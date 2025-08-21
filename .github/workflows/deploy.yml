@@ -1,0 +1,32 @@
+name: Deploy Hugo site to Pages
+
+on:
+  push:
+    branches:
+      - main   # 只要推到 main 就會觸發部署
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 把 repo checkout 下來
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2. 安裝 Hugo
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.148.2'   # 換成你要用的 Hugo 版本
+          extended: true            # 建議開啟 (支援 SCSS)
+
+      # 3. 編譯網站
+      - name: Build
+        run: hugo --minify
+
+      # 4. 部署到 GitHub Pages
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
