@@ -1,0 +1,13 @@
+baseURL = 'https://your-username.github.io/blog'
+languageCode = 'zh-tw'
+title = '我的部落格'
+theme = ''
+
+[params]
+  author = '你的名字'
+  description = '部落格描述'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
