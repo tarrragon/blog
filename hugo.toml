@@ -1,13 +1,49 @@
-baseURL = 'https://your-username.github.io/blog'
-languageCode = 'zh-tw'
-title = '我的部落格'
-theme = ''
+# 基本設定
+baseURL = 'https://tarrragon.github.io/blog'
+theme = 'hugo-bearcub'
+copyright = 'Tarragon (CC BY 4.0)'
+defaultContentLanguage = 'zh-tw'
 
-[params]
-  author = '你的名字'
-  description = '部落格描述'
+# 產生 robots.txt 以利於 SEO
+enableRobotsTXT = true
 
+# 設定語法高亮
 [markup]
+  [markup.highlight]
+    lineNos = true
+    lineNumbersInTable = false
+    noClasses = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+# 多語言模式設定
+[languages]
+  [languages.zh-tw]
+    title = '我的部落格'
+    languageName = 'zh-TW 🇹🇼'
+    LanguageCode = 'zh-TW'
+    contentDir = 'content'
+    [languages.zh-tw.params]
+      madeWith = '使用 [Bear Cub](https://github.com/clente/hugo-bearcub) 製作'
+
+[params]
+  # 網站描述
+  description = '一個部落格'
+
+  # 網站標題
+  title = 'Tarragon'
+
+  # 日期格式
+  dateFormat = '2006-01-02'
+
+  # 主題樣式 (original 或 herman)
+  themeStyle = 'original'
+
+  # 自動產生社群媒體卡片
+  generateSocialCard = true
+
+  # 作者資訊
+  [params.author]
+    name = 'tarragon'
+    email = 'tarragonstop@gmail.com'

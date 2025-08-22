@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>開始 on 我的部落格</title>
+    <link>http://localhost:1313/tags/%E9%96%8B%E5%A7%8B/</link>
+    <description>Recent content in 開始 on 我的部落格</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-TW</language>
+    <managingEditor>your.email@example.com (你的名字)</managingEditor>
+    <webMaster>your.email@example.com (你的名字)</webMaster>
+    <copyright>你的名字 (CC BY 4.0)</copyright>
+    <lastBuildDate>Fri, 22 Aug 2025 20:41:50 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E9%96%8B%E5%A7%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>歡迎來到我的部落格</title>
+      <link>http://localhost:1313/posts/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/</link>
+      <pubDate>Fri, 22 Aug 2025 20:41:50 +0800</pubDate><author>your.email@example.com (你的名字)</author>
+      <guid>http://localhost:1313/posts/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/</guid>
+      <description>&lt;h1 id=&#34;歡迎來到我的部落格&#34;&gt;歡迎來到我的部落格！&lt;/h1&gt;&#xA;&lt;p&gt;這是我使用 &lt;strong&gt;Hugo&lt;/strong&gt; 靜態網站產生器和 &lt;strong&gt;Bear Cub&lt;/strong&gt; 主題建立的第一篇文章。&lt;/p&gt;&#xA;&lt;h2 id=&#34;bear-cub-主題特色&#34;&gt;Bear Cub 主題特色&lt;/h2&gt;&#xA;&lt;p&gt;Bear Cub 是一個：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;🚀 &lt;strong&gt;極速&lt;/strong&gt;：載入速度非常快&lt;/li&gt;&#xA;&lt;li&gt;🎨 &lt;strong&gt;簡潔&lt;/strong&gt;：乾淨的設計風格&lt;/li&gt;&#xA;&lt;li&gt;📱 &lt;strong&gt;響應式&lt;/strong&gt;：在各種裝置上都有良好顯示&lt;/li&gt;&#xA;&lt;li&gt;🌍 &lt;strong&gt;多語言&lt;/strong&gt;：支援繁體中文&lt;/li&gt;&#xA;&lt;li&gt;🔍 &lt;strong&gt;SEO 優化&lt;/strong&gt;：對搜尋引擎友善&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;接下來的計劃&#34;&gt;接下來的計劃&lt;/h2&gt;&#xA;&lt;p&gt;我計劃在這個部落格分享：&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;技術學習心得&lt;/li&gt;&#xA;&lt;li&gt;程式開發經驗&lt;/li&gt;&#xA;&lt;li&gt;生活點滴&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;p&gt;感謝你的造訪！&lt;/p&gt;</description>
+      <content:encoded><![CDATA[<h1 id="歡迎來到我的部落格">歡迎來到我的部落格！</h1>
+<p>這是我使用 <strong>Hugo</strong> 靜態網站產生器和 <strong>Bear Cub</strong> 主題建立的第一篇文章。</p>
+<h2 id="bear-cub-主題特色">Bear Cub 主題特色</h2>
+<p>Bear Cub 是一個：</p>
+<ul>
+<li>🚀 <strong>極速</strong>：載入速度非常快</li>
+<li>🎨 <strong>簡潔</strong>：乾淨的設計風格</li>
+<li>📱 <strong>響應式</strong>：在各種裝置上都有良好顯示</li>
+<li>🌍 <strong>多語言</strong>：支援繁體中文</li>
+<li>🔍 <strong>SEO 優化</strong>：對搜尋引擎友善</li>
+</ul>
+<h2 id="接下來的計劃">接下來的計劃</h2>
+<p>我計劃在這個部落格分享：</p>
+<ol>
+<li>技術學習心得</li>
+<li>程式開發經驗</li>
+<li>生活點滴</li>
+</ol>
+<p>感謝你的造訪！</p>
+]]></content:encoded>
+    </item>
+  </channel>
+</rss>
