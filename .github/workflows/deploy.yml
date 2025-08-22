@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main   # 只要推到 main 就會觸發部署
-
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
