@@ -1,15 +1,27 @@
+太好了 👍 你這個 workflow 幾乎完整，但差在最後一步的 部署方式。
+
+👉 你現在是用 peaceiris/actions-gh-pages@v3，它會幫你把內容推到一個 gh-pages branch。
+這沒錯，但 GitHub Pages 的新版（2022之後）推薦用 actions/deploy-pages，而且這樣 Settings → Pages 頁面才會自動顯示網址。
+
+
+---
+
+我幫你標出 目前少的部分 和 改進建議（附註解）：
+
 name: Deploy Hugo site to Pages
 
 on:
   push:
     branches:
       - main   # 只要推到 main 就會觸發部署
+
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read   # ✅ 只需要 read，因為 deploy-pages 會負責推 branch
+  pages: write     # ✅ 必要，才能寫入 GitHub Pages
+  id-token: write  # ✅ 必要，才能使用 OIDC 身份驗證
+
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       # 1. 把 repo checkout 下來
@@ -27,9 +39,20 @@ jobs:
       - name: Build
         run: hugo --minify
 
-      # 4. 部署到 GitHub Pages
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      # 4. 上傳編譯好的檔案，給 deploy job 用
+      - name: Upload artifact   
+        uses: actions/upload-pages-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          path: ./public         # Hugo 預設輸出資料夾
+
+  deploy:
+    needs: build                 # ⬅️ 先跑完 build 才能 deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages         # ⬅️ GitHub 會自動綁定 Pages
+      url: ${{ steps.deployment.outputs.page_url }}  # 自動生成網址
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2   # ⬅️ 官方建議用這個來取代 peaceiris
+
