@@ -1,12 +1,4 @@
-太好了 👍 你這個 workflow 幾乎完整，但差在最後一步的 部署方式。
 
-👉 你現在是用 peaceiris/actions-gh-pages@v3，它會幫你把內容推到一個 gh-pages branch。
-這沒錯，但 GitHub Pages 的新版（2022之後）推薦用 actions/deploy-pages，而且這樣 Settings → Pages 頁面才會自動顯示網址。
-
-
----
-
-我幫你標出 目前少的部分 和 改進建議（附註解）：
 
 name: Deploy Hugo site to Pages
 
