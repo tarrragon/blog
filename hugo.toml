@@ -20,7 +20,7 @@ enableRobotsTXT = true
 # 多語言模式設定
 [languages]
   [languages.zh-tw]
-    title = '我的部落格'
+    title = 'Tarragon'
     languageName = 'zh-TW 🇹🇼'
     LanguageCode = 'zh-TW'
     contentDir = 'content'
@@ -38,7 +38,7 @@ enableRobotsTXT = true
   dateFormat = '2006-01-02'
 
   # 主題樣式 (original 或 herman)
-  themeStyle = 'original'
+  themeStyle = 'herman'
 
   # 自動產生社群媒體卡片
   generateSocialCard = true
