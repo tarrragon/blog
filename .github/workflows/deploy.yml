@@ -33,7 +33,7 @@ jobs:
 
       # 4. 上傳編譯好的檔案，給 deploy job 用
       - name: Upload artifact   
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./public         # Hugo 預設輸出資料夾
 
