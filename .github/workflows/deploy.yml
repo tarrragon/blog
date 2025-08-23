@@ -33,7 +33,7 @@ jobs:
 
       # 4. 上傳編譯好的檔案，給 deploy job 用
       - name: Upload artifact   
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public         # Hugo 預設輸出資料夾
 
@@ -42,9 +42,9 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages         # ⬅️ GitHub 會自動綁定 Pages
-      url: ${{ steps.deployment.outputs.page_url }}  # 自動生成網址
+      
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2   # ⬅️ 官方建議用這個來取代 peaceiris
+        uses: actions/deploy-pages@v4   
 
