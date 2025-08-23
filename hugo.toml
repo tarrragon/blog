@@ -1,5 +1,5 @@
 # 基本設定
-baseURL = 'https://tarrragon.github.io/blog'
+baseURL = 'https://tarrragon.github.io/blog/'
 theme = 'hugo-bearcub'
 copyright = 'Tarragon (CC BY 4.0)'
 defaultContentLanguage = 'zh-tw'
