@@ -5,6 +5,7 @@ draft: false
 tags: ["Markdown", "blog心得",]
 ---
 
+使用YAML格式撰寫以下資訊放在文章開頭，title部分取代＃大標題
 
 ```YAML
 ---
