@@ -49,10 +49,7 @@ enableRobotsTXT = true
     url = "/tags/"
     weight = 10
   
-  [[menu.main]]
-    name = "分類"
-    url = "/categories/"
-    weight = 20
+ 
 
 [params]
   # 網站描述
