@@ -1,50 +1,49 @@
-
-
 name: Deploy Hugo site to Pages
 
 on:
   push:
     branches:
-      - main   # 只要推到 main 就會觸發部署
+      - main
 
 permissions:
-  contents: read   # ✅ 只需要 read，因為 deploy-pages 會負責推 branch
-  pages: write     # ✅ 必要，才能寫入 GitHub Pages
-  id-token: write  # ✅ 必要，才能使用 OIDC 身份驗證
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. 把 repo checkout 下來
+      # 1. 把 repo checkout 下來（包含子模組）
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive # ⬅️ 重要：處理子模組
 
       # 2. 安裝 Hugo
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: '0.148.2'   # 換成你要用的 Hugo 版本
-          extended: true            # 建議開啟 (支援 SCSS)
+          hugo-version: "0.148.2"
+          extended: true
 
       # 3. 編譯網站
       - name: Build
         run: hugo --minify
 
-      # 4. 上傳編譯好的檔案，給 deploy job 用
-      - name: Upload artifact   
+      # 4. 上傳編譯好的檔案
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public         # Hugo 預設輸出資料夾
+          path: ./public
 
   deploy:
-    needs: build                 # ⬅️ 先跑完 build 才能 deploy
+    needs: build
     runs-on: ubuntu-latest
     environment:
-      name: github-pages         # ⬅️ GitHub 會自動綁定 Pages
-      
+      name: github-pages
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4   
-
+        uses: actions/deploy-pages@v4
