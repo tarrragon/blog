@@ -29,10 +29,6 @@ enableRobotsTXT = true
 
 # 導航選單設定
 [menu]
-    [[menu.main]]
-    name = "首頁"
-    url = "/"
-    weight = 1
   
   [[menu.main]]
     name = "文章"
