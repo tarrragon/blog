@@ -38,11 +38,6 @@ enableRobotsTXT = true
     name = "文章"
     url = "/posts/"
     weight = 5
-  
-  [[menu.main]]
-    name = "工作筆記"
-    url = "/work-log/"
-    weight = 8
 
   [[menu.main]]
     name = "標籤"
