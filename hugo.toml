@@ -47,3 +47,8 @@ enableRobotsTXT = true
   [params.author]
     name = 'tarragon'
     email = 'tarragonstop@gmail.com'
+
+#永久連結  
+[permalinks]
+  posts = "/posts/:slug/"
+  work-log = "/work-log/:slug/"

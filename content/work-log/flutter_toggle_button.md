@@ -1,4 +1,9 @@
-# flutter 可以使用的 togglebutton 樣式
+---
+title: "flutter 可以使用的 togglebutton 樣式"
+date: 2025-09-09
+draft: false
+tags: ["flutter"]
+---
 
 ## 有製作切換選項的按鈕需求，查詢之後得到三種可用的樣式
 
