@@ -27,6 +27,33 @@ enableRobotsTXT = true
     [languages.zh-tw.params]
       madeWith = '使用 [Bear Cub](https://github.com/clente/hugo-bearcub) 製作'
 
+# 導航選單設定
+[menu]
+    [[menu.main]]
+    name = "首頁"
+    url = "/"
+    weight = 1
+  
+  [[menu.main]]
+    name = "文章"
+    url = "/posts/"
+    weight = 5
+  
+  [[menu.main]]
+    name = "工作筆記"
+    url = "/work-log/"
+    weight = 8
+
+  [[menu.main]]
+    name = "標籤"
+    url = "/tags/"
+    weight = 10
+  
+  [[menu.main]]
+    name = "分類"
+    url = "/categories/"
+    weight = 20
+
 [params]
   # 網站描述
   description = '一個部落格'
@@ -48,3 +75,7 @@ enableRobotsTXT = true
     name = 'tarragon'
     email = 'tarragonstop@gmail.com'
 
+#永久連結  
+[permalinks]
+  posts = "/posts/:slug/"
+  work-log = "/work-log/:slug/"
