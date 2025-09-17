@@ -70,3 +70,4 @@ summaryLength = 200  # 摘要字數限制
 [permalinks]
   posts = "/posts/:slug/"
   work-log = "/work-log/:slug/"
+  work-log = "/record/:slug/"
