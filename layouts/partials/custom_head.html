@@ -1,2 +1,6 @@
-<!-- 引入自訂 CSS -->
-<link href="/custom.css" rel="stylesheet">
+{{ $customCSS := resources.Get "custom.css" }}
+{{ if $customCSS }}
+<style>
+{{ $customCSS.Content | safeCSS }}
+</style>
+{{ end }}

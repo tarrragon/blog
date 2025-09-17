@@ -1,0 +1,84 @@
+/* 覆蓋 herman 主題的水平排列，改為垂直排列 */
+ul.blog-posts li {
+  display: flex;
+  flex-direction: column !important;
+  gap: calc(var(--spacing) / 4);
+  margin-bottom: calc(var(--spacing) * 1.5);
+  padding-bottom: calc(var(--spacing) / 2);
+  border-bottom: 1px solid rgba(250, 250, 250, 0.1);
+}
+
+ul.blog-posts li:last-child {
+  border-bottom: none;
+}
+
+/* 文章標題樣式調整 */
+.blog-post-header {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) / 4);
+  margin-bottom: calc(var(--spacing) / 2);
+}
+
+.blog-post-date {
+  opacity: 0.7;
+  font-size: calc(var(--size) * 1.4);
+}
+
+.blog-post-title {
+  margin: 0;
+}
+
+.blog-post-title h2 {
+  margin: 0;
+  font-size: calc(var(--size) * 2.2);
+  line-height: 1.3;
+}
+
+/* 文章摘要樣式 */
+.blog-post-summary {
+  margin: calc(var(--spacing) / 2) 0;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+/* 繼續閱讀按鈕 */
+.blog-post-read-more {
+  margin: calc(var(--spacing) / 4) 0;
+}
+
+.read-more-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: calc(var(--size) * 1.6);
+  font-weight: 500;
+}
+
+.read-more-link:hover {
+  text-decoration: underline;
+}
+
+/* 標籤區域 */
+.blog-post-tags {
+  margin-top: calc(var(--spacing) / 2);
+}
+
+.blog-tag {
+  display: inline-block;
+  margin-right: calc(var(--spacing) / 3);
+  margin-bottom: calc(var(--spacing) / 4);
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: calc(var(--size) * 1.4);
+}
+
+.blog-tag:hover {
+  text-decoration: underline;
+}
+
+/* 確保在所有螢幕尺寸下都保持垂直排列 */
+@media screen and (min-width: 600px) {
+  ul.blog-posts li {
+    flex-direction: column !important;
+  }
+}

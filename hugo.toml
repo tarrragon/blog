@@ -64,7 +64,7 @@ summaryLength = 200  # 摘要字數限制
   # 作者資訊
   [params.author]
     name = 'tarragon'
-    email = 'tarragonstop@gmail.com'
+    # email = 'tarragonstop@gmail.com'  # 註解掉 email 以移除寄信按鈕
 
 #永久連結
 [permalinks]
