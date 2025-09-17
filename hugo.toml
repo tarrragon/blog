@@ -7,6 +7,9 @@ defaultContentLanguage = 'zh-tw'
 # 產生 robots.txt 以利於 SEO
 enableRobotsTXT = true
 
+# 摘要設定
+summaryLength = 200  # 摘要字數限制
+
 # 設定語法高亮
 [markup]
   [markup.highlight]
