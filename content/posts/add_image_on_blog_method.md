@@ -1,4 +1,11 @@
-# 在文章中加入圖片的語法
+---
+title: "在文章中加入圖片的語法"
+date: 2025-09-17
+draft: false
+description: "描述如何在部落格中引用圖片"
+tags: ["Hugo", "Bear Cub", "AI協作心得"]
+---
+
 
 ## 在文章中引用assets的圖片
 
