@@ -66,8 +66,8 @@ summaryLength = 200  # 摘要字數限制
     name = 'tarragon'
     email = 'tarragonstop@gmail.com'
 
-#永久連結  
+#永久連結
 [permalinks]
   posts = "/posts/:slug/"
   work-log = "/work-log/:slug/"
-  work-log = "/record/:slug/"
+  record = "/record/:slug/"
