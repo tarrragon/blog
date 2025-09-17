@@ -7,7 +7,7 @@ tags: ["flutter"]
 
 ## 有製作切換選項的按鈕需求，查詢之後得到三種可用的樣式
 
-1.ToggleButtons
+1. ToggleButtons
 
 {{< figure src="/work-log/flutter_toggle_button/ToggleButtons.png" alt="ToggleButtons 樣式" >}}
 
@@ -28,7 +28,7 @@ ToggleButtons(
 )
 ```
 
-2.SegmentedButton (Flutter 3.12+)
+1. SegmentedButton (Flutter 3.12+)
 
 {{< figure src="/work-log/flutter_toggle_button/SegmentedButton.png" alt="SegmentedButton 樣式" >}}
 
@@ -45,7 +45,7 @@ SegmentedButton<String>(
 )
 ```
 
-3.CupertinoSlidingSegmentedControl (iOS 風格)
+1. CupertinoSlidingSegmentedControl (iOS 風格)
 
 {{< figure src="/work-log/flutter_toggle_button/CupertinoSlidingSegmentedControl.png" alt="CupertinoSlidingSegmentedControl 樣式" >}}
 
