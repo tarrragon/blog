@@ -82,3 +82,109 @@ ul.blog-posts li:last-child {
     flex-direction: column !important;
   }
 }
+
+/* ===========================================
+   超連結樣式選項 - 選擇一種你喜歡的樣式
+   =========================================== */
+
+/* 選項 1: 簡潔樣式 - 無底線，hover 時顯示底線 */
+/*
+a {
+  color: var(--color-primary) !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline !important;
+  text-decoration-color: var(--color-primary) !important;
+}
+*/
+
+/* 選項 2: 虛線底線 */
+/*
+a {
+  color: var(--color-primary) !important;
+  text-decoration: none !important;
+  border-bottom: 1px dashed var(--color-primary);
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  border-bottom: 1px solid var(--color-primary);
+  background-color: rgba(26, 143, 227, 0.1);
+}
+*/
+
+/* 選項 3: 漸變底線 */
+a {
+  color: #888888 !important;
+  text-decoration: none !important;
+  background: linear-gradient(to right, var(--color-primary), var(--color-primary)) no-repeat;
+  background-size: 0% 2px;
+  background-position: left bottom;
+  transition: background-size 0.3s ease;
+}
+
+a:hover {
+  background-size: 100% 2px;
+}
+
+/* ==========================================
+   增強 h4 標題樣式 - 解決四層標題不明顯問題
+   ========================================== */
+
+h4 {
+  font-size: calc(var(--size) * 2.0) !important;  /* 適中字體大小 */
+  font-weight: 600 !important;                     /* 適中粗細 */
+  color: var(--color-light) !important;            /* 白色文字 */
+  margin-top: calc(var(--spacing) * 1.0) !important;
+  margin-bottom: calc(var(--spacing) / 2) !important;
+  border-left: 3px solid var(--color-primary);     /* 左邊框 */
+  padding-left: calc(var(--spacing) / 2);          /* 縮排 */
+  background: rgba(26, 143, 227, 0.08);            /* 很淡的背景 */
+  padding-top: calc(var(--spacing) / 4);
+  padding-bottom: calc(var(--spacing) / 4);
+  border-radius: 2px;
+}
+
+h5 {
+  font-size: calc(var(--size) * 1.6) !important;  /* 五層標題 */
+  font-weight: 500 !important;
+  color: #888888 !important;                       /* 灰色 */
+  margin-top: calc(var(--spacing)) !important;
+  margin-bottom: calc(var(--spacing) / 3) !important;
+  font-style: italic;                              /* 斜體 */
+}
+
+/* 選項 4: 方框樣式 */
+/*
+a {
+  color: var(--color-primary) !important;
+  text-decoration: none !important;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  background-color: var(--color-primary);
+  color: var(--color-dark) !important;
+}
+*/
+
+/* 選項 5: 目前使用的樣式 - 調整顏色但保持原本設計 */
+/*
+a {
+  color: var(--color-light) !important;
+  text-decoration-color: var(--color-primary) !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 0.2ex !important;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-primary) !important;
+  text-decoration-thickness: 2px !important;
+}
+*/
