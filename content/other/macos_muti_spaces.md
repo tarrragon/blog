@@ -25,8 +25,8 @@ Macos 不同螢幕的多桌面跑到錯誤的螢幕。
 輸入以下指令並按 Enter：
 
 ```bash
-defaults delete com.apple.spaces
-killall Dock
+defaults delete com.apple.spaces #清除設定
+killall Dock                     #重啟 Dock
 ```
 
 Dock 重啟後，Mission Control 的桌面配置會被重置，所有螢幕會只剩下「一個桌面」。
