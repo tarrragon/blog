@@ -25,30 +25,30 @@ ai 寫的md會有許多格式上的錯誤
 
   先檢查專案結構，看看是否有任何lint配置文件，然後嘗試運行一些常見的工具。
 
-⏺ Bash(which markdownlint)
-  ⎿  Error: markdownlint not found
+- Bash(which markdownlint)
 
-✻ Thinking…
+  ⎿  Error: markdownlint not found
 
   markdownlint 沒有安裝。讓我檢查是否有其他的markdown linting工具可用，或者可以通過npm安裝。
 
-⏺ Bash(which mdl)
+- Bash(which mdl)
+
   ⎿  Error: mdl not found
 
   看起來沒有預安裝的markdown
   linting工具。檢查是否可以使用npm來安裝markdownlint，或者檢查項目中是否已經有相關配置。
 
-⏺ Bash(which npm)
+- Bash(which npm)
 
   好的，npm可用。可以使用npm安裝markdownlint-cli來檢查markdown文件的格式錯誤。
 
   現在會安裝markdownlint-cli來檢查markdown格式錯誤。
 
-⏺ Bash(npm install -g markdownlint-cli)
+- Bash(npm install -g markdownlint-cli)
 
   好的，markdownlint-cli已經安裝成功。現在我可以使用它來檢查項目中的markdown文件。讓我先檢查所有的m
   arkdown文件。
 
-⏺ Bash(find  -name "*.md" -type f)
+- Bash(find  -name "*.md" -type f)
 
 現在會使用markdownlint來檢查這些markdown文件中的格式錯誤。
