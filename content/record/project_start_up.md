@@ -53,7 +53,11 @@ tags: [ "AI協作心得"]
 
 4.我請ai幫我處理了i18n相關的設定跟初始化
 
+5.我要求ai把 main底下的 themedata、初始化的行為、homepage的內容，從main.dart拆分出去，並且新增route設定以及riverpod的設定
+
 ## 最終專案的0.0.1 初始化成果
+
+{{< figure src="/record/project_start_up/project0.0.1.png" alt="0.0.1的專案結構" >}}
 
 我直接貼上ai幫我做的工作日誌內容作為成果參考，這是一個flutter專案，使用riverpod做狀態管理
 
