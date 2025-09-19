@@ -59,7 +59,9 @@ tags: [ "AI協作心得"]
 
 {{< figure src="/record/project_start_up/project0.0.1.png" alt="0.0.1的專案結構" >}}
 
-我直接貼上ai幫我做的工作日誌內容作為成果參考，這是一個flutter專案，使用riverpod做狀態管理
+---
+
+## 我直接貼上ai幫我做的工作日誌內容作為成果參考，這是一個flutter專案，使用riverpod做狀態管理
 
 ```yaml
 ---
