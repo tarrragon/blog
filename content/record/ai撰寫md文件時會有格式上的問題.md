@@ -1,6 +1,6 @@
 ---
 title: "如何要求ai使用正確的格式撰寫md文件"
-date: 2025-09-18
+date: 2025-09-19
 draft: false
 description: "ai 寫的md會有許多格式上的錯誤，需要讓他先檢查再修正"
 tags: ["AI協作心得"]
