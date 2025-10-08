@@ -19,6 +19,10 @@ summaryLength = 200  # 摘要字數限制
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+    ordered = false
 
 # 多語言模式設定
 [languages]
