@@ -44,6 +44,13 @@
   {{ end }}
 </article>
 
+<!-- 回到頂部按鈕 -->
+<button id="back-to-top" class="back-to-top-btn" aria-label="回到頂部">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="m18 15-6-6-6 6"/>
+  </svg>
+</button>
+
 <!-- 章節導航互動腳本 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -93,10 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // 滾動時高亮當前章節
+  // 滾動時高亮當前章節並自動滾動側邊欄
   function updateActiveSection() {
     const sections = document.querySelectorAll('.article-content h2, .article-content h3, .article-content h4');
     const tocLinks = document.querySelectorAll('.toc-sidebar a[href^="#"]');
+    const tocSidebar = document.querySelector('.toc-sidebar');
     
     let currentSection = '';
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -113,11 +121,58 @@ document.addEventListener('DOMContentLoaded', function() {
       link.classList.remove('active');
     });
     
-    // 為當前章節添加 active 類別
+    // 為當前章節添加 active 類別並自動滾動側邊欄
     if (currentSection) {
       const activeLink = document.querySelector('.toc-sidebar a[href="#' + currentSection + '"]');
       if (activeLink) {
         activeLink.classList.add('active');
+        
+        // 自動滾動側邊欄到當前章節位置
+        if (tocSidebar && activeLink) {
+          // 獲取側邊欄的滾動容器信息
+          const sidebarScrollTop = tocSidebar.scrollTop;
+          const sidebarHeight = tocSidebar.clientHeight;
+          const sidebarScrollHeight = tocSidebar.scrollHeight;
+          
+          // 獲取當前連結在側邊欄中的位置
+          const linkOffsetTop = activeLink.offsetTop;
+          const linkHeight = activeLink.offsetHeight;
+          
+          // 計算連結相對於側邊欄可視區域的位置
+          const linkTop = linkOffsetTop - sidebarScrollTop;
+          const linkBottom = linkTop + linkHeight;
+          
+          // 設定緩衝區域（側邊欄高度的 20%）
+          const bufferZone = Math.max(20, sidebarHeight * 0.2);
+          const safeTop = bufferZone;
+          const safeBottom = sidebarHeight - bufferZone;
+          
+          // 檢查是否需要滾動
+          let needsScroll = false;
+          let targetScrollTop = sidebarScrollTop;
+          
+          if (linkTop < safeTop) {
+            // 連結太靠近頂部，滾動到連結上方預留緩衝空間
+            targetScrollTop = linkOffsetTop - bufferZone;
+            needsScroll = true;
+          } else if (linkBottom > safeBottom) {
+            // 連結太靠近底部，滾動到連結下方預留緩衝空間
+            targetScrollTop = linkOffsetTop + linkHeight - sidebarHeight + bufferZone;
+            needsScroll = true;
+          }
+          
+          // 如果需要滾動，執行滾動
+          if (needsScroll) {
+            // 確保滾動位置在有效範圍內
+            const maxScrollTop = sidebarScrollHeight - sidebarHeight;
+            targetScrollTop = Math.max(0, Math.min(targetScrollTop, maxScrollTop));
+            
+            // 只有當目標位置與當前位置差距足夠大時才滾動
+            if (Math.abs(targetScrollTop - sidebarScrollTop) > 10) {
+              tocSidebar.scrollTop = targetScrollTop;
+            }
+          }
+        }
       }
     }
   }
@@ -127,6 +182,41 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 初始化時執行一次
   updateActiveSection();
+});
+
+// 回到頂部按鈕功能（所有裝置都支援）
+document.addEventListener('DOMContentLoaded', function() {
+  const backToTopBtn = document.getElementById('back-to-top');
+  
+  if (!backToTopBtn) return;
+  
+  // 顯示/隱藏按鈕
+  function toggleBackToTopBtn() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    if (scrollTop > 300) {
+      backToTopBtn.style.display = 'flex';
+      backToTopBtn.classList.add('visible');
+    } else {
+      backToTopBtn.style.display = 'none';
+      backToTopBtn.classList.remove('visible');
+    }
+  }
+  
+  // 回到頂部功能
+  function scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+  
+  // 綁定事件
+  window.addEventListener('scroll', toggleBackToTopBtn);
+  backToTopBtn.addEventListener('click', scrollToTop);
+  
+  // 初始化
+  toggleBackToTopBtn();
 });
 </script>
 {{ end }}

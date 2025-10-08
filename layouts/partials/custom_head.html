@@ -233,4 +233,70 @@
     margin-bottom: 0.5rem;
     line-height: 1.5;
   }
+
+  /* 回到頂部按鈕樣式 */
+  .back-to-top-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .back-to-top-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .back-to-top-btn:active {
+    transform: translateY(0);
+  }
+
+  .back-to-top-btn.visible {
+    display: flex;
+    animation: fadeInUp 0.3s ease;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 響應式設計 - 手機版調整 */
+  @media (max-width: 768px) {
+    .back-to-top-btn {
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 45px;
+      height: 45px;
+    }
+  }
+
+  /* 平板版調整 */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .back-to-top-btn {
+      bottom: 1.8rem;
+      right: 1.8rem;
+    }
+  }
 </style>
