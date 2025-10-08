@@ -24,7 +24,14 @@
 {{ end }}
 
 {{ $date := .Date.Format (default "2006-01-02" .Site.Params.dateFormat) }}
-{{ $author := (or ($.Param "author") $.Site.Params.author.name) }}
+{{ $author := "作者" }}
+{{ if $.Param "author" }}
+  {{ $author = $.Param "author" }}
+{{ else if $.Site.Params.author }}
+  {{ if $.Site.Params.author.name }}
+    {{ $author = $.Site.Params.author.name }}
+  {{ end }}
+{{ end }}
 {{ $byline := (printf "%s | %s" $author $date) }}
 
 {{ $fg = $fg.Filter (images.Text $byline (dict
