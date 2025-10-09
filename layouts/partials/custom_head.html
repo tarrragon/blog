@@ -58,6 +58,85 @@
     }
   }
 
+  /* 可折疊程式碼區塊樣式 */
+  details {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  details:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  details[open] {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.5rem;
+    margin: -1rem -1rem 0 -1rem;
+    border-radius: 8px 8px 0 0;
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    user-select: none;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::before {
+    content: '▶';
+    display: inline-block;
+    margin-right: 0.5rem;
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+  }
+
+  details[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  summary:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  details[open] summary {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px 8px 0 0;
+  }
+
+  /* 確保 details 內的程式碼區塊樣式正常 */
+  details pre {
+    margin: 1rem 0 0 0;
+  }
+
+  details > *:not(summary) {
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   /* 側邊章節導航樣式 - 獨立側邊欄 */
   .toc-sidebar {
     position: fixed;

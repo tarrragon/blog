@@ -1,0 +1,16 @@
+{{/*
+  Details shortcode - 用於創建可折疊的內容區塊
+  
+  使用方式:
+  {{</* details summary="點擊展開" */>}}
+  內容...
+  {{</* /details */>}}
+  
+  參數:
+  - summary: 摘要文字（可選，預設為 "點擊展開"）
+*/}}
+<details>
+  <summary>{{ .Get "summary" | default "點擊展開" }}</summary>
+  {{ .Inner | markdownify }}
+</details>
+
