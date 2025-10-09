@@ -307,15 +307,15 @@ git commit -am "備份：準備遷移到 shortcode"
 ```bash
 # 替換開始標籤
 find content -name "*.md" -type f -exec sed -i '' \
-  's/<details>$/{{< details summary="📝 點擊查看程式碼" >}}/g' {} +
+  's/<details>$/{{</* details summary="📝 點擊查看程式碼" */>}}/g' {} +
 
 # 替換帶 summary 的開始標籤
 find content -name "*.md" -type f -exec sed -i '' \
-  's/<details>.*<summary>\(.*\)<\/summary>/{{< details summary="\1" >}}/g' {} +
+  's/<details>.*<summary>\(.*\)<\/summary>/{{</* details summary="\1" */>}}/g' {} +
 
 # 替換結束標籤
 find content -name "*.md" -type f -exec sed -i '' \
-  's/<\/details>/{{< \/details >}}/g' {} +
+  's/<\/details>/{{</* \/details */>}}/g' {} +
 ```
 
 {{< /details >}}
