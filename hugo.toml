@@ -32,7 +32,7 @@ summaryLength = 200  # 摘要字數限制
     LanguageCode = 'zh-TW'
     contentDir = 'content'
     [languages.zh-tw.params]
-      madeWith = '使用 [Bear Cub](https://github.com/clente/hugo-bearcub) 製作'
+      madeWith = '使用 [hugo](https://gohugo.io/) 製作'
 
 # 導航選單設定
 [menu]
