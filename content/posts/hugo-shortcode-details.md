@@ -75,16 +75,16 @@ Hugo Shortcode 是 Hugo 靜態網站生成器提供的一個強大功能，允�
 
 在專案根目錄創建 `layouts/shortcodes/details.html`：
 
-{{< details summary="📝 點擊查看 Shortcode 程式碼" >}}
+{{% details summary="📝 點擊查看 Shortcode 程式碼" %}}
 
 ```html
-{{/*
+{{/* 
   Details shortcode - 用於創建可折疊的內容區塊
   
   使用方式:
-  {{</* details summary="點擊展開" */>}}
+  {{< details summary="點擊展開" >}}
   內容...
-  {{</* /details */>}}
+  {{% /details %}}
   
   參數:
   - summary: 摘要文字（可選，預設為 "點擊展開"）
@@ -95,7 +95,7 @@ Hugo Shortcode 是 Hugo 靜態網站生成器提供的一個強大功能，允�
 </details>
 ```
 
-{{< /details >}}
+{{% /details %}}
 
 **程式碼說明**：
 
@@ -125,7 +125,7 @@ Hugo Shortcode 是 Hugo 靜態網站生成器提供的一個強大功能，允�
 **新方式（符合 Markdown 規範）：**
 
 ```markdown
-{{</* details summary="📝 點擊查看程式碼" */>}}
+{{< details summary="📝 點擊查看程式碼" >}}
 
 \```toml
 [markup]
@@ -133,14 +133,14 @@ Hugo Shortcode 是 Hugo 靜態網站生成器提供的一個強大功能，允�
     startLevel = 2
 \```
 
-{{</* /details */>}}
+{{% /details %}}
 ```
 
 ### 步驟 3：添加 CSS 樣式
 
 在 `layouts/partials/custom_head.html` 中添加樣式：
 
-{{< details summary="📝 點擊查看 CSS 樣式程式碼" >}}
+{{% details summary="📝 點擊查看 CSS 樣式程式碼" %}}
 
 ```css
 /* 可折疊程式碼區塊樣式 */
@@ -237,7 +237,7 @@ details > *:not(summary) {
 }
 ```
 
-{{< /details >}}
+{{% /details %}}
 
 ## 進階功能
 
@@ -245,7 +245,7 @@ details > *:not(summary) {
 
 你可以擴展 shortcode 支援更多參數：
 
-{{< details summary="📝 點擊查看進階 Shortcode 程式碼" >}}
+{{% details summary="📝 點擊查看進階 Shortcode 程式碼" %}}
 
 ```html
 {{/*
@@ -262,14 +262,14 @@ details > *:not(summary) {
 </details>
 ```
 
-{{< /details >}}
+{{% /details %}}
 
 **使用範例**：
 
 ```markdown
-{{</* details summary="重要提示" open="true" class="warning" */>}}
+{{< details summary="重要提示" open="true" class="warning" >}}
 這個區塊預設是展開的
-{{</* /details */>}}
+{{% /details %}}
 ```
 
 ### 巢狀使用
@@ -277,15 +277,15 @@ details > *:not(summary) {
 Shortcode 支援巢狀使用：
 
 ```markdown
-{{</* details summary="外層標題" */>}}
+{{< details summary="外層標題" >}}
 
 這是外層內容
 
-{{</* details summary="內層標題" */>}}
+{{< details summary="內層標題" >}}
 這是內層內容
-{{</* /details */>}}
+{{% /details %}}
 
-{{</* /details */>}}
+{{% /details %}}
 ```
 
 ## 遷移指南
@@ -302,23 +302,23 @@ git commit -am "備份：準備遷移到 shortcode"
 
 #### 步驟 2：使用 sed 批量替換（macOS）
 
-{{< details summary="📝 點擊查看批量替換腳本" >}}
+{{% details summary="📝 點擊查看批量替換腳本" %}}
 
 ```bash
 # 替換開始標籤
 find content -name "*.md" -type f -exec sed -i '' \
-  's/<details>$/{{</* details summary="📝 點擊查看程式碼" */>}}/g' {} +
+  's/<details>$/{{&lt; details summary="📝 點擊查看程式碼" &gt;}}/g' {} +
 
 # 替換帶 summary 的開始標籤
 find content -name "*.md" -type f -exec sed -i '' \
-  's/<details>.*<summary>\(.*\)<\/summary>/{{</* details summary="\1" */>}}/g' {} +
+  's/<details>.*<summary>\(.*\)<\/summary>/{{&lt; details summary="\1" &gt;}}/g' {} +
 
 # 替換結束標籤
 find content -name "*.md" -type f -exec sed -i '' \
-  's/<\/details>/{{</* \/details */>}}/g' {} +
+  's/<\/details>/{{&lt; \/details &gt;}}/g' {} +
 ```
 
-{{< /details >}}
+{{% /details %}}
 
 #### 步驟 3：驗證結果
 
