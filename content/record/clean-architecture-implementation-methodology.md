@@ -1,10 +1,15 @@
-# 🏗 Clean Architecture 實作方法論
-
+---
+title: "Clean Architecture 實作指引"
+date: 2025-10-11
+draft: false
+description: "我事先定義了敏捷開發方法論，嘗試把任務做拆分，但是任務拆分缺乏一個固定標準，所以這裡嘗試引用  Clean Architecture 作為任務分派流程的核心判斷理論，所以這裡會先闡述 Clean Architecture 的開發理念去定義我希望AI會怎麼考慮開發的方式"
+tags: ["AI協作心得","方法論"]
+---
 ## 📖 方法論概述
 
 這裡文章內容是AI生成的，因為內容太經典了可能有部分著作權問題，如果內容有侵犯著作權的問題請再告知我。
 
-我們事先定義了敏捷開發方法論，嘗試把任務做拆分，但是任務拆分缺乏一個固定標準，所以我嘗試引用  Clean Architecture 作為任務分派流程的核心判斷理論，所以這裡會先闡述 Clean Architecture 的開發理念去定義我希望AI會怎麼考慮開發的方式，後續實際的派工方法論請參考 [設計派工方法論](content/record/ticket_v2.md)  
+我事先定義了敏捷開發方法論，嘗試把任務做拆分，但是任務拆分缺乏一個固定標準，所以這裡嘗試引用  Clean Architecture 作為任務分派流程的核心判斷理論，所以這裡會先闡述 Clean Architecture 的開發理念去定義我希望AI會怎麼考慮開發的方式，後續實際的派工方法論請參考 [設計派工方法論](content/record/ticket_v2.md)  
 
 系統化的 Clean Architecture 實作指引，整合依賴反轉原則（DIP）、Interface-Driven Development、TDD 四階段流程和敏捷重構方法論，確保架構設計的獨立性、可測試性和可維護性。
 
