@@ -207,17 +207,77 @@ ReadingSpeed calculateReadingSpeed(
 
 ## 禁止的註解模式
 
-### 程式碼重述
+### 程式碼重述與技術實作細節描述（違反 DRY 原則）
+
+#### ❌ 禁止：直接重述程式碼行為
 
 ```dart
 // ❌ 禁止：重述程式碼
 // 設定書籍標題
 book.setTitle(newTitle);
 
-// ❌ 禁止：解釋實作細節
+// ❌ 禁止：描述技術實作細節
 // 使用 Map 快速查找避免 O(n) 複雜度
 final bookMap = books.asMap();
 ```
+
+#### ❌ 禁止：描述 UI 技術實作細節（嚴重違反 DRY 原則）
+
+```dart
+/// ❌ 錯誤：重複描述程式碼內容
+/// BookListItem - 書庫列表項目 Widget
+///
+/// 視覺設計：
+/// - 陰影刻痕變化（凸起→凹陷）              ← 直接描述程式碼實作
+/// - 無背景色變化（保持純白）                ← 可以從程式碼看出
+/// - 無邊框、無選中指示器（極簡設計）        ← 程式碼已說明
+/// - AnimatedContainer 200ms 過渡動畫       ← 重複程式碼參數
+///
+/// 觸覺回饋：
+/// - 選擇時：HapticFeedback.selectionClick()  ← 重複程式碼呼叫
+/// - 取消選擇：HapticFeedback.lightImpact()   ← 重複程式碼呼叫
+class BookListItem extends StatelessWidget {
+  // ...
+}
+```
+
+**問題分析**：
+
+- ❌ 描述「200ms」、「陰影凸起→凹陷」等技術細節 → 程式碼已經說明
+- ❌ 列舉 `HapticFeedback.selectionClick()` 等 API 呼叫 → 完全重複程式碼
+- ❌ 沒有說明「為什麼」這樣設計 → 缺少需求和設計決策依據
+
+#### ✅ 正確：記錄設計決策和需求脈絡
+
+```dart
+/// 【需求來源】UC-05: 雙模式書庫展示切換 - 書籍選擇互動
+/// 【規格文件】docs/ui_design_specification.md#book-selection-feedback
+/// 【設計決策】採用方案C-1基礎版 - 極簡視覺回饋設計
+/// 【為什麼選擇陰影刻痕變化】
+/// - 不影響文字可讀性：避免背景色干擾閱讀體驗
+/// - 符合無障礙設計：不依賴顏色作為唯一視覺提示
+/// 【為什麼選擇差異化觸覺回饋】
+/// - 選中 vs 取消必須有不同的觸覺回饋類型
+/// - selectionClick 提供明確的「確認」感受
+/// - lightImpact 提供輕微的「狀態變更」提示
+/// 【修改約束】
+/// - 觸覺回饋時機不可調換（與使用者預期一致）
+/// - 陰影變化動畫時長需保持 < 250ms（符合 Material Design 規範）
+/// 【維護警告】
+/// - 此 Widget 被 3 個書庫頁面使用
+/// - 修改視覺回饋會影響整體使用者體驗一致性
+class BookListItem extends StatelessWidget {
+  // ...
+}
+```
+
+**正確註解特徵**：
+
+- ✅ 說明「為什麼」選擇陰影變化（使用者調研數據）
+- ✅ 說明「為什麼」差異化觸覺回饋（使用者預期）
+- ✅ 記錄設計約束（Material Design 規範）
+- ✅ 提供維護警告（影響範圍）
+- ❌ 不重複程式碼內容（200ms、HapticFeedback API）
 
 ### 模糊的業務描述
 
