@@ -221,7 +221,7 @@ book.setTitle(newTitle);
 final bookMap = books.asMap();
 ```
 
-#### ❌ 禁止：描述 UI 技術實作細節（嚴重違反 DRY 原則）
+#### ❌ 禁止：描述 UI 技術實作細節
 
 ```dart
 /// ❌ 錯誤：重複描述程式碼內容
