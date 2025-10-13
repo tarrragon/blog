@@ -2,7 +2,6 @@
 title: "Hugo 部落格支援 Mermaid 流程圖完整實現指南"
 date: 2025-10-08
 tags: ["hugo", "mermaid", "流程圖", "圖表", "markdown"]
-categories: ["技術教學"]
 description: "詳細說明如何在 Hugo 部落格中實現 Mermaid 流程圖支援，包含語法轉換、樣式自定義和響應式設計"
 ---
 

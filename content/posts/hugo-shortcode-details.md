@@ -1,9 +1,8 @@
 ---
 title: "Hugo Shortcode 實現可折疊區塊"
 date: 2025-10-09
-tags: ["hugo", "shortcode", "markdown", "最佳實踐"]
-categories: ["技術教學"]
-description: "詳細說明如何使用 Hugo Shortcode 實現可折疊內容區塊，避免 MD033 Markdown Linter 警告，符合最佳實踐"
+tags: ["hugo", "shortcode", "markdown"]
+description: "說明如何使用 Hugo Shortcode 實現可折疊內容區塊"
 ---
 
 ## 問題背景

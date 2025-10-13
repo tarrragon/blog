@@ -2,7 +2,6 @@
 title: "Hugo 部落格側邊章節導航 (TOC) 完整實現指南"
 date: 2025-10-08
 tags: ["hugo", "toc", "導航", "響應式設計", "javascript"]
-categories: ["技術教學"]
 description: "詳細說明如何在 Hugo 部落格中實現響應式側邊章節導航功能，包含自動滾動、高亮顯示和手機版適配"
 ---
 
