@@ -3,7 +3,7 @@ title: "層級隔離派工方法論"
 date: 2025-10-11
 draft: false
 description: "定義 Clean Architecture 五層劃分標準和單層修改原則，指導 Ticket 拆分和實作順序"
-tags: ["AI協作心得","方法論"]
+tags: ["AI協作心得",Ticket,"方法論"]
 ---
 
 ## 文件資訊
