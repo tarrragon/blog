@@ -260,11 +260,42 @@ git clone --mirror original-repo backup-repo
 
 ### Remote 會被移除
 
-`git filter-repo` 執行後會自動移除 `origin` remote，需要手動重新加入：
+
+`git filter-repo` 執行後會**自動移除 `origin` remote**。執行時你會看到以下提示：
+
+```
+NOTICE: Removing 'origin' remote; see 'Why is my origin removed?'
+        in the manual if you want to push back there.
+```
+
+#### 為什麼要移除 Remote？
+
+這是 `git filter-repo` 的**安全機制設計**，目的是保護你和你的團隊：
+
+1. **防止意外推送**：重寫歷史後，所有 commit hash 都會改變。如果你不小心直接執行 `git push`，會把重寫後的歷史推送到遠端，可能覆蓋其他人的工作，造成嚴重問題。
+
+2. **強迫你停下來思考**：移除 remote 後，你必須：
+   - 確認是否真的要推送重寫後的歷史
+   - 手動重新加入 remote
+   - 明確使用 `--force` 參數推送
+
+3. **給你機會通知團隊**：在重新加入 remote 和 force push 之前，你有機會先通知其他協作者，讓他們做好準備。
+
+#### 如何處理
+
+執行完 `git filter-repo` 後，依序執行：
 
 ```bash
+# 1. 重新加入 remote
 git remote add origin <repository-url>
+
+# 2. 確認 remote 已加入
+git remote -v
+
+# 3. Force push（確認團隊已知情後再執行）
+git push origin --force --all
 ```
+
 
 ### Force Push
 
