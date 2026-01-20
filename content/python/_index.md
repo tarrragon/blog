@@ -59,6 +59,8 @@ Python 標準庫的常用模組，這些都是 Hook 系統中實際使用的工�
 - [re - 正規表達式](03-stdlib/regex/)
 - [logging - 日誌系統](03-stdlib/logging/)
 - [argparse - CLI 介面](03-stdlib/argparse/)
+- [並行處理 - threading、multiprocessing、concurrent.futures](03-stdlib/concurrency/)
+- [效能迷思與優化策略](03-stdlib/performance/)
 
 ### [模組四：物件導向設計](04-oop/)
 
@@ -100,7 +102,7 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 
 所有範例均來自實際的 Hook 系統程式碼：
 
-```
+```text
 .claude/lib/
 ├── __init__.py           # 模組初始化
 ├── config_loader.py      # 配置載入
@@ -120,5 +122,6 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 
 ---
 
-*文件版本：v0.31.0*
-*建立日期：2026-01-20*
+*文件版本：v0.32.0*
+*最後更新：2026-01-20*
+*新增內容：並行處理、效能優化章節*

@@ -62,6 +62,7 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 - [記憶體管理與垃圾回收](04-cpython-internals/memory-gc/)
 - [Bytecode 與虛擬機](04-cpython-internals/bytecode/)
 - [GIL 與執行緒模型](04-cpython-internals/gil-threading/)
+- [Free-Threading](04-cpython-internals/free-threading/)
 
 ### [模組五：用 C 擴展 Python](05-c-extensions/)
 
