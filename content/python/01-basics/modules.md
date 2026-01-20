@@ -1,5 +1,6 @@
 ---
 title: "1.2 模組與套件組織"
+date: 2026-01-20
 description: "理解 Python 的模組系統和套件結構"
 weight: 2
 ---

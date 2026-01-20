@@ -1,5 +1,6 @@
 ---
 title: "5.4 實戰案例分析"
+date: 2026-01-20
 description: "分析知名 Python 專案如何使用 Rust"
 weight: 4
 ---

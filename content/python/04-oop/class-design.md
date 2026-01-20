@@ -1,5 +1,6 @@
 ---
 title: "4.1 類別設計原則"
+date: 2026-01-20
 description: "設計清晰的類別介面"
 weight: 1
 ---

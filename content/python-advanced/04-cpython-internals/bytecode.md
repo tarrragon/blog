@@ -1,5 +1,6 @@
 ---
 title: "3.3 Bytecode 與虛擬機"
+date: 2026-01-20
 description: "理解 Python 的執行過程"
 weight: 3
 ---

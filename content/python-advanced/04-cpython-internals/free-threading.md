@@ -1,5 +1,6 @@
 ---
 title: "4.5 Free-Threading - Python 的真正多執行緒時代"
+date: 2026-01-20
 description: "Python 3.13+ 無 GIL 版本的完整指南"
 weight: 5
 ---

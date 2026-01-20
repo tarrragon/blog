@@ -1,5 +1,6 @@
 ---
 title: "3.6 argparse - CLI 介面"
+date: 2026-01-20
 description: "命令列參數解析"
 weight: 6
 ---

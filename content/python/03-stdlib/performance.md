@@ -1,5 +1,6 @@
 ---
 title: "3.8 效能迷思與優化策略"
+date: 2026-01-20
 description: "Python 效能的真相、常見誤解與優化方法"
 weight: 8
 ---

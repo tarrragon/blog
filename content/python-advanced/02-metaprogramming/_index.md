@@ -1,5 +1,6 @@
 ---
 title: "模組二：元編程"
+date: 2026-01-20
 description: "深入 Python 的元編程機制，理解框架的實現原理"
 weight: 2
 ---

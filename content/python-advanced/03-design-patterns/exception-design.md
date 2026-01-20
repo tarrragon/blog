@@ -1,5 +1,6 @@
 ---
 title: "3.5.2 異常設計架構"
+date: 2026-01-20
 description: "異常層級設計、異常鏈、ExceptionGroup、異常 vs 返回值"
 weight: 2
 ---

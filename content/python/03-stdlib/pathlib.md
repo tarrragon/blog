@@ -1,5 +1,6 @@
 ---
 title: "3.1 pathlib - 路徑操作"
+date: 2026-01-20
 description: "物件導向的路徑處理"
 weight: 1
 ---

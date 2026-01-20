@@ -1,5 +1,6 @@
 ---
 title: "開放封閉原則與認知負擔"
+date: 2026-01-20
 description: "從認知負擔的視角重新理解 SOLID 原則"
 weight: 3
 ---

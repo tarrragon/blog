@@ -1,5 +1,6 @@
 ---
 title: "1.1 基礎概念與事件迴圈"
+date: 2026-01-20
 description: "理解 asyncio 的核心概念：事件迴圈、協程與並發模型"
 weight: 1
 ---

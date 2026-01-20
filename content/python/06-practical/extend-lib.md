@@ -1,5 +1,6 @@
 ---
 title: "6.2 如何擴展共用模組"
+date: 2026-01-20
 description: "為 Hook 系統添加新功能"
 weight: 2
 ---

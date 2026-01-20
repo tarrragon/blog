@@ -1,5 +1,6 @@
 ---
 title: "6.3 發布到 PyPI"
+date: 2026-01-20
 description: "學習如何建構 wheel 並發布到 PyPI"
 weight: 3
 ---

@@ -1,5 +1,6 @@
 ---
 title: "4.1 ctypes 與 cffi：動態綁定"
+date: 2026-01-20
 description: "使用 ctypes 和 cffi 呼叫 C 函式庫"
 weight: 1
 ---

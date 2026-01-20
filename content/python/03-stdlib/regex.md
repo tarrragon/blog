@@ -1,5 +1,6 @@
 ---
 title: "3.4 re - 正規表達式"
+date: 2026-01-20
 description: "文字模式匹配與擷取"
 weight: 4
 ---

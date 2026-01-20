@@ -1,5 +1,6 @@
 ---
 title: "6.4 套件維護最佳實踐"
+date: 2026-01-20
 description: "長期維護 Python 套件的最佳實踐"
 weight: 4
 ---

@@ -1,5 +1,6 @@
 ---
 title: "5.4 Mock 與測試隔離"
+date: 2026-01-20
 description: "隔離外部依賴"
 weight: 4
 ---

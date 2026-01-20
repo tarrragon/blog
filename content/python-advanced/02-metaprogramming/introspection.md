@@ -1,5 +1,6 @@
 ---
 title: "2.4 反射與 inspect 模組"
+date: 2026-01-20
 description: "使用反射和 inspect 模組檢視和操作 Python 物件"
 weight: 4
 ---

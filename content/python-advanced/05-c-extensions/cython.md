@@ -1,5 +1,6 @@
 ---
 title: "4.2 Cython：Python 語法的 C 速度"
+date: 2026-01-20
 description: "使用 Cython 加速 Python 程式碼"
 weight: 2
 ---

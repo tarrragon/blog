@@ -1,5 +1,6 @@
 ---
 title: "2.4 Enum 列舉型別"
+date: 2026-01-20
 description: "定義有限選項集合"
 weight: 4
 ---

@@ -1,5 +1,6 @@
 ---
 title: "6.3 如何新增語言解析器"
+date: 2026-01-20
 description: "繼承 ABC 實作新解析器"
 weight: 3
 ---

@@ -1,5 +1,6 @@
 ---
 title: "重構案例研究"
+date: 2026-01-20
 description: "完整回顧 v0.28.0 Hook 系統重構流程"
 weight: 75
 ---

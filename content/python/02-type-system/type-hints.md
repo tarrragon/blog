@@ -1,5 +1,6 @@
 ---
 title: "2.1 Type Hints 基礎"
+date: 2026-01-20
 description: "為函式添加型別註解，提升程式碼可讀性"
 weight: 1
 ---

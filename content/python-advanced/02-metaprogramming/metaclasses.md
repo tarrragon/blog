@@ -1,5 +1,6 @@
 ---
 title: "2.2 Metaclass 設計與應用"
+date: 2026-01-20
 description: "理解 Python 的類別建立機制與 Metaclass"
 weight: 2
 ---

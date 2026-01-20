@@ -1,5 +1,6 @@
 ---
 title: "5.1 異常處理策略"
+date: 2026-01-20
 description: "何時捕獲、何時拋出"
 weight: 1
 ---

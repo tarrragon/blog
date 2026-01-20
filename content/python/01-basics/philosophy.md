@@ -1,5 +1,6 @@
 ---
 title: "1.1 Python 哲學與設計理念"
+date: 2026-01-20
 description: "理解 Python 的核心設計原則"
 weight: 1
 ---

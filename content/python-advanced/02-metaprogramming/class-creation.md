@@ -1,5 +1,6 @@
 ---
 title: "2.3 類別裝飾器與動態類別"
+date: 2026-01-20
 description: "使用類別裝飾器和 type() 動態建立類別"
 weight: 3
 ---

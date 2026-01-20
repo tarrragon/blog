@@ -1,5 +1,6 @@
 ---
 title: "模組四：CPython 內部機制"
+date: 2026-01-20
 description: "深入 CPython 直譯器，理解 Python 如何運作"
 weight: 4
 ---

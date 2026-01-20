@@ -1,5 +1,6 @@
 ---
 title: "3.5.1 泛型進階"
+date: 2026-01-20
 description: "TypeVar 進階用法、Generic 類別、Protocol 與結構化子型別"
 weight: 1
 ---

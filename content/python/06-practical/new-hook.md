@@ -1,5 +1,6 @@
 ---
 title: "6.1 如何新增一個 Hook"
+date: 2026-01-20
 description: "完整的 Hook 開發流程"
 weight: 1
 ---

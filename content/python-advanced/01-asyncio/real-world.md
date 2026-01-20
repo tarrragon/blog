@@ -1,5 +1,6 @@
 ---
 title: "1.4 實戰：與同步程式碼整合"
+date: 2026-01-20
 description: "在現有專案中引入 asyncio，處理同步與異步的混合場景"
 weight: 4
 ---

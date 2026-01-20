@@ -1,5 +1,6 @@
 ---
 title: "3.2 json - 序列化"
+date: 2026-01-20
 description: "資料的讀寫與轉換"
 weight: 2
 ---

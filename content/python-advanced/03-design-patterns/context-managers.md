@@ -1,5 +1,6 @@
 ---
 title: "3.5.3 進階上下文管理"
+date: 2026-01-20
 description: "上下文管理器協議、contextlib 工具、嵌套與組合、async with"
 weight: 3
 ---

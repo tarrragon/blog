@@ -1,5 +1,6 @@
 ---
 title: "模組二：型別系統"
+date: 2026-01-20
 description: "現代 Python 的型別提示與資料結構"
 weight: 2
 ---

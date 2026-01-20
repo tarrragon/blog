@@ -1,5 +1,6 @@
 ---
 title: "模組一：非同步程式設計（asyncio）"
+date: 2026-01-20
 description: "Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技能"
 weight: 1
 ---

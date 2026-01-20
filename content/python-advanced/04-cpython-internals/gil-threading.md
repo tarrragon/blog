@@ -1,5 +1,6 @@
 ---
 title: "3.4 GIL 與執行緒模型"
+date: 2026-01-20
 description: "深入理解 GIL 的設計與實現"
 weight: 4
 ---

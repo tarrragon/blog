@@ -1,5 +1,6 @@
 ---
 title: "4.3 工廠模式"
+date: 2026-01-20
 description: "動態建立物件"
 weight: 3
 ---

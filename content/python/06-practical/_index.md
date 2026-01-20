@@ -1,5 +1,6 @@
 ---
 title: "模組六：實戰指南"
+date: 2026-01-20
 description: "將所學應用到實際工作中"
 weight: 6
 ---

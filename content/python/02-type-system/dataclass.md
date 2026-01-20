@@ -1,5 +1,6 @@
 ---
 title: "2.3 Dataclass 資料結構"
+date: 2026-01-20
 description: "快速定義資料類別"
 weight: 3
 ---

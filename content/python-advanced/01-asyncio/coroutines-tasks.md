@@ -1,5 +1,6 @@
 ---
 title: "1.2 協程與 Task 管理"
+date: 2026-01-20
 description: "深入理解協程、Task 與 Future，掌握 async/await 的進階用法"
 weight: 2
 ---

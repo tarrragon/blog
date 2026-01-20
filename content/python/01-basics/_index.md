@@ -1,5 +1,6 @@
 ---
 title: "模組一：Python 基礎概念"
+date: 2026-01-20
 description: "Python 語言的核心概念快速回顧"
 weight: 1
 ---

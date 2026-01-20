@@ -1,5 +1,6 @@
 ---
 title: "3.3 subprocess - 執行外部命令"
+date: 2026-01-20
 description: "呼叫系統命令和外部程式"
 weight: 3
 ---

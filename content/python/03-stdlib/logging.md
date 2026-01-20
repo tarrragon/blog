@@ -1,5 +1,6 @@
 ---
 title: "3.5 logging - 日誌系統"
+date: 2026-01-20
 description: "結構化日誌輸出與除錯"
 weight: 5
 ---

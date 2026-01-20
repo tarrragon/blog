@@ -1,5 +1,6 @@
 ---
 title: "模組三：標準庫實戰"
+date: 2026-01-20
 description: "Python 標準庫的常用模組實戰應用"
 weight: 3
 ---

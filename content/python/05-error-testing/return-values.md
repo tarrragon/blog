@@ -1,5 +1,6 @@
 ---
 title: "5.2 返回值設計"
+date: 2026-01-20
 description: "(bool, str) 模式的應用"
 weight: 2
 ---

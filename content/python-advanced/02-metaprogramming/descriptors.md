@@ -1,5 +1,6 @@
 ---
 title: "2.1 Descriptor Protocol 完整指南"
+date: 2026-01-20
 description: "深入理解 Python 的 Descriptor Protocol，@property 的本質"
 weight: 1
 ---

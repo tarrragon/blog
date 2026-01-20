@@ -1,5 +1,6 @@
 ---
 title: "4.2 抽象基類 ABC"
+date: 2026-01-20
 description: "定義介面契約"
 weight: 2
 ---

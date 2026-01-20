@@ -1,5 +1,6 @@
 ---
 title: "3.2 記憶體管理與垃圾回收"
+date: 2026-01-20
 description: "理解 Python 的記憶體管理機制"
 weight: 2
 ---

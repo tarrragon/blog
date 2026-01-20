@@ -1,5 +1,6 @@
 ---
 title: "模組四：用 C 擴展 Python"
+date: 2026-01-20
 description: "學習使用 ctypes、cffi、Cython、pybind11 擴展 Python"
 weight: 4
 ---

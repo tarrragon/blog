@@ -1,5 +1,6 @@
 ---
 title: "5.1 為什麼選擇 Rust？"
+date: 2026-01-20
 description: "比較 Rust 與 C/C++ 作為 Python 擴展語言"
 weight: 1
 ---

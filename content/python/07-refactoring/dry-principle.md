@@ -1,5 +1,6 @@
 ---
 title: "DRY 原則與共用程式庫"
+date: 2026-01-20
 description: "學習識別重複程式碼並建立共用模組"
 weight: 73
 ---

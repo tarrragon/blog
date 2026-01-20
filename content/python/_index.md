@@ -1,5 +1,6 @@
 ---
 title: "Python 維護工程師實戰指南"
+date: 2026-01-20
 description: "以 Hook 系統為範例的 Python 開發教學"
 weight: 30
 ---

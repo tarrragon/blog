@@ -1,5 +1,6 @@
 ---
 title: "4.4 單例與快取模式"
+date: 2026-01-20
 description: "控制物件生命週期"
 weight: 4
 ---

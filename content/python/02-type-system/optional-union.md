@@ -1,5 +1,6 @@
 ---
 title: "2.2 Optional、Union、泛型"
+date: 2026-01-20
 description: "處理可能為 None 的值和複合型別"
 weight: 2
 ---
