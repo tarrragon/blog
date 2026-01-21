@@ -92,6 +92,14 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 - [發布到 PyPI](07-packaging/distribution/)
 - [套件維護最佳實踐](07-packaging/best-practices/)
 
+### [模組八：實戰效能優化](08-practical-optimization/)
+
+將入門系列的並行處理與效能優化知識應用到真實系統，基於實際專案程式碼的案例研究。
+
+- [並行處理實戰](08-practical-optimization/parallel-processing/) - ThreadPoolExecutor、ProcessPoolExecutor 實際應用
+- [效能調優實戰](08-practical-optimization/performance-tuning/) - 正則預編譯、LRU 快取、資料結構選擇
+- [案例研究](08-practical-optimization/case-studies/) - 5 個完整的優化案例與效能測量
+
 ## 學習路徑
 
 ### 路徑 A：Web/API 開發者
@@ -113,28 +121,36 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 ### 路徑 C：效能工程師
 
 ```text
-模組四（CPython）→ 模組五（C 擴展）或 模組六（Rust 擴展）
+模組八（實戰優化）→ 模組四（CPython）→ 模組五（C 擴展）或 模組六（Rust 擴展）
 ```
 
-重點：理解瓶頸、用原生語言加速
+重點：先用純 Python 優化，再理解瓶頸、用原生語言加速
 
 ### 路徑 D：完整學習
 
 ```text
-模組一 → 模組二 → 模組三 → 模組四 → 模組五/六 → 模組七
+模組一 → 模組二 → 模組三 → 模組四 → 模組五/六 → 模組七 → 模組八
 ```
 
 按順序學習，建立完整知識體系
 
 ## 先備知識
 
-本系列假設你已經具備：
+本系列假設你已經完成了 [Python 入門指南](../python/) 的以下章節：
 
-- Python 基礎語法與物件導向程式設計
-- 基本的並行處理概念（threading、multiprocessing）
-- 了解 GIL 的基本概念
+### 必要先備
 
-如果還不熟悉這些概念，建議先完成 [入門系列](../python/)。
+- [模組三：標準庫實戰](../python/03-stdlib/) - 尤其是：
+  - [3.7 並行處理](../python/03-stdlib/concurrency/)（threading、multiprocessing、GIL）
+  - [3.8 效能優化](../python/03-stdlib/performance/)（效能測量與優化策略）
+
+### 推薦先備
+
+- [模組二：型別系統](../python/02-type-system/) - Type Hints、Optional、泛型
+- [模組四：物件導向設計](../python/04-oop/) - @property、@dataclass、ABC
+- [模組五：錯誤與測試](../python/05-error-testing/) - 異常處理、with 語句
+
+如果還不熟悉這些概念，建議先完成入門系列。
 
 ## 每章結構
 

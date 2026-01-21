@@ -360,6 +360,11 @@ class Checker:
 2. 為現有類別添加完整的文檔字串
 3. 實作一個遵循單一職責原則的驗證器類別
 
+## 延伸閱讀（進階系列）
+
+- [進階設計模式](/python-advanced/03-design-patterns/) - 深入設計模式的高級應用
+- [插件系統設計](/python-advanced/03-design-patterns/plugin-system/) - 建構可擴展的系統架構
+
 ---
 
 *下一章：[抽象基類 ABC](../abc/)*

@@ -404,6 +404,11 @@ ParserFactory.register(DartParser)
 - [命名的藝術：讓程式碼說故事](../naming-art/) - 降低認知負擔的另一種方式
 - [抽象基類 ABC](../../04-oop/abc/) - Python 中實現 OCP 的工具
 
+## 延伸閱讀（進階系列）
+
+- [進階設計模式](/python-advanced/03-design-patterns/) - OCP 在複雜系統中的應用
+- [插件系統設計](/python-advanced/03-design-patterns/plugin-system/) - 用 OCP 原則建構可擴展架構
+
 ---
 
 ## 參考資料

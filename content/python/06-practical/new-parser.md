@@ -105,7 +105,6 @@ except ImportError:
     except ImportError:
         tomllib = None
 
-
 class TomlParser(BaseParser):
     """
     TOML 格式解析器
@@ -244,7 +243,6 @@ try:
 except ImportError:
     HAS_TOML = False
 
-
 @unittest.skipUnless(HAS_TOML, "TOML support not available")
 class TestTomlParser(unittest.TestCase):
     """測試 TomlParser 類別"""
@@ -300,7 +298,6 @@ class TestTomlParser(unittest.TestCase):
         """測試檔案副檔名"""
         self.assertIn(".toml", self.parser.file_extensions)
 
-
 @unittest.skipUnless(HAS_TOML, "TOML support not available")
 class TestTomlParserFactory(unittest.TestCase):
     """測試 TOML 解析器與工廠的整合"""
@@ -318,7 +315,6 @@ class TestTomlParserFactory(unittest.TestCase):
 
         parser = ParserFactory.create_from_file("config.toml")
         self.assertIsInstance(parser, TomlParser)
-
 
 if __name__ == "__main__":
     unittest.main()
@@ -352,7 +348,7 @@ from parsers import ParserFactory
 parser = ParserFactory.create_from_file("config.toml")
 config = parser.parse_file("config.toml")
 ```
-```
+```python
 
 ## 完整檢查清單
 
@@ -417,6 +413,12 @@ except toml.TomlDecodeError as e:
 1. 為什麼要將原始異常作為 `from e` 傳遞？
 2. 如何設計讓解析器支援串流處理（大檔案）？
 3. 如果要支援解析器鏈（先解密再解析），應該如何設計？
+
+## 延伸閱讀（進階系列）
+
+- [插件系統設計](/python-advanced/03-design-patterns/plugin-system/) - 更靈活的解析器註冊機制
+- [自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/) - 用 metaclass 實現自動註冊
+- [泛型驗證器](/python-advanced/03-design-patterns/case-studies/generic-validator/) - 泛型在驗證器設計中的應用
 
 ---
 

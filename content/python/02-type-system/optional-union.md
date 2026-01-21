@@ -57,7 +57,6 @@ from typing import Optional
 _agents_config_cache: Optional[dict] = None
 _quality_rules_cache: Optional[dict] = None
 
-
 def load_agents_config() -> dict:
     """載入代理人配置"""
     global _agents_config_cache
@@ -313,6 +312,11 @@ def parse_json(text: str) -> dict[str, Any]:
 
 2. 寫一個泛型函式，返回列表中的最大和最小值
 3. 為一個回調函式參數添加 `Callable` 型別提示
+
+## 延伸閱讀（進階系列）
+
+- [泛型進階](/python-advanced/03-design-patterns/generics/) - 深入泛型的高級用法
+- [進階設計模式](/python-advanced/03-design-patterns/) - 用型別系統建構可靠的系統
 
 ---
 

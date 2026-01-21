@@ -487,6 +487,7 @@ print(f"Set 查找: {time.perf_counter() - start:.6f}s")
 
 ## 延伸閱讀（進階系列）
 
+- [實戰效能優化](/python-advanced/08-practical-optimization/) - 真實案例的效能調優實戰
 - [CPython 內部機制](/python-advanced/04-cpython-internals/) - 理解 Python 的運作原理以優化效能
 - [Free-Threading](/python-advanced/04-cpython-internals/free-threading/) - Python 3.13+ 無 GIL 多執行緒
 - [用 C 擴展 Python](/python-advanced/05-c-extensions/) - 使用 ctypes、Cython、pybind11 提升效能

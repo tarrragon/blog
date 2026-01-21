@@ -14,6 +14,7 @@ weight: 100
 | 案例 | 素材 | 學習重點 |
 |------|------|---------|
 | [Cython 加速 Markdown 解析](cython-markdown/) | markdown_link_checker.py | Cython 基礎、型別宣告、效能比較 |
+| [使用 ctypes 呼叫系統 API](ctypes-system-call/) | 系統 API | ctypes 實戰、跨平台、效能比較 |
 
 ## 學習路徑
 

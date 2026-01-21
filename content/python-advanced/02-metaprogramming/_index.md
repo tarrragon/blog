@@ -9,6 +9,33 @@ weight: 2
 
 元編程（Metaprogramming）是指撰寫可以操作程式碼的程式碼。Python 提供了豐富的元編程機制，包括 Descriptor、Metaclass、類別裝飾器等。
 
+## 你已經在使用元編程
+
+如果你完成了入門系列，你其實已經接觸過元編程了：
+
+```python
+# 1. @property - Descriptor Protocol 的應用
+class User:
+    @property
+    def full_name(self):
+        return f"{self.first} {self.last}"
+
+# 2. @dataclass - 類別裝飾器 + 元類別技術
+@dataclass
+class Config:
+    name: str
+    timeout: int = 30
+
+# 3. ABC - 元類別控制子類別行為
+from abc import ABC, abstractmethod
+class Parser(ABC):
+    @abstractmethod
+    def parse(self, content: str) -> dict:
+        pass
+```
+
+這些都是元編程的入門應用。本模組將深入探討它們背後的原理，以及如何創建自己的元編程工具。
+
 ## 為什麼學習元編程？
 
 理解元編程機制有多重好處：

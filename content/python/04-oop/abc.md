@@ -110,7 +110,6 @@ class JsonParser(BaseParser):
         except json.JSONDecodeError:
             return False
 
-
 class YamlParser(BaseParser):
     """YAML 解析器"""
 
@@ -145,7 +144,6 @@ class BaseParser(ABC):
     def mime_type(self) -> str:
         """MIME 類型"""
         pass
-
 
 class JsonParser(BaseParser):
 
@@ -383,6 +381,12 @@ class BaseParser(ABC):
 1. 設計一個 `BaseValidator` 抽象基類，定義驗證器的介面
 2. 實作兩個繼承自 `BaseValidator` 的具體驗證器
 3. 使用範本方法模式實作一個多步驟的資料處理流程
+
+## 延伸閱讀（進階系列）
+
+- [Descriptor Protocol 完整指南](/python-advanced/02-metaprogramming/descriptors/) - 理解 @property 背後的原理
+- [插件系統設計](/python-advanced/03-design-patterns/plugin-system/) - 用 ABC 建構可擴展的插件架構
+- [元編程](/python-advanced/02-metaprogramming/) - ABC 背後的 metaclass 機制
 
 ---
 

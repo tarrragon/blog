@@ -24,7 +24,6 @@ from typing import Optional
 _agents_config_cache: Optional[dict] = None
 _quality_rules_cache: Optional[dict] = None
 
-
 def load_agents_config() -> dict:
     """
     載入代理人配置
@@ -42,7 +41,6 @@ def load_agents_config() -> dict:
 
     return _agents_config_cache
 
-
 def load_quality_rules() -> dict:
     """載入品質規則配置"""
     global _quality_rules_cache
@@ -54,7 +52,6 @@ def load_quality_rules() -> dict:
             _quality_rules_cache = _get_default_quality_rules()
 
     return _quality_rules_cache
-
 
 def clear_config_cache() -> None:
     """
@@ -399,6 +396,12 @@ def load_config() -> dict:
 1. 使用 `@lru_cache` 實作一個帶快取的 API 呼叫函式
 2. 實作一個帶 TTL（存活時間）的快取
 3. 為現有的快取添加執行緒安全保護
+
+## 延伸閱讀（進階系列）
+
+- [進階設計模式](/python-advanced/03-design-patterns/) - 更多設計模式的深入探討
+- [快取生命週期管理](/python-advanced/03-design-patterns/case-studies/cache-lifecycle/) - 進階快取策略
+- [實戰效能優化：LRU 快取](/python-advanced/08-practical-optimization/case-studies/lru-cache-branch/) - lru_cache 的實際應用
 
 ---
 
