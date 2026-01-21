@@ -46,6 +46,17 @@ weight: 35
 | [3.5.4](plugin-system/) | 插件系統設計 | 建立可擴展的架構 |
 | [3.5.5](integration/) | 設計模式整合案例 | 綜合應用所有模式 |
 
+## 案例研究
+
+基於 `.claude/lib` 實際程式碼的進階案例：
+
+| 案例 | 素材 | 學習重點 |
+|------|------|---------|
+| [快取生命週期管理](case-studies/cache-lifecycle/) | config_loader.py | Context Manager |
+| [插件架構設計](case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制 |
+| [異常設計架構](case-studies/exception-hierarchy/) | hook_io.py | 異常階層 + ExceptionGroup |
+| [泛型驗證器](case-studies/generic-validator/) | hook_validator.py | Generic + TypeVar |
+
 ## 先備知識
 
 | 章節 | 需要先讀 |

@@ -26,6 +26,16 @@ weight: 2
 | [2.3](class-creation/) | 類別裝飾器與動態類別 | @dataclass 的實現原理 |
 | [2.4](introspection/) | 反射與 inspect 模組 | 程式檢視自身的能力 |
 
+## 案例研究
+
+基於 `.claude/lib` 實際程式碼的進階案例：
+
+| 案例 | 素材 | 學習重點 |
+|------|------|---------|
+| [宣告式驗證](case-studies/declarative-validation/) | hook_validator.py | Descriptor Protocol |
+| [自動註冊機制](case-studies/auto-registration/) | hook_validator.py | Metaclass |
+| [類似 Django Field](case-studies/field-descriptor/) | hook_io.py | Descriptor + dataclass |
+
 ## 先備知識
 
 - 入門系列 [4.4 單例與快取](../../python/04-oop/singleton-cache/)

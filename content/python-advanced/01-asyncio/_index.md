@@ -39,6 +39,16 @@ asyncio 不是要取代 threading，而是提供另一種選擇：在單執行�
 | [1.3](patterns/) | 設計模式與最佳實踐 | 學會常見的異步模式 |
 | [1.4](real-world/) | 實戰：與同步程式碼整合 | 在現有專案中應用 asyncio |
 
+## 案例研究
+
+基於 `.claude/lib` 實際程式碼的進階案例：
+
+| 案例 | 素材 | 學習重點 |
+|------|------|---------|
+| [非同步 Subprocess](case-studies/async-subprocess/) | git_utils.py | asyncio.create_subprocess_exec |
+| [並行 I/O 操作](case-studies/parallel-io/) | git_utils.py | asyncio.gather、TaskGroup |
+| [同步/非同步橋接](case-studies/sync-async-bridge/) | 整個 lib | run_in_executor |
+
 ## 先備知識
 
 - 入門系列 [3.7 並行處理](../../python/03-stdlib/concurrency/)
