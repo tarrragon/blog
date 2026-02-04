@@ -91,6 +91,7 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 - [建構系統比較：setuptools vs Poetry vs Hatch](07-packaging/build-systems/)
 - [發布到 PyPI](07-packaging/distribution/)
 - [套件維護最佳實踐](07-packaging/best-practices/)
+- [封裝預編譯二進位](07-packaging/bundled-binaries/) - Python 封裝 Go/Rust/C 二進位的架構模式
 
 ### [模組八：實戰效能優化](08-practical-optimization/)
 

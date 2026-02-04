@@ -23,6 +23,7 @@ weight: 6
 | [6.2](build-systems/) | 建構系統比較 | setuptools vs Poetry vs Hatch |
 | [6.3](distribution/) | 發布到 PyPI | 建構與上傳流程 |
 | [6.4](best-practices/) | 最佳實踐 | 套件維護指南 |
+| [6.5](bundled-binaries/) | 封裝預編譯二進位 | Python 封裝 Go/Rust/C 二進位 |
 
 ## 相關 PEP 標準
 
