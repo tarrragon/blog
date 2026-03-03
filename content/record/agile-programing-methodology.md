@@ -2,7 +2,8 @@
 title: "敏捷開發方法論"
 date: 2025-10-08
 draft: false
-description: "基於敏捷重構方法論追加文件設計規範以及實際跑一陣子後的範例說明"
+archived: true
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "基於敏捷重構方法論追加文件設計規範以及實際跑一陣子後的範例說明"
 tags: ["方法論", "文件規範", "AI協作心得"]
 ---
 

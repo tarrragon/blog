@@ -1,29 +1,81 @@
 ---
-title: "hook使用心得"
-date: 2025-10-09
+title: "用 Hook 系統把開發規範變成自動執行的基礎設施"
+date: 2026-03-04
 draft: false
-description: "基於敏捷重構方法論追加hook的心得"
-tags: ["AI協作心得","hook"]
+description: "從一個社群文章得到靈感，到建立完整的 Hook 系統方法論，我們如何用 Claude Code Hook 把開發規範從「應該遵守」變成「無法不遵守」"
+tags: ["AI協作心得","hook","Claude Code"]
 ---
 
-### 前言
+### 從一個社群文章開始
 
-雖然我已經有在設計hook，但是有些東西靠自己想還是不夠，今天看到社群文章的提醒，才發現我低估了hook能做的事情
+社群裡有人分享了幾篇關於 Claude Code Hook 的文章，看完第一個反應是：「我低估了 hook 能做的事情。」
 
-### 參考資料
+我知道 hook 的存在，但一直把它當成「跑幾個簡單檢查」的輔助工具。那幾篇文章讓我意識到，hook 可以是完整的品質控制基礎設施——在每個關鍵時機介入，執行那些「應該要做但忘記做」的檢查。
 
-- [蒼時弦也 的 FB](https://www.facebook.com/share/p/1DYpdCmUPy/)
-- [Cash Wu 的 blog](https://blog.cashwu.com/blog/2025/claude-code-hooks-advanced-agentic-coding)
-- [claude 的 hook 文件](https://docs.claude.com/zh-TW/docs/claude-code/hooks)
+<!--more-->
 
-### 實作流程
+### Hook 的執行時機
 
-要求claude code 閱讀 [敏捷開發方法論](agile-programing-methodology.md)，然後再要求 ai 使用 context7 查詢 hook 的文件說明，然後分析我們的流程需要哪些 hook ，再讓 ai 實作
+Claude Code Hook 有五個觸發點：`SessionStart`、`UserPromptSubmit`、`PreToolUse`、`PostToolUse`、`Stop`，涵蓋整個開發互動的生命週期。
 
-### 實作內容
+有了這個框架，問題就變成：哪些規範應該在哪個時機點執行？
 
-- 主線程職責檢查 (PostToolUse)
-- 階段完成驗證 (Stop Hook)
-- 任務分派準備度 (PreToolUse Task)
-- 三重文件一致性使用 $CLAUDE_PROJECT_DIR
-- 代理人回報追蹤使用 $CLAUDE_PROJECT_DIR
+### 我們建立了哪些 Hook
+
+**Session 啟動檢查**
+
+每次 session 開始時自動確認：git 遠端是否有需要同步的變更、開發環境依賴是否完整、工作日誌狀態。這些檢查不阻止啟動，只是讓開發者一開始就有完整的情境。
+
+**任務逃避偵測**
+
+這是我們設計中比較有趣的一個 hook。它在每次 prompt 提交時執行，掃描內容裡是否出現「太複雜先跳過」、「暫時不處理」這類詞彙，同時也會檢查行為模式：程式碼變更了但測試沒有對應變更、技術債務累積超過閾值等。一旦偵測到逃避行為，會建立一個 block 標記檔案，後續所有工具呼叫都會被阻止，直到問題被正視。
+
+**程式異味即時偵測**
+
+每次檔案編輯後（`PostToolUse`），我們會即時掃描變更的程式碼。函數超過 30 行、巢狀超過 4 層、參數超過 5 個、依賴數超過 10 個，這些都會觸發記錄並建議重構。這個 hook 採用非阻塞設計——發現問題時記錄，但不中斷開發流程。
+
+**版本推進建議**
+
+在 Claude 完成回應時（`Stop`），hook 會分析當前的工作狀態：有沒有未提交的變更、工作日誌有沒有標記完成、TodoList 系列是否達成。根據這些狀態，自動建議接下來應該做小版本推進還是繼續開發。
+
+**文件同步提醒**
+
+程式碼變更後，hook 根據檔案類型判斷哪些文件需要同步更新。API 異動對應 API 文件，架構異動對應架構文件，這類規則很難靠人記，但 hook 記得。
+
+### 一個反覆踩到的坑
+
+hook 開發過程中踩了同一個坑不只一次。
+
+Claude Code hook 系統的設計是：任何寫入 `stderr` 的輸出都會被視為 hook error 顯示給使用者。Python 的 `logging` 模組預設輸出到 stderr，所以即使 hook 正常執行，只要有 logging 輸出，UI 上就會冒出 hook error 警告。
+
+這個問題反覆出現，最後系統性地修復，確立了一條規則：hook 禁止寫入 stderr，所有輸出必須走 stdout。現在這條規則寫進方法論，新 hook 都有對應的驗證：
+
+```bash
+grep -r "sys\.stderr" .claude/hooks/ --include="*.py"
+```
+
+這個指令應該永遠返回空結果。
+
+### 模組化的演進
+
+剛開始每個 hook 腳本都是獨立的，讀取輸入、處理邏輯、輸出結果各自實作。問題很明顯：讀取 hook 輸入、輸出決策結果這些通用邏輯，在每個腳本裡都重複了一遍。
+
+後來重構引入了共用模組。`.claude/lib/` 底下現在有幾個核心模組：`hook_io.py` 負責標準化 I/O，`hook_logging.py` 負責日誌，`config_loader.py` 載入配置，`git_utils.py` 封裝 git 操作。
+
+帶來兩個好處：腳本結構變得簡潔，開發者只需要專注判斷邏輯；共用模組可以寫獨立的單元測試，以前 hook 的正確性很難驗證，現在有了。
+
+### 幾個設計原則
+
+**非阻塞優先**。大部分品質檢查不該阻止開發流程，而是記錄、追蹤、提示。只有真正關鍵的違規——任務逃避、阻止狀態——才完全阻斷操作。
+
+**漸進式強制**。從警告到記錄到追蹤到阻止，給開發者理解和修正的機會，不是一刀切拒絕。
+
+**可觀測性**。hook 系統自己也需要被監控。有一個 performance monitor hook 專門追蹤其他 hook 的執行時間，超過 5 秒視為需要立即優化。
+
+**配置外部化**。品質規則的閾值、代理人分派規則，全部放在 YAML 配置檔，不硬編碼在腳本裡。需要調整只改配置。
+
+### 現在的感受
+
+把規範寫進文件和寫進 hook，是完全不同的感受。
+
+寫進文件的規範靠人記。寫進 hook 的規範，在每個關鍵時機自動執行，開發者甚至可以不知道它存在——但規範確實在發生效用。品質基線從依賴個人紀律，變成由系統保證。

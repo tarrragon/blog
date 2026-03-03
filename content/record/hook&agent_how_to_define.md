@@ -2,7 +2,8 @@
 title: "如何建立AI輔助系統開發"
 date: 2025-10-11
 draft: false
-description: "建立從理論到實踐的完整閉環"
+archived: true
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "建立從理論到實踐的完整閉環"
 tags: [ "AI協作心得"]
 ---
 

@@ -2,7 +2,8 @@
 title: "MVVM ViewModel 開發方法論"
 date: 2025-10-13
 draft: false
-description: "建立完整的 ViewModel 開發規範，確保 MVVM 架構一致性"
+archived: true
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "建立完整的 ViewModel 開發規範，確保 MVVM 架構一致性"
 tags: ["AI協作心得","ViewModel","方法論"]
 ---
 

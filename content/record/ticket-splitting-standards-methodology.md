@@ -2,7 +2,8 @@
 title: "Ticket 拆分標準方法論"
 date: 2025-10-13
 draft: false
-description: "Ticket 拆分標準"
+archived: true
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "Ticket 拆分標準"
 tags: ["AI協作心得","Ticket","方法論"]
 ---
 ## 方法論概述

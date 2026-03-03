@@ -2,7 +2,8 @@
 title: "Ticket 設計派工方法論"
 date: 2025-10-11
 draft: false
-description: "本方法論提供完整的 Ticket 設計和派工機制，解決大型開發任務的協作效率問題，降低實作偏差風險"
+archived: true
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "本方法論提供完整的 Ticket 設計和派工機制，解決大型開發任務的協作效率問題，降低實作偏差風險"
 tags: ["AI協作心得","方法論"]
 ---
 

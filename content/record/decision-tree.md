@@ -2,7 +2,8 @@
 title: "二元決策樹系統 "
 date: 2026-01-28
 draft: false
-description: "透過 Hook 與 Ticket 機制強制執行的二元決策樹系統，確保主線程依照規範派發任務給專業代理人，涵蓋明確性檢查、問題處理、命令處理、TDD 階段與事件回應等完整流程"
+archived: true
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "透過 Hook 與 Ticket 機制強制執行的二元決策樹系統，確保主線程依照規範派發任務給專業代理人，涵蓋明確性檢查、問題處理、命令處理、TDD 階段與事件回應等完整流程"
 tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理", "TDD流程", "工作流程"]
 ---
 
