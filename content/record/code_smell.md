@@ -3,7 +3,8 @@ title: "Code Smell 檢查清單"
 date: 2025-10-11
 draft: false
 archived: true
-archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "在這裡列出常見的 Code Smell 清單，提供 設計和派工做 review 的參考及早察覺問題"
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"
+description: "在這裡列出常見的 Code Smell 清單，提供 設計和派工做 review 的參考及早察覺問題"
 tags: ["AI協作心得","方法論"]
 ---
 

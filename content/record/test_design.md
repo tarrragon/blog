@@ -3,7 +3,8 @@ title: "開始一個新專案的測試規劃"
 date: 2025-09-19
 draft: false
 archived: true
-archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "從測試開始規劃專案流程，分析事件交互的需求，之後再依據測試實作"
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"
+description: "從測試開始規劃專案流程，分析事件交互的需求，之後再依據測試實作"
 tags: [ "AI協作心得"]
 ---
 

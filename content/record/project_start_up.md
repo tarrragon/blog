@@ -3,7 +3,8 @@ title: "開始一個新專案的做法"
 date: 2025-09-19
 draft: false
 archived: true
-archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "我已經跟AI描述過我的需求，請AI建立了相關的需求文件，現在要開始建立新專案"
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"
+description: "我已經跟AI描述過我的需求，請AI建立了相關的需求文件，現在要開始建立新專案"
 tags: [ "AI協作心得"]
 ---
 ## 前情提要

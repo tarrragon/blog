@@ -3,7 +3,8 @@ title: "Claude Code Hook 系統 Exit Code 實驗"
 date: 2025-09-26
 draft: false
 archived: true
-archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "建立 Claude 內建自檢、Hook 系統驗證、修復模式補救的完整防護體系，從根本預防逃避行為"
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"
+description: "建立 Claude 內建自檢、Hook 系統驗證、修復模式補救的完整防護體系，從根本預防逃避行為"
 tags: ["Hook", "AI協作心得", "自檢機制"]
 ---
 

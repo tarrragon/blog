@@ -3,7 +3,8 @@ title: "Ticket 生命週期流程 - AI 協作開發的任務管理系統"
 date: 2026-02-02
 draft: false
 archived: true
-archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "定義 Ticket 從建立到完成的完整生命週期，包含狀態管理、驗收流程、任務鏈設計和與 TDD 流程的整合"
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"
+description: "定義 Ticket 從建立到完成的完整生命週期，包含狀態管理、驗收流程、任務鏈設計和與 TDD 流程的整合"
 tags:
   ["Ticket", "任務管理", "專案管理", "TDD", "驗收流程", "AI協作", "開發流程"]
 ---

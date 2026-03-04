@@ -3,7 +3,8 @@ title: "如何要求ai使用正確的格式撰寫md文件"
 date: 2025-09-19
 draft: false
 archived: true
-archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"description: "ai 寫的md會有許多格式上的錯誤，需要讓他先檢查再修正"
+archive_reason: "歷史記錄，專案方法論已演進或無對應方法論"
+description: "ai 寫的md會有許多格式上的錯誤，需要讓他先檢查再修正"
 tags: ["AI協作心得"]
 ---
 
