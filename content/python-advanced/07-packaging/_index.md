@@ -1,11 +1,11 @@
 ---
-title: "模組六：打包與發布"
+title: "模組七：打包與發布"
 date: 2026-01-20
 description: "學習現代 Python 套件的打包與發布流程"
-weight: 6
+weight: 7
 ---
 
-# 模組六：打包與發布
+# 模組七：打包與發布
 
 本模組介紹現代 Python 套件的打包標準與發布流程。
 
@@ -19,11 +19,11 @@ weight: 6
 
 | 章節 | 主題 | 關鍵收穫 |
 |------|------|---------|
-| [6.1](pyproject-toml/) | pyproject.toml 完整指南 | 現代設定標準 |
-| [6.2](build-systems/) | 建構系統比較 | setuptools vs Poetry vs Hatch |
-| [6.3](distribution/) | 發布到 PyPI | 建構與上傳流程 |
-| [6.4](best-practices/) | 最佳實踐 | 套件維護指南 |
-| [6.5](bundled-binaries/) | 封裝預編譯二進位 | Python 封裝 Go/Rust/C 二進位 |
+| [7.1](pyproject-toml/) | pyproject.toml 完整指南 | 現代設定標準 |
+| [7.2](build-systems/) | 建構系統比較 | setuptools vs Poetry vs Hatch |
+| [7.3](distribution/) | 發布到 PyPI | 建構與上傳流程 |
+| [7.4](best-practices/) | 最佳實踐 | 套件維護指南 |
+| [7.5](bundled-binaries/) | 封裝預編譯二進位 | Python 封裝 Go/Rust/C 二進位 |
 
 ## 相關 PEP 標準
 
@@ -42,4 +42,4 @@ weight: 6
 
 ---
 
-*上一模組：[模組五：用 Rust 擴展 Python](../05-rust-extensions/)*
+*上一模組：[模組六：用 Rust 擴展 Python](../06-rust-extensions/)*

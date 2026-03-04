@@ -1,11 +1,11 @@
 ---
-title: "模組四：用 C 擴展 Python"
+title: "模組五：用 C 擴展 Python"
 date: 2026-01-20
 description: "學習使用 ctypes、cffi、Cython、pybind11 擴展 Python"
-weight: 4
+weight: 5
 ---
 
-# 模組四：用 C 擴展 Python
+# 模組五：用 C 擴展 Python
 
 本模組介紹如何使用 C/C++ 擴展 Python，提升效能或整合現有的 C 函式庫。
 
@@ -19,10 +19,10 @@ weight: 4
 
 | 章節 | 主題 | 關鍵收穫 |
 |------|------|---------|
-| [4.1](ctypes-cffi/) | ctypes 與 cffi | 動態綁定 C 函式庫 |
-| [4.2](cython/) | Cython | Python 語法的 C 速度 |
-| [4.3](pybind11/) | pybind11 | 現代 C++ 綁定 |
-| [4.4](when-to-use/) | 選擇指南 | 工具比較與決策 |
+| [5.1](ctypes-cffi/) | ctypes 與 cffi | 動態綁定 C 函式庫 |
+| [5.2](cython/) | Cython | Python 語法的 C 速度 |
+| [5.3](pybind11/) | pybind11 | 現代 C++ 綁定 |
+| [5.4](when-to-use/) | 選擇指南 | 工具比較與決策 |
 
 ## 工具選擇快速指南
 
@@ -35,7 +35,7 @@ C++ 函式庫 ──────→ pybind11
 
 ## 先備知識
 
-- 進階系列 [模組三：CPython 內部機制](../03-cpython-internals/)
+- 進階系列 [模組四：CPython 內部機制](../04-cpython-internals/)
 - 基本的 C 語言知識（指標、結構體、記憶體管理）
 
 ## 學習時間
@@ -44,5 +44,5 @@ C++ 函式庫 ──────→ pybind11
 
 ---
 
-*上一模組：[模組三：CPython 內部機制](../03-cpython-internals/)*
-*下一模組：[模組五：用 Rust 擴展 Python](../05-rust-extensions/)*
+*上一模組：[模組四：CPython 內部機制](../04-cpython-internals/)*
+*下一模組：[模組六：用 Rust 擴展 Python](../06-rust-extensions/)*

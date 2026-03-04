@@ -1,11 +1,11 @@
 ---
-title: "模組五：用 Rust 擴展 Python"
+title: "模組六：用 Rust 擴展 Python"
 date: 2026-01-20
 description: "學習使用 PyO3 和 Maturin 用 Rust 擴展 Python"
-weight: 5
+weight: 6
 ---
 
-# 模組五：用 Rust 擴展 Python
+# 模組六：用 Rust 擴展 Python
 
 本模組介紹如何使用 Rust 擴展 Python，結合 Rust 的記憶體安全與高效能。
 
@@ -19,10 +19,10 @@ weight: 5
 
 | 章節 | 主題 | 關鍵收穫 |
 |------|------|---------|
-| [5.1](why-rust/) | 為什麼選擇 Rust？ | Rust vs C/C++ 的比較 |
-| [5.2](pyo3-basics/) | PyO3 基礎 | Rust 的 Python 綁定 |
-| [5.3](maturin-workflow/) | Maturin 開發流程 | 建構與發布工具 |
-| [5.4](real-world-examples/) | 實戰案例分析 | 知名專案的 Rust 應用 |
+| [6.1](why-rust/) | 為什麼選擇 Rust？ | Rust vs C/C++ 的比較 |
+| [6.2](pyo3-basics/) | PyO3 基礎 | Rust 的 Python 綁定 |
+| [6.3](maturin-workflow/) | Maturin 開發流程 | 建構與發布工具 |
+| [6.4](real-world-examples/) | 實戰案例分析 | 知名專案的 Rust 應用 |
 
 ## 使用 Rust 的知名 Python 套件
 
@@ -33,7 +33,7 @@ weight: 5
 
 ## 先備知識
 
-- 進階系列 [模組三：CPython 內部機制](../03-cpython-internals/)
+- 進階系列 [模組四：CPython 內部機制](../04-cpython-internals/)
 - 基本的 Rust 語言知識（所有權、生命週期、Result/Option）
 
 ## 學習時間
@@ -42,5 +42,5 @@ weight: 5
 
 ---
 
-*上一模組：[模組四：用 C 擴展 Python](../04-c-extensions/)*
-*下一模組：[模組六：打包與發布](../06-packaging/)*
+*上一模組：[模組五：用 C 擴展 Python](../05-c-extensions/)*
+*下一模組：[模組七：打包與發布](../07-packaging/)*
