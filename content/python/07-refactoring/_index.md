@@ -20,25 +20,37 @@ weight: 70
 
 ## 章節內容
 
+### [重構的動機與策略](refactoring-strategy/)
+
+量化認知負擔、制定重構策略、掌握階段分解方法。
+
 ### [程式碼壞味道識別](code-smells/)
 
 學習如何識別程式碼中的問題，包括 Error Patterns 系統介紹和 5 Why 分析方法。
-
-### [配置與程式碼分離](config-separation/)
-
-基於 ARCH-001 錯誤模式，學習如何將硬編碼配置抽離到 YAML 檔案。
 
 ### [DRY 原則與共用程式庫](dry-principle/)
 
 基於 IMP-001 錯誤模式，學習如何識別重複程式碼並建立共用模組。
 
-### [消除魔法數字](magic-numbers/)
+### [配置分離與常數管理](constants-management/)
 
-基於 IMP-002 錯誤模式，學習如何用具名常數替代難以理解的數字。
+基於 IMP-002、ARCH-001 錯誤模式，學習三種硬編碼（魔法數字、配置、字串）的系統性消除。
 
-### [重構案例研究](case-study/)
+### [大規模統一化重構](unified-infrastructure/)
 
-完整回顧 v0.28.0 重構流程，從問題識別到最終成果。
+基於 W22-W24 統一化重構經驗，學習三階段漸進式重構方法。
+
+### [重構陷阱與防護](refactoring-pitfalls/)
+
+基於 IMP-003、IMP-005 錯誤模式，學習重構中的常見陷阱和防護措施。
+
+### [非程式碼的重構](non-code-refactoring/)
+
+文件壞味道識別與 Progressive Disclosure 精簡策略。
+
+### [完整案例回顧](case-study/)
+
+完整回顧 v0.28.0-v0.31.0 重構流程，從問題識別到最終成果。
 
 ### [作用域迴歸案例研究](scope-regression/)
 

@@ -93,11 +93,15 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 
 基於 v0.28.0 重構經驗，學習識別程式碼問題並進行系統性重構。
 
+- [重構的動機與策略](07-refactoring/refactoring-strategy/)
 - [程式碼壞味道識別](07-refactoring/code-smells/)
-- [配置與程式碼分離](07-refactoring/config-separation/)
 - [DRY 原則與共用程式庫](07-refactoring/dry-principle/)
-- [消除魔法數字](07-refactoring/magic-numbers/)
-- [重構案例研究](07-refactoring/case-study/)
+- [配置分離與常數管理](07-refactoring/constants-management/)
+- [大規模統一化重構](07-refactoring/unified-infrastructure/)
+- [重構陷阱與防護](07-refactoring/refactoring-pitfalls/)
+- [非程式碼的重構](07-refactoring/non-code-refactoring/)
+- [完整案例回顧](07-refactoring/case-study/)
+- [作用域迴歸案例研究](07-refactoring/scope-regression/)
 
 ## 範例來源
 
