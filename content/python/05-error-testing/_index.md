@@ -17,6 +17,7 @@ weight: 5
 | [5.2](return-values/) | 返回值設計 | `(bool, str)` 模式的應用 |
 | [5.3](unittest/) | unittest 基礎 | 撰寫第一個測試 |
 | [5.4](mock/) | Mock 與測試隔離 | 隔離外部依賴 |
+| [5.5](error-infrastructure/) | 頂層例外處理機制 | `run_hook_safely` 與統一錯誤基礎設施 |
 
 ## 實際範例來源
 
@@ -26,6 +27,7 @@ weight: 5
 | 返回值設計 | Hook 系統的 `(bool, str)` 模式 |
 | unittest | `tests/` 目錄 |
 | Mock | `test_hook_io.py` |
+| 頂層例外處理 | `hook_utils.py`（W22-W25） |
 
 ## 核心理念
 
@@ -45,9 +47,9 @@ def validate_something() -> tuple[bool, str]:
 ## 學習路徑
 
 ```
-異常處理 → 返回值設計 → unittest 基礎 → Mock 技巧
+異常處理 → 返回值設計 → unittest 基礎 → Mock 技巧 → 頂層例外處理機制
 ```
 
 ## 學習時間
 
-預計 60-75 分鐘
+預計 75-90 分鐘
