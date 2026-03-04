@@ -18,6 +18,7 @@ weight: 5
 | [5.3](unittest/) | unittest 基礎 | 撰寫第一個測試 |
 | [5.4](mock/) | Mock 與測試隔離 | 隔離外部依賴 |
 | [5.5](error-infrastructure/) | 頂層例外處理機制 | `run_hook_safely` 與統一錯誤基礎設施 |
+| [5.6](observability-design/) | Hook 系統可觀測性設計 | 日誌架構、錯誤可見性、健康監控 |
 
 ## 實際範例來源
 
@@ -28,6 +29,7 @@ weight: 5
 | unittest | `tests/` 目錄 |
 | Mock | `test_hook_io.py` |
 | 頂層例外處理 | `hook_utils.py`（W22-W25） |
+| 可觀測性設計 | `hook_utils.py` 日誌架構 + IMP-003/005/006 錯誤模式 |
 
 ## 核心理念
 
@@ -47,9 +49,9 @@ def validate_something() -> tuple[bool, str]:
 ## 學習路徑
 
 ```
-異常處理 → 返回值設計 → unittest 基礎 → Mock 技巧 → 頂層例外處理機制
+異常處理 → 返回值設計 → unittest 基礎 → Mock 技巧 → 頂層例外處理機制 → 可觀測性設計
 ```
 
 ## 學習時間
 
-預計 75-90 分鐘
+預計 90-110 分鐘

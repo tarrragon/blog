@@ -32,6 +32,7 @@ weight: 30
 - [認知負擔：程式碼設計的核心目的](00-philosophy/cognitive-load/)
 - [命名的藝術：讓程式碼說故事](00-philosophy/naming-art/)
 - [開放封閉原則與認知負擔](00-philosophy/open-closed-principle/)
+- [成本思維：軟體開發的隱性代價](00-philosophy/cost-thinking/)
 
 ### [模組一：Python 基礎概念](01-basics/)
 
@@ -80,6 +81,7 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 - [返回值設計](05-error-testing/return-values/)
 - [unittest 基礎](05-error-testing/unittest/)
 - [Mock 與測試隔離](05-error-testing/mock/)
+- [Hook 系統可觀測性設計](05-error-testing/observability-design/)
 
 ### [模組六：實戰指南](06-practical/)
 
