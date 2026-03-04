@@ -6,7 +6,9 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
+  issues: write
   pages: write
   id-token: write
 
@@ -29,7 +31,30 @@ jobs:
 
       # 3. 編譯網站
       - name: Build
-        run: hugo --minify
+        id: hugo-build
+        run: hugo --minify 2>&1 | tee hugo-build-output.txt
+        continue-on-error: true
+
+      # 3.1 Build 失敗時，讓 Claude 自動除錯並修復
+      - name: Claude Debug on Build Failure
+        if: steps.hugo-build.outcome == 'failure'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Hugo build failed. Here is the error output:
+
+            $(cat hugo-build-output.txt)
+
+            Please analyze the error, find the problematic file(s), fix the YAML front matter or content issue, and commit the fix.
+          claude_args: "--max-turns 10"
+
+      # 3.2 如果原本 build 就失敗且 Claude 沒修好，終止流程
+      - name: Fail if build was not fixed
+        if: steps.hugo-build.outcome == 'failure'
+        run: |
+          echo "Retrying Hugo build after Claude fix..."
+          hugo --minify
 
       # 4. 上傳編譯好的檔案
       - name: Upload artifact
