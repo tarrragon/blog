@@ -6,7 +6,11 @@
       "Bash(wc:*)",
       "Bash(head:*)",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(read f:*)",
+      "Bash(hugo:*)",
+      "Bash(git:*)",
+      "Bash(do echo:*)"
     ],
     "deny": [],
     "ask": []
