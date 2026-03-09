@@ -13,7 +13,15 @@ tags: ["zellij", "terminal", "remote", "web"]
 ## 安裝 Zellij
 
 ```bash
+# macOS
 brew install zellij
+
+# Linux（使用安裝腳本）
+bash <(curl -L zellij.dev/launch)
+
+# Windows（需要支援原生 Windows 的版本，詳見 GitHub Releases）
+# 從 https://github.com/zellij-org/zellij/releases 下載 Windows 版 .zip
+# 解壓後將 zellij.exe 加入 PATH
 ```
 
 確認版本（需 v0.43.0 以上）：
@@ -28,6 +36,7 @@ zellij --version
 
 - 一個網域名稱（或固定 IP）
 - SSL 憑證（對外連線強制要求）
+- SSH 連線能力（如需遠端操作主機）→ 參考 [SSH Key 設定筆記]({{< ref "/work-log/ssh_key_setup" >}})
 
 ---
 
@@ -40,8 +49,15 @@ zellij --version
 需要先安裝 `certbot`：
 
 ```bash
+# macOS
+brew install certbot
+
 # Ubuntu / Debian
 sudo apt install certbot
+
+# Windows（使用 Chocolatey）
+choco install certbot
+# 或使用 win-acme（Windows 原生替代方案）：https://www.win-acme.com/
 ```
 
 申請憑證（將 `your-domain.com` 換成你的網域）：
@@ -50,11 +66,18 @@ sudo apt install certbot
 sudo certbot certonly --standalone -d your-domain.com
 ```
 
+> Windows 上若未使用 WSL，建議改用 [win-acme](https://www.win-acme.com/)，操作更直覺。
+
 憑證預設存放在：
 
 ```text
+# macOS / Linux
 /etc/letsencrypt/live/your-domain.com/fullchain.pem   # 憑證
 /etc/letsencrypt/live/your-domain.com/privkey.pem      # 私鑰
+
+# Windows（certbot）
+C:\Certbot\live\your-domain.com\fullchain.pem
+C:\Certbot\live\your-domain.com\privkey.pem
 ```
 
 ### 使用自簽憑證（測試用）
@@ -71,13 +94,41 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 
 Zellij web server 預設使用 port `3000`，需要對外開放：
 
+### Linux（ufw）
+
 ```bash
-# Ubuntu (ufw)
 sudo ufw allow 3000/tcp
 
 # 或指定來源 IP（更安全）
 sudo ufw allow from 1.2.3.4 to any port 3000
 ```
+
+### macOS
+
+macOS 內建的防火牆是應用程式層級的，無法直接開放特定 port。通常有兩種做法：
+
+1. **系統偏好設定** → 網路 → 防火牆 → 確認沒有擋住 Zellij
+2. **使用 `pf`**（進階，通常不需要）：
+
+```bash
+# 新增規則到 /etc/pf.conf
+echo "pass in proto tcp from any to any port 3000" | sudo tee -a /etc/pf.conf
+sudo pfctl -f /etc/pf.conf
+```
+
+> macOS 預設防火牆通常不會擋住主動開啟的服務，多數情況下不需要額外設定。如果是在家用網路，記得在路由器設定 port forwarding。
+
+### Windows
+
+```powershell
+# 使用 Windows Defender Firewall（以系統管理員執行 PowerShell）
+New-NetFirewallRule -DisplayName "Zellij Web" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow
+
+# 或限制來源 IP（更安全）
+New-NetFirewallRule -DisplayName "Zellij Web" -Direction Inbound -Protocol TCP -LocalPort 3000 -RemoteAddress 1.2.3.4 -Action Allow
+```
+
+> Zellij 已支援原生 Windows，直接在 PowerShell 或 Windows Terminal 中執行即可。
 
 如果是雲端主機（AWS、GCP、Azure 等），記得同步在後台的安全群組開放 port 3000。
 

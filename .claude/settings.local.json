@@ -10,7 +10,9 @@
       "Bash(read f:*)",
       "Bash(hugo:*)",
       "Bash(git:*)",
-      "Bash(do echo:*)"
+      "Bash(do echo:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []
