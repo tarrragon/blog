@@ -5,154 +5,221 @@ draft: false
 description: "從多廚房印表機功能開發經驗，歸納測試設計的三大陷阱與檢查清單，避免測試全過但線上有 Bug"
 tags: ["測試", "方法論", "Dart", "整合測試", "除錯"]
 ---
+# 測試全過但線上連續出現四個 Bug 的經驗記錄
 
-源自 2026-03 線上點單多廚房印表機功能開發過程中的除錯經驗。
-33 個測試全部通過，但實際執行卻有 2 個 Bug。
-
-<!--more-->
-
-## 案例背景
-
-開發「多廚房印表機列印」功能，核心流程：
-
-```text
-OnlineOrderPrintHandler.printAppendedOrder
-  → _buildItemPrinterMapping       (品項分派到印表機)
-  → _receiptBuilder.buildReceiptLines (組裝收據)
-  → _printCenter.printReceiptLines    (列印)
-    → printer.init()                  (初始化 generator)
-    → printer.printText()             (用 generator 產生 ESC/POS 指令)
-    → printer.sendBytes()             (傳送到印表機)
-```
-
-兩個在測試中未被發現的 Bug：
-
-| Bug | 根因 | 現象 |
-|-----|------|------|
-| FakePrinter generator 未初始化 | `init()` 跳過了 `Generator` 的建立 | `printText` 拋出 `LateInitializationError`，被 try-catch 吞掉，回傳 `false` |
-| 所有品項都分配到同一台印表機 | fallback 邏輯找到第一台空 mapping 的印表機就用了 | 2 台印表機只有 1 台在工作 |
+> 2026-03，開發線上點單多廚房印表機列印功能。
+> 寫了 28 個測試，全部通過，上實機後陸續發現四個 Bug。
 
 ---
 
-## 遺漏測試的三個原因
+## 發生了什麼事
 
-### 1. 測試「自己寫的答案」而非「實際行為」
+功能的核心流程：
 
-**問題程式碼：**
+```
+收到追加點單
+  → 把品項分派到對應的廚房印表機
+  → 組裝收據內容（標題、品名+數量、備註等）
+  → 逐行列印
+    → 單行文字（標題、桌號）
+    → 多欄表格（品名 + 數量）
+```
+
+上實機後，四個 Bug 依序出現——因為它們在同一條執行路徑的不同深度，每修一個，程式才能走到下一個：
+
+```
+Bug 1（印表機內部元件未初始化）
+  ↓ 修好，程式碼走得更遠
+Bug 2（品項分派邏輯錯誤，全部送到同一台）
+  ↓ 修好，兩台印表機都有被呼叫
+Bug 3（多欄表格的欄位寬度不符合規定）
+  ↓ 修好，表格列印通過驗證，繼續往下
+Bug 4（空行觸發第三方 library 的越界錯誤）
+```
+
+| Bug | 出了什麼事 | 測試沒抓到的原因 |
+|-----|-----------|-----------------|
+| Bug 1: 印表機元件未初始化 | 模擬印表機的初始化漏掉了內部元件 | 只測了「送出資料」，沒測「組裝列印指令」這個步驟 |
+| Bug 2: 品項全分到同一台 | 分派邏輯找到第一台可用的印表機就全部送過去 | 手動構造預期結果，分派邏輯沒有被執行 |
+| Bug 3: 欄位寬度錯誤 | 欄位比例（3:1=4）不符合 library 要求的總和 12 | 模擬的收據內容只有純文字行，沒有多欄表格行 |
+| Bug 4: 空行越界錯誤 | 第三方 library 沒有處理空字串 | 被 Bug 3 擋住，程式從未執行到這一行 |
+
+---
+
+## 為什麼一次只能發現一個 Bug
+
+四個 Bug 都在同一條執行路徑上，只是深度不同。程式走到第一個錯誤就中斷了，後面的都被遮蔽。
+
+而測試沒有發現這些問題，是因為測試沒有走過這條完整路徑。
+
+```
+真實路徑：  接收訂單 → 組裝收據 → 列印中心 → 表格列印/文字列印 → 印表機底層
+測試路徑：  接收訂單 → ❌（手動構造結果，後面都沒跑）
+
+後來補了模擬元件：接收訂單 → 模擬收據產生器 → 列印中心 → 模擬印表機 → 底層
+                                  ↑
+                           但模擬的收據只有純文字行
+                           → 文字列印有被覆蓋，表格列印沒有
+                           → Bug 3, 4 仍然隱藏
+```
+
+這次的問題不在測試數量，而在測試覆蓋的路徑深度。
+
+---
+
+## 回顧：這次踩到的五個坑
+
+### 1. 測試的是「手動構造的結果」，不是「程式的行為」
+
+**怎麼發現的：** 實機上兩台廚房印表機只有一台收到品項，另一台完全沒動。但測試裡「品項分派邏輯」的測試案例是通過的。
+
+**怎麼找到原因的：** 回頭看測試程式碼，發現測試裡的分派結果是手動寫死的，不是由分派邏輯算出來的：
 
 ```dart
-// ❌ 手動構造預期結果，沒有走過真正的分派邏輯
-test('品名長度奇數分配到第一台，偶數分配到第二台', () {
+test('品名長度奇數分配到第一台', () {
   final result = OnlineOrderPrintResult(
-    itemPrinterMapping: {
-      'item-1': 'kitchen-2', // 手動寫死「偶數→第二台」
-      'item-2': 'kitchen-1', // 手動寫死「奇數→第一台」
-    },
-    // ...
+    itemPrinterMapping: {'item-1': 'kitchen-2'}, // 寫死的值
   );
   record.applyPrintResult(result);
   expect(record.kitchenItemPrintJobs['item-1']!.printerId, 'kitchen-2');
 });
 ```
 
-這個測試的名稱叫「品項分派邏輯」，但實際上測的是 `applyPrintResult` 能不能正確儲存資料——分派邏輯（`_buildItemPrinterMapping`）根本沒被執行過。
+這個測試驗證的是「把結果存進去再讀出來，資料有沒有一致」，但品項分派的程式碼從頭到尾沒有被執行過。測試名稱寫的是分派邏輯，實際測的是資料儲存。
 
-**修正後：**
-
-```dart
-//  透過 printAppendedOrder 驅動，讓真正的分派邏輯跑一遍
-test('2 台空 productNames 印表機：品名奇偶分配到不同印表機', () async {
-  PrintCenter.to.initFakeKitchenPrinters(); // 真實的 setUp
-  final result = await handler.printAppendedOrder(payload, printMain: false);
-  expect(result.itemPrinterMapping['item-1'], 'kitchen-2'); // 驗證實際分派結果
-  expect(result.kitchenResults['kitchen-1'], isTrue);       // 驗證列印成功
-});
-```
-
-> **教訓：測試應該驅動被測程式碼的真實路徑，而非用手動構造的資料驗證資料搬運是否正確。**
+**怎麼修的：** 改成從入口方法開始呼叫，讓品項分派的邏輯實際跑一遍。跑完之後 Bug 2 就出現了——分派邏輯的 fallback 條件寫錯，所有品項都被送到同一台。
 
 ---
 
-### 2. 只測「覆寫的方法」，沒測「繼承的方法」
+### 2. 只測了子類別自己的方法，沒測從父類別繼承的方法
 
-**問題程式碼：**
+**怎麼發現的：** 實機上廚房印表機列印全部失敗，log 顯示內部元件未初始化的錯誤，但測試裡模擬印表機的初始化和列印測試都是通過的。
 
-```dart
-// ❌ 只測了 FakePrinter 自己覆寫的方法
-test('sendBytes 不報錯', () async {
-  final printer = FakePrinterAdapter('test-printer');
-  await printer.init();
-  await printer.sendBytes([1, 2, 3]); // sendBytes 是 FakePrinter 覆寫的 no-op
-});
-```
+**怎麼找到原因的：** 比對測試和實際程式碼的呼叫路徑。測試裡呼叫的是模擬印表機自己覆寫的「送出資料」方法（改成什麼都不做），但實際列印時上層呼叫的是從父類別繼承的「組裝列印指令」方法，這個方法內部依賴一個需要初始化的元件。測試覆蓋到的方法，和實際執行路徑走到的方法不是同一個。
 
-但實際列印路徑呼叫的是 `printText()`——這是從 `GeneralPrinterAdapter` 繼承的方法，內部依賴 `generator`。`sendBytes` 不用 `generator`，所以永遠不會觸發 Bug。
-
-**修正後：**
-
-```dart
-//  測試實際列印路徑會用到的方法
-test('init 後 printText 不報錯（驗證 generator 已初始化）', () async {
-  final printer = FakePrinterAdapter('test-printer');
-  await printer.init();
-  await printer.printText('測試文字'); // 走 generator.text() → sendBytes
-});
-
-//  反向驗證：確認未初始化的行為
-test('未 init 就呼叫 printText 會拋出錯誤', () async {
-  final printer = FakePrinterAdapter('test-printer');
-  expect(() => printer.printText('測試文字'), throwsA(isA<Error>()));
-});
-```
-
-> **教訓：覆寫子類別時，要測試「上層呼叫者實際會用到的方法」，而非只測「你覆寫了什麼」。**
+**怎麼修的：** 在測試中加入對繼承方法的測試——初始化後呼叫「組裝列印指令」確認不報錯，以及未初始化時呼叫確認會拋出錯誤。同時修正模擬印表機的初始化方法，補上內部元件的建立。
 
 ---
 
-### 3. 驗證「有沒有」但不驗證「對不對」
+### 3. 斷言只檢查「有沒有」，沒檢查「對不對」
 
-**問題程式碼：**
+**怎麼發現的：** 修完 Bug 1 和 2 之後重跑測試，整合測試通過了。但看 log 發現廚房 1 和廚房 2 的列印結果都是 `false`（失敗），和測試通過的結果矛盾。
+
+**怎麼找到原因的：** 回頭看斷言，發現寫的是 `containsKey`：
 
 ```dart
-// ❌ 只檢查 key 存在，不檢查 value
 expect(result.kitchenResults.containsKey('kitchen-1'), isTrue);
-expect(result.kitchenResults.containsKey('kitchen-2'), isTrue);
 ```
 
-因為缺少 `ReceiptBuilderService`，列印路徑在 `buildReceiptLines` 就斷了，try-catch 回傳 `false`。但測試只檢查 `containsKey`，不管是 `true` 還是 `false`，都會通過。
+這個斷言只檢查「有沒有這台印表機的結果」，不管結果是成功還是失敗。列印在 try-catch 裡失敗後回傳 `false`，但 key 存在，所以斷言通過。
 
-**修正後：**
+**怎麼修的：** 改成直接檢查值 `expect(result.kitchenResults['kitchen-1'], isTrue)`。改完之後測試立刻失敗，顯示列印結果確實是 `false`。這才發現測試環境缺少收據產生器的依賴，列印路徑在組裝收據的步驟就斷了，被 try-catch 吞掉回傳 `false`。
 
-```dart
-//  驗證列印結果的值
-expect(result.kitchenResults['kitchen-1'], isTrue,
-    reason: '廚房1 列印應成功');
-expect(result.kitchenResults['kitchen-2'], isTrue,
-    reason: '廚房2 列印應成功');
-```
+---
 
-而要讓值為 `true`，就必須讓完整路徑跑通——這迫使我們補上 `FakeReceiptBuilderService`：
+### 4. 模擬元件的回傳資料只覆蓋了部分分支
+
+**怎麼發現的：** 修完 Bug 1、2，也修正了斷言（坑 3）之後，測試全過，列印結果也都是 `true`。但上實機測試時，廚房印表機仍然全部失敗，log 顯示「欄位寬度總和必須等於 12」。
+
+**怎麼找到原因的：** 測試環境和實機的差異在於收據的內容。實機用的是真實的廚房收據模板，包含多欄表格（品名+數量）。測試用的是模擬的收據產生器，只回傳一行純文字：
 
 ```dart
 class FakeReceiptBuilderService extends ReceiptBuilderService {
-  @override
-  Future<List<ReceiptLine>> buildReceiptLines(
-    ReceiptData data, ReceiptTemplate template,
-  ) async {
-    return [ReceiptLine.singleLine(data.title)];
+  Future<List<ReceiptLine>> buildReceiptLines(...) async {
+    return [ReceiptLine.singleLine(data.title)]; // 只有標題
   }
 }
 ```
 
-> **教訓：斷言要驗證「結果的值」，不要只驗證「結果的存在」。特別是 Map、List 這類容器，`containsKey` / `isNotEmpty` 不等於正確。**
+純文字走的是「文字列印」，多欄表格走的是「表格列印」——這是兩條不同的分支。模擬的資料只觸發了文字列印，表格列印從未被測試執行過。
+
+- 純文字列印有被覆蓋 → 沒問題
+- 多欄表格列印沒有被觸發 → Bug 3 仍然隱藏
+- 空行列印沒有被觸發 → Bug 4 仍然隱藏
+
+**怎麼修的：** 在印表機的表格列印方法中加入自動正規化，將欄位比例換算為符合 library 要求的總和 12。這是適配層的修復，所有收據模板都不需要修改。
 
 ---
 
-## 設計測試的方法論
+### 5. 第三方 library 的地雷——前面都做對了才踩到
+
+**怎麼發現的：** 修完 Bug 3 之後再上實機，廚房印表機仍然失敗，但錯誤訊息不同了——從「欄位寬度總和必須等於 12」變成「RangeError: Valid value range is empty: 0」。
+
+**怎麼找到原因的：** 從 log 看到列印標題和桌號成功（兩次資料送出），在第三行（空行）就失敗了。追蹤到第三方 library 的原始碼，發現它在解析文字時會取第一個字元來判斷是否為中文字，但沒有處理空字串的情況，直接對空字串取 `text[0]` 導致越界。
+
+這個問題一直存在，但之前 Bug 3 擋在前面（程式在表格列印就失敗了，走不到後面的空行列印），前三個 Bug 都修好之後，執行路徑才真正打通，觸發了這個潛在問題。
+
+從另一個角度看，能走到 Bug 4 代表前面的修復都是有效的。
+
+**怎麼修的：** 在呼叫 library 之前加了空字串的前置檢查，遇到空字串時改用換行指令代替，繞過 library 的問題。
+
+---
+
+### 6. try-catch 的範圍太大，把程式碼 bug 和硬體故障混在一起處理
+
+**怎麼發現的：** 回顧整個除錯過程，Bug 1、3、4 都有一個共同特徵——錯誤被 try-catch 吞掉，回傳 `false`，沒有任何明顯的異常。在測試中，缺少依賴的情況也被同樣的 try-catch 吞掉，測試照樣通過。
+
+**怎麼找到原因的：** 看列印方法的 catch 區塊：
+
+```dart
+Future<bool> _printKitchenReceipt(...) async {
+  try {
+    // 組裝收據資料
+    // 組裝收據行
+    // 呼叫印表機列印
+    return true;
+  } catch (e) {
+    debugPrint('failed: $e');
+    return false;
+  }
+}
+```
+
+`catch (e)` 攔截了所有錯誤，不區分類型。但這裡面混了兩種性質不同的錯誤：
+
+- **印表機故障**（連線逾時、無紙、裝置離線）→ 執行期的預期狀況，應該攔截，回傳失敗讓 UI 顯示重印按鈕
+- **程式碼 bug**（未初始化的元件、欄位寬度不合法、空字串越界）→ 開發階段就該被發現的問題，不應該被靜默吞掉
+
+四個 Bug 裡有三個屬於後者，全部被同一個 `catch (e)` 攔住，在開發和測試階段都沒有任何異常跡象。
+
+**怎麼修的：** 做了三件事：
+
+1. 定義 `PrinterException`，專門代表印表機硬體/連線錯誤
+2. 在列印中心（IO 邊界）把印表機拋出的 `Exception` 包成 `PrinterException`，但不攔截 `Error`（程式碼 bug）
+3. 列印方法改為 `on PrinterException catch`，只處理印表機故障
+
+改動前後的對比：
+
+```dart
+// 改動前：所有錯誤都被吞掉
+try {
+  final lines = await receiptBuilder.buildReceiptLines(data, template);  // ← 出錯也被吞
+  await printCenter.printReceiptLines(lines: lines, printer: printer);   // ← 出錯也被吞
+  return true;
+} catch (e) {
+  return false;
+}
+
+// 改動後：資料準備不在 try 裡，只攔截印表機錯誤
+final lines = await receiptBuilder.buildReceiptLines(data, template);  // ← 出錯直接拋出
+
+try {
+  await printCenter.printReceiptLines(lines: lines, printer: printer);
+  return true;
+} on PrinterException catch (e) {  // ← 只攔截印表機故障
+  return false;
+}
+```
+
+改完之後，測試裡缺少依賴的情況不再被吞掉——之前有一組測試預期列印結果是 `false`（因為缺收據產生器被 catch 吞掉），現在補上依賴後預期改為 `true`，測試驗證的是真正的列印行為。
+
+---
+
+## 從這次經驗歸納的測試方法
 
 ### 一、從呼叫路徑出發，而非從程式碼結構出發
 
-不要按照「這個 class 有哪些方法」來寫測試，要按照「使用者操作觸發了什麼路徑」來寫。
+這次犯的最大錯誤是按照「這個 class 有哪些方法」來分配測試，結果每個方法各自通過，但串在一起就出問題。後來改成按「使用者操作觸發了什麼路徑」來規劃：
 
 ```text
 使用者操作                    要測試的完整路徑
@@ -167,7 +234,11 @@ class FakeReceiptBuilderService extends ReceiptBuilderService {
                       → printAppendedOrder(kitchenItemIds: {itemId})
 ```
 
+按路徑規劃之後，每個測試案例都會走過完整的鏈路，中間環節的問題自然會被觸發。
+
 ### 二、整合測試與單元測試的分工
+
+這次的六個坑裡，有四個（坑 1、3、4、6）屬於「元件之間銜接」的問題，單元測試各自通過但串接失敗。回頭看分工：
 
 ```text
                     單元測試                     整合測試
@@ -182,30 +253,17 @@ class FakeReceiptBuilderService extends ReceiptBuilderService {
                                                 → 端到端路徑正確
 ```
 
-**關鍵原則：如果你的功能涉及「多個元件協作」，只寫單元測試是不夠的。**
+這次的經驗是：功能涉及多個元件協作時，只有單元測試是不夠的。整合測試才能抓到元件之間的銜接問題。
 
 ### 三、替 try-catch 設計專門的測試
 
-try-catch 是測試的天敵——它會把錯誤吞掉，讓測試誤以為一切正常。
+try-catch 在這次經驗裡反覆出現——Bug 1、3、4 被它吞掉，坑 3 的斷言因為它而失效，坑 6 則是根本性的設計問題。
 
-```dart
-// 生產程式碼中的 try-catch
-Future<bool> _printKitchenReceipt(...) async {
-  try {
-    final lines = await _receiptBuilder.buildReceiptLines(data, template);
-    await _printCenter.printReceiptLines(lines: lines, printer: config.printer);
-    return true;
-  } catch (e) {
-    debugPrint('kitchen print failed: $e');
-    return false;  // ← Bug 被吞掉，變成靜默失敗
-  }
-}
-```
+回顧後歸納的三個對策：
 
-對策：
-- **斷言成功路徑的值**：不要只檢查「沒拋錯」，要檢查回傳值是 `true`
-- **提供完整的依賴**：讓 try 區塊能完整執行，而非依賴 catch 來「通過」測試
-- **寫專門的失敗測試**：故意製造失敗條件，驗證錯誤處理行為
+- **斷言成功路徑的值**：不只檢查「沒拋錯」，要檢查回傳值是 `true`。坑 3 就是因為只檢查 key 存在，沒檢查值
+- **提供完整的依賴**：讓 try 區塊能完整執行，而非依賴 catch 來「通過」測試。坑 3 的根因就是缺少收據產生器
+- **寫專門的失敗測試**：故意製造失敗條件（如模擬印表機拋出 `PrinterException`），驗證錯誤處理行為符合預期
 
 ### 四、Fake / Mock 的設計原則
 
@@ -213,28 +271,53 @@ Future<bool> _printKitchenReceipt(...) async {
                     Fake（假實作）               Mock（模擬物件）
 ─────────────────────────────────────────────────────────
 適用場景          需要跑通完整路徑               只需驗證互動次數/參數
-本案例            FakeReceiptBuilderService      不適用（我們要驗證端到端結果）
+本案例            FakeReceiptBuilderService      不適用（需要驗證端到端結果）
                   FakePrinterAdapter
 ```
 
-設計 Fake 時的檢查清單：
+這次 `FakePrinterAdapter` 的設計漏掉了父類別繼承方法依賴的內部狀態（坑 2），`FakeReceiptBuilderService` 的回傳資料只覆蓋了部分分支（坑 4）。後來整理出設計 Fake 時的確認項目：
 
-- [ ] 繼承/實作的方法中，有哪些是**上層呼叫者實際會用到的**？
-- [ ] 這些方法依賴哪些**內部狀態**（如 `late` 變數）？
-- [ ] Fake 的 `init()` 是否正確初始化了這些內部狀態？
-- [ ] Fake 回傳的資料是否足以讓下游繼續執行？
+- 繼承/實作的方法中，有哪些是上層呼叫者實際會用到的？
+- 這些方法依賴哪些內部狀態（如 `late` 變數）？
+- Fake 的初始化是否正確建立了這些內部狀態？
+- Fake 回傳的資料是否足以讓下游所有分支都被觸發？
 
 ---
 
-## 檢查清單：避免「測試全過但有 Bug」
+## 之後可以改善的地方
 
-寫完測試後，用以下問題自我檢查：
+### 寫測試時
 
-1. **路徑覆蓋**：這個測試有沒有走過被測功能的「關鍵程式碼路徑」？還是只測了資料搬運？
-2. **斷言強度**：斷言是檢查「值是否正確」還是只檢查「東西存不存在」？
-3. **依賴完整性**：被測程式碼的所有依賴（Service、Adapter）是否都有提供？缺少的依賴是否被 try-catch 靜默吞掉？
-4. **繼承鏈**：如果用了 Fake/Mock 子類別，上層呼叫者用到的「繼承方法」是否有被測試到？
-5. **反向驗證**：是否有測試「錯誤情境」來確認你理解了 Bug 的根因？
+- 測試應從入口方法開始驅動，讓中間的邏輯實際執行，避免手動構造中間結果
+- 使用模擬子類別時，確認上層實際呼叫到的繼承方法也有被測試覆蓋
+- 斷言驗證值本身，而非只驗證存在性（`containsKey` → 直接檢查值）
+- 設計模擬元件的回傳資料時，先確認下游有哪些分支，確認回傳資料能觸發這些分支
+- 回傳資料中加入邊界值——空字串、空列表等
+
+### 修 Bug 時
+
+- 修完後確認有測試會實際走到修改的程式碼，否則測試通過不代表修改生效
+- 沿著執行路徑往下看——之前被擋住的程式碼現在可以執行了，那些區段可能存在未發現的問題
+- 如果修改讓新的資料流入第三方 library，檢查那些資料是否有 edge case
+
+### 設計 try-catch 時
+
+- 區分「預期的執行期錯誤」和「程式碼 bug」，只攔截前者
+- 定義專用的 exception 類型（如 `PrinterException`），在 IO 邊界包裝，上層只 catch 這個類型
+- 資料準備、邏輯運算等步驟不要放在 try-catch 裡面，讓錯誤直接拋出
+
+### 自我檢查清單
+
+寫完測試後可以對照的問題：
+
+1. 這個測試有走過真實的呼叫路徑嗎？還是只測了資料搬運？
+2. 斷言是驗證「值」還是只驗證「存在」？
+3. 所有依賴都有提供嗎？缺少的依賴會不會被 try-catch 吞掉？
+4. 模擬子類別覆寫的方法之外，繼承的方法有被測到嗎？
+5. 模擬元件回傳的資料有觸發下游的所有分支嗎？
+6. 邊界值（空字串、空列表、null）有出現在測試資料中嗎？
+7. try-catch 的範圍是否只包含 IO 操作？資料準備和邏輯運算是否在 try 外面？
+8. 有寫反向測試（故意觸發錯誤）來確認理解了 Bug 的根因嗎？
 
 ---
 
@@ -251,8 +334,8 @@ OnlineOrderRecord 模型（7 tests）
 
 FakePrinterAdapter（6 tests）
   ├── init / sendBytes — 基本功能
-  ├── printText after init —  驗證 generator 初始化（抓 Bug 1）
-  └── printText without init —  反向驗證
+  ├── printText after init — 驗證內部元件初始化（抓 Bug 1）
+  └── printText without init — 反向驗證
 
 KitchenPrinterConfig（2 tests）
   └── 單元測試：品名匹配邏輯
@@ -267,3 +350,15 @@ KitchenPrinterConfig（2 tests）
 PrintCenter 廚房印表機管理（5 tests）
   └── 註冊、移除、初始化、向後兼容
 ```
+
+---
+
+## 最終的修復
+
+| Bug | 修復方式 |
+|-----|---------|
+| Bug 1 | 模擬印表機的初始化方法補上內部元件的建立 |
+| Bug 2 | 品項分派的 fallback 邏輯改為：唯一一台無對應表 → 全部給它，多台 → 依規則分配 |
+| Bug 3 | 多欄表格列印前，自動將欄位比例正規化為符合 library 要求的總和 12 |
+| Bug 4 | 文字列印前加入空字串檢查，遇到空字串改用換行指令繞過 library 的問題 |
+| 設計改善 | 定義 `PrinterException`，列印方法改為只攔截印表機故障，程式碼 bug 不再被靜默吞掉 |
