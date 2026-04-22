@@ -249,6 +249,33 @@ a:hover {
   align-items: flex-end;
 }
 
+.article-nav-toc {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.article-nav-toc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(250, 250, 250, 0.1);
+  border-radius: 6px;
+  color: rgba(250, 250, 250, 0.5) !important;
+  background: none !important;
+  background-size: 0 !important;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease !important;
+}
+
+.article-nav-toc-btn:hover {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  background-color: rgba(26, 143, 227, 0.05) !important;
+  background-size: 0 !important;
+}
+
 @media screen and (max-width: 600px) {
   .article-nav {
     flex-direction: column;
