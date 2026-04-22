@@ -16,9 +16,9 @@ title: "首頁"
 
 ## 教學系列
 
-- [Python 維護工程師實戰指南](/python/)：入門教學，以 Hook 系統為範例
+- [Python 維護指南](/python/)：入門教學，以 Hook 系統為範例
 - [Python 進階指南](/python-advanced/)：深入內部機制與擴展開發
-- [Go 入門實戰指南](/go/)：理解 Go 語言精神與核心開發能力
+- [Go 維護指南](/go/)：理解 Go 語言精神與核心開發能力
 - [Go 進階指南](/go-advanced/)：深入 Go 並發、WebSocket、runtime 與服務架構
 - [Backend 服務實務指南](/backend/)：整理資料庫、快取、訊息佇列、觀測、部署與可靠性驗證等跨語言後端能力
 
