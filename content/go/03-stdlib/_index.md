@@ -20,6 +20,7 @@ Go 的標準庫是理解 Go 精神的重要入口。它偏好清楚的小 API、
 | [3.7](context/)          | context：取消、逾時與生命週期 | 讓長時間工作可以停止                         |
 | [3.8](defer-cleanup/)    | defer 與資源清理              | 用 `defer` 管理 close、unlock、recover 邊界  |
 | [3.9](config-flags-env/) | flag、os/env 與設定邊界       | 用標準庫讀取設定，並把設定轉成 config struct |
+| [3.10](service-support/) | 標準庫如何支撐服務型 Go        | 把 `context`、`net/http` 與 `log/slog` 串成底座 |
 
 ## 本模組使用的範例主題
 
