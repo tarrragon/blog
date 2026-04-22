@@ -5,20 +5,18 @@ description: "整理快取策略、Redis 資料型別與分散式狀態輔助能
 weight: 2
 ---
 
-# 模組二：快取與 Redis
-
 快取模組的核心目標是說明暫存資料如何提升讀取效率，同時不破壞 source of truth。語言教材會處理 cache port、資料複製邊界與 TTL 的程式邊界；本模組負責 Redis 與快取策略的具體實作。
 
 ## 暫定分類
 
-| 分類 | 內容方向 |
-|------|----------|
-| Cache aside | read-through 思路、cache miss、invalidation |
-| TTL 與 eviction | 過期策略、容量控制、熱點資料 |
+| 分類             | 內容方向                                         |
+| ---------------- | ------------------------------------------------ |
+| Cache aside      | read-through 思路、cache miss、invalidation      |
+| TTL 與 eviction  | 過期策略、容量控制、熱點資料                     |
 | Redis data types | string、hash、set、sorted set、stream 的適用場景 |
-| Presence store | 即時連線狀態、過期清理、跨節點查詢 |
-| Distributed lock | lock 語意、租約、失效與風險 |
-| Pub/Sub | 即時通知、跨節點 fan-out、可靠性限制 |
+| Presence store   | 即時連線狀態、過期清理、跨節點查詢               |
+| Distributed lock | lock 語意、租約、失效與風險                      |
+| Pub/Sub          | 即時通知、跨節點 fan-out、可靠性限制             |
 
 ## 與語言教材的分工
 

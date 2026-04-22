@@ -5,8 +5,6 @@ description: "(bool, str) 模式的應用"
 weight: 2
 ---
 
-# 返回值設計
-
 Hook 系統採用 `(bool, str)` 返回值模式，這是一種替代異常處理的設計策略。本章深入探討這個模式的設計理念和最佳實踐。
 
 ## (bool, str) 模式
@@ -95,6 +93,7 @@ def get_project_root() -> str:
 ### 優點
 
 1. **明確的錯誤處理**
+
    ```python
    # 呼叫者必須處理兩種情況
    success, message = validate()
@@ -104,6 +103,7 @@ def get_project_root() -> str:
    ```
 
 2. **錯誤訊息保留**
+
    ```python
    # 錯誤訊息可以傳遞給使用者
    success, error = run_command()
@@ -113,6 +113,7 @@ def get_project_root() -> str:
    ```
 
 3. **不中斷執行流程**
+
    ```python
    # 可以收集所有錯誤
    errors = []
@@ -124,12 +125,12 @@ def get_project_root() -> str:
 
 ### 與異常的比較
 
-| 特性 | (bool, str) | 異常 |
-|------|------------|------|
-| 強制處理 | 是（需要解包） | 否（可能被忽略） |
-| 控制流程 | 不中斷 | 中斷 |
-| 效能 | 較好 | 較差（stack trace） |
-| 適合場景 | 預期的錯誤 | 非預期的錯誤 |
+| 特性     | (bool, str)    | 異常                |
+| -------- | -------------- | ------------------- |
+| 強制處理 | 是（需要解包） | 否（可能被忽略）    |
+| 控制流程 | 不中斷         | 中斷                |
+| 效能     | 較好           | 較差（stack trace） |
+| 適合場景 | 預期的錯誤     | 非預期的錯誤        |
 
 ## 設計變體
 
@@ -330,5 +331,5 @@ def validate(data: str) -> Tuple[bool, str]:
 
 ---
 
-*上一章：[異常處理策略](../exception/)*
-*下一章：[unittest 基礎](../unittest/)*
+_上一章：[異常處理策略](../exception/)_
+_下一章：[unittest 基礎](../unittest/)_

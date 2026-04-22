@@ -5,8 +5,6 @@ description: "合併 HTTP、queue、timer 與外部事件來源"
 weight: 4
 ---
 
-# 多來源 event 融合
-
 事件融合的核心目標是讓不同來源的同類事件進入同一套內部規則。HTTP callback、queue message、timer scan 與檔案 reader 都只是輸入方式；進入 processor 前，它們應該被轉成一致的 `DomainEvent`。
 
 ## 本章目標
@@ -53,12 +51,12 @@ timer scan    ─┘
 
 來源設計的核心動作是明確寫出每個 adapter 對上游的承諾。不同來源的錯誤回應方式不同，但進入 processor 的事件語意應一致。
 
-| 來源 | adapter 責任 | 失敗回應 |
-|------|--------------|----------|
-| HTTP callback | decode JSON、驗證簽章、normalize | 回 4xx/5xx |
+| 來源           | adapter 責任                             | 失敗回應           |
+| -------------- | ---------------------------------------- | ------------------ |
+| HTTP callback  | decode JSON、驗證簽章、normalize         | 回 4xx/5xx         |
 | queue consumer | decode message、控制 ack/nack、normalize | ack、nack 或 retry |
-| timer scan | 讀取本地狀態、產生內部事件 | 記錄錯誤或下次再掃 |
-| file reader | 讀取增量資料、normalize | 記錄 offset 或停下 |
+| timer scan     | 讀取本地狀態、產生內部事件               | 記錄錯誤或下次再掃 |
+| file reader    | 讀取增量資料、normalize                  | 記錄 offset 或停下 |
 
 表格不是文件裝飾，而是設計工具。若某一列寫不清楚，代表 adapter 與 processor 的邊界還不清楚。
 
@@ -188,13 +186,13 @@ func (l EventLoop) Run(ctx context.Context) error {
 
 錯誤策略的核心問題是「失敗後誰能重送，重送是否安全」。HTTP、queue、timer 的答案不同。
 
-| 錯誤位置 | HTTP callback | queue message | timer scan |
-|----------|---------------|---------------|------------|
-| decode 失敗 | 400，不重試 | nack(false) 或 dead-letter | 記錄錯誤 |
-| normalize 失敗 | 400，不重試 | nack(false) 或 dead-letter | 記錄錯誤 |
-| processor 暫時失敗 | 503，可重試 | nack(true) | 下次再掃 |
-| duplicate event | 202 或 204 | ack | 忽略 |
-| publisher 失敗 | 視語意而定 | 視語意而定 | 視語意而定 |
+| 錯誤位置           | HTTP callback | queue message              | timer scan |
+| ------------------ | ------------- | -------------------------- | ---------- |
+| decode 失敗        | 400，不重試   | nack(false) 或 dead-letter | 記錄錯誤   |
+| normalize 失敗     | 400，不重試   | nack(false) 或 dead-letter | 記錄錯誤   |
+| processor 暫時失敗 | 503，可重試   | nack(true)                 | 下次再掃   |
+| duplicate event    | 202 或 204    | ack                        | 忽略       |
+| publisher 失敗     | 視語意而定    | 視語意而定                 | 視語意而定 |
 
 錯誤策略不能只看技術來源，也要看資料語意。若事件已經成功更新狀態但即時推送失敗，HTTP 是否要回錯取決於 API 是否承諾推送已完成。
 

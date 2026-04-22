@@ -5,8 +5,6 @@ description: "保留語義鍵並降低重複流程"
 weight: 3
 ---
 
-# 事件去重邏輯的重構策略
-
 事件去重重構的核心目標是把語義鍵、時間窗口與來源優先順序整理成可測規則。本章用一般事件處理流程說明如何降低重複邏輯，同時保留事件合併的判斷依據。
 
 ## 本章目標
@@ -69,13 +67,13 @@ raw payload 去重的核心問題是來源格式不是 domain 語意。不同來
 
 容易造成誤判的欄位：
 
-| 欄位 | 問題 |
-|------|------|
-| request ID | 每次重送都可能不同 |
-| received timestamp | 取決於系統收到時間，不是發生時間 |
-| raw payload hash | 欄位順序或 metadata 變化會改變 hash |
-| source-specific ID | 不同來源可能沒有共同 ID |
-| debug metadata | 不代表事件語意 |
+| 欄位               | 問題                                |
+| ------------------ | ----------------------------------- |
+| request ID         | 每次重送都可能不同                  |
+| received timestamp | 取決於系統收到時間，不是發生時間    |
+| raw payload hash   | 欄位順序或 metadata 變化會改變 hash |
+| source-specific ID | 不同來源可能沒有共同 ID             |
+| debug metadata     | 不代表事件語意                      |
 
 去重應該發生在 normalized `DomainEvent` 上，而不是 raw HTTP body、queue message 或 worker update 上。
 

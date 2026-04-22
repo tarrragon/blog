@@ -5,8 +5,6 @@ description: "用 time provider 避免測試依賴真實時間"
 weight: 5
 ---
 
-# 時間注入與 deterministic test
-
 時間注入的核心目標是讓測試可以控制「現在時間」。只要函式內部直接呼叫 `time.Now()`，測試結果就可能受執行時間影響；把時間來源改成參數或小介面後，測試就能重現固定情境。
 
 ## 真實時間會讓測試不穩定
@@ -15,7 +13,7 @@ weight: 5
 
 ```go
 func IsExpired(deadline time.Time) bool {
-	return time.Now().After(deadline)
+    return time.Now().After(deadline)
 }
 ```
 
@@ -25,7 +23,7 @@ func IsExpired(deadline time.Time) bool {
 
 ```go
 func IsExpired(now time.Time, deadline time.Time) bool {
-	return now.After(deadline)
+    return now.After(deadline)
 }
 ```
 
@@ -37,10 +35,10 @@ func IsExpired(now time.Time, deadline time.Time) bool {
 
 ```go
 func Remaining(now time.Time, deadline time.Time) time.Duration {
-	if now.After(deadline) {
-		return 0
-	}
-	return deadline.Sub(now)
+    if now.After(deadline) {
+        return 0
+    }
+    return deadline.Sub(now)
 }
 ```
 
@@ -48,15 +46,15 @@ func Remaining(now time.Time, deadline time.Time) time.Duration {
 
 ```go
 func TestRemaining(t *testing.T) {
-	now := time.Date(2026, 4, 22, 10, 0, 0, 0, time.UTC)
-	deadline := time.Date(2026, 4, 22, 10, 5, 0, 0, time.UTC)
+    now := time.Date(2026, 4, 22, 10, 0, 0, 0, time.UTC)
+    deadline := time.Date(2026, 4, 22, 10, 5, 0, 0, time.UTC)
 
-	got := Remaining(now, deadline)
-	want := 5 * time.Minute
+    got := Remaining(now, deadline)
+    want := 5 * time.Minute
 
-	if got != want {
-		t.Fatalf("Remaining() = %v, want %v", got, want)
-	}
+    if got != want {
+        t.Fatalf("Remaining() = %v, want %v", got, want)
+    }
 }
 ```
 
@@ -68,18 +66,18 @@ func TestRemaining(t *testing.T) {
 
 ```go
 type TokenGenerator struct {
-	now func() time.Time
+    now func() time.Time
 }
 
 func NewTokenGenerator(now func() time.Time) TokenGenerator {
-	return TokenGenerator{now: now}
+    return TokenGenerator{now: now}
 }
 
 func (g TokenGenerator) NewToken(userID string) Token {
-	return Token{
-		UserID:    userID,
-		CreatedAt: g.now(),
-	}
+    return Token{
+        UserID:    userID,
+        CreatedAt: g.now(),
+    }
 }
 ```
 
@@ -93,15 +91,15 @@ generator := NewTokenGenerator(time.Now)
 
 ```go
 func TestTokenGenerator(t *testing.T) {
-	fixedNow := time.Date(2026, 4, 22, 10, 0, 0, 0, time.UTC)
-	generator := NewTokenGenerator(func() time.Time {
-		return fixedNow
-	})
+    fixedNow := time.Date(2026, 4, 22, 10, 0, 0, 0, time.UTC)
+    generator := NewTokenGenerator(func() time.Time {
+        return fixedNow
+    })
 
-	token := generator.NewToken("user_123")
-	if !token.CreatedAt.Equal(fixedNow) {
-		t.Fatalf("CreatedAt = %v, want %v", token.CreatedAt, fixedNow)
-	}
+    token := generator.NewToken("user_123")
+    if !token.CreatedAt.Equal(fixedNow) {
+        t.Fatalf("CreatedAt = %v, want %v", token.CreatedAt, fixedNow)
+    }
 }
 ```
 
@@ -113,11 +111,11 @@ func TestTokenGenerator(t *testing.T) {
 
 ```go
 func RetryDelay(attempt int) time.Duration {
-	if attempt <= 0 {
-		return 0
-	}
+    if attempt <= 0 {
+        return 0
+    }
 
-	return time.Duration(attempt) * 100 * time.Millisecond
+    return time.Duration(attempt) * 100 * time.Millisecond
 }
 ```
 
@@ -125,12 +123,12 @@ func RetryDelay(attempt int) time.Duration {
 
 ```go
 func TestRetryDelay(t *testing.T) {
-	got := RetryDelay(3)
-	want := 300 * time.Millisecond
+    got := RetryDelay(3)
+    want := 300 * time.Millisecond
 
-	if got != want {
-		t.Fatalf("RetryDelay() = %v, want %v", got, want)
-	}
+    if got != want {
+        t.Fatalf("RetryDelay() = %v, want %v", got, want)
+    }
 }
 ```
 
@@ -138,13 +136,13 @@ func TestRetryDelay(t *testing.T) {
 
 ```go
 type Sleeper interface {
-	Sleep(time.Duration)
+    Sleep(time.Duration)
 }
 
 type realSleeper struct{}
 
 func (realSleeper) Sleep(d time.Duration) {
-	time.Sleep(d)
+    time.Sleep(d)
 }
 ```
 
@@ -163,7 +161,7 @@ createdAt := time.Date(2026, 4, 22, 10, 0, 0, 0, time.UTC)
 ```go
 loc, err := time.LoadLocation("Asia/Taipei")
 if err != nil {
-	t.Fatalf("load location: %v", err)
+    t.Fatalf("load location: %v", err)
 }
 
 localTime := time.Date(2026, 4, 22, 18, 0, 0, 0, loc)

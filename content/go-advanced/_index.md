@@ -5,8 +5,6 @@ description: "深入 Go 並發、WebSocket、runtime 與服務架構"
 weight: 33
 ---
 
-# Go 進階指南
-
 本系列為已完成入門教學的工程師設計，深入探討 Go 的並發模式、WebSocket 服務架構、runtime 診斷、狀態邊界與生產環境可觀測性。
 
 ## 目標讀者
@@ -143,13 +141,13 @@ Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、
 
 進階篇的章節會反覆碰到 log、time、state、event、WebSocket 與 testing。這些不是重複內容，而是同一主題在不同服務壓力下的責任分工。
 
-| 主題 | 單一 process 內的設計 | 生產操作 | 跨節點邊界 | Backend 實作 |
-|------|----------------------|----------|------------|--------------|
-| 並發與容量 | [channel ownership](01-concurrency-patterns/channel-ownership/)、[select loop](01-concurrency-patterns/select-loop/)、[非阻塞送出](01-concurrency-patterns/non-blocking-send/) | [race condition 檢查](05-testing-reliability/race-check/)、[graceful shutdown](06-production-operations/graceful-shutdown/) | [可靠性驗證流程](07-distributed-operations/reliability-pipeline/) | [Backend：可靠性驗證](../backend/06-reliability/) |
-| WebSocket | [read/write pump](02-networking-websocket/read-write-pump/)、[heartbeat](02-networking-websocket/heartbeat-deadline/)、[慢客戶端](02-networking-websocket/slow-client/) | [WebSocket integration test](05-testing-reliability/websocket-integration/)、[health diagnostics](06-production-operations/health-diagnostics/) | [跨節點 WebSocket](07-distributed-operations/cross-node-websocket/) | [Backend：快取與 Redis](../backend/02-cache-redis/)、[訊息佇列](../backend/03-message-queue/) |
-| Runtime 診斷 | [GC 與 memory limit](03-runtime-profiling/gc-memory-limit/)、[pprof](03-runtime-profiling/pprof/)、[goroutine leak](03-runtime-profiling/goroutine-leak/) | [diagnostics endpoint](06-production-operations/health-diagnostics/) | [Observability pipeline](07-distributed-operations/observability-pipeline/)、[部署平台合約](07-distributed-operations/deployment-contracts/) | [Backend：可觀測性平台](../backend/04-observability/)、[部署平台](../backend/05-deployment-platform/) |
-| 事件與狀態 | [component boundaries](04-architecture-boundaries/component-boundaries/)、[source of truth](04-architecture-boundaries/source-of-truth/)、[event fusion](04-architecture-boundaries/event-fusion/) | [結構化日誌欄位](06-production-operations/log-fields/) | [outbox 與 idempotency](07-distributed-operations/outbox-idempotency/)、[資料庫 transaction](07-distributed-operations/database-transactions/) | [Backend：資料庫](../backend/01-database/)、[訊息佇列](../backend/03-message-queue/) |
-| 測試分層 | [時間控制](05-testing-reliability/time-control/)、[table-driven test](05-testing-reliability/table-tests/) | [race check](05-testing-reliability/race-check/)、[integration test](05-testing-reliability/websocket-integration/) | [可靠性驗證流程](07-distributed-operations/reliability-pipeline/) | [Backend：可靠性驗證](../backend/06-reliability/) |
+| 主題         | 單一 process 內的設計                                                                                                                                                                              | 生產操作                                                                                                                                        | 跨節點邊界                                                                                                                                     | Backend 實作                                                                                          |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 並發與容量   | [channel ownership](01-concurrency-patterns/channel-ownership/)、[select loop](01-concurrency-patterns/select-loop/)、[非阻塞送出](01-concurrency-patterns/non-blocking-send/)                     | [race condition 檢查](05-testing-reliability/race-check/)、[graceful shutdown](06-production-operations/graceful-shutdown/)                     | [可靠性驗證流程](07-distributed-operations/reliability-pipeline/)                                                                              | [Backend：可靠性驗證](../backend/06-reliability/)                                                     |
+| WebSocket    | [read/write pump](02-networking-websocket/read-write-pump/)、[heartbeat](02-networking-websocket/heartbeat-deadline/)、[慢客戶端](02-networking-websocket/slow-client/)                            | [WebSocket integration test](05-testing-reliability/websocket-integration/)、[health diagnostics](06-production-operations/health-diagnostics/) | [跨節點 WebSocket](07-distributed-operations/cross-node-websocket/)                                                                            | [Backend：快取與 Redis](../backend/02-cache-redis/)、[訊息佇列](../backend/03-message-queue/)         |
+| Runtime 診斷 | [GC 與 memory limit](03-runtime-profiling/gc-memory-limit/)、[pprof](03-runtime-profiling/pprof/)、[goroutine leak](03-runtime-profiling/goroutine-leak/)                                          | [diagnostics endpoint](06-production-operations/health-diagnostics/)                                                                            | [Observability pipeline](07-distributed-operations/observability-pipeline/)、[部署平台合約](07-distributed-operations/deployment-contracts/)   | [Backend：可觀測性平台](../backend/04-observability/)、[部署平台](../backend/05-deployment-platform/) |
+| 事件與狀態   | [component boundaries](04-architecture-boundaries/component-boundaries/)、[source of truth](04-architecture-boundaries/source-of-truth/)、[event fusion](04-architecture-boundaries/event-fusion/) | [結構化日誌欄位](06-production-operations/log-fields/)                                                                                          | [outbox 與 idempotency](07-distributed-operations/outbox-idempotency/)、[資料庫 transaction](07-distributed-operations/database-transactions/) | [Backend：資料庫](../backend/01-database/)、[訊息佇列](../backend/03-message-queue/)                  |
+| 測試分層     | [時間控制](05-testing-reliability/time-control/)、[table-driven test](05-testing-reliability/table-tests/)                                                                                         | [race check](05-testing-reliability/race-check/)、[integration test](05-testing-reliability/websocket-integration/)                             | [可靠性驗證流程](07-distributed-operations/reliability-pipeline/)                                                                              | [Backend：可靠性驗證](../backend/06-reliability/)                                                     |
 
 ## 先備知識
 
@@ -170,6 +168,6 @@ Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、
 
 ---
 
-*文件版本：v0.1.0*
-*最後更新：2026-04-22*
-*系列狀態：核心初稿完成，延伸模組規劃中*
+_文件版本：v0.1.0_
+_最後更新：2026-04-22_
+_系列狀態：核心初稿完成，延伸模組規劃中_

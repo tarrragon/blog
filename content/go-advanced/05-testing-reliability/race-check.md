@@ -5,8 +5,6 @@ description: "用 go test -race 找資料競爭"
 weight: 3
 ---
 
-# race condition 檢查
-
 Race detector 的核心作用是找出測試執行期間發生的 data race。它能指出未同步讀寫同一份記憶體的位置，但不能取代 ownership、mutex、channel 與狀態邊界設計。
 
 ## 本章目標
@@ -166,11 +164,11 @@ Previous write at 0x...
 
 修正 data race 的核心選擇是建立正確同步邊界。常見方法有 mutex、channel owner、atomic。
 
-| 方法 | 適用情境 | 注意事項 |
-|------|----------|----------|
-| mutex | 多方法讀寫同一份 map/slice/state | lock 要保護完整不變式 |
-| channel owner | 狀態修改可集中成事件 loop | 要設計 reply、shutdown、backpressure |
-| atomic | 單一數值 counter 或 flag | 不適合複雜狀態 |
+| 方法          | 適用情境                         | 注意事項                             |
+| ------------- | -------------------------------- | ------------------------------------ |
+| mutex         | 多方法讀寫同一份 map/slice/state | lock 要保護完整不變式                |
+| channel owner | 狀態修改可集中成事件 loop        | 要設計 reply、shutdown、backpressure |
+| atomic        | 單一數值 counter 或 flag         | 不適合複雜狀態                       |
 
 Mutex 範例：
 

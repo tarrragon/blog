@@ -5,8 +5,6 @@ description: "撰寫第一個單元測試"
 weight: 3
 ---
 
-# unittest 基礎
-
 `unittest` 是 Python 內建的測試框架，提供了測試組織、斷言和測試執行等功能。Hook 系統的測試都使用 `unittest` 撰寫。
 
 ## 基本結構
@@ -73,17 +71,17 @@ class TestMyModule(unittest.TestCase):
 
 ## 常用斷言方法
 
-| 方法 | 檢查 |
-|------|------|
-| `assertEqual(a, b)` | a == b |
-| `assertNotEqual(a, b)` | a != b |
-| `assertTrue(x)` | x is True |
-| `assertFalse(x)` | x is False |
-| `assertIs(a, b)` | a is b |
-| `assertIsNone(x)` | x is None |
-| `assertIn(a, b)` | a in b |
+| 方法                     | 檢查             |
+| ------------------------ | ---------------- |
+| `assertEqual(a, b)`      | a == b           |
+| `assertNotEqual(a, b)`   | a != b           |
+| `assertTrue(x)`          | x is True        |
+| `assertFalse(x)`         | x is False       |
+| `assertIs(a, b)`         | a is b           |
+| `assertIsNone(x)`        | x is None        |
+| `assertIn(a, b)`         | a in b           |
 | `assertIsInstance(a, b)` | isinstance(a, b) |
-| `assertRaises(Error)` | 拋出指定異常 |
+| `assertRaises(Error)`    | 拋出指定異常     |
 
 ## 實際範例：測試 Hook IO
 
@@ -387,5 +385,5 @@ class TestMarkdownChecker(unittest.TestCase):
 
 ---
 
-*上一章：[異常處理策略](../exception/)*
-*下一章：[Mock 與測試隔離](../mock/)*
+_上一章：[異常處理策略](../exception/)_
+_下一章：[Mock 與測試隔離](../mock/)_

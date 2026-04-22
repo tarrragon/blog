@@ -5,8 +5,6 @@ description: "分離 WebSocket 讀取、寫入與心跳"
 weight: 1
 ---
 
-# read pump / write pump 模式
-
 Read pump / write pump 的核心規則是單一 WebSocket 連線的讀取與寫入必須分成兩個協調的 goroutine。Read pump 擁有讀取權，write pump 擁有寫入權；其他元件不直接操作底層 connection，而是透過 channel 或 method 協作。
 
 ## 本章目標
@@ -65,12 +63,12 @@ type Client struct {
 
 責任表：
 
-| 元件 | 責任 | 不應做的事 |
-|------|------|------------|
-| read pump | 讀 client message、交給 router | 直接寫 WebSocket |
-| write pump | 寫 server message、送 heartbeat、送 close | 處理 client action |
-| hub | 註冊、取消註冊、廣播 | 直接讀寫 connection |
-| router | 解析 action、呼叫 usecase 或更新訂閱 | 關閉底層 connection |
+| 元件       | 責任                                      | 不應做的事          |
+| ---------- | ----------------------------------------- | ------------------- |
+| read pump  | 讀 client message、交給 router            | 直接寫 WebSocket    |
+| write pump | 寫 server message、送 heartbeat、送 close | 處理 client action  |
+| hub        | 註冊、取消註冊、廣播                      | 直接讀寫 connection |
+| router     | 解析 action、呼叫 usecase 或更新訂閱      | 關閉底層 connection |
 
 這個分工讓連線生命週期可以被測試與替換，而不是散在多個 goroutine 裡。
 

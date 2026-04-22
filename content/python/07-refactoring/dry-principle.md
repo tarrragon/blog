@@ -5,9 +5,7 @@ description: "學習識別重複程式碼並建立共用模組，含模組演進
 weight: 73
 ---
 
-# DRY 原則與共用程式庫
-
-*上一章：[程式碼壞味道偵測](../code-smells/)*
+_上一章：[程式碼壞味道偵測](../code-smells/)_
 
 DRY (Don't Repeat Yourself) 是軟體開發的核心原則之一。本章基於 Error Pattern IMP-001，學習如何識別重複程式碼並建立共用模組。後半部分以 v0.31.0 的模組演進和遷移實戰為例，示範共用庫如何隨系統成長持續演進。
 
@@ -46,7 +44,7 @@ DRY 的完整含義不只是「不要複製貼上」：
 
 > Every piece of knowledge must have a single, unambiguous, authoritative representation within a system.
 >
-> -- Andy Hunt & Dave Thomas, *The Pragmatic Programmer*
+> -- Andy Hunt & Dave Thomas, _The Pragmatic Programmer_
 
 這意味著不只是程式碼，還包括業務邏輯、資料定義、設定內容。
 
@@ -62,11 +60,11 @@ grep -rh "^def " .claude/hooks/*.py | sort | uniq -c | sort -rn | head -20
 #    2 def parse_worktree_line(line):
 ```
 
-| 重複類型 | 範例 | 處理方式 |
-|----------|------|----------|
-| 完全相同 | 複製貼上的程式碼 | 抽取到共用模組 |
-| 結構相同 | 相似但參數不同 | 抽取並參數化 |
-| 概念相同 | 做同樣的事但實作不同 | 統一介面 |
+| 重複類型 | 範例                 | 處理方式       |
+| -------- | -------------------- | -------------- |
+| 完全相同 | 複製貼上的程式碼     | 抽取到共用模組 |
+| 結構相同 | 相似但參數不同       | 抽取並參數化   |
+| 概念相同 | 做同樣的事但實作不同 | 統一介面       |
 
 ## 建立共用程式庫
 
@@ -183,12 +181,12 @@ check_files("**/*.yaml", validate_yaml)
 
 ## 共用模組設計原則
 
-| 原則 | 做法 | 反面教材 |
-|------|------|---------|
-| **單一職責** | `git_utils.py`（Git 操作）、`config_loader.py`（配置載入）。模組名稱即可看出職責 | `utils.py`（什麼都放，職責不明確） |
-| **穩定的介面** | 透過 `__init__.py` 定義公開 API，內部可自由重構 | 讓使用者直接 import 內部實作細節 |
-| **完整的 docstring** | 每個公開函式都要有 docstring（Args/Returns/Raises） | 只有程式碼，沒有使用說明 |
-| **充分的測試** | 每個共用函式都要有對應的單元測試 | 重構後不跑測試就上線 |
+| 原則                 | 做法                                                                             | 反面教材                           |
+| -------------------- | -------------------------------------------------------------------------------- | ---------------------------------- |
+| **單一職責**         | `git_utils.py`（Git 操作）、`config_loader.py`（配置載入）。模組名稱即可看出職責 | `utils.py`（什麼都放，職責不明確） |
+| **穩定的介面**       | 透過 `__init__.py` 定義公開 API，內部可自由重構                                  | 讓使用者直接 import 內部實作細節   |
+| **完整的 docstring** | 每個公開函式都要有 docstring（Args/Returns/Raises）                              | 只有程式碼，沒有使用說明           |
+| **充分的測試**       | 每個共用函式都要有對應的單元測試                                                 | 重構後不跑測試就上線               |
 
 ## 模組演進：從 4 個到 7+ 個
 
@@ -196,15 +194,15 @@ check_files("**/*.yaml", validate_yaml)
 
 ### 模組演進表
 
-| 版本 | 模組 | 職責 | 說明 |
-|------|------|------|------|
-| v0.28.0 | `git_utils.py` | Git 命令執行、分支管理 | 消除 4 處 run_git_command 重複 |
-| v0.28.0 | `hook_io.py` | Hook JSON 輸入讀取、輸出生成 | 統一 stdin/stdout 處理 |
-| v0.28.0 | `config_loader.py` | YAML 配置檔案載入 | 支援 PyYAML fallback JSON |
-| v0.28.0 | `hook_logging.py` | 日誌設定 | 統一日誌格式 |
-| v0.31.0 | `hook_utils.py` | 統一日誌 + 頂層例外處理 | 取代分散的兩套日誌系統 |
-| v0.31.0 | `hook_messages.py` | 訊息常數集中管理 | 消除 19 個 Hook 的硬編碼訊息 |
-| v0.31.0 | `hook_validator.py` | Hook 健康檢查 | 驗證 import 和執行狀態 |
+| 版本    | 模組                | 職責                         | 說明                           |
+| ------- | ------------------- | ---------------------------- | ------------------------------ |
+| v0.28.0 | `git_utils.py`      | Git 命令執行、分支管理       | 消除 4 處 run_git_command 重複 |
+| v0.28.0 | `hook_io.py`        | Hook JSON 輸入讀取、輸出生成 | 統一 stdin/stdout 處理         |
+| v0.28.0 | `config_loader.py`  | YAML 配置檔案載入            | 支援 PyYAML fallback JSON      |
+| v0.28.0 | `hook_logging.py`   | 日誌設定                     | 統一日誌格式                   |
+| v0.31.0 | `hook_utils.py`     | 統一日誌 + 頂層例外處理      | 取代分散的兩套日誌系統         |
+| v0.31.0 | `hook_messages.py`  | 訊息常數集中管理             | 消除 19 個 Hook 的硬編碼訊息   |
+| v0.31.0 | `hook_validator.py` | Hook 健康檢查                | 驗證 import 和執行狀態         |
 
 ### 演進的驅動力
 
@@ -225,10 +223,10 @@ check_files("**/*.yaml", validate_yaml)
 
 ### 分批遷移計畫
 
-| 批次 | 範圍 | 檔案數 | 策略 |
-|------|------|--------|------|
-| W22-001.2 | 主力遷移 | 14 個 | 按 Hook 事件類型分組遷移 |
-| W22-001.3 | 補漏 | 3 個 | 掃描殘留的舊 import |
+| 批次      | 範圍     | 檔案數 | 策略                     |
+| --------- | -------- | ------ | ------------------------ |
+| W22-001.2 | 主力遷移 | 14 個  | 按 Hook 事件類型分組遷移 |
+| W22-001.3 | 補漏     | 3 個   | 掃描殘留的舊 import      |
 
 ### 每個 Hook 的遷移三步驟
 
@@ -258,12 +256,12 @@ uv run python hook-name.py < /dev/null
 
 ### 為什麼分批而非一次全改
 
-| 一次全改 | 分批遷移 |
-|---------|---------|
+| 一次全改                     | 分批遷移                 |
+| ---------------------------- | ------------------------ |
 | 改動 40+ 個檔案，review 困難 | 每批 14-3 個，可仔細確認 |
-| 一個錯誤影響所有 Hook | 錯誤影響範圍有限 |
-| 無法中途暫停 | 每批獨立可交付 |
-| 回滾等於全部回滾 | 只回滾出問題的批次 |
+| 一個錯誤影響所有 Hook        | 錯誤影響範圍有限         |
+| 無法中途暫停                 | 每批獨立可交付           |
+| 回滾等於全部回滾             | 只回滾出問題的批次       |
 
 ## 遷移陷阱：IMP-005
 
@@ -320,22 +318,22 @@ except ImportError as e:
 
 v0.28.0 初建共用庫：
 
-| 函式 | 重複次數 | 重構後 |
-|------|----------|--------|
-| run_git_command | 4 | 1 (git_utils.py) |
-| get_current_branch | 3 | 1 (git_utils.py) |
-| parse_worktree_line | 2 | 1 (git_utils.py) |
-| load_json | 2 | 1 (hook_io.py) |
+| 函式                | 重複次數 | 重構後           |
+| ------------------- | -------- | ---------------- |
+| run_git_command     | 4        | 1 (git_utils.py) |
+| get_current_branch  | 3        | 1 (git_utils.py) |
+| parse_worktree_line | 2        | 1 (git_utils.py) |
+| load_json           | 2        | 1 (hook_io.py)   |
 
 總計消除數百行重複程式碼。
 
 v0.31.0 持續演進：
 
-| 項目 | 重複次數 | 重構後 |
-|------|----------|--------|
-| setup_hook_logging | 2 套系統 | 1 (hook_utils.py) |
-| run_hook_safely | 40+ 處 try-except | 1 (hook_utils.py) |
-| 使用者訊息字串 | 19 個 Hook 散落 | 1 (hook_messages.py) |
+| 項目               | 重複次數          | 重構後               |
+| ------------------ | ----------------- | -------------------- |
+| setup_hook_logging | 2 套系統          | 1 (hook_utils.py)    |
+| run_hook_safely    | 40+ 處 try-except | 1 (hook_utils.py)    |
+| 使用者訊息字串     | 19 個 Hook 散落   | 1 (hook_messages.py) |
 
 ## 常見錯誤
 
@@ -432,9 +430,9 @@ grep -r "from common_functions import" .claude/hooks/*.py
 - 共用庫隨系統成長持續演進，大規模遷移採用分批策略
 - 模組搬家後必須全量 `grep` 引用並逐一驗證，防止 IMP-005 陷阱
 
-*下一章：[配置分離與常數管理](../constants-management/)*
+_下一章：[配置分離與常數管理](../constants-management/)_
 
 ---
 
-*文件版本：v0.31.1*
-*建立日期：2026-03-04*
+_文件版本：v0.31.1_
+_建立日期：2026-03-04_

@@ -5,8 +5,6 @@ description: "把 structured log、metric、trace 與 profile 組成可操作的
 weight: 4
 ---
 
-# 7.4 Observability pipeline、metrics 與 tracing
-
 Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。Structured log 描述單次事件，metric 描述趨勢，trace 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。
 
 ## 前置章節

@@ -5,8 +5,6 @@ description: "理解 debug.SetMemoryLimit 在長時間服務中的用途"
 weight: 1
 ---
 
-# GC 與 memory limit
-
 GC 與 memory limit 的核心關係是：Go runtime 會根據 heap 成長決定何時執行 GC，而 memory limit 讓 runtime 有一個軟性記憶體目標。Memory limit 不是硬性上限，也不是 leak 修復工具；它是讓 runtime 更早回應記憶體壓力的控制訊號。
 
 ## 本章目標
@@ -139,12 +137,12 @@ func SavePayload(id string, payload []byte) {
 
 記憶體問題的核心分流是：物件被大量配置但很快回收，還是物件被長期保留。
 
-| 現象 | 可能問題 | 下一步 |
-|------|----------|--------|
-| `alloc_space` 高，`inuse_space` 不高 | 短命配置多，GC 壓力大 | 找熱路徑 allocation |
-| `inuse_space` 持續上升 | 長期保留或 leak | 看 heap profile retainers |
-| goroutine 數量同步上升 | goroutine leak 或 queue 堆積 | 看 goroutine profile |
-| GC 次數暴增但 heap 仍高 | memory limit 壓力或資料保留 | 檢查 cache/map/buffer |
+| 現象                                 | 可能問題                     | 下一步                    |
+| ------------------------------------ | ---------------------------- | ------------------------- |
+| `alloc_space` 高，`inuse_space` 不高 | 短命配置多，GC 壓力大        | 找熱路徑 allocation       |
+| `inuse_space` 持續上升               | 長期保留或 leak              | 看 heap profile retainers |
+| goroutine 數量同步上升               | goroutine leak 或 queue 堆積 | 看 goroutine profile      |
+| GC 次數暴增但 heap 仍高              | memory limit 壓力或資料保留  | 檢查 cache/map/buffer     |
 
 這個分流會決定後續工具。GC 參數能緩解壓力，但保留資料要回到資料結構與 lifecycle 修。
 

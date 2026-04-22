@@ -5,8 +5,6 @@ description: "用入口程式建立 Go 程式的啟動與資料流模型"
 weight: 7
 ---
 
-# 從入口程式看應用啟動流程
-
 入口程式是 Go 應用的系統地圖。它不一定包含最多細節，但應該讓你知道 process 如何初始化、哪些 goroutine 會啟動、HTTP endpoint 如何註冊，以及程式如何關閉。
 
 ## 本章目標
@@ -24,13 +22,13 @@ weight: 7
 
 入口程式的核心責任是揭露應用如何啟動，而不是承載所有實作細節。一個稍具規模的 `main()` 可以切成五個區塊：
 
-| 區塊 | 責任 |
-|------|------|
-| Runtime 與日誌設定 | 設定記憶體限制、初始化 `slog` |
-| 環境設定 | 讀取設定檔、環境變數與 port |
-| 元件組裝 | 建立 repository、worker、service 或 server |
-| 背景工作 | 啟動 worker、queue consumer 或定時任務 |
-| 對外介面 | 註冊 CLI command、HTTP endpoint 或 WebSocket route |
+| 區塊               | 責任                                               |
+| ------------------ | -------------------------------------------------- |
+| Runtime 與日誌設定 | 設定記憶體限制、初始化 `slog`                      |
+| 環境設定           | 讀取設定檔、環境變數與 port                        |
+| 元件組裝           | 建立 repository、worker、service 或 server         |
+| 背景工作           | 啟動 worker、queue consumer 或定時任務             |
+| 對外介面           | 註冊 CLI command、HTTP endpoint 或 WebSocket route |
 
 這種切法讓入口同時保留完整脈絡，又不把所有實作細節塞進 `main()`。
 
@@ -53,13 +51,13 @@ server := NewHTTPServer(repo, notifications)
 
 新增功能的核心判斷是：先確認它屬於哪一種生命週期，再決定接入位置。新增功能時，先判斷它屬於哪一種生命週期：
 
-| 新功能類型 | 接入位置 |
-|------------|----------|
-| 新 HTTP endpoint | 入口程式註冊 route，實作獨立 handler |
-| 新背景事件來源 | 新增 channel、worker 或 queue consumer |
-| 新即時訊息 action | message router 或連線管理元件 |
-| 新狀態欄位 | repository 更新與 model 擴展 |
-| 新診斷能力 | 條件註冊 endpoint 或 `slog` 欄位 |
+| 新功能類型        | 接入位置                               |
+| ----------------- | -------------------------------------- |
+| 新 HTTP endpoint  | 入口程式註冊 route，實作獨立 handler   |
+| 新背景事件來源    | 新增 channel、worker 或 queue consumer |
+| 新即時訊息 action | message router 或連線管理元件          |
+| 新狀態欄位        | repository 更新與 model 擴展           |
+| 新診斷能力        | 條件註冊 endpoint 或 `slog` 欄位       |
 
 這個判斷可以避免把功能塞進錯誤元件，造成後續難測與難改。
 

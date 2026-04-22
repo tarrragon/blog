@@ -5,8 +5,6 @@ description: "掌握 Go 的條件判斷、迴圈與分支控制"
 weight: 3
 ---
 
-# 控制流程：if、for、switch
-
 Go 控制流程的核心規則是：語法少但語意明確；`if` 處理條件分支，`for` 是唯一迴圈語法，`switch` 用於多分支判斷。本章將建立閱讀 Go 流程控制的基本模型。
 
 ## `if` 表達條件與提前返回
@@ -15,7 +13,7 @@ Go 控制流程的核心規則是：語法少但語意明確；`if` 處理條件
 
 ```go
 if age >= 18 {
-	fmt.Println("adult")
+    fmt.Println("adult")
 }
 ```
 
@@ -25,11 +23,11 @@ Go 不會把數字、字串或指標自動當成布林值。條件必須是明�
 count := 3
 
 if count > 0 {
-	fmt.Println("has items")
+    fmt.Println("has items")
 }
 
 // if count {
-// 	fmt.Println("invalid")
+//     fmt.Println("invalid")
 // }
 ```
 
@@ -41,7 +39,7 @@ if count > 0 {
 
 ```go
 if value, ok := cache["user:1"]; ok {
-	fmt.Println("cache hit:", value)
+    fmt.Println("cache hit:", value)
 }
 ```
 
@@ -49,7 +47,7 @@ if value, ok := cache["user:1"]; ok {
 
 ```go
 if err := saveProfile(profile); err != nil {
-	return err
+    return err
 }
 ```
 
@@ -61,16 +59,16 @@ Go 常用提前返回處理失敗或特殊情況。核心原則是先處理不�
 
 ```go
 func normalizeEmail(input string) (string, error) {
-	input = strings.TrimSpace(input)
-	if input == "" {
-		return "", fmt.Errorf("email is required")
-	}
+    input = strings.TrimSpace(input)
+    if input == "" {
+        return "", fmt.Errorf("email is required")
+    }
 
-	if !strings.Contains(input, "@") {
-		return "", fmt.Errorf("invalid email")
-	}
+    if !strings.Contains(input, "@") {
+        return "", fmt.Errorf("invalid email")
+    }
 
-	return strings.ToLower(input), nil
+    return strings.ToLower(input), nil
 }
 ```
 
@@ -84,7 +82,7 @@ Go 的迴圈只有 `for`。它可以表達傳統計數迴圈、條件迴圈、�
 
 ```go
 for i := 0; i < 3; i++ {
-	fmt.Println(i)
+    fmt.Println(i)
 }
 ```
 
@@ -93,8 +91,8 @@ for i := 0; i < 3; i++ {
 ```go
 remaining := 3
 for remaining > 0 {
-	fmt.Println(remaining)
-	remaining--
+    fmt.Println(remaining)
+    remaining--
 }
 ```
 
@@ -102,8 +100,8 @@ for remaining > 0 {
 
 ```go
 for {
-	fmt.Println("polling")
-	break
+    fmt.Println("polling")
+    break
 }
 ```
 
@@ -117,7 +115,7 @@ for {
 names := []string{"alice", "bob"}
 
 for i, name := range names {
-	fmt.Println(i, name)
+    fmt.Println(i, name)
 }
 ```
 
@@ -125,7 +123,7 @@ for i, name := range names {
 
 ```go
 for _, name := range names {
-	fmt.Println(name)
+    fmt.Println(name)
 }
 ```
 
@@ -133,12 +131,12 @@ for _, name := range names {
 
 ```go
 scores := map[string]int{
-	"alice": 90,
-	"bob":   80,
+    "alice": 90,
+    "bob":   80,
 }
 
 for name, score := range scores {
-	fmt.Println(name, score)
+    fmt.Println(name, score)
 }
 ```
 
@@ -150,15 +148,15 @@ for name, score := range scores {
 
 ```go
 for _, line := range lines {
-	if line == "" {
-		continue
-	}
+    if line == "" {
+        continue
+    }
 
-	if line == "STOP" {
-		break
-	}
+    if line == "STOP" {
+        break
+    }
 
-	fmt.Println(line)
+    fmt.Println(line)
 }
 ```
 
@@ -173,13 +171,13 @@ for _, line := range lines {
 ```go
 switch method {
 case "GET":
-	fmt.Println("read")
+    fmt.Println("read")
 case "POST":
-	fmt.Println("create")
+    fmt.Println("create")
 case "DELETE":
-	fmt.Println("delete")
+    fmt.Println("delete")
 default:
-	fmt.Println("unsupported")
+    fmt.Println("unsupported")
 }
 ```
 
@@ -190,13 +188,13 @@ default:
 ```go
 switch {
 case score >= 90:
-	fmt.Println("A")
+    fmt.Println("A")
 case score >= 80:
-	fmt.Println("B")
+    fmt.Println("B")
 case score >= 70:
-	fmt.Println("C")
+    fmt.Println("C")
 default:
-	fmt.Println("D")
+    fmt.Println("D")
 }
 ```
 

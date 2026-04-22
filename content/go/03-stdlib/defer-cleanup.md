@@ -5,8 +5,6 @@ description: "用 defer 管理 close、unlock、cleanup 與 panic 邊界"
 weight: 8
 ---
 
-# 3.8 defer 與資源清理
-
 `defer` 的核心用途是把資源清理放在取得資源的附近。檔案、鎖、response body、temporary resource 與測試 cleanup 都適合用 `defer` 表達「離開這個 scope 前要完成的事」。
 
 ## 預計補充內容

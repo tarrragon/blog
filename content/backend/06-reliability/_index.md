@@ -5,20 +5,18 @@ description: "整理 CI、load test、fuzz、chaos testing 與系統級回歸驗
 weight: 6
 ---
 
-# 模組六：可靠性驗證流程
-
 可靠性驗證模組的核心目標是說明測試如何從單一函式擴展到整個後端系統。語言教材會處理 unit test、table-driven / parameterized test、race / async test 與 integration test；本模組負責 CI pipeline、壓力測試、fuzz campaign 與 chaos testing。
 
 ## 暫定分類
 
-| 分類 | 內容方向 |
-|------|----------|
-| CI pipeline | test 分層、快慢測試、artifact、環境變數 |
-| Load test | workload model、throughput、latency、容量瓶頸 |
-| Fuzz campaign | input boundary、corpus、crash reproduction |
-| Chaos testing | broker 斷線、資料庫延遲、節點重啟、網路抖動 |
-| Test environment | ephemeral database、container service、seed data |
-| Release gate | regression suite、migration check、rollback rehearsal |
+| 分類             | 內容方向                                              |
+| ---------------- | ----------------------------------------------------- |
+| CI pipeline      | test 分層、快慢測試、artifact、環境變數               |
+| Load test        | workload model、throughput、latency、容量瓶頸         |
+| Fuzz campaign    | input boundary、corpus、crash reproduction            |
+| Chaos testing    | broker 斷線、資料庫延遲、節點重啟、網路抖動           |
+| Test environment | ephemeral database、container service、seed data      |
+| Release gate     | regression suite、migration check、rollback rehearsal |
 
 ## 與語言教材的分工
 

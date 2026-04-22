@@ -5,8 +5,6 @@ description: "更新狀態模型、repository 與 API 輸出"
 weight: 3
 ---
 
-# 如何擴展狀態投影欄位
-
 擴展狀態投影欄位的核心流程是先確認欄位屬於 domain state、read model 還是 response view。欄位加在哪一層，會決定寫入規則、相容性與測試方式。
 
 ## 本章目標
@@ -25,11 +23,11 @@ weight: 3
 
 狀態欄位的核心問題不是「struct 要加在哪裡」，而是「這個欄位代表哪一種資料責任」。同一個欄位放在不同層，代表不同寫入規則與相容性承諾。
 
-| 層次 | 意義 | 範例 |
-|------|------|------|
-| domain state | 影響業務規則與狀態轉移 | job 是否 running、failed、completed |
-| projection/read model | 方便查詢、列表或即時顯示 | 最近更新時間、目前進度百分比 |
-| response view | 只影響對外輸出格式 | 顯示文字、前端用 badge 顏色 |
+| 層次                  | 意義                     | 範例                                |
+| --------------------- | ------------------------ | ----------------------------------- |
+| domain state          | 影響業務規則與狀態轉移   | job 是否 running、failed、completed |
+| projection/read model | 方便查詢、列表或即時顯示 | 最近更新時間、目前進度百分比        |
+| response view         | 只影響對外輸出格式       | 顯示文字、前端用 badge 顏色         |
 
 例如「job 狀態」是 domain state，因為它會影響是否能重試、取消或完成。相反地，「狀態顯示文字」通常是 response view，因為它只是把內部狀態轉成 client 更容易顯示的文字。
 

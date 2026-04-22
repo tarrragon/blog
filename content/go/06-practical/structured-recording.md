@@ -5,8 +5,6 @@ description: "區分 operational log、domain event log 與狀態資料"
 weight: 5
 ---
 
-# 如何新增結構化記錄欄位
-
 新增結構化記錄欄位的核心規則是先判斷這筆資訊是給工程師除錯、給系統重播，還是給使用者查詢。不同用途對應不同記錄邊界，不能全部塞進 log。
 
 ## 本章目標
@@ -25,11 +23,11 @@ weight: 5
 
 記錄邊界的核心問題是資料要服務誰。工程師除錯、系統重播、使用者查詢是三種不同用途，對應三種不同儲存與格式責任。
 
-| 記錄類型 | 用途 | 範例 |
-|----------|------|------|
-| structured log | 操作診斷、除錯、聚合查詢 | queue full、event rejected、worker failed |
-| domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed` |
-| state repository | 查詢目前狀態或投影 | job current status、notification summary |
+| 記錄類型         | 用途                          | 範例                                      |
+| ---------------- | ----------------------------- | ----------------------------------------- |
+| structured log   | 操作診斷、除錯、聚合查詢      | queue full、event rejected、worker failed |
+| domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed`      |
+| state repository | 查詢目前狀態或投影            | job current status、notification summary  |
 
 structured log 不應當成資料庫。event log 不應當成 debug message。state repository 不應保存所有操作細節。先分清楚用途，才知道欄位該放哪裡。
 
@@ -210,12 +208,12 @@ func (p *RecordingEventProcessor) Process(ctx context.Context, event DomainEvent
 
 常見位置：
 
-| 發生位置 | 應記錄內容 |
-|----------|------------|
-| adapter | raw input decode/normalize 失敗 |
-| router/usecase | command 被拒絕、權限不足、狀態不允許 |
-| processor | event validation、dedup、projection apply 結果 |
-| worker | queue full、外部來源失敗、重試結果 |
+| 發生位置       | 應記錄內容                                     |
+| -------------- | ---------------------------------------------- |
+| adapter        | raw input decode/normalize 失敗                |
+| router/usecase | command 被拒絕、權限不足、狀態不允許           |
+| processor      | event validation、dedup、projection apply 結果 |
+| worker         | queue full、外部來源失敗、重試結果             |
 
 例如 adapter 解碼失敗：
 

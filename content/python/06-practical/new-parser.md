@@ -5,13 +5,12 @@ description: "繼承 ABC 實作新解析器"
 weight: 3
 ---
 
-# 如何新增語言解析器
-
 本章示範如何透過繼承抽象基類來新增語言解析器。這是一個完整的實作範例，展示了前面學到的 ABC、工廠模式和型別提示等概念。
 
 ## 前置知識
 
 建議先閱讀：
+
 - [4.2 抽象基類 ABC](../../04-oop/abc/)
 - [4.3 工廠模式](../../04-oop/factory/)
 - [2.1 Type Hints 基礎](../../02-type-system/type-hints/)
@@ -324,7 +323,7 @@ if __name__ == "__main__":
 
 在 README 或相關文件中記錄新功能：
 
-```markdown
+````markdown
 ## 支援的配置格式
 
 - JSON (.json) - 內建支援
@@ -338,6 +337,7 @@ if __name__ == "__main__":
 # 或安裝第三方套件
 pip install toml
 ```
+````
 
 ### 使用範例
 
@@ -348,7 +348,8 @@ from parsers import ParserFactory
 parser = ParserFactory.create_from_file("config.toml")
 config = parser.parse_file("config.toml")
 ```
-```python
+
+````python
 
 ## 完整檢查清單
 
@@ -382,7 +383,7 @@ def __init__(self):
             "TomlParser requires 'toml' package. "
             "Install with: pip install toml"
         )
-```
+````
 
 ### Q: 如何處理不同版本的 API？
 
@@ -422,5 +423,5 @@ except toml.TomlDecodeError as e:
 
 ---
 
-*上一章：[如何擴展共用模組](../extend-lib/)*
-*回到首頁：[Python 維護工程師實戰指南](../../)*
+_上一章：[如何擴展共用模組](../extend-lib/)_
+_回到首頁：[Python 維護工程師實戰指南](../../)_

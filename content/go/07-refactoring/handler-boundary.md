@@ -5,8 +5,6 @@ description: "分離 HTTP 協定處理與核心邏輯"
 weight: 1
 ---
 
-# 把 handler 邏輯拆成可測單元
-
 handler 重構的核心目標是把 transport concern 和 application concern 分開。handler 應處理 request/response，usecase 應處理行為規則，domain 應保存狀態語意。
 
 ## 本章目標

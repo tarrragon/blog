@@ -5,8 +5,6 @@ description: "用小介面描述元件需要的能力"
 weight: 3
 ---
 
-# interface：用行為定義依賴
-
 Go 的 interface 描述的是行為，不是繼承關係。你不需要在 concrete type 上宣告「我實作了某個 interface」；只要方法集合符合，Go 就視為實作。
 
 ## 本章目標

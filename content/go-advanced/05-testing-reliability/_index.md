@@ -5,20 +5,18 @@ description: "時間控制、WebSocket integration test、race check 與 table-d
 weight: 5
 ---
 
-# 模組五：測試與可靠性
-
 並發服務測試的核心目標是讓時間、連線、goroutine、共享狀態與錯誤路徑變得可重現。只測 happy path 不足以保護長時間運行的 Go 服務；真正需要測的是取消、timeout、queue full、cleanup、data race 與協定邊界。
 
 本模組承接前面的並發、WebSocket 與架構邊界：時間注入讓狀態轉移可測，WebSocket integration test 驗證真實連線互動，race detector 檢查共享狀態，table-driven test 幫助案例保持清楚。
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-|------|------|---------|
-| [5.1](time-control/) | 時間注入與狀態轉移測試 | 不用 sleep 也能測 timeout、deadline 與狀態轉移 |
-| [5.2](websocket-integration/) | WebSocket integration test | 用真實 test server 驗證 client/server 協定 |
-| [5.3](race-check/) | race condition 檢查 | 用 `go test -race` 搭配併發測試找資料競爭 |
-| [5.4](table-tests/) | table-driven test 的設計邊界 | 讓測試表只描述單一行為維度 |
+| 章節                          | 主題                         | 關鍵收穫                                       |
+| ----------------------------- | ---------------------------- | ---------------------------------------------- |
+| [5.1](time-control/)          | 時間注入與狀態轉移測試       | 不用 sleep 也能測 timeout、deadline 與狀態轉移 |
+| [5.2](websocket-integration/) | WebSocket integration test   | 用真實 test server 驗證 client/server 協定     |
+| [5.3](race-check/)            | race condition 檢查          | 用 `go test -race` 搭配併發測試找資料競爭      |
+| [5.4](table-tests/)           | table-driven test 的設計邊界 | 讓測試表只描述單一行為維度                     |
 
 ## 本模組使用的範例主題
 

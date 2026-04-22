@@ -5,8 +5,6 @@ description: "何時捕獲、何時拋出"
 weight: 1
 ---
 
-# 異常處理策略
-
 異常處理是撰寫穩健程式碼的關鍵。本章介紹 Python 的異常處理機制，以及 Hook 系統中採用的設計策略。
 
 ## 基本語法
@@ -44,16 +42,16 @@ finally:
 
 ## 常見異常類型
 
-| 異常 | 發生時機 |
-|------|---------|
-| `FileNotFoundError` | 檔案不存在 |
-| `PermissionError` | 權限不足 |
-| `ValueError` | 值不合法 |
-| `TypeError` | 型別不正確 |
-| `KeyError` | 字典鍵不存在 |
-| `IndexError` | 索引超出範圍 |
-| `JSONDecodeError` | JSON 解析失敗 |
-| `TimeoutError` | 操作超時 |
+| 異常                | 發生時機      |
+| ------------------- | ------------- |
+| `FileNotFoundError` | 檔案不存在    |
+| `PermissionError`   | 權限不足      |
+| `ValueError`        | 值不合法      |
+| `TypeError`         | 型別不正確    |
+| `KeyError`          | 字典鍵不存在  |
+| `IndexError`        | 索引超出範圍  |
+| `JSONDecodeError`   | JSON 解析失敗 |
+| `TimeoutError`      | 操作超時      |
 
 ## 實際範例：Git 命令執行
 
@@ -114,6 +112,7 @@ def run_git_command(
 ### 為什麼不直接拋出異常？
 
 Hook 腳本需要穩定運行，即使遇到錯誤也要：
+
 1. 給出有意義的反饋
 2. 不中斷整個 Claude 工作流程
 3. 讓主程式能夠決定如何處理
@@ -316,4 +315,4 @@ def validate_hook(path: str) -> None:
 
 ---
 
-*下一章：[返回值設計](../return-values/)*
+_下一章：[返回值設計](../return-values/)_

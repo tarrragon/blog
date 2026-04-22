@@ -5,8 +5,6 @@ description: "理解 Go 的 embedding、方法提升與組合邊界"
 weight: 6
 ---
 
-# 2.6 struct embedding 與組合式設計
-
 struct embedding 的核心用途是組合既有能力。它可以讓欄位與方法被提升到外層型別，但設計重點仍然是清楚表達責任，而不是模擬繼承階層。
 
 ## 預計補充內容

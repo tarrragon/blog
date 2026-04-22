@@ -5,8 +5,6 @@ description: "用 key-value log 設計可查詢、可過濾的程式訊號"
 weight: 6
 ---
 
-# log/slog：結構化日誌
-
 `log/slog` 是 Go 標準庫提供的結構化日誌 package。它的核心用途是把 log 寫成「訊息 + key-value 欄位」，讓人類能讀，也讓工具能搜尋、過濾與聚合。
 
 ## 本章目標
@@ -53,11 +51,11 @@ JSON handler 會輸出類似：
 
 log level 的核心規則是：level 表示事件需要多少注意力，不表示程式碼所在位置。
 
-| level | 適用情境 |
-|-------|----------|
-| Debug | 開發或診斷細節 |
-| Info | 正常但重要的狀態變化 |
-| Warn | 可恢復但需要注意的異常 |
+| level | 適用情境                 |
+| ----- | ------------------------ |
+| Debug | 開發或診斷細節           |
+| Info  | 正常但重要的狀態變化     |
+| Warn  | 可恢復但需要注意的異常   |
 | Error | 操作失敗或需要處理的錯誤 |
 
 範例：
@@ -75,13 +73,13 @@ logger.Error("write file failed", "path", path, "error", err)
 
 log 欄位設計的核心規則是：同一個概念使用同一個欄位名稱，不要在不同地方混用別名。
 
-| 概念 | 建議欄位 |
-|------|----------|
-| 使用者 ID | `userID` |
+| 概念       | 建議欄位    |
+| ---------- | ----------- |
+| 使用者 ID  | `userID`    |
 | request ID | `requestID` |
-| 工作 ID | `jobID` |
-| 元件名稱 | `component` |
-| 錯誤 | `error` |
+| 工作 ID    | `jobID`     |
+| 元件名稱   | `component` |
+| 錯誤       | `error`     |
 
 不要這樣混用：
 

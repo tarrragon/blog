@@ -5,8 +5,6 @@ description: "表達時間點、時間差、timer、ticker 與 timeout"
 weight: 2
 ---
 
-# time：時間與 duration
-
 時間處理的核心規則是：時間點使用 `time.Time`，時間長度使用 `time.Duration`。本章將說明 now、parse、format、duration、timer 與 ticker 的基本用法。
 
 ## `time.Time` 表示時間點
@@ -22,7 +20,7 @@ fmt.Println(now)
 
 ```go
 func isExpired(now time.Time, deadline time.Time) bool {
-	return now.After(deadline)
+    return now.After(deadline)
 }
 ```
 
@@ -70,7 +68,7 @@ fmt.Println(elapsed)
 ```go
 remaining := time.Until(deadline)
 if remaining <= 0 {
-	fmt.Println("expired")
+    fmt.Println("expired")
 }
 ```
 
@@ -96,7 +94,7 @@ input := "2026-04-22 09:30:00"
 
 createdAt, err := time.Parse("2006-01-02 15:04:05", input)
 if err != nil {
-	return err
+    return err
 }
 
 fmt.Println(createdAt)
@@ -114,7 +112,7 @@ defer timer.Stop()
 
 select {
 case <-timer.C:
-	fmt.Println("timeout")
+    fmt.Println("timeout")
 }
 ```
 
@@ -125,7 +123,7 @@ case <-timer.C:
 ```go
 select {
 case <-time.After(2 * time.Second):
-	fmt.Println("timeout")
+    fmt.Println("timeout")
 }
 ```
 
@@ -140,8 +138,8 @@ ticker := time.NewTicker(1 * time.Second)
 defer ticker.Stop()
 
 for i := 0; i < 3; i++ {
-	<-ticker.C
-	fmt.Println("tick")
+    <-ticker.C
+    fmt.Println("tick")
 }
 ```
 
@@ -151,17 +149,17 @@ for i := 0; i < 3; i++ {
 
 ```go
 func run(ctx context.Context) {
-	ticker := time.NewTicker(1 * time.Second)
-	defer ticker.Stop()
+    ticker := time.NewTicker(1 * time.Second)
+    defer ticker.Stop()
 
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case <-ticker.C:
-			fmt.Println("work")
-		}
-	}
+    for {
+        select {
+        case <-ctx.Done():
+            return
+        case <-ticker.C:
+            fmt.Println("work")
+        }
+    }
 }
 ```
 

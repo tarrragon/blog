@@ -5,8 +5,6 @@ description: "用 go run、go test、go fmt、go mod tidy 建立 Go 專案的基
 weight: 8
 ---
 
-# 1.8 Go tooling 與日常開發流程
-
 Go tooling 的核心價值是讓日常開發流程標準化。`go run`、`go test`、`go fmt`、`go mod tidy`、`go build` 是 Go 專案最基本的協作語言。
 
 ## 預計補充內容

@@ -5,8 +5,6 @@ description: "用標準庫讀取設定，並把外部輸入轉成 config struct"
 weight: 9
 ---
 
-# 3.9 flag、os/env 與設定邊界
-
 設定讀取的核心責任是把外部字串轉成程式內部的 typed config。環境變數、命令列 flag、設定檔與預設值都只是輸入來源；application 應依賴已驗證的 config struct。
 
 ## 預計補充內容

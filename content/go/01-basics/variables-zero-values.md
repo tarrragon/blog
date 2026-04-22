@@ -5,8 +5,6 @@ description: "理解 Go 如何宣告、初始化與使用零值"
 weight: 2
 ---
 
-# 變數、零值與短變數宣告
-
 Go 變數宣告的核心規則是：每個變數都有明確型別，未指定初始值時會得到該型別的零值。本章將說明 `var`、`:=`、型別推斷與零值如何讓 Go 程式保持可預測。
 
 ## 變數一定有型別
@@ -51,15 +49,15 @@ fmt.Println(tags == nil) // true
 
 ```go
 type Counter struct {
-	value int
+    value int
 }
 
 func (c *Counter) Add(n int) {
-	c.value += n
+    c.value += n
 }
 
 func (c Counter) Value() int {
-	return c.value
+    return c.value
 }
 
 var counter Counter
@@ -77,9 +75,9 @@ fmt.Println(counter.Value()) // 3
 var userID string
 
 if fromHeader != "" {
-	userID = fromHeader
+    userID = fromHeader
 } else {
-	userID = fromCookie
+    userID = fromCookie
 }
 ```
 
@@ -100,8 +98,8 @@ package 層級變數會增加全域狀態，使用前要先確認它是否真的
 
 ```go
 func greeting(name string) string {
-	message := "hello, " + name
-	return message
+    message := "hello, " + name
+    return message
 }
 ```
 
@@ -119,12 +117,12 @@ func greeting(name string) string {
 ```go
 data, err := loadFile("config.json")
 if err != nil {
-	return err
+    return err
 }
 
 config, err := parseConfig(data) // config 是新變數，err 是重新指派
 if err != nil {
-	return err
+    return err
 }
 ```
 
@@ -178,7 +176,7 @@ scores["alice"] = 10
 
 ```go
 for i, item := range items {
-	fmt.Println(i, item)
+    fmt.Println(i, item)
 }
 ```
 

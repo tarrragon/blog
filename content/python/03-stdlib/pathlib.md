@@ -5,8 +5,6 @@ description: "物件導向的路徑處理"
 weight: 1
 ---
 
-# pathlib - 路徑操作
-
 `pathlib` 是 Python 3.4+ 引入的現代路徑處理模組，提供物件導向的 API 來處理檔案系統路徑。在 Hook 系統中，幾乎每個檔案都使用 `pathlib`。
 
 ## 為什麼使用 pathlib？
@@ -324,4 +322,4 @@ def safe_read_file(path: Path) -> Optional[str]:
 
 ---
 
-*下一章：[json - 序列化](../json/)*
+_下一章：[json - 序列化](../json/)_

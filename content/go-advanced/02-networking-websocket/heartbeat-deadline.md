@@ -5,8 +5,6 @@ description: "用 ping/pong 和 deadline 偵測失效連線"
 weight: 2
 ---
 
-# heartbeat、deadline 與連線清理
-
 Heartbeat 的核心目標是讓失效的長連線可以被發現並清理。Deadline 定義讀寫最多能停滯多久，ping/pong 在沒有業務訊息時確認連線仍然活著，unregister 流程負責釋放連線與訂閱狀態。
 
 ## 本章目標
@@ -47,12 +45,12 @@ const (
 )
 ```
 
-| 參數 | 角色 | 常見關係 |
-|------|------|----------|
-| `writeWait` | 單次寫入最多等待多久 | 小於 `pongWait` |
-| `pongWait` | 多久沒讀到資料就視為失效 | 大於 `pingPeriod` |
-| `pingPeriod` | 多久主動送一次 ping | 小於 `pongWait` |
-| `maxMessage` | 單筆 client message 大小上限 | 依協定需求設定 |
+| 參數         | 角色                         | 常見關係          |
+| ------------ | ---------------------------- | ----------------- |
+| `writeWait`  | 單次寫入最多等待多久         | 小於 `pongWait`   |
+| `pongWait`   | 多久沒讀到資料就視為失效     | 大於 `pingPeriod` |
+| `pingPeriod` | 多久主動送一次 ping          | 小於 `pongWait`   |
+| `maxMessage` | 單筆 client message 大小上限 | 依協定需求設定    |
 
 `pingPeriod` 應小於 `pongWait`，讓 server 有時間送 ping 並等待 client 回 pong。`writeWait` 保護每次寫入，避免 write pump 無限卡住。
 

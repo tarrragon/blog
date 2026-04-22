@@ -5,8 +5,6 @@ description: "用表格整理多組輸入、預期輸出與錯誤情境"
 weight: 3
 ---
 
-# table-driven test
-
 table-driven test 的核心規則是：同一個行為的多組案例放進表格，測試流程只寫一次。本章將說明如何設計案例欄位、命名子測試，並避免把太多不同行為塞進同一張表。
 
 ## table-driven test 解決重複案例
@@ -15,8 +13,8 @@ table-driven test 的核心目標是把「案例資料」和「測試流程」�
 
 ```go
 func NormalizeName(input string) string {
-	input = strings.TrimSpace(input)
-	return strings.ToLower(input)
+    input = strings.TrimSpace(input)
+    return strings.ToLower(input)
 }
 ```
 
@@ -24,24 +22,24 @@ func NormalizeName(input string) string {
 
 ```go
 func TestNormalizeName(t *testing.T) {
-	tests := []struct {
-		name  string
-		input string
-		want  string
-	}{
-		{name: "lowercase", input: "alice", want: "alice"},
-		{name: "trim spaces", input: "  Alice  ", want: "alice"},
-		{name: "empty", input: "", want: ""},
-	}
+    tests := []struct {
+        name  string
+        input string
+        want  string
+    }{
+        {name: "lowercase", input: "alice", want: "alice"},
+        {name: "trim spaces", input: "  Alice  ", want: "alice"},
+        {name: "empty", input: "", want: ""},
+    }
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := NormalizeName(tt.input)
-			if got != tt.want {
-				t.Fatalf("NormalizeName(%q) = %q, want %q", tt.input, got, tt.want)
-			}
-		})
-	}
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got := NormalizeName(tt.input)
+            if got != tt.want {
+                t.Fatalf("NormalizeName(%q) = %q, want %q", tt.input, got, tt.want)
+            }
+        })
+    }
 }
 ```
 
@@ -53,14 +51,14 @@ func TestNormalizeName(t *testing.T) {
 
 ```go
 tests := []struct {
-	name    string
-	input   string
-	want    int
-	wantErr bool
+    name    string
+    input   string
+    want    int
+    wantErr bool
 }{
-	{name: "valid", input: "8080", want: 8080},
-	{name: "not number", input: "abc", wantErr: true},
-	{name: "zero", input: "0", wantErr: true},
+    {name: "valid", input: "8080", want: 8080},
+    {name: "not number", input: "abc", wantErr: true},
+    {name: "zero", input: "0", wantErr: true},
 }
 ```
 
@@ -68,23 +66,23 @@ tests := []struct {
 
 ```go
 for _, tt := range tests {
-	t.Run(tt.name, func(t *testing.T) {
-		got, err := ParsePort(tt.input)
-		if tt.wantErr {
-			if err == nil {
-				t.Fatalf("ParsePort(%q) error = nil, want error", tt.input)
-			}
-			return
-		}
+    t.Run(tt.name, func(t *testing.T) {
+        got, err := ParsePort(tt.input)
+        if tt.wantErr {
+            if err == nil {
+                t.Fatalf("ParsePort(%q) error = nil, want error", tt.input)
+            }
+            return
+        }
 
-		if err != nil {
-			t.Fatalf("ParsePort(%q) error = %v", tt.input, err)
-		}
+        if err != nil {
+            t.Fatalf("ParsePort(%q) error = %v", tt.input, err)
+        }
 
-		if got != tt.want {
-			t.Fatalf("ParsePort(%q) = %d, want %d", tt.input, got, tt.want)
-		}
-	})
+        if got != tt.want {
+            t.Fatalf("ParsePort(%q) = %d, want %d", tt.input, got, tt.want)
+        }
+    })
 }
 ```
 
@@ -96,7 +94,7 @@ for _, tt := range tests {
 
 ```go
 t.Run(tt.name, func(t *testing.T) {
-	// case assertion
+    // case assertion
 })
 ```
 
@@ -104,12 +102,12 @@ t.Run(tt.name, func(t *testing.T) {
 
 ```go
 tests := []struct {
-	name  string
-	input string
-	want  string
+    name  string
+    input string
+    want  string
 }{
-	{name: "trim spaces", input: "  Alice  ", want: "alice"},
-	{name: "preserve hyphen", input: "Mary-Jane", want: "mary-jane"},
+    {name: "trim spaces", input: "  Alice  ", want: "alice"},
+    {name: "preserve hyphen", input: "Mary-Jane", want: "mary-jane"},
 }
 ```
 
@@ -121,11 +119,11 @@ table-driven test 的邊界是「同一個測試流程是否能自然描述所�
 
 ```go
 func TestParsePort(t *testing.T) {
-	// 測 ParsePort 的輸入輸出規則
+    // 測 ParsePort 的輸入輸出規則
 }
 
 func TestLoadConfig(t *testing.T) {
-	// 測 LoadConfig 的檔案讀取與解析流程
+    // 測 LoadConfig 的檔案讀取與解析流程
 }
 ```
 
@@ -139,16 +137,16 @@ func TestLoadConfig(t *testing.T) {
 
 ```go
 func SplitCSV(input string) []string {
-	if input == "" {
-		return nil
-	}
+    if input == "" {
+        return nil
+    }
 
-	parts := strings.Split(input, ",")
-	for i := range parts {
-		parts[i] = strings.TrimSpace(parts[i])
-	}
+    parts := strings.Split(input, ",")
+    for i := range parts {
+        parts[i] = strings.TrimSpace(parts[i])
+    }
 
-	return parts
+    return parts
 }
 ```
 
@@ -156,23 +154,23 @@ func SplitCSV(input string) []string {
 
 ```go
 func TestSplitCSV(t *testing.T) {
-	tests := []struct {
-		name  string
-		input string
-		want  []string
-	}{
-		{name: "empty", input: "", want: nil},
-		{name: "two values", input: "a, b", want: []string{"a", "b"}},
-	}
+    tests := []struct {
+        name  string
+        input string
+        want  []string
+    }{
+        {name: "empty", input: "", want: nil},
+        {name: "two values", input: "a, b", want: []string{"a", "b"}},
+    }
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := SplitCSV(tt.input)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Fatalf("SplitCSV(%q) = %#v, want %#v", tt.input, got, tt.want)
-			}
-		})
-	}
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got := SplitCSV(tt.input)
+            if !reflect.DeepEqual(got, tt.want) {
+                t.Fatalf("SplitCSV(%q) = %#v, want %#v", tt.input, got, tt.want)
+            }
+        })
+    }
 }
 ```
 

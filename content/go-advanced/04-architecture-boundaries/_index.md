@@ -5,8 +5,6 @@ description: "用事件驅動架構拆解事件來源、處理流程、狀態邊
 weight: 4
 ---
 
-# 模組四：架構邊界與事件系統
-
 架構邊界的核心目標是讓每個元件只承擔一種責任。事件來源負責接收外部訊號，normalize 階段負責轉成內部事件，processor 負責套用規則，repository 負責保存狀態真相，publisher 負責把結果送出去。
 
 事件驅動不是把所有東西都丟進 channel。Go 的事件系統需要明確的型別、清楚的擁有者、可測的狀態轉移，以及能在多來源輸入下維持一致的處理流程。
@@ -15,12 +13,12 @@ weight: 4
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-|------|------|---------|
+| 章節                         | 主題                         | 關鍵收穫                                                        |
+| ---------------------------- | ---------------------------- | --------------------------------------------------------------- |
 | [4.1](component-boundaries/) | 事件來源、處理流程與狀態邊界 | 用邊界拆開 reader、normalizer、processor、repository、publisher |
-| [4.2](dedup-key/) | 事件去重與語義鍵設計 | 用 domain key、時間窗口與清理策略管理重複事件 |
-| [4.3](source-of-truth/) | Source of Truth：狀態邊界 | 集中狀態轉移、保護可變資料、設計 projection |
-| [4.4](event-fusion/) | 多來源 event 融合 | 把 HTTP、queue、timer 等來源收斂到同一套 domain event 流程 |
+| [4.2](dedup-key/)            | 事件去重與語義鍵設計         | 用 domain key、時間窗口與清理策略管理重複事件                   |
+| [4.3](source-of-truth/)      | Source of Truth：狀態邊界    | 集中狀態轉移、保護可變資料、設計 projection                     |
+| [4.4](event-fusion/)         | 多來源 event 融合            | 把 HTTP、queue、timer 等來源收斂到同一套 domain event 流程      |
 
 ## 本模組使用的範例主題
 

@@ -5,8 +5,6 @@ description: "用 lock 與 copy 保護長期服務的狀態資料"
 weight: 4
 ---
 
-# 共享狀態與複製邊界
-
 共享狀態的核心規則是同一份可變資料若會被多個 goroutine 存取，就必須有明確 owner 與保護邊界。Map 需要同步，slice 回傳前通常要 copy，可變指標不能隨意暴露，修改行為應集中在擁有狀態的型別內。
 
 ## 本章目標
@@ -246,10 +244,10 @@ func (r *UserRepository) UpdateEmail(ctx context.Context, id string, email strin
 
 狀態保護的核心選擇是 mutex owner 或 goroutine owner。兩者都符合 Go 的精神，差異在資料存取模式。
 
-| 方法 | 適用情境 | 代價 |
-|------|----------|------|
-| mutex owner | 多個方法需要同步讀寫狀態 | 要維護 lock 與 copy boundary |
-| goroutine owner | 所有修改都能表示成訊息 | 要設計 command、reply、shutdown |
+| 方法            | 適用情境                 | 代價                            |
+| --------------- | ------------------------ | ------------------------------- |
+| mutex owner     | 多個方法需要同步讀寫狀態 | 要維護 lock 與 copy boundary    |
+| goroutine owner | 所有修改都能表示成訊息   | 要設計 command、reply、shutdown |
 
 Mutex 版本：
 

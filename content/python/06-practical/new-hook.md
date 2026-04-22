@@ -5,13 +5,12 @@ description: "完整的 Hook 開發流程"
 weight: 1
 ---
 
-# 如何新增一個 Hook
-
 本章介紹如何從零開始建立一個 Claude Code Hook 腳本。這是一個實戰指南，整合了前面學到的所有概念。
 
 ## 前置知識
 
 建議先閱讀：
+
 - [3.2 json 序列化](../../03-stdlib/json/)
 - [3.5 logging 日誌系統](../../03-stdlib/logging/)
 - [4.1 類別設計原則](../../04-oop/class-design/)
@@ -20,6 +19,7 @@ weight: 1
 ## Hook 系統概述
 
 Claude Code Hook 是在特定事件發生時執行的腳本，例如：
+
 - `SessionStart` - 會話開始
 - `Stop` - Claude 主動結束
 - `PreToolUse` - 工具使用前
@@ -500,5 +500,5 @@ tail -f .claude/hook-logs/my_hook.log
 
 ---
 
-*下一章：[如何擴展共用模組](../extend-lib/)*
-*回到首頁：[Python 維護工程師實戰指南](../../)*
+_下一章：[如何擴展共用模組](../extend-lib/)_
+_回到首頁：[Python 維護工程師實戰指南](../../)_

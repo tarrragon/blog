@@ -5,8 +5,6 @@ description: "集中狀態更新、保護可變資料、設計查詢 projection"
 weight: 3
 ---
 
-# Source of Truth：狀態邊界
-
 Source of truth 的核心原則是系統中只有一個地方負責判定目前狀態。其他元件可以請求更新、讀取快照或訂閱變化，但不能各自保存一份會被當成真相的資料。
 
 ## 本章目標
@@ -129,12 +127,12 @@ func transition(current AccountState, event DomainEvent) (AccountState, error) {
 
 狀態資料的核心分類是 internal state、history 與 projection。三者用途不同，不應混成同一個 struct 到處傳。
 
-| 類型 | 角色 | 範例 |
-|------|------|------|
-| internal state | 系統判斷真相的資料 | `AccountState` |
-| history | 狀態變化紀錄 | `[]AccountState` |
-| projection | 查詢或 UI 需要的讀取模型 | `AccountSummary` |
-| response view | 特定 API 的輸出格式 | `accountResponse` |
+| 類型           | 角色                     | 範例              |
+| -------------- | ------------------------ | ----------------- |
+| internal state | 系統判斷真相的資料       | `AccountState`    |
+| history        | 狀態變化紀錄             | `[]AccountState`  |
+| projection     | 查詢或 UI 需要的讀取模型 | `AccountSummary`  |
+| response view  | 特定 API 的輸出格式      | `accountResponse` |
 
 projection 可以從 state 與 history 組出來，但 projection 不應反過來成為狀態真相。API 需要新增欄位時，優先新增 response view 或 projection，不要直接污染 internal state。
 

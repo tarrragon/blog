@@ -5,8 +5,6 @@ description: "掌握 Go 最常用的集合型別：slice 與 map"
 weight: 2
 ---
 
-# slice 與 map
-
 slice 和 map 是 Go 最常用的集合型別。slice 表達有順序的資料列表，map 表達 key-value 查詢表。理解它們的行為，是寫出可靠 Go 程式的基本功。
 
 ## 本章目標

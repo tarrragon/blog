@@ -5,8 +5,6 @@ description: "驗證 client/server 實際互動"
 weight: 2
 ---
 
-# WebSocket integration test
-
 WebSocket integration test 的核心目標是驗證 client 與 server 透過真實連線互動後，協定行為是否正確。它比單元測試慢，但能覆蓋 HTTP upgrade、read/write pump、router、server message、push flow 與 cleanup。
 
 ## 本章目標
@@ -42,11 +40,11 @@ Integration test 的核心責任是覆蓋協定流程，不是取代所有規則
 
 建議分工：
 
-| 測試類型 | 負責內容 |
-|----------|----------|
-| unit test | router、payload validation、subscription state、TrySend |
+| 測試類型         | 負責內容                                                 |
+| ---------------- | -------------------------------------------------------- |
+| unit test        | router、payload validation、subscription state、TrySend  |
 | integration test | dial、upgrade、read/write pump、server response、cleanup |
-| race test | hub、client state、repository 的並發存取 |
+| race test        | hub、client state、repository 的並發存取                 |
 
 如果每個 validation case 都啟動 WebSocket server，測試會變慢且失敗定位不清楚。Integration test 應少量、關鍵、穩定。
 

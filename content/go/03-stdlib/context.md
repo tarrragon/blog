@@ -5,8 +5,6 @@ description: "用 context 傳遞取消、逾時與請求生命週期"
 weight: 7
 ---
 
-# context：取消、關閉與生命週期
-
 `context.Context` 是 Go 用來傳遞取消訊號、逾時與 request-scoped 資訊的標準機制。它的核心用途不是保存任意資料，而是讓一串呼叫知道「這件工作是否應該停止」。
 
 ## 本章目標
@@ -113,10 +111,10 @@ func worker(ctx context.Context, jobs <-chan Job) {
 
 這個 worker 有兩種退出路徑：
 
-| 退出原因 | 對應 case |
-|----------|-----------|
-| 上層取消 | `<-ctx.Done()` |
-| job channel 關閉 | `ok == false` |
+| 退出原因         | 對應 case      |
+| ---------------- | -------------- |
+| 上層取消         | `<-ctx.Done()` |
+| job channel 關閉 | `ok == false`  |
 
 這比讓 goroutine 無限跑更安全，也比較容易測試。
 

@@ -5,8 +5,6 @@ description: "理解 Python 程式如何從單一 .py 檔案長成 module、pack
 weight: 2
 ---
 
-# 從單一 script 到多檔案專案
-
 Python 程式變大的第一個斷點通常不是物件導向或架構分層，而是執行方式與 import 邊界。初學者常從一個 `script.py` 開始，接著拆出 helper module，最後才整理成 package；每一步都會改變程式如何被執行、如何 import，以及測試如何找到程式碼。
 
 > 撰寫提示：本章先保留大綱，詳細內容之後補。補寫時請使用中立範例，例如 `notify.py`、`config.py`、`parser.py`、`service.py`，避免綁定特定專案或 Hook 系統細節。
@@ -147,14 +145,14 @@ notify/
 
 Python 和 Go 在這個主題上的差異應明確說清楚：
 
-| 主題 | Python | Go |
-|------|--------|----|
-| 最小單位 | `.py` module | package |
-| 單檔起點 | 任意 script | `package main` + `func main()` |
-| 可見性 | `_name` 慣例，runtime 不強制 | 大小寫由編譯器強制 |
-| import 問題 | 受 `sys.path`、執行方式、安裝方式影響 | 受 `go.mod`、module path、package 邊界影響 |
-| 循環依賴 | runtime 才可能爆 partially initialized module | 編譯期拒絕 import cycle |
-| 正式專案 | `pyproject.toml`、package、`src/` layout | `go.mod`、package、`cmd/`、`internal/` |
+| 主題        | Python                                        | Go                                         |
+| ----------- | --------------------------------------------- | ------------------------------------------ |
+| 最小單位    | `.py` module                                  | package                                    |
+| 單檔起點    | 任意 script                                   | `package main` + `func main()`             |
+| 可見性      | `_name` 慣例，runtime 不強制                  | 大小寫由編譯器強制                         |
+| import 問題 | 受 `sys.path`、執行方式、安裝方式影響         | 受 `go.mod`、module path、package 邊界影響 |
+| 循環依賴    | runtime 才可能爆 partially initialized module | 編譯期拒絕 import cycle                    |
+| 正式專案    | `pyproject.toml`、package、`src/` layout      | `go.mod`、package、`cmd/`、`internal/`     |
 
 ## 本章不處理
 

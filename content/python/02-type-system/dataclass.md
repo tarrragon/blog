@@ -5,8 +5,6 @@ description: "快速定義資料類別"
 weight: 3
 ---
 
-# Dataclass 資料結構
-
 `dataclass` 是 Python 3.7+ 引入的裝飾器，用於快速建立主要用於存放資料的類別。它自動產生 `__init__`、`__repr__` 等方法，減少樣板程式碼。
 
 ## 為什麼使用 Dataclass？
@@ -48,6 +46,7 @@ class ValidationIssue:
 ```
 
 自動產生：
+
 - `__init__`
 - `__repr__`
 - `__eq__`
@@ -141,16 +140,16 @@ class ValidationResult:
 
 ### field() 參數
 
-| 參數 | 說明 | 預設值 |
-|------|------|--------|
-| `default` | 預設值 | 無 |
-| `default_factory` | 產生預設值的函式 | 無 |
-| `repr` | 是否包含在 `__repr__` | True |
-| `compare` | 是否包含在比較中 | True |
-| `hash` | 是否包含在 hash 中 | None |
-| `init` | 是否包含在 `__init__` | True |
+| 參數              | 說明                  | 預設值 |
+| ----------------- | --------------------- | ------ |
+| `default`         | 預設值                | 無     |
+| `default_factory` | 產生預設值的函式      | 無     |
+| `repr`            | 是否包含在 `__repr__` | True   |
+| `compare`         | 是否包含在比較中      | True   |
+| `hash`            | 是否包含在 hash 中    | None   |
+| `init`            | 是否包含在 `__init__` | True   |
 
-## __post_init__
+## **post_init**
 
 在 `__init__` 完成後執行，用於衍生欄位計算：
 
@@ -269,12 +268,12 @@ print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
 
 ## 與 TypedDict 的比較
 
-| 特性 | dataclass | TypedDict |
-|------|-----------|-----------|
-| 用途 | 資料物件 | 字典型別提示 |
-| 執行時驗證 | 有（可選） | 無 |
-| 方法 | 可以定義 | 不能定義 |
-| 輸出 | 物件 | 字典 |
+| 特性       | dataclass  | TypedDict    |
+| ---------- | ---------- | ------------ |
+| 用途       | 資料物件   | 字典型別提示 |
+| 執行時驗證 | 有（可選） | 無           |
+| 方法       | 可以定義   | 不能定義     |
+| 輸出       | 物件       | 字典         |
 
 ```python
 from typing import TypedDict
@@ -319,7 +318,7 @@ class Container:
     # items: List[str] = []  # 錯誤！
 ```
 
-### 3. 善用 __post_init__
+### 3. 善用 **post_init**
 
 ```python
 @dataclass
@@ -345,5 +344,5 @@ class Result:
 
 ---
 
-*上一章：[Optional、Union、泛型](../optional-union/)*
-*下一章：[Enum 列舉型別](../enum/)*
+_上一章：[Optional、Union、泛型](../optional-union/)_
+_下一章：[Enum 列舉型別](../enum/)_

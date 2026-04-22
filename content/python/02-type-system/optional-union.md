@@ -5,8 +5,6 @@ description: "處理可能為 None 的值和複合型別"
 weight: 2
 ---
 
-# Optional、Union、泛型
-
 當函式的參數或返回值可能是多種型別時，我們需要使用 `Optional`、`Union` 或泛型來表達。這些工具讓型別提示更加精確。
 
 ## Optional
@@ -305,6 +303,7 @@ def parse_json(text: str) -> dict[str, Any]:
 ## 實作練習
 
 1. 為以下函式添加型別提示：
+
    ```python
    def get_value(data, key, default=None):
        return data.get(key, default)
@@ -320,5 +319,5 @@ def parse_json(text: str) -> dict[str, Any]:
 
 ---
 
-*上一章：[Type Hints 基礎](../type-hints/)*
-*下一章：[Dataclass 資料結構](../dataclass/)*
+_上一章：[Type Hints 基礎](../type-hints/)_
+_下一章：[Dataclass 資料結構](../dataclass/)_

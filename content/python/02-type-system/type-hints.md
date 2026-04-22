@@ -5,8 +5,6 @@ description: "為函式添加型別註解，提升程式碼可讀性"
 weight: 1
 ---
 
-# Type Hints 基礎
-
 Python 3.5 引入了型別提示（Type Hints），讓你可以為變數和函式添加型別註解。型別提示不會影響執行，但能大幅提升程式碼的可讀性和 IDE 的智慧提示功能。
 
 ## 為什麼需要型別提示？
@@ -96,12 +94,12 @@ def run_git_command(
 
 分析這個函式的型別提示：
 
-| 參數 | 型別 | 說明 |
-|------|------|------|
-| `args` | `list[str]` | 字串列表 |
-| `cwd` | `Optional[str]` | 可選字串，可以是 None |
-| `timeout` | `int` | 整數，有預設值 |
-| 返回值 | `tuple[bool, str]` | 布林和字串組成的元組 |
+| 參數      | 型別               | 說明                  |
+| --------- | ------------------ | --------------------- |
+| `args`    | `list[str]`        | 字串列表              |
+| `cwd`     | `Optional[str]`    | 可選字串，可以是 None |
+| `timeout` | `int`              | 整數，有預設值        |
+| 返回值    | `tuple[bool, str]` | 布林和字串組成的元組  |
 
 ## 容器型別
 
@@ -237,6 +235,7 @@ mypy .claude/lib/
 ### IDE 整合
 
 現代 IDE（VS Code、PyCharm）會自動利用型別提示：
+
 - 自動完成更準確
 - 型別錯誤即時提示
 - 重構更安全
@@ -273,6 +272,7 @@ MyStr = str  # 這有什麼意義？
 ### 3. 逐步添加型別提示
 
 不需要一次為所有程式碼添加型別提示，可以從以下開始：
+
 - 公開 API
 - 複雜函式
 - 經常被呼叫的函式
@@ -303,4 +303,4 @@ def merge_dicts(dict1, dict2):
 
 ---
 
-*下一章：[Optional、Union、泛型](../optional-union/)*
+_下一章：[Optional、Union、泛型](../optional-union/)_

@@ -5,8 +5,6 @@ description: "分析列表、歷史資料與 WebSocket payload 的配置成本"
 weight: 4
 ---
 
-# 資料結構與 allocation 壓力
-
 Allocation 分析的核心目標是區分必要的安全複製與可優化的重複配置。Go 服務中很多配置來自 slice 成長、map/list 複製、JSON marshal、buffer 建立與 WebSocket payload；優化前要先確認配置是否位於熱路徑，且不能破壞狀態邊界。
 
 ## 本章目標
@@ -92,12 +90,12 @@ func (r *UserRepository) ListUsers(ctx context.Context) ([]User, error) {
 
 可選策略：
 
-| 策略 | 適用情境 | 代價 |
-|------|----------|------|
-| 分頁 | 使用者只需要部分資料 | API 需要 cursor 或 offset |
-| projection | 只需要摘要欄位 | 要維護讀取模型 |
-| snapshot cache | 讀多寫少 | 要處理快取失效 |
-| incremental update | WebSocket 推送最新變化 | client 要能合併狀態 |
+| 策略               | 適用情境               | 代價                      |
+| ------------------ | ---------------------- | ------------------------- |
+| 分頁               | 使用者只需要部分資料   | API 需要 cursor 或 offset |
+| projection         | 只需要摘要欄位         | 要維護讀取模型            |
+| snapshot cache     | 讀多寫少               | 要處理快取失效            |
+| incremental update | WebSocket 推送最新變化 | client 要能合併狀態       |
 
 優化資料形狀通常比取消 copy 更安全。Copy boundary 保護正確性，資料形狀決定每次 copy 的成本。
 
@@ -200,10 +198,10 @@ go tool pprof http://localhost:8080/debug/pprof/heap
 go tool pprof -alloc_space http://localhost:8080/debug/pprof/heap
 ```
 
-| 指標 | 問題 | 常見修正 |
-|------|------|----------|
-| `inuse_space` 高 | 現在誰保留記憶體 | cache 淘汰、釋放引用、限制 buffer |
-| `alloc_space` 高 | 誰累積配置最多 | 預配置、重用、減少 marshal、改資料形狀 |
+| 指標             | 問題             | 常見修正                               |
+| ---------------- | ---------------- | -------------------------------------- |
+| `inuse_space` 高 | 現在誰保留記憶體 | cache 淘汰、釋放引用、限制 buffer      |
+| `alloc_space` 高 | 誰累積配置最多   | 預配置、重用、減少 marshal、改資料形狀 |
 
 若 `alloc_space` 高但 `inuse_space` 不高，代表配置很多但大多被回收，問題可能是 GC 壓力。若 `inuse_space` 持續上升，代表資料被長期保留，應檢查 cache、map、slice、goroutine reference 或 send buffer。
 

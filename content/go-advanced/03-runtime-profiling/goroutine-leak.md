@@ -5,8 +5,6 @@ description: "判斷背景工作與 client pump 是否正確退出"
 weight: 3
 ---
 
-# goroutine leak 偵測
-
 Goroutine leak 偵測的核心目標是確認已經沒有存在價值的 goroutine 能被停止。它通常不是語法問題，而是生命週期問題：誰取消、誰 close、誰解除 I/O 阻塞、誰停止 ticker。
 
 ## 本章目標
@@ -172,13 +170,13 @@ curl "http://localhost:8080/debug/pprof/goroutine?debug=2"
 
 常見 pattern：
 
-| stack 類型 | 可能原因 | 回到哪個邊界 |
-|------------|----------|--------------|
-| channel receive | 上游不會再送，也沒 close/context | channel ownership |
-| channel send | 下游不再接收或 buffer 滿 | backpressure / unregister |
-| network read | 沒有 deadline 或 connection 未 close | heartbeat / I/O lifecycle |
-| ticker loop | context 沒接上或 ticker 未 stop | select loop lifecycle |
-| mutex lock | 鎖競爭或死鎖 | shared state owner |
+| stack 類型      | 可能原因                             | 回到哪個邊界              |
+| --------------- | ------------------------------------ | ------------------------- |
+| channel receive | 上游不會再送，也沒 close/context     | channel ownership         |
+| channel send    | 下游不再接收或 buffer 滿             | backpressure / unregister |
+| network read    | 沒有 deadline 或 connection 未 close | heartbeat / I/O lifecycle |
+| ticker loop     | context 沒接上或 ticker 未 stop      | select loop lifecycle     |
+| mutex lock      | 鎖競爭或死鎖                         | shared state owner        |
 
 看到 stack 後，下一步不是只殺 goroutine，而是回到對應 lifecycle 設計：誰負責停止，誰負責釋放阻塞點。
 

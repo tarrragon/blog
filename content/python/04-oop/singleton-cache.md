@@ -5,8 +5,6 @@ description: "控制物件生命週期"
 weight: 4
 ---
 
-# 單例與快取模式
-
 在某些情況下，我們需要控制物件的建立次數或快取計算結果以提升效能。本章介紹 Hook 系統中使用的快取模式。
 
 ## 模組級快取
@@ -244,7 +242,7 @@ db2 = Database()  # 不印出（返回同一個實例）
 db1 is db2  # True
 ```
 
-### 使用 __new__
+### 使用 **new**
 
 ```python
 class Singleton:
@@ -405,5 +403,5 @@ def load_config() -> dict:
 
 ---
 
-*上一章：[工廠模式](../factory/)*
-*下一模組：[錯誤處理與測試](../../05-error-testing/)*
+_上一章：[工廠模式](../factory/)_
+_下一模組：[錯誤處理與測試](../../05-error-testing/)_

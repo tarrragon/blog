@@ -5,8 +5,6 @@ description: "用 httptest 驗證 request 與 response"
 weight: 4
 ---
 
-# HTTP handler 測試
-
 HTTP handler 測試的核心規則是不用啟動真實 server，也能驗證 request 進入 handler 後產生的 response。`net/http/httptest` 提供 request builder 與 response recorder，讓 handler 可以像普通函式一樣被測試。
 
 ## `httptest` 把 HTTP 測試變成函式呼叫
@@ -15,13 +13,13 @@ HTTP handler 測試的核心規則是不用啟動真實 server，也能驗證 re
 
 ```go
 func handleHealth(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+    if r.Method != http.MethodGet {
+        http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, `{"status":"ok"}`)
+    w.Header().Set("Content-Type", "application/json")
+    fmt.Fprint(w, `{"status":"ok"}`)
 }
 ```
 
@@ -29,17 +27,17 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 
 ```go
 func TestHandleHealth(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/health", nil)
-	rec := httptest.NewRecorder()
+    req := httptest.NewRequest(http.MethodGet, "/health", nil)
+    rec := httptest.NewRecorder()
 
-	handleHealth(rec, req)
+    handleHealth(rec, req)
 
-	res := rec.Result()
-	defer res.Body.Close()
+    res := rec.Result()
+    defer res.Body.Close()
 
-	if res.StatusCode != http.StatusOK {
-		t.Fatalf("status = %d, want %d", res.StatusCode, http.StatusOK)
-	}
+    if res.StatusCode != http.StatusOK {
+        t.Fatalf("status = %d, want %d", res.StatusCode, http.StatusOK)
+    }
 }
 ```
 
@@ -51,14 +49,14 @@ HTTP response 的核心合約通常先看 status code。成功、輸入錯誤、
 
 ```go
 func TestHandleHealthMethodNotAllowed(t *testing.T) {
-	req := httptest.NewRequest(http.MethodPost, "/health", nil)
-	rec := httptest.NewRecorder()
+    req := httptest.NewRequest(http.MethodPost, "/health", nil)
+    rec := httptest.NewRecorder()
 
-	handleHealth(rec, req)
+    handleHealth(rec, req)
 
-	if rec.Code != http.StatusMethodNotAllowed {
-		t.Fatalf("status = %d, want %d", rec.Code, http.StatusMethodNotAllowed)
-	}
+    if rec.Code != http.StatusMethodNotAllowed {
+        t.Fatalf("status = %d, want %d", rec.Code, http.StatusMethodNotAllowed)
+    }
 }
 ```
 
@@ -72,22 +70,22 @@ response body 的核心檢查方式應該配合輸出格式。純文字可以比
 
 ```go
 func TestHandleHealthBody(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/health", nil)
-	rec := httptest.NewRecorder()
+    req := httptest.NewRequest(http.MethodGet, "/health", nil)
+    rec := httptest.NewRecorder()
 
-	handleHealth(rec, req)
+    handleHealth(rec, req)
 
-	var body struct {
-		Status string `json:"status"`
-	}
+    var body struct {
+        Status string `json:"status"`
+    }
 
-	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
-		t.Fatalf("decode response body: %v", err)
-	}
+    if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
+        t.Fatalf("decode response body: %v", err)
+    }
 
-	if body.Status != "ok" {
-		t.Fatalf("status field = %q, want %q", body.Status, "ok")
-	}
+    if body.Status != "ok" {
+        t.Fatalf("status field = %q, want %q", body.Status, "ok")
+    }
 }
 ```
 
@@ -99,18 +97,18 @@ func TestHandleHealthBody(t *testing.T) {
 
 ```go
 func TestHandleCreateUser(t *testing.T) {
-	body := strings.NewReader(`{"name":"Alice","email":"alice@example.com"}`)
-	req := httptest.NewRequest(http.MethodPost, "/users", body)
-	req.Header.Set("Content-Type", "application/json")
+    body := strings.NewReader(`{"name":"Alice","email":"alice@example.com"}`)
+    req := httptest.NewRequest(http.MethodPost, "/users", body)
+    req.Header.Set("Content-Type", "application/json")
 
-	rec := httptest.NewRecorder()
-	handler := newCreateUserHandler(fakeUserCreator{})
+    rec := httptest.NewRecorder()
+    handler := newCreateUserHandler(fakeUserCreator{})
 
-	handler.ServeHTTP(rec, req)
+    handler.ServeHTTP(rec, req)
 
-	if rec.Code != http.StatusCreated {
-		t.Fatalf("status = %d, want %d", rec.Code, http.StatusCreated)
-	}
+    if rec.Code != http.StatusCreated {
+        t.Fatalf("status = %d, want %d", rec.Code, http.StatusCreated)
+    }
 }
 ```
 
@@ -122,15 +120,15 @@ handler 測試的核心邊界是 HTTP 行為，不是資料庫或外部服務。
 
 ```go
 type fakeUserCreator struct {
-	id  string
-	err error
+    id  string
+    err error
 }
 
 func (f fakeUserCreator) CreateUser(ctx context.Context, name string, email string) (string, error) {
-	if f.err != nil {
-		return "", f.err
-	}
-	return f.id, nil
+    if f.err != nil {
+        return "", f.err
+    }
+    return f.id, nil
 }
 ```
 
@@ -138,15 +136,15 @@ func (f fakeUserCreator) CreateUser(ctx context.Context, name string, email stri
 
 ```go
 func TestHandleCreateUserServiceError(t *testing.T) {
-	req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(`{"name":"Alice","email":"alice@example.com"}`))
-	rec := httptest.NewRecorder()
+    req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(`{"name":"Alice","email":"alice@example.com"}`))
+    rec := httptest.NewRecorder()
 
-	handler := newCreateUserHandler(fakeUserCreator{err: errors.New("database unavailable")})
-	handler.ServeHTTP(rec, req)
+    handler := newCreateUserHandler(fakeUserCreator{err: errors.New("database unavailable")})
+    handler.ServeHTTP(rec, req)
 
-	if rec.Code != http.StatusInternalServerError {
-		t.Fatalf("status = %d, want %d", rec.Code, http.StatusInternalServerError)
-	}
+    if rec.Code != http.StatusInternalServerError {
+        t.Fatalf("status = %d, want %d", rec.Code, http.StatusInternalServerError)
+    }
 }
 ```
 

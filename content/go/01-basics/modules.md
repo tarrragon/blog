@@ -5,8 +5,6 @@ description: "理解 go.mod、module path 與 Go 專案的依賴邊界"
 weight: 1
 ---
 
-# Go 專案結構與 module
-
 Go 專案的邊界通常從 `go.mod` 開始。它定義目前程式碼屬於哪個 module、使用哪個 Go 版本，以及依賴哪些外部套件。
 
 ## 本章目標
@@ -52,11 +50,11 @@ go test ./...
 
 閱讀 import 的核心規則是：先分辨能力來源，再決定去哪裡查。讀 Go 檔案時，先把 import 分成三類：
 
-| 類型 | 例子 | 意義 |
-|------|------|------|
-| 標準庫 | `net/http`, `context`, `encoding/json` | Go 內建能力 |
-| 第三方套件 | `github.com/gorilla/websocket` | 由 `go.mod` 管理 |
-| module 內部套件 | `example.com/notify-service/messages` | 同一個 module 的其他 package |
+| 類型            | 例子                                   | 意義                         |
+| --------------- | -------------------------------------- | ---------------------------- |
+| 標準庫          | `net/http`, `context`, `encoding/json` | Go 內建能力                  |
+| 第三方套件      | `github.com/gorilla/websocket`         | 由 `go.mod` 管理             |
+| module 內部套件 | `example.com/notify-service/messages`  | 同一個 module 的其他 package |
 
 這個分類會告訴你：問題應該去查標準庫文件、第三方套件文件，還是目前 module 的其他目錄。
 

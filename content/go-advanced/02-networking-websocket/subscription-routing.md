@@ -5,8 +5,6 @@ description: "將 client action 對應到主題訂閱狀態"
 weight: 3
 ---
 
-# 訂閱模型與訊息路由
-
 訂閱模型的核心目標是把 client action 轉成明確的連線狀態與回應訊息。WebSocket 是長連線，單次 action 失敗通常不應直接關閉連線；router 應把錯誤轉成可理解的 server message。
 
 ## 本章目標

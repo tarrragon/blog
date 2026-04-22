@@ -5,20 +5,18 @@ description: "整理 durable queue、broker、retry、outbox 與 idempotency 的
 weight: 3
 ---
 
-# 模組三：訊息佇列與事件傳遞
-
 訊息佇列模組的核心目標是說明事件離開單一 process 後，如何處理持久化、重試、重複投遞與 consumer 協調。語言教材會先處理本地 queue abstraction、publisher port、processor 與 idempotency interface；本模組負責 broker 的具體語意。
 
 ## 暫定分類
 
-| 分類 | 內容方向 |
-|------|----------|
-| RabbitMQ | exchange、queue、routing key、ack/nack、dead-letter queue |
-| NATS | subject、consumer、JetStream、at-least-once delivery |
-| Kafka | topic、partition、consumer group、offset、ordering |
-| Redis Streams | stream、consumer group、pending entry、claim |
-| Outbox | transaction outbox、poller、publisher、重試策略 |
-| Idempotency | idempotency key、dedup store、replay safety |
+| 分類          | 內容方向                                                  |
+| ------------- | --------------------------------------------------------- |
+| RabbitMQ      | exchange、queue、routing key、ack/nack、dead-letter queue |
+| NATS          | subject、consumer、JetStream、at-least-once delivery      |
+| Kafka         | topic、partition、consumer group、offset、ordering        |
+| Redis Streams | stream、consumer group、pending entry、claim              |
+| Outbox        | transaction outbox、poller、publisher、重試策略           |
+| Idempotency   | idempotency key、dedup store、replay safety               |
 
 ## 與語言教材的分工
 

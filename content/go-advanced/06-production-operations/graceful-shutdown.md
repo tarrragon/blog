@@ -5,8 +5,6 @@ description: "用 signal 與 context 傳遞停止訊號"
 weight: 1
 ---
 
-# graceful shutdown 與 signal handling
-
 Graceful shutdown 的核心目標是服務收到停止訊號後，不再接受新工作，並給既有工作一段時間完成或清理。Go 服務通常用 signal、root context、`http.Server.Shutdown`、worker context 與 timeout 串起停止流程。
 
 ## 本章目標

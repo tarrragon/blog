@@ -5,8 +5,6 @@ description: "用 ports 與 adapters 控制 Go 服務的依賴方向"
 weight: 6
 ---
 
-# 逐步遷移到 ports/adapters 架構
-
 ports/adapters 遷移的核心目標是讓 application 與 domain 不依賴外部技術細節。HTTP、WebSocket、callback receiver、database 都是 adapters；usecase 透過 ports 使用它們。
 
 這種重構不需要一次套完整架構。Go 專案更常見的做法是先把過重 handler、外部依賴與狀態寫入切開，再在壓力最大的邊界引入 port。
@@ -49,12 +47,12 @@ inbound adapter 的核心責任是接收外部訊號，轉成 application comman
 
 常見 inbound adapter：
 
-| adapter | 輸入 | 轉換結果 |
-|---------|------|----------|
-| HTTP handler | HTTP request | command |
-| WebSocket router | client message | command |
-| callback receiver | external callback | domain event |
-| worker | timer 或 queue item | command/event |
+| adapter           | 輸入                | 轉換結果      |
+| ----------------- | ------------------- | ------------- |
+| HTTP handler      | HTTP request        | command       |
+| WebSocket router  | client message      | command       |
+| callback receiver | external callback   | domain event  |
+| worker            | timer 或 queue item | command/event |
 
 例如 HTTP adapter：
 

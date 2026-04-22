@@ -5,8 +5,6 @@ description: "處理格式化輸出、字串清理、切割與組合"
 weight: 1
 ---
 
-# fmt、strings 與基本文字處理
-
 文字處理的核心規則是：格式化輸出交給 `fmt`，字串查找、裁切、替換與組合交給 `strings`。本章將用 CLI 輸出、設定值清理與簡單 parser 建立標準庫文字處理基礎。
 
 ## `fmt` 負責格式化
@@ -31,8 +29,8 @@ fmt.Println(message)
 
 ```go
 type User struct {
-	ID   int
-	Name string
+    ID   int
+    Name string
 }
 
 user := User{ID: 7, Name: "alice"}
@@ -50,11 +48,11 @@ fmt.Printf("%#v\n", user) // main.User{ID:7, Name:"alice"}
 
 ```go
 func loadUser(id string) error {
-	if id == "" {
-		return fmt.Errorf("load user: id is required")
-	}
+    if id == "" {
+        return fmt.Errorf("load user: id is required")
+    }
 
-	return nil
+    return nil
 }
 ```
 
@@ -62,7 +60,7 @@ func loadUser(id string) error {
 
 ```go
 if err := saveConfig(path, config); err != nil {
-	return fmt.Errorf("save config %q: %w", path, err)
+    return fmt.Errorf("save config %q: %w", path, err)
 }
 ```
 
@@ -78,7 +76,7 @@ raw = strings.TrimSpace(raw)
 
 parts := strings.Split(raw, ",")
 for _, part := range parts {
-	fmt.Println(strings.TrimSpace(part))
+    fmt.Println(strings.TrimSpace(part))
 }
 ```
 
@@ -92,11 +90,11 @@ for _, part := range parts {
 path := "/api/users"
 
 if strings.HasPrefix(path, "/api/") {
-	fmt.Println("api route")
+    fmt.Println("api route")
 }
 
 if strings.Contains(path, "users") {
-	fmt.Println("user resource")
+    fmt.Println("user resource")
 }
 ```
 
@@ -104,7 +102,7 @@ if strings.Contains(path, "users") {
 
 ```go
 if strings.Index(path, "/api/") == 0 {
-	fmt.Println("api route")
+    fmt.Println("api route")
 }
 ```
 
@@ -126,9 +124,9 @@ fmt.Println(message)
 var builder strings.Builder
 
 for _, name := range []string{"alice", "bob", "carol"} {
-	builder.WriteString("- ")
-	builder.WriteString(name)
-	builder.WriteString("\n")
+    builder.WriteString("- ")
+    builder.WriteString(name)
+    builder.WriteString("\n")
 }
 
 fmt.Print(builder.String())
@@ -142,18 +140,18 @@ fmt.Print(builder.String())
 
 ```go
 func parsePair(input string) (string, string, error) {
-	parts := strings.SplitN(input, "=", 2)
-	if len(parts) != 2 {
-		return "", "", fmt.Errorf("parse pair %q: missing =", input)
-	}
+    parts := strings.SplitN(input, "=", 2)
+    if len(parts) != 2 {
+        return "", "", fmt.Errorf("parse pair %q: missing =", input)
+    }
 
-	key := strings.TrimSpace(parts[0])
-	value := strings.TrimSpace(parts[1])
-	if key == "" {
-		return "", "", fmt.Errorf("parse pair %q: empty key", input)
-	}
+    key := strings.TrimSpace(parts[0])
+    value := strings.TrimSpace(parts[1])
+    if key == "" {
+        return "", "", fmt.Errorf("parse pair %q: empty key", input)
+    }
 
-	return key, value, nil
+    return key, value, nil
 }
 ```
 

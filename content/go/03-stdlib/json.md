@@ -5,8 +5,6 @@ description: "用 encoding/json 在 struct、檔案與 HTTP 之間交換資料"
 weight: 4
 ---
 
-# encoding/json：資料交換
-
 `encoding/json` 是 Go 標準庫中負責 JSON 編碼與解碼的 package。它的核心用途是把 Go struct 轉成 JSON，或把 JSON 轉回 Go struct，讓程式能和設定檔、HTTP API、message queue 等外部格式交換資料。
 
 ## 本章目標
@@ -71,10 +69,10 @@ Go 欄位必須 exported，`encoding/json` 才能讀寫。小寫開頭欄位是 
 
 JSON API 選擇的核心規則是：資料已經在記憶體中用 `Marshal` / `Unmarshal`，資料來自 stream 用 `Encoder` / `Decoder`。
 
-| 情境 | 適合 API |
-|------|----------|
-| `[]byte` 解析成 struct | `json.Unmarshal` |
-| struct 轉成 `[]byte` | `json.Marshal` |
+| 情境                   | 適合 API          |
+| ---------------------- | ----------------- |
+| `[]byte` 解析成 struct | `json.Unmarshal`  |
+| struct 轉成 `[]byte`   | `json.Marshal`    |
 | 從 `io.Reader` 讀 JSON | `json.NewDecoder` |
 | 寫 JSON 到 `io.Writer` | `json.NewEncoder` |
 

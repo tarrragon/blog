@@ -5,8 +5,6 @@ description: "呼叫系統命令和外部程式"
 weight: 3
 ---
 
-# subprocess - 執行外部命令
-
 `subprocess` 模組讓你從 Python 程式中執行外部命令。在 Hook 系統中，主要用於執行 Git 命令。
 
 ## 基本用法
@@ -353,5 +351,5 @@ def robust_run(args):
 
 ---
 
-*上一章：[json - 序列化](../json/)*
-*下一章：[re - 正規表達式](../regex/)*
+_上一章：[json - 序列化](../json/)_
+_下一章：[re - 正規表達式](../regex/)_

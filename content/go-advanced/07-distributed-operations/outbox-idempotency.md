@@ -5,8 +5,6 @@ description: "設計跨 process 事件傳遞的可靠性與去重邊界"
 weight: 2
 ---
 
-# 7.2 Durable queue、outbox 與 idempotency
-
 跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的背壓；durable queue、outbox 與 idempotency store 才能處理服務重啟、網路失敗與 consumer 重試。
 
 ## 前置章節

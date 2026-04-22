@@ -5,8 +5,6 @@ description: "把單元測試與整合測試擴展成服務可靠性驗證流程
 weight: 6
 ---
 
-# 7.6 CI、fuzz、load test 與 chaos testing
-
 可靠性驗證流程的核心責任是讓不同層級的測試回答不同風險。Unit test 驗證規則，integration test 驗證協定協作，race test 檢查資料競爭，fuzz test 尋找輸入邊界，load test 驗證容量，chaos test 驗證失敗復原。
 
 ## 前置章節

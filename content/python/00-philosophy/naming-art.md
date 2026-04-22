@@ -5,8 +5,6 @@ description: "透過命名降低認知負擔，讓程式碼像故事一樣易讀
 weight: 2
 ---
 
-# 命名的藝術：讓程式碼說故事
-
 ## 程式碼是一個故事
 
 好的程式碼讀起來應該像一個故事，有主角（變數）、有動作（函式）、有情節（流程）。
@@ -51,6 +49,7 @@ formatted_output = format_for_display(cleaned_input)
 ### 讀者應該能像讀故事一樣理解程式碼
 
 如果讀者需要：
+
 - 往回翻看變數定義
 - 查閱文件理解函式功能
 - 猜測縮寫的含義
@@ -202,21 +201,21 @@ def extract_email_addresses(text):
 
 ### 常見動詞模式
 
-| 動詞 | 使用場景 | 範例 |
-|------|---------|------|
-| `get` | 取得現有的值 | `get_user_name()` |
-| `set` | 設定值 | `set_user_name()` |
-| `create` | 建立新物件 | `create_user()` |
-| `build` | 組裝複雜物件 | `build_report()` |
-| `calculate` | 計算數值 | `calculate_total()` |
-| `validate` | 驗證資料 | `validate_input()` |
-| `parse` | 解析文字 | `parse_config()` |
-| `format` | 格式化輸出 | `format_date()` |
-| `convert` | 轉換型別 | `convert_to_json()` |
-| `extract` | 從資料中提取 | `extract_ids()` |
-| `filter` | 過濾資料 | `filter_active_users()` |
-| `find` | 尋找符合條件的 | `find_user_by_email()` |
-| `is/has/can` | 布林判斷 | `is_valid()`, `has_permission()` |
+| 動詞         | 使用場景       | 範例                             |
+| ------------ | -------------- | -------------------------------- |
+| `get`        | 取得現有的值   | `get_user_name()`                |
+| `set`        | 設定值         | `set_user_name()`                |
+| `create`     | 建立新物件     | `create_user()`                  |
+| `build`      | 組裝複雜物件   | `build_report()`                 |
+| `calculate`  | 計算數值       | `calculate_total()`              |
+| `validate`   | 驗證資料       | `validate_input()`               |
+| `parse`      | 解析文字       | `parse_config()`                 |
+| `format`     | 格式化輸出     | `format_date()`                  |
+| `convert`    | 轉換型別       | `convert_to_json()`              |
+| `extract`    | 從資料中提取   | `extract_ids()`                  |
+| `filter`     | 過濾資料       | `filter_active_users()`          |
+| `find`       | 尋找符合條件的 | `find_user_by_email()`           |
+| `is/has/can` | 布林判斷       | `is_valid()`, `has_permission()` |
 
 ### 對稱命名
 
@@ -260,6 +259,7 @@ r = aggregate(d)
 ```
 
 讀到最後一行時，你需要記住：
+
 - `d` 一開始是什麼
 - `d` 經過了哪些處理
 - 現在的 `d` 是什麼狀態
@@ -273,6 +273,7 @@ report = generate_summary_report(normalized_data)
 ```
 
 讀到最後一行時，你只需要知道：
+
 - `normalized_data` 是正規化後的資料
 - `generate_summary_report` 會產生報告
 
@@ -331,6 +332,7 @@ def has_valid_python_header(file_path: Path) -> bool:
 撰寫程式碼時，對每個名稱問自己：
 
 ### 變數命名
+
 - [ ] 名稱是否說明「這是什麼」？
 - [ ] 讀者是否能在不看定義的情況下理解？
 - [ ] 布林變數是否以 is/has/can/should 開頭？
@@ -338,6 +340,7 @@ def has_valid_python_header(file_path: Path) -> bool:
 - [ ] 名稱是否和實際內容一致？
 
 ### 函式命名
+
 - [ ] 名稱是否以動詞開頭？
 - [ ] 名稱是否說明「做什麼」而非「怎麼做」？
 - [ ] 相關函式是否有對稱的命名？
@@ -345,6 +348,7 @@ def has_valid_python_header(file_path: Path) -> bool:
 - [ ] 名稱是否符合常見的動詞模式？
 
 ### 整體檢查
+
 - [ ] 讀者是否能像讀故事一樣閱讀程式碼？
 - [ ] 讀者是否需要往回追溯才能理解？
 - [ ] 名稱是否有歧義或誤導性？
