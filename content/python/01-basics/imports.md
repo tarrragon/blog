@@ -1,13 +1,15 @@
 ---
-title: "1.3 導入機制與路徑管理"
+title: "1.4 導入機制與路徑管理"
 date: 2026-01-20
 description: "解決模組找不到的問題"
-weight: 3
+weight: 4
 ---
 
 # 導入機制與路徑管理
 
 「ModuleNotFoundError」是 Python 開發者最常遇到的錯誤之一。理解導入機制可以幫助你快速解決這類問題。
+
+> 承接提示：import 問題通常不是單一語法問題，而是 script、module、package 與執行位置共同造成的結果。如果還不確定這幾個概念的差異，請先閱讀 [從單一 script 到多檔案專案](../script-to-package/)。
 
 ## 模組搜尋路徑
 

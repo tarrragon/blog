@@ -1,13 +1,15 @@
 ---
-title: "1.2 模組與套件組織"
+title: "1.3 模組與套件組織"
 date: 2026-01-20
 description: "理解 Python 的模組系統和套件結構"
-weight: 2
+weight: 3
 ---
 
 # 模組與套件組織
 
 Python 的模組系統是組織程式碼的基礎。理解模組如何運作，是維護和擴展 Hook 系統的關鍵。
+
+> 承接提示：如果你還不熟悉程式如何從單一 `.py` 檔案拆成多個 module，請先閱讀 [從單一 script 到多檔案專案](../script-to-package/)。本章聚焦在已經出現 package 後，如何理解 module、`__init__.py` 與公開 API。
 
 ## 基本概念
 

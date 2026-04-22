@@ -36,9 +36,10 @@ weight: 30
 
 ### [模組一：Python 基礎概念](01-basics/)
 
-快速回顧 Python 的核心概念，包括語言哲學、模組組織和導入機制。
+快速回顧 Python 的核心概念，包括語言哲學、script 到 package 的成長路線、模組組織和導入機制。
 
 - [Python 哲學與設計理念](01-basics/philosophy/)
+- [從單一 script 到多檔案專案](01-basics/script-to-package/)
 - [模組與套件組織](01-basics/modules/)
 - [導入機制與路徑管理](01-basics/imports/)
 
