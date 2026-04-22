@@ -295,7 +295,20 @@ func TestProcessorSkipsDuplicateEvent(t *testing.T) {
 
 ## 本章不處理
 
-本章不討論分散式一致性、跨服務 transaction 或完整 event sourcing。那些問題需要額外的 durable queue、outbox、idempotency store 與操作機制；本章先建立單一 Go 服務內部的事件邊界。後續可接 [資料庫 transaction 與 schema migration](../07-distributed-operations/database-transactions/) 以及 [Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/)。
+本章先處理單一 Go 服務內的事件來源與處理邊界；分散式一致性與 event sourcing，會在下列章節再往外延伸：
+
+- [Go 進階：資料庫 transaction 與 schema migration](../07-distributed-operations/database-transactions/)
+- [Go 進階：Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/)
+- [Backend：資料庫與持久化](../../backend/01-database/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 action、event、repository 與 publisher 的邊界；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
+- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
+- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
+- [Go：逐步遷移到 ports/adapters 架構](../../go/07-refactoring/hexagonal-migration/)
 
 ## 小結
 

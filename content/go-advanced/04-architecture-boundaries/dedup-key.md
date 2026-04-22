@@ -246,7 +246,20 @@ func TestDedupKey(t *testing.T) {
 
 ## 本章不處理
 
-本章不處理跨節點去重的一致性問題。多台服務同時消費事件時，memory map 不足以保證全域去重；那需要 Redis、資料庫唯一鍵、queue 去重能力或 idempotency store。後續可接 [Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/)。
+本章先處理單一服務內的事件去重語意；跨節點一致性與 idempotency store，會在下列章節再往外延伸：
+
+- [Backend：快取與 Redis](../../backend/02-cache-redis/)
+- [Backend：資料庫與持久化](../../backend/01-database/)
+- [Go 進階：Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 event normalization、processor 與 source priority；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
+- [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
+- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
+- [Go：事件去重邏輯的重構策略](../../go/07-refactoring/dedup-refactor/)
 
 ## 小結
 

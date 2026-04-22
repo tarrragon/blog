@@ -22,6 +22,12 @@ weight: 2
 
 語言教材處理 interface / protocol、並發或非同步保護、timeout 與 cache 呼叫邊界。Backend cache 模組處理 Redis command、資料結構、失效策略、跨節點一致性與操作風險。
 
+## 章節列表
+
+| 章節                            | 主題                         | 關鍵收穫                                                     |
+| ------------------------------- | ---------------------------- | ------------------------------------------------------------ |
+| [2.1](high-concurrency-access/) | 高併發下的 Redis 讀寫邊界    | 共用 client、控制 pipeline、避免 hot key 與 cache stampede |
+
 ## 相關語言章節
 
 - [Go：指標與資料複製邊界](../../go/02-types-data/pointers-copy/)

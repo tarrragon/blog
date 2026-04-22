@@ -253,7 +253,20 @@ func TestHTTPAndQueueNormalizeToSameDomainEvent(t *testing.T) {
 
 ## 本章不處理
 
-本章不處理完整 queue driver、dead-letter queue 操作、分散式追蹤或 durable outbox。這些是生產等級事件系統的重要部分，但它們建立在本章的基本邊界之上。後續可接 [Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/) 以及 [Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)。
+本章先處理多來源事件如何在單一服務內融合；queue driver、outbox 與 tracing，會在下列章節再往外延伸：
+
+- [Go 進階：Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/)
+- [Go 進階：Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)
+- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
+
+## 和 Go 教材的關係
+
+這一章承接的是多來源 adapter、normalize 與 processor 的路線；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
+- [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
+- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
+- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
 
 ## 小結
 

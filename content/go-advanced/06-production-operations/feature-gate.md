@@ -259,7 +259,19 @@ func TestDecideRealtimeEnabled(t *testing.T) {
 
 ## 本章不處理
 
-本章不討論大型 feature flag 平台、使用者分群灰度、遠端動態配置或 A/B testing。這些可以建立在相同原則上；本章先聚焦 Go 服務內部如何把 gate 設計成可測的行為邊界。
+本章先處理服務內部的 gate 行為邊界；遠端 feature flag 平台與灰度流程，會在下列章節再往外延伸：
+
+- [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 composition root、handler boundary 與 runtime gate；如果你要先回看語言教材，可以讀：
+
+- [Go：composition root 與依賴組裝](../../go/07-refactoring/composition-root/)
+- [Go：把 handler 邏輯拆成可測單元](../../go/07-refactoring/handler-boundary/)
+- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
+- [Go：testing 基礎](../../go/05-error-testing/testing-basics/)
+- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)
 
 ## 小結
 

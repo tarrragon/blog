@@ -229,7 +229,20 @@ go test -race ./...
 
 ## 本章不處理
 
-本章不處理 Go memory model 的完整形式化規則，也不討論 lock-free algorithm。多數後端服務的主要風險來自共享 map/slice、goroutine lifecycle 與 channel ownership；先把這些路徑用 `-race` 和行為測試保護起來更實用。
+本章先處理共享 state、channel ownership 與 goroutine lifecycle 的 race 風險；lock-free 與完整 memory model，會在下列章節再往外延伸：
+
+- [Go 進階：共享狀態與複製邊界](../01-concurrency-patterns/shared-state/)
+- [Go 進階：channel ownership 與關閉責任](../01-concurrency-patterns/channel-ownership/)
+- [Go 進階：select loop 的生命週期設計](../01-concurrency-patterns/select-loop/)
+
+## 和 Go 教材的關係
+
+這一章承接的是共享狀態、channel ownership 與 lifecycle；如果你要先回看語言教材，可以讀：
+
+- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
+- [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
 
 ## 小結
 

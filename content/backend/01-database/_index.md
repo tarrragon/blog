@@ -21,6 +21,12 @@ weight: 1
 
 語言教材處理 repository interface / protocol、取消與逾時、error wrapping、memory fake 與 contract test。Backend database 模組處理 SQL schema、migration tool、transaction isolation、connection pool 與資料庫錯誤語意。
 
+## 章節列表
+
+| 章節                            | 主題                         | 關鍵收穫                                           |
+| ------------------------------- | ---------------------------- | -------------------------------------------------- |
+| [1.1](high-concurrency-access/) | 高併發下的 SQL 讀寫邊界      | 共用 `sql.DB`、控制連線池、縮小 transaction 範圍 |
+
 ## 相關語言章節
 
 - [Go：如何新增 repository port](../../go/06-practical/repository-port/)

@@ -184,7 +184,19 @@ func TestParseMemoryLimitMB(t *testing.T) {
 
 ## 本章不處理
 
-本章不深入 Go GC 的完整實作細節，也不討論雲端平台的 OOM killer 行為。這些會影響部署策略，但本章先建立服務內部如何判讀 heap、GC、memory limit 與 runtime metrics。後續可接 [Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)。
+本章先處理單一 Go process 如何判讀 heap、GC 與 memory limit；平台 OOM 與部署合約，會在下列章節再往外延伸：
+
+- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)
+- [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 runtime 壓力、allocation 與 pprof 診斷；如果你要先回看語言教材，可以讀：
+
+- [Go：資料結構與 allocation 壓力](allocation/)
+- [Go：goroutine leak 偵測](goroutine-leak/)
+- [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
+- [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
 
 ## 小結
 

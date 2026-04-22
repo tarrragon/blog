@@ -213,7 +213,19 @@ HTTP server 測試可以啟動 server 後 cancel context，確認 `RunHTTPServer
 
 ## 本章不處理
 
-本章不討論 Kubernetes preStop hook、terminationGracePeriod、systemd unit 或雲端 load balancer 的所有細節。這些會影響 shutdown 時間與順序，但 Go 程式內部仍需要清楚的 context、timeout 與 cleanup owner。後續可接 [Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)。
+本章先處理服務內部的 shutdown 順序與 cleanup owner；平台 hook、timeout 與 load balancer 合約，會在下列章節再往外延伸：
+
+- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 goroutine lifecycle、ticker cleanup 與 platform handoff；如果你要先回看語言教材，可以讀：
+
+- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
+- [Go：defer 與資源清理](../../go/03-stdlib/defer-cleanup/)
+- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
+- [Go：goroutine leak 偵測](../../go-advanced/03-runtime-profiling/goroutine-leak/)
+- [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)
 
 ## 小結
 

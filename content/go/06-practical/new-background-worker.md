@@ -385,11 +385,21 @@ worker 直接改 repository 會讓狀態規則繞過 processor 或 usecase。背
 
 ## 本章不處理
 
-- 不使用 cron library。
-- 不引入外部 queue。
-- 不把 worker 寫成無法停止的背景 goroutine。
+本章先處理單一背景工作如何啟動、停止與回報；cron、queue、retry 與 outbox，會在下列章節再往外延伸：
 
-如果背景工作需要跨 process queue、retry、dead-letter 或 durable outbox，可以接著閱讀 [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)。
+- [Go 進階：bounded worker pool](../../go-advanced/01-concurrency-patterns/worker-pool/)
+- [Go 進階：select loop 的生命週期設計](../../go-advanced/01-concurrency-patterns/select-loop/)
+- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
+- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 goroutine 生命週期與 event processing；如果你要先回看語言教材，可以讀：
+
+- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
+- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
 
 ## 小結
 

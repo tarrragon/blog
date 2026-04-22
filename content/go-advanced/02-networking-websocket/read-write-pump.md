@@ -248,7 +248,19 @@ Write pump 的測試通常放在 integration test，因為它依賴真實 connec
 
 ## 本章不處理
 
-本章不處理 gorilla/websocket 以外的 WebSocket library 差異，也不處理跨節點 hub 或外部 message broker。這些實作會改變 API，但不改變 read owner、write owner 與 unregister owner 的設計原則；後續可接 [跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)。
+本章先處理單一連線的 read/write ownership；跨節點 hub 與 broker 互動，會在下列章節延伸：
+
+- [Go 進階：跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 goroutine ownership、channel 與 backpressure；如果你要先回看語言教材，可以讀：
+
+- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel ownership 與關閉責任](../../go-advanced/01-concurrency-patterns/channel-ownership/)
+- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
+- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
 
 ## 小結
 

@@ -249,7 +249,20 @@ func TestUnknownActionReturnsErrorMessage(t *testing.T) {
 
 ## 本章不處理
 
-本章不處理瀏覽器端測試、跨節點 WebSocket fan-out 或壓力測試。Integration test 的目標是驗證單一 Go server 的協定協作；容量和跨節點行為應用其他測試層處理。後續可接 [跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/) 以及 [CI、fuzz、load test 與 chaos testing](../07-distributed-operations/reliability-pipeline/)。
+本章先處理單一 Go server 內的 WebSocket 協定協作；跨節點 fan-out 與壓力測試，會在下列章節再往外延伸：
+
+- [Go 進階：跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 WebSocket handler、pump 與 heartbeat；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
+- [Go：read/write pump 模式](../../go-advanced/02-networking-websocket/read-write-pump/)
+- [Go：heartbeat、deadline 與連線清理](../../go-advanced/02-networking-websocket/heartbeat-deadline/)
+- [Go：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
+- [Go 進階：CI、fuzz、load test 與 chaos testing](../07-distributed-operations/reliability-pipeline/)
+- [Backend：可靠性驗證流程](../../backend/06-reliability/)
 
 ## 小結
 

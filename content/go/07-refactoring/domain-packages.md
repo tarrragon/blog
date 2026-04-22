@@ -375,10 +375,21 @@ package 重構應先保持行為不變。若同時改規則與搬檔案，測試
 
 ## 本章不處理
 
-- 不要求所有專案都使用 `domain/` 目錄。
-- 不一次完成完整分層架構。
-- 不討論 monorepo 或多 module 拆分。
-- 不把 package 拆分當成替代測試的手段。
+本章先處理 package 結構如何反映 domain 語意；更大型的 module 拆分與 monorepo 策略，會在下列章節再往外延伸：
+
+- [Go 入門：從單檔到多檔案](../../go/01-basics/growing-files-packages/)
+- [Go 入門：Go 專案結構與 module](../../go/01-basics/modules/)
+- [Go 入門：composition 優先：小介面與明確依賴](../../go/00-philosophy/composition/)
+- [Go 進階：逐步遷移到 ports/adapters 架構](hexagonal-migration/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 type、rule 與 package 邊界；如果你要先回看語言教材，可以讀：
+
+- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
+- [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
+- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
+- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
 
 ## 小結
 

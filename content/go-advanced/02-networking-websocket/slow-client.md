@@ -257,7 +257,20 @@ func TestBroadcastUnregistersFullClient(t *testing.T) {
 
 ## 本章不處理
 
-本章不處理跨節點 WebSocket fan-out、持久化訊息同步或 mobile client 的完整重連協定。這些主題需要額外的 message broker、presence store 或 client protocol；本章先處理單一 server 內的慢 client 邊界。後續可接 [跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)。
+本章先處理單一 server 內的慢 client 與 send buffer 邊界；跨節點 fan-out 與持久化同步，會在下列章節延伸：
+
+- [Go 進階：跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 channel 背壓、non-blocking send 與 rate limiting；如果你要先回看語言教材，可以讀：
+
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：非阻塞送出與事件丟棄策略](../../go-advanced/01-concurrency-patterns/non-blocking-send/)
+- [Go：rate limiting 與背壓](../../go-advanced/01-concurrency-patterns/rate-limit/)
+- [Go：bounded worker pool](../../go-advanced/01-concurrency-patterns/worker-pool/)
+- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
+- [Backend：快取與 Redis](../../backend/02-cache-redis/)
 
 ## 小結
 

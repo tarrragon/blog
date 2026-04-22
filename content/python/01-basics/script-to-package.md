@@ -161,6 +161,15 @@ Python 和 Go 在這個主題上的差異應明確說清楚：
 - 不討論大型框架專案結構。
 - 不把 `src/` layout 當成所有專案的預設起點。
 
+## 和 Python 教材的關係
+
+這一章承接的是 module、package 與測試路徑；如果你要先回看 Python 教材，可以讀：
+
+- [Python：modules](modules/)
+- [Python 進階：packaging 與 distribution](../../python-advanced/07-packaging/)
+- [Python：測試基礎](../../python/05-error-testing/)
+- [Python 進階：error handling 與 mock](../../python/05-error-testing/mock/)
+
 ## 小結
 
 Python 程式的成長路線通常是 script、同層 module、package、可安裝專案。這條路線的核心不是目錄變多，而是執行方式、import 邊界與測試方式逐步穩定。

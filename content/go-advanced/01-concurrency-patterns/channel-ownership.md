@@ -234,7 +234,19 @@ func TestMergeClosesAfterAllInputsClose(t *testing.T) {
 
 ## 本章不處理
 
-本章不討論跨 process 的 queue ack、broker consumer group 或分散式訊號。那些系統也有 ownership 問題，但本章先聚焦單一 Go process 內的 channel close 與 goroutine lifecycle。
+本章先聚焦單一 Go process 內的 channel close 與 goroutine lifecycle；跨 process 的 ack、consumer group 與分散式訊號，會在下列章節再往外延伸：
+
+- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
+- [Backend：可靠性驗證流程](../../backend/06-reliability/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 channel、goroutine 與 select 的協作；如果你要先回看語言教材，可以讀：
+
+- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
+- [Go：bounded worker pool](worker-pool/)
 
 ## 小結
 

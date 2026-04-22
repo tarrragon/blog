@@ -224,7 +224,19 @@ func TestEnqueueStopsWhenContextCanceled(t *testing.T) {
 
 ## 本章不處理
 
-本章不處理 Kafka、NATS、Redis stream 或其他可靠 queue 的完整語意。可靠 queue 能提供持久化、重試與多 consumer 協調，但單一 process 內的 channel 滿載策略仍然需要先定義清楚。
+本章先處理單一 process 內的滿載處理策略；當訊息需要持久化、重試或跨 process 傳遞時，會在下列章節再往外延伸：
+
+- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
+- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 channel 背壓、worker capacity 與事件丟棄策略；如果你要先回看語言教材，可以讀：
+
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
+- [Go：rate limiting 與背壓](rate-limit/)
+- [Go：多來源 event 融合](../../go-advanced/04-architecture-boundaries/event-fusion/)
 
 ## 小結
 

@@ -256,7 +256,21 @@ func TestListUsersReturnsCopy(t *testing.T) {
 
 ## 本章不處理
 
-本章不討論逃逸分析的完整編譯器細節，也不深入手寫高效 JSON encoder。這些主題可以在特定瓶頸出現後再研究；本章先建立配置診斷與安全優化順序。
+本章先處理熱路徑上的配置與資料形狀；更大範圍的序列化與 payload 策略，會在下列章節再往外延伸：
+
+- [Go 入門：struct 與 JSON tag](../../go/02-types-data/struct-json/)
+- [Go 入門：slice 與 map](../../go/02-types-data/slices-maps/)
+- [Go 入門：指標與資料複製邊界](../../go/02-types-data/pointers-copy/)
+- [Go 進階：pprof 基礎診斷流程](pprof/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 copy boundary、JSON 與 runtime profile；如果你要先回看語言教材，可以讀：
+
+- [Go：如何擴展狀態投影欄位](../../go/06-practical/state-fields/)
+- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
+- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
+- [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
 
 ## 小結
 

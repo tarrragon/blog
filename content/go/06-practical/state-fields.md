@@ -408,9 +408,20 @@ handler 直接改 projection 會讓狀態規則分散。新增第二個入口時
 
 ## 本章不處理
 
-- 不引入資料庫 migration。
-- 不把欄位擴展寫成前端相容性專章。
-- 不直接暴露 repository 內部資料。
+本章先處理狀態欄位如何影響 response contract；資料庫 migration 與前端相容性策略，會在下列章節再往外延伸：
+
+- [Go 進階：Source of Truth：狀態邊界](../../go-advanced/04-architecture-boundaries/source-of-truth/)
+- [Go 進階：資料庫 transaction 與 schema migration](../../go-advanced/07-distributed-operations/database-transactions/)
+- [Backend：資料庫與持久化](../../backend/01-database/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 repository、event 與 response view 的邊界；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
+- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
+- [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
+- [Go 進階：Source of Truth](../../go-advanced/04-architecture-boundaries/source-of-truth/)
 
 ## 小結
 

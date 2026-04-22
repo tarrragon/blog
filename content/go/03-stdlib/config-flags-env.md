@@ -9,12 +9,21 @@ weight: 9
 
 ## 預計補充內容
 
-1. `flag` package 的基本用法。
-2. `os.Getenv`、`os.LookupEnv` 與預設值處理。
-3. 把字串設定轉成 int、duration、bool 與 enum。
-4. 在 `main` 或 composition root 完成設定驗證。
-5. 測試時用明確 config struct 取代全域環境讀取。
+這些設定邊界會在下列章節展開：
+
+- [Go 進階：composition root 與依賴組裝](../../go/07-refactoring/composition-root/)：設定讀取的真正用途，是在啟動層把外部輸入轉成可驗證的依賴。
+- [Go 入門：從入口程式看應用啟動流程](../../go/01-basics/main-flow/)：先看主程式怎麼啟動，才知道設定應該在哪裡完成驗證。
+- [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)：像 secret manager、ConfigMap 與 rollout 這類平台責任應該留給 Backend。
 
 ## 與 Backend 教材的分工
 
 本章只處理 Go 程式內的設定邊界。secret manager、Kubernetes ConfigMap、container environment、遠端動態設定與部署平台 rollout 會放在 [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)。
+
+## 和 Go 教材的關係
+
+這一章承接的是入口流程與 composition root；如果你要先回看語言教材，可以讀：
+
+- [Go：從入口程式看應用啟動流程](../../go/01-basics/main-flow/)
+- [Go：composition root 與依賴組裝](../../go/07-refactoring/composition-root/)
+- [Go：testing 基礎](../../go/05-error-testing/testing-basics/)
+- [Go：flag、os/env 與設定邊界](../../go/03-stdlib/config-flags-env/)

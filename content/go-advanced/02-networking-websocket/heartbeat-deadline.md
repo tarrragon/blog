@@ -216,7 +216,19 @@ func TestUnregisterClientIsIdempotent(t *testing.T) {
 
 ## 本章不處理
 
-本章不處理 client 端重連策略、跨區網路品質調整或 load balancer 的完整設定。這些主題會影響 heartbeat 參數，但不改變 read deadline、write deadline 與統一清理路徑的核心設計；後續可接 [Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)。
+本章先處理單一 WebSocket 連線的存活偵測與 cleanup；client 重連與 load balancer 參數，會在下列章節延伸：
+
+- [Go 進階：跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 read/write pump、time control 與 shutdown；如果你要先回看語言教材，可以讀：
+
+- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
+- [Go：defer 與資源清理](../../go/03-stdlib/defer-cleanup/)
+- [Go 進階：time control](../../go-advanced/05-testing-reliability/time-control/)
+- [Go 進階：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
+- [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)
 
 ## 小結
 

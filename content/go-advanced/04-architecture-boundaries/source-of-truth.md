@@ -262,7 +262,19 @@ func TestHistoryReturnsCopy(t *testing.T) {
 
 ## 本章不處理
 
-本章不處理資料庫 schema migration、transaction isolation 或 CQRS 的完整架構。這些主題可以接在 repository port 之後逐步加入；本章先處理單一服務內部如何避免狀態真相分裂。後續可接 [資料庫 transaction 與 schema migration](../07-distributed-operations/database-transactions/)。
+本章先處理單一服務內誰有寫入權責；資料庫 migration 與 CQRS，會在下列章節再往外延伸：
+
+- [Go 進階：資料庫 transaction 與 schema migration](../07-distributed-operations/database-transactions/)
+- [Backend：資料庫與持久化](../../backend/01-database/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 repository、state owner 與 projection 的邊界；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
+- [Go：如何擴展狀態投影欄位](../../go/06-practical/state-fields/)
+- [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
+- [Go：以 domain 重新整理 package](../../go/07-refactoring/domain-packages/)
 
 ## 小結
 

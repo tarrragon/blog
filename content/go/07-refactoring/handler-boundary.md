@@ -490,12 +490,19 @@ JSON tag 是 transport contract。domain model 若直接承擔對外格式，未
 
 ## 本章不處理
 
-- 不選擇特定 HTTP router。
-- 不引入 middleware 框架。
-- 不重構到完整 ports/adapters 目錄。
-- 不處理資料庫 transaction。
+本章先處理 HTTP handler 的轉換邊界；router、middleware 與 transaction，會在下列章節再往外延伸：
 
-如果 handler 邊界要繼續演進到 ports/adapters，可以閱讀 [Go 入門：逐步遷移到 ports/adapters 架構](hexagonal-migration/)；如果資料寫入需要 transaction，可以接著閱讀 [Go 進階：資料庫 transaction 與 schema migration](../../go-advanced/07-distributed-operations/database-transactions/)。
+- [Go 進階：逐步遷移到 ports/adapters 架構](hexagonal-migration/)
+- [Go 進階：資料庫 transaction 與 schema migration](../../go-advanced/07-distributed-operations/database-transactions/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 request DTO、command 與 usecase 分層；如果你要先回看語言教材，可以讀：
+
+- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
+- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
+- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
+- [Go：如何擴展狀態投影欄位](../../go/06-practical/state-fields/)
 
 ## 小結
 

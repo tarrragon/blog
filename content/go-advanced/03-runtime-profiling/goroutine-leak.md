@@ -251,7 +251,20 @@ Goroutine leak 的核心修正不是在 goroutine 裡加更多條件，而是補
 
 ## 本章不處理
 
-本章不討論 runtime scheduler 的完整實作，也不討論跨服務 worker pool 的全域治理。多數 Go 服務的 goroutine leak 來自 context、channel、ticker、connection lifecycle；先把這些邊界設計清楚最有效。
+本章先處理 goroutine 的啟動、停止與阻塞邊界；更完整的 worker 全域治理，會在下列章節再往外延伸：
+
+- [Go 進階：channel ownership 與關閉責任](../01-concurrency-patterns/channel-ownership/)
+- [Go 進階：bounded worker pool](../01-concurrency-patterns/worker-pool/)
+- [Go 進階：select loop 的生命週期設計](../01-concurrency-patterns/select-loop/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 goroutine lifecycle、channel 與 shutdown；如果你要先回看語言教材，可以讀：
+
+- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
+- [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
 
 ## 小結
 

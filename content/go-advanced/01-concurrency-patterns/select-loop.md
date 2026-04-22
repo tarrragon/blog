@@ -261,7 +261,20 @@ func TestRunStopsOnContextCancel(t *testing.T) {
 
 ## 本章不處理
 
-本章不討論完整 scheduler、cron library 或分散式 worker 協調。這些工具可以建立在相同原則上：明確輸入、明確停止、明確資源擁有權。
+本章先把長生命週期 goroutine 的停止、輸入與排空講清楚；更完整的 worker 協調與平台排程責任，會在下列章節再往外延伸：
+
+- [Go 進階：bounded worker pool](worker-pool/)
+- [Go 進階：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
+- [Backend：可靠性驗證流程](../../backend/06-reliability/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 goroutine、channel 與 shutdown loop；如果你要先回看語言教材，可以讀：
+
+- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
+- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：bounded worker pool](worker-pool/)
+- [Go：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
 
 ## 小結
 

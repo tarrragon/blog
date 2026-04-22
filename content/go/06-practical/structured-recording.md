@@ -374,11 +374,20 @@ event log 記錄的是 normalized fact。若把暫時性錯誤、debug 訊息與
 
 ## 本章不處理
 
-- 不導入集中式 log 平台。
-- 不實作完整資料庫 event store。
-- 不把完整 payload 或敏感資料寫進 log。
+本章先處理 log、event log 與 repository 的分工；集中式 log 平台與可重播事件系統，會在下列章節再往外延伸：
 
-如果要把 event log 延伸成可持久化、可重播的事件系統，可以接著閱讀 [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)；如果要把 log 接到集中式觀測平台，可以閱讀 [Go 進階：Observability pipeline、metrics 與 tracing](../../go-advanced/07-distributed-operations/observability-pipeline/)。
+- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
+- [Go 進階：Observability pipeline、metrics 與 tracing](../../go-advanced/07-distributed-operations/observability-pipeline/)
+- [Backend：可觀測性平台](../../backend/04-observability/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 event log、state repository 與 log schema；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增一種 domain event](new-event-type/)
+- [Go：如何新增 repository port](repository-port/)
+- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
+- [Go：結構化日誌欄位設計](../../go-advanced/06-production-operations/log-fields/)
 
 ## 小結
 

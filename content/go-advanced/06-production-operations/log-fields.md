@@ -222,9 +222,21 @@ func TestLogAttrsForEvent(t *testing.T) {
 
 ## 本章不處理
 
-本章不討論完整 log aggregation 平台、OpenTelemetry 欄位標準或隱私法規細節。這些會影響部署與治理；本章先建立 Go 服務內部的 structured log schema 思路。後續可接 [Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)。
+本章先處理 Go 服務內部的 structured log schema；集中式平台、欄位標準與隱私治理，會在下列章節再往外延伸：
 
-如果你還不熟悉 `slog` 的基本 API，先回到 [Go 入門：log/slog](../../go/03-stdlib/slog/)；如果你正在判斷資料應放進 structured log、domain event log 還是 state repository，先讀 [Go 入門：如何新增結構化記錄欄位](../../go/06-practical/structured-recording/)。
+- [Go 進階：Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 structured recording、event log 與 observability pipeline；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增結構化記錄欄位](../../go/06-practical/structured-recording/)
+- [Go：結構化日誌](../../go/03-stdlib/slog/)
+- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
+- [Go：Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)
+- [Backend：可觀測性平台](../../backend/04-observability/)
+- [Go 入門：log/slog](../../go/03-stdlib/slog/)
+- [Go 入門：如何新增結構化記錄欄位](../../go/06-practical/structured-recording/)
 
 ## 小結
 

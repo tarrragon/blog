@@ -401,12 +401,20 @@ race detector 只能檢查測試實際跑到的路徑。若並發讀寫沒有被
 
 ## 本章不處理
 
-- 不選擇特定資料庫。
-- 不設計完整 transaction manager。
-- 不討論分散式一致性。
-- 不把所有 state 一次搬成大型 repository。
+本章先處理 state owner、lock boundary 與 copy boundary；資料庫 transaction 與分散式一致性，會在下列章節再往外延伸：
 
-如果狀態邊界要進一步落到資料庫 transaction、migration 或 isolation level，可以接著閱讀 [Go 進階：資料庫 transaction 與 schema migration](../../go-advanced/07-distributed-operations/database-transactions/)。
+- [Go 進階：資料庫 transaction 與 schema migration](../../go-advanced/07-distributed-operations/database-transactions/)
+- [Go 進階：Source of Truth：狀態邊界](../../go-advanced/04-architecture-boundaries/source-of-truth/)
+- [Backend：資料庫與持久化](../../backend/01-database/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 repository、read model 與 shared state 的邊界；如果你要先回看語言教材，可以讀：
+
+- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
+- [Go：如何擴展狀態投影欄位](../../go/06-practical/state-fields/)
+- [Go：用 interface 隔離外部依賴](interface-boundary/)
+- [Go：以 domain 重新整理 package](domain-packages/)
 
 ## 小結
 

@@ -233,9 +233,20 @@ func TestStatusWithSleep(t *testing.T) {
 
 ## 本章不處理
 
-本章不討論完整 fake clock library、模擬 runtime timer 或時間旅行測試框架。這些工具可以在大型系統中使用，但多數 Go 服務先用 `now time.Time` 與 `func() time.Time` 就能解決主要問題。
+本章先處理時間作為輸入的可測性；更完整的 fake clock 與平台 timeout 合約，會在下列章節再往外延伸：
 
-如果時間問題來自 heartbeat、read deadline 或 shutdown timeout，應回到對應服務設計章節：[heartbeat、deadline 與連線清理](../02-networking-websocket/heartbeat-deadline/)、[graceful shutdown 與 signal handling](../06-production-operations/graceful-shutdown/) 與 [Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)。
+- [Go 進階：heartbeat、deadline 與連線清理](../02-networking-websocket/heartbeat-deadline/)
+
+## 和 Go 教材的關係
+
+這一章承接的是 defer、select loop 與 timeout 邊界；如果你要先回看語言教材，可以讀：
+
+- [Go：defer 與資源清理](../../go/03-stdlib/defer-cleanup/)
+- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
+- [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
+- [Go：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
+- [Go 進階：graceful shutdown 與 signal handling](../06-production-operations/graceful-shutdown/)
+- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)
 
 ## 小結
 
