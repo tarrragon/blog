@@ -42,6 +42,28 @@
     </p>
   {{ end }}
   {{ end }}
+
+  <!-- 上一篇 / 下一篇文章導航 (.Prev/.Next 天生排除 _index.md section pages) -->
+  {{ if or .Prev .Next }}
+  <nav class="article-nav">
+    <div class="article-nav-item article-nav-prev">
+      {{ with .Prev }}{{ if not .IsSection }}
+      <a href="{{ .RelPermalink }}" class="article-nav-link">
+        <span class="article-nav-label">← 上一篇</span>
+        <span class="article-nav-title">{{ .Title }}</span>
+      </a>
+      {{ end }}{{ end }}
+    </div>
+    <div class="article-nav-item article-nav-next">
+      {{ with .Next }}{{ if not .IsSection }}
+      <a href="{{ .RelPermalink }}" class="article-nav-link">
+        <span class="article-nav-label">下一篇 →</span>
+        <span class="article-nav-title">{{ .Title }}</span>
+      </a>
+      {{ end }}{{ end }}
+    </div>
+  </nav>
+  {{ end }}
 </article>
 
 <!-- 回到頂部按鈕 -->
