@@ -49,7 +49,7 @@
     <div class="article-nav-item article-nav-prev">
       {{ with .Prev }}{{ if not .IsSection }}
       <a href="{{ .RelPermalink }}" class="article-nav-link">
-        <span class="article-nav-label"><</span>
+        <span class="article-nav-label"></span>
         <span class="article-nav-title">{{ .Title }}</span>
       </a>
       {{ end }}{{ end }}
@@ -57,7 +57,7 @@
     <div class="article-nav-item article-nav-next">
       {{ with .Next }}{{ if not .IsSection }}
       <a href="{{ .RelPermalink }}" class="article-nav-link">
-        <span class="article-nav-label"> ></span>
+        <span class="article-nav-label"></span>
         <span class="article-nav-title">{{ .Title }}</span>
       </a>
       {{ end }}{{ end }}
