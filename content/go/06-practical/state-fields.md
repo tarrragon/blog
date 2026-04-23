@@ -21,7 +21,7 @@ weight: 3
 
 ## 【觀察】先判斷欄位屬於哪一層
 
-狀態欄位的核心問題不是「struct 要加在哪裡」，而是「這個欄位代表哪一種資料責任」。同一個欄位放在不同層，代表不同寫入規則與相容性承諾。
+狀態欄位的核心問題是「這個欄位代表哪一種資料責任」。同一個欄位放在不同層，代表不同寫入規則與相容性承諾。
 
 | 層次                  | 意義                     | 範例                                |
 | --------------------- | ------------------------ | ----------------------------------- |
@@ -74,11 +74,11 @@ type JobProjection struct {
 }
 ```
 
-pointer 不是為了看起來進階，而是為了區分「沒有值」和「有一個零值」。時間、數字與 bool 欄位最常遇到這個問題。
+pointer 在這裡的用途是區分「沒有值」和「有一個零值」。時間、數字與 bool 欄位最常遇到這個問題。
 
 ## 【策略】狀態轉移要集中在同一個入口
 
-狀態轉移的核心規則是所有寫入都經過同一組方法。handler、worker 或 WebSocket router 不應直接修改 map 或 projection 欄位。
+狀態轉移的核心規則是所有寫入都經過同一組方法。handler、worker 或 WebSocket router 應把狀態變更交給 repository 或 state owner，而不是自行修改 map 或 projection 欄位。
 
 先定義內部 event：
 
@@ -216,7 +216,7 @@ func cloneJobProjection(job JobProjection) JobProjection {
 
 ## 【策略】response view 負責對外格式
 
-response view 的核心責任是把內部狀態轉成外部 contract。JSON tag、`omitempty`、顯示文字與相容性都應該在 response struct 中處理，不要污染 domain model。
+response view 的核心責任是把內部狀態轉成外部 contract。JSON tag、`omitempty`、顯示文字與相容性都應該在 response struct 中處理，讓 domain model 保持在業務狀態語意上。
 
 ```go
 type JobResponse struct {
@@ -259,11 +259,11 @@ func displayText(status JobStatus) string {
 }
 ```
 
-`DisplayText` 是 response view，不是 domain state。若未來前端改文案，不應要求 repository 狀態轉移跟著改。
+`DisplayText` 是 response view，負責呈現用文字。若未來前端改文案，response 轉換函式可以調整，repository 狀態轉移規則應保持穩定。
 
 ## 【判讀】`omitempty` 是相容性語意
 
-`omitempty` 的核心語意是欄位在某些情境中不是必要資料。它不是單純讓 JSON 變短，而是在對外 contract 中表示「這個欄位可能不存在」。
+`omitempty` 的核心語意是欄位在某些情境中可以不存在。它在對外 contract 中表示「這個欄位可能不存在」，而不是只為了縮短 JSON。
 
 例如 `FinishedAt` 只有 job 完成或失敗後才有值：
 
@@ -273,7 +273,7 @@ FinishedAt *time.Time `json:"finishedAt,omitempty"`
 
 舊 client 如果不知道 `finishedAt`，通常會忽略新欄位。新 client 如果需要這個欄位，也必須處理它不存在的情況。
 
-必填欄位的 JSON contract 應保持穩定輸出。`id` 或 `status` 這類欄位消失會讓 client 無法理解資料，因此它們不屬於可選欄位，也不應加上 `omitempty`。
+必填欄位的 JSON contract 應保持穩定輸出。`id` 或 `status` 這類欄位消失會讓 client 無法理解資料，因此它們屬於必要欄位，應維持固定輸出。
 
 ## 【執行】state transition 測試要鎖定規則
 
@@ -388,23 +388,23 @@ func TestJobResponseOmitsFinishedAtWhenNil(t *testing.T) {
 8. `omitempty` 是否真的代表可選欄位
 9. 測試是否分成 state transition、copy boundary、response JSON
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：把顯示欄位放進 domain state
+### 檢查一：顯示欄位放在 response view
 
-顯示文字、顏色或前端 badge 通常是 response view。除非它影響業務規則，否則不應進入 domain state。
+顯示文字、顏色或前端 badge 通常是 response view。只有影響業務規則的欄位，才需要進入 domain state。
 
-### 錯誤二：讓 handler 直接改 projection
+### 檢查二：handler 透過狀態入口修改 projection
 
-handler 直接改 projection 會讓狀態規則分散。新增第二個入口時，常會忘記同步同一套規則。
+handler 透過 repository 或 state owner 修改 projection，可以讓狀態規則集中。handler 直接改 projection 時，新增第二個入口容易漏掉同一套規則。
 
-### 錯誤三：回傳內部 slice、map 或 pointer
+### 檢查三：回傳資料保護 copy boundary
 
 只要呼叫端能修改 repository 內部資料，狀態邊界就失效。回傳值時要檢查是否需要 clone。
 
-### 錯誤四：把 `omitempty` 當作預設選項
+### 檢查四：`omitempty` 對應可選欄位
 
-必填欄位加上 `omitempty` 會讓 response contract 變模糊。欄位是否可省略，應由資料語意決定，不是由欄位零值方便性決定。
+必填欄位加上 `omitempty` 會讓 response contract 變模糊。欄位是否可省略，應由資料語意決定，而不是由欄位零值方便性決定。
 
 ## 本章不處理
 

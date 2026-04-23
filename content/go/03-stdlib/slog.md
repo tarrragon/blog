@@ -119,7 +119,7 @@ logger.Info("job finished", "jobID", "j_1")
 
 `With` 會回傳帶有固定欄位的新 logger。這適合 component、version、requestID 這類上下文。
 
-## 常見錯誤
+## 設計檢查
 
 ### 把所有資訊塞進 msg
 

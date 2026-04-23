@@ -186,9 +186,9 @@ seen := map[string]bool{
 }
 ```
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：忽略 append 回傳值
+### 檢查一：接住 append 回傳值
 
 ```go
 append(names, "Alice") // 編譯錯誤：append 結果未使用
@@ -200,7 +200,7 @@ append(names, "Alice") // 編譯錯誤：append 結果未使用
 names = append(names, "Alice")
 ```
 
-### 錯誤二：寫入 nil map
+### 檢查二：寫入前初始化 map
 
 ```go
 var m map[string]int
@@ -214,7 +214,7 @@ m := make(map[string]int)
 m["x"] = 1
 ```
 
-### 錯誤三：假設 map 迭代順序穩定
+### 檢查三：需要順序時先排序 key
 
 map 的順序不能拿來做穩定輸出、測試 snapshot 或 UI 排序。需要順序就額外維護 slice。
 

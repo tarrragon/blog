@@ -138,7 +138,7 @@ func handleCreateUser(w http.ResponseWriter, r *http.Request) {
 
 這個 handler 把 JSON 邊界處理清楚：先解碼，再驗證，再執行核心邏輯，最後輸出 JSON。
 
-## 常見錯誤
+## 設計檢查
 
 ### 忘記傳 pointer 給 Unmarshal
 

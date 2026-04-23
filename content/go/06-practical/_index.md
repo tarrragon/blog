@@ -7,7 +7,7 @@ weight: 6
 
 本模組把 Go 的核心概念轉成常見服務開發任務。核心順序是：先定義資料與行為語意，再處理輸入邊界，接著更新 usecase、repository、event/log 邊界，最後補測試。這裡的範例會使用中立的即時通知服務，不要求讀者知道任何特定專案。
 
-實戰章節的重點不是套用大型架構模板，而是練習 Go 的判斷方式：何時只需要 struct，何時需要 method，何時需要 interface，何時需要 goroutine，何時應該把狀態集中管理。服務設計只是這些語言概念的應用場景。
+實戰章節的重點是練習 Go 的判斷方式：何時只需要 struct，何時需要 method，何時需要 interface，何時需要 goroutine，何時應該把狀態集中管理。大型架構模板留到壓力出現後再評估；服務設計只是這些語言概念的應用場景。
 
 ## 章節列表
 
@@ -26,7 +26,7 @@ weight: 6
 
 - **資料先有語意**：struct 欄位、JSON tag、zero value 與 `omitempty` 都要表達資料意義。
 - **邊界先小後大**：先用函式與 struct 整理行為，只有在替換、測試或隔離需求出現時才引入 interface。
-- **goroutine 要有生命週期**：背景工作必須能取消、停止與測試，不能只是把工作丟進 `go func()`。
+- **goroutine 要有生命週期**：背景工作必須能取消、停止與測試；只把工作丟進 `go func()` 會讓 shutdown、錯誤回報與測試邊界變模糊。
 - **記錄要按用途分流**：log 用於操作診斷，event log 用於事實記錄，repository 用於目前狀態。
 - **架構來自壓力**：domain package、repository port、event envelope 是服務變大後的自然拆分，不是入門程式的預設起點。
 

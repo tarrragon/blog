@@ -41,7 +41,7 @@ JSON tag 的核心規則是：Go 欄位名稱服務程式碼可見性，JSON 欄
 | Go struct 欄位 | `AppName` | exported 欄位必須大寫開頭  |
 | JSON payload   | `appName` | JSON 與 API 常用 camelCase |
 
-`omitempty` 宣告「這個欄位在某些資料情境中不是必要資料」。它不是單純省字，而是可選欄位的語義標記；欄位為零值時，JSON 序列化會跳過輸出。
+`omitempty` 宣告「這個欄位在某些資料情境中不是必要資料」。它是可選欄位的語義標記；欄位為零值時，JSON 序列化會跳過輸出。
 
 ## 【策略】先用資料語意決定欄位是否必要
 
@@ -106,4 +106,4 @@ type Config struct {
 
 ## 小結
 
-struct 是 Go 程式的資料骨架，JSON tag 是對外 contract。讀 model 時不要只看欄位型別，也要看 tag 是否揭露了 API 或檔案格式的必要性、可選性與命名邊界。
+struct 是 Go 程式的資料骨架，JSON tag 是對外 contract。讀 model 時應同時看欄位型別與 tag，因為 tag 會揭露 API 或檔案格式的必要性、可選性與命名邊界。

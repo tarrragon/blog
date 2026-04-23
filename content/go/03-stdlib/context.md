@@ -118,7 +118,7 @@ func worker(ctx context.Context, jobs <-chan Job) {
 
 這比讓 goroutine 無限跑更安全，也比較容易測試。
 
-## 常見錯誤
+## 設計檢查
 
 ### 把 context 存進 struct
 

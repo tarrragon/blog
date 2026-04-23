@@ -5,7 +5,7 @@ description: "把 context、net/http、log/slog、defer 與 time 連成服務底
 weight: 10
 ---
 
-這一章不是再教一次標準庫 API，而是把前面學過的工具串成一個事實：Go 之所以適合服務型應用，很大一部分原因是標準庫已經直接支撐了 HTTP、timeout、取消、日誌與資源管理。
+Go 標準庫的服務價值在於它直接提供 HTTP、timeout、取消、日誌與資源管理的基本能力。這一章把前面學過的工具串成服務底座，讓讀者理解標準庫如何支撐後端程式，而不只是個別 API 的使用方式。
 
 ## 本章目標
 
@@ -21,13 +21,13 @@ weight: 10
 
 ## 【觀察】標準庫本身就能做服務
 
-Go 的標準庫不是只能拿來寫練習題。`net/http` 可以直接建立服務，`context` 可以控制取消與 timeout，`log/slog` 可以支援結構化日誌，`defer` 可以整理資源釋放，`time` 可以處理期限與排程。
+Go 的標準庫已經包含服務程式需要的主要基礎能力。`net/http` 可以直接建立服務，`context` 可以控制取消與 timeout，`log/slog` 可以支援結構化日誌，`defer` 可以整理資源釋放，`time` 可以處理期限與排程。
 
 這些能力拼在一起，就是一個後端服務最基本的底盤。
 
 ## 【判讀】context 是服務生命週期的中心
 
-在服務型 Go 裡，`context` 不是可有可無的參數，而是請求、取消與 deadline 的共同語言。當 handler、worker、DB、Redis 都接受 context 時，整個流程就能在同一個生命週期邊界內運作。
+在服務型 Go 裡，`context` 是請求、取消與 deadline 的共同語言。當 handler、worker、DB、Redis 都接受 context 時，整個流程就能在同一個生命週期邊界內運作；缺少 context 的長時間流程會讓取消與逾時難以傳遞。
 
 ## 【判讀】net/http 讓入口保持簡單
 
@@ -39,4 +39,4 @@ Go 的標準庫不是只能拿來寫練習題。`net/http` 可以直接建立服
 
 ## 小結
 
-標準庫不是 Go 的附屬品，而是它能成為服務語言的核心原因之一。當你把 `context`、`net/http`、`log/slog`、`defer` 與 `time` 看成一組工具時，就更容易理解 Go 為什麼適合做後端服務。
+標準庫是 Go 成為服務語言的核心原因之一。當你把 `context`、`net/http`、`log/slog`、`defer` 與 `time` 看成一組工具時，就更容易理解 Go 為什麼適合做後端服務。

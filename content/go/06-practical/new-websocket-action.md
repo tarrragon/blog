@@ -5,7 +5,7 @@ description: "修改 client message、路由與 handler"
 weight: 1
 ---
 
-新增即時訊息 action 的核心流程是先定義 client 意圖，再把 action 轉成 application command，而不是讓 WebSocket handler 直接修改 domain state。本章用一個簡化的 topic subscription action 示範完整路徑。
+新增即時訊息 action 的核心流程是先定義 client 意圖，再把 action 轉成 application command。WebSocket handler 負責傳輸邊界，domain state 的修改交給 usecase 或 processor。本章用一個簡化的 topic subscription action 示範完整路徑。
 
 ## 本章目標
 
@@ -21,7 +21,7 @@ weight: 1
 
 ## 【觀察】action 表達 client intent
 
-action 的核心語意是 client 想要系統做什麼。它不是 UI 按鈕名稱，也不是 handler 函式名稱，而是 client 和 server 之間的訊息合約。
+action 的核心語意是 client 想要系統做什麼。它是 client 和 server 之間的訊息合約，命名應描述行為意圖，而不是 UI 按鈕或 handler 函式名稱。
 
 例如即時通知服務可能有三種 action：
 
@@ -41,7 +41,7 @@ const (
 )
 ```
 
-action 名稱應該描述行為意圖，而不是描述傳輸細節。`subscribe_topic` 比 `ws_subscribe` 更穩定，因為未來同一個 usecase 也可能被 HTTP endpoint 或 background job 呼叫。
+action 名稱應該描述行為意圖。`subscribe_topic` 比 `ws_subscribe` 更穩定，因為未來同一個 usecase 也可能被 HTTP endpoint 或 background job 呼叫。
 
 ## 【判讀】外部訊息先進入 envelope
 
@@ -85,7 +85,7 @@ type SubscribeTopicRequest struct {
 
 `Topic` 是必填欄位，因為沒有 topic 就無法訂閱。`IncludeHistory` 是可選欄位，零值 `false` 可以代表「不要求歷史資料」。這裡使用 `omitempty` 是在表達：輸出 response 或轉送資料時，這個欄位可以省略；它不是必填資料。
 
-驗證規則應該靠明確函式完成，而不是散落在 router 分支中：
+驗證規則應該靠明確函式完成，讓 router 分支只負責呼叫驗證與轉換：
 
 ```go
 func (r SubscribeTopicRequest) Validate() error {
@@ -100,7 +100,7 @@ func (r SubscribeTopicRequest) Validate() error {
 
 ## 【執行】router 只做解析、驗證與轉換
 
-message router 的核心責任是把 client message 轉成 application command。router 不應直接修改 repository，也不應保存訂閱狀態；它只處理傳輸邊界。
+message router 的核心責任是把 client message 轉成 application command。router 只處理傳輸邊界，狀態修改與訂閱規則交給 usecase。
 
 先定義 usecase 需要的 command：
 
@@ -112,7 +112,7 @@ type SubscribeTopicCommand struct {
 }
 ```
 
-command 不需要 JSON tag，因為它不是外部傳輸格式。它是 application layer 的輸入模型，只描述 usecase 需要的資料。
+command 是 application layer 的輸入模型，只描述 usecase 需要的資料。它不需要 JSON tag，因為外部傳輸格式已經停在 request struct。
 
 接著定義 usecase 介面：
 
@@ -228,9 +228,9 @@ func ErrorMessage(replyTo string, code string, message string) ServerMessage {
 
 WebSocket action 失敗不一定要關閉連線。JSON 格式錯誤、未知 action 或 payload 驗證失敗，通常可以回一筆 error message，讓 client 修正下一次請求；只有協定嚴重錯誤、授權失效或連線狀態不可恢復時，才考慮關閉連線。
 
-## 【策略】WebSocket handler 不應承載所有邏輯
+## 【策略】WebSocket handler 聚焦 connection I/O
 
-WebSocket handler 的核心責任是 connection I/O。它可以讀 message、呼叫 router、寫 response，但不應該直接知道每種 action 的業務規則。
+WebSocket handler 的核心責任是 connection I/O。它可以讀 message、呼叫 router、寫 response；每種 action 的業務規則交給 router 後方的 usecase。
 
 簡化後的連線處理可以像這樣：
 
@@ -248,7 +248,7 @@ func handleClientMessage(ctx context.Context, router *MessageRouter, clientID st
 }
 ```
 
-真實 WebSocket server 會有 read loop、write loop、heartbeat 與 slow client 處理。這些都屬於連線生命週期，不應和 action routing 混在一起。
+真實 WebSocket server 會有 read loop、write loop、heartbeat 與 slow client 處理。這些都屬於連線生命週期，應和 action routing 分開維護。
 
 ## 【執行】router 測試先覆蓋協定行為
 
@@ -304,7 +304,7 @@ func TestMessageRouterSubscribeTopic(t *testing.T) {
 }
 ```
 
-輸入錯誤案例應該測 response code，而不是只看錯誤文案：
+輸入錯誤案例應該測 response code。錯誤文案可以調整，code 才是較穩定的協定欄位：
 
 ```go
 func TestMessageRouterUnknownAction(t *testing.T) {
@@ -368,21 +368,21 @@ func TestSubscriptionServiceSubscribeTopic(t *testing.T) {
 8. router 測試是否覆蓋成功、未知 action、invalid JSON、invalid payload
 9. usecase 測試是否直接使用 command
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：handler 直接修改狀態
+### 檢查一：handler 只處理傳輸邊界
 
-handler 直接改 map、slice 或 repository 會讓傳輸協定和業務規則綁死。後續若要新增 HTTP API、CLI 或背景工作呼叫同一行為，就會複製一套邏輯。
+handler 只處理讀寫、編碼與連線狀態，可以讓 HTTP API、CLI 或背景工作共用同一個 usecase。handler 直接改 map、slice 或 repository 時，傳輸協定和業務規則會綁在一起。
 
-### 錯誤二：payload 使用 `map[string]any` 傳到底
+### 檢查二：payload 轉成明確 command
 
 `map[string]any` 適合短暫承接未知 JSON，不適合傳進 usecase。usecase 應該接收明確 command，讓欄位、型別與驗證規則可讀可測。
 
-### 錯誤三：把 action 失敗等同連線失敗
+### 檢查三：action 失敗和連線失敗分開處理
 
 單一 action payload 錯誤不代表 WebSocket 連線壞掉。多數 client input error 應該用 error response 表達，避免 client 因小錯誤被斷線。
 
-### 錯誤四：一開始建立巨大 router 介面
+### 檢查四：router interface 跟著 usecase 成長
 
 router 依賴的 interface 應該由當下需要的 usecase 定義。過早建立大型 service interface，會讓每個測試都被迫實作不相關方法。
 

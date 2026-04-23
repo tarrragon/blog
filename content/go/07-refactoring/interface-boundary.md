@@ -330,21 +330,21 @@ type EventLogWithList interface {
 
 不要先設計一個完美的全域介面。從使用端需要的最小方法開始，介面會更穩。
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：interface 由 implementation 定義
+### 檢查一：interface 由使用端定義
 
 implementation 定義的 interface 往往暴露太多方法。使用端定義 interface，才能只依賴自己真正需要的能力。
 
-### 錯誤二：所有 struct 都配一個 interface
+### 檢查二：有替換需求再建立 interface
 
 `Foo` 搭配 `FooInterface` 不是 Go 的慣例。interface 應該來自使用需求，而不是來自型別存在。
 
-### 錯誤三：fake 必須模擬完整系統
+### 檢查三：fake 服務當前測試行為
 
 fake 是測試工具，不是真 adapter。它只需要支援測試情境，不需要重建資料庫、網路或完整狀態機。
 
-### 錯誤四：interface 太早穩定成公開 API
+### 檢查四：公開 interface 需要穩定承諾
 
 一旦 interface 被多個 package 依賴，修改成本會提高。邊界還在探索時，保持 unexported 或使用 concrete type 更務實。
 

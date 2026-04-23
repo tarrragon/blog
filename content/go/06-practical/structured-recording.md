@@ -5,7 +5,7 @@ description: "區分 operational log、domain event log 與狀態資料"
 weight: 5
 ---
 
-新增結構化記錄欄位的核心規則是先判斷這筆資訊是給工程師除錯、給系統重播，還是給使用者查詢。不同用途對應不同記錄邊界，不能全部塞進 log。
+新增結構化記錄欄位的核心規則是先判斷這筆資訊是給工程師除錯、給系統重播，還是給使用者查詢。不同用途對應不同記錄邊界，資料應依用途進入 log、event log 或 repository。
 
 ## 本章目標
 
@@ -29,7 +29,7 @@ weight: 5
 | domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed`      |
 | state repository | 查詢目前狀態或投影            | job current status、notification summary  |
 
-structured log 不應當成資料庫。event log 不應當成 debug message。state repository 不應保存所有操作細節。先分清楚用途，才知道欄位該放哪裡。
+structured log 服務操作診斷，event log 保存 normalized fact，state repository 回答目前狀態。先分清楚用途，才知道欄位該放哪裡。
 
 ## 【判讀】structured log 是操作訊號
 
@@ -73,7 +73,7 @@ logger.Info("event accepted", LogAttrsForEvent(event)...)
 
 ## 【策略】reason 欄位要像 enum
 
-`reason` 的核心語意是可聚合的原因分類。它不應該放完整錯誤訊息，而應該使用小集合穩定值。
+`reason` 的核心語意是可聚合的原因分類。它應使用小集合穩定值；完整錯誤訊息則放在 `error` 欄位協助診斷。
 
 ```go
 const (
@@ -100,7 +100,7 @@ logger.Warn(
 
 ## 【判讀】event log 記錄 normalized fact
 
-domain event log 的核心責任是保存已正規化的 domain event。它記錄的是系統承認的事實，而不是 raw request、debug log 或目前狀態。
+domain event log 的核心責任是保存已正規化的 domain event。它記錄的是系統承認的事實；raw request、debug log 與目前狀態分別屬於不同記錄邊界。
 
 先定義 port：
 
@@ -162,11 +162,11 @@ func (l *InMemoryEventLog) List() []DomainEvent {
 }
 ```
 
-這不是完整 event store，只是教學用邊界。真正 event store 還需要持久化、排序、schema migration、重播策略與交易語意。
+這裡展示的是教學用記錄邊界。真正 event store 還需要持久化、排序、schema migration、重播策略與交易語意。
 
 ## 【策略】state repository 保存目前狀態
 
-state repository 的核心責任是回答目前狀態，不是保存所有歷史事實。它可以由 event 更新，但它不等同 event log。
+state repository 的核心責任是回答目前狀態。它可以由 event 更新，但用途不同於保存所有歷史事實的 event log。
 
 例如：
 
@@ -204,7 +204,7 @@ func (p *RecordingEventProcessor) Process(ctx context.Context, event DomainEvent
 
 ## 【判讀】記錄位置要跟錯誤發生層一致
 
-記錄位置的核心規則是在哪一層能提供最多上下文，就在哪一層記錄。不要每一層都記同一個錯誤，否則 log 會被重複訊號淹沒。
+記錄位置的核心規則是在哪一層能提供最多上下文，就在哪一層記錄。同一個錯誤通常選擇一個主要層次記錄，避免 log 被重複訊號淹沒。
 
 常見位置：
 
@@ -226,11 +226,11 @@ logger.Warn(
 )
 ```
 
-這裡不要把完整 body 寫進 log。payload 大小足以診斷資料是否異常；完整 payload 可能包含敏感資料或過大內容。
+這裡記錄 payload 大小即可診斷資料是否異常；完整 payload 可能包含敏感資料或過大內容。
 
 ## 【策略】敏感資料預設不進 log
 
-敏感資料邊界的核心規則是 log 會被保存、轉發與搜尋，所以不要把 token、password、完整 payload、完整個資寫進 log。
+敏感資料邊界的核心規則是 log 會被保存、轉發與搜尋，所以 token、password、完整 payload、完整個資應排除在 log 之外。
 
 可以記錄：
 
@@ -258,11 +258,11 @@ logger.Debug(
 )
 ```
 
-debug log 也不是安全例外。只要可能被集中收集，就要遵守同樣規則。
+debug log 也需要遵守同樣規則；只要可能被集中收集，就要先控制敏感資料。
 
 ## 【執行】log helper 測試只測穩定欄位
 
-log helper 測試的核心目標是保護欄位名稱與值。不要測 log message 文案，因為文案是給人讀的，容易調整。
+log helper 測試的核心目標是保護欄位名稱與值。log message 文案是給人讀的內容，通常保留調整空間。
 
 ```go
 func TestLogAttrsForEvent(t *testing.T) {
@@ -303,7 +303,7 @@ func attrsToMap(attrs []any) map[string]any {
 }
 ```
 
-這個測試不需要真的寫 log，也不需要解析 logger output。
+這個測試直接檢查 helper 輸出，不需要真的寫 log 或解析 logger output。
 
 ## 【執行】event log 測試要保護 append 與 copy
 
@@ -354,21 +354,21 @@ func TestInMemoryEventLogAppendCopiesPayload(t *testing.T) {
 8. event log 是否保護 copy boundary
 9. 測試是否檢查穩定欄位，而不是自由文字
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：把 log 當資料庫
+### 檢查一：log 服務操作診斷
 
 log 是操作診斷訊號，不是穩定查詢 API。需要使用者查詢的目前狀態，應該進 repository 或 read model。
 
-### 錯誤二：把 event log 當 debug log
+### 檢查二：event log 保存 normalized fact
 
 event log 記錄的是 normalized fact。若把暫時性錯誤、debug 訊息與 raw payload 全塞進 event log，重播與 audit 會變得不可信。
 
-### 錯誤三：欄位名稱每個地方都不同
+### 檢查三：欄位名稱維持一致
 
 `event_id`、`eventID`、`id` 混用會讓查詢失效。欄位 schema 要像 API 一樣維持穩定。
 
-### 錯誤四：為了方便把完整 payload 寫進 log
+### 檢查四：完整 payload 需要明確策略
 
 完整 payload 可能包含敏感資料，也可能非常大。除非有明確安全與保存策略，否則只記錄大小、hash、ID 與必要欄位。
 

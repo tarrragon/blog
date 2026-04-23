@@ -125,17 +125,17 @@ config/
 - `validate.go` 集中驗證規則，方便測試
 - unexported helper 留在 package 內，不污染外部 API
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：把所有東西都 exported
+### 檢查一：控制 exported API
 
 如果你把所有型別、函式、常數都用大寫開頭，其他 package 就會開始依賴你的內部細節。未來你想重構時，會發現很多名稱都不能改。
 
-### 錯誤二：package 名稱太抽象
+### 檢查二：package 名稱表達責任
 
 `utils`、`common`、`helpers` 這類名稱常讓 package 變成雜物間。Go 更偏好用資料或能力命名，例如 `config`、`auth`、`metrics`、`parser`。
 
-### 錯誤三：檔案切太細
+### 檢查三：檔案切分服務閱讀
 
 過度切分會讓讀者一直跳檔案。Go 的檔案可以稍微長一點，只要同一個檔案仍然圍繞同一組概念。
 

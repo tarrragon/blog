@@ -355,21 +355,21 @@ func TestProcessorAppliesJobProjection(t *testing.T) {
 7. 修正 import，避免 domain 依賴 adapter。
 8. 測試通過後，再搬下一個 domain。
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：照目錄模板一次切太多層
+### 檢查一：目錄跟著概念壓力成長
 
 服務還小時，一次建立 `domain/application/infrastructure/interfaces` 可能只會增加跳轉成本。先拆最痛的語意邊界。
 
-### 錯誤二：package 名稱只描述技術類型
+### 檢查二：package 名稱表達 domain 概念
 
 `models`、`types`、`helpers` 通常不夠好。它們說明了程式碼形狀，沒有說明業務語意。
 
-### 錯誤三：domain package import HTTP 或 WebSocket
+### 檢查三：domain package 保持技術無關
 
 domain 應保存業務語意，不應知道傳輸協定。若 domain import adapter，依賴方向已經反了。
 
-### 錯誤四：搬移時順手改行為
+### 檢查四：搬移和行為變更分開
 
 package 重構應先保持行為不變。若同時改規則與搬檔案，測試失敗時很難判斷是搬移錯誤還是行為改動。
 

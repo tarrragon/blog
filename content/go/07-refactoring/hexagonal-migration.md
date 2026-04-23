@@ -376,21 +376,21 @@ adapter integration test 則可以用 `httptest` 驗證 request/response 與 use
 7. 舊功能被修改時，逐步搬到同樣邊界。
 8. 用 import direction review 防止反向依賴。
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：一開始就搬完整目錄
+### 檢查一：遷移從單一邊界開始
 
 ports/adapters 的價值是依賴方向。若沒有先拆 usecase 與 port，只是搬資料夾，複雜度會上升但邊界不會變清楚。
 
-### 錯誤二：application import storage implementation
+### 檢查二：application 依賴 port
 
 application 應依賴 port，不依賴 memory、SQLite 或 database adapter。若 application import storage，依賴方向已經反了。
 
-### 錯誤三：adapter 保存業務規則
+### 檢查三：業務規則留在 application 或 domain
 
 adapter 可以驗證輸入格式，但業務規則應該在 usecase 或 domain。否則 HTTP 與 WebSocket 會各自複製規則。
 
-### 錯誤四：把所有 port 放成巨大 ports package
+### 檢查四：port 跟著使用端分散
 
 port 應靠近使用端。把所有 interface 集中到一個大型 package，常會讓依賴重新糾纏在一起。
 

@@ -470,21 +470,21 @@ integration test 的核心用途是確認組裝正確，不是覆蓋所有規則
 
 每一步都應該讓程式可編譯、測試可跑。不要一次把 handler、repository、package 結構全部搬完。
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：只把程式碼搬到另一個函式
+### 檢查一：抽出真正的行為邊界
 
 如果新函式仍然接收 `http.ResponseWriter` 和 `*http.Request`，那只是移動程式碼，還沒有分離 transport concern。
 
-### 錯誤二：domain model 直接加 JSON tag
+### 檢查二：domain model 和 response model 分開
 
 JSON tag 是 transport contract。domain model 若直接承擔對外格式，未來內部欄位調整就會牽動 API 相容性。
 
-### 錯誤三：handler 捕捉所有錯誤都回 500
+### 檢查三：錯誤類型對應 HTTP 回應
 
 輸入錯誤、重複資料、權限問題與內部錯誤應該對應不同 status code。錯誤型別與 error mapping helper 可以避免字串判斷。
 
-### 錯誤四：只保留端到端測試
+### 檢查四：分層測試保護不同責任
 
 端到端測試重要，但不應是唯一測試。usecase 規則越多，越需要直接測 command 與 fake repository。
 

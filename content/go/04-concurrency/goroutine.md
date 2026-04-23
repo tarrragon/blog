@@ -124,7 +124,7 @@ func worker(ctx context.Context, jobs <-chan Job) {
 
 這個 worker 不會無限卡住；上層取消 context 或關閉 jobs channel，它都會退出。
 
-## 常見錯誤
+## 設計檢查
 
 ### 啟動後不等待
 

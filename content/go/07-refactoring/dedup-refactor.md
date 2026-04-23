@@ -351,21 +351,21 @@ func TestDeduperCleanup(t *testing.T) {
 
 不要一開始就把所有事件融合規則做完。先把「是否看過」集中，再處理 priority 或 replace policy。
 
-## 常見錯誤
+## 設計檢查
 
-### 錯誤一：用 raw payload hash 去重
+### 檢查一：去重鍵使用 domain 語意
 
 payload hash 對格式變化太敏感。欄位順序、metadata 或 timestamp 精度改變，都會讓同一件事看起來不同。
 
-### 錯誤二：把 ReceivedAt 當事件發生時間
+### 檢查二：事件順序使用 OccurredAt
 
 `ReceivedAt` 是系統收到時間。事件是否同一件事，通常應看 `OccurredAt` 與 subject 語意。
 
-### 錯誤三：去重表沒有 cleanup
+### 檢查三：去重表需要 cleanup
 
 任何「看過的 key」map 都會成長。沒有 cleanup 的 deduper 會在長時間服務中累積記憶體壓力。
 
-### 錯誤四：來源 priority 沒有測試
+### 檢查四：來源 priority 需要測試
 
 若不同來源資料完整度不同，priority 是 domain policy。它應該有明確函式與測試，而不是散落在 processor 的條件判斷裡。
 
