@@ -41,7 +41,7 @@ weight: 7
 
 - 使用者建立訂單時庫存不足，對外 response 要表達「目前狀態不允許」，對內 log 要能定位商品與庫存版本。
 - 付款 API timeout，對外 response 要避免承諾付款結果，對內訊號要標出 payment provider、timeout duration 與 retry policy。
-- Webhook payload 格式錯誤，對外要回穩定錯誤碼，對內要記錄 schema version 與來源系統。
+- [Webhook](../knowledge-cards/webhook/) payload 格式錯誤，對外要回穩定錯誤碼，對內要記錄 schema version 與來源系統。
 
 這類設計的陷阱是只留下自由文字錯誤。自由文字適合人快速閱讀，但分類、查詢、告警與統計需要穩定欄位。錯誤分類要同時支援 API contract、log schema、metric label 與 runbook。
 
@@ -91,7 +91,7 @@ weight: 7
 
 ## 【判讀】備援切換要先定義切換條件
 
-備援切換的核心責任是讓系統在依賴、節點或區域失效時轉到可用路徑。切換可以發生在 client、load balancer、service discovery、application adapter、queue consumer 或資料層；每一層都需要明確條件。
+備援切換的核心責任是讓系統在依賴、節點或區域失效時轉到可用路徑。切換可以發生在 client、load balancer、[service discovery](../knowledge-cards/service-discovery/)、application adapter、queue consumer 或資料層；每一層都需要明確條件。
 
 接近真實網路服務的例子包括：
 
@@ -110,12 +110,27 @@ weight: 7
 接近真實網路服務的例子包括：
 
 - 在預備環境讓 payment provider adapter 回 timeout，驗證訂單狀態是否停在待確認。
-- 在 load test 中提高 queue lag，驗證 dashboard、alert 與 consumer 擴容決策。
-- 在 chaos test 中讓 broker 暫時中斷，驗證 outbox、retry 與 idempotency。
+- 在 [load test](../knowledge-cards/load-test/) 中提高 queue lag，驗證 dashboard、alert 與 consumer 擴容決策。
+- 在 [chaos test](../knowledge-cards/chaos-test/) 中讓 broker 暫時中斷，驗證 outbox、retry 與 idempotency。
 
 這類設計的陷阱是只測成功路徑。錯誤分類、定位線索、降級策略與 failover 都應有對應測試、演練或 release gate，否則事故發生時才會知道設計缺口。
 
 下一步可讀：[可靠性驗證流程](../06-reliability/)。
+
+## 【檢查】進入實作前的概念邊界清單
+
+當以下問題都能回答時，代表本章的概念層已完成，可以進入觀測與事故治理實作章節：
+
+1. 錯誤分類是否可被查詢與統計（對外碼、對內欄位）
+2. 定位線索是否可跨邊界串接（request、trace、event）
+3. 降級與切換條件是否明確（觸發條件、回切條件）
+4. 演練與驗證入口是否明確（load、chaos、事故演練）
+
+下一步建議路由：
+
+- [04-observability](../04-observability/)
+- [06-reliability](../06-reliability/)
+- [08-incident-response](../08-incident-response/)
 
 ## 小結
 

@@ -25,7 +25,7 @@ weight: 8
 | 需求類型   | 核心問題                                              | 常見情境                                                                                                                                                     |
 | ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 權限分級   | 誰能看、改、匯出、審核或管理資料                      | RBAC、ABAC、tenant boundary                                                                                                                                  |
-| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | admin endpoint、upload、webhook                                                                                                                              |
+| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | admin endpoint、upload、[webhook](../knowledge-cards/webhook/)                                                                                                                              |
 | 資料遮罩   | 匯出、log、客服畫面要顯示多少敏感資訊                 | email、電話、身分證、付款資訊                                                                                                                                |
 | 傳輸保護   | 資料在 client、service、queue、storage 之間如何被保護 | [TLS / mTLS](../knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](../knowledge-cards/certificate-chain-trust/)                  |
 | 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷              | [secret management](../knowledge-cards/secret-management/)、[website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)、key rotation |
@@ -49,11 +49,11 @@ weight: 8
 
 ## 【判讀】伺服器防護要先找暴露入口
 
-伺服器防護的核心責任是降低服務入口的攻擊面。API、admin endpoint、webhook、file upload、public asset、diagnostics endpoint 與 internal endpoint 都有不同暴露程度。
+伺服器防護的核心責任是降低服務入口的攻擊面。API、admin endpoint、[webhook](../knowledge-cards/webhook/)、file upload、public asset、diagnostics endpoint 與 internal endpoint 都有不同暴露程度。
 
 接近真實網路服務的例子包括：
 
-- webhook endpoint 需要驗證來源簽章、限制重放時間窗，並記錄來源系統。
+- [webhook](../knowledge-cards/webhook/) endpoint 需要驗證來源簽章、限制重放時間窗，並記錄來源系統。
 - admin endpoint 需要更高權限、來源限制與操作稽核。
 - file upload 需要限制大小、型別、掃描結果與後續存取權限。
 
@@ -83,9 +83,9 @@ weight: 8
 
 - client 到 API 使用 [TLS](../knowledge-cards/tls-mtls/)，避免帳號資料在網路中被竊聽。
 - service 到 service 使用 [mTLS](../knowledge-cards/tls-mtls/) 或 signed request，確認呼叫來源與訊息完整性。
-- webhook callback 驗證簽章與 timestamp，降低偽造與重放風險。
+- [webhook](../knowledge-cards/webhook/) callback 驗證簽章與 timestamp，降低偽造與重放風險。
 
-這類需求的陷阱是只保護公開入口。內部網路、queue message、object storage link、backup transfer 與第三方 callback 都是資料流動路徑；傳輸保護要依邊界與資料等級設定。
+這類需求的陷阱是只保護公開入口。內部網路、queue message、[object storage](../knowledge-cards/object-storage/) link、backup transfer 與第三方 callback 都是資料流動路徑；傳輸保護要依邊界與資料等級設定。
 
 下一步可讀：[部署平台與網路入口](../05-deployment-platform/) 與 [資安與資料保護](../07-security-data-protection/)。
 
@@ -117,6 +117,20 @@ weight: 8
 這類需求的陷阱是把 audit log 和 debug log 混在一起。debug log 服務排障，audit log 服務責任判斷；audit log 需要更穩定的 schema、保存策略、存取權限與完整性保護。
 
 下一步可讀：[資安與資料保護](../07-security-data-protection/) 與 [可觀測性平台](../04-observability/)。
+
+## 【檢查】進入實作前的概念邊界清單
+
+當以下問題都能回答時，代表本章的概念層已完成，可以進入資安與資料保護實作章節：
+
+1. 資料分級與角色責任是否明確（誰可讀、可改、可匯出）
+2. 資料流路徑是否明確（client、service、queue、storage）
+3. 秘密與憑證生命週期是否明確（保存、輪替、撤銷、續期）
+4. 稽核與事故追蹤要求是否明確（audit 欄位、保存、查核流程）
+
+下一步建議路由：
+
+- [07-security-data-protection](../07-security-data-protection/)
+- [08-incident-response](../08-incident-response/)
 
 ## 小結
 

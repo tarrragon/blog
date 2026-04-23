@@ -15,6 +15,13 @@ weight: -1
 | ---- | -------- | ------------ |
 | [Database](database/) | 正式狀態如何保存、查詢與保護 | source of truth、transaction、backup |
 | [Source of Truth](source-of-truth/) | 哪個位置承擔正式資料判斷 | database、cache、search index |
+| [Search Index](search-index/) | 搜尋體驗如何有獨立讀取模型 | full-text、filter、ranking |
+| [Full-Text Search](full-text-search/) | 文本檢索如何支援關鍵字與相關性排序 | search、documents、catalog |
+| [Facet Query](facet-query/) | 搜尋結果如何提供可篩選聚合維度 | filter、aggregation、UX |
+| [Object Storage](object-storage/) | 大型檔案如何保存與控管生命週期 | upload、export、backup |
+| [Event Log](event-log/) | 歷史事件如何保存與重播 | replay、audit、projection |
+| [Read Model](read-model/) | 查詢需求如何有獨立讀取資料形狀 | projection、query model |
+| [Projection](projection/) | 來源資料如何轉換成查詢視圖 | events、materialized view |
 | [資料生命週期](data-lifecycle/) | 資料如何建立、保留、封存與刪除 | retention、audit、export |
 | [資料不一致](data-inconsistency/) | 多份資料暫時不同步時如何辨識與修復 | cache、replica、eventual consistency |
 | [Transaction](transaction/) | 一組資料變更如何一起成功或一起回復 | database、commit、rollback |
@@ -42,8 +49,10 @@ weight: -1
 | [Dependency Isolation](dependency-isolation/) | 如何避免單一下游耗盡共享資源 | pool、queue、dependency |
 | [Bulkhead](bulkhead/) | 如何用資源分艙限制故障擴散 | worker、tenant、pool |
 | [In-Process Channel](in-process-channel/) | 單一 process 內如何傳遞工作或訊號 | channel、local queue |
+| [Local Worker](local-worker/) | 同 process 背景工作的責任與邊界 | background task、shutdown |
 | [Worker Pool](worker-pool/) | 如何限制同時處理量 | worker、background job |
 | [HTTP Client](http-client/) | 呼叫外部 HTTP 依賴時如何管理資源 | API、dependency |
+| [Webhook](webhook/) | 外部系統回呼事件如何驗證與處理 | callback、signature、retry |
 | [Stream Pipeline](stream-pipeline/) | 連續資料流如何管理吞吐與背壓 | stream、CDC、ETL |
 | [Buffer](buffer/) | 暫存空間如何吸收短暫速度差 | queue、socket、cache |
 | [Queue](queue/) | 等待處理的工作如何形成容量邊界 | producer、consumer、backlog |
@@ -76,6 +85,12 @@ weight: -1
 | ---- | -------- | ------------ |
 | [Broker](broker/) | 訊息離開單一 process 後由誰保存、路由與交付 | queue、event、worker、stream |
 | [Topic](topic/) | 事件如何依主題分流給不同訂閱者 | broker、event、stream |
+| [Pub/Sub](pub-sub/) | 訊息如何即時分發給多個訂閱者 | realtime、notification、broadcast |
+| [Fan-out](fan-out/) | 單一事件如何同時送到多個下游 | topic、subscription、event flow |
+| [Durable Queue](durable-queue/) | 工作如何在故障後仍可被處理 | persistence、ack/nack、retry |
+| [Reliability Boundary](reliability-boundary/) | 系統在哪些邊界內承諾可恢復傳遞 | request、process、service boundary |
+| [Offline Catch-up](offline-catchup/) | 離線期間漏失事件如何補齊 | websocket、sync、reconnect |
+| [Strong Reliability](strong-reliability/) | 關鍵事件如何達到高可靠路徑 | payment、inventory、audit |
 | [Routing Rule](routing-rule/) | 訊息如何依規則進入不同處理路徑 | broker、queue、priority |
 | [Producer](producer/) | 誰把工作、事件或資料送入處理路徑 | queue、broker、stream |
 | [Consumer](consumer/) | 誰取得等待處理的工作並產生結果 | queue、worker、side effect |
@@ -91,6 +106,7 @@ weight: -1
 | [Publisher Confirm](publisher-confirm/) | producer 如何確認 broker 已接收訊息 | publish、outbox |
 | [Message Persistence](message-persistence/) | 訊息是否落盤保存 | durability、cost |
 | [Delivery Mode](delivery-mode/) | 投遞模式如何影響可靠性與延遲 | broker、event semantics |
+| [Delivery Semantics](delivery-semantics/) | 事件投遞承諾如何決定補償策略 | retry、idempotency、replay |
 | [Consumer Capacity](consumer-capacity/) | consumer 群組每秒能處理多少工作 | lag、scaling |
 | [Competing Consumers](competing-consumers/) | 多個 consumer 如何共同處理同一 queue | worker、throughput |
 | [Consumer Group](consumer-group/) | 多個 consumer 如何共同分攤 stream | Kafka、Redis Streams |
@@ -153,6 +169,9 @@ weight: -1
 | [降級](degradation/) | 服務部分能力失效時如何保留核心功能 | failover、fallback、capacity |
 | [Circuit Breaker](circuit-breaker/) | 下游持續失敗時如何暫停呼叫 | timeout、fallback、degradation |
 | [Failover](failover/) | 主要路徑失效時如何切到備援 | HA、region、provider |
+| [Autoscaling](autoscaling/) | 容量如何依指標自動擴縮 | HPA、capacity、traffic burst |
+| [Rolling Update](rolling-update/) | 版本如何逐批替換並維持可用 | deployment、release |
+| [Service Discovery](service-discovery/) | 服務實例如何被查找與路由 | registry、load balancing |
 | [停機](downtime/) | 服務中斷時要先保護哪些產品結果 | incident、SLO、deployment |
 | [Readiness](readiness/) | instance 何時可以安全接收流量 | Kubernetes、load balancer、rollout |
 | [Health Check / Liveness](health-check-liveness/) | 平台如何判斷 process 是否仍然存活 | Kubernetes、systemd |
@@ -164,6 +183,9 @@ weight: -1
 | ---- | -------- | ------------ |
 | [On-Call](on-call/) | 值班制度如何承接告警與事故流程 | paging、handover、incident |
 | [Playbook](playbook/) | 場景化處置如何快速啟動與執行 | incident workflow、recovery |
+| [CI Pipeline](ci-pipeline/) | 合併前如何自動驗證品質與相容性 | tests、checks、merge gate |
+| [Load Test](load-test/) | 預期流量下如何驗證容量與延遲 | performance、SLO、capacity |
+| [Chaos Test](chaos-test/) | 受控故障注入如何驗證韌性 | resilience、failover、runbook |
 | [Game Day](game-day/) | 事故演練如何驗證流程與協作 | drill、readiness、training |
 | [Incident Severity](incident-severity/) | 事故如何依產品影響分級 | on-call、incident、SLO |
 | [Incident Command System](incident-command-system/) | 事故期間如何分配指揮與執行角色 | commander、scribe、owner |
@@ -192,6 +214,7 @@ weight: -1
 | [Tenant Boundary](tenant-boundary/) | 多租戶資料與資源如何隔離 | SaaS、RBAC |
 | [Least Privilege](least-privilege/) | 身份如何只取得必要權限 | IAM、database user |
 | [Security Misconfiguration](security-misconfiguration/) | 設定錯誤如何暴露內部能力 | CORS、debug、cloud |
+| [Feature Flag](feature-flag/) | 功能開關如何分離部署與啟用 | rollout、experiment、rollback |
 | [Input Validation](input-validation/) | 入口資料如何檢查格式與語意 | API、webhook |
 | [SSRF](ssrf/) | 伺服器端請求如何被濫用 | URL fetch、webhook |
 | [PII](pii/) | 可識別個人的資料如何保護 | masking、retention |

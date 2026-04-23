@@ -30,13 +30,13 @@ weight: 0
 | 即時互動 | client 需要持續接收狀態變化 | 聊天、通知、進度更新、presence |
 | 操作診斷 | 出事時要知道原因與影響範圍 | log、metric、trace、dashboard |
 | 服務交付 | 服務要穩定發版、擴容與接流量 | container、load balancer、readiness |
-| 可靠性驗證 | 事故前要驗證容量與失敗情境 | CI、load test、fuzz、chaos |
+| 可靠性驗證 | 事故前要驗證容量與失敗情境 | [CI pipeline](../knowledge-cards/ci-pipeline/)、[load test](../knowledge-cards/load-test/)、fuzz、[chaos test](../knowledge-cards/chaos-test/) |
 
 這張表是需求索引。每個類型後面都會對應到不同的能力地圖，但實際功能常會同時命中多列。
 
 ## 【判讀】狀態保存需求要先找正式狀態
 
-狀態保存需求的核心訊號是「資料會被後續流程承認」。當使用者、營運人員、付款系統或稽核流程都需要相信某份資料，這份資料就需要明確的 source of truth。
+狀態保存需求的核心訊號是「資料會被後續流程承認」。當使用者、營運人員、付款系統或稽核流程都需要相信某份資料，這份資料就需要明確的 [source of truth](../knowledge-cards/source-of-truth/)。
 
 接近真實網路服務的例子包括：
 
@@ -55,10 +55,10 @@ weight: 0
 接近真實網路服務的例子包括：
 
 - 活動商品頁在短時間內被大量瀏覽，但商品描述變更頻率低。
-- 每個 API request 都要讀取使用者權限與 feature flag。
+- 每個 API request 都要讀取使用者權限與 [feature flag](../knowledge-cards/feature-flag/)。
 - 即時通知服務需要頻繁查詢 topic 的在線訂閱者。
 
-這類需求的陷阱是把所有慢查詢都當成快取問題。若查詢慢是因為資料模型、索引、N+1 request、外部 API timeout 或資料量爆炸，快取只能暫時吸收症狀。讀取壓力要先確認是否有明確 source of truth、資料能否重建、失效後是否能接受短暫不一致。
+這類需求的陷阱是把所有慢查詢都當成快取問題。若查詢慢是因為資料模型、索引、N+1 request、外部 API timeout 或資料量爆炸，快取只能暫時吸收症狀。讀取壓力要先確認是否有明確 [source of truth](../knowledge-cards/source-of-truth/)、資料能否重建、失效後是否能接受短暫不一致。
 
 下一步可讀：[後端服務能力地圖](service-capability-map/) 與 [狀態與資料儲存選型](state-storage-selection/)。
 
@@ -70,7 +70,7 @@ weight: 0
 
 - 付款成功頁先回應使用者，email、推播與報表更新在後面完成。
 - 使用者上傳影片後先看到處理中狀態，轉檔與縮圖由背景 worker 執行。
-- 外部 webhook 進來後先驗證與保存，再由後續流程重試與分派。
+- 外部 [webhook](../knowledge-cards/webhook/) 進來後先驗證與保存，再由後續流程重試與分派。
 
 這類需求的陷阱是把「放到背景」視為可靠性保證。背景工作離開 request 後，系統還要回答是否可遺失、是否重試、是否允許重複、是否需要順序、process 重啟後工作是否仍存在。
 
@@ -86,7 +86,7 @@ weight: 0
 - 任務處理頁需要即時顯示轉檔進度。
 - 共同編輯工具需要讓其他使用者看到狀態變化。
 
-這類需求的陷阱是把即時通道當成唯一可靠資料來源。WebSocket、SSE 或 pub/sub 適合降低延遲，但 client 斷線、server 重啟、網路切換都會造成缺口。即時需求要先決定離線後如何補狀態、哪些訊息可丟、哪些訊息需要正式保存。
+這類需求的陷阱是把即時通道當成唯一可靠資料來源。WebSocket、SSE 或 [pub/sub](../knowledge-cards/pub-sub/) 適合降低延遲，但 client 斷線、server 重啟、網路切換都會造成缺口。即時需求要先決定離線後如何 [offline catch-up](../knowledge-cards/offline-catchup/)、哪些訊息可丟、哪些訊息需要正式保存。
 
 下一步可讀：[非同步與事件傳遞選型](async-delivery-selection/) 與 [操作平台選型](operations-platform-selection/)。
 
@@ -114,7 +114,7 @@ weight: 0
 - 活動流量前沒有容量證據，只能靠臨時加機器。
 - 重要 parser 一次更新後影響大量 webhook，缺少 fuzz 或回歸案例。
 
-這類需求的陷阱是把可靠性視為上線後的補救工作。交付與可靠性要在設計時就定義 readiness、shutdown、rollback、load test、資料 migration 與事故演練的檢查點。
+這類需求的陷阱是把可靠性視為上線後的補救工作。交付與可靠性要在設計時就定義 readiness、shutdown、rollback、[load test](../knowledge-cards/load-test/)、資料 migration 與事故演練的檢查點。
 
 下一步可讀：[操作平台選型](operations-platform-selection/)。
 

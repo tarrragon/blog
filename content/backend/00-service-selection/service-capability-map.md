@@ -42,18 +42,18 @@ weight: 1
 - 會員系統需要保存帳號、權限、登入方式與審計資料
 - SaaS 產品需要保存 workspace、plan、billing 與使用量
 
-這類問題的核心是 source of truth。快取可以加速讀取，queue 可以延後處理，log 可以協助診斷，但正式狀態仍需要清楚的資料模型與一致性邊界。
+這類問題的核心是 [source of truth](../knowledge-cards/source-of-truth/)。快取可以加速讀取，queue 可以延後處理，log 可以協助診斷，但正式狀態仍需要清楚的資料模型與一致性邊界。
 
 下一步可讀：[資料庫與持久化](../01-database/)。
 
 ## 【判讀】讀取壓力集中通常先看快取
 
-快取解決的是「同一類資料被重複讀取時，如何降低正式資料來源壓力」。如果資料本身已經有 source of truth，但熱門資料導致資料庫或下游 API 壓力過高，選型應先進入快取與 Redis 模組。
+快取解決的是「同一類資料被重複讀取時，如何降低正式資料來源壓力」。如果資料本身已經有 [source of truth](../knowledge-cards/source-of-truth/)，但熱門資料導致資料庫或下游 API 壓力過高，選型應先進入快取與 Redis 模組。
 
 接近真實網路服務的例子包括：
 
 - 商品詳情頁被大量瀏覽，但商品資料變更頻率低
-- 使用者權限或 feature flag 每個 request 都要查
+- 使用者權限或 [feature flag](../knowledge-cards/feature-flag/) 每個 request 都要查
 - 即時服務需要快速查詢 client presence 或 topic 訂閱狀態
 
 這類問題的核心是讀取路徑與失效策略。快取要回答資料何時過期、何時更新、下游失敗時如何回應、cache miss 尖峰如何保護系統。
@@ -70,7 +70,7 @@ weight: 1
 - 使用者上傳影片後要轉檔、產生縮圖與通知完成
 - IoT 裝置上報資料後要清洗、聚合與觸發告警
 
-這類問題的核心是 delivery semantics。系統要決定是否需要持久化、是否允許重複投遞、失敗是否重試、consumer 如何水平擴展。
+這類問題的核心是 [delivery semantics](../knowledge-cards/delivery-semantics/)。系統要決定是否需要持久化、是否允許重複投遞、失敗是否重試、consumer 如何水平擴展。
 
 下一步可讀：[訊息佇列與事件傳遞](../03-message-queue/)。
 
@@ -90,7 +90,7 @@ weight: 1
 
 ## 【判讀】服務交付不穩通常先看部署平台
 
-部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 rolling update、health check、load balancer、service discovery、container image 或資源限制，選型應先進入部署平台與網路入口模組。
+部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 [rolling update](../knowledge-cards/rolling-update/)、health check、load balancer、[service discovery](../knowledge-cards/service-discovery/)、container image 或資源限制，選型應先進入部署平台與網路入口模組。
 
 接近真實網路服務的例子包括：
 
