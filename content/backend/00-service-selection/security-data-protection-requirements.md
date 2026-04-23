@@ -22,14 +22,14 @@ weight: 8
 
 資安設計的第一個問題是「誰在什麼路徑上接觸什麼資料」。同一個系統可能同時有使用者、客服、營運、工程師、背景 worker、外部合作方與管理員；每個角色需要的資料、操作與稽核等級都不同。
 
-| 需求類型 | 核心問題 | 常見情境 |
-| -------- | -------- | -------- |
-| 權限分級 | 誰能看、改、匯出、審核或管理資料 | RBAC、ABAC、tenant boundary |
-| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面 | admin endpoint、upload、webhook |
-| 資料遮罩 | 匯出、log、客服畫面要顯示多少敏感資訊 | email、電話、身分證、付款資訊 |
-| 傳輸保護 | 資料在 client、service、queue、storage 之間如何被保護 | [TLS / mTLS](../00-knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](../00-knowledge-cards/certificate-chain-trust/) |
-| 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷 | [secret management](../00-knowledge-cards/secret-management/)、[website certificate lifecycle](../00-knowledge-cards/website-certificate-lifecycle/)、key rotation |
-| 稽核追蹤 | 高風險操作是否能被追蹤與事後審查 | audit log、approval、admin action |
+| 需求類型   | 核心問題                                              | 常見情境                                                                                                                                                     |
+| ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 權限分級   | 誰能看、改、匯出、審核或管理資料                      | RBAC、ABAC、tenant boundary                                                                                                                                  |
+| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | admin endpoint、upload、webhook                                                                                                                              |
+| 資料遮罩   | 匯出、log、客服畫面要顯示多少敏感資訊                 | email、電話、身分證、付款資訊                                                                                                                                |
+| 傳輸保護   | 資料在 client、service、queue、storage 之間如何被保護 | [TLS / mTLS](../knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](../knowledge-cards/certificate-chain-trust/)                  |
+| 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷              | [secret management](../knowledge-cards/secret-management/)、[website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)、key rotation |
+| 稽核追蹤   | 高風險操作是否能被追蹤與事後審查                      | audit log、approval、admin action                                                                                                                            |
 
 這張表是需求索引。資安討論要先定義資料與操作的保護等級，再決定具體平台、服務或產品。
 
@@ -81,8 +81,8 @@ weight: 8
 
 接近真實網路服務的例子包括：
 
-- client 到 API 使用 [TLS](../00-knowledge-cards/tls-mtls/)，避免帳號資料在網路中被竊聽。
-- service 到 service 使用 [mTLS](../00-knowledge-cards/tls-mtls/) 或 signed request，確認呼叫來源與訊息完整性。
+- client 到 API 使用 [TLS](../knowledge-cards/tls-mtls/)，避免帳號資料在網路中被竊聽。
+- service 到 service 使用 [mTLS](../knowledge-cards/tls-mtls/) 或 signed request，確認呼叫來源與訊息完整性。
 - webhook callback 驗證簽章與 timestamp，降低偽造與重放風險。
 
 這類需求的陷阱是只保護公開入口。內部網路、queue message、object storage link、backup transfer 與第三方 callback 都是資料流動路徑；傳輸保護要依邊界與資料等級設定。
@@ -91,14 +91,14 @@ weight: 8
 
 ## 【判讀】密鑰與秘密管理要設計生命週期
 
-密鑰與秘密管理的核心責任是控制 token、API key、private key、database credential、session secret 與加密 key 的產生、保存、使用、輪替與撤銷，並把網站憑證納入 [website certificate lifecycle](../00-knowledge-cards/website-certificate-lifecycle/)。
+密鑰與秘密管理的核心責任是控制 token、API key、private key、database credential、session secret 與加密 key 的產生、保存、使用、輪替與撤銷，並把網站憑證納入 [website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)。
 
 接近真實網路服務的例子包括：
 
 - 第三方 API key 需要分環境保存，並能在外洩時快速撤銷。
 - database credential 需要依服務分離，避免單一 credential 擁有過大權限。
 - 簽章密鑰需要支援輪替期，讓新舊 key 在過渡期間都能驗證。
-- 公網站點憑證需要有 [ACME automation](../00-knowledge-cards/acme-automation/) 或明確續期流程，並具備 [certificate revocation](../00-knowledge-cards/certificate-revocation/) 設計。
+- 公網站點憑證需要有 [ACME automation](../knowledge-cards/acme-automation/) 或明確續期流程，並具備 [certificate revocation](../knowledge-cards/certificate-revocation/) 設計。
 
 這類需求的陷阱是把秘密寫進設定檔、log、測試資料或部署指令。秘密管理要同時包含保存位置、存取權限、輪替流程、撤銷流程、憑證續期流程與稽核紀錄。
 

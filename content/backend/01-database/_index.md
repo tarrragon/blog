@@ -5,7 +5,7 @@ description: "整理 SQL、transaction、migration 與 repository adapter 的後
 weight: 1
 ---
 
-資料庫模組的核心目標是說明 application 狀態進入持久化層後，如何維持一致性、可演進性與可測性。語言教材會先定義 repository port、protocol 或 interface；本模組負責說明具體資料庫 adapter 如何實作這些邊界。閱讀本模組前，可先建立 [source of truth](../00-knowledge-cards/source-of-truth/)、[transaction boundary](../00-knowledge-cards/transaction-boundary/)、[schema migration](../00-knowledge-cards/schema-migration/)、[isolation level](../00-knowledge-cards/isolation-level/) 與 [connection pool](../00-knowledge-cards/connection-pool/) 的共同語意。
+資料庫模組的核心目標是說明 application 狀態進入持久化層後，如何維持一致性、可演進性與可測性。語言教材會先定義 repository port、protocol 或 interface；本模組負責說明具體資料庫 adapter 如何實作這些邊界。閱讀本模組前，可先建立 [source of truth](../knowledge-cards/source-of-truth/)、[transaction boundary](../knowledge-cards/transaction-boundary/)、[schema migration](../knowledge-cards/schema-migration/)、[isolation level](../knowledge-cards/isolation-level/) 與 [connection pool](../knowledge-cards/connection-pool/) 的共同語意。
 
 ## 暫定分類
 
@@ -23,7 +23,7 @@ weight: 1
 
 SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場景；PostgreSQL 適合多使用者後端、複雜查詢、transaction、index 與長期 schema evolution。Migration 工具解決 schema 隨版本演進的問題；transaction boundary 解決多筆資料一起成功或失敗的問題；repository adapter 解決 application port 到具體 SQL 實作的轉換。
 
-接近真實網路服務的例子包括訂單系統、會員系統、訂閱方案、付款紀錄與權限資料。這些資料都需要明確 [source of truth](../00-knowledge-cards/source-of-truth/)，因此本模組會從資料模型、一致性、migration 與 adapter 邊界開始說明。
+接近真實網路服務的例子包括訂單系統、會員系統、訂閱方案、付款紀錄與權限資料。這些資料都需要明確 [source of truth](../knowledge-cards/source-of-truth/)，因此本模組會從資料模型、一致性、migration 與 adapter 邊界開始說明。
 
 ## 與語言教材的分工
 

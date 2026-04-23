@@ -9,15 +9,15 @@ weight: 8
 
 ## 暫定分類
 
-| 分類 | 內容方向 |
-| ---- | -------- |
-| Incident severity | 事故分級、影響判斷、啟動條件 |
-| Command model | incident commander、角色分工、決策邊界 |
-| Containment and recovery | 止血、隔離、降級、回復、rollback |
-| Incident communication | 內部通報、外部溝通、狀態更新節奏 |
-| Incident runbook | 場景化 playbook、查詢入口、停止條件 |
-| Post-incident review | RCA、行動項、驗證與關閉流程 |
-| Readiness and drills | 值班訓練、演練設計、game day |
+| 分類                     | 內容方向                               |
+| ------------------------ | -------------------------------------- |
+| Incident severity        | 事故分級、影響判斷、啟動條件           |
+| Command model            | incident commander、角色分工、決策邊界 |
+| Containment and recovery | 止血、隔離、降級、回復、rollback       |
+| Incident communication   | 內部通報、外部溝通、狀態更新節奏       |
+| Incident runbook         | 場景化 playbook、查詢入口、停止條件    |
+| Post-incident review     | RCA、行動項、驗證與關閉流程            |
+| Readiness and drills     | 值班訓練、演練設計、game day           |
 
 ## 選型入口
 
@@ -34,14 +34,14 @@ weight: 8
 
 ## 章節大綱
 
-| 章節 | 主題 | 目標 |
-| ---- | ---- | ---- |
-| 8.1 | 事故分級與啟動條件 | 建立統一分級與啟動門檻 |
-| 8.2 | 事故指揮與角色分工 | 定義 commander、owner、scribe、on-call 協作 |
-| 8.3 | 止血、降級與回復策略 | 把短期止血與正式回復拆成可執行步驟 |
-| 8.4 | 事故通訊與狀態更新 | 建立內外部通訊節奏與格式 |
-| 8.5 | 復盤與改進追蹤 | 把 RCA 與 action items 變成可驗證閉環 |
-| 8.6 | 演練與值班能力建設 | 用 game day 與值班訓練提升反應品質 |
+| 章節 | 主題                 | 目標                                        |
+| ---- | -------------------- | ------------------------------------------- |
+| 8.1  | 事故分級與啟動條件   | 建立統一分級與啟動門檻                      |
+| 8.2  | 事故指揮與角色分工   | 定義 commander、owner、scribe、on-call 協作 |
+| 8.3  | 止血、降級與回復策略 | 把短期止血與正式回復拆成可執行步驟          |
+| 8.4  | 事故通訊與狀態更新   | 建立內外部通訊節奏與格式                    |
+| 8.5  | 復盤與改進追蹤       | 把 RCA 與 action items 變成可驗證閉環       |
+| 8.6  | 演練與值班能力建設   | 用 game day 與值班訓練提升反應品質          |
 
 ## 章節列表
 
@@ -54,35 +54,35 @@ weight: 8
 
 ## 既有可引用卡片
 
-- [runbook](../00-knowledge-cards/runbook/)
-- [alert runbook](../00-knowledge-cards/alert-runbook/)
-- [runbook link](../00-knowledge-cards/runbook-link/)
-- [on-call](../00-knowledge-cards/on-call/)
-- [playbook](../00-knowledge-cards/playbook/)
-- [game day](../00-knowledge-cards/game-day/)
-- [symptom-based alert](../00-knowledge-cards/symptom-based-alert/)
-- [alert fatigue](../00-knowledge-cards/alert-fatigue/)
-- [downtime](../00-knowledge-cards/downtime/)
-- [degradation](../00-knowledge-cards/degradation/)
-- [failover](../00-knowledge-cards/failover/)
-- [fallback plan](../00-knowledge-cards/fallback-plan/)
-- [replay runbook](../00-knowledge-cards/replay-runbook/)
+- [runbook](../knowledge-cards/runbook/)
+- [alert runbook](../knowledge-cards/alert-runbook/)
+- [runbook link](../knowledge-cards/runbook-link/)
+- [on-call](../knowledge-cards/on-call/)
+- [playbook](../knowledge-cards/playbook/)
+- [game day](../knowledge-cards/game-day/)
+- [symptom-based alert](../knowledge-cards/symptom-based-alert/)
+- [alert fatigue](../knowledge-cards/alert-fatigue/)
+- [downtime](../knowledge-cards/downtime/)
+- [degradation](../knowledge-cards/degradation/)
+- [failover](../knowledge-cards/failover/)
+- [fallback plan](../knowledge-cards/fallback-plan/)
+- [replay runbook](../knowledge-cards/replay-runbook/)
 
 ## 首批事故處理卡片
 
 事故處理章節可直接引用以下原子卡片，避免每章重複定義同一套術語：
 
-1. [incident severity](../00-knowledge-cards/incident-severity/)
-2. [incident command system](../00-knowledge-cards/incident-command-system/)
-3. [escalation policy](../00-knowledge-cards/escalation-policy/)
-4. [incident timeline](../00-knowledge-cards/incident-timeline/)
-5. [blast radius](../00-knowledge-cards/blast-radius/)
-6. [rollback strategy](../00-knowledge-cards/rollback-strategy/)
-7. [post-incident review](../00-knowledge-cards/post-incident-review/)
-8. [RCA](../00-knowledge-cards/rca/)
-9. [RTO](../00-knowledge-cards/rto/)
-10. [RPO](../00-knowledge-cards/rpo/)
-11. [MTTR](../00-knowledge-cards/mttr/)
+1. [incident severity](../knowledge-cards/incident-severity/)
+2. [incident command system](../knowledge-cards/incident-command-system/)
+3. [escalation policy](../knowledge-cards/escalation-policy/)
+4. [incident timeline](../knowledge-cards/incident-timeline/)
+5. [blast radius](../knowledge-cards/blast-radius/)
+6. [rollback strategy](../knowledge-cards/rollback-strategy/)
+7. [post-incident review](../knowledge-cards/post-incident-review/)
+8. [RCA](../knowledge-cards/rca/)
+9. [RTO](../knowledge-cards/rto/)
+10. [RPO](../knowledge-cards/rpo/)
+11. [MTTR](../knowledge-cards/mttr/)
 
 ## 下一步
 

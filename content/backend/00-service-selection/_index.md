@@ -9,21 +9,21 @@ weight: 0
 
 本模組先建立跨分類的選型語言。後續進入 database、Redis、message queue、observability 或 deployment 資料夾時，每個資料夾開頭都應延續同一個形式：先說明這類服務解決什麼問題，再比較同質服務的差異，最後才進入實作細節。
 
-閱讀本模組前，建議先把 [前置知識卡片](../00-knowledge-cards/) 當成共同詞彙索引。選型文章會使用 consumer lag、dead-letter、replay、降級、停機、readiness 等概念；這些概念的完整 domain knowhow 放在卡片中，章節本文則專注於需求判讀與服務能力取捨。
+閱讀本模組前，建議先把 [前置知識卡片](../knowledge-cards/) 當成共同詞彙索引。選型文章會使用 consumer lag、dead-letter、replay、降級、停機、readiness 等概念；這些概念的完整 domain knowhow 放在卡片中，章節本文則專注於需求判讀與服務能力取捨。
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-| ---- | ---- | -------- |
-| [0.0](backend-demand-taxonomy/) | 後端需求分類地圖 | 先把需求分成狀態、讀取、非同步、即時、診斷、交付與可靠性 |
-| [0.1](service-capability-map/) | 後端服務能力地圖 | 用需求類型判斷該先看資料庫、快取、queue、觀測或部署平台 |
-| [0.2](state-storage-selection/) | 狀態與資料儲存選型 | 區分 source of truth、快取、搜尋索引、event log 與 object storage |
-| [0.3](async-delivery-selection/) | 非同步與事件傳遞選型 | 區分背景工作、durable queue、stream、pub/sub 與 outbox |
-| [0.4](operations-platform-selection/) | 操作平台選型 | 區分 log、metric、trace、dashboard、alert、deployment 與 reliability |
-| [0.5](traffic-data-scale/) | 流量與資料量評估 | 用 QPS、burst、hot key、資料成長與保留期限評估需求規模 |
-| [0.6](cost-risk-tradeoffs/) | 成本、風險與選型取捨 | 用人力成本、雲端成本、操作成本與失敗代價判斷投入順序 |
-| [0.7](failure-observability-design/) | 錯誤定位、觀測訊號與備援切換設計 | 從錯誤分類、定位線索、降級與 failover 設計服務可維護性 |
-| [0.8](security-data-protection-requirements/) | 資安與資料保護需求 | 從權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界 |
+| 章節                                          | 主題                             | 關鍵收穫                                                             |
+| --------------------------------------------- | -------------------------------- | -------------------------------------------------------------------- |
+| [0.0](backend-demand-taxonomy/)               | 後端需求分類地圖                 | 先把需求分成狀態、讀取、非同步、即時、診斷、交付與可靠性             |
+| [0.1](service-capability-map/)                | 後端服務能力地圖                 | 用需求類型判斷該先看資料庫、快取、queue、觀測或部署平台              |
+| [0.2](state-storage-selection/)               | 狀態與資料儲存選型               | 區分 source of truth、快取、搜尋索引、event log 與 object storage    |
+| [0.3](async-delivery-selection/)              | 非同步與事件傳遞選型             | 區分背景工作、durable queue、stream、pub/sub 與 outbox               |
+| [0.4](operations-platform-selection/)         | 操作平台選型                     | 區分 log、metric、trace、dashboard、alert、deployment 與 reliability |
+| [0.5](traffic-data-scale/)                    | 流量與資料量評估                 | 用 QPS、burst、hot key、資料成長與保留期限評估需求規模               |
+| [0.6](cost-risk-tradeoffs/)                   | 成本、風險與選型取捨             | 用人力成本、雲端成本、操作成本與失敗代價判斷投入順序                 |
+| [0.7](failure-observability-design/)          | 錯誤定位、觀測訊號與備援切換設計 | 從錯誤分類、定位線索、降級與 failover 設計服務可維護性               |
+| [0.8](security-data-protection-requirements/) | 資安與資料保護需求               | 從權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界         |
 
 ## 需求討論順序
 
