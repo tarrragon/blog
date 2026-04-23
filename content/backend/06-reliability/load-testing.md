@@ -1,0 +1,17 @@
+---
+title: "6.2 load test"
+date: 2026-04-23
+description: "整理 workload model、throughput 與 latency 基準"
+weight: 2
+---
+
+## 大綱
+
+- workload model
+- throughput / latency
+- bottleneck
+- capacity planning
+
+## 相關語言章節
+
+- [Go：高併發控制與背壓](../../go/04-concurrency/backpressure/)

@@ -1,0 +1,17 @@
+---
+title: "4.3 tracing 與 context link"
+date: 2026-04-23
+description: "整理 trace id、span 與跨服務 context propagation"
+weight: 3
+---
+
+## 大綱
+
+- trace / span 模型
+- context propagation
+- sampling
+- service graph
+
+## 相關語言章節
+
+- [Go：context](../../go/03-stdlib/context/)

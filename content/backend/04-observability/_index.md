@@ -27,3 +27,12 @@ weight: 4
 - [Go 進階：pprof 基礎診斷流程](../../go-advanced/03-runtime-profiling/pprof/)
 - [Go 進階：結構化日誌欄位設計](../../go-advanced/06-production-operations/log-fields/)
 - [Go 進階：Observability pipeline、metrics 與 tracing](../../go-advanced/07-distributed-operations/observability-pipeline/)
+
+## 章節列表
+
+| 章節                          | 主題                     | 關鍵收穫                                                     |
+| ----------------------------- | ------------------------ | ------------------------------------------------------------ |
+| [4.1](log-schema/)            | log schema 與搜尋規劃     | 設計欄位、索引與查詢方式                                      |
+| [4.2](metrics-basics/)        | metrics 與 SLI/SLO        | 用 counter、gauge、histogram 描述服務健康                    |
+| [4.3](tracing-context/)       | tracing 與 context link   | 追蹤跨服務 request path                                       |
+| [4.4](dashboard-alert/)       | dashboard 與 alert 設計   | 讓告警能對應 runbook 與容量趨勢                                |

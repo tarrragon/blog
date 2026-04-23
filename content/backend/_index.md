@@ -60,6 +60,17 @@ Backend 教材承接語言教材中的外部技術邊界。語言章節會先建
 
 Python 教材後續也可以用同樣方式對齊：Python 章節說明 protocol、abstract base class、async context、dependency injection、pytest fixture 與測試替身；Backend 章節說明資料庫、Redis、message broker、觀測與部署平台的實作語意。
 
+## 與 Go 案例的關係
+
+前面的 Go 案例模組已經把高併發、長連線、事件處理、資料庫與雲端基礎設施場景說明得很清楚。Backend 教材接下來要做的事情，就是把這些服務型態拆成具體技術主題：
+
+- [Cloudflare 與長連線服務](../go/08-case-studies/cloudflare/)
+- [Cockroach Labs 與分散式 SQL](../go/08-case-studies/cockroach-labs/)
+- [Stream 與即時 feed / chat](../go/08-case-studies/stream/)
+- [ByteDance / CloudWeGo 與微服務治理](../go/08-case-studies/cloudwego/)
+
+這些案例提供了「為什麼需要這些後端實作主題」的來源，而 Backend 模組則提供「這些主題本身怎麼運作」的說明。
+
 ## 暫定章節來源
 
 目前 Backend 目錄先承接 Go 與 Python 後端教材都會遇到的外部實作議題：

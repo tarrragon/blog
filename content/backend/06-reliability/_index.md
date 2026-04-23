@@ -28,3 +28,12 @@ weight: 6
 - [Go：並發行為測試](../../go/05-error-testing/concurrency-test/)
 - [Go 進階：race condition 檢查](../../go-advanced/05-testing-reliability/race-check/)
 - [Go 進階：CI、fuzz、load test 與 chaos testing](../../go-advanced/07-distributed-operations/reliability-pipeline/)
+
+## 章節列表
+
+| 章節                    | 主題                   | 關鍵收穫                                                     |
+| ----------------------- | ---------------------- | ------------------------------------------------------------ |
+| [6.1](ci-pipeline/)     | CI pipeline             | 分層測試、快慢測試與 artifact 管理                            |
+| [6.2](load-testing/)    | load test               | 定義 workload、吞吐與延遲基準                                |
+| [6.3](fuzz-campaign/)    | fuzz campaign           | 建立輸入邊界、corpus 與 crash reproduction                  |
+| [6.4](chaos-testing/)    | chaos testing           | 模擬 broker、DB、network 與節點故障                         |

@@ -26,9 +26,13 @@ weight: 1
 | 章節                            | 主題                         | 關鍵收穫                                           |
 | ------------------------------- | ---------------------------- | -------------------------------------------------- |
 | [1.1](high-concurrency-access/) | 高併發下的 SQL 讀寫邊界      | 共用 `sql.DB`、控制連線池、縮小 transaction 範圍 |
+| [1.2](schema-design/)          | schema design 與資料建模      | 規劃 table、index、key 與命名規則                 |
+| [1.3](transaction-boundary/)   | transaction 與一致性邊界      | 判斷何時使用 transaction、retry 與 isolation      |
+| [1.4](repository-adapter/)     | repository adapter 實作       | 把 SQL row mapping 與錯誤轉換封裝成 adapter        |
 
 ## 相關語言章節
 
 - [Go：如何新增 repository port](../../go/06-practical/repository-port/)
 - [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
 - [Go 進階：Source of Truth](../../go-advanced/04-architecture-boundaries/source-of-truth/)
+- [Go：高併發下的 SQL 讀寫邊界](../../go/06-practical/data-access-boundaries/)

@@ -1,0 +1,19 @@
+---
+title: "3.2 durable queue 與重試策略"
+date: 2026-04-23
+description: "整理持久化佇列、DLQ 與重試流程"
+weight: 2
+---
+
+這一章把 queue 的持久化語意、重試與 dead-letter flow 拆開，方便後續連到 outbox 與 consumer 設計。
+
+## 大綱
+
+- durable vs ephemeral queue
+- retry、backoff、jitter
+- dead-letter queue
+- ordering 與 requeue 風險
+
+## 相關語言章節
+
+- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)

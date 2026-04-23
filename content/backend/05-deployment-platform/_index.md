@@ -27,3 +27,12 @@ weight: 5
 - [Go 進階：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
 - [Go 進階：健康檢查與診斷 endpoint](../../go-advanced/06-production-operations/health-diagnostics/)
 - [Go 進階：Kubernetes、systemd 與 load balancer 合約](../../go-advanced/07-distributed-operations/deployment-contracts/)
+
+## 章節列表
+
+| 章節                         | 主題                      | 關鍵收穫                                                     |
+| ---------------------------- | ------------------------- | ------------------------------------------------------------ |
+| [5.1](container-runtime/)    | container 與 runtime      | 規劃 image、資源限制與啟動行為                                |
+| [5.2](kubernetes-deployment/)| Kubernetes 部署策略       | 了解 deployment、probe、rolling update                       |
+| [5.3](load-balancer-contract/) | load balancer 合約      | 處理 idle timeout、draining 與 health check                  |
+| [5.4](service-discovery/)    | service discovery         | 讓服務能穩定發現彼此與完成設定下發                            |

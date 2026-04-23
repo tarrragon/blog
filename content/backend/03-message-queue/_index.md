@@ -28,3 +28,12 @@ weight: 3
 - [Go 進階：非阻塞送出與事件丟棄策略](../../go-advanced/01-concurrency-patterns/non-blocking-send/)
 - [Go 進階：多來源 event 融合](../../go-advanced/04-architecture-boundaries/event-fusion/)
 - [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
+
+## 章節列表
+
+| 章節                            | 主題                      | 關鍵收穫                                                     |
+| ------------------------------- | ------------------------- | ------------------------------------------------------------ |
+| [3.1](broker-basics/)           | broker 基礎與投遞模型     | 看懂 exchange、topic、consumer 與 delivery semantics         |
+| [3.2](durable-queue/)           | durable queue 與重試策略   | 規劃持久化、ack/nack、DLQ 與 retry                           |
+| [3.3](outbox-pattern/)          | outbox pattern 與發佈一致性 | 把交易寫入與事件發佈分離                                      |
+| [3.4](consumer-design/)         | consumer 設計與去重        | 設計 idempotency、checkpoint 與 replay safety               |
