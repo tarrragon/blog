@@ -162,6 +162,9 @@ weight: -1
 
 | 卡片 | 核心問題 | 常見出現位置 |
 | ---- | -------- | ------------ |
+| [On-Call](on-call/) | 值班制度如何承接告警與事故流程 | paging、handover、incident |
+| [Playbook](playbook/) | 場景化處置如何快速啟動與執行 | incident workflow、recovery |
+| [Game Day](game-day/) | 事故演練如何驗證流程與協作 | drill、readiness、training |
 | [Incident Severity](incident-severity/) | 事故如何依產品影響分級 | on-call、incident、SLO |
 | [Incident Command System](incident-command-system/) | 事故期間如何分配指揮與執行角色 | commander、scribe、owner |
 | [Escalation Policy](escalation-policy/) | 事故無回應或無進展時如何升級 | on-call、paging、handover |
