@@ -9,14 +9,14 @@ weight: 7
 
 ## 暫定分類
 
-| 分類 | 內容方向 |
-| ---- | -------- |
-| Identity and access | authentication、authorization、RBAC、ABAC、tenant boundary |
-| Server protection | rate limit、WAF、admin endpoint、upload boundary、webhook signature |
-| Data masking | export masking、log redaction、test data anonymization、field-level policy |
+| 分類                 | 內容方向                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identity and access  | authentication、authorization、RBAC、ABAC、tenant boundary                                                                                                                                                                                                                                                                                                                        |
+| Server protection    | rate limit、WAF、admin endpoint、upload boundary、webhook signature                                                                                                                                                                                                                                                                                                               |
+| Data masking         | export masking、log redaction、test data anonymization、field-level policy                                                                                                                                                                                                                                                                                                        |
 | Transport protection | [TLS / mTLS](../00-knowledge-cards/tls-mtls/)、signed request、[website certificate lifecycle](../00-knowledge-cards/website-certificate-lifecycle/)、[ACME automation](../00-knowledge-cards/acme-automation/)、[certificate rotation and renewal](../00-knowledge-cards/certificate-rotation-renewal/)、[certificate revocation](../00-knowledge-cards/certificate-revocation/) |
-| Secrets management | secret storage、key rotation、credential scope、revocation |
-| Audit trail | admin action、data export、permission change、compliance record |
+| Secrets management   | secret storage、key rotation、credential scope、revocation                                                                                                                                                                                                                                                                                                                        |
+| Audit trail          | admin action、data export、permission change、compliance record                                                                                                                                                                                                                                                                                                                   |
 
 ## 選型入口
 
