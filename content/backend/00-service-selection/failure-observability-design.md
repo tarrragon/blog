@@ -20,15 +20,15 @@ weight: 7
 
 ## 【觀察】錯誤設計是服務合約的一部分
 
-錯誤設計的核心問題是「失敗時系統要留下什麼線索，並給誰什麼動作」。API response、domain error、log、metric、trace、alert、retry、fallback 與 failover 都是錯誤合約的一部分。
+錯誤設計的核心問題是「失敗時系統要留下什麼線索，並給誰什麼動作」。API response、domain error、[log](../knowledge-cards/log)、metric、[trace](../knowledge-cards/trace)、[alert](../knowledge-cards/alert)、retry、[fallback](../knowledge-cards/fallback) 與 [failover](../knowledge-cards/failover) 都是錯誤合約的一部分。
 
 | 設計面向 | 要回答的問題 | 常見產出 |
 | -------- | ------------ | -------- |
 | 錯誤分類 | 這是輸入錯誤、權限錯誤、狀態衝突、下游失敗，還是系統故障 | error code、status、reason |
-| 定位線索 | 工程師如何找到 request、使用者、資源、下游與版本 | trace id、request id、subject id、dependency |
+| 定位線索 | 工程師如何找到 request、使用者、資源、下游與版本 | [trace id](../knowledge-cards/trace-id)、[request id](../knowledge-cards/request-id)、subject id、dependency |
 | 對外回應 | 呼叫者能否理解下一步動作 | stable error response、retry hint |
-| 操作訊號 | on-call 如何知道影響範圍與嚴重度 | log、metric、alert、dashboard |
-| 降級策略 | 主要路徑失敗時能否提供較低能力服務 | fallback、cache、read-only、queue later |
+| 操作訊號 | [on-call](../knowledge-cards/on-call) 如何知道影響範圍與嚴重度 | log、metric、alert、[dashboard](../knowledge-cards/dashboard) |
+| 降級策略 | 主要路徑失敗時能否提供較低能力服務 | fallback、cache、read-only、[queue](../knowledge-cards/queue) later |
 | 切換策略 | 依賴或節點失效時能否轉到其他路徑 | failover、traffic shift、draining |
 
 這張表是設計索引。錯誤定位與備援切換應在服務設計時討論，而非等事故後才補欄位。
@@ -40,10 +40,10 @@ weight: 7
 接近真實網路服務的例子包括：
 
 - 使用者建立訂單時庫存不足，對外 response 要表達「目前狀態不允許」，對內 log 要能定位商品與庫存版本。
-- 付款 API timeout，對外 response 要避免承諾付款結果，對內訊號要標出 payment provider、timeout duration 與 retry policy。
+- 付款 API [timeout](../knowledge-cards/timeout)，對外 response 要避免承諾付款結果，對內訊號要標出 payment provider、timeout duration 與 [retry policy](../knowledge-cards/retry-policy)。
 - [Webhook](../knowledge-cards/webhook/) payload 格式錯誤，對外要回穩定錯誤碼，對內要記錄 schema version 與來源系統。
 
-這類設計的陷阱是只留下自由文字錯誤。自由文字適合人快速閱讀，但分類、查詢、告警與統計需要穩定欄位。錯誤分類要同時支援 API contract、log schema、metric label 與 runbook。
+這類設計的陷阱是只留下自由文字錯誤。自由文字適合人快速閱讀，但分類、查詢、告警與統計需要穩定欄位。錯誤分類要同時支援 API contract、[log schema](../knowledge-cards/log-schema)、metric label 與 [runbook](../knowledge-cards/runbook)。
 
 下一步可讀：[操作平台選型](operations-platform-selection/) 與 [可觀測性平台](../04-observability/)。
 
@@ -54,8 +54,8 @@ weight: 7
 接近真實網路服務的例子包括：
 
 - checkout 變慢時，需要知道同一個 trace 經過 cart、payment、inventory 與 shipping 的哪一段。
-- queue message 重試時，需要知道原始 request、event id、consumer、attempt count 與最後錯誤。
-- 即時通知漏送時，需要知道 topic、client id、connection id、server instance 與 publish path。
+- queue message 重試時，需要知道原始 request、event id、[consumer](../knowledge-cards/consumer)、attempt count 與最後錯誤。
+- 即時通知漏送時，需要知道 [topic](../knowledge-cards/topic)、client id、connection id、server instance 與 publish path。
 
 這類設計的陷阱是每個元件各自產生無關 ID。request id、trace id、event id、subject id 與 dependency name 要有清楚用途，並在跨服務、跨 queue、跨 worker 時保留關聯。
 
@@ -96,7 +96,7 @@ weight: 7
 接近真實網路服務的例子包括：
 
 - 外部付款 provider 連續 timeout 後，系統暫停建立新付款並保留待確認狀態。
-- 某個 service instance readiness 失敗後，load balancer 停止送新流量並進入 draining。
+- 某個 service instance [readiness](../knowledge-cards/readiness) 失敗後，load balancer 停止送新流量並進入 draining。
 - 主要搜尋 cluster 延遲過高時，後台切到只讀快照或簡化查詢。
 
 這類設計的陷阱是把 failover 想成自動且無代價。切換可能造成重複請求、順序改變、資料短暫不一致、成本上升或排障複雜度增加。切換條件、回切條件、資料一致性與告警都要一起設計。
@@ -105,13 +105,13 @@ weight: 7
 
 ## 【判讀】備援設計需要驗證流程
 
-備援設計的核心完成標準是能被演練。文件中宣稱可以重試、降級、切換或回復，只代表設計意圖；可靠性驗證要證明這些路徑在接近真實條件下能運作。
+備援設計的核心完成標準是能被演練。文件中宣稱可以重試、[降級](../knowledge-cards/degradation)、切換或回復，只代表設計意圖；可靠性驗證要證明這些路徑在接近真實條件下能運作。
 
 接近真實網路服務的例子包括：
 
 - 在預備環境讓 payment provider adapter 回 timeout，驗證訂單狀態是否停在待確認。
 - 在 [load test](../knowledge-cards/load-test/) 中提高 queue lag，驗證 dashboard、alert 與 consumer 擴容決策。
-- 在 [chaos test](../knowledge-cards/chaos-test/) 中讓 broker 暫時中斷，驗證 outbox、retry 與 idempotency。
+- 在 [chaos test](../knowledge-cards/chaos-test/) 中讓 [broker](../knowledge-cards/broker) 暫時中斷，驗證 outbox、retry 與 [idempotency](../knowledge-cards/idempotency)。
 
 這類設計的陷阱是只測成功路徑。錯誤分類、定位線索、降級策略與 failover 都應有對應測試、演練或 release gate，否則事故發生時才會知道設計缺口。
 

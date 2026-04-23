@@ -7,7 +7,7 @@ weight: 4
 
 ## 大綱
 
-- broker outage
-- database latency
+- [broker](../knowledge-cards/broker) outage
+- [database](../knowledge-cards/database) latency
 - node restart
-- network jitter
+- network [jitter](../knowledge-cards/jitter)

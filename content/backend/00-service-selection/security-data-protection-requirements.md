@@ -26,10 +26,10 @@ weight: 8
 | ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 權限分級   | 誰能看、改、匯出、審核或管理資料                      | [authorization](../knowledge-cards/authorization/)、[tenant boundary](../knowledge-cards/tenant-boundary/)                                                                                                                                  |
 | 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | admin endpoint、upload、[webhook](../knowledge-cards/webhook/)、[WAF](../knowledge-cards/waf/)                                                                                                                              |
-| 資料遮罩   | 匯出、log、客服畫面要顯示多少敏感資訊                 | email、電話、身分證、付款資訊                                                                                                                                |
-| 傳輸保護   | 資料在 client、service、queue、storage 之間如何被保護 | [TLS / mTLS](../knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](../knowledge-cards/certificate-chain-trust/)                  |
+| 資料遮罩   | 匯出、[log](../knowledge-cards/log)、客服畫面要顯示多少敏感資訊                 | email、電話、身分證、付款資訊                                                                                                                                |
+| 傳輸保護   | 資料在 client、service、[queue](../knowledge-cards/queue)、storage 之間如何被保護 | [TLS / mTLS](../knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](../knowledge-cards/certificate-chain-trust/)                  |
 | 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷              | [secret management](../knowledge-cards/secret-management/)、[website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)、key rotation |
-| 稽核追蹤   | 高風險操作是否能被追蹤與事後審查                      | audit log、approval、admin action                                                                                                                            |
+| 稽核追蹤   | 高風險操作是否能被追蹤與事後審查                      | [audit log](../knowledge-cards/audit-log)、approval、admin action                                                                                                                            |
 
 這張表是需求索引。資安討論要先定義資料與操作的保護等級，再決定具體平台、服務或產品。
 
@@ -77,7 +77,7 @@ weight: 8
 
 ## 【判讀】傳輸保護要覆蓋跨邊界流動
 
-傳輸保護的核心責任是保護資料跨越邊界時的機密性、完整性與來源可信度。邊界可能是 client 到 API、service 到 service、worker 到 broker、service 到 database、系統到第三方。
+傳輸保護的核心責任是保護資料跨越邊界時的機密性、完整性與來源可信度。邊界可能是 client 到 API、service 到 service、worker 到 [broker](../knowledge-cards/broker)、service 到 [database](../knowledge-cards/database)、系統到第三方。
 
 接近真實網路服務的例子包括：
 

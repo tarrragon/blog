@@ -10,4 +10,4 @@ weight: 4
 - DNS / registry
 - endpoint discovery
 - configuration rollout
-- failure fallback
+- failure [fallback](../knowledge-cards/fallback)

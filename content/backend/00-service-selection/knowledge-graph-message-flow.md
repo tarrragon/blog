@@ -20,7 +20,7 @@ weight: 9
 
 ## 【判讀】事件生命週期先於產品選型
 
-事件設計的核心問題是「事件在系統裡如何出生、傳遞、處理、失敗、重試與回放」。先回答生命週期，才有辦法判斷是否要用 broker、queue 或 stream。
+事件設計的核心問題是「事件在系統裡如何出生、傳遞、處理、失敗、重試與回放」。先回答生命週期，才有辦法判斷是否要用 [broker](../knowledge-cards/broker)、[queue](../knowledge-cards/queue) 或 stream。
 
 一條最小生命週期通常包含：
 
@@ -56,7 +56,7 @@ weight: 9
 
 ## 【判讀】壅塞與延遲要用同一組語言處理
 
-非同步壓力的核心問題是「輸入速度高於處理速度」。這會同時反映在 queue depth、consumer lag、timeout 與重試風暴。
+非同步壓力的核心問題是「輸入速度高於處理速度」。這會同時反映在 [queue depth](../knowledge-cards/queue-depth)、[consumer lag](../knowledge-cards/consumer-lag/)、[timeout](../knowledge-cards/timeout) 與重試風暴。
 
 對應卡片關係：
 
@@ -67,7 +67,7 @@ weight: 9
 - 失敗擴散：  
   [Retry Storm](../knowledge-cards/retry-storm/) / [Cascading Failure](../knowledge-cards/cascading-failure/)
 
-這一層討論完成前，不需要先決定 broker 產品或 partition 數量。
+這一層討論完成前，不需要先決定 broker 產品或 [partition](../knowledge-cards/partition) 數量。
 
 ## 【判讀】回復流程是可靠性設計的一部分
 

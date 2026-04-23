@@ -7,7 +7,7 @@ weight: 2
 
 ## 大綱
 
-- metrics 基本型別
-- latency histogram
+- [metrics](../knowledge-cards/metrics) 基本型別
+- latency [histogram](../knowledge-cards/histogram)
 - error rate
-- SLI / SLO / error budget
+- [SLI / SLO](../knowledge-cards/sli-slo) / [error budget](../knowledge-cards/error-budget)

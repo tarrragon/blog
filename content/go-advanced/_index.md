@@ -5,7 +5,7 @@ description: "深入 Go 並發、WebSocket、runtime 與服務架構"
 weight: 33
 ---
 
-本系列是接在入門教學之後的延伸路線，目標是把 Go 的並發模式、WebSocket 服務架構、runtime 診斷、狀態邊界與生產環境可觀測性講到能真正用在服務上。語法細節留在入門篇；進階篇聚焦長時間服務會遇到的設計壓力。
+本系列是接在入門教學之後的延伸路線，目標是把 Go 的並發模式、[WebSocket](../backend/knowledge-cards/websocket/) 服務架構、runtime 診斷、狀態邊界與生產環境可觀測性講到能真正用在服務上。語法細節留在入門篇；進階篇聚焦長時間服務會遇到的設計壓力。
 
 ## 目標讀者
 
@@ -17,20 +17,20 @@ weight: 33
 ## 學習目標
 
 1. 掌握 goroutine、channel、mutex 的進階使用邊界
-2. 理解 WebSocket client lifecycle、heartbeat、buffer 與慢客戶端問題
+2. 理解 WebSocket client lifecycle、heartbeat、[buffer](../backend/knowledge-cards/buffer/) 與慢客戶端問題
 3. 使用 pprof、runtime 記憶體限制與結構化日誌診斷服務
 4. 設計 event-driven service 的資料邊界與去重策略
 5. 建立並發測試、整合測試與可重現的時間控制
 6. 能評估 Go 服務在生產環境的風險與操作策略
-7. 知道單一 Go 服務延伸到跨節點與平台整合時，哪些責任會轉移到資料庫、queue、broker、observability pipeline 與部署平台
+7. 知道單一 Go 服務延伸到跨節點與平台整合時，哪些責任會轉移到資料庫、[queue](../backend/knowledge-cards/queue/)、[broker](../backend/knowledge-cards/broker/)、observability pipeline 與部署平台
 
 ## 共用術語
 
-進階篇延續入門篇的 action、command、domain event、repository、port、adapter、projection 等詞彙。若你需要確認這些詞在這套教材中的責任邊界，可以先回到 [Go 教材核心術語](../go/glossary/)。
+進階篇延續入門篇的 action、command、domain event、repository、port、adapter、[projection](../backend/knowledge-cards/projection/) 等詞彙。若你需要確認這些詞在這套教材中的責任邊界，可以先回到 [Go 教材核心術語](../go/glossary/)。
 
 ## 與 Backend 教材的分工
 
-Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、WebSocket pump、runtime 診斷、event boundary、race test、graceful shutdown 與 diagnostics endpoint。當內容開始碰到資料庫、Redis、RabbitMQ、Kafka、OpenTelemetry、Kubernetes 或 CI 平台操作時，就應該轉到跨語言的 [Backend 服務實務指南](../backend/)。
+Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、WebSocket pump、runtime 診斷、event boundary、race test、[graceful shutdown](../backend/knowledge-cards/graceful-shutdown/) 與 diagnostics endpoint。當內容開始碰到資料庫、Redis、RabbitMQ、Kafka、OpenTelemetry、Kubernetes 或 CI 平台操作時，就應該轉到跨語言的 [Backend 服務實務指南](../backend/)。
 
 模組七保留在進階篇裡，因為它要回答「Go 服務在跨出去以前，還需要先把哪些 port、訊號與測試合約準備好」。外部系統本身的選型與部署細節，則放在 Backend，讓不同語言都能共用同一套實作知識。
 
@@ -38,7 +38,7 @@ Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、
 
 ### [模組一：進階並發模式](01-concurrency-patterns/)
 
-從服務實例理解 fan-in、fan-out、取消傳播與 backpressure ，先把並發語意說清楚。
+從服務實例理解 fan-in、fan-out、取消傳播與 [backpressure](../backend/knowledge-cards/backpressure/) ，先把並發語意說清楚。
 
 - [channel ownership 與關閉責任](01-concurrency-patterns/channel-ownership/)
 - [select loop 的生命週期設計](01-concurrency-patterns/select-loop/)
@@ -139,7 +139,7 @@ Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、
 
 ## 主題延伸地圖
 
-進階篇的章節會反覆碰到 log、time、state、event、WebSocket 與 testing。這些主題會在不同服務壓力下承擔不同責任；主題延伸地圖用來幫讀者辨識每一層的分工。
+進階篇的章節會反覆碰到 [log](../backend/knowledge-cards/log/)、time、state、event、WebSocket 與 testing。這些主題會在不同服務壓力下承擔不同責任；主題延伸地圖用來幫讀者辨識每一層的分工。
 
 | 主題         | 單一 process 內的設計                                                                                                                                                                              | 生產操作                                                                                                                                        | 跨節點邊界                                                                                                                                     | Backend 實作                                                                                          |
 | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |

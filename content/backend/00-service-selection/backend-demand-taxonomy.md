@@ -28,8 +28,8 @@ weight: 0
 | 讀取壓力 | 同一份資料被大量重複讀取 | 商品頁、權限摘要、首頁推薦 |
 | 非同步工作 | request 結束後仍要可靠處理 | 寄信、轉檔、同步外部系統 |
 | 即時互動 | client 需要持續接收狀態變化 | 聊天、通知、進度更新、presence |
-| 操作診斷 | 出事時要知道原因與影響範圍 | log、metric、trace、dashboard |
-| 服務交付 | 服務要穩定發版、擴容與接流量 | container、load balancer、readiness |
+| 操作診斷 | 出事時要知道原因與影響範圍 | [log](../knowledge-cards/log/)、metric、[trace](../knowledge-cards/trace/)、[dashboard](../knowledge-cards/dashboard/) |
+| 服務交付 | 服務要穩定發版、擴容與接流量 | container、load balancer、[readiness](../knowledge-cards/readiness/) |
 | 可靠性驗證 | 事故前要驗證容量與失敗情境 | [CI pipeline](../knowledge-cards/ci-pipeline/)、[load test](../knowledge-cards/load-test/)、fuzz、[chaos test](../knowledge-cards/chaos-test/) |
 
 這張表是需求索引。每個類型後面都會對應到不同的能力地圖，但實際功能常會同時命中多列。
@@ -56,15 +56,15 @@ weight: 0
 
 - 活動商品頁在短時間內被大量瀏覽，但商品描述變更頻率低。
 - 每個 API request 都要讀取使用者權限與 [feature flag](../knowledge-cards/feature-flag/)。
-- 即時通知服務需要頻繁查詢 topic 的在線訂閱者。
+- 即時通知服務需要頻繁查詢 [topic](../knowledge-cards/topic) 的在線訂閱者。
 
-這類需求的陷阱是把所有慢查詢都當成快取問題。若查詢慢是因為資料模型、索引、N+1 request、外部 API timeout 或資料量爆炸，快取只能暫時吸收症狀。讀取壓力要先確認是否有明確 [source of truth](../knowledge-cards/source-of-truth/)、資料能否重建、失效後是否能接受短暫不一致。
+這類需求的陷阱是把所有慢查詢都當成快取問題。若查詢慢是因為資料模型、索引、N+1 request、外部 API [timeout](../knowledge-cards/timeout/) 或資料量爆炸，快取只能暫時吸收症狀。讀取壓力要先確認是否有明確 [source of truth](../knowledge-cards/source-of-truth/)、資料能否重建、失效後是否能接受短暫不一致。
 
 下一步可讀：[後端服務能力地圖](service-capability-map/) 與 [狀態與資料儲存選型](state-storage-selection/)。
 
 ## 【判讀】非同步需求要先找 request 邊界
 
-非同步需求的核心訊號是「使用者不需要等到所有後續工作完成」。一個 request 可以先完成主要承諾，後續工作由背景流程、queue、stream 或 outbox 接續處理。
+非同步需求的核心訊號是「使用者不需要等到所有後續工作完成」。一個 request 可以先完成主要承諾，後續工作由背景流程、[queue](../knowledge-cards/queue)、stream 或 outbox 接續處理。
 
 接近真實網路服務的例子包括：
 
@@ -92,15 +92,15 @@ weight: 0
 
 ## 【判讀】操作診斷需求要先找決策問題
 
-操作診斷需求的核心訊號是「團隊需要用訊號做決策」。log、metric、trace、dashboard 與 alert 的用途不同；它們都應服務某個排障、容量、告警或產品營運問題。
+操作診斷需求的核心訊號是「團隊需要用訊號做決策」。log、metric、trace、dashboard 與 [alert](../knowledge-cards/alert/) 的用途不同；它們都應服務某個排障、容量、告警或產品營運問題。
 
 接近真實網路服務的例子包括：
 
 - API 延遲上升時，要判斷瓶頸在資料庫、外部 API、queue 還是某個版本。
-- queue lag 增加時，要判斷 producer 變快、consumer 變慢，還是下游失敗。
+- queue lag 增加時，要判斷 [producer](../knowledge-cards/producer/) 變快、[consumer](../knowledge-cards/consumer/) 變慢，還是下游失敗。
 - 某地區 [WebSocket](../knowledge-cards/websocket/) disconnect 增加時，要知道是 client 版本、網路入口還是部署節點問題。
 
-這類需求的陷阱是先買平台，再補欄位語意。沒有穩定欄位、trace context、錯誤分類與 runbook，觀測平台只能保存大量難以操作的訊號。
+這類需求的陷阱是先買平台，再補欄位語意。沒有穩定欄位、[trace context](../knowledge-cards/trace-context/)、錯誤分類與 [runbook](../knowledge-cards/runbook/)，觀測平台只能保存大量難以操作的訊號。
 
 下一步可讀：[操作平台選型](operations-platform-selection/)。
 
@@ -112,9 +112,9 @@ weight: 0
 
 - 發版時新版本尚未 ready 就接到流量，造成部分 request 失敗。
 - 活動流量前沒有容量證據，只能靠臨時加機器。
-- 重要 parser 一次更新後影響大量 webhook，缺少 fuzz 或回歸案例。
+- 重要 parser 一次更新後影響大量 [webhook](../knowledge-cards/webhook/)，缺少 fuzz 或回歸案例。
 
-這類需求的陷阱是把可靠性視為上線後的補救工作。交付與可靠性要在設計時就定義 readiness、shutdown、rollback、[load test](../knowledge-cards/load-test/)、資料 migration 與事故演練的檢查點。
+這類需求的陷阱是把可靠性視為上線後的補救工作。交付與可靠性要在設計時就定義 readiness、shutdown、rollback、[load test](../knowledge-cards/load-test/)、資料 [migration](../knowledge-cards/migration/) 與事故演練的檢查點。
 
 下一步可讀：[操作平台選型](operations-platform-selection/)。
 

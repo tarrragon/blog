@@ -33,7 +33,7 @@ weight: 10
 - 恢復目標：  
   [RTO](../knowledge-cards/rto/) / [RPO](../knowledge-cards/rpo/)
 
-如果只定義 timeout，沒有 fallback 與回復目標，系統仍缺少操作上的可控性。
+如果只定義 [timeout](../knowledge-cards/timeout)，沒有 [fallback](../knowledge-cards/fallback) 與回復目標，系統仍缺少操作上的可控性。
 
 ## 【判讀】可觀測訊號要服務操作決策
 
@@ -71,7 +71,7 @@ weight: 10
 
 ## 【判讀】事故治理把容量、觀測與資安接起來
 
-事故治理的核心問題是「異常發生時，如何在可接受風險下恢復服務」。severity、on-call、timeline、RCA 與 game day 是將前面三軸落地的操作語言。
+事故治理的核心問題是「異常發生時，如何在可接受風險下恢復服務」。severity、[on-call](../knowledge-cards/on-call)、timeline、[RCA](../knowledge-cards/rca) 與 [game day](../knowledge-cards/game-day) 是將前面三軸落地的操作語言。
 
 對應卡片：
 
@@ -88,7 +88,7 @@ weight: 10
 當以下問題都能回答時，代表概念層已完成，可以進入實作模組：
 
 1. 核心服務的容量保護鏈是什麼（timeout 到 fallback）
-2. 告警觸發後，runbook 的第一個與第二個動作是什麼
+2. 告警觸發後，[runbook](../knowledge-cards/runbook) 的第一個與第二個動作是什麼
 3. 高風險資料在系統內的流動路徑與存取角色是什麼
 4. 事故升級與回報節點如何定義
 

@@ -11,19 +11,19 @@ weight: 8
 
 | 分類                     | 內容方向                               |
 | ------------------------ | -------------------------------------- |
-| Incident severity        | 事故分級、影響判斷、啟動條件           |
+| [Incident severity](../knowledge-cards/incident-severity)        | 事故分級、影響判斷、啟動條件           |
 | Command model            | incident commander、角色分工、決策邊界 |
-| Containment and recovery | 止血、隔離、降級、回復、rollback       |
+| Containment and recovery | 止血、隔離、[降級](../knowledge-cards/degradation)、回復、rollback       |
 | Incident communication   | 內部通報、外部溝通、狀態更新節奏       |
-| Incident runbook         | 場景化 playbook、查詢入口、停止條件    |
-| Post-incident review     | RCA、行動項、驗證與關閉流程            |
-| Readiness and drills     | 值班訓練、演練設計、game day           |
+| Incident [runbook](../knowledge-cards/runbook)         | 場景化 [playbook](../knowledge-cards/playbook)、查詢入口、停止條件    |
+| [Post-incident review](../knowledge-cards/post-incident-review)     | [RCA](../knowledge-cards/rca)、行動項、驗證與關閉流程            |
+| [Readiness](../knowledge-cards/readiness) and drills     | 值班訓練、演練設計、[game day](../knowledge-cards/game-day)           |
 
 ## 選型入口
 
 事故處理設計的核心判斷是先界定產品影響，再安排處置節奏。分級回答影響多大，指揮模型回答誰決策，止血回復回答先保護什麼結果，通訊流程回答誰需要知道什麼資訊，復盤流程回答下一次如何更快更準。
 
-接近真實網路服務的例子包括付款成功率下降、broker consumer lag 持續擴大、憑證過期導致 HTTPS 失效、資料回填錯誤造成查詢結果偏差。這些場景的共同問題是跨角色協作與時間壓力，因此需要明確分工與標準化流程。
+接近真實網路服務的例子包括付款成功率下降、[broker](../knowledge-cards/broker) [consumer lag](../knowledge-cards/consumer-lag/) 持續擴大、憑證過期導致 HTTPS 失效、資料回填錯誤造成查詢結果偏差。這些場景的共同問題是跨角色協作與時間壓力，因此需要明確分工與標準化流程。
 
 ## 與既有模組關係
 
@@ -37,7 +37,7 @@ weight: 8
 | 章節 | 主題                 | 目標                                        |
 | ---- | -------------------- | ------------------------------------------- |
 | 8.1  | 事故分級與啟動條件   | 建立統一分級與啟動門檻                      |
-| 8.2  | 事故指揮與角色分工   | 定義 commander、owner、scribe、on-call 協作 |
+| 8.2  | 事故指揮與角色分工   | 定義 commander、owner、scribe、[on-call](../knowledge-cards/on-call) 協作 |
 | 8.3  | 止血、降級與回復策略 | 把短期止血與正式回復拆成可執行步驟          |
 | 8.4  | 事故通訊與狀態更新   | 建立內外部通訊節奏與格式                    |
 | 8.5  | 復盤與改進追蹤       | 把 RCA 與 action items 變成可驗證閉環       |

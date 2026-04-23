@@ -5,16 +5,16 @@ description: "graceful shutdown、健康檢查、結構化日誌與 feature gate
 weight: 6
 ---
 
-生產操作的核心目標是讓 Go 服務可停止、可觀測、可診斷、可漸進啟用功能。服務能在本機跑起來只是第一步；長時間運行後，真正重要的是 shutdown 是否可預期、監控訊號是否清楚、log 是否可查詢、功能開關是否有降級策略。
+生產操作的核心目標是讓 Go 服務可停止、可觀測、可診斷、可漸進啟用功能。服務能在本機跑起來只是第一步；長時間運行後，真正重要的是 shutdown 是否可預期、監控訊號是否清楚、[log](../../backend/knowledge-cards/log/) 是否可查詢、功能開關是否有降級策略。
 
-本模組承接前面的並發、WebSocket、runtime 與測試：graceful shutdown 需要 context 和 goroutine lifecycle，health endpoint 需要區分可用性與診斷，structured log 需要能追 event flow，feature gate 需要能安全控制新能力。
+本模組承接前面的並發、[WebSocket](../../backend/knowledge-cards/websocket/)、runtime 與測試：[graceful shutdown](../../backend/knowledge-cards/graceful-shutdown/) 需要 context 和 goroutine lifecycle，health endpoint 需要區分可用性與診斷，structured log 需要能追 event flow，feature gate 需要能安全控制新能力。
 
 ## 章節列表
 
 | 章節                       | 主題                                 | 關鍵收穫                                                |
 | -------------------------- | ------------------------------------ | ------------------------------------------------------- |
-| [6.1](graceful-shutdown/)  | graceful shutdown 與 signal handling | 用 signal、context、timeout 與 owner cleanup 停止服務   |
-| [6.2](health-diagnostics/) | 健康檢查與診斷 endpoint              | 區分 health、readiness、diagnostics 與 status code 合約 |
+| [6.1](graceful-shutdown/)  | graceful shutdown 與 signal handling | 用 signal、context、[timeout](../../backend/knowledge-cards/timeout/) 與 owner cleanup 停止服務   |
+| [6.2](health-diagnostics/) | 健康檢查與診斷 endpoint              | 區分 health、[readiness](../../backend/knowledge-cards/readiness/)、diagnostics 與 status code 合約 |
 | [6.3](log-fields/)         | 結構化日誌欄位設計                   | 用穩定欄位讓 log 可 grep、可聚合、可追蹤                |
 | [6.4](feature-gate/)       | 版本偵測與 feature gate              | 用功能開關、能力偵測與降級策略控制行為                  |
 

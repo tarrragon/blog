@@ -8,6 +8,6 @@ weight: 5
 ## 大綱
 
 - timeline reconstruction
-- rca method
+- [rca](../knowledge-cards/rca) method
 - action tracking
 - closure criteria

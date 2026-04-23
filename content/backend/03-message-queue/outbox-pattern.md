@@ -5,7 +5,7 @@ description: "把 transaction 與 event publish 分離"
 weight: 3
 ---
 
-這一章處理 transaction 與訊息發佈之間的一致性問題，後續可以再延伸到 polling、relay 與 failure recovery。
+這一章處理 [transaction](../knowledge-cards/transaction) 與訊息發佈之間的一致性問題，後續可以再延伸到 polling、relay 與 failure recovery。
 
 ## 大綱
 

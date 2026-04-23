@@ -7,7 +7,7 @@ weight: 34
 
 Backend 教材的核心目標是整理「應該被 application interface 隔離」的外部服務能力。語言教材負責各自的語法、標準庫、並發或非同步模型、測試方法與 interface / protocol 邊界；Backend 教材負責資料庫、快取、訊息佇列、觀測平台、部署平台、系統可靠性與資安資料保護。
 
-這個切分讓不同語言的學習保持清楚：Go、Python 或其他後端語言可以各自說明如何定義抽象邊界、處理取消與逾時、回傳錯誤、寫 fake 或 contract test；Backend 章節則說明 SQLite、PostgreSQL、Redis、RabbitMQ、broker、migration、metrics、tracing、Kubernetes、identity、permission、[TLS / mTLS](knowledge-cards/tls-mtls/)、[WAF](knowledge-cards/waf/)、[Secret Management](knowledge-cards/secret-management/)、[Audit Log](knowledge-cards/audit-log/) 等具體技術如何運作。
+這個切分讓不同語言的學習保持清楚：Go、Python 或其他後端語言可以各自說明如何定義抽象邊界、處理取消與逾時、回傳錯誤、寫 fake 或 contract test；Backend 章節則說明 SQLite、PostgreSQL、Redis、RabbitMQ、[broker](knowledge-cards/broker)、[migration](knowledge-cards/migration)、[metrics](knowledge-cards/metrics)、tracing、Kubernetes、identity、permission、[TLS / mTLS](knowledge-cards/tls-mtls/)、[WAF](knowledge-cards/waf/)、[Secret Management](knowledge-cards/secret-management/)、[Audit Log](knowledge-cards/audit-log/) 等具體技術如何運作。
 
 Backend 是多個後端語言系列共用的實作層。未來若新增 frontend、data engineering、machine learning、mobile 或其他非後端主題，也可以用同樣方式把共用實作知識抽成獨立資料夾，讓特定語言教材保留在語言本身的能力邊界。
 
@@ -15,19 +15,19 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 | 類型       | 放在語言教材                                                                                    | 放在 Backend 教材                                                                                              |
 | ---------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| 資料存取   | repository port、interface / protocol、context / cancellation、error、contract test             | SQLite、PostgreSQL、transaction、schema migration、index、isolation level                                      |
-| 快取       | cache port、TTL 概念、資料複製邊界、失效策略的程式邊界                                          | Redis 資料型別、eviction、distributed lock、cache aside、pub/sub                                               |
-| 訊息傳遞   | channel / queue abstraction、backpressure、publisher port、processor、idempotency interface     | RabbitMQ、NATS、Kafka、Redis Streams、ack/nack、dead-letter queue、consumer group                              |
-| 可觀測性   | 標準 logger、runtime 訊號、diagnostics endpoint、trace context 邊界、錯誤分類欄位               | log aggregation、Prometheus、OpenTelemetry、trace、dashboard、alert                                            |
-| 部署平台   | graceful shutdown、health/readiness、signal handling、resource limit、failover hook 的程式設計  | Kubernetes、systemd、load balancer、container image、service discovery                                         |
-| 可靠性驗證 | unit test、table-driven / parameterized test、race / async test、integration test、故障路徑測試 | CI pipeline、load test、fuzz campaign、chaos testing、環境治理                                                 |
+| 資料存取   | repository port、interface / protocol、context / cancellation、error、contract test             | SQLite、PostgreSQL、[transaction](knowledge-cards/transaction)、[schema migration](knowledge-cards/schema-migration)、index、[isolation level](knowledge-cards/isolation-level)                                      |
+| 快取       | cache port、[TTL](knowledge-cards/ttl) 概念、資料複製邊界、失效策略的程式邊界                                          | Redis 資料型別、[eviction](knowledge-cards/eviction)、distributed lock、[cache aside](knowledge-cards/cache-aside)、[pub/sub](knowledge-cards/pub-sub)                                               |
+| 訊息傳遞   | channel / [queue](knowledge-cards/queue) abstraction、[backpressure](knowledge-cards/backpressure)、publisher port、processor、[idempotency](knowledge-cards/idempotency) interface     | RabbitMQ、NATS、Kafka、Redis Streams、[ack/nack](knowledge-cards/ack-nack)、[dead-letter queue](knowledge-cards/dead-letter-queue)、[consumer group](knowledge-cards/consumer-group)                              |
+| 可觀測性   | 標準 logger、runtime 訊號、diagnostics endpoint、[trace context](knowledge-cards/trace-context) 邊界、錯誤分類欄位               | [log](knowledge-cards/log) aggregation、Prometheus、OpenTelemetry、trace、[dashboard](knowledge-cards/dashboard)、[alert](knowledge-cards/alert)                                            |
+| 部署平台   | [graceful shutdown](knowledge-cards/graceful-shutdown)、health/[readiness](knowledge-cards/readiness)、signal handling、resource limit、[failover](knowledge-cards/failover) hook 的程式設計  | Kubernetes、systemd、load balancer、container image、[service discovery](knowledge-cards/service-discovery)                                         |
+| 可靠性驗證 | unit test、table-driven / parameterized test、race / async test、integration test、故障路徑測試 | [CI pipeline](knowledge-cards/ci-pipeline)、[load test](knowledge-cards/load-test)、fuzz campaign、chaos testing、環境治理                                                 |
 | 資安保護   | middleware、policy interface、error mapping、redaction helper、security test                    | identity、[authorization](knowledge-cards/authorization/)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[WAF](knowledge-cards/waf/)、[Secret Management](knowledge-cards/secret-management/)、[Audit Log](knowledge-cards/audit-log/)、[data masking](knowledge-cards/data-masking/) |
 
 ## 教學模組
 
 ### [前置知識卡片](knowledge-cards/)
 
-用原子化卡片整理 source of truth、transaction、migration、CDC、backfill、cutover、timeout、backoff、jitter、retry storm、load shedding、bulkhead、fallback、TTL、cache warmup、singleflight、broker、consumer lag、prefetch、redelivery、partition、offset、idempotency、outbox、backpressure、log schema、metrics、trace、SLO、error budget、authorization、BOLA、mass assignment、data masking、[Secret Management](knowledge-cards/secret-management/)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[Audit Log](knowledge-cards/audit-log/) 與 [Website Certificate Lifecycle](knowledge-cards/website-certificate-lifecycle/) 等後端 domain knowhow。這些卡片負責補足服務選型文章中的先備知識，讓章節可以專注在需求判讀與服務取捨。
+用原子化卡片整理 [source of truth](knowledge-cards/source-of-truth)、transaction、migration、CDC、[backfill](knowledge-cards/backfill)、[cutover](knowledge-cards/cutover-switchover)、[timeout](knowledge-cards/timeout)、backoff、[jitter](knowledge-cards/jitter)、[retry storm](knowledge-cards/retry-storm)、[load shedding](knowledge-cards/load-shedding)、[bulkhead](knowledge-cards/bulkhead)、[fallback](knowledge-cards/fallback)、TTL、[cache warmup](knowledge-cards/cache-warmup)、[singleflight](knowledge-cards/singleflight)、broker、[consumer lag](knowledge-cards/consumer-lag)、[prefetch](knowledge-cards/prefetch)、[redelivery](knowledge-cards/redelivery)、[partition](knowledge-cards/partition)、[offset](knowledge-cards/offset)、idempotency、outbox、backpressure、[log schema](knowledge-cards/log-schema)、metrics、trace、[SLO](knowledge-cards/sli-slo)、[error budget](knowledge-cards/error-budget)、[authorization](knowledge-cards/authorization)、[BOLA](knowledge-cards/bola-idor)、[mass assignment](knowledge-cards/mass-assignment)、[data masking](knowledge-cards/data-masking)、[Secret Management](knowledge-cards/secret-management/)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[Audit Log](knowledge-cards/audit-log/) 與 [Website Certificate Lifecycle](knowledge-cards/website-certificate-lifecycle/) 等後端 domain knowhow。這些卡片負責補足服務選型文章中的先備知識，讓章節可以專注在需求判讀與服務取捨。
 
 ### [模組零：後端需求分析與服務選型](00-service-selection/)
 
@@ -35,7 +35,7 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 ### [模組一：資料庫與持久化](01-database/)
 
-整理 relational database、embedded database、transaction、migration、repository adapter 與資料一致性。
+整理 relational [database](knowledge-cards/database)、embedded database、transaction、migration、repository adapter 與資料一致性。
 
 ### [模組二：快取與 Redis](02-cache-redis/)
 
@@ -43,7 +43,7 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 ### [模組三：訊息佇列與事件傳遞](03-message-queue/)
 
-整理 durable queue、broker、ack/nack、retry、dead-letter queue、outbox、idempotency 與 consumer 設計。
+整理 [durable queue](knowledge-cards/durable-queue)、broker、ack/nack、retry、dead-letter queue、outbox、idempotency 與 consumer 設計。
 
 ### [模組四：可觀測性平台](04-observability/)
 
@@ -51,7 +51,7 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 ### [模組五：部署平台與網路入口](05-deployment-platform/)
 
-整理 Kubernetes、systemd、load balancer、container、service discovery、rolling update 與平台合約。
+整理 Kubernetes、systemd、load balancer、container、service discovery、[rolling update](knowledge-cards/rolling-update) 與平台合約。
 
 ### [模組六：可靠性驗證流程](06-reliability/)
 
@@ -72,7 +72,7 @@ Backend 教材提供跨語言的服務概念與操作語意。語言教材可以
 Backend 章節討論具體服務時，應加入跨語言適配評估。這個評估讓讀者從 runtime、語言生態與抽象邊界理解服務使用方式，並取代特定語言教材作為前置依賴。
 
 1. 這個服務需要語言端提供哪些抽象邊界，例如 interface、protocol、adapter、middleware、worker 或 client wrapper。
-2. 哪些 runtime 特性會影響服務使用方式，例如 thread model、event loop、async/await、goroutine、process model、GC、connection pool 或 cancellation。
+2. 哪些 runtime 特性會影響服務使用方式，例如 thread model、event loop、async/await、goroutine、process model、GC、[connection pool](knowledge-cards/connection-pool) 或 cancellation。
 3. 哪些語言特性適合這個服務，例如明確 context 傳遞、型別化錯誤、成熟 ORM、生態套件、背景 worker 框架或 observability SDK。
 4. 哪些語言特性會形成風險，例如隱式全域狀態、阻塞 I/O 混入 event loop、連線池生命週期不清楚、例外處理邊界模糊或套件抽象過厚。
 5. 語言教材若需要示範實作，應由語言教材回連 Backend；Backend 則保持跨語言概念完整。
@@ -85,7 +85,7 @@ Backend 案例應從服務需求出發。高併發、長連線、事件處理、
 
 ## 前置知識卡片規範
 
-Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of truth、transaction boundary、schema migration、timeout、deadline、exponential backoff、jitter、retry storm、thundering herd、transient failure、partial failure、cascading failure、load shedding、token bucket、dependency isolation、bulkhead、fallback、fail fast、retry budget、TTL、eviction、broker、consumer lag、dead-letter queue、replay runbook、重複投遞、idempotency、outbox、backpressure、rate limit、log schema、metrics、trace context、SLO、authorization、data masking、secret management、[TLS / mTLS](knowledge-cards/tls-mtls/)、[website certificate lifecycle](knowledge-cards/website-certificate-lifecycle/)、[certificate rotation and renewal](knowledge-cards/certificate-rotation-renewal/)、[certificate revocation](knowledge-cards/certificate-revocation/)、audit log、降級、停機、readiness 與 graceful shutdown 都是 domain knowhow；它們需要說明系統責任、產品後果、操作訊號與排障方式。
+Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of truth、[transaction boundary](knowledge-cards/transaction-boundary)、schema migration、timeout、[deadline](knowledge-cards/deadline)、[exponential backoff](knowledge-cards/exponential-backoff)、jitter、retry storm、[thundering herd](knowledge-cards/thundering-herd)、[transient failure](knowledge-cards/transient-failure)、[partial failure](knowledge-cards/partial-failure)、[cascading failure](knowledge-cards/cascading-failure)、load shedding、[token bucket](knowledge-cards/token-bucket)、[dependency isolation](knowledge-cards/dependency-isolation)、bulkhead、fallback、[fail fast](knowledge-cards/fail-fast)、[retry budget](knowledge-cards/retry-budget)、TTL、eviction、broker、consumer lag、dead-letter queue、[replay runbook](knowledge-cards/replay-runbook)、[重複投遞](knowledge-cards/duplicate-delivery)、idempotency、outbox、backpressure、[rate limit](knowledge-cards/rate-limit)、log schema、metrics、trace context、SLO、authorization、data masking、[secret management](knowledge-cards/secret-management)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[website certificate lifecycle](knowledge-cards/website-certificate-lifecycle/)、[certificate rotation and renewal](knowledge-cards/certificate-rotation-renewal/)、[certificate revocation](knowledge-cards/certificate-revocation/)、[audit log](knowledge-cards/audit-log)、[降級](knowledge-cards/degradation)、[停機](knowledge-cards/downtime)、readiness 與 graceful shutdown 都是 domain knowhow；它們需要說明系統責任、產品後果、操作訊號與排障方式。
 
 每張卡片應維持一個概念，並至少包含概念位置、可觀察訊號、接近真實網路服務的例子與設計責任。卡片內容要能獨立閱讀；定義只是一個入口，完整卡片要讓讀者理解這個概念在事故、擴容、部署或資料修復時會如何影響決策。
 
@@ -100,7 +100,7 @@ Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of
 - Kubernetes、systemd、load balancer、container runtime
 - CI、load test、fuzz、chaos testing
 - identity、[authorization](knowledge-cards/authorization/)、[data masking](knowledge-cards/data-masking/)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[website certificate lifecycle](knowledge-cards/website-certificate-lifecycle/)、[Secret Management](knowledge-cards/secret-management/)、[Audit Log](knowledge-cards/audit-log/)
-- incident severity、command model、escalation policy、rollback strategy、post-incident review
+- [incident severity](knowledge-cards/incident-severity)、command model、[escalation policy](knowledge-cards/escalation-policy)、[rollback strategy](knowledge-cards/rollback-strategy)、[post-incident review](knowledge-cards/post-incident-review)
 
 後續撰寫任何語言教材時，凡是涉及具體外部服務操作、部署平台設定或產品選型，都應優先放到 Backend；語言章節只保留足夠說明抽象邊界的最小背景。
 

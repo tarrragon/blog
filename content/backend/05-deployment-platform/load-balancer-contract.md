@@ -7,7 +7,7 @@ weight: 3
 
 ## 大綱
 
-- health check contract
+- [health check](../knowledge-cards/health-check-liveness) contract
 - draining / connection closing
-- idle timeout
+- idle [timeout](../knowledge-cards/timeout)
 - sticky session

@@ -13,8 +13,8 @@ weight: 5
 
 1. 理解 bounded concurrency 的用途
 2. 用 semaphore 或 worker pool 限制同時工作數
-3. 看懂 backpressure 為什麼能保護下游
-4. 在併發流程中保留 cancellation 與 timeout
+3. 看懂 [backpressure](../../backend/knowledge-cards/backpressure/) 為什麼能保護下游
+4. 在併發流程中保留 cancellation 與 [timeout](../../backend/knowledge-cards/timeout/)
 5. 辨認什麼時候該拒絕新工作
 
 ---
