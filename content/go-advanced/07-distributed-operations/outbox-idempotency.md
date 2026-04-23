@@ -5,7 +5,7 @@ description: "設計跨 process 事件傳遞的可靠性與去重邊界"
 weight: 2
 ---
 
-跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的背壓；durable queue、[outbox](../../backend/00-knowledge-cards/outbox-pattern/) 與 [idempotency](../../backend/00-knowledge-cards/idempotency/) store 才能處理服務重啟、網路失敗與 consumer 重試。
+跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的背壓；durable queue、[outbox](../../backend/knowledge-cards/outbox-pattern/) 與 [idempotency](../../backend/knowledge-cards/idempotency/) store 才能處理服務重啟、網路失敗與 consumer 重試。
 
 ## 本章目標
 
@@ -22,10 +22,10 @@ weight: 2
 - [Go 進階：非阻塞送出與事件丟棄策略](../01-concurrency-patterns/non-blocking-send/)
 - [Go 進階：事件去重與語義鍵設計](../04-architecture-boundaries/dedup-key/)
 - [Go 進階：多來源 event 融合](../04-architecture-boundaries/event-fusion/)
-- [Backend：Ack / Nack](../../backend/00-knowledge-cards/ack-nack/)
-- [Backend：Retry Policy](../../backend/00-knowledge-cards/retry-policy/)
-- [Backend：Dead-Letter Queue](../../backend/00-knowledge-cards/dead-letter-queue/)
-- [Backend：Consumer Lag](../../backend/00-knowledge-cards/consumer-lag/)
+- [Backend：Ack / Nack](../../backend/knowledge-cards/ack-nack/)
+- [Backend：Retry Policy](../../backend/knowledge-cards/retry-policy/)
+- [Backend：Dead-Letter Queue](../../backend/knowledge-cards/dead-letter-queue/)
+- [Backend：Consumer Lag](../../backend/knowledge-cards/consumer-lag/)
 
 ## 後續撰寫方向
 

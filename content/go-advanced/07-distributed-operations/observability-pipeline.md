@@ -5,7 +5,7 @@ description: "把 structured log、metric、trace 與 profile 組成可操作的
 weight: 4
 ---
 
-Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。[Log schema](../../backend/00-knowledge-cards/log-schema/) 描述單次事件，[metrics](../../backend/00-knowledge-cards/metrics/) 描述趨勢，[trace context](../../backend/00-knowledge-cards/trace-context/) 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。
+Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。[Log schema](../../backend/knowledge-cards/log-schema/) 描述單次事件，[metrics](../../backend/knowledge-cards/metrics/) 描述趨勢，[trace context](../../backend/knowledge-cards/trace-context/) 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。
 
 ## 本章目標
 
@@ -23,9 +23,9 @@ Observability pipeline 的核心責任是把服務訊號整理成可查詢、可
 - [Go 進階：pprof 基礎診斷流程](../03-runtime-profiling/pprof/)
 - [Go 進階：結構化日誌欄位設計](../06-production-operations/log-fields/)
 - [Go 進階：健康檢查與診斷 endpoint](../06-production-operations/health-diagnostics/)
-- [Backend：SLI / SLO](../../backend/00-knowledge-cards/sli-slo/)
-- [Backend：Metric Cardinality](../../backend/00-knowledge-cards/metric-cardinality/)
-- [Backend：Alert Runbook](../../backend/00-knowledge-cards/alert-runbook/)
+- [Backend：SLI / SLO](../../backend/knowledge-cards/sli-slo/)
+- [Backend：Metric Cardinality](../../backend/knowledge-cards/metric-cardinality/)
+- [Backend：Alert Runbook](../../backend/knowledge-cards/alert-runbook/)
 
 ## 後續撰寫方向
 
