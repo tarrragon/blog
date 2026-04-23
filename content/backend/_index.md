@@ -134,7 +134,7 @@ Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of
 每篇具體服務實體章節都必須包含「跨語言適配評估」段落。這個段落不連到特定語言教材，而是從語言特性評估使用風險：
 
 1. 同步 thread-based runtime 如何管理 connection pool、blocking I/O 與 timeout。
-2. async/event-loop runtime 如何避免 blocking client、長時間 CPU work 與背壓失控。
+2. async/event-loop runtime 如何避免 blocking client、長時間 CPU work 與 backpressure 失控。
 3. goroutine 或 lightweight task runtime 如何限制下游資源，避免把廉價並發轉成昂貴連線壓力。
 4. 強型別語言如何表達 schema、錯誤分類與 contract test。
 5. 動態語言如何用 protocol、typing、fixture、runtime validation 或 framework convention 保護邊界。

@@ -21,5 +21,4 @@ Twitch 的案例幾乎就是 Go 教材裡高併發與即時系統的縮影。官
 
 - [Go case studies page](https://go.dev/solutions/case-studies)
 
-Twitch 的核心系統原始碼不是公開教學重點，所以這一章更適合把官方案例本身當成第一手材料，再回到你的 WebSocket、channel 與背壓章節對照。
-
+Twitch 的核心系統原始碼不是公開教學重點，所以這一章更適合把官方案例本身當成第一手材料，再回到你的 WebSocket、channel 與 backpressure 章節對照。

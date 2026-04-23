@@ -263,11 +263,11 @@ func TestBroadcastUnregistersFullClient(t *testing.T) {
 
 ## 和 Go 教材的關係
 
-這一章承接的是 channel 背壓、non-blocking send 與 rate limiting；如果你要先回看語言教材，可以讀：
+這一章承接的是 channel backpressure 、non-blocking send 與 rate limiting；如果你要先回看語言教材，可以讀：
 
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：非阻塞送出與事件丟棄策略](../../go-advanced/01-concurrency-patterns/non-blocking-send/)
-- [Go：rate limiting 與背壓](../../go-advanced/01-concurrency-patterns/rate-limit/)
+- [Go：rate limiting 與 backpressure ](../../go-advanced/01-concurrency-patterns/rate-limit/)
 - [Go：bounded worker pool](../../go-advanced/01-concurrency-patterns/worker-pool/)
 - [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
 - [Backend：快取與 Redis](../../backend/02-cache-redis/)

@@ -272,7 +272,7 @@ func TestRunStopsOnContextCancel(t *testing.T) {
 這一章承接的是 goroutine、channel 與 shutdown loop；如果你要先回看語言教材，可以讀：
 
 - [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：bounded worker pool](worker-pool/)
 - [Go：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
 

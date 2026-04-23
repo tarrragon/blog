@@ -38,14 +38,14 @@ Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、
 
 ### [模組一：進階並發模式](01-concurrency-patterns/)
 
-從服務實例理解 fan-in、fan-out、取消傳播與背壓，先把並發語意說清楚。
+從服務實例理解 fan-in、fan-out、取消傳播與 backpressure ，先把並發語意說清楚。
 
 - [channel ownership 與關閉責任](01-concurrency-patterns/channel-ownership/)
 - [select loop 的生命週期設計](01-concurrency-patterns/select-loop/)
 - [非阻塞送出與事件丟棄策略](01-concurrency-patterns/non-blocking-send/)
 - [共享狀態與複製邊界](01-concurrency-patterns/shared-state/)
 - [bounded worker pool](01-concurrency-patterns/worker-pool/)
-- [rate limiting 與背壓](01-concurrency-patterns/rate-limit/)
+- [rate limiting 與 backpressure ](01-concurrency-patterns/rate-limit/)
 
 ### [模組二：WebSocket 服務架構](02-networking-websocket/)
 

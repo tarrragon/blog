@@ -11,16 +11,16 @@ weight: 6
 
 ## 章節列表
 
-| 章節                          | 主題                        | 關鍵收穫                                                        |
-| ----------------------------- | --------------------------- | --------------------------------------------------------------- |
-| [6.1](new-websocket-action/)  | 如何新增一個即時訊息 action | 用 struct、JSON、error 與 usecase 切開輸入邊界                  |
-| [6.2](new-event-type/)        | 如何新增一種 domain event   | 用明確型別定義事件語意、envelope 與驗證規則                     |
-| [6.3](state-fields/)          | 如何擴展狀態投影欄位        | 判斷欄位屬於 domain state、read model 或 response view          |
-| [6.4](new-background-worker/) | 如何新增背景工作流程        | 用 context、channel、ticker 與 shutdown 管理 goroutine 生命週期 |
-| [6.5](structured-recording/)  | 如何新增結構化記錄欄位      | 區分 structured log、domain event log 與 state repository       |
-| [6.6](repository-port/)       | 如何新增 repository port    | 用小介面建立儲存邊界，再決定 memory 或 database 實作            |
-| [6.7](service-scenarios/)     | Go 常見服務場景總覽         | 看懂 Go 最常落地的即時、背景與事件處理場景                    |
-| [6.8](data-access-boundaries/) | 高併發下的 Redis 與 SQL 使用原則 | 用 timeout、pool 與背壓控制下游壓力                          |
+| 章節                           | 主題                             | 關鍵收穫                                                        |
+| ------------------------------ | -------------------------------- | --------------------------------------------------------------- |
+| [6.1](new-websocket-action/)   | 如何新增一個即時訊息 action      | 用 struct、JSON、error 與 usecase 切開輸入邊界                  |
+| [6.2](new-event-type/)         | 如何新增一種 domain event        | 用明確型別定義事件語意、envelope 與驗證規則                     |
+| [6.3](state-fields/)           | 如何擴展狀態投影欄位             | 判斷欄位屬於 domain state、read model 或 response view          |
+| [6.4](new-background-worker/)  | 如何新增背景工作流程             | 用 context、channel、ticker 與 shutdown 管理 goroutine 生命週期 |
+| [6.5](structured-recording/)   | 如何新增結構化記錄欄位           | 區分 structured log、domain event log 與 state repository       |
+| [6.6](repository-port/)        | 如何新增 repository port         | 用小介面建立儲存邊界，再決定 memory 或 database 實作            |
+| [6.7](service-scenarios/)      | Go 常見服務場景總覽              | 看懂 Go 最常落地的即時、背景與事件處理場景                      |
+| [6.8](data-access-boundaries/) | 高併發下的 Redis 與 SQL 使用原則 | 用 timeout、pool 與 backpressure 控制下游壓力                   |
 
 ## 本模組的教學主軸
 

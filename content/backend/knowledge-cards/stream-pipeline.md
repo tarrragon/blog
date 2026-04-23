@@ -1,7 +1,7 @@
 ---
 title: "Stream Pipeline"
 date: 2026-04-23
-description: "說明連續資料流經多個處理階段時如何管理吞吐、順序與背壓"
+description: "說明連續資料流經多個處理階段時如何管理吞吐、順序與 backpressure "
 weight: 128
 ---
 

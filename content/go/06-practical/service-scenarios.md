@@ -41,7 +41,7 @@ WebSocket、SSE 或其他長連線服務，通常需要處理：
 - heartbeat
 - 事件路由
 - 慢 client
-- 背壓
+- backpressure
 
 這些都和 goroutine、channel、context、timeout 直接相關，所以 Go 很自然會出現在這裡。
 

@@ -23,7 +23,7 @@ weight: 3
 
 Channel 滿載的核心意義是下游處理速度跟不上上游輸入速度。這可能是短暫尖峰，也可能是系統長期容量不足。
 
-最直接的 send 會接受背壓：
+最直接的 send 會接受 backpressure ：
 
 ```go
 events <- event
@@ -35,7 +35,7 @@ events <- event
 
 ## 【判讀】blocking send 表示願意等待
 
-Blocking send 的核心語意是 sender 接受下游背壓。資料不會被丟掉，但 sender 的生命週期會被 receiver 影響。
+Blocking send 的核心語意是 sender 接受下游 backpressure 。資料不會被丟掉，但 sender 的生命週期會被 receiver 影響。
 
 有 context 的 blocking send：
 
@@ -73,7 +73,7 @@ func TryEnqueue(events chan<- Event, event Event) error {
 
 這段程式不會等待 receiver。當 buffer 滿載時，呼叫端會立刻拿到 `ErrQueueFull`，並可以決定回 HTTP 錯誤、記錄 drop、或改走其他儲存。
 
-Non-blocking send 不是比較進階的寫法。它只是把背壓從「等待」改成「立即決策」。
+Non-blocking send 不是比較進階的寫法。它只是把 backpressure 從「等待」改成「立即決策」。
 
 ## 【策略】先定義事件的保留等級
 
@@ -231,13 +231,13 @@ func TestEnqueueStopsWhenContextCanceled(t *testing.T) {
 
 ## 和 Go 教材的關係
 
-這一章承接的是 channel 背壓、worker capacity 與事件丟棄策略；如果你要先回看語言教材，可以讀：
+這一章承接的是 channel backpressure 、worker capacity 與事件丟棄策略；如果你要先回看語言教材，可以讀：
 
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
-- [Go：rate limiting 與背壓](rate-limit/)
+- [Go：rate limiting 與 backpressure ](rate-limit/)
 - [Go：多來源 event 融合](../../go-advanced/04-architecture-boundaries/event-fusion/)
 
 ## 小結
 
-非阻塞送出是服務策略，不是語法技巧。Channel 滿載時，系統必須明確選擇等待、回錯、丟棄、覆蓋或轉交可靠儲存。選擇之前先定義事件的保留等級，選擇之後補上 log、metric 與測試，才能讓背壓成為可管理的服務行為。
+非阻塞送出是服務策略，不是語法技巧。Channel 滿載時，系統必須明確選擇等待、回錯、丟棄、覆蓋或轉交可靠儲存。選擇之前先定義事件的保留等級，選擇之後補上 log、metric 與測試，才能讓 backpressure 成為可管理的服務行為。

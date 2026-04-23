@@ -244,7 +244,7 @@ func TestMergeClosesAfterAllInputsClose(t *testing.T) {
 這一章承接的是 channel、goroutine 與 select 的協作；如果你要先回看語言教材，可以讀：
 
 - [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
 - [Go：bounded worker pool](worker-pool/)
 

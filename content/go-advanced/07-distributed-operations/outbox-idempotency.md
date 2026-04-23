@@ -5,7 +5,7 @@ description: "設計跨 process 事件傳遞的可靠性與去重邊界"
 weight: 2
 ---
 
-跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的背壓；durable queue、[outbox](../../backend/knowledge-cards/outbox-pattern/) 與 [idempotency](../../backend/knowledge-cards/idempotency/) store 才能處理服務重啟、網路失敗與 consumer 重試。
+跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的 backpressure ；durable queue、[outbox](../../backend/knowledge-cards/outbox-pattern/) 與 [idempotency](../../backend/knowledge-cards/idempotency/) store 才能處理服務重啟、網路失敗與 consumer 重試。
 
 ## 本章目標
 

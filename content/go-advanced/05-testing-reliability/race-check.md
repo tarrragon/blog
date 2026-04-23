@@ -240,7 +240,7 @@ go test -race ./...
 這一章承接的是共享狀態、channel ownership 與 lifecycle；如果你要先回看語言教材，可以讀：
 
 - [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
 - [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
 

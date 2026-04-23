@@ -262,7 +262,7 @@ Goroutine leak 的核心修正不是在 goroutine 裡加更多條件，而是補
 這一章承接的是 goroutine lifecycle、channel 與 shutdown；如果你要先回看語言教材，可以讀：
 
 - [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
 - [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
 

@@ -257,7 +257,7 @@ Write pump 的測試通常放在 integration test，因為它依賴真實 connec
 這一章承接的是 goroutine ownership、channel 與 backpressure；如果你要先回看語言教材，可以讀：
 
 - [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：channel ownership 與關閉責任](../../go-advanced/01-concurrency-patterns/channel-ownership/)
 - [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
 - [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)

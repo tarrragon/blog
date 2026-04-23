@@ -1,7 +1,7 @@
 ---
-title: "4.2 channel：資料傳遞與背壓"
+title: "4.2 channel：資料傳遞與 backpressure "
 date: 2026-04-22
-description: "理解 channel 如何在 goroutine 之間傳遞資料並形成背壓"
+description: "理解 channel 如何在 goroutine 之間傳遞資料並形成 backpressure "
 weight: 2
 ---
 
@@ -13,7 +13,7 @@ channel 是 Go 用來在 goroutine 之間傳遞資料的同步工具。它的核
 
 1. 建立與使用 channel
 2. 看懂 channel 的方向與資料型別
-3. 理解 buffered channel 的背壓意義
+3. 理解 buffered channel 的 backpressure 意義
 4. 分辨 blocking send 與 non-blocking send
 5. 用 channel 畫出資料流
 
@@ -58,7 +58,7 @@ jobs := make(chan Job, 10)
 jobs <- Job{ID: "1"}
 ```
 
-buffer 大小不是隨便的數字。它代表系統允許累積多少尚未處理的工作；接收端處理速度跟不上時，buffer 會逐漸填滿，最後形成背壓。
+buffer 大小不是隨便的數字。它代表系統允許累積多少尚未處理的工作；接收端處理速度跟不上時，buffer 會逐漸填滿，最後形成 backpressure 。
 
 ## 【策略】用方向限制表達所有權
 

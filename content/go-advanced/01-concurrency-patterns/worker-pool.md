@@ -12,7 +12,7 @@ bounded worker pool 的核心責任是限制同時執行的工作量。goroutine
 這些工作量邊界會在下列章節展開：
 
 - [Go 入門：goroutine：背景工作與服務生命週期](../../go/04-concurrency/goroutine/)：先理解 goroutine 的啟動和結束方式，才知道 worker pool 為什麼要限制並發數。
-- [Go 入門：channel：事件流與背壓](../../go/04-concurrency/channel/)：job channel 的容量和阻塞行為，會直接影響 pool 的整體策略。
+- [Go 入門：channel：事件流與 backpressure ](../../go/04-concurrency/channel/)：job channel 的容量和阻塞行為，會直接影響 pool 的整體策略。
 - [Go 進階：select loop 的生命週期設計](select-loop/)：worker 的停止、排空與關閉，通常都要回到 select loop 來說明。
 - [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)：真正跨 process 的 consumer、retry 與 dead-letter 行為屬於這裡。
 
@@ -29,6 +29,6 @@ bounded worker pool 的核心責任是限制同時執行的工作量。goroutine
 這一章承接的是 goroutine、channel 與 select loop；如果你要先回看語言教材，可以讀：
 
 - [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
-- [Go：channel：資料傳遞與背壓](../../go/04-concurrency/channel/)
+- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
 - [Go：select：同時等待多種事件](select-loop/)
 - [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
