@@ -13,15 +13,15 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 ## 教材邊界
 
-| 類型       | 放在語言教材                                                                                | 放在 Backend 教材                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| 資料存取   | repository port、interface / protocol、context / cancellation、error、contract test         | SQLite、PostgreSQL、transaction、schema migration、index、isolation level         |
-| 快取       | cache port、TTL 概念、資料複製邊界、失效策略的程式邊界                                      | Redis 資料型別、eviction、distributed lock、cache aside、pub/sub                  |
-| 訊息傳遞   | channel / queue abstraction、backpressure、publisher port、processor、idempotency interface | RabbitMQ、NATS、Kafka、Redis Streams、ack/nack、dead-letter queue、consumer group |
-| 可觀測性   | 標準 logger、runtime 訊號、diagnostics endpoint、trace context 邊界、錯誤分類欄位             | log aggregation、Prometheus、OpenTelemetry、trace、dashboard、alert               |
-| 部署平台   | graceful shutdown、health/readiness、signal handling、resource limit、failover hook 的程式設計 | Kubernetes、systemd、load balancer、container image、service discovery            |
-| 可靠性驗證 | unit test、table-driven / parameterized test、race / async test、integration test、故障路徑測試 | CI pipeline、load test、fuzz campaign、chaos testing、環境治理                    |
-| 資安保護   | middleware、policy interface、error mapping、redaction helper、security test                  | identity、authorization、[TLS / mTLS](00-knowledge-cards/tls-mtls/)、WAF、secret manager、audit log、data masking        |
+| 類型       | 放在語言教材                                                                                    | 放在 Backend 教材                                                                                                 |
+| ---------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 資料存取   | repository port、interface / protocol、context / cancellation、error、contract test             | SQLite、PostgreSQL、transaction、schema migration、index、isolation level                                         |
+| 快取       | cache port、TTL 概念、資料複製邊界、失效策略的程式邊界                                          | Redis 資料型別、eviction、distributed lock、cache aside、pub/sub                                                  |
+| 訊息傳遞   | channel / queue abstraction、backpressure、publisher port、processor、idempotency interface     | RabbitMQ、NATS、Kafka、Redis Streams、ack/nack、dead-letter queue、consumer group                                 |
+| 可觀測性   | 標準 logger、runtime 訊號、diagnostics endpoint、trace context 邊界、錯誤分類欄位               | log aggregation、Prometheus、OpenTelemetry、trace、dashboard、alert                                               |
+| 部署平台   | graceful shutdown、health/readiness、signal handling、resource limit、failover hook 的程式設計  | Kubernetes、systemd、load balancer、container image、service discovery                                            |
+| 可靠性驗證 | unit test、table-driven / parameterized test、race / async test、integration test、故障路徑測試 | CI pipeline、load test、fuzz campaign、chaos testing、環境治理                                                    |
+| 資安保護   | middleware、policy interface、error mapping、redaction helper、security test                    | identity、authorization、[TLS / mTLS](00-knowledge-cards/tls-mtls/)、WAF、secret manager、audit log、data masking |
 
 ## 教學模組
 
@@ -61,6 +61,10 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 整理權限分級、伺服器防護、資料遮罩、傳輸保護、密鑰管理、稽核追蹤與資料匯出安全。
 
+### [模組八：事故處理與復盤](08-incident-response/)
+
+整理事故分級、指揮流程、止血回復、通訊節奏、復盤閉環與演練機制。
+
 ## 與語言教材的關係
 
 Backend 教材提供跨語言的服務概念與操作語意。語言教材可以回連 Backend，說明特定語言如何實作 repository port、publisher port、cache interface、middleware、async worker 或 observability boundary；Backend 章節本身應保持獨立，讓 Go、Python、Node.js、Java、C#、PHP、Rust 或其他後端語言都能使用同一套服務判斷。
@@ -96,6 +100,7 @@ Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of
 - Kubernetes、systemd、load balancer、container runtime
 - CI、load test、fuzz、chaos testing
 - identity、authorization、data masking、[TLS / mTLS](00-knowledge-cards/tls-mtls/)、[website certificate lifecycle](00-knowledge-cards/website-certificate-lifecycle/)、secret management、audit trail
+- incident severity、command model、escalation policy、rollback strategy、post-incident review
 
 後續撰寫任何語言教材時，凡是涉及具體外部服務操作、部署平台設定或產品選型，都應優先放到 Backend；語言章節只保留足夠說明抽象邊界的最小背景。
 

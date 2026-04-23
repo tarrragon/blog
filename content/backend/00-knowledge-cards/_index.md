@@ -158,6 +158,22 @@ weight: -1
 | [Health Check / Liveness](health-check-liveness/) | 平台如何判斷 process 是否仍然存活 | Kubernetes、systemd |
 | [Graceful Shutdown](graceful-shutdown/) | instance 停止前如何排空流量與保存狀態 | deployment、worker、long connection |
 
+## 事故處理與復盤
+
+| 卡片 | 核心問題 | 常見出現位置 |
+| ---- | -------- | ------------ |
+| [Incident Severity](incident-severity/) | 事故如何依產品影響分級 | on-call、incident、SLO |
+| [Incident Command System](incident-command-system/) | 事故期間如何分配指揮與執行角色 | commander、scribe、owner |
+| [Escalation Policy](escalation-policy/) | 事故無回應或無進展時如何升級 | on-call、paging、handover |
+| [Incident Timeline](incident-timeline/) | 事故事件如何形成一致時間軸 | incident log、communication |
+| [Blast Radius](blast-radius/) | 故障影響面如何估算與隔離 | dependency、shared resource |
+| [Rollback Strategy](rollback-strategy/) | 事故期間何時回滾與回切 | deployment、release gate |
+| [Post-Incident Review](post-incident-review/) | 事故後如何形成改進閉環 | retrospective、action items |
+| [RCA](rca/) | 根因分析如何從證據推導改進 | timeline、control gap |
+| [RTO](rto/) | 服務回復時間目標如何定義 | SLA/SLO、DR |
+| [RPO](rpo/) | 可接受資料損失窗口如何定義 | backup、replication |
+| [MTTR](mttr/) | 平均修復時間如何反映處置能力 | incident metrics、review |
+
 ## 資安與資料保護
 
 | 卡片 | 核心問題 | 常見出現位置 |
