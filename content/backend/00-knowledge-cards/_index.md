@@ -13,10 +13,13 @@ weight: -1
 
 | 卡片 | 核心問題 | 常見出現位置 |
 | ---- | -------- | ------------ |
+| [Database](database/) | 正式狀態如何保存、查詢與保護 | source of truth、transaction、backup |
 | [Source of Truth](source-of-truth/) | 哪個位置承擔正式資料判斷 | database、cache、search index |
 | [資料生命週期](data-lifecycle/) | 資料如何建立、保留、封存與刪除 | retention、audit、export |
 | [資料不一致](data-inconsistency/) | 多份資料暫時不同步時如何辨識與修復 | cache、replica、eventual consistency |
+| [Transaction](transaction/) | 一組資料變更如何一起成功或一起回復 | database、commit、rollback |
 | [Transaction Boundary](transaction-boundary/) | 哪些變更要一起成功或回復 | database、unit of work |
+| [Migration](migration/) | 系統如何從舊狀態受控移到新狀態 | release、cutover、backfill |
 | [Schema Migration](schema-migration/) | 資料庫結構如何隨版本安全演進 | release、rollback、migration |
 | [Isolation Level](isolation-level/) | 並發交易彼此看見哪些資料 | transaction、lock、retry |
 | [Connection Pool](connection-pool/) | application 如何限制下游連線壓力 | database、Redis、broker |
@@ -38,6 +41,13 @@ weight: -1
 | [Token Bucket](token-bucket/) | 如何用配額與補充速率控制流量 | rate limit、retry budget |
 | [Dependency Isolation](dependency-isolation/) | 如何避免單一下游耗盡共享資源 | pool、queue、dependency |
 | [Bulkhead](bulkhead/) | 如何用資源分艙限制故障擴散 | worker、tenant、pool |
+| [In-Process Channel](in-process-channel/) | 單一 process 內如何傳遞工作或訊號 | channel、local queue |
+| [Worker Pool](worker-pool/) | 如何限制同時處理量 | worker、background job |
+| [HTTP Client](http-client/) | 呼叫外部 HTTP 依賴時如何管理資源 | API、dependency |
+| [Stream Pipeline](stream-pipeline/) | 連續資料流如何管理吞吐與背壓 | stream、CDC、ETL |
+| [Buffer](buffer/) | 暫存空間如何吸收短暫速度差 | queue、socket、cache |
+| [Queue](queue/) | 等待處理的工作如何形成容量邊界 | producer、consumer、backlog |
+| [Socket](socket/) | 網路連線如何成為資料讀寫與資源邊界 | network、connection、timeout |
 | [Fallback](fallback/) | 主要路徑失敗時使用什麼替代結果 | degradation、circuit breaker |
 | [Fail Fast](fail-fast/) | 已知無法完成時如何快速回應 | circuit breaker、validation |
 | [Retry Budget](retry-budget/) | 重試量如何受整體容量限制 | retry、SLO、token bucket |
@@ -65,6 +75,10 @@ weight: -1
 | 卡片 | 核心問題 | 常見出現位置 |
 | ---- | -------- | ------------ |
 | [Broker](broker/) | 訊息離開單一 process 後由誰保存、路由與交付 | queue、event、worker、stream |
+| [Topic](topic/) | 事件如何依主題分流給不同訂閱者 | broker、event、stream |
+| [Routing Rule](routing-rule/) | 訊息如何依規則進入不同處理路徑 | broker、queue、priority |
+| [Producer](producer/) | 誰把工作、事件或資料送入處理路徑 | queue、broker、stream |
+| [Consumer](consumer/) | 誰取得等待處理的工作並產生結果 | queue、worker、side effect |
 | [Prefetch](prefetch/) | consumer 一次可持有多少未確認訊息 | broker、consumer tuning |
 | [In-Flight Message](in-flight-message/) | 訊息已交給 consumer 但尚未完成 | consumer、shutdown |
 | [Unacked Message](unacked-message/) | broker 尚未收到 consumer 確認的訊息 | queue health、prefetch |
@@ -112,21 +126,26 @@ weight: -1
 
 | 卡片 | 核心問題 | 常見出現位置 |
 | ---- | -------- | ------------ |
+| [Log](log/) | 單一事件如何留下可搜尋的上下文 | incident、debug、audit |
 | [Log Schema](log-schema/) | log 欄位如何支援搜尋與關聯 | structured log、incident |
 | [Metrics](metrics/) | 指標如何描述趨勢、容量與健康 | Prometheus、dashboard |
 | [Histogram](histogram/) | 如何用分桶統計延遲與分布 | latency、SLO |
 | [Bucket](bucket/) | histogram 分桶如何影響解析度 | metrics、cost |
 | [Percentile](percentile/) | p95 / p99 如何描述長尾延遲 | latency、UX |
 | [Metric Cardinality](metric-cardinality/) | label 組合數如何影響成本 | metrics、storage、query |
+| [Trace](trace/) | 跨服務流程如何重建路徑與耗時 | tracing、dependency |
 | [Trace Context](trace-context/) | 跨服務 request 如何串起路徑 | tracing、OpenTelemetry |
 | [Trace ID](trace-id/) | 同一條 trace 的識別碼 | tracing、log correlation |
 | [Span](span/) | trace 中一段工作如何記錄耗時 | tracing、dependency |
 | [Correlation ID](correlation-id/) | 跨事件與跨服務如何關聯業務流程 | order、payment、queue |
 | [Request ID](request-id/) | 單次 request 如何被追蹤 | API、support |
+| [Dashboard](dashboard/) | 多個觀測訊號如何組成服務狀態畫面 | incident、capacity、SLO |
 | [SLI / SLO](sli-slo/) | 服務品質如何連到產品承諾 | alert、incident、error budget |
 | [Error Budget](error-budget/) | SLO 允許的失敗額度如何決策 | release、reliability |
 | [Burn Rate](burn-rate/) | error budget 消耗速度如何告警 | SLO alert |
 | [Sampling](sampling/) | 如何抽樣觀測資料以控制成本 | trace、log |
+| [Alert](alert/) | 服務症狀如何轉成可行動通知 | on-call、SLO、incident |
+| [Runbook](runbook/) | 事故判斷與操作步驟如何標準化 | on-call、incident、replay |
 | [Alert Runbook](alert-runbook/) | 告警如何連到可執行排障流程 | on-call、dashboard |
 | [Symptom-Based Alert](symptom-based-alert/) | 告警如何優先偵測產品症狀 | SLO、on-call |
 | [Runbook Link](runbook-link/) | 告警如何直接連到處理流程 | alert、dashboard |
