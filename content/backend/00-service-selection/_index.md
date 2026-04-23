@@ -73,3 +73,30 @@ weight: 0
 ## 本模組不處理
 
 本模組只處理需求分析與選型入口。具體 SQL schema、Redis command、RabbitMQ exchange、Prometheus query、Kubernetes deployment 或 [chaos test](../knowledge-cards/chaos-test/) 設計，會放在後續對應模組中。
+
+## 大綱待辦
+
+這一節只記錄仍需要沿著原子卡原則拆出的概念，之後補卡、拆卡或新增卡都先回到這裡確認。
+
+### 已完成拆分
+
+- `endpoint`：service endpoint / public API endpoint / admin endpoint / diagnostic endpoint / internal endpoint
+- `gateway`：API gateway / request routing
+- `contract`：boundary contract / API contract / deployment contract / queue contract / load balancer contract
+- `protocol`：communication protocol / request-response protocol / message protocol / webhook protocol
+- `adapter`：integration adapter / repository adapter / provider adapter / notification adapter
+- `middleware`：request middleware / authentication middleware / authorization middleware / observability middleware / security middleware / validation middleware
+
+### 需要保留為議題入口的章節
+
+- [0.0](backend-demand-taxonomy/) 後端需求分類地圖
+- [0.1](service-capability-map/) 後端服務能力地圖
+- [0.2](state-storage-selection/) 狀態與資料儲存選型
+- [0.3](async-delivery-selection/) 非同步與事件傳遞選型
+- [0.4](operations-platform-selection/) 操作平台選型
+- [0.5](traffic-data-scale/) 流量與資料量評估
+- [0.6](cost-risk-tradeoffs/) 成本、風險與選型取捨
+- [0.7](failure-observability-design/) 錯誤定位、觀測訊號與備援切換設計
+- [0.8](security-data-protection-requirements/) 資安與資料保護需求
+- [0.9](knowledge-graph-message-flow/) 知識網：訊息與事件決策路徑
+- [0.10](knowledge-graph-operations-security/) 知識網：容量、觀測與資安決策路徑

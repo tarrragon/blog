@@ -5,7 +5,7 @@ description: "修改 client message、路由與 handler"
 weight: 1
 ---
 
-新增即時訊息 action 的核心流程是先定義 client 意圖，再把 action 轉成 application command。WebSocket handler 負責傳輸邊界，domain state 的修改交給 usecase 或 processor。本章用一個簡化的 topic subscription action 示範完整路徑。
+新增即時訊息 action 的核心流程是先定義 client 意圖，再把 action 轉成 application command。[WebSocket](../../backend/knowledge-cards/websocket) handler 負責傳輸邊界，domain state 的修改交給 usecase 或 processor。本章用一個簡化的 [topic](../../backend/knowledge-cards/topic) subscription action 示範完整路徑。
 
 ## 本章目標
 

@@ -10,4 +10,4 @@ weight: 2
 - command model
 - role ownership
 - decision boundary
-- handover protocol
+- [handover protocol](../knowledge-cards/handover-protocol/)

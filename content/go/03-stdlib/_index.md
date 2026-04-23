@@ -12,11 +12,11 @@ Go 的標準庫是理解 Go 精神的重要入口。它偏好清楚的小 API、
 | 章節                     | 主題                          | 關鍵收穫                                     |
 | ------------------------ | ----------------------------- | -------------------------------------------- |
 | [3.1](fmt-strings/)      | fmt、strings 與基本文字處理   | 處理輸出、格式化與字串轉換                   |
-| [3.2](time/)             | time：時間與 duration         | 表達時間點、時間差與 timeout                 |
+| [3.2](time/)             | time：時間與 duration         | 表達時間點、時間差與 [timeout](../../backend/knowledge-cards/timeout)                 |
 | [3.3](files-io/)         | os/io：檔案與輸入輸出         | 讀寫檔案與理解 `io.Reader`                   |
 | [3.4](json/)             | encoding/json：資料交換       | 在檔案、API 與訊息中使用 JSON                |
 | [3.5](http-handler/)     | net/http 與 handler 設計      | 用 `http.HandlerFunc` 理解 Go 的組合風格     |
-| [3.6](slog/)             | log/slog：結構化日誌          | 用欄位支援除錯與 grep                        |
+| [3.6](slog/)             | [log](../../backend/knowledge-cards/log)/slog：結構化日誌          | 用欄位支援除錯與 grep                        |
 | [3.7](context/)          | context：取消、逾時與生命週期 | 讓長時間工作可以停止                         |
 | [3.8](defer-cleanup/)    | defer 與資源清理              | 用 `defer` 管理 close、unlock、recover 邊界  |
 | [3.9](config-flags-env/) | flag、os/env 與設定邊界       | 用標準庫讀取設定，並把設定轉成 config struct |

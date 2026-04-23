@@ -17,4 +17,4 @@ Completeness 是資料品質的一部分。Migration、backfill、報表、audit
 
 ## 設計責任
 
-Completeness 檢查要包含總量、分群、時間範圍、關聯完整性與抽樣。結果應進入 migration gate，並留下可重跑的查詢或報表。
+Completeness 檢查要包含總量、分群、時間範圍、關聯完整性與抽樣。結果應進入 [Migration Gate](migration-gate/)，並留下可重跑的查詢或報表。

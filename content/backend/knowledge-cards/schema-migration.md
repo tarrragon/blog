@@ -9,7 +9,7 @@ Schema migration 的核心概念是「用版本化流程修改 [database](../dat
 
 ## 概念位置
 
-Migration 是 database 與 release 流程的交界。小型服務可能只需要簡單版本檔；正式服務通常需要 expand/contract 策略，先新增可相容欄位，再部署 application，最後移除舊欄位。
+Migration 是 database 與 release 流程的交界。小型服務可能只需要簡單版本檔；正式服務通常需要 [Expand / Contract](expand-contract/) 策略，先新增可相容欄位，再部署 application，最後移除舊欄位。
 
 ## 可觀察訊號與例子
 
@@ -17,4 +17,4 @@ Migration 是 database 與 release 流程的交界。小型服務可能只需要
 
 ## 設計責任
 
-Migration 設計要包含相容性、[backfill](../backfill/)、索引建立成本、鎖表風險、回滾策略與 release gate。高風險 migration 應先在接近正式資料量的環境驗證。
+Migration 設計要包含相容性、[backfill](../backfill/)、索引建立成本、鎖表風險、回滾策略與 [Release Gate](release-gate/)。高風險 migration 應先在接近正式資料量的環境驗證。

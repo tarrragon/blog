@@ -14,7 +14,7 @@ weight: 7
 1. 把錯誤處理看成可靠性的一部分
 2. 區分可恢復錯誤與不可恢復錯誤
 3. 用測試保護失敗路徑與並發路徑
-4. 讓 timeout、取消與 race condition 能被提早發現
+4. 讓 [timeout](../../backend/knowledge-cards/timeout)、取消與 race condition 能被提早發現
 5. 理解為什麼高併發服務更需要明確的測試邊界
 
 ---
@@ -32,7 +32,7 @@ Go 把錯誤放在回傳值中，就是要讓這些常態能被直接看見。
 - HTTP handler 與外部輸入邊界
 - goroutine 之間的共享狀態
 - timeout 與 cancellation
-- event / queue 的重複或漏處理
+- event / [queue](../../backend/knowledge-cards/queue) 的重複或漏處理
 
 這些邊界都應該有測試。人工驗證可以輔助檢查流程，但它無法穩定重現 timeout、取消、race condition 與高併發失敗路徑。
 

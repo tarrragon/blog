@@ -18,7 +18,7 @@ Go tooling 的核心價值是讓日常開發流程標準化。`go run`、`go tes
 
 ## 與 Backend 教材的分工
 
-本章只處理 Go toolchain。CI pipeline、container build、部署前 gate 與 release artifact 會放在 [Backend：可靠性驗證流程](../../backend/06-reliability/) 與 [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)。
+本章只處理 Go toolchain。[CI pipeline](../../backend/knowledge-cards/ci-pipeline)、container build、部署前 gate 與 release artifact 會放在 [Backend：可靠性驗證流程](../../backend/06-reliability/) 與 [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)。
 
 ## 和 Go 教材的關係
 

@@ -17,7 +17,7 @@ weight: 8
 
 ## 與 Go 進階的關係
 
-本章建立基本資源清理語感。長時間 worker、WebSocket pump 與 graceful shutdown 會在 [Go 進階：select loop 的生命週期設計](../../go-advanced/01-concurrency-patterns/select-loop/) 與 [graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/) 中延伸。
+本章建立基本資源清理語感。長時間 worker、[WebSocket](../../backend/knowledge-cards/websocket) pump 與 [graceful shutdown](../../backend/knowledge-cards/graceful-shutdown) 會在 [Go 進階：select loop 的生命週期設計](../../go-advanced/01-concurrency-patterns/select-loop/) 與 [graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/) 中延伸。
 
 ## 和 Go 教材的關係
 

@@ -148,7 +148,7 @@ func TestHandleCreateUserServiceError(t *testing.T) {
 }
 ```
 
-這不是完整整合測試，而是 handler 單元測試。資料庫連線、migration、真實網路等行為應該放在更高層級的整合測試處理。
+這不是完整整合測試，而是 handler 單元測試。資料庫連線、[migration](../../backend/knowledge-cards/migration)、真實網路等行為應該放在更高層級的整合測試處理。
 
 ## 小結
 

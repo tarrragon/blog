@@ -5,7 +5,7 @@ description: "讓時間相關邏輯可重現"
 weight: 1
 ---
 
-時間控制測試的核心原則是把「現在」變成可指定輸入。只要程式邏輯依賴目前時間、deadline、timeout、ticker 或過期判斷，測試就不應依賴真實等待。
+時間控制測試的核心原則是把「現在」變成可指定輸入。只要程式邏輯依賴目前時間、[deadline](../../backend/knowledge-cards/deadline)、[timeout](../../backend/knowledge-cards/timeout)、ticker 或過期判斷，測試就不應依賴真實等待。
 
 ## 本章目標
 

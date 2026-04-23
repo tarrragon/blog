@@ -53,7 +53,7 @@ weight: 1
 接近真實網路服務的例子包括：
 
 - 商品詳情頁被大量瀏覽，但商品資料變更頻率低
-- 使用者權限或 [feature flag](../knowledge-cards/feature-flag/) 每個 request 都要查
+- 使用者權限或 [Feature Flag](../knowledge-cards/feature-flag/) 每個 request 都要查
 - 即時服務需要快速查詢 client presence 或 [topic](../knowledge-cards/topic) 訂閱狀態
 
 這類問題的核心是讀取路徑與失效策略。快取要回答資料何時過期、何時更新、下游失敗時如何回應、cache [miss](../knowledge-cards/cache-hit-miss) 尖峰如何保護系統。
@@ -90,7 +90,7 @@ weight: 1
 
 ## 【判讀】服務交付不穩通常先看部署平台
 
-部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 [rolling update](../knowledge-cards/rolling-update/)、[health check](../knowledge-cards/health-check-liveness)、load balancer、[service discovery](../knowledge-cards/service-discovery/)、container image 或資源限制，選型應先進入部署平台與網路入口模組。
+部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 [rolling update](../knowledge-cards/rolling-update/)、[liveness](../knowledge-cards/health-check-liveness)、[load balancer](../knowledge-cards/load-balancer/)、[service discovery](../knowledge-cards/service-discovery/)、container image 或資源限制，選型應先進入部署平台與網路入口模組。
 
 接近真實網路服務的例子包括：
 

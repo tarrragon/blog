@@ -1,6 +1,6 @@
 # Codex Brief: knowledge-cards 擴建任務
 
-本 brief 指導 Codex 掃描 `content/backend/` 與 `content/go/`（含 `go-advanced/`）既有文章，識別尚未建立知識卡片的術語，補寫卡片並建立雙向連結。執行前請先讀取 `/Users/tarragon/Projects/blog/.codex/codex.md` 的寫作與檢查規範。
+本 brief 指導 Codex 掃描 `content/backend/` 與 `content/go/`（含 `go-advanced/`）既有文章，識別尚未建立知識卡片的術語，補寫卡片並建立雙向連結。執行前請先讀取 `/Users/tarragon/Projects/blog/codex.md` 的寫作與檢查規範。
 
 ---
 
@@ -8,7 +8,7 @@
 
 依序讀取：
 
-1. `/Users/tarragon/Projects/blog/.codex/codex.md` — blog 專案總規範（正面表述、檢查循環）
+1. `/Users/tarragon/Projects/blog/codex.md` — blog 專案總規範（正面表述、檢查循環）
 2. `/Users/tarragon/Projects/book_overview_v1/.claude/skills/compositional-writing/SKILL.md` — 原子化寫作五大原則
 3. `/Users/tarragon/Projects/blog/content/backend/knowledge-cards/_index.md` — 既有卡片主題分類表
 4. 既有卡片樣本（挑 3 張閱讀，熟悉格式）：

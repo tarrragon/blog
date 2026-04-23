@@ -117,7 +117,7 @@ Redis 很快，但應用端仍然要設計邊界。語言端應使用 timeout、
 
 ## 跨語言適配評估
 
-Redis 高併發邊界會受語言 runtime 影響。Thread-based runtime 要管理 client pool 與 blocking command；async runtime 要確認 Redis client 不會阻塞 event loop；輕量 task runtime 要限制同時呼叫 Redis 的工作數量。動態語言要特別控制 cache value schema 與序列化格式；強型別語言要避免把內部型別直接當成跨服務 cache contract。
+Redis 高併發邊界會受語言 runtime 影響。Thread-based runtime 要管理 client pool 與 blocking command；async runtime 要確認 Redis client 不會阻塞 event loop；輕量 task runtime 要限制同時呼叫 Redis 的工作數量。動態語言要特別控制 cache value schema 與序列化格式；強型別語言要避免把內部型別直接當成跨服務 cache [contract](../knowledge-cards/contract/)。
 
 ## 小結
 

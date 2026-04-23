@@ -5,7 +5,7 @@ description: "分離 WebSocket 讀取、寫入與心跳"
 weight: 1
 ---
 
-Read pump / write pump 的核心規則是單一 WebSocket 連線的讀取與寫入必須分成兩個協調的 goroutine。Read pump 擁有讀取權，write pump 擁有寫入權；其他元件不直接操作底層 connection，而是透過 channel 或 method 協作。
+Read pump / write pump 的核心規則是單一 [WebSocket](../../backend/knowledge-cards/websocket) 連線的讀取與寫入必須分成兩個協調的 goroutine。Read pump 擁有讀取權，write pump 擁有寫入權；其他元件不直接操作底層 connection，而是透過 channel 或 method 協作。
 
 ## 本章目標
 
@@ -169,9 +169,9 @@ func (c *Client) TrySend(message ServerMessage) bool {
 }
 ```
 
-`TrySend` 使用 non-blocking send，表示 client buffer 滿時不阻塞呼叫端。Hub 可以根據 `false` 決定丟棄訊息、取消註冊 client 或記錄 metric。
+`TrySend` 使用 non-blocking send，表示 client [buffer](../../backend/knowledge-cards/buffer) 滿時不阻塞呼叫端。Hub 可以根據 `false` 決定丟棄訊息、取消註冊 client 或記錄 metric。
 
-這個方法把 WebSocket 寫入問題轉成前一模組的 backpressure 問題：滿載時要有明確策略。
+這個方法把 WebSocket 寫入問題轉成前一模組的 [backpressure](../../backend/knowledge-cards/backpressure) 問題：滿載時要有明確策略。
 
 ## 【執行】hub 統一管理 unregister
 
@@ -248,7 +248,7 @@ Write pump 的測試通常放在 integration test，因為它依賴真實 connec
 
 ## 本章不處理
 
-本章先處理單一連線的 read/write ownership；跨節點 hub 與 broker 互動，會在下列章節延伸：
+本章先處理單一連線的 read/write ownership；跨節點 hub 與 [broker](../../backend/knowledge-cards/broker) 互動，會在下列章節延伸：
 
 - [Go 進階：跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)
 

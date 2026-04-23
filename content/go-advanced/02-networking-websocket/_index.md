@@ -14,15 +14,15 @@ weight: 2
 | 章節                         | 主題                           | 關鍵收穫                                                   |
 | ---------------------------- | ------------------------------ | ---------------------------------------------------------- |
 | [2.1](read-write-pump/)      | read pump / write pump 模式    | 讓單一連線的讀取、寫入與清理責任可推理                     |
-| [2.2](heartbeat-deadline/)   | heartbeat、[deadline](../../backend/knowledge-cards/deadline/) 與連線清理 | 用 ping/pong、deadline 與統一 unregister 偵測失效連線      |
+| [2.2](heartbeat-deadline/)   | heartbeat、[deadline](../../backend/knowledge-cards/deadline/) 與連線清理 | 用 ping/pong、[deadline](../../backend/knowledge-cards/deadline) 與統一 unregister 偵測失效連線      |
 | [2.3](subscription-routing/) | 訂閱模型與訊息路由             | 把 client action 轉成可測的 command 與訂閱狀態             |
-| [2.4](slow-client/)          | 慢客戶端與 send buffer 管理    | 用 bounded buffer、drop policy 與 byte budget 控制容量風險 |
+| [2.4](slow-client/)          | 慢客戶端與 send [buffer](../../backend/knowledge-cards/buffer) 管理    | 用 bounded buffer、drop policy 與 byte budget 控制容量風險 |
 
 ## 本模組使用的範例主題
 
-本模組使用虛構的即時通知服務作為範例。Client 可以訂閱 [topic](../../backend/knowledge-cards/topic/)，server 會依 topic 推送 notification、status update 或 error message。
+本模組使用虛構的即時通知服務作為範例。Client 可以訂閱 [topic](../../backend/knowledge-cards/topic/)，server 會依 [topic](../../backend/knowledge-cards/topic) 推送 notification、status update 或 error message。
 
-範例只用來展示 Go WebSocket 服務設計，不假設讀者正在維護任何特定專案。
+範例只用來展示 Go [WebSocket](../../backend/knowledge-cards/websocket) 服務設計，不假設讀者正在維護任何特定專案。
 
 ## 本模組的 Go 核心概念
 

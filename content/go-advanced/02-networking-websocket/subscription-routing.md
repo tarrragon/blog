@@ -5,7 +5,7 @@ description: "將 client action 對應到主題訂閱狀態"
 weight: 3
 ---
 
-訂閱模型的核心目標是把 client action 轉成明確的連線狀態與回應訊息。WebSocket 是長連線，單次 action 失敗通常不應直接關閉連線；router 應把錯誤轉成可理解的 server message。
+訂閱模型的核心目標是把 client action 轉成明確的連線狀態與回應訊息。[WebSocket](../../backend/knowledge-cards/websocket) 是長連線，單次 action 失敗通常不應直接關閉連線；router 應把錯誤轉成可理解的 server message。
 
 ## 本章目標
 
@@ -13,7 +13,7 @@ weight: 3
 
 1. 設計穩定的 client action envelope
 2. 把 router、handler、usecase 與 client state 分開
-3. 用訂閱集合表達 client 想收到的 topic
+3. 用訂閱集合表達 client 想收到的 [topic](../../backend/knowledge-cards/topic)
 4. 在 broadcast 前檢查訂閱狀態
 5. 測試 action routing、payload validation 與 error response
 
@@ -197,11 +197,11 @@ func (s *SubscriptionService) Subscribe(ctx context.Context, client *Client, cmd
 }
 ```
 
-若 action 失敗，read pump 或 router wrapper 可以把錯誤轉成 `ServerMessage{Type: "error"}`。不要只寫 server log，因為 client 需要知道該 action 沒有成功。
+若 action 失敗，read pump 或 router wrapper 可以把錯誤轉成 `ServerMessage{Type: "error"}`。不要只寫 server [log](../../backend/knowledge-cards/log)，因為 client 需要知道該 action 沒有成功。
 
 ## 【執行】broadcast 前檢查訂閱
 
-Broadcast 的核心規則是 producer 只產生 topic 與 message，hub 決定哪些 client 應該收到。訂閱邏輯不應散落在每個 producer 裡。
+Broadcast 的核心規則是 [producer](../../backend/knowledge-cards/producer) 只產生 topic 與 message，hub 決定哪些 client 應該收到。訂閱邏輯不應散落在每個 producer 裡。
 
 ```go
 func (h *Hub) Broadcast(topic string, message ServerMessage) {
@@ -217,7 +217,7 @@ func (h *Hub) Broadcast(topic string, message ServerMessage) {
 }
 ```
 
-這段程式先檢查訂閱，再嘗試送出。若 client 的 send buffer 滿了，hub 可以 unregister 或採用其他慢 client 策略；下一章會專門處理。
+這段程式先檢查訂閱，再嘗試送出。若 client 的 send [buffer](../../backend/knowledge-cards/buffer) 滿了，hub 可以 unregister 或採用其他慢 client 策略；下一章會專門處理。
 
 ## 【測試】router test 不需要真實 WebSocket
 

@@ -25,10 +25,10 @@ weight: 8
 | 需求類型   | 核心問題                                              | 常見情境                                                                                                                                                     |
 | ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 權限分級   | 誰能看、改、匯出、審核或管理資料                      | [authorization](../knowledge-cards/authorization/)、[tenant boundary](../knowledge-cards/tenant-boundary/)                                                                                                                                  |
-| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | admin endpoint、upload、[webhook](../knowledge-cards/webhook/)、[WAF](../knowledge-cards/waf/)                                                                                                                              |
+| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | [Admin Endpoint](../knowledge-cards/admin-endpoint/)、upload、[webhook](../knowledge-cards/webhook/)、[WAF](../knowledge-cards/waf/)                                                                                                                              |
 | 資料遮罩   | 匯出、[log](../knowledge-cards/log)、客服畫面要顯示多少敏感資訊                 | email、電話、身分證、付款資訊                                                                                                                                |
 | 傳輸保護   | 資料在 client、service、[queue](../knowledge-cards/queue)、storage 之間如何被保護 | [TLS / mTLS](../knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](../knowledge-cards/certificate-chain-trust/)                  |
-| 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷              | [secret management](../knowledge-cards/secret-management/)、[website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)、key rotation |
+| 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷              | [Secret Management](../knowledge-cards/secret-management/)、[Website Certificate Lifecycle](../knowledge-cards/website-certificate-lifecycle/)、key rotation |
 | 稽核追蹤   | 高風險操作是否能被追蹤與事後審查                      | [audit log](../knowledge-cards/audit-log)、approval、admin action                                                                                                                            |
 
 這張表是需求索引。資安討論要先定義資料與操作的保護等級，再決定具體平台、服務或產品。
@@ -49,15 +49,15 @@ weight: 8
 
 ## 【判讀】伺服器防護要先找暴露入口
 
-伺服器防護的核心責任是降低服務入口的攻擊面。API、admin endpoint、[webhook](../knowledge-cards/webhook/)、file upload、public asset、diagnostics endpoint 與 internal endpoint 都有不同暴露程度。
+伺服器防護的核心責任是降低服務入口的攻擊面。Public API、[Admin Endpoint](../knowledge-cards/admin-endpoint/)、[webhook](../knowledge-cards/webhook/)、file upload、public asset、[Diagnostic Endpoint](../knowledge-cards/diagnostic-endpoint/) 與 [Internal Endpoint](../knowledge-cards/internal-endpoint/) 都有不同暴露程度。
 
 接近真實網路服務的例子包括：
 
-- [webhook](../knowledge-cards/webhook/) endpoint 需要驗證來源簽章、限制重放時間窗，並記錄來源系統。
-- admin endpoint 需要更高權限、來源限制與操作稽核。
+- [webhook](../knowledge-cards/webhook/) 需要驗證來源簽章、限制重放時間窗，並記錄來源系統。
+- [Admin Endpoint](../knowledge-cards/admin-endpoint/) 需要更高權限、來源限制與操作稽核。
 - file upload 需要限制大小、型別、掃描結果與後續存取權限。
 
-這類需求的陷阱是把所有 HTTP endpoint 視為同一種入口。公開 API、內部 API、診斷 API、管理 API 與第三方 callback 的風險不同；防護策略要依入口用途分級。
+這類需求的陷阱是把所有 HTTP 入口視為同一種入口。公開 API、內部 API、診斷 API、管理 API 與第三方 callback 的風險不同；防護策略要依入口用途分級。
 
 下一步可讀：[部署平台與網路入口](../05-deployment-platform/) 與 [資安與資料保護](../07-security-data-protection/)。
 
@@ -91,12 +91,12 @@ weight: 8
 
 ## 【判讀】密鑰與秘密管理要設計生命週期
 
-密鑰與秘密管理的核心責任是控制 token、API key、private key、database credential、session secret 與加密 key 的產生、保存、使用、輪替與撤銷，並把網站憑證納入 [website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)。
+密鑰與秘密管理的核心責任是控制 token、API key、private key、database [Credential](../knowledge-cards/credential/)、session secret 與加密 key 的產生、保存、使用、輪替與撤銷，並把網站憑證納入 [Website Certificate Lifecycle](../knowledge-cards/website-certificate-lifecycle/)。
 
 接近真實網路服務的例子包括：
 
 - 第三方 API key 需要分環境保存，並能在外洩時快速撤銷。
-- database credential 需要依服務分離，避免單一 credential 擁有過大權限。
+- database [credential](../knowledge-cards/credential/) 需要依服務分離，避免單一 [credential](../knowledge-cards/credential/) 擁有過大權限。
 - 簽章密鑰需要支援輪替期，讓新舊 key 在過渡期間都能驗證。
 - 公網站點憑證需要有 [ACME automation](../knowledge-cards/acme-automation/) 或明確續期流程，並具備 [certificate revocation](../knowledge-cards/certificate-revocation/) 設計。
 

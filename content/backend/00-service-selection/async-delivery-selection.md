@@ -66,7 +66,7 @@ stream 的核心責任是保存事件序列，讓 consumer 可以依自己的進
 - 訂單事件同時給推薦、風控、報表系統消費
 - IoT sensor readings 需要持續聚合與回放
 
-這類設計的主要風險是順序、保留期限與 schema 演進。Kafka、Redis Streams、NATS JetStream 都提供不同程度的 stream 能力；選型時要看 throughput、consumer group、保留策略與操作成本。
+這類設計的主要風險是順序、保留期限與 schema 演進。Kafka、Redis Streams、NATS JetStream 都提供不同程度的 stream 能力；選型時要看 [throughput](../knowledge-cards/throughput/)、consumer group、保留策略與操作成本。
 
 ## 【判讀】pub/sub 承擔即時 fan-out
 

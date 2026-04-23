@@ -5,7 +5,7 @@ description: "用 ping/pong 和 deadline 偵測失效連線"
 weight: 2
 ---
 
-Heartbeat 的核心目標是讓失效的長連線可以被發現並清理。Deadline 定義讀寫最多能停滯多久，ping/pong 在沒有業務訊息時確認連線仍然活著，unregister 流程負責釋放連線與訂閱狀態。
+Heartbeat 的核心目標是讓失效的長連線可以被發現並清理。[Deadline](../../backend/knowledge-cards/deadline) 定義讀寫最多能停滯多久，ping/pong 在沒有業務訊息時確認連線仍然活著，unregister 流程負責釋放連線與訂閱狀態。
 
 ## 本章目標
 
@@ -15,20 +15,20 @@ Heartbeat 的核心目標是讓失效的長連線可以被發現並清理。Dead
 2. 在 read pump 設定 pong handler 與 read limit
 3. 在 write pump 用 ticker 統一送 ping
 4. 讓 heartbeat 失敗進入同一條 unregister 路徑
-5. 測試 timeout 設定與清理流程的邊界
+5. 測試 [timeout](../../backend/knowledge-cards/timeout) 設定與清理流程的邊界
 
 ---
 
 ## 【觀察】長連線可能在沒有錯誤訊息時失效
 
-WebSocket 長連線的核心風險是失效不一定立刻表現成明確錯誤。Client 可能斷網、瀏覽器休眠、代理中斷、行動網路切換，server 的 read 或 write 可能長時間卡住。
+[WebSocket](../../backend/knowledge-cards/websocket) 長連線的核心風險是失效不一定立刻表現成明確錯誤。Client 可能斷網、瀏覽器休眠、代理中斷、行動網路切換，server 的 read 或 write 可能長時間卡住。
 
 沒有 heartbeat 的服務可能出現：
 
 - client 已離線，但 server 還保留 client。
 - 訂閱狀態沒有清理，broadcast 仍嘗試推送。
 - write pump 卡在慢或失效的 connection。
-- goroutine、send buffer、記憶體逐步累積。
+- goroutine、send [buffer](../../backend/knowledge-cards/buffer)、記憶體逐步累積。
 
 Heartbeat 的目的不是讓連線永遠保持成功，而是讓失敗可以在合理時間內被觀測並進入清理流程。
 
@@ -90,7 +90,7 @@ func (c *Client) readPump(ctx context.Context, hub *Hub, router MessageRouter) {
 }
 ```
 
-`ReadJSON` 回錯時，read pump 不需要判斷每一種錯誤都如何清理；它只要退出並通知 hub。錯誤分類可以用於 log，但清理路徑應一致。
+`ReadJSON` 回錯時，read pump 不需要判斷每一種錯誤都如何清理；它只要退出並通知 hub。錯誤分類可以用於 [log](../../backend/knowledge-cards/log)，但清理路徑應一致。
 
 ## 【執行】write pump 用 ticker 送 ping
 

@@ -17,7 +17,7 @@ func IsExpired(deadline time.Time) bool {
 }
 ```
 
-這個函式看起來只有一個參數，但實際上還依賴目前時間。測試如果用 `time.Now().Add(...)` 組 deadline，可能因為執行延遲、時區或邊界條件而變得脆弱。
+這個函式看起來只有一個參數，但實際上還依賴目前時間。測試如果用 `time.Now().Add(...)` 組 [deadline](../../backend/knowledge-cards/deadline)，可能因為執行延遲、時區或邊界條件而變得脆弱。
 
 更好的做法是把現在時間傳進去。
 
@@ -107,7 +107,7 @@ func TestTokenGenerator(t *testing.T) {
 
 ## duration 測試應控制時間
 
-測試 timeout 的核心原則是驗證邏輯，不是讓測試真的睡很久。`time.Sleep` 會讓測試慢，也會讓測試受排程影響。
+測試 [timeout](../../backend/knowledge-cards/timeout) 的核心原則是驗證邏輯，不是讓測試真的睡很久。`time.Sleep` 會讓測試慢，也會讓測試受排程影響。
 
 ```go
 func RetryDelay(attempt int) time.Duration {
@@ -177,4 +177,4 @@ localTime := time.Date(2026, 4, 22, 18, 0, 0, 0, loc)
 
 ## 延伸閱讀
 
-本章處理入門測試中的時間依賴。若要測長時間 worker、ticker 排程、WebSocket cleanup 或 deadline，可以接著閱讀 [Go 進階：時間注入與狀態轉移測試](../../go-advanced/05-testing-reliability/time-control/)；若 timeout 來自部署平台或 load balancer，則閱讀 [Go 進階：Kubernetes、systemd 與 load balancer 合約](../../go-advanced/07-distributed-operations/deployment-contracts/)。
+本章處理入門測試中的時間依賴。若要測長時間 worker、ticker 排程、[WebSocket](../../backend/knowledge-cards/websocket) cleanup 或 deadline，可以接著閱讀 [Go 進階：時間注入與狀態轉移測試](../../go-advanced/05-testing-reliability/time-control/)；若 timeout 來自部署平台或 load balancer，則閱讀 [Go 進階：Kubernetes、systemd 與 load balancer 合約](../../go-advanced/07-distributed-operations/deployment-contracts/)。

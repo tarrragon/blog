@@ -8,6 +8,6 @@ weight: 2
 ## 大綱
 
 - deployment / replica / rollout
-- [readiness](../knowledge-cards/readiness) / [liveness](../knowledge-cards/health-check-liveness) probe
-- config rollout
+- [readiness](../knowledge-cards/readiness) / [liveness](../knowledge-cards/health-check-liveness) [probe](../knowledge-cards/probe/)
+- [Config Rollout](../knowledge-cards/config-rollout/)
 - [autoscaling](../knowledge-cards/autoscaling)

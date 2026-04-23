@@ -14,7 +14,7 @@ Goroutine leak 偵測的核心目標是確認已經沒有存在價值的 gorouti
 1. 分辨合理長期 goroutine 與 goroutine leak
 2. 用 context、done channel、connection close 設計退出路徑
 3. 用 pprof goroutine profile 判讀卡住 stack
-4. 測試 worker、ticker、WebSocket pump 是否能退出
+4. 測試 worker、ticker、[WebSocket](../../backend/knowledge-cards/websocket) pump 是否能退出
 5. 從 leak pattern 回到 ownership 修正
 
 ---
@@ -37,7 +37,7 @@ func StartWorker(jobs <-chan Job) {
 
 這個 worker 只有在 `jobs` 被關閉時才會退出。若呼叫端永遠不關閉 `jobs`，而 worker 也沒有 context，這個 goroutine 可能永久存在。
 
-長期存在不一定是 leak。HTTP server accept loop、metrics exporter、background scheduler 都可能合理存在；問題是它們是否有明確停止條件，且 shutdown 時是否真的會走到。
+長期存在不一定是 leak。HTTP server accept loop、[metrics](../../backend/knowledge-cards/metrics) exporter、background scheduler 都可能合理存在；問題是它們是否有明確停止條件，且 shutdown 時是否真的會走到。
 
 ## 【判讀】每個 goroutine 都要有退出原因
 
@@ -71,7 +71,7 @@ func RunWorker(ctx context.Context, jobs <-chan Job) {
 
 ## 【策略】I/O 阻塞需要 deadline 或 close
 
-I/O goroutine 的核心風險是 context 本身不一定能打斷底層阻塞呼叫。WebSocket read、TCP read、file watcher、外部 API call 都要確認是否支援 context、deadline 或 close。
+I/O goroutine 的核心風險是 context 本身不一定能打斷底層阻塞呼叫。WebSocket read、TCP read、file watcher、外部 API call 都要確認是否支援 context、[deadline](../../backend/knowledge-cards/deadline) 或 close。
 
 WebSocket read pump 常見退出方式：
 
@@ -134,7 +134,7 @@ func TestRunWorkerStops(t *testing.T) {
 }
 ```
 
-Timeout 是測試保護，不是功能本身。真正的退出訊號是 `done` 被關閉。
+[Timeout](../../backend/knowledge-cards/timeout) 是測試保護，不是功能本身。真正的退出訊號是 `done` 被關閉。
 
 ## 【執行】ticker 必須停止
 
@@ -173,7 +173,7 @@ curl "http://localhost:8080/debug/pprof/goroutine?debug=2"
 | stack 類型      | 可能原因                             | 回到哪個邊界              |
 | --------------- | ------------------------------------ | ------------------------- |
 | channel receive | 上游不會再送，也沒 close/context     | channel ownership         |
-| channel send    | 下游不再接收或 buffer 滿             | backpressure / unregister |
+| channel send    | 下游不再接收或 [buffer](../../backend/knowledge-cards/buffer) 滿             | [backpressure](../../backend/knowledge-cards/backpressure) / unregister |
 | network read    | 沒有 deadline 或 connection 未 close | heartbeat / I/O lifecycle |
 | ticker loop     | context 沒接上或 ticker 未 stop      | select loop lifecycle     |
 | mutex lock      | 鎖競爭或死鎖                         | shared state owner        |

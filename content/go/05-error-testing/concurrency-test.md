@@ -5,7 +5,7 @@ description: "測試 channel、goroutine 與狀態更新"
 weight: 6
 ---
 
-並發測試的核心目標是驗證可觀察的同步行為，而不是猜測 goroutine 的執行順序。Go 的 goroutine 由 scheduler 安排，測試應該用 channel、context、WaitGroup 與 timeout 表達「什麼結果必須發生」。
+並發測試的核心目標是驗證可觀察的同步行為，而不是猜測 goroutine 的執行順序。Go 的 goroutine 由 scheduler 安排，測試應該用 channel、context、WaitGroup 與 [timeout](../../backend/knowledge-cards/timeout) 表達「什麼結果必須發生」。
 
 ## 並發測試應等待明確訊號
 
@@ -121,7 +121,7 @@ func TestRunWorkerStops(t *testing.T) {
 
 ## `sync.WaitGroup` 適合等待一組工作完成
 
-`WaitGroup` 的核心用途是等待已知數量的 goroutine 完成。它適合 fan-out 工作、批次處理與測試中需要等多個背景任務結束的情境。
+`WaitGroup` 的核心用途是等待已知數量的 goroutine 完成。它適合 [fan-out](../../backend/knowledge-cards/fan-out) 工作、批次處理與測試中需要等多個背景任務結束的情境。
 
 ```go
 func ProcessAll(items []string, process func(string)) {
@@ -173,7 +173,7 @@ go test -race ./...
 
 `-race` 會讓測試變慢，但能抓出許多一般斷言看不見的並發錯誤。只要程式有 goroutine 與共享資料，定期跑 race test 就很有價值。
 
-race detector 不是邏輯正確性的完整證明。它能檢查資料競爭，但不能保證事件順序、buffer 策略或 timeout 行為都符合需求；這些仍然要靠明確測試案例。
+race detector 不是邏輯正確性的完整證明。它能檢查資料競爭，但不能保證事件順序、[buffer](../../backend/knowledge-cards/buffer) 策略或 timeout 行為都符合需求；這些仍然要靠明確測試案例。
 
 ## 小結
 

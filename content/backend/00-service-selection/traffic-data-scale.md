@@ -41,7 +41,7 @@ weight: 5
 接近真實網路服務的例子包括：
 
 - 一個 B2B [SaaS](../knowledge-cards/tenant-boundary/) 白天每秒 50 個 API request，晚上降到每秒 5 個。
-- 一個 [webhook](../knowledge-cards/webhook/) endpoint 平均每秒 20 筆事件，但每筆事件會觸發三個下游工作。
+- 一個 [webhook](../knowledge-cards/webhook/) 平均每秒 20 筆事件，但每筆事件會觸發三個下游工作。
 - 一個即時 [dashboard](../knowledge-cards/dashboard) 平均每秒收到 200 筆狀態更新。
 
 這類評估的陷阱是只看平均值。平均值能估算基礎成本，但它無法說明尖峰、集中 key、批次匯入或下游失敗時的堆積風險。

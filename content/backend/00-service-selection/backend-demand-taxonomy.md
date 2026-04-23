@@ -29,7 +29,7 @@ weight: 0
 | 非同步工作 | request 結束後仍要可靠處理 | 寄信、轉檔、同步外部系統 |
 | 即時互動 | client 需要持續接收狀態變化 | 聊天、通知、進度更新、presence |
 | 操作診斷 | 出事時要知道原因與影響範圍 | [log](../knowledge-cards/log/)、metric、[trace](../knowledge-cards/trace/)、[dashboard](../knowledge-cards/dashboard/) |
-| 服務交付 | 服務要穩定發版、擴容與接流量 | container、load balancer、[readiness](../knowledge-cards/readiness/) |
+| 服務交付 | 服務要穩定發版、擴容與接流量 | [container](../knowledge-cards/container/)、[load balancer](../knowledge-cards/load-balancer/)、[readiness](../knowledge-cards/readiness/) |
 | 可靠性驗證 | 事故前要驗證容量與失敗情境 | [CI pipeline](../knowledge-cards/ci-pipeline/)、[load test](../knowledge-cards/load-test/)、fuzz、[chaos test](../knowledge-cards/chaos-test/) |
 
 這張表是需求索引。每個類型後面都會對應到不同的能力地圖，但實際功能常會同時命中多列。
@@ -55,7 +55,7 @@ weight: 0
 接近真實網路服務的例子包括：
 
 - 活動商品頁在短時間內被大量瀏覽，但商品描述變更頻率低。
-- 每個 API request 都要讀取使用者權限與 [feature flag](../knowledge-cards/feature-flag/)。
+- 每個 API request 都要讀取使用者權限與 [Feature Flag](../knowledge-cards/feature-flag/)。
 - 即時通知服務需要頻繁查詢 [topic](../knowledge-cards/topic) 的在線訂閱者。
 
 這類需求的陷阱是把所有慢查詢都當成快取問題。若查詢慢是因為資料模型、索引、N+1 request、外部 API [timeout](../knowledge-cards/timeout/) 或資料量爆炸，快取只能暫時吸收症狀。讀取壓力要先確認是否有明確 [source of truth](../knowledge-cards/source-of-truth/)、資料能否重建、失效後是否能接受短暫不一致。

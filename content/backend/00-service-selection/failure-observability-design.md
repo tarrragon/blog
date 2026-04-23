@@ -43,7 +43,7 @@ weight: 7
 - 付款 API [timeout](../knowledge-cards/timeout)，對外 response 要避免承諾付款結果，對內訊號要標出 payment provider、timeout duration 與 [retry policy](../knowledge-cards/retry-policy)。
 - [Webhook](../knowledge-cards/webhook/) payload 格式錯誤，對外要回穩定錯誤碼，對內要記錄 schema version 與來源系統。
 
-這類設計的陷阱是只留下自由文字錯誤。自由文字適合人快速閱讀，但分類、查詢、告警與統計需要穩定欄位。錯誤分類要同時支援 API contract、[log schema](../knowledge-cards/log-schema)、metric label 與 [runbook](../knowledge-cards/runbook)。
+這類設計的陷阱是只留下自由文字錯誤。自由文字適合人快速閱讀，但分類、查詢、告警與統計需要穩定欄位。錯誤分類要同時支援 [API Contract](../knowledge-cards/api-contract/)、[log schema](../knowledge-cards/log-schema)、metric label 與 [runbook](../knowledge-cards/runbook)。
 
 下一步可讀：[操作平台選型](operations-platform-selection/) 與 [可觀測性平台](../04-observability/)。
 
@@ -91,12 +91,12 @@ weight: 7
 
 ## 【判讀】備援切換要先定義切換條件
 
-備援切換的核心責任是讓系統在依賴、節點或區域失效時轉到可用路徑。切換可以發生在 client、load balancer、[service discovery](../knowledge-cards/service-discovery/)、application adapter、queue consumer 或資料層；每一層都需要明確條件。
+備援切換的核心責任是讓系統在依賴、節點或區域失效時轉到可用路徑。切換可以發生在 client、[load balancer](../knowledge-cards/load-balancer/)、[service discovery](../knowledge-cards/service-discovery/)、[Integration Adapter](../knowledge-cards/adapter/)、queue consumer 或資料層；每一層都需要明確條件。
 
 接近真實網路服務的例子包括：
 
 - 外部付款 provider 連續 timeout 後，系統暫停建立新付款並保留待確認狀態。
-- 某個 service instance [readiness](../knowledge-cards/readiness) 失敗後，load balancer 停止送新流量並進入 draining。
+- 某個 service instance [readiness](../knowledge-cards/readiness) 失敗後，[load balancer](../knowledge-cards/load-balancer/) 停止送新流量並進入 draining。
 - 主要搜尋 cluster 延遲過高時，後台切到只讀快照或簡化查詢。
 
 這類設計的陷阱是把 failover 想成自動且無代價。切換可能造成重複請求、順序改變、資料短暫不一致、成本上升或排障複雜度增加。切換條件、回切條件、資料一致性與告警都要一起設計。
@@ -109,11 +109,11 @@ weight: 7
 
 接近真實網路服務的例子包括：
 
-- 在預備環境讓 payment provider adapter 回 timeout，驗證訂單狀態是否停在待確認。
+- 在預備環境讓 payment [Provider Adapter](../knowledge-cards/provider-adapter/) 回 timeout，驗證訂單狀態是否停在待確認。
 - 在 [load test](../knowledge-cards/load-test/) 中提高 queue lag，驗證 dashboard、alert 與 consumer 擴容決策。
 - 在 [chaos test](../knowledge-cards/chaos-test/) 中讓 [broker](../knowledge-cards/broker) 暫時中斷，驗證 outbox、retry 與 [idempotency](../knowledge-cards/idempotency)。
 
-這類設計的陷阱是只測成功路徑。錯誤分類、定位線索、降級策略與 failover 都應有對應測試、演練或 release gate，否則事故發生時才會知道設計缺口。
+這類設計的陷阱是只測成功路徑。錯誤分類、定位線索、降級策略與 failover 都應有對應測試、演練或 [Release Gate](../knowledge-cards/release-gate/)，否則事故發生時才會知道設計缺口。
 
 下一步可讀：[可靠性驗證流程](../06-reliability/)。
 

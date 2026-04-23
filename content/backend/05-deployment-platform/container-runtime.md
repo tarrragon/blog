@@ -9,5 +9,5 @@ weight: 1
 
 - image build
 - entrypoint / command
-- resource limit
-- environment variable / secret
+- [Resource Limit](../knowledge-cards/resource-limit/)
+- [Runtime Config](../knowledge-cards/runtime-config/)

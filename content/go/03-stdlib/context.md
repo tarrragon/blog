@@ -87,7 +87,7 @@ func fetchData(ctx context.Context) error {
 }
 ```
 
-當 timeout 到達，HTTP request 會被取消。
+當 [timeout](../../backend/knowledge-cards/timeout) 到達，HTTP request 會被取消。
 
 ## 【執行】讓背景 goroutine 有序退出
 
@@ -139,7 +139,7 @@ defer cancel()
 
 ### 用 context 傳一般參數
 
-context value 適合 request-scoped metadata，例如 request ID。一般業務參數應放在函式參數或 struct 裡。
+context value 適合 request-scoped metadata，例如 [request ID](../../backend/knowledge-cards/request-id)。一般業務參數應放在函式參數或 struct 裡。
 
 ## 小結
 

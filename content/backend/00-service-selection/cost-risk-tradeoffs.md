@@ -27,7 +27,7 @@ weight: 6
 
 | 取捨面向 | 要回答的問題                                 | 常見例子                                                             |
 | -------- | -------------------------------------------- | -------------------------------------------------------------------- |
-| 建置成本 | 開發與導入要花多少時間                       | schema、adapter、pipeline、[dashboard](../knowledge-cards/dashboard/)                                 |
+| 建置成本 | 開發與導入要花多少時間                       | schema、[Repository Adapter](../knowledge-cards/repository-adapter/)、pipeline、[dashboard](../knowledge-cards/dashboard/)                                 |
 | 使用成本 | 流量與資料量帶來多少費用                     | storage、egress、request、compute                                    |
 | 操作成本 | 誰負責維護、升級、排障                       | backup、[alert](../knowledge-cards/alert/)、權限、容量規劃                                        |
 | 失敗代價 | 延遲、遺失、重複、停機造成什麼後果           | 付款錯誤、通知延遲、[資料不一致](../knowledge-cards/data-inconsistency)                                       |
@@ -43,7 +43,7 @@ weight: 6
 接近真實網路服務的例子包括：
 
 - 匯出報表若包含個資，系統需要欄位遮罩、核准流程、下載期限、[audit log](../knowledge-cards/audit-log/) 與存取權限。
-- 內部 service-to-service 呼叫若傳遞付款資料，可能需要 [mTLS](../knowledge-cards/tls-mtls/)、signed request、credential rotation 與 [trace](../knowledge-cards/trace/) 關聯。
+- 內部 service-to-service 呼叫若傳遞付款資料，可能需要 [mTLS](../knowledge-cards/tls-mtls/)、signed request、[credential](../knowledge-cards/credential/) rotation 與 [trace](../knowledge-cards/trace/) 關聯。
 - 客服查詢後台若能看到敏感資料，權限分級、操作稽核與資料最小揭露會成為必要成本。
 
 這類取捨的核心風險是低估安全需求對操作面的影響。資安限制會增加設計、測試、稽核、教育訓練與事故處理成本；它也會降低資料外洩、權限誤用與合規事故的風險。服務章節討論選型時，必須把這兩邊一起列出。
@@ -103,7 +103,7 @@ weight: 6
 接近真實網路服務的例子包括：
 
 - 產品仍在找市場定位時，先用清楚邊界保留替換空間，比導入完整事件平台更實際。
-- 服務已經有穩定收入且事故頻繁時，補 observability、deployment contract 與 reliability pipeline 會直接降低業務風險。
+- 服務已經有穩定收入且事故頻繁時，補 observability、[Deployment Contract](../knowledge-cards/deployment-contract/) 與 reliability pipeline 會直接降低業務風險。
 - 流量即將進入大型活動前，先做 [load test](../knowledge-cards/load-test/)、容量預估與降級策略，比重構所有資料層更有時效。
 
 這類取捨的陷阱是把架構完整度當成目標。選型應回答目前最需要降低哪個風險，並設計能回頭修正的邊界。

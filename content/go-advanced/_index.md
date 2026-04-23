@@ -17,7 +17,7 @@ weight: 33
 ## 學習目標
 
 1. 掌握 goroutine、channel、mutex 的進階使用邊界
-2. 理解 WebSocket client lifecycle、heartbeat、[buffer](../backend/knowledge-cards/buffer/) 與慢客戶端問題
+2. 理解 [WebSocket](../backend/knowledge-cards/websocket) client lifecycle、heartbeat、[buffer](../backend/knowledge-cards/buffer/) 與慢客戶端問題
 3. 使用 pprof、runtime 記憶體限制與結構化日誌診斷服務
 4. 設計 event-driven service 的資料邊界與去重策略
 5. 建立並發測試、整合測試與可重現的時間控制
@@ -38,7 +38,7 @@ Go 進階篇處理單一 Go 服務內部的高階能力：goroutine lifecycle、
 
 ### [模組一：進階並發模式](01-concurrency-patterns/)
 
-從服務實例理解 fan-in、fan-out、取消傳播與 [backpressure](../backend/knowledge-cards/backpressure/) ，先把並發語意說清楚。
+從服務實例理解 fan-in、[fan-out](../backend/knowledge-cards/fan-out)、取消傳播與 [backpressure](../backend/knowledge-cards/backpressure/) ，先把並發語意說清楚。
 
 - [channel ownership 與關閉責任](01-concurrency-patterns/channel-ownership/)
 - [select loop 的生命週期設計](01-concurrency-patterns/select-loop/)

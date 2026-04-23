@@ -104,7 +104,7 @@ if err := rows.Err(); err != nil {
 
 ## 跨語言適配評估
 
-資料庫高併發邊界會受語言 runtime 影響。Thread-based runtime 要管理 thread pool 與 connection pool 的比例；async runtime 要確認 database driver 是否真正非阻塞；輕量 task runtime 要限制同時查詢數量，避免把大量 task 轉成下游連線壓力。強型別語言可以用型別保護 row mapping 與錯誤分類；動態語言則需要用 migration、runtime validation、contract test 與 fixture 保護 schema 邊界。
+資料庫高併發邊界會受語言 runtime 影響。Thread-based runtime 要管理 thread pool 與 connection pool 的比例；async runtime 要確認 database driver 是否真正非阻塞；輕量 task runtime 要限制同時查詢數量，避免把大量 task 轉成下游連線壓力。強型別語言可以用型別保護 row mapping 與錯誤分類；動態語言則需要用 migration、runtime validation、[contract](../knowledge-cards/contract/) test 與 fixture 保護 schema 邊界。
 
 ## 小結
 

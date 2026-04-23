@@ -28,7 +28,7 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](../knowledge-card
 
 ## 與語言教材的分工
 
-語言教材處理 interface / protocol、並發或非同步保護、[timeout](../knowledge-cards/timeout) 與 cache 呼叫邊界。Backend cache 模組處理 Redis command、資料結構、失效策略、跨節點一致性與操作風險。
+語言教材處理 interface / [protocol](../knowledge-cards/protocol/)、並發或非同步保護、[timeout](../knowledge-cards/timeout) 與 cache 呼叫邊界。Backend cache 模組處理 Redis command、資料結構、失效策略、跨節點一致性與操作風險。
 
 ## 章節列表
 
@@ -42,4 +42,4 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](../knowledge-card
 
 ## 跨語言適配評估
 
-快取與 Redis 的使用方式會受語言的資料複製模型、client lifecycle、序列化成本與並發模型影響。同步 runtime 要避免每個 request 建立連線；async runtime 要避免 blocking Redis client 卡住 event loop；輕量並發 runtime 要用 timeout、[rate limit](../knowledge-cards/rate-limit) 與 pipeline 邊界保護 Redis。動態語言要特別留意 cache value schema 演進；強型別語言則要避免把內部型別直接當成跨服務快取 contract。
+快取與 Redis 的使用方式會受語言的資料複製模型、client lifecycle、序列化成本與並發模型影響。同步 runtime 要避免每個 request 建立連線；async runtime 要避免 blocking Redis client 卡住 event loop；輕量並發 runtime 要用 timeout、[rate limit](../knowledge-cards/rate-limit) 與 pipeline 邊界保護 Redis。動態語言要特別留意 cache value schema 演進；強型別語言則要避免把內部型別直接當成跨服務快取 [contract](../knowledge-cards/contract/)。

@@ -28,6 +28,10 @@ weight: -1
 | [Transaction Boundary](transaction-boundary/) | 哪些變更要一起成功或回復           | database、unit of work               |
 | [Migration](migration/)                       | 系統如何從舊狀態受控移到新狀態     | release、cutover、backfill           |
 | [Schema Migration](schema-migration/)         | 資料庫結構如何隨版本安全演進       | release、rollback、migration         |
+| [Expand / Contract](expand-contract/)         | 先擴充相容面再收斂舊路徑的遷移做法   | schema migration、online migration   |
+| [Migration Gate](migration-gate/)             | 遷移流程如何決定能否進入下一階段   | backfill、correctness check          |
+| [Release Gate](release-gate/)                 | 變更如何在正式釋出前通過或阻擋     | error budget、migration、review      |
+| [Rollback Rehearsal](rollback-rehearsal/)     | 回滾流程如何在正式事故前演練       | rollback strategy、migration         |
 | [Isolation Level](isolation-level/)           | 並發交易彼此看見哪些資料           | transaction、lock、retry             |
 | [Connection Pool](connection-pool/)           | application 如何限制下游連線壓力   | database、Redis、broker              |
 
@@ -56,6 +60,7 @@ weight: -1
 | [WebSocket](websocket/)                       | 長連線雙向即時通訊如何運作            | chat、presence、push         |
 | [Server-Sent Events (SSE)](sse/)              | HTTP 單向事件串流如何推送更新         | notification、progress       |
 | [Stream Pipeline](stream-pipeline/)           | 連續資料流如何管理吞吐與 backpressure | stream、CDC、ETL             |
+| [Throughput](throughput/)                     | 單位時間內可處理多少工作              | load test、queue、broker     |
 | [Buffer](buffer/)                             | 暫存空間如何吸收短暫速度差            | queue、socket、cache         |
 | [Queue](queue/)                               | 等待處理的工作如何形成容量邊界        | producer、consumer、backlog  |
 | [Socket](socket/)                             | 網路連線如何成為資料讀寫與資源邊界    | network、connection、timeout |
@@ -80,6 +85,57 @@ weight: -1
 | [Cache Stampede](cache-stampede/)             | 快取同時 miss 如何壓垮正式來源        | hot key、TTL、database       |
 | [Rate Limit](rate-limit/)                     | 如何限制主體在一段時間內的資源使用量  | API、tenant、worker          |
 | [Backpressure](backpressure/)                 | 下游變慢時如何讓上游放慢              | queue、worker、stream        |
+
+## 入口與部署
+
+| 卡片                              | 核心問題                              | 常見出現位置                        |
+| --------------------------------- | ------------------------------------- | ----------------------------------- |
+| [Service Endpoint](endpoint/)    | 服務入口如何被路由與存取               | API、service discovery、internal    |
+| [Public API Endpoint](public-api-endpoint/) | 面向 client 的穩定對外入口     | product API、SDK、client            |
+| [API Gateway](api-gateway/)      | 外部流量如何集中路由、驗證與轉發       | auth、rate limit、routing、request id |
+| [Request Routing](request-routing/) | 入口流量如何分派到不同服務或版本      | host、path、tenant、version        |
+| [Admin Endpoint](admin-endpoint/) | 高權限管理入口如何被隔離與稽核       | admin、backoffice、control plane    |
+| [Diagnostic Endpoint](diagnostic-endpoint/) | health、readiness 與 debug 入口 | liveness、probe、metrics snapshot   |
+| [Internal Endpoint](internal-endpoint/) | 服務內部通訊入口如何受控         | service-to-service、control plane   |
+| [Container](container/)           | 服務如何被包裝成可交付單位            | image、runtime、CI、Kubernetes      |
+| [Load Balancer](load-balancer/)   | 流量如何分散、排空與導向健康節點      | ingress、draining、rolling update   |
+| [Draining](draining/)             | 服務如何先停新流量再完成既有工作      | rolling update、shutdown、cutover   |
+| [Sticky Session](sticky-session/) | 同一 client 如何維持命中同一實例      | session affinity、load balancer     |
+| [Idle Timeout](idle-timeout/)     | 連線或會話多久沒活動後要回收         | socket、load balancer、proxy        |
+| [Health Check](health-check/)     | 平台如何快速判斷服務狀態             | load balancer、probe、diagnostic    |
+| [Resource Limit](resource-limit/) | 服務可用的 CPU / memory 上限如何影響行為 | container、scheduler、runtime       |
+| [Probe](probe/)                   | 平台如何判斷存活與接流量條件          | readiness、liveness、startup        |
+| [Config Rollout](config-rollout/) | 設定如何安全下發到運作中的服務實例    | feature flag、secret、runtime config |
+| [Runtime Config](runtime-config/) | 執行時設定如何被讀取、組合與覆寫       | env var、secret、feature flag       |
+
+## 通訊協定
+
+| 卡片                              | 核心問題                              | 常見出現位置                        |
+| --------------------------------- | ------------------------------------- | ----------------------------------- |
+| [Communication Protocol](protocol/) | 不同系統如何對齊資料交換與錯誤語意   | request/response、message、webhook  |
+| [Request/Response Protocol](request-response-protocol/) | 同步呼叫如何對齊互動規則 | HTTP API、gRPC、RPC                 |
+| [Message Protocol](message-protocol/) | queue / stream 訊息如何對齊格式與語意 | event、job、delivery                |
+| [Webhook Protocol](webhook-protocol/) | 外部回呼如何對齊簽章與 payload        | callback、signature、retry          |
+
+## 邊界與治理
+
+| 卡片                           | 核心問題                      | 常見出現位置                      |
+| ------------------------------ | ----------------------------- | --------------------------------- |
+| [Boundary Contract](contract/) | 邊界兩端如何維持一致約定      | API contract、deployment contract、queue contract、load balancer contract |
+| [API Contract](api-contract/)  | request / response 如何維持相容 | client、SDK、public API           |
+| [Deployment Contract](deployment-contract/) | application 與 platform 如何對齊生命週期 | readiness、shutdown、rollout |
+| [Queue Contract](queue-contract/) | producer / broker / consumer 如何對齊交付語意 | ack、retry、DLQ、redelivery |
+| [Load Balancer Contract](load-balancer-contract/) | 服務與流量入口如何對齊健康與切流 | health check、draining、idle timeout |
+| [Integration Adapter](adapter/) | 外部系統如何轉成內部需要的形狀 | repository、payment、notification |
+| [Repository Adapter](repository-adapter/) | 持久化存取如何對齊應用模型 | SQL、transaction、row mapping |
+| [Provider Adapter](provider-adapter/) | 第三方服務如何被包裝成穩定介面 | payment、email、SMS、storage |
+| [Notification Adapter](notification-adapter/) | 通知通道如何轉成外部發送格式 | email、push、webhook |
+| [Request Middleware](middleware/)      | 共通請求處理如何放在邊界上    | auth、logging、tracing、validation |
+| [Authentication Middleware](authentication-middleware/) | 請求進入前如何驗證身份 | token、session、signature |
+| [Authorization Middleware](authorization-middleware/) | 請求進入前如何判斷權限 | role、tenant、resource owner |
+| [Observability Middleware](observability-middleware/) | 請求如何補上觀測欄位 | request id、trace context |
+| [Security Middleware](security-middleware/) | 請求如何套用共通安全控制 | rate limit、redaction |
+| [Validation Middleware](validation-middleware/) | 請求如何先做共通驗證 | schema、header、payload shape |
 
 ## 訊息與事件
 
@@ -173,10 +229,11 @@ weight: -1
 | [Failover](failover/)                             | 主要路徑失效時如何切到備援            | HA、region、provider                |
 | [Autoscaling](autoscaling/)                       | 容量如何依指標自動擴縮                | HPA、capacity、traffic burst        |
 | [Rolling Update](rolling-update/)                 | 版本如何逐批替換並維持可用            | deployment、release                 |
-| [Service Discovery](service-discovery/)           | 服務實例如何被查找與路由              | registry、load balancing            |
+| [Service Registry](service-registry/)             | 服務實例如何被註冊、維護與摘除        | heartbeat、TTL、metadata            |
+| [Service Discovery](service-discovery/)           | 服務實例如何被查找與路由              | registry、DNS、load balancing       |
 | [停機](downtime/)                                 | 服務中斷時要先保護哪些產品結果        | incident、SLO、deployment           |
 | [Readiness](readiness/)                           | instance 何時可以安全接收流量         | Kubernetes、load balancer、rollout  |
-| [Health Check / Liveness](health-check-liveness/) | 平台如何判斷 process 是否仍然存活     | Kubernetes、systemd                 |
+| [Liveness](health-check-liveness/)               | 平台如何判斷 process 是否仍然存活     | Kubernetes、systemd                 |
 | [Graceful Shutdown](graceful-shutdown/)           | instance 停止前如何排空流量與保存狀態 | deployment、worker、long connection |
 
 ## 事故處理與復盤
@@ -184,6 +241,7 @@ weight: -1
 | 卡片                                                | 核心問題                       | 常見出現位置                  |
 | --------------------------------------------------- | ------------------------------ | ----------------------------- |
 | [On-Call](on-call/)                                 | 值班制度如何承接告警與事故流程 | paging、handover、incident    |
+| [Handover Protocol](handover-protocol/)             | 值班或事故責任如何安全交接     | on-call、escalation、incident |
 | [Playbook](playbook/)                               | 場景化處置如何快速啟動與執行   | incident workflow、recovery   |
 | [CI Pipeline](ci-pipeline/)                         | 合併前如何自動驗證品質與相容性 | tests、checks、merge gate     |
 | [Load Test](load-test/)                             | 預期流量下如何驗證容量與延遲   | performance、SLO、capacity    |
@@ -191,6 +249,7 @@ weight: -1
 | [Game Day](game-day/)                               | 事故演練如何驗證流程與協作     | drill、readiness、training    |
 | [Incident Severity](incident-severity/)             | 事故如何依產品影響分級         | on-call、incident、SLO        |
 | [Incident Command System](incident-command-system/) | 事故期間如何分配指揮與執行角色 | commander、scribe、owner      |
+| [Incident Communication Channel](incident-communication-channel/) | 事故期間如何同步對內對外資訊 | internal chat、status update、bridge |
 | [Escalation Policy](escalation-policy/)             | 事故無回應或無進展時如何升級   | on-call、paging、handover     |
 | [Incident Timeline](incident-timeline/)             | 事故事件如何形成一致時間軸     | incident log、communication   |
 | [Blast Radius](blast-radius/)                       | 故障影響面如何估算與隔離       | dependency、shared resource   |
@@ -207,6 +266,7 @@ weight: -1
 | ----------------------------------------------------------------------- | ------------------------------------ | ------------------------------ |
 | [Authorization](authorization/)                                         | 誰能對哪些資源執行哪些操作           | RBAC、ABAC、tenant             |
 | [Authentication](authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS           |
+| [Credential](credential/)                                               | 身分與系統存取用秘密如何保存與輪替   | API key、password、private key  |
 | [IAM](iam/)                                                             | 身分與權限如何集中治理               | SSO、roles、policy             |
 | [BOLA / IDOR](bola-idor/)                                               | 使用者如何被限制只能存取授權物件     | API、resource ID               |
 | [BOPLA](bopla/)                                                         | 欄位層級如何授權讀寫                 | DTO、field policy              |

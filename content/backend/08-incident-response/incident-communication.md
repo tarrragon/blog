@@ -7,7 +7,7 @@ weight: 4
 
 ## 大綱
 
-- internal channel protocol
+- [incident communication channel](../knowledge-cards/incident-communication-channel/)
 - external status update
 - update cadence
 - stakeholder mapping
