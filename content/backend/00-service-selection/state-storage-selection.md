@@ -52,7 +52,7 @@ cache 的核心責任是降低讀取成本。快取資料應該能從 [source of
 
 - 商品詳情頁快取商品名稱、價格與庫存摘要
 - 使用者 session 或權限摘要
-- WebSocket presence 狀態與 topic 訂閱集合
+- [WebSocket](../knowledge-cards/websocket/) presence 狀態與 topic 訂閱集合
 
 這類資料的主要風險是過期與不一致。服務要知道 cache miss 怎麼處理、TTL 如何設定、資料更新時如何失效、熱門 key 如何保護。
 
@@ -74,7 +74,7 @@ cache 的核心責任是降低讀取成本。快取資料應該能從 [source of
 
 接近真實網路服務的例子包括：
 
-- 訂單狀態每次改變都要留下 audit trail
+- 訂單狀態每次改變都要留下 [audit log](../knowledge-cards/audit-log/)
 - 付款成功事件需要被通知、出貨、分析系統各自消費
 - 使用者行為事件需要進入分析 pipeline
 

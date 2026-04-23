@@ -23,7 +23,7 @@ weight: 4
 
 Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 error rate、latency、throughput 與 queue lag；tracing 適合拆解跨服務 request path；dashboard 適合整合 [SLI/SLO](../knowledge-cards/sli-slo/) 與容量趨勢；alert 適合把需要動作的異常送到負責者面前，並連到 [alert runbook](../knowledge-cards/alert-runbook/)。
 
-接近真實網路服務的例子包括 checkout 變慢、queue lag 上升、WebSocket 斷線增加、Redis timeout 增加與下游 API 錯誤率上升。這些場景的共同問題是從症狀回到原因，因此本模組會先處理欄位、關聯、[metric cardinality](../knowledge-cards/metric-cardinality/)、查詢、視覺化與告警規則。
+接近真實網路服務的例子包括 checkout 變慢、queue lag 上升、[WebSocket](../knowledge-cards/websocket/) 斷線增加、Redis timeout 增加與下游 API 錯誤率上升。這些場景的共同問題是從症狀回到原因，因此本模組會先處理欄位、關聯、[metric cardinality](../knowledge-cards/metric-cardinality/)、查詢、視覺化與告警規則。
 
 ## 與語言教材的分工
 

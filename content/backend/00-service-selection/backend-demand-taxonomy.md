@@ -86,7 +86,7 @@ weight: 0
 - 任務處理頁需要即時顯示轉檔進度。
 - 共同編輯工具需要讓其他使用者看到狀態變化。
 
-這類需求的陷阱是把即時通道當成唯一可靠資料來源。WebSocket、SSE 或 [pub/sub](../knowledge-cards/pub-sub/) 適合降低延遲，但 client 斷線、server 重啟、網路切換都會造成缺口。即時需求要先決定離線後如何 [offline catch-up](../knowledge-cards/offline-catchup/)、哪些訊息可丟、哪些訊息需要正式保存。
+這類需求的陷阱是把即時通道當成唯一可靠資料來源。[WebSocket](../knowledge-cards/websocket/)、[Server-Sent Events (SSE)](../knowledge-cards/sse/) 或 [pub/sub](../knowledge-cards/pub-sub/) 適合降低延遲，但 client 斷線、server 重啟、網路切換都會造成缺口。即時需求要先決定離線後如何 [offline catch-up](../knowledge-cards/offline-catchup/)、哪些訊息可丟、哪些訊息需要正式保存。
 
 下一步可讀：[非同步與事件傳遞選型](async-delivery-selection/) 與 [操作平台選型](operations-platform-selection/)。
 
@@ -98,7 +98,7 @@ weight: 0
 
 - API 延遲上升時，要判斷瓶頸在資料庫、外部 API、queue 還是某個版本。
 - queue lag 增加時，要判斷 producer 變快、consumer 變慢，還是下游失敗。
-- 某地區 WebSocket disconnect 增加時，要知道是 client 版本、網路入口還是部署節點問題。
+- 某地區 [WebSocket](../knowledge-cards/websocket/) disconnect 增加時，要知道是 client 版本、網路入口還是部署節點問題。
 
 這類需求的陷阱是先買平台，再補欄位語意。沒有穩定欄位、trace context、錯誤分類與 runbook，觀測平台只能保存大量難以操作的訊號。
 

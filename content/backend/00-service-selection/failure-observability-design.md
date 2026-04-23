@@ -49,7 +49,7 @@ weight: 7
 
 ## 【判讀】定位線索要沿著 request 與事件流傳遞
 
-定位線索的核心責任是讓工程師能把一個症狀追回完整路徑。當 request 跨過 API、資料庫、cache、queue、worker、外部服務與 WebSocket 推送時，線索需要跟著邊界傳遞。
+定位線索的核心責任是讓工程師能把一個症狀追回完整路徑。當 request 跨過 API、資料庫、cache、queue、worker、外部服務與 [WebSocket](../knowledge-cards/websocket/) 推送時，線索需要跟著邊界傳遞。
 
 接近真實網路服務的例子包括：
 

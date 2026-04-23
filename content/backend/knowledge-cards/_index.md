@@ -53,6 +53,8 @@ weight: -1
 | [Worker Pool](worker-pool/)                   | 如何限制同時處理量                    | worker、background job       |
 | [HTTP Client](http-client/)                   | 呼叫外部 HTTP 依賴時如何管理資源      | API、dependency              |
 | [Webhook](webhook/)                           | 外部系統回呼事件如何驗證與處理        | callback、signature、retry   |
+| [WebSocket](websocket/)                       | 長連線雙向即時通訊如何運作            | chat、presence、push         |
+| [Server-Sent Events (SSE)](sse/)              | HTTP 單向事件串流如何推送更新         | notification、progress       |
 | [Stream Pipeline](stream-pipeline/)           | 連續資料流如何管理吞吐與 backpressure | stream、CDC、ETL             |
 | [Buffer](buffer/)                             | 暫存空間如何吸收短暫速度差            | queue、socket、cache         |
 | [Queue](queue/)                               | 等待處理的工作如何形成容量邊界        | producer、consumer、backlog  |
@@ -205,6 +207,7 @@ weight: -1
 | ----------------------------------------------------------------------- | ------------------------------------ | ------------------------------ |
 | [Authorization](authorization/)                                         | 誰能對哪些資源執行哪些操作           | RBAC、ABAC、tenant             |
 | [Authentication](authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS           |
+| [IAM](iam/)                                                             | 身分與權限如何集中治理               | SSO、roles、policy             |
 | [BOLA / IDOR](bola-idor/)                                               | 使用者如何被限制只能存取授權物件     | API、resource ID               |
 | [BOPLA](bopla/)                                                         | 欄位層級如何授權讀寫                 | DTO、field policy              |
 | [Mass Assignment](mass-assignment/)                                     | 自動綁定欄位如何造成未授權修改       | API、ORM                       |
@@ -214,6 +217,7 @@ weight: -1
 | [Tenant Boundary](tenant-boundary/)                                     | 多租戶資料與資源如何隔離             | SaaS、RBAC                     |
 | [Least Privilege](least-privilege/)                                     | 身份如何只取得必要權限               | IAM、database user             |
 | [Security Misconfiguration](security-misconfiguration/)                 | 設定錯誤如何暴露內部能力             | CORS、debug、cloud             |
+| [WAF](waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack             |
 | [Feature Flag](feature-flag/)                                           | 功能開關如何分離部署與啟用           | rollout、experiment、rollback  |
 | [Input Validation](input-validation/)                                   | 入口資料如何檢查格式與語意           | API、webhook                   |
 | [SSRF](ssrf/)                                                           | 伺服器端請求如何被濫用               | URL fetch、webhook             |

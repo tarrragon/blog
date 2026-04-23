@@ -24,8 +24,8 @@ weight: 8
 
 | 需求類型   | 核心問題                                              | 常見情境                                                                                                                                                     |
 | ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 權限分級   | 誰能看、改、匯出、審核或管理資料                      | RBAC、ABAC、tenant boundary                                                                                                                                  |
-| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | admin endpoint、upload、[webhook](../knowledge-cards/webhook/)                                                                                                                              |
+| 權限分級   | 誰能看、改、匯出、審核或管理資料                      | [authorization](../knowledge-cards/authorization/)、[tenant boundary](../knowledge-cards/tenant-boundary/)                                                                                                                                  |
+| 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                      | admin endpoint、upload、[webhook](../knowledge-cards/webhook/)、[WAF](../knowledge-cards/waf/)                                                                                                                              |
 | 資料遮罩   | 匯出、log、客服畫面要顯示多少敏感資訊                 | email、電話、身分證、付款資訊                                                                                                                                |
 | 傳輸保護   | 資料在 client、service、queue、storage 之間如何被保護 | [TLS / mTLS](../knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](../knowledge-cards/certificate-chain-trust/)                  |
 | 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷              | [secret management](../knowledge-cards/secret-management/)、[website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)、key rotation |
@@ -41,7 +41,7 @@ weight: 8
 
 - 客服可以查看訂單狀態與配送資訊，但付款敏感欄位只顯示遮罩版本。
 - 營運可以調整活動商品，但價格變更需要主管審核。
-- 企業 SaaS 中，workspace admin 可以管理成員，普通 member 只能操作自己有權限的 project。
+- 企業 [SaaS](../knowledge-cards/tenant-boundary/) 中，workspace admin 可以管理成員，普通 member 只能操作自己有權限的 project。
 
 這類需求的陷阱是只用「是否登入」表示授權。登入代表身份已被確認；授權要回答這個身份能否操作特定資源、特定欄位與特定動作。權限規則也要能被測試、稽核與解釋。
 
@@ -106,7 +106,7 @@ weight: 8
 
 ## 【判讀】稽核追蹤要服務事後責任判斷
 
-稽核追蹤的核心責任是回答「誰在何時對哪個資源做了什麼，理由與結果是什麼」。高風險操作、管理員操作、資料匯出、權限變更、金流狀態修改都需要清楚 audit trail。
+稽核追蹤的核心責任是回答「誰在何時對哪個資源做了什麼，理由與結果是什麼」。高風險操作、管理員操作、資料匯出、權限變更、金流狀態修改都需要清楚 [audit log](../knowledge-cards/audit-log/)。
 
 接近真實網路服務的例子包括：
 

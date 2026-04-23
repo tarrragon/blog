@@ -7,7 +7,7 @@ weight: 34
 
 Backend 教材的核心目標是整理「應該被 application interface 隔離」的外部服務能力。語言教材負責各自的語法、標準庫、並發或非同步模型、測試方法與 interface / protocol 邊界；Backend 教材負責資料庫、快取、訊息佇列、觀測平台、部署平台、系統可靠性與資安資料保護。
 
-這個切分讓不同語言的學習保持清楚：Go、Python 或其他後端語言可以各自說明如何定義抽象邊界、處理取消與逾時、回傳錯誤、寫 fake 或 contract test；Backend 章節則說明 SQLite、PostgreSQL、Redis、RabbitMQ、broker、migration、metrics、tracing、Kubernetes、identity、permission、[TLS / mTLS](knowledge-cards/tls-mtls/)、secret 與 audit 等具體技術如何運作。
+這個切分讓不同語言的學習保持清楚：Go、Python 或其他後端語言可以各自說明如何定義抽象邊界、處理取消與逾時、回傳錯誤、寫 fake 或 contract test；Backend 章節則說明 SQLite、PostgreSQL、Redis、RabbitMQ、broker、migration、metrics、tracing、Kubernetes、identity、permission、[TLS / mTLS](knowledge-cards/tls-mtls/)、[WAF](knowledge-cards/waf/)、[Secret Management](knowledge-cards/secret-management/)、[Audit Log](knowledge-cards/audit-log/) 等具體技術如何運作。
 
 Backend 是多個後端語言系列共用的實作層。未來若新增 frontend、data engineering、machine learning、mobile 或其他非後端主題，也可以用同樣方式把共用實作知識抽成獨立資料夾，讓特定語言教材保留在語言本身的能力邊界。
 
@@ -21,13 +21,13 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 | 可觀測性   | 標準 logger、runtime 訊號、diagnostics endpoint、trace context 邊界、錯誤分類欄位               | log aggregation、Prometheus、OpenTelemetry、trace、dashboard、alert                                            |
 | 部署平台   | graceful shutdown、health/readiness、signal handling、resource limit、failover hook 的程式設計  | Kubernetes、systemd、load balancer、container image、service discovery                                         |
 | 可靠性驗證 | unit test、table-driven / parameterized test、race / async test、integration test、故障路徑測試 | CI pipeline、load test、fuzz campaign、chaos testing、環境治理                                                 |
-| 資安保護   | middleware、policy interface、error mapping、redaction helper、security test                    | identity、authorization、[TLS / mTLS](knowledge-cards/tls-mtls/)、WAF、secret manager、audit log、data masking |
+| 資安保護   | middleware、policy interface、error mapping、redaction helper、security test                    | identity、[authorization](knowledge-cards/authorization/)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[WAF](knowledge-cards/waf/)、[Secret Management](knowledge-cards/secret-management/)、[Audit Log](knowledge-cards/audit-log/)、[data masking](knowledge-cards/data-masking/) |
 
 ## 教學模組
 
 ### [前置知識卡片](knowledge-cards/)
 
-用原子化卡片整理 source of truth、transaction、migration、CDC、backfill、cutover、timeout、backoff、jitter、retry storm、load shedding、bulkhead、fallback、TTL、cache warmup、singleflight、broker、consumer lag、prefetch、redelivery、partition、offset、idempotency、outbox、backpressure、log schema、metrics、trace、SLO、error budget、authorization、BOLA、mass assignment、data masking、secret、[TLS / mTLS](knowledge-cards/tls-mtls/)、audit 與 [Website Certificate Lifecycle](knowledge-cards/website-certificate-lifecycle/) 等後端 domain knowhow。這些卡片負責補足服務選型文章中的先備知識，讓章節可以專注在需求判讀與服務取捨。
+用原子化卡片整理 source of truth、transaction、migration、CDC、backfill、cutover、timeout、backoff、jitter、retry storm、load shedding、bulkhead、fallback、TTL、cache warmup、singleflight、broker、consumer lag、prefetch、redelivery、partition、offset、idempotency、outbox、backpressure、log schema、metrics、trace、SLO、error budget、authorization、BOLA、mass assignment、data masking、[Secret Management](knowledge-cards/secret-management/)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[Audit Log](knowledge-cards/audit-log/) 與 [Website Certificate Lifecycle](knowledge-cards/website-certificate-lifecycle/) 等後端 domain knowhow。這些卡片負責補足服務選型文章中的先備知識，讓章節可以專注在需求判讀與服務取捨。
 
 ### [模組零：後端需求分析與服務選型](00-service-selection/)
 
@@ -99,7 +99,7 @@ Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of
 - metrics、tracing、log aggregation、OpenTelemetry
 - Kubernetes、systemd、load balancer、container runtime
 - CI、load test、fuzz、chaos testing
-- identity、authorization、data masking、[TLS / mTLS](knowledge-cards/tls-mtls/)、[website certificate lifecycle](knowledge-cards/website-certificate-lifecycle/)、secret management、audit trail
+- identity、[authorization](knowledge-cards/authorization/)、[data masking](knowledge-cards/data-masking/)、[TLS / mTLS](knowledge-cards/tls-mtls/)、[website certificate lifecycle](knowledge-cards/website-certificate-lifecycle/)、[Secret Management](knowledge-cards/secret-management/)、[Audit Log](knowledge-cards/audit-log/)
 - incident severity、command model、escalation policy、rollback strategy、post-incident review
 
 後續撰寫任何語言教材時，凡是涉及具體外部服務操作、部署平台設定或產品選型，都應優先放到 Backend；語言章節只保留足夠說明抽象邊界的最小背景。
@@ -120,7 +120,7 @@ Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of
 
 ## 服務實體章節規範
 
-每篇討論具體服務實體的章節，例如 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、OpenTelemetry、Kubernetes、WAF、secret manager 或 IAM，都必須包含「成本權衡與機會成本」段落。這個段落至少回答：
+每篇討論具體服務實體的章節，例如 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、OpenTelemetry、Kubernetes、[WAF](knowledge-cards/waf/)、[Secret Management](knowledge-cards/secret-management/) 或 [IAM](knowledge-cards/iam/)，都必須包含「成本權衡與機會成本」段落。這個段落至少回答：
 
 1. 這個服務降低哪一種風險
 2. 在資安限制下會增加哪些設計、審核、遮罩、加密、稽核或權限成本

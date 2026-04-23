@@ -7,7 +7,7 @@ weight: 6
 
 成本與風險取捨的核心原則是把選型看成長期承諾。每加入一種後端服務能力，都會帶來雲端費用、人力維護、操作流程、事故風險與學習成本；它也可能降低延遲、失敗代價、開發摩擦與未來重構成本。
 
-這一章的內容是所有 Backend 服務實體章節的共同段落要求。後續討論 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、Kubernetes、WAF、IAM、secret manager 或任何具體服務時，都要回到同一組問題：資安限制會增加什麼成本，流量與穩定性會造成什麼壓力，伺服器與雲端費用如何成長，團隊要承擔多少操作成本，選擇這個方案會放棄哪些替代路線。
+這一章的內容是所有 Backend 服務實體章節的共同段落要求。後續討論 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、Kubernetes、[WAF](../knowledge-cards/waf/)、[IAM](../knowledge-cards/iam/)、[Secret Management](../knowledge-cards/secret-management/) 或任何具體服務時，都要回到同一組問題：資安限制會增加什麼成本，流量與穩定性會造成什麼壓力，伺服器與雲端費用如何成長，團隊要承擔多少操作成本，選擇這個方案會放棄哪些替代路線。
 
 ## 本章目標
 
@@ -32,7 +32,7 @@ weight: 6
 | 操作成本 | 誰負責維護、升級、排障                       | backup、alert、權限、容量規劃                                        |
 | 失敗代價 | 延遲、遺失、重複、停機造成什麼後果           | 付款錯誤、通知延遲、資料不一致                                       |
 | 機會成本 | 導入這項能力會延後哪些產品工作               | 平台建設、功能交付、技術債                                           |
-| 資安成本 | 權限、遮罩、加密、稽核與防護帶來多少額外責任 | IAM、[TLS / mTLS](../knowledge-cards/tls-mtls/)、audit、data masking |
+| 資安成本 | 權限、遮罩、加密、稽核與防護帶來多少額外責任 | [IAM](../knowledge-cards/iam/)、[TLS / mTLS](../knowledge-cards/tls-mtls/)、[audit log](../knowledge-cards/audit-log/)、[data masking](../knowledge-cards/data-masking/) |
 
 這張表是成本索引。討論選型時，應把「技術是否強大」轉成「它是否值得目前承擔」。
 

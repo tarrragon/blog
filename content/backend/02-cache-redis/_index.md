@@ -24,7 +24,7 @@ weight: 2
 
 Cache aside 適合商品詳情、權限摘要、feature flag 這類可重建讀取資料；[TTL](../knowledge-cards/ttl/) 與 [eviction](../knowledge-cards/eviction/) 用來控制資料新鮮度與容量；Redis data types 用來表達 set、sorted set、hash、stream 等不同資料形狀；presence store 適合即時連線狀態；distributed lock 適合需要短時間互斥的協調流程；pub/sub 適合即時 fan-out。
 
-接近真實網路服務的例子包括熱門商品頁、會員 session、WebSocket presence、[rate limit](../knowledge-cards/rate-limit/) counter 與跨節點通知。這些場景的共同問題是讀取節奏、過期策略與資料一致性，因此本模組會先處理資料形狀、[hot key](../knowledge-cards/hot-key/)、[cache stampede](../knowledge-cards/cache-stampede/)、[thundering herd](../knowledge-cards/thundering-herd/) 與失效邊界。
+接近真實網路服務的例子包括熱門商品頁、會員 session、[WebSocket](../knowledge-cards/websocket/) presence、[rate limit](../knowledge-cards/rate-limit/) counter 與跨節點通知。這些場景的共同問題是讀取節奏、過期策略與資料一致性，因此本模組會先處理資料形狀、[hot key](../knowledge-cards/hot-key/)、[cache stampede](../knowledge-cards/cache-stampede/)、[thundering herd](../knowledge-cards/thundering-herd/) 與失效邊界。
 
 ## 與語言教材的分工
 

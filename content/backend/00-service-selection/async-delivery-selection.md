@@ -74,7 +74,7 @@ stream 的核心責任是保存事件序列，讓 consumer 可以依自己的進
 
 接近真實網路服務的例子包括：
 
-- WebSocket server 跨節點廣播 topic update
+- [WebSocket](../knowledge-cards/websocket/) server 跨節點廣播 topic update
 - presence 狀態變更通知在線 client
 - dashboard 即時刷新目前任務進度
 

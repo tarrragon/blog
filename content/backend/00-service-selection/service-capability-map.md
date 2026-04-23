@@ -40,7 +40,7 @@ weight: 1
 
 - 電商訂單需要保存付款狀態、出貨狀態與退款紀錄
 - 會員系統需要保存帳號、權限、登入方式與審計資料
-- SaaS 產品需要保存 workspace、plan、billing 與使用量
+- [SaaS](../knowledge-cards/tenant-boundary/) 產品需要保存 workspace、plan、billing 與使用量
 
 這類問題的核心是 [source of truth](../knowledge-cards/source-of-truth/)。快取可以加速讀取，queue 可以延後處理，log 可以協助診斷，但正式狀態仍需要清楚的資料模型與一致性邊界。
 
@@ -82,7 +82,7 @@ weight: 1
 
 - API 偶爾變慢，但無法判斷是資料庫、外部 API 還是部署節點問題
 - queue lag 上升，但不知道 producer 變快還是 consumer 變慢
-- WebSocket client 斷線增加，但缺少連線生命週期與地區資訊
+- [WebSocket](../knowledge-cards/websocket/) client 斷線增加，但缺少連線生命週期與地區資訊
 
 這類問題的核心是操作訊號。log、metric、trace、dashboard 與 alert 需要共用欄位與關聯方式，才能讓工程師從症狀回到原因。
 

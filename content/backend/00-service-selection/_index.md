@@ -56,7 +56,7 @@ weight: 0
 
 ## 服務實體的固定討論段落
 
-服務實體章節的核心要求是每個選型都要回答「值得引入的理由」與「引入後的代價」。討論 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、Kubernetes、WAF、IAM、secret manager 或任何具體服務時，都必須保留成本權衡段落。
+服務實體章節的核心要求是每個選型都要回答「值得引入的理由」與「引入後的代價」。討論 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、Kubernetes、[WAF](../knowledge-cards/waf/)、[IAM](../knowledge-cards/iam/)、[Secret Management](../knowledge-cards/secret-management/) 或任何具體服務時，都必須保留成本權衡段落。
 
 這個段落要同時看五個方向：
 
