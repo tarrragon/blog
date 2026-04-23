@@ -17,4 +17,4 @@ TLS 是公開網路服務的基本傳輸保護。mTLS 常用在 service-to-servi
 
 ## 設計責任
 
-TLS / mTLS 設計要包含憑證簽發、輪替、過期 [alert](../alert/)、信任根、撤銷、測試環境與故障排查。憑證、private key 與相關 credential 應納入 [secret management](../secret-management/)。
+TLS / mTLS 設計要包含 [website certificate lifecycle](../website-certificate-lifecycle/)、[ACME automation](../acme-automation/)、[certificate chain and trust root](../certificate-chain-trust/)、[certificate rotation and renewal](../certificate-rotation-renewal/)、[certificate revocation](../certificate-revocation/)、過期 [alert](../alert/)、測試環境與故障排查。憑證、private key 與相關 credential 應納入 [secret management](../secret-management/)。

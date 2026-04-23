@@ -180,6 +180,11 @@ weight: -1
 | [Data Masking](data-masking/) | 敏感資料如何降低暴露 | export、log、support tool |
 | [Secret Management](secret-management/) | token、key、password 如何保存與輪替 | credential、deployment |
 | [TLS / mTLS](tls-mtls/) | 傳輸加密與雙向身份驗證如何保護資料流 | service-to-service、API |
+| [Website Certificate Lifecycle](website-certificate-lifecycle/) | 網站憑證從簽發到續期與撤銷如何治理 | HTTPS、edge、ingress |
+| [ACME Automation](acme-automation/) | 網站憑證如何自動簽發與續期 | Let's Encrypt、DNS-01、HTTP-01 |
+| [Certificate Chain and Trust Root](certificate-chain-trust/) | 憑證鏈與信任根如何影響握手 | intermediate CA、trust store |
+| [Certificate Rotation and Renewal](certificate-rotation-renewal/) | 憑證與私鑰如何不中斷更新 | expiry、zero-downtime |
+| [Certificate Revocation](certificate-revocation/) | 憑證失效時如何撤銷與替換 | key compromise、incident |
 | [Audit Log](audit-log/) | 高風險操作如何留下責任證據 | admin、export、permission |
 
 ## 使用方式

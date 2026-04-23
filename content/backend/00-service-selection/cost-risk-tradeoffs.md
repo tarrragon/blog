@@ -32,7 +32,7 @@ weight: 6
 | 操作成本 | 誰負責維護、升級、排障                       | backup、alert、權限、容量規劃        |
 | 失敗代價 | 延遲、遺失、重複、停機造成什麼後果           | 付款錯誤、通知延遲、資料不一致       |
 | 機會成本 | 導入這項能力會延後哪些產品工作               | 平台建設、功能交付、技術債           |
-| 資安成本 | 權限、遮罩、加密、稽核與防護帶來多少額外責任 | IAM、TLS、audit、data masking        |
+| 資安成本 | 權限、遮罩、加密、稽核與防護帶來多少額外責任 | IAM、[TLS / mTLS](../00-knowledge-cards/tls-mtls/)、audit、data masking        |
 
 這張表是成本索引。討論選型時，應把「技術是否強大」轉成「它是否值得目前承擔」。
 
@@ -43,7 +43,7 @@ weight: 6
 接近真實網路服務的例子包括：
 
 - 匯出報表若包含個資，系統需要欄位遮罩、核准流程、下載期限、audit log 與存取權限。
-- 內部 service-to-service 呼叫若傳遞付款資料，可能需要 mTLS、signed request、credential rotation 與 trace 關聯。
+- 內部 service-to-service 呼叫若傳遞付款資料，可能需要 [mTLS](../00-knowledge-cards/tls-mtls/)、signed request、credential rotation 與 trace 關聯。
 - 客服查詢後台若能看到敏感資料，權限分級、操作稽核與資料最小揭露會成為必要成本。
 
 這類取捨的核心風險是低估安全需求對操作面的影響。資安限制會增加設計、測試、稽核、教育訓練與事故處理成本；它也會降低資料外洩、權限誤用與合規事故的風險。服務章節討論選型時，必須把這兩邊一起列出。
@@ -78,15 +78,15 @@ weight: 6
 
 接近真實網路服務的例子包括：
 
-- 團隊導入多種 [broker](../../00-knowledge-cards/broker/) 後，需要同步建立 [consumer lag](../../00-knowledge-cards/consumer-lag/)、[dead-letter](../../00-knowledge-cards/dead-letter-queue/) 與 [replay runbook](../../00-knowledge-cards/replay-runbook/)。
-- 服務開始使用多個快取層後，需要同步建立 [失效策略](../../00-knowledge-cards/cache-invalidation/) 與 [資料不一致](../../00-knowledge-cards/data-inconsistency/) 的排查方式。
-- 部署平台支援自動擴容後，application 需要提供 [readiness](../../00-knowledge-cards/readiness/) 與 [graceful shutdown](../../00-knowledge-cards/graceful-shutdown/) 合約。
+- 團隊導入多種 [broker](../00-knowledge-cards/broker/) 後，需要同步建立 [consumer lag](../00-knowledge-cards/consumer-lag/)、[dead-letter](../00-knowledge-cards/dead-letter-queue/) 與 [replay runbook](../00-knowledge-cards/replay-runbook/)。
+- 服務開始使用多個快取層後，需要同步建立 [失效策略](../00-knowledge-cards/cache-invalidation/) 與 [資料不一致](../00-knowledge-cards/data-inconsistency/) 的排查方式。
+- 部署平台支援自動擴容後，application 需要提供 [readiness](../00-knowledge-cards/readiness/) 與 [graceful shutdown](../00-knowledge-cards/graceful-shutdown/) 合約。
 
 這類取捨的陷阱是只計算開發時間。操作成本常在上線後才出現，因此選型時要把 runbook、告警、權限、備份、回復與測試環境列入範圍。
 
 ## 【判讀】失敗代價決定保證等級
 
-失敗代價的核心問題是「錯誤發生時產品後果是什麼」。資料遺失、[重複投遞](../../00-knowledge-cards/duplicate-delivery/)、短暫不一致、延遲、[partial failure](../../00-knowledge-cards/partial-failure/)、[cascading failure](../../00-knowledge-cards/cascading-failure/)、[降級](../../00-knowledge-cards/degradation/)與[停機](../../00-knowledge-cards/downtime/)的代價不同，對應的保證等級也不同。
+失敗代價的核心問題是「錯誤發生時產品後果是什麼」。資料遺失、[重複投遞](../00-knowledge-cards/duplicate-delivery/)、短暫不一致、延遲、[partial failure](../00-knowledge-cards/partial-failure/)、[cascading failure](../00-knowledge-cards/cascading-failure/)、[降級](../00-knowledge-cards/degradation/)與[停機](../00-knowledge-cards/downtime/)的代價不同，對應的保證等級也不同。
 
 接近真實網路服務的例子包括：
 
