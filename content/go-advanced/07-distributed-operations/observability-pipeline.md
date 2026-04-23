@@ -5,7 +5,7 @@ description: "把 structured log、metric、trace 與 profile 組成可操作的
 weight: 4
 ---
 
-Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。Structured log 描述單次事件，metric 描述趨勢，trace 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。
+Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。[Log schema](../../backend/00-knowledge-cards/log-schema/) 描述單次事件，[metrics](../../backend/00-knowledge-cards/metrics/) 描述趨勢，[trace context](../../backend/00-knowledge-cards/trace-context/) 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。
 
 ## 本章目標
 
@@ -14,8 +14,8 @@ Observability pipeline 的核心責任是把服務訊號整理成可查詢、可
 1. 分辨 log、metric、trace 與 profile 各自回答什麼問題
 2. 設計穩定的 correlation 欄位
 3. 讓 Go 服務輸出適合聚合的診斷訊號
-4. 控制敏感資料不要流入觀測管線
-5. 了解 dashboard 與 alert 為什麼不應依賴自由文字
+4. 在產生端控制敏感資料進入觀測管線
+5. 了解 dashboard 與 alert 為什麼需要依賴穩定欄位
 
 ## 前置章節
 
@@ -23,6 +23,9 @@ Observability pipeline 的核心責任是把服務訊號整理成可查詢、可
 - [Go 進階：pprof 基礎診斷流程](../03-runtime-profiling/pprof/)
 - [Go 進階：結構化日誌欄位設計](../06-production-operations/log-fields/)
 - [Go 進階：健康檢查與診斷 endpoint](../06-production-operations/health-diagnostics/)
+- [Backend：SLI / SLO](../../backend/00-knowledge-cards/sli-slo/)
+- [Backend：Metric Cardinality](../../backend/00-knowledge-cards/metric-cardinality/)
+- [Backend：Alert Runbook](../../backend/00-knowledge-cards/alert-runbook/)
 
 ## 後續撰寫方向
 
@@ -30,11 +33,11 @@ Observability pipeline 的核心責任是把服務訊號整理成可查詢、可
 2. `request_id`、`event_id`、`trace_id`、`span_id` 與 `correlation_id` 如何分工。
 3. OpenTelemetry 導入時，Go 程式碼應保留哪些清楚邊界。
 4. Sensitive data policy 如何套用到 log、trace attribute 與 error event。
-5. Dashboard 與 alert 應依賴穩定欄位，而不是自由文字。
+5. Dashboard 與 alert 應依賴穩定欄位，讓查詢與告警規則可以被重複執行。
 
 ## 【觀察】診斷資料要先可關聯，再談漂亮
 
-如果 log、metric、trace 各自長得很漂亮，但欄位對不起來，排障時還是會很痛苦。observability pipeline 的第一個要求，不是格式華麗，而是能把同一筆請求、同一個事件、同一條 goroutine 路徑串起來。
+Observability pipeline 的第一個要求是關聯能力。Log、metric、trace 的格式可以各自精緻，但欄位需要對齊，才能把同一筆請求、同一個事件、同一條 goroutine 路徑串起來。
 
 通常會先建立幾個穩定欄位：
 
@@ -55,7 +58,7 @@ Observability pipeline 的核心責任是把服務訊號整理成可查詢、可
 
 ## 【策略】敏感資料要在產生端就攔住
 
-不要期待下游收集平台自己知道哪些欄位不該出現。Go 服務應該在輸出 log 或 trace attribute 前就決定哪些資訊可以外送。
+敏感資料政策應在產生端執行。Go 服務應該在輸出 log 或 trace attribute 前就決定哪些資訊可以外送。
 
 常見要注意的資料有：
 
@@ -73,7 +76,7 @@ Observability pipeline 的核心責任是把服務訊號整理成可查詢、可
 - metric extraction 轉成趨勢指標
 - alert rule 用來偵測異常
 
-所以 log 欄位不要常常改名，也不要把分類資訊藏在自由文字裡。
+所以 log 欄位要維持穩定命名，分類資訊要放在結構化欄位裡。
 
 ## 【延伸】診斷和容量規劃要串在一起
 

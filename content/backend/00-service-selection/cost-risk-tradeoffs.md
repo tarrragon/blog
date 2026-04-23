@@ -78,15 +78,15 @@ weight: 6
 
 接近真實網路服務的例子包括：
 
-- 團隊導入多種 broker，但缺少 consumer lag、dead-letter 與 replay runbook。
-- 服務開始使用多個快取層，但缺少失效策略與資料不一致的排查方式。
-- 部署平台支援自動擴容，但 application 沒有 readiness 與 graceful shutdown 合約。
+- 團隊導入多種 [broker](../../00-knowledge-cards/broker/) 後，需要同步建立 [consumer lag](../../00-knowledge-cards/consumer-lag/)、[dead-letter](../../00-knowledge-cards/dead-letter-queue/) 與 [replay runbook](../../00-knowledge-cards/replay-runbook/)。
+- 服務開始使用多個快取層後，需要同步建立 [失效策略](../../00-knowledge-cards/cache-invalidation/) 與 [資料不一致](../../00-knowledge-cards/data-inconsistency/) 的排查方式。
+- 部署平台支援自動擴容後，application 需要提供 [readiness](../../00-knowledge-cards/readiness/) 與 [graceful shutdown](../../00-knowledge-cards/graceful-shutdown/) 合約。
 
 這類取捨的陷阱是只計算開發時間。操作成本常在上線後才出現，因此選型時要把 runbook、告警、權限、備份、回復與測試環境列入範圍。
 
 ## 【判讀】失敗代價決定保證等級
 
-失敗代價的核心問題是「錯誤發生時產品後果是什麼」。資料遺失、重複投遞、短暫不一致、延遲、降級與停機的代價不同，對應的保證等級也不同。
+失敗代價的核心問題是「錯誤發生時產品後果是什麼」。資料遺失、[重複投遞](../../00-knowledge-cards/duplicate-delivery/)、短暫不一致、延遲、[partial failure](../../00-knowledge-cards/partial-failure/)、[cascading failure](../../00-knowledge-cards/cascading-failure/)、[降級](../../00-knowledge-cards/degradation/)與[停機](../../00-knowledge-cards/downtime/)的代價不同，對應的保證等級也不同。
 
 接近真實網路服務的例子包括：
 

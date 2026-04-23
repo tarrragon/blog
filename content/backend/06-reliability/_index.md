@@ -20,9 +20,9 @@ weight: 6
 
 ## 選型入口
 
-可靠性驗證選型的核心判斷是團隊要提前驗證哪一種失敗風險。CI pipeline 驗證每次變更的基本正確性；load test 驗證容量與延遲；fuzz campaign 驗證輸入邊界；chaos testing 驗證外部依賴或平台故障；test environment 與 release gate 則支撐穩定、可重現的驗證流程。
+可靠性驗證選型的核心判斷是團隊要提前驗證哪一種失敗風險。CI pipeline 驗證每次變更的基本正確性；load test 驗證容量、延遲、[backpressure](../00-knowledge-cards/backpressure/)、[rate limit](../00-knowledge-cards/rate-limit/) 與 [load shedding](../00-knowledge-cards/load-shedding/)；fuzz campaign 驗證輸入邊界；chaos testing 驗證外部依賴、[partial failure](../00-knowledge-cards/partial-failure/)、[cascading failure](../00-knowledge-cards/cascading-failure/) 或 [failover](../00-knowledge-cards/failover/)；test environment 與 release gate 則支撐穩定、可重現的驗證流程。
 
-CI pipeline 適合保護回歸；load test 適合高流量活動、容量規劃與瓶頸定位；fuzz campaign 適合 parser、protocol、payload validation 與安全邊界；chaos testing 適合 broker、database、network、node failure 等系統級風險；release gate 適合 migration、rollback 與跨服務相容性。
+CI pipeline 適合保護回歸；load test 適合高流量活動、容量規劃與瓶頸定位；fuzz campaign 適合 parser、protocol、payload validation 與安全邊界；chaos testing 適合 broker、database、network、node failure、[timeout](../00-knowledge-cards/timeout/)、[retry storm](../00-knowledge-cards/retry-storm/)、[circuit breaker](../00-knowledge-cards/circuit-breaker/) 與系統級風險；release gate 適合 migration、rollback 與跨服務相容性。
 
 接近真實網路服務的例子包括活動前驗證 checkout 容量、發版前驗證 migration、對 webhook parser 做 fuzz、在預備環境演練 broker 暫時中斷。這些場景的共同問題是事故前驗證，因此本模組會先處理測試分層、工作負載模型與失敗模式。
 

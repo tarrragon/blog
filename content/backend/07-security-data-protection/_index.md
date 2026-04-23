@@ -5,7 +5,7 @@ description: "整理權限分級、伺服器防護、資料遮罩、傳輸保護
 weight: 7
 ---
 
-資安與資料保護模組的核心目標是把安全需求轉成可設計、可測試、可稽核的服務邊界。語言教材會處理 middleware、error response、資料模型、測試替身與輸入驗證；本模組負責權限模型、資料分級、傳輸保護、秘密管理、資料遮罩、稽核追蹤與伺服器防護的選型語意。
+資安與資料保護模組的核心目標是把安全需求轉成可設計、可測試、可稽核的服務邊界。語言教材會處理 middleware、error response、資料模型、測試替身與輸入驗證；本模組負責 [authorization](../00-knowledge-cards/authorization/)、資料分級、[TLS / mTLS](../00-knowledge-cards/tls-mtls/)、[secret management](../00-knowledge-cards/secret-management/)、[data masking](../00-knowledge-cards/data-masking/)、[audit log](../00-knowledge-cards/audit-log/) 與伺服器防護的選型語意。
 
 ## 暫定分類
 

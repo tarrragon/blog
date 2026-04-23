@@ -5,7 +5,7 @@ description: "整理 durable queue、broker、retry、outbox 與 idempotency 的
 weight: 3
 ---
 
-訊息佇列模組的核心目標是說明事件離開單一 process 後，如何處理持久化、重試、重複投遞與 consumer 協調。語言教材會先處理本地 queue abstraction、publisher port、processor 與 idempotency interface；本模組負責 broker 的具體語意。
+訊息佇列模組的核心目標是說明事件離開單一 process 後，如何處理持久化、重試、[重複投遞](../00-knowledge-cards/duplicate-delivery/)與 consumer 協調。語言教材會先處理本地 queue abstraction、publisher port、processor 與 idempotency interface；本模組負責 [broker](../00-knowledge-cards/broker/) 的具體語意。
 
 ## 暫定分類
 
@@ -22,9 +22,9 @@ weight: 3
 
 訊息佇列選型的核心判斷是工作離開 request 或 process 後需要什麼投遞保證。當工作需要排隊、重試、跨服務傳遞、多 consumer 協作或事件補送時，broker 與 outbox 值得優先評估。
 
-RabbitMQ 適合明確 routing、ack/nack 與工作佇列；NATS 適合 subject-based messaging 與較輕量的服務通訊，搭配 JetStream 可加入持久化；Kafka 適合高吞吐事件流、partition 與長期 replay；Redis Streams 適合 Redis 生態內的 stream 與 consumer group；outbox 解決資料寫入與事件發布的一致性；idempotency 解決重複投遞造成的結果穩定性。
+RabbitMQ 適合明確 routing、[ack/nack](../00-knowledge-cards/ack-nack/) 與工作佇列；NATS 適合 subject-based messaging 與較輕量的服務通訊，搭配 JetStream 可加入持久化；Kafka 適合高吞吐事件流、partition 與長期 replay；Redis Streams 適合 Redis 生態內的 stream 與 consumer group；[outbox](../00-knowledge-cards/outbox-pattern/) 解決資料寫入與事件發布的一致性；[idempotency](../00-knowledge-cards/idempotency/) 解決重複投遞造成的結果穩定性；[retry budget](../00-knowledge-cards/retry-budget/) 與 [jitter](../00-knowledge-cards/jitter/) 則控制故障期間的重試壓力。
 
-接近真實網路服務的例子包括付款後寄信、影片轉檔、訂單事件傳給多個系統、IoT readings pipeline 與跨節點通知。這些場景的共同問題是 delivery semantics，因此本模組會先處理 broker 模型、retry、DLQ、outbox 與 consumer 設計。
+接近真實網路服務的例子包括付款後寄信、影片轉檔、訂單事件傳給多個系統、IoT readings pipeline 與跨節點通知。這些場景的共同問題是 delivery semantics，因此本模組會先處理 broker 模型、retry、[DLQ](../00-knowledge-cards/dead-letter-queue/)、outbox 與 consumer 設計。
 
 ## 與語言教材的分工
 

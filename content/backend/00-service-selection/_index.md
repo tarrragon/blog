@@ -9,6 +9,8 @@ weight: 0
 
 本模組先建立跨分類的選型語言。後續進入 database、Redis、message queue、observability 或 deployment 資料夾時，每個資料夾開頭都應延續同一個形式：先說明這類服務解決什麼問題，再比較同質服務的差異，最後才進入實作細節。
 
+閱讀本模組前，建議先把 [前置知識卡片](../00-knowledge-cards/) 當成共同詞彙索引。選型文章會使用 consumer lag、dead-letter、replay、降級、停機、readiness 等概念；這些概念的完整 domain knowhow 放在卡片中，章節本文則專注於需求判讀與服務能力取捨。
+
 ## 章節列表
 
 | 章節 | 主題 | 關鍵收穫 |

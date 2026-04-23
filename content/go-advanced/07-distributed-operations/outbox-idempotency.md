@@ -5,7 +5,7 @@ description: "設計跨 process 事件傳遞的可靠性與去重邊界"
 weight: 2
 ---
 
-跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的背壓；durable queue、outbox 與 idempotency store 才能處理服務重啟、網路失敗與 consumer 重試。
+跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的背壓；durable queue、[outbox](../../backend/00-knowledge-cards/outbox-pattern/) 與 [idempotency](../../backend/00-knowledge-cards/idempotency/) store 才能處理服務重啟、網路失敗與 consumer 重試。
 
 ## 本章目標
 
@@ -15,13 +15,17 @@ weight: 2
 2. 分辨 domain dedup key 與 idempotency key 的用途
 3. 設計可重入的 consumer / processor
 4. 用 retry、DLQ 與回補流程處理失敗事件
-5. 把事件可靠性寫進資料結構，而不是只靠說明文件
+5. 把事件可靠性寫進資料結構，讓規則可以被程式與測試驗證
 
 ## 前置章節
 
 - [Go 進階：非阻塞送出與事件丟棄策略](../01-concurrency-patterns/non-blocking-send/)
 - [Go 進階：事件去重與語義鍵設計](../04-architecture-boundaries/dedup-key/)
 - [Go 進階：多來源 event 融合](../04-architecture-boundaries/event-fusion/)
+- [Backend：Ack / Nack](../../backend/00-knowledge-cards/ack-nack/)
+- [Backend：Retry Policy](../../backend/00-knowledge-cards/retry-policy/)
+- [Backend：Dead-Letter Queue](../../backend/00-knowledge-cards/dead-letter-queue/)
+- [Backend：Consumer Lag](../../backend/00-knowledge-cards/consumer-lag/)
 
 ## 後續撰寫方向
 

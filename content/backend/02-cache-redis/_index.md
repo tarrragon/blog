@@ -5,7 +5,7 @@ description: "整理快取策略、Redis 資料型別與分散式狀態輔助能
 weight: 2
 ---
 
-快取模組的核心目標是說明暫存資料如何提升讀取效率，同時不破壞 source of truth。語言教材會處理 cache port、資料複製邊界與 TTL 的程式邊界；本模組負責 Redis 與快取策略的具體實作。
+快取模組的核心目標是說明暫存資料如何提升讀取效率，同時保護 [source of truth](../00-knowledge-cards/source-of-truth/) 的正式判斷責任。語言教材會處理 cache port、資料複製邊界與 [TTL](../00-knowledge-cards/ttl/) 的程式邊界；本模組負責 Redis 與快取策略的具體實作。
 
 ## 暫定分類
 
@@ -22,9 +22,9 @@ weight: 2
 
 快取選型的核心判斷是資料是否可以重建，以及讀取壓力是否集中。當正式狀態已經存在於資料庫或下游服務，但熱門讀取造成延遲、成本或容量壓力時，快取與 Redis 值得優先評估。
 
-Cache aside 適合商品詳情、權限摘要、feature flag 這類可重建讀取資料；TTL 與 eviction 用來控制資料新鮮度與容量；Redis data types 用來表達 set、sorted set、hash、stream 等不同資料形狀；presence store 適合即時連線狀態；distributed lock 適合需要短時間互斥的協調流程；pub/sub 適合即時 fan-out。
+Cache aside 適合商品詳情、權限摘要、feature flag 這類可重建讀取資料；[TTL](../00-knowledge-cards/ttl/) 與 [eviction](../00-knowledge-cards/eviction/) 用來控制資料新鮮度與容量；Redis data types 用來表達 set、sorted set、hash、stream 等不同資料形狀；presence store 適合即時連線狀態；distributed lock 適合需要短時間互斥的協調流程；pub/sub 適合即時 fan-out。
 
-接近真實網路服務的例子包括熱門商品頁、會員 session、WebSocket presence、rate limit counter 與跨節點通知。這些場景的共同問題是讀取節奏、過期策略與資料一致性，因此本模組會先處理資料形狀與失效邊界。
+接近真實網路服務的例子包括熱門商品頁、會員 session、WebSocket presence、[rate limit](../00-knowledge-cards/rate-limit/) counter 與跨節點通知。這些場景的共同問題是讀取節奏、過期策略與資料一致性，因此本模組會先處理資料形狀、[hot key](../00-knowledge-cards/hot-key/)、[cache stampede](../00-knowledge-cards/cache-stampede/)、[thundering herd](../00-knowledge-cards/thundering-herd/) 與失效邊界。
 
 ## 與語言教材的分工
 

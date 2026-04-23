@@ -25,6 +25,10 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 ## 教學模組
 
+### [前置知識卡片](00-knowledge-cards/)
+
+用原子化卡片整理 source of truth、transaction、migration、CDC、backfill、cutover、timeout、backoff、jitter、retry storm、load shedding、bulkhead、fallback、TTL、cache warmup、singleflight、broker、consumer lag、prefetch、redelivery、partition、offset、idempotency、outbox、backpressure、log schema、metrics、trace、SLO、error budget、authorization、BOLA、mass assignment、data masking、secret、TLS、audit 等後端 domain knowhow。這些卡片負責補足服務選型文章中的先備知識，讓章節可以專注在需求判讀與服務取捨。
+
 ### [模組零：後端需求分析與服務選型](00-service-selection/)
 
 整理後端需求分類、流量形狀、資料量、失敗代價、成本模型、錯誤定位、觀測訊號、備援切換與服務能力地圖，再從需求類型判斷資料庫、快取、訊息佇列、觀測平台與部署平台的選型方向。
@@ -74,6 +78,12 @@ Backend 章節討論具體服務時，應加入跨語言適配評估。這個評
 ## 與案例的關係
 
 Backend 案例應從服務需求出發。高併發、長連線、事件處理、資料庫、雲端基礎設施、資安與可觀測性都可以用跨語言案例說明；案例的責任是提供需求情境，服務章節的責任是說明後端能力本身。
+
+## 前置知識卡片規範
+
+Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of truth、transaction boundary、schema migration、timeout、deadline、exponential backoff、jitter、retry storm、thundering herd、transient failure、partial failure、cascading failure、load shedding、token bucket、dependency isolation、bulkhead、fallback、fail fast、retry budget、TTL、eviction、broker、consumer lag、dead-letter queue、replay runbook、重複投遞、idempotency、outbox、backpressure、rate limit、log schema、metrics、trace context、SLO、authorization、data masking、secret management、TLS、audit log、降級、停機、readiness 與 graceful shutdown 都是 domain knowhow；它們需要說明系統責任、產品後果、操作訊號與排障方式。
+
+每張卡片應維持一個概念，並至少包含概念位置、可觀察訊號、接近真實網路服務的例子與設計責任。卡片內容要能獨立閱讀；定義只是一個入口，完整卡片要讓讀者理解這個概念在事故、擴容、部署或資料修復時會如何影響決策。
 
 ## 暫定章節來源
 
