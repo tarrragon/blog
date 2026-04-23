@@ -229,7 +229,7 @@ case <-ctx.Done():
 
 drain queue 則需要另一個停止接收的協定，例如由擁有送出端的一方關閉 channel，再讓 worker range 到 channel 關閉。channel close 的所有權要留在送出端，因為送出端最清楚是否還會送資料。
 
-初學者最容易混淆「取消 context」和「關閉 channel」。context 表示這件工作該停了；channel close 表示不會再有新資料。兩者可以搭配，但語意不同。
+這裡的核心區分是「取消 context」和「關閉 channel」代表不同訊號。context 表示這件工作該停了；channel close 表示不會再有新資料。兩者可以搭配，但語意不同。
 
 ## 【判讀】worker 使用服務生命週期 context
 

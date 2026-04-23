@@ -18,16 +18,21 @@ weight: 6
 | Test environment | ephemeral database、container service、seed data      |
 | Release gate     | regression suite、migration check、rollback rehearsal |
 
+## 選型入口
+
+可靠性驗證選型的核心判斷是團隊要提前驗證哪一種失敗風險。CI pipeline 驗證每次變更的基本正確性；load test 驗證容量與延遲；fuzz campaign 驗證輸入邊界；chaos testing 驗證外部依賴或平台故障；test environment 與 release gate 則支撐穩定、可重現的驗證流程。
+
+CI pipeline 適合保護回歸；load test 適合高流量活動、容量規劃與瓶頸定位；fuzz campaign 適合 parser、protocol、payload validation 與安全邊界；chaos testing 適合 broker、database、network、node failure 等系統級風險；release gate 適合 migration、rollback 與跨服務相容性。
+
+接近真實網路服務的例子包括活動前驗證 checkout 容量、發版前驗證 migration、對 webhook parser 做 fuzz、在預備環境演練 broker 暫時中斷。這些場景的共同問題是事故前驗證，因此本模組會先處理測試分層、工作負載模型與失敗模式。
+
 ## 與語言教材的分工
 
 語言教材處理測試程式如何寫得可讀、可重現、可定位。Backend reliability 模組處理測試如何在 CI、環境、資料庫、broker、網路與部署流程中被執行。
 
-## 相關語言章節
+## 跨語言適配評估
 
-- [Go：table-driven test](../../go/05-error-testing/table-driven-test/)
-- [Go：並發行為測試](../../go/05-error-testing/concurrency-test/)
-- [Go 進階：race condition 檢查](../../go-advanced/05-testing-reliability/race-check/)
-- [Go 進階：CI、fuzz、load test 與 chaos testing](../../go-advanced/07-distributed-operations/reliability-pipeline/)
+可靠性驗證使用方式會受語言的測試框架、fixture 生態、並發測試能力、型別系統、fuzz 支援與容器化工具影響。同步 runtime 要測 thread pool、connection pool 與 timeout；async runtime 要測 event loop blocking、task cancellation 與 backpressure；動態語言要用 contract test 與 runtime validation 補足 schema 風險；強型別語言要把型別安全延伸到外部 payload 與 migration 相容性。
 
 ## 章節列表
 

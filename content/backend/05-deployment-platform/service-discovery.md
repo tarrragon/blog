@@ -11,7 +11,3 @@ weight: 4
 - endpoint discovery
 - configuration rollout
 - failure fallback
-
-## 相關語言章節
-
-- [Go：高併發控制與背壓](../../go/04-concurrency/backpressure/)

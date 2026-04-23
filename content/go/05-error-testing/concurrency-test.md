@@ -7,7 +7,7 @@ weight: 6
 
 並發測試的核心目標是驗證可觀察的同步行為，而不是猜測 goroutine 的執行順序。Go 的 goroutine 由 scheduler 安排，測試應該用 channel、context、WaitGroup 與 timeout 表達「什麼結果必須發生」。
 
-## 不要依賴 goroutine 執行順序
+## 並發測試應等待明確訊號
 
 並發程式的核心限制是執行順序不穩定。測試如果假設某個 goroutine 一定先跑，通常會變成偶發失敗。
 

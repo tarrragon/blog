@@ -31,7 +31,7 @@ weight: 1
 4. Isolation level、unique constraint 與 application-level validation 如何分工。
 5. Contract test 如何保護 memory repository 與 database repository 的一致行為。
 
-## 【觀察】transaction 是一致性邊界，不是加速技巧
+## 【觀察】transaction 是一致性邊界
 
 transaction 的核心用途是把一組資料庫操作綁成單一一致性單位。它不是用來讓程式更快，也不是預設每次寫入都該包起來。真正該思考的是：這個 usecase 哪些狀態要一起成功或一起失敗。
 

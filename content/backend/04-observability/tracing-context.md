@@ -11,7 +11,3 @@ weight: 3
 - context propagation
 - sampling
 - service graph
-
-## 相關語言章節
-
-- [Go：context](../../go/03-stdlib/context/)

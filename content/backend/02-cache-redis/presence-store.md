@@ -11,8 +11,3 @@ weight: 5
 - cross-node query
 - heartbeat / expiration
 - cleanup strategy
-
-## 相關語言章節
-
-- [Go：Go 常見服務場景總覽](../../go/06-practical/service-scenarios/)
-- [Go：跨節點 WebSocket](../../go-advanced/07-distributed-operations/cross-node-websocket/)

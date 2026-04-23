@@ -11,8 +11,3 @@ weight: 4
 - nullable handling
 - error translation
 - contract test
-
-## 相關語言章節
-
-- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
-- [Go：逐步遷移到 ports/adapters 架構](../../go/07-refactoring/hexagonal-migration/)

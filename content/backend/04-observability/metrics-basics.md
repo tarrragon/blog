@@ -11,7 +11,3 @@ weight: 2
 - latency histogram
 - error rate
 - SLI / SLO / error budget
-
-## 相關語言章節
-
-- [Go 進階：Observability pipeline、metrics 與 tracing](../../go-advanced/07-distributed-operations/observability-pipeline/)

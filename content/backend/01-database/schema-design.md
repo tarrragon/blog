@@ -11,7 +11,3 @@ weight: 2
 - primary key / foreign key
 - index 設計
 - naming convention
-
-## 相關語言章節
-
-- [Go：高併發下的 SQL 讀寫邊界](../../go/06-practical/data-access-boundaries/)

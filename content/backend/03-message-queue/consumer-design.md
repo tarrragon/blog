@@ -13,8 +13,3 @@ weight: 4
 - checkpoint 與 offset
 - idempotency key
 - replay safety
-
-## 相關語言章節
-
-- [Go 進階：多來源 event 融合](../../go-advanced/04-architecture-boundaries/event-fusion/)
-- [Go 進階：事件去重邏輯的重構策略](../../go/07-refactoring/dedup-refactor/)

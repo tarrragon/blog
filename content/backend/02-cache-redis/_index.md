@@ -18,6 +18,14 @@ weight: 2
 | Distributed lock | lock 語意、租約、失效與風險                      |
 | Pub/Sub          | 即時通知、跨節點 fan-out、可靠性限制             |
 
+## 選型入口
+
+快取選型的核心判斷是資料是否可以重建，以及讀取壓力是否集中。當正式狀態已經存在於資料庫或下游服務，但熱門讀取造成延遲、成本或容量壓力時，快取與 Redis 值得優先評估。
+
+Cache aside 適合商品詳情、權限摘要、feature flag 這類可重建讀取資料；TTL 與 eviction 用來控制資料新鮮度與容量；Redis data types 用來表達 set、sorted set、hash、stream 等不同資料形狀；presence store 適合即時連線狀態；distributed lock 適合需要短時間互斥的協調流程；pub/sub 適合即時 fan-out。
+
+接近真實網路服務的例子包括熱門商品頁、會員 session、WebSocket presence、rate limit counter 與跨節點通知。這些場景的共同問題是讀取節奏、過期策略與資料一致性，因此本模組會先處理資料形狀與失效邊界。
+
 ## 與語言教材的分工
 
 語言教材處理 interface / protocol、並發或非同步保護、timeout 與 cache 呼叫邊界。Backend cache 模組處理 Redis command、資料結構、失效策略、跨節點一致性與操作風險。
@@ -32,9 +40,6 @@ weight: 2
 | [2.4](distributed-lock/)       | distributed lock 與租約       | 分辨鎖語意、租約風險與適用場景                       |
 | [2.5](presence-store/)         | presence store 與即時狀態     | 追蹤線上狀態、跨節點查詢與過期清理                   |
 
-## 相關語言章節
+## 跨語言適配評估
 
-- [Go：指標與資料複製邊界](../../go/02-types-data/pointers-copy/)
-- [Go 進階：共享狀態與複製邊界](../../go-advanced/01-concurrency-patterns/shared-state/)
-- [Go 進階：跨節點 WebSocket](../../go-advanced/07-distributed-operations/cross-node-websocket/)
-- [Go：高併發下的 Redis 讀寫邊界](../../go/02-cache-redis/high-concurrency-access/)
+快取與 Redis 的使用方式會受語言的資料複製模型、client lifecycle、序列化成本與並發模型影響。同步 runtime 要避免每個 request 建立連線；async runtime 要避免 blocking Redis client 卡住 event loop；輕量並發 runtime 要用 timeout、rate limit 與 pipeline 邊界保護 Redis。動態語言要特別留意 cache value schema 演進；強型別語言則要避免把內部型別直接當成跨服務快取 contract。

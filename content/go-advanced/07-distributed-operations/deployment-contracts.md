@@ -43,7 +43,7 @@ Go 程式不會在真空裡執行。Kubernetes、systemd、load balancer、conta
 - connection draining
 - memory pressure
 
-## 【判讀】health 與 readiness 不是同一件事
+## 【判讀】health 與 readiness 有不同合約
 
 health 通常表示服務自己還活著，readiness 則表示它是否適合接新流量。
 

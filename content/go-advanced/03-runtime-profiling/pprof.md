@@ -35,7 +35,7 @@ pprof 診斷的核心起點是先確認你要回答哪個問題。不同 profile
 
 Profile 不是一次全抓就會自動給答案。先問清楚問題，再抓對應資料，分析成本會低很多。
 
-## 【判讀】pprof endpoint 是診斷入口，不是公開 API
+## 【判讀】pprof endpoint 是受控診斷入口
 
 pprof endpoint 的核心安全責任是受控地暴露診斷資訊。它可能包含 goroutine stack、函式名稱、路徑、記憶體配置模式與部分請求脈絡；正式服務應把 `/debug/pprof/` 放在明確啟用、內部網路或驗證保護之後。
 

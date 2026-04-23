@@ -11,7 +11,3 @@ weight: 3
 - eviction policy
 - hot data / cold data
 - capacity planning
-
-## 相關語言章節
-
-- [Go：高併發控制與背壓](../../go/04-concurrency/backpressure/)

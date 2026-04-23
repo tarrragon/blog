@@ -19,7 +19,7 @@ Go 的並發優勢在於 runtime 讓大量 goroutine 的生命週期、排程與
 
 ---
 
-## 【觀察】goroutine 不是 OS thread
+## 【觀察】goroutine 由 Go runtime 管理
 
 goroutine 是 Go runtime 管理的輕量工作單位，OS thread 則是作業系統實際排程的執行緒。你通常不會直接手動管理 goroutine 對應到哪一條 thread；Go runtime 會負責把很多 goroutine 排程到較少的 OS thread 上。
 

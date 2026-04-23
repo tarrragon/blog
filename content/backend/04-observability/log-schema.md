@@ -11,8 +11,3 @@ weight: 1
 - correlation fields
 - index 與 retention
 - query pattern
-
-## 相關語言章節
-
-- [Go：log/slog](../../go/03-stdlib/slog/)
-- [Go 進階：結構化日誌欄位設計](../../go-advanced/06-production-operations/log-fields/)

@@ -105,7 +105,7 @@ func TestTokenGenerator(t *testing.T) {
 
 `func() time.Time` 比完整介面更輕量，適合只需要目前時間的情境。若元件還需要 timer、ticker 或 sleep，才需要更完整的 clock abstraction。
 
-## duration 測試不要真的等待
+## duration 測試應控制時間
 
 測試 timeout 的核心原則是驗證邏輯，不是讓測試真的睡很久。`time.Sleep` 會讓測試慢，也會讓測試受排程影響。
 

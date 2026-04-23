@@ -134,9 +134,9 @@ func (f fakeUsers) FindName(userID string) (string, bool) {
 
 這就是 Go interface 最實用的地方：它讓依賴變小，讓測試變簡單。
 
-## 何時不要用 interface
+## 何時先保留 concrete type
 
-interface 的使用邊界是：沒有明確替換或測試需求時，先不要抽象。以下情境通常先不要抽 interface：
+interface 的使用邊界是：替換需求或測試替身需求清楚時，再抽出小介面。以下情境通常適合先保留 concrete type：
 
 - 只有一個 concrete type，而且沒有測試替身需求
 - interface 只是完整複製 concrete type 的所有方法

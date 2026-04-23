@@ -125,7 +125,7 @@ func (c *Client) writePump() {
 
 每次寫入前設定 write deadline。這包含正常訊息、ping、close message；只保護部分寫入會留下卡住路徑。
 
-## 【判讀】heartbeat 失敗不是特殊清理流程
+## 【判讀】heartbeat 失敗走共用清理流程
 
 Heartbeat 失敗的核心語意是連線不可用。它應該進入和 read error、write error、client disconnect 相同的 unregister 流程，而不是在 ping 錯誤處重寫一套清理。
 

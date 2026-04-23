@@ -13,7 +13,3 @@ weight: 3
 - relay worker
 - publish 成功與失敗補償
 - duplicate publish 的處理方式
-
-## 相關語言章節
-
-- [Go：資料庫 transaction 與 schema migration](../../go-advanced/07-distributed-operations/database-transactions/)

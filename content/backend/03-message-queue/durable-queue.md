@@ -13,7 +13,3 @@ weight: 2
 - retry、backoff、jitter
 - dead-letter queue
 - ordering 與 requeue 風險
-
-## 相關語言章節
-
-- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)

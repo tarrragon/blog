@@ -11,7 +11,3 @@ weight: 1
 - fast/slow split
 - artifact
 - environment variables
-
-## 相關語言章節
-
-- [Go：table-driven test](../../go/05-error-testing/table-driven-test/)

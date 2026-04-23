@@ -43,7 +43,7 @@ weight: 6
 - load test：容量與延遲是否能接受
 - chaos test：失敗發生時系統能不能復原
 
-## 【判讀】race test 不是替代設計
+## 【判讀】race test 是輔助檢查
 
 `go test -race` 能抓出實際跑到的資料競爭，但它不是正確性保證。真正的重點仍然是：
 

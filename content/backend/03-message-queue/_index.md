@@ -18,16 +18,21 @@ weight: 3
 | Outbox        | transaction outbox、poller、publisher、重試策略           |
 | Idempotency   | idempotency key、dedup store、replay safety               |
 
+## 選型入口
+
+訊息佇列選型的核心判斷是工作離開 request 或 process 後需要什麼投遞保證。當工作需要排隊、重試、跨服務傳遞、多 consumer 協作或事件補送時，broker 與 outbox 值得優先評估。
+
+RabbitMQ 適合明確 routing、ack/nack 與工作佇列；NATS 適合 subject-based messaging 與較輕量的服務通訊，搭配 JetStream 可加入持久化；Kafka 適合高吞吐事件流、partition 與長期 replay；Redis Streams 適合 Redis 生態內的 stream 與 consumer group；outbox 解決資料寫入與事件發布的一致性；idempotency 解決重複投遞造成的結果穩定性。
+
+接近真實網路服務的例子包括付款後寄信、影片轉檔、訂單事件傳給多個系統、IoT readings pipeline 與跨節點通知。這些場景的共同問題是 delivery semantics，因此本模組會先處理 broker 模型、retry、DLQ、outbox 與 consumer 設計。
+
 ## 與語言教材的分工
 
 語言教材處理本地 backpressure、processor 邊界、port / protocol 設計與單一 process 內的去重。Backend message queue 模組處理 broker selection、ack/nack、DLQ、consumer group、outbox 與跨 process 重試。
 
-## 相關語言章節
+## 跨語言適配評估
 
-- [Go：channel](../../go/04-concurrency/channel/)
-- [Go 進階：非阻塞送出與事件丟棄策略](../../go-advanced/01-concurrency-patterns/non-blocking-send/)
-- [Go 進階：多來源 event 融合](../../go-advanced/04-architecture-boundaries/event-fusion/)
-- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
+訊息佇列使用方式會受語言的 worker model、錯誤處理、序列化、背景任務框架與 idempotency 設計影響。同步 runtime 要控制 consumer thread 數量與 ack timeout；async runtime 要處理 backpressure 與 long-running handler；輕量並發 runtime 要限制同時處理量，避免 consumer 擴張超過下游容量。強型別語言適合建立 event schema 與 command model；動態語言要補足 payload validation、dead-letter 診斷與重播測試。
 
 ## 章節列表
 

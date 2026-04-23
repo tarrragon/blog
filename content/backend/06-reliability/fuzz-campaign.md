@@ -11,7 +11,3 @@ weight: 3
 - corpus management
 - crash reproduction
 - minimization
-
-## 相關語言章節
-
-- [Go：錯誤處理與測試在高併發服務中的角色](../../go/05-error-testing/service-reliability/)

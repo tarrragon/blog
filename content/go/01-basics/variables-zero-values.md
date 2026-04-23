@@ -168,7 +168,7 @@ scores := make(map[string]int)
 scores["alice"] = 10
 ```
 
-這個差異是初學者常見錯誤：`nil` slice 通常容易處理，`nil` map 則不能直接寫入。
+這個差異是零值判讀的核心陷阱：`nil` slice 通常容易處理，`nil` map 則需要先初始化才能寫入。
 
 ## 命名要服務讀者
 

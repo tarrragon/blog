@@ -11,8 +11,3 @@ weight: 1
 - entrypoint / command
 - resource limit
 - environment variable / secret
-
-## 相關語言章節
-
-- [Go：defer 與資源清理](../../go/03-stdlib/defer-cleanup/)
-- [Go：標準庫如何支撐服務型 Go](../../go/03-stdlib/service-support/)

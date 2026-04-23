@@ -13,8 +13,3 @@ weight: 1
 - push 與 pull 模型
 - at-most-once、at-least-once、exactly-once 的實務差異
 - consumer 與 ack/nack 的基本流程
-
-## 相關語言章節
-
-- [Go：channel](../../go/04-concurrency/channel/)
-- [Go 進階：非阻塞送出與事件丟棄策略](../../go-advanced/01-concurrency-patterns/non-blocking-send/)

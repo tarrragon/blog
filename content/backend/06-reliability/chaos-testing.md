@@ -11,8 +11,3 @@ weight: 4
 - database latency
 - node restart
 - network jitter
-
-## 相關語言章節
-
-- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
-- [Go 進階：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)

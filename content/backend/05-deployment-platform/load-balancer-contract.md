@@ -11,7 +11,3 @@ weight: 3
 - draining / connection closing
 - idle timeout
 - sticky session
-
-## 相關語言章節
-
-- [Go 進階：健康檢查與診斷 endpoint](../../go-advanced/06-production-operations/health-diagnostics/)

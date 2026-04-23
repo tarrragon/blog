@@ -35,7 +35,7 @@ WebSocket action 的核心風險是前後端快速加功能時，訊息格式變
 
 這種訊息描述 UI 發生什麼，不是描述 client 想對服務做什麼。服務端應該接收穩定 action，例如 `subscribe_topic`、`unsubscribe_topic`、`list_subscriptions`。
 
-## 【判讀】action 是 client intent，不是 domain event
+## 【判讀】action 是 client intent
 
 Client action 的核心語意是「client 想做什麼」。它不是 domain event，因為它還沒被驗證、授權或套用規則。Domain event 表示已經發生的事，action 表示請求。
 

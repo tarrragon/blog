@@ -11,7 +11,3 @@ weight: 4
 - renewal / expiration
 - split brain risk
 - when to avoid distributed lock
-
-## 相關語言章節
-
-- [Go：高併發下的 Redis 讀寫邊界](../../go/06-practical/data-access-boundaries/)
