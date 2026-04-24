@@ -14,7 +14,7 @@ weight: 74
 | 回應層資料揭露 | 回應欄位超過最小必要範圍 | 查詢便利性與欄位分級要分層治理 | [Snowflake 2024](red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) |
 | 匯出與分享流程 | 合法匯出可被放大成外送路徑 | 高風險匯出要有獨立事件節奏 | [WS_FTP 2023](red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/) |
 | 備份與復原鏈 | 回復能力與外送風險同時上升 | 備份資產要獨立權限域與稽核 | [LastPass 2022](red-team/cases/data-exfiltration/lastpass-2022-backup-chain/) |
-| 跨組織資料交換 | 傳輸中樞事件會擴散多方影響 | 受影響交易盤點與通知節奏要同步 | [GoAnywhere 2023](red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/) |
+| 跨組織資料交換 | 傳輸中樞事件會擴散多方影響 | [impact scope](../knowledge-cards/impact-scope/) 盤點與通知節奏要同步 | [GoAnywhere 2023](red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/) |
 
 回應層資料揭露的責任是限制最小揭露面。這個環節的判讀重點是欄位分級與查詢目的是否一致。
 
@@ -22,7 +22,7 @@ weight: 74
 
 備份與復原鏈的責任是平衡可恢復性與存取邊界。這個環節的判讀重點是備份權限域與正式環境的分離程度。
 
-跨組織資料交換的責任是保持交易可追蹤與通知可收斂。這個環節的判讀重點是影響面盤點與通報節奏。
+跨組織資料交換的責任是保持交易可追蹤與通知可收斂。這個環節的判讀重點是 [impact scope](../knowledge-cards/impact-scope/) 盤點與通報節奏。
 
 ## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
 
@@ -37,7 +37,7 @@ weight: 74
 - [data-classification](../knowledge-cards/data-classification/) 與回應欄位配置差異。
 - 匯出操作的時序異常與操作角色異常。
 - 備份讀取、恢復與下載行為的異常集中。
-- 跨組織交換資料的受影響清單完整度。
+- 跨組織交換資料的 [impact scope](../knowledge-cards/impact-scope/) 完整度。
 
 ## 風險邊界
 

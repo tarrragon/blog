@@ -13,7 +13,7 @@ weight: 5
 | --- | --- | --- | --- |
 | 入口暴露面 | 入口分級與實際可達範圍不一致 | 入口清單與責任鏈要先對齊 | [MOVEit 2023](../07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/) |
 | 生命周期訊號 | readiness、draining、shutdown 節奏不一致 | 平台合約要先定義再驗證 | [Ivanti 2024](../07-security-data-protection/red-team/cases/edge-exposure/ivanti-2024-vpn-chain/) |
-| 設定與密鑰下發 | 設定漂移與權限擴張同時發生 | 高風險設定要進 release gate | [F5 BIG-IP 2023](../07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/) |
+| 設定與密鑰下發 | 設定漂移與權限擴張同時發生 | 高風險設定要進 release gate，並分離 [management plane](../knowledge-cards/management-plane/) | [F5 BIG-IP 2023](../07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/) |
 | 交付切換節奏 | 回滾與切換條件不清晰 | 先定停損條件再定交付速度 | [TeamCity 2024](../07-security-data-protection/red-team/cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/) |
 
 ## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）

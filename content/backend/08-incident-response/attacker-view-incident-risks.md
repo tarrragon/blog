@@ -13,7 +13,7 @@ weight: 7
 | --- | --- | --- | --- |
 | 啟動與分級 | 事件啟動節奏晚於擴散節奏 | 分級門檻要對齊服務影響邊界 | [MGM 2023](../07-security-data-protection/red-team/cases/identity-access/mgm-2023-identity-lateral-impact/) |
 | 指揮與責任 | 角色定義存在但決策鏈延遲 | 指揮鏈與責任鏈要同時可回查 | [ServiceNow 2024](../07-security-data-protection/red-team/cases/edge-exposure/servicenow-cve-2024-4879-enterprise-platform/) |
-| 止血與回復 | 止血完成後仍缺驗證關閉 | 止血、回復、驗證要形成閉環 | [Citrix ADC 後續事件](../07-security-data-protection/red-team/cases/edge-exposure/citrix-adc-2023-follow-on-session-risk/) |
+| 止血與回復 | [containment](../knowledge-cards/containment/) 完成後仍缺驗證關閉 | 止血、回復、驗證要形成閉環 | [Citrix ADC 後續事件](../07-security-data-protection/red-team/cases/edge-exposure/citrix-adc-2023-follow-on-session-risk/) |
 | 交接與通訊 | 技術時序與通報時序偏移 | 交接格式要先標準化再演練 | [Change Healthcare 2024](../07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/) |
 
 ## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）

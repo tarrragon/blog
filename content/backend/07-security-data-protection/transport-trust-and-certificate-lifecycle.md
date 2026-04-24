@@ -11,8 +11,8 @@ weight: 75
 
 | 環節 | 主要問題 | 注意事項 | 優先案例 |
 | --- | --- | --- | --- |
-| 邊界到服務傳輸 | 入口會話可被重放或延續利用 | 事件後會話失效與憑證收斂要同步 | [Citrix Bleed 2023](red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) |
-| 管理平面信任 | 管理流量與業務流量信任混層 | 管理平面需要獨立信任節奏 | [F5 BIG-IP 2023](red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/) |
+| 邊界到服務傳輸 | 入口會話可被重放或延續利用 | 事件後 [session invalidation](../knowledge-cards/session-invalidation/) 與憑證收斂要同步 | [Citrix Bleed 2023](red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) |
+| 管理平面信任 | 管理流量與業務流量信任混層 | [management plane](../knowledge-cards/management-plane/) 需要獨立信任節奏 | [F5 BIG-IP 2023](red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/) |
 | 憑證生命周期 | 輪替、撤銷、回查節奏不一致 | 生命周期要與事件節奏對齊 | [Storm-0558 2023](red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) |
 | 供應商傳輸鏈 | 第三方傳輸信任可放大影響面 | 供應商事件要觸發信任重評估 | [Okta + Cloudflare 2023](red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/) |
 

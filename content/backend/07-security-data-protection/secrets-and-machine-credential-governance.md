@@ -11,12 +11,12 @@ weight: 76
 
 | 環節 | 主要問題 | 注意事項 | 優先案例 |
 | --- | --- | --- | --- |
-| 第三方 token 鏈 | 供應商節點事件可直接擴散 | token 分域與撤銷節奏要可回查 | [GitHub OAuth 2022](red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/) |
+| 第三方 token 鏈 | 供應商節點事件可直接擴散 | token 分域與 [token revocation](../knowledge-cards/token-revocation/) 節奏要可回查 | [GitHub OAuth 2022](red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/) |
 | CI secrets 集中 | 集中 secrets 提高單點風險 | 事件時需要分批輪替與優先順序 | [CircleCI 2023](red-team/cases/supply-chain/circleci-2023-secrets-rotation/) |
 | 支援流程憑證 | 支援事件會傳導到內部憑證 | 外部事件要觸發內部憑證收斂 | [Cloudflare 2023](red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/) |
 | 機器憑證生命周期 | 發放與淘汰節奏不一致 | 生命周期節奏要與事件節奏對齊 | [Storm-0558 2023](red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) |
 
-第三方 token 鏈的責任是限制外部信任擴散。這個環節的判讀重點是 token 範圍與撤銷時序。
+第三方 token 鏈的責任是限制外部信任擴散。這個環節的判讀重點是 token 範圍與 [token revocation](../knowledge-cards/token-revocation/) 時序。
 
 CI secrets 集中的責任是維持交付可用性與收斂速度平衡。這個環節的判讀重點是分層輪替策略與依賴盤點完整度。
 
