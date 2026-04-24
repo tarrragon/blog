@@ -90,7 +90,7 @@ weight: 1
 
 ## 【判讀】服務交付不穩通常先看部署平台
 
-部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 [rolling update](../knowledge-cards/rolling-update/)、[liveness](../knowledge-cards/health-check-liveness)、[load balancer](../knowledge-cards/load-balancer/)、[service discovery](../knowledge-cards/service-discovery/)、container image 或資源限制，選型應先進入部署平台與網路入口模組。
+部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 [rolling update](../knowledge-cards/rolling-update/)、[liveness](../knowledge-cards/health-check-liveness)、[load balancer](../knowledge-cards/load-balancer/)、[service registry](../knowledge-cards/service-registry/)、[service discovery](../knowledge-cards/service-discovery/)、container image 或資源限制，選型應先進入部署平台與網路入口模組。
 
 接近真實網路服務的例子包括：
 

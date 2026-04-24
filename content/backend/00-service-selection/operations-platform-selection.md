@@ -90,7 +90,7 @@ deployment platform 的核心責任是讓服務穩定啟動、更新、接流量
 
 - [rolling update](../knowledge-cards/rolling-update/) 時新版本還沒 ready 就接到流量
 - pod 被停止時還有 worker 和長連線尚未清理
-- 多個 service instance 需要透過 [load balancer](../knowledge-cards/load-balancer/) 與 [service discovery](../knowledge-cards/service-discovery/) 協作
+- 多個 service instance 需要透過 [load balancer](../knowledge-cards/load-balancer/) 與 [service registry](../knowledge-cards/service-registry/)、[service discovery](../knowledge-cards/service-discovery/) 協作
 
 這類平台的主要風險是程式與平台合約不一致。服務要提供 [readiness](../knowledge-cards/readiness)、[liveness](../knowledge-cards/health-check-liveness)、[graceful shutdown](../knowledge-cards/graceful-shutdown) 與 resource usage 訊號；平台要根據這些訊號調度流量。
 

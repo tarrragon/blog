@@ -71,7 +71,7 @@ weight: 9
 
 ## 【判讀】回復流程是可靠性設計的一部分
 
-回復設計的核心問題是「錯誤發生後如何回到正確狀態」。`DLQ`、`replay`、`reconciliation` 與 `runbook` 應該一起定義。
+回復設計的核心問題是「錯誤發生後如何回到正確狀態」。`DLQ`、`replay`、[Data Reconciliation](../knowledge-cards/data-reconciliation/) 與 `runbook` 應該一起定義。
 
 對應卡片：
 

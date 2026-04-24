@@ -10,6 +10,6 @@ weight: 4
 ## 大綱
 
 - [consumer group](../knowledge-cards/consumer-group) 與 [partition](../knowledge-cards/partition) / subscription
-- [checkpoint](../knowledge-cards/checkpoint) 與 [offset](../knowledge-cards/offset)
+- [checkpoint](../knowledge-cards/checkpoint/) 與 [offset](../knowledge-cards/offset/)
 - [idempotency](../knowledge-cards/idempotency) key
 - replay safety

@@ -277,6 +277,9 @@ weight: -1
 | [Tenant Boundary](tenant-boundary/)                                     | 多租戶資料與資源如何隔離             | SaaS、RBAC                     |
 | [Least Privilege](least-privilege/)                                     | 身份如何只取得必要權限               | IAM、database user             |
 | [Security Misconfiguration](security-misconfiguration/)                 | 設定錯誤如何暴露內部能力             | CORS、debug、cloud             |
+| [Attack Surface](attack-surface/)                                       | 系統哪些對外暴露面最先被探測       | public API、admin route、webhook |
+| [Trust Boundary](trust-boundary/)                                       | 哪些位置開始不能沿用原本信任假設   | auth boundary、tenant、network  |
+| [Abuse Case](abuse-case/)                                               | 合法功能如何被惡意轉用             | export、invite、reset           |
 | [WAF](waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack             |
 | [Feature Flag](feature-flag/)                                           | 功能開關如何分離部署與啟用           | rollout、experiment、rollback  |
 | [Input Validation](input-validation/)                                   | 入口資料如何檢查格式與語意           | API、webhook                   |

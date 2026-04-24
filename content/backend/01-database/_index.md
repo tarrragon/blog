@@ -13,7 +13,7 @@ weight: 1
 | ------------------ | ------------------------------------------------------------------- |
 | SQLite             | embedded [database](../knowledge-cards/database)、單機服務、[migration](../knowledge-cards/migration)、測試資料庫                  |
 | PostgreSQL         | schema design、index、[transaction](../knowledge-cards/transaction)、[isolation level](../knowledge-cards/isolation-level)、[connection pool](../knowledge-cards/connection-pool) |
-| Migration          | versioned schema、rollback、expand/contract migration               |
+| Migration          | versioned schema、rollback、[Expand / Contract](../knowledge-cards/expand-contract/) migration               |
 | Transaction        | unit of work、[transaction boundary](../knowledge-cards/transaction-boundary)、deadlock、retry                 |
 | Repository [adapter](../knowledge-cards/repository-adapter/) | SQL row mapping、[contract](../knowledge-cards/contract/) test、錯誤轉換                            |
 

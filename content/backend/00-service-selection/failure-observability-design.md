@@ -91,7 +91,7 @@ weight: 7
 
 ## 【判讀】備援切換要先定義切換條件
 
-備援切換的核心責任是讓系統在依賴、節點或區域失效時轉到可用路徑。切換可以發生在 client、[load balancer](../knowledge-cards/load-balancer/)、[service discovery](../knowledge-cards/service-discovery/)、[Integration Adapter](../knowledge-cards/adapter/)、queue consumer 或資料層；每一層都需要明確條件。
+備援切換的核心責任是讓系統在依賴、節點或區域失效時轉到可用路徑。切換可以發生在 client、[load balancer](../knowledge-cards/load-balancer/)、[service registry](../knowledge-cards/service-registry/)、[service discovery](../knowledge-cards/service-discovery/)、[Integration Adapter](../knowledge-cards/adapter/)、queue consumer 或資料層；每一層都需要明確條件。
 
 接近真實網路服務的例子包括：
 
