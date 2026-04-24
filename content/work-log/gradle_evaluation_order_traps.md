@@ -9,11 +9,11 @@ tags: ["gradle", "android"]
 
 這些錯誤表面訊息不同，但根本原因都是「callback 註冊得太晚，或屬性被賦值得太晚」：
 
-| 錯誤訊息 | 實際含義 |
-|---|---|
-| `Cannot run Project.afterEvaluate(Closure) when the project is already evaluated` | 對象已 evaluate 完，註冊 callback 失敗 |
-| `The value for property 'languageVersion' is final and cannot be changed any further` | 屬性已被 finalize，後續賦值失敗 |
-| 覆寫了 plugin 設定但沒生效 | 覆寫時機早於 plugin，被 plugin 蓋回去 |
+| 錯誤訊息                                                                              | 實際含義                               |
+| ------------------------------------------------------------------------------------- | -------------------------------------- |
+| `Cannot run Project.afterEvaluate(Closure) when the project is already evaluated`     | 對象已 evaluate 完，註冊 callback 失敗 |
+| `The value for property 'languageVersion' is final and cannot be changed any further` | 屬性已被 finalize，後續賦值失敗        |
+| 覆寫了 plugin 設定但沒生效                                                            | 覆寫時機早於 plugin，被 plugin 蓋回去  |
 
 想正確治理這些情境，必須先理解 Gradle configuration 的時序模型。
 
@@ -194,12 +194,12 @@ subprojects {
 
 回到時序圖：
 
-| 順序 | 執行內容 |
-|---|---|
-| 1 | `subprojects {}` 內的 `plugins.withId` callback 註冊 |
-| 2 | subproject build.gradle 開始執行 |
-| 3 | plugin 被 apply → `plugins.withId` callback 觸發（這裡設 17） |
-| 4 | plugin build.gradle 繼續執行 → `android { compileOptions = 1.8 }` |
+| 順序 | 執行內容                                                          |
+| ---- | ----------------------------------------------------------------- |
+| 1    | `subprojects {}` 內的 `plugins.withId` callback 註冊              |
+| 2    | subproject build.gradle 開始執行                                  |
+| 3    | plugin 被 apply → `plugins.withId` callback 觸發（這裡設 17）     |
+| 4    | plugin build.gradle 繼續執行 → `android { compileOptions = 1.8 }` |
 
 第 4 步晚於第 3 步，覆蓋了我們的 17。
 
@@ -248,9 +248,9 @@ flowchart TD
 
 ## 判斷「時機太早還是太晚」的速查
 
-| 現象 | 時機狀態 | 該往哪搬 |
-|---|---|---|
-| callback 註冊失敗（already evaluated） | 太晚 | 提前，或跳過已 evaluate 的對象 |
-| 屬性賦值失敗（is final） | 太晚 | 提前到屬性 finalize 之前的 hook |
-| 我設的值被蓋掉 | 太早 | 延後到對方設定之後（通常是 afterEvaluate） |
-| task 上設了值但沒生效 | 取決於 plugin | 看 plugin 有沒有從 extension 同步的機制 |
+| 現象                                   | 時機狀態      | 該往哪搬                                   |
+| -------------------------------------- | ------------- | ------------------------------------------ |
+| callback 註冊失敗（already evaluated） | 太晚          | 提前，或跳過已 evaluate 的對象             |
+| 屬性賦值失敗（is final）               | 太晚          | 提前到屬性 finalize 之前的 hook            |
+| 我設的值被蓋掉                         | 太早          | 延後到對方設定之後（通常是 afterEvaluate） |
+| task 上設了值但沒生效                  | 取決於 plugin | 看 plugin 有沒有從 extension 同步的機制    |

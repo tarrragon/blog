@@ -79,13 +79,13 @@ Non-blocking send 不是比較進階的寫法。它只是把 backpressure 從「
 
 滿載策略的核心判斷是資料語意。每種事件都應先定義保留等級：必須保存、可降級、可覆蓋、可取樣，或可延後處理。這個等級決定 channel 滿載時要等待、回錯、丟棄、覆蓋或轉交可靠儲存。
 
-| 事件類型           | 建議策略                       | 理由                          |
-| ------------------ | ------------------------------ | ----------------------------- |
-| [audit log](../../backend/knowledge-cards/audit-log)          | 不應直接丟，應寫可靠儲存或回錯 | 資料遺失會破壞稽核            |
-| UI 即時提示        | 可丟棄或覆蓋                   | 使用者可重新查詢狀態          |
-| 狀態轉移事件       | 通常不應丟                     | 會造成 [source of truth](../../backend/knowledge-cards/source-of-truth) 不一致 |
-| [metrics](../../backend/knowledge-cards/metrics) sample     | 可取樣或丟棄                   | 趨勢比單筆資料重要            |
-| background refresh | 可跳過本輪                     | 下次仍可重新計算              |
+| 事件類型                                                | 建議策略                       | 理由                                                                           |
+| ------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------ |
+| [audit log](../../backend/knowledge-cards/audit-log)    | 不應直接丟，應寫可靠儲存或回錯 | 資料遺失會破壞稽核                                                             |
+| UI 即時提示                                             | 可丟棄或覆蓋                   | 使用者可重新查詢狀態                                                           |
+| 狀態轉移事件                                            | 通常不應丟                     | 會造成 [source of truth](../../backend/knowledge-cards/source-of-truth) 不一致 |
+| [metrics](../../backend/knowledge-cards/metrics) sample | 可取樣或丟棄                   | 趨勢比單筆資料重要                                                             |
+| background refresh                                      | 可跳過本輪                     | 下次仍可重新計算                                                               |
 
 這個表格的重點不是固定答案，而是要求每種事件都要有明確策略。若團隊只說「channel 滿了就 default」，通常代表資料語意還沒有想清楚。
 

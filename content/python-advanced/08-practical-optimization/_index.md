@@ -39,22 +39,22 @@ weight: 8
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-| ---- | ---- | -------- |
-| [8.1](parallel-processing/) | 並行處理實戰 | 將 I/O 密集任務並行化 |
-| [8.2](performance-tuning/) | 效能調優實戰 | 測量、分析、優化的完整流程 |
+| 章節                        | 主題         | 關鍵收穫                   |
+| --------------------------- | ------------ | -------------------------- |
+| [8.1](parallel-processing/) | 並行處理實戰 | 將 I/O 密集任務並行化      |
+| [8.2](performance-tuning/)  | 效能調優實戰 | 測量、分析、優化的完整流程 |
 
 ## 案例研究
 
 基於 `.claude/lib` 實際程式碼的進階案例：
 
-| 案例 | 素材 | 學習重點 |
-| ---- | ---- | -------- |
-| [並行檔案檢查](case-studies/parallel-file-check/) | markdown_link_checker.py | ThreadPoolExecutor |
-| [並行 Hook 驗證](case-studies/parallel-hook-validation/) | hook_validator.py | as_completed + 進度報告 |
-| [正則表達式預編譯](case-studies/regex-precompile/) | hook_validator.py | re.compile 效能提升 |
-| [LRU 快取](case-studies/lru-cache-branch/) | git_utils.py | functools.lru_cache |
-| [資料結構選擇](case-studies/data-structure-choice/) | hook_validator.py | list vs set 查詢效能 |
+| 案例                                                     | 素材                     | 學習重點                |
+| -------------------------------------------------------- | ------------------------ | ----------------------- |
+| [並行檔案檢查](case-studies/parallel-file-check/)        | markdown_link_checker.py | ThreadPoolExecutor      |
+| [並行 Hook 驗證](case-studies/parallel-hook-validation/) | hook_validator.py        | as_completed + 進度報告 |
+| [正則表達式預編譯](case-studies/regex-precompile/)       | hook_validator.py        | re.compile 效能提升     |
+| [LRU 快取](case-studies/lru-cache-branch/)               | git_utils.py             | functools.lru_cache     |
+| [資料結構選擇](case-studies/data-structure-choice/)      | hook_validator.py        | list vs set 查詢效能    |
 
 ## 可執行程式碼
 
@@ -72,8 +72,8 @@ practical-optimization/
 
 ## 先備知識
 
-| 章節 | 需要先讀 |
-| ---- | -------- |
+| 章節             | 需要先讀                                                     |
+| ---------------- | ------------------------------------------------------------ |
 | 8.1 並行處理實戰 | 入門系列 [3.7 並行處理](../../python/03-stdlib/concurrency/) |
 | 8.2 效能調優實戰 | 入門系列 [3.8 效能優化](../../python/03-stdlib/performance/) |
 

@@ -22,15 +22,15 @@ weight: 0
 
 需求分類的第一個判斷是「這個功能其實包含哪些後端責任」。例如一個電商結帳流程看起來是單一功能，但它可能同時需要保存訂單、查商品與庫存、呼叫付款、寄通知、更新報表、記錄操作訊號與支援發版回滾。
 
-| 需求類型 | 核心問題 | 常見情境 |
-| -------- | -------- | -------- |
-| 狀態保存 | 系統承認哪份資料是正式狀態 | 訂單、會員、付款、權限 |
-| 讀取壓力 | 同一份資料被大量重複讀取 | 商品頁、權限摘要、首頁推薦 |
-| 非同步工作 | request 結束後仍要可靠處理 | 寄信、轉檔、同步外部系統 |
-| 即時互動 | client 需要持續接收狀態變化 | 聊天、通知、進度更新、presence |
-| 操作診斷 | 出事時要知道原因與影響範圍 | [log](../knowledge-cards/log/)、metric、[trace](../knowledge-cards/trace/)、[dashboard](../knowledge-cards/dashboard/) |
-| 服務交付 | 服務要穩定發版、擴容與接流量 | [container](../knowledge-cards/container/)、[load balancer](../knowledge-cards/load-balancer/)、[readiness](../knowledge-cards/readiness/) |
-| 可靠性驗證 | 事故前要驗證容量與失敗情境 | [CI pipeline](../knowledge-cards/ci-pipeline/)、[load test](../knowledge-cards/load-test/)、fuzz、[chaos test](../knowledge-cards/chaos-test/) |
+| 需求類型   | 核心問題                     | 常見情境                                                                                                                                       |
+| ---------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 狀態保存   | 系統承認哪份資料是正式狀態   | 訂單、會員、付款、權限                                                                                                                         |
+| 讀取壓力   | 同一份資料被大量重複讀取     | 商品頁、權限摘要、首頁推薦                                                                                                                     |
+| 非同步工作 | request 結束後仍要可靠處理   | 寄信、轉檔、同步外部系統                                                                                                                       |
+| 即時互動   | client 需要持續接收狀態變化  | 聊天、通知、進度更新、presence                                                                                                                 |
+| 操作診斷   | 出事時要知道原因與影響範圍   | [log](../knowledge-cards/log/)、metric、[trace](../knowledge-cards/trace/)、[dashboard](../knowledge-cards/dashboard/)                         |
+| 服務交付   | 服務要穩定發版、擴容與接流量 | [container](../knowledge-cards/container/)、[load balancer](../knowledge-cards/load-balancer/)、[readiness](../knowledge-cards/readiness/)     |
+| 可靠性驗證 | 事故前要驗證容量與失敗情境   | [CI pipeline](../knowledge-cards/ci-pipeline/)、[load test](../knowledge-cards/load-test/)、fuzz、[chaos test](../knowledge-cards/chaos-test/) |
 
 這張表是需求索引。每個類型後面都會對應到不同的能力地圖，但實際功能常會同時命中多列。
 

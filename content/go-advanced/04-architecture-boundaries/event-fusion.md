@@ -51,11 +51,11 @@ timer scan    ─┘
 
 來源設計的核心動作是明確寫出每個 adapter 對上游的承諾。不同來源的錯誤回應方式不同，但進入 processor 的事件語意應一致。
 
-| 來源           | adapter 責任                             | 失敗回應           |
-| -------------- | ---------------------------------------- | ------------------ |
-| HTTP callback  | decode JSON、驗證簽章、normalize         | 回 4xx/5xx         |
-| queue consumer | decode message、控制 ack/nack、normalize | ack、nack 或 retry |
-| timer scan     | 讀取本地狀態、產生內部事件               | 記錄錯誤或下次再掃 |
+| 來源           | adapter 責任                             | 失敗回應                                                   |
+| -------------- | ---------------------------------------- | ---------------------------------------------------------- |
+| HTTP callback  | decode JSON、驗證簽章、normalize         | 回 4xx/5xx                                                 |
+| queue consumer | decode message、控制 ack/nack、normalize | ack、nack 或 retry                                         |
+| timer scan     | 讀取本地狀態、產生內部事件               | 記錄錯誤或下次再掃                                         |
 | file reader    | 讀取增量資料、normalize                  | 記錄 [offset](../../backend/knowledge-cards/offset) 或停下 |
 
 表格不是文件裝飾，而是設計工具。若某一列寫不清楚，代表 adapter 與 processor 的邊界還不清楚。

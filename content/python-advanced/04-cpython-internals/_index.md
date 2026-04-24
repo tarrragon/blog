@@ -16,13 +16,13 @@ weight: 4
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-|------|------|---------|
-| [4.1](object-model/) | PyObject 與物件模型 | 理解「一切皆物件」 |
-| [4.2](memory-gc/) | 記憶體管理與垃圾回收 | 理解記憶體如何管理 |
-| [4.3](bytecode/) | Bytecode 與虛擬機 | 理解程式碼如何執行 |
-| [4.4](gil-threading/) | GIL 與執行緒模型 | 深入理解 GIL |
-| [4.5](free-threading/) | Free-Threading | Python 3.13+ 無 GIL 多執行緒 |
+| 章節                   | 主題                 | 關鍵收穫                     |
+| ---------------------- | -------------------- | ---------------------------- |
+| [4.1](object-model/)   | PyObject 與物件模型  | 理解「一切皆物件」           |
+| [4.2](memory-gc/)      | 記憶體管理與垃圾回收 | 理解記憶體如何管理           |
+| [4.3](bytecode/)       | Bytecode 與虛擬機    | 理解程式碼如何執行           |
+| [4.4](gil-threading/)  | GIL 與執行緒模型     | 深入理解 GIL                 |
+| [4.5](free-threading/) | Free-Threading       | Python 3.13+ 無 GIL 多執行緒 |
 
 ## 先備知識
 

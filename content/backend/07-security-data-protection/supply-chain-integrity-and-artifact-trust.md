@@ -21,9 +21,9 @@ weight: 82
 
 ## 問題節點（案例觸發式）
 
-| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 |
-| --- | --- | --- | --- |
-| 來源可追溯性不足 | build 與來源提交無法一致回查 | 發佈可信度下降 | [ci-pipeline](../knowledge-cards/ci-pipeline/) |
-| artifact 信任斷點 | 發佈產物缺乏簽署與完整性證據 | 受污染產物進入正式流程 | [deployment-contract](../knowledge-cards/deployment-contract/) |
-| 第三方依賴風險放大 | 同類組件事件波及多服務 | 修補與回退成本上升 | [dependency-isolation](../knowledge-cards/dependency-isolation/) |
-| 事件後發佈節奏混亂 | 凍結與恢復條件不一致 | 二次事故風險上升 | [release-gate](../knowledge-cards/release-gate/) |
+| 問題節點           | 判讀訊號                     | 風險後果               | 前置控制面                                                       |
+| ------------------ | ---------------------------- | ---------------------- | ---------------------------------------------------------------- |
+| 來源可追溯性不足   | build 與來源提交無法一致回查 | 發佈可信度下降         | [ci-pipeline](../knowledge-cards/ci-pipeline/)                   |
+| artifact 信任斷點  | 發佈產物缺乏簽署與完整性證據 | 受污染產物進入正式流程 | [deployment-contract](../knowledge-cards/deployment-contract/)   |
+| 第三方依賴風險放大 | 同類組件事件波及多服務       | 修補與回退成本上升     | [dependency-isolation](../knowledge-cards/dependency-isolation/) |
+| 事件後發佈節奏混亂 | 凍結與恢復條件不一致         | 二次事故風險上升       | [release-gate](../knowledge-cards/release-gate/)                 |

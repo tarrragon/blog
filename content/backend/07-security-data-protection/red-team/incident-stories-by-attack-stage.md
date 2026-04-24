@@ -9,23 +9,23 @@ weight: 716
 
 ## 服務環節問題地圖
 
-| 服務環節 | 核心問題 | 注意事項 | 優先案例 |
-| --- | --- | --- | --- |
-| 身分與授權鏈 | 入口成功後可快速擴散 | 高風險操作要有獨立事件節奏 | [Uber 2022](cases/identity-access/uber-2022-mfa-fatigue/)、[Twilio 2022](cases/identity-access/twilio-2022-social-engineering/)、[MGM 2023](cases/identity-access/mgm-2023-identity-lateral-impact/) |
-| 第三方與支援流程 | 外部事件會傳導到內部身分鏈 | 公告、盤點、收斂要同一節奏 | [Okta + Cloudflare 2023](cases/identity-access/okta-cloudflare-2023-support-supply-chain/)、[GitHub OAuth 2022](cases/supply-chain/github-oauth-2022-token-supply-chain/) |
-| 邊界入口與設備 | 暴露面與修補窗口同時放大風險 | 隔離、修補、驗證要成一組流程 | [MOVEit 2023](cases/edge-exposure/moveit-2023-mass-exfiltration/)、[Ivanti 2024](cases/edge-exposure/ivanti-2024-vpn-chain/)、[Citrix 2023](cases/edge-exposure/citrix-cve-2023-3519-code-injection/) |
-| 交付與供應鏈 | 合法交付路徑可被反向利用 | 先凍結再驗證再恢復 | [SolarWinds 2020](cases/supply-chain/solarwinds-2020-sunburst/)、[CircleCI 2023](cases/supply-chain/circleci-2023-secrets-rotation/)、[TeamCity 2024](cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/) |
-| 資料外送與回復 | 外送風險與營運衝擊同步上升 | 盤點、通報、回復排序要並行 | [LastPass 2022](cases/data-exfiltration/lastpass-2022-backup-chain/)、[Snowflake 2024](cases/data-exfiltration/snowflake-2024-credential-abuse/)、[Change Healthcare 2024](cases/data-exfiltration/change-healthcare-2024-ops-impact/) |
+| 服務環節         | 核心問題                     | 注意事項                     | 優先案例                                                                                                                                                                                                                               |
+| ---------------- | ---------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 身分與授權鏈     | 入口成功後可快速擴散         | 高風險操作要有獨立事件節奏   | [Uber 2022](cases/identity-access/uber-2022-mfa-fatigue/)、[Twilio 2022](cases/identity-access/twilio-2022-social-engineering/)、[MGM 2023](cases/identity-access/mgm-2023-identity-lateral-impact/)                                   |
+| 第三方與支援流程 | 外部事件會傳導到內部身分鏈   | 公告、盤點、收斂要同一節奏   | [Okta + Cloudflare 2023](cases/identity-access/okta-cloudflare-2023-support-supply-chain/)、[GitHub OAuth 2022](cases/supply-chain/github-oauth-2022-token-supply-chain/)                                                              |
+| 邊界入口與設備   | 暴露面與修補窗口同時放大風險 | 隔離、修補、驗證要成一組流程 | [MOVEit 2023](cases/edge-exposure/moveit-2023-mass-exfiltration/)、[Ivanti 2024](cases/edge-exposure/ivanti-2024-vpn-chain/)、[Citrix 2023](cases/edge-exposure/citrix-cve-2023-3519-code-injection/)                                  |
+| 交付與供應鏈     | 合法交付路徑可被反向利用     | 先凍結再驗證再恢復           | [SolarWinds 2020](cases/supply-chain/solarwinds-2020-sunburst/)、[CircleCI 2023](cases/supply-chain/circleci-2023-secrets-rotation/)、[TeamCity 2024](cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/)           |
+| 資料外送與回復   | 外送風險與營運衝擊同步上升   | 盤點、通報、回復排序要並行   | [LastPass 2022](cases/data-exfiltration/lastpass-2022-backup-chain/)、[Snowflake 2024](cases/data-exfiltration/snowflake-2024-credential-abuse/)、[Change Healthcare 2024](cases/data-exfiltration/change-healthcare-2024-ops-impact/) |
 
 ## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
 
-| 情境 | 判讀 | 注意事項 | 路由章節 |
-| --- | --- | --- | --- |
-| 身分異常事件在短時間擴大 | 身分邊界已進入擴散節奏 | 先收斂高風險身份，再追蹤橫向路徑 | [7.2 身分與授權邊界](../identity-access-boundary/) |
-| 供應商事件後內部憑證仍活躍 | 供應商事件已傳導到內部環節 | 盤點與輪替要一起啟動 | [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/) |
-| 邊界修補完成後異常會話持續 | 修補節奏與信任收斂節奏脫鉤 | 會話失效與狀態驗證要同步 | [7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/) |
-| 交付事件影響 artifact 信任 | 供應鏈風險已跨到發佈節奏 | 發佈凍結條件要先於恢復條件定義 | [5.5 平台與入口弱點判讀](../../05-deployment-platform/attacker-view-platform-entry-risks/) |
-| 外送事件伴隨跨部門通報壓力 | 技術時序與業務時序需要並行 | 受影響清單與通報節奏要先對齊 | [8.8 事故報告轉 workflow](../../08-incident-response/incident-report-to-workflow/) |
+| 情境                       | 判讀                       | 注意事項                         | 路由章節                                                                                   |
+| -------------------------- | -------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------ |
+| 身分異常事件在短時間擴大   | 身分邊界已進入擴散節奏     | 先收斂高風險身份，再追蹤橫向路徑 | [7.2 身分與授權邊界](../identity-access-boundary/)                                         |
+| 供應商事件後內部憑證仍活躍 | 供應商事件已傳導到內部環節 | 盤點與輪替要一起啟動             | [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)                |
+| 邊界修補完成後異常會話持續 | 修補節奏與信任收斂節奏脫鉤 | 會話失效與狀態驗證要同步         | [7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/)                |
+| 交付事件影響 artifact 信任 | 供應鏈風險已跨到發佈節奏   | 發佈凍結條件要先於恢復條件定義   | [5.5 平台與入口弱點判讀](../../05-deployment-platform/attacker-view-platform-entry-risks/) |
+| 外送事件伴隨跨部門通報壓力 | 技術時序與業務時序需要並行 | 受影響清單與通報節奏要先對齊     | [8.8 事故報告轉 workflow](../../08-incident-response/incident-report-to-workflow/)         |
 
 ## 到實作前的最後一層
 

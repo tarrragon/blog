@@ -37,36 +37,36 @@ weight: 3
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-|------|------|---------|
-| [3.1](generics/) | 泛型進階 | 建立型別安全的抽象層 |
-| [3.2](exception-design/) | 異常設計架構 | 設計大型專案的錯誤處理 |
-| [3.3](context-managers/) | 進階上下文管理 | 複雜資源的優雅管理 |
-| [3.4](plugin-system/) | 插件系統設計 | 建立可擴展的架構 |
-| [3.5](integration/) | 設計模式整合案例 | 綜合應用所有模式 |
-| [3.6](trade-offs/) | 軟體設計的取捨藝術 | 取捨決策框架與業界經驗 |
+| 章節                     | 主題               | 關鍵收穫               |
+| ------------------------ | ------------------ | ---------------------- |
+| [3.1](generics/)         | 泛型進階           | 建立型別安全的抽象層   |
+| [3.2](exception-design/) | 異常設計架構       | 設計大型專案的錯誤處理 |
+| [3.3](context-managers/) | 進階上下文管理     | 複雜資源的優雅管理     |
+| [3.4](plugin-system/)    | 插件系統設計       | 建立可擴展的架構       |
+| [3.5](integration/)      | 設計模式整合案例   | 綜合應用所有模式       |
+| [3.6](trade-offs/)       | 軟體設計的取捨藝術 | 取捨決策框架與業界經驗 |
 
 ## 案例研究
 
 基於 `.claude/lib` 實際程式碼的進階案例：
 
-| 案例 | 素材 | 學習重點 |
-|------|------|---------|
-| [快取生命週期管理](case-studies/cache-lifecycle/) | config_loader.py | Context Manager |
-| [插件架構設計](case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制 |
-| [異常設計架構](case-studies/exception-hierarchy/) | hook_io.py | 異常階層 + ExceptionGroup |
-| [泛型驗證器](case-studies/generic-validator/) | hook_validator.py | Generic + TypeVar |
+| 案例                                              | 素材              | 學習重點                  |
+| ------------------------------------------------- | ----------------- | ------------------------- |
+| [快取生命週期管理](case-studies/cache-lifecycle/) | config_loader.py  | Context Manager           |
+| [插件架構設計](case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制       |
+| [異常設計架構](case-studies/exception-hierarchy/) | hook_io.py        | 異常階層 + ExceptionGroup |
+| [泛型驗證器](case-studies/generic-validator/)     | hook_validator.py | Generic + TypeVar         |
 
 ## 先備知識
 
-| 章節 | 需要先讀 |
-|------|---------|
-| 3.1 泛型進階 | 入門系列 [2.2 Optional、Union、泛型](../../python/02-type-system/optional-union/) |
-| 3.2 異常設計 | 入門系列 [5.1 異常處理策略](../../python/05-error-testing/exception/) |
-| 3.3 上下文管理 | 入門系列的 `with` 語句使用 |
-| 3.4 插件系統 | 本進階系列 [模組二：元編程](../02-metaprogramming/) |
-| 3.5 整合案例 | 本模組 3.1-3.4 |
-| 3.6 取捨藝術 | 本模組 3.1-3.5（應用全部設計模式的決策思維） |
+| 章節           | 需要先讀                                                                          |
+| -------------- | --------------------------------------------------------------------------------- |
+| 3.1 泛型進階   | 入門系列 [2.2 Optional、Union、泛型](../../python/02-type-system/optional-union/) |
+| 3.2 異常設計   | 入門系列 [5.1 異常處理策略](../../python/05-error-testing/exception/)             |
+| 3.3 上下文管理 | 入門系列的 `with` 語句使用                                                        |
+| 3.4 插件系統   | 本進階系列 [模組二：元編程](../02-metaprogramming/)                               |
+| 3.5 整合案例   | 本模組 3.1-3.4                                                                    |
+| 3.6 取捨藝術   | 本模組 3.1-3.5（應用全部設計模式的決策思維）                                      |
 
 ## 學習路徑
 

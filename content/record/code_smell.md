@@ -1218,13 +1218,13 @@ Ticket 的職責定義不明確，無法判斷屬於哪一層級。
 
 **檢測時機對應 TDD 四階段**:
 
-| 階段 | 檢測時機 | 檢測重點 | 對應 Code Smell |
-|------|---------|---------|---------------|
-| **Phase 1 設計階段** | Ticket 設計完成時 | Ticket 粒度和層級定位 | C1, C2, C3, A1 |
-| **Phase 2 測試設計** | 測試設計完成時 | 測試範圍是否限定在單一層級 | C2, B1 |
-| **Phase 3 實作執行** | 程式碼提交時 | 實作是否產生 Code Smell | A2, A3, A4, B2, B3 |
-| **Code Review** | PR 提交時 | 最終驗證 | 所有 Code Smell |
-| **Phase 4 重構階段** | 重構評估時 | 識別需要重構的 Code Smell | B1, B2, B3, B4 |
+| 階段                 | 檢測時機          | 檢測重點                   | 對應 Code Smell    |
+| -------------------- | ----------------- | -------------------------- | ------------------ |
+| **Phase 1 設計階段** | Ticket 設計完成時 | Ticket 粒度和層級定位      | C1, C2, C3, A1     |
+| **Phase 2 測試設計** | 測試設計完成時    | 測試範圍是否限定在單一層級 | C2, B1             |
+| **Phase 3 實作執行** | 程式碼提交時      | 實作是否產生 Code Smell    | A2, A3, A4, B2, B3 |
+| **Code Review**      | PR 提交時         | 最終驗證                   | 所有 Code Smell    |
+| **Phase 4 重構階段** | 重構評估時        | 識別需要重構的 Code Smell  | B1, B2, B3, B4     |
 
 **檢測流程總覽**:
 
@@ -1711,19 +1711,19 @@ Incomplete Ticket:
 
 ### 3.5 檢測方法總結表
 
-| Code Smell | 檢測時機 | 檢測指標 | 判斷標準 | 引用[層級隔離派工方法論](layered-ticket-methodology.md) 章節 |
-|-----------|---------|---------|---------|---------------|
-| **A1. Shotgun Surgery** | Ticket 設計 | 層級跨度 | > 2 層 | 3.1 單層修改原則 |
-| **A2. Feature Envy** | Code Review | 直接依賴 Domain | UI 存取 Entity | 2.2 Layer 2 職責 |
-| **A3. Inappropriate Intimacy** | Code Review | 依賴方向 | 內層依賴外層 | 2.3 依賴方向規則 |
-| **A4. Leaky Abstraction** | 介面設計 | 介面純淨度 | 包含實作關鍵字 | 2.2 Layer 4 職責 |
-| **B1. Divergent Change** | Phase 4 重構 | 方法分組數 | > 2 組 | 3.2 SRP 理論 |
-| **B2. Large Class** | Phase 4 重構 | 程式碼行數 | > 300 行 | 5.2 量化指標 |
-| **B3. Long Method** | Phase 3 實作 | 方法行數 | > 50 行 | 5.2 量化指標 |
-| **B4. Dead Code** | Phase 4 重構 | unused 警告 | dart analyze | - |
-| **C1. God Ticket** | Ticket 設計 | 檔案數 | > 10 個 | 5.2 Ticket 粒度 |
-| **C2. Incomplete Ticket** | Code Review | 測試檔案 | 缺少測試 | TDD 四階段 |
-| **C3. Ambiguous Responsibility** | Ticket 設計 | 標題格式 | 無層級標示 | 5.3 Ticket 範例 |
+| Code Smell                       | 檢測時機     | 檢測指標        | 判斷標準       | 引用[層級隔離派工方法論](layered-ticket-methodology.md) 章節 |
+| -------------------------------- | ------------ | --------------- | -------------- | ------------------------------------------------------------ |
+| **A1. Shotgun Surgery**          | Ticket 設計  | 層級跨度        | > 2 層         | 3.1 單層修改原則                                             |
+| **A2. Feature Envy**             | Code Review  | 直接依賴 Domain | UI 存取 Entity | 2.2 Layer 2 職責                                             |
+| **A3. Inappropriate Intimacy**   | Code Review  | 依賴方向        | 內層依賴外層   | 2.3 依賴方向規則                                             |
+| **A4. Leaky Abstraction**        | 介面設計     | 介面純淨度      | 包含實作關鍵字 | 2.2 Layer 4 職責                                             |
+| **B1. Divergent Change**         | Phase 4 重構 | 方法分組數      | > 2 組         | 3.2 SRP 理論                                                 |
+| **B2. Large Class**              | Phase 4 重構 | 程式碼行數      | > 300 行       | 5.2 量化指標                                                 |
+| **B3. Long Method**              | Phase 3 實作 | 方法行數        | > 50 行        | 5.2 量化指標                                                 |
+| **B4. Dead Code**                | Phase 4 重構 | unused 警告     | dart analyze   | -                                                            |
+| **C1. God Ticket**               | Ticket 設計  | 檔案數          | > 10 個        | 5.2 Ticket 粒度                                              |
+| **C2. Incomplete Ticket**        | Code Review  | 測試檔案        | 缺少測試       | TDD 四階段                                                   |
+| **C3. Ambiguous Responsibility** | Ticket 設計  | 標題格式        | 無層級標示     | 5.3 Ticket 範例                                              |
 
 ---
 
@@ -1733,19 +1733,19 @@ Incomplete Ticket:
 
 每種 Code Smell 都有對應的標準重構模式（引用 Martin Fowler 的 Refactoring 書籍）:
 
-| Code Smell | 重構模式 | 重構策略 | 預期效果 |
-|-----------|---------|---------|---------|
-| **A1. Shotgun Surgery** | Extract Interface + Introduce Facade | 引入抽象層隔離變更 | 單層修改 |
-| **A2. Feature Envy** | Move Method + Extract ViewModel | 移動邏輯到正確層級 | 職責對齊 |
-| **A3. Inappropriate Intimacy** | Introduce Parameter Object | 打破循環依賴 | 依賴方向正確 |
-| **A4. Leaky Abstraction** | Extract Interface | 重新設計抽象介面 | 隱藏實作細節 |
-| **B1. Divergent Change** | Extract Class | 拆分為多個單一職責類別 | 符合 SRP |
-| **B2. Large Class** | Extract Class + Move Method | 拆分大類別 | 降低複雜度 |
-| **B3. Long Method** | Extract Method | 拆分長方法 | 提升可讀性 |
-| **B4. Dead Code** | Remove Dead Code | 直接刪除 | 程式碼簡潔 |
-| **C1. God Ticket** | Split Ticket | 拆分為多個單層 Ticket | 降低風險 |
-| **C2. Incomplete Ticket** | Add Missing Tests | 補充測試和文件 | 完整性 |
-| **C3. Ambiguous Responsibility** | Clarify Responsibility | 明確層級和職責 | 職責清晰 |
+| Code Smell                       | 重構模式                             | 重構策略               | 預期效果     |
+| -------------------------------- | ------------------------------------ | ---------------------- | ------------ |
+| **A1. Shotgun Surgery**          | Extract Interface + Introduce Facade | 引入抽象層隔離變更     | 單層修改     |
+| **A2. Feature Envy**             | Move Method + Extract ViewModel      | 移動邏輯到正確層級     | 職責對齊     |
+| **A3. Inappropriate Intimacy**   | Introduce Parameter Object           | 打破循環依賴           | 依賴方向正確 |
+| **A4. Leaky Abstraction**        | Extract Interface                    | 重新設計抽象介面       | 隱藏實作細節 |
+| **B1. Divergent Change**         | Extract Class                        | 拆分為多個單一職責類別 | 符合 SRP     |
+| **B2. Large Class**              | Extract Class + Move Method          | 拆分大類別             | 降低複雜度   |
+| **B3. Long Method**              | Extract Method                       | 拆分長方法             | 提升可讀性   |
+| **B4. Dead Code**                | Remove Dead Code                     | 直接刪除               | 程式碼簡潔   |
+| **C1. God Ticket**               | Split Ticket                         | 拆分為多個單層 Ticket  | 降低風險     |
+| **C2. Incomplete Ticket**        | Add Missing Tests                    | 補充測試和文件         | 完整性       |
+| **C3. Ambiguous Responsibility** | Clarify Responsibility               | 明確層級和職責         | 職責清晰     |
 
 ---
 
@@ -1920,15 +1920,15 @@ class BookDetailFacade implements IBookDetailFacade {
 
 **優先級矩陣範例**:
 
-| Code Smell | 影響範圍 | 業務風險 | 累積速度 | 分數 | 優先級 |
-|-----------|---------|---------|---------|------|-------|
-| Inappropriate Intimacy | 4 | 5 | 3 | 26 | 高 ⚠️ |
-| Shotgun Surgery | 5 | 4 | 2 | 25 | 高 ⚠️ |
-| God Ticket | 5 | 3 | 3 | 24 | 高 ⚠️ |
-| Feature Envy | 3 | 3 | 3 | 15 | 中 |
-| Large Class | 2 | 3 | 4 | 16 | 中 |
-| Long Method | 1 | 2 | 3 | 8 | 低 |
-| Dead Code | 1 | 1 | 1 | 4 | 低 |
+| Code Smell             | 影響範圍 | 業務風險 | 累積速度 | 分數 | 優先級 |
+| ---------------------- | -------- | -------- | -------- | ---- | ------ |
+| Inappropriate Intimacy | 4        | 5        | 3        | 26   | 高 ⚠️   |
+| Shotgun Surgery        | 5        | 4        | 2        | 25   | 高 ⚠️   |
+| God Ticket             | 5        | 3        | 3        | 24   | 高 ⚠️   |
+| Feature Envy           | 3        | 3        | 3        | 15   | 中     |
+| Large Class            | 2        | 3        | 4        | 16   | 中     |
+| Long Method            | 1        | 2        | 3        | 8    | 低     |
+| Dead Code              | 1        | 1        | 1        | 4    | 低     |
 
 ---
 
@@ -3507,13 +3507,13 @@ test('should mark book as favorite', () {
 
 **答**:
 
-| 特性 | Bug（程式錯誤） | Code Smell（程式異味） |
-|-----|---------------|---------------------|
-| **影響** | 導致功能失敗或程式崩潰 | 程式功能正常運作 |
-| **檢測方式** | 透過測試失敗發現 | 透過程式碼檢視或靜態分析發現 |
-| **修正優先級** | 必須立即修正 | 可規劃重構時機 |
-| **修正方法** | 修正邏輯錯誤 | 透過重構改善設計 |
-| **長期影響** | 直接影響用戶體驗 | 影響程式碼可維護性和擴展性 |
+| 特性           | Bug（程式錯誤）        | Code Smell（程式異味）       |
+| -------------- | ---------------------- | ---------------------------- |
+| **影響**       | 導致功能失敗或程式崩潰 | 程式功能正常運作             |
+| **檢測方式**   | 透過測試失敗發現       | 透過程式碼檢視或靜態分析發現 |
+| **修正優先級** | 必須立即修正           | 可規劃重構時機               |
+| **修正方法**   | 修正邏輯錯誤           | 透過重構改善設計             |
+| **長期影響**   | 直接影響用戶體驗       | 影響程式碼可維護性和擴展性   |
 
 **範例說明**:
 
@@ -3618,12 +3618,12 @@ Ticket 粒度檢測（Phase 1）:
 
 **澄清誤解**:
 
-| 誤解 | 實際情況 |
-|------|---------|
-| 「檢查清單限制了我的設計」 | 檢查清單是**最低標準**，不限制創新設計 |
-| 「量化指標太死板」 | 量化指標是**參考標準**，特殊情況可調整 |
-| 「所有 Code Smell 都要消除」 | 根據**優先級評估**決定修正時機 |
-| 「重構會降低開發速度」 | 及早重構**降低長期維護成本** |
+| 誤解                         | 實際情況                               |
+| ---------------------------- | -------------------------------------- |
+| 「檢查清單限制了我的設計」   | 檢查清單是**最低標準**，不限制創新設計 |
+| 「量化指標太死板」           | 量化指標是**參考標準**，特殊情況可調整 |
+| 「所有 Code Smell 都要消除」 | 根據**優先級評估**決定修正時機         |
+| 「重構會降低開發速度」       | 及早重構**降低長期維護成本**           |
 
 **正確理解**:
 
@@ -3649,12 +3649,12 @@ Ticket 粒度檢測（Phase 1）:
 
 **關係說明**:
 
-| 方法論 | [層級隔離派工方法論](layered-ticket-methodology.md)  | 本 Code Smell 檢查清單 |
-|-------|--------------------------|----------------------------|
-| **角色** | 正面原則（應該怎麼做） | 負面模式（不應該怎麼做） |
-| **內容** | 五層架構定義、單層修改原則、Ticket 粒度標準 | Code Smell 檢測、違規模式識別、重構策略 |
-| **使用時機** | 設計和規劃階段 | 檢測和驗證階段 |
-| **產出** | 架構設計、Ticket 規劃 | 品質檢測報告、重構建議 |
+| 方法論       | [層級隔離派工方法論](layered-ticket-methodology.md) | 本 Code Smell 檢查清單                  |
+| ------------ | --------------------------------------------------- | --------------------------------------- |
+| **角色**     | 正面原則（應該怎麼做）                              | 負面模式（不應該怎麼做）                |
+| **內容**     | 五層架構定義、單層修改原則、Ticket 粒度標準         | Code Smell 檢測、違規模式識別、重構策略 |
+| **使用時機** | 設計和規劃階段                                      | 檢測和驗證階段                          |
+| **產出**     | 架構設計、Ticket 規劃                               | 品質檢測報告、重構建議                  |
 
 **引用關係**:
 
@@ -4085,12 +4085,12 @@ jobs:
 
 **工具定位**:
 
-| 工具 | dart_code_metrics | Code Smell 檢查清單（本文件） |
-|-----|------------------|---------------------------|
-| **檢測範圍** | 程式碼複雜度、重複度 | 架構設計、層級隔離 |
-| **檢測對象** | 單一檔案、方法 | 跨檔案、跨層級 |
-| **量化指標** | 循環複雜度、認知複雜度 | 檔案數、層級跨度 |
-| **適用場景** | Phase 3 實作、Phase 4 重構 | Phase 1 設計、Code Review |
+| 工具         | dart_code_metrics          | Code Smell 檢查清單（本文件） |
+| ------------ | -------------------------- | ----------------------------- |
+| **檢測範圍** | 程式碼複雜度、重複度       | 架構設計、層級隔離            |
+| **檢測對象** | 單一檔案、方法             | 跨檔案、跨層級                |
+| **量化指標** | 循環複雜度、認知複雜度     | 檔案數、層級跨度              |
+| **適用場景** | Phase 3 實作、Phase 4 重構 | Phase 1 設計、Code Review     |
 
 **整合使用**:
 
@@ -4373,7 +4373,7 @@ genhtml coverage/lcov.info -o coverage/html
 - 第四章重構模式對應表引用 Fowler 的重構模式
 - 重構步驟設計參考 Fowler 的重構技巧
 
-**延伸閱讀**: https://refactoring.com/
+**延伸閱讀**: [refactoring.com](https://refactoring.com/)
 
 ---
 

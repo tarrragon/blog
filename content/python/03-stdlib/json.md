@@ -172,14 +172,14 @@ json.dumps(data, default=json_serializer)
 ## 型別對應
 
 | Python 型別 | JSON 型別 |
-|------------|-----------|
-| dict | object |
-| list, tuple | array |
-| str | string |
-| int, float | number |
-| True | true |
-| False | false |
-| None | null |
+| ----------- | --------- |
+| dict        | object    |
+| list, tuple | array     |
+| str         | string    |
+| int, float  | number    |
+| True        | true      |
+| False       | false     |
+| None        | null      |
 
 ## 常見錯誤處理
 

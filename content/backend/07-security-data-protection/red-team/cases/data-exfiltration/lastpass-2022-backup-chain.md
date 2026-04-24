@@ -39,6 +39,6 @@ weight: 71741
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://blog.lastpass.com/2022/08/notice-of-recent-security-incident/
-- 政府或監管：https://blog.lastpass.com/2022/11/notice-of-recent-security-incident/
-- 技術分析：https://blog.lastpass.com/2022/12/notice-of-recent-security-incident/
+- 官方：[blog.lastpass.com](https://blog.lastpass.com/2022/08/notice-of-recent-security-incident/)
+- 政府或監管：[blog.lastpass.com](https://blog.lastpass.com/2022/11/notice-of-recent-security-incident/)
+- 技術分析：[blog.lastpass.com](https://blog.lastpass.com/2022/12/notice-of-recent-security-incident/)

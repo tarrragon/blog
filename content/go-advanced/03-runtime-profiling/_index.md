@@ -11,12 +11,12 @@ Runtime 診斷的核心目標是用資料判斷服務壓力來源。Go 服務長
 
 ## 章節列表
 
-| 章節                    | 主題                       | 關鍵收穫                                                           |
-| ----------------------- | -------------------------- | ------------------------------------------------------------------ |
-| [3.1](gc-memory-limit/) | GC 與 memory limit         | 理解 heap、GOGC、memory limit 與 runtime [metrics](../../backend/knowledge-cards/metrics) 的關係            |
-| [3.2](pprof/)           | pprof 基礎診斷流程         | 用 heap、goroutine、CPU、[trace](../../backend/knowledge-cards/trace) profile 定位壓力來源                |
+| 章節                    | 主題                       | 關鍵收穫                                                                                                     |
+| ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [3.1](gc-memory-limit/) | GC 與 memory limit         | 理解 heap、GOGC、memory limit 與 runtime [metrics](../../backend/knowledge-cards/metrics) 的關係             |
+| [3.2](pprof/)           | pprof 基礎診斷流程         | 用 heap、goroutine、CPU、[trace](../../backend/knowledge-cards/trace) profile 定位壓力來源                   |
 | [3.3](goroutine-leak/)  | goroutine leak 偵測        | 從 stack pattern 回到 context、close、[deadline](../../backend/knowledge-cards/deadline) 與 ticker lifecycle |
-| [3.4](allocation/)      | 資料結構與 allocation 壓力 | 區分必要 copy、安全邊界與可優化熱路徑配置                          |
+| [3.4](allocation/)      | 資料結構與 allocation 壓力 | 區分必要 copy、安全邊界與可優化熱路徑配置                                                                    |
 
 ## 本模組使用的範例主題
 

@@ -38,6 +38,6 @@ weight: 71743
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.unitedhealthgroup.com/newsroom/2024/2024-04-22-uhg-updates-on-change-healthcare-cyberattack.html
-- 政府或監管：https://www.cms.gov/newsroom/press-releases/cms-statement-change-healthcare-cyberattack
-- 技術分析：https://www.aha.org/cybersecurity/change-healthcare-cyberattack-updates
+- 官方：[unitedhealthgroup.com](https://www.unitedhealthgroup.com/newsroom/2024/2024-04-22-uhg-updates-on-change-healthcare-cyberattack.html)
+- 政府或監管：[cms.gov](https://www.cms.gov/newsroom/press-releases/cms-statement-change-healthcare-cyberattack)
+- 技術分析：[aha.org](https://www.aha.org/cybersecurity/change-healthcare-cyberattack-updates)

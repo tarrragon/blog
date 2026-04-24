@@ -73,13 +73,13 @@ logger.Error("write file failed", "path", path, "error", err)
 
 log 欄位設計的核心規則是：同一個概念使用同一個欄位名稱，不要在不同地方混用別名。
 
-| 概念       | 建議欄位    |
-| ---------- | ----------- |
-| 使用者 ID  | `userID`    |
+| 概念                                                   | 建議欄位    |
+| ------------------------------------------------------ | ----------- |
+| 使用者 ID                                              | `userID`    |
 | [request ID](../../backend/knowledge-cards/request-id) | `requestID` |
-| 工作 ID    | `jobID`     |
-| 元件名稱   | `component` |
-| 錯誤       | `error`     |
+| 工作 ID                                                | `jobID`     |
+| 元件名稱                                               | `component` |
+| 錯誤                                                   | `error`     |
 
 不要這樣混用：
 

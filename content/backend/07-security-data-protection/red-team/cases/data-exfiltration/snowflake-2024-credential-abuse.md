@@ -39,6 +39,6 @@ weight: 71742
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.snowflake.com/en/blog/communication-on-recent-cyber-threat-activity/
-- 政府或監管：https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-customers-take-steps-prevent-unauthorized-access
-- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion
+- 官方：[snowflake.com](https://www.snowflake.com/en/blog/communication-on-recent-cyber-threat-activity/)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-customers-take-steps-prevent-unauthorized-access)
+- 技術分析：[cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion)

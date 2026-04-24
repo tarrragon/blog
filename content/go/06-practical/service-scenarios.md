@@ -23,13 +23,13 @@ weight: 7
 
 Go 最常出現在需要長時間運行、協調 I/O、維持清楚邊界的服務層：
 
-| 場景                | Go 常扮演的角色                |
-| ------------------- | ------------------------------ |
-| [WebSocket](../../backend/knowledge-cards/websocket) service   | 長連線、事件傳遞、訂閱與廣播   |
-| background worker   | 背景處理、批次同步、事件消費   |
-| API gateway         | 路由、聚合、驗證與轉送         |
-| notification system | 推播、排程與重試               |
-| event processor     | 事件解碼、去重、派送與狀態更新 |
+| 場景                                                         | Go 常扮演的角色                |
+| ------------------------------------------------------------ | ------------------------------ |
+| [WebSocket](../../backend/knowledge-cards/websocket) service | 長連線、事件傳遞、訂閱與廣播   |
+| background worker                                            | 背景處理、批次同步、事件消費   |
+| API gateway                                                  | 路由、聚合、驗證與轉送         |
+| notification system                                          | 推播、排程與重試               |
+| event processor                                              | 事件解碼、去重、派送與狀態更新 |
 
 這些場景共通點都是：工作量大多是 I/O 與協調，CPU 單點重運算通常只占一小部分。
 

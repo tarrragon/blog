@@ -61,10 +61,10 @@ T_constrained = TypeVar("T_constrained", Dog, Cat)
 
 差異：
 
-| 方式 | 適用情況 |
-|------|---------|
-| `bound=Animal` | T 可以是 Animal 或任何子類別（包括未來新增的） |
-| `TypeVar("T", Dog, Cat)` | T 只能是明確列出的型別 |
+| 方式                     | 適用情況                                       |
+| ------------------------ | ---------------------------------------------- |
+| `bound=Animal`           | T 可以是 Animal 或任何子類別（包括未來新增的） |
+| `TypeVar("T", Dog, Cat)` | T 只能是明確列出的型別                         |
 
 ### covariant 與 contravariant
 
@@ -272,12 +272,12 @@ render(Square())  # OK - Square 有 draw() 方法
 
 ### Protocol vs ABC
 
-| 特性 | Protocol | ABC |
-|------|----------|-----|
-| 繼承要求 | 不需要 | 需要 |
-| 型別檢查 | 結構化（duck typing） | 名義上（nominal） |
-| 執行期檢查 | 需要 `runtime_checkable` | 內建 |
-| 適用場景 | 第三方類別、鬆散耦合 | 自己控制的類別層級 |
+| 特性       | Protocol                 | ABC                |
+| ---------- | ------------------------ | ------------------ |
+| 繼承要求   | 不需要                   | 需要               |
+| 型別檢查   | 結構化（duck typing）    | 名義上（nominal）  |
+| 執行期檢查 | 需要 `runtime_checkable` | 內建               |
+| 適用場景   | 第三方類別、鬆散耦合     | 自己控制的類別層級 |
 
 ```python
 from abc import ABC, abstractmethod
@@ -481,13 +481,13 @@ class MutableBox(Generic[T_co]):  # 錯誤！
 
 ## 小結
 
-| 概念 | 用途 |
-|------|------|
-| `bound` | 限制 TypeVar 必須是某型別的子型別 |
-| `covariant` | 只讀容器，子型別可替代父型別 |
-| `contravariant` | 只寫容器，父型別可替代子型別 |
-| `Generic[T]` | 建立泛型類別 |
-| `Protocol` | 結構化子型別，不需繼承 |
+| 概念            | 用途                              |
+| --------------- | --------------------------------- |
+| `bound`         | 限制 TypeVar 必須是某型別的子型別 |
+| `covariant`     | 只讀容器，子型別可替代父型別      |
+| `contravariant` | 只寫容器，父型別可替代子型別      |
+| `Generic[T]`    | 建立泛型類別                      |
+| `Protocol`      | 結構化子型別，不需繼承            |
 
 ## 思考題
 

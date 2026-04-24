@@ -22,13 +22,13 @@ weight: 3
 
 非同步處理通常從一個現象開始：某件事適合在 request 結束後繼續做。這可能是因為工作太慢、需要重試、需要多個 [consumer](../knowledge-cards/consumer/)、需要跨服務傳遞，或需要在資料庫交易後補送事件。
 
-| 需求訊號                                   | 代表的工程問題                 | 常見服務方向  |
-| ------------------------------------------ | ------------------------------ | ------------- |
-| 工作只需要離開 request，但留在同一 process | 背景處理與生命週期             | [local worker](../knowledge-cards/local-worker/)  |
-| 工作需要 process 重啟後仍存在              | 持久化與重試                   | [durable queue](../knowledge-cards/durable-queue/) |
-| 多個 consumer 要各自追進度                 | replay、[offset](../knowledge-cards/offset/)、[consumer group](../knowledge-cards/consumer-group/) | stream / [log](../knowledge-cards/log/)  |
-| 多個訂閱者即時收到訊息                     | [fan-out](../knowledge-cards/fan-out/) 與即時通知 | [pub/sub](../knowledge-cards/pub-sub/)       |
-| 資料寫入和事件發布要一起可靠               | 交易一致性與補送               | outbox        |
+| 需求訊號                                   | 代表的工程問題                                                                                     | 常見服務方向                                       |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| 工作只需要離開 request，但留在同一 process | 背景處理與生命週期                                                                                 | [local worker](../knowledge-cards/local-worker/)   |
+| 工作需要 process 重啟後仍存在              | 持久化與重試                                                                                       | [durable queue](../knowledge-cards/durable-queue/) |
+| 多個 consumer 要各自追進度                 | replay、[offset](../knowledge-cards/offset/)、[consumer group](../knowledge-cards/consumer-group/) | stream / [log](../knowledge-cards/log/)            |
+| 多個訂閱者即時收到訊息                     | [fan-out](../knowledge-cards/fan-out/) 與即時通知                                                  | [pub/sub](../knowledge-cards/pub-sub/)             |
+| 資料寫入和事件發布要一起可靠               | 交易一致性與補送                                                                                   | outbox                                             |
 
 這張表是索引。選型時要看事件是否能遺失、是否會重複、是否要重播、是否要多個服務各自消費。
 

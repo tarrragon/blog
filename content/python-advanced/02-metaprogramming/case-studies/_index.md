@@ -10,11 +10,11 @@ weight: 10
 
 ## 案例列表
 
-| 案例 | 素材 | 進階技術 | 難度 |
-|------|------|----------|------|
-| [宣告式驗證](declarative-validation/) | hook_validator.py | Descriptor Protocol | ⭐⭐ |
-| [自動註冊機制](auto-registration/) | hook_validator.py | Metaclass | ⭐⭐⭐ |
-| [類似 Django Field](field-descriptor/) | hook_io.py | Descriptor + dataclass | ⭐⭐⭐ |
+| 案例                                   | 素材              | 進階技術               | 難度   |
+| -------------------------------------- | ----------------- | ---------------------- | ------ |
+| [宣告式驗證](declarative-validation/)  | hook_validator.py | Descriptor Protocol    | ⭐⭐   |
+| [自動註冊機制](auto-registration/)     | hook_validator.py | Metaclass              | ⭐⭐⭐ |
+| [類似 Django Field](field-descriptor/) | hook_io.py        | Descriptor + dataclass | ⭐⭐⭐ |
 
 ## 學習路徑
 

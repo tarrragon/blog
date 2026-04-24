@@ -39,8 +39,8 @@ ProxyShell 事件延續了 Exchange 入口風險，顯示 CVE-2021-34473、CVE-2
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://techcommunity.microsoft.com/blog/exchange/released-july-2021-exchange-server-security-updates/2523421
-- 政府或監管：https://www.cisa.gov/news-events/alerts/2021/08/21/urgent-protect-against-active-exploitation-proxyshell-vulnerabilities
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2021-34473
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2021-34523
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2021-31207
+- 官方：[techcommunity.microsoft.com](https://techcommunity.microsoft.com/blog/exchange/released-july-2021-exchange-server-security-updates/2523421)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/alerts/2021/08/21/urgent-protect-against-active-exploitation-proxyshell-vulnerabilities)
+- 技術分析：[nvd.nist.gov/CVE-2021-34473](https://nvd.nist.gov/vuln/detail/CVE-2021-34473)
+- 技術分析：[nvd.nist.gov/CVE-2021-34523](https://nvd.nist.gov/vuln/detail/CVE-2021-34523)
+- 技術分析：[nvd.nist.gov/CVE-2021-31207](https://nvd.nist.gov/vuln/detail/CVE-2021-31207)

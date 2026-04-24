@@ -42,14 +42,14 @@ weight: 2
 
 ### 為什麼選擇 Poetry？
 
-| 特性 | pip + venv | Poetry |
-|------|------------|--------|
-| 相依性鎖定 | 手動（pip freeze） | 自動（poetry.lock） |
-| 間接相依性追蹤 | 無 | 完整追蹤 |
-| 虛擬環境管理 | 手動 | 自動整合 |
-| 建構系統 | 需要額外工具 | 內建 |
-| 發布流程 | 需要 twine | 內建 |
-| 相依性群組 | 無原生支援 | 完整支援 |
+| 特性           | pip + venv         | Poetry              |
+| -------------- | ------------------ | ------------------- |
+| 相依性鎖定     | 手動（pip freeze） | 自動（poetry.lock） |
+| 間接相依性追蹤 | 無                 | 完整追蹤            |
+| 虛擬環境管理   | 手動               | 自動整合            |
+| 建構系統       | 需要額外工具       | 內建                |
+| 發布流程       | 需要 twine         | 內建                |
+| 相依性群組     | 無原生支援         | 完整支援            |
 
 ## 解決方案
 
@@ -435,37 +435,37 @@ addopts = "-v --tb=short"
 
 ### Poetry vs pip
 
-| 操作 | pip | Poetry |
-|------|-----|--------|
-| 安裝相依性 | `pip install -r requirements.txt` | `poetry install` |
-| 新增相依性 | 手動編輯 requirements.txt | `poetry add package` |
-| 鎖定版本 | `pip freeze > requirements.txt` | 自動更新 poetry.lock |
-| 建立環境 | `python -m venv .venv` | 自動建立 |
-| 執行命令 | `source .venv/bin/activate && python` | `poetry run python` |
-| 建構套件 | `python -m build` | `poetry build` |
-| 發布套件 | `twine upload dist/*` | `poetry publish` |
+| 操作       | pip                                   | Poetry               |
+| ---------- | ------------------------------------- | -------------------- |
+| 安裝相依性 | `pip install -r requirements.txt`     | `poetry install`     |
+| 新增相依性 | 手動編輯 requirements.txt             | `poetry add package` |
+| 鎖定版本   | `pip freeze > requirements.txt`       | 自動更新 poetry.lock |
+| 建立環境   | `python -m venv .venv`                | 自動建立             |
+| 執行命令   | `source .venv/bin/activate && python` | `poetry run python`  |
+| 建構套件   | `python -m build`                     | `poetry build`       |
+| 發布套件   | `twine upload dist/*`                 | `poetry publish`     |
 
 ### Poetry vs setuptools
 
-| 面向 | setuptools | Poetry |
-|------|------------|--------|
-| 設定格式 | pyproject.toml + 可能需要 setup.py | 僅 pyproject.toml |
-| 相依性管理 | 需要額外工具 | 內建完整支援 |
-| 環境管理 | 無 | 內建 |
-| 學習曲線 | 較陡（歷史包袱） | 較平緩 |
-| C 擴展支援 | 完整 | 不支援 |
-| 生態系統 | 最廣泛 | 持續成長 |
+| 面向       | setuptools                         | Poetry            |
+| ---------- | ---------------------------------- | ----------------- |
+| 設定格式   | pyproject.toml + 可能需要 setup.py | 僅 pyproject.toml |
+| 相依性管理 | 需要額外工具                       | 內建完整支援      |
+| 環境管理   | 無                                 | 內建              |
+| 學習曲線   | 較陡（歷史包袱）                   | 較平緩            |
+| C 擴展支援 | 完整                               | 不支援            |
+| 生態系統   | 最廣泛                             | 持續成長          |
 
 ### Poetry vs Hatch
 
-| 面向 | Hatch | Poetry |
-|------|-------|--------|
-| 設計理念 | PEP 標準優先 | 使用者體驗優先 |
-| 相依性鎖定 | 無內建 | 核心功能 |
-| 環境管理 | 多環境（類似 tox） | 單一虛擬環境 |
-| 腳本系統 | 完整 | 基本 |
-| 建構後端 | hatchling | poetry-core |
-| 適用場景 | 開源函式庫 | 應用程式、內部工具 |
+| 面向       | Hatch              | Poetry             |
+| ---------- | ------------------ | ------------------ |
+| 設計理念   | PEP 標準優先       | 使用者體驗優先     |
+| 相依性鎖定 | 無內建             | 核心功能           |
+| 環境管理   | 多環境（類似 tox） | 單一虛擬環境       |
+| 腳本系統   | 完整               | 基本               |
+| 建構後端   | hatchling          | poetry-core        |
+| 適用場景   | 開源函式庫         | 應用程式、內部工具 |
 
 ## 實用技巧
 
@@ -650,12 +650,12 @@ poetry env use /usr/bin/python3.11
 
 ## 設計權衡
 
-| 面向 | 優點 | 缺點 |
-|------|------|------|
-| **相依性鎖定** | 環境可重現、團隊一致 | lock 檔案衝突、更新需謹慎 |
-| **一體化工具** | 學習成本低、工作流統一 | 與其他工具整合需調整 |
-| **虛擬環境整合** | 自動管理、不易混淆 | 自訂環境位置需設定 |
-| **建構與發布** | 流程簡化 | 不支援 C 擴展 |
+| 面向             | 優點                   | 缺點                      |
+| ---------------- | ---------------------- | ------------------------- |
+| **相依性鎖定**   | 環境可重現、團隊一致   | lock 檔案衝突、更新需謹慎 |
+| **一體化工具**   | 學習成本低、工作流統一 | 與其他工具整合需調整      |
+| **虛擬環境整合** | 自動管理、不易混淆     | 自訂環境位置需設定        |
+| **建構與發布**   | 流程簡化               | 不支援 C 擴展             |
 
 ## 練習
 

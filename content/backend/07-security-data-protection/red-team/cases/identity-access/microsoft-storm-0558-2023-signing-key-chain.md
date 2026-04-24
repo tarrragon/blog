@@ -38,6 +38,6 @@ Storm-0558 事件揭露簽章金鑰治理一旦失效，攻擊者就能沿著身
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.microsoft.com/en-us/msrc/blog/2023/07/microsoft-mitigates-china-based-threat-actor-storm-0558-targeting-of-customer-email/
-- 政府或監管：https://www.cisa.gov/resources-tools/resources/review-board-report-microsoft-exchange-online-incident
-- 技術分析：https://msrc.microsoft.com/blog/2023/09/results-of-major-technical-investigations-for-storm-0558-key-acquisition/
+- 官方：[microsoft.com](https://www.microsoft.com/en-us/msrc/blog/2023/07/microsoft-mitigates-china-based-threat-actor-storm-0558-targeting-of-customer-email/)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/resources-tools/resources/review-board-report-microsoft-exchange-online-incident)
+- 技術分析：[msrc.microsoft.com](https://msrc.microsoft.com/blog/2023/09/results-of-major-technical-investigations-for-storm-0558-key-acquisition/)

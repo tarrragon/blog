@@ -77,21 +77,21 @@ flowchart TD
 
 **每一層都能掩蓋不同的問題**：
 
-| Cache | 掩蓋的情境 |
-|---|---|
+| Cache               | 掩蓋的情境                                                                  |
+| ------------------- | --------------------------------------------------------------------------- |
 | Configuration cache | 跳過 build script 重跑，所以 `tasks.withType(...)` 內的 validation 不會再跑 |
-| Task up-to-date | plugin 的 `.class` 已存在，整個 compile task skip，validation 也跳過 |
-| Build cache | 從其他機器或之前的 build 拉 output，完全不編譯 |
-| Incremental | 只編改動的 source 檔，新加的 validation 若沒影響到改動檔就不觸發 |
+| Task up-to-date     | plugin 的 `.class` 已存在，整個 compile task skip，validation 也跳過        |
+| Build cache         | 從其他機器或之前的 build 拉 output，完全不編譯                              |
+| Incremental         | 只編改動的 source 檔，新加的 validation 若沒影響到改動檔就不觸發            |
 
 ### Cache 失效的觸發條件
 
-| Cache | 失效 trigger |
-|---|---|
+| Cache               | 失效 trigger                                             |
+| ------------------- | -------------------------------------------------------- |
 | Configuration cache | build script 改動、依賴 resolution 結果變、Gradle 版本變 |
-| Task up-to-date | input 檔改動、task 的 configuration 改動 |
-| Build cache | cache key 改（input hash 變） |
-| Incremental | compiler 認為需要重跑 |
+| Task up-to-date     | input 檔改動、task 的 configuration 改動                 |
+| Build cache         | cache key 改（input hash 變）                            |
+| Incremental         | compiler 認為需要重跑                                    |
 
 `pubspec.lock` 改動會打破 configuration cache 和 dependency resolution cache，這就是合併後最常見的引爆點。
 

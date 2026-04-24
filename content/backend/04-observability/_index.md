@@ -9,13 +9,13 @@ weight: 4
 
 ## 暫定分類
 
-| 分類            | 內容方向                                             |
-| --------------- | ---------------------------------------------------- |
-| [Log](../knowledge-cards/log) aggregation | [log schema](../knowledge-cards/log-schema)、索引、查詢、保留策略                     |
-| [Metrics](../knowledge-cards/metrics)         | counter、gauge、[histogram](../knowledge-cards/histogram)、cardinality、Prometheus   |
-| Tracing         | [span](../knowledge-cards/span)、[trace id](../knowledge-cards/trace-id)、[trace context](../knowledge-cards/trace-context/)、OpenTelemetry   |
-| [Dashboard](../knowledge-cards/dashboard)       | SLI、[SLO](../knowledge-cards/sli-slo)、容量趨勢、服務健康                         |
-| [Alert](../knowledge-cards/alert)           | alert rule、noise control、[runbook](../knowledge-cards/runbook)、[on-call](../knowledge-cards/on-call) workflow |
+| 分類                                      | 內容方向                                                                                                                                    |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Log](../knowledge-cards/log) aggregation | [log schema](../knowledge-cards/log-schema)、索引、查詢、保留策略                                                                           |
+| [Metrics](../knowledge-cards/metrics)     | counter、gauge、[histogram](../knowledge-cards/histogram)、cardinality、Prometheus                                                          |
+| Tracing                                   | [span](../knowledge-cards/span)、[trace id](../knowledge-cards/trace-id)、[trace context](../knowledge-cards/trace-context/)、OpenTelemetry |
+| [Dashboard](../knowledge-cards/dashboard) | SLI、[SLO](../knowledge-cards/sli-slo)、容量趨勢、服務健康                                                                                  |
+| [Alert](../knowledge-cards/alert)         | alert rule、noise control、[runbook](../knowledge-cards/runbook)、[on-call](../knowledge-cards/on-call) workflow                            |
 
 ## 選型入口
 
@@ -35,10 +35,10 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 ## 章節列表
 
-| 章節                    | 主題                    | 關鍵收穫                                  |
-| ----------------------- | ----------------------- | ----------------------------------------- |
-| [4.1](log-schema/)      | log schema 與搜尋規劃   | 設計欄位、索引與查詢方式                  |
-| [4.2](metrics-basics/)  | metrics 與 SLI/SLO      | 用 counter、gauge、histogram 描述服務健康 |
-| [4.3](tracing-context/) | tracing 與 context link | 追蹤跨服務 request path                   |
-| [4.4](dashboard-alert/) | dashboard 與 alert 設計 | 讓告警能對應 runbook 與容量趨勢           |
+| 章節                                      | 主題                                 | 關鍵收穫                                   |
+| ----------------------------------------- | ------------------------------------ | ------------------------------------------ |
+| [4.1](log-schema/)                        | log schema 與搜尋規劃                | 設計欄位、索引與查詢方式                   |
+| [4.2](metrics-basics/)                    | metrics 與 SLI/SLO                   | 用 counter、gauge、histogram 描述服務健康  |
+| [4.3](tracing-context/)                   | tracing 與 context link              | 追蹤跨服務 request path                    |
+| [4.4](dashboard-alert/)                   | dashboard 與 alert 設計              | 讓告警能對應 runbook 與容量趨勢            |
 | [4.5](attacker-view-observability-risks/) | 攻擊者視角（紅隊）：可觀測性弱點判讀 | 用盲區、告警失真與資料暴露風險檢查觀測系統 |

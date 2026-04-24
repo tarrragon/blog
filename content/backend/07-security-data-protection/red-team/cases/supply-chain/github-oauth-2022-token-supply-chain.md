@@ -39,6 +39,6 @@ weight: 71722
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://github.blog/news-insights/company-news/security-alert-stolen-oauth-user-tokens/
-- 政府或監管：https://github.blog/2022-12-08-notice-of-security-incident/
-- 技術分析：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
+- 官方：[github.blog](https://github.blog/news-insights/company-news/security-alert-stolen-oauth-user-tokens/)
+- 政府或監管：[github.blog](https://github.blog/2022-12-08-notice-of-security-incident/)
+- 技術分析：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a)

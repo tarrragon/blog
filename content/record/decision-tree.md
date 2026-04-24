@@ -48,20 +48,20 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 
 ### 觸發確認機制的情境
 
-| 情境 | 觸發條件 | 確認目標 |
-|------|---------|---------|
-| 不確定性詞彙 | 包含「好像」、「可能」、「似乎」等 | 確認問題性質 |
-| 複雜需求 | 觸發 3+ 代理人 | 確認 use case 和優先級 |
-| 模糊需求 | 無法用「動詞+目標」描述 | 確認具體需求 |
-| 多解釋可能 | 可解釋為多種意圖 | 確認用戶意圖 |
+| 情境         | 觸發條件                           | 確認目標               |
+| ------------ | ---------------------------------- | ---------------------- |
+| 不確定性詞彙 | 包含「好像」、「可能」、「似乎」等 | 確認問題性質           |
+| 複雜需求     | 觸發 3+ 代理人                     | 確認 use case 和優先級 |
+| 模糊需求     | 無法用「動詞+目標」描述            | 確認具體需求           |
+| 多解釋可能   | 可解釋為多種意圖                   | 確認用戶意圖           |
 
 ### 不確定性詞彙清單
 
-| 類型 | 詞彙 |
-|------|------|
+| 類型 | 詞彙                           |
+| ---- | ------------------------------ |
 | 推測 | 好像、似乎、可能、應該是、大概 |
-| 疑問 | 是不是、會不會、有沒有 |
-| 模糊 | 有點、有時候、偶爾 |
+| 疑問 | 是不是、會不會、有沒有         |
+| 模糊 | 有點、有時候、偶爾             |
 
 ### 確認流程
 
@@ -117,10 +117,10 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 
 ### 訊息類型判斷規則
 
-| 訊息類型 | 識別關鍵字 |
-|---------|-----------|
-| 問題 | "怎麼樣"、"進度"、"為什麼"、"如何"、"是什麼"、"?" |
-| 命令 | "實作"、"建立"、"修復"、"處理"、"執行"、"開始" |
+| 訊息類型 | 識別關鍵字                                        |
+| -------- | ------------------------------------------------- |
+| 問題     | "怎麼樣"、"進度"、"為什麼"、"如何"、"是什麼"、"?" |
+| 命令     | "實作"、"建立"、"修復"、"處理"、"執行"、"開始"    |
 
 ---
 
@@ -137,23 +137,23 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 
 ### 查詢類問題判斷
 
-| 問題類型 | 識別關鍵字 | 執行動作 |
-|---------|-----------|---------|
-| Ticket 進度總覽 | "進度"、"狀態"、"完成了嗎" | `/ticket-track summary` |
-| 特定 Ticket 查詢 | "Ticket {id}"、"查詢 {id}" | `/ticket-track query {id}` |
-| 版本進度查詢 | "版本進度"、"v0.x.x 進度" | 讀取 `docs/work-logs/{version}/` |
-| 待辦事項查詢 | "待辦"、"還有什麼要做" | 讀取 `docs/todolist.md` |
+| 問題類型         | 識別關鍵字                 | 執行動作                         |
+| ---------------- | -------------------------- | -------------------------------- |
+| Ticket 進度總覽  | "進度"、"狀態"、"完成了嗎" | `/ticket-track summary`          |
+| 特定 Ticket 查詢 | "Ticket {id}"、"查詢 {id}" | `/ticket-track query {id}`       |
+| 版本進度查詢     | "版本進度"、"v0.x.x 進度"  | 讀取 `docs/work-logs/{version}/` |
+| 待辦事項查詢     | "待辦"、"還有什麼要做"     | 讀取 `docs/todolist.md`          |
 
 ### 諮詢類問題派發
 
-| 問題類型 | 識別關鍵字 | 派發代理人 |
-|---------|-----------|-----------|
-| 系統架構問題 | "架構"、"設計模式"、"系統結構" | → [system-analyst](../agents/system-analyst.md) |
-| UI/UX 設計問題 | "畫面"、"介面"、"UI"、"操作流程" | → [system-designer](../agents/system-designer.md) |
-| 資料設計問題 | "資料庫"、"資料結構"、"儲存" | → [data-administrator](../agents/data-administrator.md) |
-| 環境配置問題 | "環境"、"配置"、"安裝"、"設定" | → [system-engineer](../agents/system-engineer.md) |
-| 安全問題 | "安全"、"漏洞"、"認證"、"授權" | → [security-reviewer](../agents/security-reviewer.md) |
-| 效能問題 | "效能"、"FPS"、"卡頓"、"延遲"、"慢" | → ginger-performance-tuner |
+| 問題類型       | 識別關鍵字                          | 派發代理人                                              |
+| -------------- | ----------------------------------- | ------------------------------------------------------- |
+| 系統架構問題   | "架構"、"設計模式"、"系統結構"      | → [system-analyst](../agents/system-analyst.md)         |
+| UI/UX 設計問題 | "畫面"、"介面"、"UI"、"操作流程"    | → [system-designer](../agents/system-designer.md)       |
+| 資料設計問題   | "資料庫"、"資料結構"、"儲存"        | → [data-administrator](../agents/data-administrator.md) |
+| 環境配置問題   | "環境"、"配置"、"安裝"、"設定"      | → [system-engineer](../agents/system-engineer.md)       |
+| 安全問題       | "安全"、"漏洞"、"認證"、"授權"      | → [security-reviewer](../agents/security-reviewer.md)   |
+| 效能問題       | "效能"、"FPS"、"卡頓"、"延遲"、"慢" | → ginger-performance-tuner                              |
 
 ---
 
@@ -187,9 +187,9 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
                  (用戶決策：繼續或修正)
 ```
 
-| 檢查點 | 驗證內容 | 成功時 | 失敗時 |
-|--------|---------|--------|--------|
-| Ticket 存在檢查 | 是否存在 pending/in_progress Ticket | 進入認領檢查 | 輸出 `/ticket-create` 建議 |
+| 檢查點          | 驗證內容                                | 成功時       | 失敗時                          |
+| --------------- | --------------------------------------- | ------------ | ------------------------------- |
+| Ticket 存在檢查 | 是否存在 pending/in_progress Ticket     | 進入認領檢查 | 輸出 `/ticket-create` 建議      |
 | Ticket 認領檢查 | Ticket 是否已認領（status=in_progress） | 進入命令執行 | 輸出 `/ticket-track claim` 建議 |
 
 ### 開發/修改命令
@@ -217,21 +217,21 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 
 ### 安全相關命令（強制規則）
 
-| 安全類型 | 識別關鍵字 |
-|---------|-----------|
+| 安全類型 | 識別關鍵字                                                |
+| -------- | --------------------------------------------------------- |
 | 認證相關 | "authentication", "login", "password", "token", "session" |
-| 授權相關 | "authorization", "permission", "role", "access control" |
-| 輸入處理 | "user input", "form validation", "request body" |
-| 敏感資料 | "credential", "secret", "API key", "private key" |
+| 授權相關 | "authorization", "permission", "role", "access control"   |
+| 輸入處理 | "user input", "form validation", "request body"           |
+| 敏感資料 | "credential", "secret", "API key", "private key"          |
 
 ### 除錯命令（強制規則）
 
-| 錯誤類型 | 識別關鍵字 |
-|---------|-----------|
-| 測試失敗 | "test failed", "測試失敗", "X tests failed", "FAILED" |
-| 編譯錯誤 | "compile error", "編譯錯誤", "build failed" |
-| 執行時錯誤 | "runtime error", "exception", "crash" |
-| 用戶回報問題 | "bug", "問題", "不正常", "出錯" |
+| 錯誤類型     | 識別關鍵字                                            |
+| ------------ | ----------------------------------------------------- |
+| 測試失敗     | "test failed", "測試失敗", "X tests failed", "FAILED" |
+| 編譯錯誤     | "compile error", "編譯錯誤", "build failed"           |
+| 執行時錯誤   | "runtime error", "exception", "crash"                 |
+| 用戶回報問題 | "bug", "問題", "不正常", "出錯"                       |
 
 **強制動作**：除錯命令 → [強制] 派發 incident-responder
 
@@ -239,12 +239,12 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 
 **禁止違反 Level 2 驗證結果**：
 
-| 禁止行為 | 正確做法 | 違規等級 |
-|---------|---------|---------|
-| 主線程直接修改程式碼（未建立 Ticket） | 按 Hook 建議執行 `/ticket-create` | 嚴重 |
-| 主線程跳過 incident-responder | 必須派發 incident-responder | 嚴重 |
-| 忽視 Level 2 警告後直接修改 | 應修正 Ticket 狀態後再繼續 | 中等 |
-| 在未認領 Ticket 的情況下修改 | 執行 `/ticket-track claim {id}` 先認領 | 中等 |
+| 禁止行為                              | 正確做法                               | 違規等級 |
+| ------------------------------------- | -------------------------------------- | -------- |
+| 主線程直接修改程式碼（未建立 Ticket） | 按 Hook 建議執行 `/ticket-create`      | 嚴重     |
+| 主線程跳過 incident-responder         | 必須派發 incident-responder            | 嚴重     |
+| 忽視 Level 2 警告後直接修改           | 應修正 Ticket 狀態後再繼續             | 中等     |
+| 在未認領 Ticket 的情況下修改          | 執行 `/ticket-track claim {id}` 先認領 | 中等     |
 
 **警告類型（由 Hook 輸出）**：
 
@@ -271,12 +271,12 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 ### Ticket 狀態對應動作
 
-| Ticket 狀態 | 動作 | 下一步 |
-|------------|------|--------|
-| pending | 執行 `/ticket-track claim {id}` | 進入階段判斷 |
-| in_progress | 繼續執行 | 進入階段判斷 |
-| completed | 詢問是否有後續任務 | 根據回答決定 |
-| blocked | 升級到 PM | PM 處理阻塞 |
+| Ticket 狀態 | 動作                            | 下一步       |
+| ----------- | ------------------------------- | ------------ |
+| pending     | 執行 `/ticket-track claim {id}` | 進入階段判斷 |
+| in_progress | 繼續執行                        | 進入階段判斷 |
+| completed   | 詢問是否有後續任務              | 根據回答決定 |
+| blocked     | 升級到 PM                       | PM 處理阻塞  |
 
 ---
 
@@ -286,12 +286,12 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 ### 並行派發觸發條件
 
-| 條件 | 說明 | 判斷方法 |
-|------|------|---------|
-| 多任務 | 有 2+ 個待處理任務 | 同一 Wave 中有多個 pending Ticket |
-| 無相互依賴 | 任務之間無先後順序 | Ticket 間無 blockedBy 關係 |
-| 無檔案重疊 | 修改的檔案集合無交集 | 檢查 Ticket 的 target 目錄 |
-| 同類型任務 | 屬於同一 TDD 階段 | 都是 Phase 3b 或都是 Phase 1 |
+| 條件       | 說明                 | 判斷方法                          |
+| ---------- | -------------------- | --------------------------------- |
+| 多任務     | 有 2+ 個待處理任務   | 同一 Wave 中有多個 pending Ticket |
+| 無相互依賴 | 任務之間無先後順序   | Ticket 間無 blockedBy 關係        |
+| 無檔案重疊 | 修改的檔案集合無交集 | 檢查 Ticket 的 target 目錄        |
+| 同類型任務 | 屬於同一 TDD 階段    | 都是 Phase 3b 或都是 Phase 1      |
 
 ### 並行安全檢查清單
 
@@ -318,14 +318,14 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 ### TDD 四階段派發
 
-| 階段 | 代理人 | 進入條件 | 完成後 |
-|------|-------|---------|--------|
-| SA 前置審查 | [system-analyst](../agents/system-analyst.md) | 新功能/架構變更 | Phase 1 |
-| Phase 1 | [lavender-interface-designer](../agents/lavender-interface-designer.md) | SA 通過 | Phase 2 |
-| Phase 2 | [sage-test-architect](../agents/sage-test-architect.md) | Phase 1 完成 | Phase 3a |
-| Phase 3a | [pepper-test-implementer](../agents/pepper-test-implementer.md) | Phase 2 完成 | Phase 3b |
-| Phase 3b | [parsley-flutter-developer](../agents/parsley-flutter-developer.md) | Phase 3a 完成 | Phase 4 |
-| Phase 4 | [cinnamon-refactor-owl](../agents/cinnamon-refactor-owl.md) | Phase 3b 完成 | [完成判斷] |
+| 階段        | 代理人                                                                  | 進入條件        | 完成後     |
+| ----------- | ----------------------------------------------------------------------- | --------------- | ---------- |
+| SA 前置審查 | [system-analyst](../agents/system-analyst.md)                           | 新功能/架構變更 | Phase 1    |
+| Phase 1     | [lavender-interface-designer](../agents/lavender-interface-designer.md) | SA 通過         | Phase 2    |
+| Phase 2     | [sage-test-architect](../agents/sage-test-architect.md)                 | Phase 1 完成    | Phase 3a   |
+| Phase 3a    | [pepper-test-implementer](../agents/pepper-test-implementer.md)         | Phase 2 完成    | Phase 3b   |
+| Phase 3b    | [parsley-flutter-developer](../agents/parsley-flutter-developer.md)     | Phase 3a 完成   | Phase 4    |
+| Phase 4     | [cinnamon-refactor-owl](../agents/cinnamon-refactor-owl.md)             | Phase 3b 完成   | [完成判斷] |
 
 ---
 
@@ -362,18 +362,18 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 ### 錯誤類型派發表
 
-| 錯誤分類 | 子分類 | 派發代理人 |
-|---------|-------|-----------|
-| 編譯錯誤 | 依賴問題 | system-engineer |
-| 編譯錯誤 | 類型/語法錯誤 | parsley-flutter-developer |
-| 測試失敗 | 測試本身問題 | sage-test-architect |
-| 測試失敗 | 設計邏輯錯誤 | system-analyst |
-| 測試失敗 | 實作不符預期 | parsley-flutter-developer |
-| 執行時錯誤 | 環境問題 | system-engineer |
-| 執行時錯誤 | 資料問題 | data-administrator |
-| 執行時錯誤 | 程式錯誤 | parsley-flutter-developer |
-| 效能問題 | - | ginger-performance-tuner |
-| 安全問題 | - | security-reviewer |
+| 錯誤分類   | 子分類        | 派發代理人                |
+| ---------- | ------------- | ------------------------- |
+| 編譯錯誤   | 依賴問題      | system-engineer           |
+| 編譯錯誤   | 類型/語法錯誤 | parsley-flutter-developer |
+| 測試失敗   | 測試本身問題  | sage-test-architect       |
+| 測試失敗   | 設計邏輯錯誤  | system-analyst            |
+| 測試失敗   | 實作不符預期  | parsley-flutter-developer |
+| 執行時錯誤 | 環境問題      | system-engineer           |
+| 執行時錯誤 | 資料問題      | data-administrator        |
+| 執行時錯誤 | 程式錯誤      | parsley-flutter-developer |
+| 效能問題   | -             | ginger-performance-tuner  |
+| 安全問題   | -             | security-reviewer         |
 
 ---
 
@@ -400,25 +400,25 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 ### 完成判斷規則
 
-| 判斷項目 | 條件 | 動作 |
-|---------|------|------|
-| 技術債務 | 發現可優化項目 | `/tech-debt-capture` 建立 Ticket |
-| 規則變更同步 | 修改了 `.claude/rules/` 下的檔案 | 檢查 SKILL 和方法論是否需要同步 |
-| 學習經驗 | 重要決策或經驗 | 派發 memory-network-builder 記錄 |
-| 後續階段 | 有對應下一階段 | 更新 worklog 進入下一個 Ticket |
-| 版本完成 | 所有 Ticket 完成 | `/version-release check` 準備發布 |
-| 等待中 | 其他 Ticket 未完成 | 繼續等待其他 Ticket
+| 判斷項目     | 條件                             | 動作                              |
+| ------------ | -------------------------------- | --------------------------------- |
+| 技術債務     | 發現可優化項目                   | `/tech-debt-capture` 建立 Ticket  |
+| 規則變更同步 | 修改了 `.claude/rules/` 下的檔案 | 檢查 SKILL 和方法論是否需要同步   |
+| 學習經驗     | 重要決策或經驗                   | 派發 memory-network-builder 記錄  |
+| 後續階段     | 有對應下一階段                   | 更新 worklog 進入下一個 Ticket    |
+| 版本完成     | 所有 Ticket 完成                 | `/version-release check` 準備發布 |
+| 等待中       | 其他 Ticket 未完成               |                                   |
 
 ### 規則變更同步檢查
 
 當修改了 `.claude/rules/` 下的規則檔案時，必須檢查以下相關文件是否需要同步更新：
 
-| 檢查項目 | 檔案位置 | 說明 |
-|---------|---------|------|
-| 相關 SKILL | `.claude/skills/` | 檢查是否有 SKILL 引用了變更的規則 |
-| 方法論 | `.claude/methodologies/` | 檢查是否有方法論引用了變更的規則 |
-| 代理人定義 | `.claude/agents/` | 檢查代理人定義是否需要更新 |
-| 範本 | `.claude/templates/` | 檢查範本是否需要同步 |
+| 檢查項目   | 檔案位置                 | 說明                              |
+| ---------- | ------------------------ | --------------------------------- |
+| 相關 SKILL | `.claude/skills/`        | 檢查是否有 SKILL 引用了變更的規則 |
+| 方法論     | `.claude/methodologies/` | 檢查是否有方法論引用了變更的規則  |
+| 代理人定義 | `.claude/agents/`        | 檢查代理人定義是否需要更新        |
+| 範本       | `.claude/templates/`     | 檢查範本是否需要同步              |
 
 **同步檢查命令**：
 
@@ -458,12 +458,12 @@ Level 5: TDD 階段代理人（lavender, sage, pepper, parsley, cinnamon）
 
 ### 多條件觸發處理規則
 
-| 觸發組合 | 處理方式 | 理由 |
-|---------|---------|------|
-| 錯誤 + 任何 | incident-responder 先處理 | 錯誤必須優先排除 |
-| SA + security | SA 先審查架構 | 安全審查依賴架構設計 |
-| SA + 專業代理人 | SA 先分解需求 | 需先確定範圍 |
-| 多個專業代理人 | SA 協調或按需求分解為多 Ticket | 避免職責混亂 |
+| 觸發組合        | 處理方式                       | 理由                 |
+| --------------- | ------------------------------ | -------------------- |
+| 錯誤 + 任何     | incident-responder 先處理      | 錯誤必須優先排除     |
+| SA + security   | SA 先審查架構                  | 安全審查依賴架構設計 |
+| SA + 專業代理人 | SA 先分解需求                  | 需先確定範圍         |
+| 多個專業代理人  | SA 協調或按需求分解為多 Ticket | 避免職責混亂         |
 
 ---
 
@@ -475,20 +475,20 @@ Level 5: TDD 階段代理人（lavender, sage, pepper, parsley, cinnamon）
 
 **任一條件符合即需拆分**：
 
-| 條件 | 閾值 | 說明 |
-|------|------|------|
+| 條件       | 閾值   | 說明                            |
+| ---------- | ------ | ------------------------------- |
 | 變數狀態數 | > 5 個 | 單一任務需追蹤超過 5 個變數狀態 |
-| 架構層級數 | > 2 層 | 任務跨越 3+ 架構層 |
-| 依賴關係數 | > 3 個 | 任務依賴超過 3 個其他模組 |
-| 修改檔案數 | > 5 個 | 單一任務需修改超過 5 個檔案 |
+| 架構層級數 | > 2 層 | 任務跨越 3+ 架構層              |
+| 依賴關係數 | > 3 個 | 任務依賴超過 3 個其他模組       |
+| 修改檔案數 | > 5 個 | 單一任務需修改超過 5 個檔案     |
 
 ### 複雜度快速評估
 
-| 總分 | 複雜度 | 建議 |
-|------|--------|------|
-| 0-2 | 低 | 直接派發單一代理人 |
-| 3-5 | 中 | 謹慎評估，考慮拆分 |
-| 6-8 | 高 | 必須拆分後再派發 |
+| 總分 | 複雜度 | 建議               |
+| ---- | ------ | ------------------ |
+| 0-2  | 低     | 直接派發單一代理人 |
+| 3-5  | 中     | 謹慎評估，考慮拆分 |
+| 6-8  | 高     | 必須拆分後再派發   |
 
 ---
 
@@ -520,12 +520,12 @@ decision_tree_path:
 
 ### 為何需要決策樹欄位？
 
-| 價值 | 說明 |
-|------|------|
+| 價值         | 說明                               |
+| ------------ | ---------------------------------- |
 | 釐清任務內容 | 強制記錄決策過程，確保任務定義明確 |
-| 知識傳承 | 決策路徑可作為後續類似任務的參考 |
-| 品質把關 | 防止跳過必要的分析步驟 |
-| 模型優化 | 模糊之處可提出討論，持續改進決策樹 |
+| 知識傳承     | 決策路徑可作為後續類似任務的參考   |
+| 品質把關     | 防止跳過必要的分析步驟             |
+| 模型優化     | 模糊之處可提出討論，持續改進決策樹 |
 
 ---
 
@@ -533,40 +533,40 @@ decision_tree_path:
 
 ### Ticket 管理命令
 
-| 命令 | 用途 | 觸發時機 |
-|------|------|---------|
-| `/ticket-create` | 建立新 Ticket | 新任務、無對應 Ticket |
-| `/ticket-track summary` | 查詢所有 Ticket 進度 | 用戶詢問進度 |
-| `/ticket-track query {id}` | 查詢特定 Ticket | 需要詳細資訊 |
-| `/ticket-track claim {id}` | 認領 Ticket | 開始執行時 |
-| `/ticket-track complete {id}` | 完成 Ticket | 階段完成時 |
-| `/ticket-track release {id}` | 釋放 Ticket | 無法繼續時 |
+| 命令                          | 用途                 | 觸發時機              |
+| ----------------------------- | -------------------- | --------------------- |
+| `/ticket-create`              | 建立新 Ticket        | 新任務、無對應 Ticket |
+| `/ticket-track summary`       | 查詢所有 Ticket 進度 | 用戶詢問進度          |
+| `/ticket-track query {id}`    | 查詢特定 Ticket      | 需要詳細資訊          |
+| `/ticket-track claim {id}`    | 認領 Ticket          | 開始執行時            |
+| `/ticket-track complete {id}` | 完成 Ticket          | 階段完成時            |
+| `/ticket-track release {id}`  | 釋放 Ticket          | 無法繼續時            |
 
 ### 決策和評估命令
 
-| 命令 | 用途 | 觸發時機 |
-|------|------|---------|
-| `/5w1h-decision` | 5W1H 決策框架 | 需要決策時 |
-| `/pre-fix-eval` | 修復前評估 | 除錯命令入口（強制） |
-| `/tech-debt-capture` | 技術債務捕獲 | Phase 4 完成後（強制） |
+| 命令                 | 用途          | 觸發時機               |
+| -------------------- | ------------- | ---------------------- |
+| `/5w1h-decision`     | 5W1H 決策框架 | 需要決策時             |
+| `/pre-fix-eval`      | 修復前評估    | 除錯命令入口（強制）   |
+| `/tech-debt-capture` | 技術債務捕獲  | Phase 4 完成後（強制） |
 
 ### 版本管理命令
 
-| 命令 | 用途 | 觸發時機 |
-|------|------|---------|
-| `/version-release check` | 檢查發布準備度 | 版本完成時（強制） |
-| `/version-release update-docs` | 更新文件 | 發布前 |
-| `/version-release release` | 執行發布 | 確認發布 |
+| 命令                           | 用途           | 觸發時機           |
+| ------------------------------ | -------------- | ------------------ |
+| `/version-release check`       | 檢查發布準備度 | 版本完成時（強制） |
+| `/version-release update-docs` | 更新文件       | 發布前             |
+| `/version-release release`     | 執行發布       | 確認發布           |
 
 ### 其他常用命令
 
-| 命令 | 用途 |
-|------|------|
-| `/commit-as-prompt` | 提交流程 |
-| `/lsp-first` | LSP 使用指南 |
-| `/startup-check` | Session 開始檢查 |
-| `/cognitive-load` | 認知負擔評估 |
-| `/decision-helper` | 決策樹助手 |
+| 命令                | 用途             |
+| ------------------- | ---------------- |
+| `/commit-as-prompt` | 提交流程         |
+| `/lsp-first`        | LSP 使用指南     |
+| `/startup-check`    | Session 開始檢查 |
+| `/cognitive-load`   | 認知負擔評估     |
+| `/decision-helper`  | 決策樹助手       |
 
 ---
 
@@ -574,11 +574,11 @@ decision_tree_path:
 
 以下命令在特定情境下**必須執行**，不可跳過：
 
-| 情境 | 強制命令 | 理由 |
-|------|---------|------|
-| 錯誤/失敗發生 | `/pre-fix-eval` | 防止衝動修復 |
-| Phase 4 完成 | `/tech-debt-capture` | 捕獲技術債務 |
-| 版本發布前 | `/version-release check` | 確保發布品質 |
+| 情境          | 強制命令                 | 理由         |
+| ------------- | ------------------------ | ------------ |
+| 錯誤/失敗發生 | `/pre-fix-eval`          | 防止衝動修復 |
+| Phase 4 完成  | `/tech-debt-capture`     | 捕獲技術債務 |
+| 版本發布前    | `/version-release check` | 確保發布品質 |
 
 ---
 
@@ -586,12 +586,12 @@ decision_tree_path:
 
 ### 主線程違規行為
 
-| 違規行為 | 處理方式 |
-|---------|---------|
+| 違規行為                         | 處理方式                   |
+| -------------------------------- | -------------------------- |
 | 跳過 incident-responder 直接修復 | 停止，回滾修改，重新走流程 |
-| 未建立 Ticket 就開始實作 | 停止，先建立 Ticket |
-| 跳過 SA 前置審查（新功能） | 停止，派發 SA |
-| 跳過 Phase 4 | 強制執行 Phase 4 |
+| 未建立 Ticket 就開始實作         | 停止，先建立 Ticket        |
+| 跳過 SA 前置審查（新功能）       | 停止，派發 SA              |
+| 跳過 Phase 4                     | 強制執行 Phase 4           |
 
 ---
 

@@ -80,12 +80,12 @@ GestureDetector (100x100)  ← 整個 100x100 都算命中
 
 ## 對照表
 
-| | deferToChild | opaque | translucent |
-|---|---|---|---|
-| 空白處命中？ | 否 | 是 | 是 |
-| 阻擋下層？ | — | 是 | 否 |
-| 子元件能收到？ | 是 | 是（子元件更優先） | 是（子元件更優先） |
-| 典型用途 | 一般按鈕 | barrier、全螢幕手勢 | 透明背景 dialog |
+|                | deferToChild | opaque              | translucent        |
+| -------------- | ------------ | ------------------- | ------------------ |
+| 空白處命中？   | 否           | 是                  | 是                 |
+| 阻擋下層？     | —            | 是                  | 否                 |
+| 子元件能收到？ | 是           | 是（子元件更優先）  | 是（子元件更優先） |
+| 典型用途       | 一般按鈕     | barrier、全螢幕手勢 | 透明背景 dialog    |
 
 ---
 
@@ -123,9 +123,9 @@ Get.dialog<String>(
 
 ## 點擊結果
 
-| 點擊位置 | 行為 |
-|----------|------|
-| Dialog 外空白 | 外層 GestureDetector → 關閉 |
-| Dialog 內空白（間距、標題） | 內層 GestureDetector → 關閉 |
-| 卡片 | 卡片自身 GestureDetector → 執行卡片邏輯 |
-| 按鈕 | 按鈕 onPressed → 執行按鈕邏輯 |
+| 點擊位置                    | 行為                                    |
+| --------------------------- | --------------------------------------- |
+| Dialog 外空白               | 外層 GestureDetector → 關閉             |
+| Dialog 內空白（間距、標題） | 內層 GestureDetector → 關閉             |
+| 卡片                        | 卡片自身 GestureDetector → 執行卡片邏輯 |
+| 按鈕                        | 按鈕 onPressed → 執行按鈕邏輯           |

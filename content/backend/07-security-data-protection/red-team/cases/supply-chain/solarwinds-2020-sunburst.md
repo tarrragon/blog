@@ -38,6 +38,6 @@ weight: 71721
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.solarwinds.com/securityadvisory
-- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a
-- 技術分析：https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises
+- 官方：[solarwinds.com](https://www.solarwinds.com/securityadvisory)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a)
+- 技術分析：[mandiant.com](https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises)

@@ -39,6 +39,6 @@ weight: 71731
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.progress.com/trust-center/moveit-transfer-and-moveit-cloud-vulnerability
-- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2023-34362
+- 官方：[progress.com](https://www.progress.com/trust-center/moveit-transfer-and-moveit-cloud-vulnerability)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a)
+- 技術分析：[nvd.nist.gov/CVE-2023-34362](https://nvd.nist.gov/vuln/detail/CVE-2023-34362)

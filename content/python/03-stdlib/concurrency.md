@@ -82,10 +82,10 @@ GIL（Global Interpreter Lock）是 CPython 直譯器的一個機制，它確保
 
 ### GIL 的影響
 
-| 任務類型 | GIL 影響 | 原因 |
-|---------|---------|------|
-| I/O 密集 | 影響小 | 等待 I/O 時會釋放 GIL |
-| CPU 密集 | 影響大 | 多執行緒無法真正並行計算 |
+| 任務類型 | GIL 影響 | 原因                     |
+| -------- | -------- | ------------------------ |
+| I/O 密集 | 影響小   | 等待 I/O 時會釋放 GIL    |
+| CPU 密集 | 影響大   | 多執行緒無法真正並行計算 |
 
 這就是為什麼：
 
@@ -302,12 +302,12 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 
 ## 選擇指南
 
-| 任務類型 | 推薦方案 | 原因 |
-|---------|---------|------|
-| I/O 密集 | `ThreadPoolExecutor` | 輕量、共享記憶體、GIL 影響小 |
-| CPU 密集 | `ProcessPoolExecutor` | 繞過 GIL、真正並行 |
-| 需要細控制 | `threading`/`multiprocessing` | 底層 API、更多控制 |
-| Python 3.14+ CPU 密集 | `threading` + Free-threading | 真正的多執行緒並行 |
+| 任務類型              | 推薦方案                      | 原因                         |
+| --------------------- | ----------------------------- | ---------------------------- |
+| I/O 密集              | `ThreadPoolExecutor`          | 輕量、共享記憶體、GIL 影響小 |
+| CPU 密集              | `ProcessPoolExecutor`         | 繞過 GIL、真正並行           |
+| 需要細控制            | `threading`/`multiprocessing` | 底層 API、更多控制           |
+| Python 3.14+ CPU 密集 | `threading` + Free-threading  | 真正的多執行緒並行           |
 
 ### 決策流程
 

@@ -22,12 +22,12 @@ weight: 76
 
 ## 問題節點（案例觸發式）
 
-| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 | 交接路由 |
-| --- | --- | --- | --- | --- |
-| token 分域不足 | 高權限 token 使用面過寬 | 外部事件可快速傳導 | [token-revocation](../knowledge-cards/token-revocation/)、[authorization](../knowledge-cards/authorization/) | `08` |
-| CI secrets 集中 | 單一節點承載大量憑證 | 輪替成本與中斷風險上升 | [secret-management](../knowledge-cards/secret-management/)、[ci-pipeline](../knowledge-cards/ci-pipeline/) | `05 + 06` |
-| 憑證生命周期失衡 | 發放、更新、撤銷節奏分離 | 可用憑證存量高於收斂速度 | [credential](../knowledge-cards/credential/)、[containment](../knowledge-cards/containment/) | `06 + 08` |
-| 供應商事件傳導未收斂 | 外部事件後內部憑證仍活躍 | 內部風險延長停留 | [incident-timeline](../knowledge-cards/incident-timeline/)、[impact-scope](../knowledge-cards/impact-scope/) | `08` |
+| 問題節點             | 判讀訊號                 | 風險後果                 | 前置控制面                                                                                                   | 交接路由  |
+| -------------------- | ------------------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------ | --------- |
+| token 分域不足       | 高權限 token 使用面過寬  | 外部事件可快速傳導       | [token-revocation](../knowledge-cards/token-revocation/)、[authorization](../knowledge-cards/authorization/) | `08`      |
+| CI secrets 集中      | 單一節點承載大量憑證     | 輪替成本與中斷風險上升   | [secret-management](../knowledge-cards/secret-management/)、[ci-pipeline](../knowledge-cards/ci-pipeline/)   | `05 + 06` |
+| 憑證生命周期失衡     | 發放、更新、撤銷節奏分離 | 可用憑證存量高於收斂速度 | [credential](../knowledge-cards/credential/)、[containment](../knowledge-cards/containment/)                 | `06 + 08` |
+| 供應商事件傳導未收斂 | 外部事件後內部憑證仍活躍 | 內部風險延長停留         | [incident-timeline](../knowledge-cards/incident-timeline/)、[impact-scope](../knowledge-cards/impact-scope/) | `08`      |
 
 ## 下一步路由
 

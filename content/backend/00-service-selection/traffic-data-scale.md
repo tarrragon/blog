@@ -22,15 +22,15 @@ weight: 5
 
 容量評估的第一個問題是「壓力如何出現」。同樣是一千個 request，每秒穩定進來、五秒內全部湧入、集中打同一個商品、或每次都查不同使用者，對系統的壓力完全不同。
 
-| 評估面向 | 需要回答的問題 | 常見影響 |
-| -------- | -------------- | -------- |
-| 平均流量 | 平常每秒有多少 request 或 message | 基礎容量與成本 |
-| 尖峰倍率 | 尖峰是平均的幾倍，持續多久 | [buffer](../knowledge-cards/buffer)、[autoscaling](../knowledge-cards/autoscaling/)、[backpressure](../knowledge-cards/backpressure) |
-| 讀寫比例 | 讀多、寫多，還是混合交易 | cache、index、[transaction](../knowledge-cards/transaction) 設計 |
-| hot key | 壓力是否集中在少數 key | cache、sharding、[rate limit](../knowledge-cards/rate-limit) |
-| 資料成長 | 每天新增多少 row、event 或 object | storage、[partition](../knowledge-cards/partition)、[retention](../knowledge-cards/retention) |
-| 查詢範圍 | 查最近資料、全量資料，還是任意條件 | index、search、archive |
-| 保留期限 | 資料要留多久，是否需要 audit | cost、lifecycle、compliance |
+| 評估面向 | 需要回答的問題                     | 常見影響                                                                                                                             |
+| -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 平均流量 | 平常每秒有多少 request 或 message  | 基礎容量與成本                                                                                                                       |
+| 尖峰倍率 | 尖峰是平均的幾倍，持續多久         | [buffer](../knowledge-cards/buffer)、[autoscaling](../knowledge-cards/autoscaling/)、[backpressure](../knowledge-cards/backpressure) |
+| 讀寫比例 | 讀多、寫多，還是混合交易           | cache、index、[transaction](../knowledge-cards/transaction) 設計                                                                     |
+| hot key  | 壓力是否集中在少數 key             | cache、sharding、[rate limit](../knowledge-cards/rate-limit)                                                                         |
+| 資料成長 | 每天新增多少 row、event 或 object  | storage、[partition](../knowledge-cards/partition)、[retention](../knowledge-cards/retention)                                        |
+| 查詢範圍 | 查最近資料、全量資料，還是任意條件 | index、search、archive                                                                                                               |
+| 保留期限 | 資料要留多久，是否需要 audit       | cost、lifecycle、compliance                                                                                                          |
 
 這張表是評估索引。真正的容量討論要把數字放回產品情境，才能知道需要擴充哪種能力。
 

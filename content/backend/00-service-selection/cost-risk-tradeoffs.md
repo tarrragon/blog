@@ -25,13 +25,13 @@ weight: 6
 
 選型取捨的第一個問題是「這個能力降低哪種風險，又增加哪種成本」。資料庫、快取、[queue](../knowledge-cards/queue)、觀測平台、部署平台與可靠性流程都能提升能力，但它們也會增加操作面積。
 
-| 取捨面向 | 要回答的問題                                 | 常見例子                                                             |
-| -------- | -------------------------------------------- | -------------------------------------------------------------------- |
-| 建置成本 | 開發與導入要花多少時間                       | schema、[Repository Adapter](../knowledge-cards/repository-adapter/)、pipeline、[dashboard](../knowledge-cards/dashboard/)                                 |
-| 使用成本 | 流量與資料量帶來多少費用                     | storage、egress、request、compute                                    |
-| 操作成本 | 誰負責維護、升級、排障                       | backup、[alert](../knowledge-cards/alert/)、權限、容量規劃                                        |
-| 失敗代價 | 延遲、遺失、重複、停機造成什麼後果           | 付款錯誤、通知延遲、[資料不一致](../knowledge-cards/data-inconsistency)                                       |
-| 機會成本 | 導入這項能力會延後哪些產品工作               | 平台建設、功能交付、技術債                                           |
+| 取捨面向 | 要回答的問題                                 | 常見例子                                                                                                                                                                 |
+| -------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 建置成本 | 開發與導入要花多少時間                       | schema、[Repository Adapter](../knowledge-cards/repository-adapter/)、pipeline、[dashboard](../knowledge-cards/dashboard/)                                               |
+| 使用成本 | 流量與資料量帶來多少費用                     | storage、egress、request、compute                                                                                                                                        |
+| 操作成本 | 誰負責維護、升級、排障                       | backup、[alert](../knowledge-cards/alert/)、權限、容量規劃                                                                                                               |
+| 失敗代價 | 延遲、遺失、重複、停機造成什麼後果           | 付款錯誤、通知延遲、[資料不一致](../knowledge-cards/data-inconsistency)                                                                                                  |
+| 機會成本 | 導入這項能力會延後哪些產品工作               | 平台建設、功能交付、技術債                                                                                                                                               |
 | 資安成本 | 權限、遮罩、加密、稽核與防護帶來多少額外責任 | [IAM](../knowledge-cards/iam/)、[TLS / mTLS](../knowledge-cards/tls-mtls/)、[audit log](../knowledge-cards/audit-log/)、[data masking](../knowledge-cards/data-masking/) |
 
 這張表是成本索引。討論選型時，應把「技術是否強大」轉成「它是否值得目前承擔」。

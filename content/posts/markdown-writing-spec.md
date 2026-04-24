@@ -36,11 +36,11 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 
 ## 1. 工具總覽
 
-| 子命令 | 職責 | 改檔 | 觸發時機 |
-| --- | --- | --- | --- |
-| `mdtools fmt [--fix\|--check]` | 格式正規化（URL、表格、空行、列表間距、trailing newline） | `--fix` 會改 | pre-commit（`--fix`）、CI（`--check`） |
-| `mdtools lint` | 結構檢查（標題、反釣魚、code block 語言、front matter schema） | 否 | pre-commit、CI |
-| `mdtools cards` | 跨文件完整性（連結、orphan、K4） | 否 | pre-commit、CI |
+| 子命令                         | 職責                                                           | 改檔         | 觸發時機                               |
+| ------------------------------ | -------------------------------------------------------------- | ------------ | -------------------------------------- |
+| `mdtools fmt [--fix\|--check]` | 格式正規化（URL、表格、空行、列表間距、trailing newline）      | `--fix` 會改 | pre-commit（`--fix`）、CI（`--check`） |
+| `mdtools lint`                 | 結構檢查（標題、反釣魚、code block 語言、front matter schema） | 否           | pre-commit、CI                         |
+| `mdtools cards`                | 跨文件完整性（連結、orphan、K4）                               | 否           | pre-commit、CI                         |
 
 工具原始碼在 `scripts/mdtools/`，binary build 到 `bin/mdtools`（已 gitignore）。
 
@@ -106,11 +106,11 @@ MD036（粗體當標題）常見誤用：
 
 段落或表格儲存格內的裸 URL 會自動包成 markdown 連結。顯示文字依路徑可識別性分級：
 
-| 情境 | 顯示文字 | 範例（before → after） |
-| --- | --- | --- |
-| 路徑含識別碼（例如 CVE） | `domain.com/識別碼` | `https://nvd.nist.gov/vuln/detail/CVE-2023-34362` → `[nvd.nist.gov/CVE-2023-34362](https://nvd.nist.gov/vuln/detail/CVE-2023-34362)` |
-| 路徑冗長但無識別性 | `domain.com` | `https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-...` → `[cisa.gov](https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-...)` |
-| 已是 markdown 連結 | 不動 | — |
+| 情境                     | 顯示文字            | 範例（before → after）                                                                                                                                                    |
+| ------------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 路徑含識別碼（例如 CVE） | `domain.com/識別碼` | `https://nvd.nist.gov/vuln/detail/CVE-2023-34362` → `[nvd.nist.gov/CVE-2023-34362](https://nvd.nist.gov/vuln/detail/CVE-2023-34362)`                                      |
+| 路徑冗長但無識別性       | `domain.com`        | `https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-...` → `[cisa.gov](https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-...)` |
+| 已是 markdown 連結       | 不動                | —                                                                                                                                                                         |
 
 識別碼偵測用 regex 白名單，初始清單專注在高頻識別碼格式（例如 `CVE-YYYY-N`），其他格式以「遇到再加」原則擴充。清單維護在 `scripts/mdtools/internal/rules/identifiers.go`。
 
@@ -286,11 +286,11 @@ Hugo 依賴 YAML front matter 提供 title / date / weight 等欄位給 render p
 
 作用範圍：`content/**/*.md`，重點關注 `content/backend/knowledge-cards/`。
 
-| 層級 | 規則 | 實作 |
-| --- | --- | --- |
-| **L1 連結有效性** | 所有相對連結 `[...](./path)` / `[...](../path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案 |
-| **L2 卡片 orphan 偵測** | 每張卡片至少被 `content/**` 中一篇非卡片正文引用 | 建反向索引 → 找無 incoming edge 的卡片 |
-| **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結 | AST 定位段落節點 → 統計子樹 Link 數 |
+| 層級                    | 規則                                                               | 實作                                        |
+| ----------------------- | ------------------------------------------------------------------ | ------------------------------------------- |
+| **L1 連結有效性**       | 所有相對連結 `[...](./path)` / `[...](../path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案 |
+| **L2 卡片 orphan 偵測** | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                   | 建反向索引 → 找無 incoming edge 的卡片      |
+| **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                    | AST 定位段落節點 → 統計子樹 Link 數         |
 
 L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字典（`.codex/briefs/knowledge-web-expansion.md`）啟動後再開。
 

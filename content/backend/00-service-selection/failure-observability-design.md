@@ -22,14 +22,14 @@ weight: 7
 
 錯誤設計的核心問題是「失敗時系統要留下什麼線索，並給誰什麼動作」。API response、domain error、[log](../knowledge-cards/log)、metric、[trace](../knowledge-cards/trace)、[alert](../knowledge-cards/alert)、retry、[fallback](../knowledge-cards/fallback) 與 [failover](../knowledge-cards/failover) 都是錯誤合約的一部分。
 
-| 設計面向 | 要回答的問題 | 常見產出 |
-| -------- | ------------ | -------- |
-| 錯誤分類 | 這是輸入錯誤、權限錯誤、狀態衝突、下游失敗，還是系統故障 | error code、status、reason |
-| 定位線索 | 工程師如何找到 request、使用者、資源、下游與版本 | [trace id](../knowledge-cards/trace-id)、[request id](../knowledge-cards/request-id)、subject id、dependency |
-| 對外回應 | 呼叫者能否理解下一步動作 | stable error response、retry hint |
-| 操作訊號 | [on-call](../knowledge-cards/on-call) 如何知道影響範圍與嚴重度 | log、metric、alert、[dashboard](../knowledge-cards/dashboard) |
-| 降級策略 | 主要路徑失敗時能否提供較低能力服務 | fallback、cache、read-only、[queue](../knowledge-cards/queue) later |
-| 切換策略 | 依賴或節點失效時能否轉到其他路徑 | failover、traffic shift、draining |
+| 設計面向 | 要回答的問題                                                   | 常見產出                                                                                                     |
+| -------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 錯誤分類 | 這是輸入錯誤、權限錯誤、狀態衝突、下游失敗，還是系統故障       | error code、status、reason                                                                                   |
+| 定位線索 | 工程師如何找到 request、使用者、資源、下游與版本               | [trace id](../knowledge-cards/trace-id)、[request id](../knowledge-cards/request-id)、subject id、dependency |
+| 對外回應 | 呼叫者能否理解下一步動作                                       | stable error response、retry hint                                                                            |
+| 操作訊號 | [on-call](../knowledge-cards/on-call) 如何知道影響範圍與嚴重度 | log、metric、alert、[dashboard](../knowledge-cards/dashboard)                                                |
+| 降級策略 | 主要路徑失敗時能否提供較低能力服務                             | fallback、cache、read-only、[queue](../knowledge-cards/queue) later                                          |
+| 切換策略 | 依賴或節點失效時能否轉到其他路徑                               | failover、traffic shift、draining                                                                            |
 
 這張表是設計索引。錯誤定位與備援切換應在服務設計時討論，而非等事故後才補欄位。
 

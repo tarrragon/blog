@@ -38,6 +38,6 @@ weight: 71712
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause
-- 政府或監管：https://blog.cloudflare.com/thanksgiving-2023-security-incident/
-- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
+- 官方：[sec.okta.com](https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause)
+- 政府或監管：[blog.cloudflare.com](https://blog.cloudflare.com/thanksgiving-2023-security-incident/)
+- 技術分析：[cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications)

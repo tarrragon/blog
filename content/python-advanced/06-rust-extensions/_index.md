@@ -16,12 +16,12 @@ weight: 6
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-|------|------|---------|
-| [6.1](why-rust/) | 為什麼選擇 Rust？ | Rust vs C/C++ 的比較 |
-| [6.2](pyo3-basics/) | PyO3 基礎 | Rust 的 Python 綁定 |
-| [6.3](maturin-workflow/) | Maturin 開發流程 | 建構與發布工具 |
-| [6.4](real-world-examples/) | 實戰案例分析 | 知名專案的 Rust 應用 |
+| 章節                        | 主題              | 關鍵收穫             |
+| --------------------------- | ----------------- | -------------------- |
+| [6.1](why-rust/)            | 為什麼選擇 Rust？ | Rust vs C/C++ 的比較 |
+| [6.2](pyo3-basics/)         | PyO3 基礎         | Rust 的 Python 綁定  |
+| [6.3](maturin-workflow/)    | Maturin 開發流程  | 建構與發布工具       |
+| [6.4](real-world-examples/) | 實戰案例分析      | 知名專案的 Rust 應用 |
 
 ## 使用 Rust 的知名 Python 套件
 

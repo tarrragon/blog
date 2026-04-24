@@ -21,9 +21,9 @@ weight: 80
 
 ## 問題節點（案例觸發式）
 
-| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 |
-| --- | --- | --- | --- |
-| 機器身份來源不清 | credential 缺乏發放責任鏈 | 憑證可用窗口失控 | [credential](../knowledge-cards/credential/) |
-| 跨平台信任擴張過快 | token 使用面超出預期服務邊界 | 外部事件可快速傳導 | [trust-boundary](../knowledge-cards/trust-boundary/) |
-| 短時憑證策略不完整 | 失效節奏與授權節奏分離 | 撤銷成本上升 | [token-revocation](../knowledge-cards/token-revocation/) |
-| federation 回查不足 | 信任來源與授權決策無法回串 | 事故判讀時間延長 | [audit-log](../knowledge-cards/audit-log/) |
+| 問題節點            | 判讀訊號                     | 風險後果           | 前置控制面                                               |
+| ------------------- | ---------------------------- | ------------------ | -------------------------------------------------------- |
+| 機器身份來源不清    | credential 缺乏發放責任鏈    | 憑證可用窗口失控   | [credential](../knowledge-cards/credential/)             |
+| 跨平台信任擴張過快  | token 使用面超出預期服務邊界 | 外部事件可快速傳導 | [trust-boundary](../knowledge-cards/trust-boundary/)     |
+| 短時憑證策略不完整  | 失效節奏與授權節奏分離       | 撤銷成本上升       | [token-revocation](../knowledge-cards/token-revocation/) |
+| federation 回查不足 | 信任來源與授權決策無法回串   | 事故判讀時間延長   | [audit-log](../knowledge-cards/audit-log/)               |

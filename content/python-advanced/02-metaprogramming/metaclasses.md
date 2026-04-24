@@ -190,14 +190,14 @@ print(Plugin._plugins)
 
 ### 何時用 __init_subclass__，何時用 Metaclass？
 
-| 需求 | 推薦方案 |
-|------|---------|
-| 註冊子類別 | `__init_subclass__` |
-| 驗證類別屬性 | `__init_subclass__` |
+| 需求                 | 推薦方案                   |
+| -------------------- | -------------------------- |
+| 註冊子類別           | `__init_subclass__`        |
+| 驗證類別屬性         | `__init_subclass__`        |
 | 修改類別的 namespace | Metaclass（`__prepare__`） |
-| 控制實例建立 | Metaclass（`__call__`） |
-| 修改類別建立過程 | Metaclass |
-| 需要影響多層繼承 | Metaclass |
+| 控制實例建立         | Metaclass（`__call__`）    |
+| 修改類別建立過程     | Metaclass                  |
+| 需要影響多層繼承     | Metaclass                  |
 
 ---
 

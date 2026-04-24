@@ -9,14 +9,14 @@ weight: 2
 
 ## 暫定分類
 
-| 分類             | 內容方向                                         |
-| ---------------- | ------------------------------------------------ |
-| [Cache aside](../knowledge-cards/cache-aside)      | read-through 思路、cache [miss](../knowledge-cards/cache-hit-miss)、invalidation      |
-| [TTL](../knowledge-cards/ttl) 與 [eviction](../knowledge-cards/eviction)  | 過期策略、容量控制、熱點資料                     |
-| Redis data types | string、hash、set、sorted set、stream 的適用場景 |
-| Presence store   | 即時連線狀態、過期清理、跨節點查詢               |
-| Distributed lock | lock 語意、租約、失效與風險                      |
-| [Pub/Sub](../knowledge-cards/pub-sub)          | 即時通知、跨節點 [fan-out](../knowledge-cards/fan-out)、可靠性限制             |
+| 分類                                                                     | 內容方向                                                                         |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| [Cache aside](../knowledge-cards/cache-aside)                            | read-through 思路、cache [miss](../knowledge-cards/cache-hit-miss)、invalidation |
+| [TTL](../knowledge-cards/ttl) 與 [eviction](../knowledge-cards/eviction) | 過期策略、容量控制、熱點資料                                                     |
+| Redis data types                                                         | string、hash、set、sorted set、stream 的適用場景                                 |
+| Presence store                                                           | 即時連線狀態、過期清理、跨節點查詢                                               |
+| Distributed lock                                                         | lock 語意、租約、失效與風險                                                      |
+| [Pub/Sub](../knowledge-cards/pub-sub)                                    | 即時通知、跨節點 [fan-out](../knowledge-cards/fan-out)、可靠性限制               |
 
 ## 選型入口
 
@@ -32,14 +32,14 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](../knowledge-card
 
 ## 章節列表
 
-| 章節                            | 主題                      | 關鍵收穫                                                   |
-| ------------------------------- | ------------------------- | ---------------------------------------------------------- |
-| [2.1](high-concurrency-access/) | 高併發下的 Redis 讀寫邊界 | 共用 client、控制 pipeline、避免 [hot key](../knowledge-cards/hot-key) 與 [cache stampede](../knowledge-cards/cache-stampede) |
-| [2.2](cache-aside/)             | cache aside 與失效策略    | 寫出讀取優先的 cache 流程與失效方式                        |
-| [2.3](ttl-eviction/)            | TTL 與 eviction           | 規劃過期、淘汰與容量控制                                   |
-| [2.4](distributed-lock/)        | distributed lock 與租約   | 分辨鎖語意、租約風險與適用場景                             |
-| [2.5](presence-store/)          | presence store 與即時狀態 | 追蹤線上狀態、跨節點查詢與過期清理                         |
-| [2.6](attacker-view-cache-risks/) | 攻擊者視角（紅隊）：快取弱點判讀 | 用一致性、污染與放大流量風險檢查快取設計 |
+| 章節                              | 主題                             | 關鍵收穫                                                                                                                      |
+| --------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [2.1](high-concurrency-access/)   | 高併發下的 Redis 讀寫邊界        | 共用 client、控制 pipeline、避免 [hot key](../knowledge-cards/hot-key) 與 [cache stampede](../knowledge-cards/cache-stampede) |
+| [2.2](cache-aside/)               | cache aside 與失效策略           | 寫出讀取優先的 cache 流程與失效方式                                                                                           |
+| [2.3](ttl-eviction/)              | TTL 與 eviction                  | 規劃過期、淘汰與容量控制                                                                                                      |
+| [2.4](distributed-lock/)          | distributed lock 與租約          | 分辨鎖語意、租約風險與適用場景                                                                                                |
+| [2.5](presence-store/)            | presence store 與即時狀態        | 追蹤線上狀態、跨節點查詢與過期清理                                                                                            |
+| [2.6](attacker-view-cache-risks/) | 攻擊者視角（紅隊）：快取弱點判讀 | 用一致性、污染與放大流量風險檢查快取設計                                                                                      |
 
 ## 跨語言適配評估
 

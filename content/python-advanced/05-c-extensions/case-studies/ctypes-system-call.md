@@ -318,13 +318,13 @@ if __name__ == "__main__":
 
 ### 平台差異對照表
 
-| 功能 | Linux | macOS | Windows |
-|------|-------|-------|---------|
-| libc 名稱 | `libc.so.6` | `libc.dylib` | `msvcrt` |
-| `gethostname` | libc | libc | `kernel32.GetComputerNameA` |
-| `getpid` | libc | libc | `kernel32.GetCurrentProcessId` |
-| `time` | libc | libc | `msvcrt.time` |
-| `getuid/geteuid` | libc | libc | 不適用 |
+| 功能             | Linux       | macOS        | Windows                        |
+| ---------------- | ----------- | ------------ | ------------------------------ |
+| libc 名稱        | `libc.so.6` | `libc.dylib` | `msvcrt`                       |
+| `gethostname`    | libc        | libc         | `kernel32.GetComputerNameA`    |
+| `getpid`         | libc        | libc         | `kernel32.GetCurrentProcessId` |
+| `time`           | libc        | libc         | `msvcrt.time`                  |
+| `getuid/geteuid` | libc        | libc         | 不適用                         |
 
 ### Windows 特定實作
 
@@ -613,11 +613,11 @@ socket (stdlib):
 
 ### 結果分析
 
-| 方法 | 平均時間 | 相對 ctypes | 適用場景 |
-|------|---------|-------------|---------|
-| **socket (stdlib)** | ~0.9 us | 0.6x (最快) | 首選，已有封裝 |
-| **ctypes** | ~1.5 us | 1x (基準) | 無標準庫支援時 |
-| **subprocess** | ~4500 us | ~3000x (最慢) | 需要執行外部命令時 |
+| 方法                | 平均時間 | 相對 ctypes   | 適用場景           |
+| ------------------- | -------- | ------------- | ------------------ |
+| **socket (stdlib)** | ~0.9 us  | 0.6x (最快)   | 首選，已有封裝     |
+| **ctypes**          | ~1.5 us  | 1x (基準)     | 無標準庫支援時     |
+| **subprocess**      | ~4500 us | ~3000x (最慢) | 需要執行外部命令時 |
 
 **結論**：
 
@@ -627,13 +627,13 @@ socket (stdlib):
 
 ## 設計權衡
 
-| 面向 | ctypes | subprocess | 標準庫 |
-|------|--------|------------|--------|
-| **效能** | 優秀 (~1-5 us) | 差 (~3-5 ms) | 最佳 (~1 us) |
-| **可移植性** | 需處理平台差異 | 取決於命令可用性 | 優秀 |
-| **複雜度** | 中（需了解 C 型別） | 低 | 低 |
-| **安全性** | 需謹慎處理 | 需防止命令注入 | 良好 |
-| **功能範圍** | 廣（任何 C 函式） | 廣（任何命令） | 受限於已實作功能 |
+| 面向         | ctypes              | subprocess       | 標準庫           |
+| ------------ | ------------------- | ---------------- | ---------------- |
+| **效能**     | 優秀 (~1-5 us)      | 差 (~3-5 ms)     | 最佳 (~1 us)     |
+| **可移植性** | 需處理平台差異      | 取決於命令可用性 | 優秀             |
+| **複雜度**   | 中（需了解 C 型別） | 低               | 低               |
+| **安全性**   | 需謹慎處理          | 需防止命令注入   | 良好             |
+| **功能範圍** | 廣（任何 C 函式）   | 廣（任何命令）   | 受限於已實作功能 |
 
 ## 實際應用建議
 

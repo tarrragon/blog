@@ -22,12 +22,12 @@ weight: 75
 
 ## 問題節點（案例觸發式）
 
-| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 | 交接路由 |
-| --- | --- | --- | --- | --- |
-| 會話收斂節奏落後 | 修補後異常 session 延續 | 事件關閉窗口延長 | [session-invalidation](../knowledge-cards/session-invalidation/)、[timeout](../knowledge-cards/timeout/) | `08 + 05` |
-| 憑證輪替覆蓋不足 | 輪替完成率偏低、失效窗口過長 | 信任鏈可利用窗口維持 | [website-certificate-lifecycle](../knowledge-cards/website-certificate-lifecycle/)、[certificate-revocation](../knowledge-cards/certificate-revocation/) | `05 + 06` |
-| 管理平面傳輸混層 | 管理流量與業務流量共用邊界 | 高權限邊界可被橫向利用 | [management-plane](../knowledge-cards/management-plane/)、[trust-boundary](../knowledge-cards/trust-boundary/) | `05 + 08` |
-| 第三方信任重評估延遲 | 外部事件後內部憑證收斂滯後 | 傳導風險停留在生產路徑 | [token-revocation](../knowledge-cards/token-revocation/)、[incident-severity](../knowledge-cards/incident-severity/) | `08` |
+| 問題節點             | 判讀訊號                     | 風險後果               | 前置控制面                                                                                                                                               | 交接路由  |
+| -------------------- | ---------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| 會話收斂節奏落後     | 修補後異常 session 延續      | 事件關閉窗口延長       | [session-invalidation](../knowledge-cards/session-invalidation/)、[timeout](../knowledge-cards/timeout/)                                                 | `08 + 05` |
+| 憑證輪替覆蓋不足     | 輪替完成率偏低、失效窗口過長 | 信任鏈可利用窗口維持   | [website-certificate-lifecycle](../knowledge-cards/website-certificate-lifecycle/)、[certificate-revocation](../knowledge-cards/certificate-revocation/) | `05 + 06` |
+| 管理平面傳輸混層     | 管理流量與業務流量共用邊界   | 高權限邊界可被橫向利用 | [management-plane](../knowledge-cards/management-plane/)、[trust-boundary](../knowledge-cards/trust-boundary/)                                           | `05 + 08` |
+| 第三方信任重評估延遲 | 外部事件後內部憑證收斂滯後   | 傳導風險停留在生產路徑 | [token-revocation](../knowledge-cards/token-revocation/)、[incident-severity](../knowledge-cards/incident-severity/)                                     | `08`      |
 
 ## 下一步路由
 

@@ -22,12 +22,12 @@ weight: 77
 
 ## 問題節點（案例觸發式）
 
-| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 | 交接路由 |
-| --- | --- | --- | --- | --- |
-| 稽核欄位結構缺漏 | 主體、目的、資產欄位不完整 | 事故回查效率下降 | [audit-log](../knowledge-cards/audit-log/)、[incident-timeline](../knowledge-cards/incident-timeline/) | `08` |
-| 代理與批准節奏脫鉤 | 變更事件與批准事件時序偏移 | 責任邊界判讀成本上升 | [authorization](../knowledge-cards/authorization/)、[incident-command-system](../knowledge-cards/incident-command-system/) | `08` |
-| 跨部門通報節奏失衡 | 技術更新與對外訊息不同步 | 決策一致性下降 | [incident-communication-channel](../knowledge-cards/incident-communication-channel/)、[post-incident-review](../knowledge-cards/post-incident-review/) | `08` |
-| 平台級事件責任混層 | 平台與產品責任切分不清 | 收斂順序與優先級混亂 | [management-plane](../knowledge-cards/management-plane/)、[containment](../knowledge-cards/containment/) | `06 + 08` |
+| 問題節點           | 判讀訊號                   | 風險後果             | 前置控制面                                                                                                                                             | 交接路由  |
+| ------------------ | -------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
+| 稽核欄位結構缺漏   | 主體、目的、資產欄位不完整 | 事故回查效率下降     | [audit-log](../knowledge-cards/audit-log/)、[incident-timeline](../knowledge-cards/incident-timeline/)                                                 | `08`      |
+| 代理與批准節奏脫鉤 | 變更事件與批准事件時序偏移 | 責任邊界判讀成本上升 | [authorization](../knowledge-cards/authorization/)、[incident-command-system](../knowledge-cards/incident-command-system/)                             | `08`      |
+| 跨部門通報節奏失衡 | 技術更新與對外訊息不同步   | 決策一致性下降       | [incident-communication-channel](../knowledge-cards/incident-communication-channel/)、[post-incident-review](../knowledge-cards/post-incident-review/) | `08`      |
+| 平台級事件責任混層 | 平台與產品責任切分不清     | 收斂順序與優先級混亂 | [management-plane](../knowledge-cards/management-plane/)、[containment](../knowledge-cards/containment/)                                               | `06 + 08` |
 
 ## 下一步路由
 

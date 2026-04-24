@@ -11,12 +11,12 @@ weight: 5
 
 ## 章節列表
 
-| 章節                          | 主題                         | 關鍵收穫                                       |
-| ----------------------------- | ---------------------------- | ---------------------------------------------- |
+| 章節                          | 主題                         | 關鍵收穫                                                                                 |
+| ----------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------- |
 | [5.1](time-control/)          | 時間注入與狀態轉移測試       | 不用 sleep 也能測 timeout、[deadline](../../backend/knowledge-cards/deadline) 與狀態轉移 |
-| [5.2](websocket-integration/) | WebSocket integration test   | 用真實 test server 驗證 client/server 協定     |
-| [5.3](race-check/)            | race condition 檢查          | 用 `go test -race` 搭配併發測試找資料競爭      |
-| [5.4](table-tests/)           | table-driven test 的設計邊界 | 讓測試表只描述單一行為維度                     |
+| [5.2](websocket-integration/) | WebSocket integration test   | 用真實 test server 驗證 client/server 協定                                               |
+| [5.3](race-check/)            | race condition 檢查          | 用 `go test -race` 搭配併發測試找資料競爭                                                |
+| [5.4](table-tests/)           | table-driven test 的設計邊界 | 讓測試表只描述單一行為維度                                                               |
 
 ## 本模組使用的範例主題
 

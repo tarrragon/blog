@@ -9,20 +9,20 @@ weight: 8
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-| --- | --- | --- |
-| [8.0](selection-patterns/) | Go 的選型案例總覽 | 用服務壓力辨識 Go 常出現的選型條件 |
-| [8.1](google/) | Google：大規模微服務與索引服務 | 看懂 Go 如何支撐大規模搜尋與資料處理 |
-| [8.2](paypal/) | PayPal：支付平台與 NoSQL / build pipelines | 看懂 Go 如何處理複雜系統與多執行緒邊界 |
-| [8.3](dropbox/) | Dropbox：從 Python 遷移到 Go | 看懂性能關鍵後端如何逐步轉向 Go |
-| [8.4](microsoft/) | Microsoft：雲端基礎設施的一部分 | 看懂 Go 如何支撐 cloud infrastructure |
-| [8.5](twitch/) | Twitch：直播與聊天室系統 | 看懂 Go 如何服務低延遲、高併發的即時系統 |
-| [8.6](cloudflare/) | Cloudflare：DNS、SSL 與長連線服務 | 看懂 Go 如何處理網路邊界與大量連線 |
-| [8.7](cockroach-labs/) | Cockroach Labs：分散式 SQL 資料庫 | 看懂 Go 如何支撐高一致性、高複雜度系統 |
-| [8.8](stream/) | Stream：Feeds 與 Chat | 看懂 Go 如何支撐大規模即時訊息服務 |
-| [8.9](cloudwego/) | ByteDance / CloudWeGo：微服務基礎設施 | 看懂 Go 如何沉澱成微服務治理與框架 |
-| [8.10](high-concurrency-services/) | Go 的高併發服務案例 | 從長連線、代理、背景處理與資料服務辨識並發壓力 |
-| [8.11](open-source-code-reading/) | Go 公開原始碼讀碼路線 | 用入口、組裝、邊界、並發 owner 與測試建立讀碼順序 |
+| 章節                               | 主題                                       | 關鍵收穫                                          |
+| ---------------------------------- | ------------------------------------------ | ------------------------------------------------- |
+| [8.0](selection-patterns/)         | Go 的選型案例總覽                          | 用服務壓力辨識 Go 常出現的選型條件                |
+| [8.1](google/)                     | Google：大規模微服務與索引服務             | 看懂 Go 如何支撐大規模搜尋與資料處理              |
+| [8.2](paypal/)                     | PayPal：支付平台與 NoSQL / build pipelines | 看懂 Go 如何處理複雜系統與多執行緒邊界            |
+| [8.3](dropbox/)                    | Dropbox：從 Python 遷移到 Go               | 看懂性能關鍵後端如何逐步轉向 Go                   |
+| [8.4](microsoft/)                  | Microsoft：雲端基礎設施的一部分            | 看懂 Go 如何支撐 cloud infrastructure             |
+| [8.5](twitch/)                     | Twitch：直播與聊天室系統                   | 看懂 Go 如何服務低延遲、高併發的即時系統          |
+| [8.6](cloudflare/)                 | Cloudflare：DNS、SSL 與長連線服務          | 看懂 Go 如何處理網路邊界與大量連線                |
+| [8.7](cockroach-labs/)             | Cockroach Labs：分散式 SQL 資料庫          | 看懂 Go 如何支撐高一致性、高複雜度系統            |
+| [8.8](stream/)                     | Stream：Feeds 與 Chat                      | 看懂 Go 如何支撐大規模即時訊息服務                |
+| [8.9](cloudwego/)                  | ByteDance / CloudWeGo：微服務基礎設施      | 看懂 Go 如何沉澱成微服務治理與框架                |
+| [8.10](high-concurrency-services/) | Go 的高併發服務案例                        | 從長連線、代理、背景處理與資料服務辨識並發壓力    |
+| [8.11](open-source-code-reading/)  | Go 公開原始碼讀碼路線                      | 用入口、組裝、邊界、並發 owner 與測試建立讀碼順序 |
 
 ## 案例分類的閱讀方式
 

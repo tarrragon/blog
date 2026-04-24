@@ -9,15 +9,15 @@ weight: 8
 
 ## 暫定分類
 
-| 分類                     | 內容方向                               |
-| ------------------------ | -------------------------------------- |
-| [Incident severity](../knowledge-cards/incident-severity)        | 事故分級、影響判斷、啟動條件           |
-| Command model            | incident commander、角色分工、決策邊界 |
-| Containment and recovery | 止血、隔離、[降級](../knowledge-cards/degradation)、回復、rollback       |
-| Incident communication   | 內部通報、外部溝通、狀態更新節奏       |
-| Incident [runbook](../knowledge-cards/runbook)         | 場景化 [playbook](../knowledge-cards/playbook)、查詢入口、停止條件    |
-| [Post-incident review](../knowledge-cards/post-incident-review)     | [RCA](../knowledge-cards/rca)、行動項、驗證與關閉流程            |
-| [Readiness](../knowledge-cards/readiness) and drills     | 值班訓練、演練設計、[game day](../knowledge-cards/game-day)           |
+| 分類                                                            | 內容方向                                                           |
+| --------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [Incident severity](../knowledge-cards/incident-severity)       | 事故分級、影響判斷、啟動條件                                       |
+| Command model                                                   | incident commander、角色分工、決策邊界                             |
+| Containment and recovery                                        | 止血、隔離、[降級](../knowledge-cards/degradation)、回復、rollback |
+| Incident communication                                          | 內部通報、外部溝通、狀態更新節奏                                   |
+| Incident [runbook](../knowledge-cards/runbook)                  | 場景化 [playbook](../knowledge-cards/playbook)、查詢入口、停止條件 |
+| [Post-incident review](../knowledge-cards/post-incident-review) | [RCA](../knowledge-cards/rca)、行動項、驗證與關閉流程              |
+| [Readiness](../knowledge-cards/readiness) and drills            | 值班訓練、演練設計、[game day](../knowledge-cards/game-day)        |
 
 ## 選型入口
 
@@ -46,16 +46,16 @@ weight: 8
 
 ## 章節大綱
 
-| 章節 | 主題                 | 目標                                        |
-| ---- | -------------------- | ------------------------------------------- |
-| 8.1  | 事故分級與啟動條件   | 建立統一分級與啟動門檻                      |
-| 8.2  | 事故指揮與角色分工   | 定義 commander、owner、scribe、[on-call](../knowledge-cards/on-call) 協作 |
-| 8.3  | 止血、降級與回復策略 | 把短期止血與正式回復拆成可執行步驟          |
-| 8.4  | 事故通訊與狀態更新   | 建立內外部通訊節奏與格式                    |
-| 8.5  | 復盤與改進追蹤       | 把 RCA 與 action items 變成可驗證閉環       |
-| 8.6  | 演練與值班能力建設   | 用 game day 與值班訓練提升反應品質          |
-| 8.7  | 攻擊者視角（紅隊）事故弱點判讀 | 用擴散路徑、回復瓶頸與交接斷點檢查事故設計 |
-| 8.8  | 事故報告轉 workflow  | 把事故故事轉成可執行、可驗證、可演練的流程 |
+| 章節 | 主題                           | 目標                                                                      |
+| ---- | ------------------------------ | ------------------------------------------------------------------------- |
+| 8.1  | 事故分級與啟動條件             | 建立統一分級與啟動門檻                                                    |
+| 8.2  | 事故指揮與角色分工             | 定義 commander、owner、scribe、[on-call](../knowledge-cards/on-call) 協作 |
+| 8.3  | 止血、降級與回復策略           | 把短期止血與正式回復拆成可執行步驟                                        |
+| 8.4  | 事故通訊與狀態更新             | 建立內外部通訊節奏與格式                                                  |
+| 8.5  | 復盤與改進追蹤                 | 把 RCA 與 action items 變成可驗證閉環                                     |
+| 8.6  | 演練與值班能力建設             | 用 game day 與值班訓練提升反應品質                                        |
+| 8.7  | 攻擊者視角（紅隊）事故弱點判讀 | 用擴散路徑、回復瓶頸與交接斷點檢查事故設計                                |
+| 8.8  | 事故報告轉 workflow            | 把事故故事轉成可執行、可驗證、可演練的流程                                |
 
 ## 章節列表
 

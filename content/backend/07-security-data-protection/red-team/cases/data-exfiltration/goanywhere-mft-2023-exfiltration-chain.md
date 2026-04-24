@@ -39,6 +39,6 @@ GoAnywhere MFT 2023 事件顯示檔案傳輸中樞在漏洞事件中會快速演
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.fortra.com/blog/summary-investigation-related-cve-2023-0669
-- 政府或監管：https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-0669
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2023-0669
+- 官方：[fortra.com](https://www.fortra.com/blog/summary-investigation-related-cve-2023-0669)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-0669)
+- 技術分析：[nvd.nist.gov/CVE-2023-0669](https://nvd.nist.gov/vuln/detail/CVE-2023-0669)

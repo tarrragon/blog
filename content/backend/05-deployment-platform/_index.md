@@ -9,16 +9,16 @@ weight: 5
 
 ## 暫定分類
 
-| 分類              | 內容方向                                             |
-| ----------------- | ---------------------------------------------------- |
-| [Container](../knowledge-cards/container/)         | image build、[Runtime Config](../knowledge-cards/runtime-config/)、[Resource Limit](../knowledge-cards/resource-limit/)          |
-| Kubernetes        | deployment、pod lifecycle、[probe](../knowledge-cards/probe/)、[rolling update](../knowledge-cards/rolling-update)     |
-| systemd           | service unit、restart policy、signal、journal        |
-| [Load balancer](../knowledge-cards/load-balancer/)     | [idle timeout](../knowledge-cards/idle-timeout/)、[draining](../knowledge-cards/draining/)、[health check](../knowledge-cards/health-check/)、[sticky session](../knowledge-cards/sticky-session/) |
-| [Service Registry](../knowledge-cards/service-registry/) | 實例如何註冊、更新與摘除                 |
-| [Service discovery](../knowledge-cards/service-discovery/) | [Internal Endpoint](../knowledge-cards/internal-endpoint/) discovery、DNS              |
-| [Config rollout](../knowledge-cards/config-rollout/) | 設定如何安全下發到正在運作的服務實例        |
-| [Runtime Config](../knowledge-cards/runtime-config/) | environment variable、[Secret Management](../knowledge-cards/secret-management/)、[Feature Flag](../knowledge-cards/feature-flag/)           |
+| 分類                                                       | 內容方向                                                                                                                                                                                           |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Container](../knowledge-cards/container/)                 | image build、[Runtime Config](../knowledge-cards/runtime-config/)、[Resource Limit](../knowledge-cards/resource-limit/)                                                                            |
+| Kubernetes                                                 | deployment、pod lifecycle、[probe](../knowledge-cards/probe/)、[rolling update](../knowledge-cards/rolling-update)                                                                                 |
+| systemd                                                    | service unit、restart policy、signal、journal                                                                                                                                                      |
+| [Load balancer](../knowledge-cards/load-balancer/)         | [idle timeout](../knowledge-cards/idle-timeout/)、[draining](../knowledge-cards/draining/)、[health check](../knowledge-cards/health-check/)、[sticky session](../knowledge-cards/sticky-session/) |
+| [Service Registry](../knowledge-cards/service-registry/)   | 實例如何註冊、更新與摘除                                                                                                                                                                           |
+| [Service discovery](../knowledge-cards/service-discovery/) | [Internal Endpoint](../knowledge-cards/internal-endpoint/) discovery、DNS                                                                                                                          |
+| [Config rollout](../knowledge-cards/config-rollout/)       | 設定如何安全下發到正在運作的服務實例                                                                                                                                                               |
+| [Runtime Config](../knowledge-cards/runtime-config/)       | environment variable、[Secret Management](../knowledge-cards/secret-management/)、[Feature Flag](../knowledge-cards/feature-flag/)                                                                 |
 
 ## 選型入口
 
@@ -48,10 +48,10 @@ Container 解決服務包裝與 runtime 依賴；Kubernetes 解決多 instance �
 
 ## 章節列表
 
-| 章節                           | 主題                 | 關鍵收穫                                    |
-| ------------------------------ | -------------------- | ------------------------------------------- |
-| [5.1](container-runtime/)      | [container](../knowledge-cards/container/) 與 runtime | 規劃 image、資源限制與啟動行為              |
-| [5.2](kubernetes-deployment/)  | Kubernetes 部署策略  | 了解 deployment、[probe](../knowledge-cards/probe/)、rolling update      |
-| [5.3](load-balancer-contract/) | [Load Balancer Contract](../knowledge-cards/load-balancer-contract/)   | 處理 [idle timeout](../knowledge-cards/idle-timeout/)、[draining](../knowledge-cards/draining/) 與 [health check](../knowledge-cards/health-check/) |
-| [5.4](service-discovery/)      | [service discovery](../knowledge-cards/service-discovery/)    | 讓服務能穩定註冊與發現彼此                |
-| [5.5](attacker-view-platform-entry-risks/) | 攻擊者視角（紅隊）：平台與入口弱點判讀 | 用隱藏入口、設定漂移與切換風險檢查交付平台 |
+| 章節                                       | 主題                                                                 | 關鍵收穫                                                                                                                                            |
+| ------------------------------------------ | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [5.1](container-runtime/)                  | [container](../knowledge-cards/container/) 與 runtime                | 規劃 image、資源限制與啟動行為                                                                                                                      |
+| [5.2](kubernetes-deployment/)              | Kubernetes 部署策略                                                  | 了解 deployment、[probe](../knowledge-cards/probe/)、rolling update                                                                                 |
+| [5.3](load-balancer-contract/)             | [Load Balancer Contract](../knowledge-cards/load-balancer-contract/) | 處理 [idle timeout](../knowledge-cards/idle-timeout/)、[draining](../knowledge-cards/draining/) 與 [health check](../knowledge-cards/health-check/) |
+| [5.4](service-discovery/)                  | [service discovery](../knowledge-cards/service-discovery/)           | 讓服務能穩定註冊與發現彼此                                                                                                                          |
+| [5.5](attacker-view-platform-entry-risks/) | 攻擊者視角（紅隊）：平台與入口弱點判讀                               | 用隱藏入口、設定漂移與切換風險檢查交付平台                                                                                                          |

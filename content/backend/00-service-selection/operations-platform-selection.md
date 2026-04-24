@@ -22,15 +22,15 @@ weight: 4
 
 操作平台需求通常來自事故、擴容、發版或維護壓力。當服務在本機可用，但到生產環境後很難診斷、告警、部署或驗證，問題就已經超出語言本身。
 
-| 需求訊號 | 代表的工程問題 | 優先評估方向 |
-| -------- | -------------- | ------------ |
-| 只知道錯了，看不到上下文 | 操作事件與錯誤脈絡 | log aggregation |
-| 想看趨勢、容量、錯誤率 | 數值訊號與 [SLI/SLO](../knowledge-cards/sli-slo) | [metrics](../knowledge-cards/metrics) |
-| 跨服務 request path 不清楚 | 呼叫鏈與延遲拆解 | tracing |
-| 團隊需要共同看服務健康 | 視覺化與操作入口 | dashboard |
-| 問題發生時需要主動通知 | 告警與 [runbook](../knowledge-cards/runbook) | alerting |
-| 發版與擴容不穩 | 平台合約與流量入口 | deployment platform |
-| 想驗證系統能承受壓力與失敗 | 可靠性驗證 | reliability pipeline |
+| 需求訊號                   | 代表的工程問題                                   | 優先評估方向                          |
+| -------------------------- | ------------------------------------------------ | ------------------------------------- |
+| 只知道錯了，看不到上下文   | 操作事件與錯誤脈絡                               | log aggregation                       |
+| 想看趨勢、容量、錯誤率     | 數值訊號與 [SLI/SLO](../knowledge-cards/sli-slo) | [metrics](../knowledge-cards/metrics) |
+| 跨服務 request path 不清楚 | 呼叫鏈與延遲拆解                                 | tracing                               |
+| 團隊需要共同看服務健康     | 視覺化與操作入口                                 | dashboard                             |
+| 問題發生時需要主動通知     | 告警與 [runbook](../knowledge-cards/runbook)     | alerting                              |
+| 發版與擴容不穩             | 平台合約與流量入口                               | deployment platform                   |
+| 想驗證系統能承受壓力與失敗 | 可靠性驗證                                       | reliability pipeline                  |
 
 這張表是索引。每種能力都可以採用不同產品與平台，但第一步是判斷你缺的是哪一種操作能力。
 

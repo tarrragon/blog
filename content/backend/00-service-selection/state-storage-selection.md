@@ -22,13 +22,13 @@ weight: 2
 
 資料儲存服務的第一個問題是「這份資料扮演什麼責任」。同一份商品資料可以同時出現在 PostgreSQL、Redis、Elasticsearch、[event log](../knowledge-cards/event-log/) 與 [object storage](../knowledge-cards/object-storage/) 裡，但每個位置的責任不同。
 
-| 資料責任 | 可觀察特徵 | 常見服務方向 |
-| -------- | ---------- | ------------ |
-| 正式狀態 | 需要交易、一致性、查詢與長期保存 | SQL / document [database](../knowledge-cards/database) |
-| 暫存讀取 | 來源資料已存在，目標是降低讀取成本 | Redis / cache |
-| 搜尋查詢 | 需要[全文搜尋](../knowledge-cards/full-text-search/)、排序、[facet](../knowledge-cards/facet-query/)、相關性 | search engine |
-| 事件歷史 | 需要追蹤發生過的事、audit、replay | [event log](../knowledge-cards/event-log/) / stream |
-| 大型檔案 | 需要保存圖片、影片、報表、備份 | [object storage](../knowledge-cards/object-storage/) |
+| 資料責任 | 可觀察特徵                                                                                                   | 常見服務方向                                           |
+| -------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| 正式狀態 | 需要交易、一致性、查詢與長期保存                                                                             | SQL / document [database](../knowledge-cards/database) |
+| 暫存讀取 | 來源資料已存在，目標是降低讀取成本                                                                           | Redis / cache                                          |
+| 搜尋查詢 | 需要[全文搜尋](../knowledge-cards/full-text-search/)、排序、[facet](../knowledge-cards/facet-query/)、相關性 | search engine                                          |
+| 事件歷史 | 需要追蹤發生過的事、audit、replay                                                                            | [event log](../knowledge-cards/event-log/) / stream    |
+| 大型檔案 | 需要保存圖片、影片、報表、備份                                                                               | [object storage](../knowledge-cards/object-storage/)   |
 
 這張表是索引。選型時要看資料是否能重建、是否需要一致性、是否要被使用者查詢、是否承擔稽核責任。
 

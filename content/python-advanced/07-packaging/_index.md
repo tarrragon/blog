@@ -16,13 +16,13 @@ weight: 7
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-|------|------|---------|
-| [7.1](pyproject-toml/) | pyproject.toml 完整指南 | 現代設定標準 |
-| [7.2](build-systems/) | 建構系統比較 | setuptools vs Poetry vs Hatch |
-| [7.3](distribution/) | 發布到 PyPI | 建構與上傳流程 |
-| [7.4](best-practices/) | 最佳實踐 | 套件維護指南 |
-| [7.5](bundled-binaries/) | 封裝預編譯二進位 | Python 封裝 Go/Rust/C 二進位 |
+| 章節                     | 主題                    | 關鍵收穫                      |
+| ------------------------ | ----------------------- | ----------------------------- |
+| [7.1](pyproject-toml/)   | pyproject.toml 完整指南 | 現代設定標準                  |
+| [7.2](build-systems/)    | 建構系統比較            | setuptools vs Poetry vs Hatch |
+| [7.3](distribution/)     | 發布到 PyPI             | 建構與上傳流程                |
+| [7.4](best-practices/)   | 最佳實踐                | 套件維護指南                  |
+| [7.5](bundled-binaries/) | 封裝預編譯二進位        | Python 封裝 Go/Rust/C 二進位  |
 
 ## 相關 PEP 標準
 

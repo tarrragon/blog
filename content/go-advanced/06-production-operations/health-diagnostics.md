@@ -40,11 +40,11 @@ Health endpoint 的核心風險是語意混亂。若 `/health` 同時檢查 proc
 
 操作 endpoint 的核心設計是每個 endpoint 只回答一個問題。
 
-| Endpoint     | 使用者            | 回答的問題           | 失敗影響         |
-| ------------ | ----------------- | -------------------- | ---------------- |
-| `/health`    | process monitor   | process 是否基本活著 | 可能重啟 process |
-| `/ready`     | load balancer     | 是否應接新流量       | 暫停導流         |
-| `/debug/...` | 工程師            | 服務內部狀態如何     | 不應公開         |
+| Endpoint     | 使用者                                                     | 回答的問題           | 失敗影響         |
+| ------------ | ---------------------------------------------------------- | -------------------- | ---------------- |
+| `/health`    | process monitor                                            | process 是否基本活著 | 可能重啟 process |
+| `/ready`     | load balancer                                              | 是否應接新流量       | 暫停導流         |
+| `/debug/...` | 工程師                                                     | 服務內部狀態如何     | 不應公開         |
 | `/metrics`   | [metrics](../../backend/knowledge-cards/metrics) collector | 可聚合監控資料       | 監控缺資料       |
 
 這樣切分後，某個外部依賴故障不一定要讓 process 被重啟；服務可能只是不 ready，或處於 degraded 狀態。

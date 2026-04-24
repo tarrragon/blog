@@ -38,6 +38,6 @@ weight: 71714
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://investors.mgmresorts.com/investors/news-releases/press-release-details/2023/MGM-Resorts-Provides-Cybersecurity-Incident-Update/default.aspx
-- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
-- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
+- 官方：[investors.mgmresorts.com](https://investors.mgmresorts.com/investors/news-releases/press-release-details/2023/MGM-Resorts-Provides-Cybersecurity-Incident-Update/default.aspx)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a)
+- 技術分析：[cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications)

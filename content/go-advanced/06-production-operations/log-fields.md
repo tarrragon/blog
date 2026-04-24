@@ -50,16 +50,16 @@ Log schema 的核心規則是欄位名稱與值集合要穩定。`request_id`、
 
 常用欄位：
 
-| 欄位         | 用途                     |
-| ------------ | ------------------------ |
-| `layer`      | 問題發生在哪個系統層     |
-| `request_id` | 串起單次 HTTP request    |
-| `event_id`   | 串起事件處理流程         |
-| `event_type` | 聚合某類 domain event    |
+| 欄位         | 用途                                                                |
+| ------------ | ------------------------------------------------------------------- |
+| `layer`      | 問題發生在哪個系統層                                                |
+| `request_id` | 串起單次 HTTP request                                               |
+| `event_id`   | 串起事件處理流程                                                    |
+| `event_type` | 聚合某類 domain event                                               |
 | `client_id`  | 查 [WebSocket](../../backend/knowledge-cards/websocket) client 行為 |
-| `topic`      | 查訂閱或推送範圍         |
-| `reason`     | 聚合失敗原因             |
-| `error`      | 保存錯誤文字             |
+| `topic`      | 查訂閱或推送範圍                                                    |
+| `reason`     | 聚合失敗原因                                                        |
+| `error`      | 保存錯誤文字                                                        |
 
 欄位不需要很多，但要一致。穩定欄位能讓除錯從「讀一堆文字」變成「查一組條件」。
 

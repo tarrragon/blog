@@ -22,12 +22,12 @@ weight: 73
 
 ## 問題節點（案例觸發式）
 
-| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 | 交接路由 |
-| --- | --- | --- | --- | --- |
-| 對外入口可達面擴張 | 掃描流量上升、未知端點暴露、修補等待時間拉長 | 批量利用窗口擴大 | [attack-surface](../knowledge-cards/attack-surface/)、[public-api-endpoint](../knowledge-cards/public-api-endpoint/) | `05 + 08` |
-| 管理平面暴露失衡 | 管理入口異常登入、異常設定變更 | 高權限面成為事件起點 | [management-plane](../knowledge-cards/management-plane/)、[admin-endpoint](../knowledge-cards/admin-endpoint/) | `05 + 08` |
-| VPN 與遠端路徑失控 | 異常 session 延續、跨區存取時序偏移 | 內網橋接風險增加 | [sticky-session](../knowledge-cards/sticky-session/)、[session-invalidation](../knowledge-cards/session-invalidation/) | `08 + 06` |
-| 修補與驗證節奏分離 | 修補完成後異常指標持續 | 事件處置成本上升 | [containment](../knowledge-cards/containment/)、[rollback-strategy](../knowledge-cards/rollback-strategy/) | `06 + 08` |
+| 問題節點           | 判讀訊號                                     | 風險後果             | 前置控制面                                                                                                             | 交接路由  |
+| ------------------ | -------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------- |
+| 對外入口可達面擴張 | 掃描流量上升、未知端點暴露、修補等待時間拉長 | 批量利用窗口擴大     | [attack-surface](../knowledge-cards/attack-surface/)、[public-api-endpoint](../knowledge-cards/public-api-endpoint/)   | `05 + 08` |
+| 管理平面暴露失衡   | 管理入口異常登入、異常設定變更               | 高權限面成為事件起點 | [management-plane](../knowledge-cards/management-plane/)、[admin-endpoint](../knowledge-cards/admin-endpoint/)         | `05 + 08` |
+| VPN 與遠端路徑失控 | 異常 session 延續、跨區存取時序偏移          | 內網橋接風險增加     | [sticky-session](../knowledge-cards/sticky-session/)、[session-invalidation](../knowledge-cards/session-invalidation/) | `08 + 06` |
+| 修補與驗證節奏分離 | 修補完成後異常指標持續                       | 事件處置成本上升     | [containment](../knowledge-cards/containment/)、[rollback-strategy](../knowledge-cards/rollback-strategy/)             | `06 + 08` |
 
 ## 下一步路由
 

@@ -38,6 +38,6 @@ weight: 71723
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://circleci.com/blog/jan-4-2023-incident-report/
-- 政府或監管：https://circleci.com/blog/january-12-2023-security-alert/
-- 技術分析：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
+- 官方：[circleci.com](https://circleci.com/blog/jan-4-2023-incident-report/)
+- 政府或監管：[circleci.com](https://circleci.com/blog/january-12-2023-security-alert/)
+- 技術分析：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a)

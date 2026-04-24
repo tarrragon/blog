@@ -45,22 +45,22 @@ class Parser(ABC):
 
 ## 章節列表
 
-| 章節 | 主題 | 關鍵收穫 |
-|------|------|---------|
-| [2.1](descriptors/) | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
-| [2.2](metaclasses/) | Metaclass 設計與應用 | 控制類別的建立過程 |
-| [2.3](class-creation/) | 類別裝飾器與動態類別 | @dataclass 的實現原理 |
-| [2.4](introspection/) | 反射與 inspect 模組 | 程式檢視自身的能力 |
+| 章節                   | 主題                         | 關鍵收穫              |
+| ---------------------- | ---------------------------- | --------------------- |
+| [2.1](descriptors/)    | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
+| [2.2](metaclasses/)    | Metaclass 設計與應用         | 控制類別的建立過程    |
+| [2.3](class-creation/) | 類別裝飾器與動態類別         | @dataclass 的實現原理 |
+| [2.4](introspection/)  | 反射與 inspect 模組          | 程式檢視自身的能力    |
 
 ## 案例研究
 
 基於 `.claude/lib` 實際程式碼的進階案例：
 
-| 案例 | 素材 | 學習重點 |
-|------|------|---------|
-| [宣告式驗證](case-studies/declarative-validation/) | hook_validator.py | Descriptor Protocol |
-| [自動註冊機制](case-studies/auto-registration/) | hook_validator.py | Metaclass |
-| [類似 Django Field](case-studies/field-descriptor/) | hook_io.py | Descriptor + dataclass |
+| 案例                                                | 素材              | 學習重點               |
+| --------------------------------------------------- | ----------------- | ---------------------- |
+| [宣告式驗證](case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    |
+| [自動註冊機制](case-studies/auto-registration/)     | hook_validator.py | Metaclass              |
+| [類似 Django Field](case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass |
 
 ## 先備知識
 
@@ -71,12 +71,12 @@ class Parser(ABC):
 
 元編程強大但複雜，使用前請考慮：
 
-| 場景 | 建議 |
-|------|------|
-| 需要驗證屬性 | 先考慮 @property |
-| 需要修改類別 | 先考慮類別裝飾器 |
+| 場景           | 建議                     |
+| -------------- | ------------------------ |
+| 需要驗證屬性   | 先考慮 @property         |
+| 需要修改類別   | 先考慮類別裝飾器         |
 | 需要控制子類別 | 先考慮 __init_subclass__ |
-| 需要深度定制 | 才考慮 Metaclass |
+| 需要深度定制   | 才考慮 Metaclass         |
 
 **原則**：能用簡單方案解決就不用複雜方案。
 

@@ -43,12 +43,12 @@ Redis 在 Go 服務裡常見用途包括：
 
 Go 端使用 Redis 時要注意：
 
-| 問題            | 風險                        |
-| --------------- | --------------------------- |
-| 熱 key          | 單點壓力過大                |
-| cache [miss](../../backend/knowledge-cards/cache-hit-miss) 擁塞 | 大量 goroutine 同時打到後端 |
-| pipeline 太大   | [buffer](../../backend/knowledge-cards/buffer) 與記憶體壓力增加     |
-| 缺少 timeout    | 慢 request 會堆積成連鎖問題 |
+| 問題                                                            | 風險                                                            |
+| --------------------------------------------------------------- | --------------------------------------------------------------- |
+| 熱 key                                                          | 單點壓力過大                                                    |
+| cache [miss](../../backend/knowledge-cards/cache-hit-miss) 擁塞 | 大量 goroutine 同時打到後端                                     |
+| pipeline 太大                                                   | [buffer](../../backend/knowledge-cards/buffer) 與記憶體壓力增加 |
+| 缺少 timeout                                                    | 慢 request 會堆積成連鎖問題                                     |
 
 ## 【判讀】SQL 適合正式狀態與一致性資料
 

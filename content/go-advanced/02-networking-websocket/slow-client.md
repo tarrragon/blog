@@ -61,12 +61,12 @@ Buffer 的目的只是吸收短暫尖峰，不是讓 client 長期落後。若 c
 
 慢 client 滿載的核心決策是訊息能不能遺失。不同資料類型需要不同策略。
 
-| 訊息類型             | 常見策略                | 理由                       |
-| -------------------- | ----------------------- | -------------------------- |
-| 即時狀態 snapshot    | 可丟棄舊訊息或 coalesce | 最新狀態比每個中間狀態重要 |
-| action result        | 優先送達，滿載時可斷線  | client 需要知道操作結果    |
-| 診斷 [log](../../backend/knowledge-cards/log) stream      | 可取樣或丟棄            | 資料量大，通常不是唯一真相 |
-| 金流、訂單、稽核事件 | 不應只靠 [WebSocket](../../backend/knowledge-cards/websocket)      | 需要可靠儲存或可重播來源   |
+| 訊息類型                                             | 常見策略                                                      | 理由                       |
+| ---------------------------------------------------- | ------------------------------------------------------------- | -------------------------- |
+| 即時狀態 snapshot                                    | 可丟棄舊訊息或 coalesce                                       | 最新狀態比每個中間狀態重要 |
+| action result                                        | 優先送達，滿載時可斷線                                        | client 需要知道操作結果    |
+| 診斷 [log](../../backend/knowledge-cards/log) stream | 可取樣或丟棄                                                  | 資料量大，通常不是唯一真相 |
+| 金流、訂單、稽核事件                                 | 不應只靠 [WebSocket](../../backend/knowledge-cards/websocket) | 需要可靠儲存或可重播來源   |
 
 WebSocket send buffer 不應承擔資料可靠性。若訊息不能遺失，可靠性應放在資料庫、queue 或 [event log](../../backend/knowledge-cards/event-log)，WebSocket 只負責即時通知。
 
@@ -107,11 +107,11 @@ func (h *Hub) Broadcast(topic string, message ServerMessage) {
 
 Queue full 策略的核心差異是保留哪一筆資料，以及是否繼續維持連線。
 
-| 策略        | 行為                  | 適用情境             |
-| ----------- | --------------------- | -------------------- |
-| drop newest | 新訊息不進 queue      | 舊訊息仍有價值       |
-| drop oldest | 移除舊訊息，保留最新  | 狀態型更新           |
-| disconnect  | 關閉 client，要求重連 | client 已明顯跟不上  |
+| 策略        | 行為                  | 適用情境                                                    |
+| ----------- | --------------------- | ----------------------------------------------------------- |
+| drop newest | 新訊息不進 queue      | 舊訊息仍有價值                                              |
+| drop oldest | 移除舊訊息，保留最新  | 狀態型更新                                                  |
+| disconnect  | 關閉 client，要求重連 | client 已明顯跟不上                                         |
 | coalesce    | 合併多筆更新成一筆    | [topic](../../backend/knowledge-cards/topic) 最新狀態可覆蓋 |
 
 Drop oldest 範例：

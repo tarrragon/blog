@@ -39,6 +39,6 @@ weight: 71728
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.3cx.com/blog/news/security-alert-update/
-- 政府或監管：https://www.cisa.gov/news-events/alerts/2023/03/30/supply-chain-attack-against-3cxdesktopapp
-- 技術分析：https://www.sentinelone.com/blog/smoothoperator-ongoing-campaign-trojanizes-3cxdesktopapp-in-a-supply-chain-attack/
+- 官方：[3cx.com](https://www.3cx.com/blog/news/security-alert-update/)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/alerts/2023/03/30/supply-chain-attack-against-3cxdesktopapp)
+- 技術分析：[sentinelone.com](https://www.sentinelone.com/blog/smoothoperator-ongoing-campaign-trojanizes-3cxdesktopapp-in-a-supply-chain-attack/)

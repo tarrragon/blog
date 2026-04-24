@@ -133,17 +133,17 @@ dis.dis(add)
 
 ### 常見 Bytecode 指令
 
-| 指令 | 說明 |
-| ---- | ---- |
-| LOAD_FAST | 載入區域變數 |
-| LOAD_GLOBAL | 載入全域變數 |
-| LOAD_CONST | 載入常數 |
-| STORE_FAST | 儲存區域變數 |
-| BINARY_OP | 二元運算 |
-| CALL | 呼叫函式 |
-| RETURN_VALUE | 返回值 |
-| JUMP_FORWARD | 向前跳躍 |
-| POP_JUMP_IF_FALSE | 條件跳躍 |
+| 指令              | 說明         |
+| ----------------- | ------------ |
+| LOAD_FAST         | 載入區域變數 |
+| LOAD_GLOBAL       | 載入全域變數 |
+| LOAD_CONST        | 載入常數     |
+| STORE_FAST        | 儲存區域變數 |
+| BINARY_OP         | 二元運算     |
+| CALL              | 呼叫函式     |
+| RETURN_VALUE      | 返回值       |
+| JUMP_FORWARD      | 向前跳躍     |
+| POP_JUMP_IF_FALSE | 條件跳躍     |
 
 ---
 

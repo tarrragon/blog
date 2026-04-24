@@ -242,14 +242,14 @@ V1 專案選擇 **npm test** 的原因：
 
 ## 語言特性對比
 
-| 語言 | 實現機制 | 優勢 | 測試環境支援 |
-|------|----------|------|-------------|
-| **Dart** | Package system | 編譯時解析，IDE 支援佳 | 原生支援 package: 導入 |
-| **Go** | Module system | 強制語意化，無相對路徑 | 測試檔案使用相同 module path |
-| **PHP Laravel** | 框架 + Composer | 自動載入，標準化目錄 | PHPUnit 自動載入命名空間 |
-| **TypeScript** | Module resolution | 彈性配置，工具支援 | Jest/Vitest 支援 path mapping |
-| **Node.js (V1)** | 相對路徑 + Jest 映射 | 生產簡單，測試語意化 | **Jest moduleNameMapper 實現語意化** |
-| **Python** | Package imports | 簡潔語法，標準化 | pytest 原生支援 package 導入 |
+| 語言             | 實現機制             | 優勢                   | 測試環境支援                         |
+| ---------------- | -------------------- | ---------------------- | ------------------------------------ |
+| **Dart**         | Package system       | 編譯時解析，IDE 支援佳 | 原生支援 package: 導入               |
+| **Go**           | Module system        | 強制語意化，無相對路徑 | 測試檔案使用相同 module path         |
+| **PHP Laravel**  | 框架 + Composer      | 自動載入，標準化目錄   | PHPUnit 自動載入命名空間             |
+| **TypeScript**   | Module resolution    | 彈性配置，工具支援     | Jest/Vitest 支援 path mapping        |
+| **Node.js (V1)** | 相對路徑 + Jest 映射 | 生產簡單，測試語意化   | **Jest moduleNameMapper 實現語意化** |
+| **Python**       | Package imports      | 簡潔語法，標準化       | pytest 原生支援 package 導入         |
 
 ## 實踐選擇指南
 

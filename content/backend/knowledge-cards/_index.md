@@ -29,7 +29,7 @@ weight: -1
 | [Transaction Boundary](transaction-boundary/) | 哪些變更要一起成功或回復           | database、unit of work               |
 | [Migration](migration/)                       | 系統如何從舊狀態受控移到新狀態     | release、cutover、backfill           |
 | [Schema Migration](schema-migration/)         | 資料庫結構如何隨版本安全演進       | release、rollback、migration         |
-| [Expand / Contract](expand-contract/)         | 先擴充相容面再收斂舊路徑的遷移做法   | schema migration、online migration   |
+| [Expand / Contract](expand-contract/)         | 先擴充相容面再收斂舊路徑的遷移做法 | schema migration、online migration   |
 | [Migration Gate](migration-gate/)             | 遷移流程如何決定能否進入下一階段   | backfill、correctness check          |
 | [Release Gate](release-gate/)                 | 變更如何在正式釋出前通過或阻擋     | error budget、migration、review      |
 | [Rollback Rehearsal](rollback-rehearsal/)     | 回滾流程如何在正式事故前演練       | rollback strategy、migration         |
@@ -89,54 +89,54 @@ weight: -1
 
 ## 入口與部署
 
-| 卡片                              | 核心問題                              | 常見出現位置                        |
-| --------------------------------- | ------------------------------------- | ----------------------------------- |
-| [Service Endpoint](endpoint/)    | 服務入口如何被路由與存取               | API、service discovery、internal    |
-| [Public API Endpoint](public-api-endpoint/) | 面向 client 的穩定對外入口     | product API、SDK、client            |
-| [API Gateway](api-gateway/)      | 外部流量如何集中路由、驗證與轉發       | auth、rate limit、routing、request id |
-| [Request Routing](request-routing/) | 入口流量如何分派到不同服務或版本      | host、path、tenant、version        |
-| [Admin Endpoint](admin-endpoint/) | 高權限管理入口如何被隔離與稽核       | admin、backoffice、control plane    |
-| [Diagnostic Endpoint](diagnostic-endpoint/) | health、readiness 與 debug 入口 | liveness、probe、metrics snapshot   |
-| [Internal Endpoint](internal-endpoint/) | 服務內部通訊入口如何受控         | service-to-service、control plane   |
-| [Container](container/)           | 服務如何被包裝成可交付單位            | image、runtime、CI、Kubernetes      |
-| [Load Balancer](load-balancer/)   | 流量如何分散、排空與導向健康節點      | ingress、draining、rolling update   |
-| [Draining](draining/)             | 服務如何先停新流量再完成既有工作      | rolling update、shutdown、cutover   |
-| [Sticky Session](sticky-session/) | 同一 client 如何維持命中同一實例      | session affinity、load balancer     |
-| [Idle Timeout](idle-timeout/)     | 連線或會話多久沒活動後要回收         | socket、load balancer、proxy        |
-| [Health Check](health-check/)     | 平台如何快速判斷服務狀態             | load balancer、probe、diagnostic    |
-| [Resource Limit](resource-limit/) | 服務可用的 CPU / memory 上限如何影響行為 | container、scheduler、runtime       |
-| [Probe](probe/)                   | 平台如何判斷存活與接流量條件          | readiness、liveness、startup        |
-| [Config Rollout](config-rollout/) | 設定如何安全下發到運作中的服務實例    | feature flag、secret、runtime config |
-| [Runtime Config](runtime-config/) | 執行時設定如何被讀取、組合與覆寫       | env var、secret、feature flag       |
+| 卡片                                        | 核心問題                                 | 常見出現位置                          |
+| ------------------------------------------- | ---------------------------------------- | ------------------------------------- |
+| [Service Endpoint](endpoint/)               | 服務入口如何被路由與存取                 | API、service discovery、internal      |
+| [Public API Endpoint](public-api-endpoint/) | 面向 client 的穩定對外入口               | product API、SDK、client              |
+| [API Gateway](api-gateway/)                 | 外部流量如何集中路由、驗證與轉發         | auth、rate limit、routing、request id |
+| [Request Routing](request-routing/)         | 入口流量如何分派到不同服務或版本         | host、path、tenant、version           |
+| [Admin Endpoint](admin-endpoint/)           | 高權限管理入口如何被隔離與稽核           | admin、backoffice、control plane      |
+| [Diagnostic Endpoint](diagnostic-endpoint/) | health、readiness 與 debug 入口          | liveness、probe、metrics snapshot     |
+| [Internal Endpoint](internal-endpoint/)     | 服務內部通訊入口如何受控                 | service-to-service、control plane     |
+| [Container](container/)                     | 服務如何被包裝成可交付單位               | image、runtime、CI、Kubernetes        |
+| [Load Balancer](load-balancer/)             | 流量如何分散、排空與導向健康節點         | ingress、draining、rolling update     |
+| [Draining](draining/)                       | 服務如何先停新流量再完成既有工作         | rolling update、shutdown、cutover     |
+| [Sticky Session](sticky-session/)           | 同一 client 如何維持命中同一實例         | session affinity、load balancer       |
+| [Idle Timeout](idle-timeout/)               | 連線或會話多久沒活動後要回收             | socket、load balancer、proxy          |
+| [Health Check](health-check/)               | 平台如何快速判斷服務狀態                 | load balancer、probe、diagnostic      |
+| [Resource Limit](resource-limit/)           | 服務可用的 CPU / memory 上限如何影響行為 | container、scheduler、runtime         |
+| [Probe](probe/)                             | 平台如何判斷存活與接流量條件             | readiness、liveness、startup          |
+| [Config Rollout](config-rollout/)           | 設定如何安全下發到運作中的服務實例       | feature flag、secret、runtime config  |
+| [Runtime Config](runtime-config/)           | 執行時設定如何被讀取、組合與覆寫         | env var、secret、feature flag         |
 
 ## 通訊協定
 
-| 卡片                              | 核心問題                              | 常見出現位置                        |
-| --------------------------------- | ------------------------------------- | ----------------------------------- |
-| [Communication Protocol](protocol/) | 不同系統如何對齊資料交換與錯誤語意   | request/response、message、webhook  |
-| [Request/Response Protocol](request-response-protocol/) | 同步呼叫如何對齊互動規則 | HTTP API、gRPC、RPC                 |
-| [Message Protocol](message-protocol/) | queue / stream 訊息如何對齊格式與語意 | event、job、delivery                |
-| [Webhook Protocol](webhook-protocol/) | 外部回呼如何對齊簽章與 payload        | callback、signature、retry          |
+| 卡片                                                    | 核心問題                              | 常見出現位置                       |
+| ------------------------------------------------------- | ------------------------------------- | ---------------------------------- |
+| [Communication Protocol](protocol/)                     | 不同系統如何對齊資料交換與錯誤語意    | request/response、message、webhook |
+| [Request/Response Protocol](request-response-protocol/) | 同步呼叫如何對齊互動規則              | HTTP API、gRPC、RPC                |
+| [Message Protocol](message-protocol/)                   | queue / stream 訊息如何對齊格式與語意 | event、job、delivery               |
+| [Webhook Protocol](webhook-protocol/)                   | 外部回呼如何對齊簽章與 payload        | callback、signature、retry         |
 
 ## 邊界與治理
 
-| 卡片                           | 核心問題                      | 常見出現位置                      |
-| ------------------------------ | ----------------------------- | --------------------------------- |
-| [Boundary Contract](contract/) | 邊界兩端如何維持一致約定      | API contract、deployment contract、queue contract、load balancer contract |
-| [API Contract](api-contract/)  | request / response 如何維持相容 | client、SDK、public API           |
-| [Deployment Contract](deployment-contract/) | application 與 platform 如何對齊生命週期 | readiness、shutdown、rollout |
-| [Queue Contract](queue-contract/) | producer / broker / consumer 如何對齊交付語意 | ack、retry、DLQ、redelivery |
-| [Load Balancer Contract](load-balancer-contract/) | 服務與流量入口如何對齊健康與切流 | health check、draining、idle timeout |
-| [Integration Adapter](adapter/) | 外部系統如何轉成內部需要的形狀 | repository、payment、notification |
-| [Repository Adapter](repository-adapter/) | 持久化存取如何對齊應用模型 | SQL、transaction、row mapping |
-| [Provider Adapter](provider-adapter/) | 第三方服務如何被包裝成穩定介面 | payment、email、SMS、storage |
-| [Notification Adapter](notification-adapter/) | 通知通道如何轉成外部發送格式 | email、push、webhook |
-| [Request Middleware](middleware/)      | 共通請求處理如何放在邊界上    | auth、logging、tracing、validation |
-| [Authentication Middleware](authentication-middleware/) | 請求進入前如何驗證身份 | token、session、signature |
-| [Authorization Middleware](authorization-middleware/) | 請求進入前如何判斷權限 | role、tenant、resource owner |
-| [Observability Middleware](observability-middleware/) | 請求如何補上觀測欄位 | request id、trace context |
-| [Security Middleware](security-middleware/) | 請求如何套用共通安全控制 | rate limit、redaction |
-| [Validation Middleware](validation-middleware/) | 請求如何先做共通驗證 | schema、header、payload shape |
+| 卡片                                                    | 核心問題                                      | 常見出現位置                                                              |
+| ------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------- |
+| [Boundary Contract](contract/)                          | 邊界兩端如何維持一致約定                      | API contract、deployment contract、queue contract、load balancer contract |
+| [API Contract](api-contract/)                           | request / response 如何維持相容               | client、SDK、public API                                                   |
+| [Deployment Contract](deployment-contract/)             | application 與 platform 如何對齊生命週期      | readiness、shutdown、rollout                                              |
+| [Queue Contract](queue-contract/)                       | producer / broker / consumer 如何對齊交付語意 | ack、retry、DLQ、redelivery                                               |
+| [Load Balancer Contract](load-balancer-contract/)       | 服務與流量入口如何對齊健康與切流              | health check、draining、idle timeout                                      |
+| [Integration Adapter](adapter/)                         | 外部系統如何轉成內部需要的形狀                | repository、payment、notification                                         |
+| [Repository Adapter](repository-adapter/)               | 持久化存取如何對齊應用模型                    | SQL、transaction、row mapping                                             |
+| [Provider Adapter](provider-adapter/)                   | 第三方服務如何被包裝成穩定介面                | payment、email、SMS、storage                                              |
+| [Notification Adapter](notification-adapter/)           | 通知通道如何轉成外部發送格式                  | email、push、webhook                                                      |
+| [Request Middleware](middleware/)                       | 共通請求處理如何放在邊界上                    | auth、logging、tracing、validation                                        |
+| [Authentication Middleware](authentication-middleware/) | 請求進入前如何驗證身份                        | token、session、signature                                                 |
+| [Authorization Middleware](authorization-middleware/)   | 請求進入前如何判斷權限                        | role、tenant、resource owner                                              |
+| [Observability Middleware](observability-middleware/)   | 請求如何補上觀測欄位                          | request id、trace context                                                 |
+| [Security Middleware](security-middleware/)             | 請求如何套用共通安全控制                      | rate limit、redaction                                                     |
+| [Validation Middleware](validation-middleware/)         | 請求如何先做共通驗證                          | schema、header、payload shape                                             |
 
 ## 訊息與事件
 
@@ -199,103 +199,103 @@ weight: -1
 
 ## 可觀測性與可靠性
 
-| 卡片                                              | 核心問題                              | 常見出現位置                        |
-| ------------------------------------------------- | ------------------------------------- | ----------------------------------- |
-| [Log](log/)                                       | 單一事件如何留下可搜尋的上下文        | incident、debug、audit              |
-| [Log Schema](log-schema/)                         | log 欄位如何支援搜尋與關聯            | structured log、incident            |
-| [Metrics](metrics/)                               | 指標如何描述趨勢、容量與健康          | Prometheus、dashboard               |
-| [Histogram](histogram/)                           | 如何用分桶統計延遲與分布              | latency、SLO                        |
-| [Bucket](bucket/)                                 | histogram 分桶如何影響解析度          | metrics、cost                       |
-| [Percentile](percentile/)                         | p95 / p99 如何描述長尾延遲            | latency、UX                         |
-| [Metric Cardinality](metric-cardinality/)         | label 組合數如何影響成本              | metrics、storage、query             |
-| [Trace](trace/)                                   | 跨服務流程如何重建路徑與耗時          | tracing、dependency                 |
-| [Trace Context](trace-context/)                   | 跨服務 request 如何串起路徑           | tracing、OpenTelemetry              |
-| [Trace ID](trace-id/)                             | 同一條 trace 的識別碼                 | tracing、log correlation            |
-| [Span](span/)                                     | trace 中一段工作如何記錄耗時          | tracing、dependency                 |
-| [Correlation ID](correlation-id/)                 | 跨事件與跨服務如何關聯業務流程        | order、payment、queue               |
-| [Request ID](request-id/)                         | 單次 request 如何被追蹤               | API、support                        |
-| [Dashboard](dashboard/)                           | 多個觀測訊號如何組成服務狀態畫面      | incident、capacity、SLO             |
-| [SLI / SLO](sli-slo/)                             | 服務品質如何連到產品承諾              | alert、incident、error budget       |
-| [Error Budget](error-budget/)                     | SLO 允許的失敗額度如何決策            | release、reliability                |
-| [Burn Rate](burn-rate/)                           | error budget 消耗速度如何告警         | SLO alert                           |
-| [Sampling](sampling/)                             | 如何抽樣觀測資料以控制成本            | trace、log                          |
-| [Alert](alert/)                                   | 服務症狀如何轉成可行動通知            | on-call、SLO、incident              |
-| [Runbook](runbook/)                               | 事故判斷與操作步驟如何標準化          | on-call、incident、replay           |
-| [Alert Runbook](alert-runbook/)                   | 告警如何連到可執行排障流程            | on-call、dashboard                  |
-| [Symptom-Based Alert](symptom-based-alert/)       | 告警如何優先偵測產品症狀              | SLO、on-call                        |
-| [Runbook Link](runbook-link/)                     | 告警如何直接連到處理流程              | alert、dashboard                    |
-| [Alert Fatigue](alert-fatigue/)                   | 低品質告警如何降低反應品質            | on-call、alert policy               |
-| [降級](degradation/)                              | 服務部分能力失效時如何保留核心功能    | failover、fallback、capacity        |
-| [Circuit Breaker](circuit-breaker/)               | 下游持續失敗時如何暫停呼叫            | timeout、fallback、degradation      |
-| [Failover](failover/)                             | 主要路徑失效時如何切到備援            | HA、region、provider                |
-| [Autoscaling](autoscaling/)                       | 容量如何依指標自動擴縮                | HPA、capacity、traffic burst        |
-| [Rolling Update](rolling-update/)                 | 版本如何逐批替換並維持可用            | deployment、release                 |
-| [Service Registry](service-registry/)             | 服務實例如何被註冊、維護與摘除        | heartbeat、TTL、metadata            |
-| [Service Discovery](service-discovery/)           | 服務實例如何被查找與路由              | registry、DNS、load balancing       |
-| [停機](downtime/)                                 | 服務中斷時要先保護哪些產品結果        | incident、SLO、deployment           |
-| [Readiness](readiness/)                           | instance 何時可以安全接收流量         | Kubernetes、load balancer、rollout  |
-| [Liveness](health-check-liveness/)               | 平台如何判斷 process 是否仍然存活     | Kubernetes、systemd                 |
-| [Graceful Shutdown](graceful-shutdown/)           | instance 停止前如何排空流量與保存狀態 | deployment、worker、long connection |
+| 卡片                                        | 核心問題                              | 常見出現位置                        |
+| ------------------------------------------- | ------------------------------------- | ----------------------------------- |
+| [Log](log/)                                 | 單一事件如何留下可搜尋的上下文        | incident、debug、audit              |
+| [Log Schema](log-schema/)                   | log 欄位如何支援搜尋與關聯            | structured log、incident            |
+| [Metrics](metrics/)                         | 指標如何描述趨勢、容量與健康          | Prometheus、dashboard               |
+| [Histogram](histogram/)                     | 如何用分桶統計延遲與分布              | latency、SLO                        |
+| [Bucket](bucket/)                           | histogram 分桶如何影響解析度          | metrics、cost                       |
+| [Percentile](percentile/)                   | p95 / p99 如何描述長尾延遲            | latency、UX                         |
+| [Metric Cardinality](metric-cardinality/)   | label 組合數如何影響成本              | metrics、storage、query             |
+| [Trace](trace/)                             | 跨服務流程如何重建路徑與耗時          | tracing、dependency                 |
+| [Trace Context](trace-context/)             | 跨服務 request 如何串起路徑           | tracing、OpenTelemetry              |
+| [Trace ID](trace-id/)                       | 同一條 trace 的識別碼                 | tracing、log correlation            |
+| [Span](span/)                               | trace 中一段工作如何記錄耗時          | tracing、dependency                 |
+| [Correlation ID](correlation-id/)           | 跨事件與跨服務如何關聯業務流程        | order、payment、queue               |
+| [Request ID](request-id/)                   | 單次 request 如何被追蹤               | API、support                        |
+| [Dashboard](dashboard/)                     | 多個觀測訊號如何組成服務狀態畫面      | incident、capacity、SLO             |
+| [SLI / SLO](sli-slo/)                       | 服務品質如何連到產品承諾              | alert、incident、error budget       |
+| [Error Budget](error-budget/)               | SLO 允許的失敗額度如何決策            | release、reliability                |
+| [Burn Rate](burn-rate/)                     | error budget 消耗速度如何告警         | SLO alert                           |
+| [Sampling](sampling/)                       | 如何抽樣觀測資料以控制成本            | trace、log                          |
+| [Alert](alert/)                             | 服務症狀如何轉成可行動通知            | on-call、SLO、incident              |
+| [Runbook](runbook/)                         | 事故判斷與操作步驟如何標準化          | on-call、incident、replay           |
+| [Alert Runbook](alert-runbook/)             | 告警如何連到可執行排障流程            | on-call、dashboard                  |
+| [Symptom-Based Alert](symptom-based-alert/) | 告警如何優先偵測產品症狀              | SLO、on-call                        |
+| [Runbook Link](runbook-link/)               | 告警如何直接連到處理流程              | alert、dashboard                    |
+| [Alert Fatigue](alert-fatigue/)             | 低品質告警如何降低反應品質            | on-call、alert policy               |
+| [降級](degradation/)                        | 服務部分能力失效時如何保留核心功能    | failover、fallback、capacity        |
+| [Circuit Breaker](circuit-breaker/)         | 下游持續失敗時如何暫停呼叫            | timeout、fallback、degradation      |
+| [Failover](failover/)                       | 主要路徑失效時如何切到備援            | HA、region、provider                |
+| [Autoscaling](autoscaling/)                 | 容量如何依指標自動擴縮                | HPA、capacity、traffic burst        |
+| [Rolling Update](rolling-update/)           | 版本如何逐批替換並維持可用            | deployment、release                 |
+| [Service Registry](service-registry/)       | 服務實例如何被註冊、維護與摘除        | heartbeat、TTL、metadata            |
+| [Service Discovery](service-discovery/)     | 服務實例如何被查找與路由              | registry、DNS、load balancing       |
+| [停機](downtime/)                           | 服務中斷時要先保護哪些產品結果        | incident、SLO、deployment           |
+| [Readiness](readiness/)                     | instance 何時可以安全接收流量         | Kubernetes、load balancer、rollout  |
+| [Liveness](health-check-liveness/)          | 平台如何判斷 process 是否仍然存活     | Kubernetes、systemd                 |
+| [Graceful Shutdown](graceful-shutdown/)     | instance 停止前如何排空流量與保存狀態 | deployment、worker、long connection |
 
 ## 事故處理與復盤
 
-| 卡片                                                | 核心問題                       | 常見出現位置                  |
-| --------------------------------------------------- | ------------------------------ | ----------------------------- |
-| [On-Call](on-call/)                                 | 值班制度如何承接告警與事故流程 | paging、handover、incident    |
-| [Handover Protocol](handover-protocol/)             | 值班或事故責任如何安全交接     | on-call、escalation、incident |
-| [Playbook](playbook/)                               | 場景化處置如何快速啟動與執行   | incident workflow、recovery   |
-| [CI Pipeline](ci-pipeline/)                         | 合併前如何自動驗證品質與相容性 | tests、checks、merge gate     |
-| [Load Test](load-test/)                             | 預期流量下如何驗證容量與延遲   | performance、SLO、capacity    |
-| [Chaos Test](chaos-test/)                           | 受控故障注入如何驗證韌性       | resilience、failover、runbook |
-| [Game Day](game-day/)                               | 事故演練如何驗證流程與協作     | drill、readiness、training    |
-| [Incident Severity](incident-severity/)             | 事故如何依產品影響分級         | on-call、incident、SLO        |
-| [Incident Command System](incident-command-system/) | 事故期間如何分配指揮與執行角色 | commander、scribe、owner      |
-| [Incident Communication Channel](incident-communication-channel/) | 事故期間如何同步對內對外資訊 | internal chat、status update、bridge |
-| [Escalation Policy](escalation-policy/)             | 事故無回應或無進展時如何升級   | on-call、paging、handover     |
-| [Incident Timeline](incident-timeline/)             | 事故事件如何形成一致時間軸     | incident log、communication   |
-| [Blast Radius](blast-radius/)                       | 故障影響面如何估算與隔離       | dependency、shared resource   |
-| [Rollback Strategy](rollback-strategy/)             | 事故期間何時回滾與回切         | deployment、release gate      |
-| [Post-Incident Review](post-incident-review/)       | 事故後如何形成改進閉環         | retrospective、action items   |
-| [RCA](rca/)                                         | 根因分析如何從證據推導改進     | timeline、control gap         |
-| [RTO](rto/)                                         | 服務回復時間目標如何定義       | SLA/SLO、DR                   |
-| [RPO](rpo/)                                         | 可接受資料損失窗口如何定義     | backup、replication           |
-| [MTTR](mttr/)                                       | 平均修復時間如何反映處置能力   | incident metrics、review      |
+| 卡片                                                              | 核心問題                       | 常見出現位置                         |
+| ----------------------------------------------------------------- | ------------------------------ | ------------------------------------ |
+| [On-Call](on-call/)                                               | 值班制度如何承接告警與事故流程 | paging、handover、incident           |
+| [Handover Protocol](handover-protocol/)                           | 值班或事故責任如何安全交接     | on-call、escalation、incident        |
+| [Playbook](playbook/)                                             | 場景化處置如何快速啟動與執行   | incident workflow、recovery          |
+| [CI Pipeline](ci-pipeline/)                                       | 合併前如何自動驗證品質與相容性 | tests、checks、merge gate            |
+| [Load Test](load-test/)                                           | 預期流量下如何驗證容量與延遲   | performance、SLO、capacity           |
+| [Chaos Test](chaos-test/)                                         | 受控故障注入如何驗證韌性       | resilience、failover、runbook        |
+| [Game Day](game-day/)                                             | 事故演練如何驗證流程與協作     | drill、readiness、training           |
+| [Incident Severity](incident-severity/)                           | 事故如何依產品影響分級         | on-call、incident、SLO               |
+| [Incident Command System](incident-command-system/)               | 事故期間如何分配指揮與執行角色 | commander、scribe、owner             |
+| [Incident Communication Channel](incident-communication-channel/) | 事故期間如何同步對內對外資訊   | internal chat、status update、bridge |
+| [Escalation Policy](escalation-policy/)                           | 事故無回應或無進展時如何升級   | on-call、paging、handover            |
+| [Incident Timeline](incident-timeline/)                           | 事故事件如何形成一致時間軸     | incident log、communication          |
+| [Blast Radius](blast-radius/)                                     | 故障影響面如何估算與隔離       | dependency、shared resource          |
+| [Rollback Strategy](rollback-strategy/)                           | 事故期間何時回滾與回切         | deployment、release gate             |
+| [Post-Incident Review](post-incident-review/)                     | 事故後如何形成改進閉環         | retrospective、action items          |
+| [RCA](rca/)                                                       | 根因分析如何從證據推導改進     | timeline、control gap                |
+| [RTO](rto/)                                                       | 服務回復時間目標如何定義       | SLA/SLO、DR                          |
+| [RPO](rpo/)                                                       | 可接受資料損失窗口如何定義     | backup、replication                  |
+| [MTTR](mttr/)                                                     | 平均修復時間如何反映處置能力   | incident metrics、review             |
 
 ## 資安與資料保護
 
-| 卡片                                                                    | 核心問題                             | 常見出現位置                   |
-| ----------------------------------------------------------------------- | ------------------------------------ | ------------------------------ |
-| [Authorization](authorization/)                                         | 誰能對哪些資源執行哪些操作           | RBAC、ABAC、tenant             |
-| [Authentication](authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS           |
-| [Credential](credential/)                                               | 身分與系統存取用秘密如何保存與輪替   | API key、password、private key  |
-| [IAM](iam/)                                                             | 身分與權限如何集中治理               | SSO、roles、policy             |
-| [BOLA / IDOR](bola-idor/)                                               | 使用者如何被限制只能存取授權物件     | API、resource ID               |
-| [BOPLA](bopla/)                                                         | 欄位層級如何授權讀寫                 | DTO、field policy              |
-| [Mass Assignment](mass-assignment/)                                     | 自動綁定欄位如何造成未授權修改       | API、ORM                       |
-| [Excessive Data Exposure](excessive-data-exposure/)                     | API 回傳過多資料如何增加外洩風險     | response、DTO                  |
-| [Unrestricted Resource Consumption](unrestricted-resource-consumption/) | API 如何限制昂貴資源使用             | upload、export、query          |
-| [Function-Level Authorization](function-level-authorization/)           | 功能操作本身如何授權                 | refund、export、admin          |
-| [Tenant Boundary](tenant-boundary/)                                     | 多租戶資料與資源如何隔離             | SaaS、RBAC                     |
-| [Least Privilege](least-privilege/)                                     | 身份如何只取得必要權限               | IAM、database user             |
-| [Security Misconfiguration](security-misconfiguration/)                 | 設定錯誤如何暴露內部能力             | CORS、debug、cloud             |
-| [Attack Surface](attack-surface/)                                       | 系統哪些對外暴露面最先被探測       | public API、admin route、webhook |
-| [Trust Boundary](trust-boundary/)                                       | 哪些位置開始不能沿用原本信任假設   | auth boundary、tenant、network  |
-| [Abuse Case](abuse-case/)                                               | 合法功能如何被惡意轉用             | export、invite、reset           |
-| [WAF](waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack             |
-| [Feature Flag](feature-flag/)                                           | 功能開關如何分離部署與啟用           | rollout、experiment、rollback  |
-| [Input Validation](input-validation/)                                   | 入口資料如何檢查格式與語意           | API、webhook                   |
-| [SSRF](ssrf/)                                                           | 伺服器端請求如何被濫用               | URL fetch、webhook             |
-| [PII](pii/)                                                             | 可識別個人的資料如何保護             | masking、retention             |
-| [Data Classification](data-classification/)                             | 資料分級如何決定保護規則             | security、compliance           |
-| [Data Masking](data-masking/)                                           | 敏感資料如何降低暴露                 | export、log、support tool      |
-| [Secret Management](secret-management/)                                 | token、key、password 如何保存與輪替  | credential、deployment         |
-| [TLS / mTLS](tls-mtls/)                                                 | 傳輸加密與雙向身份驗證如何保護資料流 | service-to-service、API        |
-| [Website Certificate Lifecycle](website-certificate-lifecycle/)         | 網站憑證從簽發到續期與撤銷如何治理   | HTTPS、edge、ingress           |
-| [ACME Automation](acme-automation/)                                     | 網站憑證如何自動簽發與續期           | Let's Encrypt、DNS-01、HTTP-01 |
-| [Certificate Chain and Trust Root](certificate-chain-trust/)            | 憑證鏈與信任根如何影響握手           | intermediate CA、trust store   |
-| [Certificate Rotation and Renewal](certificate-rotation-renewal/)       | 憑證與私鑰如何不中斷更新             | expiry、zero-downtime          |
-| [Certificate Revocation](certificate-revocation/)                       | 憑證失效時如何撤銷與替換             | key compromise、incident       |
-| [Audit Log](audit-log/)                                                 | 高風險操作如何留下責任證據           | admin、export、permission      |
+| 卡片                                                                    | 核心問題                             | 常見出現位置                     |
+| ----------------------------------------------------------------------- | ------------------------------------ | -------------------------------- |
+| [Authorization](authorization/)                                         | 誰能對哪些資源執行哪些操作           | RBAC、ABAC、tenant               |
+| [Authentication](authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS             |
+| [Credential](credential/)                                               | 身分與系統存取用秘密如何保存與輪替   | API key、password、private key   |
+| [IAM](iam/)                                                             | 身分與權限如何集中治理               | SSO、roles、policy               |
+| [BOLA / IDOR](bola-idor/)                                               | 使用者如何被限制只能存取授權物件     | API、resource ID                 |
+| [BOPLA](bopla/)                                                         | 欄位層級如何授權讀寫                 | DTO、field policy                |
+| [Mass Assignment](mass-assignment/)                                     | 自動綁定欄位如何造成未授權修改       | API、ORM                         |
+| [Excessive Data Exposure](excessive-data-exposure/)                     | API 回傳過多資料如何增加外洩風險     | response、DTO                    |
+| [Unrestricted Resource Consumption](unrestricted-resource-consumption/) | API 如何限制昂貴資源使用             | upload、export、query            |
+| [Function-Level Authorization](function-level-authorization/)           | 功能操作本身如何授權                 | refund、export、admin            |
+| [Tenant Boundary](tenant-boundary/)                                     | 多租戶資料與資源如何隔離             | SaaS、RBAC                       |
+| [Least Privilege](least-privilege/)                                     | 身份如何只取得必要權限               | IAM、database user               |
+| [Security Misconfiguration](security-misconfiguration/)                 | 設定錯誤如何暴露內部能力             | CORS、debug、cloud               |
+| [Attack Surface](attack-surface/)                                       | 系統哪些對外暴露面最先被探測         | public API、admin route、webhook |
+| [Trust Boundary](trust-boundary/)                                       | 哪些位置開始不能沿用原本信任假設     | auth boundary、tenant、network   |
+| [Abuse Case](abuse-case/)                                               | 合法功能如何被惡意轉用               | export、invite、reset            |
+| [WAF](waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack                |
+| [Feature Flag](feature-flag/)                                           | 功能開關如何分離部署與啟用           | rollout、experiment、rollback    |
+| [Input Validation](input-validation/)                                   | 入口資料如何檢查格式與語意           | API、webhook                     |
+| [SSRF](ssrf/)                                                           | 伺服器端請求如何被濫用               | URL fetch、webhook               |
+| [PII](pii/)                                                             | 可識別個人的資料如何保護             | masking、retention               |
+| [Data Classification](data-classification/)                             | 資料分級如何決定保護規則             | security、compliance             |
+| [Data Masking](data-masking/)                                           | 敏感資料如何降低暴露                 | export、log、support tool        |
+| [Secret Management](secret-management/)                                 | token、key、password 如何保存與輪替  | credential、deployment           |
+| [TLS / mTLS](tls-mtls/)                                                 | 傳輸加密與雙向身份驗證如何保護資料流 | service-to-service、API          |
+| [Website Certificate Lifecycle](website-certificate-lifecycle/)         | 網站憑證從簽發到續期與撤銷如何治理   | HTTPS、edge、ingress             |
+| [ACME Automation](acme-automation/)                                     | 網站憑證如何自動簽發與續期           | Let's Encrypt、DNS-01、HTTP-01   |
+| [Certificate Chain and Trust Root](certificate-chain-trust/)            | 憑證鏈與信任根如何影響握手           | intermediate CA、trust store     |
+| [Certificate Rotation and Renewal](certificate-rotation-renewal/)       | 憑證與私鑰如何不中斷更新             | expiry、zero-downtime            |
+| [Certificate Revocation](certificate-revocation/)                       | 憑證失效時如何撤銷與替換             | key compromise、incident         |
+| [Audit Log](audit-log/)                                                 | 高風險操作如何留下責任證據           | admin、export、permission        |
 
 ## 使用方式
 

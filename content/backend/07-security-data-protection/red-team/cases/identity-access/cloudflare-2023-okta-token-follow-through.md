@@ -38,6 +38,6 @@ Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://blog.cloudflare.com/thanksgiving-2023-security-incident/
-- 政府或監管：https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause
-- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
+- 官方：[blog.cloudflare.com](https://blog.cloudflare.com/thanksgiving-2023-security-incident/)
+- 政府或監管：[sec.okta.com](https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause)
+- 技術分析：[cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications)

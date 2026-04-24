@@ -39,6 +39,6 @@ weight: 71733
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.netscaler.com/blog/news/cve-2023-4966-critical-security-update-now-available-for-netscaler-adc-and-netscaler-gateway/
-- 政府或監管：https://www.cisa.gov/news-events/alerts/2023/11/07/cisa-releases-guidance-addressing-citrix-netscaler-adc-and-gateway-vulnerability-cve-2023-4966
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2023-4966
+- 官方：[netscaler.com](https://www.netscaler.com/blog/news/cve-2023-4966-critical-security-update-now-available-for-netscaler-adc-and-netscaler-gateway/)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/alerts/2023/11/07/cisa-releases-guidance-addressing-citrix-netscaler-adc-and-gateway-vulnerability-cve-2023-4966)
+- 技術分析：[nvd.nist.gov/CVE-2023-4966](https://nvd.nist.gov/vuln/detail/CVE-2023-4966)

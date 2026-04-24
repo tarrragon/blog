@@ -9,12 +9,12 @@ weight: 10
 
 ## 高併發型態
 
-| 型態 | 主要壓力 | 相關案例 |
-| --- | --- | --- |
-| 長連線與即時推送 | 大量 client、慢連線、斷線清理 | Twitch、Stream、Cloudflare |
-| 網路代理與邊緣服務 | timeout、連線管理、資源限制 | Cloudflare、Kubernetes 生態工具 |
-| 背景處理與 pipeline | [fan-out](../../../backend/knowledge-cards/fan-out)、排隊、取消、錯誤回報 | PayPal、Dropbox |
-| 分散式資料服務 | 複製、一致性、節點協調 | Cockroach Labs |
+| 型態                | 主要壓力                                                                  | 相關案例                        |
+| ------------------- | ------------------------------------------------------------------------- | ------------------------------- |
+| 長連線與即時推送    | 大量 client、慢連線、斷線清理                                             | Twitch、Stream、Cloudflare      |
+| 網路代理與邊緣服務  | timeout、連線管理、資源限制                                               | Cloudflare、Kubernetes 生態工具 |
+| 背景處理與 pipeline | [fan-out](../../../backend/knowledge-cards/fan-out)、排隊、取消、錯誤回報 | PayPal、Dropbox                 |
+| 分散式資料服務      | 複製、一致性、節點協調                                                    | Cockroach Labs                  |
 
 ### 長連線與即時推送：先看 client 是否持續留在線上
 

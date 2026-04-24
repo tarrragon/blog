@@ -37,14 +37,14 @@ interface 的價值是讓 usecase 可以說：「我只需要儲存 notification
 
 外部依賴的核心特徵是慢、不穩、難測或帶有技術細節。這些依賴通常適合被 interface 隔離。
 
-| 依賴            | 隔離原因                           | 可能 interface                |
-| --------------- | ---------------------------------- | ----------------------------- |
-| clock           | 測試需要固定時間                   | `Clock` 或 `func() time.Time` |
-| repository      | 儲存技術可替換                     | `NotificationRepository`      |
-| [event [log](../../backend/knowledge-cards/log)](../../backend/knowledge-cards/event-log)       | 記錄實作可替換                     | `EventLog`                    |
-| publisher       | WebSocket、[queue](../../backend/knowledge-cards/queue)、log 都可能是輸出 | `Publisher`                   |
-| external client | 網路失敗與測試替身                 | `NotificationSource`          |
-| command runner  | 外部程序慢且不穩                   | `CommandRunner`               |
+| 依賴                                                                                      | 隔離原因                                                                  | 可能 interface                |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------- |
+| clock                                                                                     | 測試需要固定時間                                                          | `Clock` 或 `func() time.Time` |
+| repository                                                                                | 儲存技術可替換                                                            | `NotificationRepository`      |
+| [event [log](../../backend/knowledge-cards/log)](../../backend/knowledge-cards/event-log) | 記錄實作可替換                                                            | `EventLog`                    |
+| publisher                                                                                 | WebSocket、[queue](../../backend/knowledge-cards/queue)、log 都可能是輸出 | `Publisher`                   |
+| external client                                                                           | 網路失敗與測試替身                                                        | `NotificationSource`          |
+| command runner                                                                            | 外部程序慢且不穩                                                          | `CommandRunner`               |
 
 不是所有型別都需要 interface。純資料 struct、簡單 helper、沒有替換需求的內部物件，通常先保持 concrete type 更清楚。
 

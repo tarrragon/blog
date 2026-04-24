@@ -90,12 +90,12 @@ func (r *UserRepository) ListUsers(ctx context.Context) ([]User, error) {
 
 可選策略：
 
-| 策略               | 適用情境               | 代價                      |
-| ------------------ | ---------------------- | ------------------------- |
+| 策略               | 適用情境               | 代價                                                              |
+| ------------------ | ---------------------- | ----------------------------------------------------------------- |
 | 分頁               | 使用者只需要部分資料   | API 需要 cursor 或 [offset](../../backend/knowledge-cards/offset) |
-| projection         | 只需要摘要欄位         | 要維護讀取模型            |
-| snapshot cache     | 讀多寫少               | 要處理快取失效            |
-| incremental update | WebSocket 推送最新變化 | client 要能合併狀態       |
+| projection         | 只需要摘要欄位         | 要維護讀取模型                                                    |
+| snapshot cache     | 讀多寫少               | 要處理快取失效                                                    |
+| incremental update | WebSocket 推送最新變化 | client 要能合併狀態                                               |
 
 優化資料形狀通常比取消 copy 更安全。Copy boundary 保護正確性，資料形狀決定每次 copy 的成本。
 

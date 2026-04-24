@@ -39,7 +39,7 @@ weight: 71732
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：https://www.ivanti.com/blog/security-update-for-ivanti-connect-secure-and-ivanti-policy-secure-gateways
-- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-060b
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2023-46805
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2024-21887
+- 官方：[ivanti.com](https://www.ivanti.com/blog/security-update-for-ivanti-connect-secure-and-ivanti-policy-secure-gateways)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-060b)
+- 技術分析：[nvd.nist.gov/CVE-2023-46805](https://nvd.nist.gov/vuln/detail/CVE-2023-46805)
+- 技術分析：[nvd.nist.gov/CVE-2024-21887](https://nvd.nist.gov/vuln/detail/CVE-2024-21887)

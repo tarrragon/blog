@@ -23,11 +23,11 @@ weight: 5
 
 記錄邊界的核心問題是資料要服務誰。工程師除錯、系統重播、使用者查詢是三種不同用途，對應三種不同儲存與格式責任。
 
-| 記錄類型         | 用途                          | 範例                                      |
-| ---------------- | ----------------------------- | ----------------------------------------- |
+| 記錄類型         | 用途                          | 範例                                                                             |
+| ---------------- | ----------------------------- | -------------------------------------------------------------------------------- |
 | structured log   | 操作診斷、除錯、聚合查詢      | [queue](../../backend/knowledge-cards/queue) full、event rejected、worker failed |
-| domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed`      |
-| state repository | 查詢目前狀態或投影            | job current status、notification summary  |
+| domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed`                                             |
+| state repository | 查詢目前狀態或投影            | job current status、notification summary                                         |
 
 structured log 服務操作診斷，event log 保存 normalized fact，state repository 回答目前狀態。先分清楚用途，才知道欄位該放哪裡。
 
@@ -208,12 +208,12 @@ func (p *RecordingEventProcessor) Process(ctx context.Context, event DomainEvent
 
 常見位置：
 
-| 發生位置       | 應記錄內容                                     |
-| -------------- | ---------------------------------------------- |
-| adapter        | raw input decode/normalize 失敗                |
-| router/usecase | command 被拒絕、權限不足、狀態不允許           |
+| 發生位置       | 應記錄內容                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| adapter        | raw input decode/normalize 失敗                                                            |
+| router/usecase | command 被拒絕、權限不足、狀態不允許                                                       |
 | processor      | event validation、dedup、[projection](../../backend/knowledge-cards/projection) apply 結果 |
-| worker         | queue full、外部來源失敗、重試結果             |
+| worker         | queue full、外部來源失敗、重試結果                                                         |
 
 例如 adapter 解碼失敗：
 

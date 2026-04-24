@@ -11,12 +11,12 @@ weight: 2
 
 ## 章節列表
 
-| 章節                         | 主題                           | 關鍵收穫                                                   |
-| ---------------------------- | ------------------------------ | ---------------------------------------------------------- |
-| [2.1](read-write-pump/)      | read pump / write pump 模式    | 讓單一連線的讀取、寫入與清理責任可推理                     |
-| [2.2](heartbeat-deadline/)   | heartbeat、[deadline](../../backend/knowledge-cards/deadline/) 與連線清理 | 用 ping/pong、[deadline](../../backend/knowledge-cards/deadline) 與統一 unregister 偵測失效連線      |
-| [2.3](subscription-routing/) | 訂閱模型與訊息路由             | 把 client action 轉成可測的 command 與訂閱狀態             |
-| [2.4](slow-client/)          | 慢客戶端與 send [buffer](../../backend/knowledge-cards/buffer) 管理    | 用 bounded buffer、drop policy 與 byte budget 控制容量風險 |
+| 章節                         | 主題                                                                      | 關鍵收穫                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [2.1](read-write-pump/)      | read pump / write pump 模式                                               | 讓單一連線的讀取、寫入與清理責任可推理                                                          |
+| [2.2](heartbeat-deadline/)   | heartbeat、[deadline](../../backend/knowledge-cards/deadline/) 與連線清理 | 用 ping/pong、[deadline](../../backend/knowledge-cards/deadline) 與統一 unregister 偵測失效連線 |
+| [2.3](subscription-routing/) | 訂閱模型與訊息路由                                                        | 把 client action 轉成可測的 command 與訂閱狀態                                                  |
+| [2.4](slow-client/)          | 慢客戶端與 send [buffer](../../backend/knowledge-cards/buffer) 管理       | 用 bounded buffer、drop policy 與 byte budget 控制容量風險                                      |
 
 ## 本模組使用的範例主題
 

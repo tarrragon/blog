@@ -39,6 +39,6 @@ weight: 71724
 
 ## 三個以上來源（官方/政府或監管/技術分析）
 
-- 官方：http://www.openwall.com/lists/oss-security/2024/03/29/4
-- 政府或監管：https://www.cisa.gov/news-events/alerts/2024/03/29/reported-supply-chain-compromise-affecting-xz-utils-data-compression-library-cve-2024-3094
-- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2024-3094
+- 官方：[openwall.com](http://www.openwall.com/lists/oss-security/2024/03/29/4)
+- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/alerts/2024/03/29/reported-supply-chain-compromise-affecting-xz-utils-data-compression-library-cve-2024-3094)
+- 技術分析：[nvd.nist.gov/CVE-2024-3094](https://nvd.nist.gov/vuln/detail/CVE-2024-3094)
