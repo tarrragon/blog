@@ -9,7 +9,7 @@ weight: 9
 
 業界大量這類 Go 程式：hugo（靜態網站產生器）、kubectl / helm（k8s 客戶端）、terraform（基礎設施描述）、gh（GitHub CLI）、goldmark（markdown parser）、stringer / gopls（官方工具鏈）、golangci-lint（linter 集合）。後端工程師轉過去寫工具時會遇到不同的設計約束：沒有長時執行、資料來自檔案而非 request、錯誤處理偏向中斷而非降級、效能瓶頸是 I/O 而非併發。
 
-本模組以 `scripts/mdtools`（blog 本身用來守住 markdown 品質的內部工具鏈）作為 worked example 串連概念。每一章提煉的是可複用的 Go 技術，不是 mdtools 專屬紀錄。
+本模組以 `scripts/mdtools`（blog 本身用來守住 markdown 品質的內部工具鏈）作為 worked example 串連概念。每一章提煉可複用的 Go 技術；mdtools 只是其中一種 concrete instance，讀者能把同樣 pattern 套到自己的工具上。
 
 ## 章節列表
 
@@ -27,7 +27,7 @@ weight: 9
 
 - **stdlib 優先**：Go 的工具鏈文化偏好最小依賴。cobra / viper / 各種框架都有存在的理由，但 Go 的 `flag` + `os` + `filepath` 已經能撐起 80% 的 CLI 需求。
 - **AST 是原始 regex 的升級路徑，不是預設起點**：line-based 處理便宜、直觀；AST 在需要「段落歸屬」「父子關係」「跨檔連結」時才付出整合成本才有回報。
-- **工具要 idempotent**：`fmt --fix` 跑兩次結果要相同；pre-commit 觸發的修改不能破壞 git state；`--check` 跟 `--fix` 要共用同一套規則判讀。
+- **工具要 idempotent**：`fmt --fix` 跑兩次結果要相同；pre-commit 觸發的修改要保持 git state 完整；`--check` 跟 `--fix` 要共用同一套規則判讀。
 - **跨檔案檢查需要圖**：single-file linter 好寫；跨檔 orphan 偵測、連結完整性、reverse-dependency 這類問題需要先把整個 repo 建成結構化圖，再走訪。
 - **工具的價值在落地**：寫出能跑的 binary 只是起點；接到 pre-commit hook 跟 CI 才讓工具真正守住品質。
 
@@ -49,7 +49,7 @@ weight: 9
 - 模組五：error 處理與 testing 的基本 pattern
 - （加分）模組四：concurrency — 雖然 CLI 工具很少需要 goroutine，但 pipeline fan-out 偶爾用得到
 
-不需要先讀後端服務的模組（6、7、8）— 本模組跟後端模組是**並行**關係，不是遞進。
+本模組與後端服務模組（6、7、8）是**並行關係**，讀者可以直接跳入，無需先讀完後端系列。
 
 ## 本模組使用的範例
 

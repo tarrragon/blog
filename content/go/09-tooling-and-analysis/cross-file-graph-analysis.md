@@ -9,7 +9,7 @@ weight: 4
 
 這類分析的典型觸發點是需求已經離開 single-file 層：**orphan 偵測**（某個檔案是否被引用）、**backlink 完整性**（連結目標是否存在）、**dependency cycle 檢測**（import graph 是否有環）、**unused export 偵測**（某個 symbol 是否被使用）。每個都是圖論問題，需要先把 repo 結構化，單檔 walker 看不見跨檔 edge。本章以 `mdtools cards`（L1 連結有效性、L2 orphan 卡片、L4 卡片 K4 合規）作為 concrete instance。
 
-## 為什麼不能「每次 lint 都現查」
+## 為什麼要預先建圖而非每次 lint 都現查
 
 直覺會說：對每個 link，直接 `os.Stat(target)` 看存在不存在，就能驗證 L1。
 

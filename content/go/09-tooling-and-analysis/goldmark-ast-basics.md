@@ -17,7 +17,7 @@ Markdown parser 在 Go 有多個選項。選 goldmark 的理由：
 
 - **Hugo 內建用它** — 同一個 parser 解析，lint 結果跟 render 結果一定一致。其他 parser 可能判讀差異導致「lint 過了但 Hugo render 壞」的長尾 bug。
 - **完整 CommonMark 支援 + GFM 擴充**。table、strikethrough、task list 都在。
-- **AST 節點設計貼近 CommonMark spec**。不用翻對照表。
+- **AST 節點設計貼近 CommonMark spec**：心智負擔小，節點型別直接對應 spec 用語。
 - **純 Go、零 CGO、穩定**。build 不會踩奇怪的 C 依賴。
 
 類似選擇邏輯可套用到其他格式：Go 原始碼用 `go/parser`，YAML 用 `gopkg.in/yaml.v3`，protobuf 用 `google.golang.org/protobuf/encoding/prototext`。
@@ -63,7 +63,7 @@ func (p *Parser) Parse(src []byte) ast.Node {
 
 三個 struct / package / extension 配置的預設值：
 
-- **Extensions**：`extension.GFM` 涵蓋 blog 需要的全部；不要包太多沒用到的 extension。
+- **Extensions**：`extension.GFM` 涵蓋 blog 需要的全部；只啟用實際用到的 extension 讓 parser 行為可預測。
 - **Context**：每次 `Parse` 都建新 context — goldmark context 儲存 parse 狀態，不能跨 parse 共用。
 
 ## AST 節點階層：Block 跟 Inline 的分野
@@ -227,7 +227,7 @@ lineBytes := src[firstSeg.Start:firstSeg.Stop]
 
 ### 用 `string(src)` 當作可變字串操作
 
-goldmark 預期 src 在 Parse 過程中 **不變**。若要改動，先讀 `src`、parse、收集位置、**產生新 byte slice**，不要 in-place mutation。
+goldmark 預期 src 在 Parse 過程中 **保持不變**。若要改動，應先讀 `src`、parse、收集位置、**產生新 byte slice**；以不可變輸入 + 新輸出替代 in-place mutation。
 
 ### `ast.Walk` 忘記回傳 continue
 

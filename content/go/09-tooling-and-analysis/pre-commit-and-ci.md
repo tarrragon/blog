@@ -184,11 +184,11 @@ jobs:
 
 ### `go-version-file: scripts/mdtools/go.mod`
 
-不寫死 Go 版本字串。`go.mod` 裡寫 `go 1.25.1`，CI 自動用匹配的版本。本機升 Go 時不用再改 workflow。
+讓 CI 從 `go.mod` 讀取 Go 版本。`go.mod` 裡寫 `go 1.25.1`，CI 自動用匹配的版本；本機升 Go 時 workflow 跟著同步。
 
-### CI 用 `--check`，不是 `--fix`
+### CI 用 `--check` 而非 `--fix`
 
-CI 的角色是**偵測**，不是修復。`--check` 發現問題就 fail，讓作者在本機修完再 push。若 CI 自動 `--fix` 然後 commit，會造成「CI 偷改作者 PR」的混亂。
+CI 的角色是**偵測**，修復留給本機。`--check` 發現問題就 fail，讓作者在本機修完再 push。若 CI 自動 `--fix` 然後 commit，會造成「CI 偷改作者 PR」的混亂。
 
 ### 不寫 try-catch 吞錯
 

@@ -52,7 +52,7 @@ func main() {
 
 服務讀 request body、寫 response JSON、從 queue 拉訊息。工具讀檔案、parse 命令列 flag、接 stdin pipe、寫 stdout。這改變了幾個預設：
 
-- **JSON 不是主角**。工具常處理 markdown、YAML、CSV、純文字；encoding/json 是基礎而非核心。
+- **輸入格式多元**：工具常處理 markdown、YAML、CSV、純文字；encoding/json 是基礎而非核心，其他 parser 反而更常用。
 - **`os.ReadFile` / `os.WriteFile` / `filepath.WalkDir` 是主力**。Path 處理（`filepath.Rel`、`filepath.ToSlash`）會反覆出現。
 - **stdout 是結果通道**。服務的 log 跟 response 是兩條 stream；工具的 log 跟 output 經常搶同一條 stream，需要嚴格 discipline：log 全部走 stderr，output 走 stdout，讓使用者能 pipe。
 
@@ -73,15 +73,15 @@ func main() {
 - 標準選型是先看 `flag` + `os` + `filepath` + `encoding/*` 能否滿足。
 - 確實需要外部 parser、terminal UI、或結構化資料函式庫時才引入，而非預設。
 
-這不是教條，是因為工具經常作為單一 binary 發佈，依賴越少、build 越快、跨平台問題越少。
+這個 convention 出於實用考量：工具經常作為單一 binary 發佈，依賴越少、build 越快、跨平台問題越少。
 
 ### 部署：binary 而非 container
 
-服務類部署到 k8s，工具類部署成 `go install example.com/tool@latest` 的 binary。連帶的：
+服務類部署到 k8s，工具類部署成 `go install example.com/tool@latest` 的 binary。連帶的預設：
 
-- **不用設計配置檔格式**除非真的需要（CLI flag + 環境變數經常夠）。
-- **版本管理用 build tag**（`go build -ldflags "-X main.Version=..."`），不用寫 config schema。
-- **升級用戶體驗用 `go install` 就解決**，不用設計自更新機制（除非是 hugo / kubectl 這種 end-user tool）。
+- **配置用 CLI flag + 環境變數覆蓋**：真正需要結構化配置時才引入 config schema。
+- **版本管理用 build tag**：`go build -ldflags "-X main.Version=..."` 把版本刻進 binary。
+- **升級由 `go install` 承接**：使用者重跑 `go install` 拉最新版，end-user 工具（hugo / kubectl）才額外設計自更新。
 
 ## 工具選型的判讀表
 
