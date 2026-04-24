@@ -30,20 +30,39 @@
     }
 
     @media (min-width: 768px) {
-      /* Desktop：drawer 以 grid 把 filter 放左、結果放右。*/
-      .search-shell #search .pagefind-ui__drawer {
+      /*
+        Desktop layout：
+          filter-panel 作為左側獨立 column（跨越搜尋框與結果兩行）；
+          搜尋框與結果合成右側 column、垂直堆疊。
+
+        Pagefind 的 form 與 drawer 是 .pagefind-ui 的兩個直接子元素。
+        透過 display:contents 讓 drawer 的 children（filter-panel、
+        results-area）穿透到 .pagefind-ui 的 grid，便能統一排版。
+      */
+      .search-shell #search .pagefind-ui {
         display: grid;
         grid-template-columns: 240px 1fr;
-        gap: 2rem;
+        grid-template-areas:
+          "filter form"
+          "filter results";
+        gap: 1.5rem 2rem;
         align-items: start;
       }
+      .search-shell #search .pagefind-ui__form {
+        grid-area: form;
+      }
+      .search-shell #search .pagefind-ui__drawer {
+        display: contents;
+      }
       .search-shell #search .pagefind-ui__filter-panel {
+        grid-area: filter;
         min-width: 0;
         margin-top: 0;
         position: sticky;
         top: 1rem;
       }
       .search-shell #search .pagefind-ui__results-area {
+        grid-area: results;
         min-width: 0;
         margin-top: 0;
       }
