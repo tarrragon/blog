@@ -41,4 +41,3 @@ weight: 71713
 - 官方：https://www.twilio.com/en-us/blog/august-2022-social-engineering-attack
 - 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
 - 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware/
-

@@ -19,4 +19,3 @@ Session invalidation 位在 [authentication](../authentication/)、[credential](
 ## 設計責任
 
 會話失效要定義觸發條件、覆蓋範圍、失效時序與驗證方式。設計上需要兼顧安全收斂速度與業務可用性。
-

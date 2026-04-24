@@ -618,6 +618,7 @@ class FirestoreBookRepository implements IBookRepository {
 4. 類別方法可以明確分組（2+ 個分組）
 
 **與[層級隔離派工方法論](layered-ticket-methodology.md) 的關聯**:
+
 - 違反「單層修改原則」的 SRP 理論依據（3.2 節）
 - 違反「變更原因單一」要求（3.1 節）
 
@@ -806,6 +807,7 @@ class BookReportService {
 方法過長，難以理解和測試。
 
 **特徵識別（量化標準）**:
+
 - 方法行數: > 50 行
 - 巢狀層級: > 3 層
 - 邏輯區塊: > 4 個（用註解分隔）
@@ -1046,11 +1048,13 @@ class BookService {
 單一 Ticket 修改過多檔案和層級，範圍失控。
 
 **特徵識別（引用[層級隔離派工方法論](layered-ticket-methodology.md) 第 5.2 節量化標準）**:
+
 - 修改檔案數 > 10 個
 - 跨 3 個以上架構層級
 - 預估工時 > 16 小時（2 天）
 
 **與[層級隔離派工方法論](layered-ticket-methodology.md) 的關聯**:
+
 - 違反「Ticket 粒度標準」（5.2 節）
 - 違反「單層修改原則」（3.1 節）
 
@@ -1987,11 +1991,13 @@ flutter test --coverage
 - [ ] 使用[層級隔離派工方法論](layered-ticket-methodology.md) 第 2.4 節決策樹確認層級定位正確
 
 **單層修改檢查**（引用[層級隔離派工方法論](layered-ticket-methodology.md) 第 3.1 節）
+
 - [ ] 所有檔案都屬於同一層級
 - [ ] 變更原因單一且明確
 - [ ] 不需要同步修改其他層級
 
 **Ticket 粒度檢查**（引用[層級隔離派工方法論](layered-ticket-methodology.md) 第 5.2 節）
+
 - [ ] 檔案數: 1-5 個
 - [ ] 預估工時: 2-8 小時（1 個工作天內）
 - [ ] 如果超過標準，規劃拆分策略
@@ -2017,6 +2023,7 @@ flutter test --coverage
 **檢查項目**:
 
 **測試範圍檢查**（引用[層級隔離派工方法論](layered-ticket-methodology.md) 第 6.4 節）
+
 - [ ] 測試只驗證該層級的職責
 - [ ] 不需要啟動其他層級（使用 Mock）
 - [ ] 測試檔案路徑對應層級結構
@@ -2770,6 +2777,7 @@ jobs:
 Ticket: 新增「書籍評分」功能
 
 **初始設計**:
+
 - 需要修改 4 個層級（Layer 1, 2, 3, 5）
 - 修改 6 個檔案
 - 預估工時: 16 小時
@@ -3004,6 +3012,7 @@ test('should display book details', () {
 Ticket: 實作完整的「我的書架」功能
 
 **初始 Ticket 設計**:
+
 - 修改 15 個檔案
 - 跨 4 個層級
 - 預估工時: 32 小時
@@ -3596,6 +3605,7 @@ Ticket 粒度檢測（Phase 1）:
 ```
 
 **決策建議**:
+
 - 高優先級：**立即修正**（影響架構或核心功能）
 - 中優先級：**規劃重構**（技術債務累積但不緊急）
 - 低優先級：**opportunistic 重構**（修改相關程式碼時順便重構）

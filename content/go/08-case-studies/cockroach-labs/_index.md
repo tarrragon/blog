@@ -24,4 +24,3 @@ Cockroach Labs 的案例適合放在 Go 教材裡，因為它把 Go 的工程價
 - [cockroachdb/cockroach-go](https://github.com/cockroachdb/cockroach-go)
 
 這是本模組最值得讀的 repo 之一。你可以對照第七模組的 package 邊界、接口設計與 composition root，理解大型 Go 系統如何組織。
-

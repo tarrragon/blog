@@ -285,6 +285,7 @@ for name, cls in plugins.items():
 ```
 
 **優點**：
+
 - 標準化的發現機制
 - 支援第三方套件提供插件
 - pip 安裝即可使用

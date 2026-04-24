@@ -1151,6 +1151,7 @@ class IndentationCheck:
 ```
 
 提示：
+
 - 使用 `context.content.splitlines()` 取得每一行
 - 檢查每行開頭的空白字元 `line[:len(line) - len(line.lstrip())]`
 
@@ -1205,6 +1206,7 @@ class HotReloadableRegistry(CheckRegistry):
 ```
 
 提示：
+
 - 使用 `importlib.reload()` 重新載入模組
 - 使用 `watchdog` 套件監控檔案變化
 - 注意處理模組快取 `sys.modules`

@@ -19,4 +19,3 @@ Playbook 位在 [incident command system](../incident-command-system/)、[rollba
 ## 設計責任
 
 Playbook 要定義觸發條件、必要查詢、操作步驟、停止條件與回復驗證。內容應保持短而可執行，並在每次演練或真實事故後更新。
-

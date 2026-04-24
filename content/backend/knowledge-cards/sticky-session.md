@@ -27,4 +27,3 @@ Sticky Session 位在 client、load balancer、application instances 與 session
 ## 設計責任
 
 設計時要定義黏著的判斷鍵、有效時間、失效後怎麼重新導向、以及單一 instance 故障時如何處理 session 遷移。Sticky Session 會讓負載分佈變得不均，因此要清楚知道它是權宜策略，不是預設最佳解。
-

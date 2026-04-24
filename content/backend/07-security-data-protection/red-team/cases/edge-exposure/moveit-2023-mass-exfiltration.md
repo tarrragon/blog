@@ -42,4 +42,3 @@ weight: 71731
 - 官方：https://www.progress.com/trust-center/moveit-transfer-and-moveit-cloud-vulnerability
 - 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a
 - 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2023-34362
-

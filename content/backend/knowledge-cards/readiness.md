@@ -23,4 +23,3 @@ Kubernetes rolling update 建立新 pod 後，若 readiness 太早通過，新 p
 ## 設計責任
 
 Readiness endpoint 要反映接流量所需的最小條件，並且控制下游短暫波動對流量調度的影響。設計時要分清 readiness、liveness 與深度依賴檢查，讓平台能做穩定調度。
-

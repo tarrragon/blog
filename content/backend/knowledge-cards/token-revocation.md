@@ -19,4 +19,3 @@ Token revocation 位在 [authorization](../authorization/)、[secret-management]
 ## 設計責任
 
 token 撤銷要定義分域、優先級、批次策略與可回查紀錄。事件中要能先撤銷高風險 token，再依業務優先級逐步恢復必要授權。
-

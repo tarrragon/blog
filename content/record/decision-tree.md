@@ -13,6 +13,7 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 我之前做了很多規範去強迫或者限制AI執行的時候需要記住所有的判斷原則，但是實際執行狀況並不理想，生成式AI的問題就是每次生成的內容都是不穩定的，那後來我改變了想法，先使用 hook 禁止 主線程(我跟AI的對話視窗)編輯工作日誌以外的資料夾 ，然後要求主線程必須依照我設計的決策樹去分派任務，但是就算把規則這樣寫了，也不能保證AI真的都會依照決策樹執行，所以進一步再加入一個 hook ，我要求分派任務的時候一定要有 ticket ，否則代理人會拒絕執行，而 建立 ticket 的方式，是必須依照 ticket 範本去建立 ticket ，範本中有一個欄位強制需要填入決策樹的思考過程，所以能夠保證在生成 ticket 的時候，會做一輪決策樹的思考。
 
 ### 所以這個文件就是完整的決策樹設計內容，文件末端有附上 完整流程圖
+
 ---
 
 ## 決策流程總覽（二元樹結構）
@@ -33,6 +34,7 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 ```
 
 **第零層後的流程**：
+
 - 錯誤優先：直接進入第六層（事件回應流程）
 - 不確定性詞彙：確認後進入第一層
 - 複雜需求：確認後進入第一層
@@ -84,6 +86,7 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 ### 確認問題模板
 
 **不確定性詞彙確認**：
+
 ```text
 您提到「{問題描述}」，請確認：
 1. 這是一個需要修復的錯誤嗎？
@@ -91,6 +94,7 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 ```
 
 **複雜需求確認**：
+
 ```text
 這個需求涉及多個面向（{面向列表}），請確認：
 1. 主要目標是什麼？
@@ -206,6 +210,7 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 ```
 
 **說明**：
+
 - Level 2 驗證是非阻塞式的警告機制（不會強制停止執行）
 - 用戶可選擇忽略警告繼續執行，但應遵循建議操作
 - 驗證檢查點詳見：command-entrance-gate-hook.py
@@ -242,6 +247,7 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 | 在未認領 Ticket 的情況下修改 | 執行 `/ticket-track claim {id}` 先認領 | 中等 |
 
 **警告類型（由 Hook 輸出）**：
+
 - 「未找到待處理 Ticket」：建議執行 `/ticket-create`
 - 「Ticket 尚未認領」：建議執行 `/ticket-track claim {id}`
 
@@ -445,6 +451,7 @@ Level 5: TDD 階段代理人（lavender, sage, pepper, parsley, cinnamon）
 ```
 
 **Level 2 驗證特性**：
+
 - 觸發時機：接收開發命令後立即執行（比任何代理人派發都早）
 - 驗證責任：Hook 系統完全自動化
 - 特性：非阻塞式警告（不會強制停止）
@@ -591,22 +598,27 @@ decision_tree_path:
 ## 相關文件
 
 ### 代理人定義
+
 - [agents/overview](../agents/overview.md) - 代理人總覽
 
 ### 執行流程
+
 - [flows/tdd-flow](../flows/tdd-flow.md) - TDD 流程
 - [flows/incident-response](../flows/incident-response.md) - 事件回應流程
 - [flows/ticket-lifecycle](../flows/ticket-lifecycle.md) - Ticket 生命週期
 
 ### 操作指南
+
 - [guides/task-splitting](../guides/task-splitting.md) - 任務拆分指南
 - [guides/parallel-dispatch](../guides/parallel-dispatch.md) - 並行派發指南
 
 ### Hook 系統
+
 - Hook 實作：`.claude/hooks/command-entrance-gate-hook.py` - Level 2 驗證檢查點實作
 - Hook 日誌：`.claude/hook-logs/command-entrance-gate/` - 驗證檢查日誌
 
 ### 禁止行為
+
 - [forbidden/skip-gate](../forbidden/skip-gate.md) - Skip-gate 防護
 
 ---
@@ -615,6 +627,7 @@ decision_tree_path:
 **Version**: 3.1.0
 
 **Change Log**:
+
 - v3.1.0 (2026-01-28): 新增規則變更同步檢查
   - 第七層新增「規則變更同步」判斷節點
   - 當修改 `.claude/rules/` 時，強制檢查 SKILL 和方法論是否需要同步

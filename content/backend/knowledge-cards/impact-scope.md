@@ -19,4 +19,3 @@ Impact scope 位在 [blast-radius](../blast-radius/)、[incident-timeline](../in
 ## 設計責任
 
 影響面盤點要定義盤點粒度、資料來源、更新節奏與責任角色。事件中應先完成最小可用清單，再持續擴充精度。
-

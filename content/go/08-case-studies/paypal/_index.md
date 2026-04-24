@@ -23,4 +23,3 @@ PayPal 的案例很適合拿來理解 Go 在複雜企業系統中的角色。官
 - [paypal/github organization](https://github.com/paypal)
 
 PayPal 的 Go 內部系統細節不會完整公開，但它的公開 API spec 與 SDK 生態，能幫你理解大型支付平台如何維持清楚的外部合約。
-

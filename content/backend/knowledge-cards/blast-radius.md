@@ -19,4 +19,3 @@ Blast radius 與 [degradation](../degradation/)、[failover](../failover/) 與 [
 ## 設計責任
 
 影響面設計要標出依賴拓撲、共享資源與隔離手段。事故期間應持續更新影響面估算，並把結果同步到指揮與通訊流程。
-

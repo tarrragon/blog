@@ -27,4 +27,3 @@ Kubernetes rolling update 前先讓 instance 進入 draining、load balancer 在
 ## 設計責任
 
 設計時要定義何時開始 draining、draining 多久、超時後怎麼強制終止，以及如何觀察 in-flight request、consumer ack 與長連線狀態。Draining 的目的不是無限等待，而是把切換風險壓到可接受範圍。
-

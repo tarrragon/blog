@@ -19,4 +19,3 @@ Runbook 是 domain knowhow 的操作化文件。[Alert](../alert/)、[dashboard]
 ## 設計責任
 
 Runbook 要包含觸發條件、影響判斷、查詢連結、立即緩解、權限需求、停止條件、回復驗證與事後更新責任。每次事故後應把實際學到的判斷規則補回 runbook。
-

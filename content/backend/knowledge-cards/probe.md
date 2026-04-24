@@ -23,4 +23,3 @@ Kubernetes 會用 probe 決定 instance 是否加入流量池。Readiness probe 
 ## 設計責任
 
 設計時要讓 probe 簡單、快速、穩定，並且只反映它自己的責任範圍。Probe 不應該做昂貴查詢或深度業務判斷，否則平台訊號會不穩定。
-

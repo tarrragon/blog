@@ -19,4 +19,3 @@ Load shedding 是過載保護工具。它和 rate limit、backpressure、degrada
 ## 設計責任
 
 Load shedding 要定義優先級、拒絕回應、重試建議、告警與使用者體驗。觀測上要記錄 shed count、原因、受影響 endpoint 與核心路徑是否恢復。
-

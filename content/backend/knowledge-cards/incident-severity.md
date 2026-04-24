@@ -19,4 +19,3 @@ Incident severity 連接 [alert](../alert/)、[runbook](../runbook/) 與 [escala
 ## 設計責任
 
 分級要定義等級條件、升級門檻、負責角色、通訊頻率與回顧要求。等級規則應定期和事故紀錄對照，避免長期失真。
-

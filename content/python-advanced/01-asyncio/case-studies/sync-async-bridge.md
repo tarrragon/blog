@@ -1196,6 +1196,7 @@ async def async_fetch_39(url: str) -> str:
 
     return await asyncio.to_thread(fetch)
 ```
+
 </details>
 
 ### 進階練習
@@ -1277,6 +1278,7 @@ class WeatherClient:
             for city, result in zip(cities, results)
         }
 ```
+
 </details>
 
 ### 挑戰題
@@ -1392,6 +1394,7 @@ async def demo():
     result3 = await caller.call_async(sync_func, 5)   # Uses executor
     result4 = await caller.call_async(async_func, 5)  # Direct await
 ```
+
 </details>
 
 ## 延伸閱讀

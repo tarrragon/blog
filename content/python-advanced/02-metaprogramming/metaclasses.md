@@ -77,6 +77,7 @@ MyClass = type('MyClass', (), {'x': 10, 'method': method})
 ```
 
 參數說明：
+
 - 第一個參數：類別名稱
 - 第二個參數：父類別的 tuple
 - 第三個參數：屬性和方法的 dict

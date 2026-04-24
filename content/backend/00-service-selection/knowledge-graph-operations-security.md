@@ -98,4 +98,3 @@ weight: 10
 - 進入部署與可靠性能力：[05-deployment-platform](../05-deployment-platform/) / [06-reliability](../06-reliability/)
 - 進入資安與資料保護能力：[07-security-data-protection](../07-security-data-protection/)
 - 進入事故治理能力：[08-incident-response](../08-incident-response/)
-

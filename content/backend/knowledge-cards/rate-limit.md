@@ -19,4 +19,3 @@ Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、
 ## 設計責任
 
 限流設計要定義主體、窗口、配額、超限回應、例外權限與觀測欄位。對外 API 要提供清楚的 retry-after 或配額資訊；內部服務要搭配 [alert](../alert/)、[token bucket](../token-bucket/) 與容量規劃。
-

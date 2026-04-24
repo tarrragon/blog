@@ -27,4 +27,3 @@ Config Rollout 位在 configuration source、deployment platform 與 running ins
 ## 設計責任
 
 設計時要定義設定來源、分發順序、驗證方式、回復方式與影響範圍。Config Rollout 應該讓設定變更可預測，而不是把風險藏在部署流程裡。
-

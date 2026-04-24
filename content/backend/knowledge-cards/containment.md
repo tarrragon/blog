@@ -19,4 +19,3 @@ Containment 位在 [incident-severity](../incident-severity/)、[degradation](..
 ## 設計責任
 
 containment 要定義觸發條件、執行順序、停止條件與驗證關閉標準。它應該讓團隊在壓力下快速做出一致決策。
-

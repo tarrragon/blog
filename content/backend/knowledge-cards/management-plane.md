@@ -19,4 +19,3 @@ Management plane 位在 [admin-endpoint](../admin-endpoint/)、[trust-boundary](
 ## 設計責任
 
 管理平面要定義存取邊界、操作審核、變更時序與責任鏈。事件發生時要能快速鎖定高風險操作入口，避免控制能力被橫向擴散。
-

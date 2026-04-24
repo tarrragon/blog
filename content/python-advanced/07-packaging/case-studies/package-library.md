@@ -760,6 +760,7 @@ def greet(name: str) -> str:
 ```
 
 **要求**：
+
 1. 使用 hatchling 作為建構後端
 2. 設定專案名稱、版本、描述
 3. 指定 Python 版本要求（>=3.10）
@@ -789,6 +790,7 @@ packages = ["src/my_utils"]
 **目標**：擴展上面的套件，加入可選的功能
 
 **要求**：
+
 1. 新增一個需要 `requests` 的函式
 2. 將 `requests` 設為可選相依性
 3. 加入開發相依性（pytest, ruff）
@@ -849,12 +851,14 @@ def fetch_json(url: str) -> dict:
 **目標**：建立完整的 CI/CD 流程
 
 **要求**：
+
 1. Pull Request 時執行測試
 2. 建立 Release 時自動發布到 PyPI
 3. 使用 Trusted Publishing（不需要 API Token）
 4. 多版本 Python 測試矩陣
 
 **提示**：
+
 - 需要在 PyPI 設定 Trusted Publisher
 - 使用 `pypa/gh-action-pypi-publish@release/v1`
 - 設定 `id-token: write` 權限

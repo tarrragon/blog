@@ -23,4 +23,3 @@ Dropbox 的案例是最典型的「性能關鍵服務遷移」故事之一。官
 - [dropbox/dropbox-api-spec](https://github.com/dropbox/dropbox-api-spec)
 
 Dropbox 的公開 Go libraries 與 API spec 很適合對照閱讀。你會看到一個大公司如何把 Go 用在可重用工具與服務邊界上。
-

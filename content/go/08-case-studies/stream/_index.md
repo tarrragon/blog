@@ -23,4 +23,3 @@ Stream 的官方案例很適合教學用途，因為它把 Go 的幾個核心優
 - [GetStream/getstream-go](https://github.com/GetStream/getstream-go)
 
 這個 Go SDK 很適合拿來看 request/response model、client 設計、testing 與 OpenAPI codegen 的邊界。
-

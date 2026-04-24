@@ -474,4 +474,3 @@ document.querySelectorAll('.mermaid').forEach(el => {
 3. 響應式設計
 4. 支援流程圖、時序圖、甘特圖等
 5. 可以根據網站主題調整外觀
-

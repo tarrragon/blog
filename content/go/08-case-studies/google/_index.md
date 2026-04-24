@@ -24,4 +24,3 @@ Google 的官方案例最適合用來理解 Go 的原始定位：這門語言不
 - [kubernetes/kubernetes](https://github.com/kubernetes/kubernetes)
 
 Kubernetes 不是 Google 內部產品，但它很好地呈現了 Google 文化裡常見的 Go 工程模式：大型 codebase、明確 package 邊界、cmd 入口與大量服務協調。
-

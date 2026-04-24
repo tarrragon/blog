@@ -879,6 +879,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
 - 多個類似結構的資料類別
 
 **不建議使用**：
+
 - 簡單的資料容器（直接用 dataclass）
 - 不需要序列化的內部類別
 - Pydantic 已經滿足需求

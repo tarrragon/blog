@@ -27,4 +27,3 @@ WebSocket 連線、HTTP keep-alive、反向代理連線池或 application 內部
 ## 設計責任
 
 設計時要定義閒置判定條件、關閉前通知、重連策略與是否允許不同層級使用不同 timeout。Idle Timeout 應該和 read/write timeout、request timeout 區分開來，避免把不同問題混在一起。
-

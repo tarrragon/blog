@@ -42,4 +42,3 @@ weight: 71741
 - 官方：https://blog.lastpass.com/2022/08/notice-of-recent-security-incident/
 - 政府或監管：https://blog.lastpass.com/2022/11/notice-of-recent-security-incident/
 - 技術分析：https://blog.lastpass.com/2022/12/notice-of-recent-security-incident/
-

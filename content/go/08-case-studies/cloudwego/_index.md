@@ -26,4 +26,3 @@ CloudWeGo 是理解 Go 在大型公司內部如何演化成基礎設施層的好
 - [cloudwego/netpoll](https://github.com/cloudwego/netpoll)
 
 這三個 repo 很適合對照第 4、6、7 模組，尤其是高併發控制、HTTP 邊界與 ports/adapters 的組織方式。
-

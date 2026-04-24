@@ -647,12 +647,14 @@ Phase 1 完成後，多個開發者可並行執行 Phase 2-3 的不同 Ticket。
 本節整合 v0.12.G.2「Code Smell 檢查清單」到 Ticket 設計流程，實現「設計階段就能發現 Code Smell」的品質管理策略。
 
 **整合目標**:
+
 - 在 Ticket 設計階段執行 Code Smell 檢測
 - 降低修正成本（設計階段 vs 實作後修正）
 - 提供明確的 Ticket 設計品質標準
 - 實現預防勝於治療的品質管理
 
 **引用方法論**:
+
 - 引用 v0.12.G.1「層級隔離派工方法論」的五層架構和單層修改原則
 - 引用 v0.12.G.2「Code Smell 檢查清單」的 C 類 Code Smell 檢測方法
 
@@ -695,6 +697,7 @@ Phase 1: 功能設計（lavender-interface-designer）
 **責任歸屬**: lavender-interface-designer（TDD Phase 1 功能設計專家）
 
 **檢測職責**:
+
 1. 對每個 Ticket 執行 C1/C2/C3 檢測
 2. 記錄檢測結果到工作日誌
 3. 檢測失敗時執行修正
@@ -716,6 +719,7 @@ Phase 1: 功能設計（lavender-interface-designer）
 ```
 
 **阻斷原則**:
+
 - **強制阻斷**: 任何 Ticket 未通過 C1/C2/C3 檢測，禁止進入 Phase 2
 - **修正優先**: 發現問題後立即修正，不延後處理
 - **完整記錄**: 所有檢測過程和修正過程都記錄到工作日誌
@@ -1416,6 +1420,7 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 **範例**:
 
 ✅ **合格驗收條件**:
+
 ```markdown
 ### 驗收條件
 - [ ] `IBookRepository` 介面檔案建立在 `lib/domains/library/repositories/`
@@ -1427,11 +1432,13 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 ```
 
 ❌ **不合格驗收條件**:
+
 ```markdown
 ### 驗收條件
 - [ ] 功能可以正常運作
 - [ ] 程式碼品質良好
 ```
+
 問題：驗收條件過於模糊，無法量化驗證
 
 **步驟 2: 檢查測試規劃完整性**
@@ -1457,6 +1464,7 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 **範例**:
 
 ✅ **合格測試規劃**:
+
 ```markdown
 ### 步驟
 4. 撰寫 `test/domain/repositories/book_repository_test.dart` 單元測試
@@ -1468,10 +1476,12 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 ```
 
 ❌ **不合格測試規劃**:
+
 ```markdown
 ### 步驟
 4. 撰寫測試
 ```
+
 問題：沒有明確測試檔案路徑和測試項目
 
 **步驟 3: 檢查工作日誌規劃**
@@ -1496,6 +1506,7 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 **範例**:
 
 ✅ **合格工作日誌規劃**:
+
 ```markdown
 ### 工作日誌
 檔案名稱: `docs/work-logs/v0.12.8-book-repository-interface.md`
@@ -1508,6 +1519,7 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 ```
 
 ❌ **不合格工作日誌規劃**:
+
 ```markdown
 （沒有工作日誌規劃）
 ```
@@ -1534,6 +1546,7 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 **範例**:
 
 ✅ **合格參考文件**:
+
 ```markdown
 ### 參考文件
 - `docs/app-requirements-spec.md` #UC-01 書籍查詢功能
@@ -1542,6 +1555,7 @@ Incomplete Ticket 是指 Ticket 內容缺失關鍵元素，導致開發者無法
 ```
 
 ❌ **不合格參考文件**:
+
 ```markdown
 （沒有參考文件章節）
 ```
@@ -1584,6 +1598,7 @@ C2 檢測結論: 通過 ✅
 **缺失項目 1: 沒有驗收條件**
 
 修正步驟:
+
 ```text
 1. 新增「### 驗收條件」章節
 2. 撰寫 3-6 個可量化驗收項目
@@ -1596,6 +1611,7 @@ C2 檢測結論: 通過 ✅
 **缺失項目 2: 沒有測試規劃**
 
 修正步驟:
+
 ```text
 1. 在「### 步驟」章節新增測試步驟
 2. 明確列出測試檔案路徑
@@ -1606,6 +1622,7 @@ C2 檢測結論: 通過 ✅
 **缺失項目 3: 沒有工作日誌規劃**
 
 修正步驟:
+
 ```text
 1. 新增「### 工作日誌」章節
 2. 定義工作日誌檔案名稱
@@ -1616,6 +1633,7 @@ C2 檢測結論: 通過 ✅
 **缺失項目 4: 沒有參考文件**
 
 修正步驟:
+
 ```text
 1. 新增「### 參考文件」章節
 2. 連結需求規格（必要）
@@ -1626,6 +1644,7 @@ C2 檢測結論: 通過 ✅
 **完整修正範例**:
 
 ❌ **修正前（Incomplete Ticket）**:
+
 ```markdown
 ## Ticket: 定義 IBookRepository 介面
 
@@ -1639,6 +1658,7 @@ C2 檢測結論: 通過 ✅
 ```
 
 ✅ **修正後（Complete Ticket）**:
+
 ```markdown
 ## Ticket: [Layer 5] 定義 IBookRepository 介面
 
@@ -1751,6 +1771,7 @@ Ticket 清單撰寫完成
 | **3️⃣ C2** | Incomplete Ticket | 完整性是 Ticket 可執行性的保證 | 補充遺漏項目，確保開發者理解需求 |
 
 **檢測順序設計理由**:
+
 - **C1 優先**: 檔案數和層級問題會影響職責定義，必須先解決結構問題
 - **C3 次之**: 職責明確後才能評估驗收條件和測試規劃是否完整
 - **C2 最後**: 完整性檢測依賴明確的職責定義
@@ -1947,6 +1968,7 @@ PM 批准
 本節為 v0.12.G.4「代理人和 Hook 機制調整」準備自動化檢測規則設計。
 
 **自動化檢測目標**:
+
 - 減少人工檢測工作量
 - 提升檢測一致性
 - 即時反饋 Ticket 品質問題
@@ -1963,6 +1985,7 @@ PM 批准
 | **預估工時** | 60% ⚠️ | 根據步驟數量估算（< 10 步 = 2-4h）| 複雜度需人工確認 |
 
 **自動化規則設計**:
+
 ```python
 def check_god_ticket_automated(ticket_content: str) -> dict:
     """
@@ -2018,6 +2041,7 @@ def check_god_ticket_automated(ticket_content: str) -> dict:
 | **參考文件** | 100% ✅ | 檢查章節存在性、連結數量 | 無 |
 
 **自動化規則設計**:
+
 ```python
 def check_incomplete_ticket_automated(ticket_content: str) -> dict:
     """
@@ -2083,6 +2107,7 @@ def check_incomplete_ticket_automated(ticket_content: str) -> dict:
 | **驗收限定** | 70% ⚠️ | 提取驗收條件的類別名稱 | 層級一致性需人工確認 |
 
 **自動化規則設計**:
+
 ```python
 def check_ambiguous_responsibility_automated(ticket_content: str) -> dict:
     """

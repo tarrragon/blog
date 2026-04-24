@@ -624,6 +624,7 @@ async def check_repos_with_taskgroup(repos: list[str]) -> dict[str, str]:
 ```
 
 TaskGroup 的優點：
+
 - 更好的異常處理（一個失敗，全部取消）
 - 結構化並行（明確的範圍）
 

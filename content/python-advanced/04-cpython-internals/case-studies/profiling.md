@@ -978,6 +978,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
 ## 什麼時候該做效能分析？
 
 適合分析：
+
 - 程式明顯變慢
 - 處理大量資料
 - 發布前的效能驗證
@@ -985,6 +986,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
 - 有迴圈處理大量項目
 
 不建議過早優化：
+
 - 功能還在開發中
 - 使用頻率很低
 - 效能已經足夠
