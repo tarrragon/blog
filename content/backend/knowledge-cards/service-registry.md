@@ -27,3 +27,7 @@ Kubernetes 會把 pod、labels 與 endpoint 維持成可查找狀態；service m
 ## 設計責任
 
 Service Registry 要定義註冊來源、heartbeat 或 TTL、失效摘除條件、metadata 結構與回復方式。它的重點是讓查找方拿到可信且更新的實例資料。
+
+## 英文術語對照
+- Service registry
+- Instance registry

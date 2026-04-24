@@ -22,3 +22,7 @@ Load balancer 以 health check 判斷 instance 能否接新流量；運維工具
 ## 設計責任
 
 設計時要讓 health check 保持簡單、穩定、低成本，並且只反映它被設計要回答的問題。更細的流量條件交給 readiness，更細的存活條件交給 liveness，更完整的操作介面交給 diagnostic endpoint。
+
+## 英文術語對照
+- Health check
+- Service health probe

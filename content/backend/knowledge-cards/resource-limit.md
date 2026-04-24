@@ -26,3 +26,7 @@ Kubernetes container limit、單機 systemd service 的 cgroup 限制、worker p
 ## 設計責任
 
 設計時要區分 request 與 limit、理解 throttling 與 OOM 的差異，並把上限調整和實際流量、cache、啟動成本與重試行為一起看。Resource Limit 的目標是保護系統穩定，而不是只追求把數字填滿。
+
+## 英文術語對照
+- Resource limit
+- Compute limit

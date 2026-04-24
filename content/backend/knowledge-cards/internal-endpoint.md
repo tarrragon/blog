@@ -22,3 +22,7 @@ Internal Endpoint 位在 service discovery、internal network、[API Gateway](ap
 ## 設計責任
 
 設計時要定義內部網路邊界、授權方式、服務發現與變更時的回復策略。Internal Endpoint 的暴露範圍應比 public API 更嚴格。
+
+## 英文術語對照
+- Internal endpoint
+- Private service endpoint

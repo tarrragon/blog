@@ -18,3 +18,7 @@ MTTR 連接 [incident severity](../incident-severity/)、[alert](../alert/)、[r
 ## 設計責任
 
 MTTR 指標要搭配樣本數、嚴重度分層與影響範圍一起解讀。它應導向流程改善與演練設計，而不是單純追求數字下降。
+
+## 英文術語對照
+- Mean Time to Recovery (MTTR)
+- Mean Time to Restore

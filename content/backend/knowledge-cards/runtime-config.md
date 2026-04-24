@@ -26,3 +26,7 @@ Runtime Config 位在 environment variable、config file、secret injection、fe
 ## 設計責任
 
 設計時要定義設定來源優先序、缺值行為、型別驗證、啟動失敗條件與是否允許動態更新。Runtime Config 應該讓服務在不同環境中保持一致的配置語意。
+
+## 英文術語對照
+- Runtime configuration
+- Runtime config

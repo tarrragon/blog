@@ -18,3 +18,7 @@ On-call 是 [alert](../alert/)、[incident severity](../incident-severity/) 與 
 ## 設計責任
 
 On-call 設計要定義排班、回應時限、交接格式、升級路徑與支援角色。制度需要和 [runbook](../runbook/) 與演練一起維護，避免值班只剩 pager 通知而沒有可執行流程。
+
+## 英文術語對照
+- On-call
+- Duty rotation

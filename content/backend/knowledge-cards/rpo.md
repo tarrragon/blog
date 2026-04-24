@@ -18,3 +18,6 @@ RPO 與 [database](../database/)、備份策略、[replication lag](../replicati
 ## 設計責任
 
 RPO 要定義資料類型分級、保護機制、驗證流程與例外處理。設定後應透過備份回復演練檢查實際可達成範圍。
+
+## 英文術語對照
+- Recovery Point Objective (RPO)

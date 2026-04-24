@@ -18,3 +18,6 @@ RTO 連接 [downtime](../downtime/)、[failover](../failover/) 與 [rollback-str
 ## 設計責任
 
 RTO 要對應分級、責任角色、演練頻率與驗證方式。設定後需用演練與真實事故資料驗證是否達成。
+
+## 英文術語對照
+- Recovery Time Objective (RTO)
