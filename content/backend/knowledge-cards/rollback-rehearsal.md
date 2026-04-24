@@ -27,3 +27,7 @@ Rollback Rehearsal 位在 release gate、rollback strategy、migration 與 disas
 ## 設計責任
 
 Rollback Rehearsal 要定義環境、資料範圍、演練步驟、驗證項目與紀錄方式。演練的重點是找出「看似可回滾、實際回不去」的缺口。
+
+## 英文術語對照
+- Rollback rehearsal
+- Rollback drill

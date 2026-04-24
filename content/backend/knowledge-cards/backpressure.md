@@ -39,3 +39,7 @@ codex-check:
   reviewed-at: 2026-04-23
   role: reference-sample (brief §3.1 指定正面範例卡片)
 -->
+
+## 英文術語對照
+- Backpressure
+- Flow control

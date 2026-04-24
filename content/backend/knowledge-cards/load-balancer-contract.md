@@ -22,3 +22,7 @@ Load Balancer Contract 位在 application、load balancer、ingress 與 service 
 ## 設計責任
 
 Load Balancer Contract 要定義什麼情況可接新流量、什麼情況要排空、切換需要等待多久，以及健康檢查失敗後的處理方式。
+
+## 英文術語對照
+- Load balancer contract
+- LB contract
