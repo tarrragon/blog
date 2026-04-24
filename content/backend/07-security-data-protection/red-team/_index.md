@@ -30,10 +30,12 @@ weight: 71
 
 | 章節 | 主題 | 目標 |
 | --- | --- | --- |
+| [7.R0](red-team-basics-and-attack-flow/) | 紅隊基礎與常見攻擊流程 | 建立共同詞彙與流程判讀框架 |
 | [7.R1](attack-surface-boundary/) | 攻擊面與信任邊界 | 確認哪些入口與資源先被看見 |
 | [7.R2](abuse-paths/) | 入口濫用與權限突破 | 確認合法功能是否能被惡意組合 |
 | [7.R3](exposure-and-exfiltration/) | 資料暴露與外洩路徑 | 確認資料會從哪些路徑流出 |
 | [7.R4](resource-abuse/) | 資源濫用與可用性破壞 | 確認哪些操作會被放大成壓力 |
 | [7.R5](misconfiguration-and-hidden-entrypoints/) | 設定錯誤與隱藏入口 | 確認哪些預設值或 debug 面會暴露能力 |
+| [7.R6](incident-stories-by-attack-stage/) | 事故故事：按攻擊流程拆解弱點 | 用公開事故理解不同環節的失效模式與取捨 |
 
 本子分類會先建立判讀順序與控制面，再往後延伸到具體驗證方式與實作策略。
