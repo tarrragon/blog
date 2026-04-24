@@ -43,6 +43,7 @@ weight: 8
 | 8.5  | 復盤與改進追蹤       | 把 RCA 與 action items 變成可驗證閉環       |
 | 8.6  | 演練與值班能力建設   | 用 game day 與值班訓練提升反應品質          |
 | 8.7  | 攻擊者視角（紅隊）事故弱點判讀 | 用擴散路徑、回復瓶頸與交接斷點檢查事故設計 |
+| 8.8  | 事故報告轉 workflow  | 把事故故事轉成可執行、可驗證、可演練的流程 |
 
 ## 章節列表
 
@@ -53,6 +54,7 @@ weight: 8
 - [8.5 復盤與改進追蹤](post-incident-review/)
 - [8.6 演練與值班能力建設](drills-and-oncall-readiness/)
 - [8.7 攻擊者視角（紅隊）事故弱點判讀](attacker-view-incident-risks/)
+- [8.8 事故報告轉 workflow：從案例到日常流程](incident-report-to-workflow/)
 
 ## 既有可引用卡片
 

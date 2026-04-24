@@ -37,5 +37,6 @@ weight: 71
 | [7.R4](resource-abuse/) | 資源濫用與可用性破壞 | 確認哪些操作會被放大成壓力 |
 | [7.R5](misconfiguration-and-hidden-entrypoints/) | 設定錯誤與隱藏入口 | 確認哪些預設值或 debug 面會暴露能力 |
 | [7.R6](incident-stories-by-attack-stage/) | 事故故事：按攻擊流程拆解弱點 | 用公開事故理解不同環節的失效模式與取捨 |
+| [7.R7](cases/) | 事故案例庫（可引用） | 讓服務章節可引用「缺少哪個 workflow 會重演事故」 |
 
 本子分類會先建立判讀順序與控制面，再往後延伸到具體驗證方式與實作策略。
