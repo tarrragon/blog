@@ -1,0 +1,70 @@
+{{- /*
+  Render hook：為站內連結注入目標頁面的 title / description，
+  讓 custom_head.html 的 CSS 在 hover 時顯示卡片式 tooltip。
+
+  支援兩種 destination 寫法：
+  1. 推薦 — content 根絕對路徑：[text](/backend/knowledge-cards/waf/)
+  2. 舊寫法 — 相對路徑：[text](../../knowledge-cards/waf/)
+
+  行為：
+  - 查得到目標 page → href 改用 target.RelPermalink（自動補 baseURL），
+    並注入 data-link-title / data-link-desc 供 CSS tooltip 使用
+  - 外部連結（http/https/mailto/tel/protocol-relative）或查不到 page
+    → silent fallback 到原始 destination
+*/ -}}
+
+{{- $dest := .Destination -}}
+{{- $mdTitle := .Title -}}
+
+{{- /* 剝掉 anchor 讓 GetPage 能找到頁面；最後輸出還是用原本的 $dest 保留 anchor */ -}}
+{{- $path := $dest -}}
+{{- if strings.Contains $path "#" -}}
+  {{- $path = index (split $path "#") 0 -}}
+{{- end -}}
+
+{{- /* 外部協定偵測 — 一律不查 page */ -}}
+{{- $isExternal := or (hasPrefix $dest "http://") (hasPrefix $dest "https://") -}}
+{{- $isExternal = or $isExternal (hasPrefix $dest "mailto:") -}}
+{{- $isExternal = or $isExternal (hasPrefix $dest "tel:") -}}
+{{- $isExternal = or $isExternal (hasPrefix $dest "//") -}}
+
+{{- $target := false -}}
+{{- if and (not $isExternal) $path -}}
+  {{- if hasPrefix $path "/" -}}
+    {{- /* content 根絕對路徑：直接查 */ -}}
+    {{- with $.Page.GetPage $path -}}
+      {{- $target = . -}}
+    {{- end -}}
+  {{- else -}}
+    {{- /* 相對路徑：URL 空間裡，regular page 本身也算一層目錄，_index.md 不算 */ -}}
+    {{- $base := "" -}}
+    {{- with $.Page.File -}}
+      {{- $base = .Dir -}}
+      {{- if ne .BaseFileName "_index" -}}
+        {{- $base = path.Join $base .BaseFileName -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $resolved := strings.TrimRight "/" (path.Join $base $path) -}}
+    {{- with $.Page.GetPage $resolved -}}
+      {{- $target = . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $target -}}
+  {{- $linkTitle := $target.Title -}}
+  {{- $linkDesc := $target.Params.description -}}
+  {{- /* 若原 destination 帶 anchor，保留它接在 RelPermalink 之後 */ -}}
+  {{- $anchor := "" -}}
+  {{- if strings.Contains $dest "#" -}}
+    {{- $anchor = printf "#%s" (index (split $dest "#") 1) -}}
+  {{- end -}}
+  {{- $href := printf "%s%s" $target.RelPermalink $anchor -}}
+  {{- if and $linkTitle $linkDesc -}}
+<a href="{{ $href | safeURL }}" title="{{ $linkTitle }} — {{ $linkDesc }}" data-link-title="{{ $linkTitle }}" data-link-desc="{{ $linkDesc }}">{{ .Text | safeHTML }}</a>
+  {{- else -}}
+<a href="{{ $href | safeURL }}"{{ with $mdTitle }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
+  {{- end -}}
+{{- else -}}
+<a href="{{ $dest | safeURL }}"{{ with $mdTitle }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
+{{- end -}}
