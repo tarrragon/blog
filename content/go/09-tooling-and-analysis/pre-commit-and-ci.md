@@ -5,9 +5,9 @@ description: "工具寫完只是起點；接到 pre-commit hook 跟 CI 才真正
 weight: 6
 ---
 
-CLI 工具寫完、build 成 binary、跑起來符合預期 — 這只完成了 50%。另一半是**讓工具在對的時機自動執行**。沒接 pre-commit hook 的 linter 是「給勤勞的人用的」— 人會累、會忘；接了 hook 的 linter 是「基礎設施」— 每次 commit 都跑，跳不過。
+工具落地的核心責任是**讓檢查在對的時機自動執行**，把紀律從「勤勞的人手動跑」轉移到「每次 commit / push 都跑」的基礎設施。Pre-commit hook 守本機開發、CI 守共享 branch；兩者互補、一起把規則失敗成本壓到秒級可回饋，避免 bug 漏到 production。
 
-本章講 mdtools 怎麼接進 git 跟 CI，以及幾個容易踩的邊界。
+工具一旦從 CLI 進入 hook / CI，就有幾個容易踩雷的邊界：**哪些 check 該放 hook**（快、本地可執行）、**哪些該放 CI**（慢、需要乾淨環境）、**hook 改了檔怎麼 re-stage**、**--no-verify 的邊界**怎麼約定、**CI strict mode 跟 local dev 的差異**怎麼處理。本章展開這些問題，並以 `.githooks/pre-commit` + `.github/workflows/md-check.yml` 作為 concrete instance。
 
 ## Pre-commit hook 能做什麼、不該做什麼
 

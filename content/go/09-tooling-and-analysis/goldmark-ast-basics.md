@@ -5,9 +5,11 @@ description: "用 goldmark 把 markdown 解析成 AST，掌握 ast.Walk visitor 
 weight: 2
 ---
 
-CLI 工具經常需要 parse 結構化文字 — markdown、YAML、Go 原始碼、protobuf。自己寫 parser 是坑；用成熟的 parser 包是標準作法。但「拿來就用」跟「用對」之間有幾個常見陷阱，goldmark 的 inline 節點 panic 就是典型例子。
+第三方 parser 整合的核心責任是**把外部格式的語法細節封裝成可走訪的結構化樹**，讓上層業務邏輯脫離字串處理，直接在 AST 節點上判讀。對 markdown 這類格式，成熟 parser（如 goldmark）提供完整 CommonMark 解析、GFM 擴充、位置資訊；上層工具接住 AST 後再決定要做 lint、rewrite、render 或 graph 分析。
 
-本章以 `scripts/mdtools/internal/astutil` 跟 `internal/mdcards/graph.go` 為範例，示範把 goldmark 整合到自己工具裡的標準做法。更廣泛的 AST 概念背景在 [什麼是 AST](../../../posts/what-is-ast/)，這裡聚焦 Go 層面的整合。
+Go 的慣例是**封一層薄 wrapper** — 不讓呼叫端直接看到第三方 API 的完整型別空間，保留未來換 parser 的彈性。加上 Go 的 AST 節點通常區分 **block** 跟 **inline** 兩種型別（對應到 CommonMark spec），走訪時需要配合型別判讀，以免呼叫到只存在於 block 節點的 method（`Lines()` 就是典型例子，對 inline 節點呼叫會 panic）。
+
+本章以 `scripts/mdtools/internal/astutil` 跟 `internal/mdcards/graph.go` 為 concrete instance 示範整合流程。更廣泛的 AST 概念背景在 [什麼是 AST](../../../posts/what-is-ast/)；本章聚焦 Go 層面的整合 pattern。
 
 ## 為什麼選 goldmark
 
