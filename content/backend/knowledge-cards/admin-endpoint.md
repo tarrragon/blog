@@ -1,5 +1,6 @@
 ---
 title: "Admin Endpoint"
+tags: ["管理端點", "Admin Endpoint"]
 date: 2026-04-23
 description: "說明管理入口如何承擔高權限操作與稽核責任"
 weight: 0
@@ -23,6 +24,3 @@ Admin Endpoint 位在內部網路、身份驗證與授權層之後，和一般 p
 
 設計時要定義更嚴格的身份驗證、授權、來源限制、操作追蹤與錯誤回應。Admin Endpoint 的失敗後果通常比 public API 更高。
 
-## 英文術語對照
-- Admin endpoint
-- Administrative endpoint

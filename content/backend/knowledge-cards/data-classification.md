@@ -1,5 +1,6 @@
 ---
 title: "Data Classification"
+tags: ["資料分級", "Data Classification"]
 date: 2026-04-23
 description: "說明資料分級如何決定保護、存取、保留與匯出規則"
 weight: 124
@@ -19,6 +20,3 @@ Data classification 的核心概念是「依敏感度與風險把資料分級」
 
 資料分級要落到欄位、表、事件、log、匯出與測試資料。每個等級應定義存取條件、遮罩、加密、保留期限、audit 與事故處理要求。
 
-## 英文術語對照
-- Data classification
-- Information classification

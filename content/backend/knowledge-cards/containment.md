@@ -1,5 +1,6 @@
 ---
 title: "Containment"
+tags: ["事故圍堵", "Containment"]
 date: 2026-04-24
 description: "說明事故處理中如何限制擴散面，為回復與驗證爭取時間"
 weight: 267
@@ -19,8 +20,3 @@ Containment 位在 [incident-severity](../incident-severity/)、[degradation](..
 
 containment 要定義觸發條件、執行順序、停止條件與驗證關閉標準。它應該讓團隊在壓力下快速做出一致決策。
 
-## 英文術語對照
-
-- Containment
-- Incident containment
-- Blast radius control

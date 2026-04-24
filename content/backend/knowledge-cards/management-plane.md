@@ -1,5 +1,6 @@
 ---
 title: "Management Plane"
+tags: ["管理平面", "Management Plane"]
 date: 2026-04-24
 description: "說明管理平面如何與業務流量平面分離，避免高權限入口擴散"
 weight: 264
@@ -19,8 +20,3 @@ Management plane 位在 [admin-endpoint](../admin-endpoint/)、[trust-boundary](
 
 管理平面要定義存取邊界、操作審核、變更時序與責任鏈。事件發生時要能快速鎖定高風險操作入口，避免控制能力被橫向擴散。
 
-## 英文術語對照
-
-- Management plane
-- Control plane (在部分網路與平台語境可近似)
-- Administrative plane

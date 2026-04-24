@@ -1,5 +1,6 @@
 ---
 title: "Sticky Session"
+tags: ["黏性會話", "Sticky Session"]
 date: 2026-04-24
 description: "說明同一 client 如何在一段時間內持續命中同一個後端實例"
 weight: 130
@@ -27,6 +28,3 @@ Sticky Session 位在 client、load balancer、application instances 與 session
 
 設計時要定義黏著的判斷鍵、有效時間、失效後怎麼重新導向、以及單一 instance 故障時如何處理 session 遷移。Sticky Session 會讓負載分佈變得不均，因此要清楚知道它是權宜策略，不是預設最佳解。
 
-## 英文術語對照
-- Sticky session
-- Session affinity

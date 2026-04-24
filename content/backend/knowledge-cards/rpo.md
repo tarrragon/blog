@@ -1,5 +1,6 @@
 ---
 title: "RPO"
+tags: ["復原點目標", "RPO"]
 date: 2026-04-23
 description: "說明恢復點目標如何定義可接受資料損失範圍"
 weight: 159
@@ -19,5 +20,3 @@ RPO 與 [database](../database/)、備份策略、[replication lag](../replicati
 
 RPO 要定義資料類型分級、保護機制、驗證流程與例外處理。設定後應透過備份回復演練檢查實際可達成範圍。
 
-## 英文術語對照
-- Recovery Point Objective (RPO)

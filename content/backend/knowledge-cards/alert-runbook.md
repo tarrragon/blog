@@ -1,5 +1,6 @@
 ---
 title: "Alert Runbook"
+tags: ["告警處置手冊", "Alert Runbook"]
 date: 2026-04-23
 description: "說明告警如何連到可執行的排障與恢復流程"
 weight: 37
@@ -19,6 +20,3 @@ Alert runbook 是可觀測性與操作流程的交界。告警搭配 [runbook](.
 
 Runbook 要包含影響判斷、查詢連結、原因分類、立即緩解、回復驗證與升級路徑。每次事故後應更新 runbook，讓下一次處理更可重現。
 
-## 英文術語對照
-- Alert runbook
-- Incident response runbook

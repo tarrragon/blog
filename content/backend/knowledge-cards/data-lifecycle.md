@@ -1,5 +1,6 @@
 ---
-title: "資料生命週期"
+title: "Data Lifecycle"
+tags: ["資料生命週期", "Data Lifecycle"]
 date: 2026-04-23
 description: "說明資料從建立、使用、保留到刪除的責任邊界"
 weight: 13

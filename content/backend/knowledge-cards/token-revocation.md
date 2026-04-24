@@ -1,5 +1,6 @@
 ---
 title: "Token Revocation"
+tags: ["權杖撤銷", "Token Revocation"]
 date: 2026-04-24
 description: "說明事件中如何撤銷 token，縮短可利用窗口"
 weight: 266
@@ -19,8 +20,3 @@ Token revocation 位在 [authorization](../authorization/)、[secret-management]
 
 token 撤銷要定義分域、優先級、批次策略與可回查紀錄。事件中要能先撤銷高風險 token，再依業務優先級逐步恢復必要授權。
 
-## 英文術語對照
-
-- Token revocation
-- Token invalidation
-- Credential revocation (較廣義)

@@ -1,5 +1,6 @@
 ---
 title: "Resource Limit"
+tags: ["資源限制", "Resource Limit"]
 date: 2026-04-24
 description: "說明服務可使用的 CPU、memory 與相關資源上限如何影響行為"
 weight: 134
@@ -27,6 +28,3 @@ Kubernetes container limit、單機 systemd service 的 cgroup 限制、worker p
 
 設計時要區分 request 與 limit、理解 throttling 與 OOM 的差異，並把上限調整和實際流量、cache、啟動成本與重試行為一起看。Resource Limit 的目標是保護系統穩定，而不是只追求把數字填滿。
 
-## 英文術語對照
-- Resource limit
-- Compute limit

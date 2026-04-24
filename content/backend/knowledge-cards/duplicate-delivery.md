@@ -1,5 +1,6 @@
 ---
-title: "重複投遞"
+title: "Duplicate Delivery"
+tags: ["重複投遞", "Duplicate Delivery"]
 date: 2026-04-23
 description: "說明同一個訊息被處理多次時如何保持結果穩定"
 weight: 5

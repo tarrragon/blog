@@ -1,5 +1,6 @@
 ---
 title: "Load Shedding"
+tags: ["負載削峰", "Load Shedding"]
 date: 2026-04-23
 description: "說明服務過載時如何主動拒絕低優先工作以保護核心能力"
 weight: 52
@@ -19,6 +20,3 @@ Load shedding 是過載保護工具。它和 rate limit、backpressure、degrada
 
 Load shedding 要定義優先級、拒絕回應、重試建議、告警與使用者體驗。觀測上要記錄 shed count、原因、受影響 endpoint 與核心路徑是否恢復。
 
-## 英文術語對照
-- Load shedding
-- Adaptive rejection

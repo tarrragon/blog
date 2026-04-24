@@ -1,5 +1,6 @@
 ---
 title: "Impact Scope"
+tags: ["影響範圍", "Impact Scope"]
 date: 2026-04-24
 description: "說明事故中如何盤點受影響範圍，支持通報、回復與責任判讀"
 weight: 268
@@ -19,8 +20,3 @@ Impact scope 位在 [blast-radius](../blast-radius/)、[incident-timeline](../in
 
 影響面盤點要定義盤點粒度、資料來源、更新節奏與責任角色。事件中應先完成最小可用清單，再持續擴充精度。
 
-## 英文術語對照
-
-- Impact scope
-- Affected scope
-- Scope of impact

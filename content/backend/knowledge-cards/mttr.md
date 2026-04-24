@@ -1,5 +1,6 @@
 ---
 title: "MTTR"
+tags: ["平均修復時間", "MTTR"]
 date: 2026-04-23
 description: "說明平均修復時間如何作為事故處理能力指標"
 weight: 160
@@ -19,6 +20,3 @@ MTTR 連接 [incident severity](../incident-severity/)、[alert](../alert/)、[r
 
 MTTR 指標要搭配樣本數、嚴重度分層與影響範圍一起解讀。它應導向流程改善與演練設計，而不是單純追求數字下降。
 
-## 英文術語對照
-- Mean Time to Recovery (MTTR)
-- Mean Time to Restore

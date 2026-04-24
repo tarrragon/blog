@@ -1,5 +1,6 @@
 ---
 title: "Probe"
+tags: ["探針", "Probe"]
 date: 2026-04-23
 description: "說明平台如何透過 probe 判斷服務狀態與接流量條件"
 weight: 130
@@ -23,6 +24,3 @@ Kubernetes 會用 probe 決定 instance 是否加入流量池。Readiness probe 
 
 設計時要讓 probe 簡單、快速、穩定，並且只反映它自己的責任範圍。Probe 不應該做昂貴查詢或深度業務判斷，否則平台訊號會不穩定。
 
-## 英文術語對照
-- Probe
-- Liveness/Readiness probe

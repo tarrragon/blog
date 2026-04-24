@@ -1,5 +1,6 @@
 ---
 title: "RTO"
+tags: ["復原時間目標", "RTO"]
 date: 2026-04-23
 description: "說明恢復時間目標如何約束事故回復策略"
 weight: 158
@@ -19,5 +20,3 @@ RTO 連接 [downtime](../downtime/)、[failover](../failover/) 與 [rollback-str
 
 RTO 要對應分級、責任角色、演練頻率與驗證方式。設定後需用演練與真實事故資料驗證是否達成。
 
-## 英文術語對照
-- Recovery Time Objective (RTO)

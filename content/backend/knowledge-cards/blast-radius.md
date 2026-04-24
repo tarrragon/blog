@@ -1,5 +1,6 @@
 ---
 title: "Blast Radius"
+tags: ["影響半徑", "Blast Radius"]
 date: 2026-04-23
 description: "說明事故影響面如何估算與隔離"
 weight: 154
@@ -19,6 +20,3 @@ Blast radius 與 [degradation](../degradation/)、[failover](../failover/) 與 [
 
 影響面設計要標出依賴拓撲、共享資源與隔離手段。事故期間應持續更新影響面估算，並把結果同步到指揮與通訊流程。
 
-## 英文術語對照
-- Blast radius
-- Impact radius

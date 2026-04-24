@@ -1,5 +1,6 @@
 ---
 title: "Internal Endpoint"
+tags: ["內部端點", "Internal Endpoint"]
 date: 2026-04-23
 description: "說明服務內部通訊入口如何配合網路邊界與服務發現"
 weight: 0
@@ -23,6 +24,3 @@ Internal Endpoint 位在 service discovery、internal network、[API Gateway](ap
 
 設計時要定義內部網路邊界、授權方式、服務發現與變更時的回復策略。Internal Endpoint 的暴露範圍應比 public API 更嚴格。
 
-## 英文術語對照
-- Internal endpoint
-- Private service endpoint

@@ -1,5 +1,6 @@
 ---
-title: "降級"
+title: "Degradation"
+tags: ["降級", "Degradation"]
 date: 2026-04-23
 description: "說明服務部分能力失效時如何保留核心功能與控制風險"
 weight: 8
@@ -23,6 +24,3 @@ weight: 8
 
 降級策略要有觸發條件、使用者體驗、資料一致性影響、告警與恢復條件。它也需要演練，因為未演練的降級常在事故中暴露缺少設定、權限、dashboard 或回復流程。
 
-## 英文術語對照
-- Degradation
-- Graceful degradation

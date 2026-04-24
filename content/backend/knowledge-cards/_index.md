@@ -1,5 +1,6 @@
 ---
-title: "前置知識卡片"
+title: "Knowledge Cards"
+tags: ["前置知識卡片", "Knowledge Cards"]
 date: 2026-04-23
 description: "用原子化卡片整理後端服務選型前需要理解的 domain knowhow"
 weight: -1

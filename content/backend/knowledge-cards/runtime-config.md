@@ -1,5 +1,6 @@
 ---
 title: "Runtime Config"
+tags: ["執行期設定", "Runtime Config"]
 date: 2026-04-24
 description: "說明服務在啟動與執行時如何讀取與組合設定"
 weight: 153
@@ -27,6 +28,3 @@ Runtime Config 位在 environment variable、config file、secret injection、fe
 
 設計時要定義設定來源優先序、缺值行為、型別驗證、啟動失敗條件與是否允許動態更新。Runtime Config 應該讓服務在不同環境中保持一致的配置語意。
 
-## 英文術語對照
-- Runtime configuration
-- Runtime config

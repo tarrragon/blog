@@ -1,5 +1,6 @@
 ---
 title: "Readiness"
+tags: ["就緒檢查", "Readiness"]
 date: 2026-04-23
 description: "說明 instance 何時可以安全接收流量，以及 readiness 如何和部署平台協作"
 weight: 10
@@ -23,6 +24,3 @@ Kubernetes rolling update 建立新 pod 後，若 readiness 太早通過，新 p
 
 Readiness endpoint 要反映接流量所需的最小條件，並且控制下游短暫波動對流量調度的影響。設計時要分清 readiness、liveness 與深度依賴檢查，讓平台能做穩定調度。
 
-## 英文術語對照
-- Readiness
-- Readiness check

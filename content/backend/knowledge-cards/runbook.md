@@ -1,5 +1,6 @@
 ---
 title: "Runbook"
+tags: ["執行手冊", "Runbook"]
 date: 2026-04-23
 description: "說明 runbook 如何把事故判斷與操作步驟標準化"
 weight: 143
@@ -19,6 +20,3 @@ Runbook 是 domain knowhow 的操作化文件。[Alert](../alert/)、[dashboard]
 
 Runbook 要包含觸發條件、影響判斷、查詢連結、立即緩解、權限需求、停止條件、回復驗證與事後更新責任。每次事故後應把實際學到的判斷規則補回 runbook。
 
-## 英文術語對照
-- Runbook
-- Operational runbook

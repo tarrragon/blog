@@ -1,5 +1,6 @@
 ---
 title: "Diagnostic Endpoint"
+tags: ["診斷端點", "Diagnostic Endpoint"]
 date: 2026-04-23
 description: "說明健康檢查、診斷與調試入口如何控制暴露面"
 weight: 0
@@ -23,6 +24,3 @@ Diagnostic Endpoint 位在運維系統、負載平衡器、監控工具與 appli
 
 設計時要限制可見資訊、避免透露敏感設定，並把用途與 public API 明確分開。Diagnostic Endpoint 應優先服務平台決策，而不是人手排障的便利性。
 
-## 英文術語對照
-- Diagnostic endpoint
-- Debug endpoint

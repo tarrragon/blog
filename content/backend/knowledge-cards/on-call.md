@@ -1,5 +1,6 @@
 ---
 title: "On-Call"
+tags: ["值班機制", "On-Call"]
 date: 2026-04-23
 description: "說明值班制度如何承接告警、事故分級與升級流程"
 weight: 161
@@ -19,6 +20,3 @@ On-call 是 [alert](../alert/)、[incident severity](../incident-severity/) 與 
 
 On-call 設計要定義排班、回應時限、交接格式、升級路徑與支援角色。制度需要和 [runbook](../runbook/) 與演練一起維護，避免值班只剩 pager 通知而沒有可執行流程。
 
-## 英文術語對照
-- On-call
-- Duty rotation

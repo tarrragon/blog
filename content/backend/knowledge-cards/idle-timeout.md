@@ -1,5 +1,6 @@
 ---
 title: "Idle Timeout"
+tags: ["閒置逾時", "Idle Timeout"]
 date: 2026-04-24
 description: "說明連線或會話在多久沒有活動後應該被回收"
 weight: 132
@@ -27,6 +28,3 @@ WebSocket 連線、HTTP keep-alive、反向代理連線池或 application 內部
 
 設計時要定義閒置判定條件、關閉前通知、重連策略與是否允許不同層級使用不同 timeout。Idle Timeout 應該和 read/write timeout、request timeout 區分開來，避免把不同問題混在一起。
 
-## 英文術語對照
-- Idle timeout
-- Connection idle timeout

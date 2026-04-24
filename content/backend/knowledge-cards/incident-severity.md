@@ -1,5 +1,6 @@
 ---
 title: "Incident Severity"
+tags: ["事故等級", "Incident Severity"]
 date: 2026-04-23
 description: "說明事故分級如何把產品影響轉成對應處置節奏"
 weight: 150
@@ -19,6 +20,3 @@ Incident severity 連接 [alert](../alert/)、[runbook](../runbook/) 與 [escala
 
 分級要定義等級條件、升級門檻、負責角色、通訊頻率與回顧要求。等級規則應定期和事故紀錄對照，避免長期失真。
 
-## 英文術語對照
-- Incident severity
-- Severity level

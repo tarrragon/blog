@@ -1,5 +1,6 @@
 ---
 title: "Draining"
+tags: ["排空", "Draining"]
 date: 2026-04-24
 description: "說明服務如何先停止接收新流量，再讓既有工作完成"
 weight: 131
@@ -27,6 +28,3 @@ Kubernetes rolling update 前先讓 instance 進入 draining、load balancer 在
 
 設計時要定義何時開始 draining、draining 多久、超時後怎麼強制終止，以及如何觀察 in-flight request、consumer ack 與長連線狀態。Draining 的目的不是無限等待，而是把切換風險壓到可接受範圍。
 
-## 英文術語對照
-- Connection draining
-- Traffic draining

@@ -1,5 +1,6 @@
 ---
 title: "Config Rollout"
+tags: ["設定發布", "Config Rollout"]
 date: 2026-04-24
 description: "說明設定如何安全下發到正在運作的服務實例"
 weight: 152
@@ -27,6 +28,3 @@ Config Rollout 位在 configuration source、deployment platform 與 running ins
 
 設計時要定義設定來源、分發順序、驗證方式、回復方式與影響範圍。Config Rollout 應該讓設定變更可預測，而不是把風險藏在部署流程裡。
 
-## 英文術語對照
-- Configuration rollout
-- Config rollout

@@ -1,5 +1,6 @@
 ---
 title: "Rate Limit"
+tags: ["速率限制", "Rate Limit"]
 date: 2026-04-23
 description: "說明限流如何保護服務入口、下游依賴與租戶公平性"
 weight: 28
@@ -19,6 +20,3 @@ Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、
 
 限流設計要定義主體、窗口、配額、超限回應、例外權限與觀測欄位。對外 API 要提供清楚的 retry-after 或配額資訊；內部服務要搭配 [alert](../alert/)、[token bucket](../token-bucket/) 與容量規劃。
 
-## 英文術語對照
-- Rate limit
-- Rate limiting

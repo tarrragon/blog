@@ -1,5 +1,6 @@
 ---
-title: "停機"
+title: "Downtime"
+tags: ["停機", "Downtime"]
 date: 2026-04-23
 description: "說明服務中斷時需要評估的產品後果、資料保護與復原順序"
 weight: 9

@@ -1,5 +1,6 @@
 ---
 title: "Backpressure"
+tags: ["背壓控制", "Backpressure"]
 date: 2026-04-23
 description: "說明下游處理速度不足時系統如何讓上游依下游能力送出工作"
 weight: 27
@@ -40,6 +41,3 @@ codex-check:
   role: reference-sample (brief §3.1 指定正面範例卡片)
 -->
 
-## 英文術語對照
-- Backpressure
-- Flow control

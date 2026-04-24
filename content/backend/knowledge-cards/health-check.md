@@ -1,5 +1,6 @@
 ---
 title: "Health Check"
+tags: ["健康檢查", "Health Check"]
 date: 2026-04-24
 description: "說明服務如何對外提供可供平台判斷狀態的健康回應"
 weight: 133
@@ -23,6 +24,3 @@ Load balancer 以 health check 判斷 instance 能否接新流量；運維工具
 
 設計時要讓 health check 保持簡單、穩定、低成本，並且只反映它被設計要回答的問題。更細的流量條件交給 readiness，更細的存活條件交給 liveness，更完整的操作介面交給 diagnostic endpoint。
 
-## 英文術語對照
-- Health check
-- Service health probe

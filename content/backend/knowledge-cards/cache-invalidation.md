@@ -1,5 +1,6 @@
 ---
-title: "快取失效策略"
+title: "Cache Invalidation"
+tags: ["快取失效策略", "Cache Invalidation"]
 date: 2026-04-23
 description: "說明快取資料何時更新、刪除或重建，以及失效策略如何影響一致性"
 weight: 6
