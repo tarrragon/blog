@@ -42,6 +42,7 @@ weight: 8
 | 8.4  | 事故通訊與狀態更新   | 建立內外部通訊節奏與格式                    |
 | 8.5  | 復盤與改進追蹤       | 把 RCA 與 action items 變成可驗證閉環       |
 | 8.6  | 演練與值班能力建設   | 用 game day 與值班訓練提升反應品質          |
+| 8.7  | 攻擊者視角（紅隊）事故弱點判讀 | 用擴散路徑、回復瓶頸與交接斷點檢查事故設計 |
 
 ## 章節列表
 
@@ -51,6 +52,7 @@ weight: 8
 - [8.4 事故通訊與狀態更新](incident-communication/)
 - [8.5 復盤與改進追蹤](post-incident-review/)
 - [8.6 演練與值班能力建設](drills-and-oncall-readiness/)
+- [8.7 攻擊者視角（紅隊）事故弱點判讀](attacker-view-incident-risks/)
 
 ## 既有可引用卡片
 

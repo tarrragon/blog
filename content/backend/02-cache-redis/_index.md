@@ -39,6 +39,7 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](../knowledge-card
 | [2.3](ttl-eviction/)            | TTL 與 eviction           | 規劃過期、淘汰與容量控制                                   |
 | [2.4](distributed-lock/)        | distributed lock 與租約   | 分辨鎖語意、租約風險與適用場景                             |
 | [2.5](presence-store/)          | presence store 與即時狀態 | 追蹤線上狀態、跨節點查詢與過期清理                         |
+| [2.6](attacker-view-cache-risks/) | 攻擊者視角（紅隊）：快取弱點判讀 | 用一致性、污染與放大流量風險檢查快取設計 |
 
 ## 跨語言適配評估
 

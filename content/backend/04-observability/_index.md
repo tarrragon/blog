@@ -41,3 +41,4 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.2](metrics-basics/)  | metrics 與 SLI/SLO      | 用 counter、gauge、histogram 描述服務健康 |
 | [4.3](tracing-context/) | tracing 與 context link | 追蹤跨服務 request path                   |
 | [4.4](dashboard-alert/) | dashboard 與 alert 設計 | 讓告警能對應 runbook 與容量趨勢           |
+| [4.5](attacker-view-observability-risks/) | 攻擊者視角（紅隊）：可觀測性弱點判讀 | 用盲區、告警失真與資料暴露風險檢查觀測系統 |
