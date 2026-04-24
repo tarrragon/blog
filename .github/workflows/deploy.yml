@@ -58,7 +58,7 @@ jobs:
 
       # 3.3 產生 Pagefind 搜尋索引到 public/pagefind/
       - name: Build Pagefind search index
-        run: npx -y pagefind --site public
+        run: npx -y pagefind --site public --root-selector main
 
       # 4. 上傳編譯好的檔案
       - name: Upload artifact

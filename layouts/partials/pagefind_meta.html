@@ -1,0 +1,18 @@
+{{- /*
+  Pagefind filter metadata — 隱藏元素，只給 Pagefind 索引時讀取。
+
+  產出兩類 filter：
+  - type：頁面所屬 section（posts、backend、go、python、skills、…），
+          讓搜尋 UI 能依內容類型篩選
+  - tag：frontmatter 的 tags，讓搜尋 UI 能依標籤篩選
+
+  搜尋頁本身（/search/）掛 data-pagefind-ignore，不會走到這裡。
+*/ -}}
+
+{{- with .Section -}}
+<span hidden data-pagefind-filter="type:{{ . }}"></span>
+{{- end -}}
+
+{{- range .Params.tags -}}
+<span hidden data-pagefind-filter="tag:{{ . }}"></span>
+{{- end -}}

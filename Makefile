@@ -57,4 +57,4 @@ clean:
 site:
 	@rm -rf public
 	@hugo --minify
-	@npx -y pagefind --site public
+	@npx -y pagefind --site public --root-selector main
