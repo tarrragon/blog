@@ -8,7 +8,8 @@
 
 規則：
   - 只處理 [text](path) 形式的 inline link
-  - 只改寫以 "./" 或 "../" 開頭的相對路徑
+  - 改寫相對路徑（./、../、以及 bare-relative 如 foo/bar/）
+  - 跳過絕對路徑（/ 開頭）與外部協定
   - 保留原本的 trailing slash 與 anchor
   - 跳過圖片 ![alt](src)、外部協定、絕對路徑、純 anchor
   - 若 normalize 結果逃出 content/（開頭是 ..），保留原連結不動並警告
@@ -61,9 +62,12 @@ def resolve_link(md_path: Path, link: str) -> str | None:
     else:
         path_part, anchor = link, ""
 
-    # 只處理明確相對（./ 或 ../），其他全部跳過
-    if not (path_part.startswith("./") or path_part.startswith("../")):
+    # 跳過空（純 anchor）、絕對路徑、protocol-relative、外部協定
+    if not path_part or path_part.startswith(("/", "//")):
         return None
+    for scheme in ("http://", "https://", "mailto:", "tel:", "ftp://", "data:"):
+        if path_part.startswith(scheme):
+            return None
 
     url_base = compute_url_base(md_path)
     combined = posixpath.join(url_base, path_part)
