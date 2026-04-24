@@ -56,6 +56,10 @@ jobs:
           echo "Retrying Hugo build after Claude fix..."
           hugo --minify
 
+      # 3.3 產生 Pagefind 搜尋索引到 public/pagefind/
+      - name: Build Pagefind search index
+        run: npx -y pagefind --site public
+
       # 4. 上傳編譯好的檔案
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

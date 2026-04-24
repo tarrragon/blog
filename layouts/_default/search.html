@@ -1,0 +1,32 @@
+{{ define "main" }}
+<div data-pagefind-ignore>
+  <h1>{{ .Title }}</h1>
+  {{ with .Content }}{{ . }}{{ end }}
+
+  <link href="{{ "pagefind/pagefind-ui.css" | relURL }}" rel="stylesheet">
+  <div id="search"></div>
+  <script src="{{ "pagefind/pagefind-ui.js" | relURL }}"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      new PagefindUI({
+        element: "#search",
+        showSubResults: true,
+        showImages: false,
+        translations: {
+          placeholder: "搜尋卡片或文章…",
+          clear_search: "清除",
+          load_more: "載入更多",
+          search_label: "站內搜尋",
+          filters_label: "篩選",
+          zero_results: "找不到 [SEARCH_TERM] 相關內容",
+          many_results: "[COUNT] 筆結果符合 [SEARCH_TERM]",
+          one_result: "1 筆結果符合 [SEARCH_TERM]",
+          alt_search: "找不到 [SEARCH_TERM]，以下是 [DIFFERENT_TERM] 的結果",
+          search_suggestion: "找不到 [SEARCH_TERM]。試試：",
+          searching: "搜尋 [SEARCH_TERM]…"
+        }
+      });
+    });
+  </script>
+</div>
+{{ end }}

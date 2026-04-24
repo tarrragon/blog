@@ -8,7 +8,7 @@ MDTOOLS_SRC := $(shell find scripts/mdtools -type f -name '*.go' 2>/dev/null)
 MDTOOLS_MOD := scripts/mdtools/go.mod scripts/mdtools/go.sum
 MDTOOLS_BIN := bin/mdtools
 
-.PHONY: build check fix lint cards install-hooks clean help
+.PHONY: build check fix lint cards install-hooks clean help site
 
 help:
 	@echo "Blog mdtools targets:"
@@ -19,6 +19,7 @@ help:
 	@echo "  make lint            Run lint on content/**"
 	@echo "  make cards           Run cards on content/**"
 	@echo "  make install-hooks   Point git at .githooks/ for pre-commit"
+	@echo "  make site            Build Hugo + Pagefind search index into public/"
 	@echo "  make clean           Remove bin/"
 
 build: $(MDTOOLS_BIN)
@@ -50,3 +51,10 @@ install-hooks:
 clean:
 	@rm -rf bin/
 	@echo "removed bin/"
+
+# Full site build: Hugo output + Pagefind search index.
+# Run this locally before previewing search; CI runs the same two steps.
+site:
+	@rm -rf public
+	@hugo --minify
+	@npx -y pagefind --site public

@@ -36,7 +36,12 @@ summaryLength = 200  # 摘要字數限制
 
 # 導航選單設定
 [menu]
-  
+
+  [[menu.main]]
+    name = "搜尋"
+    url = "/search/"
+    weight = 1
+
   [[menu.main]]
     name = "文章"
     url = "/posts/"
