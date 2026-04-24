@@ -24,6 +24,8 @@ func main() {
 		exitCode = cmd.Lint(args)
 	case "cards":
 		exitCode = cmd.Cards(args)
+	case "migrate":
+		exitCode = cmd.Migrate(args)
 	case "-h", "--help", "help":
 		usage()
 	case "version":
@@ -47,6 +49,7 @@ Subcommands:
   fmt [--fix|--check]  Format normalization (auto-fixable rules)
   lint                 Structural and schema checks
   cards                Cross-file card completeness checks
+  migrate <sub>        One-off content migration tools (e.g. fix-links)
   version              Print version
   help                 Show this help
 
