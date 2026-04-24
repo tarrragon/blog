@@ -14,21 +14,36 @@ import (
 	"strings"
 )
 
-// LineContext holds per-line skip flags produced by AnalyzeLines.
-// Skip[i] is true when line i sits inside a region that line-based rules
-// must leave alone (YAML front matter, fenced code block).
+// LineContext holds per-line classification flags produced by AnalyzeLines.
+//
+//   - Skip[i]       — true when line i is in front matter or fenced code
+//                     interior; standard line rules (heading detection,
+//                     list detection) should leave it alone.
+//   - FenceOpen[i]  — true when line i opens a fenced code block; used by
+//                     MD031 to insert a blank line before the fence.
+//   - FenceClose[i] — true when line i closes a fenced code block; used
+//                     by MD031 to insert a blank line after the fence.
+//
+// Note: Skip is also true on FenceOpen/FenceClose lines. The two flag
+// families are orthogonal — fence lines are both "skip for heading/list
+// detection" and "the target of MD031".
 type LineContext struct {
-	Skip []bool
+	Skip       []bool
+	FenceOpen  []bool
+	FenceClose []bool
 }
 
 // AnalyzeLines scans lines once and populates the context. The scan is
-// O(n) and allocation-light; callers can re-run it after any pass that
+// O(n) and allocation-light; callers re-run it after any pass that
 // changes line count.
 func AnalyzeLines(lines []string) LineContext {
 	skip := make([]bool, len(lines))
+	fenceOpen := make([]bool, len(lines))
+	fenceClose := make([]bool, len(lines))
+
 	inFrontMatter := false
 	frontMatterOpened := false
-	var fence string // "" when not inside fenced code; otherwise holds the marker used to open
+	var fence string // "" when outside; otherwise opening marker
 
 	for i, line := range lines {
 		trimmed := strings.TrimSpace(line)
@@ -48,54 +63,69 @@ func AnalyzeLines(lines []string) LineContext {
 			continue
 		}
 
-		// Fenced code block: any `` ``` `` or `~~~` at line start opens;
-		// matching marker (same char, len >= opening) closes.
+		// Fenced code block.
 		if fence == "" {
 			if open := detectOpenFence(trimmed); open != "" {
 				fence = open
 				skip[i] = true
+				fenceOpen[i] = true
 				continue
 			}
 		} else {
 			skip[i] = true
 			if isClosingFence(trimmed, fence) {
+				fenceClose[i] = true
 				fence = ""
 			}
 			continue
 		}
 	}
 
-	return LineContext{Skip: skip}
-}
-
-// detectOpenFence returns the fence marker ("```" or "~~~") if trimmed
-// starts with one of them. Language hints after the marker are allowed
-// and don't affect detection.
-func detectOpenFence(trimmed string) string {
-	for _, marker := range []string{"```", "~~~"} {
-		if strings.HasPrefix(trimmed, marker) {
-			return marker
-		}
+	return LineContext{
+		Skip:       skip,
+		FenceOpen:  fenceOpen,
+		FenceClose: fenceClose,
 	}
-	return ""
 }
 
-// isClosingFence reports whether trimmed is a closing fence matching the
-// given opening marker. A closing fence consists only of the marker char,
-// repeated at least len(marker) times, with optional surrounding space.
+// detectOpenFence returns the exact fence marker run at line start, or
+// "" if trimmed does not open a fenced code block. The return value
+// preserves the full run length so that isClosingFence can enforce
+// CommonMark §4.5: a closing fence must be a run of the same char at
+// least as long as the opening run. This is critical for nested fence
+// content (e.g. a `` ``` `` block demonstrating `` ``` `` syntax inside
+// a ```` ```` ```` wrapper).
+func detectOpenFence(trimmed string) string {
+	if len(trimmed) == 0 {
+		return ""
+	}
+	ch := trimmed[0]
+	if ch != '`' && ch != '~' {
+		return ""
+	}
+	count := 0
+	for count < len(trimmed) && trimmed[count] == ch {
+		count++
+	}
+	if count < 3 {
+		return ""
+	}
+	return trimmed[:count]
+}
+
+// isClosingFence reports whether trimmed is a valid closing fence for
+// the given opening run. The closing fence must use the same char as
+// opening and have a run length >= len(opening). Trailing language
+// hints or any other non-fence chars invalidate a closing line.
 func isClosingFence(trimmed, opening string) bool {
-	if len(trimmed) < len(opening) {
+	if len(opening) == 0 || len(trimmed) < len(opening) {
 		return false
 	}
-	if trimmed == opening {
-		return true
-	}
-	// Allow longer runs of the same fence char, e.g. "````" closes "```".
-	marker := opening[0]
+	ch := opening[0]
 	for i := 0; i < len(trimmed); i++ {
-		if trimmed[i] != marker {
+		if trimmed[i] != ch {
 			return false
 		}
 	}
-	return len(trimmed) >= len(opening)
+	return true
 }
