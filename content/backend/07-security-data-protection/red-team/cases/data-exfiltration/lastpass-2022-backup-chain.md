@@ -27,6 +27,7 @@ weight: 71741
 
 ## 可落地的 workflow 檢查點
 
+- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：備份與正式環境使用不同權限域。
 - 日常：定期審查備份讀取行為與授權範圍。
 - 事故中：啟動備份層獨立調查與金鑰輪替。
@@ -36,9 +37,9 @@ weight: 71741
 - `backend/01-database` 的備份與恢復設計
 - `backend/07-security-data-protection` 的金鑰治理
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://blog.lastpass.com/2022/08/notice-of-recent-security-incident/
-- https://blog.lastpass.com/2022/11/notice-of-recent-security-incident/
-- https://blog.lastpass.com/2022/12/notice-of-recent-security-incident/
+- 官方：https://blog.lastpass.com/2022/08/notice-of-recent-security-incident/
+- 政府或監管：https://blog.lastpass.com/2022/11/notice-of-recent-security-incident/
+- 技術分析：https://blog.lastpass.com/2022/12/notice-of-recent-security-incident/
 

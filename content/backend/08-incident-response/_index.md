@@ -31,6 +31,7 @@ weight: 8
 2. [部署平台與網路入口](../05-deployment-platform/) 提供切換、回滾與流量控制能力。
 3. [可靠性驗證流程](../06-reliability/) 提供事故前演練與風險驗證。
 4. [資安與資料保護](../07-security-data-protection/) 提供權限、稽核與高風險操作約束。
+5. [紅隊案例庫（7.R7）](../07-security-data-protection/red-team/cases/) 提供可引用事故案例與 workflow 檢查點來源。
 
 ## 章節大綱
 

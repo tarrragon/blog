@@ -1,24 +1,22 @@
 ---
 title: "7.R7 事故案例庫（可引用）"
 date: 2026-04-24
-description: "把公開事故拆成可引用案例：事件摘要、失效控制面、可落地 workflow 檢查點"
+description: "把公開事故整理成可引用案例體系，讓服務章節與 incident workflow 可雙向回寫"
 weight: 717
 ---
 
-這個分類把紅隊案例整理成可重用素材。每個案例都回答同一組問題：發生了什麼、哪個控制面失效、如果工作流程少做哪一步會重演、後續章節應該引用哪裡。
+這個分類的責任是把事故拆成可重複引用的決策素材。每篇案例都用同一組結構回答：事故摘要、攻擊路徑、失效控制面、少一步的後果、可落地的 workflow 檢查點、可引用章節、可追溯來源。
 
 ## 分類入口
 
-| 分類 | 內容 |
-| --- | --- |
-| [Identity & Access](identity-access/) | 身分、認證流程、支援流程、社交工程 |
-| [Supply Chain](supply-chain/) | 第三方整合、CI/CD、軟體供應鏈 |
-| [Edge Exposure](edge-exposure/) | 邊界設備、外網入口、零時差攻擊 |
-| [Data Exfiltration](data-exfiltration/) | 資料外送、備份風險、營運衝擊 |
-| [案例引用地圖](case-reference-map/) | 服務主題對應事故案例與 workflow 檢查點 |
+- [Identity & Access](identity-access/)：身分、認證流程、社交工程、第三方身分鏈。
+- [Supply Chain](supply-chain/)：CI/CD、更新鏈、RMM、開源與 MSP 供應鏈。
+- [Edge Exposure](edge-exposure/)：邊界設備、外網入口、管理平面、鏈式漏洞。
+- [Data Exfiltration](data-exfiltration/)：資料外送、備份鏈、營運中斷與回復壓力。
+- [案例引用地圖](case-reference-map/)：服務主題到案例與 workflow 檢查點的對照。
 
 ## 使用方式
 
-1. 在服務章節先描述需求與風險。
-2. 連到對應案例，指出「若缺少哪個流程步驟會重演」。
-3. 連到 [事故處理 workflow 參考](../../../../08-incident-response/incident-report-to-workflow/) 落地成 runbook 或演練項目。
+1. 先在服務章節定義風險主題與控制面。
+2. 選一篇同類型案例，引用「如果 workflow 少一步會發生什麼」。
+3. 把該步驟落地到 [incident-report-to-workflow](../../../../08-incident-response/incident-report-to-workflow/) 的 runbook 流程。

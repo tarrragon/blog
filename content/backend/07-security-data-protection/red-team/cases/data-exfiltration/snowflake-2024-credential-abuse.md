@@ -27,6 +27,7 @@ weight: 71742
 
 ## 可落地的 workflow 檢查點
 
+- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：資料平台預設強制 MFA 與網路政策。
 - 日常：建立異常查詢與匯出告警。
 - 事故中：分批停用可疑憑證、限制外送並啟動調查。
@@ -36,9 +37,9 @@ weight: 71742
 - `backend/07-security-data-protection` 的身份與資料治理
 - `backend/04-observability` 的行為告警設計
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://www.snowflake.com/en/blog/communication-on-recent-cyber-threat-activity/
-- https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-customers-take-steps-prevent-unauthorized-access
-- https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion
+- 官方：https://www.snowflake.com/en/blog/communication-on-recent-cyber-threat-activity/
+- 政府或監管：https://www.cisa.gov/news-events/alerts/2024/06/03/snowflake-recommends-customers-take-steps-prevent-unauthorized-access
+- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion
 

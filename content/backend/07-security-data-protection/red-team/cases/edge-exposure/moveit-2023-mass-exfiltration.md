@@ -27,6 +27,7 @@ weight: 71731
 
 ## 可落地的 workflow 檢查點
 
+- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：對外服務建立即時隔離開關。
 - 日常：監控大批量匯出與異常下載模式。
 - 事故中：先隔離入口，再做修補與回復。
@@ -36,9 +37,9 @@ weight: 71731
 - `backend/05-deployment-platform` 的邊界流量控制
 - `backend/08-incident-response` 的止血優先序
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://www.progress.com/trust-center/moveit-transfer-and-moveit-cloud-vulnerability
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a
-- https://nvd.nist.gov/vuln/detail/CVE-2023-34362
+- 官方：https://www.progress.com/trust-center/moveit-transfer-and-moveit-cloud-vulnerability
+- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a
+- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2023-34362
 

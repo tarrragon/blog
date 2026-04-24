@@ -36,9 +36,9 @@ weight: 71712
 - `backend/07-security-data-protection` 的第三方信任邊界
 - `backend/04-observability` 的供應商事件告警關聯
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause
-- https://blog.cloudflare.com/thanksgiving-2023-security-incident/
-- https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
+- 官方：https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause
+- 政府或監管：https://blog.cloudflare.com/thanksgiving-2023-security-incident/
+- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
 

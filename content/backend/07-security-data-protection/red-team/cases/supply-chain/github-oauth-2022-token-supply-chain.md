@@ -27,6 +27,7 @@ weight: 71722
 
 ## 可落地的 workflow 檢查點
 
+- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：採最小權限 token 與明確用途分域。
 - 日常：建立第三方整合清單與失效期限巡檢。
 - 事故中：依清單自動化撤銷、輪替、補授權。
@@ -36,9 +37,9 @@ weight: 71722
 - `backend/07-security-data-protection` 的憑證與授權治理
 - `backend/04-observability` 的第三方整合監測
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://github.blog/news-insights/company-news/security-alert-stolen-oauth-user-tokens/
-- https://github.blog/2022-12-08-notice-of-security-incident/
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
+- 官方：https://github.blog/news-insights/company-news/security-alert-stolen-oauth-user-tokens/
+- 政府或監管：https://github.blog/2022-12-08-notice-of-security-incident/
+- 技術分析：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
 

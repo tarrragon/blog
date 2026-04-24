@@ -23,7 +23,7 @@ weight: 71714
 
 ## 如果 workflow 少一步會發生什麼
 
-若缺少「服務降級與切換劇本」，即使識別到攻擊路徑，也無法在可接受時間內維持核心服務。
+若缺少「服務降級與切換劇本」，即使識別到攻擊路徑，也難以在可接受時間內維持核心服務。
 
 ## 可落地的 workflow 檢查點
 
@@ -36,9 +36,8 @@ weight: 71714
 - `backend/06-reliability` 的降級與回復策略
 - `backend/08-incident-response` 的事故指揮模型
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://investors.mgmresorts.com/investors/news-releases/press-release-details/2023/MGM-Resorts-Provides-Cybersecurity-Incident-Update/default.aspx
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
-- https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
-
+- 官方：https://investors.mgmresorts.com/investors/news-releases/press-release-details/2023/MGM-Resorts-Provides-Cybersecurity-Incident-Update/default.aspx
+- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
+- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications

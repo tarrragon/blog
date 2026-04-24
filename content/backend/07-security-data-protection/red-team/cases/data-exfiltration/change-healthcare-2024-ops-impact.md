@@ -36,9 +36,9 @@ weight: 71743
 - `backend/06-reliability` 的可用性與備援設計
 - `backend/08-incident-response` 的事故分級與跨部門通訊
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://www.unitedhealthgroup.com/newsroom/2024/2024-04-22-uhg-updates-on-change-healthcare-cyberattack.html
-- https://www.cms.gov/newsroom/press-releases/cms-statement-change-healthcare-cyberattack
-- https://www.aha.org/cybersecurity/change-healthcare-cyberattack-updates
+- 官方：https://www.unitedhealthgroup.com/newsroom/2024/2024-04-22-uhg-updates-on-change-healthcare-cyberattack.html
+- 政府或監管：https://www.cms.gov/newsroom/press-releases/cms-statement-change-healthcare-cyberattack
+- 技術分析：https://www.aha.org/cybersecurity/change-healthcare-cyberattack-updates
 

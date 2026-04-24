@@ -19,7 +19,7 @@ weight: 71723
 
 - CI secrets 集中化且缺少分域隔離。
 - 輪替流程成本高，導致執行延遲。
-- 客戶端無法快速判斷最小必要輪替範圍。
+- 客戶端難以快速判斷最小必要輪替範圍。
 
 ## 如果 workflow 少一步會發生什麼
 
@@ -36,9 +36,8 @@ weight: 71723
 - `backend/05-deployment-platform` 的 CI/CD 機制
 - `backend/08-incident-response` 的止血與回復順序
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://circleci.com/blog/jan-4-2023-incident-report/
-- https://circleci.com/blog/january-12-2023-security-alert/
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
-
+- 官方：https://circleci.com/blog/jan-4-2023-incident-report/
+- 政府或監管：https://circleci.com/blog/january-12-2023-security-alert/
+- 技術分析：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a

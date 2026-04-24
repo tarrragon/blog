@@ -27,6 +27,7 @@ weight: 71732
 
 ## 可落地的 workflow 檢查點
 
+- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：高風險邊界設備準備替代路徑。
 - 日常：建立邊界設備健康與變更基線。
 - 事故中：執行隔離、重建、憑證輪替三段流程。
@@ -36,9 +37,9 @@ weight: 71732
 - `backend/06-reliability` 的可用性與替代路徑
 - `backend/08-incident-response` 的隔離與回復流程
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://www.ivanti.com/blog/security-update-for-ivanti-connect-secure-and-ivanti-policy-secure-gateways
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-060b
-- https://nvd.nist.gov/vuln/detail/CVE-2024-21887
+- 官方：https://www.ivanti.com/blog/security-update-for-ivanti-connect-secure-and-ivanti-policy-secure-gateways
+- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-060b
+- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2024-21887
 

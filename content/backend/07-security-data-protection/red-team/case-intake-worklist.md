@@ -5,7 +5,7 @@ description: "紅隊教材案例擴充工作表：每案例至少三來源、兩
 weight: 799
 ---
 
-本檔是教材案例擴充的工作表，不是正文。收錄規則如下：
+本檔定位為教材案例擴充工作表。收錄規則如下：
 
 1. 每案例至少三個來源。
 2. 每案例至少兩種來源類型（官方公告、政府/監管、技術分析）。
@@ -19,6 +19,17 @@ weight: 799
 - `verified`：0
 
 > 說明：本檔同時包含「案例主表」與「事件級交叉驗證表」，統計會包含兩區條目。
+
+## 獨立文章覆蓋盤點（母清單 #1-40）
+
+這一區的責任是把母清單案例對齊到 `cases/` 獨立文章，確保每個事件都可直接被章節引用與 workflow 回寫。
+
+- 盤點日期：2026-04-24
+- 覆蓋範圍：母清單第 1 到 40 筆案例
+- 已有獨立文：40
+- 尚待建立：0
+
+本輪新增的缺漏補齊案例包含 TeamCity、ScreenConnect、PaperCut、Confluence、Log4Shell、Cisco IOS XE、Storm-0558、Cloudflare、Slack、Fortinet SSL-VPN、SysAid、Juniper、ServiceNow、Check Point、3CX、Dropbox、Kaseya、ProxyLogon、ProxyShell、VMware ESXiArgs、FortiOS、Citrix ADC 後續事件、WS_FTP、GoAnywhere。
 
 ## 已收錄案例（第一批）
 

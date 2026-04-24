@@ -37,9 +37,9 @@ weight: 71711
 - `backend/07-security-data-protection` 的認證與授權設計
 - `backend/08-incident-response` 的啟動條件與角色分工
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://www.uber.com/newsroom/security-update/
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
-- https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware/
+- 官方：https://www.uber.com/newsroom/security-update/
+- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
+- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware/
 

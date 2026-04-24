@@ -27,6 +27,7 @@ weight: 71744
 
 ## 可落地的 workflow 檢查點
 
+- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：對客服工具高風險操作加上雙人核准。
 - 日常：追蹤管理工具異常操作模式。
 - 事故中：快速凍結可疑角色與工單操作權限。
@@ -36,9 +37,9 @@ weight: 71744
 - `backend/07-security-data-protection` 的權限分級與稽核
 - `backend/08-incident-response` 的溝通與法遵流程
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://mailchimp.com/newsroom/january-2023-security-incident/
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
-- https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
+- 官方：https://mailchimp.com/newsroom/january-2023-security-incident/
+- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
+- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications
 

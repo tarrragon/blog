@@ -1,11 +1,11 @@
 ---
 title: "7.R7.3 Edge Exposure 類案例"
 date: 2026-04-24
-description: "整理外網入口、邊界設備與零時差攻擊相關事故案例"
+description: "整理邊界設備、外網入口、管理平面與鏈式漏洞事故案例"
 weight: 7173
 ---
 
-本分類聚焦邊界與外網入口。核心判讀是：入口暴露面高、修補窗口短、攻擊自動化程度高，三者疊加會快速造成批量事件。
+本分類的責任是把外網入口與邊界設備風險轉成可執行流程。核心判讀是：入口暴露、修補時差、攻擊自動化會同時放大事件規模，流程需要先隔離再修補再驗證。
 
 ## 案例列表
 
@@ -13,4 +13,15 @@ weight: 7173
 - [Ivanti 2024：VPN 邊界漏洞鏈](ivanti-2024-vpn-chain/)
 - [Citrix Bleed 2023：會話被劫持與重放風險](citrix-bleed-2023-session-hijack/)
 - [PAN-OS 2024：邊界設備遠端命令執行](panos-cve-2024-3400-edge-rce/)
-
+- [PaperCut 2023：認證繞過與入口執行風險](papercut-cve-2023-27350-auth-bypass-rce/)
+- [Confluence 2022：網站入口 RCE 與知識系統風險](confluence-cve-2022-26134-ognl-rce/)
+- [Cisco IOS XE 2023：Web UI 管理面風險](cisco-ios-xe-cve-2023-20198-webui-chain/)
+- [Fortinet SSL-VPN 2024：邊界 VPN 高風險窗口](fortinet-ssl-vpn-cve-2024-21762/)
+- [SysAid 2023：ITSM 入口與維運流程風險](sysaid-cve-2023-47246-itsm-entrypoint/)
+- [Juniper 2023：網通設備鏈式漏洞窗口](juniper-cve-2023-36844-vpn-chain/)
+- [ServiceNow 2024：企業平台入口風險](servicenow-cve-2024-4879-enterprise-platform/)
+- [Check Point 2024：VPN 資訊外洩與會話風險](check-point-cve-2024-24919-vpn-info-disclosure/)
+- [ProxyLogon 2021：Exchange 入口鏈式失效](proxylogon-2021-exchange-entry-chain/)
+- [ProxyShell 2021：Exchange 後續鏈式攻擊](proxyshell-2021-exchange-post-auth-chain/)
+- [FortiOS 2022：VPN 零時差事件節奏](fortios-cve-2022-42475-vpn-zero-day/)
+- [Citrix ADC 後續事件：Session 重放延伸](citrix-adc-2023-follow-on-session-risk/)

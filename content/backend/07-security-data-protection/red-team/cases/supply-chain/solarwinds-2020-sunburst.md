@@ -36,9 +36,9 @@ weight: 71721
 - `backend/05-deployment-platform` 的交付與簽章治理
 - `backend/08-incident-response` 的供應鏈事件指揮流程
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://www.solarwinds.com/securityadvisory
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a
-- https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises
+- 官方：https://www.solarwinds.com/securityadvisory
+- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa20-352a
+- 技術分析：https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises
 

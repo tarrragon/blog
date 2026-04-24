@@ -36,9 +36,9 @@ weight: 71713
 - `backend/07-security-data-protection` 的身份治理章節
 - `backend/08-incident-response` 的止血與角色分工
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- https://www.twilio.com/en-us/blog/august-2022-social-engineering-attack
-- https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
-- https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware/
+- 官方：https://www.twilio.com/en-us/blog/august-2022-social-engineering-attack
+- 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a
+- 技術分析：https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware/
 

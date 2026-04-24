@@ -19,7 +19,7 @@ weight: 71724
 
 - 開源維護與釋出治理缺少獨立覆核。
 - 下游對上游釋出信任過高。
-- 供應鏈檢測流程無法及時抓到異常組件行為。
+- 供應鏈檢測流程常延後辨識異常組件行為。
 
 ## 如果 workflow 少一步會發生什麼
 
@@ -27,6 +27,7 @@ weight: 71724
 
 ## 可落地的 workflow 檢查點
 
+- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：關鍵依賴建立雙人覆核與來源驗證。
 - 日常：維護套件清單與影響面地圖。
 - 事故中：啟動版本凍結、替代版本切換與復測流程。
@@ -36,9 +37,8 @@ weight: 71724
 - `backend/05-deployment-platform` 的依賴治理
 - `backend/06-reliability` 的變更風險控制
 
-## 來源
+## 三個以上來源（官方/政府或監管/技術分析）
 
-- http://www.openwall.com/lists/oss-security/2024/03/29/4
-- https://www.cisa.gov/news-events/alerts/2024/03/29/reported-supply-chain-compromise-affecting-xz-utils-data-compression-library-cve-2024-3094
-- https://nvd.nist.gov/vuln/detail/CVE-2024-3094
-
+- 官方：http://www.openwall.com/lists/oss-security/2024/03/29/4
+- 政府或監管：https://www.cisa.gov/news-events/alerts/2024/03/29/reported-supply-chain-compromise-affecting-xz-utils-data-compression-library-cve-2024-3094
+- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2024-3094
