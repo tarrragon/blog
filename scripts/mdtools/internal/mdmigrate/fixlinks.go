@@ -14,11 +14,17 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 
 	"blog/scripts/mdtools/internal/mdcards"
 )
+
+// sectionPrefixRe matches a leading section-number prefix like "03-",
+// "10-", "0.5-". Used by the secondary slug index to reconnect links
+// that went stale after a section was renumbered.
+var sectionPrefixRe = regexp.MustCompile(`^[\d.]+-`)
 
 // LinkFix is one proposed rewrite of a relative link destination.
 type LinkFix struct {
@@ -44,7 +50,7 @@ type UnresolvableLink struct {
 // the knowledge-cards directory prefix used by the heuristic that
 // prefers card targets when slug matches multiple places.
 func FindFixes(g *mdcards.Graph, cardsRoot string) ([]LinkFix, []UnresolvableLink) {
-	slugIndex := buildSlugIndex(g)
+	primary, normalized := buildSlugIndexes(g)
 
 	var fixes []LinkFix
 	var unresolved []UnresolvableLink
@@ -53,7 +59,7 @@ func FindFixes(g *mdcards.Graph, cardsRoot string) ([]LinkFix, []UnresolvableLin
 		if mdcards.TargetExists(edge.Target) {
 			continue
 		}
-		fix, miss := resolveEdge(edge, slugIndex, cardsRoot)
+		fix, miss := resolveEdge(edge, primary, normalized, cardsRoot)
 		if fix != nil {
 			fixes = append(fixes, *fix)
 			continue
@@ -79,36 +85,63 @@ func FindFixes(g *mdcards.Graph, cardsRoot string) ([]LinkFix, []UnresolvableLin
 	return fixes, unresolved
 }
 
-// buildSlugIndex maps a slug to the filesystem paths that could satisfy
-// it. For content pages the path is the .md file without extension; for
-// Hugo section pages (`_index.md`) the path is the enclosing directory
-// (which is what Hugo routes `parent/slug/` to).
-func buildSlugIndex(g *mdcards.Graph) map[string][]string {
-	index := make(map[string][]string)
+// buildSlugIndexes builds two indexes keyed by slug:
+//
+//   - primary: exact slug as written (e.g. "broker", "04-cpython-internals").
+//   - normalized: slug with any leading "NN-" / "N.N-" section prefix
+//     stripped (e.g. "04-cpython-internals" also indexed under
+//     "cpython-internals"). This is the fallback that reconnects links
+//     left stale after a section renumbering.
+//
+// For content pages the stored path is the .md file without extension;
+// for section pages (`_index.md`) the stored path is the enclosing
+// directory (what Hugo routes `parent/slug/` to).
+func buildSlugIndexes(g *mdcards.Graph) (primary, normalized map[string][]string) {
+	primary = make(map[string][]string)
+	normalized = make(map[string][]string)
 	for _, fn := range g.Files {
 		base := filepath.Base(fn.Path)
+		var slug, target string
 		if base == "_index.md" {
 			parent := filepath.Dir(fn.Path)
-			slug := filepath.Base(parent)
-			if slug != "" && slug != "." {
-				index[slug] = append(index[slug], parent)
-			}
+			slug = filepath.Base(parent)
+			target = parent
+		} else {
+			slug = strings.TrimSuffix(base, ".md")
+			target = strings.TrimSuffix(fn.Path, ".md")
+		}
+		if slug == "" || slug == "." {
 			continue
 		}
-		slug := strings.TrimSuffix(base, ".md")
-		target := strings.TrimSuffix(fn.Path, ".md")
-		index[slug] = append(index[slug], target)
+		primary[slug] = append(primary[slug], target)
+		if norm := sectionPrefixRe.ReplaceAllString(slug, ""); norm != slug && norm != "" {
+			normalized[norm] = append(normalized[norm], target)
+		}
 	}
-	return index
+	return primary, normalized
 }
 
-// resolveEdge applies the three-tier heuristic (single candidate →
-// knowledge-cards preference → same-top-level preference) and, if a
-// unique target emerges, computes the correct relative URL from source
-// to that target.
-func resolveEdge(edge mdcards.Edge, slugIndex map[string][]string, cardsRoot string) (*LinkFix, *UnresolvableLink) {
+// resolveEdge applies the heuristic tiers in order:
+//
+//  1. primary slug match (single candidate → done, else cards pref).
+//  2. section-number-normalized slug (e.g. "03-foo" → "foo" matches
+//     "04-foo") — fires only when primary yields zero candidates.
+//  3. knowledge-cards preference (filter multi-candidate).
+//  4. same-top-level-subdir preference (filter multi-candidate).
+//
+// Returns a LinkFix if a unique target emerges, else records the
+// violation as UnresolvableLink.
+func resolveEdge(edge mdcards.Edge, primary, normalized map[string][]string, cardsRoot string) (*LinkFix, *UnresolvableLink) {
 	slug := extractSlug(edge.Destination)
-	candidates := slugIndex[slug]
+	candidates := primary[slug]
+	reason := "single-candidate"
+	if len(candidates) == 0 {
+		norm := sectionPrefixRe.ReplaceAllString(slug, "")
+		if norm != slug && norm != "" {
+			candidates = normalized[norm]
+			reason = "numeric-prefix-normalized"
+		}
+	}
 	if len(candidates) == 0 {
 		return nil, &UnresolvableLink{
 			SourcePath: edge.SourcePath,
@@ -118,7 +151,6 @@ func resolveEdge(edge mdcards.Edge, slugIndex map[string][]string, cardsRoot str
 		}
 	}
 
-	reason := "single-candidate"
 	if len(candidates) > 1 {
 		if cards := filterCardCandidates(candidates, cardsRoot); len(cards) == 1 {
 			candidates = cards
