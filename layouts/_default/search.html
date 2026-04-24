@@ -1,10 +1,77 @@
 {{ define "main" }}
-<div data-pagefind-ignore>
+<div data-pagefind-ignore class="search-shell">
   <h1>{{ .Title }}</h1>
   {{ with .Content }}{{ . }}{{ end }}
 
   <link href="{{ "pagefind/pagefind-ui.css" | relURL }}" rel="stylesheet">
+
+  <style>
+    /* 搜尋頁專屬：把主欄寬限放寬，讓 filter 能擺在結果旁邊而不擠壓。 */
+    body.page-search main#main-content {
+      max-width: min(1200px, 95vw);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Mobile toggle 按鈕預設存在；桌面隱藏。 */
+    .search-filter-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4em;
+      margin: 0.75rem 0 0.25rem;
+      padding: 0.45rem 0.9rem;
+      border: 1px solid currentColor;
+      border-radius: 6px;
+      background: transparent;
+      color: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    @media (min-width: 768px) {
+      /* Desktop：drawer 以 grid 把 filter 放左、結果放右。*/
+      .search-shell #search .pagefind-ui__drawer {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+      .search-shell #search .pagefind-ui__filter-panel {
+        min-width: 0;
+        margin-top: 0;
+        position: sticky;
+        top: 1rem;
+      }
+      .search-shell #search .pagefind-ui__results-area {
+        min-width: 0;
+        margin-top: 0;
+      }
+
+      /* Toggle 按鈕在桌面沒用。 */
+      .search-filter-toggle { display: none; }
+    }
+
+    @media (max-width: 767px) {
+      /* Mobile：filter 與結果互斥顯示；預設顯示結果，按 toggle 後顯示 filter。 */
+      .search-shell:not(.mobile-filters-open) #search .pagefind-ui__filter-panel {
+        display: none;
+      }
+      .search-shell.mobile-filters-open #search .pagefind-ui__results-area {
+        display: none;
+      }
+    }
+  </style>
+
+  <button type="button" class="search-filter-toggle"
+          data-search-filter-toggle
+          aria-pressed="false">
+    <span class="label-to-filters">⇄ 切換到篩選</span>
+    <span class="label-to-results" hidden>⇄ 切換到結果</span>
+  </button>
+
   <div id="search"></div>
+
   <script src="{{ "pagefind/pagefind-ui.js" | relURL }}"></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
@@ -26,6 +93,17 @@
           searching: "搜尋 [SEARCH_TERM]…"
         }
       });
+    });
+
+    // Mobile toggle：在 filter 視圖與結果視圖之間切換。
+    document.addEventListener('click', function (ev) {
+      var btn = ev.target.closest('[data-search-filter-toggle]');
+      if (!btn) return;
+      var shell = document.querySelector('.search-shell');
+      var open = shell.classList.toggle('mobile-filters-open');
+      btn.setAttribute('aria-pressed', open ? 'true' : 'false');
+      btn.querySelector('.label-to-filters').hidden = open;
+      btn.querySelector('.label-to-results').hidden = !open;
     });
   </script>
 </div>

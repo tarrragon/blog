@@ -31,7 +31,7 @@
   {{- partial "custom_head.html" . -}}
 </head>
 
-<body>
+<body{{ if eq .Layout "search" }} class="page-search"{{ end }}>
   <header>
     {{- partial "header.html" . -}}
   </header>
