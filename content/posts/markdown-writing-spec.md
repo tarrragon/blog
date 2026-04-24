@@ -249,10 +249,12 @@ Hugo 依賴 YAML front matter 提供 title / date / weight 等欄位給 render p
 
 ### 6.1 通用層（`content/**/*.md`）
 
-所有 markdown 檔必須有：
+所有內容文章必須有：
 
 - `title`：字串，不可空。
 - `date`：`YYYY-MM-DD` 格式（ISO 8601 date）。
+
+**Hugo `_index.md` section 頁面例外**：這類檔案是 Hugo 的 section 列表 landing page，不是內容文章，沒有語意上的「日期」。只要求 `title`，不強制 `date`。
 
 ### 6.2 推薦層（警告，不阻擋）
 

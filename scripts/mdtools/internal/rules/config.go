@@ -53,8 +53,11 @@ type CodeBlockRules struct {
 
 // FrontMatterRules governs §6 of the spec.
 type FrontMatterRules struct {
-	// Tier 1: required for every markdown file.
+	// Tier 1: required for every standard content file.
 	GlobalRequired []string // e.g. []string{"title", "date"}
+	// Tier 1-section: required for Hugo `_index.md` section pages, which
+	// don't carry meaningful per-page `date` (they're list landing pages).
+	IndexRequired []string // e.g. []string{"title"}
 	// Tier 2: recommended — warn on absence, do not block.
 	Recommended []string // e.g. []string{"description", "tags"}
 	// Tier 3: card-specific required (content/backend/knowledge-cards/**).
@@ -110,6 +113,7 @@ func Default() Config {
 		},
 		FrontMatter: FrontMatterRules{
 			GlobalRequired: []string{"title", "date"},
+			IndexRequired:  []string{"title"},
 			Recommended:    []string{"description", "tags"},
 			CardRequired:   []string{"title", "date", "description", "weight"},
 			Disallowed:     []string{"author", "permalink"},
