@@ -5,16 +5,35 @@ description: "說明 debug、預設值與環境差異如何意外暴露能力"
 weight: 715
 ---
 
-紅隊很常從設定錯誤開始找突破點，因為功能本身可能沒問題，但環境、預設值或部署流程會把不該公開的能力打開。這類問題的重點不是程式碼邏輯，而是誰以為某個入口只存在於某個環境。
+本章處理紅隊分析的第五步：把環境設定、預設值與部署差異納入攻擊面盤點。目標是把設定風險前移到設計與交付流程，減少隱藏入口在生產環境暴露。
 
-## 概念位置
+## 【情境】哪些變動最容易引入隱藏入口
 
-這類風險已和 [Security Misconfiguration](../../knowledge-cards/security-misconfiguration/) 直接相連，也會碰到 [Diagnostic Endpoint](../../knowledge-cards/diagnostic-endpoint/)、[Admin Endpoint](../../knowledge-cards/admin-endpoint/)、[feature flag](../../knowledge-cards/feature-flag/)、[Release Gate](../../knowledge-cards/release-gate/) 與 cloud policy。紅隊會找的是隱藏能力、測試殘留、錯誤的 CORS、過寬的來源限制與不一致的環境設定。
+下列變動通常伴隨設定風險上升：
 
-## 可觀察訊號與例子
+- 新增環境、區域或新部署平台
+- 調整 CORS、網路白名單與憑證設定
+- 引入 debug endpoint 與 feature flag
+- 擴大第三方整合與雲端資源權限
 
-如果 staging 的 debug endpoint 在 production 仍可用、default credential 沒被換掉、或某些環境能看到比預期更多的錯誤訊息，這些都是典型的 misconfiguration surface。紅隊會把這些面視為低成本高回報的突破點。
+## 【判讀流程】設定面檢查順序
 
-## 設計責任
+1. 比對環境：比對 dev/staging/prod 的設定差異與預設值。
+2. 列高風險項：檢查 [Diagnostic Endpoint](../../knowledge-cards/diagnostic-endpoint/)、[Admin Endpoint](../../knowledge-cards/admin-endpoint/)、credential 與網路入口。
+3. 看交付閘門：檢查 [Release Gate](../../knowledge-cards/release-gate/) 是否包含高風險設定驗證。
+4. 看漂移：持續偵測環境偏移與權限擴張。
 
-設定錯誤不能只靠人工記憶。防護要有 baseline config、環境差異審查、secret scan、IaC review 與 drift detection，並且把高風險設定納入 release gate，而不是只在事故後才回頭處理。
+## 【風險代價】設定錯誤的修復成本常跨團隊
+
+設定錯誤多半涉及應用、平台、網路與安全協作，修復路徑長且容易反覆。若設定驗證在交付前就完成，事故面會縮小，溝通與回復成本也會同步下降。
+
+## 【設計取捨】交付速度與設定治理深度
+
+放寬設定審查可提升交付速度；同時會提高隱藏入口暴露機率。較穩定的做法是把高風險設定做成自動化檢查，讓交付速度與治理品質一起維持。
+
+## 【最低控制面】進入實作前要先定義
+
+- baseline config 與環境差異規範
+- 高風險設定的自動化檢查清單
+- 權限擴張與設定漂移告警
+- 變更審查與回滾條件

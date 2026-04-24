@@ -5,7 +5,7 @@ description: "從攻擊者角度盤點暴露面、邊界、濫用路徑與資料
 weight: 71
 ---
 
-紅隊子分類的核心目標不是寫 exploit，而是把「哪些地方會被找、怎麼被試、哪裡會被突破」拆成可討論的概念。它會回頭檢查 public entry、auth boundary、tenant boundary、hidden capability、data leak route 與 abuse path，確認防護設計是否真的封住暴露面。
+紅隊子分類的核心目標是建立一條可操作的風險判讀路徑：先盤點攻擊面，再檢查流程濫用、資料外洩、資源濫用與設定風險。章節內容使用技術文章格式，聚焦情境判讀、代價分析與設計取捨，名詞定義則統一放在 knowledge cards。
 
 ## 暫定分類
 
@@ -36,4 +36,4 @@ weight: 71
 | [7.R4](resource-abuse/) | 資源濫用與可用性破壞 | 確認哪些操作會被放大成壓力 |
 | [7.R5](misconfiguration-and-hidden-entrypoints/) | 設定錯誤與隱藏入口 | 確認哪些預設值或 debug 面會暴露能力 |
 
-本子分類會先建立概念與檢查順序，再往後延伸到具體驗證方式。
+本子分類會先建立判讀順序與控制面，再往後延伸到具體驗證方式與實作策略。

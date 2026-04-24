@@ -5,16 +5,35 @@ description: "說明敏感資料會從哪些回應、紀錄或工具中流出"
 weight: 713
 ---
 
-紅隊看資料不是只看 API response，而是看資料會不會從更多路徑被帶走。Excessive data exposure、log、search index、support tool、backup、export、cache 與錯誤訊息都可能是外洩路徑。
+本章處理紅隊分析的第三步：盤點資料流經的每個節點，找出資料暴露與外洩風險。目標是把資料保護從單一 API 回應擴展到完整資料生命週期。
 
-## 概念位置
+## 【情境】資料路徑擴張時先做外洩盤點
 
-這一類問題會與 [Excessive Data Exposure](../../knowledge-cards/excessive-data-exposure/)、[Data Classification](../../knowledge-cards/data-classification/)、[Data Masking](../../knowledge-cards/data-masking/)、[Audit Log](../../knowledge-cards/audit-log/) 與 [Secret Management](../../knowledge-cards/secret-management/) 交疊。紅隊的工作是找出哪個資料流最容易被忘記，哪個中介層最容易被誤當成安全邊界。
+下列情況出現時，資料外洩盤點優先級應提升：
 
-## 可觀察訊號與例子
+- 同一資料同時進入 API、log、search index、support tool
+- 匯出與備份流程增加，資料保留時間拉長
+- 客服、營運與分析角色存取範圍擴張
+- 多團隊共享資料平台與查詢工具
 
-當系統有客服介面、管理後台、批次匯出、搜尋索引或觀測工具時，資料外洩風險會不只存在於前台 API。紅隊會特別注意 response 裡多出來的欄位、log 裡的敏感資訊、支援工具是否能查到未遮罩資料，以及索引或備份是否保留過多原始內容。
+## 【判讀流程】資料外洩路徑圖
 
-## 設計責任
+1. 分級：先定義 [Data Classification](../../knowledge-cards/data-classification/) 與保留策略。
+2. 追蹤：把每類資料的流向畫到 response、[log](../../knowledge-cards/log/)、search、export、backup。
+3. 驗證：逐段檢查 [Data Masking](../../knowledge-cards/data-masking/) 與授權條件是否一致。
+4. 稽核：把高風險存取與匯出操作接到 [Audit Log](../../knowledge-cards/audit-log/)。
 
-資料暴露的防護責任要從資料分級開始，延伸到回應、紀錄、搜尋、分析與備份。只要某個資料流會離開主要存取路徑，就要重新定義遮罩、權限與保存策略，不能只靠單一 API 的回傳格式保護整個系統。
+## 【風險代價】外洩事件的處理週期長
+
+資料外洩的影響包含法規處理、客訴、信任損失與長期稽核負擔。資料流盤點越晚，復原成本越高。早期完成資料路徑圖，可明確界定責任邊界與回復步驟，縮短事故處理時間。
+
+## 【設計取捨】資料可用性與最小暴露
+
+營運分析需要資料可見性，資安需要最小暴露面。常見做法是把查詢便利性與敏感欄位脫鉤，透過欄位分級、遮罩層與分權存取平衡兩者需求。
+
+## 【最低控制面】進入實作前要先定義
+
+- 敏感欄位分類與保存年限
+- 回應、觀測、匯出的最小欄位策略
+- 高風險查詢與匯出的稽核欄位
+- 外洩事件的通報與收斂流程

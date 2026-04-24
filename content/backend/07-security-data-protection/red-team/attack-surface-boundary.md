@@ -5,16 +5,35 @@ description: "從紅隊角度盤點系統暴露面，以及信任假設在哪裡
 weight: 711
 ---
 
-Attack surface 的核心概念是「系統有哪些地方會被外部看見並嘗試互動」。Trust boundary 的核心概念是「信任假設在哪裡開始不再成立」。紅隊會先找這兩件事，因為只要暴露面與邊界不清楚，後面的權限、稽核、遮罩與防護都會變成局部補洞。
+本章處理紅隊分析的第一步：建立完整攻擊面清單，並標註每條路徑跨越的信任邊界。目標是讓團隊在選型與設計早期就看見高風險入口，先完成優先順序，而不是在事故期間才補盤點。
 
-## 概念位置
+## 【情境】哪些服務需要先做攻擊面盤點
 
-Attack surface 不只是 [Public API](../../knowledge-cards/public-api-endpoint/)。它還包括 [Admin Endpoint](../../knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](../../knowledge-cards/diagnostic-endpoint/)、[Internal Endpoint](../../knowledge-cards/internal-endpoint/)、[webhook](../../knowledge-cards/webhook/)、upload path、debug flag、cloud resource 與依賴服務的對外介面。Trust boundary 則是從外部呼叫到內部能力、從 tenant 到 tenant、從網路到資料層、從授權前到授權後的切換點。
+下列情境同時出現時，攻擊面與邊界章節應放在前面：
 
-## 可觀察訊號與例子
+- 對外入口超過一種（API、webhook、管理介面、診斷介面）
+- 角色與租戶模型持續擴張
+- 系統同時依賴多個內外部服務
+- 交付節奏快，設定變動頻繁
 
-系統需要盤點 attack surface 的訊號是存在多種入口、不同權限等級、可枚舉資源與可回傳診斷資訊。若某個 endpoint 可以被猜路徑、透過錯誤訊息推回內部結構，或因預設設定而暴露額外能力，紅隊就會把它視為高優先暴露面。
+## 【判讀流程】四步完成邊界標註
 
-## 設計責任
+1. 列入口：整理 [Public API](../../knowledge-cards/public-api-endpoint/)、[Admin Endpoint](../../knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](../../knowledge-cards/diagnostic-endpoint/)、[Internal Endpoint](../../knowledge-cards/internal-endpoint/) 與 [webhook](../../knowledge-cards/webhook/)。
+2. 畫資料流：每條入口都連到下游能力與資料資產，包含第三方整合。
+3. 標信任切換點：在身份、租戶、網路、資料層切換處標示 [Trust Boundary](../../knowledge-cards/trust-boundary/)。
+4. 排優先級：以可枚舉性、可重放性、資料敏感度與橫向移動能力排序。
 
-暴露面管理要把入口用途、來源限制、資料回應與日誌責任分開定義。對外公開的 surface 需要比內部 surface 更嚴格的驗證、速率控制與回應最小化；任何會跨越 trust boundary 的操作，都要能被明確描述、測試與稽核。
+## 【風險代價】盤點品質直接影響事故規模
+
+盤點不足時，常見結果是高風險入口晚被辨識，導致事件初期無法聚焦調查。這會同時拉高停機時間、修復人力與溝通成本。盤點完整時，告警、稽核與隔離策略可以對齊同一張路徑圖，事故處理速度會明顯提升。
+
+## 【設計取捨】入口密度與維運成本
+
+入口越多，產品迭代彈性越高；同時，邊界管理與稽核成本也會增加。設計上可透過入口分層、責任分離與固定命名規則控制複雜度，讓新入口進入流程時就能被標記與追蹤。
+
+## 【最低控制面】進入實作前要先定義
+
+- 入口清單與擁有者
+- 邊界切換規則與驗證責任
+- 高風險入口的告警與稽核路徑
+- 入口變更的審查節點與 release gate

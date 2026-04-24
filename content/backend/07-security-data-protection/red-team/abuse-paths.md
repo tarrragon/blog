@@ -5,16 +5,34 @@ description: "說明合法功能如何被惡意組合成權限突破或流程濫
 weight: 712
 ---
 
-Abuse case 的核心概念是「攻擊者不一定要繞過入口，他也可能直接濫用合法功能」。紅隊關注的不是單一 API 是否存在，而是這個功能是否可以被重新排列成未授權操作、越權動作或流程欺騙。
+本章處理紅隊分析的第二步：把合法流程轉成濫用路徑，評估哪條業務流程最容易變成越權操作。目標是讓權限設計與業務流程一起驗證，避免只檢查單點 API。
 
-## 概念位置
+## 【情境】哪些流程需要優先做濫用分析
 
-Abuse case 會落在 [authentication](../../knowledge-cards/authentication/)、[authorization](../../knowledge-cards/authorization/)、[BOLA / IDOR](../../knowledge-cards/bola-idor/)、[Function-Level Authorization](../../knowledge-cards/function-level-authorization/)、[Tenant Boundary](../../knowledge-cards/tenant-boundary/) 與 [Least Privilege](../../knowledge-cards/least-privilege/) 的交界。它關心的是合法行為如何被轉成非預期結果，例如邀請、重設、匯出、審核、切換或分享流程。
+下列流程通常優先納入濫用分析：
 
-## 可觀察訊號與例子
+- 邀請、審核、代理操作、帳號切換
+- 密碼重設、權限提升、方案升降級
+- 匯出、分享、批次操作
+- 跨租戶協作與第三方授權
 
-系統需要 abuse case 檢查的訊號是功能很多、流程很長、角色很多，或有明顯的例外分支。像是匯出功能被用來批量蒐集資料、邀請流程被用來擴張不該有的存取、重設流程被用來接管帳號，這些都不是「攻擊碼」，而是「合法功能被惡意轉用」。
+## 【判讀流程】三層檢查法
 
-## 設計責任
+1. 目的層：確認每個流程的正常商業目的與預期受益者。
+2. 權限層：沿流程標示 [authentication](../../knowledge-cards/authentication/)、[authorization](../../knowledge-cards/authorization/) 與 [Tenant Boundary](../../knowledge-cards/tenant-boundary/) 切換點。
+3. 濫用層：列出 [BOLA / IDOR](../../knowledge-cards/bola-idor/) 與 [Function-Level Authorization](../../knowledge-cards/function-level-authorization/) 可觸發的非預期結果。
 
-防護要能回答三件事：這個功能的正常目的為何、它可能被怎麼濫用、濫用時系統要在哪一層攔下來。若流程本身包含權限跳轉、狀態切換或代理操作，紅隊就會把這些地方當成第一優先的濫用路徑。
+## 【風險代價】流程越長，放大效果越強
+
+濫用路徑成功時，代價通常高於一般漏洞：它看起來像合法操作，偵測延遲較長，資料外流量可能更高，回溯也更困難。流程級分析越完整，越能縮小事故調查範圍並減少誤封。
+
+## 【設計取捨】操作便利性與授權嚴謹度
+
+流程越順，使用者體驗越好；同時，濫用成本也可能下降。常見做法是把高風險節點加入二次驗證、操作審批或風險分層，讓低風險路徑維持流暢，高風險路徑提高檢查強度。
+
+## 【最低控制面】進入實作前要先定義
+
+- 主要流程的濫用情境清單與責任人
+- 高風險動作的授權層級與審核策略
+- 濫用偵測訊號與稽核欄位
+- 例外流程的測試與演練節點
