@@ -44,7 +44,7 @@
   {{- end -}}
   {{- $href := printf "%s%s" $target.RelPermalink $anchor -}}
   {{- if and $linkTitle $linkDesc -}}
-<a href="{{ $href | safeURL }}" title="{{ $linkTitle }} — {{ $linkDesc }}" data-link-title="{{ $linkTitle }}" data-link-desc="{{ $linkDesc }}">{{ .Text | safeHTML }}</a>
+<a href="{{ $href | safeURL }}" data-link-title="{{ $linkTitle }}" data-link-desc="{{ $linkDesc }}">{{ .Text | safeHTML }}</a>
   {{- else -}}
 <a href="{{ $href | safeURL }}"{{ with $mdTitle }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
   {{- end -}}
