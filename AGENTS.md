@@ -159,7 +159,7 @@
 - 核心規則摘要：
   - **標題**：正文禁止 H1（front matter `title` 已產生 H1）；siblings_only 重複偵測；標題尾禁標點（MD026）；禁用粗體當標題（MD036）。
   - **URL**：裸 URL 禁止；顯示文字若含 TLD 字樣（`.com` / `.org` / `.gov` / `.net` / `.io` / `.dev` / `.tw`），domain 必須與 href 一致（反釣魚）。
-  - **表格**：compact 風格，`| cell |` 前後各一格；分隔線 `| --- |`。
+  - **表格**：aligned 風格，每欄補空白對齊（CJK 雙寬）；分隔線 `| --- |` 長度隨欄寬自動增減。`mdtools fmt --fix` 負責重新對齊。
   - **列表與代碼**：列表 / code block 前後空行；有序列表 `1./2./3.` 一致；code block 需語言標示。
   - **Front matter**：通用層 `title` + `date` 必填；卡片層加 `description` + `weight` 必填。
   - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。

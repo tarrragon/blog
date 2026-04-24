@@ -41,8 +41,12 @@ type URLRules struct {
 
 // TableRules governs §4 of the spec.
 type TableRules struct {
-	Style                string // "compact"
-	ForbidAlignmentColon bool   // true: `| --- |` without `:` for alignment
+	// Style is one of "aligned" (default) or "compact".
+	//   "aligned": every column padded to its max display width using
+	//              CJK-aware runewidth; pipes line up vertically.
+	//   "compact": single space around each pipe, no padding.
+	Style                string
+	ForbidAlignmentColon bool // true: `| --- |` without `:` for alignment
 }
 
 // CodeBlockRules governs §5.1 (MD040), §5.2 (MD031).
@@ -104,7 +108,7 @@ func Default() Config {
 			ApplyToBlockquoteURLs: true,
 		},
 		Tables: TableRules{
-			Style:                "compact",
+			Style:                "aligned",
 			ForbidAlignmentColon: true,
 		},
 		CodeBlocks: CodeBlockRules{
