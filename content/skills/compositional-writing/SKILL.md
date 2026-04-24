@@ -1,13 +1,9 @@
 ---
-name: compositional-writing
-description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, and long-form technical articles. Use when cognitive load and token cost matter. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, post-mortem, 架構決策, 除錯復盤, 欄位設計, atomic, reusable."
-license: MIT
-metadata:
-  version: 0.1.0
-  category: writing-methodology
+title: "Compositional Writing — SKILL 入口"
+date: 2026-04-24
+description: "Zettelkasten 寫作方法論的 SKILL 入口：三大支柱、五大原則速查、觸發路由對應表。"
+tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
-
-# Compositional Writing
 
 以 Zettelkasten（卡片盒筆記法）為核心的寫作方法論。將每段文字視為可重複組合的原子卡片，讓人類讀者與 AI 代理人都能以最小認知負擔找到答案。
 
@@ -15,11 +11,11 @@ metadata:
 
 ## Core Pillars（三大支柱）
 
-| 支柱 | 意義 |
-|------|------|
-| **Atomization** 原子化 | 一段文字只承載一個概念，可獨立閱讀與重用 |
+| 支柱                         | 意義                                           |
+| ---------------------------- | ---------------------------------------------- |
+| **Atomization** 原子化       | 一段文字只承載一個概念，可獨立閱讀與重用       |
 | **Explicit Intent** 意圖顯性 | 讀者第一眼就看懂「為什麼在這裡」與「該做什麼」 |
-| **Searchability** 可查詢性 | 人和 AI 都能用關鍵字 / grep / regex 快速定位 |
+| **Searchability** 可查詢性   | 人和 AI 都能用關鍵字 / grep / regex 快速定位   |
 
 ---
 
@@ -51,17 +47,17 @@ metadata:
 
 ## When to Consult This Skill（觸發路由）
 
-| 觸發情境 | 讀哪份 reference |
-|---------|----------------|
-| 要寫或改一段程式碼註解 / doc comment | `./writing-code-comments.md` |
-| 要起草 / 改寫一份文件（worklog、spec、README） | `./writing-documents.md` |
-| 要設計 log / 錯誤訊息 / 結構化輸出 | `./writing-logs.md` |
-| 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle | `./writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
-| 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估） | `./writing-articles.md` |
-| 要設計 ticket 欄位 / schema frontmatter / 表單欄位 | `./designing-fields.md` |
-| 想驗證寫作品質（認知負擔、獨立理解率） | `./meta-metrics.md` |
-| 要新增或修改一份 Skill reference（撰寫品質規範、結構標準） | `./reference-authoring-standards.md` |
-| 要驗收 Skill 發布品質（語意層驗收、Phase 2 dry-run） | `./dry-run-guide.md` |
+| 觸發情境                                                                           | 讀哪份 reference                                                                                          |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 要寫或改一段程式碼註解 / doc comment                                               | `./writing-code-comments.md`                                                                              |
+| 要起草 / 改寫一份文件（worklog、spec、README）                                     | `./writing-documents.md`                                                                                  |
+| 要設計 log / 錯誤訊息 / 結構化輸出                                                 | `./writing-logs.md`                                                                                       |
+| 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle           | `./writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
+| 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估） | `./writing-articles.md`                                                                                   |
+| 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                 | `./designing-fields.md`                                                                                   |
+| 想驗證寫作品質（認知負擔、獨立理解率）                                             | `./meta-metrics.md`                                                                                       |
+| 要新增或修改一份 Skill reference（撰寫品質規範、結構標準）                         | `./reference-authoring-standards.md`                                                                      |
+| 要驗收 Skill 發布品質（語意層驗收、Phase 2 dry-run）                               | `./dry-run-guide.md`                                                                                      |
 
 每份 reference 自包含：以該情境為核心，把五大原則翻譯成可直接套用的檢查項與範例。閱讀任一 reference 不需要回來看其他 reference。
 
@@ -69,9 +65,9 @@ metadata:
 
 ## Success Criteria（M1-M2 認知負擔類）
 
-| Metric | 定義 | 目標 |
-|--------|------|------|
-| **M1 — 找到答案路徑** | 讀者從 SKILL.md 出發，需要開啟幾個檔案才能解決問題 | ≤ 2 |
+| Metric                        | 定義                                                  | 目標 |
+| ----------------------------- | ----------------------------------------------------- | ---- |
+| **M1 — 找到答案路徑**         | 讀者從 SKILL.md 出發，需要開啟幾個檔案才能解決問題    | ≤ 2  |
 | **M2 — reference 獨立理解率** | 隨機挑一份 reference，不讀其他 reference 能否獨立套用 | 100% |
 
 詳細量測方式與自評表見 `./meta-metrics.md`。M3-M5（token 類）保留未定，待實際範例累積後補足。

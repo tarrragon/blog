@@ -9,10 +9,10 @@ tags: ["Hugo", "搜尋", "Pagefind", "靜態網站", "工具設計"]
 
 靜態站沒有後端可以接查詢，所有搜尋工作必須在兩個時點之一完成：**build 時**產生索引、**client runtime** 執行匹配。這個前提決定了所有靜態站搜尋方案共同面對的兩個設計軸：
 
-| 設計軸 | 意義 |
-|-------|------|
+| 設計軸       | 意義                                       |
+| ------------ | ------------------------------------------ |
 | 索引產生時機 | build 時靜態產生，或 client 載入後動態建立 |
-| 索引交付方式 | 一次全量下載，或按查詢 lazy-load |
+| 索引交付方式 | 一次全量下載，或按查詢 lazy-load           |
 
 方案差異來自這兩軸的組合。Pagefind 選的是「build 時產生、按需載入」，它的所有設計決策都是這個選擇的延伸。
 
@@ -26,11 +26,11 @@ tags: ["Hugo", "搜尋", "Pagefind", "靜態網站", "工具設計"]
 
 **CASE**：Pagefind 的索引是三層結構：
 
-| 層次 | 內容 | 大小 |
-|------|------|------|
-| `pagefind-entry.json` | 索引目錄，記載有哪些 chunk 與 fragment | <10KB |
-| `index/*.pf_index` | 倒排索引切片，依 term 前綴分片 | 10-50KB / chunk |
-| `fragment/*.pf_fragment` | 每篇文章的 metadata、URL、摘要 | 2-5KB / fragment |
+| 層次                     | 內容                                   | 大小             |
+| ------------------------ | -------------------------------------- | ---------------- |
+| `pagefind-entry.json`    | 索引目錄，記載有哪些 chunk 與 fragment | <10KB            |
+| `index/*.pf_index`       | 倒排索引切片，依 term 前綴分片         | 10-50KB / chunk  |
+| `fragment/*.pf_fragment` | 每篇文章的 metadata、URL、摘要         | 2-5KB / fragment |
 
 查「WAF」時，client 下載路徑是：entry（10KB）→ 涵蓋 "W" 的 index chunk（~30KB）→ 命中文章的 fragment（每筆 3KB）。總傳輸量與全站大小幾乎脫鉤 — 站擴大 10 倍，單次搜尋仍然只下載「W」那個 chunk 與少數 fragment。
 
@@ -121,14 +121,14 @@ ubuntu-latest runner 內建 node，`npx -y` 首次執行會下載並 cache binar
 
 評估 Pagefind 不看「比較快」「比較省事」這類時間維度，用下列內在屬性：
 
-| 維度 | Pagefind 的特徵 |
-|------|----------------|
-| 覆蓋完整性 | 索引全站 HTML；不需要逐 section 註冊 |
-| 可逆性 | 產物是檔案，移除就是刪除 `public/pagefind/` 與搜尋頁，無殘留依賴 |
-| 維護成本 | build pipeline 多一步；無 runtime 服務、無 key 管理、無版本相依性 |
-| 可理解性 | UI drop-in、filter 用 HTML 屬性宣告、三層索引結構直觀 |
-| 依賴前提 | 要求目標 framework 能產出 HTML（絕大多數 static generator 滿足） |
-| 擴展性 | 單次查詢下載量與全站大小脫鉤 — scaling 由 build time 吸收，不轉嫁到訪客 |
+| 維度       | Pagefind 的特徵                                                         |
+| ---------- | ----------------------------------------------------------------------- |
+| 覆蓋完整性 | 索引全站 HTML；不需要逐 section 註冊                                    |
+| 可逆性     | 產物是檔案，移除就是刪除 `public/pagefind/` 與搜尋頁，無殘留依賴        |
+| 維護成本   | build pipeline 多一步；無 runtime 服務、無 key 管理、無版本相依性       |
+| 可理解性   | UI drop-in、filter 用 HTML 屬性宣告、三層索引結構直觀                   |
+| 依賴前提   | 要求目標 framework 能產出 HTML（絕大多數 static generator 滿足）        |
+| 擴展性     | 單次查詢下載量與全站大小脫鉤 — scaling 由 build time 吸收，不轉嫁到訪客 |
 
 **內建的一等公民特性**：
 

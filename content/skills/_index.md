@@ -11,17 +11,17 @@ tags: ["skills", "Claude", "寫作方法論", "工具設計"]
 
 同一份 skill 有兩種存在形式，各自負責不同角色：
 
-| 位置 | 角色 | 讀者 |
-|------|------|------|
-| `.claude/skills/<name>/` | 實際 skill，Claude runtime 呼叫 | Claude |
-| `content/skills/<name>/`（本處） | 文章版本，Hugo 渲染成 blog 頁 | 人類讀者 |
+| 位置                             | 角色                            | 讀者     |
+| -------------------------------- | ------------------------------- | -------- |
+| `.claude/skills/<name>/`         | 實際 skill，Claude runtime 呼叫 | Claude   |
+| `content/skills/<name>/`（本處） | 文章版本，Hugo 渲染成 blog 頁   | 人類讀者 |
 
 兩處內容相同、結構略有差異：`.claude/` 版本保留原始 `SKILL.md + references/` 巢狀結構以配合 Claude 的路徑解析；`content/` 版本扁平化（references 內容升級到同層），以契合 blog 的單層文章呈現。
 
 ## 目前收錄的 skill
 
-| Skill | 主題 | 入口 |
-|-------|------|------|
+| Skill                 | 主題                          | 入口                                                             |
+| --------------------- | ----------------------------- | ---------------------------------------------------------------- |
 | compositional-writing | Zettelkasten 式組合寫作方法論 | [/skills/compositional-writing/](/skills/compositional-writing/) |
 
 ---

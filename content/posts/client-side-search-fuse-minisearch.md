@@ -9,11 +9,11 @@ tags: ["Hugo", "搜尋", "Fuse.js", "MiniSearch", "靜態網站"]
 
 靜態站搜尋必須在 build 時或 client runtime 完成。選擇**整包序列化 + client 載入**這條路時，核心設計軸是：
 
-| 設計軸 | 意義 |
-|-------|------|
-| 索引內容 | 由作者在 build time 明確決定要搜哪些欄位、哪些 section |
-| 索引結構 | 扁平 JSON 陣列，每筆一個頁面，欄位直寫 |
-| runtime 處理 | 在瀏覽器內建索引、記憶體內匹配 |
+| 設計軸       | 意義                                                   |
+| ------------ | ------------------------------------------------------ |
+| 索引內容     | 由作者在 build time 明確決定要搜哪些欄位、哪些 section |
+| 索引結構     | 扁平 JSON 陣列，每筆一個頁面，欄位直寫                 |
+| runtime 處理 | 在瀏覽器內建索引、記憶體內匹配                         |
 
 Fuse.js 與 MiniSearch 是這條路上的兩個主要實作。差異在匹配策略（fuzzy vs 全文），共享的是「一包索引載入瀏覽器、之後所有查詢不再出站」這個骨幹。
 
@@ -145,14 +145,14 @@ const results = mini.search(query);
 
 ## 方案的內在屬性
 
-| 維度 | Fuse.js / MiniSearch 的特徵 |
-|------|----------------------------|
-| 覆蓋完整性 | 由作者顯式宣告索引範圍 — 要搜什麼完全可控 |
-| 可逆性 | 移除只需刪除 `index.json` output、搜尋頁、script reference |
-| 維護成本 | 無額外 build step；索引 schema 改動要同步改 template 與 client code |
-| 可理解性 | library 原始碼規模可讀（Fuse.js ~10KB、MiniSearch ~6KB gzipped），API 面積小 |
-| 依賴前提 | 要求 Hugo 支援 custom output format（所有版本皆支援）；要求 client 能跑 JS |
-| 擴展性 | 單次查詢發生在 memory 內 — 查詢效能不受網路或站規模影響；索引載入是首次一次性 |
+| 維度       | Fuse.js / MiniSearch 的特徵                                                   |
+| ---------- | ----------------------------------------------------------------------------- |
+| 覆蓋完整性 | 由作者顯式宣告索引範圍 — 要搜什麼完全可控                                     |
+| 可逆性     | 移除只需刪除 `index.json` output、搜尋頁、script reference                    |
+| 維護成本   | 無額外 build step；索引 schema 改動要同步改 template 與 client code           |
+| 可理解性   | library 原始碼規模可讀（Fuse.js ~10KB、MiniSearch ~6KB gzipped），API 面積小  |
+| 依賴前提   | 要求 Hugo 支援 custom output format（所有版本皆支援）；要求 client 能跑 JS    |
+| 擴展性     | 單次查詢發生在 memory 內 — 查詢效能不受網路或站規模影響；索引載入是首次一次性 |
 
 **與 runtime 獨立相關的延伸特徵**：
 
@@ -171,11 +171,11 @@ const results = mini.search(query);
 
 Fuse.js 與 MiniSearch 共享核心架構，**設計重心不同**：
 
-| 面向 | Fuse.js | MiniSearch |
-|------|---------|-----------|
-| 匹配策略 | 以 fuzzy / approximate match 為主軸 | 傳統全文檢索（詞項匹配 + 評分） |
-| 擅長情境 | 錯字容錯、近似詞匹配 — 搜 "kubernates" 命中 "kubernetes" | 精確詞匹配、field boosting、prefix 搜尋 |
-| Gzipped 大小 | ~10KB | ~6KB |
+| 面向         | Fuse.js                                                  | MiniSearch                              |
+| ------------ | -------------------------------------------------------- | --------------------------------------- |
+| 匹配策略     | 以 fuzzy / approximate match 為主軸                      | 傳統全文檢索（詞項匹配 + 評分）         |
+| 擅長情境     | 錯字容錯、近似詞匹配 — 搜 "kubernates" 命中 "kubernetes" | 精確詞匹配、field boosting、prefix 搜尋 |
+| Gzipped 大小 | ~10KB                                                    | ~6KB                                    |
 
 兩者的 API 形狀相近，切換成本低。決定用哪一個，主要看**希望怎麼對待 query**：可能有錯字的模糊輸入偏向 Fuse.js，結構化的技術關鍵字偏向 MiniSearch。
 
