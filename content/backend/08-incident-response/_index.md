@@ -33,6 +33,17 @@ weight: 8
 4. [資安與資料保護](../07-security-data-protection/) 提供權限、稽核與高風險操作約束。
 5. [紅隊案例庫（7.R7）](../07-security-data-protection/red-team/cases/) 提供可引用事故案例與 workflow 檢查點來源。
 
+## 與資安概念層的交接
+
+本模組承接 07 模組的概念判讀，並把問題地圖轉成可執行事故節奏。交接基線如下：
+
+- 來自 [7.2 身分與授權邊界](../07-security-data-protection/identity-access-boundary/)：承接身分事件分級與收斂順序。
+- 來自 [7.3 入口治理與伺服器防護](../07-security-data-protection/entrypoint-and-server-protection/)：承接入口事件止血、隔離與驗證節奏。
+- 來自 [7.4 資料保護與遮罩治理](../07-security-data-protection/data-protection-and-masking-governance/)：承接外送事件通報與影響盤點節奏。
+- 來自 [7.7 稽核追蹤與責任邊界](../07-security-data-protection/audit-trail-and-accountability-boundary/)：承接證據結構與復盤責任閉環。
+
+這個交接讓事故模組聚焦角色協作與決策節奏，同時保持與資安章節同一套語意。
+
 ## 章節大綱
 
 | 章節 | 主題                 | 目標                                        |
