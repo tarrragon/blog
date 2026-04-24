@@ -1,56 +1,35 @@
 ---
 title: "7.7 稽核追蹤與責任邊界"
 date: 2026-04-24
-description: "用服務環節視角整理高風險操作追蹤、判讀與責任邊界的問題與注意事項"
+description: "大綱稿：以問題驅動方式整理高風險操作追蹤、可回查與責任切分"
 weight: 77
 ---
 
-本章的責任是建立稽核追蹤與責任邊界的判讀框架。核心輸出是事件證據結構、責任切分與路由節奏，讓高風險操作在事故時可快速回查與判讀。
+本章的責任是定義稽核追蹤與責任邊界問題節點，讓高風險操作在事故時可以快速回查與決策。
 
-## 服務環節問題地圖
+## 本章寫作邊界
 
-| 環節 | 主要問題 | 注意事項 | 優先案例 |
-| --- | --- | --- | --- |
-| 高風險管理操作 | 操作存在但責任鏈不完整 | 事件證據要先定義再收集 | [Mailchimp 2023](red-team/cases/data-exfiltration/mailchimp-2023-support-tool-abuse/) |
-| 權限變更與代理操作 | 變更行為難以回查決策來源 | 代理操作需要可回查時序 | [MGM 2023](red-team/cases/identity-access/mgm-2023-identity-lateral-impact/) |
-| 跨部門事件協作 | 技術事件與營運影響切分不足 | 技術時序與業務時序要並行紀錄 | [Change Healthcare 2024](red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/) |
-| 平台級管理事件 | 平台事件會擾動多流程責任邊界 | 平台事件要有分級責任模型 | [ServiceNow 2024](red-team/cases/edge-exposure/servicenow-cve-2024-4879-enterprise-platform/) |
+本章聚焦證據模型、責任鏈與跨部門節奏。案例在問題節點被觸發時作為判讀佐證。
 
-高風險管理操作的責任是提供可回查證據。這個環節的判讀重點是操作主體、操作目的與資產影響是否可串連。
+## 大綱（待填充）
 
-權限變更與代理操作的責任是維持決策可追溯。這個環節的判讀重點是變更時序與批准時序一致性。
+1. 稽核事件資料模型
+2. 高風險操作責任鏈
+3. 代理操作與批准時序
+4. 技術時序與業務時序並行
+5. 平台級事件責任切分
+6. 交接路由到 06/08
 
-跨部門事件協作的責任是維持資訊節奏一致。這個環節的判讀重點是技術處置與營運處置的時序並行能力。
+## 問題節點（案例觸發式）
 
-平台級管理事件的責任是維持責任邊界穩定。這個環節的判讀重點是平台分級與流程分級是否對齊。
-
-## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
-
-| 情境 | 判讀 | 注意事項 | 路由章節 |
-| --- | --- | --- | --- |
-| 高風險操作存在但主體資訊不完整 | 稽核證據模型尚未閉環 | 先補事件欄位結構再追查責任鏈 | [8.5 復盤與改進追蹤](../08-incident-response/post-incident-review/) |
-| 權限變更與代理操作時序不一致 | 決策責任邊界可能模糊 | 代理與批准時序要同時可回查 | [8.2 事故指揮與角色分工](../08-incident-response/incident-command-roles/) |
-| 技術事件與營運通報節奏偏移過大 | 跨部門責任鏈可能中斷 | 技術時序與業務時序要並行維護 | [8.4 事故通訊與狀態更新](../08-incident-response/incident-communication/) |
-
-## 判讀訊號
-
-- [audit-log](../knowledge-cards/audit-log/) 欄位完整度與事件時序完整度。
-- 高風險操作的主體、目的、影響資產對齊程度。
-- 權限變更事件與代理操作事件的連續模式。
-- 技術事件時序與對外通報時序的偏移量。
-
-## 風險邊界
-
-稽核治理的核心風險是事件存在但責任鏈斷裂。當證據模型未先定義，事故後判讀會延長，跨團隊協作成本會快速上升。
+| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 | 交接路由 |
+| --- | --- | --- | --- | --- |
+| 稽核欄位結構缺漏 | 主體、目的、資產欄位不完整 | 事故回查效率下降 | [audit-log](../knowledge-cards/audit-log/)、[incident-timeline](../knowledge-cards/incident-timeline/) | `08` |
+| 代理與批准節奏脫鉤 | 變更事件與批准事件時序偏移 | 責任邊界判讀成本上升 | [authorization](../knowledge-cards/authorization/)、[incident-command-system](../knowledge-cards/incident-command-system/) | `08` |
+| 跨部門通報節奏失衡 | 技術更新與對外訊息不同步 | 決策一致性下降 | [incident-communication-channel](../knowledge-cards/incident-communication-channel/)、[post-incident-review](../knowledge-cards/post-incident-review/) | `08` |
+| 平台級事件責任混層 | 平台與產品責任切分不清 | 收斂順序與優先級混亂 | [management-plane](../knowledge-cards/management-plane/)、[containment](../knowledge-cards/containment/) | `06 + 08` |
 
 ## 下一步路由
 
-- 事故分級與角色分工： [模組八：事故處理與復盤](../08-incident-response/)
-- 演練與驗證： [模組六：可靠性驗證流程](../06-reliability/)
-
-## 大綱
-
-- 稽核事件模型：誰、何時、做了什麼、影響哪個資產
-- 高風險操作：權限變更、資料匯出、管理設定、供應商操作
-- 判讀訊號：異常頻率、異常路徑、異常時序
-- 責任邊界：產品、平台、值班、法遵協作
+- 演練與驗證：`06-reliability`
+- 分級、指揮、通報、復盤：`08-incident-response`

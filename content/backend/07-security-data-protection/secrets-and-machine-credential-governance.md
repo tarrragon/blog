@@ -1,56 +1,36 @@
 ---
 title: "7.6 秘密管理與機器憑證治理"
 date: 2026-04-24
-description: "用服務環節視角整理 secret、token、key 與機器憑證治理的問題與注意事項"
+description: "大綱稿：以問題驅動方式整理 secret、token、key 與機器身份治理"
 weight: 76
 ---
 
-本章的責任是建立秘密管理與機器憑證治理的判讀框架。核心輸出是分域策略、生命周期邊界與事件收斂路由，讓機器身份風險可在實作前被明確切分。
+本章的責任是定義秘密管理與機器憑證問題節點，讓機器身份風險能以分域語言被清楚治理。
 
-## 服務環節問題地圖
+## 本章寫作邊界
 
-| 環節 | 主要問題 | 注意事項 | 優先案例 |
-| --- | --- | --- | --- |
-| 第三方 token 鏈 | 供應商節點事件可直接擴散 | token 分域與 [token revocation](../knowledge-cards/token-revocation/) 節奏要可回查 | [GitHub OAuth 2022](red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/) |
-| CI secrets 集中 | 集中 secrets 提高單點風險 | 事件時需要分批輪替與優先順序 | [CircleCI 2023](red-team/cases/supply-chain/circleci-2023-secrets-rotation/) |
-| 支援流程憑證 | 支援事件會傳導到內部憑證 | 外部事件要觸發內部憑證收斂 | [Cloudflare 2023](red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/) |
-| 機器憑證生命周期 | 發放與淘汰節奏不一致 | 生命周期節奏要與事件節奏對齊 | [Storm-0558 2023](red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) |
+本章聚焦分域策略、生命周期一致性與事件收斂節奏。案例在問題觸發時作為證據參考。
 
-第三方 token 鏈的責任是限制外部信任擴散。這個環節的判讀重點是 token 範圍與 [token revocation](../knowledge-cards/token-revocation/) 時序。
+## 大綱（待填充）
 
-CI secrets 集中的責任是維持交付可用性與收斂速度平衡。這個環節的判讀重點是分層輪替策略與依賴盤點完整度。
+1. 憑證分類與責任分層
+2. 分域策略（用途、環境、權限）
+3. 輪替、撤銷、淘汰節奏
+4. 供應商事件傳導治理
+5. 機器身份盤點與收斂
+6. 交接路由到 05/06/08
 
-支援流程憑證的責任是縮短事件傳導窗口。這個環節的判讀重點是外部公告到內部收斂的節奏。
+## 問題節點（案例觸發式）
 
-機器憑證生命周期的責任是維持機器身份可控性。這個環節的判讀重點是發放、輪替、撤銷的一致性。
-
-## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
-
-| 情境 | 判讀 | 注意事項 | 路由章節 |
-| --- | --- | --- | --- |
-| 第三方事件後 token 仍可持續存取 | 憑證收斂節奏慢於事件節奏 | 先盤點用途分域，再執行分批撤銷 | [8.8 事故報告轉 workflow](../08-incident-response/incident-report-to-workflow/) |
-| CI secrets 輪替造成交付不穩定 | 分域與優先順序尚未對齊 | 輪替流程要先定義批次與回退順序 | [6.1 CI pipeline](../06-reliability/ci-pipeline/) |
-| 機器憑證發放與淘汰時序不一致 | 生命周期治理存在遺留窗口 | 發放、輪替、撤銷要使用同一責任鏈 | [5.1 container 與 runtime](../05-deployment-platform/container-runtime/) |
-
-## 判讀訊號
-
-- [secret-management](../knowledge-cards/secret-management/) 事件與分域策略差異。
-- [credential](../knowledge-cards/credential/) 撤銷與輪替完成時間差。
-- 高風險 token 的用途分域與實際使用差異。
-- 外部事件後內部憑證收斂覆蓋率。
-
-## 風險邊界
-
-秘密治理的核心風險是可用憑證存量高於收斂速度。當分域與生命周期失去一致節奏，攻擊者可沿機器身份路徑延長事件影響。
+| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 | 交接路由 |
+| --- | --- | --- | --- | --- |
+| token 分域不足 | 高權限 token 使用面過寬 | 外部事件可快速傳導 | [token-revocation](../knowledge-cards/token-revocation/)、[authorization](../knowledge-cards/authorization/) | `08` |
+| CI secrets 集中 | 單一節點承載大量憑證 | 輪替成本與中斷風險上升 | [secret-management](../knowledge-cards/secret-management/)、[ci-pipeline](../knowledge-cards/ci-pipeline/) | `05 + 06` |
+| 憑證生命周期失衡 | 發放、更新、撤銷節奏分離 | 可用憑證存量高於收斂速度 | [credential](../knowledge-cards/credential/)、[containment](../knowledge-cards/containment/) | `06 + 08` |
+| 供應商事件傳導未收斂 | 外部事件後內部憑證仍活躍 | 內部風險延長停留 | [incident-timeline](../knowledge-cards/incident-timeline/)、[impact-scope](../knowledge-cards/impact-scope/) | `08` |
 
 ## 下一步路由
 
-- 交付與執行環境實作： [模組五：部署平台與網路入口](../05-deployment-platform/)
-- 事件收斂流程： [模組八：事故處理與復盤](../08-incident-response/)
-
-## 大綱
-
-- 憑證分類：human credential、service credential、ephemeral token
-- 分域策略：用途分域、環境分域、權限分域
-- 生命周期治理：發放、更新、撤銷、淘汰
-- 事件收斂：供應商事件後的輪替與盤點節奏
+- 交付與執行環境：`05-deployment-platform`
+- 輪替與回退演練：`06-reliability`
+- 事件收斂與通報：`08-incident-response`

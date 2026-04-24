@@ -1,57 +1,36 @@
 ---
 title: "7.2 身分與授權邊界"
 date: 2026-04-24
-description: "用服務環節視角整理身份、授權、會話與供應商身分鏈的問題與注意事項"
+description: "大綱稿：以問題驅動方式整理身份、授權、會話與供應商身分鏈"
 weight: 72
 ---
 
-本章的責任是建立身分與授權邊界的判讀框架。核心輸出是判讀訊號、風險邊界、注意事項與案例路由，讓不同服務實體能用同一套語言對齊決策。
+本章的責任是定義身分與授權問題節點，讓團隊先對齊判讀語言，再進入服務實體設計。
 
-## 服務環節問題地圖
+## 本章寫作邊界
 
-| 環節 | 主要問題 | 注意事項 | 優先案例 |
-| --- | --- | --- | --- |
-| 登入與初始驗證 | 入口成功後可快速擴散 | 高風險動作需要獨立事件節奏 | [Uber 2022](red-team/cases/identity-access/uber-2022-mfa-fatigue/) |
-| 內部工具授權 | 角色存在但擴散路徑過寬 | 內部管理工具需要分層授權 | [MGM 2023](red-team/cases/identity-access/mgm-2023-identity-lateral-impact/) |
-| 供應商身分鏈 | 第三方事件可傳導到內部 | 供應商事件要直接觸發收斂流程 | [Okta + Cloudflare 2023](red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/) |
-| 會話與 token | 修補後會話仍可被利用 | 會話失效與憑證輪替要同步執行 | [Citrix Bleed 2023](red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) |
+本章聚焦概念層判讀，主體是問題節點、訊號、風險與路由條件。案例在問題被觸發時提供證據參考，不作章節主體。
 
-登入與初始驗證的責任是提供第一層邊界。這個環節的判讀重點是異常登入密度、跨地區登入節奏與高風險操作接續模式。
+## 大綱（待填充）
 
-內部工具授權的責任是限制擴散速度。這個環節的判讀重點是高權限能力集中度與代理操作路徑。
+1. 身分邊界模型
+2. 授權邊界模型
+3. 會話與 token 收斂節奏
+4. 第三方身分傳導風險
+5. 問題節點判讀流程
+6. 交接路由到 05/06/08
 
-供應商身分鏈的責任是縮短傳導窗口。這個環節的判讀重點是外部事件到內部收斂的時間差。
+## 問題節點（案例觸發式）
 
-會話與 token 的責任是管理持續存取邊界。這個環節的判讀重點是事件後會話失效覆蓋與 token 生命周期分域。
-
-## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
-
-| 情境 | 判讀 | 注意事項 | 路由章節 |
-| --- | --- | --- | --- |
-| 登入異常密度短時間上升 | 身分入口可能進入疲勞式攻擊節奏 | 先收斂高風險身份，再做全域盤點 | [8.1 事故分級與啟動條件](../08-incident-response/incident-severity-trigger/) |
-| 內部管理工具接觸面快速增加 | 授權邊界存在擴散路徑 | 高權限工具與一般操作要分層判讀 | [8.3 止血、降級與回復策略](../08-incident-response/containment-recovery-strategy/) |
-| 供應商事件後 token 仍大量存續 | 外部事件傳導已進入內部身份鏈 | 事件公告與收斂流程要同時啟動 | [8.8 事故報告轉 workflow](../08-incident-response/incident-report-to-workflow/) |
-
-## 判讀訊號
-
-- [authentication](../knowledge-cards/authentication/) 異常密度與重複驗證模式。
-- [authorization](../knowledge-cards/authorization/) 與角色邊界跨越次數。
-- 高風險管理功能的連續操作與代理操作模式。
-- 第三方事件後內部 token 與 session 收斂進度。
-
-## 風險邊界
-
-身分邊界的核心風險是擴散速度快於判讀速度。當事件節奏落後，攻擊者可沿著合法身份樣態擴大可操作範圍。
+| 問題節點 | 判讀訊號 | 風險後果 | 前置控制面 | 交接路由 |
+| --- | --- | --- | --- | --- |
+| 登入驗證節奏失衡 | 異常驗證密度、異常地理切換、連續高風險操作 | 身分擴散速度提升 | [authentication](../knowledge-cards/authentication/)、[incident-severity](../knowledge-cards/incident-severity/) | `08 incident response` |
+| 授權範圍擴張過快 | 高權限操作集中、代理操作鏈過長 | 權限濫用影響面擴大 | [authorization](../knowledge-cards/authorization/)、[least-privilege](../knowledge-cards/least-privilege/) | `08 incident response` |
+| 會話失效節奏落後 | 修補後異常 session 持續、token 存續過久 | 事件關閉時間延長 | [session-invalidation](../knowledge-cards/session-invalidation/)、[token-revocation](../knowledge-cards/token-revocation/) | `08 + 05` |
+| 供應商身分鏈傳導 | 外部事件後內部憑證存續比例偏高 | 內部信任邊界承受外部衝擊 | [credential](../knowledge-cards/credential/)、[containment](../knowledge-cards/containment/) | `08 + 06` |
 
 ## 下一步路由
 
-- 身分事件轉 runbook： [8.8 事故報告轉 workflow](../08-incident-response/incident-report-to-workflow/)
-- 邊界入口與網路實體設計： [部署平台與網路入口](../05-deployment-platform/)
-- 可用性與回復節奏： [模組六：可靠性](../06-reliability/)
-
-## 大綱
-
-- 身分邊界模型：人員、服務帳號、機器憑證
-- 權限擴散路徑：角色模型與代理操作
-- 供應商身分鏈：事件傳導與收斂節奏
-- 會話與 token：生命周期、失效與回查
+- 入口與平台實體：`05-deployment-platform`
+- 驗證與回復節奏：`06-reliability`
+- 事件分級與收斂：`08-incident-response`
