@@ -40,6 +40,15 @@ func Check(path string, cfg rules.Config) ([]report.Violation, error) {
 	// describes which fields are required / recommended / disallowed.
 	out = append(out, checkFrontMatter(path, lines, cfg.FrontMatter, cfg.Cards.CardsRoot)...)
 
+	// AST-guided checks share one parser invocation per file; keep
+	// them grouped together so we only pay the goldmark cost once.
+	if cfg.Headings.ForbidBoldAsHeading {
+		out = append(out, checkEmphasisAsHeading(path, data)...)
+	}
+	if cfg.URLs.AntiPhishingCheck {
+		out = append(out, checkAntiPhishingURLs(path, data, cfg.URLs)...)
+	}
+
 	return out, nil
 }
 
