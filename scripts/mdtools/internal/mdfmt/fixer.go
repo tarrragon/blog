@@ -66,6 +66,15 @@ func applyAll(data []byte, cfg rules.Config) []byte {
 	ctx := AnalyzeLines(lines)
 	lines = FixListBlankLines(lines, ctx)
 
+	// MD060 — compact-style table rows. Line-count preserving; runs
+	// before URL shortening so long URLs get their proper cell first.
+	ctx = AnalyzeLines(lines)
+	lines = FixTableCompactStyle(lines, ctx)
+
+	// MD034 — bare URL → shortened markdown link. Line-count preserving.
+	ctx = AnalyzeLines(lines)
+	lines = FixBareURLs(lines, ctx, cfg.URLs)
+
 	out := joinLines(lines)
 	out = EnsureTrailingNewline(out) // MD047
 	return out
