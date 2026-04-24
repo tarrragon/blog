@@ -146,14 +146,14 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 
 ### 諮詢類問題派發
 
-| 問題類型       | 識別關鍵字                          | 派發代理人                                              |
-| -------------- | ----------------------------------- | ------------------------------------------------------- |
-| 系統架構問題   | "架構"、"設計模式"、"系統結構"      | → system-analyst         |
-| UI/UX 設計問題 | "畫面"、"介面"、"UI"、"操作流程"    | → system-designer       |
-| 資料設計問題   | "資料庫"、"資料結構"、"儲存"        | → data-administrator |
-| 環境配置問題   | "環境"、"配置"、"安裝"、"設定"      | → system-engineer       |
-| 安全問題       | "安全"、"漏洞"、"認證"、"授權"      | → security-reviewer   |
-| 效能問題       | "效能"、"FPS"、"卡頓"、"延遲"、"慢" | → ginger-performance-tuner                              |
+| 問題類型       | 識別關鍵字                          | 派發代理人                 |
+| -------------- | ----------------------------------- | -------------------------- |
+| 系統架構問題   | "架構"、"設計模式"、"系統結構"      | → system-analyst           |
+| UI/UX 設計問題 | "畫面"、"介面"、"UI"、"操作流程"    | → system-designer          |
+| 資料設計問題   | "資料庫"、"資料結構"、"儲存"        | → data-administrator       |
+| 環境配置問題   | "環境"、"配置"、"安裝"、"設定"      | → system-engineer          |
+| 安全問題       | "安全"、"漏洞"、"認證"、"授權"      | → security-reviewer        |
+| 效能問題       | "效能"、"FPS"、"卡頓"、"延遲"、"慢" | → ginger-performance-tuner |
 
 ---
 
@@ -318,14 +318,14 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 ### TDD 四階段派發
 
-| 階段        | 代理人                                                                  | 進入條件        | 完成後     |
-| ----------- | ----------------------------------------------------------------------- | --------------- | ---------- |
-| SA 前置審查 | system-analyst                           | 新功能/架構變更 | Phase 1    |
+| 階段        | 代理人                      | 進入條件        | 完成後     |
+| ----------- | --------------------------- | --------------- | ---------- |
+| SA 前置審查 | system-analyst              | 新功能/架構變更 | Phase 1    |
 | Phase 1     | lavender-interface-designer | SA 通過         | Phase 2    |
-| Phase 2     | sage-test-architect                 | Phase 1 完成    | Phase 3a   |
-| Phase 3a    | pepper-test-implementer         | Phase 2 完成    | Phase 3b   |
-| Phase 3b    | parsley-flutter-developer     | Phase 3a 完成   | Phase 4    |
-| Phase 4     | cinnamon-refactor-owl             | Phase 3b 完成   | [完成判斷] |
+| Phase 2     | sage-test-architect         | Phase 1 完成    | Phase 3a   |
+| Phase 3a    | pepper-test-implementer     | Phase 2 完成    | Phase 3b   |
+| Phase 3b    | parsley-flutter-developer   | Phase 3a 完成   | Phase 4    |
+| Phase 4     | cinnamon-refactor-owl       | Phase 3b 完成   | [完成判斷] |
 
 ---
 
