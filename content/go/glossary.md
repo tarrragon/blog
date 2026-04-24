@@ -215,6 +215,48 @@ processor 應處理已經 normalize 的資料。它不應依賴 HTTP request bod
 
 延伸閱讀：[如何新增背景工作流程](../06-practical/new-background-worker/)、[事件來源、處理流程與狀態邊界](../../go-advanced/04-architecture-boundaries/component-boundaries/)。
 
+## 工具與靜態分析
+
+### AST Walker
+
+`AST walker` 表示用 visitor pattern 對解析後的抽象語法樹做 DFS 走訪，並在每個節點上套用規則或收集資訊的處理方式。在 Go 中，`ast.Walk` 是 `go/ast` 與 `goldmark/ast` 都採用的 API 慣例：傳入 root node 跟 walker 函式，framework 負責遞迴下降、把 entering / exiting 時機告訴你。
+
+walker 的責任是**把樹的走訪邏輯外部化**，讓規則本身只關心「這個節點我要做什麼」。多條規則可以共用同一次走訪；複雜的 context（例如父節點是什麼、目前在哪個 heading 層級）由 walker 狀態機累積，不污染 rule 程式碼。Block vs inline 節點的判讀是 walker 用法最常見的陷阱 — 對 inline 節點呼叫 `Lines()` 會 panic，因此需要走上去找最近的 block 節點再取位置。
+
+延伸閱讀：[goldmark AST 入門](../09-tooling-and-analysis/goldmark-ast-basics/)、[什麼是 AST](../../posts/what-is-ast/)。
+
+### Idempotent 文字改寫
+
+`idempotent 文字改寫` 表示對同一輸入跑一次或多次、結果相同的轉換契約。應用在 `gofmt`、`prettier`、`ruff fix` 這類 formatter 與 fixer 上，契約讓工具能安全地接到 pre-commit hook（重複跑不會累積漂移）、能用 `--check` 跟 `--fix` 共用同一套邏輯（差別只在要不要寫檔）、能分段除錯。
+
+實作上的核心技巧是**每條規則自己冪等**：判斷「違規才修」而非「無論如何都套用」。多規則串成流水線時，每條規則的輸出要是下一條的合法輸入；行數變動時要重建 LineContext 索引。測試可以用「跑兩次結果相等」當斷言，直接驗證契約。
+
+延伸閱讀：[AST 驅動的 idempotent 文字改寫](../09-tooling-and-analysis/ast-idempotent-rewriting/)、[Pre-commit hook 與 CI 整合](../09-tooling-and-analysis/pre-commit-and-ci/)。
+
+### 跨檔案 Link Graph
+
+`跨檔案 link graph` 表示把整個 repo 的檔案視為節點、檔案間連結視為邊的資料結構，用一次 parse 之後的 in-memory map 支援反向查詢（這個目標被誰引用？這個連結的目標存在嗎？）。避免 N² 的「每次查詢都重 parse 全部檔案」成本。
+
+典型應用包含 orphan 偵測（節點沒有 inbound edge）、broken link 偵測（邊指到不存在的節點）、dependency cycle 偵測（graph 有環）、reverse index 建構（哪些檔案引用了 X）。Graph 一次建好後，所有後續 query 都是 map lookup 或 slice scan，microsecond 級。
+
+延伸閱讀：[跨檔案圖分析](../09-tooling-and-analysis/cross-file-graph-analysis/)。
+
+### Tripwire 決策
+
+`tripwire 決策` 表示用事前約定的可量測條件，在命中時觸發「重新評估是否升級」的決策方法。目的是避開「太早升級」（過度工程化）跟「太晚升級」（信譽破產）兩種失敗。
+
+tripwire 的重點是**把評估時機從模糊直覺變成明確觸發**。設計時要選合適的訊號（誤判率、維護成本、使用者投訴頻率），並定期檢驗條件是否仍然合理。適用於技術選型（regex vs AST、Python vs Go）、架構升級（單體 → 微服務）、工具邊界（lint vs full type-check）等決策。
+
+延伸閱讀：[工具決策的 tripwire](../09-tooling-and-analysis/tool-decision-tripwire/)。
+
+### Pre-commit Hook 定位
+
+`pre-commit hook` 表示 git commit 流程中、commit 實際建立前自動觸發的檢查點。定位上它是**快速守門員**，負責秒級可完成的 lint / fmt / 基本驗證，把錯誤攔在本機、讓作者早期回饋。
+
+跟 CI 的分工是：hook 守本機（快、只看 staged 檔案），CI 守共享 branch（慢、乾淨環境、完整 test）。兩者互補、共用同一套工具與規則。落地時要處理 re-staging（hook 自動修檔後 `git add` 回 staged）、exit code 語意（0 = pass、1 = violation block、2 = tool failure）、`--no-verify` 繞過的邊界（原則上禁止，緊急情境有條件例外）。
+
+延伸閱讀：[Pre-commit hook 與 CI 整合](../09-tooling-and-analysis/pre-commit-and-ci/)。
+
 ## 使用方式
 
-閱讀章節時若遇到同一個詞在不同情境出現，先回到本頁確認它的核心責任。入門篇會用簡化範例建立語感；進階篇會把同一批詞彙放進並發、WebSocket、資料庫、觀測與部署壓力中重新檢查。
+閱讀章節時若遇到同一個詞在不同情境出現，先回到本頁確認它的核心責任。入門篇會用簡化範例建立語感；進階篇會把同一批詞彙放進並發、WebSocket、資料庫、觀測與部署壓力中重新檢查；工具類章節會把型別、interface、package 等概念落到 CLI、parser、graph analysis 等非服務場景。

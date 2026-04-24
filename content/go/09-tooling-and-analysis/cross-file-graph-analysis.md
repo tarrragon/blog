@@ -5,7 +5,7 @@ description: "Single-file 規則用 AST 搞定；跨檔 orphan 偵測、broken l
 weight: 4
 ---
 
-跨檔案靜態分析的核心責任是**把整個 repo 結構化成可查詢的圖**，讓「這張卡片有沒有被引用」「這個連結指的目標存在嗎」「這個 section 是否被孤立」這類反向/跨檔問題能在 O(1) 或 O(log n) 的 graph lookup 內回答，而不是每次查詢都重 parse 全部檔案。圖的節點是檔案、邊是檔案間的連結 / 引用 / 依賴關係；一次 parse 之後，所有跨檔 query 都在 in-memory map 上做。
+跨檔案靜態分析的核心責任是**把整個 repo 結構化成可查詢的 [link graph](../../glossary/#跨檔案-link-graph)**，讓「這張卡片有沒有被引用」「這個連結指的目標存在嗎」「這個 section 是否被孤立」這類反向/跨檔問題能在 O(1) 或 O(log n) 的 graph lookup 內回答，而不是每次查詢都重 parse 全部檔案。圖的節點是檔案、邊是檔案間的連結 / 引用 / 依賴關係；一次 parse（用 [AST walker](../../glossary/#ast-walker) 掃過）之後，所有跨檔 query 都在 in-memory map 上做。
 
 這類分析的典型觸發點是需求已經離開 single-file 層：**orphan 偵測**（某個檔案是否被引用）、**backlink 完整性**（連結目標是否存在）、**dependency cycle 檢測**（import graph 是否有環）、**unused export 偵測**（某個 symbol 是否被使用）。每個都是圖論問題，需要先把 repo 結構化，單檔 walker 看不見跨檔 edge。本章以 `mdtools cards`（L1 連結有效性、L2 orphan 卡片、L4 卡片 K4 合規）作為 concrete instance。
 

@@ -50,7 +50,7 @@ scripts/mdtools/
 
 - **layer 1**：幾乎不測，因為只是 `switch`。
 - **layer 2**：integration test（給定 argv、確認 exit code 與 stdout）。
-- **layer 3**：unit test，純函式輸入輸出。
+- **layer 3**：unit test，純函式輸入輸出。後續模組的所有實作技術 — [AST 整合](../goldmark-ast-basics/)、[idempotent 改寫](../ast-idempotent-rewriting/)、[graph 分析](../cross-file-graph-analysis/) — 都落在這層。
 
 把 `os.Exit` / `os.Args` / `os.Stderr` 都擋在 layer 1-2，layer 3 就能用一般 table-driven test 測，不用起 subprocess。
 

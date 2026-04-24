@@ -5,7 +5,7 @@ description: "工具寫完只是起點；接到 pre-commit hook 跟 CI 才真正
 weight: 6
 ---
 
-工具落地的核心責任是**讓檢查在對的時機自動執行**，把紀律從「勤勞的人手動跑」轉移到「每次 commit / push 都跑」的基礎設施。Pre-commit hook 守本機開發、CI 守共享 branch；兩者互補、一起把規則失敗成本壓到秒級可回饋，避免 bug 漏到 production。
+工具落地的核心責任是**讓檢查在對的時機自動執行**，把紀律從「勤勞的人手動跑」轉移到「每次 commit / push 都跑」的基礎設施。[Pre-commit hook](../../glossary/#pre-commit-hook-定位) 守本機開發、CI 守共享 branch；兩者互補、一起把規則失敗成本壓到秒級可回饋，避免 bug 漏到 production。這個模式對 [idempotent](../../glossary/#idempotent-文字改寫) 工具特別重要 — hook 每次 commit 都會跑，非冪等的工具會累積漂移、讓作者反覆看到「為什麼這個檔案又被改了」的困惑。
 
 工具一旦從 CLI 進入 hook / CI，就有幾個容易踩雷的邊界：**哪些 check 該放 hook**（快、本地可執行）、**哪些該放 CI**（慢、需要乾淨環境）、**hook 改了檔怎麼 re-stage**、**--no-verify 的邊界**怎麼約定、**CI strict mode 跟 local dev 的差異**怎麼處理。本章展開這些問題，並以 `.githooks/pre-commit` + `.github/workflows/md-check.yml` 作為 concrete instance。
 
