@@ -5,7 +5,6 @@ description: "理解 Python 的執行過程"
 weight: 3
 ---
 
-# Bytecode 與虛擬機
 
 Python 不是直接執行原始碼，而是先編譯成 bytecode，再由虛擬機執行。理解這個過程有助於優化程式碼效能。
 

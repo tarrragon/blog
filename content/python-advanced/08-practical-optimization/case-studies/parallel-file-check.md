@@ -5,7 +5,6 @@ description: "使用 ThreadPoolExecutor 加速 Markdown 連結檢查"
 weight: 1
 ---
 
-# 案例：並行檔案檢查
 
 本案例基於 `.claude/lib/markdown_link_checker.py`，展示如何用 ThreadPoolExecutor 加速 I/O 密集的檔案檢查任務。
 

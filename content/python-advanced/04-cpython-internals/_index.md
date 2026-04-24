@@ -5,7 +5,6 @@ description: "深入 CPython 直譯器，理解 Python 如何運作"
 weight: 4
 ---
 
-# 模組四：CPython 內部機制
 
 本模組深入 CPython 直譯器的內部，幫助你理解 Python 的運作原理。
 

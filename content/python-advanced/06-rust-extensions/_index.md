@@ -5,7 +5,6 @@ description: "學習使用 PyO3 和 Maturin 用 Rust 擴展 Python"
 weight: 6
 ---
 
-# 模組六：用 Rust 擴展 Python
 
 本模組介紹如何使用 Rust 擴展 Python，結合 Rust 的記憶體安全與高效能。
 

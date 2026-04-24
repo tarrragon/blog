@@ -5,7 +5,6 @@ description: "從專案建立到發布的 Hatch 實戰指南"
 weight: 3
 ---
 
-# 案例：使用 Hatch 完整工作流
 
 本案例展示如何使用 Hatch 這個 PyPA 推薦的現代 Python 專案管理工具，完成從專案建立到發布的完整流程。
 

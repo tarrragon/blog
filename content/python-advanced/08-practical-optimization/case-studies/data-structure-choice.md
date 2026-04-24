@@ -5,7 +5,6 @@ description: "選擇正確的資料結構：list vs set 的查詢效能差異"
 weight: 5
 ---
 
-# 案例：資料結構選擇
 
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何選擇正確的資料結構來優化成員查詢效能。
 

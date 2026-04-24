@@ -5,7 +5,6 @@ description: "從專案建立到發布的 Poetry 完整工作流程"
 weight: 2
 ---
 
-# 案例：使用 Poetry 完整工作流
 
 本案例展示如何使用 Poetry 管理現代 Python 專案的完整生命週期，從專案建立到套件發布。
 

@@ -5,7 +5,6 @@ description: "透過 ctypes 直接呼叫 C 函式庫的系統函式，實現 Pyt
 weight: 2
 ---
 
-# 案例：使用 ctypes 呼叫系統 API
 
 本案例展示如何使用 ctypes 直接呼叫系統 API，處理 Python 標準庫未提供的底層功能。
 

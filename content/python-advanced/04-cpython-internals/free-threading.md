@@ -5,7 +5,6 @@ description: "Python 3.13+ 無 GIL 版本的完整指南"
 weight: 5
 ---
 
-# Free-Threading - Python 的真正多執行緒時代
 
 Python 3.13 開始提供實驗性的 Free-threading 支援，Python 3.14 正式將其升級為官方支援功能。這是 Python 歷史上最重要的並行處理改進之一。
 

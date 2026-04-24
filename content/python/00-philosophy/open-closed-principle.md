@@ -5,7 +5,6 @@ description: "從認知負擔的視角重新理解 SOLID 原則"
 weight: 3
 ---
 
-# 開放封閉原則與認知負擔
 
 ## OCP 的傳統解釋
 

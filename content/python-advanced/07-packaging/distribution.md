@@ -5,7 +5,6 @@ description: "學習如何建構 wheel 並發布到 PyPI"
 weight: 3
 ---
 
-# 發布到 PyPI
 
 本章介紹如何將套件發布到 PyPI。
 

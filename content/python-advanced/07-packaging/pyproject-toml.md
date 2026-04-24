@@ -5,7 +5,6 @@ description: "理解現代 Python 套件的設定標準"
 weight: 1
 ---
 
-# pyproject.toml 完整指南
 
 本章介紹 pyproject.toml 的結構與設定方式。
 

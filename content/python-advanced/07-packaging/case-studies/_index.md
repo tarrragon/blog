@@ -5,7 +5,6 @@ description: "基於 .claude/lib 實際程式碼的打包發布案例"
 weight: 100
 ---
 
-# 案例研究
 
 本節收錄基於 `.claude/lib` 實際程式碼的案例研究，展示如何將內部共用庫打包成可重用的 Python 套件。
 

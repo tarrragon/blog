@@ -5,7 +5,6 @@ description: "用 PyO3 和 Rust 實現高效能的 Markdown 連結解析器"
 weight: 1
 ---
 
-# 案例：PyO3 文字解析
 
 本案例基於 `.claude/lib/markdown_link_checker.py` 的實際程式碼，展示如何用 PyO3 和 Rust 實現高效能的文字解析器。
 

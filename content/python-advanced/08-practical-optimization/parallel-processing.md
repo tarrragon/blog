@@ -5,7 +5,6 @@ description: "將 concurrent.futures 應用於真實的 I/O 密集任務"
 weight: 1
 ---
 
-# 並行處理實戰
 
 本章將入門系列學到的 `concurrent.futures` 知識，應用於 `.claude/lib` 中的真實程式碼，展示如何識別並行化機會、實作並行版本，以及測量效能差異。
 

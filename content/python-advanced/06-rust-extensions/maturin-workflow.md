@@ -5,7 +5,6 @@ description: "使用 Maturin 建構和發布 Rust Python 套件"
 weight: 3
 ---
 
-# Maturin 開發流程
 
 本章介紹 Maturin，Rust Python 套件的建構工具。
 

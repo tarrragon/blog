@@ -5,7 +5,6 @@ description: "使用 pybind11 建立 Python 與 C++ 的綁定"
 weight: 3
 ---
 
-# pybind11：現代 C++ 綁定
 
 本章介紹 pybind11，一個輕量級的 header-only C++ 函式庫，用於建立 Python 綁定。
 

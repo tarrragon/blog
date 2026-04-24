@@ -5,7 +5,6 @@ description: "深入 Python 內部機制與擴展開發"
 weight: 31
 ---
 
-# Python 進階指南
 
 本系列為已完成入門教學的工程師設計，深入探討 Python 的內部機制、元編程技術、效能優化方案，以及如何用 C/Rust 擴展 Python。
 

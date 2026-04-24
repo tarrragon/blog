@@ -5,7 +5,6 @@ description: "用 asyncio.gather 和 TaskGroup 實現高效的並行 I/O 操作"
 weight: 2
 ---
 
-# 案例：並行 I/O 操作
 
 本案例基於 `.claude/lib/git_utils.py` 的實際程式碼，展示如何用 `asyncio.gather` 和 `TaskGroup` 實現高效的並行 I/O 操作。
 

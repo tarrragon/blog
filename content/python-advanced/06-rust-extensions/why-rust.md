@@ -5,7 +5,6 @@ description: "比較 Rust 與 C/C++ 作為 Python 擴展語言"
 weight: 1
 ---
 
-# 為什麼選擇 Rust？
 
 本章比較 Rust 與傳統 C/C++ 作為 Python 擴展語言的優缺點。
 

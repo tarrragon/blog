@@ -5,7 +5,6 @@ description: "用 run_in_executor 和 asyncio.run 在同步與非同步程式碼
 weight: 3
 ---
 
-# 案例：同步/非同步橋接
 
 本案例基於 `.claude/lib` 整體架構，展示如何用 `run_in_executor` 和 `asyncio.run` 在同步與非同步程式碼之間建立橋樑。
 

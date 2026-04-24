@@ -5,7 +5,6 @@ description: "Python 並行處理的三種方式與選擇指南"
 weight: 7
 ---
 
-# 並行處理 - threading、multiprocessing、concurrent.futures
 
 Python 提供了多種並行處理的方式。本章介紹三個核心模組，幫助你根據任務特性選擇合適的方案。
 

@@ -5,7 +5,6 @@ description: "使用 PyO3 建立 Rust 與 Python 的綁定"
 weight: 2
 ---
 
-# PyO3 基礎
 
 本章介紹 PyO3，Rust 的 Python 綁定函式庫。
 

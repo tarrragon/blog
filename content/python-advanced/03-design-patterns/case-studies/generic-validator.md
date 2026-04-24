@@ -5,7 +5,6 @@ description: "用 Generic 和 TypeVar 建立型別安全的通用驗證器"
 weight: 4
 ---
 
-# 案例：泛型驗證器
 
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Generic 和 TypeVar 建立型別安全的通用驗證器。
 

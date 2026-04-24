@@ -5,7 +5,6 @@ description: "資料的讀寫與轉換"
 weight: 2
 ---
 
-# json - 序列化
 
 JSON（JavaScript Object Notation）是現代應用程式中最常用的資料交換格式。Python 的 `json` 模組提供了簡單的 API 來處理 JSON 資料。
 

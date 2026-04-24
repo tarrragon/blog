@@ -5,7 +5,6 @@ description: "幫助你從傳統執行緒模型平滑過渡到異步程式設計
 weight: 0
 ---
 
-# 從 threading 到 asyncio：轉換指南
 
 如果你已經熟悉入門系列的 `threading` 模組，本章將幫助你理解為什麼需要 asyncio，以及如何將現有的多執行緒程式碼轉換為異步版本。
 

@@ -5,7 +5,6 @@ description: "基於 .claude/lib 實際程式碼的 Rust 擴展案例"
 weight: 100
 ---
 
-# 案例研究
 
 本節收錄基於 `.claude/lib` 實際程式碼的案例研究，展示如何用 PyO3 和 Rust 加速 Python 程式碼。
 

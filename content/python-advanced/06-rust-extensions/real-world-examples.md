@@ -5,7 +5,6 @@ description: "分析知名 Python 專案如何使用 Rust"
 weight: 4
 ---
 
-# 實戰案例分析
 
 本章分析幾個使用 Rust 的知名 Python 專案，學習實際應用的模式。
 

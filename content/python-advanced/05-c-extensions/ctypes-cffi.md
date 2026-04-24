@@ -5,7 +5,6 @@ description: "使用 ctypes 和 cffi 呼叫 C 函式庫"
 weight: 1
 ---
 
-# ctypes 與 cffi：動態綁定
 
 本章介紹如何使用 ctypes 和 cffi 動態載入和呼叫 C 函式庫。
 

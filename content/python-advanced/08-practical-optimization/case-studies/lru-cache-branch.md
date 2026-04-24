@@ -5,7 +5,6 @@ description: "用 functools.lru_cache 快取重複計算"
 weight: 4
 ---
 
-# 案例：LRU 快取
 
 本案例基於 `.claude/lib/git_utils.py` 的 `is_protected_branch()` 和 `is_allowed_branch()` 函式，展示如何用 `functools.lru_cache` 快取重複的分支檢查結果。
 

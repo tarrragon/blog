@@ -5,8 +5,6 @@ draft: false
 tags: ["git"]
 ---
 
-# Git Filter-Repo 使用說明教學
-
 `git filter-repo` 是一個強大的工具，用於重寫 Git 歷史記錄。它比 `git filter-branch` 更快、更安全，是官方推薦的替代方案。
 
 ## 目錄
@@ -260,10 +258,9 @@ git clone --mirror original-repo backup-repo
 
 ### Remote 會被移除
 
-
 `git filter-repo` 執行後會**自動移除 `origin` remote**。執行時你會看到以下提示：
 
-```
+```bash
 NOTICE: Removing 'origin' remote; see 'Why is my origin removed?'
         in the manual if you want to push back there.
 ```
@@ -295,7 +292,6 @@ git remote -v
 # 3. Force push（確認團隊已知情後再執行）
 git push origin --force --all
 ```
-
 
 ### Force Push
 

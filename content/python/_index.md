@@ -5,7 +5,6 @@ description: "以 Hook 系統為範例的 Python 開發教學"
 weight: 30
 ---
 
-# Python 維護工程師實戰指南
 
 本教學文件專為需要維護和擴展 Hook 系統的工程師設計。透過實際專案範例，幫助你快速掌握 Python 開發的核心技能。
 

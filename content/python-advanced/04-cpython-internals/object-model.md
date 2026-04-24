@@ -5,7 +5,6 @@ description: "深入理解 Python 的物件模型"
 weight: 1
 ---
 
-# PyObject 與物件模型
 
 Python 中「一切皆物件」不只是一句口號，而是 CPython 實現的核心設計。理解 PyObject 是深入 Python 內部的第一步。
 

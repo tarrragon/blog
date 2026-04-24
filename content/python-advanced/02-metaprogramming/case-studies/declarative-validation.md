@@ -5,7 +5,6 @@ description: "用 Descriptor Protocol 將驗證邏輯從方法變成屬性定義
 weight: 1
 ---
 
-# 案例：宣告式驗證
 
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Descriptor Protocol 實現宣告式驗證。
 

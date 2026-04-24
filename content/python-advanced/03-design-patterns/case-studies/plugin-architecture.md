@@ -5,7 +5,6 @@ description: "用 Protocol 和註冊機制實現可擴展的插件系統"
 weight: 2
 ---
 
-# 案例：插件架構設計
 
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Protocol 和註冊機制實現可擴展的插件系統。
 

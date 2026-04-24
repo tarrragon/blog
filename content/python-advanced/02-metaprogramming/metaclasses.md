@@ -5,7 +5,6 @@ description: "理解 Python 的類別建立機制與 Metaclass"
 weight: 2
 ---
 
-# Metaclass 設計與應用
 
 Metaclass 是「類別的類別」，控制類別本身的建立過程。這是 Python 中最深層的元編程機制。
 

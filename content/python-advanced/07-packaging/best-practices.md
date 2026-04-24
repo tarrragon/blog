@@ -5,7 +5,6 @@ description: "長期維護 Python 套件的最佳實踐"
 weight: 4
 ---
 
-# 套件維護最佳實踐
 
 本章介紹維護 Python 套件的長期策略。
 

@@ -5,7 +5,6 @@ description: "將 .claude/lib 打包成可重用的 Python 套件"
 weight: 1
 ---
 
-# 案例：打包共用庫
 
 本案例基於 `.claude/lib` 整體結構，展示如何將內部共用庫打包成可重用的 Python 套件。
 

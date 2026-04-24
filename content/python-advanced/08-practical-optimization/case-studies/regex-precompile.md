@@ -5,7 +5,6 @@ description: "用 re.compile 減少重複編譯開銷"
 weight: 3
 ---
 
-# 案例：正則表達式預編譯
 
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何透過正則表達式預編譯來減少重複編譯的開銷。
 

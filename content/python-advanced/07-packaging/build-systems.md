@@ -5,7 +5,6 @@ description: "比較 setuptools、Poetry、Hatch 等建構系統"
 weight: 2
 ---
 
-# 建構系統比較
 
 本章比較主流的 Python 套件建構系統。
 

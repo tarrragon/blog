@@ -5,7 +5,6 @@ description: "學習現代 Python 套件的打包與發布流程"
 weight: 7
 ---
 
-# 模組七：打包與發布
 
 本模組介紹現代 Python 套件的打包標準與發布流程。
 

@@ -5,7 +5,6 @@ description: "使用 Cython 加速 Python 程式碼"
 weight: 2
 ---
 
-# Cython：Python 語法的 C 速度
 
 本章介紹 Cython，一種 Python 的超集語言，可以編譯成 C 程式碼。
 

@@ -5,7 +5,6 @@ description: "用 Cython 加速 Markdown 連結解析器，比較純 Python 與 
 weight: 1
 ---
 
-# 案例：Cython 加速 Markdown 解析
 
 本案例基於 `.claude/lib/markdown_link_checker.py` 的實際程式碼，展示如何用 Cython 加速文字解析。
 

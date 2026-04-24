@@ -52,3 +52,9 @@ weight: 712
 
 1. 已完成濫用情境清單後，交接到 [資安與資料保護模組 7.2](../../07-security-data-protection/identity-access-boundary/)。
 2. 已定義高風險流程的事件節奏後，交接到 [事故報告轉 workflow](../../08-incident-response/incident-report-to-workflow/)。
+
+## 【延伸閱讀】流程原子卡片
+
+流程原子卡片的責任是把高風險流程拆成單一問題節點。每張卡片都用同一格式說明為什麼會失效、常見失效樣式、判讀訊號與案例觸發條件。
+
+- [7.R11 流程濫用問題卡片](problem-cards/)

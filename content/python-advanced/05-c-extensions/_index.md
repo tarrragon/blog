@@ -5,7 +5,6 @@ description: "學習使用 ctypes、cffi、Cython、pybind11 擴展 Python"
 weight: 5
 ---
 
-# 模組五：用 C 擴展 Python
 
 本模組介紹如何使用 C/C++ 擴展 Python，提升效能或整合現有的 C 函式庫。
 

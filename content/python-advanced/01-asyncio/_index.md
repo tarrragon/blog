@@ -5,7 +5,6 @@ description: "Python 的異步程式設計模型，掌握現代 Web/網路開發
 weight: 1
 ---
 
-# 模組一：非同步程式設計（asyncio）
 
 Python 的 `asyncio` 模組提供了異步程式設計的基礎設施。本模組將帶你從基礎概念到實戰應用，全面掌握 Python 的異步程式設計。
 

@@ -5,7 +5,6 @@ description: "用 __slots__ 和 weakref 優化快取系統的記憶體使用"
 weight: 2
 ---
 
-# 案例：記憶體優化
 
 本案例基於 `.claude/lib/config_loader.py` 的實際程式碼，展示如何用 `__slots__` 和 `weakref` 優化記憶體使用。
 

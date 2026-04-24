@@ -5,7 +5,6 @@ description: "深入理解 Python 的 Descriptor Protocol，@property 的本質"
 weight: 1
 ---
 
-# Descriptor Protocol 完整指南
 
 Descriptor 是 Python 中最強大但也最容易被忽略的機制之一。理解 Descriptor 是深入 Python 物件模型的關鍵。
 

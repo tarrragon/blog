@@ -5,7 +5,6 @@ description: "異常層級設計、異常鏈、ExceptionGroup、異常 vs 返回
 weight: 2
 ---
 
-# 異常設計架構
 
 入門系列介紹了異常處理的基本策略。本章深入探討如何為大型專案設計異常架構，包括異常層級、異常鏈、以及 Python 3.11 引入的 ExceptionGroup。
 
