@@ -1,47 +1,45 @@
 ---
 title: "模組七：資安與資料保護"
-date: 2026-04-23
-description: "整理權限分級、伺服器防護、攻擊者視角（紅隊）驗證、資料遮罩、傳輸保護、密鑰管理與稽核追蹤"
+date: 2026-04-24
+description: "以原子化概念建立資安章節：先定義服務環節問題，再用案例判讀，最後路由到各服務章節實作"
 weight: 7
 ---
 
-資安與資料保護模組的核心目標是把安全需求轉成可設計、可測試、可稽核的服務邊界。語言教材會處理 [Request Middleware](../knowledge-cards/middleware/)、error response、資料模型、測試替身與輸入驗證；本模組負責 [authorization](../knowledge-cards/authorization/)、資料分級、[TLS / mTLS](../knowledge-cards/tls-mtls/)、[website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)、[secret management](../knowledge-cards/secret-management/)、[data masking](../knowledge-cards/data-masking/)、[audit log](../knowledge-cards/audit-log/) 與伺服器防護、紅隊驗證（攻擊者視角的風險檢查）的選型語意。
+本模組的責任是把資安議題拆成可重用的原子化決策單元。每個章節先回答服務環節的問題與注意事項，再用案例提供判讀證據，最後把實作路由到對應服務章節。
 
-## 暫定分類
+## 原子化拆分原則
 
-| 分類                 | 內容方向                                                                                                                                                                                                                                                                                                                                                           |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Identity and access  | [authentication](../knowledge-cards/authentication/)、[authorization](../knowledge-cards/authorization/)、[tenant boundary](../knowledge-cards/tenant-boundary/)                                                                                                                                                                                                                                                                                                         |
-| Server protection    | [rate limit](../knowledge-cards/rate-limit/)、[WAF](../knowledge-cards/waf/)、[Admin Endpoint](../knowledge-cards/admin-endpoint/)、upload boundary、[webhook](../knowledge-cards/webhook) signature                                                                                                                                                                                                                                                                                                |
-| [攻擊者視角（紅隊）驗證](red-team/)  | [Attack Surface](../knowledge-cards/attack-surface/)、[Trust Boundary](../knowledge-cards/trust-boundary/)、[Abuse Case](../knowledge-cards/abuse-case/)、exposure path、resource abuse                                                                                                                                                                                                                                                                                                         |
-| [Data masking](../knowledge-cards/data-masking)         | export masking、[log](../knowledge-cards/log) redaction、test data anonymization、field-level policy                                                                                                                                                                                                                                                                                         |
-| Transport protection | [TLS / mTLS](../knowledge-cards/tls-mtls/)、signed request、[website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)、[ACME automation](../knowledge-cards/acme-automation/)、[certificate rotation and renewal](../knowledge-cards/certificate-rotation-renewal/)、[certificate revocation](../knowledge-cards/certificate-revocation/) |
-| Secrets management   | secret storage、key rotation、[credential](../knowledge-cards/credential/) scope、revocation                                                                                                                                                                                                                                                                                                         |
-| Audit trail          | admin action、data export、permission change、compliance record                                                                                                                                                                                                                                                                                                    |
+原子化拆分的核心是讓每章只承擔一個語意責任。這個做法讓同一個概念可以跨服務重用，並維持章節之間的邊界清晰。
 
-## 選型入口
+- 身分與授權章：回答誰能做什麼，以及風險如何擴散。
+- 入口與邊界章：回答攻擊面在哪裡，以及入口治理節奏。
+- 資料保護章：回答資料在回應、匯出、log、備份的暴露風險。
+- 傳輸信任章：回答跨邊界流量信任如何建立與維持。
+- 憑證與秘密章：回答機器憑證與密鑰生命週期的治理。
+- 稽核與責任章：回答高風險操作如何追蹤、判讀、回溯。
+- 紅隊章：回答攻擊者視角案例如何映射到服務環節。
 
-資安選型的核心判斷是先看資料等級、角色風險與暴露路徑。權限模型解決誰能操作什麼；伺服器防護解決入口如何降低攻擊面；資料遮罩解決敏感資訊如何在畫面、匯出、log 與測試資料中被控制；傳輸保護解決資料跨邊界流動；秘密管理解決 token、key 與 [website certificate lifecycle](../knowledge-cards/website-certificate-lifecycle/)；稽核追蹤解決高風險操作的事後責任判斷。
+## 模組分工定位
 
-接近真實網路服務的例子包括客服查詢個資、管理員調整權限、使用者匯出訂單、第三方 webhook 進站、service-to-service 呼叫、API key 輪替、網站憑證 [rotation and renewal](../knowledge-cards/certificate-rotation-renewal/) 與高風險操作審核。這些場景的共同問題是資料與操作都需要被授權、保護、記錄與驗證。
+本模組提供觀念、判讀與路由。實作細節由各服務章節承接，確保同一套觀念可依服務實體差異展開。
 
-從攻擊者視角看，這些場景還要再反問一次：哪個入口最容易被枚舉、哪個邊界最容易被跨越、哪個流程最容易被合法功能包裝成濫用、哪個資料流最容易被帶出系統。這一層會先放在紅隊子分類裡處理。
+- `backend/05-deployment-platform`：承接入口、交付鏈與邊界實作。
+- `backend/06-reliability`：承接回復排序、可用性與驗證實作。
+- `backend/08-incident-response`：承接分級、指揮與 runbook 實作。
 
-## 與語言教材的分工
+## 章節列表（原子化骨架）
 
-語言教材處理程式內如何表達安全邊界，例如 [Request Middleware](../knowledge-cards/middleware/)、handler、policy interface、error mapping、資料遮罩 helper 與測試案例。Backend security 模組處理安全需求如何對應到身份、權限、網路入口、加密、秘密管理、資料匯出與稽核系統。
+| 章節 | 主題 | 核心責任 |
+| --- | --- | --- |
+| [7.1 攻擊者視角（紅隊）與攻擊面驗證](red-team/) | 案例與攻擊者判讀 | 把案例轉成跨服務問題地圖 |
+| [7.2 身分與授權邊界](identity-access-boundary/) | Identity & Access | 建立角色、權限、會話與供應商身分邊界 |
+| [7.3 入口治理與伺服器防護](entrypoint-and-server-protection/) | Server Protection | 建立入口分級、暴露面收斂與事件節奏 |
+| [7.4 資料保護與遮罩治理](data-protection-and-masking-governance/) | Data Protection | 建立資料流分級、遮罩、匯出與備份邊界 |
+| [7.5 傳輸信任與憑證生命週期](transport-trust-and-certificate-lifecycle/) | Transport Trust | 建立 TLS/mTLS 與憑證信任維運節奏 |
+| [7.6 秘密管理與機器憑證治理](secrets-and-machine-credential-governance/) | Secrets & Credentials | 建立 secret、token、key 的分域與輪替路由 |
+| [7.7 稽核追蹤與責任邊界](audit-trail-and-accountability-boundary/) | Audit & Accountability | 建立高風險操作追蹤與責任判讀框架 |
+| [7.8 模組路由：案例到服務實作](security-routing-from-case-to-service/) | Routing | 把案例判讀轉成跨章節落地任務清單 |
 
-## 相關需求章節
+## 本輪填充範圍
 
-- [後端服務選型：資安與資料保護需求](../00-service-selection/security-data-protection-requirements/)
-- [後端服務選型：錯誤定位、觀測訊號與備援切換設計](../00-service-selection/failure-observability-design/)
-- [可觀測性平台](../04-observability/)
-- [部署平台與網路入口](../05-deployment-platform/)
-
-## 攻擊者視角（紅隊）子分類
-
-- [7.1 攻擊者視角（紅隊）與攻擊面驗證](red-team/)
-
-## 章節列表
-
-本模組先建立分類入口。後續章節會在需求討論完成後，再依權限模型、資料遮罩、傳輸保護、秘密管理、伺服器防護、紅隊驗證與稽核追蹤拆分。
+本輪先完成完整大綱，並先填充 7.2 與 7.3 內文。後續章節已建立可直接續寫的結構與路由。
