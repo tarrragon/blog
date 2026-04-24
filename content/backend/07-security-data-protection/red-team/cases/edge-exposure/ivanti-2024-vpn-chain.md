@@ -1,5 +1,5 @@
 ---
-title: "7.R7.3.2 Ivanti 2024：VPN 邊界漏洞鏈"
+title: "7.R7.3.2 Ivanti 2024：CVE-2023-46805/2024-21887 VPN 邊界漏洞鏈"
 date: 2026-04-24
 description: "多漏洞串接下，邊界設備事件如何轉為持續控制風險"
 weight: 71732
@@ -7,7 +7,7 @@ weight: 71732
 
 ## 事故摘要
 
-2024 年初，Ivanti Connect Secure 相關公告顯示攻擊者可串接漏洞進行認證繞過與遠端執行，並帶來持久化風險。
+2024 年初，Ivanti Connect Secure 相關公告顯示攻擊者可串接 CVE-2023-46805 與 CVE-2024-21887 進行認證繞過與遠端執行，並帶來持久化風險。
 
 ## 攻擊路徑
 
@@ -41,5 +41,5 @@ weight: 71732
 
 - 官方：https://www.ivanti.com/blog/security-update-for-ivanti-connect-secure-and-ivanti-policy-secure-gateways
 - 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-060b
+- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2023-46805
 - 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2024-21887
-

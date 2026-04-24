@@ -1,5 +1,5 @@
 ---
-title: "7.R7.3.13 ProxyLogon 2021：Exchange 入口鏈式失效"
+title: "7.R7.3.13 ProxyLogon 2021：CVE-2021-26855/27065 入口鏈式失效"
 date: 2026-04-24
 description: "郵件系統入口漏洞被串接利用時，事件會迅速擴大到內部服務邊界"
 weight: 717313
@@ -7,7 +7,7 @@ weight: 717313
 
 ## 事故摘要
 
-ProxyLogon 事件顯示企業郵件系統入口漏洞在實戰中可被快速批量利用並形成內網風險。
+ProxyLogon 事件顯示 CVE-2021-26855 與 CVE-2021-27065 這類企業郵件系統入口漏洞可被快速批量利用並形成內網風險。
 
 ## 攻擊路徑
 
@@ -42,3 +42,4 @@ ProxyLogon 事件顯示企業郵件系統入口漏洞在實戰中可被快速批
 - 官方：https://www.microsoft.com/en-us/msrc/blog/2021/03/multiple-security-updates-released-for-exchange-server
 - 政府或監管：https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-062a
 - 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2021-26855
+- 技術分析：https://nvd.nist.gov/vuln/detail/CVE-2021-27065

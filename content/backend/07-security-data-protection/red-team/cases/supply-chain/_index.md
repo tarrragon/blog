@@ -18,3 +18,4 @@ weight: 7172
 - [Log4Shell 2021：共用元件風險與修補鏈](log4shell-cve-2021-44228-component-chain/)
 - [3CX 2023：桌面軟體更新鏈攻擊](3cx-2023-desktopapp-supply-chain/)
 - [Kaseya VSA 2021：MSP 供應鏈擴散路徑](kaseya-vsa-2021-msp-ransomware-chain/)
+- [TeamCity 2024：CVE-2024-27198/27199 入口鏈](teamcity-2024-cve-27198-27199-auth-path-traversal/)
