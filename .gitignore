@@ -5,6 +5,9 @@ public/
 .hugo_build.lock
 resources/
 
+# mdtools build output (Go binary; see scripts/mdtools/README.md)
+bin/
+
 # OS files
 .DS_Store
 Thumbs.db
