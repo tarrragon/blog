@@ -148,3 +148,21 @@
 - `ticket`：任務執行與追蹤（下游）
 
 寫作工作需反映在對應大綱與版本文件，避免散落 todo。
+
+---
+
+## 8. Markdown 排版規範（引用）
+
+`content/**` 所有 markdown 的排版與結構規範，以 `content/posts/markdown-writing-spec.md` 為單一真實來源。本章只保留給 agent 的最小提要：
+
+- 工具鏈：`scripts/mdtools`（Go + goldmark AST）在 pre-commit 與 CI 強制執行。
+- 核心規則摘要：
+  - **標題**：正文禁止 H1（front matter `title` 已產生 H1）；siblings_only 重複偵測；標題尾禁標點（MD026）；禁用粗體當標題（MD036）。
+  - **URL**：裸 URL 禁止；顯示文字若含 TLD 字樣（`.com` / `.org` / `.gov` / `.net` / `.io` / `.dev` / `.tw`），domain 必須與 href 一致（反釣魚）。
+  - **表格**：compact 風格，`| cell |` 前後各一格；分隔線 `| --- |`。
+  - **列表與代碼**：列表 / code block 前後空行；有序列表 `1./2./3.` 一致；code block 需語言標示。
+  - **Front matter**：通用層 `title` + `date` 必填；卡片層加 `description` + `weight` 必填。
+  - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。
+- 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
+- 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
+- 寫作時遇到 pre-commit 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。
