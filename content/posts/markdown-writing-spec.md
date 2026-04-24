@@ -232,7 +232,13 @@ Shell 範例統一用 `bash`（即使是 zsh 語法，讓 syntax highlighter 有
 
 POSIX 文字檔規範；缺失時 git diff 會出現 `\ No newline at end of file`。`mdtools fmt --fix` 自動補。
 
-### 5.7 行長度上限（MD013）— 預設關閉
+### 5.7 Tab 字元（MD010）— 僅限 fenced code block
+
+由 `mdtools lint` 檢查（warn 等級）。Prose / 列表 / 表格 / 引用等非 code-block 行內若出現 tab 字元，會被標記並建議改成空白；fenced code block 內的 tab 保留（Go 原始碼依 gofmt 慣例用 tab，文章要讓讀者能直接複製貼用）。
+
+Repo 根目錄的 `.markdownlint.json` 用 `"MD010": { "code_blocks": false }` 告知 IDE 的 markdownlint extension 採用同一套 policy，讓編輯器跟 CI 的警告保持一致。
+
+### 5.8 行長度上限（MD013）— 預設關閉
 
 本規則**預設關閉**。中英混用的技術寫作不適用 80-char 慣例：
 

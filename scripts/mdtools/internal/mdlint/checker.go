@@ -36,6 +36,10 @@ func Check(path string, cfg rules.Config) ([]report.Violation, error) {
 	if cfg.CodeBlocks.RequireLanguage {
 		out = append(out, checkCodeBlockLanguage(path, lines, ctx)...)
 	}
+	// MD010 prose-tab: warn on tab characters outside fenced code
+	// blocks / front matter. Code block tabs are legitimate Go source
+	// indentation, so the rule is scoped to plain content lines.
+	out = append(out, checkProseTabs(path, lines, ctx)...)
 	// Front matter schema check always runs; rules.Config.FrontMatter
 	// describes which fields are required / recommended / disallowed.
 	out = append(out, checkFrontMatter(path, lines, cfg.FrontMatter, cfg.Cards.CardsRoot)...)
