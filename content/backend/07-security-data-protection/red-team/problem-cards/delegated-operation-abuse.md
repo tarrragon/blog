@@ -32,3 +32,7 @@ weight: 7213
 
 - [7.2 身分與授權邊界](../../identity-access-boundary/)
 - [7.7 稽核追蹤與責任邊界](../../audit-trail-and-accountability-boundary/)
+
+## 對應失效樣式卡
+
+- [7.R11.P3 代理會話上下文混層](fp-delegated-session-context-bleed/)

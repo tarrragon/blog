@@ -32,3 +32,7 @@ weight: 7216
 
 - [7.2 身分與授權邊界](../../identity-access-boundary/)
 - [7.14 資安治理例外與 Tripwire](../../security-governance-exception-and-tripwire/)
+
+## 對應失效樣式卡
+
+- [7.R11.P6 權限提升缺乏時效綁定](fp-privilege-elevation-without-time-bound/)

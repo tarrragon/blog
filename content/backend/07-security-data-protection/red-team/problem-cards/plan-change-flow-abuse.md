@@ -32,3 +32,7 @@ weight: 7217
 
 - [7.3 入口治理與伺服器防護](../../entrypoint-and-server-protection/)
 - [7.12 供應鏈完整性與 Artifact 信任](../../supply-chain-integrity-and-artifact-trust/)
+
+## 對應失效樣式卡
+
+- [7.R11.P7 降級後能力回收延遲](fp-entitlement-revocation-lag-after-plan-downgrade/)

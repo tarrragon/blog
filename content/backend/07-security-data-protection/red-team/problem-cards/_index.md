@@ -16,6 +16,8 @@ weight: 721
 
 ## 卡片列表
 
+### 流程問題卡
+
 - [邀請流程濫用](invite-flow-abuse/)
 - [審核流程濫用](approval-flow-abuse/)
 - [代理操作濫用](delegated-operation-abuse/)
@@ -28,3 +30,18 @@ weight: 721
 - [批次操作濫用](bulk-operation-abuse/)
 - [跨租戶協作濫用](cross-tenant-collaboration-abuse/)
 - [第三方授權濫用](third-party-authorization-abuse/)
+
+### 單一失效樣式卡
+
+- [可重放邀請連結](fp-replayable-invitation-link/)
+- [提交與審核責任重疊](fp-submitter-approver-overlap/)
+- [代理會話上下文混層](fp-delegated-session-context-bleed/)
+- [帳號切換後沿用高權限 token](fp-stale-privileged-token-after-account-switch/)
+- [重設憑證可重放且有效期過長](fp-replayable-reset-token-with-long-ttl/)
+- [權限提升缺乏時效綁定](fp-privilege-elevation-without-time-bound/)
+- [降級後能力回收延遲](fp-entitlement-revocation-lag-after-plan-downgrade/)
+- [匯出檔案長時間可重複下載](fp-long-lived-repeatable-export-artifact/)
+- [分享連結缺少到期語意](fp-share-link-without-expiry-semantics/)
+- [批次流程缺少中止檢查點](fp-batch-flow-without-stop-checkpoint/)
+- [跨租戶上下文快取殘留](fp-cross-tenant-context-cache-residue/)
+- [第三方 token 授權範圍過寬](fp-overscoped-third-party-token-grant/)

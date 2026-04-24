@@ -32,3 +32,7 @@ weight: 7219
 
 - [7.4 資料保護與遮罩治理](../../data-protection-and-masking-governance/)
 - [7.5 傳輸信任與憑證生命週期](../../transport-trust-and-certificate-lifecycle/)
+
+## 對應失效樣式卡
+
+- [7.R11.P9 分享連結缺少到期語意](fp-share-link-without-expiry-semantics/)

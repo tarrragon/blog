@@ -32,3 +32,7 @@ weight: 7212
 
 - [7.7 稽核追蹤與責任邊界](../../audit-trail-and-accountability-boundary/)
 - [8.2 事故指揮與角色分工](../../../08-incident-response/incident-command-roles/)
+
+## 對應失效樣式卡
+
+- [7.R11.P2 提交與審核責任重疊](fp-submitter-approver-overlap/)

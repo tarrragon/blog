@@ -32,3 +32,7 @@ weight: 7221
 
 - [7.2 身分與授權邊界](../../identity-access-boundary/)
 - [7.4 資料保護與遮罩治理](../../data-protection-and-masking-governance/)
+
+## 對應失效樣式卡
+
+- [7.R11.P11 跨租戶上下文快取殘留](fp-cross-tenant-context-cache-residue/)

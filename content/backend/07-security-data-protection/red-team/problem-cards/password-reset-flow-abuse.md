@@ -32,3 +32,7 @@ weight: 7215
 
 - [7.2 身分與授權邊界](../../identity-access-boundary/)
 - [8.8 事故報告轉 workflow](../../../08-incident-response/incident-report-to-workflow/)
+
+## 對應失效樣式卡
+
+- [7.R11.P5 重設憑證可重放且有效期過長](fp-replayable-reset-token-with-long-ttl/)

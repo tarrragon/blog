@@ -32,3 +32,7 @@ weight: 7220
 
 - [7.4 資料保護與遮罩治理](../../data-protection-and-masking-governance/)
 - [7.9 服務生命週期的資安風險節奏](../../security-lifecycle-risk-cadence/)
+
+## 對應失效樣式卡
+
+- [7.R11.P10 批次流程缺少中止檢查點](fp-batch-flow-without-stop-checkpoint/)

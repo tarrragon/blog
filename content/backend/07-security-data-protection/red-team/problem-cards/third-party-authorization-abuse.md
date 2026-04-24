@@ -33,3 +33,7 @@ weight: 7222
 
 - [7.6 秘密管理與機器憑證治理](../../secrets-and-machine-credential-governance/)
 - [7.10 Workload Identity 與聯邦信任邊界](../../workload-identity-and-federated-trust/)
+
+## 對應失效樣式卡
+
+- [7.R11.P12 第三方 token 授權範圍過寬](fp-overscoped-third-party-token-grant/)

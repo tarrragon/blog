@@ -32,3 +32,7 @@ weight: 7214
 
 - [7.2 身分與授權邊界](../../identity-access-boundary/)
 - [7.5 傳輸信任與憑證生命週期](../../transport-trust-and-certificate-lifecycle/)
+
+## 對應失效樣式卡
+
+- [7.R11.P4 帳號切換後沿用高權限 token](fp-stale-privileged-token-after-account-switch/)
