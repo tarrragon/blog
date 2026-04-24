@@ -441,4 +441,4 @@ Python 3.15/3.16:   可能成為預設
 ---
 
 *上一章：[Bytecode 與虛擬機](../bytecode/)*
-*下一模組：[模組四：用 C 擴展 Python](../../04-c-extensions/)*
+*下一模組：[模組四：用 C 擴展 Python](../../05-c-extensions/)*

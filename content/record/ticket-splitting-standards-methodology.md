@@ -3826,6 +3826,6 @@ Clean Architecture 實作方法論：
 - [📚 Ticket 設計派工方法論](../ticket-design-dispatch-methodology/) - 主方法論
 - [🏗 Clean Architecture 實作方法論](../clean-architecture-implementation-methodology/) - 架構基礎
 - [🎯 層級隔離派工方法論](../layered-ticket-methodology/) - 派工策略
-- [🔬 TDD 四階段方法論](tdd-four-phases-methodology.md) - 開發流程
+- 🔬 TDD 四階段方法論 - 開發流程
 
 ---

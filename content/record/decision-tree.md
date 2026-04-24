@@ -148,11 +148,11 @@ tags: ["決策樹", "AI代理人", "任務派發", "Hook系統", "Ticket管理",
 
 | 問題類型       | 識別關鍵字                          | 派發代理人                                              |
 | -------------- | ----------------------------------- | ------------------------------------------------------- |
-| 系統架構問題   | "架構"、"設計模式"、"系統結構"      | → [system-analyst](../agents/system-analyst.md)         |
-| UI/UX 設計問題 | "畫面"、"介面"、"UI"、"操作流程"    | → [system-designer](../agents/system-designer.md)       |
-| 資料設計問題   | "資料庫"、"資料結構"、"儲存"        | → [data-administrator](../agents/data-administrator.md) |
-| 環境配置問題   | "環境"、"配置"、"安裝"、"設定"      | → [system-engineer](../agents/system-engineer.md)       |
-| 安全問題       | "安全"、"漏洞"、"認證"、"授權"      | → [security-reviewer](../agents/security-reviewer.md)   |
+| 系統架構問題   | "架構"、"設計模式"、"系統結構"      | → system-analyst         |
+| UI/UX 設計問題 | "畫面"、"介面"、"UI"、"操作流程"    | → system-designer       |
+| 資料設計問題   | "資料庫"、"資料結構"、"儲存"        | → data-administrator |
+| 環境配置問題   | "環境"、"配置"、"安裝"、"設定"      | → system-engineer       |
+| 安全問題       | "安全"、"漏洞"、"認證"、"授權"      | → security-reviewer   |
 | 效能問題       | "效能"、"FPS"、"卡頓"、"延遲"、"慢" | → ginger-performance-tuner                              |
 
 ---
@@ -282,7 +282,7 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 ## 第四層半：並行派發判斷
 
-> 詳細規則：[parallel-dispatch](../guides/parallel-dispatch.md)
+> 詳細規則：parallel-dispatch
 
 ### 並行派發觸發條件
 
@@ -320,18 +320,18 @@ Ticket 是 pending? ─是→ 執行 /ticket-track claim {id}
 
 | 階段        | 代理人                                                                  | 進入條件        | 完成後     |
 | ----------- | ----------------------------------------------------------------------- | --------------- | ---------- |
-| SA 前置審查 | [system-analyst](../agents/system-analyst.md)                           | 新功能/架構變更 | Phase 1    |
-| Phase 1     | [lavender-interface-designer](../agents/lavender-interface-designer.md) | SA 通過         | Phase 2    |
-| Phase 2     | [sage-test-architect](../agents/sage-test-architect.md)                 | Phase 1 完成    | Phase 3a   |
-| Phase 3a    | [pepper-test-implementer](../agents/pepper-test-implementer.md)         | Phase 2 完成    | Phase 3b   |
-| Phase 3b    | [parsley-flutter-developer](../agents/parsley-flutter-developer.md)     | Phase 3a 完成   | Phase 4    |
-| Phase 4     | [cinnamon-refactor-owl](../agents/cinnamon-refactor-owl.md)             | Phase 3b 完成   | [完成判斷] |
+| SA 前置審查 | system-analyst                           | 新功能/架構變更 | Phase 1    |
+| Phase 1     | lavender-interface-designer | SA 通過         | Phase 2    |
+| Phase 2     | sage-test-architect                 | Phase 1 完成    | Phase 3a   |
+| Phase 3a    | pepper-test-implementer         | Phase 2 完成    | Phase 3b   |
+| Phase 3b    | parsley-flutter-developer     | Phase 3a 完成   | Phase 4    |
+| Phase 4     | cinnamon-refactor-owl             | Phase 3b 完成   | [完成判斷] |
 
 ---
 
 ## 第六層：事件回應流程（錯誤分類決策樹）
 
-> 詳細流程：[incident-response](../flows/incident-response.md)
+> 詳細流程：incident-response
 
 ### 二元化錯誤分類樹
 
@@ -431,7 +431,7 @@ grep -r "rules/{changed-file}" .claude/
 
 ## 代理人觸發優先級
 
-> 詳細定義：[agents/overview](../agents/overview.md)
+> 詳細定義：agents/overview
 
 ### 優先級順序
 
@@ -469,7 +469,7 @@ Level 5: TDD 階段代理人（lavender, sage, pepper, parsley, cinnamon）
 
 ## 任務拆分認知負擔檢查
 
-> 詳細指南：[task-splitting](../guides/task-splitting.md)
+> 詳細指南：task-splitting
 
 ### 拆分觸發條件
 
@@ -599,18 +599,18 @@ decision_tree_path:
 
 ### 代理人定義
 
-- [agents/overview](../agents/overview.md) - 代理人總覽
+- agents/overview - 代理人總覽
 
 ### 執行流程
 
-- [flows/tdd-flow](../flows/tdd-flow.md) - TDD 流程
-- [flows/incident-response](../flows/incident-response.md) - 事件回應流程
+- flows/tdd-flow - TDD 流程
+- flows/incident-response - 事件回應流程
 - [flows/ticket-lifecycle](../ticket-lifecycle/) - Ticket 生命週期
 
 ### 操作指南
 
-- [guides/task-splitting](../guides/task-splitting.md) - 任務拆分指南
-- [guides/parallel-dispatch](../guides/parallel-dispatch.md) - 並行派發指南
+- guides/task-splitting - 任務拆分指南
+- guides/parallel-dispatch - 並行派發指南
 
 ### Hook 系統
 
@@ -619,7 +619,7 @@ decision_tree_path:
 
 ### 禁止行為
 
-- [forbidden/skip-gate](../forbidden/skip-gate.md) - Skip-gate 防護
+- forbidden/skip-gate - Skip-gate 防護
 
 ---
 

@@ -82,4 +82,4 @@ weight: 3
 ---
 
 *上一模組：[模組二：元編程](../02-metaprogramming/)*
-*下一模組：[模組三：CPython 內部機制](../03-cpython-internals/)*
+*下一模組：[模組三：CPython 內部機制](../04-cpython-internals/)*

@@ -170,9 +170,9 @@ tags: ["方法論", "文件規範", "AI協作心得"]
 
 **參考文件**:
 
-- [TDD 協作流程 - Phase 4-1 UI 效能檢查]($CLAUDE_PROJECT_DIR/.claude/tdd-collaboration-flow.md)
-- [測試金字塔設計 - 效能測試策略]($CLAUDE_PROJECT_DIR/docs/test-pyramid-design.md)
-- [Widget 測試指導原則 - 禁止效能測試]($CLAUDE_PROJECT_DIR/test/TESTING_GUIDELINES.md)
+- TDD 協作流程 - Phase 4-1 UI 效能檢查
+- 測試金字塔設計 - 效能測試策略
+- Widget 測試指導原則 - 禁止效能測試
 
 **違規處理**: 缺少效能考量分析，視為**設計規劃不完整**，必須補充效能分析後才能分派任務。
 

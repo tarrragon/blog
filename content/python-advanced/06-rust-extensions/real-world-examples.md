@@ -739,4 +739,4 @@ for e in errors:
 ---
 
 *上一章：[Maturin 開發流程](../maturin-workflow/)*
-*下一模組：[模組六：打包與發布](../../06-packaging/)*
+*下一模組：[模組六：打包與發布](../../07-packaging/)*

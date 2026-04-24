@@ -507,4 +507,4 @@ for p in params:
 ---
 
 *上一章：[類別裝飾器與動態類別](../class-creation/)*
-*下一模組：[模組三：CPython 內部機制](../../03-cpython-internals/)*
+*下一模組：[模組三：CPython 內部機制](../../04-cpython-internals/)*
