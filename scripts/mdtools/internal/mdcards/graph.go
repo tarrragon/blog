@@ -121,6 +121,9 @@ func (g *Graph) extractEdges(fn FileNode) {
 
 // isExternalOrAnchor returns true when the link destination points
 // outside the filesystem (http, https, mailto) or is a pure anchor.
+// Protocol-relative `//example.com` is also external; single-leading-slash
+// paths like `/backend/foo/` are content-root absolute and handled by
+// resolveTarget.
 func isExternalOrAnchor(dest string) bool {
 	if dest == "" {
 		return true
@@ -128,32 +131,33 @@ func isExternalOrAnchor(dest string) bool {
 	if strings.HasPrefix(dest, "#") {
 		return true
 	}
+	if strings.HasPrefix(dest, "//") {
+		return true
+	}
 	for _, scheme := range []string{"http://", "https://", "mailto:", "tel:", "ftp://"} {
 		if strings.HasPrefix(dest, scheme) {
 			return true
 		}
 	}
-	// Absolute path like "/about/" — treat as Hugo-rendered URL, skip.
-	if strings.HasPrefix(dest, "/") {
-		return true
-	}
 	return false
 }
 
-// resolveTarget mimics Hugo URL resolution to convert a relative link
+// resolveTarget mimics Hugo URL resolution to convert a link destination
 // into a canonical filesystem-adjacent path (without the .md extension).
 // The caller checks both "{target}.md" and "{target}/_index.md" because
 // Hugo treats section index pages and content pages interchangeably in
 // URL routing.
 //
-// Accepts both conventions observed in the repo:
-//   - Hugo URL style: `../broker/` (slug with trailing slash).
+// Accepts three conventions observed in the repo:
+//   - Content-root absolute: `/backend/knowledge-cards/broker/`
+//     (preferred; maps directly to `content/backend/knowledge-cards/broker`).
+//   - Hugo URL relative style: `../broker/` (slug with trailing slash).
 //   - Filesystem style: `broker.md` (direct file reference).
 //
-// Both are normalized to the same canonical form. Anchor suffixes
+// All forms are normalized to the same canonical form. Anchor suffixes
 // (`#section`) are stripped.
 //
-// Source file treatment:
+// Source file treatment (for relative paths):
 //   - Content page `foo.md` sits at URL `<dir>/foo/`; relative links
 //     are resolved from that URL directory.
 //   - Section page `_index.md` sits at URL `<dir>/`; relatives are
@@ -167,6 +171,11 @@ func resolveTarget(sourcePath, dest string) string {
 	dest = strings.TrimSuffix(dest, ".markdown")
 	if dest == "" {
 		return ""
+	}
+
+	// Content-root absolute path: prepend "content" to map URL to filesystem.
+	if strings.HasPrefix(dest, "/") {
+		return filepath.Clean(filepath.Join("content", dest))
 	}
 
 	sourceDir := filepath.Dir(sourcePath)
