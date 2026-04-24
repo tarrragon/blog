@@ -18,13 +18,13 @@ jobs:
     steps:
       # 1. 把 repo checkout 下來（包含子模組）
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive # ⬅️ 重要：處理子模組
 
       # 2. 安裝 Hugo
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: "0.148.2"
           extended: true
@@ -62,7 +62,7 @@ jobs:
 
       # 4. 上傳編譯好的檔案
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./public
 
@@ -75,4 +75,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
