@@ -24,6 +24,14 @@ weight: 74
 
 跨組織資料交換的責任是保持交易可追蹤與通知可收斂。這個環節的判讀重點是影響面盤點與通報節奏。
 
+## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
+
+| 情境 | 判讀 | 注意事項 | 路由章節 |
+| --- | --- | --- | --- |
+| 匯出操作在短時間異常集中 | 資料外送風險正在放大 | 先收斂匯出路徑，再盤點影響清單 | [8.4 事故通訊與狀態更新](../08-incident-response/incident-communication/) |
+| 備份層讀取行為與平常時序偏移 | 備份邊界可能被用於擴散 | 備份權限域與正式域要分開調查 | [6.1 CI pipeline](../06-reliability/ci-pipeline/) |
+| 跨組織交換資料受影響範圍不明 | 通報節奏與責任鏈可能斷裂 | 先完成交易級影響面盤點再對外同步 | [8.8 事故報告轉 workflow](../08-incident-response/incident-report-to-workflow/) |
+
 ## 判讀訊號
 
 - [data-classification](../knowledge-cards/data-classification/) 與回應欄位配置差異。

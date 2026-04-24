@@ -24,6 +24,14 @@ CI secrets 集中的責任是維持交付可用性與收斂速度平衡。這個
 
 機器憑證生命周期的責任是維持機器身份可控性。這個環節的判讀重點是發放、輪替、撤銷的一致性。
 
+## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
+
+| 情境 | 判讀 | 注意事項 | 路由章節 |
+| --- | --- | --- | --- |
+| 第三方事件後 token 仍可持續存取 | 憑證收斂節奏慢於事件節奏 | 先盤點用途分域，再執行分批撤銷 | [8.8 事故報告轉 workflow](../08-incident-response/incident-report-to-workflow/) |
+| CI secrets 輪替造成交付不穩定 | 分域與優先順序尚未對齊 | 輪替流程要先定義批次與回退順序 | [6.1 CI pipeline](../06-reliability/ci-pipeline/) |
+| 機器憑證發放與淘汰時序不一致 | 生命周期治理存在遺留窗口 | 發放、輪替、撤銷要使用同一責任鏈 | [5.1 container 與 runtime](../05-deployment-platform/container-runtime/) |
+
 ## 判讀訊號
 
 - [secret-management](../knowledge-cards/secret-management/) 事件與分域策略差異。

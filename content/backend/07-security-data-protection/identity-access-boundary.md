@@ -24,6 +24,14 @@ weight: 72
 
 會話與 token 的責任是管理持續存取邊界。這個環節的判讀重點是事件後會話失效覆蓋與 token 生命周期分域。
 
+## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
+
+| 情境 | 判讀 | 注意事項 | 路由章節 |
+| --- | --- | --- | --- |
+| 登入異常密度短時間上升 | 身分入口可能進入疲勞式攻擊節奏 | 先收斂高風險身份，再做全域盤點 | [8.1 事故分級與啟動條件](../08-incident-response/incident-severity-trigger/) |
+| 內部管理工具接觸面快速增加 | 授權邊界存在擴散路徑 | 高權限工具與一般操作要分層判讀 | [8.3 止血、降級與回復策略](../08-incident-response/containment-recovery-strategy/) |
+| 供應商事件後 token 仍大量存續 | 外部事件傳導已進入內部身份鏈 | 事件公告與收斂流程要同時啟動 | [8.8 事故報告轉 workflow](../08-incident-response/incident-report-to-workflow/) |
+
 ## 判讀訊號
 
 - [authentication](../knowledge-cards/authentication/) 異常密度與重複驗證模式。

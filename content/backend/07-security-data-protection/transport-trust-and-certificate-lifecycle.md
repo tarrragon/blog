@@ -24,6 +24,14 @@ weight: 75
 
 供應商傳輸鏈的責任是控制外部信任傳導。這個環節的判讀重點是外部事件到內部信任重評估的時間差。
 
+## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
+
+| 情境 | 判讀 | 注意事項 | 路由章節 |
+| --- | --- | --- | --- |
+| 入口修補後會話風險仍持續 | 傳輸信任鏈尚未完成收斂 | 會話失效與憑證收斂需要同步節奏 | [8.3 止血、降級與回復策略](../08-incident-response/containment-recovery-strategy/) |
+| 管理平面流量與業務流量混層 | 高權限信任邊界不清晰 | 管理信任模型要獨立於業務信任模型 | [5.3 Load Balancer Contract](../05-deployment-platform/load-balancer-contract/) |
+| 憑證輪替事件與服務中斷頻率相關 | 生命周期節奏與營運節奏失衡 | 輪替與回復路由要一體設計 | [6.5 驗證缺口弱點判讀](../06-reliability/attacker-view-validation-risks/) |
+
 ## 判讀訊號
 
 - [tls-mtls](../knowledge-cards/tls-mtls/) 邊界配置與實際流量邊界差異。

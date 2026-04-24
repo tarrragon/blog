@@ -1,39 +1,29 @@
 ---
 title: "5.5 攻擊者視角（紅隊）：平台與入口弱點判讀"
 date: 2026-04-24
-description: "從隱藏入口、設定漂移與切換風險，盤點 deployment platform 的主要弱點"
+description: "以概念層判讀部署平台弱點，聚焦入口、生命周期、設定與交付節奏"
 weight: 5
 ---
 
-平台與入口的攻擊者視角（紅隊）判讀目標是確認「服務怎麼被看見、怎麼被接流量、失效時怎麼擴散」。部署平台同時承擔可用性與安全邊界，弱點常出現在交付流程與設定面，而不是單一業務邏輯。
+本章的責任是把部署平台的弱點判讀維持在概念上限。核心輸出是平台問題地圖、案例對照與交接條件，讓實作前決策可先對齊。
 
-## 【情境】哪些交付路徑要先做弱點盤點
+## 服務環節問題地圖
 
-下列情境出現時，平台層弱點通常優先級較高：
+| 環節 | 主要問題 | 注意事項 | 優先案例 |
+| --- | --- | --- | --- |
+| 入口暴露面 | 入口分級與實際可達範圍不一致 | 入口清單與責任鏈要先對齊 | [MOVEit 2023](../07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/) |
+| 生命周期訊號 | readiness、draining、shutdown 節奏不一致 | 平台合約要先定義再驗證 | [Ivanti 2024](../07-security-data-protection/red-team/cases/edge-exposure/ivanti-2024-vpn-chain/) |
+| 設定與密鑰下發 | 設定漂移與權限擴張同時發生 | 高風險設定要進 release gate | [F5 BIG-IP 2023](../07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/) |
+| 交付切換節奏 | 回滾與切換條件不清晰 | 先定停損條件再定交付速度 | [TeamCity 2024](../07-security-data-protection/red-team/cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/) |
 
-- 多環境、多區域、頻繁發版
-- 入口層同時含 public API、管理介面與 webhook
-- 自動擴容與滾動更新已上線
-- 組態與密鑰透過多來源下發
+## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
 
-## 【判讀流程】平台與入口檢查順序
+| 情境 | 判讀 | 注意事項 | 路由章節 |
+| --- | --- | --- | --- |
+| 外網可達入口在發版後增加 | 入口分級與交付節奏存在脫鉤 | 入口盤點要成為交付前條件 | [5.3 Load Balancer Contract](../05-deployment-platform/load-balancer-contract/) |
+| readiness 通過但實際流量錯誤率上升 | 生命周期合約與流量模型不一致 | 探針、draining、shutdown 要同批驗證 | [6.5 驗證缺口弱點判讀](../06-reliability/attacker-view-validation-risks/) |
+| 設定異動與異常事件同時出現 | 設定漂移可能已跨越安全邊界 | 設定審查與責任追蹤要同步維護 | [8.5 復盤與改進追蹤](../08-incident-response/post-incident-review/) |
 
-1. 看入口面：檢查 [load balancer](../knowledge-cards/load-balancer/)、[service discovery](../knowledge-cards/service-discovery/) 與 [internal endpoint](../knowledge-cards/internal-endpoint/) 暴露範圍。
-2. 看生命週期：檢查 [readiness](../knowledge-cards/readiness/)、[health check](../knowledge-cards/health-check/)、[draining](../knowledge-cards/draining/) 與 [graceful shutdown](../knowledge-cards/graceful-shutdown/) 合約是否一致。
-3. 看設定面：檢查 [runtime config](../knowledge-cards/runtime-config/)、[feature flag](../knowledge-cards/feature-flag/) 與 [secret management](../knowledge-cards/secret-management/) 是否有漂移與過寬權限。
-4. 看交付面：檢查 [rolling update](../knowledge-cards/rolling-update/)、回滾條件與 [release gate](../knowledge-cards/release-gate/) 是否能阻擋高風險變更。
+## 到實作前的最後一層
 
-## 【風險代價】平台弱點會跨服務擴散
-
-平台層錯誤常直接影響整批服務。readiness 與流量切換不一致會造成短時間大面積失敗；設定漂移會讓同版本行為不一致；隱藏入口暴露會把單點防護缺口擴大成系統風險。這類問題通常需要跨團隊協作，修復成本高且時間長。
-
-## 【設計取捨】交付速度與邊界治理
-
-交付速度越快，平台保護機制越需要前移。過度精簡審查可換到短期效率，但會提升高風險設定直接進入生產的機率。穩定做法是保留最小必要 gate，把高風險檢查自動化，減少人工判斷負擔。
-
-## 【最低控制面】進入實作前要先定義
-
-- 入口暴露清單與責任人
-- 生命週期訊號合約與驗證規則
-- 設定變更審查與漂移告警
-- 發版、回滾、切換的停損條件
+本章在概念層回答的是平台風險判讀與交接節奏。當討論進入 Kubernetes 欄位、LB 規則、系統服務參數或腳本配置時，就代表已進入實作層。

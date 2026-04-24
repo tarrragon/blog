@@ -1,39 +1,29 @@
 ---
 title: "6.5 攻擊者視角（紅隊）：驗證缺口弱點判讀"
 date: 2026-04-24
-description: "從驗證盲區、演練缺口與 release gate 失真，盤點 reliability 流程的主要弱點"
+description: "以概念層判讀驗證盲區，聚焦 gate、負載、故障演練與回復節奏"
 weight: 5
 ---
 
-可靠性流程的攻擊者視角（紅隊）判讀目標是確認「哪些風險沒有被測到、哪些失敗模式沒有被演練、哪些門檻無法阻擋高風險變更」。驗證流程若只追求覆蓋率，常漏掉真實事故路徑。
+本章的責任是把可靠性驗證缺口維持在概念上限。核心輸出是驗證問題地圖、案例對照與交接條件，讓實作前先對齊高風險變更的驗證邊界。
 
-## 【情境】哪些團隊需要先盤點驗證缺口
+## 服務環節問題地圖
 
-下列情境出現時，驗證缺口通常是高風險來源：
+| 環節 | 主要問題 | 注意事項 | 優先案例 |
+| --- | --- | --- | --- |
+| Release Gate | 高風險變更缺少差異化 gate | 變更分級要先於驗證編排 | [TeamCity 2023](../07-security-data-protection/red-team/cases/supply-chain/teamcity-cve-2023-42793-ci-entrypoint/) |
+| 負載驗證模型 | 測試流量與實際事件節奏脫鉤 | 尖峰、重試、外部依賴要同時建模 | [WS_FTP 2023](../07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/) |
+| 失敗模式演練 | partial failure 與連鎖失效覆蓋不足 | 演練順序要對齊回復順序 | [Change Healthcare 2024](../07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/) |
+| 回復路徑驗證 | rollback 與 runbook 缺少時限驗證 | 回復可行性要在事故前驗證 | [VMware ESXiArgs 2023](../07-security-data-protection/red-team/cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/) |
 
-- 發版頻率高，但事故仍集中在相似類型
-- CI 通過率高，線上回滾率仍偏高
-- 壓測、fuzz、chaos 僅在特定時段執行
-- migration 與跨服務變更缺少聯合驗證
+## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
 
-## 【判讀流程】驗證弱點檢查順序
+| 情境 | 判讀 | 注意事項 | 路由章節 |
+| --- | --- | --- | --- |
+| CI 綠燈但線上回滾率上升 | gate 覆蓋與實際風險未對齊 | 高風險變更要獨立 gate | [6.1 CI pipeline](../06-reliability/ci-pipeline/) |
+| 壓測通過但事故時連鎖降速 | 負載模型缺少失敗流量特徵 | 把重試、排隊、降級納入測試模型 | [6.2 load test](../06-reliability/load-testing/) |
+| 演練記錄完整但回復時間偏長 | 演練內容與實戰決策節奏不一致 | 回復順序要以業務優先級編排 | [8.3 止血、降級與回復策略](../08-incident-response/containment-recovery-strategy/) |
 
-1. 看門檻面：檢查 [release gate](../knowledge-cards/release-gate/) 是否覆蓋高風險變更與相依條件。
-2. 看負載面：檢查 [load test](../knowledge-cards/load-test/) 是否反映真實流量、尖峰與失敗重試行為。
-3. 看失敗面：檢查 chaos 與故障演練是否涵蓋 [partial failure](../knowledge-cards/partial-failure/) 與 [cascading failure](../knowledge-cards/cascading-failure/)。
-4. 看回復面：檢查 [rollback rehearsal](../knowledge-cards/rollback-rehearsal/) 與 [runbook](../knowledge-cards/runbook/) 是否可在時間壓力下執行。
+## 到實作前的最後一層
 
-## 【風險代價】驗證缺口會在上線後付更高成本
-
-驗證盲區最常見代價是事故延後暴露。問題在上線後才出現時，影響範圍更大、修復步驟更多、跨團隊溝通成本更高。若回復流程未演練，事故期間容易陷入反覆嘗試與二次失敗。
-
-## 【設計取捨】交付節奏與驗證深度
-
-縮短驗證可提升短期交付速度；同時會提高高風險變更穿透門檻的機率。穩定做法是分層驗證：日常變更走快速 gate，高風險變更走加深驗證與演練。
-
-## 【最低控制面】進入實作前要先定義
-
-- 高風險變更分類與對應 gate
-- 壓測、故障演練與回滾演練週期
-- 事故回放與測試資料一致性規範
-- 驗證失敗時的停線與升級條件
+本章在概念層回答的是驗證範圍、驗證節奏與交接邊界。當討論進入壓測參數、CI 腳本、故障注入工具或具體數值門檻時，就代表已進入實作層。
