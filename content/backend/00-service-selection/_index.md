@@ -26,6 +26,7 @@ weight: 0
 | [0.8](security-data-protection-requirements/) | 資安與資料保護需求               | 從權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界         |
 | [0.9](knowledge-graph-message-flow/)          | 知識網：訊息與事件決策路徑       | 用 [broker](../knowledge-cards/broker/)、queue、[ack](../knowledge-cards/ack-nack/)、retry、DLQ、replay 串出非同步決策脈絡         |
 | [0.10](knowledge-graph-operations-security/)  | 知識網：容量、觀測與資安決策路徑 | 用 [backpressure](../knowledge-cards/backpressure/)、[timeout](../knowledge-cards/timeout/)、[runbook](../knowledge-cards/runbook/)、[RTO](../knowledge-cards/rto/)/[RPO](../knowledge-cards/rpo/)、權限與憑證串出操作脈絡   |
+| [0.11](red-team-cross-service-weaknesses/)    | 攻擊者視角（紅隊）：跨服務弱點判讀總表     | 用攻擊面、可觀察訊號與失敗代價建立跨分類的弱點判讀順序 |
 
 ## 需求討論順序
 
@@ -100,3 +101,4 @@ weight: 0
 - [0.8](security-data-protection-requirements/) 資安與資料保護需求
 - [0.9](knowledge-graph-message-flow/) 知識網：訊息與事件決策路徑
 - [0.10](knowledge-graph-operations-security/) 知識網：容量、觀測與資安決策路徑
+- [0.11](red-team-cross-service-weaknesses/) 攻擊者視角（紅隊）：跨服務弱點判讀總表
