@@ -446,9 +446,9 @@ def dispatch_task(task):
 
 ## 延伸閱讀
 
-- [認知負擔：程式碼設計的核心目的](../cognitive-load/) - 認知負擔也是一種「隱性成本」
-- [命名的藝術：讓程式碼說故事](../naming-art/) - 好的命名降低閱讀成本
-- [開放封閉原則與認知負擔](../open-closed-principle/) - OCP 降低擴展成本
+- [認知負擔：程式碼設計的核心目的](/python/00-philosophy/cognitive-load/) - 認知負擔也是一種「隱性成本」
+- [命名的藝術：讓程式碼說故事](/python/00-philosophy/naming-art/) - 好的命名降低閱讀成本
+- [開放封閉原則與認知負擔](/python/00-philosophy/open-closed-principle/) - OCP 降低擴展成本
 - [DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/) - 重複程式碼的成本控制實戰
 - [Hook 系統可觀測性設計](/python/05-error-testing/observability-design/) - 可觀測性投資的詳細案例
 

@@ -5,7 +5,7 @@ description: "把單元測試與整合測試擴展成服務可靠性驗證流程
 weight: 6
 ---
 
-可靠性驗證流程的核心責任是讓不同層級的測試回答不同風險。Unit test 驗證規則，integration test 驗證協定協作，race test 檢查資料競爭，[fuzz test](../../../backend/knowledge-cards/fuzz-test/) 尋找輸入邊界，[load test](../../../backend/knowledge-cards/load-test/) 驗證容量，[chaos test](../../../backend/knowledge-cards/chaos-test/) 驗證失敗復原。
+可靠性驗證流程的核心責任是讓不同層級的測試回答不同風險。Unit test 驗證規則，integration test 驗證協定協作，race test 檢查資料競爭，[fuzz test](/backend/knowledge-cards/fuzz-test/) 尋找輸入邊界，[load test](/backend/knowledge-cards/load-test/) 驗證容量，[chaos test](/backend/knowledge-cards/chaos-test/) 驗證失敗復原。
 
 ## 本章目標
 
@@ -19,17 +19,17 @@ weight: 6
 
 ## 前置章節
 
-- [Go 入門：testing 基礎](../../../go/05-error-testing/testing-basics/)
-- [Go 進階：WebSocket integration test](../../05-testing-reliability/websocket-integration/)
-- [Go 進階：race condition 檢查](../../05-testing-reliability/race-check/)
-- [Go 進階：table-driven test 的設計邊界](../../05-testing-reliability/table-tests/)
+- [Go 入門：testing 基礎](/go/05-error-testing/testing-basics/)
+- [Go 進階：WebSocket integration test](/go-advanced/05-testing-reliability/websocket-integration/)
+- [Go 進階：race condition 檢查](/go-advanced/05-testing-reliability/race-check/)
+- [Go 進階：table-driven test 的設計邊界](/go-advanced/05-testing-reliability/table-tests/)
 
 ## 後續撰寫方向
 
 1. CI 中哪些測試應每次執行，哪些可以排程或合併前執行。
 2. Fuzzing 適合驗證 parser、normalizer 與 protocol decoder 的哪些邊界。
 3. Load test 如何設定 client 數、message rate、payload size 與觀測指標。
-4. Chaos testing 如何模擬 [broker](../../../backend/knowledge-cards/broker/) 斷線、資料庫延遲、server shutdown 與網路抖動。
+4. Chaos testing 如何模擬 [broker](/backend/knowledge-cards/broker/) 斷線、資料庫延遲、server shutdown 與網路抖動。
 5. 測試結果如何回饋到 capacity planning 與 feature gate。
 
 ## 【觀察】不同測試層級回答不同問題
@@ -56,10 +56,10 @@ weight: 6
 
 load test 不應只是跑出一個數字，還要能回答：
 
-- 哪個 [queue](../../../backend/knowledge-cards/queue/) 開始變長
-- 哪個 DB [connection pool](../../../backend/knowledge-cards/connection-pool/) 開始飽和
+- 哪個 [queue](/backend/knowledge-cards/queue/) 開始變長
+- 哪個 DB [connection pool](/backend/knowledge-cards/connection-pool/) 開始飽和
 - 哪種 message rate 會讓 latency 明顯上升
-- 哪個 memory curve 表示需要調整 [buffer](../../../backend/knowledge-cards/buffer/) 或 GC 參數
+- 哪個 memory curve 表示需要調整 [buffer](/backend/knowledge-cards/buffer/) 或 GC 參數
 
 如果沒有這些觀察點，壓測結果就很難轉成實際修正。
 
@@ -68,11 +68,11 @@ load test 不應只是跑出一個數字，還要能回答：
 chaos test 的重點不是故意把系統弄壞，而是模擬真實世界常見的失敗：
 
 - broker 暫時不可用
-- [database](../../../backend/knowledge-cards/database/) 延遲上升
+- [database](/backend/knowledge-cards/database/) 延遲上升
 - shutdown 中斷流量
-- 網路抖動或 [timeout](../../../backend/knowledge-cards/timeout/)
+- 網路抖動或 [timeout](/backend/knowledge-cards/timeout/)
 
-這些情境應該回到 [graceful shutdown](../../../backend/knowledge-cards/graceful-shutdown/)、retry、[idempotency](../../../backend/knowledge-cards/idempotency/) 與 [backpressure](../../../backend/knowledge-cards/backpressure/) 設計。
+這些情境應該回到 [graceful shutdown](/backend/knowledge-cards/graceful-shutdown/)、retry、[idempotency](/backend/knowledge-cards/idempotency/) 與 [backpressure](/backend/knowledge-cards/backpressure/) 設計。
 
 ## 【延伸】測試結果應回饋到 feature gate
 
@@ -86,7 +86,7 @@ chaos test 的重點不是故意把系統弄壞，而是模擬真實世界常見
 
 這一章承接的是 Go 的並發測試與可靠性驗證；如果你要先回看語言教材，可以讀：
 
-- [Go：測試基礎](../../../go/05-error-testing/testing-basics/)
-- [Go 進階：WebSocket integration test](../../05-testing-reliability/websocket-integration/)
-- [Go 進階：race condition 檢查](../../05-testing-reliability/race-check/)
-- [Go 進階：table-driven test 的設計邊界](../../05-testing-reliability/table-tests/)
+- [Go：測試基礎](/go/05-error-testing/testing-basics/)
+- [Go 進階：WebSocket integration test](/go-advanced/05-testing-reliability/websocket-integration/)
+- [Go 進階：race condition 檢查](/go-advanced/05-testing-reliability/race-check/)
+- [Go 進階：table-driven test 的設計邊界](/go-advanced/05-testing-reliability/table-tests/)

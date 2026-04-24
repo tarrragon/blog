@@ -7,7 +7,7 @@ weight: 3
 
 ## 大綱
 
-- [TTL](../../knowledge-cards/ttl/) strategy
-- [eviction](../../knowledge-cards/eviction/) policy
+- [TTL](/backend/knowledge-cards/ttl/) strategy
+- [eviction](/backend/knowledge-cards/eviction/) policy
 - hot data / cold data
 - capacity planning

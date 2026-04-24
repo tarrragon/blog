@@ -647,5 +647,5 @@ archs = ["AMD64"]
 
 ---
 
-*上一章：[建構系統比較](../build-systems/)*
-*下一章：[最佳實踐](../best-practices/)*
+*上一章：[建構系統比較](/python-advanced/07-packaging/build-systems/)*
+*下一章：[最佳實踐](/python-advanced/07-packaging/best-practices/)*

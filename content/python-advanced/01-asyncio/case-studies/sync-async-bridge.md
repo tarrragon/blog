@@ -10,8 +10,8 @@ weight: 3
 
 ## 先備知識
 
-- [1.1 非同步 Subprocess](../async-subprocess/)
-- [1.4 實戰：與同步程式碼整合](../../real-world/)
+- [1.1 非同步 Subprocess](/python-advanced/01-asyncio/case-studies/async-subprocess/)
+- [1.4 實戰：與同步程式碼整合](/python-advanced/01-asyncio/real-world/)
 
 ## 問題背景
 
@@ -1405,5 +1405,5 @@ async def demo():
 
 ---
 
-*上一章：[並行 I/O 操作](../parallel-io/)*
-*返回：[模組一：非同步程式設計](../../)*
+*上一章：[並行 I/O 操作](/python-advanced/01-asyncio/case-studies/parallel-io/)*
+*返回：[模組一：非同步程式設計](/python-advanced/01-asyncio/)*

@@ -5,7 +5,7 @@ description: "讓時間相關邏輯可重現"
 weight: 1
 ---
 
-時間控制測試的核心原則是把「現在」變成可指定輸入。只要程式邏輯依賴目前時間、[deadline](../../../backend/knowledge-cards/deadline/)、[timeout](../../../backend/knowledge-cards/timeout/)、ticker 或過期判斷，測試就不應依賴真實等待。
+時間控制測試的核心原則是把「現在」變成可指定輸入。只要程式邏輯依賴目前時間、[deadline](/backend/knowledge-cards/deadline/)、[timeout](/backend/knowledge-cards/timeout/)、ticker 或過期判斷，測試就不應依賴真實等待。
 
 ## 本章目標
 
@@ -235,18 +235,18 @@ func TestStatusWithSleep(t *testing.T) {
 
 本章先處理時間作為輸入的可測性；更完整的 fake clock 與平台 timeout 合約，會在下列章節再往外延伸：
 
-- [Go 進階：heartbeat、deadline 與連線清理](../../02-networking-websocket/heartbeat-deadline/)
+- [Go 進階：heartbeat、deadline 與連線清理](/go-advanced/02-networking-websocket/heartbeat-deadline/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 defer、select loop 與 timeout 邊界；如果你要先回看語言教材，可以讀：
 
-- [Go：defer 與資源清理](../../../go/03-stdlib/defer-cleanup/)
-- [Go：select：同時等待多種事件](../../../go/04-concurrency/select/)
-- [Go：如何新增背景工作流程](../../../go/06-practical/new-background-worker/)
-- [Go：graceful shutdown 與 signal handling](../../../backend/knowledge-cards/graceful-shutdown/)
-- [Go 進階：graceful shutdown 與 signal handling](../../../backend/knowledge-cards/graceful-shutdown/)
-- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../../07-distributed-operations/deployment-contracts/)
+- [Go：defer 與資源清理](/go/03-stdlib/defer-cleanup/)
+- [Go：select：同時等待多種事件](/go/04-concurrency/select/)
+- [Go：如何新增背景工作流程](/go/06-practical/new-background-worker/)
+- [Go：graceful shutdown 與 signal handling](/backend/knowledge-cards/graceful-shutdown/)
+- [Go 進階：graceful shutdown 與 signal handling](/backend/knowledge-cards/graceful-shutdown/)
+- [Go 進階：Kubernetes、systemd 與 load balancer 合約](/go-advanced/07-distributed-operations/deployment-contracts/)
 
 ## 小結
 

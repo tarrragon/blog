@@ -7,7 +7,7 @@ weight: 3
 
 ## 大綱
 
-- [trace](../../knowledge-cards/trace/) / [span](../../knowledge-cards/span/) 模型
+- [trace](/backend/knowledge-cards/trace/) / [span](/backend/knowledge-cards/span/) 模型
 - context propagation
-- [sampling](../../knowledge-cards/sampling/)
+- [sampling](/backend/knowledge-cards/sampling/)
 - service graph

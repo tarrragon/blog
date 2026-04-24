@@ -303,8 +303,8 @@ def check_hook(hook_path: Path) -> tuple[bool, str]:
 
 ## 延伸閱讀
 
-- [命名的藝術：讓程式碼說故事](../naming-art/) - 如何用命名降低認知負擔
-- [開放封閉原則與認知負擔](../open-closed-principle/) - SOLID 原則的認知負擔詮釋
+- [命名的藝術：讓程式碼說故事](/python/00-philosophy/naming-art/) - 如何用命名降低認知負擔
+- [開放封閉原則與認知負擔](/python/00-philosophy/open-closed-principle/) - SOLID 原則的認知負擔詮釋
 
 ---
 

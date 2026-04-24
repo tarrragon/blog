@@ -543,4 +543,4 @@ try: ... except:                match result {
 
 ---
 
-*下一章：[PyO3 基礎](../pyo3-basics/)*
+*下一章：[PyO3 基礎](/python-advanced/06-rust-extensions/pyo3-basics/)*

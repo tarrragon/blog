@@ -29,8 +29,8 @@ weight: 71711
 ## 可落地的 workflow 檢查點
 
 - 發布前：高風險操作要求強認證與裝置信任。
-- 日常：監控 [authentication](../../../../../knowledge-cards/authentication/) 異常事件與 [on-call](../../../../../knowledge-cards/on-call/) 升級規則。
-- 事故中：快速凍結可疑身分、切斷高權限工具存取、建立 [incident timeline](../../../../../knowledge-cards/incident-timeline/)。
+- 日常：監控 [authentication](/backend/knowledge-cards/authentication/) 異常事件與 [on-call](/backend/knowledge-cards/on-call/) 升級規則。
+- 事故中：快速凍結可疑身分、切斷高權限工具存取、建立 [incident timeline](/backend/knowledge-cards/incident-timeline/)。
 
 ## 可引用章節
 

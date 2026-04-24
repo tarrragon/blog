@@ -18,10 +18,10 @@ weight: 5
 
 ## 【判讀流程】觀測弱點檢查順序
 
-1. 看資料面：檢查 [log schema](../../knowledge-cards/log-schema/)、[metrics](../../knowledge-cards/metrics/) 與 [trace](../../knowledge-cards/trace/) 是否能對齊同一事件。
-2. 看關聯面：檢查 [request id](../../knowledge-cards/request-id/)、[correlation id](../../knowledge-cards/correlation-id/) 與 [trace context](../../knowledge-cards/trace-context/) 是否穩定傳遞。
-3. 看告警面：檢查 [alert](../../knowledge-cards/alert/) 是否可直連 [runbook](../../knowledge-cards/runbook/) 與責任角色。
-4. 看暴露面：檢查觀測資料是否含敏感欄位，並對齊 [data masking](../../knowledge-cards/data-masking/) 與 [audit log](../../knowledge-cards/audit-log/)。
+1. 看資料面：檢查 [log schema](/backend/knowledge-cards/log-schema/)、[metrics](/backend/knowledge-cards/metrics/) 與 [trace](/backend/knowledge-cards/trace/) 是否能對齊同一事件。
+2. 看關聯面：檢查 [request id](/backend/knowledge-cards/request-id/)、[correlation id](/backend/knowledge-cards/correlation-id/) 與 [trace context](/backend/knowledge-cards/trace-context/) 是否穩定傳遞。
+3. 看告警面：檢查 [alert](/backend/knowledge-cards/alert/) 是否可直連 [runbook](/backend/knowledge-cards/runbook/) 與責任角色。
+4. 看暴露面：檢查觀測資料是否含敏感欄位，並對齊 [data masking](/backend/knowledge-cards/data-masking/) 與 [audit log](/backend/knowledge-cards/audit-log/)。
 
 ## 【風險代價】觀測弱點會拉長事故時間
 

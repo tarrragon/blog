@@ -27,8 +27,8 @@ Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到
 
 ## 可落地的 workflow 檢查點
 
-- 發布前：為第三方事件設計獨立 [runbook](../../../../../knowledge-cards/runbook/) 與責任分工。
-- 日常：維護 [playbook](../../../../../knowledge-cards/playbook/) 的憑證輪替優先級。
+- 發布前：為第三方事件設計獨立 [runbook](/backend/knowledge-cards/runbook/) 與責任分工。
+- 日常：維護 [playbook](/backend/knowledge-cards/playbook/) 的憑證輪替優先級。
 - 事故中：先凍結高風險憑證，再分批恢復必要權限。
 
 ## 可引用章節

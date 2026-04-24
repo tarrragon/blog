@@ -535,4 +535,4 @@ ls dist/
 
 ---
 
-*下一章：[建構系統比較](../build-systems/)*
+*下一章：[建構系統比較](/python-advanced/07-packaging/build-systems/)*

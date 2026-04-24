@@ -13,7 +13,7 @@ channel 是 Go 用來在 goroutine 之間傳遞資料的同步工具。它的核
 
 1. 建立與使用 channel
 2. 看懂 channel 的方向與資料型別
-3. 理解 buffered channel 的 [backpressure](../../../backend/knowledge-cards/backpressure/) 意義
+3. 理解 buffered channel 的 [backpressure](/backend/knowledge-cards/backpressure/) 意義
 4. 分辨 blocking send 與 non-blocking send
 5. 用 channel 畫出資料流
 
@@ -51,7 +51,7 @@ value := <-ch
 fmt.Println(value)
 ```
 
-buffered channel 的核心規則是：[buffer](../../../backend/knowledge-cards/buffer/) 未滿時送出不會阻塞，buffer 滿時送出會阻塞。
+buffered channel 的核心規則是：[buffer](/backend/knowledge-cards/buffer/) 未滿時送出不會阻塞，buffer 滿時送出會阻塞。
 
 ```go
 jobs := make(chan Job, 10)
@@ -75,11 +75,11 @@ func consumer(in <-chan Job) {
 }
 ```
 
-`chan<- Job` 表示只能送出，`<-chan Job` 表示只能接收。這是 API 層的保護：[producer](../../../backend/knowledge-cards/producer/) 不能讀取 channel，[consumer](../../../backend/knowledge-cards/consumer/) 不能寫入 channel。
+`chan<- Job` 表示只能送出，`<-chan Job` 表示只能接收。這是 API 層的保護：[producer](/backend/knowledge-cards/producer/) 不能讀取 channel，[consumer](/backend/knowledge-cards/consumer/) 不能寫入 channel。
 
 ## 【執行】non-blocking send 的取捨
 
-non-blocking send 的核心規則是：送不出去時立即走 [fallback](../../../backend/knowledge-cards/fallback/)，不等待接收端。它適合「寧可丟棄或記錄，也不要卡住呼叫端」的情境。
+non-blocking send 的核心規則是：送不出去時立即走 [fallback](/backend/knowledge-cards/fallback/)，不等待接收端。它適合「寧可丟棄或記錄，也不要卡住呼叫端」的情境。
 
 ```go
 select {
@@ -90,7 +90,7 @@ default:
 }
 ```
 
-這個策略的代價是資料可能被丟棄，所以必須記錄 [log](../../../backend/knowledge-cards/log/) 或回傳明確錯誤。若資料不能丟，就不要用 default；讓送出端阻塞或回傳「系統忙碌」會更誠實。
+這個策略的代價是資料可能被丟棄，所以必須記錄 [log](/backend/knowledge-cards/log/) 或回傳明確錯誤。若資料不能丟，就不要用 default；讓送出端阻塞或回傳「系統忙碌」會更誠實。
 
 ## 關閉 channel
 

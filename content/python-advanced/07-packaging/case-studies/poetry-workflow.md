@@ -10,7 +10,7 @@ weight: 2
 
 ## 先備知識
 
-- [建構系統比較](../../build-systems/)
+- [建構系統比較](/python-advanced/07-packaging/build-systems/)
 - Python 虛擬環境基礎
 - 套件相依性概念
 
@@ -694,4 +694,4 @@ poetry env use /usr/bin/python3.11
 
 ---
 
-*返回：[案例研究](../)*
+*返回：[案例研究](/python-advanced/07-packaging/case-studies/)*

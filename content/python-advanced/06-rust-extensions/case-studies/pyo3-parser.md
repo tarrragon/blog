@@ -10,9 +10,9 @@ weight: 1
 
 ## 先備知識
 
-- [模組五：用 Rust 擴展 Python](../../)
+- [模組五：用 Rust 擴展 Python](/python-advanced/06-rust-extensions/)
 - Rust 基礎語法
-- [5.1 Cython 加速](../../../05-c-extensions/case-studies/cython-markdown/)
+- [5.1 Cython 加速](/python-advanced/05-c-extensions/case-studies/cython-markdown/)
 
 ## 問題背景
 
@@ -561,7 +561,7 @@ fn is_external_link(target: &str) -> bool {
 ///     List of MarkdownLink objects
 ///
 /// Example:
-///     >>> links = parse_markdown_links("Check [docs](./README.md)")
+///     >>> links = parse_markdown_links("Check [docs](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/README.md)")
 ///     >>> links[0].text
 ///     'docs'
 ///     >>> links[0].target
@@ -845,7 +845,7 @@ if __name__ == "__main__":
     # Example usage
     sample = (
         "# Sample Document\n\n"
-        "Check the [documentation](./docs/README.md) for more info.\n\n"
+        "Check the [documentation](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/docs/README.md) for more info.\n\n"
         "External link: [Google](https://google.com)\n\n"
         "Reference style: [API docs][api]\n\n"
         "[api]: ./api/reference.md\n\n"
@@ -892,7 +892,7 @@ def generate_markdown(num_links: int) -> str:
     for i in range(num_links):
         if i % 5 == 0:
             # Inline link
-            lines.append(f"Check [link{i}](./path/to/file{i}.md) for info.\n")
+            lines.append(f"Check [link{i}](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/path/to/file{i}.md) for info.\n")
         elif i % 5 == 1:
             # External link (should be filtered)
             lines.append(f"Visit [site{i}](https://example{i}.com)\n")
@@ -1341,4 +1341,4 @@ fn parse_line_links(line: &str, line_number: usize) -> Vec<PyMarkdownLink> {
 
 ---
 
-*下一章：[Rust 正則表達式](../rust-regex/)*
+*下一章：[Rust 正則表達式](/python-advanced/06-rust-extensions/case-studies/rust-regex/)*

@@ -67,7 +67,7 @@ Race detector 的核心限制是只能檢查實際執行到的程式路徑。沒
 go test -race ./...
 ```
 
-這個指令會用 race detector 跑所有 package 的測試。它會比一般測試慢，但對含有 goroutine、共享 map、[WebSocket](../../../backend/knowledge-cards/websocket/) hub、background worker 的服務非常重要。
+這個指令會用 race detector 跑所有 package 的測試。它會比一般測試慢，但對含有 goroutine、共享 map、[WebSocket](/backend/knowledge-cards/websocket/) hub、background worker 的服務非常重要。
 
 若專案很大，可以先針對相關 package：
 
@@ -164,11 +164,11 @@ Previous write at 0x...
 
 修正 data race 的核心選擇是建立正確同步邊界。常見方法有 mutex、channel owner、atomic。
 
-| 方法          | 適用情境                         | 注意事項                                                                               |
-| ------------- | -------------------------------- | -------------------------------------------------------------------------------------- |
-| mutex         | 多方法讀寫同一份 map/slice/state | lock 要保護完整不變式                                                                  |
-| channel owner | 狀態修改可集中成事件 loop        | 要設計 reply、shutdown、[backpressure](../../../backend/knowledge-cards/backpressure/) |
-| atomic        | 單一數值 counter 或 flag         | 不適合複雜狀態                                                                         |
+| 方法          | 適用情境                         | 注意事項                                                                       |
+| ------------- | -------------------------------- | ------------------------------------------------------------------------------ |
+| mutex         | 多方法讀寫同一份 map/slice/state | lock 要保護完整不變式                                                          |
+| channel owner | 狀態修改可集中成事件 loop        | 要設計 reply、shutdown、[backpressure](/backend/knowledge-cards/backpressure/) |
+| atomic        | 單一數值 counter 或 flag         | 不適合複雜狀態                                                                 |
 
 Mutex 範例：
 
@@ -207,12 +207,12 @@ default:
 }
 ```
 
-這段程式可能沒有 data race，但「[queue](../../../backend/knowledge-cards/queue/) full 時丟訊息」是否正確是服務語意問題。Race detector 不會告訴你該丟、該斷線、還是該寫可靠 queue。
+這段程式可能沒有 data race，但「[queue](/backend/knowledge-cards/queue/) full 時丟訊息」是否正確是服務語意問題。Race detector 不會告訴你該丟、該斷線、還是該寫可靠 queue。
 
 因此並發測試要分成兩層：
 
 - 用 `go test -race` 找未同步記憶體存取。
-- 用行為測試檢查 channel close、queue full、context cancel、cleanup、[timeout](../../../backend/knowledge-cards/timeout/)。
+- 用行為測試檢查 channel close、queue full、context cancel、cleanup、[timeout](/backend/knowledge-cards/timeout/)。
 
 ## 【測試】把 race check 納入固定流程
 
@@ -231,18 +231,18 @@ go test -race ./...
 
 本章先處理共享 state、channel ownership 與 goroutine lifecycle 的 race 風險；lock-free 與完整 memory model，會在下列章節再往外延伸：
 
-- [Go 進階：共享狀態與複製邊界](../../01-concurrency-patterns/shared-state/)
-- [Go 進階：channel ownership 與關閉責任](../../01-concurrency-patterns/channel-ownership/)
-- [Go 進階：select loop 的生命週期設計](../../01-concurrency-patterns/select-loop/)
+- [Go 進階：共享狀態與複製邊界](/go-advanced/01-concurrency-patterns/shared-state/)
+- [Go 進階：channel ownership 與關閉責任](/go-advanced/01-concurrency-patterns/channel-ownership/)
+- [Go 進階：select loop 的生命週期設計](/go-advanced/01-concurrency-patterns/select-loop/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是共享狀態、channel ownership 與 lifecycle；如果你要先回看語言教材，可以讀：
 
-- [Go：goroutine：輕量並發工作](../../../go/04-concurrency/goroutine/)
-- [Go：channel：資料傳遞與 backpressure ](../../../go/04-concurrency/channel/)
-- [Go：狀態管理的安全邊界](../../../go/07-refactoring/state-boundary/)
-- [Go：如何新增背景工作流程](../../../go/06-practical/new-background-worker/)
+- [Go：goroutine：輕量並發工作](/go/04-concurrency/goroutine/)
+- [Go：channel：資料傳遞與 backpressure ](/go/04-concurrency/channel/)
+- [Go：狀態管理的安全邊界](/go/07-refactoring/state-boundary/)
+- [Go：如何新增背景工作流程](/go/06-practical/new-background-worker/)
 
 ## 小結
 

@@ -132,4 +132,4 @@ func main() {
 
 ## 下一步
 
-進入 [9.1 stdlib flag 做 subcommand CLI](../stdlib-flag-subcommands/) 開始看具體實作。
+進入 [9.1 stdlib flag 做 subcommand CLI](/go/09-tooling-and-analysis/stdlib-flag-subcommands/) 開始看具體實作。

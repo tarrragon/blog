@@ -830,5 +830,5 @@ updates:
 
 ---
 
-*上一章：[發布到 PyPI](../distribution/)*
-*返回：[模組六首頁](../)*
+*上一章：[發布到 PyPI](/python-advanced/07-packaging/distribution/)*
+*返回：[模組六首頁](/python-advanced/07-packaging/)*

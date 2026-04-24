@@ -18,10 +18,10 @@ weight: 713
 
 ## 【判讀流程】資料外洩路徑圖
 
-1. 分級：先定義 [Data Classification](../../../knowledge-cards/data-classification/) 與保留策略。
-2. 追蹤：把每類資料的流向畫到 response、[log](../../../knowledge-cards/log/)、search、export、backup。
-3. 驗證：逐段檢查 [Data Masking](../../../knowledge-cards/data-masking/) 與授權條件是否一致。
-4. 稽核：把高風險存取與匯出操作接到 [Audit Log](../../../knowledge-cards/audit-log/)。
+1. 分級：先定義 [Data Classification](/backend/knowledge-cards/data-classification/) 與保留策略。
+2. 追蹤：把每類資料的流向畫到 response、[log](/backend/knowledge-cards/log/)、search、export、backup。
+3. 驗證：逐段檢查 [Data Masking](/backend/knowledge-cards/data-masking/) 與授權條件是否一致。
+4. 稽核：把高風險存取與匯出操作接到 [Audit Log](/backend/knowledge-cards/audit-log/)。
 
 ## 【風險代價】外洩事件的處理週期長
 
@@ -51,5 +51,5 @@ weight: 713
 
 ## 【交接點】何時路由到實作章節
 
-1. 已完成資料路徑圖與分級後，交接到 [7.4 資料保護與遮罩治理](../../data-protection-and-masking-governance/)。
-2. 已定義外洩事件收斂節奏後，交接到 [8.8 事故報告轉 workflow](../../../08-incident-response/incident-report-to-workflow/)。
+1. 已完成資料路徑圖與分級後，交接到 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)。
+2. 已定義外洩事件收斂節奏後，交接到 [8.8 事故報告轉 workflow](/backend/08-incident-response/incident-report-to-workflow/)。

@@ -9,7 +9,7 @@ Abuse case 的核心概念是「功能本來合法，但可能被攻擊者重新
 
 ## 概念位置
 
-Abuse case 會落在 [authentication](../authentication/)、[authorization](../authorization/)、[BOLA / IDOR](../bola-idor/)、[Function-Level Authorization](../function-level-authorization/)、[Least Privilege](../least-privilege/) 與 [Tenant Boundary](../tenant-boundary/) 的交界。常見場景包含 export、invite、reset、approval、trial、switch、share 與 automation。
+Abuse case 會落在 [authentication](/backend/knowledge-cards/authentication/)、[authorization](/backend/knowledge-cards/authorization/)、[BOLA / IDOR](/backend/knowledge-cards/bola-idor/)、[Function-Level Authorization](/backend/knowledge-cards/function-level-authorization/)、[Least Privilege](/backend/knowledge-cards/least-privilege/) 與 [Tenant Boundary](/backend/knowledge-cards/tenant-boundary/) 的交界。常見場景包含 export、invite、reset、approval、trial、switch、share 與 automation。
 
 ## 可觀察訊號與例子
 

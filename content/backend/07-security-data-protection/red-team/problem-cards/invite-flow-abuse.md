@@ -25,14 +25,14 @@ weight: 7211
 
 ## 案例觸發參考
 
-- [Uber 2022](../../cases/identity-access/uber-2022-mfa-fatigue/)
-- [MGM 2023](../../cases/identity-access/mgm-2023-identity-lateral-impact/)
+- [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
+- [MGM 2023](/backend/07-security-data-protection/red-team/cases/identity-access/mgm-2023-identity-lateral-impact/)
 
 ## 可連動章節
 
-- [7.2 身分與授權邊界](../../../identity-access-boundary/)
-- [7.7 稽核追蹤與責任邊界](../../../audit-trail-and-accountability-boundary/)
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- [7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P1 可重放邀請連結](../fp-replayable-invitation-link/)
+- [7.R11.P1 可重放邀請連結](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-invitation-link/)

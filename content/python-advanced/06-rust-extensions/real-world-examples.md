@@ -738,5 +738,5 @@ for e in errors:
 
 ---
 
-*上一章：[Maturin 開發流程](../maturin-workflow/)*
-*下一模組：[模組六：打包與發布](../../07-packaging/)*
+*上一章：[Maturin 開發流程](/python-advanced/06-rust-extensions/maturin-workflow/)*
+*下一模組：[模組六：打包與發布](/python-advanced/07-packaging/)*

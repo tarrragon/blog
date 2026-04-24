@@ -15,7 +15,7 @@ tags: ["AI協作心得","方法論"]
 
 **與其他方法論的關係**:
 
-- 引用[層級隔離派工方法論](../layered-ticket-methodology/)  的五層架構定義
+- 引用[層級隔離派工方法論](/record/layered-ticket-methodology/)  的五層架構定義
 - 配合 TDD 四階段流程使用
 - 整合到 Hook 系統自動化檢測
 
@@ -102,7 +102,7 @@ Code Smell（程式異味）:
 
 ### 1.3 Code Smell 分類體系
 
-基於[層級隔離派工方法論](../layered-ticket-methodology/)  的五層架構，本檢查清單將 Code Smell 分為三大類：
+基於[層級隔離派工方法論](/record/layered-ticket-methodology/)  的五層架構，本檢查清單將 Code Smell 分為三大類：
 
 #### **分類 A：跨層級 Code Smells**（違反層級隔離原則）
 
@@ -133,7 +133,7 @@ Code Smell（程式異味）:
 #### 分類樹狀結構
 
 ```text
-Code Smell 分類體系（基於[層級隔離派工方法論](../layered-ticket-methodology/) 第 2.2 節五層架構定義）
+Code Smell 分類體系（基於[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.2 節五層架構定義）
 
 A. 跨層級 Code Smells（違反層級隔離）
    ├─ A1. Shotgun Surgery（散彈槍手術）
@@ -155,11 +155,11 @@ C. Ticket 粒度相關 Code Smells
 
 ---
 
-### 1.4 與[層級隔離派工方法論](../layered-ticket-methodology/) 的關係
+### 1.4 與[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關係
 
 **互補關係**:
 
-- **[層級隔離派工方法論](../layered-ticket-methodology/)**: 定義「應該怎麼做」（正面原則）
+- **[層級隔離派工方法論](/record/layered-ticket-methodology/)**: 定義「應該怎麼做」（正面原則）
   - 五層架構定義（Layer 1-5）
   - 單層修改原則
   - Ticket 粒度標準
@@ -170,7 +170,7 @@ C. Ticket 粒度相關 Code Smells
   - 重構策略
 
 **引用關係**:
-本檢查清單引用[層級隔離派工方法論](../layered-ticket-methodology/)  的以下章節：
+本檢查清單引用[層級隔離派工方法論](/record/layered-ticket-methodology/)  的以下章節：
 
 - **2.2 節**: 五層架構完整定義
 - **2.3 節**: 依賴方向規則
@@ -180,7 +180,7 @@ C. Ticket 粒度相關 Code Smells
 - **6.5 節**: 違規模式識別
 
 **無重複定義**:
-本文件不重複定義五層架構，所有層級定義都引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 2.2 節。
+本文件不重複定義五層架構，所有層級定義都引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.2 節。
 
 ---
 
@@ -191,7 +191,7 @@ C. Ticket 粒度相關 Code Smells
 #### 2.1.1 A1. Shotgun Surgery（散彈槍手術）
 
 **定義**:
-單一邏輯變更需要同時修改多個架構層級的程式碼，違反「單層修改原則」（[層級隔離派工方法論](../layered-ticket-methodology/) 第 3.1 節）。
+單一邏輯變更需要同時修改多個架構層級的程式碼，違反「單層修改原則」（[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 3.1 節）。
 
 **特徵識別**:
 
@@ -200,11 +200,11 @@ C. Ticket 粒度相關 Code Smells
 3. 變更影響範圍不可控
 4. 檔案修改數量 > 5 個且跨 2 個以上層級
 
-**與[層級隔離派工方法論](../layered-ticket-methodology/) 的關聯**:
+**與[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關聯**:
 
-- 違反[單層修改原則](../layered-ticket-methodology/)（3.1 節）
-- 違反[從外而內實作順序](../clean-architecture-implementation-methodology/)（4.1 節）
-- 未遵循[Ticket 粒度標準](../ticket_v2/)（5.2 節）
+- 違反[單層修改原則](/record/layered-ticket-methodology/)（3.1 節）
+- 違反[從外而內實作順序](/record/clean-architecture-implementation-methodology/)（4.1 節）
+- 未遵循[Ticket 粒度標準](/record/ticket_v2/)（5.2 節）
 
 **範例說明**:
 
@@ -337,7 +337,7 @@ class BookDetailWidget {
 4. UI 層直接 import Domain Entity
 5. 外層存取內層內部欄位次數 > 3 次
 
-**與[層級隔離派工方法論](../layered-ticket-methodology/) 的關聯**:
+**與[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關聯**:
 
 - 違反「依賴倒置原則」（2.3 節）
 - 違反 Layer 2 的「資料轉換職責」（2.2 節 Layer 2 定義）
@@ -440,7 +440,7 @@ class BookDetailWidget extends StatelessWidget {
 3. 存在循環依賴
 4. Domain Entity 包含 UI 或 Infrastructure 的 import
 
-**與[層級隔離派工方法論](../layered-ticket-methodology/) 的關聯**:
+**與[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關聯**:
 
 - 違反「依賴方向規則」（2.3 節）
 - 違反「Layer 5 不依賴任何層級」原則
@@ -536,7 +536,7 @@ class BookDetailController {
 3. 抽象介面不夠抽象，包含實作關鍵字
 4. 介面方法名稱洩漏實作細節
 
-**與[層級隔離派工方法論](../layered-ticket-methodology/) 的關聯**:
+**與[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關聯**:
 
 - 違反 Layer 4「介面契約」的職責定義（2.2 節）
 - 介面應該隱藏實作細節
@@ -617,7 +617,7 @@ class FirestoreBookRepository implements IBookRepository {
 3. 變更原因不單一（有 2+ 個變更原因）
 4. 類別方法可以明確分組（2+ 個分組）
 
-**與[層級隔離派工方法論](../layered-ticket-methodology/) 的關聯**:
+**與[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關聯**:
 
 - 違反「單層修改原則」的 SRP 理論依據（3.2 節）
 - 違反「變更原因單一」要求（3.1 節）
@@ -718,7 +718,7 @@ class BookSearchController {
 **定義**:
 類別過大，包含過多方法和屬性，職責不清。
 
-**特徵識別（量化標準，引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.2 節）**:
+**特徵識別（量化標準，引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.2 節）**:
 
 - 總行數: > 300 行
 - public 方法: > 15 個
@@ -1047,13 +1047,13 @@ class BookService {
 **定義**:
 單一 Ticket 修改過多檔案和層級，範圍失控。
 
-**特徵識別（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.2 節量化標準）**:
+**特徵識別（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.2 節量化標準）**:
 
 - 修改檔案數 > 10 個
 - 跨 3 個以上架構層級
 - 預估工時 > 16 小時（2 天）
 
-**與[層級隔離派工方法論](../layered-ticket-methodology/) 的關聯**:
+**與[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關聯**:
 
 - 違反「Ticket 粒度標準」（5.2 節）
 - 違反「單層修改原則」（3.1 節）
@@ -1094,7 +1094,7 @@ Ticket: 新增「書籍評分」完整功能
 - 預估工時: 24 小時（> 16 小時標準）
 - 判斷: God Ticket ❌
 
-建議拆分（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.4 節拆分指引）:
+建議拆分（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.4 節拆分指引）:
 - Ticket 1 [Layer 5]: Rating Value Object 和 Entity 設計
 - Ticket 2 [Layer 5]: Rating Repository 實作
 - Ticket 3 [Layer 3]: RateBookUseCase 實作
@@ -1272,7 +1272,7 @@ Phase 4 重構評估
 2. **層級跨度指標**: Ticket 涉及的層級數量
 3. **依賴鏈長度指標**: 從 UI 到 Domain 的依賴鏈長度
 
-**判斷標準**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.2 節）:
+**判斷標準**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.2 節）:
 
 ```text
 良好 Ticket（單層修改）:
@@ -1291,11 +1291,11 @@ Shotgun Surgery（散彈槍手術）:
 - 依賴鏈: 需要同步修改多層
 ```
 
-**檢測流程**（基於[層級隔離派工方法論](../layered-ticket-methodology/) 第 6.2 節檔案路徑分析法）:
+**檢測流程**（基於[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 6.2 節檔案路徑分析法）:
 
 ```text
 步驟 1: 列出 Ticket 涉及的所有檔案
-步驟 2: 使用[層級隔離派工方法論](../layered-ticket-methodology/) 第 2.4 節的決策樹判斷每個檔案屬於哪一層
+步驟 2: 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.4 節的決策樹判斷每個檔案屬於哪一層
 步驟 3: 統計跨幾個層級
   ├─ 1 層級 → 良好設計 ✅
   ├─ 2 層級 → 需要檢查是否可拆分 ⚠️
@@ -1358,7 +1358,7 @@ Feature Envy:
 2. **循環依賴檢查**: 是否存在雙向依賴
 3. **Domain 純淨度檢查**: Domain 是否包含 UI 或 Infrastructure 依賴
 
-**判斷標準**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 2.3 節依賴方向規則）:
+**判斷標準**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.3 節依賴方向規則）:
 
 ```text
 正確依賴方向（外層→內層）:
@@ -1588,7 +1588,7 @@ grep -r "^[[:space:]]*//.*{" lib/
 
 #### 3.4.1 C1. God Ticket 檢測
 
-**檢測指標**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.2 節）:
+**檢測指標**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.2 節）:
 
 1. **檔案修改數量**: 計算 git diff 涉及的檔案數
 2. **層級跨度**: 涉及幾個架構層級
@@ -1618,7 +1618,7 @@ God Ticket:
 ```text
 步驟 1: 列出 Ticket 需要修改的檔案清單
 步驟 2: 統計檔案數量
-步驟 3: 使用[層級隔離派工方法論](../layered-ticket-methodology/) 第 2.4 節決策樹判斷每個檔案的層級
+步驟 3: 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.4 節決策樹判斷每個檔案的層級
 步驟 4: 計算層級跨度
 步驟 5: 評估預估工時
 
@@ -1711,19 +1711,19 @@ Incomplete Ticket:
 
 ### 3.5 檢測方法總結表
 
-| Code Smell                       | 檢測時機     | 檢測指標        | 判斷標準       | 引用[層級隔離派工方法論](../layered-ticket-methodology/) 章節 |
-| -------------------------------- | ------------ | --------------- | -------------- | ------------------------------------------------------------- |
-| **A1. Shotgun Surgery**          | Ticket 設計  | 層級跨度        | > 2 層         | 3.1 單層修改原則                                              |
-| **A2. Feature Envy**             | Code Review  | 直接依賴 Domain | UI 存取 Entity | 2.2 Layer 2 職責                                              |
-| **A3. Inappropriate Intimacy**   | Code Review  | 依賴方向        | 內層依賴外層   | 2.3 依賴方向規則                                              |
-| **A4. Leaky Abstraction**        | 介面設計     | 介面純淨度      | 包含實作關鍵字 | 2.2 Layer 4 職責                                              |
-| **B1. Divergent Change**         | Phase 4 重構 | 方法分組數      | > 2 組         | 3.2 SRP 理論                                                  |
-| **B2. Large Class**              | Phase 4 重構 | 程式碼行數      | > 300 行       | 5.2 量化指標                                                  |
-| **B3. Long Method**              | Phase 3 實作 | 方法行數        | > 50 行        | 5.2 量化指標                                                  |
-| **B4. Dead Code**                | Phase 4 重構 | unused 警告     | dart analyze   | -                                                             |
-| **C1. God Ticket**               | Ticket 設計  | 檔案數          | > 10 個        | 5.2 Ticket 粒度                                               |
-| **C2. Incomplete Ticket**        | Code Review  | 測試檔案        | 缺少測試       | TDD 四階段                                                    |
-| **C3. Ambiguous Responsibility** | Ticket 設計  | 標題格式        | 無層級標示     | 5.3 Ticket 範例                                               |
+| Code Smell                       | 檢測時機     | 檢測指標        | 判斷標準       | 引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 章節 |
+| -------------------------------- | ------------ | --------------- | -------------- | ------------------------------------------------------------------ |
+| **A1. Shotgun Surgery**          | Ticket 設計  | 層級跨度        | > 2 層         | 3.1 單層修改原則                                                   |
+| **A2. Feature Envy**             | Code Review  | 直接依賴 Domain | UI 存取 Entity | 2.2 Layer 2 職責                                                   |
+| **A3. Inappropriate Intimacy**   | Code Review  | 依賴方向        | 內層依賴外層   | 2.3 依賴方向規則                                                   |
+| **A4. Leaky Abstraction**        | 介面設計     | 介面純淨度      | 包含實作關鍵字 | 2.2 Layer 4 職責                                                   |
+| **B1. Divergent Change**         | Phase 4 重構 | 方法分組數      | > 2 組         | 3.2 SRP 理論                                                       |
+| **B2. Large Class**              | Phase 4 重構 | 程式碼行數      | > 300 行       | 5.2 量化指標                                                       |
+| **B3. Long Method**              | Phase 3 實作 | 方法行數        | > 50 行        | 5.2 量化指標                                                       |
+| **B4. Dead Code**                | Phase 4 重構 | unused 警告     | dart analyze   | -                                                                  |
+| **C1. God Ticket**               | Ticket 設計  | 檔案數          | > 10 個        | 5.2 Ticket 粒度                                                    |
+| **C2. Incomplete Ticket**        | Code Review  | 測試檔案        | 缺少測試       | TDD 四階段                                                         |
+| **C3. Ambiguous Responsibility** | Ticket 設計  | 標題格式        | 無層級標示     | 5.3 Ticket 範例                                                    |
 
 ---
 
@@ -1988,15 +1988,15 @@ flutter test --coverage
 
 - [ ] Ticket 標題包含層級標示（如 [Layer 2]）
 - [ ] 職責描述清楚說明修改哪一層
-- [ ] 使用[層級隔離派工方法論](../layered-ticket-methodology/) 第 2.4 節決策樹確認層級定位正確
+- [ ] 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.4 節決策樹確認層級定位正確
 
-**單層修改檢查**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 3.1 節）
+**單層修改檢查**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 3.1 節）
 
 - [ ] 所有檔案都屬於同一層級
 - [ ] 變更原因單一且明確
 - [ ] 不需要同步修改其他層級
 
-**Ticket 粒度檢查**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.2 節）
+**Ticket 粒度檢查**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.2 節）
 
 - [ ] 檔案數: 1-5 個
 - [ ] 預估工時: 2-8 小時（1 個工作天內）
@@ -2022,7 +2022,7 @@ flutter test --coverage
 
 **檢查項目**:
 
-**測試範圍檢查**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 6.4 節）
+**測試範圍檢查**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 6.4 節）
 
 - [ ] 測試只驗證該層級的職責
 - [ ] 不需要啟動其他層級（使用 Mock）
@@ -2128,10 +2128,10 @@ flutter test --coverage
 
 **檢查項目**:
 
-**層級隔離快速檢查**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 6.2 節）
+**層級隔離快速檢查**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 6.2 節）
 
 - [ ] **檔案路徑檢查**: 所有修改檔案都屬於同一層級？
-  - 使用[層級隔離派工方法論](../layered-ticket-methodology/) 第 2.4 節決策樹快速判斷
+  - 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.4 節決策樹快速判斷
   - 如果跨多層 → 檢查是否有 Shotgun Surgery
 
 - [ ] **import 語句檢查**: 依賴方向正確？
@@ -2254,7 +2254,7 @@ flutter test --coverage
 
 ---
 
-### 6.3 違規模式識別（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 6.5 節）
+### 6.3 違規模式識別（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 6.5 節）
 
 **常見違規模式**:
 
@@ -2808,7 +2808,7 @@ Ticket: 新增「書籍評分」功能
 **重構步驟**:
 
 ```text
-步驟 1: 拆分 Ticket（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.4 節）
+步驟 1: 拆分 Ticket（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.4 節）
 
 Ticket 1 [Layer 5]: Rating Value Object 和 Book Entity 擴充
   - 新增 Rating Value Object
@@ -3061,7 +3061,7 @@ Layer 5 (Domain + Infrastructure):
 - 判斷: 高優先級（強制拆分）
 ```
 
-**拆分策略**（引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.4 節）:
+**拆分策略**（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.4 節）:
 
 ```text
 策略 1: 按層級拆分（從內而外）
@@ -3122,7 +3122,7 @@ Ticket 4: 搜尋和排序功能
   - 檔案數: 4 個，預估: 6 小時
 
 選擇策略 1（按層級拆分）的理由:
-✅ 符合從內而外實作順序（[層級隔離派工方法論](../layered-ticket-methodology/) 第 4.1 節）
+✅ 符合從內而外實作順序（[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 4.1 節）
 ✅ 每個 Ticket 單層修改
 ✅ 可並行開發（Layer 5 和 Layer 1 可同時開發）
 ✅ 依賴關係清晰
@@ -3643,42 +3643,42 @@ Ticket 粒度檢測（Phase 1）:
 
 ---
 
-#### Q5: 本檢查清單和[層級隔離派工方法論](../layered-ticket-methodology/) 的關係是什麼？
+#### Q5: 本檢查清單和[層級隔離派工方法論](/record/layered-ticket-methodology/) 的關係是什麼？
 
-**答**: **互補關係** - [層級隔離派工方法論](../layered-ticket-methodology/) 定義「應該怎麼做」，本檢查清單定義「不應該怎麼做」。
+**答**: **互補關係** - [層級隔離派工方法論](/record/layered-ticket-methodology/) 定義「應該怎麼做」，本檢查清單定義「不應該怎麼做」。
 
 **關係說明**:
 
-| 方法論       | [層級隔離派工方法論](../layered-ticket-methodology/) | 本 Code Smell 檢查清單                  |
-| ------------ | ---------------------------------------------------- | --------------------------------------- |
-| **角色**     | 正面原則（應該怎麼做）                               | 負面模式（不應該怎麼做）                |
-| **內容**     | 五層架構定義、單層修改原則、Ticket 粒度標準          | Code Smell 檢測、違規模式識別、重構策略 |
-| **使用時機** | 設計和規劃階段                                       | 檢測和驗證階段                          |
-| **產出**     | 架構設計、Ticket 規劃                                | 品質檢測報告、重構建議                  |
+| 方法論       | [層級隔離派工方法論](/record/layered-ticket-methodology/) | 本 Code Smell 檢查清單                  |
+| ------------ | --------------------------------------------------------- | --------------------------------------- |
+| **角色**     | 正面原則（應該怎麼做）                                    | 負面模式（不應該怎麼做）                |
+| **內容**     | 五層架構定義、單層修改原則、Ticket 粒度標準               | Code Smell 檢測、違規模式識別、重構策略 |
+| **使用時機** | 設計和規劃階段                                            | 檢測和驗證階段                          |
+| **產出**     | 架構設計、Ticket 規劃                                     | 品質檢測報告、重構建議                  |
 
 **引用關係**:
 
-- 本檢查清單**引用**[層級隔離派工方法論](../layered-ticket-methodology/) 的定義，不重複定義層級架構
-- 例如：Shotgun Surgery 的判斷標準引用[層級隔離派工方法論](../layered-ticket-methodology/) 第 5.2 節 Ticket 粒度標準
+- 本檢查清單**引用**[層級隔離派工方法論](/record/layered-ticket-methodology/) 的定義，不重複定義層級架構
+- 例如：Shotgun Surgery 的判斷標準引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.2 節 Ticket 粒度標準
 
 **協作流程**:
 
 ```text
 Phase 1 設計:
 
-1. 使用[層級隔離派工方法論](../layered-ticket-methodology/) 設計 Ticket（定義層級、規劃粒度）
+1. 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 設計 Ticket（定義層級、規劃粒度）
 2. 使用本檢查清單檢測 Ticket（檢查是否有 God Ticket、Ambiguous Responsibility）
 
 Phase 3 實作:
 
-1. 使用[層級隔離派工方法論](../layered-ticket-methodology/) 指導實作（遵循單層修改原則）
+1. 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 指導實作（遵循單層修改原則）
 2. 使用本檢查清單檢測實作（檢查是否產生 Code Smell）
 
 Phase 4 重構:
 
 1. 使用本檢查清單識別 Code Smell
 2. 使用本檢查清單的重構策略修正
-3. 使用[層級隔離派工方法論](../layered-ticket-methodology/) 驗證重構後是否符合層級隔離原則
+3. 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 驗證重構後是否符合層級隔離原則
 ```
 
 ---
@@ -4309,7 +4309,7 @@ genhtml coverage/lcov.info -o coverage/html
 
 本 Code Smell 檢查清單基於以下方法論建立：
 
-#### [層級隔離派工方法論](../layered-ticket-methodology/)
+#### [層級隔離派工方法論](/record/layered-ticket-methodology/)
 
 **檔案位置**: `.claude/methodologies/layered-ticket-methodology.md`
 
@@ -4352,7 +4352,7 @@ genhtml coverage/lcov.info -o coverage/html
 
 **關係說明**:
 
-- [層級隔離派工方法論](../layered-ticket-methodology/) 定義「應該怎麼做」（正面原則）
+- [層級隔離派工方法論](/record/layered-ticket-methodology/) 定義「應該怎麼做」（正面原則）
 - 本檢查清單定義「不應該怎麼做」（負面模式識別）
 - 兩者互補，共同建構完整的品質標準體系
 

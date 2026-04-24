@@ -5,7 +5,7 @@ description: "從三級分類系統到偵測工具鏈，建立系統化的程式
 weight: 72
 ---
 
-_上一章：[重構的動機與策略](../refactoring-strategy/)_
+_上一章：[重構的動機與策略](/python/07-refactoring/refactoring-strategy/)_
 
 「程式碼壞味道」(Code Smell) 是 Martin Fowler 在《Refactoring》中提出的概念：程式碼中暗示深層問題的表面跡象。壞味道不是 Bug，程式仍然能正常執行，但它們預告了維護成本的攀升。上一章介紹了認知負擔指數——重複程式碼和難以理解的結構是指數升高的主要原因。本章把這些讓認知負擔上升的具體模式系統化，稱為「壞味道」。
 
@@ -464,4 +464,4 @@ Why 5: 為什麼沒有這個檢查清單？
 - 5 Why 分析追問到「流程或規範的缺失」才是根因
 - Error Patterns 把個人經驗變成團隊資產
 
-_下一章：[DRY 原則與共用程式庫](../dry-principle/)_
+_下一章：[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)_

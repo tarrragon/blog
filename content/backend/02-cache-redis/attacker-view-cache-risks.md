@@ -11,16 +11,16 @@ weight: 6
 
 下列情境出現時，快取弱點通常會快速放大：
 
-- 熱門資料高度集中，存在 [hot key](../../knowledge-cards/hot-key/)
+- 熱門資料高度集中，存在 [hot key](/backend/knowledge-cards/hot-key/)
 - 同一份資料會被 API、搜尋與報表共用
 - 快取失效策略依賴多個服務協作
 - 匯出、權限摘要或價格資料大量走快取
 
 ## 【判讀流程】快取弱點檢查順序
 
-1. 看資料責任：先區分 [source of truth](../../knowledge-cards/source-of-truth/) 與快取副本，避免角色混用。
-2. 看失效面：檢查 [cache invalidation](../../knowledge-cards/cache-invalidation/)、[ttl](../../knowledge-cards/ttl/) 與 [eviction](../../knowledge-cards/eviction/) 規則是否一致。
-3. 看放大面：檢查 [cache stampede](../../knowledge-cards/cache-stampede/)、[thundering herd](../../knowledge-cards/thundering-herd/) 與回源壓力保護。
+1. 看資料責任：先區分 [source of truth](/backend/knowledge-cards/source-of-truth/) 與快取副本，避免角色混用。
+2. 看失效面：檢查 [cache invalidation](/backend/knowledge-cards/cache-invalidation/)、[ttl](/backend/knowledge-cards/ttl/) 與 [eviction](/backend/knowledge-cards/eviction/) 規則是否一致。
+3. 看放大面：檢查 [cache stampede](/backend/knowledge-cards/cache-stampede/)、[thundering herd](/backend/knowledge-cards/thundering-herd/) 與回源壓力保護。
 4. 看污染面：檢查 key 設計、租戶隔離與欄位遮罩是否防止快取污染與越權讀取。
 
 ## 【風險代價】快取弱點常導致錯誤決策

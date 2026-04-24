@@ -9,7 +9,7 @@ Full-text search 的核心概念是「對文本內容做可擴展檢索」。它
 
 ## 概念位置
 
-通常由 [search index](../search-index/) 提供，適合文件、商品描述與知識庫查詢。
+通常由 [search index](/backend/knowledge-cards/search-index/) 提供，適合文件、商品描述與知識庫查詢。
 
 ## 設計責任
 

@@ -10,7 +10,7 @@ weight: 2
 
 ## 先備知識
 
-- 入門系列 [5.1 異常處理策略](../../../python/05-error-testing/exception/)
+- 入門系列 [5.1 異常處理策略](/python/05-error-testing/exception/)
 
 ## 異常層級設計
 
@@ -490,5 +490,5 @@ with suppress(FileNotFoundError, PermissionError):
 
 ---
 
-*上一章：[3.5.1 泛型進階](../generics/)*
-*下一章：[3.5.3 進階上下文管理](../context-managers/)*
+*上一章：[3.5.1 泛型進階](/python-advanced/03-design-patterns/generics/)*
+*下一章：[3.5.3 進階上下文管理](/python-advanced/03-design-patterns/context-managers/)*

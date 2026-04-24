@@ -9,7 +9,7 @@ Online migration 的核心概念是「在服務持續運作期間完成資料或
 
 ## 概念位置
 
-Online migration 是 release、database、observability 與 rollback 的共同工程。它通常搭配 [Expand / Contract](../expand-contract/)、backfill、dual write、shadow read、cutover 與 correctness check。
+Online migration 是 release、database、observability 與 rollback 的共同工程。它通常搭配 [Expand / Contract](/backend/knowledge-cards/expand-contract/)、backfill、dual write、shadow read、cutover 與 correctness check。
 
 ## 可觀察訊號與例子
 

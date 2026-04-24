@@ -13,12 +13,12 @@ weight: 4
 
 ## 章節列表
 
-| 章節                         | 主題                                                                       | 關鍵收穫                                                                                          |
-| ---------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [4.1](component-boundaries/) | 事件來源、處理流程與狀態邊界                                               | 用邊界拆開 reader、normalizer、processor、repository、publisher                                   |
-| [4.2](dedup-key/)            | 事件去重與語義鍵設計                                                       | 用 domain key、時間窗口與清理策略管理重複事件                                                     |
-| [4.3](source-of-truth/)      | [Source of Truth](../../backend/knowledge-cards/source-of-truth)：狀態邊界 | 集中狀態轉移、保護可變資料、設計 [projection](../../backend/knowledge-cards/projection)           |
-| [4.4](event-fusion/)         | 多來源 event 融合                                                          | 把 HTTP、[queue](../../backend/knowledge-cards/queue)、timer 等來源收斂到同一套 domain event 流程 |
+| 章節                         | 主題                                                                  | 關鍵收穫                                                                                     |
+| ---------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| [4.1](component-boundaries/) | 事件來源、處理流程與狀態邊界                                          | 用邊界拆開 reader、normalizer、processor、repository、publisher                              |
+| [4.2](dedup-key/)            | 事件去重與語義鍵設計                                                  | 用 domain key、時間窗口與清理策略管理重複事件                                                |
+| [4.3](source-of-truth/)      | [Source of Truth](/backend/knowledge-cards/source-of-truth)：狀態邊界 | 集中狀態轉移、保護可變資料、設計 [projection](/backend/knowledge-cards/projection)           |
+| [4.4](event-fusion/)         | 多來源 event 融合                                                     | 把 HTTP、[queue](/backend/knowledge-cards/queue)、timer 等來源收斂到同一套 domain event 流程 |
 
 ## 本模組使用的範例主題
 
@@ -58,7 +58,7 @@ weight: 4
 
 ## 本模組不處理
 
-本模組不實作完整 message queue、分散式 [transaction](../../backend/knowledge-cards/transaction) 或 event sourcing 平台。這些主題需要更多基礎設施與操作細節；本模組先聚焦 Go 程式內部如何建立清楚的事件與狀態邊界。後續可接 [資料庫 transaction 與 schema migration](../07-distributed-operations/database-transactions/) 以及 [Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/)。
+本模組不實作完整 message queue、分散式 [transaction](/backend/knowledge-cards/transaction) 或 event sourcing 平台。這些主題需要更多基礎設施與操作細節；本模組先聚焦 Go 程式內部如何建立清楚的事件與狀態邊界。後續可接 [資料庫 transaction 與 schema migration](/go-advanced/07-distributed-operations/database-transactions/) 以及 [Durable queue、outbox 與 idempotency](/go-advanced/07-distributed-operations/outbox-idempotency/)。
 
 ## 學習時間
 

@@ -5,7 +5,7 @@ description: "用 encoding/json 在 struct、檔案與 HTTP 之間交換資料"
 weight: 4
 ---
 
-`encoding/json` 是 Go 標準庫中負責 JSON 編碼與解碼的 package。它的核心用途是把 Go struct 轉成 JSON，或把 JSON 轉回 Go struct，讓程式能和設定檔、HTTP API、message [queue](../../../backend/knowledge-cards/queue/) 等外部格式交換資料。
+`encoding/json` 是 Go 標準庫中負責 JSON 編碼與解碼的 package。它的核心用途是把 Go struct 轉成 JSON，或把 JSON 轉回 Go struct，讓程式能和設定檔、HTTP API、message [queue](/backend/knowledge-cards/queue/) 等外部格式交換資料。
 
 ## 本章目標
 
@@ -155,7 +155,7 @@ JSON 來自外部輸入，解析錯誤是正常情境。忽略錯誤會讓後續
 
 ### 把內部錯誤直接回給外部
 
-對外 response 應該穩定且安全；內部錯誤細節留在 [log](../../../backend/knowledge-cards/log/) 或 error chain 裡，不直接暴露給使用者。
+對外 response 應該穩定且安全；內部錯誤細節留在 [log](/backend/knowledge-cards/log/) 或 error chain 裡，不直接暴露給使用者。
 
 ## 小結
 

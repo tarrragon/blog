@@ -28,8 +28,8 @@ weight: 71723
 ## 可落地的 workflow 檢查點
 
 - 發布前：定義 secrets 分級與依賴地圖。
-- 日常：定期演練 [rollback strategy](../../../../../knowledge-cards/rollback-strategy/) 與 secrets 更新。
-- 事故中：按分級快速輪替，並記錄 [MTTR](../../../../../knowledge-cards/mttr/)。
+- 日常：定期演練 [rollback strategy](/backend/knowledge-cards/rollback-strategy/) 與 secrets 更新。
+- 事故中：按分級快速輪替，並記錄 [MTTR](/backend/knowledge-cards/mttr/)。
 
 ## 可引用章節
 

@@ -21,7 +21,7 @@ weight: 1
 
 ## 【觀察】事件流程容易被寫成一團
 
-事件流程膨脹的常見原因是入口程式碼太方便。HTTP handler 可以 decode JSON、驗證欄位、查 map、送通知；worker 也可以讀 [queue](../../../backend/knowledge-cards/queue/)、判斷重複、更新狀態、寫 [log](../../../backend/knowledge-cards/log/)。短期看起來直接，長期會讓每個入口都複製一套規則。
+事件流程膨脹的常見原因是入口程式碼太方便。HTTP handler 可以 decode JSON、驗證欄位、查 map、送通知；worker 也可以讀 [queue](/backend/knowledge-cards/queue/)、判斷重複、更新狀態、寫 [log](/backend/knowledge-cards/log/)。短期看起來直接，長期會讓每個入口都複製一套規則。
 
 反模式示意：
 
@@ -109,7 +109,7 @@ type DomainEvent struct {
 
 ## 【執行】adapter 只負責外部格式
 
-adapter 的核心責任是把外部輸入轉成內部事件或 command。它可以知道 JSON tag、HTTP status、queue [ack](../../../backend/knowledge-cards/ack-nack/)、header，但不應直接修改狀態。
+adapter 的核心責任是把外部輸入轉成內部事件或 command。它可以知道 JSON tag、HTTP status、queue [ack](/backend/knowledge-cards/ack-nack/)、header，但不應直接修改狀態。
 
 ```go
 type CallbackPayload struct {
@@ -244,11 +244,11 @@ func (p *EventProcessor) Process(ctx context.Context, event DomainEvent) error {
 }
 ```
 
-這個 processor 依賴能力介面，不依賴具體實作。Go 的 implicit interface 讓 memory repository、[database](../../../backend/knowledge-cards/database/) repository 或測試 fake 都可以自然接上。
+這個 processor 依賴能力介面，不依賴具體實作。Go 的 implicit interface 讓 memory repository、[database](/backend/knowledge-cards/database/) repository 或測試 fake 都可以自然接上。
 
 ## 【判讀】publisher 失敗策略必須明確
 
-publisher 的核心問題是「輸出失敗是否影響狀態成功」。即時通知、審計紀錄、外部 [webhook](../../../backend/knowledge-cards/webhook/) 的可靠性要求不同，不能一律用同一個錯誤策略。
+publisher 的核心問題是「輸出失敗是否影響狀態成功」。即時通知、審計紀錄、外部 [webhook](/backend/knowledge-cards/webhook/) 的可靠性要求不同，不能一律用同一個錯誤策略。
 
 常見策略：
 
@@ -297,18 +297,18 @@ func TestProcessorSkipsDuplicateEvent(t *testing.T) {
 
 本章先處理單一 Go 服務內的事件來源與處理邊界；分散式一致性與 event sourcing，會在下列章節再往外延伸：
 
-- [Go 進階：資料庫 transaction 與 schema migration](../../07-distributed-operations/database-transactions/)
-- [Go 進階：Durable queue、outbox 與 idempotency](../../07-distributed-operations/outbox-idempotency/)
-- [Backend：資料庫與持久化](../../../backend/01-database/)
+- [Go 進階：資料庫 transaction 與 schema migration](/go-advanced/07-distributed-operations/database-transactions/)
+- [Go 進階：Durable queue、outbox 與 idempotency](/go-advanced/07-distributed-operations/outbox-idempotency/)
+- [Backend：資料庫與持久化](/backend/01-database/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 action、event、repository 與 publisher 的邊界；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增一個即時訊息 action](../../../go/06-practical/new-websocket-action/)
-- [Go：如何新增一種 domain event](../../../go/06-practical/new-event-type/)
-- [Go：用 interface 隔離外部依賴](../../../go/07-refactoring/interface-boundary/)
-- [Go：逐步遷移到 ports/adapters 架構](../../../go/07-refactoring/hexagonal-migration/)
+- [Go：如何新增一個即時訊息 action](/go/06-practical/new-websocket-action/)
+- [Go：如何新增一種 domain event](/go/06-practical/new-event-type/)
+- [Go：用 interface 隔離外部依賴](/go/07-refactoring/interface-boundary/)
+- [Go：逐步遷移到 ports/adapters 架構](/go/07-refactoring/hexagonal-migration/)
 
 ## 小結
 

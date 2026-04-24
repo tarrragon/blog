@@ -14,7 +14,7 @@ weight: 4
 1. 用 `const` 定義固定值
 2. 理解 untyped constant 與 typed constant 的差異
 3. 用 typed string 表達狀態與事件類型
-4. 集中管理協定字串與 [log](../../../backend/knowledge-cards/log/) message
+4. 集中管理協定字串與 [log](/backend/knowledge-cards/log/) message
 
 ---
 

@@ -9,7 +9,7 @@ Fan-out 的核心概念是「一個事件被多個訂閱者各自處理」。它
 
 ## 概念位置
 
-Fan-out 常搭配 [pub/sub](../pub-sub/)、[topic](../topic/) 或 stream consumer group。若每個下游都需要可靠處理，通常還要搭配 [durable queue](../durable-queue/) 與 [idempotency](../idempotency/)。
+Fan-out 常搭配 [pub/sub](/backend/knowledge-cards/pub-sub/)、[topic](/backend/knowledge-cards/topic/) 或 stream consumer group。若每個下游都需要可靠處理，通常還要搭配 [durable queue](/backend/knowledge-cards/durable-queue/) 與 [idempotency](/backend/knowledge-cards/idempotency/)。
 
 ## 可觀察訊號與例子
 

@@ -32,7 +32,7 @@ weight: 6
 
 ## 先備知識
 
-- 進階系列 [模組四：CPython 內部機制](../04-cpython-internals/)
+- 進階系列 [模組四：CPython 內部機制](/python-advanced/04-cpython-internals/)
 - 基本的 Rust 語言知識（所有權、生命週期、Result/Option）
 
 ## 學習時間
@@ -41,5 +41,5 @@ weight: 6
 
 ---
 
-*上一模組：[模組五：用 C 擴展 Python](../05-c-extensions/)*
-*下一模組：[模組七：打包與發布](../07-packaging/)*
+*上一模組：[模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)*
+*下一模組：[模組七：打包與發布](/python-advanced/07-packaging/)*

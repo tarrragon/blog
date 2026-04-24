@@ -9,7 +9,7 @@ Local worker 的核心概念是「背景工作仍留在同一個 application pro
 
 ## 概念位置
 
-Local worker 常搭配 [in-process channel](../in-process-channel/) 與 [worker pool](../worker-pool/)；若需求轉向跨節點可靠處理，通常要改用 [durable queue](../durable-queue/)。
+Local worker 常搭配 [in-process channel](/backend/knowledge-cards/in-process-channel/) 與 [worker pool](/backend/knowledge-cards/worker-pool/)；若需求轉向跨節點可靠處理，通常要改用 [durable queue](/backend/knowledge-cards/durable-queue/)。
 
 ## 可觀察訊號與例子
 

@@ -10,4 +10,4 @@ weight: 4
 - row mapping
 - nullable handling
 - error translation
-- [contract](../../knowledge-cards/contract/) test
+- [contract](/backend/knowledge-cards/contract/) test

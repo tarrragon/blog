@@ -18,14 +18,14 @@ weight: 78
 
 ## 主題路由表（問題驅動）
 
-| 問題主題             | 概念入口                                             | 交接章節                                                             |
-| -------------------- | ---------------------------------------------------- | -------------------------------------------------------------------- |
-| 身分擴散與授權濫用   | [7.2](../identity-access-boundary/)                  | `08 incident-response`                                               |
-| 入口暴露與管理面風險 | [7.3](../entrypoint-and-server-protection/)          | `05 deployment-platform` + `08 incident-response`                    |
-| 資料暴露與交換責任鏈 | [7.4](../data-protection-and-masking-governance/)    | `05 deployment-platform` + `08 incident-response`                    |
-| 信任鏈與憑證節奏     | [7.5](../transport-trust-and-certificate-lifecycle/) | `05 deployment-platform` + `06 reliability`                          |
-| 秘密治理與機器身份   | [7.6](../secrets-and-machine-credential-governance/) | `05 deployment-platform` + `06 reliability` + `08 incident-response` |
-| 稽核證據與責任切分   | [7.7](../audit-trail-and-accountability-boundary/)   | `08 incident-response`                                               |
+| 問題主題             | 概念入口                                                                               | 交接章節                                                             |
+| -------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 身分擴散與授權濫用   | [7.2](/backend/07-security-data-protection/identity-access-boundary/)                  | `08 incident-response`                                               |
+| 入口暴露與管理面風險 | [7.3](/backend/07-security-data-protection/entrypoint-and-server-protection/)          | `05 deployment-platform` + `08 incident-response`                    |
+| 資料暴露與交換責任鏈 | [7.4](/backend/07-security-data-protection/data-protection-and-masking-governance/)    | `05 deployment-platform` + `08 incident-response`                    |
+| 信任鏈與憑證節奏     | [7.5](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) | `05 deployment-platform` + `06 reliability`                          |
+| 秘密治理與機器身份   | [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) | `05 deployment-platform` + `06 reliability` + `08 incident-response` |
+| 稽核證據與責任切分   | [7.7](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)   | `08 incident-response`                                               |
 
 ## 章節交接條件（待填充）
 

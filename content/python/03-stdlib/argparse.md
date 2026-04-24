@@ -424,5 +424,5 @@ else:
 
 ---
 
-_上一章：[logging - 日誌系統](../logging/)_
-_下一模組：[物件導向設計](../../04-oop/)_
+_上一章：[logging - 日誌系統](/python/03-stdlib/logging/)_
+_下一模組：[物件導向設計](/python/04-oop/)_

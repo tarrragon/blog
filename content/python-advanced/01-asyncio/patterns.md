@@ -10,7 +10,7 @@ weight: 3
 
 ## 先備知識
 
-- [1.2 協程與 Task 管理](../coroutines-tasks/)
+- [1.2 協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)
 
 ## 本章目標
 
@@ -265,5 +265,5 @@ async def good():
 
 ---
 
-*上一章：[協程與 Task 管理](../coroutines-tasks/)*
-*下一章：[實戰：與同步程式碼整合](../real-world/)*
+*上一章：[協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)*
+*下一章：[實戰：與同步程式碼整合](/python-advanced/01-asyncio/real-world/)*

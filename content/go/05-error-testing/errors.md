@@ -63,7 +63,7 @@ func LoadConfig(path string) (Config, error) {
 - `parse config`
 - `validate config`
 
-當錯誤出現在 [log](../../../backend/knowledge-cards/log/) 裡時，讀者不只知道失敗了，也知道失敗在哪個階段。
+當錯誤出現在 [log](/backend/knowledge-cards/log/) 裡時，讀者不只知道失敗了，也知道失敗在哪個階段。
 
 ## 【策略】用 early return 避免巢狀
 

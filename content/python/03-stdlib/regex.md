@@ -313,5 +313,5 @@ if match:
 
 ---
 
-_上一章：[subprocess - 執行外部命令](../subprocess/)_
-_下一章：[logging - 日誌系統](../logging/)_
+_上一章：[subprocess - 執行外部命令](/python/03-stdlib/subprocess/)_
+_下一章：[logging - 日誌系統](/python/03-stdlib/logging/)_

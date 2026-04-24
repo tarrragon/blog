@@ -10,8 +10,8 @@ weight: 3
 
 ## 先備知識
 
-- 入門系列 [5.1 異常處理策略](../../../../python/05-error-testing/exception/)
-- [3.5.2 異常設計架構](../../exception-design/)
+- 入門系列 [5.1 異常處理策略](/python/05-error-testing/exception/)
+- [3.5.2 異常設計架構](/python-advanced/03-design-patterns/exception-design/)
 
 ## 問題背景
 
@@ -1285,5 +1285,5 @@ except ConfigError as e:
 
 ---
 
-*上一章：[插件架構設計](../plugin-architecture/)*
-*下一章：[泛型驗證器](../generic-validator/)*
+*上一章：[插件架構設計](/python-advanced/03-design-patterns/case-studies/plugin-architecture/)*
+*下一章：[泛型驗證器](/python-advanced/03-design-patterns/case-studies/generic-validator/)*

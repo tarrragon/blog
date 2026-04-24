@@ -303,4 +303,4 @@ def merge_dicts(dict1, dict2):
 
 ---
 
-_下一章：[Optional、Union、泛型](../optional-union/)_
+_下一章：[Optional、Union、泛型](/python/02-type-system/optional-union/)_

@@ -25,14 +25,14 @@ weight: 7216
 
 ## 案例觸發參考
 
-- [Confluence 2023（22515/22518）](../../cases/edge-exposure/confluence-2023-cve-22515-22518-access-control-chain/)
-- [Fortinet 2022（40684）](../../cases/edge-exposure/fortinet-cve-2022-40684-auth-bypass/)
+- [Confluence 2023（22515/22518）](/backend/07-security-data-protection/red-team/cases/edge-exposure/confluence-2023-cve-22515-22518-access-control-chain/)
+- [Fortinet 2022（40684）](/backend/07-security-data-protection/red-team/cases/edge-exposure/fortinet-cve-2022-40684-auth-bypass/)
 
 ## 可連動章節
 
-- [7.2 身分與授權邊界](../../../identity-access-boundary/)
-- [7.14 資安治理例外與 Tripwire](../../../security-governance-exception-and-tripwire/)
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P6 權限提升缺乏時效綁定](../fp-privilege-elevation-without-time-bound/)
+- [7.R11.P6 權限提升缺乏時效綁定](/backend/07-security-data-protection/red-team/problem-cards/fp-privilege-elevation-without-time-bound/)

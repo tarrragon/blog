@@ -21,9 +21,9 @@ weight: 7232
 
 ## 案例觸發參考
 
-- [Mailchimp 2023](../../cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
-- [Change Healthcare 2024](../../cases/data-exfiltration/change-healthcare-2024-ops-impact/)
+- [Mailchimp 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
+- [Change Healthcare 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/)
 
 ## 來源流程卡
 
-- [審核流程濫用](../approval-flow-abuse/)
+- [審核流程濫用](/backend/07-security-data-protection/red-team/problem-cards/approval-flow-abuse/)

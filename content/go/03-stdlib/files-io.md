@@ -85,7 +85,7 @@ fmt.Println(count)
 
 ## `io.Writer` 表示可寫目的地
 
-`io.Writer` 的核心意義是「可以接收 bytes 的目的地」。檔案、網路連線、HTTP response、記憶體 [buffer](../../../backend/knowledge-cards/buffer/) 都可以是 writer。
+`io.Writer` 的核心意義是「可以接收 bytes 的目的地」。檔案、網路連線、HTTP response、記憶體 [buffer](/backend/knowledge-cards/buffer/) 都可以是 writer。
 
 ```go
 func writeGreeting(w io.Writer, name string) error {

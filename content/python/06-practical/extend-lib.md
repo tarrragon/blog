@@ -11,10 +11,10 @@ weight: 2
 
 建議先閱讀：
 
-- [1.2 模組與套件組織](../../01-basics/modules/)
-- [2.1 Type Hints 基礎](../../02-type-system/type-hints/)
-- [4.1 類別設計原則](../../04-oop/class-design/)
-- [5.3 unittest 基礎](../../05-error-testing/unittest/)
+- [1.2 模組與套件組織](/python/01-basics/modules/)
+- [2.1 Type Hints 基礎](/python/02-type-system/type-hints/)
+- [4.1 類別設計原則](/python/04-oop/class-design/)
+- [5.3 unittest 基礎](/python/05-error-testing/unittest/)
 
 ## 共用模組架構
 
@@ -563,6 +563,6 @@ def load_config(name: str) -> dict:
 
 ---
 
-_上一章：[如何新增一個 Hook](../new-hook/)_
-_下一章：[如何新增語言解析器](../new-parser/)_
-_回到首頁：[Python 維護工程師實戰指南](../../)_
+_上一章：[如何新增一個 Hook](/python/06-practical/new-hook/)_
+_下一章：[如何新增語言解析器](/python/06-practical/new-parser/)_
+_回到首頁：[Python 維護工程師實戰指南](/python/)_

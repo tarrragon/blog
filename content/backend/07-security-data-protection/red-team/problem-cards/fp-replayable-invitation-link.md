@@ -21,9 +21,9 @@ weight: 7231
 
 ## 案例觸發參考
 
-- [Uber 2022](../../cases/identity-access/uber-2022-mfa-fatigue/)
-- [MGM 2023](../../cases/identity-access/mgm-2023-identity-lateral-impact/)
+- [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
+- [MGM 2023](/backend/07-security-data-protection/red-team/cases/identity-access/mgm-2023-identity-lateral-impact/)
 
 ## 來源流程卡
 
-- [邀請流程濫用](../invite-flow-abuse/)
+- [邀請流程濫用](/backend/07-security-data-protection/red-team/problem-cards/invite-flow-abuse/)

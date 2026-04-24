@@ -25,14 +25,14 @@ weight: 7220
 
 ## 案例觸發參考
 
-- [Change Healthcare 2024](../../cases/data-exfiltration/change-healthcare-2024-ops-impact/)
-- [VMware ESXiArgs 2023](../../cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/)
+- [Change Healthcare 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/)
+- [VMware ESXiArgs 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/)
 
 ## 可連動章節
 
-- [7.4 資料保護與遮罩治理](../../../data-protection-and-masking-governance/)
-- [7.9 服務生命週期的資安風險節奏](../../../security-lifecycle-risk-cadence/)
+- [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)
+- [7.9 服務生命週期的資安風險節奏](/backend/07-security-data-protection/security-lifecycle-risk-cadence/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P10 批次流程缺少中止檢查點](../fp-batch-flow-without-stop-checkpoint/)
+- [7.R11.P10 批次流程缺少中止檢查點](/backend/07-security-data-protection/red-team/problem-cards/fp-batch-flow-without-stop-checkpoint/)

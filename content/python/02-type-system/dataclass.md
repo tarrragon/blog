@@ -344,5 +344,5 @@ class Result:
 
 ---
 
-_上一章：[Optional、Union、泛型](../optional-union/)_
-_下一章：[Enum 列舉型別](../enum/)_
+_上一章：[Optional、Union、泛型](/python/02-type-system/optional-union/)_
+_下一章：[Enum 列舉型別](/python/02-type-system/enum/)_

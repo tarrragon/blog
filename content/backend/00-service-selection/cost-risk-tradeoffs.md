@@ -7,7 +7,7 @@ weight: 6
 
 成本與風險取捨的核心原則是把選型看成長期承諾。每加入一種後端服務能力，都會帶來雲端費用、人力維護、操作流程、事故風險與學習成本；它也可能降低延遲、失敗代價、開發摩擦與未來重構成本。
 
-這一章的內容是所有 Backend 服務實體章節的共同段落要求。後續討論 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、Kubernetes、[WAF](../../knowledge-cards/waf/)、[IAM](../../knowledge-cards/iam/)、[Secret Management](../../knowledge-cards/secret-management/) 或任何具體服務時，都要回到同一組問題：資安限制會增加什麼成本，流量與穩定性會造成什麼壓力，伺服器與雲端費用如何成長，團隊要承擔多少操作成本，選擇這個方案會放棄哪些替代路線。
+這一章的內容是所有 Backend 服務實體章節的共同段落要求。後續討論 PostgreSQL、Redis、RabbitMQ、Kafka、Prometheus、Kubernetes、[WAF](/backend/knowledge-cards/waf/)、[IAM](/backend/knowledge-cards/iam/)、[Secret Management](/backend/knowledge-cards/secret-management/) 或任何具體服務時，都要回到同一組問題：資安限制會增加什麼成本，流量與穩定性會造成什麼壓力，伺服器與雲端費用如何成長，團隊要承擔多少操作成本，選擇這個方案會放棄哪些替代路線。
 
 ## 本章目標
 
@@ -23,27 +23,27 @@ weight: 6
 
 ## 【觀察】後端選型同時改變成本與風險
 
-選型取捨的第一個問題是「這個能力降低哪種風險，又增加哪種成本」。資料庫、快取、[queue](../../knowledge-cards/queue/)、觀測平台、部署平台與可靠性流程都能提升能力，但它們也會增加操作面積。
+選型取捨的第一個問題是「這個能力降低哪種風險，又增加哪種成本」。資料庫、快取、[queue](/backend/knowledge-cards/queue/)、觀測平台、部署平台與可靠性流程都能提升能力，但它們也會增加操作面積。
 
-| 取捨面向 | 要回答的問題                                 | 常見例子                                                                                                                                                                             |
-| -------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 建置成本 | 開發與導入要花多少時間                       | schema、[Repository Adapter](../../knowledge-cards/repository-adapter/)、pipeline、[dashboard](../../knowledge-cards/dashboard/)                                                     |
-| 使用成本 | 流量與資料量帶來多少費用                     | storage、egress、request、compute                                                                                                                                                    |
-| 操作成本 | 誰負責維護、升級、排障                       | backup、[alert](../../knowledge-cards/alert/)、權限、容量規劃                                                                                                                        |
-| 失敗代價 | 延遲、遺失、重複、停機造成什麼後果           | 付款錯誤、通知延遲、[資料不一致](../../knowledge-cards/data-inconsistency/)                                                                                                          |
-| 機會成本 | 導入這項能力會延後哪些產品工作               | 平台建設、功能交付、技術債                                                                                                                                                           |
-| 資安成本 | 權限、遮罩、加密、稽核與防護帶來多少額外責任 | [IAM](../../knowledge-cards/iam/)、[TLS / mTLS](../../knowledge-cards/tls-mtls/)、[audit log](../../knowledge-cards/audit-log/)、[data masking](../../knowledge-cards/data-masking/) |
+| 取捨面向 | 要回答的問題                                 | 常見例子                                                                                                                                                                                         |
+| -------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 建置成本 | 開發與導入要花多少時間                       | schema、[Repository Adapter](/backend/knowledge-cards/repository-adapter/)、pipeline、[dashboard](/backend/knowledge-cards/dashboard/)                                                           |
+| 使用成本 | 流量與資料量帶來多少費用                     | storage、egress、request、compute                                                                                                                                                                |
+| 操作成本 | 誰負責維護、升級、排障                       | backup、[alert](/backend/knowledge-cards/alert/)、權限、容量規劃                                                                                                                                 |
+| 失敗代價 | 延遲、遺失、重複、停機造成什麼後果           | 付款錯誤、通知延遲、[資料不一致](/backend/knowledge-cards/data-inconsistency/)                                                                                                                   |
+| 機會成本 | 導入這項能力會延後哪些產品工作               | 平台建設、功能交付、技術債                                                                                                                                                                       |
+| 資安成本 | 權限、遮罩、加密、稽核與防護帶來多少額外責任 | [IAM](/backend/knowledge-cards/iam/)、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[audit log](/backend/knowledge-cards/audit-log/)、[data masking](/backend/knowledge-cards/data-masking/) |
 
 這張表是成本索引。討論選型時，應把「技術是否強大」轉成「它是否值得目前承擔」。
 
 ## 【判讀】資安限制會改變成本模型
 
-資安成本的核心問題是「安全要求會讓原本的服務選型增加哪些責任」。同一個資料庫、cache、queue 或 [object storage](../../knowledge-cards/object-storage/)，在沒有敏感資料與有個資、金流、企業權限、稽核要求時，成本模型完全不同。
+資安成本的核心問題是「安全要求會讓原本的服務選型增加哪些責任」。同一個資料庫、cache、queue 或 [object storage](/backend/knowledge-cards/object-storage/)，在沒有敏感資料與有個資、金流、企業權限、稽核要求時，成本模型完全不同。
 
 接近真實網路服務的例子包括：
 
-- 匯出報表若包含個資，系統需要欄位遮罩、核准流程、下載期限、[audit log](../../knowledge-cards/audit-log/) 與存取權限。
-- 內部 service-to-service 呼叫若傳遞付款資料，可能需要 [mTLS](../../knowledge-cards/tls-mtls/)、signed request、[credential](../../knowledge-cards/credential/) rotation 與 [trace](../../knowledge-cards/trace/) 關聯。
+- 匯出報表若包含個資，系統需要欄位遮罩、核准流程、下載期限、[audit log](/backend/knowledge-cards/audit-log/) 與存取權限。
+- 內部 service-to-service 呼叫若傳遞付款資料，可能需要 [mTLS](/backend/knowledge-cards/tls-mtls/)、signed request、[credential](/backend/knowledge-cards/credential/) rotation 與 [trace](/backend/knowledge-cards/trace/) 關聯。
 - 客服查詢後台若能看到敏感資料，權限分級、操作稽核與資料最小揭露會成為必要成本。
 
 這類取捨的核心風險是低估安全需求對操作面的影響。資安限制會增加設計、測試、稽核、教育訓練與事故處理成本；它也會降低資料外洩、權限誤用與合規事故的風險。服務章節討論選型時，必須把這兩邊一起列出。
@@ -78,19 +78,19 @@ weight: 6
 
 接近真實網路服務的例子包括：
 
-- 團隊導入多種 [broker](../../knowledge-cards/broker/) 後，需要同步建立 [consumer lag](../../knowledge-cards/consumer-lag/)、[dead-letter](../../knowledge-cards/dead-letter-queue/) 與 [replay runbook](../../knowledge-cards/replay-runbook/)。
-- 服務開始使用多個快取層後，需要同步建立 [失效策略](../../knowledge-cards/cache-invalidation/) 與 [資料不一致](../../knowledge-cards/data-inconsistency/) 的排查方式。
-- 部署平台支援自動擴容後，application 需要提供 [readiness](../../knowledge-cards/readiness/) 與 [graceful shutdown](../../knowledge-cards/graceful-shutdown/) 合約。
+- 團隊導入多種 [broker](/backend/knowledge-cards/broker/) 後，需要同步建立 [consumer lag](/backend/knowledge-cards/consumer-lag/)、[dead-letter](/backend/knowledge-cards/dead-letter-queue/) 與 [replay runbook](/backend/knowledge-cards/replay-runbook/)。
+- 服務開始使用多個快取層後，需要同步建立 [失效策略](/backend/knowledge-cards/cache-invalidation/) 與 [資料不一致](/backend/knowledge-cards/data-inconsistency/) 的排查方式。
+- 部署平台支援自動擴容後，application 需要提供 [readiness](/backend/knowledge-cards/readiness/) 與 [graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 合約。
 
-這類取捨的陷阱是只計算開發時間。操作成本常在上線後才出現，因此選型時要把 [runbook](../../knowledge-cards/runbook/)、告警、權限、備份、回復與測試環境列入範圍。
+這類取捨的陷阱是只計算開發時間。操作成本常在上線後才出現，因此選型時要把 [runbook](/backend/knowledge-cards/runbook/)、告警、權限、備份、回復與測試環境列入範圍。
 
 ## 【判讀】失敗代價決定保證等級
 
-失敗代價的核心問題是「錯誤發生時產品後果是什麼」。資料遺失、[重複投遞](../../knowledge-cards/duplicate-delivery/)、短暫不一致、延遲、[partial failure](../../knowledge-cards/partial-failure/)、[cascading failure](../../knowledge-cards/cascading-failure/)、[降級](../../knowledge-cards/degradation/)與[停機](../../knowledge-cards/downtime/)的代價不同，對應的保證等級也不同。
+失敗代價的核心問題是「錯誤發生時產品後果是什麼」。資料遺失、[重複投遞](/backend/knowledge-cards/duplicate-delivery/)、短暫不一致、延遲、[partial failure](/backend/knowledge-cards/partial-failure/)、[cascading failure](/backend/knowledge-cards/cascading-failure/)、[降級](/backend/knowledge-cards/degradation/)與[停機](/backend/knowledge-cards/downtime/)的代價不同，對應的保證等級也不同。
 
 接近真實網路服務的例子包括：
 
-- 付款事件重複可能造成重複出貨或重複通知，因此 [consumer](../../knowledge-cards/consumer/) 需要 [idempotency](../../knowledge-cards/idempotency/)。
+- 付款事件重複可能造成重複出貨或重複通知，因此 [consumer](/backend/knowledge-cards/consumer/) 需要 [idempotency](/backend/knowledge-cards/idempotency/)。
 - 聊天 typing indicator 遺失通常可接受，正式訊息遺失則需要保存與補送。
 - 商品價格短暫不一致可能造成客訴，庫存短暫不一致可能造成超賣。
 
@@ -103,8 +103,8 @@ weight: 6
 接近真實網路服務的例子包括：
 
 - 產品仍在找市場定位時，先用清楚邊界保留替換空間，比導入完整事件平台更實際。
-- 服務已經有穩定收入且事故頻繁時，補 observability、[Deployment Contract](../../knowledge-cards/deployment-contract/) 與 reliability pipeline 會直接降低業務風險。
-- 流量即將進入大型活動前，先做 [load test](../../knowledge-cards/load-test/)、容量預估與降級策略，比重構所有資料層更有時效。
+- 服務已經有穩定收入且事故頻繁時，補 observability、[Deployment Contract](/backend/knowledge-cards/deployment-contract/) 與 reliability pipeline 會直接降低業務風險。
+- 流量即將進入大型活動前，先做 [load test](/backend/knowledge-cards/load-test/)、容量預估與降級策略，比重構所有資料層更有時效。
 
 這類取捨的陷阱是把架構完整度當成目標。選型應回答目前最需要降低哪個風險，並設計能回頭修正的邊界。
 
@@ -113,15 +113,15 @@ weight: 6
 當以下問題都能回答時，代表本章的概念層已完成，可以進入具體服務取捨與落地章節：
 
 1. 成本維度是否完整（建置、使用、操作、資安、機會成本）
-2. 失敗代價是否分級（遺失、重複、延遲、[停機](../../knowledge-cards/downtime/)）
+2. 失敗代價是否分級（遺失、重複、延遲、[停機](/backend/knowledge-cards/downtime/)）
 3. 團隊可承擔的操作責任是否明確（runbook、告警、備份、回復）
 4. 何時重評選型的條件是否明確（流量、法規、事故頻率）
 
 下一步建議路由：
 
-- [01-database](../../01-database/)
-- [03-message-queue](../../03-message-queue/)
-- [07-security-data-protection](../../07-security-data-protection/)
+- [01-database](/backend/01-database/)
+- [03-message-queue](/backend/03-message-queue/)
+- [07-security-data-protection](/backend/07-security-data-protection/)
 
 ## 小結
 

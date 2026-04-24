@@ -20,7 +20,7 @@ Go 的 interface 描述的是行為，不是繼承關係。你不需要在 concr
 
 ## 【觀察】interface 只描述需要的行為
 
-interface 的核心規則是：只描述呼叫者需要的行為，不描述實作者的完整身份。假設有一個函式要把訊息寫到某個目的地；它不需要知道目的地是檔案、記憶體 [buffer](../../../backend/knowledge-cards/buffer/)，還是網路連線，只需要知道對方能 `Write`。
+interface 的核心規則是：只描述呼叫者需要的行為，不描述實作者的完整身份。假設有一個函式要把訊息寫到某個目的地；它不需要知道目的地是檔案、記憶體 [buffer](/backend/knowledge-cards/buffer/)，還是網路連線，只需要知道對方能 `Write`。
 
 ```go
 type Writer interface {

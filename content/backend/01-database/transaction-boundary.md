@@ -7,7 +7,7 @@ weight: 3
 
 ## 大綱
 
-- [transaction boundary](../../knowledge-cards/transaction-boundary/)
-- [isolation level](../../knowledge-cards/isolation-level/)
+- [transaction boundary](/backend/knowledge-cards/transaction-boundary/)
+- [isolation level](/backend/knowledge-cards/isolation-level/)
 - deadlock 與 retry
 - unit of work

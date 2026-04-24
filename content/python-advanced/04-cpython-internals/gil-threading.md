@@ -10,9 +10,9 @@ GIL（Global Interpreter Lock）是 CPython 中最具爭議的設計之一。本
 
 ## 先備知識
 
-- [3.3 Bytecode 與虛擬機](../bytecode/)
-- 入門系列 [3.7 並行處理](../../../python/03-stdlib/concurrency/)
-- 入門系列 [3.8 Free-Threading](../free-threading/)
+- [3.3 Bytecode 與虛擬機](/python-advanced/04-cpython-internals/bytecode/)
+- 入門系列 [3.7 並行處理](/python/03-stdlib/concurrency/)
+- 入門系列 [3.8 Free-Threading](/python-advanced/04-cpython-internals/free-threading/)
 
 ## 本章目標
 
@@ -440,5 +440,5 @@ Python 3.15/3.16:   可能成為預設
 
 ---
 
-*上一章：[Bytecode 與虛擬機](../bytecode/)*
-*下一模組：[模組四：用 C 擴展 Python](../../05-c-extensions/)*
+*上一章：[Bytecode 與虛擬機](/python-advanced/04-cpython-internals/bytecode/)*
+*下一模組：[模組四：用 C 擴展 Python](/python-advanced/05-c-extensions/)*

@@ -8,6 +8,6 @@ weight: 2
 ## 大綱
 
 - workload model
-- [throughput](../../knowledge-cards/throughput/) / latency
+- [throughput](/backend/knowledge-cards/throughput/) / latency
 - bottleneck
 - capacity planning

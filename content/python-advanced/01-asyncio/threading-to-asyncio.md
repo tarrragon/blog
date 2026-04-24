@@ -354,11 +354,11 @@ if __name__ == "__main__":
 
 理解了 threading 和 asyncio 的區別後，你可以開始深入學習 asyncio 的核心概念：
 
-- [1.1 基礎概念與事件迴圈](../fundamentals/) - 理解 asyncio 的運作原理
-- [1.2 協程與 Task 管理](../coroutines-tasks/) - 掌握 async/await 語法
-- [1.4 實戰：與同步程式碼整合](../real-world/) - 學習混合模式的最佳實踐
+- [1.1 基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/) - 理解 asyncio 的運作原理
+- [1.2 協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/) - 掌握 async/await 語法
+- [1.4 實戰：與同步程式碼整合](/python-advanced/01-asyncio/real-world/) - 學習混合模式的最佳實踐
 
 ---
 
-*上一章：[入門系列 3.7 並行處理](../../../python/03-stdlib/concurrency/)*
-*下一章：[1.1 基礎概念與事件迴圈](../fundamentals/)*
+*上一章：[入門系列 3.7 並行處理](/python/03-stdlib/concurrency/)*
+*下一章：[1.1 基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/)*

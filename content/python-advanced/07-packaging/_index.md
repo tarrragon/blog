@@ -41,4 +41,4 @@ weight: 7
 
 ---
 
-*上一模組：[模組六：用 Rust 擴展 Python](../06-rust-extensions/)*
+*上一模組：[模組六：用 Rust 擴展 Python](/python-advanced/06-rust-extensions/)*

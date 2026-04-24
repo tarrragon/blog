@@ -701,4 +701,4 @@ def safe_example():
 
 ---
 
-*下一章：[Cython](../cython/)*
+*下一章：[Cython](/python-advanced/05-c-extensions/cython/)*

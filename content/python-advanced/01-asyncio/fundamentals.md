@@ -10,7 +10,7 @@ weight: 1
 
 ## 先備知識
 
-- 入門系列 [3.7 並行處理](../../../python/03-stdlib/concurrency/)
+- 入門系列 [3.7 並行處理](/python/03-stdlib/concurrency/)
 - 了解 I/O 密集任務的特性
 
 ## 本章目標
@@ -400,4 +400,4 @@ asyncio.run(main())
 
 ---
 
-*下一章：[協程與 Task 管理](../coroutines-tasks/)*
+*下一章：[協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)*

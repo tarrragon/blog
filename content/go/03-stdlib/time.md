@@ -28,7 +28,7 @@ func isExpired(now time.Time, deadline time.Time) bool {
 
 ## `time.Duration` 表示時間長度
 
-`time.Duration` 的核心意義是一段時間長度，不是某個時間點。它常用於 [timeout](../../../backend/knowledge-cards/timeout/)、interval、重試等待與效能測量。
+`time.Duration` 的核心意義是一段時間長度，不是某個時間點。它常用於 [timeout](/backend/knowledge-cards/timeout/)、interval、重試等待與效能測量。
 
 ```go
 timeout := 5 * time.Second

@@ -27,7 +27,7 @@ weight: 71732
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](/backend/knowledge-cards/runbook/) 與 [incident timeline](/backend/knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：高風險邊界設備準備替代路徑。
 - 日常：建立邊界設備健康與變更基線。
 - 事故中：執行隔離、重建、憑證輪替三段流程。

@@ -26,7 +26,7 @@ weight: 4
 
 ## 先備知識
 
-- 入門系列 [並行處理](../../python/03-stdlib/concurrency/)
+- 入門系列 [並行處理](/python/03-stdlib/concurrency/)
 
 ## 學習時間
 
@@ -34,5 +34,5 @@ weight: 4
 
 ---
 
-*上一模組：[模組三：進階設計模式](../03-design-patterns/)*
-*下一模組：[模組五：用 C 擴展 Python](../05-c-extensions/)*
+*上一模組：[模組三：進階設計模式](/python-advanced/03-design-patterns/)*
+*下一模組：[模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)*

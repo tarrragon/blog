@@ -10,7 +10,7 @@ weight: 4
 
 ## 先備知識
 
-- 本進階系列 [模組二：元編程](../../02-metaprogramming/)
+- 本進階系列 [模組二：元編程](/python-advanced/02-metaprogramming/)
 - 特別是 Metaclass 與 `__init_subclass__`
 
 ## 插件架構模式
@@ -689,5 +689,5 @@ def check_compatibility(
 
 ---
 
-*上一章：[3.5.3 進階上下文管理](../context-managers/)*
-*下一章：[3.5.5 設計模式整合案例](../integration/)*
+*上一章：[3.5.3 進階上下文管理](/python-advanced/03-design-patterns/context-managers/)*
+*下一章：[3.5.5 設計模式整合案例](/python-advanced/03-design-patterns/integration/)*

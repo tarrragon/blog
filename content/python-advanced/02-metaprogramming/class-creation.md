@@ -10,7 +10,7 @@ weight: 3
 
 ## 先備知識
 
-- [2.2 Metaclass 設計與應用](../metaclasses/)
+- [2.2 Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)
 
 ## 本章目標
 
@@ -446,5 +446,5 @@ User("Alice", 30)  # OK
 
 ---
 
-*上一章：[Metaclass 設計與應用](../metaclasses/)*
-*下一章：[反射與 inspect 模組](../introspection/)*
+*上一章：[Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)*
+*下一章：[反射與 inspect 模組](/python-advanced/02-metaprogramming/introspection/)*

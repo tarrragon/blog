@@ -331,5 +331,5 @@ def validate(data: str) -> Tuple[bool, str]:
 
 ---
 
-_上一章：[異常處理策略](../exception/)_
-_下一章：[unittest 基礎](../unittest/)_
+_上一章：[異常處理策略](/python/05-error-testing/exception/)_
+_下一章：[unittest 基礎](/python/05-error-testing/unittest/)_

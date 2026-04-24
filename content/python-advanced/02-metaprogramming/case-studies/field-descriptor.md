@@ -10,8 +10,8 @@ weight: 3
 
 ## 先備知識
 
-- [2.1 宣告式驗證](../declarative-validation/)
-- [2.3 類別裝飾器與動態類別](../../class-creation/)
+- [2.1 宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)
+- [2.3 類別裝飾器與動態類別](/python-advanced/02-metaprogramming/class-creation/)
 
 ## 問題背景
 
@@ -1013,5 +1013,5 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
 
 ---
 
-*上一章：[自動註冊機制](../auto-registration/)*
-*返回：[模組二：元編程](../../)*
+*上一章：[自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)*
+*返回：[模組二：元編程](/python-advanced/02-metaprogramming/)*

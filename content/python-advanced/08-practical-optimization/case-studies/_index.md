@@ -61,9 +61,9 @@ python profiling/profile_link_checker.py
 
 建議先完成以下章節：
 
-- [8.1 並行處理實戰](../parallel-processing/)
-- [8.2 效能調優實戰](../performance-tuning/)
+- [8.1 並行處理實戰](/python-advanced/08-practical-optimization/parallel-processing/)
+- [8.2 效能調優實戰](/python-advanced/08-practical-optimization/performance-tuning/)
 
 ---
 
-*返回：[模組八：實戰效能優化](../)*
+*返回：[模組八：實戰效能優化](/python-advanced/08-practical-optimization/)*

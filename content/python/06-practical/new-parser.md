@@ -11,9 +11,9 @@ weight: 3
 
 建議先閱讀：
 
-- [4.2 抽象基類 ABC](../../04-oop/abc/)
-- [4.3 工廠模式](../../04-oop/factory/)
-- [2.1 Type Hints 基礎](../../02-type-system/type-hints/)
+- [4.2 抽象基類 ABC](/python/04-oop/abc/)
+- [4.3 工廠模式](/python/04-oop/factory/)
+- [2.1 Type Hints 基礎](/python/02-type-system/type-hints/)
 
 ## 場景說明
 
@@ -423,5 +423,5 @@ except toml.TomlDecodeError as e:
 
 ---
 
-_上一章：[如何擴展共用模組](../extend-lib/)_
-_回到首頁：[Python 維護工程師實戰指南](../../)_
+_上一章：[如何擴展共用模組](/python/06-practical/extend-lib/)_
+_回到首頁：[Python 維護工程師實戰指南](/python/)_

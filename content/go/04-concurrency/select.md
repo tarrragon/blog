@@ -5,7 +5,7 @@ description: "用 select 建立事件迴圈"
 weight: 3
 ---
 
-`select` 是 Go 用來同時等待多個 channel 操作的控制結構。它的核心用途是讓一個 goroutine 同時處理資料輸入、取消訊號、timer/ticker 與 [fallback](../../../backend/knowledge-cards/fallback/) 行為。
+`select` 是 Go 用來同時等待多個 channel 操作的控制結構。它的核心用途是讓一個 goroutine 同時處理資料輸入、取消訊號、timer/ticker 與 [fallback](/backend/knowledge-cards/fallback/) 行為。
 
 ## 本章目標
 
@@ -108,7 +108,7 @@ default:
 }
 ```
 
-若結果是必要的，應該等待或設定 [timeout](../../../backend/knowledge-cards/timeout/)，而不是直接 default。
+若結果是必要的，應該等待或設定 [timeout](/backend/knowledge-cards/timeout/)，而不是直接 default。
 
 ## timeout pattern
 

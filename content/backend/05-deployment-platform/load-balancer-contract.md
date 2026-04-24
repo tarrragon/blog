@@ -7,7 +7,7 @@ weight: 3
 
 ## 大綱
 
-- [Load Balancer Contract](../../knowledge-cards/load-balancer-contract/)
+- [Load Balancer Contract](/backend/knowledge-cards/load-balancer-contract/)
 - draining / connection closing
-- idle [timeout](../../knowledge-cards/timeout/)
-- [Sticky Session](../../knowledge-cards/sticky-session/)
+- idle [timeout](/backend/knowledge-cards/timeout/)
+- [Sticky Session](/backend/knowledge-cards/sticky-session/)

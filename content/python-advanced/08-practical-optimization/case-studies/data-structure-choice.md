@@ -10,7 +10,7 @@ weight: 5
 
 ## 先備知識
 
-- [入門系列 3.8 效能優化](../../../../python/03-stdlib/performance/)
+- [入門系列 3.8 效能優化](/python/03-stdlib/performance/)
 - 基本的時間複雜度概念（O(n)、O(1)）
 
 ## 問題背景
@@ -576,5 +576,5 @@ def compare_directories(dir1: Path, dir2: Path) -> dict:
 
 ---
 
-*上一章：[LRU 快取](../lru-cache-branch/)*
-*返回：[案例研究索引](../)*
+*上一章：[LRU 快取](/python-advanced/08-practical-optimization/case-studies/lru-cache-branch/)*
+*返回：[案例研究索引](/python-advanced/08-practical-optimization/case-studies/)*

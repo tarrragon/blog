@@ -30,9 +30,9 @@ weight: 10
 
 建議先完成以下章節：
 
-- [2.1 Descriptor Protocol 完整指南](../descriptors/)
-- [2.2 Metaclass 設計與應用](../metaclasses/)
+- [2.1 Descriptor Protocol 完整指南](/python-advanced/02-metaprogramming/descriptors/)
+- [2.2 Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)
 
 ---
 
-*返回：[模組二：元編程](../)*
+*返回：[模組二：元編程](/python-advanced/02-metaprogramming/)*

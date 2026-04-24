@@ -116,12 +116,12 @@ return usePolling(ctx)
 
 Feature gate 的核心問題不是只決定開或關，而是關閉時要做什麼。常見策略包括降級、回錯、隱藏入口、排程稍後處理。
 
-| 策略                                                   | 行為                         | 適用情境                     |
-| ------------------------------------------------------ | ---------------------------- | ---------------------------- |
-| [fallback](../../../backend/knowledge-cards/fallback/) | 使用舊流程                   | 新能力只是效率改善           |
-| reject                                                 | 回明確錯誤                   | 功能沒有安全替代方案         |
-| hide                                                   | 不註冊 endpoint 或不顯示入口 | 使用者不應看到該功能         |
-| store for later                                        | 先保存，稍後處理             | 即時能力暫不可用但資料不能丟 |
+| 策略                                           | 行為                         | 適用情境                     |
+| ---------------------------------------------- | ---------------------------- | ---------------------------- |
+| [fallback](/backend/knowledge-cards/fallback/) | 使用舊流程                   | 新能力只是效率改善           |
+| reject                                         | 回明確錯誤                   | 功能沒有安全替代方案         |
+| hide                                           | 不註冊 endpoint 或不顯示入口 | 使用者不應看到該功能         |
+| store for later                                | 先保存，稍後處理             | 即時能力暫不可用但資料不能丟 |
 
 例如即時推送關閉時，可以改成保存待處理資料：
 
@@ -203,7 +203,7 @@ func DecideRealtime(features Features, caps Capabilities) RealtimeDecision {
 }
 ```
 
-Decision 物件讓 [log](../../../backend/knowledge-cards/log/)、測試與錯誤回應都能使用相同 reason。
+Decision 物件讓 [log](/backend/knowledge-cards/log/)、測試與錯誤回應都能使用相同 reason。
 
 ## 【執行】log 要記錄 gate decision
 
@@ -259,19 +259,19 @@ func TestDecideRealtimeEnabled(t *testing.T) {
 
 ## 本章不處理
 
-本章先處理服務內部的 gate 行為邊界；遠端 [feature flag](../../../backend/knowledge-cards/feature-flag/) 平台與灰度流程，會在下列章節再往外延伸：
+本章先處理服務內部的 gate 行為邊界；遠端 [feature flag](/backend/knowledge-cards/feature-flag/) 平台與灰度流程，會在下列章節再往外延伸：
 
-- [Backend：部署平台與網路入口](../../../backend/05-deployment-platform/)
+- [Backend：部署平台與網路入口](/backend/05-deployment-platform/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 composition root、handler boundary 與 runtime gate；如果你要先回看語言教材，可以讀：
 
-- [Go：composition root 與依賴組裝](../../../go/07-refactoring/composition-root/)
-- [Go：把 handler 邏輯拆成可測單元](../../../go/07-refactoring/handler-boundary/)
-- [Go：用 interface 隔離外部依賴](../../../go/07-refactoring/interface-boundary/)
-- [Go：testing 基礎](../../../go/05-error-testing/testing-basics/)
-- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../../07-distributed-operations/deployment-contracts/)
+- [Go：composition root 與依賴組裝](/go/07-refactoring/composition-root/)
+- [Go：把 handler 邏輯拆成可測單元](/go/07-refactoring/handler-boundary/)
+- [Go：用 interface 隔離外部依賴](/go/07-refactoring/interface-boundary/)
+- [Go：testing 基礎](/go/05-error-testing/testing-basics/)
+- [Go 進階：Kubernetes、systemd 與 load balancer 合約](/go-advanced/07-distributed-operations/deployment-contracts/)
 
 ## 小結
 

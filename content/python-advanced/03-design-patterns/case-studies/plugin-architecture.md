@@ -10,8 +10,8 @@ weight: 2
 
 ## 先備知識
 
-- [2.2 自動註冊機制](../../../02-metaprogramming/case-studies/auto-registration/)
-- [3.5.4 插件系統設計](../../plugin-system/)
+- [2.2 自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)
+- [3.5.4 插件系統設計](/python-advanced/03-design-patterns/plugin-system/)
 
 ## 問題背景
 
@@ -1220,5 +1220,5 @@ class HotReloadableRegistry(CheckRegistry):
 
 ---
 
-*上一章：[快取生命週期管理](../cache-lifecycle/)*
-*下一章：[異常設計架構](../exception-hierarchy/)*
+*上一章：[快取生命週期管理](/python-advanced/03-design-patterns/case-studies/cache-lifecycle/)*
+*下一章：[異常設計架構](/python-advanced/03-design-patterns/case-studies/exception-hierarchy/)*

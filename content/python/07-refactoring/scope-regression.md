@@ -139,7 +139,7 @@ def run_hook_safely(main_func, hook_name):
 
 7 個 Hook 就這樣在至少 2 個 session 中靜默失敗。直到有人手動觸發了一個受影響的 Hook 並檢查日誌，才發現問題。
 
-> 這也是為什麼 W25-005 後來在 `_log_exception` 加入了 stderr 輸出。詳見 [5.5 頂層例外處理機制](../../05-error-testing/error-infrastructure/)。
+> 這也是為什麼 W25-005 後來在 `_log_exception` 加入了 stderr 輸出。詳見 [5.5 頂層例外處理機制](/python/05-error-testing/error-infrastructure/)。
 
 ## 正確的修正方式
 
@@ -298,5 +298,5 @@ def main():
 
 ---
 
-_上一章：[重構案例研究](../case-study/)_
-_相關：[5.5 頂層例外處理機制](../../05-error-testing/error-infrastructure/) — 本案例中 bug 被靜默吞掉的機制分析_
+_上一章：[重構案例研究](/python/07-refactoring/case-study/)_
+_相關：[5.5 頂層例外處理機制](/python/05-error-testing/error-infrastructure/) — 本案例中 bug 被靜默吞掉的機制分析_

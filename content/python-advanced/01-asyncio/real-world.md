@@ -10,7 +10,7 @@ weight: 4
 
 ## 先備知識
 
-- [1.3 設計模式與最佳實踐](../patterns/)
+- [1.3 設計模式與最佳實踐](/python-advanced/01-asyncio/patterns/)
 
 ## 本章目標
 
@@ -244,5 +244,5 @@ async def test_with_mock():
 
 ---
 
-*上一章：[設計模式與最佳實踐](../patterns/)*
-*下一模組：[模組二：元編程](../../02-metaprogramming/)*
+*上一章：[設計模式與最佳實踐](/python-advanced/01-asyncio/patterns/)*
+*下一模組：[模組二：元編程](/python-advanced/02-metaprogramming/)*

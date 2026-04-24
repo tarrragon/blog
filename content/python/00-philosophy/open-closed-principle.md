@@ -131,7 +131,7 @@ report = generator.generate(data)
 
 ### 這和命名是同一件事：降低認知負擔
 
-回想[命名的藝術](../naming-art/)：好的命名讓讀者不需要追溯定義就能理解。
+回想[命名的藝術](/python/00-philosophy/naming-art/)：好的命名讓讀者不需要追溯定義就能理解。
 
 OCP 做的是同樣的事，只是在更高的層級：好的設計讓讀者不需要理解整個系統就能擴展。
 
@@ -404,9 +404,9 @@ ParserFactory.register(DartParser)
 
 ## 延伸閱讀
 
-- [認知負擔：程式碼設計的核心目的](../cognitive-load/) - 認知負擔的基本概念
-- [命名的藝術：讓程式碼說故事](../naming-art/) - 降低認知負擔的另一種方式
-- [抽象基類 ABC](../../04-oop/abc/) - Python 中實現 OCP 的工具
+- [認知負擔：程式碼設計的核心目的](/python/00-philosophy/cognitive-load/) - 認知負擔的基本概念
+- [命名的藝術：讓程式碼說故事](/python/00-philosophy/naming-art/) - 降低認知負擔的另一種方式
+- [抽象基類 ABC](/python/04-oop/abc/) - Python 中實現 OCP 的工具
 
 ## 延伸閱讀（進階系列）
 

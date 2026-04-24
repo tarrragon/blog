@@ -388,5 +388,5 @@ class BaseParser(ABC):
 
 ---
 
-_上一章：[類別設計原則](../class-design/)_
-_下一章：[工廠模式](../factory/)_
+_上一章：[類別設計原則](/python/04-oop/class-design/)_
+_下一章：[工廠模式](/python/04-oop/factory/)_

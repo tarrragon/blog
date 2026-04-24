@@ -10,8 +10,8 @@ weight: 1
 
 ## 先備知識
 
-- [1.1 基礎概念與事件迴圈](../../fundamentals/)
-- [1.4 實戰：與同步程式碼整合](../../real-world/)
+- [1.1 基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/)
+- [1.4 實戰：與同步程式碼整合](/python-advanced/01-asyncio/real-world/)
 
 ## 問題背景
 
@@ -651,5 +651,5 @@ TaskGroup 的優點：
 
 ---
 
-*上一章：[案例研究索引](../)*
-*下一章：[案例：並行 I/O 操作](../parallel-io/)*
+*上一章：[案例研究索引](/python-advanced/01-asyncio/case-studies/)*
+*下一章：[案例：並行 I/O 操作](/python-advanced/01-asyncio/case-studies/parallel-io/)*

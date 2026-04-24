@@ -9,7 +9,7 @@ RCA 的核心概念是「找出事故能發生的系統性原因」。它區分 
 
 ## 概念位置
 
-RCA 是 [post-incident-review](../post-incident-review/) 的分析骨架，並和 [incident timeline](../incident-timeline/) 與 [runbook](../runbook/) 改進連動。
+RCA 是 [post-incident-review](/backend/knowledge-cards/post-incident-review/) 的分析骨架，並和 [incident timeline](/backend/knowledge-cards/incident-timeline/) 與 [runbook](/backend/knowledge-cards/runbook/) 改進連動。
 
 ## 可觀察訊號與例子
 

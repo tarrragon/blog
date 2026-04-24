@@ -5,7 +5,7 @@ description: "把 context、net/http、log/slog、defer 與 time 連成服務底
 weight: 10
 ---
 
-Go 標準庫的服務價值在於它直接提供 HTTP、[timeout](../../../backend/knowledge-cards/timeout/)、取消、日誌與資源管理的基本能力。這一章把前面學過的工具串成服務底座，讓讀者理解標準庫如何支撐後端程式，而不只是個別 API 的使用方式。
+Go 標準庫的服務價值在於它直接提供 HTTP、[timeout](/backend/knowledge-cards/timeout/)、取消、日誌與資源管理的基本能力。這一章把前面學過的工具串成服務底座，讓讀者理解標準庫如何支撐後端程式，而不只是個別 API 的使用方式。
 
 ## 本章目標
 
@@ -27,7 +27,7 @@ Go 的標準庫已經包含服務程式需要的主要基礎能力。`net/http` 
 
 ## 【判讀】context 是服務生命週期的中心
 
-在服務型 Go 裡，`context` 是請求、取消與 [deadline](../../../backend/knowledge-cards/deadline/) 的共同語言。當 handler、worker、DB、Redis 都接受 context 時，整個流程就能在同一個生命週期邊界內運作；缺少 context 的長時間流程會讓取消與逾時難以傳遞。
+在服務型 Go 裡，`context` 是請求、取消與 [deadline](/backend/knowledge-cards/deadline/) 的共同語言。當 handler、worker、DB、Redis 都接受 context 時，整個流程就能在同一個生命週期邊界內運作；缺少 context 的長時間流程會讓取消與逾時難以傳遞。
 
 ## 【判讀】net/http 讓入口保持簡單
 

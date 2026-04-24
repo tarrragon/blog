@@ -367,8 +367,8 @@ def has_valid_python_header(file_path: Path) -> bool:
 
 ## 延伸閱讀
 
-- [認知負擔：程式碼設計的核心目的](../cognitive-load/) - 理解命名為何重要
-- [開放封閉原則與認知負擔](../open-closed-principle/) - 命名在架構設計中的角色
+- [認知負擔：程式碼設計的核心目的](/python/00-philosophy/cognitive-load/) - 理解命名為何重要
+- [開放封閉原則與認知負擔](/python/00-philosophy/open-closed-principle/) - 命名在架構設計中的角色
 
 ---
 

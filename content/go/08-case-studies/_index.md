@@ -28,7 +28,7 @@ weight: 8
 
 案例分類的核心原則是先看服務壓力，再看公司名稱。Google、PayPal、Dropbox、Microsoft、Twitch、Cloudflare、Cockroach Labs、Stream 與 CloudWeGo 代表的是不同工程條件：大規模平台、高併發即時服務、效能敏感遷移、分散式資料系統與微服務治理。
 
-大規模平台案例通常要觀察服務形狀是否一致：入口、設定、[log](../../backend/knowledge-cards/log)、部署與 [health check](../../backend/knowledge-cards/health-check-liveness) 是否能被很多團隊共用。高併發即時案例通常要觀察連線是否長時間存在，以及 server 是否需要管理大量 client 狀態。效能敏感遷移案例通常要觀察瓶頸是否集中在清楚邊界。分散式基礎設施案例則要觀察主要問題是否落在多節點協調與可靠性。
+大規模平台案例通常要觀察服務形狀是否一致：入口、設定、[log](/backend/knowledge-cards/log)、部署與 [health check](/backend/knowledge-cards/health-check-liveness) 是否能被很多團隊共用。高併發即時案例通常要觀察連線是否長時間存在，以及 server 是否需要管理大量 client 狀態。效能敏感遷移案例通常要觀察瓶頸是否集中在清楚邊界。分散式基礎設施案例則要觀察主要問題是否落在多節點協調與可靠性。
 
 這張表是入口索引。讀每家公司案例時，應回到具體章節對照：選型判斷看 [Go 的選型案例總覽](selection-patterns/)，並發服務看 [Go 的高併發服務案例](high-concurrency-services/)，公開原始碼則依照 [Go 公開原始碼讀碼路線](open-source-code-reading/) 逐層閱讀。
 

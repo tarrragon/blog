@@ -21,9 +21,9 @@ weight: 7238
 
 ## 案例觸發參考
 
-- [Snowflake 2024](../../cases/data-exfiltration/snowflake-2024-credential-abuse/)
-- [WS_FTP 2023](../../cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)
+- [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- [WS_FTP 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)
 
 ## 來源流程卡
 
-- [匯出流程濫用](../export-flow-abuse/)
+- [匯出流程濫用](/backend/07-security-data-protection/red-team/problem-cards/export-flow-abuse/)

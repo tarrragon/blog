@@ -10,8 +10,8 @@ weight: 2
 
 ## 先備知識
 
-- [1.1 非同步 Subprocess](../async-subprocess/)
-- [1.2 協程與 Task 管理](../../coroutines-tasks/)
+- [1.1 非同步 Subprocess](/python-advanced/01-asyncio/case-studies/async-subprocess/)
+- [1.2 協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)
 
 ## 問題背景
 
@@ -1019,5 +1019,5 @@ async def monitor_repos(
 
 ---
 
-*上一章：[非同步 Subprocess](../async-subprocess/)*
-*下一章：[同步/非同步橋接](../sync-async-bridge/)*
+*上一章：[非同步 Subprocess](/python-advanced/01-asyncio/case-studies/async-subprocess/)*
+*下一章：[同步/非同步橋接](/python-advanced/01-asyncio/case-studies/sync-async-bridge/)*

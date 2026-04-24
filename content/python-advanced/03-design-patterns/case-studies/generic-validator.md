@@ -10,8 +10,8 @@ weight: 4
 
 ## 先備知識
 
-- 入門系列 [2.2 Optional、Union、泛型](../../../../python/02-type-system/optional-union/)
-- [3.5.1 泛型進階](../../generics/)
+- 入門系列 [2.2 Optional、Union、泛型](/python/02-type-system/optional-union/)
+- [3.5.1 泛型進階](/python-advanced/03-design-patterns/generics/)
 
 ## 問題背景
 
@@ -1005,5 +1005,5 @@ print(result.errors)    # ["[1] Value cannot be empty"]
 
 ---
 
-*上一章：[異常設計架構](../exception-hierarchy/)*
-*返回：[模組 3.5：進階設計模式](../../)*
+*上一章：[異常設計架構](/python-advanced/03-design-patterns/case-studies/exception-hierarchy/)*
+*返回：[模組 3.5：進階設計模式](/python-advanced/03-design-patterns/)*

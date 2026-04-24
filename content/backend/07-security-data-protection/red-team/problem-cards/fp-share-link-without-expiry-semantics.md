@@ -21,9 +21,9 @@ weight: 7239
 
 ## 案例觸發參考
 
-- [GoAnywhere 2023](../../cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)
-- [LastPass 2022](../../cases/data-exfiltration/lastpass-2022-backup-chain/)
+- [GoAnywhere 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)
+- [LastPass 2022](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)
 
 ## 來源流程卡
 
-- [分享流程濫用](../sharing-flow-abuse/)
+- [分享流程濫用](/backend/07-security-data-protection/red-team/problem-cards/sharing-flow-abuse/)

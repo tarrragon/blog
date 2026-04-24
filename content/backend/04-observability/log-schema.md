@@ -7,7 +7,7 @@ weight: 1
 
 ## 大綱
 
-- structured [log schema](../../knowledge-cards/log-schema/)
+- structured [log schema](/backend/knowledge-cards/log-schema/)
 - correlation fields
-- index 與 [retention](../../knowledge-cards/retention/)
+- index 與 [retention](/backend/knowledge-cards/retention/)
 - query pattern

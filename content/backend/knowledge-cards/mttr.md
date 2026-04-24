@@ -10,7 +10,7 @@ MTTR 的核心概念是「從事故開始到恢復的平均時間」。它幫助
 
 ## 概念位置
 
-MTTR 連接 [incident severity](../incident-severity/)、[alert](../alert/)、[runbook](../runbook/) 與 [post-incident-review](../post-incident-review/)。不同等級事故應分開計算，避免指標失真。
+MTTR 連接 [incident severity](/backend/knowledge-cards/incident-severity/)、[alert](/backend/knowledge-cards/alert/)、[runbook](/backend/knowledge-cards/runbook/) 與 [post-incident-review](/backend/knowledge-cards/post-incident-review/)。不同等級事故應分開計算，避免指標失真。
 
 ## 可觀察訊號與例子
 

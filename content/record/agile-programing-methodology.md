@@ -776,17 +776,17 @@ graph TD
 ## 📋 參考文件（強制完整）
 
 ### UseCase 參考
-- [UC-01 ISBN 精確查詢](../../app-use-cases.md#uc-01)
+- [UC-01 ISBN 精確查詢](/app-use-cases.md#uc-01)
 
 ### 流程圖參考（具體到 Event）
-- [主流程 Event 6](../../use-cases/unified-api/book-info-query-flow.md)
+- [主流程 Event 6](/use-cases/unified-api/book-info-query-flow.md)
   - Event 6: BookEnrichmentProcessor.process(rawData)
   - 輸入: GoogleBooksDto
   - 輸出: BookEnrichmentData
 
 ### 架構規範
-- [Application 層設計](../../app-requirements-spec.md#application-layer)
-- [資料轉換規範](../../domain-transformation-layer-design.md)
+- [Application 層設計](/app-requirements-spec.md#application-layer)
+- [資料轉換規範](/domain-transformation-layer-design.md)
 
 ### 依賴類別（前置任務產出）
 - `BookQueryInput` (v0.11.3)
@@ -794,7 +794,7 @@ graph TD
 - `GoogleBooksDto` (Infrastructure 既有)
 
 ### 測試設計參考
-- [主流程測試設計](./v0.11.2-tdd-phase2-test-design.md#task-22)
+- [主流程測試設計](/record/agile-programing-methodology/v0.11.2-tdd-phase2-test-design.md#task-22)
 - 測試檔案: `book_enrichment_processor_test.dart`
 - 測試用例: 20 個
 
@@ -826,9 +826,9 @@ graph TD
 **負責**: pepper-test-implementer
 
 **子任務**:
-- [ ] v0.11.5-a: BookEnrichmentProcessor ([工作日誌](./v0.11.5-a-enrichment-processor.md))
-- [ ] v0.11.5-b: BookMetadata ([工作日誌](./v0.11.5-b-book-metadata.md))
-- [ ] v0.11.5-c: ApiCacheManager ([工作日誌](./v0.11.5-c-cache-manager.md))
+- [ ] v0.11.5-a: BookEnrichmentProcessor ([工作日誌](/record/agile-programing-methodology/v0.11.5-a-enrichment-processor.md))
+- [ ] v0.11.5-b: BookMetadata ([工作日誌](/record/agile-programing-methodology/v0.11.5-b-book-metadata.md))
+- [ ] v0.11.5-c: ApiCacheManager ([工作日誌](/record/agile-programing-methodology/v0.11.5-c-cache-manager.md))
 
 **驗收**: 三個子任務全部完成，資料處理鏈測試通過
 
@@ -931,12 +931,12 @@ graph LR
 - ApiCacheManager
 
 **📋 參考文件**（Phase 2 補充）:
-- [主流程 Event 6-7](../use-cases/unified-api/book-info-query-flow.md)
-- [測試設計](./v0.11.2-tdd-phase2-test-design.md#task-22)
+- [主流程 Event 6-7](/record/use-cases/unified-api/book-info-query-flow.md)
+- [測試設計](/record/agile-programing-methodology/v0.11.2-tdd-phase2-test-design.md#task-22)
 - 依賴類別: `BookEnrichmentData` (**已遷移到 Domain 層**)
 - 依賴類別: `BookQueryInput` (v0.11.3)
 - 依賴類別: `QueryType` (v0.11.4)
-- [錯誤處理規範](../app-error-handling-design.md)
+- [錯誤處理規範](/record/app-error-handling-design.md)
 
 **⚠️ Phase 2 發現**:
 - BookEnrichmentData 已從 Infrastructure 遷移到 Domain
@@ -1437,27 +1437,27 @@ graph TD
 ### 📋 參考文件（強制完整填寫）
 
 #### UseCase 參考（必須）
-- [UC-XX](../app-use-cases.md#uc-xx) - [Use Case 名稱]
-- [UC-YY](../app-use-cases.md#uc-yy) - [相關 Use Case]
+- [UC-XX](/record/app-use-cases.md#uc-xx) - [Use Case 名稱]
+- [UC-YY](/record/app-use-cases.md#uc-yy) - [相關 Use Case]
 
 **說明**: 明確指出此任務對應哪些 Use Case，確保實作符合業務需求。
 
 #### 流程圖參考（必須，具體到 Event）
-- [流程圖名稱 Event X-Y](../use-cases/[feature]/[flow-name].md)
+- [流程圖名稱 Event X-Y](/record/use-cases/[feature]/[flow-name].md)
   - Event X: [Event 描述] - [對應的類別/方法]
   - Event Y: [Event 描述] - [對應的類別/方法]
 
 **範例**（來自 v0.11.5）:
-- [主流程 Event 6-7](../use-cases/unified-api/book-info-query-flow.md)
+- [主流程 Event 6-7](/record/use-cases/unified-api/book-info-query-flow.md)
   - Event 6: BookEnrichmentProcessor.process(rawData) - 處理原始資料
   - Event 7: BookMetadata.create() - 建立 Domain 實體
 
 **說明**: 具體到 Event 編號，讓代理人知道要實作流程圖的哪個部分。
 
 #### 架構規範（必須）
-- [Domain 層設計](../app-requirements-spec.md#domain-layer) - 層級職責定義
-- [錯誤處理規範](../app-error-handling-design.md) - 異常處理標準
-- [資料轉換規範](../domain-transformation-layer-design.md) - DTO 轉換規則
+- [Domain 層設計](/record/app-requirements-spec.md#domain-layer) - 層級職責定義
+- [錯誤處理規範](/record/app-error-handling-design.md) - 異常處理標準
+- [資料轉換規範](/record/domain-transformation-layer-design.md) - DTO 轉換規則
 
 **說明**: 確保實作符合專案架構原則。
 
@@ -1473,7 +1473,7 @@ graph TD
 **說明**: 列出此任務依賴的前置任務產出，包含版本號方便追溯。
 
 #### 測試設計參考（TDD 必須）
-- [測試設計文件](./vX.Y.Z-test-design.md#section)
+- [測試設計文件](/record/agile-programing-methodology/vX.Y.Z-test-design.md#section)
 - 測試檔案: `test_file_name_test.dart`
 - 測試用例數: N 個
 - 效能基準: [如有特殊要求]
@@ -1481,8 +1481,8 @@ graph TD
 **說明**: TDD 開發必須先參考測試設計，瞭解驗收標準。
 
 #### 實作範例（如有）
-- [類似實作參考](./vX.Y.Z-work-log.md#implementation)
-- [程式碼範例](../docs/implementation-examples.md)
+- [類似實作參考](/record/agile-programing-methodology/vX.Y.Z-work-log.md#implementation)
+- [程式碼範例](/record/docs/implementation-examples.md)
 
 **說明**: 提供參考範例幫助代理人理解預期實作方式。
 

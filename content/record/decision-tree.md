@@ -605,7 +605,7 @@ decision_tree_path:
 
 - flows/tdd-flow - TDD 流程
 - flows/incident-response - 事件回應流程
-- [flows/ticket-lifecycle](../ticket-lifecycle/) - Ticket 生命週期
+- [flows/ticket-lifecycle](/record/ticket-lifecycle/) - Ticket 生命週期
 
 ### 操作指南
 

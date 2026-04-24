@@ -588,5 +588,5 @@ def safe():
 
 ---
 
-*上一章：[3.5.2 異常設計架構](../exception-design/)*
-*下一章：[3.5.4 插件系統設計](../plugin-system/)*
+*上一章：[3.5.2 異常設計架構](/python-advanced/03-design-patterns/exception-design/)*
+*下一章：[3.5.4 插件系統設計](/python-advanced/03-design-patterns/plugin-system/)*

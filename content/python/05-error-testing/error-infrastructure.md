@@ -129,7 +129,7 @@ run_hook_safely(main, "hook-name")
 | 測試性     | 無法單獨測試錯誤處理       | 可以測試 `run_hook_safely` 的行為        |
 | 關注點分離 | 業務邏輯和錯誤處理混在一起 | Hook 只寫業務邏輯，錯誤處理交給框架      |
 
-這就是[高階函式](../../02-type-system/callable/)在實務中的應用。
+這就是[高階函式](/python/02-type-system/callable/)在實務中的應用。
 
 ### 為什麼 `KeyboardInterrupt` 和 `SystemExit` 要特別處理？
 
@@ -225,7 +225,7 @@ SessionStart:startup hook error: [Hook Error] acceptance-gate-hook failed unexpe
 # 用戶立刻知道有問題
 ```
 
-> 這個教訓的完整記錄在 IMP-003 錯誤模式中，[模組七的作用域迴歸案例研究](../../07-refactoring/scope-regression/)有詳細分析。
+> 這個教訓的完整記錄在 IMP-003 錯誤模式中，[模組七的作用域迴歸案例研究](/python/07-refactoring/scope-regression/)有詳細分析。
 
 ## 日誌系統配置
 
@@ -262,7 +262,7 @@ def setup_hook_logging(hook_name: str) -> logging.Logger:
 
 注意 `except OSError` 的處理：目錄建立失敗時不拋出異常，而是返回一個只有 `StreamHandler` 的 fallback logger。這確保**即使檔案系統出問題，日誌功能仍然可用**（只是沒有檔案記錄）。
 
-這體現了 [5.1 異常處理策略](../exception/) 中「策略 4：使用預設值」的原則。
+這體現了 [5.1 異常處理策略](/python/05-error-testing/exception/) 中「策略 4：使用預設值」的原則。
 
 ## 統一前後的對比
 
@@ -287,5 +287,5 @@ def setup_hook_logging(hook_name: str) -> logging.Logger:
 
 ---
 
-_上一章：[Mock 與測試隔離](../mock/)_
-_相關：[作用域迴歸案例研究](../../07-refactoring/scope-regression/) — 這套機制如何在一次重構中暴露出潛在問題_
+_上一章：[Mock 與測試隔離](/python/05-error-testing/mock/)_
+_相關：[作用域迴歸案例研究](/python/07-refactoring/scope-regression/) — 這套機制如何在一次重構中暴露出潛在問題_

@@ -10,8 +10,8 @@ weight: 2
 
 ## 先備知識
 
-- 入門系列 [3.7 並行處理](../../../../python/03-stdlib/concurrency/)
-- [案例：並行檔案檢查](../parallel-file-check/)（使用 `map()` 的基本並行模式）
+- 入門系列 [3.7 並行處理](/python/03-stdlib/concurrency/)
+- [案例：並行檔案檢查](/python-advanced/08-practical-optimization/case-studies/parallel-file-check/)（使用 `map()` 的基本並行模式）
 
 ## 問題背景
 
@@ -1124,5 +1124,5 @@ class PausableValidator:
 
 ---
 
-*上一章：[並行檔案檢查](../parallel-file-check/)*
-*下一章：[正則表達式預編譯](../regex-precompile/)*
+*上一章：[並行檔案檢查](/python-advanced/08-practical-optimization/case-studies/parallel-file-check/)*
+*下一章：[正則表達式預編譯](/python-advanced/08-practical-optimization/case-studies/regex-precompile/)*

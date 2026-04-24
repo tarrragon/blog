@@ -5,11 +5,11 @@ description: "整理 consumer、checkpoint 與 replay safety"
 weight: 4
 ---
 
-這一章聚焦在 [consumer](../../knowledge-cards/consumer/) 端怎麼做可重入、可重試、可回放的設計。
+這一章聚焦在 [consumer](/backend/knowledge-cards/consumer/) 端怎麼做可重入、可重試、可回放的設計。
 
 ## 大綱
 
-- [consumer group](../../knowledge-cards/consumer-group/) 與 [partition](../../knowledge-cards/partition/) / subscription
-- [checkpoint](../../knowledge-cards/checkpoint/) 與 [offset](../../knowledge-cards/offset/)
-- [idempotency](../../knowledge-cards/idempotency/) key
+- [consumer group](/backend/knowledge-cards/consumer-group/) 與 [partition](/backend/knowledge-cards/partition/) / subscription
+- [checkpoint](/backend/knowledge-cards/checkpoint/) 與 [offset](/backend/knowledge-cards/offset/)
+- [idempotency](/backend/knowledge-cards/idempotency/) key
 - replay safety

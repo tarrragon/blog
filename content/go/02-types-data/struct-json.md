@@ -58,7 +58,7 @@ JSON tag 的核心規則是：Go 欄位名稱服務程式碼可見性，JSON 欄
 
 ## 【執行】事件資料建模
 
-事件資料模型的核心規則是：事件本身必備欄位不使用 `omitempty`，事件內容可依類型使用可選欄位。`UserEvent` 表示一筆使用者行為事件，可以來自檔案、HTTP API 或 message [queue](../../../backend/knowledge-cards/queue/)：
+事件資料模型的核心規則是：事件本身必備欄位不使用 `omitempty`，事件內容可依類型使用可選欄位。`UserEvent` 表示一筆使用者行為事件，可以來自檔案、HTTP API 或 message [queue](/backend/knowledge-cards/queue/)：
 
 ```go
 type UserEvent struct {

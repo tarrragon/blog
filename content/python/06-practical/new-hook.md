@@ -11,10 +11,10 @@ weight: 1
 
 建議先閱讀：
 
-- [3.2 json 序列化](../../03-stdlib/json/)
-- [3.5 logging 日誌系統](../../03-stdlib/logging/)
-- [4.1 類別設計原則](../../04-oop/class-design/)
-- [5.1 異常處理策略](../../05-error-testing/exception/)
+- [3.2 json 序列化](/python/03-stdlib/json/)
+- [3.5 logging 日誌系統](/python/03-stdlib/logging/)
+- [4.1 類別設計原則](/python/04-oop/class-design/)
+- [5.1 異常處理策略](/python/05-error-testing/exception/)
 
 ## Hook 系統概述
 
@@ -500,5 +500,5 @@ tail -f .claude/hook-logs/my_hook.log
 
 ---
 
-_下一章：[如何擴展共用模組](../extend-lib/)_
-_回到首頁：[Python 維護工程師實戰指南](../../)_
+_下一章：[如何擴展共用模組](/python/06-practical/extend-lib/)_
+_回到首頁：[Python 維護工程師實戰指南](/python/)_

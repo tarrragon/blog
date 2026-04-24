@@ -11,7 +11,7 @@ weight: 6
 ## 先備知識
 
 - 本模組 3.5.1-3.5.5 所有章節
-- 入門系列 [模組四：物件導向設計](../../../python/04-oop/)
+- 入門系列 [模組四：物件導向設計](/python/04-oop/)
 
 ---
 
@@ -866,5 +866,5 @@ def get_value_eafp(data: dict, key: str) -> str | None:
 
 ---
 
-*上一章：[3.5.5 設計模式整合案例](../integration/)*
-*回到模組首頁：[模組 3.5：進階設計模式](../)*
+*上一章：[3.5.5 設計模式整合案例](/python-advanced/03-design-patterns/integration/)*
+*回到模組首頁：[模組 3.5：進階設計模式](/python-advanced/03-design-patterns/)*

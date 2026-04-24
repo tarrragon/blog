@@ -25,14 +25,14 @@ weight: 7219
 
 ## 案例觸發參考
 
-- [GoAnywhere 2023](../../cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)
-- [LastPass 2022](../../cases/data-exfiltration/lastpass-2022-backup-chain/)
+- [GoAnywhere 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)
+- [LastPass 2022](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)
 
 ## 可連動章節
 
-- [7.4 資料保護與遮罩治理](../../../data-protection-and-masking-governance/)
-- [7.5 傳輸信任與憑證生命週期](../../../transport-trust-and-certificate-lifecycle/)
+- [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)
+- [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P9 分享連結缺少到期語意](../fp-share-link-without-expiry-semantics/)
+- [7.R11.P9 分享連結缺少到期語意](/backend/07-security-data-protection/red-team/problem-cards/fp-share-link-without-expiry-semantics/)

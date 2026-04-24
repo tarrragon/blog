@@ -33,10 +33,10 @@ weight: 10
 
 建議先完成以下章節：
 
-- [3.1 泛型進階](../generics/)
-- [3.2 異常設計架構](../exception-design/)
-- [3.3 進階上下文管理](../context-managers/)
+- [3.1 泛型進階](/python-advanced/03-design-patterns/generics/)
+- [3.2 異常設計架構](/python-advanced/03-design-patterns/exception-design/)
+- [3.3 進階上下文管理](/python-advanced/03-design-patterns/context-managers/)
 
 ---
 
-*返回：[模組三：進階設計模式](../)*
+*返回：[模組三：進階設計模式](/python-advanced/03-design-patterns/)*

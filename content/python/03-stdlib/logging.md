@@ -309,5 +309,5 @@ logger.debug(f"Data: {expensive_function()}")
 
 ---
 
-*上一章：[re - 正規表達式](../regex/)*
-*下一章：[argparse - CLI 介面](../argparse/)*
+*上一章：[re - 正規表達式](/python/03-stdlib/regex/)*
+*下一章：[argparse - CLI 介面](/python/03-stdlib/argparse/)*

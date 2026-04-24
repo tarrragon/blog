@@ -298,5 +298,5 @@ json.dumps(data, ensure_ascii=False, indent=2)
 
 ---
 
-*上一章：[pathlib - 路徑操作](../pathlib/)*
-*下一章：[subprocess - 執行外部命令](../subprocess/)*
+*上一章：[pathlib - 路徑操作](/python/03-stdlib/pathlib/)*
+*下一章：[subprocess - 執行外部命令](/python/03-stdlib/subprocess/)*

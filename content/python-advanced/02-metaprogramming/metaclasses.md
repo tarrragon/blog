@@ -10,7 +10,7 @@ Metaclass 是「類別的類別」，控制類別本身的建立過程。這是 
 
 ## 先備知識
 
-- [2.1 Descriptor Protocol](../descriptors/)
+- [2.1 Descriptor Protocol](/python-advanced/02-metaprogramming/descriptors/)
 
 ## 本章目標
 
@@ -392,5 +392,5 @@ print(User._fields)  # {'name': CharField, 'age': IntegerField}
 
 ---
 
-*上一章：[Descriptor Protocol 完整指南](../descriptors/)*
-*下一章：[類別裝飾器與動態類別](../class-creation/)*
+*上一章：[Descriptor Protocol 完整指南](/python-advanced/02-metaprogramming/descriptors/)*
+*下一章：[類別裝飾器與動態類別](/python-advanced/02-metaprogramming/class-creation/)*

@@ -19,8 +19,8 @@ weight: 712
 ## 【判讀流程】三層檢查法
 
 1. 目的層：確認每個流程的正常商業目的與預期受益者。
-2. 權限層：沿流程標示 [authentication](../../../knowledge-cards/authentication/)、[authorization](../../../knowledge-cards/authorization/) 與 [Tenant Boundary](../../../knowledge-cards/tenant-boundary/) 切換點。
-3. 濫用層：列出 [BOLA / IDOR](../../../knowledge-cards/bola-idor/) 與 [Function-Level Authorization](../../../knowledge-cards/function-level-authorization/) 可觸發的非預期結果。
+2. 權限層：沿流程標示 [authentication](/backend/knowledge-cards/authentication/)、[authorization](/backend/knowledge-cards/authorization/) 與 [Tenant Boundary](/backend/knowledge-cards/tenant-boundary/) 切換點。
+3. 濫用層：列出 [BOLA / IDOR](/backend/knowledge-cards/bola-idor/) 與 [Function-Level Authorization](/backend/knowledge-cards/function-level-authorization/) 可觸發的非預期結果。
 
 ## 【風險代價】流程越長，放大效果越強
 
@@ -50,11 +50,11 @@ weight: 712
 
 ## 【交接點】何時路由到實作章節
 
-1. 已完成濫用情境清單後，交接到 [資安與資料保護模組 7.2](../../identity-access-boundary/)。
-2. 已定義高風險流程的事件節奏後，交接到 [事故報告轉 workflow](../../../08-incident-response/incident-report-to-workflow/)。
+1. 已完成濫用情境清單後，交接到 [資安與資料保護模組 7.2](/backend/07-security-data-protection/identity-access-boundary/)。
+2. 已定義高風險流程的事件節奏後，交接到 [事故報告轉 workflow](/backend/08-incident-response/incident-report-to-workflow/)。
 
 ## 【延伸閱讀】流程原子卡片
 
 流程原子卡片的責任是把高風險流程拆成單一問題節點。每張卡片都用同一格式說明為什麼會失效、常見失效樣式、判讀訊號與案例觸發條件。
 
-- [7.R11 流程濫用問題卡片](../problem-cards/)
+- [7.R11 流程濫用問題卡片](/backend/07-security-data-protection/red-team/problem-cards/)

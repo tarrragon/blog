@@ -10,11 +10,11 @@ Runbook 的核心概念是「把事故判斷與操作步驟標準化」。它描
 
 ## 概念位置
 
-Runbook 是 domain knowhow 的操作化文件。[Alert](../alert/)、[dashboard](../dashboard/)、[log](../log/) query、[trace](../trace/)、擴容、rollback、[replay runbook](../replay-runbook/) 與 [failover](../failover/) 都需要 runbook 把零散知識整理成可執行流程。
+Runbook 是 domain knowhow 的操作化文件。[Alert](/backend/knowledge-cards/alert/)、[dashboard](/backend/knowledge-cards/dashboard/)、[log](/backend/knowledge-cards/log/) query、[trace](/backend/knowledge-cards/trace/)、擴容、rollback、[replay runbook](/backend/knowledge-cards/replay-runbook/) 與 [failover](/backend/knowledge-cards/failover/) 都需要 runbook 把零散知識整理成可執行流程。
 
 ## 可觀察訊號與例子
 
-系統需要 runbook 的訊號是同一類事故每次都靠個人經驗處理。[DLQ](../dead-letter-queue/) 快速增加時，runbook 應引導處理者查看錯誤分類、payload 範圍、最近部署、replay 條件與暫停 [consumer](../consumer/) 的判斷。
+系統需要 runbook 的訊號是同一類事故每次都靠個人經驗處理。[DLQ](/backend/knowledge-cards/dead-letter-queue/) 快速增加時，runbook 應引導處理者查看錯誤分類、payload 範圍、最近部署、replay 條件與暫停 [consumer](/backend/knowledge-cards/consumer/) 的判斷。
 
 ## 設計責任
 

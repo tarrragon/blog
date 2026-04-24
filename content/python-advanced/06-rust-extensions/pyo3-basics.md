@@ -743,5 +743,5 @@ fn normalize_inplace(mut arr: PyReadwriteArray1<'_, f64>) {
 
 ---
 
-*上一章：[為什麼選擇 Rust？](../why-rust/)*
-*下一章：[Maturin 開發流程](../maturin-workflow/)*
+*上一章：[為什麼選擇 Rust？](/python-advanced/06-rust-extensions/why-rust/)*
+*下一章：[Maturin 開發流程](/python-advanced/06-rust-extensions/maturin-workflow/)*

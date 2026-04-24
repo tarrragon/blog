@@ -315,4 +315,4 @@ def validate_hook(path: str) -> None:
 
 ---
 
-_下一章：[返回值設計](../return-values/)_
+_下一章：[返回值設計](/python/05-error-testing/return-values/)_

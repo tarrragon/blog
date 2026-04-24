@@ -10,8 +10,8 @@ weight: 2
 
 ## 先備知識
 
-- [2.1 宣告式驗證](../declarative-validation/)
-- [2.2 Metaclass 設計與應用](../../metaclasses/)
+- [2.1 宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)
+- [2.2 Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)
 
 ## 問題背景
 
@@ -882,5 +882,5 @@ validator.discover_checkers('checkers/')  # 自動載入目錄下的所有檢查
 
 ---
 
-*上一章：[宣告式驗證](../declarative-validation/)*
-*下一章：[類似 Django Field](../field-descriptor/)*
+*上一章：[宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)*
+*下一章：[類似 Django Field](/python-advanced/02-metaprogramming/case-studies/field-descriptor/)*

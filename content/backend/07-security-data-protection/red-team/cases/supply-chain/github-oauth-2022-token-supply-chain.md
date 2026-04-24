@@ -27,7 +27,7 @@ weight: 71722
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](/backend/knowledge-cards/runbook/) 與 [incident timeline](/backend/knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：採最小權限 token 與明確用途分域。
 - 日常：建立第三方整合清單與失效期限巡檢。
 - 事故中：依清單自動化撤銷、輪替、補授權。

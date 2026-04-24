@@ -420,5 +420,5 @@ class ParserFactory:
 
 ---
 
-_上一章：[抽象基類 ABC](../abc/)_
-_下一章：[單例與快取模式](../singleton-cache/)_
+_上一章：[抽象基類 ABC](/python/04-oop/abc/)_
+_下一章：[單例與快取模式](/python/04-oop/singleton-cache/)_

@@ -702,5 +702,5 @@ def test_fib_sequence():
 
 ---
 
-*上一章：[PyO3 基礎](../pyo3-basics/)*
-*下一章：[實戰案例分析](../real-world-examples/)*
+*上一章：[PyO3 基礎](/python-advanced/06-rust-extensions/pyo3-basics/)*
+*下一章：[實戰案例分析](/python-advanced/06-rust-extensions/real-world-examples/)*

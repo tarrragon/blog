@@ -9,8 +9,8 @@ weight: 2
 
 ## 先備知識
 
-- [模組六：用 Rust 擴展 Python](../../)
-- [6.1 PyO3 文字解析](../pyo3-parser/)
+- [模組六：用 Rust 擴展 Python](/python-advanced/06-rust-extensions/)
+- [6.1 PyO3 文字解析](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/)
 
 ## 問題背景
 
@@ -1371,5 +1371,5 @@ pub fn benchmark_pattern(
 
 ---
 
-*上一章：[PyO3 文字解析](../pyo3-parser/)*
-*返回：[模組六：用 Rust 擴展 Python](../../)*
+*上一章：[PyO3 文字解析](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/)*
+*返回：[模組六：用 Rust 擴展 Python](/python-advanced/06-rust-extensions/)*

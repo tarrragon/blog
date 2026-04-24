@@ -7,7 +7,7 @@ weight: 3
 
 Python 的模組系統是組織程式碼的基礎。理解模組如何運作，是維護和擴展 Hook 系統的關鍵。
 
-> 承接提示：如果你還不熟悉程式如何從單一 `.py` 檔案拆成多個 module，請先閱讀 [從單一 script 到多檔案專案](../script-to-package/)。本章聚焦在已經出現 package 後，如何理解 module、`__init__.py` 與公開 API。
+> 承接提示：如果你還不熟悉程式如何從單一 `.py` 檔案拆成多個 module，請先閱讀 [從單一 script 到多檔案專案](/python/01-basics/script-to-package/)。本章聚焦在已經出現 package 後，如何理解 module、`__init__.py` 與公開 API。
 
 ## 基本概念
 
@@ -262,5 +262,5 @@ lib/
 
 ---
 
-_上一章：[Python 哲學與設計理念](../philosophy/)_
-_下一章：[導入機制與路徑管理](../imports/)_
+_上一章：[Python 哲學與設計理念](/python/01-basics/philosophy/)_
+_下一章：[導入機制與路徑管理](/python/01-basics/imports/)_

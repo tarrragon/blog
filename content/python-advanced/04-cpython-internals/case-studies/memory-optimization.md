@@ -10,8 +10,8 @@ weight: 2
 
 ## 先備知識
 
-- [模組四：CPython 內部機制](../../)
-- [4.2 記憶體管理與垃圾回收](../../memory-gc/)
+- [模組四：CPython 內部機制](/python-advanced/04-cpython-internals/)
+- [4.2 記憶體管理與垃圾回收](/python-advanced/04-cpython-internals/memory-gc/)
 
 ## 問題背景
 
@@ -1080,5 +1080,5 @@ def process_events():
 
 ---
 
-*上一章：[效能分析實戰](../profiling/)*
-*返回：[模組四：CPython 內部機制](../../)*
+*上一章：[效能分析實戰](/python-advanced/04-cpython-internals/case-studies/profiling/)*
+*返回：[模組四：CPython 內部機制](/python-advanced/04-cpython-internals/)*

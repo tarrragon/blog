@@ -10,8 +10,8 @@ weight: 2
 
 ## 先備知識
 
-- [4.1 ctypes 與 cffi：動態綁定](../../ctypes-cffi/)
-- [模組五：用 C 擴展 Python](../../)
+- [4.1 ctypes 與 cffi：動態綁定](/python-advanced/05-c-extensions/ctypes-cffi/)
+- [模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)
 
 ## 問題背景
 
@@ -730,5 +730,5 @@ def getenv_ctypes(name: str) -> Optional[str]:
 
 ---
 
-*返回：[案例研究](../)*
-*返回：[模組五：用 C 擴展 Python](../../)*
+*返回：[案例研究](/python-advanced/05-c-extensions/case-studies/)*
+*返回：[模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)*

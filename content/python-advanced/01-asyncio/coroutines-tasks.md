@@ -10,7 +10,7 @@ weight: 2
 
 ## 先備知識
 
-- [1.1 基礎概念與事件迴圈](../fundamentals/)
+- [1.1 基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/)
 
 ## 本章目標
 
@@ -265,5 +265,5 @@ async def main():
 
 ---
 
-*上一章：[基礎概念與事件迴圈](../fundamentals/)*
-*下一章：[設計模式與最佳實踐](../patterns/)*
+*上一章：[基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/)*
+*下一章：[設計模式與最佳實踐](/python-advanced/01-asyncio/patterns/)*

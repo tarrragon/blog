@@ -13,7 +13,7 @@ Blog 專案的 markdown 規範有三類不同性質的檢查需求：
 2. **反釣魚校驗**（R-URL-1/2）— 顯示文字含 TLD 字樣時必須與 href 的 domain 一致，避免釣魚型連結。這條規則不在 markdownlint 標準集內。
 3. **卡片雙向完整性**（L1/L2/L4）— 跨文件的圖論檢查：每張卡片至少被一篇正文引用、相對連結目標存在、卡片首段含鄰卡連結。
 
-三類檢查共享兩個技術需求：**AST 層的語法理解**、**goldmark 與 Hugo render 的一致性**。詳細原因寫在[什麼是 AST](../what-is-ast/)。
+三類檢查共享兩個技術需求：**AST 層的語法理解**、**goldmark 與 Hugo render 的一致性**。詳細原因寫在[什麼是 AST](/posts/what-is-ast/)。
 
 Markdownlint-cli2 涵蓋第一類、無法表達第二、三類。現成方案湊不出來，就自己寫。
 
@@ -263,7 +263,7 @@ Rule config 在 `internal/rules/config.go`，spec 文件在 `content/posts/markd
 
 ## 延伸閱讀
 
-- [什麼是 AST — 從字串到語法樹的視角轉換](../what-is-ast/) — 為什麼要升級到 AST 工具鏈
-- [Blog Markdown 寫作規範與 mdtools 檢查](../markdown-writing-spec/) — mdtools 檢查的完整規則清單
+- [什麼是 AST — 從字串到語法樹的視角轉換](/posts/what-is-ast/) — 為什麼要升級到 AST 工具鏈
+- [Blog Markdown 寫作規範與 mdtools 檢查](/posts/markdown-writing-spec/) — mdtools 檢查的完整規則清單
 - [goldmark 官方 repo](https://github.com/yuin/goldmark) — Hugo 所用的 markdown parser
 - [goldmark AST package reference](https://pkg.go.dev/github.com/yuin/goldmark/ast) — `ast.Walk`、節點型別、parent traversal API

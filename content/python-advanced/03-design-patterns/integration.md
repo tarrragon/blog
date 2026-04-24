@@ -851,5 +851,5 @@ for task_id, result in results.items():
 
 ---
 
-*上一章：[3.5.4 插件系統設計](../plugin-system/)*
-*回到模組目錄：[模組 3.5：進階設計模式](../)*
+*上一章：[3.5.4 插件系統設計](/python-advanced/03-design-patterns/plugin-system/)*
+*回到模組目錄：[模組 3.5：進階設計模式](/python-advanced/03-design-patterns/)*

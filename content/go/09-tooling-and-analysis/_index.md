@@ -62,7 +62,7 @@ weight: 9
 - `.githooks/pre-commit` — 把工具接進 git workflow
 - `.github/workflows/md-check.yml` — CI 整合
 
-完整工具的設計紀錄可參考 [mdtools：Go + goldmark 的 markdown 工具鏈設計](../../posts/mdtools-design/)；AST 概念的入門說明見 [什麼是 AST](../../posts/what-is-ast/)。
+完整工具的設計紀錄可參考 [mdtools：Go + goldmark 的 markdown 工具鏈設計](/posts/mdtools-design/)；AST 概念的入門說明見 [什麼是 AST](/posts/what-is-ast/)。
 
 ## 學習時間
 

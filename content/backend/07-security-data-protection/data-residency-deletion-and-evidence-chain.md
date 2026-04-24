@@ -21,9 +21,9 @@ weight: 81
 
 ## 問題節點（案例觸發式）
 
-| 問題節點         | 判讀訊號                       | 風險後果               | 前置控制面                                                    |
-| ---------------- | ------------------------------ | ---------------------- | ------------------------------------------------------------- |
-| 資料駐留邊界模糊 | 同一資料集跨區副本責任不清     | 通報與整改範圍擴大     | [data-lifecycle](../../knowledge-cards/data-lifecycle/)       |
-| 刪除流程缺乏閉環 | 主系統刪除完成但衍生系統仍存留 | 使用者承諾失效         | [retention](../../knowledge-cards/retention/)                 |
-| 備份刪除節奏脫鉤 | 正式資料移除後備份仍長期可還原 | 長尾暴露風險升高       | [object-storage](../../knowledge-cards/object-storage/)       |
-| 刪除證據不可驗證 | 時序與主體資訊無法回查         | 合規與事故回應成本上升 | [incident-timeline](../../knowledge-cards/incident-timeline/) |
+| 問題節點         | 判讀訊號                       | 風險後果               | 前置控制面                                                       |
+| ---------------- | ------------------------------ | ---------------------- | ---------------------------------------------------------------- |
+| 資料駐留邊界模糊 | 同一資料集跨區副本責任不清     | 通報與整改範圍擴大     | [data-lifecycle](/backend/knowledge-cards/data-lifecycle/)       |
+| 刪除流程缺乏閉環 | 主系統刪除完成但衍生系統仍存留 | 使用者承諾失效         | [retention](/backend/knowledge-cards/retention/)                 |
+| 備份刪除節奏脫鉤 | 正式資料移除後備份仍長期可還原 | 長尾暴露風險升高       | [object-storage](/backend/knowledge-cards/object-storage/)       |
+| 刪除證據不可驗證 | 時序與主體資訊無法回查         | 合規與事故回應成本上升 | [incident-timeline](/backend/knowledge-cards/incident-timeline/) |

@@ -10,7 +10,7 @@ weight: 4
 
 ## 先備知識
 
-- [入門系列 3.8 效能優化](../../../../python/03-stdlib/performance/)
+- [入門系列 3.8 效能優化](/python/03-stdlib/performance/)
 - 基本的 Git 分支概念
 
 ## 問題背景
@@ -858,5 +858,5 @@ def timed_lru_cache(seconds: int, maxsize: int = 128):
 
 ---
 
-*上一章：[正則表達式預編譯](../regex-precompile/)*
-*下一章：[資料結構選擇](../data-structure-choice/)*
+*上一章：[正則表達式預編譯](/python-advanced/08-practical-optimization/case-studies/regex-precompile/)*
+*下一章：[資料結構選擇](/python-advanced/08-practical-optimization/case-studies/data-structure-choice/)*

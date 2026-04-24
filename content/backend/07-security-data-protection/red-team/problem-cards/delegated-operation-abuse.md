@@ -25,14 +25,14 @@ weight: 7213
 
 ## 案例觸發參考
 
-- [MGM 2023](../../cases/identity-access/mgm-2023-identity-lateral-impact/)
-- [Mailchimp 2023](../../cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
+- [MGM 2023](/backend/07-security-data-protection/red-team/cases/identity-access/mgm-2023-identity-lateral-impact/)
+- [Mailchimp 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
 
 ## 可連動章節
 
-- [7.2 身分與授權邊界](../../../identity-access-boundary/)
-- [7.7 稽核追蹤與責任邊界](../../../audit-trail-and-accountability-boundary/)
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- [7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P3 代理會話上下文混層](../fp-delegated-session-context-bleed/)
+- [7.R11.P3 代理會話上下文混層](/backend/07-security-data-protection/red-team/problem-cards/fp-delegated-session-context-bleed/)

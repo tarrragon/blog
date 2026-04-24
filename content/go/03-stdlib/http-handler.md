@@ -5,7 +5,7 @@ description: "用 net/http 建立健康檢查、API endpoint 與清楚的 handle
 weight: 5
 ---
 
-Go 的 `net/http` 把 HTTP endpoint 簡化成一個核心模型：handler 接收 request，然後寫出 response。後端服務可以有複雜的資料庫、[queue](../../../backend/knowledge-cards/queue/)、背景工作或即時連線，但 HTTP 入口本身應該先保持清楚。
+Go 的 `net/http` 把 HTTP endpoint 簡化成一個核心模型：handler 接收 request，然後寫出 response。後端服務可以有複雜的資料庫、[queue](/backend/knowledge-cards/queue/)、背景工作或即時連線，但 HTTP 入口本身應該先保持清楚。
 
 ## handler 是 HTTP 邊界
 
@@ -26,7 +26,7 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 
 這個 handler 只處理健康檢查：確認 HTTP method，設定回應格式，寫出 JSON。它沒有讀取資料庫，也沒有啟動背景工作，因為健康檢查的責任就是讓呼叫者知道服務是否能回應。
 
-handler 可以呼叫內部服務，但不應該把所有業務規則都塞在 HTTP 層。HTTP 層越薄，測試越容易，未來改成 CLI、queue [consumer](../../../backend/knowledge-cards/consumer/) 或其他入口時也比較不會重寫核心邏輯。
+handler 可以呼叫內部服務，但不應該把所有業務規則都塞在 HTTP 層。HTTP 層越薄，測試越容易，未來改成 CLI、queue [consumer](/backend/knowledge-cards/consumer/) 或其他入口時也比較不會重寫核心邏輯。
 
 ## `http.HandlerFunc` 是函式轉接器
 

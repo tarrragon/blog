@@ -10,8 +10,8 @@ weight: 1
 
 ## 先備知識
 
-- [4.2 Cython：Python 語法的 C 速度](../../cython/)
-- [模組五：用 C 擴展 Python](../../)
+- [4.2 Cython：Python 語法的 C 速度](/python-advanced/05-c-extensions/cython/)
+- [模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)
 
 ## 問題背景
 
@@ -957,5 +957,5 @@ def profile_parsers(content: str):
 
 ---
 
-*返回：[案例研究](../)*
-*返回：[模組四：用 C 擴展 Python](../../)*
+*返回：[案例研究](/python-advanced/05-c-extensions/case-studies/)*
+*返回：[模組四：用 C 擴展 Python](/python-advanced/05-c-extensions/)*

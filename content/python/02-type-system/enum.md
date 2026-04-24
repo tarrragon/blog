@@ -357,5 +357,5 @@ paint("red")          # 型別檢查會警告
 
 ---
 
-_上一章：[Dataclass 資料結構](../dataclass/)_
-_下一模組：[標準庫實戰](../../03-stdlib/)_
+_上一章：[Dataclass 資料結構](/python/02-type-system/dataclass/)_
+_下一模組：[標準庫實戰](/python/03-stdlib/)_

@@ -64,7 +64,7 @@ class Parser(ABC):
 
 ## 先備知識
 
-- 入門系列 [4.4 單例與快取](../../python/04-oop/singleton-cache/)
+- 入門系列 [4.4 單例與快取](/python/04-oop/singleton-cache/)
 - 熟悉 Python 的類別與物件
 
 ## 何時使用元編程？
@@ -86,5 +86,5 @@ class Parser(ABC):
 
 ---
 
-*上一模組：[模組一：非同步程式設計](../01-asyncio/)*
-*下一模組：[模組三：CPython 內部機制](../04-cpython-internals/)*
+*上一模組：[模組一：非同步程式設計](/python-advanced/01-asyncio/)*
+*下一模組：[模組三：CPython 內部機制](/python-advanced/04-cpython-internals/)*

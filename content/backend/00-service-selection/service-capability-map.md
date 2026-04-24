@@ -40,25 +40,25 @@ weight: 1
 
 - 電商訂單需要保存付款狀態、出貨狀態與退款紀錄
 - 會員系統需要保存帳號、權限、登入方式與審計資料
-- [SaaS](../../knowledge-cards/tenant-boundary/) 產品需要保存 workspace、plan、billing 與使用量
+- [SaaS](/backend/knowledge-cards/tenant-boundary/) 產品需要保存 workspace、plan、billing 與使用量
 
-這類問題的核心是 [source of truth](../../knowledge-cards/source-of-truth/)。快取可以加速讀取，[queue](../../knowledge-cards/queue/) 可以延後處理，[log](../../knowledge-cards/log/) 可以協助診斷，但正式狀態仍需要清楚的資料模型與一致性邊界。
+這類問題的核心是 [source of truth](/backend/knowledge-cards/source-of-truth/)。快取可以加速讀取，[queue](/backend/knowledge-cards/queue/) 可以延後處理，[log](/backend/knowledge-cards/log/) 可以協助診斷，但正式狀態仍需要清楚的資料模型與一致性邊界。
 
-下一步可讀：[資料庫與持久化](../../01-database/)。
+下一步可讀：[資料庫與持久化](/backend/01-database/)。
 
 ## 【判讀】讀取壓力集中通常先看快取
 
-快取解決的是「同一類資料被重複讀取時，如何降低正式資料來源壓力」。如果資料本身已經有 [source of truth](../../knowledge-cards/source-of-truth/)，但熱門資料導致資料庫或下游 API 壓力過高，選型應先進入快取與 Redis 模組。
+快取解決的是「同一類資料被重複讀取時，如何降低正式資料來源壓力」。如果資料本身已經有 [source of truth](/backend/knowledge-cards/source-of-truth/)，但熱門資料導致資料庫或下游 API 壓力過高，選型應先進入快取與 Redis 模組。
 
 接近真實網路服務的例子包括：
 
 - 商品詳情頁被大量瀏覽，但商品資料變更頻率低
-- 使用者權限或 [Feature Flag](../../knowledge-cards/feature-flag/) 每個 request 都要查
-- 即時服務需要快速查詢 client presence 或 [topic](../../knowledge-cards/topic/) 訂閱狀態
+- 使用者權限或 [Feature Flag](/backend/knowledge-cards/feature-flag/) 每個 request 都要查
+- 即時服務需要快速查詢 client presence 或 [topic](/backend/knowledge-cards/topic/) 訂閱狀態
 
-這類問題的核心是讀取路徑與失效策略。快取要回答資料何時過期、何時更新、下游失敗時如何回應、cache [miss](../../knowledge-cards/cache-hit-miss/) 尖峰如何保護系統。
+這類問題的核心是讀取路徑與失效策略。快取要回答資料何時過期、何時更新、下游失敗時如何回應、cache [miss](/backend/knowledge-cards/cache-hit-miss/) 尖峰如何保護系統。
 
-下一步可讀：[快取與 Redis](../../02-cache-redis/)。
+下一步可讀：[快取與 Redis](/backend/02-cache-redis/)。
 
 ## 【判讀】工作跨出 request 通常先看訊息傳遞
 
@@ -70,9 +70,9 @@ weight: 1
 - 使用者上傳影片後要轉檔、產生縮圖與通知完成
 - IoT 裝置上報資料後要清洗、聚合與觸發告警
 
-這類問題的核心是 [delivery semantics](../../knowledge-cards/delivery-semantics/)。系統要決定是否需要持久化、是否允許重複投遞、失敗是否重試、[consumer](../../knowledge-cards/consumer/) 如何水平擴展。
+這類問題的核心是 [delivery semantics](/backend/knowledge-cards/delivery-semantics/)。系統要決定是否需要持久化、是否允許重複投遞、失敗是否重試、[consumer](/backend/knowledge-cards/consumer/) 如何水平擴展。
 
-下一步可讀：[訊息佇列與事件傳遞](../../03-message-queue/)。
+下一步可讀：[訊息佇列與事件傳遞](/backend/03-message-queue/)。
 
 ## 【判讀】看不見系統行為通常先看觀測平台
 
@@ -81,16 +81,16 @@ weight: 1
 接近真實網路服務的例子包括：
 
 - API 偶爾變慢，但無法判斷是資料庫、外部 API 還是部署節點問題
-- queue lag 上升，但不知道 [producer](../../knowledge-cards/producer/) 變快還是 consumer 變慢
-- [WebSocket](../../knowledge-cards/websocket/) client 斷線增加，但缺少連線生命週期與地區資訊
+- queue lag 上升，但不知道 [producer](/backend/knowledge-cards/producer/) 變快還是 consumer 變慢
+- [WebSocket](/backend/knowledge-cards/websocket/) client 斷線增加，但缺少連線生命週期與地區資訊
 
-這類問題的核心是操作訊號。log、metric、[trace](../../knowledge-cards/trace/)、[dashboard](../../knowledge-cards/dashboard/) 與 [alert](../../knowledge-cards/alert/) 需要共用欄位與關聯方式，才能讓工程師從症狀回到原因。
+這類問題的核心是操作訊號。log、metric、[trace](/backend/knowledge-cards/trace/)、[dashboard](/backend/knowledge-cards/dashboard/) 與 [alert](/backend/knowledge-cards/alert/) 需要共用欄位與關聯方式，才能讓工程師從症狀回到原因。
 
-下一步可讀：[可觀測性平台](../../04-observability/)。
+下一步可讀：[可觀測性平台](/backend/04-observability/)。
 
 ## 【判讀】服務交付不穩通常先看部署平台
 
-部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 [rolling update](../../knowledge-cards/rolling-update/)、[liveness](../../knowledge-cards/health-check-liveness/)、[load balancer](../../knowledge-cards/load-balancer/)、[service registry](../../knowledge-cards/service-registry/)、[service discovery](../../knowledge-cards/service-discovery/)、container image 或資源限制，選型應先進入部署平台與網路入口模組。
+部署平台解決的是「服務如何被啟動、更新、擴容、接流量與停止」。如果問題集中在 [rolling update](/backend/knowledge-cards/rolling-update/)、[liveness](/backend/knowledge-cards/health-check-liveness/)、[load balancer](/backend/knowledge-cards/load-balancer/)、[service registry](/backend/knowledge-cards/service-registry/)、[service discovery](/backend/knowledge-cards/service-discovery/)、container image 或資源限制，選型應先進入部署平台與網路入口模組。
 
 接近真實網路服務的例子包括：
 
@@ -98,9 +98,9 @@ weight: 1
 - 服務需要水平擴展，但 client 不知道該連到哪個 instance
 - shutdown 時仍有背景工作或長連線尚未清理
 
-這類問題的核心是平台合約。程式要提供 health、[readiness](../../knowledge-cards/readiness/)、shutdown 與資源使用訊號；平台要提供流量入口、排程、發版與回滾能力。
+這類問題的核心是平台合約。程式要提供 health、[readiness](/backend/knowledge-cards/readiness/)、shutdown 與資源使用訊號；平台要提供流量入口、排程、發版與回滾能力。
 
-下一步可讀：[部署平台與網路入口](../../05-deployment-platform/)。
+下一步可讀：[部署平台與網路入口](/backend/05-deployment-platform/)。
 
 ## 小結
 

@@ -165,10 +165,10 @@ Python 和 Go 在這個主題上的差異應明確說清楚：
 
 這一章承接的是 module、package 與測試路徑；如果你要先回看 Python 教材，可以讀：
 
-- [Python：modules](../modules/)
-- [Python 進階：packaging 與 distribution](../../../python-advanced/07-packaging/)
-- [Python：測試基礎](../../05-error-testing/)
-- [Python 進階：error handling 與 mock](../../05-error-testing/mock/)
+- [Python：modules](/python/01-basics/modules/)
+- [Python 進階：packaging 與 distribution](/python-advanced/07-packaging/)
+- [Python：測試基礎](/python/05-error-testing/)
+- [Python 進階：error handling 與 mock](/python/05-error-testing/mock/)
 
 ## 小結
 

@@ -10,7 +10,7 @@ weight: 1
 
 ## 先備知識
 
-- [模組四基礎章節](../../)
+- [模組四基礎章節](/python-advanced/04-cpython-internals/)
 - Python 正則表達式基礎
 
 ## 問題背景
@@ -1179,4 +1179,4 @@ if __name__ == "__main__":
 
 ---
 
-*下一章：[記憶體優化](../memory-optimization/)*
+*下一章：[記憶體優化](/python-advanced/04-cpython-internals/case-studies/memory-optimization/)*

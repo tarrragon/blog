@@ -50,7 +50,7 @@ scripts/mdtools/
 
 - **layer 1**：幾乎不測，因為只是 `switch`。
 - **layer 2**：integration test（給定 argv、確認 exit code 與 stdout）。
-- **layer 3**：unit test，純函式輸入輸出。後續模組的所有實作技術 — [AST 整合](../goldmark-ast-basics/)、[idempotent 改寫](../ast-idempotent-rewriting/)、[graph 分析](../cross-file-graph-analysis/) — 都落在這層。
+- **layer 3**：unit test，純函式輸入輸出。後續模組的所有實作技術 — [AST 整合](/go/09-tooling-and-analysis/goldmark-ast-basics/)、[idempotent 改寫](/go/09-tooling-and-analysis/ast-idempotent-rewriting/)、[graph 分析](/go/09-tooling-and-analysis/cross-file-graph-analysis/) — 都落在這層。
 
 把 `os.Exit` / `os.Args` / `os.Stderr` 都擋在 layer 1-2，layer 3 就能用一般 table-driven test 測，不用起 subprocess。
 
@@ -280,4 +280,4 @@ PersistentFlags 概念在 stdlib 沒有，手動在每個子命令重複 `fs.Boo
 
 ## 下一步
 
-[9.2 goldmark AST 入門](../goldmark-ast-basics/) 會看 mdtools 怎麼把 markdown 解析成可操作的結構，layer 3 內部怎麼組織 parser 整合。
+[9.2 goldmark AST 入門](/go/09-tooling-and-analysis/goldmark-ast-basics/) 會看 mdtools 怎麼把 markdown 解析成可操作的結構，layer 3 內部怎麼組織 parser 整合。

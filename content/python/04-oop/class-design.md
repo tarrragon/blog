@@ -369,4 +369,4 @@ class Checker:
 
 ---
 
-_下一章：[抽象基類 ABC](../abc/)_
+_下一章：[抽象基類 ABC](/python/04-oop/abc/)_

@@ -403,5 +403,5 @@ def load_config() -> dict:
 
 ---
 
-_上一章：[工廠模式](../factory/)_
-_下一模組：[錯誤處理與測試](../../05-error-testing/)_
+_上一章：[工廠模式](/python/04-oop/factory/)_
+_下一模組：[錯誤處理與測試](/python/05-error-testing/)_

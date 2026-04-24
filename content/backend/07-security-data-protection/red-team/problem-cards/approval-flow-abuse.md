@@ -25,14 +25,14 @@ weight: 7212
 
 ## 案例觸發參考
 
-- [Mailchimp 2023](../../cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
-- [Change Healthcare 2024](../../cases/data-exfiltration/change-healthcare-2024-ops-impact/)
+- [Mailchimp 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
+- [Change Healthcare 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/)
 
 ## 可連動章節
 
-- [7.7 稽核追蹤與責任邊界](../../../audit-trail-and-accountability-boundary/)
-- [8.2 事故指揮與角色分工](../../../../08-incident-response/incident-command-roles/)
+- [7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)
+- [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P2 提交與審核責任重疊](../fp-submitter-approver-overlap/)
+- [7.R11.P2 提交與審核責任重疊](/backend/07-security-data-protection/red-team/problem-cards/fp-submitter-approver-overlap/)

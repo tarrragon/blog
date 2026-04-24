@@ -9,7 +9,7 @@ Worker pool 的核心概念是「用固定或可控數量的 worker 處理工作
 
 ## 概念位置
 
-Worker pool 是 application 內部的容量控制工具。它常和 [in-process channel](../in-process-channel/)、[queue depth](../queue-depth/)、[backpressure](../backpressure/)、[bulkhead](../bulkhead/)、[dependency isolation](../dependency-isolation/) 與 [graceful shutdown](../graceful-shutdown/) 一起使用。
+Worker pool 是 application 內部的容量控制工具。它常和 [in-process channel](/backend/knowledge-cards/in-process-channel/)、[queue depth](/backend/knowledge-cards/queue-depth/)、[backpressure](/backend/knowledge-cards/backpressure/)、[bulkhead](/backend/knowledge-cards/bulkhead/)、[dependency isolation](/backend/knowledge-cards/dependency-isolation/) 與 [graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 一起使用。
 
 ## 可觀察訊號與例子
 
@@ -17,4 +17,4 @@ Worker pool 是 application 內部的容量控制工具。它常和 [in-process 
 
 ## 設計責任
 
-Worker pool 要定義 worker 數量、queue 長度、等待期限、錯誤回報、shutdown、重試與觀測欄位。擴大 worker 數前要先確認瓶頸位置：可能在 [connection pool](../connection-pool/)、[HTTP client](../http-client/) pool 或外部 API quota。
+Worker pool 要定義 worker 數量、queue 長度、等待期限、錯誤回報、shutdown、重試與觀測欄位。擴大 worker 數前要先確認瓶頸位置：可能在 [connection pool](/backend/knowledge-cards/connection-pool/)、[HTTP client](/backend/knowledge-cards/http-client/) pool 或外部 API quota。

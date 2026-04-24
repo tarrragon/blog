@@ -9,7 +9,7 @@ Communication Protocol 的核心概念是「雙方對資料格式、順序、錯
 
 ## 概念位置
 
-Communication Protocol 位在 application、client、broker、[API Gateway](../api-gateway/) 或 service 之間，決定兩端如何交換資料與解讀狀態。
+Communication Protocol 位在 application、client、broker、[API Gateway](/backend/knowledge-cards/api-gateway/) 或 service 之間，決定兩端如何交換資料與解讀狀態。
 
 ## 可觀察訊號
 

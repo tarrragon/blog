@@ -363,7 +363,7 @@ class TestMarkdownChecker(unittest.TestCase):
 
     def setUp(self):
         self.checker = MarkdownLinkChecker()
-        self.test_content = "# Test\n[link](./file.md)"
+        self.test_content = "# Test\n[link](/python/05-error-testing/unittest/file.md)"
 
     def test_check_valid_link(self):
         # 使用 setUp 中建立的物件
@@ -385,5 +385,5 @@ class TestMarkdownChecker(unittest.TestCase):
 
 ---
 
-_上一章：[異常處理策略](../exception/)_
-_下一章：[Mock 與測試隔離](../mock/)_
+_上一章：[異常處理策略](/python/05-error-testing/exception/)_
+_下一章：[Mock 與測試隔離](/python/05-error-testing/mock/)_

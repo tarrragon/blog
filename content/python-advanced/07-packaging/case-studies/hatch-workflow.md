@@ -10,7 +10,7 @@ weight: 3
 
 ## 先備知識
 
-- [6.2 建構系統比較](../../build-systems/)
+- [6.2 建構系統比較](/python-advanced/07-packaging/build-systems/)
 - Python 虛擬環境基礎
 - 基本的命令列操作
 
@@ -688,4 +688,4 @@ addopts = "-v"
 
 ---
 
-*返回：[案例研究](../)*
+*返回：[案例研究](/python-advanced/07-packaging/case-studies/)*

@@ -322,4 +322,4 @@ def safe_read_file(path: Path) -> Optional[str]:
 
 ---
 
-_下一章：[json - 序列化](../json/)_
+_下一章：[json - 序列化](/python/03-stdlib/json/)_

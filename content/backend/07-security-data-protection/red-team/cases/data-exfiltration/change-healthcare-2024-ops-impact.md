@@ -27,7 +27,7 @@ weight: 71743
 
 ## 可落地的 workflow 檢查點
 
-- 發布前：定義核心流程的 [RTO](../../../../../knowledge-cards/rto/) 與 [RPO](../../../../../knowledge-cards/rpo/)。
+- 發布前：定義核心流程的 [RTO](/backend/knowledge-cards/rto/) 與 [RPO](/backend/knowledge-cards/rpo/)。
 - 日常：演練核心交易路徑的降級方案。
 - 事故中：技術處置與業務處置分軌並行。
 

@@ -7,7 +7,7 @@ weight: 6
 
 ## 大綱
 
-- [game day](../../knowledge-cards/game-day/) design
+- [game day](/backend/knowledge-cards/game-day/) design
 - scenario library
-- [on-call](../../knowledge-cards/on-call/) training
-- [readiness](../../knowledge-cards/readiness/) [metrics](../../knowledge-cards/metrics/)
+- [on-call](/backend/knowledge-cards/on-call/) training
+- [readiness](/backend/knowledge-cards/readiness/) [metrics](/backend/knowledge-cards/metrics/)

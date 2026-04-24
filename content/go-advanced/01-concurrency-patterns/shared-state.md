@@ -353,18 +353,18 @@ func TestRepositoryConcurrentAccess(t *testing.T) {
 
 本章先聚焦單一 Go process 內的共享狀態保護；更外層的資料庫交易、快取一致性與資料複製邊界，會在下列章節再往外延伸：
 
-- [Backend：資料庫與持久化](../../../backend/01-database/)
-- [Backend：快取與 Redis](../../../backend/02-cache-redis/)
-- [Go 入門：指標與資料複製邊界](../../../go/02-types-data/pointers-copy/)
+- [Backend：資料庫與持久化](/backend/01-database/)
+- [Backend：快取與 Redis](/backend/02-cache-redis/)
+- [Go 入門：指標與資料複製邊界](/go/02-types-data/pointers-copy/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 repository、copy boundary 與 state owner；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增 repository port](../../../go/06-practical/repository-port/)
-- [Go：如何擴展狀態投影欄位](../../../go/06-practical/state-fields/)
-- [Go：狀態管理的安全邊界](../../../go/07-refactoring/state-boundary/)
-- [Go：用 interface 隔離外部依賴](../../../go/07-refactoring/interface-boundary/)
+- [Go：如何新增 repository port](/go/06-practical/repository-port/)
+- [Go：如何擴展狀態投影欄位](/go/06-practical/state-fields/)
+- [Go：狀態管理的安全邊界](/go/07-refactoring/state-boundary/)
+- [Go：用 interface 隔離外部依賴](/go/07-refactoring/interface-boundary/)
 
 ## 小結
 

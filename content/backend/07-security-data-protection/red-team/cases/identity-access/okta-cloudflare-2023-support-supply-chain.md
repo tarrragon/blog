@@ -28,8 +28,8 @@ weight: 71712
 ## 可落地的 workflow 檢查點
 
 - 發布前：支援系統資料分級，限制下載與外流路徑。
-- 日常：建立第三方事件觸發的 [runbook](../../../../../knowledge-cards/runbook/)。
-- 事故中：啟用供應商事件專用 [playbook](../../../../../knowledge-cards/playbook/)，執行輪替、追蹤、封鎖。
+- 日常：建立第三方事件觸發的 [runbook](/backend/knowledge-cards/runbook/)。
+- 事故中：啟用供應商事件專用 [playbook](/backend/knowledge-cards/playbook/)，執行輪替、追蹤、封鎖。
 
 ## 可引用章節
 

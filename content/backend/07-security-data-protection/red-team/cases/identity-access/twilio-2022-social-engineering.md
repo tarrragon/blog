@@ -28,8 +28,8 @@ weight: 71713
 ## 可落地的 workflow 檢查點
 
 - 發布前：高風險管理操作要求二次核准。
-- 日常：針對員工身份建立 [alert runbook](../../../../../knowledge-cards/alert-runbook/)。
-- 事故中：執行分批憑證輪替與權限縮減，控制 [blast radius](../../../../../knowledge-cards/blast-radius/)。
+- 日常：針對員工身份建立 [alert runbook](/backend/knowledge-cards/alert-runbook/)。
+- 事故中：執行分批憑證輪替與權限縮減，控制 [blast radius](/backend/knowledge-cards/blast-radius/)。
 
 ## 可引用章節
 

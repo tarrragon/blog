@@ -319,5 +319,5 @@ def parse_json(text: str) -> dict[str, Any]:
 
 ---
 
-_上一章：[Type Hints 基礎](../type-hints/)_
-_下一章：[Dataclass 資料結構](../dataclass/)_
+_上一章：[Type Hints 基礎](/python/02-type-system/type-hints/)_
+_下一章：[Dataclass 資料結構](/python/02-type-system/dataclass/)_

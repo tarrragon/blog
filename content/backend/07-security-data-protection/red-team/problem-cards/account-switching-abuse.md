@@ -25,14 +25,14 @@ weight: 7214
 
 ## 案例觸發參考
 
-- [Citrix Bleed 2023](../../cases/edge-exposure/citrix-bleed-2023-session-hijack/)
-- [Uber 2022](../../cases/identity-access/uber-2022-mfa-fatigue/)
+- [Citrix Bleed 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/)
+- [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
 
 ## 可連動章節
 
-- [7.2 身分與授權邊界](../../../identity-access-boundary/)
-- [7.5 傳輸信任與憑證生命週期](../../../transport-trust-and-certificate-lifecycle/)
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P4 帳號切換後沿用高權限 token](../fp-stale-privileged-token-after-account-switch/)
+- [7.R11.P4 帳號切換後沿用高權限 token](/backend/07-security-data-protection/red-team/problem-cards/fp-stale-privileged-token-after-account-switch/)

@@ -351,5 +351,5 @@ def robust_run(args):
 
 ---
 
-_上一章：[json - 序列化](../json/)_
-_下一章：[re - 正規表達式](../regex/)_
+_上一章：[json - 序列化](/python/03-stdlib/json/)_
+_下一章：[re - 正規表達式](/python/03-stdlib/regex/)_

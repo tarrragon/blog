@@ -374,5 +374,5 @@ def tearDown(self):
 
 ---
 
-*上一章：[unittest 基礎](../unittest/)*
-*下一模組：[物件導向設計](../../04-oop/)*
+*上一章：[unittest 基礎](/python/05-error-testing/unittest/)*
+*下一模組：[物件導向設計](/python/04-oop/)*

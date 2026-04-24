@@ -6,7 +6,7 @@ weight: 74
 ---
 
 
-*上一章：[DRY 原則與共用程式庫](../dry-principle/)*
+*上一章：[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)*
 
 硬編碼問題不只是魔法數字。當專案成長到數十個模組時，三種不同形態的硬編碼會同時出現：看不懂的數字、混在邏輯裡的配置資料、散落各處的使用者訊息。本章整合 Error Pattern IMP-002（魔法數字）和 ARCH-001（配置與邏輯混合）的實戰經驗，並加入 W23 訊息集中化的完整案例。
 
@@ -487,7 +487,7 @@ def process_hook_result(result_line: str) -> str | None:
 - 使用者訊息用 Messages 類別集中化，按角色和情境分組
 - 決策關鍵：**會隨環境改變 → 配置檔；是使用者文字 → Messages；是裸露數字 → 常數**
 
-*下一章：[大規模統一化重構](../unified-infrastructure/)*
+*下一章：[大規模統一化重構](/python/07-refactoring/unified-infrastructure/)*
 
 ---
 

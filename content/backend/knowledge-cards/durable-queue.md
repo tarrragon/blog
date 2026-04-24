@@ -9,11 +9,11 @@ Durable queue 的核心概念是「待處理工作在 process 重啟或節點故
 
 ## 概念位置
 
-Durable queue 是 [queue](../queue/) 與 [message persistence](../message-persistence/) 的組合，常由 [broker](../broker/) 提供，並搭配 [ack/nack](../ack-nack/)、[retry policy](../retry-policy/) 與 [dead-letter queue](../dead-letter-queue/)。
+Durable queue 是 [queue](/backend/knowledge-cards/queue/) 與 [message persistence](/backend/knowledge-cards/message-persistence/) 的組合，常由 [broker](/backend/knowledge-cards/broker/) 提供，並搭配 [ack/nack](/backend/knowledge-cards/ack-nack/)、[retry policy](/backend/knowledge-cards/retry-policy/) 與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)。
 
 ## 可觀察訊號與例子
 
-當工作可延遲但不可遺失時，durable queue 是常見候選。例如付款後通知、對帳同步、背景轉檔。若僅需在線即時廣播，通常 [pub/sub](../pub-sub/) 成本更低。
+當工作可延遲但不可遺失時，durable queue 是常見候選。例如付款後通知、對帳同步、背景轉檔。若僅需在線即時廣播，通常 [pub/sub](/backend/knowledge-cards/pub-sub/) 成本更低。
 
 ## 設計責任
 

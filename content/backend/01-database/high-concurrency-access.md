@@ -5,23 +5,23 @@ description: "說明高併發服務如何共用資料庫 client、控制 transac
 weight: 1
 ---
 
-高併發服務處理 SQL 的核心原則是共用資料庫 client，並讓 [connection pool](../../knowledge-cards/connection-pool/) 管理連線生命週期。當並發升高時，真正要控制的是連線數、交易範圍、查詢時間與下游壓力；每個 request 各自建立連線會放大握手、排隊與資源回收成本。
+高併發服務處理 SQL 的核心原則是共用資料庫 client，並讓 [connection pool](/backend/knowledge-cards/connection-pool/) 管理連線生命週期。當並發升高時，真正要控制的是連線數、交易範圍、查詢時間與下游壓力；每個 request 各自建立連線會放大握手、排隊與資源回收成本。
 
 ## 本章目標
 
 學完本章後，你將能夠：
 
 1. 理解資料庫 client 為什麼應該共用
-2. 分辨 query、exec、rows 與 [transaction](../../knowledge-cards/transaction/) 的不同邊界
+2. 分辨 query、exec、rows 與 [transaction](/backend/knowledge-cards/transaction/) 的不同邊界
 3. 了解連線池參數對高併發的影響
-4. 用 `context` 與 [timeout](../../knowledge-cards/timeout/) 控制慢查詢
+4. 用 `context` 與 [timeout](/backend/knowledge-cards/timeout/) 控制慢查詢
 5. 避免長 transaction、慢掃描與過量並發把資料庫壓爆
 
 ---
 
 ## 【觀察】資料庫 client 通常代表連線池入口
 
-多數後端語言的資料庫 client 都會包住連線池或連線管理能力。一般情況下，服務會在啟動時建立可重用的 [database](../../knowledge-cards/database/) handle，讓 request handler、worker 或 service layer 共用它，並在需要時從池子裡取出可用連線。
+多數後端語言的資料庫 client 都會包住連線池或連線管理能力。一般情況下，服務會在啟動時建立可重用的 [database](/backend/knowledge-cards/database/) handle，讓 request handler、worker 或 service layer 共用它，並在需要時從池子裡取出可用連線。
 
 這種模型的好處是：
 
@@ -85,26 +85,26 @@ if err := rows.Err(); err != nil {
 
 ## 【策略】慢查詢要靠 timeout 與上層限流處理
 
-在高併發服務裡，database timeout 應由 request timeout、client timeout 與資料庫 timeout 共同定義。語言端需要能把取消、[deadline](../../knowledge-cards/deadline/) 或 timeout 往資料庫 client 傳遞，讓慢查詢在合理時間內釋放資源。
+在高併發服務裡，database timeout 應由 request timeout、client timeout 與資料庫 timeout 共同定義。語言端需要能把取消、[deadline](/backend/knowledge-cards/deadline/) 或 timeout 往資料庫 client 傳遞，讓慢查詢在合理時間內釋放資源。
 
 如果下游開始變慢，通常要搭配：
 
 - request-level timeout
-- [worker pool](../../knowledge-cards/worker-pool/) 或 semaphore
-- [queue](../../knowledge-cards/queue/) 長度限制
+- [worker pool](/backend/knowledge-cards/worker-pool/) 或 semaphore
+- [queue](/backend/knowledge-cards/queue/) 長度限制
 - 降級或拒絕策略
 
 這樣做的目標是避免應用自己堆出大量等待中的工作，最後把問題放大成整個服務卡死。
 
 ## 【延伸】語言端的責任是邊界
 
-這一章不討論 PostgreSQL、MySQL、SQLite 的語法差異，也不討論 [migration](../../knowledge-cards/migration/) 工具本身。語言端需要掌握的是：怎麼共用 database client、怎麼控制並發、怎麼縮小 transaction、怎麼把 timeout 和取消傳下去。
+這一章不討論 PostgreSQL、MySQL、SQLite 的語法差異，也不討論 [migration](/backend/knowledge-cards/migration/) 工具本身。語言端需要掌握的是：怎麼共用 database client、怎麼控制並發、怎麼縮小 transaction、怎麼把 timeout 和取消傳下去。
 
-具體 schema、index、[isolation level](../../knowledge-cards/isolation-level/) 與 migration 寫法，會放在這個模組的其他資料庫教材中。
+具體 schema、index、[isolation level](/backend/knowledge-cards/isolation-level/) 與 migration 寫法，會放在這個模組的其他資料庫教材中。
 
 ## 跨語言適配評估
 
-資料庫高併發邊界會受語言 runtime 影響。Thread-based runtime 要管理 thread pool 與 connection pool 的比例；async runtime 要確認 database driver 是否真正非阻塞；輕量 task runtime 要限制同時查詢數量，避免把大量 task 轉成下游連線壓力。強型別語言可以用型別保護 row mapping 與錯誤分類；動態語言則需要用 migration、runtime validation、[contract](../../knowledge-cards/contract/) test 與 fixture 保護 schema 邊界。
+資料庫高併發邊界會受語言 runtime 影響。Thread-based runtime 要管理 thread pool 與 connection pool 的比例；async runtime 要確認 database driver 是否真正非阻塞；輕量 task runtime 要限制同時查詢數量，避免把大量 task 轉成下游連線壓力。強型別語言可以用型別保護 row mapping 與錯誤分類；動態語言則需要用 migration、runtime validation、[contract](/backend/knowledge-cards/contract/) test 與 fixture 保護 schema 邊界。
 
 ## 小結
 

@@ -21,9 +21,9 @@ weight: 7241
 
 ## 案例觸發參考
 
-- [Snowflake 2024](../../cases/data-exfiltration/snowflake-2024-credential-abuse/)
-- [GitHub OAuth 2022](../../cases/supply-chain/github-oauth-2022-token-supply-chain/)
+- [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- [GitHub OAuth 2022](/backend/07-security-data-protection/red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/)
 
 ## 來源流程卡
 
-- [跨租戶協作濫用](../cross-tenant-collaboration-abuse/)
+- [跨租戶協作濫用](/backend/07-security-data-protection/red-team/problem-cards/cross-tenant-collaboration-abuse/)

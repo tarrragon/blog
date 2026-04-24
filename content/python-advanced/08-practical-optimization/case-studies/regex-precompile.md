@@ -10,7 +10,7 @@ weight: 3
 
 ## 先備知識
 
-- [模組八基礎章節](../../)
+- [模組八基礎章節](/python-advanced/08-practical-optimization/)
 - Python `re` 模組基本操作
 - 基本的效能測量概念
 
@@ -969,5 +969,5 @@ if __name__ == "__main__":
 
 ---
 
-*上一章：[並行 Hook 驗證](../parallel-hook-validation/)*
-*下一章：[LRU 快取](../lru-cache-branch/)*
+*上一章：[並行 Hook 驗證](/python-advanced/08-practical-optimization/case-studies/parallel-hook-validation/)*
+*下一章：[LRU 快取](/python-advanced/08-practical-optimization/case-studies/lru-cache-branch/)*

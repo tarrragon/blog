@@ -17,4 +17,4 @@ Error budget 把可靠性討論轉成決策語言。Budget 消耗過快時，團
 
 ## 設計責任
 
-Error budget 要和 SLO、alert、incident review、[Release Gate](../release-gate/) 連接。它應反映使用者影響，instance 存活只是底層健康訊號之一。
+Error budget 要和 SLO、alert、incident review、[Release Gate](/backend/knowledge-cards/release-gate/) 連接。它應反映使用者影響，instance 存活只是底層健康訊號之一。

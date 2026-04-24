@@ -21,10 +21,10 @@ weight: 7242
 
 ## 案例觸發參考
 
-- [Okta + Cloudflare 2023](../../cases/identity-access/okta-cloudflare-2023-support-supply-chain/)
-- [Cloudflare 2023](../../cases/identity-access/cloudflare-2023-okta-token-follow-through/)
-- [Slack 2022](../../cases/identity-access/slack-2022-token-compromise/)
+- [Okta + Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/)
+- [Cloudflare 2023](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)
+- [Slack 2022](/backend/07-security-data-protection/red-team/cases/identity-access/slack-2022-token-compromise/)
 
 ## 來源流程卡
 
-- [第三方授權濫用](../third-party-authorization-abuse/)
+- [第三方授權濫用](/backend/07-security-data-protection/red-team/problem-cards/third-party-authorization-abuse/)

@@ -11,19 +11,19 @@ weight: 9
 
 這些設定邊界會在下列章節展開：
 
-- [Go 進階：composition root 與依賴組裝](../../07-refactoring/composition-root/)：設定讀取的真正用途，是在啟動層把外部輸入轉成可驗證的依賴。
-- [Go 入門：從入口程式看應用啟動流程](../../01-basics/main-flow/)：先看主程式怎麼啟動，才知道設定應該在哪裡完成驗證。
-- [Backend：部署平台與網路入口](../../../backend/05-deployment-platform/)：像 secret manager、ConfigMap 與 rollout 這類平台責任應該留給 Backend。
+- [Go 進階：composition root 與依賴組裝](/go/07-refactoring/composition-root/)：設定讀取的真正用途，是在啟動層把外部輸入轉成可驗證的依賴。
+- [Go 入門：從入口程式看應用啟動流程](/go/01-basics/main-flow/)：先看主程式怎麼啟動，才知道設定應該在哪裡完成驗證。
+- [Backend：部署平台與網路入口](/backend/05-deployment-platform/)：像 secret manager、ConfigMap 與 rollout 這類平台責任應該留給 Backend。
 
 ## 與 Backend 教材的分工
 
-本章只處理 Go 程式內的設定邊界。secret manager、Kubernetes ConfigMap、container environment、遠端動態設定與部署平台 rollout 會放在 [Backend：部署平台與網路入口](../../../backend/05-deployment-platform/)。
+本章只處理 Go 程式內的設定邊界。secret manager、Kubernetes ConfigMap、container environment、遠端動態設定與部署平台 rollout 會放在 [Backend：部署平台與網路入口](/backend/05-deployment-platform/)。
 
 ## 和 Go 教材的關係
 
 這一章承接的是入口流程與 composition root；如果你要先回看語言教材，可以讀：
 
-- [Go：從入口程式看應用啟動流程](../../01-basics/main-flow/)
-- [Go：composition root 與依賴組裝](../../07-refactoring/composition-root/)
-- [Go：testing 基礎](../../05-error-testing/testing-basics/)
-- [Go：flag、os/env 與設定邊界](./)
+- [Go：從入口程式看應用啟動流程](/go/01-basics/main-flow/)
+- [Go：composition root 與依賴組裝](/go/07-refactoring/composition-root/)
+- [Go：testing 基礎](/go/05-error-testing/testing-basics/)
+- [Go：flag、os/env 與設定邊界](/go/03-stdlib/config-flags-env/)

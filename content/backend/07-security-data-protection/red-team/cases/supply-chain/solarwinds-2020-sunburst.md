@@ -28,7 +28,7 @@ weight: 71721
 ## 可落地的 workflow 檢查點
 
 - 發布前：供應鏈節點做分層信任與簽章驗證。
-- 日常：建立異常更新行為的 [symptom-based alert](../../../../../knowledge-cards/symptom-based-alert/)。
+- 日常：建立異常更新行為的 [symptom-based alert](/backend/knowledge-cards/symptom-based-alert/)。
 - 事故中：切換受影響更新鏈、建立替代交付路徑與回復順序。
 
 ## 可引用章節

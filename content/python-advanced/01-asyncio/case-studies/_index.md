@@ -30,10 +30,10 @@ weight: 10
 
 建議先完成以下章節：
 
-- [1.1 基礎概念與事件迴圈](../fundamentals/)
-- [1.2 協程與 Task 管理](../coroutines-tasks/)
-- [1.4 實戰：與同步程式碼整合](../real-world/)
+- [1.1 基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/)
+- [1.2 協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)
+- [1.4 實戰：與同步程式碼整合](/python-advanced/01-asyncio/real-world/)
 
 ---
 
-*返回：[模組一：非同步程式設計](../)*
+*返回：[模組一：非同步程式設計](/python-advanced/01-asyncio/)*

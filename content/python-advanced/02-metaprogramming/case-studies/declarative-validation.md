@@ -10,7 +10,7 @@ weight: 1
 
 ## 先備知識
 
-- [2.1 Descriptor Protocol 完整指南](../../descriptors/)
+- [2.1 Descriptor Protocol 完整指南](/python-advanced/02-metaprogramming/descriptors/)
 
 ## 問題背景
 
@@ -599,5 +599,5 @@ class HookConfigDataclass:
 
 ---
 
-*上一章：[案例研究索引](../)*
-*下一章：[案例：自動註冊機制](../auto-registration/)*
+*上一章：[案例研究索引](/python-advanced/02-metaprogramming/case-studies/)*
+*下一章：[案例：自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)*

@@ -10,7 +10,7 @@ weight: 1
 
 ## 先備知識
 
-- 入門系列 [2.2 Optional、Union、泛型](../../../python/02-type-system/optional-union/)
+- 入門系列 [2.2 Optional、Union、泛型](/python/02-type-system/optional-union/)
 
 ## TypeVar 進階
 
@@ -497,4 +497,4 @@ class MutableBox(Generic[T_co]):  # 錯誤！
 
 ---
 
-*下一章：[3.5.2 異常設計架構](../exception-design/)*
+*下一章：[3.5.2 異常設計架構](/python-advanced/03-design-patterns/exception-design/)*

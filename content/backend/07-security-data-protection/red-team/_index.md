@@ -45,4 +45,4 @@ weight: 71
 
 本子分類會先建立判讀順序與控制面，再往後延伸到具體驗證方式與實作策略。
 
-案例庫與 incident workflow 的雙向路由可參考 [8.8 事故報告轉 workflow](../../08-incident-response/incident-report-to-workflow/) 與 [案例引用地圖](cases/case-reference-map/)。
+案例庫與 incident workflow 的雙向路由可參考 [8.8 事故報告轉 workflow](/backend/08-incident-response/incident-report-to-workflow/) 與 [案例引用地圖](cases/case-reference-map/)。

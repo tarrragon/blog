@@ -531,5 +531,5 @@ nanobind  → 新專案，追求最小化
 
 ---
 
-*上一章：[pybind11](../pybind11/)*
-*下一模組：[模組五：用 Rust 擴展 Python](../../06-rust-extensions/)*
+*上一章：[pybind11](/python-advanced/05-c-extensions/pybind11/)*
+*下一模組：[模組五：用 Rust 擴展 Python](/python-advanced/06-rust-extensions/)*

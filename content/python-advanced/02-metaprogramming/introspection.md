@@ -10,7 +10,7 @@ weight: 4
 
 ## 先備知識
 
-- [2.3 類別裝飾器與動態類別](../class-creation/)
+- [2.3 類別裝飾器與動態類別](/python-advanced/02-metaprogramming/class-creation/)
 
 ## 本章目標
 
@@ -506,5 +506,5 @@ for p in params:
 
 ---
 
-*上一章：[類別裝飾器與動態類別](../class-creation/)*
-*下一模組：[模組三：CPython 內部機制](../../04-cpython-internals/)*
+*上一章：[類別裝飾器與動態類別](/python-advanced/02-metaprogramming/class-creation/)*
+*下一模組：[模組三：CPython 內部機制](/python-advanced/04-cpython-internals/)*

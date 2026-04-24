@@ -533,15 +533,15 @@ def check_dependencies():
 
 ## 相關章節
 
-- [GIL 與執行緒模型](../gil-threading/) - 深入理解 GIL 的設計與實現
-- [用 C 擴展 Python](../../05-c-extensions/) - 使用 C 擴展繞過 GIL 的傳統方法
-- [用 Rust 擴展 Python](../../06-rust-extensions/) - 使用 PyO3 建立高效能擴展
+- [GIL 與執行緒模型](/python-advanced/04-cpython-internals/gil-threading/) - 深入理解 GIL 的設計與實現
+- [用 C 擴展 Python](/python-advanced/05-c-extensions/) - 使用 C 擴展繞過 GIL 的傳統方法
+- [用 Rust 擴展 Python](/python-advanced/06-rust-extensions/) - 使用 PyO3 建立高效能擴展
 
 ## 先備知識
 
-- 入門系列 [並行處理](../../../python/03-stdlib/concurrency/) - threading、multiprocessing 基礎
+- 入門系列 [並行處理](/python/03-stdlib/concurrency/) - threading、multiprocessing 基礎
 
 ---
 
-*上一章：[GIL 與執行緒模型](../gil-threading/)*
-*下一模組：[模組五：用 C 擴展 Python](../../05-c-extensions/)*
+*上一章：[GIL 與執行緒模型](/python-advanced/04-cpython-internals/gil-threading/)*
+*下一模組：[模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)*

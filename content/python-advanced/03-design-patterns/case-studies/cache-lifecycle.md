@@ -10,7 +10,7 @@ weight: 1
 
 ## 先備知識
 
-- [3.3 進階上下文管理](../../context-managers/)
+- [3.3 進階上下文管理](/python-advanced/03-design-patterns/context-managers/)
 
 ## 問題背景
 
@@ -599,5 +599,5 @@ def process_with_multiple_caches():
 
 ---
 
-*上一章：[案例研究索引](../)*
-*下一章：[案例：插件架構設計](../plugin-architecture/)*
+*上一章：[案例研究索引](/python-advanced/03-design-patterns/case-studies/)*
+*下一章：[案例：插件架構設計](/python-advanced/03-design-patterns/case-studies/plugin-architecture/)*

@@ -7,7 +7,7 @@ weight: 4
 
 ## 大綱
 
-- [incident communication channel](../../knowledge-cards/incident-communication-channel/)
+- [incident communication channel](/backend/knowledge-cards/incident-communication-channel/)
 - external status update
 - update cadence
 - stakeholder mapping

@@ -25,14 +25,14 @@ weight: 7221
 
 ## 案例觸發參考
 
-- [Snowflake 2024](../../cases/data-exfiltration/snowflake-2024-credential-abuse/)
-- [GitHub OAuth 2022](../../cases/supply-chain/github-oauth-2022-token-supply-chain/)
+- [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- [GitHub OAuth 2022](/backend/07-security-data-protection/red-team/cases/supply-chain/github-oauth-2022-token-supply-chain/)
 
 ## 可連動章節
 
-- [7.2 身分與授權邊界](../../../identity-access-boundary/)
-- [7.4 資料保護與遮罩治理](../../../data-protection-and-masking-governance/)
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P11 跨租戶上下文快取殘留](../fp-cross-tenant-context-cache-residue/)
+- [7.R11.P11 跨租戶上下文快取殘留](/backend/07-security-data-protection/red-team/problem-cards/fp-cross-tenant-context-cache-residue/)

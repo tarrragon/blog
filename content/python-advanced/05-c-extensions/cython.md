@@ -645,5 +645,5 @@ py.extension_module(
 
 ---
 
-*上一章：[ctypes 與 cffi](../ctypes-cffi/)*
-*下一章：[pybind11](../pybind11/)*
+*上一章：[ctypes 與 cffi](/python-advanced/05-c-extensions/ctypes-cffi/)*
+*下一章：[pybind11](/python-advanced/05-c-extensions/pybind11/)*

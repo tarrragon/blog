@@ -17,4 +17,4 @@ Correctness check 是 migration、refactoring、shadow read、backfill 與 cutov
 
 ## 設計責任
 
-Correctness check 要定義比對欄位、容忍差異、抽樣策略、錯誤分類與停止條件。高風險差異要能追到 request id、資料版本與規則版本，並作為 [Migration Gate](../migration-gate/) 的依據。
+Correctness check 要定義比對欄位、容忍差異、抽樣策略、錯誤分類與停止條件。高風險差異要能追到 request id、資料版本與規則版本，並作為 [Migration Gate](/backend/knowledge-cards/migration-gate/) 的依據。

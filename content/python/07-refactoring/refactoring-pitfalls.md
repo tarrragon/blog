@@ -24,7 +24,7 @@ weight: 76
 
 ## 陷阱一：作用域迴歸
 
-> 本節是概要。IMP-003 的完整分析（含 LEGB 規則詳解、AST 修正腳本）請見[作用域迴歸案例研究](../scope-regression/)。
+> 本節是概要。IMP-003 的完整分析（含 LEGB 規則詳解、AST 修正腳本）請見[作用域迴歸案例研究](/python/07-refactoring/scope-regression/)。
 
 ### 事件摘要
 
@@ -51,13 +51,13 @@ def main():
 兩個因素疊加讓這個 bug 特別難發現：
 
 1. **`py_compile` 抓不到**：`logger.info(...)` 語法完全合法，名稱解析要到執行時才發生
-2. **頂層例外處理吞掉了 `NameError`**：`run_hook_safely()` 捕捉所有 `Exception`，Hook 靜默失敗而非 crash（詳見 [5.5 頂層例外處理機制](../../05-error-testing/error-infrastructure/)）
+2. **頂層例外處理吞掉了 `NameError`**：`run_hook_safely()` 捕捉所有 `Exception`，Hook 靜默失敗而非 crash（詳見 [5.5 頂層例外處理機制](/python/05-error-testing/error-infrastructure/)）
 
 結果：7 個 Hook 在至少 2 個 session 中靜默失敗，41 個函式需要修正，+143/-81 行修改——全部源自一個「只是移動定義位置」的操作。
 
 ### 正確做法
 
-修改前用 grep 或 AST 列出所有引用，逐一加入 `logger` 參數，再用 AST 驗證無遺漏。完整的四步修正流程見[作用域迴歸案例研究](../scope-regression/)。
+修改前用 grep 或 AST 列出所有引用，逐一加入 `logger` 參數，再用 AST 驗證無遺漏。完整的四步修正流程見[作用域迴歸案例研究](/python/07-refactoring/scope-regression/)。
 
 ---
 
@@ -317,7 +317,7 @@ grep -rn "save_check_log(" .claude/hooks/*.py
 
 2. 陷阱三案例 B（語義分類錯誤）無法被任何靜態工具偵測。你會如何設計一個測試來防護這類問題？
 
-3. 「頂層例外處理吞掉錯誤」既是安全機制（防止 crash），也是風險（隱藏 bug）。如何在這兩個需求之間取得平衡？（可參考 [5.5 頂層例外處理機制](../../05-error-testing/error-infrastructure/) 的設計方案）
+3. 「頂層例外處理吞掉錯誤」既是安全機制（防止 crash），也是風險（隱藏 bug）。如何在這兩個需求之間取得平衡？（可參考 [5.5 頂層例外處理機制](/python/05-error-testing/error-infrastructure/) 的設計方案）
 
 ## 實作練習
 
@@ -329,7 +329,7 @@ grep -rn "save_check_log(" .claude/hooks/*.py
 
 ---
 
-*上一章：[大規模統一化重構](../unified-infrastructure/)*
-*下一章：[非程式碼的重構](../non-code-refactoring/)*
-*相關：[作用域迴歸案例研究](../scope-regression/) -- 陷阱一的完整深入分析*
-*相關：[5.5 頂層例外處理機制](../../05-error-testing/error-infrastructure/) -- 例外處理如何隱藏 bug 的機制分析*
+*上一章：[大規模統一化重構](/python/07-refactoring/unified-infrastructure/)*
+*下一章：[非程式碼的重構](/python/07-refactoring/non-code-refactoring/)*
+*相關：[作用域迴歸案例研究](/python/07-refactoring/scope-regression/) -- 陷阱一的完整深入分析*
+*相關：[5.5 頂層例外處理機制](/python/05-error-testing/error-infrastructure/) -- 例外處理如何隱藏 bug 的機制分析*

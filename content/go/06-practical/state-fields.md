@@ -5,7 +5,7 @@ description: "更新狀態模型、repository 與 API 輸出"
 weight: 3
 ---
 
-擴展狀態投影欄位的核心流程是先確認欄位屬於 domain state、[read model](../../../backend/knowledge-cards/read-model/) 還是 response view。欄位加在哪一層，會決定寫入規則、相容性與測試方式。
+擴展狀態投影欄位的核心流程是先確認欄位屬於 domain state、[read model](/backend/knowledge-cards/read-model/) 還是 response view。欄位加在哪一層，會決定寫入規則、相容性與測試方式。
 
 ## 本章目標
 
@@ -23,11 +23,11 @@ weight: 3
 
 狀態欄位的核心問題是「這個欄位代表哪一種資料責任」。同一個欄位放在不同層，代表不同寫入規則與相容性承諾。
 
-| 層次                                                                  | 意義                     | 範例                                |
-| --------------------------------------------------------------------- | ------------------------ | ----------------------------------- |
-| domain state                                                          | 影響業務規則與狀態轉移   | job 是否 running、failed、completed |
-| [projection](../../../backend/knowledge-cards/projection/)/read model | 方便查詢、列表或即時顯示 | 最近更新時間、目前進度百分比        |
-| response view                                                         | 只影響對外輸出格式       | 顯示文字、前端用 badge 顏色         |
+| 層次                                                          | 意義                     | 範例                                |
+| ------------------------------------------------------------- | ------------------------ | ----------------------------------- |
+| domain state                                                  | 影響業務規則與狀態轉移   | job 是否 running、failed、completed |
+| [projection](/backend/knowledge-cards/projection/)/read model | 方便查詢、列表或即時顯示 | 最近更新時間、目前進度百分比        |
+| response view                                                 | 只影響對外輸出格式       | 顯示文字、前端用 badge 顏色         |
 
 例如「job 狀態」是 domain state，因為它會影響是否能重試、取消或完成。相反地，「狀態顯示文字」通常是 response view，因為它只是把內部狀態轉成 client 更容易顯示的文字。
 
@@ -78,7 +78,7 @@ pointer 在這裡的用途是區分「沒有值」和「有一個零值」。時
 
 ## 【策略】狀態轉移要集中在同一個入口
 
-狀態轉移的核心規則是所有寫入都經過同一組方法。handler、worker 或 [WebSocket](../../../backend/knowledge-cards/websocket/) router 應把狀態變更交給 repository 或 state owner，而不是自行修改 map 或 projection 欄位。
+狀態轉移的核心規則是所有寫入都經過同一組方法。handler、worker 或 [WebSocket](/backend/knowledge-cards/websocket/) router 應把狀態變更交給 repository 或 state owner，而不是自行修改 map 或 projection 欄位。
 
 先定義內部 event：
 
@@ -408,20 +408,20 @@ handler 透過 repository 或 state owner 修改 projection，可以讓狀態規
 
 ## 本章不處理
 
-本章先處理狀態欄位如何影響 response contract；資料庫 [migration](../../../backend/knowledge-cards/migration/) 與前端相容性策略，會在下列章節再往外延伸：
+本章先處理狀態欄位如何影響 response contract；資料庫 [migration](/backend/knowledge-cards/migration/) 與前端相容性策略，會在下列章節再往外延伸：
 
-- [Go 進階：Source of Truth：狀態邊界](../../../backend/knowledge-cards/source-of-truth/)
-- [Go 進階：資料庫 transaction 與 schema migration](../../../go-advanced/07-distributed-operations/database-transactions/)
-- [Backend：資料庫與持久化](../../../backend/01-database/)
+- [Go 進階：Source of Truth：狀態邊界](/backend/knowledge-cards/source-of-truth/)
+- [Go 進階：資料庫 transaction 與 schema migration](/go-advanced/07-distributed-operations/database-transactions/)
+- [Backend：資料庫與持久化](/backend/01-database/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 repository、event 與 response view 的邊界；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增 repository port](../repository-port/)
-- [Go：如何新增一種 domain event](../new-event-type/)
-- [Go：狀態管理的安全邊界](../../07-refactoring/state-boundary/)
-- [Go 進階：Source of Truth](../../../backend/knowledge-cards/source-of-truth/)
+- [Go：如何新增 repository port](/go/06-practical/repository-port/)
+- [Go：如何新增一種 domain event](/go/06-practical/new-event-type/)
+- [Go：狀態管理的安全邊界](/go/07-refactoring/state-boundary/)
+- [Go 進階：Source of Truth](/backend/knowledge-cards/source-of-truth/)
 
 ## 小結
 

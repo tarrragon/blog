@@ -5,7 +5,7 @@ description: "學習識別重複程式碼並建立共用模組，含模組演進
 weight: 73
 ---
 
-_上一章：[程式碼壞味道偵測](../code-smells/)_
+_上一章：[程式碼壞味道偵測](/python/07-refactoring/code-smells/)_
 
 DRY (Don't Repeat Yourself) 是軟體開發的核心原則之一。本章基於 Error Pattern IMP-001，學習如何識別重複程式碼並建立共用模組。後半部分以 v0.31.0 的模組演進和遷移實戰為例，示範共用庫如何隨系統成長持續演進。
 
@@ -430,7 +430,7 @@ grep -r "from common_functions import" .claude/hooks/*.py
 - 共用庫隨系統成長持續演進，大規模遷移採用分批策略
 - 模組搬家後必須全量 `grep` 引用並逐一驗證，防止 IMP-005 陷阱
 
-_下一章：[配置分離與常數管理](../constants-management/)_
+_下一章：[配置分離與常數管理](/python/07-refactoring/constants-management/)_
 
 ---
 

@@ -9,20 +9,20 @@ weight: 5
 
 ## 服務環節問題地圖
 
-| 環節           | 主要問題                                 | 注意事項                                                                                        | 優先案例                                                                                                                          |
-| -------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 入口暴露面     | 入口分級與實際可達範圍不一致             | 入口清單與責任鏈要先對齊                                                                        | [MOVEit 2023](../../07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/)                      |
-| 生命周期訊號   | readiness、draining、shutdown 節奏不一致 | 平台合約要先定義再驗證                                                                          | [Ivanti 2024](../../07-security-data-protection/red-team/cases/edge-exposure/ivanti-2024-vpn-chain/)                              |
-| 設定與密鑰下發 | 設定漂移與權限擴張同時發生               | 高風險設定要進 release gate，並分離 [management plane](../../knowledge-cards/management-plane/) | [F5 BIG-IP 2023](../../07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/)             |
-| 交付切換節奏   | 回滾與切換條件不清晰                     | 先定停損條件再定交付速度                                                                        | [TeamCity 2024](../../07-security-data-protection/red-team/cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/) |
+| 環節           | 主要問題                                 | 注意事項                                                                                           | 優先案例                                                                                                                             |
+| -------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 入口暴露面     | 入口分級與實際可達範圍不一致             | 入口清單與責任鏈要先對齊                                                                           | [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/)                      |
+| 生命周期訊號   | readiness、draining、shutdown 節奏不一致 | 平台合約要先定義再驗證                                                                             | [Ivanti 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/ivanti-2024-vpn-chain/)                              |
+| 設定與密鑰下發 | 設定漂移與權限擴張同時發生               | 高風險設定要進 release gate，並分離 [management plane](/backend/knowledge-cards/management-plane/) | [F5 BIG-IP 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/)             |
+| 交付切換節奏   | 回滾與切換條件不清晰                     | 先定停損條件再定交付速度                                                                           | [TeamCity 2024](/backend/07-security-data-protection/red-team/cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/) |
 
 ## 案例對照表（情境 -> 判讀 -> 注意事項 -> 路由章節）
 
-| 情境                               | 判讀                         | 注意事項                            | 路由章節                                                                     |
-| ---------------------------------- | ---------------------------- | ----------------------------------- | ---------------------------------------------------------------------------- |
-| 外網可達入口在發版後增加           | 入口分級與交付節奏存在脫鉤   | 入口盤點要成為交付前條件            | [5.3 Load Balancer Contract](../../knowledge-cards/load-balancer-contract/)  |
-| readiness 通過但實際流量錯誤率上升 | 生命周期合約與流量模型不一致 | 探針、draining、shutdown 要同批驗證 | [6.5 驗證缺口弱點判讀](../../06-reliability/attacker-view-validation-risks/) |
-| 設定異動與異常事件同時出現         | 設定漂移可能已跨越安全邊界   | 設定審查與責任追蹤要同步維護        | [8.5 復盤與改進追蹤](../../knowledge-cards/post-incident-review/)            |
+| 情境                               | 判讀                         | 注意事項                            | 路由章節                                                                        |
+| ---------------------------------- | ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------- |
+| 外網可達入口在發版後增加           | 入口分級與交付節奏存在脫鉤   | 入口盤點要成為交付前條件            | [5.3 Load Balancer Contract](/backend/knowledge-cards/load-balancer-contract/)  |
+| readiness 通過但實際流量錯誤率上升 | 生命周期合約與流量模型不一致 | 探針、draining、shutdown 要同批驗證 | [6.5 驗證缺口弱點判讀](/backend/06-reliability/attacker-view-validation-risks/) |
+| 設定異動與異常事件同時出現         | 設定漂移可能已跨越安全邊界   | 設定審查與責任追蹤要同步維護        | [8.5 復盤與改進追蹤](/backend/knowledge-cards/post-incident-review/)            |
 
 ## 到實作前的最後一層
 

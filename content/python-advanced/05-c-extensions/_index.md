@@ -34,7 +34,7 @@ C++ 函式庫 ──────→ pybind11
 
 ## 先備知識
 
-- 進階系列 [模組四：CPython 內部機制](../04-cpython-internals/)
+- 進階系列 [模組四：CPython 內部機制](/python-advanced/04-cpython-internals/)
 - 基本的 C 語言知識（指標、結構體、記憶體管理）
 
 ## 學習時間
@@ -43,5 +43,5 @@ C++ 函式庫 ──────→ pybind11
 
 ---
 
-*上一模組：[模組四：CPython 內部機制](../04-cpython-internals/)*
-*下一模組：[模組六：用 Rust 擴展 Python](../06-rust-extensions/)*
+*上一模組：[模組四：CPython 內部機制](/python-advanced/04-cpython-internals/)*
+*下一模組：[模組六：用 Rust 擴展 Python](/python-advanced/06-rust-extensions/)*

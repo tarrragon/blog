@@ -783,5 +783,5 @@ def method3(text: str) -> bool:
 
 ---
 
-*上一章：[並行處理實戰](../parallel-processing/)*
-*下一章：[案例研究](../case-studies/)*
+*上一章：[並行處理實戰](/python-advanced/08-practical-optimization/parallel-processing/)*
+*下一章：[案例研究](/python-advanced/08-practical-optimization/case-studies/)*

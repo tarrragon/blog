@@ -10,8 +10,8 @@ weight: 3
 
 ## 先備知識
 
-- [4.3 pybind11：現代 C++ 綁定](../../pybind11/)
-- [模組五：用 C 擴展 Python](../../)
+- [4.3 pybind11：現代 C++ 綁定](/python-advanced/05-c-extensions/pybind11/)
+- [模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)
 
 ## 問題背景
 
@@ -1213,5 +1213,5 @@ find_all
 
 ---
 
-*返回：[案例研究](../)*
-*返回：[模組五：用 C 擴展 Python](../../)*
+*返回：[案例研究](/python-advanced/05-c-extensions/case-studies/)*
+*返回：[模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)*

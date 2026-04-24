@@ -6,11 +6,11 @@ description: "說明場景化處置腳本如何降低事故處理不確定性"
 weight: 162
 ---
 
-Playbook 的核心概念是「針對特定故障場景提供可直接執行的處置腳本」。它比通用 [runbook](../runbook/) 更聚焦，通常對應單一風險模式或單一系統路徑。
+Playbook 的核心概念是「針對特定故障場景提供可直接執行的處置腳本」。它比通用 [runbook](/backend/knowledge-cards/runbook/) 更聚焦，通常對應單一風險模式或單一系統路徑。
 
 ## 概念位置
 
-Playbook 位在 [incident command system](../incident-command-system/)、[rollback-strategy](../rollback-strategy/) 與 [post-incident-review](../post-incident-review/) 之間。復盤後的改進常會沉澱成新的 playbook。
+Playbook 位在 [incident command system](/backend/knowledge-cards/incident-command-system/)、[rollback-strategy](/backend/knowledge-cards/rollback-strategy/) 與 [post-incident-review](/backend/knowledge-cards/post-incident-review/) 之間。復盤後的改進常會沉澱成新的 playbook。
 
 ## 可觀察訊號與例子
 

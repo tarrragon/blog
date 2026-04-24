@@ -11,9 +11,9 @@ generics 的核心用途是讓重複的型別安全邏輯可以被抽出來。Go
 
 這些型別系統邊界會在下列章節展開：
 
-- [Go 入門：interface：用行為定義依賴](../interfaces/)：先看 interface 與具體型別的邊界，才能判斷什麼情況值得引入 generics。
-- [Go 入門：table-driven test](../../05-error-testing/table-driven-test/)：泛型 helper 常常是給測試工具用的，這裡會看到它怎麼支撐重複案例。
-- [Go 進階：資料結構與 allocation 壓力](../../../go-advanced/03-runtime-profiling/allocation/)：當泛型影響配置與熱路徑時，才需要往 runtime 成本那層看。
+- [Go 入門：interface：用行為定義依賴](/go/02-types-data/interfaces/)：先看 interface 與具體型別的邊界，才能判斷什麼情況值得引入 generics。
+- [Go 入門：table-driven test](/go/05-error-testing/table-driven-test/)：泛型 helper 常常是給測試工具用的，這裡會看到它怎麼支撐重複案例。
+- [Go 進階：資料結構與 allocation 壓力](/go-advanced/03-runtime-profiling/allocation/)：當泛型影響配置與熱路徑時，才需要往 runtime 成本那層看。
 
 ## 與 Backend 教材的分工
 
@@ -23,7 +23,7 @@ generics 的核心用途是讓重複的型別安全邏輯可以被抽出來。Go
 
 這一章承接的是集合操作、型別約束與泛型應用；如果你要先回看語言教材，可以讀：
 
-- [Go：slice 與 map](../slices-maps/)
-- [Go：interface：用行為定義依賴](../interfaces/)
-- [Go：指標與資料複製邊界](../pointers-copy/)
-- [Go：狀態管理的安全邊界](../../07-refactoring/state-boundary/)
+- [Go：slice 與 map](/go/02-types-data/slices-maps/)
+- [Go：interface：用行為定義依賴](/go/02-types-data/interfaces/)
+- [Go：指標與資料複製邊界](/go/02-types-data/pointers-copy/)
+- [Go：狀態管理的安全邊界](/go/07-refactoring/state-boundary/)

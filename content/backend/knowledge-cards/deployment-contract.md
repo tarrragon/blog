@@ -17,7 +17,7 @@ Deployment Contract 位在 application、container、Kubernetes、systemd 與 ro
 
 ## 接近真實網路服務的例子
 
-readiness、shutdown、[draining](../draining/) 與 [resource limit](../resource-limit/) 都屬於 deployment contract。實際發版節奏與批次切換則交給 [rolling update](../rolling-update/) 或 cutover 類卡片處理。
+readiness、shutdown、[draining](/backend/knowledge-cards/draining/) 與 [resource limit](/backend/knowledge-cards/resource-limit/) 都屬於 deployment contract。實際發版節奏與批次切換則交給 [rolling update](/backend/knowledge-cards/rolling-update/) 或 cutover 類卡片處理。
 
 ## 設計責任
 

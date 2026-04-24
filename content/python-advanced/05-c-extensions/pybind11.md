@@ -674,5 +674,5 @@ pybind11:
 
 ---
 
-*上一章：[Cython](../cython/)*
-*下一章：[選擇指南](../when-to-use/)*
+*上一章：[Cython](/python-advanced/05-c-extensions/cython/)*
+*下一章：[選擇指南](/python-advanced/05-c-extensions/when-to-use/)*

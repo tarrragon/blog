@@ -10,7 +10,7 @@ Management plane 的核心概念是「承載高權限控制操作的系統平面
 
 ## 概念位置
 
-Management plane 位在 [admin-endpoint](../admin-endpoint/)、[trust-boundary](../trust-boundary/)、[runtime-config](../runtime-config/) 與 [audit-log](../audit-log/) 之間。它需要和業務流量平面維持清楚邊界。
+Management plane 位在 [admin-endpoint](/backend/knowledge-cards/admin-endpoint/)、[trust-boundary](/backend/knowledge-cards/trust-boundary/)、[runtime-config](/backend/knowledge-cards/runtime-config/) 與 [audit-log](/backend/knowledge-cards/audit-log/) 之間。它需要和業務流量平面維持清楚邊界。
 
 ## 可觀察訊號與例子
 

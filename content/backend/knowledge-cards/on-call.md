@@ -10,7 +10,7 @@ On-call 的核心概念是「在指定時段由明確責任角色承接運行事
 
 ## 概念位置
 
-On-call 是 [alert](../alert/)、[incident severity](../incident-severity/) 與 [escalation policy](../escalation-policy/) 的執行入口。值班制度決定誰先收到訊號、誰有權啟動 incident 流程。
+On-call 是 [alert](/backend/knowledge-cards/alert/)、[incident severity](/backend/knowledge-cards/incident-severity/) 與 [escalation policy](/backend/knowledge-cards/escalation-policy/) 的執行入口。值班制度決定誰先收到訊號、誰有權啟動 incident 流程。
 
 ## 可觀察訊號與例子
 
@@ -18,4 +18,4 @@ On-call 是 [alert](../alert/)、[incident severity](../incident-severity/) 與 
 
 ## 設計責任
 
-On-call 設計要定義排班、回應時限、交接格式、升級路徑與支援角色。制度需要和 [runbook](../runbook/) 與演練一起維護，避免值班只剩 pager 通知而沒有可執行流程。
+On-call 設計要定義排班、回應時限、交接格式、升級路徑與支援角色。制度需要和 [runbook](/backend/knowledge-cards/runbook/) 與演練一起維護，避免值班只剩 pager 通知而沒有可執行流程。

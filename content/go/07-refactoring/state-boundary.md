@@ -21,7 +21,7 @@ weight: 4
 
 ## 【觀察】共享狀態外洩會讓規則分散
 
-共享狀態外洩的核心問題是多個元件可以繞過同一套規則直接修改資料。當 handler、worker、[WebSocket](../../../backend/knowledge-cards/websocket/) client manager 都能改同一個 map，狀態不一致與 data race 會變得很難追蹤。
+共享狀態外洩的核心問題是多個元件可以繞過同一套規則直接修改資料。當 handler、worker、[WebSocket](/backend/knowledge-cards/websocket/) client manager 都能改同一個 map，狀態不一致與 data race 會變得很難追蹤。
 
 重構前常見寫法：
 
@@ -187,7 +187,7 @@ func cloneJobProjection(job JobProjection) JobProjection {
 
 ## 【判讀】state 和 projection 要分清楚
 
-state/[projection](../../../backend/knowledge-cards/projection/) 分離的核心原因是寫入規則與讀取需求不同。domain state 保存規則，projection 服務查詢與顯示。
+state/[projection](/backend/knowledge-cards/projection/) 分離的核心原因是寫入規則與讀取需求不同。domain state 保存規則，projection 服務查詢與顯示。
 
 ```go
 type JobState struct {
@@ -205,7 +205,7 @@ type JobProjection struct {
 }
 ```
 
-`DisplayText` 不應參與狀態轉移，它是 response 或 [read model](../../../backend/knowledge-cards/read-model/) 的資料。若把顯示文字混進核心 state，前端文案改動就會牽動業務規則測試。
+`DisplayText` 不應參與狀態轉移，它是 response 或 [read model](/backend/knowledge-cards/read-model/) 的資料。若把顯示文字混進核心 state，前端文案改動就會牽動業務規則測試。
 
 重構時不一定要一次拆出兩個 struct。可以先在程式碼中標記哪些欄位是 state，哪些欄位是 projection；等壓力變大，再正式拆型別。
 
@@ -239,7 +239,7 @@ handler 不知道 repository 內部用 map、slice、mutex 還是資料庫。它
 
 ## 【策略】為未來資料庫保留邊界，但不提前綁死
 
-[database](../../../backend/knowledge-cards/database/)-ready 邊界的核心是 context、error 與一致性語意，不是提早引入 ORM。memory repository 可以先存在，但方法簽名可以保留未來 I/O 的可能。
+[database](/backend/knowledge-cards/database/)-ready 邊界的核心是 context、error 與一致性語意，不是提早引入 ORM。memory repository 可以先存在，但方法簽名可以保留未來 I/O 的可能。
 
 ```go
 type JobRepositoryPort interface {
@@ -263,7 +263,7 @@ func (r *JobRepository) Get(ctx context.Context, id string) (JobProjection, bool
 }
 ```
 
-未來換成資料庫時，context 可以傳給 query；error 可以包上資料庫錯誤。[transaction](../../../backend/knowledge-cards/transaction/) 則等到一個 usecase 真的需要多筆寫入一致性時再設計。
+未來換成資料庫時，context 可以傳給 query；error 可以包上資料庫錯誤。[transaction](/backend/knowledge-cards/transaction/) 則等到一個 usecase 真的需要多筆寫入一致性時再設計。
 
 ## 【執行】state transition 測試鎖定規則
 
@@ -391,7 +391,7 @@ race detector 只能檢查測試實際跑到的路徑。若並發讀寫沒有被
 
 ### 檢查三：狀態副本需要明確 owner
 
-多份狀態副本會造成 [source of truth](../../../backend/knowledge-cards/source-of-truth/) 混亂。handler 應該請求同一個 state owner 更新或查詢。
+多份狀態副本會造成 [source of truth](/backend/knowledge-cards/source-of-truth/) 混亂。handler 應該請求同一個 state owner 更新或查詢。
 
 ### 檢查四：持久化替換跟著需求前進
 
@@ -403,18 +403,18 @@ race detector 只能檢查測試實際跑到的路徑。若並發讀寫沒有被
 
 本章先處理 state owner、lock boundary 與 copy boundary；資料庫 transaction 與分散式一致性，會在下列章節再往外延伸：
 
-- [Go 進階：資料庫 transaction 與 schema migration](../../../go-advanced/07-distributed-operations/database-transactions/)
-- [Go 進階：Source of Truth：狀態邊界](../../../backend/knowledge-cards/source-of-truth/)
-- [Backend：資料庫與持久化](../../../backend/01-database/)
+- [Go 進階：資料庫 transaction 與 schema migration](/go-advanced/07-distributed-operations/database-transactions/)
+- [Go 進階：Source of Truth：狀態邊界](/backend/knowledge-cards/source-of-truth/)
+- [Backend：資料庫與持久化](/backend/01-database/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 repository、read model 與 shared state 的邊界；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增 repository port](../../06-practical/repository-port/)
-- [Go：如何擴展狀態投影欄位](../../06-practical/state-fields/)
-- [Go：用 interface 隔離外部依賴](../interface-boundary/)
-- [Go：以 domain 重新整理 package](../domain-packages/)
+- [Go：如何新增 repository port](/go/06-practical/repository-port/)
+- [Go：如何擴展狀態投影欄位](/go/06-practical/state-fields/)
+- [Go：用 interface 隔離外部依賴](/go/07-refactoring/interface-boundary/)
+- [Go：以 domain 重新整理 package](/go/07-refactoring/domain-packages/)
 
 ## 小結
 

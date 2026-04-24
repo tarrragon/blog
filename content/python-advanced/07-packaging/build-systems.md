@@ -597,5 +597,5 @@ pip + lock file > Poetry > PDM
 
 ---
 
-*上一章：[pyproject.toml 完整指南](../pyproject-toml/)*
-*下一章：[發布到 PyPI](../distribution/)*
+*上一章：[pyproject.toml 完整指南](/python-advanced/07-packaging/pyproject-toml/)*
+*下一章：[發布到 PyPI](/python-advanced/07-packaging/distribution/)*

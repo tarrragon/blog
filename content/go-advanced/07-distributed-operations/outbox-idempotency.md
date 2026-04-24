@@ -5,43 +5,43 @@ description: "設計跨 process 事件傳遞的可靠性與去重邊界"
 weight: 2
 ---
 
-跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的 [backpressure](../../../backend/knowledge-cards/backpressure/) ；[durable [queue](../../../backend/knowledge-cards/queue/)](../../backend/knowledge-cards/durable-queue)、[outbox](../../../backend/knowledge-cards/outbox-pattern/) 與 [idempotency](../../../backend/knowledge-cards/idempotency/) store 才能處理服務重啟、網路失敗與 [consumer](../../../backend/knowledge-cards/consumer/) 重試。
+跨 process 事件傳遞的核心責任是讓事件在失敗、重試與重複投遞下仍維持可預期語意。Channel 只能處理單一 process 內的 [backpressure](/backend/knowledge-cards/backpressure/) ；[durable [queue](/backend/knowledge-cards/queue/)](/go-advanced/backend/knowledge-cards/durable-queue)、[outbox](/backend/knowledge-cards/outbox-pattern/) 與 [idempotency](/backend/knowledge-cards/idempotency/) store 才能處理服務重啟、網路失敗與 [consumer](/backend/knowledge-cards/consumer/) 重試。
 
 ## 本章目標
 
 學完本章後，你將能夠：
 
 1. 理解 outbox 為什麼能避免半成功
-2. 分辨 domain dedup key 與 [idempotency](../../../backend/knowledge-cards/idempotency/) key 的用途
+2. 分辨 domain dedup key 與 [idempotency](/backend/knowledge-cards/idempotency/) key 的用途
 3. 設計可重入的 consumer / processor
 4. 用 retry、DLQ 與回補流程處理失敗事件
 5. 把事件可靠性寫進資料結構，讓規則可以被程式與測試驗證
 
 ## 前置章節
 
-- [Go 進階：非阻塞送出與事件丟棄策略](../../01-concurrency-patterns/non-blocking-send/)
-- [Go 進階：事件去重與語義鍵設計](../../04-architecture-boundaries/dedup-key/)
-- [Go 進階：多來源 event 融合](../../04-architecture-boundaries/event-fusion/)
-- [Backend：Ack / Nack](../../../backend/knowledge-cards/ack-nack/)
-- [Backend：Retry Policy](../../../backend/knowledge-cards/retry-policy/)
-- [Backend：Dead-Letter Queue](../../../backend/knowledge-cards/dead-letter-queue/)
-- [Backend：Consumer Lag](../../../backend/knowledge-cards/consumer-lag/)
+- [Go 進階：非阻塞送出與事件丟棄策略](/go-advanced/01-concurrency-patterns/non-blocking-send/)
+- [Go 進階：事件去重與語義鍵設計](/go-advanced/04-architecture-boundaries/dedup-key/)
+- [Go 進階：多來源 event 融合](/go-advanced/04-architecture-boundaries/event-fusion/)
+- [Backend：Ack / Nack](/backend/knowledge-cards/ack-nack/)
+- [Backend：Retry Policy](/backend/knowledge-cards/retry-policy/)
+- [Backend：Dead-Letter Queue](/backend/knowledge-cards/dead-letter-queue/)
+- [Backend：Consumer Lag](/backend/knowledge-cards/consumer-lag/)
 
 ## 後續撰寫方向
 
 1. Outbox 如何避免「狀態已寫入，但事件沒送出」的半成功。
 2. Idempotency key 如何和 domain dedup key 分工。
-3. Consumer retry、[dead-letter queue](../../../backend/knowledge-cards/dead-letter-queue/) 與 [poison message](../../../backend/knowledge-cards/poison-message/) 如何設計處理流程。
+3. Consumer retry、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 與 [poison message](/backend/knowledge-cards/poison-message/) 如何設計處理流程。
 4. At-least-once delivery 下，processor 如何保持可重入。
-5. Queue lag、retry count、dead-letter count 應如何進入 [log](../../../backend/knowledge-cards/log/) 與 metric。
+5. Queue lag、retry count、dead-letter count 應如何進入 [log](/backend/knowledge-cards/log/) 與 metric。
 
 ## 【觀察】outbox 是把資料與事件綁在同一個 transaction
 
-outbox 的核心概念是：先把業務狀態與待發事件一起寫進資料庫，再由獨立 publisher 把 outbox 內容送到 queue 或 [broker](../../../backend/knowledge-cards/broker/)。這樣即使 process 在寫完資料後當機，也不會丟掉事件。
+outbox 的核心概念是：先把業務狀態與待發事件一起寫進資料庫，再由獨立 publisher 把 outbox 內容送到 queue 或 [broker](/backend/knowledge-cards/broker/)。這樣即使 process 在寫完資料後當機，也不會丟掉事件。
 
 典型流程是：
 
-1. usecase 開 [transaction](../../../backend/knowledge-cards/transaction/)。
+1. usecase 開 [transaction](/backend/knowledge-cards/transaction/)。
 2. 寫入 domain data。
 3. 寫入 outbox record。
 4. commit。
@@ -93,7 +93,7 @@ func (p *Processor) Handle(ctx context.Context, evt Event) error {
 
 ## 【延伸】queue lag 與 retry 需要被觀測
 
-只要有 durable queue，就一定會有 backlog、retry 與 failure pattern。這些訊號應進入 log 與 metric，讓工程師知道是 [producer](../../../backend/knowledge-cards/producer/) 變慢、consumer 壞掉，還是下游依賴正在抖動。
+只要有 durable queue，就一定會有 backlog、retry 與 failure pattern。這些訊號應進入 log 與 metric，讓工程師知道是 [producer](/backend/knowledge-cards/producer/) 變慢、consumer 壞掉，還是下游依賴正在抖動。
 
 ## 本章不處理
 
@@ -103,6 +103,6 @@ func (p *Processor) Handle(ctx context.Context, evt Event) error {
 
 這一章承接 Go 的事件邊界與非阻塞送出；如果你要先回看語言教材，可以讀：
 
-- [Go 進階：非阻塞送出與事件丟棄策略](../../01-concurrency-patterns/non-blocking-send/)
-- [Go 進階：事件去重與語義鍵設計](../../04-architecture-boundaries/dedup-key/)
-- [Go 進階：多來源 event 融合](../../04-architecture-boundaries/event-fusion/)
+- [Go 進階：非阻塞送出與事件丟棄策略](/go-advanced/01-concurrency-patterns/non-blocking-send/)
+- [Go 進階：事件去重與語義鍵設計](/go-advanced/04-architecture-boundaries/dedup-key/)
+- [Go 進階：多來源 event 融合](/go-advanced/04-architecture-boundaries/event-fusion/)
