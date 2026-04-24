@@ -1,151 +1,159 @@
 {{ define "main" }}
+<link href="{{ "pagefind/pagefind-ui.css" | relURL }}" rel="stylesheet">
+
+{{- /* 左欄 filter slot：桌面寬時用 JS 把 pagefind 的 filter-panel 搬進來。
+       在手機 / 桌面窄視窗都隱藏；filter 維持在 pagefind 的 drawer 原位。 */ -}}
+<aside class="search-filter-slot" aria-label="篩選條件"></aside>
+
 <div data-pagefind-ignore class="search-shell">
-  <h1>{{ .Title }}</h1>
+  <h1 class="search-title">{{ .Title }}</h1>
   {{ with .Content }}{{ . }}{{ end }}
-
-  <link href="{{ "pagefind/pagefind-ui.css" | relURL }}" rel="stylesheet">
-
-  <style>
-    /* 搜尋頁專屬：把主欄寬限放寬，讓 filter 能擺在結果旁邊而不擠壓。 */
-    body.page-search main#main-content {
-      max-width: min(1200px, 95vw);
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Mobile toggle 按鈕預設存在；桌面隱藏。 */
-    .search-filter-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4em;
-      margin: 0.75rem 0 0.25rem;
-      padding: 0.45rem 0.9rem;
-      border: 1px solid currentColor;
-      border-radius: 6px;
-      background: transparent;
-      color: inherit;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    @media (min-width: 768px) {
-      /*
-        Desktop layout：
-          [ filter | H1       ]
-          [ filter | 搜尋框    ]
-          [ filter | 結果列表  ]
-
-        filter 是左側獨立 column、跨三列；右側 column 由上而下堆疊
-        H1、搜尋框、結果。
-
-        實作上，pagefind-ui.js 產生的 DOM 是
-          #search > .pagefind-ui > .pagefind-ui__form
-                                > .pagefind-ui__drawer > .pagefind-ui__filter-panel
-                                                       > .pagefind-ui__results-area
-        要讓 filter-panel（深在 DOM 底層）視覺上與 H1（淺在 DOM 上層）
-        出現在同一個 grid 裡，讓中間三層（#search、.pagefind-ui、
-        .pagefind-ui__drawer）走 display:contents，把子孫提升進 .search-shell
-        的 grid。
-
-        Pagefind 的 svelte class 在 CSS 裡常以 .x.x 雙寫形式出現
-        （specificity = 30）壓過一般選擇器。我們也用雙寫把 specificity
-        追平，再靠 pagefind-ui.css 先載入、這個 style block 晚載入取勝。
-      */
-      .search-shell {
-        display: grid;
-        grid-template-columns: 240px 1fr;
-        grid-template-areas:
-          "filter title"
-          "filter form"
-          "filter results";
-        gap: 1.5rem 2rem;
-        align-items: start;
-      }
-      .search-shell > h1 {
-        grid-area: title;
-        margin: 0;
-      }
-      .search-shell > #search,
-      .search-shell #search > .pagefind-ui.pagefind-ui,
-      .search-shell .pagefind-ui__drawer.pagefind-ui__drawer {
-        display: contents;
-      }
-      .search-shell .pagefind-ui__form.pagefind-ui__form {
-        grid-area: form;
-      }
-      .search-shell .pagefind-ui__filter-panel.pagefind-ui__filter-panel {
-        grid-area: filter;
-        min-width: 0;
-        margin-top: 0;
-        flex: none;
-        position: sticky;
-        top: 1rem;
-      }
-      .search-shell .pagefind-ui__results-area.pagefind-ui__results-area {
-        grid-area: results;
-        min-width: 0;
-        margin-top: 0;
-        flex: none;
-      }
-
-      /* Toggle 按鈕在桌面沒用。 */
-      .search-filter-toggle { display: none; }
-    }
-
-    @media (max-width: 767px) {
-      /* Mobile：filter 與結果互斥顯示；預設顯示結果，按 toggle 後顯示 filter。 */
-      .search-shell:not(.mobile-filters-open) #search .pagefind-ui__filter-panel {
-        display: none;
-      }
-      .search-shell.mobile-filters-open #search .pagefind-ui__results-area {
-        display: none;
-      }
-    }
-  </style>
-
-  <button type="button" class="search-filter-toggle"
-          data-search-filter-toggle
-          aria-pressed="false">
-    <span class="label-to-filters">⇄ 切換到篩選</span>
-    <span class="label-to-results" hidden>⇄ 切換到結果</span>
-  </button>
-
   <div id="search"></div>
-
-  <script src="{{ "pagefind/pagefind-ui.js" | relURL }}"></script>
-  <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      new PagefindUI({
-        element: "#search",
-        showSubResults: true,
-        showImages: false,
-        translations: {
-          placeholder: "搜尋卡片或文章…",
-          clear_search: "清除",
-          load_more: "載入更多",
-          search_label: "站內搜尋",
-          filters_label: "篩選",
-          zero_results: "找不到 [SEARCH_TERM] 相關內容",
-          many_results: "[COUNT] 筆結果符合 [SEARCH_TERM]",
-          one_result: "1 筆結果符合 [SEARCH_TERM]",
-          alt_search: "找不到 [SEARCH_TERM]，以下是 [DIFFERENT_TERM] 的結果",
-          search_suggestion: "找不到 [SEARCH_TERM]。試試：",
-          searching: "搜尋 [SEARCH_TERM]…"
-        }
-      });
-    });
-
-    // Mobile toggle：在 filter 視圖與結果視圖之間切換。
-    document.addEventListener('click', function (ev) {
-      var btn = ev.target.closest('[data-search-filter-toggle]');
-      if (!btn) return;
-      var shell = document.querySelector('.search-shell');
-      var open = shell.classList.toggle('mobile-filters-open');
-      btn.setAttribute('aria-pressed', open ? 'true' : 'false');
-      btn.querySelector('.label-to-filters').hidden = open;
-      btn.querySelector('.label-to-results').hidden = !open;
-    });
-  </script>
 </div>
+
+<script src="{{ "pagefind/pagefind-ui.js" | relURL }}"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    new PagefindUI({
+      element: "#search",
+      showSubResults: true,
+      showImages: false,
+      translations: {
+        placeholder: "搜尋卡片或文章…",
+        clear_search: "清除",
+        load_more: "載入更多",
+        search_label: "站內搜尋",
+        filters_label: "篩選",
+        zero_results: "找不到 [SEARCH_TERM] 相關內容",
+        many_results: "[COUNT] 筆結果符合 [SEARCH_TERM]",
+        one_result: "1 筆結果符合 [SEARCH_TERM]",
+        alt_search: "找不到 [SEARCH_TERM]，以下是 [DIFFERENT_TERM] 的結果",
+        search_suggestion: "找不到 [SEARCH_TERM]。試試：",
+        searching: "搜尋 [SEARCH_TERM]…"
+      }
+    });
+
+    /*
+      桌面寬時把 .pagefind-ui__filter-panel 搬進左欄 slot；
+      縮窄視窗時搬回 pagefind 原本的 drawer，讓它以原生位置顯示。
+      門檻與 CSS @media 對齊（1400px）。
+    */
+    var slot = document.querySelector('.search-filter-slot');
+    var mql  = window.matchMedia('(min-width: 1400px)');
+    var filter, drawer, drawerParent;
+
+    function place() {
+      if (!filter || !drawer) return;
+      if (mql.matches) {
+        if (filter.parentElement !== slot) slot.appendChild(filter);
+      } else {
+        if (filter.parentElement !== drawer) drawer.insertBefore(filter, drawer.firstChild);
+      }
+    }
+
+    function waitAndInit() {
+      filter = document.querySelector('.pagefind-ui__filter-panel');
+      drawer = document.querySelector('.pagefind-ui__drawer');
+      if (!filter || !drawer) { setTimeout(waitAndInit, 100); return; }
+      drawerParent = drawer;
+      place();
+      reorderFilters();
+      mql.addEventListener('change', place);
+    }
+    waitAndInit();
+
+    /*
+      pagefind 預設把 filter-block 以 filter key 的字母順序排（tag < type），
+      但 type 選項比 tag 少、先顯示短清單找起來較輕鬆。
+      讓 filter-block 按自訂順序：type → tag。
+    */
+    function reorderFilters() {
+      if (!filter) return;
+      var blocks = filter.querySelectorAll('.pagefind-ui__filter-block');
+      var desiredOrder = ['type', 'tag'];
+      var byKey = {};
+      blocks.forEach(function (b) {
+        var name = b.querySelector('.pagefind-ui__filter-name');
+        if (!name) return;
+        var key = name.textContent.trim().toLowerCase();
+        byKey[key] = b;
+      });
+      // 依 desiredOrder 把元素重新 append 到 filter 最後面
+      desiredOrder.forEach(function (k) {
+        if (byKey[k]) filter.appendChild(byKey[k]);
+      });
+    }
+  });
+</script>
+
+<style>
+  /*
+    高度變數：鎖定右欄 H1 / 搜尋框 / 結果頂間距的視覺單位。
+    左欄 slot 的 padding-top 直接引用、不會錯位。
+  */
+  body.page-search {
+    --search-title-h: 64px;
+    --search-form-h: 68px;  /* pagefind input 64px + 上下 border 各 2px */
+    --search-gap: 20px;     /* 搜尋框下緣到結果上緣的空白（pagefind drawer margin-top） */
+  }
+
+  .search-title {
+    height: var(--search-title-h);
+    line-height: var(--search-title-h);
+    margin: 0;
+  }
+
+  /* pagefind input 自然高度 = 64px * scale；把 scale 設成 1.0 讓結果剛好 68px。 */
+  .search-shell {
+    --pagefind-ui-scale: 1.0;
+  }
+
+  /* filter slot 的 offset parent。 */
+  body.page-search main#main-content {
+    position: relative;
+  }
+
+  /* 拿掉 filter-block 間的分隔線（pagefind 預設 border-bottom 2px）。 */
+  .pagefind-ui__filter-block { border-bottom: 0 !important; }
+
+  /* filter-panel 本身是 <fieldset>，依賴 pagefind 外層 .pagefind-ui--reset 清掉 UA 樣式。
+     JS 把它搬到 aside 後，reset 不再是 ancestor，UA border 顯現。直接在 slot 內壓掉。 */
+  .search-filter-slot fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+
+  /*
+    Breakpoint 計算：
+      main 寬度 70ch ≈ 720px
+      filter 寬 400px + gap 32px = 432px
+      body 左右 padding 各 64px
+      → viewport ≥ 720 + 432*2 + 128 ≈ 1712 才能左右都對稱放下
+      → 若只要左側放下（允許溢出到 body padding 內）：viewport ≥ 1280
+      → 取 1400px 當安全門檻
+  */
+
+  /* 預設（含 mobile / 桌面窄）：slot 隱藏；filter 留在 pagefind 的 drawer 原位。 */
+  .search-filter-slot { display: none; }
+
+  /* 桌面寬（≥1400px）：slot 顯示於 main 左外側；pagefind 原生 filter-panel 藏起來。
+     （但 JS 會把 filter-panel 搬進 slot，所以 !important 只是防禦殘留樣式。） */
+  @media (min-width: 1400px) {
+    .search-filter-slot {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: calc(100% + 2rem);
+      width: 400px;
+      padding-top: calc(var(--search-title-h) + var(--search-form-h) + var(--search-gap));
+      padding-left: 0;
+      padding-right: 0;
+      padding-bottom: 1rem;
+      min-height: 240px;
+      box-sizing: border-box;
+    }
+  }
+</style>
 {{ end }}

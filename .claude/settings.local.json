@@ -22,7 +22,11 @@
       "Bash(wait)",
       "Bash(gh run *)",
       "Bash(bin/mdtools fmt *)",
-      "Bash(make fix *)"
+      "Bash(make fix *)",
+      "Bash(ln -sfn public blog)",
+      "Bash(curl -sI http://localhost:8000/blog/search/)",
+      "Bash(curl -sI http://localhost:8000/blog/pagefind/pagefind-ui.js)",
+      "Bash(awk '/^body \\\\{/,/^\\\\}/' themes/hugo-bearcub/assets/herman.css)"
     ],
     "deny": [],
     "ask": []

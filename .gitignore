@@ -19,3 +19,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.swp
+
+# Local convenience symlink for serving /blog/ subpath on localhost
+/blog
