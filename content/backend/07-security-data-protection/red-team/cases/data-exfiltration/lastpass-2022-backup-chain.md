@@ -27,7 +27,7 @@ weight: 71741
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：備份與正式環境使用不同權限域。
 - 日常：定期審查備份讀取行為與授權範圍。
 - 事故中：啟動備份層獨立調查與金鑰輪替。

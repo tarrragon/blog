@@ -5,7 +5,7 @@ description: "區分 operational log、domain event log 與狀態資料"
 weight: 5
 ---
 
-新增結構化記錄欄位的核心規則是先判斷這筆資訊是給工程師除錯、給系統重播，還是給使用者查詢。不同用途對應不同記錄邊界，資料應依用途進入 [log](../../backend/knowledge-cards/log)、[event log](../../backend/knowledge-cards/event-log) 或 repository。
+新增結構化記錄欄位的核心規則是先判斷這筆資訊是給工程師除錯、給系統重播，還是給使用者查詢。不同用途對應不同記錄邊界，資料應依用途進入 [log](../../../backend/knowledge-cards/log/)、[event log](../../../backend/knowledge-cards/event-log/) 或 repository。
 
 ## 本章目標
 
@@ -23,11 +23,11 @@ weight: 5
 
 記錄邊界的核心問題是資料要服務誰。工程師除錯、系統重播、使用者查詢是三種不同用途，對應三種不同儲存與格式責任。
 
-| 記錄類型         | 用途                          | 範例                                                                             |
-| ---------------- | ----------------------------- | -------------------------------------------------------------------------------- |
-| structured log   | 操作診斷、除錯、聚合查詢      | [queue](../../backend/knowledge-cards/queue) full、event rejected、worker failed |
-| domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed`                                             |
-| state repository | 查詢目前狀態或投影            | job current status、notification summary                                         |
+| 記錄類型         | 用途                          | 範例                                                                                 |
+| ---------------- | ----------------------------- | ------------------------------------------------------------------------------------ |
+| structured log   | 操作診斷、除錯、聚合查詢      | [queue](../../../backend/knowledge-cards/queue/) full、event rejected、worker failed |
+| domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed`                                                 |
+| state repository | 查詢目前狀態或投影            | job current status、notification summary                                             |
 
 structured log 服務操作診斷，event log 保存 normalized fact，state repository 回答目前狀態。先分清楚用途，才知道欄位該放哪裡。
 
@@ -69,7 +69,7 @@ func LogAttrsForEvent(event DomainEvent) []any {
 logger.Info("event accepted", LogAttrsForEvent(event)...)
 ```
 
-這個 helper 保護的是 [log schema](../../backend/knowledge-cards/log-schema)。欄位名稱穩定，查詢與 [dashboard](../../backend/knowledge-cards/dashboard) 才能穩定。
+這個 helper 保護的是 [log schema](../../../backend/knowledge-cards/log-schema/)。欄位名稱穩定，查詢與 [dashboard](../../../backend/knowledge-cards/dashboard/) 才能穩定。
 
 ## 【策略】reason 欄位要像 enum
 
@@ -131,7 +131,7 @@ func (l *InMemoryEventLog) Append(ctx context.Context, event DomainEvent) error 
 }
 ```
 
-event log 應該保存 `DomainEvent` envelope 中的穩定欄位，例如 event ID、type、subject、schema version、occurred/received time。它不需要保存 adapter 的 raw input，除非你已經明確設計 raw [audit log](../../backend/knowledge-cards/audit-log)。
+event log 應該保存 `DomainEvent` envelope 中的穩定欄位，例如 event ID、type、subject、schema version、occurred/received time。它不需要保存 adapter 的 raw input，除非你已經明確設計 raw [audit log](../../../backend/knowledge-cards/audit-log/)。
 
 ## 【執行】event log 要保護 copy boundary
 
@@ -162,7 +162,7 @@ func (l *InMemoryEventLog) List() []DomainEvent {
 }
 ```
 
-這裡展示的是教學用記錄邊界。真正 event store 還需要持久化、排序、[schema [migration](../../backend/knowledge-cards/migration)](../../backend/knowledge-cards/schema-migration)、重播策略與交易語意。
+這裡展示的是教學用記錄邊界。真正 event store 還需要持久化、排序、[schema [migration](../../../backend/knowledge-cards/migration/)](../../backend/knowledge-cards/schema-migration)、重播策略與交易語意。
 
 ## 【策略】state repository 保存目前狀態
 
@@ -208,12 +208,12 @@ func (p *RecordingEventProcessor) Process(ctx context.Context, event DomainEvent
 
 常見位置：
 
-| 發生位置       | 應記錄內容                                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------ |
-| adapter        | raw input decode/normalize 失敗                                                            |
-| router/usecase | command 被拒絕、權限不足、狀態不允許                                                       |
-| processor      | event validation、dedup、[projection](../../backend/knowledge-cards/projection) apply 結果 |
-| worker         | queue full、外部來源失敗、重試結果                                                         |
+| 發生位置       | 應記錄內容                                                                                     |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| adapter        | raw input decode/normalize 失敗                                                                |
+| router/usecase | command 被拒絕、權限不足、狀態不允許                                                           |
+| processor      | event validation、dedup、[projection](../../../backend/knowledge-cards/projection/) apply 結果 |
+| worker         | queue full、外部來源失敗、重試結果                                                             |
 
 例如 adapter 解碼失敗：
 
@@ -358,7 +358,7 @@ func TestInMemoryEventLogAppendCopiesPayload(t *testing.T) {
 
 ### 檢查一：log 服務操作診斷
 
-log 是操作診斷訊號，不是穩定查詢 API。需要使用者查詢的目前狀態，應該進 repository 或 [read model](../../backend/knowledge-cards/read-model)。
+log 是操作診斷訊號，不是穩定查詢 API。需要使用者查詢的目前狀態，應該進 repository 或 [read model](../../../backend/knowledge-cards/read-model/)。
 
 ### 檢查二：event log 保存 normalized fact
 
@@ -376,18 +376,18 @@ event log 記錄的是 normalized fact。若把暫時性錯誤、debug 訊息與
 
 本章先處理 log、event log 與 repository 的分工；集中式 log 平台與可重播事件系統，會在下列章節再往外延伸：
 
-- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
-- [Go 進階：Observability pipeline、metrics 與 tracing](../../go-advanced/07-distributed-operations/observability-pipeline/)
-- [Backend：可觀測性平台](../../backend/04-observability/)
+- [Go 進階：Durable queue、outbox 與 idempotency](../../../go-advanced/07-distributed-operations/outbox-idempotency/)
+- [Go 進階：Observability pipeline、metrics 與 tracing](../../../go-advanced/07-distributed-operations/observability-pipeline/)
+- [Backend：可觀測性平台](../../../backend/04-observability/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 event log、state repository 與 log schema；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增一種 domain event](new-event-type/)
-- [Go：如何新增 repository port](repository-port/)
-- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
-- [Go：結構化日誌欄位設計](../../go-advanced/06-production-operations/log-fields/)
+- [Go：如何新增一種 domain event](../new-event-type/)
+- [Go：如何新增 repository port](../repository-port/)
+- [Go：用 interface 隔離外部依賴](../../07-refactoring/interface-boundary/)
+- [Go：結構化日誌欄位設計](../../../go-advanced/06-production-operations/log-fields/)
 
 ## 小結
 

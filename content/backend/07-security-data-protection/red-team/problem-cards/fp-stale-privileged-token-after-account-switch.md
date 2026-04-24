@@ -21,9 +21,9 @@ weight: 7234
 
 ## 案例觸發參考
 
-- [Citrix Bleed 2023](../cases/edge-exposure/citrix-bleed-2023-session-hijack/)
-- [Uber 2022](../cases/identity-access/uber-2022-mfa-fatigue/)
+- [Citrix Bleed 2023](../../cases/edge-exposure/citrix-bleed-2023-session-hijack/)
+- [Uber 2022](../../cases/identity-access/uber-2022-mfa-fatigue/)
 
 ## 來源流程卡
 
-- [帳號切換濫用](account-switching-abuse/)
+- [帳號切換濫用](../account-switching-abuse/)

@@ -17,4 +17,4 @@ Shadow read 是 migration 與服務替換的驗證工具。它能在不影響使
 
 ## 設計責任
 
-Shadow read 要控制採樣率、timeout、資料遮罩、差異記錄與成本。它的結果應進入 correctness dashboard，並作為 [Migration Gate](migration-gate/) 的依據。
+Shadow read 要控制採樣率、timeout、資料遮罩、差異記錄與成本。它的結果應進入 correctness dashboard，並作為 [Migration Gate](../migration-gate/) 的依據。

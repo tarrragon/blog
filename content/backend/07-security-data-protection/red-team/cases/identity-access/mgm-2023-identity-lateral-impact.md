@@ -27,9 +27,9 @@ weight: 71714
 
 ## 可落地的 workflow 檢查點
 
-- 發布前：定義關鍵能力的 [degradation](../../../../knowledge-cards/degradation/) 路徑。
-- 日常：演練 [failover](../../../../knowledge-cards/failover/) 與回復時序。
-- 事故中：依 [incident severity](../../../../knowledge-cards/incident-severity/) 快速分級與跨團隊指揮。
+- 發布前：定義關鍵能力的 [degradation](../../../../../knowledge-cards/degradation/) 路徑。
+- 日常：演練 [failover](../../../../../knowledge-cards/failover/) 與回復時序。
+- 事故中：依 [incident severity](../../../../../knowledge-cards/incident-severity/) 快速分級與跨團隊指揮。
 
 ## 可引用章節
 

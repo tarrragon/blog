@@ -17,4 +17,4 @@ Security misconfiguration 是部署與操作層面的安全風險。程式邏輯
 
 ## 設計責任
 
-防護要包含 baseline config、環境差異審查、secret scan、IaC review、security test 與 drift detection。高風險設定應進入 [Release Gate](release-gate/)。
+防護要包含 baseline config、環境差異審查、secret scan、IaC review、security test 與 drift detection。高風險設定應進入 [Release Gate](../release-gate/)。

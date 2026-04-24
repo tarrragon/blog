@@ -21,9 +21,9 @@ weight: 7240
 
 ## 案例觸發參考
 
-- [Change Healthcare 2024](../cases/data-exfiltration/change-healthcare-2024-ops-impact/)
-- [VMware ESXiArgs 2023](../cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/)
+- [Change Healthcare 2024](../../cases/data-exfiltration/change-healthcare-2024-ops-impact/)
+- [VMware ESXiArgs 2023](../../cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/)
 
 ## 來源流程卡
 
-- [批次操作濫用](bulk-operation-abuse/)
+- [批次操作濫用](../bulk-operation-abuse/)

@@ -12,7 +12,7 @@ weight: 1
 
 - [模組五：用 Rust 擴展 Python](../../)
 - Rust 基礎語法
-- [5.1 Cython 加速](../../05-c-extensions/case-studies/cython-markdown/)
+- [5.1 Cython 加速](../../../05-c-extensions/case-studies/cython-markdown/)
 
 ## 問題背景
 

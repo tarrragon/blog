@@ -13,7 +13,7 @@ WAF 位在流量入口與 application 之間。它適合處理 SQL injection、X
 
 ## 可觀察訊號與例子
 
-系統需要 WAF 的訊號是攻擊流量、濫用流量或掃描流量開始增加。公開 API、[Admin Endpoint](admin-endpoint/)、file upload 與 webhook 入口如果暴露在網際網路上，通常需要額外的 WAF 規則與例外管理。
+系統需要 WAF 的訊號是攻擊流量、濫用流量或掃描流量開始增加。公開 API、[Admin Endpoint](../admin-endpoint/)、file upload 與 webhook 入口如果暴露在網際網路上，通常需要額外的 WAF 規則與例外管理。
 
 ## 設計責任
 

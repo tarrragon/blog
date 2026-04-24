@@ -21,9 +21,9 @@ weight: 7233
 
 ## 案例觸發參考
 
-- [MGM 2023](../cases/identity-access/mgm-2023-identity-lateral-impact/)
-- [Mailchimp 2023](../cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
+- [MGM 2023](../../cases/identity-access/mgm-2023-identity-lateral-impact/)
+- [Mailchimp 2023](../../cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
 
 ## 來源流程卡
 
-- [代理操作濫用](delegated-operation-abuse/)
+- [代理操作濫用](../delegated-operation-abuse/)

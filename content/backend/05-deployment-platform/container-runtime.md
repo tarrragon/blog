@@ -9,5 +9,5 @@ weight: 1
 
 - image build
 - entrypoint / command
-- [Resource Limit](../knowledge-cards/resource-limit/)
-- [Runtime Config](../knowledge-cards/runtime-config/)
+- [Resource Limit](../../knowledge-cards/resource-limit/)
+- [Runtime Config](../../knowledge-cards/runtime-config/)

@@ -40,7 +40,7 @@ fmt.Printf("%+v\n", user) // {ID:7 Name:alice}
 fmt.Printf("%#v\n", user) // main.User{ID:7, Name:"alice"}
 ```
 
-`%v` 適合一般輸出，`%+v` 適合快速檢查 struct 欄位，`%#v` 適合除錯或理解實際型別。正式 [log](../../backend/knowledge-cards/log) 通常應該使用結構化 log，而不是把所有資料塞進格式化字串。
+`%v` 適合一般輸出，`%+v` 適合快速檢查 struct 欄位，`%#v` 適合除錯或理解實際型別。正式 [log](../../../backend/knowledge-cards/log/) 通常應該使用結構化 log，而不是把所有資料塞進格式化字串。
 
 ## 錯誤訊息要包含可行動資訊
 
@@ -161,4 +161,4 @@ func parsePair(input string) (string, string, error) {
 
 `fmt` 解決資料如何呈現成文字，`strings` 解決文字如何被查找、裁切、切割與組合。入門階段應先熟悉這兩個 package，因為它們會出現在 CLI、設定處理、錯誤訊息、HTTP handler 與測試輸出中。
 
-下一章會進入 `time`，說明時間點、時間長度與 [timeout](../../backend/knowledge-cards/timeout) 的標準表示方式。
+下一章會進入 `time`，說明時間點、時間長度與 [timeout](../../../backend/knowledge-cards/timeout/) 的標準表示方式。

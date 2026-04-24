@@ -27,7 +27,7 @@ ProxyShell 事件延續了 Exchange 入口風險，顯示 CVE-2021-34473、CVE-2
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：建立同平台連續漏洞的專屬追蹤清單。
 - 日常：持續監控異常管理命令與資料下載行為。
 - 事故中：修補與風險重評估並行，直到驗證關閉。

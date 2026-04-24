@@ -837,7 +837,7 @@ class AdaptiveParallelChecker:
 - [concurrent.futures 官方文件](https://docs.python.org/3/library/concurrent.futures.html)
 - [ThreadPoolExecutor 使用指南](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor)
 - [as_completed vs map 的選擇](https://superfastpython.com/threadpoolexecutor-map-vs-submit/)
-- 入門系列：[3.7 並行處理](../../../python/03-stdlib/concurrency/)
+- 入門系列：[3.7 並行處理](../../../../python/03-stdlib/concurrency/)
 
 ---
 

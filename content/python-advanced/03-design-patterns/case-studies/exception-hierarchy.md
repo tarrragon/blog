@@ -10,7 +10,7 @@ weight: 3
 
 ## 先備知識
 
-- 入門系列 [5.1 異常處理策略](../../../python/05-error-testing/exception/)
+- 入門系列 [5.1 異常處理策略](../../../../python/05-error-testing/exception/)
 - [3.5.2 異常設計架構](../../exception-design/)
 
 ## 問題背景

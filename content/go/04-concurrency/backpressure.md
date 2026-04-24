@@ -12,9 +12,9 @@ weight: 5
 學完本章後，你將能夠：
 
 1. 理解 bounded concurrency 的用途
-2. 用 semaphore 或 [worker pool](../../backend/knowledge-cards/worker-pool) 限制同時工作數
-3. 看懂 [backpressure](../../backend/knowledge-cards/backpressure/) 為什麼能保護下游
-4. 在併發流程中保留 cancellation 與 [timeout](../../backend/knowledge-cards/timeout/)
+2. 用 semaphore 或 [worker pool](../../../backend/knowledge-cards/worker-pool/) 限制同時工作數
+3. 看懂 [backpressure](../../../backend/knowledge-cards/backpressure/) 為什麼能保護下游
+4. 在併發流程中保留 cancellation 與 [timeout](../../../backend/knowledge-cards/timeout/)
 5. 辨認什麼時候該拒絕新工作
 
 ---
@@ -52,14 +52,14 @@ for _, job := range jobs {
 
 ## 【策略】backpressure 保護的是下游
 
-[backpressure](../../backend/knowledge-cards/backpressure) 的核心規則是：當系統處理不過來時，不要無限累積工作。這可以表現成：
+[backpressure](../../../backend/knowledge-cards/backpressure/) 的核心規則是：當系統處理不過來時，不要無限累積工作。這可以表現成：
 
 - channel 滿了就阻塞
-- [queue](../../backend/knowledge-cards/queue) 有上限
+- [queue](../../../backend/knowledge-cards/queue/) 有上限
 - goroutine pool 有上限
 - 佇列滿時直接拒絕請求
 
-例如 [WebSocket](../../backend/knowledge-cards/websocket)、event [consumer](../../backend/knowledge-cards/consumer) 或 background worker 如果沒有 backpressure ，輸入端一快，下游就會被放大成連鎖問題。
+例如 [WebSocket](../../../backend/knowledge-cards/websocket/)、event [consumer](../../../backend/knowledge-cards/consumer/) 或 background worker 如果沒有 backpressure ，輸入端一快，下游就會被放大成連鎖問題。
 
 ```go
 select {
@@ -74,7 +74,7 @@ default:
 
 ## 【執行】cancellation 與 timeout 不能少
 
-bounded concurrency 只控制數量，不能解決卡死工作。每個工作都應該保留取消訊號與 [timeout](../../backend/knowledge-cards/timeout)，否則即使數量受限，資源也會被慢工作一直占著。
+bounded concurrency 只控制數量，不能解決卡死工作。每個工作都應該保留取消訊號與 [timeout](../../../backend/knowledge-cards/timeout/)，否則即使數量受限，資源也會被慢工作一直占著。
 
 ```go
 ctx, cancel := context.WithTimeout(parent, 3*time.Second)

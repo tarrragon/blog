@@ -8,6 +8,6 @@ weight: 3
 ## 大綱
 
 - containment priority
-- [degradation](../knowledge-cards/degradation) path
+- [degradation](../../knowledge-cards/degradation/) path
 - rollback checkpoints
 - recovery validation

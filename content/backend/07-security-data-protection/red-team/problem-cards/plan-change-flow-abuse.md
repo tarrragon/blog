@@ -25,14 +25,14 @@ weight: 7217
 
 ## 案例觸發參考
 
-- [Kaseya 2021](../cases/supply-chain/kaseya-vsa-2021-msp-ransomware-chain/)
-- [TeamCity 2024](../cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/)
+- [Kaseya 2021](../../cases/supply-chain/kaseya-vsa-2021-msp-ransomware-chain/)
+- [TeamCity 2024](../../cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/)
 
 ## 可連動章節
 
-- [7.3 入口治理與伺服器防護](../../entrypoint-and-server-protection/)
-- [7.12 供應鏈完整性與 Artifact 信任](../../supply-chain-integrity-and-artifact-trust/)
+- [7.3 入口治理與伺服器防護](../../../entrypoint-and-server-protection/)
+- [7.12 供應鏈完整性與 Artifact 信任](../../../supply-chain-integrity-and-artifact-trust/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P7 降級後能力回收延遲](fp-entitlement-revocation-lag-after-plan-downgrade/)
+- [7.R11.P7 降級後能力回收延遲](../fp-entitlement-revocation-lag-after-plan-downgrade/)

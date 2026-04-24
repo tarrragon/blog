@@ -7,7 +7,7 @@ weight: 2
 
 ## 大綱
 
-- [metrics](../knowledge-cards/metrics) 基本型別
-- latency [histogram](../knowledge-cards/histogram)
+- [metrics](../../knowledge-cards/metrics/) 基本型別
+- latency [histogram](../../knowledge-cards/histogram/)
 - error rate
-- [SLI / SLO](../knowledge-cards/sli-slo) / [error budget](../knowledge-cards/error-budget)
+- [SLI / SLO](../../knowledge-cards/sli-slo/) / [error budget](../../knowledge-cards/error-budget/)

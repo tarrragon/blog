@@ -9,7 +9,7 @@ Request/Response Protocol 的核心概念是「client 發出請求，service 回
 
 ## 概念位置
 
-Request/Response Protocol 位在 client、[API Gateway](api-gateway/)、service 與 RPC layer 之間。它適用於同步互動的請求/回應模型。
+Request/Response Protocol 位在 client、[API Gateway](../api-gateway/)、service 與 RPC layer 之間。它適用於同步互動的請求/回應模型。
 
 ## 可觀察訊號
 

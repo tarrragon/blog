@@ -17,8 +17,8 @@ Boundary Contract 位在 client 與 service、service 與 service、程式與平
 
 ## 接近真實網路服務的例子
 
-API contract 會定義欄位名稱、必要欄位、錯誤格式與相容版本；deployment contract 會定義 readiness、shutdown、[draining](draining/) 與 [resource limit](resource-limit/)；queue contract 會定義 ack、重試與重複投遞行為；load balancer contract 會定義流量切換、[health check](health-check/) 與排空行為。
+API contract 會定義欄位名稱、必要欄位、錯誤格式與相容版本；deployment contract 會定義 readiness、shutdown、[draining](../draining/) 與 [resource limit](../resource-limit/)；queue contract 會定義 ack、重試與重複投遞行為；load balancer contract 會定義流量切換、[health check](../health-check/) 與排空行為。
 
 ## 設計責任
 
-Boundary Contract 設計要清楚定義版本、相容性、破壞性變更、驗證方式與回復流程。若 contract 不穩，應搭配 contract test、[Release Gate](release-gate/) 與文件化規則。
+Boundary Contract 設計要清楚定義版本、相容性、破壞性變更、驗證方式與回復流程。若 contract 不穩，應搭配 contract test、[Release Gate](../release-gate/) 與文件化規則。

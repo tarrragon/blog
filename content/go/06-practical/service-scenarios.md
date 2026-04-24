@@ -23,31 +23,31 @@ weight: 7
 
 Go 最常出現在需要長時間運行、協調 I/O、維持清楚邊界的服務層：
 
-| 場景                                                         | Go 常扮演的角色                |
-| ------------------------------------------------------------ | ------------------------------ |
-| [WebSocket](../../backend/knowledge-cards/websocket) service | 長連線、事件傳遞、訂閱與廣播   |
-| background worker                                            | 背景處理、批次同步、事件消費   |
-| API gateway                                                  | 路由、聚合、驗證與轉送         |
-| notification system                                          | 推播、排程與重試               |
-| event processor                                              | 事件解碼、去重、派送與狀態更新 |
+| 場景                                                             | Go 常扮演的角色                |
+| ---------------------------------------------------------------- | ------------------------------ |
+| [WebSocket](../../../backend/knowledge-cards/websocket/) service | 長連線、事件傳遞、訂閱與廣播   |
+| background worker                                                | 背景處理、批次同步、事件消費   |
+| API gateway                                                      | 路由、聚合、驗證與轉送         |
+| notification system                                              | 推播、排程與重試               |
+| event processor                                                  | 事件解碼、去重、派送與狀態更新 |
 
 這些場景共通點都是：工作量大多是 I/O 與協調，CPU 單點重運算通常只占一小部分。
 
 ## 【判讀】即時服務需要穩定的生命週期
 
-WebSocket、[SSE](../../backend/knowledge-cards/sse) 或其他長連線服務，通常需要處理：
+WebSocket、[SSE](../../../backend/knowledge-cards/sse/) 或其他長連線服務，通常需要處理：
 
 - 連線建立與關閉
 - heartbeat
 - 事件路由
 - 慢 client
-- [backpressure](../../backend/knowledge-cards/backpressure)
+- [backpressure](../../../backend/knowledge-cards/backpressure/)
 
-這些都和 goroutine、channel、context、[timeout](../../backend/knowledge-cards/timeout) 直接相關，所以 Go 很自然會出現在這裡。
+這些都和 goroutine、channel、context、[timeout](../../../backend/knowledge-cards/timeout/) 直接相關，所以 Go 很自然會出現在這裡。
 
 ## 【判讀】背景 worker 需要明確的停止條件
 
-[queue](../../backend/knowledge-cards/queue) [consumer](../../backend/knowledge-cards/consumer)、cron worker、event relay 或同步流程，通常都需要：
+[queue](../../../backend/knowledge-cards/queue/) [consumer](../../../backend/knowledge-cards/consumer/)、cron worker、event relay 或同步流程，通常都需要：
 
 - 可取消
 - 可重試

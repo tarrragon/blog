@@ -5,13 +5,13 @@ description: "讓 log 可 grep、可聚合、可追蹤"
 weight: 3
 ---
 
-結構化日誌欄位的核心目標是讓 [log](../../backend/knowledge-cards/log) 可查詢、可聚合、可追蹤。Message 給人讀，欄位給系統查；重要資訊應放在穩定欄位，不應只藏在自由文字裡。
+結構化日誌欄位的核心目標是讓 [log](../../../backend/knowledge-cards/log/) 可查詢、可聚合、可追蹤。Message 給人讀，欄位給系統查；重要資訊應放在穩定欄位，不應只藏在自由文字裡。
 
 ## 本章目標
 
 學完本章後，你將能夠：
 
-1. 設計穩定 [log schema](../../backend/knowledge-cards/log-schema)
+1. 設計穩定 [log schema](../../../backend/knowledge-cards/log-schema/)
 2. 用 `layer`、`request_id`、`event_type`、`reason` 支援查詢
 3. 區分 message 與 structured fields 的責任
 4. 避免重複記錄同一個錯誤
@@ -50,16 +50,16 @@ Log schema 的核心規則是欄位名稱與值集合要穩定。`request_id`、
 
 常用欄位：
 
-| 欄位         | 用途                                                                |
-| ------------ | ------------------------------------------------------------------- |
-| `layer`      | 問題發生在哪個系統層                                                |
-| `request_id` | 串起單次 HTTP request                                               |
-| `event_id`   | 串起事件處理流程                                                    |
-| `event_type` | 聚合某類 domain event                                               |
-| `client_id`  | 查 [WebSocket](../../backend/knowledge-cards/websocket) client 行為 |
-| `topic`      | 查訂閱或推送範圍                                                    |
-| `reason`     | 聚合失敗原因                                                        |
-| `error`      | 保存錯誤文字                                                        |
+| 欄位         | 用途                                                                    |
+| ------------ | ----------------------------------------------------------------------- |
+| `layer`      | 問題發生在哪個系統層                                                    |
+| `request_id` | 串起單次 HTTP request                                                   |
+| `event_id`   | 串起事件處理流程                                                        |
+| `event_type` | 聚合某類 domain event                                                   |
+| `client_id`  | 查 [WebSocket](../../../backend/knowledge-cards/websocket/) client 行為 |
+| `topic`      | 查訂閱或推送範圍                                                        |
+| `reason`     | 聚合失敗原因                                                            |
+| `error`      | 保存錯誤文字                                                            |
 
 欄位不需要很多，但要一致。穩定欄位能讓除錯從「讀一堆文字」變成「查一組條件」。
 
@@ -88,7 +88,7 @@ logger.Warn("queue full",
 
 ## 【策略】correlation ID 串起一次流程
 
-[Correlation ID](../../backend/knowledge-cards/correlation-id) 的核心目標是把同一次請求或同一個事件流串起來。HTTP request 常用 `request_id`，背景事件可以用 `event_id` 或 `trace_id`。
+[Correlation ID](../../../backend/knowledge-cards/correlation-id/) 的核心目標是把同一次請求或同一個事件流串起來。HTTP request 常用 `request_id`，背景事件可以用 `event_id` 或 `trace_id`。
 
 ```go
 func WithRequestLog(r *http.Request, logger *slog.Logger) *slog.Logger {
@@ -224,19 +224,19 @@ func TestLogAttrsForEvent(t *testing.T) {
 
 本章先處理 Go 服務內部的 structured log schema；集中式平台、欄位標準與隱私治理，會在下列章節再往外延伸：
 
-- [Go 進階：Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)
+- [Go 進階：Observability pipeline、metrics 與 tracing](../../07-distributed-operations/observability-pipeline/)
 
 ## 和 Go 教材的關係
 
-這一章承接的是 structured recording、[event log](../../backend/knowledge-cards/event-log) 與 observability pipeline；如果你要先回看語言教材，可以讀：
+這一章承接的是 structured recording、[event log](../../../backend/knowledge-cards/event-log/) 與 observability pipeline；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增結構化記錄欄位](../../go/06-practical/structured-recording/)
-- [Go：結構化日誌](../../go/03-stdlib/slog/)
-- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
-- [Go：Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)
-- [Backend：可觀測性平台](../../backend/04-observability/)
-- [Go 入門：log/slog](../../go/03-stdlib/slog/)
-- [Go 入門：如何新增結構化記錄欄位](../../go/06-practical/structured-recording/)
+- [Go：如何新增結構化記錄欄位](../../../go/06-practical/structured-recording/)
+- [Go：結構化日誌](../../../go/03-stdlib/slog/)
+- [Go：如何新增一種 domain event](../../../go/06-practical/new-event-type/)
+- [Go：Observability pipeline、metrics 與 tracing](../../07-distributed-operations/observability-pipeline/)
+- [Backend：可觀測性平台](../../../backend/04-observability/)
+- [Go 入門：log/slog](../../../go/03-stdlib/slog/)
+- [Go 入門：如何新增結構化記錄欄位](../../../go/06-practical/structured-recording/)
 
 ## 小結
 

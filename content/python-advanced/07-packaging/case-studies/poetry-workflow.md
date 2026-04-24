@@ -10,7 +10,7 @@ weight: 2
 
 ## 先備知識
 
-- [建構系統比較](../build-systems/)
+- [建構系統比較](../../build-systems/)
 - Python 虛擬環境基礎
 - 套件相依性概念
 

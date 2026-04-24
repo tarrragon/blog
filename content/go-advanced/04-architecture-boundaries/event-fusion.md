@@ -5,7 +5,7 @@ description: "合併 HTTP、queue、timer 與外部事件來源"
 weight: 4
 ---
 
-事件融合的核心目標是讓不同來源的同類事件進入同一套內部規則。HTTP callback、[queue](../../backend/knowledge-cards/queue) message、timer scan 與檔案 reader 都只是輸入方式；進入 processor 前，它們應該被轉成一致的 `DomainEvent`。
+事件融合的核心目標是讓不同來源的同類事件進入同一套內部規則。HTTP callback、[queue](../../../backend/knowledge-cards/queue/) message、timer scan 與檔案 reader 都只是輸入方式；進入 processor 前，它們應該被轉成一致的 `DomainEvent`。
 
 ## 本章目標
 
@@ -14,14 +14,14 @@ weight: 4
 1. 分辨來源差異與 domain 規則差異
 2. 為不同來源設計 adapter 與 normalize
 3. 用 channel 或直接呼叫收斂事件入口
-4. 為突發流量設計 [backpressure](../../backend/knowledge-cards/backpressure) 策略
+4. 為突發流量設計 [backpressure](../../../backend/knowledge-cards/backpressure/) 策略
 5. 決定錯誤應回給上游、重試、丟棄或記錄
 
 ---
 
 ## 【觀察】來源增加後規則容易分裂
 
-事件來源增加的核心風險是每個來源各自實作一套處理規則。HTTP handler 有一套 validation，queue [consumer](../../backend/knowledge-cards/consumer) 有一套 retry 判斷，timer worker 又有一套狀態更新；最後同一種 domain event 在不同入口產生不同結果。
+事件來源增加的核心風險是每個來源各自實作一套處理規則。HTTP handler 有一套 validation，queue [consumer](../../../backend/knowledge-cards/consumer/) 有一套 retry 判斷，timer worker 又有一套狀態更新；最後同一種 domain event 在不同入口產生不同結果。
 
 反模式示意：
 
@@ -35,7 +35,7 @@ timer scan    ──> validate C ──> update state C
 
 ## 【判讀】來源差異應限制在 adapter
 
-事件融合的核心原則是來源差異停在 adapter 與 normalizer。來源可以有不同 [authentication](../../backend/knowledge-cards/authentication)、[ack](../../backend/knowledge-cards/ack-nack)、HTTP status、payload 格式與重試語意；但轉成 `DomainEvent` 後，processor 應該面對一致模型。
+事件融合的核心原則是來源差異停在 adapter 與 normalizer。來源可以有不同 [authentication](../../../backend/knowledge-cards/authentication/)、[ack](../../../backend/knowledge-cards/ack-nack/)、HTTP status、payload 格式與重試語意；但轉成 `DomainEvent` 後，processor 應該面對一致模型。
 
 目標結構：
 
@@ -51,12 +51,12 @@ timer scan    ─┘
 
 來源設計的核心動作是明確寫出每個 adapter 對上游的承諾。不同來源的錯誤回應方式不同，但進入 processor 的事件語意應一致。
 
-| 來源           | adapter 責任                             | 失敗回應                                                   |
-| -------------- | ---------------------------------------- | ---------------------------------------------------------- |
-| HTTP callback  | decode JSON、驗證簽章、normalize         | 回 4xx/5xx                                                 |
-| queue consumer | decode message、控制 ack/nack、normalize | ack、nack 或 retry                                         |
-| timer scan     | 讀取本地狀態、產生內部事件               | 記錄錯誤或下次再掃                                         |
-| file reader    | 讀取增量資料、normalize                  | 記錄 [offset](../../backend/knowledge-cards/offset) 或停下 |
+| 來源           | adapter 責任                             | 失敗回應                                                       |
+| -------------- | ---------------------------------------- | -------------------------------------------------------------- |
+| HTTP callback  | decode JSON、驗證簽章、normalize         | 回 4xx/5xx                                                     |
+| queue consumer | decode message、控制 ack/nack、normalize | ack、nack 或 retry                                             |
+| timer scan     | 讀取本地狀態、產生內部事件               | 記錄錯誤或下次再掃                                             |
+| file reader    | 讀取增量資料、normalize                  | 記錄 [offset](../../../backend/knowledge-cards/offset/) 或停下 |
 
 表格不是文件裝飾，而是設計工具。若某一列寫不清楚，代表 adapter 與 processor 的邊界還不清楚。
 
@@ -149,7 +149,7 @@ func EnqueueEvent(ctx context.Context, events chan<- DomainEvent, event DomainEv
 }
 ```
 
-HTTP handler 遇到 `ErrEventQueueFull` 可以回 `503`。queue consumer 可以 nack 並 [requeue](../../backend/knowledge-cards/requeue)。timer scan 可以跳過本輪。不同來源的上游回應不同，但進入 channel 的事件模型相同。
+HTTP handler 遇到 `ErrEventQueueFull` 可以回 `503`。queue consumer 可以 nack 並 [requeue](../../../backend/knowledge-cards/requeue/)。timer scan 可以跳過本輪。不同來源的上游回應不同，但進入 channel 的事件模型相同。
 
 ## 【執行】processor loop 擁有消費節奏
 
@@ -198,7 +198,7 @@ func (l EventLoop) Run(ctx context.Context) error {
 
 ## 【策略】觀測欄位要跨來源一致
 
-事件融合後的 [log](../../backend/knowledge-cards/log) 與 metric 也應使用共同欄位。這讓你能跨 HTTP、queue、timer 比較同一類事件的行為。
+事件融合後的 [log](../../../backend/knowledge-cards/log/) 與 metric 也應使用共同欄位。這讓你能跨 HTTP、queue、timer 比較同一類事件的行為。
 
 ```go
 func LogAttrsForEvent(event DomainEvent) []slog.Attr {
@@ -255,18 +255,18 @@ func TestHTTPAndQueueNormalizeToSameDomainEvent(t *testing.T) {
 
 本章先處理多來源事件如何在單一服務內融合；queue driver、outbox 與 tracing，會在下列章節再往外延伸：
 
-- [Go 進階：Durable queue、outbox 與 idempotency](../07-distributed-operations/outbox-idempotency/)
-- [Go 進階：Observability pipeline、metrics 與 tracing](../07-distributed-operations/observability-pipeline/)
-- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
+- [Go 進階：Durable queue、outbox 與 idempotency](../../07-distributed-operations/outbox-idempotency/)
+- [Go 進階：Observability pipeline、metrics 與 tracing](../../07-distributed-operations/observability-pipeline/)
+- [Backend：訊息佇列與事件傳遞](../../../backend/03-message-queue/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是多來源 adapter、normalize 與 processor 的路線；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
-- [Go：如何新增背景工作流程](../../go/06-practical/new-background-worker/)
-- [Go：如何新增一種 domain event](../../go/06-practical/new-event-type/)
-- [Go：用 interface 隔離外部依賴](../../go/07-refactoring/interface-boundary/)
+- [Go：如何新增一個即時訊息 action](../../../go/06-practical/new-websocket-action/)
+- [Go：如何新增背景工作流程](../../../go/06-practical/new-background-worker/)
+- [Go：如何新增一種 domain event](../../../go/06-practical/new-event-type/)
+- [Go：用 interface 隔離外部依賴](../../../go/07-refactoring/interface-boundary/)
 
 ## 小結
 

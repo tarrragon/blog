@@ -27,7 +27,7 @@ weight: 71731
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：對外服務建立即時隔離開關。
 - 日常：監控大批量匯出與異常下載模式。
 - 事故中：先隔離入口，再做修補與回復。

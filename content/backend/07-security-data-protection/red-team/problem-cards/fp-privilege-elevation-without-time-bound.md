@@ -21,9 +21,9 @@ weight: 7236
 
 ## 案例觸發參考
 
-- [Confluence 2023（22515/22518）](../cases/edge-exposure/confluence-2023-cve-22515-22518-access-control-chain/)
-- [Fortinet 2022（40684）](../cases/edge-exposure/fortinet-cve-2022-40684-auth-bypass/)
+- [Confluence 2023（22515/22518）](../../cases/edge-exposure/confluence-2023-cve-22515-22518-access-control-chain/)
+- [Fortinet 2022（40684）](../../cases/edge-exposure/fortinet-cve-2022-40684-auth-bypass/)
 
 ## 來源流程卡
 
-- [權限提升流程濫用](privilege-escalation-flow-abuse/)
+- [權限提升流程濫用](../privilege-escalation-flow-abuse/)

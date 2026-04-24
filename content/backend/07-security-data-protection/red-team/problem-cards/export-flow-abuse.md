@@ -25,14 +25,14 @@ weight: 7218
 
 ## 案例觸發參考
 
-- [Snowflake 2024](../cases/data-exfiltration/snowflake-2024-credential-abuse/)
-- [WS_FTP 2023](../cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)
+- [Snowflake 2024](../../cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- [WS_FTP 2023](../../cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)
 
 ## 可連動章節
 
-- [7.4 資料保護與遮罩治理](../../data-protection-and-masking-governance/)
-- [7.7 稽核追蹤與責任邊界](../../audit-trail-and-accountability-boundary/)
+- [7.4 資料保護與遮罩治理](../../../data-protection-and-masking-governance/)
+- [7.7 稽核追蹤與責任邊界](../../../audit-trail-and-accountability-boundary/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P8 匯出檔案長時間可重複下載](fp-long-lived-repeatable-export-artifact/)
+- [7.R11.P8 匯出檔案長時間可重複下載](../fp-long-lived-repeatable-export-artifact/)

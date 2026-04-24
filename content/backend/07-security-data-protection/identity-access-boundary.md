@@ -22,12 +22,12 @@ weight: 72
 
 ## 問題節點（案例觸發式）
 
-| 問題節點         | 判讀訊號                                   | 風險後果                 | 前置控制面                                                                                                                 | 交接路由               |
-| ---------------- | ------------------------------------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| 登入驗證節奏失衡 | 異常驗證密度、異常地理切換、連續高風險操作 | 身分擴散速度提升         | [authentication](../knowledge-cards/authentication/)、[incident-severity](../knowledge-cards/incident-severity/)           | `08 incident response` |
-| 授權範圍擴張過快 | 高權限操作集中、代理操作鏈過長             | 權限濫用影響面擴大       | [authorization](../knowledge-cards/authorization/)、[least-privilege](../knowledge-cards/least-privilege/)                 | `08 incident response` |
-| 會話失效節奏落後 | 修補後異常 session 持續、token 存續過久    | 事件關閉時間延長         | [session-invalidation](../knowledge-cards/session-invalidation/)、[token-revocation](../knowledge-cards/token-revocation/) | `08 + 05`              |
-| 供應商身分鏈傳導 | 外部事件後內部憑證存續比例偏高             | 內部信任邊界承受外部衝擊 | [credential](../knowledge-cards/credential/)、[containment](../knowledge-cards/containment/)                               | `08 + 06`              |
+| 問題節點         | 判讀訊號                                   | 風險後果                 | 前置控制面                                                                                                                       | 交接路由               |
+| ---------------- | ------------------------------------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 登入驗證節奏失衡 | 異常驗證密度、異常地理切換、連續高風險操作 | 身分擴散速度提升         | [authentication](../../knowledge-cards/authentication/)、[incident-severity](../../knowledge-cards/incident-severity/)           | `08 incident response` |
+| 授權範圍擴張過快 | 高權限操作集中、代理操作鏈過長             | 權限濫用影響面擴大       | [authorization](../../knowledge-cards/authorization/)、[least-privilege](../../knowledge-cards/least-privilege/)                 | `08 incident response` |
+| 會話失效節奏落後 | 修補後異常 session 持續、token 存續過久    | 事件關閉時間延長         | [session-invalidation](../../knowledge-cards/session-invalidation/)、[token-revocation](../../knowledge-cards/token-revocation/) | `08 + 05`              |
+| 供應商身分鏈傳導 | 外部事件後內部憑證存續比例偏高             | 內部信任邊界承受外部衝擊 | [credential](../../knowledge-cards/credential/)、[containment](../../knowledge-cards/containment/)                               | `08 + 06`              |
 
 ## 下一步路由
 

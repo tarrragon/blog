@@ -27,8 +27,8 @@ ESXiArgs 事件顯示 CVE-2021-21974 與 CVE-2021-21972 這類虛擬化平台漏
 
 ## 可落地的 workflow 檢查點
 
-- 發布前：定義核心服務的 [RTO](../../../../knowledge-cards/rto/) 與 [RPO](../../../../knowledge-cards/rpo/)。
-- 日常：演練備份還原並記錄 [MTTR](../../../../knowledge-cards/mttr/)。
+- 發布前：定義核心服務的 [RTO](../../../../../knowledge-cards/rto/) 與 [RPO](../../../../../knowledge-cards/rpo/)。
+- 日常：演練備份還原並記錄 [MTTR](../../../../../knowledge-cards/mttr/)。
 - 事故中：先恢復核心服務，再分批回補次要工作負載。
 
 ## 可引用章節

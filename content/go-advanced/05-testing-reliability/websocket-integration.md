@@ -5,7 +5,7 @@ description: "驗證 client/server 實際互動"
 weight: 2
 ---
 
-[WebSocket](../../backend/knowledge-cards/websocket) integration test 的核心目標是驗證 client 與 server 透過真實連線互動後，協定行為是否正確。它比單元測試慢，但能覆蓋 HTTP upgrade、read/write pump、router、server message、push flow 與 cleanup。
+[WebSocket](../../../backend/knowledge-cards/websocket/) integration test 的核心目標是驗證 client 與 server 透過真實連線互動後，協定行為是否正確。它比單元測試慢，但能覆蓋 HTTP upgrade、read/write pump、router、server message、push flow 與 cleanup。
 
 ## 本章目標
 
@@ -13,7 +13,7 @@ weight: 2
 
 1. 用 `httptest.Server` 建立真實 WebSocket 測試入口
 2. 將 `http://` 測試 URL 轉成 `ws://`
-3. 用 [deadline](../../backend/knowledge-cards/deadline) 避免 read/write 永久卡住
+3. 用 [deadline](../../../backend/knowledge-cards/deadline/) 避免 read/write 永久卡住
 4. 驗證 subscribe、push、error response 與 cleanup
 5. 分辨 integration test 與 unit test 的責任邊界
 
@@ -21,7 +21,7 @@ weight: 2
 
 ## 【觀察】WebSocket 的錯誤常出現在元件交界
 
-WebSocket 測試的核心困難是很多錯誤不在單一函式裡。Router 單元測試可能通過，但真實連線仍可能因為 upgrade path、read pump、write pump、send [buffer](../../backend/knowledge-cards/buffer) 或 unregister 流程出錯。
+WebSocket 測試的核心困難是很多錯誤不在單一函式裡。Router 單元測試可能通過，但真實連線仍可能因為 upgrade path、read pump、write pump、send [buffer](../../../backend/knowledge-cards/buffer/) 或 unregister 流程出錯。
 
 Integration test 適合驗證這些交界：
 
@@ -36,7 +36,7 @@ Integration test 適合驗證這些交界：
 
 ## 【判讀】integration test 補的是協作信心
 
-Integration test 的核心責任是覆蓋協定流程，不是取代所有規則測試。Router validation、[topic](../../backend/knowledge-cards/topic) normalization、dedup key、state transition 應主要用單元測試；WebSocket integration test 只挑關鍵端到端流程。
+Integration test 的核心責任是覆蓋協定流程，不是取代所有規則測試。Router validation、[topic](../../../backend/knowledge-cards/topic/) normalization、dedup key、state transition 應主要用單元測試；WebSocket integration test 只挑關鍵端到端流程。
 
 建議分工：
 
@@ -152,7 +152,7 @@ func readServerMessage(t *testing.T, conn *websocket.Conn) ServerMessage {
 
 Deadline 是測試保護。若 server 沒有送出預期訊息，測試會在合理時間內失敗，而不是卡住整個測試套件。
 
-[Timeout](../../backend/knowledge-cards/timeout) 不應過短。CI 可能比本機慢，測試應給足合理緩衝，但仍要能快速暴露失敗。
+[Timeout](../../../backend/knowledge-cards/timeout/) 不應過短。CI 可能比本機慢，測試應給足合理緩衝，但仍要能快速暴露失敗。
 
 ## 【執行】推送測試要先建立可觀察觸發點
 
@@ -245,24 +245,24 @@ func TestUnknownActionReturnsErrorMessage(t *testing.T) {
 }
 ```
 
-若設計上 unknown action 應直接關閉連線，也應明確測出 close 行為。重點是協定行為要可驗證，不要只依賴 server [log](../../backend/knowledge-cards/log)。
+若設計上 unknown action 應直接關閉連線，也應明確測出 close 行為。重點是協定行為要可驗證，不要只依賴 server [log](../../../backend/knowledge-cards/log/)。
 
 ## 本章不處理
 
-本章先處理單一 Go server 內的 WebSocket 協定協作；跨節點 [fan-out](../../backend/knowledge-cards/fan-out) 與壓力測試，會在下列章節再往外延伸：
+本章先處理單一 Go server 內的 WebSocket 協定協作；跨節點 [fan-out](../../../backend/knowledge-cards/fan-out/) 與壓力測試，會在下列章節再往外延伸：
 
-- [Go 進階：跨節點 WebSocket、presence 與重連協定](../07-distributed-operations/cross-node-websocket/)
+- [Go 進階：跨節點 WebSocket、presence 與重連協定](../../07-distributed-operations/cross-node-websocket/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 WebSocket handler、pump 與 heartbeat；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增一個即時訊息 action](../../go/06-practical/new-websocket-action/)
-- [Go：read/write pump 模式](../../go-advanced/02-networking-websocket/read-write-pump/)
-- [Go：heartbeat、deadline 與連線清理](../../go-advanced/02-networking-websocket/heartbeat-deadline/)
-- [Go：graceful shutdown 與 signal handling](../../go-advanced/06-production-operations/graceful-shutdown/)
-- [Go 進階：CI、fuzz、load test 與 chaos testing](../07-distributed-operations/reliability-pipeline/)
-- [Backend：可靠性驗證流程](../../backend/06-reliability/)
+- [Go：如何新增一個即時訊息 action](../../../go/06-practical/new-websocket-action/)
+- [Go：read/write pump 模式](../../02-networking-websocket/read-write-pump/)
+- [Go：heartbeat、deadline 與連線清理](../../02-networking-websocket/heartbeat-deadline/)
+- [Go：graceful shutdown 與 signal handling](../../../backend/knowledge-cards/graceful-shutdown/)
+- [Go 進階：CI、fuzz、load test 與 chaos testing](../../07-distributed-operations/reliability-pipeline/)
+- [Backend：可靠性驗證流程](../../../backend/06-reliability/)
 
 ## 小結
 

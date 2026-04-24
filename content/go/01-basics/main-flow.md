@@ -22,13 +22,13 @@ weight: 7
 
 入口程式的核心責任是揭露應用如何啟動，而不是承載所有實作細節。一個稍具規模的 `main()` 可以切成五個區塊：
 
-| 區塊               | 責任                                                                                                                    |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| Runtime 與日誌設定 | 設定記憶體限制、初始化 `slog`                                                                                           |
-| 環境設定           | 讀取設定檔、環境變數與 port                                                                                             |
-| 元件組裝           | 建立 repository、worker、service 或 server                                                                              |
-| 背景工作           | 啟動 worker、[queue](../../backend/knowledge-cards/queue) [consumer](../../backend/knowledge-cards/consumer) 或定時任務 |
-| 對外介面           | 註冊 CLI command、HTTP endpoint 或 [WebSocket](../../backend/knowledge-cards/websocket) route                           |
+| 區塊               | 責任                                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Runtime 與日誌設定 | 設定記憶體限制、初始化 `slog`                                                                                                   |
+| 環境設定           | 讀取設定檔、環境變數與 port                                                                                                     |
+| 元件組裝           | 建立 repository、worker、service 或 server                                                                                      |
+| 背景工作           | 啟動 worker、[queue](../../../backend/knowledge-cards/queue/) [consumer](../../../backend/knowledge-cards/consumer/) 或定時任務 |
+| 對外介面           | 註冊 CLI command、HTTP endpoint 或 [WebSocket](../../../backend/knowledge-cards/websocket/) route                               |
 
 這種切法讓入口同時保留完整脈絡，又不把所有實作細節塞進 `main()`。
 

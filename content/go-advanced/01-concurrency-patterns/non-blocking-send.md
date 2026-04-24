@@ -14,7 +14,7 @@ weight: 3
 1. 分辨 blocking send 與 non-blocking send 的服務語意
 2. 為 HTTP、worker、即時推送設計不同滿載策略
 3. 判斷哪些事件可以丟、哪些不能丟
-4. 為 drop 與 [queue](../../backend/knowledge-cards/queue) full 建立 [log](../../backend/knowledge-cards/log)/metric
+4. 為 drop 與 [queue](../../../backend/knowledge-cards/queue/) full 建立 [log](../../../backend/knowledge-cards/log/)/metric
 5. 測試 channel 滿載時的行為
 
 ---
@@ -23,15 +23,15 @@ weight: 3
 
 Channel 滿載的核心意義是下游處理速度跟不上上游輸入速度。這可能是短暫尖峰，也可能是系統長期容量不足。
 
-最直接的 send 會接受 [backpressure](../../backend/knowledge-cards/backpressure) ：
+最直接的 send 會接受 [backpressure](../../../backend/knowledge-cards/backpressure/) ：
 
 ```go
 events <- event
 ```
 
-如果 `events` 沒有 [buffer](../../backend/knowledge-cards/buffer)，或 buffer 已滿，sender 會等待 receiver。這能保留資料，但也可能讓 HTTP handler、connection writer 或其他 goroutine 卡住。
+如果 `events` 沒有 [buffer](../../../backend/knowledge-cards/buffer/)，或 buffer 已滿，sender 會等待 receiver。這能保留資料，但也可能讓 HTTP handler、connection writer 或其他 goroutine 卡住。
 
-對批次 worker 來說，等待可能合理；對使用者 request 來說，無限等待通常會變成 [timeout](../../backend/knowledge-cards/timeout) 或 goroutine 堆積。
+對批次 worker 來說，等待可能合理；對使用者 request 來說，無限等待通常會變成 [timeout](../../../backend/knowledge-cards/timeout/) 或 goroutine 堆積。
 
 ## 【判讀】blocking send 表示願意等待
 
@@ -79,13 +79,13 @@ Non-blocking send 不是比較進階的寫法。它只是把 backpressure 從「
 
 滿載策略的核心判斷是資料語意。每種事件都應先定義保留等級：必須保存、可降級、可覆蓋、可取樣，或可延後處理。這個等級決定 channel 滿載時要等待、回錯、丟棄、覆蓋或轉交可靠儲存。
 
-| 事件類型                                                | 建議策略                       | 理由                                                                           |
-| ------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------ |
-| [audit log](../../backend/knowledge-cards/audit-log)    | 不應直接丟，應寫可靠儲存或回錯 | 資料遺失會破壞稽核                                                             |
-| UI 即時提示                                             | 可丟棄或覆蓋                   | 使用者可重新查詢狀態                                                           |
-| 狀態轉移事件                                            | 通常不應丟                     | 會造成 [source of truth](../../backend/knowledge-cards/source-of-truth) 不一致 |
-| [metrics](../../backend/knowledge-cards/metrics) sample | 可取樣或丟棄                   | 趨勢比單筆資料重要                                                             |
-| background refresh                                      | 可跳過本輪                     | 下次仍可重新計算                                                               |
+| 事件類型                                                    | 建議策略                       | 理由                                                                               |
+| ----------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------- |
+| [audit log](../../../backend/knowledge-cards/audit-log/)    | 不應直接丟，應寫可靠儲存或回錯 | 資料遺失會破壞稽核                                                                 |
+| UI 即時提示                                                 | 可丟棄或覆蓋                   | 使用者可重新查詢狀態                                                               |
+| 狀態轉移事件                                                | 通常不應丟                     | 會造成 [source of truth](../../../backend/knowledge-cards/source-of-truth/) 不一致 |
+| [metrics](../../../backend/knowledge-cards/metrics/) sample | 可取樣或丟棄                   | 趨勢比單筆資料重要                                                                 |
+| background refresh                                          | 可跳過本輪                     | 下次仍可重新計算                                                                   |
 
 這個表格的重點不是固定答案，而是要求每種事件都要有明確策略。若團隊只說「channel 滿了就 default」，通常代表資料語意還沒有想清楚。
 
@@ -158,8 +158,8 @@ events := make(chan Event, 1024)
 設計 buffer 時至少要考慮：
 
 - 單筆事件大小
-- [producer](../../backend/knowledge-cards/producer) 峰值速度
-- [consumer](../../backend/knowledge-cards/consumer) 穩定處理速度
+- [producer](../../../backend/knowledge-cards/producer/) 峰值速度
+- [consumer](../../../backend/knowledge-cards/consumer/) 穩定處理速度
 - 允許排隊延遲
 - 滿載時的回應策略
 
@@ -226,17 +226,17 @@ func TestEnqueueStopsWhenContextCanceled(t *testing.T) {
 
 本章先處理單一 process 內的滿載處理策略；當訊息需要持久化、重試或跨 process 傳遞時，會在下列章節再往外延伸：
 
-- [Backend：訊息佇列與事件傳遞](../../backend/03-message-queue/)
-- [Go 進階：Durable queue、outbox 與 idempotency](../../go-advanced/07-distributed-operations/outbox-idempotency/)
+- [Backend：訊息佇列與事件傳遞](../../../backend/03-message-queue/)
+- [Go 進階：Durable queue、outbox 與 idempotency](../../07-distributed-operations/outbox-idempotency/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 channel backpressure 、worker capacity 與事件丟棄策略；如果你要先回看語言教材，可以讀：
 
-- [Go：channel：資料傳遞與 backpressure ](../../go/04-concurrency/channel/)
-- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
-- [Go：rate limiting 與 backpressure ](rate-limit/)
-- [Go：多來源 event 融合](../../go-advanced/04-architecture-boundaries/event-fusion/)
+- [Go：channel：資料傳遞與 backpressure ](../../../go/04-concurrency/channel/)
+- [Go：select：同時等待多種事件](../../../go/04-concurrency/select/)
+- [Go：rate limiting 與 backpressure ](../../../backend/knowledge-cards/rate-limit/)
+- [Go：多來源 event 融合](../../04-architecture-boundaries/event-fusion/)
 
 ## 小結
 

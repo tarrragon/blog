@@ -22,13 +22,13 @@ weight: 710
 
 ## 服務環節問題地圖（觀念層）
 
-| 服務環節     | 主要問題                       | 注意事項                               | 優先案例                                                                                                                                                                  |
-| ------------ | ------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 身分與授權   | 入口驗證通過後仍可快速擴散     | 高風險動作需要獨立判讀節奏             | [Uber 2022](cases/identity-access/uber-2022-mfa-fatigue/)、[Twilio 2022](cases/identity-access/twilio-2022-social-engineering/)                                           |
-| 第三方整合   | 供應商事件可直接傳導到內部流程 | 事件觸發與憑證收斂需要同一條路由       | [Okta + Cloudflare 2023](cases/identity-access/okta-cloudflare-2023-support-supply-chain/)、[GitHub OAuth 2022](cases/supply-chain/github-oauth-2022-token-supply-chain/) |
-| 邊界與入口   | 暴露面與修補窗口同時放大風險   | 入口隔離、分區修補、狀態驗證要同時規劃 | [Ivanti 2024](cases/edge-exposure/ivanti-2024-vpn-chain/)、[PAN-OS 2024](cases/edge-exposure/panos-cve-2024-3400-edge-rce/)                                               |
-| 交付與供應鏈 | 合法交付路徑可被反向利用       | 凍結、驗證、恢復需要明確順序           | [SolarWinds 2020](cases/supply-chain/solarwinds-2020-sunburst/)、[TeamCity 2024](cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/)                   |
-| 資料與回復   | 外送風險與營運衝擊常同時出現   | 資料盤點、回復排序、通報節奏需要連動   | [Snowflake 2024](cases/data-exfiltration/snowflake-2024-credential-abuse/)、[Change Healthcare 2024](cases/data-exfiltration/change-healthcare-2024-ops-impact/)          |
+| 服務環節     | 主要問題                       | 注意事項                               | 優先案例                                                                                                                                                                        |
+| ------------ | ------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 身分與授權   | 入口驗證通過後仍可快速擴散     | 高風險動作需要獨立判讀節奏             | [Uber 2022](../cases/identity-access/uber-2022-mfa-fatigue/)、[Twilio 2022](../cases/identity-access/twilio-2022-social-engineering/)                                           |
+| 第三方整合   | 供應商事件可直接傳導到內部流程 | 事件觸發與憑證收斂需要同一條路由       | [Okta + Cloudflare 2023](../cases/identity-access/okta-cloudflare-2023-support-supply-chain/)、[GitHub OAuth 2022](../cases/supply-chain/github-oauth-2022-token-supply-chain/) |
+| 邊界與入口   | 暴露面與修補窗口同時放大風險   | 入口隔離、分區修補、狀態驗證要同時規劃 | [Ivanti 2024](../cases/edge-exposure/ivanti-2024-vpn-chain/)、[PAN-OS 2024](../cases/edge-exposure/panos-cve-2024-3400-edge-rce/)                                               |
+| 交付與供應鏈 | 合法交付路徑可被反向利用       | 凍結、驗證、恢復需要明確順序           | [SolarWinds 2020](../cases/supply-chain/solarwinds-2020-sunburst/)、[TeamCity 2024](../cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/)                   |
+| 資料與回復   | 外送風險與營運衝擊常同時出現   | 資料盤點、回復排序、通報節奏需要連動   | [Snowflake 2024](../cases/data-exfiltration/snowflake-2024-credential-abuse/)、[Change Healthcare 2024](../cases/data-exfiltration/change-healthcare-2024-ops-impact/)          |
 
 ## 與其他章節的分工路由
 

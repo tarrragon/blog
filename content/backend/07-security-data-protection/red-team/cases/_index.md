@@ -19,4 +19,4 @@ weight: 717
 
 1. 先在服務章節定義風險主題與控制面。
 2. 選一篇同類型案例，引用「如果 workflow 少一步會發生什麼」。
-3. 把該步驟落地到 [incident-report-to-workflow](../../../../08-incident-response/incident-report-to-workflow/) 的 runbook 流程。
+3. 把該步驟落地到 [incident-report-to-workflow](../../../08-incident-response/incident-report-to-workflow/) 的 runbook 流程。

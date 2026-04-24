@@ -5,7 +5,7 @@ description: "用 signal 與 context 傳遞停止訊號"
 weight: 1
 ---
 
-[Graceful shutdown](../../backend/knowledge-cards/graceful-shutdown) 的核心目標是服務收到停止訊號後，不再接受新工作，並給既有工作一段時間完成或清理。Go 服務通常用 signal、root context、`http.Server.Shutdown`、worker context 與 [timeout](../../backend/knowledge-cards/timeout) 串起停止流程。
+[Graceful shutdown](../../../backend/knowledge-cards/graceful-shutdown/) 的核心目標是服務收到停止訊號後，不再接受新工作，並給既有工作一段時間完成或清理。Go 服務通常用 signal、root context、`http.Server.Shutdown`、worker context 與 [timeout](../../../backend/knowledge-cards/timeout/) 串起停止流程。
 
 ## 本章目標
 
@@ -13,7 +13,7 @@ weight: 1
 
 1. 把 OS signal 轉成 root context 取消
 2. 用 `http.Server.Shutdown` 停止接受新 request
-3. 讓 worker、hub、[WebSocket](../../backend/knowledge-cards/websocket) pump 觀察同一個停止訊號
+3. 讓 worker、hub、[WebSocket](../../../backend/knowledge-cards/websocket/) pump 觀察同一個停止訊號
 4. 設計 shutdown timeout 與強制退出邊界
 5. 測試 server 與 worker 的停止流程
 
@@ -21,14 +21,14 @@ weight: 1
 
 ## 【觀察】直接結束 process 會留下不確定狀態
 
-Shutdown 的核心風險是停止流程不明確。服務可能正在處理 request、WebSocket client 仍在線、worker 正在寫資料、[queue](../../backend/knowledge-cards/queue) message 尚未 [ack](../../backend/knowledge-cards/ack-nack)、diagnostics 還以為服務可接流量。
+Shutdown 的核心風險是停止流程不明確。服務可能正在處理 request、WebSocket client 仍在線、worker 正在寫資料、[queue](../../../backend/knowledge-cards/queue/) message 尚未 [ack](../../../backend/knowledge-cards/ack-nack/)、diagnostics 還以為服務可接流量。
 
 不完整停止常見後果：
 
 - 新 request 在服務即將關閉時仍被接受。
 - WebSocket client 沒收到 close，server 端 goroutine 殘留。
 - 背景 worker 寫到一半被中斷。
-- [readiness](../../backend/knowledge-cards/readiness) 還是 200，負載平衡器繼續送流量。
+- [readiness](../../../backend/knowledge-cards/readiness/) 還是 200，負載平衡器繼續送流量。
 - 測試結束後留下 goroutine 或開放 port。
 
 Graceful shutdown 不是保證所有工作都完成，而是讓停止策略可預期。
@@ -141,7 +141,7 @@ cancel()
 
 ## 【執行】背景工作要觀察 context
 
-背景 worker 的核心 shutdown 條件是每個 loop 都能觀察停止訊號。Ticker、queue [consumer](../../backend/knowledge-cards/consumer)、WebSocket hub 都應該有退出路徑。
+背景 worker 的核心 shutdown 條件是每個 loop 都能觀察停止訊號。Ticker、queue [consumer](../../../backend/knowledge-cards/consumer/)、WebSocket hub 都應該有退出路徑。
 
 ```go
 func RunWorker(ctx context.Context) error {
@@ -215,17 +215,17 @@ HTTP server 測試可以啟動 server 後 cancel context，確認 `RunHTTPServer
 
 本章先處理服務內部的 shutdown 順序與 cleanup owner；平台 hook、timeout 與 load balancer 合約，會在下列章節再往外延伸：
 
-- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../07-distributed-operations/deployment-contracts/)
+- [Go 進階：Kubernetes、systemd 與 load balancer 合約](../../07-distributed-operations/deployment-contracts/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 goroutine lifecycle、ticker cleanup 與 platform handoff；如果你要先回看語言教材，可以讀：
 
-- [Go：goroutine：輕量並發工作](../../go/04-concurrency/goroutine/)
-- [Go：defer 與資源清理](../../go/03-stdlib/defer-cleanup/)
-- [Go：select：同時等待多種事件](../../go/04-concurrency/select/)
-- [Go：goroutine leak 偵測](../../go-advanced/03-runtime-profiling/goroutine-leak/)
-- [Backend：部署平台與網路入口](../../backend/05-deployment-platform/)
+- [Go：goroutine：輕量並發工作](../../../go/04-concurrency/goroutine/)
+- [Go：defer 與資源清理](../../../go/03-stdlib/defer-cleanup/)
+- [Go：select：同時等待多種事件](../../../go/04-concurrency/select/)
+- [Go：goroutine leak 偵測](../../03-runtime-profiling/goroutine-leak/)
+- [Backend：部署平台與網路入口](../../../backend/05-deployment-platform/)
 
 ## 小結
 

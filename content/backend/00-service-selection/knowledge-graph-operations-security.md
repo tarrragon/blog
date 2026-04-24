@@ -25,15 +25,15 @@ weight: 10
 對應卡片關係：
 
 - 請求邊界：  
-  [Timeout](../knowledge-cards/timeout/) / [Deadline](../knowledge-cards/deadline/)
+  [Timeout](../../knowledge-cards/timeout/) / [Deadline](../../knowledge-cards/deadline/)
 - 壓力控制：  
-  [Backpressure](../knowledge-cards/backpressure/) / [Rate Limit](../knowledge-cards/rate-limit/) / [Token Bucket](../knowledge-cards/token-bucket/)
+  [Backpressure](../../knowledge-cards/backpressure/) / [Rate Limit](../../knowledge-cards/rate-limit/) / [Token Bucket](../../knowledge-cards/token-bucket/)
 - 退讓策略：  
-  [Fallback](../knowledge-cards/fallback/) / [Degradation](../knowledge-cards/degradation/) / [Failover](../knowledge-cards/failover/)
+  [Fallback](../../knowledge-cards/fallback/) / [Degradation](../../knowledge-cards/degradation/) / [Failover](../../knowledge-cards/failover/)
 - 恢復目標：  
-  [RTO](../knowledge-cards/rto/) / [RPO](../knowledge-cards/rpo/)
+  [RTO](../../knowledge-cards/rto/) / [RPO](../../knowledge-cards/rpo/)
 
-如果只定義 [timeout](../knowledge-cards/timeout)，沒有 [fallback](../knowledge-cards/fallback) 與回復目標，系統仍缺少操作上的可控性。
+如果只定義 [timeout](../../knowledge-cards/timeout/)，沒有 [fallback](../../knowledge-cards/fallback/) 與回復目標，系統仍缺少操作上的可控性。
 
 ## 【判讀】可觀測訊號要服務操作決策
 
@@ -42,13 +42,13 @@ weight: 10
 對應卡片關係：
 
 - 事件與脈絡：  
-  [Log](../knowledge-cards/log/) / [Log Schema](../knowledge-cards/log-schema/) / [Correlation ID](../knowledge-cards/correlation-id/)
+  [Log](../../knowledge-cards/log/) / [Log Schema](../../knowledge-cards/log-schema/) / [Correlation ID](../../knowledge-cards/correlation-id/)
 - 趨勢與目標：  
-  [Metrics](../knowledge-cards/metrics/) / [SLI/SLO](../knowledge-cards/sli-slo/) / [Error Budget](../knowledge-cards/error-budget/)
+  [Metrics](../../knowledge-cards/metrics/) / [SLI/SLO](../../knowledge-cards/sli-slo/) / [Error Budget](../../knowledge-cards/error-budget/)
 - 路徑與定位：  
-  [Trace](../knowledge-cards/trace/) / [Trace Context](../knowledge-cards/trace-context/)
+  [Trace](../../knowledge-cards/trace/) / [Trace Context](../../knowledge-cards/trace-context/)
 - 執行與回應：  
-  [Alert](../knowledge-cards/alert/) / [Alert Runbook](../knowledge-cards/alert-runbook/) / [Runbook](../knowledge-cards/runbook/)
+  [Alert](../../knowledge-cards/alert/) / [Alert Runbook](../../knowledge-cards/alert-runbook/) / [Runbook](../../knowledge-cards/runbook/)
 
 當觀測鏈完整後，才適合比較具體平台組合。
 
@@ -59,27 +59,27 @@ weight: 10
 對應卡片關係：
 
 - 身份與存取：  
-  [Authentication](../knowledge-cards/authentication/) / [Authorization](../knowledge-cards/authorization/) / [Least Privilege](../knowledge-cards/least-privilege/)
+  [Authentication](../../knowledge-cards/authentication/) / [Authorization](../../knowledge-cards/authorization/) / [Least Privilege](../../knowledge-cards/least-privilege/)
 - 傳輸與憑證：  
-  [TLS/mTLS](../knowledge-cards/tls-mtls/) / [Certificate Chain and Trust](../knowledge-cards/certificate-chain-trust/) / [Certificate Revocation](../knowledge-cards/certificate-revocation/)
+  [TLS/mTLS](../../knowledge-cards/tls-mtls/) / [Certificate Chain and Trust](../../knowledge-cards/certificate-chain-trust/) / [Certificate Revocation](../../knowledge-cards/certificate-revocation/)
 - 秘密與輪替：  
-  [Secret Management](../knowledge-cards/secret-management/) / [Certificate Rotation and Renewal](../knowledge-cards/certificate-rotation-renewal/)
+  [Secret Management](../../knowledge-cards/secret-management/) / [Certificate Rotation and Renewal](../../knowledge-cards/certificate-rotation-renewal/)
 - 敏感資料與稽核：  
-  [PII](../knowledge-cards/pii/) / [Data Masking](../knowledge-cards/data-masking/) / [Audit Log](../knowledge-cards/audit-log/)
+  [PII](../../knowledge-cards/pii/) / [Data Masking](../../knowledge-cards/data-masking/) / [Audit Log](../../knowledge-cards/audit-log/)
 
 若資安設計只停在單一工具，缺少資料流路徑與角色責任描述，章節仍停在術語層。
 
 ## 【判讀】事故治理把容量、觀測與資安接起來
 
-事故治理的核心問題是「異常發生時，如何在可接受風險下恢復服務」。severity、[on-call](../knowledge-cards/on-call)、timeline、[RCA](../knowledge-cards/rca) 與 [game day](../knowledge-cards/game-day) 是將前面三軸落地的操作語言。
+事故治理的核心問題是「異常發生時，如何在可接受風險下恢復服務」。severity、[on-call](../../knowledge-cards/on-call/)、timeline、[RCA](../../knowledge-cards/rca/) 與 [game day](../../knowledge-cards/game-day/) 是將前面三軸落地的操作語言。
 
 對應卡片：
 
-- [Incident Severity](../knowledge-cards/incident-severity/)
-- [On-call](../knowledge-cards/on-call/)
-- [Incident Timeline](../knowledge-cards/incident-timeline/)
-- [RCA](../knowledge-cards/rca/)
-- [Game Day](../knowledge-cards/game-day/)
+- [Incident Severity](../../knowledge-cards/incident-severity/)
+- [On-call](../../knowledge-cards/on-call/)
+- [Incident Timeline](../../knowledge-cards/incident-timeline/)
+- [RCA](../../knowledge-cards/rca/)
+- [Game Day](../../knowledge-cards/game-day/)
 
 這些概念建立後，事故處理不會只依賴個人臨場反應。
 
@@ -88,13 +88,13 @@ weight: 10
 當以下問題都能回答時，代表概念層已完成，可以進入實作模組：
 
 1. 核心服務的容量保護鏈是什麼（timeout 到 fallback）
-2. 告警觸發後，[runbook](../knowledge-cards/runbook) 的第一個與第二個動作是什麼
+2. 告警觸發後，[runbook](../../knowledge-cards/runbook/) 的第一個與第二個動作是什麼
 3. 高風險資料在系統內的流動路徑與存取角色是什麼
 4. 事故升級與回報節點如何定義
 
 下一步建議路由：
 
-- 進入可觀測實作能力：[04-observability](../04-observability/)
-- 進入部署與可靠性能力：[05-deployment-platform](../05-deployment-platform/) / [06-reliability](../06-reliability/)
-- 進入資安與資料保護能力：[07-security-data-protection](../07-security-data-protection/)
-- 進入事故治理能力：[08-incident-response](../08-incident-response/)
+- 進入可觀測實作能力：[04-observability](../../04-observability/)
+- 進入部署與可靠性能力：[05-deployment-platform](../../05-deployment-platform/) / [06-reliability](../../06-reliability/)
+- 進入資安與資料保護能力：[07-security-data-protection](../../07-security-data-protection/)
+- 進入事故治理能力：[08-incident-response](../../08-incident-response/)

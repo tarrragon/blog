@@ -517,7 +517,7 @@ jobs:
 - [Python Packaging Guide - Binary Extensions](https://packaging.python.org/en/latest/guides/packaging-binary-extensions/)
 - [manylinux 標準](https://github.com/pypa/manylinux)
 - [PyOxidizer 文件](https://pyoxidizer.readthedocs.io/)
-- [模組四：用 C 擴展 Python](../05-c-extensions/) - 另一種整合原生程式碼的方式
+- [模組四：用 C 擴展 Python](../../05-c-extensions/) - 另一種整合原生程式碼的方式
 
 ---
 

@@ -28,8 +28,8 @@ Slack 2022 安全公告說明攻擊者透過員工帳號路徑接觸內部資產
 ## 可落地的 workflow 檢查點
 
 - 發布前：把管理 token 分域並限制到最小權限。
-- 日常：建立 [alert runbook](../../../../knowledge-cards/alert-runbook/) 監控異常存取。
-- 事故中：分層撤銷 token，並用 [blast radius](../../../../knowledge-cards/blast-radius/) 框定影響面。
+- 日常：建立 [alert runbook](../../../../../knowledge-cards/alert-runbook/) 監控異常存取。
+- 事故中：分層撤銷 token，並用 [blast radius](../../../../../knowledge-cards/blast-radius/) 框定影響面。
 
 ## 可引用章節
 

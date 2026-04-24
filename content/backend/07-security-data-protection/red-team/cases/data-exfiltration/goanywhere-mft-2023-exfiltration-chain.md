@@ -27,7 +27,7 @@ GoAnywhere MFT 2023 事件顯示檔案傳輸中樞在漏洞事件中會快速演
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：為 MFT 流程建立資料分級與權限分域。
 - 日常：維護交易追蹤與外送告警指標。
 - 事故中：盤點受影響交易、封鎖傳輸路徑、分層通知利害關係人。

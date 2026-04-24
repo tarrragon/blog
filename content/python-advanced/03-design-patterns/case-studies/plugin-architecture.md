@@ -10,7 +10,7 @@ weight: 2
 
 ## 先備知識
 
-- [2.2 自動註冊機制](../../02-metaprogramming/case-studies/auto-registration/)
+- [2.2 自動註冊機制](../../../02-metaprogramming/case-studies/auto-registration/)
 - [3.5.4 插件系統設計](../../plugin-system/)
 
 ## 問題背景

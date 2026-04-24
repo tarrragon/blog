@@ -5,7 +5,7 @@ description: "集中狀態更新、保護可變資料、設計查詢 projection"
 weight: 3
 ---
 
-[Source of truth](../../backend/knowledge-cards/source-of-truth) 的核心原則是系統中只有一個地方負責判定目前狀態。其他元件可以請求更新、讀取快照或訂閱變化，但不能各自保存一份會被當成真相的資料。
+[Source of truth](../../../backend/knowledge-cards/source-of-truth/) 的核心原則是系統中只有一個地方負責判定目前狀態。其他元件可以請求更新、讀取快照或訂閱變化，但不能各自保存一份會被當成真相的資料。
 
 ## 本章目標
 
@@ -15,7 +15,7 @@ weight: 3
 2. 把狀態轉移集中在 repository 或 state owner
 3. 同步更新 current state 與 history
 4. 用 copy boundary 保護 slice、map、pointer
-5. 分辨 internal state、[projection](../../backend/knowledge-cards/projection) 與 response view
+5. 分辨 internal state、[projection](../../../backend/knowledge-cards/projection/) 與 response view
 
 ---
 
@@ -221,7 +221,7 @@ type stateCommand struct {
 }
 ```
 
-兩者都可以正確。選擇 mutex 時要小心 copy boundary；選擇 goroutine owner 時要設計 shutdown、reply channel 與 [backpressure](../../backend/knowledge-cards/backpressure)。不要為了使用 channel 而使用 channel，狀態模型簡單時 mutex 通常更直接。
+兩者都可以正確。選擇 mutex 時要小心 copy boundary；選擇 goroutine owner 時要設計 shutdown、reply channel 與 [backpressure](../../../backend/knowledge-cards/backpressure/)。不要為了使用 channel 而使用 channel，狀態模型簡單時 mutex 通常更直接。
 
 ## 【測試】狀態測試要覆蓋轉移與外洩
 
@@ -262,19 +262,19 @@ func TestHistoryReturnsCopy(t *testing.T) {
 
 ## 本章不處理
 
-本章先處理單一服務內誰有寫入權責；資料庫 [migration](../../backend/knowledge-cards/migration) 與 CQRS，會在下列章節再往外延伸：
+本章先處理單一服務內誰有寫入權責；資料庫 [migration](../../../backend/knowledge-cards/migration/) 與 CQRS，會在下列章節再往外延伸：
 
-- [Go 進階：資料庫 transaction 與 schema migration](../07-distributed-operations/database-transactions/)
-- [Backend：資料庫與持久化](../../backend/01-database/)
+- [Go 進階：資料庫 transaction 與 schema migration](../../07-distributed-operations/database-transactions/)
+- [Backend：資料庫與持久化](../../../backend/01-database/)
 
 ## 和 Go 教材的關係
 
 這一章承接的是 repository、state owner 與 projection 的邊界；如果你要先回看語言教材，可以讀：
 
-- [Go：如何新增 repository port](../../go/06-practical/repository-port/)
-- [Go：如何擴展狀態投影欄位](../../go/06-practical/state-fields/)
-- [Go：狀態管理的安全邊界](../../go/07-refactoring/state-boundary/)
-- [Go：以 domain 重新整理 package](../../go/07-refactoring/domain-packages/)
+- [Go：如何新增 repository port](../../../go/06-practical/repository-port/)
+- [Go：如何擴展狀態投影欄位](../../../go/06-practical/state-fields/)
+- [Go：狀態管理的安全邊界](../../../go/07-refactoring/state-boundary/)
+- [Go：以 domain 重新整理 package](../../../go/07-refactoring/domain-packages/)
 
 ## 小結
 

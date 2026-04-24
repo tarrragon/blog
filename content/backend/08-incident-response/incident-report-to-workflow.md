@@ -17,14 +17,14 @@ weight: 88
 
 ## 常見輸出物
 
-- [runbook](../knowledge-cards/runbook/)：定義觸發條件、決策邊界與停止條件。
-- [incident timeline](../knowledge-cards/incident-timeline/)：建立跨團隊共用時間軸。
-- [post-incident review](../knowledge-cards/post-incident-review/)：保留可追蹤 action items。
-- 量測指標：例如 [MTTR](../knowledge-cards/mttr/)、告警到升級時間、回復耗時。
+- [runbook](../../knowledge-cards/runbook/)：定義觸發條件、決策邊界與停止條件。
+- [incident timeline](../../knowledge-cards/incident-timeline/)：建立跨團隊共用時間軸。
+- [post-incident review](../../knowledge-cards/post-incident-review/)：保留可追蹤 action items。
+- 量測指標：例如 [MTTR](../../knowledge-cards/mttr/)、告警到升級時間、回復耗時。
 
 ## 從案例到 workflow
 
-案例入口在 [7.R7 事故案例庫（可引用）](../07-security-data-protection/red-team/cases/)。
+案例入口在 [7.R7 事故案例庫（可引用）](../../07-security-data-protection/red-team/cases/)。
 
 1. 先在服務章節選同類型案例。
 2. 引用案例中的「如果 workflow 少一步會發生什麼」。
@@ -32,7 +32,7 @@ weight: 88
 
 ## 從 workflow 回查案例
 
-workflow 設計完成後要反向驗證案例覆蓋是否充足。引用地圖在 [案例引用地圖](../07-security-data-protection/red-team/cases/case-reference-map/)。
+workflow 設計完成後要反向驗證案例覆蓋是否充足。引用地圖在 [案例引用地圖](../../07-security-data-protection/red-team/cases/case-reference-map/)。
 
 - 身分或授權步驟：回查 `identity-access` 案例。
 - 供應鏈或 CI/CD 步驟：回查 `supply-chain` 案例。

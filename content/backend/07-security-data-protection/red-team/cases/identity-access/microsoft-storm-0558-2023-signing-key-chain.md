@@ -28,7 +28,7 @@ Storm-0558 事件揭露簽章金鑰治理一旦失效，攻擊者就能沿著身
 ## 可落地的 workflow 檢查點
 
 - 發布前：把簽章金鑰納入硬體保護與輪替節奏。
-- 日常：監控 [authentication](../../../../knowledge-cards/authentication/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 的異常關聯。
+- 日常：監控 [authentication](../../../../../knowledge-cards/authentication/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 的異常關聯。
 - 事故中：同步執行金鑰收斂、權杖失效、受影響範圍比對。
 
 ## 可引用章節

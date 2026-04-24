@@ -18,9 +18,9 @@ weight: 711
 
 ## 【判讀流程】四步完成邊界標註
 
-1. 列入口：整理 [Public API](../../knowledge-cards/public-api-endpoint/)、[Admin Endpoint](../../knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](../../knowledge-cards/diagnostic-endpoint/)、[Internal Endpoint](../../knowledge-cards/internal-endpoint/) 與 [webhook](../../knowledge-cards/webhook/)。
+1. 列入口：整理 [Public API](../../../knowledge-cards/public-api-endpoint/)、[Admin Endpoint](../../../knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](../../../knowledge-cards/diagnostic-endpoint/)、[Internal Endpoint](../../../knowledge-cards/internal-endpoint/) 與 [webhook](../../../knowledge-cards/webhook/)。
 2. 畫資料流：每條入口都連到下游能力與資料資產，包含第三方整合。
-3. 標信任切換點：在身份、租戶、網路、資料層切換處標示 [Trust Boundary](../../knowledge-cards/trust-boundary/)。
+3. 標信任切換點：在身份、租戶、網路、資料層切換處標示 [Trust Boundary](../../../knowledge-cards/trust-boundary/)。
 4. 排優先級：以可枚舉性、可重放性、資料敏感度與橫向移動能力排序。
 
 ## 【風險代價】盤點品質直接影響事故規模
@@ -51,5 +51,5 @@ weight: 711
 
 ## 【交接點】何時路由到實作章節
 
-1. 已完成入口分級與擁有者盤點後，交接到 [部署平台與網路入口](../../05-deployment-platform/)。
-2. 已定義高風險入口驗證節奏後，交接到 [事故處理與復盤](../../08-incident-response/)。
+1. 已完成入口分級與擁有者盤點後，交接到 [部署平台與網路入口](../../../05-deployment-platform/)。
+2. 已定義高風險入口驗證節奏後，交接到 [事故處理與復盤](../../../08-incident-response/)。

@@ -7,7 +7,7 @@ weight: 4
 
 ## 大綱
 
-- [dashboard](../knowledge-cards/dashboard) layout
-- [alert](../knowledge-cards/alert) noise control
-- [runbook](../knowledge-cards/runbook) linkage
-- [on-call](../knowledge-cards/on-call) workflow
+- [dashboard](../../knowledge-cards/dashboard/) layout
+- [alert](../../knowledge-cards/alert/) noise control
+- [runbook](../../knowledge-cards/runbook/) linkage
+- [on-call](../../knowledge-cards/on-call/) workflow

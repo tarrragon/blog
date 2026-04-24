@@ -25,14 +25,14 @@ weight: 7215
 
 ## 案例觸發參考
 
-- [Twilio 2022](../cases/identity-access/twilio-2022-social-engineering/)
-- [Dropbox 2022](../cases/identity-access/dropbox-2022-code-repo-phishing-chain/)
+- [Twilio 2022](../../cases/identity-access/twilio-2022-social-engineering/)
+- [Dropbox 2022](../../cases/identity-access/dropbox-2022-code-repo-phishing-chain/)
 
 ## 可連動章節
 
-- [7.2 身分與授權邊界](../../identity-access-boundary/)
-- [8.8 事故報告轉 workflow](../../../08-incident-response/incident-report-to-workflow/)
+- [7.2 身分與授權邊界](../../../identity-access-boundary/)
+- [8.8 事故報告轉 workflow](../../../../08-incident-response/incident-report-to-workflow/)
 
 ## 對應失效樣式卡
 
-- [7.R11.P5 重設憑證可重放且有效期過長](fp-replayable-reset-token-with-long-ttl/)
+- [7.R11.P5 重設憑證可重放且有效期過長](../fp-replayable-reset-token-with-long-ttl/)

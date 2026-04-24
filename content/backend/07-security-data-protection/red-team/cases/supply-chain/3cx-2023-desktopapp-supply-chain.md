@@ -27,7 +27,7 @@ weight: 71728
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：建立更新簽章與來源完整性檢查。
 - 日常：將端點異常與更新事件關聯到同一告警流程。
 - 事故中：凍結版本、隔離端點、驗證恢復清單。

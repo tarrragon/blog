@@ -21,9 +21,9 @@ weight: 83
 
 ## 問題節點（案例觸發式）
 
-| 問題節點           | 判讀訊號                       | 風險後果           | 前置控制面                                                       |
-| ------------------ | ------------------------------ | ------------------ | ---------------------------------------------------------------- |
-| 覆蓋率描述空泛     | 只定義監控存在，未定義判讀用途 | 事故期無法快速決策 | [alert](../knowledge-cards/alert/)                               |
-| 訊號品質不穩定     | 同類事件訊號噪音高、關聯性低   | 告警疲勞與延遲處置 | [symptom-based-alert](../knowledge-cards/symptom-based-alert/)   |
-| 漏報風險無回饋迴路 | 復盤未回寫偵測策略             | 缺口長期存留       | [post-incident-review](../knowledge-cards/post-incident-review/) |
-| 事件分級與訊號脫鉤 | 高嚴重度事件缺少高信號來源     | 分級品質下降       | [incident-severity](../knowledge-cards/incident-severity/)       |
+| 問題節點           | 判讀訊號                       | 風險後果           | 前置控制面                                                          |
+| ------------------ | ------------------------------ | ------------------ | ------------------------------------------------------------------- |
+| 覆蓋率描述空泛     | 只定義監控存在，未定義判讀用途 | 事故期無法快速決策 | [alert](../../knowledge-cards/alert/)                               |
+| 訊號品質不穩定     | 同類事件訊號噪音高、關聯性低   | 告警疲勞與延遲處置 | [symptom-based-alert](../../knowledge-cards/symptom-based-alert/)   |
+| 漏報風險無回饋迴路 | 復盤未回寫偵測策略             | 缺口長期存留       | [post-incident-review](../../knowledge-cards/post-incident-review/) |
+| 事件分級與訊號脫鉤 | 高嚴重度事件缺少高信號來源     | 分級品質下降       | [incident-severity](../../knowledge-cards/incident-severity/)       |

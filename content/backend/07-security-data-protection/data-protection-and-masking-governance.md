@@ -22,12 +22,12 @@ weight: 74
 
 ## 問題節點（案例觸發式）
 
-| 問題節點             | 判讀訊號                         | 風險後果               | 前置控制面                                                                                                                                       | 交接路由  |
-| -------------------- | -------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
-| 回應欄位超出必要範圍 | 欄位分級與 API 回應不一致        | 資料暴露面擴張         | [data-classification](../knowledge-cards/data-classification/)、[excessive-data-exposure](../knowledge-cards/excessive-data-exposure/)           | `05 + 08` |
-| 高風險匯出節奏異常   | 批量匯出、異常角色、異常時段集中 | 外送風險提升           | [audit-log](../knowledge-cards/audit-log/)、[impact-scope](../knowledge-cards/impact-scope/)                                                     | `08`      |
-| 備份資產權限混層     | 備份讀取與正式環境權限邊界重疊   | 回復鏈轉為外送鏈       | [retention](../knowledge-cards/retention/)、[credential](../knowledge-cards/credential/)                                                         | `06 + 08` |
-| 跨組織交換責任鏈斷點 | 通知節奏與交易時序偏移           | 通報品質與處置速度下降 | [incident-communication-channel](../knowledge-cards/incident-communication-channel/)、[incident-timeline](../knowledge-cards/incident-timeline/) | `08`      |
+| 問題節點             | 判讀訊號                         | 風險後果               | 前置控制面                                                                                                                                             | 交接路由  |
+| -------------------- | -------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- |
+| 回應欄位超出必要範圍 | 欄位分級與 API 回應不一致        | 資料暴露面擴張         | [data-classification](../../knowledge-cards/data-classification/)、[excessive-data-exposure](../../knowledge-cards/excessive-data-exposure/)           | `05 + 08` |
+| 高風險匯出節奏異常   | 批量匯出、異常角色、異常時段集中 | 外送風險提升           | [audit-log](../../knowledge-cards/audit-log/)、[impact-scope](../../knowledge-cards/impact-scope/)                                                     | `08`      |
+| 備份資產權限混層     | 備份讀取與正式環境權限邊界重疊   | 回復鏈轉為外送鏈       | [retention](../../knowledge-cards/retention/)、[credential](../../knowledge-cards/credential/)                                                         | `06 + 08` |
+| 跨組織交換責任鏈斷點 | 通知節奏與交易時序偏移           | 通報品質與處置速度下降 | [incident-communication-channel](../../knowledge-cards/incident-communication-channel/)、[incident-timeline](../../knowledge-cards/incident-timeline/) | `08`      |
 
 ## 下一步路由
 

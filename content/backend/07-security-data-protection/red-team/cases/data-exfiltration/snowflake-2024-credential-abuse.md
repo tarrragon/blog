@@ -27,7 +27,7 @@ weight: 71742
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：資料平台預設強制 MFA 與網路政策。
 - 日常：建立異常查詢與匯出告警。
 - 事故中：分批停用可疑憑證、限制外送並啟動調查。

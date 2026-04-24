@@ -92,7 +92,7 @@ GIL（Global Interpreter Lock）是 CPython 直譯器的一個機制，它確保
 - **I/O 密集**：使用 `threading` 即可
 - **CPU 密集**：需要使用 `multiprocessing` 繞過 GIL
 
-> **注意**：Python 3.13+ 推出了 Free-threading（無 GIL）版本，詳見 [3.8 Free-Threading](../free-threading/)
+> **注意**：Python 3.13+ 推出了 Free-threading（無 GIL）版本，詳見 [3.8 Free-Threading](../../../python-advanced/04-cpython-internals/free-threading/)
 
 ## threading 模組
 

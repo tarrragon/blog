@@ -21,9 +21,9 @@ weight: 7237
 
 ## 案例觸發參考
 
-- [Kaseya 2021](../cases/supply-chain/kaseya-vsa-2021-msp-ransomware-chain/)
-- [TeamCity 2024](../cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/)
+- [Kaseya 2021](../../cases/supply-chain/kaseya-vsa-2021-msp-ransomware-chain/)
+- [TeamCity 2024](../../cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/)
 
 ## 來源流程卡
 
-- [方案升降級流程濫用](plan-change-flow-abuse/)
+- [方案升降級流程濫用](../plan-change-flow-abuse/)

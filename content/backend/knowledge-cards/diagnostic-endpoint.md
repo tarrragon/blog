@@ -6,7 +6,7 @@ description: "說明健康檢查、診斷與調試入口如何控制暴露面"
 weight: 0
 ---
 
-Diagnostic Endpoint 的核心概念是「讓平台或工程師查詢服務狀態，但不暴露業務資料」。它包含 [health check](health-check/)、readiness、metrics snapshot、debug info 等入口。
+Diagnostic Endpoint 的核心概念是「讓平台或工程師查詢服務狀態，但不暴露業務資料」。它包含 [health check](../health-check/)、readiness、metrics snapshot、debug info 等入口。
 
 ## 概念位置
 
@@ -18,7 +18,7 @@ Diagnostic Endpoint 位在運維系統、負載平衡器、監控工具與 appli
 
 ## 接近真實網路服務的例子
 
-[health check](health-check/)、readiness 檢查、liveness 檢查、debug status、版本資訊與依賴健康狀態，都可能透過 diagnostic endpoint 暴露。
+[health check](../health-check/)、readiness 檢查、liveness 檢查、debug status、版本資訊與依賴健康狀態，都可能透過 diagnostic endpoint 暴露。
 
 ## 設計責任
 

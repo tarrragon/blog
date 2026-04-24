@@ -5,27 +5,27 @@ description: "把 structured log、metric、trace 與 profile 組成可操作的
 weight: 4
 ---
 
-Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。[Log schema](../../backend/knowledge-cards/log-schema/) 描述單次事件，[metrics](../../backend/knowledge-cards/metrics/) 描述趨勢，[trace context](../../backend/knowledge-cards/trace-context/) 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。
+Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。[Log schema](../../../backend/knowledge-cards/log-schema/) 描述單次事件，[metrics](../../../backend/knowledge-cards/metrics/) 描述趨勢，[trace context](../../../backend/knowledge-cards/trace-context/) 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。
 
 ## 本章目標
 
 學完本章後，你將能夠：
 
-1. 分辨 [log](../../backend/knowledge-cards/log)、metric、[trace](../../backend/knowledge-cards/trace) 與 profile 各自回答什麼問題
+1. 分辨 [log](../../../backend/knowledge-cards/log/)、metric、[trace](../../../backend/knowledge-cards/trace/) 與 profile 各自回答什麼問題
 2. 設計穩定的 correlation 欄位
 3. 讓 Go 服務輸出適合聚合的診斷訊號
 4. 在產生端控制敏感資料進入觀測管線
-5. 了解 [dashboard](../../backend/knowledge-cards/dashboard) 與 [alert](../../backend/knowledge-cards/alert) 為什麼需要依賴穩定欄位
+5. 了解 [dashboard](../../../backend/knowledge-cards/dashboard/) 與 [alert](../../../backend/knowledge-cards/alert/) 為什麼需要依賴穩定欄位
 
 ## 前置章節
 
-- [Go 入門：log/slog：結構化日誌](../../go/03-stdlib/slog/)
-- [Go 進階：pprof 基礎診斷流程](../03-runtime-profiling/pprof/)
-- [Go 進階：結構化日誌欄位設計](../06-production-operations/log-fields/)
-- [Go 進階：健康檢查與診斷 endpoint](../06-production-operations/health-diagnostics/)
-- [Backend：SLI / SLO](../../backend/knowledge-cards/sli-slo/)
-- [Backend：Metric Cardinality](../../backend/knowledge-cards/metric-cardinality/)
-- [Backend：Alert Runbook](../../backend/knowledge-cards/alert-runbook/)
+- [Go 入門：log/slog：結構化日誌](../../../go/03-stdlib/slog/)
+- [Go 進階：pprof 基礎診斷流程](../../03-runtime-profiling/pprof/)
+- [Go 進階：結構化日誌欄位設計](../../06-production-operations/log-fields/)
+- [Go 進階：健康檢查與診斷 endpoint](../../06-production-operations/health-diagnostics/)
+- [Backend：SLI / SLO](../../../backend/knowledge-cards/sli-slo/)
+- [Backend：Metric Cardinality](../../../backend/knowledge-cards/metric-cardinality/)
+- [Backend：Alert Runbook](../../../backend/knowledge-cards/alert-runbook/)
 
 ## 後續撰寫方向
 
@@ -44,7 +44,7 @@ Observability pipeline 的第一個要求是關聯能力。Log、metric、trace 
 - request_id
 - event_id
 - trace_id
-- [span](../../backend/knowledge-cards/span)_id
+- [span](../../../backend/knowledge-cards/span/)_id
 - user_id 或 tenant_id
 
 ## 【判讀】不同訊號回答不同問題
@@ -80,7 +80,7 @@ Observability pipeline 的第一個要求是關聯能力。Log、metric、trace 
 
 ## 【延伸】診斷和容量規劃要串在一起
 
-觀測資料不只是事後排障，也會反過來影響容量規劃與 release 判斷。當你看到 goroutine 數、[queue](../../backend/knowledge-cards/queue) lag、DB latency 或 retry rate 持續變高，就代表系統邊界已經開始吃緊。
+觀測資料不只是事後排障，也會反過來影響容量規劃與 release 判斷。當你看到 goroutine 數、[queue](../../../backend/knowledge-cards/queue/) lag、DB latency 或 retry rate 持續變高，就代表系統邊界已經開始吃緊。
 
 ## 本章不處理
 
@@ -90,7 +90,7 @@ Observability pipeline 的第一個要求是關聯能力。Log、metric、trace 
 
 這一章承接的是 Go 的結構化日誌與 runtime 診斷；如果你要先回看語言教材，可以讀：
 
-- [Go：結構化日誌](../../go/03-stdlib/slog/)
-- [Go 進階：pprof 基礎診斷流程](../03-runtime-profiling/pprof/)
-- [Go 進階：結構化日誌欄位設計](../06-production-operations/log-fields/)
-- [Go 進階：健康檢查與診斷 endpoint](../06-production-operations/health-diagnostics/)
+- [Go：結構化日誌](../../../go/03-stdlib/slog/)
+- [Go 進階：pprof 基礎診斷流程](../../03-runtime-profiling/pprof/)
+- [Go 進階：結構化日誌欄位設計](../../06-production-operations/log-fields/)
+- [Go 進階：健康檢查與診斷 endpoint](../../06-production-operations/health-diagnostics/)

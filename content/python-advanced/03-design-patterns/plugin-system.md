@@ -10,7 +10,7 @@ weight: 4
 
 ## 先備知識
 
-- 本進階系列 [模組二：元編程](../02-metaprogramming/)
+- 本進階系列 [模組二：元編程](../../02-metaprogramming/)
 - 特別是 Metaclass 與 `__init_subclass__`
 
 ## 插件架構模式

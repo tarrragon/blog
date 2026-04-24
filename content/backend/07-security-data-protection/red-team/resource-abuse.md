@@ -20,7 +20,7 @@ weight: 714
 
 1. 找昂貴操作：列出 CPU、IO、網路成本最高的路徑。
 2. 算放大倍率：評估單請求可觸發的下游數量與資料量。
-3. 看保護面：檢查 [rate limit](../../knowledge-cards/rate-limit/)、[backpressure](../../knowledge-cards/backpressure/)、[timeout](../../knowledge-cards/timeout/) 與 [load shedding](../../knowledge-cards/load-shedding/)。
+3. 看保護面：檢查 [rate limit](../../../knowledge-cards/rate-limit/)、[backpressure](../../../knowledge-cards/backpressure/)、[timeout](../../../knowledge-cards/timeout/) 與 [load shedding](../../../knowledge-cards/load-shedding/)。
 4. 排收斂路徑：定義壓力升高時的降級順序與回復條件。
 
 ## 【風險代價】可用性事件常伴隨連鎖效應
@@ -51,5 +51,5 @@ weight: 714
 
 ## 【交接點】何時路由到實作章節
 
-1. 已完成高成本路徑盤點後，交接到 [模組六：可靠性驗證流程](../../06-reliability/)。
-2. 已定義降級與回復事件節奏後，交接到 [8.3 止血、降級與回復策略](../../08-incident-response/containment-recovery-strategy/)。
+1. 已完成高成本路徑盤點後，交接到 [模組六：可靠性驗證流程](../../../06-reliability/)。
+2. 已定義降級與回復事件節奏後，交接到 [8.3 止血、降級與回復策略](../../../08-incident-response/containment-recovery-strategy/)。

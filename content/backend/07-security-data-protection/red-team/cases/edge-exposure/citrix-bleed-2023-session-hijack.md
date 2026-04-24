@@ -27,7 +27,7 @@ weight: 71733
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：定義全域 session 失效與重發機制。
 - 日常：監控異常地理位置與設備指紋切換。
 - 事故中：修補、全域失效、強制重新登入同步執行。

@@ -21,9 +21,9 @@ weight: 7235
 
 ## 案例觸發參考
 
-- [Twilio 2022](../cases/identity-access/twilio-2022-social-engineering/)
-- [Dropbox 2022](../cases/identity-access/dropbox-2022-code-repo-phishing-chain/)
+- [Twilio 2022](../../cases/identity-access/twilio-2022-social-engineering/)
+- [Dropbox 2022](../../cases/identity-access/dropbox-2022-code-repo-phishing-chain/)
 
 ## 來源流程卡
 
-- [密碼重設流程濫用](password-reset-flow-abuse/)
+- [密碼重設流程濫用](../password-reset-flow-abuse/)

@@ -27,7 +27,7 @@ weight: 71744
 
 ## 可落地的 workflow 檢查點
 
-- 共同基線：以 [runbook](../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
+- 共同基線：以 [runbook](../../../../../knowledge-cards/runbook/) 與 [incident timeline](../../../../../knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
 - 發布前：對客服工具高風險操作加上雙人核准。
 - 日常：追蹤管理工具異常操作模式。
 - 事故中：快速凍結可疑角色與工單操作權限。

@@ -21,9 +21,9 @@ weight: 84
 
 ## 問題節點（案例觸發式）
 
-| 問題節點         | 判讀訊號                       | 風險後果               | 前置控制面                                                 |
-| ---------------- | ------------------------------ | ---------------------- | ---------------------------------------------------------- |
-| 例外條件描述不足 | 只記錄同意結果，未記錄邊界條件 | 例外範圍持續擴張       | [runbook](../knowledge-cards/runbook/)                     |
-| 風險接受缺乏期限 | 例外長期存續且無重評估節點     | 長期暴露風險累積       | [incident-timeline](../knowledge-cards/incident-timeline/) |
-| 補償控制面不足   | 例外期間缺少額外監測與限制     | 事件發生時缺乏止血槓桿 | [containment](../knowledge-cards/containment/)             |
-| tripwire 未定義  | 重大變化出現時無自動重審機制   | 決策過期仍持續生效     | [incident-severity](../knowledge-cards/incident-severity/) |
+| 問題節點         | 判讀訊號                       | 風險後果               | 前置控制面                                                    |
+| ---------------- | ------------------------------ | ---------------------- | ------------------------------------------------------------- |
+| 例外條件描述不足 | 只記錄同意結果，未記錄邊界條件 | 例外範圍持續擴張       | [runbook](../../knowledge-cards/runbook/)                     |
+| 風險接受缺乏期限 | 例外長期存續且無重評估節點     | 長期暴露風險累積       | [incident-timeline](../../knowledge-cards/incident-timeline/) |
+| 補償控制面不足   | 例外期間缺少額外監測與限制     | 事件發生時缺乏止血槓桿 | [containment](../../knowledge-cards/containment/)             |
+| tripwire 未定義  | 重大變化出現時無自動重審機制   | 決策過期仍持續生效     | [incident-severity](../../knowledge-cards/incident-severity/) |

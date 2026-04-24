@@ -19,8 +19,8 @@ weight: 715
 ## 【判讀流程】設定面檢查順序
 
 1. 比對環境：比對 dev/staging/prod 的設定差異與預設值。
-2. 列高風險項：檢查 [Diagnostic Endpoint](../../knowledge-cards/diagnostic-endpoint/)、[Admin Endpoint](../../knowledge-cards/admin-endpoint/)、credential 與網路入口。
-3. 看交付閘門：檢查 [Release Gate](../../knowledge-cards/release-gate/) 是否包含高風險設定驗證。
+2. 列高風險項：檢查 [Diagnostic Endpoint](../../../knowledge-cards/diagnostic-endpoint/)、[Admin Endpoint](../../../knowledge-cards/admin-endpoint/)、credential 與網路入口。
+3. 看交付閘門：檢查 [Release Gate](../../../knowledge-cards/release-gate/) 是否包含高風險設定驗證。
 4. 看漂移：持續偵測環境偏移與權限擴張。
 
 ## 【風險代價】設定錯誤的修復成本常跨團隊
@@ -51,5 +51,5 @@ weight: 715
 
 ## 【交接點】何時路由到實作章節
 
-1. 已完成高風險設定分類後，交接到 [模組五：部署平台與網路入口](../../05-deployment-platform/)。
-2. 已定義設定漂移事件節奏後，交接到 [8.5 復盤與改進追蹤](../../08-incident-response/post-incident-review/)。
+1. 已完成高風險設定分類後，交接到 [模組五：部署平台與網路入口](../../../05-deployment-platform/)。
+2. 已定義設定漂移事件節奏後，交接到 [8.5 復盤與改進追蹤](../../../knowledge-cards/post-incident-review/)。

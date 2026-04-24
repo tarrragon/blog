@@ -7,7 +7,7 @@ weight: 2
 
 ## 大綱
 
-- [cache aside](../knowledge-cards/cache-aside) flow
-- read [miss](../knowledge-cards/cache-hit-miss) / write through
+- [cache aside](../../knowledge-cards/cache-aside/) flow
+- read [miss](../../knowledge-cards/cache-hit-miss/) / write through
 - invalidation strategy
-- [stale data](../knowledge-cards/stale-data) risk
+- [stale data](../../knowledge-cards/stale-data/) risk

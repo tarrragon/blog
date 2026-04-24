@@ -192,7 +192,7 @@ result = data * 2 + 1
 
 ### 3. 並行處理
 
-見 [3.7 並行處理](../concurrency/) 和 [3.8 Free-Threading](../free-threading/)
+見 [3.7 並行處理](../concurrency/) 和 [3.8 Free-Threading](../../../python-advanced/04-cpython-internals/free-threading/)
 
 ```python
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
@@ -257,7 +257,7 @@ gc.collect(1)
 
 ### Free-Threading
 
-詳見 [3.8 Free-Threading](../free-threading/)。
+詳見 [3.8 Free-Threading](../../../python-advanced/04-cpython-internals/free-threading/)。
 
 ## 什麼時候該優化？
 

@@ -22,7 +22,7 @@ weight: 1
 
 本章假設你已經讀過入門系列的並行處理章節：
 
-- [3.7 並行處理](../../python/03-stdlib/concurrency/) - `concurrent.futures` 基本用法
+- [3.7 並行處理](../../../python/03-stdlib/concurrency/) - `concurrent.futures` 基本用法
 
 如果你對 `ThreadPoolExecutor`、`executor.map()`、`as_completed()` 還不熟悉，建議先閱讀該章節。
 
@@ -554,10 +554,10 @@ with ProcessPoolExecutor(max_workers=8) as executor:
 
 ## 延伸閱讀
 
-- [案例研究：並行檔案檢查](case-studies/parallel-file-check/) - 完整的實作與測試
-- [案例研究：並行 Hook 驗證](case-studies/parallel-hook-validation/) - 結合 as_completed 與進度報告
-- 入門系列 [3.7 並行處理](../../python/03-stdlib/concurrency/) - 複習基礎概念
-- 進階系列 [4.3 GIL 與執行緒模型](../04-cpython-internals/gil-threading/) - 深入理解 GIL
+- [案例研究：並行檔案檢查](../case-studies/parallel-file-check/) - 完整的實作與測試
+- [案例研究：並行 Hook 驗證](../case-studies/parallel-hook-validation/) - 結合 as_completed 與進度報告
+- 入門系列 [3.7 並行處理](../../../python/03-stdlib/concurrency/) - 複習基礎概念
+- 進階系列 [4.3 GIL 與執行緒模型](../../04-cpython-internals/gil-threading/) - 深入理解 GIL
 
 ---
 

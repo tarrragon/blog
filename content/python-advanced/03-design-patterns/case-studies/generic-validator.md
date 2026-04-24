@@ -10,7 +10,7 @@ weight: 4
 
 ## 先備知識
 
-- 入門系列 [2.2 Optional、Union、泛型](../../../python/02-type-system/optional-union/)
+- 入門系列 [2.2 Optional、Union、泛型](../../../../python/02-type-system/optional-union/)
 - [3.5.1 泛型進階](../../generics/)
 
 ## 問題背景
