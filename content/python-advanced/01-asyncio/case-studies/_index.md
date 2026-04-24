@@ -10,8 +10,8 @@ weight: 10
 
 ## 案例列表
 
-| 案例                                   | 素材         | 進階技術                       | 難度   |
-| -------------------------------------- | ------------ | ------------------------------ | ------ |
+| 案例                                                                            | 素材         | 進階技術                       | 難度   |
+| ------------------------------------------------------------------------------- | ------------ | ------------------------------ | ------ |
 | [非同步 subprocess](/python-advanced/01-asyncio/case-studies/async-subprocess/) | git_utils.py | asyncio.create_subprocess_exec | ⭐⭐   |
 | [並行 I/O 操作](/python-advanced/01-asyncio/case-studies/parallel-io/)          | git_utils.py | asyncio.gather, TaskGroup      | ⭐⭐   |
 | [同步/非同步橋接](/python-advanced/01-asyncio/case-studies/sync-async-bridge/)  | 整個 lib     | run_in_executor                | ⭐⭐⭐ |

@@ -13,8 +13,8 @@ weight: 4
 
 ## 章節列表
 
-| 章節                         | 主題                                                                  | 關鍵收穫                                                                                     |
-| ---------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 章節                                                                 | 主題                                                                  | 關鍵收穫                                                                                     |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | [4.1](/go-advanced/04-architecture-boundaries/component-boundaries/) | 事件來源、處理流程與狀態邊界                                          | 用邊界拆開 reader、normalizer、processor、repository、publisher                              |
 | [4.2](/go-advanced/04-architecture-boundaries/dedup-key/)            | 事件去重與語義鍵設計                                                  | 用 domain key、時間窗口與清理策略管理重複事件                                                |
 | [4.3](/go-advanced/04-architecture-boundaries/source-of-truth/)      | [Source of Truth](/backend/knowledge-cards/source-of-truth)：狀態邊界 | 集中狀態轉移、保護可變資料、設計 [projection](/backend/knowledge-cards/projection)           |

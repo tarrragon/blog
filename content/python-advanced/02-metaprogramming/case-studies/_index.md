@@ -10,8 +10,8 @@ weight: 10
 
 ## 案例列表
 
-| 案例                                   | 素材              | 進階技術               | 難度   |
-| -------------------------------------- | ----------------- | ---------------------- | ------ |
+| 案例                                                                                    | 素材              | 進階技術               | 難度   |
+| --------------------------------------------------------------------------------------- | ----------------- | ---------------------- | ------ |
 | [宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    | ⭐⭐   |
 | [自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)     | hook_validator.py | Metaclass              | ⭐⭐⭐ |
 | [類似 Django Field](/python-advanced/02-metaprogramming/case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass | ⭐⭐⭐ |

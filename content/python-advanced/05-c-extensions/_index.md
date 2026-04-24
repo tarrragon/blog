@@ -16,8 +16,8 @@ weight: 5
 
 ## 章節列表
 
-| 章節                | 主題           | 關鍵收穫             |
-| ------------------- | -------------- | -------------------- |
+| 章節                                                 | 主題           | 關鍵收穫             |
+| ---------------------------------------------------- | -------------- | -------------------- |
 | [5.1](/python-advanced/05-c-extensions/ctypes-cffi/) | ctypes 與 cffi | 動態綁定 C 函式庫    |
 | [5.2](/python-advanced/05-c-extensions/cython/)      | Cython         | Python 語法的 C 速度 |
 | [5.3](/python-advanced/05-c-extensions/pybind11/)    | pybind11       | 現代 C++ 綁定        |

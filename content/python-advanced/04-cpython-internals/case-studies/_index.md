@@ -10,8 +10,8 @@ weight: 100
 
 ## 案例列表
 
-| 案例                               | 素材                     | 學習重點                              |
-| ---------------------------------- | ------------------------ | ------------------------------------- |
+| 案例                                                                                  | 素材                     | 學習重點                              |
+| ------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------- |
 | [效能分析實戰](/python-advanced/04-cpython-internals/case-studies/profiling/)         | markdown_link_checker.py | cProfile、line_profiler、效能瓶頸定位 |
 | [記憶體優化](/python-advanced/04-cpython-internals/case-studies/memory-optimization/) | config_loader.py         | __slots__、weakref、記憶體佔用分析    |
 

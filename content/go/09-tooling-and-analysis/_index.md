@@ -13,8 +13,8 @@ weight: 9
 
 ## 章節列表
 
-| 章節                              | 主題                                             | 關鍵收穫                                                                        |
-| --------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| 章節                                                          | 主題                                             | 關鍵收穫                                                                        |
+| ------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
 | [9.0](/go/09-tooling-and-analysis/overview/)                  | Go 在工具鏈生態的位置                            | 從後端服務切換到工具開發的心態調整；CLI vs service 的結構差異                   |
 | [9.1](/go/09-tooling-and-analysis/stdlib-flag-subcommands/)   | stdlib `flag` 做 subcommand CLI                  | `main` + `cmd/` + `internal/` 佈局；`flag.NewFlagSet` 分派；什麼時候該上 cobra  |
 | [9.2](/go/09-tooling-and-analysis/goldmark-ast-basics/)       | 第三方 parser 整合：goldmark AST 入門            | `ast.Walk` visitor 模式；block vs inline 節點；byte offset 定位                 |

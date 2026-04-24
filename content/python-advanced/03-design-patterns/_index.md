@@ -37,8 +37,8 @@ weight: 3
 
 ## 章節列表
 
-| 章節                     | 主題               | 關鍵收穫               |
-| ------------------------ | ------------------ | ---------------------- |
+| 章節                                                         | 主題               | 關鍵收穫               |
+| ------------------------------------------------------------ | ------------------ | ---------------------- |
 | [3.1](/python-advanced/03-design-patterns/generics/)         | 泛型進階           | 建立型別安全的抽象層   |
 | [3.2](/python-advanced/03-design-patterns/exception-design/) | 異常設計架構       | 設計大型專案的錯誤處理 |
 | [3.3](/python-advanced/03-design-patterns/context-managers/) | 進階上下文管理     | 複雜資源的優雅管理     |
@@ -50,8 +50,8 @@ weight: 3
 
 基於 `.claude/lib` 實際程式碼的進階案例：
 
-| 案例                                              | 素材              | 學習重點                  |
-| ------------------------------------------------- | ----------------- | ------------------------- |
+| 案例                                                                                  | 素材              | 學習重點                  |
+| ------------------------------------------------------------------------------------- | ----------------- | ------------------------- |
 | [快取生命週期管理](/python-advanced/03-design-patterns/case-studies/cache-lifecycle/) | config_loader.py  | Context Manager           |
 | [插件架構設計](/python-advanced/03-design-patterns/case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制       |
 | [異常設計架構](/python-advanced/03-design-patterns/case-studies/exception-hierarchy/) | hook_io.py        | 異常階層 + ExceptionGroup |

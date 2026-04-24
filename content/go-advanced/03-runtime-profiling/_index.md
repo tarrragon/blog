@@ -11,8 +11,8 @@ Runtime 診斷的核心目標是用資料判斷服務壓力來源。Go 服務長
 
 ## 章節列表
 
-| 章節                    | 主題                       | 關鍵收穫                                                                                                |
-| ----------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 章節                                                      | 主題                       | 關鍵收穫                                                                                                |
+| --------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
 | [3.1](/go-advanced/03-runtime-profiling/gc-memory-limit/) | GC 與 memory limit         | 理解 heap、GOGC、memory limit 與 runtime [metrics](/backend/knowledge-cards/metrics) 的關係             |
 | [3.2](/go-advanced/03-runtime-profiling/pprof/)           | pprof 基礎診斷流程         | 用 heap、goroutine、CPU、[trace](/backend/knowledge-cards/trace) profile 定位壓力來源                   |
 | [3.3](/go-advanced/03-runtime-profiling/goroutine-leak/)  | goroutine leak 偵測        | 從 stack pattern 回到 context、close、[deadline](/backend/knowledge-cards/deadline) 與 ticker lifecycle |

@@ -16,8 +16,8 @@ weight: 6
 
 ## 章節列表
 
-| 章節                        | 主題              | 關鍵收穫             |
-| --------------------------- | ----------------- | -------------------- |
+| 章節                                                            | 主題              | 關鍵收穫             |
+| --------------------------------------------------------------- | ----------------- | -------------------- |
 | [6.1](/python-advanced/06-rust-extensions/why-rust/)            | 為什麼選擇 Rust？ | Rust vs C/C++ 的比較 |
 | [6.2](/python-advanced/06-rust-extensions/pyo3-basics/)         | PyO3 基礎         | Rust 的 Python 綁定  |
 | [6.3](/python-advanced/06-rust-extensions/maturin-workflow/)    | Maturin 開發流程  | 建構與發布工具       |

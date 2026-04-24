@@ -11,8 +11,8 @@ weight: 2
 
 ## 章節列表
 
-| 章節                         | 主題                                                                 | 關鍵收穫                                                                                   |
-| ---------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 章節                                                              | 主題                                                                 | 關鍵收穫                                                                                   |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | [2.1](/go-advanced/02-networking-websocket/read-write-pump/)      | read pump / write pump 模式                                          | 讓單一連線的讀取、寫入與清理責任可推理                                                     |
 | [2.2](/go-advanced/02-networking-websocket/heartbeat-deadline/)   | heartbeat、[deadline](/backend/knowledge-cards/deadline/) 與連線清理 | 用 ping/pong、[deadline](/backend/knowledge-cards/deadline) 與統一 unregister 偵測失效連線 |
 | [2.3](/go-advanced/02-networking-websocket/subscription-routing/) | 訂閱模型與訊息路由                                                   | 把 client action 轉成可測的 command 與訂閱狀態                                             |
@@ -50,8 +50,8 @@ WebSocket 章節依照連線生命週期拆分。Read/write pump、heartbeat、s
 
 如果只想處理單一問題，可以這樣查：
 
-| 問題                              | 優先閱讀                                              |
-| --------------------------------- | ----------------------------------------------------- |
+| 問題                              | 優先閱讀                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
 | concurrent write 或讀寫責任混亂   | [read pump / write pump 模式](/go-advanced/02-networking-websocket/read-write-pump/)       |
 | 連線失效沒有被清理                | [heartbeat、deadline 與連線清理](/go-advanced/02-networking-websocket/heartbeat-deadline/) |
 | action、payload、訂閱狀態混在一起 | [訂閱模型與訊息路由](/go-advanced/02-networking-websocket/subscription-routing/)           |

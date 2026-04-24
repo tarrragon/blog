@@ -11,8 +11,8 @@ weight: 6
 
 ## 章節列表
 
-| 章節                       | 主題                                                                               | 關鍵收穫                                                                                       |
-| -------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| 章節                                                             | 主題                                                                               | 關鍵收穫                                                                                       |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | [6.1](/go-advanced/06-production-operations/graceful-shutdown/)  | [graceful shutdown](/backend/knowledge-cards/graceful-shutdown) 與 signal handling | 用 signal、context、[timeout](/backend/knowledge-cards/timeout/) 與 owner cleanup 停止服務     |
 | [6.2](/go-advanced/06-production-operations/health-diagnostics/) | 健康檢查與診斷 endpoint                                                            | 區分 health、[readiness](/backend/knowledge-cards/readiness/)、diagnostics 與 status code 合約 |
 | [6.3](/go-advanced/06-production-operations/log-fields/)         | 結構化日誌欄位設計                                                                 | 用穩定欄位讓 log 可 grep、可聚合、可追蹤                                                       |

@@ -10,8 +10,8 @@ weight: 10
 
 ## 案例列表
 
-| 案例                                 | 素材              | 進階技術                  | 難度   |
-| ------------------------------------ | ----------------- | ------------------------- | ------ |
+| 案例                                                                                  | 素材              | 進階技術                  | 難度   |
+| ------------------------------------------------------------------------------------- | ----------------- | ------------------------- | ------ |
 | [快取生命週期管理](/python-advanced/03-design-patterns/case-studies/cache-lifecycle/) | config_loader.py  | Context Manager           | ⭐⭐   |
 | [插件架構設計](/python-advanced/03-design-patterns/case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制       | ⭐⭐⭐ |
 | [異常設計架構](/python-advanced/03-design-patterns/case-studies/exception-hierarchy/) | hook_io.py        | 異常階層 + ExceptionGroup | ⭐⭐   |

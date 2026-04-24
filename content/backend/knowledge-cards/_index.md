@@ -12,8 +12,8 @@ weight: -1
 
 ## 資料與一致性
 
-| 卡片                                          | 核心問題                           | 常見出現位置                         |
-| --------------------------------------------- | ---------------------------------- | ------------------------------------ |
+| 卡片                                                                   | 核心問題                           | 常見出現位置                         |
+| ---------------------------------------------------------------------- | ---------------------------------- | ------------------------------------ |
 | [Database](/backend/knowledge-cards/database/)                         | 正式狀態如何保存、查詢與保護       | source of truth、transaction、backup |
 | [Source of Truth](/backend/knowledge-cards/source-of-truth/)           | 哪個位置承擔正式資料判斷           | database、cache、search index        |
 | [Search Index](/backend/knowledge-cards/search-index/)                 | 搜尋體驗如何有獨立讀取模型         | full-text、filter、ranking           |
@@ -38,8 +38,8 @@ weight: -1
 
 ## 快取與流量
 
-| 卡片                                          | 核心問題                              | 常見出現位置                 |
-| --------------------------------------------- | ------------------------------------- | ---------------------------- |
+| 卡片                                                                   | 核心問題                              | 常見出現位置                 |
+| ---------------------------------------------------------------------- | ------------------------------------- | ---------------------------- |
 | [Timeout](/backend/knowledge-cards/timeout/)                           | 單一步驟最久可以等待多久              | API、database、broker        |
 | [Deadline](/backend/knowledge-cards/deadline/)                         | 整體操作何時必須完成                  | request、job、workflow       |
 | [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)   | 重試間隔如何逐步拉長                  | retry、API、worker           |
@@ -89,8 +89,8 @@ weight: -1
 
 ## 入口與部署
 
-| 卡片                                        | 核心問題                                 | 常見出現位置                          |
-| ------------------------------------------- | ---------------------------------------- | ------------------------------------- |
+| 卡片                                                                 | 核心問題                                 | 常見出現位置                          |
+| -------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------- |
 | [Service Endpoint](/backend/knowledge-cards/endpoint/)               | 服務入口如何被路由與存取                 | API、service discovery、internal      |
 | [Public API Endpoint](/backend/knowledge-cards/public-api-endpoint/) | 面向 client 的穩定對外入口               | product API、SDK、client              |
 | [API Gateway](/backend/knowledge-cards/api-gateway/)                 | 外部流量如何集中路由、驗證與轉發         | auth、rate limit、routing、request id |
@@ -111,8 +111,8 @@ weight: -1
 
 ## 通訊協定
 
-| 卡片                                                    | 核心問題                              | 常見出現位置                       |
-| ------------------------------------------------------- | ------------------------------------- | ---------------------------------- |
+| 卡片                                                                             | 核心問題                              | 常見出現位置                       |
+| -------------------------------------------------------------------------------- | ------------------------------------- | ---------------------------------- |
 | [Communication Protocol](/backend/knowledge-cards/protocol/)                     | 不同系統如何對齊資料交換與錯誤語意    | request/response、message、webhook |
 | [Request/Response Protocol](/backend/knowledge-cards/request-response-protocol/) | 同步呼叫如何對齊互動規則              | HTTP API、gRPC、RPC                |
 | [Message Protocol](/backend/knowledge-cards/message-protocol/)                   | queue / stream 訊息如何對齊格式與語意 | event、job、delivery               |
@@ -120,8 +120,8 @@ weight: -1
 
 ## 邊界與治理
 
-| 卡片                                                    | 核心問題                                      | 常見出現位置                                                              |
-| ------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------- |
+| 卡片                                                                             | 核心問題                                      | 常見出現位置                                                              |
+| -------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------- |
 | [Boundary Contract](/backend/knowledge-cards/contract/)                          | 邊界兩端如何維持一致約定                      | API contract、deployment contract、queue contract、load balancer contract |
 | [API Contract](/backend/knowledge-cards/api-contract/)                           | request / response 如何維持相容               | client、SDK、public API                                                   |
 | [Deployment Contract](/backend/knowledge-cards/deployment-contract/)             | application 與 platform 如何對齊生命週期      | readiness、shutdown、rollout                                              |
@@ -140,8 +140,8 @@ weight: -1
 
 ## 訊息與事件
 
-| 卡片                                          | 核心問題                                    | 常見出現位置                       |
-| --------------------------------------------- | ------------------------------------------- | ---------------------------------- |
+| 卡片                                                                   | 核心問題                                    | 常見出現位置                       |
+| ---------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------- |
 | [Broker](/backend/knowledge-cards/broker/)                             | 訊息離開單一 process 後由誰保存、路由與交付 | queue、event、worker、stream       |
 | [Topic](/backend/knowledge-cards/topic/)                               | 事件如何依主題分流給不同訂閱者              | broker、event、stream              |
 | [Pub/Sub](/backend/knowledge-cards/pub-sub/)                           | 訊息如何即時分發給多個訂閱者                | realtime、notification、broadcast  |
@@ -182,8 +182,8 @@ weight: -1
 
 ## 遷移與資料同步
 
-| 卡片                                        | 核心問題                         | 常見出現位置                  |
-| ------------------------------------------- | -------------------------------- | ----------------------------- |
+| 卡片                                                                 | 核心問題                         | 常見出現位置                  |
+| -------------------------------------------------------------------- | -------------------------------- | ----------------------------- |
 | [Online Migration](/backend/knowledge-cards/online-migration/)       | 服務持續接流量時如何遷移資料     | database、release             |
 | [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/) | 正式流量如何切到新路徑           | migration、feature flag       |
 | [Fallback Plan](/backend/knowledge-cards/fallback-plan/)             | 變更失敗時如何回到可接受狀態     | release、migration            |
@@ -199,8 +199,8 @@ weight: -1
 
 ## 可觀測性與可靠性
 
-| 卡片                                        | 核心問題                              | 常見出現位置                        |
-| ------------------------------------------- | ------------------------------------- | ----------------------------------- |
+| 卡片                                                                 | 核心問題                              | 常見出現位置                        |
+| -------------------------------------------------------------------- | ------------------------------------- | ----------------------------------- |
 | [Log](/backend/knowledge-cards/log/)                                 | 單一事件如何留下可搜尋的上下文        | incident、debug、audit              |
 | [Log Schema](/backend/knowledge-cards/log-schema/)                   | log 欄位如何支援搜尋與關聯            | structured log、incident            |
 | [Metrics](/backend/knowledge-cards/metrics/)                         | 指標如何描述趨勢、容量與健康          | Prometheus、dashboard               |
@@ -239,8 +239,8 @@ weight: -1
 
 ## 事故處理與復盤
 
-| 卡片                                                              | 核心問題                       | 常見出現位置                         |
-| ----------------------------------------------------------------- | ------------------------------ | ------------------------------------ |
+| 卡片                                                                                       | 核心問題                       | 常見出現位置                         |
+| ------------------------------------------------------------------------------------------ | ------------------------------ | ------------------------------------ |
 | [On-Call](/backend/knowledge-cards/on-call/)                                               | 值班制度如何承接告警與事故流程 | paging、handover、incident           |
 | [Handover Protocol](/backend/knowledge-cards/handover-protocol/)                           | 值班或事故責任如何安全交接     | on-call、escalation、incident        |
 | [Playbook](/backend/knowledge-cards/playbook/)                                             | 場景化處置如何快速啟動與執行   | incident workflow、recovery          |
@@ -263,8 +263,8 @@ weight: -1
 
 ## 資安與資料保護
 
-| 卡片                                                                    | 核心問題                             | 常見出現位置                     |
-| ----------------------------------------------------------------------- | ------------------------------------ | -------------------------------- |
+| 卡片                                                                                             | 核心問題                             | 常見出現位置                     |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------ | -------------------------------- |
 | [Authorization](/backend/knowledge-cards/authorization/)                                         | 誰能對哪些資源執行哪些操作           | RBAC、ABAC、tenant               |
 | [Authentication](/backend/knowledge-cards/authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS             |
 | [Credential](/backend/knowledge-cards/credential/)                                               | 身分與系統存取用秘密如何保存與輪替   | API key、password、private key   |

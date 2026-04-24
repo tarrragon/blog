@@ -45,8 +45,8 @@ class Parser(ABC):
 
 ## 章節列表
 
-| 章節                   | 主題                         | 關鍵收穫              |
-| ---------------------- | ---------------------------- | --------------------- |
+| 章節                                                       | 主題                         | 關鍵收穫              |
+| ---------------------------------------------------------- | ---------------------------- | --------------------- |
 | [2.1](/python-advanced/02-metaprogramming/descriptors/)    | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
 | [2.2](/python-advanced/02-metaprogramming/metaclasses/)    | Metaclass 設計與應用         | 控制類別的建立過程    |
 | [2.3](/python-advanced/02-metaprogramming/class-creation/) | 類別裝飾器與動態類別         | @dataclass 的實現原理 |
@@ -56,8 +56,8 @@ class Parser(ABC):
 
 基於 `.claude/lib` 實際程式碼的進階案例：
 
-| 案例                                                | 素材              | 學習重點               |
-| --------------------------------------------------- | ----------------- | ---------------------- |
+| 案例                                                                                    | 素材              | 學習重點               |
+| --------------------------------------------------------------------------------------- | ----------------- | ---------------------- |
 | [宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    |
 | [自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)     | hook_validator.py | Metaclass              |
 | [類似 Django Field](/python-advanced/02-metaprogramming/case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass |

@@ -16,8 +16,8 @@ weight: 7
 
 ## 章節列表
 
-| 章節                     | 主題                    | 關鍵收穫                      |
-| ------------------------ | ----------------------- | ----------------------------- |
+| 章節                                                   | 主題                    | 關鍵收穫                      |
+| ------------------------------------------------------ | ----------------------- | ----------------------------- |
 | [7.1](/python-advanced/07-packaging/pyproject-toml/)   | pyproject.toml 完整指南 | 現代設定標準                  |
 | [7.2](/python-advanced/07-packaging/build-systems/)    | 建構系統比較            | setuptools vs Poetry vs Hatch |
 | [7.3](/python-advanced/07-packaging/distribution/)     | 發布到 PyPI             | 建構與上傳流程                |
