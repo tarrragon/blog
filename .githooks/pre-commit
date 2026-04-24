@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Blog pre-commit hook — runs mdtools against staged markdown files.
+#
+# Pipeline:
+#   1. fmt --fix on each staged .md; re-stage if changed.
+#   2. lint on all staged .md; abort commit on error.
+#   3. cards on content/ globally; abort on error.
+#
+# Bypass with `git commit --no-verify` only when truly necessary.
+# See content/posts/markdown-writing-spec.md for the rule contract.
+
+set -euo pipefail
+
+MDTOOLS_BIN="bin/mdtools"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Fast exit if no staged .md files.
+staged_md=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.md$' || true)
+if [[ -z "$staged_md" ]]; then
+    exit 0
+fi
+
+# Rebuild mdtools if sources newer than binary (or binary missing).
+if [[ ! -x "$MDTOOLS_BIN" ]] || [[ -n "$(find scripts/mdtools -type f -name '*.go' -newer "$MDTOOLS_BIN" 2>/dev/null || true)" ]]; then
+    echo "[pre-commit] rebuilding mdtools..."
+    if ! (cd scripts/mdtools && go build -o "$REPO_ROOT/$MDTOOLS_BIN" .); then
+        echo "[pre-commit] mdtools build failed; aborting commit" >&2
+        exit 1
+    fi
+fi
+
+# --- 1. fmt --fix + re-stage -----------------------------------------------
+echo "[pre-commit] mdtools fmt --fix on staged markdown"
+restaged=0
+while IFS= read -r f; do
+    [[ -z "$f" ]] && continue
+    before=$(git hash-object "$f" 2>/dev/null || echo "")
+    "$MDTOOLS_BIN" fmt --fix "$f" >/dev/null
+    after=$(git hash-object "$f" 2>/dev/null || echo "")
+    if [[ "$before" != "$after" ]]; then
+        git add "$f"
+        restaged=$((restaged + 1))
+    fi
+done <<< "$staged_md"
+if [[ "$restaged" -gt 0 ]]; then
+    echo "[pre-commit] re-staged $restaged file(s) after fmt --fix"
+fi
+
+# --- 2. lint on staged set -------------------------------------------------
+echo "[pre-commit] mdtools lint on staged markdown"
+lint_args=()
+while IFS= read -r f; do
+    [[ -z "$f" ]] && continue
+    lint_args+=("$f")
+done <<< "$staged_md"
+if ! "$MDTOOLS_BIN" lint "${lint_args[@]}"; then
+    echo "[pre-commit] lint errors present; fix and re-stage" >&2
+    exit 1
+fi
+
+# --- 3. cards on full content/ --------------------------------------------
+# Cross-file checks (orphan, backlinks) require the whole graph, so we
+# scan content/ rather than only the staged subset.
+echo "[pre-commit] mdtools cards on content/"
+if ! "$MDTOOLS_BIN" cards content/; then
+    echo "[pre-commit] cards check failed" >&2
+    exit 1
+fi
+
+exit 0

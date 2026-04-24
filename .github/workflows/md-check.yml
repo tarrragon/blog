@@ -1,0 +1,34 @@
+name: md-check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  md-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: scripts/mdtools/go.mod
+          cache-dependency-path: scripts/mdtools/go.sum
+
+      - name: Build mdtools
+        run: |
+          mkdir -p bin
+          (cd scripts/mdtools && go build -o ../../bin/mdtools .)
+
+      - name: mdtools fmt --check
+        run: ./bin/mdtools fmt --check content/
+
+      - name: mdtools lint
+        run: ./bin/mdtools lint content/
+
+      - name: mdtools cards
+        run: ./bin/mdtools cards content/
