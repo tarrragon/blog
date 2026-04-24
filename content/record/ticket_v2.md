@@ -2960,13 +2960,13 @@ Review 發現偏差
 實現書籍資訊豐富化功能
 
 ## Ticket 索引
-- Ticket #1: 定義 IBookInfoEnrichmentService 介面 → [詳細日誌](v0.12.7-ticket-001.md)
-- Ticket #2: 撰寫 BookInfoEnrichmentService 測試 → [詳細日誌](v0.12.7-ticket-002.md)
-- Ticket #3: 實作 GoogleBooksEnrichmentService → [詳細日誌](v0.12.7-ticket-003.md)
+- Ticket #1: 定義 IBookInfoEnrichmentService 介面 → [詳細日誌](/record/ticket_v2/v0.12.7-ticket-001.md)
+- Ticket #2: 撰寫 BookInfoEnrichmentService 測試 → [詳細日誌](/record/ticket_v2/v0.12.7-ticket-002.md)
+- Ticket #3: 實作 GoogleBooksEnrichmentService → [詳細日誌](/record/ticket_v2/v0.12.7-ticket-003.md)
 
 ## 設計決策索引
-- 決策 #1: 選擇 Strategy Pattern 處理多資料源 → [詳細日誌](v0.12.7-design-decisions.md#決策1)
-- 決策 #2: 使用 Riverpod 管理服務註冊 → [詳細日誌](v0.12.7-design-decisions.md#決策2)
+- 決策 #1: 選擇 Strategy Pattern 處理多資料源 → [詳細日誌](/record/ticket_v2/v0.12.7-design-decisions.md#決策1)
+- 決策 #2: 使用 Riverpod 管理服務註冊 → [詳細日誌](/record/ticket_v2/v0.12.7-design-decisions.md#決策2)
 
 ## 版本總結
 - 完成 12 個 Ticket
@@ -3129,8 +3129,8 @@ Review 發現偏差
 
 ```markdown
 ## 設計決策索引
-- 決策 #1: 選擇 Strategy Pattern（✅ 最終決策）→ [詳細日誌](v0.12.7-design-decisions.md#決策1)
-- 決策 #2: 使用 Riverpod 管理服務（✅ 最終決策）→ [詳細日誌](v0.12.7-design-decisions.md#決策2)
+- 決策 #1: 選擇 Strategy Pattern（✅ 最終決策）→ [詳細日誌](/record/ticket_v2/v0.12.7-design-decisions.md#決策1)
+- 決策 #2: 使用 Riverpod 管理服務（✅ 最終決策）→ [詳細日誌](/record/ticket_v2/v0.12.7-design-decisions.md#決策2)
 - ~~決策 #3: 使用 GetIt 管理服務~~（❌ 已廢棄，改用決策 #2）
 ```
 
@@ -3177,11 +3177,11 @@ Review 發現偏差
 ## 設計決策索引
 
 ### 服務層設計
-- 決策 #1: 選擇 Strategy Pattern（✅ 最終決策）→ [詳細](v0.12.7-design-decisions.md#決策1)
-- 決策 #2: 使用 Riverpod 管理服務（✅ 最終決策）→ [詳細](v0.12.7-design-decisions.md#決策2)
+- 決策 #1: 選擇 Strategy Pattern（✅ 最終決策）→ [詳細](/record/ticket_v2/v0.12.7-design-decisions.md#決策1)
+- 決策 #2: 使用 Riverpod 管理服務（✅ 最終決策）→ [詳細](/record/ticket_v2/v0.12.7-design-decisions.md#決策2)
 
 ### 資料層設計
-- 決策 #4: 選擇 SQLite 儲存（✅ 最終決策）→ [詳細](v0.12.7-design-decisions.md#決策4)
+- 決策 #4: 選擇 SQLite 儲存（✅ 最終決策）→ [詳細](/record/ticket_v2/v0.12.7-design-decisions.md#決策4)
 ```
 
 **步驟 3：閱讀設計決策詳細內容**
@@ -3653,13 +3653,13 @@ Ticket 派工前檢查
 ## Ticket 索引
 
 ### Domain 層
-- Ticket #1: 定義 IBookInfoEnrichmentService 介面 → [詳細](v0.12.7-ticket-001.md)
-- Ticket #2: 定義 IEnrichmentStrategy 介面 → [詳細](v0.12.7-ticket-002.md)
-- Ticket #3: 定義 EnrichmentProgress Value Object → [詳細](v0.12.7-ticket-003.md)
+- Ticket #1: 定義 IBookInfoEnrichmentService 介面 → [詳細](/record/ticket_v2/v0.12.7-ticket-001.md)
+- Ticket #2: 定義 IEnrichmentStrategy 介面 → [詳細](/record/ticket_v2/v0.12.7-ticket-002.md)
+- Ticket #3: 定義 EnrichmentProgress Value Object → [詳細](/record/ticket_v2/v0.12.7-ticket-003.md)
 
 ### Application 層
-- Ticket #4: 定義 EnrichBookUseCase 介面 → [詳細](v0.12.7-ticket-004.md)
-- Ticket #5: 實作 EnrichBookInteractor → [詳細](v0.12.7-ticket-005.md)
+- Ticket #4: 定義 EnrichBookUseCase 介面 → [詳細](/record/ticket_v2/v0.12.7-ticket-004.md)
+- Ticket #5: 實作 EnrichBookInteractor → [詳細](/record/ticket_v2/v0.12.7-ticket-005.md)
 ...
 ```
 
@@ -3708,11 +3708,11 @@ Ticket 派工前檢查
 ## 設計決策索引
 
 ### 服務層設計
-- 決策 #1: 選擇 Strategy Pattern（✅ 最終決策）→ [詳細](v0.12.7-design-decisions.md#決策1)
-- 決策 #2: 使用 Riverpod 管理服務（✅ 最終決策）→ [詳細](v0.12.7-design-decisions.md#決策2)
+- 決策 #1: 選擇 Strategy Pattern（✅ 最終決策）→ [詳細](/record/ticket_v2/v0.12.7-design-decisions.md#決策1)
+- 決策 #2: 使用 Riverpod 管理服務（✅ 最終決策）→ [詳細](/record/ticket_v2/v0.12.7-design-decisions.md#決策2)
 
 ### 資料來源設計
-- 決策 #3: Google Books 為主要資料源（✅ 最終決策）→ [詳細](v0.12.7-design-decisions.md#決策3)
+- 決策 #3: Google Books 為主要資料源（✅ 最終決策）→ [詳細](/record/ticket_v2/v0.12.7-design-decisions.md#決策3)
 - ~~決策 #4: 豆瓣讀書為備用資料源~~（❌ 已廢棄，API 限制）
 ```
 

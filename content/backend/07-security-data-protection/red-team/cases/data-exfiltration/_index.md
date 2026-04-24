@@ -9,10 +9,10 @@ weight: 7174
 
 ## 案例列表
 
-- [LastPass 2022：備份路徑與鏈式入侵](lastpass-2022-backup-chain/)
-- [Snowflake 2024：憑證濫用與資料竊取](snowflake-2024-credential-abuse/)
-- [Change Healthcare 2024：資料事件轉為營運中斷](change-healthcare-2024-ops-impact/)
-- [Mailchimp 2023：支援工具路徑與客戶資料風險](mailchimp-2023-support-tool-abuse/)
-- [VMware ESXiArgs 2023：虛擬化平台勒索回復壓力](vmware-esxiargs-2023-ransomware-recovery-pressure/)
-- [Progress WS_FTP 2023：檔案服務入口與資料外送](progress-wsftp-2023-file-service-breach/)
-- [GoAnywhere MFT 2023：傳輸中樞被利用的外送鏈](goanywhere-mft-2023-exfiltration-chain/)
+- [LastPass 2022：備份路徑與鏈式入侵](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/)
+- [Snowflake 2024：憑證濫用與資料竊取](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
+- [Change Healthcare 2024：資料事件轉為營運中斷](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/)
+- [Mailchimp 2023：支援工具路徑與客戶資料風險](/backend/07-security-data-protection/red-team/cases/data-exfiltration/mailchimp-2023-support-tool-abuse/)
+- [VMware ESXiArgs 2023：虛擬化平台勒索回復壓力](/backend/07-security-data-protection/red-team/cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/)
+- [Progress WS_FTP 2023：檔案服務入口與資料外送](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)
+- [GoAnywhere MFT 2023：傳輸中樞被利用的外送鏈](/backend/07-security-data-protection/red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)

@@ -11,9 +11,9 @@ layout: "list"
 
 **規範與契約** — agent / 工具鏈行為的單一真實來源，被 `AGENTS.md` 或其他 config 引用：
 
-- [Blog Markdown 寫作規範與 mdtools 檢查](markdown-writing-spec/) — 排版規則、反釣魚校驗、卡片雙向完整性的工具化契約
-- [什麼是 AST — 從字串到語法樹的視角轉換](what-is-ast/) — 為什麼 blog 選 AST-based linter 而非 regex
-- [mdtools：Go + goldmark 的 markdown 工具鏈設計](mdtools-design/) — 子命令架構、語言選擇 tripwire、pre-commit 與 CI 整合
+- [Blog Markdown 寫作規範與 mdtools 檢查](/posts/markdown-writing-spec/) — 排版規則、反釣魚校驗、卡片雙向完整性的工具化契約
+- [什麼是 AST — 從字串到語法樹的視角轉換](/posts/what-is-ast/) — 為什麼 blog 選 AST-based linter 而非 regex
+- [mdtools：Go + goldmark 的 markdown 工具鏈設計](/posts/mdtools-design/) — 子命令架構、語言選擇 tripwire、pre-commit 與 CI 整合
 
 **Hugo 與 Markdown 操作經驗** — 具體寫作與渲染問題的踩坑紀錄。
 

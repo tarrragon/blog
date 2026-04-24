@@ -47,10 +47,10 @@ class Parser(ABC):
 
 | 章節                   | 主題                         | 關鍵收穫              |
 | ---------------------- | ---------------------------- | --------------------- |
-| [2.1](descriptors/)    | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
-| [2.2](metaclasses/)    | Metaclass 設計與應用         | 控制類別的建立過程    |
-| [2.3](class-creation/) | 類別裝飾器與動態類別         | @dataclass 的實現原理 |
-| [2.4](introspection/)  | 反射與 inspect 模組          | 程式檢視自身的能力    |
+| [2.1](/python-advanced/02-metaprogramming/descriptors/)    | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
+| [2.2](/python-advanced/02-metaprogramming/metaclasses/)    | Metaclass 設計與應用         | 控制類別的建立過程    |
+| [2.3](/python-advanced/02-metaprogramming/class-creation/) | 類別裝飾器與動態類別         | @dataclass 的實現原理 |
+| [2.4](/python-advanced/02-metaprogramming/introspection/)  | 反射與 inspect 模組          | 程式檢視自身的能力    |
 
 ## 案例研究
 
@@ -58,9 +58,9 @@ class Parser(ABC):
 
 | 案例                                                | 素材              | 學習重點               |
 | --------------------------------------------------- | ----------------- | ---------------------- |
-| [宣告式驗證](case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    |
-| [自動註冊機制](case-studies/auto-registration/)     | hook_validator.py | Metaclass              |
-| [類似 Django Field](case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass |
+| [宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    |
+| [自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)     | hook_validator.py | Metaclass              |
+| [類似 Django Field](/python-advanced/02-metaprogramming/case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass |
 
 ## 先備知識
 

@@ -60,7 +60,7 @@ class HookValidator:
 
     # 命名規範模式
     VALID_NAME_PATTERNS = [
-        r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$",
+        r"^[a-z0-9](/python-advanced/08-practical-optimization/case-studies/regex-precompile/[a-z0-9\-_]*[a-z0-9])?\.py$",
     ]
 
     # Hook 類型推測模式
@@ -265,7 +265,7 @@ class HookValidatorOptimized:
 
     # 預編譯的命名模式
     VALID_NAME_PATTERNS: List[Pattern] = [
-        re.compile(r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$"),
+        re.compile(r"^[a-z0-9](/python-advanced/08-practical-optimization/case-studies/regex-precompile/[a-z0-9\-_]*[a-z0-9])?\.py$"),
     ]
 
     # 預編譯的 Hook 類型推測模式
@@ -393,7 +393,7 @@ class HookValidatorOptimized:
 
     # 命名模式
     VALID_NAME_PATTERN: Pattern = re.compile(
-        r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$"
+        r"^[a-z0-9](/python-advanced/08-practical-optimization/case-studies/regex-precompile/[a-z0-9\-_]*[a-z0-9])?\.py$"
     )
 
     # Hook 類型推測
@@ -569,7 +569,7 @@ STRING_PATTERNS = [
     r"create_posttooluse_output\s*\(",
     r'print\s*\(\s*json\.dumps\s*\(',
     r'sys\.stdout\.write\s*\(\s*json\.dumps\s*\(',
-    r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$",
+    r"^[a-z0-9](/python-advanced/08-practical-optimization/case-studies/regex-precompile/[a-z0-9\-_]*[a-z0-9])?\.py$",
 ]
 
 # 預編譯版本

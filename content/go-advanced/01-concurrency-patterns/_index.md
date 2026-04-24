@@ -13,12 +13,12 @@ Go 並發設計的核心是明確定義 ownership、生命週期、 [backpressur
 
 | 章節                      | 主題                                                        | 關鍵收穫                                        |
 | ------------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
-| [1.1](channel-ownership/) | channel ownership 與關閉責任                                | 用 sender lifecycle 判斷誰能 close channel      |
-| [1.2](select-loop/)       | select loop 的生命週期設計                                  | 同時處理輸入、ticker、取消與資源釋放            |
-| [1.3](non-blocking-send/) | 非阻塞送出與事件丟棄策略                                    | 把 channel 滿載轉成明確服務行為                 |
-| [1.4](shared-state/)      | 共享狀態與複製邊界                                          | 用 lock、copy 與 owner method 保護可變資料      |
-| [1.5](worker-pool/)       | bounded [worker pool](/backend/knowledge-cards/worker-pool) | 限制同時執行的工作量，避免 goroutine 無限制堆積 |
-| [1.6](rate-limit/)        | rate limiting 與 backpressure                               | 用本地速率限制保護服務入口與下游依賴            |
+| [1.1](/go-advanced/01-concurrency-patterns/channel-ownership/) | channel ownership 與關閉責任                                | 用 sender lifecycle 判斷誰能 close channel      |
+| [1.2](/go-advanced/01-concurrency-patterns/select-loop/)       | select loop 的生命週期設計                                  | 同時處理輸入、ticker、取消與資源釋放            |
+| [1.3](/go-advanced/01-concurrency-patterns/non-blocking-send/) | 非阻塞送出與事件丟棄策略                                    | 把 channel 滿載轉成明確服務行為                 |
+| [1.4](/go-advanced/01-concurrency-patterns/shared-state/)      | 共享狀態與複製邊界                                          | 用 lock、copy 與 owner method 保護可變資料      |
+| [1.5](/go-advanced/01-concurrency-patterns/worker-pool/)       | bounded [worker pool](/backend/knowledge-cards/worker-pool) | 限制同時執行的工作量，避免 goroutine 無限制堆積 |
+| [1.6](/go-advanced/01-concurrency-patterns/rate-limit/)        | rate limiting 與 backpressure                               | 用本地速率限制保護服務入口與下游依賴            |
 
 ## 本模組使用的範例主題
 

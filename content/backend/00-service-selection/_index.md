@@ -15,18 +15,18 @@ weight: 0
 
 | 章節                                          | 主題                                   | 關鍵收穫                                                                                                                                                                                                                                                 |
 | --------------------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [0.0](backend-demand-taxonomy/)               | 後端需求分類地圖                       | 先把需求分成狀態、讀取、非同步、即時、診斷、交付與可靠性                                                                                                                                                                                                 |
-| [0.1](service-capability-map/)                | 後端服務能力地圖                       | 用需求類型判斷該先看資料庫、快取、queue、觀測或部署平台                                                                                                                                                                                                  |
-| [0.2](state-storage-selection/)               | 狀態與資料儲存選型                     | 區分 [source of truth](/backend/knowledge-cards/source-of-truth/)、快取、搜尋索引、[event log](/backend/knowledge-cards/event-log/) 與 [object storage](/backend/knowledge-cards/object-storage/)                                                        |
-| [0.3](async-delivery-selection/)              | 非同步與事件傳遞選型                   | 區分背景工作、[durable queue](/backend/knowledge-cards/durable-queue/)、stream、[pub/sub](/backend/knowledge-cards/pub-sub/) 與 outbox                                                                                                                   |
-| [0.4](operations-platform-selection/)         | 操作平台選型                           | 區分 [log](/backend/knowledge-cards/log/)、metric、[trace](/backend/knowledge-cards/trace/)、[dashboard](/backend/knowledge-cards/dashboard/)、[alert](/backend/knowledge-cards/alert/)、deployment 與 reliability                                       |
-| [0.5](traffic-data-scale/)                    | 流量與資料量評估                       | 用 QPS、burst、[hot key](/backend/knowledge-cards/hot-key/)、資料成長與保留期限評估需求規模                                                                                                                                                              |
-| [0.6](cost-risk-tradeoffs/)                   | 成本、風險與選型取捨                   | 用人力成本、雲端成本、操作成本與失敗代價判斷投入順序                                                                                                                                                                                                     |
-| [0.7](failure-observability-design/)          | 錯誤定位、觀測訊號與備援切換設計       | 從錯誤分類、定位線索、降級與 [failover](/backend/knowledge-cards/failover/) 設計服務可維護性                                                                                                                                                             |
-| [0.8](security-data-protection-requirements/) | 資安與資料保護需求                     | 從權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界                                                                                                                                                                                             |
-| [0.9](knowledge-graph-message-flow/)          | 知識網：訊息與事件決策路徑             | 用 [broker](/backend/knowledge-cards/broker/)、queue、[ack](/backend/knowledge-cards/ack-nack/)、retry、DLQ、replay 串出非同步決策脈絡                                                                                                                   |
-| [0.10](knowledge-graph-operations-security/)  | 知識網：容量、觀測與資安決策路徑       | 用 [backpressure](/backend/knowledge-cards/backpressure/)、[timeout](/backend/knowledge-cards/timeout/)、[runbook](/backend/knowledge-cards/runbook/)、[RTO](/backend/knowledge-cards/rto/)/[RPO](/backend/knowledge-cards/rpo/)、權限與憑證串出操作脈絡 |
-| [0.11](red-team-cross-service-weaknesses/)    | 攻擊者視角（紅隊）：跨服務弱點判讀總表 | 用攻擊面、可觀察訊號與失敗代價建立跨分類的弱點判讀順序                                                                                                                                                                                                   |
+| [0.0](/backend/00-service-selection/backend-demand-taxonomy/)               | 後端需求分類地圖                       | 先把需求分成狀態、讀取、非同步、即時、診斷、交付與可靠性                                                                                                                                                                                                 |
+| [0.1](/backend/00-service-selection/service-capability-map/)                | 後端服務能力地圖                       | 用需求類型判斷該先看資料庫、快取、queue、觀測或部署平台                                                                                                                                                                                                  |
+| [0.2](/backend/00-service-selection/state-storage-selection/)               | 狀態與資料儲存選型                     | 區分 [source of truth](/backend/knowledge-cards/source-of-truth/)、快取、搜尋索引、[event log](/backend/knowledge-cards/event-log/) 與 [object storage](/backend/knowledge-cards/object-storage/)                                                        |
+| [0.3](/backend/00-service-selection/async-delivery-selection/)              | 非同步與事件傳遞選型                   | 區分背景工作、[durable queue](/backend/knowledge-cards/durable-queue/)、stream、[pub/sub](/backend/knowledge-cards/pub-sub/) 與 outbox                                                                                                                   |
+| [0.4](/backend/00-service-selection/operations-platform-selection/)         | 操作平台選型                           | 區分 [log](/backend/knowledge-cards/log/)、metric、[trace](/backend/knowledge-cards/trace/)、[dashboard](/backend/knowledge-cards/dashboard/)、[alert](/backend/knowledge-cards/alert/)、deployment 與 reliability                                       |
+| [0.5](/backend/00-service-selection/traffic-data-scale/)                    | 流量與資料量評估                       | 用 QPS、burst、[hot key](/backend/knowledge-cards/hot-key/)、資料成長與保留期限評估需求規模                                                                                                                                                              |
+| [0.6](/backend/00-service-selection/cost-risk-tradeoffs/)                   | 成本、風險與選型取捨                   | 用人力成本、雲端成本、操作成本與失敗代價判斷投入順序                                                                                                                                                                                                     |
+| [0.7](/backend/00-service-selection/failure-observability-design/)          | 錯誤定位、觀測訊號與備援切換設計       | 從錯誤分類、定位線索、降級與 [failover](/backend/knowledge-cards/failover/) 設計服務可維護性                                                                                                                                                             |
+| [0.8](/backend/00-service-selection/security-data-protection-requirements/) | 資安與資料保護需求                     | 從權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界                                                                                                                                                                                             |
+| [0.9](/backend/00-service-selection/knowledge-graph-message-flow/)          | 知識網：訊息與事件決策路徑             | 用 [broker](/backend/knowledge-cards/broker/)、queue、[ack](/backend/knowledge-cards/ack-nack/)、retry、DLQ、replay 串出非同步決策脈絡                                                                                                                   |
+| [0.10](/backend/00-service-selection/knowledge-graph-operations-security/)  | 知識網：容量、觀測與資安決策路徑       | 用 [backpressure](/backend/knowledge-cards/backpressure/)、[timeout](/backend/knowledge-cards/timeout/)、[runbook](/backend/knowledge-cards/runbook/)、[RTO](/backend/knowledge-cards/rto/)/[RPO](/backend/knowledge-cards/rpo/)、權限與憑證串出操作脈絡 |
+| [0.11](/backend/00-service-selection/red-team-cross-service-weaknesses/)    | 攻擊者視角（紅隊）：跨服務弱點判讀總表 | 用攻擊面、可觀察訊號與失敗代價建立跨分類的弱點判讀順序                                                                                                                                                                                                   |
 
 ## 需求討論順序
 
@@ -90,15 +90,15 @@ weight: 0
 
 ### 需要保留為議題入口的章節
 
-- [0.0](backend-demand-taxonomy/) 後端需求分類地圖
-- [0.1](service-capability-map/) 後端服務能力地圖
-- [0.2](state-storage-selection/) 狀態與資料儲存選型
-- [0.3](async-delivery-selection/) 非同步與事件傳遞選型
-- [0.4](operations-platform-selection/) 操作平台選型
-- [0.5](traffic-data-scale/) 流量與資料量評估
-- [0.6](cost-risk-tradeoffs/) 成本、風險與選型取捨
-- [0.7](failure-observability-design/) 錯誤定位、觀測訊號與備援切換設計
-- [0.8](security-data-protection-requirements/) 資安與資料保護需求
-- [0.9](knowledge-graph-message-flow/) 知識網：訊息與事件決策路徑
-- [0.10](knowledge-graph-operations-security/) 知識網：容量、觀測與資安決策路徑
-- [0.11](red-team-cross-service-weaknesses/) 攻擊者視角（紅隊）：跨服務弱點判讀總表
+- [0.0](/backend/00-service-selection/backend-demand-taxonomy/) 後端需求分類地圖
+- [0.1](/backend/00-service-selection/service-capability-map/) 後端服務能力地圖
+- [0.2](/backend/00-service-selection/state-storage-selection/) 狀態與資料儲存選型
+- [0.3](/backend/00-service-selection/async-delivery-selection/) 非同步與事件傳遞選型
+- [0.4](/backend/00-service-selection/operations-platform-selection/) 操作平台選型
+- [0.5](/backend/00-service-selection/traffic-data-scale/) 流量與資料量評估
+- [0.6](/backend/00-service-selection/cost-risk-tradeoffs/) 成本、風險與選型取捨
+- [0.7](/backend/00-service-selection/failure-observability-design/) 錯誤定位、觀測訊號與備援切換設計
+- [0.8](/backend/00-service-selection/security-data-protection-requirements/) 資安與資料保護需求
+- [0.9](/backend/00-service-selection/knowledge-graph-message-flow/) 知識網：訊息與事件決策路徑
+- [0.10](/backend/00-service-selection/knowledge-graph-operations-security/) 知識網：容量、觀測與資安決策路徑
+- [0.11](/backend/00-service-selection/red-team-cross-service-weaknesses/) 攻擊者視角（紅隊）：跨服務弱點判讀總表

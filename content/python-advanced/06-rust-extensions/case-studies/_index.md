@@ -12,8 +12,8 @@ weight: 100
 
 | 案例                           | 素材                     | 學習重點                |
 | ------------------------------ | ------------------------ | ----------------------- |
-| [PyO3 文字解析](pyo3-parser/)  | markdown_link_checker.py | PyO3 基礎、Maturin 建置 |
-| [Rust 正則表達式](rust-regex/) | hook_validator.py        | regex crate、效能比較   |
+| [PyO3 文字解析](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/)  | markdown_link_checker.py | PyO3 基礎、Maturin 建置 |
+| [Rust 正則表達式](/python-advanced/06-rust-extensions/case-studies/rust-regex/) | hook_validator.py        | regex crate、效能比較   |
 
 ## 學習路徑
 

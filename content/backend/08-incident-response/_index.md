@@ -59,14 +59,14 @@ weight: 8
 
 ## 章節列表
 
-- [8.1 事故分級與啟動條件](incident-severity-trigger/)
-- [8.2 事故指揮與角色分工](incident-command-roles/)
-- [8.3 止血、降級與回復策略](containment-recovery-strategy/)
-- [8.4 事故通訊與狀態更新](incident-communication/)
-- [8.5 復盤與改進追蹤](post-incident-review/)
-- [8.6 演練與值班能力建設](drills-and-oncall-readiness/)
-- [8.7 攻擊者視角（紅隊）事故弱點判讀](attacker-view-incident-risks/)
-- [8.8 事故報告轉 workflow：從案例到日常流程](incident-report-to-workflow/)
+- [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)
+- [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)
+- [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
+- [8.4 事故通訊與狀態更新](/backend/08-incident-response/incident-communication/)
+- [8.5 復盤與改進追蹤](/backend/08-incident-response/post-incident-review/)
+- [8.6 演練與值班能力建設](/backend/08-incident-response/drills-and-oncall-readiness/)
+- [8.7 攻擊者視角（紅隊）事故弱點判讀](/backend/08-incident-response/attacker-view-incident-risks/)
+- [8.8 事故報告轉 workflow：從案例到日常流程](/backend/08-incident-response/incident-report-to-workflow/)
 
 ## 既有可引用卡片
 

@@ -39,12 +39,12 @@ weight: 3
 
 | 章節                     | 主題               | 關鍵收穫               |
 | ------------------------ | ------------------ | ---------------------- |
-| [3.1](generics/)         | 泛型進階           | 建立型別安全的抽象層   |
-| [3.2](exception-design/) | 異常設計架構       | 設計大型專案的錯誤處理 |
-| [3.3](context-managers/) | 進階上下文管理     | 複雜資源的優雅管理     |
-| [3.4](plugin-system/)    | 插件系統設計       | 建立可擴展的架構       |
-| [3.5](integration/)      | 設計模式整合案例   | 綜合應用所有模式       |
-| [3.6](trade-offs/)       | 軟體設計的取捨藝術 | 取捨決策框架與業界經驗 |
+| [3.1](/python-advanced/03-design-patterns/generics/)         | 泛型進階           | 建立型別安全的抽象層   |
+| [3.2](/python-advanced/03-design-patterns/exception-design/) | 異常設計架構       | 設計大型專案的錯誤處理 |
+| [3.3](/python-advanced/03-design-patterns/context-managers/) | 進階上下文管理     | 複雜資源的優雅管理     |
+| [3.4](/python-advanced/03-design-patterns/plugin-system/)    | 插件系統設計       | 建立可擴展的架構       |
+| [3.5](/python-advanced/03-design-patterns/integration/)      | 設計模式整合案例   | 綜合應用所有模式       |
+| [3.6](/python-advanced/03-design-patterns/trade-offs/)       | 軟體設計的取捨藝術 | 取捨決策框架與業界經驗 |
 
 ## 案例研究
 
@@ -52,10 +52,10 @@ weight: 3
 
 | 案例                                              | 素材              | 學習重點                  |
 | ------------------------------------------------- | ----------------- | ------------------------- |
-| [快取生命週期管理](case-studies/cache-lifecycle/) | config_loader.py  | Context Manager           |
-| [插件架構設計](case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制       |
-| [異常設計架構](case-studies/exception-hierarchy/) | hook_io.py        | 異常階層 + ExceptionGroup |
-| [泛型驗證器](case-studies/generic-validator/)     | hook_validator.py | Generic + TypeVar         |
+| [快取生命週期管理](/python-advanced/03-design-patterns/case-studies/cache-lifecycle/) | config_loader.py  | Context Manager           |
+| [插件架構設計](/python-advanced/03-design-patterns/case-studies/plugin-architecture/) | hook_validator.py | Protocol + 註冊機制       |
+| [異常設計架構](/python-advanced/03-design-patterns/case-studies/exception-hierarchy/) | hook_io.py        | 異常階層 + ExceptionGroup |
+| [泛型驗證器](/python-advanced/03-design-patterns/case-studies/generic-validator/)     | hook_validator.py | Generic + TypeVar         |
 
 ## 先備知識
 

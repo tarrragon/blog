@@ -377,7 +377,7 @@ platform.windows.scripts = [
 # 從檔案讀取
 [tool.hatch.version]
 path = "src/my_awesome_lib/__about__.py"
-pattern = "^__version__ = ['\"](?P<version>[^'\"]+)['\"]"
+pattern = "^__version__ = ['\"](/python-advanced/07-packaging/case-studies/hatch-workflow/?P<version>[^'\"]+)['\"]"
 
 # 從 VCS 讀取
 [tool.hatch.version]

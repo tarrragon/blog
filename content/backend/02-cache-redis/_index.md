@@ -34,12 +34,12 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 | 章節                              | 主題                             | 關鍵收穫                                                                                                                                  |
 | --------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| [2.1](high-concurrency-access/)   | 高併發下的 Redis 讀寫邊界        | 共用 client、控制 pipeline、避免 [hot key](/backend/knowledge-cards/hot-key) 與 [cache stampede](/backend/knowledge-cards/cache-stampede) |
-| [2.2](cache-aside/)               | cache aside 與失效策略           | 寫出讀取優先的 cache 流程與失效方式                                                                                                       |
-| [2.3](ttl-eviction/)              | TTL 與 eviction                  | 規劃過期、淘汰與容量控制                                                                                                                  |
-| [2.4](distributed-lock/)          | distributed lock 與租約          | 分辨鎖語意、租約風險與適用場景                                                                                                            |
-| [2.5](presence-store/)            | presence store 與即時狀態        | 追蹤線上狀態、跨節點查詢與過期清理                                                                                                        |
-| [2.6](attacker-view-cache-risks/) | 攻擊者視角（紅隊）：快取弱點判讀 | 用一致性、污染與放大流量風險檢查快取設計                                                                                                  |
+| [2.1](/backend/02-cache-redis/high-concurrency-access/)   | 高併發下的 Redis 讀寫邊界        | 共用 client、控制 pipeline、避免 [hot key](/backend/knowledge-cards/hot-key) 與 [cache stampede](/backend/knowledge-cards/cache-stampede) |
+| [2.2](/backend/02-cache-redis/cache-aside/)               | cache aside 與失效策略           | 寫出讀取優先的 cache 流程與失效方式                                                                                                       |
+| [2.3](/backend/02-cache-redis/ttl-eviction/)              | TTL 與 eviction                  | 規劃過期、淘汰與容量控制                                                                                                                  |
+| [2.4](/backend/02-cache-redis/distributed-lock/)          | distributed lock 與租約          | 分辨鎖語意、租約風險與適用場景                                                                                                            |
+| [2.5](/backend/02-cache-redis/presence-store/)            | presence store 與即時狀態        | 追蹤線上狀態、跨節點查詢與過期清理                                                                                                        |
+| [2.6](/backend/02-cache-redis/attacker-view-cache-risks/) | 攻擊者視角（紅隊）：快取弱點判讀 | 用一致性、污染與放大流量風險檢查快取設計                                                                                                  |
 
 ## 跨語言適配評估
 

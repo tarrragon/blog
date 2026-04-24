@@ -625,7 +625,7 @@ if __name__ == "__main__":
             if not result.is_valid:
                 print(f"\n  {result.file_path}:")
                 for link in result.broken_links:
-                    print(f"    Line {link.line}: [{link.link_text}]({link.link_target})")
+                    print(f"    Line {link.line}: [{link.link_text}](/python-advanced/08-practical-optimization/case-studies/parallel-file-check/{link.link_target})")
 
     # 效能比較
     if total_files >= 5:

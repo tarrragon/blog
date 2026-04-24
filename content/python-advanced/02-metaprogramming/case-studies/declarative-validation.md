@@ -24,7 +24,7 @@ class HookValidator:
 
     # 驗證模式定義為類別常數
     VALID_NAME_PATTERNS = [
-        r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$",
+        r"^[a-z0-9](/python-advanced/02-metaprogramming/case-studies/declarative-validation/[a-z0-9\-_]*[a-z0-9])?\.py$",
     ]
 
     HOOK_IO_PATTERNS = [

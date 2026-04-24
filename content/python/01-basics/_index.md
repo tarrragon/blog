@@ -12,10 +12,10 @@ weight: 1
 
 | 章節                      | 主題                       | 關鍵收穫                                                   |
 | ------------------------- | -------------------------- | ---------------------------------------------------------- |
-| [1.1](philosophy/)        | Python 哲學與設計理念      | 理解「Pythonic」的真正含義                                 |
-| [1.2](script-to-package/) | 從單一 script 到多檔案專案 | 理解 `.py` module、package、執行方式與測試結構如何逐步出現 |
-| [1.3](modules/)           | 模組與套件組織             | 掌握 `__init__.py` 的作用                                  |
-| [1.4](imports/)           | 導入機制與路徑管理         | 解決「找不到模組」的困擾                                   |
+| [1.1](/python/01-basics/philosophy/)        | Python 哲學與設計理念      | 理解「Pythonic」的真正含義                                 |
+| [1.2](/python/01-basics/script-to-package/) | 從單一 script 到多檔案專案 | 理解 `.py` module、package、執行方式與測試結構如何逐步出現 |
+| [1.3](/python/01-basics/modules/)           | 模組與套件組織             | 掌握 `__init__.py` 的作用                                  |
+| [1.4](/python/01-basics/imports/)           | 導入機制與路徑管理         | 解決「找不到模組」的困擾                                   |
 
 ## 實際範例來源
 

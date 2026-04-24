@@ -476,7 +476,7 @@ class HookValidator(CheckerBase):
     """
 
     # Pattern constants
-    VALID_NAME_PATTERN = r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$"
+    VALID_NAME_PATTERN = r"^[a-z0-9](/python-advanced/02-metaprogramming/case-studies/auto-registration/[a-z0-9\-_]*[a-z0-9])?\.py$"
     HOOK_IO_PATTERNS = [
         r"from\s+hook_io\s+import",
         r"from\s+lib\.hook_io\s+import",

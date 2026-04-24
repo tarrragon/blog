@@ -28,7 +28,7 @@ class MarkdownLinkChecker:
     """Markdown 連結檢查器"""
 
     # Markdown 連結正則表達式
-    # 匹配 [text](target) 格式，排除圖片 ![alt](src)
+    # 匹配 [text](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/target) 格式，排除圖片 ![alt](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/src)
     INLINE_LINK_PATTERN = re.compile(
         r'(?<!!)\[([^\]]+)\]\(([^)]+)\)'
     )
@@ -78,7 +78,7 @@ class MarkdownLinkChecker:
             if in_code_block:
                 continue
 
-            # 行內連結 [text](target)
+            # 行內連結 [text](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/target)
             for match in self.INLINE_LINK_PATTERN.finditer(line):
                 links.append({
                     "text": match.group(1),
@@ -188,7 +188,7 @@ pub struct MarkdownLink {
 
 // Pre-compiled regex patterns (compile once, use many times)
 static INLINE_LINK_PATTERN: Lazy<Regex> = Lazy::new(|| {
-    // Match [text](target), excluding images ![alt](src)
+    // Match [text](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/target), excluding images ![alt](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/src)
     Regex::new(r"(?<!!)\[([^\]]+)\]\(([^)]+)\)").unwrap()
 });
 
@@ -232,7 +232,7 @@ pub fn parse_links(content: &str) -> Vec<MarkdownLink> {
             continue;
         }
 
-        // Parse inline links [text](target)
+        // Parse inline links [text](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/target)
         for cap in INLINE_LINK_PATTERN.captures_iter(line) {
             links.push(MarkdownLink {
                 text: cap[1].to_string(),
@@ -461,7 +461,7 @@ impl From<MarkdownLink> for PyMarkdownLink {
 // Pre-compiled Regex Patterns
 // ============================================================================
 
-// Inline link: [text](target), excluding images ![alt](src)
+// Inline link: [text](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/target), excluding images ![alt](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/src)
 static INLINE_LINK_PATTERN: Lazy<Regex> = Lazy::new(|| {
     Regex::new(r"(?<!!)\[([^\]]+)\]\(([^)]+)\)").unwrap()
 });
@@ -483,7 +483,7 @@ static REFERENCE_USE_PATTERN: Lazy<Regex> = Lazy::new(|| {
 /// Parse markdown content and extract all links
 ///
 /// This function handles:
-/// - Inline links: [text](url)
+/// - Inline links: [text](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/url)
 /// - Reference links: [text][ref] with [ref]: url definitions
 /// - Code block detection (skips links inside ```)
 fn parse_links(content: &str) -> Vec<MarkdownLink> {
@@ -850,7 +850,7 @@ if __name__ == "__main__":
         "Reference style: [API docs][api]\n\n"
         "[api]: ./api/reference.md\n\n"
         "~~~python\n"
-        "# This [link](should_be_ignored.md) is in a code block\n"
+        "# This [link](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/should_be_ignored.md) is in a code block\n"
         "~~~\n"
     )
 
@@ -859,12 +859,12 @@ if __name__ == "__main__":
 
     print("All links found:")
     for link in links:
-        print(f"  Line {link['line']}: [{link['text']}]({link['target']})")
+        print(f"  Line {link['line']}: [{link['text']}](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/{link['target']})")
 
     print("\nInternal links only:")
     internal = checker.parse_internal_links(sample)
     for link in internal:
-        print(f"  Line {link['line']}: [{link['text']}]({link['target']})")
+        print(f"  Line {link['line']}: [{link['text']}](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/{link['target']})")
 ```
 
 ### 效能比較
@@ -910,7 +910,7 @@ def generate_markdown(num_links: int) -> str:
         # Add occasional code blocks (using ~~~ to avoid markdown parsing issues)
         if i % 20 == 0:
             lines.append("~~~python\n")
-            lines.append(f"# [fake link](should_ignore_{i}.md)\n")
+            lines.append(f"# [fake link](/python-advanced/06-rust-extensions/case-studies/pyo3-parser/should_ignore_{i}.md)\n")
             lines.append("print('hello')\n")
             lines.append("~~~\n")
 

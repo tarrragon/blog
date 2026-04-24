@@ -15,13 +15,13 @@ weight: 9
 
 | 章節                              | 主題                                             | 關鍵收穫                                                                        |
 | --------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
-| [9.0](overview/)                  | Go 在工具鏈生態的位置                            | 從後端服務切換到工具開發的心態調整；CLI vs service 的結構差異                   |
-| [9.1](stdlib-flag-subcommands/)   | stdlib `flag` 做 subcommand CLI                  | `main` + `cmd/` + `internal/` 佈局；`flag.NewFlagSet` 分派；什麼時候該上 cobra  |
-| [9.2](goldmark-ast-basics/)       | 第三方 parser 整合：goldmark AST 入門            | `ast.Walk` visitor 模式；block vs inline 節點；byte offset 定位                 |
-| [9.3](ast-idempotent-rewriting/)  | AST 驅動的 idempotent 文字改寫                   | 多 rule 的執行順序；line-based vs AST-guided 的取捨；`--check` / `--fix` 雙模式 |
-| [9.4](cross-file-graph-analysis/) | 跨檔案圖分析：從 lint 走到 static analysis       | 建 link graph；反向索引；slug 啟發式多層匹配                                    |
-| [9.5](tool-decision-tripwire/)    | 工具決策：regex 到 AST、Python 到 Go 的 tripwire | 用 WRAP 框架做技術決策；哪些訊號代表該升級；延遲決策的代價                      |
-| [9.6](pre-commit-and-ci/)         | Pre-commit hook 與 CI 整合                       | 工具從 CLI 走到開發流程；re-staging；CI strict mode；不能繞過的邊界             |
+| [9.0](/go/09-tooling-and-analysis/overview/)                  | Go 在工具鏈生態的位置                            | 從後端服務切換到工具開發的心態調整；CLI vs service 的結構差異                   |
+| [9.1](/go/09-tooling-and-analysis/stdlib-flag-subcommands/)   | stdlib `flag` 做 subcommand CLI                  | `main` + `cmd/` + `internal/` 佈局；`flag.NewFlagSet` 分派；什麼時候該上 cobra  |
+| [9.2](/go/09-tooling-and-analysis/goldmark-ast-basics/)       | 第三方 parser 整合：goldmark AST 入門            | `ast.Walk` visitor 模式；block vs inline 節點；byte offset 定位                 |
+| [9.3](/go/09-tooling-and-analysis/ast-idempotent-rewriting/)  | AST 驅動的 idempotent 文字改寫                   | 多 rule 的執行順序；line-based vs AST-guided 的取捨；`--check` / `--fix` 雙模式 |
+| [9.4](/go/09-tooling-and-analysis/cross-file-graph-analysis/) | 跨檔案圖分析：從 lint 走到 static analysis       | 建 link graph；反向索引；slug 啟發式多層匹配                                    |
+| [9.5](/go/09-tooling-and-analysis/tool-decision-tripwire/)    | 工具決策：regex 到 AST、Python 到 Go 的 tripwire | 用 WRAP 框架做技術決策；哪些訊號代表該升級；延遲決策的代價                      |
+| [9.6](/go/09-tooling-and-analysis/pre-commit-and-ci/)         | Pre-commit hook 與 CI 整合                       | 工具從 CLI 走到開發流程；re-staging；CI strict mode；不能繞過的邊界             |
 
 ## 本模組的教學主軸
 

@@ -627,7 +627,7 @@ class NamingConventionCheck:
     """Check hook file naming convention"""
 
     VALID_PATTERNS = [
-        r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$",
+        r"^[a-z0-9](/python-advanced/03-design-patterns/case-studies/plugin-architecture/[a-z0-9\-_]*[a-z0-9])?\.py$",
     ]
 
     @property

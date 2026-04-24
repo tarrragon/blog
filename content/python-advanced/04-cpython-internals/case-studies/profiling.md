@@ -74,7 +74,7 @@ class MarkdownLinkChecker:
             if in_code_block:
                 continue
 
-            # Inline links: [text](target)
+            # Inline links: [text](/python-advanced/04-cpython-internals/case-studies/profiling/target)
             for match in self.INLINE_LINK_PATTERN.finditer(line):
                 links.append({
                     "text": match.group(1),
@@ -402,11 +402,11 @@ def benchmark_regex_patterns():
     # Test content with various edge cases
     test_lines = [
         "Check out [Link](https://example.com)",
-        "See [Text with [brackets]](url)",
-        "Multiple [link1](url1) and [link2](url2)",
+        "See [Text with [brackets]](/python-advanced/04-cpython-internals/case-studies/profiling/url)",
+        "Multiple [link1](/python-advanced/04-cpython-internals/case-studies/profiling/url1) and [link2](/python-advanced/04-cpython-internals/case-studies/profiling/url2)",
         "No links here, just plain text",
-        "Tricky [text](url) with more [text](url) links",
-        "![Image](image.png) should be ignored",
+        "Tricky [text](/python-advanced/04-cpython-internals/case-studies/profiling/url) with more [text](/python-advanced/04-cpython-internals/case-studies/profiling/url) links",
+        "![Image](/python-advanced/04-cpython-internals/case-studies/profiling/image.png) should be ignored",
         "[Link with spaces]( url with spaces )",
     ] * 1000
 
@@ -1137,7 +1137,7 @@ def benchmark_email_patterns():
             r'(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*'
             r'|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]'
             r'|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")'
-            r'@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?'
+            r'@(?:(?:[a-z0-9](/python-advanced/04-cpython-internals/case-studies/profiling/?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](/python-advanced/04-cpython-internals/case-studies/profiling/?:[a-z0-9-]*[a-z0-9])?'
             r'|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}'
             r'(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:'
             r'(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]'

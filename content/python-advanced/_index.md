@@ -26,80 +26,80 @@ weight: 31
 
 ## 教學模組
 
-### [模組一：非同步程式設計（asyncio）](01-asyncio/)
+### [模組一：非同步程式設計（asyncio）](/python-advanced/01-asyncio/)
 
 Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技能。
 
-- [基礎概念與事件迴圈](01-asyncio/fundamentals/)
-- [協程與 Task 管理](01-asyncio/coroutines-tasks/)
-- [設計模式與最佳實踐](01-asyncio/patterns/)
-- [實戰：與同步程式碼整合](01-asyncio/real-world/)
+- [基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/)
+- [協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)
+- [設計模式與最佳實踐](/python-advanced/01-asyncio/patterns/)
+- [實戰：與同步程式碼整合](/python-advanced/01-asyncio/real-world/)
 
-### [模組二：元編程](02-metaprogramming/)
+### [模組二：元編程](/python-advanced/02-metaprogramming/)
 
 深入 Python 的元編程機制，理解框架（Django、SQLAlchemy）的實現原理。
 
-- [Descriptor Protocol 完整指南](02-metaprogramming/descriptors/)
-- [Metaclass 設計與應用](02-metaprogramming/metaclasses/)
-- [類別裝飾器與動態類別](02-metaprogramming/class-creation/)
-- [反射與 inspect 模組](02-metaprogramming/introspection/)
+- [Descriptor Protocol 完整指南](/python-advanced/02-metaprogramming/descriptors/)
+- [Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)
+- [類別裝飾器與動態類別](/python-advanced/02-metaprogramming/class-creation/)
+- [反射與 inspect 模組](/python-advanced/02-metaprogramming/introspection/)
 
-### [模組三：進階設計模式](03-design-patterns/)
+### [模組三：進階設計模式](/python-advanced/03-design-patterns/)
 
 將元編程知識應用到實際系統設計，建構可擴展、可維護的架構。
 
-- [泛型進階](03-design-patterns/generics/)
-- [異常設計架構](03-design-patterns/exception-design/)
-- [進階上下文管理](03-design-patterns/context-managers/)
-- [插件系統設計](03-design-patterns/plugin-system/)
-- [設計模式整合案例](03-design-patterns/integration/)
-- [軟體設計的取捨藝術](03-design-patterns/trade-offs/)
+- [泛型進階](/python-advanced/03-design-patterns/generics/)
+- [異常設計架構](/python-advanced/03-design-patterns/exception-design/)
+- [進階上下文管理](/python-advanced/03-design-patterns/context-managers/)
+- [插件系統設計](/python-advanced/03-design-patterns/plugin-system/)
+- [設計模式整合案例](/python-advanced/03-design-patterns/integration/)
+- [軟體設計的取捨藝術](/python-advanced/03-design-patterns/trade-offs/)
 
-### [模組四：CPython 內部機制](04-cpython-internals/)
+### [模組四：CPython 內部機制](/python-advanced/04-cpython-internals/)
 
 深入 CPython 直譯器，理解 Python 如何運作。
 
-- [PyObject 與物件模型](04-cpython-internals/object-model/)
-- [記憶體管理與垃圾回收](04-cpython-internals/memory-gc/)
-- [Bytecode 與虛擬機](04-cpython-internals/bytecode/)
-- [GIL 與執行緒模型](04-cpython-internals/gil-threading/)
-- [Free-Threading](04-cpython-internals/free-threading/)
+- [PyObject 與物件模型](/python-advanced/04-cpython-internals/object-model/)
+- [記憶體管理與垃圾回收](/python-advanced/04-cpython-internals/memory-gc/)
+- [Bytecode 與虛擬機](/python-advanced/04-cpython-internals/bytecode/)
+- [GIL 與執行緒模型](/python-advanced/04-cpython-internals/gil-threading/)
+- [Free-Threading](/python-advanced/04-cpython-internals/free-threading/)
 
-### [模組五：用 C 擴展 Python](05-c-extensions/)
+### [模組五：用 C 擴展 Python](/python-advanced/05-c-extensions/)
 
 當 Python 太慢時的解決方案：用 C/C++ 擴展 Python。
 
-- [ctypes 與 cffi：動態綁定](05-c-extensions/ctypes-cffi/)
-- [Cython：Python 語法的 C 速度](05-c-extensions/cython/)
-- [pybind11：現代 C++ 綁定](05-c-extensions/pybind11/)
-- [選擇指南與效能比較](05-c-extensions/when-to-use/)
+- [ctypes 與 cffi：動態綁定](/python-advanced/05-c-extensions/ctypes-cffi/)
+- [Cython：Python 語法的 C 速度](/python-advanced/05-c-extensions/cython/)
+- [pybind11：現代 C++ 綁定](/python-advanced/05-c-extensions/pybind11/)
+- [選擇指南與效能比較](/python-advanced/05-c-extensions/when-to-use/)
 
-### [模組六：用 Rust 擴展 Python](06-rust-extensions/)
+### [模組六：用 Rust 擴展 Python](/python-advanced/06-rust-extensions/)
 
 用 Rust 的記憶體安全特性擴展 Python，兼顧效能與安全。
 
-- [為什麼選擇 Rust？](06-rust-extensions/why-rust/)
-- [PyO3 基礎](06-rust-extensions/pyo3-basics/)
-- [Maturin 開發流程](06-rust-extensions/maturin-workflow/)
-- [實戰案例分析](06-rust-extensions/real-world-examples/)
+- [為什麼選擇 Rust？](/python-advanced/06-rust-extensions/why-rust/)
+- [PyO3 基礎](/python-advanced/06-rust-extensions/pyo3-basics/)
+- [Maturin 開發流程](/python-advanced/06-rust-extensions/maturin-workflow/)
+- [實戰案例分析](/python-advanced/06-rust-extensions/real-world-examples/)
 
-### [模組七：打包與發布](07-packaging/)
+### [模組七：打包與發布](/python-advanced/07-packaging/)
 
 從開發到發布的完整流程，掌握現代 Python 套件管理。
 
-- [pyproject.toml 完整指南](07-packaging/pyproject-toml/)
-- [建構系統比較：setuptools vs Poetry vs Hatch](07-packaging/build-systems/)
-- [發布到 PyPI](07-packaging/distribution/)
-- [套件維護最佳實踐](07-packaging/best-practices/)
-- [封裝預編譯二進位](07-packaging/bundled-binaries/) - Python 封裝 Go/Rust/C 二進位的架構模式
+- [pyproject.toml 完整指南](/python-advanced/07-packaging/pyproject-toml/)
+- [建構系統比較：setuptools vs Poetry vs Hatch](/python-advanced/07-packaging/build-systems/)
+- [發布到 PyPI](/python-advanced/07-packaging/distribution/)
+- [套件維護最佳實踐](/python-advanced/07-packaging/best-practices/)
+- [封裝預編譯二進位](/python-advanced/07-packaging/bundled-binaries/) - Python 封裝 Go/Rust/C 二進位的架構模式
 
-### [模組八：實戰效能優化](08-practical-optimization/)
+### [模組八：實戰效能優化](/python-advanced/08-practical-optimization/)
 
 將入門系列的並行處理與效能優化知識應用到真實系統，基於實際專案程式碼的案例研究。
 
-- [並行處理實戰](08-practical-optimization/parallel-processing/) - ThreadPoolExecutor、ProcessPoolExecutor 實際應用
-- [效能調優實戰](08-practical-optimization/performance-tuning/) - 正則預編譯、LRU 快取、資料結構選擇
-- [案例研究](08-practical-optimization/case-studies/) - 5 個完整的優化案例與效能測量
+- [並行處理實戰](/python-advanced/08-practical-optimization/parallel-processing/) - ThreadPoolExecutor、ProcessPoolExecutor 實際應用
+- [效能調優實戰](/python-advanced/08-practical-optimization/performance-tuning/) - 正則預編譯、LRU 快取、資料結構選擇
+- [案例研究](/python-advanced/08-practical-optimization/case-studies/) - 5 個完整的優化案例與效能測量
 
 ## 學習路徑
 

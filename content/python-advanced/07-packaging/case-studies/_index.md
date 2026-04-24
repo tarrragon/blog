@@ -12,7 +12,7 @@ weight: 100
 
 | 案例                           | 素材          | 學習重點                           |
 | ------------------------------ | ------------- | ---------------------------------- |
-| [打包共用庫](package-library/) | 整個 lib 目錄 | pyproject.toml、版本管理、發布流程 |
+| [打包共用庫](/python-advanced/07-packaging/case-studies/package-library/) | 整個 lib 目錄 | pyproject.toml、版本管理、發布流程 |
 
 ## 學習路徑
 

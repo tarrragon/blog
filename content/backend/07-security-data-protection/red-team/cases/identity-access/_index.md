@@ -9,11 +9,11 @@ weight: 7171
 
 ## 案例列表
 
-- [Uber 2022：MFA 疲勞與內部工具擴散](uber-2022-mfa-fatigue/)
-- [Okta + Cloudflare 2023：支援流程與身分供應鏈](okta-cloudflare-2023-support-supply-chain/)
-- [Twilio 2022：社交工程與員工帳號路徑](twilio-2022-social-engineering/)
-- [MGM 2023：身分流程被打穿後的營運中斷](mgm-2023-identity-lateral-impact/)
-- [Microsoft Storm-0558 2023：簽章金鑰鏈與郵件存取](microsoft-storm-0558-2023-signing-key-chain/)
-- [Cloudflare 2023：供應商事件後的身分收斂](cloudflare-2023-okta-token-follow-through/)
-- [Slack 2022：企業 token 與程式碼資產路徑](slack-2022-token-compromise/)
-- [Dropbox 2022：釣魚入侵與程式碼倉儲風險](dropbox-2022-code-repo-phishing-chain/)
+- [Uber 2022：MFA 疲勞與內部工具擴散](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
+- [Okta + Cloudflare 2023：支援流程與身分供應鏈](/backend/07-security-data-protection/red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/)
+- [Twilio 2022：社交工程與員工帳號路徑](/backend/07-security-data-protection/red-team/cases/identity-access/twilio-2022-social-engineering/)
+- [MGM 2023：身分流程被打穿後的營運中斷](/backend/07-security-data-protection/red-team/cases/identity-access/mgm-2023-identity-lateral-impact/)
+- [Microsoft Storm-0558 2023：簽章金鑰鏈與郵件存取](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)
+- [Cloudflare 2023：供應商事件後的身分收斂](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)
+- [Slack 2022：企業 token 與程式碼資產路徑](/backend/07-security-data-protection/red-team/cases/identity-access/slack-2022-token-compromise/)
+- [Dropbox 2022：釣魚入侵與程式碼倉儲風險](/backend/07-security-data-protection/red-team/cases/identity-access/dropbox-2022-code-repo-phishing-chain/)

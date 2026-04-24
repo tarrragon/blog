@@ -24,28 +24,28 @@ weight: 0
 
 ## 章節內容
 
-### [認知負擔：程式碼設計的核心目的](cognitive-load/)
+### [認知負擔：程式碼設計的核心目的](/python/00-philosophy/cognitive-load/)
 
 - 什麼是認知負擔？
 - 為什麼「可讀」比「優美」更重要
 - 認知負擔的來源分析
 - 降低認知負擔的基本原則
 
-### [命名的藝術：讓程式碼說故事](naming-art/)
+### [命名的藝術：讓程式碼說故事](/python/00-philosophy/naming-art/)
 
 - 程式碼是一個故事
 - 變數命名的藝術
 - 函式命名的藝術
 - 命名與認知負擔的關係
 
-### [開放封閉原則與認知負擔](open-closed-principle/)
+### [開放封閉原則與認知負擔](/python/00-philosophy/open-closed-principle/)
 
 - OCP 的傳統解釋
 - OCP 的認知負擔視角
 - 單一職責原則的本質
 - 實際案例分析
 
-### [成本思維：軟體開發的隱性代價](cost-thinking/)
+### [成本思維：軟體開發的隱性代價](/python/00-philosophy/cost-thinking/)
 
 - 顯性成本 vs 隱性成本
 - 重新造輪子的真實成本

@@ -11,14 +11,14 @@ weight: 1
 
 | 章節                           | 主題                      | 關鍵收穫                                                         |
 | ------------------------------ | ------------------------- | ---------------------------------------------------------------- |
-| [1.1](modules/)                | Go 專案結構與 module      | 理解 module 與 import path                                       |
-| [1.2](variables-zero-values/)  | 變數、零值與短變數宣告    | 理解 Go 如何宣告與初始化資料                                     |
-| [1.3](control-flow/)           | 控制流程：if、for、switch | 掌握 Go 的基本流程控制                                           |
-| [1.4](packages/)               | package、檔案與可見性     | 看懂 `package main` 與大小寫可見性                               |
-| [1.5](growing-files-packages/) | 從單檔到多檔案            | 理解 Go 程式如何從 `main.go` 長成多檔案與多 package              |
-| [1.6](functions-methods/)      | 函式、方法與 receiver     | 區分函式、建構函式與物件方法                                     |
-| [1.7](main-flow/)              | 從入口程式看應用啟動流程  | 建立 Go 應用啟動地圖                                             |
-| [1.8](go-tooling-workflow/)    | Go tooling 與日常開發流程 | 用 `go run`、`go test`、`go fmt`、`go mod tidy` 建立基本工作節奏 |
+| [1.1](/go/01-basics/modules/)                | Go 專案結構與 module      | 理解 module 與 import path                                       |
+| [1.2](/go/01-basics/variables-zero-values/)  | 變數、零值與短變數宣告    | 理解 Go 如何宣告與初始化資料                                     |
+| [1.3](/go/01-basics/control-flow/)           | 控制流程：if、for、switch | 掌握 Go 的基本流程控制                                           |
+| [1.4](/go/01-basics/packages/)               | package、檔案與可見性     | 看懂 `package main` 與大小寫可見性                               |
+| [1.5](/go/01-basics/growing-files-packages/) | 從單檔到多檔案            | 理解 Go 程式如何從 `main.go` 長成多檔案與多 package              |
+| [1.6](/go/01-basics/functions-methods/)      | 函式、方法與 receiver     | 區分函式、建構函式與物件方法                                     |
+| [1.7](/go/01-basics/main-flow/)              | 從入口程式看應用啟動流程  | 建立 Go 應用啟動地圖                                             |
+| [1.8](/go/01-basics/go-tooling-workflow/)    | Go tooling 與日常開發流程 | 用 `go run`、`go test`、`go fmt`、`go mod tidy` 建立基本工作節奏 |
 
 ## 本模組使用的範例主題
 

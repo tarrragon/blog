@@ -659,11 +659,11 @@ result = something.do_thing()
 
 ## 貢獻
 
-歡迎貢獻！請見 [CONTRIBUTING.md](CONTRIBUTING.md)。
+歡迎貢獻！請見 [CONTRIBUTING.md](/python-advanced/07-packaging/best-practices/CONTRIBUTING.md)。
 
 ## 授權
 
-MIT License - 詳見 [LICENSE](LICENSE)
+MIT License - 詳見 [LICENSE](/python-advanced/07-packaging/best-practices/LICENSE)
 ```
 
 ### Issue 與 PR 模板

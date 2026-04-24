@@ -11,12 +11,12 @@ weight: 5
 
 | 章節                         | 主題                  | 關鍵收穫                             |
 | ---------------------------- | --------------------- | ------------------------------------ |
-| [5.1](exception/)            | 異常處理策略          | 何時捕獲、何時拋出                   |
-| [5.2](return-values/)        | 返回值設計            | `(bool, str)` 模式的應用             |
-| [5.3](unittest/)             | unittest 基礎         | 撰寫第一個測試                       |
-| [5.4](mock/)                 | Mock 與測試隔離       | 隔離外部依賴                         |
-| [5.5](error-infrastructure/) | 頂層例外處理機制      | `run_hook_safely` 與統一錯誤基礎設施 |
-| [5.6](observability-design/) | Hook 系統可觀測性設計 | 日誌架構、錯誤可見性、健康監控       |
+| [5.1](/python/05-error-testing/exception/)            | 異常處理策略          | 何時捕獲、何時拋出                   |
+| [5.2](/python/05-error-testing/return-values/)        | 返回值設計            | `(bool, str)` 模式的應用             |
+| [5.3](/python/05-error-testing/unittest/)             | unittest 基礎         | 撰寫第一個測試                       |
+| [5.4](/python/05-error-testing/mock/)                 | Mock 與測試隔離       | 隔離外部依賴                         |
+| [5.5](/python/05-error-testing/error-infrastructure/) | 頂層例外處理機制      | `run_hook_safely` 與統一錯誤基礎設施 |
+| [5.6](/python/05-error-testing/observability-design/) | Hook 系統可觀測性設計 | 日誌架構、錯誤可見性、健康監控       |
 
 ## 實際範例來源
 

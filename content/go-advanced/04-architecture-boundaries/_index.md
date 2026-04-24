@@ -15,10 +15,10 @@ weight: 4
 
 | 章節                         | 主題                                                                  | 關鍵收穫                                                                                     |
 | ---------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [4.1](component-boundaries/) | 事件來源、處理流程與狀態邊界                                          | 用邊界拆開 reader、normalizer、processor、repository、publisher                              |
-| [4.2](dedup-key/)            | 事件去重與語義鍵設計                                                  | 用 domain key、時間窗口與清理策略管理重複事件                                                |
-| [4.3](source-of-truth/)      | [Source of Truth](/backend/knowledge-cards/source-of-truth)：狀態邊界 | 集中狀態轉移、保護可變資料、設計 [projection](/backend/knowledge-cards/projection)           |
-| [4.4](event-fusion/)         | 多來源 event 融合                                                     | 把 HTTP、[queue](/backend/knowledge-cards/queue)、timer 等來源收斂到同一套 domain event 流程 |
+| [4.1](/go-advanced/04-architecture-boundaries/component-boundaries/) | 事件來源、處理流程與狀態邊界                                          | 用邊界拆開 reader、normalizer、processor、repository、publisher                              |
+| [4.2](/go-advanced/04-architecture-boundaries/dedup-key/)            | 事件去重與語義鍵設計                                                  | 用 domain key、時間窗口與清理策略管理重複事件                                                |
+| [4.3](/go-advanced/04-architecture-boundaries/source-of-truth/)      | [Source of Truth](/backend/knowledge-cards/source-of-truth)：狀態邊界 | 集中狀態轉移、保護可變資料、設計 [projection](/backend/knowledge-cards/projection)           |
+| [4.4](/go-advanced/04-architecture-boundaries/event-fusion/)         | 多來源 event 融合                                                     | 把 HTTP、[queue](/backend/knowledge-cards/queue)、timer 等來源收斂到同一套 domain event 流程 |
 
 ## 本模組使用的範例主題
 
@@ -51,10 +51,10 @@ weight: 4
 
 閱讀時可以把四章視為一條路線：
 
-1. [事件來源、處理流程與狀態邊界](component-boundaries/)：先建立元件分工。
-2. [事件去重與語義鍵設計](dedup-key/)：再定義「同一事件」的語意。
-3. [Source of Truth：狀態邊界](source-of-truth/)：接著決定誰能改狀態。
-4. [多來源 event 融合](event-fusion/)：最後處理 HTTP、queue、timer 等多入口協作。
+1. [事件來源、處理流程與狀態邊界](/go-advanced/04-architecture-boundaries/component-boundaries/)：先建立元件分工。
+2. [事件去重與語義鍵設計](/go-advanced/04-architecture-boundaries/dedup-key/)：再定義「同一事件」的語意。
+3. [Source of Truth：狀態邊界](/go-advanced/04-architecture-boundaries/source-of-truth/)：接著決定誰能改狀態。
+4. [多來源 event 融合](/go-advanced/04-architecture-boundaries/event-fusion/)：最後處理 HTTP、queue、timer 等多入口協作。
 
 ## 本模組不處理
 

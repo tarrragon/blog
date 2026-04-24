@@ -41,8 +41,8 @@ weight: 8
 
 | 章節                        | 主題         | 關鍵收穫                   |
 | --------------------------- | ------------ | -------------------------- |
-| [8.1](parallel-processing/) | 並行處理實戰 | 將 I/O 密集任務並行化      |
-| [8.2](performance-tuning/)  | 效能調優實戰 | 測量、分析、優化的完整流程 |
+| [8.1](/python-advanced/08-practical-optimization/parallel-processing/) | 並行處理實戰 | 將 I/O 密集任務並行化      |
+| [8.2](/python-advanced/08-practical-optimization/performance-tuning/)  | 效能調優實戰 | 測量、分析、優化的完整流程 |
 
 ## 案例研究
 
@@ -50,11 +50,11 @@ weight: 8
 
 | 案例                                                     | 素材                     | 學習重點                |
 | -------------------------------------------------------- | ------------------------ | ----------------------- |
-| [並行檔案檢查](case-studies/parallel-file-check/)        | markdown_link_checker.py | ThreadPoolExecutor      |
-| [並行 Hook 驗證](case-studies/parallel-hook-validation/) | hook_validator.py        | as_completed + 進度報告 |
-| [正則表達式預編譯](case-studies/regex-precompile/)       | hook_validator.py        | re.compile 效能提升     |
-| [LRU 快取](case-studies/lru-cache-branch/)               | git_utils.py             | functools.lru_cache     |
-| [資料結構選擇](case-studies/data-structure-choice/)      | hook_validator.py        | list vs set 查詢效能    |
+| [並行檔案檢查](/python-advanced/08-practical-optimization/case-studies/parallel-file-check/)        | markdown_link_checker.py | ThreadPoolExecutor      |
+| [並行 Hook 驗證](/python-advanced/08-practical-optimization/case-studies/parallel-hook-validation/) | hook_validator.py        | as_completed + 進度報告 |
+| [正則表達式預編譯](/python-advanced/08-practical-optimization/case-studies/regex-precompile/)       | hook_validator.py        | re.compile 效能提升     |
+| [LRU 快取](/python-advanced/08-practical-optimization/case-studies/lru-cache-branch/)               | git_utils.py             | functools.lru_cache     |
+| [資料結構選擇](/python-advanced/08-practical-optimization/case-studies/data-structure-choice/)      | hook_validator.py        | list vs set 查詢效能    |
 
 ## 可執行程式碼
 

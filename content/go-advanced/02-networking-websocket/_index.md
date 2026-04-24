@@ -13,10 +13,10 @@ weight: 2
 
 | 章節                         | 主題                                                                 | 關鍵收穫                                                                                   |
 | ---------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| [2.1](read-write-pump/)      | read pump / write pump 模式                                          | 讓單一連線的讀取、寫入與清理責任可推理                                                     |
-| [2.2](heartbeat-deadline/)   | heartbeat、[deadline](/backend/knowledge-cards/deadline/) 與連線清理 | 用 ping/pong、[deadline](/backend/knowledge-cards/deadline) 與統一 unregister 偵測失效連線 |
-| [2.3](subscription-routing/) | 訂閱模型與訊息路由                                                   | 把 client action 轉成可測的 command 與訂閱狀態                                             |
-| [2.4](slow-client/)          | 慢客戶端與 send [buffer](/backend/knowledge-cards/buffer) 管理       | 用 bounded buffer、drop policy 與 byte budget 控制容量風險                                 |
+| [2.1](/go-advanced/02-networking-websocket/read-write-pump/)      | read pump / write pump 模式                                          | 讓單一連線的讀取、寫入與清理責任可推理                                                     |
+| [2.2](/go-advanced/02-networking-websocket/heartbeat-deadline/)   | heartbeat、[deadline](/backend/knowledge-cards/deadline/) 與連線清理 | 用 ping/pong、[deadline](/backend/knowledge-cards/deadline) 與統一 unregister 偵測失效連線 |
+| [2.3](/go-advanced/02-networking-websocket/subscription-routing/) | 訂閱模型與訊息路由                                                   | 把 client action 轉成可測的 command 與訂閱狀態                                             |
+| [2.4](/go-advanced/02-networking-websocket/slow-client/)          | 慢客戶端與 send [buffer](/backend/knowledge-cards/buffer) 管理       | 用 bounded buffer、drop policy 與 byte budget 控制容量風險                                 |
 
 ## 本模組使用的範例主題
 
@@ -52,10 +52,10 @@ WebSocket 章節依照連線生命週期拆分。Read/write pump、heartbeat、s
 
 | 問題                              | 優先閱讀                                              |
 | --------------------------------- | ----------------------------------------------------- |
-| concurrent write 或讀寫責任混亂   | [read pump / write pump 模式](read-write-pump/)       |
-| 連線失效沒有被清理                | [heartbeat、deadline 與連線清理](heartbeat-deadline/) |
-| action、payload、訂閱狀態混在一起 | [訂閱模型與訊息路由](subscription-routing/)           |
-| 慢 client 拖垮 hub                | [慢客戶端與 send buffer 管理](slow-client/)           |
+| concurrent write 或讀寫責任混亂   | [read pump / write pump 模式](/go-advanced/02-networking-websocket/read-write-pump/)       |
+| 連線失效沒有被清理                | [heartbeat、deadline 與連線清理](/go-advanced/02-networking-websocket/heartbeat-deadline/) |
+| action、payload、訂閱狀態混在一起 | [訂閱模型與訊息路由](/go-advanced/02-networking-websocket/subscription-routing/)           |
+| 慢 client 拖垮 hub                | [慢客戶端與 send buffer 管理](/go-advanced/02-networking-websocket/slow-client/)           |
 
 ## 本模組不處理
 

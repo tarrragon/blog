@@ -14,16 +14,16 @@ weight: 10
 
 | 案例                                        | 素材                     | 技術                | 預期加速 |
 | ------------------------------------------- | ------------------------ | ------------------- | -------- |
-| [並行檔案檢查](parallel-file-check/)        | markdown_link_checker.py | ThreadPoolExecutor  | 3-5x     |
-| [並行 Hook 驗證](parallel-hook-validation/) | hook_validator.py        | as_completed + 進度 | 3-5x     |
+| [並行檔案檢查](/python-advanced/08-practical-optimization/case-studies/parallel-file-check/)        | markdown_link_checker.py | ThreadPoolExecutor  | 3-5x     |
+| [並行 Hook 驗證](/python-advanced/08-practical-optimization/case-studies/parallel-hook-validation/) | hook_validator.py        | as_completed + 進度 | 3-5x     |
 
 ### 效能調優
 
 | 案例                                   | 素材              | 技術                | 預期加速 |
 | -------------------------------------- | ----------------- | ------------------- | -------- |
-| [正則表達式預編譯](regex-precompile/)  | hook_validator.py | re.compile          | 1.2-1.3x |
-| [LRU 快取](lru-cache-branch/)          | git_utils.py      | functools.lru_cache | 視命中率 |
-| [資料結構選擇](data-structure-choice/) | hook_validator.py | set vs list         | 10-100x  |
+| [正則表達式預編譯](/python-advanced/08-practical-optimization/case-studies/regex-precompile/)  | hook_validator.py | re.compile          | 1.2-1.3x |
+| [LRU 快取](/python-advanced/08-practical-optimization/case-studies/lru-cache-branch/)          | git_utils.py      | functools.lru_cache | 視命中率 |
+| [資料結構選擇](/python-advanced/08-practical-optimization/case-studies/data-structure-choice/) | hook_validator.py | set vs list         | 10-100x  |
 
 ## 學習路徑
 

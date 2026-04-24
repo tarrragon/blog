@@ -18,10 +18,10 @@ weight: 5
 
 | 章節                | 主題           | 關鍵收穫             |
 | ------------------- | -------------- | -------------------- |
-| [5.1](ctypes-cffi/) | ctypes 與 cffi | 動態綁定 C 函式庫    |
-| [5.2](cython/)      | Cython         | Python 語法的 C 速度 |
-| [5.3](pybind11/)    | pybind11       | 現代 C++ 綁定        |
-| [5.4](when-to-use/) | 選擇指南       | 工具比較與決策       |
+| [5.1](/python-advanced/05-c-extensions/ctypes-cffi/) | ctypes 與 cffi | 動態綁定 C 函式庫    |
+| [5.2](/python-advanced/05-c-extensions/cython/)      | Cython         | Python 語法的 C 速度 |
+| [5.3](/python-advanced/05-c-extensions/pybind11/)    | pybind11       | 現代 C++ 綁定        |
+| [5.4](/python-advanced/05-c-extensions/when-to-use/) | 選擇指南       | 工具比較與決策       |
 
 ## 工具選擇快速指南
 

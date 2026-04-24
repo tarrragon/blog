@@ -490,7 +490,7 @@ class Task(Generic[T]):
 
     def execute(self, ctx: "TaskContext") -> TaskResult[T]:
         """執行任務"""
-        result = TaskResult[T](started_at=datetime.now())
+        result = TaskResult[T](/python-advanced/03-design-patterns/integration/started_at=datetime.now())
         self.status = TaskStatus.RUNNING
 
         try:

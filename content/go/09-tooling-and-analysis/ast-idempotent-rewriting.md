@@ -129,7 +129,7 @@ func FixHeadingBlankLines(lines []string, ctx LineContext) []string {
 ```go
 // scripts/mdtools/internal/mdfmt/urls.go
 func rewriteBareURLsInLine(line string, cfg rules.URLRules, idPatterns []*regexp.Regexp) string {
-	masked := collectMaskedRanges(line) // [...](...) / <...> / `...` 的位置
+	masked := collectMaskedRanges(line) // [...](/go/09-tooling-and-analysis/ast-idempotent-rewriting/...) / <...> / `...` 的位置
 	matches := bareURLRe.FindAllStringIndex(line, -1)
 	if len(matches) == 0 {
 		return line
@@ -145,7 +145,7 @@ func rewriteBareURLsInLine(line string, cfg rules.URLRules, idPatterns []*regexp
 		} else {
 			rawURL := line[start:end]
 			display := shortenURL(rawURL, cfg, idPatterns)
-			fmt.Fprintf(&b, "[%s](%s)", display, rawURL)
+			fmt.Fprintf(&b, "[%s](/go/09-tooling-and-analysis/ast-idempotent-rewriting/%s)", display, rawURL)
 		}
 		cursor = end
 	}

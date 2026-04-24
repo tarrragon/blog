@@ -59,7 +59,7 @@ class HookValidator:
     ]
 
     VALID_NAME_PATTERNS = [
-        r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$",
+        r"^[a-z0-9](/python-advanced/06-rust-extensions/case-studies/rust-regex/[a-z0-9\-_]*[a-z0-9])?\.py$",
     ]
 
     def _has_import(self, content: str, patterns: List[str]) -> bool:
@@ -217,7 +217,7 @@ static BAD_OUTPUT_REGEX: Lazy<RegexSet> = Lazy::new(|| {
 
 // For filename validation (anchored match)
 static VALID_NAME_REGEX: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$")
+    Regex::new(r"^[a-z0-9](/python-advanced/06-rust-extensions/case-studies/rust-regex/[a-z0-9\-_]*[a-z0-9])?\.py$")
         .expect("Invalid regex pattern")
 });
 ```
@@ -481,7 +481,7 @@ class HookValidator:
         else:
             import re
             valid = bool(re.match(
-                r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$",
+                r"^[a-z0-9](/python-advanced/06-rust-extensions/case-studies/rust-regex/[a-z0-9\-_]*[a-z0-9])?\.py$",
                 filename
             ))
 
@@ -684,7 +684,7 @@ static BAD_OUTPUT_REGEX: Lazy<RegexSet> = Lazy::new(|| {
 
 /// Valid hook filename pattern (anchored)
 static VALID_NAME_REGEX: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$")
+    Regex::new(r"^[a-z0-9](/python-advanced/06-rust-extensions/case-studies/rust-regex/[a-z0-9\-_]*[a-z0-9])?\.py$")
         .expect("Invalid VALID_NAME_REGEX pattern")
 });
 

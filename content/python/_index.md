@@ -24,86 +24,86 @@ weight: 30
 
 ## 教學模組
 
-### [模組零：設計哲學（序章）](00-philosophy/)
+### [模組零：設計哲學（序章）](/python/00-philosophy/)
 
 所有程式碼設計原則的統一視角：降低閱讀者的認知負擔。
 
-- [認知負擔：程式碼設計的核心目的](00-philosophy/cognitive-load/)
-- [命名的藝術：讓程式碼說故事](00-philosophy/naming-art/)
-- [開放封閉原則與認知負擔](00-philosophy/open-closed-principle/)
-- [成本思維：軟體開發的隱性代價](00-philosophy/cost-thinking/)
+- [認知負擔：程式碼設計的核心目的](/python/00-philosophy/cognitive-load/)
+- [命名的藝術：讓程式碼說故事](/python/00-philosophy/naming-art/)
+- [開放封閉原則與認知負擔](/python/00-philosophy/open-closed-principle/)
+- [成本思維：軟體開發的隱性代價](/python/00-philosophy/cost-thinking/)
 
-### [模組一：Python 基礎概念](01-basics/)
+### [模組一：Python 基礎概念](/python/01-basics/)
 
 快速回顧 Python 的核心概念，包括語言哲學、script 到 package 的成長路線、模組組織和導入機制。
 
-- [Python 哲學與設計理念](01-basics/philosophy/)
-- [從單一 script 到多檔案專案](01-basics/script-to-package/)
-- [模組與套件組織](01-basics/modules/)
-- [導入機制與路徑管理](01-basics/imports/)
+- [Python 哲學與設計理念](/python/01-basics/philosophy/)
+- [從單一 script 到多檔案專案](/python/01-basics/script-to-package/)
+- [模組與套件組織](/python/01-basics/modules/)
+- [導入機制與路徑管理](/python/01-basics/imports/)
 
-### [模組二：型別系統](02-type-system/)
+### [模組二：型別系統](/python/02-type-system/)
 
 現代 Python 的型別系統，讓程式碼更易讀、更易維護。
 
-- [Type Hints 基礎](02-type-system/type-hints/)
-- [Optional、Union、泛型](02-type-system/optional-union/)
-- [Dataclass 資料結構](02-type-system/dataclass/)
-- [Enum 列舉型別](02-type-system/enum/)
+- [Type Hints 基礎](/python/02-type-system/type-hints/)
+- [Optional、Union、泛型](/python/02-type-system/optional-union/)
+- [Dataclass 資料結構](/python/02-type-system/dataclass/)
+- [Enum 列舉型別](/python/02-type-system/enum/)
 
-### [模組三：標準庫實戰](03-stdlib/)
+### [模組三：標準庫實戰](/python/03-stdlib/)
 
 Python 標準庫的常用模組，這些都是 Hook 系統中實際使用的工具。
 
-- [pathlib - 路徑操作](03-stdlib/pathlib/)
-- [json - 序列化](03-stdlib/json/)
-- [subprocess - 執行外部命令](03-stdlib/subprocess/)
-- [re - 正規表達式](03-stdlib/regex/)
-- [logging - 日誌系統](03-stdlib/logging/)
-- [argparse - CLI 介面](03-stdlib/argparse/)
-- [並行處理 - threading、multiprocessing、concurrent.futures](03-stdlib/concurrency/)
-- [效能迷思與優化策略](03-stdlib/performance/)
+- [pathlib - 路徑操作](/python/03-stdlib/pathlib/)
+- [json - 序列化](/python/03-stdlib/json/)
+- [subprocess - 執行外部命令](/python/03-stdlib/subprocess/)
+- [re - 正規表達式](/python/03-stdlib/regex/)
+- [logging - 日誌系統](/python/03-stdlib/logging/)
+- [argparse - CLI 介面](/python/03-stdlib/argparse/)
+- [並行處理 - threading、multiprocessing、concurrent.futures](/python/03-stdlib/concurrency/)
+- [效能迷思與優化策略](/python/03-stdlib/performance/)
 
-### [模組四：物件導向設計](04-oop/)
+### [模組四：物件導向設計](/python/04-oop/)
 
 Python 的物件導向設計模式，從類別設計到設計模式。
 
-- [類別設計原則](04-oop/class-design/)
-- [抽象基類 ABC](04-oop/abc/)
-- [工廠模式](04-oop/factory/)
-- [單例與快取模式](04-oop/singleton-cache/)
+- [類別設計原則](/python/04-oop/class-design/)
+- [抽象基類 ABC](/python/04-oop/abc/)
+- [工廠模式](/python/04-oop/factory/)
+- [單例與快取模式](/python/04-oop/singleton-cache/)
 
-### [模組五：錯誤處理與測試](05-error-testing/)
+### [模組五：錯誤處理與測試](/python/05-error-testing/)
 
 穩健程式碼的基石：異常處理和單元測試。
 
-- [異常處理策略](05-error-testing/exception/)
-- [返回值設計](05-error-testing/return-values/)
-- [unittest 基礎](05-error-testing/unittest/)
-- [Mock 與測試隔離](05-error-testing/mock/)
-- [Hook 系統可觀測性設計](05-error-testing/observability-design/)
+- [異常處理策略](/python/05-error-testing/exception/)
+- [返回值設計](/python/05-error-testing/return-values/)
+- [unittest 基礎](/python/05-error-testing/unittest/)
+- [Mock 與測試隔離](/python/05-error-testing/mock/)
+- [Hook 系統可觀測性設計](/python/05-error-testing/observability-design/)
 
-### [模組六：實戰指南](06-practical/)
+### [模組六：實戰指南](/python/06-practical/)
 
 將所學應用到實際工作中，包含完整的操作流程。
 
-- [如何新增一個 Hook](06-practical/new-hook/)
-- [如何擴展共用模組](06-practical/extend-lib/)
-- [如何新增語言解析器](06-practical/new-parser/)
+- [如何新增一個 Hook](/python/06-practical/new-hook/)
+- [如何擴展共用模組](/python/06-practical/extend-lib/)
+- [如何新增語言解析器](/python/06-practical/new-parser/)
 
-### [模組七：重構實戰](07-refactoring/)
+### [模組七：重構實戰](/python/07-refactoring/)
 
 基於 v0.28.0 重構經驗，學習識別程式碼問題並進行系統性重構。
 
-- [重構的動機與策略](07-refactoring/refactoring-strategy/)
-- [程式碼壞味道識別](07-refactoring/code-smells/)
-- [DRY 原則與共用程式庫](07-refactoring/dry-principle/)
-- [配置分離與常數管理](07-refactoring/constants-management/)
-- [大規模統一化重構](07-refactoring/unified-infrastructure/)
-- [重構陷阱與防護](07-refactoring/refactoring-pitfalls/)
-- [非程式碼的重構](07-refactoring/non-code-refactoring/)
-- [完整案例回顧](07-refactoring/case-study/)
-- [作用域迴歸案例研究](07-refactoring/scope-regression/)
+- [重構的動機與策略](/python/07-refactoring/refactoring-strategy/)
+- [程式碼壞味道識別](/python/07-refactoring/code-smells/)
+- [DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)
+- [配置分離與常數管理](/python/07-refactoring/constants-management/)
+- [大規模統一化重構](/python/07-refactoring/unified-infrastructure/)
+- [重構陷阱與防護](/python/07-refactoring/refactoring-pitfalls/)
+- [非程式碼的重構](/python/07-refactoring/non-code-refactoring/)
+- [完整案例回顧](/python/07-refactoring/case-study/)
+- [作用域迴歸案例研究](/python/07-refactoring/scope-regression/)
 
 ## 範例來源
 

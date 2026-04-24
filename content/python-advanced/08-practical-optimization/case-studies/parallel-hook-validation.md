@@ -636,7 +636,7 @@ class HookValidator:
     ]
 
     VALID_NAME_PATTERNS = [
-        r"^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?\.py$",
+        r"^[a-z0-9](/python-advanced/08-practical-optimization/case-studies/parallel-hook-validation/[a-z0-9\-_]*[a-z0-9])?\.py$",
     ]
 
     def __init__(self, project_root: Optional[str] = None):

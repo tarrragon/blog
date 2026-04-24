@@ -28,20 +28,20 @@ weight: 7
 
 | 章節                                                                            | 主題                               | 核心責任                                 |
 | ------------------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------- |
-| [7.1 攻擊者視角（紅隊）與攻擊面驗證](red-team/)                                 | 攻擊者判讀語言                     | 把攻擊路徑轉成服務問題語言               |
-| [7.2 身分與授權邊界](identity-access-boundary/)                                 | Identity & Access                  | 定義身份擴散、授權濫用、會話收斂問題     |
-| [7.3 入口治理與伺服器防護](entrypoint-and-server-protection/)                   | Entrypoint & Server                | 定義入口暴露、管理面與修補窗口問題       |
-| [7.4 資料保護與遮罩治理](data-protection-and-masking-governance/)               | Data Protection                    | 定義資料暴露、匯出、備份與跨界交換問題   |
-| [7.5 傳輸信任與憑證生命週期](transport-trust-and-certificate-lifecycle/)        | Transport Trust                    | 定義信任鏈、會話完整性與憑證節奏問題     |
-| [7.6 秘密管理與機器憑證治理](secrets-and-machine-credential-governance/)        | Secrets & Credentials              | 定義 secret/token/key 的分域與收斂問題   |
-| [7.7 稽核追蹤與責任邊界](audit-trail-and-accountability-boundary/)              | Audit & Accountability             | 定義證據模型、責任鏈與可回查問題         |
-| [7.8 模組路由：問題到服務實作](security-routing-from-case-to-service/)          | Routing                            | 定義概念層到實作層的交接規則             |
-| [7.9 服務生命週期的資安風險節奏](security-lifecycle-risk-cadence/)              | Lifecycle Risk Cadence             | 定義設計到復盤五段的資安節奏問題         |
-| [7.10 Workload Identity 與聯邦信任邊界](workload-identity-and-federated-trust/) | Workload Identity & Federation     | 定義非人類身份與跨平台信任問題           |
-| [7.11 資料駐留、刪除與證據鏈](data-residency-deletion-and-evidence-chain/)      | Data Residency & Deletion Evidence | 定義資料位置、刪除閉環與證據可驗證問題   |
-| [7.12 供應鏈完整性與 Artifact 信任](supply-chain-integrity-and-artifact-trust/) | Supply Chain Integrity             | 定義 build 與 artifact 信任鏈問題        |
-| [7.13 偵測覆蓋率與訊號治理](detection-coverage-and-signal-governance/)          | Detection & Signal Governance      | 定義偵測覆蓋、訊號品質與誤報成本問題     |
-| [7.14 資安治理例外與 Tripwire](security-governance-exception-and-tripwire/)     | Governance Exception & Tripwire    | 定義例外決策期限、補償控制與重評估觸發器 |
+| [7.1 攻擊者視角（紅隊）與攻擊面驗證](/backend/07-security-data-protection/red-team/)                                 | 攻擊者判讀語言                     | 把攻擊路徑轉成服務問題語言               |
+| [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)                                 | Identity & Access                  | 定義身份擴散、授權濫用、會話收斂問題     |
+| [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)                   | Entrypoint & Server                | 定義入口暴露、管理面與修補窗口問題       |
+| [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)               | Data Protection                    | 定義資料暴露、匯出、備份與跨界交換問題   |
+| [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)        | Transport Trust                    | 定義信任鏈、會話完整性與憑證節奏問題     |
+| [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)        | Secrets & Credentials              | 定義 secret/token/key 的分域與收斂問題   |
+| [7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)              | Audit & Accountability             | 定義證據模型、責任鏈與可回查問題         |
+| [7.8 模組路由：問題到服務實作](/backend/07-security-data-protection/security-routing-from-case-to-service/)          | Routing                            | 定義概念層到實作層的交接規則             |
+| [7.9 服務生命週期的資安風險節奏](/backend/07-security-data-protection/security-lifecycle-risk-cadence/)              | Lifecycle Risk Cadence             | 定義設計到復盤五段的資安節奏問題         |
+| [7.10 Workload Identity 與聯邦信任邊界](/backend/07-security-data-protection/workload-identity-and-federated-trust/) | Workload Identity & Federation     | 定義非人類身份與跨平台信任問題           |
+| [7.11 資料駐留、刪除與證據鏈](/backend/07-security-data-protection/data-residency-deletion-and-evidence-chain/)      | Data Residency & Deletion Evidence | 定義資料位置、刪除閉環與證據可驗證問題   |
+| [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) | Supply Chain Integrity             | 定義 build 與 artifact 信任鏈問題        |
+| [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)          | Detection & Signal Governance      | 定義偵測覆蓋、訊號品質與誤報成本問題     |
+| [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)     | Governance Exception & Tripwire    | 定義例外決策期限、補償控制與重評估觸發器 |
 
 ## 本輪輸出
 
