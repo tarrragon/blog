@@ -14,8 +14,15 @@
       "Bash(gh api:*)",
       "WebFetch(domain:github.com)",
       "Bash(kill %1)",
-      "Bash(head -n 153 AGENTS.md)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(awk '/^content\\\\// {f=$0} /^  -/ {print f\" | \"$0}')",
+      "Bash(bin/mdtools cards *)",
+      "Bash(make site *)",
+      "Bash(bin/mdtools lint *)",
+      "Bash(wait)",
+      "Bash(gh run *)",
+      "Bash(bin/mdtools fmt *)",
+      "Bash(make fix *)"
     ],
     "deny": [],
     "ask": []
