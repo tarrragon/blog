@@ -116,6 +116,35 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 
 - [#54 Pattern：跨 slot 同節點搬遷](pattern-cross-slot-node-relocation/) — stateful UI 在兩個 slot 間搬同一節點、不複製
 
+Filter × Source 合成三選（從 #59 抽出）：
+
+- [#60 Pattern：自動續抓直到湊滿 quota](pattern-fetch-until-quota/) — source 不支援 server filter、match 密度可預期
+- [#61 Pattern：把 filter 推進 query 引擎](pattern-query-side-pushdown/) — source 支援、避免層錯位的最優解
+- [#62 Pattern：誠實進度 UX（已掃 N / 命中 K / 共 M）](pattern-honest-progress-ui/) — sourcing 限制下的合理透明度
+
+### 第八輪：Filter × Source / Data Flow 議題（#55-#59, #63-#64）
+
+從搜尋頁 title/content filter bug 萃取出的「stream 操作 × 分批 source」主軸。跨前端 / 後端 / 演算法 / 資料庫通用、不只 UI。
+
+問題分析：
+
+- [#55 Filter 與 Source 的抽象層錯位](view-layer-filter-vs-source-layer/) — filter 在視覺層、source 在資料層分批 → silent 語意縫
+- [#56 視覺完成 ≠ 功能完成](visual-completion-vs-functional-completion/) — 視覺驗收訊號早於功能驗收成立、容易誤判完工
+- [#57 Loading / Empty / End 三狀態的區分](loading-empty-end-state-distinction/) — 三事實不同、UX 必須分
+
+指令澄清（補 #16-23 第三輪第 5 類）：
+
+- [#58 篩選類指令的澄清時機](filter-instruction-clarification/) — 三問模板（定義域 / 資料源型態 / 空狀態）
+
+解法策略：
+
+- [#59 Filter × Source 合成策略五選一](filter-source-composition-strategies/) — A 推進 query / B 自動續抓 / C 預先 index / D 誠實 UX / E 接受語意縮小
+
+抽象原則（屬第六輪、跨領域升級）：
+
+- [#63 資料源的形狀決定 feature 的形狀](data-source-shape-defines-feature-shape/) — 不能憑 UI 倒推資料層
+- [#64 Feature 操作要跟 Source 同層合成](compose-feature-at-source-layer/) — stream 操作 = 同層或更上游、跨前端 / 後端 / 演算法 / 資料庫通用
+
 ---
 
 ## 場景導讀
@@ -149,6 +178,7 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 - 「不要動 X」「隔離」 → `#18 隔離程度類`
 - 客製需求看似簡單但會對抗多層 → `#19 覆寫深度的成本告知`
 - 同方向反覆失敗 → `#20 同方向反覆失敗的轉折點`
+- 「依 X 篩選」「只看 X」「過濾 Y」 → `#58 篩選類指令的澄清時機`
 
 ### 路徑 6：寫測試固化已 debug 過的版型
 
@@ -182,6 +212,18 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 
 `#16-23 第三輪八篇` 整批是「下次看到這類指令該怎麼處理」、開發前重溫一遍可避免反覆失敗。
 
+### 路徑 11：設計含 filter / sort 的 feature、source 是分批 / streaming
+
+`#63 資料源形狀決定 feature 形狀` → `#58 篩選類指令的澄清時機` → `#55 Filter 與 Source 層錯位` → `#59 五策略選一` → 依選擇看 `#60 / #61 / #62` 對應 pattern
+
+### 路徑 12：feature「畫面對了但功能怪」debug
+
+`#56 視覺完成 ≠ 功能完成` → `#57 三狀態區分` → `#55 層錯位（如果是 filter 類）` → `#64 同層合成原則`
+
+### 路徑 13：跨前端 / 後端 / 演算法的 stream 操作架構
+
+`#64 Feature 操作要跟 Source 同層合成` → `#63 資料源形狀` → `#59 策略五選一` — 適用於後端 middleware filter、map-reduce post-filter、pipeline transform 等非 UI 情境
+
 ---
 
-**Last Updated**: 2026-04-25 — 五輪實作 43 篇 + 第六輪抽象層 4 篇（#42-45）+ 第七輪 Pattern 卡片 7 篇（#46-51 + #54）。Focus 三輪重審完成：#5/#13 整合、#40 拆三 a11y、#2 拆出 #54 pattern、#33 改 audit 視角引用 #29。Index 純路由、內容由各篇自包含。
+**Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 4 篇（#42-45）+ 第七輪 Pattern 卡片 10 篇（#46-51, #54, #60-62）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。新一輪冷啟版本、待迭代輪做原子化拆解 / 補充 / 反向擴充 / pattern 抽出。
