@@ -50,61 +50,17 @@ items.forEach(el => {
 
 ---
 
-## 多面向：四類資料源、同樣的層錯位
+## 哪些 source 形狀有層錯位風險
 
-層錯位不限於搜尋頁 + post-filter。任何「stream 在某層分批 materialize、filter 在更下游」都會出現。
+| Source 型態                           | 是否有層錯位風險                |
+| ------------------------------------- | ------------------------------- |
+| 一次性 fetch、靜態陣列                | 否（沒有 subset）               |
+| Paginated fetch（load more / cursor） | 是 — 本次任務的 case            |
+| Streaming（SSE / WebSocket）          | 視 server 是否限額              |
+| Lazy iterator + take(N) / break       | 是                              |
+| Cached + revalidate                   | 是（cache vs fresh 兩 dataset） |
 
-### 面向 1：Paginated source + post-filter（本次任務的 case）
-
-Pagefind 分批 fetch、JS 在 view 層 post-filter。
-
-```js
-// pagefind 分批
-pagefind.search(query).then(r => r.results.slice(0, 10).forEach(render));
-// 我們在 view 層 filter
-results.forEach(el => el.style.display = matches(el) ? '' : 'none');
-```
-
-第一批 10 筆 filter 後 0 筆顯示 → 空白頁、使用者不知道「載更多會不會有」。
-
-### 面向 2：Streaming source（SSE / async iterator） + post-filter
-
-```js
-for await (const item of eventSource) {
-  if (matches(item)) container.append(render(item));
-}
-// 表面上看起來是 source-layer filter (在 for await 裡)
-// 但如果 server 端決定「只 push 前 N 筆」、filter 仍然有層錯位
-```
-
-「只看到符合的」依賴 server 推 dataset 是否完整。如果 server 也分批、就轉成面向 1。
-
-### 面向 3：Cached source（service worker / SWR）+ filter
-
-```js
-const cached = await cache.match(query);
-const fresh = await fetch(query);
-// filter 寫在 cache layer 跟 fresh layer 之上
-filter(cached || fresh);
-```
-
-Cached subset 過濾 → 看似 instant、實際 fresh 來了之後 filter 對的是不同 dataset。**使用者可能在 cache 結果上做了決策、新 dataset 改變後決策失效**。
-
-### 面向 4：Lazy iterator / generator + post-collection filter
-
-```python
-def items():
-    for page in fetch_pages():  # 分批
-        for item in page:
-            yield item
-
-# filter 全收後再過濾
-filtered = [x for x in items() if matches(x)]
-```
-
-Python 這寫法看似 OK（generator 會抓完全部）、但如果中間有 break / take(N) / 上游限額（quota）— 一樣是面向 1 的層錯位。
-
-**四個面向共用同個結構**：source 分批 / 限額 / 延遲 materialize、filter 在下游 → silent 缺口。
+四類 source 共用同個結構：**source 分批 / 限額 / 延遲 materialize、filter 在下游 → silent 缺口**。詳細形狀分析見 [#63 資料源的形狀決定 feature 的形狀](../data-source-shape-defines-feature-shape/)。
 
 ---
 
@@ -140,9 +96,9 @@ function applyFilter(scope) {
 
 兩個定義在一般狀況看起來一樣（已載入子集裡有命中）、稀疏 case 暴露縫。
 
-### 執行（待解、本文不展開解法）
+### 執行（解法選擇）
 
-解法選擇是另一個議題（見 `filter-source-composition-strategies.md` 待補）。本文聚焦在「先識別這是層錯位、不是 UI bug」 — 識別錯了、後續解法都會在錯誤的層上補救。
+解法選擇展開見 [#59 Filter × Source 合成策略五選一](../filter-source-composition-strategies/) — A 推進 query / B 自動續抓 / C 預先 index / D 誠實 UX / E 明示縮小。本文聚焦「先識別這是層錯位、不是 UI bug」 — 識別錯了、後續解法都會在錯誤的層上補救。
 
 ---
 
@@ -159,37 +115,6 @@ function applyFilter(scope) {
 
 ---
 
-## 設計取捨：filter 該放哪一層
-
-四種做法、各自機會成本不同。沒有絕對最佳、看 source 的 cardinality（總數）跟 match 密度而定。
-
-### A：Filter 推到資料層、source 端帶條件 query
-
-- **機制**：把 filter 條件變成 source 的 query 參數（pagefind 的 filter API、SQL `WHERE`、API endpoint 的 ?filter=）
-- **選 A 的理由**：跟使用者意圖最近、source 直接回符合的、沒有 silent 缺口
-- **適合**：source 支援 server-side filter（已索引的欄位、SQL 可查的條件）
-- **代價**：source 不支援該 filter 條件時要改 source（重 index、改 schema、改 API） — 工程量大
-
-### B：Filter 在資料層、自動續抓直到湊滿
-
-- **機制**：抓一批 → filter → 不夠就再抓 → 直到湊滿 N 個 match 或 source 結束
-- **跟 A 的取捨**：B 不需要改 source、但稀疏 case 可能拉光整個 dataset；A 有索引時遠快
-- **B 才合理的情境**：source 不支援 server-side filter、match 密度可預期不會太低
-
-### C：Filter 在視覺層、但 UI 誠實顯示「掃描範圍」
-
-- **機制**：保留視覺層 filter、但 UI 寫「已掃 N 筆 / 命中 K 筆 / 共 M 筆」、使用者點「再掃一批」續抓
-- **跟 A 的取捨**：C 工程量低、不裝完美；A 體驗好、要重設計
-- **C 才合理的情境**：filter 是次要功能、使用者願意手動續抓、原生 source 互動已是「載更多」模式
-
-### D：Filter 在視覺層、不告知使用者層錯位
-
-- **機制**：silent post-filter、使用者自己觀察「load more 沒動」自己理解
-- **D 成本特別高的原因**：使用者對「沒命中」與「載入失敗」與「還沒掃到」三狀態無法區分、產生信任損失
-- **D 才合理的情境**：實務上幾乎不存在 — 這是「能用」的假象、不是合理選擇
-
----
-
 ## 識別層錯位的三問
 
 寫 filter / sort / count / transform 之前自問：
@@ -200,13 +125,7 @@ function applyFilter(scope) {
 
 ### 2. Source 是「一次給完整 dataset」還是「分批 / 限額」？
 
-| Source 型態                     | 是否有層錯位風險                |
-| ------------------------------- | ------------------------------- |
-| 一次性 fetch、靜態陣列          | 否                              |
-| Paginated fetch（load more）    | 是                              |
-| Streaming（SSE / WebSocket）    | 視 server 是否限額              |
-| Lazy iterator + take(N) / break | 是                              |
-| Cached + revalidate             | 是（cache vs fresh 兩 dataset） |
+對照前面「哪些 source 形狀有層錯位風險」表 — 任何分批 / 限額 / streaming / cached source 都有風險。一次性 fetch 或靜態陣列才安全。
 
 ### 3. 「沒命中」與「還沒 materialize」對使用者要不要區分？
 

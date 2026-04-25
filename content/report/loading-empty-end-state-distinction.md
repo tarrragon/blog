@@ -63,19 +63,11 @@ End 狀態類似：`results.length > 0 && !hasMore` 才是 End、跟「還可以
 
 ## 多面向：三狀態的延伸
 
-### 面向 1：Filter 加進來、變五狀態
+### 面向 1：Filter 加進來、狀態空間擴張
 
-當 view 層有 filter、狀態空間擴張：
+當 view 層有 filter、三狀態擴張為五狀態（Loading / Empty-raw / Empty-filter / Partial / End）。「Empty-filter」跟「Partial」是 [#55 層錯位](../view-layer-filter-vs-source-layer/) 的 UX 表現 — 共用同個 empty 畫面 = 使用者無法判斷「再 load more 會不會有」。
 
-| 狀態           | 條件                                    |
-| -------------- | --------------------------------------- |
-| Loading        | fetch pending                           |
-| Empty (raw)    | fetch done、source 真的無結果           |
-| Empty (filter) | fetch done、source 有結果但 filter 後 0 |
-| Partial        | filter 後有結果、但 source 還有未載入   |
-| End            | source 載完、filter 後可能 0 也可能有   |
-
-「Empty (filter)」跟「Partial」是 #55 層錯位的 UX 表現。共用同個 empty 畫面 = 使用者無法判斷「再 load more 會不會有」。
+具體 UX 模板（三數字、五狀態各別 UI）見 [#62 Pattern：誠實進度 UX](../pattern-honest-progress-ui/)。
 
 ### 面向 2：Streaming / SSE 的「無更多」很難判斷
 

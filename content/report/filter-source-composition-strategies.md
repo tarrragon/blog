@@ -30,161 +30,31 @@ tags: ["report", "事後檢討", "工程方法論", "Architecture", "Data Flow"]
 
 ---
 
-## 策略 A：推進 query
+## 五策略一句話總覽
 
-### 機制
+每個策略各自一張獨立 pattern 卡片、本卡只給總覽與選擇規則。
 
-把 filter 條件變成 source 的 query 參數。Source 直接回符合的、client 不再 post-filter。
+### 策略 A：推進 query
 
-```js
-// 反例：post-filter
-const all = await pagefind.search(query);
-const filtered = all.results.filter(r => r.type === 'post');
+把 filter 條件變成 source 的 query 參數、source 端就回符合的。最優、無層錯位 — 但要 source 支援。詳見 [#61 Pattern：推進 query](../pattern-query-side-pushdown/)。
 
-// 對例：推進 query
-const filtered = await pagefind.search(query, { filters: { type: 'post' } });
-```
+### 策略 B：自動續抓直到湊滿
 
-### 適合
+抓一批 → filter → 不夠再抓 → 湊滿 N 個或 source 結束。需要上限保護避免拉爆。詳見 [#60 Pattern：自動續抓](../pattern-fetch-until-quota/)。
 
-- Source 已索引該欄位（pagefind filter API、SQL `WHERE`、ES bool query）
-- 條件能在 source 端表達（=, BETWEEN, IN, full-text match）
+### 策略 C：預先建獨立 index
 
-### 不適合
+Build time 為每種 filter mode 各建一份 source、runtime 切 mode = 切 source。前提是能控 build、mode 有限。詳見 [#65 Pattern：多 index](../pattern-multiple-indexes/)。
 
-- Source 不支援該 filter（如 pagefind 的 title-only vs content 區分、需要重 index）
-- 條件需要 client 計算（隨機抽樣、依 viewport 計算）
+### 策略 D：誠實進度 UX
 
----
+保留 view 層 filter、UI 顯示「已掃 N / 命中 K / 共 M」三數字 + 「再掃一批」、使用者手動觸發續抓。詳見 [#62 Pattern：誠實進度 UX](../pattern-honest-progress-ui/)。
 
-## 策略 B：自動續抓直到湊滿
+### 策略 E：明示語意縮小
 
-### 機制
+明示告訴使用者「filter 範圍 = 已載入、不承諾全集」、不假裝是全集 filter。比 D 顯眼度低、但成本最低。詳見 [#66 Pattern：明示語意縮小](../pattern-explicit-semantic-narrowing/)。
 
-抓一批 → filter → 不夠就再抓 → 直到湊滿目標數或 source 結束。
-
-```js
-async function loadFiltered(targetCount) {
-  let collected = [];
-  while (collected.length < targetCount && hasMore()) {
-    const batch = await fetchNext();
-    collected.push(...batch.filter(matches));
-  }
-  return collected;
-}
-```
-
-### 適合
-
-- Source 不支援 server-side filter
-- Match 密度可預期（不會稀疏到要拉光整個 dataset）
-- 使用者期望「filter 後自動湊夠」
-
-### 不適合
-
-- 稀疏 match（拉光 dataset 才湊到 N 個 → 浪費頻寬）
-- 沒有上限保護（拉到無限）
-- Source cardinality 大（10 萬筆全拉一遍）
-
-### 必要的保護
-
-| 保護         | 必要性                       |
-| ------------ | ---------------------------- |
-| 最大續抓次數 | 必要 — 避免稀疏時拉爆        |
-| 最大時間     | 必要 — 避免 UX 凍住          |
-| 已掃進度顯示 | 推薦 — 使用者看到正在工作    |
-| 可中斷       | 必要 — 使用者改 query 時能停 |
-
----
-
-## 策略 C：預先建獨立 index
-
-### 機制
-
-Build time 為每種 filter mode 各建一份 source / index。Runtime 切換 mode = 切 source。
-
-```bash
-# Build 階段
-pagefind --source public --output-subdir _pagefind-all
-pagefind --source public/title-extract --output-subdir _pagefind-title
-```
-
-```js
-// Runtime
-const pf = mode === 'title' ? pagefindTitle : pagefindAll;
-const r = await pf.search(query);
-```
-
-### 適合
-
-- 能控 source 的 build pipeline
-- Filter mode 數量有限（< 5）
-- 兩個 mode 都重要、流量大、值得分開
-
-### 不適合
-
-- Filter 維度多（每個維度組合都建 index 會爆炸）
-- Index 大小敏感（多份 index = 多份 size）
-- Build pipeline 不能控（外部 API source）
-
----
-
-## 策略 D：誠實 UX
-
-### 機制
-
-保留 view 層 filter、UI 顯示「已掃 N 筆 / 命中 K 筆 / 共 M 筆 / 再掃一批」、使用者手動續抓。
-
-```html
-<div class="filter-status">
-  已掃 <strong>24</strong> 筆 / 命中 <strong>3</strong> 筆 / 共 <strong>~150</strong> 筆
-  <button>再掃一批</button>
-</div>
-```
-
-### 適合
-
-- Filter 是次要功能、預設模式不用 filter
-- 使用者願意手動互動
-- 工程量限制、無法做 A / B / C
-
-### 不適合
-
-- Filter 是主要互動模式
-- 使用者期望「自動全找完」
-
-### 跟策略 B 的差別
-
-B 是「自動」、D 是「半自動」（使用者觸發每一輪）。B 透明、D 顯眼。
-
----
-
-## 策略 E：接受語意縮小
-
-### 機制
-
-明示或隱性把 filter 的語意定為「在已載入子集裡」、不承諾包含 source 全集。
-
-```text
-"Filter results"
-  ↓
-（隱性語意：filter 已載入的、不續抓）
-```
-
-### 適合
-
-- Source 一次給完整 dataset（沒分批 → 沒層錯位）
-- 使用者明確知道「先載入更多再 filter」是分開動作
-- 原型 / MVP 階段、不解決完美
-
-### 不適合
-
-- Source 分批、但使用者預期 filter 是「全集」
-- 使用者沒被告知語意縮小
-
-### 跟策略 D 的差別
-
-D 用 UI 顯式告訴使用者「掃描範圍」。E 不告訴 — 接受使用者可能誤解。E 通常是「來不及做 D」的退而求其次。
+> **D 跟 E 都是 subset 上做、差別**：D 用三數字持續顯示掃描範圍、E 用文字一次性告知。silent 縮小（既不三數字、也不告知）= 反模式、撞回 [#55 層錯位](../view-layer-filter-vs-source-layer/)。
 
 ---
 

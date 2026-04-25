@@ -118,9 +118,11 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 
 Filter × Source 合成三選（從 #59 抽出）：
 
-- [#60 Pattern：自動續抓直到湊滿 quota](pattern-fetch-until-quota/) — source 不支援 server filter、match 密度可預期
-- [#61 Pattern：把 filter 推進 query 引擎](pattern-query-side-pushdown/) — source 支援、避免層錯位的最優解
-- [#62 Pattern：誠實進度 UX（已掃 N / 命中 K / 共 M）](pattern-honest-progress-ui/) — sourcing 限制下的合理透明度
+- [#60 Pattern：自動續抓直到湊滿 quota](pattern-fetch-until-quota/) — 策略 B、source 不支援 server filter、match 密度可預期
+- [#61 Pattern：把 filter 推進 query 引擎](pattern-query-side-pushdown/) — 策略 A、source 支援、避免層錯位的最優解
+- [#62 Pattern：誠實進度 UX（已掃 N / 命中 K / 共 M）](pattern-honest-progress-ui/) — 策略 D、sourcing 限制下的合理透明度
+- [#65 Pattern：預先建獨立 index](pattern-multiple-indexes/) — 策略 C、build time 為每種 mode 各建一份 index
+- [#66 Pattern：明示語意縮小](pattern-explicit-semantic-narrowing/) — 策略 E、explicit 告訴使用者「filter 範圍 = subset」
 
 ### 第八輪：Filter × Source / Data Flow 議題（#55-#59, #63-#64）
 
