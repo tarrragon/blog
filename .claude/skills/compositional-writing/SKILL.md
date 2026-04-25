@@ -31,6 +31,8 @@ metadata:
 
 一張卡一個概念：能獨立理解、可跨情境重用。拆分依據是**認知負擔與情境匹配度**，不是行數。若讀者需要同時記住 7 個以上概念才能讀懂一張卡，必須再拆。
 
+**拆分判準的核心問題**：「這張卡聚焦在什麼問題、有沒有議題切了一半？」— 不是「卡片之間有沒有衝突」、不是「邊界清不清晰」。兩張卡互不衝突也可能各切了一半同樣議題；一張卡邊界清晰也可能塞了兩個獨立議題。判準是 focus 完整度、不是邊界清晰度。
+
 ### 2. 索引建立（Indexing）
 
 用 MOC（Map of Content）、tag 層級與反向索引把卡片串成可導航的網。入口文件只做路由，不承載細節；避免 A→B→C 的多層跳躍，引用最多一層深。
@@ -38,6 +40,8 @@ metadata:
 ### 3. 意圖顯性與商業邏輯（Explicit Intent & Business Logic）
 
 寫「為什麼」和「要達成什麼」，不寫「程式碼在做什麼」。避免 TODO / placeholder 當成說明；主詞與動詞直接，段落開頭即表達意圖。同一篇文字要貼合它在系統裡的抽象層級，不洩漏下層實作。
+
+**機會成本語氣、不用絕對主義**：程式設計極少有絕對正確、討論的是多目標取捨。避免「正確概念是 X / 替代方案不足 / 應該這樣做」這種絕對二元語氣、改用「比較好的做法是 A、因為 [情境] / B 在 [其他情境] 合理 / D 的成本特別高、只在 [極端情境] 才划算」。絕對主義教讀者「規則」（壓力下會忘）、機會成本教讀者「思考方式」（能套用到新情境）。例外只限物理 / 法律事實（安全性、數據完整性、合規）。
 
 ### 4. 可查詢性（Searchability）
 
@@ -58,6 +62,7 @@ metadata:
 | 要設計 log / 錯誤訊息 / 結構化輸出 | `references/writing-logs.md` |
 | 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle | `references/writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
 | 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估） | `references/writing-articles.md` |
+| 要管理多篇相關文章的結構（系列、文集、知識庫、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片） | `references/managing-article-collections.md` |
 | 要設計 ticket 欄位 / schema frontmatter / 表單欄位 | `references/designing-fields.md` |
 | 想驗證寫作品質（認知負擔、獨立理解率） | `references/meta-metrics.md` |
 | 要新增或修改一份 Skill reference（撰寫品質規範、結構標準） | `references/reference-authoring-standards.md` |
@@ -80,7 +85,7 @@ metadata:
 
 ## Directory Index
 
-```
+```text
 compositional-writing/
 ├── SKILL.md                              # 本檔：五大原則速查 + 觸發路由
 └── references/
@@ -89,6 +94,7 @@ compositional-writing/
     ├── writing-logs.md                   # 情境 3：log 輸出
     ├── writing-prompts.md                # 情境 4：prompt 撰寫
     ├── writing-articles.md               # 情境 5：完整長篇技術文章
+    ├── managing-article-collections.md   # 情境 5b：跨多篇文章的結構（三層、MOC、Pattern 卡片）
     ├── designing-fields.md               # 情境 6：欄位設計（含六欄位角度總表）
     ├── designing-fields-ticket-6w.md     # 六欄位詳細範例：正確 + 混淆共 12 項（按需讀取）
     ├── meta-metrics.md                   # 品質量化驗收（M1-M5）
@@ -106,5 +112,6 @@ compositional-writing/
 
 ---
 
-**Last Updated**: 2026-04-18
+**Last Updated**: 2026-04-25
+**Version**: 0.4.0 — 新增 `managing-article-collections.md`（跨多篇文章結構：三層、MOC、Pattern 卡片）；強化原則 1「原子化」（focus 是議題完整度、不是邊界清晰）；強化原則 3「意圖顯性」（機會成本語氣、不用絕對主義）
 **Version**: 0.3.0 — 新增 `dry-run-guide.md` 於 Directory Index 與觸發路由（Skill 發布前語意層驗收 Phase 2 dry-run）
