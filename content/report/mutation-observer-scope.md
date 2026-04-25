@@ -288,31 +288,34 @@ new MutationObserver(applyB).observe(elB, { attributes: true });
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：MutationObserver 的設計策略
 
-### 監聽範圍從具體放寬
+四種做法、各自機會成本不同。這個專案選 A（收斂 root + 必要 option + debounce）當預設、其他做法在特定情境合理。
 
-**正確概念**：先用「最小目標元素 + childList: true」開始、確認觸發頻率與覆蓋率不夠才加 subtree 或擴大 root。
+### A：收斂 root + 必要 option + debounce + 結構分離（這個專案的預設）
 
-**替代方案的不足**：預設 `subtree: true` — 監聽範圍太大、framework patch 時觸發數十次、且很難之後縮回去（不知道哪些變動真的需要監聽）。
+- **機制**：root 取最小共同 ancestor、option 只勾真正關心的變動、加 50-100ms debounce、apply 改的範圍跟 observer 看的範圍結構上分離
+- **選 A 的理由**：觸發頻率最低、layout 穩定、無 self-mutation 循環風險
+- **適合**：絕大多數 observer 設計
+- **代價**：前期設計成本中（要思考 root / option / 結構）
 
-### Option 逐一勾選
+### B：收斂 root + 必要 option（無 debounce）
 
-**正確概念**：根據實際關心的變動勾 option（childList / attributes / characterData）。屬性監聽用 `attributeFilter` 縮到特定屬性。
+- **機制**：縮範圍與 option、但不加 debounce
+- **跟 A 的取捨**：B 即時反應、A 等 debounce；但 B 在 framework patch 中段觸發、layout 不穩時跑 apply 結果不可靠
+- **B 比 A 好的情境**：apply 不依賴 layout（純改 attribute、不讀 bounding rect）
 
-**替代方案的不足**：把所有 option 勾起來「以防萬一」 — 代價是過度觸發、行為不可預測、debug 時不知道哪個變動觸發了 apply。
+### C：寬範圍 + subtree + 全勾 option（預設配置）
 
-### Debounce 是 default、不是優化
+- **機制**：observe(elem, { childList: true, subtree: true, attributes: true, ...})
+- **跟 A 的取捨**：C 寫法簡單、A 顯式設計；但 C 觸發數十次、難 debug、效能下降
+- **C 才合理的情境**：實務上幾乎不存在 — 「以防萬一全勾」是 anti-pattern
 
-**正確概念**：observer 預設加 debounce（50-100ms）、保護自己不被連續變動淹沒。Layout 不穩時觸發的 apply 結果會錯。
+### D：disconnect / observe 配對處理 self-mutation
 
-**替代方案的不足**：每次都跑 apply — 短期看似「即時反應」、實際是在 framework patch 中段跑、layout 還沒穩、結果不可靠。
-
-### Self-mutation 用結構分離、不用 flag
-
-**正確概念**：設計時讓 observer 看的範圍跟 apply 改的範圍結構上分離 — observer 觀察 results、apply 改 input。
-
-**替代方案的不足**：用 `isApplying` flag 判斷 — observer 是非同步、flag 的時序保證不夠強、邊界 case 仍會循環。
+- **機制**：apply 前 disconnect、apply 後 reconnect
+- **跟 A（結構分離）的取捨**：D 處理 callback 必須改 observer 監聽範圍的情境、A 從設計上避免；A 更乾淨
+- **D 比 A 好的情境**：無法做結構分離（apply 必須改 observer 看的範圍）— 唯一情境
 
 ---
 
