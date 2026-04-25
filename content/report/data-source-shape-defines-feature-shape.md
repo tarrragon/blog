@@ -92,6 +92,98 @@ UI 設計時要決定：cache-first（快但 stale）還是 fresh-first（慢但
 
 ---
 
+## 形狀識別的 protocol
+
+拿到一個 source（API、SDK、library）、用以下兩問判斷它是哪個形狀：
+
+### 問 1：是否一次給完整 dataset？
+
+| 答案 | 形狀                    |
+| ---- | ----------------------- |
+| 是   | 形狀 1（一次性）— 安全  |
+| 否   | 形狀 2 / 3 / 4 — 進問 2 |
+
+判讀依據：API 是否有 `pagination` / `cursor` / `nextPage` / `loadMore` / `for await` / `subscribe` 等概念？有就是「不一次給完」。
+
+### 問 2：分批的觸發機制是什麼？
+
+| 機制                                   | 形狀                          |
+| -------------------------------------- | ----------------------------- |
+| 客戶端要求下一頁（pull）               | 形狀 2（paginated）           |
+| 伺服端推（push）、可能無終點           | 形狀 3（streaming）           |
+| 預先給一份（cache）+ 之後重抓（fresh） | 形狀 4（cached + revalidate） |
+
+判讀依據：SDK doc / API spec 的「資料更新方式」段落。讀不到就跑 spike：手動觸發、看是 pull 還是 push、有沒有 cache。
+
+兩問跑完、形狀已知 → 寫 feature 之前能評估「資料形狀對 feature 設計的硬約束」。
+
+---
+
+## 形狀混合（疊加）
+
+實務上、source 常常是多個形狀疊加。常見組合：
+
+### 組合 1：Cached + Paginated
+
+```text
+[Server paginated API]
+   ↓
+[Client cache layer (e.g. SWR)]
+   ↓
+[UI 拿 cache + 分批 fetch fresh]
+```
+
+- 形狀 4（cached）+ 形狀 2（paginated）疊加
+- Filter 要決定：在 cache 上還是 fresh 上？fresh 是分批的、又有層錯位？
+
+### 組合 2：Streaming + Buffered
+
+```text
+[Server SSE push]
+   ↓
+[Client buffer N events]
+   ↓
+[UI 從 buffer 取]
+```
+
+- 形狀 3（streaming）+ 內部 buffer 限額
+- Filter 要看：在 stream 入口還是 buffer 出口？buffer 滿了怎麼處理舊事件？
+
+### 組合 3：Lazy iterator + take(N)
+
+```python
+def stream():
+    for chunk in remote_paginated():
+        yield from chunk
+
+list(itertools.islice(stream(), 100))  # 限額 100
+```
+
+- 形狀 2（paginated）+ 用 take 限額 → 行為像形狀 1（一次給完）但只給前 100
+- Filter 全集還是 100 個 subset？
+
+混合形狀的 filter 要分別處理每一層的層錯位、不是當成單一形狀。
+
+---
+
+## 形狀的可改造性
+
+形狀不只決定 feature 設計、還決定「策略可選範圍」。可改造性分三類：
+
+| 類別           | 例子                               | 對策略選擇的影響                                       |
+| -------------- | ---------------------------------- | ------------------------------------------------------ |
+| 你控的 source  | 自家 build pipeline、自家 API      | 全部策略可選（A 重 index、C 多 index、改 schema 都行） |
+| 你不控但能要求 | 同公司其他團隊、open source vendor | 部分可選（提 issue / PR、等回覆）                      |
+| 完全不可控     | 第三方 API、legacy black box       | 只剩 B / D / E（client-side 解）                       |
+
+評估可改造性、跟 #59 五策略的選擇配套：
+
+- 全可控 → A（推進 query）或 C（多 index）通常最優
+- 半可控 → B 短期解 + 長期等可改造
+- 不可控 → 接受 D / E、不要硬撞 A / C
+
+---
+
 ## 寫 feature 前的形狀對照表
 
 寫第一行之前、先填這張表：

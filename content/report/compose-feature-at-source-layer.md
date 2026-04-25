@@ -140,6 +140,60 @@ def filtered_pipeline(predicate):
 
 ---
 
+## 為什麼這個原則跨領域通用：資訊可見範圍
+
+五個領域共用結構不是巧合。底層命題是**資訊論的問題、不是工程問題**：
+
+> 一個操作能「看見」的範圍、就是它能正確套用的範圍。把操作放在看不見完整 stream 的位置 = 操作對部分資訊運算 = 結果不能宣稱對完整資訊。
+
+「合成位置」就是「資訊可見範圍」的代名詞。同層或上游的位置看得到完整 stream、下游位置只看得到 subset。這跟「stream 是什麼樣的資料」「系統是哪個語言寫的」「框架是 React 還是 Vue」都無關 — 只跟「看得到什麼」有關。
+
+所以這個原則：
+
+- 不是「前端 bug」 — 後端、演算法、DB、map-reduce、分散式系統都會遇到
+- 不是「特定技術 stack 問題」 — 任何分層架構都適用
+- 不是「pagefind 特定問題」 — 任何「分批 materialize」的 source 都會引發
+
+把它當「資訊可見範圍」原則來理解、能應用到任何「stream 操作 + 分層 materialization」的情境。
+
+---
+
+## 上推（push down）在不同領域的代價
+
+把操作從下游推到上游 = 改變誰負責執行操作。每個領域的「上推」代價不同：
+
+| 領域            | 上推 = 在哪裡做              | 代價                                      |
+| --------------- | ---------------------------- | ----------------------------------------- |
+| 前端 UI         | 推到 fetch 層 / source query | 重設計 fetcher、可能改 API contract       |
+| 後端 middleware | 推到 ORM query / SQL WHERE   | 改 query、可能要加 index                  |
+| 演算法管線      | 推到 stream stage 內         | 重排 pipeline、可能影響其他 stage         |
+| 資料庫          | 推到原表 query / 重建 view   | 重 build view、影響其他依賴 view 的 query |
+| Map-reduce      | 推到 map 階段或 reduce 內    | 改 mapper / reducer 邏輯                  |
+
+代價評估決定「能不能上推」：
+
+- 代價 < 缺口的維護成本 → 上推
+- 代價 > 缺口的維護成本 → 退到 explicit 縮小（#66）+ 接受
+- 代價 ≈ 缺口的維護成本 → 看其他因素（短期 vs 長期、團隊熟悉度）
+
+---
+
+## 常見誤判：以為自己在 source 層、實際在 subset 層
+
+每個領域都有「看起來是 source 但實際是 subset」的陷阱：
+
+| 領域         | 看起來是 source、實際是 subset                                                                |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| 前端         | `Array.from(document.querySelectorAll(...))` 看起來是「全部元素」、實際是「已 render 的元素」 |
+| 後端 ORM     | `User.all()` 看起來是「所有 user」、實際是 lazy load + memory 限制                            |
+| 演算法       | `list(generator)` 看起來是「materialize 全部」、實際 generator 上游可能 lazy / take(N)        |
+| 資料庫       | `SELECT * FROM materialized_view` 看起來是查表、實際 view 可能 stale / partial                |
+| 分散式 cache | `cache.get_all()` 看起來是「cache 全集」、實際是 single-node subset                           |
+
+這些誤判共用結構：**API 命名暗示「全集」、實際是 subset**。寫之前要看「這個 API 的真實 cardinality 是什麼」、不是看名字。
+
+---
+
 ## 跟 #63 形狀原則的關係
 
 [#63 資料源的形狀決定 feature 的形狀](../data-source-shape-defines-feature-shape/) 講「形狀是硬約束」 — 本文講「在硬約束下、操作該放哪一層」。
