@@ -1,36 +1,49 @@
 ---
-title: "與 framework-managed DOM 共處的隔離原則"
+title: "客製 UI 留 framework 邊界外、用 CSS 控制視覺位置"
 date: 2026-04-25
 weight: 5
-description: "Svelte / React 等框架對自己管轄的 DOM 子樹有完整渲染週期 — 客製 UI 注入這個子樹會被框架重繪清掉。本文以 scope UI 注入 .pagefind-ui 失敗為例，展開『客製 UI 留在框架邊界外、用 CSS 控制視覺位置』的原則。"
-tags: ["report", "事後檢討", "Svelte", "JavaScript", "工程方法論"]
+description: "Svelte / React 等框架對自己管轄的 DOM 子樹有完整渲染週期 — 客製 UI 注入這個子樹會被框架重繪清掉。本文展開「邊界外 + CSS 視覺定位」這條策略：為什麼 framework 會清外來節點、CSS 怎麼達到注入想要的視覺效果、什麼時候這條策略不適用。"
+tags: ["report", "事後檢討", "Svelte", "JavaScript", "CSS", "工程方法論"]
 ---
 
 ## 核心原則
 
-**框架管轄的 DOM 子樹是框架的領地 — 客製 UI 注入這個子樹會被框架的渲染週期清掉。** 客製 UI 留在框架邊界外、用 CSS（grid / absolute / margin spacer）控制視覺位置；必要的 DOM 移動只搬「框架管的節點本身」、不修改節點內部。
+**客製 UI 留在 framework 管轄的 DOM 邊界外、用 CSS（absolute、margin spacer、grid）達成想要的視覺位置。** 注入 framework 子樹的客製元素會被 reconciliation 清掉、跟渲染週期競爭、行為不可預測。邊界外的客製跟 framework 解耦、命運由我們自己決定。
+
+> 本篇焦點：客製 UI 該放哪。**framework 元件本身需要動（搬節點、改順序、改 attribute）的安全規則**由 [#13 JS 操作 framework 元件：邊界辨識與安全規則](component-boundary-and-js-impact/) 處理。
 
 ---
 
-## 為什麼框架管轄區不能塞東西
+## 為什麼 framework 管轄區會清外來節點
 
-### 商業邏輯
+### Reconciliation 機制
 
-Svelte / React 等框架透過「component tree → DOM tree」的 reconciliation 機制保持 UI 與 state 同步。框架在 patch 時只認得自己 create 的節點；外來節點要嘛被視為差異而清掉、要嘛被忽略並擋住框架的更新。
+Svelte / React 等框架透過「component tree → DOM tree」的 reconciliation 機制保持 UI 與 state 同步。框架在 patch 時：
 
-外來節點的命運由框架的 reconciliation 策略決定 — 不可預測，且不在我們的控制範圍。
+1. 比對 component tree 的當前狀態與目標狀態
+2. 計算 DOM 需要的最小變動
+3. 套用變動到實際 DOM
 
-### 兩種 DOM 區域、兩種策略
+關鍵是步驟 2：**框架只認得自己 create 的節點**。外來節點（我們手動 appendChild 進去的）不在它的 component tree 裡、被視為「該節點不該存在」、清掉。
 
-| 區域                 | 框架管轄程度                   | 客製策略                    |
-| -------------------- | ------------------------------ | --------------------------- |
-| 框架邊界外           | 不管                           | 自由加 / 改 / 移除          |
-| 框架邊界內，節點本身 | 框架認得這個節點，但不檢查內部 | 可整節點 reparent、不改內部 |
-| 框架邊界內，節點內部 | 完全管轄                       | 不要動 — 等框架自己更新     |
+這不是 bug、是 reconciliation 的正常行為 — 框架要保證 DOM 跟 component state 一致、外來節點屬於不一致的部分。
+
+### 外來節點的命運是不可預測的
+
+不同框架 / 不同 reconciliation 策略對外來節點的處理：
+
+| 框架 | 外來節點命運 |
+|---|---|
+| Svelte | 多數情境清掉、視 patch 點而定 |
+| React | 通常清掉（Virtual DOM diff 時） |
+| Vue | 通常清掉、但 v-pre 包裹可保留 |
+| Web Components | 由 component 內部邏輯決定 |
+
+**「不可預測」本身就是問題** — 即使某次測試沒清、下次升級或 patch 時可能清。設計時不該依賴未明確保證的行為。
 
 ---
 
-## 這次任務的實際情境
+## 這次任務的具體情境
 
 ### 觀察
 
@@ -44,16 +57,14 @@ Svelte / React 等框架透過「component tree → DOM tree」的 reconciliatio
 
 Pagefind 用 svelte 構建 UI、reactivity 監聽 search query 變動。Query 改變時 svelte 會 patch `.pagefind-ui` 的子樹 — 我們注入的 scope 不是 svelte 認得的節點、被視為差異清掉。
 
-這不是 bug、是 svelte reconciliation 的正常行為：框架要保證 DOM 與 component state 一致，外來節點屬於不一致的部分。
+### 執行：邊界外 + CSS 控制位置
 
-### 執行
-
-策略改為「scope 留在 `.search-shell` 裡（框架邊界外）、用 CSS absolute 浮在 form 上」：
+策略改為「scope 留在 `.search-shell` 裡（framework 邊界外）、用 CSS absolute 浮在 form 上」：
 
 ```html
 <div class="search-shell">
   <h1>...</h1>
-  <div class="search-scope">...</div>      <!-- 框架邊界外 -->
+  <div class="search-scope">...</div>      <!-- 邊界外、永不被清 -->
   <div id="search">...</div>               <!-- pagefind 進來這裡 -->
 </div>
 ```
@@ -74,67 +85,122 @@ scope 不在 svelte 管轄區、永遠不被清；視覺位置靠 absolute + dra
 
 ---
 
-## 必要的 DOM 移動：搬整節點
+## CSS 達成視覺位置的設計工具
 
-某些情境需要把框架管的節點移到別處（例如 filter sidebar 切換）— 移動時遵守「只搬節點、不修改節點內部」。
+### 工具 1：Absolute + 容器 relative
 
-### 為什麼搬整節點是安全的
+把客製 UI 設 `position: absolute`、容器設 `position: relative` 當定位基準。
 
-框架的 reconciliation 通常以「節點 identity」為依據 — 同一個節點在哪裡不重要、節點存不存在才重要。把 `.pagefind-ui__filter-panel` 從 drawer 移到外部 aside、節點本身與內部子樹保持完整、框架在下次 patch 時看到節點還在、就繼續更新。
+```css
+.search-shell { position: relative; }
+.search-custom { position: absolute; top: ...; left: ...; }
+```
 
-### 不可動的：節點內部
+客製 UI 跟 framework 元素脫離 layout flow、各自獨立。
 
-| 操作                                            | 是否安全                  |
-| ----------------------------------------------- | ------------------------- |
-| `aside.appendChild(filterPanel)` 整節點搬       | 安全 — 節點 identity 不變 |
-| 在 filterPanel 內部 `appendChild` 加東西        | 不安全 — 框架會清掉       |
-| 改 filterPanel 內部子節點的 attribute           | 不安全 — 框架可能 revert  |
-| 改 filterPanel 自己的 attribute（class、style） | 多半安全 — 看框架實作     |
+### 工具 2：Margin spacer 推開 framework 元素
+
+要在 framework 元素之間插入空間放客製 UI、改 framework 元素的 margin / padding 推出空間：
+
+```css
+.framework-element { margin-top: var(--custom-height); }
+.custom-ui { position: absolute; top: 0; height: var(--custom-height); }
+```
+
+framework 元素留出空間、客製 UI 浮在空間上。
+
+### 工具 3：Grid 容器讓 framework 元件當 grid item
+
+```css
+.search-shell {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+.search-shell > .search-scope { grid-row: 2; }
+.search-shell > #search { grid-row: 3; }
+```
+
+把 framework 元件當 grid 的一個 item — grid 控制 layout、framework 不知道有 grid 在外層、繼續管它的子樹。
+
+### 工具 4：用 CSS variables 共享尺寸
+
+framework 元素的尺寸需要參考客製 UI 時、用 CSS variable 傳遞：
+
+```css
+:root { --custom-height: 60px; }
+.framework-element { margin-top: var(--custom-height); }
+.custom-ui { height: var(--custom-height); }
+```
+
+或用 ResizeObserver 量測寫回 variable（[#27 runtime 量測模式統一](runtime-measurement-unification/)）。
 
 ---
 
-## 內在屬性比較：客製 UI 的位置選擇
+## 設計取捨：客製 UI 的位置選擇
 
-| 位置                      | 依賴前提                   | 升級風險            | 視覺控制                  |
-| ------------------------- | -------------------------- | ------------------- | ------------------------- |
-| 框架邊界外 + CSS 視覺定位 | 框架元素的 class / id 穩定 | 低                  | 中 — CSS 能達成多數位置   |
-| 框架邊界外 + JS 量測位置  | DOM measurable             | 低                  | 高 — runtime 算出精確位置 |
-| 框架邊界內注入            | 框架不重繪這部分           | 高 — 框架更新即失效 | 高 — 直接放在想要的位置   |
-| Fork 框架 source          | 整個框架原始碼             | 最高 — 升級必衝突   | 最高                      |
+四種做法、各自機會成本不同。這個專案選 A（邊界外 + CSS）當預設、其他做法在特定情境合理。
 
-優先選擇前兩種。框架邊界內注入只在「該子樹確認不會被 reconcile」時可用 — 多數情境難以保證。
+### A：framework 邊界外 + CSS 視覺定位（這個專案的預設）
+
+- **機制**：客製 UI 放在 framework 元件的 sibling 位置、用 CSS absolute / grid / margin spacer 達成視覺位置
+- **選 A 的理由**：跟 framework reconciliation 完全解耦、命運由自己決定、升級不影響
+- **適合**：絕大多數需要在 framework UI 旁 / 上 / 下加客製內容的情境
+- **代價**：CSS 定位邏輯比 DOM 巢狀複雜、需要正確處理 stacking context / z-index
+
+### B：framework 邊界外 + JS 量測位置
+
+- **機制**：用 ResizeObserver 量 framework 元素的 bounding rect、JS 算出客製 UI 該擺哪
+- **跟 A 的取捨**：A 用 CSS 表達靜態關係、B 處理 runtime 才知道的尺寸；B 多一層 JS、但能達成 CSS 表達不出的精確定位
+- **B 比 A 好的情境**：客製 UI 位置依賴 framework 元件的 runtime 尺寸（內容換行、字型變化）
+
+### C：framework 邊界內注入
+
+- **機制**：JS 把客製 element 直接 appendChild 到 framework 子樹內
+- **跟 A 的取捨**：C 看似省事（少一層 wrapper）、實際把客製命運綁在 framework reconciliation 上
+- **C 才合理的情境**：該 framework 子樹確認「不會被 reconcile」（極罕見、需要讀框架 source 確認）
+- **代價**：客製可能在任何 patch 時消失、需要 MutationObserver 補打、跟渲染週期賽跑
+
+### D：Fork framework source
+
+- **機制**：fork 整個 framework、改 reconciliation 行為讓它認得我們的客製
+- **成本特別高的原因**：每次升級都要重新 merge、客製永久綁在 fork 版本
+- **D 才合理的情境**：framework 已停止維護、且客製需求超過所有其他選項
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 不該套用「邊界外」的情境
 
-### 客製 UI 與框架 UI 各自有自己的 DOM 邊界
+A 是預設、但不是萬靈丹：
 
-**正確概念**：客製 UI 放在框架邊界外，用 CSS / 量測算出視覺位置。框架 UI 維持原樣。兩者透過 CSS 共存、不透過 DOM 巢狀。
+| 情境 | 為什麼不適合 A |
+|------|------------|
+| 客製內容必須在 framework 元件的內部視覺脈絡內（共享 inline flow） | Absolute 跳出 flow、達不到 inline 的視覺效果 |
+| Framework 元件本身就是要客製化（改 row、改 cell） | 動的是 framework 本身、不是「在旁邊加東西」 |
+| Framework 提供了官方擴展介面（slot、render prop） | 用官方介面更穩、不需要邊界外 hack |
+| 客製需要訪問 framework 的內部 state | 邊界外的客製跟內部 state 隔離、訪問成本高 |
 
-**替代方案的不足**：把客製 UI 注入框架 DOM 內 — 看似省事（節省一層 wrapper），實際讓客製 UI 的命運綁在框架的 reconciliation 策略上。
+**核心判準**：客製是「在 framework 旁邊加東西」還是「改 framework 本身」？前者用本策略、後者另想辦法。
 
-### 整節點 reparent 是安全的；改節點內部不安全
+---
 
-**正確概念**：框架以節點 identity 追蹤元素。整節點搬到別處不影響 identity。改內部則進入框架管轄區。
+## 跟其他原則的關係
 
-**替代方案的不足**：在框架管的節點內加東西（即使只是一個 span）— 框架不認得這個 span、可能清掉；即使這次沒清，下次更新還是會。
-
-### CSS spacer 取代 DOM 注入
-
-**正確概念**：要在框架元素之間插入客製內容，用 CSS `margin-top` 推開框架元素、把客製內容絕對定位在讓出的空間。
-
-**替代方案的不足**：硬要把客製 DOM 塞到框架 DOM 之間 — 跟框架的渲染競爭、bug 不可預測。
+| 抽象層原則 | 關係 |
+|---------|------|
+| [#45 跟外部組件合作的層次](external-component-collaboration-layers/) | 「邊界外 + CSS」是「不要挖 framework 內部」的具體應用 — 客製貼著外部介面（DOM sibling）做、不挖內部 |
+| [#42 2 次門檻](two-occurrence-threshold/) | 第 1 次注入失敗（被清掉）= 第 2 次該換策略到邊界外、不該繼續嘗試「換種方式注入」 |
+| [#13 JS 操作 framework 元件：邊界辨識與安全規則](component-boundary-and-js-impact/) | 互補關係 — 本篇處理「客製 UI 該放哪」、#13 處理「framework 元件本身要動時怎麼動」 |
 
 ---
 
 ## 判讀徵兆
 
-| 訊號                                     | 可能的根因                       | 第一個該嘗試的動作                                            |
-| ---------------------------------------- | -------------------------------- | ------------------------------------------------------------- |
-| 注入框架 DOM 的元素在使用者互動後消失    | 框架 reconciliation 清掉外來節點 | 把該元素搬出框架邊界、用 CSS 控制視覺位置                     |
-| 整節點搬到別處後框架行為異常             | 改了節點內部、不只搬位置         | 確認搬節點時沒動內部子樹                                      |
-| 客製 UI 在框架更新後 attribute 被 revert | 框架重新套 attribute             | 不要改框架管的節點 attribute、用 wrapper 元素套自家 attribute |
-| 看不出哪些 DOM 是框架管的                | 缺少邊界辨識                     | 讀框架的 mount root，從那裡往內都是管轄區                     |
+| 訊號 | 該怎麼處理 |
+|------|---------|
+| 注入 framework DOM 的元素在使用者互動後消失 | 把該元素搬出 framework 邊界、用 CSS 控制視覺位置 |
+| 客製 UI 在 framework 更新後 attribute 被 revert | 客製 UI 不該在 framework 內、wrapper 在外、attribute 套 wrapper |
+| 看不出哪些 DOM 是 framework 管的 | 讀 framework 的 mount root、從那裡往內都是管轄區 |
+| Stacking context 衝突、z-index 失靈 | 確認 absolute 的 containing block 是預期的 relative parent |
+| Framework 元件位置不固定、客製 UI 對不齊 | 用 ResizeObserver 量 framework 元素、寫回 CSS variable |
 
-**核心原則**：客製 UI 的存活壽命 = 「離框架管轄區多遠」。最遠 = 永遠不被清；最近（注入內部） = 隨時可能消失。
+**核心原則**：客製 UI 的存活壽命 = 「離 framework 管轄區多遠」。最遠 = 永遠不被清；注入內部 = 隨時可能消失。預設選邊界外、不要為了「省一層 wrapper」進入 framework 領地。

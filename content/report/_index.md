@@ -30,7 +30,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#2 跨 viewport 雙模式 UI 的物理空間預算](viewport-dual-mode-spatial-budget/) — breakpoint 從固有尺寸加總推算、不從常見值取
 - [#3 視覺對齊用單一真實來源](visual-alignment-single-source-of-truth/) — 對齊基準上的尺寸值定義位置只能有一處
 - [#4 拓樸理解先行於 CSS 規則](dom-topology-before-css/) — 寫 CSS 之前先看真實 DOM tree、不靠 class name 推測層級
-- [#5 與 framework-managed DOM 共處的隔離原則](coexisting-with-framework-managed-dom/) — 客製 UI 留在 framework 邊界外、用 CSS 控制位置
+- [#5 客製 UI 留 framework 邊界外、用 CSS 控制視覺位置](coexisting-with-framework-managed-dom/) — 注入 framework 子樹會被 reconciliation 清掉
 - [#6 Filter 順序由使用者掃描成本決定](filter-order-by-scan-cost/) — 短清單先、長清單後、不接受字母排序預設
 - [#41 Mode 與 Facet 是不同語意層級、UI 區域分開擺放](mode-vs-facet-semantics/) — Mode 緊貼 input、Facet 靠近結果
 
@@ -42,7 +42,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#10 從色塊 placeholder 開始的漸進式 UI 除錯](placeholder-driven-ui-debug/) — UI 除錯的最小可驗證單位是「一個有顏色的盒子」
 - [#11 在開發循環裡早一點用 playwright 看真實結果](playwright-early-in-loop/) — 靜態推理 ≥ 2 次失敗、改用 playwright 讀 live DOM
 - [#12 排版精度的工具選擇：CSS-only vs JS-assisted](css-only-vs-js-assisted/) — 問值能否在 build time 定下來、能 → CSS、不能 → JS
-- [#13 元件邊界與 JS 操作的影響範圍](component-boundary-and-js-impact/) — JS 操作前界定元件邊界、動的範圍越小越安全
+- [#13 JS 操作 framework 元件：邊界辨識與安全規則](component-boundary-and-js-impact/) — 整節點 reparent 安全、改內部不安全、改 attribute 是灰區
 - [#14 Selector 精準度：讓 query 只命中你想要的元素](dom-selector-precision/) — 起點 / 範圍 / 過濾三維度顯式設計
 - [#15 用前端測試把排版問題自動化](layout-tests-with-playwright/) — 版型 debug 兩次以上就值得寫 playwright 測試
 
@@ -83,7 +83,9 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#37 動態 DOM 移動時的 focus 管理](focus-management-on-dom-move/)
 - [#38 Screen reader 與動態內容變動的 live region 設計](aria-live-for-dynamic-content/)
 - [#39 Native HTML element 優先於 ARIA role 的取捨](native-html-over-aria-role/)
-- [#40 視覺輔助情境：對比度、縮放、響應式 zoom](visual-aids-contrast-zoom-responsive/)
+- [#40 視覺輔助：對比度、放大、字型 zoom 的 layout 適配](visual-aids-contrast-zoom-responsive/) — 純視覺呈現面 a11y
+- [#52 鍵盤可達性：focus indicator、tab 順序、escape 路徑](keyboard-accessibility/) — 鍵盤使用者導航三要素
+- [#53 Motor 可達性：hit target、間距、誤點防護](motor-accessibility-hit-target/) — 行動 / motor 使用者的點擊精準度
 
 ### 第六輪：抽象層原則（待補完）
 
@@ -164,7 +166,9 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 - 鍵盤使用者 focus 跑掉 → `#37 動態 DOM 移動時的 focus 管理`
 - Screen reader 不知道有變動 → `#38 aria-live region 設計`
 - 想用 fieldset 取代自訂 radiogroup → `#39 Native HTML 優先於 ARIA`
-- 低視力 / 色弱 → `#40 視覺輔助情境`
+- 低視力 / 色弱 / 字型放大 → `#40 視覺輔助`
+- Focus indicator / tab 順序 / modal escape → `#52 鍵盤可達性`
+- 行動裝置誤點 / hit target 太小 → `#53 Motor 可達性`
 
 ### 路徑 9：搜尋 UI / facet UX 設計
 
@@ -176,4 +180,4 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 
 ---
 
-**Last Updated**: 2026-04-25 — 五輪實作 41 篇 + 第六輪抽象層 4 篇（#42-45 已完成）+ 第七輪 Pattern 卡片 6 篇（#46-51）。三層結構就位：抽象原則 / 情境檢討 / Pattern 卡片。Index 純路由、內容由各篇自包含。
+**Last Updated**: 2026-04-25 — 五輪實作 43 篇（含 #52、#53 從 #40 拆出的 a11y 補篇）+ 第六輪抽象層 4 篇（#42-45）+ 第七輪 Pattern 卡片 6 篇（#46-51）。Focus 重審：#5 拆分（議題 B 合進 #13）、#40 拆三篇 a11y。Index 純路由、內容由各篇自包含。
