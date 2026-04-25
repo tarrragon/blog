@@ -20,9 +20,10 @@ tags: ["skills", "Claude", "寫作方法論", "工具設計"]
 
 ## 目前收錄的 skill
 
-| Skill                 | 主題                          | 入口                                                             |
-| --------------------- | ----------------------------- | ---------------------------------------------------------------- |
-| compositional-writing | Zettelkasten 式組合寫作方法論 | [/skills/compositional-writing/](/skills/compositional-writing/) |
+| Skill                 | 主題                                                       | 入口                                                             |
+| --------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| compositional-writing | Zettelkasten 式組合寫作方法論                              | [/skills/compositional-writing/](/skills/compositional-writing/) |
+| requirement-protocol  | 需求確認到實作的對話協議（模糊指令、失敗轉折、漸進驗證等） | [/skills/requirement-protocol/](/skills/requirement-protocol/)   |
 
 ---
 
