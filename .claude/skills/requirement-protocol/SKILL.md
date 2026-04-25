@@ -1,0 +1,120 @@
+---
+name: requirement-protocol
+description: "從需求確認到實作的對話協議：模糊指令澄清、可決定 vs 該確認的邊界、失敗 2 次的轉折、覆寫成本告知、revert/checkpoint 處理、漸進驗證、工具切換時機。Triggers: 收到模糊指令, 自決還是確認, 反覆失敗, 換思路, 覆寫成本, 先還原, 先重來, placeholder, 最小範圍, 推理失敗, playwright 切換, 開發前澄清, 需求確認, 排除障礙, 逼近答案."
+license: MIT
+metadata:
+  version: 0.1.0
+  category: collaboration-protocol
+---
+
+# Requirement Protocol
+
+從需求確認到實作的對話協議。把「使用者下指令 → 執行者實作」之間的溝通流程結構化、避免反覆失敗、避免做出使用者沒要的東西、避免在錯誤方向上累積沉沒成本。
+
+協議的核心命題：**對話成本與重做風險之間有最佳化空間**。全自決對話成本最低、但容易做錯；全確認重做風險最低、但對話爆炸。協議定的是「哪些該攤、哪些自決」、以及「卡住時該怎麼轉彎」。
+
+---
+
+## Core Pillars（三大支柱）
+
+| 支柱                                       | 意義                                                                 |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| **Visibility-Based Confirmation** 可見性確認 | 使用者會看到的決定（數字 / 順序 / 文字）攤開確認、純技術細節自決     |
+| **Two-Occurrence Threshold** 2 次門檻        | 第 1 次是運氣、第 2 次是訊號；同方向失敗 2 次就停、不沿同方向加碼到 3 |
+| **Cost Transparency** 成本透明              | 覆寫深度、revert 影響、最小必要範圍 — 把成本攤開讓使用者參與決策     |
+
+---
+
+## Five Principles（五大原則速查）
+
+讀者在本區塊能完成大方向判斷；具體情境的展開（步驟 / 模板 / 反例）依下方「觸發路由」進對應 reference。
+
+### 1. 可決定 vs 該確認的邊界
+
+純技術實作（grid / flex、ResizeObserver / setInterval、selector 寫法）可自決；使用者會看到的決定（breakpoint、預設尺寸、filter 順序、UI 文字、配色）先列選項給使用者點頭。
+
+判準三問：**UI 上會不會產生使用者感知的差異？選不同會不會影響體驗？寫進 commit 後改動成本高不高？** 任一個「是」 → 該確認。確認時給「選項 + 推薦 + 開放修改」、不要開放問。
+
+### 2. 同方向失敗 2 次 = 停下驗證假設
+
+第 1 次失敗多半是執行細節（typo、cache、syntax）— 修了再試。第 2 次同方向失敗、不要再試一次更小心、用工具驗證底層假設（DOM tree、computed style、framework 行為）。
+
+驗證後分兩條路：**假設對 → 繼續修；假設錯 → 換方向、不為前面的努力買單**。第 3 次同方向加碼（更複雜的 selector、加 `!important`、再寫一層 polyfill）會放大原本的問題、產生脆弱的 patchwork。
+
+### 3. 推理失敗 2 次切到量測工具
+
+靜態 CSS 推理 + 視覺截圖溝通的迴圈在第 1 次假設錯了之後成本就爆炸。第 2 次失敗主動提：**起 server、用 playwright `browser_evaluate` 讀 live DOM**。
+
+工具切換 ROI 在第 1 次失敗後就轉正、不要等到第 5 次。簡單一次性確認用 DevTools、複雜或反覆 debug 用 playwright（可重跑、可寫成測試）。
+
+### 4. 覆寫成本攤開、不偷偷對抗
+
+當客製需求看似簡單但會對抗多層（UA stylesheet、framework CSS、browser default）— 在開始寫之前先報成本：**「會打到哪幾層、要寫幾條規則、剩下什麼風險（升級會壞？瀏覽器差異？）」**、讓使用者決定值不值。
+
+不在使用者不知情的情況下堆 `!important` / specificity 戰 / 多層 polyfill — 沉默對抗會讓使用者驚訝於後續的維護負擔。
+
+### 5. Revert 含 checkpoint、不直接清空
+
+收到「先還原」「先重來」「換個方向」時、先確認：**還原到哪個狀態？要不要先 commit 當前進度當 checkpoint（標「explored, not adopted」）？** 再執行 reset。
+
+探索的成果即使沒採用、也是「為什麼不採用」的證據 — 直接清空會丟掉「下次別再走這條路」的判斷依據。
+
+### 6. 漸進驗證、最小必要範圍
+
+UI debug 從色塊 placeholder 起步（沒文字、沒樣式、單純色塊）→ 確認位置 / 尺寸 / grid 對 → 再加文字 → 再加樣式 → 再加互動。每階段只引入一個變數。
+
+Selector / MutationObserver root / JS 操作邊界：**從最小開始、有證據再擴張**。「先寬後縮」分不出哪個寬度是刻意的；「先窄後寬」每次擴張都有原因。
+
+---
+
+## When to Consult This Skill（觸發路由）
+
+| 觸發情境                                                        | 讀哪份 reference                              |
+| --------------------------------------------------------------- | --------------------------------------------- |
+| 收到模糊指令（含「對齊」「靠近」「隔離」「不要動」「分開」等）  | `references/clarifying-ambiguous-instructions.md` |
+| 不確定某個決定該自決還是該先問使用者                            | `references/clarifying-ambiguous-instructions.md` |
+| 同方向失敗 ≥ 2 次、想再試一次更小心                              | `references/failure-pivot-protocol.md`        |
+| 推理 + 視覺截圖溝通迴圈卡住、不知道該不該換工具                  | `references/tool-switching-timing.md`         |
+| 客製需求要對抗多層（vendor CSS、framework、browser default）     | `references/cost-and-checkpoint.md`           |
+| 收到「先還原 / 先重來 / 換個方向」類指令                         | `references/cost-and-checkpoint.md`           |
+| 開始 UI layout debug、不知道從哪一步起                           | `references/progressive-verification.md`      |
+| 設計 selector / MutationObserver root / JS 操作範圍              | `references/progressive-verification.md`      |
+
+每份 reference 自包含：以該情境為核心、把六大原則翻譯成可直接套用的協議步驟與模板。閱讀任一 reference 不需要回來看其他 reference。
+
+---
+
+## Success Criteria（M1-M2 認知負擔類）
+
+| Metric | 定義                                                                  | 目標 |
+| ------ | --------------------------------------------------------------------- | ---- |
+| **M1** | 從 SKILL.md 出發、解決一個觸發情境需要開幾個檔案                     | ≤ 2  |
+| **M2** | 隨機抽一份 reference、不讀其他 reference 能否獨立套用                 | 100% |
+
+---
+
+## Directory Index
+
+```text
+requirement-protocol/
+├── SKILL.md                                       # 本檔：六大原則速查 + 觸發路由
+└── references/
+    ├── clarifying-ambiguous-instructions.md       # 情境 1：模糊指令的澄清協議（spatial / relative / isolation / decision-authority）
+    ├── failure-pivot-protocol.md                  # 情境 2：失敗 2 次的轉折協議（停下、驗證假設、換方向）
+    ├── cost-and-checkpoint.md                     # 情境 3：覆寫成本告知 + revert 含 checkpoint
+    ├── progressive-verification.md                # 情境 4：placeholder 漸進 + measurement 完整性 + 最小必要範圍
+    └── tool-switching-timing.md                   # 情境 5：推理 / DevTools / playwright 之間的切換時機
+```
+
+---
+
+## Reading Order（建議閱讀順序）
+
+1. 第一次接觸 → 從本 SKILL.md 的「三大支柱 + 六大原則」讀起
+2. 進入實際情境 → 依觸發路由讀對應 reference（只讀一份）
+3. 想驗證自己有沒有套用對 → 用該 reference 結尾的 self-check checklist 自評
+
+---
+
+**Last Updated**: 2026-04-26
+**Version**: 0.1.0 — 從 `content/report/` 50+ 篇事後檢討萃取「需求 → 實作對話協議」這條主軸；五份 references 對應「模糊指令 / 失敗轉折 / 成本與 checkpoint / 漸進驗證 / 工具切換」五個情境
