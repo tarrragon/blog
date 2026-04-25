@@ -90,9 +90,9 @@ tags: ["report", "事後檢討", "工程方法論"]
 跨多篇實作的共同骨架。每篇不重述具體 case、只展開原則本身、結尾列出對應的實作篇。
 
 - [#42 2 次門檻：第一次是運氣、第二次是訊號](two-occurrence-threshold/) — 串 #11 / #15 / #20 / #23、跨工具/測試/思路/溝通四面向
-- #43 最小必要範圍是 sanity 防線（待寫）— 串 #13 / #14 / #29
-- #44 Single Source of Truth：值的住址只能有一處（待寫）— 串 #3 / #26 / #27
-- #45 跟外部組件合作的層次（待寫）— 串 #1 / #5 / #19 / #24
+- [#43 最小必要範圍是 sanity 防線、不是優化](minimum-necessary-scope-is-sanity-defense/) — 串 #13 / #14 / #29、跨 JS 邊界 / selector / observer 三類範圍
+- [#44 Single Source of Truth：值的住址只能有一處](single-source-of-truth/) — 串 #3 / #26 / #27、跨定義位置 / 來源機制 / 對齊基準三類違反
+- [#45 跟外部組件合作的層次：離介面越近、合作越穩](external-component-collaboration-layers/) — 串 #1 / #5 / #19 / #24、四層代價對照與跳維度機制
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -176,4 +176,4 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 
 ---
 
-**Last Updated**: 2026-04-25 — 五輪實作 41 篇 + 第六輪抽象層 1 篇（#42、#43-45 待寫）+ 第七輪 Pattern 卡片 6 篇（#46-49 selector 起點、#50-51 idempotency 過濾、#14 取捨段落已全部抽完）。Index 重構為純路由、內容由各篇自包含。
+**Last Updated**: 2026-04-25 — 五輪實作 41 篇 + 第六輪抽象層 4 篇（#42-45 已完成）+ 第七輪 Pattern 卡片 6 篇（#46-51）。三層結構就位：抽象原則 / 情境檢討 / Pattern 卡片。Index 純路由、內容由各篇自包含。
