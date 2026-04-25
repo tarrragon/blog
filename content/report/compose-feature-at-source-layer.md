@@ -243,3 +243,9 @@ silent 失敗、跟意圖有縫。實務上幾乎不存在合理情境。
 | 內心 OS：「在最後 filter 比較容易寫」                                 | 是訊號 — 容易寫的位置通常是錯位的位置           |
 
 **核心原則**：Stream 操作的合成位置決定它的語意。同層或更上游 = 操作 stream、跟意圖對齊。下游 = 操作 subset、跟意圖有縫。這個原則跨前端 / 後端 / 演算法 / 資料庫 / 分散式系統通用 — 不是「前端 vs 後端」的問題、是「合成位置 vs materialization 位置」的問題。
+
+跟其他抽象層原則的關係：
+
+- 跟 [#43 最小必要範圍是 sanity 防線](../minimum-necessary-scope-is-sanity-defense/)：兩者共用「邊界選對 vs 選錯」的精神 — #43 講範圍從窄到寬、本卡講合成從上游到下游；錯方向都是 silent 失敗
+- 跟 [#44 Single Source of Truth](../single-source-of-truth/)：兩者共用「值的住址唯一」精神 — SSOT 是「定義位置唯一」、本卡是「操作位置正確」；操作不在 source 層 = 等於建了個第二定義（subset 上的「filter 結果」）跟 stream 全集競爭
+- 跟 [#42 2 次門檻](../two-occurrence-threshold/)：發現合成位置錯時、不要試「同層補丁」三次以上、第 2 次失敗就退一層找根因

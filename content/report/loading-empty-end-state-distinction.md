@@ -128,3 +128,5 @@ Streaming 通常沒明確的 End 訊號 — 需要 server 主動送一個 `event
 | Streaming / async iterator 沒明確 End 訊號              | 加：server-side 送 end event、或 client timeout     |
 
 **核心原則**：三狀態（Loading / Empty / End）是不同事實、不同 UX。共用畫面 = 把「使用者該做什麼」這個決策丟給使用者自己猜。實作要從資料層追蹤 state、不能只看 `results`。
+
+跟 [#38 動態內容變動的 aria-live region 設計](../aria-live-for-dynamic-content/) 同源：兩者都是「狀態變動需要告知使用者」、本卡告訴的是 sighted 使用者（視覺區分）、#38 告訴 screen reader（aria-live 廣播）。

@@ -95,3 +95,5 @@ Build time 為每種 filter mode 各建一份 source、runtime 切 mode = 切 so
 | 使用者意圖明確要「全部命中」、source 不支援、match 稀疏 | A 或 C 重設計、不要 B（會拉爆） |
 
 **核心原則**：Filter × Source 沒有最佳解、只有「對齊三變數（capabilities / 密度 / UX）的取捨」。識別三變數、選對策略 → 比寫漂亮的程式重要。
+
+跟 [#45 跟外部組件合作的四層次](../external-component-collaboration-layers/) 同構：A 推進 query ≈ 公共介面層（最穩定）、C 多 index ≈ 邊界層（build pipeline 控制）、B 自動續抓 ≈ 邊界 DOM 層（client 補足）、D / E 誠實或縮小 ≈ 內部結構層（接受限制）。兩個原則的選擇順序都是「離 source 公共介面越近、合作越穩」。

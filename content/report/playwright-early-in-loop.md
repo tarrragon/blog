@@ -192,3 +192,5 @@ Playwright MCP 提供：
 | 動態 DOM 結構不確定                 | 切到 playwright | 列出目標 container 的子節點          |
 
 **核心原則**：縮短診斷迴圈的工具該早一點用、不該等到推理徹底失敗。第 2 次推理失敗就切換、別等第 5 次。
+
+延伸應用：playwright 也用來查「資料層 vs 視覺層的層錯位」 — 見 [#55 Filter 與 Source 的抽象層錯位](../view-layer-filter-vs-source-layer/) 用 `browser_evaluate` 量 source 真實 cardinality 與分批機制。

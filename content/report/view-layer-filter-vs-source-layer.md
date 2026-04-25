@@ -138,12 +138,13 @@ function applyFilter(scope) {
 
 ## 判讀徵兆
 
-| 訊號                                                                                  | 該做的行動                                       |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| 即將寫 `elements.forEach(el => el.hidden = !matches(el))`                             | 停 — 確認 source 是不是分批的；是 → 推到資料層   |
-| Source 是 `pagefind.search()` / `paginatedFetch()` / `for await` 但 filter 在 forEach | 是 — 重看「filter 該放哪一層」                   |
-| Filter 後可能 0 筆但 source 還有未載入                                                | 必須補「自動續抓」或「誠實掃描範圍 UX」          |
-| 「Load more」「Show next」按鈕存在、且有 filter                                       | 評估：filter 跟 load more 的 quota 是否同層      |
-| 內心 OS：「先做出來、晚點補資料層」                                                   | 停 — 補不回來、會 ship 進 production silent 失敗 |
+| 訊號                                                                                  | 該做的行動                                                                  |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 即將寫 `elements.forEach(el => el.hidden = !matches(el))`                             | 停 — 確認 source 是不是分批的；是 → 推到資料層                              |
+| Source 是 `pagefind.search()` / `paginatedFetch()` / `for await` 但 filter 在 forEach | 是 — 重看「filter 該放哪一層」                                              |
+| 不確定 source 真實 cardinality 跟分批機制                                             | 用 [#11 playwright](../playwright-early-in-loop/) 量 live source 的回傳數量 |
+| Filter 後可能 0 筆但 source 還有未載入                                                | 必須補「自動續抓」或「誠實掃描範圍 UX」                                     |
+| 「Load more」「Show next」按鈕存在、且有 filter                                       | 評估：filter 跟 load more 的 quota 是否同層                                 |
+| 內心 OS：「先做出來、晚點補資料層」                                                   | 停 — 補不回來、會 ship 進 production silent 失敗                            |
 
 **核心原則**：filter / sort / count / transform 是 stream operation、必須跟 stream 的 materialization 同層或更上游。寫在下游 = 操作 subset 而不是 stream、語意縫是必然、不是偶發 bug。

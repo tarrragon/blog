@@ -218,3 +218,5 @@ document.body.appendChild(status);
 | 訊息太頻繁打擾                                 | Debounce、跳過重複                              |
 
 **核心原則**：UI 上「使用者沒主動觸發但有變動」的位置、screen reader 預設沉默 — 用 aria-live region 把沉默變成可聽見。
+
+跟 [#57 Loading / Empty / End 三狀態的區分](../loading-empty-end-state-distinction/) 同源：兩者都是「狀態變動需要告知使用者」、aria-live 告訴的是 screen reader、#57 講的是視覺區分。**完整的狀態變動 UX = 視覺區分 + aria-live 廣播**。
