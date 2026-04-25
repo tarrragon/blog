@@ -340,10 +340,101 @@ tags: ["report", "事後檢討", "工程方法論"]
 
 ---
 
+## 第五輪補充：效能與無障礙的風險點盤點（待補完）
+
+第五輪聚焦「規模放大或使用者多元時才浮現」的風險。每篇不設計解法、列風險點與「症狀 → 該檢查的位置 → 評估方法」對應、未來實際遇到時可以快速定位。
+
+### 效能組（#33–36）
+
+| #   | 主題                                      | 對應的搜尋頁實作                                                             |
+| --- | ----------------------------------------- | ---------------------------------------------------------------------------- |
+| 33  | Reactive 監聽器的觸發頻率管理             | MutationObserver subtree 觸發、ResizeObserver 自激迴圈、debounce 策略選擇    |
+| 34  | Runtime 計算成本：每筆迭代與正則          | scope filter regex、每筆 textContent 讀取、IntersectionObserver / 分批的取捨 |
+| 35  | Layout reflow / repaint 的可量化評估      | filter slot 切換、CSS 變數寫入、forced sync layout 的避免                    |
+| 36  | 資源載入時序：lazy chunk 與 critical path | pagefind index lazy load、preload entry chunk 的取捨                         |
+
+### 無障礙組（#37–40）
+
+| #   | 主題                                            | 對應的搜尋頁實作                                                                |
+| --- | ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| 37  | 動態 DOM 移動時的 focus 管理                    | filter slot 跨 viewport 搬節點、scope filter 隱藏結果後的 focus 走向            |
+| 38  | Screen reader 與動態內容變動的 live region 設計 | scope filter 切換、結果數量變動、aria-live polite vs assertive                  |
+| 39  | Native HTML element 優先於 ARIA role 的取捨     | scope UI 用 fieldset / legend vs div role、details / summary 的鍵盤行為         |
+| 40  | 視覺輔助情境：對比度、縮放、響應式 zoom         | highlight 對比、放大模式下 absolute filter 是否在可達範圍、字型放大 layout 適配 |
+
+---
+
+## 場景導讀
+
+依任務情境查、不需要按編號逐篇讀。每條路徑列「該讀哪幾篇、什麼順序」。
+
+### 路徑 1：面對 layout 對齊或位置問題
+
+`#7 量測值缺一不可` → `#3 視覺對齊用單一真實來源` → `#4 拓樸理解先行於 CSS 規則` → `#11 早一點用 playwright 看真實結果`
+
+從「為什麼對不齊」到「先讀 DOM 再寫規則」、最後到「用 playwright 驗證假設」。
+
+### 路徑 2：要客製外部組件
+
+`#1 在外部組件上加客製功能` → `#5 與 framework-managed DOM 共處` → `#24 CSS Layers 取代 specificity 戰` → `#19 覆寫深度的成本告知`
+
+從「找邊界」到「跟框架共處」、再到「用 layers 取代 specificity 戰」、最後「覆寫成本要事先告知」。
+
+### 路徑 3：要 refactor 既有 code
+
+`#25 CSS / JS 拆出獨立檔案` → `#24 CSS Layers` → `#27 runtime 量測模式統一` → `#28 class toggle 取代 important` → `#31 setupScopeFilter 拆三個職責`
+
+依序是：拆檔（基礎）→ Layers（前提）→ 量測模式統一 → class toggle → 函式拆分。後面三項依賴前面、不要跳過。
+
+### 路徑 4：debug 一個元件位置「跟著狀態飄」
+
+`#9 同一元件三種狀態 root cause 分析` → `#4 拓樸理解先行` → `#11 用 playwright 量 live DOM`
+
+從「找 anchor」到「讀 DOM」到「實際量測」。
+
+### 路徑 5：遇到不明確的指令
+
+依指令類型挑：
+
+- 缺數字（「對齊」「padding」） → `#16 空間 / 尺寸類`
+- 元件位置（「在 X 旁邊」） → `#17 元件相對位置類`
+- 「不要動 X」「隔離」 → `#18 隔離程度類`
+- 客製需求看似簡單但會對抗多層 → `#19 覆寫深度的成本告知`
+
+### 路徑 6：寫測試固化已 debug 過的版型
+
+`#15 用前端測試把排版問題自動化` → `#11 早一點用 playwright`
+
+從「值得寫測試嗎」到「playwright 工具的使用」。
+
+### 路徑 7：使用者反映效能問題
+
+按症狀：
+
+- 卡頓、CPU 100% → `#33 Reactive 監聽器的觸發頻率`
+- 結果規模大時慢 → `#34 Runtime 計算成本`
+- Resize 視窗、視覺跳動 → `#35 Layout reflow / repaint`
+- 首次互動延遲 → `#36 資源載入時序`
+
+### 路徑 8：使用者反映無障礙問題
+
+按使用者類型：
+
+- 鍵盤使用者 focus 跑掉 → `#37 動態 DOM 移動時的 focus 管理`
+- Screen reader 不知道有變動 → `#38 aria-live region 設計`
+- 想用 fieldset 取代自訂 radiogroup → `#39 Native HTML 優先於 ARIA`
+- 低視力 / 色弱 → `#40 視覺輔助情境`
+
+### 路徑 9：對話 protocol 自我檢查
+
+`#16-23 第三輪八篇` 整批是「下次看到這類指令該怎麼處理」、開發前重溫一遍可以避免反覆失敗。
+
+---
+
 ## 待補
 
 之後使用者會補充漏掉的情境。每篇大綱補完後再寫成完整內文。
 
 ---
 
-**Last Updated**: 2026-04-25 — 初版：搜尋頁開發四輪共 32 篇大綱待寫成內文。
+**Last Updated**: 2026-04-25 — 五輪共 40 篇大綱待寫成內文（前 32 篇已完成）。
