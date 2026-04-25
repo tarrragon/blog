@@ -104,8 +104,6 @@ GitHub Actions 在 push 到 `main` 時：
 
 文章版本（人類讀者直接在 blog 讀）：[content/skills/compositional-writing/](./content/skills/compositional-writing/)
 
-`AGENTS.md` 是 agent 寫作時的最高優先規範（核心原則先行、正向陳述、商業邏輯先於 CASE 等），跟 compositional-writing skill 互補。
-
 ## 結構決策
 
 | 決策 | 來由 |
