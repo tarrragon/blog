@@ -97,9 +97,9 @@ Filter UI（`.pagefind-ui__filter-panel`，本質是 `<fieldset>`）需要從 `.
 
 ---
 
-## specificity 邊界：用 CSS Layers 跳出線性比較
+## specificity 邊界：跳出線性比較戰場
 
-**核心定義**：CSS Layers 提供分組權重機制 — layered CSS 永遠輸給 unlayered CSS，**不論個別 specificity 數值**。
+**核心定義**：當組件透過 hash class 把 specificity 拉高到一般客製寫法蓋不過時，邊界落在 CSS 樣式分層機制 — 不在個別 selector 數字。
 
 **這次的觀察**
 
@@ -107,18 +107,11 @@ Pagefind 透過 svelte 把 class name 加 hash 重複寫進 selector（`.x.svelt
 
 **判讀**
 
-Specificity 是線性數字比較；無論寫多複雜的 selector，遲早會被組件作者用更高 specificity 蓋過。`!important` 也只是局部解 — 多個 `!important` 之間沒有層級。
-
-CSS Layers 把比較從「線性數字」改成「分組順序」。一旦組件 CSS 放進 layer、自家 CSS 留在 unlayered，**這個比較就跳出 specificity 戰場**。
+Specificity 是線性數字比較 — 跟組件作者比 specificity 是無贏的軍備競賽。要真正解這類覆寫戰、需要跳出「線性比較」這個維度本身。
 
 **執行**
 
-```css
-@import url('/blog/pagefind/pagefind-ui.css') layer(pagefind);
-
-/* 自家客製 CSS 留在 unlayered、自動贏 */
-.pagefind-ui__filter-block { border-bottom: 0; }
-```
+具體做法（`@import url(...) layer(...)`）與升級兼容性、其他外部組件的 layer 策略，由 [#24 CSS Layers 取代 specificity 戰](../css-layers-over-specificity/) 完整展開。在邊界辨識上、本篇要記住的是：**遇到 specificity 30+ 的覆寫戰、不要往 `!important` / `.x.x` 雙寫的方向加碼、改去看 layer 維度**。
 
 **完成標準**：所有原本需要 `!important` 或 `.x.x` 雙寫的覆寫，可以用單純的 class selector 寫。
 

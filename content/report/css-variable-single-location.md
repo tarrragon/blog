@@ -149,6 +149,8 @@ body.page-search {
 
 ## 變數的 fallback 策略
 
+> **責任邊界**：本節只談「fallback 值寫在哪個 selector」、屬於定義位置議題。「該不該用 runtime 量測」這個更上層的策略選擇由 [#27 runtime 量測模式統一](../runtime-measurement-unification/) 處理 — 那邊主張「全寫死 vs 全量測、不要混搭」。
+
 JS 量測寫入的變數、CSS 應該有 fallback 值供 JS 還沒跑完時用：
 
 ```css

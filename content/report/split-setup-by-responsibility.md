@@ -1,8 +1,8 @@
 ---
-title: "setupScopeFilter 拆三個職責"
+title: "Init function 是 orchestrator、職責拆出獨立 function"
 date: 2026-04-25
 weight: 31
-description: "一個 init function 同時做 5 件事 → 拆成多個獨立函式、各自有清楚的 input / output。Debug 時知道哪個壞了、也容易單獨重用。"
+description: "一個 init function 同時做多件事 → 按職責拆成多個獨立函式、各自有清楚的 input / output、init 退化為組合各職責的 orchestrator。Debug 時知道哪個壞了、也容易單獨重用。"
 tags: ["report", "事後檢討", "JavaScript", "Refactor", "工程方法論"]
 ---
 
