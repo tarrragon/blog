@@ -73,7 +73,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 
 效能組：
 
-- [#33 Reactive 監聽器的觸發頻率管理](reactive-listener-frequency-management/)
+- [#33 Reactive 監聽器的效能 audit：跨 listener 類型盤點觸發頻率](reactive-listener-frequency-management/) — audit 視角、跟 #29 設計指引互補
 - [#34 Runtime 計算成本：每筆迭代與正則](runtime-iteration-and-regex-cost/)
 - [#35 Layout reflow / repaint 的可量化評估](layout-reflow-measurement/)
 - [#36 資源載入時序：lazy chunk 與 critical path](lazy-loading-and-critical-path/)
@@ -111,6 +111,10 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 
 - [#50 Pattern：DOM attribute idempotency 標記](pattern-attribute-idempotency-marker/) — production 預設、devtools 可見
 - [#51 Pattern：WeakMap idempotency 紀錄](pattern-weakmap-idempotency-record/) — library 設計、不污染 DOM
+
+跨 slot 搬遷（從 #2 抽出）：
+
+- [#54 Pattern：跨 slot 同節點搬遷](pattern-cross-slot-node-relocation/) — stateful UI 在兩個 slot 間搬同一節點、不複製
 
 ---
 
@@ -180,4 +184,4 @@ Idempotency 過濾兩選一（從 #14 抽出）：
 
 ---
 
-**Last Updated**: 2026-04-25 — 五輪實作 43 篇（含 #52、#53 從 #40 拆出的 a11y 補篇）+ 第六輪抽象層 4 篇（#42-45）+ 第七輪 Pattern 卡片 6 篇（#46-51）。Focus 重審：#5 拆分（議題 B 合進 #13）、#40 拆三篇 a11y。Index 純路由、內容由各篇自包含。
+**Last Updated**: 2026-04-25 — 五輪實作 43 篇 + 第六輪抽象層 4 篇（#42-45）+ 第七輪 Pattern 卡片 7 篇（#46-51 + #54）。Focus 三輪重審完成：#5/#13 整合、#40 拆三 a11y、#2 拆出 #54 pattern、#33 改 audit 視角引用 #29。Index 純路由、內容由各篇自包含。
