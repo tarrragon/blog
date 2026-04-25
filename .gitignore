@@ -22,3 +22,6 @@ Thumbs.db
 
 # Local convenience symlink for serving /blog/ subpath on localhost
 /blog
+
+# Playwright MCP runtime cache (snapshots, console logs)
+.playwright-mcp/
