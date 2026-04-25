@@ -128,25 +128,34 @@ CSS 規則在 computed style 顯示為「我設了什麼」、DOM tree 顯示「
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：對抗狀態化飄移的定位策略
 
-### 元件位置由 anchor + 偏移組成
+四種做法、各自機會成本不同。這個專案選 A（absolute + 自定義 offset parent）當預設、其他做法在特定情境合理。
 
-**正確概念**：debug 元件位置時拆成「anchor 是誰、偏移多少」兩層。狀態化飄移幾乎都在 anchor 層。
+### A：Absolute + 穩定 offset parent（這個專案的預設）
 
-**替代方案的不足**：直接調元件自己的 CSS（margin、padding、top）— 在某狀態下調對、其他狀態下又錯，反覆試錯。
+- **機制**：元件 `position: absolute`、選定一個尺寸不隨狀態變動的 ancestor 作為 offset parent
+- **選 A 的理由**：anchor 不變則元件不動、跨所有互動狀態位置一致
+- **適合**：需要在多狀態下保持固定位置的元件
+- **代價**：跳出 layout flow、附近元件需要手動讓位（margin spacer）
 
-### 動態 container 不適合靜態 layout
+### B：Grid / Flex item
 
-**正確概念**：grid / flex 的 container 內容隨狀態撐開時，內部 grid-row 排序會跟著重算。要在這種 container 內維持絕對位置，用 absolute 跳出。
+- **機制**：把元件當 grid / flex container 的子項、用 grid-row / flex-order 排
+- **跟 A 的取捨**：B 自然 reflow、A 完全 anchor-driven；B 在 container 內容隨狀態撐開時、grid 排序跟著重算
+- **B 比 A 好的情境**：container 尺寸不隨狀態變動的場景（純 layout、內容靜態）
 
-**替代方案的不足**：堅持用 grid-row 數字排序、期待它在所有狀態下都對 — 動態 container 撐開時 row 高度跟著變、絕對位置失準。
+### C：Static / block flow（預設 layout）
 
-### 拓樸先讀、anchor 先確認
+- **機制**：不設 position、跟 sibling 自然排
+- **跟 A/B 的取捨**：C 最簡單、A/B 主動處理 anchor；C 完全受前置 sibling 影響、狀態化飄移風險最高
+- **C 才合理的情境**：頁面內容極穩定、無狀態切換 — 否則第 N 個元素位置受前 N-1 個元素影響
 
-**正確概念**：寫 CSS 規則前用 playwright 讀 DOM tree 的真實巢狀、確認元件的 anchor 是誰。
+### D：Fixed（相對 viewport）
 
-**替代方案的不足**：依 class name 推測 anchor — `__form` 與 `__drawer` 看似 sibling、實際 drawer 在 form 內、anchor 計算錯。
+- **機制**：`position: fixed`、anchor 是 viewport
+- **跟 A 的取捨**：D 永遠在 viewport 同位置、A 跟著內容；D 對「導航類元件」合理、對「內容相關元件」不合理
+- **D 比 A 好的情境**：永遠可見的功能元件（toolbar、scroll-to-top button）
 
 ---
 

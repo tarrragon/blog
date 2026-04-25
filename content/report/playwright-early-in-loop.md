@@ -149,25 +149,36 @@ Playwright MCP 提供：
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：CSS / DOM debug 工具選擇
 
-### Playwright 是診斷工具、不是 last resort
+四種做法、各自機會成本不同。這個專案在推理 ≥ 2 次失敗後選 A（playwright `browser_evaluate`）當預設、其他做法在特定情境合理。
 
-**正確概念**：當推理 + 截圖循環的成本超過「起 server + 寫 evaluate」的成本，就切換到 playwright。門檻通常在第 2-3 次推理失敗。
+> 本篇是 [#42 2 次門檻](../two-occurrence-threshold/) 抽象原則在「debug 工具切換」這個面向的應用。
 
-**替代方案的不足**：把 playwright 當「最後手段」、堅持靠推理 — 推理錯誤累積、每輪都基於前輪錯誤假設、debug 時間爆炸。
+### A：Playwright `browser_evaluate` 程式化讀 live DOM（這個專案的預設）
 
-### 量 live DOM 比讀 source 權威
+- **機制**：起 server、用 `browser_evaluate` 寫 JS query 讀 DOM tree / computed style / bounding rect
+- **選 A 的理由**：取得資訊量最大、可重跑、可寫成測試
+- **適合**：推理失敗 ≥ 2 次、複雜或反覆 debug 的情境
+- **代價**：起步成本中（需要 server + 寫 evaluate）
 
-**正確概念**：動態渲染的組件（svelte、react）source 看到的是 template、實際 DOM 可能多包了層。讀 live DOM。
+### B：靜態 CSS 推理 + 視覺截圖溝通
 
-**替代方案的不足**：只看 framework source 推結構 — runtime 行為可能加 wrapper、跟 source 不一致。
+- **機制**：純看 CSS 與假設的 DOM 推測、用截圖跟使用者溝通
+- **跟 A 的取捨**：B 起步成本 0、A 起步成本中；但 B 第 2 次以後成本爆炸（每輪都基於前輪錯誤假設）
+- **B 比 A 好的情境**：第 1 次嘗試、預估假設正確機率高（簡單修改）
 
-### Browser_evaluate 寫一段、查一片
+### C：瀏覽器 DevTools 手動查
 
-**正確概念**：寫一個 evaluate fn 同時取得 DOM tree、computed style、bounding rect 多個資訊 — 一次量、整體判斷。
+- **機制**：開 DevTools 切 Elements / Computed / Layout 面板手動探索
+- **跟 A 的取捨**：C 不需 server / playwright setup、但每次手點切面板慢、不能寫成測試
+- **C 比 A 好的情境**：一次性確認、不需要重複 query 同樣資訊
 
-**替代方案的不足**：DevTools 一次查一個面板（Elements、Computed、Layout）— 切換面板慢、跨面板對照容易漏。
+### D：寫成 playwright 測試固化
+
+- **機制**：把 debug 過程寫成 playwright 測試、未來自動跑
+- **跟 A 的取捨**：D 是 A 的延伸 — 第 2 次 debug 同個版型時、值得固化（[#15 layout tests](../layout-tests-with-playwright/)）
+- **D 比 A 好的情境**：版型 bug 出現第 2 次以上、值得寫測試防止回歸
 
 ---
 

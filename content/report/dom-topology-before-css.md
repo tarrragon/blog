@@ -109,25 +109,34 @@ drawer 是 form 的 child、不是 sibling。我們的 grid 規則把 form（含
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：拓樸理解的方法
 
-### 拓樸先讀、規則後寫
+四種做法、各自機會成本不同。這個專案選 A（讀 live DOM）當預設、其他做法在特定情境合理。
 
-**正確概念**：寫 CSS 規則前用 playwright 或 DevTools 讀 live DOM、列出每個目標元素的 ancestor chain。
+### A：讀 live DOM（playwright / DevTools）（這個專案的預設）
 
-**替代方案的不足**：靠 class name 推測 — 命名是慣例不是契約、會錯；錯了之後 CSS 規則不生效、debug 從「規則寫對了嗎」開始浪費時間。
+- **機制**：用 `playwright browser_evaluate` 讀 ancestor chain、computed style、bounding rect；或 DevTools Elements 面板手動探索
+- **選 A 的理由**：反映實際渲染結果、跨 framework 都對、可寫成測試
+- **適合**：debug、整合外部組件、寫第一版 CSS 之前
+- **代價**：需要 server 跑著（可用 hugo dev / static server）
 
-### Live DOM 比 source 更權威
+### B：讀框架 source / template
 
-**正確概念**：動態渲染的組件（svelte / react）source 看到的是 template、實際 DOM 可能多包了層或拆了層。讀 live DOM。
+- **機制**：直接看 svelte / react component 的 template
+- **跟 A 的取捨**：B 看靜態結構、A 看 runtime 結構；B 對自家組件夠用、對動態渲染（runtime wrapper / portal）會漏
+- **B 比 A 好的情境**：自家組件、template 跟 DOM 1:1 對應、不需要 runtime 確認
 
-**替代方案的不足**：只看 source 不看 live — 框架的編譯與 runtime 行為可能加 wrapper、漏推測。
+### C：用 class name 命名規則推測
 
-### display: contents 用前先確認 box 責任
+- **機制**：看 `.parent__child` 推測 DOM 巢狀
+- **跟 A 的取捨**：C 完全不需要工具、A 需要 server；但 C 命名是慣例不是契約、容易錯
+- **C 才合理的情境**：初步假設、必須用 A/B 驗證後才能寫 CSS — 不應作為唯一依據
 
-**正確概念**：拆掉中間 box 之前，列出該 box 承擔的視覺責任（定位 anchor、偽元素、背景）。有責任就不能拆。
+### D：視覺截圖推測
 
-**替代方案的不足**：直接設 contents 然後逐個修壞掉的東西 — 修一個漏一個、最後維護成本超過原本問題。
+- **機制**：看截圖猜 DOM 結構
+- **成本特別高的原因**：截圖看不到 wrapper、看不到 display: contents 等不可視結構
+- **D 才合理的情境**：實務上幾乎不存在 — 視覺上看起來相同的 DOM 可能完全不同
 
 ---
 

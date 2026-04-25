@@ -111,25 +111,34 @@ body.page-search main { position: relative; }
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：兩元件共存的 layout 策略
 
-### Layout 流與絕對定位是兩個獨立層
+四種做法、各自機會成本不同。這個專案選 A（疊層 absolute）當預設、其他做法在特定情境合理。
 
-**正確概念**：把要嚴格置中的元件留在 layout 流、把附加元件用 absolute 浮在 layout 流之上。兩者透過 offset parent 連結但不互相影響。
+### A：疊層式（中央 layout flow + 附加 absolute）（這個專案的預設）
 
-**替代方案的不足**：把所有元件都放進同一 grid 試圖一次解決 — 中央欄的位置依賴 sidebar 的存在、改 sidebar 設計就要重算 main 的位置、互相牽動。
+- **機制**：嚴格置中的元件留 layout flow、附加元件 `position: absolute` 跳出 flow
+- **選 A 的理由**：中央位置不受附加元件影響、改附加元件不需重算中央
+- **適合**：中央嚴格置中 + sidebar 是「附加」的場景（搜尋頁、文章閱讀頁）
+- **代價**：absolute 需要明確 offset parent、要做物理空間檢查避免溢出
 
-### Absolute 元件的座標基準要明確
+### B：排擠式（同 layout flow、grid / flex）
 
-**正確概念**：absolute 元件透過 `position: relative` ancestor 建立座標系。把該 ancestor 選定為「跟 absolute 元件移動同步的參考點」。
+- **機制**：把兩元件放進同一 grid / flex container、各佔一個欄位
+- **跟 A 的取捨**：B 兩元件都自然撐開、A 中央嚴格置中；B 改一邊另一邊跟著動、A 完全解耦
+- **B 比 A 好的情境**：兩元件都是內容主體、需要互相適應寬度（dashboard 多面板）
 
-**替代方案的不足**：忘了設 `position: relative`，absolute 元件相對 viewport 計算、跟著 viewport 走、跟 main 的位置脫鉤。
+### C：Fixed（相對 viewport）
 
-### 物理空間預算與疊層分開處理
+- **機制**：附加元件 `position: fixed`、永遠在 viewport 同位置
+- **跟 A 的取捨**：C 永遠可見（隨 scroll 不動）、A 跟內容一起 scroll；C 適合 always-on UI
+- **C 比 A 好的情境**：浮動操作鈕、頂部 nav、使用者隨時要 access 的元件
 
-**正確概念**：疊層式解決「位置關係」；物理空間預算解決「viewport 夠不夠寬」。兩者獨立、各自有對應規則。
+### D：重新設計 layout（取消共存需求）
 
-**替代方案的不足**：把 viewport 寬度檢查塞進 absolute 定位的 calc — sidebar 可能溢出 viewport 也仍然顯示、視覺破壞。
+- **機制**：把附加元件搬到完全不同位置（footer、modal、抽屜）
+- **跟 A/B/C 的取捨**：D 完全避開共存問題、A/B/C 解決共存
+- **D 比 A 好的情境**：附加元件使用頻率低（offset 很大價值低）— 例如 settings 改放 modal 內
 
 ---
 
