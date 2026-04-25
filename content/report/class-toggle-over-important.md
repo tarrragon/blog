@@ -154,25 +154,35 @@ DevTools 顯示「有 `.is-scope-filtered` class」 — class 名本身解釋為
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：JS 控制視覺狀態的策略
 
-### 視覺狀態用 class、值動態用 inline
+四種做法、各自機會成本不同。這個專案選 A（class toggle）當預設、其他做法在特定情境合理。
 
-**正確概念**：「顯示 / 隱藏」「啟用 / 停用」這類布林狀態用 class toggle；動態值（座標、尺寸）用 inline style。
+### A：Class toggle + CSS 規則（這個專案的預設）
 
-**替代方案的不足**：所有 JS 改視覺都用 inline — 規則散在 JS、CSS 失去設計系統的角色。
+- **機制**：`el.classList.toggle('is-scope-filtered')`、CSS 內定義 `.is-scope-filtered { display: none }`
+- **選 A 的理由**：CSS 規則集中、devtools 看 class 知狀態、改視覺只動 CSS、配 CSS Layers 不需 `!important`
+- **適合**：布林狀態切換（顯示 / 隱藏 / 啟用 / 停用）
+- **代價**：需要在 CSS 預先定義 class 規則（多一份 CSS）
 
-### CSS Layers 後不再需要 important
+### B：Inline `style.X = ...`
 
-**正確概念**：CSS Layers 把 vendor CSS 包進低權層、自家 unlayered 自動贏 — `!important` 不再有用武之地。
+- **機制**：`el.style.display = 'none'`
+- **跟 A 的取捨**：B 一行 JS、A 需要 CSS 規則；但 B 規則散在 JS 各處、devtools 看到 `display: none` inline 不知道為什麼
+- **B 比 A 好的情境**：runtime 計算的動態值（`el.style.top = scrollY + 'px'`）— 這類值無法預先寫進 CSS
 
-**替代方案的不足**：保留 `!important` 作 defensive 寫法 — important 之間沒層級、未來其他 important 對撞時 debug 困難。
+### C：Inline + `setProperty('important')`
 
-### Class 名要語意化
+- **機制**：`el.style.setProperty('display', 'none', 'important')`
+- **跟 A/B 的取捨**：C 比 B 多 important、為了壓過 framework 重繪 reset 的 inline；但 C 進入 `!important` 戰、未來新 important 對撞 debug 困難
+- **C 才合理的情境**：framework 強制 reset 自家 inline style、且不能用 layered CSS（極罕見）
+- **更好的解**：用 [#24 CSS Layers](../css-layers-over-specificity/) 解 specificity 戰、本卡片 A 即可
 
-**正確概念**：Class 名表達「為什麼這狀態」（`is-scope-filtered`）、不表達「視覺結果」（`is-display-none`）。
+### D：Dataset attribute + CSS attribute selector
 
-**替代方案的不足**：用 `is-hidden` / `is-display-none` 等視覺結果命名 — 改視覺實作（從 display:none 改 visibility:hidden）時 class 名不再貼切、要重命名。
+- **機制**：`el.dataset.state = 'hidden'`、CSS `[data-state="hidden"] { display: none }`
+- **跟 A 的取捨**：D 用 attribute 表狀態、A 用 class；D 在「狀態值多種」時更合適（例如 `data-state="loading|ready|error"`）
+- **D 比 A 好的情境**：狀態有多個值（不只 boolean）、需要 CSS attribute selector 表達多分支
 
 ---
 

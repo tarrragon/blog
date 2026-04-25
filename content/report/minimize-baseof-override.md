@@ -176,25 +176,35 @@ diff themes/hugo-bearcub/layouts/_default/baseof.html \
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：Theme 客製的策略
 
-### 用 hook 比 override 好
+四種做法、各自機會成本不同。優先選 A（用 theme hook）— 不夠用才退到 B / C / D。
 
-**正確概念**：theme 提供 partial / block / template hook 時、優先用 hook 客製。Override 只在 hook 不夠用時。
+### A：用 theme 提供的 partial / block / template hook（最佳）
 
-**替代方案的不足**：所有客製都用 override — 升級成本高、theme 改進無法享受。
+- **機制**：theme 預留 `block`、`custom_head.html`、`custom_body.html` 等 hook、本地只填 hook
+- **選 A 的理由**：theme 升級不影響本地客製、hook 是公開介面
+- **適合**：theme 設計時預留了對應 hook 的客製需求
+- **代價**：需要 theme 預先支援、若不支援考慮給 theme 提 PR 加 hook
 
-### Override 加 diff 註解
+### B：Override 加 diff 註解（這個專案的預設）
 
-**正確概念**：必須 override 時、註解標明跟 theme 版本的差異 — 升級時知道要 sync 哪些位置。
+- **機制**：複製 theme 檔案到本地、改必要的部分、註解標明跟 theme 版本的差異
+- **跟 A 的取捨**：B 不需要 theme 預留 hook、A 需要；B 升級時要手動 sync
+- **適合**：theme 沒對應 hook、必須 override
+- **代價**：升級時要 diff theme 新版手動 merge、註解可降低 merge 成本
 
-**替代方案的不足**：Override 不加註解 — 未來維護者不知道為什麼這個檔案在本地、不知道哪些是「override 改動」哪些是「theme 原版」。
+### C：Override 不加註解
 
-### Override 範圍最小化
+- **機制**：複製 theme 檔案、改必要部分、不註解
+- **跟 B 的取捨**：C 寫法簡單、B 額外註解；但 C 未來維護者不知為什麼這檔案在本地、漏 sync 風險高
+- **C 才合理的情境**：純探索性 override、之後會還原 — production 不該如此
 
-**正確概念**：Override 的內容跟 theme 版本盡量一致、只改必要的部分、其他保持原樣 — 升級時 merge 衝突最少。
+### D：Fork theme 維護自己版本
 
-**替代方案的不足**：Override 後順便重構 / 美化 — 改動面積擴大、升級時要 merge 很多無關差異。
+- **機制**：fork theme 整個 repo、所有客製改在 fork 內
+- **成本特別高的原因**：每次原 theme 升級都要 merge upstream、長期維護負擔重
+- **D 才合理的情境**：客製極深（多檔案 override + 改 internal logic）、且願意承擔 fork 維護成本
 
 ---
 

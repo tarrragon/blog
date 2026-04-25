@@ -144,25 +144,34 @@ CSS Layers 在所有主流瀏覽器（Chrome 99+、Firefox 97+、Safari 15.4+）
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：覆寫外部組件 CSS 的策略
 
-### Layers 是分組、specificity 是線性
+四種做法、各自機會成本不同。這個專案選 A（CSS Layers）當預設、其他做法在特定情境合理。
 
-**正確概念**：CSS 樣式優先級有兩維度 — 分組（layer）與線性（specificity）。分組永遠優先於線性、用分組解決組件覆寫問題。
+### A：CSS Layers（這個專案的預設）
 
-**替代方案的不足**：只用線性 specificity 對抗組件 — 規則複雜度與成本累積、最後變成 `!important` 戰。
+- **機制**：`@import url(...) layer(vendor)` 把外部 CSS 包進低權層、自家 unlayered CSS 自動贏
+- **選 A 的理由**：跨組件升級穩定、規則簡單、`!important` 完全不需要、跳出 specificity 線性比較戰場
+- **適合**：所有現代瀏覽器（Chrome 99+ / Firefox 97+ / Safari 15.4+）的客製情境
+- **代價**：需要重新引入 vendor CSS（從 `<link>` 改 `@import`）
 
-### Vendor CSS 一律進 layer
+### B：雙寫 class 提升 specificity
 
-**正確概念**：所有外部組件的 CSS 都用 `@import url(...) layer(...)` 包起來、自家保留最高優先權。
+- **機制**：`.pagefind-ui__filter-block.pagefind-ui__filter-block` 寫兩次提升 specificity 從 10 到 20
+- **跟 A 的取捨**：B 不需要改 vendor CSS 引入方式、A 需要；但 B 跟組件 specificity 競賽（組件作者改 hash 寫法就壞）、A 跳出競賽
+- **B 比 A 好的情境**：實務上幾乎不存在 — 唯一情境是 vendor CSS 不能用 `@import` 引入（極罕見的 build pipeline 限制）
 
-**替代方案的不足**：照組件文件的 `<link>` 引入方式 — 跟自家 CSS 處於同層、需要靠 source order 與 specificity 競爭。
+### C：`!important` 對抗
 
-### `!important` 是 emergency only
+- **機制**：每條覆寫加 `!important`、用 importance 取勝
+- **跟 A 的取捨**：C 短期有效、長期 important 之間沒層級可言；多個 important 對撞時 debug 困難
+- **C 才合理的情境**：CSS Layers 不支援的舊瀏覽器（< 2022 的版本）、且確認沒其他 important 對撞
 
-**正確概念**：用 layers 之後、`!important` 只在「同層內優先級緊急覆寫」用。覆寫外部組件 CSS 不需要 `!important`。
+### D：Inline style + `setProperty('important')`
 
-**替代方案的不足**：每次覆寫都加 `!important` — 久了不知道為什麼、改某條 important 可能引發其他 important 失效。
+- **機制**：JS 用 `el.style.setProperty('display', 'none', 'important')`
+- **成本特別高的原因**：規則散落在 JS 各處、devtools 看不出意圖、跟 framework 重繪競爭
+- **D 才合理的情境**：動態值（runtime 算的位置 / 尺寸）必須用 inline 表達 — 但即使這樣、也建議用 class toggle + CSS 變數（[#28](../class-toggle-over-important/)）取代
 
 ---
 

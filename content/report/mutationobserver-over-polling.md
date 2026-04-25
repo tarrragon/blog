@@ -197,25 +197,34 @@ if (root.querySelector(selector)) {
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：等待 DOM 元素出現的策略
 
-### Event-driven 比 polling 好
+四種做法、各自機會成本不同。這個專案選 A（MutationObserver + fast path）當預設、其他做法在特定情境合理。
 
-**正確概念**：「等待某事發生」用對應的 event 機制（MutationObserver / ResizeObserver / IntersectionObserver / Promise）、不用 setTimeout 輪詢。
+### A：MutationObserver + already-exists fast path（這個專案的預設）
 
-**替代方案的不足**：所有等待都用 setTimeout — 有延遲、無事件響應、CPU 浪費。
+- **機制**：先檢查目標是否已存在（直接觸發）、否則 observe DOM 變動、找到後 disconnect
+- **選 A 的理由**：0 延遲、CPU 不被輪詢吃、找到後立即停
+- **適合**：等待 framework / 第三方 library 動態 mount 的元素
+- **代價**：需要寫 fast path + observer + disconnect 三段邏輯（用 helper 包裝即可一行調用）
 
-### 找到目標後 disconnect
+### B：`setTimeout` 輪詢
 
-**正確概念**：Observer 找到目標後立即 disconnect、不繼續監聽。
+- **機制**：每隔 N ms 檢查、找到就停
+- **跟 A 的取捨**：B 寫法簡單、A 設計嚴謹；但 B 有最快回應 = N ms 的延遲、CPU 一直跑
+- **B 比 A 好的情境**：等的不是 DOM 元素而是無事件可監聽的狀態（全局變數出現、外部 API 結果且無 promise 介面）
 
-**替代方案的不足**：忘記 disconnect — observer 永久 active、未來 DOM 變動都觸發 callback、可能造成意外副作用。
+### C：Promise / async（如果 API 提供）
 
-### Already-exists fast path
+- **機制**：`await framework.ready()` 等 framework 提供的 promise
+- **跟 A 的取捨**：C 是最乾淨的解、但需要 framework / library 提供 promise API
+- **C 比 A 好的情境**：等的目標有官方 promise 介面（避免自行 observe 內部 DOM）
 
-**正確概念**：等待邏輯先檢查「目標是否已存在」、是的話直接觸發、不需要 observer。
+### D：`requestAnimationFrame` 迴圈
 
-**替代方案的不足**：直接 `observe` 不檢查 — 元素已存在但沒變動、observer 不會觸發、卡死。
+- **機制**：每個 frame 檢查一次
+- **跟 B 的取捨**：D 跟著 frame、不會在 idle 時跑；但仍是輪詢、延遲 16ms
+- **D 才合理的情境**：等待動畫 frame 相關狀態（罕見）— 純等 DOM 元素仍應用 A
 
 ---
 
