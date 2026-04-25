@@ -1,7 +1,7 @@
 ---
 title: "Compositional Writing — 組合式寫作方法論"
-date: 2026-04-24
-description: "以 Zettelkasten 為核心、針對程式碼註解、文件、log、prompt、欄位、長篇技術文章的寫作方法論。五大原則 + 觸發路由 + 9 份情境 reference。"
+date: 2026-04-25
+description: "以 Zettelkasten 為核心、針對程式碼註解、文件、log、prompt、欄位、長篇技術文章、跨多篇 collection 結構的寫作方法論。五大原則 + 觸發路由 + 10 份情境 reference。"
 tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing"]
 ---
 
@@ -32,6 +32,7 @@ tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing
 | 要設計 log / 錯誤訊息 / 結構化輸出             | [writing-logs](/skills/compositional-writing/writing-logs/)                                   |
 | 要撰寫給 AI 的 prompt / instruction            | [writing-prompts](/skills/compositional-writing/writing-prompts/)                             |
 | 要撰寫完整長篇技術文章                         | [writing-articles](/skills/compositional-writing/writing-articles/)                           |
+| 要管理多篇相關文章的結構（系列、文集、知識庫） | [managing-article-collections](/skills/compositional-writing/managing-article-collections/)   |
 | 要設計 ticket 欄位 / schema frontmatter        | [designing-fields](/skills/compositional-writing/designing-fields/)                           |
 | 六欄位範例詳查（正確 + 混淆對照）              | [designing-fields-ticket-6w](/skills/compositional-writing/designing-fields-ticket-6w/)       |
 | 驗證寫作品質（認知負擔、獨立理解率）           | [meta-metrics](/skills/compositional-writing/meta-metrics/)                                   |
@@ -51,4 +52,12 @@ tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing
 
 ## Last Updated
 
-2026-04-24 — 初版文章化：`.claude/skills/compositional-writing/` @ v0.3.0 同步。
+2026-04-25 — 同步到 `.claude/skills/compositional-writing/` @ v0.6.0：
+
+- v0.4.0 — 新增 managing-article-collections.md（跨多篇文章結構）
+- v0.5.0 — 機會成本語氣補強（選項數由議題決定、idiom 庫、三類 structure 模板）
+- v0.6.0 — references 拆分減少過載 + 規則八「自我應用 (dogfooding)」
+
+歷史版本：
+
+- 2026-04-24 — 初版文章化：v0.3.0 同步
