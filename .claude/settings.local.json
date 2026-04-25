@@ -26,7 +26,10 @@
       "Bash(ln -sfn public blog)",
       "Bash(curl -sI http://localhost:8000/blog/search/)",
       "Bash(curl -sI http://localhost:8000/blog/pagefind/pagefind-ui.js)",
-      "Bash(awk '/^body \\\\{/,/^\\\\}/' themes/hugo-bearcub/assets/herman.css)"
+      "Bash(awk '/^body \\\\{/,/^\\\\}/' themes/hugo-bearcub/assets/herman.css)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot"
     ],
     "deny": [],
     "ask": []

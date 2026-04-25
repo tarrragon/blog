@@ -8,6 +8,16 @@
 <div data-pagefind-ignore class="search-shell">
   <h1 class="search-title">{{ .Title }}</h1>
   {{ with .Content }}{{ . }}{{ end }}
+  {{- /* 搜尋範圍切換器：JS 把它搬進 .pagefind-ui、放在 form 和 drawer 之間，
+         確保視覺位置在搜尋框下、結果上，不會被結果列表擠到最底。
+         用 div + role="radiogroup" 取代 fieldset，避免 fieldset 的 min-width 與
+         UA border 相關怪癖。 */ -}}
+  <div class="search-scope" role="radiogroup" aria-label="搜尋範圍">
+    <span class="search-scope-label">搜尋範圍</span>
+    <label><input type="radio" name="search-scope" value="all" checked><span>全部</span></label>
+    <label><input type="radio" name="search-scope" value="title"><span>標題</span></label>
+    <label><input type="radio" name="search-scope" value="content"><span>內文</span></label>
+  </div>
   <div id="search"></div>
 </div>
 
@@ -58,9 +68,91 @@
       drawerParent = drawer;
       place();
       reorderFilters();
+      setupScopeFilter();
       mql.addEventListener('change', place);
     }
     waitAndInit();
+
+    /*
+      搜尋範圍切換器：用 regex 對每一筆 pagefind 已渲染的結果做標題 / 內文檢查，
+      決定個別結果 display。不改 pagefind 行為、不攔截查詢流程。
+
+      狀態來源：
+        - query：pagefind 的 search input value
+        - scope：radio group 的 value（all / title / content）
+      觸發時機：
+        - scope radio change
+        - search input change（使用者輸入新字）
+        - .pagefind-ui__results 子節點變動（pagefind 重繪結果或載入更多）
+    */
+    function setupScopeFilter() {
+      var scopeEl = document.querySelector('.search-scope');
+      var input   = document.querySelector('.pagefind-ui__search-input');
+      var ui      = document.querySelector('.pagefind-ui');
+      var drawer  = document.querySelector('.pagefind-ui__drawer');
+      var slot    = document.querySelector('.search-filter-slot');
+      if (!scopeEl || !ui || !input) return;
+
+      // scope 不被搬進 .pagefind-ui — Svelte 會吃掉外來元素。
+      // scope 用 absolute 浮在 form 的 input 與 drawer 之間，drawer 用 margin-top 讓位。
+      // scope 的實際高度受字型/換行影響，每次變動後測量並同步寫入 CSS 變數。
+      function syncScopeHeight() {
+        var h = scopeEl.offsetHeight || 56;
+        document.documentElement.style.setProperty('--search-scope-h', h + 'px');
+      }
+      syncScopeHeight();
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(syncScopeHeight).observe(scopeEl);
+      }
+      window.addEventListener('resize', syncScopeHeight);
+
+      function escapeRegex(s) {
+        return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+
+      function getScope() {
+        var checked = scopeEl.querySelector('input[name="search-scope"]:checked');
+        return checked ? checked.value : 'all';
+      }
+
+      function apply() {
+        var scope = getScope();
+        var query = (input.value || '').trim();
+        var items = document.querySelectorAll('.pagefind-ui__result');
+
+        if (scope === 'all' || !query) {
+          items.forEach(function (el) { el.style.removeProperty('display'); });
+          return;
+        }
+
+        var re = new RegExp(escapeRegex(query), 'i');
+        items.forEach(function (el) {
+          var titleEl   = el.querySelector('.pagefind-ui__result-title');
+          var excerptEl = el.querySelector('.pagefind-ui__result-excerpt');
+          var title   = titleEl   ? titleEl.textContent   : '';
+          var excerpt = excerptEl ? excerptEl.textContent : '';
+          var show = scope === 'title' ? re.test(title) : re.test(excerpt);
+          if (show) {
+            el.style.removeProperty('display');
+          } else {
+            // !important 壓過 pagefind Svelte 重繪回來的 inline 樣式。
+            el.style.setProperty('display', 'none', 'important');
+          }
+        });
+      }
+
+      // pagefind Svelte 重繪結果時會換掉 DOM，用 debounce 在每次變動後統一重跑 apply。
+      var applyTimer;
+      function schedule() {
+        clearTimeout(applyTimer);
+        applyTimer = setTimeout(apply, 80);
+      }
+
+      scopeEl.addEventListener('change', schedule);
+      input.addEventListener('input', schedule);
+      // 觀察範圍擴到整個 .pagefind-ui，補抓 Svelte 對結果樹的任何重建。
+      new MutationObserver(schedule).observe(ui, { childList: true, subtree: true });
+    }
 
     /*
       pagefind 預設把 filter-block 以 filter key 的字母順序排（tag < type），
@@ -103,9 +195,34 @@
     margin: 0;
   }
 
-  /* pagefind input 自然高度 = 64px * scale；把 scale 設成 1.0 讓結果剛好 68px。 */
+  /* pagefind input 自然高度 = 64px * scale；把 scale 設成 1.0 讓結果剛好 68px。
+
+     版型策略：
+       drawer 是 form 的子節點（不是 .pagefind-ui 的直接子）。我們不能用 grid
+       把 input 與 drawer 拆到不同 row，因為它們共用 form 這個 box。
+
+       改用：scope 用 absolute 定位浮在 form 的「input 下、drawer 上」位置；
+            drawer 加 margin-top 讓出空間給 scope。
+       兩個值都用 --search-scope-h 變數鎖定，永遠對齊。 */
+  /* --search-scope-h 由 JS 量測並寫到 :root（fallback 用 60px）。 */
+  :root { --search-scope-h: 60px; }
+
   .search-shell {
     --pagefind-ui-scale: 1.0;
+    position: relative;
+  }
+
+  .search-scope {
+    position: absolute;
+    top: calc(var(--search-title-h) + var(--search-form-h) + 4px);
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+
+  /* drawer 推下，讓出 scope 占用的高度。 */
+  .search-shell .pagefind-ui__drawer {
+    margin-top: calc(var(--search-scope-h) + 8px);
   }
 
   /* filter slot 的 offset parent。 */
@@ -122,6 +239,44 @@
     border: 0;
     padding: 0;
     margin: 0;
+  }
+
+  /* 搜尋範圍切換器：水平 radio group，JS 把它搬到 pagefind 的 form 與 drawer 之間。
+     注意：被搬進 .pagefind-ui 後，descendants 會受 .pagefind-ui--reset 的 all: unset 影響。
+     font-size 靠 inheritance：.search-scope 自己定一個值，children 繼承不會被 unset。 */
+  .search-scope {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    padding: 1.25rem 0 0.5rem;
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  .search-scope .search-scope-label {
+    font-weight: 600;
+    opacity: 0.85;
+    margin-right: 0.5rem;
+  }
+  .search-scope label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+  }
+  .search-scope label:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .search-scope input[type="radio"] {
+    margin: 0;
+    cursor: pointer;
+    width: 1.15rem;
+    height: 1.15rem;
+    accent-color: var(--color-primary, #1a8fe3);
   }
 
 
@@ -147,7 +302,7 @@
       top: 0;
       right: calc(100% + 2rem);
       width: 400px;
-      padding-top: calc(var(--search-title-h) + var(--search-form-h) + var(--search-gap));
+      padding-top: calc(var(--search-title-h) + var(--search-form-h) + var(--search-scope-h) + 8px + var(--search-gap));
       padding-left: 0;
       padding-right: 0;
       padding-bottom: 1rem;
