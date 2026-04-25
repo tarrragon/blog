@@ -173,25 +173,36 @@ margin-top: calc(var(--search-scope-h, 60px) + 8px);
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：CSS 變數定義位置策略
 
-### 變數定義集中、引用分散
+四種做法、各自機會成本不同。這個專案選 A（集中在使用範圍的最高層）當預設、其他做法在特定情境合理。
 
-**正確概念**：所有變數在一個 selector 集中定義、其他地方只 `var()` 引用、不重複定義。
+> 本篇是 [#44 SSoT](../single-source-of-truth/) 抽象原則在「CSS 變數定義位置」這個面向的應用。
 
-**替代方案的不足**：每個 component 各自定義需要的變數 — 同名 token 散落多處、cascade 順序決定值、不直觀。
+### A：集中在「跟使用範圍最匹配的最高層」selector（這個專案的預設）
 
-### 定義位置 = 使用範圍的 root
+- **機制**：全站 token 在 `:root`、頁面 token 在 `body.page-X`、組件 token 在 `.component`、JS 寫入也用同 selector
+- **選 A 的理由**：定義住址唯一、改 token 自動跟上、cascade 範圍跟使用範圍一致
+- **適合**：絕大多數 design token 系統
+- **代價**：要先想清楚每個變數的「使用範圍」、不能無腦丟一處
 
-**正確概念**：選定義位置時、找「使用範圍的最高層 selector」。全站用 `:root`、頁面用 body class、組件用組件 class。
+### B：所有變數都丟 `:root`
 
-**替代方案的不足**：所有變數都丟 `:root` — 不在乎 scope、可能跟其他組件變數命名衝突。
+- **機制**：不分使用範圍、全部 `:root`
+- **跟 A 的取捨**：B 簡單一致、A 按範圍分；但 B 不在乎 scope、可能跟其他組件變數命名衝突、且 cascade 範圍過大
+- **B 比 A 好的情境**：純 design system token（顏色 / 字型）、確實全站適用
 
-### JS 寫入用同一 selector
+### C：散在多個 selector 各自定義
 
-**正確概念**：JS 用 `setProperty` 寫入變數時、寫到「定義 fallback 的同一 selector」上、保持來源一致。
+- **機制**：每個 component 各自定義需要的變數
+- **跟 A 的取捨**：C 元件自包含、A 集中管理；但 C 同名 token 散落多處、cascade 順序決定值、改一處可能漏其他
+- **C 才合理的情境**：完全獨立的元件、不共用任何 token（罕見）
 
-**替代方案的不足**：JS 寫到 element.style、CSS 在 body 定義 — 兩套機制、cascade 衝突難 debug。
+### D：每處引用點都重複定義
+
+- **機制**：用 var 引用前都重新宣告一次
+- **成本特別高的原因**：徹底違反 SSoT、改 token 要 grep 找全、必漏改
+- **D 才合理的情境**：實務上幾乎不存在 — 重複定義就是 magic number 散落的另一種形式
 
 ---
 

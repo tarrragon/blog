@@ -161,25 +161,34 @@ ARIA 的設計用途是「補強 native」、不是「取代 native」。
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：實作 UI 元素的策略
 
-### Native 自帶 semantic + behavior 雙包裝
+四種做法、各自機會成本不同。這個專案永遠優先選 A（native HTML element）— 不夠用才退到 B / C / D。
 
-**正確概念**：選 native element 等於同時拿到 semantic 標籤與鍵盤 / focus / form 行為。
+### A：純 native HTML element（永遠的首選）
 
-**替代方案的不足**：用 div + role 取代 — 拿到 semantic 但要自己補完所有行為、容易漏。
+- **機制**：用 `<button>`、`<fieldset><legend>`、`<details><summary>`、`<input type="search">` 等 native 元素
+- **選 A 的理由**：semantic + 鍵盤 + focus + form 整合「四件套」自帶、跨瀏覽器一致、跨 screen reader 一致
+- **適合**：所有 native 涵蓋的 UI 模式（按鈕、表單、disclosure、radio group）
+- **代價**：受 native 視覺預設限制、客製樣式可能要對抗 UA 預設
 
-### ARIA 是補強、不是取代
+### B：Native + ARIA 補強（aria-label / aria-describedby / aria-expanded）
 
-**正確概念**：ARIA 用在「native 已存在但需要額外資訊」（aria-label、aria-describedby）、「動態狀態」（aria-expanded、aria-checked）、「沒對應 native」的場景。
+- **機制**：native element 加 ARIA 屬性補強 semantic 或表達動態狀態
+- **跟 A 的取捨**：B 在 A 的基礎上加細節、不取代
+- **B 比 A 好的情境**：native 已涵蓋主要功能、需要補額外資訊（label、描述）或動態狀態（expanded / pressed / checked）
 
-**替代方案的不足**：把 ARIA 當「無障礙的萬能解」、所有自訂 UI 都加 role — 多數情境用 native 更乾淨、ARIA 反而增加維護成本。
+### C：`<div role="X">` + 完整 ARIA pattern + 自寫鍵盤行為
 
-### 跨瀏覽器一致性靠 native
+- **機制**：用 div 包成 semantic 元素、加 role + 完整 ARIA + JS 補鍵盤
+- **跟 A 的取捨**：C 給更高客製彈性、A 拿成熟方案；C 維護成本高（要自己保證所有行為）
+- **C 比 A 好的情境**：native 沒對應的 UI 模式（complex tree view、custom slider）— 必須自己定義 semantic
 
-**正確概念**：Native element 行為由 HTML 標準定義、跨瀏覽器一致。
+### D：純 div + 自訂 semantic（無 ARIA）
 
-**替代方案的不足**：自訂 UI 跨瀏覽器測試 — Chrome / Safari / Firefox + 各 screen reader（NVDA / JAWS / VoiceOver）的組合測試不完。
+- **機制**：用 div 自己想 semantic、不加 role
+- **成本特別高的原因**：screen reader 不認得、鍵盤無法操作、違反 a11y 標準
+- **D 才合理的情境**：實務上幾乎不存在 — 純視覺裝飾元素（無互動）才能無 ARIA
 
 ---
 

@@ -177,25 +177,34 @@ document.body.appendChild(status);
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：動態內容廣播策略
 
-### 動態變動需要主動廣播
+四種做法、各自機會成本不同。這個專案選 A（aria-live polite + aria-atomic）當預設、其他做法在特定情境合理。
 
-**正確概念**：DOM 變動但 focus 沒移動的場景、要透過 aria-live region 主動通知 screen reader。
+### A：`aria-live="polite"` + `aria-atomic="true"`（這個專案的預設）
 
-**替代方案的不足**：依賴使用者「自己 tab 過去看」 — 使用者不知道有變動、不會主動 tab。
+- **機制**：region 預先在 HTML、JS 寫入 textContent 觸發 polite 朗讀（等使用者當前朗讀完）
+- **選 A 的理由**：覆蓋多數動態變動、不打擾使用者當前操作
+- **適合**：搜尋結果數量變動、filter 切換、scope 改變等大多數 UI 變動
+- **代價**：訊息要等使用者當前朗讀完才聽到（最多幾秒延遲）
 
-### Polite 是預設、assertive 留給緊急
+### B：`aria-live="assertive"`
 
-**正確概念**：多數變動用 polite、不打擾使用者當前操作。Assertive 留給真正緊急的訊息。
+- **機制**：立刻打斷使用者當前朗讀、強制聽新訊息
+- **跟 A 的取捨**：B 即時、A 禮貌；但 B 打斷感強、頻繁使用會讓使用者疲勞
+- **B 比 A 好的情境**：真正緊急的訊息（錯誤 / 警告 / 安全提示）— 必須立刻知道
 
-**替代方案的不足**：所有訊息用 assertive — 使用者體驗變成「不停被打斷」。
+### C：`role="status"` / `role="alert"`
 
-### Region 預先在 HTML、JS 只更新內容
+- **機制**：用 semantic role 取代 aria-live、語意更明確
+- **跟 A 的取捨**：C 跟 A 行為類似（status = polite、alert = assertive）、但 role 表達意圖更清楚
+- **C 比 A 好的情境**：region 本身就是 status 或 alert 元素（語意對齊）
 
-**正確概念**：aria-live region 在頁面載入時就存在於 DOM、後續 JS 寫入 textContent 觸發朗讀。
+### D：不處理（沉默）
 
-**替代方案的不足**：動態建立 region — screen reader 不會註冊到、變動朗讀失效。
+- **機制**：DOM 變動不通知 screen reader
+- **成本特別高的原因**：screen reader 使用者完全不知道有變動、UI 變得不可用
+- **D 才合理的情境**：純視覺裝飾變動（背景動畫 / decorative）— 對 screen reader 使用者無意義
 
 ---
 

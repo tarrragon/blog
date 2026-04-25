@@ -131,25 +131,34 @@ desiredOrder.forEach(function (k) {
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：layout 操作的處理策略
 
-### Reflow 不是必避、是要量化
+四種做法、各自機會成本不同。這個專案選 A（量化評估再決定）當預設、其他做法在特定情境合理。
 
-**正確概念**：每個 layout 操作量化看實際成本、根據規模決定優化與否。「全部用 transform」是過度。
+### A：量化評估、按規模決定優化與否（這個專案的預設）
 
-**替代方案的不足**：把「避免 reflow」當原則套用到所有場景 — 寫出複雜的 transform / position absolute 組合、layout 邏輯難維護。
+- **機制**：用 DevTools Performance 量每個 layout 操作的實際成本、超過 frame budget（16.67ms）才優化
+- **選 A 的理由**：避免過度優化（多數 reflow 成本可接受）、又不漏真正貴的（forced sync layout）
+- **適合**：所有效能盤點情境
+- **代價**：需要學會用 DevTools Performance、對效能 dispute 要量
 
-### Forced sync layout 才是真正該避
+### B：全部用 transform / opacity 避免 reflow
 
-**正確概念**：寫後立刻讀（`el.style.X = ...; el.offsetHeight`）強制 sync layout、連續觸發是 perf killer。這個 pattern 才需要嚴格避免。
+- **機制**：所有動畫 / 變動都用 transform 或 opacity（GPU composite）
+- **跟 A 的取捨**：B 預先避免 reflow、A 量化按需處理；但 B 寫出複雜的 transform / absolute 組合、layout 邏輯難維護
+- **B 比 A 好的情境**：高頻動畫（每 frame 變動的旋轉 / 移動）— 確定觸發 layout 會卡
 
-**替代方案的不足**：把所有 layout 變動都當「要避免」 — 模糊焦點、忽略真正貴的 forced sync layout。
+### C：完全避免 layout 操作
 
-### DevTools Performance 是裁判
+- **機制**：把所有可能觸發 reflow 的操作都繞開
+- **跟 A/B 的取捨**：C 過度反應、A/B 適度；C 寫法極受限、layout 表達力下降
+- **C 才合理的情境**：純動畫場景（沒有 layout 需求）— 對一般 UI 不適用
 
-**正確概念**：對效能 dispute 用 DevTools 量、有具體數字後再討論。
+### D：不量、靠經驗判斷
 
-**替代方案的不足**：靠經驗 / 直覺判斷哪個快 — 瀏覽器 / 設備 / 場景差異大、直覺不可靠。
+- **機制**：依「我覺得這應該快」做決定
+- **成本特別高的原因**：瀏覽器 / 設備 / 場景差異大、直覺不可靠；可能漏掉 forced sync layout 等真正貴的 pattern
+- **D 才合理的情境**：實務上幾乎不存在 — 效能 dispute 必須有數字
 
 ---
 

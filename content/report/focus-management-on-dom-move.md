@@ -159,25 +159,34 @@ waitForElement(searchRoot, '.pagefind-ui__search-input', function (input) {
 
 ---
 
-## 正確概念與常見替代方案的對照
+## 設計取捨：DOM 變動時的 focus 處理策略
 
-### Focus 是 JS 變動的副作用、要主動管
+四種做法、各自機會成本不同。這個專案選 A（save / restore activeElement）當預設、其他做法在特定情境合理。
 
-**正確概念**：JS 移動或隱藏 DOM 時、save 變動前的 activeElement、變動後決定 focus 該去哪。
+### A：Save / restore activeElement（這個專案的預設）
 
-**替代方案的不足**：依賴瀏覽器預設處理 — 結果不一致（Chrome / Safari 不同）、且多數預設是「focus 跳 body」、使用者迷失。
+- **機制**：JS 變動 DOM 前 `var activeBefore = document.activeElement`、變動後 `activeBefore.focus()`
+- **選 A 的理由**：跨瀏覽器一致、簡單元件移動 / 顯隱都涵蓋
+- **適合**：自家管的 DOM 變動（reparent、display: none、remove）
+- **代價**：每個變動位置要顯式加 save / restore 邏輯（用 helper 包裝可一行）
 
-### 預期 focus 軌跡先設計、再寫 JS
+### B：不處理（依瀏覽器預設）
 
-**正確概念**：寫 JS 變動 DOM 前、先想清楚「這個變動後 focus 該去哪」、寫進邏輯。
+- **機制**：JS 變動 DOM、不主動處理 focus
+- **跟 A 的取捨**：B 簡單、A 有額外邏輯；但 B 結果不一致（Chrome / Safari 不同）、多數預設是「focus 跳 body」、使用者迷失
+- **B 才合理的情境**：純展示元素變動（沒有 focusable 子元素）— 不會發生 focus 掉失
 
-**替代方案的不足**：寫完 JS 才測 focus、發現 focus 掉了再補 save / restore — 補丁式、容易漏。
+### C：用 tabindex / aria-activedescendant 模擬 focus
 
-### Auto-focus 用在使用者預期的場景
+- **機制**：focus 物理上不動、用 attribute 標記「邏輯 focus」
+- **跟 A 的取捨**：C 比 A 複雜、但能處理 framework 管的 DOM（無法 save / restore）
+- **C 比 A 好的情境**：framework 持續重繪元素 identity、save / restore 失敗 — 用 attribute 表達 focus
 
-**正確概念**：搜尋頁開啟自動 focus 搜尋框、modal 開啟自動 focus 第一個 input — 這些是使用者預期的。
+### D：Auto-focus 關鍵元素
 
-**替代方案的不足**：所有頁面都 auto-focus — 對純閱讀頁面是干擾、使用者本來想 scroll 結果被搶 focus。
+- **機制**：頁面載入後 / modal 開啟後自動 focus 預期的第一個元素
+- **跟 A 的取捨**：D 不依變動觸發、A 對應變動處理；D 適合「使用者預期」的初始 focus
+- **D 比 A 好的情境**：搜尋頁載入 → focus search input、modal 開啟 → focus 第一個 input — 使用者預期的場景才用
 
 ---
 
