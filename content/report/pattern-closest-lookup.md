@@ -35,12 +35,12 @@ document.addEventListener('click', function (e) {
 
 ## 適合的情境
 
-| 情境 | 為什麼合理 |
-|------|----------|
-| SPA 路由切換、元件動態 mount/unmount | 不需要在 mount 時重綁 listener |
-| 元件數量大（>10 個實例） | 事件委派比每實例綁 listener 省記憶體 |
-| 元件透過 AJAX 動態注入 | 注入後不需要任何 setup 動作 |
-| 第三方 widget、不能控制元件生命週期 | listener 綁在 document、跟 widget 解耦 |
+| 情境                                 | 為什麼合理                             |
+| ------------------------------------ | -------------------------------------- |
+| SPA 路由切換、元件動態 mount/unmount | 不需要在 mount 時重綁 listener         |
+| 元件數量大（>10 個實例）             | 事件委派比每實例綁 listener 省記憶體   |
+| 元件透過 AJAX 動態注入               | 注入後不需要任何 setup 動作            |
+| 第三方 widget、不能控制元件生命週期  | listener 綁在 document、跟 widget 解耦 |
 
 **核心特徵**：元件的 mount 時機 / 數量 runtime 才知道、不是初始化時固定。
 
@@ -48,11 +48,11 @@ document.addEventListener('click', function (e) {
 
 ## 不適合的情境
 
-| 情境 | 為什麼過度工程 | 改用 |
-|------|------------|------|
-| 元件靜態 mount、生命週期跟頁面一樣 | 委派多一層、收益不明顯 | [起點當參數](pattern-root-as-parameter/) |
-| 一個元件實例、永不變動 | 完全沒必要 | [元件根變數](pattern-component-root/) |
-| 需要在元件 mount 時就跑邏輯（不只回應事件） | closest 只在事件發生時跑、無法當 init hook | [起點當參數](pattern-root-as-parameter/) + MutationObserver |
+| 情境                                        | 為什麼過度工程                             | 改用                                                           |
+| ------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------- |
+| 元件靜態 mount、生命週期跟頁面一樣          | 委派多一層、收益不明顯                     | [起點當參數](../pattern-root-as-parameter/)                    |
+| 一個元件實例、永不變動                      | 完全沒必要                                 | [元件根變數](../pattern-component-root/)                       |
+| 需要在元件 mount 時就跑邏輯（不只回應事件） | closest 只在事件發生時跑、無法當 init hook | [起點當參數](../pattern-root-as-parameter/) + MutationObserver |
 
 ---
 
@@ -81,12 +81,12 @@ var input = shell.querySelector('.pagefind-ui__search-input');
 
 ### 事件類型的選擇
 
-| 事件 | 適合 |
-|------|------|
-| `click` | 點擊互動 |
-| `input` | 輸入框文字變動（需要 bubble） |
-| `change` | 選項變動（select / radio / checkbox） |
-| `keydown` | 鍵盤快捷鍵 |
+| 事件             | 適合                                               |
+| ---------------- | -------------------------------------------------- |
+| `click`          | 點擊互動                                           |
+| `input`          | 輸入框文字變動（需要 bubble）                      |
+| `change`         | 選項變動（select / radio / checkbox）              |
+| `keydown`        | 鍵盤快捷鍵                                         |
 | `focus` / `blur` | 焦點移動（不 bubble、要用 `focusin` / `focusout`） |
 
 注意 `focus` / `blur` 不會 bubble — 事件委派要用 `focusin` / `focusout`。
@@ -108,14 +108,14 @@ pageContainer.addEventListener('click', handler);
 
 ## 跟其他起點做法的關係
 
-[#14 Selector 精準度](dom-selector-precision/) 的「起點」維度有四種做法：
+[#14 Selector 精準度](../dom-selector-precision/) 的「起點」維度有四種做法：
 
-| 做法 | 比較 |
-|------|------|
-| [document query](pattern-document-query/) | 靜態、簡潔、無多實例支援 |
-| [元件根變數](pattern-component-root/) | 靜態、shell 唯一假設 |
-| [起點當參數](pattern-root-as-parameter/) | 靜態多實例、forEach 一次設定 |
-| 本卡片：closest 反向找根 | 動態、事件驅動、無 init 時機綁定 |
+| 做法                                         | 比較                             |
+| -------------------------------------------- | -------------------------------- |
+| [document query](../pattern-document-query/) | 靜態、簡潔、無多實例支援         |
+| [元件根變數](../pattern-component-root/)     | 靜態、shell 唯一假設             |
+| [起點當參數](../pattern-root-as-parameter/)  | 靜態多實例、forEach 一次設定     |
+| 本卡片：closest 反向找根                     | 動態、事件驅動、無 init 時機綁定 |
 
 複雜度遞增、能處理的動態程度也遞增。最動態的場景才用本 pattern。
 
@@ -142,7 +142,7 @@ setupGlobalScopeFilter();
 
 ---
 
-## 應用範例：與 [起點當參數](pattern-root-as-parameter/) 組合
+## 應用範例：與 [起點當參數](../pattern-root-as-parameter/) 組合
 
 ```js
 // 初始化階段：對已存在的 shell 做 setup
@@ -173,12 +173,12 @@ new MutationObserver(function (mutations) {
 
 ## 判讀徵兆
 
-| 訊號 | 該套用本 pattern 嗎？ |
-|------|----------|
-| 元件 SPA 路由動態切換 | 是 — 直接對應使用情境 |
-| 元件數量大、每實例都要綁 listener | 是 — 委派省記憶體 |
-| AJAX / Web Component runtime 注入 | 是 — 不需要重綁 |
-| 確定元件靜態、生命週期固定 | 否 — [起點當參數](pattern-root-as-parameter/) 已夠 |
-| 邏輯不是事件驅動（init 時就要跑） | 否 — closest 只在事件發生時跑 |
+| 訊號                              | 該套用本 pattern 嗎？                                 |
+| --------------------------------- | ----------------------------------------------------- |
+| 元件 SPA 路由動態切換             | 是 — 直接對應使用情境                                 |
+| 元件數量大、每實例都要綁 listener | 是 — 委派省記憶體                                     |
+| AJAX / Web Component runtime 注入 | 是 — 不需要重綁                                       |
+| 確定元件靜態、生命週期固定        | 否 — [起點當參數](../pattern-root-as-parameter/) 已夠 |
+| 邏輯不是事件驅動（init 時就要跑） | 否 — closest 只在事件發生時跑                         |
 
 **核心原則**：closest 反向找根把「定位元件」從綁定時延後到事件發生時 — 換到動態能力、付出的是事件處理多一層判斷。靜態場景用更簡單的做法、動態場景才升級到本 pattern。

@@ -30,18 +30,18 @@ document.querySelectorAll('.search-shell').forEach(setupSearchShell);
 1. **多實例支援免費**：`forEach(setup)` 自動處理多個 shell
 2. **純函式特性**：函式行為只依賴參數、不依賴外部狀態 — 可單獨測試、可重用、副作用集中
 
-跟[元件根變數](pattern-component-root/)的關鍵差異：那個 pattern 假設「shell 唯一」、本 pattern 把這個假設外移到呼叫端、函式本身不假設。
+跟[元件根變數](../pattern-component-root/)的關鍵差異：那個 pattern 假設「shell 唯一」、本 pattern 把這個假設外移到呼叫端、函式本身不假設。
 
 ---
 
 ## 適合的情境
 
-| 情境 | 為什麼合理 |
-|------|----------|
-| 同頁面有多個元件實例（多語切換、相關搜尋） | `forEach` 自動覆蓋全部 |
-| 元件設計成可被重用到其他頁面 | 沒有 hardcoded 依賴、容易移植 |
-| 寫成函式庫 / 第三方 component | 使用者可以對任意根節點呼叫 |
-| 想單元測試函式行為 | 傳入 mock root 即可測試 |
+| 情境                                       | 為什麼合理                    |
+| ------------------------------------------ | ----------------------------- |
+| 同頁面有多個元件實例（多語切換、相關搜尋） | `forEach` 自動覆蓋全部        |
+| 元件設計成可被重用到其他頁面               | 沒有 hardcoded 依賴、容易移植 |
+| 寫成函式庫 / 第三方 component              | 使用者可以對任意根節點呼叫    |
+| 想單元測試函式行為                         | 傳入 mock root 即可測試       |
 
 **核心特徵**：把「shell 從哪來」這個責任明確交給呼叫端、函式自己不關心。
 
@@ -49,11 +49,11 @@ document.querySelectorAll('.search-shell').forEach(setupSearchShell);
 
 ## 不適合的情境
 
-| 情境 | 為什麼過度工程 | 改用 |
-|------|------------|------|
-| 確定全站只有一個元件實例 | 每函式多一個參數、收益不明顯 | [元件根變數](pattern-component-root/) |
-| 元件動態增減、生命週期不可預測 | forEach 只跑一次、無法捕捉後加的元件 | [closest 反向找根](pattern-closest-lookup/) |
-| 一次性探索程式碼 | 純函式設計成本不值得 | [document query](pattern-document-query/) |
+| 情境                           | 為什麼過度工程                       | 改用                                           |
+| ------------------------------ | ------------------------------------ | ---------------------------------------------- |
+| 確定全站只有一個元件實例       | 每函式多一個參數、收益不明顯         | [元件根變數](../pattern-component-root/)       |
+| 元件動態增減、生命週期不可預測 | forEach 只跑一次、無法捕捉後加的元件 | [closest 反向找根](../pattern-closest-lookup/) |
+| 一次性探索程式碼               | 純函式設計成本不值得                 | [document query](../pattern-document-query/)   |
 
 ---
 
@@ -123,14 +123,14 @@ A 比較有效率（只 query 一次）、B 比較解耦（子函式自包含）
 
 ## 跟其他起點做法的關係
 
-[#14 Selector 精準度](dom-selector-precision/) 的「起點」維度有四種做法：
+[#14 Selector 精準度](../dom-selector-precision/) 的「起點」維度有四種做法：
 
-| 做法 | 比較 |
-|------|------|
-| [document query](pattern-document-query/) | 比本卡片簡潔、無多實例支援 |
-| [元件根變數](pattern-component-root/) | 比本卡片少一個參數、無多實例支援 |
-| 本卡片：起點當參數 | 多實例支援、純函式、設計成本前移 |
-| [closest 反向找根](pattern-closest-lookup/) | 比本卡片更動態、不依賴 forEach 時機 |
+| 做法                                           | 比較                                |
+| ---------------------------------------------- | ----------------------------------- |
+| [document query](../pattern-document-query/)   | 比本卡片簡潔、無多實例支援          |
+| [元件根變數](../pattern-component-root/)       | 比本卡片少一個參數、無多實例支援    |
+| 本卡片：起點當參數                             | 多實例支援、純函式、設計成本前移    |
+| [closest 反向找根](../pattern-closest-lookup/) | 比本卡片更動態、不依賴 forEach 時機 |
 
 升級階梯：document → 元件根變數 → 起點當參數 → closest。複雜度遞增、能處理的情境也遞增。
 
@@ -168,12 +168,12 @@ test('setupSearchShell 把 filter 移到 sidebar', function () {
 
 ## 判讀徵兆
 
-| 訊號 | 該套用本 pattern 嗎？ |
-|------|----------|
-| 同頁要支援多個元件實例 | 是 — 直接的好處 |
-| 想對函式寫單元測試 | 是 — 純函式才好測 |
-| 函式內讀 module scope 變數 | 是 — 改成參數讓依賴顯式 |
-| 確定永遠只一個實例、且不寫測試 | 否 — [元件根變數](pattern-component-root/) 已夠 |
-| 元件實例 runtime 動態增減 | 否 — 升級到 [closest](pattern-closest-lookup/) |
+| 訊號                           | 該套用本 pattern 嗎？                              |
+| ------------------------------ | -------------------------------------------------- |
+| 同頁要支援多個元件實例         | 是 — 直接的好處                                    |
+| 想對函式寫單元測試             | 是 — 純函式才好測                                  |
+| 函式內讀 module scope 變數     | 是 — 改成參數讓依賴顯式                            |
+| 確定永遠只一個實例、且不寫測試 | 否 — [元件根變數](../pattern-component-root/) 已夠 |
+| 元件實例 runtime 動態增減      | 否 — 升級到 [closest](../pattern-closest-lookup/)  |
 
 **核心原則**：本 pattern 把「我從哪取得 shell」的答案從函式內搬到呼叫端 — 換到「函式可重用」+「測試容易」+「多實例免費」三個收益、代價是函式簽名多一個參數。當前情境只一個實例也適用、未來擴展不需重寫。

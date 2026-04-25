@@ -29,7 +29,10 @@
       "Bash(awk '/^body \\\\{/,/^\\\\}/' themes/hugo-bearcub/assets/herman.css)",
       "mcp__plugin_playwright_playwright__browser_navigate",
       "mcp__plugin_playwright_playwright__browser_evaluate",
-      "mcp__plugin_playwright_playwright__browser_take_screenshot"
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "Bash(perl -i -0777 -pe 's/<!-- BLOCK_TO_REMOVE_START -->.*?<!-- BLOCK_TO_REMOVE_END -->\\\\n\\\\n//s' writing-articles.md)",
+      "Bash(chmod +x /tmp/sync_skill.sh)",
+      "Bash(make check *)"
     ],
     "deny": [],
     "ask": []

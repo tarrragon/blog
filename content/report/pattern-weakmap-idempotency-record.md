@@ -24,7 +24,7 @@ shell.querySelectorAll('.pagefind-ui__result').forEach(function (el) {
 
 ## 這個做法存在的價值
 
-兩件事 [DOM attribute 標記](pattern-attribute-idempotency-marker/) 做不到：
+兩件事 [DOM attribute 標記](../pattern-attribute-idempotency-marker/) 做不到：
 
 1. **不污染 DOM**：使用者 DOM 不會被加自家 attribute、適合第三方 library
 2. **跟 framework 完全解耦**：framework 怎麼操作 DOM 都不影響 WeakMap 紀錄
@@ -35,12 +35,12 @@ shell.querySelectorAll('.pagefind-ui__result').forEach(function (el) {
 
 ## 適合的情境
 
-| 情境 | 為什麼合理 |
-|------|----------|
-| 寫第三方 library / npm package | 不在使用者 DOM 加 attribute、避免命名衝突 |
-| Framework 會清非預期的 attribute | WeakMap 不在 DOM、framework 動不到 |
-| 需要週期性 reset 紀錄 | `processed = new WeakMap()` 一行重置全部 |
-| 紀錄複雜資料、不只是 boolean | WeakMap value 可以是任何物件 |
+| 情境                             | 為什麼合理                                |
+| -------------------------------- | ----------------------------------------- |
+| 寫第三方 library / npm package   | 不在使用者 DOM 加 attribute、避免命名衝突 |
+| Framework 會清非預期的 attribute | WeakMap 不在 DOM、framework 動不到        |
+| 需要週期性 reset 紀錄            | `processed = new WeakMap()` 一行重置全部  |
+| 紀錄複雜資料、不只是 boolean     | WeakMap value 可以是任何物件              |
 
 **核心特徵**：紀錄獨立於 DOM 之外、跟 JS 物件 lifetime 綁定。
 
@@ -48,12 +48,12 @@ shell.querySelectorAll('.pagefind-ui__result').forEach(function (el) {
 
 ## 不適合的情境
 
-| 情境 | 為什麼不夠 | 改用 |
-|------|---------|------|
-| 自家 application、devtools debug 重要 | 看不到狀態、debug 困難 | [DOM attribute 標記](pattern-attribute-idempotency-marker/) |
-| 跨頁面 / 跨 session 的 idempotency | WeakMap 在 JS context 內、換頁就消失 | LocalStorage / 後端紀錄 |
-| 元素生命週期短、頻繁 GC | WeakMap 自動清理可能比預期早 | 改用 Map（但要手動清理） |
-| 紀錄要跟 SSR 同步 | WeakMap 只活在 client | 結合 attribute（SSR 階段標記） |
+| 情境                                  | 為什麼不夠                           | 改用                                                           |
+| ------------------------------------- | ------------------------------------ | -------------------------------------------------------------- |
+| 自家 application、devtools debug 重要 | 看不到狀態、debug 困難               | [DOM attribute 標記](../pattern-attribute-idempotency-marker/) |
+| 跨頁面 / 跨 session 的 idempotency    | WeakMap 在 JS context 內、換頁就消失 | LocalStorage / 後端紀錄                                        |
+| 元素生命週期短、頻繁 GC               | WeakMap 自動清理可能比預期早         | 改用 Map（但要手動清理）                                       |
+| 紀錄要跟 SSR 同步                     | WeakMap 只活在 client                | 結合 attribute（SSR 階段標記）                                 |
 
 ---
 
@@ -135,13 +135,13 @@ shell.querySelectorAll('[data-scoped]').forEach(el => {
 
 ## 跟其他 idempotency 做法的關係
 
-[#14 Selector 精準度](dom-selector-precision/) 的「過濾」維度有三種做法：
+[#14 Selector 精準度](../dom-selector-precision/) 的「過濾」維度有三種做法：
 
-| 做法 | 比較 |
-|------|------|
-| [DOM attribute 標記](pattern-attribute-idempotency-marker/) | production 預設、devtools 可見、有命名衝突風險 |
-| 本卡片：WeakMap 紀錄 | 不污染 DOM、適合 library、debug 不便 |
-| 依賴外部呼叫者保證 | 反模式、無防護 |
+| 做法                                                           | 比較                                           |
+| -------------------------------------------------------------- | ---------------------------------------------- |
+| [DOM attribute 標記](../pattern-attribute-idempotency-marker/) | production 預設、devtools 可見、有命名衝突風險 |
+| 本卡片：WeakMap 紀錄                                           | 不污染 DOM、適合 library、debug 不便           |
+| 依賴外部呼叫者保證                                             | 反模式、無防護                                 |
 
 選擇順序：**自家 application** → attribute；**library / framework 衝突** → WeakMap；**反模式不選**。
 
@@ -200,12 +200,12 @@ function apply() {
 
 ## 判讀徵兆
 
-| 訊號 | 該套用本 pattern 嗎？ |
-|------|----------|
-| 寫第三方 library / npm package | 是 — 不污染使用者 DOM |
-| Framework 會 strict 清自家 attribute | 是 — WeakMap 跟 framework 解耦 |
-| 紀錄需要儲複雜資料（不只 boolean） | 是 — WeakMap value 可任意 |
-| 自家 application、debug 重要 | 否 — [attribute 標記](pattern-attribute-idempotency-marker/) 在 inspector 可見 |
-| 紀錄要跨頁面持久化 | 否 — 改用 storage / 後端 |
+| 訊號                                 | 該套用本 pattern 嗎？                                                             |
+| ------------------------------------ | --------------------------------------------------------------------------------- |
+| 寫第三方 library / npm package       | 是 — 不污染使用者 DOM                                                             |
+| Framework 會 strict 清自家 attribute | 是 — WeakMap 跟 framework 解耦                                                    |
+| 紀錄需要儲複雜資料（不只 boolean）   | 是 — WeakMap value 可任意                                                         |
+| 自家 application、debug 重要         | 否 — [attribute 標記](../pattern-attribute-idempotency-marker/) 在 inspector 可見 |
+| 紀錄要跨頁面持久化                   | 否 — 改用 storage / 後端                                                          |
 
 **核心原則**：WeakMap idempotency 是 attribute 標記的「不污染 DOM 替代品」 — 在 library / framework 衝突情境必要、在自家 application 通常用 attribute 即可。GC 自動清理是 WeakMap 的特性、預設不用 Map / Set 是因為它們會 memory leak。

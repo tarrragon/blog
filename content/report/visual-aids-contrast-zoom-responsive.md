@@ -11,8 +11,8 @@ tags: ["report", "事後檢討", "Accessibility", "CSS", "工程方法論"]
 **視覺輔助使用者跟一般使用者「看到的不是同一個 UI」 — 對比度、放大倍率、字型尺寸調整都會把版面變形。** 設計時先盤點「在這些變形下、UI 還能用嗎」、不需要等到使用者反映。WCAG 提供量化標準、可以在開發階段驗證。
 
 > 本篇焦點：**視覺呈現面的 a11y**（對比 / 放大 / 字型 zoom）。
-> - **鍵盤使用者的 a11y**（focus indicator / tab 順序）由 [#52 鍵盤可達性](keyboard-accessibility/) 處理
-> - **行動 / motor 使用者的 a11y**（hit target / 點擊精準度）由 [#53 Motor 可達性](motor-accessibility-hit-target/) 處理
+> - **鍵盤使用者的 a11y**（focus indicator / tab 順序）由 [#52 鍵盤可達性](../keyboard-accessibility/) 處理
+> - **行動 / motor 使用者的 a11y**（hit target / 點擊精準度）由 [#53 Motor 可達性](../motor-accessibility-hit-target/) 處理
 
 ---
 
@@ -22,12 +22,12 @@ tags: ["report", "事後檢討", "Accessibility", "CSS", "工程方法論"]
 
 視覺輔助使用者的需求多元：
 
-| 情境 | 需求 |
-|---|---|
-| 色弱（colour blindness） | 不依賴顏色區分資訊 |
-| 低對比敏感 | 文字 vs 背景對比足夠 |
-| 低視力（low vision） | 字大、可放大、layout 不破 |
-| 老花、暫時視覺受限 | 字大、清楚的視覺層次 |
+| 情境                     | 需求                      |
+| ------------------------ | ------------------------- |
+| 色弱（colour blindness） | 不依賴顏色區分資訊        |
+| 低對比敏感               | 文字 vs 背景對比足夠      |
+| 低視力（low vision）     | 字大、可放大、layout 不破 |
+| 老花、暫時視覺受限       | 字大、清楚的視覺層次      |
 
 每類觸發不同的 CSS 行為。一個 UI 在標準視窗看起來 OK、放大 200% 後可能：
 
@@ -39,11 +39,11 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 ### 視覺呈現的三維度
 
-| 維度 | 變形方式 | 開發階段檢查方法 |
-|---|---|---|
-| 色彩 | dark mode / 高對比模式 / 色弱模擬 | DevTools Contrast Ratio + Emulate Vision Deficiencies |
-| 整體 zoom | 瀏覽器 zoom 200% / OS 放大鏡 | Cmd + 5 次、macOS Zoom 4x |
-| 字型 zoom | OS Display Scale（只放大字型不放大 box） | OS 設定 Larger Text |
+| 維度      | 變形方式                                 | 開發階段檢查方法                                      |
+| --------- | ---------------------------------------- | ----------------------------------------------------- |
+| 色彩      | dark mode / 高對比模式 / 色弱模擬        | DevTools Contrast Ratio + Emulate Vision Deficiencies |
+| 整體 zoom | 瀏覽器 zoom 200% / OS 放大鏡             | Cmd + 5 次、macOS Zoom 4x                             |
+| 字型 zoom | OS Display Scale（只放大字型不放大 box） | OS 設定 Larger Text                                   |
 
 三維度獨立、要分開檢查 — 一維度過 ≠ 全部過。
 
@@ -61,11 +61,11 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 **WCAG 標準**：
 
-| 等級 | 對比度要求 |
-|---|---|
-| AA 一般文字 | ≥ 4.5:1 |
-| AA 大字（≥ 18pt 或 14pt bold） | ≥ 3:1 |
-| AAA 一般文字 | ≥ 7:1 |
+| 等級                           | 對比度要求 |
+| ------------------------------ | ---------- |
+| AA 一般文字                    | ≥ 4.5:1    |
+| AA 大字（≥ 18pt 或 14pt bold） | ≥ 3:1      |
+| AAA 一般文字                   | ≥ 7:1      |
 
 **第一個該查的**：用 Chrome DevTools 的 Contrast Ratio 工具量 highlight 區域的「背景 vs 文字」對比。不足則覆寫 `--pagefind-ui-tag` 變數。
 
@@ -89,13 +89,13 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 **修正方向**：
 
-| 策略 | 機制 |
-|---|---|
-| 放大模式 fallback 到 mobile layout | `@media` 偵測 prefers-reduced-motion / 高 zoom level |
-| Filter 移到頁面內 flow（不用 absolute） | 跟主要內容一起 reflow、不會跑外 |
-| 加 floating button「展開 filter」 | 任何 zoom level 都可達 |
+| 策略                                    | 機制                                                 |
+| --------------------------------------- | ---------------------------------------------------- |
+| 放大模式 fallback 到 mobile layout      | `@media` 偵測 prefers-reduced-motion / 高 zoom level |
+| Filter 移到頁面內 flow（不用 absolute） | 跟主要內容一起 reflow、不會跑外                      |
+| 加 floating button「展開 filter」       | 任何 zoom level 都可達                               |
 
-詳細展開由 [#43 最小必要範圍](minimum-necessary-scope-is-sanity-defense/) + [#27 runtime 量測模式統一](runtime-measurement-unification/) 補充。
+詳細展開由 [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/) + [#27 runtime 量測模式統一](../runtime-measurement-unification/) 補充。
 
 ---
 
@@ -118,11 +118,11 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 **修正方向**：
 
-| 策略 | 機制 |
-|---|---|
-| 用 `min-height` 取代 `height` | box 可隨字撐高、不裁切 |
-| 用 `em` / `rem` 取代 `px` | 跟字型一起 scale |
-| 用 ResizeObserver 量字型實際高度寫回變數 | 跟 [#27 runtime 量測模式統一](runtime-measurement-unification/) 同框架 |
+| 策略                                     | 機制                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------- |
+| 用 `min-height` 取代 `height`            | box 可隨字撐高、不裁切                                                    |
+| 用 `em` / `rem` 取代 `px`                | 跟字型一起 scale                                                          |
+| 用 ResizeObserver 量字型實際高度寫回變數 | 跟 [#27 runtime 量測模式統一](../runtime-measurement-unification/) 同框架 |
 
 預設用 `min-height` + 相對單位、特殊精準對齊才用 ResizeObserver。
 
@@ -163,13 +163,13 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 每個視覺輔助項目對應一個檢查動作：
 
-| 檢查 | 動作 | WCAG 等級 |
-|---|---|---|
-| 對比度 | DevTools Inspect Element > Contrast Ratio 看每個文字區域 | AA 必要 |
-| 色彩可辨 | DevTools Rendering > Emulate Vision Deficiencies | AA 建議 |
-| Zoom 200% | 瀏覽器 Cmd + 5 次、看是否仍可用、無橫向 scroll | AA 必要 |
-| OS 字型放大 | macOS Display > Text Size > 大、看 layout | AA 建議 |
-| 螢幕放大鏡 | macOS Zoom 4x、看絕對定位元件是否在可達範圍 | AA 建議 |
+| 檢查        | 動作                                                     | WCAG 等級 |
+| ----------- | -------------------------------------------------------- | --------- |
+| 對比度      | DevTools Inspect Element > Contrast Ratio 看每個文字區域 | AA 必要   |
+| 色彩可辨    | DevTools Rendering > Emulate Vision Deficiencies         | AA 建議   |
+| Zoom 200%   | 瀏覽器 Cmd + 5 次、看是否仍可用、無橫向 scroll           | AA 必要   |
+| OS 字型放大 | macOS Display > Text Size > 大、看 layout                | AA 建議   |
+| 螢幕放大鏡  | macOS Zoom 4x、看絕對定位元件是否在可達範圍              | AA 建議   |
 
 每個 ~30 秒、開發完成前跑一輪、抓常見問題。
 
@@ -208,21 +208,21 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 ## 跟其他原則的關係
 
-| 抽象層原則 | 關係 |
-|---|---|
-| [#43 最小必要範圍](minimum-necessary-scope-is-sanity-defense/) | 字型放大下 layout 適配是「不依賴特定渲染條件」的應用 |
-| [#44 SSoT](single-source-of-truth/) | CSS 變數提供主題切換、變數住址唯一才能正確覆寫色彩 |
+| 抽象層原則                                                        | 關係                                                 |
+| ----------------------------------------------------------------- | ---------------------------------------------------- |
+| [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/) | 字型放大下 layout 適配是「不依賴特定渲染條件」的應用 |
+| [#44 SSoT](../single-source-of-truth/)                            | CSS 變數提供主題切換、變數住址唯一才能正確覆寫色彩   |
 
 ---
 
 ## 判讀徵兆
 
-| 訊號 | 該檢查的位置 |
-|---|---|
-| 色弱使用者反映找不到資訊 | DevTools Contrast Ratio + Emulate Vision Deficiencies |
-| 低視力使用者反映 UI 跑到視窗外 | 用螢幕放大鏡放 4x 確認 absolute 元件位置 |
-| 字型放大後 UI 破 | 用瀏覽器 zoom 200% 與 OS text size 雙測 |
-| Dark mode 下文字看不清 | 該主題的對比度未驗證、補測 |
+| 訊號                               | 該檢查的位置                                                    |
+| ---------------------------------- | --------------------------------------------------------------- |
+| 色弱使用者反映找不到資訊           | DevTools Contrast Ratio + Emulate Vision Deficiencies           |
+| 低視力使用者反映 UI 跑到視窗外     | 用螢幕放大鏡放 4x 確認 absolute 元件位置                        |
+| 字型放大後 UI 破                   | 用瀏覽器 zoom 200% 與 OS text size 雙測                         |
+| Dark mode 下文字看不清             | 該主題的對比度未驗證、補測                                      |
 | 「色弱使用者反正不多」當不做的理由 | 視覺輔助使用者通常不會反映、只默默離開 — 量化檢查不靠使用者通報 |
 
 **核心原則**：視覺輔助使用者用的是「同一份程式、不同的 viewport / colour / scale」。WCAG 提供量化標準、開發階段可測 — 等使用者反映晚了。

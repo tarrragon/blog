@@ -10,7 +10,7 @@ tags: ["report", "事後檢討", "Svelte", "JavaScript", "CSS", "工程方法論
 
 **客製 UI 留在 framework 管轄的 DOM 邊界外、用 CSS（absolute、margin spacer、grid）達成想要的視覺位置。** 注入 framework 子樹的客製元素會被 reconciliation 清掉、跟渲染週期競爭、行為不可預測。邊界外的客製跟 framework 解耦、命運由我們自己決定。
 
-> 本篇焦點：客製 UI 該放哪。**framework 元件本身需要動（搬節點、改順序、改 attribute）的安全規則**由 [#13 JS 操作 framework 元件：邊界辨識與安全規則](component-boundary-and-js-impact/) 處理。
+> 本篇焦點：客製 UI 該放哪。**framework 元件本身需要動（搬節點、改順序、改 attribute）的安全規則**由 [#13 JS 操作 framework 元件：邊界辨識與安全規則](../component-boundary-and-js-impact/) 處理。
 
 ---
 
@@ -32,12 +32,12 @@ Svelte / React 等框架透過「component tree → DOM tree」的 reconciliatio
 
 不同框架 / 不同 reconciliation 策略對外來節點的處理：
 
-| 框架 | 外來節點命運 |
-|---|---|
-| Svelte | 多數情境清掉、視 patch 點而定 |
-| React | 通常清掉（Virtual DOM diff 時） |
-| Vue | 通常清掉、但 v-pre 包裹可保留 |
-| Web Components | 由 component 內部邏輯決定 |
+| 框架           | 外來節點命運                    |
+| -------------- | ------------------------------- |
+| Svelte         | 多數情境清掉、視 patch 點而定   |
+| React          | 通常清掉（Virtual DOM diff 時） |
+| Vue            | 通常清掉、但 v-pre 包裹可保留   |
+| Web Components | 由 component 內部邏輯決定       |
 
 **「不可預測」本身就是問題** — 即使某次測試沒清、下次升級或 patch 時可能清。設計時不該依賴未明確保證的行為。
 
@@ -132,7 +132,7 @@ framework 元素的尺寸需要參考客製 UI 時、用 CSS variable 傳遞：
 .custom-ui { height: var(--custom-height); }
 ```
 
-或用 ResizeObserver 量測寫回 variable（[#27 runtime 量測模式統一](runtime-measurement-unification/)）。
+或用 ResizeObserver 量測寫回 variable（[#27 runtime 量測模式統一](../runtime-measurement-unification/)）。
 
 ---
 
@@ -172,12 +172,12 @@ framework 元素的尺寸需要參考客製 UI 時、用 CSS variable 傳遞：
 
 A 是預設、但不是萬靈丹：
 
-| 情境 | 為什麼不適合 A |
-|------|------------|
+| 情境                                                              | 為什麼不適合 A                               |
+| ----------------------------------------------------------------- | -------------------------------------------- |
 | 客製內容必須在 framework 元件的內部視覺脈絡內（共享 inline flow） | Absolute 跳出 flow、達不到 inline 的視覺效果 |
-| Framework 元件本身就是要客製化（改 row、改 cell） | 動的是 framework 本身、不是「在旁邊加東西」 |
-| Framework 提供了官方擴展介面（slot、render prop） | 用官方介面更穩、不需要邊界外 hack |
-| 客製需要訪問 framework 的內部 state | 邊界外的客製跟內部 state 隔離、訪問成本高 |
+| Framework 元件本身就是要客製化（改 row、改 cell）                 | 動的是 framework 本身、不是「在旁邊加東西」  |
+| Framework 提供了官方擴展介面（slot、render prop）                 | 用官方介面更穩、不需要邊界外 hack            |
+| 客製需要訪問 framework 的內部 state                               | 邊界外的客製跟內部 state 隔離、訪問成本高    |
 
 **核心判準**：客製是「在 framework 旁邊加東西」還是「改 framework 本身」？前者用本策略、後者另想辦法。
 
@@ -185,22 +185,22 @@ A 是預設、但不是萬靈丹：
 
 ## 跟其他原則的關係
 
-| 抽象層原則 | 關係 |
-|---------|------|
-| [#45 跟外部組件合作的層次](external-component-collaboration-layers/) | 「邊界外 + CSS」是「不要挖 framework 內部」的具體應用 — 客製貼著外部介面（DOM sibling）做、不挖內部 |
-| [#42 2 次門檻](two-occurrence-threshold/) | 第 1 次注入失敗（被清掉）= 第 2 次該換策略到邊界外、不該繼續嘗試「換種方式注入」 |
-| [#13 JS 操作 framework 元件：邊界辨識與安全規則](component-boundary-and-js-impact/) | 互補關係 — 本篇處理「客製 UI 該放哪」、#13 處理「framework 元件本身要動時怎麼動」 |
+| 抽象層原則                                                                             | 關係                                                                                                |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [#45 跟外部組件合作的層次](../external-component-collaboration-layers/)                | 「邊界外 + CSS」是「不要挖 framework 內部」的具體應用 — 客製貼著外部介面（DOM sibling）做、不挖內部 |
+| [#42 2 次門檻](../two-occurrence-threshold/)                                           | 第 1 次注入失敗（被清掉）= 第 2 次該換策略到邊界外、不該繼續嘗試「換種方式注入」                    |
+| [#13 JS 操作 framework 元件：邊界辨識與安全規則](../component-boundary-and-js-impact/) | 互補關係 — 本篇處理「客製 UI 該放哪」、#13 處理「framework 元件本身要動時怎麼動」                   |
 
 ---
 
 ## 判讀徵兆
 
-| 訊號 | 該怎麼處理 |
-|------|---------|
-| 注入 framework DOM 的元素在使用者互動後消失 | 把該元素搬出 framework 邊界、用 CSS 控制視覺位置 |
+| 訊號                                            | 該怎麼處理                                                      |
+| ----------------------------------------------- | --------------------------------------------------------------- |
+| 注入 framework DOM 的元素在使用者互動後消失     | 把該元素搬出 framework 邊界、用 CSS 控制視覺位置                |
 | 客製 UI 在 framework 更新後 attribute 被 revert | 客製 UI 不該在 framework 內、wrapper 在外、attribute 套 wrapper |
-| 看不出哪些 DOM 是 framework 管的 | 讀 framework 的 mount root、從那裡往內都是管轄區 |
-| Stacking context 衝突、z-index 失靈 | 確認 absolute 的 containing block 是預期的 relative parent |
-| Framework 元件位置不固定、客製 UI 對不齊 | 用 ResizeObserver 量 framework 元素、寫回 CSS variable |
+| 看不出哪些 DOM 是 framework 管的                | 讀 framework 的 mount root、從那裡往內都是管轄區                |
+| Stacking context 衝突、z-index 失靈             | 確認 absolute 的 containing block 是預期的 relative parent      |
+| Framework 元件位置不固定、客製 UI 對不齊        | 用 ResizeObserver 量 framework 元素、寫回 CSS variable          |
 
 **核心原則**：客製 UI 的存活壽命 = 「離 framework 管轄區多遠」。最遠 = 永遠不被清；注入內部 = 隨時可能消失。預設選邊界外、不要為了「省一層 wrapper」進入 framework 領地。

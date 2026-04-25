@@ -11,9 +11,9 @@ tags: ["report", "事後檢討", "Accessibility", "Keyboard", "工程方法論"]
 **鍵盤使用者導航三要素：focus 可見、tab 順序合理、有 escape 路徑。** 三者任一缺失、鍵盤使用者就卡住。視覺使用者看不到 focus 也能用滑鼠繼續、鍵盤使用者沒有 fallback。
 
 > 本篇焦點：**鍵盤可達性**。
-> - **視覺呈現面的 a11y**（對比 / 放大）由 [#40 視覺輔助](visual-aids-contrast-zoom-responsive/) 處理
-> - **行動 / motor 使用者的 a11y**（hit target）由 [#53 Motor 可達性](motor-accessibility-hit-target/) 處理
-> - **DOM 移動時的 focus 處理**由 [#37 focus management on DOM move](focus-management-on-dom-move/) 處理（本篇處理「靜態 focus 設計」、#37 處理「動態 focus 移動」）
+> - **視覺呈現面的 a11y**（對比 / 放大）由 [#40 視覺輔助](../visual-aids-contrast-zoom-responsive/) 處理
+> - **行動 / motor 使用者的 a11y**（hit target）由 [#53 Motor 可達性](../motor-accessibility-hit-target/) 處理
+> - **DOM 移動時的 focus 處理**由 [#37 focus management on DOM move](../focus-management-on-dom-move/) 處理（本篇處理「靜態 focus 設計」、#37 處理「動態 focus 移動」）
 
 ---
 
@@ -21,22 +21,22 @@ tags: ["report", "事後檢討", "Accessibility", "Keyboard", "工程方法論"]
 
 ### 使用者類型
 
-| 使用者 | 為什麼用鍵盤 |
-|---|---|
+| 使用者                       | 為什麼用鍵盤                   |
+| ---------------------------- | ------------------------------ |
 | 全盲（screen reader 使用者） | 完全靠鍵盤、滑鼠看不到游標位置 |
-| 低視力 | 鍵盤比滑鼠精準（不需要瞄準） |
-| Motor 障礙 | 鍵盤比滑鼠手部負擔小 |
-| Power user | 鍵盤比滑鼠快 |
+| 低視力                       | 鍵盤比滑鼠精準（不需要瞄準）   |
+| Motor 障礙                   | 鍵盤比滑鼠手部負擔小           |
+| Power user                   | 鍵盤比滑鼠快                   |
 
 最後一類占人口比例不小 — 鍵盤可達性對全體使用者都有價值、不只 a11y 使用者。
 
 ### 三要素的失敗模式
 
-| 要素 | 失敗模式 | 後果 |
-|---|---|---|
-| Focus 可見 | `outline: 0` 移除預設 focus 但沒補替代 | 鍵盤使用者不知道 focus 在哪、迷失 |
-| Tab 順序 | 順序跟視覺布局不一致 | 跳來跳去、迷失 |
-| Escape 路徑 | Modal 沒有 ESC 關閉 | 卡在 modal 出不來 |
+| 要素        | 失敗模式                               | 後果                              |
+| ----------- | -------------------------------------- | --------------------------------- |
+| Focus 可見  | `outline: 0` 移除預設 focus 但沒補替代 | 鍵盤使用者不知道 focus 在哪、迷失 |
+| Tab 順序    | 順序跟視覺布局不一致                   | 跳來跳去、迷失                    |
+| Escape 路徑 | Modal 沒有 ESC 關閉                    | 卡在 modal 出不來                 |
 
 三者都是「視覺使用者通常不會碰到、鍵盤使用者必碰」— 開發者用滑鼠測 100% OK、鍵盤使用者一進去就壞。
 
@@ -107,11 +107,11 @@ WCAG 2.4.11 要求 focus indicator 跟相鄰背景對比 ≥ 3:1：
 
 **修正方向**：
 
-| 策略 | 機制 |
-|---|---|
-| DOM 順序對齊視覺順序 | 改 HTML 結構讓 DOM 順序就是 tab 順序 |
-| 用 `tabindex` 調整順序 | 顯式控制 tab 順序（風險：違反 DOM 順序、對 screen reader 仍依 DOM） |
-| Skip link 跳過長 navigation | 讓鍵盤使用者快速跳到主內容 |
+| 策略                        | 機制                                                                |
+| --------------------------- | ------------------------------------------------------------------- |
+| DOM 順序對齊視覺順序        | 改 HTML 結構讓 DOM 順序就是 tab 順序                                |
+| 用 `tabindex` 調整順序      | 顯式控制 tab 順序（風險：違反 DOM 順序、對 screen reader 仍依 DOM） |
+| Skip link 跳過長 navigation | 讓鍵盤使用者快速跳到主內容                                          |
 
 預設選「DOM 順序對齊視覺順序」 — 不需要 `tabindex`、對所有 a11y 工具都正確。
 
@@ -240,24 +240,24 @@ modal.showModal();  // 自動 focus trap + ESC 處理
 
 ## 跟其他原則的關係
 
-| 篇 | 關係 |
-|---|---|
-| [#37 Focus management on DOM move](focus-management-on-dom-move/) | 互補 — 本篇處理「靜態 focus 設計」、#37 處理「DOM 移動時 focus 該怎麼跟」 |
-| [#39 Native HTML 優先於 ARIA role](native-html-over-aria-role/) | 用 `<button>` / `<dialog>` / `<input>` 等 native element、自動獲得正確 keyboard 行為 |
-| [#45 跟外部組件合作的層次](external-component-collaboration-layers/) | 客製 focus 樣式時、注意不要打破 framework 內部的 focus 邏輯 |
+| 篇                                                                      | 關係                                                                                 |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [#37 Focus management on DOM move](../focus-management-on-dom-move/)    | 互補 — 本篇處理「靜態 focus 設計」、#37 處理「DOM 移動時 focus 該怎麼跟」            |
+| [#39 Native HTML 優先於 ARIA role](../native-html-over-aria-role/)      | 用 `<button>` / `<dialog>` / `<input>` 等 native element、自動獲得正確 keyboard 行為 |
+| [#45 跟外部組件合作的層次](../external-component-collaboration-layers/) | 客製 focus 樣式時、注意不要打破 framework 內部的 focus 邏輯                          |
 
 ---
 
 ## 開發階段檢查清單
 
-| 檢查 | 動作 |
-|---|---|
-| Focus 可見 | 拔掉滑鼠、只用鍵盤、tab 過所有互動元素、確認每個都有可見 focus |
-| Focus 對比 | DevTools Contrast Ratio 量 focus indicator 跟背景對比 ≥ 3:1 |
-| Tab 順序 | tab 過去確認順序符合視覺閱讀順序 |
-| ESC 關閉 | 開啟 modal / drawer、按 ESC 看會不會關 |
-| Focus trap | 開啟 modal、tab 看是否限制在 modal 內 |
-| Focus return | 關閉 modal、看 focus 是否回觸發元素 |
+| 檢查         | 動作                                                           |
+| ------------ | -------------------------------------------------------------- |
+| Focus 可見   | 拔掉滑鼠、只用鍵盤、tab 過所有互動元素、確認每個都有可見 focus |
+| Focus 對比   | DevTools Contrast Ratio 量 focus indicator 跟背景對比 ≥ 3:1    |
+| Tab 順序     | tab 過去確認順序符合視覺閱讀順序                               |
+| ESC 關閉     | 開啟 modal / drawer、按 ESC 看會不會關                         |
+| Focus trap   | 開啟 modal、tab 看是否限制在 modal 內                          |
+| Focus return | 關閉 modal、看 focus 是否回觸發元素                            |
 
 每個 ~30 秒、開發完成前跑一輪。
 
@@ -265,12 +265,12 @@ modal.showModal();  // 自動 focus trap + ESC 處理
 
 ## 判讀徵兆
 
-| 訊號 | 該檢查的位置 |
-|---|---|
+| 訊號                                | 該檢查的位置                                        |
+| ----------------------------------- | --------------------------------------------------- |
 | 鍵盤使用者反映「不知道 focus 在哪」 | 確認沒有 `outline: 0` 沒補替代、用 `:focus-visible` |
-| Tab 順序看起來隨機 | DOM 順序對齊視覺順序、必要時用 skip link |
-| Modal 開啟後鍵盤使用者卡住 | 加 ESC 關閉 + focus trap、或改用 `<dialog>` |
-| Modal 關閉後 focus 跑到頁面開頭 | 關閉時手動 `trigger.focus()` |
-| Focus 在 dark mode 看不清 | 加對比度檢查（≥ 3:1） |
+| Tab 順序看起來隨機                  | DOM 順序對齊視覺順序、必要時用 skip link            |
+| Modal 開啟後鍵盤使用者卡住          | 加 ESC 關閉 + focus trap、或改用 `<dialog>`         |
+| Modal 關閉後 focus 跑到頁面開頭     | 關閉時手動 `trigger.focus()`                        |
+| Focus 在 dark mode 看不清           | 加對比度檢查（≥ 3:1）                               |
 
 **核心原則**：鍵盤可達性的三要素都是「視覺使用者通常不會碰、鍵盤使用者必碰」 — 開發階段必須拔滑鼠測一輪、不能依賴使用者通報。

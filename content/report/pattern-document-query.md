@@ -25,12 +25,12 @@ document.querySelectorAll('.target');
 
 ## 適合的情境
 
-| 情境 | 為什麼合理 |
-|------|----------|
-| Devtools console 一行查詢 | 沒有「未來會壞」的問題、用完就丟 |
-| 原型 / spike 階段程式碼 | 預期會被丟棄重寫、不需要長期維護考量 |
-| 確定全頁唯一的單例（`document.body`、`<html>`） | 從定義上不會多個、也不會被誤命中 |
-| Build-time script、不會在 runtime 跑 | 沒有「同頁多元件」的可能性 |
+| 情境                                            | 為什麼合理                           |
+| ----------------------------------------------- | ------------------------------------ |
+| Devtools console 一行查詢                       | 沒有「未來會壞」的問題、用完就丟     |
+| 原型 / spike 階段程式碼                         | 預期會被丟棄重寫、不需要長期維護考量 |
+| 確定全頁唯一的單例（`document.body`、`<html>`） | 從定義上不會多個、也不會被誤命中     |
+| Build-time script、不會在 runtime 跑            | 沒有「同頁多元件」的可能性           |
 
 核心特徵：**這段程式不會在多元件 / 動態 DOM 環境長期存活**。
 
@@ -38,12 +38,12 @@ document.querySelectorAll('.target');
 
 ## 不適合的情境
 
-| 情境 | 失敗模式 |
-|------|---------|
-| Production 客製、預期長期存活 | 未來頁面結構變動、誤命中或漏命中 |
-| 同頁可能有多個同類元件 | 只取第一個、其他被忽略且不報錯 |
-| 元件可能在 SPA 路由中動態增減 | query 時機跟元件 mount 時機不對齊 |
-| 寫入第三方函式庫 | 使用者頁面的其他 class 可能跟你的 selector 撞 |
+| 情境                          | 失敗模式                                      |
+| ----------------------------- | --------------------------------------------- |
+| Production 客製、預期長期存活 | 未來頁面結構變動、誤命中或漏命中              |
+| 同頁可能有多個同類元件        | 只取第一個、其他被忽略且不報錯                |
+| 元件可能在 SPA 路由中動態增減 | query 時機跟元件 mount 時機不對齊             |
+| 寫入第三方函式庫              | 使用者頁面的其他 class 可能跟你的 selector 撞 |
 
 **安靜失敗是最危險的特徵** — 不報錯、操作了錯元素、bug 表現遠離 root cause。
 
@@ -51,14 +51,14 @@ document.querySelectorAll('.target');
 
 ## 跟其他起點做法的關係
 
-[#14 Selector 精準度](dom-selector-precision/) 的「起點」維度有四種做法、document query 是其中之一：
+[#14 Selector 精準度](../dom-selector-precision/) 的「起點」維度有四種做法、document query 是其中之一：
 
-| 做法 | 比較 |
-|------|------|
-| 本卡片：document query | 簡潔但不防護未來變動 |
-| [元件根變數](pattern-component-root/) | 多一行 setup、換到「shell 內隔離」 |
-| [起點當參數](pattern-root-as-parameter/) | 多實例支援、適合可能擴展的客製 |
-| [closest 反向找根](pattern-closest-lookup/) | 事件委派情境、動態元件 |
+| 做法                                           | 比較                               |
+| ---------------------------------------------- | ---------------------------------- |
+| 本卡片：document query                         | 簡潔但不防護未來變動               |
+| [元件根變數](../pattern-component-root/)       | 多一行 setup、換到「shell 內隔離」 |
+| [起點當參數](../pattern-root-as-parameter/)    | 多實例支援、適合可能擴展的客製     |
+| [closest 反向找根](../pattern-closest-lookup/) | 事件委派情境、動態元件             |
 
 選擇順序：production 客製預設用「元件根變數」、原型 / 探索 / 一次性才用 document query。
 
@@ -89,12 +89,12 @@ document.querySelector('meta[name="description"]');
 
 ## 判讀徵兆
 
-| 訊號 | 該換做法嗎？ |
-|------|----------|
-| 「現在只有一個、之後再想」 | 是 — 換元件根變數 |
+| 訊號                                      | 該換做法嗎？            |
+| ----------------------------------------- | ----------------------- |
+| 「現在只有一個、之後再想」                | 是 — 換元件根變數       |
 | 同檔案多處 `document.querySelector('.x')` | 是 — 至少改成存變數重用 |
-| 寫第三方 library 用 document query | 是 — 改用根參數 pattern |
-| 操作 `document.body` / `<html>` | 否 — 這就是合理場景 |
-| 程式跑一次後丟棄（migration script） | 否 — 簡潔優先 |
+| 寫第三方 library 用 document query        | 是 — 改用根參數 pattern |
+| 操作 `document.body` / `<html>`           | 否 — 這就是合理場景     |
+| 程式跑一次後丟棄（migration script）      | 否 — 簡潔優先           |
 
 **核心原則**：document query 不是反模式、是有適用範圍的工具。判斷「這段程式預期活多久」 — 短命用 document、長命用元件根。
