@@ -102,6 +102,11 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#71 Tab Order = DOM Order = Mental Model 三者對齊](tab-order-mental-model-alignment/) — 串 #52 / #67 / #43、優先重排 DOM、tabindex > 0 是反模式
 - [#72 高 ROI 無外部觸發的工作會被結構性跳過](external-trigger-for-high-roi-work/) — meta-#67/#68/#69、修法是 L1-L5 結構性對策、「之後我會 X」是 plan 警訊
 - [#73 搜尋引擎的匹配模式跟使用者預期的對齊](search-engine-matching-mode-mismatch/) — Prefix / substring / fuzzy / semantic 對照、預設多為 prefix（為 index size）、使用者預期 substring（被 Google 訓練）、不對齊 = silent 失敗
+- [#74 決策呈現：選項 + 推薦 + 開放修改](decision-presentation-options-recommendation/) — 不要開放問「你想怎麼做」、給選項表 + 適配性 + 標推薦 + 「想改？」開放、把整理成本攤開
+- [#75 主策略 + 補強策略：選擇不必互斥](main-strategy-plus-supplementary/) — 多策略可疊加（structural + UX）、判準三條：解不同層 / 沒副作用衝突 / 增量成本可接受
+- [#76 分批 ship：低風險可見價值先行、結構性下輪](incremental-shipping-criteria/) — 三軸切分（可見性 / 風險 / 驗證）、先 ship 甜蜜點 = 高可見 + 低風險 + 低驗證、ship 順序 ≠ 重要程度
+- [#77 「現在不決定」是合法選項](decide-later-as-valid-option/) — 決策清單預設加「延後 + 條件」、區分「逃避決策」vs「結構性延後」、配 trigger 避免 #72 跳過
+- [#78 反省任務預設複選](retrospective-multi-select-default/) — 互斥要證明、不互斥是預設、反省題的 radio 格式 = 結構性把多面向 collapse 成單點
 
 ### 第七輪：Pattern 卡片（待補完）
 
