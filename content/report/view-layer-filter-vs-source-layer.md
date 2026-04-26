@@ -48,6 +48,8 @@ items.forEach(el => {
 
 5 行解決、看起來能用、第一輪測試（手動輸入 query → 看到 filter 生效）會通過。**「能用」的訊號出現太早、掩蓋了語意缺口**。
 
+這是 [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/) 在「filter × source」情境的具體展現 — 容易寫的位置（已 materialize 的 view 層）跟對齊意圖的位置（source 層）方向相反。
+
 ---
 
 ## 哪些 source 形狀有層錯位風險
@@ -111,7 +113,7 @@ function applyFilter(scope) {
 | 資料層 (源頭) | 完整 dataset     | 最近               | 中-高              |
 | Source 之外   | 重 query         | 最近 + 最新        | 高（query 重設計） |
 
-「寫作成本最低」跟「跟意圖最近」是反相關 — 這就是為什麼層錯位容易寫出來。
+「寫作成本最低」跟「跟意圖最近」是反相關 — 這個反相關本身是 [#67](../ease-of-writing-vs-intent-alignment/) 的核心命題、本卡是它在 filter × source 情境的展開。
 
 ---
 

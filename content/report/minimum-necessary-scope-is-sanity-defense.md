@@ -178,4 +178,4 @@ tags: ["report", "事後檢討", "抽象層", "工程方法論"]
 
 **核心原則**：最小必要範圍守護的是「行為可預測」 — 寫的時候多想一點、debug 時少痛一點。寬範圍的代價不是慢、是出錯時定位困難 — 這也是為什麼這條原則在「沒效能瓶頸」的情境下仍然成立。
 
-延伸到 stream 操作：[#64 Feature 操作要跟 Source 同層合成](../compose-feature-at-source-layer/) 是本原則在 stream 領域的應用 — 「合成位置」就是「操作的範圍邊界」、選錯位置 = 範圍錯。
+延伸到 stream 操作：[#64 Feature 操作要跟 Source 同層合成](../compose-feature-at-source-layer/) 是本原則在 stream 領域的應用 — 「合成位置」就是「操作的範圍邊界」、選錯位置 = 範圍錯。寬範圍便利、窄範圍對齊、兩者反相關的更高層原則見 [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)。

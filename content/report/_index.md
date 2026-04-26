@@ -91,10 +91,12 @@ tags: ["report", "事後檢討", "工程方法論"]
 
 跨多篇實作的共同骨架。每篇不重述具體 case、只展開原則本身、結尾列出對應的實作篇。
 
-- [#42 2 次門檻：第一次是運氣、第二次是訊號](two-occurrence-threshold/) — 串 #11 / #15 / #20 / #23、跨工具/測試/思路/溝通四面向
-- [#43 最小必要範圍是 sanity 防線、不是優化](minimum-necessary-scope-is-sanity-defense/) — 串 #13 / #14 / #29、跨 JS 邊界 / selector / observer 三類範圍
-- [#44 Single Source of Truth：值的住址只能有一處](single-source-of-truth/) — 串 #3 / #26 / #27、跨定義位置 / 來源機制 / 對齊基準三類違反
-- [#45 跟外部組件合作的層次：離介面越近、合作越穩](external-component-collaboration-layers/) — 串 #1 / #5 / #19 / #24、四層代價對照與跳維度機制
+- [#42 2 次門檻：第一次是運氣、第二次是訊號](two-occurrence-threshold/) — 串 #11 / #15 / #20 / #23 / #56、跨工具/測試/思路/溝通/驗收五面向
+- [#43 最小必要範圍是 sanity 防線、不是優化](minimum-necessary-scope-is-sanity-defense/) — 串 #13 / #14 / #29 / #64、跨 JS 邊界 / selector / observer / stream 操作四類範圍
+- [#44 Single Source of Truth：值的住址只能有一處](single-source-of-truth/) — 串 #3 / #26 / #27 / #64、跨定義位置 / 來源機制 / 對齊基準 / stream 全集四類違反
+- [#45 跟外部組件合作的層次：離介面越近、合作越穩](external-component-collaboration-layers/) — 串 #1 / #5 / #19 / #24 / #59、四層代價對照與跳維度機制
+- [#67 寫作便利度跟意圖對齊反相關](ease-of-writing-vs-intent-alignment/) — 串 #55 / #43 / #44 / #45 / #64、跨層 / 範圍 / 來源 / 客製 / 合成五面向、是「便利 vs 正確」的共同上位原則
+- [#68 驗收的時間軸：四個 checkpoint](verification-timeline-checkpoints/) — 串 #42 / #56、寫之前 / 開發中 / ship 前 / ship 後分散驗收
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -228,4 +230,4 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ---
 
-**Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 4 篇（#42-45）+ 第七輪 Pattern 卡片 10 篇（#46-51, #54, #60-62）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。新一輪冷啟版本、待迭代輪做原子化拆解 / 補充 / 反向擴充 / pattern 抽出。
+**Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 6 篇（#42-45, #67-68）+ 第七輪 Pattern 卡片 12 篇（#46-51, #54, #60-62, #65-66）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。三輪迭代完成：原子化拆解 + 概念補充 + 雙向跨卡連結 + 抽 #67/#68 兩張抽象層原則。

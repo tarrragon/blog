@@ -81,20 +81,9 @@ button.onclick = () => { saveData(); button.textContent = "Saved"; };
 
 ---
 
-## 驗收的時間軸：四個 checkpoint
+## 「畫面對」屬於哪個 checkpoint
 
-驗收不是單一動作、是分散在四個時點的累積判斷。每個 checkpoint 能 catch 不同類型的失敗：
-
-| Checkpoint | 時點                            | 能驗收的失敗類型               | 成本           |
-| ---------- | ------------------------------- | ------------------------------ | -------------- |
-| 寫之前     | 開工前列「使用者意圖完整集」    | 漏掉的 case、誤解的需求        | 低 — 列清單    |
-| 開發中     | 寫一塊測一塊                    | 邏輯錯誤、視覺錯誤             | 中 — 小範圍    |
-| Ship 前    | E2E 跑邊界 case + 規模 case     | 跨 case 的整合錯、規模相依失敗 | 高 — 設計 case |
-| Ship 後    | 真實使用者行為紀錄、log monitor | silent 缺口、競態、長尾 case   | 最高 — 反應慢  |
-
-**早期 checkpoint 抓越多、晚期 checkpoint 越輕鬆**。但實務上常常 collapse 成「寫的時候 + ship 後出問題才修」、把寫之前 / ship 前都跳過。
-
-### 「畫面對」屬於哪個 checkpoint
+驗收要分散在四個時點（寫之前 / 開發中 / ship 前 / ship 後）— 詳見 [#68 驗收的時間軸：四個 checkpoint](../verification-timeline-checkpoints/)。
 
 「畫面對」是 **開發中** 的視覺驗收訊號 — 用來判斷「邏輯有跑、UI 沒崩」。它**不能**取代：
 
