@@ -23,9 +23,9 @@
   </p>
   {{ end }}
   
-  <content>
+  <div class="article-body" data-pagefind-body>
     {{ .Content }}
-  </content>
+  </div>
   
   <p>
     {{ range (.GetTerms "tags") }}

@@ -52,9 +52,15 @@ clean:
 	@rm -rf bin/
 	@echo "removed bin/"
 
-# Full site build: Hugo output + Pagefind search index.
-# Run this locally before previewing search; CI runs the same two steps.
+# Full site build: Hugo output + Pagefind search indexes.
+# Three indexes for the search page's scope filter (#55-#66 strategy C):
+#   pagefind/         — full content (main); default index, scope=all
+#   pagefind-title/   — title-only (article > h1); scope=title
+#   pagefind-content/ — body-only (.article-body); scope=content
+# Each scope is the full set under that mode — no view-layer post-filter.
 site:
 	@rm -rf public
 	@hugo --minify
 	@npx -y pagefind --site public --root-selector main
+	@npx -y pagefind --site public --root-selector "article.article-content > h1" --output-subdir pagefind-title
+	@npx -y pagefind --site public --root-selector ".article-body" --output-subdir pagefind-content

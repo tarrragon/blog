@@ -23,34 +23,91 @@
 
 <script src="{{ "pagefind/pagefind-ui.js" | relURL }}"></script>
 <script>
+  /*
+    搜尋範圍切換器：策略 C — 多份 pagefind index、scope 切換 = 切 index 源。
+    每個 mode 拿到的結果都是該 mode 的全集（無層錯位）：
+      - all     → /pagefind/         （main 全文）
+      - title   → /pagefind-title/   （article > h1）
+      - content → /pagefind-content/ （.article-body）
+    不再做 view 層 post-filter；不再用 MutationObserver 補打 hide。
+    詳細策略選擇見 #59 / #65 / data-flow-and-filter-composition skill ref。
+  */
   window.addEventListener('DOMContentLoaded', function () {
-    new PagefindUI({
-      element: "#search",
-      showSubResults: true,
-      showImages: false,
-      translations: {
-        placeholder: "搜尋卡片或文章…",
-        clear_search: "清除",
-        load_more: "載入更多",
-        search_label: "站內搜尋",
-        filters_label: "篩選",
-        zero_results: "找不到 [SEARCH_TERM] 相關內容",
-        many_results: "[COUNT] 筆結果符合 [SEARCH_TERM]",
-        one_result: "1 筆結果符合 [SEARCH_TERM]",
-        alt_search: "找不到 [SEARCH_TERM]，以下是 [DIFFERENT_TERM] 的結果",
-        search_suggestion: "找不到 [SEARCH_TERM]。試試：",
-        searching: "搜尋 [SEARCH_TERM]…"
-      }
-    });
+    var SEARCH_EL = '#search';
+    var BUNDLES = {
+      all:     "{{ "pagefind/" | relURL }}",
+      title:   "{{ "pagefind-title/" | relURL }}",
+      content: "{{ "pagefind-content/" | relURL }}"
+    };
+
+    var TRANSLATIONS = {
+      placeholder: "搜尋卡片或文章…",
+      clear_search: "清除",
+      load_more: "載入更多",
+      search_label: "站內搜尋",
+      filters_label: "篩選",
+      zero_results: "找不到 [SEARCH_TERM] 相關內容",
+      many_results: "[COUNT] 筆結果符合 [SEARCH_TERM]",
+      one_result: "1 筆結果符合 [SEARCH_TERM]",
+      alt_search: "找不到 [SEARCH_TERM]，以下是 [DIFFERENT_TERM] 的結果",
+      search_suggestion: "找不到 [SEARCH_TERM]。試試：",
+      searching: "搜尋 [SEARCH_TERM]…"
+    };
+
+    var pagefindUI = null;
+
+    function getScope() {
+      var checked = document.querySelector('.search-scope input[name="search-scope"]:checked');
+      return checked ? checked.value : 'all';
+    }
+
+    function captureState() {
+      var input = document.querySelector('.pagefind-ui__search-input');
+      return {
+        query: input ? input.value : '',
+        focused: input ? document.activeElement === input : false
+      };
+    }
+
+    function restoreState(state) {
+      if (!state || !state.query) return;
+      // 等 PagefindUI 把 input render 出來再寫值。
+      var tries = 0;
+      var iv = setInterval(function () {
+        var input = document.querySelector('.pagefind-ui__search-input');
+        if (!input) { if (++tries > 50) clearInterval(iv); return; }
+        clearInterval(iv);
+        input.value = state.query;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        if (state.focused) input.focus();
+      }, 50);
+    }
+
+    function initPagefindUI(scope, prevState) {
+      // PagefindUI 沒有 public destroy() — 清空容器再 new 一個。
+      var container = document.querySelector(SEARCH_EL);
+      if (container) container.innerHTML = '';
+
+      pagefindUI = new PagefindUI({
+        element: SEARCH_EL,
+        bundlePath: BUNDLES[scope] || BUNDLES.all,
+        showSubResults: true,
+        showImages: false,
+        translations: TRANSLATIONS
+      });
+
+      // 等新 UI mount 完、補上 filter-panel 搬遷與 reorder。
+      waitForUI();
+      if (prevState) restoreState(prevState);
+    }
 
     /*
       桌面寬時把 .pagefind-ui__filter-panel 搬進左欄 slot；
-      縮窄視窗時搬回 pagefind 原本的 drawer，讓它以原生位置顯示。
-      門檻與 CSS @media 對齊（1400px）。
+      縮窄視窗時搬回 pagefind 原本的 drawer。門檻與 CSS @media 對齊（1400px）。
     */
     var slot = document.querySelector('.search-filter-slot');
     var mql  = window.matchMedia('(min-width: 1400px)');
-    var filter, drawer, drawerParent;
+    var filter, drawer;
 
     function place() {
       if (!filter || !drawer) return;
@@ -61,103 +118,18 @@
       }
     }
 
-    function waitAndInit() {
+    function waitForUI() {
       filter = document.querySelector('.pagefind-ui__filter-panel');
       drawer = document.querySelector('.pagefind-ui__drawer');
-      if (!filter || !drawer) { setTimeout(waitAndInit, 100); return; }
-      drawerParent = drawer;
+      if (!filter || !drawer) { setTimeout(waitForUI, 100); return; }
       place();
       reorderFilters();
-      setupScopeFilter();
-      mql.addEventListener('change', place);
-    }
-    waitAndInit();
-
-    /*
-      搜尋範圍切換器：用 regex 對每一筆 pagefind 已渲染的結果做標題 / 內文檢查，
-      決定個別結果 display。不改 pagefind 行為、不攔截查詢流程。
-
-      狀態來源：
-        - query：pagefind 的 search input value
-        - scope：radio group 的 value（all / title / content）
-      觸發時機：
-        - scope radio change
-        - search input change（使用者輸入新字）
-        - .pagefind-ui__results 子節點變動（pagefind 重繪結果或載入更多）
-    */
-    function setupScopeFilter() {
-      var scopeEl = document.querySelector('.search-scope');
-      var input   = document.querySelector('.pagefind-ui__search-input');
-      var ui      = document.querySelector('.pagefind-ui');
-      var drawer  = document.querySelector('.pagefind-ui__drawer');
-      var slot    = document.querySelector('.search-filter-slot');
-      if (!scopeEl || !ui || !input) return;
-
-      // scope 不被搬進 .pagefind-ui — Svelte 會吃掉外來元素。
-      // scope 用 absolute 浮在 form 的 input 與 drawer 之間，drawer 用 margin-top 讓位。
-      // scope 的實際高度受字型/換行影響，每次變動後測量並同步寫入 CSS 變數。
-      function syncScopeHeight() {
-        var h = scopeEl.offsetHeight || 56;
-        document.documentElement.style.setProperty('--search-scope-h', h + 'px');
-      }
       syncScopeHeight();
-      if (typeof ResizeObserver !== 'undefined') {
-        new ResizeObserver(syncScopeHeight).observe(scopeEl);
-      }
-      window.addEventListener('resize', syncScopeHeight);
-
-      function escapeRegex(s) {
-        return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      }
-
-      function getScope() {
-        var checked = scopeEl.querySelector('input[name="search-scope"]:checked');
-        return checked ? checked.value : 'all';
-      }
-
-      function apply() {
-        var scope = getScope();
-        var query = (input.value || '').trim();
-        var items = document.querySelectorAll('.pagefind-ui__result');
-
-        if (scope === 'all' || !query) {
-          items.forEach(function (el) { el.style.removeProperty('display'); });
-          return;
-        }
-
-        var re = new RegExp(escapeRegex(query), 'i');
-        items.forEach(function (el) {
-          var titleEl   = el.querySelector('.pagefind-ui__result-title');
-          var excerptEl = el.querySelector('.pagefind-ui__result-excerpt');
-          var title   = titleEl   ? titleEl.textContent   : '';
-          var excerpt = excerptEl ? excerptEl.textContent : '';
-          var show = scope === 'title' ? re.test(title) : re.test(excerpt);
-          if (show) {
-            el.style.removeProperty('display');
-          } else {
-            // !important 壓過 pagefind Svelte 重繪回來的 inline 樣式。
-            el.style.setProperty('display', 'none', 'important');
-          }
-        });
-      }
-
-      // pagefind Svelte 重繪結果時會換掉 DOM，用 debounce 在每次變動後統一重跑 apply。
-      var applyTimer;
-      function schedule() {
-        clearTimeout(applyTimer);
-        applyTimer = setTimeout(apply, 80);
-      }
-
-      scopeEl.addEventListener('change', schedule);
-      input.addEventListener('input', schedule);
-      // 觀察範圍擴到整個 .pagefind-ui，補抓 Svelte 對結果樹的任何重建。
-      new MutationObserver(schedule).observe(ui, { childList: true, subtree: true });
     }
 
     /*
       pagefind 預設把 filter-block 以 filter key 的字母順序排（tag < type），
       但 type 選項比 tag 少、先顯示短清單找起來較輕鬆。
-      讓 filter-block 按自訂順序：type → tag。
     */
     function reorderFilters() {
       if (!filter) return;
@@ -170,11 +142,37 @@
         var key = name.textContent.trim().toLowerCase();
         byKey[key] = b;
       });
-      // 依 desiredOrder 把元素重新 append 到 filter 最後面
       desiredOrder.forEach(function (k) {
         if (byKey[k]) filter.appendChild(byKey[k]);
       });
     }
+
+    /*
+      scope radio 高度同步到 CSS 變數、讓 drawer margin-top 對齊。
+    */
+    var scopeEl = document.querySelector('.search-scope');
+    function syncScopeHeight() {
+      if (!scopeEl) return;
+      var h = scopeEl.offsetHeight || 56;
+      document.documentElement.style.setProperty('--search-scope-h', h + 'px');
+    }
+    syncScopeHeight();
+    if (typeof ResizeObserver !== 'undefined' && scopeEl) {
+      new ResizeObserver(syncScopeHeight).observe(scopeEl);
+    }
+    window.addEventListener('resize', syncScopeHeight);
+    mql.addEventListener('change', place);
+
+    // scope 切換 = 切 index 源、保留 query 與 focus。
+    if (scopeEl) {
+      scopeEl.addEventListener('change', function () {
+        var prev = captureState();
+        initPagefindUI(getScope(), prev);
+      });
+    }
+
+    // 初次載入用當前 radio value（預設 all）。
+    initPagefindUI(getScope());
   });
 </script>
 
