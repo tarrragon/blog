@@ -127,9 +127,11 @@ requirement-protocol/
 - [#70 URL 是 stateful UI 的儲存層](/report/url-as-state-container/) — 列「使用者意圖完整集合」要包含 URL 維度：分享 / reload / back-forward 該不該保留 state
 - [#71 Tab Order = DOM Order = Mental Model 三者對齊](/report/tab-order-mental-model-alignment/) — A11y 維度的需求澄清：使用者預期「先做 X 再做 Y」、tab 順序該對齊 mental model
 - [#72 高 ROI 無外部觸發的工作會被結構性跳過](/report/external-trigger-for-high-roi-work/) — meta-原則：澄清 / Checkpoint 1 / RED phase 都是「沒便利路徑」工作、修法是 L3-L5 結構性對策（PR template / CI / pair）、不是「下次記得」
+- [#73 搜尋引擎的匹配模式跟使用者預期的對齊](/report/search-engine-matching-mode-mismatch/) — Checkpoint 1 列「使用者意圖完整集」要包含「使用者打字行為的預期」：工具預設 matching mode（prefix）跟使用者預期（substring，被 Google 訓練）對齊嗎？
 
 ---
 
 **Last Updated**: 2026-04-26
+**Version**: 0.3.0 — 接入 #69-#73：相關抽象層原則段補 Test-First (#69)、URL state (#70)、tab order (#71)、外部觸發 meta (#72)、search 匹配模式 (#73)
 **Version**: 0.2.0 — 接入 #55-#68 系列：clarifying-ambiguous-instructions 加第 5 類「篩選類」（呼應 #58）；觸發路由加篩選類入口；SKILL.md 加「相關抽象層原則」段（#42-45 + #67-68）
 **Version**: 0.1.0 — 從 `content/report/` 50+ 篇事後檢討萃取「需求 → 實作對話協議」這條主軸；五份 references 對應「模糊指令 / 失敗轉折 / 成本與 checkpoint / 漸進驗證 / 工具切換」五個情境

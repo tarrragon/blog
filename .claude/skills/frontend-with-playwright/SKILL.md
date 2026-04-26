@@ -158,6 +158,7 @@ frontend-with-playwright/
 - [#70 URL 是 stateful UI 的儲存層](/report/url-as-state-container/) — 互動式 UI 的可分享 / 可恢復 / 可導航 state 該寫進 URL（搜尋 / filter / tab / sort / pagination 都該檢視）
 - [#71 Tab Order = DOM Order = Mental Model 三者對齊](/report/tab-order-mental-model-alignment/) — DOM 順序預設 = tab 順序、不對齊時優先重排 DOM、tabindex > 0 是反模式
 - [#72 高 ROI 無外部觸發的工作會被結構性跳過](/report/external-trigger-for-high-roi-work/) — meta-原則：寫測試 / refactor / a11y review / Ship 前 case 設計都需要外部觸發（CI / pre-commit / PR template）、不是靠紀律
+- [#73 搜尋引擎的匹配模式跟使用者預期的對齊](/report/search-engine-matching-mode-mismatch/) — Search feature 的 capability 維度：prefix vs substring vs fuzzy vs semantic 各自取捨、預設多為 prefix（為 index size）、跟使用者預期不對齊 = silent 失敗
 
 ---
 

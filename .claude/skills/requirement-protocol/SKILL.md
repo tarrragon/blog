@@ -131,6 +131,7 @@ requirement-protocol/
 - [#70 URL 是 stateful UI 的儲存層](/report/url-as-state-container/) — 列「使用者意圖完整集合」要包含 URL 維度：分享 / reload / back-forward 該不該保留 state
 - [#71 Tab Order = DOM Order = Mental Model 三者對齊](/report/tab-order-mental-model-alignment/) — A11y 維度的需求澄清：使用者預期「先做 X 再做 Y」、tab 順序該對齊 mental model
 - [#72 高 ROI 無外部觸發的工作會被結構性跳過](/report/external-trigger-for-high-roi-work/) — meta-原則：澄清 / Checkpoint 1 / RED phase 都是「沒便利路徑」工作、修法是 L3-L5 結構性對策（PR template / CI / pair）、不是「下次記得」
+- [#73 搜尋引擎的匹配模式跟使用者預期的對齊](/report/search-engine-matching-mode-mismatch/) — Checkpoint 1 列「使用者意圖完整集」要包含「使用者打字行為的預期」：工具預設 matching mode（prefix）跟使用者預期（substring，被 Google 訓練）對齊嗎？
 
 ---
 
