@@ -140,10 +140,12 @@ requirement-protocol/
 - [#79 決策對話的五維度](/report/decision-dialogue-dimensions/) — meta-#74-#78、五個獨立維度的鬆綁、預設都選窄格 = 把使用者塞進最少自由度的盒子
 - [#80 Yes/No 二選是隱式 collapse](/report/yes-no-binary-collapse/) — 「需要 X 嗎？」「OK 嗎？」最常見最隱形的 collapse、修法是翻成多選表
 - [#81 卡片系統的迭代浮現](/report/cards-as-living-system-iteration/) — 本 skill 的 reference 是 spiral 浮現、不是線性寫成、process-level 元原則
+- [#82 字面攔截 vs 行為精煉](/report/literal-interception-vs-behavioral-refinement/) — 驗證手段跟錯誤層次對齊、行為錯誤（如 collapse）靠 multi-pass spiral 收斂、不是「補一條 hook 規則」、本 skill 的 reference + dogfood examples + self-check 就是 multi-pass 設計
 
 ---
 
 **Last Updated**: 2026-04-26
+**Version**: 0.6.0 — 補 #82 (字面攔截 vs 行為精煉)：點出 hook 對行為錯誤無能為力、本 skill 的 reference + self-check + dogfood examples 就是 multi-pass 設計、不是「再補一條 hook 規則」
 **Version**: 0.5.0 — 補 #80 (yes/no collapse) + #81 (卡片迭代浮現)、reference 加 dogfood examples 段（4 個 Bad/Good 對照）、#75 加 selector stacking 跨連 #46-#50
 **Version**: 0.4.0 — 接入 #74-#79 決策協議系列：新增第 6 份 reference `decision-dialogue.md`（五維度：呈現 / 策略 / 批次 / 時間 / 選項類型）；觸發路由加 3 條入口（呈現決策 / 開放問 / 反省題）；相關抽象層原則段補 #74-#79
 **Version**: 0.3.0 — 接入 #69-#73：相關抽象層原則段補 Test-First (#69)、URL state (#70)、tab order (#71)、外部觸發 meta (#72)、search 匹配模式 (#73)

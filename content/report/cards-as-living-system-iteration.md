@@ -133,14 +133,15 @@ SKILL（自動觸發 reference）
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                              | 關係                                                                            |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| [#42 2 次門檻](../two-occurrence-threshold/)                      | 寫 meta-卡的訊號：第 2 次看到類似結構、抽出來                                   |
-| [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/) | 先寫原子卡、有證據再抽 meta、跟「先窄後寬」同構                                 |
-| [#44 SSOT](../single-source-of-truth/)                            | meta-卡是上層 SSOT、原子卡保留 case-specific 細節、各層分工                     |
-| [#67 寫作便利度](../ease-of-writing-vs-intent-alignment/)         | 「直接寫 meta」容易但會 over-fit、迭代浮現難寫但對齊真實結構                    |
-| [#72 高 ROI 無觸發](../external-trigger-for-high-roi-work/)       | 「回頭抽 meta + 寫 reference」是高 ROI 但無觸發、需要協議 / pair / 對話結構驅動 |
-| [#79 決策對話的五個維度](../decision-dialogue-dimensions/)        | 本卡的 spiral 過程剛好就是 #79 浮現的實例 — meta-卡 + reference 都是後寫        |
+| 原則                                                                          | 關係                                                                                                                        |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [#42 2 次門檻](../two-occurrence-threshold/)                                  | 寫 meta-卡的訊號：第 2 次看到類似結構、抽出來                                                                               |
+| [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/)             | 先寫原子卡、有證據再抽 meta、跟「先窄後寬」同構                                                                             |
+| [#44 SSOT](../single-source-of-truth/)                                        | meta-卡是上層 SSOT、原子卡保留 case-specific 細節、各層分工                                                                 |
+| [#67 寫作便利度](../ease-of-writing-vs-intent-alignment/)                     | 「直接寫 meta」容易但會 over-fit、迭代浮現難寫但對齊真實結構                                                                |
+| [#72 高 ROI 無觸發](../external-trigger-for-high-roi-work/)                   | 「回頭抽 meta + 寫 reference」是高 ROI 但無觸發、需要協議 / pair / 對話結構驅動                                             |
+| [#79 決策對話的五個維度](../decision-dialogue-dimensions/)                    | 本卡的 spiral 過程剛好就是 #79 浮現的實例 — meta-卡 + reference 都是後寫                                                    |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/) | spiral 是 multi-pass refinement 的具體實現 — 卡片內容對不對、抽 meta 抽得對不對都是行為錯誤、靠 spiral 收斂、不靠 hook 攔截 |
 
 ---
 

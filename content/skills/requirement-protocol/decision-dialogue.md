@@ -242,3 +242,4 @@ tags: ["skills", "requirement-protocol", "對話協議", "決策呈現"]
 - [#72 高 ROI 無觸發](/report/external-trigger-for-high-roi-work/) — 為什麼鬆綁需要協議結構（不靠紀律）
 - [#80 Yes/No 二選是隱式 collapse](/report/yes-no-binary-collapse/) — 五維 collapse 的極致形態、最常見最隱形
 - [#81 卡片系統的迭代浮現](/report/cards-as-living-system-iteration/) — 本 reference 的成型過程（spiral 而非線性）
+- [#82 字面攔截 vs 行為精煉](/report/literal-interception-vs-behavioral-refinement/) — 為什麼用 hook 防 collapse 行不通、本 reference 是 multi-pass 設計（self-check 是第二輪、dogfood 是第三輪）

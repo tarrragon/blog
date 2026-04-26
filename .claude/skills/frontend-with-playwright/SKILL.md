@@ -160,6 +160,7 @@ frontend-with-playwright/
 - [#72 高 ROI 無外部觸發的工作會被結構性跳過](/report/external-trigger-for-high-roi-work/) — meta-原則：寫測試 / refactor / a11y review / Ship 前 case 設計都需要外部觸發（CI / pre-commit / PR template）、不是靠紀律
 - [#73 搜尋引擎的匹配模式跟使用者預期的對齊](/report/search-engine-matching-mode-mismatch/) — Search feature 的 capability 維度：prefix vs substring vs fuzzy vs semantic 各自取捨、預設多為 prefix（為 index size）、跟使用者預期不對齊 = silent 失敗
 - [#79 決策對話的五維度](/report/decision-dialogue-dimensions/) — 設計取捨呈現給使用者時的 meta-框架（呈現 / 策略疊加 / 批次 / 時間 / 選項類型）— 「設計取捨段落」常用的五策略表 + 推薦 + 「先 ship X、Y 下輪」就是這五維度的展現
+- [#82 字面攔截 vs 行為精煉](/report/literal-interception-vs-behavioral-refinement/) — playwright 測試是字面驗證（input → output 比對）、抓不到「為什麼這個 selector 設計錯」這類行為錯誤、需要 multi-pass review 配合
 
 ---
 

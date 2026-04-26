@@ -110,6 +110,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#79 決策對話的五個維度](decision-dialogue-dimensions/) — meta-#74-#78、五個獨立維度（呈現 / 策略疊加 / 批次 / 時間軸 / 選項類型）、預設都 collapse 到窄格 = 把使用者塞進最少自由度的盒子
 - [#80 Yes/No 二選是隱式 collapse](yes-no-binary-collapse/) — 「需要 X 嗎？」「OK 嗎？」是五維 collapse 的極致形態、把多選空間壓成 1 bit、最常見最隱形
 - [#81 卡片系統的迭代浮現](cards-as-living-system-iteration/) — 原子卡 → meta-卡 → reference 三層 spiral、跳層或一次寫成都會 over-fit、process-level 元原則
+- [#82 字面攔截 vs 行為精煉](literal-interception-vs-behavioral-refinement/) — 驗證粒度匹配：字面用 hook、行為用 multi-pass spiral、強行用 hook 蓋行為錯誤 = false confidence 比沒保護更危險、#72 的 ceiling
 
 ### 第七輪：Pattern 卡片（待補完）
 
