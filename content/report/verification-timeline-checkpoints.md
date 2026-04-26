@@ -227,3 +227,5 @@ tags: ["report", "事後檢討", "工程方法論", "驗收", "原則"]
 | 內心 OS：「之後 QA / 使用者會發現」            | 是「集中驗收」幻覺、跳過早期 checkpoint             |
 
 **核心原則**：驗收的價值在「分散在多個時點」、每個 checkpoint catch 不同類型的失敗。把驗收 collapse 成單一時點 = 接受該時點之外的失敗都 silent 通過。早期 checkpoint ROI 最高、跳過代價最大。
+
+Checkpoint 2「開發中」+ Checkpoint 3「Ship 前」內部的具體協議：[#69 Test-First：先看到 RED 才相信 GREEN](../test-first-red-before-green/) — 寫測試 + 跑兩次（RED-buggy + GREEN-fixed）才能驗證測試本身有用。跳過 RED = 接受測試可能是壞的。

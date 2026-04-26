@@ -97,6 +97,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#45 跟外部組件合作的層次：離介面越近、合作越穩](external-component-collaboration-layers/) — 串 #1 / #5 / #19 / #24 / #59、四層代價對照與跳維度機制
 - [#67 寫作便利度跟意圖對齊反相關](ease-of-writing-vs-intent-alignment/) — 串 #55 / #43 / #44 / #45 / #64、跨層 / 範圍 / 來源 / 客製 / 合成五面向、是「便利 vs 正確」的共同上位原則
 - [#68 驗收的時間軸：四個 checkpoint](verification-timeline-checkpoints/) — 串 #42 / #56、寫之前 / 開發中 / ship 前 / ship 後分散驗收
+- [#69 Test-First：先看到 RED 才相信 GREEN](test-first-red-before-green/) — 串 #42 / #56 / #67 / #68 / #11 / #15、測試驗收的 RED-GREEN 兩訊號協議
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -228,6 +229,10 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 `#64 Feature 操作要跟 Source 同層合成` → `#63 資料源形狀` → `#59 策略五選一` — 適用於後端 middleware filter、map-reduce post-filter、pipeline transform 等非 UI 情境
 
+### 路徑 14：寫測試固化 bug fix / feature
+
+`#68 驗收的時間軸（Checkpoint 2/3）` → `#69 Test-First RED-GREEN 順序` → `#15 layout-tests-with-playwright` / `#11 playwright-early-in-loop` — 修 bug 或加 feature 時、測試該怎麼寫才被驗證
+
 ---
 
-**Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 6 篇（#42-45, #67-68）+ 第七輪 Pattern 卡片 12 篇（#46-51, #54, #60-62, #65-66）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。六輪迭代完成：原子化拆解 + 概念補充 + 雙向跨卡連結 + 抽 #67/#68 兩張抽象層原則 + #67/#68 概念加深 + compositional-writing 規範稽核（rule 7「實務上幾乎不存在」假反模式全面替換為「（反模式）」格式、抽象層原則卡的 ABCD 改為「不該套用本原則的情境」）。
+**Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 7 篇（#42-45, #67-69）+ 第七輪 Pattern 卡片 12 篇（#46-51, #54, #60-62, #65-66）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。七輪迭代完成：原子化拆解 + 概念補充 + 雙向跨卡連結 + 抽 #67/#68 抽象層原則 + #67/#68 概念加深 + compositional-writing 規範稽核 + 加 #69 Test-First RED-GREEN 順序（從修搜尋頁 bug 過程中抓到的 dogfooding 失敗 — 修完才補測試、沒走 RED-GREEN — 抽出新原則）。

@@ -14,6 +14,8 @@ tags: ["skills", "requirement-protocol", "對話協議", "Debugging"]
 
 ---
 
+> **Test-First 補充**：當「漸進」的方式是「寫測試固化」時、必須走 RED → GREEN 兩個訊號才算驗證 — 詳見 [#69 Test-First：先看到 RED 才相信 GREEN](/report/test-first-red-before-green/)。沒看過 RED 的測試 = 未驗證的訊號、不能信任。
+
 ## 何時參閱本文件
 
 | 訊號                                                     | 該做的第一件事                  |

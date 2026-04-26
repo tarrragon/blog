@@ -127,6 +127,7 @@ requirement-protocol/
 - [#45 外部組件合作四層](/report/external-component-collaboration-layers/) — 離公共介面越近越穩
 - [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) — 容易寫的位置通常是錯位的位置（meta-principle、解釋為什麼澄清協議能 catch 到便利驅動的錯誤）
 - [#68 驗收的時間軸：四個 checkpoint](/report/verification-timeline-checkpoints/) — 寫之前 / 開發中 / ship 前 / ship 後分散驗收（原則 6 的展開）
+- [#69 Test-First：先看到 RED 才相信 GREEN](/report/test-first-red-before-green/) — 「需求確認」最重要的一環：使用者意圖落實成測試 → 在 buggy code 上跑出 RED 才證明測試 catch 到該意圖、再修到 GREEN — 跳過 RED 等於跳過「測試對應到使用者意圖」的驗證
 
 ---
 

@@ -150,6 +150,7 @@ frontend-with-playwright/
 - [#64 同層合成](/report/compose-feature-at-source-layer/) — Stream 操作必須跟 materialization 同層（Filter × Source 的本質）
 - [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) — 容易寫的位置通常是錯位的位置（meta-principle、解釋為什麼層錯位 / 寬 selector / inline style 等便利寫法都會出問題）
 - [#68 驗收的時間軸：四個 checkpoint](/report/verification-timeline-checkpoints/) — Layout test 屬 Ship 前 checkpoint 的具體做法
+- [#69 Test-First：先看到 RED 才相信 GREEN](/report/test-first-red-before-green/) — Playwright 測試的驗證協議：寫完測試 + 第一次跑就 GREEN 是警訊、要先在 buggy code 上看到 RED 才相信測試 catch 到該 catch 的東西
 
 ---
 

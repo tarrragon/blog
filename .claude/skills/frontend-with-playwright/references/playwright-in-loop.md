@@ -282,6 +282,37 @@ test('layout golden path: form → scope → results', async ({ page }) => {
 
 ---
 
+## RED-GREEN 順序：先看到 RED 才相信 GREEN
+
+寫完 playwright test 後、必須先在「buggy code」跑出 RED 才能相信「fixed code」的 GREEN。詳見 [#69 Test-First：先看到 RED 才相信 GREEN](/report/test-first-red-before-green/)。
+
+修 bug 的順序：
+
+1. **先寫測試 + 跑 → RED**（在 buggy code 上 fail、證明測試會 catch + bug 真的存在）
+2. **修 code**
+3. **跑測試 → GREEN**（證明修對了 + 測試會抓回歸）
+
+跳過 step 1 的 retrospective 補救（修完才補測試）：
+
+```bash
+# Stash 修復、checkout 修前 commit
+git stash && git checkout <pre-fix-commit>
+
+# Cherry-pick 測試 commit、build、跑
+git cherry-pick <test-commit>
+make site && npm test
+# 預期：RED ✓
+
+# 切回修後版本
+git checkout main && git stash pop
+npm test
+# 預期：GREEN ✓
+```
+
+兩個訊號都看到 + 順序對、測試才被驗證。
+
+---
+
 ## 自檢清單（dogfooding）
 
 debug / 驗證 layout 時：
