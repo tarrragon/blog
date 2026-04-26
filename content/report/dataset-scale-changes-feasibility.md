@@ -118,6 +118,42 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "Performance", "Sc
 
 ---
 
+## Dataset 質的差別：size 是 first-order proxy、type 是 second-order multiplier
+
+同樣 N MB dataset、不同 type 的處理成本差異大。size 只是 first approximation、要看 **data type 跟 access pattern**：
+
+| Type                  | 1 MB 行為                             | 10 MB 行為                        | 100 MB 行為         |
+| --------------------- | ------------------------------------- | --------------------------------- | ------------------- |
+| **Plain text**        | regex 全掃 < 1ms                      | regex 全掃 < 50ms                 | 需分塊或 index      |
+| **JSON / structured** | parse + filter < 10ms                 | parse 開始貴、可能要 stream parse | 強制 stream / index |
+| **Image / binary**    | load 即一個壓力、無法 in-memory regex | 不能放 client、需 lazy load       | 必 server-side 處理 |
+| **Time series**       | 順序敏感、不能 random access          | 同 + 必須有 time index            | 同 + 必須分區       |
+| **Graph**             | traversal 成本不只 size、看連通度     | 連通度高 → 易爆炸                 | 必須圖 DB           |
+
+### 同 size 不同 type 的可行性逆轉
+
+```text
+1 MB 純文字 search：trivial
+1 MB JSON deep filter：可能慢（parse + nested traversal）
+1 MB graph traversal：可能極慢（depth 深時呈指數）
+1 MB image：完全不能 client substring scan
+```
+
+**判讀**：先看 type、再看 size。size 算 capacity、type 決定每 byte 的成本。
+
+### 跨 type 共通的判準
+
+| 訊號                           | 該做的事                                    |
+| ------------------------------ | ------------------------------------------- |
+| 「dataset 才 1 MB 應該 fast」  | 先確認 type — JSON / 圖 / binary 行為差異大 |
+| Text 規模套到 image 場景       | size 直覺失效、重新評估                     |
+| Graph dataset 用 size 推斷     | 看 connectivity 不只看 size                 |
+| Time series 想用 random access | type 不對、改 sequential 設計               |
+
+「Dataset size」不是萬用尺、不同 type 要套不同 threshold。
+
+---
+
 ## 反模式
 
 | 反模式                                   | 後果                                                        |

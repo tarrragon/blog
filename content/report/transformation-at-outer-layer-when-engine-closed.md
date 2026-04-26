@@ -113,6 +113,48 @@ React 沒變、加一層 wrapper、行為加上了。
 
 ---
 
+## Input 跟 Output transformation 是不同 pattern
+
+外層 transformation 不是單一 pattern、要區分 **input transformation**（改 engine 看到的）跟 **output transformation**（改 engine 給出的）：
+
+| 維度        | Input transformation             | Output transformation          |
+| ----------- | -------------------------------- | ------------------------------ |
+| 動的位置    | Engine 之前（給 engine 的輸入）  | Engine 之後（engine 的輸出）   |
+| Engine 行為 | 改變（看到不同輸入、做出不同事） | 不變（後處理而已）             |
+| 副作用      | 可能改變 ranking / 內部狀態      | 純後加工、對 engine 透明       |
+| 失敗模式    | Input 錯誤 → engine 整個跑錯     | Output 處理錯 → 個別 case 不對 |
+| 適合        | 改變 engine 「能看到什麼」       | 補強 engine 「沒給的東西」     |
+
+### 例對照
+
+**Search**：
+
+- Input：build-time 加 suffix tokens（engine 索引時看到 hidden "pressure"）
+- Output：result 出來後 client-side substring scan（engine 結果照常、額外加 fallback）
+
+**LLM**：
+
+- Input：prompt 加 "請逐步推理"（engine 看到不同 prompt）
+- Output：parse output 後 extract structured data（engine 輸出照常、後處理）
+
+**DB**：
+
+- Input：generated column（engine 索引時看到 denormalized column）
+- Output：query 結果後處理 / aggregation（engine 結果照常、應用層加工）
+
+### 何時選哪個
+
+| 訊號                                       | 選               |
+| ------------------------------------------ | ---------------- |
+| 想改變 engine 結果的「內容覆蓋」           | Input            |
+| Engine 不該被改、純補強 output             | Output           |
+| 副作用衝突風險高（如 search ranking）      | Output（更安全） |
+| 需要 engine 配合（index size、build cost） | Input（更徹底）  |
+
+**多數實作 case 兩者疊加**：input 解 80%（更徹底）、output 補剩下 20%（catch input 漏的）。
+
+---
+
 ## 何時不該用外層 transformation
 
 | 情境                                                                  | 為什麼                                                                                  |

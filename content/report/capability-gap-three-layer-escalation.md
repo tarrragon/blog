@@ -131,6 +131,33 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Stra
 
 ---
 
+## 從 L3 / L2 降級回 L1 的訊號
+
+階梯不是只能升、也該能降 — L3 ship 後不該當「永久解」、是 ROI 動態的選擇。看到以下訊號、考慮降級：
+
+| 訊號                                               | 降級到                            |
+| -------------------------------------------------- | --------------------------------- |
+| L3 transformation 每次 dependency upgrade 都要修   | L1 / L2（L3 維護成本 > 收益）     |
+| Use case 變化、L3 解的問題已不存在                 | 拔掉 L3、退到 L2 或不需要         |
+| L3 ship 後 close gap 率 < 10%（投入 / 受益不對等） | 可能該重設計、不只升降            |
+| Pagefind / engine 升級後 native 支援了             | 拔 L3 transformation、用 native   |
+| L3 引入新 bug 比解的 gap 多                        | 退回 L1 + 顯式說「不支援」更誠實  |
+| L1 hint 已經教育大多數 user 改變行為               | L2 / L3 fallback 觸發率低、可降級 |
+
+### 為什麼降級難
+
+升級有「使用者抱怨」當外部觸發、降級沒有 — 沒人抱怨「我們的 transformation 太多」。所以降級是典型的 [#72 高 ROI 無觸發](../external-trigger-for-high-roi-work/) 工作、需要結構性 trigger：
+
+- Periodic review（每季 review「我們還需要這個 L3 嗎」）
+- Dependency upgrade event（升級觸發「L3 還相容嗎、還必要嗎」）
+- Maintenance cost log（紀錄 L3 修了 N 次、累積到 threshold 觸發 review）
+
+### Pruning 不是失敗
+
+降級不是「我們之前做錯」、是「ROI 變化、調整」。L3 在 ship 當下是最佳解、現在不是了 — 接受 capability gap 對策也會過時、跟其他工程決策同。
+
+---
+
 ## 階梯 vs 疊加：跟 #75 的差別
 
 [#75 主策略 + 補強策略](../main-strategy-plus-supplementary/) 講的是**多策略疊加在不同層**（structural + UX 並用）。本卡講的是**同一個 gap 上、選哪一層**（L1 vs L2 vs L3 通常選一個）。
