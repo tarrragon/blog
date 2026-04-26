@@ -151,6 +151,8 @@ frontend-with-playwright/
 - [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) — 容易寫的位置通常是錯位的位置（meta-principle、解釋為什麼層錯位 / 寬 selector / inline style 等便利寫法都會出問題）
 - [#68 驗收的時間軸：四個 checkpoint](/report/verification-timeline-checkpoints/) — Layout test 屬 Ship 前 checkpoint 的具體做法
 - [#69 Test-First：先看到 RED 才相信 GREEN](/report/test-first-red-before-green/) — Playwright 測試的驗證協議：寫完測試 + 第一次跑就 GREEN 是警訊、要先在 buggy code 上看到 RED 才相信測試 catch 到該 catch 的東西
+- [#70 URL 是 stateful UI 的儲存層](/report/url-as-state-container/) — 互動式 UI 的可分享 / 可恢復 / 可導航 state 該寫進 URL（搜尋 / filter / tab / sort / pagination 都該檢視）
+- [#71 Tab Order = DOM Order = Mental Model 三者對齊](/report/tab-order-mental-model-alignment/) — DOM 順序預設 = tab 順序、不對齊時優先重排 DOM、tabindex > 0 是反模式
 
 ---
 

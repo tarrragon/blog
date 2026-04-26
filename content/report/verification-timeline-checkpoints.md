@@ -131,6 +131,39 @@ tags: ["report", "事後檢討", "工程方法論", "驗收", "原則"]
 
 ---
 
+## 為什麼 Checkpoint 1（寫之前）也常被跳過 — 同個結構性偏差
+
+Checkpoint 1 跟 Ship 前 checkpoint 共享同一個結構性問題：**沒有便利路徑、需要刻意停下來**。
+
+| Checkpoint | 該做的事                 | 為什麼會被跳過                |
+| ---------- | ------------------------ | ----------------------------- |
+| 寫之前     | 列「使用者意圖完整集合」 | 沒既有觸發、要刻意停 5 分鐘想 |
+| Ship 前    | 設計 E2E case + 執行     | 沒既有觸發、要刻意設計        |
+
+**真實案例（這個 blog 的 search filter bug 修復）**：
+
+修 #55 層錯位 bug 時、跳過了 Checkpoint 1。直接從 bug 描述進策略選擇 + 實作。Phase 1-4 都做完、跑了 Playwright tests 過 4/4 — 看起來完工。
+
+事後 retrospective Checkpoint 1（user 提醒「需求確認是該 skill 最重要功能之一」）才發現遺漏：
+
+| 維度      | Checkpoint 1 漏掉的 case             | 跑驗證才發現                                                                               |
+| --------- | ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| URL state | `?q=X&scope=Y` 持久化                | 既有實作完全沒處理 URL state（[#70](../url-as-state-container/)）                          |
+| A11y      | Tab order 跟 mental model 對齊       | scope 在 search input 之前、反 mental model（[#71](../tab-order-mental-model-alignment/)） |
+| Filter UX | Type/tag filter 在 sub-mode 完全消失 | Silent 限制、使用者可能誤以為 bug                                                          |
+
+修完 bug + ship test = 表面完成。但 Checkpoint 1 本來該 catch 的 3 個 case 都漏到後期 retrospective 才被發現。**Test 過 ≠ 對齊使用者完整意圖**。
+
+修這個結構性偏差的方法（同 Ship 前）：
+
+- 把「列使用者意圖完整集」做成 checklist 模板、寫之前 5 分鐘填、外化成觸發
+- 用 [#21 visible 三問](../decide-vs-confirm-boundary/) 強迫自己列出「使用者會看到的維度」
+- 修 bug 不止修 bug、也檢視該 feature 的所有相關意圖維度
+
+[#69 Test-First](../test-first-red-before-green/) 是 Checkpoint 2/3 的具體協議；本卡是 Checkpoint 1 + 為什麼前後兩個 checkpoint 都被結構性跳過的解釋。
+
+---
+
 ## 瀑布原則：漏一層代價指數放大
 
 漏掉一個 checkpoint 不是線性影響、是指數放大：

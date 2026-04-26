@@ -236,6 +236,8 @@ modal.showModal();  // 自動 focus trap + ESC 處理
 - **成本特別高的原因**：違反 WCAG 2.4.7、鍵盤使用者完全無法導航
 - **D 是反模式**：違反 WCAG 2.4.7（合規層） — 即使品牌追求極簡、也該保留 focus indicator
 
+「邏輯 tab 順序」要素的詳細展開（DOM vs tabindex 的取捨、跟 mental model 對齊）見 [#71 Tab Order = DOM Order = Mental Model 三者對齊](../tab-order-mental-model-alignment/)。
+
 ---
 
 ## 跟其他原則的關係
