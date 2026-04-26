@@ -239,6 +239,107 @@ test.describe('search scope filter (multi-index)', () => {
     expect(positions!.inputBeforeScope).toBe(true);
   });
 
+  test('D — prefix-match hint visible on page load with L1+L2 explanation', async ({
+    page,
+  }) => {
+    /**
+     * [#86] L1 expectation alignment：明示 prefix-match 限制。
+     * [#90] layered consistent：hint 必須承認 L2 (substring fallback) 存在、
+     *       不能假裝 prefix-only 是 absolute limit（會跟 fallback section 矛盾）。
+     */
+    await gotoSearch(page);
+    const hint = page.locator('.search-prefix-hint');
+    await expect(hint).toBeVisible();
+
+    const text = (await hint.textContent()) ?? '';
+    expect(text).toContain('前綴匹配');
+    expect(text).toContain('substring'); // hint must reference L2 fallback
+  });
+
+  test('C1 — titles JSON emitted inline at build time', async ({ page }) => {
+    /**
+     * [#89] dataset 規模 < 1MB 區間、可 inline 全部 titles 不需 lazy load。
+     * 這個 test 防止 Hugo template change 不小心拿掉 titles emission。
+     */
+    await gotoSearch(page);
+    const titlesCount = await page.evaluate(() => {
+      const el = document.getElementById('search-titles-data');
+      if (!el) return 0;
+      try {
+        return JSON.parse(el.textContent || '[]').length;
+      } catch {
+        return -1;
+      }
+    });
+    expect(titlesCount).toBeGreaterThan(100); // expect 700+, threshold loose
+  });
+
+  test('C1 — substring fallback shows results for "pre" (excluding prefix matches)', async ({
+    page,
+  }) => {
+    /**
+     * [#69] RED-before-GREEN: 重點不只是「fallback 出現」、是「fallback 結果是
+     * 真的 substring 匹配（非 prefix）」。如果 impl bug 把 prefix 匹配也算進去、
+     * fallback 跟 Pagefind 主結果重複、本卡價值消失。
+     *
+     * [#90] layered consistent：fallback 應跟 prefix matches 區分、不重疊。
+     */
+    await gotoSearch(page, 'pre');
+    await page.waitForTimeout(500); // fallback debounce 200ms + render
+
+    const fallback = page.locator('.search-substring-fallback');
+    await expect(fallback).toBeVisible();
+
+    const items = await fallback.locator('li').allTextContents();
+    expect(items.length).toBeGreaterThan(0);
+
+    for (const item of items) {
+      const lower = item.toLowerCase().trim();
+      const idx = lower.indexOf('pre');
+      // RED-before-GREEN: each result must contain "pre" at non-zero position
+      // (substring) — never at position 0 (would be prefix, Pagefind's job).
+      expect(idx).toBeGreaterThan(0);
+    }
+  });
+
+  test('C1 — fallback hidden for short query (<2 chars)', async ({ page }) => {
+    /**
+     * 防止單字元 query 觸發大量 noise。實作中 q.length < 2 時 container hidden。
+     */
+    await gotoSearch(page, 'p');
+    await page.waitForTimeout(500);
+    await expect(page.locator('.search-substring-fallback')).toBeHidden();
+  });
+
+  test('C1 — fallback hidden when no substring match exists', async ({ page }) => {
+    /**
+     * Empty result case — fallback 不該顯示空殼 section。
+     */
+    await gotoSearch(page, 'zzznoresult123');
+    await page.waitForTimeout(500);
+    await expect(page.locator('.search-substring-fallback')).toBeHidden();
+  });
+
+  test('D + C1 layered consistency: hint + fallback both labeled, not silent', async ({
+    page,
+  }) => {
+    /**
+     * [#90] 兩 layer 同時存在時、訊號要對齊：
+     * - D hint 永遠可見、解釋 prefix-only + L2 存在
+     * - C1 fallback section 有明確 heading（含「fallback」或「補強」字眼）
+     * Silent fallback（看起來像 Pagefind 額外結果但沒標示）= [#82] false confidence。
+     */
+    await gotoSearch(page, 'pre');
+    await page.waitForTimeout(500);
+
+    await expect(page.locator('.search-prefix-hint')).toBeVisible();
+    await expect(page.locator('.search-substring-fallback')).toBeVisible();
+
+    const heading =
+      (await page.locator('.search-substring-fallback__heading').textContent()) ?? '';
+    expect(heading.toLowerCase()).toMatch(/fallback|補強/);
+  });
+
   test('Filter UI hint: visible when scope is title or content', async ({ page }) => {
     await gotoSearch(page);
     await setQuery(page, '寫作');
