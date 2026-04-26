@@ -137,14 +137,17 @@ ceiling 訊號：
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                | 關係                                                                                      |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [#42 2 次門檻](../two-occurrence-threshold/)                        | 第 2 輪是 multi-pass 的最小單位、跟本卡的「多輪設計」同骨                                 |
-| [#68 驗收的時間軸](../verification-timeline-checkpoints/)           | #68 的四個 checkpoint = 多輪 review 的時間軸實現                                          |
-| [#69 Test-First：RED before GREEN](../test-first-red-before-green/) | RED phase 是「testing the test」的多輪設計 — 純 hook 看不到                               |
-| [#72 高 ROI 無觸發](../external-trigger-for-high-roi-work/)         | #72 提倡 L3-L5 結構性對策、本卡是 ceiling — L5 hook 抓不到行為錯誤、需要 L4 review / pair |
-| [#81 卡片系統的迭代浮現](../cards-as-living-system-iteration/)      | spiral 浮現本身就是 multi-pass 的具體 case — 不靠單次「寫對」                             |
-| [#79 決策對話的五維度](../decision-dialogue-dimensions/)            | 「五維 collapse」是行為錯誤、hook 抓不到、要靠 reference dogfood + multi-pass review      |
+| 原則                                                                                     | 關係                                                                                      |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [#42 2 次門檻](../two-occurrence-threshold/)                                             | 第 2 輪是 multi-pass 的最小單位、跟本卡的「多輪設計」同骨                                 |
+| [#68 驗收的時間軸](../verification-timeline-checkpoints/)                                | #68 的四個 checkpoint = 多輪 review 的時間軸實現                                          |
+| [#69 Test-First：RED before GREEN](../test-first-red-before-green/)                      | RED phase 是「testing the test」的多輪設計 — 純 hook 看不到                               |
+| [#72 高 ROI 無觸發](../external-trigger-for-high-roi-work/)                              | #72 提倡 L3-L5 結構性對策、本卡是 ceiling — L5 hook 抓不到行為錯誤、需要 L4 review / pair |
+| [#81 卡片系統的迭代浮現](../cards-as-living-system-iteration/)                           | spiral 浮現本身就是 multi-pass 的具體 case — 不靠單次「寫對」                             |
+| [#79 決策對話的五維度](../decision-dialogue-dimensions/)                                 | 「五維 collapse」是行為錯誤、hook 抓不到、要靠 reference dogfood + multi-pass review      |
+| [#83 Writing 的 multi-pass review](../writing-multi-pass-review/)                        | 本卡在「寫」這個動作的具體實例 — review 是 multi-pass、不是 hook                          |
+| [#84 Naming 是 iterated artifact](../naming-as-iterated-artifact/)                       | 本卡在「命名」這個動作的具體實例 — 命名 lint 只擋字面、grep / 一致性 / impl 洩漏靠 review |
+| [#85 Methodology 的 multi-pass 該 embed 在 pillar](../methodology-multi-pass-embedding/) | 本卡在「方法論設計本身」這一層的展現 — multi-pass 升 pillar 才結構性執行                  |
 
 本卡是 #72 的 sibling / 補強 — #72 推 L3-L5 結構性對策最強、本卡指出 L5 也有 ceiling、不是萬能。組合解：**字面用 L5 hook、行為用 L4 pair + multi-pass**。
 
