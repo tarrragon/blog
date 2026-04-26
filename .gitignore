@@ -25,3 +25,10 @@ Thumbs.db
 
 # Playwright MCP runtime cache (snapshots, console logs)
 .playwright-mcp/
+
+# Playwright test artifacts
+node_modules/
+.test-www/
+test-results/
+playwright-report/
+playwright/.cache/
