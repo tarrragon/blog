@@ -45,55 +45,96 @@ async function setScope(page: Page, scope: 'all' | 'title' | 'content') {
   await page.waitForTimeout(1000);
 }
 
+/**
+ * Visible-only result count — excludes hidden results.
+ *
+ * Critical detail (#69 dogfooding): the OLD buggy code used view-layer
+ * post-filter that sets `display: none !important` on results that don't
+ * match. If we count `.pagefind-ui__result` indiscriminately, we'd count
+ * hidden ones too — making the test pass even on buggy code (false negative).
+ *
+ * We must count actually-visible results: not [hidden] AND computed display
+ * is not 'none'.
+ */
 async function visibleResultCount(page: Page): Promise<number> {
-  return page.locator('.pagefind-ui__result').count();
+  return page.evaluate(() => {
+    return Array.from(document.querySelectorAll('.pagefind-ui__result')).filter(
+      (el) => {
+        const style = window.getComputedStyle(el as HTMLElement);
+        return style.display !== 'none' && !(el as HTMLElement).hidden;
+      }
+    ).length;
+  });
+}
+
+/** Read first N visible result titles. */
+async function visibleTitles(page: Page, n: number): Promise<string[]> {
+  return page.evaluate((limit) => {
+    return Array.from(document.querySelectorAll('.pagefind-ui__result'))
+      .filter((el) => {
+        const style = window.getComputedStyle(el as HTMLElement);
+        return style.display !== 'none' && !(el as HTMLElement).hidden;
+      })
+      .slice(0, limit)
+      .map((el) => {
+        const t = el.querySelector('.pagefind-ui__result-title');
+        return t ? t.textContent?.trim() ?? '' : '';
+      });
+  }, n);
 }
 
 test.describe('search scope filter (multi-index)', () => {
-  test('mode switch re-runs query (different result counts possible)', async ({
+  test('mode switch loads from scope-specific index (network-level proof of multi-index)', async ({
     page,
   }) => {
-    await gotoSearch(page);
-    await setQuery(page, '搜尋');
+    // Network-level assertion: switching to scope=title MUST trigger a request
+    // to /pagefind-title/ (and content scope to /pagefind-content/). This
+    // structurally distinguishes the multi-index fix from the buggy
+    // view-layer post-filter: buggy code never loaded those bundles because
+    // they don't exist, so this test fails RED on the buggy build.
+    const titleBundleRequests: string[] = [];
+    const contentBundleRequests: string[] = [];
+    page.on('request', (req) => {
+      const url = req.url();
+      if (url.includes('/pagefind-title/')) titleBundleRequests.push(url);
+      if (url.includes('/pagefind-content/')) contentBundleRequests.push(url);
+    });
 
-    await setScope(page, 'all');
-    const allCount = await visibleResultCount(page);
-    expect(allCount).toBeGreaterThan(0);
+    await gotoSearch(page);
+    await setQuery(page, '寫作');
 
     await setScope(page, 'title');
-    const titleCount = await visibleResultCount(page);
+    // Wait for pagefind to load + query
+    await page.waitForTimeout(1500);
 
-    // The two counts come from different indexes, so at least the result
-    // identity changes; we mainly check that switching didn't crash and the
-    // new query rendered something or shows empty state.
-    const titleIsEmpty = await page
-      .locator('.pagefind-ui__message')
-      .filter({ hasText: /找不到|找到 0|相關內容/ })
-      .first()
-      .isVisible()
-      .catch(() => false);
+    expect(titleBundleRequests.length).toBeGreaterThan(0);
 
-    expect(titleCount > 0 || titleIsEmpty).toBe(true);
+    await setScope(page, 'content');
+    await page.waitForTimeout(1500);
+
+    expect(contentBundleRequests.length).toBeGreaterThan(0);
   });
 
-  test('title scope returns subset of all scope (counts respect ⊆)', async ({
+  test('title scope: every visible result contains query in title (no view-layer hide)', async ({
     page,
   }) => {
-    // Pick a query that's likely to appear in both title and body of multiple posts.
     const query = '寫作';
 
     await gotoSearch(page);
     await setQuery(page, query);
-
-    await setScope(page, 'all');
-    const allCount = await visibleResultCount(page);
-
     await setScope(page, 'title');
-    const titleCount = await visibleResultCount(page);
 
-    // Title-matching pages are a subset of all-matching pages.
-    // (Pagefind ranks differently per index but the page set should satisfy this.)
-    expect(titleCount).toBeLessThanOrEqual(allCount);
+    const titles = await visibleTitles(page, 20);
+    expect(titles.length).toBeGreaterThan(0);
+
+    // Strict: every visible title must contain the query (no fakery via
+    // hide). With buggy code, pagefind returns full-text matches and view
+    // layer tries to hide non-title-matches — but if regex escaping fails or
+    // the apply() runs before MutationObserver, non-matching results might
+    // be visible. With the fix, this is guaranteed by the source index.
+    for (const title of titles) {
+      expect(title.toLowerCase()).toContain(query);
+    }
   });
 
   test('sparse query shows explicit empty state, not silent failure', async ({
@@ -116,30 +157,25 @@ test.describe('search scope filter (multi-index)', () => {
     expect(resultCount === 0 && hasEmptyMessage).toBe(true);
   });
 
-  test('title scope: load more reveals more title-matching results, not silent', async ({
+  test('post markup has data-pagefind-body (structural prerequisite for multi-index)', async ({
     page,
   }) => {
-    // Use a common term to get enough results that load-more is offered.
-    await gotoSearch(page);
-    await setQuery(page, '寫');
-    await setScope(page, 'title');
+    // Structural test: verify the markup change that enables multi-index
+    // strategy. The buggy code used <content> tag (no data-pagefind-body),
+    // the fix uses <div class="article-body" data-pagefind-body>. This is a
+    // structural prerequisite for content-only index extraction.
+    //
+    // Pick a known post page (any post with single.html layout).
+    await page.goto(
+      '/blog/posts/blog-markdown-寫作規範與-mdtools-檢查/',
+    );
+    const articleBody = page.locator('.article-body[data-pagefind-body]');
+    await expect(articleBody).toHaveCount(1);
 
-    const before = await visibleResultCount(page);
-    const loadMore = page.locator('.pagefind-ui__button').filter({ hasText: /載入更多|Load/ });
-    if (!(await loadMore.isVisible().catch(() => false))) {
-      // No load-more available — title scope already shows everything.
-      // That's a valid pass — the bug we guard against (silent failure on load more)
-      // can't manifest if there's nothing more to load.
-      test.skip();
-      return;
-    }
-
-    await loadMore.click();
-    await page.waitForTimeout(500);
-    const after = await visibleResultCount(page);
-
-    // The fix guarantees: load more in title scope brings in more title-matching
-    // results (not silent post-hidden ones). At minimum, count should increase.
-    expect(after).toBeGreaterThan(before);
+    // The hidden title meta inside .article-body (for content-only index)
+    const titleMeta = page.locator(
+      '.article-body [data-pagefind-meta="title"]',
+    );
+    await expect(titleMeta).toHaveCount(1);
   });
 });
