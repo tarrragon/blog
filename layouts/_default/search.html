@@ -8,17 +8,21 @@
 <div data-pagefind-ignore class="search-shell">
   <h1 class="search-title">{{ .Title }}</h1>
   {{ with .Content }}{{ . }}{{ end }}
-  {{- /* 搜尋範圍切換器：JS 把它搬進 .pagefind-ui、放在 form 和 drawer 之間，
-         確保視覺位置在搜尋框下、結果上，不會被結果列表擠到最底。
-         用 div + role="radiogroup" 取代 fieldset，避免 fieldset 的 min-width 與
-         UA border 相關怪癖。 */ -}}
+  {{- /* DOM 順序對齊使用者 mental model（[#71]）：先打字 → 再篩選範圍 → 看結果。
+         #search 在 scope 之前 = tab 順序 input 先、scope 後（見 [#71] 三對齊）。
+         視覺位置由 CSS position: absolute 控制、scope 仍浮在 input 跟 results 之間。 */ -}}
+  <div id="search"></div>
   <div class="search-scope" role="radiogroup" aria-label="搜尋範圍">
     <span class="search-scope-label">搜尋範圍</span>
     <label><input type="radio" name="search-scope" value="all" checked><span>全部</span></label>
     <label><input type="radio" name="search-scope" value="title"><span>標題</span></label>
     <label><input type="radio" name="search-scope" value="content"><span>內文</span></label>
   </div>
-  <div id="search"></div>
+  {{- /* Filter UI hint：scope=title / content 時 Pagefind 的 type/tag filter
+         不存在於 sub-index、UI 會消失。明示告知使用者以避免誤判 bug（[#66]）。 */ -}}
+  <p class="search-scope-hint" hidden>
+    類型 / 標籤 filter 只在「全部」範圍下可用、切換到「標題」或「內文」會暫時消失。
+  </p>
 </div>
 
 <script src="{{ "pagefind/pagefind-ui.js" | relURL }}"></script>
@@ -55,10 +59,51 @@
     };
 
     var pagefindUI = null;
+    var VALID_SCOPES = ['all', 'title', 'content'];
 
     function getScope() {
       var checked = document.querySelector('.search-scope input[name="search-scope"]:checked');
       return checked ? checked.value : 'all';
+    }
+
+    /*
+      URL state persistence ([#70])：?q=X&scope=Y 該寫進 URL — 使用者預期
+      可分享 / 可 reload 恢復 / 可 back-forward 導航。預設 in-memory state
+      = silent 犧牲三個 UX 特性。
+    */
+    function readUrlState() {
+      var params = new URLSearchParams(location.search);
+      var rawScope = params.get('scope');
+      return {
+        query: params.get('q') || '',
+        scope: VALID_SCOPES.indexOf(rawScope) >= 0 ? rawScope : 'all'
+      };
+    }
+
+    function writeUrlState(query, scope) {
+      var params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (scope && scope !== 'all') params.set('scope', scope);
+      var qs = params.toString();
+      var url = location.pathname + (qs ? '?' + qs : '') + location.hash;
+      // replaceState：每次打字都新 history entry 太頻繁、用 replace。
+      history.replaceState(null, '', url);
+    }
+
+    function setScopeRadio(scope) {
+      var radio = document.querySelector(
+        '.search-scope input[name="search-scope"][value="' + scope + '"]'
+      );
+      if (radio) radio.checked = true;
+    }
+
+    /*
+      Filter UI hint visibility — scope=all 顯示完整 filter UI、其他 mode
+      hint 顯示告訴使用者 type/tag filter 暫時不可用（[#66]）。
+    */
+    function updateScopeHint(scope) {
+      var hint = document.querySelector('.search-scope-hint');
+      if (hint) hint.hidden = scope === 'all';
     }
 
     function captureState() {
@@ -163,16 +208,37 @@
     window.addEventListener('resize', syncScopeHeight);
     mql.addEventListener('change', place);
 
-    // scope 切換 = 切 index 源、保留 query 與 focus。
+    // scope 切換 = 切 index 源、保留 query 與 focus、寫回 URL。
     if (scopeEl) {
       scopeEl.addEventListener('change', function () {
         var prev = captureState();
-        initPagefindUI(getScope(), prev);
+        var newScope = getScope();
+        updateScopeHint(newScope);
+        writeUrlState(prev.query, newScope);
+        initPagefindUI(newScope, prev);
       });
     }
 
-    // 初次載入用當前 radio value（預設 all）。
-    initPagefindUI(getScope());
+    // 初次載入：從 URL 讀取 state 套用到 UI。
+    var initial = readUrlState();
+    setScopeRadio(initial.scope);
+    updateScopeHint(initial.scope);
+    initPagefindUI(initial.scope, initial.query ? { query: initial.query, focused: false } : null);
+
+    // 監聽 query 變動寫回 URL（input 事件在 PagefindUI 內、用 delegation）。
+    document.addEventListener('input', function (e) {
+      if (e.target && e.target.classList && e.target.classList.contains('pagefind-ui__search-input')) {
+        writeUrlState(e.target.value, getScope());
+      }
+    });
+
+    // popstate（back/forward）：重新從 URL 讀 + 套用。
+    window.addEventListener('popstate', function () {
+      var state = readUrlState();
+      setScopeRadio(state.scope);
+      updateScopeHint(state.scope);
+      initPagefindUI(state.scope, state.query ? { query: state.query, focused: false } : null);
+    });
   });
 </script>
 
@@ -221,6 +287,29 @@
   /* drawer 推下，讓出 scope 占用的高度。 */
   .search-shell .pagefind-ui__drawer {
     margin-top: calc(var(--search-scope-h) + 8px);
+  }
+
+  /* Filter UI hint：scope=title/content 顯示、提示 type/tag filter 不可用 */
+  .search-scope-hint {
+    margin: calc(var(--search-scope-h) + 16px) 0 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    opacity: 0.7;
+    border-left: 2px solid currentColor;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-radius: 0 4px 4px 0;
+    position: absolute;
+    top: calc(var(--search-title-h) + var(--search-form-h) + var(--search-scope-h) + 12px);
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+  .search-scope-hint[hidden] { display: none; }
+
+  /* 當 hint 顯示時、drawer 再往下推 */
+  .search-shell:has(.search-scope-hint:not([hidden])) .pagefind-ui__drawer {
+    margin-top: calc(var(--search-scope-h) + 64px);
   }
 
   /* filter slot 的 offset parent。 */

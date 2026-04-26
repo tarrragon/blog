@@ -178,4 +178,93 @@ test.describe('search scope filter (multi-index)', () => {
     );
     await expect(titleMeta).toHaveCount(1);
   });
+
+  // === Checkpoint 1 retrospective fixes (#70 / #71 / filter UI hint) ===
+
+  test('URL persistence: deep link with ?q=X&scope=Y restores state on load (#70)', async ({
+    page,
+  }) => {
+    // Navigate with both q and scope params. After load, both should be applied.
+    await page.goto('/blog/search/?q=' + encodeURIComponent('寫作') + '&scope=title');
+    await page.locator('.pagefind-ui__search-input').waitFor({ timeout: 10_000 });
+    await page.waitForTimeout(1500);
+
+    const state = await page.evaluate(() => ({
+      scope: (
+        document.querySelector(
+          '.search-scope input[name="search-scope"]:checked',
+        ) as HTMLInputElement
+      )?.value,
+      query: (
+        document.querySelector('.pagefind-ui__search-input') as HTMLInputElement
+      )?.value,
+    }));
+
+    expect(state.scope).toBe('title');
+    expect(state.query).toBe('寫作');
+  });
+
+  test('URL persistence: state changes write back to URL (#70)', async ({ page }) => {
+    await gotoSearch(page);
+    await setQuery(page, '寫作');
+    await setScope(page, 'title');
+    await page.waitForTimeout(500);
+
+    const url = page.url();
+    expect(url).toContain('q=' + encodeURIComponent('寫作'));
+    expect(url).toContain('scope=title');
+  });
+
+  test('Tab order: search input is first focusable, before scope radios (#71)', async ({
+    page,
+  }) => {
+    await gotoSearch(page);
+
+    // Find the document order positions of search input vs scope radios.
+    const positions = await page.evaluate(() => {
+      const input = document.querySelector('.pagefind-ui__search-input');
+      const firstScopeRadio = document.querySelector(
+        '.search-scope input[name="search-scope"]',
+      );
+      if (!input || !firstScopeRadio) return null;
+      // Use compareDocumentPosition: returns DOCUMENT_POSITION_FOLLOWING (4)
+      // if firstScopeRadio comes after input in document order.
+      const cmp = input.compareDocumentPosition(firstScopeRadio);
+      return {
+        inputBeforeScope: !!(cmp & Node.DOCUMENT_POSITION_FOLLOWING),
+      };
+    });
+
+    expect(positions).not.toBeNull();
+    expect(positions!.inputBeforeScope).toBe(true);
+  });
+
+  test('Filter UI hint: visible when scope is title or content', async ({ page }) => {
+    await gotoSearch(page);
+    await setQuery(page, '寫作');
+
+    // In 'all' mode, hint should NOT be visible
+    await setScope(page, 'all');
+    let hintVisible = await page
+      .locator('.search-scope-hint')
+      .isVisible()
+      .catch(() => false);
+    expect(hintVisible).toBe(false);
+
+    // In 'title' mode, hint SHOULD be visible (filter UI gone, user needs to know)
+    await setScope(page, 'title');
+    hintVisible = await page
+      .locator('.search-scope-hint')
+      .isVisible()
+      .catch(() => false);
+    expect(hintVisible).toBe(true);
+
+    // In 'content' mode, hint SHOULD also be visible
+    await setScope(page, 'content');
+    hintVisible = await page
+      .locator('.search-scope-hint')
+      .isVisible()
+      .catch(() => false);
+    expect(hintVisible).toBe(true);
+  });
 });
