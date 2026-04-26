@@ -56,9 +56,13 @@ jobs:
           echo "Retrying Hugo build after Claude fix..."
           hugo --minify
 
-      # 3.3 產生 Pagefind 搜尋索引到 public/pagefind/
-      - name: Build Pagefind search index
-        run: npx -y pagefind --site public --root-selector main
+      # 3.3 產生 Pagefind 搜尋索引（三份、對應 search 頁的 scope filter）
+      # 對齊 Makefile site target — 三份 index 各自是該 mode 的全集（#65 multi-index）
+      - name: Build Pagefind search indexes
+        run: |
+          npx -y pagefind --site public --root-selector main
+          npx -y pagefind --site public --root-selector "article.article-content > h1" --output-subdir pagefind-title
+          npx -y pagefind --site public --root-selector ".article-body" --output-subdir pagefind-content
 
       # 4. 上傳編譯好的檔案
       - name: Upload artifact
