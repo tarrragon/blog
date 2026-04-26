@@ -397,6 +397,26 @@ When the document is an experience-sharing write-up (not a methodology), six add
 
 ---
 
+## Multi-pass Re-read（refinement protocol）
+
+The checklist above is a single-frame final sweep — not multi-pass. Multi-pass requires each round to use a **different frame** to catch errors at different layers ([#82](/report/literal-interception-vs-behavioral-refinement/) / [#83](/report/writing-multi-pass-review/)).
+
+For documents (worklog / spec / methodology / error-pattern):
+
+| Round | Frame                                                        | Document-specific checklist                                                                 |
+| ----- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| 1     | Generation                                                   | Get content end-to-end; expect rough phrasing                                               |
+| 2     | Intent ([#67](/report/ease-of-writing-vs-intent-alignment/)) | Does the document type match the structure used? Spec / process / methodology not mixed?    |
+| 3     | Opportunity-cost tone                                        | Grep "must / should / always / never" — translate absolutes to "A in scenario X / B in Y"   |
+| 4     | Grep-ability / naming                                        | Headings contain concept keywords (not "Overview"); cross-references explain *why* to click |
+| 5     | Counter-cases / boundaries                                   | "When not to apply" section present? Examples cover edge cases not just happy path?         |
+| 6'    | Stability layer                                              | If this is a stable document (spec/methodology), are ticket IDs / commit hashes scrubbed?   |
+| 7'    | Atomic check                                                 | < 500 lines OR single concept despite length? Sections each answer one question?            |
+
+Skip rules: quick worklog notes can skip rounds 4-7'; stable specs / methodology should run all rounds twice.
+
+---
+
 ## Quick Routing by Scenario
 
 | You are about to...             | Jump to                                                                |

@@ -623,6 +623,26 @@ build-炸-修循環。明顯划算。
 
 ---
 
+## 多輪 Re-read Pass（multi-pass refinement）
+
+寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[#82](/report/literal-interception-vs-behavioral-refinement/) / [#83](/report/writing-multi-pass-review/)）。
+
+文章用的五輪 + 兩輪文章專屬：
+
+| 輪 | Frame | 文章專用 checklist |
+|---|---|---|
+| 1 | 生成 | idea 從頭寫到尾、不停下改、預期會有粗糙 |
+| 2 | 對意圖（[#67](/report/ease-of-writing-vs-intent-alignment/)） | 開頭一句點題嗎？段落順序由「易讀」決定不是「好寫」決定？ |
+| 3 | 機會成本語氣 | grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off |
+| 4 | Grep-ability / 命名 | 標題 / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title |
+| 5 | 反例 / 邊界 | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？ |
+| 6 | Cross-link 健康度 | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 `_index.md` |
+| 7 | 索引條 vs 內容 | `_index.md` 的索引描述對應到文章核心嗎、不只是 title 的延伸 |
+
+跳輪規則同 [#83](/report/writing-multi-pass-review/) — 短文 / 即時 note 跳 4-7、production 卡片 / 教學文章全跑。
+
+---
+
 ## 與五大原則的映射
 
 本規則四條與 compositional-writing 五大原則對應關係：

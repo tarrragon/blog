@@ -395,6 +395,42 @@ class DbOrderSearcher implements OrderSearcher {
 
 ---
 
+## 多輪 Re-read Pass（multi-pass refinement）
+
+寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[#82](/report/literal-interception-vs-behavioral-refinement/) / [#83](/report/writing-multi-pass-review/)）。
+
+註解用的核心三輪 + 兩輪程式碼專屬：
+
+| 輪  | Frame                                                         | 程式碼註解專用 checklist                                                     |
+| --- | ------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1   | 生成                                                          | 把「為什麼」寫出來、預期語句不順                                             |
+| 2   | 對意圖（[#67](/report/ease-of-writing-vs-intent-alignment/)） | 寫的是「為什麼這樣做」嗎、不是「程式在做什麼」？業務需求 vs 語法選擇分清楚？ |
+| 3   | 機會成本語氣                                                  | 「必須」「不可」翻成「在 X 情境下選擇 A 因為 ⋯⋯」                            |
+| 4'  | 介面 vs 實作分層                                              | doc comment 不洩漏 impl、inline comment 講 why 不講 what、抽象層對齊嗎？     |
+| 5'  | 時間軸 robust                                                 | 5 個月後讀還看得懂嗎？依賴的 ticket / 連結還活著嗎？                         |
+
+### Naming 子場景：四輪 review（[#84](/report/naming-as-iterated-artifact/)）
+
+註解寫完該 review 一次「這段程式碼涉及的命名」。命名是 iterated artifact、第一版幾乎不對：
+
+| 輪  | Frame                | 命名專用 checklist                                                                         |
+| --- | -------------------- | ------------------------------------------------------------------------------------------ |
+| 1   | 第一版               | 反映「做什麼 / 是什麼」、不是「怎麼做」；不超過 4 單字                                     |
+| 2   | Grep-ability         | `grep -r "<name>"` 能命中目標、不被別的 entity 蓋過、不撞 framework reserved（`data` 等）  |
+| 3   | Cross-call-site 一致 | 同概念在不同 file 用同名嗎？動詞時態一致嗎？跟同 module 命名格式一致嗎？                   |
+| 4   | Impl 洩漏檢查        | 名字含 impl 細節嗎（`fetchUserViaSql`）？換 impl 後名字還對嗎？data structure 細節洩漏嗎？ |
+
+跳輪規則：
+
+- Loop counter / close-up var：跑輪 1
+- Test code 內部 helper：1 + 4
+- 跨 team API / DB schema：每輪都跑、跑兩遍
+- Production-facing URL / endpoint：不可跳
+
+詳見 [#84](/report/naming-as-iterated-artifact/)。
+
+---
+
 ## 常見踩坑場景
 
 ### 場景 1：改 bug 時順手改壞註解
