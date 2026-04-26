@@ -1,7 +1,7 @@
 ---
 title: "Frontend with Playwright — 框架無關的前端開發 + Playwright 驗證"
 date: 2026-04-26
-description: "框架無關的前端開發協議 + Playwright 驗證：DOM topology 先於 CSS、CSS / JS 邊界辨識、Playwright 三個位置（假設 / 行為 / 互動驗證）、framework 共處、Reactive 效能、A11y。六大原則 + 六份情境 reference。"
+description: "框架無關的前端開發協議 + Playwright 驗證：DOM topology 先於 CSS、CSS / JS 邊界辨識、Playwright 三個位置（假設 / 行為 / 互動驗證）、framework 共處、Reactive 效能、A11y、Filter × Source 跨領域 stream 操作。六大原則 + 七份情境 reference。"
 tags: ["前端開發", "Playwright", "CSS", "JavaScript", "Accessibility", "Performance", "skills"]
 ---
 
@@ -25,20 +25,23 @@ tags: ["前端開發", "Playwright", "CSS", "JavaScript", "Accessibility", "Perf
 
 直接依觸發情境跳對應 reference：
 
-| 觸發情境                                                              | reference                                                                            |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| 要寫 CSS 規則、需要先確認 DOM 結構 / selector 該怎麼寫                | [dom-topology-first](/skills/frontend-with-playwright/dom-topology-first/)           |
-| 不確定 selector 該多寬、命中其他元素                                  | [dom-topology-first](/skills/frontend-with-playwright/dom-topology-first/)           |
-| 不確定值該寫進 CSS 還是 JS、CSS layers / variable / class toggle 取捨 | [css-js-boundary](/skills/frontend-with-playwright/css-js-boundary/)                 |
-| 用 `!important` / inline style 解 specificity                         | [css-js-boundary](/skills/frontend-with-playwright/css-js-boundary/)                 |
-| 要用 playwright 驗證 layout / 假設 / 互動                             | [playwright-in-loop](/skills/frontend-with-playwright/playwright-in-loop/)           |
-| Layout bug 第 2 次出現、想寫成測試                                    | [playwright-in-loop](/skills/frontend-with-playwright/playwright-in-loop/)           |
-| 客製 UI 被 framework 還原、不知道該注入到哪                           | [framework-coexistence](/skills/frontend-with-playwright/framework-coexistence/)     |
-| 要客製外部組件（pagefind / vendor library）                           | [framework-coexistence](/skills/frontend-with-playwright/framework-coexistence/)     |
-| 使用者反映卡頓、CPU 100%、scroll lag、resize jank                     | [reactive-performance](/skills/frontend-with-playwright/reactive-performance/)       |
-| 要設計 MutationObserver / event listener 範圍                         | [reactive-performance](/skills/frontend-with-playwright/reactive-performance/)       |
-| 要驗收鍵盤 / screen reader / motor / 視覺 a11y                        | [accessibility-and-focus](/skills/frontend-with-playwright/accessibility-and-focus/) |
-| JS reparent 後 focus 跑掉、aria-live 沒朗讀                           | [accessibility-and-focus](/skills/frontend-with-playwright/accessibility-and-focus/) |
+| 觸發情境                                                              | reference                                                                                                              |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 要寫 CSS 規則、需要先確認 DOM 結構 / selector 該怎麼寫                | [dom-topology-first](/skills/frontend-with-playwright/dom-topology-first/)                                             |
+| 不確定 selector 該多寬、命中其他元素                                  | [dom-topology-first](/skills/frontend-with-playwright/dom-topology-first/)                                             |
+| 不確定值該寫進 CSS 還是 JS、CSS layers / variable / class toggle 取捨 | [css-js-boundary](/skills/frontend-with-playwright/css-js-boundary/)                                                   |
+| 用 `!important` / inline style 解 specificity                         | [css-js-boundary](/skills/frontend-with-playwright/css-js-boundary/)                                                   |
+| 要用 playwright 驗證 layout / 假設 / 互動                             | [playwright-in-loop](/skills/frontend-with-playwright/playwright-in-loop/)                                             |
+| Layout bug 第 2 次出現、想寫成測試                                    | [playwright-in-loop](/skills/frontend-with-playwright/playwright-in-loop/)                                             |
+| 客製 UI 被 framework 還原、不知道該注入到哪                           | [framework-coexistence](/skills/frontend-with-playwright/framework-coexistence/)                                       |
+| 要客製外部組件（pagefind / vendor library）                           | [framework-coexistence](/skills/frontend-with-playwright/framework-coexistence/)                                       |
+| 使用者反映卡頓、CPU 100%、scroll lag、resize jank                     | [reactive-performance](/skills/frontend-with-playwright/reactive-performance/)                                         |
+| 要設計 MutationObserver / event listener 範圍                         | [reactive-performance](/skills/frontend-with-playwright/reactive-performance/)                                         |
+| 要驗收鍵盤 / screen reader / motor / 視覺 a11y                        | [accessibility-and-focus](/skills/frontend-with-playwright/accessibility-and-focus/)                                   |
+| JS reparent 後 focus 跑掉、aria-live 沒朗讀                           | [accessibility-and-focus](/skills/frontend-with-playwright/accessibility-and-focus/)                                   |
+| 設計 filter / sort / count 操作、source 是分批 / streaming            | [data-flow-and-filter-composition](/skills/frontend-with-playwright/data-flow-and-filter-composition/)                 |
+| 「Load more 後畫面閃但內容沒變」的 silent 缺口                        | [data-flow-and-filter-composition](/skills/frontend-with-playwright/data-flow-and-filter-composition/)（層錯位）       |
+| Backend / 演算法 / map-reduce 的 post-filter 漏項                     | [data-flow-and-filter-composition](/skills/frontend-with-playwright/data-flow-and-filter-composition/)（跨領域同結構） |
 
 每份 reference 自包含：讀任一份不需要回頭讀其他 reference。
 
@@ -64,4 +67,8 @@ tags: ["前端開發", "Playwright", "CSS", "JavaScript", "Accessibility", "Perf
 
 ## Last Updated
 
-2026-04-26 — 初版：v0.1.0 同步、六份 references 對應「DOM topology / CSS-JS 邊界 / Playwright 三位置 / framework 共處 / Reactive 效能 / A11y」六個情境。
+2026-04-26 — v0.2.0 接入 #55-#68 系列：新增第 7 份 reference `data-flow-and-filter-composition`（Filter × Source 層錯位 + 五策略 + 跨前端 / 後端 / 演算法 / DB 範例）；強調原則跨領域通用、不只前端。
+
+歷史版本：
+
+- 2026-04-26 — v0.1.0 初版：六份 references 對應「DOM topology / CSS-JS 邊界 / Playwright 三位置 / framework 共處 / Reactive 效能 / A11y」六個情境

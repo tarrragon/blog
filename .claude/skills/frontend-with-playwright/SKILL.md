@@ -1,6 +1,6 @@
 ---
 name: frontend-with-playwright
-description: "框架無關的前端開發協議 + Playwright 驗證：DOM topology 先於 CSS、CSS / JS 邊界辨識、Playwright 三個位置（假設 / 行為 / 互動驗證）、寫成 layout 測試、framework-managed DOM 共處、Reactive 效能盤點、a11y 三道防線。Triggers: 寫 CSS, selector 精準, CSS layers, CSS-only vs JS, class toggle, MutationObserver, observer scope, polling, framework 共處, 外部組件客製, custom UI 邊界外, playwright 驗證, browser_evaluate, layout test, focus management, aria-live, keyboard a11y, reactive 效能, runtime cost, layout reflow, lazy loading, 前端網頁開發, vanilla, vue, react, jquery."
+description: "框架無關的前端開發協議 + Playwright 驗證 + 跨領域 Stream 操作架構：DOM topology 先於 CSS、CSS / JS 邊界辨識、Playwright 三個位置（假設 / 行為 / 互動驗證）、寫成 layout 測試、framework-managed DOM 共處、Reactive 效能盤點、a11y 三道防線、Filter × Source 層錯位 + 五策略合成（適用前端 / 後端 / 演算法 / DB）。Triggers: 寫 CSS, selector 精準, CSS layers, CSS-only vs JS, class toggle, MutationObserver, observer scope, polling, framework 共處, 外部組件客製, custom UI 邊界外, playwright 驗證, browser_evaluate, layout test, focus management, aria-live, keyboard a11y, reactive 效能, runtime cost, layout reflow, lazy loading, 前端網頁開發, vanilla, vue, react, jquery, filter × source, 層錯位, paginated source, post-filter, 自動續抓, 推進 query, 誠實進度 UX, 演算法 pipeline, middleware filter, materialized view, map-reduce."
 license: MIT
 metadata:
   version: 0.1.0
@@ -89,6 +89,9 @@ Polling（`setTimeout` / `setInterval`）有事件可監聽就替換成 Mutation
 | 要設計 MutationObserver / event listener 範圍                         | `references/reactive-performance.md`      |
 | 要驗收鍵盤 / screen reader / motor / 視覺 a11y                         | `references/accessibility-and-focus.md`   |
 | JS reparent 後 focus 跑掉、aria-live 沒朗讀                           | `references/accessibility-and-focus.md`   |
+| 設計 filter / sort / count 操作、source 是分批 / streaming             | `references/data-flow-and-filter-composition.md` |
+| 「Load more 後畫面閃但內容沒變」的 silent 缺口                          | `references/data-flow-and-filter-composition.md`（層錯位） |
+| Backend / 演算法 / map-reduce 的 post-filter 漏項                      | `references/data-flow-and-filter-composition.md`（跨領域同結構）|
 
 每份 reference 自包含：以該情境為核心、把六大原則翻譯成可直接套用的協議步驟與範例。閱讀任一 reference 不需要回來看其他 reference。
 
@@ -114,7 +117,8 @@ frontend-with-playwright/
     ├── playwright-in-loop.md                   # 情境 3：playwright 三個位置（假設 / 行為 / 互動驗證）+ 寫成 layout test
     ├── framework-coexistence.md                # 情境 4：custom UI 留 framework 邊界外、外部組件四層合作、JS 操作邊界辨識
     ├── reactive-performance.md                 # 情境 5：observer scope、polling→observer、頻率盤點、iteration / regex / reflow
-    └── accessibility-and-focus.md              # 情境 6：focus on DOM move、keyboard 三要素、aria-live、native HTML > ARIA
+    ├── accessibility-and-focus.md              # 情境 6：focus on DOM move、keyboard 三要素、aria-live、native HTML > ARIA
+    └── data-flow-and-filter-composition.md     # 情境 7：Filter × Source 層錯位 + 五策略 + 跨領域（前端 / 後端 / 演算法 / DB）
 ```
 
 ---
@@ -135,7 +139,24 @@ frontend-with-playwright/
 當情境是「知道要做什麼、不確定前端該怎麼實作驗證」 → 讀本 skill。
 兩個 skill 的 `playwright` 段落互補：`requirement-protocol/tool-switching-timing` 講「何時切」、本 skill 的 `playwright-in-loop` 講「切了之後具體寫什麼 query」。
 
+`requirement-protocol/clarifying-ambiguous-instructions` 的「類型 5：篩選類」跟本 skill 的 `data-flow-and-filter-composition` 互補：上層講「該怎麼澄清」、本層講「澄清完該怎麼實作」。
+
+---
+
+## 相關抽象層原則（在 content/report/）
+
+本 skill 的協議建立在幾條抽象層原則上：
+
+- [#42 2 次門檻](/report/two-occurrence-threshold/) — 第 1 次失敗是運氣、第 2 次是訊號（playwright 切換時機的根據）
+- [#43 最小必要範圍](/report/minimum-necessary-scope-is-sanity-defense/) — selector / observer / 操作邊界從窄起（DOM 設計、Reactive 效能的根據）
+- [#44 SSOT](/report/single-source-of-truth/) — 值的住址只能一處（CSS 變數、量測一致性的根據）
+- [#45 外部組件合作四層](/report/external-component-collaboration-layers/) — 離公共介面越近越穩（framework 共處的根據）
+- [#64 同層合成](/report/compose-feature-at-source-layer/) — Stream 操作必須跟 materialization 同層（Filter × Source 的本質）
+- [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) — 容易寫的位置通常是錯位的位置（meta-principle、解釋為什麼層錯位 / 寬 selector / inline style 等便利寫法都會出問題）
+- [#68 驗收的時間軸：四個 checkpoint](/report/verification-timeline-checkpoints/) — Layout test 屬 Ship 前 checkpoint 的具體做法
+
 ---
 
 **Last Updated**: 2026-04-26
+**Version**: 0.2.0 — 接入 #55-#68 系列：新增第 7 份 reference `data-flow-and-filter-composition`（涵蓋 Filter × Source 層錯位 + 五策略 + 跨前端 / 後端 / 演算法 / DB 領域範例）；description 補跨領域 stream 操作觸發詞；SKILL.md 加「相關抽象層原則」段（#42-45 + #64 + #67-68）；強調「不只前端、stream 操作通用」
 **Version**: 0.1.0 — 從 `content/report/` 50+ 篇事後檢討萃取「前端網頁開發 + Playwright 驗證」這條主軸；六份 references 對應「DOM topology / CSS-JS 邊界 / Playwright 三位置 / framework 共處 / Reactive 效能 / A11y」六個情境
