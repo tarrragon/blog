@@ -153,6 +153,7 @@ frontend-with-playwright/
 - [#69 Test-First：先看到 RED 才相信 GREEN](/report/test-first-red-before-green/) — Playwright 測試的驗證協議：寫完測試 + 第一次跑就 GREEN 是警訊、要先在 buggy code 上看到 RED 才相信測試 catch 到該 catch 的東西
 - [#70 URL 是 stateful UI 的儲存層](/report/url-as-state-container/) — 互動式 UI 的可分享 / 可恢復 / 可導航 state 該寫進 URL（搜尋 / filter / tab / sort / pagination 都該檢視）
 - [#71 Tab Order = DOM Order = Mental Model 三者對齊](/report/tab-order-mental-model-alignment/) — DOM 順序預設 = tab 順序、不對齊時優先重排 DOM、tabindex > 0 是反模式
+- [#72 高 ROI 無外部觸發的工作會被結構性跳過](/report/external-trigger-for-high-roi-work/) — meta-原則：寫測試 / refactor / a11y review / Ship 前 case 設計都需要外部觸發（CI / pre-commit / PR template）、不是靠紀律
 
 ---
 

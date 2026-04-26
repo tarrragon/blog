@@ -130,6 +130,7 @@ requirement-protocol/
 - [#69 Test-First：先看到 RED 才相信 GREEN](/report/test-first-red-before-green/) — 「需求確認」最重要的一環：使用者意圖落實成測試 → 在 buggy code 上跑出 RED 才證明測試 catch 到該意圖、再修到 GREEN — 跳過 RED 等於跳過「測試對應到使用者意圖」的驗證
 - [#70 URL 是 stateful UI 的儲存層](/report/url-as-state-container/) — 列「使用者意圖完整集合」要包含 URL 維度：分享 / reload / back-forward 該不該保留 state
 - [#71 Tab Order = DOM Order = Mental Model 三者對齊](/report/tab-order-mental-model-alignment/) — A11y 維度的需求澄清：使用者預期「先做 X 再做 Y」、tab 順序該對齊 mental model
+- [#72 高 ROI 無外部觸發的工作會被結構性跳過](/report/external-trigger-for-high-roi-work/) — meta-原則：澄清 / Checkpoint 1 / RED phase 都是「沒便利路徑」工作、修法是 L3-L5 結構性對策（PR template / CI / pair）、不是「下次記得」
 
 ---
 
