@@ -19,7 +19,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 
 ---
 
-## Five Principles（五大原則速查）
+## Six Principles（六大原則速查）
 
 讀者能在本區塊完成快速複習；需要具體應用時，依下方「觸發路由」讀對應情境 reference。
 
@@ -48,6 +48,24 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 ### 5. 欄位設計（Field Design）
 
 同一份文件的不同欄位，從不同角度觀察同一件事，不重複撰寫。`what` 描述動作、`why` 陳述動機、`acceptance` 定義可驗證條件；混淆欄位會讓讀者在多處讀到相同內容。
+
+### 6. 多輪 Re-read Pass（Multi-pass Review）
+
+寫完不是 done — 是進入 review 階段。一次寫對全部維度違反 working memory、實際結果是「每維度都做一半」。設計 N 輪 re-read、每輪用不同 frame：
+
+| 輪  | Frame                                                         | 抓什麼                                                  |
+| --- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| 1   | 生成                                                          | idea → 字、預期會有錯                                   |
+| 2   | 對意圖（[#67](/report/ease-of-writing-vs-intent-alignment/)） | 跟原意對齊嗎、便利寫法偏移                              |
+| 3   | 機會成本語氣                                                  | 絕對主義詞翻成 trade-off（grep「應該/必須/不行/正確」） |
+| 4   | Grep-ability / 命名                                           | 關鍵字前置、AI 能單次 grep 命中                         |
+| 5   | 反例 / 邊界                                                   | 「何時不適用」段、反模式列表                            |
+
+**核心**：「再仔細一次」≠ multi-pass — 同 frame 重看 catch 不到新問題。每輪換 frame、才能 catch 不同層。各 reference（[writing-articles](/skills/compositional-writing/writing-articles/) / [writing-code-comments](/skills/compositional-writing/writing-code-comments/) / [writing-documents](/skills/compositional-writing/writing-documents/) / [writing-prompts](/skills/compositional-writing/writing-prompts/)）依 output 類型有特化的輪次組合。
+
+Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、見 [#84](/report/naming-as-iterated-artifact/) 跟 [writing-code-comments 的 naming review 段](/skills/compositional-writing/writing-code-comments/)。
+
+詳見 [#83 Writing 的 multi-pass review](/report/writing-multi-pass-review/)、[#85 Methodology 的 multi-pass 該 embed 在 pillar](/report/methodology-multi-pass-embedding/)。
 
 ---
 
@@ -111,6 +129,7 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-04-25
+**Version**: 0.7.0 — Phase B1 結構升級：加第 6 原則「多輪 Re-read Pass」（明示 5 輪 frame）、引用 #83 / #84 / #85 multi-pass 系列。後續 Phase B2 會把各 reference 結尾加「第 2 輪 review checklist」段
 **Version**: 0.6.0 — 從 references 過載的反思：writing-articles.md 從 780 行瘦身到 ~530 行（拆分判準 / 三類 structure 模板搬到 managing-article-collections.md、focus 集中在「單篇文章內部」）；新增規則八「自我應用 (dogfooding)」（教某條規則的段落本身遵守該規則）；managing-article-collections.md 整合「拆分判準」+「三層 structure 詳細對照 + 模板」；meta-metrics.md M2 加 dogfooding 失敗訊號
 **Version**: 0.5.0 — 從批量改寫 35 篇的經驗回流：原則 3 補「選項數由議題決定、不強湊」（避免 A/B/C/D 強迫症與「實務上幾乎不存在」的假反模式）；writing-articles.md 新增規則九（三類文章 structure 模板）；managing-article-collections.md 新增「跨篇引用 idiom 庫」與「三層 structure 對照」
 **Version**: 0.4.0 — 新增 `managing-article-collections.md`（跨多篇文章結構：三層、MOC、Pattern 卡片）；強化原則 1「原子化」（focus 是議題完整度、不是邊界清晰）；強化原則 3「意圖顯性」（機會成本語氣、不用絕對主義）
