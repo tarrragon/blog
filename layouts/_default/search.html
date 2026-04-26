@@ -5,6 +5,15 @@
        在手機 / 桌面窄視窗都隱藏；filter 維持在 pagefind 的 drawer 原位。 */ -}}
 <aside class="search-filter-slot" aria-label="篩選條件"></aside>
 
+{{- /* L1 expectation alignment（[#86] / [#90]）：明示 prefix-match 限制 + 工作 around。
+       這是 capability gap 的 L1 對策。L2（C1 client-side substring fallback）下輪 ship、
+       屆時需依 [#90] layered consistent 修改本 hint 文字承認 L2 的存在。 */ -}}
+<div data-pagefind-ignore class="search-prefix-hint" role="note">
+  <p class="search-prefix-hint__title">關於搜尋</p>
+  <p>本站搜尋採<strong>前綴匹配</strong>：「pre」會找到「<code>pre</code>fix」、但<strong>不會</strong>找到「back<code>pre</code>ssure」。</p>
+  <p>想找詞中段命中、可改打<strong>完整詞</strong>或<strong>較長前段</strong>（例如「backpre」找到「backpressure」）。</p>
+</div>
+
 <div data-pagefind-ignore class="search-shell">
   <h1 class="search-title">{{ .Title }}</h1>
   {{ with .Content }}{{ . }}{{ end }}
@@ -287,6 +296,37 @@
   /* drawer 推下，讓出 scope 占用的高度。 */
   .search-shell .pagefind-ui__drawer {
     margin-top: calc(var(--search-scope-h) + 8px);
+  }
+
+  /* Prefix-match hint（L1 expectation alignment、見 [#86] / [#90]）：
+     在 search-shell 上方、永遠可見的小區塊、解釋 prefix matching 限制 +
+     提供使用者可立刻採取的 work around（打完整詞 / 較長前段）。 */
+  .search-prefix-hint {
+    margin: 0 0 1.5rem;
+    padding: 0.85rem 1.1rem;
+    border-left: 3px solid currentColor;
+    border-radius: 0 6px 6px 0;
+    background-color: rgba(255, 255, 255, 0.04);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    opacity: 0.85;
+  }
+  .search-prefix-hint p {
+    margin: 0.25rem 0;
+  }
+  .search-prefix-hint__title {
+    font-weight: 600;
+    margin-bottom: 0.4rem !important;
+    opacity: 0.9;
+  }
+  .search-prefix-hint code {
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.08);
+    font-size: 0.95em;
+  }
+  .search-prefix-hint strong {
+    font-weight: 600;
   }
 
   /* Filter UI hint：scope=title/content 顯示、提示 type/tag filter 不可用 */
