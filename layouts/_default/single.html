@@ -24,6 +24,11 @@
   {{ end }}
   
   <div class="article-body" data-pagefind-body>
+    {{- /* Hidden title metadata for sub-indexes (#65 multi-index strategy):
+         pagefind --root-selector ".article-body" only reads meta inside that
+         scope. Without this, content-only index has no title and shows
+         "undefined" or the first heading. */ -}}
+    <span hidden data-pagefind-meta="title">{{ .Title }}</span>
     {{ .Content }}
   </div>
   
