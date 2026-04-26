@@ -177,6 +177,57 @@ tags: ["skills", "requirement-protocol", "對話協議", "決策呈現"]
 
 每個變種都是「五個維度都選窄格」的展現 — 看到任一個出現在自己 draft、立刻退回五步判讀。
 
+特別注意 **Yes/No 二選**（[#80](/report/yes-no-binary-collapse/)）— 「需要 X 嗎？」「OK 嗎？」「要繼續嗎？」這類最常見、最隱形的 collapse、把多選空間壓成 1 bit。修法是把 yes/no 翻成「現在做 X / 改 Y / 延後到 Z / 疊加 X+Y」的多選表。
+
+---
+
+## 真實 dogfood 例子（從本 skill 設計過程蒐集）
+
+寫這份 reference 的對話本身、agent 多次出現 collapse 反模式。記下作為將來 self-check 的具體素材：
+
+### 例 1：commit 後的「下一步」變 yes/no
+
+**Bad**：「下一步依你之前的決策是 ship D（UX hint），需要我繼續嗎？」
+
+**collapse**：呈現格式（單一推薦無選項）+ 選項類型（yes/no）+ 策略（單一 D）+ 批次（無選項）+ 時間（隱含立刻）= 五維全 collapse + binary。
+
+**Good**：列「立刻 ship D / 寫 case study / 反省迭代 / 延後」四選 + 推薦 + 「可複選」。
+
+### 例 2：列候選用無適配欄的 bullet
+
+**Bad**：
+
+```text
+下一層迭代候選（多選）：
+1. dogfood 檢驗
+2. L3 trigger
+3. case study
+4. 倒過來補卡
+5. 檢驗 #75 對 #46-#50
+```
+
+**collapse**：呈現格式（沒適配性欄）+ 沒明示「互不衝突可全做」+ 沒推薦組合 + 沒延後選項。
+
+**Good**：把選項排成「| 選項 | 適配性 | 取捨 |」表 + 標「都不衝突可全做」+ 推薦「先 1+3、4-5 下輪」+ 加「延後（明天再決）」欄。
+
+### 例 3：執行類決策列點未含推薦
+
+**Bad**：列出 ABC 三選但騎牆「我推薦 A、不過 B 也行」。
+
+**collapse**：呈現格式 layer 3「推薦不夠明確」變種、把選擇權騎牆推回給使用者。
+
+**Good**：「我推薦 **A**、因為 X。改成 B 的條件是 Y（如果 Y 成立、改 B）。想直接改告訴我。」
+
+### 例 4：反省題壓單選
+
+**Bad**：「這次最該做的反省是 1（補卡片）— 要做嗎？」
+
+**collapse**：反省題用 radio + 推薦 + yes/no。漏掉「全做」「跳過 1 做 2」「延後反省」三種合法回應。
+
+**Good**：列五個反省方向、明示「互不衝突」、推薦優先順序、「全做」「跳過某幾個」「調順序」全列為合法。
+
+每個 Bad 例都是 [#79 五維度](/report/decision-dialogue-dimensions/) collapse 的具體實例 — 寫的當下覺得「夠精簡」、實際藏掉 N 個合法選項。將來看到自己寫類似格式、立刻退回多選展開。
+
 ---
 
 ## 對應抽象層原則
@@ -189,3 +240,5 @@ tags: ["skills", "requirement-protocol", "對話協議", "決策呈現"]
 - [#79 決策對話的五維度](/report/decision-dialogue-dimensions/) — 上層 meta-原則
 - [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) — 為什麼窄格是預設（容易寫）
 - [#72 高 ROI 無觸發](/report/external-trigger-for-high-roi-work/) — 為什麼鬆綁需要協議結構（不靠紀律）
+- [#80 Yes/No 二選是隱式 collapse](/report/yes-no-binary-collapse/) — 五維 collapse 的極致形態、最常見最隱形
+- [#81 卡片系統的迭代浮現](/report/cards-as-living-system-iteration/) — 本 reference 的成型過程（spiral 而非線性）

@@ -108,6 +108,8 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#77 「現在不決定」是合法選項](decide-later-as-valid-option/) — 決策清單預設加「延後 + 條件」、區分「逃避決策」vs「結構性延後」、配 trigger 避免 #72 跳過
 - [#78 反省任務預設複選](retrospective-multi-select-default/) — 互斥要證明、不互斥是預設、反省題的 radio 格式 = 結構性把多面向 collapse 成單點
 - [#79 決策對話的五個維度](decision-dialogue-dimensions/) — meta-#74-#78、五個獨立維度（呈現 / 策略疊加 / 批次 / 時間軸 / 選項類型）、預設都 collapse 到窄格 = 把使用者塞進最少自由度的盒子
+- [#80 Yes/No 二選是隱式 collapse](yes-no-binary-collapse/) — 「需要 X 嗎？」「OK 嗎？」是五維 collapse 的極致形態、把多選空間壓成 1 bit、最常見最隱形
+- [#81 卡片系統的迭代浮現](cards-as-living-system-iteration/) — 原子卡 → meta-卡 → reference 三層 spiral、跳層或一次寫成都會 over-fit、process-level 元原則
 
 ### 第七輪：Pattern 卡片（待補完）
 

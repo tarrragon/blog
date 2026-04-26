@@ -138,10 +138,13 @@ requirement-protocol/
 - [#77 「現在不決定」是合法選項](/report/decide-later-as-valid-option/) — 決策表加「延後 + 條件」欄、區分逃避決策 vs 結構性延後
 - [#78 反省任務預設複選](/report/retrospective-multi-select-default/) — 互斥要證明、不互斥是預設、反省題用 radio = 結構性 collapse
 - [#79 決策對話的五維度](/report/decision-dialogue-dimensions/) — meta-#74-#78、五個獨立維度的鬆綁、預設都選窄格 = 把使用者塞進最少自由度的盒子
+- [#80 Yes/No 二選是隱式 collapse](/report/yes-no-binary-collapse/) — 「需要 X 嗎？」「OK 嗎？」最常見最隱形的 collapse、修法是翻成多選表
+- [#81 卡片系統的迭代浮現](/report/cards-as-living-system-iteration/) — 本 skill 的 reference 是 spiral 浮現、不是線性寫成、process-level 元原則
 
 ---
 
 **Last Updated**: 2026-04-26
+**Version**: 0.5.0 — 補 #80 (yes/no collapse) + #81 (卡片迭代浮現)、reference 加 dogfood examples 段（4 個 Bad/Good 對照）、#75 加 selector stacking 跨連 #46-#50
 **Version**: 0.4.0 — 接入 #74-#79 決策協議系列：新增第 6 份 reference `decision-dialogue.md`（五維度：呈現 / 策略 / 批次 / 時間 / 選項類型）；觸發路由加 3 條入口（呈現決策 / 開放問 / 反省題）；相關抽象層原則段補 #74-#79
 **Version**: 0.3.0 — 接入 #69-#73：相關抽象層原則段補 Test-First (#69)、URL state (#70)、tab order (#71)、外部觸發 meta (#72)、search 匹配模式 (#73)
 **Version**: 0.2.0 — 接入 #55-#68 系列：clarifying-ambiguous-instructions 加第 5 類「篩選類」（呼應 #58）；觸發路由加篩選類入口；SKILL.md 加「相關抽象層原則」段（#42-45 + #67-68）

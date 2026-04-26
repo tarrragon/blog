@@ -32,7 +32,8 @@
       "mcp__plugin_playwright_playwright__browser_take_screenshot",
       "Bash(perl -i -0777 -pe 's/<!-- BLOCK_TO_REMOVE_START -->.*?<!-- BLOCK_TO_REMOVE_END -->\\\\n\\\\n//s' writing-articles.md)",
       "Bash(chmod +x /tmp/sync_skill.sh)",
-      "Bash(make check *)"
+      "Bash(make check *)",
+      "WebFetch(domain:docs.claude.com)"
     ],
     "deny": [],
     "ask": []

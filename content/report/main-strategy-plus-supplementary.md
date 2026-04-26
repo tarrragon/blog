@@ -73,6 +73,21 @@ Defensive 處理失敗、Optimistic 處理成功 — 兩個 happy path 共存、
 
 「先 ship X 解眼前、Y 下輪做」是一種隱式疊加 — 不是放棄 Y、是延後到風險更可承受的 release window。判準見 [#76 分批 ship](../incremental-shipping-criteria/)。
 
+### 模式四：Selector strategy 疊加（#46-#50）
+
+[#46](../pattern-document-query/) / [#47](../pattern-component-root/) / [#48](../pattern-root-as-parameter/) / [#49](../pattern-closest-lookup/) 四張 selector 起點 pattern 卡乍看互斥（每個元件只能選一個起點）、實際在同一個 handler 內可疊加：
+
+| 元件位置                           | 適合 pattern     |
+| ---------------------------------- | ---------------- |
+| Modal / dialog 內定位元素          | #47 元件根變數   |
+| 跨 modal 邊界元素（toast、portal） | #46 全文件 query |
+| Event target → 找最近容器          | #49 closest      |
+| Test / 多實例                      | #48 函式參數     |
+
+同一份 component code 可同時用 #46 + #49（外部 portal 用 document、內部用 closest）— 解不同 selector context、不衝突、增量成本低 = 滿足三條判準。
+
+判讀：「這幾個 pattern 是同層次（互斥）還是不同 context（互補）？」不同 context = 疊加。
+
 ---
 
 ## 反模式：強迫單選的代價
