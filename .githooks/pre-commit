@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Blog pre-commit hook — runs mdtools against staged markdown files.
+# Blog pre-commit hook — runs mdtools against staged markdown files
+# + reminds about #69 RED-GREEN protocol when test files are touched.
 #
 # Pipeline:
+#   0. Test-First reminder if .spec.ts is staged (#69 / #72 L3 trigger).
 #   1. fmt --fix on each staged .md; re-stage if changed.
 #   2. lint on all staged .md; abort commit on error.
 #   3. cards on content/ globally; abort on error.
@@ -14,6 +16,32 @@ set -euo pipefail
 MDTOOLS_BIN="bin/mdtools"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
+
+# --- 0. Test-First (#69) reminder when test files are staged ---------------
+# This is a #72 L3 structural trigger: the act of committing a test triggers
+# a question. Goal: "did you see RED on buggy code, or are you committing
+# a placebo test that always passes?"
+#
+# Non-blocking — prints a reminder + asks for confirmation. Skip with
+# COMMIT_SKIP_TEST_FIRST=1 (e.g. for refactors that don't change test semantics).
+staged_tests=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.spec\.(ts|js)$|tests/.*\.(ts|js)$' || true)
+if [[ -n "$staged_tests" && "${COMMIT_SKIP_TEST_FIRST:-0}" != "1" && -t 0 ]]; then
+    echo ""
+    echo "  [pre-commit] Test files staged:"
+    echo "$staged_tests" | sed 's/^/    /'
+    echo ""
+    echo "  #69 RED-GREEN check:"
+    echo "  - Did you see this test FAIL on buggy / pre-fix code?"
+    echo "  - If GREEN-only, the test might be a placebo (5 failure modes — see #69)."
+    echo "  - Use 'make verify-red-green PRE_FIX=<commit-sha>' to retroactively verify."
+    echo "  - Skip this check: COMMIT_SKIP_TEST_FIRST=1 git commit ..."
+    echo ""
+    read -r -p "  Continue commit? [y/N] " response < /dev/tty
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo "[pre-commit] commit aborted by Test-First reminder" >&2
+        exit 1
+    fi
+fi
 
 # Fast exit if no staged .md files.
 staged_md=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.md$' || true)
