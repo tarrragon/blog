@@ -197,6 +197,23 @@ npm test
 
 兩次跑 + 兩個訊號（RED + GREEN）都對、測試才被驗證。**Retrospective 補驗證 ≠ 不能補** — 比完全跳過 RED 好、比 test-first 弱。
 
+協議已 codify 為 `make verify-red-green PRE_FIX=<commit-sha>`（見 Makefile）— 五步驟自動化、不需要每次手動 stash / checkout / build / restore。
+
+### Self-case：本卡誕生過程的 dogfooding 失敗
+
+本卡是從一次真實的 dogfooding 失敗抽出來的。修 [#55 Filter × Source 層錯位](../view-layer-filter-vs-source-layer/) bug 時、流程是：
+
+1. 修 code（multi-index 策略）
+2. 寫 4 個 Playwright tests
+3. 跑測試 → 4/4 GREEN
+4. 看起來完工
+
+User 問「修改之前有先寫測試確保符合預測狀態嗎」— 才意識到沒走 RED。Retrospective 補驗證後發現：**4 個測試只有 1 個真的 catch 到 bug、其他 3 個對 buggy code 也 PASS**（placebo 測試）。
+
+強化後（用 network-level + structural assertion 替換弱 invariant）：buggy code 上 1/4 PASS、3/4 FAIL。Fixed code 上 4/4 PASS。RED-GREEN 兩個訊號都看到、測試才真的驗證。
+
+如果不做 retrospective、會帶著 3/4 placebo 測試 ship — 表面 4/4 GREEN、實際只有 1 個真的防回歸。**「跑得通」≠「會 catch」這個區別、只有走過 RED 才知道**。
+
 ---
 
 ## 判讀徵兆
