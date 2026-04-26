@@ -6,13 +6,23 @@
 <aside class="search-filter-slot" aria-label="篩選條件"></aside>
 
 {{- /* L1 expectation alignment（[#86] / [#90]）：明示 prefix-match 限制 + 工作 around。
-       這是 capability gap 的 L1 對策。L2（C1 client-side substring fallback）下輪 ship、
-       屆時需依 [#90] layered consistent 修改本 hint 文字承認 L2 的存在。 */ -}}
+       L2（C1 substring fallback）已 ship、本 hint 依 [#90] layered consistent 承認 L2 存在。 */ -}}
 <div data-pagefind-ignore class="search-prefix-hint" role="note">
   <p class="search-prefix-hint__title">關於搜尋</p>
-  <p>本站搜尋採<strong>前綴匹配</strong>：「pre」會找到「<code>pre</code>fix」、但<strong>不會</strong>找到「back<code>pre</code>ssure」。</p>
-  <p>想找詞中段命中、可改打<strong>完整詞</strong>或<strong>較長前段</strong>（例如「backpre」找到「backpressure」）。</p>
+  <p>本站搜尋優先<strong>前綴匹配</strong>：「pre」會找到「<code>pre</code>fix」、但<strong>不會</strong>找到「back<code>pre</code>ssure」。</p>
+  <p>另外、頁面下方會顯示<strong>標題 substring 補強匹配</strong>（fallback、會明示）— 標題含 query 但非 prefix 開頭、由 client-side 補強。想要精準命中可改打完整詞或較長前段（例如「backpre」）。</p>
 </div>
+
+{{- /* C1 client-side substring fallback 的 data：emit 所有 regular pages 的 title + URL
+       為 inline JSON。Dataset 小（~135 篇 × ~50 bytes ≈ 7KB）、依 [#89] < 10MB 區間
+       O(N) 全掃 trivial、no lazy load 需要。 */ -}}
+{{- $titles := slice -}}
+{{- range .Site.RegularPages -}}
+  {{- if and .Title .RelPermalink -}}
+    {{- $titles = $titles | append (dict "title" .Title "url" .RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+<script id="search-titles-data" type="application/json">{{ $titles | jsonify | safeJS }}</script>
 
 <div data-pagefind-ignore class="search-shell">
   <h1 class="search-title">{{ .Title }}</h1>
@@ -238,8 +248,96 @@
     document.addEventListener('input', function (e) {
       if (e.target && e.target.classList && e.target.classList.contains('pagefind-ui__search-input')) {
         writeUrlState(e.target.value, getScope());
+        scheduleSubstringFallback(e.target.value);
       }
     });
+
+    /*
+      C1 — Title-only substring fallback（L2 augmenting computation、[#86]）。
+      Pagefind 1.5.2 prefix-only、找不到時補一層 client-side substring scan
+      （[#88] engine 不可調 → output transformation）。依 [#90] layered consistent：
+      明示「fallback」、跟 prefix matches 分開呈現、user 可區分結果來源。
+    */
+    var SUBSTRING_DEBOUNCE_MS = 200;
+    var SUBSTRING_MAX_RESULTS = 8;
+    var titlesData = (function () {
+      try {
+        var el = document.getElementById('search-titles-data');
+        return el ? JSON.parse(el.textContent) : [];
+      } catch (e) { return []; }
+    })();
+
+    var substringTimer = null;
+    function scheduleSubstringFallback(query) {
+      if (substringTimer) clearTimeout(substringTimer);
+      substringTimer = setTimeout(function () { runSubstringFallback(query); }, SUBSTRING_DEBOUNCE_MS);
+    }
+
+    function runSubstringFallback(query) {
+      var q = (query || '').trim().toLowerCase();
+      var container = ensureSubstringContainer();
+      // < 2 字元、空 query：清空、不執行
+      if (q.length < 2) { container.innerHTML = ''; container.hidden = true; return; }
+
+      // 純 substring match、排除 prefix match（已被 Pagefind 主結果涵蓋）
+      var matches = [];
+      for (var i = 0; i < titlesData.length && matches.length < SUBSTRING_MAX_RESULTS; i++) {
+        var t = titlesData[i];
+        var lower = (t.title || '').toLowerCase();
+        if (lower.indexOf(q) > 0 && lower.indexOf(q) !== 0) {
+          // 排除 prefix（indexOf === 0）、保留 substring（> 0）
+          matches.push(t);
+        }
+      }
+
+      if (matches.length === 0) { container.innerHTML = ''; container.hidden = true; return; }
+
+      // 依 [#90] layered consistent：清楚標示這是 fallback
+      var html = '<h3 class="search-substring-fallback__heading">標題 substring 補強匹配（fallback）</h3>';
+      html += '<p class="search-substring-fallback__note">以下標題包含「' + escapeHtml(q) + '」但非以此前綴開頭、由 client-side 補強匹配。Pagefind 主結果見上方。</p>';
+      html += '<ul class="search-substring-fallback__list">';
+      for (var j = 0; j < matches.length; j++) {
+        var m = matches[j];
+        html += '<li><a href="' + escapeHtml(m.url) + '">' + highlightMatch(m.title, q) + '</a></li>';
+      }
+      html += '</ul>';
+      container.innerHTML = html;
+      container.hidden = false;
+    }
+
+    function ensureSubstringContainer() {
+      var c = document.querySelector('.search-substring-fallback');
+      if (c) return c;
+      c = document.createElement('section');
+      c.className = 'search-substring-fallback';
+      c.setAttribute('aria-label', 'Substring fallback matches');
+      c.hidden = true;
+      var shell = document.querySelector('.search-shell');
+      if (shell) shell.appendChild(c);
+      return c;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+      });
+    }
+
+    function highlightMatch(title, q) {
+      var safeTitle = escapeHtml(title);
+      var safeQ = escapeHtml(q);
+      var lower = title.toLowerCase();
+      var idx = lower.indexOf(q);
+      if (idx <= 0) return safeTitle;
+      // case-preserving highlight
+      var before = escapeHtml(title.slice(0, idx));
+      var hit = escapeHtml(title.slice(idx, idx + q.length));
+      var after = escapeHtml(title.slice(idx + q.length));
+      return before + '<mark>' + hit + '</mark>' + after;
+    }
+
+    // 初次載入時若 URL 帶 query、跑一次 fallback
+    if (initial.query) scheduleSubstringFallback(initial.query);
 
     // popstate（back/forward）：重新從 URL 讀 + 套用。
     window.addEventListener('popstate', function () {
@@ -327,6 +425,43 @@
   }
   .search-prefix-hint strong {
     font-weight: 600;
+  }
+
+  /* Substring fallback section（C1、[#86] L2、[#90] layered consistent）：
+     視覺上明顯跟 Pagefind 主結果分開、明示這是 fallback、避免 silent compose */
+  .search-substring-fallback {
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.25rem 1rem;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+  }
+  .search-substring-fallback[hidden] { display: none; }
+  .search-substring-fallback__heading {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    opacity: 0.92;
+  }
+  .search-substring-fallback__note {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0 0 0.85rem;
+    opacity: 0.7;
+  }
+  .search-substring-fallback__list {
+    margin: 0;
+    padding: 0 0 0 1.2rem;
+  }
+  .search-substring-fallback__list li {
+    margin: 0.3rem 0;
+    line-height: 1.5;
+  }
+  .search-substring-fallback mark {
+    background-color: rgba(255, 235, 100, 0.25);
+    color: inherit;
+    padding: 0 0.1em;
+    border-radius: 2px;
   }
 
   /* Filter UI hint：scope=title/content 顯示、提示 type/tag filter 不可用 */
