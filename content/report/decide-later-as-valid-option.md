@@ -115,6 +115,7 @@ tags: ["report", "事後檢討", "工程方法論", "Communication", "Decision"]
 | [#72 高 ROI 無觸發](../external-trigger-for-high-roi-work/)          | 延後若沒 trigger 會變「結構性跳過」、必須寫條件                |
 | [#68 驗收的時間軸](../verification-timeline-checkpoints/)            | Checkpoint 1（寫之前）有時候答案就是「還不能寫、先補 context」 |
 | [#42 2 次門檻](../two-occurrence-threshold/)                         | 失敗 2 次後常該延後決策、回頭驗證假設                          |
+| [#79 決策對話的五維度](../decision-dialogue-dimensions/)             | 本卡是 #79「時間軸」維度的展開 — 立刻決 vs 結構性延後          |
 
 ---
 

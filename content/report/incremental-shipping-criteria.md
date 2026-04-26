@@ -122,6 +122,7 @@ D 滿足「高可見 + 低風險 + 低驗證」、立刻 ship 解眼前混亂。
 | [#75 主策略 + 補強](../main-strategy-plus-supplementary/)         | 補強策略通常先 ship、主策略下輪 — 兩卡互補                          |
 | [#72 高 ROI 無觸發](../external-trigger-for-high-roi-work/)       | 「下輪做」需要結構性 trigger（issue + deadline）、不靠紀律          |
 | [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/) | 每批的範圍從窄起、有證據再擴張                                      |
+| [#79 決策對話的五維度](../decision-dialogue-dimensions/)          | 本卡是 #79「批次邊界」維度的展開 — 一次 vs 分批                     |
 
 ---
 

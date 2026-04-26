@@ -109,6 +109,7 @@ Defensive 處理失敗、Optimistic 處理成功 — 兩個 happy path 共存、
 | [#65 多 index pattern](../pattern-multiple-indexes/)               | 結構修法的範本                                       |
 | [#73 搜尋匹配模式不對齊](../search-engine-matching-mode-mismatch/) | 五個策略中 D（UX hint）+ B/C（結構修法）就是疊加典型 |
 | [#76 分批 ship 準則](../incremental-shipping-criteria/)            | 「先 X 後 Y」是疊加在時間軸上的展開                  |
+| [#79 決策對話的五維度](../decision-dialogue-dimensions/)           | 本卡是 #79「策略數」維度的展開 — 單選 vs 主+補強疊加 |
 
 ---
 

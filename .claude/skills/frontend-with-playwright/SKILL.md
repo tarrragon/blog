@@ -159,9 +159,11 @@ frontend-with-playwright/
 - [#71 Tab Order = DOM Order = Mental Model 三者對齊](/report/tab-order-mental-model-alignment/) — DOM 順序預設 = tab 順序、不對齊時優先重排 DOM、tabindex > 0 是反模式
 - [#72 高 ROI 無外部觸發的工作會被結構性跳過](/report/external-trigger-for-high-roi-work/) — meta-原則：寫測試 / refactor / a11y review / Ship 前 case 設計都需要外部觸發（CI / pre-commit / PR template）、不是靠紀律
 - [#73 搜尋引擎的匹配模式跟使用者預期的對齊](/report/search-engine-matching-mode-mismatch/) — Search feature 的 capability 維度：prefix vs substring vs fuzzy vs semantic 各自取捨、預設多為 prefix（為 index size）、跟使用者預期不對齊 = silent 失敗
+- [#79 決策對話的五維度](/report/decision-dialogue-dimensions/) — 設計取捨呈現給使用者時的 meta-框架（呈現 / 策略疊加 / 批次 / 時間 / 選項類型）— 「設計取捨段落」常用的五策略表 + 推薦 + 「先 ship X、Y 下輪」就是這五維度的展現
 
 ---
 
 **Last Updated**: 2026-04-26
+**Version**: 0.3.0 — 接入 #79 決策對話五維度（對應 #74-#78 系列）；協助前端設計取捨段落的呈現格式對齊 user-facing 決策協議
 **Version**: 0.2.0 — 接入 #55-#68 系列：新增第 7 份 reference `data-flow-and-filter-composition`（涵蓋 Filter × Source 層錯位 + 五策略 + 跨前端 / 後端 / 演算法 / DB 領域範例）；description 補跨領域 stream 操作觸發詞；SKILL.md 加「相關抽象層原則」段（#42-45 + #64 + #67-68）；強調「不只前端、stream 操作通用」
 **Version**: 0.1.0 — 從 `content/report/` 50+ 篇事後檢討萃取「前端網頁開發 + Playwright 驗證」這條主軸；六份 references 對應「DOM topology / CSS-JS 邊界 / Playwright 三位置 / framework 共處 / Reactive 效能 / A11y」六個情境

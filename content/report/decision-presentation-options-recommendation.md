@@ -97,6 +97,7 @@ tags: ["report", "事後檢討", "工程方法論", "Pattern", "Communication"]
 | [#59 五策略選擇矩陣](../filter-source-composition-strategies/)            | #59 的「五策略 × 適配性表」就是本卡 Layer 1+2 的具體展現                                           |
 | [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/) | 開放問是「容易寫」的格式（少打字）、跟使用者意圖對齊（不重做功課）反相關                           |
 | [#72 高 ROI 無外部觸發](../external-trigger-for-high-roi-work/)           | 「列選項 + 標推薦」是高 ROI 但無觸發的工作（多打字、慢）、需要協議結構強制                         |
+| [#79 決策對話的五維度](../decision-dialogue-dimensions/)                  | 本卡是 #79「呈現格式」維度的展開 — 開放問 vs 結構表 + 推薦                                         |
 
 ---
 
