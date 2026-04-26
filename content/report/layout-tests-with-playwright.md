@@ -202,3 +202,5 @@ test.describe('search page layout', () => {
 | 互動狀態下版型不穩定                  | 寫狀態切換測試              | 各狀態下關鍵元素的位置關係 |
 
 **核心原則**：版型契約用測試固定 — 測試紅了表示契約被打破、不是測試壞了。每個紅色測試都是有人改了不該改的東西的訊號。
+
+跟 [#68 驗收的時間軸](../verification-timeline-checkpoints/) 的關係：layout test 是 Checkpoint 3「Ship 前」的具體做法 — 跨 viewport / 跨狀態 / 跨資料規模驗收、catch 開發中 checkpoint 看不到的整合錯。沒寫 layout test = 把 ship 前 checkpoint 跳過、所有版型回歸都進 ship 後（使用者反映才修）。

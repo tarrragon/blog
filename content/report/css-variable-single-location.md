@@ -217,3 +217,5 @@ margin-top: calc(var(--search-scope-h, 60px) + 8px);
 | 變數值在 cascade 中被另一處覆蓋    | 找出兩處、決定哪一處保留      |
 
 **核心原則**：CSS 變數是設計 token 系統的基礎、定義位置就是 token 的「住址」。住址一個就好、不要一物多址。
+
+「就地寫個值」是便利（不用找 token 位置）、「集中定義 + 引用」是對齊 — 同 [#44 SSOT](../single-source-of-truth/) 跟 [#67 便利 vs 對齊反相關](../ease-of-writing-vs-intent-alignment/)。

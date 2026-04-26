@@ -200,3 +200,5 @@ waitForElement(searchRoot, '.pagefind-ui__search-input', function (input) {
 | 開頁面立刻按 tab 跳到不對位置      | 評估是否該 auto-focus 主要互動元素      |
 
 **核心原則**：JS 變動 DOM = focus 副作用。每個變動位置都該回答「focus 該去哪」、不留給瀏覽器預設。
+
+跟 [#57 Loading / Empty / End 三狀態](../loading-empty-end-state-distinction/) 共骨：兩者都是「狀態變動需要回答對應的 UX 問題」 — #57 講「使用者看到的訊號」、本卡講「鍵盤使用者的 focus 位置」。動態 UI 設計 = 狀態變動 + 狀態變動的 UX + 狀態變動的 a11y 三個維度同時設計。

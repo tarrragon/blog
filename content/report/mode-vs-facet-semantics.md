@@ -147,3 +147,5 @@ Facet 也可以分多區（type/tag 在 sidebar、價格區間在結果上方）
 | 新增搜尋功能不知道該放哪                   | 沒有分區慣例             | 先判斷 mode/facet、再決定位置 |
 
 **核心原則**：搜尋 UI 的控制不是同層的「篩選器」 — 語意層級不同、視覺分區也應不同。位置就是契約：靠 input 的影響搜尋本身、靠結果的篩選結果。
+
+跟 [#58 篩選類指令的澄清時機](../filter-instruction-clarification/) 的關係：mode 跟 facet 是兩種不同的「篩選類指令」。Mode（如「title-only / content / both」）通常重塑 query → 對應 #58 三問的「定義域 (c) 重新搜尋」；Facet（如「type=post tag=js」）通常加 filter 條件 → 對應「定義域 (b) 在所有結果裡找」。語意分區是視覺面、定義域選擇是行為面 — 兩者一起設計才完整。

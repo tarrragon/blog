@@ -147,3 +147,5 @@ padding-top: calc(var(--search-title-h) + var(--search-form-h) + var(--search-ga
 | 「適中的 padding」            | 「適中」對應多少 px？                            | 給選項供選擇    |
 
 **核心原則**：空間關係描述只是意圖、不是實作數字。把意圖翻譯成數字的過程要對外可見、讓使用者參與。
+
+第三輪指令類型現有五類：空間（本卡）/ 相對位置（[#17](../relative-position-instruction-clarification/)）/ 隔離（[#18](../isolation-instruction-clarification/)）/ 決定權（[#21](../decide-vs-confirm-boundary/)）/ 篩選（[#58](../filter-instruction-clarification/)）。前四類缺幾何 / 邊界 / 拍板資訊、第 5 類缺操作層級資訊。

@@ -197,3 +197,5 @@ DevTools 顯示「有 `.is-scope-filtered` class」 — class 名本身解釋為
 | 改視覺需要對抗 framework reset              | 用 CSS Layers 把 framework 規則降層、自家規則不需 important |
 
 **核心原則**：CSS 是視覺規則的家、JS 控制狀態 - 兩者透過 class toggle 介面共處、不互相侵入。
+
+Inline style + !important 是「立刻生效」的便利、class toggle 是「樣式留 CSS」的對齊 — 這個反相關的更高層原則見 [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)。

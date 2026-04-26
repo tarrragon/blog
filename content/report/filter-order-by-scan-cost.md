@@ -147,3 +147,5 @@ Type 5 個落在「短」、Tag 80 個落在「長」 — 順序明顯。
 | 新增選項後順序錯亂           | reorder 邏輯依賴 hardcoded list | 改用屬性分類（例如選項數量自動排） |
 
 **核心原則**：UI 排序是設計決策、不是技術選擇。預設順序通常反映資料來源結構、不反映使用者行為 — 主動覆寫是常態、不是例外。
+
+跟 [#55-#66 Filter × Source 系列](../view-layer-filter-vs-source-layer/) 的關係：本卡是「filter UI 的排序」、Filter × Source 系列是「filter 行為的層級」 — 兩個維度互補。設計 filter UI 時兩者都要顧：本卡決定「哪個選項放前面」、[#58](../filter-instruction-clarification/) 決定「篩選的定義域是哪一層」、[#59](../filter-source-composition-strategies/) 決定「filter 跟 source 怎麼合成」。

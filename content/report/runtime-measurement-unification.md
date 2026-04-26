@@ -219,3 +219,5 @@ function setVar(name, val) {
 | 寫死值跟實際渲染差距 > 2px         | 該值依賴的條件沒鎖、改量測或鎖條件 |
 
 **核心原則**：對齊問題的根因常常是「混搭」 — 用統一策略消除這個根因、debug 範圍從「某個情境」縮到「整套策略對嗎」。
+
+混搭通常是便利驅動的結果（每處用最快的方式）、統一策略需要先對齊原則 — 同 [#44 SSOT](../single-source-of-truth/) 跟 [#67 便利 vs 對齊反相關](../ease-of-writing-vs-intent-alignment/)。

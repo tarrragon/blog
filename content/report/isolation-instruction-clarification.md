@@ -152,3 +152,5 @@ tags: ["report", "事後檢討", "溝通", "工程方法論"]
 | 「X 不能影響 Y」 | 影響的方式（layout / state / 樣式）？     | 影響途徑       |
 
 **核心原則**：隔離指令的核心是「隔離邊界類型」 — 這個答案決定實作策略。沒確認邊界就動手 = 隨機選一種隔離、可能與使用者意圖不一致。
+
+第三輪指令類型現有五類：空間（[#16](../spatial-instruction-clarification/)）/ 相對位置（[#17](../relative-position-instruction-clarification/)）/ 隔離（本卡）/ 決定權（[#21](../decide-vs-confirm-boundary/)）/ 篩選（[#58](../filter-instruction-clarification/)）。

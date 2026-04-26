@@ -193,3 +193,5 @@ Mobile < 1400：filter 移到 pagefind drawer 內、scope UI 維持原位
 | 「跟 Z 對齊」          | Z 的哪個邊（top / bottom / left / right）？         | 對齊基準                       |
 
 **核心原則**：相對位置描述只是意圖、不是實作藍圖。實作前先把意圖畫成 layout 草圖、確認後再開工。
+
+第三輪指令類型現有五類：空間（[#16](../spatial-instruction-clarification/)）/ 相對位置（本卡）/ 隔離（[#18](../isolation-instruction-clarification/)）/ 決定權（[#21](../decide-vs-confirm-boundary/)）/ 篩選（[#58](../filter-instruction-clarification/)）。

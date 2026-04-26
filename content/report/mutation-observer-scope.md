@@ -332,3 +332,5 @@ new MutationObserver(applyB).observe(elB, { attributes: true });
 | 屬性監聽觸發太頻繁          | 沒用 attributeFilter        | 加 filter 限縮屬性                        |
 
 **核心原則**：MutationObserver 是非同步監聽、跟同步 selector 設計工具完全不同。範圍 / option / 頻率三維度都要顯式設計 — 預設組合會在 framework 環境中過度觸發、且難以 debug。
+
+`subtree: true` + `attributes: true` 是「監聽全部」的便利、窄 root + 最少 option 是「精準監聽」的對齊 — 同 [#43 最小必要範圍](../minimum-necessary-scope-is-sanity-defense/) 跟 [#67 便利 vs 對齊反相關](../ease-of-writing-vs-intent-alignment/)。
