@@ -309,8 +309,9 @@ new MutationObserver(applyB).observe(elB, { attributes: true });
 ### C：寬範圍 + subtree + 全勾 option（預設配置）
 
 - **機制**：observe(elem, { childList: true, subtree: true, attributes: true, ...})
-- **跟 A 的取捨**：C 寫法簡單、A 顯式設計；但 C 觸發數十次、難 debug、效能下降
-- **C 才合理的情境**：實務上幾乎不存在 — 「以防萬一全勾」是 anti-pattern
+- **C 是反模式**：「以防萬一全勾」會觸發數十倍頻率的 callback、framework 環境必撞效能 / 競態 bug
+- **看起來吸引人的原因**：寫法簡單、不用想要監聽什麼、「全部都看就不會漏」
+- **實際發生的代價**：CPU 100%、layout thrashing、self-mutation 引發無限迴圈
 
 ### D：disconnect / observe 配對處理 self-mutation
 

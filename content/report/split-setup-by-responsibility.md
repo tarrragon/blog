@@ -248,7 +248,7 @@ function reorderFilters(filterPanel) {
 
 - **機制**：固定 LOC 拆檔、不考慮職責邊界
 - **跟 A 的取捨**：B 拆完後切片無邏輯意義、A 切片各自完整；B 更亂、debug 反而更難
-- **B 比 A 好的情境**：實務上幾乎不存在 — 「行數」不是有意義的拆分判準
+- **B 是反模式**：「行數」不是有意義的拆分判準 — 拆完後切片無邏輯意義、debug 反而更難
 
 ### C：保持 mega init function
 

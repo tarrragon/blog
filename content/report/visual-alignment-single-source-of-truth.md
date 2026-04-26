@@ -133,13 +133,13 @@ new ResizeObserver(syncScopeHeight).observe(scopeEl);
 
 - **機制**：`padding-top: 152px` 在多個 selector 直接寫死
 - **跟 A 的取捨**：C 寫法直接、不用變數系統；但改一處要找全部、漏改一個就壞
-- **C 才合理的情境**：實務上幾乎不存在 — magic number 是「未來 debug 的潛在炸彈」（[#44 SSoT](../single-source-of-truth/)）
+- **C 是反模式**：magic number 是「未來 debug 的潛在炸彈」（[#44 SSoT](../single-source-of-truth/)） — 改一處要找全部、漏改一個就壞
 
 ### D：估算值（不寫變數、不量測）
 
 - **機制**：執行者依感覺寫「padding-top: 152px、應該對齊」
 - **成本特別高的原因**：估值對 = 巧合、估值錯 = 看起來對但 +/- 幾 px、後者更糟（錯誤被視覺接受、不會被發現）
-- **D 才合理的情境**：實務上幾乎不存在 — 任何寫死值都該標明來源（fact / 鎖定條件 / 量測）
+- **D 是反模式**：任何寫死值都該標明來源（fact / 鎖定條件 / 量測）— 估值對 = 巧合、估值錯 = 看起來對但實際 +/- 幾 px、ship 後在邊界情境暴露
 
 ---
 

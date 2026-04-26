@@ -121,7 +121,7 @@ Facet 也可以分多區（type/tag 在 sidebar、價格區間在結果上方）
 
 - **機制**：mode + facet 都放 sidebar 一起
 - **跟 A 的取捨**：B 集中管理視覺乾淨、A 分區語意清晰；但 B 使用者區分不了哪個影響 query、哪個影響結果
-- **B 比 A 好的情境**：實務上幾乎不存在 — mode/facet 混淆是 UX 痛點
+- **B 是反模式**：mode/facet 混淆是 UX 痛點 — 使用者區分不了哪個影響 query、哪個影響結果
 
 ### C：所有控制集中 input 旁
 

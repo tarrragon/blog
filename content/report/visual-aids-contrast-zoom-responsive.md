@@ -155,7 +155,7 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 - **機制**：字型 `font-size: clamp(0.875rem, 1rem, 1.125rem)`、限制使用者放大範圍
 - **跟 A/B/C 的取捨**：D 主動限制字型放大範圍、違反 WCAG 1.4.4
-- **D 才合理的情境**：實務上幾乎不存在 — 強制限制字型放大是反 a11y
+- **D 是反模式**：違反 WCAG 1.4.4 — 強制限制字型放大是反 a11y、低視力使用者完全無法調整
 
 ---
 
@@ -190,7 +190,7 @@ WCAG（Web Content Accessibility Guidelines）提供量化標準（對比度 AA 
 
 - **機制**：紅色 = 錯、綠色 = 對
 - **跟 A 的取捨**：B 視覺乾淨、A 對色弱友善；B 違反 WCAG 1.4.1 Use of Color
-- **B 才合理的情境**：實務上幾乎不存在 — WCAG AA 必要
+- **B 是反模式**：違反 WCAG 1.4.1 Use of Color（合規層） — 色弱使用者完全無法區分對 / 錯
 
 ### C：純形狀 / 位置區分（無顏色）
 

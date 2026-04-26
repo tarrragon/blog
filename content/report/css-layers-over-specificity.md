@@ -159,7 +159,7 @@ CSS Layers 在所有主流瀏覽器（Chrome 99+、Firefox 97+、Safari 15.4+）
 
 - **機制**：`.pagefind-ui__filter-block.pagefind-ui__filter-block` 寫兩次提升 specificity 從 10 到 20
 - **跟 A 的取捨**：B 不需要改 vendor CSS 引入方式、A 需要；但 B 跟組件 specificity 競賽（組件作者改 hash 寫法就壞）、A 跳出競賽
-- **B 比 A 好的情境**：實務上幾乎不存在 — 唯一情境是 vendor CSS 不能用 `@import` 引入（極罕見的 build pipeline 限制）
+- **B 是反模式**：跟組件 specificity 競賽（組件作者改 hash 寫法就壞） — 唯一例外是 vendor CSS 不能用 `@import` 引入（極罕見的 build pipeline 限制）
 
 ### C：`!important` 對抗
 

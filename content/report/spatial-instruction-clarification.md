@@ -132,7 +132,7 @@ padding-top: calc(var(--search-title-h) + var(--search-form-h) + var(--search-ga
 
 - **機制**：執行者自己決定數值、不問也不告知
 - **成本特別高的原因**：跟使用者意圖不一致時要重做、多輪試錯
-- **D 才合理的情境**：實務上幾乎不存在 — 「使用者會看到的數字」屬於該確認的決定（[#21 可決定 vs 該先確認](../decide-vs-confirm-boundary/)）
+- **D 是反模式**：「使用者會看到的數字」屬於該確認的決定（[#21 可決定 vs 該先確認](../decide-vs-confirm-boundary/)）— 自決會跟意圖不一致、被退回時白做
 
 ---
 

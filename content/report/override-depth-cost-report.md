@@ -137,7 +137,7 @@ summary { display: block; list-style: none; }
 
 - **機制**：執行者自己加碼、到 4-5 條才停
 - **跟 A 的取捨**：B 給執行者更多嘗試空間、A 早提早決；B 在 N 增加時白費時間放大
-- **B 比 A 好的情境**：實務上幾乎不存在 — 第 2 次失敗就是 [#42 2 次門檻](../two-occurrence-threshold/) 的訊號
+- **B 是反模式**：第 2 次失敗就是 [#42 2 次門檻](../two-occurrence-threshold/) 的訊號、繼續加碼只是放大沉沒成本
 
 ### C：默默寫到底、不告知
 

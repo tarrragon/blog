@@ -158,7 +158,7 @@ desiredOrder.forEach(function (k) {
 
 - **機制**：依「我覺得這應該快」做決定
 - **成本特別高的原因**：瀏覽器 / 設備 / 場景差異大、直覺不可靠；可能漏掉 forced sync layout 等真正貴的 pattern
-- **D 才合理的情境**：實務上幾乎不存在 — 效能 dispute 必須有數字
+- **D 是反模式**：效能 dispute 必須有數字 — 直覺判斷會漏掉 forced sync layout 等真正貴的 pattern、跨設備差異大
 
 ---
 
