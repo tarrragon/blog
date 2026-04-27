@@ -76,15 +76,20 @@ if [[ "$restaged" -gt 0 ]]; then
 fi
 
 # --- 2. lint on staged set -------------------------------------------------
+# Skill files (.claude/skills/) follow Anthropic's Skill format (H1 + body,
+# no Hugo frontmatter) — exempt from mdtools lint which targets Hugo content.
 echo "[pre-commit] mdtools lint on staged markdown"
 lint_args=()
 while IFS= read -r f; do
     [[ -z "$f" ]] && continue
+    [[ "$f" == .claude/skills/* ]] && continue
     lint_args+=("$f")
 done <<< "$staged_md"
-if ! "$MDTOOLS_BIN" lint "${lint_args[@]}"; then
-    echo "[pre-commit] lint errors present; fix and re-stage" >&2
-    exit 1
+if [[ ${#lint_args[@]} -gt 0 ]]; then
+    if ! "$MDTOOLS_BIN" lint "${lint_args[@]}"; then
+        echo "[pre-commit] lint errors present; fix and re-stage" >&2
+        exit 1
+    fi
 fi
 
 # --- 3. cards on full content/ --------------------------------------------
