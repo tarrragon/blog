@@ -11,13 +11,13 @@
 
 ## 何時參閱本文件
 
-| 訊號                                                    | 該做的第一件事                            |
-| ------------------------------------------------------- | ----------------------------------------- |
-| 即將寫 CSS 規則但只看過 class name、沒看過真實 DOM      | playwright 量 ancestor chain              |
-| Selector 命中超出預期的元素                             | 把 selector 加上起點 + 範圍 + 過濾三維度  |
-| 規則寫了但不生效                                        | DevTools Computed → 看誰實際贏了         |
-| Class name 含 `__inner` `__wrapper` 但不確定是直接子節點 | playwright 讀 parent / child 關係         |
-| 想用 `document.querySelectorAll('.target')`             | 先評估「起點要不要從元件根」              |
+| 訊號                                                     | 該做的第一件事                           |
+| -------------------------------------------------------- | ---------------------------------------- |
+| 即將寫 CSS 規則但只看過 class name、沒看過真實 DOM       | playwright 量 ancestor chain             |
+| Selector 命中超出預期的元素                              | 把 selector 加上起點 + 範圍 + 過濾三維度 |
+| 規則寫了但不生效                                         | DevTools Computed → 看誰實際贏了         |
+| Class name 含 `__inner` `__wrapper` 但不確定是直接子節點 | playwright 讀 parent / child 關係        |
+| 想用 `document.querySelectorAll('.target')`              | 先評估「起點要不要從元件根」             |
 
 ---
 
@@ -54,11 +54,11 @@ async () => {
 
 精準的 selector = **起點 + 範圍 + 過濾** 三維度顯式設計、不是「能命中就好」。
 
-| 維度 | 問題                       | 答案類型                                     |
-| ---- | -------------------------- | -------------------------------------------- |
-| 起點 | 從哪個 DOM 節點開始 query  | document / 元件根 / 函式參數 / closest()     |
-| 範圍 | 要找直接子節點還是子孫     | `>` 直接子 / `> ... > ...` 多層 / 空格 子孫  |
-| 過濾 | 要排除哪些元素 / 已處理的  | `:not()` / `[data-processed]` / WeakMap 檢查 |
+| 維度 | 問題                      | 答案類型                                     |
+| ---- | ------------------------- | -------------------------------------------- |
+| 起點 | 從哪個 DOM 節點開始 query | document / 元件根 / 函式參數 / closest()     |
+| 範圍 | 要找直接子節點還是子孫    | `>` 直接子 / `> ... > ...` 多層 / 空格 子孫  |
+| 過濾 | 要排除哪些元素 / 已處理的 | `:not()` / `[data-processed]` / WeakMap 檢查 |
 
 ---
 
@@ -110,12 +110,12 @@ button.addEventListener('click', e => {
 
 ## 範圍：`>` 還是空格
 
-| 寫法                  | 意思                          | 風險                                   |
-| --------------------- | ----------------------------- | -------------------------------------- |
-| `.parent > .child`    | 直接子節點                    | 安全、嚴格                             |
-| `.parent .child`      | 任意深度子孫                  | 命中 nested 結構的同類元素             |
-| `.parent > * > .x`    | 確切兩層                      | 嚴格、結構變動時要更新                 |
-| `.parent .x:not(.y)`  | 子孫中排除某類                | 還是子孫範圍、:not 是過濾不是限制範圍   |
+| 寫法                 | 意思           | 風險                                  |
+| -------------------- | -------------- | ------------------------------------- |
+| `.parent > .child`   | 直接子節點     | 安全、嚴格                            |
+| `.parent .child`     | 任意深度子孫   | 命中 nested 結構的同類元素            |
+| `.parent > * > .x`   | 確切兩層       | 嚴格、結構變動時要更新                |
+| `.parent .x:not(.y)` | 子孫中排除某類 | 還是子孫範圍、:not 是過濾不是限制範圍 |
 
 預設 `>`、有證據（多層 nested 結構都該 match）才放寬到空格。
 
@@ -226,16 +226,6 @@ root.querySelectorAll(':scope > .results > .result > .title').forEach(el => el.c
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- `dom-topology-before-css.md` — 拓樸理解先行於 CSS 規則
-- `dom-selector-precision.md` — Selector 精準度三維度
-- `pattern-document-query.md` / `pattern-component-root.md` / `pattern-root-as-parameter.md` / `pattern-closest-lookup.md` — 起點四選一 pattern 卡片
-- `pattern-attribute-idempotency-marker.md` / `pattern-weakmap-idempotency-record.md` — Idempotency 兩選一
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

@@ -2,7 +2,7 @@
 
 對應觸發情境：**準備呈現決策給使用者選擇時**（任何「該怎麼做、A 還是 B、要不要做 X」的場景）。
 
-本 reference 自包含、不需讀其他 reference。把 [#74-#79](/report/) 系列翻譯成可直接套用的協議步驟與模板。
+本 reference 自包含、不需讀其他 reference。把決策協議系列翻譯成可直接套用的協議步驟與模板（個別原則卡見 `principles/`）。
 
 ---
 
@@ -10,12 +10,12 @@
 
 對話中要使用者決策時、有五個獨立維度可以選擇 — **不該預設 collapse 到單一格子**：
 
-| 維度 | 預設窄格 | 鬆綁後 |
-|---|---|---|
-| 呈現格式 | 開放問 | 選項表 + 推薦 |
-| 策略數 | 單選 | 主 + 補強疊加 |
-| 批次邊界 | 一次做完 | 分批 ship |
-| 時間軸 | 立刻決 | 結構性延後 |
+| 維度     | 預設窄格   | 鬆綁後        |
+| -------- | ---------- | ------------- |
+| 呈現格式 | 開放問     | 選項表 + 推薦 |
+| 策略數   | 單選       | 主 + 補強疊加 |
+| 批次邊界 | 一次做完   | 分批 ship     |
+| 時間軸   | 立刻決     | 結構性延後    |
 | 選項類型 | 單選 radio | 複選 checkbox |
 
 預設都選窄格 = 用最少自由度的問題塞使用者。每個維度該選哪邊、依情境 reason about、不是無腦套預設。
@@ -28,9 +28,9 @@
 
 **判準**：「這次 output 該收斂到一個答案、還是攤開多面向？」
 
-| 情境 | 預設 |
-|---|---|
-| 執行類（用 A 還是 B 工具、選哪個策略） | 單選 + 推薦 |
+| 情境                                   | 預設                         |
+| -------------------------------------- | ---------------------------- |
+| 執行類（用 A 還是 B 工具、選哪個策略） | 單選 + 推薦                  |
 | 反省類（這次學到什麼、下一步該往哪走） | 複選、明示「互不衝突可全選」 |
 
 **反例**：把「我們可以做卡片 / 測試 / 改流程 / 寫文章哪個？」當單選 — 強迫使用者排序、結果只有第一個被做。
@@ -41,9 +41,9 @@
 
 **判準**：「我（agent）有沒有提供能讓使用者下決定的全部資訊？」
 
-| 情境 | 預設 |
-|---|---|
-| Context 完整、選項都展開 | 立刻決 |
+| 情境                                                      | 預設              |
+| --------------------------------------------------------- | ----------------- |
+| Context 完整、選項都展開                                  | 立刻決            |
 | Context 缺（依賴未跑的測試 / 未讀的 code / 未完成的觀測） | **延後 + 寫條件** |
 
 **反例**：使用者說「我再想想」、agent 加壓「那你決定了嗎？」— 把延後當失敗。
@@ -54,11 +54,11 @@
 
 **判準**：策略間 (1) 解不同層、(2) 沒副作用衝突、(3) 增量成本可接受 → 三條全滿足 = 該疊加。
 
-| 組合 | 範例 |
-|---|---|
-| Structural + UX | Multi-index（解根因）+ Honest progress UI（解感知） |
-| Defensive + Optimistic | 輸入驗證 + 預設值 / 自動修正 |
-| Now + Later | 先 ship X 解眼前、Y 下輪做（時間軸疊加） |
+| 組合                   | 範例                                                |
+| ---------------------- | --------------------------------------------------- |
+| Structural + UX        | Multi-index（解根因）+ Honest progress UI（解感知） |
+| Defensive + Optimistic | 輸入驗證 + 預設值 / 自動修正                        |
+| Now + Later            | 先 ship X 解眼前、Y 下輪做（時間軸疊加）            |
 
 **反例**：「五策略選一」當預設、推薦時只列一個策略。
 
@@ -68,11 +68,11 @@
 
 **三軸切分**：
 
-| 軸 | 低（先 ship） | 高（下輪） |
-|---|---|---|
-| 使用者可見性 | UI 改變、訊息精準 | 純內部結構 |
-| 風險暴露面 | 純加法、不影響既有 path | 替換、刪除、結構重組 |
-| 驗證需求 | unit test 可驗 | 需長時觀測、A/B |
+| 軸           | 低（先 ship）           | 高（下輪）           |
+| ------------ | ----------------------- | -------------------- |
+| 使用者可見性 | UI 改變、訊息精準       | 純內部結構           |
+| 風險暴露面   | 純加法、不影響既有 path | 替換、刪除、結構重組 |
+| 驗證需求     | unit test 可驗          | 需長時觀測、A/B      |
 
 **先 ship 甜蜜點**：高可見 + 低風險 + 低驗證 — 例：UX hint、empty state 訊息、明顯 UI 修正。
 
@@ -84,10 +84,10 @@
 
 **判準**：「我能不能列選項 + 適配性 + 推薦？」
 
-| 情境 | 格式 |
-|---|---|
-| 有客觀適配性可比 | 結構表 + 推薦 + 開放修改 |
-| 純探索 / 主觀偏好 / 命名 | 開放問 |
+| 情境                     | 格式                     |
+| ------------------------ | ------------------------ |
+| 有客觀適配性可比         | 結構表 + 推薦 + 開放修改 |
+| 純探索 / 主觀偏好 / 命名 | 開放問                   |
 
 **反例**：「你想怎麼做？」— 把整個問題空間丟回去。
 
@@ -162,17 +162,17 @@
 
 ## 反模式快速辨識
 
-| 反模式 | 五維 collapse 到 |
-|---|---|
-| "你想怎麼做？" | 開放問 + 立刻 + 單選 + 一次 + 單策略 |
-| "推薦 A、要嗎？" | 結構但只 1 選 + 立刻 + 單選 + 一次 + 單策略 |
-| "ABCDE 你選哪個？" | 結構 + 立刻 + 單選 radio + 一次 + 單策略 |
-| "做完 X 才能繼續" | 結構 + 立刻 + 單選 + 一次 + 單策略（漏分批） |
-| "這次學到 X、下次注意" | 反省題壓單選、立刻、一次 |
+| 反模式                 | 五維 collapse 到                             |
+| ---------------------- | -------------------------------------------- |
+| "你想怎麼做？"         | 開放問 + 立刻 + 單選 + 一次 + 單策略         |
+| "推薦 A、要嗎？"       | 結構但只 1 選 + 立刻 + 單選 + 一次 + 單策略  |
+| "ABCDE 你選哪個？"     | 結構 + 立刻 + 單選 radio + 一次 + 單策略     |
+| "做完 X 才能繼續"      | 結構 + 立刻 + 單選 + 一次 + 單策略（漏分批） |
+| "這次學到 X、下次注意" | 反省題壓單選、立刻、一次                     |
 
 每個變種都是「五個維度都選窄格」的展現 — 看到任一個出現在自己 draft、立刻退回五步判讀。
 
-特別注意 **Yes/No 二選**（[#80](/report/yes-no-binary-collapse/)）— 「需要 X 嗎？」「OK 嗎？」「要繼續嗎？」這類最常見、最隱形的 collapse、把多選空間壓成 1 bit。修法是把 yes/no 翻成「現在做 X / 改 Y / 延後到 Z / 疊加 X+Y」的多選表。
+特別注意 **Yes/No 二選**（[#80](principles/yes-no-binary-collapse.md)）— 「需要 X 嗎？」「OK 嗎？」「要繼續嗎？」這類最常見、最隱形的 collapse、把多選空間壓成 1 bit。修法是把 yes/no 翻成「現在做 X / 改 Y / 延後到 Z / 疊加 X+Y」的多選表。
 
 ---
 
@@ -221,20 +221,20 @@
 
 **Good**：列五個反省方向、明示「互不衝突」、推薦優先順序、「全做」「跳過某幾個」「調順序」全列為合法。
 
-每個 Bad 例都是 [#79 五維度](/report/decision-dialogue-dimensions/) collapse 的具體實例 — 寫的當下覺得「夠精簡」、實際藏掉 N 個合法選項。將來看到自己寫類似格式、立刻退回多選展開。
+每個 Bad 例都是 [#79 五維度](principles/decision-dialogue-dimensions.md) collapse 的具體實例 — 寫的當下覺得「夠精簡」、實際藏掉 N 個合法選項。將來看到自己寫類似格式、立刻退回多選展開。
 
 ---
 
 ## 對應抽象層原則
 
-- [#74 決策呈現格式](/report/decision-presentation-options-recommendation/) — 步驟 5 的詳細展開
-- [#75 主策略 + 補強疊加](/report/main-strategy-plus-supplementary/) — 步驟 3 的詳細展開
-- [#76 分批 ship 準則](/report/incremental-shipping-criteria/) — 步驟 4 的詳細展開
-- [#77 「現在不決定」是合法選項](/report/decide-later-as-valid-option/) — 步驟 2 的詳細展開
-- [#78 反省任務預設複選](/report/retrospective-multi-select-default/) — 步驟 1 的詳細展開
-- [#79 決策對話的五維度](/report/decision-dialogue-dimensions/) — 上層 meta-原則
-- [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) — 為什麼窄格是預設（容易寫）
-- [#72 高 ROI 無觸發](/report/external-trigger-for-high-roi-work/) — 為什麼鬆綁需要協議結構（不靠紀律）
-- [#80 Yes/No 二選是隱式 collapse](/report/yes-no-binary-collapse/) — 五維 collapse 的極致形態、最常見最隱形
-- [#81 卡片系統的迭代浮現](/report/cards-as-living-system-iteration/) — 本 reference 的成型過程（spiral 而非線性）
-- [#82 字面攔截 vs 行為精煉](/report/literal-interception-vs-behavioral-refinement/) — 為什麼用 hook 防 collapse 行不通、本 reference 是 multi-pass 設計（self-check 是第二輪、dogfood 是第三輪）
+- [#74 決策呈現格式](principles/decision-presentation-options-recommendation.md) — 步驟 5 的詳細展開
+- [#75 主策略 + 補強疊加](principles/main-strategy-plus-supplementary.md) — 步驟 3 的詳細展開
+- [#76 分批 ship 準則](principles/incremental-shipping-criteria.md) — 步驟 4 的詳細展開
+- [#77 「現在不決定」是合法選項](principles/decide-later-as-valid-option.md) — 步驟 2 的詳細展開
+- [#78 反省任務預設複選](principles/retrospective-multi-select-default.md) — 步驟 1 的詳細展開
+- [#79 決策對話的五維度](principles/decision-dialogue-dimensions.md) — 上層 meta-原則
+- [#67 寫作便利度跟意圖對齊反相關](principles/ease-of-writing-vs-intent-alignment.md) — 為什麼窄格是預設（容易寫）
+- [#72 高 ROI 無觸發](principles/external-trigger-for-high-roi-work.md) — 為什麼鬆綁需要協議結構（不靠紀律）
+- [#80 Yes/No 二選是隱式 collapse](principles/yes-no-binary-collapse.md) — 五維 collapse 的極致形態、最常見最隱形
+- [#81 卡片系統的迭代浮現](principles/cards-as-living-system-iteration.md) — 本 reference 的成型過程（spiral 而非線性）
+- [#82 字面攔截 vs 行為精煉](principles/literal-interception-vs-behavioral-refinement.md) — 為什麼用 hook 防 collapse 行不通、本 reference 是 multi-pass 設計（self-check 是第二輪、dogfood 是第三輪）

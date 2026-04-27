@@ -11,14 +11,14 @@ A11y 三道防線：靜態（鍵盤可達性三要素）、動態（focus 跟 ar
 
 ## 何時參閱本文件
 
-| 訊號                                                | 該做的第一件事                                |
-| --------------------------------------------------- | --------------------------------------------- |
-| 自製 modal / dropdown / tabs / accordion            | 先看有沒有 `<dialog>` / `<details>` 能用       |
-| JS reparent 或 hide 元素                            | 保存 focus、操作後還原                        |
-| 動態變動內容（搜尋結果、filter 切換、status 訊息）   | 加 `aria-live` region                          |
-| 使用者反映「鍵盤跑掉」「Tab 順序怪」                | 檢查 visible focus indicator + tab order      |
-| 即將寫 `role="button"` `role="dialog"` 等 ARIA role  | 停 — 看 native HTML 能不能用                  |
-| 行動裝置誤點                                        | 檢查 hit target 大小（最小 44×44 px）         |
+| 訊號                                                | 該做的第一件事                           |
+| --------------------------------------------------- | ---------------------------------------- |
+| 自製 modal / dropdown / tabs / accordion            | 先看有沒有 `<dialog>` / `<details>` 能用 |
+| JS reparent 或 hide 元素                            | 保存 focus、操作後還原                   |
+| 動態變動內容（搜尋結果、filter 切換、status 訊息）  | 加 `aria-live` region                    |
+| 使用者反映「鍵盤跑掉」「Tab 順序怪」                | 檢查 visible focus indicator + tab order |
+| 即將寫 `role="button"` `role="dialog"` 等 ARIA role | 停 — 看 native HTML 能不能用             |
+| 行動裝置誤點                                        | 檢查 hit target 大小（最小 44×44 px）    |
 
 ---
 
@@ -128,13 +128,13 @@ JS 更新 `#count` 的 textContent 時、screen reader 朗讀「顯示 12 筆結
 
 ### 為什麼優先 Native
 
-| 元素              | Native 自帶                                              | ARIA 補強需要                        |
-| ----------------- | -------------------------------------------------------- | ------------------------------------ |
-| `<button>`        | Tab focus、Enter/Space 觸發、a11y role、disabled 狀態    | `role="button"` + tabindex + keydown listener + aria-disabled |
-| `<dialog>`        | Modal focus trap、Escape 關閉、`::backdrop`、`inert` 外層 | `role="dialog"` + aria-modal + 自寫 focus trap + Escape handler + inert polyfill |
-| `<details>`       | Toggle 展開、鍵盤、a11y                                  | `role="region"` + aria-expanded + 自寫 click handler + keyboard support |
-| `<fieldset>+<legend>` | 群組 a11y、screen reader 讀 legend                  | `role="radiogroup"` + aria-labelledby                      |
-| `<input type="...">` | 各種 input 的 native UX、validation、a11y            | 全部自寫                              |
+| 元素                  | Native 自帶                                               | ARIA 補強需要                                                                    |
+| --------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `<button>`            | Tab focus、Enter/Space 觸發、a11y role、disabled 狀態     | `role="button"` + tabindex + keydown listener + aria-disabled                    |
+| `<dialog>`            | Modal focus trap、Escape 關閉、`::backdrop`、`inert` 外層 | `role="dialog"` + aria-modal + 自寫 focus trap + Escape handler + inert polyfill |
+| `<details>`           | Toggle 展開、鍵盤、a11y                                   | `role="region"` + aria-expanded + 自寫 click handler + keyboard support          |
+| `<fieldset>+<legend>` | 群組 a11y、screen reader 讀 legend                        | `role="radiogroup"` + aria-labelledby                                            |
+| `<input type="...">`  | 各種 input 的 native UX、validation、a11y                 | 全部自寫                                                                         |
 
 ### 何時用 ARIA
 
@@ -326,18 +326,6 @@ mediaQuery.addEventListener('change', () => {
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- `focus-management-on-dom-move.md` — 動態 DOM 移動時的 focus 管理
-- `aria-live-for-dynamic-content.md` — Screen reader 與動態內容變動的 live region 設計
-- `native-html-over-aria-role.md` — Native HTML element 優先於 ARIA role 的取捨
-- `keyboard-accessibility.md` — 鍵盤可達性：focus indicator、tab 順序、escape 路徑
-- `motor-accessibility-hit-target.md` — Motor 可達性：hit target、間距、誤點防護
-- `visual-aids-contrast-zoom-responsive.md` — 視覺輔助：對比度、放大、字型 zoom 的 layout 適配
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

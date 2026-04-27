@@ -11,15 +11,15 @@
 
 ## 何時參閱本文件
 
-| 訊號                                                                  | 該做的第一件事                                  |
-| --------------------------------------------------------------------- | ----------------------------------------------- |
-| 即將寫 `forEach(el => el.hidden = !matches(el))`                      | 停 — 確認 source 是不是分批 / streaming         |
-| Source 是 `pagefind.search()` / `paginatedFetch()` / `for await`      | filter 必須跟 source 同層、不能在 view 層後處理 |
-| 「filter 後 0 筆但 source 還有未載入」可能發生                          | 必須補自動續抓 / 推進 query / 誠實 UX           |
-| Backend middleware / response wrapper 加 filter                       | 推進 ORM query / SQL `WHERE`、不在 response 後  |
-| 演算法 pipeline 末端 filter                                           | 推進 pipeline stage 內、stream-aware            |
-| Map-reduce 完成後加 post-filter                                       | 推進 map / reduce 階段                          |
-| 「畫面 / 結果對了但邊界 case 怪」                                       | 識別這是層錯位、不是 bug 修補能解               |
+| 訊號                                                             | 該做的第一件事                                  |
+| ---------------------------------------------------------------- | ----------------------------------------------- |
+| 即將寫 `forEach(el => el.hidden = !matches(el))`                 | 停 — 確認 source 是不是分批 / streaming         |
+| Source 是 `pagefind.search()` / `paginatedFetch()` / `for await` | filter 必須跟 source 同層、不能在 view 層後處理 |
+| 「filter 後 0 筆但 source 還有未載入」可能發生                   | 必須補自動續抓 / 推進 query / 誠實 UX           |
+| Backend middleware / response wrapper 加 filter                  | 推進 ORM query / SQL `WHERE`、不在 response 後  |
+| 演算法 pipeline 末端 filter                                      | 推進 pipeline stage 內、stream-aware            |
+| Map-reduce 完成後加 post-filter                                  | 推進 map / reduce 階段                          |
+| 「畫面 / 結果對了但邊界 case 怪」                                | 識別這是層錯位、不是 bug 修補能解               |
 
 ---
 
@@ -27,15 +27,15 @@
 
 Filter 操作的定義是「從 stream 中過濾出符合條件的元素」 — **stream** 是隱含的對象。當 stream 被分層 materialize 時、filter 套在哪一層、決定它能「看見」的元素範圍：
 
-| 層               | 能看到的範圍                  | filter 結果的語意      |
-| ---------------- | ----------------------------- | ---------------------- |
-| Source 層         | 完整 stream                   | 「stream 中所有符合的」 |
-| Materialization 中 | 已 materialize 的部分          | 「目前載入的符合的」    |
+| 層                      | 能看到的範圍                                     | filter 結果的語意          |
+| ----------------------- | ------------------------------------------------ | -------------------------- |
+| Source 層               | 完整 stream                                      | 「stream 中所有符合的」    |
+| Materialization 中      | 已 materialize 的部分                            | 「目前載入的符合的」       |
 | 下游（view / response） | Materialized 之後 + downstream filter 之前的子集 | 「下游可見的子集中符合的」 |
 
 使用者 / 呼叫者意圖的「filter」通常是第一層（stream 全集）— 但寫程式當下手邊的對象通常是第三層（已 materialize 的 subset）。**寫起來最便利的位置 ≠ 對齊意圖的位置**。
 
-這是 [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) 在 stream 操作上的具體展現。
+這是 [#67 寫作便利度跟意圖對齊反相關](principles/ease-of-writing-vs-intent-alignment.md) 在 stream 操作上的具體展現。
 
 ---
 
@@ -100,19 +100,19 @@ SELECT * FROM posts WHERE author_id = 42;
 
 ## 五種解法策略
 
-詳細展開見 [#59 Filter × Source 合成策略五選一](/report/filter-source-composition-strategies/)。本卡只列總覽：
+詳細展開見 [#59 Filter × Source 合成策略五選一](principles/filter-source-composition-strategies.md)。本卡只列總覽：
 
-| 策略 | 一句話                                  | 對 source 的需求            | 工程量 | UX 影響       |
-| ---- | --------------------------------------- | --------------------------- | ------ | ------------- |
-| A    | 把 filter 推進 source 的 query           | 必須支援該 filter 條件       | 中-高  | 透明（無感）  |
-| B    | 自動續抓直到湊滿 N 個 match              | 任何分批 source             | 中     | 透明（稍慢）  |
-| C    | 預先建獨立 index（每種 mode 一份）        | 能控 source 的 build pipeline | 高     | 透明（最快）  |
-| D    | 誠實 UX 顯示「已掃 N / 命中 K」           | 任何 source                 | 低     | 顯眼（多按鈕）|
-| E    | 明示語意縮小（filter 範圍 = 已載入）      | 任何 source                 | 最低   | 隱性語意縮小  |
+| 策略 | 一句話                               | 對 source 的需求              | 工程量 | UX 影響        |
+| ---- | ------------------------------------ | ----------------------------- | ------ | -------------- |
+| A    | 把 filter 推進 source 的 query       | 必須支援該 filter 條件        | 中-高  | 透明（無感）   |
+| B    | 自動續抓直到湊滿 N 個 match          | 任何分批 source               | 中     | 透明（稍慢）   |
+| C    | 預先建獨立 index（每種 mode 一份）   | 能控 source 的 build pipeline | 高     | 透明（最快）   |
+| D    | 誠實 UX 顯示「已掃 N / 命中 K」      | 任何 source                   | 低     | 顯眼（多按鈕） |
+| E    | 明示語意縮小（filter 範圍 = 已載入） | 任何 source                   | 最低   | 隱性語意縮小   |
 
 選擇順序：**A → C → B → D → E**（不寫不告知的 silent 縮小、那是反模式）。
 
-對應的 pattern 卡片：[#60 自動續抓](/report/pattern-fetch-until-quota/) / [#61 推進 query](/report/pattern-query-side-pushdown/) / [#62 誠實進度 UX](/report/pattern-honest-progress-ui/) / [#65 多 index](/report/pattern-multiple-indexes/) / [#66 明示語意縮小](/report/pattern-explicit-semantic-narrowing/)
+對應的 pattern 卡片：[#60 自動續抓](principles/pattern-fetch-until-quota.md) / [#61 推進 query](principles/pattern-query-side-pushdown.md) / [#62 誠實進度 UX](principles/pattern-honest-progress-ui.md) / [#65 多 index](principles/pattern-multiple-indexes.md) / [#66 明示語意縮小](principles/pattern-explicit-semantic-narrowing.md)
 
 ---
 
@@ -198,7 +198,7 @@ const statusVisible = await page.locator('.filter-status').textContent();
 // 應該明示 loading / partial / end / empty 之一、不只是 spinner
 ```
 
-寫成 playwright test 固化 — 未來架構改動時 CI 立刻發現 regression（[#15 layout-tests-with-playwright](/report/layout-tests-with-playwright/)）。
+寫成 playwright test 固化 — 未來架構改動時 CI 立刻發現 regression（[#15 layout-tests-with-playwright](principles/layout-tests-with-playwright.md)）。
 
 ---
 
@@ -206,11 +206,11 @@ const statusVisible = await page.locator('.filter-status').textContent();
 
 寫 filter 之前、跑這份 checklist：
 
-- [ ] Source 是不是分批 / streaming / cached / lazy？（[#63 資料源形狀](/report/data-source-shape-defines-feature-shape/)）
-- [ ] Filter 的定義域是已載入子集還是 source 全集？（使用者意圖三問、見 [#58](/report/filter-instruction-clarification/)）
+- [ ] Source 是不是分批 / streaming / cached / lazy？（[#63 資料源形狀](principles/data-source-shape-defines-feature-shape.md)）
+- [ ] Filter 的定義域是已載入子集還是 source 全集？（使用者意圖三問、見 [#58](principles/filter-instruction-clarification.md)）
 - [ ] Source 是否支援 server-side filter？（決定能不能用 A）
 - [ ] Match 密度可預期嗎？（決定 B 是否可行）
-- [ ] 三狀態（loading / empty / end）UX 怎麼區分？（[#57](/report/loading-empty-end-state-distinction/)）
+- [ ] 三狀態（loading / empty / end）UX 怎麼區分？（[#57](principles/loading-empty-end-state-distinction.md)）
 - [ ] 對於「filter 後 0 筆」的情境、使用者能否區分「沒命中」vs「還沒抓到」？
 
 ---
@@ -328,25 +328,25 @@ Filter 在 query 層、pagination 在 filter 之後、無層錯位。
 
 問題分析：
 
-- [#55 Filter 與 Source 的抽象層錯位](/report/view-layer-filter-vs-source-layer/) — 根因
-- [#56 視覺完成 ≠ 功能完成](/report/visual-completion-vs-functional-completion/) — 「畫面對」是低資訊量訊號
-- [#57 Loading / Empty / End 三狀態的區分](/report/loading-empty-end-state-distinction/) — UX 落地
+- [#55 Filter 與 Source 的抽象層錯位](principles/view-layer-filter-vs-source-layer.md) — 根因
+- [#56 視覺完成 ≠ 功能完成](principles/visual-completion-vs-functional-completion.md) — 「畫面對」是低資訊量訊號
+- [#57 Loading / Empty / End 三狀態的區分](principles/loading-empty-end-state-distinction.md) — UX 落地
 
 指令澄清（在 requirement-protocol skill）：
 
-- [#58 篩選類指令的澄清時機](/report/filter-instruction-clarification/) — 三問模板
+- [#58 篩選類指令的澄清時機](principles/filter-instruction-clarification.md) — 三問模板
 
 解法策略：
 
-- [#59 Filter × Source 合成策略五選一](/report/filter-source-composition-strategies/) — 總覽
-- [#60-#62, #65-#66 五張 Pattern 卡片](/report/pattern-fetch-until-quota/) — 各策略具體實作
+- [#59 Filter × Source 合成策略五選一](principles/filter-source-composition-strategies.md) — 總覽
+- [#60-#62, #65-#66 五張 Pattern 卡片](principles/pattern-fetch-until-quota.md) — 各策略具體實作
 
 抽象原則：
 
-- [#63 資料源的形狀決定 feature 的形狀](/report/data-source-shape-defines-feature-shape/) — 形狀是硬約束
-- [#64 Feature 操作要跟 Source 同層合成](/report/compose-feature-at-source-layer/) — 跨領域通用原則
-- [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/) — meta-principle
-- [#68 驗收的時間軸：四個 checkpoint](/report/verification-timeline-checkpoints/) — 驗收策略
+- [#63 資料源的形狀決定 feature 的形狀](principles/data-source-shape-defines-feature-shape.md) — 形狀是硬約束
+- [#64 Feature 操作要跟 Source 同層合成](principles/compose-feature-at-source-layer.md) — 跨領域通用原則
+- [#67 寫作便利度跟意圖對齊反相關](principles/ease-of-writing-vs-intent-alignment.md) — meta-principle
+- [#68 驗收的時間軸：四個 checkpoint](principles/verification-timeline-checkpoints.md) — 驗收策略
 
 ---
 

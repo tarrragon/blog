@@ -11,15 +11,15 @@ CSS 跟 JS 各自負責什麼、邊界由「值能不能 build-time 定下來」
 
 ## 何時參閱本文件
 
-| 訊號                                                       | 該做的第一件事                                  |
-| ---------------------------------------------------------- | ----------------------------------------------- |
-| 不確定值該寫進 CSS 還是 JS                                 | 問「能 build-time 定下來嗎」                     |
-| 即將寫 `!important`                                        | 停 — 換 CSS layers 思路                         |
-| 即將寫 `el.style.setProperty(..., 'important')`             | 停 — 換 class toggle                            |
-| Inline `<style>` / `<script>` 超過 30 行                    | 拆出獨立檔案、讓 Hugo / build pipeline 處理     |
-| CSS variable 在 3 個地方定義                                | 集中到單一定義位置、其他地方只引用              |
-| Vendor CSS 跟自家 CSS 打 specificity 戰                    | `@layer` 包 vendor、自家 unlayered 自動贏       |
-| Runtime 量測值跟 hardcoded 值在同一個對齊基準上混用         | 全選一邊、不要混搭                              |
+| 訊號                                                | 該做的第一件事                              |
+| --------------------------------------------------- | ------------------------------------------- |
+| 不確定值該寫進 CSS 還是 JS                          | 問「能 build-time 定下來嗎」                |
+| 即將寫 `!important`                                 | 停 — 換 CSS layers 思路                     |
+| 即將寫 `el.style.setProperty(..., 'important')`     | 停 — 換 class toggle                        |
+| Inline `<style>` / `<script>` 超過 30 行            | 拆出獨立檔案、讓 Hugo / build pipeline 處理 |
+| CSS variable 在 3 個地方定義                        | 集中到單一定義位置、其他地方只引用          |
+| Vendor CSS 跟自家 CSS 打 specificity 戰             | `@layer` 包 vendor、自家 unlayered 自動贏   |
+| Runtime 量測值跟 hardcoded 值在同一個對齊基準上混用 | 全選一邊、不要混搭                          |
 
 ---
 
@@ -291,18 +291,6 @@ window.addEventListener('resize', () => {
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- `css-only-vs-js-assisted.md` — 排版精度的工具選擇
-- `class-toggle-over-important.md` — class toggle 取代 inline `display:none !important`
-- `css-layers-over-specificity.md` — CSS Layers 取代 specificity 戰
-- `css-variable-single-location.md` — CSS 變數定義位置統一
-- `extract-css-js-files.md` — CSS / JS 拆出獨立檔案
-- `runtime-measurement-unification.md` — runtime 量測模式統一
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0
