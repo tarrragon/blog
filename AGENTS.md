@@ -166,3 +166,69 @@
 - 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
 - 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
 - 寫作時遇到 pre-commit 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。
+
+---
+
+## 9. Skill 撰寫規範（區別於文章）
+
+`.claude/skills/` 跟 `content/` 是**兩個不同的 surface**、規則互斥。寫 skill 時不要套用文章規範、寫文章時不要套用 skill 規範。
+
+### 定位差異
+
+|            | `.claude/skills/`（skill）                    | `content/`（文章）                           |
+| ---------- | --------------------------------------------- | -------------------------------------------- |
+| **讀者**   | Claude runtime 直接呼叫                       | 人類讀者透過 Hugo                            |
+| **目標**   | 跨專案 portable（複製整個目錄就能移到別專案） | 服務本 blog 的脈絡與累積                     |
+| **可依賴** | 只依賴 skill 自身內容                         | 可引用 report / posts / 其他 section         |
+| **格式**   | H1 + body、**無 Hugo frontmatter**            | 有 Hugo frontmatter（`title` / `date` 必填） |
+
+### Skill 撰寫硬規則
+
+1. **檔案結構**：H1 標題開頭、不寫 Hugo frontmatter（`title` / `date` / `weight` / `tags` 都不寫）。Anthropic Skill 格式由 H1 + body 構成、加 frontmatter 反而會讓 Claude runtime 解析錯。
+
+2. **連結只能指向 skill 內部**：禁止連結到 `/report/...` `/posts/...` `content/...` — 跨專案後這些都是死鏈。引用同 skill 內其他檔案用相對路徑（`./xxx.md` 或 `references/xxx.md`）。
+
+3. **引用 blog 抽象原則**：若 skill 要引用 `content/report/` 的原則卡、**把卡複製進該 skill 的 `references/principles/` 目錄**、不是寫外部連結。每個 skill 帶自己的 principles/、共用卡可重複存在於多個 skill。
+
+4. **去專案化具體例子**：移除 `pagefind` / `hugo` / `this blog's search` 等 blog-specific 名詞、改成中性「該元件」「該模組」「某搜尋元件」。論證邏輯保留、具體 selector / 檔案路徑改通用形式。
+
+5. **不用 blog 編號當 identifier**：原 report 的 `#42` `#58` `#85` 等編號是 blog-internal 排序、跨專案沒意義。內部引用用 slug。
+
+### Skill 結構慣例
+
+```text
+.claude/skills/{skill}/
+├── SKILL.md                  # 入口、三大支柱 + 觸發路由
+└── references/
+    ├── {scenario}.md         # 情境型 reference（協議 / 步驟 / 模板）
+    └── principles/           # 支撐型原則卡（從 content/report/ 抽象出來）
+        └── {slug}.md         # 每張卡開頭：H1 + 「角色 / 何時讀」起手段
+```
+
+Principles 卡的「角色 / 何時讀」起手段：
+
+```markdown
+> **角色**：本卡是 `{skill-name}` 的支撐型原則（principle）、被 {誰} 引用。
+>
+> **何時讀**：{觸發情境}。
+```
+
+### 同步到 `content/skills/`（可選）
+
+若該 skill 要在 blog 上給人類讀者瀏覽（如 `compositional-writing`）、把 SKILL.md / references 複製一份到 `content/skills/{skill}/`、加 Hugo frontmatter（`title` / `date` / `description` / `tags`）。**兩份內容主體相同、只差 frontmatter**。
+
+不是所有 skill 都需要 content/ 鏡像 — 只有對外公開的方法論才需要。內部協議型 skill（如 `requirement-protocol`、`frontend-with-playwright`）可以只存在於 `.claude/`。
+
+### Skill 完稿檢查
+
+- [ ] H1 開頭、沒有 Hugo frontmatter
+- [ ] 沒有 `/report/` `/posts/` 等外部連結
+- [ ] 跨檔連結都是同 skill 內相對路徑
+- [ ] 沒有 blog-specific 名詞（pagefind / hugo / 具體檔名）
+- [ ] 沒有 blog 編號（`#42`）當主要 identifier
+- [ ] principles/ 卡有「角色 / 何時讀」起手段
+- [ ] 整個 skill 目錄複製到別專案後仍能完整運作
+
+### Pre-commit lint 豁免
+
+`.claude/skills/` 路徑下的 .md 檔在 pre-commit 跳過 mdtools lint（lint 規則針對 Hugo content）— 這是設計、不是 bug。fmt 仍正常執行。
