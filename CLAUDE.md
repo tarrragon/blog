@@ -37,5 +37,5 @@ skill 內容看 `.claude/skills/<name>/SKILL.md`。
 本 repo 同時支援 Claude Code 跟 Codex。差異點：
 
 - **規範**：CLAUDE.md 跟 AGENTS.md 共用內容（透過 `@AGENTS.md`）、Codex 直接讀 AGENTS.md
-- **Skill**：路徑不同（Claude Code 用 `.claude/skills/`、Codex 用 `.agents/skills/`）— 目前 repo 只維護 `.claude/skills/`、Codex 用戶要用需手動同步
+- **Skill**：路徑不同（Claude Code 用 `.claude/skills/`、Codex 用 `.agents/skills/`）— 本 repo 用 directory symlink 共用（`.agents/skills` → `../.claude/skills`）、改 `.claude/skills/<name>/` 兩工具同步生效
 - 詳見 AGENTS.md §11
