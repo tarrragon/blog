@@ -15,7 +15,7 @@ tags: ["report", "事後檢討", "CSS", "Responsive Design", "工程方法論"]
 
 ---
 
-## 為什麼 breakpoint 不能憑感覺
+## breakpoint 從元件預算推算
 
 ### 商業邏輯
 

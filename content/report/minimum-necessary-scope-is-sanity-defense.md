@@ -1,5 +1,5 @@
 ---
-title: "最小必要範圍是 sanity 防線、不是優化"
+title: "最小必要範圍是 sanity 防線：保護行為可預測性"
 date: 2026-04-25
 weight: 43
 description: "縮 selector 範圍、observer 範圍、JS 操作範圍 — 不是為了效能、是為了讓行為可預測、不被未來變動打破。本文是 #13 / #14 / #29 三篇實作的共同抽象。"

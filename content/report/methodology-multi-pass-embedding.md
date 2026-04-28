@@ -1,5 +1,5 @@
 ---
-title: "Methodology 的 multi-pass 該 embed 在 pillar、不是 appendix"
+title: "Methodology 的 multi-pass 該升級為 pillar 層：核心結構才會被執行"
 date: 2026-04-26
 weight: 85
 description: "任何「教做事方法」的 methodology / SKILL / playbook、應該把 multi-pass refinement 放在 pillar / 核心原則層、不是放在末尾「附帶提醒」段。Pillar 層 = 結構性必跑、appendix 層 = 看心情選擇 = 永遠不跑。本卡是 #82 行為驗證 + #72 結構性對策在「方法論設計本身」這一層的展現。"

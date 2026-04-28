@@ -92,7 +92,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 跨多篇實作的共同骨架。每篇不重述具體 case、只展開原則本身、結尾列出對應的實作篇。
 
 - [#42 2 次門檻：第一次是運氣、第二次是訊號](two-occurrence-threshold/) — 串 #11 / #15 / #20 / #23 / #56、跨工具/測試/思路/溝通/驗收五面向
-- [#43 最小必要範圍是 sanity 防線、不是優化](minimum-necessary-scope-is-sanity-defense/) — 串 #13 / #14 / #29 / #64、跨 JS 邊界 / selector / observer / stream 操作四類範圍
+- [#43 最小必要範圍是 sanity 防線](minimum-necessary-scope-is-sanity-defense/) — 串 #13 / #14 / #29 / #64、跨 JS 邊界 / selector / observer / stream 操作四類範圍
 - [#44 Single Source of Truth：值的住址只能有一處](single-source-of-truth/) — 串 #3 / #26 / #27 / #64、跨定義位置 / 來源機制 / 對齊基準 / stream 全集四類違反
 - [#45 跟外部組件合作的層次：離介面越近、合作越穩](external-component-collaboration-layers/) — 串 #1 / #5 / #19 / #24 / #59、四層代價對照與跳維度機制
 - [#67 寫作便利度跟意圖對齊反相關](ease-of-writing-vs-intent-alignment/) — 串 #55 / #43 / #44 / #45 / #64、跨層 / 範圍 / 來源 / 客製 / 合成五面向、是「便利 vs 正確」的共同上位原則
@@ -113,7 +113,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#82 字面攔截 vs 行為精煉](literal-interception-vs-behavioral-refinement/) — 驗證粒度匹配：字面用 hook、行為用 multi-pass spiral、強行用 hook 蓋行為錯誤 = false confidence 比沒保護更危險、#72 的 ceiling
 - [#83 Writing 的 multi-pass review](writing-multi-pass-review/) — 寫 = N 輪不同 frame（生成 / 意圖 / 語氣 / grep / 反例）、單輪寫不出全部維度、跳輪的代價 = 某維度永遠做一半
 - [#84 Naming 是 iterated artifact](naming-as-iterated-artifact/) — 第一版命名幾乎不對（基於狹窄 context）、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、接受重命名是常態
-- [#85 Methodology 的 multi-pass 該 embed 在 pillar](methodology-multi-pass-embedding/) — 升 pillar = 結構性必跑、留 appendix = #72 結構性跳過、本卡是 #82 + #72 在「方法論設計本身」的展現
+- [#85 Methodology 的 multi-pass 該升級為 pillar 層](methodology-multi-pass-embedding/) — 升 pillar = 結構性必跑、留 appendix = #72 結構性跳過、本卡是 #82 + #72 在「方法論設計本身」的展現
 - [#86 Capability gap 的三層對策階梯](capability-gap-three-layer-escalation/) — L1 expectation alignment / L2 augmenting computation / L3 structural rebuild、預設 L1→L2→L3 升級、不必每次跳 L3、跟 #75 互補（#75 疊加 / 本卡選層）
 - [#87 Build-time vs Runtime 計算的光譜](build-time-vs-runtime-computation-spectrum/) — 兩極 + hybrid hot-path、四軸判準（頻率 / 大小 / freshness / pipeline）、「能 precompute 就 precompute」是便利驅動口號、實際要套軸才知道
 - [#88 Engine 不可調時、把 transformation 移到外層](transformation-at-outer-layer-when-engine-closed/) — 跨領域 pattern：search engine 不支援 substring → build-time emit suffix tokens、LLM 不會 CoT → prompt 加 instruction、DB JSON 不能 query → denormalize；engine 不開放 = 不該硬戳內部、改 transformation 輸入 / 外層
@@ -121,7 +121,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#90 L1 + L2 疊加時的訊號一致性](layered-strategy-signal-consistency/) — UX hint 跟自動 fallback 講的話要對齊、Silent fallback 看似簡潔實為 false confidence；三設計原則（fallback 訊號明示 / hint 承認 L2 / 可 trace 結果來源）
 - [#91 升級 trigger 的量化設計](escalation-trigger-quantification/) — 「不夠就升 Y」需要 metric + threshold + window + owner 四元素、L1 ship 時就同步寫 L2 / L3 trigger、「再觀察一下」是缺 trigger 的訊號
 - [#92 視覺手段對齊錯誤層次](visual-tool-error-layer-alignment/) — CSS / emoji 修不到語意 / 邏輯問題、修法順序「邏輯 → 語意 → 視覺」深層往淺層、用視覺工具蓋下游症狀 = false confidence、是 #82 在「呈現層」的 sibling、補 #83 multi-pass 缺的 vertical 軸
-- [#93 URL slug 是 fact、不是 derivation](url-slug-must-be-explicit-fact/) — 跨工具共用的 identifier（slug / route / ID）必須顯式定義在一處 fact、不能依賴各工具各自推導；slug 散落在「檔名 / hugo title 推導 / frontmatter」三處 = SSoT 違反、跨工具接縫時才爆；本卡是 #44 在 toolchain integration 的具體實例、跟 #82 / #92 並列為「工具 ceiling pattern」系列
+- [#93 URL slug 必須顯式定義為 fact](url-slug-must-be-explicit-fact/) — 跨工具共用的 identifier（slug / route / ID）必須顯式定義在一處 fact、不能依賴各工具各自推導；slug 散落在「檔名 / hugo title 推導 / frontmatter」三處 = SSoT 違反、跨工具接縫時才爆；本卡是 #44 在 toolchain integration 的具體實例、跟 #82 / #92 並列為「工具 ceiling pattern」系列
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -269,6 +269,6 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 **Last Updated**: 2026-04-28 — 第六輪新增 #92 視覺手段對齊錯誤層次（從 blog 文章寫作 retrospective 抽出 — emoji 圖例斷行的 trigger 揭露「multi-pass review 缺 vertical 軸」、跟 #82 並列為 sibling、補 #83 缺的 layer 維度）、新增路徑 15 給寫作 / UI 中誤判層次的情境。
 
-**Last Updated**: 2026-04-28 — 新增 #93 URL slug 是 fact、不是 derivation（從 #92 的 mermaid cross-link broken 踩坑揭露 — 175 篇內容文章 0 篇有顯式 slug、檔名 / hugo title 推導 / frontmatter 三處散落、典型 #44 SSoT 違反在 toolchain integration 維度）、新增路徑 16 給跨工具 identifier 議題。
+**Last Updated**: 2026-04-28 — 新增 #93 URL slug 必須顯式定義為 fact（從 #92 的 mermaid cross-link broken 踩坑揭露 — 175 篇內容文章 0 篇有顯式 slug、檔名 / hugo title 推導 / frontmatter 三處散落、典型 #44 SSoT 違反在 toolchain integration 維度）、新增路徑 16 給跨工具 identifier 議題。
 
 **Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 9 篇（#42-45, #67-71）+ 第七輪 Pattern 卡片 12 篇（#46-51, #54, #60-62, #65-66）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。八輪迭代完成 — 最新一輪：retrospective Checkpoint 1（修 search bug 後跳過的「列使用者意圖完整集合」）發現 3 個 silent 缺口（URL state / tab order / filter UI hint）、抽兩張新抽象層卡（#70 URL 儲存層 + #71 Tab Order 三對齊）、#68 加 Checkpoint 1 跳過的 self-case。

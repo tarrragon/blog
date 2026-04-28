@@ -20,7 +20,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Perf
 
 ---
 
-## 為什麼 build-time 不是萬能
+## build-time 的三個成本維度
 
 直覺反應：「能 precompute 就 precompute、runtime 0 最好」。但這個直覺漏了三個維度：
 
