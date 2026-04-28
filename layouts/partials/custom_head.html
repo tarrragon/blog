@@ -33,7 +33,11 @@
         primaryBorderColor: '#4a5568',
         lineColor: '#4a5568',
         secondaryColor: '#e2e8f0',
-        tertiaryColor: '#f7fafc'
+        tertiaryColor: '#f7fafc',
+        // gitGraph 顏色配置
+        git0: '#90ee90',         // HIGHLIGHT - 綠色
+        git1: '#ffb6c6',         // REVERSE - 紅色
+        git2: '#4a5568'          // 其他
       }
     });
   });
@@ -45,10 +49,21 @@
     text-align: center;
     margin: 20px 0;
   }
-  
+
   .mermaid svg {
     max-width: 100%;
     height: auto;
+  }
+
+  /* gitGraph commit type 顏色 */
+  .mermaid svg [id$="_HIGHLIGHT"] circle {
+    fill: #90ee90;
+    stroke: #2d7a2d;
+  }
+
+  .mermaid svg [id$="_REVERSE"] circle {
+    fill: #ffb6c6;
+    stroke: #d32f2f;
   }
   
   /* 響應式設計 */
