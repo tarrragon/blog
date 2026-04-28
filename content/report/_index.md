@@ -120,6 +120,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#89 Dataset 規模改變什麼可行](dataset-scale-changes-feasibility/) — 「需要 index / cache / 分散式」是 production scale 的詞、不是普世詞；具體 threshold（< 1MB 無腦 / 1-10MB O(N) 仍可 / > 100MB 才強制 index）；「以後會長大」是過度工程藉口
 - [#90 L1 + L2 疊加時的訊號一致性](layered-strategy-signal-consistency/) — UX hint 跟自動 fallback 講的話要對齊、Silent fallback 看似簡潔實為 false confidence；三設計原則（fallback 訊號明示 / hint 承認 L2 / 可 trace 結果來源）
 - [#91 升級 trigger 的量化設計](escalation-trigger-quantification/) — 「不夠就升 Y」需要 metric + threshold + window + owner 四元素、L1 ship 時就同步寫 L2 / L3 trigger、「再觀察一下」是缺 trigger 的訊號
+- [#92 視覺手段對齊錯誤層次](visual-tool-error-layer-alignment/) — CSS / emoji 修不到語意 / 邏輯問題、修法順序「邏輯 → 語意 → 視覺」深層往淺層、用視覺工具蓋下游症狀 = false confidence、是 #82 在「呈現層」的 sibling、補 #83 multi-pass 缺的 vertical 軸
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -255,6 +256,12 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 `#68 驗收的時間軸（Checkpoint 2/3）` → `#69 Test-First RED-GREEN 順序` → `#15 layout-tests-with-playwright` / `#11 playwright-early-in-loop` — 修 bug 或加 feature 時、測試該怎麼寫才被驗證
 
+### 路徑 15：寫作 / UI 中看到視覺異常、想直接改 CSS / emoji
+
+`#92 視覺手段對齊錯誤層次` → `#82 字面攔截 vs 行為精煉` → `#83 Writing 的 multi-pass review` — 先問「是不是語意 / 邏輯層的下游症狀」、確認純視覺再修 CSS；multi-pass review 要同時跑 horizontal frame（#83）和 vertical layer（#92）
+
 ---
+
+**Last Updated**: 2026-04-28 — 第六輪新增 #92 視覺手段對齊錯誤層次（從 blog 文章寫作 retrospective 抽出 — emoji 圖例斷行的 trigger 揭露「multi-pass review 缺 vertical 軸」、跟 #82 並列為 sibling、補 #83 缺的 layer 維度）、新增路徑 15 給寫作 / UI 中誤判層次的情境。
 
 **Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 9 篇（#42-45, #67-71）+ 第七輪 Pattern 卡片 12 篇（#46-51, #54, #60-62, #65-66）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。八輪迭代完成 — 最新一輪：retrospective Checkpoint 1（修 search bug 後跳過的「列使用者意圖完整集合」）發現 3 個 silent 缺口（URL state / tab order / filter UI hint）、抽兩張新抽象層卡（#70 URL 儲存層 + #71 Tab Order 三對齊）、#68 加 Checkpoint 1 跳過的 self-case。
