@@ -310,3 +310,55 @@ frontmatter 的 `slug` 跟檔名對齊（見 `markdown-writing-spec.md` §6.5）
 - `.claude/skills/compositional-writing/references/writing-articles.md` 的「層次意識」段 — 自包含、不提 report 卡編號
 
 兩者主旨對應、但各自獨立、不交叉引用。
+
+---
+
+## 11. 跨 AI agent 設定（CLAUDE.md vs AGENTS.md）
+
+本 repo 設計上同時支援 Claude Code 跟 Codex（以及其他遵循 AGENTS.md 標準的 agent）、但有預設工具：**目前以 Claude Code 為主**。
+
+### 11.1 規則檔結構
+
+| 檔案        | 角色                                  | 誰讀                                       |
+| ----------- | ------------------------------------- | ------------------------------------------ |
+| `AGENTS.md` | 寫作 / 工程規範的 SSoT                | Codex、Claude Code（透過引用）、其他 agent |
+| `CLAUDE.md` | Claude Code 專屬行為 + 內嵌 AGENTS.md | Claude Code                                |
+
+CLAUDE.md 第一行是 `@AGENTS.md` — Claude Code 會自動把 AGENTS.md 內容內嵌進來、所以 Claude Code 看到 = AGENTS.md 全部 + CLAUDE.md 補充。
+
+`@<file>` 是 Claude Code 專屬語法、Codex 不會解析、但 Codex 直接讀 AGENTS.md、不需要 CLAUDE.md。
+
+### 11.2 修改規則時的 SSoT 原則
+
+- **共用規則**（資料夾分類、寫作流程、commit 規則）：寫在 AGENTS.md、不重複到 CLAUDE.md
+- **Claude Code 專屬**（skill 自動觸發機制、`/skill-name` 調用）：寫在 CLAUDE.md
+- **Codex 專屬**（如需）：寫在 AGENTS.md 標明 `[Codex only]`
+
+避免 SSoT 違反：同一條規則只在一個檔案出現、另一檔透過 `@` 引用或不重複。
+
+### 11.3 Skill 在兩工具的差異
+
+| 項目       | Claude Code                                         | Codex                                                                      |
+| ---------- | --------------------------------------------------- | -------------------------------------------------------------------------- |
+| Skill 路徑 | `.claude/skills/<name>/`                            | `.agents/skills/<name>/`                                                   |
+| 觸發機制   | description / trigger 自動匹配 + `/skill-name` 手動 | description 自動匹配（implicit invocation）+ `/skills` 手動                |
+| Metadata   | SKILL.md frontmatter                                | SKILL.md frontmatter（接近 Anthropic 格式）+ optional `agents/openai.yaml` |
+
+**目前狀態**：本 repo 只維護 `.claude/skills/`、未同步到 `.agents/skills/`。
+
+**Codex 用戶若要使用本 repo 的 skill**、選一：
+
+- **Symlink**（推薦）：`ln -s .claude/skills .agents/skills`、兩處共用
+- **手動複製**：`cp -r .claude/skills .agents/skills`、兩處獨立維護
+
+差異主要在 SKILL.md 的 frontmatter — Anthropic 格式 / Codex 格式接近但不完全相同、symlink 後可能要小調 frontmatter。
+
+### 11.4 之後的方向
+
+當需要正式支援 Codex 時、需評估：
+
+1. 是否建立 `.agents/skills/` symlink、補對應 frontmatter
+2. AGENTS.md 是否要加 Codex 特定段落（如 `agents/openai.yaml` 配置）
+3. 文件流（doc-flow）對齊兩個 agent 的執行差異
+
+目前不做、留作 follow-up（屬 [#72](/report/external-trigger-for-high-roi-work/) 結構性跳過議題、需要 trigger 才執行）。

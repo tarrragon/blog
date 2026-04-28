@@ -34,7 +34,13 @@
       "Bash(chmod +x /tmp/sync_skill.sh)",
       "Bash(make check *)",
       "WebFetch(domain:docs.claude.com)",
-      "Bash(sed *)"
+      "Bash(sed *)",
+      "WebSearch",
+      "WebFetch(domain:developers.openai.com)",
+      "WebFetch(domain:coding-with-ai.dev)",
+      "Bash(xargs -I{} basename {} .md)",
+      "Bash([ -f \"/Users/mac-eric/project/blog/content/record/$f.md\" ])",
+      "Bash([ -f \"/Users/mac-eric/project/blog/content/other/$f.md\" ])"
     ],
     "deny": [],
     "ask": []
