@@ -666,8 +666,8 @@ Multi-pass review 的「N 輪不同 frame」是 horizontal 軸（同一份文字
 
 emoji 在容器窄時斷行：
 
-- ❌ 第一直覺修視覺：加 `white-space: nowrap` → 文字溢出 → 加 `overflow: hidden` → 症狀堆疊
-- ✅ 追問層次：HIGHLIGHT 跟 REVERSE 是兩個獨立概念、不該擠在同一行 — 拆成獨立列表項、所有下游症狀同時消失
+- **第一直覺修視覺**：加 `white-space: nowrap` → 文字溢出 → 加 `overflow: hidden` → 症狀堆疊、根因（兩個概念擠在一行）更深埋
+- **追問層次後修結構**：HIGHLIGHT 跟 REVERSE 是兩個獨立概念、不該擠在同一行 — 拆成獨立列表項、所有下游症狀同時消失
 
 判讀層次比修法重要 — 純視覺問題（容器寬度、字體大小、跨瀏覽器）用 CSS 是對的；語意 / 邏輯下游症狀用 CSS 是 false confidence。
 

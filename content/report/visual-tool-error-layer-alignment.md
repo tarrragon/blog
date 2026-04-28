@@ -24,14 +24,19 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Writ
 
 ## 為什麼視覺工具對語意 / 邏輯問題無能為力
 
-視覺工具（CSS、emoji、顏色、字體、間距、圖示）的本質是 **呈現層的調整** — 它能改變字怎麼顯示、不能改變字本身代表的概念。所以：
+視覺工具（CSS、emoji、顏色、字體、間距、圖示）的本質是 **呈現層的調整** — 它能改變字怎麼顯示、不能改變字本身代表的概念。能改的、跟改不到的、有清楚的界線：
 
-- ✅ 改得了「文字在窄視窗會不會換行」 — 純呈現
-- ✅ 改得了「兩個區塊的視覺距離」 — 純呈現
-- ✅ 改得了「不同類型用什麼顏色標」 — 純呈現
-- ❌ 改不了「兩個概念該不該擠在同一行」 — 結構層
-- ❌ 改不了「用 emoji 區分是否足夠承載語意」 — 語意層
-- ❌ 改不了「論證有沒有完整」 — 邏輯層
+**能改的（純呈現）**：
+
+- 文字在窄視窗會不會換行
+- 兩個區塊的視覺距離
+- 不同類型用什麼顏色標
+
+**改不到的（結構 / 語意 / 邏輯）**：
+
+- 兩個概念該不該擠在同一行（結構層）
+- 用 emoji 區分是否足夠承載語意（語意層）
+- 論證有沒有完整（邏輯層）
 
 當作者試圖用視覺工具解語意 / 邏輯問題、結果是 **症狀被表面平整、但下次同類問題會用新形狀冒出來** — 因為根因（概念混淆 / 結構錯位）沒動。
 
@@ -205,7 +210,7 @@ ceiling 訊號：
 
 ### Case 2：mermaid gitGraph type 顏色設定
 
-跟 Case 1 同篇文章的另一個議題：mermaid 的 `type: HIGHLIGHT` / `type: REVERSE` 自訂顏色不渲染（[mermaid_gitgraph_type_color_config](../../work-log/mermaid_gitgraph_type_color_config/)）。
+跟 Case 1 同篇文章的另一個議題：mermaid 的 `type: HIGHLIGHT` / `type: REVERSE` 自訂顏色不渲染（[mermaid_gitgraph_type_color_config](../../posts/mermaid_gitgraph_type_color_config/)）。
 
 這個 **是** 純視覺問題 — 內容本身沒爭議、只是 mermaid themeVariables 缺配置。修 CSS / themeVariables 是對的。
 
