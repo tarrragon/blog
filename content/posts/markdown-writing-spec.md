@@ -286,6 +286,40 @@ Hugo 依賴 YAML front matter 提供 title / date / weight 等欄位給 render p
 
 若未來需要鬆綁，在 `scripts/mdtools/internal/rules/frontmatter.go` 的 `DisallowedFields` 清單調整。
 
+### 6.5 slug 必填、跟檔名對齊
+
+所有 content 文章 frontmatter 必須有 `slug` 欄位，值跟檔名（不含 `.md`）對齊。
+
+```yaml
+---
+title: "視覺手段對齊錯誤層次"
+slug: "visual-tool-error-layer-alignment"   # 跟檔名對齊
+date: 2026-04-28
+---
+```
+
+**為什麼必填**：
+
+slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint、跨檔 markdown link、search index）。若不顯式定義，slug 散落在三處推導鏈：
+
+| 來源                            | 推導值                         |
+| ------------------------------- | ------------------------------ |
+| Hugo 預設（從 title 用 urlize） | runtime 推導、隨 hugo 版本變化 |
+| mdtools 字面比對                | 檔名 stem                      |
+| 跨檔連結時的引用                | 寫作者手動算 / 複製            |
+
+三個推導鏈不一致時 = silent broken link（mdtools pass 但 hugo build 後 404、或反過來）。把 slug 升成 frontmatter 顯式 fact、所有工具基於同一 source、消除 derivation 鏈。
+
+詳細論述見 [report #93 URL slug 是 fact、不是 derivation](/report/url-slug-must-be-explicit-fact/)。
+
+**檔名對齊規則**：
+
+- 檔名命名建議：英文小寫、kebab-case 或 snake_case、不含中文（避免 hugo `urlize` 規則跨版本變動）
+- slug 值 == 檔名 stem（不含 `.md`）
+- 修檔名時必須同步修 slug；修 slug 時必須同步 rename 檔案
+
+**Hugo `_index.md` 例外**：section 列表頁已有 `slug:` 欄位指定資料夾路徑、不適用本規則。
+
 ---
 
 ## 7. 卡片雙向完整性（`mdtools cards`）

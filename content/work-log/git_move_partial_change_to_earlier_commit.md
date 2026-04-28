@@ -1,5 +1,6 @@
 ---
 title: "Git：把後面 commit 的部分檔案變更搬到前面的 commit"
+slug: "git_move_partial_change_to_earlier_commit"
 date: 2026-04-28
 draft: false
 tags: ["git"]

@@ -232,3 +232,81 @@ Principles 卡的「角色 / 何時讀」起手段：
 ### Pre-commit lint 豁免
 
 `.claude/skills/` 路徑下的 .md 檔在 pre-commit 跳過 mdtools lint（lint 規則針對 Hugo content）— 這是設計、不是 bug。fmt 仍正常執行。
+
+---
+
+## 10. Content 資料夾分類流程
+
+`content/` 下有四個內容資料夾、定位不同、不可混用。寫每一篇文章 / 卡片前先判斷該放哪。
+
+### 10.1 四資料夾的定位
+
+| 資料夾      | 定位                                          | 典型內容                                         | 結構模板                                               |
+| ----------- | --------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------ |
+| `posts/`    | blog 本身的規範 / 設計 / Hugo & Markdown 經驗 | mdtools 設計、Markdown 規範、Hugo / Mermaid 配置 | 教學或踩坑紀錄、自由結構                               |
+| `work-log/` | 工作中遇到的工具 / 技術問題（不是 blog 本身） | git / Flutter / Gradle / Dart 等的具體 case      | 問題情境 → 範例 → 解法                                 |
+| `record/`   | 方法論記錄（中性 frame、不一定有具體 case）   | 5W1H 自察、敏捷、acceptance criteria 等          | 不固定、視內容定                                       |
+| `report/`   | 工程方法論的事後檢討（從 case 抽象出原則）    | 編號連續的卡片系統（#1-93+）                     | 結論 / 為什麼 / 反模式 / 修法 / 關係 / case / 判讀徵兆 |
+
+**判斷流程**：
+
+1. 議題是「blog 內部設定 / Hugo / Markdown / mdtools」？→ `posts/`
+2. 議題是「我用某工具 / 技術遇到的事件性問題」？→ `work-log/`
+3. 議題是「我整理的某個方法論 / 工作模式」？→ `record/`
+4. 議題是「從某個 case 抽出可重用的工程原則」？→ `report/`
+
+**容易誤判的邊界（實際踩過的坑）**：
+
+| 誤判                            | 正確分類                                               |
+| ------------------------------- | ------------------------------------------------------ |
+| blog mermaid 配置放 `work-log/` | mermaid 是 blog 內部設定、屬 `posts/`                  |
+| 寫作檢討放 `record/`            | 寫作 retrospective 是 case-driven 抽原則、屬 `report/` |
+| git 操作技巧放 `record/`        | 是工作中遇到的具體 case、屬 `work-log/`                |
+
+### 10.2 寫作前 due-diligence（強制）
+
+寫新文章 / 卡片前、依資料夾跑對應檢查：
+
+**寫 `report/` 卡片前**：
+
+1. 讀 `content/report/_index.md` 場景路徑、確認議題沒被既有卡片涵蓋
+2. 若議題跟既有卡片有重疊但角度不同、定位為「sibling」或「補某卡缺的維度」、不是新主題
+3. 卡片用既有編號往後遞增（不可跳號）
+
+**寫 `posts/` 文章前**：
+
+1. 確認沒有既有 posts 在講同一主題
+2. 若是補既有指南的特定議題、開頭引用既有指南建立 context
+
+**寫 `work-log/` 文章前**：
+
+1. 純技術事件、不需要 due-diligence（事件本身就是 unique）
+
+**任何資料夾都檢查**：
+
+frontmatter 的 `slug` 跟檔名對齊（見 `markdown-writing-spec.md` §6.5）。
+
+### 10.3 寫作後的 retrospective 流程
+
+寫一篇文章後若發生「來回修改 / 多次 review / 踩到非預期的坑」、進 retrospective：
+
+1. **辨識議題層次**：是視覺 / 語意 / 邏輯哪一層的問題？（見 compositional-writing 的 multi-pass layer 維度）
+2. **抽抽象原則**：問「下一個類似情境會怎麼踩同樣的坑」、有的話寫成 `report/` 卡片
+3. **連結既有原則**：新卡片必須在「跟其他抽象層原則的關係」段、列至少 3 個現有 `report/` 卡片的關係
+4. **更新規範**：若議題揭露既有規範缺失（例如本次 slug 議題揭露 `markdown-writing-spec.md` 漏 §6.5）、補規範
+5. **更新 _index.md 場景路徑**：給未來遇到同類情境的讀者一條讀法路線
+
+### 10.4 跨 surface 的內容處理
+
+**Skill ↔ Content** 規則互斥（見 §9）— 但這次寫作 retrospective 揭露議題時、可能同時要動兩個 surface：
+
+- Report 卡片是 content/、可以 cross-link 其他 report
+- Skill reference 必須自包含、不能引用 content/
+- 若議題該同時記在兩處、各寫一份、語境化在各 surface 內、**不互相引用**
+
+例：本次「multi-pass review 的 layer 軸」：
+
+- `content/report/visual-tool-error-layer-alignment.md` — case-driven、引用其他 report 卡
+- `.claude/skills/compositional-writing/references/writing-articles.md` 的「層次意識」段 — 自包含、不提 report 卡編號
+
+兩者主旨對應、但各自獨立、不交叉引用。

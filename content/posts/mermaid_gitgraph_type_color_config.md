@@ -1,5 +1,6 @@
 ---
 title: "Mermaid gitGraph：自訂 commit type 顏色不渲染的配置補洞"
+slug: "mermaid_gitgraph_type_color_config"
 date: 2026-04-28
 draft: false
 tags: ["mermaid", "hugo", "blog-config"]

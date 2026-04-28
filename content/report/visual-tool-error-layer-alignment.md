@@ -1,5 +1,6 @@
 ---
 title: "視覺手段對齊錯誤層次：CSS / emoji 修不到語意 / 邏輯問題"
+slug: "visual-tool-error-layer-alignment"
 date: 2026-04-28
 weight: 92
 description: "修視覺問題的工具（CSS、emoji、顏色、排版）只能擋視覺層、不能修語意 / 邏輯層。把語意 / 邏輯問題當成視覺問題修 = 蓋住症狀根因不動 + false confidence、跟 #82 用 hook 蓋行為錯誤同骨。三層優先序：邏輯 → 語意 → 視覺、修法從深層往淺層走、不從症狀往回推。本卡是 #82 在「呈現層」的具體實例、是 #83 multi-pass review 缺的 vertical 軸。"
@@ -210,7 +211,7 @@ ceiling 訊號：
 
 ### Case 2：mermaid gitGraph type 顏色設定
 
-跟 Case 1 同篇文章的另一個議題：mermaid 的 `type: HIGHLIGHT` / `type: REVERSE` 自訂顏色不渲染（[mermaid_gitgraph_type_color_config](../../posts/mermaid_gitgraph_type_color_config/)）。
+跟 Case 1 同篇文章的另一個議題：mermaid 的 `type: HIGHLIGHT` / `type: REVERSE` 自訂顏色不渲染（[mermaid_gitgraph_type_color_config](/posts/mermaid_gitgraph_type_color_config/)）。
 
 這個 **是** 純視覺問題 — 內容本身沒爭議、只是 mermaid themeVariables 缺配置。修 CSS / themeVariables 是對的。
 
