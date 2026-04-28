@@ -12,7 +12,7 @@ tags: ["report", "事後檢討", "CSS", "DOM", "工程方法論"]
 
 ---
 
-## 為什麼 class name 不能用來推層級
+## 層級必須從 live DOM 讀
 
 ### 商業邏輯
 

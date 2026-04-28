@@ -1,5 +1,5 @@
 ---
-title: "URL slug 是 fact、不是 derivation：跨工具 identifier 必須顯式"
+title: "URL slug 必須顯式定義為 fact：跨工具 identifier 用單一定義源"
 slug: "url-slug-must-be-explicit-fact"
 date: 2026-04-28
 weight: 93

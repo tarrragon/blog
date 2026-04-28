@@ -152,7 +152,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Stra
 - Dependency upgrade event（升級觸發「L3 還相容嗎、還必要嗎」）
 - Maintenance cost log（紀錄 L3 修了 N 次、累積到 threshold 觸發 review）
 
-### Pruning 不是失敗
+### Pruning 是正常 lifecycle
 
 降級不是「我們之前做錯」、是「ROI 變化、調整」。L3 在 ship 當下是最佳解、現在不是了 — 接受 capability gap 對策也會過時、跟其他工程決策同。
 

@@ -1,5 +1,5 @@
 ---
-title: "Writing 的 multi-pass review：寫不是一輪、是 N 輪不同 frame"
+title: "Writing 的 multi-pass review：N 輪 review、每輪換 frame"
 date: 2026-04-26
 weight: 83
 description: "寫文章 / 註解 / 文件 / prompt 的「寫」不是單次動作 — 是 N 輪 review。第 1 輪生成、第 2 輪對意圖（#67）、第 3 輪檢查機會成本語氣、第 4 輪 grep-ability、第 5 輪反例 / 邊界。每輪不同 frame、單輪寫不出全部維度。本卡是 #82 在「寫」這個 output 動作的具體實例。"

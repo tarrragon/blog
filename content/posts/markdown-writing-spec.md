@@ -310,7 +310,7 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 
 三個推導鏈不一致時 = silent broken link（mdtools pass 但 hugo build 後 404、或反過來）。把 slug 升成 frontmatter 顯式 fact、所有工具基於同一 source、消除 derivation 鏈。
 
-詳細論述見 [report #93 URL slug 是 fact、不是 derivation](/report/url-slug-must-be-explicit-fact/)。
+詳細論述見 [report #93 URL slug 必須顯式定義為 fact](/report/url-slug-must-be-explicit-fact/)。
 
 **檔名對齊規則**：
 

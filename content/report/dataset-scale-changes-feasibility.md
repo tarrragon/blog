@@ -1,5 +1,5 @@
 ---
-title: "Dataset 規模改變什麼可行：「需要 index」是 production scale 的詞、不是普世詞"
+title: "Dataset 規模改變什麼可行：「需要 index」依 scale 而定"
 date: 2026-04-26
 weight: 89
 description: "工程師習慣以「production scale」為預設、自動假設「O(N) scan 不可行、需要 index」。但小 dataset 內、O(N) 甚至 O(N²) 都 trivial、不該過度工程。本卡列具體 threshold（< 1MB / < 10MB / < 100MB / > 1GB）對應的可行操作、跟「猜測 production scale 過度設計」的反模式對照。本卡是 #43 最小必要範圍在「規模假設」維度的展現。"
