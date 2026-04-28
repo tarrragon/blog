@@ -13,18 +13,18 @@ tags: ["git"]
 
 ```mermaid
 gitGraph
-   commit id: "A (model 定義)" type: HIGHLIGHT
+   commit id: "A (model 定義)"
    commit id: "B (其他)"
-   commit id: "C (功能實作)" type: REVERSE
+   commit id: "C (功能實作)"
    commit id: "D (其他)"
 ```
 
-> 🟢 HIGHLIGHT = 接收檔案變更的目標 commit（A）
-> 🔴 REVERSE = 含有不該屬於它的檔案變更的 commit（C）
+**四個 commit 的角色**：
 
-- **目標**：commit C 中對 `models/foo.dart` 的修訂應該屬於 commit A
-- **限制**：commit C 同時改了其他 6 個檔案，**只想搬走那一個檔案**，其他保留
-- **A 跟 C 之間還有別的 commit（B）**，不能簡單 squash
+- **A**（接收目標）：commit C 中對 `models/foo.dart` 的修訂應該屬於這裡
+- **B**（中間插入）：A 跟 C 之間有別的 commit，不能簡單 squash
+- **C**（變更來源）：同時改了 `models/foo.dart` 和其他 6 個檔案
+- **限制**：只想搬走 `models/foo.dart`，其他檔案保持原狀
 
 ---
 
