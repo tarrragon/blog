@@ -93,6 +93,65 @@ if [[ ${#lint_args[@]} -gt 0 ]]; then
     fi
 fi
 
+# --- 3.5 Skill mirror sync check (#96) ------------------------------------
+# AGENTS.md §9: .claude/skills/<x>/ 跟 content/skills/<x>/ 是 mirror、主體相同。
+# 改一邊沒改另一邊是 #95/#96 反覆踩到的 case — 同 surface 的同類風險區。
+# 這一步檢查：staged 動到一邊、另一邊沒 staged 就警告（非阻擋、避免 link 格式
+# 差異的 false positive；只抓「忘了同步」這個失誤模式）。
+# Skip with COMMIT_SKIP_MIRROR_CHECK=1.
+if [[ "${COMMIT_SKIP_MIRROR_CHECK:-0}" != "1" ]]; then
+    mirror_warnings=""
+    staged_set=$(git diff --cached --name-only --diff-filter=ACMR)
+    # .claude/ → content/ direction
+    while IFS= read -r claude_path; do
+        [[ -z "$claude_path" ]] && continue
+        skill=$(echo "$claude_path" | cut -d'/' -f3)
+        rest=${claude_path#.claude/skills/$skill/}
+        case "$rest" in
+            SKILL.md) mirror_path="content/skills/$skill/skill.md" ;;
+            references/principles/*) continue ;;
+            references/*) mirror_path="content/skills/$skill/${rest#references/}" ;;
+            *) continue ;;
+        esac
+        [[ ! -f "$mirror_path" ]] && continue
+        if ! echo "$staged_set" | grep -qFx "$mirror_path"; then
+            mirror_warnings+="    $claude_path → $mirror_path"$'\n'
+        fi
+    done <<< "$(echo "$staged_set" | grep -E '^\.claude/skills/[^/]+/(SKILL\.md|references/.+\.md)$' || true)"
+    # content/ → .claude/ direction
+    while IFS= read -r content_path; do
+        [[ -z "$content_path" ]] && continue
+        skill=$(echo "$content_path" | cut -d'/' -f3)
+        rest=${content_path#content/skills/$skill/}
+        [[ "$rest" == "_index.md" ]] && continue
+        case "$rest" in
+            skill.md) mirror_path=".claude/skills/$skill/SKILL.md" ;;
+            *) mirror_path=".claude/skills/$skill/references/$rest" ;;
+        esac
+        [[ ! -f "$mirror_path" ]] && continue
+        if ! echo "$staged_set" | grep -qFx "$mirror_path"; then
+            mirror_warnings+="    $content_path → $mirror_path"$'\n'
+        fi
+    done <<< "$(echo "$staged_set" | grep -E '^content/skills/[^/]+/[^/]+\.md$' || true)"
+    if [[ -n "$mirror_warnings" ]]; then
+        echo ""
+        echo "  [pre-commit] ⚠ Mirror staged unilaterally (#96 enumeration miss):"
+        printf '%s' "$mirror_warnings"
+        echo ""
+        echo "  Skill mirror requires both surfaces to update together (AGENTS.md §9)."
+        echo "  Either stage the mirror too, or skip with COMMIT_SKIP_MIRROR_CHECK=1."
+        if [[ -t 0 ]]; then
+            read -r -p "  Continue commit anyway? [y/N] " response < /dev/tty
+            if [[ ! "$response" =~ ^[Yy]$ ]]; then
+                echo "[pre-commit] commit aborted by mirror check" >&2
+                exit 1
+            fi
+        else
+            echo "  (non-interactive: continuing — set COMMIT_SKIP_MIRROR_CHECK=1 to suppress)"
+        fi
+    fi
+fi
+
 # --- 3. cards on full content/ --------------------------------------------
 # Cross-file checks (orphan, backlinks) require the whole graph, so we
 # scan content/ rather than only the staged subset.
