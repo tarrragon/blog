@@ -122,6 +122,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#91 升級 trigger 的量化設計](escalation-trigger-quantification/) — 「不夠就升 Y」需要 metric + threshold + window + owner 四元素、L1 ship 時就同步寫 L2 / L3 trigger、「再觀察一下」是缺 trigger 的訊號
 - [#92 視覺手段對齊錯誤層次](visual-tool-error-layer-alignment/) — CSS / emoji 修不到語意 / 邏輯問題、修法順序「邏輯 → 語意 → 視覺」深層往淺層、用視覺工具蓋下游症狀 = false confidence、是 #82 在「呈現層」的 sibling、補 #83 multi-pass 缺的 vertical 軸
 - [#93 URL slug 必須顯式定義為 fact](url-slug-must-be-explicit-fact/) — 跨工具共用的 identifier（slug / route / ID）必須顯式定義在一處 fact、不能依賴各工具各自推導；slug 散落在「檔名 / hugo title 推導 / frontmatter」三處 = SSoT 違反、跨工具接縫時才爆；本卡是 #44 在 toolchain integration 的具體實例、跟 #82 / #92 並列為「工具 ceiling pattern」系列
+- [#94 正向改寫要保留對照論據、不能空降結論](positive-rewrite-preserves-contrast/) — 「X、不是 Y」同時給結論 + 排除讀者直覺、為了「正向陳述優先」直接刪 Y 會讓 X 變空降斷言；合法做法：保留 contrast / 補 reasoning / 升級對照表；本卡是 #82 在「寫作規則執行」層的同形 pattern、補 `compositional-writing` 規則六沒覆蓋的反向 case（只有錨點沒有對照）
 
 ### 第七輪：Pattern 卡片（待補完）
 
