@@ -40,7 +40,9 @@
       "WebFetch(domain:coding-with-ai.dev)",
       "Bash(xargs -I{} basename {} .md)",
       "Bash([ -f \"/Users/mac-eric/project/blog/content/record/$f.md\" ])",
-      "Bash([ -f \"/Users/mac-eric/project/blog/content/other/$f.md\" ])"
+      "Bash([ -f \"/Users/mac-eric/project/blog/content/other/$f.md\" ])",
+      "Bash(mkdir -p /Users/mac-eric/project/blog/.agents)",
+      "Bash(ln -s ../.claude/skills skills)"
     ],
     "deny": [],
     "ask": []
