@@ -126,6 +126,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#95 Multi-pass review 的 scope 要蓋『同類風險區』](multi-pass-scope-must-cover-risk-zone/) — Pass 用「我改過的檔」當 scope 是便利選擇、會 systematic miss 整個 corpus 的同類違規；合法 scope = 原則適用範圍 ∩ 待 review corpus、跟改動區無關；用 grep 把同類風險區結構性掃出來；本卡是 #67 在 review 流程的具體展現、補 #83 沒覆蓋的 scope 軸（frame × scope 兩軸都對齊才完整）
 - [#96 適用範圍要展開成 file enumeration](applicability-scope-must-be-enumerated/) — 「所有教學文件」這類口語描述執行時要心算具體檔、推導步驟易漏（mirror / fork / 翻譯版）；合法形式是 enumerated file list 或可重現的 grep / find 規則；本卡是 #95 的下游具體化（#95 答 scope 從哪來、本卡答 scope 長什麼樣）、跟 #82 互補（enumerate 是字面層、completeness 是行為層判準）、是 #44 在「原則作用域」維度的具體案例
 - [#97 Metadata surface 要納入寫作 review 範圍](metadata-surface-in-writing-review/) — title / description / frontmatter / heading / link label / MOC hook 是讀者入口與搜尋入口；body review 通過後仍要跑 metadata surface，frame × surface 兩軸同時完整才代表寫作 review coverage 完整
+- [#98 素材庫比例要支撐主情境的反向驗證](source-library-ratio-supports-scenario-validation/) — 文章主情境保持 4-5 個、素材庫保留 2-3 倍 field/source cards；每個 scenario 背後要有 2-3 個來源，才能支撐反向驗證、壓力變體與後續擴寫
 
 ### 第七輪：Pattern 卡片（待補完）
 
