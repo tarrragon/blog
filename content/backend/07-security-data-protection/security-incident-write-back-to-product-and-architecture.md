@@ -37,6 +37,19 @@ description: "把事故教訓回寫到產品決策、架構控制與知識網，
 
 與知識網連結的責任是讓教訓可查詢。回寫結果可同步更新 7.x 章節、藍隊素材庫與知識卡片連結。
 
+## 素材回寫入口
+
+素材回寫入口的責任是把 field case、scenario 與 control pattern 轉成文章更新路由。案例提供壓力，情境提供演練，控制模式提供可搬運欄位。
+
+| 素材                                                                                                                                  | 回寫責任                                                             | 文章路由        |
+| ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | --------------- |
+| [Field cases](/backend/07-security-data-protection/blue-team/materials/field-cases/)                                                  | 把真實事件壓力整理成 defender pressure                               | `7.B12`         |
+| [Scenarios](/backend/07-security-data-protection/blue-team/materials/scenarios/)                                                      | 把案例壓力轉成 tabletop 與 Game Day                                  | `7.B9`          |
+| [Control patterns](/backend/07-security-data-protection/blue-team/materials/control-patterns/)                                        | 把重複做法抽成 owner、evidence、lifecycle 與 write-back 欄位         | `7.B1` + `7.B3` |
+| [Exercise write-back pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/exercise-write-back-pattern/) | 把演練 finding 轉成控制、runbook、owner 與 tripwire 任務             | `7.24`          |
+| [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)   | 把 MFA、rotation、reset workflow 與 exposure monitoring 寫進產品基線 | `7.2` + `7.B12` |
+| [Recovery readiness pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/recovery-readiness-pattern/)   | 把復原目標、備援存取、依賴地圖與通報節奏寫進架構決策                 | `7.24` + `08`   |
+
 ## 判讀訊號與路由
 
 | 判讀訊號               | 代表需求                   | 下一步路由         |
@@ -50,6 +63,8 @@ description: "把事故教訓回寫到產品決策、架構控制與知識網，
 
 - [7.B5 Detection Engineering Lifecycle](/backend/07-security-data-protection/blue-team/detection-engineering-lifecycle/)
 - [7.B6 Incident Triage Loop](/backend/07-security-data-protection/blue-team/incident-triage-loop/)
+- [7.B9 Blue Team Scenario Library](/backend/07-security-data-protection/blue-team/blue-team-scenario-library/)
+- [7.B12 Defender Pressure From Real Incidents](/backend/07-security-data-protection/blue-team/defender-pressure-from-real-incidents/)
 - [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/)
 - [7.26 資安素材庫如何支援工程推演](/backend/07-security-data-protection/security-material-library-for-engineering-simulation/)
 

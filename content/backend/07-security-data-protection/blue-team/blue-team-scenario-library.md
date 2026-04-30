@@ -31,10 +31,16 @@ Scenario library 的核心概念是把防守知識轉成可重播情境。可重
 
 初始情境組合的責任是聚焦高價值風險。可先固定四組：
 
-1. 身份濫用與權限擴張。
-2. 入口曝險與管理面異常。
-3. 供應鏈 artifact 偏移。
-4. 低頻資料外送與長尾訊號。
+1. [Identity Support Token Tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/identity-support-token-tabletop/)：支援流程、session token 與客戶通報。
+2. [Edge Session Hijack Game Day](/backend/07-security-data-protection/blue-team/materials/scenarios/edge-session-hijack-game-day/)：入口曝險、修補後 hunting 與 session invalidation。
+3. [Supply Chain Artifact Drill](/backend/07-security-data-protection/blue-team/materials/scenarios/supply-chain-artifact-drill/)：artifact provenance、release freeze 與 rollback。
+4. [Low-frequency Exfiltration Tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/low-frequency-exfiltration-tabletop/)：資料範圍判讀、通報與證據保存。
+
+## Source-first 情境規則
+
+情境庫的責任是把真實案例轉成可重播演練。每張情境卡都要能回查到 field case 或 professional source，並把事件細節轉譯成通用服務壓力。
+
+Source-first 讓情境保留真實防守壓力，同時避免把單一公司事件寫成讀者必須照抄的流程。情境卡負責抽出 trigger、hypothesis、control surface、response route、evidence target 與 write-back target。
 
 ## 演練節奏
 
@@ -59,6 +65,7 @@ Scenario library 的核心概念是把防守知識轉成可重播情境。可重
 - [7.B6 Incident Triage Loop](/backend/07-security-data-protection/blue-team/incident-triage-loop/)
 - [7.B7 Threat-Informed Validation](/backend/07-security-data-protection/blue-team/threat-informed-validation/)
 - [7.BM3 藍隊推演情境素材](/backend/07-security-data-protection/blue-team/materials/scenarios/)
+- [7.BM2 藍隊現場案例素材](/backend/07-security-data-protection/blue-team/materials/field-cases/)
 
 ## 完稿判準
 

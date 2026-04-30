@@ -32,9 +32,20 @@ weight: 725
 | 子分類                                                                                                 | 責任                          | 初始狀態         |
 | ------------------------------------------------------------------------------------------------------ | ----------------------------- | ---------------- |
 | [Professional sources](/backend/07-security-data-protection/blue-team/materials/professional-sources/) | 專業來源卡與引用限制          | 先建立七張來源卡 |
-| [Field cases](/backend/07-security-data-protection/blue-team/materials/field-cases/)                   | 藍隊現場案例與事件壓力        | 先建立收錄規則   |
-| [Scenarios](/backend/07-security-data-protection/blue-team/materials/scenarios/)                       | Tabletop 與 Game Day 情境素材 | 先建立情境模板   |
-| [Control patterns](/backend/07-security-data-protection/blue-team/materials/control-patterns/)         | 控制面模式與驗證模式          | 先建立模式分類   |
+| [Field cases](/backend/07-security-data-protection/blue-team/materials/field-cases/)                   | 藍隊現場案例與事件壓力        | 已收錄 11 張案例 |
+| [Scenarios](/backend/07-security-data-protection/blue-team/materials/scenarios/)                       | Tabletop 與 Game Day 情境素材 | 已收錄 4 張情境  |
+| [Control patterns](/backend/07-security-data-protection/blue-team/materials/control-patterns/)         | 控制面模式與驗證模式          | 已收錄 7 張模式  |
+
+## 推演資產化大綱
+
+| 順序 | 素材層           | 預計產出                               | 使用方式                                                                          |
+| ---- | ---------------- | -------------------------------------- | --------------------------------------------------------------------------------- |
+| 1    | Field cases      | 11 張現場案例卡(含變體)                | 抽出 defender pressure、control gap、detection route                              |
+| 2    | Scenarios        | 4 張推演情境卡                         | 組成 tabletop、Game Day 與 incident handoff 演練                                  |
+| 3    | Control patterns | 7 張控制模式卡                         | 提供 release gate、evidence chain、owner、credential、recovery 與 write-back 欄位 |
+| 4    | Write-back       | 已回寫 `7.B1`、`7.B9`、`7.B12`、`7.24` | 讓素材回到文章主路由與實作交接                                                    |
+
+比例設計參考 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/):主情境 4 個、來源 2-3 倍、scenario 4-5 張、pattern 5-7 張。素材庫已達上述上限,進入穩定維護狀態。
 
 ## 下一步路由
 

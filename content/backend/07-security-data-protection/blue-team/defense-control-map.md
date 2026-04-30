@@ -84,6 +84,20 @@ weight: 721
 
 判讀表格的功能是把控制面地圖變成任務清單。每一列都能直接轉成 ticket title 與驗收欄位。
 
+## 控制模式入口
+
+控制面地圖的可搬運欄位收錄在 [7.BM4 control patterns](/backend/07-security-data-protection/blue-team/materials/control-patterns/)。每張模式卡都提供判讀訊號、欄位、適用邊界與下一步路由。
+
+| 模式                                                                                                                                        | 用途                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [Control owner pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/control-owner-pattern/)                   | owner、collaborator、decision maker 與 escalation 欄位                                           |
+| [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/)                 | signal、decision record、artifact、timeline 與 retention                                         |
+| [Detection lifecycle pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/detection-lifecycle-pattern/)       | 偵測規則來源、邏輯、測試事件與退場                                                               |
+| [Vulnerability response pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/vulnerability-response-pattern/) | observed → assessed → mitigated → patched → validated → closed 狀態                              |
+| [Exercise write-back pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/exercise-write-back-pattern/)       | finding、control update、runbook update、owner 與 tripwire                                       |
+| [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)         | MFA、rotation、reset workflow、exposure monitoring 與 network boundary                           |
+| [Recovery readiness pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/recovery-readiness-pattern/)         | recovery objective、backup access、restore verification、dependency map 與 communication cadence |
+
 ## 必連章節
 
 - [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
