@@ -283,6 +283,10 @@ weight: -1
 | [Abuse Case](/backend/knowledge-cards/abuse-case/)                                               | 合法功能如何被惡意轉用               | export、invite、reset            |
 | [WAF](/backend/knowledge-cards/waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack                |
 | [Feature Flag](/backend/knowledge-cards/feature-flag/)                                           | 功能開關如何分離部署與啟用           | rollout、experiment、rollback    |
+| [Security Exception](/backend/knowledge-cards/security-exception/)                               | 風險例外如何以期限與關閉條件治理     | risk acceptance、governance      |
+| [Release Freeze](/backend/knowledge-cards/release-freeze/)                                       | 高風險期間如何暫停特定變更           | incident、vulnerability window   |
+| [Tripwire](/backend/knowledge-cards/tripwire/)                                                   | 風險決策何時自動回到重評估流程       | threshold、escalation            |
+| [Allowlist](/backend/knowledge-cards/allowlist/)                                                 | 例外放行如何維持可控範圍             | freeze exception、policy control |
 | [Input Validation](/backend/knowledge-cards/input-validation/)                                   | 入口資料如何檢查格式與語意           | API、webhook                     |
 | [SSRF](/backend/knowledge-cards/ssrf/)                                                           | 伺服器端請求如何被濫用               | URL fetch、webhook               |
 | [PII](/backend/knowledge-cards/pii/)                                                             | 可識別個人的資料如何保護             | masking、retention               |
@@ -295,6 +299,7 @@ weight: -1
 | [Certificate Chain and Trust Root](/backend/knowledge-cards/certificate-chain-trust/)            | 憑證鏈與信任根如何影響握手           | intermediate CA、trust store     |
 | [Certificate Rotation and Renewal](/backend/knowledge-cards/certificate-rotation-renewal/)       | 憑證與私鑰如何不中斷更新             | expiry、zero-downtime            |
 | [Certificate Revocation](/backend/knowledge-cards/certificate-revocation/)                       | 憑證失效時如何撤銷與替換             | key compromise、incident         |
+| [Artifact Provenance](/backend/knowledge-cards/artifact-provenance/)                             | 交付物來源與完整性如何建立可驗證信任 | CI、supply chain、release gate   |
 | [Audit Log](/backend/knowledge-cards/audit-log/)                                                 | 高風險操作如何留下責任證據           | admin、export、permission        |
 
 ## 使用方式
