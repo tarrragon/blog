@@ -22,3 +22,20 @@ weight: 7253
 ## 初始情境方向
 
 推演情境先從四類高價值服務壓力開始：身份濫用、入口曝險、供應鏈 [artifact](/backend/knowledge-cards/artifact-provenance/) 偏移與低頻資料外送。這四類能直接承接 7.2、7.3、7.12 與 7.13。
+
+## Source-first 規則
+
+推演情境卡的責任是把真實案例轉成中性服務演練。每張情境卡都要標示來源案例，並把情境改寫成通用服務語言。
+
+情境可以合成多個來源的壓力點，但每個主要壓力都要能回查到 field case 或 professional source。這個規則讓 tabletop 與 Game Day 保持可討論性，也避免情境只停留在想像中的攻防故事。
+
+## 下一輪情境大綱
+
+| 情境                                | 觸發訊號                                    | 驗證控制面                                 | 回寫位置                                                                                                          |
+| ----------------------------------- | ------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Identity takeover tabletop          | 高風險登入、支援工具操作或 token 異常       | identity、session、escalation              | [情境卡](/backend/07-security-data-protection/blue-team/materials/scenarios/identity-support-token-tabletop/)     |
+| Edge exposure game day              | 外部通報、掃描命中或 exploit 指標           | entrypoint、patch window、containment      | [情境卡](/backend/07-security-data-protection/blue-team/materials/scenarios/edge-session-hijack-game-day/)        |
+| Supply chain artifact drill         | artifact provenance 偏移或 build 證據不一致 | ci pipeline、release gate、rollback        | [情境卡](/backend/07-security-data-protection/blue-team/materials/scenarios/supply-chain-artifact-drill/)         |
+| Low-frequency exfiltration tabletop | 低頻大量匯出、跨租戶查詢或異常下載          | data protection、audit trail、notification | [情境卡](/backend/07-security-data-protection/blue-team/materials/scenarios/low-frequency-exfiltration-tabletop/) |
+
+情境卡的完成條件是能直接產生演練腳本。每張卡至少包含 scenario trigger、initial hypothesis、response route、evidence target 與 write-back target。
