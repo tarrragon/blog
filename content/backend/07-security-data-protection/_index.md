@@ -50,7 +50,17 @@ weight: 7
 | [7.18 資安控制面如何交接到部署與事故流程](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/)          | Control Handoff                    | 定義資安控制面如何交接到 05/06/08        |
 | [7.19 資安演練：從 Abuse Case 到 Game Day](/backend/07-security-data-protection/security-exercise-from-abuse-case-to-game-day/)             | Security Exercise                  | 定義 problem card 如何轉成演練與回寫     |
 | [7.20 資安成熟度模型：從人工判斷到可稽核閉環](/backend/07-security-data-protection/security-maturity-from-manual-review-to-auditable-loop/) | Maturity Model                     | 定義資安治理成熟度與提升路由             |
+| [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/)                                     | Security as Design Input           | 把資安需求前移到設計評審與服務契約       |
+| [7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/)                                   | Risk in Release Gate               | 把風險、例外與證據納入放行判準           |
+| [7.23 資安與可靠性的共同控制面](/backend/07-security-data-protection/security-and-reliability-shared-controls/)                             | Shared Controls                    | 整合 rollback、containment、degradation  |
+| [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)           | Incident Write-Back                | 把事故教訓回寫到產品、架構與控制流程     |
+| [7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/)                                   | Organization Cadence               | 把成熟度提升轉成固定節奏與指標           |
+| [7.26 資安素材庫如何支援工程推演](/backend/07-security-data-protection/security-material-library-for-engineering-simulation/)               | Materials for Simulation           | 把來源、案例、情境與模式組成推演流程     |
+
+## 模組完成狀態
+
+主章目前已形成基礎問題節點、藍隊操作循環與跨模組延伸章節。下一輪可優先補強 `7.BM2 field-cases` 與 `7.BM4 control-patterns`，並把新增案例回寫到 `7.B9`、`7.B12` 與 `7.24`。
 
 ## 本輪輸出
 
-本輪已完成主章的問題節點、判讀訊號、風險邊界與路由骨架，並新增藍隊子分類作為防守判讀與控制面驗證入口。下一輪以控制面交接、資安演練與成熟度模型為主，讓資安章節接到部署、可靠性與事故流程。
+本輪已完成主章的問題節點、藍隊循環與延伸章節骨架，並把設計輸入、放行判準、可靠性共同控制面、事故回寫與成熟度節奏接回後端實作路由。
