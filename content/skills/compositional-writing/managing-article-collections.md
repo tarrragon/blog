@@ -112,7 +112,7 @@ Pattern 卡片從情境檢討的「設計取捨段落」中抽出。判讀訊號
 
 ## MOC（Map of Content）設計
 
-跨多篇 collection 的入口（_index.md / README.md / TOC）是 MOC、不是內容。
+跨多篇 collection 的入口（collection index / README / TOC）是 MOC、不是內容。
 
 ### 入口的職責邊界
 
@@ -232,7 +232,7 @@ layer 策略、由 [#24 CSS Layers](path/) 完整展開。在邊界辨識上、
 - [#42 2 次門檻：第一次是運氣、第二次是訊號](path/) — 串 #11 / #15 / #20 / #23、跨工具/測試/思路/溝通四面向
 ```
 
-- **位置**：_index.md / MOC
+- **位置**：collection index / MOC
 - **效果**：標題 + 一句話 hook、讓讀者選擇要不要進入該篇
 - **格式**：`- [#N 標題](slug/) — hook（≤ 150 字）`
 
