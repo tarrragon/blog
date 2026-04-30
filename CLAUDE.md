@@ -32,6 +32,18 @@ skill 內容看 `.claude/skills/<name>/SKILL.md`。
 
 跨 surface 的引用會違反規範 — 寫 skill 時複製 principle 卡進 `references/principles/`、不寫外部連結（AGENTS.md §9.2-3）。
 
+### Portable pass
+
+Claude Code 修改 `.claude/skills/` 時要把 skill 當成「可搬到空白專案的獨立目錄」。允許依賴同 skill 內的相對檔案；需要 report / posts 的抽象原則時，先抽成 `references/principles/<slug>.md`，再用相對連結引用。
+
+提交前掃描 portable 風險：
+
+```bash
+rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/report|content/posts|content/skills|_index\\.md)" .claude/skills/<name>
+```
+
+掃到 blog route、`content/` path、`/report/`、`/posts/`、`/skills/`、Hugo-only `_index.md` 時，改成 skill 內部 principle、相對連結或中性名詞（collection index / MOC / article / reference）。
+
 ## 跟 Codex / 其他 agent 的差異
 
 本 repo 同時支援 Claude Code 跟 Codex。差異點：

@@ -1,5 +1,6 @@
 ---
 title: "7.R11 流程濫用問題卡片"
+tags: ["Red Team", "Problem Cards", "Failure Patterns"]
 date: 2026-04-24
 description: "以原子化卡片細化整體 red-team 知識網，承接金字塔結構往下生長的問題討論"
 weight: 721
@@ -49,3 +50,13 @@ weight: 721
 - [批次流程缺少中止檢查點](/backend/07-security-data-protection/red-team/problem-cards/fp-batch-flow-without-stop-checkpoint/)
 - [跨租戶上下文快取殘留](/backend/07-security-data-protection/red-team/problem-cards/fp-cross-tenant-context-cache-residue/)
 - [第三方 token 授權範圍過寬](/backend/07-security-data-protection/red-team/problem-cards/fp-overscoped-third-party-token-grant/)
+- [聯邦 token 信任漂移](/backend/07-security-data-protection/red-team/problem-cards/fp-federated-token-trust-drift/)
+- [備份刪除證據缺口](/backend/07-security-data-protection/red-team/problem-cards/fp-backup-deletion-evidence-gap/)
+- [發佈凍結缺少重評估觸發器](/backend/07-security-data-protection/red-team/problem-cards/fp-release-freeze-without-tripwire/)
+- [產物缺少來源證據](/backend/07-security-data-protection/red-team/problem-cards/fp-artifact-without-provenance/)
+- [偵測訊號關聯斷點](/backend/07-security-data-protection/red-team/problem-cards/fp-detection-signal-correlation-gap/)
+- [例外缺少期限與關閉條件](/backend/07-security-data-protection/red-team/problem-cards/fp-exception-without-expiry/)
+
+### 延伸候選卡
+
+延伸候選卡的責任是保留下一輪拆卡入口。當主章出現新失效樣式或案例映射缺口時，再回填這個區塊。

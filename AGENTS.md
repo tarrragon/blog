@@ -182,11 +182,25 @@
 | **可依賴** | 只依賴 skill 自身內容                         | 可引用 report / posts / 其他 section         |
 | **格式**   | H1 + body、**無 Hugo frontmatter**            | 有 Hugo frontmatter（`title` / `date` 必填） |
 
+### Portable 依賴邊界
+
+`.claude/skills/<name>/` 是可複製到其他專案獨立運作的 portable unit。撰寫 skill 時，預設目標專案沒有本 blog 的 `content/`、`report/`、`posts/`、Hugo route、internal slug 或 `_index.md` 結構。
+
+| 依賴類型                          | 在 `.claude/skills/` 的處理方式                            |
+| --------------------------------- | ---------------------------------------------------------- |
+| 同一個 skill 內的 reference       | 用相對連結：`./x.md`、`references/x.md`、`principles/x.md` |
+| Blog 的 report / posts 原則卡     | 抽象成 skill 內部 principle，放 `references/principles/`   |
+| Blog 內部 route / content path    | 改成中性名詞：collection index、MOC、article、reference    |
+| `content/skills/<name>/` 公開鏡像 | 視為下游 mirror，不作為 `.claude/skills/` 的依賴來源       |
+| 穩定外部規格或公開來源            | 可引用，但段內要保留足夠 context，避免讀者必須開外部頁才懂 |
+
+Portable pass 的判準是：把整個 `.claude/skills/<name>/` 目錄複製到空白專案後，skill 仍能被讀懂、被執行、被維護。
+
 ### Skill 撰寫硬規則
 
 1. **檔案結構**：H1 標題開頭、不寫 Hugo frontmatter（`title` / `date` / `weight` / `tags` 都不寫）。Anthropic Skill 格式由 H1 + body 構成、加 frontmatter 反而會讓 Claude runtime 解析錯。
 
-2. **連結只能指向 skill 內部**：禁止連結到 `/report/...` `/posts/...` `content/...` — 跨專案後這些都是死鏈。引用同 skill 內其他檔案用相對路徑（`./xxx.md` 或 `references/xxx.md`）。
+2. **Skill 知識連結指向 skill 內部**：禁止連結到 `/report/...` `/posts/...` `content/...` — 跨專案後這些都是死鏈。引用同 skill 內其他檔案用相對路徑（`./xxx.md` 或 `references/xxx.md`）；穩定外部規格可用作來源，但段內要保留足夠 context。
 
 3. **引用 blog 抽象原則**：若 skill 要引用 `content/report/` 的原則卡、**把卡複製進該 skill 的 `references/principles/` 目錄**、不是寫外部連結。每個 skill 帶自己的 principles/、共用卡可重複存在於多個 skill。
 
@@ -223,11 +237,18 @@ Principles 卡的「角色 / 何時讀」起手段：
 
 - [ ] H1 開頭、沒有 Hugo frontmatter
 - [ ] 沒有 `/report/` `/posts/` 等外部連結
+- [ ] 沒有 `content/`、`content/skills/`、blog route、Hugo-only `_index.md` 依賴
 - [ ] 跨檔連結都是同 skill 內相對路徑
 - [ ] 沒有 blog-specific 名詞（pagefind / hugo / 具體檔名）
 - [ ] 沒有 blog 編號（`#42`）當主要 identifier
 - [ ] principles/ 卡有「角色 / 何時讀」起手段
 - [ ] 整個 skill 目錄複製到別專案後仍能完整運作
+
+Portable link scan：
+
+```bash
+rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/report|content/posts|content/skills|_index\\.md)" .claude/skills/<name>
+```
 
 ### Pre-commit lint 豁免
 

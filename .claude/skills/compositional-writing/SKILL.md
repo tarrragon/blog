@@ -59,19 +59,21 @@ metadata:
 
 寫完不是 done — 是進入 review 階段。一次寫對全部維度違反 working memory、實際結果是「每維度都做一半」。設計 N 輪 re-read、每輪用不同 frame：
 
-| 輪  | Frame                                                                         | 抓什麼                                                  |
-| --- | ----------------------------------------------------------------------------- | ------------------------------------------------------- |
-| 1   | 生成                                                                          | idea → 字、預期會有錯                                   |
-| 2   | 對意圖（[#67](references/principles/ease-of-writing-vs-intent-alignment.md)） | 跟原意對齊嗎、便利寫法偏移                              |
-| 3   | 機會成本語氣                                                                  | 絕對主義詞翻成 trade-off（grep「應該/必須/不行/正確」） |
-| 4   | Grep-ability / 命名                                                           | 關鍵字前置、AI 能單次 grep 命中                         |
-| 5   | 反例 / 邊界                                                                   | 「何時不適用」段、反模式列表                            |
+| 輪  | Frame                                                                         | 抓什麼                                              |
+| --- | ----------------------------------------------------------------------------- | --------------------------------------------------- |
+| 1   | 生成                                                                          | idea → 字、預期會有錯                               |
+| 2   | 對意圖（[#67](references/principles/ease-of-writing-vs-intent-alignment.md)） | 正文、title、description、MOC hook 都跟原意對齊     |
+| 3   | 機會成本語氣                                                                  | 全 surface 的絕對詞翻成 trade-off                   |
+| 4   | Grep-ability / 命名                                                           | title、slug、link label、段首關鍵字可單次 grep 命中 |
+| 5   | 反例 / 邊界                                                                   | 「何時不適用」段、反模式列表                        |
+
+Surface enumeration 是 multi-pass 的固定前置步驟。寫作產物包含 body surface 與 metadata / navigation surface：`title`、`description`、`tags`、heading、link label、MOC / index entry、slug / filename。每輪 frame 都掃這份 surface 清單，讓正文與讀者入口共用同一個概念錨點。
 
 **核心**：「再仔細一次」≠ multi-pass — 同 frame 重看 catch 不到新問題。每輪換 frame、才能 catch 不同層。各 reference（writing-articles / writing-code-comments / writing-documents / writing-prompts）依 output 類型有特化的輪次組合。
 
 Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、見 [#84](references/principles/naming-as-iterated-artifact.md) 跟 writing-code-comments 的 naming review 段。
 
-詳見 [#83 Writing 的 multi-pass review](references/principles/writing-multi-pass-review.md)、[#85 Methodology 的 multi-pass 該 embed 在 pillar](references/principles/methodology-multi-pass-embedding.md)。
+詳見 [#83 Writing 的 multi-pass review](references/principles/writing-multi-pass-review.md)、[#85 Methodology 的 multi-pass 該 embed 在 pillar](references/principles/methodology-multi-pass-embedding.md)、[Metadata surface 要納入寫作 review 範圍](references/principles/metadata-surface-in-writing-review.md)。
 
 ---
 
@@ -121,7 +123,8 @@ compositional-writing/
     ├── designing-fields-ticket-6w.md     # 六欄位詳細範例：正確 + 混淆共 12 項（按需讀取）
     ├── meta-metrics.md                   # 品質量化驗收（M1-M5）
     ├── reference-authoring-standards.md  # Skill reference 撰寫品質規範
-    └── dry-run-guide.md                  # Skill 發布前語意層驗收（Phase 2 dry-run 流程）
+    ├── dry-run-guide.md                  # Skill 發布前語意層驗收（Phase 2 dry-run 流程）
+    └── principles/                       # Skill 內部支撐型原則卡
 ```
 
 ---
@@ -134,7 +137,8 @@ compositional-writing/
 
 ---
 
-**Last Updated**: 2026-04-25
+**Last Updated**: 2026-04-30
+**Version**: 0.7.2 — 補 multi-pass 的 surface 軸：review 先列 body / metadata / navigation surface（title、description、tags、heading、link label、MOC hook、slug / filename），每輪 frame 都掃同一份 surface 清單；新增內部 principle `metadata-surface-in-writing-review.md`
 **Version**: 0.7.0 — Phase B1 結構升級：加第 6 原則「多輪 Re-read Pass」（明示 5 輪 frame）、引用 #83 / #84 / #85 multi-pass 系列。後續 Phase B2 會把各 reference 結尾加「第 2 輪 review checklist」段
 **Version**: 0.6.0 — 從 references 過載的反思：writing-articles.md 從 780 行瘦身到 ~530 行（拆分判準 / 三類 structure 模板搬到 managing-article-collections.md、focus 集中在「單篇文章內部」）；新增規則八「自我應用 (dogfooding)」（教某條規則的段落本身遵守該規則）；managing-article-collections.md 整合「拆分判準」+「三層 structure 詳細對照 + 模板」；meta-metrics.md M2 加 dogfooding 失敗訊號
 **Version**: 0.5.0 — 從批量改寫 35 篇的經驗回流：原則 3 補「選項數由議題決定、不強湊」（避免 A/B/C/D 強迫症與「實務上幾乎不存在」的假反模式）；writing-articles.md 新增規則九（三類文章 structure 模板）；managing-article-collections.md 新增「跨篇引用 idiom 庫」與「三層 structure 對照」

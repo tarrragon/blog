@@ -1,5 +1,6 @@
 ---
 title: "模組七：資安與資料保護"
+tags: ["資安", "資料保護", "Security", "Data Protection"]
 date: 2026-04-24
 description: "以問題驅動方式擴充資安知識網：先定義服務環節問題，再以案例作為觸發式參考"
 weight: 7
@@ -24,7 +25,7 @@ weight: 7
 - `backend/06-reliability`：驗證、回復與變更節奏實作。
 - `backend/08-incident-response`：分級、指揮、通報與復盤實作。
 
-## 章節列表（大綱階段）
+## 章節列表
 
 | 章節                                                                                                                 | 主題                               | 核心責任                                 |
 | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ---------------------------------------- |
@@ -42,7 +43,10 @@ weight: 7
 | [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) | Supply Chain Integrity             | 定義 build 與 artifact 信任鏈問題        |
 | [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)          | Detection & Signal Governance      | 定義偵測覆蓋、訊號品質與誤報成本問題     |
 | [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)     | Governance Exception & Tripwire    | 定義例外決策期限、補償控制與重評估觸發器 |
+| [7.15 資安作為風險路由系統](/backend/07-security-data-protection/security-as-risk-routing-system/)                   | Risk Routing Essay                 | 把 07 主章串成風險路由導讀               |
+| [7.16 從公開事故到工程 Workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)            | Case to Workflow                   | 說明事故案例如何回寫控制面與工作流       |
+| [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)               | Exception & Freeze Essay           | 說明例外與凍結決策如何避免過期           |
 
 ## 本輪輸出
 
-本輪只完成章節大綱與問題骨架。後續填充會依章節逐步展開判讀細節與案例觸發條件。
+本輪已完成主章的問題節點、判讀訊號、風險邊界與路由骨架。後續會持續補強 red-team 的進階分析章節與跨章回寫規則。

@@ -620,6 +620,7 @@ build-炸-修循環。明顯划算。
 - [ ] 判讀徵兆對照表中出現的徵兆都已展開對應問題
 - [ ] 反例／常見錯誤段落有正向概念層（能回答「正確的責任劃分是什麼」）
 - [ ] 無純負面陳述段落（「X 不是 Y」沒有對應正向錨點）
+- [ ] Title / description / heading / link label / MOC 索引條已跟正文跑同一輪正向陳述、對意圖、grep-ability review
 - [ ] 方案對照段落用機會成本語氣（A/B/C/D 多選項並列、不用「正確 vs 不足」二元）
 - [ ] 沒有「正確概念是 X」「應該用 X」「不應該用 Y」這類絕對主義語句（除非是安全 / 合規 / 數據完整性等物理 / 法律事實）
 - [ ] 文章聚焦的問題能用一句話說完
@@ -635,17 +636,19 @@ build-炸-修循環。明顯划算。
 
 寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[#82](/report/literal-interception-vs-behavioral-refinement/) / [#83](/report/writing-multi-pass-review/)）。
 
+跑下表前先做 surface enumeration：列出 body surface（段落、表格、範例）與 metadata / navigation surface（title、description、tags、heading、link label、MOC / `_index.md` 索引條、slug / filename）。每輪 frame 都掃同一份 surface 清單，讓正文與讀者入口維持同一個概念錨點。細節見 [#97 Metadata surface 要納入寫作 review 範圍](/report/metadata-surface-in-writing-review/)。
+
 文章用的五輪 + 兩輪文章專屬：
 
-| 輪  | Frame                                                         | 文章專用 checklist                                                                      |
-| --- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| 1   | 生成                                                          | idea 從頭寫到尾、不停下改、預期會有粗糙                                                 |
-| 2   | 對意圖（[#67](/report/ease-of-writing-vs-intent-alignment/)） | 開頭一句點題嗎？段落順序由「易讀」決定不是「好寫」決定？                                |
-| 3   | 機會成本語氣                                                  | grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                  |
-| 4   | Grep-ability / 命名                                           | 標題 / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title                |
-| 5   | 反例 / 邊界                                                   | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？ |
-| 6   | Cross-link 健康度                                             | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 `_index.md`            |
-| 7   | 索引條 vs 內容                                                | `_index.md` 的索引描述對應到文章核心嗎、不只是 title 的延伸                             |
+| 輪  | Frame                                                         | 文章專用 checklist                                                                                    |
+| --- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 1   | 生成                                                          | idea 從頭寫到尾、不停下改、預期會有粗糙                                                               |
+| 2   | 對意圖（[#67](/report/ease-of-writing-vs-intent-alignment/)） | 開頭一句、title、description、MOC hook 都點同一個核心責任嗎？段落順序由「易讀」決定不是「好寫」決定？ |
+| 3   | 機會成本語氣                                                  | 全 surface grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                     |
+| 4   | Grep-ability / 命名                                           | title / heading / link label / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title      |
+| 5   | 反例 / 邊界                                                   | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？               |
+| 6   | Cross-link 健康度                                             | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 `_index.md`                          |
+| 7   | 索引條 vs 內容                                                | `_index.md` 的索引描述、link label、文章 title 與正文第一段是否指向同一個核心責任                     |
 
 跳輪規則同 [#83](/report/writing-multi-pass-review/) — 短文 / 即時 note 跳 4-7、production 卡片 / 教學文章全跑。
 
@@ -671,7 +674,8 @@ build-炸-修循環。明顯划算。
 
 ---
 
-**Last Updated**: 2026-04-25
+**Last Updated**: 2026-04-30
+**Version**: 0.7.2 — 補 metadata / navigation surface review：title、description、heading、link label、MOC / `_index.md` 索引條、slug / filename 先列入 surface enumeration，再跟正文跑同一輪對意圖、正向陳述與 grep-ability pass；對應 report #97
 **Version**: 0.6.0 — 從 references 過載的反思：把「跨多篇議題」（拆分判準、三類 structure 模板、跨篇引用 idiom）整合搬到 `managing-article-collections.md`；本 reference 聚焦「單篇文章內部怎麼寫」、瘦身 130 行；舊規則八 / 九 整合到那邊。新增規則八「自我應用 (dogfooding)」 — 教某條規則的段落本身遵守該規則
 **Version**: 0.5.0 — 從批量改寫 35 篇的經驗回流：規則七補強（選項數由議題決定不強湊、真反模式直接標明、抽象層 / Pattern 卡片不寫「設計取捨 A/B/C/D」）；新增規則九「三類文章用三種 structure」（情境 / 抽象 / Pattern 各自的段落 template）；自檢清單新增五項
 **Version**: 0.4.0 — 新增規則七「機會成本語氣」（程式設計極少絕對正確、討論的是多目標取捨；方案對照用 A/B/C/D 多選項並列）；新增規則八「focus 是議題完整度」（拆分判準是 focus、不是邊界清晰；review 必須讀內文）；自檢清單新增四項

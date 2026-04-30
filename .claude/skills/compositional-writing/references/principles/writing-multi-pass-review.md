@@ -20,6 +20,8 @@
 
 每輪用「跟前一輪不同的眼睛」看同一份文字 — 才能 catch 不同層的問題。**第 1 輪的 frame 不可能同時 catch 所有層**（見 [literal-interception-vs-behavioral-refinement](./literal-interception-vs-behavioral-refinement.md) 字面 vs 行為的 ceiling）。
 
+Multi-pass review 還需要 surface inventory。Frame 定義每輪看什麼品質；surface inventory 定義每輪掃哪些文字位置。當產物包含 title、description、heading、link label、MOC / index entry 時，這些 metadata / navigation surface 要跟正文跑同一輪 review。細節見 [metadata-surface-in-writing-review](./metadata-surface-in-writing-review.md)。
+
 ---
 
 ## 為什麼一輪寫不出全部維度
@@ -141,6 +143,7 @@
 | [literal-interception-vs-behavioral-refinement](./literal-interception-vs-behavioral-refinement.md) | 本卡是該卡在「寫」這個動作的具體實例 — review 是 multi-pass、不是 hook               |
 | [naming-as-iterated-artifact](./naming-as-iterated-artifact.md)                                     | 本卡的輪 4 在 naming 場景的特化                                                      |
 | [methodology-multi-pass-embedding](./methodology-multi-pass-embedding.md)                           | 本卡的 5 輪設計就是 compositional-writing 該 embed 為核心原則的內容、不該塞 appendix |
+| [metadata-surface-in-writing-review](./metadata-surface-in-writing-review.md)                       | 本卡定義 frame 軸，該卡補 surface 軸                                                 |
 
 ---
 
