@@ -45,7 +45,7 @@ weight: 8
 
 這類需求的陷阱是只用「是否登入」表示授權。登入代表身份已被確認；授權要回答這個身份能否操作特定資源、特定欄位與特定動作。權限規則也要能被測試、稽核與解釋。
 
-下一步可讀：[資安與資料保護](/backend/07-security-data-protection/)。
+下一步可讀：[7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)。
 
 ## 【判讀】伺服器防護要先找暴露入口
 
@@ -59,7 +59,7 @@ weight: 8
 
 這類需求的陷阱是把所有 HTTP 入口視為同一種入口。公開 API、內部 API、診斷 API、管理 API 與第三方 callback 的風險不同；防護策略要依入口用途分級。
 
-下一步可讀：[部署平台與網路入口](/backend/05-deployment-platform/) 與 [資安與資料保護](/backend/07-security-data-protection/)。
+下一步可讀：[7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/) 與 [部署平台與網路入口](/backend/05-deployment-platform/)。
 
 ## 【判讀】資料遮罩要依使用情境分級
 
@@ -73,7 +73,7 @@ weight: 8
 
 這類需求的陷阱是把遮罩視為顯示層問題。資料可能流入匯出、log、queue、搜尋索引、分析資料集與備份；遮罩策略要定義在資料流路徑上，而非只套在單一頁面。
 
-下一步可讀：[資安與資料保護](/backend/07-security-data-protection/) 與 [可觀測性平台](/backend/04-observability/)。
+下一步可讀：[7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/) 與 [可觀測性平台](/backend/04-observability/)。
 
 ## 【判讀】傳輸保護要覆蓋跨邊界流動
 
@@ -87,7 +87,7 @@ weight: 8
 
 這類需求的陷阱是只保護公開入口。內部網路、queue message、[object storage](/backend/knowledge-cards/object-storage/) link、backup transfer 與第三方 callback 都是資料流動路徑；傳輸保護要依邊界與資料等級設定。
 
-下一步可讀：[部署平台與網路入口](/backend/05-deployment-platform/) 與 [資安與資料保護](/backend/07-security-data-protection/)。
+下一步可讀：[7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) 與 [部署平台與網路入口](/backend/05-deployment-platform/)。
 
 ## 【判讀】密鑰與秘密管理要設計生命週期
 
@@ -102,7 +102,7 @@ weight: 8
 
 這類需求的陷阱是把秘密寫進設定檔、log、測試資料或部署指令。秘密管理要同時包含保存位置、存取權限、輪替流程、撤銷流程、憑證續期流程與稽核紀錄。
 
-下一步可讀：[資安與資料保護](/backend/07-security-data-protection/)。
+下一步可讀：[7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)。
 
 ## 【判讀】稽核追蹤要服務事後責任判斷
 
@@ -116,7 +116,7 @@ weight: 8
 
 這類需求的陷阱是把 audit log 和 debug log 混在一起。debug log 服務排障，audit log 服務責任判斷；audit log 需要更穩定的 schema、保存策略、存取權限與完整性保護。
 
-下一步可讀：[資安與資料保護](/backend/07-security-data-protection/) 與 [可觀測性平台](/backend/04-observability/)。
+下一步可讀：[7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/) 與 [可觀測性平台](/backend/04-observability/)。
 
 ## 【檢查】進入實作前的概念邊界清單
 
@@ -127,10 +127,15 @@ weight: 8
 3. 秘密與憑證生命週期是否明確（保存、輪替、撤銷、續期）
 4. 稽核與事故追蹤要求是否明確（audit 欄位、保存、查核流程）
 
-下一步建議路由：
+下一步建議路由（按本章六議題對應）：
 
-- [07-security-data-protection](/backend/07-security-data-protection/)
-- [08-incident-response](/backend/08-incident-response/)
+- 權限分級 → [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- 伺服器防護 → [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)
+- 資料遮罩 → [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)
+- 傳輸保護 → [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)
+- 密鑰與秘密 → [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)
+- 稽核追蹤 → [7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)
+- 事件處置 → [08-incident-response](/backend/08-incident-response/)
 
 ## 小結
 
