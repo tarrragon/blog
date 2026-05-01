@@ -21,11 +21,28 @@ weight: 725
 
 ## 使用路由
 
-藍隊文章引用素材時先選來源層級。若文章要定義流程，優先引用 NIST 或 CISA；若文章要定義防守技術詞彙，優先引用 MITRE D3FEND；若文章要定義偵測規則生命週期，優先引用 Sigma 與 SANS；若文章要補現場壓力，優先引用 Mandiant。
+藍隊文章引用素材時先選來源層級、並在引用前確認來源與當下文章主題的對應關係。下表是條件式對應、不是無條件 universal 推薦：
+
+| 文章主題                    | 適合優先引用               | 適合場景                                     | 不適合場景                                                             |
+| --------------------------- | -------------------------- | -------------------------------------------- | ---------------------------------------------------------------------- |
+| 流程 / 治理基準             | NIST CSF、NIST SP 800 系列 | 政策層、合規對齊、跨組織共通語言             | 具體偵測規則 / IoC（NIST 不深入到 detection content layer）            |
+| 處置建議 / 跨機構協作       | CISA advisory、CISA KEV    | 重大事件期間的處置時序、KEV 列入、公部門協作 | 平時穩定流程設計（CISA advisory 是事件驅動、節奏跟長期 baseline 不同） |
+| 防守技術詞彙 / 對抗能力對照 | MITRE D3FEND、MITRE ATT&CK | 對抗矩陣、控制能力對照、紅藍對齊語言         | 具體 tooling 配置 / vendor-specific 設定                               |
+| 偵測規則格式 / 生命週期     | Sigma、SANS detection 教材 | 規則格式、test event、retirement 流程設計    | 政策對齊 / 合規語言（detection content 不是 governance layer）         |
+| 現場壓力 / 職能趨勢 / TTP   | Mandiant、Crowdstrike 報告 | 補事件案例、actor TTP、telemetry 視角        | 標準化基準（廠商報告各有觀察偏差、不適合當 single source of truth）    |
+
+引用前的 verifiability check：「此來源原文有沒有 conditional scope？我引用時有沒有保留？」——避免把 NIST 的 organizational risk discussion 引成 universal mandate、把 MITRE 的 abstract technique 引成 specific tool requirement。
 
 ## 反向驗證
 
-素材庫的反向驗證責任是提醒作者區分「來源能支撐什麼」與「來源需要在本章轉譯什麼」。NIST 與 CISA 適合支撐流程基準，MITRE 適合支撐威脅導向與防守詞彙，Sigma 適合支撐偵測規則格式，Mandiant 與 SANS 適合支撐現場壓力與職能趨勢。
+素材庫的反向驗證責任是提醒作者區分「來源能支撐什麼」與「來源需要在本章轉譯什麼」：
+
+- **NIST / CISA**：適合支撐流程基準與處置建議、不適合直接生成 detection rule 內容。原文常是 organizational-level guidance、轉譯到 service-level 時要明示 deployment scope。
+- **MITRE D3FEND / ATT&CK**：適合支撐威脅導向與防守詞彙、不適合直接當 implementation checklist。Technique-level 描述需要在文章補 product-specific mechanism。
+- **Sigma**：適合支撐偵測規則格式、不適合當完整的 detection coverage map。單一規則的有效性 depends on log source / parser 一致性。
+- **Mandiant / SANS**：適合支撐現場壓力與職能趨勢、不適合當 universal baseline。廠商視角受客戶基數 / 行業組成偏差影響。
+
+每個素材的 last-checked 與適用範圍變動風險、由各 source 卡片在 professional-sources 子分類各自記錄。
 
 ## 子分類
 
