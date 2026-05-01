@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Read(//Users/mac-eric/Desktop/**)",
       "Bash(git reset:*)",
       "Bash(wc:*)",
       "Bash(head:*)",
@@ -39,10 +38,11 @@
       "WebFetch(domain:developers.openai.com)",
       "WebFetch(domain:coding-with-ai.dev)",
       "Bash(xargs -I{} basename {} .md)",
-      "Bash([ -f \"/Users/mac-eric/project/blog/content/record/$f.md\" ])",
-      "Bash([ -f \"/Users/mac-eric/project/blog/content/other/$f.md\" ])",
-      "Bash(mkdir -p /Users/mac-eric/project/blog/.agents)",
-      "Bash(ln -s ../.claude/skills skills)"
+      "Bash([ -f \"content/record/$f.md\" ])",
+      "Bash([ -f \"content/other/$f.md\" ])",
+      "Bash(mkdir -p .agents)",
+      "Bash(ln -s ../.claude/skills skills)",
+      "Bash(go run *)"
     ],
     "deny": [],
     "ask": []
