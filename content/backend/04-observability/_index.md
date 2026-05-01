@@ -49,10 +49,22 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 ## 章節列表
 
-| 章節                                                                | 主題                                 | 關鍵收穫                                   |
-| ------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------ |
-| [4.1](/backend/04-observability/log-schema/)                        | log schema 與搜尋規劃                | 設計欄位、索引與查詢方式                   |
-| [4.2](/backend/04-observability/metrics-basics/)                    | metrics 與 SLI/SLO                   | 用 counter、gauge、histogram 描述服務健康  |
-| [4.3](/backend/04-observability/tracing-context/)                   | tracing 與 context link              | 追蹤跨服務 request path                    |
-| [4.4](/backend/04-observability/dashboard-alert/)                   | dashboard 與 alert 設計              | 讓告警能對應 runbook 與容量趨勢            |
-| [4.5](/backend/04-observability/attacker-view-observability-risks/) | 攻擊者視角（紅隊）：可觀測性弱點判讀 | 用盲區、告警失真與資料暴露風險檢查觀測系統 |
+| 章節                                                                | 主題                                 | 關鍵收穫                                           |
+| ------------------------------------------------------------------- | ------------------------------------ | -------------------------------------------------- |
+| [4.1](/backend/04-observability/log-schema/)                        | log schema 與搜尋規劃                | 設計欄位、索引與查詢方式                           |
+| [4.2](/backend/04-observability/metrics-basics/)                    | metrics 與 SLI/SLO                   | 用 counter、gauge、histogram 描述服務健康          |
+| [4.3](/backend/04-observability/tracing-context/)                   | tracing 與 context link              | 追蹤跨服務 request path                            |
+| [4.4](/backend/04-observability/dashboard-alert/)                   | dashboard 與 alert 設計              | 讓告警能對應 runbook 與容量趨勢                    |
+| [4.5](/backend/04-observability/attacker-view-observability-risks/) | 攻擊者視角（紅隊）：可觀測性弱點判讀 | 用盲區、告警失真與資料暴露風險檢查觀測系統         |
+| [4.6](/backend/04-observability/sli-slo-signal/)                    | SLI 量測與 SLO 訊號設計              | 把可靠性目標轉成可量測訊號、餵給 6.6 SLO 政策      |
+| [4.7](/backend/04-observability/cardinality-cost-governance/)       | Cardinality 治理與成本邊界           | 把 cardinality 與保留階梯作為平台一級治理          |
+| [4.8](/backend/04-observability/signal-governance-loop/)            | 訊號治理閉環                         | 把 postmortem 偵測缺口回寫成新訊號                 |
+| [4.9](/backend/04-observability/continuous-profiling/)              | Continuous Profiling                 | 把 CPU / heap / lock profile 升級為持續訊號        |
+| [4.10](/backend/04-observability/client-side-monitoring/)           | Client-side / Synthetic / RUM        | 補 server-side 看不到的 user perceived 訊號        |
+| [4.11](/backend/04-observability/telemetry-pipeline/)               | Telemetry Pipeline 架構              | 把採集到查詢分層治理、定位 pipeline 失敗           |
+| [4.12](/backend/04-observability/audit-log-governance/)             | Audit Log 邊界與 PII 治理            | 把稽核訊號從 operational log 拆出、按法規治理      |
+| [4.13](/backend/04-observability/service-topology/)                 | Service Topology 與 Dependency Map   | 把跨服務依賴變成自動發現的觀測訊號                 |
+| [4.14](/backend/04-observability/anomaly-detection/)                | Anomaly Detection                    | ML / statistical baseline alert 跟 rule-based 整合 |
+| [4.15](/backend/04-observability/cost-attribution/)                 | Cost Attribution / Chargeback        | 把 observability 成本拆到團隊 / 服務維度           |
+
+> 註：4.6-4.15 目前為大綱骨架、案例引用待後續迭代補上。
