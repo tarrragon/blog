@@ -13,12 +13,12 @@ weight: 77
 
 ## 從本章到實作
 
-本章寫的是 **判讀層**——稽核 / 責任鏈問題節點、訊號、風險邊界、控制面對應。判讀完成後、實作要點不在本章、必須繼續 trace 兩個方向：
+本章是 routing layer，沿兩條 chain 進入 implementation：
 
-1. **Mechanism 層**：問題節點表的 `[control-name]` link 指向 knowledge-card、那層才有具體 mechanism / 邊界 / context-dependence。例如 `[audit-log]` 在 knowledge-card 才會展開「欄位 schema / 完整性保護 / 保存策略 / 跟 debug log 的差異」。
-2. **實作層**：下游模組 `06-reliability`（演練驗證）/ `08-incident-response`（指揮 / 通報 / 復盤）承接交付實作。
+- **Mechanism**：問題節點表的 `[audit-log]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
+- **Delivery**：「交接路由」欄位指向 `06-reliability / 08-incident-response`、接配置 / 驗證 / 處置交付。
 
-判讀完成 ≠ 控制面實作完成。拿章節層 control 名稱直接 ship、會產生 false sense of security——章節給的是 routing layer、不是 implementation layer。
+兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
 ## 稽核與責任模型
 
