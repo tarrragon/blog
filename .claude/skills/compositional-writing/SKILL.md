@@ -73,24 +73,27 @@ Surface enumeration 是 multi-pass 的固定前置步驟。寫作產物包含 bo
 
 Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、見 [#84](references/principles/naming-as-iterated-artifact.md) 跟 writing-code-comments 的 naming review 段。
 
-詳見 [#83 Writing 的 multi-pass review](references/principles/writing-multi-pass-review.md)、[#85 Methodology 的 multi-pass 該 embed 在 pillar](references/principles/methodology-multi-pass-embedding.md)、[Metadata surface 要納入寫作 review 範圍](references/principles/metadata-surface-in-writing-review.md)。
+**高 stakes 內容追加輪 E（epistemic rigor、conditional opt-in）**：reader 照做後錯誤不可逆的內容（資安 / concurrency 正確性 / distributed consistency / financial / medical）在 5 輪基本 frame 之外、追加 stakes 軸的 epistemic rigor pass——比照學術 peer review 跑 claim / evidence / method / threats / citation 五個 sub-check、加上 audit recommendation tier（accept / minor / major / withdraw）。一般內容 5 輪夠、不跑輪 E；高 stakes 內容兩軸都跑。詳見 `references/auditing-articles.md` 跟 `references/principles/writing-multi-pass-review.md` 的「stakes-conditional 追加輪」段。
+
+詳見 [#83 Writing 的 multi-pass review](references/principles/writing-multi-pass-review.md)、[#85 Methodology 的 multi-pass 該 embed 在 pillar](references/principles/methodology-multi-pass-embedding.md)、[Metadata surface 要納入寫作 review 範圍](references/principles/metadata-surface-in-writing-review.md)、[False sense of security 是高 stakes 寫作的主要失敗模式](references/principles/false-sense-of-security-as-primary-failure.md)、[Risk-asymmetric audit standard](references/principles/risk-asymmetric-audit-standard.md)。
 
 ---
 
 ## When to Consult This Skill（觸發路由）
 
-| 觸發情境                                                                                               | 讀哪份 reference                                                                                                   |
-| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| 要寫或改一段程式碼註解 / doc comment                                                                   | `references/writing-code-comments.md`                                                                              |
-| 要起草 / 改寫一份文件（worklog、spec、README）                                                         | `references/writing-documents.md`                                                                                  |
-| 要設計 log / 錯誤訊息 / 結構化輸出                                                                     | `references/writing-logs.md`                                                                                       |
-| 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle                               | `references/writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
-| 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估）                     | `references/writing-articles.md`                                                                                   |
-| 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片） | `references/managing-article-collections.md`                                                                       |
-| 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                     | `references/designing-fields.md`                                                                                   |
-| 想驗證寫作品質（認知負擔、獨立理解率）                                                                 | `references/meta-metrics.md`                                                                                       |
-| 要新增或修改一份 Skill reference（撰寫品質規範、結構標準）                                             | `references/reference-authoring-standards.md`                                                                      |
-| 要驗收 Skill 發布品質（語意層驗收、Phase 2 dry-run）                                                   | `references/dry-run-guide.md`                                                                                      |
+| 觸發情境                                                                                                                                                                    | 讀哪份 reference                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 要寫或改一段程式碼註解 / doc comment                                                                                                                                        | `references/writing-code-comments.md`                                                                              |
+| 要起草 / 改寫一份文件（worklog、spec、README）                                                                                                                              | `references/writing-documents.md`                                                                                  |
+| 要設計 log / 錯誤訊息 / 結構化輸出                                                                                                                                          | `references/writing-logs.md`                                                                                       |
+| 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle                                                                                                    | `references/writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
+| 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估）                                                                                          | `references/writing-articles.md`                                                                                   |
+| 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片）                                                                      | `references/managing-article-collections.md`                                                                       |
+| 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時 | `references/auditing-articles.md`                                                                                  |
+| 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                                                                          | `references/designing-fields.md`                                                                                   |
+| 想驗證寫作品質（認知負擔、獨立理解率）                                                                                                                                      | `references/meta-metrics.md`                                                                                       |
+| 要新增或修改一份 Skill reference（撰寫品質規範、結構標準）                                                                                                                  | `references/reference-authoring-standards.md`                                                                      |
+| 要驗收 Skill 發布品質（語意層驗收、Phase 2 dry-run）                                                                                                                        | `references/dry-run-guide.md`                                                                                      |
 
 每份 reference 自包含：以該情境為核心，把五大原則翻譯成可直接套用的檢查項與範例。閱讀任一 reference 不需要回來看其他 reference。
 
