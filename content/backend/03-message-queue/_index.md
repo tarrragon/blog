@@ -7,6 +7,10 @@ weight: 3
 
 訊息佇列模組的核心目標是說明事件離開單一 process 後，如何處理持久化、重試、[重複投遞](/backend/knowledge-cards/duplicate-delivery/)與 [consumer](/backend/knowledge-cards/consumer) 協調。語言教材會先處理本地 [queue](/backend/knowledge-cards/queue) abstraction、publisher port、processor 與 [idempotency](/backend/knowledge-cards/idempotency) interface；本模組負責 [broker](/backend/knowledge-cards/broker/) 的具體語意。
 
+## Vendor / Platform 清單
+
+實作時的常用選擇見 [vendors](/backend/03-message-queue/vendors/) — T1 收錄 RabbitMQ / Kafka / NATS / Redis Streams / AWS SQS / Google Pub/Sub，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。
+
 ## 暫定分類
 
 | 分類          | 內容方向                                                                                                                                                                                                 |

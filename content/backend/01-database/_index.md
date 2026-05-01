@@ -7,6 +7,10 @@ weight: 1
 
 資料庫模組的核心目標是說明 application 狀態進入持久化層後，如何維持一致性、可演進性與可測性。語言教材會先定義 repository port、[protocol](/backend/knowledge-cards/protocol/) 或 interface；本模組負責說明具體資料庫 [Repository Adapter](/backend/knowledge-cards/repository-adapter/) 如何實作這些邊界。閱讀本模組前，可先建立 [source of truth](/backend/knowledge-cards/source-of-truth/)、[transaction boundary](/backend/knowledge-cards/transaction-boundary/)、[schema migration](/backend/knowledge-cards/schema-migration/)、[isolation level](/backend/knowledge-cards/isolation-level/) 與 [connection pool](/backend/knowledge-cards/connection-pool/) 的共同語意。
 
+## Vendor / Platform 清單
+
+實作時的常用選擇見 [vendors](/backend/01-database/vendors/) — T1 收錄 PostgreSQL / MySQL / SQLite / MongoDB / DynamoDB / CockroachDB / Aurora，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。
+
 ## 暫定分類
 
 | 分類                                                               | 內容方向                                                                                                                                                                                            |

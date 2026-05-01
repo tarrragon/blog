@@ -7,6 +7,10 @@ weight: 5
 
 部署平台模組的核心目標是說明服務如何和外部調度、網路入口與資源限制對齊。語言教材會處理 [graceful shutdown](/backend/knowledge-cards/graceful-shutdown/)、health / [readiness](/backend/knowledge-cards/readiness/) 檢查與 signal handling；本模組負責平台設定與操作語意。
 
+## Vendor / Platform 清單
+
+實作時的常用選擇見 [vendors](/backend/05-deployment-platform/vendors/) — T1 收錄 Kubernetes / Docker / systemd / nginx / Envoy / AWS ELB / Terraform / Traefik / Consul，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。
+
 ## 暫定分類
 
 | 分類                                                             | 內容方向                                                                                                                                                                                                                   |

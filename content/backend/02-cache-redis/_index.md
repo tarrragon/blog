@@ -7,6 +7,10 @@ weight: 2
 
 快取模組的核心目標是說明暫存資料如何提升讀取效率，同時保護 [source of truth](/backend/knowledge-cards/source-of-truth/) 的正式判斷責任。語言教材會處理 cache port、資料複製邊界與 [TTL](/backend/knowledge-cards/ttl/) 的程式邊界；本模組負責 Redis 與快取策略的具體實作。
 
+## Vendor / Platform 清單
+
+實作時的常用選擇見 [vendors](/backend/02-cache-redis/vendors/) — T1 收錄 Redis / Valkey / Memcached / DragonflyDB / AWS ElastiCache，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。
+
 ## 暫定分類
 
 | 分類                                                                                 | 內容方向                                                                               |
