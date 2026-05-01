@@ -9,6 +9,8 @@ weight: 71713
 
 2022 年 8 月，Twilio 公告社交工程攻擊造成員工帳號被濫用，影響內部系統與部分客戶關聯風險。
 
+**本案例的演示焦點**：員工 phishing → 內部管理工具接管 → 下游客戶 / 供應鏈傳導的 identity-chain 風險。重點在「員工身份」即「客戶風險面」的傳導邊界。其他 threat surface 由其他 case category 承擔。
+
 ## 攻擊路徑
 
 1. 以釣魚或社交工程瞄準員工。
@@ -27,17 +29,22 @@ weight: 71713
 
 ## 可落地的 workflow 檢查點
 
-- 發布前：高風險管理操作要求二次核准。
-- 日常：針對員工身份建立 [alert runbook](/backend/knowledge-cards/alert-runbook/)。
-- 事故中：執行分批憑證輪替與權限縮減，控制 [blast radius](/backend/knowledge-cards/blast-radius/)。
+- 發布前：高風險管理操作要求二次核准（multi-party approval、不只 MFA），mechanism 是讓單一帳號接管無法觸發影響客戶的決策。
+- 日常：針對員工身份建立 [alert runbook](/backend/knowledge-cards/alert-runbook/)（管理工具登入跨地理 / 跨裝置 / 異常時段）。
+- 事故中：執行分批憑證輪替與權限縮減、控制 [blast radius](/backend/knowledge-cards/blast-radius/)（前提是 token / 權限有 audit trail 可分批 scope）。
 
-## 可引用章節
+## 從本案例到實作的 chain
 
-- `backend/07-security-data-protection` 的身份治理章節
-- `backend/08-incident-response` 的止血與角色分工
+本案例是事故敘事 layer，沿三步 chain 進入 implementation：
 
-## 三個以上來源（官方/政府或監管/技術分析）
+- **失效樣式**：[權限提升流程濫用](/backend/07-security-data-protection/red-team/problem-cards/privilege-escalation-flow-abuse/) + [核准流程濫用](/backend/07-security-data-protection/red-team/problem-cards/approval-flow-abuse/) —— 把員工身分 → 管理工具 → 客戶傳導的 mechanism 抽象為可重用失效樣式。
+- **控制面**：[7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) + [7.3 入口與伺服端保護](/backend/07-security-data-protection/entrypoint-and-server-protection/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
+- **演練 / 控制落地**：[Identity support token tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/identity-support-token-tabletop/) + [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/) —— 把樣式轉成 tabletop 與 release gate 欄位。
 
-- 官方：[twilio.com](https://www.twilio.com/en-us/blog/august-2022-social-engineering-attack)
-- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a)
-- 技術分析：[cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware/)
+## 來源
+
+| 來源                                                                                                                       | 類型      | 可引用範圍                                             |
+| -------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------ |
+| [twilio.com](https://www.twilio.com/en-us/blog/august-2022-social-engineering-attack)                                      | 官方      | 攻擊入口、影響範圍、員工 phishing kit 第一手 telemetry |
+| [cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a)                                            | 政府/監管 | Scattered Spider / UNC3944 跨組織 TTP                  |
+| [cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-sms-phishing-sim-swapping-ransomware/) | 技術分析  | Mandiant 對 SMS phishing / SIM swap 後續鏈 telemetry   |

@@ -9,6 +9,8 @@ weight: 71716
 
 Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到客戶端身分流程，並觸發大規模憑證與 token 收斂作業。
 
+**本案例的演示焦點**：上游 Identity Provider 事件 → 下游客戶側 token / session 收斂壓力的 identity-chain 風險傳導。其他 threat surface（直接 phishing / 邊界零時差 / 供應鏈植入）由其他 case category 承擔。
+
 ## 攻擊路徑
 
 1. 攻擊者先利用供應商支援流程取得線索。
@@ -27,17 +29,22 @@ Cloudflare 在 2023 年事件說明中展示了供應商端事件如何傳導到
 
 ## 可落地的 workflow 檢查點
 
-- 發布前：為第三方事件設計獨立 [runbook](/backend/knowledge-cards/runbook/) 與責任分工。
-- 日常：維護 [playbook](/backend/knowledge-cards/playbook/) 的憑證輪替優先級。
-- 事故中：先凍結高風險憑證，再分批恢復必要權限。
+- 發布前：為第三方事件設計獨立 [runbook](/backend/knowledge-cards/runbook/) 與責任分工，mechanism 是讓供應商公告直接 trigger 內部盤點，不停在「閱讀公告」layer。
+- 日常：維護 [playbook](/backend/knowledge-cards/playbook/) 的憑證輪替優先級（依 token 範圍 / 受影響 tenant 分層、不是平均輪替）。
+- 事故中：先凍結高風險憑證、再分批恢復必要權限（前提是事先有 token 範圍 inventory、否則無法分批）。
 
-## 可引用章節
+## 從本案例到實作的 chain
 
-- `backend/07-security-data-protection` 的第三方信任邊界
-- `backend/08-incident-response` 的事故分級與角色分工
+本案例是事故敘事 layer，沿三步 chain 進入 implementation：
 
-## 三個以上來源（官方/政府或監管/技術分析）
+- **失效樣式**：[第三方授權濫用](/backend/07-security-data-protection/red-team/problem-cards/third-party-authorization-abuse/) + [Overscoped 第三方 token grant](/backend/07-security-data-protection/red-team/problem-cards/fp-overscoped-third-party-token-grant/) —— 把本案例的 mechanism 抽象為可重用失效樣式。
+- **控制面**：[7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) + [7.5 工作負載身份與 federated trust](/backend/07-security-data-protection/workload-identity-and-federated-trust/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
+- **演練 / 控制落地**：[Identity support token tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/identity-support-token-tabletop/) + [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/) —— 把樣式轉成 tabletop 與 release gate 欄位。
 
-- 官方：[blog.cloudflare.com](https://blog.cloudflare.com/thanksgiving-2023-security-incident/)
-- 政府或監管：[sec.okta.com](https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause)
-- 技術分析：[cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications)
+## 來源
+
+| 來源                                                                                                                      | 類型      | 可引用範圍                                                |
+| ------------------------------------------------------------------------------------------------------------------------- | --------- | --------------------------------------------------------- |
+| [blog.cloudflare.com](https://blog.cloudflare.com/thanksgiving-2023-security-incident/)                                   | 官方      | 客戶側偵測、即時回應、Zero Trust 與 hardware key 防守效果 |
+| [sec.okta.com](https://sec.okta.com/articles/2023/11/unauthorized-access-oktas-support-case-management-system-root-cause) | 政府/監管 | 上游事件 root cause、影響範圍、session token hijack 機制  |
+| [cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications)            | 技術分析  | UNC3944 對 SaaS 攻擊 TTP、跨組織 chain 模式               |
