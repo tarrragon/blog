@@ -9,6 +9,8 @@ weight: 71744
 
 2023 年 1 月，Mailchimp 公告指出攻擊者透過社交工程取得員工憑證，接觸客服/帳號管理工具並影響特定客戶帳號。
 
+**本案例的演示焦點**：員工社交工程 → 客服 / 帳號管理工具接管 → 客戶資料 read / 變更的 internal admin tool exfiltration。重點在「合法 admin 動作」跟「攻擊樣態」的偵測差異設計。
+
 ## 攻擊路徑
 
 1. 攻擊員工身份。
@@ -28,17 +30,22 @@ weight: 71744
 ## 可落地的 workflow 檢查點
 
 - 共同基線：以 [runbook](/backend/knowledge-cards/runbook/) 與 [incident timeline](/backend/knowledge-cards/incident-timeline/) 固定記錄觸發條件與處置節奏。
-- 發布前：對客服工具高風險操作加上雙人核准。
-- 日常：追蹤管理工具異常操作模式。
-- 事故中：快速凍結可疑角色與工單操作權限。
+- 發布前：對客服工具高風險操作加上雙人核准（access customer data / impersonate / 大批量 export 三類動作必須 multi-party），mechanism 是讓單一帳號接管不會直接通到客戶資料。
+- 日常：追蹤管理工具異常操作模式（單一 operator 短時間跨多 tenant、異常時段 access）。
+- 事故中：快速凍結可疑角色與工單操作權限（前提是事先有 role-level kill switch）。
 
-## 可引用章節
+## 從本案例到實作的 chain
 
-- `backend/07-security-data-protection` 的權限分級與稽核
-- `backend/08-incident-response` 的溝通與法遵流程
+本案例是事故敘事 layer，沿三步 chain 進入 implementation：
 
-## 三個以上來源（官方/政府或監管/技術分析）
+- **失效樣式**：[權限提升流程濫用](/backend/07-security-data-protection/red-team/problem-cards/privilege-escalation-flow-abuse/) + [委派操作濫用](/backend/07-security-data-protection/red-team/problem-cards/delegated-operation-abuse/) —— 把員工身分 → 客服工具 → 客戶資料的 mechanism 抽象為可重用失效樣式。
+- **控制面**：[7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) + [7.7 稽核軌跡與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/) + [7.9 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/) —— mitigation 的 mechanism / 前提 / context-dependence 在這裡定義。
+- **演練 / 控制落地**：[Identity support token tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/identity-support-token-tabletop/) + [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/) + [Control owner pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/control-owner-pattern/) —— 把樣式轉成 tabletop 與 admin tool 治理欄位。
 
-- 官方：[mailchimp.com](https://mailchimp.com/newsroom/january-2023-security-incident/)
-- 政府或監管：[cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a)
-- 技術分析：[cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications)
+## 來源
+
+| 來源                                                                                                           | 類型      | 可引用範圍                                      |
+| -------------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------- |
+| [mailchimp.com](https://mailchimp.com/newsroom/january-2023-security-incident/)                                | 官方      | 攻擊入口、影響範圍、客戶通報節奏                |
+| [cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-320a)                                | 政府/監管 | 跨組織 social engineering TTP                   |
+| [cloud.google.com](https://cloud.google.com/blog/topics/threat-intelligence/unc3944-targets-saas-applications) | 技術分析  | UNC3944 對 SaaS / admin tool 攻擊模式 telemetry |
