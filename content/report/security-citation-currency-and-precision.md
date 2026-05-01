@@ -3,7 +3,7 @@ title: "Security 標準引用的時效性與精確度"
 slug: "security-citation-currency-and-precision"
 date: 2026-05-01
 weight: 104
-description: "資安標準（OWASP / RFC / NIST / CIS）跟一般技術引用不同——best practice 時效短（MD5 / SHA-1 / bcrypt 100k / TLS 1.0 都曾是 best practice）、原文常被引用扭曲（「OWASP 說 X」但 OWASP 沒這樣說 / 語境不同）、版本不標 reader 會套用過時 spec。資安 citation 必須有：版本 / 年份、引用句意可回溯、deprecated / superseded 標記、強度參數對應 actor 能力的 review trigger。"
+description: "資安 citation 跟一般技術引用不同——best practice 時效短（MD5 / SHA-1 / bcrypt 100k / TLS 1.0 都曾是 best practice）、原文常被引用扭曲（conditional → unconditional drift）、版本不標 reader 會套用過時 spec。citation 同時涵蓋外部標準（OWASP / RFC / NIST / CIS）跟內部 citation（knowledge-cards / 跨章引用作為 control-of-record）；後者因無版本號 anchor 反而更易 silent drift / broken。每條 citation 必須附：版本 / 年份、引用句意可回溯、deprecated / superseded 標記、強度參數對應 actor 能力的 review trigger（外部）/ last-checked + sync owner（內部）。"
 tags: ["report", "事後檢討", "工程方法論", "資安", "Audit", "Citation", "原則"]
 ---
 

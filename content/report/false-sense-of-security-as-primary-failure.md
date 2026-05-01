@@ -77,6 +77,30 @@ tags: ["report", "事後檢討", "工程方法論", "資安", "Audit", "False Co
 
 每出現一個訊號詞、檢查段落有沒有對應的 boundary 補述；沒有 → 補完或改寫。
 
+### Methodology-layer 訊號詞（多 layer false sense）
+
+False sense of security 不只發生在 mitigation layer——還會在 **methodology / framework / process layer** 出現。Reader 讀完「我們有方法論 / 有路由系統 / 有 maturity stage / 有 release gate / 有 tripwire」、形成「**有 system / framework = 安全**」結論、跳過驗證下游 control 是否真擋 threat。
+
+| Layer             | 失敗模式                               | Reader 形成的 false 結論                            |
+| ----------------- | -------------------------------------- | --------------------------------------------------- |
+| Mitigation layer  | 上一張表訊號詞                         | 「我做了 X mitigation 就安全」                      |
+| Methodology layer | 把 framework / routing 當成已治理 risk | 「我們有 routing system / framework 了 = 風險可控」 |
+| Process layer     | 把 gate / checklist 當成 risk reduce   | 「跑了 release gate / 例外有 tripwire = 安全」      |
+| Maturity layer    | 把 stage 等級當成 mitigation 強度      | 「我們在可稽核閉環 stage = 風險低」                 |
+
+Methodology-layer 訊號詞清單：
+
+| 訊號詞                                    | 為什麼是 risk                                                                                                                                 |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 「有方法論」「有 framework」              | 方法論不擋 threat、是把 threat 路由到對應控制面、實際擋 threat 仍靠下游控制                                                                   |
+| 「能路由」「decision system」「分類治理」 | Routing 提供分類、不提供 mitigation；reader 不點下游控制可能停留在 routing layer                                                              |
+| 「有 maturity stage / process」           | Maturity 是 process metric、不等於 risk reduction；mature process 可在某 deployment 條件下 silent 失效                                        |
+| 「跑了 gate / 過了 checklist」            | Gate / checklist 通過 ≠ control 真擋 threat、可能是 ceremonial false sense（[#82](../literal-interception-vs-behavioral-refinement/) 字面層） |
+| 「設了 tripwire」「有重評估機制」         | Tripwire 沒 quantify（threshold / cadence / owner）等同沒設、見 [#91](../escalation-trigger-quantification/)                                  |
+| 「能治理」「可控」「閉環」                | 治理 / 閉環是流程語、reader 預設「閉環 = 風險擋住」、實際閉環只是流程 cycle、不保證 mitigation 強度                                           |
+
+驗證方式跟 mitigation layer 同：reader 讀完能否拆 falsifiable 子句？能不能列出**具體下游 control + 各自 boundary + 各自驗證訊號**？不能 → methodology-layer false sense 產地、補「下一步路由 / 必連控制面 / 各 control 的 verification check」。
+
 ### 對抗「只給結論」的句法
 
 跟 [#94 正向改寫保留對照論據](../positive-rewrite-preserves-contrast/) 同骨：資安結論單獨成立會空降、必須跟 contrast / 邊界 / 前提同句承載。
