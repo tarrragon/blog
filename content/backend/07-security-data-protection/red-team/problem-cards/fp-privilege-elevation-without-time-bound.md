@@ -27,3 +27,15 @@ weight: 7236
 ## 來源流程卡
 
 - [權限提升流程濫用](/backend/07-security-data-protection/red-team/problem-cards/privilege-escalation-flow-abuse/)
+
+## 下一步路由
+
+本失效樣式對應的實作 chain：
+
+**控制面（mitigation 在這裡定義）**：
+
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+
+**演練 / 控制落地（轉成欄位）**：
+
+- [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)

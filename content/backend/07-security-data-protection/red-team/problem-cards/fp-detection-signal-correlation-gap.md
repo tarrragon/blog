@@ -30,3 +30,15 @@ weight: 7247
 
 - [7.R10 偵測迴避與觀測缺口](/backend/07-security-data-protection/red-team/detection-evasion-and-observability-gaps/)
 - [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
+
+## 下一步路由
+
+本失效樣式對應的實作 chain：
+
+**控制面（mitigation 在這裡定義）**：
+
+- [7.12 偵測涵蓋與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
+
+**演練 / 控制落地（轉成欄位）**：
+
+- [Detection lifecycle pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/detection-lifecycle-pattern/)

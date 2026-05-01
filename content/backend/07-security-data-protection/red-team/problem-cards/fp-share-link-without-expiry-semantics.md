@@ -27,3 +27,15 @@ weight: 7239
 ## 來源流程卡
 
 - [分享流程濫用](/backend/07-security-data-protection/red-team/problem-cards/sharing-flow-abuse/)
+
+## 下一步路由
+
+本失效樣式對應的實作 chain：
+
+**控制面（mitigation 在這裡定義）**：
+
+- [7.9 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)
+
+**演練 / 控制落地（轉成欄位）**：
+
+- [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/)

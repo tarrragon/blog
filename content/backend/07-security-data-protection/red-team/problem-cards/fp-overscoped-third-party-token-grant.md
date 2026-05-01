@@ -28,3 +28,16 @@ weight: 7242
 ## 來源流程卡
 
 - [第三方授權濫用](/backend/07-security-data-protection/red-team/problem-cards/third-party-authorization-abuse/)
+
+## 下一步路由
+
+本失效樣式對應的實作 chain：
+
+**控制面（mitigation 在這裡定義）**：
+
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- [7.5 工作負載身份與 federated trust](/backend/07-security-data-protection/workload-identity-and-federated-trust/)
+
+**演練 / 控制落地（轉成欄位）**：
+
+- [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)

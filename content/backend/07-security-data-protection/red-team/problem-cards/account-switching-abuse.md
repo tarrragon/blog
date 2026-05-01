@@ -36,3 +36,9 @@ weight: 7214
 ## 對應失效樣式卡
 
 - [7.R11.P4 帳號切換後沿用高權限 token](/backend/07-security-data-protection/red-team/problem-cards/fp-stale-privileged-token-after-account-switch/)
+
+## 演練 / 控制落地
+
+把本失效樣式轉成 release gate / tabletop 欄位的 blue-team control-pattern：
+
+- [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)

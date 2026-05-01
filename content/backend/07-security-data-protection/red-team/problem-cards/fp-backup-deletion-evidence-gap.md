@@ -29,3 +29,16 @@ weight: 7244
 ## 來源流程卡
 
 - [匯出流程濫用](/backend/07-security-data-protection/red-team/problem-cards/export-flow-abuse/)
+
+## 下一步路由
+
+本失效樣式對應的實作 chain：
+
+**控制面（mitigation 在這裡定義）**：
+
+- [7.10 資料 residency / 刪除與證據鏈](/backend/07-security-data-protection/data-residency-deletion-and-evidence-chain/)
+
+**演練 / 控制落地（轉成欄位）**：
+
+- [Recovery readiness pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/recovery-readiness-pattern/)
+- [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/)

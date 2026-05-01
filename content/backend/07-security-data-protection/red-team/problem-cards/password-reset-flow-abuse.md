@@ -36,3 +36,9 @@ weight: 7215
 ## 對應失效樣式卡
 
 - [7.R11.P5 重設憑證可重放且有效期過長](/backend/07-security-data-protection/red-team/problem-cards/fp-replayable-reset-token-with-long-ttl/)
+
+## 演練 / 控制落地
+
+把本失效樣式轉成 release gate / tabletop 欄位的 blue-team control-pattern：
+
+- [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)

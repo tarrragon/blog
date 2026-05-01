@@ -36,3 +36,9 @@ weight: 7212
 ## 對應失效樣式卡
 
 - [7.R11.P2 提交與審核責任重疊](/backend/07-security-data-protection/red-team/problem-cards/fp-submitter-approver-overlap/)
+
+## 演練 / 控制落地
+
+把本失效樣式轉成 release gate / tabletop 欄位的 blue-team control-pattern：
+
+- [Control owner pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/control-owner-pattern/)

@@ -36,3 +36,9 @@ weight: 7218
 ## 對應失效樣式卡
 
 - [7.R11.P8 匯出檔案長時間可重複下載](/backend/07-security-data-protection/red-team/problem-cards/fp-long-lived-repeatable-export-artifact/)
+
+## 演練 / 控制落地
+
+把本失效樣式轉成 release gate / tabletop 欄位的 blue-team control-pattern：
+
+- [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/)

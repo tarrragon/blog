@@ -29,3 +29,15 @@ weight: 7248
 ## 來源流程卡
 
 - [方案升降級流程濫用](/backend/07-security-data-protection/red-team/problem-cards/plan-change-flow-abuse/)
+
+## 下一步路由
+
+本失效樣式對應的實作 chain：
+
+**控制面（mitigation 在這裡定義）**：
+
+- [7.13 安全事件路由](/backend/07-security-data-protection/security-routing-from-case-to-service/)
+
+**演練 / 控制落地（轉成欄位）**：
+
+- [Exercise write-back pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/exercise-write-back-pattern/)

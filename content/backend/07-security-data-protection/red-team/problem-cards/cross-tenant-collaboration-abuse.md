@@ -36,3 +36,9 @@ weight: 7221
 ## 對應失效樣式卡
 
 - [7.R11.P11 跨租戶上下文快取殘留](/backend/07-security-data-protection/red-team/problem-cards/fp-cross-tenant-context-cache-residue/)
+
+## 演練 / 控制落地
+
+把本失效樣式轉成 release gate / tabletop 欄位的 blue-team control-pattern：
+
+- [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/)

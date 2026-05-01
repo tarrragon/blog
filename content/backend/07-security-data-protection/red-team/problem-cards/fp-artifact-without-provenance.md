@@ -30,3 +30,16 @@ weight: 7246
 
 - [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)
 - [7.R8 控制面失效樣式](/backend/07-security-data-protection/red-team/control-failure-patterns/)
+
+## 下一步路由
+
+本失效樣式對應的實作 chain：
+
+**控制面（mitigation 在這裡定義）**：
+
+- [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+
+**演練 / 控制落地（轉成欄位）**：
+
+- [Vulnerability response pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/vulnerability-response-pattern/)
+- [Evidence chain pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/evidence-chain-pattern/)
