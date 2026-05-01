@@ -11,6 +11,15 @@ weight: 83
 
 本章聚焦偵測覆蓋率語意、訊號品質分級與告警成本，不討論 SIEM 或監控產品配置細節。
 
+## 從本章到實作
+
+本章寫的是 **判讀層**——偵測問題節點、訊號、風險邊界、控制面對應。判讀完成後、實作要點不在本章、必須繼續 trace 兩個方向：
+
+1. **Mechanism 層**：問題節點表的 `[control-name]` link 指向 knowledge-card、那層才有具體 mechanism / 邊界 / context-dependence。例如 `[alert]` 在 knowledge-card 才會展開「訊號分級 / 噪音控制 / 跟 incident severity 對應」。
+2. **實作層**：下游模組 `04-observability`（觀測平台與訊號管線）/ `06-reliability`（演練驗證）/ `08-incident-response`（事件分級與收斂）承接交付實作。
+
+判讀完成 ≠ 控制面實作完成。拿章節層 control 名稱直接 ship、會產生 false sense of security——章節給的是 routing layer、不是 implementation layer。
+
 ## 偵測治理模型
 
 偵測治理的核心責任是定義「哪些風險一定要看見、看見後要如何行動」。

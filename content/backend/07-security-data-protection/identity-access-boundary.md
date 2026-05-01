@@ -11,6 +11,15 @@ weight: 72
 
 本章聚焦概念層判讀，主體是問題節點、訊號、風險與路由條件。案例在問題被觸發時提供證據參考，不作章節主體。
 
+## 從本章到實作
+
+本章寫的是 **判讀層**——問題節點、訊號、風險邊界、控制面對應。判讀完成後、實作要點不在本章、必須繼續 trace 兩個方向：
+
+1. **Mechanism 層**：問題節點表的 `[control-name]` link 指向 knowledge-card、那層才有具體 mechanism / 邊界 / context-dependence。例如 `[authentication]` 在 knowledge-card 才會展開「擋什麼 threat / 不擋什麼 / 在什麼 deployment 條件下成立」。
+2. **實作層**：下游模組 `05-deployment-platform`（入口配置）/ `06-reliability`（驗證節奏）/ `08-incident-response`（事件處置）承接交付實作。
+
+判讀完成 ≠ 控制面實作完成。拿章節層 control 名稱直接 ship、會產生 false sense of security——章節給的是 routing layer、不是 implementation layer。
+
 ## 身分與授權邊界模型
 
 身分邊界的核心責任是定義「登入主體是否可信」，授權邊界的核心責任是定義「可信主體可以觸及哪些能力」。兩者需要分開治理，才能避免認證成功就直接等於高權限存取。

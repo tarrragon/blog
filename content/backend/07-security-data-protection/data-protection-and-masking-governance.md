@@ -11,6 +11,15 @@ weight: 74
 
 本章聚焦資料語意、暴露路徑、責任鏈與通報節奏。案例在特定問題觸發時提供證據參考。
 
+## 從本章到實作
+
+本章寫的是 **判讀層**——資料保護問題節點、訊號、風險邊界、控制面對應。判讀完成後、實作要點不在本章、必須繼續 trace 兩個方向：
+
+1. **Mechanism 層**：問題節點表的 `[control-name]` link 指向 knowledge-card、那層才有具體 mechanism / 邊界 / context-dependence。例如 `[data-classification]` 在 knowledge-card 才會展開「分級規則 / 各級資料的處理邊界」。
+2. **實作層**：下游模組 `05-deployment-platform`（資料路徑配置）/ `06-reliability`（驗證節奏）/ `08-incident-response`（外洩事件處置）承接交付實作。
+
+判讀完成 ≠ 控制面實作完成。拿章節層 control 名稱直接 ship、會產生 false sense of security——章節給的是 routing layer、不是 implementation layer。
+
 ## 資料保護治理模型
 
 資料治理的核心責任是讓每一條資料路徑都有明確語意、責任人與控制面。

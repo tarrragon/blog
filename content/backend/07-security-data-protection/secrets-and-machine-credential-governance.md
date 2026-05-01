@@ -11,6 +11,15 @@ weight: 76
 
 本章聚焦分域策略、生命周期一致性與事件收斂節奏。案例在問題觸發時作為證據參考。
 
+## 從本章到實作
+
+本章寫的是 **判讀層**——機器憑證問題節點、訊號、風險邊界、控制面對應。判讀完成後、實作要點不在本章、必須繼續 trace 兩個方向：
+
+1. **Mechanism 層**：問題節點表的 `[control-name]` link 指向 knowledge-card、那層才有具體 mechanism / 邊界 / context-dependence。例如 `[token-revocation]` 在 knowledge-card 才會展開「revocation list 設計 / 撤銷時窗 / 跨服務 propagation」。
+2. **實作層**：下游模組 `05-deployment-platform`（執行環境）/ `06-reliability`（輪替演練）/ `08-incident-response`（事件收斂）承接交付實作。
+
+判讀完成 ≠ 控制面實作完成。拿章節層 control 名稱直接 ship、會產生 false sense of security——章節給的是 routing layer、不是 implementation layer。
+
 ## 憑證治理模型
 
 憑證治理的核心責任是讓每一種機器憑證都有清楚的用途邊界與收斂節奏。

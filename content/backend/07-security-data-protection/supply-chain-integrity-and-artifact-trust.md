@@ -11,6 +11,15 @@ weight: 82
 
 本章聚焦來源可信度、組件邊界與發佈節奏治理，不討論單一 CI/CD 平台操作流程。
 
+## 從本章到實作
+
+本章寫的是 **判讀層**——供應鏈問題節點、訊號、風險邊界、控制面對應。判讀完成後、實作要點不在本章、必須繼續 trace 兩個方向：
+
+1. **Mechanism 層**：問題節點表的 `[control-name]` link 指向 knowledge-card、那層才有具體 mechanism / 邊界 / context-dependence。例如 `[ci-pipeline]` 在 knowledge-card 才會展開「provenance 來源 / 簽署機制 / SLSA level」。
+2. **實作層**：下游模組 `05-deployment-platform`（交付平台）/ `06-reliability`（發佈驗證 / 回退）/ `08-incident-response`（供應鏈事件收斂）承接交付實作。
+
+判讀完成 ≠ 控制面實作完成。拿章節層 control 名稱直接 ship、會產生 false sense of security——章節給的是 routing layer、不是 implementation layer。
+
 ## 供應鏈信任模型
 
 供應鏈治理的核心責任是讓每一個進入正式環境的產物都可追溯、可驗證、可回退。
