@@ -134,6 +134,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#103 Mitigation 的 context-dependence：deployment 條件改變有效性](mitigation-context-dependence/) — 同 mitigation 在不同 config / scale / runtime / actor 條件下強度從完整擋到 silent 失效；每個 mitigation 列「成立條件 / 失效條件 / deployment 變數」三類、跟 #89 規模改變可行性同骨
 - [#104 Security 標準引用的時效性與精確度](security-citation-currency-and-precision/) — 資安標準（OWASP / RFC / NIST / CIS）best practice 衰退快、原文常被引用扭曲（conditional → unconditional drift）、版本之間語意可能反轉；citation 必須附「標準 / 版本 / 原文 quote / 適用 scope / review trigger」五欄；internal citation（knowledge-cards / 跨章引用）也適用、且因無版本號 anchor 更易 silent drift / broken
 - [#105 Audit recommendation 層級：accept / minor / major / 教錯不可保留](security-audit-recommendation-tiers/) — Audit 產出是 ship 決策、不是評語；四 tier 判準（reader 會不會主動產生破口 / 結構性 vs 局部 / fix cost / 是否容忍）；withdraw tier 是資安 audit 跟學術 peer review 的關鍵差異——保留 = 增加 risk、不存在「先 ship 後改」
+- [#106 用 Next-action frame 取代 Disclaimer：把 prohibition 翻成 actionable chain](next-action-frame-over-disclaimer/) — Audit findings 寫成回應段時、disclaimer frame 自然產出負面陳述、字面正向化後 frame 仍 disclaimer；reframe 成 next-action chain 整段才自然 positive；本卡是 #94 正向改寫的上游、#82 字面 vs 行為在寫作 frame 的具體實例；補 #83 multi-pass review 的輪 3 frame 檢查
 
 ### 第七輪：Pattern 卡片（待補完）
 
