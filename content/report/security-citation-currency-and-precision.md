@@ -66,6 +66,21 @@ NIST SP 800-63B:
 
 引用「NIST 建議定期更換 password」在 2014 對、2017 後是反向違反 NIST。版本不標 = reader 可能引用到反向版本。
 
+### 特性 4：Internal citation 也是 citation
+
+問題節點 / problem-node 框架的章節常用內部連結（`[authentication]` `[session-invalidation]` 等 knowledge-cards）作為「control-of-record」，把實作細節下放到子頁。這些內部連結**等同 citation**——指向「這個 control 由那一頁定義」、章節讀者在這層形成判斷、再決定是否點進去。
+
+Internal citation 同樣有四個失效模式：
+
+| 失效模式           | 外部 citation（OWASP / RFC）        | Internal citation（knowledge-cards / 跨章引用）       |
+| ------------------ | ----------------------------------- | ----------------------------------------------------- |
+| 時效衰退           | OWASP 改版、引用過時版本            | knowledge-cards 內容更新、章節引用沒同步              |
+| 句意 drift         | conditional → unconditional 轉述    | 章節用 control-name 暗示能力、子頁定義跟暗示不一致    |
+| 版本反轉           | NIST 2014 vs 2017 password 政策反向 | knowledge-card rewrite、原本 in-scope 變 out-of-scope |
+| Broken / dead link | URL 變更、文件下架                  | knowledge-card 改 slug / 移檔、章節連結 silent broken |
+
+外部 citation 至少有版本號當 anchor、internal citation 連版本概念都沒有——更易 silent drift。所以 audit 跟 review trigger 對 internal 反而更嚴格。
+
 ---
 
 ## 理想做法
@@ -105,30 +120,33 @@ NIST SP 800-63B:
 對章節既有引用跑驗證 pass：
 
 ```text
-1. 列出所有 citation（標準名 / 文件名 / RFC 編號 / CVE）
-2. 對每條 citation 找原文一手來源、記錄 URL + 版本 + 年份
-3. 對比文中轉述跟原文 quote、check 三類 drift：
+1. 列出所有 citation（外部：標準 / RFC / CVE；內部：knowledge-cards 連結 / 跨章引用）
+2. 對每條 citation 找一手來源、記錄 URL + 版本 + 年份（外部）/ 最後修改 + slug（內部）
+3. 對比文中轉述跟原文 / 子頁定義、check 三類 drift：
    - Conditional → unconditional drift（原文有條件、文中沒條件）
    - Specific → general drift（原文限特定 context、文中講通用）
    - Recommendation → mandate drift（原文是 consider / recommend、文中是 must / required）
 4. drift 找到、補回原文 conditional / scope / language strength
-5. 標版本跟 review trigger
+5. 標版本跟 review trigger（外部）/ 標 last-checked + sync owner（內部）
+6. 內部專屬 check：連結是否 broken（slug 改了 / 檔案移了）、子頁是否仍存在 / 仍 in scope
 ```
 
-集合運算讓引用扭曲從「靠記憶」升級到「可驗證」。
+集合運算讓引用扭曲從「靠記憶」升級到「可驗證」。Internal citation 多兩個專屬步驟（broken link + slug drift）、跟 [#93 URL slug 必須顯式定義為 fact](../url-slug-must-be-explicit-fact/) 同骨——identifier 跨工具 / 跨檔案沒 fact 化、就會 silent broken。
 
 ### Review trigger 的 cadence 設計
 
 不同類型 citation 的 review cadence 不同：
 
-| Citation 類型              | 建議 review cadence                                           |
-| -------------------------- | ------------------------------------------------------------- |
-| Crypto primitive 強度參數  | 每 6-12 月（actor 算力會變）                                  |
-| OWASP Top 10 / Cheat Sheet | 每 12-24 月（major 改版頻率）                                 |
-| RFC（已 finalized）        | 每 24-36 月（除非有新 RFC supersede）                         |
-| CVE / 特定漏洞             | 即時（一次性事件、不需 cadence、引用後標記「fixed in vX.Y」） |
-| NIST SP 800 系列           | 每 24 月（NIST 改版頻率）                                     |
-| PCI DSS / ISO 27001        | 每 24-36 月（合規標準改版頻率）                               |
+| Citation 類型                | 建議 review cadence                                           |
+| ---------------------------- | ------------------------------------------------------------- |
+| Crypto primitive 強度參數    | 每 6-12 月（actor 算力會變）                                  |
+| OWASP Top 10 / Cheat Sheet   | 每 12-24 月（major 改版頻率）                                 |
+| RFC（已 finalized）          | 每 24-36 月（除非有新 RFC supersede）                         |
+| CVE / 特定漏洞               | 即時（一次性事件、不需 cadence、引用後標記「fixed in vX.Y」） |
+| **Internal knowledge-cards** | **每 6 月（內部演化快、無版本號當 anchor）**                  |
+| **跨章 / 跨模組引用**        | **每次大改子頁時 broadcast；無 broadcast 時每 6 月 sweep**    |
+| NIST SP 800 系列             | 每 24 月（NIST 改版頻率）                                     |
+| PCI DSS / ISO 27001          | 每 24-36 月（合規標準改版頻率）                               |
 
 跟 [#91 升級 trigger 的量化設計](../escalation-trigger-quantification/) 同骨——「之後再 review」不是 trigger、有 cadence + owner + threshold 才是 trigger。
 
@@ -159,35 +177,37 @@ reader 信任引用、用 citation 內容實作、citation 過時後實作不知
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                        | 關係                                                                                                                                                         |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [#97 Metadata surface 要納入寫作 review](../metadata-surface-in-writing-review/)            | **citation 是 metadata surface 的延伸** — citation 是讀者的「外部 source」入口、跟 title / heading / link label 並列為 metadata；本卡是 #97 在引用維度的展開 |
-| [#93 URL slug 必須顯式定義為 fact](../url-slug-must-be-explicit-fact/)                      | **identifier 同骨** — slug 是內部 identifier、citation 是外部 identifier；都需要 explicit fact 形式（版本 / 年份 / 原文）、不能依賴推導                      |
-| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)               | **同骨 ceiling** — 引用標準名稱 = 字面、引用句意對到原文 context = 行為；stop at 字面 = false confidence                                                     |
-| [#91 升級 trigger 的量化設計](../escalation-trigger-quantification/)                        | **review trigger 同骨** — #91 在 capability 升級的 trigger 設計、本卡在 citation review 的 cadence 設計；都是「沒 trigger = 結構性跳過」                     |
-| [#100 False sense of security 主要失敗模式](../false-sense-of-security-as-primary-failure/) | **#100 的 dimension 4** — citation 過時 / 扭曲是 false sense 的第四大產地（dimension 1-3 = threat / mitigation / context、本卡 = 引用 source）               |
-| [#99 資安教學審查標準對應風險不對稱](../security-teaching-rigor-asymmetry/)                 | 上游動機 — verifiability-first 的 dimension 4                                                                                                                |
+| 原則                                                                                        | 關係                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#97 Metadata surface 要納入寫作 review](../metadata-surface-in-writing-review/)            | **citation 是 metadata surface 的延伸** — citation 是讀者的「外部 source」入口、跟 title / heading / link label 並列為 metadata；本卡是 #97 在引用維度的展開                                                                                                                              |
+| [#93 URL slug 必須顯式定義為 fact](../url-slug-must-be-explicit-fact/)                      | **identifier 同骨 + internal citation 強相關** — slug 是內部 identifier、外部 citation / 內部 citation 都需要 explicit fact（版本 / 年份 / 原文 / slug + last-checked）；internal citation 沒版本號當 anchor、跟 #93 SSoT 違反同類風險、broken-link / drift 是 internal citation 專屬失效 |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)               | **同骨 ceiling** — 引用標準名稱 = 字面、引用句意對到原文 context = 行為；stop at 字面 = false confidence                                                                                                                                                                                  |
+| [#91 升級 trigger 的量化設計](../escalation-trigger-quantification/)                        | **review trigger 同骨** — #91 在 capability 升級的 trigger 設計、本卡在 citation review 的 cadence 設計；都是「沒 trigger = 結構性跳過」                                                                                                                                                  |
+| [#100 False sense of security 主要失敗模式](../false-sense-of-security-as-primary-failure/) | **#100 的 dimension 4** — citation 過時 / 扭曲是 false sense 的第四大產地（dimension 1-3 = threat / mitigation / context、本卡 = 引用 source）                                                                                                                                            |
+| [#99 資安教學審查標準對應風險不對稱](../security-teaching-rigor-asymmetry/)                 | 上游動機 — verifiability-first 的 dimension 4                                                                                                                                                                                                                                             |
 
 ---
 
 ## 判讀徵兆
 
-| 徵兆                                                             | 該做的事                                                                               |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| 引用「OWASP / NIST / RFC / CIS」沒標年份 / 版本                  | 補版本 + 年份、確認當前是否仍是 current                                                |
-| 引用是轉述、沒原文 quote                                         | 找一手來源、補原文 quote、check 是否被 drift                                           |
-| 「OWASP **建議** X」「RFC **規定** Y」當 universal               | 補 scope（在什麼 context / actor model 下成立）                                        |
-| Crypto / hashing 強度參數是固定值（10 / 100k / 32 char）         | 補 review trigger（每 6-12 月 re-check actor 算力跟標準）                              |
-| Citation 是「最佳實踐」「業界標準」當 anchor、沒列具體文件       | 補具體標準名稱 + 版本、不能用 vague reference                                          |
-| 章節寫於 N 年前、沒提 last reviewed 日期                         | 補 last reviewed 標記、設下次 review trigger                                           |
-| Conditional 原文被引成 unconditional（「強制」「必須」「總是」） | 找原文 conditional context、補回 scope qualifier                                       |
-| 「之後標準改了再更新」                                           | 是 [#72](../external-trigger-for-high-roi-work/) 結構性跳過、補 review cadence + owner |
+| 徵兆                                                                                                   | 該做的事                                                                               |
+| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| 引用「OWASP / NIST / RFC / CIS」沒標年份 / 版本                                                        | 補版本 + 年份、確認當前是否仍是 current                                                |
+| 引用是轉述、沒原文 quote                                                                               | 找一手來源、補原文 quote、check 是否被 drift                                           |
+| 「OWASP **建議** X」「RFC **規定** Y」當 universal                                                     | 補 scope（在什麼 context / actor model 下成立）                                        |
+| Crypto / hashing 強度參數是固定值（10 / 100k / 32 char）                                               | 補 review trigger（每 6-12 月 re-check actor 算力跟標準）                              |
+| Citation 是「最佳實踐」「業界標準」當 anchor、沒列具體文件                                             | 補具體標準名稱 + 版本、不能用 vague reference                                          |
+| 章節寫於 N 年前、沒提 last reviewed 日期                                                               | 補 last reviewed 標記、設下次 review trigger                                           |
+| Conditional 原文被引成 unconditional（「強制」「必須」「總是」）                                       | 找原文 conditional context、補回 scope qualifier                                       |
+| 「之後標準改了再更新」                                                                                 | 是 [#72](../external-trigger-for-high-roi-work/) 結構性跳過、補 review cadence + owner |
+| 章節用 internal link（knowledge-cards / 跨章引用）作為 control-of-record、沒 last-checked / sync owner | 等同未驗證的 citation；補 last-checked + sync owner、子頁大改時 broadcast 到引用方     |
+| Internal link 連結還在但目標頁 slug / 內容已改、章節原本暗示的 control 跟現在不對應                    | Silent broken / drift；定期跑連結 sweep + 文意對比、跟外部 citation 同流程處理         |
 
 ---
 
 ## 適用範圍與邊界
 
-- **適用**：資安內容引用標準（auth / crypto / 傳輸 / 防護 / 合規）；任何 best practice 衰退快、版本之間語意會反轉的領域（cloud security 配置、container 安全、特定 framework 的安全 idiom）
+- **適用**：資安內容引用標準（auth / crypto / 傳輸 / 防護 / 合規）；**內部 citation**（knowledge-cards 連結、跨章 / 跨模組引用作為 control-of-record）；任何 best practice 衰退快、版本之間語意會反轉的領域（cloud security 配置、container 安全、特定 framework 的安全 idiom）
 - **不適用**：純歷史 / 概念介紹（不依賴 current best practice）、學術 retrospective（討論 historical 標準時版本本身是內容）
 - **邊界**：「citation 時效跟精確」≠「窮舉所有版本變更」——只列當前文章涵蓋 scope 的 citation、追到一手 + 版本 + scope qualifier 即可；判別準則：「如果這條 citation 過時或語境變、reader 會做錯什麼？」——會做錯 → 補完整四欄位；不會做錯（純歷史 reference）→ 標年份即可
 - **過度引用反例**：每段話都附 citation 鏈 + 原文 quote + 三條 review trigger、文章變 footnote-driven、reader 讀不下去；citation 投資量級對應該段對 reader 實作的影響——核心 mitigation 段值得四欄位完整、background 段標版本 + URL 即可

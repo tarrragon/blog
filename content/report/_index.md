@@ -132,7 +132,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#101 Threat model 明確性：「防什麼」與「不防什麼」必須對稱](threat-model-explicitness/) — Mitigation 句子要對稱寫 in-scope threat + out-of-scope threat + 補強路由；單寫前者讀者會 universal 詮釋、實作覆蓋只是作者腦中 subset；對稱論述是 scope qualifier、不違反「正向陳述優先」
 - [#102 Mitigation 對位：防護對應到具體 threat 的驗證](mitigation-threat-alignment/) — Mitigation 名稱對位 threat 名稱是字面層（defense theater）、必須補 mechanism 層 + 前提層；對位鏈拆「攔的 threat / 攔的 mechanism / 失效訊號」三欄、reader 才能反向驗證實作強度跟追新 threat 變體
 - [#103 Mitigation 的 context-dependence：deployment 條件改變有效性](mitigation-context-dependence/) — 同 mitigation 在不同 config / scale / runtime / actor 條件下強度從完整擋到 silent 失效；每個 mitigation 列「成立條件 / 失效條件 / deployment 變數」三類、跟 #89 規模改變可行性同骨
-- [#104 Security 標準引用的時效性與精確度](security-citation-currency-and-precision/) — 資安標準（OWASP / RFC / NIST / CIS）best practice 衰退快、原文常被引用扭曲（conditional → unconditional drift）、版本之間語意可能反轉；citation 必須附「標準 / 版本 / 原文 quote / 適用 scope / review trigger」五欄
+- [#104 Security 標準引用的時效性與精確度](security-citation-currency-and-precision/) — 資安標準（OWASP / RFC / NIST / CIS）best practice 衰退快、原文常被引用扭曲（conditional → unconditional drift）、版本之間語意可能反轉；citation 必須附「標準 / 版本 / 原文 quote / 適用 scope / review trigger」五欄；internal citation（knowledge-cards / 跨章引用）也適用、且因無版本號 anchor 更易 silent drift / broken
 - [#105 Audit recommendation 層級：accept / minor / major / 教錯不可保留](security-audit-recommendation-tiers/) — Audit 產出是 ship 決策、不是評語；四 tier 判準（reader 會不會主動產生破口 / 結構性 vs 局部 / fix cost / 是否容忍）；withdraw tier 是資安 audit 跟學術 peer review 的關鍵差異——保留 = 增加 risk、不存在「先 ship 後改」
 
 ### 第七輪：Pattern 卡片（待補完）
