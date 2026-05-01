@@ -104,6 +104,60 @@ tags: ["report", "事後檢討", "工程方法論", "Pattern", "Writing", "Multi
 
 ---
 
+## Stakes-conditional 追加輪：Epistemic Rigor
+
+5 輪基本 frame 是 frame 軸（生成 / 意圖 / 語氣 / grep / 反例）；**高 stakes 內容**（reader 照做後錯誤不可逆 / 系統層 / 不可分批 ship 修正）追加 stakes 軸的 **輪 E：epistemic rigor**——比照學術 peer review 的 claim / evidence / method / threats / citation 五個 sub-check、確認論述強度足以承擔 reader 直接 implement 的下游風險。
+
+### 啟動條件（opt-in、不污染預設）
+
+| 內容類型                                       | 是否跑輪 E     |
+| ---------------------------------------------- | -------------- |
+| 一般技術文章（layout / refactor / debug 教學） | 不跑（5 輪夠） |
+| 資安 / cryptography / 防護 mitigation 教學     | **跑**         |
+| Concurrency 正確性 / memory model claims       | **跑**         |
+| Distributed consistency / consensus 演算法     | **跑**         |
+| Financial 計算 / accounting / settlement       | **跑**         |
+| Medical / safety-critical 計算                 | **跑**         |
+| 任何「reader 照做後錯誤不可逆 / 系統層」的內容 | **跑**         |
+
+判別啟動的核心問題：「**reader 照這段實作會不會在生產系統留 silent gap、且不能靠後續 ship 修補**？」——會 → 跑輪 E、不會 → 5 輪即可。動機論證見 [#99 資安教學審查標準對應風險不對稱](../security-teaching-rigor-asymmetry/)。
+
+### 輪 E：Epistemic Rigor 的 5 個 sub-check
+
+| Sub-check    | 問題                                           | 對應 audit 維度                                                                                     |
+| ------------ | ---------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| E.1 Claim    | 每個結論可拆 falsifiable 子句嗎？              | [#100 false sense of security](../false-sense-of-security-as-primary-failure/)                      |
+| E.2 Evidence | claim → evidence 推論鏈完整、有 mechanism 嗎？ | [#102 mitigation 對位](../mitigation-threat-alignment/)                                             |
+| E.3 Method   | reader 照 method 做能反向驗證嗎？              | [#101 threat model 明確性](../threat-model-explicitness/) + [#102](../mitigation-threat-alignment/) |
+| E.4 Threats  | 什麼前提失效會 invalidate？                    | [#103 context-dependence](../mitigation-context-dependence/)                                        |
+| E.5 Citation | 版本 / 句意 / current best practice 都對嗎？   | [#104 citation 時效精確](../security-citation-currency-and-precision/)                              |
+
+### 輪 E 的產出格式
+
+跑完輪 E、每個 weakness 對應到一個 dimension + tier、見 [#105 audit recommendation 層級](../security-audit-recommendation-tiers/)：
+
+- **Accept**：無 weakness 或在容忍範圍
+- **Minor revise**：補 boundary / contrast / 版本標記類小改、不阻擋 ship
+- **Major revise**：結構性 false sense、需重寫、ship 前必須修
+- **Withdraw**：教錯主動誤導 reader（過時 crypto 沒標 deprecated / 扭曲 citation 反向違反現行標準 / defense theater 當示範），保留 = 增加生產系統 risk、必須移除或全換
+
+withdraw tier 是高 stakes 內容跟一般內容的關鍵差異——一般內容 review 沒有「保留 = 增加 risk」的硬決策、高 stakes 必須有。
+
+### 跟 5 輪基本 frame 的分工
+
+| 軸       | 5 輪基本 frame                         | 輪 E（高 stakes 追加）                                                   |
+| -------- | -------------------------------------- | ------------------------------------------------------------------------ |
+| 軸定位   | Frame 軸：每輪換一個寫作品質視角       | Stakes 軸：論述強度檢查                                                  |
+| 觸發     | 預設全跑（依 output 類型可跳少數輪）   | 高 stakes 內容才 opt-in                                                  |
+| 找的問題 | typo / 偏題 / 絕對主義 / grep / 邊界缺 | claim 空降 / 對位失效 / context 缺 / citation 過時 / withdraw-level 教錯 |
+| 失敗後果 | 文字品質低、reader 用力讀              | reader 照做後實作出生產破口、silent failure                              |
+
+兩軸正交、不取代——高 stakes 內容兩軸都跑（5 輪 frame + 輪 E stakes）、一般內容只跑 5 輪。輪 E 不在 5 輪裡是因為：把 epistemic rigor 設為預設會讓一般文章 over-audit、稀釋 review 紀律；設為 conditional opt-in 才能讓高 stakes 場景拉到學術級而不污染日常寫作。
+
+→ 詳細維度展開（threat model 對稱 / mitigation 對位 mechanism / context-dependence / citation 時效）跟 audit recommendation tier 判準、見 [#99](../security-teaching-rigor-asymmetry/) → [#100](../false-sense-of-security-as-primary-failure/) → [#101-104](../threat-model-explicitness/) → [#105](../security-audit-recommendation-tiers/) 系列。
+
+---
+
 ## 反模式：跳輪的代價
 
 | 反模式                               | 後果                                                                 |

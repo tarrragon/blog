@@ -127,6 +127,13 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#96 適用範圍要展開成 file enumeration](applicability-scope-must-be-enumerated/) — 「所有教學文件」這類口語描述執行時要心算具體檔、推導步驟易漏（mirror / fork / 翻譯版）；合法形式是 enumerated file list 或可重現的 grep / find 規則；本卡是 #95 的下游具體化（#95 答 scope 從哪來、本卡答 scope 長什麼樣）、跟 #82 互補（enumerate 是字面層、completeness 是行為層判準）、是 #44 在「原則作用域」維度的具體案例
 - [#97 Metadata surface 要納入寫作 review 範圍](metadata-surface-in-writing-review/) — title / description / frontmatter / heading / link label / MOC hook 是讀者入口與搜尋入口；body review 通過後仍要跑 metadata surface，frame × surface 兩軸同時完整才代表寫作 review coverage 完整
 - [#98 素材庫比例要支撐主情境的反向驗證](source-library-ratio-supports-scenario-validation/) — 文章主情境保持 4-5 個、素材庫保留 2-3 倍 field/source cards；每個 scenario 背後要有 2-3 個來源，才能支撐反向驗證、壓力變體與後續擴寫
+- [#99 資安教學的審查標準要對應風險不對稱](security-teaching-rigor-asymmetry/) — 一般教學寫不清楚停在學習端、資安教學寫不清楚是生產端不可逆破口；audit bar 要從 readability-first 升級到 verifiability-first、預設讀者會 implement；是後續 #100-105 資安 audit 系列的 anchor
+- [#100 False sense of security 是資安寫作的主要失敗模式](false-sense-of-security-as-primary-failure/) — 失敗模式不是「讀者學不到」、是「讀者以為學會了並照做、實際還有破口」；silent failure 比 noisy failure 貴 4-5 個數量級、教學擴散讓單篇 silent gap 變系統性 risk；audit 主軸是消滅讓讀者「我做了 X 就安全」的句子
+- [#101 Threat model 明確性：「防什麼」與「不防什麼」必須對稱](threat-model-explicitness/) — Mitigation 句子要對稱寫 in-scope threat + out-of-scope threat + 補強路由；單寫前者讀者會 universal 詮釋、實作覆蓋只是作者腦中 subset；對稱論述是 scope qualifier、不違反「正向陳述優先」
+- [#102 Mitigation 對位：防護對應到具體 threat 的驗證](mitigation-threat-alignment/) — Mitigation 名稱對位 threat 名稱是字面層（defense theater）、必須補 mechanism 層 + 前提層；對位鏈拆「攔的 threat / 攔的 mechanism / 失效訊號」三欄、reader 才能反向驗證實作強度跟追新 threat 變體
+- [#103 Mitigation 的 context-dependence：deployment 條件改變有效性](mitigation-context-dependence/) — 同 mitigation 在不同 config / scale / runtime / actor 條件下強度從完整擋到 silent 失效；每個 mitigation 列「成立條件 / 失效條件 / deployment 變數」三類、跟 #89 規模改變可行性同骨
+- [#104 Security 標準引用的時效性與精確度](security-citation-currency-and-precision/) — 資安標準（OWASP / RFC / NIST / CIS）best practice 衰退快、原文常被引用扭曲（conditional → unconditional drift）、版本之間語意可能反轉；citation 必須附「標準 / 版本 / 原文 quote / 適用 scope / review trigger」五欄
+- [#105 Audit recommendation 層級：accept / minor / major / 教錯不可保留](security-audit-recommendation-tiers/) — Audit 產出是 ship 決策、不是評語；四 tier 判準（reader 會不會主動產生破口 / 結構性 vs 局部 / fix cost / 是否容忍）；withdraw tier 是資安 audit 跟學術 peer review 的關鍵差異——保留 = 增加 risk、不存在「先 ship 後改」
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -274,7 +281,13 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 `#97 Metadata surface 要納入寫作 review 範圍` → `#96 適用範圍要展開成 file enumeration` → `#95 Multi-pass scope 要蓋同類風險區` → `#83 Writing 的 multi-pass review` → `#94 正向改寫要保留對照論據` — 先列 file scope，再列每個檔內的 title / description / heading / MOC hook / link label；最後用正向陳述與對照論據判準檢查讀者入口是否跟正文共用同一個概念錨點
 
+### 路徑 18：對既有資安內容跑學術級 audit
+
+`#99 資安教學審查標準對應風險不對稱` → `#100 false sense of security 主要失敗模式` → `#101 threat model 明確性` → `#102 mitigation 對位` → `#103 mitigation context-dependence` → `#104 security citation 時效精確` → `#105 audit recommendation 層級` — 先確立風險不對稱論證、再用 false sense of security 作為主要 audit 目標、跑四個 dimension（threat model 對稱 / mitigation mechanism 對位 / context 條件顯式 / citation 版本精確）、最後用 tier 化 recommendation 把每個 weakness 映射到 ship 決策（accept / minor / major / withdraw）。適用 backend/07-security-data-protection/ 章節 audit、跨高 stakes 領域（concurrency / distributed / financial / medical）也適用 dimension 1-3。
+
 ---
+
+**Last Updated**: 2026-05-01 — 新增 #99-#105 資安內容 audit 系列（七張卡：#99 anchor 風險不對稱 / #100 false sense of security 主要失敗模式 / #101-104 四個 audit dimension（threat model 對稱 / mitigation 對位 / context-dependence / citation 時效精確）/ #105 recommendation tier 化）；資安寫作的 audit bar 從 readability-first 升級到 verifiability-first；新增路徑 18 串聯 audit workflow。後續對應 skill reference（auditing-articles.md）跟 multi-pass review 的 epistemic rigor 第 6 輪會根據本系列展開。
 
 **Last Updated**: 2026-04-30 — 新增 #97 Metadata surface 要納入寫作 review 範圍（從資安章節標題 review 漏判抽出 — 正文已建立正向概念、title 與 MOC hook 仍保留舊 frame，揭露 multi-pass review 缺 surface 軸）、新增路徑 17 給 title / frontmatter / index hook 的寫作 coverage 檢查。
 
