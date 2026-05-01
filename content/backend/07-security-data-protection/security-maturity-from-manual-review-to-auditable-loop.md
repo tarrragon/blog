@@ -82,6 +82,15 @@ weight: 90
 
 判讀表格的作用是讓團隊在每輪復盤都能快速定位階段，並決定一個最具回報的提升任務。
 
+## 從成熟度判讀到實際 mitigation 強度
+
+成熟度量的是 process metric（流程穩定性 / 證據品質 / 回寫節奏 / 自動化覆蓋）；mitigation 強度要從具體 control 驗證取得。Reader 沿兩條 chain 把 stage 轉成 mitigation 判讀：
+
+- **覆蓋 chain**：列當前 stage 應對的 7.x 章節問題節點（例：可稽核閉環 stage 對應 [7.2 身分擴散](/backend/07-security-data-protection/identity-access-boundary/) / [7.7 證據鏈](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/) / [7.13 訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) 主問題節點）；尚未涵蓋的問題節點是當前 stage 仍在的 silent gap。
+- **驗證 chain**：用具體事件 / 演練檢查 control 真擋 threat。「有 audit log」是 process metric、「audit log 在事件中能還原責任鏈」是 mitigation 驗證；兩者差距由 [7.19 資安演練](/backend/07-security-data-protection/security-exercise-from-abuse-case-to-game-day/) 量測。
+
+兩條 chain 走完，stage 才轉成可信 mitigation 判讀。Stage 提升跟 mitigation 強度提升是兩件獨立工作——前者擴張組織能力、後者靠下游模組（[05](/backend/05-deployment-platform/) / [06](/backend/06-reliability/) / [08](/backend/08-incident-response/)）真實實作。
+
 ## 必連章節
 
 - [7.7 稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)

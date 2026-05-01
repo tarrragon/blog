@@ -11,6 +11,19 @@ weight: 82
 
 本章聚焦來源可信度、組件邊界與發佈節奏治理，不討論單一 CI/CD 平台操作流程。
 
+## 本章 threat scope
+
+**In-scope**：來源可追溯性不足 / artifact 信任斷點 / 第三方依賴風險放大 / 事件後發佈節奏混亂。
+
+**Out-of-scope**（路由到他章）：
+
+- CI secrets → [7.6](../secrets-and-machine-credential-governance/)
+- workload identity → [7.10](../workload-identity-and-federated-trust/)
+- 例外治理 → [7.14](../security-governance-exception-and-tripwire/)
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：
@@ -64,6 +77,20 @@ weight: 82
 - 開源組件滲透與下游衝擊： [XZ Backdoor 2024](/backend/07-security-data-protection/red-team/cases/supply-chain/xz-backdoor-2024-open-source-supply-chain/)
 - 組件級漏洞造成大範圍傳導： [Log4Shell 2021](/backend/07-security-data-protection/red-team/cases/supply-chain/log4shell-cve-2021-44228-component-chain/)
 - 平台級供應鏈事件與回退壓力： [SolarWinds 2020](/backend/07-security-data-protection/red-team/cases/supply-chain/solarwinds-2020-sunburst/)
+
+## 引用標準
+
+供應鏈領域標準演化快、本章參考下列外部標準作為 mechanism 層 anchor。Reader 套用前 verify 版本仍是 current best practice：
+
+| 標準                                                  | 版本 / 年份                      | 適用場景                                           |
+| ----------------------------------------------------- | -------------------------------- | -------------------------------------------------- |
+| SLSA（Supply-chain Levels for Software Artifacts）    | v1.0 (2023)                      | build provenance 等級判讀（L1-L4）、來源可追溯模型 |
+| NIST SSDF（Secure Software Development Framework）    | SP 800-218 (2022)                | 開發流程安全控制 reference                         |
+| Sigstore（cosign / Rekor / Fulcio）                   | continuous                       | artifact 簽署 / 透明度日誌 mechanism               |
+| CycloneDX / SPDX                                      | CycloneDX v1.6 / SPDX 3.0 (2024) | SBOM 格式                                          |
+| OWASP Software Component Verification Standard (SCVS) | v1.0 (2020)                      | 元件驗證控制 reference                             |
+
+引用版本與 cadence 規則見 [security-citation-currency-and-precision](/report/security-citation-currency-and-precision/)（每 12-24 月 re-check 主流標準是否有新版）。Last reviewed: 2026-05-01。
 
 ## 下一步路由
 

@@ -11,6 +11,21 @@ weight: 73
 
 本章聚焦入口分級、管理平面邊界與修補窗口治理。案例在問題觸發時提供證據，不作固定列表。
 
+## 本章 threat scope
+
+**In-scope**：對外 attack surface 擴張 / public 與 admin 與 diagnostic endpoint 暴露失衡 / VPN 與遠端路徑利用 / 邊界設備漏洞 / 修補窗口暴露 / 管理平面暴露。
+
+**Out-of-scope**（路由到他章）：
+
+- 身分授權 → [7.2](../identity-access-boundary/)
+- 資料外洩 → [7.4](../data-protection-and-masking-governance/)
+- 傳輸 / 憑證 → [7.5](../transport-trust-and-certificate-lifecycle/)
+- 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
+- 偵測訊號 → [7.13](../detection-coverage-and-signal-governance/)
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：

@@ -11,6 +11,22 @@ weight: 72
 
 本章聚焦概念層判讀，主體是問題節點、訊號、風險與路由條件。案例在問題被觸發時提供證據參考，不作章節主體。
 
+## 本章 threat scope
+
+**In-scope**：credential brute force / credential stuffing / phishing 與 MFA fatigue / privilege escalation / session hijacking / 供應商身分鏈傳導 / insider abuse / 過寬授權範圍。
+
+**Out-of-scope**（路由到他章）：
+
+- 入口暴露面 → [7.3](../entrypoint-and-server-protection/)
+- 資料外洩 → [7.4](../data-protection-and-masking-governance/)
+- 傳輸 / 憑證信任 → [7.5](../transport-trust-and-certificate-lifecycle/)
+- 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
+- workload identity → [7.10](../workload-identity-and-federated-trust/)
+- 偵測訊號 → [7.13](../detection-coverage-and-signal-governance/)
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：
@@ -46,6 +62,15 @@ weight: 72
 | 授權範圍擴張過快 | 高權限操作集中、代理操作鏈過長             | 權限濫用影響面擴大       | [authorization](/backend/knowledge-cards/authorization/)、[least-privilege](/backend/knowledge-cards/least-privilege/)                 | `08 incident response` |
 | 會話失效節奏落後 | 修補後異常 session 持續、token 存續過久    | 事件關閉時間延長         | [session-invalidation](/backend/knowledge-cards/session-invalidation/)、[token-revocation](/backend/knowledge-cards/token-revocation/) | `08 + 05`              |
 | 供應商身分鏈傳導 | 外部事件後內部憑證存續比例偏高             | 內部信任邊界承受外部衝擊 | [credential](/backend/knowledge-cards/credential/)、[containment](/backend/knowledge-cards/containment/)                               | `08 + 06`              |
+
+## 跨章 SSoT：供應商身分鏈傳導
+
+本章「供應商身分鏈傳導」問題節點是跨章 SSoT——其他章節從不同 layer 補同議題的 specific 訊號：
+
+- [7.5 第三方信任重評估延遲](../transport-trust-and-certificate-lifecycle/)：傳輸層的 specific 訊號（憑證收斂滯後）
+- [7.6 供應商事件傳導未收斂](../secrets-and-machine-credential-governance/)：機器憑證層的 specific 訊號（憑證仍活躍）
+
+跨章 audit 時、本條為 canonical 定義（threat scope / mitigation chain），其他章補 layer 視角差異。
 
 ## 常見風險邊界
 

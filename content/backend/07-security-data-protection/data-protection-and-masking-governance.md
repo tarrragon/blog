@@ -11,6 +11,21 @@ weight: 74
 
 本章聚焦資料語意、暴露路徑、責任鏈與通報節奏。案例在特定問題觸發時提供證據參考。
 
+## 本章 threat scope
+
+**In-scope**：過量回應欄位暴露 / 高風險匯出節奏 / 備份權限混層 / 跨組織交換責任鏈斷點 / 資料分級錯位 / 遮罩遺漏路徑。
+
+**Out-of-scope**（路由到他章）：
+
+- 身分授權 → [7.2](../identity-access-boundary/)
+- 入口暴露 → [7.3](../entrypoint-and-server-protection/)
+- 傳輸保護 → [7.5](../transport-trust-and-certificate-lifecycle/)
+- 殘留與刪除證據 → [7.11](../data-residency-deletion-and-evidence-chain/)
+- 偵測訊號 → [7.13](../detection-coverage-and-signal-governance/)
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：

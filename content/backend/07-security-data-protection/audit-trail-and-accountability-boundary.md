@@ -11,6 +11,18 @@ weight: 77
 
 本章聚焦證據模型、責任鏈與跨部門節奏。案例在問題節點被觸發時作為判讀佐證。
 
+## 本章 threat scope
+
+**In-scope**：稽核欄位結構缺漏 / 代理與批准節奏脫鉤 / 跨部門通報節奏失衡 / 平台級事件責任混層。
+
+**Out-of-scope**（路由到他章）：
+
+- 資料分級與遮罩 → [7.4](../data-protection-and-masking-governance/)
+- 偵測訊號 → [7.13](../detection-coverage-and-signal-governance/)
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：

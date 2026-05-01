@@ -11,6 +11,21 @@ weight: 75
 
 本章聚焦信任鏈治理、會話收斂、憑證生命周期與第三方傳導。案例在問題被觸發時提供佐證。
 
+## 本章 threat scope
+
+**In-scope**：會話收斂節奏落後 / 憑證輪替覆蓋不足 / 管理平面傳輸混層 / 第三方信任重評估延遲。
+
+**Out-of-scope**（路由到他章）：
+
+- 身分授權 → [7.2](../identity-access-boundary/)
+- 入口暴露 → [7.3](../entrypoint-and-server-protection/)
+- 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
+- workload federation → [7.10](../workload-identity-and-federated-trust/)
+- artifact 信任 → [7.12](../supply-chain-integrity-and-artifact-trust/)
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：
@@ -47,6 +62,10 @@ weight: 75
 | 憑證輪替覆蓋不足     | 輪替完成率偏低、失效窗口過長 | 信任鏈可利用窗口維持   | [website-certificate-lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)、[certificate-revocation](/backend/knowledge-cards/certificate-revocation/) | `05 + 06` |
 | 管理平面傳輸混層     | 管理流量與業務流量共用邊界   | 高權限邊界可被橫向利用 | [management-plane](/backend/knowledge-cards/management-plane/)、[trust-boundary](/backend/knowledge-cards/trust-boundary/)                                           | `05 + 08` |
 | 第三方信任重評估延遲 | 外部事件後內部憑證收斂滯後   | 傳導風險停留在生產路徑 | [token-revocation](/backend/knowledge-cards/token-revocation/)、[incident-severity](/backend/knowledge-cards/incident-severity/)                                     | `08`      |
+
+## 跨章議題交叉引用
+
+本章「第三方信任重評估延遲」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在傳輸層的展現；canonical SSoT 在 7.2、本條補憑證收斂滯後的 specific 訊號。
 
 ## 常見風險邊界
 

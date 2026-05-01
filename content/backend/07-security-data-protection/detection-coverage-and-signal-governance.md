@@ -11,6 +11,17 @@ weight: 83
 
 本章聚焦偵測覆蓋率語意、訊號品質分級與告警成本，不討論 SIEM 或監控產品配置細節。
 
+## 本章 threat scope
+
+**In-scope**：覆蓋率描述空泛 / 訊號品質不穩定 / 漏報風險無回饋迴路 / 事件分級與訊號脫鉤。
+
+**Out-of-scope**（路由到他章）：
+
+- 各領域 specific threats → 7.2-7.12（各章領域）
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：
@@ -64,6 +75,20 @@ weight: 83
 - 身分異常訊號不足導致擴散： [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
 - 憑證濫用下的低噪音外送： [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)
 - 邊界設備高壓窗口下的偵測需求： [PAN-OS 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)
+
+## 引用標準
+
+偵測領域標準演化快、本章參考下列外部標準作為 mechanism 層 anchor。Reader 套用前 verify 版本仍是 current best practice：
+
+| 標準                                                     | 版本 / 年份                        | 適用場景                                         |
+| -------------------------------------------------------- | ---------------------------------- | ------------------------------------------------ |
+| NIST SP 800-61 Computer Security Incident Handling Guide | Rev. 2 (2012)，Rev. 3 draft (2024) | 偵測與事件處理流程 reference                     |
+| MITRE ATT&CK                                             | continuous                         | 攻擊技術 taxonomy / detection coverage 對照      |
+| OWASP Logging Cheat Sheet                                | continuous                         | log / alert / detection 設計 reference           |
+| Sigma Rules                                              | continuous                         | 跨 SIEM 偵測規則 portable 格式                   |
+| ENISA Detection Engineering Guide                        | 2023                               | detection 成熟度與訊號品質 reference（歐盟脈絡） |
+
+引用版本與 cadence 規則見 [security-citation-currency-and-precision](/report/security-citation-currency-and-precision/)（每 12-24 月 re-check）。Last reviewed: 2026-05-01。
 
 ## 下一步路由
 

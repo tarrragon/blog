@@ -11,6 +11,21 @@ weight: 76
 
 本章聚焦分域策略、生命周期一致性與事件收斂節奏。案例在問題觸發時作為證據參考。
 
+## 本章 threat scope
+
+**In-scope**：token 分域不足 / CI secrets 集中 / 憑證生命週期失衡 / 供應商事件傳導未收斂。
+
+**Out-of-scope**（路由到他章）：
+
+- 人類身分 → [7.2](../identity-access-boundary/)
+- 入口暴露 → [7.3](../entrypoint-and-server-protection/)
+- 傳輸 / 憑證輪替 → [7.5](../transport-trust-and-certificate-lifecycle/)
+- workload federation → [7.10](../workload-identity-and-federated-trust/)
+- build provenance → [7.12](../supply-chain-integrity-and-artifact-trust/)
+- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
+
 ## 從本章到實作
 
 本章是 routing layer，沿兩條 chain 進入 implementation：
@@ -47,6 +62,10 @@ weight: 76
 | CI secrets 集中      | 單一節點承載大量憑證     | 輪替成本與中斷風險上升   | [secret-management](/backend/knowledge-cards/secret-management/)、[ci-pipeline](/backend/knowledge-cards/ci-pipeline/)   | `05 + 06` |
 | 憑證生命周期失衡     | 發放、更新、撤銷節奏分離 | 可用憑證存量高於收斂速度 | [credential](/backend/knowledge-cards/credential/)、[containment](/backend/knowledge-cards/containment/)                 | `06 + 08` |
 | 供應商事件傳導未收斂 | 外部事件後內部憑證仍活躍 | 內部風險延長停留         | [incident-timeline](/backend/knowledge-cards/incident-timeline/)、[impact-scope](/backend/knowledge-cards/impact-scope/) | `08`      |
+
+## 跨章議題交叉引用
+
+本章「供應商事件傳導未收斂」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在機器憑證層的展現；canonical SSoT 在 7.2、本條補憑證仍活躍的 specific 訊號。
 
 ## 常見風險邊界
 
