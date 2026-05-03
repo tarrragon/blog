@@ -16,6 +16,35 @@ weight: 13
 - 跟 [6.8 release gate](/backend/06-reliability/release-gate/) 的整合：perf 退化作為 gate 條件
 - 反模式：perf test 只在 release 前跑一次、退化已累積；CI 用 shared runner 噪音吞掉訊號；只看平均不看 percentile
 
+## 概念定位
+
+Performance regression gate 是把效能 baseline 轉成持續放行條件，責任是避免看似功能正確的變更悄悄拖垮延遲、吞吐或成本。
+
+這一頁關心的是變更有沒有偷走系統的效能餘裕。沒有 gate，效能退化常常要等使用者先感受到才會被看見。
+
+## 核心判讀
+
+判讀效能 gate 時，先看 baseline 是否穩定，再看 regression 是否足夠敏感。
+
+重點訊號包括：
+
+- baseline 是否來自 production-like workload
+- regression 是否能分辨 noise 與真實退化
+- perf budget 是否跟 release gate 綁定
+- 當退化出現時，是否能快速定位到 code path 或依賴
+
+## 案例對照
+
+- [Google](/backend/06-reliability/cases/google/_index.md)：大型系統需要把效能回饋變成日常 gate。
+- [LinkedIn](/backend/06-reliability/cases/linkedin/_index.md)：高互動平台的 latency regression 不能只靠事後觀察。
+- [Shopify](/backend/06-reliability/cases/shopify/_index.md)：高峰流量下，效能退化等於可靠性退化。
+
+## 下一步路由
+
+- 06.2 load testing：baseline 來自哪種 workload
+- 06.8 release gate：perf budget 如何納入放行
+- 06.9 capacity / cost：效能退化常伴隨成本上升
+
 ## 判讀訊號
 
 - 連續多版微小退化、累積後才被發現

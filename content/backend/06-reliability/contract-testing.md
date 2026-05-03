@@ -17,6 +17,34 @@ weight: 10
 - vendor 取捨：Pact / Spring Cloud Contract / OpenAPI diff tool / Buf
 - 反模式：契約只在 docs、無自動驗證；consumer 改 schema 不通知 producer；breaking change 靠口頭溝通
 
+## 概念定位
+
+Contract testing 是在服務邊界上驗證 producer 與 consumer 的相容性，責任是把跨團隊協作的隱性期待變成可執行的契約。
+
+這一頁不只在驗 schema，而是在驗誰對誰承諾了什麼。當服務彼此頻繁演進，契約測試就是避免變更互相踩踏的最小保護層。
+
+## 核心判讀
+
+好的 contract testing 會明確劃出兼容視窗，並把驗證放進 CI 或 release gate。
+
+判讀時看三件事：
+
+- 契約是否對準真實 consumer，不是抽象假想 client
+- schema evolution 是否有明確 compatibility window
+- 失敗是否能回到責任邊界，而不是只看到測試紅燈
+
+## 案例對照
+
+- [GitHub](/backend/08-incident-response/cases/github/_index.md)：API 與平台整合面常需要維持可預測的契約。
+- [Stripe](/backend/06-reliability/cases/stripe/_index.md)：外部整合的變更要能維持 backward compatibility。
+- [Slack](/backend/08-incident-response/cases/slack/_index.md)：跨系統 webhook / event 契約失配會直接放大事故。
+
+## 下一步路由
+
+- 06.8 release gate：把契約驗證放進放行條件
+- 06.11 migration safety：把 schema 演進變成可逆流程
+- 06.16 test data：把契約案例轉成持久化 seed
+
 ## 判讀訊號
 
 - 跨服務 deploy 順序錯誤導致 production 故障

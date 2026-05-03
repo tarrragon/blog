@@ -14,8 +14,8 @@ weight: 11
 單獨看任一模組會錯估它的責任邊界：
 
 - **04 單獨看**：把訊號當成「服務狀態的視覺化」、忽略訊號是 6.6 SLO 政策的依據、是 8.1 事故啟動條件的觸發器。
-- **06 單獨看**：把驗證當成「測試完整度的驗證」、忽略驗證 hypothesis 來自事故 postmortem、SLO 來自觀測訊號。
-- **08 單獨看**：把事故當成「響應流程演練」、忽略事故 postmortem 的價值在回寫 04 訊號與 06 驗證、不在響應本身。
+- **06 單獨看**：把驗證當成「測試完整度的驗證」、忽略驗證 hypothesis 來自事故 [post-incident review](/backend/knowledge-cards/post-incident-review/)、SLO 來自觀測訊號。
+- **08 單獨看**：把事故當成「響應流程演練」、忽略事故 [post-incident review](/backend/knowledge-cards/post-incident-review/) 的價值在回寫 04 訊號與 06 驗證、不在響應本身。
 
 閉環視角讓三個模組各自的設計受其他兩者約束、避免局部最佳化。
 
@@ -35,9 +35,9 @@ weight: 11
 
 ### 08 → 06：事故回寫驗證設計
 
-事故 postmortem 的 action items 不應該只是「補 runbook」這類局部修正、而應該回寫到事前驗證設計、讓下一次同類事故在 production 前被攔截。
+事故 [post-incident review](/backend/knowledge-cards/post-incident-review/) 的 action items 不應該只是「補 runbook」這類局部修正、而應該回寫到事前驗證設計、讓下一次同類事故在 production 前被攔截。
 
-交接點是 postmortem action items 的分類：哪些回到 6.4 chaos experiment、哪些回到 6.7 DR rehearsal、哪些回到 6.8 release gate、哪些回到 6.6 SLO 政策。
+交接點是 [post-incident review](/backend/knowledge-cards/post-incident-review/) action items 的分類：哪些回到 6.4 chaos experiment、哪些回到 6.7 DR rehearsal、哪些回到 6.8 release gate、哪些回到 6.6 SLO 政策。
 
 具體例子：
 
@@ -60,7 +60,7 @@ weight: 11
 
 ### 08 → 04：事故揭露偵測缺口
 
-事故發生後、postmortem 通常會發現「訊號其實有、但太晚 / 太雜 / 看不出 user impact」、這些是 04 的偵測缺口。
+事故發生後、[post-incident review](/backend/knowledge-cards/post-incident-review/) 通常會發現「訊號其實有、但太晚 / 太雜 / 看不出 user impact」、這些是 04 的偵測缺口。
 
 交接點跟 06 → 04 不同：06 → 04 是預期性新增訊號、08 → 04 是修正既有訊號治理問題。回寫到 [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) 與 04 的訊號設計。
 
@@ -74,19 +74,19 @@ weight: 11
 
 閉環是否運作的判讀訊號 — 三個方向都應該定期觀察是否在動：
 
-| 方向    | 健康訊號                                        | 失能訊號                                                 |
-| ------- | ----------------------------------------------- | -------------------------------------------------------- |
-| 04 → 08 | 多數 Sev2+ 事故由 alert 觸發、不是客戶通報      | 客戶通報先於 alert 的比例上升、值班發現 alert 沒人接     |
-| 08 → 06 | 每次 postmortem 至少產出一個事前驗證 action     | postmortem action items 都是 runbook 補丁、無事前驗證    |
-| 06 → 04 | Chaos / SLO 工作會驅動新訊號出現                | 驗證活動孤立、不會反向擴充 04 訊號集                     |
-| 08 → 04 | Postmortem 會具名指出哪個訊號不足、有 follow-up | Postmortem 提到「訊號不夠」但沒落實到具體 metric / alert |
+| 方向    | 健康訊號                                                                                                    | 失能訊號                                                                                                             |
+| ------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 04 → 08 | 多數 Sev2+ 事故由 alert 觸發、不是客戶通報                                                                  | 客戶通報先於 alert 的比例上升、值班發現 alert 沒人接                                                                 |
+| 08 → 06 | 每次 [post-incident review](/backend/knowledge-cards/post-incident-review/) 至少產出一個事前驗證 action     | [post-incident review](/backend/knowledge-cards/post-incident-review/) action items 都是 runbook 補丁、無事前驗證    |
+| 06 → 04 | Chaos / SLO 工作會驅動新訊號出現                                                                            | 驗證活動孤立、不會反向擴充 04 訊號集                                                                                 |
+| 08 → 04 | [post-incident review](/backend/knowledge-cards/post-incident-review/) 會具名指出哪個訊號不足、有 follow-up | [post-incident review](/backend/knowledge-cards/post-incident-review/) 提到「訊號不夠」但沒落實到具體 metric / alert |
 
 ## 閉環斷裂的失能模式
 
 每個方向斷裂會導致可預測的問題：
 
 - **04 → 08 斷**：alert 沒接 IR 流程、訊號變成「儀表板好看」但不驅動行動。常見於把 04 當成 BI 工具的團隊。
-- **08 → 06 斷**：每次事故重複同類根因、postmortem 變成 ritual、對下一次事故沒影響。常見於沒有 6.7 DR rehearsal 文化的團隊。
+- **08 → 06 斷**：每次事故重複同類根因、[post-incident review](/backend/knowledge-cards/post-incident-review/) 變成 ritual、對下一次事故沒影響。常見於沒有 6.7 DR rehearsal 文化的團隊。
 - **06 → 04 斷**：驗證活動成為孤立工程實踐、chaos 結果不影響 dashboard / alert 設計。常見於 SRE 跟 platform 團隊割裂時。
 - **08 → 04 斷**：訊號治理停滯、alert noise 累積、值班疲乏。常見於沒有 [alert fatigue](/backend/knowledge-cards/alert-fatigue/) 主題的成熟度檢視。
 
@@ -94,5 +94,5 @@ weight: 11
 
 判讀完閉環現況後沿兩條 chain 進入 implementation：
 
-1. **方向強化 chain**：找出最弱的方向、補對應模組的章節 — 04 → 08 弱補 4.4 alert design + 8.2 command；08 → 06 弱補 8.5 postmortem 模板 + 6.6 / 6.7；06 → 04 弱補 6.6 SLO + 4.2 metrics；08 → 04 弱補 8.5 + 4.4。
-2. **跨模組演練 chain**：用 6.6 game day 同時驗證三個方向是否串通 — 注入故障、看 04 是否觸發、08 是否響應、postmortem 是否回寫 06 / 04。
+1. **方向強化 chain**：找出最弱的方向、補對應模組的章節 — 04 → 08 弱補 4.4 alert design + 8.2 command；08 → 06 弱補 8.5 [post-incident review](/backend/knowledge-cards/post-incident-review/) 模板 + 6.6 / 6.7；06 → 04 弱補 6.6 SLO + 4.2 metrics；08 → 04 弱補 8.5 + 4.4。
+2. **跨模組演練 chain**：用 6.6 [game day](/backend/knowledge-cards/game-day/) 同時驗證三個方向是否串通 — 注入故障、看 04 是否觸發、08 是否響應、[post-incident review](/backend/knowledge-cards/post-incident-review/) 是否回寫 06 / 04。

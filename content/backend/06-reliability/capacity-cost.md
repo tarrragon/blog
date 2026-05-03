@@ -15,6 +15,35 @@ weight: 9
 - 跟 [6.6 SLO](/backend/06-reliability/slo-error-budget/) 的耦合：SLO 達成的容量代價
 - 反模式：容量規劃只看 CPU、autoscaling 無上限、成本失控用降級掩蓋
 
+## 概念定位
+
+Capacity 與成本邊界是把容量規劃跟成本約束一起看，責任是讓系統能承載預期負載，同時不把成本曲線推到不可接受區域。
+
+這一頁處理的是規模化之後的 trade-off。容量不是越高越好，真正的目標是找到能維持 SLO、又不浪費資源的區間。
+
+## 核心判讀
+
+判讀 capacity 時，先看 saturation 點，再看成本曲線是不是隨之失控。
+
+重點訊號包括：
+
+- autoscaling 是否有清楚上限與成本門檻
+- 依賴層是否先於應用層成為瓶頸
+- peak forecast 是否涵蓋活動、季節性與推廣事件
+- 降級是否被當成例外策略，而不是常態容量替代
+
+## 案例對照
+
+- [Shopify](/backend/06-reliability/cases/shopify/_index.md)：高峰型流量把容量與成本的邊界推得很清楚。
+- [LinkedIn](/backend/06-reliability/cases/linkedin/_index.md)：互動型服務常先在某個依賴層出現瓶頸。
+- [Amazon](/backend/06-reliability/cases/amazon/_index.md)：大規模系統常把成本與可靠性一起做優化。
+
+## 下一步路由
+
+- 06.2 load testing：capacity 輸入來自 workload model
+- 06.9 reliability metrics：容量與成本要有量測口徑
+- 06.13 perf regression gate：效能退化通常伴隨成本上升
+
 ## 判讀訊號
 
 - autoscaling max 設無限大、或長期未觸碰

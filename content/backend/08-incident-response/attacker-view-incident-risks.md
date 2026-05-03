@@ -7,6 +7,29 @@ weight: 7
 
 本章的責任是把事故弱點判讀維持在概念上限。核心輸出是事故問題地圖、案例對照與交接條件，讓事故流程在進入 playbook 細節前先完成決策對齊。
 
+## 概念定位
+
+攻擊者視角的事故弱點判讀，是從反向壓力看事故流程是否會在分級、指揮、回復與交接上被擊穿，責任是先找出流程設計的脆弱點。
+
+這一頁處理的是事故主幹，不是單一 playbook。只要某個節點會讓事故擴散、延長或失去證據，紅隊視角就要先把它標出來。
+
+## 核心判讀
+
+判讀事故弱點時，先看啟動是否太慢，再看指揮與交接是否能維持同一條推進線。
+
+重點訊號包括：
+
+- 分級門檻是否晚於實際擴散節奏
+- 指揮鏈與責任鏈是否可回查
+- containment、回復與驗證是否形成閉環
+- 技術時序與通報時序是否一致
+
+## 案例對照
+
+- [AWS S3](/backend/08-incident-response/cases/aws-s3/_index.md)：control-plane 類事故會直接考驗回復與驗證。
+- [GitHub](/backend/08-incident-response/cases/github/_index.md)：平台級事故常暴露指揮與交接節奏。
+- [Cloudflare](/backend/08-incident-response/cases/cloudflare/_index.md)：edge 型事故容易放大 blast radius 與通訊壓力。
+
 ## 服務環節問題地圖
 
 | 環節       | 主要問題                                                                | 注意事項                   | 優先案例                                                                                                                           |

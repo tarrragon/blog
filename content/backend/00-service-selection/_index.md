@@ -27,6 +27,7 @@ weight: 0
 | [0.9](/backend/00-service-selection/knowledge-graph-message-flow/)          | 知識網：訊息與事件決策路徑             | 用 [broker](/backend/knowledge-cards/broker/)、queue、[ack](/backend/knowledge-cards/ack-nack/)、retry、DLQ、replay 串出非同步決策脈絡                                                                                                                   |
 | [0.10](/backend/00-service-selection/knowledge-graph-operations-security/)  | 知識網：容量、觀測與資安決策路徑       | 用 [backpressure](/backend/knowledge-cards/backpressure/)、[timeout](/backend/knowledge-cards/timeout/)、[runbook](/backend/knowledge-cards/runbook/)、[RTO](/backend/knowledge-cards/rto/)/[RPO](/backend/knowledge-cards/rpo/)、權限與憑證串出操作脈絡 |
 | [0.11](/backend/00-service-selection/red-team-cross-service-weaknesses/)    | 攻擊者視角（紅隊）：跨服務弱點判讀總表 | 用攻擊面、可觀察訊號與失敗代價建立跨分類的弱點判讀順序                                                                                                                                                                                                   |
+| [0.12](/backend/00-service-selection/operations-control-service-selection/) | 觀測、可靠性與事故服務選型             | 用訊號、驗證、響應與閉環四層能力判斷操作控制服務該如何選型                                                                                                                                                                                               |
 
 ## 需求討論順序
 
@@ -102,3 +103,4 @@ weight: 0
 - [0.9](/backend/00-service-selection/knowledge-graph-message-flow/) 知識網：訊息與事件決策路徑
 - [0.10](/backend/00-service-selection/knowledge-graph-operations-security/) 知識網：容量、觀測與資安決策路徑
 - [0.11](/backend/00-service-selection/red-team-cross-service-weaknesses/) 攻擊者視角（紅隊）：跨服務弱點判讀總表
+- [0.12](/backend/00-service-selection/operations-control-service-selection/) 觀測、可靠性與事故服務選型
