@@ -25,6 +25,7 @@ tags: ["skills", "Claude", "寫作方法論", "工具設計"]
 | compositional-writing    | Zettelkasten 式組合寫作方法論                                                                                                | [/skills/compositional-writing/](/skills/compositional-writing/)       |
 | requirement-protocol     | 需求確認到實作的對話協議（模糊指令、失敗轉折、漸進驗證等）                                                                   | [/skills/requirement-protocol/](/skills/requirement-protocol/)         |
 | frontend-with-playwright | 框架無關的前端開發 + Playwright 驗證 + Filter × Source 跨領域 stream 操作（DOM / CSS / JS / framework 共處 / a11y / 資料流） | [/skills/frontend-with-playwright/](/skills/frontend-with-playwright/) |
+| wrap-decision            | WRAP 決策框架（錨點確認、資料充足度、擴增選項、實境檢驗、機會成本、行前預想與絆腳索）                                        | [/skills/wrap-decision/](/skills/wrap-decision/)                       |
 
 ---
 
