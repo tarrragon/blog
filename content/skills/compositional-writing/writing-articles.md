@@ -9,7 +9,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 
 > **自包含聲明**：本文件不依賴其他 reference。讀完本文件即可獨立寫出合格技術文章。
 >
-> **來源**：methodology 骨架整合自 [tarrragon/blog · tech_writing_structure.md](https://github.com/tarrragon/blog/blob/main/content/posts/tech_writing_structure.md)（2026-04-17）；與 compositional-writing 五大原則的映射由本檔補充。
+> **來源**：methodology 骨架整合自 `tarrragon/blog` 的 `tech_writing_structure.md`（2026-04-17）；與 compositional-writing 五大原則的映射由本檔補充。
 
 ---
 
@@ -566,8 +566,8 @@ build-炸-修循環。明顯划算。
 
 跨多篇 collection 的議題（拆分判準、三類文章 structure 模板、跨篇引用 idiom）由 `managing-article-collections.md` 統一處理。本 reference 聚焦「單篇文章內部怎麼寫」、不重複展開：
 
-- **拆分判準（focus 是議題完整度）**：見 [managing-article-collections.md → 拆分判準](../managing-article-collections/#拆分判準focus-是議題完整度)
-- **三類文章 structure 模板**：見 [managing-article-collections.md → 三層 structure 詳細對照](../managing-article-collections/#三層-structure-詳細對照)
+- **拆分判準（focus 是議題完整度）**：見 [managing-article-collections](../managing-article-collections/)
+- **三類文章 structure 模板**：見 [managing-article-collections](../managing-article-collections/)
 
 當寫的是多篇 collection 中的一篇、先讀那邊判斷文章類型（情境檢討 / 抽象層原則 / Pattern 卡片）、再回本 reference 套用對應規則。
 
@@ -634,23 +634,70 @@ build-炸-修循環。明顯划算。
 
 ## 多輪 Re-read Pass（multi-pass refinement）
 
-寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[#82](/report/literal-interception-vs-behavioral-refinement/) / [#83](/report/writing-multi-pass-review/)）。
+寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（#82 字面攔截 vs 行為精煉 / #83 Writing 的 multi-pass review）。
 
-跑下表前先做 surface enumeration：列出 body surface（段落、表格、範例）與 metadata / navigation surface（title、description、tags、heading、link label、MOC / `_index.md` 索引條、slug / filename）。每輪 frame 都掃同一份 surface 清單，讓正文與讀者入口維持同一個概念錨點。細節見 [#97 Metadata surface 要納入寫作 review 範圍](/report/metadata-surface-in-writing-review/)。
+跑下表前先做 surface enumeration：列出 body surface（段落、表格、範例）與 metadata / navigation surface（title、description、tags、heading、link label、MOC / index entry、slug / filename）。每輪 frame 都掃同一份 surface 清單，讓正文與讀者入口維持同一個概念錨點。細節見 metadata-surface-in-writing-review。
 
 文章用的五輪 + 兩輪文章專屬：
 
-| 輪  | Frame                                                         | 文章專用 checklist                                                                                    |
-| --- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| 1   | 生成                                                          | idea 從頭寫到尾、不停下改、預期會有粗糙                                                               |
-| 2   | 對意圖（[#67](/report/ease-of-writing-vs-intent-alignment/)） | 開頭一句、title、description、MOC hook 都點同一個核心責任嗎？段落順序由「易讀」決定不是「好寫」決定？ |
-| 3   | 機會成本語氣                                                  | 全 surface grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                     |
-| 4   | Grep-ability / 命名                                           | title / heading / link label / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title      |
-| 5   | 反例 / 邊界                                                   | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？               |
-| 6   | Cross-link 健康度                                             | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 `_index.md`                          |
-| 7   | 索引條 vs 內容                                                | `_index.md` 的索引描述、link label、文章 title 與正文第一段是否指向同一個核心責任                     |
+| 輪  | Frame                                    | 文章專用 checklist                                                                                                             |
+| --- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | 生成                                     | idea 從頭寫到尾、不停下改、預期會有粗糙                                                                                        |
+| 2   | 對意圖（#67 寫作便利度跟意圖對齊反相關） | 開頭一句、title、description、MOC hook 都點同一個核心責任嗎？段落順序由「易讀」決定不是「好寫」決定？去掉視覺標記後還能讀嗎？  |
+| 3   | 機會成本語氣                             | 全 surface grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                                              |
+| 4   | Grep-ability / 命名 / 術語               | title / heading / link label / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title；術語保留原文錨點與完整名詞頭 |
+| 5   | 反例 / 邊界                              | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？                                        |
+| 6   | Cross-link 健康度                        | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 collection index                                              |
+| 7   | 索引條 vs 內容                           | MOC / index entry 的索引描述、link label、文章 title 與正文第一段是否指向同一個核心責任                                        |
 
-跳輪規則同 [#83](/report/writing-multi-pass-review/) — 短文 / 即時 note 跳 4-7、production 卡片 / 教學文章全跑。
+跳輪規則同 #83 Writing 的 multi-pass review — 短文 / 即時 note 跳 4-7、production 卡片 / 教學文章全跑。
+
+### 術語檢查：中文入口 + 原文錨點 + 完整名詞頭
+
+術語檢查屬於輪 4 的命名子場景，production 卡片 / 教學文章要把它當成獨立子 pass。技術文章中的術語同時承擔可讀性、可搜尋性與概念邊界；中文讓 reader 進入段落，原文讓概念可回溯，完整名詞頭讓中文離開原句仍能獨立成立。
+
+翻譯檢查先看句內邏輯。把中文譯名放回原句後，要檢查它跟主詞、動詞、修飾語、因果關係是否成立；如果譯名讓句子多出原文沒有的前提，或讓讀者追問方向改變，這個翻譯就有問題。
+
+| 檢查項                     | 問題                                                   | 修法                                                      |
+| -------------------------- | ------------------------------------------------------ | --------------------------------------------------------- |
+| 原文錨點                   | 學術 / 標準 / 方法論術語第一次出現是否保留原文？       | 寫成「中文術語（original term）」                         |
+| 譯名對位                   | 中文是否帶入原詞沒有的文化 / 政治 / 日常語意？         | 回原文語境重選中文，必要時在定義段列常見譯名              |
+| 完整名詞頭                 | 中文壓縮後是否仍回答「這是什麼」？                     | 補「盲點 / 偏誤 / 風險 / 模式 / 檢查 / 策略」等 head noun |
+| 全文一致                   | 同一術語是否出現多個中文譯名或多個詞尾？               | 選 canonical 譯名與 head noun 後全篇替換                  |
+| Metadata / navigation 同步 | title、description、heading、link label 是否同樣對位？ | 跟正文第一個定義使用同一組術語                            |
+| 句內邏輯                   | 譯名是否讓句子多出原文沒有的前提？                     | 標出主詞 / 動詞 / 修飾語 / 因果，逐項檢查是否成立         |
+| 讀者追問                   | reader 看到中文會追問正確問題嗎？                      | 問「他會問 A 還是 B？」；問錯方向就重譯                   |
+
+例：`paternalism` 在決策 / 倫理脈絡裡較接近「家長主義」；翻成帶 gender 聯想的詞會讓概念漂移。例：中文壓縮詞若只剩「盲」一個字，reader 無法判斷它是盲點、盲區或盲測；補成「多步驟成功率盲點」才有完整分類。
+
+完整翻譯 / 轉譯流程見 [translation-review](../translation-review/)。支撐原則見 terminology-keeps-original-anchor 與 compressed-chinese-terms-need-head-noun。
+
+### 層次意識：frame 是 horizontal、layer 是 vertical
+
+Multi-pass review 的「N 輪不同 frame」是 horizontal 軸（同一份文字、5 個視角輪流看）。常見的誤區是 5 輪都落在同一個 vertical layer（例如全部在看視覺層）、漏掉語意 / 邏輯層 — frame 換了但 layer 沒換、根本問題不會被觸碰。
+
+技術文章中常見的三個檢查層次（每輪 frame 內、都要掃一次三層）：
+
+| 層次       | 檢查內容                                         | 修法               | 根本問題的訊號                                                            |
+| ---------- | ------------------------------------------------ | ------------------ | ------------------------------------------------------------------------- |
+| **邏輯層** | 論證是否完整、推導是否跳過、方案是否充分列舉     | 重新分概念、補論證 | 「有未回答的假設」「觀察直接跳執行」「只列一個選項」                      |
+| **語意層** | 概念是否清晰、有無依賴視覺標記、概念邊界是否明確 | 改表達結構、加分段 | 「用 emoji 作為唯一區分」「同一行表達兩個不同概念」「去掉顏色就無法理解」 |
+| **視覺層** | 排版是否對齊、圖表是否正確渲染、容器寬度是否適配 | CSS / 排版 / 渲染  | 「emoji 斷行」「圖表無法顯示」「文字超出邊界」                            |
+
+**關鍵原則**：
+
+1. 邏輯和語意錯誤會表現成視覺問題（症狀在淺層、根因在深層）
+2. 視覺工具的 ceiling 在語意 / 邏輯層 — 用 CSS / emoji 蓋下游症狀 = false confidence、根因換 context 復發
+3. 若多輪都在檢查視覺問題、表示 frame 換了但 layer 沒換、根本問題還沒被觸碰
+
+**反例（修錯層次）**：
+
+emoji 在容器窄時斷行：
+
+- **第一直覺修視覺**：加 `white-space: nowrap` → 文字溢出 → 加 `overflow: hidden` → 症狀堆疊、根因（兩個概念擠在一行）更深埋
+- **追問層次後修結構**：HIGHLIGHT 跟 REVERSE 是兩個獨立概念、不該擠在同一行 — 拆成獨立列表項、所有下游症狀同時消失
+
+判讀層次比修法重要 — 純視覺問題（容器寬度、字體大小、跨瀏覽器）用 CSS 是對的；語意 / 邏輯下游症狀用 CSS 是 false confidence。
 
 ---
 
@@ -675,7 +722,12 @@ build-炸-修循環。明顯划算。
 ---
 
 **Last Updated**: 2026-04-30
-**Version**: 0.7.2 — 補 metadata / navigation surface review：title、description、heading、link label、MOC / `_index.md` 索引條、slug / filename 先列入 surface enumeration，再跟正文跑同一輪對意圖、正向陳述與 grep-ability pass；對應 report #97
+**Version**: 0.7.5 — 將翻譯 / 轉譯 review 升級為獨立 reference：`translation-review.md`，聚焦句內邏輯對位、前提檢查、因果檢查與讀者追問方向；writing-articles 保留短檢查表並轉介。
+**Version**: 0.7.4 — 強化術語翻譯的句內邏輯檢查：譯名放回原句後要檢查主詞、動詞、修飾語、因果與讀者追問方向；避免中文順口但讓句子多出原文沒有的前提。
+**Version**: 0.7.3 — 輪 4 補術語檢查：翻譯術語第一次出現保留原文錨點，中文壓縮術語保留完整名詞頭；新增 `terminology-keeps-original-anchor` 與 `compressed-chinese-terms-need-head-noun` 兩張內部 principle。
+**Version**: 0.7.2 — 補 metadata / navigation surface review：title、description、heading、link label、MOC / index entry、slug / filename 先列入 surface enumeration，再跟正文跑同一輪對意圖、正向陳述與 grep-ability pass；新增內部 principle 連結，維持 skill 可攜性
+**Version**: 0.7.1 — 修正 0.7.0 的兩個違規：(a) 移除對外部 content path 的跨引用（違反 reference-authoring-standards 自包含性、修正後段內就地展開層次論述）；(b)「不能用視覺修補替代邏輯或語意修正」改機會成本語氣（違反規則七絕對主義）；標題「層次意識」副題改成「frame 是 horizontal、layer 是 vertical」更精準描述兩軸正交；表格「檢查時機」欄改「修法」更實用、修正「對齐」錯字；加反例段落（emoji 症狀堆疊 vs 改結構）。本 reference 自包含、不引用外部內容系統
+**Version**: 0.7.0 — 補強 multi-pass review：第 2 輪檢查清單新增「層次意識」（去掉視覺標記後還能讀嗎、有無依賴 emoji/顏色/圖表）；新增「層次意識」段落說明邏輯層 / 語意層 / 視覺層的區別與優先順序
 **Version**: 0.6.0 — 從 references 過載的反思：把「跨多篇議題」（拆分判準、三類 structure 模板、跨篇引用 idiom）整合搬到 `managing-article-collections.md`；本 reference 聚焦「單篇文章內部怎麼寫」、瘦身 130 行；舊規則八 / 九 整合到那邊。新增規則八「自我應用 (dogfooding)」 — 教某條規則的段落本身遵守該規則
 **Version**: 0.5.0 — 從批量改寫 35 篇的經驗回流：規則七補強（選項數由議題決定不強湊、真反模式直接標明、抽象層 / Pattern 卡片不寫「設計取捨 A/B/C/D」）；新增規則九「三類文章用三種 structure」（情境 / 抽象 / Pattern 各自的段落 template）；自檢清單新增五項
 **Version**: 0.4.0 — 新增規則七「機會成本語氣」（程式設計極少絕對正確、討論的是多目標取捨；方案對照用 A/B/C/D 多選項並列）；新增規則八「focus 是議題完整度」（拆分判準是 focus、不是邊界清晰；review 必須讀內文）；自檢清單新增四項

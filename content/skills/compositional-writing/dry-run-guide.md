@@ -27,7 +27,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 執行 Phase 2 前，以下條件必須已成立：
 
 - [ ] Phase 1 通過：`./scripts/portability-check.sh` exit 0
-- [ ] SKILL.md 和所有 6 個 reference 均已完成（writing-code-comments / writing-documents / writing-logs / writing-prompts / writing-articles / designing-fields）
+- [ ] SKILL.md 和所有核心 reference 均已完成（writing-code-comments / writing-documents / writing-logs / writing-prompts / writing-articles / translation-review / designing-fields）
 - [ ] meta-metrics.md 已完成（M1-M2 量測方式已定義）
 
 ---

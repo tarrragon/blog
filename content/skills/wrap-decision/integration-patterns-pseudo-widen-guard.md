@@ -1,17 +1,17 @@
 ---
-title: "Pseudo Widen Guard"
+title: "偽擴增選項防護（Pseudo Widen Guard）"
 date: 2026-05-04
-description: "WRAP integration reference：辨識假選項與根因假設單一化的偽 Widen 防護。"
+description: "WRAP integration reference：辨識假選項與根因假設單一化的偽擴增選項（pseudo-Widen）防護。"
 tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 ---
 
-偽 Widen 防護的責任是確認選項多元性發生在假設層級，而不只是實作手段層級。它特別適用於根因分析、架構決策與規則設計。
+偽擴增選項（pseudo-Widen）防護的責任是確認選項多元性發生在假設層級，而不只是實作手段層級。它特別適用於根因分析、架構決策與規則設計。
 
 ---
 
 ## 核心判準
 
-真正的 Widen 會提出不同根因假設或不同達成路徑。偽 Widen 只是在同一假設下列出多個變體，表面上有選項，實際上仍被單一框架鎖住。
+真正的擴增選項（Widen）會提出不同根因假設或不同達成路徑。偽擴增選項（pseudo-Widen）只是在同一假設下列出多個變體，表面上有選項，實際上仍被單一框架鎖住。
 
 ---
 
@@ -38,7 +38,7 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 | 證據多元 | 每個選項需要不同證據驗證                 |
 | 回退多元 | 每個選項的失敗與回退方式不同             |
 
-### 4. Reality Test
+### 4. 現實檢驗（Reality Test）
 
 每個候選假設至少要有一個可驗證訊號。缺少可驗證訊號的選項保留為待驗假設，並在補齊證據後再進入方案比較。
 
@@ -58,7 +58,7 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 ## 可複製提示
 
 ```text
-先做偽 Widen 檢查：
+先做偽擴增選項（pseudo-Widen）檢查：
 1. 我現在假設的根因是什麼？
 2. 相反假設是什麼？
 3. 目前選項是否都接受同一根因？
@@ -68,4 +68,4 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 ---
 
 **Last Updated**: 2026-04-30
-**Version**: 2.0.0 — 可攜偽 Widen 防護模板。
+**Version**: 2.0.0 — 可攜偽擴增選項（pseudo-Widen）防護模板。

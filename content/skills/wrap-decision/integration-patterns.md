@@ -1,11 +1,11 @@
 ---
 title: "WRAP Integration Patterns"
 date: 2026-05-04
-description: "WRAP reference：把 WRAP 整合進任務系統、CLI、Hook、規則庫與案例庫的可攜模式總覽。"
+description: "WRAP reference：把 WRAP 整合進任務系統、CLI、掛鉤（Hook）、規則庫與案例庫的可攜模式總覽。"
 tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 ---
 
-本目錄的責任是提供 WRAP 在任務系統、CLI、Hook、規則庫與案例庫中的可攜整合模式。內容只描述通用整合語意，不依賴特定專案路徑或工具名稱。
+本目錄的責任是提供 WRAP 在任務系統、CLI、掛鉤（Hook）、規則庫與案例庫中的可攜整合模式。內容只描述通用整合語意，不依賴特定專案路徑或工具名稱。
 
 ---
 
@@ -26,7 +26,7 @@ WRAP core skill  ->  integration patterns  ->  project-specific implementation
 | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | [triggers-alignment](/skills/wrap-decision/integration-patterns-triggers-alignment/)                 | 觸發條件在文字規則、機器設定與自動提醒之間的同步模式 |
 | [simplified-three-questions](/skills/wrap-decision/integration-patterns-simplified-three-questions/) | 任務啟動時的 W/A/P 三問模板                          |
-| [pseudo-widen-guard](/skills/wrap-decision/integration-patterns-pseudo-widen-guard/)                 | 偽 Widen 防護與假設層級多元性檢查                    |
+| [pseudo-widen-guard](/skills/wrap-decision/integration-patterns-pseudo-widen-guard/)                 | 偽擴增選項（pseudo-Widen）防護與假設層級多元性檢查   |
 | [source-verification](/skills/wrap-decision/integration-patterns-source-verification/)               | 清單類答案的逐項來源核對流程                         |
 | [personalized-advice](/skills/wrap-decision/integration-patterns-personalized-advice/)               | 個人化建議場景的 Step 0 落地方式                     |
 | [rules-map](/skills/wrap-decision/integration-patterns-rules-map/)                                   | 規則庫與 WRAP 的分工模板                             |
@@ -49,7 +49,7 @@ WRAP core skill  ->  integration patterns  ->  project-specific implementation
 
 - 只使用 skill 內部相對連結與中性範例。
 - 只使用通用任務名稱，避免專案內部任務編號、批次代號、錯誤代碼或歷史編號。
-- 保持 CLI、Hook framework 與任務管理工具的供應商中立。
+- 保持 CLI、掛鉤框架（Hook framework）與任務管理工具的供應商中立。
 - 範例使用中性名稱，例如 task、rule store、automation hook、case library。
 
 ---

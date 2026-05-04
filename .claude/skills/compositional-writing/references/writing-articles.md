@@ -635,17 +635,37 @@ build-炸-修循環。明顯划算。
 
 文章用的五輪 + 兩輪文章專屬：
 
-| 輪  | Frame                                                              | 文章專用 checklist                                                                                                            |
-| --- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 生成                                                               | idea 從頭寫到尾、不停下改、預期會有粗糙                                                                                       |
-| 2   | 對意圖（[#67](principles/ease-of-writing-vs-intent-alignment.md)） | 開頭一句、title、description、MOC hook 都點同一個核心責任嗎？段落順序由「易讀」決定不是「好寫」決定？去掉視覺標記後還能讀嗎？ |
-| 3   | 機會成本語氣                                                       | 全 surface grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                                             |
-| 4   | Grep-ability / 命名                                                | title / heading / link label / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title                              |
-| 5   | 反例 / 邊界                                                        | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？                                       |
-| 6   | Cross-link 健康度                                                  | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 collection index                                             |
-| 7   | 索引條 vs 內容                                                     | MOC / index entry 的索引描述、link label、文章 title 與正文第一段是否指向同一個核心責任                                       |
+| 輪  | Frame                                                              | 文章專用 checklist                                                                                                             |
+| --- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | 生成                                                               | idea 從頭寫到尾、不停下改、預期會有粗糙                                                                                        |
+| 2   | 對意圖（[#67](principles/ease-of-writing-vs-intent-alignment.md)） | 開頭一句、title、description、MOC hook 都點同一個核心責任嗎？段落順序由「易讀」決定不是「好寫」決定？去掉視覺標記後還能讀嗎？  |
+| 3   | 機會成本語氣                                                       | 全 surface grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                                              |
+| 4   | Grep-ability / 命名 / 術語                                         | title / heading / link label / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title；術語保留原文錨點與完整名詞頭 |
+| 5   | 反例 / 邊界                                                        | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？                                        |
+| 6   | Cross-link 健康度                                                  | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 collection index                                              |
+| 7   | 索引條 vs 內容                                                     | MOC / index entry 的索引描述、link label、文章 title 與正文第一段是否指向同一個核心責任                                        |
 
 跳輪規則同 [#83](principles/writing-multi-pass-review.md) — 短文 / 即時 note 跳 4-7、production 卡片 / 教學文章全跑。
+
+### 術語檢查：中文入口 + 原文錨點 + 完整名詞頭
+
+術語檢查屬於輪 4 的命名子場景，production 卡片 / 教學文章要把它當成獨立子 pass。技術文章中的術語同時承擔可讀性、可搜尋性與概念邊界；中文讓 reader 進入段落，原文讓概念可回溯，完整名詞頭讓中文離開原句仍能獨立成立。
+
+翻譯檢查先看句內邏輯。把中文譯名放回原句後，要檢查它跟主詞、動詞、修飾語、因果關係是否成立；如果譯名讓句子多出原文沒有的前提，或讓讀者追問方向改變，這個翻譯就有問題。
+
+| 檢查項                     | 問題                                                   | 修法                                                      |
+| -------------------------- | ------------------------------------------------------ | --------------------------------------------------------- |
+| 原文錨點                   | 學術 / 標準 / 方法論術語第一次出現是否保留原文？       | 寫成「中文術語（original term）」                         |
+| 譯名對位                   | 中文是否帶入原詞沒有的文化 / 政治 / 日常語意？         | 回原文語境重選中文，必要時在定義段列常見譯名              |
+| 完整名詞頭                 | 中文壓縮後是否仍回答「這是什麼」？                     | 補「盲點 / 偏誤 / 風險 / 模式 / 檢查 / 策略」等 head noun |
+| 全文一致                   | 同一術語是否出現多個中文譯名或多個詞尾？               | 選 canonical 譯名與 head noun 後全篇替換                  |
+| Metadata / navigation 同步 | title、description、heading、link label 是否同樣對位？ | 跟正文第一個定義使用同一組術語                            |
+| 句內邏輯                   | 譯名是否讓句子多出原文沒有的前提？                     | 標出主詞 / 動詞 / 修飾語 / 因果，逐項檢查是否成立         |
+| 讀者追問                   | reader 看到中文會追問正確問題嗎？                      | 問「他會問 A 還是 B？」；問錯方向就重譯                   |
+
+例：`paternalism` 在決策 / 倫理脈絡裡較接近「家長主義」；翻成帶 gender 聯想的詞會讓概念漂移。例：中文壓縮詞若只剩「盲」一個字，reader 無法判斷它是盲點、盲區或盲測；補成「多步驟成功率盲點」才有完整分類。
+
+完整翻譯 / 轉譯流程見 [translation-review](translation-review.md)。支撐原則見 [terminology-keeps-original-anchor](principles/terminology-keeps-original-anchor.md) 與 [compressed-chinese-terms-need-head-noun](principles/compressed-chinese-terms-need-head-noun.md)。
 
 ### 層次意識：frame 是 horizontal、layer 是 vertical
 
@@ -697,6 +717,9 @@ emoji 在容器窄時斷行：
 ---
 
 **Last Updated**: 2026-04-30
+**Version**: 0.7.5 — 將翻譯 / 轉譯 review 升級為獨立 reference：`translation-review.md`，聚焦句內邏輯對位、前提檢查、因果檢查與讀者追問方向；writing-articles 保留短檢查表並轉介。
+**Version**: 0.7.4 — 強化術語翻譯的句內邏輯檢查：譯名放回原句後要檢查主詞、動詞、修飾語、因果與讀者追問方向；避免中文順口但讓句子多出原文沒有的前提。
+**Version**: 0.7.3 — 輪 4 補術語檢查：翻譯術語第一次出現保留原文錨點，中文壓縮術語保留完整名詞頭；新增 `terminology-keeps-original-anchor` 與 `compressed-chinese-terms-need-head-noun` 兩張內部 principle。
 **Version**: 0.7.2 — 補 metadata / navigation surface review：title、description、heading、link label、MOC / index entry、slug / filename 先列入 surface enumeration，再跟正文跑同一輪對意圖、正向陳述與 grep-ability pass；新增內部 principle 連結，維持 skill 可攜性
 **Version**: 0.7.1 — 修正 0.7.0 的兩個違規：(a) 移除對外部 content path 的跨引用（違反 reference-authoring-standards 自包含性、修正後段內就地展開層次論述）；(b)「不能用視覺修補替代邏輯或語意修正」改機會成本語氣（違反規則七絕對主義）；標題「層次意識」副題改成「frame 是 horizontal、layer 是 vertical」更精準描述兩軸正交；表格「檢查時機」欄改「修法」更實用、修正「對齐」錯字；加反例段落（emoji 症狀堆疊 vs 改結構）。本 reference 自包含、不引用外部內容系統
 **Version**: 0.7.0 — 補強 multi-pass review：第 2 輪檢查清單新增「層次意識」（去掉視覺標記後還能讀嗎、有無依賴 emoji/顏色/圖表）；新增「層次意識」段落說明邏輯層 / 語意層 / 視覺層的區別與優先順序

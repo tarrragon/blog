@@ -135,6 +135,9 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#104 Security 標準引用的時效性與精確度](security-citation-currency-and-precision/) — 資安標準（OWASP / RFC / NIST / CIS）best practice 衰退快、原文常被引用扭曲（conditional → unconditional drift）、版本之間語意可能反轉；citation 必須附「標準 / 版本 / 原文 quote / 適用 scope / review trigger」五欄；internal citation（knowledge-cards / 跨章引用）也適用、且因無版本號 anchor 更易 silent drift / broken
 - [#105 Audit recommendation 層級：accept / minor / major / 教錯不可保留](security-audit-recommendation-tiers/) — Audit 產出是 ship 決策、不是評語；四 tier 判準（reader 會不會主動產生破口 / 結構性 vs 局部 / fix cost / 是否容忍）；withdraw tier 是資安 audit 跟學術 peer review 的關鍵差異——保留 = 增加 risk、不存在「先 ship 後改」
 - [#106 用 Next-action frame 取代 Disclaimer：把 prohibition 翻成 actionable chain](next-action-frame-over-disclaimer/) — Audit findings 寫成回應段時、disclaimer frame 自然產出負面陳述、字面正向化後 frame 仍 disclaimer；reframe 成 next-action chain 整段才自然 positive；本卡是 #94 正向改寫的上游、#82 字面 vs 行為在寫作 frame 的具體實例；補 #83 multi-pass review 的輪 3 frame 檢查
+- [#107 術語翻譯要保留原文錨點](terminology-keeps-original-anchor/) — 中文術語負責可讀性、原文術語負責概念邊界與可回溯性；第一次出現用「中文（original term）」避免翻譯漂移，尤其是學術 / 標準 / 方法論術語
+- [#108 中文壓縮術語要保留完整名詞頭](compressed-chinese-terms-need-head-noun/) — 壓縮後仍要回答「這是什麼」；術語至少保留「盲點 / 偏誤 / 風險 / 模式 / 檢查 / 策略」等 head noun，避免只剩單字修飾或句子殘片
+- [#109 術語翻譯要保留概念角色](translation-must-preserve-concept-role/) — 術語中文名詞頭要對應來源中的概念角色；`Steelman` 若翻成「最強版本測試」會把論證方法壓成檢查動作，較穩寫法是「最強版本論證（Steelman）」
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -286,7 +289,13 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 `#99 資安教學審查標準對應風險不對稱` → `#100 false sense of security 主要失敗模式` → `#101 threat model 明確性` → `#102 mitigation 對位` → `#103 mitigation context-dependence` → `#104 security citation 時效精確` → `#105 audit recommendation 層級` — 先確立風險不對稱論證、再用 false sense of security 作為主要 audit 目標、跑四個 dimension（threat model 對稱 / mitigation mechanism 對位 / context 條件顯式 / citation 版本精確）、最後用 tier 化 recommendation 把每個 weakness 映射到 ship 決策（accept / minor / major / withdraw）。適用 backend/07-security-data-protection/ 章節 audit、跨高 stakes 領域（concurrency / distributed / financial / medical）也適用 dimension 1-3。
 
+### 路徑 19：翻譯 / 轉譯文章時檢查術語是否錯位
+
+`#107 術語翻譯要保留原文錨點` → `#108 中文壓縮術語要保留完整名詞頭` → `#109 術語翻譯要保留概念角色` → `#84 Naming 是 iterated artifact` → `#97 Metadata surface 要納入寫作 review 範圍` — 先保留原文讓概念可回溯，再確認中文離開原句仍有完整名詞頭；最後檢查名詞頭是否保留來源中的概念角色，並同步掃 heading / checklist / index entry。
+
 ---
+
+**Last Updated**: 2026-05-04 — 新增 #107-#109 術語翻譯 review 系列（原文錨點 / 完整名詞頭 / 概念角色），從 `paternalism`、`多步驟 perplexity 盲`、`Steelman` 三個 case 抽出翻譯檢查流程；新增路徑 19 給文章轉譯與術語 review。
 
 **Last Updated**: 2026-05-01 — 新增 #99-#105 資安內容 audit 系列（七張卡：#99 anchor 風險不對稱 / #100 false sense of security 主要失敗模式 / #101-104 四個 audit dimension（threat model 對稱 / mitigation 對位 / context-dependence / citation 時效精確）/ #105 recommendation tier 化）；資安寫作的 audit bar 從 readability-first 升級到 verifiability-first；新增路徑 18 串聯 audit workflow。後續對應 skill reference（auditing-articles.md）跟 multi-pass review 的 epistemic rigor 第 6 輪會根據本系列展開。
 
