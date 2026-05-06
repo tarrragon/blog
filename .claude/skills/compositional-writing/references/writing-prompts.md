@@ -525,17 +525,17 @@ Ticket YAML frontmatter 的 Problem Analysis 區塊作為 context bundle：
 
 ## 多輪 Re-read Pass（multi-pass refinement）
 
-寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[#82](principles/literal-interception-vs-behavioral-refinement.md) / [#83](principles/writing-multi-pass-review.md)）。
+寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[literal-interception-vs-behavioral-refinement](principles/literal-interception-vs-behavioral-refinement.md) / [writing-multi-pass-review](principles/writing-multi-pass-review.md)）。
 
 Prompt 用的核心三輪 + 兩輪 prompt 專屬：
 
-| 輪  | Frame                                                              | Prompt 專用 checklist                                                                                                               |
-| --- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 生成                                                               | 寫完任務 / 輸入 / 約束 / 輸出 / 驗收骨架、預期文字粗糙                                                                              |
-| 2   | 對意圖（[#67](principles/ease-of-writing-vs-intent-alignment.md)） | 自己讀一遍、能想像 LLM 會做出什麼？跟你想要的一致嗎？                                                                               |
-| 3   | 機會成本語氣                                                       | 「必須」「不可」翻成具體條件「在 X 條件下做 Y、否則做 Z」                                                                           |
-| 4'' | 模糊指令清查                                                       | grep「對齊 / 靠近 / 適當 / 合理 / 隔離」這類詞、翻成具體數字 / 條件；可用「定義域 / 資料源型態 / 空狀態」三問把模糊詞轉成可驗收條件 |
-| 5'' | 邊界 case 預期                                                     | 「邊界 case 預期行為」明示了嗎？空 input、超大 input、衝突指令各會怎樣？                                                            |
+| 輪  | Frame                                                                                              | Prompt 專用 checklist                                                                                                               |
+| --- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 生成                                                                                               | 寫完任務 / 輸入 / 約束 / 輸出 / 驗收骨架、預期文字粗糙                                                                              |
+| 2   | 對意圖（[ease-of-writing-vs-intent-alignment](principles/ease-of-writing-vs-intent-alignment.md)） | 自己讀一遍、能想像 LLM 會做出什麼？跟你想要的一致嗎？                                                                               |
+| 3   | 機會成本語氣                                                                                       | 「必須」「不可」翻成具體條件「在 X 條件下做 Y、否則做 Z」                                                                           |
+| 4'' | 模糊指令清查                                                                                       | grep「對齊 / 靠近 / 適當 / 合理 / 隔離」這類詞、翻成具體數字 / 條件；可用「定義域 / 資料源型態 / 空狀態」三問把模糊詞轉成可驗收條件 |
+| 5'' | 邊界 case 預期                                                                                     | 「邊界 case 預期行為」明示了嗎？空 input、超大 input、衝突指令各會怎樣？                                                            |
 
 跳輪規則：
 

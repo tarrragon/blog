@@ -59,23 +59,25 @@ metadata:
 
 寫完不是 done — 是進入 review 階段。一次寫對全部維度違反 working memory、實際結果是「每維度都做一半」。設計 N 輪 re-read、每輪用不同 frame：
 
-| 輪  | Frame                                                                         | 抓什麼                                                                            |
-| --- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| 1   | 生成                                                                          | idea → 字、預期會有錯                                                             |
-| 2   | 對意圖（[#67](references/principles/ease-of-writing-vs-intent-alignment.md)） | 正文、title、description、MOC hook 都跟原意對齊                                   |
-| 3   | 機會成本語氣                                                                  | 全 surface 的絕對詞翻成 trade-off                                                 |
-| 4   | Grep-ability / 命名 / 術語                                                    | title、slug、link label、段首關鍵字可單次 grep 命中；術語保留原文錨點與完整名詞頭 |
-| 5   | 反例 / 邊界                                                                   | 「何時不適用」段、反模式列表                                                      |
+| 輪  | Frame                                                                                                         | 抓什麼                                                                            |
+| --- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| 1   | 生成                                                                                                          | idea → 字、預期會有錯                                                             |
+| 2   | 對意圖（[ease-of-writing-vs-intent-alignment](references/principles/ease-of-writing-vs-intent-alignment.md)） | 正文、title、description、MOC hook 都跟原意對齊                                   |
+| 3   | 機會成本語氣                                                                                                  | 全 surface 的絕對詞翻成 trade-off                                                 |
+| 4   | Grep-ability / 命名 / 術語                                                                                    | title、slug、link label、段首關鍵字可單次 grep 命中；術語保留原文錨點與完整名詞頭 |
+| 5   | 反例 / 邊界                                                                                                   | 「何時不適用」段、反模式列表                                                      |
 
 Surface enumeration 是 multi-pass 的固定前置步驟。寫作產物包含 body surface 與 metadata / navigation surface：`title`、`description`、`tags`、heading、link label、MOC / index entry、slug / filename。每輪 frame 都掃這份 surface 清單，讓正文與讀者入口共用同一個概念錨點。
 
 **核心**：「再仔細一次」≠ multi-pass — 同 frame 重看 catch 不到新問題。每輪換 frame、才能 catch 不同層。各 reference（writing-articles / writing-code-comments / writing-documents / writing-prompts）依 output 類型有特化的輪次組合。
 
-Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、見 [#84](references/principles/naming-as-iterated-artifact.md) 跟 writing-code-comments 的 naming review 段。術語是 naming 的高歧義子場景：翻譯術語第一次出現保留原文錨點，中文壓縮術語保留完整名詞頭，中文名詞頭要保留來源中的概念角色，見 [terminology-keeps-original-anchor](references/principles/terminology-keeps-original-anchor.md)、[compressed-chinese-terms-need-head-noun](references/principles/compressed-chinese-terms-need-head-noun.md) 與 [translation-must-preserve-concept-role](references/principles/translation-must-preserve-concept-role.md)。
+Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、見 [naming-as-iterated-artifact](references/principles/naming-as-iterated-artifact.md) 跟 writing-code-comments 的 naming review 段。術語是 naming 的高歧義子場景：翻譯術語第一次出現保留原文錨點，中文壓縮術語保留完整名詞頭，中文名詞頭要保留來源中的概念角色，見 [terminology-keeps-original-anchor](references/principles/terminology-keeps-original-anchor.md)、[compressed-chinese-terms-need-head-noun](references/principles/compressed-chinese-terms-need-head-noun.md) 與 [translation-must-preserve-concept-role](references/principles/translation-must-preserve-concept-role.md)。
 
 **高 stakes 內容追加輪 E（epistemic rigor、conditional opt-in）**：reader 照做後錯誤不可逆的內容（資安 / concurrency 正確性 / distributed consistency / financial / medical）在 5 輪基本 frame 之外、追加 stakes 軸的 epistemic rigor pass——比照學術 peer review 跑 claim / evidence / method / threats / citation 五個 sub-check、加上 audit recommendation tier（accept / minor / major / withdraw）。一般內容 5 輪夠、不跑輪 E；高 stakes 內容兩軸都跑。詳見 `references/auditing-articles.md` 跟 `references/principles/writing-multi-pass-review.md` 的「stakes-conditional 追加輪」段。
 
-詳見 [#83 Writing 的 multi-pass review](references/principles/writing-multi-pass-review.md)、[#85 Methodology 的 multi-pass 該 embed 在 pillar](references/principles/methodology-multi-pass-embedding.md)、[Metadata surface 要納入寫作 review 範圍](references/principles/metadata-surface-in-writing-review.md)、[False sense of security 是高 stakes 寫作的主要失敗模式](references/principles/false-sense-of-security-as-primary-failure.md)、[Risk-asymmetric audit standard](references/principles/risk-asymmetric-audit-standard.md)。
+**Production 教學文章追加輪 8-10（字句層 catch、跑 N 輪仍漏時觸發）**：跑了 5 輪基本 frame 仍系統性漏 catch 字句層問題（口語修辭 / 廢話前綴 / 地區漂移 / 依賴 code）時、追加三個換軸機制——輪 8 keyword bank（換工具）、輪 9 reader simulation（換視角）、輪 10 self-criticism（換層次、審視 framework 本身覆蓋度）。短文 / 即時 note 不需要、production 教學文章在跑 5 輪後仍漏同類問題時 opt-in。詳見 [multi-pass-review-frame-granularity](references/principles/multi-pass-review-frame-granularity.md) 跟 `references/writing-articles.md` 輪 8-10 段。
+
+詳見 [Writing 的 multi-pass review](references/principles/writing-multi-pass-review.md)、[Methodology 的 multi-pass 該 embed 在 pillar](references/principles/methodology-multi-pass-embedding.md)、[Metadata surface 要納入寫作 review 範圍](references/principles/metadata-surface-in-writing-review.md)、[False sense of security 是高 stakes 寫作的主要失敗模式](references/principles/false-sense-of-security-as-primary-failure.md)、[Risk-asymmetric audit standard](references/principles/risk-asymmetric-audit-standard.md)、[colloquial-rhetoric-erodes-technical-precision](references/principles/colloquial-rhetoric-erodes-technical-precision.md)、[prose-self-contained-without-code-reference](references/principles/prose-self-contained-without-code-reference.md)、[regional-terminology-alignment](references/principles/regional-terminology-alignment.md)、[multi-pass-review-frame-granularity](references/principles/multi-pass-review-frame-granularity.md)、[design-flaw-by-current-axes-not-hindsight](references/principles/design-flaw-by-current-axes-not-hindsight.md)。
 
 ---
 
@@ -142,7 +144,8 @@ compositional-writing/
 
 ---
 
-**Last Updated**: 2026-04-30
+**Last Updated**: 2026-05-06
+**Version**: 0.8.1 — 第 6 原則同步 writing-articles v0.8.1：補「Production 教學文章追加輪 8-10」段（換工具 / 換視角 / 換層次三機制處理「跑 N 輪仍漏」字句層問題）；「詳見」連結加 5 張新 principle（colloquial-rhetoric / prose-self-contained / regional-terminology / multi-pass-review-frame-granularity / design-flaw-by-current-axes）
 **Version**: 0.7.4 — 新增 `translation-review.md` 路由：翻譯 / 轉譯文章時，用句內邏輯檢查譯名是否跟主詞、動詞、修飾語、因果與讀者追問方向對位。
 **Version**: 0.7.3 — managing-article-collections 補「素材庫比例」路由：多篇文章需要案例 / source / scenario / pattern 支撐時，主文章情境維持少量、素材庫保留 2-3 倍來源做反向驗證
 **Version**: 0.7.2 — 補 multi-pass 的 surface 軸：review 先列 body / metadata / navigation surface（title、description、tags、heading、link label、MOC hook、slug / filename），每輪 frame 都掃同一份 surface 清單；新增內部 principle `metadata-surface-in-writing-review.md`
