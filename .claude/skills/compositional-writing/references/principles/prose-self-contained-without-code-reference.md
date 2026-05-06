@@ -1,4 +1,4 @@
-# 商業邏輯論述要 self-contained：不依賴 code 才能被理解
+# 概念類論述要 self-contained：不依賴 code 才能被理解
 
 > **角色**：本卡是 `compositional-writing` 的支撐型原則（principle）、被 `references/writing-articles.md` 規則二（商業邏輯先於 CASE）+ multi-pass review 輪 5（反例 / 邊界）的 reader simulation 子場景引用。
 >
@@ -6,9 +6,21 @@
 
 ---
 
+## 論述基礎與限制
+
+本卡的論述基於 **1 個 case** 的 review 觀察抽出。具體限制：
+
+- **Scope 限縮在概念說明 / 架構決策 / 設計檢討類文章**：教學類、tutorial 類、code walkthrough 類文章的讀者本來就會逐行對映 code、本卡不適用——這幾類文章的論述跟 code 緊密交織是合理 narrative
+- **「翻譯成業務角色」也有讀者熟悉度的邊界**：用業務角色名詞替代代詞、對熟悉領域的讀者通順、對不熟的讀者仍是空名詞。修法是「換 reference 類型」、不是「徹底解決 self-contained」
+- **跟規則二（商業邏輯先於 CASE）的關係要精準**：規則二講「層次順序」、本卡講「論述自包含」。兩者有重疊但不完全相同——本卡是規則二在「字句層 reference 處理」的子場景、不是規則二的全面延伸
+
+讀者使用本卡時、先判斷文章類型——概念說明 / 架構決策 / 設計檢討 → 套用；教學 / tutorial → 評估「跟 code 交織」是否合理 narrative。
+
+---
+
 ## 核心原則
 
-技術文章的論述段（不放 code 的段落）要 **self-contained**——用名詞 / 角色 / 條件描述業務邏輯、不依賴讀者去翻附近的 code block。讀者跳過所有 code block 仍能理解論述、是「商業邏輯先於 CASE」的延伸實踐。
+概念說明 / 架構決策 / 設計檢討類文章的論述段（不放 code 的段落）要 **self-contained**——用名詞 / 角色 / 條件描述業務邏輯、不依賴讀者去翻附近的 code block。讀者跳過所有 code block 仍能理解論述、是「商業邏輯先於 CASE」的延伸實踐。
 
 | 維度     | 依賴 code 的論述                           | Self-contained 論述                                |
 | -------- | ------------------------------------------ | -------------------------------------------------- |
