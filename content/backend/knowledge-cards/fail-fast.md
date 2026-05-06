@@ -5,11 +5,12 @@ description: "說明已知無法完成時快速回應如何保護資源與上游
 weight: 57
 ---
 
-Fail fast 的核心概念是「已知當前操作無法成功時，快速回應明確失敗」。它讓上游不用等待到 timeout，也讓系統保留資源給仍可能成功的工作。
+
+Fail fast 的核心概念是「已知當前操作無法成功時，快速回應明確失敗」。它讓上游不用等待到 timeout，也讓系統保留資源給仍可能成功的工作。 可先對照 [Failover](/backend/knowledge-cards/failover/)。
 
 ## 概念位置
 
-Fail fast 常和 circuit breaker、validation、dependency health、rate limit 與 load shedding 搭配。它把已知會失敗的等待轉成可分類錯誤，讓上游可以選擇 fallback、重試或停止流程。
+Fail fast 常和 circuit breaker、validation、dependency health、rate limit 與 load shedding 搭配。它把已知會失敗的等待轉成可分類錯誤，讓上游可以選擇 fallback、重試或停止流程。 可先對照 [Failover](/backend/knowledge-cards/failover/)。
 
 ## 可觀察訊號與例子
 

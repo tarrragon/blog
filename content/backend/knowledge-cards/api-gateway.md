@@ -5,7 +5,8 @@ description: "說明外部流量如何先收斂到一層可集中控制的入口
 weight: 131
 ---
 
-API Gateway 的核心概念是「把對外流量先收斂到一層可集中控制的入口」。它負責把 client 的 request 轉成後端可處理的路由與共同政策，常見責任包括路由、身份驗證、節流、標頭補寫、版本切換與觀測欄位傳遞。
+
+API Gateway 的核心概念是「把對外流量先收斂到一層可集中控制的入口」。它負責把 client 的 request 轉成後端可處理的路由與共同政策，常見責任包括路由、身份驗證、節流、標頭補寫、版本切換與觀測欄位傳遞。 可先對照 [Request Routing](/backend/knowledge-cards/request-routing/)。
 
 ## 概念位置
 

@@ -6,7 +6,8 @@ description: "說明事故中如何盤點受影響範圍，支持通報、回復
 weight: 268
 ---
 
-Impact scope 的核心概念是「用一致規則界定事故影響到哪些資產、流程與利害關係人」。它是事故通報與回復排序的共用基礎。
+
+Impact scope 的核心概念是「用一致規則界定事故影響到哪些資產、流程與利害關係人」。它是事故通報與回復排序的共用基礎。 可先對照 [Blast Radius](/backend/knowledge-cards/blast-radius/)。
 
 ## 概念位置
 

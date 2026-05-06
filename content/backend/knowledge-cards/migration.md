@@ -5,6 +5,7 @@ description: "說明系統如何把資料、流量或結構從舊狀態移到新
 weight: 138
 ---
 
+
 Migration 的核心概念是「把系統從舊狀態移到新狀態的受控流程」。它可以是 [schema migration](/backend/knowledge-cards/schema-migration/)、資料 [backfill](/backend/knowledge-cards/backfill/)、服務拆分、平台切換、read path 切換或事件模型改版。常見做法之一是 [Expand / Contract](/backend/knowledge-cards/expand-contract/)。
 
 ## 概念位置

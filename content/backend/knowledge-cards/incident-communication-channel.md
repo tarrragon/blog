@@ -5,7 +5,8 @@ description: "說明事故期間內外部溝通要使用哪些固定通道與節
 weight: 154
 ---
 
-Incident communication channel 的核心概念是「事故期間用固定通道承接對內同步、對外公告與跨角色協作」。它關心的是誰在什麼通道收到什麼資訊，而不是技術傳輸格式。
+
+Incident communication channel 的核心概念是「事故期間用固定通道承接對內同步、對外公告與跨角色協作」。它關心的是誰在什麼通道收到什麼資訊，而不是技術傳輸格式。 可先對照 [Incident Command System](/backend/knowledge-cards/incident-command-system/)。
 
 ## 概念位置
 

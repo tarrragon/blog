@@ -5,11 +5,12 @@ description: "說明錯誤設定如何讓安全控制失效或暴露內部能力
 weight: 120
 ---
 
-Security misconfiguration 的核心概念是「系統設定讓安全控制失效或暴露不該公開的能力」。它可能出現在 CORS、TLS、debug endpoint、admin route、bucket permission、default password、WAF rule 或 error detail。
+
+Security misconfiguration 的核心概念是「系統設定讓安全控制失效或暴露不該公開的能力」。它可能出現在 CORS、TLS、debug endpoint、admin route、bucket permission、default password、WAF rule 或 error detail。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。
 
 ## 概念位置
 
-Security misconfiguration 是部署與操作層面的安全風險。程式邏輯正確仍可能因環境設定、預設值或部署流程錯誤而暴露資料或功能。
+Security misconfiguration 是部署與操作層面的安全風險。程式邏輯正確仍可能因環境設定、預設值或部署流程錯誤而暴露資料或功能。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。
 
 ## 可觀察訊號與例子
 

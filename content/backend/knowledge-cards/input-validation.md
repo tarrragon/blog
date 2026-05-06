@@ -5,11 +5,12 @@ description: "說明進入系統的資料如何先被檢查格式、範圍與語
 weight: 121
 ---
 
-Input validation 的核心概念是「資料進入系統時先檢查格式、範圍與語意」。它保護後續 business logic、database、queue、parser 與外部 API。
+
+Input validation 的核心概念是「資料進入系統時先檢查格式、範圍與語意」。它保護後續 business logic、database、queue、parser 與外部 API。 可先對照 [Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)。
 
 ## 概念位置
 
-Input validation 是 API 邊界與安全邊界的第一層。它不取代 authorization、business rule 或 database constraint，但能提早拒絕無效資料並產生清楚錯誤。
+Input validation 是 API 邊界與安全邊界的第一層。它不取代 authorization、business rule 或 database constraint，但能提早拒絕無效資料並產生清楚錯誤。 可先對照 [Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)。
 
 ## 可觀察訊號與例子
 

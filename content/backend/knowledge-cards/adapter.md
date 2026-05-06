@@ -5,11 +5,12 @@ description: "說明外部系統接入層如何轉換介面與隔離差異"
 weight: 0
 ---
 
-Integration Adapter 的核心概念是「把外部系統的介面轉成 application 需要的形狀」。它是 service boundary 與具體技術之間的轉譯層。
+
+Integration Adapter 的核心概念是「把外部系統的介面轉成 application 需要的形狀」。它是 service boundary 與具體技術之間的轉譯層。 可先對照 [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)。
 
 ## 概念位置
 
-Integration Adapter 位在 application port 與外部服務之間。repository adapter、provider adapter、notification adapter 都屬於這個角色。
+Integration Adapter 位在 application port 與外部服務之間。repository adapter、provider adapter、notification adapter 都屬於這個角色。 可先對照 [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)。
 
 ## 可觀察訊號
 

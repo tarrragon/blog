@@ -6,7 +6,8 @@ description: "說明事件中如何撤銷 token，縮短可利用窗口"
 weight: 266
 ---
 
-Token revocation 的核心概念是「在事件節奏內讓既有 token 失去授權效力」。它是第三方事件與身分事件中的關鍵收斂能力。
+
+Token revocation 的核心概念是「在事件節奏內讓既有 token 失去授權效力」。它是第三方事件與身分事件中的關鍵收斂能力。 可先對照 [Authorization](/backend/knowledge-cards/authorization/)。
 
 ## 概念位置
 

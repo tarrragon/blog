@@ -6,7 +6,8 @@ description: "說明變更在正式釋出前如何通過或阻擋"
 weight: 253
 ---
 
-Release Gate 的核心概念是「在變更進入正式環境前，用明確條件決定能不能放行」。
+
+Release Gate 的核心概念是「在變更進入正式環境前，用明確條件決定能不能放行」。 可先對照 [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)。
 
 ## 概念位置
 

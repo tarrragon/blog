@@ -6,7 +6,8 @@ description: "說明事故期間如何判斷回滾、回切與暫停變更"
 weight: 155
 ---
 
-Rollback strategy 的核心概念是「在事故期間用可驗證條件決定是否回滾」。回滾不是預設答案，而是根據影響面、資料風險與回復速度做出的風險控制決策。
+
+Rollback strategy 的核心概念是「在事故期間用可驗證條件決定是否回滾」。回滾不是預設答案，而是根據影響面、資料風險與回復速度做出的風險控制決策。 可先對照 [Incident Severity](/backend/knowledge-cards/incident-severity/)。
 
 ## 概念位置
 

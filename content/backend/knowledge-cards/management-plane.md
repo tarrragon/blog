@@ -6,7 +6,8 @@ description: "說明管理平面如何與業務流量平面分離，避免高權
 weight: 264
 ---
 
-Management plane 的核心概念是「承載高權限控制操作的系統平面」。它通常包含管理介面、配置變更入口、平台控制 API 與維運工具。
+
+Management plane 的核心概念是「承載高權限控制操作的系統平面」。它通常包含管理介面、配置變更入口、平台控制 API 與維運工具。 可先對照 [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)。
 
 ## 概念位置
 

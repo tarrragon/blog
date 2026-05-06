@@ -6,11 +6,12 @@ description: "說明容器如何包裝服務、隔離依賴與影響部署方式
 weight: 128
 ---
 
-Container 的核心概念是「把應用程式與執行環境封裝成可交付單位」。它通常承載 application binary、runtime 依賴、config 與啟動命令。
+
+Container 的核心概念是「把應用程式與執行環境封裝成可交付單位」。它通常承載 application binary、runtime 依賴、config 與啟動命令。 可先對照 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
 
 ## 概念位置
 
-Container 位在 build、deploy、runtime 與 platform 之間，是服務交付與資源限制的基本單位。
+Container 位在 build、deploy、runtime 與 platform 之間，是服務交付與資源限制的基本單位。 可先對照 [Resource Limit](/backend/knowledge-cards/resource-limit/)。
 
 ## 可觀察訊號
 

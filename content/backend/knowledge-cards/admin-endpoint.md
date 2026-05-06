@@ -6,11 +6,12 @@ description: "說明管理入口如何承擔高權限操作與稽核責任"
 weight: 0
 ---
 
-Admin Endpoint 的核心概念是「只給受信任角色使用的高權限入口」。它通常處理管理、調整、匯出或修正資料的操作。
+
+Admin Endpoint 的核心概念是「只給受信任角色使用的高權限入口」。它通常處理管理、調整、匯出或修正資料的操作。 可先對照 [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)。
 
 ## 概念位置
 
-Admin Endpoint 位在內部網路、身份驗證與授權層之後，和一般 public API 分開管理。
+Admin Endpoint 位在內部網路、身份驗證與授權層之後，和一般 public API 分開管理。 可先對照 [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)。
 
 ## 可觀察訊號
 

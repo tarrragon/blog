@@ -5,11 +5,12 @@ description: "說明過多低品質告警如何降低 on-call 反應品質"
 weight: 110
 ---
 
-Alert fatigue 的核心概念是「過多低品質告警讓處理者對告警失去敏感度」。當告警常常沒有使用者影響、沒有行動步驟或頻繁自動恢復，on-call 會開始忽略訊號。
+
+Alert fatigue 的核心概念是「過多低品質告警讓處理者對告警失去敏感度」。當告警常常沒有使用者影響、沒有行動步驟或頻繁自動恢復，on-call 會開始忽略訊號。 可先對照 [Alert Runbook](/backend/knowledge-cards/alert-runbook/)。
 
 ## 概念位置
 
-Alert fatigue 是可觀測性設計的失敗模式。告警應代表需要人介入的產品風險；其他訊號可以進 dashboard、ticket、報表或自動修復流程。
+Alert fatigue 是可觀測性設計的失敗模式。告警應代表需要人介入的產品風險；其他訊號可以進 dashboard、ticket、報表或自動修復流程。 可先對照 [Alert Runbook](/backend/knowledge-cards/alert-runbook/)。
 
 ## 可觀察訊號與例子
 

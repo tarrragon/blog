@@ -5,11 +5,12 @@ description: "說明多租戶系統如何隔離不同客戶或組織的資料與
 weight: 118
 ---
 
-Tenant boundary 的核心概念是「隔離不同客戶、組織或租戶的資料與資源」。多租戶系統中，使用者身份之外還要判斷他屬於哪個 tenant，以及能否跨 tenant 操作。
+
+Tenant boundary 的核心概念是「隔離不同客戶、組織或租戶的資料與資源」。多租戶系統中，使用者身份之外還要判斷他屬於哪個 tenant，以及能否跨 tenant 操作。 可先對照 [Throughput](/backend/knowledge-cards/throughput/)。
 
 ## 概念位置
 
-Tenant boundary 是 authorization、data partition、rate limit、audit 與 billing 的共同邊界。它可以落在資料庫欄位、schema、database、queue、cache key、storage path 或 network policy。
+Tenant boundary 是 authorization、data partition、rate limit、audit 與 billing 的共同邊界。它可以落在資料庫欄位、schema、database、queue、cache key、storage path 或 network policy。 可先對照 [Throughput](/backend/knowledge-cards/throughput/)。
 
 ## 可觀察訊號與例子
 

@@ -5,11 +5,12 @@ description: "說明屬性層授權缺失如何讓使用者讀寫不該暴露的
 weight: 113
 ---
 
-BOPLA 的核心概念是「物件屬性層級的授權缺失」。即使使用者可以存取某個物件，也不代表可以讀取或修改該物件的所有欄位。
+
+BOPLA 的核心概念是「物件屬性層級的授權缺失」。即使使用者可以存取某個物件，也不代表可以讀取或修改該物件的所有欄位。 可先對照 [Broker](/backend/knowledge-cards/broker/)。
 
 ## 概念位置
 
-BOPLA 是 field-level policy 的安全問題。訂單物件可以讓使用者查看商品與金額，但內部風控欄位、成本、客服註記或權限欄位需要更高權限。
+BOPLA 是 field-level policy 的安全問題。訂單物件可以讓使用者查看商品與金額，但內部風控欄位、成本、客服註記或權限欄位需要更高權限。 可先對照 [Broker](/backend/knowledge-cards/broker/)。
 
 ## 可觀察訊號與例子
 

@@ -5,11 +5,12 @@ description: "說明 broker 重新投遞訊息時 consumer 需要承擔的重入
 weight: 62
 ---
 
-Redelivery 的核心概念是「broker 把先前投遞過的訊息再次交給 consumer」。常見原因包含 consumer crash、ack timeout、nack requeue、連線中斷或 broker failover。
+
+Redelivery 的核心概念是「broker 把先前投遞過的訊息再次交給 consumer」。常見原因包含 consumer crash、ack timeout、nack requeue、連線中斷或 broker failover。 可先對照 [Release Freeze](/backend/knowledge-cards/release-freeze/)。
 
 ## 概念位置
 
-Redelivery 是 at-least-once delivery 的正常結果。它要求 consumer 具備 idempotency、處理紀錄、狀態檢查與可觀測欄位，讓重複進入的訊息維持同一個業務結果。
+Redelivery 是 at-least-once delivery 的正常結果。它要求 consumer 具備 idempotency、處理紀錄、狀態檢查與可觀測欄位，讓重複進入的訊息維持同一個業務結果。 可先對照 [Release Freeze](/backend/knowledge-cards/release-freeze/)。
 
 ## 可觀察訊號與例子
 

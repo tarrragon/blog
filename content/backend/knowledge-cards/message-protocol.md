@@ -5,11 +5,12 @@ description: "說明 queue 或 stream message 如何對齊格式與處理語意"
 weight: 0
 ---
 
-Message Protocol 的核心概念是「producer 與 consumer 對訊息格式、處理順序與失敗結果達成一致」。
+
+Message Protocol 的核心概念是「producer 與 consumer 對訊息格式、處理順序與失敗結果達成一致」。 可先對照 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。
 
 ## 概念位置
 
-Message Protocol 位在 producer、broker 與 consumer 之間。它適用於 queue、stream 與事件傳遞。
+Message Protocol 位在 producer、broker 與 consumer 之間。它適用於 queue、stream 與事件傳遞。 可先對照 [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)。
 
 ## 可觀察訊號
 

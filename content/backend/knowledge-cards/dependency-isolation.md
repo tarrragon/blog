@@ -5,11 +5,12 @@ description: "說明如何隔離下游依賴，避免單一依賴耗盡共享資
 weight: 54
 ---
 
-Dependency isolation 的核心概念是「讓不同下游依賴使用可分開限制的資源」。如果所有依賴共用同一個 worker pool、connection pool 或 queue，單一下游變慢可能耗盡整個服務的處理能力。
+
+Dependency isolation 的核心概念是「讓不同下游依賴使用可分開限制的資源」。如果所有依賴共用同一個 worker pool、connection pool 或 queue，單一下游變慢可能耗盡整個服務的處理能力。 可先對照 [Deployment Contract](/backend/knowledge-cards/deployment-contract/)。
 
 ## 概念位置
 
-Dependency isolation 是防止 cascading failure 的結構性設計。它可以透過獨立 pool、獨立 queue、bulkhead、timeout、rate limit 與 circuit breaker 實作。
+Dependency isolation 是防止 cascading failure 的結構性設計。它可以透過獨立 pool、獨立 queue、bulkhead、timeout、rate limit 與 circuit breaker 實作。 可先對照 [Deployment Contract](/backend/knowledge-cards/deployment-contract/)。
 
 ## 可觀察訊號與例子
 

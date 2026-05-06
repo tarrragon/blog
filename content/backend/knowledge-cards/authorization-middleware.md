@@ -5,11 +5,12 @@ description: "說明請求進入 handler 前如何完成權限判斷"
 weight: 0
 ---
 
-Authorization Middleware 的核心概念是「在 request 進入業務處理前，先確認呼叫者能不能做這件事」。
+
+Authorization Middleware 的核心概念是「在 request 進入業務處理前，先確認呼叫者能不能做這件事」。 可先對照 [Authorization](/backend/knowledge-cards/authorization/)。
 
 ## 概念位置
 
-Authorization Middleware 位在 authentication 之後、業務 handler 之前。它依角色、資源或 tenant 來判斷可否操作。
+Authorization Middleware 位在 authentication 之後、業務 handler 之前。它依角色、資源或 tenant 來判斷可否操作。 可先對照 [Authorization](/backend/knowledge-cards/authorization/)。
 
 ## 可觀察訊號
 

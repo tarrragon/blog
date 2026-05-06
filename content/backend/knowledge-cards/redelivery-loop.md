@@ -5,11 +5,12 @@ description: "說明同一訊息反覆投遞失敗如何消耗 consumer 容量"
 weight: 64
 ---
 
-Redelivery loop 的核心概念是「同一訊息反覆被投遞、失敗、重新排回，再次被投遞」。它會消耗 consumer 容量，並讓正常訊息延遲。
+
+Redelivery loop 的核心概念是「同一訊息反覆被投遞、失敗、重新排回，再次被投遞」。它會消耗 consumer 容量，並讓正常訊息延遲。 可先對照 [Redelivery](/backend/knowledge-cards/redelivery/)。
 
 ## 概念位置
 
-Redelivery loop 是 retry policy 與 dead-letter 設計不足的訊號。它通常代表錯誤分類、最大重試次數、backoff 或 DLQ 條件缺失。
+Redelivery loop 是 retry policy 與 dead-letter 設計不足的訊號。它通常代表錯誤分類、最大重試次數、backoff 或 DLQ 條件缺失。 可先對照 [Redelivery](/backend/knowledge-cards/redelivery/)。
 
 ## 可觀察訊號與例子
 

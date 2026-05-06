@@ -5,11 +5,12 @@ description: "說明伺服器端請求被濫用時如何存取內部網路或 me
 weight: 122
 ---
 
-SSRF 的核心概念是「攻擊者讓伺服器替他發出未授權的網路請求」。如果 API 接收 URL 並由後端抓取內容，攻擊者可能指向內部服務、metadata endpoint 或管理介面。
+
+SSRF 的核心概念是「攻擊者讓伺服器替他發出未授權的網路請求」。如果 API 接收 URL 並由後端抓取內容，攻擊者可能指向內部服務、metadata endpoint 或管理介面。 可先對照 [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)。
 
 ## 概念位置
 
-SSRF 是伺服器端輸入驗證與網路出口控制問題。它常出現在 webhook 測試、圖片抓取、URL preview、匯入工具、PDF 產生與代理服務。
+SSRF 是伺服器端輸入驗證與網路出口控制問題。它常出現在 webhook 測試、圖片抓取、URL preview、匯入工具、PDF 產生與代理服務。 可先對照 [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)。
 
 ## 可觀察訊號與例子
 

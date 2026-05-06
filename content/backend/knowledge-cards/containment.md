@@ -6,7 +6,8 @@ description: "說明事故處理中如何限制擴散面，為回復與驗證爭
 weight: 267
 ---
 
-Containment 的核心概念是「在事故期間限制風險擴散，維持可控處置空間」。它是止血、隔離與收斂節奏的上位概念。
+
+Containment 的核心概念是「在事故期間限制風險擴散，維持可控處置空間」。它是止血、隔離與收斂節奏的上位概念。 可先對照 [Incident Severity](/backend/knowledge-cards/incident-severity/)。
 
 ## 概念位置
 

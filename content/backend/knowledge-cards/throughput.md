@@ -6,11 +6,12 @@ description: "整理系統單位時間內可處理的工作量"
 weight: 0
 ---
 
-Throughput 的核心概念是「系統在一段時間內完成多少工作」。它和 latency 不同，throughput 看總量與持續處理能力，latency 看單次完成時間。
+
+Throughput 的核心概念是「系統在一段時間內完成多少工作」。它和 latency 不同，throughput 看總量與持續處理能力，latency 看單次完成時間。 可先對照 [Thundering Herd](/backend/knowledge-cards/thundering-herd/)。
 
 ## 概念位置
 
-Throughput 位在容量、排程與流量控制的交界。queue、broker、stream、load test 與 partitioning 都會直接影響 throughput。
+Throughput 位在容量、排程與流量控制的交界。queue、broker、stream、load test 與 partitioning 都會直接影響 throughput。 可先對照 [Thundering Herd](/backend/knowledge-cards/thundering-herd/)。
 
 ## 可觀察訊號
 

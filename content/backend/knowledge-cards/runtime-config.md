@@ -6,11 +6,12 @@ description: "說明服務在啟動與執行時如何讀取與組合設定"
 weight: 153
 ---
 
-Runtime Config 的核心概念是「服務在執行時需要哪些設定，以及這些設定如何被讀取、預設與覆寫」。它處理的是設定來源與組合規則，不是設定發送流程本身。
+
+Runtime Config 的核心概念是「服務在執行時需要哪些設定，以及這些設定如何被讀取、預設與覆寫」。它處理的是設定來源與組合規則，不是設定發送流程本身。 可先對照 [Sampling](/backend/knowledge-cards/sampling/)。
 
 ## 概念位置
 
-Runtime Config 位在 environment variable、config file、secret injection、feature flag 與 application startup 之間。它決定服務如何取得執行所需的參數與開關。
+Runtime Config 位在 environment variable、config file、secret injection、feature flag 與 application startup 之間。它決定服務如何取得執行所需的參數與開關。 可先對照 [Sampling](/backend/knowledge-cards/sampling/)。
 
 ## 可觀察訊號
 

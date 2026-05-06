@@ -5,11 +5,12 @@ description: "說明身份、服務與人員只應取得完成工作所需的最
 weight: 119
 ---
 
-Least privilege 的核心概念是「每個身份只取得完成工作所需的最小權限」。身份可以是使用者、管理員、service account、CI job、database user 或第三方 integration。
+
+Least privilege 的核心概念是「每個身份只取得完成工作所需的最小權限」。身份可以是使用者、管理員、service account、CI job、database user 或第三方 integration。 可先對照 [Load Balancer Contract](/backend/knowledge-cards/load-balancer-contract/)。
 
 ## 概念位置
 
-Least privilege 是權限模型與事故限縮工具。權限越大，credential 洩漏、程式 bug 或人為操作的影響範圍越大。
+Least privilege 是權限模型與事故限縮工具。權限越大，credential 洩漏、程式 bug 或人為操作的影響範圍越大。 可先對照 [Load Balancer Contract](/backend/knowledge-cards/load-balancer-contract/)。
 
 ## 可觀察訊號與例子
 

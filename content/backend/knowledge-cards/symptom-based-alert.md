@@ -6,6 +6,7 @@ description: "說明告警應優先偵測使用者可感知症狀"
 weight: 108
 ---
 
+
 Symptom-based alert 的核心概念是「[alert](/backend/knowledge-cards/alert/) 優先偵測使用者或產品可感知的症狀」。症狀包括錯誤率、延遲、可用性、資料延遲、付款失敗與訊息未送達。
 
 ## 概念位置

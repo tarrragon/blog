@@ -6,7 +6,8 @@ description: "說明風險決策在條件變化時如何自動回到評估流程
 weight: 254
 ---
 
-Tripwire 的核心概念是「用可量測訊號讓風險決策在條件變化時回到評估流程」。它把治理決策從一次性同意，轉成可持續更新的閉環。
+
+Tripwire 的核心概念是「用可量測訊號讓風險決策在條件變化時回到評估流程」。它把治理決策從一次性同意，轉成可持續更新的閉環。 可先對照 [Security Exception](/backend/knowledge-cards/security-exception/)。
 
 ## 概念位置
 

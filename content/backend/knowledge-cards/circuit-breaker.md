@@ -5,6 +5,7 @@ description: "說明下游持續失敗時如何暫停呼叫並保護系統"
 weight: 29
 ---
 
+
 Circuit breaker 的核心概念是「下游持續失敗時，暫時停止呼叫該下游」。它讓 application [fail fast](/backend/knowledge-cards/fail-fast/)、使用 [fallback](/backend/knowledge-cards/fallback/) 或進入 [degradation](/backend/knowledge-cards/degradation/)，降低每個 request 都等待同一個失效依賴的風險。
 
 ## 概念位置

@@ -5,11 +5,12 @@ description: "說明遷移流程何時可以進入下一階段或正式切換"
 weight: 140
 ---
 
-Migration Gate 的核心概念是「在遷移流程中，用明確條件決定能不能進下一階段或正式切換」。
+
+Migration Gate 的核心概念是「在遷移流程中，用明確條件決定能不能進下一階段或正式切換」。 可先對照 [Migration](/backend/knowledge-cards/migration/)。
 
 ## 概念位置
 
-Migration Gate 位在 migration、backfill、correctness check、data completeness 與 cutover 之間。它是遷移內部的階段控制點，不等於一般的 release gate。
+Migration Gate 位在 migration、backfill、correctness check、data completeness 與 cutover 之間。它是遷移內部的階段控制點，不等於一般的 release gate。 可先對照 [Migration](/backend/knowledge-cards/migration/)。
 
 ## 可觀察訊號
 

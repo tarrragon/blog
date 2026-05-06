@@ -5,7 +5,8 @@ description: "說明服務持續接流量時如何完成資料或 schema 遷移"
 weight: 76
 ---
 
-Online migration 的核心概念是「在服務持續運作期間完成資料或 schema 遷移」。它讓系統在不中斷主要服務的情況下搬移資料、改欄位、換儲存或調整索引。
+
+Online migration 的核心概念是「在服務持續運作期間完成資料或 schema 遷移」。它讓系統在不中斷主要服務的情況下搬移資料、改欄位、換儲存或調整索引。 可先對照 [Expand / Contract](/backend/knowledge-cards/expand-contract/)。
 
 ## 概念位置
 

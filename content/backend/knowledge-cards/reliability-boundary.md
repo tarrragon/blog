@@ -5,6 +5,7 @@ description: "說明系統在哪個邊界內承諾可靠傳遞，邊界外需要
 weight: 139
 ---
 
+
 Reliability boundary 的核心概念是「系統在哪一段路徑內承諾不遺失、可重試、可追蹤」。同一個功能中，in-process channel、[pub/sub](/backend/knowledge-cards/pub-sub/)、[durable queue](/backend/knowledge-cards/durable-queue/) 與 database transaction 的可靠性強度不同，必須先界定邊界再談工具。
 
 ## 概念位置

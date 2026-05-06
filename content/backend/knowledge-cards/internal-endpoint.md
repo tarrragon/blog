@@ -6,7 +6,8 @@ description: "說明服務內部通訊入口如何配合網路邊界與服務發
 weight: 0
 ---
 
-Internal Endpoint 的核心概念是「只供系統內部服務彼此呼叫的入口」。它不是公開給外部 client 的功能入口。
+
+Internal Endpoint 的核心概念是「只供系統內部服務彼此呼叫的入口」。它不是公開給外部 client 的功能入口。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 概念位置
 

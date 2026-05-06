@@ -5,7 +5,8 @@ description: "說明事故期間的指揮角色、決策邊界與協作方式"
 weight: 151
 ---
 
-Incident command system 的核心概念是「事故期間由明確角色統一決策與分工」。它把指揮、操作、溝通與紀錄拆開，降低多人同時決策造成的混亂。
+
+Incident command system 的核心概念是「事故期間由明確角色統一決策與分工」。它把指揮、操作、溝通與紀錄拆開，降低多人同時決策造成的混亂。 可先對照 [Incident Severity](/backend/knowledge-cards/incident-severity/)。
 
 ## 概念位置
 

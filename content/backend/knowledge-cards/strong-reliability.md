@@ -5,7 +5,8 @@ description: "說明高可靠事件路徑需要的保存、重試、去重與回
 weight: 143
 ---
 
-Strong reliability 的核心概念是「關鍵事件在失敗條件下仍可被恢復到可接受狀態」。它不代表絕對零失敗，而是要求可追蹤、可補償、可驗證。
+
+Strong reliability 的核心概念是「關鍵事件在失敗條件下仍可被恢復到可接受狀態」。它不代表絕對零失敗，而是要求可追蹤、可補償、可驗證。 可先對照 [Message Persistence](/backend/knowledge-cards/message-persistence/)。
 
 ## 概念位置
 

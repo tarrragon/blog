@@ -6,11 +6,12 @@ description: "說明 instance 何時可以安全接收流量，以及 readiness 
 weight: 10
 ---
 
-Readiness 的核心概念是「instance 是否已準備好接收正式流量」。部署平台或 load balancer 會根據 readiness 訊號決定是否把 request 導到該 instance。
+
+Readiness 的核心概念是「instance 是否已準備好接收正式流量」。部署平台或 load balancer 會根據 readiness 訊號決定是否把 request 導到該 instance。 可先對照 [Redelivery Loop](/backend/knowledge-cards/redelivery-loop/)。
 
 ## 概念位置
 
-Readiness 是 application 與平台之間的流量合約。Application 啟動成功只代表 process 存活；readiness 代表必要設定、連線、migration 狀態、背景初始化、cache warmup 或依賴檢查已達到接流量條件。
+Readiness 是 application 與平台之間的流量合約。Application 啟動成功只代表 process 存活；readiness 代表必要設定、連線、migration 狀態、背景初始化、cache warmup 或依賴檢查已達到接流量條件。 可先對照 [Redelivery Loop](/backend/knowledge-cards/redelivery-loop/)。
 
 ## 可觀察訊號
 

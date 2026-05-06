@@ -5,11 +5,12 @@ description: "說明通知通道如何把 domain event 轉成外部傳遞格式"
 weight: 0
 ---
 
-Notification Adapter 的核心概念是「把 domain event 或業務狀態，轉成 email、push、webhook 或其他通知格式」。
+
+Notification Adapter 的核心概念是「把 domain event 或業務狀態，轉成 email、push、webhook 或其他通知格式」。 可先對照 [Object Storage](/backend/knowledge-cards/object-storage/)。
 
 ## 概念位置
 
-Notification Adapter 位在 application 與通知渠道之間。它負責把內部事件轉成適合發送的外部 payload。
+Notification Adapter 位在 application 與通知渠道之間。它負責把內部事件轉成適合發送的外部 payload。 可先對照 [Object Storage](/backend/knowledge-cards/object-storage/)。
 
 ## 可觀察訊號
 

@@ -5,11 +5,12 @@ description: "說明持久化層如何把資料模型轉成外部儲存介面"
 weight: 0
 ---
 
-Repository Adapter 的核心概念是「把 application 的 repository port 轉成資料庫或其他持久化存取方式」。
+
+Repository Adapter 的核心概念是「把 application 的 repository port 轉成資料庫或其他持久化存取方式」。 可先對照 [Request ID](/backend/knowledge-cards/request-id/)。
 
 ## 概念位置
 
-Repository Adapter 位在 application 與 database 之間。它處理 row mapping、查詢組合與錯誤轉換。
+Repository Adapter 位在 application 與 database 之間。它處理 row mapping、查詢組合與錯誤轉換。 可先對照 [Request ID](/backend/knowledge-cards/request-id/)。
 
 ## 可觀察訊號
 

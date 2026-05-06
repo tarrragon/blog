@@ -5,11 +5,12 @@ description: "說明訊息投遞模式如何影響可靠性、延遲與成本"
 weight: 69
 ---
 
-Delivery mode 的核心概念是「訊息系統對交付行為的可靠性選擇」。它可能包含持久化、確認、重送、順序、保留期限與 consumer 分派規則。
+
+Delivery mode 的核心概念是「訊息系統對交付行為的可靠性選擇」。它可能包含持久化、確認、重送、順序、保留期限與 consumer 分派規則。 可先對照 [Delivery Semantics](/backend/knowledge-cards/delivery-semantics/)。
 
 ## 概念位置
 
-Delivery mode 把產品語意轉成 broker 設定。正式訂單事件需要較高保證；即時狀態提示可以選擇低延遲、低保留的模式。
+Delivery mode 把產品語意轉成 broker 設定。正式訂單事件需要較高保證；即時狀態提示可以選擇低延遲、低保留的模式。 可先對照 [Delivery Semantics](/backend/knowledge-cards/delivery-semantics/)。
 
 ## 可觀察訊號與例子
 

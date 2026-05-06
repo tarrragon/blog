@@ -6,7 +6,8 @@ description: "說明平均修復時間如何作為事故處理能力指標"
 weight: 160
 ---
 
-MTTR 的核心概念是「從事故開始到恢復的平均時間」。它幫助團隊追蹤處置效率趨勢，但不能單獨代表可靠性品質。
+
+MTTR 的核心概念是「從事故開始到恢復的平均時間」。它幫助團隊追蹤處置效率趨勢，但不能單獨代表可靠性品質。 可先對照 [Incident Severity](/backend/knowledge-cards/incident-severity/)。
 
 ## 概念位置
 

@@ -5,6 +5,7 @@ description: "說明 consumer 如何向 broker 回報訊息處理結果"
 weight: 23
 ---
 
+
 Ack / nack 的核心概念是「[consumer](/backend/knowledge-cards/consumer/) 對 [broker](/backend/knowledge-cards/broker/) 回報訊息處理結果」。Ack 表示訊息已完成處理，可以從待處理集合移除；nack 或 reject 表示處理未完成，需要 [retry policy](/backend/knowledge-cards/retry-policy/)、[requeue](/backend/knowledge-cards/requeue/) 或送進 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)。
 
 ## 概念位置

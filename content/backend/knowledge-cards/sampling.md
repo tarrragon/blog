@@ -5,11 +5,12 @@ description: "說明觀測資料如何抽樣以控制成本並保留診斷能力
 weight: 103
 ---
 
-Sampling 的核心概念是「只保留部分觀測資料」。高流量系統若收集所有 log、trace 或事件，成本與查詢壓力可能快速上升；sampling 用代表性資料保留診斷能力。
+
+Sampling 的核心概念是「只保留部分觀測資料」。高流量系統若收集所有 log、trace 或事件，成本與查詢壓力可能快速上升；sampling 用代表性資料保留診斷能力。 可先對照 [Schema Migration](/backend/knowledge-cards/schema-migration/)。
 
 ## 概念位置
 
-Sampling 是觀測成本控制工具。它可以是固定比例、依錯誤保留、依延遲保留、依 tenant 保留或 adaptive sampling。
+Sampling 是觀測成本控制工具。它可以是固定比例、依錯誤保留、依延遲保留、依 tenant 保留或 adaptive sampling。 可先對照 [Schema Migration](/backend/knowledge-cards/schema-migration/)。
 
 ## 可觀察訊號與例子
 

@@ -6,6 +6,7 @@ description: "說明授權如何判斷誰能對哪些資源執行哪些操作"
 weight: 38
 ---
 
+
 Authorization 的核心概念是「判斷已識別主體是否能執行某個操作」。[Authentication](/backend/knowledge-cards/authentication/) 回答你是誰；authorization 回答你能做什麼、對哪個資源做、在什麼條件下做。
 
 ## 概念位置

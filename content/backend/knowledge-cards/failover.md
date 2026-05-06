@@ -6,11 +6,12 @@ description: "說明主要服務或節點失效時如何切換到備援能力"
 weight: 30
 ---
 
-Failover 的核心概念是「主要路徑失效時切換到備援路徑」。備援可以是另一個 instance、另一個 availability zone、另一個資料庫 replica、另一個服務供應商或簡化功能。
+
+Failover 的核心概念是「主要路徑失效時切換到備援路徑」。備援可以是另一個 instance、另一個 availability zone、另一個資料庫 replica、另一個服務供應商或簡化功能。 可先對照 [Fallback Plan](/backend/knowledge-cards/fallback-plan/)。
 
 ## 概念位置
 
-Failover 是可用性設計的一部分。它要處理健康判斷、切換觸發、資料一致性、DNS 或 load balancer 更新、連線重建與回切流程。
+Failover 是可用性設計的一部分。它要處理健康判斷、切換觸發、資料一致性、DNS 或 load balancer 更新、連線重建與回切流程。 可先對照 [Fallback Plan](/backend/knowledge-cards/fallback-plan/)。
 
 ## 可觀察訊號與例子
 

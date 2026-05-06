@@ -6,7 +6,8 @@ description: "說明高風險期間如何以凍結策略保護正式環境"
 weight: 256
 ---
 
-Release freeze 的核心概念是「在高風險期間暫停特定變更，保護正式環境穩定與資料安全」。它是風險治理節奏的一部分，不是永久狀態。
+
+Release freeze 的核心概念是「在高風險期間暫停特定變更，保護正式環境穩定與資料安全」。它是風險治理節奏的一部分，不是永久狀態。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。
 
 ## 概念位置
 

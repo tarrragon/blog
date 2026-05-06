@@ -5,11 +5,12 @@ description: "說明資料是否完整到足以支持查詢、遷移與決策"
 weight: 86
 ---
 
-Data completeness 的核心概念是「資料是否完整到足以支持目標用途」。資料可以格式正確，但仍缺少必要筆數、欄位、時間範圍或關聯資料。
+
+Data completeness 的核心概念是「資料是否完整到足以支持目標用途」。資料可以格式正確，但仍缺少必要筆數、欄位、時間範圍或關聯資料。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
 ## 概念位置
 
-Completeness 是資料品質的一部分。Migration、backfill、報表、audit、搜尋索引與機器學習資料集都需要確認資料是否完整。
+Completeness 是資料品質的一部分。Migration、backfill、報表、audit、搜尋索引與機器學習資料集都需要確認資料是否完整。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
 ## 可觀察訊號與例子
 

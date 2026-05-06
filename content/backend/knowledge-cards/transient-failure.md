@@ -5,11 +5,12 @@ description: "說明暫時性故障如何影響重試、告警與使用者回應
 weight: 49
 ---
 
-Transient failure 的核心概念是「短時間內發生、稍後可能自行恢復的故障」。常見來源包含網路抖動、短暫 timeout、下游重啟、連線重建、rate limit 與 leader 切換。
+
+Transient failure 的核心概念是「短時間內發生、稍後可能自行恢復的故障」。常見來源包含網路抖動、短暫 timeout、下游重啟、連線重建、rate limit 與 leader 切換。 可先對照 [Tripwire](/backend/knowledge-cards/tripwire/)。
 
 ## 概念位置
 
-暫時性故障適合用 retry、backoff、jitter、timeout 與 fallback 吸收。它和永久性錯誤不同；payload schema 錯、權限拒絕、業務狀態不允許通常需要分類處理，而非持續重試。
+暫時性故障適合用 retry、backoff、jitter、timeout 與 fallback 吸收。它和永久性錯誤不同；payload schema 錯、權限拒絕、業務狀態不允許通常需要分類處理，而非持續重試。 可先對照 [Tripwire](/backend/knowledge-cards/tripwire/)。
 
 ## 可觀察訊號與例子
 

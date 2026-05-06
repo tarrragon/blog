@@ -6,11 +6,12 @@ description: "說明服務如何對外提供可供平台判斷狀態的健康回
 weight: 133
 ---
 
-Health Check 的核心概念是「讓平台用一個簡單回應判斷服務是否值得接流量或是否需要介入」。它是狀態判斷的入口語意，不等於 readiness、liveness 或 diagnostic endpoint 本身。
+
+Health Check 的核心概念是「讓平台用一個簡單回應判斷服務是否值得接流量或是否需要介入」。它是狀態判斷的入口語意，不等於 readiness、liveness 或 diagnostic endpoint 本身。 可先對照 [Histogram](/backend/knowledge-cards/histogram/)。
 
 ## 概念位置
 
-Health Check 位在 load balancer、platform、diagnostic endpoint 與 application 之間。平台會依這個回應決定是否導流、是否重啟，或是否需要進一步檢查。
+Health Check 位在 load balancer、platform、diagnostic endpoint 與 application 之間。平台會依這個回應決定是否導流、是否重啟，或是否需要進一步檢查。 可先對照 [Histogram](/backend/knowledge-cards/histogram/)。
 
 ## 可觀察訊號
 

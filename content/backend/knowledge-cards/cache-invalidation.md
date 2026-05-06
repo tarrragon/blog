@@ -6,11 +6,12 @@ description: "說明快取資料何時更新、刪除或重建，以及失效策
 weight: 6
 ---
 
-快取失效策略的核心概念是「定義快取資料何時離開可用狀態」。快取可以加速讀取與降低下游壓力，但資料來源更新後，快取需要透過 TTL、主動刪除、版本鍵、write-through、event invalidation 或重建流程維持合理一致性。
+
+快取失效策略的核心概念是「定義快取資料何時離開可用狀態」。快取可以加速讀取與降低下游壓力，但資料來源更新後，快取需要透過 TTL、主動刪除、版本鍵、write-through、event invalidation 或重建流程維持合理一致性。 可先對照 [Cache Prefetching](/backend/knowledge-cards/cache-prefetching/)。
 
 ## 概念位置
 
-快取失效是讀取效能與資料正確性的交界。失效太頻繁會降低快取命中率；失效太慢會讓使用者看到過期資料。多層快取還會增加判斷難度，因為 browser、CDN、application cache、Redis 與 local memory 可能各自保存不同版本。
+快取失效是讀取效能與資料正確性的交界。失效太頻繁會降低快取命中率；失效太慢會讓使用者看到過期資料。多層快取還會增加判斷難度，因為 browser、CDN、application cache、Redis 與 local memory 可能各自保存不同版本。 可先對照 [Cache Prefetching](/backend/knowledge-cards/cache-prefetching/)。
 
 ## 可觀察訊號
 

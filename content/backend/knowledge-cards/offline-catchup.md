@@ -5,7 +5,8 @@ description: "說明訂閱者離線後如何補回缺失事件或狀態"
 weight: 142
 ---
 
-Offline catch-up 的核心概念是「接收端離線期間漏掉的事件，如何在重新連線後補齊」。它是即時通道與正式狀態之間的補償設計。
+
+Offline catch-up 的核心概念是「接收端離線期間漏掉的事件，如何在重新連線後補齊」。它是即時通道與正式狀態之間的補償設計。 可先對照 [Durable Queue](/backend/knowledge-cards/durable-queue/)。
 
 ## 概念位置
 

@@ -5,7 +5,8 @@ description: "說明網站憑證如何透過 ACME 自動簽發與續期"
 weight: 146
 ---
 
-ACME automation 的核心概念是「用標準化協議自動化網站憑證簽發與續期」。它透過 HTTP-01、DNS-01 或 TLS-ALPN-01 驗證網域控制權，減少手動更新憑證的風險。
+
+ACME automation 的核心概念是「用標準化協議自動化網站憑證簽發與續期」。它透過 HTTP-01、DNS-01 或 TLS-ALPN-01 驗證網域控制權，減少手動更新憑證的風險。 可先對照 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)。
 
 ## 概念位置
 

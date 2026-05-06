@@ -5,7 +5,8 @@ description: "說明根因分析如何區分觸發事件、系統弱點與防線
 weight: 157
 ---
 
-RCA 的核心概念是「找出事故能發生的系統性原因」。它區分 trigger、contributing factors 與 control gaps，避免把單一操作失誤當成唯一答案。
+
+RCA 的核心概念是「找出事故能發生的系統性原因」。它區分 trigger、contributing factors 與 control gaps，避免把單一操作失誤當成唯一答案。 可先對照 [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)。
 
 ## 概念位置
 

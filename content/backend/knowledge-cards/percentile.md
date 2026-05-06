@@ -5,11 +5,12 @@ description: "說明 p95 與 p99 如何描述長尾延遲與使用者體驗"
 weight: 100
 ---
 
-Percentile 的核心概念是「某比例的觀測值低於某個門檻」。p95 latency 表示 95% request 的延遲不高於該值；p99 則觀察更長尾的慢請求。
+
+Percentile 的核心概念是「某比例的觀測值低於某個門檻」。p95 latency 表示 95% request 的延遲不高於該值；p99 則觀察更長尾的慢請求。 可先對照 [PII](/backend/knowledge-cards/pii/)。
 
 ## 概念位置
 
-Percentile 用來描述平均值看不到的使用者體驗。高流量服務中，少數慢 request 可能代表大量使用者受影響，因此 p95 / p99 常比平均值更有操作意義。
+Percentile 用來描述平均值看不到的使用者體驗。高流量服務中，少數慢 request 可能代表大量使用者受影響，因此 p95 / p99 常比平均值更有操作意義。 可先對照 [PII](/backend/knowledge-cards/pii/)。
 
 ## 可觀察訊號與例子
 

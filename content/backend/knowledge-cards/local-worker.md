@@ -5,7 +5,8 @@ description: "說明同一個 process 內的背景工作模型與其生命週期
 weight: 148
 ---
 
-Local worker 的核心概念是「背景工作仍留在同一個 application process」。它可降低 request 等待時間，但不提供跨 process 的持久可靠保證。
+
+Local worker 的核心概念是「背景工作仍留在同一個 application process」。它可降低 request 等待時間，但不提供跨 process 的持久可靠保證。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。
 
 ## 概念位置
 

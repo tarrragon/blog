@@ -83,6 +83,53 @@ Backend 章節討論具體服務時，應加入跨語言適配評估。這個評
 
 Backend 案例應從服務需求出發。高併發、長連線、事件處理、資料庫、雲端基礎設施、資安與可觀測性都可以用跨語言案例說明；案例的責任是提供需求情境，服務章節的責任是說明後端能力本身。
 
+
+## 補充知識卡片入口
+
+下列卡片目前尚未從教學文章直接引用，先放在這裡作為補充入口。
+
+| 卡片                                                                                             | 入口     |
+| ------------------------------------------------------------------------------------------------ | -------- |
+| [Authentication Middleware](/backend/knowledge-cards/authentication-middleware/)                 | 補充入口 |
+| [Authorization Middleware](/backend/knowledge-cards/authorization-middleware/)                   | 補充入口 |
+| [BOPLA](/backend/knowledge-cards/bopla/)                                                         | 補充入口 |
+| [Bucket](/backend/knowledge-cards/bucket/)                                                       | 補充入口 |
+| [Cache Prefetching](/backend/knowledge-cards/cache-prefetching/)                                 | 補充入口 |
+| [Change Data Capture](/backend/knowledge-cards/change-data-capture/)                             | 補充入口 |
+| [Cold Start](/backend/knowledge-cards/cold-start/)                                               | 補充入口 |
+| [Competing Consumers](/backend/knowledge-cards/competing-consumers/)                             | 補充入口 |
+| [Consumer Capacity](/backend/knowledge-cards/consumer-capacity/)                                 | 補充入口 |
+| [Correctness Check](/backend/knowledge-cards/correctness-check/)                                 | 補充入口 |
+| [Data Completeness](/backend/knowledge-cards/data-completeness/)                                 | 補充入口 |
+| [Dual Write](/backend/knowledge-cards/dual-write/)                                               | 補充入口 |
+| [Service Endpoint](/backend/knowledge-cards/endpoint/)                                           | 補充入口 |
+| [HTTP Client](/backend/knowledge-cards/http-client/)                                             | 補充入口 |
+| [In-Flight Message](/backend/knowledge-cards/in-flight-message/)                                 | 補充入口 |
+| [Migration Gate](/backend/knowledge-cards/migration-gate/)                                       | 補充入口 |
+| [Notification Adapter](/backend/knowledge-cards/notification-adapter/)                           | 補充入口 |
+| [Observability Middleware](/backend/knowledge-cards/observability-middleware/)                   | 補充入口 |
+| [Online Migration](/backend/knowledge-cards/online-migration/)                                   | 補充入口 |
+| [Projection](/backend/knowledge-cards/projection/)                                               | 補充入口 |
+| [Publisher Confirm](/backend/knowledge-cards/publisher-confirm/)                                 | 補充入口 |
+| [Queue Contract](/backend/knowledge-cards/queue-contract/)                                       | 補充入口 |
+| [Redelivery Loop](/backend/knowledge-cards/redelivery-loop/)                                     | 補充入口 |
+| [Replication Lag](/backend/knowledge-cards/replication-lag/)                                     | 補充入口 |
+| [Request/Response Protocol](/backend/knowledge-cards/request-response-protocol/)                 | 補充入口 |
+| [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)                               | 補充入口 |
+| [Routing Rule](/backend/knowledge-cards/routing-rule/)                                           | 補充入口 |
+| [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/)                 | 補充入口 |
+| [Shadow Read](/backend/knowledge-cards/shadow-read/)                                             | 補充入口 |
+| [Socket](/backend/knowledge-cards/socket/)                                                       | 補充入口 |
+| [Soft TTL](/backend/knowledge-cards/soft-ttl/)                                                   | 補充入口 |
+| [SSRF](/backend/knowledge-cards/ssrf/)                                                           | 補充入口 |
+| [Stream Pipeline](/backend/knowledge-cards/stream-pipeline/)                                     | 補充入口 |
+| [Unacked Message](/backend/knowledge-cards/unacked-message/)                                     | 補充入口 |
+| [Unrestricted Resource Consumption](/backend/knowledge-cards/unrestricted-resource-consumption/) | 補充入口 |
+| [Validation Middleware](/backend/knowledge-cards/validation-middleware/)                         | 補充入口 |
+| [Webhook Protocol](/backend/knowledge-cards/webhook-protocol/)                                   | 補充入口 |
+| [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)                               | 補充入口 |
+| [Write-Through Cache](/backend/knowledge-cards/write-through-cache/)                             | 補充入口 |
+
 ## 前置知識卡片規範
 
 Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of truth、[transaction boundary](/backend/knowledge-cards/transaction-boundary)、schema migration、timeout、[deadline](/backend/knowledge-cards/deadline)、[exponential backoff](/backend/knowledge-cards/exponential-backoff)、jitter、retry storm、[thundering herd](/backend/knowledge-cards/thundering-herd)、[transient failure](/backend/knowledge-cards/transient-failure)、[partial failure](/backend/knowledge-cards/partial-failure)、[cascading failure](/backend/knowledge-cards/cascading-failure)、load shedding、[token bucket](/backend/knowledge-cards/token-bucket)、[dependency isolation](/backend/knowledge-cards/dependency-isolation)、bulkhead、fallback、[fail fast](/backend/knowledge-cards/fail-fast)、[retry budget](/backend/knowledge-cards/retry-budget)、TTL、eviction、broker、consumer lag、dead-letter queue、[replay runbook](/backend/knowledge-cards/replay-runbook)、[重複投遞](/backend/knowledge-cards/duplicate-delivery)、idempotency、outbox、backpressure、[rate limit](/backend/knowledge-cards/rate-limit)、log schema、metrics、trace context、SLO、authorization、data masking、[secret management](/backend/knowledge-cards/secret-management)、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[website certificate lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)、[certificate rotation and renewal](/backend/knowledge-cards/certificate-rotation-renewal/)、[certificate revocation](/backend/knowledge-cards/certificate-revocation/)、[audit log](/backend/knowledge-cards/audit-log)、[降級](/backend/knowledge-cards/degradation)、[停機](/backend/knowledge-cards/downtime)、readiness 與 graceful shutdown 都是 domain knowhow；它們需要說明系統責任、產品後果、操作訊號與排障方式。

@@ -5,11 +5,12 @@ description: "說明如何從事件或主資料投影出查詢用資料視圖"
 weight: 160
 ---
 
+
 Projection 的核心概念是「把來源資料轉換成特定用途的讀取視圖」。它常和 [read model](/backend/knowledge-cards/read-model/) 一起出現。
 
 ## 概念位置
 
-常由事件流或資料同步流程持續更新，用於列表、統計、搜尋或即時儀表板。
+常由事件流或資料同步流程持續更新，用於列表、統計、搜尋或即時儀表板。 可先對照 [Read Model](/backend/knowledge-cards/read-model/)。
 
 ## 設計責任
 

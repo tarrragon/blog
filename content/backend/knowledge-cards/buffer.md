@@ -5,6 +5,7 @@ description: "說明系統如何用暫存空間吸收短暫速度差與尖峰流
 weight: 129
 ---
 
+
 Buffer 的核心概念是「用暫存空間吸收 [producer](/backend/knowledge-cards/producer/) 與 [consumer](/backend/knowledge-cards/consumer/) 之間的短暫速度差」。Buffer 可以存在於 [in-process channel](/backend/knowledge-cards/in-process-channel/)、[queue](/backend/knowledge-cards/queue/)、[socket](/backend/knowledge-cards/socket/)、[HTTP client](/backend/knowledge-cards/http-client/)、[broker](/backend/knowledge-cards/broker/)、[stream pipeline](/backend/knowledge-cards/stream-pipeline/) 或 [write-behind cache](/backend/knowledge-cards/write-behind-cache/)。
 
 ## 概念位置

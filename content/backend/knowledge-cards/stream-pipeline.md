@@ -5,7 +5,8 @@ description: "說明連續資料流經多個處理階段時如何管理吞吐、
 weight: 128
 ---
 
-Stream pipeline 的核心概念是「資料連續流經多個處理階段」。每個階段讀取輸入、處理資料、送到下一階段；整體吞吐取決於最慢階段與階段之間的 buffer。
+
+Stream pipeline 的核心概念是「資料連續流經多個處理階段」。每個階段讀取輸入、處理資料、送到下一階段；整體吞吐取決於最慢階段與階段之間的 buffer。 可先對照 [Change Data Capture](/backend/knowledge-cards/change-data-capture/)。
 
 ## 概念位置
 

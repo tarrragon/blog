@@ -6,7 +6,8 @@ description: "說明資安風險例外如何以期限、補償控制與關閉條
 weight: 255
 ---
 
-Security exception 的核心概念是「在明確邊界內接受短期風險，並用協議管理收斂路徑」。它讓風險接受決策可追蹤、可關閉、可回寫。
+
+Security exception 的核心概念是「在明確邊界內接受短期風險，並用協議管理收斂路徑」。它讓風險接受決策可追蹤、可關閉、可回寫。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。
 
 ## 概念位置
 

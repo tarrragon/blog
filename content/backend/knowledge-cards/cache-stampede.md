@@ -5,11 +5,12 @@ description: "說明快取同時失效時大量 request 如何壓垮正式來源
 weight: 22
 ---
 
-Cache stampede 的核心概念是「大量 request 在同一時間遇到 cache miss，並同時打向正式來源」。這個現象常出現在熱門 key 過期、服務重啟、快取清空或活動流量尖峰。
+
+Cache stampede 的核心概念是「大量 request 在同一時間遇到 cache miss，並同時打向正式來源」。這個現象常出現在熱門 key 過期、服務重啟、快取清空或活動流量尖峰。 可先對照 [Cache Warmup](/backend/knowledge-cards/cache-warmup/)。
 
 ## 概念位置
 
-Cache stampede 是快取失效與下游保護的交界。快取原本用來保護資料庫；若熱門資料同時過期，快取反而會把大量請求集中送到資料庫。
+Cache stampede 是快取失效與下游保護的交界。快取原本用來保護資料庫；若熱門資料同時過期，快取反而會把大量請求集中送到資料庫。 可先對照 [Cache Warmup](/backend/knowledge-cards/cache-warmup/)。
 
 ## 可觀察訊號與例子
 

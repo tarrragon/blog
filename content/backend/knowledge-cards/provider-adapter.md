@@ -5,11 +5,12 @@ description: "說明第三方服務如何被包裝成內部穩定介面"
 weight: 0
 ---
 
-Provider Adapter 的核心概念是「把外部供應商的 API、錯誤與限制，轉成 application 需要的形狀」。
+
+Provider Adapter 的核心概念是「把外部供應商的 API、錯誤與限制，轉成 application 需要的形狀」。 可先對照 [Pub/Sub](/backend/knowledge-cards/pub-sub/)。
 
 ## 概念位置
 
-Provider Adapter 位在 application 與 payment、notification、storage、identity 等第三方服務之間。
+Provider Adapter 位在 application 與 payment、notification、storage、identity 等第三方服務之間。 可先對照 [Pub/Sub](/backend/knowledge-cards/pub-sub/)。
 
 ## 可觀察訊號
 

@@ -5,7 +5,8 @@ description: "說明搜尋索引如何承擔全文檢索、排序與查詢體驗
 weight: 146
 ---
 
-Search index 的核心概念是「為查詢體驗建立專用讀取模型」。它擅長全文搜尋、排序、filter 與 facet，通常不是正式寫入來源。
+
+Search index 的核心概念是「為查詢體驗建立專用讀取模型」。它擅長全文搜尋、排序、filter 與 facet，通常不是正式寫入來源。 可先對照 [Source of Truth](/backend/knowledge-cards/source-of-truth/)。
 
 ## 概念位置
 

@@ -5,11 +5,12 @@ description: "說明快取容量不足時哪些資料會被淘汰，以及淘汰
 weight: 19
 ---
 
-Eviction 的核心概念是「容量不足時系統選擇移除哪些資料」。快取與記憶體型服務需要 eviction policy，因為可用容量有限，資料量與 hot key 會隨流量變化。
+
+Eviction 的核心概念是「容量不足時系統選擇移除哪些資料」。快取與記憶體型服務需要 eviction policy，因為可用容量有限，資料量與 hot key 會隨流量變化。 可先對照 [Excessive Data Exposure](/backend/knowledge-cards/excessive-data-exposure/)。
 
 ## 概念位置
 
-Eviction 處理的是容量控制，TTL 處理的是時間有效性。Redis、CDN、local cache 都可能在容量壓力下淘汰資料；被淘汰的資料若可重建，系統會承擔額外查詢成本。
+Eviction 處理的是容量控制，TTL 處理的是時間有效性。Redis、CDN、local cache 都可能在容量壓力下淘汰資料；被淘汰的資料若可重建，系統會承擔額外查詢成本。 可先對照 [Excessive Data Exposure](/backend/knowledge-cards/excessive-data-exposure/)。
 
 ## 可觀察訊號與例子
 

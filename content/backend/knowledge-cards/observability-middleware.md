@@ -5,11 +5,12 @@ description: "說明請求進入 handler 前後如何補上觀測欄位"
 weight: 0
 ---
 
-Observability Middleware 的核心概念是「在 request 進入與離開 handler 的過程中，補上可觀測欄位與上下文」。
+
+Observability Middleware 的核心概念是「在 request 進入與離開 handler 的過程中，補上可觀測欄位與上下文」。 可先對照 [Offline Catch-up](/backend/knowledge-cards/offline-catchup/)。
 
 ## 概念位置
 
-Observability Middleware 位在 transport layer 與業務 handler 之間。它通常負責 request id、trace context、log context 與 timing。
+Observability Middleware 位在 transport layer 與業務 handler 之間。它通常負責 request id、trace context、log context 與 timing。 可先對照 [Offline Catch-up](/backend/knowledge-cards/offline-catchup/)。
 
 ## 可觀察訊號
 

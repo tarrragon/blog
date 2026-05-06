@@ -5,11 +5,12 @@ description: "說明服務或快取剛啟動時尚未累積狀態造成的延遲
 weight: 92
 ---
 
-Cold start 的核心概念是「系統剛啟動或狀態剛清空時，尚未具備穩定運作所需的暖資料」。它可能出現在 application instance、cache、connection pool、JIT runtime、model loading 或 function runtime。
+
+Cold start 的核心概念是「系統剛啟動或狀態剛清空時，尚未具備穩定運作所需的暖資料」。它可能出現在 application instance、cache、connection pool、JIT runtime、model loading 或 function runtime。 可先對照 [Competing Consumers](/backend/knowledge-cards/competing-consumers/)。
 
 ## 概念位置
 
-Cold start 是部署、autoscaling、cache warmup 與 readiness 的共同問題。新 instance 若尚未建立連線、載入設定或暖好 cache，就接正式流量，可能造成延遲尖峰。
+Cold start 是部署、autoscaling、cache warmup 與 readiness 的共同問題。新 instance 若尚未建立連線、載入設定或暖好 cache，就接正式流量，可能造成延遲尖峰。 可先對照 [Competing Consumers](/backend/knowledge-cards/competing-consumers/)。
 
 ## 可觀察訊號與例子
 

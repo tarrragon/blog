@@ -5,7 +5,8 @@ description: "說明 WebSocket 如何提供長連線雙向即時通訊"
 weight: 132
 ---
 
-WebSocket 的核心概念是「在單一連線上維持雙向即時資料交換」。它通常從 HTTP upgrade 開始，之後以長連線承載訊息推送、狀態同步與即時互動。
+
+WebSocket 的核心概念是「在單一連線上維持雙向即時資料交換」。它通常從 HTTP upgrade 開始，之後以長連線承載訊息推送、狀態同步與即時互動。 可先對照 [Socket](/backend/knowledge-cards/socket/)。
 
 ## 概念位置
 

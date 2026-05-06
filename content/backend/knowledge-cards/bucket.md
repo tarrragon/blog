@@ -5,11 +5,12 @@ description: "說明 histogram 分桶如何決定觀測解析度與成本"
 weight: 99
 ---
 
-Bucket 的核心概念是「histogram 中用來統計觀測值範圍的界線」。每個 bucket 代表小於等於某個上限的觀測值累積數。
+
+Bucket 的核心概念是「histogram 中用來統計觀測值範圍的界線」。每個 bucket 代表小於等於某個上限的觀測值累積數。 可先對照 [Buffer](/backend/knowledge-cards/buffer/)。
 
 ## 概念位置
 
-Bucket 是 histogram 可用性的關鍵。Bucket 應圍繞 SLO 門檻與常見延遲分布設計；錯誤 bucket 會讓 dashboard 看起來有資料，卻回答不了服務是否達標。
+Bucket 是 histogram 可用性的關鍵。Bucket 應圍繞 SLO 門檻與常見延遲分布設計；錯誤 bucket 會讓 dashboard 看起來有資料，卻回答不了服務是否達標。 可先對照 [Buffer](/backend/knowledge-cards/buffer/)。
 
 ## 可觀察訊號與例子
 

@@ -5,6 +5,7 @@ description: "說明指標如何描述服務趨勢、容量與健康狀態"
 weight: 33
 ---
 
+
 Metrics 的核心概念是「用可聚合數值描述系統行為」。常見指標包括 request count、error rate、latency、[queue depth](/backend/knowledge-cards/queue-depth/)、[consumer lag](/backend/knowledge-cards/consumer-lag/)、CPU、memory、[connection pool](/backend/knowledge-cards/connection-pool/) 使用量與 [cache hit rate](/backend/knowledge-cards/cache-hit-rate/)。
 
 ## 概念位置

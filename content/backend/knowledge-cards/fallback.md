@@ -5,7 +5,8 @@ description: "說明主要路徑失敗時使用替代結果或替代流程的設
 weight: 56
 ---
 
-Fallback 的核心概念是「主要路徑失敗時使用替代結果或替代流程」。Fallback 可以是 cached data、預設值、簡化頁面、備援服務、延後處理或人工流程。
+
+Fallback 的核心概念是「主要路徑失敗時使用替代結果或替代流程」。Fallback 可以是 cached data、預設值、簡化頁面、備援服務、延後處理或人工流程。 可先對照 [Partial Failure](/backend/knowledge-cards/partial-failure/)。
 
 ## 概念位置
 

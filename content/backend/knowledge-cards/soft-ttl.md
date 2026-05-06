@@ -5,11 +5,12 @@ description: "說明資料進入刷新期後仍可短暫使用以降低 stampede
 weight: 96
 ---
 
-Soft TTL 的核心概念是「資料過了建議刷新時間後仍可短暫使用，同時觸發背景刷新」。它讓系統在資料需要更新時仍保留可用結果，降低 cache stampede 風險。
+
+Soft TTL 的核心概念是「資料過了建議刷新時間後仍可短暫使用，同時觸發背景刷新」。它讓系統在資料需要更新時仍保留可用結果，降低 cache stampede 風險。 可先對照 [Source of Truth](/backend/knowledge-cards/source-of-truth/)。
 
 ## 概念位置
 
-Soft TTL 把過期分成可用刷新期與硬過期點。資料進入刷新期後仍可回應部分 request，並由背景流程重建；到達硬過期點後則停止使用該副本。
+Soft TTL 把過期分成可用刷新期與硬過期點。資料進入刷新期後仍可回應部分 request，並由背景流程重建；到達硬過期點後則停止使用該副本。 可先對照 [Source of Truth](/backend/knowledge-cards/source-of-truth/)。
 
 ## 可觀察訊號與例子
 

@@ -6,7 +6,8 @@ description: "說明事故後如何完成復盤、學習與改進閉環"
 weight: 156
 ---
 
-Post-incident review 的核心概念是「事故後把事實、原因與改進行動整理成可驗證輸出」。它的目標是提升系統與流程，不是追究個人。
+
+Post-incident review 的核心概念是「事故後把事實、原因與改進行動整理成可驗證輸出」。它的目標是提升系統與流程，不是追究個人。 可先對照 [Incident Timeline](/backend/knowledge-cards/incident-timeline/)。
 
 ## 概念位置
 

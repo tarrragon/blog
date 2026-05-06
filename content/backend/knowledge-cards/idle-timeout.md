@@ -6,11 +6,12 @@ description: "說明連線或會話在多久沒有活動後應該被回收"
 weight: 132
 ---
 
-Idle Timeout 的核心概念是「一段時間沒有活動就關閉連線或回收會話」。它和一般 request timeout 不同，重點不是等待單次操作完成，而是避免空閒連線長時間佔住資源。
+
+Idle Timeout 的核心概念是「一段時間沒有活動就關閉連線或回收會話」。它和一般 request timeout 不同，重點不是等待單次操作完成，而是避免空閒連線長時間佔住資源。 可先對照 [Impact Scope](/backend/knowledge-cards/impact-scope/)。
 
 ## 概念位置
 
-Idle Timeout 位在 socket、load balancer、proxy、application 與 connection pool 之間。它常用來保護連線資源，避免長時間閒置造成檔案描述符、memory 或 session state 浪費。
+Idle Timeout 位在 socket、load balancer、proxy、application 與 connection pool 之間。它常用來保護連線資源，避免長時間閒置造成檔案描述符、memory 或 session state 浪費。 可先對照 [Impact Scope](/backend/knowledge-cards/impact-scope/)。
 
 ## 可觀察訊號
 

@@ -5,6 +5,7 @@ description: "說明多個資料來源不一致時如何比對、修復與留下
 weight: 87
 ---
 
+
 Data reconciliation 的核心概念是「比對多個資料來源，找出差異並修復到可接受狀態」。它常用在付款對帳、資料 [migration](/backend/knowledge-cards/migration/)、事件漏處理、報表修復與第三方同步。
 
 ## 概念位置

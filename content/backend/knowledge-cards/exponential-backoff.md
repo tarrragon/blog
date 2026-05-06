@@ -5,11 +5,12 @@ description: "說明重試間隔如何逐步拉長以降低下游壓力"
 weight: 45
 ---
 
-Exponential backoff 的核心概念是「每次重試後把下一次等待時間按倍數拉長」。它讓系統在暫時性故障期間降低呼叫頻率，給下游恢復時間。
+
+Exponential backoff 的核心概念是「每次重試後把下一次等待時間按倍數拉長」。它讓系統在暫時性故障期間降低呼叫頻率，給下游恢復時間。 可先對照 [Facet Query](/backend/knowledge-cards/facet-query/)。
 
 ## 概念位置
 
-Backoff 是 retry policy 的節奏控制。固定間隔重試容易在下游尚未恢復時持續施壓；指數退避能讓重試從快速恢復逐漸轉成保守等待。
+Backoff 是 retry policy 的節奏控制。固定間隔重試容易在下游尚未恢復時持續施壓；指數退避能讓重試從快速恢復逐漸轉成保守等待。 可先對照 [Facet Query](/backend/knowledge-cards/facet-query/)。
 
 ## 可觀察訊號與例子
 

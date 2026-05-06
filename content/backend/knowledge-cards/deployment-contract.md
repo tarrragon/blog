@@ -5,11 +5,12 @@ description: "說明服務與部署平台之間的生命週期約定"
 weight: 0
 ---
 
-Deployment Contract 的核心概念是「application 與平台對啟動、存活、接流量與停止方式達成一致」。它把服務生命週期變成可預期的協作規則。
+
+Deployment Contract 的核心概念是「application 與平台對啟動、存活、接流量與停止方式達成一致」。它把服務生命週期變成可預期的協作規則。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 概念位置
 
-Deployment Contract 位在 application、container、Kubernetes、systemd 與 rollout control 之間。
+Deployment Contract 位在 application、container、Kubernetes、systemd 與 rollout control 之間。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 可觀察訊號
 

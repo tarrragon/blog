@@ -5,11 +5,12 @@ description: "說明事件流如何切分成多個可並行處理的有序片段
 weight: 73
 ---
 
-Partition 的核心概念是「把事件流切分成多個可並行處理的片段」。同一 partition 內通常保留順序，不同 partition 可以平行處理。
+
+Partition 的核心概念是「把事件流切分成多個可並行處理的片段」。同一 partition 內通常保留順序，不同 partition 可以平行處理。 可先對照 [Percentile](/backend/knowledge-cards/percentile/)。
 
 ## 概念位置
 
-Partition 是 throughput、ordering 與 hot key 的取捨。Partition key 決定同一類事件會落到哪裡；選錯 key 可能造成單一 partition 過熱，或讓需要順序的事件被拆散。
+Partition 是 throughput、ordering 與 hot key 的取捨。Partition key 決定同一類事件會落到哪裡；選錯 key 可能造成單一 partition 過熱，或讓需要順序的事件被拆散。 可先對照 [Percentile](/backend/knowledge-cards/percentile/)。
 
 ## 可觀察訊號與例子
 

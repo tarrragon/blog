@@ -5,6 +5,7 @@ description: "說明哪些資料變更應在同一個交易中一起成功或一
 weight: 14
 ---
 
+
 Transaction boundary 的核心概念是「一組資料變更必須一起成功或一起回復的範圍」。交易邊界決定哪些狀態需要被 [database](/backend/knowledge-cards/database/) [transaction](/backend/knowledge-cards/transaction/) 保護，哪些外部動作應放在交易之外。
 
 ## 概念位置

@@ -5,7 +5,8 @@ description: "說明服務如何對外暴露可被路由與存取的入口"
 weight: 126
 ---
 
-Service Endpoint 的核心概念是「外部請求進入服務的明確位置」。它是網路流量進入應用程式邊界的地址、路徑或命名位置。
+
+Service Endpoint 的核心概念是「外部請求進入服務的明確位置」。它是網路流量進入應用程式邊界的地址、路徑或命名位置。 可先對照 [Request Routing](/backend/knowledge-cards/request-routing/)。
 
 ## 概念位置
 

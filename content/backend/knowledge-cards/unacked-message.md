@@ -5,11 +5,12 @@ description: "說明 broker 已投遞但尚未收到 consumer 確認的訊息"
 weight: 61
 ---
 
-Unacked message 的核心概念是「broker 已投遞出去，但尚未收到 consumer ack 的訊息」。它通常代表訊息正在處理、consumer 卡住、ack 遺失或 handler 耗時過長。
+
+Unacked message 的核心概念是「broker 已投遞出去，但尚未收到 consumer ack 的訊息」。它通常代表訊息正在處理、consumer 卡住、ack 遺失或 handler 耗時過長。 可先對照 [Unrestricted Resource Consumption](/backend/knowledge-cards/unrestricted-resource-consumption/)。
 
 ## 概念位置
 
-Unacked message 是 queue health 的重要訊號。Queue depth 告訴團隊有多少訊息等著處理；unacked 則告訴團隊有多少訊息卡在 consumer 手上。
+Unacked message 是 queue health 的重要訊號。Queue depth 告訴團隊有多少訊息等著處理；unacked 則告訴團隊有多少訊息卡在 consumer 手上。 可先對照 [Unrestricted Resource Consumption](/backend/knowledge-cards/unrestricted-resource-consumption/)。
 
 ## 可觀察訊號與例子
 

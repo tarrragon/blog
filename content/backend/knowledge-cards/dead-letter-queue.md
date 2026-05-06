@@ -5,6 +5,7 @@ description: "說明 dead-letter queue 如何隔離多次處理失敗的訊息"
 weight: 3
 ---
 
+
 Dead-letter queue 的核心概念是「把超過處理條件的訊息移到隔離區」。訊息經過 [retry policy](/backend/knowledge-cards/retry-policy/) 仍然失敗、格式無法解析、業務狀態拒絕處理或超過存活期限時，[broker](/backend/knowledge-cards/broker/) 或 [consumer](/backend/knowledge-cards/consumer/) 會把它送進 dead-letter queue，讓主要 [queue](/backend/knowledge-cards/queue/) 保持可前進。
 
 ## 概念位置

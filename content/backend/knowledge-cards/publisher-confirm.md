@@ -5,11 +5,12 @@ description: "說明 producer 如何確認 broker 已接收並承擔訊息"
 weight: 67
 ---
 
-Publisher confirm 的核心概念是「producer 取得 broker 已接收訊息的確認」。它讓 producer 區分訊息已交給 broker，或在發送途中失敗。
+
+Publisher confirm 的核心概念是「producer 取得 broker 已接收訊息的確認」。它讓 producer 區分訊息已交給 broker，或在發送途中失敗。 可先對照 [Queue Contract](/backend/knowledge-cards/queue-contract/)。
 
 ## 概念位置
 
-Publisher confirm 是發布可靠性的下半段。Application 寫出事件後，仍需要確認 broker 是否承擔保存或投遞責任；若 confirm 失敗，producer 要重試、寫 outbox 或回報錯誤。
+Publisher confirm 是發布可靠性的下半段。Application 寫出事件後，仍需要確認 broker 是否承擔保存或投遞責任；若 confirm 失敗，producer 要重試、寫 outbox 或回報錯誤。 可先對照 [Queue Contract](/backend/knowledge-cards/queue-contract/)。
 
 ## 可觀察訊號與例子
 

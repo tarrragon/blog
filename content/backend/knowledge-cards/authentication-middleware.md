@@ -5,11 +5,12 @@ description: "說明請求進入 handler 前如何完成身份驗證"
 weight: 0
 ---
 
-Authentication Middleware 的核心概念是「在 request 進入業務處理前，先確認呼叫者是誰」。
+
+Authentication Middleware 的核心概念是「在 request 進入業務處理前，先確認呼叫者是誰」。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 概念位置
 
-Authentication Middleware 位在 transport layer 與 handler 之間。它負責把 token、session、signature 或其他身份憑證轉成已驗證的 caller context。
+Authentication Middleware 位在 transport layer 與 handler 之間。它負責把 token、session、signature 或其他身份憑證轉成已驗證的 caller context。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 可觀察訊號
 

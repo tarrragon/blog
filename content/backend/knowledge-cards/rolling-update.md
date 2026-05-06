@@ -5,7 +5,8 @@ description: "說明逐批替換服務版本的發版策略與風險控制"
 weight: 152
 ---
 
-Rolling update 的核心概念是「逐批替換舊版本實例，維持服務持續可用」。它可降低一次性切換風險。
+
+Rolling update 的核心概念是「逐批替換舊版本實例，維持服務持續可用」。它可降低一次性切換風險。 可先對照 [Readiness](/backend/knowledge-cards/readiness/)。
 
 ## 概念位置
 

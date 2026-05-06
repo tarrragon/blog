@@ -5,11 +5,12 @@ description: "說明 topic 如何把事件依主題分流給不同訂閱者"
 weight: 134
 ---
 
+
 Topic 的核心概念是「用主題名稱描述一類事件或訊息」。[Producer](/backend/knowledge-cards/producer/) 把事件發布到 topic，[broker](/backend/knowledge-cards/broker/) 再依照訂閱關係、[routing rule](/backend/knowledge-cards/routing-rule/) 或 stream 模型把事件交給對應 [consumer](/backend/knowledge-cards/consumer/)。
 
 ## 概念位置
 
-Topic 是事件分流的命名邊界。它讓訂單、付款、會員、通知、庫存等事件可以被不同服務訂閱，也讓團隊用事件種類思考資料流與責任範圍。
+Topic 是事件分流的命名邊界。它讓訂單、付款、會員、通知、庫存等事件可以被不同服務訂閱，也讓團隊用事件種類思考資料流與責任範圍。 可先對照 [Producer](/backend/knowledge-cards/producer/)。
 
 ## 可觀察訊號與例子
 

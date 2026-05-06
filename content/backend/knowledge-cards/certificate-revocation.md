@@ -5,7 +5,8 @@ description: "說明憑證洩漏或誤發時如何撤銷並控制影響範圍"
 weight: 149
 ---
 
-Certificate revocation 的核心概念是「在憑證不再可信時快速宣布失效」。常見觸發情境是私鑰洩漏、錯誤簽發、身份資訊不再有效或資安事件需要立即切斷信任。
+
+Certificate revocation 的核心概念是「在憑證不再可信時快速宣布失效」。常見觸發情境是私鑰洩漏、錯誤簽發、身份資訊不再有效或資安事件需要立即切斷信任。 可先對照 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)。
 
 ## 概念位置
 

@@ -5,11 +5,12 @@ description: "說明 trace 中一段工作如何記錄耗時、狀態與關聯"
 weight: 107
 ---
 
-Span 的核心概念是「trace 中的一段工作」。每個 span 描述某個操作的開始、結束、耗時、狀態、屬性與父子關係。
+
+Span 的核心概念是「trace 中的一段工作」。每個 span 描述某個操作的開始、結束、耗時、狀態、屬性與父子關係。 可先對照 [Server-Sent Events (SSE)](/backend/knowledge-cards/sse/)。
 
 ## 概念位置
 
-Span 是 tracing 的基本單位。HTTP handler、database query、cache call、broker publish、consumer handle 與外部 API 呼叫都可以形成 span。
+Span 是 tracing 的基本單位。HTTP handler、database query、cache call、broker publish、consumer handle 與外部 API 呼叫都可以形成 span。 可先對照 [Server-Sent Events (SSE)](/backend/knowledge-cards/sse/)。
 
 ## 可觀察訊號與例子
 

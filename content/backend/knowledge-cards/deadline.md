@@ -5,6 +5,7 @@ description: "說明整體操作的截止時間如何沿著服務邊界傳遞"
 weight: 44
 ---
 
+
 Deadline 的核心概念是「整體操作必須完成的截止時間」。[Timeout](/backend/knowledge-cards/timeout/) 常是單一步驟的等待上限；deadline 則是整條 request、job 或 workflow 的總時間預算。
 
 ## 概念位置

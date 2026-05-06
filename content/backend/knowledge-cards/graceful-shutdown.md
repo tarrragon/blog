@@ -5,11 +5,12 @@ description: "說明服務停止前如何排空流量、完成工作與保存狀
 weight: 11
 ---
 
-Graceful shutdown 的核心概念是「instance 收到停止訊號後，以可控流程結束服務」。它會先停止接收新工作，再讓正在處理的 request、長連線、consumer 或背景任務在期限內完成、保存狀態或交回 broker。
+
+Graceful shutdown 的核心概念是「instance 收到停止訊號後，以可控流程結束服務」。它會先停止接收新工作，再讓正在處理的 request、長連線、consumer 或背景任務在期限內完成、保存狀態或交回 broker。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 概念位置
 
-Graceful shutdown 是 application 與部署平台的停止合約。平台負責送出停止訊號、移出流量與設定期限；application 負責停止入口、排空處理中工作、釋放連線、提交 checkpoint、送出最後 log 與 metrics。
+Graceful shutdown 是 application 與部署平台的停止合約。平台負責送出停止訊號、移出流量與設定期限；application 負責停止入口、排空處理中工作、釋放連線、提交 checkpoint、送出最後 log 與 metrics。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 可觀察訊號
 

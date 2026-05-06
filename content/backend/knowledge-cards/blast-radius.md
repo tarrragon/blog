@@ -6,7 +6,8 @@ description: "說明事故影響面如何估算與隔離"
 weight: 154
 ---
 
-Blast radius 的核心概念是「估算故障可擴散到哪些服務、資料與使用者」。它幫助團隊在事故早期決定先隔離哪個邊界，避免影響持續擴大。
+
+Blast radius 的核心概念是「估算故障可擴散到哪些服務、資料與使用者」。它幫助團隊在事故早期決定先隔離哪個邊界，避免影響持續擴大。 可先對照 [Degradation](/backend/knowledge-cards/degradation/)。
 
 ## 概念位置
 

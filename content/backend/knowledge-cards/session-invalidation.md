@@ -6,7 +6,8 @@ description: "說明事件後如何讓既有會話失效，避免被重放或延
 weight: 265
 ---
 
-Session invalidation 的核心概念是「使既有會話在定義時間內失去可用性」。它是事件收斂的重要步驟，常與憑證輪替同時執行。
+
+Session invalidation 的核心概念是「使既有會話在定義時間內失去可用性」。它是事件收斂的重要步驟，常與憑證輪替同時執行。 可先對照 [Authentication](/backend/knowledge-cards/authentication/)。
 
 ## 概念位置
 

@@ -6,6 +6,7 @@ description: "說明告警如何連到可執行的排障與恢復流程"
 weight: 37
 ---
 
+
 Alert runbook 的核心概念是「每個需要人處理的 [alert](/backend/knowledge-cards/alert/) 都要附上下一步」。Alert 通知異常，runbook 則說明如何判斷影響、查哪些 [dashboard](/backend/knowledge-cards/dashboard/)、執行哪些修復、何時升級。
 
 ## 概念位置

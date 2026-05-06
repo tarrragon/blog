@@ -5,7 +5,8 @@ description: "說明事故升級鏈與值班轉接規則"
 weight: 152
 ---
 
-Escalation policy 的核心概念是「在指定時間內把未解決事故交給下一層責任角色」。它確保事故在無回應或無進展時自動升級，而不是停在單一值班人員。
+
+Escalation policy 的核心概念是「在指定時間內把未解決事故交給下一層責任角色」。它確保事故在無回應或無進展時自動升級，而不是停在單一值班人員。 可先對照 [Incident Severity](/backend/knowledge-cards/incident-severity/)。
 
 ## 概念位置
 

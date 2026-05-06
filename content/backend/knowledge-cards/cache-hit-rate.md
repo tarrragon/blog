@@ -5,11 +5,12 @@ description: "說明快取命中比例如何衡量加速效果與下游保護"
 weight: 89
 ---
 
-Cache hit rate 的核心概念是「快取命中次數佔總讀取次數的比例」。它用來衡量快取是否真的承擔讀取流量。
+
+Cache hit rate 的核心概念是「快取命中次數佔總讀取次數的比例」。它用來衡量快取是否真的承擔讀取流量。 可先對照 [Cache Invalidation](/backend/knowledge-cards/cache-invalidation/)。
 
 ## 概念位置
 
-Hit rate 是容量與成本指標。低 hit rate 可能代表快取資料不適合、key 太分散、TTL 太短、資料經常失效或工作負載不重複。
+Hit rate 是容量與成本指標。低 hit rate 可能代表快取資料不適合、key 太分散、TTL 太短、資料經常失效或工作負載不重複。 可先對照 [Cache Invalidation](/backend/knowledge-cards/cache-invalidation/)。
 
 ## 可觀察訊號與例子
 

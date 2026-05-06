@@ -5,11 +5,12 @@ description: "說明長時間處理流程如何記錄可恢復進度"
 weight: 81
 ---
 
-Checkpoint 的核心概念是「記錄處理流程已安全完成的位置」。它讓長時間工作、event consumer、migration、backfill 或資料同步在中斷後可以接續。
+
+Checkpoint 的核心概念是「記錄處理流程已安全完成的位置」。它讓長時間工作、event consumer、migration、backfill 或資料同步在中斷後可以接續。 可先對照 [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)。
 
 ## 概念位置
 
-Checkpoint 是恢復能力與重放安全的基礎。它可以是 offset、時間戳、primary key、batch id、file position 或業務狀態。
+Checkpoint 是恢復能力與重放安全的基礎。它可以是 offset、時間戳、primary key、batch id、file position 或業務狀態。 可先對照 [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)。
 
 ## 可觀察訊號與例子
 

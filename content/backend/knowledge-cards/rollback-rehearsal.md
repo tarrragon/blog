@@ -6,11 +6,12 @@ description: "說明如何在正式事故前演練回滾流程"
 weight: 156
 ---
 
-Rollback Rehearsal 的核心概念是「在低風險環境實際走一次回滾流程，確認步驟、權限與耗時都符合預期」。
+
+Rollback Rehearsal 的核心概念是「在低風險環境實際走一次回滾流程，確認步驟、權限與耗時都符合預期」。 可先對照 [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)。
 
 ## 概念位置
 
-Rollback Rehearsal 位在 release gate、rollback strategy、migration 與 disaster recovery 之間。它不是文件審查，而是把回滾步驟實際走過一次。
+Rollback Rehearsal 位在 release gate、rollback strategy、migration 與 disaster recovery 之間。它不是文件審查，而是把回滾步驟實際走過一次。 可先對照 [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)。
 
 ## 可觀察訊號
 

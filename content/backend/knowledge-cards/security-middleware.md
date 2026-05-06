@@ -5,11 +5,12 @@ description: "說明請求進入 handler 前如何完成共通安全控制"
 weight: 0
 ---
 
-Security Middleware 的核心概念是「在 request 進入業務處理前，先套用共通安全控制」。
+
+Security Middleware 的核心概念是「在 request 進入業務處理前，先套用共通安全控制」。 可先對照 [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/)。
 
 ## 概念位置
 
-Security Middleware 位在 transport layer 與 handler 之間。它處理 rate limit、redaction、來源限制或其他共通防護。
+Security Middleware 位在 transport layer 與 handler 之間。它處理 rate limit、redaction、來源限制或其他共通防護。 可先對照 [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/)。
 
 ## 可觀察訊號
 

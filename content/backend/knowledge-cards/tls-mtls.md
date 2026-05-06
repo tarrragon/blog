@@ -5,7 +5,8 @@ description: "說明傳輸加密與雙向憑證驗證如何保護跨邊界資料
 weight: 41
 ---
 
-TLS / mTLS 的核心概念是「保護資料在網路傳輸中的機密性、完整性與身份驗證」。TLS 通常驗證 server 並加密連線；mTLS 讓 client 與 server 彼此驗證憑證。
+
+TLS / mTLS 的核心概念是「保護資料在網路傳輸中的機密性、完整性與身份驗證」。TLS 通常驗證 server 並加密連線；mTLS 讓 client 與 server 彼此驗證憑證。 可先對照 [Authentication](/backend/knowledge-cards/authentication/)。
 
 ## 概念位置
 

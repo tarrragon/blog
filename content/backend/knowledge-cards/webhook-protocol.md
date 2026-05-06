@@ -5,11 +5,12 @@ description: "說明外部回呼如何對齊簽章、重試與 payload 語意"
 weight: 0
 ---
 
-Webhook Protocol 的核心概念是「外部系統把事件送進來時，雙方如何對齊驗證、payload 與失敗語意」。
+
+Webhook Protocol 的核心概念是「外部系統把事件送進來時，雙方如何對齊驗證、payload 與失敗語意」。 可先對照 [Webhook](/backend/knowledge-cards/webhook/)。
 
 ## 概念位置
 
-Webhook Protocol 位在 external system、HTTP endpoint 與 service 之間。它是外部事件導入的通訊約定。
+Webhook Protocol 位在 external system、HTTP endpoint 與 service 之間。它是外部事件導入的通訊約定。 可先對照 [Webhook](/backend/knowledge-cards/webhook/)。
 
 ## 可觀察訊號
 

@@ -5,7 +5,8 @@ description: "說明事件歷史如何保存、重播與支援跨服務資料重
 weight: 145
 ---
 
-Event log 的核心概念是「按時間保存已發生事件的紀錄」。它適合承擔歷史追蹤、重播補送與衍生資料重建，而不是直接取代業務主資料。
+
+Event log 的核心概念是「按時間保存已發生事件的紀錄」。它適合承擔歷史追蹤、重播補送與衍生資料重建，而不是直接取代業務主資料。 可先對照 [Consumer Group](/backend/knowledge-cards/consumer-group/)。
 
 ## 概念位置
 

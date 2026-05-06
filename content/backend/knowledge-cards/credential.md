@@ -5,11 +5,12 @@ description: "整理身分驗證與系統存取用秘密資料"
 weight: 0
 ---
 
-Credential 的核心概念是「讓主體能證明自己並取得存取權的秘密資料」。常見 credential 包含 password、API key、token、private key、service account secret 與 database credential。
+
+Credential 的核心概念是「讓主體能證明自己並取得存取權的秘密資料」。常見 credential 包含 password、API key、token、private key、service account secret 與 database credential。 可先對照 [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)。
 
 ## 概念位置
 
-Credential 位在 authentication、authorization、secret management 與 service-to-service access 的交界。
+Credential 位在 authentication、authorization、secret management 與 service-to-service access 的交界。 可先對照 [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)。
 
 ## 可觀察訊號
 

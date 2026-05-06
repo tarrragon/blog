@@ -5,7 +5,8 @@ description: "說明網站憑證如何安全續期與輪替以避免停機"
 weight: 148
 ---
 
-Certificate rotation and renewal 的核心概念是「在不中斷服務的前提下更新憑證與私鑰」。續期關注到期前更新，輪替關注主動替換既有憑證與金鑰材料。
+
+Certificate rotation and renewal 的核心概念是「在不中斷服務的前提下更新憑證與私鑰」。續期關注到期前更新，輪替關注主動替換既有憑證與金鑰材料。 可先對照 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)。
 
 ## 概念位置
 

@@ -5,11 +5,12 @@ description: "說明資料庫交易隔離級別如何影響並發讀寫結果"
 weight: 16
 ---
 
-Isolation level 的核心概念是「交易彼此看見資料變更的規則」。隔離級別越高，越能降低並發異常；同時也可能增加鎖競爭、等待與重試成本。
+
+Isolation level 的核心概念是「交易彼此看見資料變更的規則」。隔離級別越高，越能降低並發異常；同時也可能增加鎖競爭、等待與重試成本。 可先對照 [Jitter](/backend/knowledge-cards/jitter/)。
 
 ## 概念位置
 
-隔離級別處理的是同一份資料被多個交易同時讀寫時的行為。常見問題包括 dirty read、non-repeatable read、phantom read、lost update 與 write skew。不同資料庫的預設隔離與實作細節不同。
+隔離級別處理的是同一份資料被多個交易同時讀寫時的行為。常見問題包括 dirty read、non-repeatable read、phantom read、lost update 與 write skew。不同資料庫的預設隔離與實作細節不同。 可先對照 [Jitter](/backend/knowledge-cards/jitter/)。
 
 ## 可觀察訊號與例子
 

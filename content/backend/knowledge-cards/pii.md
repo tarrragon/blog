@@ -5,7 +5,8 @@ description: "說明可識別個人的資料如何影響權限、遮罩、保留
 weight: 123
 ---
 
-PII 的核心概念是「可識別特定個人的資料」。姓名、電話、email、地址、身份證號、裝置 ID、付款資訊與某些組合資料都可能成為 PII。
+
+PII 的核心概念是「可識別特定個人的資料」。姓名、電話、email、地址、身份證號、裝置 ID、付款資訊與某些組合資料都可能成為 PII。 可先對照 [Data Classification](/backend/knowledge-cards/data-classification/)。
 
 ## 概念位置
 

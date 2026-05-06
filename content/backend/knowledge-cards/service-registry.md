@@ -6,11 +6,12 @@ description: "說明服務實例如何被註冊、維護與摘除"
 weight: 152
 ---
 
-Service Registry 的核心概念是「保存目前可用服務實例的位址、狀態與 metadata，供 discovery、load balancer 或內部呼叫查找」。
+
+Service Registry 的核心概念是「保存目前可用服務實例的位址、狀態與 metadata，供 discovery、load balancer 或內部呼叫查找」。 可先對照 [Session Invalidation](/backend/knowledge-cards/session-invalidation/)。
 
 ## 概念位置
 
-Service Registry 位在 deployment platform、health check、service discovery 與 load balancing 之間。它負責維持「目前有哪些實例可用」這份資料。
+Service Registry 位在 deployment platform、health check、service discovery 與 load balancing 之間。它負責維持「目前有哪些實例可用」這份資料。 可先對照 [Session Invalidation](/backend/knowledge-cards/session-invalidation/)。
 
 ## 可觀察訊號
 

@@ -5,11 +5,12 @@ description: "說明如何為既有資料補上新欄位、新索引或新衍生
 weight: 82
 ---
 
-Backfill 的核心概念是「為既有資料補上新結構或新衍生結果」。它常出現在 migration、新功能上線、資料修復、搜尋索引重建與報表補算。
+
+Backfill 的核心概念是「為既有資料補上新結構或新衍生結果」。它常出現在 migration、新功能上線、資料修復、搜尋索引重建與報表補算。 可先對照 [Backpressure](/backend/knowledge-cards/backpressure/)。
 
 ## 概念位置
 
-Backfill 是資料遷移的執行階段。它會消耗資料庫、cache、queue、CPU 與網路資源，因此需要速率限制、checkpoint、監控與停止條件。
+Backfill 是資料遷移的執行階段。它會消耗資料庫、cache、queue、CPU 與網路資源，因此需要速率限制、checkpoint、監控與停止條件。 可先對照 [Backpressure](/backend/knowledge-cards/backpressure/)。
 
 ## 可觀察訊號與例子
 

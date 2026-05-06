@@ -6,11 +6,12 @@ description: "說明服務與負載平衡器之間的流量與健康檢查約定
 weight: 0
 ---
 
+
 Load Balancer Contract 的核心概念是「服務如何告訴流量入口自己能否安全接流量」。它描述 [health check](/backend/knowledge-cards/health-check/)、排空、切流與超時行為。
 
 ## 概念位置
 
-Load Balancer Contract 位在 application、load balancer、ingress 與 service discovery 之間。
+Load Balancer Contract 位在 application、load balancer、ingress 與 service discovery 之間。 可先對照 [Health Check](/backend/knowledge-cards/health-check/)。
 
 ## 可觀察訊號
 

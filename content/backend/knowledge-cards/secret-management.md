@@ -6,6 +6,7 @@ description: "說明 token、key、password 與憑證如何保存、輪替與撤
 weight: 40
 ---
 
+
 Secret management 的核心概念是「用受控流程管理可取得系統權限的秘密資料」。Secret 包含 API key、[database](/backend/knowledge-cards/database/) password、JWT signing key、[TLS](/backend/knowledge-cards/tls-mtls/) private key、webhook secret 與第三方 credential。
 
 ## 概念位置

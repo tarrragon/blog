@@ -5,11 +5,12 @@ description: "說明重試次數如何受整體容量與錯誤預算限制"
 weight: 58
 ---
 
-Retry budget 的核心概念是「把重試量限制在系統可承受的預算內」。它承認重試會消耗下游容量，因此重試規則需要納入共享容量與全局保護。
+
+Retry budget 的核心概念是「把重試量限制在系統可承受的預算內」。它承認重試會消耗下游容量，因此重試規則需要納入共享容量與全局保護。 可先對照 [Retry Policy](/backend/knowledge-cards/retry-policy/)。
 
 ## 概念位置
 
-Retry budget 是 retry storm 的防護工具。它可以用比例、token bucket、error budget、全域配額或每個 client 配額實作，讓重試量和正常流量維持合理比例。
+Retry budget 是 retry storm 的防護工具。它可以用比例、token bucket、error budget、全域配額或每個 client 配額實作，讓重試量和正常流量維持合理比例。 可先對照 [Retry Policy](/backend/knowledge-cards/retry-policy/)。
 
 ## 可觀察訊號與例子
 

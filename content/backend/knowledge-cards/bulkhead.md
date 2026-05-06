@@ -5,11 +5,12 @@ description: "說明 bulkhead 如何用資源分艙限制故障擴散"
 weight: 55
 ---
 
-Bulkhead 的核心概念是「把服務資源分成彼此隔離的艙室」。某個艙室過載或失效時，其他艙室仍保留處理能力。
+
+Bulkhead 的核心概念是「把服務資源分成彼此隔離的艙室」。某個艙室過載或失效時，其他艙室仍保留處理能力。 可先對照 [Burn Rate](/backend/knowledge-cards/burn-rate/)。
 
 ## 概念位置
 
-Bulkhead 是 dependency isolation 的具體模式。它常用在 thread pool、connection pool、queue、worker group、tenant capacity 與不同優先級工作。
+Bulkhead 是 dependency isolation 的具體模式。它常用在 thread pool、connection pool、queue、worker group、tenant capacity 與不同優先級工作。 可先對照 [Burn Rate](/backend/knowledge-cards/burn-rate/)。
 
 ## 可觀察訊號與例子
 

@@ -5,11 +5,12 @@ description: "說明 error budget 消耗速度如何支援告警與事故分級"
 weight: 102
 ---
 
-Burn rate 的核心概念是「error budget 被消耗的速度」。它讓團隊知道目前錯誤率若持續下去，多久會耗盡可靠性預算。
+
+Burn rate 的核心概念是「error budget 被消耗的速度」。它讓團隊知道目前錯誤率若持續下去，多久會耗盡可靠性預算。 可先對照 [Cache Aside](/backend/knowledge-cards/cache-aside/)。
 
 ## 概念位置
 
-Burn rate 是 SLO alerting 的常用方式。短時間高 burn rate 代表急性事故；長時間中等 burn rate 代表慢性可靠性退化。
+Burn rate 是 SLO alerting 的常用方式。短時間高 burn rate 代表急性事故；長時間中等 burn rate 代表慢性可靠性退化。 可先對照 [Cache Aside](/backend/knowledge-cards/cache-aside/)。
 
 ## 可觀察訊號與例子
 

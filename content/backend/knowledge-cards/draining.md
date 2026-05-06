@@ -6,11 +6,12 @@ description: "說明服務如何先停止接收新流量，再讓既有工作完
 weight: 131
 ---
 
-Draining 的核心概念是「先把新的 request 停掉，再讓已經進來的工作在期限內完成或交回」。它是負載切換與停止流程中的保護動作，常出現在 rolling update、縮容、故障切換與 graceful shutdown。
+
+Draining 的核心概念是「先把新的 request 停掉，再讓已經進來的工作在期限內完成或交回」。它是負載切換與停止流程中的保護動作，常出現在 rolling update、縮容、故障切換與 graceful shutdown。 可先對照 [Dual Write](/backend/knowledge-cards/dual-write/)。
 
 ## 概念位置
 
-Draining 位在 load balancer、deployment platform、application 與 in-flight work 之間。它介於流量入口與工作完成之間，目標是避免切換瞬間把正在處理的請求硬切掉。
+Draining 位在 load balancer、deployment platform、application 與 in-flight work 之間。它介於流量入口與工作完成之間，目標是避免切換瞬間把正在處理的請求硬切掉。 可先對照 [Dual Write](/backend/knowledge-cards/dual-write/)。
 
 ## 可觀察訊號
 

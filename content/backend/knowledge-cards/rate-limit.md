@@ -6,11 +6,12 @@ description: "說明限流如何保護服務入口、下游依賴與租戶公平
 weight: 28
 ---
 
+
 Rate limit 的核心概念是「限制某個主體在一段時間內可以使用的資源量」。主體可以是 user、API key、IP、tenant、endpoint、worker、[producer](/backend/knowledge-cards/producer/) 或內部服務。
 
 ## 概念位置
 
-Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、匯出、第三方 API、webhook endpoint 與下游服務，降低單一來源耗盡共享資源的風險。
+Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、匯出、第三方 API、webhook endpoint 與下游服務，降低單一來源耗盡共享資源的風險。 可先對照 [Producer](/backend/knowledge-cards/producer/)。
 
 ## 可觀察訊號與例子
 

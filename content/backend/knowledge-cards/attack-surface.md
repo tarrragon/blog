@@ -5,7 +5,8 @@ description: "說明系統哪些對外暴露面會被先行探測與枚舉"
 weight: 123
 ---
 
-Attack surface 的核心概念是「攻擊者能先看見並嘗試互動的所有暴露面」。它不只包括 public API，也包括 admin route、webhook、diagnostic endpoint、upload path、debug flag、雲端資源與任何能被外部觸及的入口。
+
+Attack surface 的核心概念是「攻擊者能先看見並嘗試互動的所有暴露面」。它不只包括 public API，也包括 admin route、webhook、diagnostic endpoint、upload path、debug flag、雲端資源與任何能被外部觸及的入口。 可先對照 [Public API Endpoint](/backend/knowledge-cards/public-api-endpoint/)。
 
 ## 概念位置
 

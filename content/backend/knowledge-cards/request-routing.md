@@ -5,7 +5,8 @@ description: "說明入口流量如何依規則被導向不同服務或處理路
 weight: 132
 ---
 
-Request Routing 的核心概念是「根據 request 的特徵，決定它應該被送到哪個服務或哪條處理路徑」。它處理的是入口層的分派規則，而不是訊息 broker 內部的 routing rule。
+
+Request Routing 的核心概念是「根據 request 的特徵，決定它應該被送到哪個服務或哪條處理路徑」。它處理的是入口層的分派規則，而不是訊息 broker 內部的 routing rule。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 概念位置
 

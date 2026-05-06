@@ -5,11 +5,12 @@ description: "說明 histogram 如何用分桶統計延遲、大小與分布"
 weight: 98
 ---
 
-Histogram 的核心概念是「把觀測值分到多個 bucket，記錄每個範圍的累積數量」。它常用來觀察 latency、request size、payload size、queue wait time 與處理耗時。
+
+Histogram 的核心概念是「把觀測值分到多個 bucket，記錄每個範圍的累積數量」。它常用來觀察 latency、request size、payload size、queue wait time 與處理耗時。 可先對照 [Hot Key](/backend/knowledge-cards/hot-key/)。
 
 ## 概念位置
 
-Histogram 是 metrics 中描述分布的工具。平均值只能說明中心趨勢，histogram 可以支援 p95、p99、SLO 與 burn rate 判斷。
+Histogram 是 metrics 中描述分布的工具。平均值只能說明中心趨勢，histogram 可以支援 p95、p99、SLO 與 burn rate 判斷。 可先對照 [Hot Key](/backend/knowledge-cards/hot-key/)。
 
 ## 可觀察訊號與例子
 

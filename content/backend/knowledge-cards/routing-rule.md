@@ -5,7 +5,8 @@ description: "說明訊息系統如何依規則把訊息送到不同處理路徑
 weight: 135
 ---
 
-Routing rule 的核心概念是「用訊息屬性決定訊息要進入哪個處理路徑」。規則可以依 topic、routing key、header、tenant、事件類型、優先級或業務狀態分派訊息。
+
+Routing rule 的核心概念是「用訊息屬性決定訊息要進入哪個處理路徑」。規則可以依 topic、routing key、header、tenant、事件類型、優先級或業務狀態分派訊息。 可先對照 [Broker](/backend/knowledge-cards/broker/)。
 
 ## 概念位置
 

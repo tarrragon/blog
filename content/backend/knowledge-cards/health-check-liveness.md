@@ -5,11 +5,12 @@ description: "說明平台如何判斷 process 是否仍然存活，以及何時
 weight: 31
 ---
 
-Liveness 的核心概念是「判斷 instance 是否仍能維持基本存活」。平台用這類訊號決定是否重啟 instance；readiness 則決定 instance 是否接收正式流量。
+
+Liveness 的核心概念是「判斷 instance 是否仍能維持基本存活」。平台用這類訊號決定是否重啟 instance；readiness 則決定 instance 是否接收正式流量。 可先對照 [Health Check](/backend/knowledge-cards/health-check/)。
 
 ## 概念位置
 
-Liveness 關注 process 是否卡死、主 loop 是否停止、必要 runtime 是否失效。Readiness 關注接流量條件。兩者混用會讓平台在下游短暫故障時重啟正常 instance，造成更大波動。
+Liveness 關注 process 是否卡死、主 loop 是否停止、必要 runtime 是否失效。Readiness 關注接流量條件。兩者混用會讓平台在下游短暫故障時重啟正常 instance，造成更大波動。 可先對照 [Health Check](/backend/knowledge-cards/health-check/)。
 
 ## 可觀察訊號與例子
 

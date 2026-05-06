@@ -5,11 +5,12 @@ description: "說明 consumer 群組每秒能穩定處理多少工作"
 weight: 70
 ---
 
-Consumer capacity 的核心概念是「consumer 群組在穩定條件下能處理的工作量」。它取決於 consumer 數量、handler 耗時、prefetch、下游容量、錯誤率與重試量。
+
+Consumer capacity 的核心概念是「consumer 群組在穩定條件下能處理的工作量」。它取決於 consumer 數量、handler 耗時、prefetch、下游容量、錯誤率與重試量。 可先對照 [Consumer Group](/backend/knowledge-cards/consumer-group/)。
 
 ## 概念位置
 
-Consumer capacity 是 queue sizing 與容量規劃的基礎。Producer rate 高於 consumer capacity 時，queue depth 與 lag 會上升；consumer capacity 高於下游容量時，壓力會轉移到資料庫或 API。
+Consumer capacity 是 queue sizing 與容量規劃的基礎。Producer rate 高於 consumer capacity 時，queue depth 與 lag 會上升；consumer capacity 高於下游容量時，壓力會轉移到資料庫或 API。 可先對照 [Consumer Group](/backend/knowledge-cards/consumer-group/)。
 
 ## 可觀察訊號與例子
 

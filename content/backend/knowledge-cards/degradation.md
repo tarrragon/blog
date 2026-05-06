@@ -6,11 +6,12 @@ description: "說明服務部分能力失效時如何保留核心功能與控制
 weight: 8
 ---
 
-降級的核心概念是「在部分依賴失效或容量不足時，保留最重要的產品能力」。降級設計會預先定義哪些功能可以暫停、改用簡化結果、延後處理或只提供只讀能力，讓系統在壓力下維持可控狀態。
+
+降級的核心概念是「在部分依賴失效或容量不足時，保留最重要的產品能力」。降級設計會預先定義哪些功能可以暫停、改用簡化結果、延後處理或只提供只讀能力，讓系統在壓力下維持可控狀態。 可先對照 [Delivery Mode](/backend/knowledge-cards/delivery-mode/)。
 
 ## 概念位置
 
-降級是可靠性設計的一部分。它和 failover、rate limit、circuit breaker、feature flag、cache fallback、read-only mode 相關，但重點是產品取捨：哪些功能必須保留，哪些功能可以暫時縮小。
+降級是可靠性設計的一部分。它和 failover、rate limit、circuit breaker、feature flag、cache fallback、read-only mode 相關，但重點是產品取捨：哪些功能必須保留，哪些功能可以暫時縮小。 可先對照 [Delivery Mode](/backend/knowledge-cards/delivery-mode/)。
 
 ## 可觀察訊號
 

@@ -6,11 +6,12 @@ description: "說明設定如何安全下發到正在運作的服務實例"
 weight: 152
 ---
 
-Config Rollout 的核心概念是「把設定變更從程式部署中分離，並以可控方式送到正在運作的服務」。它處理的是設定版本、下發節奏、回復方式與觀察驗證，不是單純修改一個環境變數值。
+
+Config Rollout 的核心概念是「把設定變更從程式部署中分離，並以可控方式送到正在運作的服務」。它處理的是設定版本、下發節奏、回復方式與觀察驗證，不是單純修改一個環境變數值。 可先對照 [Connection Pool](/backend/knowledge-cards/connection-pool/)。
 
 ## 概念位置
 
-Config Rollout 位在 configuration source、deployment platform 與 running instances 之間。它通常與 service discovery、container runtime、feature flag、secret management 或配置中心一起出現。
+Config Rollout 位在 configuration source、deployment platform 與 running instances 之間。它通常與 service discovery、container runtime、feature flag、secret management 或配置中心一起出現。 可先對照 [Connection Pool](/backend/knowledge-cards/connection-pool/)。
 
 ## 可觀察訊號
 

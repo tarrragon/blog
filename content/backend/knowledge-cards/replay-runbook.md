@@ -5,6 +5,7 @@ description: "說明事件重放前需要控制的範圍、順序、驗證與副
 weight: 4
 ---
 
+
 Replay runbook 的核心概念是「把事件重放變成可控操作」。Replay 會讓歷史訊息再次進入處理流程，因此 [runbook](/backend/knowledge-cards/runbook/) 要定義重放範圍、順序、速率、驗證方式、回滾策略與負責人。
 
 ## 概念位置

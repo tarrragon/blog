@@ -5,11 +5,12 @@ description: "說明缺少資源限制如何讓 API 被濫用或拖垮"
 weight: 116
 ---
 
-Unrestricted resource consumption 的核心概念是「API 沒有對資源使用量設定足夠限制」。攻擊者或錯誤 client 可以用大量 request、大型 payload、昂貴查詢或大量匯出耗盡系統資源。
+
+Unrestricted resource consumption 的核心概念是「API 沒有對資源使用量設定足夠限制」。攻擊者或錯誤 client 可以用大量 request、大型 payload、昂貴查詢或大量匯出耗盡系統資源。 可先對照 [Validation Middleware](/backend/knowledge-cards/validation-middleware/)。
 
 ## 概念位置
 
-資源消耗限制連接 rate limit、payload limit、timeout、pagination、query cost、queue quota 與 tenant quota。它同時是可靠性與資安問題。
+資源消耗限制連接 rate limit、payload limit、timeout、pagination、query cost、queue quota 與 tenant quota。它同時是可靠性與資安問題。 可先對照 [Validation Middleware](/backend/knowledge-cards/validation-middleware/)。
 
 ## 可觀察訊號與例子
 

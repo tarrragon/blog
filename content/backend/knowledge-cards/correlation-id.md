@@ -5,11 +5,12 @@ description: "說明跨事件或跨服務的關聯識別碼如何支援排障"
 weight: 104
 ---
 
-Correlation ID 的核心概念是「把同一個業務流程中的多筆紀錄關聯起來的識別碼」。它可以跨 request、queue message、background job、log、trace 與外部 API 呼叫。
+
+Correlation ID 的核心概念是「把同一個業務流程中的多筆紀錄關聯起來的識別碼」。它可以跨 request、queue message、background job、log、trace 與外部 API 呼叫。 可先對照 [Credential](/backend/knowledge-cards/credential/)。
 
 ## 概念位置
 
-Correlation ID 是診斷關聯層。Trace ID 偏向一次技術呼叫路徑；correlation ID 可以代表更長的業務流程，例如一筆訂單或一次付款嘗試。
+Correlation ID 是診斷關聯層。Trace ID 偏向一次技術呼叫路徑；correlation ID 可以代表更長的業務流程，例如一筆訂單或一次付款嘗試。 可先對照 [Credential](/backend/knowledge-cards/credential/)。
 
 ## 可觀察訊號與例子
 

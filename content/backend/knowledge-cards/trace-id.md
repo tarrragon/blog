@@ -5,11 +5,12 @@ description: "說明分散式追蹤中同一條呼叫路徑的識別碼"
 weight: 106
 ---
 
-Trace ID 的核心概念是「分散式追蹤中同一條呼叫路徑的識別碼」。一個 trace 由多個 span 組成，trace ID 讓 tracing 系統把它們聚合成同一次操作。
+
+Trace ID 的核心概念是「分散式追蹤中同一條呼叫路徑的識別碼」。一個 trace 由多個 span 組成，trace ID 讓 tracing 系統把它們聚合成同一次操作。 可先對照 [Trace](/backend/knowledge-cards/trace/)。
 
 ## 概念位置
 
-Trace ID 是 tracing 的頂層關聯欄位。它適合追蹤一次 request 經過多個服務、queue、database 與外部 API 的時間分布。
+Trace ID 是 tracing 的頂層關聯欄位。它適合追蹤一次 request 經過多個服務、queue、database 與外部 API 的時間分布。 可先對照 [Trace](/backend/knowledge-cards/trace/)。
 
 ## 可觀察訊號與例子
 

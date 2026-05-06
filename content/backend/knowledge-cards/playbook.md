@@ -6,6 +6,7 @@ description: "說明場景化處置腳本如何降低事故處理不確定性"
 weight: 162
 ---
 
+
 Playbook 的核心概念是「針對特定故障場景提供可直接執行的處置腳本」。它比通用 [runbook](/backend/knowledge-cards/runbook/) 更聚焦，通常對應單一風險模式或單一系統路徑。
 
 ## 概念位置

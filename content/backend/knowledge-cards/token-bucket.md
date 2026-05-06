@@ -5,11 +5,12 @@ description: "說明 token bucket 如何用配額與補充速率控制流量"
 weight: 53
 ---
 
-Token bucket 的核心概念是「用可累積的 token 表示可使用配額」。每次操作消耗 token，系統按固定速率補充 token；bucket 容量決定可容忍的短暫 burst。
+
+Token bucket 的核心概念是「用可累積的 token 表示可使用配額」。每次操作消耗 token，系統按固定速率補充 token；bucket 容量決定可容忍的短暫 burst。 可先對照 [Token Revocation](/backend/knowledge-cards/token-revocation/)。
 
 ## 概念位置
 
-Token bucket 常用於 rate limit、retry budget、API quota、worker admission 與下游保護。它同時表達平均速率與短暫尖峰容忍度。
+Token bucket 常用於 rate limit、retry budget、API quota、worker admission 與下游保護。它同時表達平均速率與短暫尖峰容忍度。 可先對照 [Token Revocation](/backend/knowledge-cards/token-revocation/)。
 
 ## 可觀察訊號與例子
 

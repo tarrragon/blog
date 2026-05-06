@@ -5,11 +5,12 @@ description: "說明同一操作執行多次時如何保持結果一致"
 weight: 25
 ---
 
-Idempotency 的核心概念是「同一操作執行一次或多次，最終業務結果相同」。後端系統用 idempotency 保護重試、重複投遞、使用者重送 request 與外部 API timeout。
+
+Idempotency 的核心概念是「同一操作執行一次或多次，最終業務結果相同」。後端系統用 idempotency 保護重試、重複投遞、使用者重送 request 與外部 API timeout。 可先對照 [Idle Timeout](/backend/knowledge-cards/idle-timeout/)。
 
 ## 概念位置
 
-Idempotency 是副作用邊界的穩定性設計。查詢通常天然接近 idempotent；建立訂單、扣款、出貨、寄送通知與發放點數都需要額外設計 idempotency key 或狀態檢查。
+Idempotency 是副作用邊界的穩定性設計。查詢通常天然接近 idempotent；建立訂單、扣款、出貨、寄送通知與發放點數都需要額外設計 idempotency key 或狀態檢查。 可先對照 [Idle Timeout](/backend/knowledge-cards/idle-timeout/)。
 
 ## 可觀察訊號與例子
 

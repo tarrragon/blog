@@ -6,6 +6,7 @@ description: "說明重複、手動、無永久價值的工作如何成為工程
 weight: 315
 ---
 
+
 Toil 的核心概念是「重複、手動、無永久價值、可自動化的工作」。它通常和 [on-call](/backend/knowledge-cards/on-call/) 壓力、[alert fatigue](/backend/knowledge-cards/alert-fatigue/) 與 [runbook](/backend/knowledge-cards/runbook/) 綁在一起。
 
 ## 概念位置

@@ -5,7 +5,8 @@ description: "說明資料副本落後正式來源多久，以及它如何影響
 weight: 80
 ---
 
-Replication lag 的核心概念是「資料副本落後正式來源的時間或位置差距」。Replica、搜尋索引、read model、cache 與資料倉儲都可能有 lag。
+
+Replication lag 的核心概念是「資料副本落後正式來源的時間或位置差距」。Replica、搜尋索引、read model、cache 與資料倉儲都可能有 lag。 可先對照 [Database](/backend/knowledge-cards/database/)。
 
 ## 概念位置
 

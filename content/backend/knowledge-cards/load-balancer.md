@@ -6,6 +6,7 @@ description: "說明流量如何分散、排空與導向健康節點"
 weight: 129
 ---
 
+
 Load balancer 的核心概念是「把進來的流量導到合適的服務實例」。它常處理分流、健康檢查、[draining](/backend/knowledge-cards/draining/)、[sticky session](/backend/knowledge-cards/sticky-session/) 與 [idle timeout](/backend/knowledge-cards/idle-timeout/)。
 
 ## 概念位置

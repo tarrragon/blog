@@ -5,11 +5,12 @@ description: "說明服務品質指標與服務品質目標如何連接產品承
 weight: 34
 ---
 
-SLI / SLO 的核心概念是「用可量測訊號表達服務承諾」。SLI 是服務品質指標，例如成功率、延遲、可用性；SLO 是這些指標的目標，例如 99.9% request 在 300ms 內成功。
+
+SLI / SLO 的核心概念是「用可量測訊號表達服務承諾」。SLI 是服務品質指標，例如成功率、延遲、可用性；SLO 是這些指標的目標，例如 99.9% request 在 300ms 內成功。 可先對照 [Socket](/backend/knowledge-cards/socket/)。
 
 ## 概念位置
 
-SLI/SLO 把觀測資料轉成決策語言。單純看到 error rate 上升只能說明症狀；對照 SLO 後，團隊才能判斷是否需要暫停發版、啟動 incident、擴容或降級。
+SLI/SLO 把觀測資料轉成決策語言。單純看到 error rate 上升只能說明症狀；對照 SLO 後，團隊才能判斷是否需要暫停發版、啟動 incident、擴容或降級。 可先對照 [Socket](/backend/knowledge-cards/socket/)。
 
 ## 可觀察訊號與例子
 

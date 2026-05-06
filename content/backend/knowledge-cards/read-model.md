@@ -5,6 +5,7 @@ description: "說明為查詢場景建立的讀取模型與正式狀態的責任
 weight: 150
 ---
 
+
 Read model 的核心概念是「為查詢需求建立專用資料形狀」。它強調查詢效率與體驗，正式狀態仍由 [source of truth](/backend/knowledge-cards/source-of-truth/) 承擔。
 
 ## 概念位置

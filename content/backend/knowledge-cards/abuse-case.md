@@ -5,7 +5,8 @@ description: "說明合法功能如何被惡意轉用成突破或濫用路徑"
 weight: 125
 ---
 
-Abuse case 的核心概念是「功能本來合法，但可能被攻擊者重新組合成非預期用途」。它和 threat model 的差別在於，abuse case 更關心具體的惡意使用情境，而不是抽象風險分類。
+
+Abuse case 的核心概念是「功能本來合法，但可能被攻擊者重新組合成非預期用途」。它和 threat model 的差別在於，abuse case 更關心具體的惡意使用情境，而不是抽象風險分類。 可先對照 [Authentication](/backend/knowledge-cards/authentication/)。
 
 ## 概念位置
 

@@ -5,11 +5,12 @@ description: "說明佇列工作在重試、確認與重複投遞上的約定"
 weight: 0
 ---
 
-Queue Contract 的核心概念是「producer、queue 與 consumer 對工作如何被確認與重送達成一致」。它描述的是交付語意，而不是單純的格式。
+
+Queue Contract 的核心概念是「producer、queue 與 consumer 對工作如何被確認與重送達成一致」。它描述的是交付語意，而不是單純的格式。 可先對照 [Queue Depth](/backend/knowledge-cards/queue-depth/)。
 
 ## 概念位置
 
-Queue Contract 位在 producer、broker 與 consumer 之間。當工作要可靠排隊與重試時，就需要清楚的 contract。
+Queue Contract 位在 producer、broker 與 consumer 之間。當工作要可靠排隊與重試時，就需要清楚的 contract。 可先對照 [Queue Depth](/backend/knowledge-cards/queue-depth/)。
 
 ## 可觀察訊號
 

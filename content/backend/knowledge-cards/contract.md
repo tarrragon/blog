@@ -5,11 +5,12 @@ description: "說明跨邊界約定如何維持相容與可驗證"
 weight: 0
 ---
 
-Boundary Contract 的核心概念是「邊界兩端共同承認的約定」。它描述不同系統、元件或流程在互相協作時，需要遵守的共同規則。
+
+Boundary Contract 的核心概念是「邊界兩端共同承認的約定」。它描述不同系統、元件或流程在互相協作時，需要遵守的共同規則。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 概念位置
 
-Boundary Contract 位在 client 與 service、service 與 service、程式與平台之間。當兩端都需要依同一份規則運作時，就需要 contract 來避免含糊地帶。
+Boundary Contract 位在 client 與 service、service 與 service、程式與平台之間。當兩端都需要依同一份規則運作時，就需要 contract 來避免含糊地帶。 可先對照 [Draining](/backend/knowledge-cards/draining/)。
 
 ## 可觀察訊號
 

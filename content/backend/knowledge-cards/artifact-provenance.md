@@ -6,7 +6,8 @@ description: "說明交付物的來源、完整性與簽章關聯如何建立信
 weight: 258
 ---
 
-Artifact provenance 的核心概念是「證明交付物來源、建置路徑與完整性，讓部署決策有可驗證信任基礎」。它把供應鏈信任從假設改成證據。
+
+Artifact provenance 的核心概念是「證明交付物來源、建置路徑與完整性，讓部署決策有可驗證信任基礎」。它把供應鏈信任從假設改成證據。 可先對照 [CI Pipeline](/backend/knowledge-cards/ci-pipeline/)。
 
 ## 概念位置
 

@@ -5,11 +5,12 @@ description: "說明外部系統回呼事件的接收、驗證與處理邊界"
 weight: 155
 ---
 
-Webhook 的核心概念是「外部系統主動把事件推送到你的 endpoint」。它常用於支付、物流、第三方整合通知。
+
+Webhook 的核心概念是「外部系統主動把事件推送到你的 endpoint」。它常用於支付、物流、第三方整合通知。 可先對照 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)。
 
 ## 概念位置
 
-Webhook 通常需要來源驗證、重放防護、重試處理與可追蹤事件 ID。
+Webhook 通常需要來源驗證、重放防護、重試處理與可追蹤事件 ID。 可先對照 [Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)。
 
 ## 設計責任
 

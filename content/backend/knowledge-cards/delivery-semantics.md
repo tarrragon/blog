@@ -5,7 +5,8 @@ description: "說明事件投遞語意如何定義遺失、重複、順序與補
 weight: 149
 ---
 
-Delivery semantics 的核心概念是「系統對事件投遞結果的承諾」。它回答訊息可否遺失、可否重複、是否要求順序，以及失敗後如何補償。
+
+Delivery semantics 的核心概念是「系統對事件投遞結果的承諾」。它回答訊息可否遺失、可否重複、是否要求順序，以及失敗後如何補償。 可先對照 [Retry Policy](/backend/knowledge-cards/retry-policy/)。
 
 ## 概念位置
 

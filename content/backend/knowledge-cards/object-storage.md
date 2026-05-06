@@ -5,11 +5,12 @@ description: "說明大型非結構化檔案的保存、存取與生命週期管
 weight: 147
 ---
 
-Object storage 的核心概念是「用 object key 管理大型檔案內容」。它適合圖片、影片、附件、匯出檔與備份，不適合承擔複雜交易查詢。
+
+Object storage 的核心概念是「用 object key 管理大型檔案內容」。它適合圖片、影片、附件、匯出檔與備份，不適合承擔複雜交易查詢。 可先對照 [Observability Middleware](/backend/knowledge-cards/observability-middleware/)。
 
 ## 概念位置
 
-常見做法是把檔案 metadata 放在資料庫，內容放在 object storage，並用 key 連結兩者。
+常見做法是把檔案 metadata 放在資料庫，內容放在 object storage，並用 key 連結兩者。 可先對照 [Observability Middleware](/backend/knowledge-cards/observability-middleware/)。
 
 ## 可觀察訊號與例子
 

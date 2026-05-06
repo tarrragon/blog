@@ -6,11 +6,12 @@ description: "說明如何用可動態開關控制功能曝光與風險"
 weight: 154
 ---
 
-Feature flag 的核心概念是「把功能啟用控制與部署分離」。它可用於灰度發布、A/B 測試與緊急關閉。
+
+Feature flag 的核心概念是「把功能啟用控制與部署分離」。它可用於灰度發布、A/B 測試與緊急關閉。 可先對照 [Full-Text Search](/backend/knowledge-cards/full-text-search/)。
 
 ## 概念位置
 
-常出現在高風險功能、實驗功能與跨租戶差異化控制。
+常出現在高風險功能、實驗功能與跨租戶差異化控制。 可先對照 [Full-Text Search](/backend/knowledge-cards/full-text-search/)。
 
 ## 設計責任
 

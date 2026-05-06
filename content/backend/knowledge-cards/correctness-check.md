@@ -5,11 +5,12 @@ description: "說明遷移或重構期間如何驗證新舊結果是否符合規
 weight: 85
 ---
 
-Correctness check 的核心概念是「用明確規則驗證新舊結果是否一致或可接受」。它不只比對字面相等，也要理解哪些差異符合預期，哪些差異代表資料錯誤。
+
+Correctness check 的核心概念是「用明確規則驗證新舊結果是否一致或可接受」。它不只比對字面相等，也要理解哪些差異符合預期，哪些差異代表資料錯誤。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
 ## 概念位置
 
-Correctness check 是 migration、refactoring、shadow read、backfill 與 cutover 的決策依據。沒有正確性檢查，團隊只能憑錯誤率或使用者回報判斷新系統。
+Correctness check 是 migration、refactoring、shadow read、backfill 與 cutover 的決策依據。沒有正確性檢查，團隊只能憑錯誤率或使用者回報判斷新系統。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
 ## 可觀察訊號與例子
 

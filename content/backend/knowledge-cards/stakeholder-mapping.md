@@ -6,6 +6,7 @@ description: "說明事故期間如何把通報對象分層與對應 owner"
 weight: 314
 ---
 
+
 Stakeholder mapping 的核心概念是「把誰需要知道什麼、由誰負責、在什麼節奏通知」先畫清楚。它和 [incident communication channel](/backend/knowledge-cards/incident-communication-channel/) 以及 [status page](/backend/knowledge-cards/status-page/) 一起決定通報的分層。
 
 ## 概念位置

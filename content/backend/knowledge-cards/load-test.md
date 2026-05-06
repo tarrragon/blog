@@ -5,11 +5,12 @@ description: "說明在預期流量下驗證容量、延遲與降級策略的測
 weight: 158
 ---
 
-Load test 的核心概念是「以接近真實流量模型驗證系統容量」。它用來發現瓶頸與評估擴容/降級策略。
+
+Load test 的核心概念是「以接近真實流量模型驗證系統容量」。它用來發現瓶頸與評估擴容/降級策略。 可先對照 [Local Worker](/backend/knowledge-cards/local-worker/)。
 
 ## 概念位置
 
-常在活動前、重大發版前或架構調整後執行，並觀察延遲、錯誤率與資源使用。
+常在活動前、重大發版前或架構調整後執行，並觀察延遲、錯誤率與資源使用。 可先對照 [Local Worker](/backend/knowledge-cards/local-worker/)。
 
 ## 設計責任
 

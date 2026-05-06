@@ -5,7 +5,8 @@ description: "說明面向外部 client 的穩定 API 入口如何被管理"
 weight: 0
 ---
 
-Public API Endpoint 的核心概念是「外部 client 直接呼叫服務時，所經過的穩定入口」。它承載產品功能對外的 request / response 邊界。
+
+Public API Endpoint 的核心概念是「外部 client 直接呼叫服務時，所經過的穩定入口」。它承載產品功能對外的 request / response 邊界。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 概念位置
 

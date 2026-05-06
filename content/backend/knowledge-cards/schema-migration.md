@@ -5,6 +5,7 @@ description: "說明資料庫結構如何隨應用程式版本安全演進"
 weight: 15
 ---
 
+
 Schema migration 的核心概念是「用版本化流程修改 [database](/backend/knowledge-cards/database/) 結構」。資料表、欄位、索引、constraint 與資料修補都會影響 application，因此 [migration](/backend/knowledge-cards/migration/) 要和部署、回滾、資料量與相容性一起設計。
 
 ## 概念位置

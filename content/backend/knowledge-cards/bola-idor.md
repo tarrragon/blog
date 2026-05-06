@@ -5,11 +5,12 @@ description: "說明物件層授權缺失如何讓使用者存取不屬於自己
 weight: 112
 ---
 
-BOLA / IDOR 的核心概念是「使用者透過修改物件 ID 存取未授權資源」。BOLA 是 Broken Object Level Authorization；IDOR 是 Insecure Direct Object Reference。
+
+BOLA / IDOR 的核心概念是「使用者透過修改物件 ID 存取未授權資源」。BOLA 是 Broken Object Level Authorization；IDOR 是 Insecure Direct Object Reference。 可先對照 [BOPLA](/backend/knowledge-cards/bopla/)。
 
 ## 概念位置
 
-BOLA 是 API 安全中常見的授權問題。Authentication 只能確認呼叫者身份；每次讀寫訂單、檔案、帳戶、發票或 tenant 資源時，仍要檢查該身份是否能操作該物件。
+BOLA 是 API 安全中常見的授權問題。Authentication 只能確認呼叫者身份；每次讀寫訂單、檔案、帳戶、發票或 tenant 資源時，仍要檢查該身份是否能操作該物件。 可先對照 [BOPLA](/backend/knowledge-cards/bopla/)。
 
 ## 可觀察訊號與例子
 

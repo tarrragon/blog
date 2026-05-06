@@ -5,11 +5,12 @@ description: "說明 API 回傳過多資料如何增加敏感資訊外洩風險"
 weight: 115
 ---
 
-Excessive data exposure 的核心概念是「API 回傳超出呼叫者需要的資料」。即使前端沒有顯示，資料仍然已經離開後端邊界。
+
+Excessive data exposure 的核心概念是「API 回傳超出呼叫者需要的資料」。即使前端沒有顯示，資料仍然已經離開後端邊界。 可先對照 [Expand / Contract](/backend/knowledge-cards/expand-contract/)。
 
 ## 概念位置
 
-資料暴露是輸出邊界問題。API response 應依用途設計 DTO、欄位遮罩與角色權限，內部資料模型應留在服務邊界內。
+資料暴露是輸出邊界問題。API response 應依用途設計 DTO、欄位遮罩與角色權限，內部資料模型應留在服務邊界內。 可先對照 [Expand / Contract](/backend/knowledge-cards/expand-contract/)。
 
 ## 可觀察訊號與例子
 

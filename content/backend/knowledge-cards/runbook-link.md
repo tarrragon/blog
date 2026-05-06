@@ -5,6 +5,7 @@ description: "說明告警與 dashboard 如何直接連到處理流程"
 weight: 109
 ---
 
+
 Runbook link 的核心概念是「[alert](/backend/knowledge-cards/alert/) 或 [dashboard](/backend/knowledge-cards/dashboard/) 直接連到對應處理流程」。它讓 on-call 從訊號直接進入可執行步驟，並降低對搜尋文件或個人記憶的依賴。
 
 ## 概念位置

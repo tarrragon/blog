@@ -5,11 +5,12 @@ description: "說明正式讀取仍走舊路徑時如何暗中讀新路徑比對
 weight: 84
 ---
 
-Shadow read 的核心概念是「正式結果仍使用舊路徑，同時暗中讀新路徑做比對」。它讓團隊在 cutover 前驗證新系統的正確性與延遲。
+
+Shadow read 的核心概念是「正式結果仍使用舊路徑，同時暗中讀新路徑做比對」。它讓團隊在 cutover 前驗證新系統的正確性與延遲。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
 ## 概念位置
 
-Shadow read 是 migration 與服務替換的驗證工具。它能在不影響使用者結果的前提下收集新舊差異，但會增加下游流量與資料存取成本。
+Shadow read 是 migration 與服務替換的驗證工具。它能在不影響使用者結果的前提下收集新舊差異，但會增加下游流量與資料存取成本。 可先對照 [Migration Gate](/backend/knowledge-cards/migration-gate/)。
 
 ## 可觀察訊號與例子
 

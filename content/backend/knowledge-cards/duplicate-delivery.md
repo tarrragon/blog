@@ -6,11 +6,12 @@ description: "說明同一個訊息被處理多次時如何保持結果穩定"
 weight: 5
 ---
 
-重複投遞的核心概念是「同一個工作或事件可能被 consumer 看見多次」。在 at-least-once delivery 模型中，broker 會優先保證訊息有機會被處理；當 ack 遺失、consumer crash、網路中斷或 timeout 發生時，同一則訊息可能再次投遞。
+
+重複投遞的核心概念是「同一個工作或事件可能被 consumer 看見多次」。在 at-least-once delivery 模型中，broker 會優先保證訊息有機會被處理；當 ack 遺失、consumer crash、網路中斷或 timeout 發生時，同一則訊息可能再次投遞。 可先對照 [Durable Queue](/backend/knowledge-cards/durable-queue/)。
 
 ## 概念位置
 
-重複投遞是可靠訊息系統的正常設計條件。它要求 consumer 把「收到訊息」與「造成外部結果」分開思考，並用 idempotency key、dedup store、唯一約束、狀態機或業務檢查讓多次處理得到同一個結果。
+重複投遞是可靠訊息系統的正常設計條件。它要求 consumer 把「收到訊息」與「造成外部結果」分開思考，並用 idempotency key、dedup store、唯一約束、狀態機或業務檢查讓多次處理得到同一個結果。 可先對照 [Durable Queue](/backend/knowledge-cards/durable-queue/)。
 
 ## 可觀察訊號
 

@@ -5,7 +5,8 @@ description: "說明網站憑證鏈與信任根如何影響連線可用性與驗
 weight: 147
 ---
 
-Certificate chain and trust root 的核心概念是「憑證驗證依賴完整憑證鏈與受信任根」。伺服器端需要提供 leaf certificate 與中繼憑證，客戶端再以信任根驗證整條鏈。
+
+Certificate chain and trust root 的核心概念是「憑證驗證依賴完整憑證鏈與受信任根」。伺服器端需要提供 leaf certificate 與中繼憑證，客戶端再以信任根驗證整條鏈。 可先對照 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)。
 
 ## 概念位置
 

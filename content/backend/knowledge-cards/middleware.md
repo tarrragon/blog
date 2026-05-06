@@ -5,11 +5,12 @@ description: "說明請求處理鏈中的共通攔截與前後置處理"
 weight: 0
 ---
 
-Request Middleware 的核心概念是「在 request 進入 handler 前後插入共通處理」。它承接多個 handler 共用的攔截層與前後置處理。
+
+Request Middleware 的核心概念是「在 request 進入 handler 前後插入共通處理」。它承接多個 handler 共用的攔截層與前後置處理。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 概念位置
 
-Request Middleware 位在 transport layer 與業務 handler 之間。它處理多個 endpoint 共用的橫切關注，而不是單一業務規則本身。
+Request Middleware 位在 transport layer 與業務 handler 之間。它處理多個 endpoint 共用的橫切關注，而不是單一業務規則本身。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 可觀察訊號
 

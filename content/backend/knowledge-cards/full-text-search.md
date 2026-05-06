@@ -5,7 +5,8 @@ description: "說明全文檢索如何處理關鍵字匹配、語言分析與排
 weight: 161
 ---
 
-Full-text search 的核心概念是「對文本內容做可擴展檢索」。它支援分詞、相關性排序與關鍵字查詢。
+
+Full-text search 的核心概念是「對文本內容做可擴展檢索」。它支援分詞、相關性排序與關鍵字查詢。 可先對照 [Search Index](/backend/knowledge-cards/search-index/)。
 
 ## 概念位置
 

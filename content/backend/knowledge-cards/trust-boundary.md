@@ -5,7 +5,8 @@ description: "說明系統哪些位置開始不能沿用原本的信任假設"
 weight: 124
 ---
 
-Trust boundary 的核心概念是「信任假設在哪裡開始不再成立」。紅隊會特別關注這些切換點，因為只要邊界不清楚，權限、稽核、遮罩與防護都可能只在局部成立。
+
+Trust boundary 的核心概念是「信任假設在哪裡開始不再成立」。紅隊會特別關注這些切換點，因為只要邊界不清楚，權限、稽核、遮罩與防護都可能只在局部成立。 可先對照 [Authentication](/backend/knowledge-cards/authentication/)。
 
 ## 概念位置
 

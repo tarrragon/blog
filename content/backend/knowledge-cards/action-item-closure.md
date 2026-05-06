@@ -6,7 +6,8 @@ description: "說明事故行動項如何被驗證完成，而不是只停留在
 weight: 316
 ---
 
-Action item closure 的核心概念是「把復盤行動項變成可驗證完成的工程責任」。它關心的不是列出多少待辦，而是每一項是否有 owner、完成標準、驗證方式與截止時間。
+
+Action item closure 的核心概念是「把復盤行動項變成可驗證完成的工程責任」。它關心的不是列出多少待辦，而是每一項是否有 owner、完成標準、驗證方式與截止時間。 可先對照 [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)。
 
 ## 概念位置
 

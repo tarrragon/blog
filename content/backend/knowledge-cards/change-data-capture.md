@@ -5,6 +5,7 @@ description: "說明資料變更如何被捕捉並傳送到其他系統"
 weight: 79
 ---
 
+
 Change Data Capture 的核心概念是「捕捉 [database](/backend/knowledge-cards/database/) 變更並把變更傳送給其他系統」。CDC 可以用於同步搜尋索引、資料倉儲、cache、event stream 或新舊系統 [migration](/backend/knowledge-cards/migration/)。
 
 ## 概念位置

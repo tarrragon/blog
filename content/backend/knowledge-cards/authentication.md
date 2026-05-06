@@ -6,7 +6,8 @@ description: "說明系統如何確認呼叫者身份"
 weight: 111
 ---
 
-Authentication 的核心概念是「確認呼叫者是誰」。它可以透過 password、session、token、OAuth、certificate、API key 或 workload identity 完成。
+
+Authentication 的核心概念是「確認呼叫者是誰」。它可以透過 password、session、token、OAuth、certificate、API key 或 workload identity 完成。 可先對照 [Authorization](/backend/knowledge-cards/authorization/)。
 
 ## 概念位置
 

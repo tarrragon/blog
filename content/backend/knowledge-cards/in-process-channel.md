@@ -5,7 +5,8 @@ description: "說明單一 process 內用來傳遞工作的 channel 或 queue ab
 weight: 125
 ---
 
-In-process channel 的核心概念是「單一 process 內用來傳遞工作或訊號的通道」。它可以是語言內建 channel、blocking queue、async queue、actor mailbox 或 framework 提供的本地 queue abstraction。
+
+In-process channel 的核心概念是「單一 process 內用來傳遞工作或訊號的通道」。它可以是語言內建 channel、blocking queue、async queue、actor mailbox 或 framework 提供的本地 queue abstraction。 可先對照 [Broker](/backend/knowledge-cards/broker/)。
 
 ## 概念位置
 

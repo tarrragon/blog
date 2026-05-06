@@ -6,7 +6,8 @@ description: "說明如何用明確允許條件控制例外放行範圍"
 weight: 257
 ---
 
-Allowlist 的核心概念是「以明確條件列出可放行項目，讓例外放行保持可控邊界」。它把放行決策從口頭同意轉成可稽核政策。
+
+Allowlist 的核心概念是「以明確條件列出可放行項目，讓例外放行保持可控邊界」。它把放行決策從口頭同意轉成可稽核政策。 可先對照 [Input Validation](/backend/knowledge-cards/input-validation/)。
 
 ## 概念位置
 

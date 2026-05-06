@@ -5,6 +5,7 @@ description: "說明跨服務 request 如何用 trace context 串起路徑與耗
 weight: 35
 ---
 
+
 Trace context 的核心概念是「讓同一個 request 在跨服務呼叫中保持同一條追蹤線」。它通常包含 [trace id](/backend/knowledge-cards/trace-id/)、span id、parent [span](/backend/knowledge-cards/span/) 與 baggage，讓 [trace](/backend/knowledge-cards/trace/) 系統能重建呼叫路徑。
 
 ## 概念位置

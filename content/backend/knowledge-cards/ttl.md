@@ -5,11 +5,12 @@ description: "說明資料過期時間如何影響快取新鮮度、成本與一
 weight: 18
 ---
 
-TTL 的核心概念是「資料在指定時間後自動過期」。TTL 常用在 cache、session、presence、temporary token、匯出檔案與去重紀錄，讓系統用時間控制資料有效性。
+
+TTL 的核心概念是「資料在指定時間後自動過期」。TTL 常用在 cache、session、presence、temporary token、匯出檔案與去重紀錄，讓系統用時間控制資料有效性。 可先對照 [Unacked Message](/backend/knowledge-cards/unacked-message/)。
 
 ## 概念位置
 
-TTL 是資料新鮮度與操作成本的取捨。TTL 長可以提高命中率與降低下游壓力；TTL 短可以降低過期資料風險，但會增加重新載入與下游查詢。
+TTL 是資料新鮮度與操作成本的取捨。TTL 長可以提高命中率與降低下游壓力；TTL 短可以降低過期資料風險，但會增加重新載入與下游查詢。 可先對照 [Unacked Message](/backend/knowledge-cards/unacked-message/)。
 
 ## 可觀察訊號與例子
 

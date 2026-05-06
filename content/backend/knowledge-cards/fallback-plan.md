@@ -5,11 +5,12 @@ description: "說明變更失敗時如何回到可接受狀態"
 weight: 78
 ---
 
-Fallback plan 的核心概念是「變更失敗時回到可接受狀態的計畫」。它關注 migration、發版、設定切換或服務替換失敗後的操作路徑。
+
+Fallback plan 的核心概念是「變更失敗時回到可接受狀態的計畫」。它關注 migration、發版、設定切換或服務替換失敗後的操作路徑。 可先對照 [Fallback](/backend/knowledge-cards/fallback/)。
 
 ## 概念位置
 
-Fallback plan 是 release 與 migration 的風險控制。Rollback 是回到舊版本；fallback plan 可以包含暫停流量、切回舊路徑、凍結寫入、啟動維護模式或人工處理。
+Fallback plan 是 release 與 migration 的風險控制。Rollback 是回到舊版本；fallback plan 可以包含暫停流量、切回舊路徑、凍結寫入、啟動維護模式或人工處理。 可先對照 [Fallback](/backend/knowledge-cards/fallback/)。
 
 ## 可觀察訊號與例子
 

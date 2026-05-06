@@ -5,11 +5,12 @@ description: "說明已交給 consumer 但尚未完成確認的訊息狀態"
 weight: 60
 ---
 
-In-flight message 的核心概念是「已經交給 consumer，但尚未完成 ack 或 nack 的訊息」。這些訊息正在處理中，broker 通常會把它們和可投遞訊息分開管理。
+
+In-flight message 的核心概念是「已經交給 consumer，但尚未完成 ack 或 nack 的訊息」。這些訊息正在處理中，broker 通常會把它們和可投遞訊息分開管理。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。
 
 ## 概念位置
 
-In-flight 狀態是 consumer lifecycle 的中間階段。它連接 prefetch、ack timeout、redelivery、consumer crash 與 graceful shutdown。In-flight 訊息越多，代表系統有越多未完成副作用。
+In-flight 狀態是 consumer lifecycle 的中間階段。它連接 prefetch、ack timeout、redelivery、consumer crash 與 graceful shutdown。In-flight 訊息越多，代表系統有越多未完成副作用。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。
 
 ## 可觀察訊號與例子
 

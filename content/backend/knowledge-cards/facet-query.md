@@ -5,7 +5,8 @@ description: "說明分面查詢如何提供分類統計與篩選體驗"
 weight: 162
 ---
 
-Facet query 的核心概念是「在搜尋結果上提供可聚合的分類維度」。它讓使用者能快速依品牌、分類、價格區間等條件縮小結果。
+
+Facet query 的核心概念是「在搜尋結果上提供可聚合的分類維度」。它讓使用者能快速依品牌、分類、價格區間等條件縮小結果。 可先對照 [Search Index](/backend/knowledge-cards/search-index/)。
 
 ## 概念位置
 

@@ -5,11 +5,12 @@ description: "說明資料或事件保留多久，以及保留期限如何影響
 weight: 75
 ---
 
-Retention 的核心概念是「資料或事件在系統中保留多久」。它影響 storage cost、audit、replay、debug、合規與資料刪除責任。
+
+Retention 的核心概念是「資料或事件在系統中保留多久」。它影響 storage cost、audit、replay、debug、合規與資料刪除責任。 可先對照 [Retry Budget](/backend/knowledge-cards/retry-budget/)。
 
 ## 概念位置
 
-Retention 連接資料生命週期與操作能力。Log、trace、queue message、event stream、backup、匯出檔案與 audit log 都需要不同保留期限。
+Retention 連接資料生命週期與操作能力。Log、trace、queue message、event stream、backup、匯出檔案與 audit log 都需要不同保留期限。 可先對照 [Retry Budget](/backend/knowledge-cards/retry-budget/)。
 
 ## 可觀察訊號與例子
 
