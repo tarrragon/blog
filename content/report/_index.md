@@ -139,6 +139,9 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#108 中文壓縮術語要保留完整名詞頭](compressed-chinese-terms-need-head-noun/) — 壓縮後仍要回答「這是什麼」；術語至少保留「盲點 / 偏誤 / 風險 / 模式 / 檢查 / 策略」等 head noun，避免只剩單字修飾或句子殘片
 - [#109 術語翻譯要保留概念角色](translation-must-preserve-concept-role/) — 術語中文名詞頭要對應來源中的概念角色；`Steelman` 若翻成「最強版本測試」會把論證方法壓成檢查動作，較穩寫法是「最強版本論證（Steelman）」
 - [#110 設計檢討用當下三軸論證、不依賴 hindsight](design-flaw-by-current-axes-not-hindsight/) — 「設計缺陷」精準定義是「當下成本對稱條件下選了限制更高的選項」、不是「沒預測到後來需求」；hindsight 論述依賴結局、把需求演化誤判成設計缺陷、歸因落在個人預見性；當下三軸論述（成本對稱性 / 可逆性 / 領域先驗）讓判斷不依賴結局、歸因轉到工具預設與制度
+- [#111 口語化修辭會稀釋技術精度](colloquial-rhetoric-erodes-technical-precision/) — 「一輩子」「碰巧能用」「立刻撞牆」「沒事」「下次看到 X 時做 Y」這類修辭在三層稀釋精度：時間性誇張 / 因果模糊 / 結局描述代替契約描述 / 廢話前綴 / 否定先行；修法是把口語修辭翻譯回技術屬性語言（生命週期 / 觸發條件 / 型別契約 / 違反條件 / 判斷工具）
+- [#112 地區用語對齊：寫作前先確定讀者的中文語料](regional-terminology-alignment/) — 繁中 vs 簡中的用詞差異（屏 / 螢幕、文件 / 檔案、默認 / 預設、質量 / 品質、視頻 / 影片、函數 / 函式、內存 / 記憶體）會在每個詞累積 0.5 秒對映成本、整篇下來顯著降低閱讀流暢度；寫前確定讀者地區、寫完跑 grep 對齊
+- [#113 商業邏輯論述要 self-contained：不依賴 code 才能被理解](prose-self-contained-without-code-reference/) — 不放 code 的段落仍要 self-contained——用「那個 payload 第二段」「剛才的 controller」「就好 / 就能」這類 reference 等於把理解門檻轉嫁給讀者去翻 code；修法是用名詞 / 角色 / 條件描述、即使讀者跳過所有 code block 也能理解論述
 
 ### 第七輪：Pattern 卡片（待補完）
 
