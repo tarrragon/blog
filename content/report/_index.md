@@ -138,6 +138,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#107 術語翻譯要保留原文錨點](terminology-keeps-original-anchor/) — 中文術語負責可讀性、原文術語負責概念邊界與可回溯性；第一次出現用「中文（original term）」避免翻譯漂移，尤其是學術 / 標準 / 方法論術語
 - [#108 中文壓縮術語要保留完整名詞頭](compressed-chinese-terms-need-head-noun/) — 壓縮後仍要回答「這是什麼」；術語至少保留「盲點 / 偏誤 / 風險 / 模式 / 檢查 / 策略」等 head noun，避免只剩單字修飾或句子殘片
 - [#109 術語翻譯要保留概念角色](translation-must-preserve-concept-role/) — 術語中文名詞頭要對應來源中的概念角色；`Steelman` 若翻成「最強版本測試」會把論證方法壓成檢查動作，較穩寫法是「最強版本論證（Steelman）」
+- [#110 設計檢討用當下三軸論證、不依賴 hindsight](design-flaw-by-current-axes-not-hindsight/) — 「設計缺陷」精準定義是「當下成本對稱條件下選了限制更高的選項」、不是「沒預測到後來需求」；hindsight 論述依賴結局、把需求演化誤判成設計缺陷、歸因落在個人預見性；當下三軸論述（成本對稱性 / 可逆性 / 領域先驗）讓判斷不依賴結局、歸因轉到工具預設與制度
 
 ### 第七輪：Pattern 卡片（待補完）
 
