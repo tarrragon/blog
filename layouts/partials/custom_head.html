@@ -246,17 +246,65 @@
     margin-left: 1rem;
   }
 
-  /* 響應式設計 */
-  @media (max-width: 1024px) {
+  .toc-toggle-btn {
+    display: none;
+  }
+
+  /* 筆電與窄桌面改用右側抽屜，避免固定 TOC 覆蓋正文 */
+  @media (max-width: 1499px) and (min-width: 769px) {
     .toc-sidebar {
-      width: 240px;
-      right: 15px;
+      right: 16px;
+      width: min(300px, calc(100vw - 96px));
+      max-height: 76vh;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(calc(100% + 32px), -50%);
+    }
+
+    .toc-sidebar.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(-50%);
+    }
+
+    .toc-toggle-btn {
+      display: flex;
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 72px;
+      padding: 0.5rem 0.35rem;
+      writing-mode: vertical-rl;
+      color: rgba(255, 255, 255, 0.88);
+      background: rgba(0, 0, 0, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-right: 0;
+      border-radius: 10px 0 0 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .toc-toggle-btn:hover,
+    .toc-toggle-btn[aria-expanded="true"] {
+      color: var(--primary-color, #fff);
+      background: rgba(0, 0, 0, 0.95);
     }
   }
 
   @media (max-width: 768px) {
     /* 手機版隱藏 TOC */
-    .toc-sidebar {
+    .toc-sidebar,
+    .toc-toggle-btn {
       display: none;
     }
     
@@ -270,7 +318,6 @@
   /* 平板版調整 */
   @media (max-width: 1024px) and (min-width: 769px) {
     .toc-sidebar {
-      width: 220px;
       padding: 1rem;
       font-size: 0.9rem;
     }

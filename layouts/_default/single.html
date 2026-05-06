@@ -10,6 +10,9 @@
     </p>
   {{ end }}
 </aside>
+<button id="toc-toggle" class="toc-toggle-btn" type="button" aria-label="開啟章節目錄" aria-controls="TableOfContents" aria-expanded="false">
+  目錄
+</button>
 
 <!-- 文章內容 - 保持原有的置中佈局 -->
 <article class="article-content">
@@ -102,6 +105,39 @@ document.addEventListener('DOMContentLoaded', function() {
     return; // 手機版不執行 TOC 相關功能
   }
 
+  const tocSidebar = document.querySelector('.toc-sidebar');
+  const tocToggle = document.getElementById('toc-toggle');
+
+  function isCompactToc() {
+    return window.innerWidth > 768 && window.innerWidth <= 1499;
+  }
+
+  function setTocOpen(isOpen) {
+    if (!tocSidebar || !tocToggle) return;
+
+    tocSidebar.classList.toggle('is-open', isOpen);
+    tocToggle.setAttribute('aria-expanded', String(isOpen));
+    tocToggle.setAttribute('aria-label', isOpen ? '關閉章節目錄' : '開啟章節目錄');
+  }
+
+  if (tocToggle && tocSidebar) {
+    tocToggle.addEventListener('click', function() {
+      setTocOpen(!tocSidebar.classList.contains('is-open'));
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isCompactToc()) {
+        setTocOpen(false);
+      }
+    });
+
+    window.addEventListener('resize', function() {
+      if (!isCompactToc()) {
+        setTocOpen(false);
+      }
+    });
+  }
+
   // 確保所有標題都有 ID
   const headings = document.querySelectorAll('.article-content h2, .article-content h3, .article-content h4');
   
@@ -136,6 +172,10 @@ document.addEventListener('DOMContentLoaded', function() {
             behavior: 'smooth',
             block: 'start'
           });
+
+          if (isCompactToc()) {
+            setTocOpen(false);
+          }
         });
       }
     }
@@ -145,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateActiveSection() {
     const sections = document.querySelectorAll('.article-content h2, .article-content h3, .article-content h4');
     const tocLinks = document.querySelectorAll('.toc-sidebar a[href^="#"]');
-    const tocSidebar = document.querySelector('.toc-sidebar');
     
     let currentSection = '';
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
