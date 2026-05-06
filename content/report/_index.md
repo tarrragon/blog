@@ -142,6 +142,7 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#111 口語化修辭會稀釋技術精度](colloquial-rhetoric-erodes-technical-precision/) — 「一輩子」「碰巧能用」「立刻撞牆」「沒事」「下次看到 X 時做 Y」這類修辭在三層稀釋精度：時間性誇張 / 因果模糊 / 結局描述代替契約描述 / 廢話前綴 / 否定先行；修法是把口語修辭翻譯回技術屬性語言（生命週期 / 觸發條件 / 型別契約 / 違反條件 / 判斷工具）
 - [#112 地區用語對齊：寫作前先確定讀者的中文語料](regional-terminology-alignment/) — 繁中 vs 簡中的用詞差異（屏 / 螢幕、文件 / 檔案、默認 / 預設、質量 / 品質、視頻 / 影片、函數 / 函式、內存 / 記憶體）會在每個詞累積 0.5 秒對映成本、整篇下來顯著降低閱讀流暢度；寫前確定讀者地區、寫完跑 grep 對齊
 - [#113 商業邏輯論述要 self-contained：不依賴 code 才能被理解](prose-self-contained-without-code-reference/) — 不放 code 的段落仍要 self-contained——用「那個 payload 第二段」「剛才的 controller」「就好 / 就能」這類 reference 等於把理解門檻轉嫁給讀者去翻 code；修法是用名詞 / 角色 / 條件描述、即使讀者跳過所有 code block 也能理解論述
+- [#114 Multi-pass review 的 frame 顆粒度盲點](multi-pass-review-frame-granularity-blindspot/) — Multi-pass 用「規則 frame」掃描有效抓結構性違反、抓不到字句層具體訊號（口語修辭 / 地區漂移 / 依賴 code / 廢話前綴）；同一 reviewer 跑多輪 catch 的東西高度相同；要擴大覆蓋度需要三機制——keyword bank（換工具）+ reader simulation（換視角）+ self-criticism（換層次）
 
 ### 第七輪：Pattern 卡片（待補完）
 

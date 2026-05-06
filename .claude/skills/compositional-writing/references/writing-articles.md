@@ -649,17 +649,20 @@ build-炸-修循環。明顯划算。
 
 文章用的五輪 + 兩輪文章專屬：
 
-| 輪  | Frame                                                              | 文章專用 checklist                                                                                                                                                                  |
-| --- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 生成                                                               | idea 從頭寫到尾、不停下改、預期會有粗糙                                                                                                                                             |
-| 2   | 對意圖（[#67](principles/ease-of-writing-vs-intent-alignment.md)） | 開頭一句、title、description、MOC hook 都點同一個核心責任嗎？段落順序由「易讀」決定不是「好寫」決定？去掉視覺標記後還能讀嗎？                                                       |
-| 3   | 機會成本語氣                                                       | 全 surface grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                                                                                                   |
-| 4   | Grep-ability / 命名 / 術語                                         | title / heading / link label / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title；術語保留原文錨點與完整名詞頭                                                      |
-| 5   | 反例 / 邊界                                                        | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？設計檢討類文章另掃 [hindsight 論述](principles/design-flaw-by-current-axes-not-hindsight.md) |
-| 6   | Cross-link 健康度                                                  | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 collection index                                                                                                   |
-| 7   | 索引條 vs 內容                                                     | MOC / index entry 的索引描述、link label、文章 title 與正文第一段是否指向同一個核心責任                                                                                             |
+| 輪  | Frame                                                              | 文章專用 checklist                                                                                                                                                                                                                                                            |
+| --- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 生成                                                               | idea 從頭寫到尾、不停下改、預期會有粗糙                                                                                                                                                                                                                                       |
+| 2   | 對意圖（[#67](principles/ease-of-writing-vs-intent-alignment.md)） | 開頭一句、title、description、MOC hook 都點同一個核心責任嗎？段落順序由「易讀」決定不是「好寫」決定？去掉視覺標記後還能讀嗎？                                                                                                                                                 |
+| 3   | 機會成本語氣                                                       | 全 surface grep「應該/必須/不行/正確/唯一」、絕對詞翻成 trade-off                                                                                                                                                                                                             |
+| 4   | Grep-ability / 命名 / 術語                                         | title / heading / link label / 段首關鍵字前置、表格欄位用 `:` `\|` `→` 友善分隔、slug 對應 title；術語保留原文錨點與完整名詞頭                                                                                                                                                |
+| 5   | 反例 / 邊界                                                        | 「何時不適用」段寫了嗎？「跟其他卡的關係」表完整嗎？反模式給「為什麼不好」+「修法」嗎？設計檢討類文章另掃 [hindsight 論述](principles/design-flaw-by-current-axes-not-hindsight.md)                                                                                           |
+| 6   | Cross-link 健康度                                                  | 引用的卡都還在嗎、被引用該卡是否反向引回（雙向）、新卡有沒有加進 collection index                                                                                                                                                                                             |
+| 7   | 索引條 vs 內容                                                     | MOC / index entry 的索引描述、link label、文章 title 與正文第一段是否指向同一個核心責任                                                                                                                                                                                       |
+| 8   | Keyword bank（換工具）                                             | 跑 grep 比對固定 keyword list（口語修辭 / 廢話前綴 / 地區漂移 / 依賴 code）、不靠 reviewer 記憶——詳見 [colloquial-rhetoric](principles/colloquial-rhetoric-erodes-technical-precision.md) + [prose-self-contained](principles/prose-self-contained-without-code-reference.md) |
+| 9   | Reader simulation（換視角）                                        | 拿掉所有 code block 重讀論述是否仍能 parse？跳到段落中間直接讀能不能拿到關鍵資訊？——強迫換讀者視角、catch reviewer 的「fill in 上下文」盲點                                                                                                                                   |
+| 10  | Self-criticism（換層次）                                           | 我跑的 N 輪 catch 哪些問題類型？同個規則下還有哪些違反句型沒掃到？framework 是否有 known blind spot？——詳見 [multi-pass-review-frame-granularity](principles/multi-pass-review-frame-granularity.md)                                                                          |
 
-跳輪規則同 [#83](principles/writing-multi-pass-review.md) — 短文 / 即時 note 跳 4-7、production 卡片 / 教學文章全跑。
+跳輪規則同 [#83](principles/writing-multi-pass-review.md) — 短文 / 即時 note 跳 4-7、production 卡片 / 教學文章全跑；輪 8-10 是 production 教學文章專用、catch 字句層問題、跑 N 輪後仍漏 catch 同類問題時觸發。
 
 ### 術語檢查：中文入口 + 原文錨點 + 完整名詞頭
 
@@ -731,6 +734,7 @@ emoji 在容器窄時斷行：
 ---
 
 **Last Updated**: 2026-05-06
+**Version**: 0.8.0 — Multi-pass review 加輪 8-10（keyword bank / reader simulation / self-criticism）、處理「跑了 N 輪、字句層問題仍漏」的盲點；新增三張內部 principle：[`colloquial-rhetoric`](principles/colloquial-rhetoric-erodes-technical-precision.md)（口語修辭 keyword bank）、[`prose-self-contained`](principles/prose-self-contained-without-code-reference.md)（reader simulation 自測）、[`multi-pass-review-frame-granularity`](principles/multi-pass-review-frame-granularity.md)（meta 層、self-criticism 三機制論述）
 **Version**: 0.7.6 — 規則四補進階段「避免 hindsight 論述汙染判讀記錄」、輪 5 補設計檢討類另掃 hindsight 論述；新增內部 principle [`design-flaw-by-current-axes-not-hindsight`](principles/design-flaw-by-current-axes-not-hindsight.md)——把「設計缺陷的精準定義」從「沒預測到後來需求」改成「在當下成本對稱條件下選了限制更高的選項」、用三軸論證代替 hindsight、確保產出 portable 判斷工具
 **Version**: 0.7.5 — 將翻譯 / 轉譯 review 升級為獨立 reference：`translation-review.md`，聚焦句內邏輯對位、前提檢查、因果檢查與讀者追問方向；writing-articles 保留短檢查表並轉介。
 **Version**: 0.7.4 — 強化術語翻譯的句內邏輯檢查：譯名放回原句後要檢查主詞、動詞、修飾語、因果與讀者追問方向；避免中文順口但讓句子多出原文沒有的前提。
