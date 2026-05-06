@@ -182,7 +182,7 @@ String maskCardNumber(String cardNumber);
 String maskCardNumber(String cardNumber);
 ```
 
-業務動機要有來源（規範文件、PM 決策、incident 紀錄）才寫；猜的不要寫。猜的動機被當真會反向影響後續決策——「啊原來是因為 PCI-DSS，那 X 也要這樣處理」。
+業務動機要有來源（規範文件、PM 決策、incident 紀錄）才寫；猜的不要寫。猜的動機被當真會反向影響後續決策——讀者拿這條沒來源的猜測當依據、推到「既然是因為 PCI-DSS、那 X 也要這樣處理」、就把錯誤論述擴散到下游。
 
 ### 介面 doc 越精簡越能被讀完
 
