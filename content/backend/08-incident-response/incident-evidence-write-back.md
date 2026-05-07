@@ -25,6 +25,16 @@ Incident evidence write-back 是事故處理回寫到可觀測性、可靠性驗
 
 Write-back 的價值在於避免同類事故只被記錄一次。PIR action item 若只停在待辦，下一次事故仍會遇到相同缺口；write-back 要把缺口落到 dashboard、alert、SLO、experiment、runbook 或 automation guardrail。
 
+## 案例中的回寫路徑
+
+回寫不是抽象流程，必須能對應到具體事故。Cloudflare 2019 與 AWS S3 2017 提供了兩種常見回寫場景：快速擴散型事故與共享依賴型事故。
+
+Cloudflare 2019 的關鍵缺口是規則成本在上線前不可見。回寫不是只寫「加強測試」，而是把 evidence 落到可執行控制面：04 的 rule-level CPU 訊號、06 的 rollout safety gate、08 的 decision log 與 write-back 閉環。這樣下次同類變更才會在推送前被攔下。
+
+AWS S3 2017 的關鍵缺口是共享子系統恢復順序與通訊入口依賴。回寫重點不是單一 bug，而是操作與通訊控制面：內部操作 guardrail、恢復順序驗證、主通道失效切換，以及對外敘事的證據對位。這些回寫會直接改變下次事故的可見性與節奏。
+
+這兩個案例共同說明：好的回寫不是「多做一點」，而是把事故中的決策痛點轉成下一次能提早判讀的控制面。
+
 ## 輸入材料
 
 Evidence write-back 的輸入來自事故期間已經建立的 artifact。每個 artifact 對應不同回寫方向。
@@ -45,6 +55,20 @@ Decision log 能揭露判讀缺口。若 IC 做決策時缺少 trace、data qual
 Customer impact 能揭露通訊與補償缺口。若影響範圍在事故後才算清楚，回寫方向可能是 impact assessment query、billing evidence 或 status page template。
 
 Incident timeline 能揭露節奏缺口。若 handoff、escalation 或 containment 花太久，回寫方向可能是 on-call drill、IC handoff 或 automation setup。
+
+## 失敗回寫的判讀訊號
+
+回寫最常失敗在「有 action item，沒有控制面」。當回寫只停在任務清單，下次事故通常會重演同樣判讀遲滯。
+
+| 判讀訊號                 | 失敗原因                      | 修正方向                                     |
+| ------------------------ | ----------------------------- | -------------------------------------------- |
+| 下次事故仍從客訴才發現   | 訊號缺口未回寫到 04           | 把缺口落到 readiness / evidence package      |
+| 對外更新仍反覆改口       | 決策與通訊未對位              | 對外敘事變更強制連到 decision log            |
+| 同類 rollback 仍無門檻   | 驗證缺口未回寫到 06           | 把缺口轉成 experiment safety 與 steady state |
+| PIR 提到缺口但無追蹤結果 | action item 缺 closure signal | 補 closure signal 與 review date             |
+| 有修程式碼但流程沒變     | 回寫停在實作層                | 同步回寫 runbook、演練與 incident 路由       |
+
+這組訊號的用途是幫團隊辨識「回寫是否真的發生」。如果半年後同類事故的判讀速度沒有變快，代表回寫仍停在文件層，還沒進到控制面層。
 
 ## 回寫欄位
 
