@@ -25,6 +25,12 @@ Stripe 是金流場景的可靠性教學標竿、deploy strategy 與 idempotency
 | Database online migration | 高頻交易場景的 schema 變更         |
 | Monitoring & Alerting     | 金流場景的訊號設計                 |
 
+## 章節列表
+
+| 章節                                                                                | 主題                     | 核心責任                                     |
+| ----------------------------------------------------------------------------------- | ------------------------ | -------------------------------------------- |
+| [S1](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/) | Idempotency 與零停機遷移 | 把交易重試與資料遷移放在同一套一致性安全模型 |
+
 ## 案例定位
 
 Stripe 這個案例在講的是交易系統如何把重試、遷移與部署都設計成可回復的操作。讀者先抓 idempotency 與 zero-downtime migration 這兩個原語，再看它們怎麼保護支付流程不被重試與變更放大。

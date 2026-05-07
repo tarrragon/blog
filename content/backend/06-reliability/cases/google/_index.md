@@ -25,6 +25,12 @@ Google 是 SRE 概念的原始來源、SRE Book 與 Workbook 是領域 canonical
 | Hierarchy of Reliability  | Monitoring → IR → PIR → Testing → Capacity → Dev → Product |
 | Embedded SRE / Consulting | SRE 介入服務的多種模式                                     |
 
+## 章節列表
+
+| 章節                                                                               | 主題                           | 核心責任                              |
+| ---------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------- |
+| [G1](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/) | Error Budget 與 Release Gating | 把 SLO 消耗量轉成放行、限速與凍結決策 |
+
 ## 案例定位
 
 Google 這個案例在講的是可靠性如何變成一套可操作的工程制度，而不是單一工具或單一事故。讀者先抓到 SLI / SLO、error budget、postmortem 與 toil 這幾個原語各自負責什麼，再把它們組成一條可執行的可靠性路徑。

@@ -25,6 +25,12 @@ Amazon 是 cell-based architecture 與 shuffle sharding 的代表、AWS Builders
 | Workload Isolation       | tenancy / region / availability zone 的隔離層級   |
 | Build with constant work | 為何 push-based 比 pull-based 在 failure 時更穩定 |
 
+## 章節列表
+
+| 章節                                                                           | 主題                          | 核心責任                                     |
+| ------------------------------------------------------------------------------ | ----------------------------- | -------------------------------------------- |
+| [A1](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/) | Shuffle Sharding 與 Cell 邊界 | 用局部隔離限制多租戶擴散，讓恢復可以分批收斂 |
+
 ## 案例定位
 
 Amazon 這個案例在講的是可靠性如何靠隔離來守住擴散邊界。讀者先看懂 cell-based architecture 與 shuffle sharding 的責任，再把它們當成控制 blast radius 的設計語言，而不是單純的 AWS 名詞。

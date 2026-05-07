@@ -25,6 +25,12 @@ Netflix 是 Chaos Engineering 的起源、Chaos Monkey 跟 Simian Army 是領域
 | Chaos Engineering Manifesto | hypothesis / scope / blast radius 控制   |
 | Production chaos vs Staging | 為何 production 才有真實價值             |
 
+## 章節列表
+
+| 章節                                                                    | 主題                       | 核心責任                                       |
+| ----------------------------------------------------------------------- | -------------------------- | ---------------------------------------------- |
+| [N1](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/) | Steady State、Chaos 與 FIT | 把故障注入變成可證偽、可停止、可回寫的驗證流程 |
+
 ## 案例定位
 
 Netflix 這個案例在講的是故障注入如何從實驗變成工程制度。讀者要先分辨 steady state、hypothesis、blast radius 與回復條件各自扮演的角色，才能理解為什麼 chaos 不是演示，而是驗證服務韌性的方法。

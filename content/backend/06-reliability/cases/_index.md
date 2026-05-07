@@ -17,6 +17,16 @@ weight: 90
 - [stripe](/backend/06-reliability/cases/stripe/)
 - [shopify](/backend/06-reliability/cases/shopify/)
 
+## T1 第一批正文（已完成）
+
+| 服務    | 正文入口                                                                                                          | 主題重點                         |
+| ------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Google  | [G1 Error Budget 與 Release Gating](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/) | 可靠性消耗如何直接決定發布節奏   |
+| Netflix | [N1 Steady State、Chaos 與 FIT](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/)                | 故障注入如何變成可證偽流程       |
+| Amazon  | [A1 Shuffle Sharding 與 Cell 邊界](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/)      | 多租戶故障如何被局部化           |
+| Stripe  | [S1 Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)      | 交易重試與遷移如何共用一致性模型 |
+| Shopify | [H1 BFCM 容量治理與 Game Day](/backend/06-reliability/cases/shopify/bfcm-capacity-and-game-day/)                  | 峰值風險如何在活動前被消化       |
+
 ## T2 服務
 
 - [linkedin](/backend/06-reliability/cases/linkedin/)
