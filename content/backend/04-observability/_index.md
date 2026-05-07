@@ -72,6 +72,16 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [Cloudflare Observability](https://blog.cloudflare.com/vision-for-observability/)                             | 監控、分析、鑑識三層能力如何組合             | [4.4](/backend/04-observability/dashboard-alert/)、[4.20](/backend/04-observability/observability-evidence-package/)        |
 | [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) | 成長後如何從儲存問題回推觀測缺口             | [4.17](/backend/04-observability/telemetry-data-quality/)、[4.18](/backend/04-observability/observability-operating-model/) |
 
+若要擴充企業案例，先到 [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) 依「企業型態 × 規模階段」挑樣本，再把觀測面教訓回寫到 4.16-4.21。這樣案例擴充會先補齊覆蓋度，再補單點技巧。
+
+第一批缺口回填建議先做三條觀測題目：FinTech 補 audit log completeness 與 evidence traceability（回寫 4.12、4.20）；Gaming 補高峰時段 signal freshness 與 cardinality guardrail（回寫 4.7、4.17）；Healthcare 補資料主權相關的 access evidence 與留存邊界（回寫 4.12、4.18）。
+
+| 產業案例類型 | 觀測回寫重點                                       | 章節路由                                                                                                                   |
+| ------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| FinTech      | 金流與帳務事件的 evidence chain、審計 log 完整性   | [4.12](/backend/04-observability/audit-log-governance/)、[4.20](/backend/04-observability/observability-evidence-package/) |
+| Gaming       | 高峰流量下的訊號新鮮度、cardinality 膨脹與警示品質 | [4.7](/backend/04-observability/cardinality-cost-governance/)、[4.17](/backend/04-observability/telemetry-data-quality/)   |
+| Healthcare   | 存取軌跡可追溯性、資料留存邊界與跨團隊 ownership   | [4.12](/backend/04-observability/audit-log-governance/)、[4.18](/backend/04-observability/observability-operating-model/)  |
+
 ## 跨語言適配評估
 
 可觀測性使用方式會受語言的 logger 生態、[trace context](/backend/knowledge-cards/trace-context/)、exception/error model、執行環境 metrics 與 instrumentation SDK 影響。同步 runtime 要保留 request context 與 thread-local 邊界；async runtime 要確認 [trace context](/backend/knowledge-cards/trace-context/) 能跨 task 傳遞；輕量並發 runtime 要觀察 task/goroutine 數量、queue lag 與下游等待。動態語言要特別管理 log schema 穩定性；強型別語言則要避免過度包裝導致 trace 與 error chain 斷裂。

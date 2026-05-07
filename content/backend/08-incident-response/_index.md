@@ -57,6 +57,16 @@ weight: 8
 | [Roblox 2021 Prolonged Outage](/backend/08-incident-response/cases/roblox/2021-oct-prolonged-core-infra-outage/)             | 根因定位延遲與長尾恢復治理       | [8.12](/backend/08-incident-response/ic-handoff-long-incident/)、[6.22](/backend/06-reliability/steady-state-definition/)              |
 | [Fastly 2021 Global Edge Outage](/backend/08-incident-response/cases/fastly/2021-june-global-edge-config-triggered-outage/)  | 有效配置觸發潛藏 bug 的全球擴散  | [6.24](/backend/06-reliability/rule-rollout-safety-gate/)、[8.4](/backend/08-incident-response/incident-communication/)                |
 
+若要繼續擴案例，不要只沿同一家公司加事件；先回到 [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) 補「企業型態 × 規模階段」覆蓋，再把新增事故映射到本章的問題節點（8.1-8.5、8.18-8.22），才能同時強化案例多樣性與教學路由。
+
+第一批缺口回填建議先做三條事故題目：FinTech 補交易中斷時的 impact 分級與對外通訊節奏（回寫 8.1、8.10、8.20）；Gaming 補高峰活動期間的 multi-incident 協調與長事故交接（回寫 8.12、8.14）；Healthcare 補資料與服務雙重事件的 evidence triage 與責任分流（回寫 8.17、8.18、8.19）。
+
+| 產業案例類型 | 事故回寫重點                               | 章節路由                                                                                                                                                                                                      |
+| ------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FinTech      | 交易中斷分級、對外更新節奏、客戶影響量化   | [8.1](/backend/08-incident-response/incident-severity-trigger/)、[8.10](/backend/08-incident-response/stakeholder-communication/)、[8.20](/backend/08-incident-response/customer-impact-assessment/)          |
+| Gaming       | 活動高峰多事故協調、跨時區接班與復原節奏   | [8.12](/backend/08-incident-response/ic-handoff-long-incident/)、[8.14](/backend/08-incident-response/multi-incident-coordination/)                                                                           |
+| Healthcare   | 資料與服務雙軌事件分流、證據分級與決策紀錄 | [8.17](/backend/08-incident-response/security-vs-operational-incident/)、[8.18](/backend/08-incident-response/incident-intake-evidence-triage/)、[8.19](/backend/08-incident-response/incident-decision-log/) |
+
 ## Vendor / Platform 清單
 
 實作工具見 [vendors](/backend/08-incident-response/vendors/) — T1 收錄 On-call（PagerDuty / Opsgenie / Grafana OnCall）、IR 平台（incident.io / FireHydrant / Rootly）、Status page（Atlassian Statuspage / Instatus）、Postmortem（Jeli）共 9 個 vendor 骨架。跟 [cases/](/backend/08-incident-response/cases/) 是不同維度（cases 是公開事故案例來源、vendors 是實作工具）。

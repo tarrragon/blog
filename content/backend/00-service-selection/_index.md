@@ -29,6 +29,7 @@ weight: 0
 | [0.11](/backend/00-service-selection/red-team-cross-service-weaknesses/)    | 攻擊者視角（紅隊）：跨服務弱點判讀總表 | 用攻擊面、可觀察訊號與失敗代價建立跨分類的弱點判讀順序                                                                                                                                                                                                   |
 | [0.12](/backend/00-service-selection/operations-control-service-selection/) | 觀測、可靠性與事故服務選型             | 用訊號、驗證、響應與閉環四層能力判斷操作控制服務該如何選型                                                                                                                                                                                               |
 | [0.13](/backend/00-service-selection/operations-control-vertical-slice/)    | 操作控制 vertical slice 實作入口       | 用一個服務串起 evidence package、verification handoff、decision log 與 write-back                                                                                                                                                                        |
+| [0.14](/backend/00-service-selection/enterprise-selection-case-atlas/)      | 企業選型案例圖譜                       | 以企業型態與規模階段分組案例，建立跨產業、跨規模的選型壓力對照                                                                                                                                                                                           |
 
 ## 需求討論順序
 
@@ -84,6 +85,8 @@ weight: 0
 | [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages)                                                                  | 儲存引擎選型如何隨成長重評               | [0.2](/backend/00-service-selection/state-storage-selection/)、[0.6](/backend/00-service-selection/cost-risk-tradeoffs/)      |
 | [Introducing Domain-Oriented Microservice Architecture](https://www.uber.com/en-GB/blog/microservice-architecture/)                                                            | 微服務邊界與複雜度治理如何重新切分       | [0.0](/backend/00-service-selection/backend-demand-taxonomy/)、[0.1](/backend/00-service-selection/service-capability-map/)   |
 | [Workload isolation using shuffle-sharding](https://aws.amazon.com/builders-library/workload-isolation-using-shuffle-sharding/)                                                | 多租戶隔離與 blast radius 如何進選型決策 | [0.6](/backend/00-service-selection/cost-risk-tradeoffs/)、[0.7](/backend/00-service-selection/failure-observability-design/) |
+
+若要做「跨產業 × 跨規模」的系統化案例蒐集與回寫，直接使用 [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/)；該章節提供分組後案例地圖與覆蓋缺口檢查表，可直接當後續補強 backlog。
 
 ## 本模組不處理
 
