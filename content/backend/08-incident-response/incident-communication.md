@@ -5,40 +5,113 @@ description: "建立內外部通報節奏與狀態更新格式"
 weight: 4
 ---
 
-## 大綱
-
-- [incident communication channel](/backend/knowledge-cards/incident-communication-channel/)
-- external status update
-- update cadence
-- [stakeholder mapping](/backend/knowledge-cards/stakeholder-mapping/)
-- [incident timeline](/backend/knowledge-cards/incident-timeline/)
-
-## 判讀訊號
-
-- 對外 update cadence 不規律、客戶不知道事況
-- 內部多 channel 並存、訊息散落、決策無單一真實來源
-- [stakeholder mapping](/backend/knowledge-cards/stakeholder-mapping/) 過期、漏通知關鍵角色
-- [status page](/backend/knowledge-cards/status-page/) 滯後 / 語焉不詳、客戶比 [incident command system](/backend/knowledge-cards/incident-command-system/) 早知道
-- 通訊範本臨時寫、措辭跨事故不一致
+事故通訊與狀態更新的核心責任是維持單一事實敘事，讓內外部在同一時間窗理解同一件事，並在主要通道故障時仍能持續發布。
 
 ## 概念定位
 
-Incident communication channel 是把事故期間對內同步、對外公告與跨角色協作固定在少數通道上的控制面。它的責任是讓資訊流動有路由，而不是讓每個人各自找一個群組。
+Incident communication channel 是事故期間的通訊控制面，責任是固定主通道、備援通道與更新節奏，避免訊息流量比事故本身更快失控。
 
-這一頁處理的是溝通通道，不是通訊內容。當通道不固定，更新節奏就會碎裂，最後會變成資訊比事故更難追。
+這一頁處理的是通訊路由與節奏，不是公關措辭。當主通道、備援通道與發言權限沒有先定義，現場就會出現多版本敘事、更新延遲與錯誤承諾。
+
+## 大綱
+
+- 通訊控制面的責任：維持內外部單一敘事
+- 通訊拓樸：內部主通道、外部主通道、備援通道
+- 更新節奏：固定 cadence、變更觸發、緊急補播
+- 欄位模型：時間窗、影響範圍、已知限制、下一次更新時間
+- 主要通道失效處理：status page 依賴檢查與切換門檻
+- 與 decision log 的關係：所有對外敘事變更都需可回放
+- 反模式：多通道平行宣布、主通道故障但不切換、只報「仍在調查」
+
+## 判讀訊號
+
+- 對外 update cadence 不規律，客戶不清楚下一次更新時間
+- 內部多 channel 並存，決策與通訊內容分裂
+- [stakeholder mapping](/backend/knowledge-cards/stakeholder-mapping/) 過期，漏通知關鍵角色
+- [status page](/backend/knowledge-cards/status-page/) 入口依賴受影響系統，更新卡住
+- 對外聲明沒有標示已知限制，後續反覆修正文案
 
 ## 核心判讀
 
-判讀 [incident communication channel](/backend/knowledge-cards/incident-communication-channel/) 時，先看主要通道是否明確，再看備援通道與發言權限是否可執行。
+判讀通訊控制面時，先看主通道是否明確，再看備援通道是否可在門檻內切換。
 
 重點訊號包括：
 
 - 是否有單一對內主通道與單一對外發布節點
-- [incident timeline](/backend/knowledge-cards/incident-timeline/) 是否能持續更新
-- [stakeholder mapping](/backend/knowledge-cards/stakeholder-mapping/) 是否涵蓋所有需要同步的人
-- [status page](/backend/knowledge-cards/status-page/) 是否跟內部節奏對齊
+- 對外更新是否固定包含「下次更新時間」
+- 主通道失效時是否能切到備援通道
+- 對外敘事是否連到同一條 [incident timeline](/backend/knowledge-cards/incident-timeline/)
+- [stakeholder mapping](/backend/knowledge-cards/stakeholder-mapping/) 是否覆蓋支援、客服、法務與管理層
+
+| 控制面   | 最小可用判準                       | 失效訊號           |
+| -------- | ---------------------------------- | ------------------ |
+| 主通道   | 內外部各一個主通道                 | 多組人各自對外更新 |
+| 備援通道 | 有切換門檻與啟動責任人             | 主通道卡住後仍等待 |
+| 節奏     | 固定 cadence + 事件觸發補播        | 更新間隔不可預期   |
+| 欄位     | 時間窗、影響範圍、限制、下一步齊備 | 對外只有「調查中」 |
+| 對位     | 通訊內容對齊 decision log          | 內外部敘事彼此衝突 |
+
+## 通訊拓樸
+
+通訊拓樸要先定義，再進入事故。拓樸的責任是讓每個角色知道資訊要去哪裡收斂、從哪裡發布。
+
+| 層級       | 角色                      | 典型通道                               | 責任                               |
+| ---------- | ------------------------- | -------------------------------------- | ---------------------------------- |
+| 內部主通道 | IC、scribe、service owner | incident room / war-room               | 收斂事實、同步決策、更新時間線     |
+| 外部主通道 | comms lead                | status page                            | 對外發布已確認事實與下一次更新時間 |
+| 外部備援   | comms lead                | vendor status page、社群帳號、客服入口 | 主通道失效時維持公告能力           |
+
+內部主通道要偏向決策，外部主通道要偏向已確認事實。兩者共用同一條決策與證據基線，但敘述粒度不同。
+
+外部備援不是選配項。若 status page 管理面與受影響服務同依賴，主通道可能同時失效；備援通道要能在數分鐘內接手公告。
+
+## 更新欄位與節奏
+
+更新內容要固定欄位，避免每次都重寫格式。欄位固定後，對外訊息才可比較、可審核、可回放。
+
+| 欄位             | 責任                           | 範例                                |
+| ---------------- | ------------------------------ | ----------------------------------- |
+| Timestamp        | 說明本次更新時間               | 2026-05-07T16:30Z                   |
+| Scope            | 說明受影響區域 / 功能 / 客戶群 | us-east-1 PUT API / 部分租戶        |
+| Known facts      | 說明已確認事實                 | index subsystem 重啟中              |
+| Known limitation | 說明未確認或資料限制           | 目前僅掌握 API 指標，客戶端待補證據 |
+| Mitigation       | 說明已執行止血或降級           | 限流 + read-only fallback           |
+| Next update      | 承諾下一次更新時間             | 20 分鐘後或重大進展立即更新         |
+
+更新節奏需要雙軌：固定 cadence + 重大事件補播。固定 cadence 提供可預期性，重大事件補播提供時效性。
+
+## 主通道失效切換
+
+主通道失效切換的責任是確保事故中仍有可信對外入口。切換條件要事前定義，避免現場臨時爭論。
+
+| 切換觸發條件                   | 切換動作                         | 決策紀錄要求                       |
+| ------------------------------ | -------------------------------- | ---------------------------------- |
+| status page 入口不可用超過門檻 | 啟動備援通道                     | 記錄觸發時間、責任人、備援 URL     |
+| 主通道更新延遲超過既定 cadence | 由 comms lead 直接補播           | 記錄延遲原因與修正措施             |
+| 外部依賴造成訊息發布阻塞       | 切換到不共依賴的公告入口         | 記錄依賴關係與下次演練需修正的拓樸 |
+| 內外部敘事版本不一致           | 凍結對外新增敘事、先對齊事實版本 | 記錄哪個欄位衝突與由誰核定最終版本 |
+
+這個控制面直接對應 AWS S3 2017 的教訓：狀態頁更新入口如果受同一事故影響，團隊必須先維持對外可見性，再補全細節。
+
+## 與 Decision Log 的關係
+
+每一次對外敘事變更都應在 [incident decision log](/backend/08-incident-response/incident-decision-log/) 留下原因與證據。通訊不是附屬工作，它本身就是事故決策的一部分。
+
+最小紀錄包括：本次對外訊息的變更原因、支撐 evidence、風險限制與下次更新條件。這能避免復盤時只看到文案，卻看不到為何當時這樣表述。
+
+## 常見反模式
+
+| 反模式               | 表面現象                   | 修正方向                            |
+| -------------------- | -------------------------- | ----------------------------------- |
+| 多通道平行對外       | 客戶收到互相衝突版本       | 固定單一外部主通道                  |
+| 主通道故障不切換     | status page 卡住卻持續等待 | 定義切換門檻與備援通道              |
+| 只報「仍在調查」     | 缺少時間窗與下一步承諾     | 固定更新欄位，至少包含 next update  |
+| 通訊與決策脫鉤       | 對外說法與內部決策不一致   | 所有敘事變更回寫 8.19 decision log  |
+| 事故後不回寫通訊缺口 | 下次事故重演同樣混亂       | 把缺口回寫 8.22 evidence write-back |
 
 ## 交接路由
 
 - 08.10 stakeholder / 外部狀態頁：對外承諾與補償政策
 - 08.12 [handover protocol](/backend/knowledge-cards/handover-protocol/)：跨班次對外節奏不可斷
+- 08.19 incident decision log：保留敘事變更的證據鏈
+- 08.22 incident evidence write-back：回寫主通道失效與備援切換缺口
