@@ -89,6 +89,7 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.18](/backend/04-observability/observability-operating-model/)    | Observability Operating Model        | 定義 platform / service team / on-call 對訊號、dashboard、alert 與成本的 ownership             |
 | [4.19](/backend/04-observability/debuggability-by-design/)          | Debuggability by Design              | 把可診斷性前移到 API、async workflow、dependency call 與錯誤模型設計                           |
 | [4.20](/backend/04-observability/observability-evidence-package/)   | Observability Evidence Package       | 把 log、metric、trace、audit 與資料品質限制包成可交接證據                                      |
+| [4.21](/backend/04-observability/rule-level-cpu-signal-governance/) | Rule-level CPU Signal Governance     | 把規則執行成本變成可觀測訊號，避免小變更在全域 rollout 後形成 CPU 熱點                         |
 
 > 註：4.6-4.15 目前為訊號治理與平台能力骨架、案例引用待後續迭代補上；4.16-4.19 是本輪優先完成的個案前控制面，負責支援 06 可靠性驗證與 08 事故處理後續章節。
 
@@ -109,12 +110,13 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 04 後續撰寫順序以「先補前提、再補驗證、最後補事故入口」為主。可觀測性是 06 與 08 的輸入層，因此本模組先把 readiness、data quality、operating model 與 debuggability 寫成可引用章節，再讓可靠性與事故模組承接。
 
-| 順序 | 章節                                                                                             | 交付責任                                              | 下游路由                                             |
-| ---- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------------- |
-| 1    | [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/) | 定義上線、變更與演練前的訊號準備度                    | 06.19 reliability readiness、08.18 intake            |
-| 2    | [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)                 | 定義 completeness、freshness、drift 與 sampling 限制  | 06.6 SLO、08.19 decision log                         |
-| 3    | [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)   | 定義 dashboard、alert、schema、成本與 owner           | 08.2 command roles、08.16 runbook lifecycle          |
-| 4    | [4.19 Debuggability by Design](/backend/04-observability/debuggability-by-design/)               | 定義 API、async、dependency 與 error model 的診斷欄位 | 06.10 contract testing、08.18 evidence triage        |
-| 5    | [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) | 把可觀測資料包成可交給 06 / 08 的證據包               | 6.23 verification evidence、8.22 evidence write-back |
+| 順序 | 章節                                                                                                 | 交付責任                                              | 下游路由                                             |
+| ---- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------- |
+| 1    | [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/)     | 定義上線、變更與演練前的訊號準備度                    | 06.19 reliability readiness、08.18 intake            |
+| 2    | [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)                     | 定義 completeness、freshness、drift 與 sampling 限制  | 06.6 SLO、08.19 decision log                         |
+| 3    | [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)       | 定義 dashboard、alert、schema、成本與 owner           | 08.2 command roles、08.16 runbook lifecycle          |
+| 4    | [4.19 Debuggability by Design](/backend/04-observability/debuggability-by-design/)                   | 定義 API、async、dependency 與 error model 的診斷欄位 | 06.10 contract testing、08.18 evidence triage        |
+| 5    | [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)     | 把可觀測資料包成可交給 06 / 08 的證據包               | 6.23 verification evidence、8.22 evidence write-back |
+| 6    | [4.21 Rule-level CPU Signal Governance](/backend/04-observability/rule-level-cpu-signal-governance/) | 把規則層 CPU 成本前移到 rollout 判讀與回退閘門        | 6.24 rule rollout safety gate、8.19 decision log     |
 
 完成條件是每篇都能回答四件事：判讀訊號、風險代價、控制面邊界與下一步路由。這樣 06 的 SLO / readiness / experiment safety 與 08 的 intake / decision log / impact assessment 才能引用 04，而不需要在各自章節重寫觀測前提。

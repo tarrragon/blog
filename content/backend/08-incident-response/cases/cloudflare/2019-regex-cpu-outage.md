@@ -48,6 +48,7 @@ Cloudflare 在 2019-07-02 發布新的 WAF Managed Rule 後，規則中的 regex
 ## 下一步路由
 
 - 回寫訊號治理： [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)  
+- 回寫規則成本訊號： [4.21 Rule-level CPU Signal Governance](/backend/04-observability/rule-level-cpu-signal-governance/)
 - 回寫規則推送閘門： [6.24 Rule Rollout Safety Gate](/backend/06-reliability/rule-rollout-safety-gate/)
 - 回寫驗證與安全邊界： [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)  
 - 回寫事中決策與證據： [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)  
