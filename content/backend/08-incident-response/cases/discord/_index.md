@@ -51,6 +51,12 @@ Discord 和 Slack 是兩種不同的長連線通訊平台，但都會遇到 reco
 - authentication 與 voice path 分層，讓不同失效能有不同恢復路徑。
 - capacity surprise 讓平時看似正常的流量，在事故時突然失控。
 
+## 章節列表
+
+| 章節                                                                            | 主題             | 核心責任                             |
+| ------------------------------------------------------------------------------- | ---------------- | ------------------------------------ |
+| [DC1](/backend/08-incident-response/cases/discord/2022-gateway-capacity-event/) | Gateway 容量事件 | 在長連線平台中控制回復造成的二次擁塞 |
+
 ## 引用源
 
 - [Gateway](https://docs.discord.com/developers/events/gateway)：Discord Gateway 的官方文檔，補 long-lived WebSocket 語意。

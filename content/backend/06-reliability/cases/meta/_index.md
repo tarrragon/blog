@@ -53,6 +53,12 @@ Meta 的價值在於把超大規模網路事故和恢復工具放在一起看，
 - DNS 自我封鎖讓內外部控制面一起失效。
 - traffic shift 讓恢復不只是切流量，而是管理整個依賴網。
 
+## 章節列表
+
+| 章節                                                                                 | 主題                     | 核心責任                         |
+| ------------------------------------------------------------------------------------ | ------------------------ | -------------------------------- |
+| [M1](/backend/06-reliability/cases/meta/region-failover-and-reliability-boundaries/) | Region Failover 邊界治理 | 把跨區故障擴散限制在可回復邊界內 |
+
 ## 引用源
 
 - [More details about the October 4 outage](https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/)：Meta 2021-10 outage 的技術回顧。

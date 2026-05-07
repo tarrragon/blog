@@ -51,6 +51,12 @@ Heroku 比較像是 PaaS 世界裡的 AWS S3 或 Cloudflare，因為入口路由
 - multi-tenant routing 讓入口層成為最敏感的擴散點。
 - third-party add-on 事故提醒平台必須清楚切出責任邊界。
 
+## 章節列表
+
+| 章節                                                                          | 主題             | 核心責任                               |
+| ----------------------------------------------------------------------------- | ---------------- | -------------------------------------- |
+| [HR1](/backend/08-incident-response/cases/heroku/2021-routing-control-event/) | Routing 控制事件 | 在 PaaS 多租戶入口層限制擴散與分批回復 |
+
 ## 引用源
 
 - [Heroku Status](https://devcenter.heroku.com/articles/heroku-status)：Heroku incident 通訊與歷史紀錄的官方說明。

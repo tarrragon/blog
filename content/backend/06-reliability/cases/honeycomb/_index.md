@@ -53,6 +53,12 @@ Honeycomb 把觀測責任直接拉到每個工程團隊，這和 Google 的 SLO 
 - query latency 會反過來告訴你資料建模是否已經失真。
 - feature flag 配合觀測訊號，讓 production testing 可以安全推進。
 
+## 章節列表
+
+| 章節                                                                                    | 主題                 | 核心責任                            |
+| --------------------------------------------------------------------------------------- | -------------------- | ----------------------------------- |
+| [HC1](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/) | Burn Rate 驅動可靠性 | 把 SLO 消耗速度轉成值班與改善優先序 |
+
 ## 引用源
 
 - [What Is Observability Engineering?](https://www.honeycomb.io/resources/getting-started/what-is-observability-engineering)：Honeycomb 對 observability engineering 的核心定義。

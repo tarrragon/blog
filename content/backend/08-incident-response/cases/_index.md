@@ -24,6 +24,18 @@ tags: ["backend", "incident-response", "case-study"]
 | Roblox     | [2021 Oct Prolonged Core Infra Outage](/backend/08-incident-response/cases/roblox/2021-oct-prolonged-core-infra-outage/)                                                                                                                                                                                                       | 補恢復後優化案例     |
 | Fastly     | [2021 June Global Edge Config-triggered Outage](/backend/08-incident-response/cases/fastly/2021-june-global-edge-config-triggered-outage/)                                                                                                                                                                                     | 補後續改善案例       |
 
+## T2/T3 第一批正文（已完成）
+
+| 服務          | 正文入口                                                                                                               | 主題重點                   |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| Slack         | [SL1 連線恢復與狀態通訊](/backend/08-incident-response/cases/slack/2022-connection-recovery-and-status-communication/) | 通訊平台失效時的對外節奏   |
+| Datadog       | [DD1 多區觀測中斷](/backend/08-incident-response/cases/datadog/2023-multi-region-observability-disruption/)            | 監控平台失效的二階風險     |
+| Discord       | [DC1 Gateway 容量事件](/backend/08-incident-response/cases/discord/2022-gateway-capacity-event/)                       | 長連線回復造成的二次擁塞   |
+| Azure AD      | [AZ1 身分控制面中斷](/backend/08-incident-response/cases/azure-ad/2021-identity-control-plane-disruption/)             | 跨產品身份依賴分級治理     |
+| Heroku        | [HR1 Routing 控制事件](/backend/08-incident-response/cases/heroku/2021-routing-control-event/)                         | 多租戶入口故障的局部化回復 |
+| Reddit        | [RD1 Kubernetes 升級事故](/backend/08-incident-response/cases/reddit/2023-kubernetes-upgrade-incident/)                | 平台升級與回退決策治理     |
+| Microsoft 365 | [M365-1 套件級身份事故](/backend/08-incident-response/cases/microsoft-365/2023-suite-wide-authentication-incident/)    | 企業套件跨產品影響盤點     |
+
 ## T1 服務
 
 - [aws-s3](/backend/08-incident-response/cases/aws-s3/)

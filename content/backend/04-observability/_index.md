@@ -82,6 +82,8 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | Gaming       | 高峰流量下的訊號新鮮度、cardinality 膨脹與警示品質 | [4.7](/backend/04-observability/cardinality-cost-governance/)、[4.17](/backend/04-observability/telemetry-data-quality/)   |
 | Healthcare   | 存取軌跡可追溯性、資料留存邊界與跨團隊 ownership   | [4.12](/backend/04-observability/audit-log-governance/)、[4.18](/backend/04-observability/observability-operating-model/)  |
 
+第一批案例正文入口見 [可觀測性案例正文](/backend/04-observability/cases/)，可直接對應 `4.12 / 4.17 / 4.18 / 4.20` 的回寫欄位。
+
 ## 跨語言適配評估
 
 可觀測性使用方式會受語言的 logger 生態、[trace context](/backend/knowledge-cards/trace-context/)、exception/error model、執行環境 metrics 與 instrumentation SDK 影響。同步 runtime 要保留 request context 與 thread-local 邊界；async runtime 要確認 [trace context](/backend/knowledge-cards/trace-context/) 能跨 task 傳遞；輕量並發 runtime 要觀察 task/goroutine 數量、queue lag 與下游等待。動態語言要特別管理 log schema 穩定性；強型別語言則要避免過度包裝導致 trace 與 error chain 斷裂。

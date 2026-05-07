@@ -80,6 +80,16 @@ weight: 14
 
 這批案例以「產業壓力類型」為主，不以單一公司唯一做法當標準答案。後續第二批再補製造業平台與跨國多區治理案例。
 
+## 對應正文入口
+
+第一批缺口已補對應正文，圖譜可直接連到可回寫文章：
+
+| 類型       | 正文入口                                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| FinTech    | [0.C1 FinTech：合規壓力下的後端選型](/backend/00-service-selection/cases/fintech-compliance-and-selection-pressure/)     |
+| Gaming     | [0.C2 Gaming：高峰流量與隔離邊界選型](/backend/00-service-selection/cases/gaming-peak-traffic-and-isolation/)            |
+| Healthcare | [0.C3 Healthcare：資料主權與回復順序選型](/backend/00-service-selection/cases/healthcare-data-sovereignty-and-recovery/) |
+
 ## 讀法提醒
 
 同一家公司不代表同一答案。公司不同時期的選型結論可能相反，因為負載、組織、預算與產品階段已經改變。把案例當成「決策壓力樣本」，比當成「標準答案」更可靠。

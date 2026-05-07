@@ -53,6 +53,12 @@ Spotify 的重點是把可靠性做成平台能力，這和 LinkedIn 的 operabi
 - fleet management 讓大規模機器與服務狀態保持一致。
 - catalog-driven ops 讓平台資訊成為日常營運入口。
 
+## 章節列表
+
+| 章節                                                                                         | 主題                 | 核心責任                           |
+| -------------------------------------------------------------------------------------------- | -------------------- | ---------------------------------- |
+| [SP1](/backend/06-reliability/cases/spotify/platform-engineering-and-reliability-contracts/) | 平台工程與可靠性契約 | 讓分散團隊共用可靠性基線與交付契約 |
+
 ## 引用源
 
 - [About | Spotify Engineering](https://engineering.atspotify.com/about/)：Spotify Engineering 與 Backstage 的官方入口。

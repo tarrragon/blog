@@ -34,6 +34,17 @@ weight: 90
 - [cloudflare（住於 08）](/backend/08-incident-response/cases/cloudflare/)
 - [microsoft](/backend/06-reliability/cases/microsoft/)
 
+## T2/T3 第一批正文（已完成）
+
+| 服務      | 正文入口                                                                                                          | 主題重點                |
+| --------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| LinkedIn  | [L1 Capacity 與 On-call 分層](/backend/06-reliability/cases/linkedin/capacity-headroom-and-oncall-tiering/)       | 容量邊界與值班交接協同  |
+| Honeycomb | [HC1 Burn Rate 驅動可靠性](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)      | 用 SLO 消耗速度驅動行動 |
+| Microsoft | [MS1 變更治理與可靠性門檻](/backend/06-reliability/cases/microsoft/change-management-and-reliability-governance/) | 變更分層與 release gate |
+| Spotify   | [SP1 平台工程與可靠性契約](/backend/06-reliability/cases/spotify/platform-engineering-and-reliability-contracts/) | 分散團隊共用可靠性基線  |
+| Pinterest | [P1 快取可靠性與容量驚奇](/backend/06-reliability/cases/pinterest/cache-reliability-and-capacity-surprises/)      | 命中率崩落時的恢復節奏  |
+| Meta      | [M1 Region Failover 邊界治理](/backend/06-reliability/cases/meta/region-failover-and-reliability-boundaries/)     | 跨區擴散與回復順序治理  |
+
 ## T3 服務
 
 - [spotify](/backend/06-reliability/cases/spotify/)

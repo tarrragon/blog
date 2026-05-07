@@ -51,6 +51,12 @@ Azure AD 是 Microsoft 365、GitHub Enterprise 與其他 SaaS 服務的基礎路
 - token service 與 DNS 故障會把身份驗證整體拉下來。
 - service health 變成客戶理解影響範圍的第一手資訊。
 
+## 章節列表
+
+| 章節                                                                                        | 主題           | 核心責任                         |
+| ------------------------------------------------------------------------------------------- | -------------- | -------------------------------- |
+| [AZ1](/backend/08-incident-response/cases/azure-ad/2021-identity-control-plane-disruption/) | 身分控制面中斷 | 盤點跨產品身份依賴與分級回復順序 |
+
 ## 引用源
 
 - [Service Level Agreement performance for Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/reference-sla-performance)：Entra ID 的 SLA / incident history 入口。
