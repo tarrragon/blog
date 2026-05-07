@@ -61,6 +61,17 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 語言教材處理如何產生穩定欄位與執行環境訊號。Backend observability 模組處理收集、儲存、查詢、視覺化、告警與跨服務關聯。
 
+## 企業案例補充
+
+可觀測性的案例補充重點是「訊號平台為什麼這樣設計」，不是工具比較表。閱讀時先抓資料規模、查詢延遲、保留策略與多租戶治理，再對照本模組章節。
+
+| 企業案例                                                                                                      | 主要觀測選型問題                             | 優先回讀章節                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [M3: Uber’s Open Source, Large-scale Metrics Platform for Prometheus](https://www.uber.com/en-GB/blog/m3/)    | 單機 Prometheus 不足時如何擴成平台層         | [4.2](/backend/04-observability/metrics-basics/)、[4.11](/backend/04-observability/telemetry-pipeline/)                     |
+| [Building Cloudflare on Cloudflare](https://blog.cloudflare.com/building-cloudflare-on-cloudflare/)           | 大規模系統內部如何同時做 logs/metrics/traces | [4.1](/backend/04-observability/log-schema/)、[4.3](/backend/04-observability/tracing-context/)                             |
+| [Cloudflare Observability](https://blog.cloudflare.com/vision-for-observability/)                             | 監控、分析、鑑識三層能力如何組合             | [4.4](/backend/04-observability/dashboard-alert/)、[4.20](/backend/04-observability/observability-evidence-package/)        |
+| [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) | 成長後如何從儲存問題回推觀測缺口             | [4.17](/backend/04-observability/telemetry-data-quality/)、[4.18](/backend/04-observability/observability-operating-model/) |
+
 ## 跨語言適配評估
 
 可觀測性使用方式會受語言的 logger 生態、[trace context](/backend/knowledge-cards/trace-context/)、exception/error model、執行環境 metrics 與 instrumentation SDK 影響。同步 runtime 要保留 request context 與 thread-local 邊界；async runtime 要確認 [trace context](/backend/knowledge-cards/trace-context/) 能跨 task 傳遞；輕量並發 runtime 要觀察 task/goroutine 數量、queue lag 與下游等待。動態語言要特別管理 log schema 穩定性；強型別語言則要避免過度包裝導致 trace 與 error chain 斷裂。

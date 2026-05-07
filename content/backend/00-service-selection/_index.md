@@ -73,6 +73,18 @@ weight: 0
 
 語言教材負責教「如何隔離外部能力」。Backend 選型模組負責教「什麼能力值得被隔離」。例如 Go 章節會說明 repository port、publisher port、cache interface 與 observability boundary；本模組則說明何時需要資料庫、Redis、broker、OpenTelemetry 或部署平台能力。
 
+## 企業選型案例補充
+
+模組零的案例補充重點是「企業如何說明選型取捨」，不是背誦哪一個技術名稱。閱讀時先抓它在解什麼需求壓力，再對照本模組的需求分類與成本取捨章節。
+
+| 企業案例                                                                                                                                                                       | 主要選型問題                             | 優先回讀章節                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [Herding elephants: Lessons learned from sharding Postgres at Notion](https://www.notion.com/blog/sharding-postgres-at-notion)                                                 | 單體資料庫何時需要走向分片               | [0.2](/backend/00-service-selection/state-storage-selection/)、[0.5](/backend/00-service-selection/traffic-data-scale/)       |
+| [Horizontally scaling the Rails backend of Shop app with Vitess](https://shopify.engineering/blogs/engineering/horizontally-scaling-the-rails-backend-of-shop-app-with-vitess) | MySQL 生態下何時改走 Vitess              | [0.1](/backend/00-service-selection/service-capability-map/)、[0.6](/backend/00-service-selection/cost-risk-tradeoffs/)       |
+| [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages)                                                                  | 儲存引擎選型如何隨成長重評               | [0.2](/backend/00-service-selection/state-storage-selection/)、[0.6](/backend/00-service-selection/cost-risk-tradeoffs/)      |
+| [Introducing Domain-Oriented Microservice Architecture](https://www.uber.com/en-GB/blog/microservice-architecture/)                                                            | 微服務邊界與複雜度治理如何重新切分       | [0.0](/backend/00-service-selection/backend-demand-taxonomy/)、[0.1](/backend/00-service-selection/service-capability-map/)   |
+| [Workload isolation using shuffle-sharding](https://aws.amazon.com/builders-library/workload-isolation-using-shuffle-sharding/)                                                | 多租戶隔離與 blast radius 如何進選型決策 | [0.6](/backend/00-service-selection/cost-risk-tradeoffs/)、[0.7](/backend/00-service-selection/failure-observability-design/) |
+
 ## 本模組不處理
 
 本模組只處理需求分析與選型入口。具體 SQL schema、Redis command、RabbitMQ exchange、Prometheus query、Kubernetes deployment 或 [chaos test](/backend/knowledge-cards/chaos-test/) 設計，會放在後續對應模組中。

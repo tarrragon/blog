@@ -110,6 +110,17 @@ tags: ["backend", "reliability", "sre"]
 
 語言教材處理測試程式如何寫得可讀、可重現、可定位。Backend reliability 模組處理測試如何在 CI、環境、資料庫、broker、網路與部署流程中被執行。
 
+## 企業案例補充
+
+可靠性案例補充的重點是「驗證機制如何被制度化」。閱讀時先抓它在保護哪一種風險，再對照本模組的驗證節點與放行門檻。
+
+| 企業案例                                                                                                                        | 主要可靠性選型問題                     | 優先回讀章節                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [Four Steps to Creating Effective Game Day Tests](https://shopify.engineering/four-steps-creating-effective-game-day-tests)     | Game Day 如何從想法變成可執行驗證流程  | [6.4](/backend/06-reliability/chaos-testing/)、[6.20](/backend/06-reliability/experiment-safety-boundary/)                  |
+| [Resiliency Planning for High-Traffic Events](https://shopify.engineering/resiliency-planning-for-high-traffic-events)          | 高流量活動前如何做風險建模與演練       | [6.9](/backend/06-reliability/capacity-cost/)、[6.22](/backend/06-reliability/steady-state-definition/)                     |
+| [Workload isolation using shuffle-sharding](https://aws.amazon.com/builders-library/workload-isolation-using-shuffle-sharding/) | 多租戶系統如何把故障影響限制在局部     | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[6.20](/backend/06-reliability/experiment-safety-boundary/) |
+| [Google SRE Workbook: Example Error Budget Policy](https://sre.google/workbook/error-budget-policy/)                            | Error budget 如何直接影響 release 節奏 | [6.6](/backend/06-reliability/slo-error-budget/)、[6.8](/backend/06-reliability/release-gate/)                              |
+
 ## 跨語言適配評估
 
 可靠性驗證使用方式會受語言的測試框架、fixture 生態、並發測試能力、型別系統、fuzz 支援與容器化工具影響。同步 runtime 要測 thread pool、[connection pool](/backend/knowledge-cards/connection-pool) 與 [timeout](/backend/knowledge-cards/timeout)；async runtime 要測 event loop blocking、task cancellation 與 [backpressure](/backend/knowledge-cards/backpressure)；動態語言要用 [contract](/backend/knowledge-cards/contract/) test 與 runtime validation 補足 schema 風險；強型別語言要把型別安全延伸到外部 payload 與 migration 相容性。
