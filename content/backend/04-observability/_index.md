@@ -88,8 +88,9 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.17](/backend/04-observability/telemetry-data-quality/)           | Telemetry Data Quality               | 把 missing signal、schema drift、sampling bias 與 timestamp skew 變成資料品質問題              |
 | [4.18](/backend/04-observability/observability-operating-model/)    | Observability Operating Model        | 定義 platform / service team / on-call 對訊號、dashboard、alert 與成本的 ownership             |
 | [4.19](/backend/04-observability/debuggability-by-design/)          | Debuggability by Design              | 把可診斷性前移到 API、async workflow、dependency call 與錯誤模型設計                           |
+| [4.20](/backend/04-observability/observability-evidence-package/)   | Observability Evidence Package       | 把 log、metric、trace、audit 與資料品質限制包成可交接證據                                      |
 
-> 註：4.6-4.19 目前為大綱骨架、案例引用待後續迭代補上。
+> 註：4.6-4.15 目前為訊號治理與平台能力骨架、案例引用待後續迭代補上；4.16-4.19 是本輪優先完成的個案前控制面，負責支援 06 可靠性驗證與 08 事故處理後續章節。
 
 ## 個案前拓展空間
 
@@ -102,4 +103,18 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | Observability Operating Model  | dashboard、alert、成本與淘汰需要明確 owner     | 4.18     |
 | Debuggability by Design        | 診斷能力需要進入 API / async / dependency 設計 | 4.19     |
 
-這些章節完成後，04 才適合進入 vendor 實作或跨模組案例引用。若服務案例暴露的是訊號分類問題，回寫 4.16；若暴露的是資料品質問題，回寫 4.17；若暴露的是 owner 與治理問題，回寫 4.18；若暴露的是架構本身難以診斷，回寫 4.19。
+本輪先完成這四個前置控制面，讓後續 06 與 08 文章有穩定的訊號前提可引用。若服務案例暴露的是訊號分類問題，回寫 4.16；若暴露的是資料品質問題，回寫 4.17；若暴露的是 owner 與治理問題，回寫 4.18；若暴露的是架構本身難以診斷，回寫 4.19。
+
+## 下一輪撰寫順序
+
+04 後續撰寫順序以「先補前提、再補驗證、最後補事故入口」為主。可觀測性是 06 與 08 的輸入層，因此本模組先把 readiness、data quality、operating model 與 debuggability 寫成可引用章節，再讓可靠性與事故模組承接。
+
+| 順序 | 章節                                                                                             | 交付責任                                              | 下游路由                                             |
+| ---- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------------- |
+| 1    | [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/) | 定義上線、變更與演練前的訊號準備度                    | 06.19 reliability readiness、08.18 intake            |
+| 2    | [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)                 | 定義 completeness、freshness、drift 與 sampling 限制  | 06.6 SLO、08.19 decision log                         |
+| 3    | [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)   | 定義 dashboard、alert、schema、成本與 owner           | 08.2 command roles、08.16 runbook lifecycle          |
+| 4    | [4.19 Debuggability by Design](/backend/04-observability/debuggability-by-design/)               | 定義 API、async、dependency 與 error model 的診斷欄位 | 06.10 contract testing、08.18 evidence triage        |
+| 5    | [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) | 把可觀測資料包成可交給 06 / 08 的證據包               | 6.23 verification evidence、8.22 evidence write-back |
+
+完成條件是每篇都能回答四件事：判讀訊號、風險代價、控制面邊界與下一步路由。這樣 06 的 SLO / readiness / experiment safety 與 08 的 intake / decision log / impact assessment 才能引用 04，而不需要在各自章節重寫觀測前提。

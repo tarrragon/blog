@@ -253,6 +253,9 @@ weight: -1
 | [Incident Communication Channel](/backend/knowledge-cards/incident-communication-channel/) | 事故期間如何同步對內對外資訊   | internal chat、status update、bridge |
 | [Escalation Policy](/backend/knowledge-cards/escalation-policy/)                           | 事故無回應或無進展時如何升級   | on-call、paging、handover            |
 | [Incident Timeline](/backend/knowledge-cards/incident-timeline/)                           | 事故事件如何形成一致時間軸     | incident log、communication          |
+| [Evidence Package](/backend/knowledge-cards/evidence-package/)                             | 觀測與事故證據如何交接與回放   | observability、verification、PIR     |
+| [Incident Decision Log](/backend/knowledge-cards/incident-decision-log/)                   | 事故決策如何保存證據與回退條件 | IC handoff、PIR、status update       |
+| [Steady State](/backend/knowledge-cards/steady-state/)                                     | 實驗與事故恢復如何定義成功狀態 | chaos、DR、recovery                  |
 | [Blast Radius](/backend/knowledge-cards/blast-radius/)                                     | 故障影響面如何估算與隔離       | dependency、shared resource          |
 | [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)                           | 事故期間何時回滾與回切         | deployment、release gate             |
 | [Post-Incident Review](/backend/knowledge-cards/post-incident-review/)                     | 事故後如何形成改進閉環         | retrospective、action items          |

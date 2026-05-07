@@ -131,8 +131,9 @@ weight: 8
 | [8.19](/backend/08-incident-response/incident-decision-log/)                                                  | Incident Decision Log                 | 把事中假設、決策、證據、回退條件與責任人留下可復盤紀錄                                                                                |
 | [8.20](/backend/08-incident-response/customer-impact-assessment/)                                             | Customer Impact Assessment            | 把受影響用戶、功能、區域、金額、SLO 與補償判斷串成影響評估模型                                                                        |
 | [8.21](/backend/08-incident-response/incident-workflow-automation-boundary/)                                  | Incident Workflow Automation Boundary | 定義哪些事故流程適合自動化，哪些決策需要保留人工確認                                                                                  |
+| [8.22](/backend/08-incident-response/incident-evidence-write-back/)                                           | Incident Evidence Write-back          | 把事故證據、決策與復盤結論回寫到 observability、reliability 與 runbook                                                                |
 
-> 註：8.9-8.21 目前為大綱骨架、案例引用待後續迭代補上。
+> 註：8.18-8.21 是本輪優先完成的事故入口與決策前置控制面，承接 04 evidence 與 06 readiness / steady state；8.9-8.17 仍待案例引用與細節補強。
 
 ## 個案前拓展空間
 
@@ -145,7 +146,21 @@ weight: 8
 | Customer Impact Assessment            | 對外通訊與補償需要更精準的影響評估模型     | 8.20     |
 | Incident Workflow Automation Boundary | 自動化適合處理通知與欄位，決策仍需清楚邊界 | 8.21     |
 
-這些章節完成後，公開事故案例才容易被拆成可重用素材。若案例重點是「事故從哪裡被發現」，回寫 Incident Intake & Evidence Triage；若重點是「事中決策如何形成」，回寫 Incident Decision Log；若重點是「客戶影響如何量化」，回寫 Customer Impact Assessment；若重點是「流程工具是否幫上忙」，回寫 Incident Workflow Automation Boundary。
+本輪先完成這四個個案前拓展章，讓公開事故案例可以被拆成可重用素材。若案例重點是「事故從哪裡被發現」，回寫 Incident Intake & Evidence Triage；若重點是「事中決策如何形成」，回寫 Incident Decision Log；若重點是「客戶影響如何量化」，回寫 Customer Impact Assessment；若重點是「流程工具是否幫上忙」，回寫 Incident Workflow Automation Boundary。
+
+## 下一輪撰寫順序
+
+08 後續撰寫順序以「先整理入口 evidence、再保留決策、最後支援對外影響與流程自動化」為主。事故處理承接 04 的觀測證據與 06 的驗證結果，並把事中事後學習回寫到兩個上游模組。
+
+| 順序 | 章節                                                                                                               | 交付責任                                                            | 上下游路由                                        |
+| ---- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------- |
+| 1    | [8.18 Incident Intake & Evidence Triage](/backend/08-incident-response/incident-intake-evidence-triage/)           | 把告警、客訴、vendor notice 與 security signal 轉成事故候選         | 04.16 readiness、8.1 severity trigger             |
+| 2    | [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)                                 | 保留假設、證據、決策、owner 與回退條件                              | 04.17 data quality、8.5 post-incident review      |
+| 3    | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)                       | 把技術症狀轉成用戶、產品與商業影響                                  | 8.1 severity、8.10 stakeholder communication      |
+| 4    | [8.21 Incident Workflow Automation Boundary](/backend/08-incident-response/incident-workflow-automation-boundary/) | 定義事故流程自動化與人工確認邊界                                    | 8.2 command roles、07 security exception          |
+| 5    | [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)                   | 把 evidence package、decision log 與 PIR action item 回寫成上游改善 | 4.20 evidence package、6.23 verification evidence |
+
+完成條件是每篇都能回答四件事：輸入來源、判讀欄位、決策責任、回寫路由。這樣 08 才能把事故從臨場反應整理成可演練、可復盤、可交接的流程。
 
 ## 服務案例庫規劃
 
