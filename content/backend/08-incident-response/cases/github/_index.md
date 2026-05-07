@@ -22,6 +22,14 @@ GitHub 是高 traffic、跨區資料庫 + 強一致性需求的代表、MySQL sp
 | 2020-11 | Actions outages           | CI/CD 平台失效的客戶影響量化                  |
 | 2021-11 | 跨區網路 / replication    | 跨區一致性 vs 可用性的取捨                    |
 
+## 案例清單
+
+- [2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)
+
+## 建議閱讀順序
+
+1. [2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)
+
 ## 案例定位
 
 GitHub 這個案例在講的是跨區資料一致性如何把事故拉長。讀者先看懂 replication、Orchestrator 與 status communication 的責任，再把 split-brain 與 Actions outage 視為不同層級的 control-plane 失效。

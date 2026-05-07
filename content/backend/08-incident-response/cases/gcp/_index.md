@@ -23,6 +23,14 @@ GCP 是全球 anycast + 強控制面整合的代表、Load Balancer / IAM 失效
 | External ALB incident | 控制面變更 staged rollout 的限制  |
 | 下游服務退化案例      | 跨產品的 dependency 暴露          |
 
+## 案例清單
+
+- [2019 US Network Congestion Multi-service Incident](/backend/08-incident-response/cases/gcp/2019-us-network-congestion-multi-service-incident/)
+
+## 建議閱讀順序
+
+1. [2019 US Network Congestion Multi-service Incident](/backend/08-incident-response/cases/gcp/2019-us-network-congestion-multi-service-incident/)
+
 ## 案例定位
 
 GCP 這個案例在講的是全球控制面如何把單一變更擴成跨產品事故。讀者先看懂 LB、IAM 與 identity 依賴的責任，再把 status event 當成 postmortem 與容災設計的入口。

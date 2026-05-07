@@ -43,6 +43,20 @@ weight: 8
 | Roblox     | prolonged recovery 與廠商協作 | root cause discovery、return to service                                                      |
 | Fastly     | 客戶配置觸發供應商 bug        | propagation speed、rollback                                                                  |
 
+## 第一輪案例驅動路由
+
+第一輪 T1 案例已補到「每個服務至少一篇可引用事故頁」。這些案例的用途不是堆疊事件，而是把 04 的觀測證據、06 的驗證邊界、08 的指揮與通訊串成同一條教學路徑。
+
+| 事故案例                                                                                                                     | 主要判讀問題                     | 優先回讀章節                                                                                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| [Cloudflare 2019 Regex CPU Outage](/backend/08-incident-response/cases/cloudflare/2019-regex-cpu-outage/)                    | 規則推送如何秒級擴散             | [4.21](/backend/04-observability/rule-level-cpu-signal-governance/)、[6.24](/backend/06-reliability/rule-rollout-safety-gate/)         |
+| [AWS S3 2017 US-EAST-1](/backend/08-incident-response/cases/aws-s3/2017-us-east-1-service-disruption/)                       | 共享子系統恢復順序與通訊入口依賴 | [8.3](/backend/08-incident-response/containment-recovery-strategy/)、[8.4](/backend/08-incident-response/incident-communication/)      |
+| [GitHub 2018 Oct21](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)                          | 一致性優先下的 fail-forward 決策 | [8.19](/backend/08-incident-response/incident-decision-log/)、[6.22](/backend/06-reliability/steady-state-definition/)                 |
+| [GCP 2019 Network Incident](/backend/08-incident-response/cases/gcp/2019-us-network-congestion-multi-service-incident/)      | 區域網路壅塞如何跨產品擴散       | [4.20](/backend/04-observability/observability-evidence-package/)、[8.22](/backend/08-incident-response/incident-evidence-write-back/) |
+| [Atlassian 2022 Multi-tenant Outage](/backend/08-incident-response/cases/atlassian/2022-april-multi-tenant-deletion-outage/) | 長事故的分批恢復與客戶通訊       | [8.20](/backend/08-incident-response/customer-impact-assessment/)、[8.4](/backend/08-incident-response/incident-communication/)        |
+| [Roblox 2021 Prolonged Outage](/backend/08-incident-response/cases/roblox/2021-oct-prolonged-core-infra-outage/)             | 根因定位延遲與長尾恢復治理       | [8.12](/backend/08-incident-response/ic-handoff-long-incident/)、[6.22](/backend/06-reliability/steady-state-definition/)              |
+| [Fastly 2021 Global Edge Outage](/backend/08-incident-response/cases/fastly/2021-june-global-edge-config-triggered-outage/)  | 有效配置觸發潛藏 bug 的全球擴散  | [6.24](/backend/06-reliability/rule-rollout-safety-gate/)、[8.4](/backend/08-incident-response/incident-communication/)                |
+
 ## Vendor / Platform 清單
 
 實作工具見 [vendors](/backend/08-incident-response/vendors/) — T1 收錄 On-call（PagerDuty / Opsgenie / Grafana OnCall）、IR 平台（incident.io / FireHydrant / Rootly）、Status page（Atlassian Statuspage / Instatus）、Postmortem（Jeli）共 9 個 vendor 骨架。跟 [cases/](/backend/08-incident-response/cases/) 是不同維度（cases 是公開事故案例來源、vendors 是實作工具）。
