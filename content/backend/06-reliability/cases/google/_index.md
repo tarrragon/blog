@@ -27,9 +27,11 @@ Google 是 SRE 概念的原始來源、SRE Book 與 Workbook 是領域 canonical
 
 ## 章節列表
 
-| 章節                                                                               | 主題                           | 核心責任                              |
-| ---------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------- |
-| [G1](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/) | Error Budget 與 Release Gating | 把 SLO 消耗量轉成放行、限速與凍結決策 |
+| 章節                                                                                     | 主題                           | 核心責任                                   |
+| ---------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------ |
+| [G1](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)       | Error Budget 與 Release Gating | 把 SLO 消耗量轉成放行、限速與凍結決策      |
+| [G2](/backend/06-reliability/cases/google/postmortem-action-item-closure-governance/)    | Postmortem Closure 治理        | 把事故改進項變成可追蹤、可驗證的治理節奏   |
+| [G3](/backend/06-reliability/cases/google/toil-budget-and-automation-investment-policy/) | Toil Budget 投資政策           | 把手動運維工作轉成可預算、可回寫的工程投資 |
 
 ## 案例定位
 

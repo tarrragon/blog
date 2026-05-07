@@ -255,19 +255,22 @@ weight: 8
 
 ## 模組完成狀態
 
-主章 8.1-8.8 骨架已建立、8.9-8.10 規劃中。服務案例庫（T1）已完成公開來源蒐集、個別 case 內容待展開。本模組目前處於規劃階段。
+主章 8.1-8.22 已完成首輪正文，服務案例庫第一批正文已補齊（Cloudflare / AWS S3 / GitHub / GCP / Atlassian / Roblox / Fastly，以及 Slack / Datadog / Discord / Azure AD / Heroku / Reddit / Microsoft 365）。目前重點從「補案例檔案」轉為「補多事件對照與決策路徑精度」。
+
+案例正文入口見 [事故案例庫](/backend/08-incident-response/cases/)。每篇案例至少要能回寫一個事故控制面章節（例如 8.18、8.19、8.20、8.21、8.22），避免只停在事故時間線描述。
+
+第二批案例深挖已補 `AWS` 第二事件： [2021 US-EAST-1 Control Plane Degradation](/backend/08-incident-response/cases/aws-s3/2021-us-east-1-control-plane-degradation/)。這篇重點回寫 `8.3 / 8.4 / 8.20` 與 `4.18 / 4.20`，補齊 control plane 退化與通訊節奏的判讀。
+
+深挖批次 B 已補 `Cloudflare` 第三事件： [2023 Workers KV Deployment Tool Misconfiguration](/backend/08-incident-response/cases/cloudflare/2023-workers-kv-deployment-tool-misconfiguration/)。這篇重點回寫 `8.19 / 8.22 / 6.24`，把控制面變更擴散與 decision log 的治理責任接回主章。
 
 ## 下一輪推演大綱
 
-| 階段 | 產出              | 責任                                                                                   | 回寫位置                               |
-| ---- | ----------------- | -------------------------------------------------------------------------------------- | -------------------------------------- |
-| 1    | T1 服務內文       | 為 7 個 T1 服務補 2-3 個事故時間線與公開來源                                           | `cases/{service}/`                     |
-| 2    | 8.7 改名落實      | 把「攻擊者視角」改名「失敗模式審查」、用 IR 領域詞彙重寫                               | `8.7`                                  |
-| 3    | 8.9 事故型態庫    | 把 cascading / split-brain / control-plane 等抽成型態卡                                | `8.9`                                  |
-| 4    | 個案前拓展章      | 補 intake、decision log、impact assessment、automation boundary                        | `8.18`-`8.21`                          |
-| 5    | T1 第一個服務內容 | 從 `aws-s3` 或 `cloudflare` 起頭、寫服務 _index 加 2-3 incident                        | `cases/aws-s3/` 或 `cases/cloudflare/` |
-| 6    | 8.10 通訊節奏     | 把 stakeholder、[status page](/backend/knowledge-cards/status-page/)、補償政策串成節奏 | `8.10`                                 |
-| 7    | 跨模組回寫        | 把 case 教訓回寫到可靠性演練、可觀測性訊號與部署切換                                   | Case to Workflow + incident controls   |
+| 階段 | 產出           | 責任                                                              | 回寫位置                               |
+| ---- | -------------- | ----------------------------------------------------------------- | -------------------------------------- |
+| 1    | 案例深挖批次 A | 針對 T1 案例補第二事件或後續事件，強化同服務的決策演進對照        | `cases/cloudflare/`、`cases/aws-s3/`   |
+| 2    | 案例深挖批次 B | 針對 T2/T3 案例補不同事故型態，避免只集中在單一故障類型           | `cases/{service}/`                     |
+| 3    | 章節回寫補強   | 把案例中的 intake、decision、impact、automation 教訓回寫主章      | `8.18`、`8.19`、`8.20`、`8.21`、`8.22` |
+| 4    | 跨模組路由校正 | 補齊 04/05/06/07 的交接連結，讓讀者可從事故案例直接跳到上游控制面 | 各章節「交接路由」段                   |
 
 推演資產化的完成條件是讓讀者能從一個事故壓力出發，找到對應問題節點、服務 case 與回寫章節。完成後事故模組才進入穩定維護狀態。
 

@@ -32,6 +32,12 @@ skill 內容看 `.claude/skills/<name>/SKILL.md`。
 
 跨 surface 的引用會違反規範 — 寫 skill 時複製 principle 卡進 `references/principles/`、不寫外部連結（AGENTS.md §9.2-3）。
 
+## 文章寫作避免模板化
+
+Claude Code 寫 `content/` 文章時，不要為了整齊而把案例、反例、規模對照或 tripwire 抽成共通模板。不同情境的業務壓力、資料形狀、流量型態、失敗條件與回退路徑若不同，必須用該情境自己的敘事說明與判讀條件。
+
+表格只能輔助整理，不可取代情境判讀。若欄位化後讓內容變得僵硬、抽象或遺失細節，應改回段落式說明。
+
 ## Content 路徑大小寫
 
 `content/` 的資料夾與對外 route 一律使用小寫（例如 `content/ci` ↔ `/ci/`）。在 macOS 本機大小寫錯誤可能不會浮現，但 Linux CI 會把 `content/CI` 與 `/ci/` 視為不同路徑，造成 `mdtools cards` 大量 broken link。

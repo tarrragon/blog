@@ -84,6 +84,12 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 第一批案例正文入口見 [可觀測性案例正文](/backend/04-observability/cases/)，可直接對應 `4.12 / 4.17 / 4.18 / 4.20` 的回寫欄位。
 
+第二批觀測遷移案例已補： [4.C4 X-Ray 到 OTel 轉換](/backend/04-observability/cases/xray-to-opentelemetry-migration/) 與 [4.C5 Cloud Trace OTLP 導入](/backend/04-observability/cases/cloud-trace-otlp-adoption/)。兩者可直接回寫到 [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/)、[4.17 telemetry data quality](/backend/04-observability/telemetry-data-quality/) 與 [4.18 operating model](/backend/04-observability/observability-operating-model/)。
+
+反例與規模對照入口： [4.C9 反例](/backend/04-observability/cases/failure-otel-migration-signal-drift/) / [4.C10 對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)。
+
+回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，觀測案例要優先保留訊號語意、採樣策略、告警偏差與 SLO 判讀差異。
+
 ## 跨語言適配評估
 
 可觀測性使用方式會受語言的 logger 生態、[trace context](/backend/knowledge-cards/trace-context/)、exception/error model、執行環境 metrics 與 instrumentation SDK 影響。同步 runtime 要保留 request context 與 thread-local 邊界；async runtime 要確認 [trace context](/backend/knowledge-cards/trace-context/) 能跨 task 傳遞；輕量並發 runtime 要觀察 task/goroutine 數量、queue lag 與下游等待。動態語言要特別管理 log schema 穩定性；強型別語言則要避免過度包裝導致 trace 與 error chain 斷裂。

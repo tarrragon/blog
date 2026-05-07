@@ -226,20 +226,22 @@ tags: ["backend", "reliability", "sre"]
 
 ## 模組完成狀態
 
-主章 6.1-6.5 骨架已建立、6.6-6.9 規劃中。服務案例庫第一批 T1 正文（Google / Netflix / Amazon / Stripe / Shopify）已完成，可直接回連到 6.6、6.8、6.20、6.22、6.23 與 8.x 事故路由；其餘 T2/T3 與 T1 第二批細節仍待補強。
+主章 6.1-6.24 已完成首輪正文，服務案例庫第一批正文已補齊（T1：Google / Netflix / Amazon / Stripe / Shopify；T2/T3：LinkedIn / Honeycomb / Microsoft / Spotify / Pinterest / Meta）。目前重點從「補章節骨架」轉為「補案例深度與跨章節回寫」。
+
+案例正文入口見 [可靠性案例庫](/backend/06-reliability/cases/)。每篇案例至少要能回寫一個章節判準（例如 6.6、6.19、6.20、6.22、6.23、6.24），避免案例只停留在事件敘事。
+
+第二批案例深挖已補 Google 與 Netflix 的第二篇正文： [Google Postmortem Closure 治理](/backend/06-reliability/cases/google/postmortem-action-item-closure-governance/) 與 [Netflix Business-Hours Chaos Guardrails](/backend/06-reliability/cases/netflix/chaos-monkey-business-hours-guardrails/)。兩者分別對應 `6.21 / 8.5 / 8.22` 與 `6.19 / 6.20 / 6.22 / 8.6` 的制度化回寫。
+
+深挖批次 B 已補 Google 第三篇制度案例： [Google Toil Budget 與 Automation 投資政策](/backend/06-reliability/cases/google/toil-budget-and-automation-investment-policy/)。這篇把 toil ratio 直接接到 `6.8 / 6.21 / 8.22`，補齊「值班壓力 → 工程投資 → release gate」的決策鏈。
 
 ## 下一輪推演大綱
 
-| 階段 | 產出              | 責任                                                            | 回寫位置                                |
-| ---- | ----------------- | --------------------------------------------------------------- | --------------------------------------- |
-| 1    | T1 服務內文       | 為 5 個 T1 服務補 2-3 個實踐卡與來源脈絡                        | `cases/{service}/`                      |
-| 2    | 6.5 改名落實      | 把「攻擊者視角」改名「失敗模式預判」、用 SRE 詞彙重寫           | `6.5`                                   |
-| 3    | 6.6 SLO 主章      | 把可靠性目標、量測、凍結條件變成可驗證問題節點                  | `6.6`                                   |
-| 4    | 個案前拓展章      | 補 readiness、experiment safety、reliability debt、steady state | `6.19`-`6.22`                           |
-| 5    | T1 第一個服務內容 | 從 `google` 或 `netflix` 起頭、寫服務 _index 加 2-3 個實踐卡    | `cases/google/` 或 `cases/netflix/`     |
-| 6    | 6.7 DR 主章       | 把回復路徑變成可重播流程節點                                    | `6.7`                                   |
-| 7    | 6.8 / 6.9 補完    | Release Gate 與容量成本變驗證輸入                               | `6.8` + `6.9`                           |
-| 8    | 跨模組回寫        | 把 case 教訓接回可觀測性訊號、部署流程、資安約束與事故閉環      | Release Gate + shared controls + drills |
+| 階段 | 產出           | 責任                                                            | 回寫位置                              |
+| ---- | -------------- | --------------------------------------------------------------- | ------------------------------------- |
+| 1    | 案例深挖批次 A | 針對 T1 案例補第二篇以上正文，強化同一服務的多次驗證脈絡        | `cases/google/`、`cases/netflix/`     |
+| 2    | 案例深挖批次 B | 針對 T2/T3 案例補跨規模對照，避免只描述單一事件                 | `cases/{service}/`                    |
+| 3    | 章節回寫補強   | 把案例中的 policy、gate、readiness 與 evidence 直接回寫主章段落 | `6.6`、`6.19`、`6.20`、`6.22`、`6.23` |
+| 4    | 跨模組路由校正 | 補齊 04/05/07/08 的交接連結，讓讀者可從案例直接跳到對應控制面   | 各章節「交接路由」段                  |
 
 推演資產化的完成條件是讓讀者能從一個失敗風險出發，找到驗證節點、服務 case 與回寫章節。完成後可靠性模組才進入穩定維護狀態。
 

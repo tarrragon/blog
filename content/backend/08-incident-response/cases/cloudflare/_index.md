@@ -29,13 +29,15 @@ Cloudflare 是 anycast edge 的代表、單一配置 push 即可影響全球流�
 
 - [2019 Regex CPU Outage](/backend/08-incident-response/cases/cloudflare/2019-regex-cpu-outage/)
 - [2023 Control Plane Token Incident](/backend/08-incident-response/cases/cloudflare/2023-control-plane-token-incident/)
+- [2023 Workers KV Deployment Tool Misconfiguration](/backend/08-incident-response/cases/cloudflare/2023-workers-kv-deployment-tool-misconfiguration/)
 - [2026 BYOIP BGP Withdrawal](/backend/08-incident-response/cases/cloudflare/2026-byoip-bgp-withdrawal/)
 
 ## 建議閱讀順序
 
 1. [2019 Regex CPU Outage](/backend/08-incident-response/cases/cloudflare/2019-regex-cpu-outage/)
 2. [2023 Control Plane Token Incident](/backend/08-incident-response/cases/cloudflare/2023-control-plane-token-incident/)
-3. [2026 BYOIP BGP Withdrawal](/backend/08-incident-response/cases/cloudflare/2026-byoip-bgp-withdrawal/)
+3. [2023 Workers KV Deployment Tool Misconfiguration](/backend/08-incident-response/cases/cloudflare/2023-workers-kv-deployment-tool-misconfiguration/)
+4. [2026 BYOIP BGP Withdrawal](/backend/08-incident-response/cases/cloudflare/2026-byoip-bgp-withdrawal/)
 
 ## 案例定位
 

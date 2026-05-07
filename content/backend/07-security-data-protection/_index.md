@@ -30,6 +30,20 @@ weight: 7
 - `backend/06-reliability`：驗證、回復與變更節奏實作。
 - `backend/08-incident-response`：分級、指揮、通報與復盤實作。
 
+## 案例驅動讀法
+
+資安案例的核心讀法是先判斷事件發生在 identity、credential 還是 network control plane，再選擇對應治理控制。
+
+| 案例                                                                                                                | 先看章節                                                                                                                                                                        | 回寫目標                                         |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [7.C1 Cloudflare：2026 Route Leak](/backend/07-security-data-protection/cases/cloudflare-route-leak-2026/)          | [7.14](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)、[7.3](/backend/07-security-data-protection/entrypoint-and-server-protection/)         | 把路由自動化風險轉成變更前守門與 tripwire        |
+| [7.C2 Cloudflare：2023 Token 事件](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/) | [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)、[7.12](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) | 把 token 事件回寫到 machine credential lifecycle |
+| [7.C3 Azure AD：2021 控制面事件](/backend/07-security-data-protection/cases/azure-ad-identity-control-plane-2021/)  | [7.2](/backend/07-security-data-protection/identity-access-boundary/)、[7.13](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)                   | 把身份控制面故障轉成依賴隔離與恢復優先序治理     |
+
+反例與規模對照入口： [7.C9 反例](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) / [7.C10 對照](/backend/07-security-data-protection/cases/contrast-identity-governance-by-scale/)。
+
+回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
+
 ## 從章節到實作的 chain
 
 各章節交付三樣：問題節點清單、判讀訊號、控制面 link。判讀完成後沿兩條 chain 進入 implementation：
@@ -72,6 +86,7 @@ weight: 7
 | [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)           | Incident Write-Back                | 把事故教訓回寫到產品、架構與控制流程     |
 | [7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/)                                   | Organization Cadence               | 把成熟度提升轉成固定節奏與指標           |
 | [7.26 資安素材庫如何支援工程推演](/backend/07-security-data-protection/security-material-library-for-engineering-simulation/)               | Materials for Simulation           | 把來源、案例、情境與模式組成推演流程     |
+| [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                     | 把控制面事件轉成可回寫治理控制與路由     |
 
 ## 模組完成狀態
 

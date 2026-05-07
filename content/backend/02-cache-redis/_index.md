@@ -34,6 +34,16 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 語言教材處理 interface / [protocol](/backend/knowledge-cards/protocol/)、並發或非同步保護、[timeout](/backend/knowledge-cards/timeout) 與 cache 呼叫邊界。Backend cache 模組處理 Redis command、資料結構、失效策略、跨節點一致性與操作風險。
 
+## 案例驅動讀法
+
+快取案例的核心讀法是先看「一致性問題長什麼樣」，再決定要調策略還是調架構。
+
+| 案例                                                                                               | 先看章節                                                                                                | 回寫目標                           |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| [2.C1 Meta：Cache Consistency 升級](/backend/02-cache-redis/cases/meta-cache-consistency-upgrade/) | [2.2](/backend/02-cache-redis/cache-aside/)、[2.3](/backend/02-cache-redis/ttl-eviction/)               | 把 invalidation 問題前移到訊號治理 |
+| [2.C2 Meta：mcrouter 跨區路由](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)  | [2.1](/backend/02-cache-redis/high-concurrency-access/)、[2.5](/backend/02-cache-redis/presence-store/) | 把快取路由層納入可用性邊界         |
+| [2.C3 Shopify：序列化遷移](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)   | [2.2](/backend/02-cache-redis/cache-aside/)                                                             | 把格式轉換做成雙軌相容與可回退流程 |
+
 ## 章節列表
 
 | 章節                                                      | 主題                             | 關鍵收穫                                                                                                                                  |
@@ -44,6 +54,11 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 | [2.4](/backend/02-cache-redis/distributed-lock/)          | distributed lock 與租約          | 分辨鎖語意、租約風險與適用場景                                                                                                            |
 | [2.5](/backend/02-cache-redis/presence-store/)            | presence store 與即時狀態        | 追蹤線上狀態、跨節點查詢與過期清理                                                                                                        |
 | [2.6](/backend/02-cache-redis/attacker-view-cache-risks/) | 攻擊者視角（紅隊）：快取弱點判讀 | 用一致性、污染與放大流量風險檢查快取設計                                                                                                  |
+| [2.C](/backend/02-cache-redis/cases/)                     | 轉換案例正文                     | 把快取策略、路由層與序列化遷移轉成可回寫實作                                                                                              |
+
+反例與規模對照入口： [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) / [2.C10 對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)。
+
+回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，快取案例要優先保留回源壓力、資料新鮮度與熱門 key 行為。
 
 ## 跨語言適配評估
 

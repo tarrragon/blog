@@ -27,9 +27,10 @@ Netflix 是 Chaos Engineering 的起源、Chaos Monkey 跟 Simian Army 是領域
 
 ## 章節列表
 
-| 章節                                                                    | 主題                       | 核心責任                                       |
-| ----------------------------------------------------------------------- | -------------------------- | ---------------------------------------------- |
-| [N1](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/) | Steady State、Chaos 與 FIT | 把故障注入變成可證偽、可停止、可回寫的驗證流程 |
+| 章節                                                                                | 主題                       | 核心責任                                        |
+| ----------------------------------------------------------------------------------- | -------------------------- | ----------------------------------------------- |
+| [N1](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/)             | Steady State、Chaos 與 FIT | 把故障注入變成可證偽、可停止、可回寫的驗證流程  |
+| [N2](/backend/06-reliability/cases/netflix/chaos-monkey-business-hours-guardrails/) | Business-Hours Guardrails  | 把時段策略、風險邊界與應變能力整合進 chaos 驗證 |
 
 ## 案例定位
 
