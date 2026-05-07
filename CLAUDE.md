@@ -32,6 +32,22 @@ skill 內容看 `.claude/skills/<name>/SKILL.md`。
 
 跨 surface 的引用會違反規範 — 寫 skill 時複製 principle 卡進 `references/principles/`、不寫外部連結（AGENTS.md §9.2-3）。
 
+## Content 路徑大小寫
+
+`content/` 的資料夾與對外 route 一律使用小寫（例如 `content/ci` ↔ `/ci/`）。在 macOS 本機大小寫錯誤可能不會浮現，但 Linux CI 會把 `content/CI` 與 `/ci/` 視為不同路徑，造成 `mdtools cards` 大量 broken link。
+
+提交前最少做一次：
+
+```bash
+./bin/mdtools cards content/
+```
+
+若要快速掃描 repo 是否殘留大寫內容路徑：
+
+```bash
+git ls-tree -r --name-only HEAD | rg '^content/[A-Z]'
+```
+
 ### Portable pass
 
 Claude Code 修改 `.claude/skills/` 時要把 skill 當成「可搬到空白專案的獨立目錄」。允許依賴同 skill 內的相對檔案；需要 report / posts 的抽象原則時，先抽成 `references/principles/<slug>.md`，再用相對連結引用。

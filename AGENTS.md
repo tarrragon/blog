@@ -166,6 +166,8 @@
 - 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
 - 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
 - 寫作時遇到 pre-commit 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。
+- **路徑大小寫一致性（強制）**：`content/` 下資料夾、檔名與站內連結 route 一律用小寫（例如 `content/ci` 對應 `/ci/`）。macOS 預設檔案系統不區分大小寫，Linux CI 會區分；若目錄是 `content/CI` 但連結寫 `/ci/`，`mdtools cards` 在 CI 會判定 broken link。
+- **大小寫檢查指令**：提交前可用 `./bin/mdtools cards content/` 驗證；若懷疑大小寫漂移，再用 `git ls-tree -r --name-only HEAD | rg '^content/[A-Z]'` 掃描是否存在大寫路徑。
 
 ---
 
