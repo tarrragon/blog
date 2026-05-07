@@ -3,6 +3,7 @@ title: "模組六：可靠性驗證流程"
 date: 2026-05-01
 description: "用 SRE 領域詞彙建問題節點、以服務級案例庫累積驗證脈絡，先建概念與案例庫再進實作交接"
 weight: 6
+tags: ["backend", "reliability", "sre"]
 ---
 
 可靠性驗證模組的核心目標是說明測試如何從單一函式擴展到整個後端系統。語言教材會處理 unit test、table-driven / parameterized test、race / async test 與 integration test；本模組負責 [CI pipeline](/backend/knowledge-cards/ci-pipeline)、壓力測試、fuzz campaign、chaos testing、SLO 與 [Release Gate](/backend/knowledge-cards/release-gate/)。
@@ -140,6 +141,7 @@ weight: 6
 | [6.21](/backend/06-reliability/reliability-debt-backlog/)                                         | Reliability Debt Backlog      | 把反覆事故、演練缺口與手動修復累積成可排序、可關閉的 reliability debt                          |
 | [6.22](/backend/06-reliability/steady-state-definition/)                                          | Steady State Definition       | 在 chaos 與 failover 前先定義系統應維持的穩定狀態與可接受退化                                  |
 | [6.23](/backend/06-reliability/verification-evidence-handoff/)                                    | Verification Evidence Handoff | 把 SLO、load、chaos、DR 與 readiness 結果包成 release / incident 可用證據                      |
+| [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)                        | Rule Rollout Safety Gate      | 把規則、策略與控制面配置推送變更納入高擴散風險 gate                                            |
 
 > 註：6.6、6.19、6.20、6.22 是本輪優先完成的可靠性前置控制面，承接 04 訊號前提並提供 08 事故流程可引用的驗證語意；其餘 6.7-6.18、6.21 仍待案例引用與細節補強。
 
