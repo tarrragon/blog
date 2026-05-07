@@ -42,6 +42,7 @@ weight: 11
 
 ## 下一步路由
 
+- 01.6 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)：雙寫、回填、切流與回滾
 - 06.8 release gate：把可逆性放進放行條件
 - 06.10 contract testing：先驗 schema 相容性
 - 08.5 [post-incident review](/backend/knowledge-cards/post-incident-review/)：migration 類事故通常需要結構化復盤
@@ -56,6 +57,8 @@ weight: 11
 
 ## 交接路由
 
+- 01.6 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)：執行層流程
+- 0.C4 [營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)：決策層判讀
 - 06.7 DR / rollback：migration rollback 演練
 - 06.8 release gate：可逆性檢查
 - 06.10 contract testing：schema 契約驗證

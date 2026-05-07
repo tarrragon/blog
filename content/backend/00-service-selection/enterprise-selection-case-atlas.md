@@ -90,6 +90,8 @@ weight: 14
 | Gaming     | [0.C2 Gaming：高峰流量與隔離邊界選型](/backend/00-service-selection/cases/gaming-peak-traffic-and-isolation/)            |
 | Healthcare | [0.C3 Healthcare：資料主權與回復順序選型](/backend/00-service-selection/cases/healthcare-data-sovereignty-and-recovery/) |
 
+營運一段時間後的語言、工具或架構轉換案例，見 [0.C4 營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)。
+
 ## 讀法提醒
 
 同一家公司不代表同一答案。公司不同時期的選型結論可能相反，因為負載、組織、預算與產品階段已經改變。把案例當成「決策壓力樣本」，比當成「標準答案」更可靠。
