@@ -15,6 +15,10 @@ weight: 51
 | tenant-level impact variance | 影響是否呈現分區差異 | [8.20](/backend/08-incident-response/customer-impact-assessment/)   |
 | status lag                   | 對外更新是否落後     | [8.10](/backend/08-incident-response/stakeholder-communication/)    |
 
-## 控制面與下一步
+## 邊界判讀
 
-事故流程需先切分租戶影響，再做回復批次，並回寫 [8.4](/backend/08-incident-response/incident-communication/)。
+這個案例的邊界是「路由層共享入口」對多租戶的擴散影響。主要風險是未先切租戶影響就全量回復，導致二次壅塞。
+
+## 下一步路由
+
+事故流程需先切分租戶影響，再做回復批次，並回寫 [8.4](/backend/08-incident-response/incident-communication/) 與 [8.20](/backend/08-incident-response/customer-impact-assessment/)。

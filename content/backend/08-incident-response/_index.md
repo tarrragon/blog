@@ -263,6 +263,8 @@ weight: 8
 
 深挖批次 B 已補 `Cloudflare` 第三事件： [2023 Workers KV Deployment Tool Misconfiguration](/backend/08-incident-response/cases/cloudflare/2023-workers-kv-deployment-tool-misconfiguration/)。這篇重點回寫 `8.19 / 8.22 / 6.24`，把控制面變更擴散與 decision log 的治理責任接回主章。
 
+第三批案例補強已補 `AWS` 第三篇： [2023 Control Plane Accountability and Communication Pattern](/backend/08-incident-response/cases/aws-s3/2023-control-plane-accountability-and-communication-pattern/)。這篇重點回寫 `8.19 / 8.20 / 8.4 / 4.20`，補齊控制面事故的責任邊界與對外節奏樣式。
+
 ## 下一輪推演大綱
 
 | 階段 | 產出           | 責任                                                              | 回寫位置                               |

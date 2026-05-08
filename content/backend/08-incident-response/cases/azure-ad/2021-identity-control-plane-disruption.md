@@ -15,6 +15,10 @@ weight: 41
 | token issuance lag      | 控制面是否壅塞     | [8.18](/backend/08-incident-response/incident-intake-evidence-triage/) |
 | dependency blast radius | 下游受影響範圍     | [8.15](/backend/08-incident-response/vendor-dependency-incident/)      |
 
-## 控制面與下一步
+## 邊界判讀
 
-先做影響分層，再同步外部通訊與回復節奏，並將判讀欄位回寫 [8.20](/backend/08-incident-response/customer-impact-assessment/)。
+這個案例的邊界是「身份控制面」對下游產品鏈的連鎖影響。主要風險是事件分級只看單一產品，忽略共用身份依賴的擴散速度。
+
+## 下一步路由
+
+先做影響分層，再同步外部通訊與回復節奏，並將判讀欄位回寫 [8.20](/backend/08-incident-response/customer-impact-assessment/) 與 [8.19](/backend/08-incident-response/incident-decision-log/)。

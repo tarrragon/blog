@@ -234,6 +234,8 @@ tags: ["backend", "reliability", "sre"]
 
 深挖批次 B 已補 Google 第三篇制度案例： [Google Toil Budget 與 Automation 投資政策](/backend/06-reliability/cases/google/toil-budget-and-automation-investment-policy/)。這篇把 toil ratio 直接接到 `6.8 / 6.21 / 8.22`，補齊「值班壓力 → 工程投資 → release gate」的決策鏈。
 
+第三批案例補強已補 `Netflix` 第三篇： [FIT 證據交接與 Release Gate 回寫](/backend/06-reliability/cases/netflix/fit-failure-injection-evidence-handoff/)。這篇把故障注入結果直接接到 `6.23 / 6.24 / 8.19 / 8.22`，補齊「實驗結果 → 放行決策 → 事故調用」的鏈路。
+
 ## 下一輪推演大綱
 
 | 階段 | 產出           | 責任                                                            | 回寫位置                              |

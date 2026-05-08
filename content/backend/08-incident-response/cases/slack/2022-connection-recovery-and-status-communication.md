@@ -15,6 +15,10 @@ weight: 11
 | status update cadence   | 對外節奏是否穩定       | [8.4](/backend/08-incident-response/incident-communication/)        |
 | workspace impact spread | 影響是否跨租戶擴散     | [8.20](/backend/08-incident-response/customer-impact-assessment/)   |
 
-## 控制面與下一步
+## 邊界判讀
 
-先保住連線層穩態，再做狀態同步。事故後把通訊節奏與指揮欄位回寫 [8.19](/backend/08-incident-response/incident-decision-log/)。
+這個案例的邊界是「連線恢復節奏」與「對外通訊節奏」必須同步。主要風險是恢復動作先行但通訊滯後，造成客戶端行為與狀態頁資訊脫節。
+
+## 下一步路由
+
+先保住連線層穩態，再做狀態同步。事故後把通訊節奏與指揮欄位回寫 [8.19](/backend/08-incident-response/incident-decision-log/) 與 [8.4](/backend/08-incident-response/incident-communication/)。

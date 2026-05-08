@@ -15,6 +15,10 @@ weight: 71
 | admin-plane availability  | 管理平面是否可用       | [8.15](/backend/08-incident-response/vendor-dependency-incident/) |
 | communication consistency | 對外狀態是否一致       | [8.10](/backend/08-incident-response/stakeholder-communication/)  |
 
-## 控制面與下一步
+## 邊界判讀
 
-先做產品分層影響盤點，再把指揮決策與外部更新同步回寫 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。
+這個案例的邊界是「套件級共同依賴失效」，不是單一產品缺陷。主要風險是把跨產品事件拆成局部事件，導致對外訊息與修復順序失焦。
+
+## 下一步路由
+
+先做產品分層影響盤點，再把指揮決策與外部更新同步回寫 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。若影響評估不一致，先補 [8.20](/backend/08-incident-response/customer-impact-assessment/) 再更新對外節奏。

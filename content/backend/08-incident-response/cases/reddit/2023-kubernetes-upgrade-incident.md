@@ -15,6 +15,10 @@ weight: 61
 | rollback decision delay  | 回退決策是否過慢       | [8.19](/backend/08-incident-response/incident-decision-log/)        |
 | service recovery slope   | 恢復是否分批收斂       | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
 
-## 控制面與下一步
+## 邊界判讀
 
-把升級變更與事故決策共用欄位，並在 [6.8](/backend/06-reliability/release-gate/) 加入升級專屬 gate。
+這個案例的邊界是「平台升級變更」與「事故分級決策」要共用同一套欄位。主要風險是把升級當例行操作，延後回退判斷。
+
+## 下一步路由
+
+把升級變更與事故決策共用欄位，並在 [6.8](/backend/06-reliability/release-gate/) 加入升級專屬 gate。事故收斂後回寫 [8.19](/backend/08-incident-response/incident-decision-log/)。

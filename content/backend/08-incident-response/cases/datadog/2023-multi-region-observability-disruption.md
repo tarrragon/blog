@@ -15,6 +15,10 @@ weight: 21
 | customer-side false normal  | 客戶是否誤以為服務正常 | [8.10](/backend/08-incident-response/stakeholder-communication/)       |
 | fallback evidence readiness | 備援證據能否即時接手   | [4.20](/backend/04-observability/observability-evidence-package/)      |
 
-## 控制面與下一步
+## 邊界判讀
 
-事故流程要預留「觀測失明」分支，並在復盤回寫 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。
+這個案例的邊界是「觀測資料缺失時的事故判讀」。主要風險是把缺失資料誤判為服務恢復，導致決策建立在錯誤安全感上。
+
+## 下一步路由
+
+事故流程要預留「觀測失明」分支，並在復盤回寫 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。同時補 [4.20](/backend/04-observability/observability-evidence-package/) 的備援證據來源。

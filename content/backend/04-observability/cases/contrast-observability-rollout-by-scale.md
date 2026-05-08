@@ -26,3 +26,15 @@ weight: 10
 - 同一事件在兩套儀表板得到相反結論
 
 觸發條件時應停止切換，先修資料語意與採樣策略，再決定是否繼續遷移。
+
+## 判讀訊號
+
+判讀重點是「兩套觀測是否仍在描述同一個系統狀態」。當 error rate、burn rate、trace coverage 三者任一長期偏離，就代表遷移證據不可信，應先停切換再修資料品質。
+
+## 邊界判讀
+
+這篇對照只處理觀測遷移的判讀邊界，不處理各 vendor 的實作細節。主要風險是把資料語意不一致當成短暫噪音，導致團隊在錯誤證據上推進切換。
+
+## 下一步路由
+
+先回到 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 修正語意與採樣，再到 [4.11 Telemetry Pipeline](/backend/04-observability/telemetry-pipeline/) 校正雙軌管線。若已影響事故判讀，交接到 [8.18 Incident Intake](/backend/08-incident-response/incident-intake-evidence-triage/)。
