@@ -164,7 +164,7 @@ tags: ["backend", "reliability", "sre"]
 | [6.23](/backend/06-reliability/verification-evidence-handoff/)                                    | Verification Evidence Handoff | 把 SLO、load、chaos、DR 與 readiness 結果包成 release / incident 可用證據                      |
 | [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)                        | Rule Rollout Safety Gate      | 把規則、策略與控制面配置推送變更納入高擴散風險 gate                                            |
 
-> 註：6.6、6.19、6.20、6.22 是本輪優先完成的可靠性前置控制面，承接 04 訊號前提並提供 08 事故流程可引用的驗證語意；其餘 6.7-6.18、6.21 仍待案例引用與細節補強。
+> 註：6.1-6.24 已完成概念層正文，案例庫可支援 SLO、readiness、experiment boundary、evidence handoff 的教學路由。後續工作重點是案例深挖與主章回寫密度，不是章節補齊。
 
 ## 個案前拓展空間
 
@@ -179,17 +179,19 @@ tags: ["backend", "reliability", "sre"]
 
 本輪先完成其中三個前置章節：Reliability Readiness Review、Experiment Safety Boundary 與 Steady State Definition，並補強 6.6 SLO / Error Budget 政策。服務案例完成後，若教訓是「上線前準備不足」，回寫 Reliability Readiness Review；若是「實驗本身造成過大影響」，回寫 Experiment Safety Boundary；若是「反覆事故沒有被工程化」，回寫 Reliability Debt Backlog；若是「chaos 沒有穩態定義」，回寫 Steady State Definition。
 
-## 下一輪撰寫順序
+## 後續深化方向
 
-06 後續撰寫順序以「先定義可靠性政策、再定義上線準備、最後定義實驗安全」為主。可靠性驗證需要先承接 04 的訊號可信度，再把驗證結果交給 08 的事故入口、決策紀錄與復盤閉環。
+06 後續深化以「多事件案例鏈、驗證證據欄位統一、事故路由回寫」為主。可靠性驗證承接 04 的訊號可信度，並把結果穩定交給 08 的 incident 決策流程。
 
-| 順序 | 章節                                                                                         | 交付責任                                                     | 下游路由                                        |
-| ---- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------- |
-| 1    | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)                    | 把 user journey、SLI、SLO 與 freeze 條件接成政策             | 6.8 release gate、8.1 severity trigger          |
-| 2    | [6.19 Reliability Readiness Review](/backend/06-reliability/reliability-readiness-review/)   | 把上線、重大變更與高風險操作變成準備度門檻                   | 6.8 release gate、8.6 drills                    |
-| 3    | [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)       | 定義 chaos、load、DR drill 的範圍與停止條件                  | 6.4 chaos testing、8.6 on-call readiness        |
-| 4    | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)             | 定義實驗與事故共用的穩態與恢復完成條件                       | 6.20 experiment boundary、8.3 recovery          |
-| 5    | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) | 把驗證結果轉成 release gate、runbook 與事故流程可用 evidence | 4.20 evidence package、8.22 evidence write-back |
+| 深化方向     | 主要責任                                       | 回寫路由                                                                                                                       |
+| ------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 多事件案例鏈 | 同服務補第二、第三事件，提升 longitudinal 判讀 | [cases/](/backend/06-reliability/cases/)                                                                                       |
+| 證據欄位統一 | 把 SLO / chaos / rollout 證據變成同一決策格式  | [6.23](/backend/06-reliability/verification-evidence-handoff/)、[8.19](/backend/08-incident-response/incident-decision-log/)   |
+| 風險回寫治理 | 把 repeated incident 與手動補救回寫 backlog    | [6.21](/backend/06-reliability/reliability-debt-backlog/)、[8.22](/backend/08-incident-response/incident-evidence-write-back/) |
+
+## 實作探討入口
+
+進入實作層時，06 建議先做一條最小 release gate：同一個變更同時具備 `SLO 狀態、readiness 結論、experiment 證據、rollback 條件` 四欄，並寫入 [6.23](/backend/06-reliability/verification-evidence-handoff/) 供 [8.19](/backend/08-incident-response/incident-decision-log/) 直接調用。
 
 完成條件是每篇都能回答四件事：可靠性目標、驗證訊號、停止或凍結條件、事故或發布路由。這樣可靠性章節才會成為「觀測 → 驗證 → 事故」閉環的中段，而不是測試工具清單。
 

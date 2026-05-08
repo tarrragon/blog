@@ -92,6 +92,16 @@ weight: 0
 
 本模組只處理需求分析與選型入口。具體 SQL schema、Redis command、RabbitMQ exchange、Prometheus query、Kubernetes deployment 或 [chaos test](/backend/knowledge-cards/chaos-test/) 設計，會放在後續對應模組中。
 
+## 實作探討入口
+
+當你準備從概念層切到實作層，建議先選一條單一業務路徑做最小切片，並同時建立三個 artifact：
+
+1. 觀測證據： [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)
+2. 驗證證據： [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)
+3. 事故決策： [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
+
+這三個 artifact 先接起來，再補該路徑的 DB、cache、queue、deployment 細節，實作討論會更穩定，也更容易做跨模組回寫。
+
 ## 大綱待辦
 
 這一節只記錄仍需要沿著原子卡原則拆出的概念，之後補卡、拆卡或新增卡都先回到這裡確認。

@@ -120,7 +120,7 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.20](/backend/04-observability/observability-evidence-package/)   | Observability Evidence Package       | 把 log、metric、trace、audit 與資料品質限制包成可交接證據                                      |
 | [4.21](/backend/04-observability/rule-level-cpu-signal-governance/) | Rule-level CPU Signal Governance     | 把規則執行成本變成可觀測訊號，避免小變更在全域 rollout 後形成 CPU 熱點                         |
 
-> 註：4.6-4.15 目前為訊號治理與平台能力骨架、案例引用待後續迭代補上；4.16-4.19 是本輪優先完成的個案前控制面，負責支援 06 可靠性驗證與 08 事故處理後續章節。
+> 註：4.1-4.21 已完成概念層正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。
 
 ## 個案前拓展空間
 
@@ -135,17 +135,18 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 本輪先完成這四個前置控制面，讓後續 06 與 08 文章有穩定的訊號前提可引用。若服務案例暴露的是訊號分類問題，回寫 4.16；若暴露的是資料品質問題，回寫 4.17；若暴露的是 owner 與治理問題，回寫 4.18；若暴露的是架構本身難以診斷，回寫 4.19。
 
-## 下一輪撰寫順序
+## 後續深化方向
 
-04 後續撰寫順序以「先補前提、再補驗證、最後補事故入口」為主。可觀測性是 06 與 08 的輸入層，因此本模組先把 readiness、data quality、operating model 與 debuggability 寫成可引用章節，再讓可靠性與事故模組承接。
+04 後續深化以「案例反例補強、跨模組回寫、證據欄位對齊」為主。可觀測性是 06 與 08 的輸入層，重點在提高 evidence package、data quality 與 incident write-back 的銜接精度。
 
-| 順序 | 章節                                                                                                 | 交付責任                                              | 下游路由                                             |
-| ---- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------- |
-| 1    | [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/)     | 定義上線、變更與演練前的訊號準備度                    | 06.19 reliability readiness、08.18 intake            |
-| 2    | [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)                     | 定義 completeness、freshness、drift 與 sampling 限制  | 06.6 SLO、08.19 decision log                         |
-| 3    | [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)       | 定義 dashboard、alert、schema、成本與 owner           | 08.2 command roles、08.16 runbook lifecycle          |
-| 4    | [4.19 Debuggability by Design](/backend/04-observability/debuggability-by-design/)                   | 定義 API、async、dependency 與 error model 的診斷欄位 | 06.10 contract testing、08.18 evidence triage        |
-| 5    | [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)     | 把可觀測資料包成可交給 06 / 08 的證據包               | 6.23 verification evidence、8.22 evidence write-back |
-| 6    | [4.21 Rule-level CPU Signal Governance](/backend/04-observability/rule-level-cpu-signal-governance/) | 把規則層 CPU 成本前移到 rollout 判讀與回退閘門        | 6.24 rule rollout safety gate、8.19 decision log     |
+| 深化方向     | 主要責任                                        | 回寫路由                                                                                                                     |
+| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 案例反例補強 | 補齊遷移失敗與訊號失真案例                      | [4.17](/backend/04-observability/telemetry-data-quality/)、[4.20](/backend/04-observability/observability-evidence-package/) |
+| 跨模組對位   | 把觀測欄位對齊 release/incident 決策欄位        | [6.23](/backend/06-reliability/verification-evidence-handoff/)、[8.19](/backend/08-incident-response/incident-decision-log/) |
+| 成本與治理   | 把採樣、cardinality、chargeback 連到 owner 決策 | [4.7](/backend/04-observability/cardinality-cost-governance/)、[4.15](/backend/04-observability/cost-attribution/)           |
+
+## 實作探討入口
+
+進入實作層時，04 建議先從一條最小切片開始：同一個 user journey 建立 `SLI + dashboard + alert + evidence query` 四件組，再把欄位直接接到 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 
 完成條件是每篇都能回答四件事：判讀訊號、風險代價、控制面邊界與下一步路由。這樣 06 的 SLO / readiness / experiment safety 與 08 的 intake / decision log / impact assessment 才能引用 04，而不需要在各自章節重寫觀測前提。

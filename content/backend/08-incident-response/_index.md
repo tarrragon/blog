@@ -157,7 +157,7 @@ weight: 8
 | [8.21](/backend/08-incident-response/incident-workflow-automation-boundary/)                                  | Incident Workflow Automation Boundary | 定義哪些事故流程適合自動化，哪些決策需要保留人工確認                                                                                  |
 | [8.22](/backend/08-incident-response/incident-evidence-write-back/)                                           | Incident Evidence Write-back          | 把事故證據、決策與復盤結論回寫到 observability、reliability 與 runbook                                                                |
 
-> 註：8.18-8.21 是本輪優先完成的事故入口與決策前置控制面，承接 04 evidence 與 06 readiness / steady state；8.9-8.17 仍待案例引用與細節補強。
+> 註：8.1-8.22 已完成概念層正文，案例庫可支援 intake、decision、impact、write-back 的完整路由。後續重點為多事件對照與跨模組回寫精度提升。
 
 ## 個案前拓展空間
 
@@ -172,17 +172,19 @@ weight: 8
 
 本輪先完成這四個個案前拓展章，讓公開事故案例可以被拆成可重用素材。若案例重點是「事故從哪裡被發現」，回寫 Incident Intake & Evidence Triage；若重點是「事中決策如何形成」，回寫 Incident Decision Log；若重點是「客戶影響如何量化」，回寫 Customer Impact Assessment；若重點是「流程工具是否幫上忙」，回寫 Incident Workflow Automation Boundary。
 
-## 下一輪撰寫順序
+## 後續深化方向
 
-08 後續撰寫順序以「先整理入口 evidence、再保留決策、最後支援對外影響與流程自動化」為主。事故處理承接 04 的觀測證據與 06 的驗證結果，並把事中事後學習回寫到兩個上游模組。
+08 後續深化以「同服務多事件對照、decision/evidence 欄位標準化、跨模組閉環回寫」為主。事故處理承接 04 的觀測證據與 06 的驗證結果，並持續回寫上游控制面。
 
-| 順序 | 章節                                                                                                               | 交付責任                                                            | 上下游路由                                        |
-| ---- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------- |
-| 1    | [8.18 Incident Intake & Evidence Triage](/backend/08-incident-response/incident-intake-evidence-triage/)           | 把告警、客訴、vendor notice 與 security signal 轉成事故候選         | 04.16 readiness、8.1 severity trigger             |
-| 2    | [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)                                 | 保留假設、證據、決策、owner 與回退條件                              | 04.17 data quality、8.5 post-incident review      |
-| 3    | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)                       | 把技術症狀轉成用戶、產品與商業影響                                  | 8.1 severity、8.10 stakeholder communication      |
-| 4    | [8.21 Incident Workflow Automation Boundary](/backend/08-incident-response/incident-workflow-automation-boundary/) | 定義事故流程自動化與人工確認邊界                                    | 8.2 command roles、07 security exception          |
-| 5    | [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)                   | 把 evidence package、decision log 與 PIR action item 回寫成上游改善 | 4.20 evidence package、6.23 verification evidence |
+| 深化方向       | 主要責任                                               | 回寫路由                                                                                                                             |
+| -------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 多事件對照     | 同服務建立第二、第三事件對照，提煉失效模式             | [cases/](/backend/08-incident-response/cases/)                                                                                       |
+| 欄位標準化     | intake / decision / impact / write-back 用同一欄位語言 | [8.18](/backend/08-incident-response/incident-intake-evidence-triage/)、[8.19](/backend/08-incident-response/incident-decision-log/) |
+| 跨模組閉環回寫 | 把事故教訓回寫到觀測與驗證控制面                       | [4.20](/backend/04-observability/observability-evidence-package/)、[6.23](/backend/06-reliability/verification-evidence-handoff/)    |
+
+## 實作探討入口
+
+進入實作層時，08 建議先建最小 incident artifact 套組：`intake sheet + decision log + customer impact note + write-back record`，並固定連到 [4.20](/backend/04-observability/observability-evidence-package/) 與 [6.23](/backend/06-reliability/verification-evidence-handoff/)。
 
 完成條件是每篇都能回答四件事：輸入來源、判讀欄位、決策責任、回寫路由。這樣 08 才能把事故從臨場反應整理成可演練、可復盤、可交接的流程。
 
@@ -265,7 +267,7 @@ weight: 8
 
 第三批案例補強已補 `AWS` 第三篇： [2023 Control Plane Accountability and Communication Pattern](/backend/08-incident-response/cases/aws-s3/2023-control-plane-accountability-and-communication-pattern/)。這篇重點回寫 `8.19 / 8.20 / 8.4 / 4.20`，補齊控制面事故的責任邊界與對外節奏樣式。
 
-## 下一輪推演大綱
+## 後續推演大綱
 
 | 階段 | 產出           | 責任                                                              | 回寫位置                               |
 | ---- | -------------- | ----------------------------------------------------------------- | -------------------------------------- |
