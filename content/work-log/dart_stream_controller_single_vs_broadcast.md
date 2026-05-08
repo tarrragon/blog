@@ -1,5 +1,5 @@
 ---
-title: "Dart StreamController：single-subscription vs broadcast 的踩坑實錄"
+title: "Dart StreamController：single-subscription vs broadcast 的設計選型問題"
 date: 2026-05-05
 draft: false
 description: "Dart `StreamController()` 預設是單訂閱、被當廣播用了一段時間才在第二個訂閱者出現時暴露。整理三種 controller 行為的程式碼對比、修復決策跟 Rx / .obs 的深入比較、以及把 single-subscription 預設視為「設計缺陷」而非個人疏忽的制度層補強方向。"
