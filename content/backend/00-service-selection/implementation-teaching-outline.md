@@ -26,22 +26,22 @@ tags: ["backend", "implementation", "outline", "service-path"]
 | 知識卡缺口   | 需要的 mechanism 已有卡片，或明確列為待補概念        | 文章會在正文中臨時發明術語 |
 | 實作入口清楚 | 能挑出一條服務路徑，並知道它產出哪些 evidence / gate | 實作順序會變成模組名稱排序 |
 
-04、06、07、08 已經接近這個狀態：它們有問題節點、案例庫、跨模組交接與實作探討入口。01、02、03、05 目前有選型入口與案例，但主要章節仍偏骨架，需要先補觀念網路。
+04、06、07、08 的 artifact backbone 實作示範已落地。01、02、03、05 也已完成觀念網路補完與多輪審查，下一步是把四個分類的服務路徑實作補齊並對齊 artifact 欄位基線。
 
 ## 模組完整性總表
 
 完整性總表的責任是決定下一輪寫作先補哪一層。已具備的模組可以進入案例深挖或實作示範；尚未具備的模組要先補概念連接與知識卡路由。
 
-| 模組             | 現況判讀                     | 下一步重點                                             |
-| ---------------- | ---------------------------- | ------------------------------------------------------ |
-| 01 Database      | 有基礎章節，但缺操作閉環     | 補 source of truth、migration safety、reconciliation   |
-| 02 Cache / Redis | 有案例入口，但缺新鮮度主線   | 補 freshness、invalidation、origin protection          |
-| 03 Message Queue | 有 broker 主線，但缺三層語意 | 補 delivery、processing、recovery semantics            |
-| 04 Observability | 概念層已成熟                 | 進入 evidence package 實作與案例回寫                   |
-| 05 Deployment    | 有平台項目，但缺契約主線     | 補 runtime、lifecycle、traffic、rollout contract       |
-| 06 Reliability   | 概念層已成熟                 | 進入 release gate / verification handoff 實作          |
-| 07 Security      | 概念層已成熟                 | 進入 scoped operation、credential rotation、audit 實作 |
-| 08 Incident      | 概念層已成熟                 | 進入 incident artifact pack 實作                       |
+| 模組             | 現況判讀                       | 下一步重點                                   |
+| ---------------- | ------------------------------ | -------------------------------------------- |
+| 01 Database      | 觀念網路完成，待補服務路徑實作 | 以 migration rollout evidence 寫完整實作流程 |
+| 02 Cache / Redis | 觀念網路完成，待補服務路徑實作 | 以 stampede rollback 寫完整實作流程          |
+| 03 Message Queue | 觀念網路完成，待補服務路徑實作 | 以 retry/replay handoff 寫完整實作流程       |
+| 04 Observability | 實作示範已完成                 | 擴充跨案例 evidence package 回寫密度         |
+| 05 Deployment    | 觀念網路完成，待補服務路徑實作 | 以 rollout + drain + rollback 寫完整實作流程 |
+| 06 Reliability   | 實作示範已完成                 | 擴充 provider 依賴類 gate 的多案例對照       |
+| 07 Security      | 實作示範已完成                 | 擴充 credential rotation 的多情境與回退策略  |
+| 08 Incident      | 實作示範已完成                 | 擴充 control-plane 事故的 write-back 關閉力  |
 
 這張表的判斷結論是：下一輪先把 01、02、03、05 補到能和 04、06、07、08 對話的程度，再分批寫實作正文。
 
@@ -115,25 +115,23 @@ tags: ["backend", "implementation", "outline", "service-path"]
 | 01 Database / Storage         | Schema migration rollout evidence           | 訂單資料表欄位演進                       | 需先補觀念網路   |
 | 02 Cache / Redis              | Cache migration and stampede rollback       | 商品詳情或價格快取                       | 需先補觀念網路   |
 | 03 Message Queue              | Queue consumer retry and replay handoff     | 訂單事件 consumer                        | 需先補觀念網路   |
-| 04 Observability              | Checkout API evidence package               | checkout 同步 API                        | 可進入實作       |
+| 04 Observability              | Checkout API evidence package               | checkout 同步 API                        | 已完成首篇示範   |
 | 05 Deployment Platform        | Deployment rollout with drain and rollback  | checkout service rollout                 | 需先補觀念網路   |
-| 06 Reliability                | Release gate for provider dependency change | payment provider timeout/fallback        | 可進入實作       |
-| 07 Security / Data Protection | Credential rotation with scoped evidence    | webhook secret / API credential rotation | 可進入實作       |
-| 08 Incident Workflow          | Control plane decision log and write-back   | rule/config rollout incident             | 可進入實作       |
+| 06 Reliability                | Release gate for provider dependency change | payment provider timeout/fallback        | 已完成首篇示範   |
+| 07 Security / Data Protection | Credential rotation with scoped evidence    | webhook secret / API credential rotation | 已完成首篇示範   |
+| 08 Incident Workflow          | Control plane decision log and write-back   | rule/config rollout incident             | 已完成首篇示範   |
 
-這份 backlog 的順序應以依賴關係安排。先補 01、02、03、05 的觀念網路，再從 04/06/08 的 artifact backbone 開始寫示範，最後回到 01/02/03/05 寫具體服務路徑。
+這份 backlog 的順序應以依賴關係安排。04/06/07/08 的 artifact backbone 首篇示範已完成，下一批主軸是回到 01/02/03/05 寫具體服務路徑，並直接引用既有 artifact 欄位基線。
 
 ## 寫作順序
 
-下一輪寫作的核心順序是先補完整性，再寫正文。這樣後續低負載模型可以依大綱寫文章，而不需要重新做架構判斷。
+下一輪寫作的核心順序改為「以既有 artifact backbone 驅動服務實作」。這樣後續正文可直接沿同一組 evidence/gate/decision 欄位寫作，不需要再重建交接語言。
 
-1. 更新 01、02、03、05 首頁，加入觀念網路、知識卡缺口、案例回寫與實作入口。
-2. 依每章補完方向，建立或標記缺少的 knowledge cards。
-3. 優先補 01 migration safety / 02 freshness and origin protection / 03 processing and recovery semantics / 05 platform contract 的概念正文。
-4. 寫 04 `Checkout API evidence package`，作為 evidence backbone。
-5. 寫 06 `Queue consumer verification handoff` 或 `Provider dependency release gate`，作為 verification backbone。
-6. 寫 08 `Control plane decision log`，作為 incident backbone。
-7. 回頭寫 01/02/03/05 的服務路徑實作，讓它們引用 04、06、08 的 artifact。
+1. 先寫 01 `Schema migration rollout evidence` 的完整實作示範，引用 4.22 / 6.25 / 8.23。
+2. 再寫 02 `Cache migration and stampede rollback`，對齊同一組欄位與停損條件。
+3. 再寫 03 `Queue consumer retry and replay handoff`，把 replay 決策接到 decision log。
+4. 最後寫 05 `Deployment rollout with drain and rollback`，把切流、gate 與 write-back 串成閉環。
+5. 每篇完成後回寫對應 `_index.md` 的實作入口與案例路由。
 
 ## 完成判準
 

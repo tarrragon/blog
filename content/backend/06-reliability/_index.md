@@ -137,34 +137,35 @@ tags: ["backend", "reliability", "sre"]
 
 ## 主章規劃
 
-| 章節                                                                                              | 主題                          | 核心責任                                                                                       |
-| ------------------------------------------------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------- |
-| [6.1 CI pipeline](/backend/06-reliability/ci-pipeline/)                                           | CI Pipeline                   | 分層測試、快慢測試與 artifact 管理                                                             |
-| [6.2 Load test](/backend/06-reliability/load-testing/)                                            | Load Test                     | 定義 workload、吞吐與延遲基準                                                                  |
-| [6.3 Fuzz campaign](/backend/06-reliability/fuzz-campaign/)                                       | Fuzz Campaign                 | 建立輸入邊界、corpus 與 crash reproduction                                                     |
-| [6.4 Chaos testing](/backend/06-reliability/chaos-testing/)                                       | Chaos Testing                 | 模擬 broker、DB、network 與節點故障                                                            |
-| [6.5 失敗模式預判（Pre-mortem 與 FMEA）](/backend/06-reliability/attacker-view-validation-risks/) | Failure Mode Pre-mortem       | 用驗證盲區、演練缺口與門檻失真檢查 release 風險（原「攻擊者視角」改名為 SRE first-class 詞彙） |
-| [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)                         | SLO & Error Budget            | 把可靠性目標轉成可驗證量測與凍結條件                                                           |
-| [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)                | DR & Rollback Rehearsal       | 把回復路徑變成定期可重播流程                                                                   |
-| [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                              | Release Gate                  | 把驗證、migration、相容性納入放行判準                                                          |
-| [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                      | Capacity & Cost               | 把容量規劃跟成本約束變成驗證輸入                                                               |
-| [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)                 | Contract Testing              | 把跨服務 / API / event schema 契約變成可驗證 artifact                                          |
-| [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                  | Migration Safety              | 把 schema migration 變成可逆、可漸進的 rollout 流程                                            |
-| [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/)                    | Idempotency & Replay          | 把重試 / 重播 / 冪等從口頭約定變成可驗證屬性                                                   |
-| [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)          | Perf Regression Gate          | 把效能 baseline 從一次性壓測變成持續 release gate                                              |
-| [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)      | Dependency Budget             | 把內外依賴可靠性納入 SLO 計算與設計約束                                                        |
-| [6.15 Environment Parity 與漂移控制](/backend/06-reliability/environment-parity/)                 | Environment Parity            | 把 staging / preprod / prod 差異作為一級風險治理                                               |
-| [6.16 Test Data Management](/backend/06-reliability/test-data-management/)                        | Test Data Management          | 把 fixture / seed / production-like data 作為跨模組共用 artifact                               |
-| [6.17 Feature Flag / Dark Launch Governance](/backend/06-reliability/feature-flag-governance/)    | Feature Flag Governance       | 把 feature flag 從上線工具升級為有 lifecycle / debt 治理的 artifact                            |
-| [6.18 Reliability Metrics Governance](/backend/06-reliability/reliability-metrics-governance/)    | Reliability Metrics           | DORA / SPACE / CFR 等可靠性指標的選用、量測與治理                                              |
-| [6.19](/backend/06-reliability/reliability-readiness-review/)                                     | Reliability Readiness Review  | 把上線前、重大變更前與高風險操作前的可靠性準備度變成可檢查門檻                                 |
-| [6.20](/backend/06-reliability/experiment-safety-boundary/)                                       | Experiment Safety Boundary    | 定義 chaos、load test、DR drill 的 blast radius、停止條件與權限約束                            |
-| [6.21](/backend/06-reliability/reliability-debt-backlog/)                                         | Reliability Debt Backlog      | 把反覆事故、演練缺口與手動修復累積成可排序、可關閉的 reliability debt                          |
-| [6.22](/backend/06-reliability/steady-state-definition/)                                          | Steady State Definition       | 在 chaos 與 failover 前先定義系統應維持的穩定狀態與可接受退化                                  |
-| [6.23](/backend/06-reliability/verification-evidence-handoff/)                                    | Verification Evidence Handoff | 把 SLO、load、chaos、DR 與 readiness 結果包成 release / incident 可用證據                      |
-| [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)                        | Rule Rollout Safety Gate      | 把規則、策略與控制面配置推送變更納入高擴散風險 gate                                            |
+| 章節                                                                                              | 主題                                      | 核心責任                                                                                       |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [6.1 CI pipeline](/backend/06-reliability/ci-pipeline/)                                           | CI Pipeline                               | 分層測試、快慢測試與 artifact 管理                                                             |
+| [6.2 Load test](/backend/06-reliability/load-testing/)                                            | Load Test                                 | 定義 workload、吞吐與延遲基準                                                                  |
+| [6.3 Fuzz campaign](/backend/06-reliability/fuzz-campaign/)                                       | Fuzz Campaign                             | 建立輸入邊界、corpus 與 crash reproduction                                                     |
+| [6.4 Chaos testing](/backend/06-reliability/chaos-testing/)                                       | Chaos Testing                             | 模擬 broker、DB、network 與節點故障                                                            |
+| [6.5 失敗模式預判（Pre-mortem 與 FMEA）](/backend/06-reliability/attacker-view-validation-risks/) | Failure Mode Pre-mortem                   | 用驗證盲區、演練缺口與門檻失真檢查 release 風險（原「攻擊者視角」改名為 SRE first-class 詞彙） |
+| [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)                         | SLO & Error Budget                        | 把可靠性目標轉成可驗證量測與凍結條件                                                           |
+| [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)                | DR & Rollback Rehearsal                   | 把回復路徑變成定期可重播流程                                                                   |
+| [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                              | Release Gate                              | 把驗證、migration、相容性納入放行判準                                                          |
+| [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                      | Capacity & Cost                           | 把容量規劃跟成本約束變成驗證輸入                                                               |
+| [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)                 | Contract Testing                          | 把跨服務 / API / event schema 契約變成可驗證 artifact                                          |
+| [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                  | Migration Safety                          | 把 schema migration 變成可逆、可漸進的 rollout 流程                                            |
+| [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/)                    | Idempotency & Replay                      | 把重試 / 重播 / 冪等從口頭約定變成可驗證屬性                                                   |
+| [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)          | Perf Regression Gate                      | 把效能 baseline 從一次性壓測變成持續 release gate                                              |
+| [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)      | Dependency Budget                         | 把內外依賴可靠性納入 SLO 計算與設計約束                                                        |
+| [6.15 Environment Parity 與漂移控制](/backend/06-reliability/environment-parity/)                 | Environment Parity                        | 把 staging / preprod / prod 差異作為一級風險治理                                               |
+| [6.16 Test Data Management](/backend/06-reliability/test-data-management/)                        | Test Data Management                      | 把 fixture / seed / production-like data 作為跨模組共用 artifact                               |
+| [6.17 Feature Flag / Dark Launch Governance](/backend/06-reliability/feature-flag-governance/)    | Feature Flag Governance                   | 把 feature flag 從上線工具升級為有 lifecycle / debt 治理的 artifact                            |
+| [6.18 Reliability Metrics Governance](/backend/06-reliability/reliability-metrics-governance/)    | Reliability Metrics                       | DORA / SPACE / CFR 等可靠性指標的選用、量測與治理                                              |
+| [6.19](/backend/06-reliability/reliability-readiness-review/)                                     | Reliability Readiness Review              | 把上線前、重大變更前與高風險操作前的可靠性準備度變成可檢查門檻                                 |
+| [6.20](/backend/06-reliability/experiment-safety-boundary/)                                       | Experiment Safety Boundary                | 定義 chaos、load test、DR drill 的 blast radius、停止條件與權限約束                            |
+| [6.21](/backend/06-reliability/reliability-debt-backlog/)                                         | Reliability Debt Backlog                  | 把反覆事故、演練缺口與手動修復累積成可排序、可關閉的 reliability debt                          |
+| [6.22](/backend/06-reliability/steady-state-definition/)                                          | Steady State Definition                   | 在 chaos 與 failover 前先定義系統應維持的穩定狀態與可接受退化                                  |
+| [6.23](/backend/06-reliability/verification-evidence-handoff/)                                    | Verification Evidence Handoff             | 把 SLO、load、chaos、DR 與 readiness 結果包成 release / incident 可用證據                      |
+| [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)                        | Rule Rollout Safety Gate                  | 把規則、策略與控制面配置推送變更納入高擴散風險 gate                                            |
+| [6.25](/backend/06-reliability/provider-dependency-release-gate/)                                 | Provider Dependency Release Gate 實作示範 | 以 payment provider 變更示範 gate、stop condition 與 rollback window 的實作交接                |
 
-> 註：6.1-6.24 已完成概念層正文，案例庫可支援 SLO、readiness、experiment boundary、evidence handoff 的教學路由。後續工作重點是案例深挖與主章回寫密度，不是章節補齊。
+> 註：6.1-6.25 已完成概念層與第一篇實作示範正文，案例庫可支援 SLO、readiness、experiment boundary、evidence handoff 與 release gate 實作路由。後續工作重點是案例深挖與主章回寫密度，不是章節補齊。
 
 ## 個案前拓展空間
 
@@ -192,6 +193,8 @@ tags: ["backend", "reliability", "sre"]
 ## 實作探討入口
 
 進入實作層時，06 建議先做一條最小 release gate：同一個變更同時具備 `SLO 狀態、readiness 結論、experiment 證據、rollback 條件` 四欄，並寫入 [6.23](/backend/06-reliability/verification-evidence-handoff/) 供 [8.19](/backend/08-incident-response/incident-decision-log/) 直接調用。
+
+首篇示範已完成： [6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)。
 
 完成條件是每篇都能回答四件事：可靠性目標、驗證訊號、停止或凍結條件、事故或發布路由。這樣可靠性章節才會成為「觀測 → 驗證 → 事故」閉環的中段，而不是測試工具清單。
 
@@ -228,7 +231,7 @@ tags: ["backend", "reliability", "sre"]
 
 ## 模組完成狀態
 
-主章 6.1-6.24 已完成首輪正文，服務案例庫第一批正文已補齊（T1：Google / Netflix / Amazon / Stripe / Shopify；T2/T3：LinkedIn / Honeycomb / Microsoft / Spotify / Pinterest / Meta）。目前重點從「補章節骨架」轉為「補案例深度與跨章節回寫」。
+主章 6.1-6.25 已完成首輪正文，服務案例庫第一批正文已補齊（T1：Google / Netflix / Amazon / Stripe / Shopify；T2/T3：LinkedIn / Honeycomb / Microsoft / Spotify / Pinterest / Meta）。目前重點從「補章節骨架」轉為「補案例深度與跨章節回寫」。
 
 案例正文入口見 [可靠性案例庫](/backend/06-reliability/cases/)。每篇案例至少要能回寫一個章節判準（例如 6.6、6.19、6.20、6.22、6.23、6.24），避免案例只停留在事件敘事。
 

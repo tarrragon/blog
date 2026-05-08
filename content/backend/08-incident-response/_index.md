@@ -132,32 +132,33 @@ weight: 8
 
 ## 主章規劃
 
-| 章節                                                                                                          | 主題                                  | 核心責任                                                                                                                              |
-| ------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)                            | Severity & Trigger                    | 建立統一分級與啟動門檻                                                                                                                |
-| [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)                               | Command Model                         | 定義 commander、owner、scribe、[on-call](/backend/knowledge-cards/on-call) 協作                                                       |
-| [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)                      | Containment & Recovery                | 把短期止血與正式回復拆成可執行步驟                                                                                                    |
-| [8.4 事故通訊與狀態更新](/backend/08-incident-response/incident-communication/)                               | Incident Communication                | 建立內外部通訊節奏與格式                                                                                                              |
-| [8.5 復盤與改進追蹤](/backend/08-incident-response/post-incident-review/)                                     | Post-Incident Review                  | 把 [RCA](/backend/knowledge-cards/rca/) 與 action items 變成可驗證閉環                                                                |
-| [8.6 演練與值班能力建設](/backend/08-incident-response/drills-and-oncall-readiness/)                          | Drills & Readiness                    | 用 game day 與值班訓練提升反應品質                                                                                                    |
-| [8.7 失敗模式審查（Failure Mode Audit）](/backend/08-incident-response/attacker-view-incident-risks/)         | Failure Mode Audit                    | 用擴散路徑、回復瓶頸與交接斷點檢查事故設計（原「攻擊者視角」改名為領域 first-class 詞彙）                                             |
-| [8.8 事故報告轉 workflow](/backend/08-incident-response/incident-report-to-workflow/)                         | Case to Workflow                      | 把事故故事轉成可執行、可驗證、可演練的流程                                                                                            |
-| [8.9 事故型態庫入口](/backend/08-incident-response/incident-pattern-library/)                                 | Incident Pattern                      | 把跨服務的共通事故型態（cascading / split-brain / control-plane failure）抽成型態卡                                                   |
-| [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)                 | Stakeholder Comms                     | 把 [impact scope](/backend/knowledge-cards/impact-scope/)、[status page](/backend/knowledge-cards/status-page/)、補償政策串成節奏     |
-| [8.11 觀測、驗證與事故閉環](/backend/08-incident-response/observability-reliability-incident-loop/)           | Cross-Module Loop                     | 把可觀測性、可靠性驗證與事故處理的雙向反饋串成可判讀循環                                                                              |
-| [8.12 IC Handoff 與長事故協調](/backend/08-incident-response/ic-handoff-long-incident/)                       | Handover                              | 把 24h+ / 跨 timezone 事故的接班節奏變成可重複流程                                                                                    |
-| [8.13 Repeated Incident 與 Toil 治理](/backend/08-incident-response/repeated-incident-toil/)                  | Repeated & Toil                       | 把同型反覆事故與重複手動修復變成工程化治理對象                                                                                        |
-| [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/)                | Multi-incident                        | 把同時多事故的優先序、資源分配與 [incident command system](/backend/knowledge-cards/incident-command-system/) pool 協調變成可執行流程 |
-| [8.15 Vendor / 第三方依賴事故處理](/backend/08-incident-response/vendor-dependency-incident/)                 | Vendor Incident                       | 依賴方掛掉、自己無 control 時的決策模型                                                                                               |
-| [8.16 Runbook Lifecycle 管理](/backend/08-incident-response/runbook-lifecycle/)                               | Runbook Lifecycle                     | 把 runbook 變成有版本、有演練、會過期的 artifact                                                                                      |
-| [8.17 Security vs Operational Incident 分流](/backend/08-incident-response/security-vs-operational-incident/) | Security vs Ops IR                    | 把資安事故跟可用性事故的 IR 流程分支點明確化                                                                                          |
-| [8.18](/backend/08-incident-response/incident-intake-evidence-triage/)                                        | Incident Intake & Evidence Triage     | 把告警、客訴、支援回報與第三方狀態轉成同一個 intake / evidence 判讀流程                                                               |
-| [8.19](/backend/08-incident-response/incident-decision-log/)                                                  | Incident Decision Log                 | 把事中假設、決策、證據、回退條件與責任人留下可復盤紀錄                                                                                |
-| [8.20](/backend/08-incident-response/customer-impact-assessment/)                                             | Customer Impact Assessment            | 把受影響用戶、功能、區域、金額、SLO 與補償判斷串成影響評估模型                                                                        |
-| [8.21](/backend/08-incident-response/incident-workflow-automation-boundary/)                                  | Incident Workflow Automation Boundary | 定義哪些事故流程適合自動化，哪些決策需要保留人工確認                                                                                  |
-| [8.22](/backend/08-incident-response/incident-evidence-write-back/)                                           | Incident Evidence Write-back          | 把事故證據、決策與復盤結論回寫到 observability、reliability 與 runbook                                                                |
+| 章節                                                                                                          | 主題                                               | 核心責任                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)                            | Severity & Trigger                                 | 建立統一分級與啟動門檻                                                                                                                |
+| [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)                               | Command Model                                      | 定義 commander、owner、scribe、[on-call](/backend/knowledge-cards/on-call) 協作                                                       |
+| [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)                      | Containment & Recovery                             | 把短期止血與正式回復拆成可執行步驟                                                                                                    |
+| [8.4 事故通訊與狀態更新](/backend/08-incident-response/incident-communication/)                               | Incident Communication                             | 建立內外部通訊節奏與格式                                                                                                              |
+| [8.5 復盤與改進追蹤](/backend/08-incident-response/post-incident-review/)                                     | Post-Incident Review                               | 把 [RCA](/backend/knowledge-cards/rca/) 與 action items 變成可驗證閉環                                                                |
+| [8.6 演練與值班能力建設](/backend/08-incident-response/drills-and-oncall-readiness/)                          | Drills & Readiness                                 | 用 game day 與值班訓練提升反應品質                                                                                                    |
+| [8.7 失敗模式審查（Failure Mode Audit）](/backend/08-incident-response/attacker-view-incident-risks/)         | Failure Mode Audit                                 | 用擴散路徑、回復瓶頸與交接斷點檢查事故設計（原「攻擊者視角」改名為領域 first-class 詞彙）                                             |
+| [8.8 事故報告轉 workflow](/backend/08-incident-response/incident-report-to-workflow/)                         | Case to Workflow                                   | 把事故故事轉成可執行、可驗證、可演練的流程                                                                                            |
+| [8.9 事故型態庫入口](/backend/08-incident-response/incident-pattern-library/)                                 | Incident Pattern                                   | 把跨服務的共通事故型態（cascading / split-brain / control-plane failure）抽成型態卡                                                   |
+| [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)                 | Stakeholder Comms                                  | 把 [impact scope](/backend/knowledge-cards/impact-scope/)、[status page](/backend/knowledge-cards/status-page/)、補償政策串成節奏     |
+| [8.11 觀測、驗證與事故閉環](/backend/08-incident-response/observability-reliability-incident-loop/)           | Cross-Module Loop                                  | 把可觀測性、可靠性驗證與事故處理的雙向反饋串成可判讀循環                                                                              |
+| [8.12 IC Handoff 與長事故協調](/backend/08-incident-response/ic-handoff-long-incident/)                       | Handover                                           | 把 24h+ / 跨 timezone 事故的接班節奏變成可重複流程                                                                                    |
+| [8.13 Repeated Incident 與 Toil 治理](/backend/08-incident-response/repeated-incident-toil/)                  | Repeated & Toil                                    | 把同型反覆事故與重複手動修復變成工程化治理對象                                                                                        |
+| [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/)                | Multi-incident                                     | 把同時多事故的優先序、資源分配與 [incident command system](/backend/knowledge-cards/incident-command-system/) pool 協調變成可執行流程 |
+| [8.15 Vendor / 第三方依賴事故處理](/backend/08-incident-response/vendor-dependency-incident/)                 | Vendor Incident                                    | 依賴方掛掉、自己無 control 時的決策模型                                                                                               |
+| [8.16 Runbook Lifecycle 管理](/backend/08-incident-response/runbook-lifecycle/)                               | Runbook Lifecycle                                  | 把 runbook 變成有版本、有演練、會過期的 artifact                                                                                      |
+| [8.17 Security vs Operational Incident 分流](/backend/08-incident-response/security-vs-operational-incident/) | Security vs Ops IR                                 | 把資安事故跟可用性事故的 IR 流程分支點明確化                                                                                          |
+| [8.18](/backend/08-incident-response/incident-intake-evidence-triage/)                                        | Incident Intake & Evidence Triage                  | 把告警、客訴、支援回報與第三方狀態轉成同一個 intake / evidence 判讀流程                                                               |
+| [8.19](/backend/08-incident-response/incident-decision-log/)                                                  | Incident Decision Log                              | 把事中假設、決策、證據、回退條件與責任人留下可復盤紀錄                                                                                |
+| [8.20](/backend/08-incident-response/customer-impact-assessment/)                                             | Customer Impact Assessment                         | 把受影響用戶、功能、區域、金額、SLO 與補償判斷串成影響評估模型                                                                        |
+| [8.21](/backend/08-incident-response/incident-workflow-automation-boundary/)                                  | Incident Workflow Automation Boundary              | 定義哪些事故流程適合自動化，哪些決策需要保留人工確認                                                                                  |
+| [8.22](/backend/08-incident-response/incident-evidence-write-back/)                                           | Incident Evidence Write-back                       | 把事故證據、決策與復盤結論回寫到 observability、reliability 與 runbook                                                                |
+| [8.23](/backend/08-incident-response/control-plane-decision-log-write-back/)                                  | Control Plane Decision Log and Write-back 實作示範 | 以 rule/config rollout 事故示範 decision log 與 write-back 的完整閉環                                                                 |
 
-> 註：8.1-8.22 已完成概念層正文，案例庫可支援 intake、decision、impact、write-back 的完整路由。後續重點為多事件對照與跨模組回寫精度提升。
+> 註：8.1-8.23 已完成概念層與第一篇實作示範正文，案例庫可支援 intake、decision、impact、write-back 的完整路由。後續重點為多事件對照與跨模組回寫精度提升。
 
 ## 個案前拓展空間
 
@@ -185,6 +186,8 @@ weight: 8
 ## 實作探討入口
 
 進入實作層時，08 建議先建最小 incident artifact 套組：`intake sheet + decision log + customer impact note + write-back record`，並固定連到 [4.20](/backend/04-observability/observability-evidence-package/) 與 [6.23](/backend/06-reliability/verification-evidence-handoff/)。
+
+首篇示範已完成： [8.23 Control Plane Decision Log and Write-back 實作示範](/backend/08-incident-response/control-plane-decision-log-write-back/)。
 
 完成條件是每篇都能回答四件事：輸入來源、判讀欄位、決策責任、回寫路由。這樣 08 才能把事故從臨場反應整理成可演練、可復盤、可交接的流程。
 
@@ -257,7 +260,7 @@ weight: 8
 
 ## 模組完成狀態
 
-主章 8.1-8.22 已完成首輪正文，服務案例庫第一批正文已補齊（Cloudflare / AWS S3 / GitHub / GCP / Atlassian / Roblox / Fastly，以及 Slack / Datadog / Discord / Azure AD / Heroku / Reddit / Microsoft 365）。目前重點從「補案例檔案」轉為「補多事件對照與決策路徑精度」。
+主章 8.1-8.23 已完成首輪正文，服務案例庫第一批正文已補齊（Cloudflare / AWS S3 / GitHub / GCP / Atlassian / Roblox / Fastly，以及 Slack / Datadog / Discord / Azure AD / Heroku / Reddit / Microsoft 365）。目前重點從「補案例檔案」轉為「補多事件對照與決策路徑精度」。
 
 案例正文入口見 [事故案例庫](/backend/08-incident-response/cases/)。每篇案例至少要能回寫一個事故控制面章節（例如 8.18、8.19、8.20、8.21、8.22），避免只停在事故時間線描述。
 
