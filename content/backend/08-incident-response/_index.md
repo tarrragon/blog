@@ -3,6 +3,7 @@ title: "模組八：事故處理與復盤"
 date: 2026-05-01
 description: "用 IR 領域詞彙建問題節點、以服務級案例庫累積事故脈絡，先建概念與案例庫再進實作交接"
 weight: 8
+tags: ["backend", "incident-response", "operations"]
 ---
 
 事故處理模組的核心目標是把「事故發生時的臨場反應」轉成可演練、可交接、可復用的團隊流程。本模組採問題驅動方法、用 IR 領域 first-class 詞彙（ICS / Severity / [post-incident review](/backend/knowledge-cards/post-incident-review/) / Game Day），把事故議題拆成問題節點，蒐集公開事故報告作為案例庫，再把控制面交接到可觀測性、部署平台、可靠性驗證與資安約束落地。

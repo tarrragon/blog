@@ -30,7 +30,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 ## 模組完整性總表
 
-完整性總表的責任是決定下一輪寫作先補哪一層。已具備的模組可以進入案例深挖或實作示範；尚未具備的模組要先補概念連接與知識卡路由。
+完整性總表的責任是決定下一輪寫作先補哪一層。現階段 04/06/07/08 已完成首篇 artifact backbone，01/02/03/05 已完成觀念網路補完；下一批工作集中在四條服務路徑實作。
 
 | 模組             | 現況判讀                       | 下一步重點                                   |
 | ---------------- | ------------------------------ | -------------------------------------------- |
@@ -43,7 +43,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 | 07 Security      | 實作示範已完成                 | 擴充 credential rotation 的多情境與回退策略  |
 | 08 Incident      | 實作示範已完成                 | 擴充 control-plane 事故的 write-back 關閉力  |
 
-這張表的判斷結論是：下一輪先把 01、02、03、05 補到能和 04、06、07、08 對話的程度，再分批寫實作正文。
+這張表的判斷結論是：下一輪直接寫 01、02、03、05 的服務路徑實作，並引用 04/06/07/08 已落地的 artifact backbone。
 
 ## 01 Database / Storage 補完方向
 
@@ -95,7 +95,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 ## 04 / 06 / 07 / 08 實作入口
 
-04、06、07、08 的共同狀態是概念層已經足以支援實作示範。下一輪重點轉向 artifact backbone，讓它們支援後續服務路徑正文。
+04、06、07、08 的共同狀態是概念層與首篇 artifact backbone 都已完成。它們現在作為 01、02、03、05 服務路徑正文的共同交接基線。
 
 | 模組 | 第一篇完整示範                              | 服務路徑                 | 主要產出                                           |
 | ---- | ------------------------------------------- | ------------------------ | -------------------------------------------------- |
@@ -112,11 +112,11 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 | 分類                          | 實作文章題目                                | 服務路徑                                 | 前置觀念補完狀態 |
 | ----------------------------- | ------------------------------------------- | ---------------------------------------- | ---------------- |
-| 01 Database / Storage         | Schema migration rollout evidence           | 訂單資料表欄位演進                       | 需先補觀念網路   |
-| 02 Cache / Redis              | Cache migration and stampede rollback       | 商品詳情或價格快取                       | 需先補觀念網路   |
-| 03 Message Queue              | Queue consumer retry and replay handoff     | 訂單事件 consumer                        | 需先補觀念網路   |
+| 01 Database / Storage         | Schema migration rollout evidence           | 訂單資料表欄位演進                       | 待寫服務路徑實作 |
+| 02 Cache / Redis              | Cache migration and stampede rollback       | 商品詳情或價格快取                       | 待寫服務路徑實作 |
+| 03 Message Queue              | Queue consumer retry and replay handoff     | 訂單事件 consumer                        | 待寫服務路徑實作 |
 | 04 Observability              | Checkout API evidence package               | checkout 同步 API                        | 已完成首篇示範   |
-| 05 Deployment Platform        | Deployment rollout with drain and rollback  | checkout service rollout                 | 需先補觀念網路   |
+| 05 Deployment Platform        | Deployment rollout with drain and rollback  | checkout service rollout                 | 待寫服務路徑實作 |
 | 06 Reliability                | Release gate for provider dependency change | payment provider timeout/fallback        | 已完成首篇示範   |
 | 07 Security / Data Protection | Credential rotation with scoped evidence    | webhook secret / API credential rotation | 已完成首篇示範   |
 | 08 Incident Workflow          | Control plane decision log and write-back   | rule/config rollout incident             | 已完成首篇示範   |
