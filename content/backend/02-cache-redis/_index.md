@@ -3,6 +3,7 @@ title: "模組二：快取與 Redis"
 date: 2026-04-22
 description: "整理快取策略、Redis 資料型別與分散式狀態輔助能力"
 weight: 2
+tags: ["backend", "cache", "redis"]
 ---
 
 快取模組的核心目標是說明暫存資料如何提升讀取效率，同時保護 [source of truth](/backend/knowledge-cards/source-of-truth/) 的正式判斷責任。語言教材會處理 cache port、資料複製邊界與 [TTL](/backend/knowledge-cards/ttl/) 的程式邊界；本模組負責 Redis 與快取策略的具體實作。
@@ -59,6 +60,32 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 反例與規模對照入口： [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) / [2.C10 對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)。
 
 回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，快取案例要優先保留回源壓力、資料新鮮度與熱門 key 行為。
+
+## 觀念網路補完方向
+
+快取章節下一輪的核心責任是把「暫存副本」和「正式狀態」的界線寫清楚。現有章節已經有 cache aside、TTL、distributed lock 與 presence store，但還需要補上資料新鮮度、失效語意、回源保護與快取遷移之間的引用關係，讓讀者知道快取策略何時只是加速，何時已經變成服務正確性風險。
+
+| 補完方向            | 需要回答的問題                                       | 主要路由                                                                                                                                          |
+| ------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cache copy boundary | cache value 是否只是可重建副本，還是被誤用成正式狀態 | [source of truth](/backend/knowledge-cards/source-of-truth/)、[1.1](/backend/01-database/high-concurrency-access/)                                |
+| Freshness window    | stale data 在產品上可接受多久，誰承擔錯誤後果        | [stale data](/backend/knowledge-cards/stale-data/)、[4.17](/backend/04-observability/telemetry-data-quality/)                                     |
+| Invalidation model  | 更新、刪除、TTL、event invalidation 是否互相對齊     | [cache invalidation](/backend/knowledge-cards/cache-invalidation/)、[2.2](/backend/02-cache-redis/cache-aside/)                                   |
+| Origin protection   | miss、hot key、stampede 是否會把壓力打回資料庫       | [cache stampede](/backend/knowledge-cards/cache-stampede/)、[6.20](/backend/06-reliability/experiment-safety-boundary/)                           |
+| Cache migration     | key format、value schema、TTL 策略是否能分批回退     | [2.C3](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)、[8.22](/backend/08-incident-response/incident-evidence-write-back/) |
+
+這些方向要用快取自己的服務壓力展開。商品詳情、價格、權限摘要、presence 與 rate limit 的失敗代價不同，寫作時要分別處理它們的新鮮度與回源壓力。
+
+## 知識卡補強方向
+
+快取模組的 knowledge card 缺口集中在「新鮮度」與「回源保護」。已有 [cache hit rate](/backend/knowledge-cards/cache-hit-rate/)、[cache warmup](/backend/knowledge-cards/cache-warmup/)、[cache prefetching](/backend/knowledge-cards/cache-prefetching/) 與 [stale data](/backend/knowledge-cards/stale-data/) 可以先引用。
+
+下一批候選卡片包括 freshness window、origin protection、request coalescing、negative cache、cache key versioning 與 cache serialization migration。這些卡片要讓讀者能分辨「可短暫不新鮮」和「錯誤會直接影響交易或權限」的差異。
+
+## 實作探討入口
+
+快取的第一條實作路徑建議是 `Cache migration and stampede rollback`。這篇以商品詳情或價格快取為例，說明 cache evidence package、origin protection gate、warmup plan 與 rollback trigger 如何一起成立。
+
+這條路徑的前置引用應該是 2.2 cache aside、2.3 TTL / eviction、[2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)、[4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 與 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)。完成後再回寫 [0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/)。
 
 ## 跨語言適配評估
 

@@ -3,6 +3,7 @@ title: "模組零：後端服務選型"
 date: 2026-04-23
 description: "從需求類型判斷資料庫、快取、訊息佇列、觀測與部署平台的選型方向"
 weight: 0
+tags: ["backend", "service-selection"]
 ---
 
 後端服務選型的核心目標是把「需求類型」轉成「服務能力」。資料庫、快取、訊息佇列、觀測平台與部署平台都能提升系統能力，但它們解決的是不同問題；選型時要先辨識需求、流量、資料量、失敗代價與成本模型，再進入具體產品比較。
@@ -30,6 +31,7 @@ weight: 0
 | [0.12](/backend/00-service-selection/operations-control-service-selection/) | 觀測、可靠性與事故服務選型             | 用訊號、驗證、響應與閉環四層能力判斷操作控制服務該如何選型                                                                                                                                                                                               |
 | [0.13](/backend/00-service-selection/operations-control-vertical-slice/)    | 操作控制 vertical slice 實作入口       | 用一個服務串起 evidence package、verification handoff、decision log 與 write-back                                                                                                                                                                        |
 | [0.14](/backend/00-service-selection/enterprise-selection-case-atlas/)      | 企業選型案例圖譜                       | 以企業型態與規模階段分組案例，建立跨產業、跨規模的選型壓力對照                                                                                                                                                                                           |
+| [0.15](/backend/00-service-selection/implementation-teaching-outline/)      | 後端實作教學大綱                       | 規劃各模組從觀念網路補完到服務路徑實作示範的寫作順序                                                                                                                                                                                                     |
 
 ## 需求討論順序
 
@@ -102,6 +104,8 @@ weight: 0
 
 這三個 artifact 先接起來，再補該路徑的 DB、cache、queue、deployment 細節，實作討論會更穩定，也更容易做跨模組回寫。
 
+完整撰寫順序與服務路徑選擇見 [0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/)。
+
 ## 大綱待辦
 
 這一節只記錄仍需要沿著原子卡原則拆出的概念，之後補卡、拆卡或新增卡都先回到這裡確認。
@@ -131,3 +135,4 @@ weight: 0
 - [0.11](/backend/00-service-selection/red-team-cross-service-weaknesses/) 攻擊者視角（紅隊）：跨服務弱點判讀總表
 - [0.12](/backend/00-service-selection/operations-control-service-selection/) 觀測、可靠性與事故服務選型
 - [0.13](/backend/00-service-selection/operations-control-vertical-slice/) 操作控制 vertical slice 實作入口
+- [0.15](/backend/00-service-selection/implementation-teaching-outline/) 後端實作教學大綱
