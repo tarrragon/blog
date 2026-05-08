@@ -45,6 +45,8 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 這張表的判斷結論是：下一輪直接寫 01、02、03、05 的服務路徑實作，並引用 04/06/07/08 已落地的 artifact backbone。
 
+服務實例層級的正文細綱已拆到 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/)。0.15 保留系列順序與 backlog 判讀，0.16 負責把每個分類的服務實例、前置概念、artifact 交接、案例回寫與不適用邊界拆到後續正文撰寫可直接接手的粒度。
+
 ## 01 Database / Storage 補完方向
 
 資料庫模組的實作前提是先把「正式狀態如何演進」講清楚。資料庫集中承擔服務的 [source of truth](/backend/knowledge-cards/source-of-truth/)、交易邊界、查詢邊界、migration 風險與資料修復責任。
@@ -121,11 +123,11 @@ tags: ["backend", "implementation", "outline", "service-path"]
 | 07 Security / Data Protection | Credential rotation with scoped evidence    | webhook secret / API credential rotation | 已完成首篇示範   |
 | 08 Incident Workflow          | Control plane decision log and write-back   | rule/config rollout incident             | 已完成首篇示範   |
 
-這份 backlog 的順序應以依賴關係安排。04/06/07/08 的 artifact backbone 首篇示範已完成，下一批主軸是回到 01/02/03/05 寫具體服務路徑，並直接引用既有 artifact 欄位基線。
+這份 backlog 的順序應以依賴關係安排。04/06/07/08 的 artifact backbone 首篇示範已完成，下一批主軸是回到 01/02/03/05 寫具體服務路徑，並直接引用既有 artifact 欄位基線。各服務實例的段落責任、案例路由與不適用邊界，依 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/) 執行。
 
 ## 寫作順序
 
-下一輪寫作的核心順序改為「以既有 artifact backbone 驅動服務實作」。這樣後續正文可直接沿同一組 evidence/gate/decision 欄位寫作，不需要再重建交接語言。
+下一輪寫作的核心順序改為「以既有 artifact backbone 驅動服務實作」。這樣後續正文可直接沿同一組 evidence/gate/decision 欄位寫作，不需要再重建交接語言。正文開寫前先讀 0.16，避免把四個分類寫成共用模板。
 
 1. 先寫 01 `Schema migration rollout evidence` 的完整實作示範，引用 4.22 / 6.25 / 8.23。
 2. 再寫 02 `Cache migration and stampede rollback`，對齊同一組欄位與停損條件。
