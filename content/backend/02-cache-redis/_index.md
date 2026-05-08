@@ -87,6 +87,8 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 這條路徑的前置引用應該是 2.2 cache aside、2.3 TTL / eviction、[2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)、[4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 與 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)。完成後再回寫 [0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/)。
 
+快取路徑的 artifact 對齊重點是「先證明回源壓力受控，再擴大快取覆蓋率」。對 [4.17](/backend/04-observability/telemetry-data-quality/) / [4.20](/backend/04-observability/observability-evidence-package/) 要交 `Source/Time range/Query link/Owner/Data quality`，並覆蓋 hit/miss、origin QPS、stale read 與 hot key 分布；對 [6.20](/backend/06-reliability/experiment-safety-boundary/) / [6.8](/backend/06-reliability/release-gate/) 要交 `Gate decision/Checks/Stop condition/Rollback window/Owner`，呈現 warmup 演練與 stampede 停損門檻；對 [8.22](/backend/08-incident-response/incident-evidence-write-back/) / [8.19](/backend/08-incident-response/incident-decision-log/) 要交 `Timestamp/Decision/Context/Evidence/Owner/Expected effect/Rollback condition`，記錄 key pattern、影響範圍與修復後追蹤信號。
+
 ## 跨語言適配評估
 
 快取與 Redis 的使用方式會受語言的資料複製模型、client lifecycle、序列化成本與並發模型影響。同步 runtime 要避免每個 request 建立連線；async runtime 要避免 blocking Redis client 卡住 event loop；輕量並發 runtime 要用 timeout、[rate limit](/backend/knowledge-cards/rate-limit) 與 pipeline 邊界保護 Redis。動態語言要特別留意 cache value schema 演進；強型別語言則要避免把內部型別直接當成跨服務快取 [contract](/backend/knowledge-cards/contract/)。

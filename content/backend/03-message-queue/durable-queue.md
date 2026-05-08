@@ -51,6 +51,7 @@ durable queue 在順序與吞吐之間需要明確取捨。全域順序通常成
 ## 案例回寫
 
 durable queue 的重試與隔離節奏可用 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 回寫。先看事件中的 backlog、retry、DLQ 變化，再回到本章判讀是重試策略失衡，還是隔離邊界不清楚。
+這個案例主要支撐的是「重試隔離與停損門檻」判讀，不直接支撐 outbox 交易切分；若事件核心是資料提交與發布不一致，應轉到 3.3 與 1.3。
 
 當重試量上升且主隊列延遲同步拉高時，先拆分重試通道並收斂 DLQ 分流條件，再把停損門檻接到 [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)。
 

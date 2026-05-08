@@ -55,6 +55,7 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 ## 案例回寫
 
 部署切換語意可用 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 做回寫。先看事件中的失敗是在 rollout 批次、probe 判斷、還是 drain 時序，再對照本章的 rollout 節奏與停止條件。
+這個案例主要支撐的是「部署批次與切換時序」判讀，不直接支撐資料庫交易切分或 consumer 冪等；若問題落在提交一致性或重播補償，應轉到 1.3 或 3.4。
 
 若版本已切換但錯誤率延遲上升，先回到 probe 與 config 相容窗口，再把證據欄位接到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 

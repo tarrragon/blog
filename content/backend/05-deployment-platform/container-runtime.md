@@ -51,6 +51,7 @@ runtime 配置與映像版本要保留相容窗口，讓部署與回退可分步
 ## 案例回寫
 
 runtime 穩定性可用 [5.C1 Tradeshift：self-managed K8s -> EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) 回寫。先看遷移期內啟動行為與資源限制如何影響切流，再對照本章檢查 image、entrypoint、limit 與 config 相容窗口。
+這個案例主要支撐的是「執行環境可重現性」判讀，不直接支撐 service discovery TTL 或 queue replay 邏輯；若根因在定位鏈路或重播流程，應轉到 5.4 或 3.4。
 
 若同版容器在不同節點出現分歧行為，先追建置來源與 runtime config 版本鏈，確認是依賴漂移還是環境漂移，再把關鍵證據收斂到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 

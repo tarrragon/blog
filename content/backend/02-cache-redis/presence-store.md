@@ -49,6 +49,7 @@ cleanup 的責任是避免殭屍狀態堆積。定期掃描、lazy cleanup、事
 ## 案例回寫
 
 presence 模型可用 [2.C2 Meta：mcrouter 跨區路由](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/) 回寫。先看跨區路由如何影響在線可見性，再回到本章檢查 heartbeat 視窗、跨節點聚合與清理節奏是否一致。
+這個案例主要支撐的是「跨區可見性與狀態新鮮度」判讀，不直接支撐 lock 租約或 queue 語意；若問題是互斥衝突或重播邊界，應轉到 2.4 或 3.x。
 
 若區域內在線正常、跨區可見性延遲偏大，先調整跨區同步策略與 fallback 壽命，再把影響評估接到 [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)。
 

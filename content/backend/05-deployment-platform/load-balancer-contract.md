@@ -50,6 +50,7 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 ## 案例回寫
 
 流量契約可用 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 回寫。先看事件中的摘流量順序、drain 視窗與連線重建節奏，再回到本章判讀 connection contract 與 drain contract 是否對齊。
+這個案例主要支撐的是「連線生命週期與摘流量順序」判讀，不直接支撐 container build 可重現性；若根因在映像與 runtime 漂移，應回到 5.1。
 
 當回退後錯誤率仍高或重連風暴延續，通常表示 timeout 與 sticky policy 仍在放大舊連線狀態。先重建連線生命週期時序，再把回退判斷同步到 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 

@@ -47,6 +47,7 @@ duplicate publish 在 outbox 模式下屬於預期現象。消費端需要配合
 ## 案例回寫
 
 outbox 一致性可用 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 的恢復段落回寫。先看資料寫入與下游狀態同步是否脫節，再回到本章檢查 outbox backlog、relay 進度與重播策略。
+這個案例主要支撐的是「提交後發布一致性」判讀，不直接支撐 broker 的底層投遞參數；若問題是 ack/partition 策略，應回到 3.1/3.2。
 
 當資料已提交但事件遲到，或重播後副作用重複時，先調整 relay 節流與 consumer 冪等，再把驗證證據對齊 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)。
 

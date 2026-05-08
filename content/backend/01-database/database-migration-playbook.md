@@ -3,6 +3,7 @@ title: "1.6 資料庫轉換實作：雙寫、回填、切流與回滾"
 date: 2026-05-07
 description: "把資料庫轉換從一次性搬遷變成可分段驗證的工程流程。"
 weight: 6
+tags: ["backend", "database", "migration"]
 ---
 
 資料庫轉換實作的核心責任是讓 schema、資料與流量切換都可分段驗證，並在任一階段可安全回退。這一頁不討論要不要轉換，專注回答「決定要換之後怎麼做」。
@@ -33,11 +34,21 @@ weight: 6
 
 把 dual-write 當成最終保障也常出錯。雙寫只能保證「兩邊都有寫」，不保證「語意一致」，仍要配 shadow read 與業務對帳。
 
-## 與案例的連結
+## 案例回寫
 
 - 選型層案例： [0.C4 營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)
 - 可靠性治理： [6.11 Migration Safety](/backend/06-reliability/migration-safety/)
 - 事故反饋： [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)
+
+這組案例主要支撐的是「分段切換與可回退驗證」判讀，不直接支撐快取 TTL 或 broker delivery 參數；若問題核心在快取新鮮度或投遞語意，應轉到 2.x 或 3.x。
+
+## 跨模組路由
+
+1. 與 1.2 的交接：欄位演進與命名語意回到 [schema design](/backend/01-database/schema-design/)。
+2. 與 1.3 的交接：交易邊界與副作用切分回到 [transaction boundary](/backend/01-database/transaction-boundary/)。
+3. 與 4.20 的交接：validation query 與一致性證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
+4. 與 6.11/6.8 的交接：放行與停損條件進入 [Migration Safety](/backend/06-reliability/migration-safety/) 與 [Release Gate](/backend/06-reliability/release-gate/)。
+5. 與 8.19 的交接：pause、rollback、fail-forward 決策記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 
 ## 下一步路由
 

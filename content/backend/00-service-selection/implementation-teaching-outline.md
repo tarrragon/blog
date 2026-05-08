@@ -147,3 +147,13 @@ tags: ["backend", "implementation", "outline", "service-path"]
 | artifact 可用  | 文章產出的 evidence、handoff、decision log 可被演練填寫  |
 | 案例能回寫     | 案例教訓能回寫到 01/02/03/05 的主概念，也能接到 04/06/08 |
 | 沒有模板化失真 | 章節依服務壓力寫作，不用共用欄位覆蓋不同情境             |
+
+## Artifact 欄位對齊基線
+
+跨章節對齊時，欄位名稱以 04/06/08 的主章作為單一基線，避免各模組自創同義欄位導致交接落差。
+
+- Evidence package（對齊 4.20）：`Source`、`Time range`、`Query link`、`Owner`、`Data quality`、`Confidence`、`Known gap`。
+- Release gate（對齊 6.8）：`Gate decision`、`Checks`、`Stop condition`、`Rollback window`、`Owner`。
+- Incident decision log（對齊 8.19）：`Timestamp`、`Decision`、`Context`、`Evidence`、`Owner`、`Expected effect`、`Rollback condition`。
+
+各分類正文可以用自己的敘事語言，但交付 artifact 時，欄位名稱與責任要回到這組基線。

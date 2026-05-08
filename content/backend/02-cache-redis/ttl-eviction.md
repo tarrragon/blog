@@ -45,6 +45,7 @@ hot data 與 cold data 的差異不只在存取次數，也在回源成本與業
 ## 案例回寫
 
 TTL/eviction 的容量節奏可用 [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 回寫。先看事件中的過期同步與回源尖峰，再回到本章檢查 TTL 分布、淘汰策略與熱資料保護是否同時成立。
+這個案例主要支撐的是「容量淘汰與過期波形」判讀，不直接支撐資料庫交易切分或部署切流策略；若事件核心在交易提交或 rollout 批次，應轉到 1.3 或 5.2。
 
 當 eviction 上升但命中率未明顯下降時，先補 value size 與 key 分布監控，再把量測定義回寫到 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)。
 
