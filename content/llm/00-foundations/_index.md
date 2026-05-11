@@ -41,11 +41,12 @@ weight: 0
 
 ## 不在本模組內的主題
 
-本模組不討論：
+本模組聚焦「操作層心智模型」、其他層次交給對應模組：
 
-1. Transformer 架構數學細節（attention、positional encoding、residual stream 等）— 寫 code 不需要這層理解。
-2. 訓練、fine-tuning、RLHF — 跟「跑現成模型」是不同的工程問題。
-3. 雲端 GPU 部署 — 本指南範圍只在 Apple Silicon Mac。
-4. 具體工具的安裝步驟 — 那些放在 [模組一](/llm/01-local-llm-services/)。
+1. **Transformer 架構數學細節**（attention、positional encoding、residual stream 等）→ [模組三 LLM 理論基礎](/llm/03-theoretical-foundations/)
+2. **線性代數、機率、最佳化、數值精度等數學工具** → [模組二 數學基礎](/llm/02-math-foundations/)
+3. **訓練、fine-tuning、RLHF、DPO** → [模組三 3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/)
+4. **具體工具的安裝步驟** → [模組一 本地 LLM 服務](/llm/01-local-llm-services/)
+5. **雲端 GPU 部署** → 本指南範圍只在 Apple Silicon Mac、請另尋資料中心 inference 教材
 
-需要那些主題時，請從其他來源補；本模組只提供「Mac 本地寫 code」這條最短路徑需要的概念基底。
+本模組只提供「Mac 本地寫 code」這條最短路徑需要的概念基底；其他層次的學習路線見[首頁的模組對照表](/llm/)。
