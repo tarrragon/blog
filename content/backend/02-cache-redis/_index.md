@@ -47,15 +47,18 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 ## 章節列表
 
-| 章節                                                      | 主題                             | 關鍵收穫                                                                                                                                  |
-| --------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| [2.1](/backend/02-cache-redis/high-concurrency-access/)   | 高併發下的 Redis 讀寫邊界        | 共用 client、控制 pipeline、避免 [hot key](/backend/knowledge-cards/hot-key) 與 [cache stampede](/backend/knowledge-cards/cache-stampede) |
-| [2.2](/backend/02-cache-redis/cache-aside/)               | cache aside 與失效策略           | 寫出讀取優先的 cache 流程與失效方式                                                                                                       |
-| [2.3](/backend/02-cache-redis/ttl-eviction/)              | TTL 與 eviction                  | 規劃過期、淘汰與容量控制                                                                                                                  |
-| [2.4](/backend/02-cache-redis/distributed-lock/)          | distributed lock 與租約          | 分辨鎖語意、租約風險與適用場景                                                                                                            |
-| [2.5](/backend/02-cache-redis/presence-store/)            | presence store 與即時狀態        | 追蹤線上狀態、跨節點查詢與過期清理                                                                                                        |
-| [2.6](/backend/02-cache-redis/attacker-view-cache-risks/) | 攻擊者視角（紅隊）：快取弱點判讀 | 用一致性、污染與放大流量風險檢查快取設計                                                                                                  |
-| [2.C](/backend/02-cache-redis/cases/)                     | 轉換案例正文                     | 把快取策略、路由層與序列化遷移轉成可回寫實作                                                                                              |
+| 章節                                                              | 主題                                          | 關鍵收穫                                                                                                                                  |
+| ----------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [2.1](/backend/02-cache-redis/high-concurrency-access/)           | 高併發下的 Redis 讀寫邊界                     | 共用 client、控制 pipeline、避免 [hot key](/backend/knowledge-cards/hot-key) 與 [cache stampede](/backend/knowledge-cards/cache-stampede) |
+| [2.2](/backend/02-cache-redis/cache-aside/)                       | cache aside 與失效策略                        | 寫出讀取優先的 cache 流程與失效方式                                                                                                       |
+| [2.3](/backend/02-cache-redis/ttl-eviction/)                      | TTL 與 eviction                               | 規劃過期、淘汰與容量控制                                                                                                                  |
+| [2.4](/backend/02-cache-redis/distributed-lock/)                  | distributed lock 與租約                       | 分辨鎖語意、租約風險與適用場景                                                                                                            |
+| [2.5](/backend/02-cache-redis/presence-store/)                    | presence store 與即時狀態                     | 追蹤線上狀態、跨節點查詢與過期清理                                                                                                        |
+| [2.6](/backend/02-cache-redis/attacker-view-cache-risks/)         | 攻擊者視角（紅隊）：快取弱點判讀              | 用一致性、污染與放大流量風險檢查快取設計                                                                                                  |
+| [2.7](/backend/02-cache-redis/cache-copy-freshness-boundary/)     | Cache Copy Boundary 與 Freshness              | 分辨快取副本、正式狀態、新鮮度與回源保護                                                                                                  |
+| [2.8](/backend/02-cache-redis/cache-data-shape-access-pattern/)   | Cache Data Shape 與 Access Pattern            | 用 key space、value shape 與 access pattern 判讀資料形狀                                                                                  |
+| [2.9](/backend/02-cache-redis/cache-migration-stampede-rollback/) | Cache Migration 與 Stampede Rollback 實作示範 | 以商品詳情或價格快取示範 evidence、gate 與 rollback trigger                                                                               |
+| [2.C](/backend/02-cache-redis/cases/)                             | 轉換案例正文                                  | 把快取策略、路由層與序列化遷移轉成可回寫實作                                                                                              |
 
 反例與規模對照入口： [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) / [2.C10 對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)。
 
@@ -83,7 +86,7 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 ## 實作探討入口
 
-快取的第一條實作路徑建議是 `Cache migration and stampede rollback`。這篇以商品詳情或價格快取為例，說明 cache evidence package、origin protection gate、warmup plan 與 rollback trigger 如何一起成立。
+快取的第一條實作路徑是 [2.9 Cache Migration 與 Stampede Rollback（實作示範）](/backend/02-cache-redis/cache-migration-stampede-rollback/)。這篇以商品詳情或價格快取為例，說明 cache evidence package、origin protection gate、warmup plan 與 rollback trigger 如何一起成立。
 
 這條路徑的前置引用應該是 2.2 cache aside、2.3 TTL / eviction、[2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)、[4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 與 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)。完成後再回寫 [0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/)。
 
