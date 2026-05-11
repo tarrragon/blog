@@ -32,3 +32,8 @@ node_modules/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# RAG / MCP demo build artifacts (regenerable)
+scripts/rag-demo/index.pkl
+scripts/rag-demo/__pycache__/
+scripts/mcp-demo/__pycache__/
