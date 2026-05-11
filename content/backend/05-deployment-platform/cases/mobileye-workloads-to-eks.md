@@ -3,6 +3,7 @@ title: "5.C4 Mobileye：Workloads 遷移到 EKS"
 date: 2026-05-07
 description: "大規模工作負載遷移到 managed Kubernetes 的分段治理案例。"
 weight: 4
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個案例的核心責任是把 workload 遷移從基礎設施作業改成服務可用性作業。

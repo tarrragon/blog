@@ -3,6 +3,7 @@ title: "7.C2 Cloudflare：2023 Control-plane Token 事件"
 date: 2026-05-07
 description: "控制面 token 事件如何回寫 secrets 與機器憑證治理。"
 weight: 2
+tags: ["backend", "security", "case-study"]
 ---
 
 這個案例的核心責任是把控制面 token 風險落到 secret lifecycle 與權限邊界治理。

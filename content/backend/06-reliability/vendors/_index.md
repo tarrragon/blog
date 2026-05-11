@@ -3,6 +3,7 @@ title: "可靠性 Vendor 清單"
 date: 2026-05-01
 description: "後端可靠性實作時的常用工具選擇，預先建立引用路徑"
 weight: 91
+tags: ["backend", "reliability", "vendor"]
 ---
 
 本清單列出 backend 可靠性實作會選用的 vendor / platform：CI、load test、chaos engineering、SLO 工具。每個 vendor 一個資料夾，先建定位與取捨骨架。

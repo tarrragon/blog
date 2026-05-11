@@ -3,6 +3,7 @@ title: "systemd"
 date: 2026-05-01
 description: "Linux init system、VM / 單機 service lifecycle"
 weight: 3
+tags: ["backend", "deployment", "vendor"]
 ---
 
 systemd 是 Linux 主流 init system、管理 service unit、restart policy、signal、journal、socket activation。適合 VM / bare metal 上單機服務、不需要 cluster orchestration 的場景。

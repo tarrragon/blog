@@ -3,6 +3,7 @@ title: "DynamoDB"
 date: 2026-05-01
 description: "AWS managed key-value、cell-based scaling"
 weight: 5
+tags: ["backend", "database", "vendor"]
 ---
 
 DynamoDB 是 AWS managed key-value store、partition-based scaling、可預測 P99 latency。適合需要 single-digit millisecond latency 與 elastic capacity 的場景、是 Amazon 自己 cell-based architecture 的代表實作。

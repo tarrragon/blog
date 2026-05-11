@@ -3,6 +3,7 @@ title: "4.20 Observability Evidence Package"
 date: 2026-05-02
 description: "把 log、metric、trace、audit 與資料品質限制包成可交接證據"
 weight: 20
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

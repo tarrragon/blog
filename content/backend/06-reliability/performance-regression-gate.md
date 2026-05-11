@@ -3,6 +3,7 @@ title: "6.13 Performance Regression Gate"
 date: 2026-05-01
 description: "把效能 baseline 從一次性壓測變成持續對齊的 release gate"
 weight: 13
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

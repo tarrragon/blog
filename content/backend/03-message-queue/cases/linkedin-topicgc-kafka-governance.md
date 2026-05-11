@@ -3,6 +3,7 @@ title: "3.C3 LinkedIn：TopicGC 與 Kafka 治理轉換"
 date: 2026-05-07
 description: "Kafka topic 從手動治理轉自動治理對叢集的影響。"
 weight: 3
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是說明 queue 系統的轉換也包含 metadata 治理。

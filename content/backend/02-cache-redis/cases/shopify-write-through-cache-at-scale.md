@@ -3,6 +3,7 @@ title: "2.C5 Shopify：Write-through Cache 在高讀流量的實作"
 date: 2026-05-07
 description: "read-heavy 服務如何轉向 write-through 快取模型。"
 weight: 5
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是把快取從被動補貨模式，轉成資料寫入時即同步更新的模式。

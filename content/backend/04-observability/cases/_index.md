@@ -3,6 +3,7 @@ title: "可觀測性案例正文"
 date: 2026-05-07
 description: "模組四案例正文入口，將企業案例補充轉成可回寫的訊號判讀文章。"
 weight: 80
+tags: ["backend", "observability", "case-study"]
 ---
 
 這個資料夾的核心責任是把觀測案例變成可回寫章節。案例表格提供線索，正文負責輸出訊號邊界與路由。

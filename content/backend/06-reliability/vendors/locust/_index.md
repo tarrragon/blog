@@ -3,6 +3,7 @@ title: "Locust"
 date: 2026-05-01
 description: "Python-based load test、distributed、易擴展"
 weight: 6
+tags: ["backend", "reliability", "vendor"]
 ---
 
 Locust 是 Python-based load test 工具、test 用 Python class 寫、distributed mode 內建、Web UI 即時查看。適合 Python 團隊與需要極高自訂邏輯的場景。

@@ -3,6 +3,7 @@ title: "Spotify"
 date: 2026-05-01
 description: "Spotify Chaos Engineering 與 Squad-based SRE"
 weight: 21
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Spotify 是音樂串流平台、squad-based 組織模型對 SRE 實踐有特殊影響、chaos engineering 文章是 mid-size company 採用 chaos 的代表。

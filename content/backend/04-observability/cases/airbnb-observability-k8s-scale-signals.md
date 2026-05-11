@@ -3,6 +3,7 @@ title: "4.C8 Airbnb：Kubernetes 規模化下的觀測訊號治理"
 date: 2026-05-07
 description: "叢集擴縮與工作負載變動如何回寫觀測模型。"
 weight: 8
+tags: ["backend", "observability", "case-study"]
 ---
 
 這個案例的核心責任是把平台擴縮行為轉成可觀測治理問題。

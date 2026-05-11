@@ -3,6 +3,7 @@ title: "模組三案例正文"
 date: 2026-05-07
 description: "訊息佇列與事件傳遞的轉換案例入口。"
 weight: 80
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個資料夾的核心責任是把 broker、queue 與語義治理的轉換壓力落到可執行判讀。

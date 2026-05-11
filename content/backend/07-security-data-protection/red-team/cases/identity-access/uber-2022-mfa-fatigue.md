@@ -3,6 +3,7 @@ title: "7.R7.1.1 Uber 2022：MFA 疲勞與內部工具擴散"
 date: 2026-04-24
 description: "從社交工程到內部工具存取，拆解身分流程與權限邊界的失效點"
 weight: 71711
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

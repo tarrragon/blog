@@ -3,6 +3,7 @@ title: "7.R11.P12 第三方 token 授權範圍過寬"
 date: 2026-04-24
 description: "說明第三方 token 授權範圍過寬如何放大供應商事件傳導"
 weight: 7242
+tags: ["backend", "security", "red-team"]
 ---
 
 這個失效樣式的核心問題是外部授權範圍超出實際用途邊界。當第三方 token 權限過寬，外部事件會快速傳導到內部高風險路徑。

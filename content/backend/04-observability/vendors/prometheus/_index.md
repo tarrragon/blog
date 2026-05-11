@@ -3,6 +3,7 @@ title: "Prometheus"
 date: 2026-05-01
 description: "Pull-based metrics 主流 OSS、PromQL 與 alerting"
 weight: 2
+tags: ["backend", "observability", "vendor"]
 ---
 
 Prometheus 是 CNCF graduated 的 metrics 系統、pull-based scraping、PromQL 查詢、Alertmanager 告警。是 Kubernetes 生態 metrics 的事實標準。短期儲存為主、長期儲存交給 Mimir / Thanos / Cortex 等。

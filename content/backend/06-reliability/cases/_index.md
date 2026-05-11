@@ -3,6 +3,7 @@ title: "可靠性服務案例庫"
 date: 2026-05-01
 description: "按服務組織的 SRE 實踐案例庫，累積架構脈絡與工程文化"
 weight: 90
+tags: ["backend", "reliability", "case-study"]
 ---
 
 本案例庫以服務為單位、收錄公開 SRE 實踐（SRE Book / 工程部落格 / 演講 / paper）。每個服務一個資料夾，累積該服務的可靠性工程文化、failure mode 與 chaos / DR 案例。

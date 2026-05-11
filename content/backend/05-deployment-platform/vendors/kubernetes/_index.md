@@ -3,6 +3,7 @@ title: "Kubernetes"
 date: 2026-05-01
 description: "Container orchestration 主流、GKE / EKS / AKS / 自管"
 weight: 1
+tags: ["backend", "deployment", "vendor"]
 ---
 
 Kubernetes 是 container orchestration 事實標準、提供 deployment / pod lifecycle / service / ingress / probe / resource limit / rolling update。可自管或用 cloud managed（GKE / EKS / AKS）。是 cloud-native 生態核心。

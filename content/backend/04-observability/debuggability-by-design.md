@@ -3,6 +3,7 @@ title: "4.19 Debuggability by Design"
 date: 2026-05-02
 description: "把可診斷性前移到 API、async workflow、dependency call 與錯誤模型設計"
 weight: 19
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

@@ -169,11 +169,13 @@
   - **URL**：裸 URL 禁止；顯示文字若含 TLD 字樣（`.com` / `.org` / `.gov` / `.net` / `.io` / `.dev` / `.tw`），domain 必須與 href 一致（反釣魚）。
   - **表格**：aligned 風格，每欄補空白對齊（CJK 雙寬）；分隔線 `| --- |` 長度隨欄寬自動增減。`mdtools fmt --fix` 負責重新對齊。
   - **列表與代碼**：列表 / code block 前後空行；有序列表 `1./2./3.` 一致；code block 需語言標示。
-  - **Front matter**：通用層 `title` + `date` 必填；卡片層加 `description` + `weight` 必填。
+  - **Front matter**：通用層 `title` + `date` 必填；新文章必填 `description` + `tags`；卡片層加 `description` + `weight` 必填。
   - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。
 - 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
 - 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
 - 寫作時遇到 pre-commit 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。
+- **Recommended warning 基線處理**：`description` / `tags` 是警告層，但不是可新增的技術債。新增內容一律補齊；修改既有 `content/**` 檔案時，若同檔缺 recommended 欄位，應在同次變更補上。
+- **驗證輸出分層**：提交前以「changed-set scoped lint」判斷本次變更品質；full lint 可用來觀察歷史基線，但回報時要把既有 warning 與本次新增問題分開，避免 tags recommended warning 淹沒真正錯誤。
 - **路徑大小寫一致性（強制）**：`content/` 下資料夾、檔名與站內連結 route 一律用小寫（例如 `content/ci` 對應 `/ci/`）。macOS 預設檔案系統不區分大小寫，Linux CI 會區分；若目錄是 `content/CI` 但連結寫 `/ci/`，`mdtools cards` 在 CI 會判定 broken link。
 - **大小寫檢查指令**：提交前可用 `./bin/mdtools cards content/` 驗證；若懷疑大小寫漂移，再用 `git ls-tree -r --name-only HEAD | rg '^content/[A-Z]'` 掃描是否存在大寫路徑。
 

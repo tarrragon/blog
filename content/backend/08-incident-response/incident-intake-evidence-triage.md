@@ -3,6 +3,7 @@ title: "8.18 Incident Intake & Evidence Triage"
 date: 2026-05-02
 description: "把告警、客訴、支援回報與第三方狀態轉成同一個 intake / evidence 判讀流程"
 weight: 18
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

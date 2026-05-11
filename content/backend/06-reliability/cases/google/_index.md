@@ -3,6 +3,7 @@ title: "Google"
 date: 2026-05-01
 description: "Google SRE 實踐原典：SLI / SLO / Error Budget / Postmortem 文化"
 weight: 1
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Google 是 SRE 概念的原始來源、SRE Book 與 Workbook 是領域 canonical text。教學重點不在單一事故、而在 SRE 工程文化、量化方法與組織節奏。

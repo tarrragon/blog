@@ -3,6 +3,7 @@ title: "7.R7.1.5 Microsoft Storm-0558 2023：簽章金鑰鏈與郵件存取"
 date: 2026-04-24
 description: "從簽章金鑰保護失效到雲端郵件存取，拆解身分信任鏈的關鍵控制點"
 weight: 71715
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

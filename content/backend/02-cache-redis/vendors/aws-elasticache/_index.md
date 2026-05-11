@@ -3,6 +3,7 @@ title: "AWS ElastiCache"
 date: 2026-05-01
 description: "AWS managed Redis / Valkey / Memcached"
 weight: 5
+tags: ["backend", "cache", "vendor"]
 ---
 
 ElastiCache 是 AWS managed cache 服務、支援 Redis / Valkey / Memcached engine、託管 cluster mode、自動 failover、跨 AZ 複製。是 AWS 生態下 cache 的預設選擇。

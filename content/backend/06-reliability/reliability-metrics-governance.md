@@ -3,6 +3,7 @@ title: "6.18 Reliability Metrics Governance"
 date: 2026-05-01
 description: "DORA / SPACE / CFR 等可靠性指標的選用、量測與治理"
 weight: 18
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

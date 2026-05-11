@@ -3,6 +3,7 @@ title: "8.10 Stakeholder 通訊與外部狀態頁"
 date: 2026-05-01
 description: "把 impact scope、status page、補償政策串成節奏"
 weight: 10
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

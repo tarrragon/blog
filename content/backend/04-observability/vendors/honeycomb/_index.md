@@ -3,6 +3,7 @@ title: "Honeycomb"
 date: 2026-05-01
 description: "High-cardinality observability 平台、events-based 模型"
 weight: 6
+tags: ["backend", "observability", "vendor"]
 ---
 
 Honeycomb 是 high-cardinality observability SaaS、events-based 模型（不是 metrics aggregation）、強調 unknown-unknowns 的偵錯能力。Charity Majors 推動的 observability-driven SRE 文化代表平台。06 教學標竿同時是實作 vendor，見 [06 honeycomb cases](/backend/06-reliability/cases/honeycomb/)。

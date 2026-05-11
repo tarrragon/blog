@@ -3,6 +3,7 @@ title: "7.R7.1.3 Twilio 2022：社交工程與員工帳號路徑"
 date: 2026-04-24
 description: "社交工程如何穿透員工身分流程，並影響下游客戶與供應鏈"
 weight: 71713
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

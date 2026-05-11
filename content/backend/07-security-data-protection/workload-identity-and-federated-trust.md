@@ -3,6 +3,7 @@ title: "7.10 Workload Identity 與聯邦信任邊界"
 date: 2026-04-24
 description: "定義非人類身份、跨平台信任與短時憑證治理問題"
 weight: 80
+tags: ["backend", "security"]
 ---
 
 本章的責任是把機器到機器信任風險拆成可驗證邊界，讓 workload identity 與 federation 不會把外部風險直接帶入內部高權限路徑。

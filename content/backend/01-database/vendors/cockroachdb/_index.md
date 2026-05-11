@@ -3,6 +3,7 @@ title: "CockroachDB"
 date: 2026-05-01
 description: "分散式 SQL、跨區強一致、PostgreSQL 線協議相容"
 weight: 6
+tags: ["backend", "database", "vendor"]
 ---
 
 CockroachDB 是分散式 SQL database、PostgreSQL wire protocol 相容、原生跨區強一致（Raft consensus）。適合需要水平擴展與多區可用性的 SQL 場景。

@@ -3,6 +3,7 @@ title: "6.20 Experiment Safety Boundary"
 date: 2026-05-02
 description: "定義 chaos、load test、DR drill 的 blast radius、停止條件與權限約束"
 weight: 20
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

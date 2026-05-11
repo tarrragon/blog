@@ -3,6 +3,7 @@ title: "5.C6 Airbnb：Kubernetes 叢集擴縮演進"
 date: 2026-05-07
 description: "從手動擴縮走向自動化容量治理的部署平台案例。"
 weight: 6
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個案例的核心責任是說明部署平台演進常來自容量治理需求。

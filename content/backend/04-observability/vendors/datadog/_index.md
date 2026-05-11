@@ -3,6 +3,7 @@ title: "Datadog"
 date: 2026-05-01
 description: "All-in-one SaaS 觀測平台、APM / Logs / Metrics / RUM / Security"
 weight: 4
+tags: ["backend", "observability", "vendor"]
 ---
 
 Datadog 是 all-in-one SaaS observability 平台、覆蓋 APM / logs / metrics / RUM / synthetics / security / CI visibility。賣點是整合度高、安裝簡單、auto-instrumentation 完整。成本是主要取捨點。

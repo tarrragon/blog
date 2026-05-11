@@ -3,6 +3,7 @@ title: "4.17 Telemetry Data Quality"
 date: 2026-05-02
 description: "把 missing signal、schema drift、sampling bias 與 timestamp skew 變成資料品質問題"
 weight: 17
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

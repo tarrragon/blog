@@ -3,6 +3,7 @@ title: "Heroku"
 date: 2026-05-01
 description: "Heroku PaaS 事故與 router 層架構脈絡"
 weight: 21
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Heroku 是早期 PaaS 的代表、router 層事故揭露 multi-tenant 路由的失敗模式。Heroku status 與工程文章累積多年事故敘事。

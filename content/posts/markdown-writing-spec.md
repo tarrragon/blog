@@ -270,6 +270,10 @@ Hugo 依賴 YAML front matter 提供 title / date / weight 等欄位給 render p
 - `description`：字串，建議 30–150 字，影響 SEO 與列表頁預覽。
 - `tags`：陣列，至少 1 個標籤。
 
+推薦層是歷史內容的緩衝區，不是新增內容的放行條件。新增文章必須同時填寫 `description` 與 `tags`；修改既有文章時，若同一檔案缺少推薦欄位，應在同次變更補齊，避免每次驗證都被舊 warning 淹沒。
+
+驗證時先跑 changed-set scoped lint 判斷本次變更品質，再視需要跑 full lint 觀察整體基線。回報 full lint 結果時，要把歷史 warning、已知 warning 與本次新增問題分開描述。
+
 ### 6.3 卡片嚴格層（`content/backend/knowledge-cards/**`）
 
 知識卡片額外要求（對應 `.codex/briefs/knowledge-cards.md` K2）：

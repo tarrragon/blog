@@ -3,6 +3,7 @@ title: "6.11 Migration Safety 與 DB Rollout"
 date: 2026-05-01
 description: "把 schema migration 從一次性事件變成可逆、可漸進的 rollout 流程"
 weight: 11
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

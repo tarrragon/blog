@@ -3,6 +3,7 @@ title: "7.R7.1.7 Slack 2022：企業 token 與程式碼資產路徑"
 date: 2026-04-24
 description: "員工帳號被社交工程利用後，企業 token 與私有程式碼資產的防線如何運作"
 weight: 71717
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

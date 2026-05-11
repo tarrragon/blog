@@ -3,6 +3,7 @@ title: "5.C2 Condé Nast：EKS 平台整併與標準化"
 date: 2026-05-07
 description: "多地區異質 Kubernetes 平台整併為統一控制面的案例。"
 weight: 2
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個案例的核心責任是說明平台轉換常是組織治理問題，不只是技術選型問題。

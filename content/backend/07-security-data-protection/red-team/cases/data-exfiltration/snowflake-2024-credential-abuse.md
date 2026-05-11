@@ -3,6 +3,7 @@ title: "7.R7.4.2 Snowflake 2024：憑證濫用與資料竊取"
 date: 2026-04-24
 description: "外洩憑證與 MFA 缺口如何在資料平台形成高風險外送事件"
 weight: 71742
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

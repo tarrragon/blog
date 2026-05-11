@@ -3,6 +3,7 @@ title: "8.11 Observability / Reliability / Incident Response 閉環"
 date: 2026-05-01
 description: "把 04 / 06 / 08 三個模組的雙向反饋串成可判讀循環，定義閉環健康度判讀訊號"
 weight: 11
+tags: ["backend", "incident-response"]
 ---
 
 服務的可靠性工程不是單向 pipeline、是循環反饋系統。觀測（04）偵測訊號驅動事故響應（08）、事故學習回寫到驗證設計（06）、驗證實踐又反過來定義觀測訊號（04）。任一段缺失閉環就斷裂、組織會以可預測的方式陷入特定失能模式。

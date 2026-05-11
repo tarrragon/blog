@@ -3,6 +3,7 @@ title: "LitmusChaos"
 date: 2026-05-01
 description: "Kubernetes chaos engineering 平台（CNCF graduated）"
 weight: 8
+tags: ["backend", "reliability", "vendor"]
 ---
 
 LitmusChaos 是 CNCF graduated 的 chaos engineering 平台、ChaosHub 提供現成 experiment、Litmus Workflow 編排多步驟 chaos、SaaS 版本（Harness ChaosNative）。

@@ -3,6 +3,7 @@ title: "6.21 Reliability Debt Backlog"
 date: 2026-05-02
 description: "把反覆事故、演練缺口與手動修復累積成可排序、可關閉的 reliability debt"
 weight: 21
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

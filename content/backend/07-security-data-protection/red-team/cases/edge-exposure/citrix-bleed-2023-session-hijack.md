@@ -3,6 +3,7 @@ title: "7.R7.3.3 Citrix Bleed 2023：會話被劫持與重放風險"
 date: 2026-04-24
 description: "邊界設備會話資料外洩後，如何演變成帳號與服務風險"
 weight: 71733
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

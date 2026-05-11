@@ -3,6 +3,7 @@ title: "Gatling"
 date: 2026-05-01
 description: "JVM-based load test、Scala / Java DSL、HTTP / WebSocket"
 weight: 4
+tags: ["backend", "reliability", "vendor"]
 ---
 
 Gatling 是 JVM-based load test 工具、Scala / Java / Kotlin DSL、強型別測試 script、適合 JVM 生態團隊與複雜 scenario。Gatling Enterprise（前 FrontLine）提供 cloud 版。

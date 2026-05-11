@@ -3,6 +3,7 @@ title: "6.7 DR 演練與 Rollback Rehearsal"
 date: 2026-05-01
 description: "把回復路徑變成定期可重播流程"
 weight: 7
+tags: ["backend", "reliability"]
 ---
 
 ## 概念定位

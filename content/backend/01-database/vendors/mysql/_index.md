@@ -3,6 +3,7 @@ title: "MySQL"
 date: 2026-05-01
 description: "高併發網路服務常用關聯式資料庫、Vitess / PlanetScale 分片生態"
 weight: 2
+tags: ["backend", "database", "vendor"]
 ---
 
 MySQL 是大型網路服務的常見選擇、簡單 query 效能與分片生態（Vitess / PlanetScale）成熟。GitHub / Shopify / Slack / Facebook 等大規模服務的核心 OLTP 多採 MySQL。

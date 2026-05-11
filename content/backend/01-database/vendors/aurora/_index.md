@@ -3,6 +3,7 @@ title: "AWS Aurora"
 date: 2026-05-01
 description: "AWS managed PostgreSQL / MySQL、storage layer 重寫"
 weight: 7
+tags: ["backend", "database", "vendor"]
 ---
 
 Aurora 是 AWS managed PostgreSQL / MySQL、保留 protocol 相容、storage layer 重寫成跨 AZ 分散式。適合既有 PostgreSQL / MySQL 應用想換 managed 與更好 scaling、不想離開 SQL 模型。

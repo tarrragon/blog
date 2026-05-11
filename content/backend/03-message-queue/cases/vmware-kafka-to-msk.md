@@ -3,6 +3,7 @@ title: "3.C2 VMware Tanzu CloudHealth：Kafka 轉 Amazon MSK"
 date: 2026-05-07
 description: "自管 Kafka 遷移到託管平台時的治理重點。"
 weight: 2
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是把 broker 遷移拆成平台責任、運維責任與資料責任三層。

@@ -3,6 +3,7 @@ title: "資料庫 Vendor 清單"
 date: 2026-05-01
 description: "後端資料庫實作時的常用選擇，預先建立引用路徑"
 weight: 90
+tags: ["backend", "database", "vendor"]
 ---
 
 本清單列出 backend 服務實作會選用的 database vendor / platform。每個 vendor 一個資料夾，先建定位與取捨骨架，實作話題隨後續擴充。

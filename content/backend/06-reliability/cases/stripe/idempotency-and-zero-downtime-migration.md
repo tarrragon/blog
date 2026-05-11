@@ -3,6 +3,7 @@ title: "Stripe：Idempotency 與零停機遷移的交易安全設計"
 date: 2026-05-07
 description: "把 API 重試與資料遷移放在同一套安全模型，維持支付交易的一致結果。"
 weight: 41
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Stripe 案例的核心責任是確保交易語義在重試與變更中保持一致。支付系統的失效成本不只來自停機，還來自錯誤結果；因此可靠性設計要同時守住可用性與正確性。

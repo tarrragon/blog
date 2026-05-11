@@ -3,6 +3,7 @@ title: "8.9 事故型態庫入口"
 date: 2026-05-01
 description: "把跨服務的共通事故型態抽成型態卡，作為新事故的判讀錨點"
 weight: 9
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

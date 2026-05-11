@@ -3,6 +3,7 @@ title: "Honeycomb：以 Burn Rate 驅動的可靠性操作"
 date: 2026-05-07
 description: "把 SLO burn rate 直接連到值班決策與改善優先序，降低高噪音告警造成的判讀失真。"
 weight: 21
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Honeycomb 案例的核心責任是把可觀測訊號直接轉成可靠性決策。當團隊面對大量告警時，burn rate 提供比固定閾值更接近使用者體感的判讀方式。

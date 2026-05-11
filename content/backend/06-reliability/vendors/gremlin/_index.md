@@ -3,6 +3,7 @@ title: "Gremlin"
 date: 2026-05-01
 description: "商業 chaos engineering 平台、跨平台與 GameDay"
 weight: 9
+tags: ["backend", "reliability", "vendor"]
 ---
 
 Gremlin 是商業 chaos engineering SaaS、跨平台（VM / container / k8s / cloud）、GameDay 設計與報告功能、企業偏好的選擇。Founder 來自 Netflix Chaos team。

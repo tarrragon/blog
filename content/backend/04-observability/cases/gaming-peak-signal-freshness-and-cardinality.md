@@ -3,6 +3,7 @@ title: "Gaming：高峰流量下的訊號新鮮度與 Cardinality"
 date: 2026-05-07
 description: "在高峰事件中控制訊號延遲與維度爆炸，維持告警與定位可信度。"
 weight: 2
+tags: ["backend", "observability", "case-study"]
 ---
 
 本案例的核心責任是避免高峰流量讓觀測系統本身失真。若訊號延遲與 cardinality 膨脹失控，值班決策會落在過期資料上。

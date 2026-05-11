@@ -3,6 +3,7 @@ title: "7.R7.2.2 GitHub OAuth 2022：第三方 token 供應鏈風險"
 date: 2026-04-24
 description: "第三方整合 token 被竊後，如何形成跨組織存取風險"
 weight: 71722
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

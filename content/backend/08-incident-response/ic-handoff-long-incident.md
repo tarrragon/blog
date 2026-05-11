@@ -3,6 +3,7 @@ title: "8.12 IC Handoff 與長事故跨班次協調"
 date: 2026-05-01
 description: "把 24h+ / 跨 timezone 事故的接班節奏變成可重複流程"
 weight: 12
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

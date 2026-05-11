@@ -3,6 +3,7 @@ title: "7.12 供應鏈完整性與 Artifact 信任"
 date: 2026-04-24
 description: "定義 build provenance、artifact 信任與交付鏈風險問題"
 weight: 82
+tags: ["backend", "security"]
 ---
 
 本章的責任是把交付鏈信任風險拆成可驗證節點，讓來源可信度、產物完整性與事件後收斂能被一致治理。

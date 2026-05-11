@@ -3,6 +3,7 @@ title: "CircleCI"
 date: 2026-05-01
 description: "CI/CD 平台、強 cache 與 parallelism"
 weight: 2
+tags: ["backend", "reliability", "vendor"]
 ---
 
 CircleCI 是獨立 CI/CD 平台、強項是 caching、parallelism、resource class 彈性。在 GitHub Actions 普及前是主流選擇之一。

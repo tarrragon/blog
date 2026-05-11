@@ -3,6 +3,7 @@ title: "7.R7.4 Data Exfiltration 類案例"
 date: 2026-04-24
 description: "整理資料外送、備份風險、勒索回復與營運衝擊相關事故案例"
 weight: 7174
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 本分類的責任是把資料外送與營運中斷風險轉成可驗證的治理步驟。核心判讀是：資料治理、回復順序與跨團隊通報要同步設計，才能縮小外送規模與停擺時間。

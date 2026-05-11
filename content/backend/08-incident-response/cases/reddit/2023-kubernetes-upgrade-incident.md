@@ -3,6 +3,7 @@ title: "Reddit：2023 Kubernetes 升級事故"
 date: 2026-05-07
 description: "平台升級變更如何觸發服務退化，以及如何設計可回退的升級策略。"
 weight: 61
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 這起案例的核心責任是把平台升級納入事故流程。升級事件不是純部署問題，會直接影響事件分級、回退與通訊節奏。

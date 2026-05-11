@@ -3,6 +3,7 @@ title: "營運後技術轉換：語言、工具與架構何時該換"
 date: 2026-05-07
 description: "服務營運一段時間後，如何判讀何時該轉語言、工具或架構，並用案例說明轉換動機。"
 weight: 4
+tags: ["backend", "service-selection", "case-study", "migration"]
 ---
 
 這個案例的核心責任是把「營運後轉換」變成可判讀決策，而不是技術潮流追逐。服務在成長期常會遇到早期選型與現況負載不再匹配，此時轉換的重點是風險收斂與效率改善，而不是語言偏好。
@@ -119,7 +120,7 @@ weight: 4
 
 | 分類                          | 目前案例密度 | 代表案例入口                                                                                                                      | 目前缺口與補查方向                                                               |
 | ----------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| 01 Database / Storage         | 高           | [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)                                                           | 已有遷移流程；下一步補更多 vendor 轉換對照                                       |
+| 01 Database / Storage         | 高           | [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)                                  | 已有遷移流程與 rollout evidence；下一步補更多 vendor 轉換對照                    |
 | 02 Cache / Redis              | 中低         | [Pinterest：快取可靠性與容量驚奇治理](/backend/06-reliability/cases/pinterest/cache-reliability-and-capacity-surprises/)          | 補「快取策略轉換」案例（cache-aside -> write-through、multi-layer cache）        |
 | 03 Message Queue              | 中低         | [Amazon：Shuffle Sharding 與 Cell 邊界](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/)                 | 補「自管 broker -> managed queue」與「語義轉換（at-least-once / exactly-once）」 |
 | 04 Observability              | 中           | [Honeycomb：Burn Rate 驅動操作](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)                 | 補「監控平台遷移」與「OpenTelemetry 導入遷移」案例                               |
@@ -254,7 +255,7 @@ weight: 4
 
 ## 下一步路由
 
-若問題在執行時特性（延遲抖動、記憶體模型），先回 [0.2](/backend/00-service-selection/state-storage-selection/) 與 [0.5](/backend/00-service-selection/traffic-data-scale/)。若是資料庫轉換已進入執行階段，直接進 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)；需要放行與回滾治理時，接 [6.11 Migration Safety](/backend/06-reliability/migration-safety/)；若要看事故層教訓，接 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)。
+若問題在執行時特性（延遲抖動、記憶體模型），先回 [0.2](/backend/00-service-selection/state-storage-selection/) 與 [0.5](/backend/00-service-selection/traffic-data-scale/)。若是資料庫轉換已進入執行階段，直接進 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)；需要把 production migration 寫成 evidence、gate 與 decision log，接 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)；需要放行與回滾治理時，接 [6.11 Migration Safety](/backend/06-reliability/migration-safety/)；若要看事故層教訓，接 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)。
 
 ## 引用源
 

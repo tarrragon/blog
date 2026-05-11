@@ -3,6 +3,7 @@ title: "RabbitMQ"
 date: 2026-05-01
 description: "Classic message broker、AMQP routing 為主"
 weight: 1
+tags: ["backend", "message-queue", "vendor"]
 ---
 
 RabbitMQ 是 AMQP 協議實作的 classic broker、exchange / queue / binding / routing key 模型靈活、適合 task queue 與複雜 routing 場景。多用於 worker pool、RPC over messaging、跨服務 task dispatch。

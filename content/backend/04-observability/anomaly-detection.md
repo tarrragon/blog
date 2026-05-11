@@ -3,6 +3,7 @@ title: "4.14 Anomaly Detection"
 date: 2026-05-01
 description: "把 ML / statistical baseline 訊號跟 rule-based alert 整合"
 weight: 14
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

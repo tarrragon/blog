@@ -3,6 +3,7 @@ title: "3.C6 Uber：Kafka 事件平台演進"
 date: 2026-05-07
 description: "事件平台從團隊自管走向多租戶共享基礎設施。"
 weight: 6
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是把 broker 轉換從單隊列問題提升到平台治理問題。

@@ -3,6 +3,7 @@ title: "Healthcare：存取可追溯性與保留邊界"
 date: 2026-05-07
 description: "在資料主權限制下，建立可追溯存取證據與分層保留策略。"
 weight: 3
+tags: ["backend", "observability", "case-study"]
 ---
 
 本案例的核心責任是讓資料主權場景下的觀測仍可追溯。Healthcare 系統常同時面臨最小存取原則、資料留存規範與跨團隊協作需求。

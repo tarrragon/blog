@@ -3,6 +3,7 @@ title: "7.C4 Microsoft：Storm-0558 簽章金鑰事件"
 date: 2026-05-07
 description: "簽章金鑰事件如何回寫 identity 信任邊界與觀測證據鏈。"
 weight: 4
+tags: ["backend", "security", "case-study"]
 ---
 
 這個案例的核心責任是把身份簽章事件轉成長期信任治理問題。

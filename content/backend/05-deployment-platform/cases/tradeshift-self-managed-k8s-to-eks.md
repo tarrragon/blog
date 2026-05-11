@@ -3,6 +3,7 @@ title: "5.C1 Tradeshift：self-managed Kubernetes 遷移到 EKS"
 date: 2026-05-07
 description: "零停機平台遷移的分段策略案例。"
 weight: 1
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個案例的核心責任是把平台遷移從「搬家」改寫成「流量與依賴分段切換」。

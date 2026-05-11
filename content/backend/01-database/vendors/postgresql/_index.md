@@ -3,6 +3,7 @@ title: "PostgreSQL"
 date: 2026-05-01
 description: "多用途 OLTP 主流關聯式資料庫"
 weight: 1
+tags: ["backend", "database", "vendor"]
 ---
 
 PostgreSQL 是 backend 預設關聯式資料庫的安全選擇、生態完整、SQL 功能豐富、MVCC 與 transaction 模型穩定。多數新專案沒特殊需求時的 default。

@@ -3,6 +3,7 @@ title: "7.R10 偵測迴避與觀測缺口"
 date: 2026-04-24
 description: "從攻擊者角度盤點偵測盲區與觀測資料缺口"
 weight: 720
+tags: ["backend", "security", "red-team"]
 ---
 
 本章的責任是把偵測盲區轉成可討論的問題節點，讓觀測與告警設計能抵抗常見迴避路徑。

@@ -3,6 +3,7 @@ title: "模組七案例正文"
 date: 2026-05-07
 description: "資安控制面與控制平面轉換案例入口。"
 weight: 85
+tags: ["backend", "security", "case-study"]
 ---
 
 這個資料夾的核心責任是把資安與控制平面事故轉成可回寫治理控制的案例正文。

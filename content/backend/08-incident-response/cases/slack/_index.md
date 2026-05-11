@@ -3,6 +3,7 @@ title: "Slack"
 date: 2026-05-01
 description: "Slack 通訊服務事故與外部狀態頁設計"
 weight: 11
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Slack 是即時通訊服務、事故時通訊管道本身受影響、是「monitor your own monitor」議題的代表。Slack engineering blog 公開度高、status page 設計細緻。

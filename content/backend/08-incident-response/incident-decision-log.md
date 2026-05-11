@@ -3,6 +3,7 @@ title: "8.19 Incident Decision Log"
 date: 2026-05-02
 description: "把事中假設、決策、證據、回退條件與責任人留下可復盤紀錄"
 weight: 19
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

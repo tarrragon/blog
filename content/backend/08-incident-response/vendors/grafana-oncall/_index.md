@@ -3,6 +3,7 @@ title: "Grafana OnCall"
 date: 2026-05-01
 description: "OSS on-call 平台、Grafana Labs"
 weight: 3
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 Grafana OnCall 是 Grafana Labs 出品的 OSS on-call 平台、源自 Amixr 收購、提供 schedule / escalation / phone & SMS notification。可自管或用 Grafana Cloud。是 PagerDuty / Opsgenie 的 OSS 替代。

@@ -3,6 +3,7 @@ title: "Memcached"
 date: 2026-05-01
 description: "純記憶體 key-value cache、無持久化"
 weight: 3
+tags: ["backend", "cache", "vendor"]
 ---
 
 Memcached 是最早期、最純粹的 in-memory cache、僅支援 string key-value、無持久化、無複雜 data types。極輕量、運維成本低、適合純 cache 場景。

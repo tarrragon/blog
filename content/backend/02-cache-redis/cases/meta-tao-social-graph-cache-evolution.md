@@ -3,6 +3,7 @@ title: "2.C8 Meta：TAO 社交圖快取演進"
 date: 2026-05-07
 description: "社交圖查詢在規模化下如何把快取做成資料層能力。"
 weight: 8
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是說明快取在高關聯查詢場景會接近資料庫層角色。

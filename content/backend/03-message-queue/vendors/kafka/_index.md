@@ -3,6 +3,7 @@ title: "Apache Kafka"
 date: 2026-05-01
 description: "Distributed event streaming platform、log-based 模型"
 weight: 2
+tags: ["backend", "message-queue", "vendor"]
 ---
 
 Kafka 是 distributed event streaming platform、log-based 儲存模型、partition + consumer group 提供高吞吐與 ordering 保證。適合 event-driven 架構、CDC、stream processing、跨系統事件總線。

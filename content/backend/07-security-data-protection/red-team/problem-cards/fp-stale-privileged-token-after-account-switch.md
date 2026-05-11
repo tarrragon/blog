@@ -3,6 +3,7 @@ title: "7.R11.P4 帳號切換後沿用高權限 token"
 date: 2026-04-24
 description: "說明帳號切換後權限 token 殘留如何造成身份邊界漂移"
 weight: 7234
+tags: ["backend", "security", "red-team"]
 ---
 
 這個失效樣式的核心問題是身份切換與 token 收斂節奏不一致。當切換完成仍沿用前一身份 token，流程會形成隱性越權。

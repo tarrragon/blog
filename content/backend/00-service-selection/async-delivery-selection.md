@@ -3,6 +3,7 @@ title: "0.3 非同步與事件傳遞選型"
 date: 2026-04-23
 description: "區分背景工作、durable queue、stream、pub/sub 與 outbox 的選型邊界"
 weight: 3
+tags: ["backend", "service-selection"]
 ---
 
 非同步與事件傳遞選型的核心原則是先判斷工作離開 request 後需要什麼保證。背景工作、[durable queue](/backend/knowledge-cards/durable-queue/)、stream、[pub/sub](/backend/knowledge-cards/pub-sub/) 與 outbox 都能讓流程非同步化，但它們對持久化、重試、順序、[fan-out](/backend/knowledge-cards/fan-out/) 與一致性的承諾不同。

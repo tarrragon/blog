@@ -3,6 +3,7 @@ title: "3.C1 Meta：FOQS 從區域到全域佇列遷移"
 date: 2026-05-07
 description: "佇列架構如何在不中斷下升級成 disaster-ready 模式。"
 weight: 1
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是說明 queue 轉換不只換 broker，還包含路由與可用性模型重整。

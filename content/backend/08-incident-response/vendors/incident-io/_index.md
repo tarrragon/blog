@@ -3,6 +3,7 @@ title: "incident.io"
 date: 2026-05-01
 description: "Slack-native IR 平台、整合 paging / response / retro"
 weight: 4
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 incident.io 是 Slack-native 的 IR 平台、強項是把 incident lifecycle（declare / respond / update / close / postmortem）整合在 Slack 內、降低工具切換成本。整合 PagerDuty / Opsgenie / Statuspage 等。後加入 on-call 模組。

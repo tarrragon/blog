@@ -3,6 +3,7 @@ title: "AWS SQS"
 date: 2026-05-01
 description: "AWS managed queue、簡單可靠、無 ordering（standard）"
 weight: 5
+tags: ["backend", "message-queue", "vendor"]
 ---
 
 SQS 是 AWS managed queue 服務、極簡 API、無維運成本。Standard queue 提供 at-least-once + 不保證 ordering；FIFO queue 提供 exactly-once + ordering 但 throughput 受限。適合 AWS 生態內的 task queue。

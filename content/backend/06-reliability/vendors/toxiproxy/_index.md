@@ -3,6 +3,7 @@ title: "Toxiproxy"
 date: 2026-05-01
 description: "TCP-level fault injection proxy（Shopify 開源）"
 weight: 10
+tags: ["backend", "reliability", "vendor"]
 ---
 
 Toxiproxy 是 Shopify 開源的 TCP-level fault injection proxy、在 client 與 server 之間插入 proxy、注入 latency / bandwidth / connection drop / partition。適合 integration test 中模擬網路故障。

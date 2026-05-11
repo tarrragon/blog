@@ -3,6 +3,7 @@ title: "MongoDB"
 date: 2026-05-01
 description: "Document database 代表、彈性 schema 與 sharding"
 weight: 4
+tags: ["backend", "database", "vendor"]
 ---
 
 MongoDB 是 document database 的代表、schema-less 寫入彈性高、原生 sharding 與 replica set。適合 schema 演進快、半結構化資料密集的場景。

@@ -3,6 +3,7 @@ title: "Pinterest"
 date: 2026-05-01
 description: "Pinterest Capacity Planning 與儲存架構可靠性"
 weight: 22
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Pinterest 是視覺探索平台、capacity planning 與儲存架構的工程文章揭露大規模 data-heavy service 的可靠性挑戰。

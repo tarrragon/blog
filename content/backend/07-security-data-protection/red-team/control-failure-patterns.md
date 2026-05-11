@@ -3,6 +3,7 @@ title: "7.R8 控制面失效樣式"
 date: 2026-04-24
 description: "把常見攻擊結果回推成控制面失效樣式"
 weight: 718
+tags: ["backend", "security", "red-team"]
 ---
 
 本章的責任是把攻擊事件回推為控制面失效樣式，讓紅隊判讀能直接對應服務設計的缺口類型。

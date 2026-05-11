@@ -3,6 +3,7 @@ title: "4.18 Observability Operating Model"
 date: 2026-05-02
 description: "定義 platform / service team / on-call 對訊號、dashboard、alert 與成本的 ownership"
 weight: 18
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

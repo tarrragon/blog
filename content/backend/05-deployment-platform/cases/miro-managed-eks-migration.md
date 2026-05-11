@@ -3,6 +3,7 @@ title: "5.C5 Miro：Managed EKS 遷移"
 date: 2026-05-07
 description: "從自維運平台轉向 managed EKS 的組織與技術協同案例。"
 weight: 5
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個案例的核心責任是說明平台遷移也會改變團隊職責分工。

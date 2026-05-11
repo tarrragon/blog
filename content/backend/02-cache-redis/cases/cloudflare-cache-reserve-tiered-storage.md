@@ -3,6 +3,7 @@ title: "2.C7 Cloudflare：Cache Reserve 分層儲存快取"
 date: 2026-05-07
 description: "邊緣快取延伸到持久層以降低回源壓力的案例。"
 weight: 7
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是把快取從短期命中策略擴展到長期容量策略。

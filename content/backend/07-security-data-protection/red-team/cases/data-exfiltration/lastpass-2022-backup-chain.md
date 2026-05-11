@@ -3,6 +3,7 @@ title: "7.R7.4.1 LastPass 2022：備份路徑與鏈式入侵"
 date: 2026-04-24
 description: "開發環境資訊外流如何沿著備份路徑擴大成資料風險"
 weight: 71741
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

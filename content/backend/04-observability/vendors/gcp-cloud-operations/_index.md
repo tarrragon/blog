@@ -3,6 +3,7 @@ title: "GCP Cloud Operations"
 date: 2026-05-01
 description: "GCP 原生觀測性套件（前 Stackdriver）：Logging / Monitoring / Trace / Profiler"
 weight: 8
+tags: ["backend", "observability", "vendor"]
 ---
 
 Cloud Operations（前 Stackdriver）是 GCP 原生 observability 套件、Cloud Logging / Monitoring / Trace / Profiler / Error Reporting。跟 GCP 服務深度整合、GKE / Cloud Run / BigQuery 內建匯出。

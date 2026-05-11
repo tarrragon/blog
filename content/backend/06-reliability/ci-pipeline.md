@@ -3,6 +3,7 @@ title: "6.1 CI pipeline"
 date: 2026-04-23
 description: "整理分層測試、快慢測試與 artifact 管理"
 weight: 1
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

@@ -3,6 +3,7 @@ title: "Discord"
 date: 2026-05-01
 description: "Discord Gateway scale-out 事故與容量驚奇"
 weight: 13
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Discord 是大規模長連線 gateway 的代表、事故多源自 capacity surprise（用戶行為意外觸發 fan-out 放大）。Discord engineering blog 揭露多次 scaling 事故。

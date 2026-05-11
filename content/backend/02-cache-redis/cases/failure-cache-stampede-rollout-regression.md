@@ -3,6 +3,7 @@ title: "2.C9 反例：快取切換引發 Stampede 回歸"
 date: 2026-05-07
 description: "快取策略切換若缺乏保護，會導致回源壓力與錯誤率連鎖上升。"
 weight: 9
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個反例的核心責任是說明快取轉換最常失敗在回源保護不足。

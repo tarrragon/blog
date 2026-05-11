@@ -3,6 +3,7 @@ title: "Datadog：2023 多區觀測中斷事件"
 date: 2026-05-07
 description: "監控平台自身退化時，如何避免客戶誤判系統健康狀態。"
 weight: 21
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 這起案例的核心責任是處理「監控系統本身失效」的盲區。當觀測平台中斷，事故判讀需要立即切換備援證據來源。

@@ -3,6 +3,7 @@ title: "FireHydrant"
 date: 2026-05-01
 description: "IR + retrospective 平台、Slack / Teams 整合"
 weight: 5
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 FireHydrant 是 IR 平台、覆蓋 incident response / retrospective / runbook automation / status page。同時支援 Slack 與 Microsoft Teams（vs incident.io 早期 Slack-only）。後加入 on-call 模組。

@@ -3,6 +3,7 @@ title: "7.6 秘密管理與機器憑證治理"
 date: 2026-04-24
 description: "以問題驅動方式整理 secret、token、key 與機器身份治理"
 weight: 76
+tags: ["backend", "security"]
 ---
 
 本章的責任是把機器身份與憑證風險拆成分域治理模型，讓 secret、token、key 的生命周期可以被一致驗證。

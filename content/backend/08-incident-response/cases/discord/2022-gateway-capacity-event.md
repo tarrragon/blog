@@ -3,6 +3,7 @@ title: "Discord：Gateway 容量事件與恢復節奏"
 date: 2026-05-07
 description: "長連線平台在容量邊界被擊穿時，如何控制擴散並分批恢復。"
 weight: 31
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 這起案例的核心責任是把長連線流量恢復做成可分批節奏。容量事件若直接全量回復，容易觸發二次擁塞。

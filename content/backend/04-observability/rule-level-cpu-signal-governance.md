@@ -3,6 +3,7 @@ title: "4.21 Rule-level CPU Signal Governance"
 date: 2026-05-07
 description: "把規則與策略執行成本變成可觀測訊號，避免控制面小變更在資料面形成 CPU 熱點。"
 weight: 21
+tags: ["backend", "observability"]
 ---
 
 Rule-level CPU signal governance 的核心責任是讓規則與策略執行成本可被提前判讀，避免高成本規則在全域 rollout 後才以 5xx 與 latency 形式被動暴露。

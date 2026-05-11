@@ -3,6 +3,7 @@ title: "Meta / Facebook"
 date: 2026-05-01
 description: "Meta Reliability Engineering 與超大規模事故學習"
 weight: 23
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Meta（前 Facebook）是超大規模分散式系統的代表、2021-10 BGP 全球失效事故是大規模事故敘事的教學標竿。Engineering blog 公開的 reliability 文章涵蓋 region failover、cell architecture 等深度實踐。

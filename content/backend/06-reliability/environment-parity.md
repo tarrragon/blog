@@ -3,6 +3,7 @@ title: "6.15 Environment Parity 與漂移控制"
 date: 2026-05-01
 description: "把 staging / preprod / prod 之間的差異作為一級風險"
 weight: 15
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

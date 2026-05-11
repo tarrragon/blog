@@ -3,6 +3,7 @@ title: "DragonflyDB"
 date: 2026-05-01
 description: "高效能 Redis / Memcached 相容替代、多核架構"
 weight: 4
+tags: ["backend", "cache", "vendor"]
 ---
 
 DragonflyDB 是用 C++ 重寫的 in-memory store、Redis / Memcached protocol 相容、原生多核 / shared-nothing 架構，宣稱比 Redis 高 25 倍 throughput。Apache 2.0 → BSL 授權變動。

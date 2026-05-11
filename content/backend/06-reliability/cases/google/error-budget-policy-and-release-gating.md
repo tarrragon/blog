@@ -3,6 +3,7 @@ title: "Google：Error Budget 政策如何決定發布節奏"
 date: 2026-05-07
 description: "把 SLO 消耗量轉成 release gate，讓可靠性與交付速度共用同一套決策語言。"
 weight: 11
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Error budget policy 的核心責任是把「可靠性目標」轉成「發布節奏控制」。團隊不需要在每次風險升高時重新爭論要不要繼續推版，而是用同一套 SLO 消耗判準決定放行、限流或凍結。

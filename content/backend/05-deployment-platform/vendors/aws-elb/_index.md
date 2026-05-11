@@ -3,6 +3,7 @@ title: "AWS ELB（ALB / NLB / CLB）"
 date: 2026-05-01
 description: "AWS managed load balancer、ALB（L7）/ NLB（L4）/ CLB（legacy）"
 weight: 6
+tags: ["backend", "deployment", "vendor"]
 ---
 
 AWS ELB 包含 ALB（Application Load Balancer，L7）、NLB（Network Load Balancer，L4）、CLB（Classic，legacy）。是 AWS 生態下流量入口的預設選擇、跟 ECS / EKS / Lambda 深度整合。

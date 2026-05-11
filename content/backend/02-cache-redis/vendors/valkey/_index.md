@@ -3,6 +3,7 @@ title: "Valkey"
 date: 2026-05-01
 description: "Redis fork、Linux Foundation 託管、BSD 授權"
 weight: 2
+tags: ["backend", "cache", "vendor"]
 ---
 
 Valkey 是 2024 年從 Redis 7.2.4 fork 的開源專案、由 Linux Foundation 託管、AWS / Google / Oracle / Ericsson 等支援。維持 Redis API 相容、避免 Redis 授權變動的疑慮。

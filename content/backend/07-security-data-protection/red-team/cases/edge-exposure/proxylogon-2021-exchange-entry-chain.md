@@ -3,6 +3,7 @@ title: "7.R7.3.13 ProxyLogon 2021：CVE-2021-26855/27065 入口鏈式失效"
 date: 2026-04-24
 description: "郵件系統入口漏洞被串接利用時，事件會迅速擴大到內部服務邊界"
 weight: 717313
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

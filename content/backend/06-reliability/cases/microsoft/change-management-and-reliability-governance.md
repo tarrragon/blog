@@ -3,6 +3,7 @@ title: "Microsoft：變更治理與可靠性門檻"
 date: 2026-05-07
 description: "透過分層變更管理與發布閘門，降低大型 SaaS 平台的系統性回歸風險。"
 weight: 51
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Microsoft 案例的核心責任是把變更管理制度化。對大型 SaaS 而言，事故常由多個低風險變更疊加而成，治理重點在於發布節奏與風險分層。

@@ -3,6 +3,7 @@ title: "Google Cloud Pub/Sub"
 date: 2026-05-01
 description: "GCP managed pub/sub、global routing、push/pull"
 weight: 6
+tags: ["backend", "message-queue", "vendor"]
 ---
 
 Cloud Pub/Sub 是 GCP managed pub/sub 服務、global routing、自動 scaling、push 與 pull 兩種 delivery 模式。適合 GCP 生態內的事件分發、跨服務 decoupling、Dataflow 整合。

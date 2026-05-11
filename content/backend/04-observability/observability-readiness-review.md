@@ -3,6 +3,7 @@ title: "4.16 Observability Readiness Review"
 date: 2026-05-02
 description: "在服務上線、重大變更與演練前檢查 log / metric / trace / alert 是否可支援事故判讀"
 weight: 16
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

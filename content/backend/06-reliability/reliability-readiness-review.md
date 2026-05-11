@@ -3,6 +3,7 @@ title: "6.19 Reliability Readiness Review"
 date: 2026-05-02
 description: "把上線前、重大變更前與高風險操作前的可靠性準備度變成可檢查門檻"
 weight: 19
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

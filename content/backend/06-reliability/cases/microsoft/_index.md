@@ -3,6 +3,7 @@ title: "Microsoft / Azure SRE"
 date: 2026-05-01
 description: "Microsoft Azure SRE Practices 與 Resilience Patterns"
 weight: 13
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Microsoft Azure 的 SRE 文章與 Resilience patterns 文件是大型雲端供應商的可靠性工程公開素材。教學重點在「企業導向 cloud 的可靠性 patterns 與 governance」。

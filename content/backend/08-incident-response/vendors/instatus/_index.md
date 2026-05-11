@@ -3,6 +3,7 @@ title: "Instatus"
 date: 2026-05-01
 description: "輕量 status page SaaS、現代 UI、價格敏感替代"
 weight: 8
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 Instatus 是輕量 status page SaaS、UI 現代、價格比 Statuspage 親民、近年崛起。功能覆蓋 component / incident / subscriber notification、跟 IR 工具整合（incident.io / Rootly）。

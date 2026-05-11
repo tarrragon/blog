@@ -3,6 +3,7 @@ title: "訊息佇列 Vendor 清單"
 date: 2026-05-01
 description: "後端訊息佇列實作時的常用選擇，預先建立引用路徑"
 weight: 90
+tags: ["backend", "message-queue", "vendor"]
 ---
 
 本清單列出 backend 服務實作會選用的 message queue / broker vendor / platform。每個 vendor 一個資料夾，先建定位與取捨骨架。

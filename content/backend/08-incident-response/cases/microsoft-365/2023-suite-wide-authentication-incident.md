@@ -3,6 +3,7 @@ title: "Microsoft 365：套件級身分驗證事故"
 date: 2026-05-07
 description: "企業套件在身份依賴失效時，如何同步處理跨產品影響與對外揭露。"
 weight: 71
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 這起案例的核心責任是處理跨產品套件的共同依賴風險。企業套件事故常同時影響 mail、collaboration 與 admin 能力，影響評估必須快速分層。

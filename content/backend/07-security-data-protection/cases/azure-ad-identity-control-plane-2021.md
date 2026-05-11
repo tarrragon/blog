@@ -3,6 +3,7 @@ title: "7.C3 Azure AD：2021 Identity Control-plane 事件"
 date: 2026-05-07
 description: "身分控制面事件如何影響多服務信任鏈與回復優先序。"
 weight: 3
+tags: ["backend", "security", "case-study"]
 ---
 
 這個案例的核心責任是說明身份服務控制面故障會外溢成大範圍服務故障。

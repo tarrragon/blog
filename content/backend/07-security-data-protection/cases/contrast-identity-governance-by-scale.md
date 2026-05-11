@@ -3,6 +3,7 @@ title: "7.C10 對照：規模差異下的身份治理"
 date: 2026-05-07
 description: "identity 控制面治理在不同規模服務下的失敗邊界差異。"
 weight: 10
+tags: ["backend", "security", "case-study"]
 ---
 
 這篇對照的核心責任是讓身份治理隨規模調整，而不是固定流程複製。

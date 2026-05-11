@@ -3,6 +3,7 @@ title: "2.C2 Meta：mcrouter 與跨區快取路由"
 date: 2026-05-07
 description: "快取從單點最佳化演進到分散式路由層的案例。"
 weight: 2
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是說明快取規模變大後，路由層本身會成為選型主題。

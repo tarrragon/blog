@@ -3,6 +3,7 @@ title: "4.8 訊號治理閉環"
 date: 2026-05-01
 description: "把 postmortem 揭露的偵測缺口回寫成新訊號、讓觀測能力隨事故學習成長"
 weight: 8
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

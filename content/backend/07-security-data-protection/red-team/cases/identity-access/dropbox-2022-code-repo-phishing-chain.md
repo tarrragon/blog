@@ -3,6 +3,7 @@ title: "7.R7.1.8 Dropbox 2022：釣魚入侵與程式碼倉儲風險"
 date: 2026-04-24
 description: "從員工釣魚事件到私有程式碼資產保護，建立身分與研發資產的聯防流程"
 weight: 71718
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

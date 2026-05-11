@@ -3,6 +3,7 @@ title: "6.8 Release Gate 與變更節奏"
 date: 2026-05-01
 description: "把驗證、migration、相容性納入放行判準"
 weight: 8
+tags: ["backend", "reliability"]
 ---
 
 ## 概念定位

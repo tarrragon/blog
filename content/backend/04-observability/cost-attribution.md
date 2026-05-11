@@ -3,6 +3,7 @@ title: "4.15 Cost Attribution / Chargeback"
 date: 2026-05-01
 description: "把 observability 成本拆到團隊、產品、環境維度"
 weight: 15
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

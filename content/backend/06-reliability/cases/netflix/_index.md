@@ -3,6 +3,7 @@ title: "Netflix"
 date: 2026-05-01
 description: "Netflix Chaos Engineering 起源：Simian Army / FIT / 規模化故障注入"
 weight: 2
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Netflix 是 Chaos Engineering 的起源、Chaos Monkey 跟 Simian Army 是領域標準工具的概念來源、FIT（Failure Injection Testing）是大規模 production chaos 的實作範本。教學重點在「故障注入如何作為 first-class 工程實踐」。

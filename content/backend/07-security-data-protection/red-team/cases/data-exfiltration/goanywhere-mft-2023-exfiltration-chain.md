@@ -3,6 +3,7 @@ title: "7.R7.4.7 GoAnywhere MFT 2023：傳輸中樞被利用的外送鏈"
 date: 2026-04-24
 description: "MFT 中樞服務漏洞會把檔案交換流程直接轉成資料外送風險"
 weight: 71747
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

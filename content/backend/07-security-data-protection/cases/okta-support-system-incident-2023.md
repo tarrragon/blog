@@ -3,6 +3,7 @@ title: "7.C5 Okta：2023 Support System 事件"
 date: 2026-05-07
 description: "支援系統憑證風險如何擴散到客戶租戶的案例。"
 weight: 5
+tags: ["backend", "security", "case-study"]
 ---
 
 這個案例的核心責任是提醒控制面不只在正式生產系統，也在支援工具鏈。

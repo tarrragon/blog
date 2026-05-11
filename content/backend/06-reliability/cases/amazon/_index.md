@@ -3,6 +3,7 @@ title: "Amazon"
 date: 2026-05-01
 description: "Amazon Cell-based Architecture / Shuffle Sharding / Blast Radius 設計"
 weight: 3
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Amazon 是 cell-based architecture 與 shuffle sharding 的代表、AWS Builders' Library 是大規模分散式系統的工程實踐 SSoT。教學重點在「如何設計才能讓失效局部化」。

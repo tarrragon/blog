@@ -3,6 +3,7 @@ title: "LinkedIn"
 date: 2026-05-01
 description: "LinkedIn Capacity Planning 與 On-call 結構"
 weight: 11
+tags: ["backend", "reliability", "case-study"]
 ---
 
 LinkedIn 是大規模社交平台、capacity planning 與 [on-call](/backend/knowledge-cards/on-call/) 結構的工程文章公開度高、是「中型公司如何規模化 SRE」的教學標竿。

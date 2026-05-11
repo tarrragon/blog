@@ -3,6 +3,7 @@ title: "7.R7.2.9 Kaseya VSA 2021：MSP 供應鏈擴散路徑"
 date: 2026-04-24
 description: "管理平台事件透過 MSP 模型向多客戶擴散時，workflow 應如何分層應對"
 weight: 71729
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

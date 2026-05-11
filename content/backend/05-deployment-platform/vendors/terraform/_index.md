@@ -3,6 +3,7 @@ title: "Terraform / OpenTofu"
 date: 2026-05-01
 description: "Infrastructure as Code 主流工具"
 weight: 7
+tags: ["backend", "deployment", "vendor"]
 ---
 
 Terraform 是 HashiCorp 出品的 IaC 工具、HCL 配置語言、provider 生態最廣（AWS / GCP / Azure / Kubernetes 等）。2023 授權變動為 BSL、社群 fork OpenTofu（Linux Foundation 託管、MPL 2.0）。

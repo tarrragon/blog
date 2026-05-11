@@ -3,6 +3,7 @@ title: "Heroku：Routing 控制事件與多租戶影響"
 date: 2026-05-07
 description: "PaaS 路由層異常時，如何限制租戶擴散並維持可用通訊。"
 weight: 51
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 這起案例的核心責任是守住路由層故障的擴散邊界。PaaS 共享入口若失效，租戶影響會快速放大。

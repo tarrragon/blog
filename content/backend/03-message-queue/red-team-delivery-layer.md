@@ -3,6 +3,7 @@ title: "3.5 攻擊者視角（紅隊）：傳遞層弱點判讀"
 date: 2026-04-24
 description: "從重複投遞、重放濫用、毒訊息與容量壓力，盤點 message delivery 的主要弱點"
 weight: 5
+tags: ["backend", "message-queue"]
 ---
 
 傳遞層紅隊判讀的核心目標是確認「訊息如何被重送、重放、放大與耗盡資源」。這裡的紅隊指攻擊者視角的風險檢查：先找可被放大的傳遞路徑，再回推控制面。只要系統採用 [broker](/backend/knowledge-cards/broker/) 或 stream，弱點就會同時落在 [delivery semantics](/backend/knowledge-cards/delivery-semantics/)、consumer 容量與回復流程。

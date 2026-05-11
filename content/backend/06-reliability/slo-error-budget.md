@@ -3,6 +3,7 @@ title: "6.6 SLO 與 Error Budget 政策"
 date: 2026-05-01
 description: "把可靠性目標轉成可驗證量測與凍結條件"
 weight: 6
+tags: ["backend", "reliability"]
 ---
 
 ## 概念定位

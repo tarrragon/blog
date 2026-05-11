@@ -3,6 +3,7 @@ title: "Grafana Stack"
 date: 2026-05-01
 description: "Grafana / Loki / Tempo / Mimir / Pyroscope 全棧"
 weight: 3
+tags: ["backend", "observability", "vendor"]
 ---
 
 Grafana Labs 提供開源 observability 全棧：Grafana（視覺化）/ Loki（logs）/ Tempo（traces）/ Mimir（metrics 長期儲存）/ Pyroscope（profiling）。可自管或用 Grafana Cloud。是 OSS-first 的 Datadog 替代方案。

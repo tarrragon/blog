@@ -3,6 +3,7 @@ title: "2.C6 Netflix：EVCache 全域快取層"
 date: 2026-05-07
 description: "快取從本地層演進為跨區分散式能力的案例。"
 weight: 6
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是說明快取在全球服務下會變成平台能力。

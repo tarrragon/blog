@@ -3,6 +3,7 @@ title: "Google：Toil Budget 與 Automation 投資政策"
 date: 2026-05-07
 description: "把 toil 從感受問題轉成預算問題：用時間配比與自動化回報機制，避免 on-call 壓力長期侵蝕可靠性工程。"
 weight: 13
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Toil budget 的核心責任是把重複手動工作變成可治理成本。Google SRE 的關鍵做法是先量化 toil，再把超額部分強制導向自動化投資，而不是持續靠人力吸收。

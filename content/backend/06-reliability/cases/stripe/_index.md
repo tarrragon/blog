@@ -3,6 +3,7 @@ title: "Stripe"
 date: 2026-05-01
 description: "Stripe Deploy Strategy / Game Day / Idempotency 實踐"
 weight: 4
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Stripe 是金流場景的可靠性教學標竿、deploy strategy 與 idempotency 設計是 API platform 的工程典範。教學重點在「金流不可重複扣款 / 不可漏扣款」如何透過工程實踐保證。

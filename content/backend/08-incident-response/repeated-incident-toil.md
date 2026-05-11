@@ -3,6 +3,7 @@ title: "8.13 Repeated Incident 與 Toil 治理"
 date: 2026-05-01
 description: "把同型事故反覆發生與重複手動修復作為工程化治理對象"
 weight: 13
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

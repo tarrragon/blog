@@ -3,6 +3,7 @@ title: "Netflix：Business-Hours Chaos 與 Guardrails"
 date: 2026-05-07
 description: "Chaos Monkey 為何刻意在 business hours 執行：把即時應變能力納入驗證，並用 guardrails 限制實驗風險。"
 weight: 22
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Netflix 把 Chaos Monkey 放在 business hours 執行，核心責任是同時驗證系統韌性與團隊反應能力。若只在離峰或隔離環境跑故障注入，很多真實依賴與協作問題不會被看見。

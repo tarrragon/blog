@@ -3,6 +3,7 @@ title: "0.9 知識網：訊息與事件決策路徑"
 date: 2026-04-23
 description: "把 broker、queue、ack、retry、DLQ、replay 與 idempotency 串成可操作的非同步決策語言"
 weight: 9
+tags: ["backend", "service-selection"]
 ---
 
 非同步決策的核心原則是先定義投遞語意，再選擇傳遞工具。`queue`、`stream`、[`pub/sub`](/backend/knowledge-cards/pub-sub/)、`outbox`、`retry`、`dead-letter`、`replay` 與 `idempotency` 是同一條決策鏈，不是獨立名詞清單。

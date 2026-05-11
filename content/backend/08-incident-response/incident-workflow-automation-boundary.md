@@ -3,6 +3,7 @@ title: "8.21 Incident Workflow Automation Boundary"
 date: 2026-05-02
 description: "定義哪些事故流程適合自動化，哪些決策需要保留人工確認"
 weight: 21
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

@@ -23,7 +23,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 ## 01 Database / Storage：Schema Migration Rollout Evidence
 
-資料庫服務路徑的核心問題是正式狀態如何在不中斷服務的前提下演進。建議正文檔名是 `content/backend/01-database/schema-migration-rollout-evidence.md`，服務實例以訂單資料表欄位演進為主，例如新增 `payment_state`、拆分 `status`，或把第三方付款狀態從文字欄位改成可驗證狀態欄位。
+資料庫服務路徑的核心問題是正式狀態如何在不中斷服務的前提下演進。正文已完成於 [1.7 Schema Migration Rollout Evidence 實作示範](/backend/01-database/schema-migration-rollout-evidence/)，服務實例以訂單資料表欄位演進為主，例如新增 `payment_state`、拆分 `status`，或把第三方付款狀態從文字欄位改成可驗證狀態欄位。
 
 這篇正文要先說明 migration 是 state rollout，DDL 只是其中一個執行步驟。讀者需要看到訂單狀態被 checkout API、付款回呼、客服查詢、報表和對帳流程共同讀寫，因此欄位變更必須保留新舊版本相容窗口。
 
@@ -144,7 +144,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 ## 後續正文派發順序
 
-後續正文派發的第一批應完成 01 / 02 / 03 / 05，因為這四篇會補齊尚未落地的服務路徑實作。建議順序維持 01 → 02 → 03 → 05：先寫正式狀態演進，再寫副本保護，再寫非同步副作用，最後寫平台流量切換。
+後續正文派發的第一批應完成 01 / 02 / 03 / 05，因為這四篇會補齊尚未落地的服務路徑實作。01 已完成，建議後續順序維持 02 → 03 → 05：先寫副本保護，再寫非同步副作用，最後寫平台流量切換。
 
 第二批再擴充 04 / 06 / 07 / 08 的同層級服務實例。這樣做可以讓 04/06/07/08 先吃到 01/02/03/05 新文章產出的 evidence、gate 與 decision log，再用具體服務素材擴充既有 artifact backbone。
 

@@ -3,6 +3,7 @@ title: "4.9 Continuous Profiling"
 date: 2026-05-01
 description: "把 CPU / memory / lock profile 從一次性除錯升級為持續訊號"
 weight: 9
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

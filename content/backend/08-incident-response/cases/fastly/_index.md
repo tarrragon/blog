@@ -3,6 +3,7 @@ title: "Fastly"
 date: 2026-05-01
 description: "Fastly 全球配置 push 事故時間線"
 weight: 7
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Fastly 2021-06 的全球分鐘級配置 push 事故是 edge platform 的客戶配置觸發供應商 bug 的教學標竿。事件揭露了「客戶觸發供應商 bug」這類 IR 議題的特殊性、跟 Cloudflare 配置事故有對照價值。

@@ -3,6 +3,7 @@ title: "Rootly"
 date: 2026-05-01
 description: "IR 自動化平台、no-code workflow"
 weight: 6
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 Rootly 是 IR 平台、強項是 no-code workflow builder、Slack / Teams 整合、retrospective template、AI 輔助 timeline 整理。產品迭代快、近年跟 incident.io / FireHydrant 三家構成 modern IR 平台主要選項。

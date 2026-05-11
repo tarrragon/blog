@@ -3,6 +3,7 @@ title: "SQLite"
 date: 2026-05-01
 description: "Embedded SQL、CLI / desktop / test fixture"
 weight: 3
+tags: ["backend", "database", "vendor"]
 ---
 
 SQLite 是嵌入式關聯式資料庫、無 server process、單檔儲存、零維運成本。適合 embedded、CLI 工具、test fixture、輕量服務、邊緣節點本地狀態。

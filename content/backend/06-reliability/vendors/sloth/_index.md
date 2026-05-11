@@ -3,6 +3,7 @@ title: "Sloth"
 date: 2026-05-01
 description: "OSS SLO generator for Prometheus"
 weight: 12
+tags: ["backend", "reliability", "vendor"]
 ---
 
 Sloth 是 OSS Prometheus SLO generator、輸入簡單 YAML 定義 SLO、輸出 Prometheus recording rules + alerting rules（multi-window multi-burn-rate）。適合 Prometheus-based 環境的純 OSS SLO。

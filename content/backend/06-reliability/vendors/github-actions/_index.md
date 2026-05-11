@@ -3,6 +3,7 @@ title: "GitHub Actions"
 date: 2026-05-01
 description: "GitHub 原生 CI/CD、PR check、deploy gate"
 weight: 1
+tags: ["backend", "reliability", "vendor"]
 ---
 
 GitHub Actions 是 GitHub 原生的 CI/CD 工具、跟 PR / Issue / Release 深度整合、marketplace action 生態廣。是 GitHub-hosted 專案的預設 CI 選擇。

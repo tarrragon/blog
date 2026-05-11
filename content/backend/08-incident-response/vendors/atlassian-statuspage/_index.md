@@ -3,6 +3,7 @@ title: "Atlassian Statuspage"
 date: 2026-05-01
 description: "公開狀態頁 SaaS、Atlassian 出品"
 weight: 7
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 Statuspage 是 Atlassian 收購整合的公開狀態頁 SaaS、提供 component / incident / scheduled maintenance / metrics 揭露、subscriber 通知（email / SMS / Slack / webhook）。是公開狀態頁的事實標準。

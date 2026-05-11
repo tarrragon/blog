@@ -3,6 +3,7 @@ title: "8.8 事故報告轉 workflow：從案例到日常流程"
 date: 2026-04-24
 description: "把事故報告拆成可執行流程，並與 red-team 案例庫建立雙向引用"
 weight: 88
+tags: ["backend", "incident-response"]
 ---
 
 這一章的核心原則是把事故報告轉成可重複執行流程。每份報告都需要落地為 runbook、告警規則、演練腳本，並可回查到對應 red-team 案例。

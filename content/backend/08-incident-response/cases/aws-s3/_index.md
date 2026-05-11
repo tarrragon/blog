@@ -3,6 +3,7 @@ title: "AWS S3"
 date: 2026-05-01
 description: "AWS S3 重大事故時間線與架構脈絡"
 weight: 1
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 AWS S3 是物件儲存的事實標準、區域控制面失效會大規模擴散到下游服務、是區域依賴 / blast radius / 控制面 vs 資料面分離的教學標竿。

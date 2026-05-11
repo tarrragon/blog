@@ -3,6 +3,7 @@ title: "6.10 Contract Testing 與 Schema 演進"
 date: 2026-05-01
 description: "用契約測試驗證跨服務 / API / event schema 的相容性"
 weight: 10
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

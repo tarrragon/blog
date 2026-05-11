@@ -3,6 +3,7 @@ title: "部署平台 Vendor 清單"
 date: 2026-05-01
 description: "後端部署、編排、網路入口實作時的常用選擇"
 weight: 90
+tags: ["backend", "deployment", "vendor"]
 ---
 
 本清單列出 backend 服務實作會選用的 deployment / orchestration / network entrypoint vendor / platform。每個 vendor 一個資料夾，先建定位與取捨骨架。

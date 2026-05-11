@@ -3,6 +3,7 @@ title: "4.12 Audit Log 邊界與 PII 治理"
 date: 2026-05-01
 description: "把稽核訊號從 operational log 拆出、按法規與不變性治理"
 weight: 12
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

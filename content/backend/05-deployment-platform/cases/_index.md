@@ -3,6 +3,7 @@ title: "模組五案例正文"
 date: 2026-05-07
 description: "部署平台轉換案例入口。"
 weight: 80
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個資料夾的核心責任是把平台遷移案例轉成部署策略、切流策略與回退策略的可操作內容。

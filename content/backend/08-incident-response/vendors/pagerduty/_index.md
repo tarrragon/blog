@@ -3,6 +3,7 @@ title: "PagerDuty"
 date: 2026-05-01
 description: "On-call / alerting 主流 SaaS、IR 平台演化"
 weight: 1
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 PagerDuty 是 on-call / alerting 的事實標準 SaaS、escalation policy / schedule / incident workflow / mobile app 成熟。從 paging 工具演化成完整 IR 平台（Incident Response、AIOps、Process Automation）。

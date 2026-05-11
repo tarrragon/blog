@@ -3,6 +3,7 @@ title: "Netflix：Steady State、Chaos 與 FIT 的驗證路徑"
 date: 2026-05-07
 description: "把故障注入從工具操作升級成可驗證流程：先定義穩態，再設計注入與回復條件。"
 weight: 21
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Netflix chaos 實踐的核心責任是驗證「服務在失效條件下是否仍維持穩態」。重點不是注入了多少故障，而是注入後能否用明確訊號證明系統仍可服務。

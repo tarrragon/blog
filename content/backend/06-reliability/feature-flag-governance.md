@@ -3,6 +3,7 @@ title: "6.17 Feature Flag / Dark Launch Governance"
 date: 2026-05-01
 description: "把 feature flag 從上線工具升級為有 lifecycle、有 debt 治理的 artifact"
 weight: 17
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

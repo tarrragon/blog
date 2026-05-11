@@ -3,6 +3,7 @@ title: "4.13 Service Topology 與 Dependency Map"
 date: 2026-05-01
 description: "把跨服務依賴從文件變成自動發現的觀測訊號"
 weight: 13
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

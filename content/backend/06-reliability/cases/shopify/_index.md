@@ -3,6 +3,7 @@ title: "Shopify"
 date: 2026-05-01
 description: "Shopify BFCM Scaling / Pod-based Isolation / Capacity Planning"
 weight: 5
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Shopify 是 BFCM（Black Friday / Cyber Monday）流量峰值的可靠性教學標竿、pod-based architecture 是 multi-tenant SaaS 的隔離典範。教學重點在「年度可預期峰值如何透過架構與演練準備」。

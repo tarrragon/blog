@@ -3,6 +3,7 @@ title: "7.R7.1 Identity & Access 類案例"
 date: 2026-04-24
 description: "整理身分流程、社交工程、支援系統與 token 鏈的事故案例"
 weight: 7171
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 本分類的責任是檢查身分與授權流程是否能在攻擊壓力下維持邊界。核心判讀是：登入成功只代表入口被通過，控制面仍需要持續驗證、隔離與收斂。

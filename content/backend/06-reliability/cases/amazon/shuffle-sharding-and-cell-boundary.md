@@ -3,6 +3,7 @@ title: "Amazon：Shuffle Sharding 與 Cell 邊界的失效局部化"
 date: 2026-05-07
 description: "用 cell 與 shuffle sharding 將多租戶故障限制在局部，讓恢復策略可分批執行。"
 weight: 31
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Amazon 可靠性設計的核心責任是把失效影響限制在局部邊界。當系統採用多租戶與大規模共享資源，隔離策略必須先於恢復策略被定義，否則任何回復動作都會變成全域風險。

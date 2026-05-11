@@ -3,6 +3,7 @@ title: "Sentry"
 date: 2026-05-01
 description: "Error tracking 主流、APM / Profiling / Session Replay 擴展"
 weight: 9
+tags: ["backend", "observability", "vendor"]
 ---
 
 Sentry 是 error tracking 的事實標準、覆蓋 frontend / backend / mobile，近年擴展到 APM、Continuous Profiling、Session Replay、Cron Monitoring、Feedback。產品 OSS（self-hosted）+ SaaS 雙軌、規模化用 SaaS 為主。

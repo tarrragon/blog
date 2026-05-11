@@ -3,6 +3,7 @@ title: "Azure AD / Entra ID"
 date: 2026-05-01
 description: "Microsoft Identity 控制面失效與 cascading 影響"
 weight: 14
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Azure AD（現 Entra ID）是 Microsoft 生態的 identity 控制面、其失效會讓所有依賴 SSO 的服務無法登入、是 identity-as-cascading-point 的代表。

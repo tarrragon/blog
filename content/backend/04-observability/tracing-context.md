@@ -3,6 +3,7 @@ title: "4.3 tracing 與 context link"
 date: 2026-04-23
 description: "整理 trace id、span 與跨服務 context propagation"
 weight: 3
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

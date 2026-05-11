@@ -3,6 +3,7 @@ title: "Gaming：高峰流量與隔離邊界選型"
 date: 2026-05-07
 description: "大型活動流量下，如何在低延遲與穩定性之間做可持續取捨。"
 weight: 2
+tags: ["backend", "service-selection", "case-study"]
 ---
 
 這個案例的核心責任是把活動高峰轉成預先可驗證的容量與隔離決策。Gaming 場景的失效通常來自瞬間峰值與連線風暴疊加。

@@ -3,6 +3,7 @@ title: "7.R7.3 Edge Exposure 類案例"
 date: 2026-04-24
 description: "整理邊界設備、外網入口、管理平面與鏈式漏洞事故案例"
 weight: 7173
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 本分類的責任是把外網入口與邊界設備風險轉成可執行流程。核心判讀是：入口暴露、修補時差、攻擊自動化會同時放大事件規模，流程需要先隔離再修補再驗證。

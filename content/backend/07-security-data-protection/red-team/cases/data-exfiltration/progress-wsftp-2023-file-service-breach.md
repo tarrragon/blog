@@ -3,6 +3,7 @@ title: "7.R7.4.6 Progress WS_FTP 2023：檔案服務入口與資料外送"
 date: 2026-04-24
 description: "對外檔案服務漏洞在企業環境常直接轉為資料外送風險"
 weight: 71746
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

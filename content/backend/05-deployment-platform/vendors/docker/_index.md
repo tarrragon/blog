@@ -3,6 +3,7 @@ title: "Docker"
 date: 2026-05-01
 description: "Container runtime / image 標準"
 weight: 2
+tags: ["backend", "deployment", "vendor"]
 ---
 
 Docker 是最早 popularize container 的工具、提供 build（Dockerfile）/ run / image registry。在 production orchestration 多被 Kubernetes + containerd 取代、但 dev workflow 與 image build 仍是主流。OCI image 是事實標準。

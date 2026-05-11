@@ -3,6 +3,7 @@ title: "Traefik"
 date: 2026-05-01
 description: "Cloud-native ingress / reverse proxy、auto-discovery"
 weight: 8
+tags: ["backend", "deployment", "vendor"]
 ---
 
 Traefik 是 cloud-native reverse proxy / ingress、強項是 auto-discovery（Docker / Kubernetes / Consul / etc）、dynamic config、ACME 自動 TLS 憑證、配置簡潔。在 Docker / k8s 生態廣泛使用。

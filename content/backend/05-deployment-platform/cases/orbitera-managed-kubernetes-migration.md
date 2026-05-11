@@ -3,6 +3,7 @@ title: "5.C3 Orbitera：遷移到 Managed Kubernetes"
 date: 2026-05-07
 description: "平台重置時如何讓產品不中斷地完成編排層轉換。"
 weight: 3
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個案例的核心責任是說明平台遷移的關鍵在服務連續性，而非單次替換完成。

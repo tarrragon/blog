@@ -3,6 +3,7 @@ title: "7.R7.2.4 XZ Backdoor 2024：開源供應鏈長期滲透"
 date: 2026-04-24
 description: "開源維護鏈遭滲透後，為何會直接影響廣泛 Linux 發行流程"
 weight: 71724
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

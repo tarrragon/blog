@@ -3,6 +3,7 @@ title: "7.R7.3.1 MOVEit 2023：外網檔案服務批量外送"
 date: 2026-04-24
 description: "MFT 對外入口在零時差事件中如何被批量利用"
 weight: 71731
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

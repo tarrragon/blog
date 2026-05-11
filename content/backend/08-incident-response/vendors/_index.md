@@ -3,6 +3,7 @@ title: "事故處理 Vendor 清單"
 date: 2026-05-01
 description: "後端事故處理實作時的常用工具選擇，預先建立引用路徑"
 weight: 91
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 本清單列出 backend 事故處理會選用的 vendor / platform：on-call、IR 平台、status page、retrospective 工具。每個 vendor 一個資料夾。

@@ -3,6 +3,7 @@ title: "Envoy"
 date: 2026-05-01
 description: "Cloud-native service proxy、xDS dynamic config、Istio / Gateway 底層"
 weight: 5
+tags: ["backend", "deployment", "vendor"]
 ---
 
 Envoy 是 CNCF graduated 的 service proxy、Lyft 開源、xDS 動態配置 API 強大、是 Istio / Linkerd2-proxy / AWS App Mesh / Gateway API 等的底層實作。原生支援 gRPC / HTTP/2 / HTTP/3。

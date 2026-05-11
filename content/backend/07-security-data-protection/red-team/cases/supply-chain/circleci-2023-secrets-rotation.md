@@ -3,6 +3,7 @@ title: "7.R7.2.3 CircleCI 2023：CI secrets 輪替壓力"
 date: 2026-04-24
 description: "工程端點入侵後，CI 平台 secrets 如何成為高風險擴散點"
 weight: 71723
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

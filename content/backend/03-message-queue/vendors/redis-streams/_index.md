@@ -3,6 +3,7 @@ title: "Redis Streams"
 date: 2026-05-01
 description: "Redis 生態內的 streams、append-only log + consumer group"
 weight: 4
+tags: ["backend", "message-queue", "vendor"]
 ---
 
 Redis Streams 是 Redis 5.0 引入的 append-only log data type、提供 consumer group 與 pending entries list。適合 Redis 生態內的輕量 event stream、stream processing 入門、避免額外引入 Kafka 的場景。Redis vendor 細節見 [02 redis](/backend/02-cache-redis/vendors/redis/)。

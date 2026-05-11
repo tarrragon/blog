@@ -3,6 +3,7 @@ title: "7.14 資安治理例外與 Tripwire"
 date: 2026-04-24
 description: "定義例外管理、風險接受與重新評估觸發器"
 weight: 84
+tags: ["backend", "security"]
 ---
 
 本章的責任是定義治理例外與重新評估問題節點，讓風險接受決策具備期限、條件與回收機制。

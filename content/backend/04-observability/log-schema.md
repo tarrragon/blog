@@ -3,6 +3,7 @@ title: "4.1 log schema 與搜尋規劃"
 date: 2026-04-23
 description: "整理 log 欄位、索引與搜尋策略"
 weight: 1
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

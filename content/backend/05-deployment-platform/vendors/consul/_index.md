@@ -3,6 +3,7 @@ title: "Consul"
 date: 2026-05-01
 description: "Service registry / mesh / KV / DNS"
 weight: 9
+tags: ["backend", "deployment", "vendor"]
 ---
 
 Consul 是 HashiCorp 出品的 service networking 平台、提供 service registry / discovery / health check / KV store / service mesh（Consul Connect）/ DNS interface。多用於非 k8s 環境的 service discovery、跨平台統一 registry。BSL 授權變動同 Terraform。

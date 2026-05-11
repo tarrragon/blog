@@ -3,6 +3,7 @@ title: "Reddit"
 date: 2026-05-01
 description: "Reddit Pi Day 2023 k8s 升級事故"
 weight: 22
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Reddit 2023 Pi Day（3/14）的 314 分鐘事故是 Kubernetes 升級導致的事故、揭露 k8s 升級在大規模生產環境的隱性風險。Reddit engineering blog 公開 post-mortem 細節豐富。

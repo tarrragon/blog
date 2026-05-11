@@ -3,6 +3,7 @@ title: "LinkedIn：Capacity Headroom 與 On-call 分層"
 date: 2026-05-07
 description: "把容量預測與值班分層綁在一起，降低高峰時段的升級混亂與恢復延遲。"
 weight: 31
+tags: ["backend", "reliability", "case-study"]
 ---
 
 LinkedIn 案例的核心責任是讓容量治理與 on-call 分工一起運作。高流量服務的穩定性不只靠擴容，還靠清楚的接手邏輯。

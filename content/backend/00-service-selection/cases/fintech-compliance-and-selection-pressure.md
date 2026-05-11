@@ -3,6 +3,7 @@ title: "FinTech：合規壓力下的後端選型"
 date: 2026-05-07
 description: "在審計、留存與交易正確性要求下，如何平衡成本、風險與交付速度。"
 weight: 1
+tags: ["backend", "service-selection", "case-study"]
 ---
 
 這個案例的核心責任是把合規壓力轉成選型條件。FinTech 場景下，資料保留、審計追溯與交易一致性通常比純效能優先。

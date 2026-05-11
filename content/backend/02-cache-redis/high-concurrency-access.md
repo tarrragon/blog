@@ -3,6 +3,7 @@ title: "2.1 高併發下的 Redis 讀寫邊界"
 date: 2026-04-22
 description: "說明高併發服務如何共用 Redis client、控制 pipeline 與避免 cache stampede"
 weight: 1
+tags: ["backend", "cache"]
 ---
 
 Redis 在後端服務裡常扮演 cache、session、counter、dedup、presence 或輕量協調層。它通常比 SQL 更適合高併發短操作，但前提是 client、連線池、pipeline 與 key 設計都受控。高併發下的 Redis 仍然會遇到 [hot key](/backend/knowledge-cards/hot-key/)、快取穿透、stampede、過大 pipeline 與不當鎖設計。

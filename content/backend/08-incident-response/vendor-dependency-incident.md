@@ -3,6 +3,7 @@ title: "8.15 Vendor / 第三方依賴事故處理"
 date: 2026-05-01
 description: "依賴方掛掉、自己無 control 時的決策模型"
 weight: 15
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

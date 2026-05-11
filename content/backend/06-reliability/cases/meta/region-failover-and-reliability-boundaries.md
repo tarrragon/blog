@@ -3,6 +3,7 @@ title: "Meta：Region Failover 與可靠性邊界"
 date: 2026-05-07
 description: "把跨區故障視為邊界治理問題，透過分區隔離與回復順序控制失效擴散。"
 weight: 41
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Meta 案例的核心責任是處理跨區故障時的邊界與回復順序。大規模平台的關鍵風險不在單點失效，而在跨區相依引發的連鎖退化。

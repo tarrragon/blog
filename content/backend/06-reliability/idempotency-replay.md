@@ -3,6 +3,7 @@ title: "6.12 Idempotency 與 Replay 驗證"
 date: 2026-05-01
 description: "把重試、重播與冪等性從口頭約定變成可驗證屬性"
 weight: 12
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

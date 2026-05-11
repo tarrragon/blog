@@ -3,6 +3,7 @@ title: "Slack：2022 連線恢復與狀態通訊節奏"
 date: 2026-05-07
 description: "在通訊平台自身失效時，如何同步恢復節奏與對外狀態揭露。"
 weight: 11
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 這起案例的核心責任是維持「恢復動作」與「外部通訊」同步。對通訊平台來說，狀態揭露本身就是事故處理的一級控制面。

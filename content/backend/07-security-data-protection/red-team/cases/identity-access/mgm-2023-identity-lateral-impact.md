@@ -3,6 +3,7 @@ title: "7.R7.1.4 MGM 2023：身分流程被打穿後的營運中斷"
 date: 2026-04-24
 description: "社交工程造成身分邊界失守後，如何演變成可用性與營運衝擊"
 weight: 71714
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

@@ -3,6 +3,7 @@ title: "4.C4 AWS：X-Ray 到 OpenTelemetry 轉換"
 date: 2026-05-07
 description: "觀測儀表從 vendor-specific SDK 轉向 OpenTelemetry 的治理重點。"
 weight: 4
+tags: ["backend", "observability", "case-study"]
 ---
 
 這個案例的核心責任是把觀測遷移從工具替換，提升為標準化策略。

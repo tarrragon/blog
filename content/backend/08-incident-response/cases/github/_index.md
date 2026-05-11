@@ -3,6 +3,7 @@ title: "GitHub"
 date: 2026-05-01
 description: "GitHub 重大事故時間線與架構脈絡"
 weight: 3
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 GitHub 是高 traffic、跨區資料庫 + 強一致性需求的代表、MySQL split-brain / Actions 大規模 outage 是跨區資料一致性與 control-plane 失效的教學標竿。

@@ -52,4 +52,4 @@ tags: ["backend", "database", "migration"]
 
 ## 下一步路由
 
-若你還在判斷是否該轉換，先回 [0.C4](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/) 看決策訊號。若你在設計放行與演練，接著看 [6.11](/backend/06-reliability/migration-safety/) 與 [6.8](/backend/06-reliability/release-gate/)。若你在事故回溯，接著看 [8.23 Post-incident Review](/backend/08-incident-response/post-incident-review/)。
+若你還在判斷是否該轉換，先回 [0.C4](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/) 看決策訊號。若你要把這套流程寫成 production rollout evidence，接著讀 [1.7 Schema Migration Rollout Evidence 實作示範](/backend/01-database/schema-migration-rollout-evidence/)。若你在設計放行與演練，接著看 [6.11](/backend/06-reliability/migration-safety/) 與 [6.8](/backend/06-reliability/release-gate/)。若你在事故回溯，接著看 [8.23 Post-incident Review](/backend/08-incident-response/post-incident-review/)。

@@ -3,6 +3,7 @@ title: "Opsgenie"
 date: 2026-05-01
 description: "Atlassian on-call、跟 Jira / Statuspage 套件整合"
 weight: 2
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 Opsgenie 是 Atlassian 出品的 on-call / alerting 平台、強項是跟 Jira Service Management / Statuspage / Confluence 等 Atlassian 套件深度整合。已被併入 Jira Service Management Cloud。

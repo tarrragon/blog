@@ -3,6 +3,7 @@ title: "Pinterest：快取可靠性與容量驚奇治理"
 date: 2026-05-07
 description: "針對快取層失效與流量突增，建立容量緩衝、退化路徑與重建節奏。"
 weight: 61
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Pinterest 案例的核心責任是處理快取層造成的容量驚奇。快取命中率下滑會在短時間放大到資料層與下游依賴，因此需要預先設計退化與重建節奏。

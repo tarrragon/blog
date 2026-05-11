@@ -3,6 +3,7 @@ title: "Azure AD：2021 身分控制面中斷事件"
 date: 2026-05-07
 description: "身分服務失效時，如何評估跨產品影響與收斂優先序。"
 weight: 41
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 這起案例的核心責任是處理身份控制面故障對下游產品的連鎖影響。身份系統事故通常擴散快、影響廣，分級與通訊需要提前對齊。

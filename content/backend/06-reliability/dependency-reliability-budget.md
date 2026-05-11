@@ -3,6 +3,7 @@ title: "6.14 Dependency Reliability Budget"
 date: 2026-05-01
 description: "把內外依賴的可靠性納入 SLO 計算與設計約束"
 weight: 14
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

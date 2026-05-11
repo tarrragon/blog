@@ -3,6 +3,7 @@ title: "7.R7.2.1 SolarWinds 2020：更新鏈被濫用"
 date: 2026-04-24
 description: "合法更新流程遭植入後，攻擊者如何長期潛伏與橫向擴散"
 weight: 71721
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

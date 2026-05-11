@@ -3,6 +3,7 @@ title: "8.22 Incident Evidence Write-back"
 date: 2026-05-02
 description: "把事故證據、決策與復盤結論回寫到 observability、reliability 與 runbook"
 weight: 22
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

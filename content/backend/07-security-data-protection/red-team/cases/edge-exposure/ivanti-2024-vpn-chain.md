@@ -3,6 +3,7 @@ title: "7.R7.3.2 Ivanti 2024：CVE-2023-46805/2024-21887 VPN 邊界漏洞鏈"
 date: 2026-04-24
 description: "多漏洞串接下，邊界設備事件如何轉為持續控制風險"
 weight: 71732
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

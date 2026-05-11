@@ -3,6 +3,7 @@ title: "7.R7.2.8 3CX 2023：桌面軟體更新鏈攻擊"
 date: 2026-04-24
 description: "合法更新流程被植入後，桌面端供應鏈事件如何傳到企業端點"
 weight: 71728
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

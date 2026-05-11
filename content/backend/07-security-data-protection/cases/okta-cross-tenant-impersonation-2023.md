@@ -3,6 +3,7 @@ title: "7.C6 Okta：Cross-tenant Impersonation 防禦回寫"
 date: 2026-05-07
 description: "跨租戶 impersonation 風險如何轉成身份治理與偵測策略。"
 weight: 6
+tags: ["backend", "security", "case-study"]
 ---
 
 這個案例的核心責任是把跨租戶身份濫用轉成可檢測、可回退的控制流程。

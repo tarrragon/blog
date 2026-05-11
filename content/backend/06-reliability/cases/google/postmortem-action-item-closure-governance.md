@@ -3,6 +3,7 @@ title: "Google：Postmortem Action Item Closure 治理"
 date: 2026-05-07
 description: "把 blameless postmortem 從會議文件變成可追蹤的可靠性治理機制：action item 分級、完成條件與回寫節奏。"
 weight: 12
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Postmortem 的核心責任不是解釋事故，而是把事故轉成會被完成的工程改進。Google 的做法重點在 action item closure：每個改進項都要有 owner、完成條件、追蹤節奏與逾期處理規則。

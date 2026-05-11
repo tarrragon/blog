@@ -3,6 +3,7 @@ title: "Netflix：FIT 證據交接與 Release Gate 回寫"
 date: 2026-05-08
 description: "用 Failure Injection Testing 產出的證據直接驅動 release gate：把實驗結果轉成可放行、可凍結、可回退的決策欄位。"
 weight: 23
+tags: ["backend", "reliability", "case-study"]
 ---
 
 FIT（Failure Injection Testing）的核心責任不是做故障演示，而是產生可決策的證據。當實驗結果無法直接回答「能不能放行」，FIT 就只是測試活動，不是可靠性控制面。

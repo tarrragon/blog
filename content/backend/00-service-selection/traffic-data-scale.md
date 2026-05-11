@@ -3,6 +3,7 @@ title: "0.5 流量與資料量評估"
 date: 2026-04-23
 description: "用流量形狀、資料成長、hot key、保留期限與尖峰模式評估後端需求規模"
 weight: 5
+tags: ["backend", "service-selection"]
 ---
 
 流量與資料量評估的核心原則是先描述規模形狀，再討論服務能力。平均 QPS、尖峰倍率、資料成長速度、[hot key](/backend/knowledge-cards/hot-key/)、保留期限與讀寫比例，會直接影響資料庫、快取、[queue](/backend/knowledge-cards/queue/)、觀測與部署平台的選型方向。

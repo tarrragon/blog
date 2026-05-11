@@ -3,6 +3,7 @@ title: "Redis"
 date: 2026-05-01
 description: "OSS in-memory data structure store、cache 主流"
 weight: 1
+tags: ["backend", "cache", "vendor"]
 ---
 
 Redis 是 in-memory data structure store、cache 場景事實標準、支援豐富 data types（string / hash / list / set / sorted set / stream / hyperloglog / geo）。從 2024 起授權變動為 RSALv2 / SSPL（OSI 不認）、引發 Valkey fork。

@@ -3,6 +3,7 @@ title: "4.C7 Datadog：OTel 相容遷移實務"
 date: 2026-05-07
 description: "APM 採集從專有代理轉向 OTel 相容模式的治理案例。"
 weight: 7
+tags: ["backend", "observability", "case-study"]
 ---
 
 這個案例的核心責任是把 observability 遷移做成可逐步替換的技術路線。

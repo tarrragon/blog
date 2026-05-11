@@ -3,6 +3,7 @@ title: "4.6 SLI 量測與 SLO 訊號設計"
 date: 2026-05-01
 description: "把可靠性目標的訊號從 metric 端設計好、餵給 6.6 SLO 政策"
 weight: 6
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

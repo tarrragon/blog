@@ -3,6 +3,7 @@ title: "4.C6 AWS：ADOT on EKS 管線遷移"
 date: 2026-05-07
 description: "從分散式 agent 組合轉成 OpenTelemetry collector 管線治理。"
 weight: 6
+tags: ["backend", "observability", "case-study"]
 ---
 
 這個案例的核心責任是把 observability 遷移做成管線治理，而不是單點 agent 替換。

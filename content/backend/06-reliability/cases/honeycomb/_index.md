@@ -3,6 +3,7 @@ title: "Honeycomb"
 date: 2026-05-01
 description: "Honeycomb Observability-driven SRE 與 SLO 實作"
 weight: 12
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Honeycomb 是 observability platform、由創辦人之一 Charity Majors 推動的 observability-driven SRE 是領域 thought leadership 來源。教學重點在「以 observability 為主軸的 SRE 工程文化」。

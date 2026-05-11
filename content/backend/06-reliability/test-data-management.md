@@ -3,6 +3,7 @@ title: "6.16 Test Data Management"
 date: 2026-05-01
 description: "把 fixture / seed / production-like data 作為跨模組共用 artifact"
 weight: 16
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

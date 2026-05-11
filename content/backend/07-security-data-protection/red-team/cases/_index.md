@@ -3,6 +3,7 @@ title: "7.R7 事故案例庫（可引用）"
 date: 2026-04-24
 description: "把公開事故整理成可引用案例體系，讓服務章節與 incident workflow 可雙向回寫"
 weight: 717
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 這個分類的責任是把事故拆成可重複引用的決策素材。每篇案例都用同一組結構回答：事故摘要 + 演示焦點、攻擊路徑、失效控制面、少一步的後果、可落地的 workflow 檢查點、從本案例到實作的 chain、可追溯來源。

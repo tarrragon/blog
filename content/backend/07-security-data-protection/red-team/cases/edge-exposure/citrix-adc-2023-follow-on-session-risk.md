@@ -3,6 +3,7 @@ title: "7.R7.3.16 Citrix ADC 後續事件：Session 重放延伸"
 date: 2026-04-24
 description: "同一波邊界事件在後續通報階段，重點轉為會話與憑證收斂"
 weight: 717316
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

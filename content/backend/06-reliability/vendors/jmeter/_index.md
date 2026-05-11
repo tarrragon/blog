@@ -3,6 +3,7 @@ title: "Apache JMeter"
 date: 2026-05-01
 description: "老牌 load test 工具、GUI + plugins"
 weight: 5
+tags: ["backend", "reliability", "vendor"]
 ---
 
 JMeter 是 Apache 出品的老牌 load test 工具、GUI 設計 + XML save format、plugins 生態廣、支援多 protocol（HTTP / JDBC / JMS / FTP / mail）。學習曲線低、企業環境常見。

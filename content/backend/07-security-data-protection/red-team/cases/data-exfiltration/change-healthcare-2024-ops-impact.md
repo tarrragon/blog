@@ -3,6 +3,7 @@ title: "7.R7.4.3 Change Healthcare 2024：資料事件轉為營運中斷"
 date: 2026-04-24
 description: "醫療支付中樞事件如何同時衝擊資料安全與業務連續性"
 weight: 71743
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

@@ -3,6 +3,7 @@ title: "4.11 Telemetry Pipeline 架構"
 date: 2026-05-01
 description: "把 log / metric / trace 的 agent → collector → ingest → storage → query 分層治理"
 weight: 11
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

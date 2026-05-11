@@ -3,6 +3,7 @@ title: "1.5 攻擊者視角（紅隊）：資料層弱點判讀"
 date: 2026-04-24
 description: "從資料存取邊界、外洩路徑與修復代價，盤點 database 的主要弱點"
 weight: 5
+tags: ["backend", "database"]
 ---
 
 資料層紅隊判讀的核心目標是確認「誰能讀到什麼資料、資料會從哪裡流出、錯誤狀態如何回復」。這裡的紅隊指攻擊者視角的風險檢查：從可被濫用的路徑反向檢查資料邊界。database 一旦承擔 [source of truth](/backend/knowledge-cards/source-of-truth/)，弱點就同時影響正確性、隱私與可恢復性。

@@ -3,6 +3,7 @@ title: "5.C10 對照：規模差異下的平台遷移"
 date: 2026-05-07
 description: "平台遷移策略在小中大型組織下的差異。"
 weight: 10
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這篇對照的核心責任是避免把同一套切流流程套到所有組織規模。

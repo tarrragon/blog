@@ -3,6 +3,7 @@ title: "6.22 Steady State Definition"
 date: 2026-05-02
 description: "在 chaos 與 failover 前先定義系統應維持的穩定狀態與可接受退化"
 weight: 22
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

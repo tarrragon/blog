@@ -3,6 +3,7 @@ title: "4.C10 對照：規模差異下的觀測遷移"
 date: 2026-05-07
 description: "觀測遷移在不同規模團隊下的流程與風險差異。"
 weight: 10
+tags: ["backend", "observability", "case-study"]
 ---
 
 這篇對照的核心責任是提醒觀測遷移不是工具替換，而是治理能力轉換。

@@ -3,6 +3,7 @@ title: "7.C1 Cloudflare：2026 Route Leak 事件"
 date: 2026-05-07
 description: "BGP 路由政策自動化失誤如何回寫控制面治理。"
 weight: 1
+tags: ["backend", "security", "case-study"]
 ---
 
 這個案例的核心責任是把網路控制面事件轉換成治理層可操作條件。

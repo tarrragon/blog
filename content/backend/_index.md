@@ -3,6 +3,7 @@ title: "Backend 服務實務指南"
 date: 2026-04-22
 description: "整理資料庫、快取、訊息佇列、觀測、部署、可靠性驗證與資安等後端服務能力"
 weight: 34
+tags: ["backend"]
 ---
 
 Backend 教材的核心目標是整理「應該被 application interface 隔離」的外部服務能力。語言教材負責各自的語法、標準庫、並發或非同步模型、測試方法與 interface / [protocol](/backend/knowledge-cards/protocol/) 邊界；Backend 教材負責資料庫、快取、訊息佇列、觀測平台、部署平台、系統可靠性與資安資料保護。

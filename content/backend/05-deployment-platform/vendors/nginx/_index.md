@@ -3,6 +3,7 @@ title: "nginx"
 date: 2026-05-01
 description: "HTTP server / reverse proxy / LB / ingress"
 weight: 4
+tags: ["backend", "deployment", "vendor"]
 ---
 
 nginx 是 HTTP server / reverse proxy / load balancer 的事實標準之一、配置簡單、效能穩定。在 Kubernetes 生態作為 ingress controller（ingress-nginx）。OpenResty 提供 Lua 擴展、F5 收購後 nginx Plus 商業版本。

@@ -3,6 +3,7 @@ title: "7.R7.4.4 Mailchimp 2023：支援工具路徑與客戶資料風險"
 date: 2026-04-24
 description: "社交工程進入客服工具後，如何形成特定客戶資料存取風險"
 weight: 71744
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

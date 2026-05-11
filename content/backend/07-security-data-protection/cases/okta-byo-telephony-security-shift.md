@@ -3,6 +3,7 @@ title: "7.C7 Okta：BYO Telephony 的身份安全責任轉換"
 date: 2026-05-07
 description: "MFA 簡訊/語音路徑從平台托管轉向客戶自管的治理案例。"
 weight: 7
+tags: ["backend", "security", "case-study"]
 ---
 
 這個案例的核心責任是說明身份安全控制也會出現供應鏈責任重分配。

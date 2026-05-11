@@ -3,6 +3,7 @@ title: "7.R7.4.5 VMware ESXiArgs 2023：虛擬化平台勒索回復壓力"
 date: 2026-04-24
 description: "虛擬化平台漏洞被利用後，回復策略與營運連續性會面臨同步壓力"
 weight: 71745
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

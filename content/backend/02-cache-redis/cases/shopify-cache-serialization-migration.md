@@ -3,6 +3,7 @@ title: "2.C3 Shopify：快取序列化格式遷移"
 date: 2026-05-07
 description: "快取 payload 從 Marshal 轉 MessagePack 的遷移策略。"
 weight: 3
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是說明快取轉換常見的格式遷移如何安全落地。

@@ -3,6 +3,7 @@ title: "OpenTelemetry"
 date: 2026-05-01
 description: "可觀測性開放標準、SDK 與 Collector"
 weight: 1
+tags: ["backend", "observability", "vendor"]
 ---
 
 OpenTelemetry（OTel）是 CNCF 開放標準、定義 traces / metrics / logs 的資料模型、SDK 與 OTLP 協議。Vendor-neutral instrumentation 的事實標準、避免 vendor lock-in。多數現代 observability 平台都接受 OTLP。

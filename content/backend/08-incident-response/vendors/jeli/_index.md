@@ -3,6 +3,7 @@ title: "Jeli"
 date: 2026-05-01
 description: "Postmortem / learning 平台、PagerDuty 收購整合"
 weight: 9
+tags: ["backend", "incident-response", "vendor"]
 ---
 
 Jeli（2023 被 PagerDuty 收購、整合進 PagerDuty 平台）是聚焦 incident learning 的工具、強調 narrative-based investigation、把 timeline、人員、決策變成結構化資料。源自 Honeycomb 的 Production Excellence 文化圈。

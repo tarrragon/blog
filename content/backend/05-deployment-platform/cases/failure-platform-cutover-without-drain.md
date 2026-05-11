@@ -3,6 +3,7 @@ title: "5.C9 反例：平台切流未先 Draining"
 date: 2026-05-07
 description: "切流時忽略連線清退造成請求錯誤與重試風暴。"
 weight: 9
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個反例的核心責任是說明部署平台切換失敗常在 connection lifecycle 管理。

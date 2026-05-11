@@ -3,6 +3,7 @@ title: "3.C8 Cloudflare：Queues 全球交付模型"
 date: 2026-05-07
 description: "事件佇列服務在全球網路下的交付語義與治理案例。"
 weight: 8
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是把 queue 選型從單區域傳遞提升為全球交付治理。

@@ -3,6 +3,7 @@ title: "2.C4 Meta：CacheLib / Kangaroo 分層快取"
 date: 2026-05-07
 description: "快取從 DRAM-only 轉向分層快取架構的實務案例。"
 weight: 4
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是說明快取容量壓力升高後，策略會從單層記憶體轉向分層管理。

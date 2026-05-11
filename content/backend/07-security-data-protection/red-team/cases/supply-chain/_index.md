@@ -3,6 +3,7 @@ title: "7.R7.2 Supply Chain 類案例"
 date: 2026-04-24
 description: "整理第三方整合、CI/CD、更新鏈、開源與 MSP 供應鏈事故案例"
 weight: 7172
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 本分類的責任是驗證信任鏈在外部節點失效時是否可快速收斂。核心判讀是：只要系統信任外部交付或整合，workflow 就要先設計凍結、驗證、輪替與回復路由。

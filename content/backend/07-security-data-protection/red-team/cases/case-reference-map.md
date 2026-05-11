@@ -3,6 +3,7 @@ title: "7.R7.M 案例引用地圖（服務主題 -> 案例 -> workflow）"
 date: 2026-04-24
 description: "把服務主題連到完整案例體系，再連回 incident workflow 檢查點"
 weight: 7179
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 這份地圖的責任是提供雙向引用路由：服務設計可以從主題找到案例，incident workflow 可以從流程步驟回查案例證據。

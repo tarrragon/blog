@@ -3,6 +3,7 @@ title: "Microsoft 365"
 date: 2026-05-01
 description: "Microsoft 365 SaaS 套件事故與企業客戶影響"
 weight: 23
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Microsoft 365（Exchange Online / Teams / SharePoint）是企業 SaaS 套件的代表、事故影響企業生產力、Microsoft 的 PIR 揭露格式具有教學價值。

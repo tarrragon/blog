@@ -3,6 +3,7 @@ title: "7.C9 反例：憑證輪替未分 Scope"
 date: 2026-05-07
 description: "憑證輪替若未分域分批，容易造成跨系統連鎖中斷。"
 weight: 9
+tags: ["backend", "security", "case-study"]
 ---
 
 這個反例的核心責任是說明 credential rotation 的失敗通常是治理節奏錯誤。

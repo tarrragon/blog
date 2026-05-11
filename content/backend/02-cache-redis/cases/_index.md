@@ -3,6 +3,7 @@ title: "模組二案例正文"
 date: 2026-05-07
 description: "快取策略與快取平台演進案例入口。"
 weight: 80
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個資料夾的核心責任是把快取與 Redis 的轉換壓力寫成可回寫正文，而不是只列工具名稱。

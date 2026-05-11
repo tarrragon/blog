@@ -3,6 +3,7 @@ title: "Healthcare：資料主權與回復順序選型"
 date: 2026-05-07
 description: "醫療場景下，如何把資料主權、存取邊界與災難回復放進同一套決策。"
 weight: 3
+tags: ["backend", "service-selection", "case-study"]
 ---
 
 這個案例的核心責任是讓資料主權與可用性同時被治理。Healthcare 場景常同時面臨資料區域限制、最小存取原則與緊急回復需求。

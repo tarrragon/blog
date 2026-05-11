@@ -3,6 +3,7 @@ title: "5.C7 Airbnb：Istio 升級治理"
 date: 2026-05-07
 description: "service mesh 升級在大規模環境下如何保持高可用。"
 weight: 7
+tags: ["backend", "deployment", "case-study"]
 ---
 
 這個案例的核心責任是把平台元件升級從一次性作業轉成可重播流程。

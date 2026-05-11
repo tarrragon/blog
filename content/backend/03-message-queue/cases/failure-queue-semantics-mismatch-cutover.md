@@ -3,6 +3,7 @@ title: "3.C9 反例：Queue 語義切換誤配"
 date: 2026-05-07
 description: "at-least-once / exactly-once 語義誤配導致資料重複與遺漏。"
 weight: 9
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個反例的核心責任是說明 broker 遷移失敗常發生在語義假設錯置。

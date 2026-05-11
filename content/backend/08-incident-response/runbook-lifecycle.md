@@ -3,6 +3,7 @@ title: "8.16 Runbook Lifecycle 管理"
 date: 2026-05-01
 description: "把 runbook 從一次性文件變成有版本、有演練、會過期的 artifact"
 weight: 16
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

@@ -3,6 +3,7 @@ title: "6.23 Verification Evidence Handoff"
 date: 2026-05-02
 description: "把 SLO、load、chaos、DR 與 readiness 結果包成 release / incident 可用證據"
 weight: 23
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

@@ -3,6 +3,7 @@ title: "2.C10 對照：規模差異下的快取策略"
 date: 2026-05-07
 description: "同一快取策略在小中大型服務下會產生不同風險。"
 weight: 10
+tags: ["backend", "cache", "case-study"]
 ---
 
 這篇對照的核心責任是避免把單一快取做法視為通用解。

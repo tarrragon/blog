@@ -3,6 +3,7 @@ title: "3.C7 LinkedIn：Kafka 自動修復治理"
 date: 2026-05-07
 description: "Kafka 維運從人工處置轉向自動修復的案例。"
 weight: 7
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是把 queue 可靠性從人力值班轉成自動化機制。

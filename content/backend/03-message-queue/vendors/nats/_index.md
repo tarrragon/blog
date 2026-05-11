@@ -3,6 +3,7 @@ title: "NATS"
 date: 2026-05-01
 description: "Lightweight messaging、JetStream 加持久化與 streams"
 weight: 3
+tags: ["backend", "message-queue", "vendor"]
 ---
 
 NATS 是 lightweight high-performance messaging system、subject-based routing、JetStream 提供 persistence / streams / KV store。適合微服務通訊、IoT、edge 場景、需要簡單 broker 但保留 streaming 能力。

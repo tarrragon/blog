@@ -3,6 +3,7 @@ title: "FinTech：審計證據鏈的可觀測性設計"
 date: 2026-05-07
 description: "把交易與存取事件轉成可回查證據，降低合規審核與事故判讀落差。"
 weight: 1
+tags: ["backend", "observability", "case-study"]
 ---
 
 本案例的核心責任是讓審計證據與運維訊號共用同一套資料邊界。FinTech 場景下，觀測資料不只是除錯用途，也是合規證據基礎。

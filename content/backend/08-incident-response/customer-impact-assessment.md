@@ -3,6 +3,7 @@ title: "8.20 Customer Impact Assessment"
 date: 2026-05-02
 description: "把受影響用戶、功能、區域、金額、SLO 與補償判斷串成影響評估模型"
 weight: 20
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

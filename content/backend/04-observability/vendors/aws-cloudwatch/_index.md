@@ -3,6 +3,7 @@ title: "AWS CloudWatch"
 date: 2026-05-01
 description: "AWS 原生觀測性服務、Logs / Metrics / Traces (X-Ray)"
 weight: 7
+tags: ["backend", "observability", "vendor"]
 ---
 
 CloudWatch 是 AWS 原生 observability 服務、覆蓋 Metrics / Logs / Alarms / Synthetics / RUM、X-Ray 提供 tracing。優勢是跟 AWS 服務深度整合、缺點是查詢語法（Logs Insights / Metrics Math）有學習曲線、跨區成本可觀。

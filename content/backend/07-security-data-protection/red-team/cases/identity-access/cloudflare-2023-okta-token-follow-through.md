@@ -3,6 +3,7 @@ title: "7.R7.1.6 Cloudflare 2023：供應商事件後的身分收斂"
 date: 2026-04-24
 description: "同一條供應商事件鏈，如何在客戶端變成 session 與 token 的收斂壓力"
 weight: 71716
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

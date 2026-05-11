@@ -3,6 +3,7 @@ title: "1.1 高併發下的 SQL 讀寫邊界"
 date: 2026-04-22
 description: "說明高併發服務如何共用資料庫 client、控制 transaction 與避免資料庫成為瓶頸"
 weight: 1
+tags: ["backend", "database"]
 ---
 
 高併發服務處理 SQL 的核心原則是共用資料庫 client，並讓 [connection pool](/backend/knowledge-cards/connection-pool/) 管理連線生命週期。當並發升高時，真正要控制的是連線數、交易範圍、查詢時間與下游壓力；每個 request 各自建立連線會放大握手、排隊與資源回收成本。

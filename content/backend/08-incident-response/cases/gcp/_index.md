@@ -3,6 +3,7 @@ title: "Google Cloud Platform"
 date: 2026-05-01
 description: "GCP 重大事故時間線與架構脈絡"
 weight: 4
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 GCP 是全球 anycast + 強控制面整合的代表、Load Balancer / IAM 失效是全球控制面事故的教學標竿。Google 公開的 post-mortem 包含詳細時間線與技術細節、適合作為事故敘事範本。

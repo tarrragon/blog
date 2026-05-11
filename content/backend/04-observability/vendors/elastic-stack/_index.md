@@ -3,6 +3,7 @@ title: "Elastic Stack"
 date: 2026-05-01
 description: "ELK：Elasticsearch / Logstash / Kibana + Beats / APM"
 weight: 5
+tags: ["backend", "observability", "vendor"]
 ---
 
 Elastic Stack（前 ELK）是 logs 為主的 observability 棧、Elasticsearch 做搜尋與分析、Kibana 視覺化、Beats / Logstash 採集、Elastic APM 提供 tracing。可自管、Elastic Cloud SaaS、或 AWS OpenSearch fork。

@@ -3,6 +3,7 @@ title: "4.7 Cardinality 治理與成本邊界"
 date: 2026-05-01
 description: "把 metric / log / trace 的 cardinality 與成本作為平台一級治理議題"
 weight: 7
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

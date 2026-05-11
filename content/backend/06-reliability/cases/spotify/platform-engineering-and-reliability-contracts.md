@@ -3,6 +3,7 @@ title: "Spotify：平台工程與可靠性契約"
 date: 2026-05-07
 description: "用平台契約統一服務團隊的可靠性最低標準，降低跨團隊變更造成的隱性風險。"
 weight: 71
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Spotify 案例的核心責任是把可靠性標準平台化。當團隊自治程度高，若沒有共同契約，跨服務風險會在整合時爆發。

@@ -3,6 +3,7 @@ title: "Shopify：BFCM 容量治理與 Game Day 驗證節奏"
 date: 2026-05-07
 description: "把季節性流量峰值轉成年度可靠性流程，透過容量模型、演練與隔離策略提前吸收風險。"
 weight: 51
+tags: ["backend", "reliability", "case-study"]
 ---
 
 Shopify 案例的核心責任是把可預期峰值轉成可預演流程。當流量高峰是年度固定事件，可靠性工作重點不是臨場救火，而是提前把容量與失效路徑變成可驗證資產。

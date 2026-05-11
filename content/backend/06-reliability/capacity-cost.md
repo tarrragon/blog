@@ -3,6 +3,7 @@ title: "6.9 容量與成本邊界"
 date: 2026-05-01
 description: "把容量規劃跟成本約束變成驗證輸入"
 weight: 9
+tags: ["backend", "reliability"]
 ---
 
 ## 大綱

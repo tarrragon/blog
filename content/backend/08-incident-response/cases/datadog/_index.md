@@ -3,6 +3,7 @@ title: "Datadog"
 date: 2026-05-01
 description: "Datadog 監控服務事故、客戶觀測落差"
 weight: 12
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Datadog 2023 multi-region 事故是「監控供應商自己掛」的代表案例。當客戶依賴的 observability 平台失效、客戶失去判讀自己服務的能力、IR 流程出現 second-order 影響。

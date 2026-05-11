@@ -3,6 +3,7 @@ title: "0.10 知識網：容量、觀測與資安決策路徑"
 date: 2026-04-23
 description: "把容量、可觀測、備援、權限、憑證與稽核術語串成統一的服務治理語言"
 weight: 10
+tags: ["backend", "service-selection"]
 ---
 
 服務治理的核心原則是把可用性與安全性放在同一張決策圖上。`timeout`、`deadline`、`readiness`、`runbook`、`RTO/RPO`、`authentication`、`authorization`、`TLS/mTLS` 與 `audit log` 描述的是同一件事：系統如何在壓力與風險下維持可運作。

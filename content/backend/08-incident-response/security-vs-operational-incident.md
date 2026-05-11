@@ -3,6 +3,7 @@ title: "8.17 Security Incident vs Operational Incident 分流"
 date: 2026-05-01
 description: "把資安事故跟可用性事故的 IR 流程分支點明確化"
 weight: 17
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

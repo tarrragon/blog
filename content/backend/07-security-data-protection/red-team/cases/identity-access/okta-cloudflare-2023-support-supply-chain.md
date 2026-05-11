@@ -3,6 +3,7 @@ title: "7.R7.1.2 Okta + Cloudflare 2023：支援流程與身分供應鏈"
 date: 2026-04-24
 description: "支援工單與第三方身份供應商路徑如何變成入侵鏈的一部分"
 weight: 71712
+tags: ["backend", "security", "case-study", "red-team"]
 ---
 
 ## 事故摘要

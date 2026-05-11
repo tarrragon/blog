@@ -3,6 +3,7 @@ title: "0.2 狀態與資料儲存選型"
 date: 2026-04-23
 description: "區分 source of truth、快取、搜尋索引、event log 與 object storage 的選型邊界"
 weight: 2
+tags: ["backend", "service-selection"]
 ---
 
 狀態與資料儲存選型的核心原則是先判斷資料責任。正式狀態、暫存資料、搜尋索引、事件歷史與大型檔案都屬於資料，但它們需要不同服務能力。

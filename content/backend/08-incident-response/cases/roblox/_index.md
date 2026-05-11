@@ -3,6 +3,7 @@ title: "Roblox"
 date: 2026-05-01
 description: "Roblox 73 小時事故時間線與架構脈絡"
 weight: 6
+tags: ["backend", "incident-response", "case-study"]
 ---
 
 Roblox 2021 的 73 小時事故是 Consul 流量模式 + long-tail recovery 的教學標竿。事故 post-mortem 詳細揭露根因發現過程、適合作為「為何根因難找」「為何 recovery 比預期慢」的敘事範本。

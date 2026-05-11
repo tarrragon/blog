@@ -3,6 +3,7 @@ title: "k6"
 date: 2026-05-01
 description: "現代 load test、JS scripting、Grafana Labs"
 weight: 3
+tags: ["backend", "reliability", "vendor"]
 ---
 
 k6 是 Grafana Labs 出品的 load test 工具、Go 寫成、JS 寫測試 script、CLI-first、cloud 版（k6 Cloud / Grafana Cloud k6）。是現代 load test 主流選擇。

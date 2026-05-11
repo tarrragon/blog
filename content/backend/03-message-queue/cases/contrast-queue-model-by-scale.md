@@ -3,6 +3,7 @@ title: "3.C10 對照：規模差異下的佇列模型"
 date: 2026-05-07
 description: "同一 queue 模型在不同規模下的治理與失敗邊界差異。"
 weight: 10
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這篇對照的核心責任是說明 queue 選型要跟著流量與組織規模改變。

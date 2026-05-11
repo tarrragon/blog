@@ -3,6 +3,7 @@ title: "2.C1 Meta：Cache Consistency 升級"
 date: 2026-05-07
 description: "快取 invalidation 一致性如何從常見錯誤演進到高可信治理。"
 weight: 1
+tags: ["backend", "cache", "case-study"]
 ---
 
 這個案例的核心責任是說明快取轉換不只在容量與速度，還包括一致性治理能力。

@@ -3,6 +3,7 @@ title: "4.C5 Google Cloud：Cloud Trace 導入 OTLP 入口"
 date: 2026-05-07
 description: "觀測平台從專有入口擴展到 OTLP 標準通道的案例。"
 weight: 5
+tags: ["backend", "observability", "case-study"]
 ---
 
 這個案例的核心責任是說明 observability 平台轉換常來自資料通道標準化需求。

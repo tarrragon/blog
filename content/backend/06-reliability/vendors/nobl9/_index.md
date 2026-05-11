@@ -3,6 +3,7 @@ title: "Nobl9"
 date: 2026-05-01
 description: "SLO platform、跨 data source、企業 SLO 治理"
 weight: 11
+tags: ["backend", "reliability", "vendor"]
 ---
 
 Nobl9 是商業 SLO 平台、跨 data source（Datadog / Prometheus / New Relic / CloudWatch / Splunk 等）、把 SLO 從工具孤島提升到組織治理層。創辦人來自 Google SRE、推動 OpenSLO 標準。

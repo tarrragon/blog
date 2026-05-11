@@ -3,6 +3,7 @@ title: "0.4 操作平台選型"
 date: 2026-04-23
 description: "區分 log、metric、trace、dashboard、alert、deployment 與 reliability 的選型邊界"
 weight: 4
+tags: ["backend", "service-selection"]
 ---
 
 操作平台選型的核心原則是先判斷系統需要哪一種操作能力。[log](/backend/knowledge-cards/log/)、metric、[trace](/backend/knowledge-cards/trace/)、[dashboard](/backend/knowledge-cards/dashboard/)、[alert](/backend/knowledge-cards/alert/)、deployment platform 與 reliability pipeline 都服務於系統運行，但它們回答的問題不同。

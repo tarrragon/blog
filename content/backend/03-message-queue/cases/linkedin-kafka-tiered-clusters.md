@@ -3,6 +3,7 @@ title: "3.C4 LinkedIn：Kafka 分層叢集治理"
 date: 2026-05-07
 description: "Kafka 從單叢集走向 tiered clusters 的轉換案例。"
 weight: 4
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是把 queue 轉換從容量問題提升到治理問題。

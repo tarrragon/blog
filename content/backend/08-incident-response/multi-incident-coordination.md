@@ -3,6 +3,7 @@ title: "8.14 Multi-incident Coordination"
 date: 2026-05-01
 description: "把同時多事故的優先序、資源分配與 incident command system pool 協調變成可執行流程"
 weight: 14
+tags: ["backend", "incident-response"]
 ---
 
 ## 大綱

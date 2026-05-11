@@ -3,6 +3,7 @@ title: "4.10 Client-side / Synthetic / RUM"
 date: 2026-05-01
 description: "補 server-side 看不到的 user perceived 訊號"
 weight: 10
+tags: ["backend", "observability"]
 ---
 
 ## 大綱

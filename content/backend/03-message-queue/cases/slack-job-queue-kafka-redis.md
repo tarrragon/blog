@@ -3,6 +3,7 @@ title: "3.C5 Slack：Job Queue 演進到 Kafka + Redis"
 date: 2026-05-07
 description: "背景工作通道在成長期如何從單一路徑演進成組合式架構。"
 weight: 5
+tags: ["backend", "message-queue", "case-study"]
 ---
 
 這個案例的核心責任是說明工作佇列轉換常是拓樸重整，而不是單點替換。
