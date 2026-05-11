@@ -45,8 +45,10 @@ weight: -1
 | [Fallback Read](/backend/knowledge-cards/fallback-read/)               | 切換失敗時如何暫時回到舊讀取語意   | cutover、rollback window             |
 | [Cutover Window](/backend/knowledge-cards/cutover-window/)             | 正式切換如何被時間窗與訊號框住     | cutover、release gate                |
 | [Release Gate](/backend/knowledge-cards/release-gate/)                 | 變更如何在正式釋出前通過或阻擋     | error budget、migration、review      |
+| [Gate Decision](/backend/knowledge-cards/gate-decision/)               | gate 如何把證據轉成下一步決策      | release gate、rollout                |
 | [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)     | 回滾流程如何在正式事故前演練       | rollback strategy、migration         |
 | [Rollback Window](/backend/knowledge-cards/rollback-window/)           | 變更後還能用哪種方式回退或改路線   | cutover、rollback strategy           |
+| [Rollback Condition](/backend/knowledge-cards/rollback-condition/)     | 決策後何時要撤回、回退或改路線     | incident decision、rollback          |
 | [Fail-forward](/backend/knowledge-cards/fail-forward/)                 | 無法回到舊狀態時如何受控前進修復   | rollback window、incident decision   |
 | [Stop Condition](/backend/knowledge-cards/stop-condition/)             | 何時必須暫停、回退或改路線         | release gate、incident decision      |
 | [Isolation Level](/backend/knowledge-cards/isolation-level/)           | 並發交易彼此看見哪些資料           | transaction、lock、retry             |
@@ -270,6 +272,11 @@ weight: -1
 | [Escalation Policy](/backend/knowledge-cards/escalation-policy/)                           | 事故無回應或無進展時如何升級   | on-call、paging、handover            |
 | [Incident Timeline](/backend/knowledge-cards/incident-timeline/)                           | 事故事件如何形成一致時間軸     | incident log、communication          |
 | [Evidence Package](/backend/knowledge-cards/evidence-package/)                             | 觀測與事故證據如何交接與回放   | observability、verification、PIR     |
+| [Time Range](/backend/knowledge-cards/time-range/)                                         | 證據如何保留明確時間窗         | evidence、incident timeline          |
+| [Query Link](/backend/knowledge-cards/query-link/)                                         | 證據如何保留可重跑查詢入口     | evidence、handoff                    |
+| [Data Quality](/backend/knowledge-cards/data-quality/)                                     | 證據如何標示完整度與限制       | evidence、sampling、freshness        |
+| [Confidence](/backend/knowledge-cards/confidence/)                                         | 證據如何標示判讀信心等級       | evidence、gate decision              |
+| [Known Gap](/backend/knowledge-cards/known-gap/)                                           | 證據如何保存已知缺口           | evidence、PIR、readiness             |
 | [Incident Decision Log](/backend/knowledge-cards/incident-decision-log/)                   | 事故決策如何保存證據與回退條件 | IC handoff、PIR、status update       |
 | [Steady State](/backend/knowledge-cards/steady-state/)                                     | 實驗與事故恢復如何定義成功狀態 | chaos、DR、recovery                  |
 | [Blast Radius](/backend/knowledge-cards/blast-radius/)                                     | 故障影響面如何估算與隔離       | dependency、shared resource          |

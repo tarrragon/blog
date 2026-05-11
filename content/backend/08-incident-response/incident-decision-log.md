@@ -51,24 +51,24 @@ decision log 也是交班工具。當事故跨班次或跨時區，新的 IC 只
 
 Incident decision log 的欄位模型要同時支援事中交班與事後復盤。欄位過少會失去證據鏈，欄位過多會讓事故現場寫不下去。
 
-| 欄位               | 責任                          | 範例                                |
-| ------------------ | ----------------------------- | ----------------------------------- |
-| Timestamp          | 記錄決策時間                  | 2026-05-02T10:15Z                   |
-| Decision           | 寫清楚採取或暫緩的動作        | rollback API v42                    |
-| Context            | 說明當時問題與限制            | p95 latency 超 SLO，trace sample 低 |
-| Evidence           | 連到 dashboard、query、ticket | burn rate chart、support case       |
-| Owner              | 指定執行或追蹤責任人          | IC、service owner、comms lead       |
-| Expected effect    | 說明預期改善或風險            | 10 分鐘內 error rate 下降           |
-| Rollback condition | 說明何時回退這個決策          | queue lag 超門檻即停止              |
-| Follow-up          | 標記後續查證或復盤項目        | 補 runbook、補 alert                |
+| 欄位                                                               | 責任                          | 範例                                |
+| ------------------------------------------------------------------ | ----------------------------- | ----------------------------------- |
+| Timestamp                                                          | 記錄決策時間                  | 2026-05-02T10:15Z                   |
+| Decision                                                           | 寫清楚採取或暫緩的動作        | rollback API v42                    |
+| Context                                                            | 說明當時問題與限制            | p95 latency 超 SLO，trace sample 低 |
+| Evidence                                                           | 連到 dashboard、query、ticket | burn rate chart、support case       |
+| Owner                                                              | 指定執行或追蹤責任人          | IC、service owner、comms lead       |
+| Expected effect                                                    | 說明預期改善或風險            | 10 分鐘內 error rate 下降           |
+| [Rollback condition](/backend/knowledge-cards/rollback-condition/) | 說明何時回退這個決策          | queue lag 超門檻即停止              |
+| Follow-up                                                          | 標記後續查證或復盤項目        | 補 runbook、補 alert                |
 
 Timestamp 要使用一致時間基準。事故跨工具、跨時區、跨 vendor 時，decision log 應保留標準化時間，必要時也保留來源原始時間。
 
 Decision 欄位要寫具體動作。`處理中`、`觀察一下` 這類描述難以支援復盤；`rollback API v42`、`disable feature flag checkout_new_route`、`escalate to vendor support` 才能回放。
 
-Context 欄位要保留限制。事故期間的資料常有缺口，decision log 應寫出 evidence 的 completeness、freshness、confidence 與已知盲區。
+Context 欄位要保留限制。事故期間的資料常有缺口，decision log 應寫出 evidence 的 completeness、freshness、[confidence](/backend/knowledge-cards/confidence/) 與已知盲區。
 
-Expected effect 與 rollback condition 是控制次生風險的核心。每個止血或回復決策都應說明預期看到什麼改善，以及看到什麼訊號時要撤回或改路線。
+Expected effect 與 [rollback condition](/backend/knowledge-cards/rollback-condition/) 是控制次生風險的核心。每個止血或回復決策都應說明預期看到什麼改善，以及看到什麼訊號時要撤回或改路線。
 
 ## 決策類型
 
@@ -91,7 +91,7 @@ Rollback / failover 決策需要留下資料相容性。版本回退、流量切
 
 Customer communication 決策需要與 evidence 對齊。對外說法應引用當時已確認事實，並標示仍在查證的範圍，避免內外部敘事分裂。
 
-資料 migration 決策需要留下 rollout 階段。暫停 backfill、回到 fallback read、停止 contract 或選擇 fail-forward 時，decision log 應連到 validation query、mismatch sample、rollback window 與 owner；完整範例可接到 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)。
+資料 migration 決策需要留下 rollout 階段。暫停 backfill、回到 fallback read、停止 contract 或選擇 fail-forward 時，decision log 應連到 validation query、mismatch sample、[rollback window](/backend/knowledge-cards/rollback-window/) 與 owner；完整範例可接到 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)。
 
 ## 判讀訊號
 

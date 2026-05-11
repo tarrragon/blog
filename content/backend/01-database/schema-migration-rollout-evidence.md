@@ -99,7 +99,7 @@ checkpoint:
 
 Checkpoint 的角色是把 backfill 變成可恢復流程。`last_order_id` 告訴下一批從哪裡繼續，`rows_updated` 與 `mismatch_count` 告訴 gate 這批是否可以被納入放行證據，時間欄位則讓 replication lag、slow query 與錯誤率能回到同一個觀察窗口。
 
-[Validation query](/backend/knowledge-cards/validation-query/) 的責任是證明語意一致。最小集合包含總筆數、已補筆數、缺值筆數、新舊語意不一致樣本、每批耗時、慢查詢與 replication lag。這些查詢要保留 query link 與時間窗，後續才能進入 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
+[Validation query](/backend/knowledge-cards/validation-query/) 的責任是證明語意一致。最小集合包含總筆數、已補筆數、缺值筆數、新舊語意不一致樣本、每批耗時、慢查詢與 replication lag。這些查詢要保留 [query link](/backend/knowledge-cards/query-link/) 與 [time range](/backend/knowledge-cards/time-range/)，後續才能進入 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 
 ```sql
 SELECT
@@ -127,19 +127,19 @@ Cutover phase 的核心責任是把服務判讀權交給新欄位，同時保留
 
 資料庫 migration 的 evidence package 負責證明資料演進是否可判讀。這份 package 要把 validation query、時間窗、資料限制與 owner 包成後續放行與事故判斷可引用的證據，dashboard 只作為摘要入口。
 
-| 欄位         | 訂單欄位演進中的內容                                      |
-| ------------ | --------------------------------------------------------- |
-| Source       | validation query、DB metric、migration job log、audit log |
-| Time range   | expand、backfill、cutover 各階段的查詢窗口                |
-| Query link   | row count、mismatch sample、replication lag、slow query   |
-| Owner        | database owner、checkout owner、reconciliation owner      |
-| Data quality | query 延遲、replica freshness、sample completeness        |
-| Confidence   | confirmed / suspected / needs follow-up                   |
-| Known gap    | 未覆蓋的手動修復路徑、低流量 tenant、延遲回呼             |
+| 欄位                                                   | 訂單欄位演進中的內容                                      |
+| ------------------------------------------------------ | --------------------------------------------------------- |
+| Source                                                 | validation query、DB metric、migration job log、audit log |
+| [Time range](/backend/knowledge-cards/time-range/)     | expand、backfill、cutover 各階段的查詢窗口                |
+| [Query link](/backend/knowledge-cards/query-link/)     | row count、mismatch sample、replication lag、slow query   |
+| Owner                                                  | database owner、checkout owner、reconciliation owner      |
+| [Data quality](/backend/knowledge-cards/data-quality/) | query 延遲、replica freshness、sample completeness        |
+| [Confidence](/backend/knowledge-cards/confidence/)     | confirmed / suspected / needs follow-up                   |
+| [Known gap](/backend/knowledge-cards/known-gap/)       | 未覆蓋的手動修復路徑、低流量 tenant、延遲回呼             |
 
 Source 欄位要保留資料來源的能力邊界。Validation query 能證明欄位語意一致，DB metric 能看出 latency 與 lag，job log 能追進度，audit log 能判斷是否有高權限修復行為。把這些來源混在一起會讓下游誤判證據的用途。
 
-Data quality 欄位要直接寫出限制。若查詢只跑 primary、replica lag 還在回復、某些 tenant 因資料遮罩未被抽樣，這些限制要跟 evidence 一起交給 release gate，讓 gate 能以證據完整度決定是否放行。
+[Data quality](/backend/knowledge-cards/data-quality/) 欄位要直接寫出限制。若查詢只跑 primary、replica lag 還在回復、某些 tenant 因資料遮罩未被抽樣，這些限制要跟 evidence 一起交給 release gate，讓 gate 能以證據完整度決定是否放行。
 
 ```yaml
 evidence_package:
@@ -167,15 +167,15 @@ evidence_package:
 
 Schema migration 的 release gate 負責判斷下一階段是否可以放行。它接收 evidence package，但決策語言要回到 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)：`Gate decision`、`Checks`、`Stop condition`、`Rollback window`、`Owner`。
 
-| Gate 欄位       | 這條路徑的最小內容                                                    |
-| --------------- | --------------------------------------------------------------------- |
-| Gate decision   | 放行下一批 backfill、暫停 cutover、回到 fallback read 或 fail-forward |
-| Checks          | compatibility result、mismatch rate、replication lag、slow query      |
-| Stop condition  | mismatch 超門檻、交易錯誤率上升、lag 超窗口、客服查詢漂移             |
-| Rollback window | 讀取 fallback 可用時間、舊欄位可支撐多久、contract 前最後回退點       |
-| Owner           | migration owner、service owner、on-call owner                         |
+| Gate 欄位                                                | 這條路徑的最小內容                                                    |
+| -------------------------------------------------------- | --------------------------------------------------------------------- |
+| [Gate decision](/backend/knowledge-cards/gate-decision/) | 放行下一批 backfill、暫停 cutover、回到 fallback read 或 fail-forward |
+| Checks                                                   | compatibility result、mismatch rate、replication lag、slow query      |
+| Stop condition                                           | mismatch 超門檻、交易錯誤率上升、lag 超窗口、客服查詢漂移             |
+| Rollback window                                          | 讀取 fallback 可用時間、舊欄位可支撐多久、contract 前最後回退點       |
+| Owner                                                    | migration owner、service owner、on-call owner                         |
 
-Gate decision 要用服務語言書寫。`migration pass` 這種結論對下游不夠具體；`放行 10% 訂單 backfill`、`暫停使用者可見讀取 cutover`、`維持 fallback read 24 小時` 才能讓執行團隊知道下一步。
+[Gate decision](/backend/knowledge-cards/gate-decision/) 要用服務語言書寫。`migration pass` 這種結論對下游不夠具體；`放行 10% 訂單 backfill`、`暫停使用者可見讀取 cutover`、`維持 fallback read 24 小時` 才能讓執行團隊知道下一步。
 
 [Rollback window](/backend/knowledge-cards/rollback-window/) 是資料庫 migration 的關鍵欄位。Expand 與 backfill 階段通常能回到舊讀取；cutover 後仍可 fallback；contract 後舊語意被移除，回退會變成資料修復或 [fail-forward](/backend/knowledge-cards/fail-forward/)。gate 要在每階段說清楚目前還剩哪種退路。
 
@@ -200,7 +200,7 @@ release_gate:
 
 Migration 進入 production 後，pause、rollback 與 fail-forward 都是事故決策。這些決策要同步寫入 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)，讓事中交班與事後復盤能回放當時的證據與限制。
 
-常見決策包括暫停 backfill、降低 batch size、回到舊讀取、停止 contract、手動修補 mismatch、選擇 fail-forward。每筆都要保留 `Timestamp`、`Decision`、`Context`、`Evidence`、`Owner`、`Expected effect` 與 `Rollback condition`。
+常見決策包括暫停 backfill、降低 batch size、回到舊讀取、停止 contract、手動修補 mismatch、選擇 fail-forward。每筆都要保留 `Timestamp`、`Decision`、`Context`、`Evidence`、`Owner`、`Expected effect` 與 [rollback condition](/backend/knowledge-cards/rollback-condition/)。
 
 例如 cutover 後發現客服查詢 mismatch 升高，decision log 可以寫成：
 
