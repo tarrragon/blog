@@ -20,6 +20,7 @@ weight: 99
 
 | 章節 | 主題 |
 | ---- | ---- |
+| [Quickstart：clone repo 後跑通所有 demo](/llm/01-local-llm-services/hands-on/quickstart/) | 4 步驟整合 setup、跑 RAG / MCP / permission demo、跨 hands-on 系列導讀 |
 | [Ollama 安裝 + Gemma 模型](/llm/01-local-llm-services/hands-on/ollama-setup/) | brew install、ollama pull、curl 驗證 |
 | [ComfyUI + Stable Diffusion XL](/llm/01-local-llm-services/hands-on/comfyui-setup/) | git clone、Python 環境、SDXL 模型放哪 |
 | [Whisper 語音轉文字](/llm/01-local-llm-services/hands-on/whisper-setup/) | pip install、模型選擇、驗證轉錄 |

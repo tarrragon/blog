@@ -22,6 +22,7 @@ weight: 4
 | [4.3](/llm/04-applications/application-protocols/)              | 應用層協議：function calling / structured output / MCP | 三者層級差異、為什麼出現 MCP、組合工作流 |
 | [4.4](/llm/04-applications/workflow-patterns/)                  | Workflow 編排模式                 | Pipeline / router / parallel / reflection 四種基本模式、退化條件   |
 | [4.5](/llm/04-applications/production-resource-planning/)       | Production 部署的資源評估原理     | 6 個 dimension：concurrency / latency / cost / storage / observability / reliability |
+| [4.6](/llm/04-applications/artifact-management/)                | 衍生產物管理原理：什麼進 git、什麼不該 | Source / derived / external 三分類、`.gitignore` 設計模式、prompt + eval 版本管理、production deployment 對接 |
 
 ## 為什麼這個順序
 
