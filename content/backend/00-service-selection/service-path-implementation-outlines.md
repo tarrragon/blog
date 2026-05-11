@@ -21,9 +21,9 @@ tags: ["backend", "implementation", "outline", "service-path"]
 - Incident decision 對齊 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 與 [8.23 Control Plane Decision Log and Write-back 實作示範](/backend/08-incident-response/control-plane-decision-log-write-back/)。
 - Security / audit 邊界只在服務路徑涉及 credential、PII、管理面、資料修復權限或供應鏈 artifact 時接到 [7.27 Credential Rotation with Scoped Evidence 實作示範](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)。
 
-## 01 Database / Storage：Schema Migration Rollout Evidence
+## 01 Database / Storage：Schema Migration Rollout 證據
 
-資料庫服務路徑的核心問題是正式狀態如何在不中斷服務的前提下演進。正文已完成於 [1.7 Schema Migration Rollout Evidence 實作示範](/backend/01-database/schema-migration-rollout-evidence/)，服務實例以訂單資料表欄位演進為主，例如新增 `payment_state`、拆分 `status`，或把第三方付款狀態從文字欄位改成可驗證狀態欄位。
+資料庫服務路徑的核心問題是正式狀態如何在不中斷服務的前提下演進。正文已完成於 [1.7 Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)，服務實例以訂單資料表欄位演進為主，例如新增 `payment_state`、拆分 `status`，或把第三方付款狀態從文字欄位改成可驗證狀態欄位。
 
 這篇正文要先說明 migration 是 state rollout，DDL 只是其中一個執行步驟。讀者需要看到訂單狀態被 checkout API、付款回呼、客服查詢、報表和對帳流程共同讀寫，因此欄位變更必須保留新舊版本相容窗口。
 

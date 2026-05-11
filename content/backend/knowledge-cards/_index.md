@@ -10,6 +10,14 @@ weight: -1
 
 這個模組先建立共同語言。每張卡片只處理一個知識節點，並用「概念位置、可觀察訊號、接近真實網路服務的例子、設計責任」說明它在後端系統中的角色。
 
+## 術語建卡判準
+
+知識卡片的建卡判準是術語是否承擔理解成本與判斷成本，而不是只看它是否已經在多篇文章重複出現。讀者如果不知道某個名詞，就無法理解服務路徑、風險邊界、artifact 欄位或下一步決策，這個名詞就值得建卡。
+
+適合建卡的術語通常有三個特徵：第一，它不是單純字面翻譯，而是包含服務責任、操作條件或失敗代價；第二，它會影響讀者對實作路線的判斷，例如 validation query、rollback window、fallback read；第三，它可以被獨立說明成「概念位置、可觀察訊號、例子、設計責任」。多篇重複使用是建卡訊號之一，但不是必要條件。
+
+不適合建卡的是過度寬泛、沒有明確服務責任的詞。若名詞只是文章中的普通形容詞、單一欄位值、或只能在該句子內成立，優先在正文補清楚，不硬拆成卡片。
+
 ## 資料與一致性
 
 | 卡片                                                                   | 核心問題                           | 常見出現位置                         |
@@ -31,8 +39,16 @@ weight: -1
 | [Schema Migration](/backend/knowledge-cards/schema-migration/)         | 資料庫結構如何隨版本安全演進       | release、rollback、migration         |
 | [Expand / Contract](/backend/knowledge-cards/expand-contract/)         | 先擴充相容面再收斂舊路徑的遷移做法 | schema migration、online migration   |
 | [Migration Gate](/backend/knowledge-cards/migration-gate/)             | 遷移流程如何決定能否進入下一階段   | backfill、correctness check          |
+| [Mapping Table](/backend/knowledge-cards/mapping-table/)               | 舊資料語意如何明確對應到新語意     | migration、backfill、validation      |
+| [Validation Query](/backend/knowledge-cards/validation-query/)         | 查詢如何證明資料語意是否一致       | migration、evidence package          |
+| [Read Compatibility](/backend/knowledge-cards/read-compatibility/)     | 讀取路徑如何同時支援新舊語意       | expand、cutover、fallback read       |
+| [Fallback Read](/backend/knowledge-cards/fallback-read/)               | 切換失敗時如何暫時回到舊讀取語意   | cutover、rollback window             |
+| [Cutover Window](/backend/knowledge-cards/cutover-window/)             | 正式切換如何被時間窗與訊號框住     | cutover、release gate                |
 | [Release Gate](/backend/knowledge-cards/release-gate/)                 | 變更如何在正式釋出前通過或阻擋     | error budget、migration、review      |
 | [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)     | 回滾流程如何在正式事故前演練       | rollback strategy、migration         |
+| [Rollback Window](/backend/knowledge-cards/rollback-window/)           | 變更後還能用哪種方式回退或改路線   | cutover、rollback strategy           |
+| [Fail-forward](/backend/knowledge-cards/fail-forward/)                 | 無法回到舊狀態時如何受控前進修復   | rollback window、incident decision   |
+| [Stop Condition](/backend/knowledge-cards/stop-condition/)             | 何時必須暫停、回退或改路線         | release gate、incident decision      |
 | [Isolation Level](/backend/knowledge-cards/isolation-level/)           | 並發交易彼此看見哪些資料           | transaction、lock、retry             |
 | [Connection Pool](/backend/knowledge-cards/connection-pool/)           | application 如何限制下游連線壓力   | database、Redis、broker              |
 

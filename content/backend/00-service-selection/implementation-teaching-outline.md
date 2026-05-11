@@ -57,7 +57,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 延伸知識卡方向先列為候選，不在正文中臨時創造術語：migration validation、read compatibility、cutover window、reconciliation、data repair runbook、fail-forward migration。已有卡片則優先引用，不重複定義。
 
-首篇實作示範已完成： [Schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/)。這篇以訂單資料表付款狀態欄位演進為服務路徑，產出 migration plan、validation query、rollback condition 與 incident decision route。
+首篇實作示範已完成： [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)。這篇以訂單資料表付款狀態欄位演進為服務路徑，產出 migration plan、validation query、rollback condition 與 incident decision route。
 
 ## 02 Cache / Redis 補完方向
 
@@ -112,16 +112,16 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 實作 backlog 的責任是保留後續正文順序。每篇正文都應先寫服務路徑，再寫訊號、風險、選型差異與 artifact；工具指令只在概念成立後出現。
 
-| 分類                          | 實作文章題目                                                                                 | 服務路徑                                 | 前置觀念補完狀態 |
-| ----------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------- |
-| 01 Database / Storage         | [Schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) | 訂單資料表欄位演進                       | 已完成首篇示範   |
-| 02 Cache / Redis              | Cache migration and stampede rollback                                                        | 商品詳情或價格快取                       | 待寫服務路徑實作 |
-| 03 Message Queue              | Queue consumer retry and replay handoff                                                      | 訂單事件 consumer                        | 待寫服務路徑實作 |
-| 04 Observability              | Checkout API evidence package                                                                | checkout 同步 API                        | 已完成首篇示範   |
-| 05 Deployment Platform        | Deployment rollout with drain and rollback                                                   | checkout service rollout                 | 待寫服務路徑實作 |
-| 06 Reliability                | Release gate for provider dependency change                                                  | payment provider timeout/fallback        | 已完成首篇示範   |
-| 07 Security / Data Protection | Credential rotation with scoped evidence                                                     | webhook secret / API credential rotation | 已完成首篇示範   |
-| 08 Incident Workflow          | Control plane decision log and write-back                                                    | rule/config rollout incident             | 已完成首篇示範   |
+| 分類                          | 實作文章題目                                                                             | 服務路徑                                 | 前置觀念補完狀態 |
+| ----------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------- |
+| 01 Database / Storage         | [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/) | 訂單資料表欄位演進                       | 已完成首篇示範   |
+| 02 Cache / Redis              | Cache migration and stampede rollback                                                    | 商品詳情或價格快取                       | 待寫服務路徑實作 |
+| 03 Message Queue              | Queue consumer retry and replay handoff                                                  | 訂單事件 consumer                        | 待寫服務路徑實作 |
+| 04 Observability              | Checkout API evidence package                                                            | checkout 同步 API                        | 已完成首篇示範   |
+| 05 Deployment Platform        | Deployment rollout with drain and rollback                                               | checkout service rollout                 | 待寫服務路徑實作 |
+| 06 Reliability                | Release gate for provider dependency change                                              | payment provider timeout/fallback        | 已完成首篇示範   |
+| 07 Security / Data Protection | Credential rotation with scoped evidence                                                 | webhook secret / API credential rotation | 已完成首篇示範   |
+| 08 Incident Workflow          | Control plane decision log and write-back                                                | rule/config rollout incident             | 已完成首篇示範   |
 
 這份 backlog 的順序應以依賴關係安排。01 與 04/06/07/08 的首篇示範已完成，下一批主軸是回到 02/03/05 寫具體服務路徑，並直接引用既有 artifact 欄位基線。各服務實例的段落責任、案例路由與不適用邊界，依 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/) 執行。
 
@@ -129,7 +129,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 下一輪寫作的核心順序改為「以既有 artifact backbone 驅動服務實作」。這樣後續正文可直接沿同一組 evidence/gate/decision 欄位寫作，不需要再重建交接語言。正文開寫前先讀 0.16，避免把四個分類寫成共用模板。
 
-1. 01 `Schema migration rollout evidence` 的完整實作示範已完成，引用 4.22 / 6.25 / 8.23。
+1. 01 `Schema Migration Rollout 證據` 的完整實作示範已完成，引用 4.22 / 6.25 / 8.23。
 2. 接著寫 02 `Cache migration and stampede rollback`，對齊同一組欄位與停損條件。
 3. 再寫 03 `Queue consumer retry and replay handoff`，把 replay 決策接到 decision log。
 4. 最後寫 05 `Deployment rollout with drain and rollback`，把切流、gate 與 write-back 串成閉環。

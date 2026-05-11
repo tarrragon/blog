@@ -65,10 +65,11 @@ schema 設計會直接影響後續可靠性與事故處理。
 
 1. 與 1.3 的交接：交易一致性邊界落在 [transaction boundary](/backend/01-database/transaction-boundary/)。
 2. 與 1.6 的交接：演進策略落在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
-3. 與 4.20 的交接：查詢與資料驗證證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
-4. 與 6.11 的交接：高風險 schema 變更進入 [Migration Safety](/backend/06-reliability/migration-safety/)。
-5. 與 8.19 的交接：資料修復與回退決策記錄進入 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+3. 與 1.7 的交接：欄位責任進入 production rollout 時，讀 [Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)。
+4. 與 4.20 的交接：查詢與資料驗證證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
+5. 與 6.11 的交接：高風險 schema 變更進入 [Migration Safety](/backend/06-reliability/migration-safety/)。
+6. 與 8.19 的交接：資料修復與回退決策記錄進入 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 
 ## 下一步路由
 
-要把建模與交易一起看，接著讀 [1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)。要把建模放進變更流程，接著讀 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
+要把建模與交易一起看，接著讀 [1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)。要把建模放進變更流程，接著讀 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)。要看欄位拆分如何產出 validation query、evidence package 與 release gate，接著讀 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)。

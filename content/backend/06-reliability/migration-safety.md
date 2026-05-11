@@ -44,6 +44,7 @@ tags: ["backend", "reliability"]
 ## 下一步路由
 
 - 01.6 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)：雙寫、回填、切流與回滾
+- 01.7 [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)：把 migration plan 落成 validation query、evidence package、release gate 與 decision log
 - 06.8 release gate：把可逆性放進放行條件
 - 06.10 contract testing：先驗 schema 相容性
 - 08.5 [post-incident review](/backend/knowledge-cards/post-incident-review/)：migration 類事故通常需要結構化復盤
@@ -59,6 +60,7 @@ tags: ["backend", "reliability"]
 ## 交接路由
 
 - 01.6 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)：執行層流程
+- 01.7 [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)：production rollout evidence 與 gate 欄位
 - 0.C4 [營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/)：決策層判讀
 - 06.7 DR / rollback：migration rollback 演練
 - 06.8 release gate：可逆性檢查
