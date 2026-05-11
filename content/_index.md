@@ -26,5 +26,6 @@ tags: ["首頁", "教學", "工程筆記"]
 - [Go 進階指南](/go-advanced/)：深入 Go 並發、WebSocket、runtime 與服務架構
 - [Backend 服務實務指南](/backend/)：整理資料庫、快取、訊息佇列、觀測、部署與可靠性驗證等跨語言後端能力
 - [CI/CD 教學](/ci/)：整理驗證、建置、發布 gate 與不同部署場域的流程差異
+- [本地 LLM 寫 code 實務指南](/llm/)：在 Apple Silicon Mac 上跑本地 LLM、整合 VS Code 寫 code 的最短可行路徑
 
 ---
