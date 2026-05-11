@@ -20,11 +20,11 @@ weight: 3
 
 ## 前置設定
 
-| 項目 | 檢查指令 | 預期 |
-| ---- | -------- | ---- |
-| Python | `python3 --version` | 3.11+ |
-| pip | `pip3 --version` | 25+ |
-| 磁碟空間 | `df -h ~` | 至少 200 MB（Piper + 一個 voice） |
+| 項目     | 檢查指令            | 預期                              |
+| -------- | ------------------- | --------------------------------- |
+| Python   | `python3 --version` | 3.11+                             |
+| pip      | `pip3 --version`    | 25+                               |
+| 磁碟空間 | `df -h ~`           | 至少 200 MB（Piper + 一個 voice） |
 
 Piper 跟 Whisper 一樣分離 binary 跟 model：先裝 runtime、再下載 voice。
 
@@ -74,22 +74,22 @@ curl -L -o en_US-lessac-low.onnx.json \
 
 可用 voice quality 等級：
 
-| Quality | 大小 | 用途 |
-| ------- | ---- | ---- |
-| `low` | 17-65 MB | 快、品質粗糙、適合 prototype |
-| `medium` | 50-100 MB | 平衡、日常用 |
-| `high` | 100-200 MB | 品質佳、合成略慢 |
-| `x_low` | < 20 MB | 極小、品質明顯差、適合受限環境 |
+| Quality  | 大小       | 用途                           |
+| -------- | ---------- | ------------------------------ |
+| `low`    | 17-65 MB   | 快、品質粗糙、適合 prototype   |
+| `medium` | 50-100 MB  | 平衡、日常用                   |
+| `high`   | 100-200 MB | 品質佳、合成略慢               |
+| `x_low`  | < 20 MB    | 極小、品質明顯差、適合受限環境 |
 
 語言 / 地區覆蓋（部分）：
 
-| Locale | Voice 範例 |
-| ------ | ---------- |
-| `en_US` | lessac、ryan、amy、libritts |
-| `en_GB` | alan、cori、jenny |
-| `zh_CN` | huayan（北京話） |
-| `ja_JP`（社群） | 較少 |
-| `de_DE` / `fr_FR` / `es_ES` 等 | 各有多個 |
+| Locale                         | Voice 範例                  |
+| ------------------------------ | --------------------------- |
+| `en_US`                        | lessac、ryan、amy、libritts |
+| `en_GB`                        | alan、cori、jenny           |
+| `zh_CN`                        | huayan（北京話）            |
+| `ja_JP`（社群）                | 較少                        |
+| `de_DE` / `fr_FR` / `es_ES` 等 | 各有多個                    |
 
 完整清單在 `rhasspy/piper-voices` 的 [VOICES.md](https://github.com/rhasspy/piper)。
 
@@ -141,17 +141,17 @@ afplay /tmp/piper-out.wav
 
 ## 常用選項
 
-| 選項 | 作用 |
-| ---- | ---- |
-| `-m MODEL` | voice model `.onnx` 路徑（必填） |
-| `-c CONFIG` | metadata json 路徑（預設自動找同名 `.onnx.json`） |
-| `-i FILE` | 輸入文字檔（替代 stdin） |
-| `-f OUTPUT` | 輸出 WAV 路徑 |
-| `-d DIR` | 輸出目錄（多句時自動分檔） |
-| `--length-scale FACTOR` | 速度調整（< 1 加速、> 1 減速、預設 1.0） |
-| `--volume FACTOR` | 音量調整（0.0-1.0） |
-| `-s SPEAKER` | 多 speaker model 選 speaker（如 libritts） |
-| `--cuda` | 用 CUDA（Apple Silicon 用不到、留 default） |
+| 選項                    | 作用                                              |
+| ----------------------- | ------------------------------------------------- |
+| `-m MODEL`              | voice model `.onnx` 路徑（必填）                  |
+| `-c CONFIG`             | metadata json 路徑（預設自動找同名 `.onnx.json`） |
+| `-i FILE`               | 輸入文字檔（替代 stdin）                          |
+| `-f OUTPUT`             | 輸出 WAV 路徑                                     |
+| `-d DIR`                | 輸出目錄（多句時自動分檔）                        |
+| `--length-scale FACTOR` | 速度調整（< 1 加速、> 1 減速、預設 1.0）          |
+| `--volume FACTOR`       | 音量調整（0.0-1.0）                               |
+| `-s SPEAKER`            | 多 speaker model 選 speaker（如 libritts）        |
+| `--cuda`                | 用 CUDA（Apple Silicon 用不到、留 default）       |
 
 典型應用：
 

@@ -14,13 +14,13 @@ weight: 0
 
 ## 前置設定
 
-| 項目         | 檢查指令              | 預期                         |
-| ------------ | --------------------- | ---------------------------- |
-| macOS 版本   | `sw_vers -productVersion` | 14.x 或更新                 |
-| Apple Silicon | `uname -m`            | `arm64`                      |
-| Homebrew     | `brew --version`      | 4.x（任何近期版）            |
-| 磁碟空間     | `df -h ~`             | 至少 3 GB 剩餘給 runtime + 1B 模型 |
-| port 11434   | `lsof -i :11434`      | 無輸出（port 沒被佔）         |
+| 項目          | 檢查指令                  | 預期                               |
+| ------------- | ------------------------- | ---------------------------------- |
+| macOS 版本    | `sw_vers -productVersion` | 14.x 或更新                        |
+| Apple Silicon | `uname -m`                | `arm64`                            |
+| Homebrew      | `brew --version`          | 4.x（任何近期版）                  |
+| 磁碟空間      | `df -h ~`                 | 至少 3 GB 剩餘給 runtime + 1B 模型 |
+| port 11434    | `lsof -i :11434`          | 無輸出（port 沒被佔）              |
 
 選 1B 模型只是為了驗證流程、能力很弱、實際寫 code 場景請用 14B / 31B 級。模型大小跟記憶體 / 磁碟對應關係見 [0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)。
 

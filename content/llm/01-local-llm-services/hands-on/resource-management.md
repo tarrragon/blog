@@ -38,15 +38,15 @@ brew services start → load model on demand → serve → ??? → 你忘記 sto
 
 ## 三個 dimension + 觀察工具
 
-| Dimension | 觀察指令 | 看什麼 |
-| --------- | -------- | ------ |
-| RAM | `vm_stat \| head -5` | Pages free（每 page 16 KB）、空閒越多越好 |
-| RAM（per process） | Activity Monitor 或 `ps aux \| sort -k6 -rn \| head` | 哪個 process 佔最多記憶體 |
-| 磁碟 | `df -h ~ \| tail -1` | 系統 volume 剩餘 |
-| 磁碟（per dir） | `du -sh ~/.ollama/models/blobs` | LLM models 累積量 |
-| Port | `lsof -i :11434` | 誰在 listen 該 port |
-| Process | `ps aux \| grep -i ollama \| grep -v grep` | Ollama / ComfyUI / Python 跑哪幾個 |
-| Ollama loaded models | `ollama ps` | 哪些 model 在 RAM、size、idle timer |
+| Dimension            | 觀察指令                                             | 看什麼                                    |
+| -------------------- | ---------------------------------------------------- | ----------------------------------------- |
+| RAM                  | `vm_stat \| head -5`                                 | Pages free（每 page 16 KB）、空閒越多越好 |
+| RAM（per process）   | Activity Monitor 或 `ps aux \| sort -k6 -rn \| head` | 哪個 process 佔最多記憶體                 |
+| 磁碟                 | `df -h ~ \| tail -1`                                 | 系統 volume 剩餘                          |
+| 磁碟（per dir）      | `du -sh ~/.ollama/models/blobs`                      | LLM models 累積量                         |
+| Port                 | `lsof -i :11434`                                     | 誰在 listen 該 port                       |
+| Process              | `ps aux \| grep -i ollama \| grep -v grep`           | Ollama / ComfyUI / Python 跑哪幾個        |
+| Ollama loaded models | `ollama ps`                                          | 哪些 model 在 RAM、size、idle timer       |
 
 實測：剛 kill 完 ComfyUI（SDXL + Python venv）後、`vm_stat` 看到 free pages 從 619K 變 1090K（每 page 16 KB）、約 **+7.5 GB RAM 釋放**——這就是 SDXL + ComfyUI process 一直占的記憶體量。
 
@@ -83,11 +83,11 @@ OLLAMA_KEEP_ALIVE=0 brew services restart ollama
 
 選 keep_alive 的 trade-off：
 
-| 設定 | RAM 占用 | 首字延遲 | 適合場景 |
-| ---- | -------- | -------- | -------- |
-| `0` | 最低（generate 完立即釋放） | 高（每次都重 load） | 偶爾用、RAM 緊張 |
-| `5m`（預設） | 中（活躍用占住、閒 5 分鐘後釋放） | 低（活躍期不重 load） | 大多場景 |
-| `-1` | 高（永久占住） | 最低 | 整天頻繁用、RAM 充裕 |
+| 設定         | RAM 占用                          | 首字延遲              | 適合場景             |
+| ------------ | --------------------------------- | --------------------- | -------------------- |
+| `0`          | 最低（generate 完立即釋放）       | 高（每次都重 load）   | 偶爾用、RAM 緊張     |
+| `5m`（預設） | 中（活躍用占住、閒 5 分鐘後釋放） | 低（活躍期不重 load） | 大多場景             |
+| `-1`         | 高（永久占住）                    | 最低                  | 整天頻繁用、RAM 充裕 |
 
 **主動 unload 指令**：
 
@@ -137,24 +137,24 @@ lsof -i :8188 | head -3
 
 ### 為什麼 Ollama 跟 ComfyUI 設計不同
 
-| 因素 | Ollama 設計 | ComfyUI 設計 |
-| ---- | ----------- | ------------- |
-| 主要使用模式 | API 服務、IDE plugin 透過 HTTP 用 | 互動 GUI、user 連續調 prompt |
-| Model 切換頻率 | 高（不同任務換不同 model） | 低（一次 session 通常一個 model） |
-| User 期待的 latency | 低首字延遲（IDE 補完場景） | 高 throughput（連續生圖） |
-| 結論 | Auto-unload 釋 RAM 給其他 model | 持續載入避免重複 load 浪費 |
+| 因素                | Ollama 設計                       | ComfyUI 設計                      |
+| ------------------- | --------------------------------- | --------------------------------- |
+| 主要使用模式        | API 服務、IDE plugin 透過 HTTP 用 | 互動 GUI、user 連續調 prompt      |
+| Model 切換頻率      | 高（不同任務換不同 model）        | 低（一次 session 通常一個 model） |
+| User 期待的 latency | 低首字延遲（IDE 補完場景）        | 高 throughput（連續生圖）         |
+| 結論                | Auto-unload 釋 RAM 給其他 model   | 持續載入避免重複 load 浪費        |
 
 兩種設計都 valid、適合不同使用模式。理解差異後就知道 ComfyUI 一直占 RAM「不是 bug」、是設計選擇。
 
 ## 跟其他本地 server 對比
 
-| Server | Auto-unload | 主動 unload 指令 | 占 RAM 觀察 |
-| ------ | ----------- | ----------------- | ----------- |
-| Ollama | ✓（5 分鐘 idle） | `keep_alive: 0` 或 stop daemon | `ollama ps` |
-| LM Studio | ✗（GUI 主動關閉 model 才釋） | GUI Eject Model | Activity Monitor |
-| llama.cpp `llama-server` | ✗ | kill process | `lsof -i :8080` |
-| ComfyUI | ✗ | kill process | `ps aux \| grep ComfyUI` |
-| oMLX | ✓（per model 可配） | API endpoint | server log |
+| Server                   | Auto-unload                  | 主動 unload 指令               | 占 RAM 觀察              |
+| ------------------------ | ---------------------------- | ------------------------------ | ------------------------ |
+| Ollama                   | ✓（5 分鐘 idle）             | `keep_alive: 0` 或 stop daemon | `ollama ps`              |
+| LM Studio                | ✗（GUI 主動關閉 model 才釋） | GUI Eject Model                | Activity Monitor         |
+| llama.cpp `llama-server` | ✗                            | kill process                   | `lsof -i :8080`          |
+| ComfyUI                  | ✗                            | kill process                   | `ps aux \| grep ComfyUI` |
+| oMLX                     | ✓（per model 可配）          | API endpoint                   | server log               |
 
 **結論**：只有 Ollama 跟 oMLX 內建 auto-unload、其他都要手動釋放。GUI server（LM Studio）通常給 user 一個「Eject」按鈕、CLI server 通常要 kill process。
 

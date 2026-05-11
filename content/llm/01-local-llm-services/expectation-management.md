@@ -44,19 +44,19 @@ weight: 5
 
 下列任務在雲端旗艦上的表現明顯領先本地、預設交給雲端可以省下「先試本地、發現品質不夠、再切雲端」的時間成本：
 
-| 任務                                                                  | 為什麼雲端旗艦較適合                                                     |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| 跨多個檔案的重構                                                      | context window 較大 + 推理深度足夠                                       |
-| 設計新模組的架構                                                      | 需要綜合判斷、雲端旗艦深度領先                                           |
-| 規劃 multi-step 任務（拆 todo）                                       | 規劃能力是雲端旗艦的明顯強項                                             |
-| 深度 debug（非常見錯誤）                                              | 需要推理能力與大量訓練資料                                               |
-| 評估技術選型（A vs B）                                                | 需要廣泛知識與權衡能力                                                   |
-| 寫長篇技術文件                                                        | 篇幅大、邏輯連貫要求高                                                   |
-| 從模糊需求拆出 acceptance criteria                                    | 需要產品意識、模型訓練資料中較少                                         |
-| 數學推理（複雜演算法）                                                | 雲端旗艦的 reasoning effort 模式領先明顯                                 |
-| 解少見語言（COBOL、Erlang）                                           | 訓練資料較多、hallucination 較少                                         |
-| 處理長 [context](/llm/knowledge-cards/context-window/)（10K+ tokens） | 雲端的 [prefill](/llm/knowledge-cards/prefill/) 算力遠高於 Apple Silicon |
-| [Agent](/llm/knowledge-cards/agent/) 模式（複雜 multi-step tool use）                 | 本地 [tool use](/llm/knowledge-cards/function-calling/) 支援陽春、雲端 agent 框架成熟、見 [4.2 Agent 架構原理](/llm/04-applications/agent-architecture/) |
+| 任務                                                                  | 為什麼雲端旗艦較適合                                                                                                                                     |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 跨多個檔案的重構                                                      | context window 較大 + 推理深度足夠                                                                                                                       |
+| 設計新模組的架構                                                      | 需要綜合判斷、雲端旗艦深度領先                                                                                                                           |
+| 規劃 multi-step 任務（拆 todo）                                       | 規劃能力是雲端旗艦的明顯強項                                                                                                                             |
+| 深度 debug（非常見錯誤）                                              | 需要推理能力與大量訓練資料                                                                                                                               |
+| 評估技術選型（A vs B）                                                | 需要廣泛知識與權衡能力                                                                                                                                   |
+| 寫長篇技術文件                                                        | 篇幅大、邏輯連貫要求高                                                                                                                                   |
+| 從模糊需求拆出 acceptance criteria                                    | 需要產品意識、模型訓練資料中較少                                                                                                                         |
+| 數學推理（複雜演算法）                                                | 雲端旗艦的 reasoning effort 模式領先明顯                                                                                                                 |
+| 解少見語言（COBOL、Erlang）                                           | 訓練資料較多、hallucination 較少                                                                                                                         |
+| 處理長 [context](/llm/knowledge-cards/context-window/)（10K+ tokens） | 雲端的 [prefill](/llm/knowledge-cards/prefill/) 算力遠高於 Apple Silicon                                                                                 |
+| [Agent](/llm/knowledge-cards/agent/) 模式（複雜 multi-step tool use） | 本地 [tool use](/llm/knowledge-cards/function-calling/) 支援陽春、雲端 agent 框架成熟、見 [4.2 Agent 架構原理](/llm/04-applications/agent-architecture/) |
 
 這份清單覆蓋了「LLM 真正取代人類思考的部分」、雲端旗艦的能力斷崖式領先。
 

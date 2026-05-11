@@ -23,11 +23,11 @@ LLM 應用的 codebase 不只 source code、還含 [embedding](/llm/knowledge-ca
 
 ## 三類產物 framework
 
-| 類別 | 定義 | 例子 | 該進 git？ |
-| ---- | ---- | ---- | ---------- |
-| **Source** | 人類撰寫、是真理來源 | code、prompt template、test fixture、config schema | ✓ 必須 |
-| **Derived** | 從 source 自動產出、可重建 | binary、index、cache、compiled output、generated docs | ✗ 不該 |
-| **External** | 從外部下載、跟 source 解耦 | model weights、dependency package、dataset | ✗ 用 registry / manifest |
+| 類別         | 定義                       | 例子                                                  | 該進 git？               |
+| ------------ | -------------------------- | ----------------------------------------------------- | ------------------------ |
+| **Source**   | 人類撰寫、是真理來源       | code、prompt template、test fixture、config schema    | ✓ 必須                   |
+| **Derived**  | 從 source 自動產出、可重建 | binary、index、cache、compiled output、generated docs | ✗ 不該                   |
+| **External** | 從外部下載、跟 source 解耦 | model weights、dependency package、dataset            | ✗ 用 registry / manifest |
 
 判讀問題：「**刪掉重來、用什麼能 reconstruct 一模一樣？**」
 
@@ -41,36 +41,36 @@ LLM 應用的 codebase 不只 source code、還含 [embedding](/llm/knowledge-ca
 
 ### Source（進 git）
 
-| 產物 | 說明 |
-| ---- | ---- |
-| 程式 source code | wrapper script、framework 整合 code |
-| Prompt template | system prompt、few-shot example、prompt structure |
-| Config schema | 哪些參數可調、合法範圍、default value |
-| Test fixture | 測試輸入 / 預期輸出 pair |
-| Markdown content（如本 blog） | 文章本身就是 source |
-| `.gitignore` / lock file 規則 | 描述哪些不進 git 也是 source |
-| Build script | `ingest.py`、`build.sh`、能從 source 重建 derived |
+| 產物                          | 說明                                              |
+| ----------------------------- | ------------------------------------------------- |
+| 程式 source code              | wrapper script、framework 整合 code               |
+| Prompt template               | system prompt、few-shot example、prompt structure |
+| Config schema                 | 哪些參數可調、合法範圍、default value             |
+| Test fixture                  | 測試輸入 / 預期輸出 pair                          |
+| Markdown content（如本 blog） | 文章本身就是 source                               |
+| `.gitignore` / lock file 規則 | 描述哪些不進 git 也是 source                      |
+| Build script                  | `ingest.py`、`build.sh`、能從 source 重建 derived |
 
 ### Derived（不進 git、但 build path 進 git）
 
-| 產物 | 為什麼不 commit | 怎麼 share |
-| ---- | --------------- | ---------- |
-| `index.pkl`（RAG embedding index） | 從 corpus + embedding model 重建、跟 model 版本綁、3.7 MB-GB 級 | `ingest.py` script、跑一次就 reconstruct |
-| Embedding cache（per-document hash） | 跑時動態建、避免重 embed 同 chunk | 不 share、各自 rebuild |
-| Python `__pycache__/` | 跑時自動產、Python 版本敏感 | 不 share、各自 rebuild |
-| Compiled binary（如 `bin/mdtools`） | 從 Go source build、平台敏感 | source + build instructions、可選 release page 提供 |
-| Generated docs（如 Hugo `public/`） | 從 markdown source build、deploy 時自動生 | source + deploy pipeline |
-| Log files | runtime output、量大、有 PII 風險 | 不 share、log retention 政策另立 |
+| 產物                                 | 為什麼不 commit                                                 | 怎麼 share                                          |
+| ------------------------------------ | --------------------------------------------------------------- | --------------------------------------------------- |
+| `index.pkl`（RAG embedding index）   | 從 corpus + embedding model 重建、跟 model 版本綁、3.7 MB-GB 級 | `ingest.py` script、跑一次就 reconstruct            |
+| Embedding cache（per-document hash） | 跑時動態建、避免重 embed 同 chunk                               | 不 share、各自 rebuild                              |
+| Python `__pycache__/`                | 跑時自動產、Python 版本敏感                                     | 不 share、各自 rebuild                              |
+| Compiled binary（如 `bin/mdtools`）  | 從 Go source build、平台敏感                                    | source + build instructions、可選 release page 提供 |
+| Generated docs（如 Hugo `public/`）  | 從 markdown source build、deploy 時自動生                       | source + deploy pipeline                            |
+| Log files                            | runtime output、量大、有 PII 風險                               | 不 share、log retention 政策另立                    |
 
 ### External（不進 git、用 manifest / registry）
 
-| 產物 | Manifest / registry | 例子 |
-| ---- | ------------------- | ---- |
-| LLM model weights | Hugging Face / Ollama registry tag | `nomic-embed-text:latest`、`sd_xl_base_1.0` |
-| Python dependency | `requirements.txt` / `pyproject.toml` | `requests==2.31.0` |
-| Node modules | `package.json` + `package-lock.json` | `react@18.2.0` |
-| Dataset | `data.dvc` / S3 URL + checksum | training data、eval set |
-| Docker image | `Dockerfile` + image tag | `python:3.11-slim` |
+| 產物              | Manifest / registry                   | 例子                                        |
+| ----------------- | ------------------------------------- | ------------------------------------------- |
+| LLM model weights | Hugging Face / Ollama registry tag    | `nomic-embed-text:latest`、`sd_xl_base_1.0` |
+| Python dependency | `requirements.txt` / `pyproject.toml` | `requests==2.31.0`                          |
+| Node modules      | `package.json` + `package-lock.json`  | `react@18.2.0`                              |
+| Dataset           | `data.dvc` / S3 URL + checksum        | training data、eval set                     |
+| Docker image      | `Dockerfile` + image tag              | `python:3.11-slim`                          |
 
 External 跟 derived 的差別：external 來自 git 外的 source、derived 來自 git 內的 source。但**機制上都不該直接 commit**——manifest 進 git、實際 bytes 進 registry。
 
@@ -186,15 +186,15 @@ logs/
 
 幾個容易誤判的：
 
-| 產物 | 該不該 commit | 為什麼 |
-| ---- | ------------- | ------ |
-| `package-lock.json` / `poetry.lock` | ✓ commit | 是 manifest、保證 reproducibility |
-| `node_modules/` | ✗ 不 commit | 是 derived、可從 lockfile 重建 |
-| 小型 fixture data（< 1 MB） | ✓ commit（作 source） | 是 test 的一部分、不 reconstruct |
-| 大型 eval dataset（> 100 MB） | ✗ 用 dvc / S3 manifest | 量大、不該進 git history |
-| Pre-built model 用於 demo | ✗ 用 release artifact / Hugging Face | 量大、版本要可追蹤 |
-| Prompt template (markdown / yaml) | ✓ commit | 是 source、影響行為、要 diff |
-| 從 LLM 生的 sample output | ✗ 不 commit（除非當 fixture） | 是 demo artifact、不 reconstruct 來源 |
+| 產物                                | 該不該 commit                        | 為什麼                                |
+| ----------------------------------- | ------------------------------------ | ------------------------------------- |
+| `package-lock.json` / `poetry.lock` | ✓ commit                             | 是 manifest、保證 reproducibility     |
+| `node_modules/`                     | ✗ 不 commit                          | 是 derived、可從 lockfile 重建        |
+| 小型 fixture data（< 1 MB）         | ✓ commit（作 source）                | 是 test 的一部分、不 reconstruct      |
+| 大型 eval dataset（> 100 MB）       | ✗ 用 dvc / S3 manifest               | 量大、不該進 git history              |
+| Pre-built model 用於 demo           | ✗ 用 release artifact / Hugging Face | 量大、版本要可追蹤                    |
+| Prompt template (markdown / yaml)   | ✓ commit                             | 是 source、影響行為、要 diff          |
+| 從 LLM 生的 sample output           | ✗ 不 commit（除非當 fixture）        | 是 demo artifact、不 reconstruct 來源 |
 
 判讀 heuristic：
 
@@ -230,14 +230,14 @@ logs/
 
 把「**從哪下載 + checksum**」commit 進 git、實際 content 不進。常見 manifest format：
 
-| Manifest | 描述 |
-| -------- | ---- |
-| `requirements.txt` / `pyproject.toml` | Python deps + version |
-| `package.json` + `package-lock.json` | Node deps + exact version + integrity hash |
-| `Dockerfile` | OS + 環境 + 依賴 + entrypoint |
-| `dvc.yaml` + `dvc.lock` | dataset + model version |
-| Ollama Modelfile（如果寫了） | LLM model + system prompt 組合 |
-| `Cargo.lock` / `go.sum` | Rust / Go 的 dep checksum |
+| Manifest                              | 描述                                       |
+| ------------------------------------- | ------------------------------------------ |
+| `requirements.txt` / `pyproject.toml` | Python deps + version                      |
+| `package.json` + `package-lock.json`  | Node deps + exact version + integrity hash |
+| `Dockerfile`                          | OS + 環境 + 依賴 + entrypoint              |
+| `dvc.yaml` + `dvc.lock`               | dataset + model version                    |
+| Ollama Modelfile（如果寫了）          | LLM model + system prompt 組合             |
+| `Cargo.lock` / `go.sum`               | Rust / Go 的 dep checksum                  |
 
 Manifest 自己是 source（人寫、進 git）、它指向的 external content 不進 git（用 download script 取回）。
 
@@ -245,11 +245,11 @@ Manifest 自己是 source（人寫、進 git）、它指向的 external content 
 
 LLM 應用特有的問題：**prompt template 是 source、但 prompt 改變影響行為跟 derived 改變不同**。
 
-| Prompt 操作 | git 行為 | 影響 |
-| ----------- | -------- | ---- |
-| 改一個字 | 一個 commit | 模型行為可能大變、要重跑 eval |
-| 加 few-shot example | 一個 commit | 同上 |
-| 換不同模型（在 config） | config commit | 用 prompt 沒變、行為變 |
+| Prompt 操作             | git 行為      | 影響                          |
+| ----------------------- | ------------- | ----------------------------- |
+| 改一個字                | 一個 commit   | 模型行為可能大變、要重跑 eval |
+| 加 few-shot example     | 一個 commit   | 同上                          |
+| 換不同模型（在 config） | config commit | 用 prompt 沒變、行為變        |
 
 Prompt + model 是一對組合、行為相依、改一個都要重 test。建議在 commit message / PR description 描述「這個 prompt 改動的 expected behavior change」、不要當 trivial 小改 review。
 
@@ -270,12 +270,12 @@ prompts/
 
 本地 hands-on 跟 production 對應：
 
-| 本地 hands-on | Production |
-| -------------- | ---------- |
+| 本地 hands-on                  | Production                                               |
+| ------------------------------ | -------------------------------------------------------- |
 | `python ingest.py` build index | Build pipeline 跑同樣 script、output 進 artifact storage |
-| `ollama pull nomic-embed-text` | Container image 預載 model 或 mount volume |
-| `.gitignore` 排除 index.pkl | CI 自動 rebuild、deploy 時讀 artifact storage |
-| Source code 進 git | Source 觸發 CI、build & deploy |
+| `ollama pull nomic-embed-text` | Container image 預載 model 或 mount volume               |
+| `.gitignore` 排除 index.pkl    | CI 自動 rebuild、deploy 時讀 artifact storage            |
+| Source code 進 git             | Source 觸發 CI、build & deploy                           |
 
 成熟的 LLM 應用部署 pipeline：
 

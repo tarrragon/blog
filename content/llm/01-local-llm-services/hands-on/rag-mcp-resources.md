@@ -18,11 +18,11 @@ weight: 9
 
 RAG / MCP 工作流通常分三階段、各自吃不同資源：
 
-| 階段 | 主要資源消耗 | 持續時間 | 是否常駐 |
-| ---- | ----------- | -------- | -------- |
-| **RAG ingest** | embedding model RAM + CPU + 磁碟寫 | one-shot（corpus 更動時跑） | 否 |
-| **RAG query** | index 載入 RAM + chat model RAM + GPU | per-request | retrieval index 常駐 |
-| **MCP server** | subprocess 永久跑、tool 呼叫時動態載資源 | session 內常駐 | 是 |
+| 階段           | 主要資源消耗                             | 持續時間                    | 是否常駐             |
+| -------------- | ---------------------------------------- | --------------------------- | -------------------- |
+| **RAG ingest** | embedding model RAM + CPU + 磁碟寫       | one-shot（corpus 更動時跑） | 否                   |
+| **RAG query**  | index 載入 RAM + chat model RAM + GPU    | per-request                 | retrieval index 常駐 |
+| **MCP server** | subprocess 永久跑、tool 呼叫時動態載資源 | session 內常駐              | 是                   |
 
 不同階段的瓶頸不一樣、優化目標也不同。
 
@@ -41,12 +41,12 @@ Wrote 463 records to scripts/rag-demo/index.pkl (22.3s)
 
 實測資源消耗：
 
-| 資源 | 數字 | 為什麼 |
-| ---- | ---- | ------ |
-| RAM（峰值） | ~600 MB | nomic-embed-text 模型 (274 MB) + Python runtime + 累積 records (~200 MB) |
-| 磁碟寫 | `index.pkl` ~3.7 MB | 463 records、每筆含 chunk text + 768-dim float embedding |
-| CPU + GPU | Ollama 推 embedding、Apple Silicon Metal backend | 22 秒處理 463 個 chunk、平均 ~21 chunk/sec |
-| 網路 | 0 | 完全本地推論 |
+| 資源        | 數字                                             | 為什麼                                                                   |
+| ----------- | ------------------------------------------------ | ------------------------------------------------------------------------ |
+| RAM（峰值） | ~600 MB                                          | nomic-embed-text 模型 (274 MB) + Python runtime + 累積 records (~200 MB) |
+| 磁碟寫      | `index.pkl` ~3.7 MB                              | 463 records、每筆含 chunk text + 768-dim float embedding                 |
+| CPU + GPU   | Ollama 推 embedding、Apple Silicon Metal backend | 22 秒處理 463 個 chunk、平均 ~21 chunk/sec                               |
+| 網路        | 0                                                | 完全本地推論                                                             |
 
 **Ingest 階段的特性**：
 
@@ -57,12 +57,12 @@ Wrote 463 records to scripts/rag-demo/index.pkl (22.3s)
 
 **規模 extrapolation**：
 
-| Corpus 大小 | 預估 ingest 時間 | index.pkl 大小 |
-| ----------- | ---------------- | -------------- |
-| 71 docs / 463 chunks（本 blog）| 22 秒 | 3.7 MB |
-| 1000 docs / ~7000 chunks（中型 codebase） | ~5 分鐘 | ~55 MB |
-| 10000 docs / ~70000 chunks（大型 codebase） | ~50 分鐘 | ~550 MB |
-| 100K docs / ~700K chunks（公司 wiki） | ~8 小時 | ~5.5 GB |
+| Corpus 大小                                 | 預估 ingest 時間 | index.pkl 大小 |
+| ------------------------------------------- | ---------------- | -------------- |
+| 71 docs / 463 chunks（本 blog）             | 22 秒            | 3.7 MB         |
+| 1000 docs / ~7000 chunks（中型 codebase）   | ~5 分鐘          | ~55 MB         |
+| 10000 docs / ~70000 chunks（大型 codebase） | ~50 分鐘         | ~550 MB        |
+| 100K docs / ~700K chunks（公司 wiki）       | ~8 小時          | ~5.5 GB        |
 
 10K docs 以上就應該考慮：
 
@@ -84,13 +84,13 @@ Loaded 463 chunks from scripts/rag-demo/index.pkl
 
 實測資源消耗（單次 query）：
 
-| 階段 | RAM 增量 | 時間 |
-| ---- | -------- | ---- |
-| 載 index.pkl 到 RAM | 3.7 MB（小 corpus）/ MB 級（大 corpus） | < 1 秒 |
-| embed query | 0（已載入的 nomic-embed-text） | 200 ms |
-| cosine over 463 chunks | 純 Python 計算、暫時用 ~10 MB | 50 ms |
-| 載 chat model（gemma3:1b） | ~1 GB（首次）/ 0（已 cached） | 5-10 秒（首次）/ 0（cached） |
-| 生成 response | 0 額外 | 5-30 秒（看 model + prompt 長度） |
+| 階段                       | RAM 增量                                | 時間                              |
+| -------------------------- | --------------------------------------- | --------------------------------- |
+| 載 index.pkl 到 RAM        | 3.7 MB（小 corpus）/ MB 級（大 corpus） | < 1 秒                            |
+| embed query                | 0（已載入的 nomic-embed-text）          | 200 ms                            |
+| cosine over 463 chunks     | 純 Python 計算、暫時用 ~10 MB           | 50 ms                             |
+| 載 chat model（gemma3:1b） | ~1 GB（首次）/ 0（已 cached）           | 5-10 秒（首次）/ 0（cached）      |
+| 生成 response              | 0 額外                                  | 5-30 秒（看 model + prompt 長度） |
 
 **Query 階段的特性**：
 
@@ -115,12 +115,12 @@ ollama ps
 
 **規模 sanity check**：
 
-| 場景 | RAM 需求 |
-| ---- | -------- |
-| 純 chat（gemma3:1b） | ~1 GB |
-| RAG with gemma3:1b + nomic-embed-text + 小 index | ~1.5 GB |
-| RAG with gemma3:4b + nomic-embed-text + 中型 index | ~6 GB |
-| RAG with gemma4:31b + nomic-embed-text + 大 index | ~20 GB |
+| 場景                                               | RAM 需求 |
+| -------------------------------------------------- | -------- |
+| 純 chat（gemma3:1b）                               | ~1 GB    |
+| RAG with gemma3:1b + nomic-embed-text + 小 index   | ~1.5 GB  |
+| RAG with gemma3:4b + nomic-embed-text + 中型 index | ~6 GB    |
+| RAG with gemma4:31b + nomic-embed-text + 大 index  | ~20 GB   |
 
 跑 RAG 比 chat 額外要 ~300-1000 MB（embedding model + index）、不會太重。
 
@@ -130,11 +130,11 @@ ollama ps
 
 實測：
 
-| 資源 | 數字 | 備註 |
-| ---- | ---- | ---- |
-| Subprocess RAM | ~50 MB | Python runtime + index.pkl mmap |
-| stdio pipe 數量 | 3（stdin、stdout、stderr） | 每 spawn 一個 server 都要 3 FD |
-| 持續時間 | client 在跑就在跑 | client 結束時 SIGPIPE 自動結束 server |
+| 資源            | 數字                       | 備註                                  |
+| --------------- | -------------------------- | ------------------------------------- |
+| Subprocess RAM  | ~50 MB                     | Python runtime + index.pkl mmap       |
+| stdio pipe 數量 | 3（stdin、stdout、stderr） | 每 spawn 一個 server 都要 3 FD        |
+| 持續時間        | client 在跑就在跑          | client 結束時 SIGPIPE 自動結束 server |
 
 **MCP server 的特性**：
 
@@ -152,12 +152,12 @@ pkill -f "blog_mcp_server.py"
 
 **多 MCP server 並存**（如 Claude Desktop 接 git server + filesystem server + custom server）：
 
-| Server | RAM | 主要負載 |
-| ------ | --- | -------- |
-| git MCP server | ~30 MB | shell 呼叫 |
-| filesystem MCP server | ~30 MB | fs 操作 |
+| Server                     | RAM                | 主要負載              |
+| -------------------------- | ------------------ | --------------------- |
+| git MCP server             | ~30 MB             | shell 呼叫            |
+| filesystem MCP server      | ~30 MB             | fs 操作               |
 | blog_mcp_server（本 demo） | ~50 MB（含 index） | embedding + retrieval |
-| 5 個 server 同時 | ~200 MB | 累積 |
+| 5 個 server 同時           | ~200 MB            | 累積                  |
 
 200 MB 在 32 GB Mac 上不顯眼、但 16 GB Mac + 多 MCP server + 大 chat model 就可能擠到。
 
@@ -179,11 +179,11 @@ nomic-embed-text 模型 (~274 MB) + 主 chat model (~6 GB)
 
 整體 RAM 占用範圍：
 
-| 配置 | 估算 |
-| ---- | ---- |
-| Minimal（gemma3:1b + 小 index） | ~1.7 GB |
-| Standard（gemma3:4b + 中 index） | ~6.5 GB |
-| Heavy（gemma4:31b + 大 index + 多 MCP server） | ~22 GB |
+| 配置                                           | 估算    |
+| ---------------------------------------------- | ------- |
+| Minimal（gemma3:1b + 小 index）                | ~1.7 GB |
+| Standard（gemma3:4b + 中 index）               | ~6.5 GB |
+| Heavy（gemma4:31b + 大 index + 多 MCP server） | ~22 GB  |
 
 跟 [resource-management 章](/llm/01-local-llm-services/hands-on/resource-management/) 比、RAG / MCP 加 ~500 MB-1 GB overhead 在 chat 之上、是合理的 tradeoff（換來 retrieval + tool use 能力）。
 
@@ -250,12 +250,12 @@ ps aux | grep "mcp_server" | grep -v grep
 
 跑超過幾週、會累積：
 
-| 累積物 | 為什麼累積 | 怎麼清 |
-| ------ | ---------- | ------ |
-| Multiple `index.pkl` | 跑不同 corpus 各建 index、舊的沒刪 | `find scripts -name 'index*.pkl' -mtime +30 -delete` |
-| Ollama models | 試了不同 model 沒清 | 看 `ollama list` modified 欄、`ollama rm` 不用的 |
-| Python `__pycache__` | 每次跑 script 累積 | `.gitignore` 已包、本地 `find . -name __pycache__ -exec rm -rf {} +` |
-| Embedding cache | 如果你寫了 embedding cache 機制 | 各自清理策略 |
+| 累積物               | 為什麼累積                         | 怎麼清                                                               |
+| -------------------- | ---------------------------------- | -------------------------------------------------------------------- |
+| Multiple `index.pkl` | 跑不同 corpus 各建 index、舊的沒刪 | `find scripts -name 'index*.pkl' -mtime +30 -delete`                 |
+| Ollama models        | 試了不同 model 沒清                | 看 `ollama list` modified 欄、`ollama rm` 不用的                     |
+| Python `__pycache__` | 每次跑 script 累積                 | `.gitignore` 已包、本地 `find . -name __pycache__ -exec rm -rf {} +` |
+| Embedding cache      | 如果你寫了 embedding cache 機制    | 各自清理策略                                                         |
 
 清理 idiom：
 
@@ -275,16 +275,16 @@ llm-rag-cleanup() {
 
 本篇紀錄的數字、是「single-user、single-machine、no concurrency」的 baseline。Production 場景多了幾個維度：
 
-| 維度 | 本地 | Production |
-| ---- | ---- | ---------- |
-| 並發 user | 1 | 10-10000 |
-| Index 大小 | < 100 MB | TB 級 |
-| Model serving | Ollama 1 process | vLLM / TGI / Triton 多 worker |
-| Vector storage | pickle | Pinecone / Weaviate / pgvector |
-| Latency 要求 | 秒級 OK | p50 < 500ms、p99 < 2s |
-| Cost model | 一次性硬體 | $/request、$/token |
-| Observability | tail log | metrics / traces / dashboards |
-| 失敗模式 | crash → 自己重啟 | 99.9% uptime SLA |
+| 維度           | 本地             | Production                     |
+| -------------- | ---------------- | ------------------------------ |
+| 並發 user      | 1                | 10-10000                       |
+| Index 大小     | < 100 MB         | TB 級                          |
+| Model serving  | Ollama 1 process | vLLM / TGI / Triton 多 worker  |
+| Vector storage | pickle           | Pinecone / Weaviate / pgvector |
+| Latency 要求   | 秒級 OK          | p50 < 500ms、p99 < 2s          |
+| Cost model     | 一次性硬體       | $/request、$/token             |
+| Observability  | tail log         | metrics / traces / dashboards  |
+| 失敗模式       | crash → 自己重啟 | 99.9% uptime SLA               |
 
 Production 視角詳細展開見 [4.5 Production 部署的資源評估原理](/llm/04-applications/production-resource-planning/)。
 

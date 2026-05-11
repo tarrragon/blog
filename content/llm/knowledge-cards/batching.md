@@ -14,12 +14,12 @@ Batching 介於 inference engine 內部、跟 [KV cache](/llm/knowledge-cards/kv
 
 ## 可觀察訊號與例子
 
-| 策略 | 機制 | 適合場景 |
-| ---- | ---- | -------- |
-| No batching | 每 request 獨立 forward pass | Single-user、極低 latency 要求 |
-| Static batching | 等湊滿 N 個 request 才跑 | 高 throughput 批次處理（embedding pipeline、文件 ingest） |
-| Continuous batching | 新 request 動態加入正在跑的 batch | vLLM / TGI / SGLang 等 production inference 主流 |
-| In-flight batching | 不同 sequence 在不同 step 同時推 | NVIDIA Triton + TensorRT-LLM 等深度優化 |
+| 策略                | 機制                              | 適合場景                                                  |
+| ------------------- | --------------------------------- | --------------------------------------------------------- |
+| No batching         | 每 request 獨立 forward pass      | Single-user、極低 latency 要求                            |
+| Static batching     | 等湊滿 N 個 request 才跑          | 高 throughput 批次處理（embedding pipeline、文件 ingest） |
+| Continuous batching | 新 request 動態加入正在跑的 batch | vLLM / TGI / SGLang 等 production inference 主流          |
+| In-flight batching  | 不同 sequence 在不同 step 同時推  | NVIDIA Triton + TensorRT-LLM 等深度優化                   |
 
 實務觀察：production LLM 服務 throughput 在 batch size 4-32 之間有明顯提升、超過 GPU memory 上限後反而下降（KV cache 跟 model weight 競爭記憶體）。
 

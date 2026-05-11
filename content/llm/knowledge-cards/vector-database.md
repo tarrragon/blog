@@ -16,12 +16,12 @@ Vector DB 跟傳統 SQL / NoSQL database 並列、但專精「向量相似度搜
 
 主流選擇分類：
 
-| 類別 | 例子 | 適合 |
-| ---- | ---- | ---- |
-| Hosted SaaS | Pinecone、Weaviate Cloud、Qdrant Cloud | 不想 maintain、流量大 |
-| Self-host service | Weaviate、Qdrant、Milvus | 內部部署、控制 cost |
-| Embedded library | FAISS、HNSWLib、Annoy | 嵌進應用、單機規模 |
-| DB extension | pgvector、SQLite + vec | 已有 SQL DB、加 vector 能力 |
+| 類別              | 例子                                   | 適合                        |
+| ----------------- | -------------------------------------- | --------------------------- |
+| Hosted SaaS       | Pinecone、Weaviate Cloud、Qdrant Cloud | 不想 maintain、流量大       |
+| Self-host service | Weaviate、Qdrant、Milvus               | 內部部署、控制 cost         |
+| Embedded library  | FAISS、HNSWLib、Annoy                  | 嵌進應用、單機規模          |
+| DB extension      | pgvector、SQLite + vec                 | 已有 SQL DB、加 vector 能力 |
 
 關鍵 ANN 演算法：
 
@@ -31,12 +31,12 @@ Vector DB 跟傳統 SQL / NoSQL database 並列、但專精「向量相似度搜
 
 scale 對照（基於 [4.5 production](/llm/04-applications/production-resource-planning/) 跟 [RAG/MCP resources](/llm/01-local-llm-services/hands-on/rag-mcp-resources/) 章節）：
 
-| Corpus 規模 | 適合 |
-| ----------- | ---- |
+| Corpus 規模  | 適合                                                                                            |
+| ------------ | ----------------------------------------------------------------------------------------------- |
 | < 10K chunks | Python pickle / in-memory list（[本 blog demo](/llm/01-local-llm-services/hands-on/rag-demo/)） |
-| 10K-100K | FAISS / embedded library |
-| 100K-10M | Self-host vector DB |
-| > 10M | Hosted SaaS 或分散式 cluster |
+| 10K-100K     | FAISS / embedded library                                                                        |
+| 100K-10M     | Self-host vector DB                                                                             |
+| > 10M        | Hosted SaaS 或分散式 cluster                                                                    |
 
 ## 設計責任
 

@@ -146,13 +146,13 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 
 下列延伸方向值得知道存在，但不在本指南內展開：
 
-| 方向                                    | 為什麼不展開                                                          |
-| --------------------------------------- | --------------------------------------------------------------------- |
+| 方向                                                                 | 為什麼不展開                                                                                                 |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | [RAG](/llm/knowledge-cards/rag/)（檢索增強生成）                     | 需要 vector database、文件 chunking、embedding 設計、見 [4.0 RAG 原理](/llm/04-applications/rag-principles/) |
-| Fine-tuning                             | 訓練流程跟跑現成模型是不同工程；資源、資料、評估都複雜                |
-| Multi-modal（語音、影片）               | 工具鏈跟生態完全獨立                                                  |
-| [MCP](/llm/knowledge-cards/mcp/)（Model Context Protocol）伺服器整合 | 是工具串接協定、見 [4.3 應用層協議](/llm/04-applications/application-protocols/) |
-| 部署到雲端 GPU / Linux server           | 本指南範圍只在 Apple Silicon Mac                                      |
+| Fine-tuning                                                          | 訓練流程跟跑現成模型是不同工程；資源、資料、評估都複雜                                                       |
+| Multi-modal（語音、影片）                                            | 工具鏈跟生態完全獨立                                                                                         |
+| [MCP](/llm/knowledge-cards/mcp/)（Model Context Protocol）伺服器整合 | 是工具串接協定、見 [4.3 應用層協議](/llm/04-applications/application-protocols/)                             |
+| 部署到雲端 GPU / Linux server                                        | 本指南範圍只在 Apple Silicon Mac                                                                             |
 
 需要這些方向時請另尋專門資源；硬塞進來會稀釋本指南「Mac 本地寫 code」這條最短路徑。
 

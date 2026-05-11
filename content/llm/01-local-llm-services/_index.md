@@ -12,17 +12,17 @@ weight: 1
 
 ## 章節列表
 
-| 章節                                                           | 主題                                 | 關鍵收穫                                                                  |
-| -------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
-| [1.0](/llm/01-local-llm-services/ollama/)                      | Ollama：主流推論伺服器               | 一行 brew 裝完、`ollama run` 一鍵跑 Gemma 4 MTP、OpenAI 相容 API on 11434 |
-| [1.1](/llm/01-local-llm-services/lm-studio/)                   | LM Studio：GUI 探索模型              | 內建模型瀏覽器、speculative decoding 設定面板、適合探索新模型             |
-| [1.2](/llm/01-local-llm-services/llama-cpp/)                   | llama.cpp：底層引擎                  | 直接面對 GGUF 與量化選項、MTP 仍 beta、需要進階設定                       |
-| [1.3](/llm/01-local-llm-services/vscode-continue-integration/) | VS Code + Continue.dev 整合          | 安裝擴充套件、config.json 設定、Cmd+L / Cmd+I 快捷鍵                      |
-| [1.4](/llm/01-local-llm-services/model-selection-priority/)    | 寫 code 場景的模型選型優先順序       | Gemma 4 31B MTP → Qwen3-Coder 30B → Qwen3 14B → gpt-oss 20B 的取捨理由    |
-| [1.5](/llm/01-local-llm-services/expectation-management/)      | 期望管理：本地 LLM 的擅長領域與分工  | 本地是免費的初階 pair programmer，不是 Claude 替代品；混用是現階段正解    |
-| [1.6](/llm/01-local-llm-services/extension-paths/)             | 延伸方向：Web UI、coding agent、產圖 | 先把寫 code 跑穩，再評估 Open WebUI、aider 等延伸；產圖另闢戰場           |
-| [1.7](/llm/01-local-llm-services/troubleshooting/)             | 排錯方法論：用三層架構做故障定位 | 先定位哪一層壞、log 角色差異、最小可重現、跨層級誤判模式                 |
-| [Hands-on](/llm/01-local-llm-services/hands-on/)               | 實作筆記：Ollama / ComfyUI / Whisper / Piper TTS / RAG / MCP | 實際安裝指令、驗證流程、跟 1.x 原理章節互補的當下快照              |
+| 章節                                                           | 主題                                                         | 關鍵收穫                                                                  |
+| -------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| [1.0](/llm/01-local-llm-services/ollama/)                      | Ollama：主流推論伺服器                                       | 一行 brew 裝完、`ollama run` 一鍵跑 Gemma 4 MTP、OpenAI 相容 API on 11434 |
+| [1.1](/llm/01-local-llm-services/lm-studio/)                   | LM Studio：GUI 探索模型                                      | 內建模型瀏覽器、speculative decoding 設定面板、適合探索新模型             |
+| [1.2](/llm/01-local-llm-services/llama-cpp/)                   | llama.cpp：底層引擎                                          | 直接面對 GGUF 與量化選項、MTP 仍 beta、需要進階設定                       |
+| [1.3](/llm/01-local-llm-services/vscode-continue-integration/) | VS Code + Continue.dev 整合                                  | 安裝擴充套件、config.json 設定、Cmd+L / Cmd+I 快捷鍵                      |
+| [1.4](/llm/01-local-llm-services/model-selection-priority/)    | 寫 code 場景的模型選型優先順序                               | Gemma 4 31B MTP → Qwen3-Coder 30B → Qwen3 14B → gpt-oss 20B 的取捨理由    |
+| [1.5](/llm/01-local-llm-services/expectation-management/)      | 期望管理：本地 LLM 的擅長領域與分工                          | 本地是免費的初階 pair programmer，不是 Claude 替代品；混用是現階段正解    |
+| [1.6](/llm/01-local-llm-services/extension-paths/)             | 延伸方向：Web UI、coding agent、產圖                         | 先把寫 code 跑穩，再評估 Open WebUI、aider 等延伸；產圖另闢戰場           |
+| [1.7](/llm/01-local-llm-services/troubleshooting/)             | 排錯方法論：用三層架構做故障定位                             | 先定位哪一層壞、log 角色差異、最小可重現、跨層級誤判模式                  |
+| [Hands-on](/llm/01-local-llm-services/hands-on/)               | 實作筆記：Ollama / ComfyUI / Whisper / Piper TTS / RAG / MCP | 實際安裝指令、驗證流程、跟 1.x 原理章節互補的當下快照                     |
 
 ## 推論伺服器選型總表
 

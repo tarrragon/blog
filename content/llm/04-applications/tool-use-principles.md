@@ -106,13 +106,13 @@ Structured output 解這個問題：把 LLM 的輸出約束到預定義的結構
 
 可逆性 spectrum、由低風險到高風險：
 
-| 等級 | 副作用                       | 例子                                       | 適合的審查模型        |
-| ---- | ---------------------------- | ------------------------------------------ | --------------------- |
-| 1    | 純讀、無副作用                | search、read file、query DB                | 完全自動              |
-| 2    | 寫 sandbox / staging         | write to scratch file、test environment    | 完全自動 + 事後審     |
-| 3    | 寫本地持久化                 | edit code file、modify config              | step-by-step 審查     |
-| 4    | 寫共享 / production          | git push、deploy、modify DB production     | 強制人類確認          |
-| 5    | 操作真實世界                 | 發 email、買股票、控制硬體                 | 強制人類確認 + audit  |
+| 等級 | 副作用               | 例子                                    | 適合的審查模型       |
+| ---- | -------------------- | --------------------------------------- | -------------------- |
+| 1    | 純讀、無副作用       | search、read file、query DB             | 完全自動             |
+| 2    | 寫 sandbox / staging | write to scratch file、test environment | 完全自動 + 事後審    |
+| 3    | 寫本地持久化         | edit code file、modify config           | step-by-step 審查    |
+| 4    | 寫共享 / production  | git push、deploy、modify DB production  | 強制人類確認         |
+| 5    | 操作真實世界         | 發 email、買股票、控制硬體              | 強制人類確認 + audit |
 
 每升一級、人類審查的需求越高、agent 的自主度越低。設計工具時、把同樣功能切到不同等級可以大幅降風險：
 

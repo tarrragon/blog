@@ -36,18 +36,18 @@ weight: 7
 
 不同症狀對應到不同最有可能的故障層、建立對應反射能省下大量試錯時間。下表是寫 code 場景常見症狀的對應：
 
-| 症狀                              | 最可能層級     | 第一步驗證                          |
-| --------------------------------- | -------------- | ----------------------------------- |
-| Continue.dev 完全沒回應           | 介面層 / 伺服器層 | curl 伺服器、看伺服器是否正常       |
-| Continue.dev 報「connection refused」 | 伺服器層       | 伺服器沒在跑 / port 不對            |
-| Continue.dev 顯示請求送出但無回應 | 介面層 / 伺服器層 | curl 同 prompt、比較行為            |
-| 回答內容亂碼 / 一直重複           | 模型層         | 換量化等級或換模型試                |
-| 回答邏輯離譜 / 答非所問           | 模型層         | model 能力不足、考慮換大一點 model  |
-| TTFT 異常變長                     | 模型層 / 推論機制 | prompt 變長了？KV cache 失效？      |
-| 整台 Mac 變慢、Ollama 沒崩        | 伺服器層 / 系統 | 記憶體 swap、看 Activity Monitor    |
-| Ollama 自己 crash                 | 伺服器層       | 看 server log、通常 OOM 或 bug      |
-| 跨 session 設定遺失               | 介面層         | IDE 設定沒存或被 reset              |
-| Tab autocomplete 完全不觸發       | 介面層         | autocomplete model 沒配對 / 沒 pull |
+| 症狀                                  | 最可能層級        | 第一步驗證                          |
+| ------------------------------------- | ----------------- | ----------------------------------- |
+| Continue.dev 完全沒回應               | 介面層 / 伺服器層 | curl 伺服器、看伺服器是否正常       |
+| Continue.dev 報「connection refused」 | 伺服器層          | 伺服器沒在跑 / port 不對            |
+| Continue.dev 顯示請求送出但無回應     | 介面層 / 伺服器層 | curl 同 prompt、比較行為            |
+| 回答內容亂碼 / 一直重複               | 模型層            | 換量化等級或換模型試                |
+| 回答邏輯離譜 / 答非所問               | 模型層            | model 能力不足、考慮換大一點 model  |
+| TTFT 異常變長                         | 模型層 / 推論機制 | prompt 變長了？KV cache 失效？      |
+| 整台 Mac 變慢、Ollama 沒崩            | 伺服器層 / 系統   | 記憶體 swap、看 Activity Monitor    |
+| Ollama 自己 crash                     | 伺服器層          | 看 server log、通常 OOM 或 bug      |
+| 跨 session 設定遺失                   | 介面層            | IDE 設定沒存或被 reset              |
+| Tab autocomplete 完全不觸發           | 介面層            | autocomplete model 沒配對 / 沒 pull |
 
 這張表的核心訊號：
 

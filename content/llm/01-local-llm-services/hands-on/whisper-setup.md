@@ -19,11 +19,11 @@ weight: 2
 
 ## 前置設定
 
-| 項目 | 檢查指令 | 預期 |
-| ---- | -------- | ---- |
-| Homebrew | `brew --version` | 4.x |
-| ffmpeg | `which ffmpeg` | `/opt/homebrew/bin/ffmpeg`（沒有：`brew install ffmpeg`） |
-| 磁碟空間 | `df -h ~` | 至少 200 MB（whisper-cli + 1 個 small model） |
+| 項目     | 檢查指令         | 預期                                                      |
+| -------- | ---------------- | --------------------------------------------------------- |
+| Homebrew | `brew --version` | 4.x                                                       |
+| ffmpeg   | `which ffmpeg`   | `/opt/homebrew/bin/ffmpeg`（沒有：`brew install ffmpeg`） |
+| 磁碟空間 | `df -h ~`        | 至少 200 MB（whisper-cli + 1 個 small model）             |
 
 `ffmpeg` 是必要的——whisper-cli 接受多種音訊格式、但實際內部會先轉成 16kHz mono WAV、ffmpeg 是這個轉換的依賴。
 
@@ -70,14 +70,14 @@ curl -L -o ggml-tiny.en.bin \
 
 可用 model 比較（大小越大、品質越好、速度越慢）：
 
-| Model | 大小 | 適合場景 |
-| ----- | ---- | -------- |
-| `ggml-tiny.en.bin` | 78 MB | 英文、最小驗證、品質可接受 |
-| `ggml-base.en.bin` | 148 MB | 英文、常用入門 |
-| `ggml-small.en.bin` | 488 MB | 英文、daily use 甜蜜點 |
-| `ggml-medium.en.bin` | 1.5 GB | 英文、品質敏感 |
-| `ggml-small.bin` | 488 MB | 多語言（含中文） |
-| `ggml-large-v3.bin` | 3.1 GB | 多語言、最佳品質、跑得最慢 |
+| Model                | 大小   | 適合場景                   |
+| -------------------- | ------ | -------------------------- |
+| `ggml-tiny.en.bin`   | 78 MB  | 英文、最小驗證、品質可接受 |
+| `ggml-base.en.bin`   | 148 MB | 英文、常用入門             |
+| `ggml-small.en.bin`  | 488 MB | 英文、daily use 甜蜜點     |
+| `ggml-medium.en.bin` | 1.5 GB | 英文、品質敏感             |
+| `ggml-small.bin`     | 488 MB | 多語言（含中文）           |
+| `ggml-large-v3.bin`  | 3.1 GB | 多語言、最佳品質、跑得最慢 |
 
 選 `tiny.en` 是因為**只驗證安裝路徑**、實際日常用要 `small.en` 起跳。
 
@@ -132,15 +132,15 @@ whisper-cli -m ~/.whisper-models/ggml-tiny.en.bin -f /tmp/sample.wav -nt
 
 ## 常用選項
 
-| 選項 | 作用 |
-| ---- | ---- |
-| `-l zh` | 指定語言（中文）；多語言 model 用、單語 model 用不到 |
-| `-otxt` | 同時輸出 .txt 檔（純文字、無時間軸） |
-| `-osrt` | 同時輸出 .srt 字幕檔 |
-| `-ovtt` | 同時輸出 .vtt 字幕檔 |
-| `-of OUT` | 設定輸出檔名 prefix |
-| `-t N` | 用 N 個 thread（預設用 CPU 核心數） |
-| `-pp` | 列出每個 token 的機率（debug 用） |
+| 選項      | 作用                                                 |
+| --------- | ---------------------------------------------------- |
+| `-l zh`   | 指定語言（中文）；多語言 model 用、單語 model 用不到 |
+| `-otxt`   | 同時輸出 .txt 檔（純文字、無時間軸）                 |
+| `-osrt`   | 同時輸出 .srt 字幕檔                                 |
+| `-ovtt`   | 同時輸出 .vtt 字幕檔                                 |
+| `-of OUT` | 設定輸出檔名 prefix                                  |
+| `-t N`    | 用 N 個 thread（預設用 CPU 核心數）                  |
+| `-pp`     | 列出每個 token 的機率（debug 用）                    |
 
 實務常用組合：
 

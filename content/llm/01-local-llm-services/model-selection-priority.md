@@ -200,7 +200,7 @@ Embedding 模型的選擇對 codebase 搜尋品質有影響，但邊際效益遠
 | 16GB Mac                   | `gemma4:e4b` 或 `qwen3:7b`，主力仍雲端    |
 | 48GB+ Mac、要榨乾硬體      | `qwen3-coder:32b-bf16` 或同時跑兩個 model |
 | 想當 codebase 搜尋用       | + `nomic-embed-text`（embedding model）   |
-| 想當 tab autocomplete 用   | + `gemma4:e4b` 或 `qwen3:7b`（速度優先）   |
+| 想當 tab autocomplete 用   | + `gemma4:e4b` 或 `qwen3:7b`（速度優先）  |
 
 ## 小結
 

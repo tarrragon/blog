@@ -15,12 +15,12 @@ weight: 1
 
 ## 前置設定
 
-| 項目 | 檢查指令 | 預期 |
-| ---- | -------- | ---- |
-| Git | `which git` | `/usr/bin/git` 或 brew 版 |
-| Python 3.10+ | `python3 --version` | 3.10 ~ 3.14 都可、本 demo 用 3.14 |
-| 磁碟空間 | `df -h ~` | 至少 15 GB（runtime 3 GB + SDXL 6.5 GB + cache） |
-| 統一記憶體 | `system_profiler SPHardwareDataType \| grep Memory` | 至少 16 GB、推薦 32 GB+ |
+| 項目         | 檢查指令                                            | 預期                                             |
+| ------------ | --------------------------------------------------- | ------------------------------------------------ |
+| Git          | `which git`                                         | `/usr/bin/git` 或 brew 版                        |
+| Python 3.10+ | `python3 --version`                                 | 3.10 ~ 3.14 都可、本 demo 用 3.14                |
+| 磁碟空間     | `df -h ~`                                           | 至少 15 GB（runtime 3 GB + SDXL 6.5 GB + cache） |
+| 統一記憶體   | `system_profiler SPHardwareDataType \| grep Memory` | 至少 16 GB、推薦 32 GB+                          |
 
 ComfyUI 在 Apple Silicon 跑 Diffusion 用 MPS（Metal Performance Shaders）backend、不需要 NVIDIA CUDA。但跑 SDXL 至少要 12 GB 統一記憶體留給 model + activation、16 GB Mac 跟其他 app 一起會吃緊。
 
@@ -111,13 +111,13 @@ ls -lh sd_xl_base_1.0.safetensors
 
 可選的進階模型：
 
-| Model | 大小 | 用途 |
-| ----- | ---- | ---- |
-| SDXL base 1.0 | 6.5 GB | 基礎、本 demo 用 |
-| SDXL refiner 1.0 | 6.1 GB | 跟 base 配對、提升細節 |
-| SD 1.5 | 4.0 GB | 較小、生態最成熟（很多 LoRA） |
-| Flux.1 schnell | 12 GB | 2024+ 最強開源 SD 級 |
-| Flux.1 dev | 24 GB | Flux 完整版、品質最佳 |
+| Model            | 大小   | 用途                          |
+| ---------------- | ------ | ----------------------------- |
+| SDXL base 1.0    | 6.5 GB | 基礎、本 demo 用              |
+| SDXL refiner 1.0 | 6.1 GB | 跟 base 配對、提升細節        |
+| SD 1.5           | 4.0 GB | 較小、生態最成熟（很多 LoRA） |
+| Flux.1 schnell   | 12 GB  | 2024+ 最強開源 SD 級          |
+| Flux.1 dev       | 24 GB  | Flux 完整版、品質最佳         |
 
 SDXL 6.5 GB 是「能驗證 + 不過大」的甜蜜點。再小可以選 SD 1.5（4 GB）、跑 Flux 要 24 GB 磁碟 + 16 GB+ 統一記憶體。
 
@@ -174,11 +174,11 @@ ComfyUI 預設 workflow 是 text-to-image：
 
 實測時間（M4 Pro 32GB、SDXL base、1024×1024、MPS backend）：
 
-| Steps | 第一張（含 model 載入） | 後續同 model | 備註 |
-| ----- | ----------------------- | ------------ | ---- |
-| 15 | 約 100-110 秒 | 約 30-40 秒 | 本驗證實測 106s（含載入） |
-| 20 | 約 130-150 秒 | 約 40-60 秒 | ComfyUI 預設值 |
-| 30 | 約 200 秒 | 約 80 秒 | 品質更高、邊際效益小 |
+| Steps | 第一張（含 model 載入） | 後續同 model | 備註                      |
+| ----- | ----------------------- | ------------ | ------------------------- |
+| 15    | 約 100-110 秒           | 約 30-40 秒  | 本驗證實測 106s（含載入） |
+| 20    | 約 130-150 秒           | 約 40-60 秒  | ComfyUI 預設值            |
+| 30    | 約 200 秒               | 約 80 秒     | 品質更高、邊際效益小      |
 
 16GB Mac 跑 SDXL：每張 60-180 秒、可能會降頻。
 
@@ -296,13 +296,13 @@ API 形狀跟 Diffusion 任務匹配、跟 LLM 的 `/chat/completions` 完全不
 
 ComfyUI 的核心功能來自 custom nodes、社群維護。最常用：
 
-| Custom Node | 功能 |
-| ----------- | ---- |
-| ComfyUI-Manager | 管理其他 custom node、安裝 / 更新 |
-| ComfyUI-Impact-Pack | 物件偵測、masking、inpainting |
-| ComfyUI-AnimateDiff | 影片動畫生成 |
-| ComfyUI-ControlNet-Aux | ControlNet preprocessor |
-| ComfyUI-IPAdapter-plus | 圖像 reference embedding |
+| Custom Node            | 功能                              |
+| ---------------------- | --------------------------------- |
+| ComfyUI-Manager        | 管理其他 custom node、安裝 / 更新 |
+| ComfyUI-Impact-Pack    | 物件偵測、masking、inpainting     |
+| ComfyUI-AnimateDiff    | 影片動畫生成                      |
+| ComfyUI-ControlNet-Aux | ControlNet preprocessor           |
+| ComfyUI-IPAdapter-plus | 圖像 reference embedding          |
 
 安裝方式（透過 ComfyUI-Manager）：
 
@@ -370,12 +370,12 @@ python main.py --port 8189  # 改 port
 
 ComfyUI 用 port 8188、跟 Ollama (11434) / LM Studio (1234) 完全不撞、可同時跑。實務配置：
 
-| 服務 | Port | 用途 |
-| ---- | ---- | ---- |
-| Ollama | 11434 | 寫 code、對話 |
-| ComfyUI | 8188 | 產圖 |
-| LM Studio | 1234 | 探索新 LLM |
-| Open WebUI | 3000 | ChatGPT 風格瀏覽器介面 |
+| 服務       | Port  | 用途                   |
+| ---------- | ----- | ---------------------- |
+| Ollama     | 11434 | 寫 code、對話          |
+| ComfyUI    | 8188  | 產圖                   |
+| LM Studio  | 1234  | 探索新 LLM             |
+| Open WebUI | 3000  | ChatGPT 風格瀏覽器介面 |
 
 各服務獨立、不干擾、可以一台 Mac 跑全部（看記憶體預算）。
 

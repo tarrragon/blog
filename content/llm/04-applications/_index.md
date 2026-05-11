@@ -14,15 +14,15 @@ weight: 4
 
 ## 章節列表
 
-| 章節                                                            | 主題                              | 關鍵收穫                                                          |
-| --------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------- |
-| [4.0](/llm/04-applications/rag-principles/)                     | RAG 原理：retrieval + augmentation 模式 | 為什麼要外掛知識、語意相似 vs 字面相似、chunking 取捨、失敗的根本原因   |
-| [4.1](/llm/04-applications/tool-use-principles/)                | Tool use 原理：LLM 跟外部世界互動 | structured output 是橋、function calling 取捨、為什麼小模型 tool use 崩 |
-| [4.2](/llm/04-applications/agent-architecture/)                 | Agent 架構原理                    | Agent loop 結構、失敗模式、什麼任務適合 vs 不適合、人類審查模型     |
-| [4.3](/llm/04-applications/application-protocols/)              | 應用層協議：function calling / structured output / MCP | 三者層級差異、為什麼出現 MCP、組合工作流 |
-| [4.4](/llm/04-applications/workflow-patterns/)                  | Workflow 編排模式                 | Pipeline / router / parallel / reflection 四種基本模式、退化條件   |
-| [4.5](/llm/04-applications/production-resource-planning/)       | Production 部署的資源評估原理     | 6 個 dimension：concurrency / latency / cost / storage / observability / reliability |
-| [4.6](/llm/04-applications/artifact-management/)                | 衍生產物管理原理：什麼進 git、什麼不該 | Source / derived / external 三分類、`.gitignore` 設計模式、prompt + eval 版本管理、production deployment 對接 |
+| 章節                                                      | 主題                                                   | 關鍵收穫                                                                                                      |
+| --------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [4.0](/llm/04-applications/rag-principles/)               | RAG 原理：retrieval + augmentation 模式                | 為什麼要外掛知識、語意相似 vs 字面相似、chunking 取捨、失敗的根本原因                                         |
+| [4.1](/llm/04-applications/tool-use-principles/)          | Tool use 原理：LLM 跟外部世界互動                      | structured output 是橋、function calling 取捨、為什麼小模型 tool use 崩                                       |
+| [4.2](/llm/04-applications/agent-architecture/)           | Agent 架構原理                                         | Agent loop 結構、失敗模式、什麼任務適合 vs 不適合、人類審查模型                                               |
+| [4.3](/llm/04-applications/application-protocols/)        | 應用層協議：function calling / structured output / MCP | 三者層級差異、為什麼出現 MCP、組合工作流                                                                      |
+| [4.4](/llm/04-applications/workflow-patterns/)            | Workflow 編排模式                                      | Pipeline / router / parallel / reflection 四種基本模式、退化條件                                              |
+| [4.5](/llm/04-applications/production-resource-planning/) | Production 部署的資源評估原理                          | 6 個 dimension：concurrency / latency / cost / storage / observability / reliability                          |
+| [4.6](/llm/04-applications/artifact-management/)          | 衍生產物管理原理：什麼進 git、什麼不該                 | Source / derived / external 三分類、`.gitignore` 設計模式、prompt + eval 版本管理、production deployment 對接 |
 
 ## 為什麼這個順序
 
@@ -48,12 +48,12 @@ weight: 4
 
 ## 適合的讀者
 
-| 你的背景                            | 適合程度                                                                 |
-| ----------------------------------- | ------------------------------------------------------------------------ |
-| 寫過 Ollama + Continue.dev、想懂「然後呢」 | 直接適合、從 4.0 依序讀                                                  |
-| 已經試過 LangChain / aider / Cline、想看原理 | 直接適合、本模組補足「為什麼這樣設計」的視角                             |
-| 想做 LLM 應用開發                   | 重點讀 4.0、4.1、4.3、4.4                                                |
-| 只想用本地 LLM 寫 code、不做應用    | 跳過本模組無妨、模組零 + 模組一已足夠                                    |
+| 你的背景                                     | 適合程度                                     |
+| -------------------------------------------- | -------------------------------------------- |
+| 寫過 Ollama + Continue.dev、想懂「然後呢」   | 直接適合、從 4.0 依序讀                      |
+| 已經試過 LangChain / aider / Cline、想看原理 | 直接適合、本模組補足「為什麼這樣設計」的視角 |
+| 想做 LLM 應用開發                            | 重點讀 4.0、4.1、4.3、4.4                    |
+| 只想用本地 LLM 寫 code、不做應用             | 跳過本模組無妨、模組零 + 模組一已足夠        |
 
 ## 不在本模組內的主題
 

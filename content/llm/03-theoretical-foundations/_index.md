@@ -14,17 +14,17 @@ weight: 3
 
 ## 章節列表
 
-| 章節                                                             | 主題                             | 關鍵收穫                                                       |
-| ---------------------------------------------------------------- | -------------------------------- | -------------------------------------------------------------- |
-| [3.0](/llm/03-theoretical-foundations/neural-network-basics/)    | 神經網路基礎                     | layer、weights、activation function、forward / backward pass   |
-| [3.1](/llm/03-theoretical-foundations/embedding-spaces/)         | Embedding 空間                   | 為什麼相似 token 在向量空間靠近、embedding 是怎麼學出來的      |
-| [3.2](/llm/03-theoretical-foundations/attention-mechanism/)      | Attention 機制                   | Query / Key / Value、scaled dot-product、multi-head attention  |
-| [3.3](/llm/03-theoretical-foundations/transformer-architecture/) | Transformer 架構細節             | Decoder-only、positional encoding、layer norm、residual stream |
-| [3.4](/llm/03-theoretical-foundations/training-pipeline/)        | 訓練流程：pre-train → SFT → RLHF | 三階段訓練、各階段目標、為什麼這順序                           |
-| [3.5](/llm/03-theoretical-foundations/sampling-and-decoding/)    | Sampling 與 decoding 策略        | Greedy、beam、top-k、top-p、temperature、min-p                 |
-| [3.6](/llm/03-theoretical-foundations/tokenization-algorithms/)  | Tokenization：BPE、SentencePiece | 為什麼不同 model 切出來的 token 數不同、tokenizer 的選擇影響   |
-| [3.7](/llm/03-theoretical-foundations/cross-language-tokenization/) | 跨語言 tokenizer 與訓練分佈原理 | 雙因素：tokenizer + 訓練資料分佈、語言選擇取捨                 |
-| [3.8](/llm/03-theoretical-foundations/going-deeper-theory/)      | 想學更深：推薦公開課程           | Karpathy、Stanford CS224N / CS25 / CS336、DeepLearning.AI      |
+| 章節                                                                | 主題                             | 關鍵收穫                                                       |
+| ------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------------------- |
+| [3.0](/llm/03-theoretical-foundations/neural-network-basics/)       | 神經網路基礎                     | layer、weights、activation function、forward / backward pass   |
+| [3.1](/llm/03-theoretical-foundations/embedding-spaces/)            | Embedding 空間                   | 為什麼相似 token 在向量空間靠近、embedding 是怎麼學出來的      |
+| [3.2](/llm/03-theoretical-foundations/attention-mechanism/)         | Attention 機制                   | Query / Key / Value、scaled dot-product、multi-head attention  |
+| [3.3](/llm/03-theoretical-foundations/transformer-architecture/)    | Transformer 架構細節             | Decoder-only、positional encoding、layer norm、residual stream |
+| [3.4](/llm/03-theoretical-foundations/training-pipeline/)           | 訓練流程：pre-train → SFT → RLHF | 三階段訓練、各階段目標、為什麼這順序                           |
+| [3.5](/llm/03-theoretical-foundations/sampling-and-decoding/)       | Sampling 與 decoding 策略        | Greedy、beam、top-k、top-p、temperature、min-p                 |
+| [3.6](/llm/03-theoretical-foundations/tokenization-algorithms/)     | Tokenization：BPE、SentencePiece | 為什麼不同 model 切出來的 token 數不同、tokenizer 的選擇影響   |
+| [3.7](/llm/03-theoretical-foundations/cross-language-tokenization/) | 跨語言 tokenizer 與訓練分佈原理  | 雙因素：tokenizer + 訓練資料分佈、語言選擇取捨                 |
+| [3.8](/llm/03-theoretical-foundations/going-deeper-theory/)         | 想學更深：推薦公開課程           | Karpathy、Stanford CS224N / CS25 / CS336、DeepLearning.AI      |
 
 ## 跟其他模組的分工
 

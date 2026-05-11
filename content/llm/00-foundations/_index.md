@@ -20,8 +20,8 @@ weight: 0
 | [0.3](/llm/00-foundations/openai-compatible-api/)    | OpenAI 相容 API              | 為什麼幾乎所有工具不用改就能切到本地：背後是同一套 API 形狀 |
 | [0.4](/llm/00-foundations/mlx-mtp-omlx/)             | MLX / MTP / oMLX 的區別      | 三者疊加而非互斥：framework、加速技巧、特化 server          |
 | [0.5](/llm/00-foundations/hardware-memory-budget/)   | Apple Silicon 記憶體預算     | 記憶體決定能跑什麼，Q4 量化下的可運作模型對照與系統保留     |
-| [0.6](/llm/00-foundations/info-judgment-frames/)    | 判讀本地 LLM 資訊的五個框架  | 版本時間、量化變數、三層架構、載入 vs 好用、隱私資料流      |
-| [0.7](/llm/00-foundations/privacy-data-flow/)       | 隱私 / 資安的資料流原理      | 從「位置」到「資料流」思考、信任邊界、零信任原則            |
+| [0.6](/llm/00-foundations/info-judgment-frames/)     | 判讀本地 LLM 資訊的五個框架  | 版本時間、量化變數、三層架構、載入 vs 好用、隱私資料流      |
+| [0.7](/llm/00-foundations/privacy-data-flow/)        | 隱私 / 資安的資料流原理      | 從「位置」到「資料流」思考、信任邊界、零信任原則            |
 
 ## 為什麼先讀模組零
 
