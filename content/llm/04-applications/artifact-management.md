@@ -6,9 +6,9 @@ tags: ["llm", "applications", "git", "artifacts", "deployment"]
 weight: 6
 ---
 
-LLM 應用的 codebase 不只 source code、還含 embedding index、cache、model weights、prompt config、lockfile、log 等各種「衍生」或「外部」產物。每個產物該不該進 git、有沒有共通邏輯？
+LLM 應用的 codebase 不只 source code、還含 [embedding](/llm/knowledge-cards/embedding-model/) index、cache、model weights、prompt config、lockfile、log 等各種「衍生」或「外部」產物。每個產物該不該進 git、有沒有共通邏輯？
 
-本章寫的是「**source / derived / external 三類產物的判讀框架**」、跟「production deployment 怎麼處理 share + reproducibility 取捨」。對應到 hands-on 系列實際遇到的問題——為什麼 `index.pkl` 進 `.gitignore`、Hugging Face model weights 為什麼不能塞進 repo、prompt template 該怎麼版本管理。
+本章寫的是「**source / derived / external 三類產物的判讀框架**」、跟「production deployment 怎麼處理 share + reproducibility 取捨」。對應到 hands-on 系列實際遇到的問題——為什麼 [RAG](/llm/knowledge-cards/rag/) demo 的 `index.pkl` 進 `.gitignore`、Hugging Face model weights 為什麼不能塞進 repo、prompt template 該怎麼版本管理。
 
 跟 [4.5 Production resource planning](/llm/04-applications/production-resource-planning/) 對應「production 怎麼跑」、本章對應「production 怎麼版本控制 + 部署」。
 

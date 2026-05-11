@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "quickstart", "setup"]
 weight: 0
 ---
 
-本篇是 hands-on 系列的**導讀**——把分散在 `ollama-setup` / `rag-demo` / `mcp-demo` / `permission-boundary` 各章節的 setup 步驟整合成一條最短路徑、讓 clone repo 的人能在 15 分鐘內跑通所有 demo。
+本篇是 hands-on 系列的**導讀**——把分散在 `ollama-setup` / `rag-demo` / `mcp-demo` / `permission-boundary` 各章節的 setup 步驟整合成一條最短路徑、讓 clone repo 的人能在 15 分鐘內跑通所有 demo（[RAG](/llm/knowledge-cards/rag/)、[MCP](/llm/knowledge-cards/mcp/)、權限邊界三個 demo）。
 
 每篇 hands-on 文章 focus 在「為什麼這樣設計」、本篇 focus 在「按順序跑通」。讀完想懂原理再進對應章節讀。
 
@@ -69,7 +69,7 @@ ollama list
 # nomic-embed-text:latest    274 MB    ...
 ```
 
-選 chat model 大小的取捨見 [1.4 模型選型優先順序](/llm/01-local-llm-services/model-selection-priority/)。本 quickstart 用 1B 主要驗證流程跑通、實際應用要 4B / 8B 起跳才有 follow instruction 能力（見 [instruction-following-test](/llm/01-local-llm-services/hands-on/instruction-following-test/)）。
+選 chat model 大小的取捨見 [1.4 模型選型優先順序](/llm/01-local-llm-services/model-selection-priority/)。本 quickstart 用 1B 主要驗證流程跑通、實際應用要 4B / 8B 起跳才有 follow instruction 能力（見 [instruction-following-test](/llm/01-local-llm-services/hands-on/instruction-following-test/)）。本系列預設用 [instruction-tuned model](/llm/knowledge-cards/instruction-tuned/) 變體（tag 含 `:Xb` 不含 `-base`）、適合對話 / 寫 code。
 
 ## Step 3：建 RAG index
 

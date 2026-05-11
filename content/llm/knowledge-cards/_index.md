@@ -73,6 +73,14 @@ weight: -1
 | [LLM Agent](/llm/knowledge-cards/agent/)                   | 把控制流交給 LLM 的應用模式                    |
 | [Function Calling](/llm/knowledge-cards/function-calling/) | 模型訓練建立的呼叫工具能力                     |
 | [MCP](/llm/knowledge-cards/mcp/)                           | LLM application ↔ tool server 的標準化協議 |
+| [Chunking](/llm/knowledge-cards/chunking/)                 | 把長文件切成 retrieval 片段的 resolution vs context loss 取捨 |
+| [Vector Database](/llm/knowledge-cards/vector-database/)   | 高維向量儲存 + ANN 檢索、RAG production 的關鍵元件 |
+
+### Production 推論
+
+| 卡片                                       | 核心問題                            |
+| ------------------------------------------ | ----------------------------------- |
+| [Batching](/llm/knowledge-cards/batching/) | 多 request 一起跑、攤平 memory bandwidth 成本、throughput vs latency 取捨 |
 
 ## 卡片寫法
 

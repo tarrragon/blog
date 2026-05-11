@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "rag", "mcp", "resource"]
 weight: 9
 ---
 
-[Resource management 章](/llm/01-local-llm-services/hands-on/resource-management/) 講的是 Ollama / ComfyUI 等推論伺服器的 lifecycle。但**跑 RAG / MCP 應用**比單純 chat 多吃幾倍資源——embedding model、chat model、index 檔、subprocess、tool 邏輯——而且不同階段（ingest vs query）的瓶頸不一樣。
+[Resource management 章](/llm/01-local-llm-services/hands-on/resource-management/) 講的是 Ollama / ComfyUI 等[推論伺服器](/llm/knowledge-cards/inference-server/)的 lifecycle。但**跑 [RAG](/llm/knowledge-cards/rag/) / [MCP](/llm/knowledge-cards/mcp/) 應用**比單純 chat 多吃幾倍資源——[embedding model](/llm/knowledge-cards/embedding-model/)、chat model、index 檔、subprocess、tool 邏輯——而且不同階段（ingest vs query）的瓶頸不一樣。
 
 本篇紀錄 [RAG demo](/llm/01-local-llm-services/hands-on/rag-demo/) 跟 [MCP demo](/llm/01-local-llm-services/hands-on/mcp-demo/) 跑起來的實測資源 footprint、提供本地多模型並存的 baseline、給寫 production 應用前的 sanity check。
 
@@ -66,9 +66,9 @@ Wrote 463 records to scripts/rag-demo/index.pkl (22.3s)
 
 10K docs 以上就應該考慮：
 
-- Batching embedding（單次 request 送 50 個 chunks）
+- [Batching](/llm/knowledge-cards/batching/) embedding（單次 request 送 50 個 chunks）
 - 並行 worker（Python multiprocessing、4-8 worker）
-- 換 vector DB（不要 pickle 全部塞 RAM）
+- 換 [vector database](/llm/knowledge-cards/vector-database/)（不要 pickle 全部塞 RAM）
 
 ## RAG Query 階段：retrieval 加 generation
 
