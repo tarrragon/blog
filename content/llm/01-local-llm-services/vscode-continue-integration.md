@@ -61,7 +61,7 @@ code ~/.continue/config.json
   "tabAutocompleteModel": {
     "title": "Local autocomplete",
     "provider": "ollama",
-    "model": "gemma3:4b",
+    "model": "gemma4:e4b",
     "apiBase": "http://localhost:11434"
   },
   "embeddingsProvider": {

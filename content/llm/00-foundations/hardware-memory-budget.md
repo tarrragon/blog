@@ -44,7 +44,7 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 C
 | ---------- | --------- | ------------------------------------------------ | ------ | -------------------------------- |
 | 8GB        | 0GB       | 跑不動實用的 LLM                                 | 不建議 | 連 4B 模型都很勉強               |
 | 16GB       | 6 ~ 8GB   | Gemma 4 E4B、Qwen3 7B、Llama 3.2 8B              | 勉強   | 同時開 VS Code 就會吃緊，常 swap |
-| 24GB       | 12 ~ 14GB | Gemma 4 12B、Qwen3-Coder 14B、Llama 3.3 13B      | 堪用   | 多數工程師的起點                 |
+| 24GB       | 12 ~ 14GB | Gemma 4 26B A4B（MoE）、Qwen3-Coder 14B、Llama 3.3 13B | 堪用   | 多數工程師的起點                 |
 | 32GB       | 18 ~ 22GB | **Gemma 4 31B (MTP) 甜蜜點**、Qwen3-Coder 30B Q4 | 順暢   | 寫 code 場景最佳價格效能比       |
 | 48GB       | 32 ~ 36GB | Qwen3-Coder 32B Q5、Llama 3.3 70B Q3             | 順暢   | 開始接近 GPT-4 mini 等級         |
 | 64GB       | 48 ~ 52GB | Qwen3-Coder 32B bf16、Llama 3.3 70B Q4           | 順暢   | 大模型用較高量化，品質更好       |
@@ -71,7 +71,7 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 C
 - Mac mini M4 Pro，32GB 配置（最便宜的進入點）。
 - Mac Studio M4 Max，32GB 起跳。
 
-如果你正準備買新 Mac 主要為了跑本地 LLM 寫 code，32GB 是最值的起點。16GB 會綁手綁腳、48GB 以上對寫 code 來說是奢侈。
+如果你正準備買新 Mac 主要為了跑本地 LLM 寫 code、32GB 在 [預算敏感、單機、Gemma 4 31B 為主] 通常是最划算的起點。16GB 在 [>14B 模型 / 多工] 會被擠到 swap、48GB+ 在純寫 code 場景超過甜蜜點、但對 [長 context coding agent / 70B 模型] 仍有實際價值。
 
 ## 16GB Mac 還有救嗎
 
@@ -137,4 +137,4 @@ Apple Silicon Mac 跑本地 LLM 會持續滿載 CPU / GPU。實際體感：
 
 Apple Silicon Mac 跑本地 LLM 的關鍵是記憶體預算，不是 CPU / GPU。32GB 是寫 code 場景的甜蜜點，能跑 Gemma 4 31B MTP；16GB 是現實下界，多數情況該升級或回到雲端；48GB+ 開始接近 GPT-4 mini 能力等級。KV cache、系統保留、fanless 降頻都是常被忽略的成本，要納入預算。
 
-下一章：[0.6 網路上的常見誤解](/llm/00-foundations/common-misconceptions/)，把寫作本指南時遇到的網路文章錯誤說法一次點名清理。
+下一章：[0.6 判讀本地 LLM 資訊的五個框架](/llm/00-foundations/info-judgment-frames/)、把心智模型轉成判讀資訊的反射。

@@ -60,7 +60,7 @@ weight: 0
 
 ## 速度維度：首字延遲與生字速度
 
-本地 LLM 的速度有兩個獨立指標：**首字延遲**（Time To First Token, TTFT，從送出 prompt 到第一個 token 出現）跟**生字速度**（tokens per second, tok/s，後續每秒能吐幾個字）。雲端跟本地在這兩個指標上的差距很不對稱。
+本地 LLM 的速度有兩個獨立指標：**[首字延遲](/llm/knowledge-cards/ttft/)**（Time To First Token, TTFT，從送出 prompt 到第一個 token 出現）跟**[生字速度](/llm/knowledge-cards/tokens-per-second/)**（tokens per second, tok/s，後續每秒能吐幾個字）。雲端跟本地在這兩個指標上的差距很不對稱。
 
 接近真實的數字（2026 年 5 月、僅供量級參考、不是 benchmark）：
 
@@ -82,7 +82,7 @@ weight: 0
 
 ## 能力維度：本地模型能做到哪裡
 
-能力是本地 LLM 最被誇大、也最容易讓人失望的維度。實話實說：2026 年 5 月在 Mac 上能跑的最強本地模型（如 Gemma 4 31B、Qwen3-Coder 30B、gpt-oss 20B），能力大約在 GPT-4 mini / Claude Haiku 4.5 這個層級。比雲端旗艦模型（Claude Sonnet 4.6、Opus 4.7、GPT-5）差一個明顯的能力斷崖。
+能力是本地 LLM 最被誇大、也最容易讓人失望的維度。實話實說：2026 年 5 月在 Mac 上能跑的最強本地模型（如 Gemma 4 31B、Qwen3-Coder 30B、gpt-oss 20B），能力大約在 GPT-4 mini / Claude Haiku 4.5 這個層級。比雲端旗艦模型（Claude Sonnet 4.6、Opus 4.7、GPT-5）差一個明顯的品質差距。
 
 接近真實的判讀：
 

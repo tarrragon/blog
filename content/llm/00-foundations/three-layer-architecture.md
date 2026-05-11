@@ -69,7 +69,7 @@ weight: 2
 
 接近真實的例子：
 
-- **Gemma 4 31B**：Google 釋出的開源模型，32 billion 參數。權重檔可以是 `gemma-3-31b-it-Q4_K_M.gguf`（GGUF 格式、Q4 量化）或 `mlx-community/gemma-3-31b-it-4bit`（MLX 格式）。
+- **Gemma 4 31B**：Google 釋出的開源模型，31 billion 參數。權重檔可以是 `gemma-4-31b-it-Q4_K_M.gguf`（GGUF 格式、Q4 量化）或 `mlx-community/gemma-4-31b-it-4bit`（MLX 格式）。
 - **Qwen3-Coder 30B**：Alibaba 釋出的 coding 專用模型，SWE-bench 表現接近 GPT-4。
 - **Llama 3.x 系列**：Meta 釋出的開源模型，是早期本地 LLM 生態的主力。
 - **gpt-oss 20B**：OpenAI 釋出的開源版本，2025 年發布。

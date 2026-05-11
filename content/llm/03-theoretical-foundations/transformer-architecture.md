@@ -229,7 +229,7 @@ logits = final_hidden_states @ W_output
 
 `W_output` shape: `(hidden_dim, vocab_size)`。
 
-Gemma 4 31B 的 output projection 參數約 1.3B（hidden 5120 × vocab 262,144）、跟 input embedding 同量級。如果 tied（共用權重）就只算一次；現代 LLM 多半 untied、兩者獨立。
+Gemma 4 31B 的 output projection 參數約 1.3B（hidden 5120 × vocab 256,000）、跟 input embedding 同量級。如果 tied（共用權重）就只算一次；現代 LLM 多半 untied、兩者獨立。
 
 Output 後接 [softmax](/llm/02-math-foundations/probability-and-information/) 轉成下個 token 的機率分佈、進入 [sampling](/llm/03-theoretical-foundations/sampling-and-decoding/) 流程。
 

@@ -62,10 +62,10 @@ Ollama 的模型管理用 `ollama pull` 跟 `ollama run`：
 
 ```bash
 # 只下載、不啟動對話
-ollama pull gemma3:4b
+ollama pull gemma4:e4b
 
 # 下載（如果還沒有）+ 啟動對話 session
-ollama run gemma3:4b
+ollama run gemma4:e4b
 ```
 
 `ollama run` 進入互動 REPL 後可以直接對話：
@@ -91,7 +91,7 @@ ollama list
 刪除模型釋出空間：
 
 ```bash
-ollama rm gemma3:4b
+ollama rm gemma4:e4b
 ```
 
 模型權重存放路徑（macOS）：`~/.ollama/models/`。大模型（30B+）一個檔案可能 18 ~ 30GB，記得監控 SSD 剩餘空間。
@@ -102,8 +102,8 @@ Ollama 的 model tag 形式是 `family:size-variant-quantization`：
 
 | 範例                           | 拆解                                            |
 | ------------------------------ | ----------------------------------------------- |
-| `gemma3:4b`                    | Gemma 3 系列、4B 參數、預設量化（通常 Q4_K_M）  |
-| `gemma3:27b-instruct-q5_K_M`   | Gemma 3、27B、instruct-tuned、Q5_K_M 量化       |
+| `gemma4:e4b`                   | Gemma 4 系列、E4B（edge dense）、預設量化       |
+| `gemma4:31b-instruct-q5_K_M`   | Gemma 4、31B、instruct-tuned、Q5_K_M 量化       |
 | `gemma4:31b-coding-mtp-bf16`   | Gemma 4、31B、coding 特化、含 MTP drafter、bf16 |
 | `qwen3-coder:30b`              | Qwen3-Coder、30B 參數、預設量化                 |
 | `llama3.3:70b-instruct-q4_K_M` | Llama 3.3、70B、instruct、Q4_K_M                |

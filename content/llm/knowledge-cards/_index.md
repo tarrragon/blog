@@ -65,6 +65,15 @@ weight: -1
 | -------------------------------------------- | ------------------------- |
 | [SWE-bench](/llm/knowledge-cards/swe-bench/) | coding 能力如何被量化比較 |
 
+### 應用層模式
+
+| 卡片                                                       | 核心問題                                       |
+| ---------------------------------------------------------- | ---------------------------------------------- |
+| [RAG](/llm/knowledge-cards/rag/)                           | 怎麼給 LLM 動態外掛知識                        |
+| [LLM Agent](/llm/knowledge-cards/agent/)                   | 把控制流交給 LLM 的應用模式                    |
+| [Function Calling](/llm/knowledge-cards/function-calling/) | 模型訓練建立的呼叫工具能力                     |
+| [MCP](/llm/knowledge-cards/mcp/)                           | LLM application ↔ tool server 的標準化協議 |
+
 ## 卡片寫法
 
 每張卡片維持四段：

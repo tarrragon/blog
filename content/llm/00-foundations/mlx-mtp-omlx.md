@@ -50,7 +50,7 @@ mlx_lm.generate --model mlx-community/Llama-3.2-3B-Instruct-4bit --prompt "hi"
 
 ## MTP：一種加速技巧
 
-**Multi-Token Prediction**（MTP）的核心是「一次預測多個 token 的加速技巧」，本質上是 [speculative decoding](/llm/00-foundations/why-llm-feels-slow/) 的工程化實作。它的責任是：
+**Multi-Token Prediction**（MTP）的核心是「一次預測多個 token 的加速技巧」，本質上是 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的工程化實作。它的責任是：
 
 1. 用一個小模型（drafter）快速猜未來 N 個 token。
 2. 把這 N 個 token 一次餵給大模型（target），讓大模型並行驗證。
@@ -135,7 +135,7 @@ oMLX 解的是 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-s
 
 **「裝 MLX 就能跑 LLM」**：[MLX](/llm/knowledge-cards/mlx/) 只是 framework。實際要跑 LLM 還需要模型實作（`mlx-lm`）+ 模型權重（MLX format）+ 介面（CLI 或 server wrapper）。對寫 code 場景的多數使用者、直接用 Ollama 反而更直接、不用接觸 MLX 細節。
 
-詳細的判讀框架見 [0.6 判讀本地 LLM 資訊的五個框架](/llm/00-foundations/common-misconceptions/)；其中框架一（追溯版本與時間點）、框架二（量化宣稱三變數）、框架三（工具放回三層架構）對本章三個術語的混淆特別有用。
+詳細的判讀框架見 [0.6 判讀本地 LLM 資訊的五個框架](/llm/00-foundations/info-judgment-frames/)；其中框架一（追溯版本與時間點）、框架二（量化宣稱三變數）、框架三（工具放回三層架構）對本章三個術語的混淆特別有用。
 
 ## 給讀者的選擇順序
 

@@ -18,7 +18,7 @@ Context window 是模型訓練時決定的硬性限制，跟 [KV cache](/llm/kno
 
 | 模型                      | Context Window |
 | ------------------------- | -------------- |
-| Gemma 4 31B               | 128K tokens    |
+| Gemma 4 31B               | 256K tokens    |
 | Qwen3-Coder 30B           | 256K tokens    |
 | Llama 3.3 70B             | 128K tokens    |
 | Claude Sonnet 4.6（雲端） | 1M tokens      |

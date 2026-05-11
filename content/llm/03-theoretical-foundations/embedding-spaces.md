@@ -30,9 +30,9 @@ embedding = E[12345]   ← 取出第 12345 row、得到 hidden_dim 維向量
 
 Gemma 4 31B 的 embedding matrix：
 
-- vocab_size = 262,144
+- vocab_size = 256,000
 - hidden_dim = 5120
-- 總參數 = 262,144 × 5120 ≈ 1.3 billion
+- 總參數 = 256,000 × 5120 ≈ 1.3 billion
 
 光是 embedding layer 就佔 31B 中的 1.3B（約 4%）。70B 模型的 embedding layer 更大、可達 2B 以上。
 

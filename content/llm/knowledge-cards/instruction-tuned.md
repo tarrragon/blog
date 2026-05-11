@@ -18,7 +18,7 @@ Ollama tag 中的 `instruct`、`it` 是 instruction-tuned 標記：
 
 | 模型 tag                       | 解讀                                         |
 | ------------------------------ | -------------------------------------------- |
-| `gemma3:27b-instruct-q5_K_M`   | Gemma 3、instruct-tuned                      |
+| `gemma4:31b-instruct-q5_K_M`   | Gemma 4、instruct-tuned                      |
 | `llama3.3:70b-instruct-q4_K_M` | Llama 3.3、instruct-tuned                    |
 | `qwen3-coder:30b`              | Qwen3-Coder（預設就是 instruct，未必額外標） |
 

@@ -138,7 +138,7 @@ Continue.dev 內部會把 `provider: ollama` 翻成 OpenAI 相容請求送到 `a
 curl http://localhost:11434/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemma3:4b",
+    "model": "gemma4:e4b",
     "messages": [{"role": "user", "content": "Say hi in three languages."}],
     "stream": false
   }'
@@ -152,7 +152,7 @@ curl http://localhost:11434/v1/chat/completions \
 curl http://localhost:11434/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemma3:4b",
+    "model": "gemma4:e4b",
     "messages": [{"role": "user", "content": "Count from 1 to 5."}],
     "stream": true
   }'

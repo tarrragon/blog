@@ -19,7 +19,7 @@ LLM 生字慢的核心原因有兩個：**[自回歸架構](/llm/knowledge-cards
 3. 為什麼[模型量化](/llm/knowledge-cards/quantization/)能加速、而非只是省記憶體？
 4. 為什麼長 prompt 的[首字延遲](/llm/knowledge-cards/ttft/)特別有感？
 
-## 自回歸：一次只能吐一個 token
+## 自回歸架構：一次只能吐一個 token
 
 自回歸的核心概念是「下一個 token 的生成需要前面所有 token 的結果」。模型每生成一個 token，都要把目前已有的 token 序列（你的 prompt + 它已經生成的部分）重新丟進神經網路算一次，得到下一個 token 的機率分佈，挑一個輸出，然後重複。
 

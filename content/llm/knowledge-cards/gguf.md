@@ -18,7 +18,7 @@ Hugging Face 上 GGUF 檔案命名通常含量化標籤：
 
 | 檔名範例                             | 解讀                                      |
 | ------------------------------------ | ----------------------------------------- |
-| `gemma-3-31b-it-Q4_K_M.gguf`         | Gemma 3、31B、instruct-tuned、Q4_K_M 量化 |
+| `gemma-4-31b-it-Q4_K_M.gguf`         | Gemma 4、31B、instruct-tuned、Q4_K_M 量化 |
 | `Llama-3.3-70B-Instruct-Q5_K_M.gguf` | Llama 3.3、70B、instruct、Q5_K_M          |
 | `qwen3-coder-30b-Q8_0.gguf`          | Qwen3-Coder、30B、Q8 量化                 |
 

@@ -20,7 +20,7 @@ Hugging Face / Ollama 上 base model 通常會明示：
 | ------------------------ | --------------------------------------------------------------------- |
 | `llama-3.3-70b-base`     | 是                                                                    |
 | `llama-3.3-70b-instruct` | 否（[已 instruction-tuned](/llm/knowledge-cards/instruction-tuned/)） |
-| `gemma-3-27b`            | 視 repo 而定、要看 model card                                         |
+| `gemma-4-31b`            | 視 repo 而定、要看 model card                                         |
 | `qwen3-coder-30b`        | 否（coding-tuned 是 instruction-tuned 的特化）                        |
 
 對話 base model 的體感：問「寫一個 Python fibonacci」可能得到「寫一個 Python fibonacci。寫一個 JavaScript fibonacci。寫一個...」這種文字接龍式回答、而非真正寫出 function。
