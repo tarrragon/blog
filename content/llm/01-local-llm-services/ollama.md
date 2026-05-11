@@ -6,7 +6,7 @@ tags: ["llm", "ollama", "server"]
 weight: 0
 ---
 
-Ollama 是本地 LLM 生態中**學習曲線最低、最值得當第一個工具**的推論伺服器。它的核心承諾是「一行裝完、一行跑模型、自動 expose OpenAI 相容 API」；底層用 llama.cpp 當推論引擎，但把 GGUF 格式、量化選擇、KV cache 等細節都包好，使用者只看到 model tag 跟 CLI 指令。
+Ollama 是本地 LLM 生態中**學習曲線最低、最值得當第一個工具**的[推論伺服器](/llm/knowledge-cards/inference-server/)。它的核心承諾是「一行裝完、一行跑模型、自動 expose [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/)」；底層用 llama.cpp 當推論引擎，但把 [GGUF 格式](/llm/knowledge-cards/gguf/)、[量化](/llm/knowledge-cards/quantization/)選擇、[KV cache](/llm/knowledge-cards/kv-cache/) 等細節都包好，使用者只看到 model tag 跟 CLI 指令。
 
 對主要目標是「在 VS Code 接本地 LLM 寫 code」的讀者來說，Ollama 多半是唯一需要的伺服器層。本章把它的安裝、模型管理、API 使用、常見坑都走過一遍。
 
@@ -112,7 +112,7 @@ Ollama 的 model tag 形式是 `family:size-variant-quantization`：
 
 ## Gemma 4 MTP：一鍵加速
 
-Ollama v0.23.1（2026/5/7 釋出）加入 Gemma 4 的 MTP（Multi-Token Prediction）一鍵支援。MTP 是 [speculative decoding](/llm/00-foundations/why-llm-feels-slow/) 的具體實作，coding 任務官方數據 2 ~ 3 倍加速。詳細原理見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
+Ollama v0.23.1（2026/5/7 釋出）加入 Gemma 4 的 [MTP（Multi-Token Prediction）](/llm/knowledge-cards/mtp/) 一鍵支援。MTP 是 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的具體實作、coding 任務官方數據 2 ~ 3 倍加速。詳細原理見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
 
 啟用方式只需要 pull 對應 model tag：
 
@@ -236,7 +236,7 @@ ollama rm <model-tag>
 OLLAMA_HOST=0.0.0.0:11434 ollama serve
 ```
 
-但這會把本地 LLM 暴露在 LAN 上，任何同網路裝置都能用。家用網路通常還好，公共 Wi-Fi 千萬不要這樣設。要進一步加防火牆規則或用 SSH tunnel 比較安全。
+這個設定會把本地 LLM 暴露在 LAN 上、任何同網路裝置都能用。家用網路風險低、公共 Wi-Fi 改用 SSH tunnel 或加防火牆規則較安全。
 
 ## 升級與版本管理
 

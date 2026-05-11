@@ -52,7 +52,7 @@ LM Studio 的模型瀏覽器是它最大的賣點。在 Discover 分頁搜尋模
 
 1. **Repo 來源要看**。Hugging Face 上同一個模型有多個社群重新封裝的 repo。`google/gemma-3-...` 是官方 repo；`bartowski/...`、`TheBloke/...`（已退坑）等是社群常見的高品質 quant 提供者。挑下載量高、最近更新的 repo 較安全。
 2. **不是所有檔案都要下載**。一個 repo 可能有 5 ~ 10 個量化檔案，下載你選的那個就好。LM Studio UI 有時讓人誤以為要全選。
-3. **下載完成後檢查路徑**。預設下載到 `~/.cache/lm-studio/models/`，跟 Ollama 的 `~/.ollama/models/` 分開。模型不能直接互通，要分別下載。
+3. **下載完成後檢查路徑**：預設下載到 `~/.cache/lm-studio/models/`、跟 Ollama 的 `~/.ollama/models/` 分開。兩邊 model storage 各自獨立、想在兩個伺服器都用同一個模型要分別下載。
 
 ## 在 Chat 分頁對話
 
@@ -79,7 +79,7 @@ LM Studio 內建 [speculative decoding](/llm/00-foundations/why-llm-feels-slow/)
 2. 選 draft model（小模型，例如 Gemma 4 4B）
 3. 啟用 speculative decoding
 
-要讓 speculative decoding 真的加速，target 與 draft 必須是「同 tokenizer」的模型。Gemma 4 27B 配 Gemma 4 4B 可以工作；Gemma 4 配 Llama 不行。LM Studio UI 會自動過濾相容的 draft 候選。
+[Speculative decoding](/llm/knowledge-cards/speculative-decoding/) 真的加速需要 target 與 [drafter](/llm/knowledge-cards/drafter-model/) 用同一個 tokenizer。Gemma 4 27B 配 Gemma 4 4B 可以工作；Gemma 4 配 Llama 因 tokenizer 不同無法配對。LM Studio UI 會自動過濾相容的 draft 候選。
 
 跟 Ollama 比，LM Studio 的優勢是「能看到並調整每個推論細節」。劣勢是「Gemma 4 的官方 MTP drafter 整合不是一鍵」，要自己挑 draft model。多數使用者用 Ollama 的 `gemma4:31b-coding-mtp-bf16` 一行解決就好；想自己組合 target + drafter 的進階使用者選 LM Studio。
 

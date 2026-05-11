@@ -6,7 +6,7 @@ tags: ["llm", "foundations", "hardware", "apple-silicon"]
 weight: 5
 ---
 
-Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**，不是 CPU 也不是 GPU。記憶體決定能載入多大的模型；模型載得進、推論才有得跑。本章把網路上常見的「24GB 能跑 70B」這類含糊說法，換成可操作的記憶體預算判讀。
+Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 CPU 或 GPU 算力。記憶體決定能載入多大的模型；模型載得進、推論才有得跑（生字速度則由 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 決定、見 [0.1](/llm/00-foundations/why-llm-feels-slow/)）。本章把「24GB 能跑 70B」這類含糊說法、換成可操作的記憶體預算判讀。
 
 讀完本章後，你可以對自己這台 Mac 直接回答：能跑哪些模型、要用什麼量化、要留多少給系統、風扇會不會狂轉、什麼時候該升級。
 
@@ -30,8 +30,8 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**，不是 C
 各塊的估算原則：
 
 1. **系統與其他 app**：至少留 8GB 給 macOS、VS Code、瀏覽器與其他工作流程。重度多工建議留 10 ~ 12GB。
-2. **模型權重**：用「參數規模 × 每權重 bits / 8」算出 bytes。例如 31B 模型 Q4 量化 = 31 × 4 / 8 = 15.5 GB，加上 metadata 與 overhead 約 16 ~ 18GB。
-3. **KV cache**：跟 context 長度成正比。短 context（< 2K tokens）約 0.5 ~ 1GB，長 context（10K+ tokens）可能超過 5GB。
+2. **模型權重**：用「參數規模 × 每權重 bits / 8」算出 bytes。例如 31B 模型 [Q4 量化](/llm/knowledge-cards/quantization/) = 31 × 4 / 8 = 15.5 GB、加上 metadata 與 overhead 約 16 ~ 18GB。
+3. **[KV cache](/llm/knowledge-cards/kv-cache/)**：跟 [context](/llm/knowledge-cards/context-window/) 長度成正比。短 context（< 2K tokens）約 0.5 ~ 1GB、長 context（10K+ tokens）可能超過 5GB。
 4. **推論中間結果**：通常 1 ~ 2GB。
 
 實際留給模型的可用記憶體 = 總記憶體 − 系統保留（8GB）− KV cache（2 ~ 5GB）− 推論 overhead（2GB）。
@@ -77,8 +77,8 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**，不是 C
 
 16GB Mac 是現實上的最小可用配置。能跑的最大實用模型是 Gemma 4 E4B（Google 的 8B 級實驗版本）或 Qwen3 7B。體感上：
 
-1. 不能同時開 VS Code + Chrome + Slack + 跑模型。記憶體會被擠到 swap，整台 Mac 變慢。
-2. 模型品質明顯弱於 31B 等級。簡單 function 補完還行，跨檔案重構幾乎不可用。
+1. 同時開 VS Code + Chrome + Slack 跟跑模型會擠到 swap、整台 Mac 變慢；建議跑模型時關掉其他重度 app。
+2. 模型品質明顯弱於 31B 等級。簡單 function 補完還行、跨檔案重構交給雲端旗艦更划算。
 3. 適合「偶爾用本地、主要還是雲端」的混用策略。
 
 如果你的 Mac 是 16GB，先用 Gemma 4 E4B 試試看，評估自己工作流是否真的需要本地 LLM。多數情況下答案是「雲端 API 月費比換 Mac 便宜」。
@@ -131,7 +131,7 @@ Apple Silicon Mac 跑本地 LLM 會持續滿載 CPU / GPU。實際體感：
 | 正準備買新 Mac，要兼顧攜帶         | MacBook Pro 14 with M4 Pro 32GB                          |
 | 正準備買新 Mac，要追求最大本地能力 | Mac Studio M4 Max 64GB+                                  |
 
-陷阱是把 96GB+ 配置當成「未來證明」。模型架構演進可能讓現在的記憶體預算明年就不重要（例如 1-bit 量化、新的稀疏架構）。除非有具體需求，不要為了「以後可能跑得到 100B+ 模型」買超大記憶體。
+陷阱是把 96GB+ 配置當成「未來證明」。模型架構演進可能讓現在的記憶體預算明年就不重要（例如 1-bit 量化、新的稀疏架構）。買超大記憶體前先確認有具體現有需求支撐；「以後可能跑得到 100B+ 模型」這類期待風險很高。
 
 ## 小結
 

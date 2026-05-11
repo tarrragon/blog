@@ -20,7 +20,7 @@ weight: 0
 | [0.3](/llm/00-foundations/openai-compatible-api/)    | OpenAI 相容 API              | 為什麼幾乎所有工具不用改就能切到本地：背後是同一套 API 形狀 |
 | [0.4](/llm/00-foundations/mlx-mtp-omlx/)             | MLX / MTP / oMLX 的區別      | 三者疊加而非互斥：framework、加速技巧、特化 server          |
 | [0.5](/llm/00-foundations/hardware-memory-budget/)   | Apple Silicon 記憶體預算     | 記憶體決定能跑什麼，Q4 量化下的可運作模型對照與系統保留     |
-| [0.6](/llm/00-foundations/common-misconceptions/)    | 網路上的常見誤解             | 點名「llama.cpp 整合 MTP」「換 model 就能產圖」等錯誤說法   |
+| [0.6](/llm/00-foundations/common-misconceptions/)    | 判讀本地 LLM 資訊的五個框架  | 版本時間、量化變數、三層架構、載入 vs 好用、隱私資料流      |
 
 ## 為什麼先讀模組零
 
@@ -35,7 +35,7 @@ weight: 0
 1. 先讀 [0.0 本地 vs 雲端](/llm/00-foundations/local-vs-cloud/) 跟 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-slow/)，建立「本地 LLM 解什麼問題、不解什麼問題」的判斷。
 2. 接著讀 [0.2 三層架構](/llm/00-foundations/three-layer-architecture/) 跟 [0.3 OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)，建立「工具如何拼裝」的判斷。
 3. 然後讀 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)，避開最常見的術語陷阱。
-4. 最後讀 [0.5 硬體記憶體](/llm/00-foundations/hardware-memory-budget/) 跟 [0.6 常見誤解](/llm/00-foundations/common-misconceptions/)，把心智模型對到自己手上這台 Mac 的現實。
+4. 最後讀 [0.5 硬體記憶體](/llm/00-foundations/hardware-memory-budget/) 跟 [0.6 判讀框架](/llm/00-foundations/common-misconceptions/)、把心智模型對到自己手上這台 Mac 的現實、並建立評估新資訊的反射。
 
 讀完後直接進 [模組一：本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/) 就會發現安裝步驟變得「每一行都知道為什麼」。
 

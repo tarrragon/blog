@@ -19,7 +19,7 @@ weight: 1
 | [1.2](/llm/01-local-llm-services/llama-cpp/)                   | llama.cpp：底層引擎                  | 直接面對 GGUF 與量化選項、MTP 仍 beta、需要進階設定                       |
 | [1.3](/llm/01-local-llm-services/vscode-continue-integration/) | VS Code + Continue.dev 整合          | 安裝擴充套件、config.json 設定、Cmd+L / Cmd+I 快捷鍵                      |
 | [1.4](/llm/01-local-llm-services/model-selection-priority/)    | 寫 code 場景的模型選型優先順序       | Gemma 4 31B MTP → Qwen3-Coder 30B → Qwen3 14B → gpt-oss 20B 的取捨理由    |
-| [1.5](/llm/01-local-llm-services/expectation-management/)      | 期望管理：本地 LLM 能與不能做什麼    | 本地是免費的初階 pair programmer，不是 Claude 替代品；混用是現階段正解    |
+| [1.5](/llm/01-local-llm-services/expectation-management/)      | 期望管理：本地 LLM 的擅長領域與分工  | 本地是免費的初階 pair programmer，不是 Claude 替代品；混用是現階段正解    |
 | [1.6](/llm/01-local-llm-services/extension-paths/)             | 延伸方向：Web UI、coding agent、產圖 | 先把寫 code 跑穩，再評估 Open WebUI、aider 等延伸；產圖另闢戰場           |
 
 ## 推論伺服器選型總表
@@ -74,11 +74,11 @@ ollama run gemma4:31b-coding-mtp-bf16
 
 裝完不是終點。本地 LLM 跟雲端的差別在於「需要持續調教」。跑穩後建議的後續工作：
 
-1. **用一週實測**：不要只跑示範任務，把日常工作流真實餵進去，記錄通過率與痛點。
+1. **用一週實測**：把日常工作流真實餵進去、記錄通過率與痛點、用真實任務當判讀依據而非示範任務。
 2. **建立切換習慣**：明確哪些任務交給本地、哪些切雲端。詳見 [1.5 期望管理](/llm/01-local-llm-services/expectation-management/)。
-3. **觀察記憶體與發熱**：開 Activity Monitor 看記憶體有沒有 swap、機殼溫度有沒有過高。
-4. **追新模型**：本地模型發布速度很快，每 2 ~ 3 個月會有新的較強模型，值得追蹤。
-5. **判斷是否升級硬體**：用一個月後若覺得限制都來自記憶體，再評估升級 Mac；不要先升級再說。
+3. **觀察記憶體與發熱**：開 Activity Monitor 看記憶體 swap 狀態、機殼溫度是否過高。
+4. **追新模型**：本地模型發布速度很快、每 2 ~ 3 個月會有新候選、值得追蹤。
+5. **判斷是否升級硬體**：用一個月後若限制都來自記憶體、再評估升級 Mac；先確認痛點再投資硬體。
 
 ## 不在本模組內的主題
 

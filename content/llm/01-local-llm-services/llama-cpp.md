@@ -55,21 +55,21 @@ Ollama 是 llama.cpp 的下游 wrapper，但**不是 fork-and-track 那種同步
 
 這個關係的啟示：
 
-1. **不能假設「llama.cpp 比 Ollama 先進」**。實際情況視功能而定。
-2. **看版本要看具體 release notes**，不是看主版本號。
-3. **直接用 llama.cpp 不一定更接近上游**。Ollama 的 patches 有時是「上游應該要有但還沒接受」的功能。
+1. **「llama.cpp vs Ollama 誰先進」視功能而定**：具體功能要實際對照 release notes、「上游 / 下游」直覺只是初步參考、未必符合實際版本狀態。
+2. **判讀支援度看 release notes**：主版本號只是命名、實際功能列表要看具體版本的 changelog。
+3. **直接用 llama.cpp 跟靠近上游是兩件事**：Ollama 的 patches 有時是「上游還沒接受、但已經實用的功能」。
 
 ## 什麼情境真的需要直接用 llama.cpp
 
 絕大多數寫 code 場景，Ollama 完全夠用。直接用 llama.cpp 的合理情境只有少數：
 
-| 情境                                             | 為什麼 Ollama 不夠                                  |
-| ------------------------------------------------ | --------------------------------------------------- |
-| 想自己量化模型（從 Safetensors 轉 GGUF）         | Ollama 不提供量化工具，要用 llama.cpp 的 `quantize` |
-| 想跑 Ollama registry 沒收的特殊模型              | 要自己下載 GGUF、自己編譯 server                    |
-| 想用 llama.cpp 最新 commit 的新功能              | Ollama 還沒 cherry-pick                             |
-| 嵌入式 / 受限環境，要把 llama.cpp 編譯進別的 app | Ollama 是獨立 daemon，不能 embed                    |
-| 純研究、想看推論程式碼                           | llama.cpp 是 open source、可讀                      |
+| 情境                                             | 為什麼 Ollama 不夠                                                     |
+| ------------------------------------------------ | ---------------------------------------------------------------------- |
+| 想自己量化模型（從 Safetensors 轉 GGUF）         | Ollama 不提供量化工具，要用 llama.cpp 的 `quantize`                    |
+| 想跑 Ollama registry 沒收的特殊模型              | 要自己下載 GGUF、自己編譯 server                                       |
+| 想用 llama.cpp 最新 commit 的新功能              | Ollama 還沒 cherry-pick                                                |
+| 嵌入式 / 受限環境，要把 llama.cpp 編譯進別的 app | Ollama 是獨立 daemon、適合作為 server；要 embed 改用 llama.cpp library |
+| 純研究、想看推論程式碼                           | llama.cpp 是 open source、可讀                                         |
 
 寫 code 場景的讀者通常不命中以上任何一條。
 

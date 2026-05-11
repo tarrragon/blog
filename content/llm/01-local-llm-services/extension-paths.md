@@ -122,14 +122,14 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 2. M4 Max 跑 Flux 生 1024x1024 圖約 15 ~ 30 秒一張，可接受。
 3. Draw Things 在 Mac App Store 可下載，是最簡單的入門路徑。
 
-**為什麼不該跟寫 code 混在一起**：
+**為什麼跟寫 code 適合分開學**：
 
-1. **工具鏈不同**：Ollama 不能跑 Diffusion，反過來 Draw Things / ComfyUI 不能跑 LLM。
-2. **prompt 風格不同**：寫 code 是 instruction，產圖是 descriptive prompt + negative prompt + sampler 參數。
-3. **學習成本不同**：產圖有自己的 LoRA、ControlNet、IP-Adapter、refiner 等概念體系。
-4. **硬體最適規格不同**：寫 code 看記憶體（跑大 model），產圖看 GPU 算力與 VRAM 頻寬。
+1. **工具鏈各自獨立**：Ollama 服務 [Transformer](/llm/knowledge-cards/transformer/) LLM、Draw Things / ComfyUI 服務 [Diffusion](/llm/knowledge-cards/diffusion/) 模型、兩條路線的伺服器與生態互不通用。
+2. **prompt 風格不同**：寫 code 是 instruction 形式、產圖是 descriptive prompt + negative prompt + sampler 參數。
+3. **學習成本各自獨立**：產圖有自己的 LoRA、ControlNet、IP-Adapter、refiner 等概念體系、學起來等於進入新領域。
+4. **硬體最適規格不同**：寫 code 看記憶體預算（[跑大模型](/llm/knowledge-cards/unified-memory/)）、產圖看 GPU 算力與 VRAM 頻寬。
 
-**本指南的立場**：先把寫 code 跑穩。產圖是完全獨立的學習投入，混在一起學只會兩邊都半生不熟。等你需要產圖時，另外開一個學習主題、找專門教材，不要試圖在本指南內找到。
+**本指南的立場**：先把寫 code 跑穩、再考慮產圖。產圖屬於獨立的學習主題、另外找專門教材會學得更有效率。
 
 ## 給讀者的延伸順序
 
@@ -140,7 +140,7 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 3. **第二個延伸：aider 或 Cline**。試 coding agent，評估本地模型能 handle 多複雜的多步驟任務。
 4. **第三個延伸：產圖**。完全獨立的學習投入，跟前面工具鏈無關。
 
-不要跳順序。先讓基底穩，再加延伸。
+依序進階。先讓基底穩、再疊加延伸、學習曲線最平滑。
 
 ## 不在本章範圍內的延伸
 

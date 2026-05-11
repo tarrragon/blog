@@ -79,7 +79,7 @@ weight: 2
 1. **參數規模**（B = billion）：7B、14B、31B、70B 等。規模越大能力越強，但記憶體佔用、推論速度成本也越高。
 2. **量化等級**：bf16、Q8、Q5_K、Q4_K 等。同模型不同量化，記憶體與品質的取捨不同。
 3. **格式**：GGUF（llama.cpp 與 Ollama 主流）、MLX（Apple 框架）、Safetensors（Hugging Face 通用）等。不同伺服器支援的格式不同。
-4. **訓練目的**：base model、instruct-tuned、coding-tuned 等。寫 code 應該選 instruct + coding 版本，不是 base model。
+4. **訓練目的**：[base model](/llm/knowledge-cards/base-model/)、[instruction-tuned](/llm/knowledge-cards/instruction-tuned/)、coding-tuned 等。寫 code 適合 instruction-tuned + coding 版本；base model 適合下游微調研究、跟著 prompt 走的能力較弱。
 
 模型選擇影響能力與速度。同樣 32GB Mac 跑 Gemma 4 31B 跟 Qwen3-Coder 30B，兩個模型擅長的任務不同，速度也不同。詳見 [模型選型章節](/llm/01-local-llm-services/model-selection-priority/)。
 
@@ -119,6 +119,6 @@ weight: 2
 
 ## 小結
 
-本地 LLM 的三層架構（介面 / 伺服器 / 模型）跟雲端世界完全對應，只是全部跑在你的 Mac 上。理解三層後，後續看到任何工具都能立刻判斷它是介面、伺服器，還是模型；換工具時也知道該換哪一層、其他層能不能保留。
+本地 LLM 的三層架構（介面 / [推論伺服器](/llm/knowledge-cards/inference-server/) / 模型）跟雲端世界完全對應、只是全部跑在你的 Mac 上。理解三層後、後續看到任何工具都能立刻判斷它屬於哪一層；換工具時也知道該換哪一層、其他層可以保留。
 
 下一章：[0.3 OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)，解釋為什麼三層之間能自由組合，背後是同一套 API 形狀。

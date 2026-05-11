@@ -1,169 +1,220 @@
 ---
-title: "0.6 網路上的常見誤解"
+title: "0.6 判讀本地 LLM 資訊的五個框架"
 date: 2026-05-11
-description: "點名本地 LLM 圈最常見的錯誤說法，附正確理解與來源追溯方法"
-tags: ["llm", "foundations", "misconceptions"]
+description: "本地 LLM 資訊更新快，學會用版本、層級、變數、能力、資料流五個框架評估文章與宣稱"
+tags: ["llm", "foundations", "judgment"]
 weight: 6
 ---
 
-本地 LLM 是近一兩年快速發展的領域，網路上資訊更新速度跟錯誤資訊產出速度都很快。本章把寫作本指南時掃過、實際讀者最常被誤導的說法整理成可對照的清單。每條都先給錯誤版本、再給正確版本、最後給判讀方法，避免下次遇到類似句子時又被帶歪。
+本地 LLM 的核心特性之一是「資訊更新得很快」。新模型 2 ~ 3 個月一個世代、推論伺服器幾週一個版本、社群文章每天大量產出。同樣一件事在不同來源講法可能差很遠：有的精準、有的混淆層級、有的引用過時資訊、有的拿單一情境當普遍能力。學會用一致的框架評估每則資訊、是本地 LLM 使用者最值得培養的能力。
 
-讀完本章不代表你能識破所有錯誤資訊，但會建立一個基本反射：看到「N 倍加速」「能跑 X 大小模型」「換 model 就能 Y」這類絕對化句子時，自動回到前面章節的概念基底追問來源。
+本章把前面五章的概念整理成五個判讀框架。每個框架對應一類常見資訊問題、給讀者一組可重複套用的提問清單。讀完後你會建立一個反射：看到 LLM 相關內容時、自動跑過這些框架、確認資訊夠不夠扎實再吸收。
 
 ## 本章目標
 
 讀完本章後，你應該能：
 
-1. 辨識十個本地 LLM 圈最常見的錯誤說法。
-2. 看到陌生的 LLM 技術說法時，建立追問來源的反射。
-3. 知道哪些是「過時資訊」、哪些是「根本錯誤」。
-4. 不再被 cherry-picked 的 benchmark 數字誤導。
+1. 看到「N 倍加速」「能跑 X 大小模型」這類量化宣稱時、知道要追問哪些變數。
+2. 看到「X 工具支援 Y 功能」時、知道怎麼確認時間點與版本。
+3. 把工具放回[三層架構](/llm/00-foundations/three-layer-architecture/)、辨識「framework vs 伺服器 vs 模型」的混淆。
+4. 區分「載得進記憶體」跟「實際好用」是兩件事。
+5. 把「隱私」從「位置」改成「資料流」來思考。
 
-## 誤解 1：llama.cpp 已整合 Gemma 4 MTP
+---
 
-**錯誤版本**：「llama.cpp 在 v0.5.x 已經支援 Gemma 4 MTP，本地推論速度直接 3 倍。」
+## 框架一：追溯版本與時間點
 
-**正確版本**：2026 年 5 月，llama.cpp 的 speculative decoding 支援還在 beta，Gemma 4 的官方 drafter 整合還是 feature request（GitHub issue 開著沒合）。Ollama 反而搶先在 v0.23.1（2026/5/7）支援 Gemma 4 MTP；這是少見的「Ollama 比底層 llama.cpp 領先」情境。
+本地 LLM 工具的功能支援會隨版本變化。同一句「X 工具支援 Y 功能」可能 2025 年成立、2026 年版本改了、或反過來。判讀任一則「支援 / 整合 / 加入」的宣稱、第一步是確認版本與時間點。
 
-**判讀方法**：看到 X 支援 Y 的說法，先去 X 的 GitHub release notes 與 changelog 確認版本與時間；不要相信 Reddit 二手轉述。Ollama 的 release notes 在 `github.com/ollama/ollama/releases`，llama.cpp 在 `github.com/ggerganov/llama.cpp/releases`。
+### 這個框架解什麼問題
 
-**為什麼這個誤解流行**：Ollama 用 llama.cpp 當 backend，多數人直覺以為 llama.cpp 是 Ollama 的「上游」，新功能應該先在 llama.cpp 出現。但 Ollama 維護自己的 fork、自己加 patch，反向 upstream 通常落後。
+社群文章常省略版本資訊。「llama.cpp 加入 Gemma 4 MTP」這類句子若沒附上日期或版本號、就有三種可能：上游確實已合入、是某個 fork 加的 patch、或是社群討論的願景。三種狀態下「該怎麼用」的答案完全不同。
 
-## 誤解 2：MTP 加速 40%
+### 怎麼套用
 
-**錯誤版本**：「Gemma 4 開 MTP 後速度提升 40%。」
+看到「X 工具支援 / 整合 / 加入 Y」時、按順序問：
 
-**正確版本**：Google 官方數據是 coding 任務 2 ~ 3 倍加速（200% ~ 300% 提升）。「40%」這類數字來源不明，可能是某個非典型 benchmark 或文章作者隨手寫的估算。
+1. **版本與日期**：在哪個版本加入？發布日期是？
+2. **支援程度**：是 GA（一般可用）、beta、實驗性、還是 fork 上的 patch？
+3. **官方確認**：是否在 release notes / changelog / 官方文件提到？
 
-**判讀方法**：看到 N 倍 / N% 加速時，問三件事：
+確認來源的最快路徑：
 
-1. 什麼任務？coding、creative writing、數學推理的加速幅度差很多。
-2. 什麼基準？跟「沒開 MTP」比，還是跟「另一個模型」比？
-3. 什麼硬體？M4 Max 跟 M2 Pro 上的加速幅度不同。
+| 工具      | 看哪裡確認版本支援狀態                    |
+| --------- | ----------------------------------------- |
+| Ollama    | `github.com/ollama/ollama/releases`       |
+| llama.cpp | `github.com/ggerganov/llama.cpp/releases` |
+| LM Studio | 應用程式內 About 頁、官網 changelog       |
+| MLX       | `github.com/ml-explore/mlx/releases`      |
 
-Google 官方在 Gemma 4 技術報告中明確區分這些變數；社群文章常常省略。
+### 實際情境
 
-## 誤解 3：換個 model 就能產圖
+2026 年 5 月的具體狀態：Ollama v0.23.1（2026/5/7 釋出）一鍵支援 Gemma 4 MTP；llama.cpp 上游的 speculative decoding 框架仍 beta、Gemma 4 官方 drafter 整合是 feature request。同一個功能在兩個工具的狀態差很多、發表時間決定誰領先。
 
-**錯誤版本**：「Ollama pull 一個 Stable Diffusion 模型就能在本地產圖。」
+這個案例的啟示是「Ollama 用 llama.cpp 當底層」這件事、跟「新功能必定先在 llama.cpp 出現」是兩件事。Ollama 維護自己的 fork 加 patch、有時搶先支援上游還沒接受的功能。看資訊時要明確區分。
 
-**正確版本**：產圖（Stable Diffusion、Flux、SDXL）用的是 **Diffusion 架構**，跟寫 code 用的 **Transformer 架構**是兩個完全不同的神經網路類型。架構不同、推論流程不同、伺服器不同、生態系不同：
+---
 
-1. Ollama / LM Studio 都不支援 Diffusion 模型。
-2. 產圖工具是 ComfyUI、Draw Things、AUTOMATIC1111、Diffusers。
-3. 產圖的硬體需求與 LLM 也不同（記憶體需求較低、但對 GPU 算力更敏感）。
+## 框架二：量化宣稱的三個變數
 
-**判讀方法**：看到「換 model 就能跑 X」的說法，先確認 X 跟原任務是不是同一個架構家族。LLM、產圖、語音合成、影片生成各自獨立，工具鏈不通用。
+任何「N 倍加速」「快 X%」「達到 Y 分」的數字、都至少受三個變數影響：任務類型、比較基準、執行硬體。三個變數沒同時給齊、數字無法比較。
 
-**本指南的立場**：先把寫 code 跑穩，再玩產圖。同時學兩個只會兩邊都半生不熟。
+### 這個框架解什麼問題
 
-## 誤解 4：Ollama 只是聊天工具
+「[MTP](/llm/knowledge-cards/mtp/) 加速 3 倍」這個句子省略了「在 coding 任務上、跟沒開 MTP 比、用 M4 Max 跑」這三個前提。同樣的 MTP 在創意寫作上加速可能只有 1.5 倍、在 M2 Pro 上絕對數字小很多。讀者拿到「3 倍」這個數字、放到自己的場景常常對不上。
 
-**錯誤版本**：「Ollama 就是一個本地聊天 CLI，類似 ChatGPT 終端機版。」
+### 怎麼套用
 
-**正確版本**：Ollama 是**本地推論伺服器**，預設聽 `localhost:11434`，提供 OpenAI 相容 API 與自家原生 API。`ollama run gemma4:31b` 看起來是 CLI，但背後啟動的是常駐 server；CLI 只是 client。看 [0.2 三層架構](/llm/00-foundations/three-layer-architecture/) 重新定位 Ollama 在伺服器層的角色。
+看到量化宣稱時、回到下面三個維度確認：
 
-**判讀方法**：看到 X 是「聊天工具」「終端機版 ChatGPT」這類描述時，去看它是否提供 HTTP API。提供 API 的就是伺服器，不只是介面。
+| 變數     | 該問什麼                                           |
+| -------- | -------------------------------------------------- |
+| 任務類型 | coding？對話？數學？翻譯？不同任務的加速幅度差很多 |
+| 比較基準 | 跟「沒開該功能」比、還是跟「另一個工具」比？       |
+| 執行硬體 | M4 Max？M2 Pro？Mac Studio？硬體規格影響絕對數字   |
 
-**為什麼這個誤解重要**：把 Ollama 當聊天工具的話，你不會想到「用 VS Code 接 Ollama」這條路；用了三層架構視角，這條路就是自然的下一步。
+### 實際情境
 
-## 誤解 5：本地 LLM 已能取代雲端
+[MTP](/llm/knowledge-cards/mtp/) 的官方數據是「coding 任務 2 ~ 3 倍加速、其他任務 1.5 ~ 2 倍」。社群文章可能引用成「40% 加速」、這個數字若沒附上前提、無法判斷代表什麼任務或什麼硬體。回到 Google 官方技術報告比對、能還原原始三變數。
 
-**錯誤版本**：「Gemma 4 31B 已經追上 GPT-4，雲端 API 月費可以省了。」
+[SWE-bench](/llm/knowledge-cards/swe-bench/) 的「77.2 分」也一樣：是 SWE-bench Verified（OpenAI 篩選過的子集）、還是 SWE-bench Lite 或 Full？變體間分數差很多、混為一談會誤判模型強弱。
 
-**正確版本**：本地最強模型（Gemma 4 31B、Qwen3-Coder 30B、gpt-oss 20B）大約等於 GPT-4 mini 或 Claude Haiku 4.5 等級。比雲端旗艦（Claude Sonnet 4.6、Opus 4.7、GPT-5）仍有明顯能力斷崖。
+### 自己驗證的最穩做法
 
-**判讀方法**：看到「追上」「達到」「取代」這類絕對說法，問：
+公開 benchmark 是參考、不是結論。挑你日常工作流的 5 ~ 10 個真實任務當私人 benchmark、跑本地模型看通過率。這個方法繞過所有變數爭議、給你能用在自己場景的數字。
 
-1. 在什麼任務上追上？SWE-bench、HumanEval、MMLU 各自不同。
-2. 拿什麼版本比？GPT-4o、GPT-4-turbo、GPT-5 是不同模型。
-3. 是 cherry-picked 任務還是分佈式 benchmark？
+---
 
-更穩定的判斷方法：把自己一週實際工作的 5 ~ 10 個任務當 benchmark，本地模型跑一遍，看通過率。不要相信別人的 demo 截圖。
+## 框架三：工具放回三層架構
 
-**正確心態**：本地 LLM 是免費的初階 pair programmer，不是 Claude 替代品。混用才是 2026 年的正確姿勢。
+LLM 生態的工具屬於[介面層、推論伺服器層、模型層](/llm/00-foundations/three-layer-architecture/)。各層之間用標準介面（[OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/)、[GGUF](/llm/knowledge-cards/gguf/) 等）連接、各自可獨立替換。判讀工具相關資訊時、先確認它屬於哪一層、再評估宣稱。
 
-## 誤解 6：MLX 加速會比 llama.cpp 快
+### 這個框架解什麼問題
 
-**錯誤版本**：「用 MLX backend 跑 LLM 比 llama.cpp 快很多，因為 Apple 原生。」
+工具名稱常被當成跨層通用詞。「Ollama 很快」「[MLX](/llm/knowledge-cards/mlx/) 比 llama.cpp 強」「[oMLX](/llm/00-foundations/mlx-mtp-omlx/) 是 Ollama 的 MLX 版」這類句子各自混淆了不同層：Ollama 是推論伺服器、MLX 是 framework、llama.cpp 同時是 library 跟 server、oMLX 是另一個推論伺服器。混淆層級的句子讀起來像在比較、實際上比較的對象不在同一層。
 
-**正確版本**：MLX 跟 llama.cpp 在 Apple Silicon 上的效能各有勝負，差距通常在 10 ~ 30% 之內，不是「快很多」。llama.cpp 的 Metal backend 經過多年優化，跟 MLX 接近；MLX 在某些 kernel 與量化路徑上更快，但 Ollama / llama.cpp 的生態更成熟、坑更少。
+### 怎麼套用
 
-**判讀方法**：看到 framework A 比 framework B 快 N 倍的說法，問是哪個模型、哪個量化、哪個硬體、哪個版本。同模型同量化同硬體的精確對照才有意義。
+看到工具被比較或描述時、按下表分類：
 
-**實務建議**：對絕大多數使用者，這個差距不值得糾結。先用 Ollama 把日常路徑跑穩；只有「日常生字速度真的不夠用、且明確指向 backend」時才換 MLX 系統。
+| 工具            | 屬於哪一層           | 比較對象應該是                                            |
+| --------------- | -------------------- | --------------------------------------------------------- |
+| Continue.dev    | 介面層               | Cursor、aider、Open WebUI                                 |
+| Ollama          | 推論伺服器           | LM Studio、llama-server、oMLX                             |
+| llama.cpp       | library + 推論伺服器 | MLX、PyTorch（library 層）；llama-server 跟其他 server 比 |
+| MLX             | framework / library  | PyTorch、JAX                                              |
+| Gemma 4 / Qwen3 | 模型                 | 其他模型                                                  |
+| OpenAI 相容 API | 跨層標準介面         | （是介面、不是工具）                                      |
 
-## 誤解 7：量化越激進越省記憶體就越好
+### 實際情境
 
-**錯誤版本**：「24GB Mac 用 Q3 量化可以跑 70B 模型！」
+「Ollama 用 MLX 加速」這個句子若按本框架追問：Ollama 內部用 llama.cpp（library 層）當推論引擎、用 Metal backend 接 Apple Silicon 的 GPU。它跟 MLX 是平行的選擇、不是包含關係。要用 MLX 當 backend 要選 oMLX 或自己 wrap mlx-lm。「Ollama 用 MLX」混淆了 framework 層與 server 層。
 
-**正確版本**：技術上能載入不代表能用。Q3 量化在 70B 模型上的品質衰減在 coding 任務上非常明顯，常常輸給同硬體上跑 Q5 的 14B 模型。「跑得起來」跟「跑得好」是兩件事。
+「[oMLX](/llm/00-foundations/mlx-mtp-omlx/) 比 Ollama 強」這類句子也要拆：oMLX 主要創新是 paged SSD KV cache、解的是長 context 場景的 [TTFT](/llm/knowledge-cards/ttft/) 痛點。對短 prompt 場景、Ollama 跟 oMLX 速度差不多；對長 context 場景、oMLX 有針對性優勢。直接說「強」會丟失情境。
 
-**判讀方法**：看到極端量化的截圖時，要看實際輸出品質而不只是「跑起來」。下面是 coding 任務的經驗法則：
+---
 
-- Q8、Q5_K：品質損失幾乎察覺不到。
-- Q4_K：可察覺但實用，是主流甜蜜點。
-- Q3：明顯衰減，code 任務開始出錯。
-- Q2：基本不能用於正經任務。
+## 框架四：載得進 vs 實際好用
 
-**為什麼這個誤解流行**：YouTube / Reddit 截圖容易給人「我也想試」的衝動，但 demo 場景跟你日常工作流不一定一致。
+「能載入記憶體」跟「實際好用」是兩件事。看到「Mac 跑得起 X 模型」的截圖時、要追問體感速度與資源佔用、而非只看「啟動成功」。
 
-## 誤解 8：所有 OpenAI 相容工具能無縫互通
+### 這個框架解什麼問題
 
-**錯誤版本**：「只要伺服器是 OpenAI 相容，所有功能都能用。」
+把模型載入記憶體（[模型權重](/llm/knowledge-cards/quantization/) + [KV cache](/llm/knowledge-cards/kv-cache/) + 系統保留）只是第一步。實際使用要看：生字速度體感如何、首字延遲多久、整台 Mac 其他工作是否變慢、長時間用會不會降頻。一張截圖只證明「載入成功」、跟「能日常用」是不同層次的問題。
 
-**正確版本**：OpenAI 相容承諾的是 API 形狀（基本 chat completions）；不承諾進階功能（function calling 進階模式、structured output、reasoning effort、vision）的等價。本地伺服器多半實作了基本 chat completions，進階功能參差不齊。詳見 [0.3 OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)。
+### 怎麼套用
 
-**判讀方法**：要用某個進階功能前，去伺服器與模型的文件確認支援程度。不要假設「OpenAI 文件有的本地都有」。
+看到「我在 Mac 上跑 X 模型」的報告時、按下表追問：
 
-**實務建議**：日常寫 code 用基本 chat completions 就夠了，這部分本地通通支援。要用 structured output 或 function calling 強模型 / 強伺服器才能保證。
+| 指標                                                | 體感分界                                       |
+| --------------------------------------------------- | ---------------------------------------------- |
+| [生字速度](/llm/knowledge-cards/tokens-per-second/) | < 10 tok/s 卡頓、20 ~ 40 tok/s 流暢、> 40 即時 |
+| [TTFT](/llm/knowledge-cards/ttft/)（首字延遲）      | > 10 秒打斷思路、< 3 秒接近順暢                |
+| 整台 Mac 響應                                       | 切 tab / 開 app / 滑滑鼠是否順暢               |
+| 記憶體 swap                                         | Activity Monitor 看 Memory Pressure 是否變紅   |
+| 風扇與降頻                                          | 長時間用是否風扇狂轉、體感變熱                 |
 
-## 誤解 9：跑得起來就等於跑得好
+### 實際情境
 
-**錯誤版本**：「我用 16GB Mac 跑 31B 模型啊，可以啊！」
+16GB Mac「跑得起」31B 模型的截圖、實際多半是：模型剛載入時看起來能用、但系統正在 swap、生字速度掉到 1 ~ 2 tok/s、其他 app 全部變慢、整台 Mac 像泡在糖漿裡。這個狀態下「跑起來」的結論成立、「日常使用」的結論不成立。
 
-**正確版本**：跑得起來常常意味著系統正在 swap、生字速度掉到 1 ~ 2 tok/s、其他 app 全部變慢。這種「跑得起來」不是日常可用配置。
+換更激進量化（[Q3](/llm/knowledge-cards/quantization/)）來塞更大模型也踩同樣的陷阱。Q3 70B 在 24GB Mac 上勉強載入、但 coding 任務表現常輸給同硬體的 Q5 14B 模型；節省記憶體拿到的「更大模型」品質衰減太重、實際好用度反而退步。
 
-**判讀方法**：本地 LLM 的可用性看三個指標：
+判讀「我跑得起來」這類報告時、把上表五個指標都問一遍、才能還原真實體感。
 
-1. **生字速度**：< 10 tok/s 體感像 dial-up，> 20 tok/s 才算流暢。
-2. **首字延遲**：> 10 秒會打斷思路，< 3 秒接近順暢。
-3. **整台 Mac 響應**：開 VS Code、切 tab、滑滑鼠是否仍順暢。
+---
 
-只看「能載入」忽略後續體感，是常見的自我安慰。
+## 框架五：隱私是資料流、不是位置
 
-## 誤解 10：本地 LLM 完全沒有隱私風險
+本地推論伺服器把 prompt 留在自己機器上、是隱私光譜的起點、不是終點。完整評估隱私要追資料流：prompt 從你按下 Enter 開始、經過哪些 process、儲存在哪、最終會不會以任何形式離開機器。
 
-**錯誤版本**：「跑在本地，所以絕對私密，可以餵任何敏感資料。」
+### 這個框架解什麼問題
 
-**正確版本**：本地推論伺服器確保 prompt 不會送到雲端，但隱私是一條鏈。實際風險包括：
+「跑在本地、所以絕對私密」這個結論預設「位置」是隱私的唯一變數、但實際隱私風險來自整條資料流。同樣是「本地 LLM」、不同配置的隱私邊界可以差很多。
 
-1. **IDE plugin 雙送**：某些 IDE plugin 同時把 prompt 送本地 LLM 跟雲端服務，例如 Cursor 預設可能同時做 telemetry。
-2. **對話紀錄**：Ollama 本身會 log，Open WebUI 會存資料庫。本機被入侵的話對話紀錄仍可能外洩。
-3. **網路服務**：如果你開了 `OLLAMA_HOST=0.0.0.0` 讓區網存取，等於把本地 LLM 暴露在 LAN 上。
-4. **第三方 plugin**：介面層的 plugin 可能把 prompt 送到第三方 telemetry。
+### 怎麼套用
 
-**判讀方法**：把隱私視為「資料流」而不是「位置」。畫一張資料流圖，看 prompt 從鍵盤打進去到收到回應的過程經過多少 process / 服務 / 網路節點；每一節都是潛在洩漏點。
+把你的 LLM 使用環境畫成資料流圖、列出 prompt 經過的每個節點：
 
-## 給讀者的反射訓練
+```text
+你打字
+  ↓
+IDE / 介面層工具（Continue.dev、Cursor、Open WebUI）
+  ↓ 經過 OpenAI 相容 API
+本地推論伺服器（Ollama 等）
+  ↓
+模型權重 + KV cache 在記憶體
+  ↓
+回應顯示在 IDE
+  ↓
+（可能）對話紀錄存到 SQLite / 雲端同步 / 第三方 telemetry
+```
 
-下次看到本地 LLM 文章時，建議建立這些反射：
+每個節點問一次：
 
-| 看到這類句子        | 立刻問                                       |
-| ------------------- | -------------------------------------------- |
-| 「N 倍加速」        | 什麼任務、什麼基準、什麼硬體、什麼版本？     |
-| 「能跑 X 大小模型」 | 哪種量化、留多少給系統、長 context 還行嗎？  |
-| 「換 model 就能 Y」 | Y 是不是同一個架構家族？                     |
-| 「追上 / 達到雲端」 | 哪個雲端模型、哪個任務、有沒有 cherry-pick？ |
-| 「絕對私密」        | 整條資料流誰能看到？                         |
-| 「比 X 快」         | 同模型、同量化、同硬體、同版本嗎？           |
-| 「最新支援」        | 去 release notes 確認版本與日期。            |
-| 「免費」            | 硬體攤平要多久？電費、機會成本算了嗎？       |
+| 節點           | 該問什麼                                      |
+| -------------- | --------------------------------------------- |
+| IDE 介面層     | 有沒有 telemetry？是否同時送雲端服務？        |
+| 推論伺服器配置 | `OLLAMA_HOST` 是 `127.0.0.1` 還是 `0.0.0.0`？ |
+| 對話紀錄保存   | 存到本機 SQLite？同步到 Notion / iCloud？     |
+| 介面 plugin    | 有沒有第三方 plugin 把 prompt 送到別處？      |
+| 網路設定       | 是否有區網其他裝置能存取本地伺服器？          |
 
-把這張表存著，看新文章時對照一下。本地 LLM 領域變化太快，沒有反射的話會持續被誤導。
+### 實際情境
+
+寫 NDA 客戶 code 時、即使用 Ollama 跑本地 LLM、若同時開著「自動同步 VS Code 設定到雲端」「Open WebUI 對話歷史備份到 iCloud」、prompt 仍可能間接外洩。Cursor 等 IDE 預設可能送 telemetry（含 prompt 片段）給自家服務；用 Cursor 接本地 Ollama 跟用 Continue.dev 接本地 Ollama 的隱私邊界不同。
+
+把 `OLLAMA_HOST=0.0.0.0` 開出去（讓區網其他機器連）也常被忽略。家用網路風險低、公共 Wi-Fi 等於把本地 LLM 暴露給整個網段。預設值是 `127.0.0.1`、改動前先確認場景。
+
+雲端 LLM 也提供 zero-retention 與「不訓練」選項（企業方案、API 預設等），多數合規場景能滿足。本地的隱私優勢在「物理上資料留在機器」、雲端的隱私保證來自合約與技術控制；兩條路在隱私光譜上各占一段、按實際需求挑。
+
+---
+
+## 把五個框架當反射
+
+下表把五個框架壓成一張快速查表、看新資訊時對照：
+
+| 看到這類內容             | 先跑哪個框架                                                                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 「N 倍加速」「快 X%」    | 框架二（任務、基準、硬體三變數）                                                                                                     |
+| 「達到 / 接近 GPT-X」    | 框架二 + 框架四（變數 + 真實體感）                                                                                                   |
+| 「X 工具支援 Y 功能」    | 框架一（版本與日期）                                                                                                                 |
+| 「A 比 B 強」            | 框架三（兩者是不是同一層）                                                                                                           |
+| 「我跑得起 X 模型」      | 框架四（生字速度、TTFT、整機體感）                                                                                                   |
+| 「本地絕對私密」         | 框架五（資料流每個節點）                                                                                                             |
+| 「換 model 就能做 Y」    | 框架三（Y 是不是同一個架構家族？[Transformer](/llm/knowledge-cards/transformer/) 還是 [Diffusion](/llm/knowledge-cards/diffusion/)） |
+| 「量化越激進記憶體越省」 | 框架四（量化後品質還夠嗎）                                                                                                           |
+
+五個框架彼此互補、不互斥。一則複雜資訊常需要同時跑兩三個框架才能完整評估。例如「16GB Mac 跑 70B Q3 模型很順、達到 GPT-4 等級」這句話、要同時跑框架二（達到 GPT-4 是什麼任務上的測試？）、框架四（生字速度多少？整台 Mac 還能用嗎？）、框架三（70B Q3 跟 GPT-4 不在同一層、有點混）。三個框架都跑過、就能還原原始宣稱的真實價值。
+
+## 框架是工具、不是教條
+
+跑這些框架的目的是「拿到能用在自己場景的判讀」、不是「找出每篇文章的錯」。多數作者寫東西時省略前提、是為了文章流暢、未必是有意誤導。把框架當成補完前提的工具：看到不完整的句子、自己補上「在什麼任務、什麼硬體、什麼版本」的脈絡、就能還原作者想表達的事。
+
+對自己也用同一套標準。寫筆記、發推文、回答同事問題時、附上版本與硬體脈絡、能讓資訊更耐保存、半年後自己回看也仍能讀懂。
 
 ## 小結
 
-本地 LLM 圈的常見誤解多半來自「混淆技術層級」「過時資訊」「cherry-picked benchmark」這三類。回到本指南的概念基底（[三層架構](/llm/00-foundations/three-layer-architecture/)、[MLX / MTP / oMLX 區分](/llm/00-foundations/mlx-mtp-omlx/)、[記憶體預算](/llm/00-foundations/hardware-memory-budget/)）能識破大多數誤導；對絕對化句子建立追問來源的反射，能擋下剩下的。
+本地 LLM 的資訊密度高、更新快、層級多、變數多。五個框架（版本時間、量化三變數、三層架構、載入 vs 好用、隱私資料流）提供一致的判讀方法、讓讀者能評估任何新資訊。把框架練成反射、後續看文章、聽演講、社群討論都會自動跑過、再吸收。
 
-讀到這裡，模組零的心智模型就建立完了。下一步是 [模組一：本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/)，把概念落地到實際安裝、整合 VS Code、選模型、做期望管理。
+讀到這裡、模組零的心智模型就建立完了。下一步：[模組一 本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/)、把概念落地到實際安裝、整合 VS Code、選模型、做期望管理。

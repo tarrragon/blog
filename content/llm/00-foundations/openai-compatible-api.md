@@ -15,8 +15,8 @@ OpenAI 相容 API 是本地 LLM 生態能夠快速繁榮的關鍵基礎建設。
 讀完本章後，你應該能：
 
 1. 看懂 `apiBase: http://localhost:11434/v1` 這類設定背後在做什麼。
-2. 判斷一個介面層工具能不能接本地 LLM。
-3. 知道「OpenAI 相容」承諾什麼、不承諾什麼。
+2. 判斷一個介面層工具是否支援本地 LLM。
+3. 知道「[OpenAI 相容](/llm/knowledge-cards/openai-compatible-api/)」承諾的範圍與邊界。
 4. 用 curl 直接打本地 LLM 的 API 驗證它在跑。
 
 ## API 形狀的核心：chat completions
@@ -120,7 +120,7 @@ Continue.dev 內部會把 `provider: ollama` 翻成 OpenAI 相容請求送到 `a
 1. **模型能力**：本地 Gemma 4 31B 跟雲端 GPT-5 都能用同一套 API 呼叫，但回答品質天差地遠。
 2. **效能特性**：本地的 TTFT、生字速度跟雲端完全不同，介面層感覺不到差別不代表速度一樣。
 3. **進階參數**：OpenAI 自己的新功能（function calling 進階模式、structured output、reasoning effort 等）不一定被本地伺服器完整支援。常見問題是設定了 `tools` 參數但本地模型不會用。
-4. **模型清單**：呼叫 `GET /v1/models` 回的清單，本地是你已下載的模型，雲端是 OpenAI 提供的模型；介面層不能假設兩邊清單一樣。
+4. **模型清單**：呼叫 `GET /v1/models` 回的清單、本地是你已下載的模型、雲端是 OpenAI 提供的模型；介面層要把兩邊清單視為各自獨立的資料。
 
 接近真實的踩坑：
 

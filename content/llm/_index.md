@@ -20,19 +20,23 @@ weight: 36
 | 本地推論伺服器 | [Ollama](/llm/01-local-llm-services/ollama/)、[LM Studio](/llm/01-local-llm-services/lm-studio/)、[llama.cpp](/llm/01-local-llm-services/llama-cpp/)                      | vLLM、TGI、Triton 等資料中心級 inference server         |
 | 編輯器整合     | [Continue.dev + VS Code](/llm/01-local-llm-services/vscode-continue-integration/)、Cursor 對應關係                                                                        | JetBrains 全套整合、Vim / Emacs 進階 plugin             |
 | 模型挑選       | [coding 場景的模型優先順序](/llm/01-local-llm-services/model-selection-priority/)、量化等級對體感影響                                                                     | benchmark 跑分方法論、模型訓練資料比較                  |
-| 期望管理       | [本地 LLM 能與不能做什麼](/llm/01-local-llm-services/expectation-management/)、混用雲端的時機                                                                             | LLM 通用能力評估、AGI 預測                              |
+| 期望管理       | [本地 LLM 的擅長領域與分工](/llm/01-local-llm-services/expectation-management/)、混用雲端的時機                                                                           | LLM 通用能力評估、AGI 預測                              |
 
 ## 學習路線
 
-本指南分成兩大模組。先讀基礎知識建立心智模型，再進入本地模型服務的安裝與應用；中間任一節都可以單獨閱讀，但若直接從安裝跳入而沒讀過術語澄清，容易在網路上的錯誤資訊裡迷路。
+本指南分成兩大模組加一組前置卡片。先讀基礎知識建立心智模型、再進入本地模型服務的安裝與應用；任一節可以單獨閱讀。讀章節時遇到陌生詞彙、可以隨時跳到 [前置知識卡片](/llm/knowledge-cards/) 補完、再回到章節繼續。
+
+### [前置知識卡片](/llm/knowledge-cards/)
+
+用原子化卡片整理 [token](/llm/knowledge-cards/token/)、[自回歸](/llm/knowledge-cards/autoregressive/)、[KV cache](/llm/knowledge-cards/kv-cache/)、[量化](/llm/knowledge-cards/quantization/)、[speculative decoding](/llm/knowledge-cards/speculative-decoding/)、[MTP](/llm/knowledge-cards/mtp/)、[MLX](/llm/knowledge-cards/mlx/)、[推論伺服器](/llm/knowledge-cards/inference-server/)、[OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/)、[memory bandwidth](/llm/knowledge-cards/memory-bandwidth/)、[統一記憶體](/llm/knowledge-cards/unified-memory/)、[TTFT](/llm/knowledge-cards/ttft/)、[prefill](/llm/knowledge-cards/prefill/)、[context window](/llm/knowledge-cards/context-window/)、[Transformer](/llm/knowledge-cards/transformer/)、[Diffusion](/llm/knowledge-cards/diffusion/) 等核心概念。章節文章專注情境推導、術語背景交由卡片維持一致。
 
 ### [模組零：基礎知識與心智模型](/llm/00-foundations/)
 
-整理本地 vs 雲端 LLM 的差異、自回歸架構與記憶體頻寬瓶頸、介面 / 伺服器 / 模型三層心智模型、OpenAI 相容 API 為何重要、MLX / MTP / oMLX 三個容易搞混的術語、Apple Silicon Mac 記憶體與模型大小的對應關係，以及網路上常見的本地 LLM 誤解。
+整理本地 vs 雲端 LLM 的差異、自回歸架構與記憶體頻寬瓶頸、介面 / 伺服器 / 模型三層心智模型、OpenAI 相容 API 為何重要、MLX / MTP / oMLX 三個容易搞混的術語、Apple Silicon Mac 記憶體與模型大小的對應關係、判讀本地 LLM 資訊的五個框架。
 
 ### [模組一：本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/)
 
-整理 Ollama、LM Studio、llama.cpp 三個主流推論伺服器的現況差異與安裝路徑、用 Continue.dev 把本地 LLM 接到 VS Code 的完整步驟、寫 code 場景下模型選型的優先順序、本地模型的期望管理，以及想進一步玩 coding agent、Web UI、產圖時的延伸方向。
+整理 Ollama、LM Studio、llama.cpp 三個主流推論伺服器的現況差異與安裝路徑、用 Continue.dev 把本地 LLM 接到 VS Code 的完整步驟、寫 code 場景下模型選型的優先順序、本地模型的期望管理、想進一步玩 coding agent、Web UI、產圖時的延伸方向。
 
 ## 兩個模組怎麼配合
 

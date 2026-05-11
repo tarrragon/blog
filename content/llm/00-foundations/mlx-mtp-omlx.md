@@ -121,37 +121,34 @@ oMLX 解的是 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-s
 2. oMLX 是少數真正把 MLX 用在 server 層的工具；它的賣點不是「MLX」本身，是 SSD KV cache。
 3. MTP 是技巧層，可以疊在 Ollama 或 oMLX 上面，跟伺服器選擇正交。
 
-## 網路上的常見混淆
+## 用三層定位判讀新資訊
 
-下面是寫作本指南時掃過的常見錯誤說法，附正確版本：
+社群文章在描述這三者時、有時會混用層級。把每則資訊放回「framework 層 / server 層 / 技巧層」、可以快速還原它真正在說什麼。下面是幾個常見句子、加上用三層定位重新解析的版本：
 
-1. ❌「llama.cpp 已整合 Gemma 4 MTP」
-   - ✅ 2026 年 5 月時 llama.cpp 的 MTP 支援還在 beta，Gemma 4 drafter 還在 feature request 階段。Ollama 反而搶先支援，這是少見的「Ollama 比 llama.cpp 領先」情況。
+**「llama.cpp 已整合 Gemma 4 MTP」**：要追問版本與時間點。2026 年 5 月時 llama.cpp 上游的 speculative decoding 框架仍 beta、Gemma 4 官方 drafter 整合是 feature request；Ollama 反而在 v0.23.1（2026/5/7）一鍵支援、是少見的「Ollama 領先底層 llama.cpp」情境。Ollama 維護自己的 fork、有時搶先加 patch。
 
-2. ❌「MTP 加速 40%」
-   - ✅ 官方數據是 2 ~ 3 倍加速，視任務而定。寫 code 接近 3x，純文字寫作只有 1.5x ~ 2x。「40%」這類數字來源不明，引用時要小心。
+**「MTP 加速 40%」**：要追問任務與基準。Google 官方數據是 coding 任務 2 ~ 3 倍、其他任務 1.5 ~ 2 倍。「40%」這類數字若沒附上任務、硬體、比較基準、判讀價值有限。回到 Google Gemma 4 技術報告比對原始三變數。
 
-3. ❌「Ollama 用 MLX 比 llama.cpp 快」
-   - ✅ Ollama 內部用 llama.cpp，不是 MLX。要用 MLX 當 backend 要選 oMLX 或自己 wrap mlx-lm。
+**「Ollama 用 MLX 比 llama.cpp 快」**：混淆了 framework 層與 server 層。Ollama 內部用 llama.cpp（library 層）當推論引擎、配 Metal backend 接 Apple Silicon GPU。它跟 MLX 是平行的選擇、不是包含關係。想用 MLX 當 backend 要選 oMLX 或自己 wrap mlx-lm。
 
-4. ❌「oMLX 是 Ollama 的 MLX 版本」
-   - ✅ oMLX 跟 Ollama 沒有 fork 關係。oMLX 的主要創新是 paged SSD KV cache，跟「換 backend 到 MLX」是不同的事情。
+**「oMLX 是 Ollama 的 MLX 版本」**：兩者沒有 fork 關係。oMLX 的主要創新是 paged SSD KV cache、解的是長 [context](/llm/knowledge-cards/context-window/) coding agent 的 [TTFT](/llm/knowledge-cards/ttft/) 痛點。「換 backend 到 MLX」是另一回事、不是 oMLX 的賣點。
 
-5. ❌「裝 MLX 就能跑 LLM」
-   - ✅ MLX 只是 framework，要跑 LLM 還需要模型實作（`mlx-lm`）+ 模型權重 + 介面。對絕大多數使用者來說，直接用 Ollama 比較簡單。
+**「裝 MLX 就能跑 LLM」**：[MLX](/llm/knowledge-cards/mlx/) 只是 framework。實際要跑 LLM 還需要模型實作（`mlx-lm`）+ 模型權重（MLX format）+ 介面（CLI 或 server wrapper）。對寫 code 場景的多數使用者、直接用 Ollama 反而更直接、不用接觸 MLX 細節。
+
+詳細的判讀框架見 [0.6 判讀本地 LLM 資訊的五個框架](/llm/00-foundations/common-misconceptions/)；其中框架一（追溯版本與時間點）、框架二（量化宣稱三變數）、框架三（工具放回三層架構）對本章三個術語的混淆特別有用。
 
 ## 給讀者的選擇順序
 
-如果你只是想在 Mac 上寫 code，正確的選擇順序是：
+寫 code 場景的優先順序：
 
-1. 先裝 Ollama，跑 Gemma 4 31B MTP 或 Qwen3-Coder 30B。MTP 加速包含在 Ollama v0.23.1 內，不用額外設定。
-2. 用一週後若覺得 TTFT 在塞長 context 時痛苦，再評估 oMLX。
-3. MLX 本身對寫 code 場景的使用者來說，是抽象層下面的事；不用直接接觸。
+1. **先裝 Ollama**、跑 Gemma 4 31B MTP 或 Qwen3-Coder 30B。MTP 加速包含在 Ollama v0.23.1 內、開箱即用。
+2. **用一週後**若發現 TTFT 在塞長 context 時體感痛、再評估 oMLX。
+3. **MLX 本身**對寫 code 使用者是抽象層下面的事、預設不需要直接接觸。
 
-不要本末倒置，一開始就鑽 MLX 細節或安裝 oMLX。先把日常路徑跑穩，再針對痛點做特化。
+順序設計的核心是「先解決日常路徑、再針對痛點做特化」。先鑽 MLX 細節或安裝 oMLX、會在還沒驗證痛點存在時就承擔額外的學習與維護成本。
 
 ## 小結
 
-MLX 是 framework，MTP 是技巧，oMLX 是特化 server，三者疊加而非互斥。看到網路上把它們混為一談的句子時，回到本章的三層定位就能精準判讀。
+[MLX](/llm/knowledge-cards/mlx/) 是 framework、[MTP](/llm/knowledge-cards/mtp/) 是技巧、oMLX 是特化伺服器、三者疊加而非互斥。看到混用層級的句子時、回到本章的三層定位就能精準判讀。
 
-下一章：[0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)，把心智模型對到自己 Mac 的真實規格。
+下一章：[0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)、把心智模型對到自己 Mac 的真實規格。
