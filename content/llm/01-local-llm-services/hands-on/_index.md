@@ -29,6 +29,7 @@ weight: 99
 | [權限邊界實驗：LLM 改檔案 / 寫 shell 誰執行](/llm/01-local-llm-services/hands-on/permission-boundary/) | LLM 是 pure function、wrapper 才是權限 gate、`--dry-run` / `--confirm` / `--auto` 取捨 |
 | [跨資料夾風格 follow 任務的 model size 對比](/llm/01-local-llm-services/hands-on/instruction-following-test/) | 1B vs 4B 在「讀資料夾、follow 既有格式、寫新章節」任務上的 structural metrics phase transition |
 | [LLM 運行中 + 結束的資源管理](/llm/01-local-llm-services/hands-on/resource-management/) | RAM / 磁碟 / port 三 dimension 觀察、Ollama auto-unload vs ComfyUI persistent lifecycle、實測釋放數字、自動化 cleanup shell function |
+| [RAG / MCP 的資源 footprint](/llm/01-local-llm-services/hands-on/rag-mcp-resources/) | RAG ingest / query / MCP server 三階段 RAM / 磁碟 / process 實測、多模型並存 RAM 衝突、長期累積管理 |
 
 ## 通用前置
 
