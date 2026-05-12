@@ -45,6 +45,13 @@ Judge model 選擇看硬體：
 
 注意：reasoning model 的 thinking trace 拉長 latency、跑大量 batch 要規劃時間（100 item × 60s = 100 min）。
 
+**何時不適合用本地 judge**：
+
+1. **硬體低於 M4 Pro 24GB / 4090 16GB**（如 M1/M2 16GB、無獨立 GPU PC）：跑 32B reasoning model 太緊、強行跑會 swap、latency 爆 5-10×。改用 14B instruct model（如 Qwen2.5-14B Q4）作 judge、或直接走雲端 judge
+2. **Batch × latency > 你可接受的等待時間**：100 item × 60s/item = 100 min；500 item × 120s = 17 hr。預估超過 4 hr 時改雲端 batch API
+3. **eval 任務太 nuanced**：細粒度倫理 / 法律 / 高 stake 判讀、本地 32B distill 能力不夠、用雲端旗艦 judge 或人工 review
+4. **calibration 階段**：第一次跑、要快速 iterate rubric、雲端 judge latency 短（5-30s）更適合 iterate
+
 ## 整體流程
 
 ```text

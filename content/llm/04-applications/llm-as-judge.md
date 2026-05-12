@@ -273,4 +273,4 @@ Production users
 
 LLM-as-Judge 把「in-house benchmark」從理論變成可操作、production AI app 的 eval 事實標準。設計核心：四段式 prompt（task / input-output / rubric / format）、pairwise 或 direct scoring 看場景、三大 bias（position / verbosity / self-preference）要緩解、必須 calibrate。Production trace + judge 形成自動 eval 閉環、是 quality engineering 的標準路徑。不替代 human eval 在高 stake 任務、不替代 rule-based 在可機械驗證任務。
 
-下一步：模組四到此覆蓋從原理（4.0-4.5）、進階主題（4.6-4.11）、coding agent 工程（4.12）、cost / latency（4.13）、agent memory（4.14）、observability（4.15）、eval（4.16）的完整應用層地圖。可進入 [模組五](/llm/05-discrete-gpu/) 或 [模組六](/llm/06-security/) 看本地推論硬體跟安全議題、或回 [4.9 benchmarking 章節](/llm/04-applications/benchmarking-and-evaluation/) 對照 standard benchmark 視角。
+下一步：模組四到此覆蓋從原理（4.0-4.5）、進階主題（4.6-4.11）到 coding agent + production 應用閉環（4.12-4.16：harness / caching / memory / tracing / eval）的完整應用層地圖。可進入 [模組五](/llm/05-discrete-gpu/) 看本地推論硬體、進入 [模組六](/llm/06-security/) 看安全議題（特別是 [6.6 OWASP LLM Top 10 對照](/llm/06-security/owasp-llm-top10-mapping/)、把 production eval 的安全議題對應到企業合規詞彙）、或回 [4.9 benchmarking 章節](/llm/04-applications/benchmarking-and-evaluation/) 對照 standard benchmark 視角。

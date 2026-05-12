@@ -6,7 +6,7 @@ tags: ["llm", "applications", "observability", "tracing", "production", "opentel
 weight: 15
 ---
 
-LLM 應用 production debug 比傳統 web app debug 難 — agent 為什麼選了那條路、reasoning trace 怎麼推導、tool call 為什麼 retry 三次、token 消耗為什麼比預期高 ×3？這些問題 grep log 找不到答案。[LLM tracing](/llm/knowledge-cards/llm-tracing/) 把每次 LLM call / tool call / memory op 編成結構化 span、用 OpenTelemetry GenAI semantic conventions 標準化、提供 debug / cost / quality 監控的事實標準。
+[LLM tracing](/llm/knowledge-cards/llm-tracing/) 把每次 LLM call / tool call / memory op / handoff 編成結構化 span、用 OpenTelemetry GenAI semantic conventions 標準化、是 production LLM 應用 debug / cost / quality 監控的事實標準。傳統 web app 的字串 logging 抓不到 LLM 應用的關鍵問題 — agent 為什麼選了那條路、reasoning trace 怎麼推導、tool call 為什麼 retry 三次、token 消耗為什麼比預期高 ×3。本章把 LLM tracing 的運作機制、OTel GenAI semconv、三大 use case（cost / latency / failure）跟 production eval 閉環拆成可操作的工程實務。
 
 ## 本章目標
 

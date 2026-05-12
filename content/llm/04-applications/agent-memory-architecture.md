@@ -1,23 +1,23 @@
 ---
 title: "4.14 Agent memory 分層架構"
 date: 2026-05-12
-description: "Agent 在 context window 之外管理長期狀態的設計：working / short-term / long-term（episodic / semantic / procedural）四層、寫入時機、retrieval 設計、失敗模式"
+description: "Agent 在 context window 之外管理長期狀態的設計：working / short-term / long-term episodic / semantic / procedural 五個層次、寫入時機、retrieval 設計、失敗模式"
 tags: ["llm", "applications", "agent", "memory", "rag"]
 weight: 14
 ---
 
-LLM 本身無狀態 — 每次 [forward pass](/llm/knowledge-cards/forward-pass/) 從零開始、唯一輸入是 [context window](/llm/knowledge-cards/context-window/)。但「agent」概念上有跨 session 狀態：使用者偏好、過去任務、累積知識、操作流程。Agent memory 是 harness 層的設計、把這些狀態持久化、按需 inject 到 working context。本章把 memory 分四層、各層的寫入時機、retrieval 設計、失敗模式拆成可操作的工程實務。
+LLM 本身無狀態 — 每次 [forward pass](/llm/knowledge-cards/forward-pass/) 從零開始、唯一輸入是 [context window](/llm/knowledge-cards/context-window/)。但「agent」概念上有跨 session 狀態：使用者偏好、過去任務、累積知識、操作流程。Agent memory 是 harness 層的設計、把這些狀態持久化、按需 inject 到 working context。本章把 memory 分成五個層次、各層的寫入時機、retrieval 設計、失敗模式拆成可操作的工程實務。
 
 ## 本章目標
 
 讀完本章後、你應該能：
 
-1. 區分 working / short-term / long-term episodic / semantic / procedural 四層 [memory](/llm/knowledge-cards/agent-memory/)。
+1. 區分 [agent memory](/llm/knowledge-cards/agent-memory/) 的五個層次（working / short-term / long-term episodic / semantic / procedural）。
 2. 對自己 agent 場景判斷要哪幾層 memory、不要哪幾層。
 3. 設計 long-term memory 的「何時寫」「何時讀」邏輯。
 4. 認識 memory 的常見失敗模式（drift / PII / 污染）跟對應緩解。
 
-## 四層 memory 的責任劃分
+## 五個層次的責任劃分
 
 ```text
 [Working memory]：當前 forward pass 的 context window
@@ -52,7 +52,7 @@ LLM 本身無狀態 — 每次 [forward pass](/llm/knowledge-cards/forward-pass/
 
 跟人類認知科學的對應：working ≈ 短期工作記憶、episodic ≈ 「我昨天去哪裡了」、semantic ≈ 「巴黎是法國首都」、procedural ≈ 「騎腳踏車的肌肉記憶」。
 
-## 不是每個 agent 都要四層
+## 不是每個 agent 都要五個層次都用
 
 選擇看用例：
 
@@ -228,7 +228,7 @@ Production 多 user 場景、memory store 沒做 user isolation、A user 的 mem
 
 | 工具 / framework        | 特色                                             |
 | ----------------------- | ------------------------------------------------ |
-| Mem0                    | 開源、四層 memory framework、retrieval-on-demand |
+| Mem0                    | 開源、五層 memory framework、retrieval-on-demand |
 | Letta（前 MemGPT）      | LLM-managed memory hierarchy、自動 page in/out   |
 | LangGraph memory        | LangChain 系、跟 graph workflow 整合             |
 | Zep                     | 雲端 memory service、含 PII detection            |
@@ -256,8 +256,8 @@ Coding agent 場景的 memory 案例：
 
 **不會過時的部分**：
 
-- 四層 memory 分類（working / session / episodic / semantic / procedural）
-- 「不是每個 agent 都要四層」的選擇框架
+- 五層 memory 分類（working / session / episodic / semantic / procedural）
+- 「不是每個 agent 都要五層都用」的選擇框架
 - 寫入時機的三種模式（auto / task-end / reflection）
 - Retrieval 的三種模式（inject / retrieval / hybrid）
 - 五個失敗模式分類
@@ -271,6 +271,6 @@ Coding agent 場景的 memory 案例：
 
 ## 小結
 
-Agent memory 把 stateless LLM 包裝成有狀態 agent、分四層（working 在 context 內、session 是 scratchpad、long-term 含 episodic / semantic / procedural）。設計核心是「何時寫」（task-end 為主、reflection 補強）+「何時讀」（inject + retrieval hybrid）。五大失敗模式（drift / PII / 污染 / hallucination boost / 跨 user 污染）都有對應緩解。跟 RAG 邊界看內容類型跟 per-user 性。
+Agent memory 把 stateless LLM 包裝成有狀態 agent、分五層（working 在 context 內、short-term/session 是 scratchpad、long-term 含 episodic / semantic / procedural 三種）。設計核心是「何時寫」（task-end 為主、reflection 補強）+「何時讀」（inject + retrieval hybrid）。五大失敗模式（drift / PII / 污染 / hallucination boost / 跨 user 污染）都有對應緩解。跟 RAG 邊界看內容類型跟 per-user 性。
 
 下一章：[4.15 LLM tracing 與 observability](/llm/04-applications/llm-tracing-and-observability/)、看 production debug 跟 cost 監控的工具層。

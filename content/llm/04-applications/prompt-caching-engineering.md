@@ -6,7 +6,9 @@ tags: ["llm", "applications", "prompt-cache", "cost", "latency", "coding-agent"]
 weight: 13
 ---
 
-[Prompt cache](/llm/knowledge-cards/prompt-cache/) 把重複 prefix 的 [KV cache](/llm/knowledge-cards/kv-cache/) 在 LLM 服務端持久化、後續 query 跳過 [prefill](/llm/knowledge-cards/prefill/) 階段。Anthropic / OpenAI / Bedrock / Gemini 都列為 cost 跟 [TTFT](/llm/knowledge-cards/ttft/) 的最大單一槓桿 — 90% cost 折扣 + 顯著 latency 改善。本章把 prompt caching 的運作機制、設計原則、coding agent / long-context 場景的 pattern、常見 anti-pattern 拆成可操作的工程實務。
+[Prompt cache](/llm/knowledge-cards/prompt-cache/) 把重複 prefix 的計算結果在 LLM 服務端跨 request 持久化、後續 query 跳過 [prefill](/llm/knowledge-cards/prefill/) 階段。Anthropic / OpenAI / Bedrock / Gemini 都列為 cost 跟 [TTFT](/llm/knowledge-cards/ttft/) 的最大單一槓桿 — 90% cost 折扣 + 顯著 latency 改善。本章把 prompt caching 的運作機制、設計原則、coding agent / long-context 場景的 pattern、常見 anti-pattern 拆成可操作的工程實務。
+
+注意三層 cache 概念的層次差異（[prompt cache 卡片](/llm/knowledge-cards/prompt-cache/) 有完整對比表）：[KV cache](/llm/knowledge-cards/kv-cache/) 是單次推論內、過去 token 的 K/V 暫存（autoregressive 才省重算）；[prefix cache](/llm/knowledge-cards/prefix-cache/) 是同一推論伺服器內跨 request 共用 KV cache；**prompt cache（本章聚焦）** 是雲端 LLM API 商業 feature、跨 request 跨時間、有 TTL。三者不同層、要區分。
 
 ## 本章目標
 
