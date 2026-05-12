@@ -255,6 +255,33 @@ weight: -1
 | [Liveness](/backend/knowledge-cards/health-check-liveness/)          | 平台如何判斷 process 是否仍然存活     | Kubernetes、systemd                 |
 | [Graceful Shutdown](/backend/knowledge-cards/graceful-shutdown/)     | instance 停止前如何排空流量與保存狀態 | deployment、worker、long connection |
 
+## 效能工程與容量規劃
+
+| 卡片                                                                             | 核心問題                                 | 常見出現位置                             |
+| -------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+| [Little's Law](/backend/knowledge-cards/little-law/)                             | 並發、到達率、逗留時間如何相互推導       | capacity、saturation、SLO                |
+| [Universal Scalability Law](/backend/knowledge-cards/universal-scalability-law/) | 擴容到某點後吞吐反而下降的數學原因       | scalability、coordinator、consensus      |
+| [Saturation Point](/backend/knowledge-cards/saturation-point/)                   | latency 進入指數成長的臨界流量           | knee、capacity、headroom                 |
+| [USE Method](/backend/knowledge-cards/use-method/)                               | 資源層 Utilization / Saturation / Errors | bottleneck、resource、capacity           |
+| [RED Method](/backend/knowledge-cards/red-method/)                               | 請求層 Rate / Errors / Duration          | SLO、latency、request                    |
+| [Workload Model](/backend/knowledge-cards/workload-model/)                       | production traffic shape 如何量化重播    | load test、capacity、forecast            |
+| [Tail Latency](/backend/knowledge-cards/tail-latency/)                           | p99 / p999 為何比平均更能反映 saturation | SLO、GC、cross-zone                      |
+| [Hot Partition](/backend/knowledge-cards/hot-partition/)                         | 單一 partition 流量過熱、名義容量達不到  | DynamoDB、partition key、saturation      |
+| [Peak Forecast](/backend/knowledge-cards/peak-forecast/)                         | 預期峰值如何預測 — 容量公式輸入          | capacity、event、growth                  |
+| [Headroom Budget](/backend/knowledge-cards/headroom-budget/)                     | 容量規劃的安全餘量                       | capacity、AZ failover、forecast 誤差     |
+| [Growth Curve](/backend/knowledge-cards/growth-curve/)                           | 用戶 / 流量成長的五種形狀                | linear、step、exponential、cyclical      |
+| [Predictive Scaling](/backend/knowledge-cards/predictive-scaling/)               | 根據預測提前擴容                         | autoscaler、ML、daily pattern            |
+| [Scheduled Scaling](/backend/knowledge-cards/scheduled-scaling/)                 | 按已知時間表預先擴容                     | event、pre-scaling、Black Friday         |
+| [Shadow Traffic](/backend/knowledge-cards/shadow-traffic/)                       | production traffic 複製到新版本驗證      | production validation、traffic mirror    |
+| [Dark Launch](/backend/knowledge-cards/dark-launch/)                             | 程式碼上線但 UI 入口暫不開放             | feature flag、production validation      |
+| [Canary Perf Check](/backend/knowledge-cards/canary-perf-check/)                 | canary release 中的 latency 退化檢查     | canary、release gate、rollback           |
+| [Profile Diff](/backend/knowledge-cards/profile-diff/)                           | 比較兩次 profile 找退化原因              | release、CPU、memory、lock               |
+| [Continuous Profiling](/backend/knowledge-cards/continuous-profiling/)           | production 持續取低 overhead profile     | flame graph、observability、tracing      |
+| [Cost Per Request](/backend/knowledge-cards/cost-per-request/)                   | 雲端成本拆到單一請求的 unit economics    | FinOps、capacity、TCO                    |
+| [Performance Budget](/backend/knowledge-cards/performance-budget/)               | 跟 error budget 並列的效能退化額度       | SLO、release freeze、burn rate           |
+| [Latency Budget](/backend/knowledge-cards/latency-budget/)                       | end-to-end latency 拆到每 stage 的配額   | Little's Law、stage、reverse calculation |
+| [SLO Baseline Drift](/backend/knowledge-cards/slo-baseline-drift/)               | SLO baseline 因業務變化要重新校準        | review、surge、product change            |
+
 ## 事故處理與復盤
 
 | 卡片                                                                                       | 核心問題                       | 常見出現位置                         |

@@ -23,6 +23,7 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 | 部署平台   | [graceful shutdown](/backend/knowledge-cards/graceful-shutdown)、health/[readiness](/backend/knowledge-cards/readiness)、signal handling、resource limit、[failover](/backend/knowledge-cards/failover) hook 的程式設計 | Kubernetes、systemd、[load balancer](/backend/knowledge-cards/load-balancer/)、[container](/backend/knowledge-cards/container/) image、[service discovery](/backend/knowledge-cards/service-discovery/)                                                                                                                                |
 | 可靠性驗證 | unit test、table-driven / parameterized test、race / async test、integration test、故障路徑測試                                                                                                                         | [CI pipeline](/backend/knowledge-cards/ci-pipeline)、[load test](/backend/knowledge-cards/load-test)、fuzz campaign、chaos testing、環境治理                                                                                                                                                                                           |
 | 資安保護   | [Request Middleware](/backend/knowledge-cards/middleware/)、policy interface、error mapping、redaction helper、security test                                                                                            | identity、[authorization](/backend/knowledge-cards/authorization/)、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[WAF](/backend/knowledge-cards/waf/)、[Secret Management](/backend/knowledge-cards/secret-management/)、[Audit Log](/backend/knowledge-cards/audit-log/)、[data masking](/backend/knowledge-cards/data-masking/) |
+| 效能容量   | algorithm、hot path、micro benchmark、runtime profiler 解讀、並發程式邊界                                                                                                                                               | workload model、production traffic replay、k6 / JMeter / Gatling / Locust、saturation metric、headroom budget、capacity planning、cost per request                                                                                                                                                                                     |
 
 ## 教學模組
 
@@ -66,6 +67,10 @@ Backend 是多個後端語言系列共用的實作層。未來若新增 frontend
 
 整理事故分級、指揮流程、止血回復、通訊節奏、復盤閉環與演練機制。
 
+### [模組九：效能工程與容量規劃](/backend/09-performance-capacity/)
+
+整理壓測理論、workload modeling、壓測工具選型、saturation discovery、瓶頸定位、容量規劃、成本邊界、效能可觀測性與改進閉環。跟模組六是 sibling 工程紀律：06 看「失敗模式如何被驗證」、09 看「正常負載如何被量化與規劃」。附 31 個 AWS / GCP / Azure 雲端公開實戰案例庫、覆蓋售票 flash-sale、極端可預期峰值、事件型峰值、surge、低延遲持續、持續成長六種負載形狀。
+
 ## 與語言教材的關係
 
 Backend 教材提供跨語言的服務概念與操作語意。語言教材可以回連 Backend，說明特定語言如何實作 repository port、publisher port、cache interface、[Request Middleware](/backend/knowledge-cards/middleware/)、async worker 或 observability boundary；Backend 章節本身應保持獨立，讓 Go、Python、Node.js、Java、C#、PHP、Rust 或其他後端語言都能使用同一套服務判斷。
@@ -91,7 +96,6 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 檢查清單與欄位表在本系列是輔助工具，不是文章主體。它們的責任是收斂判讀，不是取代推理；每一個條目都應回到案例脈絡，說明為何成立、失效時會發生什麼，以及下一步要交給哪個模組。
 
 寫作時優先保留因果鏈：觀測到什麼、如何判讀、做了什麼決策、承擔什麼代價、後續如何修正。當文章只剩條列而缺少因果，讀者會知道要檢查什麼，卻不知道為什麼要這樣檢查。
-
 
 ## 補充知識卡片入口
 
@@ -159,6 +163,7 @@ Backend 文章中的高密度術語應優先抽成前置知識卡片。Source of
 - CI、load test、fuzz、chaos testing
 - identity、[authorization](/backend/knowledge-cards/authorization/)、[data masking](/backend/knowledge-cards/data-masking/)、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[website certificate lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)、[Secret Management](/backend/knowledge-cards/secret-management/)、[Audit Log](/backend/knowledge-cards/audit-log/)
 - [incident severity](/backend/knowledge-cards/incident-severity)、command model、[escalation policy](/backend/knowledge-cards/escalation-policy)、[rollback strategy](/backend/knowledge-cards/rollback-strategy)、[post-incident review](/backend/knowledge-cards/post-incident-review)
+- workload modeling、[saturation point](/backend/knowledge-cards/saturation-point/)、[USE method](/backend/knowledge-cards/use-method/)、[RED method](/backend/knowledge-cards/red-method/)、[peak forecast](/backend/knowledge-cards/peak-forecast/)、[headroom budget](/backend/knowledge-cards/headroom-budget/)、[predictive scaling](/backend/knowledge-cards/predictive-scaling/)、[performance budget](/backend/knowledge-cards/performance-budget/)、[latency budget](/backend/knowledge-cards/latency-budget/)
 
 後續撰寫任何語言教材時，凡是涉及具體外部服務操作、部署平台設定或產品選型，都應優先放到 Backend；語言章節只保留足夠說明抽象邊界的最小背景。
 
