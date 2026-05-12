@@ -6,7 +6,7 @@ tags: ["llm", "discrete-gpu", "nvidia", "amd", "intel", "cuda", "rocm"]
 weight: 7
 ---
 
-選 GPU 跑本地 LLM 不只看 VRAM 容量與 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/)、工具鏈支援度同樣重要。NVIDIA / AMD / Intel 三家廠商在 llama.cpp 生態的位置不同、CUDA 之外的 backend 仍在演進。本章整理三家在 2026 年 5 月的相對位置、跟選卡時值得考慮的判讀軸。本章不重複 [統一記憶體](/llm/knowledge-cards/unified-memory/) 的 Mac 場景、改聚焦 PC 獨立 VRAM 的廠商工具鏈差異。
+選 GPU 跑本地 LLM 不只看 [VRAM](/llm/knowledge-cards/vram/) 容量與 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/)、工具鏈支援度同樣重要。NVIDIA / AMD / Intel 三家廠商在 llama.cpp 生態的位置不同、[GPU compute backend](/llm/knowledge-cards/gpu-compute-backend/) 中 CUDA 之外的選項仍在演進。本章整理三家在 2026 年 5 月的相對位置、跟選卡時值得考慮的判讀軸；多卡互連的議題見 [NVLink](/llm/knowledge-cards/nvlink/) 跟 [PCIe](/llm/knowledge-cards/pcie/)。本章不重複 [統一記憶體](/llm/knowledge-cards/unified-memory/) 的 Mac 場景、改聚焦 PC 獨立 VRAM 的廠商工具鏈差異。
 
 > **事實查核註**：GPU 工具鏈的支援度依 driver 版本、llama.cpp release 與廠商策略快速演進、本章描述為 2026 年 5 月的社群常見回報、建議引用前查閱對應 backend 的官方文件、[llama.cpp release notes](https://github.com/ggml-org/llama.cpp/releases) 跟自己硬體的實測。
 

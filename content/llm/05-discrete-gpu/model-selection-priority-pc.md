@@ -6,7 +6,7 @@ tags: ["llm", "discrete-gpu", "model-selection", "moe", "coding"]
 weight: 6
 ---
 
-跑穩 [推論伺服器](/llm/knowledge-cards/inference-server/) 後、下一個決策是「該裝哪個模型」。PC 場景的選型有 Mac 沒有的變數：[MoE CPU 卸載](/llm/knowledge-cards/moe-cpu-offload/) 讓「同樣 16GB VRAM、要全載 14B Dense 還是卸載 30B MoE」變成主要取捨。本章用優先順序而不是對比表羅列、依不同 VRAM 容量給出社群常見的候選清單與適用情境。模型檔案格式以 [GGUF](/llm/knowledge-cards/gguf/) 為主、各等級的 [量化](/llm/knowledge-cards/quantization/) 版本是選型的第二軸；coding 能力評估的常見參考是 [SWE-bench](/llm/knowledge-cards/swe-bench/) 等公開 benchmark。
+跑穩 [推論伺服器](/llm/knowledge-cards/inference-server/) 後、下一個決策是「該裝哪個模型」。PC 場景的選型有 Mac 沒有的變數：[MoE](/llm/knowledge-cards/moe/) 模型搭配 [CPU 卸載](/llm/knowledge-cards/moe-cpu-offload/) 讓「同樣 16GB [VRAM](/llm/knowledge-cards/vram/)、要全載 14B Dense 還是卸載 30B MoE」變成主要取捨；MoE 的核心判讀軸是 [active parameter](/llm/knowledge-cards/active-parameter/) 比例。本章用優先順序而不是對比表羅列、依不同 VRAM 容量給出社群常見的候選清單與適用情境。模型檔案格式以 [GGUF](/llm/knowledge-cards/gguf/) 為主、各等級的 [量化](/llm/knowledge-cards/quantization/) 版本是選型的第二軸；coding 能力評估的常見參考是 [SWE-bench](/llm/knowledge-cards/swe-bench/) 等公開 benchmark；模型來源信任的判讀見 [model card](/llm/knowledge-cards/model-card/)。
 
 > **事實查核註**：本章引用的模型名稱、能力等級、量化版本以 2026 年 5 月的社群可用資源為基準。模型發布速度快、3 ~ 6 個月後可能有新候選、本章建議用具體版本日期跟對應的官方 model card / 技術報告校準。
 

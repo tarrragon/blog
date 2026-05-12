@@ -26,13 +26,14 @@ weight: -1
 
 ### 模型權重與量化
 
-| 卡片                                                               | 核心問題                       |
-| ------------------------------------------------------------------ | ------------------------------ |
-| [Quantization](/llm/knowledge-cards/quantization/)                 | 模型權重如何用較少 bits 表示   |
-| [GGUF](/llm/knowledge-cards/gguf/)                                 | llama.cpp 系統如何打包模型權重 |
-| [Instruction-Tuned Model](/llm/knowledge-cards/instruction-tuned/) | 模型如何跟著 prompt 走         |
-| [Base Model](/llm/knowledge-cards/base-model/)                     | 未微調的原始模型適合什麼用途   |
-| [Embedding Model](/llm/knowledge-cards/embedding-model/)           | 文字如何轉成可比對的向量       |
+| 卡片                                                               | 核心問題                                |
+| ------------------------------------------------------------------ | --------------------------------------- |
+| [Quantization](/llm/knowledge-cards/quantization/)                 | 模型權重如何用較少 bits 表示            |
+| [GGUF](/llm/knowledge-cards/gguf/)                                 | llama.cpp 系統如何打包模型權重          |
+| [Instruction-Tuned Model](/llm/knowledge-cards/instruction-tuned/) | 模型如何跟著 prompt 走                  |
+| [Base Model](/llm/knowledge-cards/base-model/)                     | 未微調的原始模型適合什麼用途            |
+| [Embedding Model](/llm/knowledge-cards/embedding-model/)           | 文字如何轉成可比對的向量                |
+| [Model Card](/llm/knowledge-cards/model-card/)                     | 判讀模型來源、訓練資料、授權的 metadata |
 
 ### 推論加速技巧
 
@@ -52,12 +53,18 @@ weight: -1
 
 ### 硬體與架構
 
-| 卡片                                                                | 核心問題                             |
-| ------------------------------------------------------------------- | ------------------------------------ |
-| [Memory Bandwidth](/llm/knowledge-cards/memory-bandwidth/)          | 為什麼記憶體頻寬決定生字速度         |
-| [Unified Memory Architecture](/llm/knowledge-cards/unified-memory/) | Apple Silicon 怎麼讓模型用滿大記憶體 |
-| [Transformer](/llm/knowledge-cards/transformer/)                    | 寫 code 用的 LLM 是哪種神經網路      |
-| [Diffusion](/llm/knowledge-cards/diffusion/)                        | 產圖用的是哪種神經網路               |
+| 卡片                                                                | 核心問題                                    |
+| ------------------------------------------------------------------- | ------------------------------------------- |
+| [Memory Bandwidth](/llm/knowledge-cards/memory-bandwidth/)          | 為什麼記憶體頻寬決定生字速度                |
+| [Unified Memory Architecture](/llm/knowledge-cards/unified-memory/) | Apple Silicon 怎麼讓模型用滿大記憶體        |
+| [VRAM](/llm/knowledge-cards/vram/)                                  | 獨立 GPU 場景的顯卡記憶體、跟系統 RAM 分層  |
+| [PCIe](/llm/knowledge-cards/pcie/)                                  | GPU 跟主機板之間的高速序列匯流排            |
+| [NVLink](/llm/knowledge-cards/nvlink/)                              | NVIDIA 多卡互連、跟 PCIe 比的卡間頻寬優勢   |
+| [GPU Compute Backend](/llm/knowledge-cards/gpu-compute-backend/)    | CUDA / ROCm / Vulkan / Metal / SYCL 對照    |
+| [Transformer](/llm/knowledge-cards/transformer/)                    | 寫 code 用的 LLM 是哪種神經網路             |
+| [Attention](/llm/knowledge-cards/attention/)                        | Transformer 內部讓 token 互相加權平均的機制 |
+| [Flash Attention](/llm/knowledge-cards/flash-attention/)            | Attention 計算的記憶體友善實作              |
+| [Diffusion](/llm/knowledge-cards/diffusion/)                        | 產圖用的是哪種神經網路                      |
 
 ### 評估指標
 
@@ -71,16 +78,33 @@ weight: -1
 | ---------------------------------------------------------- | ------------------------------------------------------------- |
 | [RAG](/llm/knowledge-cards/rag/)                           | 怎麼給 LLM 動態外掛知識                                       |
 | [LLM Agent](/llm/knowledge-cards/agent/)                   | 把控制流交給 LLM 的應用模式                                   |
+| [Agent Loop](/llm/knowledge-cards/agent-loop/)             | plan → act → observe 的自我循環、injection 放大器             |
+| [Tool Use](/llm/knowledge-cards/tool-use/)                 | LLM 透過結構化呼叫外部工具擴展能力的設計                      |
 | [Function Calling](/llm/knowledge-cards/function-calling/) | 模型訓練建立的呼叫工具能力                                    |
 | [MCP](/llm/knowledge-cards/mcp/)                           | LLM application ↔ tool server 的標準化協議                    |
+| [System Prompt](/llm/knowledge-cards/system-prompt/)       | 開發者預設、不直接顯示給使用者的指令層                        |
 | [Chunking](/llm/knowledge-cards/chunking/)                 | 把長文件切成 retrieval 片段的 resolution vs context loss 取捨 |
 | [Vector Database](/llm/knowledge-cards/vector-database/)   | 高維向量儲存 + ANN 檢索、RAG production 的關鍵元件            |
 
+### 模型行為與安全
+
+| 卡片                                                       | 核心問題                                         |
+| ---------------------------------------------------------- | ------------------------------------------------ |
+| [Hallucination](/llm/knowledge-cards/hallucination/)       | LLM 生成看似合理但事實錯誤的內容                 |
+| [Prompt Injection](/llm/knowledge-cards/prompt-injection/) | 把惡意指令藏進 LLM 會讀到的內容、OWASP LLM01     |
+| [Refusal Rate](/llm/knowledge-cards/refusal-rate/)         | LLM 拒絕回答的比例、production 偵測訊號          |
+| [Bind Address](/llm/knowledge-cards/bind-address/)         | 推論伺服器決定接受哪些網路介面的請求             |
+| [Sandbox](/llm/knowledge-cards/sandbox/)                   | 把 tool 跟 MCP server 跑在權限受限環境的隔離技術 |
+
 ### Production 推論
 
-| 卡片                                       | 核心問題                                                                  |
-| ------------------------------------------ | ------------------------------------------------------------------------- |
-| [Batching](/llm/knowledge-cards/batching/) | 多 request 一起跑、攤平 memory bandwidth 成本、throughput vs latency 取捨 |
+| 卡片                                                       | 核心問題                                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [Batching](/llm/knowledge-cards/batching/)                 | 多 request 一起跑、攤平 memory bandwidth 成本、throughput vs latency 取捨 |
+| [Prefix Cache](/llm/knowledge-cards/prefix-cache/)         | 多個請求共用前綴的 KV cache 重用優化                                      |
+| [MoE](/llm/knowledge-cards/moe/)                           | Mixture of Experts 架構、總參數大但每 token 計算量小                      |
+| [Active Parameter](/llm/knowledge-cards/active-parameter/) | MoE 每 token 實際參與計算的參數量                                         |
+| [MoE CPU 卸載](/llm/knowledge-cards/moe-cpu-offload/)      | 把 MoE 不活躍專家放系統 RAM、讓有限 VRAM 跑大模型                         |
 
 ## 卡片寫法
 

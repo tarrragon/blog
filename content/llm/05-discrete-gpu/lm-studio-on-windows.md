@@ -31,7 +31,7 @@ Windows 版的安裝步驟：
 
 ## GPU backend 選擇
 
-LM Studio 在 Windows 上的 backend 選項依 GPU 廠商不同：
+LM Studio 在 Windows 上的 [GPU compute backend](/llm/knowledge-cards/gpu-compute-backend/) 選項依 GPU 廠商不同：
 
 | GPU 廠商            | 可選 backend                       | 建議起點                                          |
 | ------------------- | ---------------------------------- | ------------------------------------------------- |

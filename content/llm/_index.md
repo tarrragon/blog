@@ -68,33 +68,40 @@ weight: 36
 
 整理消費級 PC（Windows / Linux + NVIDIA / AMD 獨立 GPU）跑本地 LLM 的硬體判讀模型與工程選項：[VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)、MoE 模型的 [CPU 卸載策略](/llm/knowledge-cards/moe-cpu-offload/)（`--n-cpu-moe`）、KV cache 量化（K=Q8 / V=Q4）跟 context 長度的權衡、llama.cpp 在 PC 上的調參空間。本模組跟模組一是平行的硬體路線、共用模組零的心智模型跟卡片。
 
+### [模組六：本地 LLM 的安全與權限](/llm/06-security/)
+
+整理個人 dev 在自己機器上跑本地 LLM 的安全議題：[模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/)、[推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/)、[tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)、[IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)、[跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)、[跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/)。framing 是個人 dev 視角、不是 enterprise 資安管理；production / 多租戶 LLM 服務的特殊資安議題見 [Backend 模組七 資安與資料保護](/backend/07-security-data-protection/) 的 LLM 相關章節。
+
 ## 模組之間怎麼配合
 
-| 模組   | 角度                 | 跟其他模組的關係                             |
-| ------ | -------------------- | -------------------------------------------- |
-| 模組零 | 操作層心智模型       | 是模組一跟模組五的共同前置                   |
-| 模組一 | 工具層、Mac 實際安裝 | 用模組零的詞彙、跟模組三的理論互補           |
-| 模組二 | 數學工具             | 提供模組三需要的數學詞彙、跟硬體平台無關     |
-| 模組三 | 理論機制             | 用模組二的工具拼出完整 LLM、跟硬體平台無關   |
-| 模組四 | 應用層原理           | 用前面模組建的詞彙、看 LLM 作為系統元件      |
-| 模組五 | 工具層、PC 獨立 GPU  | 跟模組一平行、用模組零的詞彙、處理 VRAM 場景 |
+| 模組   | 角度                  | 跟其他模組的關係                                                      |
+| ------ | --------------------- | --------------------------------------------------------------------- |
+| 模組零 | 操作層心智模型        | 是模組一跟模組五的共同前置                                            |
+| 模組一 | 工具層、Mac 實際安裝  | 用模組零的詞彙、跟模組三的理論互補                                    |
+| 模組二 | 數學工具              | 提供模組三需要的數學詞彙、跟硬體平台無關                              |
+| 模組三 | 理論機制              | 用模組二的工具拼出完整 LLM、跟硬體平台無關                            |
+| 模組四 | 應用層原理            | 用前面模組建的詞彙、看 LLM 作為系統元件                               |
+| 模組五 | 工具層、PC 獨立 GPU   | 跟模組一平行、用模組零的詞彙、處理 VRAM 場景                          |
+| 模組六 | 安全層、個人 dev 視角 | 在模組一 / 五的工作流上加安全判讀、cross-link backend/07 通用資安卡片 |
 
-模組二跟模組三可並讀。閱讀模組三遇到陌生數學詞時跳回模組二補完、再回模組三繼續。模組四在前面模組之上、但讀者熟悉 LLM 應用詞彙也可直接從這裡讀起。模組一跟模組五依硬體選一條主路線、共用模組零的心智模型與 [knowledge-cards](/llm/knowledge-cards/)。
+模組二跟模組三可並讀。閱讀模組三遇到陌生數學詞時跳回模組二補完、再回模組三繼續。模組四在前面模組之上、但讀者熟悉 LLM 應用詞彙也可直接從這裡讀起。模組一跟模組五依硬體選一條主路線、共用模組零的心智模型與 [knowledge-cards](/llm/knowledge-cards/)。模組六在模組一 / 五跑穩後接、處理「跑起來後該注意什麼」。
 
 ## 適合的讀者
 
-| 背景                                                  | 適合程度   | 建議起點                                                                                                                         |
-| ----------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| 用過 ChatGPT / Claude、沒碰過本地模型                 | 直接適合   | [模組零](/llm/00-foundations/) 從頭讀                                                                                            |
-| 裝過 Ollama 但被網路上的術語混淆                      | 直接適合   | [MLX / MTP / oMLX 區分](/llm/00-foundations/mlx-mtp-omlx/) + [判讀框架](/llm/00-foundations/info-judgment-frames/)               |
-| 想知道 24GB / 32GB Mac 該選哪個模型                   | 直接適合   | [硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/) + [模型選型](/llm/01-local-llm-services/model-selection-priority/) |
-| 想用本地 LLM 完全取代 Claude / GPT-5                  | 部分適合   | [期望管理](/llm/01-local-llm-services/expectation-management/) 先看完再決定                                                      |
-| 想懂 LLM 內部運作機制                                 | 直接適合   | [模組三 理論基礎](/llm/03-theoretical-foundations/) 從頭讀                                                                       |
-| 想懂背後的數學                                        | 直接適合   | [模組二 數學基礎](/llm/02-math-foundations/) 從頭讀                                                                              |
-| 想自己訓練 / fine-tune LLM                            | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)                                          |
-| 用 Windows / Linux + NVIDIA / AMD 獨立 GPU 跑本地 LLM | 直接適合   | [模組零](/llm/00-foundations/) 建心智模型 + [模組五](/llm/05-discrete-gpu/) 處理 VRAM 預算、MoE 卸載、KV cache 量化              |
-| 想在資料中心級 GPU（H100 / H200 / B200）部署          | 部分適合   | 心智模型跟 [knowledge-cards](/llm/knowledge-cards/) 通用；vLLM / TGI / Triton 等資料中心 inference server 另尋專門教材           |
-| 想跑 Stable Diffusion / Midjourney 等產圖             | 跟主題不同 | 產圖是 Diffusion 架構、見 [Diffusion 卡片](/llm/knowledge-cards/diffusion/)、另尋 ComfyUI / Draw Things 教材                     |
+| 背景                                                  | 適合程度   | 建議起點                                                                                                                               |
+| ----------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 用過 ChatGPT / Claude、沒碰過本地模型                 | 直接適合   | [模組零](/llm/00-foundations/) 從頭讀                                                                                                  |
+| 裝過 Ollama 但被網路上的術語混淆                      | 直接適合   | [MLX / MTP / oMLX 區分](/llm/00-foundations/mlx-mtp-omlx/) + [判讀框架](/llm/00-foundations/info-judgment-frames/)                     |
+| 想知道 24GB / 32GB Mac 該選哪個模型                   | 直接適合   | [硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/) + [模型選型](/llm/01-local-llm-services/model-selection-priority/)       |
+| 想用本地 LLM 完全取代 Claude / GPT-5                  | 部分適合   | [期望管理](/llm/01-local-llm-services/expectation-management/) 先看完再決定                                                            |
+| 想懂 LLM 內部運作機制                                 | 直接適合   | [模組三 理論基礎](/llm/03-theoretical-foundations/) 從頭讀                                                                             |
+| 想懂背後的數學                                        | 直接適合   | [模組二 數學基礎](/llm/02-math-foundations/) 從頭讀                                                                                    |
+| 想自己訓練 / fine-tune LLM                            | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)                                                |
+| 用 Windows / Linux + NVIDIA / AMD 獨立 GPU 跑本地 LLM | 直接適合   | [模組零](/llm/00-foundations/) 建心智模型 + [模組五](/llm/05-discrete-gpu/) 處理 VRAM 預算、MoE 卸載、KV cache 量化                    |
+| 想知道本地 LLM 跑起來後的安全議題                     | 直接適合   | [模組六](/llm/06-security/) 個人 dev 視角的安全與權限                                                                                  |
+| 想把 LLM 部署成 production 服務、處理服務化資安       | 部分適合   | 個人視角見 [模組六](/llm/06-security/)；production 場景見 [Backend 模組七 資安](/backend/07-security-data-protection/) 的 LLM 相關章節 |
+| 想在資料中心級 GPU（H100 / H200 / B200）部署          | 部分適合   | 心智模型跟 [knowledge-cards](/llm/knowledge-cards/) 通用；vLLM / TGI / Triton 等資料中心 inference server 另尋專門教材                 |
+| 想跑 Stable Diffusion / Midjourney 等產圖             | 跟主題不同 | 產圖是 Diffusion 架構、見 [Diffusion 卡片](/llm/knowledge-cards/diffusion/)、另尋 ComfyUI / Draw Things 教材                           |
 
 ## 用語約定
 
@@ -125,6 +132,6 @@ weight: 36
 
 ---
 
-_文件版本：v0.4.1_
+_文件版本：v0.5.0_
 _最後更新：2026-05-12_
-_系列狀態：六個模組 + 知識卡片（模組四應用層原理為大綱階段、模組五 PC 獨立 GPU 七章初稿完成）_
+_系列狀態：七個模組 + 知識卡片（模組四應用層原理為大綱階段、模組五 PC 獨立 GPU 七章初稿完成、模組六 本地 LLM 安全與權限六章初稿完成）_

@@ -6,7 +6,7 @@ tags: ["llm", "discrete-gpu", "moe", "cpu-offload", "llama-cpp"]
 weight: 2
 ---
 
-MoE CPU 卸載是 PC 場景相對 Mac 統一記憶體場景多出來的工程選項：把 Mixture-of-Experts 模型不活躍的專家層權重留在系統 RAM、活躍時走 PCIe 拉到 GPU。本章不再重複[卡片定義](/llm/knowledge-cards/moe-cpu-offload/)、而是處理「實際要不要用、用多少」的判讀。
+MoE CPU 卸載是 PC 場景相對 Mac 統一記憶體場景多出來的工程選項：把 [Mixture-of-Experts (MoE)](/llm/knowledge-cards/moe/) 模型不活躍的專家層權重留在系統 RAM、活躍時走 PCIe 拉到 GPU。本章不再重複[卡片定義](/llm/knowledge-cards/moe-cpu-offload/)、而是處理「實際要不要用、用多少」的判讀。卸載判讀的關鍵變數是 [active parameter](/llm/knowledge-cards/active-parameter/) 比例。
 
 讀完本章後、你應該能對自己的硬體配置回答：這個模型適不適合用 MoE 卸載、卸幾層是合理起點、卸到讓 prefill 變慢時該怎麼調、跟 KV cache 量化怎麼搭配。
 
@@ -28,7 +28,7 @@ MoE 卸載成立的三個結構要點：
 
 1. **總參數大、active parameter 小**：例如 Qwen3-30B-A3B 的 A3B 表示 active parameter 約 3B、總參數約 30B、每個 token 只走 ~10% 的權重。
 2. **每 token 走 PCIe 的權重量大幅縮減**：不活躍的專家權重留在 RAM、不參與本 token 的計算。具體幅度依模型 active 比例變化、可透過 [量化](/llm/knowledge-cards/quantization/) 再進一步壓縮。
-3. **共用層（attention、layernorm）放 VRAM**：這些是每 token 必經、放 VRAM 確保速度上限不被拉低、跟 [KV cache](/llm/knowledge-cards/kv-cache/) 一起佔用 VRAM 主要區段。
+3. **共用層（[attention](/llm/knowledge-cards/attention/)、layernorm）放 VRAM**：這些是每 token 必經、放 VRAM 確保速度上限不被拉低、跟 [KV cache](/llm/knowledge-cards/kv-cache/) 一起佔用 VRAM 主要區段。
 
 > **事實查核註**：MoE 模型的 active / total parameter 比例依模型而異（Qwen3-30B-A3B、Llama 4 Scout、DeepSeek V3 等各有不同設計）。具體比例見各模型的官方技術報告或 Hugging Face model card。
 

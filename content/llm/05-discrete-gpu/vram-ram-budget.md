@@ -6,7 +6,7 @@ tags: ["llm", "discrete-gpu", "vram", "ram", "hardware", "memory-budget"]
 weight: 1
 ---
 
-PC 場景跑本地 LLM 的判讀模型本質跟 [Mac 統一記憶體](/llm/00-foundations/hardware-memory-budget/) 不同：Mac 是一塊預算切系統 / 模型 / [KV cache](/llm/knowledge-cards/kv-cache/)、PC 是 VRAM 跟系統 RAM 兩塊**分層預算**、靠 PCIe 連起來。本章把「16GB 5060 Ti 能跑 30B 嗎」這類含糊說法、換成可操作的兩塊預算判讀。生字速度上限主要受 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 影響、跟 [統一記憶體](/llm/knowledge-cards/unified-memory/) 的 Mac 場景判讀軸不同。
+PC 場景跑本地 LLM 的判讀模型本質跟 [Mac 統一記憶體](/llm/00-foundations/hardware-memory-budget/) 不同：Mac 是一塊預算切系統 / 模型 / [KV cache](/llm/knowledge-cards/kv-cache/)、PC 是 [VRAM](/llm/knowledge-cards/vram/) 跟系統 RAM 兩塊**分層預算**、靠 [PCIe](/llm/knowledge-cards/pcie/) 連起來。本章把「16GB 5060 Ti 能跑 30B 嗎」這類含糊說法、換成可操作的兩塊預算判讀。生字速度上限主要受 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 影響、跟 [統一記憶體](/llm/knowledge-cards/unified-memory/) 的 Mac 場景判讀軸不同。
 
 讀完本章後、你可以對自己這台 PC 直接回答：能跑哪些模型、要不要做 MoE 卸載、KV cache 該量化到哪一級、context 能開多大、系統 RAM 容量該不該升級。
 
@@ -67,7 +67,7 @@ PCIe = 兩塊預算之間的橋
 
 這個配置（RTX 5060 Ti 16GB / RTX 5070 Ti 16GB + 64GB DDR5）在 2026 年 5 月的 PC 本地 LLM 社群裡、常被作為「寫 code 用途」的價格效能比合理起點。對應的判讀軸有四條：
 
-1. **30B 級 MoE 模型在多數寫 code 任務已能勝任**。Qwen3-30B-A3B 等 MoE 模型在公開 coding benchmark 上的回報（如 Qwen 官方技術報告、社群 SWE-bench 跑分）顯示表現接近大型 Dense 模型；具體分數依任務類型、prompt 設計與評測版本變動、需參考各模型官方文件或 [SWE-bench 卡片](/llm/knowledge-cards/swe-bench/)。
+1. **30B 級 MoE 模型在多數寫 code 任務已能勝任**。Qwen3-30B-A3B 等 [MoE](/llm/knowledge-cards/moe/) 模型在公開 coding benchmark 上的回報（如 Qwen 官方技術報告、社群 SWE-bench 跑分）顯示表現接近大型 Dense 模型；具體分數依任務類型、prompt 設計與評測版本變動、需參考各模型官方文件或 [SWE-bench 卡片](/llm/knowledge-cards/swe-bench/)。模型總參數與 [active parameter](/llm/knowledge-cards/active-parameter/) 是兩個獨立軸、影響記憶體需求跟生字速度上限。
 2. **MoE 卸載讓 16GB VRAM 能載入 30B 級模型**。把約 30 層 MoE 專家權重留在 RAM、其餘放 VRAM、Qwen3-30B-A3B Q4 量化下整套模型總記憶體約落在 18 ~ 22GB 區間、其中常見約 12 ~ 14GB 在 VRAM（實際依模型結構與 `--n-cpu-moe` 設定變化）。
 3. **KV cache 量化能在剩餘 VRAM 開大 context**。模型權重放好後、剩餘 VRAM 配上 K=Q8 / V=Q4 的 KV cache 量化、社群常見回報能開到 128K ~ 256K 級 context（依模型 attention 配置變化）、寫 code 場景的長 prompt 較少需要截斷。
 4. **零件可分次採購、後續可升級**。相對 Apple Silicon 整機綁定配置、PC 零件（GPU、RAM、CPU、儲存）可分次採購與升級；具體零件價格依在地市場、世代與促銷波動、本文不引用具體幣值。
