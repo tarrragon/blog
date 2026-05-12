@@ -1,25 +1,26 @@
 ---
 title: "本地 LLM 寫 code 實務指南"
-date: 2026-05-11
-description: "從心智模型、術語澄清、硬體現實到 Mac 本地 LLM 服務的安裝、整合 VS Code、模型選型、數學與理論基礎"
-tags: ["llm", "local-llm", "mac", "apple-silicon", "ollama", "foundations", "transformer", "inference"]
+date: 2026-05-12
+description: "從心智模型、術語澄清、硬體現實到本地 LLM 服務的安裝、整合 VS Code、模型選型、數學與理論基礎、涵蓋 Apple Silicon Mac 與 Windows / Linux 獨立 GPU 兩條路線"
+tags: ["llm", "local-llm", "mac", "apple-silicon", "nvidia", "discrete-gpu", "windows", "linux", "ollama", "llama-cpp", "foundations", "transformer", "inference"]
 weight: 36
 ---
 
-本指南的核心目標是把「在 Apple Silicon Mac 上跑本地 LLM 寫 code」這件事拆成可決策、可實作、可期望管理的工程問題。網路上的本地 LLM 文章常把推論框架、加速技巧與伺服器混為一談；本指南先把這些名詞放回正確的層級，再回答硬體記憶體、模型選擇、VS Code 整合與雲端 / 本地分工問題。
+本指南的核心目標是把「在自己機器上跑本地 LLM 寫 code」這件事拆成可決策、可實作、可期望管理的工程問題。網路上的本地 LLM 文章常把推論框架、加速技巧與伺服器混為一談；本指南先把這些名詞放回正確的層級，再回答硬體記憶體、模型選擇、VS Code 整合與雲端 / 本地分工問題。
 
-本指南預設讀者已經會用過雲端 LLM（ChatGPT、Claude），手上有一台 Apple Silicon Mac（M1 ~ M4），熟悉終端機操作，主要目的是把本地 LLM 接到 VS Code 輔助寫 code。文章不販賣本地 LLM 焦慮，也不誇大它能取代雲端的程度；它的責任是給一條最短可行路徑，並標出每個階段的取捨。
+本指南預設讀者已經會用過雲端 LLM（ChatGPT、Claude）、手上有一台能跑本地 LLM 的個人機器、熟悉終端機操作、主要目的是把本地 LLM 接到 VS Code 輔助寫 code。硬體前提分兩條路線：Apple Silicon Mac（M1 ~ M4、統一記憶體）走模組一；Windows / Linux + 獨立 GPU（NVIDIA / AMD、獨立 VRAM + 系統 RAM）走模組五。文章不販賣本地 LLM 焦慮、也不誇大它能取代雲端的程度；它的責任是給一條最短可行路徑、並標出每個階段的取捨。
 
-模組零跟模組一覆蓋「裝跟用」這條最短路徑。想懂底層的讀者、模組二（[數學基礎](/llm/02-math-foundations/)）跟模組三（[LLM 理論基礎](/llm/03-theoretical-foundations/)）提供完整理論圖像、並推薦 MIT / Stanford / Karpathy 等公開課作為深入入口。模組四（[應用層原理](/llm/04-applications/)）整理 LLM 作為系統元件的設計取捨：RAG、tool use、agent、應用層協議與 workflow 編排模式、刻意只寫跨工具世代不變的概念。
+模組零跟模組一覆蓋「Mac 上裝跟用」這條最短路徑；模組五覆蓋「PC 獨立 GPU 上裝跟用」的對應路線。想懂底層的讀者、模組二（[數學基礎](/llm/02-math-foundations/)）跟模組三（[LLM 理論基礎](/llm/03-theoretical-foundations/)）提供完整理論圖像、並推薦 MIT / Stanford / Karpathy 等公開課作為深入入口、這兩塊跟硬體平台無關。模組四（[應用層原理](/llm/04-applications/)）整理 LLM 作為系統元件的設計取捨：RAG、tool use、agent、應用層協議與 workflow 編排模式、刻意只寫跨工具世代不變的概念。
 
 ## 教材邊界
 
 | 類型           | 放在本指南                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 不放在本指南                                                      |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| 心智模型       | 本地 vs 雲端的差異、為何 LLM 生字慢、三層架構（介面 / 伺服器 / 模型）、[OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)                                                                                                                                                                                                                                                                                                                                                                                                                                      | NVIDIA / AMD GPU 部署                                             |
-| 術語澄清       | [MLX](/llm/00-foundations/mlx-mtp-omlx/)、[MTP](/llm/00-foundations/mlx-mtp-omlx/)、[oMLX](/llm/00-foundations/mlx-mtp-omlx/)、[speculative decoding](/llm/knowledge-cards/speculative-decoding/)、[量化](/llm/knowledge-cards/quantization/)、[KV cache](/llm/knowledge-cards/kv-cache/)、[TTFT](/llm/knowledge-cards/ttft/)                                                                                                                                                                                                                                             | post-training fine-tuning 細節                                    |
-| 硬體現實       | [記憶體預算與模型大小](/llm/00-foundations/hardware-memory-budget/)、量化選擇、首字延遲、風扇與功耗                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Linux server inference、雲端 GPU 租用                             |
-| 本地推論伺服器 | [Ollama](/llm/01-local-llm-services/ollama/)、[LM Studio](/llm/01-local-llm-services/lm-studio/)、[llama.cpp](/llm/01-local-llm-services/llama-cpp/)                                                                                                                                                                                                                                                                                                                                                                                                                      | vLLM、TGI、Triton 等資料中心級 inference server                   |
+| 心智模型       | 本地 vs 雲端的差異、為何 LLM 生字慢、三層架構（介面 / 伺服器 / 模型）、[OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)                                                                                                                                                                                                                                                                                                                                                                                                                                      | 雲端 GPU 租用、AGI 預測                                           |
+| 術語澄清       | [MLX](/llm/00-foundations/mlx-mtp-omlx/)、[MTP](/llm/00-foundations/mlx-mtp-omlx/)、[oMLX](/llm/00-foundations/mlx-mtp-omlx/)、[speculative decoding](/llm/knowledge-cards/speculative-decoding/)、[量化](/llm/knowledge-cards/quantization/)、[KV cache](/llm/knowledge-cards/kv-cache/)、[TTFT](/llm/knowledge-cards/ttft/)、[MoE CPU 卸載](/llm/knowledge-cards/moe-cpu-offload/)                                                                                                                                                                                      | post-training fine-tuning 細節                                    |
+| Mac 硬體現實   | [記憶體預算與模型大小](/llm/00-foundations/hardware-memory-budget/)、量化選擇、首字延遲、風扇與功耗                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 雲端 GPU 租用、資料中心訓練                                       |
+| PC 硬體現實    | [VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)、MoE 專家層 CPU 卸載、KV cache 量化、PCIe 頻寬限制                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 多卡 NVLink、資料中心級分散式推論                                 |
+| 本地推論伺服器 | [Ollama](/llm/01-local-llm-services/ollama/)、[LM Studio](/llm/01-local-llm-services/lm-studio/)、[llama.cpp](/llm/01-local-llm-services/llama-cpp/)（Mac + PC 通用）                                                                                                                                                                                                                                                                                                                                                                                                     | vLLM、TGI、Triton 等資料中心級 inference server                   |
 | 編輯器整合     | [Continue.dev + VS Code](/llm/01-local-llm-services/vscode-continue-integration/)、Cursor 對應關係                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | JetBrains 全套整合、Vim / Emacs 進階 plugin                       |
 | 模型挑選       | [coding 場景的模型優先順序](/llm/01-local-llm-services/model-selection-priority/)、量化等級對體感影響                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | benchmark 跑分方法論的完整推導                                    |
 | 期望管理       | [本地 LLM 的擅長領域與分工](/llm/01-local-llm-services/expectation-management/)、混用雲端的時機                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | LLM 通用能力評估、AGI 預測                                        |
@@ -31,10 +32,12 @@ weight: 36
 
 ## 學習路線
 
-本指南分成四個模組加一組前置卡片。讀者依目的選讀：
+本指南分成五個模組加一組前置卡片。讀者依目的與硬體選讀：
 
-- 想快速「裝跟用」：讀模組零 + 模組一就夠。
-- 想懂底層：再進入模組二跟模組三。
+- 用 Apple Silicon Mac、想快速「裝跟用」：讀模組零 + 模組一。
+- 用 Windows / Linux + 獨立 GPU、想快速「裝跟用」：讀模組零（共用心智模型）+ 模組五。
+- 想懂底層：再進入模組二跟模組三、跟硬體平台無關。
+- 想看 LLM 作為系統元件的設計取捨：模組四、跟硬體平台無關。
 - 想跟最新進展接軌：讀完所有模組、再進入推薦的公開課程跟必讀 paper。
 
 ### [前置知識卡片](/llm/knowledge-cards/)
@@ -61,37 +64,43 @@ weight: 36
 
 整理 LLM 作為系統元件的設計原理：[RAG](/llm/04-applications/rag-principles/)、[tool use](/llm/04-applications/tool-use-principles/)、[agent 架構](/llm/04-applications/agent-architecture/)、[應用層協議](/llm/04-applications/application-protocols/)、[workflow 編排模式](/llm/04-applications/workflow-patterns/)。本模組刻意只寫跨工具世代不變的原理、避開 LangChain / LlamaIndex 等具體 framework 教學。
 
+### [模組五：Windows / Linux + 獨立 GPU](/llm/05-discrete-gpu/)
+
+整理消費級 PC（Windows / Linux + NVIDIA / AMD 獨立 GPU）跑本地 LLM 的硬體判讀模型與工程選項：[VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)、MoE 模型的 [CPU 卸載策略](/llm/knowledge-cards/moe-cpu-offload/)（`--n-cpu-moe`）、KV cache 量化（K=Q8 / V=Q4）跟 context 長度的權衡、llama.cpp 在 PC 上的調參空間。本模組跟模組一是平行的硬體路線、共用模組零的心智模型跟卡片。
+
 ## 模組之間怎麼配合
 
-| 模組   | 角度             | 跟其他模組的關係                            |
-| ------ | ---------------- | ------------------------------------------- |
-| 模組零 | 操作層心智模型   | 是模組一的前置                              |
-| 模組一 | 工具層、實際安裝 | 用模組零的詞彙、跟模組三的理論互補          |
-| 模組二 | 數學工具         | 提供模組三需要的數學詞彙                    |
-| 模組三 | 理論機制         | 用模組二的工具拼出完整 LLM                  |
-| 模組四 | 應用層原理       | 用前面四個模組建的詞彙、看 LLM 作為系統元件 |
+| 模組   | 角度                 | 跟其他模組的關係                             |
+| ------ | -------------------- | -------------------------------------------- |
+| 模組零 | 操作層心智模型       | 是模組一跟模組五的共同前置                   |
+| 模組一 | 工具層、Mac 實際安裝 | 用模組零的詞彙、跟模組三的理論互補           |
+| 模組二 | 數學工具             | 提供模組三需要的數學詞彙、跟硬體平台無關     |
+| 模組三 | 理論機制             | 用模組二的工具拼出完整 LLM、跟硬體平台無關   |
+| 模組四 | 應用層原理           | 用前面模組建的詞彙、看 LLM 作為系統元件      |
+| 模組五 | 工具層、PC 獨立 GPU  | 跟模組一平行、用模組零的詞彙、處理 VRAM 場景 |
 
-模組二跟模組三可並讀。閱讀模組三遇到陌生數學詞時跳回模組二補完、再回模組三繼續。模組四在前四個模組之上、但讀者熟悉 LLM 應用詞彙也可直接從這裡讀起。
+模組二跟模組三可並讀。閱讀模組三遇到陌生數學詞時跳回模組二補完、再回模組三繼續。模組四在前面模組之上、但讀者熟悉 LLM 應用詞彙也可直接從這裡讀起。模組一跟模組五依硬體選一條主路線、共用模組零的心智模型與 [knowledge-cards](/llm/knowledge-cards/)。
 
 ## 適合的讀者
 
-| 背景                                      | 適合程度   | 建議起點                                                                                                                         |
-| ----------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| 用過 ChatGPT / Claude、沒碰過本地模型     | 直接適合   | [模組零](/llm/00-foundations/) 從頭讀                                                                                            |
-| 裝過 Ollama 但被網路上的術語混淆          | 直接適合   | [MLX / MTP / oMLX 區分](/llm/00-foundations/mlx-mtp-omlx/) + [判讀框架](/llm/00-foundations/info-judgment-frames/)               |
-| 想知道 24GB / 32GB Mac 該選哪個模型       | 直接適合   | [硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/) + [模型選型](/llm/01-local-llm-services/model-selection-priority/) |
-| 想用本地 LLM 完全取代 Claude / GPT-5      | 部分適合   | [期望管理](/llm/01-local-llm-services/expectation-management/) 先看完再決定                                                      |
-| 想懂 LLM 內部運作機制                     | 直接適合   | [模組三 理論基礎](/llm/03-theoretical-foundations/) 從頭讀                                                                       |
-| 想懂背後的數學                            | 直接適合   | [模組二 數學基礎](/llm/02-math-foundations/) 從頭讀                                                                              |
-| 想自己訓練 / fine-tune LLM                | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)                                          |
-| 想在 Linux server / NVIDIA GPU 跑推論     | 部分適合   | 本指南的伺服器章節聚焦 Apple Silicon、模組二 / 三 通用；資料中心 inference 教材另尋                                              |
-| 想跑 Stable Diffusion / Midjourney 等產圖 | 跟主題不同 | 產圖是 Diffusion 架構、見 [Diffusion 卡片](/llm/knowledge-cards/diffusion/)、另尋 ComfyUI / Draw Things 教材                     |
+| 背景                                                  | 適合程度   | 建議起點                                                                                                                         |
+| ----------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| 用過 ChatGPT / Claude、沒碰過本地模型                 | 直接適合   | [模組零](/llm/00-foundations/) 從頭讀                                                                                            |
+| 裝過 Ollama 但被網路上的術語混淆                      | 直接適合   | [MLX / MTP / oMLX 區分](/llm/00-foundations/mlx-mtp-omlx/) + [判讀框架](/llm/00-foundations/info-judgment-frames/)               |
+| 想知道 24GB / 32GB Mac 該選哪個模型                   | 直接適合   | [硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/) + [模型選型](/llm/01-local-llm-services/model-selection-priority/) |
+| 想用本地 LLM 完全取代 Claude / GPT-5                  | 部分適合   | [期望管理](/llm/01-local-llm-services/expectation-management/) 先看完再決定                                                      |
+| 想懂 LLM 內部運作機制                                 | 直接適合   | [模組三 理論基礎](/llm/03-theoretical-foundations/) 從頭讀                                                                       |
+| 想懂背後的數學                                        | 直接適合   | [模組二 數學基礎](/llm/02-math-foundations/) 從頭讀                                                                              |
+| 想自己訓練 / fine-tune LLM                            | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)                                          |
+| 用 Windows / Linux + NVIDIA / AMD 獨立 GPU 跑本地 LLM | 直接適合   | [模組零](/llm/00-foundations/) 建心智模型 + [模組五](/llm/05-discrete-gpu/) 處理 VRAM 預算、MoE 卸載、KV cache 量化              |
+| 想在資料中心級 GPU（H100 / H200 / B200）部署          | 部分適合   | 心智模型跟 [knowledge-cards](/llm/knowledge-cards/) 通用；vLLM / TGI / Triton 等資料中心 inference server 另尋專門教材           |
+| 想跑 Stable Diffusion / Midjourney 等產圖             | 跟主題不同 | 產圖是 Diffusion 架構、見 [Diffusion 卡片](/llm/knowledge-cards/diffusion/)、另尋 ComfyUI / Draw Things 教材                     |
 
 ## 用語約定
 
 本指南使用的關鍵術語在第一次出現時都附原文。為避免歧義，下列詞彙在本指南內固定指涉：
 
-1. **本地 LLM**：跑在使用者自己 Mac 上的大型語言模型推論、prompt 留在本機。
+1. **本地 LLM**：跑在使用者自己機器（Mac 或 PC）上的大型語言模型推論、prompt 留在本機。
 2. **推論伺服器**（inference server）：負責載入模型權重、處理 prompt、產生 token 的常駐程式、例如 Ollama、LM Studio 內建 server、llama.cpp `server`。
 3. **介面層**：使用者實際打字互動的工具、例如 VS Code + Continue.dev、CLI、Web UI。介面層透過 API 跟推論伺服器溝通。
 4. **模型**（model）：權重檔本身、例如 `gemma4:31b`、`qwen3-coder:30b`。模型可以在不同推論伺服器之間共用、前提是格式相容。
@@ -104,7 +113,8 @@ weight: 36
 - **多模態 LLM**（vision、speech）：跟核心文字 LLM 是不同方向、本指南聚焦文字。
 - **資料中心訓練的工程細節**：data parallelism、ZeRO、tensor parallelism 等屬於專門課程的範圍。
 - **向量資料庫的選型**（Pinecone、Weaviate、Chroma 比較等）：交給 RAG 專門教材；RAG 設計原理見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)。
-- **Kubernetes 上的 LLM 部署**：跟本地 Mac 場景方向不同。
+- **Kubernetes / 資料中心級分散式推論**：跟個人機器本地 LLM 方向不同、需另尋專門教材。
+- **多卡 NVLink、tensor parallelism**：消費級 PC 場景通常單卡、本指南不涵蓋多卡分散式推論。
 
 若讀完本指南後想往這些方向走：
 
@@ -115,6 +125,6 @@ weight: 36
 
 ---
 
-_文件版本：v0.3.0_
-_最後更新：2026-05-11_
-_系列狀態：五個模組 + 知識卡片初稿完成（模組四應用層原理為大綱階段）_
+_文件版本：v0.4.1_
+_最後更新：2026-05-12_
+_系列狀態：六個模組 + 知識卡片（模組四應用層原理為大綱階段、模組五 PC 獨立 GPU 七章初稿完成）_
