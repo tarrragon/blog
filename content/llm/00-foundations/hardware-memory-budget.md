@@ -6,6 +6,8 @@ tags: ["llm", "foundations", "hardware", "apple-silicon"]
 weight: 5
 ---
 
+本章只處理 Apple Silicon Mac 的場景。Mac 是「[統一記憶體](/llm/knowledge-cards/unified-memory/)」架構、CPU 跟 GPU 共用同一塊 RAM、所以判讀模型是「一塊預算切系統 / 模型 / KV cache」。Windows / Linux + 獨立 GPU 是「VRAM + 系統 RAM」兩塊分層預算、判讀模型本質不同、見 [模組五 5.0 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)。
+
 Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 CPU 或 GPU 算力。記憶體決定能載入多大的模型；模型載得進、推論才有得跑（生字速度則由 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 決定、見 [0.1](/llm/00-foundations/why-llm-feels-slow/)）。本章把「24GB 能跑 70B」這類含糊說法、換成可操作的記憶體預算判讀。
 
 讀完本章後，你可以對自己這台 Mac 直接回答：能跑哪些模型、要用什麼量化、要留多少給系統、風扇會不會狂轉、什麼時候該升級。
@@ -30,7 +32,7 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 C
 各塊的估算原則：
 
 1. **系統與其他 app**：至少留 8GB 給 macOS、VS Code、瀏覽器與其他工作流程。重度多工建議留 10 ~ 12GB。
-2. **模型權重**：用「參數規模 × 每權重 bits / 8」算出 bytes。例如 31B 模型 [Q4 量化](/llm/knowledge-cards/quantization/) = 31 × 4 / 8 = 15.5 GB、加上 metadata 與 overhead 約 16 ~ 18GB。
+2. **模型權重**：用「參數規模 × 每權重 bits / 8」算出 bytes。其中「Q4」代表[每個權重佔 4 bits](/llm/knowledge-cards/quantization/)。例如 31B 模型 Q4 量化 = 31 × 4 / 8 = 15.5 GB、加上 metadata 與 overhead 約 16 ~ 18GB。
 3. **[KV cache](/llm/knowledge-cards/kv-cache/)**：跟 [context](/llm/knowledge-cards/context-window/) 長度成正比。短 context（< 2K tokens）約 0.5 ~ 1GB、長 context（10K+ tokens）可能超過 5GB。
 4. **推論中間結果**：通常 1 ~ 2GB。
 
@@ -38,24 +40,37 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 C
 
 ## Mac 記憶體與可運作模型對照
 
-下表是 2026 年 5 月，Apple Silicon Mac 在 Q4 量化下的可運作模型對照。所有體感標籤都假設「主要用途是寫 code」，純文字對話的甜蜜點會往較小模型偏。
+下表是 2026 年 5 月、Apple Silicon Mac 在 Q4 量化下的可運作模型對照。預設 Q4 是因為它是 31B 等級寫 code 場景的甜蜜點、下節「為什麼 32GB 是寫 code 場景的甜蜜點」會展開原因。所有體感標籤都假設「主要用途是寫 code」、純文字對話的甜蜜點會往較小模型偏。
 
-| Mac 記憶體 | 留給模型  | 能跑的最大模型                                         | 體感   | 備註                             |
-| ---------- | --------- | ------------------------------------------------------ | ------ | -------------------------------- |
-| 8GB        | 0GB       | 跑不動實用的 LLM                                       | 不建議 | 連 4B 模型都很勉強               |
-| 16GB       | 6 ~ 8GB   | Gemma 4 E4B、Qwen3 7B、Llama 3.2 8B                    | 勉強   | 同時開 VS Code 就會吃緊，常 swap |
-| 24GB       | 12 ~ 14GB | Gemma 4 26B A4B（MoE）、Qwen3-Coder 14B、Llama 3.3 13B | 堪用   | 多數工程師的起點                 |
-| 32GB       | 18 ~ 22GB | **Gemma 4 31B (MTP) 甜蜜點**、Qwen3-Coder 30B Q4       | 順暢   | 寫 code 場景最佳價格效能比       |
-| 48GB       | 32 ~ 36GB | Qwen3-Coder 32B Q5、Llama 3.3 70B Q3                   | 順暢   | 開始接近 GPT-4 mini 等級         |
-| 64GB       | 48 ~ 52GB | Qwen3-Coder 32B bf16、Llama 3.3 70B Q4                 | 順暢   | 大模型用較高量化，品質更好       |
-| 96GB+      | 80GB+     | Llama 3.3 70B Q8、實驗 100B+ 模型                      | 順暢   | 過度配置，除非有特殊需求         |
+| Mac 記憶體 | 留給模型  | 能跑的最大模型                                                                           | 體感           | 備註                             |
+| ---------- | --------- | ---------------------------------------------------------------------------------------- | -------------- | -------------------------------- |
+| 8GB        | 0GB       | 4B 以上模型互動體感失效                                                                  | 不在本指南範圍 | 連 4B 模型 Q4 都很勉強           |
+| 16GB       | 6 ~ 8GB   | Gemma 4 E4B、Qwen3 7B、Llama 3.2 8B                                                      | 勉強           | 同時開 VS Code 就會吃緊、常 swap |
+| 24GB       | 12 ~ 14GB | Gemma 4 26B A4B（MoE、見下段）、Qwen3-Coder 14B、Llama 3.3 13B                           | 堪用           | 多數工程師的起點                 |
+| 32GB       | 18 ~ 22GB | **Gemma 4 31B（含 [MTP](/llm/knowledge-cards/mtp/) drafter）甜蜜點**、Qwen3-Coder 30B Q4 | 順暢           | 寫 code 場景最佳價格效能比       |
+| 48GB       | 32 ~ 36GB | Qwen3-Coder 32B Q5、Llama 3.3 70B Q3                                                     | 順暢           | 開始接近 GPT-4 mini 等級         |
+| 64GB       | 48 ~ 52GB | Qwen3-Coder 32B bf16、Llama 3.3 70B Q4                                                   | 順暢           | 大模型用較高量化、品質更好       |
+| 96GB+      | 80GB+     | Llama 3.3 70B Q8、實驗 100B+ 模型                                                        | 順暢           | 過度配置、除非有特殊需求         |
 
 讀這張表要注意四件事：
 
 1. **體感是 coding 場景**。純對話、寫文章、解釋程式的記憶體門檻較低。
 2. **量化等級可以調整**。32GB 跑 31B Q4 順暢、跑 31B Q5 也行（吃 21GB 左右）；跑 70B Q3 會崩潰，因為 70B Q3 約 26GB，加上 KV cache 跟系統，超過 32GB。
 3. **fanless 機種要打折**。MacBook Air 系列因為散熱被動，跑大型模型 5 分鐘後會降頻，實際生字速度比有風扇的同代機器低 30 ~ 50%。
-4. **記憶體不是 SSD**。Apple Silicon 的「統一記憶體」是 RAM，不是 SSD swap。雖然 macOS 會 swap，但 swap 後生字速度會慢一個量級以上，等於跑不動。
+4. **記憶體不是 SSD**。Apple Silicon 的「統一記憶體」是 RAM、不是 SSD swap。雖然 macOS 會 swap、但 swap 後生字速度會慢一個量級以上、實質喪失互動可用性。
+
+## MoE 與 dense 模型在記憶體預算上的差異
+
+[Mixture of Experts（MoE）](/llm/knowledge-cards/moe-cpu-offload/) 模型跟 dense 模型的記憶體 / 速度判讀方式不同、Gemma 4 26B A4B 這類 MoE 模型在上表「24GB Mac」一格出現時、容易讓人誤以為跟 14B dense 同等的記憶體需求。實際差異：
+
+| 維度       | Dense 模型（如 Gemma 4 31B）      | MoE 模型（如 Gemma 4 26B A4B）                         |
+| ---------- | --------------------------------- | ------------------------------------------------------ |
+| 名義參數   | 31B 全部參與每個 token            | 26B 總參數、每個 token 啟用約 4B（A4B 表示 active 4B） |
+| 記憶體佔用 | 整份權重必須塞進記憶體（18GB Q4） | 整份權重也要塞（13GB Q4）、但活躍部分小                |
+| 速度上限   | 頻寬 / 整份權重 ≈ 30 tok/s        | 頻寬 / 活躍權重 ≈ 80 tok/s（同硬體下）                 |
+| 量化容忍度 | Q4 31B 仍可用                     | Q4 在 MoE 上的影響跟 dense 不同、需 case-by-case 驗證  |
+
+判讀重點：MoE 的記憶體需求看「總參數」、但速度看「啟用參數」。同記憶體預算下 MoE 通常跑得比 dense 快、但能力強度比較需配合具體 benchmark 判讀、名義參數僅作初步篩選。PC 獨立 GPU 上的 MoE 部署策略（CPU 卸載專家層）見 [MoE CPU 卸載卡片](/llm/knowledge-cards/moe-cpu-offload/)。
 
 ## 為什麼 32GB 是寫 code 場景的甜蜜點
 
@@ -73,7 +88,7 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 C
 
 如果你正準備買新 Mac 主要為了跑本地 LLM 寫 code、32GB 在 [預算敏感、單機、Gemma 4 31B 為主] 通常是最划算的起點。16GB 在 [>14B 模型 / 多工] 會被擠到 swap、48GB+ 在純寫 code 場景超過甜蜜點、但對 [長 context coding agent / 70B 模型] 仍有實際價值。
 
-## 16GB Mac 還有救嗎
+## 16GB Mac 的可行策略
 
 16GB Mac 是現實上的最小可用配置。能跑的最大實用模型是 Gemma 4 E4B（Google 的 8B 級實驗版本）或 Qwen3 7B。體感上：
 
@@ -102,7 +117,7 @@ Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 C
 
 1. 短 prompt 場景（compact code completion）：完全沒問題，多數設定都在 2K 以下。
 2. 中等 context（4 ~ 16K）：32GB Mac 仍可運作，但要留意 KV cache 吃多少。
-3. 長 context（16K+）：考慮 oMLX 的 paged SSD KV cache，把 cache 推到 SSD。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
+3. 長 context（16K+）：考慮 oMLX 的 paged SSD KV cache（把 KV cache 部分頁面換出到 SSD、換取較長 context、代價是 TTFT 與生字速度略增）。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
 
 ## 風扇、發熱與降頻
 
@@ -117,9 +132,9 @@ Apple Silicon Mac 跑本地 LLM 會持續滿載 CPU / GPU。實際體感：
 
 對「全天候用本地 LLM」的工作流，桌機型（Mac mini、Studio）比筆電好。筆電上跑長時間推論還要考慮電池與發熱對手部舒適度的影響。
 
-## 給讀者的決策表
+## 按情境選機型決策表
 
-看完上面的對照後，可以照下表做決策：
+決策表把前面三個變數（手上預算 / 想跑的 model size / 主要用途）摺成一張快查、依情境定位、不需要重新讀整章。詳細的模型選型考慮見 [1.4 模型選型優先順序](/llm/01-local-llm-services/model-selection-priority/)。
 
 | 情境                               | 建議                                                     |
 | ---------------------------------- | -------------------------------------------------------- |

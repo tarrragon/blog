@@ -49,7 +49,19 @@ weight: -1
 | -------------------------------------------------------------- | ---------------------------------- |
 | [Inference Server](/llm/knowledge-cards/inference-server/)     | 載入模型、提供 API 的常駐 process  |
 | [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/) | 介面層跟伺服器層之間的標準介面     |
+| [Model Tag](/llm/knowledge-cards/model-tag/)                   | 推論伺服器如何指名某個模型版本     |
 | [MLX](/llm/knowledge-cards/mlx/)                               | Apple Silicon 的數值運算 framework |
+
+### macOS 與 shell 基礎
+
+讓對 Mac 操作不熟的讀者也能跟上本地 LLM 章節。這組卡片不算 LLM 領域知識、但本地 LLM 章節必然會碰到。
+
+| 卡片                                                                 | 核心問題                                       |
+| -------------------------------------------------------------------- | ---------------------------------------------- |
+| [Homebrew](/llm/knowledge-cards/homebrew/)                           | macOS 上 CLI 工具的標準安裝入口                |
+| [launchd Service](/llm/knowledge-cards/launchd-service/)             | 讓 Ollama 等服務開機自動啟動的 macOS 機制      |
+| [Shell 背景 Process](/llm/knowledge-cards/shell-background-process/) | 前景 vs 背景、`&`、`Ctrl+C`、找 process 的方法 |
+| [Port 與 Localhost](/llm/knowledge-cards/port-and-localhost/)        | server 暴露在哪個地址、誰能連進來              |
 
 ### 硬體與架構
 

@@ -32,7 +32,7 @@ weight: 0
 brew install ollama
 ```
 
-執行時間在 broadband 大約 30 秒到 2 分鐘、視 dependency cache 是否已有（Ollama 依賴 mlx-c 等 lib、首次裝較久）。
+執行時間在 broadband 大約 30 秒到 2 分鐘、視 dependency cache 是否已有（Ollama 依賴 mlx-c 等 Apple Silicon 加速函式庫、首次裝較久）。
 
 裝完看到的 caveat 訊息：
 
@@ -71,7 +71,7 @@ brew services start ollama
 
 這個動作做兩件事：
 
-1. 註冊一個 launchd plist 到 `~/Library/LaunchAgents/homebrew.mxcl.ollama.plist`。
+1. 註冊一個 launchd plist（macOS 開機自啟動 / 背景服務的設定檔、見 [launchd-service 卡片](/llm/knowledge-cards/launchd-service/)）到 `~/Library/LaunchAgents/homebrew.mxcl.ollama.plist`。
 2. 立刻啟動 ollama serve、之後重開機自動啟動。
 
 驗證 server 真的在跑：
@@ -126,7 +126,7 @@ gemma3:1b    8648f39daa8f    815 MB    35 seconds ago
 
 ## 驗證 OpenAI 相容 API
 
-最重要的驗證：能否用 OpenAI 相容 API 對話：
+OpenAI 相容 API 是下游所有工具（IDE plugin、RAG pipeline、MCP server、[Continue.dev](/llm/01-local-llm-services/vscode-continue-integration/) 等）依賴的介面 contract、驗證它能正常回應、整個 stack 才走得通：
 
 ```bash
 curl -s http://localhost:11434/v1/chat/completions \
@@ -143,6 +143,13 @@ curl -s http://localhost:11434/v1/chat/completions \
 1. Ollama 跟模型權重對接好。
 2. OpenAI 相容 API 格式正常（IDE plugin 可以接）。
 3. 推論流程整條通。
+
+常見的失敗回應跟下一步：
+
+- **`{"error":"model 'gemma3:1b' not found, try pulling it first"}`**：先跑 `ollama pull gemma3:1b`、確認 `ollama list` 看到該 tag。
+- **`curl: (7) Failed to connect to localhost port 11434: Connection refused`**：server 沒在跑、回 `brew services list` 看 status、若是 stopped 跑 `brew services start ollama`。
+- **`{"error":"json: cannot unmarshal ..."}`**：請求格式錯（例如 messages 寫成 string 不是 array）、檢查 JSON body。
+- **連得上但長時間沒回應**：第一次載入大 model 需要 30 ~ 60 秒、看 `~/.ollama/logs/server.log` 確認是否還在 loading。
 
 用內建 CLI 互動模式也行：
 
@@ -222,7 +229,7 @@ rm -rf ~/.ollama  # 清模型 cache（可選）
 ## 何時這篇會過時
 
 - `brew install ollama` 安裝方式跟 OpenAI 相容 API 形狀短期內不會變（生態都依賴）。
-- `gemma3:1b` 這個具體 tag 一定會被新模型取代、但「拉一個小模型驗證流程」的方法不變。
+- `gemma3:1b` 這個具體 tag 預期會被新模型取代、但「拉一個小模型驗證流程」的方法不變。
 - launchd service 機制是 macOS 系統 API、不會 deprecate。
 
 讀的時候若 `brew install` 跑失敗、查 Ollama GitHub release notes；其餘驗證步驟結構通用。

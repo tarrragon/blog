@@ -100,8 +100,8 @@ RLHF 是 alignment 的經典方法（Ouyang et al., 2022、InstructGPT 論文）
 
 #### Step 2：用 PPO 最佳化模型
 
-1. Policy = 當前的 LLM。
-2. 用 RL（通常 PPO 演算法）最佳化 policy、讓 reward model 給的分數最大化。
+1. Policy = 當前的 LLM（在 RL 框架下、模型輸出的 token 分佈被視為「策略」、所以稱為 policy）。
+2. 用 RL（通常用 PPO 演算法、Proximal Policy Optimization、一種限制每步參數更新幅度的 RL 演算法、訓練比較穩）最佳化 policy、讓 reward model 給的分數最大化。
 3. 加 KL constraint：policy 不能偏離 base SFT model 太遠（用 [KL divergence](/llm/02-math-foundations/probability-and-information/)）、避免 reward hacking。
 
 #### Step 3：迭代
@@ -125,7 +125,9 @@ loss = -log(σ(β × (log π(y_w|x)/π_ref(y_w|x) - log π(y_l|x)/π_ref(y_l|x))
 - π：當前 policy。
 - π_ref：reference model（通常 SFT model）。
 
-DPO 比 RLHF 簡單、不用訓 reward model、不用 PPO 這種 RL 演算法、訓練穩定、是 2024 ~ 2026 主流。Llama 3、Gemma 4 等都用 DPO 或變體。
+公式的直觀解讀：對每對 (好回答, 差回答)、拉高 π 給好回答的相對機率（比 π_ref 高）、壓低 π 給差回答的相對機率（比 π_ref 低）、β 控制偏離 π_ref 的力度。σ 是 sigmoid、把整體 score 壓到 (0, 1) 區間。
+
+DPO 比 RLHF 簡單、不用訓 reward model、不用 RL 演算法、訓練穩定、在「離線偏好資料量充足 + 偏好相對穩定」的場景是 2024 ~ 2026 主流選擇。Llama 3、Gemma 4 等都用 DPO 或變體。
 
 ### 其他替代方案
 
@@ -136,7 +138,7 @@ DPO 比 RLHF 簡單、不用訓 reward model、不用 PPO 這種 RL 演算法、
 | KTO   | 用 binary preference（好 / 不好）而非 pairwise                       |
 | RPO   | RLHF + DPO 混合方案                                                  |
 
-主流前沿 LLM 用 SFT + DPO（或變體）的組合、原始 PPO RLHF 逐步退出主流。
+主流前沿 LLM 用 SFT + DPO（或變體）的組合；資料量足夠 + 偏好穩定時 DPO 較佳、需要 online 人類反饋或 reward shaping（複雜環境互動、多輪偏好調整）的場景下 PPO 仍有實際空間、特別是 reasoning model（DeepSeek-R1 等）的後訓練階段。
 
 ## Fine-tuning：在 instruction-tuned model 上做特化
 
@@ -170,6 +172,12 @@ W_new = W_frozen + α × A @ B
 
 LoRA 是 consumer 級硬體做 fine-tuning 的主流選擇。32GB Mac + MLX 可以跑 7B / 14B 模型的 LoRA fine-tuning。
 
+LoRA 何時不適用 / 必須走 full fine-tune：
+
+- **大幅行為改變**：要把模型從通用 chat 轉成完全不同的人設 / 風格 / 領域。LoRA rank 容量有限（rank=4 ~ 64 對應幾百萬 ~ 幾千萬參數）、裝不下整體行為的大幅改寫；rank 拉到 256+ 後 LoRA 的記憶體優勢消失。
+- **跨 domain transfer**：base model 是 general English、想 fine-tune 到醫學 / 法律等需要重學 vocab 跟結構的 domain。LoRA 只調整現有 layer 的偏移、難以從零學新 domain；通常要先做 continued pre-training（full fine-tune）再 LoRA。
+- **跟量化推論的相容性**：base model 用 Q4 推論時、要先 dequantize 才能加上 LoRA delta、會導致 latency / memory 增加；production 場景常用 QLoRA + 在推論時 merge 回 base、避免每次推論都拆兩段。
+
 ### QLoRA
 
 QLoRA = Quantized LoRA、把 base model 量化到 4-bit、再做 LoRA。記憶體進一步降低、犧牲少量品質。
@@ -195,7 +203,7 @@ In-context learning（ICL）的核心想法是「不更新模型權重、只在 
 
 GPT-3 paper 顯示大模型有強 ICL 能力、不用 fine-tune 就能做新任務。現代 LLM 進一步強化 ICL、加上 long context、[agent](/llm/knowledge-cards/agent/) loop、[function calling](/llm/knowledge-cards/function-calling/) 等技術、覆蓋大部分原本需要 fine-tune 的場景。
 
-實務啟示：「想做新任務、先試 prompt engineering、不夠再試 RAG、最後才考慮 fine-tuning」。fine-tuning 是最重的投資、不該當第一步。
+實務啟示：「想做新任務、先試 prompt engineering、不夠再試 RAG、最後才考慮 fine-tuning」。fine-tuning 是最重的投資、適合放在最後驗證、prompt engineering 跟 RAG 跑完仍不夠才動。
 
 ## 訓練資料污染（Data Contamination）
 

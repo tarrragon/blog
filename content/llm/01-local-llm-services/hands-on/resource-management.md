@@ -190,7 +190,7 @@ vm_stat | head -3
 # free pages 該明顯增加
 ```
 
-### 不該做的「釋放方式」
+### 容易出錯的「釋放方式」
 
 - **`killall Python`**：會 kill 所有 Python process、包括其他 dev tool（如 jupyter、Django）。用 `pkill -f "ComfyUI/main.py"` 等明確 pattern。
 - **`rm -rf ~/.ollama`**：會清掉所有 model registry、下次要重 pull 全部 model。Cleanup 用 `ollama rm <model>` 才精準。

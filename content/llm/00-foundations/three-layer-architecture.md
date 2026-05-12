@@ -44,16 +44,16 @@ weight: 2
 
 介面層的選擇影響日常使用體驗，但完全不影響推論速度或品質。換介面不用換模型，這就是分層的好處。
 
-## 伺服器層：本地 LLM 的核心
+## 伺服器層：載入權重與跑推論
 
-伺服器層是本地 LLM 生態的核心。它的責任是：把模型權重從磁碟載入記憶體、接收 HTTP API 請求、處理 prompt、跑推論、把生成的 token 流回客戶端。
+[伺服器層](/llm/knowledge-cards/inference-server/)負責把模型權重從磁碟載入記憶體、接收 HTTP API 請求、處理 prompt、跑推論、把生成的 token 流回客戶端。
 
 接近真實的例子：
 
-- **Ollama**：最主流的本地推論伺服器，預設聽 `localhost:11434`，提供 OpenAI 相容 API 與自己的原生 API。內建 model registry，`ollama pull gemma4:31b` 會自動下載權重檔。
-- **LM Studio**：GUI 工具，內建模型瀏覽器與本地伺服器。可以在 UI 上開啟 server，預設聽 `localhost:1234`。適合喜歡可視化操作、不熟悉終端機的使用者。
-- **llama.cpp `server`**：底層推論引擎附帶的 HTTP server，需要手動編譯與配置。Ollama 內部其實是用 llama.cpp 當推論引擎。
-- **oMLX**：建在 MLX 之上的特化伺服器，主打 paged SSD KV cache，針對 coding agent 長 context 場景的首字延遲優化。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
+- **[Ollama](/llm/01-local-llm-services/ollama/)**：最主流的本地推論伺服器、預設聽 [`localhost:11434`](/llm/knowledge-cards/port-and-localhost/)、提供 OpenAI 相容 API 與自己的原生 API。內建 model registry、`ollama pull gemma4:31b` 會自動下載權重檔。
+- **[LM Studio](/llm/01-local-llm-services/lm-studio/)**：GUI 工具、內建模型瀏覽器與本地伺服器。可以在 UI 上開啟 server、預設聽 `localhost:1234`。適合喜歡可視化操作、不熟悉終端機的使用者。
+- **[llama.cpp `server`](/llm/01-local-llm-services/llama-cpp/)**：底層推論引擎附帶的 HTTP server、需要手動編譯與配置。Ollama 內部其實是用 llama.cpp 當推論引擎。
+- **oMLX**：建在 MLX 之上的特化伺服器、主打 paged SSD KV cache、針對 coding agent 長 context 場景的首字延遲優化。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
 
 伺服器層的選擇影響：
 
@@ -61,7 +61,7 @@ weight: 2
 2. **能跑哪些模型**：每個伺服器支援的模型格式不同（GGUF、MLX、Safetensors 等）。
 3. **API 形狀**：多數本地伺服器同時提供「OpenAI 相容」跟「自家原生」兩套 API。詳見 [0.3 OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)。
 
-陷阱是把伺服器跟模型混為一談。「Ollama 跑得快不快」這句話沒意義，要問「Ollama 跑某個模型在某台 Mac 上跑多快」。伺服器是執行引擎，模型是被執行的對象。
+陷阱是把伺服器跟模型混為一談。「Ollama 跑得快不快」這句話離開模型與機器脈絡就難以判讀、要追問「Ollama 跑哪個模型、在哪台 Mac 上、tok/s 多少」才有意義。伺服器是執行引擎、模型是被執行的對象。
 
 ## 模型層：權重檔本身
 
@@ -70,7 +70,7 @@ weight: 2
 接近真實的例子：
 
 - **Gemma 4 31B**：Google 釋出的開源模型，31 billion 參數。權重檔可以是 `gemma-4-31b-it-Q4_K_M.gguf`（GGUF 格式、Q4 量化）或 `mlx-community/gemma-4-31b-it-4bit`（MLX 格式）。
-- **Qwen3-Coder 30B**：Alibaba 釋出的 coding 專用模型，SWE-bench 表現接近 GPT-4。
+- **Qwen3-Coder 30B**：Alibaba 釋出的 coding 專用模型、[SWE-bench](/llm/knowledge-cards/swe-bench/) 等 coding benchmark 上表現強。
 - **Llama 3.x 系列**：Meta 釋出的開源模型，是早期本地 LLM 生態的主力。
 - **gpt-oss 20B**：OpenAI 釋出的開源版本，2025 年發布。
 
@@ -79,11 +79,11 @@ weight: 2
 1. **參數規模**（B = billion）：7B、14B、31B、70B 等。規模越大能力越強，但記憶體佔用、推論速度成本也越高。
 2. **量化等級**：bf16、Q8、Q5_K、Q4_K 等。同模型不同量化，記憶體與品質的取捨不同。
 3. **格式**：GGUF（llama.cpp 與 Ollama 主流）、MLX（Apple 框架）、Safetensors（Hugging Face 通用）等。不同伺服器支援的格式不同。
-4. **訓練目的**：[base model](/llm/knowledge-cards/base-model/)、[instruction-tuned](/llm/knowledge-cards/instruction-tuned/)、coding-tuned 等。寫 code 適合 instruction-tuned + coding 版本；base model 適合下游微調研究、跟著 prompt 走的能力較弱。
+4. **訓練目的**：[base model](/llm/knowledge-cards/base-model/)、[instruction-tuned](/llm/knowledge-cards/instruction-tuned/)、coding-tuned 等。寫 code 場景下 instruction-tuned + coding 版本通常勝過 base model；base model 適合下游微調研究、直接拿來對話的場景較少。
 
 模型選擇影響能力與速度。同樣 32GB Mac 跑 Gemma 4 31B 跟 Qwen3-Coder 30B，兩個模型擅長的任務不同，速度也不同。詳見 [模型選型章節](/llm/01-local-llm-services/model-selection-priority/)。
 
-## 三層如何拼裝：常見組合
+## 拼裝組合：三層的搭配範例
 
 理解三層後，本地 LLM 的所有「組合」都變得簡單。下表是幾個常見組合：
 
@@ -95,6 +95,8 @@ weight: 2
 | Open WebUI   | Ollama    | Gemma 4 31B      | 類 ChatGPT 網頁、團隊共用    |
 | Ollama CLI   | Ollama    | Llama 3.3 70B Q3 | 終端機直接對話、極限模型壓榨 |
 | LM Studio UI | LM Studio | 任意             | 純探索新模型、GUI 派         |
+
+表格中的規格欄位（量化等級、`gemma4:31b-coding-mtp-bf16` 這類 model tag、Q3 等）含義見 [0.5 記憶體預算](/llm/00-foundations/hardware-memory-budget/) 與 [Ollama model tag 命名規則](/llm/01-local-llm-services/ollama/#model-tag-命名規則)。
 
 注意三件事：
 
@@ -115,10 +117,21 @@ weight: 2
 | Gemma 4 31B                              | GPT-5、Claude Sonnet 4.6                       |
 | `gemma4:31b-coding-mtp-bf16`（模型 tag） | `gpt-5`、`claude-sonnet-4-6`（API model name） |
 
-這個對應的關鍵啟示是：**Cursor 跟 Continue.dev 都是介面層**，差別在於 Cursor 預設綁雲端、Continue.dev 預設綁本地，但兩者的責任邊界一樣。換句話說，要在 VS Code 裡接本地 LLM，不需要找「本地版的 Cursor」這種神奇東西，找一個能設定 OpenAI 相容 endpoint 的介面層就好。
+這個對應的關鍵啟示是：**Cursor 跟 Continue.dev 都是介面層**、差別在於 Cursor 預設綁雲端、Continue.dev 預設綁本地、但兩者的責任邊界一樣。換句話說、要在 VS Code 裡接本地 LLM、不需要尋找專屬「本地版的 Cursor」、找一個能設定 OpenAI 相容 endpoint 的介面層就好。
+
+## 分層失效徵兆：什麼時候三層心智模型會失準
+
+三層架構是教學用的乾淨模型、實務上有幾類工具會跨層或讓邊界模糊、判讀時要對應調整：
+
+1. **同層耦合（介面 + 伺服器綁死）**：LM Studio 的 GUI 跟內建 server 同屬一個 app、關掉 LM Studio 視窗 server 就停。這類工具用起來方便、但失去「介面換、伺服器留」的彈性、想常駐 server 時建議改用 [Ollama 的 launchd service 模式](/llm/01-local-llm-services/ollama/#背景常駐launchd-service)。
+2. **伺服器內嵌引擎（責任邊界模糊）**：Ollama 內部用 llama.cpp 當推論引擎、但對使用者展現的是 Ollama API 跟 model tag。看到「Ollama 不支援某個 llama.cpp 新功能」時、要回到 Ollama 的 release notes 看版本 cherry-pick 狀態、不是看 llama.cpp 上游。
+3. **All-in-one 工具淡化分層**：Open WebUI 把介面、user 管理、RAG pipeline 都包進一個 Docker container、看起來像「裝完就能用」、但底層仍要連到一個伺服器層（Ollama / OpenAI）。判讀此類工具時、先問「它的 server 是內建還是外接」、就能放回正確的分層。
+4. **「Cursor 是本地工具嗎」常見誤判**：Cursor 是介面層、它連的是雲端伺服器層、跑的是雲端模型 — 不是本地工具。對應到本地的是 Continue.dev + Ollama + 本地模型的組合。
+
+判讀新工具的反射動作：先把它拆成三層（這工具負責介面 / 伺服器 / 模型 的哪一段？）、再問「它做了多少跨層耦合、影響什麼彈性」。
 
 ## 小結
 
-本地 LLM 的三層架構（介面 / [推論伺服器](/llm/knowledge-cards/inference-server/) / 模型）跟雲端世界完全對應、只是全部跑在你的 Mac 上。理解三層後、後續看到任何工具都能立刻判斷它屬於哪一層；換工具時也知道該換哪一層、其他層可以保留。
+本地 LLM 的三層架構（介面 / 推論伺服器 / 模型）跟雲端世界完全對應、只是全部跑在你的 Mac 上。理解三層後、後續看到任何工具都能立刻判斷它屬於哪一層；換工具時也知道該換哪一層、其他層可以保留。
 
 下一章：[0.3 OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)，解釋為什麼三層之間能自由組合，背後是同一套 API 形狀。

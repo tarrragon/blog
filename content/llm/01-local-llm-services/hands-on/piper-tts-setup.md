@@ -36,7 +36,7 @@ Piper 跟 Whisper 一樣分離 binary 跟 model：先裝 runtime、再下載 voi
 pip3 install piper-tts --break-system-packages
 ```
 
-`--break-system-packages` 是 macOS 系統 Python 的安全機制——bypass `PEP 668` external-management warning。比較乾淨的做法是用 venv：
+`PEP 668` 是 macOS / Homebrew Python 的 external-management 機制、保護系統 Python 不被 pip 安裝污染；`--break-system-packages` 是 bypass flag、跳過該檢查直接裝。比較乾淨的做法是用 venv：
 
 ```bash
 python3 -m venv ~/.piper-venv
@@ -50,10 +50,13 @@ pip install piper-tts
 
 ```bash
 which piper
-# /opt/homebrew/bin/piper
+# /opt/homebrew/bin/piper（若 pip3 來自 Homebrew Python）
+# 或 ~/Library/Python/3.x/bin/piper（若 pip3 來自系統 Python）
 
 piper --help | head -10
 ```
+
+`which piper` 找不到時、檢查兩個 bin 目錄哪邊有檔案、把該目錄加進 `PATH`。
 
 ## 下載 Voice Model
 
@@ -255,3 +258,5 @@ ffmpeg -i piper-out.wav -ar 16000 piper-out-16k.wav
 - Hugging Face `rhasspy/piper-voices` repo 是 maintainer 官方、不會消失。
 
 讀的時候若 pip install 失敗、查 [piper GitHub](https://github.com/rhasspy/piper) 最新 install 路徑；voice 列表看 piper-voices repo。
+
+跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、語音 round-trip 對接見 [Whisper STT](/llm/01-local-llm-services/hands-on/whisper-setup/)、跨服務 lifecycle 與記憶體管理見 [Resource management](/llm/01-local-llm-services/hands-on/resource-management/)。

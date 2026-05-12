@@ -35,11 +35,15 @@ Grant Sanderson 的「Neural Networks」+「But what is a GPT?」系列、視覺
 
 **為什麼從這裡開始**：影片把抽象的 attention、embedding、residual stream 變成可視覺化的幾何運動。看完這個系列、本模組前 4 章的概念都能 grasp 到直觀層次。
 
-連結：YouTube 上搜尋 `3Blue1Brown Neural Networks`。每集 15 ~ 30 分鐘、總共約 4 小時。
+**前置條件**：高中代數 + 對矩陣有基本概念。已有 ML / Neural Network 基礎的讀者可跳過 Essence of Linear Algebra、直接看 Neural Networks 5 集系列。
+
+連結：YouTube 上搜尋 `3Blue1Brown Neural Networks`、官方頻道是 youtube.com/c/3blue1brown。每集 15 ~ 30 分鐘、總共約 4 小時。
 
 ## 階段 2：Andrej Karpathy 的 Neural Networks: Zero to Hero
 
-Andrej Karpathy（OpenAI 前研究員、Tesla 前 AI 主管）的 YouTube 系列、是「動手實作 LLM」的金標準。完整實作從 micrograd（自己刻 autograd）到 GPT-2 訓練。
+Andrej Karpathy（OpenAI 前研究員、Tesla 前 AI 主管）的 YouTube 系列、在「動手實作 LLM」場景下是最完整的公開教材之一。完整實作從 micrograd（自己刻 autograd）到 GPT-2 訓練。
+
+**前置條件**：Python 基礎、PyTorch 基本語法、看懂模組二的 chain rule 與 backprop 概念（[2.2 calculus](/llm/02-math-foundations/calculus-and-optimization/)）。沒寫過 PyTorch 的讀者建議先做完 PyTorch 60 分鐘 tutorial 再進。
 
 ### 核心集數
 
@@ -58,24 +62,26 @@ Andrej Karpathy（OpenAI 前研究員、Tesla 前 AI 主管）的 YouTube 系列
 
 ### 為什麼這系列重要
 
-- **講者深度高**：Karpathy 把每個概念講清楚、不跳步。
+- **講者深度高**：Karpathy 講解的節奏細到可以跟著手刻、實作完能對 Transformer 每個 module 的角色有具體理解。
 - **完整可執行 code**：每個影片都有 GitHub repo、可跟著跑。
 - **從零實作**：不依賴黑箱 framework、所有東西都自己刻、理解深度。
 - **涵蓋完整**：autograd → MLP → CNN → Transformer → 完整 GPT-2 訓練。
 
 完成這系列、你能：
 
-- 解釋 Transformer 內部每一行 code 的角色。
+- 對應到模組三 [3.2 attention](/llm/03-theoretical-foundations/attention-mechanism/) 跟 [3.3 transformer-architecture](/llm/03-theoretical-foundations/transformer-architecture/) 的每個 module、解釋它在 code 中的角色。
 - 用 PyTorch 從零實作一個簡單 LLM。
 - 看懂主流 LLM 的 architecture code（Llama、Mistral 等）。
 
-連結：YouTube 搜尋 `Karpathy Neural Networks Zero to Hero`。
+連結：YouTube 搜尋 `Karpathy Neural Networks Zero to Hero`、官方索引在 karpathy.ai。
 
 預估時間：完整跑完 30 ~ 50 小時（含跟著寫 code）、4 ~ 8 週投入。
 
 ## 階段 3：Stanford CS224N Natural Language Processing with Deep Learning
 
-Stanford 的 NLP + Deep Learning 旗艦課、由 Chris Manning、Tatsu Hashimoto 等講授。每年更新材料、是 LLM 系統教學的金標準。
+Stanford 的 NLP + Deep Learning 旗艦課、由 Chris Manning、Tatsu Hashimoto 等講授。每年更新材料、在「LLM 系統教學」場景下是最完整的學術課程之一。
+
+**前置條件**：微積分（chain rule、partial derivative）、線性代數（matrix multiplication、eigenvalue）、Python + PyTorch。沒有這些基礎建議先補完模組二再進。
 
 ### 內容
 
@@ -99,7 +105,9 @@ Stanford 的 NLP + Deep Learning 旗艦課、由 Chris Manning、Tatsu Hashimoto
 
 ## 階段 4：Stanford CS336 Language Modeling from Scratch
 
-2024 年 Stanford 新開的 LLM 從零訓練課。Percy Liang、Tatsu Hashimoto 講授、涵蓋從資料到部署的完整 LLM lifecycle。
+2024 年 Stanford 新開的 LLM 從零訓練課、後續每年更新。Percy Liang、Tatsu Hashimoto 講授、涵蓋從資料到部署的完整 LLM lifecycle。引用時請註明你看的是哪一年的版本（內容逐年更新、跨年版本可能有差異）。
+
+**前置條件**：完成 CS224N 或同等課程、有 distributed training 概念、了解 GPU memory hierarchy。屬於進階課、不適合作為 LLM 入門起點。
 
 ### 內容
 
@@ -201,21 +209,23 @@ Hugging Face 官方教材、實作取向。涵蓋 Transformers library、tokeniz
 
 讀完課程後、跟最新研究進度的方式是讀 paper。以下是 LLM 領域的「必讀經典」、按時間順序：
 
-| Paper                                                   | 重要性                                |
-| ------------------------------------------------------- | ------------------------------------- |
-| Attention Is All You Need (Vaswani et al., 2017)        | Transformer 原始 paper                |
-| BERT (Devlin et al., 2018)                              | Bidirectional pretraining             |
-| GPT-2 paper (Radford et al., 2019)                      | Decoder-only 規模化的開端             |
-| Scaling Laws (Kaplan et al., 2020)                      | 模型 / 資料 / 算力之間的 scaling 關係 |
-| GPT-3 paper (Brown et al., 2020)                        | In-context learning 的湧現            |
-| Chinchilla (Hoffmann et al., 2022)                      | 修正 scaling laws、改變訓練配比       |
-| InstructGPT (Ouyang et al., 2022)                       | RLHF 的標誌性實作                     |
-| LLaMA (Touvron et al., 2023)                            | Open-weight 大模型的標竿              |
-| LLaMA 2 (Touvron et al., 2023)                          | Open chat model                       |
-| DPO (Rafailov et al., 2023)                             | RLHF 的簡化替代                       |
-| Mixture of Experts (Shazeer et al., 2017、Mixtral 2024) | MoE 路線                              |
-| RoPE (Su et al., 2021)                                  | 現代 LLM 主流位置編碼                 |
-| Flash Attention (Dao et al., 2022)                      | Attention 高效實作                    |
+| Paper                                                   | 重要性                                | 對應模組三章節                                                                            |
+| ------------------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Attention Is All You Need (Vaswani et al., 2017)        | Transformer 原始 paper                | [3.2 attention](/llm/03-theoretical-foundations/attention-mechanism/)                     |
+| BERT (Devlin et al., 2018)                              | Bidirectional pretraining             | [3.3 transformer architecture](/llm/03-theoretical-foundations/transformer-architecture/) |
+| GPT-2 paper (Radford et al., 2019)                      | Decoder-only 規模化的開端             | [3.3 transformer architecture](/llm/03-theoretical-foundations/transformer-architecture/) |
+| Scaling Laws (Kaplan et al., 2020)                      | 模型 / 資料 / 算力之間的 scaling 關係 | [3.4 training pipeline](/llm/03-theoretical-foundations/training-pipeline/)               |
+| GPT-3 paper (Brown et al., 2020)                        | In-context learning 的湧現            | [3.4 training pipeline](/llm/03-theoretical-foundations/training-pipeline/)               |
+| Chinchilla (Hoffmann et al., 2022)                      | 修正 scaling laws、改變訓練配比       | [3.4 training pipeline](/llm/03-theoretical-foundations/training-pipeline/)               |
+| InstructGPT (Ouyang et al., 2022)                       | RLHF 的標誌性實作                     | [3.4 training pipeline](/llm/03-theoretical-foundations/training-pipeline/)               |
+| LLaMA (Touvron et al., 2023)                            | Open-weight 大模型的標竿              | [3.3 transformer architecture](/llm/03-theoretical-foundations/transformer-architecture/) |
+| LLaMA 2 (Touvron et al., 2023)                          | Open chat model                       | [3.4 training pipeline](/llm/03-theoretical-foundations/training-pipeline/)               |
+| DPO (Rafailov et al., 2023)                             | RLHF 的簡化替代                       | [3.4 training pipeline](/llm/03-theoretical-foundations/training-pipeline/)               |
+| Mixture of Experts (Shazeer et al., 2017、Mixtral 2024) | MoE 路線                              | [3.3 transformer architecture](/llm/03-theoretical-foundations/transformer-architecture/) |
+| RoPE (Su et al., 2021)                                  | 現代 LLM 主流位置編碼                 | [3.3 transformer architecture](/llm/03-theoretical-foundations/transformer-architecture/) |
+| Flash Attention (Dao et al., 2022)                      | Attention 高效實作                    | [3.2 attention](/llm/03-theoretical-foundations/attention-mechanism/)                     |
+
+讀 paper 的順序建議：先讀 abstract + intro + conclusion 抓研究問題與結論、再看 method 細節、最後看 experiment 與 ablation。初學者可優先讀 Transformer 原始 paper + GPT-2 + Chinchilla + InstructGPT 四篇、覆蓋「架構 / 預訓練 / scaling / alignment」骨架；Flash Attention、MoE 等工程細節 paper 可後補。
 
 訂閱 arXiv `cs.CL`、`cs.LG` daily list、或關注 Hugging Face Daily Papers、X / Twitter 上的 ML researcher、能持續跟最新進展。
 

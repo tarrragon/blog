@@ -199,13 +199,13 @@ qwen3:8b > gemma3:4b > gemma3:1b ≈ gemma4:e4b (strict) > gemma4:e4b (default)
 - **Surface-level instruction**（heading 格式、不要 meta-text、要對話）：可以用 strict prompt 改善、prompt engineering 有效。
 - **Semantic-level alignment**（特定情境的角色處理、敏感主題的表述方式）：是 RLHF 階段建立的 hard line、prompt engineering 繞不過。
 
-設計應用時要意識：**「LLM follow 不了 instruction」可能不是能力問題、是 alignment 問題**。模型訓練時被刻意 align 不做某些事、即使 prompt 明示也不會做。發現這種情況、應該換 model（或用 less-aligned variant）、不要繼續調 prompt 浪費時間。
+設計應用時要意識：**「LLM follow 不了 instruction」可能不是能力問題、是 alignment 問題**。模型訓練時被刻意 align 不做某些事、即使 prompt 明示也不會做。發現這種情況、改換 model（或 less-aligned variant）會比繼續調 prompt 更省時間。
 
 ### 「最新世代」的標籤可能誤導
 
 Gemma 4 是 2026/4/2 才發布的最新代、size 也夠大、但在這個 instruction following 任務上**輸給 6 個月前發布的 Gemma 3 4b**。
 
-設計應用 / 選模型時、不能只看「最新 / 最大」、要實測對自己 task 的表現。Benchmark ranking（如 LMSYS Chatbot Arena）反映平均表現、不一定 reflect 你的 narrow 任務。本實驗示範了「自己跑一次」比「看 benchmark」更可靠的判讀方法。
+設計應用 / 選模型時、實測對自己 task 的表現比「最新 / 最大」標籤可靠。Benchmark ranking（如 LMSYS Chatbot Arena）反映平均表現、未必 reflect 你的 narrow 任務。本實驗示範了「自己跑一次」比「看 benchmark」更可靠的判讀方法。
 
 ### Structural feature 跟 stylistic feature 兩層
 
@@ -246,11 +246,11 @@ Gemma 4 是 2026/4/2 才發布的最新代、size 也夠大、但在這個 instr
 
 ## 對寫應用的啟示
 
-1. **「最新最大」≠ 「最好 follow」**：選模型實測自己 task、別只看 benchmark / size。
-2. **本地小模型（< 3B）做需要 follow 結構規則的任務、要嚴格驗證**：用 structural metrics 自動 check、不要相信模型「看起來有做到」。
+1. **「最新最大」≠ 「最好 follow」**：選模型實測自己 task、benchmark / size 只是輔助訊號。
+2. **本地小模型（< 3B）做需要 follow 結構規則的任務、要嚴格驗證**：用 structural metrics 自動 check、目視判斷模型「看起來有做到」的可靠度低。
 3. **Edge variant 可能有 special behavior**：device-deployable variant 可能 RLHF 偏向 conservative、不一定適合所有任務。
 4. **跨家族對比比同家族升 size 收益大**：Qwen3 8B vs Gemma3 4B 比 Gemma3 4B vs Gemma3 1B 改善更明顯。
-5. **「形式跟風格」分開驗證**：應用層的 validation 要分維度 score、不要一次評全部。
+5. **「形式跟風格」分開驗證**：應用層的 validation 分維度 score、比一次評全部更可解讀。
 
 ## 跑這個實驗的 framework
 
@@ -286,3 +286,5 @@ Gemma 4 是 2026/4/2 才發布的最新代、size 也夠大、但在這個 instr
 - 「自己跑一次」比「看 benchmark」更可靠的判讀邏輯。
 
 未來想擴展、可以加入更多維度（如反向 retrieval：把生成內容當 query、看能不能找回原資料夾；或 perplexity-based 評估）。
+
+跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、選模型的優先序策略見 [Model selection priority](/llm/01-local-llm-services/model-selection-priority/)、模型 tag 命名規則見 [Model tag](/llm/knowledge-cards/model-tag/)、跑多模型的記憶體預算見 [Resource management](/llm/01-local-llm-services/hands-on/resource-management/)。

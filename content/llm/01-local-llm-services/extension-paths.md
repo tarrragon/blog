@@ -8,7 +8,7 @@ weight: 6
 
 模組一前五章覆蓋了「Ollama + Continue.dev」這條最短路徑。日常路徑跑穩後，你可能會想往以下方向延伸：加裝 ChatGPT 風格的 Web UI、跑 coding agent、嘗試產圖。本章把這些延伸方向逐一列出、給優先順序、講清楚哪些是「換工具」、哪些是「換領域」。
 
-關鍵原則：**先把寫 code 跑穩，再考慮延伸**。同時學三個延伸方向只會三邊都半生不熟。本章建議的順序是先 Web UI、再 coding agent、最後產圖；如果你只想嘗試一個，依自己最常用的場景挑。
+關鍵原則：**先把寫 code 跑穩、再考慮延伸**。同時推進三條延伸通常會讓每條都停在半生不熟階段、累積成果有限。本章建議的順序是先 Web UI、再 coding agent、最後產圖；如果你只想嘗試一個、依自己最常用的場景挑。
 
 ## 本章目標
 
@@ -42,7 +42,7 @@ docker run -d --name open-webui -p 3000:8080 \
   ghcr.io/open-webui/open-webui:main
 ```
 
-啟動後開 `http://localhost:3000`，註冊本地帳號（資料只存本機 SQLite），就有完整 ChatGPT 介面：
+`host.docker.internal` 是 Docker Desktop 提供的 DNS 名稱、container 內透過它連到宿主機（macOS 本身）跑的 Ollama；Linux Docker 沒這個別名、要改用 `--add-host=host.docker.internal:host-gateway` 或直接填宿主 IP。啟動後開 `http://localhost:3000`、註冊本地帳號（資料只存本機 SQLite）、就有完整 ChatGPT 介面：
 
 - 對話歷史保存（本地 SQLite）
 - 多 model 切換、可同時對比兩個 model 回答
@@ -66,9 +66,15 @@ docker run -d --name open-webui -p 3000:8080 \
 
 | 工具         | 介面         | 定位                                                          |
 | ------------ | ------------ | ------------------------------------------------------------- |
-| aider        | CLI          | git-aware，把 LLM 改的 diff 直接 commit，支援 multi-file edit |
-| Cline        | VS Code 擴充 | 在 VS Code 內跑 agent，可以執行 shell command                 |
-| Cursor Agent | Cursor 內建  | Cursor 訂閱戶可用，雲端綁定                                   |
+| aider        | CLI          | git-aware、把 LLM 改的 diff 直接 commit、支援 multi-file edit |
+| Cline        | VS Code 擴充 | 在 VS Code 內跑 agent、可執行 shell command                   |
+| Cursor Agent | Cursor 內建  | Cursor 訂閱戶可用、雲端綁定                                   |
+
+選擇三個工具的延伸判讀：
+
+- **aider**：當主要工作流是「在 terminal + git 內完成」、想讓 LLM 把 diff 直接 commit 進 history、aider 的 CLI-first + git-aware 設計最對位。失敗模式：跨多檔修改超過 5 個檔時、aider 的 prompt 規劃容易斷裂；改回 Continue.dev 手動逐檔修可能更穩。
+- **Cline**：當你已在 VS Code 內工作、想要 agent 能跑 shell command（執行測試、跑 build 看錯誤）並 loop 修錯時、Cline 比 aider 更貼近「IDE 內 agent」。失敗模式：本地模型在「規劃 → 執行 shell → 解讀錯誤 → 改 code」這個 loop 上接受度不穩、常需要人工接管。
+- **Cursor Agent**：當你已是 Cursor 訂閱戶、agent 預設綁雲端旗艦（成功率最高、但 prompt / code 會送到 Cursor 雲端）。NDA / 合規場景不適用、本地 LLM 接入也是次要 surface。
 
 **為什麼是 advanced**：coding agent 需要本地模型能「跟著規劃跑多步驟、用 tools、不偏離目標」。這部分是本地 LLM 的弱項（見 [1.5 期望管理](/llm/01-local-llm-services/expectation-management/)）；現階段本地模型跑 coding agent 的成功率明顯低於雲端旗艦。
 
@@ -87,17 +93,31 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 
 **陷阱**：
 
-1. 本地 LLM 跑 aider 比跑 Continue.dev 慢得多，因為每輪 agent loop 都要重新處理長 context。
-2. coding agent 對 long context 敏感，本地 [TTFT](/llm/knowledge-cards/ttft/) 痛點被放大。
-3. 失敗時 agent 可能 commit 不可用的 code，要記得 `git diff` 審過再 push。
+1. 本地 LLM 跑 aider 比跑 Continue.dev 慢得多、因為每輪 agent loop 都要重新處理長 context。
+2. coding agent 對 long context 敏感、本地 [TTFT](/llm/knowledge-cards/ttft/) 痛點被放大。Agent loop 每輪都會 mutate prompt（前一輪結果加入下一輪的 context）、[KV cache](/llm/knowledge-cards/kv-cache/) 命中率低、每輪都要重新做完整 prefill。
+3. 失敗時 agent 可能 commit 不可用的 code、要記得 `git diff` 審過再 push。
 
-**何時做這個延伸**：本地模型在 Continue.dev 對話模式下表現穩定，且你想看看「multi-step 自動化」能幫到什麼程度。對多數讀者，這條延伸在 2026 年 5 月時是「值得試一週，但不一定留下」。
+**何時做這個延伸**：本地模型在 Continue.dev 對話模式下表現穩定、且你想看看「multi-step 自動化」能幫到什麼程度。對多數讀者、這條延伸在 2026 年 5 月時是「值得試一週、但不一定留下」。
+
+**何時該停**：以下訊號出現時、agent 路線在你的工作流暫時不成立、回到 Continue.dev 對話模式：
+
+- 連續 5 個 multi-step 任務都需要人工接管 / 中途介入修錯
+- TTFT 持續 > 30 秒、agent loop 的「等待 → 接管」節奏比手寫快不了多少
+- agent commit 進 git history 的 diff 通過率 < 50%、審查與 revert 的成本超過自己寫
+- 簡單任務（單檔重構、加 test）本地 agent 也常失敗、表示模型 capacity 對 agent 規劃不足
 
 ## 延伸方向三：產圖（Stable Diffusion、Flux 等）
 
-**定位**：跟 LLM 寫 code **完全不同的領域**。產圖用的是 **Diffusion 架構**，跟寫 code 用的 **Transformer 架構**是兩個獨立的神經網路類型。工具鏈、生態、硬體最適規格都不一樣。
+產圖是另一個專業領域、工具鏈跟概念體系另起一套、跟 LLM 寫 code 沒有共用的伺服器層或 model layer。產圖用的是 **Diffusion 架構**、跟寫 code 用的 **Transformer 架構**是兩個獨立的神經網路類型。
 
-這不是「換個 model 就好」，是「進另一個專業領域」。本章只給入口資訊，不展開教學。
+四個維度上產圖跟寫 code 的工作流互不相通：
+
+1. **工具鏈各自獨立**：Ollama 服務 [Transformer](/llm/knowledge-cards/transformer/) LLM、Draw Things / ComfyUI 服務 [Diffusion](/llm/knowledge-cards/diffusion/) 模型、兩條路線的伺服器與生態互不通用。
+2. **prompt 風格不同**：寫 code 是 instruction 形式、產圖是 descriptive prompt + negative prompt + sampler 參數。
+3. **學習成本各自獨立**：產圖有自己的 LoRA、ControlNet、IP-Adapter、refiner 等概念體系、學起來等於進入新領域。
+4. **硬體最適規格不同**：寫 code 看記憶體預算（[跑大模型](/llm/knowledge-cards/unified-memory/)）、產圖看 GPU 算力與 VRAM 頻寬。
+
+本章只給入口資訊、不展開教學。
 
 **主流工具**：
 
@@ -121,13 +141,6 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 1. 24GB+ Mac 可以順暢跑 SDXL / Flux。記憶體需求其實比 LLM 低（一張圖 ~ 8GB），但對 GPU 算力敏感。
 2. M4 Max 跑 Flux 生 1024x1024 圖約 15 ~ 30 秒一張，可接受。
 3. Draw Things 在 Mac App Store 可下載，是最簡單的入門路徑。
-
-**為什麼跟寫 code 適合分開學**：
-
-1. **工具鏈各自獨立**：Ollama 服務 [Transformer](/llm/knowledge-cards/transformer/) LLM、Draw Things / ComfyUI 服務 [Diffusion](/llm/knowledge-cards/diffusion/) 模型、兩條路線的伺服器與生態互不通用。
-2. **prompt 風格不同**：寫 code 是 instruction 形式、產圖是 descriptive prompt + negative prompt + sampler 參數。
-3. **學習成本各自獨立**：產圖有自己的 LoRA、ControlNet、IP-Adapter、refiner 等概念體系、學起來等於進入新領域。
-4. **硬體最適規格不同**：寫 code 看記憶體預算（[跑大模型](/llm/knowledge-cards/unified-memory/)）、產圖看 GPU 算力與 VRAM 頻寬。
 
 **本指南的立場**：先把寫 code 跑穩、再考慮產圖。產圖屬於獨立的學習主題、另外找專門教材會學得更有效率。
 
@@ -158,6 +171,6 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 
 ## 小結
 
-延伸方向有三條：Web UI（Open WebUI、低成本、擴展使用情境）、coding agent（aider、進階、現階段本地能力受限）、產圖（完全獨立領域、不是換 model 就好）。先把寫 code 跑穩再做延伸；想做產圖就承認它是另一個學習主題、另開戰場。
+延伸方向有三條：Web UI（Open WebUI、低成本、擴展使用情境）、coding agent（aider / Cline、進階、現階段本地能力受限）、產圖（完全獨立領域、工具鏈跟概念體系另起一套）。先把寫 code 跑穩再做延伸；想做產圖就承認它是另一個學習主題、另開戰場。實作範例（含 ComfyUI / Whisper / Piper TTS / RAG / MCP）見 [Hands-on 章節](/llm/01-local-llm-services/hands-on/)。
 
-讀到這裡，本指南的核心內容就完了。下一步是回到 [模組零](/llm/00-foundations/) 或 [模組一](/llm/01-local-llm-services/) 任一章節做深度閱讀，或實際打開終端機跑第一個 `ollama run`，把概念變成肌肉記憶。
+讀到這裡、本指南的核心內容就完了。下一步是回到 [模組零](/llm/00-foundations/) 或 [模組一](/llm/01-local-llm-services/) 任一章節做深度閱讀、或實際打開終端機跑第一個 `ollama run`、把概念變成肌肉記憶。

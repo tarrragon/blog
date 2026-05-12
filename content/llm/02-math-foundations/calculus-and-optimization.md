@@ -91,7 +91,7 @@ LLM 訓練常用 learning rate：
 - Fine-tuning：1e-5 ~ 5e-5、較小避免破壞 pre-trained 權重
 - LoRA：1e-4 ~ 1e-3、只更新少量參數可較大
 
-Learning rate 是訓練 LLM 最關鍵的 hyperparameter、設錯整個訓練都壞。實務上常用 learning rate scheduler 動態調整：warmup + cosine decay 是最主流的組合。
+Learning rate 是訓練 LLM 最關鍵的 hyperparameter、設錯時整個訓練容易失敗、實務上極難救回。實務上常用 learning rate scheduler 動態調整：warmup + cosine decay 是最主流的組合。
 
 ## SGD：最基本的最佳化演算法
 
@@ -108,7 +108,7 @@ Vanilla SGD 在 LLM 場景的缺點：
 2. 在「狹長 loss surface」上震盪、收斂慢。
 3. 不利用過去 gradient 資訊。
 
-這些缺點導致 LLM 訓練普遍改用 Adam / AdamW。
+SGD-with-momentum 在 vanilla SGD 上補了「過去 gradient 累積成 velocity」、處理震盪問題、在 vision（ResNet、ImageNet 訓練）跟小規模 fine-tune 仍是合理選擇；Adam / AdamW 在 LLM 預訓練成主流的原因是「自適應 learning rate + per-parameter scale」更能對付 Transformer 的高維、稀疏 gradient 結構、大規模 transformer 預訓練幾乎全部用 AdamW。
 
 ## Adam 與 AdamW：適應性最佳化
 
@@ -126,9 +126,16 @@ update = learning_rate × m_t / (sqrt(v_t) + ε)
 - 二階矩 v：估計 gradient 大小、把更新除以 sqrt(v)、自動調整每個參數的有效步幅。
 - 結果：高 gradient 的參數步小、低 gradient 的參數步大、整體穩定收斂。
 
-AdamW 是 Adam 的改進版、把 weight decay（L2 正則化）跟 gradient update 解耦。LLM 訓練幾乎都用 AdamW、不用 vanilla Adam。
+AdamW 是 Adam 的改進版、把 weight decay（L2 正則化）跟 gradient update 解耦。大規模 transformer 預訓練幾乎都用 AdamW、vanilla Adam 已退出 LLM 主流（SGD-with-momentum 在 vision 跟小規模 fine-tune 仍適用）。
 
-代價：Adam / AdamW 需要為每個參數額外存 m 跟 v、記憶體成本是 SGD 的 3 倍。31B 模型用 AdamW 訓練、optimizer state 約佔 200GB+ 記憶體（含 fp32 master copy）。這就是為什麼訓練 LLM 需要大量 GPU。
+代價：Adam / AdamW 需要為每個參數額外存 m（一階矩、gradient 的指數移動平均）跟 v（二階矩、gradient 平方的指數移動平均）、記憶體成本是 SGD 的 3 倍。31B 模型用 AdamW 訓練的 optimizer state 約佔 200GB+ 記憶體、拆解如下（mixed-precision training、batch=1024 / 不含 activation checkpoint 的典型配置）：
+
+- fp32 master weights：31B × 4 bytes ≈ 124 GB
+- m（一階矩）：31B × 4 bytes ≈ 124 GB
+- v（二階矩）：31B × 4 bytes ≈ 124 GB
+- 總計約 372 GB optimizer state、加上 activation 與 gradient buffer 後實際需求更高
+
+對比推論時 Gemma 4 31B Q4 量化版約 18GB（含 KV cache、見 [0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)）、訓練需求是推論的 20 倍以上。這就是為什麼訓練 LLM 需要大量 GPU、推論可以在個人 Mac 上跑。
 
 ## Gradient Explosion 與 Vanishing
 
@@ -145,17 +152,9 @@ Transformer 為什麼能訓練深層網路：
 
 詳細展開見 [3.3 Transformer 架構](/llm/03-theoretical-foundations/transformer-architecture/)。
 
-## Backpropagation：把 gradient 從 loss 推回所有權重
+## Backpropagation：chain rule 在多層網路上的演算法名
 
-Backpropagation（反向傳播）的核心定義是「用 chain rule、從 loss 倒推所有權重 gradient 的演算法」。它是 deep learning 能訓練的根本原因。
-
-流程：
-
-1. **Forward pass**：input 流經各層 layer、得到 output 與 loss。
-2. **Backward pass**：從 loss 開始、逐層算 local gradient、用 chain rule 累積。
-3. 每個權重最終拿到 `∂loss / ∂W`。
-
-實作上、PyTorch / MLX 等 framework 用「automatic differentiation（autograd）」自動算 backward pass、開發者只寫 forward 即可。Autograd 跟 chain rule 是同個概念的不同抽象層級。
+Backpropagation（反向傳播）就是前面 [chain rule](#chain-rule把-gradient-從輸出傳到所有權重) 段講的「∂loss/∂W 倒推流程」在實作上的演算法名稱、不是另一個獨立概念。整體流程：forward pass 算 output 與 loss、backward pass 用 chain rule 從 loss 逐層倒推每個權重的 gradient、framework（PyTorch / MLX）的 autograd 自動完成 backward、開發者只需寫 forward。Autograd 跟 chain rule / backprop 是同個概念在不同抽象層級的展開。
 
 ## 為什麼推論不需要 backprop
 

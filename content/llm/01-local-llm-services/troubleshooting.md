@@ -17,13 +17,13 @@ weight: 7
 1. 看到症狀時、先定位是介面 / 伺服器 / 模型哪一層的問題。
 2. 知道在每一層該看什麼 log。
 3. 用「最小可重現」策略快速縮減問題範圍。
-4. 識別「跨層級的誤判」常見模式、不把 server 層的問題當 model 問題瞎調。
+4. 識別「跨層級的誤判」常見模式、把 server 層問題正確歸位、避開瞎調 model 的繞路。
 
 ## 故障定位的核心原則：先確認哪一層壞
 
 模組零 [三層架構](/llm/00-foundations/three-layer-architecture/) 的視角延伸到排錯：故障可能落在介面層（Continue.dev / Cursor 等 IDE 整合）、伺服器層（Ollama / LM Studio / llama.cpp）、或模型層（權重檔本身的能力 / 量化選擇）。在不知道哪一層壞之前、任何修法都是亂槍打鳥——重啟 Continue.dev 解不了模型量化太激進的問題、重 pull 模型解不了 IDE 設定錯的問題。
 
-排錯的第一步永遠是定位、不是修補。定位用的工具不複雜：
+先定位再修補的 ROI 高於直接修補、因為沒有定位的修法常常掃過正確答案還不知道是哪個動作生效。定位用的工具不複雜：
 
 - **直接 curl 伺服器 API**：繞過介面層、直接驗證伺服器是否回應正常。
 - **`ollama ps` / 等價指令**：看伺服器層 model 狀態、確認 model 真的載入。
@@ -36,18 +36,24 @@ weight: 7
 
 不同症狀對應到不同最有可能的故障層、建立對應反射能省下大量試錯時間。下表是寫 code 場景常見症狀的對應：
 
-| 症狀                                  | 最可能層級        | 第一步驗證                          |
-| ------------------------------------- | ----------------- | ----------------------------------- |
-| Continue.dev 完全沒回應               | 介面層 / 伺服器層 | curl 伺服器、看伺服器是否正常       |
-| Continue.dev 報「connection refused」 | 伺服器層          | 伺服器沒在跑 / port 不對            |
-| Continue.dev 顯示請求送出但無回應     | 介面層 / 伺服器層 | curl 同 prompt、比較行為            |
-| 回答內容亂碼 / 一直重複               | 模型層            | 換量化等級或換模型試                |
-| 回答邏輯離譜 / 答非所問               | 模型層            | model 能力不足、考慮換大一點 model  |
-| TTFT 異常變長                         | 模型層 / 推論機制 | prompt 變長了？KV cache 失效？      |
-| 整台 Mac 變慢、Ollama 沒崩            | 伺服器層 / 系統   | 記憶體 swap、看 Activity Monitor    |
-| Ollama 自己 crash                     | 伺服器層          | 看 server log、通常 OOM 或 bug      |
-| 跨 session 設定遺失                   | 介面層            | IDE 設定沒存或被 reset              |
-| Tab autocomplete 完全不觸發           | 介面層            | autocomplete model 沒配對 / 沒 pull |
+| 症狀                                  | 最可能層級        | 第一步驗證                                                 |
+| ------------------------------------- | ----------------- | ---------------------------------------------------------- |
+| Continue.dev 完全沒回應               | 介面層 / 伺服器層 | curl 伺服器、看伺服器是否正常                              |
+| Continue.dev 報「connection refused」 | 伺服器層          | 伺服器沒在跑 / port 不對                                   |
+| Continue.dev 顯示請求送出但無回應     | 介面層 / 伺服器層 | curl 同 prompt、比較行為                                   |
+| 回答內容亂碼 / 一直重複               | 模型層            | 換[量化](/llm/knowledge-cards/quantization/)等級或換模型試 |
+| 回答邏輯離譜 / 答非所問               | 模型層            | model 能力不足、考慮換大一點 model                         |
+| TTFT 異常變長                         | 模型層 / 推論機制 | prompt 變長了？KV cache 失效？                             |
+| 整台 Mac 變慢、Ollama 沒崩            | 伺服器層 / 系統   | 記憶體 swap、看 Activity Monitor                           |
+| Ollama 自己 crash                     | 伺服器層          | 看 server log、通常 OOM 或 bug                             |
+| 跨 session 設定遺失                   | 介面層            | IDE 設定沒存或被 reset                                     |
+| Tab autocomplete 完全不觸發           | 介面層            | autocomplete model 沒配對 / 沒 pull                        |
+
+對應的具體驗證指令範例：
+
+- **回答亂碼 / 重複**：`ollama list` 確認當前 model tag、改跑 `ollama run <較高量化版本>`（例如 Q4 → Q5）；同 prompt 換 model 確認是不是 model 本身能力問題、不是伺服器。
+- **TTFT 異常變長**：`ollama ps` 看 model 是否被 unload 又重載（[keep_alive](/llm/01-local-llm-services/ollama/#模型常駐keep_alive) 太短）；檢查 prompt 字數是否暴增（10K+ tokens 進入 [prefill](/llm/knowledge-cards/prefill/) 痛點區）。
+- **Ollama 自己 crash**：[launchd service](/llm/knowledge-cards/launchd-service/) 模式看 `/opt/homebrew/var/log/ollama.log`、前景模式看啟動 terminal 的 stderr。
 
 這張表的核心訊號：
 
@@ -74,7 +80,7 @@ weight: 7
 - **看什麼**：模型載入過程、推論進度、error trace、記憶體狀態。
 - **常見訊號**：載入 model 卡住 / 失敗 → model file 損壞或記憶體不足；推論時 OOM → 量化太激進或 context 太長；連線錯誤 → port 配置或 host binding。
 
-### 模型層
+### 模型層的觀察訊號
 
 模型層通常沒有獨立的 log——權重檔本身不會 log、行為要透過伺服器層觀察。判讀模型問題的訊號通常是：
 
@@ -84,9 +90,9 @@ weight: 7
 
 模型層問題多半不是「壞了」、是「能力上限」——換更大模型或調量化是主要解法、不是「修 bug」。
 
-### log 不要全部開到 verbose
+### log level 預設夠用、針對性提升
 
-實務上把所有 log 開 verbose 反而看不到重點。Default level 通常夠用、有問題再針對該層提升 log level、避免 noise 蓋過 signal。
+實務上 default log level 提供的訊息已涵蓋多數排錯需要；全部開 verbose 反而把 noise 蓋過 signal、要找的關鍵錯誤被淹沒。有問題時針對該層提升 log level（其他層保持 default）、定位完再降回來。
 
 ## 最小可重現的縮減策略
 
@@ -108,7 +114,7 @@ weight: 7
     - 一個好一個壞 → 該伺服器特有問題。
 
 4. **改變一個變數一次**：
-    - 不要同時改設定 + 換 model + 重啟 IDE、無法定位哪個動作生效。
+    - 每次只改一個變數（設定 / model / IDE 重啟三選一）、確保行為變化能對應到具體動作。
     - 每次只改一項、觀察行為變化。
 
 5. **記錄每一步**：
@@ -160,7 +166,7 @@ weight: 7
 ### curl
 
 - **角色**：直接打伺服器 API、繞過介面層。
-- **用法**：`curl http://localhost:11434/api/version` 看伺服器是否回應、`curl http://localhost:11434/v1/chat/completions` 帶最簡 prompt 試完整流程。
+- **用法**：`curl http://localhost:11434/api/version` 看伺服器是否回應、`curl http://localhost:11434/v1/chat/completions` 帶最簡 prompt 試完整流程（11434 是 Ollama 預設 [port](/llm/knowledge-cards/port-and-localhost/)、見 [1.0 Ollama](/llm/01-local-llm-services/ollama/)）。
 - **價值**：排除介面層、確認伺服器層行為。
 
 ### `ollama ps` / 等價指令
@@ -216,6 +222,20 @@ curl 伺服器（伺服器層活著嗎）
 
 這棵樹不是「按順序跑完」、是「定位後對應到具體分支」。學會用症狀直接 jump 到對應分支、不必每次從根跑起。
 
+## 何時不適用本章方法論
+
+本章「三層架構定位」假設「單機、單 user、單一伺服器實例、人在駕駛位」的個人開發場景。以下情境的方法論需要擴充：
+
+| 情境                       | 為什麼三層定位失效 / 需要擴充                                                                                                            |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Multi-tenant 共用伺服器    | 多個 user 共用 Ollama instance、症狀可能是「不同 user 的請求互相干擾」、單純三層定位看不出、需加 user / session 層                       |
+| 容器化部署（Docker / k8s） | 介面 / 伺服器之間多一層網路命名空間、connection refused 可能是 container network 配置、不是伺服器層                                      |
+| 跨機器分散式 inference     | 伺服器層拆成多 process / 多 node、單一 `ollama ps` 看不到全貌、需 cluster-level observability                                            |
+| 後端 production 服務       | 排錯依賴 SLI / SLO + 監控告警支撐、而非「重啟試試」的探索式做法；本章方法論偏個人開發、production 場景需另尋資料中心 SRE 教材            |
+| Agent loop 內部失敗        | 失敗可能在 LLM 規劃 / tool execution / state machine 任一處、超出三層定位、見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/) |
+
+本章方法論的甜蜜點是「個人 Mac、一個 IDE、一個 Ollama instance」的場景。離開這個甜蜜點、要把「三層」擴充成更多層（user / network / cluster）、或改用 production-grade 觀察工具。
+
 ## 何時過時 / 何時不過時
 
 **不會過時的部分**：
@@ -237,6 +257,6 @@ curl 伺服器（伺服器層活著嗎）
 
 ## 小結
 
-本地 LLM 排錯的核心是「先定位哪一層壞、再修補」。三層架構（介面 / 伺服器 / 模型）視角讓症狀對應到對的層、避開跨層級誤判。最小可重現策略快速縮減問題範圍、不要同時改多項。四個基本工具（curl / ollama ps / Activity Monitor / IDE dev tools）cover 多數場景。
+本地 LLM 排錯的核心是「先定位哪一層壞、再修補」。三層架構（介面 / 伺服器 / 模型）視角讓症狀對應到對的層、避開跨層級誤判。最小可重現策略快速縮減問題範圍、每次只改一項確保變化能歸因。四個基本工具（curl / ollama ps / Activity Monitor / IDE dev tools）cover 多數場景。
 
 下一章：[模組二 LLM 的數學基礎](/llm/02-math-foundations/)、或回到 [模組一首頁](/llm/01-local-llm-services/) 看其他章節。

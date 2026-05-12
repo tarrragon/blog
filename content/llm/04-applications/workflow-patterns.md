@@ -12,7 +12,7 @@ LLM 應用很少是單一 call、多半是多次 LLM call 的組合。Multi-call
 
 ## 本章目標
 
-讀完本章後、你應該能：
+讀完本章後你能：
 
 1. 區分四種基本 workflow 模式。
 2. 看到一個 LLM application 時、能畫出它的 workflow 結構圖。
@@ -35,7 +35,7 @@ Multi-call 組合擴展能力範圍、代價是每多一個 call 多一份成本
 - **失敗點**：每個 call 都可能失敗、N 個 call 串起來成功率是個別成功率連乘。
 - **複雜度**：error handling、retry、partial success 處理複雜度爆炸。
 
-「設計 workflow」的核心問題不是「能不能拆成多 call」、是「拆成多 call 的收益值不值得這份成本」。Workflow 設計常見的失敗是過早優化、把簡單問題切成複雜 DAG、最終比 single call 慢、貴、難維護、品質卻沒提升。
+「設計 workflow」的核心問題不是「能不能拆成多 call」、是「拆成多 call 的收益值不值得這份成本」。Workflow 設計常見的失敗是過早優化（software engineering idiom：「premature optimization is the root of all evil」、在沒有 profiling 證據前就拆結構、複雜度爆炸但無實質改進）、把簡單問題切成複雜 [DAG（directed acyclic graph、有向無環圖、描述步驟依賴關係的資料結構）](/llm/knowledge-cards/agent/)、最終比 single call 慢、貴、難維護、品質卻沒提升。Single call 在「context 塞得下 + 任務不需要外部 tool + 失敗代價低」的情境下仍是最高 ROI 選項。
 
 四種基本模式各自解不同的「為什麼需要多 call」、下面逐個展開。
 
@@ -87,10 +87,12 @@ Multi-call 組合擴展能力範圍、代價是每多一個 call 多一份成本
 - **Classifier 比下游還複雜**：本來 router 是 cost saver、結果 classifier 本身就要強模型、變成多花錢的繞路。
 - **Path 設計不完整**：有些 query 不符合任何 path、router 強塞到某個 path、結果差。
 
+Classifier 設計常用 [structured output](/llm/04-applications/application-protocols/) 強制輸出 enum、避免 free-form 解析；複雜應用可能把 classifier 本身做成 [tool use](/llm/04-applications/tool-use-principles/) 的特例。
+
 **緩解策略**：
 
 - Classifier 用較弱模型但加 confidence 判讀、低 confidence 走 fallback path。
-- 簡化 path 數量（3-5 個內、不要無限細分）。
+- 簡化 path 數量（3-5 個內、保留必要切分即可）。
 - 設計「unknown / catch-all」path、不假設所有 input 都能歸類。
 
 ## Parallel：多 Call 並行、結果合併
@@ -118,7 +120,7 @@ Multi-call 組合擴展能力範圍、代價是每多一個 call 多一份成本
 **緩解策略**：
 
 - Parallel 前先問：這些 call 真的獨立嗎？依賴的應該 sequential。
-- 合併邏輯先設計、再開始 parallel；沒想清楚怎麼合的就先別 parallel。
+- 合併邏輯先設計、再開始 parallel；想清楚怎麼合再進 parallel。
 - Cost 監控：parallel 是 cost amplifier、生產環境注意。
 
 ## Reflection：產出 → 評估 → 修正
@@ -138,17 +140,19 @@ Multi-call 組合擴展能力範圍、代價是每多一個 call 多一份成本
 
 **失敗模式**：
 
-- **Critic 跟 generator 共用 blind spot**：兩個都同個模型、有同樣的盲點、reflection 不可能 catch（如兩個都不認識某個 framework 的 API、再 reflect 也不對）。
+- **Critic 跟 generator 共用 blind spot**：兩個都同個模型、有同樣的盲點、reflection 收斂到同樣錯誤位置（如兩個都不認識某個 framework 的 API、再 reflect 也不對）。
 - **無限循環**：沒有客觀停止訊號、reflection 一直跑、cost 爆掉。
 - **過度修正**：每次 reflection 都改一點、累積結果變糟（過度 fitting critic 意見）。
 - **Critic 失職**：critic 太寬鬆、什麼都說 OK；或太嚴格、什麼都挑、永遠停不下來。
+
+**Systematic vs random error 的關鍵分層**：reflection 對 random error 有效（同 prompt 重跑因 sampling 抖動產生的錯誤、多輪重 sample 會收斂）、但對 systematic error 無效（generator 跟 critic 共用 base model、訓練分佈中的盲點不會因重跑消失、loop 收斂到同樣錯誤）。判讀訊號：若 critic 每次給的修正建議都很像、或修完還是同一類錯、就是 systematic error、加 reflection steps 無收益。修法：換不同 base model 當 critic、或加外部驗證（test、lint、schema check）取代 LLM critic。Agent loop 是 reflection 的特例、進階失敗模式分析見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/) 的三類失敗段。
 
 **緩解策略**：
 
 - Critic 用不同模型、或不同 prompt 角度、減少 blind spot。
 - Reflection 設 step 上限、即使沒達標也強制停。
 - 客觀驗證訊號（test pass、schema 合法、外部 metric）優先於 LLM critic 主觀評估。
-- 用 reflection 改進「明顯錯」、不用來改進「主觀偏好」。
+- Reflection 對有客觀訊號的任務 ROI 高、對純主觀偏好任務收益有限（critic 的「主觀好壞」跟 generator 同 base 時是同樣 distribution、無法 calibrate）。
 
 ## 四種模式的組合
 
@@ -185,7 +189,7 @@ Single call 更適合的訊號：
 - 為了「靈活性」抽象太多、最終比 single prompt 還難改。
 - 寫 workflow framework 的成本超過用 raw API 的成本。
 
-實務做法：先 single call baseline、跑半週看品質、不夠用再分解；不要從 workflow 開始設計。
+實務做法：先 single call baseline、跑半週看品質、不夠用再分解；workflow 設計留到 baseline 不足之後。
 
 ## Workflow 設計常見的反模式
 
@@ -221,7 +225,7 @@ Classifier 本身就需要強模型、變成 router「省 cost」反而花更多
 
 訊號：classifier 用的模型跟下游 path 同等級或更強。
 
-緩解：classifier 應該用最便宜的小模型、不行就接受「沒有 router、全部走主 path」。
+緩解：classifier 用最便宜的小模型；最便宜小模型若 confidence 不夠、改成「沒有 router、全部走主 path」。
 
 ### 看不出基本模式的 ad-hoc 流程
 
@@ -251,5 +255,7 @@ Classifier 本身就需要強模型、變成 router「省 cost」反而花更多
 ## 小結
 
 LLM 應用是 multi-call 組合、本質歸納成四個基本模式：pipeline、router、parallel、reflection。每個模式各自解不同問題、各有失敗模式、實際應用組合使用。Workflow 設計的核心反射是「先 single call baseline、不夠再分解」、過早優化是最常見的失敗源。
+
+設計完 workflow 後、進 production 還要評估資源、latency / throughput 取捨、observability 三層、降級設計、見 [4.6 Production 資源規劃](/llm/04-applications/production-resource-planning/)。
 
 讀到這裡、本模組的應用層原理就完整收尾。回到 [模組四首頁](/llm/04-applications/) 看完整地圖、或回到 [指南首頁](/llm/) 重新整理整體學習路徑。

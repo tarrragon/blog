@@ -1,7 +1,7 @@
 ---
 title: "Hands-on：安裝 whisper.cpp 做語音轉文字"
 date: 2026-05-12
-description: "brew install whisper-cpp、下載 GGML model、Metal 加速、ffmpeg 餵 WAV、484ms 完成 4 秒音訊轉錄"
+description: "brew install whisper-cpp、下載 GGML model、Metal 加速、ffmpeg 餵 WAV、484ms 完成 7 秒音訊轉錄"
 tags: ["llm", "hands-on", "whisper", "speech-to-text"]
 weight: 2
 ---
@@ -15,7 +15,7 @@ weight: 2
 > **驗證日期**：2026-05-12
 > **whisper-cpp 版本**：1.8.4
 > **示範模型**：`ggml-tiny.en.bin`（78 MB、英文專用、最小可用）
-> **實測**：4 秒音訊 484ms 轉錄、用 Metal GPU 加速
+> **實測**：7 秒音訊 484ms 轉錄、用 Metal GPU 加速
 
 ## 前置設定
 
@@ -94,7 +94,7 @@ ls -lh ~/.whisper-models/
 
 ```bash
 cd /tmp
-say -o sample.aiff -v Samantha "Hello world. This is a test of the whisper transcription system."
+say -o sample.aiff -v Samantha "Hello world. This is a test of the whisper transcription system. It should produce accurate text from this short audio clip."
 ffmpeg -loglevel error -y -i sample.aiff -ar 16000 -ac 1 sample.wav
 ```
 
@@ -140,7 +140,7 @@ whisper-cli -m ~/.whisper-models/ggml-tiny.en.bin -f /tmp/sample.wav -nt
 | `-ovtt`   | 同時輸出 .vtt 字幕檔                                 |
 | `-of OUT` | 設定輸出檔名 prefix                                  |
 | `-t N`    | 用 N 個 thread（預設用 CPU 核心數）                  |
-| `-pp`     | 列出每個 token 的機率（debug 用）                    |
+| `-pp`     | print progress（顯示處理進度條、跑長音訊時開）       |
 
 實務常用組合：
 
@@ -223,7 +223,9 @@ whisper-cli -m ~/.whisper-models/ggml-tiny.en.bin -f /tmp/out.wav -nt
 # 應該回：Hello world test.
 ```
 
-兩個都跑得起來表示整條 STT / TTS pipeline 工作。
+兩個都跑得起來表示整條 STT / TTS pipeline 工作。沒裝 Piper 的場景：用任何 16kHz 單聲道 WAV 都能驗證（macOS 內建 `say -o sample.aiff` + ffmpeg 轉檔、或從 Hugging Face 拉個 sample 音訊）、不一定要用 Piper。
+
+跟其他章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、本地 LLM 加 speech 在隱私 / 資料流上的位置見 [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)、排錯走三層方法論見 [1.7 排錯方法論](/llm/01-local-llm-services/troubleshooting/)。
 
 ## 何時這篇會過時
 

@@ -25,10 +25,12 @@ weight: 7
 
 ### 因素 1：Tokenizer Vocab Coverage
 
-Tokenizer 把文字切成 [token](/llm/knowledge-cards/token/)、不同 tokenizer 對不同語言的切割密度不同：
+Tokenizer 把文字切成 [token](/llm/knowledge-cards/token/)、tokenizer vocab 大小指 tokenizer 認識的 token 種類數（vocab 越大、能切得越細、越能用單一 token 表達常見字）。不同 tokenizer 對不同語言的切割密度不同：
 
-- 英文中心的 tokenizer（如 Llama 2 的 32K vocab）對中文一字常切 2-3 個 token、context 利用率差。
-- 多語言 tokenizer（如 Gemma 4 的 256K vocab）對中文多半一字一 token、跟英文接近。
+- 英文中心的 tokenizer（如 Llama 2 的 32K vocab）對 vocab 沒涵蓋的中文字會 fallback 到 byte 級切割（UTF-8 一個中文字常用 3 個 byte、所以變 3 個 token）。
+- 多語言 tokenizer（如 Gemma 4 的 256K vocab）把常見中文字當獨立 token 收進來、對中文多半一字一 token、跟英文接近。
+
+完整的 BPE / WordPiece / Unigram / SentencePiece 算法見 [3.6 tokenization 算法](/llm/03-theoretical-foundations/tokenization-algorithms/)。
 
 Tokenizer 影響三件事：
 
@@ -47,7 +49,7 @@ Tokenizer 影響三件事：
 
 - **事實準確度**：訓練資料少 → 該語言的事實覆蓋低 → hallucination 多。
 - **Reasoning 深度**：複雜推理需要大量該語言範例支撐、訓練少就退化。
-- **風格自然度**：訓練少的語言、模型輸出可能語法 OK 但「不像母語人說的」。
+- **風格自然度**：訓練少的語言、模型輸出語法 OK 但 idiom / 慣用搭配偏直譯。
 
 ### 雙因素的獨立性
 
@@ -64,7 +66,7 @@ Tokenizer 影響三件事：
 
 ## Tokenizer Vocab 對非英文的影響
 
-具體看 tokenizer 對中文的影響、用實際數字比較：
+Tokenizer vocab 設計直接決定中文 context 成本量級、差距可達兩倍以上。具體看 tokenizer 對中文的影響（以下為各 tokenizer 對該句的近似切割、實測會 ±20%、用作量級對照、不含 system prompt / response budget）：
 
 | Tokenizer      | Vocab   | 中文「敏捷的棕色狐狸跳過懶狗」估算 token 數 |
 | -------------- | ------- | ------------------------------------------- |
@@ -77,7 +79,7 @@ Tokenizer 影響三件事：
 
 數字差異看似不大、累積起來影響顯著：
 
-- **128K context 的「實際容量」**：Llama 2 對中文約 6K 中文字、Gemma 4 對中文約 14K 中文字。差兩倍以上。
+- **128K context 的「實際容量」**：以中文每字平均 token 數估算、Llama 2（約 2.2 字 / token 的反比、即一字 ≈ 2-3 token）對中文約 6K 中文字、Gemma 4（接近一字一 token）對中文約 14K 中文字、差兩倍以上（估算未含 system prompt + response budget、實際可用更少）。
 - **API 費用**：同樣中文 prompt、Llama 2 費用是 Gemma 4 的兩倍以上（按 token 收費的話）。
 - **長 prompt 的 [prefill](/llm/knowledge-cards/prefill/) 時間**：token 多 prefill 慢、[TTFT](/llm/knowledge-cards/ttft/) 受影響。
 
@@ -98,7 +100,7 @@ Web 文字的語言分佈嚴重不平衡。Common Crawl 跟同類資料源的語
 
 - **事實準確度**：問模型「台灣某縣市的人口」這類本地化問題、中文回答的準確度通常低於英文回答同個問題（即使翻譯為相同 query）。
 - **Reasoning 深度**：複雜中文推理（如解中文奧數題）、模型可能「翻譯成英文 reasoning、再翻回中文」、中間步驟跳過、答案合理但推理鏈不通。
-- **風格 / 慣用語**：中文輸出可能語法 OK、但詞彙選擇偏「翻譯腔」、不像母語自然書寫。
+- **風格 / 慣用語**：中文輸出可能語法 OK、但 idiom 與慣用搭配偏直譯、詞彙選擇偏「翻譯腔」。
 - **長尾事實**：訓練資料少的語言、長尾事實更容易 hallucinate。
 
 判讀模型在某語言上的能力強弱、看訓練資料佔比是主要訊號。Qwen 系列訓練資料大量中文、中文能力強；Llama 系列訓練資料英文為主、即使最新版中文表現仍弱於 Qwen 在中文上的表現。
@@ -123,7 +125,7 @@ Web 文字的語言分佈嚴重不平衡。Common Crawl 跟同類資料源的語
 
 - Tokenizer：32K 英文中心、中文切散。
 - 訓練資料：英文主導、其他語言極少。
-- 結果：中文勉強可讀、無法用於正式工作。
+- 結果：中文勉強可讀、不建議用於對輸出品質有要求的工作場景。
 
 判讀新模型對某語言能力時、先看這兩個因素、再參考實測——比直接看 benchmark 數字準。
 
@@ -211,9 +213,21 @@ Web 文字的語言分佈嚴重不平衡。Common Crawl 跟同類資料源的語
 
 中文一字切多個 token 時、模型可能在 token 邊界誤判語意、輸出細節不準。
 
-判讀訊號：細節錯（如把「2024 年」誤讀成「2024 月」）、英文同義問題不會錯。
+判讀訊號：細節錯（罕用字 OOV 被切成 byte / 數字本身切分不一致導致算術出錯）、英文同義問題不會錯。
 
 緩解：對細節敏感的任務（數字、日期、人名）強調確認、或翻英降低 tokenizer 誤判機率。
+
+### 何時跨語言 reasoning 不會失敗 / 何時翻英無收益
+
+上述三類失敗模式不會均勻發生在所有跨語言任務上、實際觸發條件是「深度推理 + 語言 specific 事實 retrieval」雙條件命中。以下情境通常翻英沒收益、留在中文 prompt 反而省事：
+
+- **Code 補完、語法重構、加 type annotation**：code 本身就跨語言、模型不需要「翻譯」code、中文 prompt 直接寫即可。
+- **短 QA、context-rich prompt**：問題本身就含完整 context（如「這段程式碼做什麼」+ code）、模型不需要做 retrieval、reasoning 深度需求低。
+- **格式 / 結構轉換**：JSON 轉 YAML、Markdown 重排、tabular 整理 — 任務機械化、跟語言關係小。
+- **單檔 refactor**：選定範圍內的改寫、不需跨檔 retrieval、推理深度受 context 限制而非語言。
+- **commit message / docstring 草稿**：套用 template 性質、模型輸出語言跟 prompt 一致較自然。
+
+需要翻英的場景集中在「深度推理（多步邏輯 / 數學）」+「需要 retrieval 語言 specific 事實（如某個 framework 的 API、特定論文細節、英文社群討論）」這兩條都命中時、其他場景翻譯成本是浪費。
 
 ## Code 跟自然語言的不對稱
 

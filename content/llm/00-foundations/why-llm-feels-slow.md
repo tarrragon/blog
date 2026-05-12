@@ -30,19 +30,19 @@ LLM 生字慢的核心原因有兩個：**[自回歸架構](/llm/knowledge-cards
 3. 把 prompt + `def fib` 丟進模型，產出 `(`。
 4. 一直重複到模型決定產出結束 token。
 
-每一步都要跑一次完整的神經網路 forward pass。這就是為什麼回答長度直接影響等待時間，跟雲端旗艦模型一樣；差別只是雲端每個 forward pass 跑得更快。
+每一步都要跑一次完整的神經網路 forward pass（神經網路把輸入資料從第一層算到最後一層、產出輸出的單次計算）。這就是為什麼回答長度直接影響等待時間、跟雲端旗艦模型一樣；差別只是雲端每個 forward pass 跑得更快。
 
 陷阱是把自回歸跟 streaming 混淆。Streaming 只是把已產出的 token 即時顯示在畫面上，看起來「邊想邊說」；模型內部該跑幾次 forward pass 就是幾次，streaming 不會加速生成本身。
 
 ## 記憶體頻寬：Apple Silicon 真正的瓶頸
 
-LLM 推論的「真實瓶頸」幾乎一定是記憶體頻寬，而不是算力。原因是每生成一個 token 都要把整個模型的權重從記憶體讀到處理器一次；模型有多大，每秒能讀多少 GB，就決定了每秒能吐幾個 token。
+LLM 推論的瓶頸幾乎一定落在記憶體頻寬、而不是算力。原因是每生成一個 token 都要把整個模型的權重從記憶體讀到處理器一次；模型有多大、每秒能讀多少 GB、就決定了每秒能吐幾個 token。每生一個 token 都要把整份權重讀過一次、所以「每秒能讀完幾份權重」就是「每秒能吐幾個 token」。
 
-數學很直接：
+模型大小的換算規則很簡單：bf16 每個權重佔 2 bytes、Q4 量化後每個權重約 0.5 byte。所以：
 
-- Gemma 4 31B 的 bf16 權重約 62GB，Q4 量化後約 18GB。
-- M4 Max 的記憶體頻寬約 546 GB/s，M2 Pro 約 200 GB/s。
-- 理論上限 = 頻寬 / 模型大小。M4 Max 跑 Q4 量化 31B 模型，理論上限約 546 / 18 ≈ 30 tok/s。
+- Gemma 4 31B 的 bf16 權重約 62GB（31B × 2 bytes）、Q4 量化後約 18GB。
+- M4 Max 的記憶體頻寬約 546 GB/s、M2 Pro 約 200 GB/s。
+- 理論上限 = 頻寬 / 模型大小。M4 Max 跑 Q4 量化 31B 模型、理論上限約 546 / 18 ≈ 30 tok/s。
 
 實際數字會比理論上限低 30 ~ 50%（attention 機制的 KV cache 也要讀寫、有些運算需要中間結果），所以 M4 Max 跑 Q4 31B 大約落在 20 ~ 25 tok/s。這個推導讓你看到任何「在 Mac 上跑 70B 模型很快」的說法時，可以直接用頻寬算一下合不合理。
 
@@ -56,13 +56,13 @@ Apple Silicon 的**[統一記憶體](/llm/knowledge-cards/unified-memory/)**（U
 
 常見量化等級：
 
-| 量化 | 每權重 bits | 相對 bf16 大小 | 品質衰減              | 適合場景                    |
-| ---- | ----------- | -------------- | --------------------- | --------------------------- |
-| bf16 | 16          | 1x             | 無（基準）            | 開發、評估、有大量記憶體    |
-| Q8   | 8           | 0.5x           | 幾乎不可察覺          | 32GB+ Mac、品質敏感任務     |
-| Q5_K | 5           | 0.31x          | 輕微                  | 24GB Mac、日常使用          |
-| Q4_K | 4           | 0.25x          | 可察覺但實用          | 16 ~ 24GB Mac、最常用甜蜜點 |
-| Q3   | 3           | 0.19x          | 明顯，code 任務開始崩 | 不建議跑 coding 任務        |
+| 量化 | 每權重 bits | 相對 bf16 大小 | 品質衰減                             | 適合場景                            |
+| ---- | ----------- | -------------- | ------------------------------------ | ----------------------------------- |
+| bf16 | 16          | 1x             | 無（基準）                           | 開發、評估、有大量記憶體            |
+| Q8   | 8           | 0.5x           | 幾乎不可察覺                         | 32GB+ Mac、品質敏感任務             |
+| Q5_K | 5           | 0.31x          | 輕微                                 | 24GB Mac、日常使用                  |
+| Q4_K | 4           | 0.25x          | 可察覺但實用                         | 16 ~ 24GB Mac、最常用甜蜜點         |
+| Q3   | 3           | 0.19x          | 明顯、coding 任務 hallucination 上升 | 記憶體緊張時的權宜選擇、coding 慎用 |
 
 接近真實的選擇：
 
@@ -70,11 +70,11 @@ Apple Silicon 的**[統一記憶體](/llm/knowledge-cards/unified-memory/)**（U
 - 24GB Mac 跑 14B 模型：選 Q5_K 或 Q4_K，看任務品質要求。
 - 16GB Mac 跑 7B 模型：選 Q4_K，是現實上界。
 
-陷阱是把量化等級拉到極限以塞下更大模型。Q3 以下的 31B 模型在 coding 任務上的表現會差過 Q5 的 14B 模型；模型「夠大」跟「夠好」是兩件事。後續 [模型選型章節](/llm/01-local-llm-services/model-selection-priority/) 會展開這個取捨。
+陷阱是把量化等級拉到極限以塞下更大模型。Coding 任務上 Q3 的 31B 模型常輸給 Q5 的 14B 模型；模型「夠大」跟「夠好」是兩件事、選 model size 時先看任務通過率、再用量化等級調記憶體。後續 [模型選型章節](/llm/01-local-llm-services/model-selection-priority/) 會展開這個取捨。
 
 ## KV cache 與長 prompt 痛點
 
-LLM 在推論時有個重要的暫存結構叫 **[KV cache](/llm/knowledge-cards/kv-cache/)**（key-value cache）。每個 token 在 attention 機制中產生的中間結果會被暫存、後續 token 生成時直接讀 cache 跳過重算。這讓「已經算過的 prompt」省下重複跑 forward pass。
+[KV cache](/llm/knowledge-cards/kv-cache/)（key-value cache）把 attention 機制每個 token 產生的中間結果暫存、後續 token 生成時直接讀 cache 跳過重算、讓「已經算過的 prompt」省下重複跑 forward pass。
 
 但 KV cache 有兩個性質會放大長 prompt 的痛點：
 
@@ -95,9 +95,19 @@ LLM 在推論時有個重要的暫存結構叫 **[KV cache](/llm/knowledge-cards
 
 這個機制能加速的關鍵是「大模型的驗證可以並行」。一次 forward pass 驗證 N 個 token 的時間，跟驗證 1 個 token 的時間差不多（因為瓶頸是讀權重，不是算力）。如果接受率高，等於一次 forward pass 產出多個 token。
 
-寫 code 的場景特別適合 speculative decoding，因為 code 有大量可預測 pattern（縮排、括號、常見變數名、import 語句）。小模型猜對的機率高，接受率自然高。Google 為 Gemma 4 釋出官方 drafter，官方數據宣稱 coding 任務 2 ~ 3 倍加速。
+寫 code 場景特別適合 speculative decoding、因為 code 有大量可預測 pattern（縮排、括號、常見變數名、import 語句）、小模型猜對的接受率高。Google 為 Gemma 4 釋出官方 drafter、官方數據在 coding 任務有 2 ~ 3 倍加速；接受率低的任務（純創意寫作、隨機字串生成）加速幅度可能降到 1.5 倍左右、加速倍數跟任務 pattern 強相關。
 
 **[Multi-Token Prediction](/llm/knowledge-cards/mtp/)**（MTP）是這個概念的具體實作、本質是 speculative decoding 的工程化版本。下一章 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/) 會把 MTP 跟其他容易混淆的術語放在一起對照。
+
+## 何時這套推導失準
+
+「頻寬決定生字速度」是 dense 模型 + 單請求情境下的乾淨推導。實務上有三類情境會讓這個公式失準、解讀效能數字時要對應調整：
+
+1. **MoE 模型（Mixture of Experts）**：每個 token 只啟用部分專家層、實際讀的權重遠小於總權重。例如 Mixtral 8x7B 名義 46B 參數、但每個 token 只啟用約 12B、速度上限要用「啟用權重」算、不是總權重。判讀 MoE 模型在 PC 獨立 GPU 上的部署細節見 [MoE CPU 卸載](/llm/knowledge-cards/moe-cpu-offload/)。
+2. **多請求 batching**：資料中心級推論伺服器把多請求 batch 一起跑、權重讀一次處理 N 個 token、攤平頻寬成本。本章開頭舉的「H100 跑 200 tok/s」是 batch=1 的單 user 數字、production 場景 batch=32 時單 user 看到的速度更接近 50 tok/s、但 total throughput 翻 N 倍。詳見 [batching 卡片](/llm/knowledge-cards/batching/)。
+3. **Speculative decoding 接受率變動**：MTP / drafter 的加速幅度跟任務 pattern 強相關、coding 任務的 2 ~ 3 倍無法直接 carryover 到創意寫作、看 benchmark 數字時要追問「跑的是哪類任務」。
+
+判讀效能數字時的反射動作：先問「dense 還是 MoE」「batch 多少」「任務 pattern 強弱」、再決定能不能套頻寬公式。
 
 ## 小結
 

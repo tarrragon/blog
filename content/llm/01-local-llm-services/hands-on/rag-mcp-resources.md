@@ -51,7 +51,7 @@ Wrote 463 records to scripts/rag-demo/index.pkl (22.3s)
 **Ingest 階段的特性**：
 
 - **One-shot**：corpus 不變不用重跑、index 寫一次永久用。
-- **吃 CPU 多於 RAM**：嗯生 embedding 是 forward pass、瓶頸在 GPU 算力、RAM 沒太大壓力。
+- **吃 CPU 多於 RAM**：產生 embedding 是 forward pass、瓶頸在 GPU 算力、RAM 沒太大壓力。
 - **磁碟寫小**：每 chunk 約 8 KB（text 部分 ~5 KB + embedding 768 floats × 4 bytes = ~3 KB）、463 chunks 總共 ~3.7 MB。
 - **可平行**：sequential `embed(chunk)` 是最慢實作、用 batching API（如果 Ollama 支援）或多 worker、能快 5-10x。
 
@@ -68,7 +68,7 @@ Wrote 463 records to scripts/rag-demo/index.pkl (22.3s)
 
 - [Batching](/llm/knowledge-cards/batching/) embedding（單次 request 送 50 個 chunks）
 - 並行 worker（Python multiprocessing、4-8 worker）
-- 換 [vector database](/llm/knowledge-cards/vector-database/)（不要 pickle 全部塞 RAM）
+- 換 [vector database](/llm/knowledge-cards/vector-database/)（避免把全部資料用 pickle 塞 RAM）
 
 ## RAG Query 階段：retrieval 加 generation
 
@@ -304,6 +304,8 @@ Production 視角詳細展開見 [4.5 Production 部署的資源評估原理](/l
 - 哪些 vector DB 主流（會持續演化）
 
 讀的時候若 RAM 占用跟本篇對不上、可能是新 model 架構效率改變、用同樣方法量自己環境的 baseline 即可。
+
+跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、實作配對見 [RAG demo](/llm/01-local-llm-services/hands-on/rag-demo/) 跟 [MCP demo](/llm/01-local-llm-services/hands-on/mcp-demo/)、Ollama / ComfyUI 共用的 lifecycle 管理見 [Resource management](/llm/01-local-llm-services/hands-on/resource-management/)、Apple Silicon 統一記憶體預算原理見 [0.5 記憶體預算](/llm/00-foundations/hardware-memory-budget/)。
 
 ## 跑這篇實測的指令總結
 

@@ -72,7 +72,7 @@ Activation function（激活函式）的核心責任是「在每個 layer 後引
 | tanh         | (e^x - e^{-x}) / (e^x + e^{-x}) | 早期 RNN 常用、輸出在 -1 到 1 之間          |
 | softmax      | exp(xᵢ) / Σⱼ exp(xⱼ)            | 不是逐元素 activation、用在輸出層轉機率分佈 |
 
-Transformer 內部主要用 GELU 或 SiLU。Sigmoid 跟 tanh 在深度網路中會造成 [gradient vanishing](/llm/02-math-foundations/calculus-and-optimization/)、所以 Transformer 系列避開。
+Transformer 內部主要用 GELU 或 SiLU。Sigmoid 跟 tanh 在深度 30+ 的網路中容易造成 [gradient vanishing](/llm/02-math-foundations/calculus-and-optimization/)、Transformer 系列因此採用 GELU / SiLU；淺層網路（< 10 層）兩者影響較小、Sigmoid / tanh 仍可用。
 
 [Softmax](/llm/02-math-foundations/probability-and-information/) 是特殊 activation、用在輸出層把 logits 轉成機率分佈、不在中間 layer 用。
 
@@ -130,33 +130,39 @@ Backward pass（反向傳播）的核心定義是「用 [chain rule](/llm/02-mat
 
 Bias 的核心定義是「neuron 的 `w · x + b` 中的 `+ b`」、讓 neuron 的輸出可以平移。
 
-近年 LLM 設計趨勢是「不用 bias」：
+在 hidden_dim ≥ 4096 規模下、bias 對品質的邊際貢獻被觀察為近零、近年大型 LLM 普遍取消 bias 參數：
 
 - Llama 系列、Gemma 系列、Qwen 系列都把 bias 設為 0、不訓練 bias 參數。
-- 理由：實驗發現拿掉 bias 對品質影響微小、但能省記憶體與計算。
+- 理由：實驗發現此規模下拿掉 bias 對品質影響微小、但能省記憶體與計算。
 
-某些早期 LLM（GPT-2 等）跟舊架構仍用 bias。看模型 config 可知這個模型是否含 bias 參數。
+某些早期 LLM（GPT-2 等）跟舊架構仍用 bias、小規模網路 / 特殊任務下 bias 仍有實際貢獻。看模型 config 可知這個模型是否含 bias 參數。
 
 ## Hidden Layer 與 Hidden Dimension
 
-Hidden layer 的核心定義是「介於 input layer 跟 output layer 之間的中間 layer」。Hidden dimension（hidden_dim、d_model）是這些 layer 的輸出向量維度。
-
-| 模型        | hidden_dim |
-| ----------- | ---------- |
-| GPT-2 small | 768        |
-| Llama 3 8B  | 4096       |
-| Llama 3 70B | 8192       |
-| Gemma 4 31B | 約 5120    |
+Hidden layer 的核心定義是「介於 input layer 跟 output layer 之間的中間 layer」。Hidden dimension（hidden_dim、d_model）是這些 layer 的輸出向量維度、規格見前一節 [Multi-Layer Network](#multi-layer-network串接-n-個-layer) 的表格。
 
 Hidden dim 是模型「表達能力」的主要維度之一。每個 token 在模型內部都是一個 hidden_dim 維向量、layer 越大越能編碼複雜資訊。
 
 ## 為什麼需要這麼多 parameter
 
-LLM 動輒幾十 B 參數、每個 layer 的權重矩陣大小是 `hidden_dim × hidden_dim`（feed-forward layer 通常 `hidden_dim × 4 × hidden_dim`）、加上 attention 的 Q/K/V projection 等、單一 layer 已有上億參數。
+LLM 參數量主要來自 layer 數 × 每層權重矩陣大小、其中 FFN 層約佔 2/3。每個 layer 的權重矩陣大小是 `hidden_dim × hidden_dim`（feed-forward layer 通常 `hidden_dim × 4 × hidden_dim`、4 倍的由來見 [3.3 Transformer 架構](/llm/03-theoretical-foundations/transformer-architecture/)）、加上 attention 的 Q/K/V projection 等、單一 layer 已有上億參數。
 
 Gemma 4 31B 約 50 layer、每層約 600M 參數、合計約 31B。70B / 405B 模型也是類似結構放大。
 
-參數數量越多、模型「能學到的 pattern」越多。預訓練資料 trillion token 級別、需要大模型才能完整「記住」這些 pattern。但邊際收益遞減、且推論成本線性增加。
+參數數量越多、模型「能學到的 pattern」越多。預訓練資料 trillion token 級別、需要大模型才能完整「記住」這些 pattern。實務上邊際收益隨參數量遞減（同代架構下參數翻倍、benchmark 提升通常 < 5%）、且推論成本線性增加；這就是為什麼 31B / 70B 級別停滯一段時間後、業界把焦點轉向 [MoE](/llm/knowledge-cards/moe-cpu-offload/) 等「不增加每 token 算量」的擴張路徑。
+
+## 何時這套基礎不適用
+
+本章的「neuron → linear layer → forward / backward pass」假設「純 dense Transformer」架構、實務上有幾類架構走不同的計算路徑、判讀新架構時要對應調整：
+
+| 架構                          | 跟本章基礎的差異                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------- |
+| MoE（Mixture of Experts）     | 每個 token 只啟用部分專家層、forward pass 中 router 動態決定哪些 dense layer 跑 |
+| SSM（如 Mamba）               | 用 state-space 遞迴取代 attention、forward 結構跟「層層 dense」不同             |
+| Diffusion 模型                | U-Net 結構含 down-sampling + up-sampling、跟純 stack 的 Transformer 拓撲不同    |
+| Recurrent LLM 變體（如 RWKV） | 走 recurrent state、不純做 forward stack                                        |
+
+判讀新架構時、先把它跟本章的 dense Transformer baseline 對照、找出在哪一步岔開（哪個 layer 結構、forward 順序、parameter sharing）、再深入差異點。
 
 ## 小結
 

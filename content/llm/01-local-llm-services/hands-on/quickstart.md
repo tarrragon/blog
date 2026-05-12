@@ -6,14 +6,15 @@ tags: ["llm", "hands-on", "quickstart", "setup"]
 weight: 0
 ---
 
-本篇是 hands-on 系列的**導讀**——把分散在 `ollama-setup` / `rag-demo` / `mcp-demo` / `permission-boundary` 各章節的 setup 步驟整合成一條最短路徑、讓 clone repo 的人能在 15 分鐘內跑通所有 demo（[RAG](/llm/knowledge-cards/rag/)、[MCP](/llm/knowledge-cards/mcp/)、權限邊界三個 demo）。
+本篇是 hands-on 系列的**導讀**——把分散在 `ollama-setup` / `rag-demo` / `mcp-demo` / `permission-boundary` 各章節的 setup 步驟整合成一條最短路徑、讓 clone repo 的人能在 15 分鐘內跑通所有 demo（[RAG](/llm/knowledge-cards/rag/)、[MCP](/llm/knowledge-cards/mcp/)、權限邊界三個 demo、RAG 是「retrieval 找相關內容 + LLM 回答」、MCP 是「LLM application ↔ tool server 的標準協議」）。
 
 每篇 hands-on 文章 focus 在「為什麼這樣設計」、本篇 focus 在「按順序跑通」。讀完想懂原理再進對應章節讀。
 
 > **驗證日期**：2026-05-12
 > **環境**：macOS 14+、Apple Silicon、Ollama 0.23.2、Python 3.11+
 > **總時間**：~15 分鐘（含 model 下載）
-> **磁碟需求**：~5 GB（Ollama 200 MB + nomic-embed-text 274 MB + gemma3:1b 815 MB + room for index）
+> **磁碟需求**：Step 1 ~ 4 約 ~5 GB（Ollama 200 MB + nomic-embed-text 274 MB + gemma3:1b 815 MB + room for index）；Step 5 ComfyUI 可選加 ~10 GB（SDXL base 模型）。
+> **適用平台**：本快速路徑只在 Apple Silicon Mac 驗證過；Intel Mac / Linux 上 Ollama 仍可裝、但 GPU 加速跟 model tag 行為可能不同、實際以官方 release notes 為準。
 
 ## 適合誰讀
 
@@ -26,7 +27,7 @@ weight: 0
 
 ## 為什麼不是「pre-built、clone 就能跑」
 
-衍生產物（`index.pkl`、`__pycache__/`、Ollama model weights）刻意**不進 git**、原因見 [4.6 衍生產物管理原理](/llm/04-applications/artifact-management/)。所以 clone repo 後需要：
+衍生產物（`index.pkl`、`__pycache__/`、Ollama model weights、即「跑出來的 cache / index / weight」、跟 source code 區別）刻意**不進 git**、原因見 [4.6 衍生產物管理原理](/llm/04-applications/artifact-management/)。所以 clone repo 後需要：
 
 1. 裝 Ollama daemon + 拉 model（一次性）
 2. 跑 `ingest.py` 建 RAG index（corpus 變動時重跑）
@@ -34,7 +35,9 @@ weight: 0
 
 本篇是這個流程的 step-by-step。
 
-## Step 1：裝 Ollama + 啟動 daemon
+## Step 1：裝 Ollama daemon（`brew install ollama` + `brew services start`）
+
+> daemon = 常駐 background process、開機自動啟動、見 [launchd service 卡](/llm/knowledge-cards/launchd-service/)。
 
 ```bash
 brew install ollama
@@ -50,7 +53,9 @@ curl -s http://localhost:11434/api/version
 
 詳細安裝跟 troubleshooting 見 [Ollama setup 章節](/llm/01-local-llm-services/hands-on/ollama-setup/)。
 
-## Step 2：拉兩個 model
+## Step 2：拉 model（embed + chat 兩種角色）
+
+> 為什麼要拉兩個 model：RAG 需要 embedding model 把文字壓成向量做語意比對、chat model 負責根據 retrieval 結果生成回答、兩者訓練目標不同、不能互通（見 [3.1 embedding 空間](/llm/03-theoretical-foundations/embedding-spaces/)）。
 
 ```bash
 # Embedding model（RAG / MCP 都要、274 MB）
@@ -69,9 +74,9 @@ ollama list
 # nomic-embed-text:latest    274 MB    ...
 ```
 
-選 chat model 大小的取捨見 [1.4 模型選型優先順序](/llm/01-local-llm-services/model-selection-priority/)。本 quickstart 用 1B 主要驗證流程跑通、實際應用要 4B / 8B 起跳才有 follow instruction 能力（見 [instruction-following-test](/llm/01-local-llm-services/hands-on/instruction-following-test/)）。本系列預設用 [instruction-tuned model](/llm/knowledge-cards/instruction-tuned/) 變體（tag 含 `:Xb` 不含 `-base`）、適合對話 / 寫 code。
+選 chat model 大小的取捨見 [1.4 模型選型優先順序](/llm/01-local-llm-services/model-selection-priority/)。本 quickstart 用 1B 主要驗證流程跑通；長段 daily use（需要 follow 多段格式指令、複雜推理）建議 4B / 8B 起跳（見 [instruction-following-test](/llm/01-local-llm-services/hands-on/instruction-following-test/)）、極短句驗證 / 簡單問答 1B 也可。本系列預設用 [instruction-tuned model](/llm/knowledge-cards/instruction-tuned/) 變體（tag 含 `:Xb` 不含 `-base`）、適合對話 / 寫 code。
 
-## Step 3：建 RAG index
+## Step 3：建 RAG index（跑 `ingest.py`）
 
 ```bash
 cd /path/to/blog
@@ -91,7 +96,7 @@ Wrote 463 records to scripts/rag-demo/index.pkl (22.3s)
 
 詳細的 chunking 策略、embedding 設計、為什麼 pickle、見 [RAG demo 章節](/llm/01-local-llm-services/hands-on/rag-demo/)。
 
-## Step 4：跑 demo
+## Step 4：跑 RAG / MCP / permission demo
 
 完成 step 1-3 後、四個 demo 都能跑了：
 

@@ -21,18 +21,18 @@ weight: 4
 
 ## 優先順序總覽
 
-對 32GB+ Mac 的讀者，建議的選型順序：
+對 32GB+ Mac 的讀者、建議的選型順序：
 
-1. **Gemma 4 31B MTP**（首選）— 速度最快，coding 任務 MTP 加速 2 ~ 3 倍
-2. **Qwen3-Coder 30B**（次選）— coding 專科，SWE-bench 表現最強的本地模型
-3. **Qwen3 14B**（通用備案）— 較小較快，記憶體吃緊或要跑 long context 時切回來
+1. **Gemma 4 31B [MTP](/llm/knowledge-cards/mtp/)**（首選）— 速度最快、coding 任務 MTP 加速 2 ~ 3 倍
+2. **Qwen3-Coder 30B**（次選）— coding 專科、[SWE-bench](/llm/knowledge-cards/swe-bench/) 表現最強的本地模型
+3. **Qwen3 14B**（通用備案）— 較小較快、記憶體吃緊或要跑 long context 時切回來
 4. **gpt-oss 20B**（OpenAI 開源）— 風格較像 GPT、想嘗試 OpenAI 風味時用
 
-對 24GB Mac，跳過 31B，從 14B 起步。對 16GB Mac，只能跑 7B 或 Gemma 4 E4B，能力明顯下降，建議混用雲端。
+對 24GB Mac、跳過 31B、從 14B 起步。對 16GB Mac、可用模型限於 7B 或 Gemma 4 E4B、能力明顯下降、建議混用雲端。
 
 ## 1. Gemma 4 31B MTP：日常主力首選
 
-**為什麼是首選**：寫 code 場景的「速度 × 能力 × 工具支援」三維平衡最好。Gemma 4 31B 在 SWE-bench、HumanEval 等 coding benchmark 上接近 Qwen3-Coder 30B，但因為 Google 釋出官方 MTP drafter、Ollama v0.23.1 一鍵整合，實際使用體感速度比 Qwen3-Coder 30B 快 2 ~ 3 倍（同硬體、同任務）。
+Gemma 4 31B MTP 在「速度 × 能力 × 工具支援」三軸取得寫 code 場景的最佳平衡、是首選的原因。Gemma 4 31B 在 SWE-bench、[HumanEval](https://github.com/openai/human-eval)（OpenAI 提供的 164 題 Python 函式補完 benchmark）等 coding benchmark 上接近 Qwen3-Coder 30B、但因為 Google 釋出官方 MTP [drafter](/llm/knowledge-cards/drafter-model/)、Ollama v0.23.1 一鍵整合、實際使用體感速度比 Qwen3-Coder 30B 快 2 ~ 3 倍（同硬體、同任務）。
 
 **Ollama tag**：`gemma4:31b-coding-mtp-bf16`
 
@@ -51,24 +51,24 @@ weight: 4
 
 ## 2. Qwen3-Coder 30B：coding 專科
 
-**為什麼是次選**：Qwen3-Coder 在 SWE-bench Verified 上達 77.2 分（2026 年 4 月 Alibaba 釋出時的公開數據），是本地模型中 coding 表現最強的。對「複雜程式碼任務、不在乎速度差一倍」的使用者，這是更好的選擇。
+Qwen3-Coder 30B 是「benchmark 最強、速度次之」的本地 coding 模型、做為 benchmark 敏感工作流的次選。Qwen3-Coder 在 SWE-bench Verified（OpenAI 篩過的高品質子集、500 題）上達 77.2 分（2026 年 4 月 Alibaba 釋出時的公開數據）、是本地模型中 coding 表現最強的。對「複雜程式碼任務、不在乎速度差一倍」的使用者、這是更好的選擇。
 
 **Ollama tag**：`qwen3-coder:30b`
 
 **記憶體需求**：~18 ~ 20GB，32GB Mac 順暢。
 
-**強過 Gemma 4 31B 的場景**：
+**Qwen3-Coder 30B 強項**（JSON 結構穩定 / SQL Rust Go / 200+ 行 code / 演算法題）：
 
 - 需要嚴格遵循 prompt 結構（例如要求輸出 JSON）— Qwen3-Coder 較穩定
 - 需要寫 SQL、Rust、Go 等較少見語言 — 訓練資料較多
 - 需要產出較長 code（200+ 行）— 比較不容易在中段失控
-- 需要解 leetcode 風格演算法題 — benchmark 強項
+- 需要解 leetcode 風格演算法題（注重題目模式 + 標準解）— benchmark 強項
 
-**為什麼不是首選**：沒有 MTP 加速（Alibaba 沒釋出官方 drafter，社群可能會做但目前還沒成熟）。生字速度明顯慢於 Gemma 4 31B MTP，體感等候時間長。
+**為什麼不是首選**：MTP 加速目前限於 Gemma 4 官方 drafter、Qwen3-Coder 還沒有對應的官方 drafter（2026 年 5 月）。生字速度明顯慢於 Gemma 4 31B MTP、體感等候時間長。
 
 ## 3. Qwen3 14B：通用備案
 
-**為什麼是備案**：當你發現 32GB Mac 跑 31B 模型在某些場景（長 context、多 model 並存）吃緊，14B 是「降一級」的合理選擇。能力較弱但記憶體佔用減半。
+Qwen3 14B 是 32GB Mac 想留記憶體餘裕（多 model 並存、長 [KV cache](/llm/knowledge-cards/kv-cache/)、其他重 app）時的合理「降一級」選擇。能力較弱但記憶體佔用減半。
 
 **Ollama tag**：`qwen3:14b`
 
@@ -91,7 +91,7 @@ weight: 4
 
 ## 4. gpt-oss 20B：OpenAI 開源版
 
-**為什麼是補充選項**：OpenAI 在 2025 年釋出的開源模型，風格較接近 GPT 系列。如果你已經很習慣 GPT 的回答方式，這個模型的「語感」會比 Gemma 或 Qwen 親切。
+gpt-oss 20B 是 OpenAI 在 2025 年釋出的開源模型、風格較接近 GPT 系列、定位是「習慣 GPT 語感的使用者」的補充選項。如果你已經很習慣 GPT 的回答方式、這個模型的「語感」會比 Gemma 或 Qwen 親切。
 
 **Ollama tag**：`gpt-oss:20b`
 
@@ -119,7 +119,7 @@ weight: 4
 | Qwen3 7B     | `qwen3:7b`    | 跟 E4B 類似                       |
 | Llama 3.2 8B | `llama3.2:8b` | 通用任務尚可，coding 較弱         |
 
-實話：16GB Mac 跑這些模型只能做「簡單補完、解釋短段程式碼」。比較複雜的任務還是要切雲端。如果你真的要靠本地 LLM 寫 code，16GB 撐不住；建議混用雲端，或評估升級到 24GB+ Mac。
+實話：16GB Mac 跑這些模型只能做「簡單補完、解釋短段程式碼」、比較複雜的任務還是要切雲端。如果你想以本地 LLM 為主力寫 code、16GB 不在本指南推薦範圍；建議混用雲端、或評估升級到 24GB+ Mac。
 
 ## 48GB+ Mac 的選擇
 
@@ -154,21 +154,38 @@ weight: 4
 | Q8 / bf16 | 32GB+ Mac、品質敏感任務、能塞得進就用                       |
 | Q5_K_M    | 24GB Mac 跑 14B 模型；32GB Mac 跑 31B（記憶體稍緊）         |
 | Q4_K_M    | **主流甜蜜點**。32GB Mac 跑 31B Q4 是 2026 年最佳價格效能比 |
-| Q3        | 不建議寫 code 任務。「跑得起來」不等於「跑得好」            |
+| Q3        | 寫 code 場景品質下降明顯、慎用、見下方判讀                  |
 
-陷阱是用 Q3 強塞超大模型。**Q3 70B 的 coding 表現通常輸 Q5 14B**。模型「夠大」跟「夠好」是兩件事。
+量化等級的延伸判讀：
+
+- **Q8 / bf16 的回退條件**：模型載入時 swap 到 SSD（生字速度掉一個量級）就要往下降一級。
+- **Q5_K_M 的回退條件**：載入後 KV cache 跟 IDE 一起擠到記憶體上限、改 Q4_K_M。
+- **Q4_K_M 的回退條件**：跑 coding 任務通過率明顯下降（基準 vs Q5 / Q8 下降 10% 以上）就換較小模型的 Q5、不再下降到 Q3。
+- **Q3 的觸發訊號**：hallucination 上升、編造 API、長 context 累積誤差。寫 code 場景的具體判讀：Q3 31B 在 coding 任務上常輸給 Q5 14B、選 model size 時先看任務通過率、再用量化調記憶體、不是反過來。
 
 ## 適合寫 code 以外場景的模型
 
-某些網路上熱門的模型有專屬定位、適合寫 code 以外的場景；放在寫 code 主力位置會踩到能力錯位：
+以下五類模型各自有專屬定位、跟「寫 code 主力」是不同的工作流；放在寫 code 主力位置會踩到能力錯位。每類各自有不同的判讀條件、用同一個欄位塞會遺失各自的失敗模式。
 
-| 模型                                               | 比較適合的場景                                                                                         |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Llama 3.x [base](/llm/knowledge-cards/base-model/) | 下游 fine-tuning、研究；寫 code 改選 [instruction-tuned](/llm/knowledge-cards/instruction-tuned/) 版本 |
-| 純對話模型（Vicuna 系等）                          | 早期對話研究、教學示範；coding 任務改選 Qwen3-Coder 或 Gemma 4                                         |
-| 多模態模型（Llava 等）                             | 圖片理解、UI 描述；寫 code 改選同等級的純文字模型節省記憶體                                            |
-| 中文特化模型                                       | 中文寫作、中文客服；寫 code 用通用模型 + 英文 prompt 表現較穩                                          |
-| 「最新最強」測試模型                               | 嘗鮮、跑分；日常主力等社群驗證 1 ~ 2 個月再採用                                                        |
+### Llama 3.x base 等 base model
+
+[Base model](/llm/knowledge-cards/base-model/) 是純粹做下一個 token 預測訓練、沒做 [instruction-tuning](/llm/knowledge-cards/instruction-tuned/) 的原始模型。直接拿來對話會跟著 prompt 隨機接龍、不會「回答你的問題」。適合下游 fine-tuning 跟研究；寫 code 場景改選同 family 的 instruction-tuned 版本（例如 `llama3.3:70b-instruct` 而不是 `llama3.3:70b`）。
+
+### 純對話模型（Vicuna、ChatGLM 早期等）
+
+純對話模型是 2023 年早期對話研究的成果、訓練資料偏自然對話、coding 表現遠輸後來的專科模型。早期教學示範或對話技術 baseline 仍會用到；現階段 coding 任務直接選 Qwen3-Coder 或 Gemma 4、不在這條路線上糾結。
+
+### 多模態模型（Llava、Gemma 4 多模態版等）
+
+多模態模型訓練資料含圖片 + 文字、能做圖片理解、UI 描述、OCR、圖文對應、適合「給 LLM 看截圖」這類工作流。寫 code 場景如果不需要看圖、改選同等級的純文字模型較省記憶體（多模態的 vision tower 佔額外 GB 級記憶體、純文字 coding 用不到）。
+
+### 中文特化模型
+
+中文特化模型在純中文寫作、客服場景表現好、但 coding 仍以英文 prompt + 英文 code comment 為主流。寫 code 用通用模型 + 英文 prompt 通常表現較穩、中文特化模型反而在英文程式碼相關任務上劣勢。除非工作流真的有大量中文 docstring / 註解需求、否則用通用模型。
+
+### 「最新最強」測試模型
+
+社群每週都有新模型釋出、號稱「跑分爆表」。日常主力建議等社群驗證 1 ~ 2 個月再採用、避免踩到「benchmark 強但 prompt 適應性差」「prompt 模板未進入主流工具預設」的坑。嘗鮮跟跑分是另一條工作流、用 LM Studio 探索性測試後再決定是否切主力。
 
 ## 模型不只 chat、還有 embedding
 
@@ -188,19 +205,34 @@ ollama pull nomic-embed-text
 
 Embedding 模型的選擇對 codebase 搜尋品質有影響，但邊際效益遠小於 chat model。先用預設 `nomic-embed-text`，有需求再換。
 
+## 何時不適用本章優先順序
+
+本章選型假設「Apple Silicon Mac + 寫 code 為主 + 個人使用」。以下情境的選型邏輯不同、需要另外的判讀路徑：
+
+| 情境                           | 該往哪去                                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| Windows / Linux + 獨立 GPU     | 模組五 [VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/) — VRAM 限制 + MoE CPU 卸載決定選型 |
+| 需要 vision / multimodal       | 改用多模態模型（如 Gemma 4 多模態版）、本章選型只覆蓋純文字 coding                                     |
+| 離線部署到生產（不接個人 Mac） | 考慮 vLLM、TGI 等資料中心 inference server、本章假設個人桌機推論                                       |
+| 訓練 / fine-tune 為主          | 模組三 [訓練流程](/llm/03-theoretical-foundations/training-pipeline/)、推論優先順序不適用              |
+| 非英文工作流 / 中文寫作為主    | 中文特化模型（DeepSeek、Yi 等）、本章 coding 場景以英文 prompt 為基準                                  |
+| 嘗鮮 / 跑分驗證新模型          | 用 LM Studio 探索性測試、跟本章主力選型分開、避免日常主力被新模型 churn                                |
+
 ## 給讀者的最快決策路徑
 
-把本章壓成一張決策表：
+決策表把記憶體預算跟用途摺成一張快查、依情境定位、不需要重讀整章：
 
-| 你的情境                   | 該裝的 model                              |
-| -------------------------- | ----------------------------------------- |
-| 32GB+ Mac、首次本地 LLM    | `gemma4:31b-coding-mtp-bf16`              |
-| 32GB Mac、想要 coding 最強 | `qwen3-coder:30b`，接受速度比 Gemma 慢    |
-| 24GB Mac                   | `qwen3:14b` 或 `gpt-oss:20b`              |
-| 16GB Mac                   | `gemma4:e4b` 或 `qwen3:7b`，主力仍雲端    |
-| 48GB+ Mac、要榨乾硬體      | `qwen3-coder:32b-bf16` 或同時跑兩個 model |
-| 想當 codebase 搜尋用       | + `nomic-embed-text`（embedding model）   |
-| 想當 tab autocomplete 用   | + `gemma4:e4b` 或 `qwen3:7b`（速度優先）  |
+| 你的情境                   | 該裝的 model                              | 觸發回退條件                                       |
+| -------------------------- | ----------------------------------------- | -------------------------------------------------- |
+| 32GB+ Mac、首次本地 LLM    | `gemma4:31b-coding-mtp-bf16`              | 跑 Qwen3-Coder 強項任務時改用下一列                |
+| 32GB Mac、想要 coding 最強 | `qwen3-coder:30b`、接受速度比 Gemma 慢    | 體感等候時間太久、退回 Gemma 4 MTP                 |
+| 24GB Mac                   | `qwen3:14b` 或 `gpt-oss:20b`              | 任務複雜度超過 14B 上限、改混用雲端                |
+| 16GB Mac                   | `gemma4:e4b` 或 `qwen3:7b`、主力仍雲端    | 跨檔案 / 多步驟任務直接切雲端                      |
+| 48GB+ Mac、要榨乾硬體      | `qwen3-coder:32b-bf16` 或同時跑兩個 model | 同時跑兩 model 時 KV cache 擠到上限、改 Q5 量化    |
+| 想當 codebase 搜尋用       | + `nomic-embed-text`（embedding model）   | 大型 monorepo 索引品質差、換 cloud embedding model |
+| 想當 tab autocomplete 用   | + `gemma4:e4b` 或 `qwen3:7b`（速度優先）  | autocomplete 延遲 > 500ms、降到更小的 model        |
+
+決策表的兩個閱讀方式：先按「你的情境」找對應 model、再注意「觸發回退條件」決定何時切換到下一行。回退條件常被忽略、導致讀者在條件變化時還抱著原本的選擇。
 
 ## 小結
 

@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "comfyui", "stable-diffusion", "diffusion"]
 weight: 1
 ---
 
-本篇紀錄裝 ComfyUI 跟 Stable Diffusion XL base 模型、在 Apple Silicon Mac 上跑通最小 text-to-image 流程。ComfyUI 是 2026 年 Apple Silicon 跑 [Diffusion](/llm/knowledge-cards/diffusion/) 最主流的選擇——節點式工作流、跨平台、Python 環境、容易客製化。Draw Things（Mac 原生 GUI）更簡單、但 ComfyUI 接 workflow 跟 custom node 的能力強很多。
+本篇紀錄裝 ComfyUI 跟 Stable Diffusion XL base 模型、在 Apple Silicon Mac 上跑通最小 text-to-image 流程。ComfyUI 是 2026 年 Apple Silicon 跑 [Diffusion](/llm/knowledge-cards/diffusion/) 最主流的選擇——節點式工作流（拖拉節點連線、像 visual programming、每個節點負責一段運算）、跨平台、Python 環境、容易客製化。Draw Things（Mac 原生 GUI）更簡單、但 ComfyUI 接 workflow 跟 custom node 的能力強很多。
 
 > **驗證日期**：2026-05-12
 > **ComfyUI**：main branch、shallow clone
@@ -98,11 +98,12 @@ SDXL base 約 6.5 GB、是 Stable Diffusion XL 的基礎 model。從 Hugging Fac
 mkdir -p ~/Projects/ComfyUI/models/checkpoints
 cd ~/Projects/ComfyUI/models/checkpoints
 
-curl -L -o sd_xl_base_1.0.safetensors \
+# -L 跟 redirect、--continue-at - 支援中斷後重續、避免 6.5 GB 重下
+curl -L --continue-at - -o sd_xl_base_1.0.safetensors \
   "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors?download=true"
 ```
 
-下載時間視網速、10-30 分鐘 broadband 都正常。完成後：
+下載時間視網速、10-30 分鐘 broadband 都正常。網路中斷時重跑同一個指令、`--continue-at -` 會從中斷處續傳、不用重下 6.5 GB。完成後：
 
 ```bash
 ls -lh sd_xl_base_1.0.safetensors
@@ -142,6 +143,8 @@ Using sub quadratic attention for cross-attention
 Starting server
 To see the GUI go to: http://127.0.0.1:8188
 ```
+
+Apple Silicon 統一記憶體被 PyTorch 報成 VRAM 是預期、不是 bug：mps backend 把整個統一記憶體當成「GPU 可見記憶體」、所以 32GB Mac 顯示 `Total VRAM 32768 MB`。實際使用上 ComfyUI、其他 app 跟系統共用同一塊。
 
 關鍵驗證：
 
@@ -277,11 +280,11 @@ def main():
 - **為什麼 polling 而不是 WebSocket**：WebSocket 要 subscribe events、處理 connection lifecycle、邏輯複雜。Polling 兩行解決、對教學 demo 夠用。Production 自動化系統建議用 WebSocket、知道每個 progress event。
 - **為什麼 `time.sleep(2)`**：太短（< 1s）對 server 造成不必要 polling；太長（> 5s）感知延遲明顯。2 秒是 demo 友善平衡。
 - **為什麼用 prompt_id 而不是 client_id 查 history**：一個 client 可能送多個 job、prompt_id 唯一識別 job。client_id 主要用 WebSocket 訂閱、不是 history query 主鍵。
-- **為什麼 `Path(args.out).write_bytes(blob)`**：直接 binary 寫檔、不要 `open(...).write()` 因為 PNG 是 binary、text mode 會出錯。
+- **為什麼 `Path(args.out).write_bytes(blob)`**：PNG 是 binary、用 `write_bytes` 直接寫；改用 `open(...).write()` 的 text mode 會在編碼轉換時破壞檔案內容。
 
 **實測**：M4 Pro 32GB、prompt 「a photograph of an orange cat sitting on a wooden chair, soft natural lighting, detailed fur」、15 steps、cfg=7、euler+normal sampler、seed=42 → 106 秒生成 1024×1024 PNG、1.65 MB。
 
-## 跟 ComfyUI 內部的 OpenAI 相容 API
+## ComfyUI 的 REST API 形狀（無 OpenAI 相容層）
 
 ComfyUI 沒提供 OpenAI 相容 API、它的 API 是自己的 REST + WebSocket：
 
@@ -387,3 +390,5 @@ ComfyUI 用 port 8188、跟 Ollama (11434) / LM Studio (1234) 完全不撞、可
 - Python 版本相容性會持續演化、`pip install -r requirements.txt` 偶爾要降版 Python。
 
 讀的時候若 pip install 失敗、看 ComfyUI GitHub issues 跟 PyTorch release notes 對應的 Python 版本。
+
+跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、跨服務的 lifecycle / 記憶體管理見 [Resource management](/llm/01-local-llm-services/hands-on/resource-management/)、ComfyUI 跟 Ollama 同台跑的記憶體預算規劃見 [0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)。
