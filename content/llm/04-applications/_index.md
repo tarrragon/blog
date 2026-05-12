@@ -23,6 +23,9 @@ weight: 4
 | [4.4](/llm/04-applications/workflow-patterns/)            | Workflow 編排模式                                      | Pipeline / router / parallel / reflection 四種基本模式、退化條件                                              |
 | [4.5](/llm/04-applications/production-resource-planning/) | Production 部署的資源評估原理                          | 6 個 dimension：concurrency / latency / cost / storage / observability / reliability                          |
 | [4.6](/llm/04-applications/artifact-management/)          | 衍生產物管理原理：什麼進 git、什麼不該                 | Source / derived / external 三分類、`.gitignore` 設計模式、prompt + eval 版本管理、production deployment 對接 |
+| [4.7](/llm/04-applications/long-context-engineering/)     | Long context engineering                               | claimed vs effective context、lost-in-the-middle、跟 RAG 的取捨                                               |
+| [4.8](/llm/04-applications/embedding-model-internals/)    | Embedding model 內部                                   | contrastive learning、選型、MTEB、in-domain fine-tune                                                         |
+| [4.9](/llm/04-applications/benchmarking-and-evaluation/)  | Benchmarking 與評估方法論                              | capability vs performance、in-house benchmark、`llama-bench`                                                  |
 
 ## 為什麼這個順序
 

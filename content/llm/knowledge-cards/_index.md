@@ -111,20 +111,31 @@ weight: -1
 
 ### LLM 訓練流程
 
-| 卡片                                                                                 | 核心問題                                             |
-| ------------------------------------------------------------------------------------ | ---------------------------------------------------- |
-| [Loss Function](/llm/knowledge-cards/loss-function/)                                 | 訓練最佳化的目標、量化「預測 vs 真實」的差距         |
-| [Gradient](/llm/knowledge-cards/gradient/)                                           | 該往哪個方向調權重才能降 loss                        |
-| [Backpropagation](/llm/knowledge-cards/backpropagation/)                             | 從 output loss 反向算出每個權重 gradient 的演算法    |
-| [Gradient Explosion / Vanishing](/llm/knowledge-cards/gradient-explosion-vanishing/) | 深層網路 chain rule 累乘的兩種失敗模式               |
-| [Learning Rate](/llm/knowledge-cards/learning-rate/)                                 | gradient descent 每步幅度、最敏感的 hyperparameter   |
-| [SGD](/llm/knowledge-cards/sgd/)                                                     | 用 mini-batch 算 gradient 更新的基礎 optimizer       |
-| [Adam / AdamW](/llm/knowledge-cards/adam-adamw/)                                     | 對每個參數自適應 lr、LLM 訓練主流 optimizer          |
-| [Pre-training](/llm/knowledge-cards/pre-training/)                                   | 第一階段、用 trillion-token 做 next-token prediction |
-| [SFT](/llm/knowledge-cards/sft/)                                                     | 第二階段、用「指令-回答」對 fine-tune                |
-| [RLHF](/llm/knowledge-cards/rlhf/)                                                   | 用人類偏好 + reward model + RL 對齊                  |
-| [DPO](/llm/knowledge-cards/dpo/)                                                     | RLHF 的簡化替代、直接從偏好資料 fine-tune            |
-| [LoRA](/llm/knowledge-cards/lora/)                                                   | 凍住原權重、只訓兩個小矩陣的 PEFT                    |
+| 卡片                                                                                 | 核心問題                                                |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| [Loss Function](/llm/knowledge-cards/loss-function/)                                 | 訓練最佳化的目標、量化「預測 vs 真實」的差距            |
+| [Gradient](/llm/knowledge-cards/gradient/)                                           | 該往哪個方向調權重才能降 loss                           |
+| [Backpropagation](/llm/knowledge-cards/backpropagation/)                             | 從 output loss 反向算出每個權重 gradient 的演算法       |
+| [Gradient Explosion / Vanishing](/llm/knowledge-cards/gradient-explosion-vanishing/) | 深層網路 chain rule 累乘的兩種失敗模式                  |
+| [Learning Rate](/llm/knowledge-cards/learning-rate/)                                 | gradient descent 每步幅度、最敏感的 hyperparameter      |
+| [SGD](/llm/knowledge-cards/sgd/)                                                     | 用 mini-batch 算 gradient 更新的基礎 optimizer          |
+| [Adam / AdamW](/llm/knowledge-cards/adam-adamw/)                                     | 對每個參數自適應 lr、LLM 訓練主流 optimizer             |
+| [Pre-training](/llm/knowledge-cards/pre-training/)                                   | 第一階段、用 trillion-token 做 next-token prediction    |
+| [SFT](/llm/knowledge-cards/sft/)                                                     | 第二階段、用「指令-回答」對 fine-tune                   |
+| [RLHF](/llm/knowledge-cards/rlhf/)                                                   | 用人類偏好 + reward model + RL 對齊                     |
+| [DPO](/llm/knowledge-cards/dpo/)                                                     | RLHF 的簡化替代、直接從偏好資料 fine-tune               |
+| [LoRA](/llm/knowledge-cards/lora/)                                                   | 凍住原權重、只訓兩個小矩陣的 PEFT                       |
+| [QLoRA](/llm/knowledge-cards/qlora/)                                                 | LoRA + 4-bit 量化、消費級 GPU 也能 fine-tune 大模型     |
+| [Catastrophic Forgetting](/llm/knowledge-cards/catastrophic-forgetting/)             | Fine-tune 覆蓋掉原有能力的現象、LoRA + 資料 mixing 緩解 |
+| [Contrastive Learning](/llm/knowledge-cards/contrastive-learning/)                   | Embedding model 的訓練 paradigm、相關靠近 / 無關遠離    |
+
+### Reasoning Models
+
+| 卡片                                                         | 核心問題                                             |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| [Chain-of-Thought](/llm/knowledge-cards/chain-of-thought/)   | 讓 LLM 先推理再答的 prompting / 訓練機制             |
+| [Test-Time Compute](/llm/knowledge-cards/test-time-compute/) | 推論時動態增加算力換答案品質的 paradigm              |
+| [Reasoning Model](/llm/knowledge-cards/reasoning-model/)     | o1 / R1 / QwQ 等內建長 reasoning trace 的 LLM family |
 
 ### Tokenization
 
@@ -142,11 +153,21 @@ weight: -1
 | [Beam Search](/llm/knowledge-cards/beam-search/)              | 保留 K 條候選的 decoding、translation 主流 |
 | [Top-K / Top-P / Min-P](/llm/knowledge-cards/top-p-sampling/) | 過濾低機率 token 後取樣、現代 LLM 主流     |
 
-### 評估指標
+### 推論加速進階
 
-| 卡片                                         | 核心問題                  |
-| -------------------------------------------- | ------------------------- |
-| [SWE-bench](/llm/knowledge-cards/swe-bench/) | coding 能力如何被量化比較 |
+| 卡片                                                     | 核心問題                                         |
+| -------------------------------------------------------- | ------------------------------------------------ |
+| [Acceptance Rate](/llm/knowledge-cards/acceptance-rate/) | speculative decoding 中 drafter 提案被接受的比例 |
+
+### 評估指標 / Benchmark
+
+| 卡片                                                           | 核心問題                                          |
+| -------------------------------------------------------------- | ------------------------------------------------- |
+| [SWE-bench](/llm/knowledge-cards/swe-bench/)                   | coding 能力如何被量化比較                         |
+| [LLM Benchmarks](/llm/knowledge-cards/llm-benchmarks/)         | MMLU / HumanEval / SWE-bench 等覆蓋範圍與失效情境 |
+| [MTEB](/llm/knowledge-cards/mteb-benchmark/)                   | Embedding model 跨任務通用能力的標準 benchmark    |
+| [Needle in Haystack](/llm/knowledge-cards/needle-in-haystack/) | 把事實藏在 long context 不同位置的 retrieval 測試 |
+| [Lost in the Middle](/llm/knowledge-cards/lost-in-the-middle/) | Long context 中段內容 recall 顯著降的現象         |
 
 ### 應用層模式
 
