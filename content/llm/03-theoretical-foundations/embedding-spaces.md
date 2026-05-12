@@ -19,7 +19,7 @@ Embedding 是 LLM 把離散 [token](/llm/knowledge-cards/token/) 轉成連續向
 3. 解釋 RAG / semantic search 為什麼用 embedding similarity。
 4. 區分 word2vec、句子 embedding、contextual embedding 的差別。
 
-## Embedding Layer：從 token ID 到向量
+## [Embedding Layer](/llm/knowledge-cards/embedding-layer/)：從 token ID 到向量
 
 Embedding layer（嵌入層）的核心結構是「一個 lookup table、把 token ID（整數）map 到向量」。形式上是一個 `(vocab_size, hidden_dim)` 的矩陣 E：
 

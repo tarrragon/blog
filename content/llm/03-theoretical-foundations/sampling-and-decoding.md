@@ -30,15 +30,15 @@ final hidden states → output projection → logits → temperature → softmax
 
 各環節在 sampling 中的位置：
 
-| 環節                  | 對 sampling 的影響                        |
-| --------------------- | ----------------------------------------- |
-| logits                | 模型給每個 token 的原始分數、還沒正規化   |
-| temperature           | 在 softmax 前除以 T、調整分佈尖銳度       |
-| softmax               | 把 logits 轉成機率分佈                    |
-| top-k / top-p / min-p | 過濾低機率 token、把候選集縮小            |
-| 重新正規化            | 把過濾後的剩餘 token 重新正規化成機率分佈 |
-| 取樣                  | 從正規化分佈中隨機選一個 token            |
-| repetition penalty    | 對已出現的 token 降權、避免重複           |
+| 環節                                     | 對 sampling 的影響                        |
+| ---------------------------------------- | ----------------------------------------- |
+| [logits](/llm/knowledge-cards/logit/)    | 模型給每個 token 的原始分數、還沒正規化   |
+| temperature                              | 在 softmax 前除以 T、調整分佈尖銳度       |
+| [softmax](/llm/knowledge-cards/softmax/) | 把 logits 轉成機率分佈                    |
+| top-k / top-p / min-p                    | 過濾低機率 token、把候選集縮小            |
+| 重新正規化                               | 把過濾後的剩餘 token 重新正規化成機率分佈 |
+| 取樣                                     | 從正規化分佈中隨機選一個 token            |
+| repetition penalty                       | 對已出現的 token 降權、避免重複           |
 
 實際參數順序視推論伺服器實作而異、但概念上是這條鏈。
 
@@ -66,7 +66,7 @@ next_token = argmax(probabilities)
 
 ## Beam Search：保留 top-K 條候選序列
 
-Beam search 的核心想法是「每步保留累積機率最大的 K 條序列、每條繼續展開、最後選整體機率最高的」。K 叫 beam size。
+[Beam search](/llm/knowledge-cards/beam-search/) 的核心想法是「每步保留累積機率最大的 K 條序列、每條繼續展開、最後選整體機率最高的」。K 叫 beam size。
 
 | Beam size | 行為                     |
 | --------- | ------------------------ |
@@ -117,7 +117,7 @@ Temperature 在 sampling 鏈上的位置（行 26 的流程鏈）跟其他過濾
 
 ## Top-K Sampling
 
-Top-K sampling 的核心定義是「只考慮機率最大的 K 個 token、其他設 0、重新正規化後取樣」：
+[Top-K sampling](/llm/knowledge-cards/top-p-sampling/) 的核心定義是「只考慮機率最大的 K 個 token、其他設 0、重新正規化後取樣」：
 
 ```text
 1. 對機率排序、取最大的 K 個。

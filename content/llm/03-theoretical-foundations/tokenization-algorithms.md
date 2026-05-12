@@ -60,15 +60,17 @@ weight: 6
 
 主流方案是「subword tokenization」：常見字串當一個 token、罕見字串切成更小單位（甚至到 char 級別）。三個主流算法：
 
-| 算法          | 模型例子                        |
-| ------------- | ------------------------------- |
-| BPE           | GPT-2、GPT-3、GPT-4、Llama 系列 |
-| WordPiece     | BERT                            |
-| SentencePiece | Gemma、PaLM、T5                 |
+| 算法                                                 | 模型例子                        |
+| ---------------------------------------------------- | ------------------------------- |
+| [BPE](/llm/knowledge-cards/bpe/)                     | GPT-2、GPT-3、GPT-4、Llama 系列 |
+| WordPiece                                            | BERT                            |
+| [SentencePiece](/llm/knowledge-cards/sentencepiece/) | Gemma、PaLM、T5                 |
+
+[Vocabulary size](/llm/knowledge-cards/vocabulary-size/) 跟 [special tokens](/llm/knowledge-cards/special-tokens/) 是這幾個算法產出的 tokenizer 共同的概念維度。
 
 ## BPE：Byte-Pair Encoding
 
-BPE（Sennrich et al., 2016）的核心想法是「貪婪地合併最常出現的字元對」、迭代到 vocabulary 達到目標大小。
+[BPE](/llm/knowledge-cards/bpe/)（Sennrich et al., 2016）的核心想法是「貪婪地合併最常出現的字元對」、迭代到 vocabulary 達到目標大小。
 
 ### 訓練流程
 

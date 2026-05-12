@@ -65,18 +65,82 @@ weight: -1
 
 ### 硬體與架構
 
-| 卡片                                                                | 核心問題                                    |
-| ------------------------------------------------------------------- | ------------------------------------------- |
-| [Memory Bandwidth](/llm/knowledge-cards/memory-bandwidth/)          | 為什麼記憶體頻寬決定生字速度                |
-| [Unified Memory Architecture](/llm/knowledge-cards/unified-memory/) | Apple Silicon 怎麼讓模型用滿大記憶體        |
-| [VRAM](/llm/knowledge-cards/vram/)                                  | 獨立 GPU 場景的顯卡記憶體、跟系統 RAM 分層  |
-| [PCIe](/llm/knowledge-cards/pcie/)                                  | GPU 跟主機板之間的高速序列匯流排            |
-| [NVLink](/llm/knowledge-cards/nvlink/)                              | NVIDIA 多卡互連、跟 PCIe 比的卡間頻寬優勢   |
-| [GPU Compute Backend](/llm/knowledge-cards/gpu-compute-backend/)    | CUDA / ROCm / Vulkan / Metal / SYCL 對照    |
-| [Transformer](/llm/knowledge-cards/transformer/)                    | 寫 code 用的 LLM 是哪種神經網路             |
-| [Attention](/llm/knowledge-cards/attention/)                        | Transformer 內部讓 token 互相加權平均的機制 |
-| [Flash Attention](/llm/knowledge-cards/flash-attention/)            | Attention 計算的記憶體友善實作              |
-| [Diffusion](/llm/knowledge-cards/diffusion/)                        | 產圖用的是哪種神經網路                      |
+| 卡片                                                                | 核心問題                                       |
+| ------------------------------------------------------------------- | ---------------------------------------------- |
+| [Memory Bandwidth](/llm/knowledge-cards/memory-bandwidth/)          | 為什麼記憶體頻寬決定生字速度                   |
+| [Unified Memory Architecture](/llm/knowledge-cards/unified-memory/) | Apple Silicon 怎麼讓模型用滿大記憶體           |
+| [VRAM](/llm/knowledge-cards/vram/)                                  | 獨立 GPU 場景的顯卡記憶體、跟系統 RAM 分層     |
+| [PCIe](/llm/knowledge-cards/pcie/)                                  | GPU 跟主機板之間的高速序列匯流排               |
+| [NVLink](/llm/knowledge-cards/nvlink/)                              | NVIDIA 多卡互連、跟 PCIe 比的卡間頻寬優勢      |
+| [GPU Compute Backend](/llm/knowledge-cards/gpu-compute-backend/)    | CUDA / ROCm / Vulkan / Metal / SYCL 對照       |
+| [Transformer](/llm/knowledge-cards/transformer/)                    | 寫 code 用的 LLM 是哪種神經網路                |
+| [Attention](/llm/knowledge-cards/attention/)                        | Transformer 內部讓 token 互相加權平均的機制    |
+| [Self-Attention](/llm/knowledge-cards/self-attention/)              | Q/K/V 都來自同一序列的 attention、LLM 標誌     |
+| [Multi-Head Attention](/llm/knowledge-cards/multi-head-attention/)  | 把 attention 切成多個 head 並行、MHA/GQA/MLA   |
+| [Causal Mask](/llm/knowledge-cards/causal-mask/)                    | 擋掉「未來位置」的遮罩、decoder-only 的標誌    |
+| [RoPE](/llm/knowledge-cards/rope/)                                  | 用旋轉矩陣編碼位置、Llama / Gemma / Qwen 主流  |
+| [Flash Attention](/llm/knowledge-cards/flash-attention/)            | Attention 計算的記憶體友善實作                 |
+| [FFN](/llm/knowledge-cards/ffn/)                                    | Transformer block 內部的兩層 linear、參數大頭  |
+| [Activation Function](/llm/knowledge-cards/activation-function/)    | FFN 內的非線性、讓深度網路真的「深」起來       |
+| [Layer Normalization](/llm/knowledge-cards/layer-normalization/)    | 對 hidden state 正規化、穩定深層訓練           |
+| [Residual Connection](/llm/knowledge-cards/residual-connection/)    | layer 輸入直接加到輸出、讓 gradient 能回流深層 |
+| [Embedding Layer](/llm/knowledge-cards/embedding-layer/)            | Transformer 第一層、把 token ID 轉成向量       |
+| [Forward Pass](/llm/knowledge-cards/forward-pass/)                  | input 流經所有 layer 的單向計算流程            |
+| [Diffusion](/llm/knowledge-cards/diffusion/)                        | 產圖用的是哪種神經網路                         |
+
+### 線性代數基礎
+
+| 卡片                                                                 | 核心問題                                         |
+| -------------------------------------------------------------------- | ------------------------------------------------ |
+| [Tensor](/llm/knowledge-cards/tensor/)                               | 多維陣列、framework 核心型別                     |
+| [Vector Norm](/llm/knowledge-cards/vector-norm/)                     | 衡量向量大小、L1 / L2 / L∞ 的不同用途            |
+| [Dot Product](/llm/knowledge-cards/dot-product/)                     | 兩向量相乘加總、attention / similarity 基礎      |
+| [Matrix Multiplication](/llm/knowledge-cards/matrix-multiplication/) | LLM 推論最頻繁的單一運算、memory bandwidth bound |
+| [Floating Point](/llm/knowledge-cards/floating-point/)               | FP32 / FP16 / BF16 的位元結構與精度取捨          |
+
+### LLM 機率與資訊論
+
+| 卡片                                                 | 核心問題                                           |
+| ---------------------------------------------------- | -------------------------------------------------- |
+| [Softmax](/llm/knowledge-cards/softmax/)             | 把實數向量轉成機率分佈、attention / sampling 共用  |
+| [Logit](/llm/knowledge-cards/logit/)                 | softmax 之前的原始分數、可正可負                   |
+| [Entropy](/llm/knowledge-cards/entropy/)             | 分佈的不確定性、cross-entropy / KL 的基底          |
+| [Cross-Entropy](/llm/knowledge-cards/cross-entropy/) | 預測分佈跟真實分佈的距離、預訓練主要 loss          |
+| [Perplexity](/llm/knowledge-cards/perplexity/)       | cross-entropy 的指數形式、人類直覺較好讀           |
+| [KL Divergence](/llm/knowledge-cards/kl-divergence/) | 兩個分佈的不對稱差距、RLHF / DPO 的 alignment 約束 |
+
+### LLM 訓練流程
+
+| 卡片                                                                                 | 核心問題                                             |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| [Loss Function](/llm/knowledge-cards/loss-function/)                                 | 訓練最佳化的目標、量化「預測 vs 真實」的差距         |
+| [Gradient](/llm/knowledge-cards/gradient/)                                           | 該往哪個方向調權重才能降 loss                        |
+| [Backpropagation](/llm/knowledge-cards/backpropagation/)                             | 從 output loss 反向算出每個權重 gradient 的演算法    |
+| [Gradient Explosion / Vanishing](/llm/knowledge-cards/gradient-explosion-vanishing/) | 深層網路 chain rule 累乘的兩種失敗模式               |
+| [Learning Rate](/llm/knowledge-cards/learning-rate/)                                 | gradient descent 每步幅度、最敏感的 hyperparameter   |
+| [SGD](/llm/knowledge-cards/sgd/)                                                     | 用 mini-batch 算 gradient 更新的基礎 optimizer       |
+| [Adam / AdamW](/llm/knowledge-cards/adam-adamw/)                                     | 對每個參數自適應 lr、LLM 訓練主流 optimizer          |
+| [Pre-training](/llm/knowledge-cards/pre-training/)                                   | 第一階段、用 trillion-token 做 next-token prediction |
+| [SFT](/llm/knowledge-cards/sft/)                                                     | 第二階段、用「指令-回答」對 fine-tune                |
+| [RLHF](/llm/knowledge-cards/rlhf/)                                                   | 用人類偏好 + reward model + RL 對齊                  |
+| [DPO](/llm/knowledge-cards/dpo/)                                                     | RLHF 的簡化替代、直接從偏好資料 fine-tune            |
+| [LoRA](/llm/knowledge-cards/lora/)                                                   | 凍住原權重、只訓兩個小矩陣的 PEFT                    |
+
+### Tokenization
+
+| 卡片                                                     | 核心問題                                     |
+| -------------------------------------------------------- | -------------------------------------------- |
+| [BPE](/llm/knowledge-cards/bpe/)                         | 用「最常字元對」合併建詞彙、GPT / Llama 主流 |
+| [SentencePiece](/llm/knowledge-cards/sentencepiece/)     | Google 開源多語言 tokenization 框架          |
+| [Vocabulary Size](/llm/knowledge-cards/vocabulary-size/) | 詞彙表大小、影響 embedding / 多語言友善度    |
+| [Special Tokens](/llm/knowledge-cards/special-tokens/)   | 邊界 / 角色 / tool call 等特殊用途 token     |
+
+### Sampling 策略
+
+| 卡片                                                          | 核心問題                                   |
+| ------------------------------------------------------------- | ------------------------------------------ |
+| [Beam Search](/llm/knowledge-cards/beam-search/)              | 保留 K 條候選的 decoding、translation 主流 |
+| [Top-K / Top-P / Min-P](/llm/knowledge-cards/top-p-sampling/) | 過濾低機率 token 後取樣、現代 LLM 主流     |
 
 ### 評估指標
 

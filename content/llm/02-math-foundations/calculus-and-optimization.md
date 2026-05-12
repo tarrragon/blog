@@ -6,7 +6,7 @@ tags: ["llm", "math", "optimization"]
 weight: 2
 ---
 
-LLM 訓練的本質是「最佳化問題」：給定 loss function（[cross-entropy](/llm/02-math-foundations/probability-and-information/)）、找一組權重讓 loss 最小。微積分提供工具回答「往哪個方向調權重能讓 loss 變小」、最佳化演算法回答「具體怎麼一步一步調」。
+LLM 訓練的本質是「最佳化問題」：給定 [loss function](/llm/knowledge-cards/loss-function/)（預訓練用 [cross-entropy](/llm/knowledge-cards/cross-entropy/)、推導見 [2.1 機率與資訊論](/llm/02-math-foundations/probability-and-information/)）、找一組權重讓 loss 最小。微積分提供工具回答「往哪個方向調權重能讓 loss 變小」、最佳化演算法回答「具體怎麼一步一步調」。
 
 寫 code 場景的使用者通常無需親自訓練、但理解這條鏈能解釋「為什麼 fine-tuning 要這麼多 GPU」「為什麼 learning rate 是關鍵 hyperparameter」「為什麼 gradient explosion 是常見問題」。本章整理核心概念、不展開完整推導。
 
@@ -19,7 +19,7 @@ LLM 訓練的本質是「最佳化問題」：給定 loss function（[cross-entr
 3. 區分 SGD、Adam、AdamW 在訓練 LLM 時的取捨。
 4. 看到 gradient explosion / vanishing 報告時、知道發生在哪一層。
 
-## 偏導數與 gradient：往哪個方向走 loss 變小
+## 偏導數與 [gradient](/llm/knowledge-cards/gradient/)：往哪個方向走 loss 變小
 
 偏導數（partial derivative）的核心定義是「對多變數函式中的一個變數微分、其他變數視為常數」。記號 `∂f / ∂xᵢ`。
 
@@ -65,11 +65,11 @@ layer 1
 weights W₁
 ```
 
-每層算「local gradient」（output 對 input 的導數）、chain rule 把它們乘起來、最終得到 loss 對每個權重的 gradient。這個流程叫 **backpropagation**（反向傳播）。
+每層算「local gradient」（output 對 input 的導數）、chain rule 把它們乘起來、最終得到 loss 對每個權重的 gradient。這個流程叫 **[backpropagation](/llm/knowledge-cards/backpropagation/)**（反向傳播）。
 
 詳細展開見 [3.0 神經網路基礎](/llm/03-theoretical-foundations/neural-network-basics/)。
 
-## Learning Rate：每步走多遠
+## [Learning Rate](/llm/knowledge-cards/learning-rate/)：每步走多遠
 
 Learning rate（學習率）的核心定義是「gradient descent 每步更新的幅度」、記號 α 或 η。權重更新：
 
@@ -93,7 +93,7 @@ LLM 訓練常用 learning rate：
 
 Learning rate 是訓練 LLM 最關鍵的 hyperparameter、設錯時整個訓練容易失敗、實務上極難救回。實務上常用 learning rate scheduler 動態調整：warmup + cosine decay 是最主流的組合。
 
-## SGD：最基本的最佳化演算法
+## [SGD](/llm/knowledge-cards/sgd/)：最基本的最佳化演算法
 
 SGD（Stochastic Gradient Descent、隨機梯度下降）的核心定義是「每次只用一小批資料（mini-batch）算 gradient、更新權重」。對應 vanilla gradient descent（用全部資料算一次）的計算成本問題：
 
@@ -110,7 +110,7 @@ Vanilla SGD 在 LLM 場景的缺點：
 
 SGD-with-momentum 在 vanilla SGD 上補了「過去 gradient 累積成 velocity」、處理震盪問題、在 vision（ResNet、ImageNet 訓練）跟小規模 fine-tune 仍是合理選擇；Adam / AdamW 在 LLM 預訓練成主流的原因是「自適應 learning rate + per-parameter scale」更能對付 Transformer 的高維、稀疏 gradient 結構、大規模 transformer 預訓練幾乎全部用 AdamW。
 
-## Adam 與 AdamW：適應性最佳化
+## [Adam 與 AdamW](/llm/knowledge-cards/adam-adamw/)：適應性最佳化
 
 Adam（Adaptive Moment Estimation）的核心定義是「每個參數有自己的有效 learning rate、根據過去 gradient 的一階矩跟二階矩自動調整」。簡化版本：
 
@@ -137,7 +137,7 @@ AdamW 是 Adam 的改進版、把 weight decay（L2 正則化）跟 gradient upd
 
 對比推論時 Gemma 4 31B Q4 量化版約 18GB（含 KV cache、見 [0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)）、訓練需求是推論的 20 倍以上。這就是為什麼訓練 LLM 需要大量 GPU、推論可以在個人 Mac 上跑。
 
-## Gradient Explosion 與 Vanishing
+## [Gradient Explosion 與 Vanishing](/llm/knowledge-cards/gradient-explosion-vanishing/)
 
 Gradient explosion（梯度爆炸）的核心問題是「gradient 經過多層 chain rule 累積、變成天文數字、權重更新後完全爆掉」。常見於深度網路、特別是 RNN。
 

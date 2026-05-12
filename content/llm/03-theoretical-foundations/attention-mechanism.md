@@ -69,7 +69,7 @@ Attention(Q, K, V) = softmax(Q @ K^T / sqrt(d_k)) @ V
 
 這個公式叫 **scaled dot-product attention**、是 Transformer 的核心運算。
 
-## Multi-Head Attention：多個 attention 並行
+## [Multi-Head Attention](/llm/knowledge-cards/multi-head-attention/)：多個 attention 並行
 
 Multi-head attention 的核心想法是「跑 N 個獨立的 attention、每個 head 各自有自己的 W_Q / W_K / W_V、結果 concatenate 再過一個線性層」：
 
@@ -99,7 +99,7 @@ MultiHead(Q, K, V) = Concat(head_1, ..., head_h) @ W_O
 
 ## Causal Mask：只看前面、不看後面
 
-LLM 是 [autoregressive](/llm/knowledge-cards/autoregressive/)、生成 token N 時只能看 token 0 到 N-1、不能看後面（後面還沒生）。Attention 機制要「擋掉未來位置」、用 **causal mask** 實現：
+LLM 是 [autoregressive](/llm/knowledge-cards/autoregressive/)、生成 token N 時只能看 token 0 到 N-1、不能看後面（後面還沒生）。Attention 機制要「擋掉未來位置」、用 **[causal mask](/llm/knowledge-cards/causal-mask/)** 實現：
 
 ```text
 masked_scores[i][j] = scores[i][j]   if j ≤ i

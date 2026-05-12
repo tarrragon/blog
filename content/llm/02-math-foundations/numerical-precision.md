@@ -19,7 +19,7 @@ weight: 3
 3. 推算 31B 模型用不同精度的記憶體佔用。
 4. 解釋為什麼 Q3 衰減品質遠大於 Q4 → Q5。
 
-## 浮點數的位元結構
+## [浮點數](/llm/knowledge-cards/floating-point/)的位元結構
 
 浮點數（floating point）的核心定義是「用「符號 + 指數 + 尾數」三段位元表示實數」。IEEE 754 標準：
 

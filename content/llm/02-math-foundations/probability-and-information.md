@@ -170,7 +170,7 @@ LLM 中 KL divergence 的用途：
 - **Knowledge distillation**：把大模型的分佈傳給小模型、小模型最小化 KL(大模型 || 小模型)。
 - **DPO / 各種 alignment 方法**：用 KL constraint 控制 policy 偏移量。
 
-## Entropy：分佈的不確定性
+## [Entropy](/llm/knowledge-cards/entropy/)：分佈的不確定性
 
 Entropy（熵）的核心定義是「機率分佈本身的不確定性」：
 

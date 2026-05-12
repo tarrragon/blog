@@ -6,7 +6,7 @@ tags: ["llm", "math", "linear-algebra"]
 weight: 0
 ---
 
-線性代數是 LLM 內部運算的基底。每一次模型 forward pass、本質上都是一連串矩陣乘法；每個 [token](/llm/knowledge-cards/token/) 在模型內部都是一個向量；attention 機制計算「相關性」的方式就是向量內積。理解這幾個概念、能讓「為什麼模型有 31B 個參數」「為什麼推論需要這麼多記憶體」「為什麼 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 是瓶頸」從口號變成可推導的事實。
+線性代數是 LLM 內部運算的基底。每一次模型 [forward pass](/llm/knowledge-cards/forward-pass/)、本質上都是一連串矩陣乘法；每個 [token](/llm/knowledge-cards/token/) 在模型內部都是一個向量；attention 機制計算「相關性」的方式就是向量內積。理解這幾個概念、能讓「為什麼模型有 31B 個參數」「為什麼推論需要這麼多記憶體」「為什麼 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 是瓶頸」從口號變成可推導的事實。
 
 本章假設你看過向量這個詞、知道矩陣有 row 跟 column、但忘記中間細節。每個概念給出定義、在 LLM 中的角色、實務上會怎麼遇到它。
 
@@ -34,7 +34,7 @@ weight: 0
 - [KV cache](/llm/knowledge-cards/kv-cache/) 存的就是每個 token 在每個 layer 算出來的向量。
 - 模型內部所有 token 都以向量形式流動、token 本身的整數 ID 只在輸入跟輸出端用到。
 
-## 內積：衡量兩個向量的相關性
+## [內積](/llm/knowledge-cards/dot-product/)：衡量兩個向量的相關性
 
 內積（dot product / inner product）的核心定義是「兩個向量對應位置相乘再相加」。`a · b = a₁b₁ + a₂b₂ + ... + aₙbₙ`。
 
@@ -52,7 +52,7 @@ attention_score = query · key  ← 內積
 
 每一對 (query, key) 算一次內積、得到一個分數；分數高表示「這個 token 該注意那個位置」。詳細展開見 [3.2 attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)。
 
-## Norm：向量的長度
+## [Norm](/llm/knowledge-cards/vector-norm/)：向量的長度
 
 Norm（範數）的核心定義是「衡量向量大小的純量值」。最常用的 L2 norm（也叫 Euclidean norm）：
 
@@ -64,7 +64,7 @@ LLM 中 norm 的用途：
 
 - **Layer normalization**：每個 layer 結束後把 activation（每層輸出的數值、見 [3.0 神經網路基礎](/llm/03-theoretical-foundations/neural-network-basics/)）重新正規化、避免數值爆炸或消失。
 - **Embedding normalization**：embedding 模型常把向量正規化到 L2 norm = 1、讓內積等同於 cosine similarity。
-- **Gradient clipping**：訓練時若 gradient（訓練階段更新權重用的方向、見 [2.2 微積分與最佳化](/llm/02-math-foundations/calculus-and-optimization/)）的 norm 太大、截斷到合理範圍、避免訓練不穩。
+- **Gradient clipping**：訓練時若 [gradient](/llm/knowledge-cards/gradient/)（訓練階段更新權重用的方向、詳見 [2.2 微積分與最佳化](/llm/02-math-foundations/calculus-and-optimization/)）的 norm 太大、截斷到合理範圍、避免訓練不穩。
 
 Cosine similarity（餘弦相似度）= 兩個向量的內積除以兩者 norm 的乘積、結果落在 -1 到 1 之間、是 RAG / semantic search 最常用的相似度指標。實務上常先把 embedding 正規化到 L2 norm = 1、之後 cosine similarity 退化為單純內積、可直接套用 dot-product 比對。
 
@@ -85,7 +85,7 @@ LLM 中的矩陣到處都是：
 
 模型權重數量的算法：把所有 layer 的權重矩陣大小加總、就是 31B / 70B 等參數規模。例如一個 hidden size = 4096 的 linear layer、權重矩陣大小 `4096 × 4096 = 16,777,216`、約 16.8M 參數。31B 模型的數字推導：~1800 個這個量級的權重矩陣相加（attention 的 Q / K / V / O 矩陣 + FFN 的兩個矩陣 × 數十個 transformer block）、總和約 31B 個參數；bf16 每權重 2 bytes、整份權重約 62GB；Q4 量化後每權重 0.5 bytes、約 18GB。完整的記憶體預算判讀見 [0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)。
 
-## 矩陣乘法：LLM 推論的核心運算
+## [矩陣乘法](/llm/knowledge-cards/matrix-multiplication/)：LLM 推論的核心運算
 
 矩陣乘法（matrix multiplication）的核心定義是「左矩陣的 row 跟右矩陣的 column 做內積、結果填進對應位置」。對 `A (m × k)` 跟 `B (k × n)` 相乘、得到 `C (m × n)`、其中 `C[i][j] = A 的第 i row 跟 B 的第 j column 的內積`。
 
@@ -109,7 +109,7 @@ output = activation(input @ W₁) @ W₂
 
 這就是為什麼 [量化](/llm/knowledge-cards/quantization/) 能加速：權重變小、每秒能讀過更多次完整模型、tok/s 變高。也是為什麼 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 能加速：一次 forward pass 就把權重讀過一次、驗證多個 token、攤平單 token 成本。
 
-## 張量（Tensor）：多維度的矩陣
+## [張量（Tensor）](/llm/knowledge-cards/tensor/)：多維度的矩陣
 
 張量（tensor）的核心定義是「N 維陣列、矩陣是 N=2 的特例」。LLM 內部常用 3D / 4D tensor：
 
