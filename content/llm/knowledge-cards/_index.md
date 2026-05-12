@@ -137,6 +137,16 @@ weight: -1
 | [Test-Time Compute](/llm/knowledge-cards/test-time-compute/) | 推論時動態增加算力換答案品質的 paradigm              |
 | [Reasoning Model](/llm/knowledge-cards/reasoning-model/)     | o1 / R1 / QwQ 等內建長 reasoning trace 的 LLM family |
 
+### Vision / 多模態
+
+| 卡片                                                         | 核心問題                                                  |
+| ------------------------------------------------------------ | --------------------------------------------------------- |
+| [VLM](/llm/knowledge-cards/vlm/)                             | 同時吃圖 + 文字輸入的 LLM 變體、coding 場景的 vision 基底 |
+| [Vision Encoder](/llm/knowledge-cards/vision-encoder/)       | VLM 內部把圖轉成向量序列的模組、ViT / CLIP 為主流         |
+| [Image Token](/llm/knowledge-cards/image-token/)             | VLM 把圖變成跟 text token 同質的向量、計入 context        |
+| [CLIP](/llm/knowledge-cards/clip/)                           | OpenAI contrastive 預訓練、現代 vision encoder 起點       |
+| [Multimodal Fusion](/llm/knowledge-cards/multimodal-fusion/) | Vision + LLM 結合方式：early / cross-attention / native   |
+
 ### Tokenization
 
 | 卡片                                                     | 核心問題                                     |

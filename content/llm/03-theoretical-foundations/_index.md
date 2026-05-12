@@ -93,5 +93,5 @@ weight: 3
 
 1. **完整實作 code**：本模組給概念與機制、不展開完整 PyTorch / MLX 實作。Karpathy 的 zero-to-hero 系列是更直接的實作學習路徑。
 2. **最新研究進展**：本模組整理截至 2026 年 5 月相對穩定的概念。最新進展（如 mixture of experts 新變體、長 context 技術新方法、agentic LLM 等）交給 Stanford CS25。
-3. **多模態 LLM**：vision-language、speech 等多模態擴展跟核心文字 LLM 是不同的研究主題、本模組聚焦文字。
+3. **多模態的理論細節**：vision encoder 內部架構、speech / audio LLM、video LLM 等理論深度交給專門課程；應用層的 vision 在 coding 工作流的設計見 [4.10 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)。
 4. **訓練的工程細節**：data parallelism、tensor parallelism、pipeline parallelism、ZeRO、FlashAttention 等訓練工程主題交給專門課程與 paper。

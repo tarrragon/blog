@@ -26,6 +26,7 @@ weight: 4
 | [4.7](/llm/04-applications/long-context-engineering/)     | Long context engineering                               | claimed vs effective context、lost-in-the-middle、跟 RAG 的取捨                                               |
 | [4.8](/llm/04-applications/embedding-model-internals/)    | Embedding model 內部                                   | contrastive learning、選型、MTEB、in-domain fine-tune                                                         |
 | [4.9](/llm/04-applications/benchmarking-and-evaluation/)  | Benchmarking 與評估方法論                              | capability vs performance、in-house benchmark、`llama-bench`                                                  |
+| [4.10](/llm/04-applications/vision-in-coding-workflow/)   | Vision in coding workflow                              | VLM 在 coding 場景的 use cases、本地 VLM 選型、IDE 整合現狀                                                   |
 
 ## 為什麼這個順序
 

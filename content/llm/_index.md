@@ -117,7 +117,7 @@ weight: 36
 
 本指南不討論：
 
-- **多模態 LLM**（vision、speech）：跟核心文字 LLM 是不同方向、本指南聚焦文字。
+- **Speech / audio LLM**：跟核心文字 LLM 是不同方向、本指南不涵蓋。Vision（VLM）原本不放、但因 coding 工作流的 vision use case 進入主流、補上 [4.10 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)；video LLM 仍不放。
 - **資料中心訓練的工程細節**：data parallelism、ZeRO、tensor parallelism 等屬於專門課程的範圍。
 - **向量資料庫的選型**（Pinecone、Weaviate、Chroma 比較等）：交給 RAG 專門教材；RAG 設計原理見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)。
 - **Kubernetes / 資料中心級分散式推論**：跟個人機器本地 LLM 方向不同、需另尋專門教材。
