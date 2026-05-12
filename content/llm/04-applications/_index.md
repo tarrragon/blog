@@ -28,6 +28,11 @@ weight: 4
 | [4.9](/llm/04-applications/benchmarking-and-evaluation/)           | Benchmarking 與評估方法論                              | capability vs performance、in-house benchmark、`llama-bench`                                                  |
 | [4.10](/llm/04-applications/vision-in-coding-workflow/)            | Vision in coding workflow                              | VLM 在 coding 場景的 use cases、本地 VLM 選型、IDE 整合現狀                                                   |
 | [4.11](/llm/04-applications/static-and-serverless-rag-deployment/) | 靜態 / serverless RAG deployment                       | 沒 backend 的 RAG 四方案、API key 暴露、CORS、abuse、SaaS 供應鏈、跟模組六 routing                            |
+| [4.12](/llm/04-applications/coding-agent-harness/)                 | Coding agent harness                                   | Scaffold vs harness 分層、context budget 25% 規則、subagent 設計、跟 Claude Code / Cursor / Aider 的 mapping  |
+| [4.13](/llm/04-applications/prompt-caching-engineering/)           | Prompt caching 工程實務                                | Cache breakpoint 設計、coding agent / RAG 場景 pattern、anti-pattern、cost / latency 槓桿                     |
+| [4.14](/llm/04-applications/agent-memory-architecture/)            | Agent memory 分層架構                                  | Working / session / episodic / semantic / procedural 四層、寫入時機、retrieval 設計、失敗模式                 |
+| [4.15](/llm/04-applications/llm-tracing-and-observability/)        | LLM tracing 與 observability                           | OTel GenAI semconv、cost / latency / failure debug、trace → eval 閉環                                         |
+| [4.16](/llm/04-applications/llm-as-judge/)                         | LLM-as-Judge 評估方法                                  | Rubric 設計、pairwise vs direct、三大 bias 緩解、calibration、跟 production trace 的閉環                      |
 
 ## 為什麼這個順序
 

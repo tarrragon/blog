@@ -153,6 +153,42 @@ weight: -1
 | -------------------------------------------------------- | ------------------------------------------------------- |
 | [Client-Side LLM](/llm/knowledge-cards/client-side-llm/) | 在 browser 跑 LLM / embedding、WebLLM / transformers.js |
 
+### Coding Agent 工程
+
+| 卡片                                                             | 核心問題                                                      |
+| ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| [Scaffold vs Harness](/llm/knowledge-cards/scaffold-vs-harness/) | Coding agent 的兩個工程層次：建構時靜態 vs runtime 動態       |
+| [Context Budget](/llm/knowledge-cards/context-budget/)           | Coding agent context window 拆分配額、25% 規則                |
+| [Subagent](/llm/knowledge-cards/subagent/)                       | 把特定責任拆給專門子 agent、各自獨立 context、用 handoff 調度 |
+| [Prompt Cache](/llm/knowledge-cards/prompt-cache/)               | 重複 prefix 的 KV cache 服務端持久化、90% cost 折扣           |
+| [Agent Memory](/llm/knowledge-cards/agent-memory/)               | Working / session / episodic / semantic / procedural 四層     |
+
+### Production / Observability
+
+| 卡片                                               | 核心問題                                               |
+| -------------------------------------------------- | ------------------------------------------------------ |
+| [LLM Tracing](/llm/knowledge-cards/llm-tracing/)   | OpenTelemetry GenAI semconv、結構化 span 編碼 LLM 應用 |
+| [LLM-as-Judge](/llm/knowledge-cards/llm-as-judge/) | 用 LLM 評另一個 LLM、production eval 主流方法          |
+
+### Retrieval 進階
+
+| 卡片                                                 | 核心問題                                                |
+| ---------------------------------------------------- | ------------------------------------------------------- |
+| [Reranker](/llm/knowledge-cards/reranker/)           | Cross-encoder 對 retrieval top-K 重新排序、RAG 第二階段 |
+| [Hybrid Search](/llm/knowledge-cards/hybrid-search/) | BM25（字面）+ embedding（語意）合併、補單一路線盲點     |
+
+### Constrained / Structured Output
+
+| 卡片                                                               | 核心問題                                                  |
+| ------------------------------------------------------------------ | --------------------------------------------------------- |
+| [Constrained Decoding](/llm/knowledge-cards/constrained-decoding/) | 推論時 grammar mask 強制合法 JSON / regex / CFG、反而加速 |
+
+### 安全 / 合規
+
+| 卡片                                                      | 核心問題                                               |
+| --------------------------------------------------------- | ------------------------------------------------------ |
+| [OWASP LLM Top 10](/llm/knowledge-cards/owasp-llm-top10/) | LLM 應用最常見 10 大資安風險、跟企業合規溝通的共同詞彙 |
+
 ### Tokenization
 
 | 卡片                                                     | 核心問題                                     |

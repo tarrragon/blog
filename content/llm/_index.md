@@ -144,6 +144,6 @@ weight: 36
 
 ---
 
-_文件版本：v0.6.0_
+_文件版本：v0.7.0_
 _最後更新：2026-05-12_
-_系列狀態：七個模組 + 111 張知識卡片。模組零（9 章）/ 一（10 章 + hands-on）/ 二（5 章）/ 三（11 章、含 reasoning models / speculative decoding）/ 四（12 章、含 long context / embedding / benchmarking / VLM / 靜態 deployment）/ 五（7 章）/ 六（6 章）。_
+_系列狀態：七個模組 + 125 張知識卡片。模組零（9 章）/ 一（10 章 + hands-on、含 QLoRA + judge harness）/ 二（5 章）/ 三（12 章、含 reasoning / speculative / constrained decoding）/ 四（17 章、含 long context / embedding / benchmarking / VLM / 靜態 deployment / coding agent harness / prompt caching / agent memory / tracing / LLM-as-judge）/ 五（7 章）/ 六（7 章、含 OWASP 對照）。_

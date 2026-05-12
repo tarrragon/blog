@@ -141,16 +141,93 @@ In-domain 評估的最小可行流程：
    - Fine-tune 需要至少數千對、最好 1-10 萬對
    - 對少於 1000 對的場景、fine-tune 收益通常低於數據增強 / 提升 retrieval pipeline
 
-Fine-tune 流程（簡化）：
+Fine-tune 流程（詳細）：
+
+### Step 1：蒐集 in-domain training data
+
+三種主流形態：
+
+| Format        | 結構                          | 蒐集難度                      |
+| ------------- | ----------------------------- | ----------------------------- |
+| Positive pair | (query, relevant_doc)         | 容易（從 click log、QA pair） |
+| Triplet       | (anchor, positive, negative)  | 中（要明確 negative）         |
+| Score / label | (query, doc, relevance_score) | 難（要人工標）                |
+
+實務多從 positive pair 開始（InfoNCE loss 在 batch 內自動取其他樣本當 negative）、品質提升再進 triplet（hard negative mining）。
+
+### Step 2：選 base model
+
+選擇看資料量跟硬體：
+
+| 起始 base model              | 適合資料量    | 適合硬體          |
+| ---------------------------- | ------------- | ----------------- |
+| sentence-transformers MiniLM | 1K - 50K 對   | 一般 CPU / 小 GPU |
+| BGE-base / bge-small         | 10K - 100K 對 | 16GB+ GPU         |
+| BGE-large / jina-v3 / mxbai  | 50K+ 對       | 24GB+ GPU         |
+| E5-Mistral-7B-instruct       | 100K+ 對      | 多卡 / A100       |
+
+選擇原則：base model 在 generic benchmark 越強、fine-tune 後上限越高、但訓練成本越高。
+
+### Step 3：Loss 選擇
+
+| Loss                         | 機制                                      | 適合                         |
+| ---------------------------- | ----------------------------------------- | ---------------------------- |
+| MultipleNegativesRankingLoss | InfoNCE 變體、batch 內其他樣本當 negative | Positive pair only、大 batch |
+| Triplet loss                 | 直接比 (anchor, positive, negative) 距離  | 有明確 triplet、傳統選擇     |
+| Cosine similarity loss       | 預測相似度標籤                            | Score / label data           |
+| Contrastive tension loss     | 對比學習變體、效果好                      | 大規模 fine-tune             |
+
+實務 default：MultipleNegativesRankingLoss + batch size 64-128（越大 negatives 越多、品質越高）。
+
+### Step 4：Hard negative mining
+
+純隨機 negative（batch 內其他樣本）容易、但 hard negative（看似相關但實際無關）才能 push 模型品質：
 
 ```text
-1. Collect in-domain (query, doc) pairs（或 (anchor, positive, negative) triplets）
-2. 用 sentence-transformers library 或 Hugging Face PEFT
-3. LoRA fine-tune（不全參數 fine-tune、保留通用能力）
-4. Loss：MultipleNegativesRankingLoss、InfoNCE 等
-5. Hard negative mining：用初版模型 retrieve top-50、人工 / LLM 標註哪些是 hard negative
-6. Iterate：fine-tune → 重 mine hard negatives → re-fine-tune
+1. 用初版 fine-tuned model 對每個 query 跑 retrieve top-50
+2. 對每個 query 的 top-50：
+   - 真正 relevant doc（known positive）→ skip
+   - 其他 → 候選 hard negative
+3. 篩 hard negatives（LLM-as-judge 或人工確認真的「看似相關但不對」）
+4. 用 (query, positive, hard_negative) 重訓
+5. Iterate 2-3 輪
 ```
+
+Hard negative 是 embedding fine-tune 品質的關鍵差距 — 沒做的 fine-tune 通常 plateau 早、做了的可超越通用 model。
+
+### Step 5：LoRA fine-tune 而非 full fine-tune
+
+跟 LLM fine-tune 一樣、embedding model fine-tune 也用 [LoRA](/llm/knowledge-cards/lora/)：
+
+| 方式           | 訓練成本 | 通用能力保留                                                                | 推論方式            |
+| -------------- | -------- | --------------------------------------------------------------------------- | ------------------- |
+| Full fine-tune | 高       | 易 [catastrophic forgetting](/llm/knowledge-cards/catastrophic-forgetting/) | 部署新權重          |
+| LoRA fine-tune | 低       | 保留好                                                                      | 載入 base + adapter |
+
+主流 framework：sentence-transformers + PEFT、Hugging Face Transformers + LoRA library。
+
+### Step 6：Evaluate
+
+不只看 training loss、要實測：
+
+```text
+1. Build in-domain test set（held-out、跟 training 完全分開）
+2. 算 hit_rate@K（query 的 expected doc 是否在 top-K retrieval result）
+3. 跟「base model 未 fine-tune」對比：
+   - Fine-tune 後 hit_rate@5 提升 ≥ 10 percentage point → 成功
+   - 提升 < 5pp → fine-tune 沒效益、不如優化 retrieval pipeline
+4. 確認沒崩通用能力：在 MTEB 跑、看主流 retrieval 任務沒大降
+```
+
+### 失敗模式
+
+| 失敗                              | 緩解                                                    |
+| --------------------------------- | ------------------------------------------------------- |
+| 資料太少（< 1000 對）、模型沒學到 | 數據增強（用 LLM 生 synthetic pair）、改用 prompt + RAG |
+| 訓練 loss 降但 hit_rate 沒升      | Hard negative 不夠、要重 mine                           |
+| In-domain 提升但通用能力崩        | 加 mixed dataset（80% domain + 20% MTEB）               |
+| Embedding dim 不能改              | Base model 已固定 dim、自己訓 from scratch 才能改       |
+| 部署時跟 base model 衝突          | LoRA adapter merge 進 base 後部署、或同時 serve 兩版    |
 
 ## 跟 LLM 的整合：retrieval pipeline
 

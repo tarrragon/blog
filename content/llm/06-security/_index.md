@@ -29,6 +29,7 @@ weight: 6
 | [6.3](/llm/06-security/prompt-injection-in-ide/)         | IDE 場景的 prompt injection       | codebase 內容、外部文件、剪貼簿作為攻擊面、跟雲端 LLM 場景的差異     |
 | [6.4](/llm/06-security/cross-cloud-local-data-boundary/) | 跨雲端 / 本地的資料邊界           | Continue.dev 多 provider 設定、prompt 洩漏點、本地優先的判讀         |
 | [6.5](/llm/06-security/routing-to-production-security/)  | 跨進 production 的 routing 中樞   | 個人 → 團隊 → production 三層演化、列舉 backend/07 對應卡片          |
+| [6.6](/llm/06-security/owasp-llm-top10-mapping/)         | OWASP LLM Top 10 對照圖           | 把 6.0-6.5 對應到 OWASP LLM01-LLM10、跟企業安全溝通的共同詞彙        |
 
 ## 跟其他模組的關係
 
