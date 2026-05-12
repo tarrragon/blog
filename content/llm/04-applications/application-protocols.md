@@ -174,7 +174,7 @@ LLM application 把結果塞進 context、回到推論伺服器繼續
 - **Structured output 蓋過 function calling 訓練**：模型訓練時用 Anthropic tools 格式、應用強制套 OpenAI function spec 的 grammar、模型輸出「合法但語意空洞」的 JSON（schema 對、欄位填湊數）。修法：用模型訓練過的 spec、避免在 grammar 層強制改寫。
 - **MCP server 在 prompt context 撐爆 tool 描述**：MCP server 暴露幾十個 tool、每個都有 schema 跟 description、全塞進 system prompt 把 context budget 耗光。修法：dynamic tool selection（先讓 LLM 看「tool 摘要」選相關的、再把選中 tool 的詳細 schema 塞進 context）。
 - **Function calling + structured output 兩邊 schema 不一致**：模型訓練的 function spec 跟 application 套的 JSON schema 欄位不對、模型輸出符合訓練 spec 但不符合 application schema、parser 失敗。修法：grammar 直接從 function spec 生、避免人工維護兩份。
-- **MCP server 沒做 input validation、prompt injection 通過 tool 結果污染 context**：tool 回的內容沒檢查、惡意內容（如 PR 留言中的「請執行 rm -rf」）被模型當指令執行。修法：tool 輸出做 sanitization、可疑內容用 sandbox 標籤包起來、模型 prompt 明確區分「使用者指令」vs「tool 結果」。
+- **MCP server 沒做 input validation、prompt injection 通過 tool 結果污染 context**：tool 回的內容沒檢查、惡意內容（如 PR 留言中的「請執行 rm -rf」）被模型當指令執行。修法：tool 輸出做 sanitization、可疑內容用 sandbox 標籤包起來、模型 prompt 明確區分「使用者指令」vs「tool 結果」。個人 dev 在自己機器上跑 MCP server 的權限模型（檔案系統 / shell / 網路存取邊界、第三方 MCP 信任）見 [6.2](/llm/06-security/tool-use-permission-model/)；IDE 場景中 codebase / 外部文件 / 剪貼簿等 prompt injection 攻擊面見 [6.3](/llm/06-security/prompt-injection-in-ide/)。
 
 ## 何時可以只用一部分
 

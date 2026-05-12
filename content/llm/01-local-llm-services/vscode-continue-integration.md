@@ -160,7 +160,7 @@ Continue chat panel 下方有 model selector，可以下拉切換。建議的切
 | 處理含 NDA 的客戶 code                    | 本地（合規要求 prompt 留在本機時、走本地路線） |
 | 寫 commit message                         | 本地（隱私 + 任務簡單）                        |
 
-詳細的判斷邏輯見 [1.5 期望管理](/llm/01-local-llm-services/expectation-management/)。
+詳細的判斷邏輯見 [1.5 期望管理](/llm/01-local-llm-services/expectation-management/)。**安全 / 資料邊界面向**：同個 IDE 同時接本地跟雲端 provider、prompt routing 設錯就會把該走本地的 NDA / 客戶 code 送到雲端、見 [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)；codebase / 外部文件 / 剪貼簿成為 prompt injection 攻擊面的判讀見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。
 
 ## Codebase 索引與 @ 命令
 

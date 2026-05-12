@@ -178,7 +178,7 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 選擇依據主要是「副作用範圍」（見 [4.1 工具的副作用範圍設計](/llm/04-applications/tool-use-principles/)）：等級 1-2 工具可以 full auto、等級 3 適合 checkpoint、等級 4-5 強制 step-by-step。
 
-設計 agent 時、先設想最差情況：「agent 跑偏到底會發生什麼」、再決定該用哪一級協作模型。完全自動跑 production migration 通常是 over-trust、step-by-step 跑 search 通常是 under-trust。
+設計 agent 時、先設想最差情況：「agent 跑偏到底會發生什麼」、再決定該用哪一級協作模型。完全自動跑 production migration 通常是 over-trust、step-by-step 跑 search 通常是 under-trust。個人 dev 把這個協作模型從本機 wrapper 演化到團隊 / production 服務時的 routing 判讀見 [6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/)。
 
 ## 本地 LLM 跑 Agent 的特殊挑戰
 
@@ -221,4 +221,4 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 Agent 把控制流的所有權從人類交給 LLM、帶來新的設計問題：失敗從「答錯」變「跑偏」、終止從「使用者結束」變「模型自判」、人類角色從「主導」變「監督」。Agent loop 五步骨架是骨架、context drift / 目標漂移 / tool 誤判是三類典型失敗、「適合 agent vs single-call」要看客觀驗證訊號跟失敗代價、人類審查協作模型要看副作用範圍。本地 LLM 跑 agent 現階段受訓練 + context + 規劃三方面限制、雲端仍是主場。
 
-下一章：[4.3 應用層協議](/llm/04-applications/application-protocols/)、把 function calling / structured output / MCP 三個容易混淆的概念放回正確層級。
+下一章：[4.3 應用層協議](/llm/04-applications/application-protocols/)、把 function calling / structured output / MCP 三個容易混淆的概念放回正確層級。Agent 對本機資源副作用的個人 dev 權限判讀見 [6.2](/llm/06-security/tool-use-permission-model/)、個人工作流跨進 production 服務時的 routing 中樞見 [6.5](/llm/06-security/routing-to-production-security/)。

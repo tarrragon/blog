@@ -135,7 +135,7 @@ Attention(Q, K, V) = softmax(Q @ K^T / sqrt(d_k)) @ V
 
 只算 token N+1 對應的 K、V 新值、跟既有 cache concat。每生一個 token 的計算量從 O(n²) 降到 O(n)。
 
-代價是 KV cache 隨 [context window](/llm/knowledge-cards/context-window/) 線性增長、長 context 場景吃記憶體。Gemma 4 31B 在 32GB Mac 上實用 context 約 8 ~ 16K tokens、超過會 swap。記憶體吃緊時的 KV cache 量化（K=Q8 / V=Q4）見 [模組五 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)。
+代價是 KV cache 隨 [context window](/llm/knowledge-cards/context-window/) 線性增長、長 context 場景吃記憶體。Gemma 4 31B 在 32GB Mac 上實用 context 約 8 ~ 16K tokens、超過會 swap。記憶體吃緊時的 KV cache 量化（K=Q8 / V=Q4）原理與 context / 併發取捨見 [模組五 5.2 KV cache 量化策略](/llm/05-discrete-gpu/kv-cache-quantization-strategy/)、整體 VRAM 預算見 [5.0 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)。
 
 ## Flash Attention：記憶體高效實作
 

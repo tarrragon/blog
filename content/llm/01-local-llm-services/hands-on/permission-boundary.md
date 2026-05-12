@@ -8,7 +8,7 @@ weight: 6
 
 「Ollama 自己改檔案要不要 sudo？」「叫它寫 `rm -rf` 會直接刪嗎？」這類問題的答案來自一個根本事實：**LLM 是 pure function、文字進、文字出、本身沒任何 file system / shell / network 副作用**。改檔案、刪檔案、發網路請求、執行 shell command——全部由 **wrapper 或人類**做。LLM 「以為」自己做了什麼、跟實際發生什麼是兩件事。
 
-本篇用四組對照實驗證明這個事實、再展開 wrapper 三檔審查粒度的設計取捨。這跟 [4.1 副作用範圍設計](/llm/04-applications/tool-use-principles/)、[4.2 Agent 跟人類審查的協作模型](/llm/04-applications/agent-architecture/)、[0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/) 三個原則章節對應。
+本篇用四組對照實驗證明這個事實、再展開 wrapper 三檔審查粒度的設計取捨。這跟 [4.1 副作用範圍設計](/llm/04-applications/tool-use-principles/)、[4.2 Agent 跟人類審查的協作模型](/llm/04-applications/agent-architecture/)、[0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/) 三個原則章節對應、實作層的權限與供應鏈判讀對應 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/) 跟 [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/)。
 
 > **驗證日期**：2026-05-12
 > **環境**：Ollama 0.23.2、`gemma3:1b`、Python stdlib
@@ -365,4 +365,4 @@ cp /tmp/token-orig.md content/llm/knowledge-cards/token.md
 
 讀這篇若指令跑不過、可能是 wrapper script API 微調、但「測試 LLM 是不是 pure function」這個方法本身永遠成立——拿任何 LLM API、送任何 prompt、check 檔案 mtime / md5、就能驗證。
 
-跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、副作用範圍 spectrum 原理見 [4.1 Tool use 原理](/llm/04-applications/tool-use-principles/)、Agent loop 跟人類審查的協作見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/)、術語見 [Sandbox](/llm/knowledge-cards/sandbox/)。
+跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、副作用範圍 spectrum 原理見 [4.1 Tool use 原理](/llm/04-applications/tool-use-principles/)、Agent loop 跟人類審查的協作見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/)、Tool use / MCP server 權限模型的個人 dev 視角見 [6.2](/llm/06-security/tool-use-permission-model/)、術語見 [Sandbox](/llm/knowledge-cards/sandbox/)。

@@ -192,7 +192,7 @@ OLLAMA_HOST=0.0.0.0:11434 ollama serve
 - **公共 Wi-Fi、共用網路**：透過 SSH tunnel 把 11434 隧道到遠端、或加防火牆規則限制 source IP
 - **暴露到 Internet**：需要 reverse proxy 加 auth、Ollama 本身沒有內建身分認證
 
-完整資料流判讀見 [0.7 隱私 / 資安資料流](/llm/00-foundations/privacy-data-flow/)。
+完整資料流判讀見 [0.7 隱私 / 資安資料流](/llm/00-foundations/privacy-data-flow/)、綁定模式（loopback / LAN / reverse proxy + auth）跟誤開放後的具體後果見 [6.1 推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/)。
 
 ### 版本管理
 

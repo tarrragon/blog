@@ -160,7 +160,7 @@ bf16 的 exponent 8 bits、跟 fp32 同範圍、在 LLM gradient 的典型範圍
 
 1. **權重儲存**：Q4_K_M 格式（4.5 bits / 權重）。
 2. **推論時 dequantize**：每次用到權重時、暫時 unpack 回 fp16 / bf16 跟 input 做矩陣乘法。
-3. **Activation 維持 fp16 / bf16**：樸素 Q4_K_M 的預設行為是不量化 activation、避免進一步損失精度。進階場景（[KV cache 量化](/llm/05-discrete-gpu/vram-ram-budget/) K=Q8 / V=Q4、AWQ、GPTQ 等 activation-aware 量化）會例外處理、需依框架文件配置。
+3. **Activation 維持 fp16 / bf16**：樸素 Q4_K_M 的預設行為是不量化 activation、避免進一步損失精度。進階場景（[KV cache 量化](/llm/05-discrete-gpu/kv-cache-quantization-strategy/) K=Q8 / V=Q4、AWQ、GPTQ 等 activation-aware 量化）會例外處理、需依框架文件配置。
 
 所以「Q4 模型」內部運算精度其實是 fp16 / bf16、只有「儲存」是 4 bits。這是為什麼量化主要省記憶體與頻寬、不省算力（算力差距小）。
 

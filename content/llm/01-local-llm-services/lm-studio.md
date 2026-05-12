@@ -50,7 +50,7 @@ Discover 分頁把 Hugging Face 模型搜尋、[量化等級](/llm/knowledge-car
 
 陷阱：
 
-1. **Repo 來源要看**。Hugging Face 上同一個模型有多個社群重新封裝的 repo。`google/gemma-4-...` 是官方 repo；`bartowski/...` 等是社群常見的高品質 quant 提供者。挑下載量高、最近更新的 repo 較安全。
+1. **Repo 來源要看**。Hugging Face 上同一個模型有多個社群重新封裝的 repo。`google/gemma-4-...` 是官方 repo；`bartowski/...` 等是社群常見的高品質 quant 提供者。挑下載量高、最近更新的 repo 較安全。完整的供應鏈信任判讀（量化版本污染、權重完整性、registry 信任）見 [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/)。
 2. **不是所有檔案都要下載**。一個 repo 可能有 5 ~ 10 個量化檔案，下載你選的那個就好。LM Studio UI 有時讓人誤以為要全選。
 3. **下載完成後檢查路徑**：預設下載到 `~/.cache/lm-studio/models/`、跟 Ollama 的 `~/.ollama/models/` 分開。兩邊 model storage 各自獨立、想在兩個伺服器都用同一個模型要分別下載。
 

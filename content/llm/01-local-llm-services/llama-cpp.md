@@ -113,6 +113,8 @@ curl http://localhost:8080/v1/chat/completions \
 
 `model` 欄位 llama-server 忽略，因為它一次只 serve 一個模型（不像 Ollama 可以動態切換）。
 
+`--host 127.0.0.1` 是 loopback 預設、只接受本機連線。改 `0.0.0.0` 會把伺服器暴露到整個 LAN、跟 Ollama 改 `OLLAMA_HOST` 同類別的決定；完整的綁定模式跟誤開放後果見 [6.1 推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/)。
+
 ## GGUF 格式與量化標籤
 
 量化標籤是看 GGUF 檔名選模型的唯一線索、影響「記憶體 / 品質 / 速度」三軸的取捨。GGUF（GGML Unified Format）是 llama.cpp 定義的模型權重格式、把模型權重、tokenizer、metadata 打包成單一檔案。Ollama 內部存的就是 GGUF。
