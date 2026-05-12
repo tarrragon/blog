@@ -176,7 +176,7 @@ Multimodal RAG：
   例：「跟這張 UI 截圖相似的設計」、「跟這個 error 一樣的 issue ticket」
 ```
 
-Multimodal RAG 的 embedding 通常用 [CLIP](/llm/knowledge-cards/clip/)-style 模型（跟 text-only embedding model 不同）、見 [4.8 embedding model internals](/llm/04-applications/embedding-model-internals/) 的「圖文 retrieval」延伸。
+Multimodal RAG 的 embedding 通常用 [CLIP](/llm/knowledge-cards/clip/)-style 模型（跟 [4.8 embedding model internals](/llm/04-applications/embedding-model-internals/) 介紹的 text-only embedding model 訓練 paradigm 同源、都用 contrastive learning、但同時 embed 圖跟文字到共享空間）。
 
 寫 code 場景的潛在應用：
 
@@ -185,6 +185,15 @@ Multimodal RAG 的 embedding 通常用 [CLIP](/llm/knowledge-cards/clip/)-style 
 - **Architecture 圖譜**：架構圖 retrieve、給新需求找對應的舊架構
 
 目前實用度比 text RAG 低、需要的 infrastructure（multimodal embedding service、image-friendly vector DB）尚不普及。
+
+Tripwire（什麼時候值得評估 multimodal RAG）：
+
+1. 推論伺服器（Ollama / llama.cpp）的 release notes 出現 first-class CLIP-style embedding 支援
+2. Vector DB（Qdrant / Milvus / Weaviate）的 image embedding 索引從 experimental 變 stable
+3. 自己工作流累積 1000+ 截圖（設計稿 / UI bug / 架構圖）、且 text 描述 retrieval 已撞天花板
+4. Team 開始把「跟 X 類似的舊 case」當常規查詢、不只是「找特定關鍵字」
+
+任一觸發 → 評估 multimodal RAG；都沒觸發 → 仍用 text RAG。
 
 ## 不在本章內的主題
 

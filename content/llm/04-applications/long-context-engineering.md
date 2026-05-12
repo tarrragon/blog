@@ -72,12 +72,14 @@ Recall accuracy vs 答案位置（10K context）：
 判讀流程：
 
 ```text
-知識總量 < 16K token（effective context 範圍內）？
+知識總量 < 你模型的 effective context（見後文表格、典型 7B-14B 約 8-16K、30B+ 約 16-32K）？
   ├─ 是 → 直接 long context
   └─ 否 → 知識結構化、retrieval key 明確？
             ├─ 是 → RAG
             └─ 否 → 嘗試 hybrid：RAG 把相關段 retrieve 出來 + 放進 long context
 ```
+
+注意「effective context」是你模型實際能 reliable 處理的範圍、不是 model card 上聲稱的 128K — 拿 7B 模型塞 16K 知識仍可能踩 lost-in-the-middle。
 
 混用情境：
 

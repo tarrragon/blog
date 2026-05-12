@@ -1,9 +1,9 @@
 ---
-title: "3.11 想學更深：推薦公開課程"
+title: "3.10 想學更深：推薦公開課程"
 date: 2026-05-11
 description: "Karpathy、Stanford CS224N / CS25 / CS336、DeepLearning.AI、Hugging Face：LLM 理論深入學習的完整路線"
 tags: ["llm", "theory", "courses"]
-weight: 11
+weight: 10
 ---
 
 本模組前十章把 LLM 理論基礎走過一遍：神經網路、embedding、attention、Transformer 架構、訓練流程、sampling、tokenization、cross-language、reasoning models、speculative decoding 內部。深入學習需要更系統的課程、實作練習、跟 paper 閱讀。本章整理「LLM 理論深入」這條學習路線上的高品質資源、標出每門課的定位與適合的讀者。

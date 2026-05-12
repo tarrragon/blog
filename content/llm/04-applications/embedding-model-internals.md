@@ -86,6 +86,8 @@ Stage 4 的「instruction-tuned embedding」是 2024 後流行的設計：query 
 | jina-embeddings-v3         | 8192 tokens    |
 | voyage-3                   | 32K tokens     |
 
+> **事實查核註**：本節所列具體型號（bge-large-en-v1.5、jina-embeddings-v3、nomic-embed-text-v1.5、voyage-3 等）、向量維度、context limit、訓練資料 domain、MTEB / BEIR 排名 — 都是 2026/5 主流版本的估計、各模型升級節奏快、引用前以 [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard) 跟對應 model card 當前狀態為準。
+
 選擇影響 chunking 策略（見 [4.0 RAG](/llm/04-applications/rag-principles/) 的 chunking 段）：短 context embedding 要切細、長 context embedding 可保留更完整段落、但內部 attention 對長段中段仍可能 lost-in-the-middle。
 
 ### 4. Cosine similarity 設計

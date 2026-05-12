@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "fine-tuning", "qlora", "lora"]
 weight: 7
 ---
 
-「在本機 fine-tune 一個小 coding 模型懂我 codebase 的慣例」是個人 dev 的合理目標、特別是在「本地 RAG 不夠精準、prompt engineering 已到天花板」的場景。本篇用 QLoRA 把 fine-tuning 的最短路徑走完：環境準備、資料蒐集、訓練、evaluation、合併權重、部署到 Ollama / llama.cpp 配 VS Code Continue.dev。
+[QLoRA](/llm/knowledge-cards/qlora/)（4-bit 量化 base model + [LoRA](/llm/knowledge-cards/lora/) adapter）讓消費級硬體也能 fine-tune 7B-32B 模型、是 2026/5 本地 fine-tuning 的主流方法。「在本機 fine-tune 一個小 coding 模型懂我 codebase 的慣例」是個人 dev 的合理目標、特別是在「本地 RAG 不夠精準、prompt engineering 已到天花板」的場景。本篇用 QLoRA 把 fine-tuning 的最短路徑走完：環境準備、資料蒐集、訓練、evaluation、合併權重、部署到 Ollama / llama.cpp 配 VS Code Continue.dev。
 
 本篇 framing 是「**真實會跑、不只跑 demo**」、所以包含：硬體預算估算、catastrophic forgetting 防護、evaluation 確認真的有提升、回退方案（fine-tune 失敗時怎麼辦）。
 
@@ -229,6 +229,18 @@ trainer = SFTTrainer(
 trainer.train()
 trainer.save_model("./adapters")
 ```
+
+關鍵超參數的判讀邏輯：
+
+| 參數                          | 預設               | 怎麼調                                                            |
+| ----------------------------- | ------------------ | ----------------------------------------------------------------- |
+| `r`（LoRA rank）              | 16                 | 小 dataset（< 1000 對）可降到 8、大 dataset 升到 32 / 64          |
+| `lora_alpha`                  | 32（通常 = 2 × r） | 增大會放大 LoRA 影響、太大易 catastrophic forgetting              |
+| `target_modules`              | q_proj, v_proj     | 8B+ 模型可加 k_proj + o_proj 提品質、加 ffn 是進階                |
+| `lora_dropout`                | 0.05               | dataset 小時加大（0.1）防 overfit                                 |
+| `num_train_epochs`            | 2                  | 1-3 是常見範圍、看 validation loss 何時開始升                     |
+| `per_device_train_batch_size` | 4                  | 視 GPU 記憶體；不夠用 `gradient_accumulation_steps` 補            |
+| `learning_rate`               | 1e-4               | LoRA 適合較大 lr（vs full fine-tune 的 1e-5）、初值可 1e-4 ~ 5e-4 |
 
 ### 看 training loss 趨勢
 

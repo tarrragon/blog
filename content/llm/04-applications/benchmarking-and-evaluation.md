@@ -40,6 +40,8 @@ weight: 9
 2. **HumanEval 90% vs 95% 差異不大**：飽和區間的 noise 大、判斷 coding 能力靠 SWE-bench / 真實任務測
 3. **LiveCodeBench 避免污染**：定期出新題、模型訓練 cutoff 後的題目不在 pretrain corpus、更能反映真實能力
 
+> **事實查核註**：本章所列 benchmark 飽和狀態（HumanEval 90%+、MMLU 85%+、GSM8K 90%+）、SOTA 數字（SWE-bench < 60%）、各模型在各 benchmark 的相對排名 — 都是 2026/5 估計、隨新模型推出快速變動、引用前以 [Papers with Code](https://paperswithcode.com/) 跟 [HuggingFace Open LLM Leaderboard](https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard) 當前狀態為準。
+
 ### Reasoning benchmarks
 
 | Benchmark   | 任務性質                          | 主要 audience                                                         |
@@ -269,4 +271,4 @@ llama-bench -m target.gguf --draft-model drafter.gguf \
 
 Benchmark 評估有兩條軸：capability（會什麼）跟 performance（跑多快）。Capability 要看多個 benchmark + 自己 in-house benchmark、看分佈跟絕對分數同樣重要；performance 用 `llama-bench` 標準工具量自己硬體上的真實數字。Benchmark 常見陷阱包含訓練污染、飽和、single-task overfit、prompt sensitivity；LLM-as-judge 的 bias 要透過 rubric + 多 judge + 人工 review 緩解。實務最重要的是 in-house benchmark — 公開 benchmark 是 filter、自己案例是 final test。
 
-至此模組四覆蓋了 LLM 作為系統元件的設計取捨：RAG、tool use、agent、應用層協議、workflow、production resource planning、long context、embedding model 內部、benchmarking — 寫 code 場景需要的應用層概念已完整。下一步可進入 [模組五 PC 獨立 GPU](/llm/05-discrete-gpu/) 或 [模組六 安全](/llm/06-security/)。
+下一章：[4.10 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)、把 vision 維度加進 coding 工作流的設計取捨。讀完 4.10、模組四覆蓋了 LLM 作為系統元件的設計取捨（RAG、tool use、agent、應用層協議、workflow、resource planning、long context、embedding、benchmarking、vision）、寫 code 場景需要的應用層概念完整、之後可進入 [模組五 PC 獨立 GPU](/llm/05-discrete-gpu/) 或 [模組六 安全](/llm/06-security/)。

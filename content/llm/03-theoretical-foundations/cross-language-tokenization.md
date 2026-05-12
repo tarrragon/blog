@@ -264,4 +264,4 @@ Code 本身是「英文偏向」的：keyword（`if`、`for`、`return`）、變
 
 模型對不同語言表現不一致、根因是 tokenizer vocab coverage 跟訓練資料分佈兩個獨立因素疊加。Gemma 4 / Qwen3 等主流開源旗艦在中文上接近 native level、是兩因素都改善的結果。實務上「該用什麼語言寫 prompt」取決於模型能力差距、翻譯成本、輸出語言要求——多數寫 code 場景維持中文即可。跨語言 reasoning 失敗有自己的訊號跟緩解策略。Code 部分跟自然語言部分受訓練分佈影響不對稱、判讀時要區分。
 
-下一章：[3.8 想學更深：推薦公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)。
+下一章：[3.8 Reasoning models](/llm/03-theoretical-foundations/reasoning-models/)、看 2024-2026 的 test-time compute paradigm。完整公開課推薦見 [3.10 想學更深](/llm/03-theoretical-foundations/going-deeper-theory/)。
