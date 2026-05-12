@@ -1,16 +1,16 @@
 ---
-title: "本地 LLM 寫 code 實務指南"
+title: "LLM 寫 code 工程實務指南：從心智模型到應用架構"
 date: 2026-05-12
-description: "從心智模型、術語澄清、硬體現實到本地 LLM 服務的安裝、整合 VS Code、模型選型、數學與理論基礎、涵蓋 Apple Silicon Mac 與 Windows / Linux 獨立 GPU 兩條路線"
-tags: ["llm", "local-llm", "mac", "apple-silicon", "nvidia", "discrete-gpu", "windows", "linux", "ollama", "llama-cpp", "foundations", "transformer", "inference"]
+description: "以寫 code 場景為主、涵蓋本地推論（Mac / PC）、雲端混用、LLM 數學與理論基礎、應用層架構（RAG / tool use / agent / VLM / 靜態 deployment）、reasoning model 與 speculative decoding、本地 dev 安全、跨工具世代不變的原理"
+tags: ["llm", "local-llm", "mac", "apple-silicon", "nvidia", "discrete-gpu", "windows", "linux", "ollama", "llama-cpp", "foundations", "transformer", "inference", "rag", "agent", "vlm", "reasoning", "security", "deployment"]
 weight: 36
 ---
 
-本指南的核心目標是把「在自己機器上跑本地 LLM 寫 code」這件事拆成可決策、可實作、可期望管理的工程問題。網路上的本地 LLM 文章常把推論框架、加速技巧與伺服器混為一談；本指南先把這些名詞放回正確的層級，再回答硬體記憶體、模型選擇、VS Code 整合與雲端 / 本地分工問題。
+本指南的核心目標是把「LLM 在寫 code 工作流的完整工程地圖」拆成可決策、可實作、可期望管理的工程問題。範圍覆蓋四條讀者旅程：(1) 在自己機器跑本地 LLM 寫 code 的最短可行路徑（Mac 或 PC）、(2) 想懂 LLM 內部運作機制（數學 + 理論基礎）、(3) 想做 LLM 應用開發（RAG / agent / tool use / VLM / benchmarking / 靜態 deployment）、(4) 關心 LLM 工作流的安全議題（本地 dev 視角 + 靜態網站視角）。網路上的 LLM 文章常把推論框架、加速技巧、應用模式、安全議題混為一談；本指南先把這些名詞放回正確的層級、再回答各層的具體取捨。
 
-本指南預設讀者已經會用過雲端 LLM（ChatGPT、Claude）、手上有一台能跑本地 LLM 的個人機器、熟悉終端機操作、主要目的是把本地 LLM 接到 VS Code 輔助寫 code。硬體前提分兩條路線：Apple Silicon Mac（M1 ~ M4、統一記憶體）走模組一；Windows / Linux + 獨立 GPU（NVIDIA / AMD、獨立 VRAM + 系統 RAM）走模組五。文章不販賣本地 LLM 焦慮、也不誇大它能取代雲端的程度；它的責任是給一條最短可行路徑、並標出每個階段的取捨。
+本指南預設讀者已經會用過雲端 LLM（ChatGPT、Claude）、熟悉終端機操作、想以工程視角理解 LLM。**寫 code 場景是主要使用例、但模組二 / 三 / 四 / 六多數章節跨場景通用**：想懂 reasoning model / RAG / embedding model 內部、即使不裝本地 LLM 也能讀。硬體前提分兩條路線：Apple Silicon Mac（M1 ~ M4、統一記憶體）走模組一；Windows / Linux + 獨立 GPU（NVIDIA / AMD、獨立 VRAM + 系統 RAM）走模組五。文章不販賣 LLM 焦慮、也不誇大本地能取代雲端的程度；它的責任是給每條讀者旅程的最短可行路徑、並標出每個階段的取捨。
 
-模組零跟模組一覆蓋「Mac 上裝跟用」這條最短路徑；模組五覆蓋「PC 獨立 GPU 上裝跟用」的對應路線。想懂底層的讀者、模組二（[數學基礎](/llm/02-math-foundations/)）跟模組三（[LLM 理論基礎](/llm/03-theoretical-foundations/)）提供完整理論圖像、並推薦 MIT / Stanford / Karpathy 等公開課作為深入入口、這兩塊跟硬體平台無關。模組四（[應用層原理](/llm/04-applications/)）整理 LLM 作為系統元件的設計取捨：RAG、tool use、agent、應用層協議與 workflow 編排模式、刻意只寫跨工具世代不變的概念。
+模組零（心智模型）是所有讀者旅程的共同前置。模組一跟模組五是「裝本地 LLM」的兩條硬體路線、依平台選一條；想懂底層走模組二跟模組三（跟硬體無關、含 reasoning model / speculative decoding 等推論細節）；想看 LLM 作為系統元件走模組四（12 章涵蓋 RAG、tool use、agent、應用層協議、workflow、production resource、long context、embedding model、benchmarking、vision、靜態 deployment）；本地工作流跑穩想看安全議題走模組六（個人 dev 視角的供應鏈、伺服器綁定、tool use 權限、prompt injection、跨雲端邊界、production routing）。
 
 ## 教材邊界
 
@@ -26,19 +26,25 @@ weight: 36
 | 期望管理       | [本地 LLM 的擅長領域與分工](/llm/01-local-llm-services/expectation-management/)、混用雲端的時機                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | LLM 通用能力評估、AGI 預測                                        |
 | 數學基礎       | [線性代數](/llm/02-math-foundations/linear-algebra-for-llm/)、[機率與資訊論](/llm/02-math-foundations/probability-and-information/)、[最佳化](/llm/02-math-foundations/calculus-and-optimization/)、[數值精度](/llm/02-math-foundations/numerical-precision/) 在 LLM 中的角色                                                                                                                                                                                                                                                                                             | 完整數學證明、測度論等屬於數學系範圍的主題                        |
 | 理論基礎       | [神經網路](/llm/03-theoretical-foundations/neural-network-basics/)、[embedding](/llm/03-theoretical-foundations/embedding-spaces/)、[attention](/llm/03-theoretical-foundations/attention-mechanism/)、[Transformer](/llm/03-theoretical-foundations/transformer-architecture/)、[訓練流程](/llm/03-theoretical-foundations/training-pipeline/)、[sampling](/llm/03-theoretical-foundations/sampling-and-decoding/)、[tokenization](/llm/03-theoretical-foundations/tokenization-algorithms/)、[跨語言原理](/llm/03-theoretical-foundations/cross-language-tokenization/) | 多模態擴展、最新研究細節交給 Stanford CS25                        |
-| 應用層原理     | [RAG](/llm/04-applications/rag-principles/)、[Tool use](/llm/04-applications/tool-use-principles/)、[Agent 架構](/llm/04-applications/agent-architecture/)、[應用層協議](/llm/04-applications/application-protocols/)、[Workflow 編排](/llm/04-applications/workflow-patterns/)                                                                                                                                                                                                                                                                                           | 具體 framework 教學（LangChain / LlamaIndex）、prompt engineering |
-| 隱私 / 排錯    | [隱私資料流](/llm/00-foundations/privacy-data-flow/)、[排錯方法論](/llm/01-local-llm-services/troubleshooting/)                                                                                                                                                                                                                                                                                                                                                                                                                                                           | 具體合規法規逐條檢核                                              |
+| 應用層原理     | [RAG](/llm/04-applications/rag-principles/)、[Tool use](/llm/04-applications/tool-use-principles/)、[Agent 架構](/llm/04-applications/agent-architecture/)、[應用層協議](/llm/04-applications/application-protocols/)、[Workflow 編排](/llm/04-applications/workflow-patterns/)、[Production resource](/llm/04-applications/production-resource-planning/)、[Artifact 管理](/llm/04-applications/artifact-management/)                                                                                                                                                    | 具體 framework 教學（LangChain / LlamaIndex）、prompt engineering |
+| 進階理論       | [Reasoning models](/llm/03-theoretical-foundations/reasoning-models/)（o1 / R1 / QwQ 風格）、[Speculative decoding 內部](/llm/03-theoretical-foundations/speculative-decoding-internals/)（drafter / MTP / EAGLE）                                                                                                                                                                                                                                                                                                                                                        | 完整 paper 推導、最新研究 frontier                                |
+| 進階應用       | [Long context engineering](/llm/04-applications/long-context-engineering/)、[Embedding model 內部](/llm/04-applications/embedding-model-internals/)、[Benchmarking](/llm/04-applications/benchmarking-and-evaluation/)、[Vision in coding](/llm/04-applications/vision-in-coding-workflow/)、[靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)                                                                                                                                                                               | 完整 LangChain / LlamaIndex 教學                                  |
+| Fine-tuning    | 原理（[LoRA](/llm/knowledge-cards/lora/) / [QLoRA](/llm/knowledge-cards/qlora/) / [catastrophic forgetting](/llm/knowledge-cards/catastrophic-forgetting/)）+ [本機 hands-on](/llm/01-local-llm-services/hands-on/local-fine-tuning/)                                                                                                                                                                                                                                                                                                                                     | 完整資料工程、large-scale distributed fine-tune                   |
+| 隱私 / 安全    | [隱私資料流](/llm/00-foundations/privacy-data-flow/)、[本地 dev 安全模組](/llm/06-security/)（供應鏈 / 伺服器綁定 / tool use / prompt injection / 跨雲端邊界 / production routing）、[靜態網站 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/)、[排錯方法論](/llm/01-local-llm-services/troubleshooting/)                                                                                                                                                                                                                                           | 企業合規逐條檢核、SOC 2 / HIPAA 流程                              |
 | 進一步學習     | [數學公開課推薦](/llm/02-math-foundations/going-deeper-math/)、[LLM 理論公開課推薦](/llm/03-theoretical-foundations/going-deeper-theory/)                                                                                                                                                                                                                                                                                                                                                                                                                                 | （交給推薦的課程跟書籍）                                          |
 
 ## 學習路線
 
-本指南分成五個模組加一組前置卡片。讀者依目的與硬體選讀：
+本指南分成七個模組加一組前置卡片（111 張）。讀者依目的選讀、不需要從頭到尾全讀：
 
-- 用 Apple Silicon Mac、想快速「裝跟用」：讀模組零 + 模組一。
-- 用 Windows / Linux + 獨立 GPU、想快速「裝跟用」：讀模組零（共用心智模型）+ 模組五。
-- 想懂底層：再進入模組二跟模組三、跟硬體平台無關。
-- 想看 LLM 作為系統元件的設計取捨：模組四、跟硬體平台無關。
-- 想跟最新進展接軌：讀完所有模組、再進入推薦的公開課程跟必讀 paper。
+- **想用 Apple Silicon Mac 裝本地 LLM 寫 code**：讀模組零 + 模組一（最短路徑）
+- **想用 Windows / Linux + 獨立 GPU 裝**：讀模組零 + 模組五
+- **想懂 LLM 內部原理**：模組二（數學） + 模組三（理論、含 reasoning models / speculative decoding）— 跟硬體無關
+- **想做 LLM 應用開發（含 RAG / agent / VLM / 靜態 deployment）**：模組四（12 章、跨工具世代不變的原理）— 跟硬體無關
+- **想懂本地工作流的安全議題**：模組一 / 五跑穩後接模組六（個人 dev 視角）
+- **想在靜態網站加 RAG / 智能搜尋**：直接看 [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)
+- **想在本機 fine-tune 模型**：模組三 3.4 訓練流程原理 → [本機 QLoRA hands-on](/llm/01-local-llm-services/hands-on/local-fine-tuning/)
+- **想跟最新進展接軌**：讀完模組後進推薦的公開課程跟 paper（模組二 2.4 + 模組三 3.10）
 
 ### [前置知識卡片](/llm/knowledge-cards/)
 
@@ -58,11 +64,11 @@ weight: 36
 
 ### [模組三：LLM 的理論基礎](/llm/03-theoretical-foundations/)
 
-整理 LLM 內部運作機制：[神經網路基礎](/llm/03-theoretical-foundations/neural-network-basics/)、[embedding 空間](/llm/03-theoretical-foundations/embedding-spaces/)、[attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)、[Transformer 架構](/llm/03-theoretical-foundations/transformer-architecture/)、[訓練流程](/llm/03-theoretical-foundations/training-pipeline/)（pre-train → SFT → RLHF / DPO）、[sampling 策略](/llm/03-theoretical-foundations/sampling-and-decoding/)、[tokenization 算法](/llm/03-theoretical-foundations/tokenization-algorithms/)、[跨語言場景原理](/llm/03-theoretical-foundations/cross-language-tokenization/)。每章末尾接到[公開課推薦](/llm/03-theoretical-foundations/going-deeper-theory/)（Karpathy、Stanford CS224N / CS25 / CS336、DeepLearning.AI）。
+整理 LLM 內部運作機制、共 11 章：[神經網路基礎](/llm/03-theoretical-foundations/neural-network-basics/)、[embedding 空間](/llm/03-theoretical-foundations/embedding-spaces/)、[attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)、[Transformer 架構](/llm/03-theoretical-foundations/transformer-architecture/)、[訓練流程](/llm/03-theoretical-foundations/training-pipeline/)（pre-train → SFT → RLHF / DPO）、[sampling 策略](/llm/03-theoretical-foundations/sampling-and-decoding/)、[tokenization 算法](/llm/03-theoretical-foundations/tokenization-algorithms/)、[跨語言場景原理](/llm/03-theoretical-foundations/cross-language-tokenization/)、[Reasoning models](/llm/03-theoretical-foundations/reasoning-models/)（o1 / R1 / QwQ 等 test-time compute paradigm）、[Speculative decoding 內部](/llm/03-theoretical-foundations/speculative-decoding-internals/)（drafter / MTP / EAGLE）。每章末尾接到[公開課推薦](/llm/03-theoretical-foundations/going-deeper-theory/)（Karpathy、Stanford CS224N / CS25 / CS336、DeepLearning.AI）。
 
 ### [模組四：LLM 應用層原理](/llm/04-applications/)
 
-整理 LLM 作為系統元件的設計原理：[RAG](/llm/04-applications/rag-principles/)、[tool use](/llm/04-applications/tool-use-principles/)、[agent 架構](/llm/04-applications/agent-architecture/)、[應用層協議](/llm/04-applications/application-protocols/)、[workflow 編排模式](/llm/04-applications/workflow-patterns/)。本模組刻意只寫跨工具世代不變的原理、避開 LangChain / LlamaIndex 等具體 framework 教學。
+整理 LLM 作為系統元件的設計原理、共 12 章：[RAG](/llm/04-applications/rag-principles/)、[tool use](/llm/04-applications/tool-use-principles/)、[agent 架構](/llm/04-applications/agent-architecture/)、[應用層協議](/llm/04-applications/application-protocols/)、[workflow 編排模式](/llm/04-applications/workflow-patterns/)、[Production resource planning](/llm/04-applications/production-resource-planning/)、[衍生產物管理](/llm/04-applications/artifact-management/)、[Long context engineering](/llm/04-applications/long-context-engineering/)、[Embedding model 內部](/llm/04-applications/embedding-model-internals/)、[Benchmarking 方法論](/llm/04-applications/benchmarking-and-evaluation/)、[Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)（本地 VLM 接 IDE）、[靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)（沒 backend 場景）。本模組刻意只寫跨工具世代不變的原理、避開 LangChain / LlamaIndex 等具體 framework 教學。
 
 ### [模組五：Windows / Linux + 獨立 GPU](/llm/05-discrete-gpu/)
 
@@ -88,20 +94,26 @@ weight: 36
 
 ## 適合的讀者
 
-| 背景                                                  | 適合程度   | 建議起點                                                                                                                               |
-| ----------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| 用過 ChatGPT / Claude、沒碰過本地模型                 | 直接適合   | [模組零](/llm/00-foundations/) 從頭讀                                                                                                  |
-| 裝過 Ollama 但被網路上的術語混淆                      | 直接適合   | [MLX / MTP / oMLX 區分](/llm/00-foundations/mlx-mtp-omlx/) + [判讀框架](/llm/00-foundations/info-judgment-frames/)                     |
-| 想知道 24GB / 32GB Mac 該選哪個模型                   | 直接適合   | [硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/) + [模型選型](/llm/01-local-llm-services/model-selection-priority/)       |
-| 想用本地 LLM 完全取代 Claude / GPT-5                  | 部分適合   | [期望管理](/llm/01-local-llm-services/expectation-management/) 先看完再決定                                                            |
-| 想懂 LLM 內部運作機制                                 | 直接適合   | [模組三 理論基礎](/llm/03-theoretical-foundations/) 從頭讀                                                                             |
-| 想懂背後的數學                                        | 直接適合   | [模組二 數學基礎](/llm/02-math-foundations/) 從頭讀                                                                                    |
-| 想自己訓練 / fine-tune LLM                            | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)                                                |
-| 用 Windows / Linux + NVIDIA / AMD 獨立 GPU 跑本地 LLM | 直接適合   | [模組零](/llm/00-foundations/) 建心智模型 + [模組五](/llm/05-discrete-gpu/) 處理 VRAM 預算、MoE 卸載、KV cache 量化                    |
-| 想知道本地 LLM 跑起來後的安全議題                     | 直接適合   | [模組六](/llm/06-security/) 個人 dev 視角的安全與權限                                                                                  |
-| 想把 LLM 部署成 production 服務、處理服務化資安       | 部分適合   | 個人視角見 [模組六](/llm/06-security/)；production 場景見 [Backend 模組七 資安](/backend/07-security-data-protection/) 的 LLM 相關章節 |
-| 想在資料中心級 GPU（H100 / H200 / B200）部署          | 部分適合   | 心智模型跟 [knowledge-cards](/llm/knowledge-cards/) 通用；vLLM / TGI / Triton 等資料中心 inference server 另尋專門教材                 |
-| 想跑 Stable Diffusion / Midjourney 等產圖             | 跟主題不同 | 產圖是 Diffusion 架構、見 [Diffusion 卡片](/llm/knowledge-cards/diffusion/)、另尋 ComfyUI / Draw Things 教材                           |
+| 背景                                                  | 適合程度   | 建議起點                                                                                                                                           |
+| ----------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 用過 ChatGPT / Claude、沒碰過本地模型                 | 直接適合   | [模組零](/llm/00-foundations/) 從頭讀                                                                                                              |
+| 裝過 Ollama 但被網路上的術語混淆                      | 直接適合   | [MLX / MTP / oMLX 區分](/llm/00-foundations/mlx-mtp-omlx/) + [判讀框架](/llm/00-foundations/info-judgment-frames/)                                 |
+| 想知道 24GB / 32GB Mac 該選哪個模型                   | 直接適合   | [硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/) + [模型選型](/llm/01-local-llm-services/model-selection-priority/)                   |
+| 想用本地 LLM 完全取代 Claude / GPT-5                  | 部分適合   | [期望管理](/llm/01-local-llm-services/expectation-management/) 先看完再決定                                                                        |
+| 想懂 LLM 內部運作機制                                 | 直接適合   | [模組三 理論基礎](/llm/03-theoretical-foundations/) 從頭讀（含 reasoning models / speculative decoding）                                           |
+| 想懂背後的數學                                        | 直接適合   | [模組二 數學基礎](/llm/02-math-foundations/) 從頭讀                                                                                                |
+| 想懂 o1 / DeepSeek-R1 等 reasoning model 怎麼運作     | 直接適合   | [3.8 Reasoning models](/llm/03-theoretical-foundations/reasoning-models/) 從頭讀                                                                   |
+| 想做 LLM 應用開發（RAG / agent / tool use）           | 直接適合   | [模組四](/llm/04-applications/) 從 4.0 RAG 依序讀                                                                                                  |
+| 想在自家 Hugo / Astro 等靜態網站加 RAG                | 直接適合   | [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)（含資安取捨）                                  |
+| 想用 VLM 看截圖 / 設計稿輔助寫 code                   | 直接適合   | [4.10 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)                                                                  |
+| 想評估 LLM benchmark 數字、做 in-house eval           | 直接適合   | [4.9 Benchmarking 方法論](/llm/04-applications/benchmarking-and-evaluation/)                                                                       |
+| 想在本機 fine-tune 模型懂自家 codebase 慣例           | 直接適合   | [3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/) 原理 + [QLoRA hands-on](/llm/01-local-llm-services/hands-on/local-fine-tuning/) |
+| 想做 large-scale fine-tune / 從頭訓練                 | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/) 跟 Stanford CS336                                          |
+| 用 Windows / Linux + NVIDIA / AMD 獨立 GPU 跑本地 LLM | 直接適合   | [模組零](/llm/00-foundations/) 建心智模型 + [模組五](/llm/05-discrete-gpu/) 處理 VRAM 預算、MoE 卸載、KV cache 量化                                |
+| 想知道本地 LLM 跑起來後的安全議題                     | 直接適合   | [模組六](/llm/06-security/) 個人 dev 視角的安全與權限                                                                                              |
+| 想把 LLM 部署成 production 服務、處理服務化資安       | 部分適合   | 個人視角見 [模組六](/llm/06-security/)；production 場景見 [Backend 模組七 資安](/backend/07-security-data-protection/) 的 LLM 相關章節             |
+| 想在資料中心級 GPU（H100 / H200 / B200）部署          | 部分適合   | 心智模型跟 [knowledge-cards](/llm/knowledge-cards/) 通用；vLLM / TGI / Triton 等資料中心 inference server 另尋專門教材                             |
+| 想跑 Stable Diffusion / Midjourney 等產圖             | 跟主題不同 | 產圖是 Diffusion 架構、見 [Diffusion 卡片](/llm/knowledge-cards/diffusion/)、另尋 ComfyUI / Draw Things 教材                                       |
 
 ## 用語約定
 
@@ -132,6 +144,6 @@ weight: 36
 
 ---
 
-_文件版本：v0.5.0_
+_文件版本：v0.6.0_
 _最後更新：2026-05-12_
-_系列狀態：七個模組 + 知識卡片（模組四應用層原理為大綱階段、模組五 PC 獨立 GPU 七章初稿完成、模組六 本地 LLM 安全與權限六章初稿完成）_
+_系列狀態：七個模組 + 111 張知識卡片。模組零（9 章）/ 一（10 章 + hands-on）/ 二（5 章）/ 三（11 章、含 reasoning models / speculative decoding）/ 四（12 章、含 long context / embedding / benchmarking / VLM / 靜態 deployment）/ 五（7 章）/ 六（6 章）。_
