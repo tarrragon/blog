@@ -6,7 +6,7 @@ tags: ["llm", "security", "tool-use", "mcp", "permission", "agent"]
 weight: 3
 ---
 
-[Tool use](/llm/knowledge-cards/tool-use/) 跟 [MCP](/llm/knowledge-cards/mcp/) server 是本地 LLM 對主機資源最大的副作用面。本章把「這個 tool 能做什麼」「MCP server 跑了會碰到什麼檔案」「能不能 rollback」整理成可操作的權限判讀。隔離技術見 [sandbox](/llm/knowledge-cards/sandbox/) 卡、權限白名單見 backend [allowlist](/backend/knowledge-cards/allowlist/) 跟 [least-privilege](/backend/knowledge-cards/least-privilege/) 卡。本章 framing 是個人 dev 視角；production agent 場景下 tool use 引發的 prompt injection 後果見 [backend/07 LLM agent prompt injection](/backend/07-security-data-protection/llm-prompt-injection-in-agent/)。
+[Tool use](/llm/knowledge-cards/tool-use/) 跟 [MCP](/llm/knowledge-cards/mcp/) server 是本地 LLM 對主機資源最大的副作用面。本章把「這個 tool 能做什麼」「MCP server 跑了會碰到什麼檔案」「能不能 rollback」整理成可操作的權限判讀。原理層的副作用範圍 spectrum、可逆性分級見 [4.1 Tool use 原理](/llm/04-applications/tool-use-principles/)、agent 跟人類審查的協作模型見 [4.2](/llm/04-applications/agent-architecture/)；hands-on 驗證「LLM 自己沒 FS / shell 權限、wrapper 才有」見 [Ollama 改檔案的權限邊界](/llm/01-local-llm-services/hands-on/permission-boundary/)。隔離技術見 [sandbox](/llm/knowledge-cards/sandbox/) 卡、權限白名單見 backend [allowlist](/backend/knowledge-cards/allowlist/) 跟 [least-privilege](/backend/knowledge-cards/least-privilege/) 卡。本章 framing 是個人 dev 視角；production agent 場景下 tool use 引發的 prompt injection 後果見 [backend/07 LLM agent prompt injection](/backend/07-security-data-protection/llm-prompt-injection-in-agent/)。
 
 讀完本章後、你應該能對自己用的 tool / MCP server 回答：能讀寫哪些路徑、能跑哪些 shell command、能連哪些網路位址、副作用有沒有 dry-run / preview、出錯時怎麼回退。
 

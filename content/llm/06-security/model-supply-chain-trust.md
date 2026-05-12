@@ -86,7 +86,7 @@ ls -la Qwen3-30B-A3B-Q4_K_M.gguf
 
 ## Ollama / Hugging Face / LM Studio 的供應鏈差異
 
-三個 registry 在供應鏈管理上的相對位置：
+三個 registry 在實際拉模型的操作面（namespace、download 指令、本機儲存路徑）見對應安裝章節：[1.0 Ollama](/llm/01-local-llm-services/ollama/)、[1.1 LM Studio](/llm/01-local-llm-services/lm-studio/)、PC 場景的 LM Studio 見 [5.4](/llm/05-discrete-gpu/lm-studio-on-windows/)。本節聚焦三者在供應鏈管理上的相對位置：
 
 | Registry         | 供應鏈管理風格                                            | 個人 dev 視角的注意點                                            |
 | ---------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -119,7 +119,7 @@ ls -la Qwen3-30B-A3B-Q4_K_M.gguf
 模型本身的供應鏈之外、Continue.dev / MCP server / Ollama plugin 等也構成供應鏈、且風險形態不同：
 
 1. **MCP server 多為可執行程式碼**：安裝 MCP server 等於在本機跑第三方程式碼、權限影響大於 GGUF 檔案（GGUF 只在 inference 時影響輸出、MCP server 可以直接讀寫檔案、呼叫 shell）。
-2. **Continue.dev 擴充套件**：VS Code marketplace 有基本審查、但 community-published 擴充套件的供應鏈仍是個人視角。
+2. **Continue.dev 擴充套件**：VS Code marketplace 有基本審查、但 community-published 擴充套件的供應鏈仍是個人視角。Continue.dev 安裝與 multi-provider 配置見 [1.3](/llm/01-local-llm-services/vscode-continue-integration/)。
 3. **Ollama Modelfile 中的指令**：Modelfile 內可以指定 template、system prompt 等、若使用社群分享的 Modelfile、要看完內容再用。
 
 MCP server 的權限模型詳見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。

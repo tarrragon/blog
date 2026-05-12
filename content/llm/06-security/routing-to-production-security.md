@@ -6,7 +6,7 @@ tags: ["llm", "security", "production", "routing", "team", "deployment"]
 weight: 6
 ---
 
-模組六前五章建立了個人 dev 視角的 LLM 安全判讀。當工作流從個人 dev 跨進團隊共用、再跨進 production 服務時、安全議題的 framing 跟控制機制都會升級。升級的軸對應 backend 既有卡片：[attack-surface](/backend/knowledge-cards/attack-surface/)、[blast-radius](/backend/knowledge-cards/blast-radius/)、[trust-boundary](/backend/knowledge-cards/trust-boundary/)、[tenant-boundary](/backend/knowledge-cards/tenant-boundary/)、[iam](/backend/knowledge-cards/iam/) 等。本章是這兩個跨越的 routing 中樞、把每個議題在 production 場景下的對應位置（backend/07 對應卡片）整理出來、避免讀者在升級階段「不知道下一步該讀什麼」。
+模組六前五章建立了個人 dev 視角的 LLM 安全判讀（[6.0 供應鏈](/llm/06-security/model-supply-chain-trust/)、[6.1 伺服器綁定](/llm/06-security/inference-server-binding/)、[6.2 tool use 權限](/llm/06-security/tool-use-permission-model/)、[6.3 prompt injection](/llm/06-security/prompt-injection-in-ide/)、[6.4 跨雲端資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)）、framing 的根基是 [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)。當工作流從個人 dev 跨進團隊共用、再跨進 production 服務時、安全議題的 framing 跟控制機制都會升級。升級的軸對應 backend 既有卡片：[attack-surface](/backend/knowledge-cards/attack-surface/)、[blast-radius](/backend/knowledge-cards/blast-radius/)、[trust-boundary](/backend/knowledge-cards/trust-boundary/)、[tenant-boundary](/backend/knowledge-cards/tenant-boundary/)、[iam](/backend/knowledge-cards/iam/) 等。本章是這兩個跨越的 routing 中樞、把每個議題在 production 場景下的對應位置（backend/07 對應卡片）整理出來、避免讀者在升級階段「不知道下一步該讀什麼」。
 
 讀完本章後、你應該能判讀自己當前處在三層哪一階、要跨到下一階時需要補哪些議題、對應到 backend/07 哪些卡片。
 
@@ -51,14 +51,14 @@ production 服務（對外服務 / SaaS / B2B）
 
 需要補的控制（在前五章的基礎上）：
 
-| 議題     | 從個人 dev 的什麼演化而來 | 對應的補強                                 | backend/07 對應卡片                                                                                                          |
-| -------- | ------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| 身份識別 | 自己一人 → 多人共用       | 加 auth、知道誰送了什麼 prompt             | [identity-access-boundary](/backend/07-security-data-protection/identity-access-boundary/)                                   |
-| 入口治理 | bind 到 LAN 加 API key    | 反代 + TLS + rate limit                    | [entrypoint-and-server-protection](/backend/07-security-data-protection/entrypoint-and-server-protection/)                   |
-| 傳輸信任 | 內網 HTTP 偶爾 OK         | 內網全程 HTTPS、TLS 憑證管理               | [transport-trust-and-certificate-lifecycle](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) |
-| 秘密管理 | dotfile 環境變數          | 集中 secret store（Vault / SSM / Doppler） | [secrets-and-machine-credential-governance](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) |
-| 供應鏈   | 自己抓 GGUF / npm package | 內部 mirror、固定 version、定期 audit      | [supply-chain-integrity-and-artifact-trust](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) |
-| 政策     | 自己腦中的判讀            | 寫明 acceptable use、敏感內容指引          | （結合各章的政策性章節）                                                                                                     |
+| 議題     | 從個人 dev 的什麼演化而來                                                         | 對應的補強                                 | backend/07 對應卡片                                                                                                          |
+| -------- | --------------------------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 身份識別 | 自己一人 → 多人共用                                                               | 加 auth、知道誰送了什麼 prompt             | [identity-access-boundary](/backend/07-security-data-protection/identity-access-boundary/)                                   |
+| 入口治理 | bind 到 LAN 加 API key                                                            | 反代 + TLS + rate limit                    | [entrypoint-and-server-protection](/backend/07-security-data-protection/entrypoint-and-server-protection/)                   |
+| 傳輸信任 | 內網 HTTP 偶爾 OK                                                                 | 內網全程 HTTPS、TLS 憑證管理               | [transport-trust-and-certificate-lifecycle](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) |
+| 秘密管理 | dotfile 環境變數                                                                  | 集中 secret store（Vault / SSM / Doppler） | [secrets-and-machine-credential-governance](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) |
+| 供應鏈   | 自己抓 GGUF / npm package（見 [6.0](/llm/06-security/model-supply-chain-trust/)） | 內部 mirror、固定 version、定期 audit      | [supply-chain-integrity-and-artifact-trust](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) |
+| 政策     | 自己腦中的判讀                                                                    | 寫明 acceptable use、敏感內容指引          | （結合各章的政策性章節）                                                                                                     |
 
 團隊共用階段的常見 anti-pattern：
 
@@ -76,17 +76,17 @@ production 服務（對外服務 / SaaS / B2B）
 
 需要補的控制（在前面兩層的基礎上）：
 
-| 議題                        | 從團隊共用的什麼演化而來             | 對應的補強                                              | backend/07 對應卡片                                                                                                        |
-| --------------------------- | ------------------------------------ | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 多租戶隔離                  | 共用 server 跨同事 → 跨用戶          | KV cache / log / model 訪問權的多租戶隔離               | [llm-multi-tenant-isolation](/backend/07-security-data-protection/llm-multi-tenant-isolation/)                             |
-| deployment 供應鏈           | 內部 mirror → 對外責任               | 模型 release 流程、簽章、回退機制                       | [llm-deployment-supply-chain](/backend/07-security-data-protection/llm-deployment-supply-chain/)                           |
-| agent prompt injection 後果 | IDE injection → agent 場景           | tool spec 設計、限制 agent loop、人為 review checkpoint | [llm-prompt-injection-in-agent](/backend/07-security-data-protection/llm-prompt-injection-in-agent/)                       |
-| log / PII 治理              | 簡單 access log → 完整 prompt log    | log 累積的 prompt 內容、PII 偵測與過濾、保留期限        | [llm-log-and-pii-governance](/backend/07-security-data-protection/llm-log-and-pii-governance/)                             |
-| 偵測訊號                    | 看 log → 主動偵測                    | LLM agent 異常行為的訊號設計、tool use 異常模式         | [llm-as-service-detection-coverage](/backend/07-security-data-protection/llm-as-service-detection-coverage/)               |
-| Workload Identity           | server 自己持 API key → workload IAM | 每個 workload 一個身份、可 audit                        | [workload-identity-and-federated-trust](/backend/07-security-data-protection/workload-identity-and-federated-trust/)       |
-| 偵測平台                    | 手動觀察 → SIEM                      | 集中偵測、alert 系統                                    | [detection-coverage-and-signal-governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) |
-| Incident response           | 重啟解決 → IR 流程                   | IR 演練、escalation、post-mortem                        | [incident-case-to-control-workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)               |
-| 合規                        | 不需要 → 對外服務需要                | GDPR / HIPAA / SOC 2 等                                 | [data-protection-and-masking-governance](/backend/07-security-data-protection/data-protection-and-masking-governance/)     |
+| 議題                        | 從團隊共用的什麼演化而來                                                                                                         | 對應的補強                                              | backend/07 對應卡片                                                                                                        |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 多租戶隔離                  | 共用 server 跨同事 → 跨用戶                                                                                                      | KV cache / log / model 訪問權的多租戶隔離               | [llm-multi-tenant-isolation](/backend/07-security-data-protection/llm-multi-tenant-isolation/)                             |
+| deployment 供應鏈           | 內部 mirror → 對外責任                                                                                                           | 模型 release 流程、簽章、回退機制                       | [llm-deployment-supply-chain](/backend/07-security-data-protection/llm-deployment-supply-chain/)                           |
+| agent prompt injection 後果 | IDE injection（[6.3](/llm/06-security/prompt-injection-in-ide/)）→ agent 場景（[4.2](/llm/04-applications/agent-architecture/)） | tool spec 設計、限制 agent loop、人為 review checkpoint | [llm-prompt-injection-in-agent](/backend/07-security-data-protection/llm-prompt-injection-in-agent/)                       |
+| log / PII 治理              | 簡單 access log → 完整 prompt log                                                                                                | log 累積的 prompt 內容、PII 偵測與過濾、保留期限        | [llm-log-and-pii-governance](/backend/07-security-data-protection/llm-log-and-pii-governance/)                             |
+| 偵測訊號                    | 看 log → 主動偵測                                                                                                                | LLM agent 異常行為的訊號設計、tool use 異常模式         | [llm-as-service-detection-coverage](/backend/07-security-data-protection/llm-as-service-detection-coverage/)               |
+| Workload Identity           | server 自己持 API key → workload IAM                                                                                             | 每個 workload 一個身份、可 audit                        | [workload-identity-and-federated-trust](/backend/07-security-data-protection/workload-identity-and-federated-trust/)       |
+| 偵測平台                    | 手動觀察 → SIEM                                                                                                                  | 集中偵測、alert 系統                                    | [detection-coverage-and-signal-governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) |
+| Incident response           | 重啟解決 → IR 流程                                                                                                               | IR 演練、escalation、post-mortem                        | [incident-case-to-control-workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)               |
+| 合規                        | 不需要 → 對外服務需要                                                                                                            | GDPR / HIPAA / SOC 2 等                                 | [data-protection-and-masking-governance](/backend/07-security-data-protection/data-protection-and-masking-governance/)     |
 
 production 階段不是「把團隊共用放大」、是「另一個複雜度等級」。多數議題從 backend/07 既有卡片開始讀、LLM-specific 議題在 backend/07 的 LLM 相關章節（`llm-*.md`）補充。
 

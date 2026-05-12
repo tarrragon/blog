@@ -56,8 +56,8 @@ prompt = system prompt（IDE 工具預設）
 這個結構意味著：
 
 1. **任何 IDE 能讀的檔案、都可能被引入 prompt**。檔案內容是潛在的 injection 入口。
-2. **自動 retrieval（codebase search / RAG）放大攻擊面**。攻擊者只要在 codebase 某個檔案藏 prompt、就有機會被搜尋到。
-3. **agent mode 下、tool 執行結果回流到 prompt**。tool 抓的網頁、git log、檔案內容、shell 輸出都可能含 injection。
+2. **自動 retrieval（codebase search / RAG）放大攻擊面**。攻擊者只要在 codebase 某個檔案藏 prompt、就有機會被搜尋到。retrieval 機制本身的設計見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)、本章補上「retrieval 也是攻擊面」這一視角。
+3. **agent mode 下、tool 執行結果回流到 prompt**。tool 抓的網頁、git log、檔案內容、shell 輸出都可能含 injection。agent loop 怎麼累積 context 跟「中間結果被當新目標」的失敗模式見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/)。
 
 ## IDE 場景的常見 injection 入口
 
@@ -145,7 +145,7 @@ prompt injection → LLM 輸出 → 下游動作
 1. **codebase 搜尋 exclude 第三方依賴目錄**：`node_modules/`、`vendor/`、`.venv/`、`target/`、`dist/` 等加進 search exclude、降低 RAG 索引到藏 prompt 的依賴文件。
 2. **tool use 副作用類動作要 confirm**：見 [6.2](/llm/06-security/tool-use-permission-model/)。
 3. **untrusted 來源內容明確標記**：LLM client 支援的話、用「以下是來自外部 X 的內容、僅供參考」這類框框出來。
-4. **agent mode 別讓 LLM 自己決定下一步**：個人 dev 場景下、agent loop 開太大容易自我循環、值得設 max steps 跟 review checkpoint。
+4. **agent mode 別讓 LLM 自己決定下一步**：個人 dev 場景下、agent loop 開太大容易自我循環、值得設 max steps 跟 review checkpoint。Agent loop 五步骨架跟人類審查協作 spectrum 見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/)。
 5. **codebase 用 git track**：被誤注入時、`git diff` 看得到改動、`git checkout` 回退。
 6. **雲端 LLM 跟本地 LLM 切換要明確**：本地處理 sensitive prompt、雲端跑 polish 與 brainstorm。詳見下章。
 

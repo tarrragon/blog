@@ -6,7 +6,7 @@ tags: ["llm", "security", "privacy", "data-boundary", "continue-dev", "cloud-llm
 weight: 5
 ---
 
-寫 code 工作流常混用本地 LLM 跟雲端 LLM、混用的好處是組合兩邊優勢、代價是 prompt 在不同信任邊界之間流動。本章把「哪些 prompt 該留本機、哪些可以送雲端、怎麼配置才不會誤送」整理成可操作的分流判讀。信任邊界詞彙見 backend [trust-boundary](/backend/knowledge-cards/trust-boundary/) 卡、PII 跟資料分類見 backend [pii](/backend/knowledge-cards/pii/) / [data-classification](/backend/knowledge-cards/data-classification/) 卡、API key 管理見 backend [secret-management](/backend/knowledge-cards/secret-management/) 卡。本章 framing 是個人 dev 視角；production 場景的 log / PII 治理見 [backend/07 LLM log 與 PII 治理](/backend/07-security-data-protection/llm-log-and-pii-governance/)。
+寫 code 工作流常混用本地 LLM 跟雲端 LLM、混用的好處是組合兩邊優勢、代價是 prompt 在不同信任邊界之間流動。本章把「哪些 prompt 該留本機、哪些可以送雲端、怎麼配置才不會誤送」整理成可操作的分流判讀。本章是 [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)「資料流 thinking + 信任邊界」的具體落地、跟 [1.3 VS Code + Continue.dev 整合](/llm/01-local-llm-services/vscode-continue-integration/) 的 multi-provider 配置直接對應。信任邊界詞彙見 backend [trust-boundary](/backend/knowledge-cards/trust-boundary/) 卡、PII 跟資料分類見 backend [pii](/backend/knowledge-cards/pii/) / [data-classification](/backend/knowledge-cards/data-classification/) 卡、API key 管理見 backend [secret-management](/backend/knowledge-cards/secret-management/) 卡。本章 framing 是個人 dev 視角；production 場景的 log / PII 治理見 [backend/07 LLM log 與 PII 治理](/backend/07-security-data-protection/llm-log-and-pii-governance/)。
 
 讀完本章後、你應該能對自己的 IDE 工作流回答：每個 LLM provider 收到什麼 prompt、雲端服務的資料政策大致長怎樣、哪些任務該分到本地、哪些可以送雲端、配置誤送的常見路徑跟對應防護。
 
@@ -102,11 +102,11 @@ weight: 5
 2. **預設雲端、敏感任務切本地**：日常走雲端旗艦、開機密 repo 時切本地。
 3. **依 repo 切**：用 Continue.dev / IDE 工具的「per-workspace config」、每個 repo 自己決定。
 
-選哪種模式取決於工作流的敏感度分布。多數寫 code 個人 dev 屬於「一般 / 機密混合」、值得用模式 1 或模式 3。
+選哪種模式取決於工作流的敏感度分布。多數寫 code 個人 dev 屬於「一般 / 機密混合」、值得用模式 1 或模式 3。「哪個任務適合本地、哪個適合雲端」的任務面判讀見 [1.5 期望管理](/llm/01-local-llm-services/expectation-management/)、本章補上「分流之後的資料邊界」面。
 
 ## Continue.dev 多 provider 配置範例
 
-下面是一個合理的 Continue.dev 配置範例、把本地 + 雲端混用、清楚標出每個 model 的走向：
+Continue.dev 基礎安裝跟單一 provider config 見 [1.3 VS Code + Continue.dev 整合](/llm/01-local-llm-services/vscode-continue-integration/)、本節聚焦多 provider 共存下的安全性設計。下面是一個合理的 Continue.dev 配置範例、把本地 + 雲端混用、清楚標出每個 model 的走向：
 
 ```json
 {
@@ -153,7 +153,7 @@ weight: 5
 
 1. **預設 model 設成雲端、按了 hotkey 沒看到當前 model**：把寫到一半的機密 prompt 送到雲端。對應防護：預設改本地、雲端 model 用名稱前綴明確。
 2. **autocomplete 設成雲端**：補完每幾秒就觸發、prompt 包含當前游標附近 code、流量大且持續。對應防護：autocomplete 必定本地。
-3. **codebase RAG 索引到 `.env` / secrets**：RAG 把 secret 加進 prompt、再送雲端。對應防護：IDE search exclude 加上 `.env`、`*.key`、`secrets/`、`.aws/`。
+3. **codebase RAG 索引到 `.env` / secrets**：RAG 把 secret 加進 prompt、再送雲端。對應防護：IDE search exclude 加上 `.env`、`*.key`、`secrets/`、`.aws/`。RAG 把外部內容引入 prompt 的整體機制與失敗模式見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)。
 4. **多 client 同時跑、key 共用**：Cursor / Continue.dev / Claude Code 等多 client 共用 API key、難追是哪個 client 的流量。對應防護：給每個 client 各自的 API key、有問題能追溯。
 5. **聚合服務不知道實際送到哪**：用 OpenRouter / together.ai 等聚合層、prompt 經過聚合層後送到上游 vendor、上游可能是不同 region 不同政策。對應防護：個人 dev 場景傾向不用聚合、直接接 vendor。
 6. **forgot prompt history 含 sensitive content**：某次貼了機密內容後、後續同 conversation 都帶著、不知不覺重複送。對應防護：機密 prompt 用獨立 conversation、用完清空。
