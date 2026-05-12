@@ -193,6 +193,6 @@ Continue.dev 基礎安裝跟單一 provider config 見 [1.3 VS Code + Continue.d
 
 ## 小結
 
-跨雲端 / 本地的混用是個人 dev 場景的常見模式、能力跟隱私的平衡靠分流。風險主要在「配置稍微錯一步、prompt 被誤送」、防護重點是「預設本地、雲端明確標記、autocomplete 必定本地、RAG exclude secret」。雲端 vendor 的政策依方案跟時間變化、引用前以當前官方文件為準。production 場景的 log / PII 治理跟 vendor 合約管理見 backend/07。
+跨雲端 / 本地的混用是個人 dev 場景的常見模式、能力跟隱私的平衡靠分流。風險主要在「配置稍微錯一步、prompt 被誤送」、防護重點是「預設本地、雲端明確標記、autocomplete 必定本地、RAG exclude secret」。雲端 vendor 的政策依方案跟時間變化、引用前以當前官方文件為準。production 場景的 log / PII 治理跟 vendor 合約管理見 backend/07；**靜態網站 / 沒 backend 場景的 prompt 邊界**（API key 暴露、CORS、SaaS 信任、client-side abuse）見 [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/) 的資安段。
 
 下一章：[6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/)、整合本模組到 backend/07 production 場景的路由。

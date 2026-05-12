@@ -220,6 +220,6 @@ Fine-tune 流程（簡化）：
 
 ## 小結
 
-Embedding model 是 RAG 品質的核心驅動。訓練 paradigm 是 contrastive learning + hard negative mining、跟 LLM 的 next-token prediction 不同。選型看 domain、大小、context limit、normalize 預設；MTEB 是參考、in-domain benchmark 是 final test。Fine-tune 通常不需要、特殊 domain 且資料足夠才考慮。本地 vs 雲端的選擇看隱私 / 成本 / 品質需求。
+Embedding model 是 RAG 品質的核心驅動。訓練 paradigm 是 contrastive learning + hard negative mining、跟 LLM 的 next-token prediction 不同。選型看 domain、大小、context limit、normalize 預設；MTEB 是參考、in-domain benchmark 是 final test。Fine-tune 通常不需要、特殊 domain 且資料足夠才考慮。本地 vs 雲端的選擇看隱私 / 成本 / 品質需求；沒 backend 的靜態場景（個人 blog / docs site）做 embedding 搜尋的 deployment 選擇見 [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
 
 下一章：[4.9 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)、看怎麼判讀 LLM benchmark 數字、自己跑 benchmark 的方法。

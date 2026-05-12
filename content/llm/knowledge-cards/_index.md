@@ -147,6 +147,12 @@ weight: -1
 | [CLIP](/llm/knowledge-cards/clip/)                           | OpenAI contrastive 預訓練、現代 vision encoder 起點       |
 | [Multimodal Fusion](/llm/knowledge-cards/multimodal-fusion/) | Vision + LLM 結合方式：early / cross-attention / native   |
 
+### Deployment / 靜態場景
+
+| 卡片                                                     | 核心問題                                                |
+| -------------------------------------------------------- | ------------------------------------------------------- |
+| [Client-Side LLM](/llm/knowledge-cards/client-side-llm/) | 在 browser 跑 LLM / embedding、WebLLM / transformers.js |
+
 ### Tokenization
 
 | 卡片                                                     | 核心問題                                     |

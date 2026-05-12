@@ -27,6 +27,7 @@ weight: 4
 | [4.8](/llm/04-applications/embedding-model-internals/)    | Embedding model 內部                                   | contrastive learning、選型、MTEB、in-domain fine-tune                                                         |
 | [4.9](/llm/04-applications/benchmarking-and-evaluation/)  | Benchmarking 與評估方法論                              | capability vs performance、in-house benchmark、`llama-bench`                                                  |
 | [4.10](/llm/04-applications/vision-in-coding-workflow/)   | Vision in coding workflow                              | VLM 在 coding 場景的 use cases、本地 VLM 選型、IDE 整合現狀                                                   |
+| [4.11](/llm/04-applications/static-and-serverless-rag-deployment/) | 靜態 / serverless RAG deployment              | 沒 backend 的 RAG 四方案、API key 暴露、CORS、abuse、SaaS 供應鏈、跟模組六 routing                            |
 
 ## 為什麼這個順序
 
