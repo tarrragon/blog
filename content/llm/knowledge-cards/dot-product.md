@@ -12,12 +12,12 @@ Dot product（內積、inner product）的核心概念是「**兩個向量對應
 
 Dot product 在 LLM 中的核心應用：
 
-| 應用                     | 公式 / 機制                                                     | 角色                                 |     |     |     |     |     |     |     |                                                    |
-| ------------------------ | --------------------------------------------------------------- | ------------------------------------ | --- | --- | --- | --- | --- | --- | --- | -------------------------------------------------- |
-| Attention score          | `Q · K^T`                                                       | 算「該 token 跟其他 token 的相關性」 |     |     |     |     |     |     |     |                                                    |
-| Cosine similarity        | `(a · b) / (                                                    |                                      | a   |     | ₂ × |     | b   |     | ₂)` | [RAG](/llm/knowledge-cards/rag/) / semantic search |
-| L2-normalized similarity | normalize 後直接用 `a · b`                                      | Vector database 高效檢索             |     |     |     |     |     |     |     |                                                    |
-| Logits → token 機率      | output_projection 本質是「最後 hidden state · token embedding」 | 算每個 vocab token 的「匹配度」      |     |     |     |     |     |     |     |                                                    |
+| 應用                     | 公式 / 機制                                                     | 角色                                               |
+| ------------------------ | --------------------------------------------------------------- | -------------------------------------------------- |
+| Attention score          | `Q · K^T`                                                       | 算「該 token 跟其他 token 的相關性」               |
+| Cosine similarity        | `dot(a, b) / (norm(a) × norm(b))`                               | [RAG](/llm/knowledge-cards/rag/) / semantic search |
+| L2-normalized similarity | normalize 後直接用 `a · b`                                      | Vector database 高效檢索                           |
+| Logits → token 機率      | output_projection 本質是「最後 hidden state · token embedding」 | 算每個 vocab token 的「匹配度」                    |
 
 幾何直覺：
 
