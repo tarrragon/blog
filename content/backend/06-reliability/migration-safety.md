@@ -41,6 +41,23 @@ tags: ["backend", "reliability"]
 - [GitHub](/backend/08-incident-response/cases/github/_index.md)：大規模平台 migration 容易把結構風險放大。
 - [Stripe](/backend/06-reliability/cases/stripe/_index.md)：金流系統對 migration rollback 與一致性要求特別高。
 
+## 交易類 migration 的特殊性
+
+金流 / payment / order 類 migration 跟一般 schema migration 不同：失敗代價不只是停機、還包括交易結果不一致。
+
+對應 [S1 Stripe Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)：揭露四個機制 — idempotency key（同一交易重送如何得到同一結果）、expand/contract migration（資料變更如何與新舊版本共存）、canary + rollback gate（發版異常如何快速收斂）、transaction-path observability（交易路徑是否可追溯）。
+
+交易類 migration 的關鍵 observables：
+
+- duplicate request collapse ratio：重試是否被正確合併
+- migration phase error drift：遷移各階段錯誤是否收斂
+- canary transaction anomaly：小流量交易是否出現偏差
+- payment trace consistency：trace 是否完整覆蓋交易關鍵欄位
+
+把這四個機制視為「交易類 migration 的安全 baseline」、跟 [6.12 idempotency-replay](/backend/06-reliability/idempotency-replay/) 共用 idempotency key 設計、跟 [6.8 release gate 交易類變更段](/backend/06-reliability/release-gate/#交易類變更的-gate-設計) 共用 canary 條件。
+
+交易類 migration 的反模式是把 migration 當「資料庫任務」獨立執行、跟 release gate 分離。正確做法是把 migration 跟 release 綁定治理、用同一套 evidence 跟 rollback 條件判讀。
+
 ## 下一步路由
 
 - 01.6 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)：雙寫、回填、切流與回滾

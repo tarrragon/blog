@@ -40,6 +40,20 @@ tags: ["backend", "reliability"]
 - [GitHub](/backend/08-incident-response/cases/github/_index.md)：webhook / event replay 經常直接暴露冪等缺口。
 - [Slack](/backend/08-incident-response/cases/slack/_index.md)：訊息與通知類流程特別依賴重複輸入控制。
 
+## 支付類 Idempotency 的設計約束
+
+支付類服務的 idempotency 跟一般 API idempotency 不同 — failure cost 不只是「重複請求」、是「重複扣款 / 重複建單」這類業務不可逆後果。
+
+對應 [S1 Stripe Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)：揭露的關鍵點是「key 設計要跟業務操作邊界一致」、不是「只去重請求 ID」。
+
+實作層的判讀條件：
+
+- **Key 邊界跟業務一致**：同一筆支付的 retry 必須共用 idempotency key、跨支付的請求 key 必須不同。若 key 從 client 隨機生成、server 無 fallback、key TTL 過短、晚到的 retry 都會被當新請求處理
+- **Key 不可被偽造**：客戶端傳的 key 要跟 user / session / business object 綁定校驗、防止攻擊者重送其他用戶的 key 觸發誤合併
+- **保留足夠證據供重放**：transaction-path observability 要覆蓋交易關鍵欄位（amount、currency、source、destination、idempotency key 自身）、讓 reconciliation 跟稽核可重放判讀
+
+跟 [6.11 migration-safety 交易類段](/backend/06-reliability/migration-safety/#交易類-migration-的特殊性) 共用 transaction-path observability、避免 migration 期間 idempotency 判讀失效。詳細的支付 reconciliation 路徑見 [1.9 reconciliation](/backend/01-database/) 跟 [1.3 transaction](/backend/01-database/)。
+
 ## 下一步路由
 
 - 03 message-queue：consumer 端冪等設計
