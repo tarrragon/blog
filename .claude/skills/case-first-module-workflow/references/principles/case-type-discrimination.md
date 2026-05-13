@@ -8,7 +8,7 @@
 
 引用案例前要先判斷 case 類型、不同類型適合不同承接深度。誤判類型 → 編造 case 沒寫的細節 → reviewer 抓出 → 修正成本高。
 
-## 兩類 case
+## 三類 case
 
 ### Rich case
 
@@ -17,6 +17,15 @@
 - **承接方式**：可直接引用為事實、case 揭露的具體數字（RPS、延遲、TPS、stale window）可放進章節
 - **注意**：rich case 內常含「觀察層 + 判讀層」、引用時要分層、見 [fact-vs-derive-layering](./fact-vs-derive-layering.md)
 - **例**：「90M RPS + 5M writes/sec + 99.999%」可直接寫進章節
+
+### Medium case（06 模組新發現的類別）
+
+- **典型**：模組內部 case 庫中、含結構化「決策機制」+「可觀測訊號」表、但無具體數字的中篇 case
+- **內容深度**：30-50 行、結構化 5 段（問題場景 / 決策機制 / 可觀測訊號 / 常見陷阱 / 下一步路由）、含 mechanism + 訊號名稱、但不給具體 RPS / 延遲數字
+- **承接方式**：用 case 直接列出的 **mechanism 名稱** 精準引用（如「揭露 cell 邊界 / shuffle sharding / static stability / constant work 四個機制」）— 比 skeleton 精準、但比 rich 保守
+- **承接句型**：「對應 [case]：揭露 N 個機制 — A（核心問題 1）、B（核心問題 2）、...。這 N 機制把 X 從 Y 轉為 Z。」
+- **注意**：medium case 的「決策機制」段通常是 fact 層、「常見陷阱」段可能含作者判讀層、引用時也要分層
+- **例**：06 模組 G1 Google Error Budget Policy 揭露 SLI / SLO / Budget gate 三對齊、可直接引用三對齊名稱跟對應「使用者價值 / 可接受承諾 / 交付節奏」、但不引用具體 burn rate 閾值數字
 
 ### Skeleton case
 
@@ -28,30 +37,33 @@
 
 ## 判讀條件
 
-| 訊號                              | 判讀           |
-| --------------------------------- | -------------- |
-| 行數 < 30 + 表格為主              | Skeleton       |
-| 行數 > 50 + 含具體數字 / 設計細節 | Rich           |
-| 行數 30-50                        | 看內容密度決定 |
-| 含具體 RPS / 延遲 / TPS 數字      | Rich 傾向      |
-| 只有「揭露 X、Y、Z 三個方向」結構 | Skeleton 傾向  |
+| 訊號                                                                     | 判讀          |
+| ------------------------------------------------------------------------ | ------------- |
+| 行數 < 30 + 表格為主、無 mechanism 段                                    | Skeleton      |
+| 行數 30-50 + 結構化「決策機制 + 可觀測訊號」表、無具體數字               | Medium        |
+| 行數 > 50 + 含具體數字 / 設計細節                                        | Rich          |
+| 含具體 RPS / 延遲 / TPS 數字                                             | Rich 傾向     |
+| 含 mechanism 列表（cell boundary / shuffle sharding 等具名機制）但無數字 | Medium 傾向   |
+| 只有「揭露 X、Y、Z 三個方向」結構                                        | Skeleton 傾向 |
 
-## 兩類 case 的失分對照
+## 三類 case 的失分對照
 
-| Case 類型     | 主要失分模式                                       | 修法                                                                                          |
-| ------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Skeleton case | 擴寫成 case 沒提的細節、編造數字 / taxonomy        | finding 用「揭露 X 方向、以下基於通用工程知識補充」承接                                       |
-| Rich case     | 把作者判讀層當 case fact 引用、混淆 fact vs derive | 引用時分層「觀察 X + 作者判讀 Y」、見 [fact-vs-derive-layering](./fact-vs-derive-layering.md) |
+| Case 類型     | 主要失分模式                                                                                 | 修法                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Skeleton case | 擴寫成 case 沒提的細節、編造數字 / taxonomy                                                  | finding 用「揭露 X 方向、以下基於通用工程知識補充」承接                                       |
+| Medium case   | 把 case 沒提的具體實作層擴寫進來、或混淆「決策機制」段（fact）跟「常見陷阱」段（含作者判讀） | 用 mechanism 名稱精準引用、不擴寫到 case 沒提的具體實作層、判讀段引用時標明「作者判讀」       |
+| Rich case     | 把作者判讀層當 case fact 引用、混淆 fact vs derive                                           | 引用時分層「觀察 X + 作者判讀 Y」、見 [fact-vs-derive-layering](./fact-vs-derive-layering.md) |
 
 ## 實證
 
-backend/01-05 五個模組驗證：
+backend/01-06 六個模組驗證：
 
 - backend/01：用 09 rich cases 為主、case fidelity 88%（skeleton 比例低）
 - backend/02：cache 模組 case 偏向 skeleton、case fidelity 78%（skeleton 過度推論增加）
 - backend/03：messaging case 高比例 skeleton、case fidelity 70%（最低、含 3 個 critical 編造）
 - backend/04：observability 全 skeleton、case fidelity 92.9%（紀律成熟、嚴守「揭露方向、通用補充」）
 - backend/05：5.X skeleton + 引用 09 rich case、case fidelity 80%（rich case 的「判讀層 vs fact」新失分浮現）
+- backend/06：reliability 全 medium case、case fidelity 88%（首次套用 medium case 紀律、揭露「實作層擴寫過頭」失分跟「常見陷阱」段 fact-derive 分層不清）
 
 ## Stage 1 抽 findings 的判讀步驟
 

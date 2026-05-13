@@ -9,7 +9,7 @@ metadata:
 
 # Case-First Module Workflow
 
-跨多章節教學模組（5+ 章）撰寫的五階段流程。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 5 個模組驗證、263 個 review issue / case fidelity 70-93% 區間。
+跨多章節教學模組（5+ 章）撰寫的五階段流程。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 6 個模組驗證、334 個 review issue / case fidelity 70-93% 區間。
 
 ## 適用情境
 
@@ -34,17 +34,18 @@ metadata:
 
 完整讀 case（不只 title + description）、邊際遞減判斷停止點、findings 帶 *case 來源* + *對應章節* + *case 類型* 標明。
 
-關鍵紀律：**Skeleton case vs Rich case 分類** + **Fact vs Derive 分層**。詳見 [stage-1-case-audit](./references/stage-1-case-audit.md) 跟 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md) + [principles/fact-vs-derive-layering](./references/principles/fact-vs-derive-layering.md)。
+關鍵紀律：**Skeleton / Medium / Rich case 三類分類** + **Fact vs Derive 分層**。詳見 [stage-1-case-audit](./references/stage-1-case-audit.md) 跟 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md) + [principles/fact-vs-derive-layering](./references/principles/fact-vs-derive-layering.md)。
 
 ### Stage 2：基於 findings 建立內容
 
 **寫作前 30 分鐘做 SSoT 對應**（這步不做必踩 frame 重複坑）：列出 cross-chapter findings、每個 frame 指定唯一主寫章節、其他章節只 link。跨模組層級概念 → 模組索引（module index、本 blog Hugo 結構下為 `_index.md`、其他靜態網站可能是 `README.md` 或 `index.md`）。
 
-寫作時主動防範三大反覆陷阱：
+寫作時主動防範四大反覆陷阱：
 
 1. **負向陳述骨架**：避免「不是 X、是 Y」推進論證、避免「核心責任不是 X、而是 Y」變體段首
 2. **模板化**：L1/L2/L3 三層、三選一表格、四步驟流程出現前先問「真的對等嗎？」
 3. **首句結構**：每段首句先寫「這個概念是什麼、承擔什麼責任」、不是「對應 [case] 揭露 X」
+4. **Case 引用三段式**（06 模組強化）：每處 case 引用要走「概念定義 → case 引用 → 通用展開」三段、case 引用不能取代段首概念定義。詳見 [principles/case-citation-three-part](./references/principles/case-citation-three-part.md)
 
 寫完每章後 commit 一次或合併 commit。
 
@@ -60,12 +61,12 @@ Stage 2 commit 後、平行 spawn 3 個 reviewer（`subagent_type: general-purpo
 
 預期 issue baseline：
 
-| Reviewer 維度          | 範圍            | 備註                                                                                      |
-| ---------------------- | --------------- | ----------------------------------------------------------------------------------------- |
-| Standards reviewer     | 20-30 issue     | 規範八原則、近期擴展含「不是 X 而是 Y」變體段首                                           |
-| Case fidelity reviewer | 6-20 issue      | 準確率 70-93%、skeleton case 多會擴 over-extrapolation、rich case 多會混淆 fact vs derive |
-| Consistency reviewer   | 13-18 issue     | 跟章節數 / 跨模組密度成正比                                                               |
-| **總計**               | **47-59 issue** | 5 模組穩定範圍                                                                            |
+| Reviewer 維度          | 範圍            | 備註                                                                                                                |
+| ---------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Standards reviewer     | 20-45 issue     | 規範八原則、含「不是 X 而是 Y」變體段首、06 揭露「case 引用段首」新 pattern                                         |
+| Case fidelity reviewer | 6-20 issue      | 準確率 70-93%、skeleton case 多會擴 over-extrapolation、medium case 多會擴實作層、rich case 多會混淆 fact vs derive |
+| Consistency reviewer   | 13-18 issue     | 跟章節數 / 跨模組密度成正比                                                                                         |
+| **總計**               | **47-71 issue** | 6 模組範圍（baseline 隨 standards reviewer 抓的 pattern 變多而擴大）                                                |
 
 ### Stage 4：修正循環
 
@@ -101,13 +102,15 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 
 ## 反覆陷阱（必須主動防範）
 
-5 個模組驗證後、以下陷阱在 *多數模組重複出現*、要在 stage 1-2 就防範、不能依賴 stage 3 reviewer 補救：
+6 個模組驗證後、以下陷阱在 *多數模組重複出現*、要在 stage 1-2 就防範、不能依賴 stage 3 reviewer 補救：
 
 1. **Skeleton case 擴寫成 case 事實** — 詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md)
 2. **Frame 重複展開（SSoT 不清）** — 詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md)
 3. **負向陳述 + 模板化** — 詳見 [self-scan-regex](./references/self-scan-regex.md)
 4. **Rich case 判讀層被當 case fact 引用** — 詳見 [principles/fact-vs-derive-layering](./references/principles/fact-vs-derive-layering.md)
 5. **自掃描盲點累積** — 每個模組 reviewer 抓出新 pattern 後、回頭更新 self-scan regex
+6. **Case 引用段首取代核心概念句**（06 模組新發現）— 詳見 [principles/case-citation-three-part](./references/principles/case-citation-three-part.md)
+7. **Medium case 實作層擴寫過頭**（06 模組新發現）— 用 mechanism 名稱精準引用、不擴寫到 case 沒提的具體實作細節、詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md)
 
 ## 跟其他 skill 的關係
 
