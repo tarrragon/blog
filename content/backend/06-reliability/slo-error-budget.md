@@ -108,6 +108,8 @@ Google 提供的是制度原點，因為它把 SLO、[post-incident review](/bac
 
 ## Error Budget 三對齊跟 Release Gating
 
+Error budget 三對齊是把「SLI 範圍」「SLO 目標」「Budget gate 觸發點」分別跟「使用者價值 / 可接受承諾 / 交付節奏」綁定的設計練習。任一條未對齊、policy 就會跟團隊行為脫鉤 — SLI 不對齊使用者價值、policy 就保護錯的東西；SLO 不對齊承諾、團隊就追錯目標；Gate 不對齊交付節奏、政策就無人遵循。
+
 對應 [G1 Google Error Budget Policy](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)：揭露 SLO policy 設計的三個對齊 — 使用者行為對齊（哪些 journey 直接反映服務價值 → SLI 範圍）、可靠性承諾對齊（什麼水準算服務仍可接受 → SLO 目標）、交付節奏對齊（可靠性消耗到哪裡要改變發布策略 → Budget gate）。
 
 三對齊完成後、release gate 可從「主觀風險判斷」轉成「政策驅動」：
@@ -118,9 +120,11 @@ Google 提供的是制度原點，因為它把 SLO、[post-incident review](/bac
 
 把 budget gate 跟 [6.8 release-gate 變更分層段](/backend/06-reliability/release-gate/#變更分層跟-gate-政策) 綁定、讓「budget 三階段」對應「release gate 三層放行決策」。
 
-最常見的失分是把 error budget 當 KPI、結果 SLI 縮小、告警延後或例外條件過度擴張、降低判讀可信度。budget 是「保護可靠性跟交付節奏平衡」的工具、不是追求某個固定分數的目標。
+Error budget 是「可靠性 vs 交付節奏」的平衡工具、不是被追求的固定分數。當 budget 被 KPI 化、SLI 範圍會被縮小、告警會被延後、例外條件會被擴張 — 三者都降低 budget 的判讀可信度。
 
 ## Burn Rate 雙窗監控
+
+Burn rate 雙窗監控是把「budget 消耗速率」拆成短窗（急性事故）跟長窗（慢性退化）兩個 channel、各自觸發不同回應的設計。比固定閾值告警更接近使用者體感、且能區分「需立即頁」跟「需排修復節奏」。
 
 對應 [HC1 Honeycomb Burn Rate 驅動可靠性操作](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)：揭露 fast burn / slow burn 雙窗監控的價值 — 固定閾值告警在高變化流量下容易失真、burn rate 提供比固定閾值更接近使用者體感的判讀方式。
 
@@ -129,7 +133,7 @@ Google 提供的是制度原點，因為它把 SLO、[post-incident review](/bac
 - **Fast burn**（短窗、高消耗率）：捕捉急性事故、觸發 page 立即響應
 - **Slow burn**（長窗、低消耗率持續累積）：捕捉慢性退化、觸發 ticket 排入修復節奏
 
-兩窗一起用、避免單一閾值在不同流量型態下失真。Honeycomb 案例顯示 tracing-first 分析（從 trace outlier path 找退化關鍵路徑）能補強 burn rate 訊號的可操作性 — 看到 burn rate 上升、能直接跳到具體的退化 trace。詳見 [4.3 tracing-context](/backend/04-observability/tracing-context/) 跟 [4.6 sli-slo-signal](/backend/04-observability/sli-slo-signal/) 的訊號設計。
+兩窗一起用、避免單一閾值在不同流量型態下失真。Honeycomb 自家平台展示 burn rate 訊號可以跟 trace outlier path 對接 — 看到 burn rate 上升、能直接跳到具體退化 trace（這是 Honeycomb 的產品特色、tracing-first 對 burn rate 的補強）。vendor-neutral 的同類概念見 [4.3 tracing-context](/backend/04-observability/tracing-context/) 跟 [4.6 sli-slo-signal](/backend/04-observability/sli-slo-signal/) 的訊號設計。
 
 ## 控制面
 

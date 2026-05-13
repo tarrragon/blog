@@ -59,9 +59,9 @@ debt backlog 也提供跨團隊溝通語言。平台、服務、SRE 與產品可
 
 ## Action Item 分級跟 Release Gate 綁定
 
-Action item 沒分級時、所有改進項並列在 backlog、跟 feature 競爭同一批資源。沒有強制力的 action item 容易被延後到失效。
+Action item 分級的核心責任是給每個改進項匹配的強制力：高風險者進 release gate 綁定、中風險者進 backlog 落地節點、低風險者保留追蹤節點。三類風險（重複事故、影響面放大、診斷效率）各需不同強制力、沒有分級時所有改進項並列競爭資源、強制力被攤平。
 
-對應 [G2 Google Postmortem Action Item Closure 治理](/backend/06-reliability/cases/google/postmortem-action-item-closure-governance/)：揭露三層機制 — action item 分級（P0/P1/P2）、可驗證完成條件（不是「優化」「強化」抽象字）、closure 進固定 review cadence。
+對應 [G2 Google Postmortem Action Item Closure 治理](/backend/06-reliability/cases/google/postmortem-action-item-closure-governance/)：揭露三層機制對應上述三類風險 — action item 分級（P0/P1/P2）、可驗證完成條件（不是「優化」「強化」抽象字）、closure 進固定 review cadence。
 
 P0/P1/P2 分級的核心價值是「給高風險 action item 強制力」：
 
@@ -69,20 +69,22 @@ P0/P1/P2 分級的核心價值是「給高風險 action item 強制力」：
 - P1 會放大事故影響面：要有落地日期跟 gate 條件
 - P2 提升診斷或操作效率：可排 backlog、但保留追蹤節點
 
-最關鍵的綁定是 **P0/P1 直接掛到 release gate**：未完成時不得放行關聯變更。沒有這層綁定、action item 即使分級也只是 backlog 的優先序、不是真正的工程強制力。詳見 [6.8 release gate 變更分層](/backend/06-reliability/release-gate/#變更分層跟-gate-政策)。
+最關鍵的綁定是 **P0/P1 直接掛到 release gate**：未完成時不得放行關聯變更。這層綁定才讓分級從「backlog 優先序」升級為「工程強制力」 — P0/P1 直接決定 release 是否放行、未完成的 action item 直接是放行條件缺口。詳見 [6.8 release gate 變更分層](/backend/06-reliability/release-gate/#變更分層跟-gate-政策)。
+
+整體 reliability 訊號量化（含 toil ratio、closure rate、debt 趨勢）由 [6.18 reliability-metrics-governance](/backend/06-reliability/reliability-metrics-governance/) 處理。
 
 ## Toil Budget：把重複手動工作變成預算問題
 
-Reliability debt 的另一條來源是 toil — 重複的、可自動化的手動工作。Toil 沒被治理時、會持續吸收 SRE 時間、讓改進工作被推遲。
+Toil budget 是把重複手動工作量化成預算、用 closure 機制強制超標部分轉投自動化的治理工具。Toil 沒被當預算治理時、會吸收 SRE 時間、把可靠性改進工作擠掉。
 
-對應 [G3 Google Toil Budget 與 Automation 投資政策](/backend/06-reliability/cases/google/toil-budget-and-automation-investment-policy/)：揭露四個機制 — toil 分類（哪些屬可自動化）、時間配比（典型門檻 50%）、超標處理（凍結部分 feature、轉投自動化）、改善驗證（closure 指標跟 evidence）。
+對應 [G3 Google Toil Budget 與 Automation 投資政策](/backend/06-reliability/cases/google/toil-budget-and-automation-investment-policy/)：揭露四個機制 — toil 分類（哪些屬可自動化）、時間配比（Google SRE 經驗值 50%、組織應依自身 toil 性質校準、不是普世門檻）、超標處理（凍結部分 feature、轉投自動化）、改善驗證（closure 指標跟 evidence）。前兩項屬「測量設計」（toil 是什麼 + 多少算超標）、後兩項屬「治理動作」（超標後做什麼 + 改善如何驗證）。
 
 Toil budget 跟 reliability debt backlog 是兩個面向：
 
 - Reliability debt backlog：管「失效缺口」（事故 / 演練揭露的工程化任務）
 - Toil budget：管「日常壓力」（on-call 反覆手動工作的時間成本）
 
-兩者要共用同一個 closure 機制：toil 超標時、超標部分強制轉投自動化、進 debt backlog 排序、按完成條件驗收。沒有這層綁定、toil 會被當「正常運維」、常態化壓在團隊上。Toil ratio 是 leading indicator、超標前就該觸發改善排程、不是等 on-call burnout 才補。
+兩者要共用同一個 closure 機制：toil 超標時、超標部分強制轉投自動化、進 debt backlog 排序、按完成條件驗收。這層綁定讓 toil 超標自動觸發改善排程：超標 ratio 進日常輸入信號、相關 feature 凍結、自動化工作進 debt backlog 排序、按完成條件驗收。把 toil ratio 當日常治理輸入、而非 on-call burnout 後的事後指標。
 
 ## 交接路由
 

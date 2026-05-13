@@ -42,17 +42,16 @@ tags: ["backend", "reliability"]
 
 ## 支付類 Idempotency 的設計約束
 
-支付類服務的 idempotency 跟一般 API idempotency 不同 — failure cost 不只是「重複請求」、是「重複扣款 / 重複建單」這類業務不可逆後果。
+支付類 idempotency 的核心約束是「key 邊界跟業務操作邊界一致」 — 同一筆支付的所有 retry 必須共用 key、跨支付 key 必須不同、key 不可被偽造、且要保留足夠重放證據。失敗代價（重複扣款、重複建單）讓這四個約束從 best practice 變成正確性前提。
 
-對應 [S1 Stripe Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)：揭露的關鍵點是「key 設計要跟業務操作邊界一致」、不是「只去重請求 ID」。
+對應 [S1 Stripe Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/) 揭露的 idempotency key 跟 transaction-path observability 兩個機制（S1 case 直接列出）；以下實作層判讀條件屬通用工程知識展開、case 本身只給「key 跟業務邊界一致」這一條方向。
 
 實作層的判讀條件：
 
-- **Key 邊界跟業務一致**：同一筆支付的 retry 必須共用 idempotency key、跨支付的請求 key 必須不同。若 key 從 client 隨機生成、server 無 fallback、key TTL 過短、晚到的 retry 都會被當新請求處理
-- **Key 不可被偽造**：客戶端傳的 key 要跟 user / session / business object 綁定校驗、防止攻擊者重送其他用戶的 key 觸發誤合併
-- **保留足夠證據供重放**：transaction-path observability 要覆蓋交易關鍵欄位（amount、currency、source、destination、idempotency key 自身）、讓 reconciliation 跟稽核可重放判讀
+- **Key 邊界跟業務一致**：同一筆支付的 retry 共用 idempotency key、跨支付 key 不同。Key 來源 / TTL / fallback 設計屬實作細節、跟 6.12 SSoT 描述的 server 端 key 設計呼應
+- **保留足夠證據供重放**：transaction-path observability 要覆蓋交易關鍵欄位、讓 reconciliation 跟稽核可重放判讀
 
-跟 [6.11 migration-safety 交易類段](/backend/06-reliability/migration-safety/#交易類-migration-的特殊性) 共用 transaction-path observability、避免 migration 期間 idempotency 判讀失效。詳細的支付 reconciliation 路徑見 [1.9 reconciliation](/backend/01-database/) 跟 [1.3 transaction](/backend/01-database/)。
+跟 [6.11 migration-safety 交易類段](/backend/06-reliability/migration-safety/#交易類-migration-的特殊性) 共用 transaction-path observability、避免 migration 期間 idempotency 判讀失效。支付 reconciliation 跟交易語義詳見 01 資料庫模組（具體章節依 reconciliation / transaction 主題、目前待 01 模組對應頁建立）。
 
 ## 下一步路由
 

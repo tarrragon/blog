@@ -138,15 +138,17 @@ Experiment evidence 的責任是讓實驗結果可被重播、比較與回寫。
 
 ## 案例對照：Chaos / FIT 的安全邊界設計
 
+本章的 boundary 跟 stop condition 框架在 Netflix 三個 case 中各對應不同子問題：N1 給出單輪 chaos 的四元素、N2 給出時段選擇 guardrails、N3 給出實驗輸出的結構化欄位。三者連起來、安全邊界從「實驗執行階段」延伸到「證據交接階段」。
+
 對應 [N1 Netflix Steady State、Chaos 與 FIT](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/)：揭露一輪有效 chaos 驗證的四元素 — Steady state（服務正常時應維持什麼行為）、Hypothesis（失效發生後仍應維持什麼）、Blast radius（實驗範圍怎麼限制）、Abort condition（何時立即停止）。
 
 四元素中 Blast radius + Abort condition 直接對應本章的 boundary 契約跟 stop condition。Steady state 對應 [6.22 steady-state-definition](/backend/06-reliability/steady-state-definition/)、Hypothesis 對應實驗設計層。
 
 對應 [N2 Netflix Business-Hours Chaos 與 Guardrails](/backend/06-reliability/cases/netflix/chaos-monkey-business-hours-guardrails/)：揭露「business-hours chaos 跟 off-hours chaos 的選擇」— 工作時間執行能驗證即時應變能力跟通訊鏈條、但要在 guardrails 內（時段限制、實驗範圍限制、明確 abort trigger、事後回寫）。
 
-Business-hours chaos 的核心判讀不是「比較危險」、是「在可控邊界內接近真實情境」：人員在線、依賴流量特徵真實、通訊鏈條被測到。Off-hours chaos 雖然短期風險低、但驗證價值也低（工具可執行、不代表服務可承受）。
+Business-hours chaos 的核心價值是在 guardrails 內接近真實情境：人員在線可即時應變、依賴流量真實、通訊鏈條被測到。Off-hours 雖然短期風險低、但測到的多是「工具可執行」、不等於「服務可承受」。
 
-對應 [N3 Netflix FIT 證據交接](/backend/06-reliability/cases/netflix/fit-failure-injection-evidence-handoff/)：揭露實驗輸出要結構化成四個決策欄位 — steady-state impact、abort trigger record、fallback result、dependency drift。這四欄位是 FIT 從「測試活動」升級為「release gate 輸入」的關鍵 — 沒這四欄位、FIT 結果只能靠主觀討論回到放行決策。詳見 [6.23 verification-evidence-handoff](/backend/06-reliability/verification-evidence-handoff/) 跟 [6.24 rule-rollout-safety-gate](/backend/06-reliability/rule-rollout-safety-gate/)。
+對應 [N3 Netflix FIT 證據交接](/backend/06-reliability/cases/netflix/fit-failure-injection-evidence-handoff/)：揭露實驗輸出要結構化成四個決策欄位。四欄位分屬不同 release gate 階段 — rollout 決策類（steady-state impact、dependency drift）回答「能否繼續 rollout / blast radius 是否可接受」、事故處置類（abort trigger record、fallback result）回答「是否進入凍結與回退 / 事故時能否安全止血」。這四欄位讓 FIT 結果直接對應 release gate 的具體決策 — 不再倚賴主觀討論回到放行 / 凍結判斷。詳見 [6.23 verification-evidence-handoff](/backend/06-reliability/verification-evidence-handoff/) 跟 [6.24 rule-rollout-safety-gate](/backend/06-reliability/rule-rollout-safety-gate/)。
 
 ## 常見反模式
 

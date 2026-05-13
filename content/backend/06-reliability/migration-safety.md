@@ -43,9 +43,9 @@ tags: ["backend", "reliability"]
 
 ## 交易類 migration 的特殊性
 
-金流 / payment / order 類 migration 跟一般 schema migration 不同：失敗代價不只是停機、還包括交易結果不一致。
+交易類 migration 同時承擔可用性跟正確性兩條軸。一般 schema migration 失敗的代價是停機、交易類失敗的代價額外包含結果不一致（重複扣款、訂單漏建、reconciliation 缺口）。守住兩條軸需要 idempotency + 漸進遷移 + 可回退發布 + 交易路徑可追溯四件事配合。
 
-對應 [S1 Stripe Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)：揭露四個機制 — idempotency key（同一交易重送如何得到同一結果）、expand/contract migration（資料變更如何與新舊版本共存）、canary + rollback gate（發版異常如何快速收斂）、transaction-path observability（交易路徑是否可追溯）。
+對應 [S1 Stripe Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)：揭露四個機制對應上述四件事 — idempotency key（同一交易重送如何得到同一結果）、expand/contract migration（資料變更如何與新舊版本共存）、canary + rollback gate（發版異常如何快速收斂）、transaction-path observability（交易路徑是否可追溯）。
 
 交易類 migration 的關鍵 observables：
 
