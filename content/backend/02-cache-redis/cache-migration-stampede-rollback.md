@@ -57,6 +57,55 @@ Warmup completion 的判讀訊號：
 3. 回源失敗時寫入短 TTL 降級值，避免瞬時重試風暴。
 4. 針對熱門 key 在切換前做預熱與分散過期。
 
+### Cache 切換引發 stampede 的真實事故結構
+
+對應 [2.C9 反例：Cache Stampede Rollout Regression](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) — 看似低風險的 cache key 或 TTL 切換、若沒有回源保護、會讓熱門資料同時 miss。事故結構不是「單一 key 的問題」、是「讀取路徑同時失去緩衝」的系統性失敗。
+
+切換引發 stampede 的三個放大機制：
+
+- **重試放大**：用戶請求 miss、重試、每次重試又 miss、QPS 自然放大
+- **下游放大**：cache miss 同時打到 DB、DB 變慢、cache 用 timeout 的 key 又 miss、回到 DB 更慢、循環
+- **應用層放大**：等待 cache 的 request 堆積、application thread / connection pool 滿、新請求被拒、被拒的請求重試
+
+判讀重點：stampede 的早期訊號通常 *不在 cache 層*、而在下游 origin（DB QPS 突然超 baseline 2 倍）跟 application（latency p99 拉高、request queue length 增加）。看 cache hit rate 才看到 stampede 已經是事故中後段。
+
+### 切換順序決定 stampede 風險
+
+對應 [2.C10 對照：規模差異下的快取策略](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/) — 切換順序（先改 key 結構 vs 先改 TTL）會決定是否出現 stampede 連鎖反應、特別在中型服務同時承受活動流量跟版本切換時。
+
+**安全切換順序**（dual-read 模式）：
+
+1. **新 key 寫入啟用** — 應用層同時寫舊 key + 新 key、不影響讀路徑
+2. **新 key 命中觀察** — 讀路徑加入 v2 first / fallback to v1 邏輯、v2 命中率慢慢爬
+3. **舊 key 命中率穩定下降** — 表示新 key warmup 完成、可進入下一階段
+4. **舊 key 寫入停止** — 只寫 v2、舊 key 自然 TTL 過期
+5. **舊 key 讀 fallback 移除** — 完全切到 v2 only
+
+**危險順序**（會引發 stampede）：
+
+1. 直接 *刪除* 舊 key（沒先 warmup 新 key）— 所有讀立即 miss
+2. *同時* 改 key + TTL + 序列化格式 — 多個變化疊加、debug 困難
+3. *沒先在低流量 region 試跑* — 直接全量切、爆掉沒回退時間
+
+判讀順序：每次切換只動 *一個維度*（key OR TTL OR 序列化）、先在低流量 region / tenant 試跑、命中率穩定後再擴大。對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 跟 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) 的同類 expand-contract 思維。
+
+### Schema 變更引發的隱性 cache invalidation
+
+Schema migration 是 cache stampede 的隱藏觸發點、常被忽略。對應 [9.C6 Tinder](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/) — 「configurable matching」業務邏輯複雜、快取資料的 schema 變化頻繁、一個 schema 變更可能讓既有 cache 全部 invalid、引發 cache stampede。
+
+Schema 變化讓 cache 失效的三種模式：
+
+- **欄位重命名 / 刪除**：舊 cache value 反序列化失敗、application 視為 miss、全部回源
+- **type 變更**（int → string、enum 增 case）：反序列化可能成功但語意錯、業務邏輯踩錯
+- **序列化格式換**（Marshal → MessagePack）：舊格式無法用新 decoder 讀、對應 [2.C3 Shopify](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/) 的雙軌策略
+
+防護設計：
+
+1. **Schema migration 前盤點 cache key**：哪些 cache 包含這個 schema 的資料、估算 invalid 範圍
+2. **大規模 schema migration 配 cache warmup 計畫**：別等 schema migration 後讓用戶觸發 cache miss、預先 warmup
+3. **新欄位用 versioned key**：`product:v2:{id}` 跟 `product:v1:{id}` 並存、避免雙寫干擾
+4. **降級 fallback**：cache miss 後 origin 也準備好被打、別假設「cache hit rate 永遠 95%」
+
 ## Rollout / Cutover / Rollback
 
 Rollout 的責任是把快取切換拆成可停損批次，不把風險一次放大。

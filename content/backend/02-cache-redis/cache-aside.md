@@ -24,6 +24,34 @@ tags: ["backend", "cache", "redis"]
 
 [stale data](/backend/knowledge-cards/stale-data/) 不是例外事件，而是快取系統的常態成本。設計時要先定義可接受的 stale 形式，再設計對應補償與回退路徑。
 
+## Cache aside vs write-through 的選擇
+
+Cache aside 跟 write-through 是兩種主流 cache 模式、選哪種跟 *miss 成本* 跟 *資料更新模式* 直接相關。
+
+對應 [2.C5 Shopify Write-through Cache](/backend/02-cache-redis/cases/shopify-write-through-cache-at-scale/) — read-heavy 服務在高讀流量下、write-through 把寫入跟快取更新綁定、降低 cache miss 風險。Shopify 用這策略在 Shop App 後端避免讀路徑抖動。
+
+**選擇條件**：
+
+- **Cache aside**（read-through）：寫入只動 source-of-truth、讀取 miss 時才填 cache。**適合**：寫入頻率低於讀取、寫入失敗時 cache 不該被汙染、cache 可以重建。**典型**：商品詳情、推薦列表、設定值。
+- **Write-through**：寫入同時動 source-of-truth + cache、保證 cache 永遠最新。**適合**：cache miss 成本很高（回源慢或會壓垮 origin）、寫入流量可控、資料更新時間可預測。**典型**：熱門商品的庫存 / 價格、用戶 session。
+- **Write-behind**（async）：寫入只動 cache、async 同步到 source-of-truth。**適合**：寫入頻率極高、source-of-truth 跟不上、可接受 cache crash 丟失少量資料。**典型**：counter、rate limit、metrics aggregation。
+
+判讀重點：選 cache 模式不是「哪個技術好」、是 *miss 成本* 跟 *寫入頻率* 的取捨。read-heavy + miss 昂貴 → write-through；write-heavy + miss 可接受 → cache aside；write-extreme + 可丟失 → write-behind。
+
+## Cache vs Persistent Store 的取捨
+
+當資料 *可重算*（從上游 source 或計算邏輯重新產生）時、用 cache（in-memory、可 miss）；當資料 *必須持久*（不能丟、無法重建）時、用 persistent store（durable KV、可選 cache hit）。
+
+對應 [9.C25 Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) — Tubi 把 ML feature store 從 ScyllaDB（持久 KV）遷到 ElastiCache（純 cache）、是判斷「feature 可以重新計算、不需要 durability」的取捨。p99 從 ScyllaDB 的數十毫秒降到 ElastiCache 的 < 10ms。
+
+**判斷依據**：
+
+- **重算成本**：feature 重算只需 10ms vs 重算需要 1 秒 vs 需要從歷史資料聚合 1 分鐘、決定可否接受 cache miss
+- **資料一致性需求**：feature 可以稍 stale（推薦演算法）vs 必須最新（餘額、權限）、決定是否能用 in-memory cache
+- **持久性需求**：crash 後資料是否能重建、若不能、必須用 persistent store
+
+選 cache 不是「更快」、是 *接受 miss 換 latency*。若資料不可重算、必須選 persistent store（DynamoDB、ScyllaDB、Cassandra）、即使犧牲 latency。
+
 ## 判讀訊號與回源保護
 
 cache 命中下降時，來源系統會承受瞬間回源壓力。回源保護需要和失效策略一起設計：
