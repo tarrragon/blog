@@ -25,39 +25,43 @@ tags: ["backend", "performance", "capacity", "case-study"]
 
 每個案例標 tag 讓多個主章可以反查。tag 維度：**雲商**（aws / gcp / azure）、**服務維度**（db-oltp / db-kv / cache / mq-stream / compute / global-edge / latency / data-architecture）、**負載形狀**（predictable-peak / event-peak / surge / flash-sale-spike / low-latency-sustained / sustained-growth）。
 
-| 章節                                                                                     | 主題                                  | 雲商  | 服務維度          | 負載形狀              |
-| ---------------------------------------------------------------------------------------- | ------------------------------------- | ----- | ----------------- | --------------------- |
-| [9.C1](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)         | AWS Prime Day 2025 dogfood            | aws   | multi             | predictable-peak      |
-| [9.C2](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)       | GR8 Tech 體育博彩 AI 預測式擴容       | aws   | compute           | event-peak            |
-| [9.C3](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) | Coinbase 超低延遲交易                 | aws   | latency           | low-latency-sustained |
-| [9.C4](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)       | DraftKings Aurora 100 萬 ops/min      | aws   | db-oltp           | event-peak            |
-| [9.C5](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)           | Amazon Ads DynamoDB 9000 萬 RPS       | aws   | db-kv             | sustained-growth      |
-| [9.C6](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)       | Tinder ElastiCache 配對引擎           | aws   | cache             | sustained-growth      |
-| [9.C7](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)           | Lyft 100+ 微服務 8x 峰值              | aws   | compute           | event-peak            |
-| [9.C8](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)     | Niantic Pokémon GO 50x 突發           | gcp   | compute           | surge                 |
-| [9.C9](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)    | Spotify Kafka → Pub/Sub 遷移          | gcp   | mq-stream         | sustained-growth      |
-| [9.C10](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)    | Cloud Spanner 10 億 req/sec           | gcp   | db-oltp           | low-latency-sustained |
-| [9.C11](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)        | Minecraft Earth Cosmos DB 全球        | azure | db-kv             | surge                 |
-| [9.C12](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)            | Riot Games 246 EKS clusters           | aws   | compute           | low-latency-sustained |
-| [9.C13](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) | Hotstar IPL 1860 萬同時觀看           | aws   | global-edge       | predictable-peak      |
-| [9.C14](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)       | Standard Chartered Aurora 4000 TPS    | aws   | db-oltp           | sustained-growth      |
-| [9.C15](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)     | 拓元 Tixcraft 售票搶購                | aws   | db-kv             | flash-sale-spike      |
-| [9.C16](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)           | SeatGeek Virtual Waiting Room         | aws   | compute           | flash-sale-spike      |
-| [9.C17](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/)    | BookMyShow 印度年售 2 億張票          | aws   | data-architecture | flash-sale-spike      |
-| [9.C18](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)               | Zoom COVID 30x DAU 突發               | aws   | db-kv             | surge                 |
-| [9.C19](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)              | Capcom 遊戲後端 DynamoDB + EKS        | aws   | db-kv             | sustained-growth      |
-| [9.C20](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)       | Zomato TiDB → DynamoDB 4x 吞吐        | aws   | db-kv             | sustained-growth      |
-| [9.C21](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)             | ASOS Cosmos DB Black Friday           | azure | db-kv             | predictable-peak      |
-| [9.C22](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/)              | Wayfair GCP burst capacity            | gcp   | data-architecture | predictable-peak      |
-| [9.C23](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)            | Netflix Aurora 統一 +75% 效能         | aws   | db-oltp           | sustained-growth      |
-| [9.C24](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)     | Genesys 99.999% 跨 15 region          | aws   | db-kv             | low-latency-sustained |
-| [9.C25](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)       | Tubi ML feature store sub-10ms p99    | aws   | cache             | low-latency-sustained |
-| [9.C26](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)         | PayPay 行動支付每日 3 億訊息          | aws   | db-kv             | sustained-growth      |
-| [9.C27](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)            | Disney+ 觀看歷史每日數十億動作        | aws   | db-kv             | predictable-peak      |
-| [9.C28](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)     | FanDuel 直播 + 投注雙重峰值           | aws   | compute           | event-peak            |
-| [9.C29](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)    | NTT DOCOMO Lemino 5M MAU / 3 個月     | aws   | db-kv             | predictable-peak      |
-| [9.C30](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)       | Microsoft 365 MongoDB → Cosmos DB     | azure | data-architecture | sustained-growth      |
-| [9.C31](/backend/09-performance-capacity/cases/mercado-libre-latam-bigquery-vertex/)     | Mercado Libre LatAm Vertex + BigQuery | gcp   | data-architecture | sustained-growth      |
+| 章節                                                                                     | 主題                                      | 雲商  | 服務維度          | 負載形狀              |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------- | ----- | ----------------- | --------------------- |
+| [9.C1](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)         | AWS Prime Day 2025 dogfood                | aws   | multi             | predictable-peak      |
+| [9.C2](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/)       | GR8 Tech 體育博彩 AI 預測式擴容           | aws   | compute           | event-peak            |
+| [9.C3](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) | Coinbase 超低延遲交易                     | aws   | latency           | low-latency-sustained |
+| [9.C4](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)       | DraftKings Aurora 100 萬 ops/min          | aws   | db-oltp           | event-peak            |
+| [9.C5](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)           | Amazon Ads DynamoDB 9000 萬 RPS           | aws   | db-kv             | sustained-growth      |
+| [9.C6](/backend/09-performance-capacity/cases/tinder-elasticache-valkey-matching/)       | Tinder ElastiCache 配對引擎               | aws   | cache             | sustained-growth      |
+| [9.C7](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/)           | Lyft 100+ 微服務 8x 峰值                  | aws   | compute           | event-peak            |
+| [9.C8](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)     | Niantic Pokémon GO 50x 突發               | gcp   | compute           | surge                 |
+| [9.C9](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)    | Spotify Kafka → Pub/Sub 遷移              | gcp   | mq-stream         | sustained-growth      |
+| [9.C10](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)    | Cloud Spanner 10 億 req/sec               | gcp   | db-oltp           | low-latency-sustained |
+| [9.C11](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)        | Minecraft Earth Cosmos DB 全球            | azure | db-kv             | surge                 |
+| [9.C12](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)            | Riot Games 246 EKS clusters               | aws   | compute           | low-latency-sustained |
+| [9.C13](/backend/09-performance-capacity/cases/hotstar-ipl-eighteen-million-concurrent/) | Hotstar IPL 1860 萬同時觀看               | aws   | global-edge       | predictable-peak      |
+| [9.C14](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)       | Standard Chartered Aurora 4000 TPS        | aws   | db-oltp           | sustained-growth      |
+| [9.C15](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)     | 拓元 Tixcraft 售票搶購                    | aws   | db-kv             | flash-sale-spike      |
+| [9.C16](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)           | SeatGeek Virtual Waiting Room             | aws   | compute           | flash-sale-spike      |
+| [9.C17](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/)    | BookMyShow 印度年售 2 億張票              | aws   | data-architecture | flash-sale-spike      |
+| [9.C18](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)               | Zoom COVID 30x DAU 突發                   | aws   | db-kv             | surge                 |
+| [9.C19](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)              | Capcom 遊戲後端 DynamoDB + EKS            | aws   | db-kv             | sustained-growth      |
+| [9.C20](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)       | Zomato TiDB → DynamoDB 4x 吞吐            | aws   | db-kv             | sustained-growth      |
+| [9.C21](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)             | ASOS Cosmos DB Black Friday               | azure | db-kv             | predictable-peak      |
+| [9.C22](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/)              | Wayfair GCP burst capacity                | gcp   | data-architecture | predictable-peak      |
+| [9.C23](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)            | Netflix Aurora 統一 +75% 效能             | aws   | db-oltp           | sustained-growth      |
+| [9.C24](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)     | Genesys 99.999% 跨 15 region              | aws   | db-kv             | low-latency-sustained |
+| [9.C25](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)       | Tubi ML feature store sub-10ms p99        | aws   | cache             | low-latency-sustained |
+| [9.C26](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)         | PayPay 行動支付每日 3 億訊息              | aws   | db-kv             | sustained-growth      |
+| [9.C27](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)            | Disney+ 觀看歷史每日數十億動作            | aws   | db-kv             | predictable-peak      |
+| [9.C28](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)     | FanDuel 直播 + 投注雙重峰值               | aws   | compute           | event-peak            |
+| [9.C29](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)    | NTT DOCOMO Lemino 5M MAU / 3 個月         | aws   | db-kv             | predictable-peak      |
+| [9.C30](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)       | Microsoft 365 MongoDB → Cosmos DB         | azure | data-architecture | sustained-growth      |
+| [9.C31](/backend/09-performance-capacity/cases/mercado-libre-latam-bigquery-vertex/)     | Mercado Libre LatAm Vertex + BigQuery     | gcp   | data-architecture | sustained-growth      |
+| [9.C32](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/)  | Clearent Azure SQL Hyperscale 5 億 txn/年 | azure | db-oltp           | sustained-growth      |
+| [9.C33](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)                  | Maersk + Bosch Azure AKS                  | azure | compute           | sustained-growth      |
+| [9.C34](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)               | GCP 130K-node GKE cluster (AI)            | gcp   | compute           | low-latency-sustained |
+| [9.C35](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/)              | Snap GCP KeyDB cross-cloud cache          | gcp   | cache             | low-latency-sustained |
 
 ## 主章寫作時的反查路由
 
@@ -162,31 +166,31 @@ surge（突發遠超預期）內部還可分兩種、設計回應完全不同：
 
 ## 案例覆蓋矩陣
 
-下表顯示 31 個案例在 *服務維度 × 雲商* 的覆蓋情況、空格代表待補。
+下表顯示 35 個案例在 *服務維度 × 雲商* 的覆蓋情況、空格代表待補。
 
 | 服務維度          | AWS                                        | GCP      | Azure    |
 | ----------------- | ------------------------------------------ | -------- | -------- |
-| DB-OLTP           | C4, C14, C23                               | C10      | （待補） |
+| DB-OLTP           | C4, C14, C23                               | C10      | C32      |
 | DB-KV             | C5, C15, C18, C19, C20, C24, C26, C27, C29 | （待補） | C11, C21 |
-| Cache             | C6, C25                                    | （待補） | （待補） |
+| Cache             | C6, C25                                    | C35      | （待補） |
 | MQ-Stream         | C1 (SQS), C7 (Kinesis)                     | C9       | （待補） |
-| Compute / K8s     | C2, C7, C12, C16, C19, C28                 | C8       | （待補） |
+| Compute / K8s     | C2, C7, C12, C16, C19, C28                 | C8, C34  | C33      |
 | Global Edge       | C13                                        | （待補） | （待補） |
-| Latency 敏感      | C3, C25                                    | C10      | （待補） |
+| Latency 敏感      | C3, C25                                    | C10, C35 | （待補） |
 | Data Architecture | C17                                        | C22, C31 | C30      |
 
-AWS 覆蓋 23 個 case（DB-KV 維度最深、達 9 個案例）、GCP 5 個 case、Azure 3 個 case。Azure 補了 Microsoft 365 dogfood case 後、data-architecture 維度有了。後續若要補：GCP cache / K8s 案例、Azure DB-OLTP / cache / compute 案例。
+AWS 23 個 case、GCP 7 個 case（補了 130K-node GKE + Snap KeyDB）、Azure 5 個 case（補了 Clearent + Maersk + Bosch）。三家覆蓋更平衡。剩餘缺口：Azure cache / global edge / latency、GCP DB-KV / MQ-Stream 加深、GCP / Azure global edge。
 
 ### 負載形狀 × 雲商 覆蓋
 
-| 負載形狀              | AWS                             | GCP     | Azure |
-| --------------------- | ------------------------------- | ------- | ----- |
-| predictable-peak      | C1, C13, C27, C29               | C22     | C21   |
-| event-peak            | C2, C4, C7, C28                 | -       | -     |
-| surge                 | C18                             | C8      | C11   |
-| flash-sale-spike      | C15, C16, C17                   | -       | -     |
-| low-latency-sustained | C3, C12, C24, C25               | C10     | -     |
-| sustained-growth      | C5, C6, C14, C19, C20, C23, C26 | C9, C31 | C30   |
+| 負載形狀              | AWS                             | GCP           | Azure         |
+| --------------------- | ------------------------------- | ------------- | ------------- |
+| predictable-peak      | C1, C13, C27, C29               | C22           | C21           |
+| event-peak            | C2, C4, C7, C28                 | -             | -             |
+| surge                 | C18                             | C8            | C11           |
+| flash-sale-spike      | C15, C16, C17                   | -             | -             |
+| low-latency-sustained | C3, C12, C24, C25               | C10, C34, C35 | -             |
+| sustained-growth      | C5, C6, C14, C19, C20, C23, C26 | C9, C31       | C30, C32, C33 |
 
 flash-sale-spike 是 09 案例庫的核心 differentiator — 雲商案例庫對這個負載形狀的著墨遠勝一般 engineering blog。surge 維度補了 Zoom 之後、跟 Pokemon GO（暫時 surge）跟 Minecraft Earth（地理 surge）形成三種次分類對照。後續若有 GCP / Azure 同類售票案例可補。
 
