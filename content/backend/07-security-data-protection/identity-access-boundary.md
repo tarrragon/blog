@@ -73,6 +73,30 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 跨章 audit 時、本條為 canonical 定義（threat scope / mitigation chain），其他章補 layer 視角差異。
 
+## MFA fatigue 與 step-up 驗證
+
+MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用者連續同意，攻擊者把「使用者誤點」當成唯一所需的人類動作。要解這個機制要拉開兩層判讀，登入層放強認證、操作層放 step-up 驗證，避免認證成功直接等於高權限存取。
+
+對應 [Uber 2022](../red-team/cases/identity-access/uber-2022-mfa-fatigue/)：揭露三個失效控制面 — 高風險登入路徑缺 step-up、內部工具授權邊界不足（初始落點可快速擴散）、身分異常事件與值班告警串接不足。案例的「可落地檢查點」段把對應 mechanism 標明為 phishing-resistant 強認證（WebAuthn / passkey）+ 裝置信任綁定（managed device / posture check）、屬於案例直接可引用範圍。
+
+以下基於通用工程知識補充：強認證跟裝置綁定是 mechanism 雙軌、缺一不可。只做強認證不綁裝置、攻擊者仍可在受感染端點繼承會話；只綁裝置不強化認證、社交工程仍可繞過。判讀升級條件是「短時間 MFA 請求密度異常」要走 [on-call](/backend/knowledge-cards/on-call/) 升級、不是當一般使用者支援處理。
+
+## 高權限工具的會話收斂節奏
+
+高權限工具的會話收斂是限制初始落點橫向擴散的核心控制。當身分被取得後、token 撤銷跟 session kill 的時間窗口直接決定攻擊者可觸及的資產面積；這層治理跟登入驗證是兩條獨立 chain，前者管「入場」、後者管「停留」。
+
+對應 [Slack 2022](../red-team/cases/identity-access/slack-2022-token-compromise/)：揭露兩層失效控制面 — 員工身份遭濫用後的隔離速度不足、token 範圍與用途邊界定義不夠細緻。案例「可落地檢查點」直接列出 mechanism 為「管理 token 分域並限制到最小權限、依用途切 audience」，並標明前提是「token 有 inventory 可查 issuer / scope」。
+
+以下基於通用工程知識補充：token 分域要看可達的 trust boundary、不只看權限等級。同樣是「管理 token」、跨多敏感系統的單一 token 跟限定單一 audience 的 token、blast radius 差兩個數量級。事件中分層撤銷的順序是先封最高 blast radius 的 token、再依依賴關係收斂；缺 inventory 時這個順序無法執行、被迫全域撤銷會把可用性同時打斷。
+
+## 第三方身分鏈的內部收斂責任
+
+第三方身分鏈傳導的控制責任由客戶側承擔。當供應商公開事件、內部要有獨立 runbook 讓「閱讀公告」直接 trigger「全域 token 盤點 + 分批輪替」、停留在資訊接收層會把外部風險變成內部事故。這個收斂節奏的快慢、決定供應商事件能維持在「外部新聞」、或升級成「內部事故」。
+
+對應 [Okta + Cloudflare 2023](../red-team/cases/identity-access/okta-cloudflare-2023-support-supply-chain/) 跟 [Cloudflare 2023 follow-through](../red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)：揭露三層失效控制面 — 支援資料流沒被視為高敏感資產、憑證或會話資料生命周期管理不足、供應商事件到客戶內部輪替流程沒有強制觸發。案例「可落地檢查點」標明 mechanism 是讓供應商公告直接 trigger 內部盤點，並要求「輪替能力涵蓋第三方授權 token、不只內部 session」。
+
+以下基於通用工程知識補充：第三方事件的判讀盲點是把控制責任當成廠商的事。實務上廠商只能處理供應商側、客戶側的 token / session / 憑證仍是各組織自己的責任面。內部 runbook 要把「廠商公告」「客戶側盤點」「依範圍輪替」綁成一條 chain、不分先後執行；如果三件事都要等「下一步指引」、控制節奏會比攻擊節奏慢。
+
 ## 常見風險邊界
 
 風險邊界的責任是界定何時需要從一般維運升級到事件處置。

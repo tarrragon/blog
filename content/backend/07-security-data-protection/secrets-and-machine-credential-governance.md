@@ -68,6 +68,22 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 本章「供應商事件傳導未收斂」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在機器憑證層的展現；canonical SSoT 在 7.2、本條補憑證仍活躍的 specific 訊號。
 
+## CI secrets 集中化跟 blast radius
+
+CI secrets 集中化的核心風險是把 *單一節點承載的憑證數量* 跟 *事件期間需要輪替的範圍* 綁在一起。當 CI 平台被入侵、可暴露的範圍就是該平台所有 secrets 的集合；治理層要在事件發生前把這個集合切小、不是事件後試圖縮範圍。
+
+對應 [CircleCI 2023](../red-team/cases/supply-chain/circleci-2023-secrets-rotation/)：揭露三層失效控制面 — CI secrets 集中化且缺少分域隔離、輪替流程成本高（導致執行延遲）、客戶端難以快速判斷最小必要輪替範圍。案例「可落地檢查點」標明 mechanism 是「定義 secrets 分級與依賴地圖、依 blast radius 分層、不只依名稱」，前提條件是事先有 secrets inventory 跟 owner mapping。
+
+以下基於通用工程知識補充：secrets 分級的工程意義是讓事件期間的輪替能按風險排序、不靠 ad-hoc 判斷。缺分級時、組織要在壓力下做全面輪替、容易造成服務中斷或遺漏。日常演練要包含「假設整個 CI vendor 受損」的 fire drill、確認輪替路徑能在 vendor 失能時仍可執行，這是 7.6 跟 [6.x reliability](/backend/06-reliability/) 演練面的共同訴求。
+
+## 簽章金鑰跟長期信任根
+
+簽章金鑰是憑證治理的最高層信任根、生命週期治理要跟一般 token 分開。簽章金鑰一旦失守、攻擊者能偽造 *可被驗證* 的 token、繞過所有依賴該 issuer 的下游驗證；這跟一般 token 洩漏（仍受 token 自身 scope 限制）是不同層級的失效。
+
+對應 [Microsoft Storm-0558 2023](../red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)：揭露三層失效控制面 — 簽章金鑰生命週期治理與隔離策略不足、權杖驗證邊界缺少跨服務一致性檢查、高風險身分事件追查與升級節奏偏慢。案例「可落地檢查點」標明 mechanism 為「把簽章金鑰納入硬體保護與輪替節奏（HSM-bound、不可導出、強制輪替週期）」，並標明前提是「token validation 路徑可在 fleet 層級熱抽換 issuer」。
+
+以下基於通用工程知識補充：簽章金鑰治理要看兩個面 — *材料保護* 用 HSM-bound 處理、*驗證路徑* 用 fleet 層級熱抽換能力處理。只做材料保護不做驗證路徑、發現金鑰外洩時無法快速旋轉 issuer、攻擊窗口會延長到所有 fleet 完成 deploy；只做驗證路徑不做材料保護、金鑰本身仍可被導出做離線濫用。實作層的具體選型（HSM 廠商 / 雲託管 KMS）屬於 [5.x deployment platform](/backend/05-deployment-platform/) 範圍、本章不展開。
+
 ## 常見風險邊界
 
 風險邊界的責任是定義何時要把憑證管理從日常維運升級成事件處置。

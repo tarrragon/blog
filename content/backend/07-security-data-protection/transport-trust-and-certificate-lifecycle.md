@@ -68,6 +68,22 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 本章「第三方信任重評估延遲」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在傳輸層的展現；canonical SSoT 在 7.2、本條補憑證收斂滯後的 specific 訊號。
 
+## 會話重放跟收斂節奏
+
+會話重放是傳輸層獨有的失效模式：攻擊者不需要重新驗證、只需要把 *已通過驗證* 的會話資料拿到新環境播放。控制責任是讓會話的「可重放窗口」短於攻擊者的「重放準備時間」、這條 chain 跟登入層的強認證是不同責任。
+
+對應 [Citrix Bleed 2023](../red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/)：揭露三層失效控制面 — 會話機制缺少快速失效策略、邊界事件後憑證與會話輪替未即時執行、會話異常偵測與告警關聯不足。案例「可落地檢查點」標明 mechanism 為「事件後全域 session/token 失效」+「異常地理位置與設備指紋切換偵測」、屬於案例直接可引用範圍。
+
+以下基於通用工程知識補充：全域 session 失效的工程意義是讓重放窗口從「token 自然到期」縮成「事件確認後分鐘級」。失效路徑要在日常設計時就驗證可用、不能等事件當下發現「沒有全域 kill switch」；同時要區分使用者 session 跟服務間 session、後者通常缺少強制 re-auth 路徑、要靠 issuer 端撤銷。
+
+## 簽章金鑰跟驗證路徑的雙軌治理
+
+傳輸層的憑證 lifecycle 治理跟簽章金鑰治理在事件期間會合流：金鑰本身的撤銷（material side）跟驗證路徑的 issuer 抽換（validation side）要 *同時* 可執行。任一邊失能、信任鏈就無法快速重建。
+
+對應 [Microsoft Storm-0558 2023](../red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)：揭露的「權杖驗證邊界缺少跨服務一致性檢查」屬本章傳輸層責任、「簽章金鑰生命週期治理」屬 [7.6 secrets governance](../secrets-and-machine-credential-governance/) 責任。案例「可落地檢查點」標明 mechanism 是「監控跨租戶 token 出現相同 issuer 但不應跨域的軌跡」、並標明前提是 token validation 路徑可在 fleet 層級熱抽換 issuer。
+
+以下基於通用工程知識補充：fleet 層級熱抽換是工程實作層的具體能力、要在日常基礎設施設計時就支援、不能在事件期間補。常見落差是 token validation 邏輯被嵌進個別 service 的 library、抽換 issuer 要重 deploy 每個 service、時間以小時或天計。傳輸層治理要把這個能力當前提條件、缺位時要在 [5.x deployment platform](/backend/05-deployment-platform/) 跟基礎設施團隊協作補上。
+
 ## 常見風險邊界
 
 風險邊界的責任是判斷何時要升級信任鏈處置等級。
