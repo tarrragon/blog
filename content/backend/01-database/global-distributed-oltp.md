@@ -53,6 +53,22 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 - 跨地區交易延遲 100-200ms（quorum round-trip 不可壓縮）
 - multi-region instance 可設定 quorum location（影響哪幾個 region 必須同意）
 
+### 線性擴展為什麼是 OLTP 設計的最高目標
+
+「2 nodes → 45K reads/sec、4 nodes → 90K reads/sec」這個線性對應在傳統 OLTP（PostgreSQL、MySQL）做不到。原因是 *跨節點交易需要 coordinator 確認順序、coordinator 本身是 bottleneck*。加更多節點不會線性加吞吐、因為 coordinator 處理速度跟不上、其他節點得排隊等。
+
+Spanner 用 Paxos + TrueTime 把 coordinator 變成「拓樸感知的多 leader」、每個 leader 只管自己 partition、不需要全域 coordinator。這層演算法 + 硬體（GPS + 原子鐘）配合、才達成線性擴展。
+
+**為什麼這個 frame 對選型重要**：讀「Spanner 撐 10 億 req/sec」不該理解成「能力差距」、而是「設計差距」— 傳統 OLTP 不是「沒它快」、是「結構上做不到線性」。如果業務未來會跨 region 擴展、必須在最初就選 distributed SQL、不是先用 PostgreSQL 再「之後加 sharding」。
+
+**對等技術跟取捨**：
+
+- **AWS Aurora DSQL**：用其他協議（OCC + 分散式時鐘）達成跨 region strong consistency、不用 TrueTime 硬體。
+- **CockroachDB**：用 HLC（Hybrid Logical Clock）+ Raft、可在通用硬體上跑、但 cross-region linearizability 需要 OCC retry。
+- **TiDB**：用 TSO（Timestamp Oracle）服務發 global timestamp、TSO 本身是 single point、可用性要靠 TSO failover 設計。
+
+TrueTime 是 *專屬硬體投資*、其他方案是 *軟體 only*、兩者一致性保證等級類似、但運維成本跟認證難度差很大。可複製性低的 TrueTime 是 Google 的競爭優勢、不是普遍 best practice。
+
 **容量規劃**：
 
 - 節點數量 = 容量單位（每年 review）
@@ -69,6 +85,18 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 
 - 跨洲低延遲（沒辦法、TrueTime 也壓不下 100ms 跨洲）
 - 高 throughput 但容忍 eventual consistency（Bigtable / Cassandra 更便宜）
+
+### 分散式 SQL 的 over-provision 是體質、不是 misconfiguration
+
+分散式 SQL（TiDB、CockroachDB、Spanner）的工程師常被問「為什麼平時 CPU 只用 20%、還要付這麼多錢」。這不是 capacity planning 失誤、是 distributed SQL 的 *本質要求*：
+
+- 跨節點 transaction 需要 coordinator 角色、leader election 在尖峰當下不能發生、否則整個 cluster 卡住。
+- 預留 buffer 讓 leader / follower lag 在尖峰時仍能收斂、否則 replication lag 爆增、讀走 replica 的 query 拿到太舊資料。
+- 跨 region quorum 在某個 region 暫時不可用時、剩下 region 要能繼續 quorum、所以每 region 的容量都要 >= quorum 所需。
+
+對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 從 TiDB 遷出不是因為 TiDB 不好、是因為 *該 workload 不需要 strong consistency*、過去因 TiDB 必須 over-provision 的成本不划算。判讀重點：如果業務不需要 strong consistency、distributed SQL 的「常態 over-provision 成本」就是浪費；如果業務需要、那是合理代價。
+
+選型公式：先問業務需求要什麼一致性層級、再選 DB 類型、不要倒過來。
 
 ## Aurora DSQL：AWS 的全球 strong consistency 答案
 
@@ -199,6 +227,20 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 詳見 [Latency Budget 卡片](/backend/knowledge-cards/latency-budget/)。
 
+### 業務的不同延遲代價曲線
+
+讀「100-200ms 跨洲延遲」這種數字、不能只看絕對值、要看 *業務代價怎麼隨延遲變化*。不同業務型態的延遲代價曲線不同、決定能不能用 strong consistency 全球分散。
+
+**B2B agent 操作介面**（客服平台、CRM）：agent 連續操作數十次、每次卡 1 秒就累積 30 秒延遲、客服效率掉一半、客戶等不及掛電話。對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 為什麼選 15 個 region active-active — 客服 SaaS 的 100ms 延遲代價遠高於一般網路服務。
+
+**B2C 終端用戶**（社群、電商）：用戶等 1 秒會抱怨、等 3 秒會跳離。但跟 B2B 不同的是、單次操作就完成、不會累積。容忍區間是 200ms-500ms。
+
+**金融交易**（payment、trading）：延遲代價有兩面 — 用戶體驗（付款卡 = 結帳放棄）跟 *系統正確性*（交易順序錯 = 對帳異常）。後者讓金融業願意付 100-200ms 換 strong consistency、因為對帳成本遠高於延遲成本。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場的設計。
+
+**IoT / Telemetry**：延遲幾乎無代價（資料晚 10 秒進來、報表還是準）、但 throughput 代價極大（百萬裝置同時上報、寫入塞爆 DB）。這類完全不該用 strong consistency 全球分散、應該選 KV / 時序 DB。
+
+判讀重點：選 global OLTP 前先把業務的延遲代價曲線畫出來、再決定能付多少 latency budget 給 strong consistency。看到「100ms 跨洲」就反射「太慢」的工程師、忽略了金融業願意付這個代價的真實理由。
+
 ## 容量規劃：跟 single-region OLTP 完全不同
 
 全球分散式 OLTP 的容量規劃有獨特挑戰。
@@ -218,6 +260,65 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 - 不能像 single-region 那樣 reactive 擴容、必須 predictive
 
 **對應 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)**：全球 OLTP 是「不可水平擴容服務」的延伸 — 不只「單機極限」、是「跨 region 協調的物理極限」。
+
+## 可用性目標的成本曲線
+
+「我們要 99.99% 還是 99.999%」這個問題不該用直覺答、要先看每多一個 9 帶來的成本是多少。可用性是非線性、不是線性。
+
+**九的數學意義**：
+
+| 可用性   | 年停機時間     | 月停機時間     | 適用場景                               |
+| -------- | -------------- | -------------- | -------------------------------------- |
+| 99%      | 87.6 小時 / 年 | 7.3 小時 / 月  | 開發 / 內部工具                        |
+| 99.9%    | 8.76 小時 / 年 | 43.8 分鐘 / 月 | 一般 B2C 網站                          |
+| 99.95%   | 4.38 小時 / 年 | 21.9 分鐘 / 月 | B2C SaaS、有 SLA 但非 mission-critical |
+| 99.99%   | 52.6 分鐘 / 年 | 4.38 分鐘 / 月 | 受監管產業、付款                       |
+| 99.999%  | 5.26 分鐘 / 年 | 26 秒 / 月     | 客服 SaaS、telco、5x9 是合約義務       |
+| 99.9999% | 31.5 秒 / 年   | 2.6 秒 / 月    | 極特殊（核電、航空管制）               |
+
+**為什麼 99.99 → 99.999 不是 10x 成本、是指數成本**：每多一個 9、要求 *每一層基礎設施* 都要對等冗餘。
+
+- 99.9 → 99.99：加 multi-AZ active-active、~2-3x 成本
+- 99.99 → 99.999：加 multi-region active-active、+ DR 演練、+ failover 自動化、+ 監控覆蓋率拉滿、~5-10x 成本
+- 99.999 → 99.9999：加多 cloud、+ 異地災備、+ 全自動 failover、+ 全鏈路演練、~20-50x 成本
+
+對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 客服 SaaS 用 15 主 region + 5 衛星 region 達 99.999%、這個架構成本約是 single-region 的 15-20 倍、但 B2B 客服合約要 5x9、這是合理投資。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 廣告計費 99.999% — 1 分鐘斷線可能損失數百萬美金廣告收入、5x9 不是行銷數字、是真實營收邊界。
+
+**SLO 木桶效應**：99.999% 是 *系統整體* 數字、不是 DB 單獨。DNS、load balancer、application、DB、storage 任何一層 single-region 就破壞整體 SLO。傳統工程師常以為「DB 多 region 就好」、忽略 application 跑在 single-region 的話、application down = 整體 down。
+
+要達成 5x9、要 *每一層* 都 multi-region active-active、且 *failover 流程能自動執行*（人類在事故當下做不到 5 分鐘內完成切換）。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的跨 region 部署、跟 [06 可靠性驗證模組](/backend/06-reliability/) 的 DR 演練。
+
+**Region 成本曲線**：N 個 region 的成本約是 1 個 region 的 N 倍（DB + compute + storage 都要複製）、但業務收益不是線性。
+
+- 1 region：覆蓋本國用戶
+- 3 region（同 continent）：覆蓋整 continent、延遲 < 50ms
+- 6 region（跨 continent）：覆蓋全球、延遲 100-200ms
+- 15 region：每個用戶 < 50ms 接入（如 Genesys 模式）
+
+從 6 region → 15 region 的成本是 2.5x、但用戶體驗改善（50ms 延遲）對 B2B 客服很關鍵、對 B2C 推薦系統幾乎無感。region 數量選擇要看 *業務模型對延遲的敏感度*、不是工程「越多越好」。
+
+## Sharding 粒度跟業務一致性需求
+
+distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 cluster + 應用層 sharding**。選哪個跟業務的一致性需求有關。
+
+**Hyperscale / Aurora 同類設計**（storage / compute 分離）：
+
+- AWS Aurora、Azure SQL Hyperscale、GCP AlloyDB、Spanner 都採類似工程哲學 — log-structured 分散式 storage + 獨立 compute scale
+- storage 最高通常 100 TB（Hyperscale）、超過要 sharding
+- compute 上限是 instance type（80 vCore 等）、超過要 sharding 或換 distributed SQL
+
+對應 [9.C32 Clearent](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — 5 億筆/年支付交易、用 Hyperscale 撐單一 cluster、沒拆 sharding 是因為支付業需要 *跨 merchant 對帳一致性*、共用 OLTP 比拆 cluster 划算。
+
+**選 vendor 看生態、不看技術**：Hyperscale 跟 Aurora 工程哲學一致、選哪家取決於 application 已在哪個 cloud。AWS 客戶選 Aurora、Azure 客戶選 Hyperscale、GCP 客戶選 AlloyDB / Spanner。技術差異小、生態差異大（IAM 整合、observability tooling、計費綁定）。
+
+**業務一致性需求決定 sharding 粒度**：
+
+- **微服務各自 OLTP**（Netflix Aurora consolidation）：每個微服務有自己的 Aurora cluster、跨服務一致性靠 application 層 saga / outbox。適合服務間業務 *天然解耦*（用戶服務、訂單服務、商品服務各自 owned data）。
+- **微服務共用 OLTP**（Clearent Hyperscale）：所有微服務共用一個大 cluster、跨服務一致性靠 DB transaction。適合業務 *天然耦合*（payment 跟 refund 跟 chargeback 必須在同一 transaction）。
+- **Sharding by tenant**（B2B SaaS）：每個 enterprise tenant 自己 cluster、適合 tenant 之間完全隔離、大客戶可能要求專屬 cluster。
+- **Sharding by region**（受監管產業）：每個合規市場自己 cluster、合規驅動、不是性能驅動。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個市場各自獨立。
+
+判讀重點：sharding 不是「擴容到不夠才做」、是「業務模型決定的初始設計」。等到 single cluster 撐不住才開始 shard、會踩進「跨 shard 一致性」的工程地雷區、修改成本遠高於初期設計成本。Managed DB（Aurora、Hyperscale）的容量上限是 *已知* 的、設計時就該知道未來何時觸發 sharding。
 
 ## 案例對照
 

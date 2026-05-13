@@ -249,6 +249,129 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 | [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)            | 多套 RDBMS → 統一 Aurora          | DB consolidation 釋放 DBA、效能 +75%      |
 | [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) | MongoDB → Cosmos DB（API compat） | API 相容遷移路徑、planet-scale 分析       |
 
+## 遷移評估的成本曲線
+
+遷移 ROI 評估常見錯誤是 *只看當下流量下的成本對照*、忽略未來流量曲線。決策時要算 12-24 個月的累積成本、不是 snapshot。
+
+對應 [9.C20 Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 帳單系統「成本降 50%」是當下流量下的對照。如果未來流量繼續成長、DynamoDB on-demand 的單位成本可能比 TiDB 自管 cluster 高、達到某規模後 TiDB 反而更便宜。
+
+**評估公式**：
+
+```text
+未來 N 個月累積成本 = sum(月流量 × 月單位成本)
+```
+
+各 DB 的「月單位成本 vs 流量」曲線形狀不同：
+
+- **DynamoDB on-demand**：線性、按用量計費、單位成本固定
+- **DynamoDB provisioned + reserved**：階梯、預訂量越大單價越低
+- **自管 TiDB / PostgreSQL**：階梯 + 固定基線、低流量時單位成本高（基線分攤）、高流量時單位成本低
+- **Aurora Serverless**：線性、但有最低 ACU 基線
+- **Spanner**：節點數 × 單價、增量是 100 pu 一單位
+
+**遷移 ROI 評估的維度**：
+
+| 維度               | 應該算進去                                         |
+| ------------------ | -------------------------------------------------- |
+| Infra 成本         | 當下 + 預期成長下的累積、不是 snapshot             |
+| 人力成本           | DBA、SRE、on-call 工時、跟 vendor 整合工時         |
+| 機會成本           | 遷移期間不能做新功能的時間成本                     |
+| Lock-in 成本       | 換 vendor 的退場成本、合約年限                     |
+| 合規 lead time     | 受監管產業每市場 3-12 月審查、不算進來時程會崩     |
+| Migration 本身成本 | dual-write infra、shadow read 雙倍負載、人力、風險 |
+
+判讀重點：「遷移後成本降 50%」這種敘述只看 infra 成本、且只看當下。完整評估要看所有六個維度跨 12-24 月、決策才不會踩到「短期省、長期更貴」或「短期看似賺、合規卡 1 年」的坑。
+
+## 合規審查 lead time 是時程主要拉力
+
+受監管產業（金融、醫療、電信、政府）的 DB 遷移、*合規審查* 通常是時程主導因素、不是技術整合。
+
+對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 跨 7 個受監管市場遷移到 Aurora、每個市場各自審查（中央銀行 / 金融監管機關 / 個資主管機關）、單一市場審查 3-12 個月、總時程是「市場數 × 平均審查月份」、不是「技術遷移月份」。
+
+**合規 lead time 的常見項目**：
+
+- 中央銀行核心系統變更審查（金融業）
+- 個資主管機關的跨境傳輸審批（GDPR / 各國個資法）
+- 醫療資料的隱私審查（HIPAA / 各國醫療法）
+- 雲端服務商的合規認證對應（PCI-DSS、ISO 27001、SOC 2）
+- 跨市場資料駐留限制（中國《數據安全法》、印度資料保護法、歐盟 GDPR）
+
+**規劃含義**：
+
+- 技術側 ready ≠ 可上線、合規簽核才是 cutover gate
+- 合規審查通常 serial、不能 parallel（單一審查機關沒法平行處理多 case）
+- 高風險變更（DB 換 vendor、cross-border）審查週期最長
+- 跨市場部署、各市場各自審、不能用某市場結果代替
+
+判讀重點：受監管產業的遷移計畫、預設技術側 50%、合規 50% 工時、不是「技術 90% / 合規 10%」。低估合規 lead time 會讓專案在最後關頭卡關、且無法用工程資源補。
+
+## Benchmark 對照基準的解讀
+
+遷移案例的「X% improvement」要追問 *跟什麼基準比*、否則容易誤導。
+
+對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 「10x throughput」是 *vs 舊系統*、不是 *vs 競爭對手*。受監管銀行的舊系統通常是 1990s-2000s 的 mainframe 或自建 OLTP、性能本來就低、改善幅度大不代表絕對性能領先。
+
+對應 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 「up to 75% improvement」是 *跨多個 workload 的最大改善幅度*、不是「每個 workload 都 +75%」。實際每個 workload 改善從 10% 到 75% 不等、平均可能 30-40%。
+
+**benchmark 解讀的關鍵問題**：
+
+- *vs 什麼基準*：跟舊系統比 vs 跟競爭對手比 vs 跟理論最佳比
+- *哪個 workload*：是平均 vs 最快 vs 最慢
+- *哪個 percentile*：p50 vs p99 vs p99.9
+- *多大時間窗口*：當下 vs 長期 sustained
+- *規模對照*：在多大流量下測的、自家業務規模類似嗎
+
+讀 vendor 案例研究時、這五個維度都要對照、否則「75% 改善」可能變成「在某個 cherry-picked workload 的 p50、在 vendor 的最佳配置下、跟舊系統比」、自家業務搬過去未必有對應收益。
+
+## 「預設 DB」治理 pattern
+
+大規模平台選 DB 不是 case-by-case 決定、而是建立「預設 DB」規則、新團隊用其他要 *justify*。這個治理 pattern 簡化 onboarding、降低 DB 種類太多的運維成本。
+
+對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — Genesys Cloud 的 Chief Architect 明確說「Amazon DynamoDB is our primary data layer by default, and teams have to justify the use of something else」。對應 [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 把多套 RDB 整合到 Aurora、降低 DB 種類就是降低運維 surface area。
+
+**預設 DB 治理的工程含義**：
+
+- 新團隊預設用 X、特殊需求才評估其他、減少 DB 評估的認知負擔
+- DBA / SRE 知識集中、不必養多個 vendor 的專業
+- 監控、backup、compliance 流程統一、運維成本下降
+- 多個服務的 schema migration / capacity planning 可以共用 tooling
+
+**選擇預設 DB 的判讀條件**：
+
+- 平台規模夠大（10+ 微服務）、運維 surface area 是真實成本
+- 業務需求大部分可以收斂到單一 DB（OLTP 90%、KV 10% 可以選 OLTP 為預設）
+- vendor 提供完整能力組合（managed + multi-region + auto-scaling）
+
+**預設 DB 對應**：
+
+- AWS 生態大規模 OLTP → Aurora（Netflix）
+- AWS 生態大規模 KV → DynamoDB（Genesys、Capcom、Disney+）
+- Azure 生態 multi-model → Cosmos DB
+- GCP 生態 OLTP → Spanner / AlloyDB
+
+判讀重點：小規模平台（< 5 微服務）不必預設 DB 治理、case-by-case 決定即可。但隨著服務數量增加、DB 種類失控是大規模平台的隱性成本、預設 DB 治理是規模化階段的工程紀律。
+
+## Vendor dogfood 是 selection signal
+
+選 vendor 時除了看技術規格、還要看 *vendor 自家用什麼* 撐 production-critical workload。Dogfood 是「vendor 對自己服務的信任度」、是少數能反映真實品質的訊號。
+
+對應 [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — Amazon Prime Day 用自家 DynamoDB + Aurora 撐 1.51 億 RPS + 500B txn。對應 [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/) — Google 自家 Ads、Play、Search 都用 Spanner。對應 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 365 usage analytics 用自家 Cosmos DB。
+
+**Dogfood 訊號為什麼重要**：
+
+- vendor 自家賭身家、出問題自己第一個踩
+- 內部 dogfood 通常比外部 customer earlier 用、bug 修得快
+- vendor sales team 的「能撐 X」如果跟內部 dogfood 不一致、是 marketing
+- 內部用量大、vendor 對該服務的工程投入比 marginal customer 多
+
+**Dogfood 訊號的限制**：
+
+- vendor 內部 *資源無限制*（不用付自己錢、不用算 cost）、外部用戶要付錢
+- vendor 內部 *客製化深*（用沒公開的 API、特殊 SLA）、外部用戶拿不到
+- vendor 自家業務的 workload pattern 跟你業務未必相同
+
+判讀重點：dogfood 是必要訊號、不是充分訊號。看 vendor 自家用 → 有信任、但要對照「自家業務 vs 你業務」的相似度、再判斷規格在你業務上是否成立。
+
 ## 反模式
 
 大規模 DB 遷移的常見錯誤：

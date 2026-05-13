@@ -20,6 +20,18 @@ tags: ["backend", "database", "security", "red-team"]
 
 三條軸線各有典型攻擊模式、要分別檢查。
 
+## DB 攻擊面的外圍層次
+
+DB 攻擊不只是「直接打 DB」、還有更外圍的層次。資料層紅隊檢查要把這幾層一起盤、不能只看 DB 本身。
+
+**Layer 1：DB 本身**（最直接、防禦最成熟）— SQL injection、authentication、authorization、RLS 都在這層。
+
+**Layer 2：DB 周邊產品**（最常被忽略）— file transfer service（MFT）、API gateway、search proxy、admin console 都「接 DB」、且通常 perimeter 設定比 DB 鬆。對應 [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/) — MOVEit Transfer 是 file transfer 產品、不是 DB、但漏洞讓未認證攻擊者直接打到後端 DB、跨上百家客戶外洩。判讀重點：任何「接 DB」的產品都是 DB 攻擊面、不只防 DB 自己、要盤 *所有上游 caller 產品*。類似結構的還有 [GoAnywhere MFT 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/goanywhere-mft-2023-exfiltration-chain/)、[Progress WS_FTP 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)。
+
+**Layer 3：認證信任根**（最致命、最少人想到）— signing key、token issuer、IAM federation 都決定「誰能宣稱是哪個 user」。對應 [Microsoft Storm-0558](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) — 簽章金鑰外洩後、攻擊者偽造任意 user 的 token、application 層的 BOLA / BOPLA / RLS 全部 *失效*、因為攻擊者通過了底層 trust。判讀重點：DB authorization 永遠 *接受* 上游認證結果、上游 trust 失守、DB 層怎麼設計都擋不住。
+
+**設計含義**：紅隊盤點要由外向內、不是由內向外。先盤「誰能通過認證」（trust root）、再盤「通過認證後能打到哪些產品」（caller surface）、最後盤「打到 DB 後能做什麼」（DB authorization）。傳統做法常常顛倒、把 90% 精力放在 DB 內部、忽略外圍兩層。
+
 ## 攻擊模式 1：注入類
 
 **SQL Injection**：
@@ -176,6 +188,24 @@ tags: ["backend", "database", "security", "red-team"]
 
 **真實事件對照**：[Change Healthcare 2024 ops impact](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/) 是「資料事件變成業務連續性事件」的代表。攻擊者進入 DB 後、不只外洩資料、還破壞處理能力、讓整個美國醫療支付網路停擺數週。判讀重點：DB 失守不只代表 *資料外洩* 一種損失、還可能直接停掉 *上游業務流程*、評估代價時要把這層算進去。[MGM 2023 identity lateral impact](/backend/07-security-data-protection/red-team/cases/identity-access/mgm-2023-identity-lateral-impact/) 是另一個對照：vishing 拿到 identity 後橫向到核心系統、酒店訂房 / 自助 check-in / 老虎機全停。資料層的攻擊代價要跨業務流量去評估、不只看 DB 本身。
 
+## Incident 三角：DB 事故的同步處置
+
+DB 事故當下、要 *同步* 處理三件事、不分先後執行會留下時間窗口讓攻擊者繼續：
+
+1. **漏洞修補**：補上被利用的具體漏洞或 misconfiguration
+2. **Session / 憑證失效**：撤銷所有可能被攻擊者拿到的 session、token、credential
+3. **異常痕跡清查**：盤點攻擊者已經做了什麼、哪些資料動過、哪些 backdoor 留下
+
+傳統做法是「先修漏洞、再失效憑證、再清查」線性執行、但攻擊者在中間任何一步都可能用已拿到的 credential 重新進入、或用清查前還沒被發現的 backdoor 繞過修補。
+
+**對應 [MOVEit 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/moveit-2023-mass-exfiltration/)** — 公告漏洞到攻擊者大規模利用之間只有數小時、單純等 vendor 修補來不及。實務做法是：
+
+- **發布前**：對外服務建立 *即時隔離開關*、不等 vendor patch
+- **事故中**：先把入口下線（DNS 切走 / WAF rule 全擋）、同步進行 patch + token revoke + audit log review
+- **前提**：事先有 inventory（知道哪些產品接 DB）+ 自動化失效能力（不是手動逐個 revoke）
+
+這個三角是 *能力前提*、不是 *當下決策*。事故當下發現缺哪一角、就只能線性執行、攻擊代價會被放大。
+
 ## 偵測與審計
 
 紅隊檢查不只「找漏洞」、也要設計 *持續偵測*：
@@ -190,7 +220,19 @@ tags: ["backend", "database", "security", "red-team"]
 
 - 異常 query pattern（突然 SELECT 全表、跨 tenant 範圍）
 - 異常 export volume
+- Cross-tenant token 異常（同一 issuer 出現本不應跨域的軌跡）
 - 對應 [7.13 detection coverage](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
+
+[Microsoft Storm-0558](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) 揭露 cross-tenant token 偵測的特殊困難：偽造 token *形式上完全合法*、單看 token validation 找不到異常、要看 *軌跡*（哪個 issuer 的 token 跨了哪些 tenant、跟歷史 baseline 比對）。這層偵測需要 application 跟 DB layer 都記下「token 來源 → tenant 目的」的對應、才能事後比對。
+
+[Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) 揭露異常查詢偵測的具體指標：
+
+- query 體積（突然從 1MB / 天跳到 10GB / 天）
+- 來源 IP（從 office network 突然變 unknown VPS）
+- 跨 schema scan 模式（單一 user 突然查多個 tenant 的表）
+- 匯出頻率（每天 1 次變每小時 10 次）
+
+這些指標需要 baseline 才能判斷異常、baseline 需要至少 30-90 天 telemetry、新部署的 DB 沒 baseline 期間是 *偵測盲區*。
 
 ### 3. DB-level monitoring
 
@@ -203,6 +245,67 @@ tags: ["backend", "database", "security", "red-team"]
 - 每季 review role / permission
 - 每年 audit support tool access pattern
 - migration 後重新檢查 access boundary
+
+## 認證 + 網路雙重防護
+
+DB 認證 = 資料邊界、但雲端資料平台（Snowflake、BigQuery、Cosmos DB）預設未必開 MFA、且 *網路層通常 open*（任何 IP 都能嘗試連線）。任一層失守、攻擊者就進來。
+
+對應 [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) — 外洩 credential + 未強制 MFA + 沒設 network policy → 攻擊者直接從任意 IP 用 leaked credential 登入、查多家 tenant 的資料。
+
+**雙重防護設計**：
+
+- **網路層**：network rule allowlist（只允許公司 IP / VPN / 雲端 NAT 連線）— leaked credential 即使有效、也碰不到 DB
+- **認證層**：強制 MFA + 條件式存取（context-aware：時間 / 地點 / 裝置）— 即使網路層失守、credential 還要過 MFA
+- **應用層**：API key / service account 跟 user credential 分開、各有 lifecycle
+
+兩層獨立、單層失守不至於洩漏資料。Snowflake 之後改為 *預設強制 MFA*、就是因為單層認證在 credential 外洩面前無防護。
+
+## 批量憑證撤銷的工程能力
+
+事故當下需要 *快速、大量、選擇性* 撤銷可疑憑證、否則攻擊者繼續用沒被撤銷的 credential 進入。這個能力是 *事先準備* 出來的、不是事故當下能臨時建。
+
+**最小能力清單**：
+
+- **Credential inventory**：能列出所有 active credential（user password、API key、service account token、session）。沒這個 inventory、撤銷只能憑記憶、會漏。
+- **分批撤銷 API**：能按 user group / service / scope 批次撤銷、不是逐個 revoke。批次需要 idempotency key、避免重複撤銷產生競爭。
+- **撤銷後 audit**：撤銷紀錄要存（誰被撤、什麼時間、什麼原因、誰執行）、避免事後爭議。
+- **重新發放流程**：撤銷後使用者要重新登入、SSO 跟 MFA 流程不能在事故當下卡住、否則服務在「沒攻擊但用戶進不來」狀態。
+
+對應 [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) 的事故處置 — 平台級事故影響數百家客戶、撤銷必須跨 tenant 同步進行、單一客戶手動撤銷來不及。
+
+## 長期可重複匯出工件
+
+「Long-lived repeatable export artifact」是事故後常被忽略的 attack surface。包括：
+
+- **預先生成的報表 URL**（內部 BI tool 給 download link、URL 通常長期有效）
+- **API key 綁定的 export endpoint**（key 沒過期、endpoint 一直能匯出最新資料）
+- **Snowflake / BigQuery 的 saved query**（攻擊者偽裝為合法 user、定期執行）
+- **Database backup 的 share link**（雲端儲存的 signed URL、有效期可達數年）
+
+這些工件的特性是 *長期持續產出資料*、攻擊者拿到一次、就能長期外送、不需要每次都重新進入。
+
+**防禦設計**：
+
+- **預設短 TTL**：所有匯出 URL / signed link 預設 1-24 小時失效
+- **單次性匯出**：sensitive export 限定 emit-once、用過就失效
+- **匯出記錄審計**：每次匯出寫進 audit log、定期審查哪些 endpoint 異常高頻使用
+
+對應 [Snowflake 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/) 的 long-lived export pattern — 攻擊者建立持續匯出的 saved query、即使原始 credential 被撤銷、saved query 可能仍在運作。
+
+## 備份 vs 正式環境的權限獨立性
+
+備份系統是 *獨立* 的攻擊面、跟正式環境要 *不同權限域*。常見錯誤是「備份用同一組 IAM principal 跟同一把 KMS key」、結果正式環境被打、攻擊者沿著 *備份路徑* 拿到所有歷史資料。
+
+對應 [LastPass 2022 backup chain](/backend/07-security-data-protection/red-team/cases/data-exfiltration/lastpass-2022-backup-chain/) — 開發環境被入侵後、攻擊者沿著備份路徑拿到 production vault backup。雖然 backup 內容是加密的、但 master password 弱的客戶可被離線爆破。判讀重點：備份的 *存放位置* 跟 *加密狀態* 是攻擊面、不只 production DB。
+
+**權限獨立性設計**：
+
+- **不同 IAM principal**：production 跟 backup 用不同 service account、production 帳號沒有 backup 讀權限
+- **不同 KMS key audience**：production 用 production key、backup 用 backup key、兩者 lifecycle 分離
+- **不同 audit log**：production read / write 跟 backup read 在 *不同* audit stream、後續調查能區分「正常運作」vs「備份被讀」
+- **不同 access pattern review**：定期審查哪些 principal 在哪些時段讀 backup（正常情況很少有人讀 backup、頻繁讀取是異常訊號）
+
+「正式環境的接管不直接通到備份」是設計準則、不是 best practice 加分項。對應 [1.9 reconciliation](/backend/01-database/reconciliation-data-repair/) 的備份 / PITR 段討論。
 
 ## 最低控制面
 
