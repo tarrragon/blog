@@ -32,19 +32,19 @@ hot data 與 cold data 的差異不只在存取次數，也在回源成本與業
 
 對應 [2.C4 Meta CacheLib / Kangaroo](/backend/02-cache-redis/cases/meta-cachelib-kangaroo-tiered-cache/) — Meta 把快取結構從 DRAM-only 擴展到 DRAM + flash 分層、改善容量跟成本平衡。當「全部熱資料塞 DRAM」變太貴、把次熱資料推到 flash、保留 DRAM 給最熱的子集。
 
-**分層快取的設計取捨**：
+**分層快取的相對特性**（具體 size / latency / cost 視硬體配置跟業務 workload）：
 
-- **L1 (DRAM)**：最熱資料、< 100GB / 節點、sub-ms 延遲、成本最高
-- **L2 (flash / NVMe)**：次熱資料、TB 級 / 節點、毫秒級延遲、成本約 DRAM 1/10
-- **L3 (持久 KV)**：冷資料、PB 級、10ms 級延遲、成本最低
+- **L1 (DRAM)**：容量最小、延遲最低、單位成本最高、放最熱的子集 — Meta CacheLib 用這層保留熱度最高的 working set
+- **L2 (flash / NVMe)**：容量比 L1 大、延遲比 L1 高、單位成本比 L1 低 — Meta Kangaroo 在這層處理次熱資料
+- **L3 (持久 KV)**：容量最大、延遲最高、單位成本最低、放冷資料跟 fallback
 
-落層策略要看 *資料熱度分布*。Zipfian 分布（80/20 法則）下、80% 流量打 20% 資料、L1 放這 20% 就能命中大部分；如果分布更平、要把 L1 擴大或接受更低命中率。
+落層策略要看 *資料熱度分布*。Zipfian 分布（80/20 法則）下、L1 放最熱 20% 就能命中大部分；如果分布更平、要把 L1 擴大或接受更低命中率。具體 L1 / L2 大小比例要實測 workload 才能定。
 
-對應 [2.C7 Cloudflare Cache Reserve](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) — edge cache 跟 persistent reserve 的分層、長尾資料用 reserve 接住、降低 origin 回源。這是 *同類設計思維* 在 CDN 場景的應用。
+對應 [2.C7 Cloudflare Cache Reserve](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) — edge cache 跟 persistent reserve 的分層、長尾資料用 reserve 接住、降低 origin 回源。這是 *同類設計思維* 在 CDN 場景的應用、但分層語意不同（edge cache 是地理分散的、Meta 分層是垂直記憶體 / flash 層）— 兩者都用「冷熱分離降低總成本」、實作機制差異需依場景區分。
 
 **Eviction 跟回補延遲要納入共同指標**：分層 cache 的訊號不只看 L1 命中率、要看 L1 evict 到 L2 的速率、L2 回補到 L1 的延遲、L3 回源到 L2 的尾巴延遲。混合 metric 才能判斷分層策略是否健康。
 
-判讀重點：分層 cache 是 *規模觸發* 的設計、不是優化選項。Working set < 100GB 不需要分層、單層 DRAM 足夠；Working set > 1TB 必須分層、強塞 DRAM 成本爆炸。
+判讀重點：分層 cache 屬規模觸發的設計、要從 working set 大小判斷。Working set 在 DRAM 經濟範圍內、單層即可；working set 顯著超過 DRAM 容量、需分層讓 DRAM 集中放最熱子集、其餘走 flash 或更下層。
 
 ## 判讀訊號
 
