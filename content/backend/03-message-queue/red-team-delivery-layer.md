@@ -34,6 +34,41 @@ tags: ["backend", "message-queue"]
 3. 重試與降載模型：重試節奏、上限、退避與壓力保護機制。
 4. 回復與重放模型：DLQ 分流、回放準入條件與結果校正流程。
 
+## 多租戶 broker 的隔離邊界
+
+當 broker 服務多個 team / tenant、單一 tenant 的攻擊或失誤會拖垮整個 cluster。Multi-tenant broker 的紅隊重點是 *跨租戶邊界* 是否能擋住攻擊放大跟資源耗盡。
+
+對應 [3.C6 Uber Kafka Infrastructure Evolution](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/) — Uber 把事件平台從「team 自管」演進到「多租戶共享」、focus 從擴 broker 變成租戶隔離、配額、觀測標準化。對應 [3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) — 規模化必然分層 cluster、高優先 workload 跟低優先 workload 各自獨立、避免 noisy neighbor。
+
+**Multi-tenant broker 的攻擊面**：
+
+- **配額耗盡**：單一 tenant 大量 publish 占光 broker bandwidth / storage、其他 tenant 被餓死。對應控制是 *per-tenant quota* + *rate limit*
+- **Topic 命名衝突 / 越權**：tenant A 訂閱了 tenant B 的 topic、看到不該看的資料。對應控制是 *namespace 強制隔離* + *IAM topic-level ACL*
+- **DLQ 跨租戶污染**：tenant A 的 poison message 進共用 DLQ、影響 tenant B 的 DLQ 處理流程。對應控制是 *per-tenant DLQ* + *獨立排空策略*
+- **Consumer group 命名衝突**：意外或惡意註冊跟其他 tenant 同名的 consumer group、搶 partition 分配。對應控制是 *consumer group naming convention* + *prefix-based ACL*
+
+判讀重點：multi-tenant broker 的紅隊不只看「broker 撐不撐」、要看「單一 tenant 出事時其他 tenant 是否受影響」。單一租戶事件擴散到其他租戶 = 隔離失敗、非 broker 效能問題。
+
+## Replay 攻擊跟 DLQ 濫用
+
+Replay 機制是事故恢復工具、但也是 *攻擊面*。攻擊者可能濫用 replay 重複觸發副作用（重複退款、重複送通知、重複下單）、或讓 DLQ 變成 backdoor 通道。
+
+**Replay 攻擊向量**：
+
+- **未授權 replay 觸發**：攻擊者拿到 replay 控制權、replay 舊事件造成重複副作用。對應控制是 *replay 授權需獨立審核* + *audit trail 記錄誰 replay 什麼*
+- **Replay window 越界**：replay 跨越 idempotency 紀錄到期、舊事件被當新事件處理。對應控制是 *replay window 上限 = idempotency 保留期*、見 [3.6 processing-recovery-semantics 的 replay 跟 idempotency 共設計](/backend/03-message-queue/processing-recovery-semantics/)
+- **DLQ message 注入**：攻擊者把惡意 message 直接寫進 DLQ、繞過主通道驗證、等 replay 時觸發副作用。對應控制是 *DLQ 寫入權限獨立於主通道* + *replay 前 schema 重新驗證*
+
+判讀重點：replay 屬 *production 操作*、不只是 incident 工具 — 跟 [1.9 reconciliation 修復權限管理](/backend/01-database/reconciliation-data-repair/) 同層級、要 audit trail + 審核流程。
+
+## 【案例對照】
+
+| 案例                                                                                                            | 紅隊視角重點                                           |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [3.C6 Uber Kafka Infrastructure](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)          | Multi-tenant 配額 / 隔離 / 觀測標準化、跨團隊邊界      |
+| [3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/)                | 分層 cluster、高優先跟低優先 workload 隔離             |
+| [3.C9 反例 Queue Semantics Mismatch](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) | 切換語意誤配引發重複副作用、replay 跟 idempotency 失準 |
+
 ## 【關聯卡片】
 
 - [Poison Message](/backend/knowledge-cards/poison-message/)

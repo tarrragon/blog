@@ -47,6 +47,36 @@ Recovery semantics 的責任是讓系統在 consumer crash、DLQ 爆量、下游
 
 穩定設計通常讓副作用具備 idempotency，再把 checkpoint 放在可恢復的位置。checkpoint 與 idempotency 是一組設計，需要一起審查。
 
+## Poison Message 的處理層次
+
+Poison message 是無法被 consumer 正確處理、但會持續觸發 retry 的訊息。處理流程要從 *偵測 / 隔離 / 診斷 / 修復* 四個層次設計、不只是「丟進 DLQ」。
+
+對應 [3.C9 反例：Queue Semantics Mismatch](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) — DLQ 激增且重播後仍回到相同錯誤、是 poison message 沒被正確處理的訊號。consumer lag 下降但業務結果沒收斂、表示 poison message 把 consumer 卡住。
+
+**四個處理層次**：
+
+- **偵測**：retry count 超過閾值（通常 3-5 次）後識別為 poison candidate。早期偵測訊號是 retry rate 升高但 success rate 沒同步上升、單一 consumer 反覆失敗
+- **隔離**：把 poison message 移出主通道、進 DLQ 或 quarantine queue。隔離要 *即時*、不等批次、否則持續占用主通道吞吐
+- **診斷**：DLQ 內 poison message 要分群分析、找出共同 failure pattern（payload schema 不符、外部 API 永久失敗、邏輯 bug）。對應 [3.C10 對照](/backend/03-message-queue/cases/contrast-queue-model-by-scale/) — 大型服務的 DLQ 是診斷入口
+- **修復**：依據 root cause 修 consumer / contract / 邏輯後、定向回放 DLQ 內 poison message。沒修就重播會讓同一 message 再次進 DLQ、形成 zombie cycle
+
+判讀重點：DLQ size 持續增加但沒有對應修復 commit、表示處理流程斷在「隔離」這層、沒進「診斷 / 修復」。release gate 要加「DLQ 排空速率 >= 流入速率」的條件、避免 DLQ 變長期倉庫。
+
+## Replay 跟 Idempotency 的共設計
+
+Replay safety 跟 idempotency 必須在同一個設計階段一起決定、無法事後補。replay window 設多大、idempotency key 怎麼定、checkpoint 何時提交、三者互相影響、任一改動都會破壞其他。
+
+**共設計的判讀順序**：
+
+1. **先定 idempotency key**：什麼欄位組合能唯一標記副作用（event_id、entity_id + version、business operation id）
+2. **再定 idempotency 儲存策略**：去重紀錄存多久（決定 replay window 上限）、儲存在 cache / DB / 應用層 memory
+3. **依儲存策略反推 replay window**：去重紀錄保留 7 天、replay window 上限就是 7 天、超過會出現重複副作用
+4. **再依 replay window 反推 checkpoint 策略**：checkpoint 落地時機要保證 crash 後 replay window 內可恢復
+
+對應 [9.C9 Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移要驗證業務語意跟新 broker 兼容、replay 模型在 Kafka（offset）跟 Pub/Sub（snapshot + seek）不同、idempotency 策略要重新校準。
+
+判讀重點：replay window 是 idempotency 儲存策略反推出來的、不是 broker 設定值。先看 idempotency key 跟去重儲存、再決定 replay window 安全範圍。順序顛倒會踩到「replay 跨越去重紀錄到期」的事故、表現是 replay 後出現本來該被去重的重複副作用。
+
 ## 選型前判準
 
 Queue 選型前要先回答：
