@@ -256,6 +256,6 @@ Classifier 本身就需要強模型、變成 router「省 cost」反而花更多
 
 LLM 應用是 multi-call 組合、本質歸納成四個基本模式：pipeline、router、parallel、reflection。每個模式各自解不同問題、各有失敗模式、實際應用組合使用。Workflow 設計的核心反射是「先 single call baseline、不夠再分解」、過早優化是最常見的失敗源。
 
-設計完 workflow 後、進 production 還要評估資源、latency / throughput 取捨、observability 三層、降級設計、見 [4.9 Production 資源規劃](/llm/04-applications/production-resource-planning/)。
+下一章：[4.8 Multi-Agent 拓樸](/llm/04-applications/multi-agent-topology/)、當 single-thread 多 call 不夠用、需要平行專業化角色 / 跨產品 agent 重用時、進入 multi-agent 系統的拓樸設計。
 
-讀到這裡、本模組的應用層原理就完整收尾。回到 [模組四首頁](/llm/04-applications/) 看完整地圖、或回到 [指南首頁](/llm/) 重新整理整體學習路徑。
+設計完 workflow 後、進 production 還要評估資源、latency / throughput 取捨、observability 三層、降級設計、見 [4.9 Production 資源規劃](/llm/04-applications/production-resource-planning/)。

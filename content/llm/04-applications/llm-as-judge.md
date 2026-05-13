@@ -6,7 +6,9 @@ tags: ["llm", "applications", "evaluation", "production", "llm-as-judge"]
 weight: 21
 ---
 
-[4.14 benchmarking-and-evaluation](/llm/04-applications/benchmarking-and-evaluation/) 寫了 capability benchmark（MMLU、SWE-bench 等）跟 in-house benchmark 概念。但「自己工作流的真實案例該怎麼系統性 eval」這個操作層、4.9 點到沒展開。本章補上 [LLM-as-Judge](/llm/knowledge-cards/llm-as-judge/) — production AI app 的事實標準 eval 方法、比 human eval 便宜 500-5000×、跟人類有 80%+ agreement、但要處理 bias。
+[4.14 benchmarking-and-evaluation](/llm/04-applications/benchmarking-and-evaluation/) 寫了 capability benchmark（MMLU、SWE-bench 等）跟 in-house benchmark 概念。但「自己工作流的真實案例該怎麼系統性 eval」這個操作層、4.14 點到沒展開。本章補上 [LLM-as-Judge](/llm/knowledge-cards/llm-as-judge/) — production AI app 的事實標準 eval 方法、比 human eval 便宜 500-5000×、跟人類有 80%+ agreement、但要處理 bias。
+
+Judge 在 eval 系統中的定位：[4.13 Eval 設計座標系](/llm/04-applications/eval-design-framework/) 把 eval 分三軸八象限、判斷哪個象限該用什麼工具——judge 的位置是 subjective 軸（沒 ground truth 的行為）、不是 objective 軸（有 ground truth 用 deterministic check 更便宜更準）。讀本章前先看 4.13 的軸誤選段、避開「全部 eval 都做成 judge」的常見反模式。
 
 ## 本章目標
 
@@ -273,4 +275,4 @@ Production users
 
 LLM-as-Judge 把「in-house benchmark」從理論變成可操作、production AI app 的 eval 事實標準。設計核心：四段式 prompt（task / input-output / rubric / format）、pairwise 或 direct scoring 看場景、三大 bias（position / verbosity / self-preference）要緩解、必須 calibrate。Production trace + judge 形成自動 eval 閉環、是 quality engineering 的標準路徑。不替代 human eval 在高 stake 任務、不替代 rule-based 在可機械驗證任務。
 
-下一步：模組四到此覆蓋從原理（4.0-4.5）、進階主題（4.6-4.11）到 coding agent + production 應用閉環（4.12-4.16：harness / caching / memory / tracing / eval）的完整應用層地圖。可進入 [模組五](/llm/05-discrete-gpu/) 看本地推論硬體、進入 [模組六](/llm/06-security/) 看安全議題（特別是 [6.6 OWASP LLM Top 10 對照](/llm/06-security/owasp-llm-top10-mapping/)、把 production eval 的安全議題對應到企業合規詞彙）、或回 [4.14 benchmarking 章節](/llm/04-applications/benchmarking-and-evaluation/) 對照 standard benchmark 視角。
+下一步：模組四到此覆蓋從基礎（4.0 prompt 技術光譜 / 4.1-4.2 RAG / 4.3 tool / 4.4 agent / 4.5 HITL）、協議與編排（4.6 protocols / 4.7 workflow / 4.8 multi-agent）、production 細節（4.9-4.12 resource / artifact / long-context / embedding）、到 eval 跟 production observability 閉環（4.13 eval 框架 / 4.14 benchmarking / 4.17-4.21 harness / caching / memory / tracing / judge）的完整應用層地圖。Hands-on 端到端案例見 [hands-on 子分類](/llm/04-applications/hands-on/)。可進入 [模組五](/llm/05-discrete-gpu/) 看本地推論硬體、進入 [模組六](/llm/06-security/) 看安全議題（特別是 [6.6 OWASP LLM Top 10 對照](/llm/06-security/owasp-llm-top10-mapping/)、把 production eval 的安全議題對應到企業合規詞彙）、或回 [4.13 Eval 設計座標系](/llm/04-applications/eval-design-framework/) 看 judge 在 meta eval 框架中的定位。

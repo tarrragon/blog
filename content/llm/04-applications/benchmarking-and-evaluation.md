@@ -8,6 +8,8 @@ weight: 14
 
 讀 model card 看到「MMLU 78.5」「HumanEval 82.3」「SWE-bench 12.6」等數字、要能判讀對自己場景的意義；自己跑本地 LLM、要能量化「tok/s、TTFT、實際品質」；想對比不同 model / 量化等級、要有可重現的 evaluation 方法。本章把「LLM 能力評估」跟「本地推論性能評估」兩條軸拆成可操作的方法論。
 
+本章是 eval 設計的**具體實作層**——meta 層的 eval 軸選擇（先看軸再看工具的三軸座標）見 [4.13 Eval 設計座標系](/llm/04-applications/eval-design-framework/)、subjective eval 的核心工具見 [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)。三章合起來才是 production AI app 的完整 eval pipeline。
+
 ## 本章目標
 
 讀完本章後、你應該能：

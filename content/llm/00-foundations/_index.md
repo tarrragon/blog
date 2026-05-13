@@ -32,15 +32,16 @@ weight: 0
 
 ## 模組零的閱讀策略
 
-本模組七篇章節彼此獨立，但建議依下列順序讀：
+本模組八篇章節彼此獨立，但建議依下列順序讀：
 
 1. 先讀 [0.0 本地 vs 雲端](/llm/00-foundations/local-vs-cloud/) 跟 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-slow/)，建立「本地 LLM 解什麼問題、不解什麼問題」的判斷。
 2. 接著讀 [0.2 三層架構](/llm/00-foundations/three-layer-architecture/) 跟 [0.3 OpenAI 相容 API](/llm/00-foundations/openai-compatible-api/)，建立「工具如何拼裝」的判斷。
 3. 然後讀 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)，避開最常見的術語陷阱。
 4. 接著讀 [0.5 硬體記憶體](/llm/00-foundations/hardware-memory-budget/) 跟 [0.6 判讀框架](/llm/00-foundations/info-judgment-frames/)、把心智模型對到自己手上這台 Mac 的現實、並建立評估新資訊的反射。
-5. 最後讀 [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)、把 0.6 框架五展開成可操作的設計原則。
+5. 讀 [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)、把 0.6 框架五展開成可操作的設計原則。
+6. 最後讀 [0.8 Deterministic vs Fuzzy Engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)、建立「LLM 軟體跟傳統軟體的設計典範差異」心智模型、為進入[模組四 LLM 應用層](/llm/04-applications/) 做準備。
 
-讀完後直接進 [模組一：本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/) 就會發現安裝步驟變得「每一行都知道為什麼」。
+讀完後可進 [模組一：本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/) 看安裝步驟、或直接進 [模組四 LLM 應用層](/llm/04-applications/) 看典範怎麼落到 RAG / agent / workflow 設計。
 
 ## 不在本模組內的主題
 
