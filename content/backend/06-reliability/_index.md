@@ -241,6 +241,23 @@ tags: ["backend", "reliability", "sre"]
 
 第三批案例補強已補 `Netflix` 第三篇： [FIT 證據交接與 Release Gate 回寫](/backend/06-reliability/cases/netflix/fit-failure-injection-evidence-handoff/)。這篇把故障注入結果直接接到 `6.23 / 6.24 / 8.19 / 8.22`，補齊「實驗結果 → 放行決策 → 事故調用」的鏈路。
 
+## Case-First 第四批：8 章 stage 2 擴充
+
+依 [Case-First + Agent Team Review 流程](/posts/case-first-agent-team-review-workflow/) 完成 8 個章節的 case-driven 擴充（commit 3c33ea9 / 41c0101）、覆蓋全部 15 個 content case：
+
+| 章節                                                                                         | 擴充內容                                                   | Case 對應     |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------- |
+| [6.8 release-gate](/backend/06-reliability/release-gate/)                                    | 變更分層 + Release Gate 政策、交易類變更的 gate 設計       | MS1 / G2 / S1 |
+| [6.14 dependency-reliability-budget](/backend/06-reliability/dependency-reliability-budget/) | 失效局部化、跨區故障與回復順序、跨團隊 reliability 契約    | A1 / M1 / SP1 |
+| [6.21 reliability-debt-backlog](/backend/06-reliability/reliability-debt-backlog/)           | Action Item 分級跟 Release Gate 綁定、Toil Budget 預算治理 | G2 / G3       |
+| [6.9 capacity-cost](/backend/06-reliability/capacity-cost/)                                  | 高峰型容量治理、容量值班分層協同、快取容量特殊性           | H1 / L1 / P1  |
+| [6.11 migration-safety](/backend/06-reliability/migration-safety/)                           | 交易類 migration 的特殊性                                  | S1            |
+| [6.12 idempotency-replay](/backend/06-reliability/idempotency-replay/)                       | 支付類 Idempotency 的設計約束                              | S1            |
+| [6.6 slo-error-budget](/backend/06-reliability/slo-error-budget/)                            | Error Budget 三對齊跟 Release Gating、Burn Rate 雙窗監控   | G1 / HC1      |
+| [6.20 experiment-safety-boundary](/backend/06-reliability/experiment-safety-boundary/)       | 案例對照：Chaos / FIT 的安全邊界設計                       | N1 / N2 / N3  |
+
+擴充紀律對應 [Case-First Module Workflow](/posts/case-first-agent-team-review-workflow/) 的五階段流程、用 agent team review 三維度（寫作規範 / 案例引用 / 跨章一致性）驗證、case fidelity 達 88%。
+
 ## 下一輪推演大綱
 
 | 階段 | 產出           | 責任                                                            | 回寫位置                              |
