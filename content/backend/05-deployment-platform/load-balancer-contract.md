@@ -33,9 +33,9 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 
 ## 切流失敗的回退判讀
 
-切流失敗的回退判讀核心是分辨「平台問題」跟「流量生命週期問題」。前者重啟服務可以恢復，後者重啟會擴大震盪。沒有先做出這個分辨、貿然回退會讓事故進入第二階段。
+切流失敗的回退判讀第一步是先分辨「平台問題」跟「流量生命週期問題」、再決定回退手法。平台問題用重啟服務恢復、流量生命週期問題用凍結切換並等待震盪收斂。回退手法錯位會把事故推進第二階段。
 
-對應 [5.C9 反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)：揭露「部署平台切換失敗常在 connection lifecycle 管理」「直接重啟所有服務會讓重連潮更大」「比較可靠的做法是先停止下一批切流、恢復舊入口權重、等待連線數跟錯誤率回到可控範圍」。以下基於通用工程知識展開。
+切流失敗的本質是 connection lifecycle 跟切換時序錯位、平台元件本身往往是健康的。對應 [5.C9 反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)：揭露切流失敗常因 connection lifecycle 管理錯位、重啟動作會放大震盪。以下基於通用工程知識展開回退節奏。
 
 可重複套用的回退節奏：
 
@@ -48,16 +48,18 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 
 ## 切流告警條件
 
-切流期間的告警設計要對應切流批次節奏，而不是套用日常的閾值。日常閾值在切流期會被切換本身的短暫波動觸發、變成 alert noise；切流期需要更嚴格的「批次內偏差」訊號。
+對應 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 的「部署專屬告警條件」段：揭露切流期告警的三個核心訊號（批次內 5xx 突增、長連線重連率快速上升、rollback time 超過既定 RTO）。本段在 case 三條基礎上補第 4 條（per-version error rate 偏離）與操作建議。
+
+切流期告警的核心責任是對應切流批次節奏、跟日常閾值分離。日常閾值在切流期會被切換本身的短暫波動觸發、變成 alert noise；切流期需要更嚴格的「批次內偏差」訊號。
 
 可操作的切流期告警條件：
 
 - **批次內 5xx 異常升高**：當前批次相對於前一批的 5xx 升幅超過閾值、停止下一批。
 - **長連線重連率飆升**：reconnect rate 超過 baseline N 倍、暗示 drain / timeout 錯位。
 - **回退時間超過 RTO**：執行回退後恢復時間超過既定 RTO、升級為事故等級。
-- **per-version error rate 偏離**：新舊版本 error rate 差距超過閾值、不收斂。
+- **per-version error rate 偏離**：新舊版本 error rate 差距超過閾值、不收斂（屬本章補強、case 未明示）。
 
-這些告警的閾值要在 release plan 中先定義、不是事故時臨時設。把切流告警跟一般日常告警分流到不同 channel，避免事故團隊在切流期被日常 noise 淹沒。
+這些告警的閾值要在 release plan 中先定義、進事故時直接套用、避免臨時拍定。把切流告警跟一般日常告警分流到不同 channel，避免事故團隊在切流期被日常 noise 淹沒。
 
 ## 判讀訊號
 

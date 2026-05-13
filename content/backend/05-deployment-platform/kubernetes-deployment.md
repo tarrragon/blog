@@ -46,7 +46,7 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 
 ## 分階段平台遷移
 
-平台遷移的本質是「流量跟依賴的分段切換」，不是「搬家」。遷移期內新舊叢集同時存在，rollout 策略要把跨叢集流量切換納入批次節奏，而不是視為一次性切換。
+平台遷移的本質是流量跟依賴的分段切換。遷移期內新舊叢集同時存在，rollout 策略要把跨叢集流量切換納入批次節奏、視為連續多批決策。本段聚焦流量 / 依賴切換時序；遷移期的團隊職責邊界重訂見 [5.7 Managed 平台跟團隊職責邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#managed-平台跟團隊職責邊界)。
 
 對應 [5.C1 Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)：揭露「零停機遷移要把切換做成分段策略」「難點通常在跨叢集服務依賴跟流量切換、不在 Kubernetes API 本身」。對應 [5.C4 Mobileye workloads 遷移](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)：揭露「分批遷移 workload、保留觀測對照」「明確切換 / 回退條件」「新平台先驗證容量跟恢復節奏」。以下基於通用工程知識展開。
 
@@ -57,18 +57,18 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 3. **可控流量分批切換**：用 DNS 加權、service mesh 流量切分或 LB 規則把流量分批從舊叢集導到新叢集。每批切換後驗證 SLI 偏差、再進下一批。
 4. **每批保留回退路徑**：舊叢集服務不立即下線，保留作為回退目標。回退條件先驗證（rollback script、流量切回 DNS / LB 規則），再開始下一批切換。
 
-跨叢集遷移最容易踩的坑是「服務切過去了、依賴沒切過去」。Database、cache、message queue、observability pipeline、auth service 的切換時機要分別規劃，避免應用層在新叢集但仍跨網路打舊叢集的依賴，造成隱性 latency 或單點失效。
+延伸 5.C1 揭露的「跨叢集服務依賴是難點」、5.C10 中型組織判讀「服務本身切過去了、但資料面、認證面、觀測面還沒同步」也指向同類問題。跨叢集遷移最容易踩的坑是「服務切過去了、依賴沒切過去」。Database、cache、message queue、observability pipeline、auth service 的切換時機要分別規劃，避免應用層在新叢集但仍跨網路打舊叢集的依賴，造成隱性 latency 或單點失效。規模差異下的同類問題見 [5.C10 對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)。
 
 ## 大規模 K8s 的設計取捨
 
 K8s 在不同規模下的設計取捨會明顯分歧。小規模叢集追求簡單跟低運維成本，大規模叢集追求隔離跟自動化治理。同一套部署策略放到不同規模會在某個量級開始失效。
 
-對應 [9.C12 Riot Games：246 個 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)：揭露 single-tenant per game 的多 cluster 策略、Karpenter + Terraform 的 cluster 級自動化、35ms latency 反推 region 部署。對應 [9.C34 GCP 130,000-node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)：揭露 control plane vs data plane 分開規劃容量、storage backend（Spanner 替 etcd）才是 K8s 規模極限的關鍵、AI workload 顛覆傳統 K8s 容量規劃。對應 [9.C33 Maersk + Bosch AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露傳統產業上 K8s 的動機是「治理一致性」、不是「成長彈性」、適合 single-cluster-multi-namespace。
+對應 [9.C12 Riot Games：246 個 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)：揭露架構決策從 multi-tenant cluster 改成 single-tenant per game、Karpenter + Terraform 的 cluster 級自動化、35ms 延遲門檻 + Local Zones / Outposts 區域部署（case 中「35ms 反推 region 部署」屬作者判讀層、本章引用此推論）。對應 [9.C34 GCP 130,000-node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)：揭露 control plane 極限取決於 storage backend（GCP 用 Spanner 替代 etcd）、AI workload 跟 web workload 容量規劃差異。對應 [9.C33 Maersk + Bosch AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露 Maersk 工程訴求引語「focus on things that makes the most business impact」、傳統產業上 K8s 動機是治理一致性（作者判讀）、適合 single-cluster-multi-namespace。
 
 可重複套用的取捨判讀：
 
 1. **single-tenant per workload vs single-cluster multi-namespace**：高隔離需求（每個 workload 失效不能影響其他）、高延遲敏感度（需 region cluster）→ 多 cluster；治理一致性訴求（統一 release flow、合規邊界）→ 單一 cluster 多 namespace。
-2. **Cluster 容量極限取決於 control plane**：data plane（worker nodes）擴容容易、control plane（API server、etcd / storage）擴容難。etcd 撐 5K-10K node 後吃力、需要替換 storage backend（Spanner / PostgreSQL / 自家 KV）。一般部署用不到、但要知道極限在哪。
+2. **Cluster 容量極限取決於 control plane**：data plane（worker nodes）擴容容易、control plane（API server、etcd / storage）擴容難、瓶頸通常在 control plane。etcd 撐 5K-10K node 後吃力、需要替換 storage backend（Spanner / PostgreSQL / 自家 KV）才能撐萬級節點（見 [9.C34](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)）。control plane 的 ownership 邊界由 [5.7 control plane boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 處理。
 3. **Multi-cluster 治理需要 IaC + 自動化**：Terraform / Crossplane / Cluster API + Karpenter / Cluster Autoscaler 是基本工具。手動管理超過數十個 cluster 不可行。
 4. **AI workload 跟 web workload 容量規劃完全不同**：AI workload 短時間爆量創建 Pods（萬級 / 秒）、preempt 頻繁；web workload 節點生命週期長、變動緩。把 web 經驗套到 AI workload 容量規劃會嚴重低估壓力。
 

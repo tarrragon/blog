@@ -57,9 +57,11 @@ Control plane 事故常見於規則推送、routing 誤配、secret 下發失敗
 
 ## Managed 平台跟團隊職責邊界
 
-平台託管化（self-managed → managed）改變的不只是維運責任，還改變團隊精力的分配。Platform team 從「維持 Kubernetes 跑起來」轉向「定義 release flow、observability convention、cost governance」。沒有顯式重新定義職責邊界、團隊容易停在舊心智模型、把 managed 平台當「自管 + vendor 接管 control plane」、錯失組織轉型的價值。
+平台託管化（self-managed → managed）改變維運責任跟團隊精力的分配。本段聚焦團隊職責邊界；流量跟依賴的分段切換流程見 [5.2 分階段平台遷移](/backend/05-deployment-platform/kubernetes-deployment/#分階段平台遷移)、紅隊視角的攻擊面變動見 [5.5 平台遷移期的攻擊面變動](/backend/05-deployment-platform/attacker-view-platform-entry-risks/#平台遷移期的攻擊面變動)、三者組合才完整。
 
-對應 [5.C5 Miro Managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)：揭露「平台託管化的價值在讓團隊把心力從底層維護轉到交付效率與可靠性策略」「先定義遷移後的平台責任邊界」「自動化流程取代手動平台操作」「incident 跟 release policy 接回平台治理」四個方向。對應 [9.C33 Maersk + Bosch Azure AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露「focus on things that makes the most business impact」、傳統產業上 K8s 動機是治理一致性 + 釋放工程資源到業務功能。以下基於通用工程知識展開。
+Platform team 從「維持 Kubernetes 跑起來」轉向「定義 release flow、observability convention、cost governance」。managed 平台採用後第一個治理動作是顯式重新定義職責邊界、讓 platform team 從 cluster ops 轉到 release flow / observability convention / cost governance。重新定義缺位、組織轉型紅利容易被誤判為純技術升級。
+
+對應 [5.C5 Miro Managed EKS 遷移](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)：揭露 1 個判讀（平台託管化的價值在讓團隊把心力從底層維護轉到交付效率與可靠性策略）+ 3 條策略（先定義遷移後的平台責任邊界、自動化流程取代手動平台操作、incident 跟 release policy 接回平台治理）。對應 [9.C33 Maersk + Bosch Azure AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露 Maersk 工程訴求引語「focus on things that makes the most business impact」、傳統產業 K8s 動機是治理一致性 + 釋放工程資源到業務功能（後者屬作者判讀）。以下基於通用工程知識展開。
 
 managed 平台採用後的職責邊界重訂可以分四層：
 
@@ -68,7 +70,7 @@ managed 平台採用後的職責邊界重訂可以分四層：
 3. **Application 層**：deployment、service、HPA、PDB 由 service team own、platform 提供 convention 跟 review process。
 4. **跨層議題**：cost governance、observability convention、release flow、incident response 是 platform / service / SRE / finance 跨層協作、需要 operating model 明確化。
 
-第一個踩到的坑通常是「以為 managed 服務什麼都管了」、實際 grey zone 還很多。第二個踩到的坑是「platform team 仍把心力放在 cluster ops」、沒抓到組織轉型的紅利。重新定義職責是 managed 採用後的第一個治理項目、不是 day-2 議題。
+managed 採用後 day-1 治理項目有兩件事：明確界定 grey zone ownership（避免「以為 managed 服務什麼都管了」的心智模型）、把 platform team 心力從 cluster ops 轉到組織轉型紅利（release flow、observability convention、cost governance）。把重新定義職責當 day-2 議題、會錯失組織轉型紅利。
 
 ## 選型前判準
 
