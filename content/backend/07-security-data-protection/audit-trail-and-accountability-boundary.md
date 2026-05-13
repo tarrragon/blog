@@ -62,23 +62,23 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## Token audit 跟跨工具回查壓力
 
-身分事件的事後回查、要 *跨多個工具* 把同一個身分的足跡拼起來。當 audit 欄位的主體 / 資產 / 操作 ID 在不同工具之間不對齊、回查時間會以小時或天計、超過攻擊者擴散的時間尺度。
+跨工具回查的稽核責任是把同一身分在多個工具的足跡 *對齊重組* — 當 audit 欄位的主體 / 資產 / 操作 ID 在不同工具之間不對齊、回查時間會以小時或天計、超過攻擊者擴散的時間尺度。
 
 對應 [Uber 2022](../red-team/cases/identity-access/uber-2022-mfa-fatigue/) 跟 [Slack 2022](../red-team/cases/identity-access/slack-2022-token-compromise/)：兩個案例分別在身分監控層揭露同類失效訊號 — Uber 失效控制面標明「身分異常事件與值班告警串接不足」、Slack 標明「程式碼資產存取異常訊號未快速匯流」。本章把兩者抽象為「跨工具回查壓力」是稽核視角的合成 frame、非 case 原文框架。Slack 案例「可落地檢查點」直接列出 mechanism 為 detection 層「repo 異常 clone、token 跨 IP / 跨 device 序列」+ incident response 層「分層撤銷 token、以 blast radius 框定影響面」、前提是「token 有 inventory 可查 issuer / scope」。
 
-以下基於通用工程知識補充：跨工具回查的工程瓶頸通常在欄位 schema 不一致 — 同一個 user_id 在 SSO log / 應用 audit / Git 操作記錄裡用不同 key 表示、JOIN 不上時要靠人類 fuzzy match。事件期間的時間壓力下、這層 fuzzy match 是最常出錯的地方。日常治理要把「跨工具 audit 欄位對齊」當基礎建設、待事件發生才補就晚了。
+以下基於通用工程知識補充：跨工具回查的工程瓶頸通常在欄位 schema 不一致 — 同一個 user_id 在 SSO log / 應用 audit / Git 操作記錄裡用不同 key 表示、JOIN 不上時要靠人類 fuzzy match。事件期間的時間壓力下、這層 fuzzy match 是最常出錯的地方。日常治理要把「跨工具 audit 欄位對齊」內建到 schema 設計階段、屬基礎建設層的長期投資。
 
 ## 資料外送事件的時序壓力
 
-資料外送類事件的稽核責任跟身分事件不同 — 重點是 *查詢行為的可回查性* 跟 *匯出活動的責任歸屬*。當大量 query 跟匯出活動在事後無法追到具體的觸發 session 跟業務目的、責任邊界判讀會卡住、停在「不確定誰做的」階段。
+查詢行為的可回查性跟匯出活動的責任歸屬是資料外送類事件稽核責任的兩條 chain。當大量 query 跟匯出活動在事後追不到具體的觸發 session 跟業務目的、責任邊界判讀停在「不確定誰做的」階段 — 屬稽核能力不足的明確訊號。
 
 對應 [Snowflake 2024](../red-team/cases/data-exfiltration/snowflake-2024-credential-abuse/)：揭露三層失效控制面 — 身分基線未強制 MFA 與條件式存取、查詢行為異常偵測門檻不足、高價值資料匯出控制較弱。案例「可落地檢查點」標明 mechanism 為「異常查詢與匯出告警 — query 體積 / 來源 IP / 跨 schema scan 模式」、並標明該證據鏈要支撐「分批停用可疑憑證、限制外送並啟動調查」的決策。
 
-以下基於通用工程知識補充：資料平台的 audit 設計要把「查詢」當第一級事件、不只把「登入」當第一級事件。實務上多數平台先 audit 登入、查詢只在 slow query log 或 billing log 留痕、事件期間要從多個來源拼出完整查詢時序、time cost 高。匯出活動的責任歸屬要綁業務目的（ticket 編號 / approval ID）、不只綁執行者身份。
+以下基於通用工程知識補充：資料平台的 audit 設計要把「查詢」升級為第一級事件（跟「登入」同層 schema）、事件期間查詢時序可直接從主 audit stream 抽出、避免從 slow query log / billing log 拼湊。匯出活動的責任歸屬要綁業務目的（ticket 編號 / approval ID）、單綁執行者身份不夠細。
 
 ## 平台級事件的責任切分
 
-平台級事件的責任切分困難來自 *平台行為跟產品行為共用同一執行路徑*。當供應鏈植入的 artifact 出現在產品 build pipeline、產品團隊看到的是 build 失敗、平台團隊看到的是 dependency 異常、責任歸屬需要兩邊的 audit 視角 *同時* 可回查、才能切清「平台層該收斂什麼」「產品層該回應什麼」。
+兩層 audit 共同承擔平台級事件的責任切分 — 平台 audit 記錄 build pipeline / artifact 來源 / dependency 解析、產品 audit 記錄業務操作 / 資料存取 / 使用者行為。當供應鏈植入的 artifact 出現在產品 build pipeline、產品團隊看到 build 失敗、平台團隊看到 dependency 異常、責任歸屬需要兩邊視角 *同時* 可回查、才能切清「平台層該收斂什麼」「產品層該回應什麼」。
 
 對應 [SolarWinds 2020](../red-team/cases/supply-chain/solarwinds-2020-sunburst/)：案例的失效控制面標明「更新來源信任過於單點」「行為監測難以區分合法元件與惡意利用」「供應鏈異常事件缺少快速隔離流程」。本章把這幾條失效面從供應鏈信任視角延伸到稽核視角、抽象為「平台 vs 產品的責任邊界判讀壓力」— 此 frame 為本章合成、非 case 原文。
 

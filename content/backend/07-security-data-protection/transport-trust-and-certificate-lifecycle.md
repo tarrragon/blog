@@ -76,7 +76,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 對應 [Citrix Bleed 2023](../red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/)：揭露三層失效控制面 — 會話機制缺少快速失效策略、邊界事件後憑證與會話輪替未即時執行、會話異常偵測與告警關聯不足。案例「可落地檢查點」標明事故中 mechanism 為「修補、全域失效、強制重新登入同步執行」，日常監控「異常地理位置與設備指紋切換」。
 
-以下基於通用工程知識補充：全域 session 失效的工程意義是讓重放窗口從「token 自然到期」縮成「事件確認後分鐘級」。失效路徑要在日常設計時就驗證可用、待事件當下才發現「沒有全域 kill switch」就會延長重放窗口；同時要區分使用者 session 跟服務間 session、後者通常缺少強制 re-auth 路徑、要靠 issuer 端撤銷。
+以下基於通用工程知識補充：全域 session 失效的工程意義是讓重放窗口從「token 自然到期」縮成「事件確認後分鐘級」。失效路徑要在日常設計時就完成驗證、確保全域 kill switch 在事件當下可立即觸發；缺位時要在日常演練回頭補。使用者 session 走強制 re-auth 路徑、服務間 session 透過 issuer 端撤銷 — 兩條 lever 不同、事件期間需各自獨立準備。
 
 ## 簽章金鑰失效時的驗證路徑收斂
 
@@ -84,7 +84,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 對應 [Microsoft Storm-0558 2023](../red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)：揭露的「權杖驗證邊界缺少跨服務一致性檢查」屬本章傳輸層責任。案例「可落地檢查點」標明 mechanism 是「監控跨租戶 token 出現相同 issuer 但不應跨域的軌跡」、並標明前提是 token validation 路徑可在 fleet 層級熱抽換 issuer。
 
-以下基於通用工程知識補充：fleet 層級熱抽換是工程實作層的具體能力、要在日常基礎設施設計時就支援、待事件期間才補會把重建時間拉長到小時 / 天級。常見落差是 token validation 邏輯被嵌進個別 service 的 library、抽換 issuer 要重 deploy 每個 service。傳輸層治理要把這個能力當前提條件、缺位時要在 [5.x deployment platform](/backend/05-deployment-platform/) 跟基礎設施團隊協作補上。
+以下基於通用工程知識補充：fleet 層級熱抽換屬日常基礎設施的能力前提、要在日常設計階段內建、事件期間才補通常會把重建時間拉長到小時 / 天級。常見落差是 token validation 邏輯被嵌進個別 service 的 library、抽換 issuer 等於重 deploy 每個 service。傳輸層治理要把這個能力當前提條件、缺位時要在 [5.x deployment platform](/backend/05-deployment-platform/) 跟基礎設施團隊協作補上。
 
 ## 常見風險邊界
 

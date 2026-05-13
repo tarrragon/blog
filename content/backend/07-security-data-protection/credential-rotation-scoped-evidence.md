@@ -50,7 +50,7 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 
 對應 [7.C2 Cloudflare 控制面 token 2023](/backend/07-security-data-protection/cases/cloudflare-control-plane-token-2023/) 跟 [Cloudflare 2023 follow-through](/backend/07-security-data-protection/red-team/cases/identity-access/cloudflare-2023-okta-token-follow-through/)：揭露控制面 token 事件的處置壓力 — 主 case 揭露三個策略方向（工作負載身份替代長期共享 token、強制 rotation 與細粒度 scope、把憑證事件寫入 release gate）、紅隊 case 補的具體 mechanism 是「分批恢復必要權限、前提是事先有 token 範圍 inventory」。
 
-以下基於通用工程知識補充：分批恢復的工程意義是讓事件期間的可用性風險可控、不靠「全部凍結再全部解封」這種粗粒度動作。實務上 batch 設計要看三個維度 — 業務優先序（核心交易 vs 內部工具）、依賴方向（上游 service 先恢復 / 下游後恢復）、權限等級（低權先恢復 / 高權後恢復）。三維度衝突時、業務優先序勝過權限等級、是常見的工程取捨點。
+以下基於通用工程知識補充：分批恢復的工程意義是讓事件期間的可用性風險可控 — 用三個維度排序：業務優先序（核心交易 vs 內部工具）、依賴方向（上游 service 先恢復 / 下游後恢復）、權限等級（低權先恢復 / 高權後恢復）。三維度衝突時、業務優先序勝過權限等級、是常見的工程取捨點。粗粒度的「全部凍結再全部解封」是 fallback 選項、會把可用性代價拉滿。
 
 ## CI 平台事件的輪替壓力
 
@@ -60,7 +60,7 @@ CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secret
 
 [CircleCI 2023](/backend/07-security-data-protection/red-team/cases/supply-chain/circleci-2023-secrets-rotation/) 案例「可落地檢查點」標明事故中 mechanism 為「按分級快速輪替、並記錄 MTTR」，前提是「事先有 secrets inventory 跟 owner mapping」。實作示範視角的補充是：分級要落到具體 metadata schema、不只是規範性說法。
 
-以下基於通用工程知識補充：分級的工程實作通常是 *secret 元資料* — 每個 secret 在 vault 裡帶 blast radius tag（local / shared / global）、business tier（critical / standard / experimental）、rotation cost（low / high）。事件期間先查 high blast radius + critical tier 的 subset、優先輪這個 subset、再依資源繼續展開。沒有 tag 時、所有 secret 都看起來一樣重要、被迫全部輪替或被迫只輪部分（後者容易漏）。
+以下基於通用工程知識補充：tag 是事件期間的輪替排序前提 — metadata 完整時可從「high blast radius + critical tier」直接抽 subset 優先輪、再依資源展開。每個 secret 在 vault 裡帶 blast radius tag（local / shared / global）、business tier（critical / standard / experimental）、rotation cost（low / high）三維度。metadata 不足時排序退回全域輪替（成本高）或部分輪替（覆蓋風險）兩個 fallback。
 
 ## 跨模組路由
 

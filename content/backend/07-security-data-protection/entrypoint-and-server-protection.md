@@ -67,9 +67,9 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 邊界設備事件的核心治理是「漏洞修補」「會話 / 憑證失效」「異常痕跡清查」三件事 *同步發生*、不分先後留下時間窗口。任一件先做完、其他兩件還在準備、攻擊者就能在窗口內把已取得的會話或內網落點轉成持續存取。會話失效層的 canonical 在 [7.5 § 會話重放跟全域失效](../transport-trust-and-certificate-lifecycle/#會話重放跟全域失效canonical)、本節聚焦邊界設備視角下三同步的並行需求。
 
-對應 [Citrix Bleed 2023](../red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) 跟 [PAN-OS 2024](../red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)：兩個案例的「mechanism 總綱」段共同標明這個三同步原則、並標明前提是「事先有 inventory + 自動化失效 / 清查能力」。Citrix Bleed 補的失效訊號是會話被竊取後重放、PAN-OS 補的失效訊號是邊界設備暴露面集中且修補窗口內缺暫時緩解。
+[Citrix Bleed 2023](../red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) 跟 [PAN-OS 2024](../red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/) 兩個案例的「mechanism 總綱」段共同標明這個三同步原則、並標明前提是「事先有 inventory + 自動化失效 / 清查能力」。兩 case 分別補不同層失效訊號 — Citrix Bleed 補會話被竊取後重放的視角、PAN-OS 補邊界設備暴露面集中且修補窗口內缺暫時緩解的視角。
 
-以下基於通用工程知識補充：三同步不是流程時序、是 mechanism 並行需求。如果 inventory 缺位、團隊無法在事件期間快速回答「哪些 session 受影響」「哪些憑證該收斂」、就會被迫先做修補、再事後追查 — 留下的時間窗口剛好是攻擊者最容易維持存取的時段。日常的修補演練要把 inventory 完整度當核心驗證點、不只演練「能不能修補」、要演練「能不能在修補同時失效會話」。
+以下基於通用工程知識補充：三同步是 mechanism 並行需求 — 三條 chain 共享同一個事件期間的時間窗口、不視為流程時序。inventory 缺位時、團隊在事件期間答不出「哪些 session 受影響」「哪些憑證該收斂」、只能先修補再事後追查 — 留下的時間窗口正是攻擊者持續存取的高機率窗口。日常修補演練的驗收標準要同時包含「修補完成」跟「修補同時完成會話失效」兩條軌、把 inventory 完整度當共同前提。
 
 ## 修補窗口期內的暫時緩解
 
