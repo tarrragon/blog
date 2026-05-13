@@ -143,7 +143,7 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 - 例：訂單 step1 扣庫存、step2 收款、step3 送貨。step2 失敗 → 跑 step1 的 compensation（補庫存）
 - **優點**：高可用、性能好、容易擴展
 - **缺點**：不是強一致、中間狀態可見、compensation 必須設計
-- 適合：multi-service 業務流程、可接受 eventual consistency
+- 適合：multi-service 業務流程、可接受 [eventual consistency](/backend/knowledge-cards/eventual-consistency/)
 
 **Choreography vs Orchestration**：
 
@@ -158,7 +158,7 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 
 詳見 [Outbox Pattern 卡片](/backend/knowledge-cards/outbox-pattern/) 跟 [3.3 Outbox Pattern](/backend/03-message-queue/outbox-pattern/)。
 
-## 跨 Region Transaction：CAP 取捨
+## 跨 Region Transaction：[CAP](/backend/knowledge-cards/cap/) 取捨
 
 當 transaction 必須跨 region 同時成立、CAP 定理開始作用。
 
@@ -176,7 +176,7 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 **Multi-region strong consistency**（Spanner、Aurora DSQL、CockroachDB）：
 
 - 跨 region linearizable transaction
-- 代價是 latency（跨洲 100-200ms quorum）
+- 代價是 latency（跨洲 100-200ms [quorum](/backend/knowledge-cards/quorum/)）
 - 對應 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 
 **決策邏輯**：

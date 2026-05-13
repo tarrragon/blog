@@ -41,14 +41,14 @@ description: "把事故教訓回寫到產品決策、架構控制與知識網，
 
 素材回寫入口的責任是把 field case、scenario 與 control pattern 轉成文章更新路由。案例提供壓力，情境提供演練，控制模式提供可搬運欄位。
 
-| 素材                                                                                                                                  | 回寫責任                                                             | 文章路由        |
-| ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | --------------- |
-| [Field cases](/backend/07-security-data-protection/blue-team/materials/field-cases/)                                                  | 把真實事件壓力整理成 defender pressure                               | `7.B12`         |
-| [Scenarios](/backend/07-security-data-protection/blue-team/materials/scenarios/)                                                      | 把案例壓力轉成 tabletop 與 Game Day                                  | `7.B9`          |
-| [Control patterns](/backend/07-security-data-protection/blue-team/materials/control-patterns/)                                        | 把重複做法抽成 owner、evidence、lifecycle 與 write-back 欄位         | `7.B1` + `7.B3` |
-| [Exercise write-back pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/exercise-write-back-pattern/) | 把演練 finding 轉成控制、runbook、owner 與 tripwire 任務             | `7.24`          |
-| [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)   | 把 MFA、rotation、reset workflow 與 exposure monitoring 寫進產品基線 | `7.2` + `7.B12` |
-| [Recovery readiness pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/recovery-readiness-pattern/)   | 把復原目標、備援存取、依賴地圖與通報節奏寫進架構決策                 | `7.24` + `08`   |
+| 素材                                                                                                                                  | 回寫責任                                                                                       | 文章路由        |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------- |
+| [Field cases](/backend/07-security-data-protection/blue-team/materials/field-cases/)                                                  | 把真實事件壓力整理成 defender pressure                                                         | `7.B12`         |
+| [Scenarios](/backend/07-security-data-protection/blue-team/materials/scenarios/)                                                      | 把案例壓力轉成 tabletop 與 Game Day                                                            | `7.B9`          |
+| [Control patterns](/backend/07-security-data-protection/blue-team/materials/control-patterns/)                                        | 把重複做法抽成 owner、evidence、lifecycle 與 write-back 欄位                                   | `7.B1` + `7.B3` |
+| [Exercise write-back pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/exercise-write-back-pattern/) | 把演練 finding 轉成控制、runbook、owner 與 [tripwire](/backend/knowledge-cards/tripwire/) 任務 | `7.24`          |
+| [Credential hygiene pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/credential-hygiene-pattern/)   | 把 MFA、rotation、reset workflow 與 exposure monitoring 寫進產品基線                           | `7.2` + `7.B12` |
+| [Recovery readiness pattern](/backend/07-security-data-protection/blue-team/materials/control-patterns/recovery-readiness-pattern/)   | 把復原目標、備援存取、依賴地圖與通報節奏寫進架構決策                                           | `7.24` + `08`   |
 
 ## 判讀訊號與路由
 

@@ -8,7 +8,7 @@ tags: ["backend", "incident-response"]
 
 ## 大綱
 
-- 依賴事故的特殊性：control plane 在外、自家 IR 流程多數工具失效
+- 依賴事故的特殊性：[control plane](/backend/knowledge-cards/control-plane/) 在外、自家 IR 流程多數工具失效
 - 決策模型：等 / 切換 / 降級 / 主動止血 的判讀
 - vendor [status page](/backend/knowledge-cards/status-page/) 的可信度：滯後、語焉不詳、單點訊號
 - 等待 vs 切換 的成本對照：vendor ETA 不可信時的決策

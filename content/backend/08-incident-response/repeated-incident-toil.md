@@ -13,7 +13,7 @@ tags: ["backend", "incident-response"]
 - [toil](/backend/knowledge-cards/toil/) 的定義：重複、手動、無永久價值、可自動化（Google SRE Book）
 - 從 manual runbook 到 automation 的演進路徑
 - repeated incident 的根因類別：監控盲區、架構缺陷、流程斷點、人力不足
-- error budget 撥用 [toil](/backend/knowledge-cards/toil/) reduction 的政策
+- [error budget](/backend/knowledge-cards/error-budget/) 撥用 [toil](/backend/knowledge-cards/toil/) reduction 的政策
 - 跟 [8.5 post-incident review](/backend/knowledge-cards/post-incident-review/) 的差異：8.5 處理單事故、8.13 處理 pattern
 - 跟 [6.6 SLO error budget](/backend/06-reliability/slo-error-budget/) 的整合：error budget 餘額分配給 [toil](/backend/knowledge-cards/toil/) reduction
 - 反模式：每次事故 action items 都是「補 alert / 補 runbook」；[toil](/backend/knowledge-cards/toil/) 視為值班個人問題；repeated pattern 無人擁有

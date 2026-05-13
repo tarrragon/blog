@@ -34,15 +34,15 @@ tags: ["backend", "incident-response", "operations"]
 
 讀這些案例時，先看它是哪一種事故，再看它如何收斂。第一步是判斷事故屬於控制面還是資料面。第二步是看影響面是否還在擴大。第三步是看對外通訊與內部復原是否同步。這三步會把讀者導向不同的案例頁，也會把讀者導回可觀測性、部署平台、可靠性驗證或資安約束的交接節點。
 
-| 案例       | 主要用途                      | 常見回扣節點                                                                                 |
-| ---------- | ----------------------------- | -------------------------------------------------------------------------------------------- |
-| AWS S3     | 控制面失效如何擴散到整個區域  | [blast radius](/backend/knowledge-cards/blast-radius/)、recover order                        |
-| Cloudflare | edge 配置與路由如何全球擴散   | configuration push、rollback                                                                 |
-| GitHub     | replication 與 control plane  | status update、failover boundary                                                             |
-| GCP        | 全球控制面與 identity 依賴    | staged rollout、service health                                                               |
-| Atlassian  | 多租戶誤刪與長尾復原          | [incident command system](/backend/knowledge-cards/incident-command-system/)、customer comms |
-| Roblox     | prolonged recovery 與廠商協作 | root cause discovery、return to service                                                      |
-| Fastly     | 客戶配置觸發供應商 bug        | propagation speed、rollback                                                                  |
+| 案例       | 主要用途                                                                | 常見回扣節點                                                                                 |
+| ---------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| AWS S3     | 控制面失效如何擴散到整個區域                                            | [blast radius](/backend/knowledge-cards/blast-radius/)、recover order                        |
+| Cloudflare | edge 配置與路由如何全球擴散                                             | configuration push、rollback                                                                 |
+| GitHub     | replication 與 [control plane](/backend/knowledge-cards/control-plane/) | status update、failover boundary                                                             |
+| GCP        | 全球控制面與 identity 依賴                                              | staged rollout、service health                                                               |
+| Atlassian  | 多租戶誤刪與長尾復原                                                    | [incident command system](/backend/knowledge-cards/incident-command-system/)、customer comms |
+| Roblox     | prolonged recovery 與廠商協作                                           | root cause discovery、return to service                                                      |
+| Fastly     | 客戶配置觸發供應商 bug                                                  | propagation speed、rollback                                                                  |
 
 ## 第一輪案例驅動路由
 

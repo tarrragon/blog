@@ -41,6 +41,6 @@ Atlassian 的長尾復原、GCP 的全球控制面失效、Azure AD 的 identity
 
 ## 交接路由
 
-- 04.6 SLI/SLO：burn rate 對應 severity 門檻
+- 04.6 SLI/SLO：[burn rate](/backend/knowledge-cards/burn-rate/) 對應 severity 門檻
 - 08.14 multi-incident：跨事故優先序判準
 - 08.17 security vs operational：分流影響 severity 計算

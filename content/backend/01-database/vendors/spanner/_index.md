@@ -16,7 +16,7 @@ Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地
 
 - **TrueTime API**：用 GPS + 原子鐘提供「全球 unambiguous 時間戳」、誤差 < 7ms
 - **External consistency**（線性化）：跨節點交易順序跟 wall clock 一致
-- **Paxos-based replication**：跨 zone / region quorum
+- **Paxos-based replication**：跨 zone / region [quorum](/backend/knowledge-cards/quorum/)
 - **線性擴展**：2 nodes → 45K reads/sec、4 nodes → 90K reads/sec、依此類推
 
 **容量特性**（引自 [9.C10 Spanner 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）：
@@ -57,7 +57,7 @@ Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地
 **1. 跨洲低延遲（< 50ms）需求**：
 
 - 跨洲 quorum 物理上 100ms+ 不可壓縮
-- 替代：single-region OLTP（Aurora、Cloud SQL）+ eventual consistency 跨 region 同步
+- 替代：single-region OLTP（Aurora、Cloud SQL）+ [eventual consistency](/backend/knowledge-cards/eventual-consistency/) 跨 region 同步
 
 **2. 高 throughput 但容忍 eventual consistency**：
 
@@ -113,7 +113,7 @@ Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地
 **vs Cosmos DB（multi-region write）**：
 
 - Spanner：strong consistency 跨 region
-- Cosmos DB：5 個 consistency levels、AP 系統（含 strong 但語義不同）
+- Cosmos DB：5 個 [consistency level](/backend/knowledge-cards/consistency-level/)s、AP 系統（含 strong 但語義不同）
 - 選 Spanner：必須 linearizable（金融、ticketing）
 - 選 Cosmos DB：可接受 session / eventual、Azure 生態、需要 multi-model
 
@@ -157,13 +157,13 @@ Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地
 ## 預計實作話題（後續擴充）
 
 - TrueTime API 深度（為什麼 GPS + 原子鐘）
-- External consistency vs serializability vs linearizability
+- External consistency vs serializability vs [linearizability](/backend/knowledge-cards/linearizability/)
 - Schema migration 跟 interleaved tables
 - Change streams（CDC）
 - Spanner PostgreSQL dialect
 - Spanner Graph（2024）
 - 從 Cloud SQL / PostgreSQL 遷到 Spanner
-- 跟 BigQuery 整合（OLTP / OLAP federation）
+- 跟 BigQuery 整合（OLTP / OLAP [federation](/backend/knowledge-cards/federation/)）
 
 ## 案例對照
 
@@ -175,7 +175,7 @@ Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地
 
 - **誤以為跨 region 強一致沒延遲代價**：跨洲 quorum 100-200ms、無法避免
 - **設計 schema 像傳統 PostgreSQL**：Spanner 有 interleaved tables、適當用能加速查詢
-- **不用 stale read**：read-only transaction 可選 bounded staleness、便宜很多、適合 reporting
+- **不用 [stale read](/backend/knowledge-cards/stale-read/)**：read-only transaction 可選 bounded staleness、便宜很多、適合 reporting
 - **單 region 用 Spanner**：浪費、Cloud SQL / Aurora 更便宜
 - **不評估 100 PU 起跳**：早年 1 node minimum、現在 100 PU 起、small workload 也可以 POC
 

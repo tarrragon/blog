@@ -13,7 +13,7 @@ Honeycomb 是 high-cardinality observability SaaS、events-based 模型（不是
 - 需要 high-cardinality query（user_id / request_id 等）
 - Distributed system debugging（unknown-unknowns）
 - BubbleUp / heatmap 分析模式
-- SLO burn rate alerting
+- SLO [burn rate](/backend/knowledge-cards/burn-rate/) alerting
 
 ## 不適用場景
 

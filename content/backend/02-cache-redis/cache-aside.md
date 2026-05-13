@@ -86,7 +86,7 @@ cache aside 的失效風險可用 [2.C9 反例](/backend/02-cache-redis/cases/fa
 cache aside 的設計會直接影響觀測、驗證與事故處理。
 
 1. 與 01 的交接：source of truth 與查詢壓力回到 [1.1 高併發讀寫邊界](/backend/01-database/high-concurrency-access/)。
-2. 與 04 的交接：hit ratio、origin QPS、stale read 與 eviction 進入 [Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)。
+2. 與 04 的交接：hit ratio、origin QPS、[stale read](/backend/knowledge-cards/stale-read/) 與 eviction 進入 [Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)。
 3. 與 06 的交接：回源保護與壓測邊界進入 [Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)。
 4. 與 08 的交接：失效策略誤配與 stampede 事故回寫 [Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)。
 

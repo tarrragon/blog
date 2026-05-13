@@ -24,7 +24,7 @@ Envoy 是 CNCF graduated 的 service proxy、Lyft 開源、xDS 動態配置 API 
 ## 跟其他 vendor 的取捨
 
 - vs `nginx`：Envoy dynamic config 與 observability 內建；nginx 配置簡單
-- vs Istio：Envoy 是 data plane；Istio 加上 control plane
+- vs Istio：Envoy 是 data plane；Istio 加上 [control plane](/backend/knowledge-cards/control-plane/)
 - vs `traefik`：Traefik auto-discovery；Envoy xDS
 
 ## 預計實作話題

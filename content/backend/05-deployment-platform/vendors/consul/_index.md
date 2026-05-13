@@ -23,7 +23,7 @@ Consul 是 HashiCorp 出品的 service networking 平台、提供 service regist
 
 ## 跟其他 vendor 的取捨
 
-- vs etcd：etcd 偏 k8s control plane 後端；Consul 偏 service discovery
+- vs etcd：etcd 偏 k8s [control plane](/backend/knowledge-cards/control-plane/) 後端；Consul 偏 service discovery
 - vs ZooKeeper：Consul 較現代、health check 內建
 - vs Istio / Linkerd：Consul Connect 多平台 mesh
 

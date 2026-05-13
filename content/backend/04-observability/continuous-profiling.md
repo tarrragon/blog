@@ -19,7 +19,7 @@ tags: ["backend", "observability"]
 
 ## 概念定位
 
-Continuous profiling 是把 CPU、memory、allocation 與 lock contention 變成長期可比較的 production 訊號，責任是補上 metrics、logs、traces 看不到的 callstack 成本。
+[Continuous profiling](/backend/knowledge-cards/continuous-profiling/) 是把 CPU、memory、allocation 與 lock contention 變成長期可比較的 production 訊號，責任是補上 metrics、logs、traces 看不到的 callstack 成本。
 
 這一頁處理的是 process 層的持續觀測。metrics 會告訴你變慢，trace 會告訴你哪條 request 變慢，profile 會告訴你哪段程式碼正在消耗資源。
 

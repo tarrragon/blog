@@ -15,7 +15,7 @@ tags: ["backend", "deployment", "load-balancer"]
 1. routing contract：哪些路徑導向哪些服務，如何處理權重與版本。
 2. health contract：哪些訊號代表可接流量，何時摘除節點。
 3. connection contract：長短連線的 idle timeout、keepalive、重試規則。
-4. drain contract：版本切換時如何讓 in-flight request 安全收斂。
+4. drain contract：版本切換時如何讓 [in-flight](/backend/knowledge-cards/in-flight/) request 安全收斂。
 
 這四個部分共同定義 rollout 的穩定性。服務端 [readiness](/backend/knowledge-cards/readiness/) 與平台端健康檢查要對位，否則會出現「服務已啟動但尚未可服務」的切換抖動。
 

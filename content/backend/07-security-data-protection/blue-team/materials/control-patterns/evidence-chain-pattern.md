@@ -10,11 +10,11 @@ Evidence chain pattern 的責任是讓防守決策可回查。它把 signal、de
 
 ## 支撐素材
 
-| 素材                                                                                                                                         | 可支撐論點                                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| [MOVEit exfiltration case](/backend/07-security-data-protection/blue-team/materials/field-cases/moveit-2023-mft-exfiltration-pressure/)      | data scope、customer mapping 與通報需要可回查資料            |
-| [Citrix Bleed edge case](/backend/07-security-data-protection/blue-team/materials/field-cases/citrix-bleed-2023-edge-session-pressure/)      | patch、session invalidation 與 downstream audit 需要共同保存 |
-| [CISA GeoServer IR case](/backend/07-security-data-protection/blue-team/materials/field-cases/cisa-geoserver-2024-ir-coordination-pressure/) | centralized logging 與 timeline 支撐事故調查                 |
+| 素材                                                                                                                                         | 可支撐論點                                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [MOVEit exfiltration case](/backend/07-security-data-protection/blue-team/materials/field-cases/moveit-2023-mft-exfiltration-pressure/)      | data scope、customer mapping 與通報需要可回查資料                                                              |
+| [Citrix Bleed edge case](/backend/07-security-data-protection/blue-team/materials/field-cases/citrix-bleed-2023-edge-session-pressure/)      | patch、[session invalidation](/backend/knowledge-cards/session-invalidation/) 與 downstream audit 需要共同保存 |
+| [CISA GeoServer IR case](/backend/07-security-data-protection/blue-team/materials/field-cases/cisa-geoserver-2024-ir-coordination-pressure/) | centralized logging 與 timeline 支撐事故調查                                                                   |
 
 ## 欄位
 

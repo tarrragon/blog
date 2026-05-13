@@ -181,12 +181,12 @@ KV / Document DB 的計費單位（DynamoDB 的 RCU/WCU、Cosmos DB 的 RU、Spa
 
 ## 一致性模型：strong vs eventual vs session
 
-KV / Document DB 通常提供多個 consistency level、不同 level 對應不同延遲跟可用性。
+KV / Document DB 通常提供多個 [consistency level](/backend/knowledge-cards/consistency-level/)、不同 level 對應不同延遲跟可用性。
 
 **DynamoDB**：
 
 - Eventually consistent reads（預設、便宜）：1 sec 內收斂、cost = 0.5 RCU
-- Strongly consistent reads：跨 AZ quorum、cost = 1 RCU、不可跨 region
+- Strongly consistent reads：跨 AZ [quorum](/backend/knowledge-cards/quorum/)、cost = 1 RCU、不可跨 region
 - 沒有中間 level
 
 **Cosmos DB**（最豐富）：
@@ -335,21 +335,21 @@ flash-sale 或極端負載場景的限流可能分散在多層元件、不是單
 
 ## 案例對照
 
-| 案例                                                                                                | 教學重點                                                                           |
-| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| [9.C1 AWS Prime Day 2025](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) | DynamoDB 24 小時 1.51 億 RPS、毫秒級延遲、可預期峰值上限參考                       |
-| [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)           | 9000 萬 RPS + 99.999% 可用 — partition 均勻設計典範                                |
-| [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)   | Cosmos DB 1M RU/s + multi-model + global distribution                              |
-| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)       | DynamoDB 當 durable queue、IOPS 20→135K                                            |
-| [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)             | DynamoDB 4 表 + Lambda 實作 virtual waiting room、跟 Tixcraft 的隱性緩衝形成姊妹案 |
-| [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                     | 30x DAU surge、DynamoDB 撐 control plane                                           |
-| [9.C19 Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)                  | 遊戲後端 KV、billions of requests + single-digit ms                                |
-| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)           | TiDB → DynamoDB、50% 成本下降的取捨                                                |
-| [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)                   | Black Friday 1.67 億請求 / 24h、Cosmos DB 多 region                                |
-| [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)        | 99.999% 跨 15 region、DynamoDB 為預設 DB                                           |
-| [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)             | 3 億訊息 / 天、TTL 自動清理                                                        |
-| [9.C27 Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)               | billions of actions daily、watchlist + 播放進度                                    |
-| [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)        | connection limit 才是 RDB bottleneck、改用 DynamoDB                                |
+| 案例                                                                                                | 教學重點                                                                            |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [9.C1 AWS Prime Day 2025](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) | DynamoDB 24 小時 1.51 億 RPS、毫秒級延遲、可預期峰值上限參考                        |
+| [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)           | 9000 萬 RPS + 99.999% 可用 — partition 均勻設計典範                                 |
+| [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)   | Cosmos DB 1M RU/s + multi-model + global distribution                               |
+| [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)       | DynamoDB 當 durable queue、IOPS 20→135K                                             |
+| [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)             | DynamoDB 4 表 + Lambda 實作 virtual waiting room、跟 Tixcraft 的隱性緩衝形成姊妹案  |
+| [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)                     | 30x DAU surge、DynamoDB 撐 [control plane](/backend/knowledge-cards/control-plane/) |
+| [9.C19 Capcom](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/)                  | 遊戲後端 KV、billions of requests + single-digit ms                                 |
+| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)           | TiDB → DynamoDB、50% 成本下降的取捨                                                 |
+| [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)                   | Black Friday 1.67 億請求 / 24h、Cosmos DB 多 region                                 |
+| [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)        | 99.999% 跨 15 region、DynamoDB 為預設 DB                                            |
+| [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)             | 3 億訊息 / 天、TTL 自動清理                                                         |
+| [9.C27 Disney+](/backend/09-performance-capacity/cases/disney-plus-content-metadata/)               | billions of actions daily、watchlist + 播放進度                                     |
+| [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)        | connection limit 才是 RDB bottleneck、改用 DynamoDB                                 |
 
 [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 把 DynamoDB 當 *排隊調度系統*、不只當 queue buffer：用 Counters table 控發 token 的速率、Queue table 紀錄序號、Connection table 串 WebSocket。這個架構跟 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的「全部塞進 DynamoDB 隱性緩衝」是兩種對立取捨 — Tixcraft 用透明度換流量吸收能力、SeatGeek 用流量吸收能力換體驗可見度。判讀重點：KV DB 不只能當 OLTP 替代品、4 張表組合就能變成業務級調度引擎、選表前要先確定業務需要哪一面。
 

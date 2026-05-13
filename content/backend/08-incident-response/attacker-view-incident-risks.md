@@ -29,7 +29,7 @@ tags: ["backend", "incident-response"]
 
 - [AWS S3](/backend/08-incident-response/cases/aws-s3/_index.md)：control-plane 類事故會直接考驗回復與驗證。
 - [GitHub](/backend/08-incident-response/cases/github/_index.md)：平台級事故常暴露指揮與交接節奏。
-- [Cloudflare](/backend/08-incident-response/cases/cloudflare/_index.md)：edge 型事故容易放大 blast radius 與通訊壓力。
+- [Cloudflare](/backend/08-incident-response/cases/cloudflare/_index.md)：edge 型事故容易放大 [blast radius](/backend/knowledge-cards/blast-radius/) 與通訊壓力。
 
 ## 服務環節問題地圖
 

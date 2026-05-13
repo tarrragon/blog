@@ -165,7 +165,7 @@ PostgreSQL 沒有「vendor 給的容量數字」、要靠 instance 配置 + tuni
 
 **2. Replication 配置**：
 
-- streaming replication：async / sync / quorum
+- streaming replication：async / sync / [quorum](/backend/knowledge-cards/quorum/)
 - 跨 AZ async：lag 通常 < 100ms、failover 1-2 分鐘
 - 跨 AZ sync：lag 接近 0、但寫入要等 standby ack、會降寫吞吐
 - 跨 region 通常 async

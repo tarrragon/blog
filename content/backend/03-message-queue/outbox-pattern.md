@@ -8,7 +8,7 @@ tags: ["backend", "message-queue", "outbox"]
 
 這一章處理 [transaction](/backend/knowledge-cards/transaction/) 與訊息發佈之間的一致性問題，後續可以再延伸到 polling、relay 與 failure recovery。
 
-外部發件箱模式（outbox pattern）的核心責任是讓資料提交與事件發布在失敗時保持可恢復一致。它把重複發布轉成可判讀、可去重、可補償的治理問題。
+外部發件箱模式（[outbox pattern](/backend/knowledge-cards/outbox-pattern/)）的核心責任是讓資料提交與事件發布在失敗時保持可恢復一致。它把重複發布轉成可判讀、可去重、可補償的治理問題。
 
 ## 基本流程
 

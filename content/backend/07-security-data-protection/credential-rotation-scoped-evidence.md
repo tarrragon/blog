@@ -19,7 +19,7 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 1. 盤點 scope map：服務、環境、憑證用途、到期日、owner。
 2. 設計輪替批次：先低風險租戶與非核心流量，再核心路徑。
 3. 建立雙軌驗證窗口：新舊 credential 並行期間記錄命中比例。
-4. 設定 rollback window：若驗證失敗可在時限內回退到舊憑證。
+4. 設定 [rollback window](/backend/knowledge-cards/rollback-window/)：若驗證失敗可在時限內回退到舊憑證。
 5. 輪替後執行撤銷與稽核：確認舊 credential 不再可用並保留 audit evidence。
 
 ## 判讀訊號
@@ -56,7 +56,7 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 
 CI 平台事件的輪替壓力跟控制面 token 不同 — 範圍 *已知* 但 *量大*。CI 平台被入侵時、所有客戶端 secrets 都進入 *可能洩漏* 狀態、實際是否被使用要靠後續行為佐證；scoped rotation 要在「全部輪太貴」跟「分層輪會漏」之間找平衡。
 
-CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secrets 集中化跟 blast radius](/backend/07-security-data-protection/secrets-and-machine-credential-governance/#ci-secrets-集中化跟-blast-radius)；本節聚焦 scoped rotation 視角下的實作示範 — 拿到 inventory 後如何排序 batch、用什麼 metadata 支撐分批決策。
+CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secrets 集中化跟 [blast radius](/backend/knowledge-cards/blast-radius/)](/backend/07-security-data-protection/secrets-and-machine-credential-governance/#ci-secrets-集中化跟-blast-radius)；本節聚焦 scoped rotation 視角下的實作示範 — 拿到 inventory 後如何排序 batch、用什麼 metadata 支撐分批決策。
 
 [CircleCI 2023](/backend/07-security-data-protection/red-team/cases/supply-chain/circleci-2023-secrets-rotation/) 案例「可落地檢查點」標明事故中 mechanism 為「按分級快速輪替、並記錄 MTTR」，前提是「事先有 secrets inventory 跟 owner mapping」。實作示範視角的補充是：分級要落到具體 metadata schema、不只是規範性說法。
 

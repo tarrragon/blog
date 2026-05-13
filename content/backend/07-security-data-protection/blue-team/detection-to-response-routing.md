@@ -6,7 +6,7 @@ description: "建立資安偵測訊號如何轉成 triage、severity、升級與
 weight: 722
 ---
 
-本篇的責任是把資安偵測訊號轉成回應路由。讀者讀完後，能把 alert、tripwire、audit signal 或外部通報，轉成 triage、severity、owner 與升級流程。
+本篇的責任是把資安偵測訊號轉成回應路由。讀者讀完後，能把 alert、[tripwire](/backend/knowledge-cards/tripwire/)、audit signal 或外部通報，轉成 triage、severity、owner 與升級流程。
 
 ## 核心論點
 

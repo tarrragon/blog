@@ -8,19 +8,19 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 
 ## 概念定位
 
-全球分散式 OLTP 解決一個傳統 DB 做不到的問題：跨地理位置 *同時* 維持強一致性、低延遲、高可用性。CAP 定理過往把這視為「三選二」，但近 15 年的工程進展（Google Spanner、AWS Aurora DSQL、CockroachDB、Microsoft Cosmos DB 等）顯示「在投入 *專屬硬體* 或 *特殊演算法* 的條件下、可以同時拿到 strong consistency + global distribution + 可接受 latency」。
+全球分散式 OLTP 解決一個傳統 DB 做不到的問題：跨地理位置 *同時* 維持強一致性、低延遲、高可用性。[CAP 定理](/backend/knowledge-cards/cap/)過往把這視為「三選二」，但近 15 年的工程進展（Google Spanner、AWS Aurora DSQL、CockroachDB、Microsoft Cosmos DB 等）顯示「在投入 *專屬硬體* 或 *特殊演算法* 的條件下、可以同時拿到 strong consistency + global distribution + 可接受 latency」。
 
-本章整理這類系統的工程設計、容量取捨、跟傳統 single-region OLTP 的差異。讀完後讀者能回答：什麼業務需求需要 global OLTP、跨 region quorum 的延遲代價、選 Spanner vs Aurora DSQL vs Cosmos DB 的決策依據。
+本章整理這類系統的工程設計、容量取捨、跟傳統 single-region OLTP 的差異。讀完後讀者能回答：什麼業務需求需要 [global OLTP](/backend/knowledge-cards/global-oltp/)、跨 region [quorum](/backend/knowledge-cards/quorum/) 的延遲代價、選 Spanner vs Aurora DSQL vs Cosmos DB 的決策依據。
 
 跟 [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/) 的關係：1.3 處理 single-region OLTP 的 transaction 設計、本章處理 multi-region OLTP 的特殊取捨。
 
-跟 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 的關係：1.10 KV 通常 eventual consistency 全球分散容易、本章處理 *強一致* 全球分散的工程挑戰。
+跟 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 的關係：1.10 KV 通常 [eventual consistency](/backend/knowledge-cards/eventual-consistency/) 全球分散容易、本章處理 *強一致* 全球分散的工程挑戰。
 
-## CAP 跟 PACELC：理論工具
+## CAP 跟 [PACELC](/backend/knowledge-cards/pacelc/)：理論工具
 
 選擇全球 DB 前要先理解兩個理論框架。
 
-**CAP 定理**：分散式系統 *發生分區（network partition）* 時、必須在 Consistency 跟 Availability 二選一。
+**[CAP 定理](/backend/knowledge-cards/cap/)**：分散式系統 *發生分區（network partition）* 時、必須在 Consistency 跟 Availability 二選一。
 
 - CP 系統：強一致、partition 時拒絕服務（Spanner、Cosmos DB strong）
 - AP 系統：高可用、partition 時可能回舊資料（Cassandra、DynamoDB Global Tables）
@@ -38,13 +38,13 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 
 選 global DB 不是「哪個最好」、是「業務需要哪一邊」。金融交易、ticketing inventory、payment ledger 通常需要 EC；社群 feed、推薦、analytics 通常 EL 夠用。
 
-## Spanner / TrueTime 模型
+## Spanner / [TrueTime](/backend/knowledge-cards/truetime/) 模型
 
 [Google Cloud Spanner](https://cloud.google.com/spanner) 是目前最成熟的 global strong-consistency OLTP。
 
 **TrueTime API**：用 GPS + 原子鐘提供「全球 *unambiguous* 時間戳」、解決分散式系統最難的問題之一 — 跨節點時序排序。
 
-**External consistency（線性化）**：用 TrueTime 保證「全球任何節點看到的交易順序、跟 wall clock 一致」。比 CAP 的 strong consistency 更強。
+**[External consistency](/backend/knowledge-cards/external-consistency/)（線性化）**：用 TrueTime 保證「全球任何節點看到的交易順序、跟 wall clock 一致」。比 CAP 的 strong consistency 更強。
 
 **容量特性**（引自 [9.C10 Spanner 案例](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)）：
 
@@ -59,7 +59,7 @@ tags: ["backend", "database", "oltp", "global", "consistency"]
 
 Spanner 用 Paxos + TrueTime 把 coordinator 變成「拓樸感知的多 leader」、每個 leader 只管自己 partition、不需要全域 coordinator。這層演算法 + 硬體（GPS + 原子鐘）配合、才達成線性擴展。
 
-**為什麼這個 frame 對選型重要**：讀「Spanner 撐 10 億 req/sec」不該理解成「能力差距」、而是「設計差距」— 傳統 OLTP 不是「沒它快」、是「結構上做不到線性」。如果業務未來會跨 region 擴展、必須在最初就選 distributed SQL、不是先用 PostgreSQL 再「之後加 sharding」。
+**為什麼這個 frame 對選型重要**：讀「Spanner 撐 10 億 req/sec」不該理解成「能力差距」、而是「設計差距」— 傳統 OLTP 不是「沒它快」、是「結構上做不到線性」。如果業務未來會跨 region 擴展、必須在最初就選 [distributed SQL](/backend/knowledge-cards/distributed-sql/)、不是先用 PostgreSQL 再「之後加 sharding」。
 
 **對等技術跟取捨**：
 
@@ -79,7 +79,7 @@ TrueTime 是 *專屬硬體投資*、其他方案是 *軟體 only*、兩者一致
 
 - 金融交易、ticketing inventory
 - 全球客戶但需要強一致
-- 不能容忍跨地區 stale read 的業務
+- 不能容忍跨地區 [stale read](/backend/knowledge-cards/stale-read/) 的業務
 
 **不適用**：
 
@@ -153,11 +153,11 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 [Azure Cosmos DB](https://azure.microsoft.com/products/cosmos-db/) 提供 *五個一致性層級*、是 multi-region OLTP 最有彈性的選擇之一。
 
-**五個 consistency level**（從強到弱）：
+**五個 [consistency level](/backend/knowledge-cards/consistency-level/)**（從強到弱）：
 
-1. **Strong**：linearizable、跨 region quorum
-2. **Bounded staleness**：訂版本 / 時間上限
-3. **Session**：同 session 內強一致
+1. **Strong**：[linearizable](/backend/knowledge-cards/linearizability/)、跨 region quorum
+2. **[Bounded staleness](/backend/knowledge-cards/bounded-staleness/)**：訂版本 / 時間上限
+3. **[Session consistency](/backend/knowledge-cards/session-consistency/)**：同 session 內強一致
 4. **Consistent prefix**：保證寫入順序
 5. **Eventual**：最便宜、最終一致
 
@@ -165,12 +165,12 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 - 每個 region 都能寫、不必所有寫入回主 region
 - conflict resolution 用 LWW（Last-Writer-Wins）或自訂 stored procedure
-- 跟 Spanner 的 strong consistency 不同 — 是 *AP 系統*、不保證 linearizability
+- 跟 Spanner 的 strong consistency 不同 — 是 *AP 系統*、不保證 [linearizability](/backend/knowledge-cards/linearizability/)
 
 **適用場景**：
 
 - 全球用戶分布、想 *寫入本地 region* 減延遲
-- 容忍 eventual consistency（電商商品評論、社群動態）
+- 容忍 [eventual consistency](/backend/knowledge-cards/eventual-consistency/)（電商商品評論、社群動態）
 - 不能容忍跨 region failover 中斷
 
 **對應案例**：

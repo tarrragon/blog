@@ -81,7 +81,7 @@ SLO 與 performance budget 的責任是讓容量決策有「可衡量的目標 +
 **Performance budget**（本章）：
 
 - 每月有允許的 latency 退化額度
-- 例如「p99 允許比 baseline 高 10ms 連續 X 分鐘」、用 burn rate alert
+- 例如「p99 允許比 baseline 高 10ms 連續 X 分鐘」、用 [burn rate](/backend/knowledge-cards/burn-rate/) alert
 - 額度用完 → freeze new feature release、focus on perf
 
 **兩個 budget 並列、不衝突**：

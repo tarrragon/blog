@@ -153,7 +153,7 @@ tags: ["backend", "performance", "capacity", "observability"]
 
 - saturation metric 超 threshold → trigger alert
 - alert 觸發 → trigger autoscaler / runbook / oncall
-- 持續超 threshold → trigger error budget burn alert
+- 持續超 threshold → trigger [error budget](/backend/knowledge-cards/error-budget/) burn alert
 - error budget 用完 → trigger release freeze
 
 **Alert 不要太敏感**：

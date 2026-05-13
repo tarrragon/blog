@@ -17,7 +17,7 @@ tags: ["backend", "database", "vendor"]
 - [dynamodb](/backend/01-database/vendors/dynamodb/) — AWS managed KV、9 個 09 case（Amazon Ads、Tixcraft、Zoom、Capcom、Disney+ 等）
 - [aurora](/backend/01-database/vendors/aurora/) — AWS managed PostgreSQL / MySQL、5 個 09 case（DraftKings、Standard Chartered、Netflix、FanDuel）
 - [spanner](/backend/01-database/vendors/spanner/) — GCP 全球分散式 strong-consistency OLTP、TrueTime
-- [cosmosdb](/backend/01-database/vendors/cosmosdb/) — Azure 全球分散式 multi-model、5 consistency levels
+- [cosmosdb](/backend/01-database/vendors/cosmosdb/) — Azure 全球分散式 multi-model、5 [consistency level](/backend/knowledge-cards/consistency-level/)s
 - [cockroachdb](/backend/01-database/vendors/cockroachdb/) — 分散式 SQL、Spanner 的開源 / 跨雲替代
 
 ## 後續擴充

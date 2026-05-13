@@ -37,13 +37,13 @@ description: "建立資安與可靠性共同控制面的交集，整合 rollback
 
 組合路由的責任是讓共同控制面同時接上訊號、驗證與事故流程。7.23 不只把資安控制交給可靠性驗證，也把證據需求交給 04、把處置節奏交給 08。
 
-| 組合點         | 04 可觀測性承接             | 06 可靠性承接                 | 08 事故處理承接           |
-| -------------- | --------------------------- | ----------------------------- | ------------------------- |
-| Evidence chain | audit log、trace、證據保留  | evidence replay、演練驗證     | 事故 timeline 與復盤證據  |
-| Detection gap  | alert rule、dashboard、SLO  | chaos hypothesis、SLO gate    | severity trigger、runbook |
-| Containment    | blast radius 訊號與拓撲關係 | 隔離演練、降級驗證            | 指揮、隔離與恢復排序      |
-| Rollback       | rollback 前後健康訊號       | rollback rehearsal、DR drill  | rollback decision log     |
-| Degradation    | 容量、latency、queue 指標   | load test、capacity rehearsal | 降級公告與恢復節點        |
+| 組合點         | 04 可觀測性承接                                                       | 06 可靠性承接                 | 08 事故處理承接           |
+| -------------- | --------------------------------------------------------------------- | ----------------------------- | ------------------------- |
+| Evidence chain | audit log、trace、證據保留                                            | evidence replay、演練驗證     | 事故 timeline 與復盤證據  |
+| Detection gap  | alert rule、dashboard、SLO                                            | chaos hypothesis、SLO gate    | severity trigger、runbook |
+| Containment    | [blast radius](/backend/knowledge-cards/blast-radius/) 訊號與拓撲關係 | 隔離演練、降級驗證            | 指揮、隔離與恢復排序      |
+| Rollback       | rollback 前後健康訊號                                                 | rollback rehearsal、DR drill  | rollback decision log     |
+| Degradation    | 容量、latency、queue 指標                                             | load test、capacity rehearsal | 降級公告與恢復節點        |
 
 Evidence chain 在真實服務中會落到誰在什麼時間看過什麼資料、哪個 token 被使用、哪個服務產生異常輸出。04 承接資料可觀測性，06 驗證 evidence replay 是否可重播，08 在事故 timeline 中使用同一組證據做決策與復盤。
 

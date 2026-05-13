@@ -125,7 +125,7 @@ USE 找出哪一層 saturate 之後、profile 工具找出 *該層的哪段 code
 
 **不可分散瓶頸**：
 
-- consensus DB（RAFT / Paxos）→ 加節點不一定快（quorum overhead）
+- consensus DB（RAFT / Paxos）→ 加節點不一定快（[quorum](/backend/knowledge-cards/quorum/) overhead）
 - single leader DB（master 寫）→ 必須垂直擴
 - 中央 coordinator → 必須拆解或垂直擴
 - 共享 cache（hot key）→ 必須改 partition key 或加 local cache

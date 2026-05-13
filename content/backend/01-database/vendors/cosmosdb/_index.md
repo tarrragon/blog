@@ -1,7 +1,7 @@
 ---
 title: "Azure Cosmos DB"
 date: 2026-05-13
-description: "全球分散式 multi-model DB、5 個 consistency levels、Microsoft 自家 dogfood 證據"
+description: "全球分散式 multi-model DB、5 個 [consistency level](/backend/knowledge-cards/consistency-level/)s、Microsoft 自家 dogfood 證據"
 weight: 9
 tags: ["backend", "database", "vendor", "cosmosdb", "multi-model", "global"]
 ---
@@ -22,7 +22,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 **5 個 consistency levels**（從強到弱）：
 
-1. **Strong**：linearizable、跨 region quorum、最高 latency
+1. **Strong**：linearizable、跨 region [quorum](/backend/knowledge-cards/quorum/)、最高 latency
 2. **Bounded staleness**：訂版本 / 時間差異上限
 3. **Session**：同 session 內強一致（最常用）
 4. **Consistent prefix**：保證寫入順序
@@ -65,7 +65,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 - 不像 Spanner / Aurora DSQL 是 PC 系統、Cosmos DB 是 AP 系統
 - 用 LWW（Last-Writer-Wins）或 stored procedure 處理 conflict
-- 不保證 linearizability、可接受 eventual / session consistency
+- 不保證 [linearizability](/backend/knowledge-cards/linearizability/)、可接受 eventual / session consistency
 
 ## 不適用場景
 
@@ -179,7 +179,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 - MongoDB API vs native SQL API trade-off
 - 從 MongoDB / Cassandra 遷到 Cosmos DB
 - Cosmos DB for PostgreSQL（2022 新增、不同產品）
-- 跟 Azure Synapse Link 整合（OLTP / OLAP federation）
+- 跟 Azure Synapse Link 整合（OLTP / OLAP [federation](/backend/knowledge-cards/federation/)）
 
 ## 案例對照
 

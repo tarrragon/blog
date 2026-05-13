@@ -86,7 +86,7 @@ production agent 場景下 prompt injection 治理的特殊性：
 2. **下游動作的可逆性比模型對齊重要**：模型對齊強度是「降低觸發率」、tool spec / agent loop 設計是「降低觸發後的影響」。後者更可工程化、優先投資。
 3. **agent loop 是放大器**：單次 injection 觸發單一 tool 可控、loop 中 injection 累積導致行為飄移難控；agent loop 步數限制 + 定期 checkpoint 是 production agent 的基本配置。
 4. **tool 回傳內容是次要 injection 入口**：tool 抓回的網頁、DB 查詢結果、其他 service 回傳、都會回流到下一個 prompt；這些內容應在 prompt 中明確標記（如 `<tool_result>` 包起）並 instruct 模型不當指令、但不能依賴。
-5. **agent credential 應 per-call 簽發**：靜態 credential 影響面太大、production 應該用 workload identity（見 [7.7](/backend/07-security-data-protection/workload-identity-and-federated-trust/)）動態簽發。
+5. **agent credential 應 per-call 簽發**：靜態 credential 影響面太大、production 應該用 [workload identity](/backend/knowledge-cards/workload-identity/)（見 [7.7](/backend/07-security-data-protection/workload-identity-and-federated-trust/)）動態簽發。
 
 ## 防禦設計的核心原則
 

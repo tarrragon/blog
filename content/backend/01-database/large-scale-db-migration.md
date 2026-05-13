@@ -1,7 +1,7 @@
 ---
 title: "1.12 大規模 DB 遷移實戰"
 date: 2026-05-13
-description: "跨 DB 遷移的 dual-write、shadow read、cutover、rollback 流程 — 從實戰案例提煉的工程做法"
+description: "跨 DB 遷移的 dual-write、[shadow read](/backend/knowledge-cards/shadow-read/)、cutover、rollback 流程 — 從實戰案例提煉的工程做法"
 weight: 12
 tags: ["backend", "database", "migration"]
 ---

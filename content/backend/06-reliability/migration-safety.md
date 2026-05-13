@@ -10,7 +10,7 @@ tags: ["backend", "reliability"]
 
 - migration 的核心約束：schema 變更必須跟程式碼版本相容
 - expand / contract 模式：先擴展（雙寫 / 雙讀）、再收斂（移除舊欄位）
-- 雙寫驗證：shadow read、checksum 比對、流量採樣
+- 雙寫驗證：[shadow read](/backend/knowledge-cards/shadow-read/)、checksum 比對、流量採樣
 - 線上 DDL 工具：pt-online-schema-change / gh-ost / Vitess online schema change
 - 大表 migration 策略：批次、節流、避開 peak
 - rollback 路徑設計：每階段必須可逆
@@ -61,7 +61,7 @@ tags: ["backend", "reliability"]
 ## 下一步路由
 
 - 01.6 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)：雙寫、回填、切流與回滾
-- 01.7 [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)：把 migration plan 落成 validation query、evidence package、release gate 與 decision log
+- 01.7 [Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)：把 migration plan 落成 [validation query](/backend/knowledge-cards/validation-query/)、evidence package、release gate 與 decision log
 - 06.8 release gate：把可逆性放進放行條件
 - 06.10 contract testing：先驗 schema 相容性
 - 08.5 [post-incident review](/backend/knowledge-cards/post-incident-review/)：migration 類事故通常需要結構化復盤

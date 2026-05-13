@@ -21,7 +21,7 @@ tags: ["backend", "security"]
 - 人類身分 → [7.2](../identity-access-boundary/)
 - 入口暴露 → [7.3](../entrypoint-and-server-protection/)
 - 傳輸 / 憑證輪替 → [7.5](../transport-trust-and-certificate-lifecycle/)
-- workload federation → [7.10](../workload-identity-and-federated-trust/)
+- workload [federation](/backend/knowledge-cards/federation/) → [7.10](../workload-identity-and-federated-trust/)
 - build provenance → [7.12](../supply-chain-integrity-and-artifact-trust/)
 - 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
 
@@ -68,7 +68,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 本章「供應商事件傳導未收斂」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在機器憑證層的展現；canonical SSoT 在 7.2、本條補憑證仍活躍的 specific 訊號。
 
-## CI secrets 集中化跟 blast radius
+## CI secrets 集中化跟 [blast radius](/backend/knowledge-cards/blast-radius/)
 
 CI secrets 集中化的核心風險是把 *單一節點承載的憑證數量* 跟 *事件期間需要輪替的範圍* 綁在一起。當 CI 平台被入侵、可暴露的範圍就是該平台所有 secrets 的集合；治理層要在事件發生前把這個集合切小、不是事件後試圖縮範圍。
 

@@ -102,7 +102,7 @@ MongoDB 是 *主要* document model 的 DB（不是 PostgreSQL 那種「主要 S
 **vs Cosmos DB MongoDB API**：
 
 - MongoDB Atlas：跨雲、原生 MongoDB 行為
-- Cosmos DB MongoDB API：Azure-only、global distribution + 5 consistency levels
+- Cosmos DB MongoDB API：Azure-only、global distribution + 5 [consistency level](/backend/knowledge-cards/consistency-level/)s
 - 選 MongoDB Atlas：跨雲、需要原生 MongoDB features
 - 選 Cosmos DB：Azure 生態、需要更好 global distribution
 - 對應案例：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 從 MongoDB 遷到 Cosmos DB MongoDB API、應用層幾乎不必改

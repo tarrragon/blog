@@ -81,7 +81,7 @@ Execution 是高風險層。rollback、traffic shift、status page publish、cus
 | Security disclosure       | 涉及法規、證據與對外責任     | security lead、legal route        |
 | Compensation              | 涉及金額與商務政策           | business owner、reconciled impact |
 
-Severity upgrade 需要 IC 確認。bot 可以根據 burn rate、ticket 數與 status page 建議升級，但 severity 會改變通訊節奏與資源分配，需要保留人類責任。
+Severity upgrade 需要 IC 確認。bot 可以根據 [burn rate](/backend/knowledge-cards/burn-rate/)、ticket 數與 status page 建議升級，但 severity 會改變通訊節奏與資源分配，需要保留人類責任。
 
 Customer impact statement 需要 comms 與 IC 協作。自動化可以產生初稿，但對外文字要反映已確認事實、confidence 與下一次更新時間。
 
@@ -161,5 +161,5 @@ Incident workflow automation 需要接到資安權限與例外治理。自動化
 - 08.2 incident command roles：讓 bot 支援角色提醒與交接
 - 08.4 incident communication：保護對外通訊的人類確認邊界
 - 08.19 incident decision log：自動化動作也要留下決策紀錄
-- 07.14 security exception / tripwire：高風險自動化接安全例外治理
+- 07.14 security exception / [tripwire](/backend/knowledge-cards/tripwire/)：高風險自動化接安全例外治理
 - 05 deployment platform：rollback / rollout automation 的實作邊界

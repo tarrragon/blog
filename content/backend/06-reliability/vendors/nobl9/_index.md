@@ -12,7 +12,7 @@ Nobl9 是商業 SLO 平台、跨 data source（Datadog / Prometheus / New Relic 
 
 - 多 data source 統一 SLO 治理
 - 企業需要跨團隊 SLO governance
-- Error budget 與 burn rate alerting
+- Error budget 與 [burn rate](/backend/knowledge-cards/burn-rate/) alerting
 - OpenSLO 標準採用
 
 ## 不適用場景

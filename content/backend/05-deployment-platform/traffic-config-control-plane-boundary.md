@@ -6,7 +6,7 @@ weight: 7
 tags: ["backend", "deployment", "traffic", "control-plane"]
 ---
 
-Traffic、config 與 control plane boundary 的核心責任是把平台切換中的資料面與控制面分開。進入 Kubernetes、ELB、Envoy、Consul 或 Terraform 前，讀者需要先知道流量、設定、secret、service discovery 與管理面各自有不同風險與回退方式。
+Traffic、config 與 [control plane](/backend/knowledge-cards/control-plane/) boundary 的核心責任是把平台切換中的資料面與控制面分開。進入 Kubernetes、ELB、Envoy、Consul 或 Terraform 前，讀者需要先知道流量、設定、secret、service discovery 與管理面各自有不同風險與回退方式。
 
 ## Traffic Boundary
 
@@ -14,7 +14,7 @@ Traffic boundary 的責任是決定 request 如何進入服務、如何分流、
 
 流量切換要能回答三個問題：哪一批 request 會到新版本、失敗時如何停止擴批、舊版本是否仍能承接回退流量。這三個答案明確後，canary 才能從比例設定變成可回退策略。
 
-Traffic boundary 的判讀重點是 customer impact 如何被分批限制。小比例 canary、區域切流、tenant 切流與 route rule 都是不同切換單位；切換單位越清楚，rollback window 越容易被驗證。
+Traffic boundary 的判讀重點是 customer impact 如何被分批限制。小比例 canary、區域切流、tenant 切流與 route rule 都是不同切換單位；切換單位越清楚，[rollback window](/backend/knowledge-cards/rollback-window/) 越容易被驗證。
 
 ## Config Boundary
 
@@ -79,7 +79,7 @@ managed 採用後 day-1 治理項目有兩件事：明確界定 grey zone owners
 1. 哪些變更屬於 traffic，哪些屬於 config，哪些屬於 secret。
 2. 每種變更是否能分批、暫停與回退。
 3. Discovery 失準時是否有可控 fallback。
-4. Control plane 變更是否有 audit、owner 與 blast radius 限制。
+4. Control plane 變更是否有 audit、owner 與 [blast radius](/backend/knowledge-cards/blast-radius/) 限制。
 5. 基礎元件升級是否有可重播流程跟回退窗口。
 6. Managed 平台採用後團隊職責邊界是否重新定義。
 

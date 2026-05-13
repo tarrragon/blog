@@ -6,7 +6,7 @@ weight: 7
 tags: ["backend", "reliability", "vendor"]
 ---
 
-Chaos Mesh 是 PingCAP 開源、CNCF incubating 的 Kubernetes-native chaos engineering 平台、CRD-driven、覆蓋 pod / network / IO / time / kernel / DNS / stress 等故障類型。適合 k8s 為主的 chaos 設計。
+Chaos Mesh 是 Ping[CAP](/backend/knowledge-cards/cap/) 開源、CNCF incubating 的 Kubernetes-native chaos engineering 平台、CRD-driven、覆蓋 pod / network / IO / time / kernel / DNS / stress 等故障類型。適合 k8s 為主的 chaos 設計。
 
 ## 適用場景
 

@@ -2,7 +2,7 @@
 title: "Exercise Write-back Pattern"
 tags: ["Blue Team", "Control Pattern", "Game Day"]
 date: 2026-04-30
-description: "定義 tabletop 與 game day 如何把 finding 回寫成控制更新、runbook 更新與 tripwire"
+description: "定義 tabletop 與 game day 如何把 finding 回寫成控制更新、runbook 更新與 [tripwire](/backend/knowledge-cards/tripwire/)"
 weight: 72545
 ---
 

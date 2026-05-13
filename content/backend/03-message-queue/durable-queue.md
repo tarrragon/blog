@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "message-queue", "durability"]
 ---
 
-持久化佇列（durable queue）的核心責任是讓非同步工作在 process、節點或網路故障後仍可被恢復處理。它讓業務動作在失敗後仍有可追蹤、可重試、可隔離的路徑。
+持久化佇列（[durable queue](/backend/knowledge-cards/durable-queue/)）的核心責任是讓非同步工作在 process、節點或網路故障後仍可被恢復處理。它讓業務動作在失敗後仍有可追蹤、可重試、可隔離的路徑。
 
 ## durable 與 ephemeral 的差異
 

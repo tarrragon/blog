@@ -6,7 +6,7 @@ weight: 4
 tags: ["backend", "deployment", "service-discovery"]
 ---
 
-服務發現（service discovery）的核心責任是讓服務在變動環境中仍能找到正確目標實例。它處理的是定位與可用集合，不處理業務設定判斷；這個邊界清楚後，部署切換與故障回退才可預期。
+服務發現（[service discovery](/backend/knowledge-cards/service-discovery/)）的核心責任是讓服務在變動環境中仍能找到正確目標實例。它處理的是定位與可用集合，不處理業務設定判斷；這個邊界清楚後，部署切換與故障回退才可預期。
 
 ## DNS 與 registry
 

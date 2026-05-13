@@ -23,7 +23,7 @@ DynamoDB 的核心設計是「partition 透明、capacity 抽象化」。不像 
 
 - single-digit millisecond p99 latency（read / write）
 - 同 region 跨 AZ replication 內建、預設 eventually consistent reads
-- strongly consistent reads 跨 AZ quorum、不可跨 region
+- strongly consistent reads 跨 AZ [quorum](/backend/knowledge-cards/quorum/)、不可跨 region
 
 詳見 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 跟 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的 partition 設計章節。
 
@@ -119,7 +119,7 @@ DynamoDB 的核心設計是「partition 透明、capacity 抽象化」。不像 
 **vs Cosmos DB（cross-cloud）**：
 
 - DynamoDB：AWS-only、KV 為主、無 multi-model
-- Cosmos DB：Azure-only、multi-model（SQL / Mongo / Cassandra / Gremlin / Table）、5 個 consistency levels
+- Cosmos DB：Azure-only、multi-model（SQL / Mongo / Cassandra / Gremlin / Table）、5 個 [consistency level](/backend/knowledge-cards/consistency-level/)s
 - 選 DynamoDB：AWS 生態、KV 純粹
 - 選 Cosmos DB：Azure 生態、需要 multi-model、需要 multi-region active-active write
 

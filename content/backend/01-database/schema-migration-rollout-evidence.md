@@ -159,7 +159,7 @@ Cutover phase 的核心責任是把服務判讀權交給新欄位，同時保留
 
 ### Shadow read pattern：cutover 前的讀取驗證
 
-Shadow read 的責任是讓新讀取路徑在 *真實流量* 下被驗證、但 *不影響使用者結果*。這跟 dual-write 是對偶機制：dual-write 證寫入收斂、shadow read 證讀取分歧。
+Shadow read 的責任是讓新讀取路徑在 *真實流量* 下被驗證、但 *不影響使用者結果*。這跟 dual-write 是對偶機制：dual-write 證寫入收斂、[shadow read](/backend/knowledge-cards/shadow-read/) 證讀取分歧。
 
 實作模式：
 
@@ -186,7 +186,7 @@ readPaymentStateWithShadow(order):
 Shadow read 的判讀重點：
 
 - **抽樣率**：1% / 10% / 100% — 高流量場景全量 shadow 會雙倍 DB 讀取、要先評估容量。Cosmos DB / DynamoDB 的 RU 成本要乘 2。
-- **分歧分類**：跟 dual-write 一樣、divergence 要分類（mapping bug / race condition / stale read）、不分類無法定位修法。
+- **分歧分類**：跟 dual-write 一樣、divergence 要分類（mapping bug / race condition / [stale read](/backend/knowledge-cards/stale-read/)）、不分類無法定位修法。
 - **覆蓋條件**：要驗證所有 caller path（checkout / support / reconciliation / external API）都跑過 shadow、否則 cutover 後可能踩到沒測試過的 path。
 - **退場條件**：shadow read 不該長期跑、會增加負載。設明確 sunset deadline、cutover 完成後一週內移除。
 

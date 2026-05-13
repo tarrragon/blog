@@ -12,7 +12,7 @@ tags: ["backend", "reliability"]
 - 來源：post-incident review、game day、load test、chaos、on-call toil、customer ticket
 - debt 類型：missing automation、weak rollback、manual recovery、fragile dependency、observability gap
 - 欄位：impact、frequency、owner、evidence、mitigation、target state、closure signal
-- 排序方式：SLO 影響、事故重複率、toil 成本、blast radius、修復成本
+- 排序方式：SLO 影響、事故重複率、toil 成本、[blast radius](/backend/knowledge-cards/blast-radius/)、修復成本
 - 關閉條件：測試、演練、runbook 更新、alert 改善、manual step 移除
 - 跟 08 的交接：PIR action item 進 reliability debt，集中成可追蹤工作
 - 反模式：每次復盤都列改善，三個月後仍 open；toil 沒有量化；debt 無 owner

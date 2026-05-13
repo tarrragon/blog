@@ -19,7 +19,7 @@ tags: ["backend", "security"]
 **Out-of-scope**（路由到他章）：
 
 - CI secrets → [7.6](../secrets-and-machine-credential-governance/)
-- workload identity → [7.10](../workload-identity-and-federated-trust/)
+- [workload identity](/backend/knowledge-cards/workload-identity/) → [7.10](../workload-identity-and-federated-trust/)
 - 例外治理 → [7.14](../security-governance-exception-and-tripwire/)
 - 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
 

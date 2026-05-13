@@ -21,7 +21,7 @@ tags: ["backend", "deployment"]
 
 **入口暴露面**的主要紅隊判讀是「實際可達範圍是否超過設計意圖」。容器化、service mesh、ingress controller 升級、新增 LoadBalancer 都可能無意中把內部服務暴露到公網。入口清單跟責任鏈先對齊、能避免發版本就改變了攻擊面。升級流程跟回退窗口設計見 [5.7 平台元件升級的可重播流程](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#平台元件升級的可重播流程)。
 
-**生命週期訊號**的紅隊風險聚焦於脆弱窗口期被攻擊者利用：readiness 過早通過、shutdown 階段仍在處理 in-flight request、drain 視窗內接收新請求，都會把短暫的脆弱窗口拉長。
+**生命週期訊號**的紅隊風險聚焦於脆弱窗口期被攻擊者利用：readiness 過早通過、shutdown 階段仍在處理 [in-flight](/backend/knowledge-cards/in-flight/) request、drain 視窗內接收新請求，都會把短暫的脆弱窗口拉長。
 
 **設定與密鑰下發**是最容易被忽略的維度。Image 沒變但 config / secret 變了、權限因 RBAC 漂移擴張、feature flag 在 production 偷偷開啟未經 review 的新行為。這些變更不走 release gate 的話，紅隊有大量低噪音入口可以利用。
 

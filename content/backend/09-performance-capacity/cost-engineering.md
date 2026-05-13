@@ -85,7 +85,7 @@ tags: ["backend", "performance", "capacity", "cost"]
 
 - 負載門檻：utilization > 85% → 啟動降級
 - 成本門檻：本月雲端費已超預算 X% → 啟動降級
-- SLA 觸發：error budget 快用完 → 啟動降級保 SLA
+- SLA 觸發：[error budget](/backend/knowledge-cards/error-budget/) 快用完 → 啟動降級保 SLA
 
 對應案例：[Pokemon GO 50x surge](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/) — surge 期間無法等比擴容、必須降級保住核心遊戲機制、犧牲附加功能。
 

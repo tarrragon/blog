@@ -32,7 +32,7 @@ Scenario library 的核心概念是把防守知識轉成可重播情境。可重
 初始情境組合的責任是聚焦高價值風險。可先固定四組：
 
 1. [Identity Support Token Tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/identity-support-token-tabletop/)：支援流程、session token 與客戶通報。
-2. [Edge Session Hijack Game Day](/backend/07-security-data-protection/blue-team/materials/scenarios/edge-session-hijack-game-day/)：入口曝險、修補後 hunting 與 session invalidation。
+2. [Edge Session Hijack Game Day](/backend/07-security-data-protection/blue-team/materials/scenarios/edge-session-hijack-game-day/)：入口曝險、修補後 hunting 與 [session invalidation](/backend/knowledge-cards/session-invalidation/)。
 3. [Supply Chain Artifact Drill](/backend/07-security-data-protection/blue-team/materials/scenarios/supply-chain-artifact-drill/)：artifact provenance、release freeze 與 rollback。
 4. [Low-frequency Exfiltration Tabletop](/backend/07-security-data-protection/blue-team/materials/scenarios/low-frequency-exfiltration-tabletop/)：資料範圍判讀、通報與證據保存。
 

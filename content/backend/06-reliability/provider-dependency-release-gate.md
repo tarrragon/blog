@@ -1,7 +1,7 @@
 ---
 title: "6.25 Provider Dependency Release Gate 實作示範"
 date: 2026-05-08
-description: "以 payment provider 變更示範 release gate 如何結合 evidence、stop condition 與 rollback window。"
+description: "以 payment provider 變更示範 release gate 如何結合 evidence、stop condition 與 [rollback window](/backend/knowledge-cards/rollback-window/)。"
 weight: 25
 tags: ["backend", "reliability", "release-gate", "implementation"]
 ---
@@ -16,7 +16,7 @@ gate 應固定五欄：`Gate decision`、`Checks`、`Stop condition`、`Rollback
 
 ## 實作步驟
 
-1. 定義放行前檢查：checkout 成功率、provider timeout 比率、duplicate charge 監控、error budget 餘量。
+1. 定義放行前檢查：checkout 成功率、provider timeout 比率、duplicate charge 監控、[error budget](/backend/knowledge-cards/error-budget/) 餘量。
 2. 設定 canary 節奏：1% -> 5% -> 25% -> 100%，每批觀察固定時間窗。
 3. 為每批設定 stop condition：error rate、latency、provider timeout 任一超門檻即停止擴大。
 4. 設定 rollback window：例如 15 分鐘內可無資料格式衝突地回退設定。

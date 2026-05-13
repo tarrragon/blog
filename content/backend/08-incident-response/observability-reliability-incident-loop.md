@@ -24,7 +24,7 @@ tags: ["backend", "incident-response"]
 
 ### 04 → 08：訊號驅動事故響應
 
-最直觀的方向、訊號（SLO burn rate / error rate spike / latency p99 / queue lag）達標後觸發告警、進入事故響應流程。
+最直觀的方向、訊號（SLO [burn rate](/backend/knowledge-cards/burn-rate/) / error rate spike / latency p99 / queue lag）達標後觸發告警、進入事故響應流程。
 
 判讀邊界由 04 定義（什麼算異常）、響應節奏由 08 定義（誰響應、怎麼分級、怎麼通訊）。交接點是 alert routing：[symptom-based alert](/backend/knowledge-cards/symptom-based-alert/) 連到 [alert runbook](/backend/knowledge-cards/alert-runbook/)、再連到事故指揮流程。
 

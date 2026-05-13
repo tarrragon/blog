@@ -31,7 +31,7 @@ SQS 是 AWS managed queue 服務、極簡 API、無維運成本。Standard queue
 ## 預計實作話題
 
 - Standard vs FIFO queue
-- Visibility timeout 與 in-flight 訊息
+- Visibility timeout 與 [in-flight](/backend/knowledge-cards/in-flight/) 訊息
 - DLQ 設計
 - Long polling vs short polling
 - SQS + Lambda event source mapping

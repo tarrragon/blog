@@ -64,7 +64,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 跨工具回查的稽核責任是把同一身分在多個工具的足跡 *對齊重組* — 當 audit 欄位的主體 / 資產 / 操作 ID 在不同工具之間不對齊、回查時間會以小時或天計、超過攻擊者擴散的時間尺度。
 
-對應 [Uber 2022](../red-team/cases/identity-access/uber-2022-mfa-fatigue/) 跟 [Slack 2022](../red-team/cases/identity-access/slack-2022-token-compromise/)：兩個案例分別在身分監控層揭露同類失效訊號 — Uber 失效控制面標明「身分異常事件與值班告警串接不足」、Slack 標明「程式碼資產存取異常訊號未快速匯流」。本章把兩者抽象為「跨工具回查壓力」是稽核視角的合成 frame、非 case 原文框架。Slack 案例「可落地檢查點」直接列出 mechanism 為 detection 層「repo 異常 clone、token 跨 IP / 跨 device 序列」+ incident response 層「分層撤銷 token、以 blast radius 框定影響面」、前提是「token 有 inventory 可查 issuer / scope」。
+對應 [Uber 2022](../red-team/cases/identity-access/uber-2022-mfa-fatigue/) 跟 [Slack 2022](../red-team/cases/identity-access/slack-2022-token-compromise/)：兩個案例分別在身分監控層揭露同類失效訊號 — Uber 失效控制面標明「身分異常事件與值班告警串接不足」、Slack 標明「程式碼資產存取異常訊號未快速匯流」。本章把兩者抽象為「跨工具回查壓力」是稽核視角的合成 frame、非 case 原文框架。Slack 案例「可落地檢查點」直接列出 mechanism 為 detection 層「repo 異常 clone、token 跨 IP / 跨 device 序列」+ incident response 層「分層撤銷 token、以 [blast radius](/backend/knowledge-cards/blast-radius/) 框定影響面」、前提是「token 有 inventory 可查 issuer / scope」。
 
 以下基於通用工程知識補充：跨工具回查的工程瓶頸通常在欄位 schema 不一致 — 同一個 user_id 在 SSO log / 應用 audit / Git 操作記錄裡用不同 key 表示、JOIN 不上時要靠人類 fuzzy match。事件期間的時間壓力下、這層 fuzzy match 是最常出錯的地方。日常治理要把「跨工具 audit 欄位對齊」內建到 schema 設計階段、屬基礎建設層的長期投資。
 

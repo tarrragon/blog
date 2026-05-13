@@ -6,7 +6,7 @@ weight: 4
 tags: ["backend", "database", "vendor", "cockroachdb", "sql", "distributed"]
 ---
 
-CockroachDB 是分散式 SQL、PostgreSQL wire protocol 相容、跨 region 強一致。設計理念近 Spanner（線性化、跨 region quorum）、但不用 TrueTime hardware（用 HLC + Raft）、是 open source + 跨雲可用的全球 OLTP 選擇。
+CockroachDB 是分散式 SQL、PostgreSQL wire protocol 相容、跨 region 強一致。設計理念近 Spanner（線性化、跨 region [quorum](/backend/knowledge-cards/quorum/)）、但不用 TrueTime hardware（用 HLC + Raft）、是 open source + 跨雲可用的全球 OLTP 選擇。
 
 ## 定位：Spanner 的開源 / 跨雲替代
 

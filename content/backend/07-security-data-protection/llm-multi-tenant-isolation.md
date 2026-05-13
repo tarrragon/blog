@@ -19,7 +19,7 @@ weight: 92
 **Out-of-scope**（路由到他章）：
 
 - 通用 IAM / 服務間信任 → [7.2 identity-access-boundary](../identity-access-boundary/)
-- workload identity → [7.7 workload-identity-and-federated-trust](../workload-identity-and-federated-trust/)
+- [workload identity](/backend/knowledge-cards/workload-identity/) → [7.7 workload-identity-and-federated-trust](../workload-identity-and-federated-trust/)
 - log / PII 治理 → [llm-log-and-pii-governance](../llm-log-and-pii-governance/)
 - model artifact 供應鏈 → [llm-deployment-supply-chain](../llm-deployment-supply-chain/)
 - 入口治理 → [7.3 entrypoint-and-server-protection](../entrypoint-and-server-protection/)

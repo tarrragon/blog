@@ -40,7 +40,7 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 
 可重複套用的做法：
 
-1. **擴縮策略進 IaC**：HPA / VPA / Karpenter / Cluster Autoscaler 的配置都進 git、變更走 release flow、避免手動調整在事故後被遺忘。IaC + 自動化的 ownership 邊界見 [5.7 control plane boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)。
+1. **擴縮策略進 IaC**：HPA / VPA / Karpenter / Cluster Autoscaler 的配置都進 git、變更走 release flow、避免手動調整在事故後被遺忘。IaC + 自動化的 ownership 邊界見 [5.7 [control plane](/backend/knowledge-cards/control-plane/) boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)。
 2. **workload 分群擴縮**：stateless API、長連線服務、batch job、background worker 對擴縮的需求不同。把不同 workload 用不同 namespace + 不同 autoscaler policy 隔離，避免一套規則套全部。
 3. **擴縮事件接事故指標**：HPA 觸發、scale-up 延遲、scale-down 過快、cluster autoscaler 加 node 失敗，都該在事故 timeline 上可見。回到 [4.13 service topology](/backend/04-observability/service-topology/) 的擴縮事件 vs 事故區分。
 

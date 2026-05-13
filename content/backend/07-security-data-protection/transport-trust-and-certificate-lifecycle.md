@@ -21,7 +21,7 @@ tags: ["backend", "security"]
 - 身分授權 → [7.2](../identity-access-boundary/)
 - 入口暴露 → [7.3](../entrypoint-and-server-protection/)
 - 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
-- workload federation → [7.10](../workload-identity-and-federated-trust/)
+- workload [federation](/backend/knowledge-cards/federation/) → [7.10](../workload-identity-and-federated-trust/)
 - artifact 信任 → [7.12](../supply-chain-integrity-and-artifact-trust/)
 - 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
 

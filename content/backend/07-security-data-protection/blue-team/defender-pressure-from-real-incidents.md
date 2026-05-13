@@ -30,19 +30,19 @@ Defender pressure 的核心概念是辨識防守成本集中點。壓力模型�
 
 來源案例映射的責任是讓壓力模型有真實依據。每張 field case 都提供一種主要壓力，也可以支撐多個控制面。
 
-| Field case                                                                                                                                                              | 主要壓力              | 控制面                                               |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------- |
-| [Okta support token case](/backend/07-security-data-protection/blue-team/materials/field-cases/okta-support-token-2023-identity-pressure/)                              | Coordination pressure | identity、support workflow、session                  |
-| [Citrix Bleed edge case](/backend/07-security-data-protection/blue-team/materials/field-cases/citrix-bleed-2023-edge-session-pressure/)                                 | Recovery pressure     | edge gateway、patch、session invalidation            |
-| [MOVEit exfiltration case](/backend/07-security-data-protection/blue-team/materials/field-cases/moveit-2023-mft-exfiltration-pressure/)                                 | Decision pressure     | data scope、notification、MFT ownership              |
-| [3CX supply chain case](/backend/07-security-data-protection/blue-team/materials/field-cases/3cx-2023-supply-chain-artifact-pressure/)                                  | Governance pressure   | artifact provenance、release gate、customer advisory |
-| [CISA GeoServer IR case](/backend/07-security-data-protection/blue-team/materials/field-cases/cisa-geoserver-2024-ir-coordination-pressure/)                            | Visibility pressure   | EDR alert、patch delay、IR plan                      |
-| [Storm-0558 cloud signing key case](/backend/07-security-data-protection/blue-team/materials/field-cases/storm-0558-2023-cloud-signing-key-pressure/)                   | Visibility pressure   | cloud identity、key rotation、tenant boundary        |
-| [Snowflake credential reuse case](/backend/07-security-data-protection/blue-team/materials/field-cases/snowflake-2024-credential-reuse-pressure/)                       | Decision pressure     | SaaS credential、MFA、network allow list             |
-| [Ivanti Connect Secure mass exploitation case](/backend/07-security-data-protection/blue-team/materials/field-cases/ivanti-connect-secure-2024-edge-mass-exploitation/) | Recovery pressure     | edge gateway、emergency directive、integrity check   |
-| [XZ Utils maintainer case](/backend/07-security-data-protection/blue-team/materials/field-cases/xz-utils-2024-open-source-maintainer-pressure/)                         | Governance pressure   | open source、SBOM、pre-release detection             |
-| [MGM helpdesk case](/backend/07-security-data-protection/blue-team/materials/field-cases/mgm-2023-helpdesk-social-engineering-pressure/)                                | Coordination pressure | helpdesk verification、IdP admin、disclosure         |
-| [Change Healthcare recovery case](/backend/07-security-data-protection/blue-team/materials/field-cases/change-healthcare-2024-recovery-and-dependency-pressure/)        | Recovery pressure     | MFA、long outage recovery、external dependency       |
+| Field case                                                                                                                                                              | 主要壓力              | 控制面                                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------- |
+| [Okta support token case](/backend/07-security-data-protection/blue-team/materials/field-cases/okta-support-token-2023-identity-pressure/)                              | Coordination pressure | identity、support workflow、session                                                         |
+| [Citrix Bleed edge case](/backend/07-security-data-protection/blue-team/materials/field-cases/citrix-bleed-2023-edge-session-pressure/)                                 | Recovery pressure     | edge gateway、patch、[session invalidation](/backend/knowledge-cards/session-invalidation/) |
+| [MOVEit exfiltration case](/backend/07-security-data-protection/blue-team/materials/field-cases/moveit-2023-mft-exfiltration-pressure/)                                 | Decision pressure     | data scope、notification、MFT ownership                                                     |
+| [3CX supply chain case](/backend/07-security-data-protection/blue-team/materials/field-cases/3cx-2023-supply-chain-artifact-pressure/)                                  | Governance pressure   | artifact provenance、release gate、customer advisory                                        |
+| [CISA GeoServer IR case](/backend/07-security-data-protection/blue-team/materials/field-cases/cisa-geoserver-2024-ir-coordination-pressure/)                            | Visibility pressure   | EDR alert、patch delay、IR plan                                                             |
+| [Storm-0558 cloud signing key case](/backend/07-security-data-protection/blue-team/materials/field-cases/storm-0558-2023-cloud-signing-key-pressure/)                   | Visibility pressure   | cloud identity、key rotation、tenant boundary                                               |
+| [Snowflake credential reuse case](/backend/07-security-data-protection/blue-team/materials/field-cases/snowflake-2024-credential-reuse-pressure/)                       | Decision pressure     | SaaS credential、MFA、network allow list                                                    |
+| [Ivanti Connect Secure mass exploitation case](/backend/07-security-data-protection/blue-team/materials/field-cases/ivanti-connect-secure-2024-edge-mass-exploitation/) | Recovery pressure     | edge gateway、emergency directive、integrity check                                          |
+| [XZ Utils maintainer case](/backend/07-security-data-protection/blue-team/materials/field-cases/xz-utils-2024-open-source-maintainer-pressure/)                         | Governance pressure   | open source、SBOM、pre-release detection                                                    |
+| [MGM helpdesk case](/backend/07-security-data-protection/blue-team/materials/field-cases/mgm-2023-helpdesk-social-engineering-pressure/)                                | Coordination pressure | helpdesk verification、IdP admin、disclosure                                                |
+| [Change Healthcare recovery case](/backend/07-security-data-protection/blue-team/materials/field-cases/change-healthcare-2024-recovery-and-dependency-pressure/)        | Recovery pressure     | MFA、long outage recovery、external dependency                                              |
 
 ## 壓力到控制映射
 
@@ -54,7 +54,7 @@ Defender pressure 的核心概念是辨識防守成本集中點。壓力模型�
 
 ## 壓力到治理映射
 
-壓力到治理映射的責任是把事件學習納入節奏。治理映射可接到 release gate、tripwire 與 maturity 指標，讓壓力訊號轉成持續改進。
+壓力到治理映射的責任是把事件學習納入節奏。治理映射可接到 release gate、[tripwire](/backend/knowledge-cards/tripwire/) 與 maturity 指標，讓壓力訊號轉成持續改進。
 
 ## 判讀訊號與路由
 
