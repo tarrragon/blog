@@ -308,7 +308,7 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 20：寫教學模組 / 案例驅動內容時的引用紀律
 
-`#118 standard-driven vs case-driven 領域判讀` → `#119 章節已有 routing skeleton 走補強段` → `#115 案例引用深度跟著 case 類型走` → `#116 引用案例要分觀察層 / 判讀層` → `#117 跨多個 case 合成的 frame 必須標明` — 先判讀領域該走 case-driven 還是 standard-driven、再判斷章節結構決定擴章策略；走 case-driven 時依 case 類型決定承接深度、引用 rich case 時分層標明 fact vs derive、跨多個 case 合成 frame 時 explicit 標為「本章合成」。整套流程詳見 [case-first + agent team review 方法論](/posts/case-first-agent-team-review-workflow/)。
+先讀 [case-first + agent team review 方法論](/posts/case-first-agent-team-review-workflow/) 作 anchor、再依序 `#118 standard-driven vs case-driven 領域判讀` → `#119 章節已有 routing skeleton 走補強段` → `#115 案例引用深度跟著 case 類型走` → `#116 引用案例要分觀察層 / 判讀層` → `#117 跨多個 case 合成的 frame 必須標明` — 先判讀領域該走 case-driven 還是 standard-driven、再判斷章節結構決定擴章策略；走 case-driven 時依 case 類型決定承接深度、引用 rich case 時分層標明 fact vs derive、跨多個 case 合成 frame 時 explicit 標為「本章合成」。#116 / #117 順序可互換（先看單 case 內部 vs 先看跨 case 合成、看讀者習慣）。路徑尾補 standard citation surface 見 [#104](security-citation-currency-and-precision/)。
 
 ---
 

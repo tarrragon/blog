@@ -9,7 +9,7 @@ metadata:
 
 # Case-First Module Workflow
 
-跨多章節教學模組（5+ 章）撰寫的五階段流程。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 7 個模組驗證、386 個 review issue / case fidelity 70-93% 區間。
+跨多章節教學模組（5+ 章）撰寫的五階段流程。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 7 個模組驗證、385 個 review issue / case fidelity 70-93% 區間。
 
 ## 適用情境
 
@@ -24,7 +24,7 @@ metadata:
 - **單篇短文**：流程的固定成本（讀案例 + 跑 reviewer）對短文 ROI 低
 - **快速迭代原型**：流程偏向 *寫一次寫好*、不是 *快速修改*
 - **Routing layer / 導讀性質章節**：已含完整 threat scope + 引用標準 + 問題節點表、case 庫不對應或缺位、應跳過本流程、用標準引用 + 通用工程知識補充承接
-- **Standard framework 比 case 庫成熟的領域**（07 LLM 章節驗證）：當該領域的 *標準框架*（如 OWASP LLM Top 10 / NIST AI RMF / MITRE ATLAS）已涵蓋 threat 分類、且 case 維護半衰期短於 standard（領域演進快、6 個月可能過時）、章節應 *用 standard-driven 取代 case-driven*、加 `Last reviewed: YYYY-MM-DD` cadence。這 *不是* case-first 的退化版、是該領域的正確策略。詳見 [standard-driven 取代 case-driven](#standard-driven-vs-case-driven) 段。
+- **Standard framework 比 case 庫成熟的領域**（07 LLM 章節驗證）：當該領域的 *標準框架*（如 OWASP LLM Top 10 / NIST AI RMF / MITRE ATLAS）已涵蓋 threat 分類、且 case 維護半衰期短於 standard（領域演進快、6 個月可能過時）、章節應 *用 standard-driven 取代 case-driven*、加 `Last reviewed: YYYY-MM-DD` cadence。Standard-driven 跟 case-driven 是平行選項、沒有退化 / 進階關係。詳見 [standard-driven 取代 case-driven](#standard-driven-vs-case-driven) 段。
 
 ## Standard-driven vs case-driven
 
@@ -53,6 +53,8 @@ Standard-driven 章節的寫作策略：
 - 跨章 frame 重複出現、case-driven mechanism 深化能解 SSoT 衝突
 - 出現「等級類似 SolarWinds」的 incident、案例本身夠重、單一 case 即可支撐章節擴章
 
+實證：07 batch 2 LLM 安全 5 章驗證此策略 — 章節 113-137 行、含完整 threat scope + 問題節點表 + 風險邊界、引用 OWASP LLM Top 10 + NIST AI RMF + MITRE ATLAS 取代個別 case 引用、加 `Last reviewed: 2026-05-12` cadence、完全不寫「對應 [case] —」斷言。scope 涵蓋真實 production 議題（KV cache 跨租戶、shared prefix optimization、batch 推論順序敏感）、品質跟 case-driven 章節同等。
+
 ## 三大支柱
 
 | 支柱                     | 意義                                                               |
@@ -73,7 +75,7 @@ Standard-driven 章節的寫作策略：
 
 **寫作前 30 分鐘做 SSoT 對應**（這步不做必踩 frame 重複坑）：列出 cross-chapter findings、每個 frame 指定唯一主寫章節、其他章節只 link。跨模組層級概念 → 模組索引（module index、本 blog Hugo 結構下為 `_index.md`、其他靜態網站可能是 `README.md` 或 `index.md`）。
 
-寫作時主動防範五大反覆陷阱：
+寫作時主動防範以下反覆陷阱（完整 9 條清單見「反覆陷阱」段、本段給寫作當下必須意識的核心 5 條）：
 
 1. **負向陳述骨架**：避免「不是 X、是 Y」推進論證、避免「核心責任不是 X、而是 Y」變體段首
 2. **模板化**：L1/L2/L3 三層、三選一表格、四步驟流程出現前先問「真的對等嗎？」

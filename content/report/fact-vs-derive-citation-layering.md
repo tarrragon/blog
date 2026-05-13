@@ -3,19 +3,19 @@ title: "引用案例要分觀察層 / 判讀層、強化詞是錯位訊號"
 date: 2026-05-13
 weight: 116
 description: "引用案例（特別是 rich case）時、case 內容分兩層：觀察層（具體 fact）跟判讀層（作者推論）；兩層在章節引用時要分層標明、避免把作者判讀升級成 case fact；強化詞（才是 / 必須 / 一定 / 關鍵是）通常是錯位訊號、保留 case 原文的條件性表述（取決於 / 核心瓶頸 / 主要驅動）"
-tags: ["report", "事後檢討", "工程方法論", "Writing", "Case-driven"]
+tags: ["report", "事後檢討", "工程方法論", "Writing", "Case-driven", "Case-first-workflow"]
 ---
 
 ## 結論
 
-引用案例（特別是 rich case）時、要把 case 內容分成兩層、分層標明：
+Fact vs Derive 分層是 rich case 引用的內部紀律：case 內容分成觀察層（具體事實）跟判讀層（作者推論）兩層、章節引用時要各自標明來源、避免把作者判讀升級為 case fact。具體分層：
 
 | 層別             | 來源                                                                            | 引用紀律                                                             |
 | ---------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | 觀察層（Fact）   | case 直接寫的具體事實、數字、設計細節                                           | 直接引用為事實、可放章節作為支撐                                     |
 | 判讀層（Derive） | case 作者的推論段、「我們判讀」「這意味著」「關鍵是」「核心是」「才是」等詞引出 | 用「作者判讀」「（case 中 X 屬作者推論層、本章引用此推論）」明示分層 |
 
-兩層在章節引用時不可混用 — 把判讀升級為 fact 會讓章節失去 case 支撐、讀者回查 case 時發現章節說的「揭露」實際是作者推論。
+兩層在章節引用時要分層標明 — 一旦把判讀升級為 fact、章節就失去 case 支撐、讀者回查 case 時會發現章節說的「揭露」實際是作者推論。
 
 ---
 
@@ -136,13 +136,14 @@ Stage 2 寫作時依照 finding 列表的層別標記決定引用句型。
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                 | 關係                                                             |
-| ------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| [#115 案例引用深度跟著 case 類型走](../case-type-graded-citation-depth/)             | 互補 — #115 看 case 整體類型、本卡看 case 內部結構               |
-| [#117 跨 case 合成 frame 必須標明](../cross-case-synthesized-frame-must-be-labeled/) | 第三類失分 — 章節 derive 升級成 case 揭露（07 新發現）           |
-| [#104 security citation 時效精確](../security-citation-currency-and-precision/)      | conditional → unconditional drift 的姊妹卡                       |
-| [#111 口語化修辭稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)    | 強化詞屬「結局描述代替契約描述」、跟本卡的判讀層升級為 fact 同類 |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                       | 高 stakes 內容輪 E.5 citation 精確度檢查包含本卡紀律             |
+| 原則                                                                                 | 關係                                                                                                                                                  |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#115 案例引用深度跟著 case 類型走](../case-type-graded-citation-depth/)             | 互補 — #115 看 case 整體類型、本卡看 case 內部結構                                                                                                    |
+| [#117 跨 case 合成 frame 必須標明](../cross-case-synthesized-frame-must-be-labeled/) | 第三類失分 — 章節 derive 升級成 case 揭露（07 新發現）                                                                                                |
+| [#104 security citation 時效精確](../security-citation-currency-and-precision/)      | Citation 三大 surface 中的 standard surface — 本卡是 case citation surface、兩者並列為 citation 紀律的不同 surface（standard / internal-link / case） |
+| [#111 口語化修辭稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)    | 強化詞屬「結局描述代替契約描述」、跟本卡的判讀層升級為 fact 同類                                                                                      |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                       | 高 stakes 內容輪 E.5 citation 精確度檢查包含本卡紀律                                                                                                  |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)            | 同骨 pattern — 便利的引用句型（壓縮兩層成「揭露 X」、補強化詞）跟 case fidelity 紀律反向                                                              |
 
 ---
 
@@ -156,4 +157,4 @@ Stage 2 寫作時依照 finding 列表的層別標記決定引用句型。
 | 章節 + 通用工程知識段沒明確分隔           | 補「以下基於通用工程知識補充」承接                       |
 | Reviewer B 抓 high issue 集中在 rich case | 紀律失效、整章節重審所有 rich case 引用                  |
 
-**核心**：Fact 跟 derive 的差別不是「對不對」、是「來源是 case 還是作者」。讀者回查 case 時、要能反向 trace 章節的每個斷言到 case 原文的對應段、找不到的就是錯位。
+**核心**：Fact 跟 derive 的差別在「來源是 case 還是作者」、跟內容對錯無關。讀者回查 case 時、要能反向 trace 章節的每個斷言到 case 原文的對應段、找不到的就是錯位。

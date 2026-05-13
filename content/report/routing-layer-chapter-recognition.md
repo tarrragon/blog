@@ -3,12 +3,12 @@ title: "章節已有 routing skeleton 走補強段、不空白擴章"
 date: 2026-05-13
 weight: 119
 description: "章節結構分兩類：空白章節（threat scope / 問題節點表都待補）vs routing layer 章節（已有完整結構、case 庫缺位用 standard 引用承接）。擴章策略要對應結構——空白章節走 case-driven 大幅擴章；routing layer 章節走補強段（在現有結構內補 mechanism 深化）；誤判結構會引發 frame 重複展開或章節失衡"
-tags: ["report", "事後檢討", "工程方法論", "Writing", "Chapter-structure"]
+tags: ["report", "事後檢討", "工程方法論", "Writing", "Chapter-structure", "Case-first-workflow"]
 ---
 
 ## 結論
 
-擴章前先判章節結構類型、決定擴章策略：
+Routing layer 章節辨識是擴章策略選擇的前置紀律。章節分三類、各對應不同擴章策略：
 
 | 章節類型            | 訊號                                                    | 擴章策略                                             |
 | ------------------- | ------------------------------------------------------- | ---------------------------------------------------- |
@@ -16,7 +16,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Chapter-structur
 | Routing layer 章節  | 已有 threat scope + 問題節點表 + 風險邊界 + 案例觸發段  | 走 *補強段* 策略（在現有結構內補 mechanism 深化）    |
 | 導讀 / 標準引用章節 | 用 framework（OWASP / NIST）為主、案例為輔              | 走 standard-driven、加 Last reviewed cadence、不擴章 |
 
-擴章策略要對應結構 — 在 routing layer 章節空白擴章會引發 frame 重複展開或章節失衡。
+擴章策略要對應章節結構 — 在 routing layer 章節空白擴章會引發 frame 重複展開或章節失衡。誤判章節類型是 backend/07 batch 1 三個 H issue 的共同根因。
 
 ---
 
@@ -47,7 +47,7 @@ case-first workflow 之前預設「章節空白、case 庫驅動擴章」— 但
 - 已有 *風險邊界*（4-6 條升級條件）
 - 已有 *案例觸發參考*（已 link 3-5 個 case）
 
-這種章節 *不是空白*、是 *routing layer*。空白擴章會：
+這種章節屬 *routing layer* 結構 — 完整 skeleton 已存在、case 引用段已 link 既有 case。空白擴章會：
 
 - 跟既有問題節點表結構衝突
 - 把章節擴成厚重 case-driven 章節、失衡 routing 性質
@@ -153,13 +153,13 @@ backend/07 batch 1 七章節（identity-access / secrets / entrypoint / transpor
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                               | 關係                                                             |
-| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| [#118 Standard-driven vs Case-driven 領域判讀](../standard-driven-vs-case-driven-domain-judgment/) | 互補 — 一個是領域判讀、一個是章節結構判讀                        |
-| [#44 Single Source of Truth](../single-source-of-truth/)                                           | 補強段要明示「canonical 在 X 章」是 SSoT 紀律的具體應用          |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                          | 空白擴章比補強段便利、但便利會偏離意圖（routing 性質）           |
-| [#115 案例引用深度跟著 case 類型走](../case-type-graded-citation-depth/)                           | 補強段內 case 引用紀律的 prerequisite                            |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                     | 輪 2（對意圖）的具體實作 — 寫補強段時要對齊章節原有 routing 意圖 |
+| 原則                                                                                               | 關係                                                                                                                                             |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [#118 Standard-driven vs Case-driven 領域判讀](../standard-driven-vs-case-driven-domain-judgment/) | 本卡的上游 — 先判讀領域為 case-driven、本卡才適用（standard-driven 領域走 standard 引用、不需章節結構判讀）                                      |
+| [#44 Single Source of Truth](../single-source-of-truth/)                                           | 同骨 pattern 在不同 surface 的展現 — #44 處理 engineering value 的住址、本卡處理 narrative frame 的章節住址（補強段要明示「canonical 在 X 章」） |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                          | 空白擴章比補強段便利、但便利會偏離意圖（routing 性質）                                                                                           |
+| [#115 案例引用深度跟著 case 類型走](../case-type-graded-citation-depth/)                           | 補強段內 case 引用紀律的 prerequisite                                                                                                            |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                     | 輪 2（對意圖）的具體實作 — 寫補強段時要對齊章節原有 routing 意圖                                                                                 |
 
 ---
 
@@ -174,4 +174,4 @@ backend/07 batch 1 七章節（identity-access / secrets / entrypoint / transpor
 | 章節擴章後失衡 routing 性質                       | 退回原章節、補強段重寫、保留 routing layer 結構   |
 | 想在 routing layer 章節重建 threat scope          | 紀律失效訊號、改用補強段策略                      |
 
-**核心**：擴章策略要對應章節結構、不是「所有章節都走 case-driven 大幅擴章」。Routing layer 章節走補強段、保留原 routing 性質、補 mechanism 深化即可。
+**核心**：擴章策略對應章節結構 — 空白章節走 case-driven 擴章、routing layer 章節走補強段、導讀章節走 standard-driven。三類策略各自有適用情境、選錯會引發 frame 重複展開或章節失衡。

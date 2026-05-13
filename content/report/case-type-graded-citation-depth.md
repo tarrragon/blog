@@ -3,12 +3,12 @@ title: "案例引用深度跟著 case 類型走"
 date: 2026-05-13
 weight: 115
 description: "skeleton / medium / rich case 各有不同承接深度；誤判類型 → 編造數字 / taxonomy（over-extrapolation）或漏掉 case 揭露的 mechanism（under-citation）；引用前先看 case 行數 + 內容密度判類型、決定該寫『揭露 X 方向』還是『揭露 N 個機制』還是『揭露具體數字 / 設計』"
-tags: ["report", "事後檢討", "工程方法論", "Writing", "Case-driven"]
+tags: ["report", "事後檢討", "工程方法論", "Writing", "Case-driven", "Case-first-workflow"]
 ---
 
 ## 結論
 
-引用案例前要先判 case 類型、不同類型適合不同承接深度。誤判類型 → 編造 case 沒寫的細節 → reviewer 抓出 → 修正成本高。
+案例引用深度是寫作層的紀律工具：把 case 分成 skeleton / medium / rich 三類、各類對應不同承接句型、讓引用斷言能反向 trace 回 case 原文。誤判類型會引發 over-extrapolation（編造 case 沒寫的細節）或 under-citation（漏掉 case 揭露的 mechanism）、reviewer 抓出後修正成本高。
 
 | Case 類型     | 行數      | 內容密度                                 | 承接句型                                                |
 | ------------- | --------- | ---------------------------------------- | ------------------------------------------------------- |
@@ -35,7 +35,7 @@ backend/01-07 七模組驗證（[case-first workflow](../../posts/case-first-age
 | backend/06 reliability | Medium 全套       | 88%           | Medium case 實作層擴寫過頭            |
 | backend/07 batch 1     | Medium + Skeleton | 81%           | 跨 case 合成 frame 升級成 case 揭露   |
 
-最高的 92.9% 跟最低的 70% 差 23 個百分點 — 差別不在「案例品質」、在「引用紀律」。Skeleton case 嚴守「揭露方向」、不擴寫成 rich case 樣式、就能達到 90%+。
+最高的 92.9% 跟最低的 70% 差 23 個百分點 — 關鍵變數是引用紀律、案例品質本身只佔次要因素。Skeleton case 嚴守「揭露方向」、不擴寫成 rich case 樣式、就能達到 90%+。
 
 ---
 
@@ -111,13 +111,14 @@ backend/01-07 七模組驗證（[case-first workflow](../../posts/case-first-age
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                 | 關係                                                                        |
-| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| [#116 Fact vs Derive 分層引用](../fact-vs-derive-citation-layering/)                 | case 內部 fact / derive 分層 — 本卡看 case 整體類型、#116 看 case 內部結構  |
-| [#117 跨 case 合成 frame 必須標明](../cross-case-synthesized-frame-must-be-labeled/) | 第三類失分 — 章節抽象 frame 不能升級成 case 揭露                            |
-| [#104 security citation 時效精確](../security-citation-currency-and-precision/)      | citation 紀律的姊妹卡 — 一個管 case、一個管 standard                        |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                       | case fidelity 是輪 5（反例 / 邊界）+ stakes 軸（輪 E.5 citation）的具體實作 |
-| [#44 Single Source of Truth](../single-source-of-truth/)                             | 引用要求引用「住址」、本卡是 SSoT 在 case 引用情境的具體實例                |
+| 原則                                                                                 | 關係                                                                                                                            |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| [#116 Fact vs Derive 分層引用](../fact-vs-derive-citation-layering/)                 | case 內部 fact / derive 分層 — 本卡看 case 整體類型、#116 看 case 內部結構                                                      |
+| [#117 跨 case 合成 frame 必須標明](../cross-case-synthesized-frame-must-be-labeled/) | 第三類失分 — 章節抽象 frame 不能升級成 case 揭露                                                                                |
+| [#104 security citation 時效精確](../security-citation-currency-and-precision/)      | Citation 三大 surface 中的 standard surface — 本卡跟 #116/#117 是 case citation surface、三者並列為 citation 紀律的不同 surface |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                       | case fidelity 是輪 5（反例 / 邊界）+ stakes 軸（輪 E.5 citation）的具體實作                                                     |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)            | 同骨 pattern 在 case 引用 surface 的展現 — 便利的引用句型（補通用知識、不分層）跟 case fidelity 反向                            |
+| [#44 Single Source of Truth](../single-source-of-truth/)                             | 同骨 pattern 在不同 surface 的展現 — #44 處理 engineering value 的住址、本卡處理 narrative attribution 的住址                   |
 
 ---
 
