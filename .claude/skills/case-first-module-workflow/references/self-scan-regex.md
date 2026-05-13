@@ -61,6 +61,27 @@ rg -B0 -A3 -n "^## " <file> | rg "對應 \["
 
 詳見 [principles/case-citation-three-part](./principles/case-citation-three-part.md)。
 
+**⚠️ False positive 警示（07 模組驗證）**：當 case 引用採三段式 *分離結構*（概念定義段 → 空行 → case 引用獨立段 → 空行 → 通用展開段）、`^對應 \[` regex 會把第二段的「對應 [」抓出來、但前面已有獨立概念定義段、屬於規範允許的結構。手動 review 時：
+
+```bash
+# 抓「對應 [」前面是否有概念定義段（用 awk 看 prev line 是否空行 + 前一段是否有實質內容）
+awk '/^對應 \[/{prev_blank=(prev==""); print FILENAME ":" NR ": prev_blank=" prev_blank} {prev=$0}' <file>
+```
+
+若 prev_blank=1 且前一段是實質概念定義段、屬規範允許（三段分離結構）。若 prev_blank=0 或前面是 `## H2` 標題、才是真正違規（case 引用取代概念句）。
+
+### 2a. Case 引用句構同質化（07 模組新發現的 pattern）
+
+`^對應 \[` regex 抓不到此類問題、要靠人工 scan 或 reviewer A。當跨章節 case 引用大量使用同一句構（「揭露 N 層失效控制面 — A、B、C。案例『可落地檢查點』標明 mechanism 為 X、前提是 Y」）、雖然符合三段式紀律、但讀感同質。
+
+```bash
+# 跨檔抓「揭露 N 層失效控制面」+「mechanism 標明」雙 phrase 同句構出現次數
+rg -c "揭露[^。]*失效控制面" <module-paths>
+rg -c "案例「可落地檢查點」標明" <module-paths>
+```
+
+判讀條件：同模組超過 5 處用同一句構、stage 5 polish pass 主動分流。可用句構變化見 [principles/case-citation-three-part](./principles/case-citation-three-part.md)。
+
 ### 3. 編號漂移
 
 ```bash
@@ -127,11 +148,12 @@ rg -n "\[5\.[0-9]+ .+\]\(/backend/knowledge-cards/" <module-paths>
 
 ## 模組執行 baseline
 
-| 模組  | self-scan 通過 | reviewer 抓 issue 總數 | 顯露的新 pattern                                                                        |
-| ----- | -------------- | ---------------------- | --------------------------------------------------------------------------------------- |
-| 01-03 | yes            | 47-55                  | 表格不延伸、模板化（已寫進 regex）                                                      |
-| 04    | yes（漏）      | 51                     | 「核心責任不是 X、而是 Y」變體段首                                                      |
-| 05    | yes（漏）      | 59                     | 「沒有 X、會 Y」鏈式 + 四步驟模板高密度                                                 |
-| 06    | yes（漏）      | 71                     | 「對應 [case]：揭露 N 個機制」段首取代核心概念句、case 引用句構單一化（11/12 段同句構） |
+| 模組       | self-scan 通過 | reviewer 抓 issue 總數 | 顯露的新 pattern                                                                                                                                   |
+| ---------- | -------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01-03      | yes            | 47-55                  | 表格不延伸、模板化（已寫進 regex）                                                                                                                 |
+| 04         | yes（漏）      | 51                     | 「核心責任不是 X、而是 Y」變體段首                                                                                                                 |
+| 05         | yes（漏）      | 59                     | 「沒有 X、會 Y」鏈式 + 四步驟模板高密度                                                                                                            |
+| 06         | yes（漏）      | 71                     | 「對應 [case]：揭露 N 個機制」段首取代核心概念句、case 引用句構單一化（11/12 段同句構）                                                            |
+| 07 batch 1 | yes（漏）      | 52                     | 跨 case 合成 frame 升級成 case 揭露（reviewer B 2 high）、case 引用句構同質化跨章累積（13 段同句構、`^對應 \[` regex 三段分離結構 false positive） |
 
-每次新發現 pattern 時、本檔要更新、把 regex 補上、讓下個模組能在自掃描階段就抓到。
+每次新發現 pattern 時、本檔要更新、把 regex 補上、讓下個模組能在自掃描階段就抓到。**regex 抓不到的 systemic pattern**（跨 case 合成 frame、句構同質化）要靠 reviewer B / A 補 — 規劃 stage 3 reviewer prompt 時要明示這兩類為重點。

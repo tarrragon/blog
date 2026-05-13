@@ -3,13 +3,13 @@ name: case-first-module-workflow
 description: "Case-first + Agent team review 五階段流程、寫跨多章節教學模組（5+ 章、有 case 庫）時用。觸發詞：教學模組、case-first、case-driven、stage 1/2/3/4/5、agent team review、polish pass、fact vs derive、reviewer prompt、SSoT 對應、frame 重複、skeleton case vs rich case、case fidelity、自掃描 regex、模組擴章。Trigger when writing teaching modules across multiple chapters with an existing case library."
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.2.0
   category: writing-methodology
 ---
 
 # Case-First Module Workflow
 
-跨多章節教學模組（5+ 章）撰寫的五階段流程。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 6 個模組驗證、334 個 review issue / case fidelity 70-93% 區間。
+跨多章節教學模組（5+ 章）撰寫的五階段流程。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 7 個模組驗證、386 個 review issue / case fidelity 70-93% 區間。
 
 ## 適用情境
 
@@ -18,7 +18,7 @@ metadata:
 - **品質高於速度**：完整五階段約 4-6 小時 / 模組、適合長期累積的內容、不適合 one-off 文章
 - **主 context 容量敏感**：reviewer 平行 background 是節省 context 的關鍵設計
 
-不適用：新主題沒案例庫、單篇短文、快速迭代原型。
+不適用：新主題沒案例庫、單篇短文、快速迭代原型。**特例**：模組部分章節屬 *routing layer / 導讀性質*（如 07 LLM 安全章 / 治理章節）已含完整 threat scope + 引用標準 + 問題節點表、case 庫不對應或缺位、應跳過本流程、用標準引用 + 通用工程知識補充承接。
 
 ## 三大支柱
 
@@ -40,12 +40,13 @@ metadata:
 
 **寫作前 30 分鐘做 SSoT 對應**（這步不做必踩 frame 重複坑）：列出 cross-chapter findings、每個 frame 指定唯一主寫章節、其他章節只 link。跨模組層級概念 → 模組索引（module index、本 blog Hugo 結構下為 `_index.md`、其他靜態網站可能是 `README.md` 或 `index.md`）。
 
-寫作時主動防範四大反覆陷阱：
+寫作時主動防範五大反覆陷阱：
 
 1. **負向陳述骨架**：避免「不是 X、是 Y」推進論證、避免「核心責任不是 X、而是 Y」變體段首
 2. **模板化**：L1/L2/L3 三層、三選一表格、四步驟流程出現前先問「真的對等嗎？」
 3. **首句結構**：每段首句先寫「這個概念是什麼、承擔什麼責任」、不是「對應 [case] 揭露 X」
 4. **Case 引用三段式**（06 模組強化）：每處 case 引用要走「概念定義 → case 引用 → 通用展開」三段、case 引用不能取代段首概念定義。詳見 [principles/case-citation-three-part](./references/principles/case-citation-three-part.md)
+5. **跨 case 合成 frame 必須標明**（07 模組新發現）：當段落把多個 case 的失效訊號抽象為更高層 frame（如「跨工具回查壓力」「平台責任切分」）、要 explicit 標為「本章合成、非 case 原文」、避免把章節 derive 包裝成 case 揭露。詳見 [principles/fact-vs-derive-layering](./references/principles/fact-vs-derive-layering.md)
 
 寫完每章後 commit 一次或合併 commit。
 
@@ -61,12 +62,12 @@ Stage 2 commit 後、平行 spawn 3 個 reviewer（`subagent_type: general-purpo
 
 預期 issue baseline：
 
-| Reviewer 維度          | 範圍            | 備註                                                                                                                |
-| ---------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Standards reviewer     | 20-45 issue     | 規範八原則、含「不是 X 而是 Y」變體段首、06 揭露「case 引用段首」新 pattern                                         |
-| Case fidelity reviewer | 6-20 issue      | 準確率 70-93%、skeleton case 多會擴 over-extrapolation、medium case 多會擴實作層、rich case 多會混淆 fact vs derive |
-| Consistency reviewer   | 13-18 issue     | 跟章節數 / 跨模組密度成正比                                                                                         |
-| **總計**               | **47-71 issue** | 6 模組範圍（baseline 隨 standards reviewer 抓的 pattern 變多而擴大）                                                |
+| Reviewer 維度          | 範圍            | 備註                                                                                                                                                                    |
+| ---------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Standards reviewer     | 20-45 issue     | 規範八原則、含「不是 X 而是 Y」變體段首、06 揭露「case 引用段首」、07 揭露「case 引用句構同質化」新 pattern                                                             |
+| Case fidelity reviewer | 6-20 issue      | 準確率 70-93%、skeleton case 多會擴 over-extrapolation、medium case 多會擴實作層、rich case 多會混淆 fact vs derive、跨 case 合成 frame 易升級成 case 揭露（07 新發現） |
+| Consistency reviewer   | 13-18 issue     | 跟章節數 / 跨模組密度成正比                                                                                                                                             |
+| **總計**               | **47-71 issue** | 7 模組範圍（baseline 隨 standards reviewer 抓的 pattern 變多而擴大）                                                                                                    |
 
 ### Stage 4：修正循環
 
@@ -102,7 +103,7 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 
 ## 反覆陷阱（必須主動防範）
 
-6 個模組驗證後、以下陷阱在 *多數模組重複出現*、要在 stage 1-2 就防範、不能依賴 stage 3 reviewer 補救：
+7 個模組驗證後、以下陷阱在 *多數模組重複出現*、要在 stage 1-2 就防範、不能依賴 stage 3 reviewer 補救：
 
 1. **Skeleton case 擴寫成 case 事實** — 詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md)
 2. **Frame 重複展開（SSoT 不清）** — 詳見 [principles/ssot-correspondence](./references/principles/ssot-correspondence.md)
@@ -111,6 +112,8 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 5. **自掃描盲點累積** — 每個模組 reviewer 抓出新 pattern 後、回頭更新 self-scan regex
 6. **Case 引用段首取代核心概念句**（06 模組新發現）— 詳見 [principles/case-citation-three-part](./references/principles/case-citation-three-part.md)
 7. **Medium case 實作層擴寫過頭**（06 模組新發現）— 用 mechanism 名稱精準引用、不擴寫到 case 沒提的具體實作細節、詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md)
+8. **跨 case 合成 frame 升級成 case 揭露**（07 模組新發現）— 當段落把多個 case 失效訊號抽象為更高層 frame（如「跨工具回查壓力」「平台責任切分」）、要 explicit 標為「本章合成、非 case 原文」。07 batch 1 reviewer B 的 2 個 high issue 都屬此類、發生在跨 case 合成場景。詳見 [principles/fact-vs-derive-layering](./references/principles/fact-vs-derive-layering.md)
+9. **Case 引用句構同質化**（07 模組新發現）— 跨章 13+ 段 case 引用用同一句構（「揭露 N 層失效控制面 — A、B、C。案例『可落地檢查點』標明 mechanism 為 X、前提是 Y」）會讓讀者把 case 引用當儀式而非論證、stage 5 polish pass 要主動分流。詳見 [principles/case-citation-three-part](./references/principles/case-citation-three-part.md)
 
 ## 跟其他 skill 的關係
 

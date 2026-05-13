@@ -31,7 +31,7 @@ Stage 4 後出現以下任一訊號、就該排 polish pass：
 - **不擴大 scope**：原本不在擴充範圍的章節、polish pass 也不動。Polish pass 邊界 = stage 4 修改過的章節集合。
 - **不追求 0 issue**：reviewer 抓的 ~15 個 low 通常可保留為下次擴章節時自然處理。Polish pass 處理「系統性 pattern」、不處理「孤立 issue」。
 
-## 標準工序（7 步）
+## 標準工序（8 步）
 
 按系統性 pattern 分批處理、每批跑一次自掃描確認：
 
@@ -85,7 +85,24 @@ Reviewer C 報告的所有 cross-link 缺漏一次補完、用同一個批次跑
 - `/knowledge-cards/` vs `/section/` URL 統一
 - 失效 link 改規劃中或正確路徑
 
-### 7. 最終驗證 + commit
+### 7. Case 引用句構分流（07 模組新增）
+
+跨章 case 引用句構同質化是 stage 5 的新處理項。掃描跟分流：
+
+```bash
+# 跨檔抓「揭露 N 層失效控制面」+「mechanism 標明」雙 phrase 同句構出現次數
+rg -c "揭露[^。]*失效控制面" <module-paths>
+rg -c "案例「可落地檢查點」標明" <module-paths>
+```
+
+判讀條件：同模組超過 5 處用同一句構、選 2-3 處改別的句構（按 case 結構決定）。可用句構變化見 [principles/case-citation-three-part](./principles/case-citation-three-part.md) §「案例引用句構同質化」段。
+
+修法原則：
+
+- 不追求 0 重複：保留部分同句構用於 case 結構相似的場景、避免過度變化
+- 句構選擇要 *跟著 case 類型走*、不是隨機變化（case 直接列 N mechanism → 揭露 N 層；case 揭露單一壓力 → 補的失效訊號是 X）
+
+### 8. 最終驗證 + commit
 
 ```bash
 ./bin/mdtools fmt --fix <module-paths>
@@ -124,6 +141,13 @@ backend/XX+YY: polish pass — 負向骨架 / 模板化 / cross-link / 編號漂
 - 修正項目：~35 個 issue（10 個負向骨架、2 個模板化、3 個編號漂移、3 個表格延伸段、3 個 cross-link、1 個 case 引用結構）
 - 時間：~30-45 分鐘（不重寫、只 pattern match）
 - 剩餘 ~15 個 low 保留下次
+
+07 batch 1 polish pass 數據（9 medium + 句構分流）：
+
+- 處理範圍：7 個檔案、+19 / -19 行（規模小於 04/05、因 batch 1 章節集中）
+- 修正項目：9 medium（多數是正向陳述）+ 4 處 case 引用句構分流
+- 時間：~30 分鐘
+- 額外：post-batch-1 module-wide polish（5 處 pre-existing 對比骨架、跨 batch 2/3 章節）
 
 ROI 來自「系統性 pattern 一次處理 vs 散在各章一個個改」的效率差異 — 用 grep / rg 跨檔修一輪比每章單獨修快 3-5 倍。
 

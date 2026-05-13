@@ -27,6 +27,28 @@
 - **注意**：medium case 的「決策機制」段通常是 fact 層、「常見陷阱」段可能含作者判讀層、引用時也要分層
 - **例**：06 模組 G1 Google Error Budget Policy 揭露 SLI / SLO / Budget gate 三對齊、可直接引用三對齊名稱跟對應「使用者價值 / 可接受承諾 / 交付節奏」、但不引用具體 burn rate 閾值數字
 
+### Medium case 的「可引用範圍」表（07 模組新發現的強化紀律）
+
+07 紅隊事件 case（51 行 medium case）在「來源」段用表格 *明確標明每個來源的可引用範圍*、是 fact-vs-derive 分層的最強紀律：
+
+```markdown
+## 來源
+
+| 來源                                                  | 類型      | 可引用範圍                                                |
+| ----------------------------------------------------- | --------- | --------------------------------------------------------- |
+| [blog.cloudflare.com](...)                            | 官方      | 客戶側偵測、即時回應、Zero Trust 與 hardware key 防守效果 |
+| [sec.okta.com](...)                                   | 政府/監管 | 上游事件 root cause、影響範圍、session token hijack 機制  |
+| [cloud.google.com](...)                               | 技術分析  | UNC3944 對 SaaS 攻擊 TTP、跨組織 chain 模式               |
+```
+
+引用紀律：
+
+- 章節引用要 *嚴守* 來源表標明的「可引用範圍」、不超出
+- 例：來源表標「客戶側偵測」、章節寫「揭露客戶側偵測 mechanism」屬範圍內；寫「揭露完整攻擊鏈時序」屬超出範圍（攻擊鏈時序的可引用來源是 root cause 那條來源）
+- Stage 3 reviewer B prompt 要明示「來源表可引用範圍」是 high 級 issue 抓取項
+
+這層紀律比 09 rich case 的「觀察 vs 判讀」段落分割更精細 — case 文本作者已預先做了「來源 × 範圍」對應、章節引用要尊重這層 metadata。
+
 ### Skeleton case
 
 - **典型**：模組內部 N.Cx 案例庫中只有 frame、無具體數字的短篇 case
@@ -56,7 +78,7 @@
 
 ## 實證
 
-backend/01-06 六個模組驗證：
+backend/01-07 七個模組驗證：
 
 - backend/01：用 09 rich cases 為主、case fidelity 88%（skeleton 比例低）
 - backend/02：cache 模組 case 偏向 skeleton、case fidelity 78%（skeleton 過度推論增加）
@@ -64,6 +86,7 @@ backend/01-06 六個模組驗證：
 - backend/04：observability 全 skeleton、case fidelity 92.9%（紀律成熟、嚴守「揭露方向、通用補充」）
 - backend/05：5.X skeleton + 引用 09 rich case、case fidelity 80%（rich case 的「判讀層 vs fact」新失分浮現）
 - backend/06：reliability 全 medium case、case fidelity 88%（首次套用 medium case 紀律、揭露「實作層擴寫過頭」失分跟「常見陷阱」段 fact-derive 分層不清）
+- backend/07 batch 1：紅隊 medium case（51 行、含「來源表可引用範圍」表）+ skeleton 主 case、case fidelity 81%（揭露「跨 case 合成 frame」失分新類型、reviewer B 2 high 都屬此類）
 
 ## Stage 1 抽 findings 的判讀步驟
 
