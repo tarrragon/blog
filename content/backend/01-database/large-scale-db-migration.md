@@ -1,0 +1,279 @@
+---
+title: "1.12 大規模 DB 遷移實戰"
+date: 2026-05-13
+description: "跨 DB 遷移的 dual-write、shadow read、cutover、rollback 流程 — 從實戰案例提煉的工程做法"
+weight: 12
+tags: ["backend", "database", "migration"]
+---
+
+## 概念定位
+
+DB 遷移是後端工程中 *風險最高的長期工作* 之一。一次失敗的遷移可能造成資料丟失、用戶體驗劣化、合規違約、團隊信心受挫。本章整理近 5 年公開的大規模 DB 遷移案例、提煉出可重用的工程流程。
+
+跟 [1.6 database migration playbook](/backend/01-database/database-migration-playbook/) 的關係：1.6 是 *generic playbook*、本章針對「*跨 DB 種類*」遷移（PostgreSQL → Aurora、TiDB → DynamoDB、MongoDB → Cosmos DB）、規模較大、風險較高。
+
+跟 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) 的關係：1.7 處理 *同一 DB 內* 的 schema 演進、本章處理 *換 DB engine* 的遷移。兩者都用 evidence-based gate、但 stakes 不同。
+
+讀完後讀者能回答：跨 DB 遷移該怎麼分階段、dual-write 怎麼設計、shadow read 怎麼驗證、cutover 怎麼安全進行、rollback window 訂多久。
+
+## 遷移類型分類
+
+DB 遷移不是單一概念、按 *變動範圍* 分四類、每類風險跟流程不同。
+
+**Type 1：scale-up（換 instance）**：
+
+- 例：m5.large → m5.4xlarge
+- 變動：硬體規格、不變 schema、不變 DB engine
+- 風險：低、通常 minutes downtime 即可
+- 工具：vendor 提供 in-place scaling
+
+**Type 2：schema migration**：
+
+- 例：加欄位、加 index、改 data type
+- 變動：schema 結構、不變 DB engine
+- 風險：中、需要 expand-contract 模式
+- 詳見 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)
+
+**Type 3：cross-DB engine migration**：
+
+- 例：PostgreSQL → Aurora、SQL Server → PostgreSQL、TiDB → DynamoDB
+- 變動：DB engine、可能 schema、可能 query language
+- 風險：高、可能需要應用層改寫、cutover 風險大
+- 本章重點
+
+**Type 4：cross-model migration**：
+
+- 例：RDBMS → KV、Document → Graph
+- 變動：資料模型、必須應用層大改寫
+- 風險：極高、通常分 service 漸進遷移、不會一次切完
+- 對應 [9.C20 Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)
+
+## 為什麼要做大規模 DB 遷移
+
+不是所有遷移都值得做。理由要強過 *成本 + 風險*、不然不該開工。
+
+**合理動機**：
+
+- **舊系統規模上限**：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) TiDB 必須長期 over-provision 應付 spike、成本不划算 → 換 DynamoDB on-demand 後 50% 成本下降
+- **舊系統運維成本**：[9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) 自管 Kafka 工程成本太高 → 換 managed Pub/Sub 釋放 SRE
+- **舊系統失能**：[9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 多套 RDBMS（PostgreSQL、MySQL、Oracle）DBA 負擔重 → 統一到 Aurora、效能 +75% 成本 -28%
+- **vendor 終止支援**：mongoDB 改授權、TiDB 改授權、Mesos 被棄、Oracle 升級費高
+- **合規要求**：[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 新市場上線、需要本地合規 cluster
+- **新功能需求**：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) 需要 global distribution、原 MongoDB 達不到
+
+**不合理動機（要警惕）**：
+
+- 「新技術好酷」：fad-driven、通常會後悔
+- 「vendor sales 推銷」：sales 利益跟你 ROI 不一致
+- 「同行 X 也在遷」：人家的場景跟你不同
+- 「主管要看到 transformation」：政治、不是工程
+
+## 遷移五階段流程
+
+成熟的大規模 DB 遷移分五階段、每階段有明確 exit criteria。
+
+### 階段 1：可行性評估（T-180 ~ T-90）
+
+**輸出**：可行性報告、決定 go / no-go。
+
+**評估項目**：
+
+- workload 在新 DB 上是否真的能跑（不是 marketing、是實測 POC）
+- 應用層改寫成本（哪些 query 需要改、哪些 ORM 需要換）
+- 遷移時程預估（含 *合規審查* lead time、如金融業可能 3-12 個月）
+- 成本對比（總成本曲線、不只當下 snapshot）
+- 失敗代價（如果遷移失敗、business 影響多大）
+
+**對應案例**：
+
+- [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — POC 驗證 DynamoDB 撐得住、再決定遷移
+- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB API 相容讓 POC 成本低、加速決策
+
+### 階段 2：應用層相容性改造（T-90 ~ T-30）
+
+**輸出**：應用層支援 *新舊 DB 雙寫*、可以隨時切換。
+
+**改造項目**：
+
+- Repository adapter 抽象化（[1.4 Repository Adapter](/backend/01-database/repository-adapter/)）
+- 新增 *新 DB* 的 adapter 實作
+- 配置「寫入 mode」：old only / dual-write / new only
+- query 端「讀取 mode」：old / new / shadow（讀兩邊比對）
+- error handling 兼容（不同 DB 的錯誤碼）
+
+**API-compatible 遷移的優勢**：
+
+- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) MongoDB → Cosmos DB MongoDB API — 應用層幾乎不用改、只換 connection string
+- Aurora PostgreSQL-compatible → 不改 SQL 跟 ORM
+- 缺點：API 相容不等於行為完全相同、要 *特定 query pattern* 驗證
+
+### 階段 3：Dual-write + shadow read 驗證（T-30 ~ T-7）
+
+**輸出**：新 DB 已 *並行寫入*、跟舊 DB 結果一致。
+
+**Dual-write 流程**：
+
+1. 應用層同時寫入 old 跟 new DB
+2. 用 old DB 結果回應用戶
+3. log 兩邊寫入是否成功、有差異就 alert
+4. backfill 之前的歷史資料到 new DB
+
+**Shadow read 驗證**：
+
+1. 應用層查 old DB 拿結果回用戶
+2. *也* 查 new DB、比對結果是否一致
+3. 不一致記錄到 audit log
+4. 跑 N 天（建議 7-14 天）確認一致性高
+
+**注意事項**：
+
+- Dual-write 期間 *兩邊都要可寫*、寫失敗的 fallback 流程明確
+- 新 DB 還沒承擔流量、容量規劃要 *提前 ramp up*、不要等 cutover 才發現容量不夠
+- 監控指標：write success rate、cross-DB inconsistency rate、replication lag、performance metrics
+
+對應案例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 遷移前用 dual-write 驗證 4 倍吞吐改善是真的、不是 POC marketing。
+
+### 階段 4：Cutover（T-7 ~ T-0）
+
+**輸出**：用戶流量切到 new DB、old DB 變成 fallback。
+
+**Cutover 策略**：
+
+**Big-bang cutover**：一次切全部流量
+
+- 優點：簡單、不必維護 *跨 DB consistency*
+- 缺點：風險集中、rollback 困難
+- 適合：小規模、low-stakes
+
+**Gradual cutover**（推薦）：分階段切
+
+- T-7：1% 流量到 new DB、觀察 1 天
+- T-6：5% → 觀察 1 天
+- T-5：25% → 觀察 1 天
+- T-3：50% → 觀察 2 天
+- T-1：100%
+
+**Reverse rollout**：某些工作負載先切（read-only first、再 write）
+
+- T-7：所有 read 切到 new DB（write 還在 old）
+- T-3：write 切到 new DB（read 已驗證）
+
+### 階段 5：Rollback window + 清理（T+0 ~ T+30+）
+
+**Rollback window**：cutover 後保持 *可隨時 rollback 回 old DB* 的狀態。
+
+**Rollback window 設計**：
+
+- 短期（T+7）：保持 dual-write、可以即時切回 old DB
+- 中期（T+30）：保留 old DB read-only、需要 manual 切回但快
+- 長期（T+90）：保留 old DB snapshot、disaster recovery 用
+- 結束：徹底刪除 old DB（含 backup、ETL pipeline 改寫）
+
+**Cleanup 工作**：
+
+- 移除 dual-write code
+- 移除 shadow read code
+- 簡化 repository adapter（只保留 new DB）
+- 文件更新（runbook、onboarding doc）
+- decommission old DB（不立即砍、保留至少 90 天備援）
+
+對應案例：[9.C9 Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — 大規模事件交付系統的 multi-month 漸進遷移、有明確 rollback path。
+
+## API-compatible vs 應用層改寫
+
+跨 DB 遷移的關鍵決策：要不要追求 *應用層零改動*。
+
+**API-compatible 遷移**：
+
+- 新 DB 提供舊 DB 的 wire protocol / API
+- 應用層只換 connection string、不改 query
+- 例：MongoDB → Cosmos DB（MongoDB API）、Cassandra → Cosmos DB（Cassandra API）、MySQL → Aurora（MySQL）
+
+**優點**：
+
+- 遷移成本低（不必改 application code）
+- 風險低（不會引入 query bug）
+- 時程快（不必等 application 改寫）
+
+**缺點**：
+
+- 行為可能不完全一致（subtle bug）
+- 性能可能不是最佳（compat 層有 overhead）
+- vendor lock-in 更深
+
+**應用層改寫**：
+
+- 換 query 風格、ORM、access pattern
+- 例：PostgreSQL → DynamoDB（SQL → NoSQL access pattern）
+
+**何時必須應用層改寫**：
+
+- 跨 model（RDBMS → KV）
+- 跨 query paradigm（SQL → MongoDB 風格）
+- 想拿 native 性能 / 成本優勢
+
+**對應案例**：
+
+- [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB API compat、應用層幾乎不改
+- [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 多套 RDBMS → Aurora、PostgreSQL / MySQL 相容、最小應用層改動
+- [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — TiDB（SQL）→ DynamoDB（KV）、必須改 access pattern、不能 API compat
+
+## 容量規劃在遷移中的角色
+
+DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
+
+**遷移期容量需求**：
+
+- old DB 持續服務 production
+- new DB 接 dual-write（額外負載）
+- backfill historical data（額外負載）
+- shadow read（讀兩倍）
+- 應用層擴容（dual-write 邏輯吃 CPU）
+
+**典型容量增加**：
+
+- 應用層 +20-30%（dual-write、cross-DB logic、metric）
+- new DB 必須 *提前 provision* 接 100% 流量
+- 監控 / log 容量 +50%（要追蹤更多事件）
+
+**對應 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)**：遷移期是「臨時 over-provisioning 期」、要算進 cost。遷移完才能 right-sizing。
+
+**對應 [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)**：dual-write 跟 shadow read 是 production validation 的特殊形式、要按 9.10 的安全邊界設計。
+
+## 案例對照
+
+| 案例                                                                                             | 遷移類型                          | 教學重點                                  |
+| ------------------------------------------------------------------------------------------------ | --------------------------------- | ----------------------------------------- |
+| [9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)    | self-managed → managed            | 7500 萬用戶事件交付系統遷移、人力成本驅動 |
+| [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)        | NewSQL → KV NoSQL                 | 對照 over-provisioning 成本、50% 帳單下降 |
+| [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)            | 多套 RDBMS → 統一 Aurora          | DB consolidation 釋放 DBA、效能 +75%      |
+| [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) | MongoDB → Cosmos DB（API compat） | API 相容遷移路徑、planet-scale 分析       |
+
+## 反模式
+
+大規模 DB 遷移的常見錯誤：
+
+- **沒做 POC 就 commit 遷移**：發現新 DB 撐不住某個 query pattern、時程崩
+- **dual-write 沒 monitoring**：兩邊不一致沒被發現、cutover 後資料錯亂
+- **shadow read 跑太短**：1-2 天就 cutover、long-tail bug 沒暴露
+- **沒 rollback path**：cutover 後發現問題、回不去
+- **app 跟 DB 一起遷**：兩個 risk source 疊加、追根因困難
+- **忽略合規 lead time**：技術側 ready 但合規審查還在跑、整個 stuck
+- **忽略 ETL pipeline**：production cutover 完、下游 BI / analytics 還在打 old DB
+
+## 下一步路由
+
+- 上游：[1.6 database migration playbook](/backend/01-database/database-migration-playbook/)（基本流程）/ [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)（schema 演進）
+- 平行：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) / [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
+- 跨模組：[9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)（dual-write、shadow）、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[6.11 Migration Safety](/backend/06-reliability/migration-safety/)、[8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
+
+## 既建知識卡片
+
+- [Schema Migration](/backend/knowledge-cards/schema-migration/)
+- [Expand / Contract](/backend/knowledge-cards/expand-contract/)
+- [Dual Write](/backend/knowledge-cards/dual-write/)
+- [Backfill](/backend/knowledge-cards/backfill/)
+- [Cutover Window](/backend/knowledge-cards/cutover-window/)
+- [Rollback Window](/backend/knowledge-cards/rollback-window/)
+- [Shadow Traffic](/backend/knowledge-cards/shadow-traffic/)
+- [Fallback Read](/backend/knowledge-cards/fallback-read/)
