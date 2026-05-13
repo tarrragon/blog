@@ -1,6 +1,6 @@
 # Agent team context 隔離設計：用不同 instance 換 frame、平行 background 保護主 context
 
-> **角色**：本卡是 `compositional-writing` 的支撐型原則（principle）、被 SKILL.md 第 6 原則「Multi-pass Review」引用為 instance 軸的具體實作、被 `references/auditing-articles.md` 在「跟 Multi-pass Review 第 6 輪的分工」段引用。
+> **角色**：本卡是 `compositional-writing` 的支撐型原則（principle）、被 SKILL.md 第 6 原則「Multi-pass Review」引用為 instance 軸（跟 frame 軸正交）的具體實作。
 >
 > **何時讀**：寫作 review 階段、考慮用 agent team 平行跑多 reviewer 時、想設計 reviewer prompt + context 保護策略時。
 
@@ -10,12 +10,12 @@
 
 Agent team context 隔離是 LLM-era review 工具設計的核心模式 — 用 N 個獨立 reviewer instance 各自跑 background、各自寫 output file、主 context 只接精煉摘要、不被 reviewer 細節污染。
 
-| 設計面              | 紀律                                           | 效果                                                 |
-| ------------------- | ---------------------------------------------- | ---------------------------------------------------- |
-| Instance 隔離       | N 個專責 reviewer 各自獨立 context             | 維度盲點分開處理、不互相干擾                         |
-| Background 平行     | 不阻塞主 context、可同時跑 3-5 個 reviewer     | 時間從序列 30 分鐘縮到平行 10 分鐘                   |
-| 輸出檔案隔離        | Reviewer 寫 output file、不污染主 conversation | 主 context 增量 ~3K token、節省 ~80% context         |
-| 主 context 只接摘要 | Reviewer 完成後回傳精煉彙整                    | 修正循環時 context 留給判讀、不被 raw issue 列表佔滿 |
+| 設計選擇                                        | 解決的問題                                                     | 失敗模式                                                       |
+| ----------------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
+| Instance 隔離（N 個 reviewer 各自獨立 context） | 維度盲點：單一 reviewer 同時看多維度容易互相干擾               | 用單一 reviewer 處理多維度 → 每個維度都看不深                  |
+| Background 平行                                 | 序列時間長：reviewer 序列跑 ~30 分鐘                           | 不平行、序列跑 → 時間 3x                                       |
+| Output file 隔離                                | Context 污染：reviewer raw issue 列表佔滿主 context            | Reviewer 直接在 conversation 吐 issue → 主 context 被 raw 佔滿 |
+| 主 context 只讀彙整 summary                     | Context 增量過大：直接 Read transcript 拉 raw 內容進主 context | 主 context Read reviewer transcript → 增量翻倍                 |
 
 跟 multi-pass review 的差別：multi-pass 是 *同一 reviewer 換輪次 frame*（生成 / 對意圖 / 機會成本 / grep / 反例）；本卡是 *不同 reviewer instance 各自獨立*（規範 / 案例準確 / 跨章一致 / 文章品質等）。兩者正交、可疊加。
 
@@ -38,7 +38,7 @@ Agent team context 隔離是 LLM-era review 工具設計的核心模式 — 用 
 
 ## 為什麼這層設計重要
 
-單一 reviewer 同時處理多維度有兩個限制：
+Context 隔離要解兩個具體問題：單一 reviewer 同時處理多維度有兩個限制：
 
 1. **維度盲點**：一個 reviewer 同時看寫作規範 + 案例準確性 + 跨章一致性、容易維度互相干擾、最後每個維度都看不深
 2. **Context 污染**：reviewer 讀完整 commit + 所有案例 + 所有章節後、自身 context 被佔滿、給的建議也對應主 context 跟著沉重
@@ -51,47 +51,31 @@ Context 隔離解這兩個問題：
 
 ---
 
-## 設計紀律：何時用幾個 reviewer
+## Reviewer 數量設計：依維度複雜度決定
 
-Reviewer 數量決定取決於審查對象的維度複雜度：
+Reviewer 數量取決於審查對象的維度複雜度：
 
-| 審查對象                           | Reviewer 數 | 維度分配                                                  |
-| ---------------------------------- | ----------- | --------------------------------------------------------- |
-| 跨章節案例驅動章節擴章             | 3 個        | A 寫作規範 / B 案例引用準確性 / C 跨章一致性              |
-| 方法論 / 自我審查                  | 4 個        | A 寫作規範 / B 三方自一致性 / C 概念邊界 / D 文章品質     |
-| 一般 PR review                     | 1-2 個      | 規範 + correctness、不需要 case fidelity 維度             |
-| 高 stakes 內容（資安 / financial） | 4-5 個      | 加 epistemic rigor reviewer（claim / evidence / threats） |
+| 審查對象                           | Reviewer 數 | 為什麼這個數                                                      |
+| ---------------------------------- | ----------- | ----------------------------------------------------------------- |
+| 跨章節案例驅動章節擴章             | 3 個        | 規範 / 案例準確性 / 跨章一致性三大正交 axis、加更多會 overlap     |
+| 方法論 / 自我審查                  | 4 個        | 規範 / 三方自一致性 / 概念邊界 / 文章品質、無 case 引用 axis 需要 |
+| 一般 PR review                     | 1-2 個      | 規範 + correctness 即可、不需 case fidelity 維度                  |
+| 高 stakes 內容（資安 / financial） | 4-5 個      | 額外加 epistemic rigor reviewer（claim / evidence / threats）     |
 
 維度設計要對審查對象客製、不要固定一套維度套所有任務。
 
 ---
 
-## 平行 background 的具體實作
+## 平行 background 的 abstract pattern
 
-實作 pattern（以 Agent tool 為例）：
+實作 pattern（4 個關鍵設計選擇）：
 
-```text
-# spawn 平行 background
-for reviewer_id in ['A', 'B', 'C']:
-    Agent({
-        description: f"Reviewer {reviewer_id}: {dimension}",
-        subagent_type: "general-purpose",
-        run_in_background: True,
-        prompt: get_reviewer_prompt(reviewer_id)
-    })
+1. **N 個 reviewer 各自 spawn background instance**：平行跑、不阻塞主 context
+2. **每個 reviewer 寫 output file**：報告寫到外部檔（如 `/tmp/reviewer-{id}-report.md`）、不污染主 conversation
+3. **主 context 不讀 reviewer transcript**：只讀通知 summary + 最後讀 output file 彙整
+4. **Reviewer prompt 含主 context 保護指令**：「報告寫進檔即可、不要在 conversation 吐 raw issue」
 
-# 主 context 不阻塞、繼續其他工作
-# Reviewer 完成時主 context 接通知
-# Reviewer 各自寫 output 到 /tmp/reviewer-{id}-report.md
-# 主 context 讀 output 彙整、不讀 raw conversation transcript
-```
-
-關鍵設計選擇：
-
-1. **`run_in_background: true`**：平行跑、不阻塞
-2. **Reviewer 寫 output file**：報告寫 `/tmp/...` 不污染主 conversation
-3. **主 context 不讀 reviewer transcript**：只讀通知 summary + 最後讀 output file
-4. **Reviewer prompt 含「不要佔我主 context、報告寫進檔即可」明示**：避免 reviewer 把 raw issue 都吐回主 conversation
+具體 spawn / API 用法依 agent tool 平台而異、屬實作層細節、不在本卡 scope。
 
 ---
 
@@ -104,7 +88,7 @@ Reviewer 維度不該固定 — 跨章節案例驅動章節用「規範 / 案例
 - **拆 axis 不重疊**：每個 reviewer 的維度跟其他 reviewer 互斥（如「規範」vs「案例準確性」是不同 axis）
 - **覆蓋審查對象的關鍵風險**：審查案例驅動章節要 case fidelity reviewer、審查方法論要三方自一致性 reviewer
 - **預期 issue baseline 設好**：每 reviewer 給 prompt 預期數量、reviewer 不要過度抓 / 漏抓
-- **prompt 含主 context 保護指令**：「報告寫到 /tmp/X-report.md、不要在主 conversation 吐 raw issue」
+- **prompt 含主 context 保護指令**：「報告寫到外部檔、不要在主 conversation 吐 raw issue」
 
 ---
 
@@ -117,7 +101,13 @@ Reviewer 維度不該固定 — 跨章節案例驅動章節用「規範 / 案例
 | Reviewer 維度固定不變、套所有任務                           | 維度跟審查對象不對齊、漏抓關鍵風險               |
 | Reviewer 不平行、序列跑                                     | 時間成本高、序列 30 分鐘 vs 平行 10 分鐘         |
 | Reviewer prompt 沒明示 baseline                             | Reviewer 抓 5 個或 50 個都「完成」、無法判讀品質 |
-| 主 context 直接 Read reviewer transcript                    | 把 raw conversation 拉進主 context、context 污染 |
+| 主 context 直接讀 reviewer transcript                       | 把 raw conversation 拉進主 context、context 污染 |
+
+---
+
+## 何時不適用本紀律
+
+單篇短文 / 無多維度審查需求 / 快速 prototype / 主 context 不敏感的場景不需 agent team — 單一 reviewer 跑 multi-pass（frame 軸）就夠、加 instance 軸是過度設計。Instance 軸適用 production 教學文章 / 高 stakes 內容 / 跨章節教學模組這類維度複雜度高的審查場景。
 
 ---
 
