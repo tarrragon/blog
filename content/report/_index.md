@@ -144,6 +144,14 @@ tags: ["report", "事後檢討", "工程方法論"]
 - [#113 商業邏輯論述要 self-contained：不依賴 code 才能被理解](prose-self-contained-without-code-reference/) — 不放 code 的段落仍要 self-contained——用「那個 payload 第二段」「剛才的 controller」「就好 / 就能」這類 reference 等於把理解門檻轉嫁給讀者去翻 code；修法是用名詞 / 角色 / 條件描述、即使讀者跳過所有 code block 也能理解論述
 - [#114 Multi-pass review 的 frame 顆粒度盲點](multi-pass-review-frame-granularity-blindspot/) — Multi-pass 用「規則 frame」掃描有效抓結構性違反、抓不到字句層具體訊號（口語修辭 / 地區漂移 / 依賴 code / 廢話前綴）；同一 reviewer 跑多輪 catch 的東西高度相同；要擴大覆蓋度需要三機制——keyword bank（換工具）+ reader simulation（換視角）+ self-criticism（換層次）
 
+Case-driven 寫作方法論系列（#115-119、從 [case-first-module-workflow skill](/posts/case-first-agent-team-review-workflow/) 抽出）：
+
+- [#115 案例引用深度跟著 case 類型走](case-type-graded-citation-depth/) — skeleton / medium / rich case 各有不同承接深度；誤判類型 → 編造數字 / taxonomy（over-extrapolation）或漏掉 case 揭露的 mechanism；引用前先看 case 行數 + 內容密度判類型、決定該寫「揭露 X 方向」「揭露 N 個機制」還是「揭露具體數字 / 設計」
+- [#116 引用案例要分觀察層 / 判讀層、強化詞是錯位訊號](fact-vs-derive-citation-layering/) — 引用案例（特別是 rich case）時、case 內容分兩層：觀察層（具體 fact）跟判讀層（作者推論）；兩層要分層標明、避免把作者判讀升級成 case fact；強化詞（才是 / 必須 / 一定 / 關鍵是）通常是錯位訊號、保留 case 原文的條件性表述（取決於 / 核心瓶頸 / 主要驅動）
+- [#117 跨多個 case 合成的 frame 必須標為章節合成、非 case 原文](cross-case-synthesized-frame-must-be-labeled/) — 當段落把多個 case 的失效訊號抽象為更高層 frame（如「跨工具回查壓力」「平台責任切分」）、要 explicit 標為「本章合成、非 case 原文」；否則章節 derive 會被讀者當成 case fact、回查時找不到對應段；07 LLM 模組 batch 1 兩個 high issue 都屬此類
+- [#118 Standard-driven 取代 Case-driven 適用 standard framework 比 case 庫成熟的領域](standard-driven-vs-case-driven-domain-judgment/) — 並非所有領域都該走 case-driven；判斷四維度（議題穩定度 / case 公開度 / standard 成熟度 / 維護半衰期）；LLM 安全屬 standard-driven 領域（OWASP LLM Top 10 + NIST AI RMF 已成型、case 半衰期 6 個月）、不該勉強建 case 庫；分散式系統 / 安全控制面屬 case-driven 領域
+- [#119 章節已有 routing skeleton 走補強段、不空白擴章](routing-layer-chapter-recognition/) — 章節結構分兩類：空白章節 vs routing layer 章節（已有 threat scope + 問題節點表 + 風險邊界 + 案例觸發段）；擴章策略要對應結構——空白章節走 case-driven 大幅擴章、routing layer 章節走補強段（在現有結構內補 mechanism 深化）；07 batch 1 三個 H issue 都來自誤套空白擴章策略到 routing layer 章節
+
 ### 第七輪：Pattern 卡片（待補完）
 
 從實作篇的「設計取捨」段落抽出、單一做法的深入卡片。每張卡片只討論一個 pattern：什麼時候用、什麼時候不用、跟其他做法的取捨。實作篇在取捨段落引用對應卡片。
@@ -298,7 +306,13 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 `#107 術語翻譯要保留原文錨點` → `#108 中文壓縮術語要保留完整名詞頭` → `#109 術語翻譯要保留概念角色` → `#84 Naming 是 iterated artifact` → `#97 Metadata surface 要納入寫作 review 範圍` — 先保留原文讓概念可回溯，再確認中文離開原句仍有完整名詞頭；最後檢查名詞頭是否保留來源中的概念角色，並同步掃 heading / checklist / index entry。
 
+### 路徑 20：寫教學模組 / 案例驅動內容時的引用紀律
+
+`#118 standard-driven vs case-driven 領域判讀` → `#119 章節已有 routing skeleton 走補強段` → `#115 案例引用深度跟著 case 類型走` → `#116 引用案例要分觀察層 / 判讀層` → `#117 跨多個 case 合成的 frame 必須標明` — 先判讀領域該走 case-driven 還是 standard-driven、再判斷章節結構決定擴章策略；走 case-driven 時依 case 類型決定承接深度、引用 rich case 時分層標明 fact vs derive、跨多個 case 合成 frame 時 explicit 標為「本章合成」。整套流程詳見 [case-first + agent team review 方法論](/posts/case-first-agent-team-review-workflow/)。
+
 ---
+
+**Last Updated**: 2026-05-13 — 新增 #115-119 case-driven 寫作方法論系列（5 張卡：#115 case 類型決定引用深度 / #116 fact vs derive 分層引用 / #117 跨 case 合成 frame 必須標明 / #118 standard-driven vs case-driven 領域判讀 / #119 章節已有 routing skeleton 走補強段），從 [case-first-module-workflow skill](/posts/case-first-agent-team-review-workflow/) 反向抽出原子化原則；新增路徑 20 給寫教學模組的引用紀律。
 
 **Last Updated**: 2026-05-04 — 新增 #107-#109 術語翻譯 review 系列（原文錨點 / 完整名詞頭 / 概念角色），從 `paternalism`、`多步驟 perplexity 盲`、`Steelman` 三個 case 抽出翻譯檢查流程；新增路徑 19 給文章轉譯與術語 review。
 
