@@ -86,17 +86,17 @@ TrueTime 是 *專屬硬體投資*、其他方案是 *軟體 only*、兩者一致
 - 跨洲低延遲（沒辦法、TrueTime 也壓不下 100ms 跨洲）
 - 高 throughput 但容忍 eventual consistency（Bigtable / Cassandra 更便宜）
 
-### 分散式 SQL 的 over-provision 是體質、不是 misconfiguration
+### 分散式 SQL 的 over-provision 屬結構性成本
 
-分散式 SQL（TiDB、CockroachDB、Spanner）的工程師常被問「為什麼平時 CPU 只用 20%、還要付這麼多錢」。這不是 capacity planning 失誤、是 distributed SQL 的 *本質要求*：
+分散式 SQL（TiDB、CockroachDB、Spanner）要求恆常 over-provision、是結構性成本、不是 capacity planning 失誤。三個原因都來自跨節點協調的物理需求：
 
 - 跨節點 transaction 需要 coordinator 角色、leader election 在尖峰當下不能發生、否則整個 cluster 卡住。
 - 預留 buffer 讓 leader / follower lag 在尖峰時仍能收斂、否則 replication lag 爆增、讀走 replica 的 query 拿到太舊資料。
 - 跨 region quorum 在某個 region 暫時不可用時、剩下 region 要能繼續 quorum、所以每 region 的容量都要 >= quorum 所需。
 
-對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 從 TiDB 遷出不是因為 TiDB 不好、是因為 *該 workload 不需要 strong consistency*、過去因 TiDB 必須 over-provision 的成本不划算。判讀重點：如果業務不需要 strong consistency、distributed SQL 的「常態 over-provision 成本」就是浪費；如果業務需要、那是合理代價。
+對應 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 從 TiDB 遷出是業務需求側的判斷：該 workload 本身就能接受 eventually consistent、為 strong consistency 付的 over-provision 屬於浪費。判讀重點：strong consistency 是業務需求時、distributed SQL 的常態 over-provision 是合理代價；業務需求不到這個層級時、KV / 傳統 OLTP 是更划算的選項。
 
-選型公式：先問業務需求要什麼一致性層級、再選 DB 類型、不要倒過來。
+選型公式：先問業務需求要什麼一致性層級、再選 DB 類型、避免倒過來「先選 DB 再硬塞需求」。
 
 ## Aurora DSQL：AWS 的全球 strong consistency 答案
 
@@ -231,15 +231,15 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 
 讀「100-200ms 跨洲延遲」這種數字、不能只看絕對值、要看 *業務代價怎麼隨延遲變化*。不同業務型態的延遲代價曲線不同、決定能不能用 strong consistency 全球分散。
 
-**B2B agent 操作介面**（客服平台、CRM）：agent 連續操作數十次、每次卡 1 秒就累積 30 秒延遲、客服效率掉一半、客戶等不及掛電話。對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 為什麼選 15 個 region active-active — 客服 SaaS 的 100ms 延遲代價遠高於一般網路服務。
+**B2B agent 操作介面**（客服平台、CRM）：延遲代價的特性是 *累積*。agent 一通客戶電話內連續操作數十次、每次卡 1 秒、累積 30 秒讓 agent 在用戶面前沉默 — 客服效率直接掉一半、客戶等不及掛電話、agent 績效跟 NPS 同時下降。專屬訊號是「單次 latency 看似可接受、agent 體感卻變慢」。對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 用 15 個 region 把任一 agent 的 DB 延遲壓到 < 50ms — 客服 SaaS 對單次延遲的容忍區間遠窄於一般網路服務。
 
-**B2C 終端用戶**（社群、電商）：用戶等 1 秒會抱怨、等 3 秒會跳離。但跟 B2B 不同的是、單次操作就完成、不會累積。容忍區間是 200ms-500ms。
+**B2C 終端用戶**（社群、電商）：延遲代價是 *一次性跳離*。用戶等 1 秒會抱怨、等 3 秒會跳離；但完成一個操作就走、不會像 B2B 累積多次。容忍區間在 200ms-500ms、超過就掉 conversion。專屬訊號是「session bounce rate 跟 latency p99 高度相關」、不是看平均。
 
-**金融交易**（payment、trading）：延遲代價有兩面 — 用戶體驗（付款卡 = 結帳放棄）跟 *系統正確性*（交易順序錯 = 對帳異常）。後者讓金融業願意付 100-200ms 換 strong consistency、因為對帳成本遠高於延遲成本。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場的設計。
+**金融交易**（payment、trading）：延遲代價有兩面、是其他業務型態少見的結構。一面是用戶體驗（付款卡 = 結帳放棄）、另一面是 *系統正確性*（交易順序錯 = 對帳異常、稽核失敗）。後者讓金融業願意付 100-200ms 換 strong consistency、因為對帳成本遠高於延遲成本。專屬訊號是「願意接受比 B2C 更高的 latency budget、但拒絕任何 consistency 妥協」。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個受監管市場的設計。
 
-**IoT / Telemetry**：延遲幾乎無代價（資料晚 10 秒進來、報表還是準）、但 throughput 代價極大（百萬裝置同時上報、寫入塞爆 DB）。這類完全不該用 strong consistency 全球分散、應該選 KV / 時序 DB。
+**IoT / Telemetry**：延遲幾乎無業務代價（資料晚 10 秒進來、報表還是準）、但 throughput 才是主導指標。原因是這類業務的價值來自 *大量裝置的聚合趨勢*、不是 *單一裝置即時回應*；只要事件最終到達且順序合理、晚一點不影響決策。專屬訊號是「百萬裝置同時上報、寫入吞吐才是 SLO、latency 不在 alert 條件裡」。選型上 KV 或時序 DB 比 strong-consistency OLTP 更划算。
 
-判讀重點：選 global OLTP 前先把業務的延遲代價曲線畫出來、再決定能付多少 latency budget 給 strong consistency。看到「100ms 跨洲」就反射「太慢」的工程師、忽略了金融業願意付這個代價的真實理由。
+判讀重點：選 global OLTP 前先畫業務的延遲代價曲線、再決定能付多少 latency budget 給 strong consistency。「100ms 跨洲太慢」這個直覺反射只在沒有對帳 / 累積 / 趨勢這些業務代價時成立。
 
 ## 容量規劃：跟 single-region OLTP 完全不同
 
@@ -276,13 +276,17 @@ AWS 在 2024 re:Invent 推出 Aurora DSQL、是 AWS 對 Spanner 的回應。
 | 99.999%  | 5.26 分鐘 / 年 | 26 秒 / 月     | 客服 SaaS、telco、5x9 是合約義務       |
 | 99.9999% | 31.5 秒 / 年   | 2.6 秒 / 月    | 極特殊（核電、航空管制）               |
 
-**為什麼 99.99 → 99.999 不是 10x 成本、是指數成本**：每多一個 9、要求 *每一層基礎設施* 都要對等冗餘。
+**為什麼 99.99 → 99.999 是指數成本而非線性**：每多一個 9、要求 *每一層基礎設施* 都要對等冗餘。
 
 - 99.9 → 99.99：加 multi-AZ active-active、~2-3x 成本
 - 99.99 → 99.999：加 multi-region active-active、+ DR 演練、+ failover 自動化、+ 監控覆蓋率拉滿、~5-10x 成本
 - 99.999 → 99.9999：加多 cloud、+ 異地災備、+ 全自動 failover、+ 全鏈路演練、~20-50x 成本
 
-對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 客服 SaaS 用 15 主 region + 5 衛星 region 達 99.999%、這個架構成本約是 single-region 的 15-20 倍、但 B2B 客服合約要 5x9、這是合理投資。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) 廣告計費 99.999% — 1 分鐘斷線可能損失數百萬美金廣告收入、5x9 不是行銷數字、是真實營收邊界。
+**適用場景的業務理由**：
+
+- **99.99%（受監管產業、付款）**：合約 SLA 通常落在這層。受監管金融在中央銀行 / 金融監管機關的書面要求下、年度書面合規會審查 downtime 紀錄、超過 52 分鐘 / 年要解釋；付款 gateway 對商家 SLA 通常承諾 99.99%、低於這個值會被合作夥伴扣保證金。
+- **99.999%（客服 SaaS / telco）**：5x9 是 B2B 客服 SaaS 跟電信業的 *合約義務*、不是行銷話術。對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — 客服平台用 15 主 region + 5 衛星 region 達 99.999%、架構成本約是 single-region 的 15 倍、但 B2B 客服合約要 5x9、這是合理投資。對應 [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) — 廣告計費 1 分鐘斷線可能損失幾百萬美金廣告收入、5x9 對應真實營收邊界。電信業 911 緊急通話必須 5x9 是更嚴格的法規層級。
+- **99.9999%（核電、航空管制）**：6x9 不只是工程目標、是 *公共安全法規*。核電廠 SCADA 系統、空管雷達、軌道交通信號這類業務 30 秒 / 年的中斷會威脅生命、所以付得起跨多 cloud / 異地災備 / 全鏈路演練的成本。一般網路服務談 6x9 通常是過度設計。
 
 **SLO 木桶效應**：99.999% 是 *系統整體* 數字、不是 DB 單獨。DNS、load balancer、application、DB、storage 任何一層 single-region 就破壞整體 SLO。傳統工程師常以為「DB 多 region 就好」、忽略 application 跑在 single-region 的話、application down = 整體 down。
 
@@ -313,12 +317,12 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 
 **業務一致性需求決定 sharding 粒度**：
 
-- **微服務各自 OLTP**（Netflix Aurora consolidation）：每個微服務有自己的 Aurora cluster、跨服務一致性靠 application 層 saga / outbox。適合服務間業務 *天然解耦*（用戶服務、訂單服務、商品服務各自 owned data）。
-- **微服務共用 OLTP**（Clearent Hyperscale）：所有微服務共用一個大 cluster、跨服務一致性靠 DB transaction。適合業務 *天然耦合*（payment 跟 refund 跟 chargeback 必須在同一 transaction）。
-- **Sharding by tenant**（B2B SaaS）：每個 enterprise tenant 自己 cluster、適合 tenant 之間完全隔離、大客戶可能要求專屬 cluster。
+- **微服務各自 OLTP**（Netflix Aurora consolidation）：每個微服務有自己的 Aurora cluster、跨服務一致性靠 application 層 saga / outbox。適合服務間業務 *天然解耦*（用戶服務、訂單服務、商品服務各自 owned data）。Query path 上、跨服務查詢必須走 API 而非 SQL JOIN、要接受查多個服務多次往返；一致性 path 上、跨服務 transaction 用 saga + compensation、容忍中間態。
+- **微服務共用 OLTP**（Clearent Hyperscale）：所有微服務共用一個大 cluster、跨服務一致性靠 DB transaction。適合業務 *天然耦合*（payment 跟 refund 跟 chargeback 必須在同一 transaction）。Query path 上、可以用 SQL JOIN 直接查跨服務資料、簡單；一致性 path 上、所有微服務共享一個 schema 演進邊界、schema migration 影響所有服務、要協調。
+- **Sharding by tenant**（B2B SaaS）：每個 enterprise tenant 自己 cluster、適合 tenant 之間完全隔離、大客戶可能要求專屬 cluster。Query path 上、跨 tenant 查詢（例如平台級報表）要走 federated query 或 ETL 聚合、不能直接 join；運維 path 上、每個 tenant cluster 的容量規劃、backup、upgrade 都獨立、運維工時隨 tenant 數量線性成長。
 - **Sharding by region**（受監管產業）：每個合規市場自己 cluster、合規驅動、不是性能驅動。對應 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 7 個市場各自獨立。
 
-判讀重點：sharding 不是「擴容到不夠才做」、是「業務模型決定的初始設計」。等到 single cluster 撐不住才開始 shard、會踩進「跨 shard 一致性」的工程地雷區、修改成本遠高於初期設計成本。Managed DB（Aurora、Hyperscale）的容量上限是 *已知* 的、設計時就該知道未來何時觸發 sharding。
+判讀重點：sharding 不是「擴容到不夠才做」、是「業務模型決定的初始設計」。等到 single cluster 撐不住才開始 shard、會踩進「跨 shard 一致性」的工程地雷區、修改成本遠高於初期設計成本。Managed DB（Aurora、Hyperscale）的容量上限是 *已知* 的、設計時就該知道未來何時觸發 sharding。對應 [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) 的 storage 層 replication 段 — Hyperscale / Aurora / Spanner 同類設計的容量上限同樣是 sharding 觸發點。
 
 ## 案例對照
 
@@ -335,7 +339,7 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 
 - 上游：[1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)（single-region OLTP）
 - 平行：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)（KV 全球分散）
-- 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)
+- 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（含「預設 DB 治理 pattern」— 平台規模化階段的 OLTP 選型治理）
 - 跨模組：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/)、[0.2 State Storage Selection](/backend/00-service-selection/state-storage-selection/)、[7.11 Data Residency](/backend/07-security-data-protection/data-residency-deletion-and-evidence-chain/)
 
 ## 既建知識卡片
