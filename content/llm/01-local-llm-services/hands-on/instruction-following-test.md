@@ -15,7 +15,7 @@ weight: 7
 - `qwen3:8b`（5.2 GB、跨家族 / 大）
 - `gemma4:e4b`（9.6 GB、新代 / 中、bf16）
 
-對應 [4.2 Agent 架構](/llm/04-applications/agent-architecture/) 「規劃能力是雲端旗艦的明顯強項、本地小模型的明顯弱項」這條觀察、用具體 structural metrics 驗證、並揭示**「最新世代 + 較大 size」未必比「跨家族 / 較強訓練」勝出**。
+對應 [4.4 Agent 架構](/llm/04-applications/agent-architecture/) 「規劃能力是雲端旗艦的明顯強項、本地小模型的明顯弱項」這條觀察、用具體 structural metrics 驗證、並揭示**「最新世代 + 較大 size」未必比「跨家族 / 較強訓練」勝出**。
 
 > **驗證日期**：2026-05-12
 > **環境**：Ollama 0.23.2、Apple Silicon、MPS backend
@@ -214,7 +214,7 @@ Gemma 4 是 2026/4/2 才發布的最新代、size 也夠大、但在這個 instr
 - **Structural feature**（heading level、結尾 marker、不要 cross leak）：所有模型多少都抓到。
 - **Stylistic feature**（對話 driven 敘事、篇幅精準）：差異極大、Qwen3 8B 完美、其他三個都有明顯失分。
 
-這對應 [4.2 Agent](/llm/04-applications/agent-architecture/) 的「規劃 vs 字面 follow」差距——字面 instruction 容易、stylistic mimic 困難。寫應用時、預期 follow「形式約束」（output JSON、結尾 signature）跟 follow「風格約束」（用簡潔口吻、bullet 而非段落）兩種 instruction 的成功率不同。
+這對應 [4.4 Agent](/llm/04-applications/agent-architecture/) 的「規劃 vs 字面 follow」差距——字面 instruction 容易、stylistic mimic 困難。寫應用時、預期 follow「形式約束」（output JSON、結尾 signature）跟 follow「風格約束」（用簡潔口吻、bullet 而非段落）兩種 instruction 的成功率不同。
 
 ### Cross-pairing leak：全 0
 

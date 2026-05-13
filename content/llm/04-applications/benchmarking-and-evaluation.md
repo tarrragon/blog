@@ -1,9 +1,9 @@
 ---
-title: "4.9 Benchmarking 與評估方法論"
+title: "4.14 Benchmarking 與評估方法論"
 date: 2026-05-12
 description: "判讀 model card benchmark 數字、做自己工作流的 in-house benchmark、量測本地推論速度的完整方法論"
 tags: ["llm", "applications", "benchmark", "evaluation"]
-weight: 9
+weight: 14
 ---
 
 讀 model card 看到「MMLU 78.5」「HumanEval 82.3」「SWE-bench 12.6」等數字、要能判讀對自己場景的意義；自己跑本地 LLM、要能量化「tok/s、TTFT、實際品質」；想對比不同 model / 量化等級、要有可重現的 evaluation 方法。本章把「LLM 能力評估」跟「本地推論性能評估」兩條軸拆成可操作的方法論。
@@ -68,7 +68,7 @@ weight: 9
 | LongBench                                                      | QA、summarization、code 等真實任務   | 全方面 long context           |
 | ∞Bench                                                         | 100K+ context tasks                  | 極長 context                  |
 
-判讀：聲稱「128K context」要配 RULER / LongBench 分數才知道實用、見 [4.7 Long context engineering](/llm/04-applications/long-context-engineering/)。
+判讀：聲稱「128K context」要配 RULER / LongBench 分數才知道實用、見 [4.11 Long context engineering](/llm/04-applications/long-context-engineering/)。
 
 ## Performance benchmarks：衡量「跑多快」
 
@@ -271,4 +271,4 @@ llama-bench -m target.gguf --draft-model drafter.gguf \
 
 Benchmark 評估有兩條軸：capability（會什麼）跟 performance（跑多快）。Capability 要看多個 benchmark + 自己 in-house benchmark、看分佈跟絕對分數同樣重要；performance 用 `llama-bench` 標準工具量自己硬體上的真實數字。Benchmark 常見陷阱包含訓練污染、飽和、single-task overfit、prompt sensitivity；LLM-as-judge 的 bias 要透過 rubric + 多 judge + 人工 review 緩解。實務最重要的是 in-house benchmark — 公開 benchmark 是 filter、自己案例是 final test。
 
-下一章：[4.10 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)、把 vision 維度加進 coding 工作流的設計取捨。讀完 4.10、模組四覆蓋了 LLM 作為系統元件的設計取捨（RAG、tool use、agent、應用層協議、workflow、resource planning、long context、embedding、benchmarking、vision）、寫 code 場景需要的應用層概念完整、之後可進入 [模組五 PC 獨立 GPU](/llm/05-discrete-gpu/) 或 [模組六 安全](/llm/06-security/)。
+下一章：[4.15 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)、把 vision 維度加進 coding 工作流的設計取捨。讀完 4.10、模組四覆蓋了 LLM 作為系統元件的設計取捨（RAG、tool use、agent、應用層協議、workflow、resource planning、long context、embedding、benchmarking、vision）、寫 code 場景需要的應用層概念完整、之後可進入 [模組五 PC 獨立 GPU](/llm/05-discrete-gpu/) 或 [模組六 安全](/llm/06-security/)。

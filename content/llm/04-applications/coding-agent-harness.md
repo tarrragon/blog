@@ -1,9 +1,9 @@
 ---
-title: "4.12 Coding agent harness：scaffold / context engineering / subagent"
+title: "4.17 Coding agent harness：scaffold / context engineering / subagent"
 date: 2026-05-12
 description: "Coding agent 的內部設計：scaffold vs harness 分層、context budget 25% 規則、subagent 拓樸、跟 Claude Code / Cursor / Aider 的 mapping"
 tags: ["llm", "applications", "coding-agent", "harness", "scaffold", "context-engineering"]
-weight: 12
+weight: 17
 ---
 
 教材整體 framing 是「LLM 寫 code 工程實務」、模組四前面 11 章寫的是**通用 LLM 應用層原理**（RAG / tool use / agent / VLM 等）。本章補上「coding agent 怎麼設計」這層 — 為什麼 Claude Code / Cursor / Aider / Codex 這類工具長那樣、scaffold 跟 harness 怎麼分、context budget 怎麼配。本章把這些設計取捨從特定產品抽出來、寫成跨工具世代不變的工程原理。
@@ -34,7 +34,7 @@ Harness（runtime 動態運作、每個 query / loop iteration 跑）：
   - Context budget 管理（剪裁 history、塞新內容、避免超 budget）
   - Safety / 中斷（confirm UI、permission check、可逆性判斷）
   - Error recovery（tool failed → retry / fallback / escalate）
-  - Telemetry（trace / metrics / cost、見 [4.15 OTel tracing](/llm/04-applications/llm-tracing-and-observability/)）
+  - Telemetry（trace / metrics / cost、見 [4.20 OTel tracing](/llm/04-applications/llm-tracing-and-observability/)）
 ```
 
 不同 coding agent 的 scaffold / harness 比較：
@@ -148,12 +148,12 @@ main agent 拿到 summary、繼續推進
 
 | 既有章節                                                                | 跟本章的關係                                                   |
 | ----------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [4.1 Tool use](/llm/04-applications/tool-use-principles/)               | Tool spec 是 scaffold 的核心、tool dispatch 在 harness         |
-| [4.2 Agent 架構](/llm/04-applications/agent-architecture/)              | Agent loop 是 harness 的內部執行迴圈                           |
-| [4.3 應用層協議](/llm/04-applications/application-protocols/)           | Function calling / MCP 是 tool 跟 subagent 之間的協議          |
-| [4.7 Long context](/llm/04-applications/long-context-engineering/)      | Context budget 是 long context 的工程實務面                    |
-| [4.13 Prompt caching](/llm/04-applications/prompt-caching-engineering/) | 是 scaffold 部分（system + tool schema）的 cost / latency 優化 |
-| [4.14 Agent memory](/llm/04-applications/agent-memory-architecture/)    | History 跟 long-term memory 是 harness 跟 storage 的界面       |
+| [4.3 Tool use](/llm/04-applications/tool-use-principles/)               | Tool spec 是 scaffold 的核心、tool dispatch 在 harness         |
+| [4.4 Agent 架構](/llm/04-applications/agent-architecture/)              | Agent loop 是 harness 的內部執行迴圈                           |
+| [4.6 應用層協議](/llm/04-applications/application-protocols/)           | Function calling / MCP 是 tool 跟 subagent 之間的協議          |
+| [4.11 Long context](/llm/04-applications/long-context-engineering/)      | Context budget 是 long context 的工程實務面                    |
+| [4.18 Prompt caching](/llm/04-applications/prompt-caching-engineering/) | 是 scaffold 部分（system + tool schema）的 cost / latency 優化 |
+| [4.19 Agent memory](/llm/04-applications/agent-memory-architecture/)    | History 跟 long-term memory 是 harness 跟 storage 的界面       |
 
 ## 跟具體 coding agent 的 mapping
 
@@ -198,7 +198,7 @@ Coding agent 常見失敗：
 
 ## 本地小模型跑 coding agent 的限制
 
-本地 < 14B 模型跑完整 coding agent 通常不穩、根因（跟 [3.8 reasoning-models](/llm/03-theoretical-foundations/reasoning-models/) / [4.2 agent-architecture](/llm/04-applications/agent-architecture/) 已述）：
+本地 < 14B 模型跑完整 coding agent 通常不穩、根因（跟 [3.8 reasoning-models](/llm/03-theoretical-foundations/reasoning-models/) / [4.4 agent-architecture](/llm/04-applications/agent-architecture/) 已述）：
 
 1. **Tool use 不穩**：小模型 function calling 訓練不足、tool call 格式錯誤率高
 2. **Long context 退化**：< 14B 模型 effective context 通常 < 16K、coding agent 場景容易撞 budget
@@ -232,4 +232,4 @@ Coding agent 常見失敗：
 
 Coding agent = scaffold（建構時靜態結構：system prompt / tool schema / subagent 拓樸）+ harness（runtime 動態運作：dispatch / budget / safety / recovery）。Context budget 25% 規則是核心工程實務、超標訊號要立刻處理。Subagent 是 budget 不夠 + specialty 邊界清楚時的合理選擇、不是萬靈丹。具體 coding agent（Claude Code / Cursor / Aider / Continue.dev）都遵循這 framing、差異在 scaffold 多複雜跟 harness 多強。
 
-下一章：[4.13 Prompt caching 工程實務](/llm/04-applications/prompt-caching-engineering/)、看 scaffold 部分的 cost / latency 優化。
+下一章：[4.18 Prompt caching 工程實務](/llm/04-applications/prompt-caching-engineering/)、看 scaffold 部分的 cost / latency 優化。

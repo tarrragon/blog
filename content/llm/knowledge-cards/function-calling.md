@@ -18,4 +18,4 @@ Function calling 是**模型能力**層、跟 structured output（**sampling 約
 
 ## 設計責任
 
-選擇 function calling 還是 free-form + structured output、依模型規模跟跨 model 可移植需求決定：主流大模型走 function calling 開箱即用、跨 model / 較弱模型走 free-form + grammar 約束較穩。實務常組合：function calling 「正常情況」、structured output 兜底保證合法、retry + fallback 處理失敗。詳細展開見 [4.1 Tool use 原理](/llm/04-applications/tool-use-principles/) 與 [4.3 應用層協議](/llm/04-applications/application-protocols/)。
+選擇 function calling 還是 free-form + structured output、依模型規模跟跨 model 可移植需求決定：主流大模型走 function calling 開箱即用、跨 model / 較弱模型走 free-form + grammar 約束較穩。實務常組合：function calling 「正常情況」、structured output 兜底保證合法、retry + fallback 處理失敗。詳細展開見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/) 與 [4.6 應用層協議](/llm/04-applications/application-protocols/)。

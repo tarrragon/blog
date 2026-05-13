@@ -23,11 +23,11 @@ weight: 0
 | 剛 clone 我的 blog repo、想跑 demo 試試看 | **從本篇開始**、按步驟做                                                                                                                                                                                           |
 | 想懂某個 demo 的設計取捨                  | 跑通後再進 [RAG demo](/llm/01-local-llm-services/hands-on/rag-demo/) / [MCP demo](/llm/01-local-llm-services/hands-on/mcp-demo/) / [permission-boundary](/llm/01-local-llm-services/hands-on/permission-boundary/) |
 | 想懂 Ollama / ComfyUI 安裝細節            | [Ollama setup](/llm/01-local-llm-services/hands-on/ollama-setup/) / [ComfyUI setup](/llm/01-local-llm-services/hands-on/comfyui-setup/)                                                                            |
-| 想看 production 怎麼想資源評估            | [4.5 Production resource planning](/llm/04-applications/production-resource-planning/)                                                                                                                             |
+| 想看 production 怎麼想資源評估            | [4.9 Production resource planning](/llm/04-applications/production-resource-planning/)                                                                                                                             |
 
 ## 為什麼不是「pre-built、clone 就能跑」
 
-衍生產物（`index.pkl`、`__pycache__/`、Ollama model weights、即「跑出來的 cache / index / weight」、跟 source code 區別）刻意**不進 git**、原因見 [4.6 衍生產物管理原理](/llm/04-applications/artifact-management/)。所以 clone repo 後需要：
+衍生產物（`index.pkl`、`__pycache__/`、Ollama model weights、即「跑出來的 cache / index / weight」、跟 source code 區別）刻意**不進 git**、原因見 [4.10 衍生產物管理原理](/llm/04-applications/artifact-management/)。所以 clone repo 後需要：
 
 1. 裝 Ollama daemon + 拉 model（一次性）
 2. 跑 `ingest.py` 建 RAG index（corpus 變動時重跑）
@@ -194,8 +194,8 @@ find scripts -name __pycache__ -type d -exec rm -rf {} +
 | 「為什麼 LLM 寫 `rm -rf` 不會真的執行」          | [Permission boundary](/llm/01-local-llm-services/hands-on/permission-boundary/)                                                                                    |
 | 「不同 model 在 instruction following 上的差距」 | [Instruction following test](/llm/01-local-llm-services/hands-on/instruction-following-test/)                                                                      |
 | 「跑 demo 占多少 RAM、怎麼釋放」                 | [Resource management](/llm/01-local-llm-services/hands-on/resource-management/) + [RAG/MCP 資源 footprint](/llm/01-local-llm-services/hands-on/rag-mcp-resources/) |
-| 「production 部署該怎麼想」                      | [4.5 Production resource planning](/llm/04-applications/production-resource-planning/)                                                                             |
-| 「什麼該進 git、什麼不該」                       | [4.6 衍生產物管理原理](/llm/04-applications/artifact-management/)                                                                                                  |
+| 「production 部署該怎麼想」                      | [4.9 Production resource planning](/llm/04-applications/production-resource-planning/)                                                                             |
+| 「什麼該進 git、什麼不該」                       | [4.10 衍生產物管理原理](/llm/04-applications/artifact-management/)                                                                                                  |
 
 ## 跑不過時
 
@@ -204,7 +204,7 @@ find scripts -name __pycache__ -type d -exec rm -rf {} +
 | `ollama: command not found`                      | [Ollama setup § 常見前置設定問題](/llm/01-local-llm-services/hands-on/ollama-setup/) |
 | `curl http://localhost:11434/api/version` 沒回應 | 同上                                                                                 |
 | `python3 ingest.py` 報 HTTP error                | 確認 Ollama daemon 跑著、nomic-embed-text 已 pull                                    |
-| RAG retrieval 結果都不相關                       | [4.0 RAG § Retrieval 失敗的根本原因](/llm/04-applications/rag-principles/)           |
+| RAG retrieval 結果都不相關                       | [4.1 RAG § Retrieval 失敗的根本原因](/llm/04-applications/rag-principles/)           |
 | MCP test_client 卡住                             | [MCP demo § subprocess 跟 bufsize](/llm/01-local-llm-services/hands-on/mcp-demo/)    |
 | 一切都不對                                       | [1.7 排錯方法論](/llm/01-local-llm-services/troubleshooting/)                        |
 

@@ -1,16 +1,16 @@
 ---
-title: "4.5 Production 部署的資源評估原理"
+title: "4.9 Production 部署的資源評估原理"
 date: 2026-05-12
 description: "從本地單 user 到 production multi-tenant：concurrent users、cost model、observability、SLA、capacity planning 的設計取捨"
 tags: ["llm", "applications", "production", "deployment", "resource-planning"]
-weight: 5
+weight: 9
 ---
 
 LLM 應用從本地實驗跨到 production 是個 phase transition、不是線性放大。本地 single-user 場景的「跑得起來」變 production 場景就要回答全新一組問題：100 個 user 同時打進來怎麼辦、每個 [token](/llm/knowledge-cards/token/) 要多少錢、p99 latency 怎麼控、model service down 了怎麼處理。
 
 本章寫的是「**從本地實驗 → production 該想清楚的維度**」、focus 在跨工具世代不變的原理。具體 framework（vLLM、TGI、Triton、SGLang）跟雲端服務（OpenAI / Anthropic / Bedrock）的選型不展開——這些半年一個世代、寫了會過時。本章建立的是「無論用哪套工具、都該回答」的設計取捨清單。
 
-跟 [4.0 RAG](/llm/04-applications/rag-principles/) / [4.1 Tool use](/llm/04-applications/tool-use-principles/) / [4.2 Agent](/llm/04-applications/agent-architecture/) 對應「應用怎麼設計」、本章對應「應用怎麼跑」。
+跟 [4.1 RAG](/llm/04-applications/rag-principles/) / [4.3 Tool use](/llm/04-applications/tool-use-principles/) / [4.4 Agent](/llm/04-applications/agent-architecture/) 對應「應用怎麼設計」、本章對應「應用怎麼跑」。
 
 ## 本章目標
 
@@ -347,6 +347,6 @@ Required capacity = peak_concurrent_users × per_user_RAM
 ## 跟其他章節的關係
 
 - [hands-on RAG/MCP 資源](/llm/01-local-llm-services/hands-on/rag-mcp-resources/)：本地 baseline 數字、本章的 production extrapolation 起點
-- [4.0 RAG](/llm/04-applications/rag-principles/) / [4.1 Tool use](/llm/04-applications/tool-use-principles/) / [4.2 Agent](/llm/04-applications/agent-architecture/)：應用層設計、本章是「應用如何跑」的補完
+- [4.1 RAG](/llm/04-applications/rag-principles/) / [4.3 Tool use](/llm/04-applications/tool-use-principles/) / [4.4 Agent](/llm/04-applications/agent-architecture/)：應用層設計、本章是「應用如何跑」的補完
 - [0.5 硬體記憶體預算](/llm/00-foundations/hardware-memory-budget/)：本地單機 perspective、本章對應 multi-machine production
 - [1.7 排錯方法論](/llm/01-local-llm-services/troubleshooting/)：本地 trouble-shooting、本章是 production observability 的對照

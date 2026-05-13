@@ -42,4 +42,4 @@ Cross-encoder（reranker、retrieval 第二階段）：
 2. **何時不需要**：小語料（< 1000 docs、retrieval 已準）、明確 keyword 任務（BM25 已準）、latency 敏感（< 100ms TTFT）
 3. **Pipeline 設計**：bi-encoder retrieve top-50 → reranker rerank → 給 LLM top-5；50/5 是常見起點、看實測調
 4. **跟 [hybrid search](/llm/knowledge-cards/hybrid-search/) 結合**：BM25 + embedding hybrid retrieve top-50 → reranker rerank → LLM、是 production RAG 標配
-5. **跟 [4.0 RAG 章節](/llm/04-applications/rag-principles/) 的關係**：本卡是定義、章節是 retrieval pipeline 設計（含 reranker / hybrid 段）
+5. **跟 [4.1 RAG 章節](/llm/04-applications/rag-principles/) 的關係**：本卡是定義、章節是 retrieval pipeline 設計（含 reranker / hybrid 段）

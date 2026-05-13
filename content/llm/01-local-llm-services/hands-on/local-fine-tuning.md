@@ -441,9 +441,9 @@ VS Code restart 後、Continue panel 下拉就能切換。
 
 - 原理層的 LoRA 設計見 [LoRA 卡片](/llm/knowledge-cards/lora/) 跟 [QLoRA 卡片](/llm/knowledge-cards/qlora/)
 - Catastrophic forgetting 跟整體 alignment 議題見 [3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/)
-- Fine-tune 後的模型評估見 [4.9 Benchmarking](/llm/04-applications/benchmarking-and-evaluation/)
+- Fine-tune 後的模型評估見 [4.14 Benchmarking](/llm/04-applications/benchmarking-and-evaluation/)
 - 隱私 / 供應鏈面：fine-tune 後 model 怎麼分享（給 team / 上 HuggingFace）見 [6.0 模型供應鏈](/llm/06-security/model-supply-chain-trust/)
-- 跟 RAG 的取捨見 [4.0 RAG 原理](/llm/04-applications/rag-principles/) 的「RAG vs Fine-tuning vs Long Context」段
+- 跟 RAG 的取捨見 [4.1 RAG 原理](/llm/04-applications/rag-principles/) 的「RAG vs Fine-tuning vs Long Context」段
 
 ## 小結
 

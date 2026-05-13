@@ -1,12 +1,12 @@
 ---
-title: "4.16 LLM-as-Judge 評估方法"
+title: "4.21 LLM-as-Judge 評估方法"
 date: 2026-05-12
 description: "LLM 評估 LLM 的 production eval 方法：rubric design、pairwise / direct scoring、三大 bias 緩解、跟 trace 串接的閉環、calibration"
 tags: ["llm", "applications", "evaluation", "production", "llm-as-judge"]
-weight: 16
+weight: 21
 ---
 
-[4.9 benchmarking-and-evaluation](/llm/04-applications/benchmarking-and-evaluation/) 寫了 capability benchmark（MMLU、SWE-bench 等）跟 in-house benchmark 概念。但「自己工作流的真實案例該怎麼系統性 eval」這個操作層、4.9 點到沒展開。本章補上 [LLM-as-Judge](/llm/knowledge-cards/llm-as-judge/) — production AI app 的事實標準 eval 方法、比 human eval 便宜 500-5000×、跟人類有 80%+ agreement、但要處理 bias。
+[4.14 benchmarking-and-evaluation](/llm/04-applications/benchmarking-and-evaluation/) 寫了 capability benchmark（MMLU、SWE-bench 等）跟 in-house benchmark 概念。但「自己工作流的真實案例該怎麼系統性 eval」這個操作層、4.9 點到沒展開。本章補上 [LLM-as-Judge](/llm/knowledge-cards/llm-as-judge/) — production AI app 的事實標準 eval 方法、比 human eval 便宜 500-5000×、跟人類有 80%+ agreement、但要處理 bias。
 
 ## 本章目標
 
@@ -20,7 +20,7 @@ weight: 16
 
 ## 為什麼需要 LLM-as-Judge
 
-[4.9](/llm/04-applications/benchmarking-and-evaluation/) 推「in-house benchmark 是 final test」、但操作層是個 gap：
+[4.14](/llm/04-applications/benchmarking-and-evaluation/) 推「in-house benchmark 是 final test」、但操作層是個 gap：
 
 | Eval 痛點                               | LLM-as-Judge 解法                               |
 | --------------------------------------- | ----------------------------------------------- |
@@ -166,7 +166,7 @@ Judge 不該光信、要 calibrate：
 
 Calibration 是「judge 評什麼」跟「人類評什麼」對齊的步驟、跳過會讓 production eval 失準。
 
-## 跟 [4.15 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) 的閉環
+## 跟 [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) 的閉環
 
 Production trace + LLM-as-Judge 形成自動 eval pipeline：
 
@@ -273,4 +273,4 @@ Production users
 
 LLM-as-Judge 把「in-house benchmark」從理論變成可操作、production AI app 的 eval 事實標準。設計核心：四段式 prompt（task / input-output / rubric / format）、pairwise 或 direct scoring 看場景、三大 bias（position / verbosity / self-preference）要緩解、必須 calibrate。Production trace + judge 形成自動 eval 閉環、是 quality engineering 的標準路徑。不替代 human eval 在高 stake 任務、不替代 rule-based 在可機械驗證任務。
 
-下一步：模組四到此覆蓋從原理（4.0-4.5）、進階主題（4.6-4.11）到 coding agent + production 應用閉環（4.12-4.16：harness / caching / memory / tracing / eval）的完整應用層地圖。可進入 [模組五](/llm/05-discrete-gpu/) 看本地推論硬體、進入 [模組六](/llm/06-security/) 看安全議題（特別是 [6.6 OWASP LLM Top 10 對照](/llm/06-security/owasp-llm-top10-mapping/)、把 production eval 的安全議題對應到企業合規詞彙）、或回 [4.9 benchmarking 章節](/llm/04-applications/benchmarking-and-evaluation/) 對照 standard benchmark 視角。
+下一步：模組四到此覆蓋從原理（4.0-4.5）、進階主題（4.6-4.11）到 coding agent + production 應用閉環（4.12-4.16：harness / caching / memory / tracing / eval）的完整應用層地圖。可進入 [模組五](/llm/05-discrete-gpu/) 看本地推論硬體、進入 [模組六](/llm/06-security/) 看安全議題（特別是 [6.6 OWASP LLM Top 10 對照](/llm/06-security/owasp-llm-top10-mapping/)、把 production eval 的安全議題對應到企業合規詞彙）、或回 [4.14 benchmarking 章節](/llm/04-applications/benchmarking-and-evaluation/) 對照 standard benchmark 視角。

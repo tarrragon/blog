@@ -58,7 +58,7 @@ weight: 5
 | 數學推理（複雜演算法）                                                | 雲端旗艦的 reasoning effort 模式領先明顯                                                                                                                 |
 | 解少見語言（COBOL、Erlang）                                           | 訓練資料較多、hallucination 較少                                                                                                                         |
 | 處理長 [context](/llm/knowledge-cards/context-window/)（10K+ tokens） | 雲端的 [prefill](/llm/knowledge-cards/prefill/) 算力遠高於 Apple Silicon                                                                                 |
-| [Agent](/llm/knowledge-cards/agent/) 模式（複雜 multi-step tool use） | 本地 [tool use](/llm/knowledge-cards/function-calling/) 支援陽春、雲端 agent 框架成熟、見 [4.2 Agent 架構原理](/llm/04-applications/agent-architecture/) |
+| [Agent](/llm/knowledge-cards/agent/) 模式（複雜 multi-step tool use） | 本地 [tool use](/llm/knowledge-cards/function-calling/) 支援陽春、雲端 agent 框架成熟、見 [4.4 Agent 架構原理](/llm/04-applications/agent-architecture/) |
 
 雲端擅長的共通結構：**context window 大 + reasoning depth 深 + 訓練資料密度高**。雲端旗艦的 context 動輒 200K+ tokens、reasoning effort 模式能跑深推理 chain、訓練資料量級遠超開源模型。新任務若涉及「跨多檔閱讀 + 多步驟規劃 + 領域知識深度」、預設交雲端比較划算。
 

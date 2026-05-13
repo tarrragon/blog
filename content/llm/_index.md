@@ -42,7 +42,7 @@ weight: 36
 - **想懂 LLM 內部原理**：模組二（數學） + 模組三（理論、含 reasoning models / speculative decoding）— 跟硬體無關
 - **想做 LLM 應用開發（含 RAG / agent / VLM / 靜態 deployment）**：模組四（12 章、跨工具世代不變的原理）— 跟硬體無關
 - **想懂本地工作流的安全議題**：模組一 / 五跑穩後接模組六（個人 dev 視角）
-- **想在靜態網站加 RAG / 智能搜尋**：直接看 [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)
+- **想在靜態網站加 RAG / 智能搜尋**：直接看 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)
 - **想在本機 fine-tune 模型**：模組三 3.4 訓練流程原理 → [本機 QLoRA hands-on](/llm/01-local-llm-services/hands-on/local-fine-tuning/)
 - **想跟最新進展接軌**：讀完模組後進推薦的公開課程跟 paper（模組二 2.4 + 模組三 3.10）
 
@@ -104,9 +104,9 @@ weight: 36
 | 想懂背後的數學                                        | 直接適合   | [模組二 數學基礎](/llm/02-math-foundations/) 從頭讀                                                                                                |
 | 想懂 o1 / DeepSeek-R1 等 reasoning model 怎麼運作     | 直接適合   | [3.8 Reasoning models](/llm/03-theoretical-foundations/reasoning-models/) 從頭讀                                                                   |
 | 想做 LLM 應用開發（RAG / agent / tool use）           | 直接適合   | [模組四](/llm/04-applications/) 從 4.0 RAG 依序讀                                                                                                  |
-| 想在自家 Hugo / Astro 等靜態網站加 RAG                | 直接適合   | [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)（含資安取捨）                                  |
-| 想用 VLM 看截圖 / 設計稿輔助寫 code                   | 直接適合   | [4.10 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)                                                                  |
-| 想評估 LLM benchmark 數字、做 in-house eval           | 直接適合   | [4.9 Benchmarking 方法論](/llm/04-applications/benchmarking-and-evaluation/)                                                                       |
+| 想在自家 Hugo / Astro 等靜態網站加 RAG                | 直接適合   | [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)（含資安取捨）                                  |
+| 想用 VLM 看截圖 / 設計稿輔助寫 code                   | 直接適合   | [4.15 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)                                                                  |
+| 想評估 LLM benchmark 數字、做 in-house eval           | 直接適合   | [4.14 Benchmarking 方法論](/llm/04-applications/benchmarking-and-evaluation/)                                                                       |
 | 想在本機 fine-tune 模型懂自家 codebase 慣例           | 直接適合   | [3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/) 原理 + [QLoRA hands-on](/llm/01-local-llm-services/hands-on/local-fine-tuning/) |
 | 想做 large-scale fine-tune / 從頭訓練                 | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/) 跟 Stanford CS336                                          |
 | 用 Windows / Linux + NVIDIA / AMD 獨立 GPU 跑本地 LLM | 直接適合   | [模組零](/llm/00-foundations/) 建心智模型 + [模組五](/llm/05-discrete-gpu/) 處理 VRAM 預算、MoE 卸載、KV cache 量化                                |
@@ -129,16 +129,16 @@ weight: 36
 
 本指南不討論：
 
-- **Speech / audio LLM**：跟核心文字 LLM 是不同方向、本指南不涵蓋。Vision（VLM）原本不放、但因 coding 工作流的 vision use case 進入主流、補上 [4.10 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)；video LLM 仍不放。
+- **Speech / audio LLM**：跟核心文字 LLM 是不同方向、本指南不涵蓋。Vision（VLM）原本不放、但因 coding 工作流的 vision use case 進入主流、補上 [4.15 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)；video LLM 仍不放。
 - **資料中心訓練的工程細節**：data parallelism、ZeRO、tensor parallelism 等屬於專門課程的範圍。
-- **向量資料庫的選型**（Pinecone、Weaviate、Chroma 比較等）：交給 RAG 專門教材；RAG 設計原理見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)。
+- **向量資料庫的選型**（Pinecone、Weaviate、Chroma 比較等）：交給 RAG 專門教材；RAG 設計原理見 [4.1 RAG 原理](/llm/04-applications/rag-principles/)。
 - **Kubernetes / 資料中心級分散式推論**：跟個人機器本地 LLM 方向不同、需另尋專門教材。
 - **多卡 NVLink、tensor parallelism**：消費級 PC 場景通常單卡、本指南不涵蓋多卡分散式推論。
 
 若讀完本指南後想往這些方向走：
 
-1. **想做 [RAG](/llm/knowledge-cards/rag/) 應用**：先把 Ollama + Continue.dev 跑穩、再讀 [模組四 4.0 RAG 原理](/llm/04-applications/rag-principles/) 建立設計取捨判讀、或 [模組三 3.8 推薦](/llm/03-theoretical-foundations/going-deeper-theory/) 的 DeepLearning.AI short courses。
-2. **想跑 coding [agent](/llm/knowledge-cards/agent/)**：先讀 [4.2 Agent 架構原理](/llm/04-applications/agent-architecture/) 建立判讀、再看 [1.6 延伸方向](/llm/01-local-llm-services/extension-paths/) 了解 aider、Cline 等工具的定位差異。
+1. **想做 [RAG](/llm/knowledge-cards/rag/) 應用**：先把 Ollama + Continue.dev 跑穩、再讀 [模組四 4.1 RAG 原理](/llm/04-applications/rag-principles/) 建立設計取捨判讀、或 [模組三 3.8 推薦](/llm/03-theoretical-foundations/going-deeper-theory/) 的 DeepLearning.AI short courses。
+2. **想跑 coding [agent](/llm/knowledge-cards/agent/)**：先讀 [4.4 Agent 架構原理](/llm/04-applications/agent-architecture/) 建立判讀、再看 [1.6 延伸方向](/llm/01-local-llm-services/extension-paths/) 了解 aider、Cline 等工具的定位差異。
 3. **想跑產圖模型**：[Diffusion](/llm/knowledge-cards/diffusion/) 跟 Transformer 是不同架構、請另尋 ComfyUI / Draw Things / Diffusers 教材。
 4. **想自己訓練 / fine-tune**：讀完模組三、進入 Karpathy zero-to-hero、Stanford CS336、Hugging Face NLP Course 等[推薦資源](/llm/03-theoretical-foundations/going-deeper-theory/)。
 

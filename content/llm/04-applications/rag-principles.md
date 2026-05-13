@@ -1,9 +1,9 @@
 ---
-title: "4.0 RAG 原理：retrieval + augmentation 模式"
+title: "4.1 RAG 原理：retrieval + augmentation 模式"
 date: 2026-05-11
 description: "為什麼模型需要外掛知識、語意相似 vs 字面相似、chunking 的本質取捨、retrieval 失敗的根本原因"
 tags: ["llm", "applications", "rag", "embedding"]
-weight: 0
+weight: 1
 ---
 
 [RAG](/llm/knowledge-cards/rag/)（Retrieval-Augmented Generation）的核心是「給 LLM 動態外掛一份知識、讓它在生成時拿這份知識當 context」。它的存在解的是 LLM 「靜態參數記憶」的根本限制：模型訓練完之後權重就凍結、無法存取訓練資料外的事實、無法看到 cutoff 之後發生的事、也無法存取私有資料。
@@ -235,6 +235,6 @@ RAG 適用面有邊界、下列情境改用其他方案更划算：
 
 ## 小結
 
-RAG 是「retrieval + augmentation」的二段式結構、把 LLM 的知識限制（cutoff、私有資料、長尾壓縮損失）從根本繞開。Retrieval 階段是設計重點：語意 vs 字面相似的互補、chunking 的 resolution vs context 取捨、五類失敗模式各自的根因。RAG / fine-tuning / long context 三條路線的選擇取決於知識變動頻率、量級、結構化程度。本章預設「有 backend」、沒 backend 的場景（個人 blog、docs site 加 RAG）的 deployment 取捨見 [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
+RAG 是「retrieval + augmentation」的二段式結構、把 LLM 的知識限制（cutoff、私有資料、長尾壓縮損失）從根本繞開。Retrieval 階段是設計重點：語意 vs 字面相似的互補、chunking 的 resolution vs context 取捨、五類失敗模式各自的根因。RAG / fine-tuning / long context 三條路線的選擇取決於知識變動頻率、量級、結構化程度。本章預設「有 backend」、沒 backend 的場景（個人 blog、docs site 加 RAG）的 deployment 取捨見 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
 
-下一章：[4.1 Tool use 原理](/llm/04-applications/tool-use-principles/)、看 LLM 怎麼跟外部世界互動。Retrieval 把外部內容引入 prompt 本身就是攻擊面（同個機制讓 codebase 內容、外部文件、剪貼簿都能間接影響模型輸出）、IDE 場景的 prompt injection 判讀見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。
+下一章：[4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)、看 LLM 怎麼跟外部世界互動。Retrieval 把外部內容引入 prompt 本身就是攻擊面（同個機制讓 codebase 內容、外部文件、剪貼簿都能間接影響模型輸出）、IDE 場景的 prompt injection 判讀見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。

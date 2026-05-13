@@ -62,4 +62,4 @@ score = α × BM25_score_normalized + (1-α) × embedding_score_normalized
 2. **何時不需要**：純語意任務（embedding 已準）、純 keyword 任務（BM25 已準）、極小語料
 3. **跟 [reranker](/llm/knowledge-cards/reranker/) 的組合**：hybrid retrieve top-50（BM25 top-25 + embedding top-25、RRF 合併）→ reranker rerank → LLM top-5
 4. **主流實作**：Elasticsearch / OpenSearch 內建、Weaviate / Qdrant / Pinecone 都支援、Postgres 用 pg_search + pgvector
-5. **跟 [4.0 RAG 章節](/llm/04-applications/rag-principles/) 的關係**：本卡是定義、章節是 retrieval pipeline 設計含 hybrid 段
+5. **跟 [4.1 RAG 章節](/llm/04-applications/rag-principles/) 的關係**：本卡是定義、章節是 retrieval pipeline 設計含 hybrid 段

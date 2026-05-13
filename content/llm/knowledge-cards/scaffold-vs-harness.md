@@ -45,4 +45,4 @@ Harness（runtime、dynamic）：
 
 1. **看新 coding agent 時、分兩層拆解**：scaffold（system prompt、tool list、subagent 結構）是「設計做了什麼」、harness（context 怎麼裁、tool 怎麼 dispatch、安全怎麼擋）是「runtime 怎麼跑」
 2. **修改 / 客製 agent 時、看你動的是哪層**：改 system prompt = 動 scaffold；改 tool 執行邏輯 = 動 harness
-3. **跟 [4.12 coding-agent harness](/llm/04-applications/coding-agent-harness/) 的關係**：本卡是定義、4.12 是 coding 場景的工程實務（context budget、scaffold 模式、harness pattern）
+3. **跟 [4.17 coding-agent harness](/llm/04-applications/coding-agent-harness/) 的關係**：本卡是定義、4.12 是 coding 場景的工程實務（context budget、scaffold 模式、harness pattern）

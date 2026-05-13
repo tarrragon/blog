@@ -35,5 +35,5 @@ LLM-as-Judge 的核心概念是「**用一個 LLM（judge）對另一個 LLM（t
    - **Position bias**：A/B pairwise 換位置跑 2 次取一致 vote
    - **Verbosity bias**：rubric 加「冗長不加分」明確指示、或長度 normalize
    - **Self-preference bias**：用 3 個不同 judge model 取多數
-3. **跟 [4.16 LLM-as-judge 章節](/llm/04-applications/llm-as-judge/) 的關係**：本卡是定義、章節是工程實務（rubric design、bias 緩解、calibration、trace 串接）
+3. **跟 [4.21 LLM-as-judge 章節](/llm/04-applications/llm-as-judge/) 的關係**：本卡是定義、章節是工程實務（rubric design、bias 緩解、calibration、trace 串接）
 4. **不是萬靈丹**：高 stake 任務（醫療、法律、安全）仍需 human eval；judge 的天花板 = judge 模型本身的能力

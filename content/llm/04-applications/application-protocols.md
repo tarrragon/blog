@@ -1,9 +1,9 @@
 ---
-title: "4.3 應用層協議：function calling / structured output / MCP"
+title: "4.6 應用層協議：function calling / structured output / MCP"
 date: 2026-05-11
 description: "三個常被混為一談的概念：模型能力、sampling 約束、server 協議，三者的層級差異與組合方式"
 tags: ["llm", "applications", "mcp", "function-calling", "structured-output"]
-weight: 3
+weight: 6
 ---
 
 [Function calling](/llm/knowledge-cards/function-calling/)、structured output、[MCP](/llm/knowledge-cards/mcp/) 是 LLM 應用落地時最常被混為一談的三個術語。三者解的問題層級完全不同：function calling 是**模型能力**（訓練階段建立）、structured output 是**sampling 約束**（推論階段控制）、MCP 是**server 協議**（架構層標準化）。把三者放回正確層級、應用設計就會變清楚；混為一談會看到「我啟用了 function calling 為什麼還需要 structured output」「MCP 跟 function calling 衝突嗎」這類根本誤解。
@@ -209,4 +209,4 @@ LLM application 把結果塞進 context、回到推論伺服器繼續
 
 Function calling 是模型能力、structured output 是 sampling 約束、MCP 是 server 協議——三者層級不同、解的問題互不重疊、組合使用而非競爭。MCP 複用 OpenAI 相容 API 的標準化模式、把 N×M 整合成本降到 N+M、是 LLM application 生態規模化的必要基礎建設。實務應用不必一步到位、依複雜度演化、最終穩定 stack 三者組合。
 
-下一章：[4.4 Workflow 編排模式](/llm/04-applications/workflow-patterns/)、把多 LLM call 組合的設計模式整理出來。
+下一章：[4.7 Workflow 編排模式](/llm/04-applications/workflow-patterns/)、把多 LLM call 組合的設計模式整理出來。

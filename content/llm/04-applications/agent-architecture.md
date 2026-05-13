@@ -1,9 +1,9 @@
 ---
-title: "4.2 Agent 架構原理"
+title: "4.4 Agent 架構原理"
 date: 2026-05-11
 description: "Agent loop 結構、失敗模式、什麼任務適合 vs 不適合、跟人類審查的協作模型"
 tags: ["llm", "applications", "agent"]
-weight: 2
+weight: 4
 ---
 
 [Agent](/llm/knowledge-cards/agent/) 跟「對話 LLM」的根本差異在於控制流的所有權。對話 LLM 是「人類問、模型答」、每輪都由人類決定下一步；agent 是「LLM 自己決定下一步、自己呼叫工具、自己評估結果」、控制流交給模型。
@@ -176,7 +176,7 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 | Plan first, then auto                                   | 審 plan、approve 後自動跑 | 可預測子步驟、人類確認方向後可放手      |
 | Human-in-the-loop（HITL、agent 過程中插入人類審查節點） | Agent 不確定時主動問人類  | 模糊邊界、需要 domain 判斷              |
 
-選擇依據主要是「副作用範圍」（見 [4.1 工具的副作用範圍設計](/llm/04-applications/tool-use-principles/)）：等級 1-2 工具可以 full auto、等級 3 適合 checkpoint、等級 4-5 強制 step-by-step。
+選擇依據主要是「副作用範圍」（見 [4.3 工具的副作用範圍設計](/llm/04-applications/tool-use-principles/)）：等級 1-2 工具可以 full auto、等級 3 適合 checkpoint、等級 4-5 強制 step-by-step。
 
 設計 agent 時、先設想最差情況：「agent 跑偏到底會發生什麼」、再決定該用哪一級協作模型。完全自動跑 production migration 通常是 over-trust、step-by-step 跑 search 通常是 under-trust。個人 dev 把這個協作模型從本機 wrapper 演化到團隊 / production 服務時的 routing 判讀見 [6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/)。
 
@@ -184,7 +184,7 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 本地 LLM 跑 agent 現階段（2026/5）失敗率明顯高於雲端、根因不只一條：
 
-- **Tool use 訓練不足**（見 [4.1](/llm/04-applications/tool-use-principles/)）：小模型 tool use 本來就崩、agent 需要多次穩定 tool use、失敗率複合放大。
+- **Tool use 訓練不足**（見 [4.3](/llm/04-applications/tool-use-principles/)）：小模型 tool use 本來就崩、agent 需要多次穩定 tool use、失敗率複合放大。
 - **Long context prefill 痛點**（見 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-slow/)）：Agent 每步都重新 prefill 累積 context、TTFT 越跑越長。
 - **規劃能力弱**：雲端旗艦在 multi-step planning 上的優勢是公認的；本地 model SFT 規模有限、規劃能力跟雲端有明顯差距。
 - **失敗 recovery 弱**：模型發現走錯路時、本地模型較容易繼續錯下去、雲端模型較會自我修正。
@@ -212,7 +212,7 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 - 具體 agent framework（aider / Cline / LangGraph / OpenAI Assistants 等會持續演化）。
 - 模型 agent 能力（本地模型會逐步追上雲端、平衡點會移動）。
-- Tool ecosystem 跟 MCP server 普及度（見 [4.3 應用層協議](/llm/04-applications/application-protocols/)）。
+- Tool ecosystem 跟 MCP server 普及度（見 [4.6 應用層協議](/llm/04-applications/application-protocols/)）。
 - 各家 agent 的最佳 prompt / system prompt（屬於 prompt engineering、本指南不展開）。
 
 看到新 agent framework 時、回到本章的 5 步骨架、3 類失敗模式、5 種人類審查協作模型——這些 dimension 不變、看新工具能很快理解它的定位跟限制。
@@ -221,4 +221,4 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 Agent 把控制流的所有權從人類交給 LLM、帶來新的設計問題：失敗從「答錯」變「跑偏」、終止從「使用者結束」變「模型自判」、人類角色從「主導」變「監督」。Agent loop 五步骨架是骨架、context drift / 目標漂移 / tool 誤判是三類典型失敗、「適合 agent vs single-call」要看客觀驗證訊號跟失敗代價、人類審查協作模型要看副作用範圍。本地 LLM 跑 agent 現階段受訓練 + context + 規劃三方面限制、雲端仍是主場。
 
-下一章：[4.3 應用層協議](/llm/04-applications/application-protocols/)、把 function calling / structured output / MCP 三個容易混淆的概念放回正確層級。Agent 對本機資源副作用的個人 dev 權限判讀見 [6.2](/llm/06-security/tool-use-permission-model/)、個人工作流跨進 production 服務時的 routing 中樞見 [6.5](/llm/06-security/routing-to-production-security/)。
+下一章：[4.6 應用層協議](/llm/04-applications/application-protocols/)、把 function calling / structured output / MCP 三個容易混淆的概念放回正確層級。Agent 對本機資源副作用的個人 dev 權限判讀見 [6.2](/llm/06-security/tool-use-permission-model/)、個人工作流跨進 production 服務時的 routing 中樞見 [6.5](/llm/06-security/routing-to-production-security/)。

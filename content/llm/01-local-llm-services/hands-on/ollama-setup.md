@@ -207,7 +207,7 @@ tail -50 /opt/homebrew/var/log/ollama.log
 
 - **接 VS Code**：見 [1.3 VS Code + Continue.dev 整合](/llm/01-local-llm-services/vscode-continue-integration/)。設定 `apiBase: http://localhost:11434` 就能用。
 - **跑更大模型**：32GB+ Mac 推薦 `gemma4:31b-coding-mtp-bf16`（18 GB）。模型選擇見 [1.4 模型選型優先順序](/llm/01-local-llm-services/model-selection-priority/)。
-- **加 embedding**：codebase 索引要 embedding 模型：`ollama pull nomic-embed-text`（274 MB）、見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)。
+- **加 embedding**：codebase 索引要 embedding 模型：`ollama pull nomic-embed-text`（274 MB）、見 [4.1 RAG 原理](/llm/04-applications/rag-principles/)。
 
 ## 升級 / 移除
 

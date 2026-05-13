@@ -36,4 +36,4 @@ Batching 介於 inference engine 內部、跟 [KV cache](/llm/knowledge-cards/kv
 
 Embedding 服務通常 batch 16-128 都 OK（embedding 是純 forward pass、無 KV cache 累積）；chat / generation 服務 batch size 受 KV cache 嚴格限制。
 
-詳細跟 production 部署 capacity planning 的對接見 [4.5 Production 資源評估](/llm/04-applications/production-resource-planning/)；跟 [autoregressive](/llm/knowledge-cards/autoregressive/) 推論的單 token 瓶頸對應的優化討論見 [3.2 attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)。
+詳細跟 production 部署 capacity planning 的對接見 [4.9 Production 資源評估](/llm/04-applications/production-resource-planning/)；跟 [autoregressive](/llm/knowledge-cards/autoregressive/) 推論的單 token 瓶頸對應的優化討論見 [3.2 attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)。

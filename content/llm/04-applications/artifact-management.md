@@ -1,16 +1,16 @@
 ---
-title: "4.6 衍生產物管理原理：什麼進 git、什麼不該"
+title: "4.10 衍生產物管理原理：什麼進 git、什麼不該"
 date: 2026-05-12
 description: "LLM 應用的 source / derived / external 三類產物對應 git / build cache / registry、與 production 部署的 reproducibility / cost / share 取捨"
 tags: ["llm", "applications", "git", "artifacts", "deployment"]
-weight: 6
+weight: 10
 ---
 
 LLM 應用的 codebase 不只 source code、還含 [embedding](/llm/knowledge-cards/embedding-model/) index、cache、model weights、prompt config、lockfile、log 等各種「衍生」或「外部」產物。每個產物該不該進 git、有沒有共通邏輯？
 
 本章寫的是「**source / derived / external 三類產物的判讀框架**」、跟「production deployment 怎麼處理 share + reproducibility 取捨」。對應到 hands-on 系列實際遇到的問題——為什麼 [RAG](/llm/knowledge-cards/rag/) demo 的 `index.pkl` 進 `.gitignore`、Hugging Face model weights 為什麼不能塞進 repo、prompt template 該怎麼版本管理。
 
-跟 [4.5 Production resource planning](/llm/04-applications/production-resource-planning/) 對應「production 怎麼跑」、本章對應「production 怎麼版本控制 + 部署」。
+跟 [4.9 Production resource planning](/llm/04-applications/production-resource-planning/) 對應「production 怎麼跑」、本章對應「production 怎麼版本控制 + 部署」。
 
 ## 本章目標
 
@@ -324,5 +324,5 @@ Source change → git push
 
 - [scripts/README.md](https://github.com/tarrragon/blog/blob/main/scripts/README.md)：本章原理的實作 reference
 - [Hands-on quickstart](/llm/01-local-llm-services/hands-on/quickstart/)：跑通 demo 步驟、為什麼要 rebuild `index.pkl`
-- [4.5 Production resource planning](/llm/04-applications/production-resource-planning/)：production runtime 視角、本章是 deployment 視角
+- [4.9 Production resource planning](/llm/04-applications/production-resource-planning/)：production runtime 視角、本章是 deployment 視角
 - [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)：什麼可以離開機器、本章是「什麼可以進 git」的 sibling

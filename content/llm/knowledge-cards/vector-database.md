@@ -29,7 +29,7 @@ Vector DB 跟傳統 SQL / NoSQL database 並列、但專精「向量相似度搜
 - **IVF**（Inverted File Index）：分組索引、適合超大規模
 - **Flat**（exhaustive search）：精確但 O(n)、小資料集 OK
 
-scale 對照（基於 [4.5 production](/llm/04-applications/production-resource-planning/) 跟 [RAG/MCP resources](/llm/01-local-llm-services/hands-on/rag-mcp-resources/) 章節）：
+scale 對照（基於 [4.9 production](/llm/04-applications/production-resource-planning/) 跟 [RAG/MCP resources](/llm/01-local-llm-services/hands-on/rag-mcp-resources/) 章節）：
 
 | Corpus 規模  | 適合                                                                                            |
 | ------------ | ----------------------------------------------------------------------------------------------- |

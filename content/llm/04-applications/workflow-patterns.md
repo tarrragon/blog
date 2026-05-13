@@ -1,9 +1,9 @@
 ---
-title: "4.4 Workflow 編排模式"
+title: "4.7 Workflow 編排模式"
 date: 2026-05-11
 description: "Pipeline / router / parallel / reflection：多 LLM call 組合的四種基本模式與退化條件"
 tags: ["llm", "applications", "workflow", "orchestration"]
-weight: 4
+weight: 7
 ---
 
 LLM 應用很少是單一 call、多半是多次 LLM call 的組合。Multi-call 組合的模式雖然各 framework（LangGraph、LlamaIndex Workflow、各家 DAG runner）包裝不同、本質上可歸納成幾種基本模式：pipeline、router、parallel、reflection。理解這幾個模式、看到任何 LLM application 都能拆解成基本元件、判斷複雜度合不合理、識別常見反模式。
@@ -145,7 +145,7 @@ Classifier 設計常用 [structured output](/llm/04-applications/application-pro
 - **過度修正**：每次 reflection 都改一點、累積結果變糟（過度 fitting critic 意見）。
 - **Critic 失職**：critic 太寬鬆、什麼都說 OK；或太嚴格、什麼都挑、永遠停不下來。
 
-**Systematic vs random error 的關鍵分層**：reflection 對 random error 有效（同 prompt 重跑因 sampling 抖動產生的錯誤、多輪重 sample 會收斂）、但對 systematic error 無效（generator 跟 critic 共用 base model、訓練分佈中的盲點不會因重跑消失、loop 收斂到同樣錯誤）。判讀訊號：若 critic 每次給的修正建議都很像、或修完還是同一類錯、就是 systematic error、加 reflection steps 無收益。修法：換不同 base model 當 critic、或加外部驗證（test、lint、schema check）取代 LLM critic。Agent loop 是 reflection 的特例、進階失敗模式分析見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/) 的三類失敗段。
+**Systematic vs random error 的關鍵分層**：reflection 對 random error 有效（同 prompt 重跑因 sampling 抖動產生的錯誤、多輪重 sample 會收斂）、但對 systematic error 無效（generator 跟 critic 共用 base model、訓練分佈中的盲點不會因重跑消失、loop 收斂到同樣錯誤）。判讀訊號：若 critic 每次給的修正建議都很像、或修完還是同一類錯、就是 systematic error、加 reflection steps 無收益。修法：換不同 base model 當 critic、或加外部驗證（test、lint、schema check）取代 LLM critic。Agent loop 是 reflection 的特例、進階失敗模式分析見 [4.4 Agent 架構](/llm/04-applications/agent-architecture/) 的三類失敗段。
 
 **緩解策略**：
 
@@ -256,6 +256,6 @@ Classifier 本身就需要強模型、變成 router「省 cost」反而花更多
 
 LLM 應用是 multi-call 組合、本質歸納成四個基本模式：pipeline、router、parallel、reflection。每個模式各自解不同問題、各有失敗模式、實際應用組合使用。Workflow 設計的核心反射是「先 single call baseline、不夠再分解」、過早優化是最常見的失敗源。
 
-設計完 workflow 後、進 production 還要評估資源、latency / throughput 取捨、observability 三層、降級設計、見 [4.6 Production 資源規劃](/llm/04-applications/production-resource-planning/)。
+設計完 workflow 後、進 production 還要評估資源、latency / throughput 取捨、observability 三層、降級設計、見 [4.9 Production 資源規劃](/llm/04-applications/production-resource-planning/)。
 
 讀到這裡、本模組的應用層原理就完整收尾。回到 [模組四首頁](/llm/04-applications/) 看完整地圖、或回到 [指南首頁](/llm/) 重新整理整體學習路徑。

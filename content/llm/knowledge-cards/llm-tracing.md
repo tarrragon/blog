@@ -39,4 +39,4 @@ LLM tracing 的核心概念是「**把 LLM 應用的每次 LLM call / tool call 
 1. **何時值得加 tracing**：超過個人 demo、有實際使用者 / production 流量、開始遇到「為什麼 agent 跑這條路」debug 問題
 2. **不該自己寫 logging**：用 OTel GenAI semconv 標準化、未來可換 backend（LangSmith → Phoenix → 自架）
 3. **Trace 不只 debug、也是 eval 來源**：production trace 餵回 [LLM-as-judge](/llm/knowledge-cards/llm-as-judge/) 做品質評估
-4. **跟 [4.15 LLM tracing 章節](/llm/04-applications/llm-tracing-and-observability/) 的關係**：本卡是定義、章節是工程實務（attribute 設計、cost monitoring、failure debug 流程）
+4. **跟 [4.20 LLM tracing 章節](/llm/04-applications/llm-tracing-and-observability/) 的關係**：本卡是定義、章節是工程實務（attribute 設計、cost monitoring、failure debug 流程）

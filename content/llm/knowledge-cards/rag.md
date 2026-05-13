@@ -18,4 +18,4 @@ RAG 跟 [fine-tuning](/llm/knowledge-cards/instruction-tuned/) 跟 long context 
 
 ## 設計責任
 
-設計 RAG 系統前先評估「不做 RAG 會怎樣」：知識量小可用 long context、知識結構化可用 SQL、靜態風格特化可用 fine-tune。需要動態 + 大量 + traceable 才是 RAG 的甜蜜點。詳細展開見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)。
+設計 RAG 系統前先評估「不做 RAG 會怎樣」：知識量小可用 long context、知識結構化可用 SQL、靜態風格特化可用 fine-tune。需要動態 + 大量 + traceable 才是 RAG 的甜蜜點。詳細展開見 [4.1 RAG 原理](/llm/04-applications/rag-principles/)。

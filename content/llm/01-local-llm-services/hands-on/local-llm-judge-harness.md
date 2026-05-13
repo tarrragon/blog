@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "evaluation", "llm-as-judge", "ollama"]
 weight: 8
 ---
 
-[4.16 LLM-as-judge](/llm/04-applications/llm-as-judge/) 寫的是原理。本篇用 Ollama / LM Studio 在本地跑一個最小可行的 judge harness、對自己工作流的真實案例做 systematic eval。隱私敏感場景特別合用 — eval 資料（user query、agent output、可能含 PII）不需要送雲端。
+[4.21 LLM-as-judge](/llm/04-applications/llm-as-judge/) 寫的是原理。本篇用 Ollama / LM Studio 在本地跑一個最小可行的 judge harness、對自己工作流的真實案例做 systematic eval。隱私敏感場景特別合用 — eval 資料（user query、agent output、可能含 PII）不需要送雲端。
 
 本篇 framing 是「**真的能跑、不只跑 demo**」、所以包含：硬體預算估算、judge model 選型、bias 緩解、calibration 流程、跟 production trace 串接的延伸。
 
@@ -282,7 +282,7 @@ jq '.scores.reasoning' results/eval.jsonl | sort -u
 
 ## Step 7：跟 production trace 串接（延伸）
 
-把 [4.15 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) 蒐集的 production trace export 成 JSONL、定期跑 judge：
+把 [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) 蒐集的 production trace export 成 JSONL、定期跑 judge：
 
 ```bash
 # 假設用 Langfuse self-host
@@ -317,11 +317,11 @@ python judge_harness.py
 
 ## 跟其他章節的關係
 
-- 原理層的 LLM-as-judge 設計見 [4.16](/llm/04-applications/llm-as-judge/)
-- Production trace 串接見 [4.15 tracing](/llm/04-applications/llm-tracing-and-observability/)
+- 原理層的 LLM-as-judge 設計見 [4.21](/llm/04-applications/llm-as-judge/)
+- Production trace 串接見 [4.20 tracing](/llm/04-applications/llm-tracing-and-observability/)
 - Reasoning model 選型見 [3.8](/llm/03-theoretical-foundations/reasoning-models/)
 - 隱私 / 跨雲端邊界判讀見 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)
-- Benchmark 跟 in-house eval 的層次見 [4.9](/llm/04-applications/benchmarking-and-evaluation/)
+- Benchmark 跟 in-house eval 的層次見 [4.14](/llm/04-applications/benchmarking-and-evaluation/)
 
 ## 小結
 

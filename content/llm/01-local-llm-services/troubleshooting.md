@@ -232,7 +232,7 @@ curl 伺服器（伺服器層活著嗎）
 | 容器化部署（Docker / k8s） | 介面 / 伺服器之間多一層網路命名空間、connection refused 可能是 container network 配置、不是伺服器層                                      |
 | 跨機器分散式 inference     | 伺服器層拆成多 process / 多 node、單一 `ollama ps` 看不到全貌、需 cluster-level observability                                            |
 | 後端 production 服務       | 排錯依賴 SLI / SLO + 監控告警支撐、而非「重啟試試」的探索式做法；本章方法論偏個人開發、production 場景需另尋資料中心 SRE 教材            |
-| Agent loop 內部失敗        | 失敗可能在 LLM 規劃 / tool execution / state machine 任一處、超出三層定位、見 [4.2 Agent 架構](/llm/04-applications/agent-architecture/) |
+| Agent loop 內部失敗        | 失敗可能在 LLM 規劃 / tool execution / state machine 任一處、超出三層定位、見 [4.4 Agent 架構](/llm/04-applications/agent-architecture/) |
 
 本章方法論的甜蜜點是「個人 Mac、一個 IDE、一個 Ollama instance」的場景。離開這個甜蜜點、要把「三層」擴充成更多層（user / network / cluster）、或改用 production-grade 觀察工具。
 

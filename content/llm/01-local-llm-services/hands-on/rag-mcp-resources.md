@@ -286,7 +286,7 @@ llm-rag-cleanup() {
 | Observability  | tail log         | metrics / traces / dashboards  |
 | 失敗模式       | crash → 自己重啟 | 99.9% uptime SLA               |
 
-Production 視角詳細展開見 [4.5 Production 部署的資源評估原理](/llm/04-applications/production-resource-planning/)。
+Production 視角詳細展開見 [4.9 Production 部署的資源評估原理](/llm/04-applications/production-resource-planning/)。
 
 ## 何時這篇會過時
 

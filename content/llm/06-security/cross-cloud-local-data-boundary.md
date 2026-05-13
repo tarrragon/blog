@@ -153,7 +153,7 @@ Continue.dev 基礎安裝跟單一 provider config 見 [1.3 VS Code + Continue.d
 
 1. **預設 model 設成雲端、按了 hotkey 沒看到當前 model**：把寫到一半的機密 prompt 送到雲端。對應防護：預設改本地、雲端 model 用名稱前綴明確。
 2. **autocomplete 設成雲端**：補完每幾秒就觸發、prompt 包含當前游標附近 code、流量大且持續。對應防護：autocomplete 必定本地。
-3. **codebase RAG 索引到 `.env` / secrets**：RAG 把 secret 加進 prompt、再送雲端。對應防護：IDE search exclude 加上 `.env`、`*.key`、`secrets/`、`.aws/`。RAG 把外部內容引入 prompt 的整體機制與失敗模式見 [4.0 RAG 原理](/llm/04-applications/rag-principles/)。
+3. **codebase RAG 索引到 `.env` / secrets**：RAG 把 secret 加進 prompt、再送雲端。對應防護：IDE search exclude 加上 `.env`、`*.key`、`secrets/`、`.aws/`。RAG 把外部內容引入 prompt 的整體機制與失敗模式見 [4.1 RAG 原理](/llm/04-applications/rag-principles/)。
 4. **多 client 同時跑、key 共用**：Cursor / Continue.dev / Claude Code 等多 client 共用 API key、難追是哪個 client 的流量。對應防護：給每個 client 各自的 API key、有問題能追溯。
 5. **聚合服務不知道實際送到哪**：用 OpenRouter / together.ai 等聚合層、prompt 經過聚合層後送到上游 vendor、上游可能是不同 region 不同政策。對應防護：個人 dev 場景傾向不用聚合、直接接 vendor。
 6. **forgot prompt history 含 sensitive content**：某次貼了機密內容後、後續同 conversation 都帶著、不知不覺重複送。對應防護：機密 prompt 用獨立 conversation、用完清空。
@@ -193,6 +193,6 @@ Continue.dev 基礎安裝跟單一 provider config 見 [1.3 VS Code + Continue.d
 
 ## 小結
 
-跨雲端 / 本地的混用是個人 dev 場景的常見模式、能力跟隱私的平衡靠分流。風險主要在「配置稍微錯一步、prompt 被誤送」、防護重點是「預設本地、雲端明確標記、autocomplete 必定本地、RAG exclude secret」。雲端 vendor 的政策依方案跟時間變化、引用前以當前官方文件為準。production 場景的 log / PII 治理跟 vendor 合約管理見 backend/07；**靜態網站 / 沒 backend 場景的 prompt 邊界**（API key 暴露、CORS、SaaS 信任、client-side abuse）見 [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/) 的資安段。
+跨雲端 / 本地的混用是個人 dev 場景的常見模式、能力跟隱私的平衡靠分流。風險主要在「配置稍微錯一步、prompt 被誤送」、防護重點是「預設本地、雲端明確標記、autocomplete 必定本地、RAG exclude secret」。雲端 vendor 的政策依方案跟時間變化、引用前以當前官方文件為準。production 場景的 log / PII 治理跟 vendor 合約管理見 backend/07；**靜態網站 / 沒 backend 場景的 prompt 邊界**（API key 暴露、CORS、SaaS 信任、client-side abuse）見 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/) 的資安段。
 
 下一章：[6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/)、整合本模組到 backend/07 production 場景的路由。

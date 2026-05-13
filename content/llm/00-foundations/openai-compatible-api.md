@@ -121,7 +121,7 @@ Continue.dev 內部會把 `provider: ollama` 翻成 OpenAI 相容請求送到 `a
 
 1. **模型能力**：本地 Gemma 4 31B 跟雲端 GPT-5 都能用同一套 API 呼叫，但回答品質天差地遠。
 2. **效能特性**：本地的 TTFT、生字速度跟雲端完全不同，介面層感覺不到差別不代表速度一樣。
-3. **進階參數**：OpenAI 自己的新功能（function calling 進階模式、structured output 強制 JSON 輸出、reasoning effort 控制推理深度等）不一定被本地伺服器完整支援。寫 code 場景常見問題是設定了 `tools` 參數但本地模型不會主動呼叫。模組四會展開這些進階特性、見 [4.1 Tool use 原理](/llm/04-applications/tool-use-principles/)。
+3. **進階參數**：OpenAI 自己的新功能（function calling 進階模式、structured output 強制 JSON 輸出、reasoning effort 控制推理深度等）不一定被本地伺服器完整支援。寫 code 場景常見問題是設定了 `tools` 參數但本地模型不會主動呼叫。模組四會展開這些進階特性、見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)。
 4. **模型清單**：呼叫 `GET /v1/models` 回的清單、本地是你已下載的模型、雲端是 OpenAI 提供的模型；介面層要把兩邊清單視為各自獨立的資料。
 
 接近真實的踩坑：

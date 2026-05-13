@@ -1,9 +1,9 @@
 ---
-title: "4.13 Prompt caching 工程實務：cost / latency 最大槓桿"
+title: "4.18 Prompt caching 工程實務：cost / latency 最大槓桿"
 date: 2026-05-12
 description: "Prompt cache 怎麼運作、cache_control 設計、coding agent 跟 long-context 的 cache pattern、anti-pattern 跟 cache miss 訊號"
 tags: ["llm", "applications", "prompt-cache", "cost", "latency", "coding-agent"]
-weight: 13
+weight: 18
 ---
 
 [Prompt cache](/llm/knowledge-cards/prompt-cache/) 把重複 prefix 的計算結果在 LLM 服務端跨 request 持久化、後續 query 跳過 [prefill](/llm/knowledge-cards/prefill/) 階段。Anthropic / OpenAI / Bedrock / Gemini 都列為 cost 跟 [TTFT](/llm/knowledge-cards/ttft/) 的最大單一槓桿 — 90% cost 折扣 + 顯著 latency 改善。本章把 prompt caching 的運作機制、設計原則、coding agent / long-context 場景的 pattern、常見 anti-pattern 拆成可操作的工程實務。
@@ -248,4 +248,4 @@ Ollama / LM Studio / llama.cpp 自身的 prompt cache：
 
 Prompt cache 是 cost / latency 的最大單一槓桿、coding agent / long-context / RAG / long-document Q&A 都是命中區。設計原則「不變放 prefix、變動放後段」、breakpoint 分層讓 invalidation 局部化。Anti-pattern（timestamp、user id、tool 順序、太短 prompt）會把 cache 變廢、診斷靠 cache_read_input_tokens 欄位。本地推論場景對應 prefix cache、機制同源但定價跟 control 是雲端 API 商業 feature。
 
-下一章：[4.14 Agent memory 分層](/llm/04-applications/agent-memory-architecture/)、看 agent 如何在 context window 之外管理長期狀態。
+下一章：[4.19 Agent memory 分層](/llm/04-applications/agent-memory-architecture/)、看 agent 如何在 context window 之外管理長期狀態。

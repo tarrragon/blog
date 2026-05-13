@@ -18,4 +18,4 @@ Agent 是應用層的工作流模式、建立在 [tool use](/llm/knowledge-cards
 
 ## 設計責任
 
-決定該用 agent 還是 single-call、看任務是否有明確子步驟 + 客觀驗證訊號（test 通過、file 寫入）。模糊探索性任務不適合 agent。Agent 跑高風險任務時、人類審查粒度應該配合工具的副作用範圍——可逆任務全自動、不可逆任務 step-by-step approval。詳細展開見 [4.2 Agent 架構原理](/llm/04-applications/agent-architecture/)。
+決定該用 agent 還是 single-call、看任務是否有明確子步驟 + 客觀驗證訊號（test 通過、file 寫入）。模糊探索性任務不適合 agent。Agent 跑高風險任務時、人類審查粒度應該配合工具的副作用範圍——可逆任務全自動、不可逆任務 step-by-step approval。詳細展開見 [4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)。

@@ -1,9 +1,9 @@
 ---
-title: "4.14 Agent memory 分層架構"
+title: "4.19 Agent memory 分層架構"
 date: 2026-05-12
 description: "Agent 在 context window 之外管理長期狀態的設計：working / short-term / long-term episodic / semantic / procedural 五個層次、寫入時機、retrieval 設計、失敗模式"
 tags: ["llm", "applications", "agent", "memory", "rag"]
-weight: 14
+weight: 19
 ---
 
 LLM 本身無狀態 — 每次 [forward pass](/llm/knowledge-cards/forward-pass/) 從零開始、唯一輸入是 [context window](/llm/knowledge-cards/context-window/)。但「agent」概念上有跨 session 狀態：使用者偏好、過去任務、累積知識、操作流程。Agent memory 是 harness 層的設計、把這些狀態持久化、按需 inject 到 working context。本章把 memory 分成五個層次、各層的寫入時機、retrieval 設計、失敗模式拆成可操作的工程實務。
@@ -246,7 +246,7 @@ Coding agent 場景的 memory 案例：
 | Procedural  | 「跑測試 = `npm test`」「commit 前 `npm run lint`」                       |
 | Episodic    | 「上週解過 race condition 在 user_session.ts」「alice 的 retry 邏輯偏好」 |
 
-跟 [4.12 coding agent harness](/llm/04-applications/coding-agent-harness/) 的關係：
+跟 [4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的關係：
 
 - Procedural memory 編進 [scaffold](/llm/knowledge-cards/scaffold-vs-harness/) 的 system prompt 或 skill registry
 - Semantic memory 可 inject-on-startup 或 retrieval-on-demand
@@ -273,4 +273,4 @@ Coding agent 場景的 memory 案例：
 
 Agent memory 把 stateless LLM 包裝成有狀態 agent、分五層（working 在 context 內、short-term/session 是 scratchpad、long-term 含 episodic / semantic / procedural 三種）。設計核心是「何時寫」（task-end 為主、reflection 補強）+「何時讀」（inject + retrieval hybrid）。五大失敗模式（drift / PII / 污染 / hallucination boost / 跨 user 污染）都有對應緩解。跟 RAG 邊界看內容類型跟 per-user 性。
 
-下一章：[4.15 LLM tracing 與 observability](/llm/04-applications/llm-tracing-and-observability/)、看 production debug 跟 cost 監控的工具層。
+下一章：[4.20 LLM tracing 與 observability](/llm/04-applications/llm-tracing-and-observability/)、看 production debug 跟 cost 監控的工具層。

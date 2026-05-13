@@ -38,4 +38,4 @@ Chunking 之前要回答四個問題：
 3. **語言混合**：中文跟英文 token 比例不同、char-based heuristic 可能不準。
 4. **Embedding model 能力**：太短 / 太長 chunk 都會降低 embedding 品質。
 
-寫 code 場景的實作範例見 [RAG demo hands-on](/llm/01-local-llm-services/hands-on/rag-demo/) 的 `slice_markdown` function、設計取捨展開見 [4.0 RAG 原理](/llm/04-applications/rag-principles/) 的「Chunking 的本質取捨」段。
+寫 code 場景的實作範例見 [RAG demo hands-on](/llm/01-local-llm-services/hands-on/rag-demo/) 的 `slice_markdown` function、設計取捨展開見 [4.1 RAG 原理](/llm/04-applications/rag-principles/) 的「Chunking 的本質取捨」段。

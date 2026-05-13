@@ -60,7 +60,7 @@ docker run -d --name open-webui -p 3000:8080 \
 
 ## 延伸方向二：Coding Agent（aider、Cline 等）
 
-**定位**：比 Continue.dev 更主動的 LLM 寫 code 工具。Continue.dev 是「你提問、LLM 答」的對話模式；coding [agent](/llm/knowledge-cards/agent/) 是「你給目標、LLM 自己分多步驟改 code、跑測試、修錯誤」的代理模式。詳細的 agent loop 結構、失敗模式、人類審查協作見 [4.2 Agent 架構原理](/llm/04-applications/agent-architecture/)。
+**定位**：比 Continue.dev 更主動的 LLM 寫 code 工具。Continue.dev 是「你提問、LLM 答」的對話模式；coding [agent](/llm/knowledge-cards/agent/) 是「你給目標、LLM 自己分多步驟改 code、跑測試、修錯誤」的代理模式。詳細的 agent loop 結構、失敗模式、人類審查協作見 [4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)。
 
 **主流選擇**：
 
@@ -161,10 +161,10 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 
 | 方向                                                                 | 為什麼不展開                                                                                                 |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| [RAG](/llm/knowledge-cards/rag/)（檢索增強生成）                     | 需要 vector database、文件 chunking、embedding 設計、見 [4.0 RAG 原理](/llm/04-applications/rag-principles/) |
+| [RAG](/llm/knowledge-cards/rag/)（檢索增強生成）                     | 需要 vector database、文件 chunking、embedding 設計、見 [4.1 RAG 原理](/llm/04-applications/rag-principles/) |
 | Fine-tuning                                                          | 訓練流程跟跑現成模型是不同工程；資源、資料、評估都複雜                                                       |
 | Multi-modal（語音、影片）                                            | 工具鏈跟生態完全獨立                                                                                         |
-| [MCP](/llm/knowledge-cards/mcp/)（Model Context Protocol）伺服器整合 | 是工具串接協定、見 [4.3 應用層協議](/llm/04-applications/application-protocols/)                             |
+| [MCP](/llm/knowledge-cards/mcp/)（Model Context Protocol）伺服器整合 | 是工具串接協定、見 [4.6 應用層協議](/llm/04-applications/application-protocols/)                             |
 | 部署到雲端 GPU / Linux server                                        | 本指南範圍只在 Apple Silicon Mac                                                                             |
 
 需要這些方向時請另尋專門資源；硬塞進來會稀釋本指南「Mac 本地寫 code」這條最短路徑。

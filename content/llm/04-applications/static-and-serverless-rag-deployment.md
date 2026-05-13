@@ -1,12 +1,12 @@
 ---
-title: "4.11 靜態 / serverless RAG deployment：架構選擇與資安取捨"
+title: "4.16 靜態 / serverless RAG deployment：架構選擇與資安取捨"
 date: 2026-05-12
 description: "沒 backend 的場景怎麼做 RAG：四種 deployment 方案、API key 暴露問題、CORS / abuse / 第三方信任、跟模組六的 routing"
 tags: ["llm", "applications", "rag", "deployment", "static-site", "serverless", "security"]
-weight: 11
+weight: 16
 ---
 
-[4.0 RAG](/llm/04-applications/rag-principles/) 跟 [4.8 embedding model](/llm/04-applications/embedding-model-internals/) 寫的是「RAG 在做什麼、embedding 怎麼選」、預設「有 backend server」可跑 embedding 跟 LLM。但實際大量場景是**沒 backend** — 個人 blog（Hugo / Jekyll / Astro）想加智能搜尋、docs site 想做 LLM 對話、demo 想離線跑。本章把這條「靜態 / serverless RAG」路線拆成四個方案、配合靜態場景**特有的資安議題**（這些議題模組六沒覆蓋、屬本章新增）。
+[4.1 RAG](/llm/04-applications/rag-principles/) 跟 [4.12 embedding model](/llm/04-applications/embedding-model-internals/) 寫的是「RAG 在做什麼、embedding 怎麼選」、預設「有 backend server」可跑 embedding 跟 LLM。但實際大量場景是**沒 backend** — 個人 blog（Hugo / Jekyll / Astro）想加智能搜尋、docs site 想做 LLM 對話、demo 想離線跑。本章把這條「靜態 / serverless RAG」路線拆成四個方案、配合靜態場景**特有的資安議題**（這些議題模組六沒覆蓋、屬本章新增）。
 
 ## 本章目標
 
@@ -188,7 +188,7 @@ Pagefind、Stork、lunr.js、FlexSearch — build time 產靜態 search index、
 
 1. **無 embedding similarity**：keyword / fuzzy match、不是語意相似
 2. **無 LLM augmentation**：只列文章連結、不生成回答
-3. **算 retrieval 的「字面」變體**：見 [4.0 RAG](/llm/04-applications/rag-principles/) 的「語意 vs 字面」段
+3. **算 retrieval 的「字面」變體**：見 [4.1 RAG](/llm/04-applications/rag-principles/) 的「語意 vs 字面」段
 
 **適合場景**：blog 內搜尋只需要找文章、不需要對話、極致 zero-cost。
 
@@ -374,7 +374,7 @@ RAG SaaS 供應鏈（本章新增）：
 
 ## 不在本章內的主題
 
-1. **完整 backend RAG**：see [4.0 RAG 原理](/llm/04-applications/rag-principles/) 跟 [4.8 embedding model](/llm/04-applications/embedding-model-internals/)
+1. **完整 backend RAG**：see [4.1 RAG 原理](/llm/04-applications/rag-principles/) 跟 [4.12 embedding model](/llm/04-applications/embedding-model-internals/)
 2. **具體 SaaS API 教學**：Algolia / Pinecone 等 API 細節隨版本變、見各 SaaS 文件
 3. **WebGPU 內部細節**：GPU shader、WebGPU API 設計屬 web platform 議題、不在 LLM 教材範圍
 4. **Production 多租戶 RAG 服務**：屬 backend/07、本章 framing 是「個人 / 小團隊靜態網站」

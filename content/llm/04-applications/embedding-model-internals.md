@@ -1,9 +1,9 @@
 ---
-title: "4.8 Embedding model 內部：訓練、選型、in-domain fine-tune"
+title: "4.12 Embedding model 內部：訓練、選型、in-domain fine-tune"
 date: 2026-05-12
 description: "Embedding model 怎麼訓練（contrastive learning + hard negative mining）、怎麼挑（MTEB / 大小 / domain）、何時該自己 fine-tune"
 tags: ["llm", "applications", "embedding", "rag", "evaluation"]
-weight: 8
+weight: 12
 ---
 
 [RAG](/llm/04-applications/rag-principles/) 章節定義了 retrieval + augmentation 的二段式結構、但 retrieval 階段背後的 [embedding model](/llm/knowledge-cards/embedding-model/) 怎麼運作、怎麼選、什麼時候該換、什麼時候該自己 fine-tune、這些決策直接影響 RAG 品質。本章把 embedding model 的訓練機制、評估方法、實務選型展開。
@@ -88,7 +88,7 @@ Stage 4 的「instruction-tuned embedding」是 2024 後流行的設計：query 
 
 > **事實查核註**：本節所列具體型號（bge-large-en-v1.5、jina-embeddings-v3、nomic-embed-text-v1.5、voyage-3 等）、向量維度、context limit、訓練資料 domain、MTEB / BEIR 排名 — 都是 2026/5 主流版本的估計、各模型升級節奏快、引用前以 [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard) 跟對應 model card 當前狀態為準。
 
-選擇影響 chunking 策略（見 [4.0 RAG](/llm/04-applications/rag-principles/) 的 chunking 段）：短 context embedding 要切細、長 context embedding 可保留更完整段落、但內部 attention 對長段中段仍可能 lost-in-the-middle。
+選擇影響 chunking 策略（見 [4.1 RAG](/llm/04-applications/rag-principles/) 的 chunking 段）：短 context embedding 要切細、長 context embedding 可保留更完整段落、但內部 attention 對長段中段仍可能 lost-in-the-middle。
 
 ### 4. Cosine similarity 設計
 
@@ -256,7 +256,7 @@ Hard negative 是 embedding fine-tune 品質的關鍵差距 — 沒做的 fine-t
 關鍵設計決策：
 
 1. **Embedding model 一致性**：ingestion 跟 query 必須用同個 model（換 model = 整批 re-embed）
-2. **Chunking 策略對齊 embedding context**：見 [4.0 RAG chunking](/llm/04-applications/rag-principles/)
+2. **Chunking 策略對齊 embedding context**：見 [4.1 RAG chunking](/llm/04-applications/rag-principles/)
 3. **Reranking model 通常用 cross-encoder**：embedding model 是 bi-encoder（query 跟 doc 分開 embed）、reranker 是 cross-encoder（query + doc 一起算）、品質更高但慢、適合在 top-50 → top-5 之間做 reranking
 4. **Hybrid retrieval**：BM25（字面）+ embedding（語意）混用、用 RRF（Reciprocal Rank Fusion）合併、是 production 常見配置
 
@@ -297,6 +297,6 @@ Hard negative 是 embedding fine-tune 品質的關鍵差距 — 沒做的 fine-t
 
 ## 小結
 
-Embedding model 是 RAG 品質的核心驅動。訓練 paradigm 是 contrastive learning + hard negative mining、跟 LLM 的 next-token prediction 不同。選型看 domain、大小、context limit、normalize 預設；MTEB 是參考、in-domain benchmark 是 final test。Fine-tune 通常不需要、特殊 domain 且資料足夠才考慮。本地 vs 雲端的選擇看隱私 / 成本 / 品質需求；沒 backend 的靜態場景（個人 blog / docs site）做 embedding 搜尋的 deployment 選擇見 [4.11 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
+Embedding model 是 RAG 品質的核心驅動。訓練 paradigm 是 contrastive learning + hard negative mining、跟 LLM 的 next-token prediction 不同。選型看 domain、大小、context limit、normalize 預設；MTEB 是參考、in-domain benchmark 是 final test。Fine-tune 通常不需要、特殊 domain 且資料足夠才考慮。本地 vs 雲端的選擇看隱私 / 成本 / 品質需求；沒 backend 的靜態場景（個人 blog / docs site）做 embedding 搜尋的 deployment 選擇見 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
 
-下一章：[4.9 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)、看怎麼判讀 LLM benchmark 數字、自己跑 benchmark 的方法。
+下一章：[4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)、看怎麼判讀 LLM benchmark 數字、自己跑 benchmark 的方法。

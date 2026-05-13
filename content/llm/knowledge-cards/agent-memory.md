@@ -36,4 +36,4 @@ Agent memory 的核心概念是「**agent 在 [context window](/llm/knowledge-ca
 1. **不是每個 agent 都需要五個層次都用**：autocomplete 只要 working memory；對話 IDE assistant 多用 working + session；長期 coding agent 才需要 long-term
 2. **Long-term memory 的兩條實作路線**：(a) retrieval-on-demand（vector store + similarity search、見 [RAG](/llm/knowledge-cards/rag/)）、(b) injection-on-startup（把關鍵 memory 編進 system prompt、適合小量穩定的 procedural）
 3. **失敗模式**：memory drift（舊 memory 過時但仍被 retrieve）、PII 寫入（user 不知情下被存）、context 污染（不相關 memory 被 inject 進 working）、跟 [hallucination](/llm/knowledge-cards/hallucination/) 互相 boost
-4. **跟 [4.14 agent memory 章節](/llm/04-applications/agent-memory-architecture/) 的關係**：本卡是分類定義、章節是工程實務（寫入時機、retrieval 設計、失敗模式緩解）
+4. **跟 [4.19 agent memory 章節](/llm/04-applications/agent-memory-architecture/) 的關係**：本卡是分類定義、章節是工程實務（寫入時機、retrieval 設計、失敗模式緩解）

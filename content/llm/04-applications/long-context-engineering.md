@@ -1,9 +1,9 @@
 ---
-title: "4.7 Long context engineering"
+title: "4.11 Long context engineering"
 date: 2026-05-12
 description: "128K / 1M context 模型怎麼用：claimed vs effective context、lost-in-the-middle、context 設計策略、Long context vs RAG 取捨"
 tags: ["llm", "applications", "long-context", "rag"]
-weight: 7
+weight: 11
 ---
 
 長 [context window](/llm/knowledge-cards/context-window/) 模型（128K、1M、甚至更長）在 2024-2026 變成主流標配。但「聲稱 context」跟「實用 effective context」之間有顯著落差、不理解這條鴻溝會讓 long context 變成資源浪費而非能力延伸。本章把 long context 的實際運作、典型失敗模式、prompt 設計策略、跟 [RAG](/llm/knowledge-cards/rag/) 的取捨拆成可操作的判讀。
@@ -194,4 +194,4 @@ Recall accuracy vs 答案位置（10K context）：
 
 Long context 模型的聲稱 / NIH / effective 三層落差是 long context engineering 的核心議題。Lost-in-the-middle 是主要失敗模式、緩解靠「關鍵資訊放開頭結尾」「重要內容重複」「拆 prompt」三個策略。Long context vs RAG 不是替代、是互補；混用是實務常見配置。Reasoning model + long context 有特殊衝突、需要為 reasoning trace 預留 context budget。判讀模型實用性看 effective context、不看聲稱 context；量測靠 NIH + 真實任務評估。
 
-下一章：[4.8 Embedding model 內部](/llm/04-applications/embedding-model-internals/)、看 RAG retrieval 階段背後的 embedding 是怎麼運作。
+下一章：[4.12 Embedding model 內部](/llm/04-applications/embedding-model-internals/)、看 RAG retrieval 階段背後的 embedding 是怎麼運作。

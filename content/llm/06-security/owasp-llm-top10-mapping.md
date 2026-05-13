@@ -57,7 +57,7 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 - **主章節**：[6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)
 - **覆蓋**：跨雲端 prompt 邊界、第三方 plugin 偷送 prompt、API key 不放在前端 JS
-- **補充章節**：[4.11 靜態 / serverless RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的 API key 暴露段、user query 隱私段
+- **補充章節**：[4.16 靜態 / serverless RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的 API key 暴露段、user query 隱私段
 - **不在 M6 範圍**：企業合規（GDPR / HIPAA / SOC 2）的逐條檢核屬 [backend/07](/backend/07-security-data-protection/)
 
 **個人 dev 場景的最低 control**：本地敏感任務不送雲端、雲端 model 明確標記、API key 從環境變數讀
@@ -70,7 +70,7 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 - **主章節**：[6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/)
 - **覆蓋**：GGUF / HuggingFace / Ollama registry 信任、量化版本污染、權重完整性、MCP server 信任
-- **補充**：[4.11 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的 client-side LLM 模型 CDN 信任段
+- **補充**：[4.16 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的 client-side LLM 模型 CDN 信任段
 - **不在 M6 範圍**：production 模型 release / SBOM / artifact provenance 屬 [backend/07 supply chain](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)
 
 **個人 dev 場景的最低 control**：選主流作者 / 量化者、下載後 hash 比對、MCP server 跑 sandbox
@@ -94,7 +94,7 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 - **主章節**：[6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)
 - **覆蓋**：tool 副作用範圍 spectrum、可逆性、confirm 機制
-- **補充原理**：[4.1 tool use 副作用範圍設計](/llm/04-applications/tool-use-principles/)
+- **補充原理**：[4.3 tool use 副作用範圍設計](/llm/04-applications/tool-use-principles/)
 - **不在 M6 範圍**：web app 場景的 output sanitization、CSP、render escape 屬一般 web 安全 + [backend/07](/backend/07-security-data-protection/)
 
 **個人 dev 場景的最低 control**：副作用類 tool 加 confirm、shell 命令前 review、git track + diff
@@ -105,9 +105,9 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 **模組六對應**：
 
-- **主章節**：[6.2 tool use 權限](/llm/06-security/tool-use-permission-model/) + [4.2 Agent 跟人類審查協作](/llm/04-applications/agent-architecture/)
+- **主章節**：[6.2 tool use 權限](/llm/06-security/tool-use-permission-model/) + [4.4 Agent 跟人類審查協作](/llm/04-applications/agent-architecture/)
 - **覆蓋**：sandbox / 白名單 / 副作用可逆性、agent 人類審查 spectrum、coding agent 的 permission boundary（[hands-on](/llm/01-local-llm-services/hands-on/permission-boundary/)）
-- **補充**：[4.12 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 permission boundary 設計
+- **補充**：[4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 permission boundary 設計
 
 **個人 dev 場景的最低 control**：副作用 tool 加 confirm、agent max steps、production-level tool 不放在 dev agent 可達範圍
 
@@ -117,7 +117,7 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 **模組六對應**：**部分**
 
-- **覆蓋**：[4.12 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 scaffold 設計提到 system prompt 是核心元件、但沒專門講 leakage
+- **覆蓋**：[4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 scaffold 設計提到 system prompt 是核心元件、但沒專門講 leakage
 - **不在 M6 範圍**：sysprompt leak 主要是 production 商業祕密議題、屬 backend/07 / 各 vendor docs
 
 **個人 dev 場景的最低 control**：不要把 secret（API key、internal info）寫在 system prompt、敏感邏輯放後端而非 prompt
@@ -128,8 +128,8 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 **模組六對應**：**部分**
 
-- **覆蓋**：[4.11 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的「第三方 SaaS 信任」段、跨租戶 isolation 議題
-- **補充原理**：[4.0 RAG 原理](/llm/04-applications/rag-principles/) 的失敗模式、[4.8 embedding model 內部](/llm/04-applications/embedding-model-internals/)
+- **覆蓋**：[4.16 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的「第三方 SaaS 信任」段、跨租戶 isolation 議題
+- **補充原理**：[4.1 RAG 原理](/llm/04-applications/rag-principles/) 的失敗模式、[4.12 embedding model 內部](/llm/04-applications/embedding-model-internals/)
 - **不在 M6 範圍**：production multi-tenant vector DB 屬 [backend/07 多租戶 isolation](/backend/07-security-data-protection/llm-multi-tenant-isolation/)
 
 **個人 dev 場景的最低 control**：RAG ingestion 加 PII / secret filter、vector DB 選 search-only key、不混跨 user vector
@@ -141,8 +141,8 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 **模組六對應**：**跨章節**
 
 - **概念基礎**：[hallucination 卡](/llm/knowledge-cards/hallucination/)
-- **評估方法**：[4.9 benchmarking](/llm/04-applications/benchmarking-and-evaluation/) + [4.16 LLM-as-judge](/llm/04-applications/llm-as-judge/)
-- **應用層緩解**：[4.0 RAG](/llm/04-applications/rag-principles/)（給 LLM 外掛真實知識）、[4.2 agent](/llm/04-applications/agent-architecture/) 的人類審查 spectrum
+- **評估方法**：[4.14 benchmarking](/llm/04-applications/benchmarking-and-evaluation/) + [4.21 LLM-as-judge](/llm/04-applications/llm-as-judge/)
+- **應用層緩解**：[4.1 RAG](/llm/04-applications/rag-principles/)（給 LLM 外掛真實知識）、[4.4 agent](/llm/04-applications/agent-architecture/) 的人類審查 spectrum
 - **不在 M6 範圍**：M6 預設 dev 自己驗證輸出、不專章寫
 
 **個人 dev 場景的最低 control**：critical 任務人類 review、複雜推理用 reasoning model、code 生成必跑 test
@@ -153,8 +153,8 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 **模組六對應**：**部分**
 
-- **覆蓋**：[4.11 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的「rate limit / abuse」段、靜態前端被 scrape 後燒 LLM quota 的情境
-- **補充**：[4.13 prompt caching](/llm/04-applications/prompt-caching-engineering/)（cost 控制）、[4.2 agent](/llm/04-applications/agent-architecture/) 的 termination（max steps / cost cap）、[4.12 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 budget management
+- **覆蓋**：[4.16 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的「rate limit / abuse」段、靜態前端被 scrape 後燒 LLM quota 的情境
+- **補充**：[4.18 prompt caching](/llm/04-applications/prompt-caching-engineering/)（cost 控制）、[4.4 agent](/llm/04-applications/agent-architecture/) 的 termination（max steps / cost cap）、[4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 budget management
 - **不在 M6 範圍**：production rate limiting / DDoS 防護屬 [backend/07 entrypoint protection](/backend/07-security-data-protection/entrypoint-and-server-protection/)
 
 **個人 dev 場景的最低 control**：agent 設 max_steps / max_cost、API key 不放前端 JS、用 edge function 加 rate limit
@@ -165,16 +165,16 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 
 | OWASP | 主章節                                                                                                                                         | 補充章節 / 卡片                                                                                                                                                   |
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LLM01 | [6.3](/llm/06-security/prompt-injection-in-ide/)                                                                                               | [4.2 agent loop](/llm/04-applications/agent-architecture/)、[hands-on permission-boundary](/llm/01-local-llm-services/hands-on/permission-boundary/)              |
-| LLM02 | [6.4](/llm/06-security/cross-cloud-local-data-boundary/)                                                                                       | [4.11 靜態 RAG](/llm/04-applications/static-and-serverless-rag-deployment/)、[0.7](/llm/00-foundations/privacy-data-flow/)                                        |
-| LLM03 | [6.0](/llm/06-security/model-supply-chain-trust/)                                                                                              | [4.11 client-side LLM 段](/llm/04-applications/static-and-serverless-rag-deployment/)                                                                             |
+| LLM01 | [6.3](/llm/06-security/prompt-injection-in-ide/)                                                                                               | [4.4 agent loop](/llm/04-applications/agent-architecture/)、[hands-on permission-boundary](/llm/01-local-llm-services/hands-on/permission-boundary/)              |
+| LLM02 | [6.4](/llm/06-security/cross-cloud-local-data-boundary/)                                                                                       | [4.16 靜態 RAG](/llm/04-applications/static-and-serverless-rag-deployment/)、[0.7](/llm/00-foundations/privacy-data-flow/)                                        |
+| LLM03 | [6.0](/llm/06-security/model-supply-chain-trust/)                                                                                              | [4.16 client-side LLM 段](/llm/04-applications/static-and-serverless-rag-deployment/)                                                                             |
 | LLM04 | [6.0](/llm/06-security/model-supply-chain-trust/) 部分                                                                                         | [3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/)、[hands-on fine-tune](/llm/01-local-llm-services/hands-on/local-fine-tuning/)                  |
-| LLM05 | [6.2](/llm/06-security/tool-use-permission-model/)                                                                                             | [4.1 tool use 原理](/llm/04-applications/tool-use-principles/)                                                                                                    |
-| LLM06 | [6.2](/llm/06-security/tool-use-permission-model/) + [4.2](/llm/04-applications/agent-architecture/)                                           | [4.12 coding agent harness](/llm/04-applications/coding-agent-harness/)、[hands-on permission-boundary](/llm/01-local-llm-services/hands-on/permission-boundary/) |
-| LLM07 | [4.12 scaffold](/llm/04-applications/coding-agent-harness/) 部分                                                                               | [system prompt 卡](/llm/knowledge-cards/system-prompt/)                                                                                                           |
-| LLM08 | [4.11 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 部分                                                          | [4.0 RAG](/llm/04-applications/rag-principles/)、[4.8 embedding](/llm/04-applications/embedding-model-internals/)                                                 |
-| LLM09 | [hallucination 卡](/llm/knowledge-cards/hallucination/) + [4.16](/llm/04-applications/llm-as-judge/)                                           | [4.0 RAG](/llm/04-applications/rag-principles/)、[4.9 benchmarking](/llm/04-applications/benchmarking-and-evaluation/)                                            |
-| LLM10 | [4.11 abuse 段](/llm/04-applications/static-and-serverless-rag-deployment/) + [4.13 caching](/llm/04-applications/prompt-caching-engineering/) | [4.2 termination](/llm/04-applications/agent-architecture/)、[4.12 budget](/llm/04-applications/coding-agent-harness/)                                            |
+| LLM05 | [6.2](/llm/06-security/tool-use-permission-model/)                                                                                             | [4.3 tool use 原理](/llm/04-applications/tool-use-principles/)                                                                                                    |
+| LLM06 | [6.2](/llm/06-security/tool-use-permission-model/) + [4.4](/llm/04-applications/agent-architecture/)                                           | [4.17 coding agent harness](/llm/04-applications/coding-agent-harness/)、[hands-on permission-boundary](/llm/01-local-llm-services/hands-on/permission-boundary/) |
+| LLM07 | [4.17 scaffold](/llm/04-applications/coding-agent-harness/) 部分                                                                               | [system prompt 卡](/llm/knowledge-cards/system-prompt/)                                                                                                           |
+| LLM08 | [4.16 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 部分                                                          | [4.1 RAG](/llm/04-applications/rag-principles/)、[4.12 embedding](/llm/04-applications/embedding-model-internals/)                                                 |
+| LLM09 | [hallucination 卡](/llm/knowledge-cards/hallucination/) + [4.21](/llm/04-applications/llm-as-judge/)                                           | [4.1 RAG](/llm/04-applications/rag-principles/)、[4.14 benchmarking](/llm/04-applications/benchmarking-and-evaluation/)                                            |
+| LLM10 | [4.16 abuse 段](/llm/04-applications/static-and-serverless-rag-deployment/) + [4.18 caching](/llm/04-applications/prompt-caching-engineering/) | [4.4 termination](/llm/04-applications/agent-architecture/)、[4.17 budget](/llm/04-applications/coding-agent-harness/)                                            |
 
 ## 跟 backend/07 的分工再述
 
@@ -183,7 +183,7 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 | 場景                             | 看哪                                                                                               |
 | -------------------------------- | -------------------------------------------------------------------------------------------------- |
 | 個人 dev 在自己機器跑、純粹本地  | 模組六 + 模組四                                                                                    |
-| 個人 dev 用雲端 API、自己機器跑  | 模組六 + 模組四 + [4.11 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) |
+| 個人 dev 用雲端 API、自己機器跑  | 模組六 + 模組四 + [4.16 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) |
 | 團隊內部部署 LLM、給內部用戶用   | 模組六 + [backend/07 部分](/backend/07-security-data-protection/)                                  |
 | Production multi-tenant LLM 服務 | [backend/07 全部](/backend/07-security-data-protection/)（多租戶 isolation、合規、incident）       |
 

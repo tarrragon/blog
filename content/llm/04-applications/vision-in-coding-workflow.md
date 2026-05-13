@@ -1,9 +1,9 @@
 ---
-title: "4.10 Vision in coding workflow：本地 VLM 怎麼接寫 code"
+title: "4.15 Vision in coding workflow：本地 VLM 怎麼接寫 code"
 date: 2026-05-12
 description: "VLM 在 coding 工作流的 use cases、本地 VLM 選型、跟雲端 VLM 的分工、Continue.dev / Ollama 整合現狀"
 tags: ["llm", "applications", "vlm", "vision", "multimodal", "ide-integration"]
-weight: 10
+weight: 15
 ---
 
 寫 code 工作流不只是文字進文字出 — 大量任務需要看圖：browser 截圖 debug UI、Figma mockup 寫前端、架構白板照片寫文件、log 截圖找 error。[VLM](/llm/knowledge-cards/vlm/)（Vision-Language Model）把這些任務從「人類用文字描述給 LLM」升級到「LLM 直接看圖理解」。本章把 vision 在 coding 場景的 use cases、本地 VLM 選型、跟雲端 VLM 的分工、IDE 整合現狀拆成可操作的判讀。
@@ -98,7 +98,7 @@ VLM 不是萬能、寫 code 場景的常見失敗：
 | 看自己 whiteboard 拍照        | 本地 VLM                            | 個人 thinking 不送雲端            |
 | 看 Stack Overflow 截圖        | 雲端 / 本地都行                     | 公開內容、看品質需求              |
 
-混用配置（同 [4.7 long-context](/llm/04-applications/long-context-engineering/) 跟 [6.4 cross-cloud](/llm/06-security/cross-cloud-local-data-boundary/) 推薦模式）：
+混用配置（同 [4.11 long-context](/llm/04-applications/long-context-engineering/) 跟 [6.4 cross-cloud](/llm/06-security/cross-cloud-local-data-boundary/) 推薦模式）：
 
 ```text
 Continue.dev config：
@@ -176,7 +176,7 @@ Multimodal RAG：
   例：「跟這張 UI 截圖相似的設計」、「跟這個 error 一樣的 issue ticket」
 ```
 
-Multimodal RAG 的 embedding 通常用 [CLIP](/llm/knowledge-cards/clip/)-style 模型（跟 [4.8 embedding model internals](/llm/04-applications/embedding-model-internals/) 介紹的 text-only embedding model 訓練 paradigm 同源、都用 contrastive learning、但同時 embed 圖跟文字到共享空間）。
+Multimodal RAG 的 embedding 通常用 [CLIP](/llm/knowledge-cards/clip/)-style 模型（跟 [4.12 embedding model internals](/llm/04-applications/embedding-model-internals/) 介紹的 text-only embedding model 訓練 paradigm 同源、都用 contrastive learning、但同時 embed 圖跟文字到共享空間）。
 
 寫 code 場景的潛在應用：
 
@@ -225,4 +225,4 @@ Tripwire（什麼時候值得評估 multimodal RAG）：
 
 VLM 把 coding 工作流的 vision 任務（UI debug、mockup → code、OCR）從「人類手寫描述」升級到「LLM 直接看圖」。本地 VLM 選型按硬體預算對應：M4 Pro 24GB+ 可跑 Qwen2.5-VL-7B、M4 Max 32GB+ 可跑 32B 級模型。Image token 計入 context budget、配合 long context 模型用。本地 vs 雲端按隱私分流、NDA / 內部截圖走本地。IDE plugin 整合 2026/5 仍演化中、雲端 IDE 領先、本地組合仍在追趕；trigger 訊號響時再升級到 vision-native workflow。
 
-跟其他章節的關係：本章是 [4.0 RAG](/llm/04-applications/rag-principles/) / [4.1 Tool use](/llm/04-applications/tool-use-principles/) / [4.8 embedding model](/llm/04-applications/embedding-model-internals/) 在 vision 延伸的補完；隱私 / 跨雲端分流邏輯沿用 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)；本地 VLM 配 IDE 的 hands-on 屬於 [模組一 hands-on](/llm/01-local-llm-services/hands-on/) 範圍、視推論伺服器支援度成熟度補。
+跟其他章節的關係：本章是 [4.1 RAG](/llm/04-applications/rag-principles/) / [4.3 Tool use](/llm/04-applications/tool-use-principles/) / [4.12 embedding model](/llm/04-applications/embedding-model-internals/) 在 vision 延伸的補完；隱私 / 跨雲端分流邏輯沿用 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)；本地 VLM 配 IDE 的 hands-on 屬於 [模組一 hands-on](/llm/01-local-llm-services/hands-on/) 範圍、視推論伺服器支援度成熟度補。
