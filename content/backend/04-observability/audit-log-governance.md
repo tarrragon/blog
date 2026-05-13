@@ -89,7 +89,7 @@ Retention 是 audit log 跟 operational log 最大的治理差異。Operational 
 - audit log 經過 aggregation 處理、原始事件丟失、但 aggregated view 無法滿足法規要求。
 - retention 策略由應用團隊調整、不經合規團隊審批、容易在成本壓力下被縮短。
 
-Retention 漂移的偵測手段：把 retention compliance 變成可查詢的訊號。週期性對照各類 audit log 的實際留存時間跟政策要求，偏差超過閾值時觸發告警，而不是等到稽核時才發現。
+Retention 漂移的偵測手段：把 retention compliance 變成可查詢的訊號。週期性對照各類 audit log 的實際留存時間跟政策要求、偏差超過閾值時觸發告警、讓漂移在治理週期內就被處理、避免等到稽核時才發現。
 
 對應 [4.C1 FinTech retention policy drift](/backend/04-observability/cases/fintech-audit-evidence-observability/) 跟 [4.C3 Healthcare retention boundary violations](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)：兩個案例的判讀訊號都把 retention 偏離列為一級訊號（兩 case 的表格行明示這點）；本章在此基礎上補上「偏離視為治理事件、retention compliance 變成可查詢訊號」的展開、屬章節推論。
 

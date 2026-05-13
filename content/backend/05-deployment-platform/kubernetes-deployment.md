@@ -12,7 +12,7 @@ Kubernetes 部署策略（Kubernetes deployment strategy）的核心責任是把
 
 Deployment 的責任是宣告目標狀態：期望副本數、版本、更新策略。rollout 的責任是把現況收斂到目標狀態，並在過程中維持可服務能力。這兩者分開理解後，才能在異常時判斷是目標設定問題，還是收斂過程問題。
 
-rolling update 常用來降低單次切換風險。關鍵不是名稱，而是批次大小與節奏：每批新增多少新副本、每批回收多少舊副本、每批觀察多長時間。這些參數應以服務容量曲線與回退時間目標校準。
+rolling update 常用來降低單次切換風險。rolling update 的判讀重點是批次大小與節奏：每批新增多少新副本、每批回收多少舊副本、每批觀察多長時間。這些參數以服務容量曲線與回退時間目標校準、名稱本身只是工具標籤、不是判讀條件。
 
 ## probe 對齊服務生命週期
 
@@ -40,7 +40,7 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 
 可重複套用的做法：
 
-1. **擴縮策略進 IaC**：HPA / VPA / Karpenter / Cluster Autoscaler 的配置都進 git，變更走 release flow，避免手動調整在事故後被遺忘。
+1. **擴縮策略進 IaC**：HPA / VPA / Karpenter / Cluster Autoscaler 的配置都進 git、變更走 release flow、避免手動調整在事故後被遺忘。IaC + 自動化的 ownership 邊界見 [5.7 control plane boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)。
 2. **workload 分群擴縮**：stateless API、長連線服務、batch job、background worker 對擴縮的需求不同。把不同 workload 用不同 namespace + 不同 autoscaler policy 隔離，避免一套規則套全部。
 3. **擴縮事件接事故指標**：HPA 觸發、scale-up 延遲、scale-down 過快、cluster autoscaler 加 node 失敗，都該在事故 timeline 上可見。回到 [4.13 service topology](/backend/04-observability/service-topology/) 的擴縮事件 vs 事故區分。
 

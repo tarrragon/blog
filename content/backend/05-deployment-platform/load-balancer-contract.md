@@ -27,7 +27,7 @@ tags: ["backend", "deployment", "load-balancer"]
 
 ## timeout 與 sticky session
 
-idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體驗的平衡點。timeout 太短會增加重連與錯誤，太長會占用連線與資源。設定時要以請求型態與峰值流量校準，而不是套用單一預設值。
+idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體驗的平衡點。timeout 太短會增加重連與錯誤，太長會占用連線與資源。設定時依請求型態與峰值流量校準、按 SLI 訊號迭代閾值。
 
 [sticky session](/backend/knowledge-cards/sticky-session/) 適合需要短期會話一致性的場景，但它會提高特定節點負載不均與失效轉移成本。採用 sticky policy 前要先定義會話狀態落點與失效時的回復路徑。
 
@@ -37,12 +37,13 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 
 切流失敗的本質是 connection lifecycle 跟切換時序錯位、平台元件本身往往是健康的。對應 [5.C9 反例：平台切流未先 Draining](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)：揭露切流失敗常因 connection lifecycle 管理錯位、重啟動作會放大震盪。以下基於通用工程知識展開回退節奏。
 
-可重複套用的回退節奏：
+回退節奏有兩個時序階段、性質不同。
 
-1. **先停止下一批切換**：發現切流失敗時，第一步是凍結 rollout、不擴大切換範圍。讓正在發生的震盪先穩定下來、再做後續決策。
-2. **恢復舊入口權重**：把 LB 規則 / DNS 加權 / service mesh 流量切回舊版本主導，但不立即關閉新版本。新版本保留作為對照證據、不參與決策。
-3. **等待連線數穩定**：長連線跟 reconnect 風暴需要時間消化。盲目重啟新版本實例會把重連集中在新一輪實例上、造成 thundering herd。觀察連線數、reconnect rate、5xx 趨勢回到 baseline 後再進下一步。
-4. **找出生命週期錯位點**：drain window、idle timeout、health check、client retry 是否在同一節奏？任一錯位都會把短暫切換放大。修正錯位點後重新進入小範圍驗證。
+**第一階段：先讓震盪不擴大**。發現切流失敗的第一動作是凍結 rollout（不再擴大切換範圍）跟恢復舊入口權重（把 LB 規則 / DNS 加權 / service mesh 流量切回舊版本主導）。新版本不立即關閉、保留作為對照證據。這個階段的目標是穩定當前狀態、為後續分析爭取時間、所有動作要在分鐘級內完成。
+
+**第二階段：再讓系統可恢復**。震盪不擴大後、進入「等待 + 修正」狀態。長連線跟 reconnect 風暴需要時間消化、盲目重啟新版本實例會把重連集中在新一輪實例上、造成 thundering herd。觀察連線數、reconnect rate、5xx 趨勢回到 baseline 是進入修正階段的訊號。修正動作聚焦於 drain window、idle timeout、health check、client retry 之間的節奏錯位、找出後修正、重新進入小範圍驗證。這個階段的時間尺度通常是小時級、不能用第一階段的緊急節奏對待。
+
+兩階段時序不能合併。把第一階段（凍結 + 切回）跟第二階段（等待 + 修正）並列執行、會在連線尚未穩定時嘗試修正、造成第二次震盪。
 
 回退時最常見的誤判是「LB 顯示新節點 healthy = 服務可服務」。LB 的健康判斷通常是定期 health check 通過，跟「該節點能承受重連潮」是不同問題。事故中要把這兩個訊號分開看：節點層健康（health check pass）、連線層健康（reconnect rate、長連線錯誤率、tail latency）。
 
@@ -72,11 +73,13 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 | 多租戶場景下單租戶延遲飆升              | sticky/routing policy 造成熱點聚集 | 分離租戶路由、加入負載重平衡         |
 | 回退後 reconnect 風暴持續               | 重啟動作放大震盪、未先恢復穩定路徑 | 凍結切換、等連線數穩定、再修錯位點   |
 
+「回退後 reconnect 風暴持續」是切流事故中最容易誤判的訊號。判讀順序：先看是否「凍結切換」已執行（rollout 是否真的停了）、再看「舊入口權重」是否回到主導比例（DNS / LB 規則是否切回）、最後看連線數曲線是否進入下降。三項都做完仍見風暴持續、才考慮新版本實例層級的問題（image / config / runtime 漂移）、而非反向重啟新版本。解凍切換的條件是「連線數曲線回到 baseline + reconnect rate 低於閾值連續 N 分鐘」、不是「等夠久了就解凍」的時間導向。
+
 ## 常見誤區
 
 把 load balancer 當成「只做轉發」的元件，會忽略它在部署與事故中的決策角色。LB 設定其實定義了流量切換節奏、回退可行性與故障擴散速度。
 
-把 health check 視為固定 URL 檢查，會讓複雜服務在切換時暴露隱性風險。health contract 要反映服務真實 readiness，而不是單一探針成功訊號。
+把 health check 視為固定 URL 檢查，會讓複雜服務在切換時暴露隱性風險。health contract 要反映服務真實 readiness — 含依賴連線池、必要 config、關鍵背景任務狀態 — 而非停在單一探針成功訊號。
 
 把「LB 顯示節點 healthy」當作「服務可承受流量」的訊號，也是事故中的常見誤判。健康檢查通過跟承受重連潮是不同層級的訊號。
 

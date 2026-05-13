@@ -19,7 +19,7 @@ tags: ["backend", "deployment"]
 | 設定與密鑰下發 | 設定漂移與權限擴張同時發生               | 高風險設定要進 release gate，並分離 [management plane](/backend/knowledge-cards/management-plane/) | [F5 BIG-IP 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/)             |
 | 交付切換節奏   | 回滾與切換條件不清晰                     | 先定停損條件再定交付速度                                                                           | [TeamCity 2024](/backend/07-security-data-protection/red-team/cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/) |
 
-**入口暴露面**的主要紅隊判讀是「實際可達範圍是否超過設計意圖」。容器化、service mesh、ingress controller 升級、新增 LoadBalancer 都可能無意中把內部服務暴露到公網。入口清單跟責任鏈先對齊，能避免發版本就改變了攻擊面。
+**入口暴露面**的主要紅隊判讀是「實際可達範圍是否超過設計意圖」。容器化、service mesh、ingress controller 升級、新增 LoadBalancer 都可能無意中把內部服務暴露到公網。入口清單跟責任鏈先對齊、能避免發版本就改變了攻擊面。升級流程跟回退窗口設計見 [5.7 平台元件升級的可重播流程](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#平台元件升級的可重播流程)。
 
 **生命週期訊號**的紅隊風險聚焦於脆弱窗口期被攻擊者利用：readiness 過早通過、shutdown 階段仍在處理 in-flight request、drain 視窗內接收新請求，都會把短暫的脆弱窗口拉長。
 

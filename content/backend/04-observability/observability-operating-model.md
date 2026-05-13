@@ -13,7 +13,7 @@ tags: ["backend", "observability"]
 - ownership 欄位：owner、review cadence、retention、cost center、runbook link、deprecation date
 - 生命週期：新增、審核、使用、修訂、淘汰
 - 治理節奏：dashboard review、alert review、cost review、post-incident write-back
-- 跟 04.15 cost attribution 的關係：成本歸屬是 operating model 的一部分
+- 跟 4.15 cost attribution 的關係：成本歸屬是 operating model 的一部分
 - 跟 08 的關係：事故時使用同一組 owner 與 escalation route
 - 反模式：平台團隊擁有所有 alert；service team 不看 dashboard；成本無 owner
 
@@ -178,8 +178,9 @@ Observability operating model 是事故流程的責任基礎。事故期間，IC
 
 ## 交接路由
 
-- 04.4 dashboard / alert：設計 owner、runbook 與停止條件
-- 04.8 signal governance loop：淘汰 stale alert 與 orphan dashboard
-- 04.15 cost attribution：把成本接回 owner 與服務
+- [4.4 dashboard / alert](/backend/04-observability/dashboard-alert/)：設計 owner、runbook 與停止條件
+- [4.8 signal governance loop](/backend/04-observability/signal-governance-loop/)：淘汰 stale alert 與 orphan dashboard
+- [4.13 service topology](/backend/04-observability/service-topology/)：動態叢集環境下、cluster 層 vs 服務層的 ownership 路由
+- [4.15 cost attribution](/backend/04-observability/cost-attribution/)：把成本接回 owner 與服務
 - 08.2 incident command roles：事故時使用相同 ownership 模型
 - 08.16 runbook lifecycle：把觀測資產接進 runbook 版本治理

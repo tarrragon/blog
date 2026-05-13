@@ -44,7 +44,7 @@ Control plane 事故常見於規則推送、routing 誤配、secret 下發失敗
 
 平台基礎元件升級是 control plane 風險最高的場景。Service mesh、ingress controller、CNI、API server 這類元件影響面廣、單次升級可能形成全域風險放大器。
 
-對應 [5.C7 Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露「基礎平台元件升級若缺乏分批治理會形成全域風險放大器」「分批升級 + 回退窗口」「升級驗證標準固定化」「升級事件接入 incident command 節奏」四個方向。以下基於通用工程知識展開。
+對應 [5.C7 Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露 1 個判讀（基礎平台元件升級缺乏分批治理會形成全域風險放大器）+ 3 條策略（分批升級 + 回退窗口、升級驗證標準固定化、升級事件接入 incident command 節奏）。以下基於通用工程知識展開、「升級事件進 timeline」是從 case「接入 incident command」策略進一步推到具體操作。
 
 可重複套用的升級流程：
 

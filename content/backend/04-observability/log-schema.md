@@ -27,7 +27,7 @@ tags: ["backend", "observability"]
 
 - [request id](/backend/knowledge-cards/request-id/)、[trace id](/backend/knowledge-cards/trace-id/)、[tenant boundary](/backend/knowledge-cards/tenant-boundary/) 與 service name 是否跨服務一致
 - high-cardinality 欄位是否被放進可控索引，並受查詢價值與成本預算約束
-- [retention](/backend/knowledge-cards/retention/) 是否依 operational debug、audit、compliance 分層
+- [retention](/backend/knowledge-cards/retention/) 是否依 operational debug、[audit](/backend/04-observability/audit-log-governance/)、compliance 分層
 - query pattern 是否能支援 [incident timeline](/backend/knowledge-cards/incident-timeline/) 還原
 
 ## 判讀訊號

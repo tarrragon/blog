@@ -47,7 +47,7 @@ Service topology 的可信度取決於資料來源是否反映真實流量。常
 
 - **呼叫頻率**：高頻依賴跟低頻依賴的失效影響不同。高頻依賴失效會立即放大成 5xx，低頻依賴失效可能要數小時才浮現。
 - **Latency 分布**：依賴 p50 / p99 latency 決定下游 timeout 應該設多少。沒有 latency 訊號的依賴圖無法支援 timeout 設計。
-- **Error rate**：依賴的錯誤率提供 budget 訊號。當某依賴錯誤率上升，下游應該觸發降級而不是無限重試。
+- **Error rate**：依賴的錯誤率提供 budget 訊號。當某依賴錯誤率上升，下游應觸發降級、保護自身可用性、避免進入無限重試放大故障。
 - **版本 / API contract**：依賴的版本變化跟 API contract 變更要進拓撲訊號。版本升級後若某段依賴消失，可能是 contract breaking。
 - **方向跟可選性**：是必要依賴（失效 = 服務失敗）還是可選依賴（失效 = 功能降級），影響事故分級。
 
@@ -70,11 +70,13 @@ Service topology 的可信度取決於資料來源是否反映真實流量。常
 
 對應 [4.C8 Airbnb K8s 規模化下的觀測訊號治理](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)：揭露「叢集擴縮跟工作負載變動需要回寫觀測模型」「叢集層指標跟服務層指標要分開治理」「擴縮事件跟事故關聯要可回溯」三個方向（case 直接列出）；以下展開的 service 層級節點、跨 cluster failover、drill-down 設計屬通用 K8s observability 經驗、case 本身未細說。
 
-動態叢集對拓撲訊號的挑戰有三個面向：
+動態叢集對拓撲訊號的挑戰有三個面向、性質不同、各自的對應做法也不同。
 
-1. **拓撲節點不穩定**：Pod 短暫存在、IP 不固定，把 Pod 當拓撲節點會讓 graph 持續抖動。可操作做法是用 service 層級節點（service name + version + region），把 Pod / instance 層級放到 dashboard drill-down，不在主拓撲圖呈現。
-2. **擴縮事件 vs 真實事故區分**：擴縮過程中 Pod 重啟、health check 短暫失敗、依賴連線中斷，會產生跟事故相似的訊號。把擴縮事件本身打進 timeline，事故判讀時能分辨「這段錯誤是擴縮造成還是上游問題」。
-3. **跨 cluster 流量變化**：multi-cluster 部署下，流量可能因 cluster 變更從 cluster A 切到 cluster B，拓撲圖要能呈現跨 cluster 邊界。沒有跨 cluster 視角時，B cluster 突增的流量會被誤判成 traffic spike，而不是 failover 事件。
+**拓撲節點不穩定** 是資料模型層的問題。Pod 短暫存在、IP 不固定、若直接把 Pod 當拓撲節點、graph 會分鐘級持續抖動、事故時看到的依賴結構不可信。對應做法是把節點層級從 Pod / IP 提升到 service（service name + version + region）、把 instance / Pod 層級放到 dashboard drill-down、讓主拓撲圖反映穩定的服務依賴而非瞬時實例分布。
+
+**擴縮事件 vs 真實事故區分** 是訊號分辨層的問題。HPA scale-up / scale-down、cluster autoscaler 加 node 失敗、Pod 重啟、health check 短暫失敗，這些擴縮動作本身會產生跟事故相似的訊號（5xx 短暫升高、reconnect、依賴連線中斷）、若沒分辨機制、值班會把擴縮過程的正常波動誤判成事故、或把真正的事故誤判成擴縮。對應做法是把擴縮事件本身打進 timeline、跟事故 timeline 共用同一張圖、判讀時對齊看。
+
+**跨 cluster 流量變化** 是視角層的問題。multi-cluster 部署下、流量可能因 cluster 變更從 cluster A 切到 cluster B、若拓撲圖只看單 cluster 視角、B cluster 突增的流量會被解讀為 traffic spike、漏掉真正的 failover 事件。對應做法是讓拓撲圖呈現跨 cluster 邊界、把 cluster 間流量變化也標到圖上、避免 cluster 邊界成為觀測盲區。
 
 把叢集層指標（node count、Pod count、HPA event）跟服務層指標（call rate、error rate、latency）分開治理，是動態叢集環境的基本要求。叢集層指標的 owner 通常是 platform team、服務層指標的 owner 通常是 service team，兩者放在同一 dashboard 上要清楚標示來源跟責任。
 
