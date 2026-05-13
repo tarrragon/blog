@@ -40,6 +40,33 @@ replay safety 的核心是先定義可重播範圍，再定義副作用控制。
 
 poison message 要獨立隔離。持續重試同一壞訊息會壓垮整體吞吐，穩定做法是送入 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)，再走診斷與修復流程。
 
+## Queue 語意誤配是 broker 遷移最常見的失敗模式
+
+Broker 遷移失敗的根因通常是 *consumer 對舊 broker 行為的隱式依賴*、不是 broker 本身效能。表面上訊息仍被送達、但業務資料開始出現重複扣款、重複寄信、狀態漏更新。
+
+對應 [3.C9 反例：Queue Semantics Mismatch Cutover](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) — 切換 broker 後、舊系統依賴特定 offset 行為、重試節奏跟 consumer idempotency；新系統即使提供相近 delivery semantics、失敗重播時也可能產生不同結果。語意誤配會沿著下游資料寫入擴散、難以靠 queue depth 判斷。
+
+**典型誤配場景**：
+
+- **At-least-once 假設變成 exactly-once 依賴**：consumer 寫死「處理過就忽略」、依賴 broker 不送重複；新 broker 重送同一 message、consumer 處理兩次
+- **Offset 跳號處理差異**：舊系統重啟後 offset 從特定位置開始、新系統可能從 latest / earliest 不同位置開始
+- **Consumer group rebalance 行為差異**：rebalance 期間舊系統會 pause 處理、新系統可能繼續處理、產生並發寫入衝突
+- **DLQ retry 節奏差異**：舊系統 DLQ message 預設不重試、新系統可能自動重試、製造重複副作用
+
+**回退判讀**：回退前要先確認哪一段資料已經被新語意處理過。直接切回舊 broker 可能讓同一批事件再次被處理。穩定做法是先凍結新 consumer、保留 offset 對照與 replay 範圍、再決定補償或重播。
+
+對應 [3.C10 對照](/backend/03-message-queue/cases/contrast-queue-model-by-scale/) — 中型服務常見問題是「lag/DLQ 長期累積」、不是 broker 效能單點、而是 consumer idempotency + 重播流程 + 下游承載能力 *三件事沒有一起設計*。三者要同步落地、缺一個就會在規模化時暴露。
+
+## 三個工程議題要一起設計
+
+`Consumer idempotency` + `重播流程` + `下游承載能力` 三件事是 consumer design 的鐵三角、必須 *同步落地*、缺一個就會在規模化時暴露。
+
+- **Consumer idempotency 不完整**：DLQ replay 後產生重複副作用、即使 broker 切換成功、業務帳本仍然錯亂
+- **重播流程不完整**：事故當下無法定向 replay、只能全 topic 重播、放大下游壓力
+- **下游承載能力不足**：consumer 跟 broker 都健康、但下游 DB / API 撐不住 replay 速率、形成新事故
+
+對應 [3.C5 Slack Job Queue Kafka + Redis](/backend/03-message-queue/cases/slack-job-queue-kafka-redis/) — Slack 在 job queue 擴展時、不是擴 broker、是 *拓樸重整*：高吞吐 vs 即時性的工作切到不同傳遞路徑（Kafka + Redis 分工）、分別治理持久性跟即時性目標。設計重點是「同一 consumer 不該同時承擔高吞吐 + 即時 + 持久三個目標」、要拆分到對應路徑。
+
 ## 判讀訊號
 
 | 訊號                                                            | 判讀重點                         | 對應動作                                    |

@@ -48,6 +48,33 @@ durable queue 在順序與吞吐之間需要明確取捨。全域順序通常成
 
 把 DLQ 當成長期倉庫，也會讓問題持續累積。DLQ 的工程價值在於快速定位異常類型並回到修復流程。
 
+## 訊息系統的「通知 vs 訊息」分類
+
+訊息系統設計要區分 *transactional 通知*（不可丟失、有業務後果）跟 *broadcast 訊息*（可接受部分遺失、重點是 throughput）。兩者用不同 SLO、不同 storage、不同重試策略。
+
+對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — 行動支付每日 3 億訊息、付款通知是「不可丟失 + 不可延遲」雙重需求（用戶付完款 30 秒沒收到通知會懷疑系統壞了、會打客服 / 重複扣款）。這層需求比 OTA 推播嚴格、必須有 durable queue + retry + 重複偵測。
+
+**分類設計**：
+
+- **Transactional 通知**（付款收據、訂單狀態變更、配額警告）：必須 durable、必須 idempotency key 去重、SLO 通常是 *秒級延遲 + 99.99% 投遞率*
+- **Broadcast 訊息**（行銷推播、新片發布通知、社群動態）：可丟失少數、SLO 是 *吞吐量* 而非投遞率、允許 best-effort retry
+
+判讀含義：規模化訊息系統的容量規劃要 *按類別* 分開、不是套同一個 broker capacity。3 億訊息 / 天看起來大、但 *通知* 跟 *訊息* 的工程負擔差數量級。
+
+## 下游推送是隱性瓶頸
+
+訊息系統的真正瓶頸常常不在 broker、在 *下游推送通道*（APNs、FCM、SMS gateway、email provider）。broker 寫入可以撐 3K msg/sec、但 APNs 一天的 quota 是有限的、超過會被 throttle。
+
+對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — DynamoDB 寫入容量充裕、但 APNs 推送額度可能成為事故當下的隱性瓶頸。容量規劃要把 *下游 quota* 算進去、不只看 broker 吞吐。
+
+**設計含義**：
+
+- **下游 quota 視為容量上限**：APNs / FCM / SMS 的 daily quota 是 hard ceiling、broker 規劃要對應
+- **下游降級路徑**：APNs 不可用時 fallback 到 FCM、FCM 不可用時 fallback 到 in-app notification、保留多個推送通道
+- **重試節奏跟下游容量對齊**：consumer 重試節奏要看下游 *剩餘 quota*、不是固定 backoff、避免重試把剩餘 quota 用光
+
+判讀重點：訊息系統事故當下、先看下游推送通道狀態（APNs status、FCM error rate），再看 broker。下游 throttle 引發 backlog 是規模化訊息系統最常見的瓶頸來源。
+
 ## 案例回寫
 
 durable queue 的重試與隔離節奏可用 [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 回寫。先看事件中的 backlog、retry、DLQ 變化，再回到本章判讀是重試策略失衡，還是隔離邊界不清楚。

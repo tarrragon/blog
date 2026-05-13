@@ -44,6 +44,45 @@ duplicate publish 在 outbox 模式下屬於預期現象。消費端需要配合
 
 把 outbox 表當一般業務表無上限累積，也會放大查詢與維護成本。需要定義保留與清理節奏，並確保稽核需求有對應方案。
 
+## Self-managed vs Managed broker 的長期 TCO
+
+Broker 選型常被簡化為「Kafka vs Pub/Sub」、實際上是 *long-term TCO* 決策。Self-managed Kafka 的容量規劃 + broker 數量 + 副本因子 + disk + ZooKeeper / KRaft 治理是長期工程 tax、每次擴容是工程專案。
+
+對應 [9.C9 Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 從自管 Kafka 遷到 Google Cloud Pub/Sub、動機不是「Kafka 不能撐」、是 *容量規劃的工程成本* 在 sustained growth 下變得不划算。對 7500 萬用戶的事件交付系統、把 broker 容量規劃跟運維負擔卸給 vendor、釋放 SRE 跟工程 capacity。
+
+**TCO 評估的真實成本項**：
+
+- **Broker 雲端費用**：明面成本、相對小
+- **容量規劃工程**：每季 partition planning、每年容量擴張專案
+- **故障處理人力**：broker 故障 oncall、ZooKeeper / KRaft 故障診斷
+- **升級遷移成本**：Kafka 每個 major version 升級是專案
+- **跨團隊治理**：規模化後的 multi-tenant 隔離、quota 管理、observability 建設
+
+判讀含義：Self-managed Kafka 在中小團隊可能比 Pub/Sub 便宜（雲端費用低）；但規模化後人力成本壓過雲端費用差、managed service 反而划算。對應 [3.C2 VMware Tanzu Kafka → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/) 同樣是「自管 → managed」的決策。
+
+**Managed service 的取捨**：
+
+- Pub/Sub 自動 scaling、但 vendor lock-in、cost-per-message 累積、message ordering / latency 特性跟 Kafka 不同
+- 業務語意對映（Kafka partition / offset / consumer group 在 Pub/Sub 對映成 subscription / ordering key / message attribute）不是 1:1
+- 遷移本身要驗證業務語意 — 對應 [1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 的同類流程
+
+## Broker 遷移的階段流程
+
+對應 [9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移本身是高併發容量工程、不能停機、不能丟 message。Spotify 採分階段：
+
+1. **Dual-write**：producer 同時寫兩個 broker、確保 cutover 前新 broker 有完整資料
+2. **Shadow consume**：新 broker 有獨立 consumer group 消費、驗證業務結果跟舊 broker 一致
+3. **Cutover**：流量逐步切到新 broker、保留舊 broker 為 fallback
+4. **Decommission**：確認新 broker 穩定後關掉舊 broker、清理舊架構
+
+遷移期容量規劃含義：
+
+- Dual-write 期間 broker 雙倍流量（writer side）
+- Shadow consume 期間 consumer 雙倍負載（reader side）
+- 業務驗證（mismatch tracking）期間有額外的對帳工作量
+
+跟 [1.12 大規模 DB 遷移](/backend/01-database/large-scale-db-migration/) 是同類流程、流程細節跟 evidence chain 可互相參考。
+
 ## 案例回寫
 
 outbox 一致性可用 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 的恢復段落回寫。先看資料寫入與下游狀態同步是否脫節，再回到本章檢查 outbox backlog、relay 進度與重播策略。
