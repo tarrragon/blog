@@ -72,43 +72,49 @@ Collector 在 pipeline 中扮演三個角色：
 
 ## 觀測遷移的執行順序
 
-觀測遷移本質是 pipeline 重建，不是 agent 替換。遷移順序錯誤會把短期的雙軌成本變成長期的語意漂移。
+觀測遷移的執行順序決定短期雙軌成本能否轉化為長期語意一致性。把替換風險限制在採集中介層、是先換 collector / agent、再換應用層 instrumentation 的設計理由。
 
 可重複套用的順序是先換採集中介、再換採集點：
 
 1. **先換 collector / agent**：把 collector 從 vendor-specific 換成 vendor-neutral（如 OTel Collector），同時保留舊 vendor 的 exporter，讓資料同時送到新舊後端。這層替換對應用層無感，可以快速完成。
-2. **建立雙軌對照**：新舊後端同時收資料、用同一組 query 比對 error rate、p95 latency、trace coverage 是否一致。差異超過閾值時先停止下一步、不擴大遷移面。
+2. **建立雙軌對照**：以新舊後端對照 SLI 是否一致（query 設計、偏差閾值、退出條件等對照細節由 [4.17 telemetry data quality](/backend/04-observability/telemetry-data-quality/) 處理）、差異超過閾值時停止下一步。
 3. **逐步改應用端 instrumentation**：把應用層的 vendor-specific SDK 換成 OTel SDK，分服務分批進行。每批切換後重跑對照驗證。
 4. **以對照驗證進入 release gate**：在 release pipeline 加上「新舊管線 SLI 偏差」檢查，作為遷移階段的閘門。對照穩定後才能關閉舊管線。
 
-對應 [4.C4 X-Ray 到 OpenTelemetry 轉換](/backend/04-observability/cases/xray-to-opentelemetry-migration/)：揭露「先 collector 後 instrumentation」的階段切換方向。對應 [4.C7 Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「雙軌期成本跟語意漂移」是遷移期主要風險、不是單一 agent 安裝。本章關注的是執行順序，schema drift 跟資料品質的對照驗證細節由 [4.17](/backend/04-observability/telemetry-data-quality/) 處理。
+執行順序的設計理由：collector 是 vendor-neutral 抽象、可以雙軌並存承受對照成本；應用層 instrumentation 改動會跨眾多 service team、變更面廣、要在 collector 對照穩定後才大規模推進。把次序反過來容易在 instrumentation 全面改完才發現 collector 抽象有缺失、被迫重做。
+
+對應 [4.C4 X-Ray 到 OpenTelemetry 轉換](/backend/04-observability/cases/xray-to-opentelemetry-migration/)：揭露「先 collector 後 instrumentation」的階段切換方向。對應 [4.C7 Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「雙軌期成本跟語意漂移是遷移期主要風險」（單一 agent 安裝是次要議題）。本章關注的是執行順序，schema drift 跟資料品質的對照驗證細節由 [4.17](/backend/04-observability/telemetry-data-quality/) 處理。
 
 ## 規模差異下的遷移節奏
 
-觀測遷移不是同一套流程套到所有組織。團隊規模決定能承受的雙軌成本、配置漂移風險與治理成熟度。對應 [4.C10 規模差異下觀測遷移](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)：揭露三種規模團隊的失敗模式方向，以下展開基於通用工程知識補充。
+遷移節奏由團隊規模、可承受雙軌成本、配置漂移風險與治理成熟度共同決定。本段聚焦遷移期的節奏取捨；常態 ownership 配置由 [4.18 規模差異下的角色配置](/backend/04-observability/observability-operating-model/#規模差異下的角色配置) 處理，兩者 lens 不同。
+
+對應 [4.C10 規模差異下觀測遷移](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)：揭露三種規模團隊的失敗模式骨架；以下三段的具體操作做法均屬通用工程知識展開、case 本身只列方向。
 
 小團隊的核心風險是雙軌維護消耗人力。同時看兩套 dashboard、雙倍 alert noise、雙倍 on-call 負擔，很容易讓遷移本身拖累業務維運。小團隊適合用「短期對照、快速收斂」策略：把對照期壓到一個迭代週期內，固定一個服務作為先導，把問題在小範圍內收斂，再快速複製到其他服務。
 
 中型團隊的失敗模式集中在 schema 漂移。服務數量增加後，attribute 命名一致性、service name 規約、label cardinality 邊界容易在雙軌期擴散。中型團隊要在遷移開始前先固化 semantic convention，並在 collector 層自動校驗；不固化會在遷移後拼湊出多套互相矛盾的 dashboard。
 
-大型團隊的主要失敗是治理面，不是技術面。collector 拓樸（sidecar / DaemonSet / gateway 的選擇）、sampling 政策、成本分攤、tenant 隔離都會在遷移後顯著影響成本與告警品質。大型團隊適合用「pilot region 先行、其他 region 批次跟進」策略，並把 collector 配置版本化、變更接到 release gate。
+大型團隊的主要失敗集中在治理面：collector 拓樸（sidecar / DaemonSet / gateway 的選擇）、sampling 政策、成本分攤、tenant 隔離都會在遷移後顯著影響成本與告警品質。大型團隊用「pilot region 先行、其他 region 批次跟進」策略、把 collector 配置版本化、變更接到 release gate。大型團隊的回退單位通常是 region 或 tenant 群、不是整體切回。
 
 三類團隊的共同教訓是：先決定「何時可以關閉舊管線」的退出條件，再開始遷移。沒有退出條件的雙軌會無限期延長，最後在成本壓力下被動關閉，反而失去對照驗證的能力。
 
 ## 遷移漂移的回退判讀
 
-對應 [4.C9 OTel 遷移訊號漂移反例](/backend/04-observability/cases/failure-otel-migration-signal-drift/)：揭露觀測遷移失敗常不是資料丟失、是語意漂移、回退要保留對照證據。
+漂移回退的責任是把降級決策權跟資料採集分離、讓回退保留可分析的對照證據。直接關閉新管線會失去漂移原因的線索、後續再遷移容易踩同樣的坑。
+
+對應 [4.C9 OTel 遷移訊號漂移反例](/backend/04-observability/cases/failure-otel-migration-signal-drift/)：揭露遷移失敗的主要型態是語意漂移、回退要保留對照證據。
 
 漂移發生時，主要訊號是「兩套儀表板看似都有資料、但對同一事故的判讀不同」。新舊管線對同一服務的 error rate 長期偏離、missing span 或 missing metric 比例上升、alert 噪音增加但事故量沒對應增加，都是漂移在 pipeline 層的表現。
 
-回退判讀的核心是分辨「遷移問題」跟「服務問題」。直接關閉新管線會失去分析漂移原因的證據，後續再遷移時可能踩同樣的坑。比較穩定的回退節奏：
+回退判讀的核心是分辨「遷移問題」跟「服務問題」。比較穩定的回退節奏：
 
 1. 先停止讓新管線主導告警跟 SLO 判定，把告警入口切回舊管線。
 2. 保留新管線採集、但只作為對照證據，不參與決策。
 3. 用對照資料找出語意漂移點（attribute 名稱、sampling 規則、aggregation 視窗），分項修正。
 4. 修正後重新進入雙軌對照、確認偏差收斂、再讓新管線恢復主導。
 
-這個流程是把回退視為「降級決策權」、不是「關閉系統」。把回退做成可重播流程，下次遷移才能避免在錯誤訊號上做服務回退。
+這個流程把回退視為降級決策權的釋放、而非整體關閉訊號採集。把回退做成可重播流程，下次遷移才能避免在錯誤訊號上做服務回退。
 
 ## Multi-tenant 與 Quota
 

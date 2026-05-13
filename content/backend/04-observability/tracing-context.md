@@ -40,5 +40,6 @@ tags: ["backend", "observability"]
 
 ## 交接路由
 
-- 04.11 telemetry pipeline：[sampling](/backend/knowledge-cards/sampling/) 與 collector 配置
+- [4.7 cardinality / cost](/backend/04-observability/cardinality-cost-governance/)：sampling 策略矩陣（Head / Tail / Adaptive / Exemplar）與保留決策
+- 04.11 telemetry pipeline：[sampling](/backend/knowledge-cards/sampling/) 在 collector 的集中治理
 - 04.13 service topology：trace 訊號聚合成依賴圖

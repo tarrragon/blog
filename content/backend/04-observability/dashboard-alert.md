@@ -44,3 +44,4 @@ tags: ["backend", "observability"]
 - 04.8 訊號治理閉環：alert / dashboard 的生命週期維運
 - 04.10 client-side / RUM：補 server-side 看不到的 dashboard 維度
 - 04.14 anomaly detection：rule-based alert 之外的統計訊號
+- [4.18 operating model](/backend/04-observability/observability-operating-model/)：dashboard / alert 的 ownership 矩陣與 metadata 欄位
