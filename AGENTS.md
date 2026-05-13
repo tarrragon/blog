@@ -135,6 +135,29 @@
 - 每次生成後，必做一次「規範檢討 pass」；不可直接交稿。
 - 若檢討發現違規，先修文，再進下一章。
 
+### 教學模組級流程（case-first + agent team review）
+
+寫跨多章節的教學模組（例：backend/01 資料庫模組、12 章）時、使用 [Case-First + Agent Team Review：教學內容的三階段生產流程](/posts/case-first-agent-team-review-workflow/) 作為標準流程：
+
+1. **完整閱讀案例庫、抽 findings**：用案例驅動 scope 擴展、不是 LLM 自生。讀到邊際遞減（純新議題 < 1 個 / case）就停。
+2. **基於 findings 建立內容**：findings 分布到章節、避免硬塞模板、每段保留情境敘事。
+3. **Agent team 平行多輪審查**：3 個專責 reviewer（寫作規範 / 案例引用準確性 / 跨章一致性）平行 background 跑、各自獨立報告。
+
+**何時使用**：
+
+- 跨 5+ 章節的教學模組
+- 有現成 case 庫（如 backend/07、backend/09）可引用
+- 品質要求高、長期累積的內容
+- 主 context 容量敏感、需要 reviewer 平行 background 節省 context
+
+**何時不用**：
+
+- 單篇短文（流程固定成本太高、ROI 低）
+- 沒 case 庫的新主題（要先建 case 庫）
+- 快速迭代原型（流程偏向 *寫一次寫好*、不是 *快速修改*）
+
+完整方法論、邊際遞減判讀條件、實作證據（12 章 / 47 issue / 88% → 100% 案例準確率）都在 [該文章](/posts/case-first-agent-team-review-workflow/)。新模組第一次套用時、先讀完整篇再開工。
+
 ---
 
 ## 6. 完稿檢查清單（提交前）
