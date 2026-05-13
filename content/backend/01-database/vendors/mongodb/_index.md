@@ -1,35 +1,202 @@
 ---
 title: "MongoDB"
-date: 2026-05-01
-description: "Document database 代表、彈性 schema 與 sharding"
-weight: 4
-tags: ["backend", "database", "vendor"]
+date: 2026-05-13
+description: "Document database 代表、Atlas managed、跨雲可用、許多大規模平台從 MongoDB 起家"
+weight: 3
+tags: ["backend", "database", "vendor", "mongodb", "document"]
 ---
 
-MongoDB 是 document database 的代表、schema-less 寫入彈性高、原生 sharding 與 replica set。適合 schema 演進快、半結構化資料密集的場景。
+MongoDB 是 document database 的事實標準。schema flexibility、aggregation pipeline、跨雲 managed（Atlas）讓它成為許多 startup 的 default 選擇。Microsoft 365、Disney+ 早期、Uber 等大規模平台都從 MongoDB 起家、後來部分遷移到 KV / 雲商專屬服務（Cosmos DB、DynamoDB）。
+
+## 定位：JSON document + 跨雲彈性
+
+MongoDB 是 *主要* document model 的 DB（不是 PostgreSQL 那種「主要 SQL + 可塞 JSON」）。設計圍繞 BSON document、aggregation pipeline、sharding。最近版本（6.0+）加入 time series、change streams、queryable encryption、CSFLE。
+
+選 MongoDB 的核心訴求：document model 是主要 use case、需要跨雲 managed（Atlas）、想避免 vendor lock-in（也可自管）。
+
+## 容量特性
+
+**單一 instance 吞吐**：
+
+- 一般 m5.4xlarge：5K-15K WPS（依 doc size、index）
+- 高階 instance + tuning：30K-50K WPS
+- 超過此級別 → sharding
+
+**Sharding**：
+
+- MongoDB 原生支援 sharded cluster
+- mongos router + config servers + shard
+- 跟 DynamoDB partition 透明不同 — MongoDB sharding 要 *主動設計* shard key
+
+**Replication**：
+
+- Replica set（primary + secondary、async）
+- 跨 region 通常 async
+- 自動 failover < 30 秒（mongod 內建）
+
+**Storage**：
+
+- 單一 collection 沒有官方上限、但 shard key resharding 過去版本是大手術（4.4+ 支援 reshardCollection）
 
 ## 適用場景
 
-- Schema 演進快、半結構化 / nested 資料
-- 內容管理、產品目錄、user profile 等聚合型資料
-- 需要原生 sharding 與 replica set
-- 早期 prototype 不確定 schema 時
+**1. Document model 主要 workload**：
+
+- schema 變化頻繁的早期產品
+- nested document 自然表達領域模型（訂單含多個 item、用戶含多個 preference）
+- 對應案例：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 從 MongoDB 遷移到 Cosmos DB MongoDB API、保留 document model
+
+**2. Aggregation pipeline 重 workload**：
+
+- 複雜的 $group / $match / $project chain
+- 報表、analytics、ETL prep
+- 比 RDBMS 寫複雜 query 更直觀（對某些 team）
+
+**3. 跨雲 managed（Atlas）**：
+
+- MongoDB Atlas 跨 AWS / GCP / Azure
+- 跟 DynamoDB（AWS only）、Cosmos DB（Azure only）、Spanner（GCP only）相反
+- 適合多雲策略、避免單一 vendor lock-in
+
+**4. Time series workload（6.0+）**：
+
+- time series collection 專屬優化
+- 不過 InfluxDB / TimescaleDB 仍是更專業選擇
+
+**5. 已有 MongoDB 生態 + 想 zero ops**：
+
+- Atlas 提供 backup、failover、monitoring、auto-scale
+- 不想養 MongoDB DBA
 
 ## 不適用場景
 
-- 強一致 multi-document transaction（雖然支援但效能不如 RDBMS）
-- 複雜 JOIN / 關聯資料
-- 嚴格 schema 與型別約束需求
+**1. 強 ACID multi-document transaction**：
+
+- MongoDB Transaction 支援多 document、但跨 shard 有性能影響
+- 高頻金融交易仍建議 SQL 系統
+- 替代：PostgreSQL、Aurora、Spanner
+
+**2. 複雜 JOIN**：
+
+- MongoDB $lookup 是反模式（slow、不推薦超過 2 個 collection）
+- 必須在 schema design 階段把資料模型「攤平」
+- 替代：SQL 系統做 JOIN-heavy workload
+
+**3. 純 KV + sub-ms latency**：
+
+- MongoDB document model 比 KV 多一層 BSON parsing
+- 替代：Redis、DynamoDB、Bigtable
+
+**4. 大規模 OLAP**：
+
+- aggregation 對中等資料量還行、TB 級不適合
+- 替代：ClickHouse、BigQuery、Spark on Delta Lake
+
+**5. 嚴格資料模型 + schema enforcement**：
+
+- MongoDB schema flexibility 可能導致 production data inconsistency
+- 替代：SQL DB（schema 強制）+ JSONB column 處理半結構化
 
 ## 跟其他 vendor 的取捨
 
-- vs `postgresql` JSONB：PostgreSQL JSONB 提供 document 能力 + relational；MongoDB 在 sharding 與運維工具更原生
-- vs `dynamodb`：DynamoDB 是 managed key-value、scaling 模型不同
+**vs Cosmos DB MongoDB API**：
 
-## 預計實作話題
+- MongoDB Atlas：跨雲、原生 MongoDB 行為
+- Cosmos DB MongoDB API：Azure-only、global distribution + 5 consistency levels
+- 選 MongoDB Atlas：跨雲、需要原生 MongoDB features
+- 選 Cosmos DB：Azure 生態、需要更好 global distribution
+- 對應案例：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — 從 MongoDB 遷到 Cosmos DB MongoDB API、應用層幾乎不必改
 
-- Replica set 與 election
-- Sharding 策略（hashed / ranged / zone）
-- Index 與 aggregation pipeline
-- MongoDB Atlas 託管選項
-- Schema validation
+**vs DynamoDB**：
+
+- MongoDB：document model、aggregation 強、跨雲
+- DynamoDB：KV / single-table design、AWS 整合、5 個 9 SLA
+- 選 MongoDB：document 為主、跨雲
+- 選 DynamoDB：KV 為主、AWS 生態
+- 詳見 [DynamoDB vendor page](/backend/01-database/vendors/dynamodb/) 對比段
+
+**vs PostgreSQL JSONB**：
+
+- MongoDB：document 為主、schema-less
+- PostgreSQL：SQL 為主、JSONB 補充
+- 選 MongoDB：document 占主要 schema
+- 選 PostgreSQL JSONB：主要結構化、少量半結構化欄位
+
+**vs Couchbase / Couchdb / Firestore**：
+
+- Couchbase：MongoDB 替代、有 N1QL（SQL-like）
+- CouchDB：偏小規模、master-master replication
+- Firestore：GCP-only、realtime updates
+- MongoDB 在這群裡是生態最廣的
+
+**vs Elasticsearch 作為 search 替代**：
+
+- 兩者完全不同類別：MongoDB 是 OLTP / document、Elasticsearch 是 search + analytics
+- 通常搭配用：MongoDB 主、Elasticsearch 處理 full-text search
+
+## 容量規劃要點
+
+**1. Shard key 設計是命脈**：
+
+- 跟 DynamoDB partition key 同樣關鍵
+- 不均勻 → hot shard、實際容量達不到名義
+- 4.4+ 可以 reshard、但仍是大手術
+
+**2. Replica set 是 HA 基礎**：
+
+- 至少 3 個 member（1 primary + 2 secondary）
+- secondary 可 read（read preference）但要注意 lag
+- failover 通常 < 30 秒
+
+**3. Atlas managed 服務**：
+
+- 提供 auto-scaling、auto-backup、跨雲部署
+- Tier 從 M0（free）到 M700（高階）
+- Atlas Online Archive 自動把舊資料移到便宜 storage
+
+**4. Index 限制**：
+
+- 單 collection 最多 64 個 index
+- compound index 有順序敏感（{a:1, b:1} 跟 {b:1, a:1} 不同）
+- TTL index 自動 expire 過期 document
+
+**5. Change streams（CDC）**：
+
+- 4.0+ 提供原生 change streams
+- 對接 Kafka / event bus 做 event sourcing
+
+## 預計實作話題（後續擴充）
+
+- Schema design pattern（embedded vs reference、polymorphic）
+- Shard key 選型（hashed vs ranged）
+- Aggregation pipeline optimization
+- Index 設計跟覆蓋
+- Replica set topology + read preference
+- Change streams + Kafka 整合
+- 從自管 MongoDB 遷到 Atlas
+- 從 MongoDB 遷到 Cosmos DB MongoDB API（保留 document model）
+- 從 MongoDB 遷到 DynamoDB（必須改 access pattern）
+- Queryable encryption（CSFLE）
+
+## 案例對照
+
+| 案例                                                                                             | 跟 MongoDB 的關係                                             |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) | 從 MongoDB 遷到 Cosmos DB MongoDB API、planet-scale analytics |
+
+## 常見陷阱
+
+- **schema 完全 schema-less**：production 出現 data inconsistency、難 query
+- **shard key 用 _id（自增）**：寫入全集中在最後一個 shard
+- **$lookup 過度使用**：跨 collection JOIN 是反模式、應該 schema design 時 denormalize
+- **index 太多**：寫吞吐被拖垮、定期 review 未用 index
+- **secondary read 不檢查 lag**：用戶讀到 stale data
+- **不規劃 Atlas tier upgrade 路徑**：流量上來才發現 tier 跟不上、緊急升級費用高
+
+## 下一步路由
+
+- 平行：[Cosmos DB vendor](/backend/01-database/vendors/cosmosdb/)（MongoDB API replacement）、[DynamoDB vendor](/backend/01-database/vendors/dynamodb/)（KV alternative）
+- 上游：[1.2 schema design](/backend/01-database/schema-design/)、[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)
+- 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（MongoDB 遷出範例）
+- 跨模組：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)（shard key 跟 hot shard）
+- 官方：[MongoDB Manual](https://www.mongodb.com/docs/manual/)、[MongoDB Atlas](https://www.mongodb.com/atlas)
