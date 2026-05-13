@@ -56,7 +56,9 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 
 CI 平台事件的輪替壓力跟控制面 token 不同 — 範圍 *已知* 但 *量大*。CI 平台被入侵時、所有客戶端 secrets 都進入 *可能洩漏* 狀態、實際是否被使用要靠後續行為佐證；scoped rotation 要在「全部輪太貴」跟「分層輪會漏」之間找平衡。
 
-對應 [CircleCI 2023](/backend/07-security-data-protection/red-team/cases/supply-chain/circleci-2023-secrets-rotation/)：揭露三層失效控制面 — CI secrets 集中化且缺分域、輪替成本高、客戶端難以快速判斷最小必要輪替範圍。案例「可落地檢查點」標明 mechanism 為「按分級快速輪替、並記錄 MTTR」，前提是「事先有 secrets inventory 跟 owner mapping」。
+CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secrets 集中化跟 blast radius](/backend/07-security-data-protection/secrets-and-machine-credential-governance/#ci-secrets-集中化跟-blast-radius)；本節聚焦 scoped rotation 視角下的實作示範 — 拿到 inventory 後如何排序 batch、用什麼 metadata 支撐分批決策。
+
+[CircleCI 2023](/backend/07-security-data-protection/red-team/cases/supply-chain/circleci-2023-secrets-rotation/) 案例「可落地檢查點」標明事故中 mechanism 為「按分級快速輪替、並記錄 MTTR」，前提是「事先有 secrets inventory 跟 owner mapping」。實作示範視角的補充是：分級要落到具體 metadata schema、不只是規範性說法。
 
 以下基於通用工程知識補充：分級的工程實作通常是 *secret 元資料* — 每個 secret 在 vault 裡帶 blast radius tag（local / shared / global）、business tier（critical / standard / experimental）、rotation cost（low / high）。事件期間先查 high blast radius + critical tier 的 subset、優先輪這個 subset、再依資源繼續展開。沒有 tag 時、所有 secret 都看起來一樣重要、被迫全部輪替或被迫只輪部分（後者容易漏）。
 
@@ -64,8 +66,8 @@ CI 平台事件的輪替壓力跟控制面 token 不同 — 範圍 *已知* 但 
 
 1. 與 7.6 的交接：治理原則回到 [Secrets and Machine Credential Governance](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)。
 2. 與 7.7 的交接：稽核欄位與責任鏈回到 [Audit Trail and Accountability Boundary](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)。
-3. 與 6.8 的交接：高風險輪替變更進 release gate。
-4. 與 8.19 的交接：輪替中止與回退判斷進 incident decision log。
+3. 與 [6.8 Release Gate](/backend/06-reliability/release-gate/) 的交接：高風險輪替變更進 release gate。
+4. 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 的交接：輪替中止與回退判斷進 incident decision log。
 
 ## 下一步路由
 

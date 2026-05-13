@@ -64,9 +64,9 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 身分事件的事後回查、要 *跨多個工具* 把同一個身分的足跡拼起來。當 audit 欄位的主體 / 資產 / 操作 ID 在不同工具之間不對齊、回查時間會以小時或天計、超過攻擊者擴散的時間尺度。
 
-對應 [Uber 2022](../red-team/cases/identity-access/uber-2022-mfa-fatigue/) 跟 [Slack 2022](../red-team/cases/identity-access/slack-2022-token-compromise/)：兩個案例都揭露「身分事件後的跨工具回查壓力」— Uber 失效控制面標明「身分異常事件與值班告警串接不足」、Slack 標明「程式碼資產存取異常訊號未快速匯流」。案例「可落地檢查點」直接列出 mechanism 為「token 跨 IP / 跨 device 序列偵測」跟「以 blast radius 框定影響面」、前提是「token 有 inventory 可查 issuer / scope」。
+對應 [Uber 2022](../red-team/cases/identity-access/uber-2022-mfa-fatigue/) 跟 [Slack 2022](../red-team/cases/identity-access/slack-2022-token-compromise/)：兩個案例分別在身分監控層揭露同類失效訊號 — Uber 失效控制面標明「身分異常事件與值班告警串接不足」、Slack 標明「程式碼資產存取異常訊號未快速匯流」。本章把兩者抽象為「跨工具回查壓力」是稽核視角的合成 frame、非 case 原文框架。Slack 案例「可落地檢查點」直接列出 mechanism 為 detection 層「repo 異常 clone、token 跨 IP / 跨 device 序列」+ incident response 層「分層撤銷 token、以 blast radius 框定影響面」、前提是「token 有 inventory 可查 issuer / scope」。
 
-以下基於通用工程知識補充：跨工具回查的工程瓶頸通常在欄位 schema 不一致 — 同一個 user_id 在 SSO log / 應用 audit / Git 操作記錄裡用不同 key 表示、JOIN 不上時要靠人類 fuzzy match。事件期間的時間壓力下、這層 fuzzy match 是最常出錯的地方。日常治理要把「跨工具 audit 欄位對齊」當基礎建設、不是事件後才補。
+以下基於通用工程知識補充：跨工具回查的工程瓶頸通常在欄位 schema 不一致 — 同一個 user_id 在 SSO log / 應用 audit / Git 操作記錄裡用不同 key 表示、JOIN 不上時要靠人類 fuzzy match。事件期間的時間壓力下、這層 fuzzy match 是最常出錯的地方。日常治理要把「跨工具 audit 欄位對齊」當基礎建設、待事件發生才補就晚了。
 
 ## 資料外送事件的時序壓力
 
@@ -80,7 +80,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 平台級事件的責任切分困難來自 *平台行為跟產品行為共用同一執行路徑*。當供應鏈植入的 artifact 出現在產品 build pipeline、產品團隊看到的是 build 失敗、平台團隊看到的是 dependency 異常、責任歸屬需要兩邊的 audit 視角 *同時* 可回查、才能切清「平台層該收斂什麼」「產品層該回應什麼」。
 
-對應 [SolarWinds 2020](../red-team/cases/supply-chain/solarwinds-2020-sunburst/)：揭露的「供應鏈事件中的平台責任切分」是稽核層的代表壓力場景。案例屬於跨組織 chain 事故、平台側跟客戶側都需要獨立 audit 視角支撐責任邊界。
+對應 [SolarWinds 2020](../red-team/cases/supply-chain/solarwinds-2020-sunburst/)：案例的失效控制面標明「更新來源信任過於單點」「行為監測難以區分合法元件與惡意利用」「供應鏈異常事件缺少快速隔離流程」。本章把這幾條失效面從供應鏈信任視角延伸到稽核視角、抽象為「平台 vs 產品的責任邊界判讀壓力」— 此 frame 為本章合成、非 case 原文。
 
 以下基於通用工程知識補充：平台跟產品的責任切分要在 audit schema 設計時就分層 — 平台 audit 記錄 build pipeline / artifact 來源 / dependency 解析、產品 audit 記錄業務操作 / 資料存取 / 使用者行為。兩層用 correlation ID 串連、事件期間可獨立查詢、責任歸屬會比 *把所有事件混在一個 log stream* 容易切清許多。
 

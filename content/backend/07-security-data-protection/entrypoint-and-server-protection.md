@@ -65,7 +65,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 邊界設備事件的三同步 mechanism
 
-邊界設備事件的核心治理是「漏洞修補」「會話 / 憑證失效」「異常痕跡清查」三件事 *同步發生*、不分先後留下時間窗口。任一件先做完、其他兩件還在準備、攻擊者就能在窗口內把已取得的會話或內網落點轉成持續存取。
+邊界設備事件的核心治理是「漏洞修補」「會話 / 憑證失效」「異常痕跡清查」三件事 *同步發生*、不分先後留下時間窗口。任一件先做完、其他兩件還在準備、攻擊者就能在窗口內把已取得的會話或內網落點轉成持續存取。會話失效層的 canonical 在 [7.5 § 會話重放跟全域失效](../transport-trust-and-certificate-lifecycle/#會話重放跟全域失效canonical)、本節聚焦邊界設備視角下三同步的並行需求。
 
 對應 [Citrix Bleed 2023](../red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) 跟 [PAN-OS 2024](../red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)：兩個案例的「mechanism 總綱」段共同標明這個三同步原則、並標明前提是「事先有 inventory + 自動化失效 / 清查能力」。Citrix Bleed 補的失效訊號是會話被竊取後重放、PAN-OS 補的失效訊號是邊界設備暴露面集中且修補窗口內缺暫時緩解。
 
