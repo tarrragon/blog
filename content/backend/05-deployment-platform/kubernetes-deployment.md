@@ -30,11 +30,49 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 
 跨版本配置遷移要先定義停止條件：錯誤率上升、延遲尖峰、關鍵路徑失敗或下游壓力超標。停止條件明確後，部署決策才能一致。
 
-## autoscaling 與部署策略協同
+## Autoscaling 與部署策略協同
 
 [autoscaling](/backend/knowledge-cards/autoscaling/) 在部署期間扮演容量緩衝角色。部署批次若超過服務可承受變動幅度，autoscaling 會被動補償並延長收斂時間。穩定做法是讓 rollout 節奏與容量策略同時設計：先保證服務穩態，再提高切換速度。
 
 長連線服務或有大量背景任務的 workload，通常需要比 stateless API 更保守的 rollout 策略，並額外搭配 drain 與 reconnect 設計。
+
+擴縮策略的演進需要版本化跟可回放。對應 [5.C6 Airbnb K8s 叢集擴縮演進](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/)：揭露「擴縮策略版本化跟可回放」「不同 workload 區分擴縮政策」「容量治理跟事故指標綁定」三個方向。以下基於通用工程知識展開。
+
+可重複套用的做法：
+
+1. **擴縮策略進 IaC**：HPA / VPA / Karpenter / Cluster Autoscaler 的配置都進 git，變更走 release flow，避免手動調整在事故後被遺忘。
+2. **workload 分群擴縮**：stateless API、長連線服務、batch job、background worker 對擴縮的需求不同。把不同 workload 用不同 namespace + 不同 autoscaler policy 隔離，避免一套規則套全部。
+3. **擴縮事件接事故指標**：HPA 觸發、scale-up 延遲、scale-down 過快、cluster autoscaler 加 node 失敗，都該在事故 timeline 上可見。回到 [4.13 service topology](/backend/04-observability/service-topology/) 的擴縮事件 vs 事故區分。
+
+## 分階段平台遷移
+
+平台遷移的本質是「流量跟依賴的分段切換」，不是「搬家」。遷移期內新舊叢集同時存在，rollout 策略要把跨叢集流量切換納入批次節奏，而不是視為一次性切換。
+
+對應 [5.C1 Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)：揭露「零停機遷移要把切換做成分段策略」「難點通常在跨叢集服務依賴跟流量切換、不在 Kubernetes API 本身」。對應 [5.C4 Mobileye workloads 遷移](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)：揭露「分批遷移 workload、保留觀測對照」「明確切換 / 回退條件」「新平台先驗證容量跟恢復節奏」。以下基於通用工程知識展開。
+
+可重複套用的分階段做法：
+
+1. **新叢集 + 共通配置基線**：先在新叢集上建立跟舊叢集對等的配置基線（namespace、ResourceQuota、NetworkPolicy、Ingress class、storage class），讓 workload 可以無縫部署。
+2. **小流量先導服務**：選擇影響面小、依賴單純的服務作為先導，先在新叢集跑完整 deployment cycle（rollout、drain、rollback 驗證）、累積信心後再擴大。
+3. **可控流量分批切換**：用 DNS 加權、service mesh 流量切分或 LB 規則把流量分批從舊叢集導到新叢集。每批切換後驗證 SLI 偏差、再進下一批。
+4. **每批保留回退路徑**：舊叢集服務不立即下線，保留作為回退目標。回退條件先驗證（rollback script、流量切回 DNS / LB 規則），再開始下一批切換。
+
+跨叢集遷移最容易踩的坑是「服務切過去了、依賴沒切過去」。Database、cache、message queue、observability pipeline、auth service 的切換時機要分別規劃，避免應用層在新叢集但仍跨網路打舊叢集的依賴，造成隱性 latency 或單點失效。
+
+## 大規模 K8s 的設計取捨
+
+K8s 在不同規模下的設計取捨會明顯分歧。小規模叢集追求簡單跟低運維成本，大規模叢集追求隔離跟自動化治理。同一套部署策略放到不同規模會在某個量級開始失效。
+
+對應 [9.C12 Riot Games：246 個 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)：揭露 single-tenant per game 的多 cluster 策略、Karpenter + Terraform 的 cluster 級自動化、35ms latency 反推 region 部署。對應 [9.C34 GCP 130,000-node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)：揭露 control plane vs data plane 分開規劃容量、storage backend（Spanner 替 etcd）才是 K8s 規模極限的關鍵、AI workload 顛覆傳統 K8s 容量規劃。對應 [9.C33 Maersk + Bosch AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/)：揭露傳統產業上 K8s 的動機是「治理一致性」、不是「成長彈性」、適合 single-cluster-multi-namespace。
+
+可重複套用的取捨判讀：
+
+1. **single-tenant per workload vs single-cluster multi-namespace**：高隔離需求（每個 workload 失效不能影響其他）、高延遲敏感度（需 region cluster）→ 多 cluster；治理一致性訴求（統一 release flow、合規邊界）→ 單一 cluster 多 namespace。
+2. **Cluster 容量極限取決於 control plane**：data plane（worker nodes）擴容容易、control plane（API server、etcd / storage）擴容難。etcd 撐 5K-10K node 後吃力、需要替換 storage backend（Spanner / PostgreSQL / 自家 KV）。一般部署用不到、但要知道極限在哪。
+3. **Multi-cluster 治理需要 IaC + 自動化**：Terraform / Crossplane / Cluster API + Karpenter / Cluster Autoscaler 是基本工具。手動管理超過數十個 cluster 不可行。
+4. **AI workload 跟 web workload 容量規劃完全不同**：AI workload 短時間爆量創建 Pods（萬級 / 秒）、preempt 頻繁；web workload 節點生命週期長、變動緩。把 web 經驗套到 AI workload 容量規劃會嚴重低估壓力。
+
+關鍵判讀是「先決定 cluster 是隔離單位還是治理單位」。Riot Games 把 cluster 當隔離單位（246 個獨立 cluster），Maersk / Bosch 把 cluster 當治理單位（單 cluster 多 namespace）。同一個工具兩種用法、決定整體運維模型。
 
 ## 判讀訊號
 
@@ -45,6 +83,7 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 | config 變更後特定路徑失敗率飆升    | 設定與版本相容窗口不足       | 啟動回退配置、補雙軌相容              |
 | autoscaling 在部署期間頻繁抖動     | 容量閾值與 rollout 節奏衝突  | 分離部署窗口與擴縮窗口、調整資源策略  |
 | 長連線服務切版後 reconnect storm   | drain 與連線生命週期控制不足 | 拉長 drain、分批切流、校正 timeout    |
+| 跨叢集遷移後特定路徑 latency 升高  | 應用切過去但依賴未切、跨網路 | 規劃依賴切換時機、分批一致            |
 
 ## 常見誤區
 
@@ -52,9 +91,12 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 
 把 probe 當成健康檢查 URL，會讓服務在邊界條件下過早接流量。probe 的工程價值在於反映服務真實可用條件。
 
+把 cluster scale-up 想成「加 node 就好」也是常見誤判。當 cluster 規模超過 control plane 預設邊界，etcd / API server 會先撐不住，加 node 反而加重 control plane 負擔。
+
 ## 案例回寫
 
 部署切換語意可用 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) 做回寫。先看事件中的失敗是在 rollout 批次、probe 判斷、還是 drain 時序，再對照本章的 rollout 節奏與停止條件。
+
 這個案例主要支撐的是「部署批次與切換時序」判讀，不直接支撐資料庫交易切分或 consumer 冪等；若問題落在提交一致性或重播補償，應轉到 1.3 或 3.4。
 
 若版本已切換但錯誤率延遲上升，先回到 probe 與 config 相容窗口，再把證據欄位接到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
@@ -64,10 +106,11 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 Kubernetes 部署策略要和觀測、驗證、事故流程同時對齊。
 
 1. 與 5.3 的交接：流量承接與退出落在 [load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。
-2. 與 4.20 的交接：版本切換證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
-3. 與 6.8 的交接：放行與停損條件進入 [Release Gate](/backend/06-reliability/release-gate/)。
-4. 與 8.19 的交接：部署中止與回退判斷進入 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+2. 與 5.7 的交接：control plane 跟 data plane 邊界落在 [Traffic、Config 與 Control Plane Boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)。
+3. 與 4.20 的交接：版本切換證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
+4. 與 6.8 的交接：放行與停損條件進入 [Release Gate](/backend/06-reliability/release-gate/)。
+5. 與 8.19 的交接：部署中止與回退判斷進入 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 
 ## 下一步路由
 
-要把部署與流量切換一起治理，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要看切換失敗與回退判讀，接著讀 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。
+要把部署與流量切換一起治理，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要看切換失敗與回退判讀，接著讀 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)。要看大規模 K8s 容量設計，接著讀 [9.C12 Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 跟 [9.C34 GCP 130K-node](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/)。
