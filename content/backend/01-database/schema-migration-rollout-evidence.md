@@ -79,6 +79,40 @@ applyPaymentCallback(order, callback):
 
 這裡要特別看 [dual write](/backend/knowledge-cards/dual-write/) 的風險。雙寫只表示兩個欄位都有被寫入，仍要用 validation query 驗證兩者語意是否一致。若付款回呼、手動退款與對帳修復走不同程式路徑，雙寫函式也要被這些路徑共同使用。
 
+### Dual-write divergence schema
+
+Dual-write 的責任不只是「兩邊都寫」、是「兩邊寫的結果一致」。要證明這件事、需要明確的 divergence schema、否則事故當下無法區分 mapping bug 跟 race condition。
+
+最小 divergence 紀錄欄位：
+
+| 欄位              | 用途                                                            |
+| ----------------- | --------------------------------------------------------------- |
+| `order_id`        | 哪一筆訂單                                                      |
+| `legacy_value`    | 舊欄位寫入後的值                                                |
+| `new_value`       | 新欄位寫入後的值                                                |
+| `expected_new`    | 用 mapping function 從 `legacy_value` 推算的預期新值            |
+| `divergence_type` | `mapping-mismatch` / `race-condition` / `manual-override`       |
+| `write_path`      | 哪個程式路徑寫的（callback / refund / manual / reconciliation） |
+| `detected_at`     | 偵測時間                                                        |
+
+`expected_new` 跟 `new_value` 對不上、表示 mapping function 在某些 path 沒被使用、是 mapping bug。`legacy_value` 跟 `new_value` 對不上、且 `expected_new == legacy_value` 對得上、是 dual-write 本身少寫一筆、可能是 race condition 或部分失敗。兩種情況的修法完全不同、不分類會在事故當下亂修。
+
+Dual-write 失敗回退策略：寫舊欄位成功、寫新欄位失敗時、不能直接 retry 新欄位（會跟主寫入競爭）。實務做法是把 divergence 寫進 outbox / repair queue、由 backfill 同類流程補。對應 [9.C16 SeatGeek](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 outbox-style 設計。
+
+### 線上 DDL 的 vendor 差異
+
+Expand 階段加欄位 / 加索引、不同資料庫的 *阻塞行為* 差異極大、選錯時機會直接讓 production 鎖表。
+
+- **PostgreSQL**：`ALTER TABLE ADD COLUMN ... NULL` 是 metadata-only、不重寫 table。`ADD COLUMN ... NOT NULL DEFAULT ...` 在 PG 11+ 才是 metadata-only。`CREATE INDEX CONCURRENTLY` 不阻塞寫入、但更慢、且 transaction 中不能用。`ALTER TABLE ALTER COLUMN TYPE` 通常會重寫整張表、要先評估規模。
+- **MySQL / Aurora MySQL**：`ALTER TABLE ... ALGORITHM=INSTANT` 是 8.0+ 的 metadata-only、5.7 則靠 `ALGORITHM=INPLACE` / `LOCK=NONE`。Aurora MySQL 還有 fast DDL（部分變更秒級完成、不重寫）。判讀重點是 *explicitly 指定 ALGORITHM*、不要讓 MySQL 自己選（可能掉回 COPY 算法、整張表複製）。
+- **Spanner**：schema change 預設非阻塞、後端 async 補欄位。新欄位 read 在 schema change 完成前可能讀不到、應用層要容忍。
+- **DynamoDB**：表本身沒 schema、但 *GSI（Global Secondary Index）創建是 async*、可能跑數小時、且新 GSI 在 backfill 完成前查不到完整資料。判讀重點：cutover 不能假設新 GSI 立即可用、要等 `IndexStatus = ACTIVE`。
+- **Cosmos DB**：document 級別無 schema、新 indexed path 加進 indexing policy 後、後端 *re-index* 整個 partition、期間 RU consumption 飆升。
+
+各 vendor 的線上 DDL evidence 都要包含：操作開始時間、預估完成時間、是否阻塞讀寫、實際 lock duration。expand gate 通過條件不能只看 DDL 跑完、要看 *所有副效應收斂*（index status active、re-indexing 完成、replica 同步）。
+
+對應 vendor pages：[PostgreSQL](/backend/01-database/vendors/postgresql/)、[MySQL](/backend/01-database/vendors/mysql/)、[Aurora](/backend/01-database/vendors/aurora/)、[Spanner](/backend/01-database/vendors/spanner/)、[DynamoDB](/backend/01-database/vendors/dynamodb/)、[Cosmos DB](/backend/01-database/vendors/cosmosdb/) 的線上 DDL 段。
+
 ## Backfill：把歷史資料變成可驗證進度
 
 Backfill phase 的核心責任是把歷史資料補齊成可追蹤、可暫停、可重試的進度。訂單表通常會同時承擔交易查詢、客服查詢與對帳查詢；backfill 若只追求速度，容易和線上流量競爭 I/O、放大 replication lag 或改變查詢計畫。
@@ -122,6 +156,80 @@ Cutover phase 的核心責任是把服務判讀權交給新欄位，同時保留
 讀取 cutover 的 [stop condition](/backend/knowledge-cards/stop-condition/) 要比寫入 cutover 更早觸發。新欄位讀取後出現 mismatch、客服查詢結果漂移、對帳 job 補償量異常時，先回到 [fallback read](/backend/knowledge-cards/fallback-read/)，讓錯誤限制在判讀層，再重新驗證寫入收斂條件。
 
 寫入 cutover 要確認所有更新來源都已對齊。付款回呼、手動修復、退款、訂單取消與 reconciliation job 都可能更新付款狀態；只切主 checkout 寫入路徑會留下長尾漂移。完成 cutover 前，要用 audit query 確認仍在寫舊欄位的程式路徑已經歸零或被納入例外清單。
+
+### Shadow read pattern：cutover 前的讀取驗證
+
+Shadow read 的責任是讓新讀取路徑在 *真實流量* 下被驗證、但 *不影響使用者結果*。這跟 dual-write 是對偶機制：dual-write 證寫入收斂、shadow read 證讀取分歧。
+
+實作模式：
+
+1. 每一筆讀取請求、同時用 *舊邏輯* 跟 *新邏輯* 查一次。
+2. 回給用戶的仍是舊邏輯結果（用戶體驗不變）。
+3. 在背景把兩個結果差異寫進 divergence log。
+4. 收集足夠樣本後、再決定切換 cutover。
+
+```text
+readPaymentStateWithShadow(order):
+  legacy = mapLegacyStatusToPaymentState(order.status)
+  new_result = order.payment_state ?? legacy
+  if legacy != new_result:
+    asyncLogDivergence({
+      order_id: order.id,
+      legacy: legacy,
+      new: new_result,
+      sample_at: now(),
+      caller: requestContext.caller,
+    })
+  return legacy  // 用戶仍拿舊邏輯結果
+```
+
+Shadow read 的判讀重點：
+
+- **抽樣率**：1% / 10% / 100% — 高流量場景全量 shadow 會雙倍 DB 讀取、要先評估容量。Cosmos DB / DynamoDB 的 RU 成本要乘 2。
+- **分歧分類**：跟 dual-write 一樣、divergence 要分類（mapping bug / race condition / stale read）、不分類無法定位修法。
+- **覆蓋條件**：要驗證所有 caller path（checkout / support / reconciliation / external API）都跑過 shadow、否則 cutover 後可能踩到沒測試過的 path。
+- **退場條件**：shadow read 不該長期跑、會增加負載。設明確 sunset deadline、cutover 完成後一週內移除。
+
+對應 [9.C20 Zomato TiDB → DynamoDB migration](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — migration 期間用 shadow read 持續驗證 mapping 規則、抓到 mapping drift。
+
+Dual-write 跟 shadow read 的選擇不是互斥、是依風險組合：
+
+| 風險場景                         | 建議組合                                                  |
+| -------------------------------- | --------------------------------------------------------- |
+| 新邏輯只影響讀取（cache、index） | shadow read 即可、不需要 dual-write                       |
+| 新欄位是 source of truth         | dual-write 必要、cutover 前加 shadow read 驗證            |
+| 跨 service 共用欄位              | dual-write + shadow read + cross-service contract test    |
+| 跨 region migration              | dual-write + shadow read + 跨 region replication evidence |
+
+## Multi-region 與跨服務協調
+
+Migration 跨越 region 或多個 service 時、rollout 順序錯誤是最常見的失敗模式。Service A 切到新欄位、service B 還在讀舊欄位、結果整條業務流量看到不一致。
+
+### Multi-region rollout 順序
+
+跨 region 的 schema migration 要從 *最後寫入點* 開始 expand、從 *最後讀取點* 開始 cutover。先 expand 寫端、再 expand 讀端；先 cutover 讀端、再 cutover 寫端。順序反了會在過渡期讀到沒被寫的新欄位、或寫了沒被讀的新欄位。
+
+實務步驟：
+
+1. **Schema expand**：所有 region 同步加新欄位（先寫端再讀端、不能跳）。確認跨 region replication lag 在新欄位上收斂、再進下一步。
+2. **Backfill**：可以平行跑、但每 region 各自 checkpoint、不共用。某 region backfill stuck 不應該卡住其他 region。
+3. **Cutover read**：region by region 切讀、用 canary region 先試 24-48 小時、再擴散。
+4. **Cutover write**：所有 region 都切完讀、再統一切寫。寫端切換比讀端更敏感、跨 region 寫差異會放大成跨 region inconsistency。
+
+對應 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) 的跨 region consistency 段。
+
+### Cross-service migration 協調
+
+當 schema 變更影響多個 service 時、API contract 是 *鬆耦合* 介面、不該讓所有 service 同步切換。
+
+協調機制：
+
+- **新欄位先在 API 是 optional**：API contract 加新欄位、預設 nullable / optional。下游 service 可選擇何時讀。
+- **舊欄位保留至少一個版本週期**：API 不能跟 DB schema 同步 contract、否則下游沒時間切。實務上保留 1-2 季、給下游充足 cutover 窗口。
+- **owner-by-owner cutover roster**：明確列出每個下游 service 的 owner、預計 cutover 時間、目前狀態。常用工具是共享 dashboard、不是散落的 ticket。
+- **Contract test**：每個下游 service 對新欄位都要有 contract test、在 CI gate 跑過。避免上游 cutover 後下游才發現沒讀對。
+
+對應案例：[9.C20 Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 跨多個 service 的 access pattern 變更、必須每個 service 各自驗證、不能假設「DB 切了就好」。
 
 ## Evidence Package
 
@@ -224,15 +332,23 @@ incident_decision:
 
 判讀訊號的責任是讓讀者知道何時該繼續、何時該停、何時該改路線。Migration 訊號要同時看資料正確性、線上健康度與回退窗口。
 
-| 訊號                             | 判讀重點                         | 對應動作                                  |
-| -------------------------------- | -------------------------------- | ----------------------------------------- |
-| mismatch rate 持續低於門檻       | 新舊欄位語意大致一致             | 放行下一批 backfill 或低風險讀取 cutover  |
-| mismatch 樣本集中在特定 callback | 轉換函式或特定付款路徑語意不一致 | 暫停 cutover，修 mapping 後重跑該批       |
-| replication lag 在 backfill 升高 | migration 與線上查詢競爭資源     | 降低 batch size，避開 peak，延長觀察窗口  |
-| slow query 出現在客服查詢        | 新欄位索引或查詢模型未對齊       | 回到 fallback read，補 index 或改查詢條件 |
-| contract 前仍有舊欄位寫入        | 更新來源尚未完全收斂             | 延後 contract，盤點寫入來源與 owner       |
+| 訊號                                   | 判讀重點                             | 對應動作                                  |
+| -------------------------------------- | ------------------------------------ | ----------------------------------------- |
+| mismatch rate 持續低於門檻             | 新舊欄位語意大致一致                 | 放行下一批 backfill 或低風險讀取 cutover  |
+| mismatch 樣本集中在特定 callback       | 轉換函式或特定付款路徑語意不一致     | 暫停 cutover，修 mapping 後重跑該批       |
+| dual-write divergence 分布偏向 mapping | mapping function 在某 path 沒被使用  | 找出該 path、強制走共用 mapping function  |
+| dual-write divergence 偏向 race        | 部分寫入失敗、寫順序問題             | 切到 outbox-based dual-write、別直連      |
+| shadow read 抽樣 RU 飆升               | shadow 讀取沒設抽樣率、雙倍負載      | 降低抽樣率、或改成 off-peak shadow        |
+| replication lag 在 backfill 升高       | migration 與線上查詢競爭資源         | 降低 batch size，避開 peak，延長觀察窗口  |
+| slow query 出現在客服查詢              | 新欄位索引或查詢模型未對齊           | 回到 fallback read，補 index 或改查詢條件 |
+| DynamoDB GSI 仍在 building             | cutover 前依賴未 ACTIVE 的 GSI       | 等 GSI ACTIVE 再切讀、別假設立即可用      |
+| 跨 region replica lag 在新欄位上漂移   | expand 階段沒等所有 region 收斂      | 暫停 backfill、等 region 同步             |
+| 某下游 service 沒 cutover              | cross-service 協調沒做 contract test | 補 contract test、推遲 contract 階段      |
+| contract 前仍有舊欄位寫入              | 更新來源尚未完全收斂                 | 延後 contract，盤點寫入來源與 owner       |
 
 這些訊號要放回服務路徑判讀。Mismatch 要看集中在哪個業務入口；若 mismatch 只出現在延遲付款 callback，它代表外部 provider 回呼語意未對齊。Replication lag 要看是否和 backfill 批次對位；若它只在 backfill 批次出現，gate 應調整 migration 節奏，再判斷 schema 設計是否需要修正。
+
+Dual-write 跟 shadow read 的 divergence 要分開看 — 兩者偵測不同層的問題。Dual-write divergence 偏向 mapping bug 或 race condition；shadow read divergence 偏向讀取邏輯漂移或 stale read。混在同一個 dashboard 會讓 reviewer 看不出問題真正在哪一層。
 
 ## 常見誤區
 
@@ -241,6 +357,12 @@ incident_decision:
 把 validation query 當成事後對帳，也會削弱 rollout 控制。Validation query 適合在 expand、backfill、cutover 每一階段都產生證據，讓 release gate 能在風險擴大前停下來。
 
 把 rollback 寫成單一動作容易誤導團隊。資料庫 migration 的 rollback 會隨階段改變：expand 可回退 schema 使用，backfill 可暫停與重跑，cutover 可回到 fallback read，contract 後多半只能做資料修復或 fail-forward。
+
+把 dual-write 跟 shadow read 當成同一個工具。兩者偵測不同層、結合使用可以互補、互相替代會留下盲點。Dual-write 不跑 shadow read、cutover 後可能踩到沒驗過的讀取 path；shadow read 不跑 dual-write、新欄位可能在某些寫路徑根本沒被寫進去。
+
+把線上 DDL 當「一個 SQL 跑完就好」。各 vendor 的 DDL 語意差異大、PostgreSQL 的 `ADD COLUMN NOT NULL DEFAULT` 在 PG 10 重寫整張表、PG 11+ 是 metadata-only；MySQL 不指定 `ALGORITHM=INSTANT` 可能掉回 COPY。Expand evidence 要包含 *實際 lock duration*、不是只看 DDL 是否回傳成功。
+
+只在主寫入路徑切 cutover、忘記補償流程跟 reconciliation job 也會寫舊欄位。這些長尾寫入會在 contract 階段才暴露、那時候已經沒有 fallback 可走。Cutover 前要 audit 所有寫舊欄位的程式路徑、不只看主流程。
 
 ## 案例回寫
 
