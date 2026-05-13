@@ -3,7 +3,7 @@ name: case-first-module-workflow
 description: "Case-first + Agent team review 五階段流程、寫跨多章節教學模組（5+ 章、有 case 庫）時用。觸發詞：教學模組、case-first、case-driven、stage 1/2/3/4/5、agent team review、polish pass、fact vs derive、reviewer prompt、SSoT 對應、frame 重複、skeleton case vs rich case、case fidelity、自掃描 regex、模組擴章。Trigger when writing teaching modules across multiple chapters with an existing case library."
 license: MIT
 metadata:
-  version: 1.2.0
+  version: 1.3.0
   category: writing-methodology
 ---
 
@@ -18,7 +18,40 @@ metadata:
 - **品質高於速度**：完整五階段約 4-6 小時 / 模組、適合長期累積的內容、不適合 one-off 文章
 - **主 context 容量敏感**：reviewer 平行 background 是節省 context 的關鍵設計
 
-不適用：新主題沒案例庫、單篇短文、快速迭代原型。**特例**：模組部分章節屬 *routing layer / 導讀性質*（如 07 LLM 安全章 / 治理章節）已含完整 threat scope + 引用標準 + 問題節點表、case 庫不對應或缺位、應跳過本流程、用標準引用 + 通用工程知識補充承接。
+不適用：
+
+- **新主題沒案例庫**：要先建案例庫、不能直接套這流程
+- **單篇短文**：流程的固定成本（讀案例 + 跑 reviewer）對短文 ROI 低
+- **快速迭代原型**：流程偏向 *寫一次寫好*、不是 *快速修改*
+- **Routing layer / 導讀性質章節**：已含完整 threat scope + 引用標準 + 問題節點表、case 庫不對應或缺位、應跳過本流程、用標準引用 + 通用工程知識補充承接
+- **Standard framework 比 case 庫成熟的領域**（07 LLM 章節驗證）：當該領域的 *標準框架*（如 OWASP LLM Top 10 / NIST AI RMF / MITRE ATLAS）已涵蓋 threat 分類、且 case 維護半衰期短於 standard（領域演進快、6 個月可能過時）、章節應 *用 standard-driven 取代 case-driven*、加 `Last reviewed: YYYY-MM-DD` cadence。這 *不是* case-first 的退化版、是該領域的正確策略。詳見 [standard-driven 取代 case-driven](#standard-driven-vs-case-driven) 段。
+
+## Standard-driven vs case-driven
+
+判斷該用哪種策略、看領域的兩個性質：
+
+| 領域性質        | Case-driven 適用              | Standard-driven 適用            |
+| --------------- | ----------------------------- | ------------------------------- |
+| 議題穩定度      | 高（5+ 年穩定）               | 低（< 1 年快速演進）            |
+| Case 公開度     | 高（充分的事故公告）          | 中或低（vendor 偏 marketing）   |
+| Standard 成熟度 | 中（多用 case 而非 standard） | 高（standard framework 已成型） |
+| 維護半衰期      | 長                            | 短（6 個月過時）                |
+
+典型 case-driven 領域：分散式系統 / 安全控制面 / 可靠性 / 訊息佇列。
+典型 standard-driven 領域：LLM 安全（OWASP LLM Top 10）、新興 compliance（NIST AI RMF）、cloud-native 標準（CNCF baseline）。
+
+Standard-driven 章節的寫作策略：
+
+1. **章節對齊 standard framework 分類**、用 framework 章節 ID 標明（如 OWASP LLM01 / NIST AI-1.1）
+2. **加 Last reviewed cadence**：每 quarter 重評估 standard 版本跟章節對應
+3. **「案例觸發參考」段標明「公開案例累積中、值得追蹤的方向」**、不寫「對應 [case] 揭露」斷言
+4. **引用標準時用版本號**（OWASP LLM Top 10 2025 / NIST AI RMF 1.0）、framework 改版要 trigger 章節重審
+
+何時要從 standard-driven 轉回 case-driven：
+
+- 該領域累積 5+ 個高可信度 case（vendor disclosure + academic + CVE 三來源交叉）
+- 跨章 frame 重複出現、case-driven mechanism 深化能解 SSoT 衝突
+- 出現「等級類似 SolarWinds」的 incident、案例本身夠重、單一 case 即可支撐章節擴章
 
 ## 三大支柱
 
@@ -95,11 +128,12 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 
 當使用者要寫跨章節教學模組時：
 
-1. 確認有 case 庫（rich + skeleton 案例 5+ 篇）— 沒有的話本流程不適用、要先建 case 庫
-2. 確認模組規模 5+ 章節 — 單篇文章用 [compositional-writing](../compositional-writing/SKILL.md) 即可
-3. 按 stage 1-5 順序執行、不跳階段
-4. 每個 stage 完成 commit 一次、保留可追溯歷史
-5. 模組完成後做 retrospective、把新浮現 pattern 寫回方法論
+1. **先判讀領域該走 case-driven 還是 standard-driven**：對照「Standard-driven vs case-driven」段四維度（議題穩定度 / case 公開度 / standard 成熟度 / 維護半衰期）— standard-driven 領域不建 case 庫、直接用 standard framework 寫章節 + Last reviewed cadence
+2. 確認有 case 庫（rich + skeleton 案例 5+ 篇）— *case-driven 領域*：沒有的話本流程不適用、要先建 case 庫；*standard-driven 領域*：跳過此步、直接走章節寫作
+3. 確認模組規模 5+ 章節 — 單篇文章用 [compositional-writing](../compositional-writing/SKILL.md) 即可
+4. （case-driven 領域）按 stage 1-5 順序執行、不跳階段
+5. 每個 stage 完成 commit 一次、保留可追溯歷史
+6. 模組完成後做 retrospective、把新浮現 pattern 寫回方法論
 
 ## 反覆陷阱（必須主動防範）
 
