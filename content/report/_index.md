@@ -151,6 +151,8 @@ Case-driven 寫作方法論系列（#115-119、從 [case-first-module-workflow s
 - [#117 跨多個 case 合成的 frame 必須標為章節合成、非 case 原文](cross-case-synthesized-frame-must-be-labeled/) — 當段落把多個 case 的失效訊號抽象為更高層 frame（如「跨工具回查壓力」「平台責任切分」）、要 explicit 標為「本章合成、非 case 原文」；否則章節 derive 會被讀者當成 case fact、回查時找不到對應段；07 LLM 模組 batch 1 兩個 high issue 都屬此類
 - [#118 Standard-driven 取代 Case-driven 適用 standard framework 比 case 庫成熟的領域](standard-driven-vs-case-driven-domain-judgment/) — 並非所有領域都該走 case-driven；判斷四維度（議題穩定度 / case 公開度 / standard 成熟度 / 維護半衰期）；LLM 安全屬 standard-driven 領域（OWASP LLM Top 10 + NIST AI RMF 已成型、case 半衰期 6 個月）、不該勉強建 case 庫；分散式系統 / 安全控制面屬 case-driven 領域
 - [#119 章節已有 routing skeleton 走補強段、不空白擴章](routing-layer-chapter-recognition/) — 章節結構分兩類：空白章節 vs routing layer 章節（已有 threat scope + 問題節點表 + 風險邊界 + 案例觸發段）；擴章策略要對應結構——空白章節走 case-driven 大幅擴章、routing layer 章節走補強段（在現有結構內補 mechanism 深化）；07 batch 1 三個 H issue 都來自誤套空白擴章策略到 routing layer 章節
+- [#120 案例引用三段式段落結構：概念定義 → case 引用 → 通用展開](case-citation-three-part-structure/) — Case 引用段落要走三段式結構紀律——段首是概念定義句、case 引用退到第二位置、最後通用工程知識展開；段首被 case 引用取代是 06 模組最大宗 systemic 違規（11/12 段都犯）；本卡跟 #115/#116/#117 是 case 引用紀律的不同 axis（引用深度 / 內部分層 / 跨 case 合成 / 段落結構）
+- [#121 Agent team context 隔離設計：用不同 instance 換 frame、平行 background 保護主 context](agent-team-context-isolation/) — Multi-pass review 跨輪 frame（#83）跟跨 reviewer instance 隔離（本卡）是兩個 axis；context 隔離設計讓主 context 只接精煉摘要、節省 ~80% token；跟 #114 同 reviewer 多輪 catch 同類錯形成互補解法
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -308,11 +310,11 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 20：寫教學模組 / 案例驅動內容時的引用紀律
 
-先讀 [case-first + agent team review 方法論](/posts/case-first-agent-team-review-workflow/) 作 anchor、再依序 `#118 standard-driven vs case-driven 領域判讀` → `#119 章節已有 routing skeleton 走補強段` → `#115 案例引用深度跟著 case 類型走` → `#116 引用案例要分觀察層 / 判讀層` → `#117 跨多個 case 合成的 frame 必須標明` — 先判讀領域該走 case-driven 還是 standard-driven、再判斷章節結構決定擴章策略；走 case-driven 時依 case 類型決定承接深度、引用 rich case 時分層標明 fact vs derive、跨多個 case 合成 frame 時 explicit 標為「本章合成」。#116 / #117 順序可互換（先看單 case 內部 vs 先看跨 case 合成、看讀者習慣）。路徑尾補 standard citation surface 見 [#104](security-citation-currency-and-precision/)。
+先讀 [case-first + agent team review 方法論](/posts/case-first-agent-team-review-workflow/) 作 anchor、再依序 `#118 standard-driven vs case-driven 領域判讀` → `#119 章節已有 routing skeleton 走補強段` → `#115 案例引用深度跟著 case 類型走` → `#116 引用案例要分觀察層 / 判讀層` → `#117 跨多個 case 合成的 frame 必須標明` → `#120 案例引用三段式段落結構` — 先判讀領域該走 case-driven 還是 standard-driven、再判斷章節結構決定擴章策略；走 case-driven 時依 case 類型決定承接深度、引用 rich case 時分層標明 fact vs derive、跨多個 case 合成 frame 時 explicit 標為「本章合成」、最後用三段式（概念定義 → case 引用 → 通用展開）寫每個 case 引用段落。#116 / #117 順序可互換（先看單 case 內部 vs 先看跨 case 合成、看讀者習慣）。路徑尾補 standard citation surface 見 [#104](security-citation-currency-and-precision/)、補 agent team 工具設計見 [#121](agent-team-context-isolation/)。
 
 ---
 
-**Last Updated**: 2026-05-13 — 新增 #115-119 case-driven 寫作方法論系列（5 張卡：#115 case 類型決定引用深度 / #116 fact vs derive 分層引用 / #117 跨 case 合成 frame 必須標明 / #118 standard-driven vs case-driven 領域判讀 / #119 章節已有 routing skeleton 走補強段），從 [case-first-module-workflow skill](/posts/case-first-agent-team-review-workflow/) 反向抽出原子化原則；新增路徑 20 給寫教學模組的引用紀律。
+**Last Updated**: 2026-05-13 — 新增 #115-121 case-driven 寫作方法論系列（7 張卡：#115 case 類型決定引用深度 / #116 fact vs derive 分層引用 / #117 跨 case 合成 frame 必須標明 / #118 standard-driven vs case-driven 領域判讀 / #119 章節已有 routing skeleton 走補強段 / #120 案例引用三段式段落結構 / #121 Agent team context 隔離設計），從 [case-first-module-workflow skill](/posts/case-first-agent-team-review-workflow/) 反向抽出原子化原則；新增路徑 20 給寫教學模組的引用紀律。#120 跟 #121 是評估後拓展卡（#120 案例引用「結構」axis 跟 #115-117 引用深度 / 分層 / 合成 axis 正交、#121 reviewer instance 軸跟 #83 frame 軸正交）。
 
 **Last Updated**: 2026-05-04 — 新增 #107-#109 術語翻譯 review 系列（原文錨點 / 完整名詞頭 / 概念角色），從 `paternalism`、`多步驟 perplexity 盲`、`Steelman` 三個 case 抽出翻譯檢查流程；新增路徑 19 給文章轉譯與術語 review。
 
