@@ -1,7 +1,7 @@
 ---
-title: "Case-First + Agent Team Review：教學內容的三階段生產流程"
+title: "Case-First + Agent Team Review：教學內容的五階段生產流程"
 date: 2026-05-13
-description: "LLM 寫教學文章常見盲點是內容停在「教科書級」結構、漏掉真實事故才會浮現的失敗模式跟設計取捨。本文整理一套三階段流程：完整閱讀案例庫抽 findings → 基於 findings 建立內容 → Agent team 平行多輪審查、用 01 資料庫模組 12 章 / 47 review issue 的實作驗證效益。"
+description: "LLM 寫教學文章常見盲點是內容停在「教科書級」結構、漏掉真實事故才會浮現的失敗模式跟設計取捨。本文整理一套完整流程：完整閱讀案例庫抽 findings → 基於 findings 建立內容 → Agent team 平行多輪審查 → 修正循環 → Polish pass 處理系統性殘留。用 backend/01 至 backend/05 五個模組 / 263 review issue 的實作驗證效益。"
 tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-code"]
 ---
 
@@ -12,13 +12,15 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 1. **Scope 盲點**：內容停在「教科書級」結構、漏掉真實事故才會浮現的失敗模式跟設計取捨。
 2. **準確性盲點**：把通用 best practice 包裝成「[case] 揭露」、把案例沒講的細節寫成案例事實。
 
-本文整理在 backend/01 資料庫模組撰寫過程中浮現的三階段流程：
+本文整理在 backend/01 至 backend/05 五個模組撰寫過程中浮現的五階段流程：
 
 1. **完整閱讀案例庫、抽 findings** — 用案例驅動「該寫什麼」、不只是 LLM 自生
 2. **基於 findings 建立內容** — findings 分布到章節、避免硬塞模板
 3. **Agent team 平行多輪審查** — 用 3 個專責 reviewer 補 LLM 自盲點
+4. **修正循環** — 按檔案批次修 high + 重要 medium、reviewer 抓出問題各章節對應修
+5. **Polish pass** — 跨檔系統性 pattern 集中處理（負向骨架掃描、編號漂移、用語不一、cross-link 補漏）
 
-實作數據：12 個章節、4055 行、16 個案例 audit、42 個 findings、47 個 review issue 修正後品質升至無 broken link / 無矛盾 / 案例引用無編造。
+實作數據：5 個模組（backend/01-05）、~30 章 / 263 個 review issue、case fidelity 落在 70-93% 區間、修正後品質升至 0 critical 編造、cross-link 全綠、規範違反 polish pass 後降到單位數低 issue。
 
 ## 問題：LLM 自生內容的兩個盲點
 
@@ -107,6 +109,19 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 - rich case 的 finding 可寫「對應 [case] — XXX 具體數字 / 設計」
 
 實作中（01/02/03 三個模組驗證）、skeleton case 寫成 rich case 對應是 case fidelity reviewer 抓出 over-extrapolation 的主要來源（02 / 03 各 3-4 個 critical 編造都來自此陷阱）。誤判類型 → 編造 case 沒寫的細節 → reviewer 抓出 → 修正成本高。stage 1 抽 findings 時就要 *標明 case 類型*、stage 2 寫作時依類型決定承接深度。
+
+**Rich case 引用的反向風險（04/05 模組新發現）**：rich case 雖然可以引用具體數字、但 case 內常含「觀察層」（具體 fact）跟「判讀層」（作者推論）兩段、引用時要分開處理。05 模組驗證時 case fidelity reviewer 抓出 4 個 high issue 都來自把「判讀層作者推論」寫成「case 揭露的 fact」：
+
+- 9.C12 Riot Games：5.2 寫「揭露 35ms latency 反推 region 部署」、實際 case 的「35ms」是觀察層、「反推 region 部署」是作者判讀層
+- 9.C34 GCP 130K：5.2 寫「揭露 Spanner 替 etcd 才是 K8s 規模極限的關鍵」、實際 case 用更保守的「control plane 極限取決於 storage backend、GCP 用 Spanner 替換 etcd」分兩個點寫
+- 9.C12 Riot：5.2 引用「single-tenant per game 的多 cluster 策略」、漏掉 case 揭露的關鍵歷史轉折「從 multi-tenant cluster 模型改成 single-tenant per game」
+
+**修法**：rich case 引用時、用「揭露 X 觀察 + 作者判讀 Y」分層標明、避免把推論寫成 fact。或在引用後補一句「（case 中 X 屬作者判讀層、本章引用此推論）」明示分層。
+
+兩類 case 的引用紀律可總結成一個 *fact vs derive* 分層原則：
+
+- **Skeleton case**：絕大多數內容是 derive（方向 / 議題）、引用時不擴寫成 fact
+- **Rich case**：含 fact（具體數字 / 設計）跟 derive（作者判讀）、引用時分層標明、避免把 derive 升級成 fact
 
 ## 階段 2：基於 findings 建立內容
 
@@ -223,27 +238,29 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 ### Reviewer issue 數量的 baseline
 
-3 個模組（01 / 02 / 03）驗證後、每模組 reviewer 抓到的 issue 數量穩定、可作為流程預期：
+5 個模組（01 / 02 / 03 / 04 / 05）驗證後、每模組 reviewer 抓到的 issue 數量穩定、可作為流程預期：
 
-| Reviewer 維度          | 01 modules   | 02 modules    | 03 modules    | baseline        |
-| ---------------------- | ------------ | ------------- | ------------- | --------------- |
-| Standards reviewer     | 25           | 20            | 20            | 20-25 issue     |
-| Case fidelity reviewer | 9 (88% 準確) | 20 (78% 準確) | 15 (70% 準確) | 10-20 issue     |
-| Consistency reviewer   | 13           | 15            | 15            | 13-15 issue     |
-| **總計**               | **47**       | **55**        | **50**        | **45-55 issue** |
+| Reviewer 維度          | 01      | 02       | 03       | 04        | 05       | baseline        |
+| ---------------------- | ------- | -------- | -------- | --------- | -------- | --------------- |
+| Standards reviewer     | 25      | 20       | 20       | 31        | 28       | 20-30 issue     |
+| Case fidelity reviewer | 9 (88%) | 20 (78%) | 15 (70%) | 6 (92.9%) | 13 (80%) | 6-20 issue      |
+| Consistency reviewer   | 13      | 15       | 15       | 14        | 18       | 13-18 issue     |
+| **總計**               | **47**  | **55**   | **50**   | **51**    | **59**   | **47-59 issue** |
 
 **模式觀察**：
 
-- **每模組 ~50 issue 是穩定值**、不會因主題不同大幅波動
-- **Case fidelity 準確率隨 skeleton case 比例下降**：01 用 09 rich cases 為主（88%）、03 用 skeleton case 比例高（70%）。下次規劃時要評估 case 庫的 rich vs skeleton 比例、預期準確率
-- **Consistency reviewer 抓到的 frame 重複跟章節數成正比**：02 / 03 都有 ~13-15 個一致性 issue、跟章節 8-11 個對應、平均每章 ~1.5 個跨章邊界 issue
+- **每模組 ~50 issue 是穩定值**、不會因主題不同大幅波動、但 04/05 略往上推到 ~55、Standards reviewer 抓的「不是 X、而是 Y」段首結構成為新大宗
+- **Case fidelity 準確率分布更廣**：04 的 92.9% 來自 skeleton case 嚴守「揭露方向、通用補充」紀律；05 的 80% 因引用 09 rich case 加入「fact vs derive 分層」新失分模式（見前面 *Rich case 引用的反向風險*）
+- **Consistency reviewer 抓到的 frame 重複跟章節數成正比**：02 / 03 / 04 都有 ~13-18 個一致性 issue、05 跨模組（引 09 rich case）讓 issue 推到 18
 
 **Stage 3 修正成本估算**：
 
-- Critical（編造、矛盾）：~每個 5-10 分鐘修正、佔 3-5 個
-- High（重複 frame、章節邊界）：~每個 10-20 分鐘修正、佔 5-8 個
+- Critical（編造、矛盾）：~每個 5-10 分鐘修正、佔 0-5 個（04/05 都 0 critical、紀律已成熟）
+- High（重複 frame、章節邊界、判讀層 vs fact）：~每個 10-20 分鐘修正、佔 5-14 個
 - Medium / Low（規範細節、cross-link 補）：~每個 2-5 分鐘修正、佔 35-45 個
 - **總計 ~1.5-2.5 小時 / 模組**
+
+**Stage 4 修正後仍會有 ~30-40% issue 殘留**（low / medium 的 cross-link、編號漂移、用語不一）、屬於系統性 pattern、適合在 Stage 5 polish pass 集中處理（見後段）。
 
 ### 為何要多輪 review、不是一次到位
 
@@ -273,6 +290,57 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 每個檔案修完後跑一次 `mdtools fmt --fix` + `mdtools cards` + `mdtools lint`、確認該檔內部一致、再進下一檔。最後跑一次跨檔驗證、確認 cross-link 全部對齊。
 
+## 階段 5：Polish pass（04/05 模組後新增）
+
+Stage 4 修完 high + 重要 medium 後、仍有 ~30-40% 的 low / medium 殘留、屬於系統性 pattern（負向骨架、編號漂移、cross-link 缺漏、模板化）。這些 issue 不適合按章節批次修、適合用「跨檔系統性掃描」處理 — 這是 polish pass 的核心責任。
+
+### Polish pass 的觸發條件
+
+Stage 4 後出現以下任一訊號、就該排 polish pass：
+
+- Standards reviewer 抓出的「不是 X、而是 Y」段首結構超過 5 處（屬寫作習慣、單章修改無效率）
+- Consistency reviewer 抓出「編號漂移」「失效 link」「用語不一」多處（屬跨檔規範問題）
+- 自掃描漏掉的 pattern 出現在 reviewer report（例：04 自掃描說 pass、reviewer A 抓出 31 個 issue、暴露自掃描 regex 不夠寬）
+
+### Polish pass 不該做的事
+
+- **不重寫章節結構**：polish pass 是把現有內容修得更貼合規範、不是重新組織。重寫的觸發條件應該回到 stage 2、不是 polish pass。
+- **不擴大 scope**：原本 4.20 / 5.4 等不在擴充範圍的章節、polish pass 也不動。Polish pass 邊界 = stage 4 修改過的章節集合。
+- **不追求 0 issue**：reviewer 抓的 ~15 個 low 通常可保留為下次擴章節時自然處理。Polish pass 處理「系統性 pattern」、不處理「孤立 issue」。
+
+### Polish pass 的標準工序
+
+按系統性 pattern 分批處理、每批跑一次自掃描確認：
+
+1. **負向骨架掃描修正**：用更寬泛的 regex `不是 |而不是|沒有.*[，、]會` 掃描、把「不是 X、而是 Y」「而不是 X」改成正向陳述 + 後置邊界提醒。技術約束敘述（「多人共用 IP 無法區分」）保留。
+2. **編號漂移統一**：把 `04.X` 風格 plain text 改成 `[4.X title](url)` markdown link、跟 _index 對齊。
+3. **表格延伸段補強（關鍵段）**：選 2-3 個最高 impact 表格（判讀訊號表的爭議列、Buffer / Sampling 等選型表）補延伸子段、不全部補（避免擴展超出 scope）。
+4. **模板化拆敘事（代表性段）**：選 1-2 個最明顯的「四步驟模板套不同情境」段、拆成情境化敘事、其他保留為下次。
+5. **Cross-link 補漏 + ownership 邊界補強**：reviewer C 報告的所有 cross-link 缺漏一次補完、用同一個批次跑 mdtools 驗證。
+6. **用語不一統一 + 失效 link 修正**：簡轉繁、`/knowledge-cards/` vs `/section/` URL 統一、失效 link 改規劃中或正確路徑。
+7. **最終驗證 + commit**：跑 `mdtools fmt --fix && mdtools cards && mdtools lint`、確認全綠、commit。
+
+### Polish pass 的實作成本
+
+實作中（04 / 05 polish pass 合併 commit `1072087`）：
+
+- 處理範圍：11 個檔案、+44 / -29 行
+- 修正項目：~35 個 issue（10 個負向骨架、2 個模板化、3 個編號漂移、3 個表格延伸段、3 個 cross-link、1 個 case 引用結構）
+- 時間：~30-45 分鐘（不重寫、只 pattern match）
+- 剩餘 ~15 個 low 保留下次
+
+Polish pass 的 ROI 來自「系統性 pattern 一次處理 vs 散在各章一個個改」的效率差異。每個 pattern 在多章重複出現時、用 grep / rg 跨檔修一輪比每章單獨修快 3-5 倍。
+
+### 自掃描盲點更新
+
+04 流程暴露了一個 self-scan 盲點：原 regex `不行|不可以|不要|無法|不能` 漏掉「核心責任不是 X、而是 Y」這個變體段首。修正建議：
+
+- 加 `^[^|].*責任(不是|並非)` 抓「核心責任不是 X」變體
+- 加 `^[^|].*[，,]而是` 抓「X、而是 Y」結構（已是正常陳述、但段首位置仍是負向骨架）
+- 加 `^[^|].*[，,]不是` 抓「X、不是 Y」結構
+
+把自掃描 regex 視為持續演進的工具、每個 reviewer 抓出新 pattern 就更新一次、避免在下個模組重蹈覆轍。
+
 ## 適用情境跟限制
 
 ### 適用情境
@@ -295,9 +363,9 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 - **Case 庫品質決定 findings 品質**：case 寫得淺、findings 也淺；case fidelity reviewer 也只能驗證「跟 case 一致」、不能驗證「case 本身對不對」
 - **依賴 LLM agent 平台能力**：流程預設可平行跑 background agent、不是所有 LLM 平台都支援
 
-## 3 個模組驗證後的反覆陷阱
+## 5 個模組驗證後的反覆陷阱
 
-01 / 02 / 03 三個模組執行下來、以下三個陷阱在 *每個模組都重複出現*、屬於 LLM case-driven 寫作的系統性失分點。本流程下次套用前要 *主動防範*、不能依賴 stage 3 reviewer 補救（雖然 reviewer 都會抓到、但修正成本高）。
+01 / 02 / 03 / 04 / 05 五個模組執行下來、以下陷阱在 *多數模組都重複出現*、屬於 LLM case-driven 寫作的系統性失分點。本流程下次套用前要 *主動防範*、不能依賴 stage 3 reviewer 補救（雖然 reviewer 都會抓到、但修正成本高）。
 
 ### 陷阱 1：Skeleton case 擴寫成 case 事實
 
@@ -340,15 +408,55 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 - 01 規範 violation：表格不延伸（7 處）、負向陳述（5 處）、首句結構（4 處）
 - 02 規範 violation：原則 8 模板化（6 處）、原則 2 負向陳述（6 處）、原則 4 表格不延伸（4 處）
 - 03 規範 violation：原則 2 負向陳述（12 處最嚴重）、原則 1 首句結構（5 處）、原則 6 用語節制（2 處）
+- 04 規範 violation：原則 2 負向陳述（12 處最嚴重、含「核心責任不是 X、而是 Y」變體段首）、原則 1 首句結構（9 處）、原則 4 表格不延伸（9 處）
+- 05 規範 violation：原則 2「不是 X、而是 Y」+「沒有 X、會 Y」（10 處）、原則 8 四步驟 / 四層並列模板（7 處）、原則 3 case 引用框架取代商業邏輯先行（6 處）
 
 **防範**：
 
 - Stage 2 寫完後 *寫稿端就跑掃描*、不等 reviewer：
   - `rg -n "不行|不可以|不要|無法|不能" <module-path>` 找負向骨架（技術約束敘述例外）
-  - `grep` 找「不是 X、是 Y」開段結構
+  - `rg -n "^[^|].*責任(不是|並非)" <module-path>` 找「核心責任不是 X」變體段首（04 模組新發現的 pattern）
+  - `rg -n "^[^|].*[，,]而是|^[^|].*[，,]不是" <module-path>` 找對比骨架開段
   - 自查表格：每個 bullet 是否有後文延伸？
   - 自查首句：是否「核心原則先行」而非「對應 [case] 揭露」
 - 模板化（L1/L2/L3、三選一）出現時、先問「這三項是真的對等？還是業務情境不同？」— 不同情境的話拆敘事段、不用表格
+
+### 陷阱 4：Rich case 判讀層被當 case fact 引用（04/05 模組新發現）
+
+引用 09 / 07 等 rich case 時、case 內常含「觀察層」（具體 fact）跟「判讀層」（作者推論）兩段。LLM 寫作時容易把兩層壓縮成「揭露 X」、把作者判讀升級為 case fact。
+
+跟陷阱 1（skeleton case 擴寫成 case 事實）的差別：
+
+- **陷阱 1**：case 沒提的細節（具體數字、taxonomy）被寫成 case 揭露
+- **陷阱 4**：case 有提、但屬作者判讀層的內容被寫成 case fact
+
+**實證**：
+
+- 05 / 9.C12 Riot：5.2 寫「揭露 35ms latency 反推 region 部署」、實際 case 的「35ms」是觀察層、「反推 region 部署」是作者判讀層
+- 05 / 9.C34 GCP：5.2 寫「揭露 Spanner 替 etcd 才是 K8s 規模極限的關鍵」、實際 case 用更保守的「control plane 極限取決於 storage backend、GCP 用 Spanner 替換 etcd」分兩個點寫、章節壓縮 + 強化成硬性結論
+- 05 / 9.C12 Riot：漏掉 case 揭露的關鍵歷史轉折「從 multi-tenant cluster 模型改成 single-tenant per game」
+
+**防範**：
+
+- 引用 rich case 前、先把 case 內的「觀察段」跟「判讀段」分開讀、抽 finding 時各自標明來源層
+- 引用時用「揭露 X 觀察 + 作者判讀 Y」分層寫、或在引用後補一句「（case 中 X 屬作者判讀層、本章引用此推論）」
+- 避免使用「才是 / 必須 / 一定」這類強化詞、保留 case 原文的條件性表述
+- Stage 3 case fidelity reviewer 的 prompt 要特別點出「判讀層 vs 觀察層」的分界、把這當作 high 級 issue 抓取
+
+### 陷阱 5：自掃描盲點累積（04/05 模組顯現）
+
+自掃描的 regex 跟 reviewer 抓的 pattern 會逐漸脫節。04 模組驗證時、self-scan 說 pass、但 reviewer A 抓出 31 issue、其中「核心責任不是 X、而是 Y」變體段首佔 12 處 — 屬於 self-scan 漏掉的新 pattern。
+
+**實證**：
+
+- 04 自掃描用 `不行|不可以|不要|無法|不能` 跟「不是 X、是 Y」掃描通過、但 reviewer A 抓出「核心責任不是 X、而是 Y」變體段首（佔 12 處）
+- 05 自掃描通過、但 reviewer A 仍抓出「沒有 X、會 Y」鏈式負向句構 + 「四步驟模板」+ 「case 引用框架取代商業邏輯先行」三類新 pattern
+
+**防範**：
+
+- 每個模組 reviewer 抓出新 pattern 後、回頭更新 self-scan regex
+- 把 self-scan 視為持續演進的工具、不是固定 checklist
+- Stage 5 polish pass 是處理自掃描盲點累積的標準入口（見前段）
 
 ### 衍生 insight：reviewer 維度沒覆蓋的部分
 
@@ -358,7 +466,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 - **判讀條件可操作性**：寫了判讀訊號、但實際工程師能不能用這些訊號做決策？沒 reviewer 驗證
 - **實作可行性**：建議的設計是否真的能落地？跨團隊協調是否現實？需要懂業務的 reviewer
 
-未來 4 / 5 / 6 / 7 / 8 模組執行時、可以考慮加第 4 個 reviewer 維度（教學性 + 實作可行性）。
+未來 6 / 7 / 8 模組執行時、可以考慮加第 4 個 reviewer 維度（教學性 + 實作可行性）。
 
 ## 跟其他寫作流程的差異
 
@@ -381,16 +489,19 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 ## 下一步
 
-本流程在 backend/01 模組（12 章 / 4055 行）驗證有效後、預計套用到：
+本流程在 backend/01 至 backend/05 五個模組驗證後（共 ~30 章 / 263 review issue / case fidelity 70-93% 區間）、後續套用到：
 
-- backend/02 cache：用 09 cache cases（Tinder Valkey、Tubi feature store、Snap KeyDB 等）+ 07 cache-relevant 紅隊
-- backend/03 message queue：用 09 messaging cases（PayPay 3 億 msg/day、Spotify Kafka→PubSub）
+- backend/06 reliability：用 09 reliability cases + 07 chaos cases
+- backend/07 security / data protection：紅隊 cases 已有完整體系、本流程處理跨章一致性
+- backend/08 incident response：跟 04 / 06 / 07 cross-link 密度最高、SSoT 對應規劃壓力最大
 - 其他模組依此類推
 
-流程本身也會在每個模組後 retrospective、看 reviewer 維度是否該調整、findings 抽取方法是否該強化。目前已知改進方向：
+流程本身會在每個模組後 retrospective、看 reviewer 維度是否該調整、findings 抽取方法是否該強化、polish pass 處理 pattern 是否該擴充。目前已知改進方向：
 
 - 加 reviewer：教學性審查（讀者路徑是否清楚、判讀順序是否合理）
 - 強化 findings 抽取：標註 finding 的 *泛化程度*、避免把 case-specific 細節推為通用結論
-- 加修正後自動 lint：修完不只跑 mdtools、加跑「找首句否定句」「找表格沒延伸」的自動掃描
+- Rich case 引用紀律：把「fact vs derive」分層寫進 stage 1 抽 findings 模板、stage 3 case fidelity reviewer prompt 也明示此分界
+- 自掃描 regex 持續演進：每個模組 reviewer 抓出新 pattern 後、回頭加進 self-scan 工具、避免在下個模組重蹈覆轍
+- 加修正後自動 lint：修完不只跑 mdtools、加跑「找首句否定句」「找表格沒延伸」「找模板化並列點」的自動掃描
 
 跟其他寫作協議的整合：本流程跟 `compositional-writing` skill 互補（後者管 *單篇* 寫作的原子化跟意圖、本流程管 *跨章模組* 的 scope 跟一致性）、跟 `requirement-protocol` skill 互補（後者管 *對話協議*、本流程管 *內容生產*）。
