@@ -6,7 +6,7 @@ tags: ["llm", "applications", "human-in-the-loop", "collaboration", "ux"]
 weight: 5
 ---
 
-HITL（human-in-the-loop）設計的本質是**在「人類介入頻率」spectrum 上選位置**——位置由 risk（副作用範圍 + 失敗代價）跟自動 validator 能力決定。risk 高 + validator 弱、人類介入頻率高；risk 低 + validator 強、人類介入頻率低。落點選錯就會踩兩種坑：自動化過度跑 production migration 是 over-trust、每個 tool call 都要 approval 是 under-trust。
+[HITL（human-in-the-loop）](/llm/knowledge-cards/human-in-the-loop/) 設計的本質是**在「人類介入頻率」spectrum 上選位置**——位置由 risk（副作用範圍 + 失敗代價）跟自動 validator 能力決定。risk 高 + validator 弱、人類介入頻率高；risk 低 + validator 強、人類介入頻率低。落點選錯就會踩兩種坑：自動化過度跑 production migration 是 over-trust、每個 tool call 都要 approval 是 under-trust。
 
 本章寫人機協作的拓樸設計：兩種工作模式（centaur / cyborg）、能力邊界的不規則性（jagged frontier）、三種 HITL 觸發時機、跟 [4.4 agent 自主度分層](/llm/04-applications/agent-architecture/) 的對應。這層問題是跨產品 / 跨領域通用、跟具體 framework 無關。
 
@@ -56,7 +56,7 @@ Centaur 跟 cyborg 是兩種人類跟 LLM 共事的姿態。概念起源於 Kasp
 
 ## Jagged Frontier：AI 能力的不規則邊界
 
-直覺上「AI 能做的任務」應該是一個 smooth 的連續區、簡單的能做、難的不能。實際上不是——AI 能做的任務分佈是**鋸齒狀（jagged）**：某些看起來難的任務 AI 做得很好、某些看起來簡單的任務 AI 反而做不好。
+[Jagged frontier](/llm/knowledge-cards/jagged-frontier/) 是觀察 AI 能力分佈的 framing。直覺上「AI 能做的任務」應該是一個 smooth 的連續區、簡單的能做、難的不能。實際上不是——AI 能做的任務分佈是**鋸齒狀（jagged）**：某些看起來難的任務 AI 做得很好、某些看起來簡單的任務 AI 反而做不好。
 
 | 看起來簡單但 AI 容易壞 | 看起來複雜但 AI 做得好           |
 | ---------------------- | -------------------------------- |
@@ -70,9 +70,9 @@ Centaur 跟 cyborg 是兩種人類跟 LLM 共事的姿態。概念起源於 Kasp
 每個例子背後的失敗機制各不相同：
 
 - **精確算術**：靠符號操作、訓練資料中算術佔比小、tokenizer 把數字切成多 token 也加難度。Tool use（呼叫 calculator）能補救。
-- **計數**：要對 input 做精確 traversal、跟 LLM 的並行 attention 機制不對盤、容易少算多算。
+- **計數**：要對 input 做精確 traversal、跟 LLM 的並行 [attention](/llm/knowledge-cards/attention/) 機制不對盤、容易少算多算。對 needle in long context 的失敗模式類比見 [needle in haystack](/llm/knowledge-cards/needle-in-haystack/) 卡。
 - **嚴格遵守冷僻格式**：format 沒在訓練分佈中見過、模型回退到「我熟悉的格式」。Constrained decoding（見 [3.10](/llm/03-theoretical-foundations/constrained-decoding-internals/)）能補救。
-- **引用真實 URL**：模型沒辦法區分「真實存在」跟「看起來合理」、hallucinate 出格式對但內容假的 URL。靠 tool（web search、URL validator）才能驗證。
+- **引用真實 URL**：模型沒辦法區分「真實存在」跟「看起來合理」、[hallucinate](/llm/knowledge-cards/hallucination/) 出格式對但內容假的 URL。靠 tool（web search、URL validator）才能驗證。
 
 整體看：能力分佈跟訓練資料分佈、tokenizer 行為、推論機制相關、跟人類直覺的「難易」沒對齊。這給三個實務啟示：
 

@@ -48,7 +48,7 @@ User: 「我搬家了、訂單編號 #12345、新地址是 ___」
 6. 草擬回覆 email、發出
 ```
 
-引用原理：這個 decomposition 本身對應 [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/) 的「先分解任務、再判讀每段該 deterministic 還是 fuzzy」。
+引用原理：這個 decomposition 本身對應 [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)（[deterministic-vs-fuzzy](/llm/knowledge-cards/deterministic-vs-fuzzy/) 卡）的「先分解任務、再判讀每段該 deterministic 還是 fuzzy」。
 
 ## 階段 2：典範定位
 
@@ -255,7 +255,7 @@ Production trace + eval result
 
 ### 反射五：保留 frozen baseline
 
-把某個特定 prompt + 特定 model 跑 production 一段時間後 freeze 起來、每次新版本都跟它比、漂移看得見。對應反例：每次只跟「上一版」比、半年後累積漂移完全不可見、「整體變好了沒」無從回答。
+[Frozen baseline](/llm/knowledge-cards/frozen-baseline/) 是把某個特定 prompt + 特定 model 跑 production 一段時間後 freeze 起來、每次新版本都跟它比、漂移看得見。對應反例：每次只跟「上一版」比、半年後累積漂移完全不可見、「整體變好了沒」無從回答。
 
 ## 跟其他章節的對應總表
 

@@ -6,7 +6,7 @@ tags: ["llm", "applications", "agent", "multi-agent", "architecture"]
 weight: 8
 ---
 
-[4.7 workflow patterns](/llm/04-applications/workflow-patterns/) 寫的是「多次 LLM call 怎麼組合」、四個基本模式（pipeline / router / parallel / reflection）解的是 single-thread 多 call 問題。當問題進一步複雜——需要平行的多個專業化角色、需要跨產品的 agent 重用、需要 agent 之間互相呼叫——就進入 multi-agent system 的領域。
+[4.7 workflow patterns](/llm/04-applications/workflow-patterns/) 寫的是「多次 LLM call 怎麼組合」、四個基本模式（pipeline / router / parallel / [reflection](/llm/knowledge-cards/reflection/)）解的是 single-thread 多 call 問題。當問題進一步複雜——需要平行的多個專業化角色、需要跨產品的 [agent](/llm/knowledge-cards/agent/) 重用、需要 agent 之間互相呼叫——就進入 [multi-agent system](/llm/knowledge-cards/multi-agent-system/) 的領域。
 
 本章寫的是 multi-agent 系統的**拓樸結構**：何時值得從多 call 走到多 agent、flat 跟 hierarchical 兩種拓樸的差異、agent-as-tool 的 MCP 視角、specialization 跟 orchestration overhead 的核心 trade-off。具體 framework（CrewAI、AutoGen、LangGraph 多 agent 等）半年一個世代、本章不寫具體 API。
 

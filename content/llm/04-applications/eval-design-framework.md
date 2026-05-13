@@ -204,7 +204,7 @@ Production trace 持續抽樣補進 eval set、每季 review eval set 跟 traffi
 
 ### 條件四：保留 frozen baseline
 
-把某個特定 prompt + 特定 model 跑 production 一段時間後 freeze 起來、每次新版本跟它比、定期 refresh baseline 並標明時點。漂移看得見才能管理。
+[Frozen baseline](/llm/knowledge-cards/frozen-baseline/) 是把某個特定 prompt + 特定 model 跑 production 一段時間後 freeze 起來、每次新版本跟它比、定期 refresh 並標明時點。漂移看得見才能管理。
 
 對應反例：每次 A/B 都跟「最新版本」比、長期累積漂移完全不可見、「整體變好了沒」無從回答。
 

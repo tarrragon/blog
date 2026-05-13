@@ -54,7 +54,7 @@ Prompt 知識可以分兩層：**易變層**是具體寫法（特定模型偏好
 
 ### Few-shot
 
-prompt 內塞幾個 input-output 範例、模型透過範例對齊任務。
+[Few-shot prompting](/llm/knowledge-cards/few-shot-prompting/) 在 prompt 內塞幾個 input-output 範例、模型透過範例對齊任務。
 
 - **適用**：任務有「我的標準跟模型預設不同」、但能舉幾個代表性例子。常見場景：分類、抽取、格式轉換、tone alignment。
 - **核心收益**：把「對齊任務」這件事從 fine-tune 移到 prompt——iteration 從幾天縮到幾分鐘、不動模型權重。
@@ -83,7 +83,7 @@ Few-shot 跟 fine-tune 是「對齊」這件事的兩個 endpoint。Trade-off：
 
 ### Chain-of-Thought（CoT）
 
-要求模型「show your work」、把推理步驟寫出來、再給最終答案。
+[Chain-of-Thought](/llm/knowledge-cards/chain-of-thought/) 要求模型「show your work」、把推理步驟寫出來、再給最終答案。
 
 - **適用**：multi-step reasoning（數學、邏輯、複雜判斷）、模型直接答錯但 step-by-step 後對。
 - **失效在 reasoning model 出現後**：[reasoning model](/llm/03-theoretical-foundations/reasoning-models/) 本身就在生成內部推理 trace、再外加 explicit CoT prompt 邊際收益遞減、部分模型可能反而干擾內部推理路徑。判讀訊號：模型卡片寫「reasoning model」、就不要再加 "think step by step"。
@@ -99,7 +99,7 @@ Few-shot 跟 fine-tune 是「對齊」這件事的兩個 endpoint。Trade-off：
 
 ### Reflection / self-critique
 
-要求模型先輸出一版、再 critique 自己、再修改。
+[Reflection](/llm/knowledge-cards/reflection/) 要求模型先輸出一版、再 critique 自己、再修改。
 
 - **適用**：模型有能力辨識「自己寫的不夠好」、critique 跟 generator 不會共用同樣 blind spot。
 - **失效**：critique 跟 generator 是同個模型、訓練分佈中的盲點不會因為「再想一次」消失。判讀訊號：critique 每次都給很像的建議、或修完還是同一類錯——這是 systematic error、加 reflection 沒收益。
@@ -125,7 +125,7 @@ Few-shot 跟 fine-tune 是「對齊」這件事的兩個 endpoint。Trade-off：
 
 ### Persona / system prompt
 
-跨 turn 持續性的角色與行為設定、放在 system role。
+跨 turn 持續性的角色與行為設定、放在 [system prompt](/llm/knowledge-cards/system-prompt/)。
 
 - **跟 role prompting 的差異**：role prompting 是 single call 的暫時角色、persona 是跨 turn 的長期人設。多數 chatbot 應用都在後台塞 persona。
 - **失效**：persona 跟 user request 衝突時、模型在「跟 persona 一致」跟「滿足 user」之間擺盪、行為不穩。

@@ -6,7 +6,7 @@ tags: ["llm", "foundations", "paradigm", "architecture"]
 weight: 8
 ---
 
-LLM 進到軟體工程的最大影響、不是「多了一個 API 可以呼叫」、而是軟體設計典範本身的位移。傳統軟體建立在 deterministic 假設上——同樣的 input 永遠對應同樣的 output、邏輯靠人類寫定、行為可以靠 test 鎖住。LLM 軟體則建立在 fuzzy 假設上——同樣的 input 在不同溫度、不同 sampling 下會給不同 output、邏輯是模型自己推、行為只能用統計方式驗證。
+LLM 進到軟體工程的最大影響、不是「多了一個 API 可以呼叫」、而是軟體設計典範本身的位移（見 [deterministic-vs-fuzzy](/llm/knowledge-cards/deterministic-vs-fuzzy/) 卡）。傳統軟體建立在 deterministic 假設上——同樣的 input 永遠對應同樣的 output、邏輯靠人類寫定、行為可以靠 test 鎖住。LLM 軟體則建立在 fuzzy 假設上——同樣的 input 在不同溫度、不同 sampling 下會給不同 output、邏輯是模型自己推、行為只能用統計方式驗證。
 
 這個位移影響的不只是「在某段程式裡呼叫 LLM」、而是整套設計思維：怎麼處理資料、怎麼定義「正確」、怎麼分解任務、怎麼版本控制、怎麼測試、怎麼除錯。本章把這個典範位移寫成跨應用都成立的心智模型、讓你在後續模組（特別是 [模組四 LLM 應用層](/llm/04-applications/)）讀到 RAG、agent、workflow pattern 時、知道自己在跟哪個典範打交道、該套哪一邊的設計直覺。
 
