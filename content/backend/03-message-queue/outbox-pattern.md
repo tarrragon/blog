@@ -46,34 +46,34 @@ duplicate publish 在 outbox 模式下屬於預期現象。消費端需要配合
 
 ## Self-managed vs Managed broker 的長期 TCO
 
-Broker 選型常被簡化為「Kafka vs Pub/Sub」、實際上是 *long-term TCO* 決策。Self-managed Kafka 的容量規劃 + broker 數量 + 副本因子 + disk + ZooKeeper / KRaft 治理是長期工程 tax、每次擴容是工程專案。
+Broker 選型本質是 long-term TCO 決策、需評估雲端費用 + 工程稅 + 治理負擔三層成本。Self-managed Kafka 的容量規劃 + broker 數量 + 副本因子 + disk + ZooKeeper / KRaft 治理是長期工程 tax、每次擴容是工程專案。
 
-對應 [9.C9 Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 從自管 Kafka 遷到 Google Cloud Pub/Sub、動機不是「Kafka 不能撐」、是 *容量規劃的工程成本* 在 sustained growth 下變得不划算。對 7500 萬用戶的事件交付系統、把 broker 容量規劃跟運維負擔卸給 vendor、釋放 SRE 跟工程 capacity。
+對應 [9.C9 Spotify Kafka → Pub/Sub Migration](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — Spotify 從自管 Kafka 遷到 Google Cloud Pub/Sub、動機是 *容量規劃的工程成本* 在 sustained growth 下變得不划算、非 Kafka 效能不足。對 7500 萬用戶的事件交付系統、把 broker 容量規劃跟運維負擔卸給 vendor、釋放工程團隊 capacity。
 
-**TCO 評估的真實成本項**：
+**TCO 評估的真實成本項**（9.C9 case 列前 4 項 + 雲端費用、第 5 項屬跨案例綜合）：
 
 - **Broker 雲端費用**：明面成本、相對小
 - **容量規劃工程**：每季 partition planning、每年容量擴張專案
 - **故障處理人力**：broker 故障 oncall、ZooKeeper / KRaft 故障診斷
 - **升級遷移成本**：Kafka 每個 major version 升級是專案
-- **跨團隊治理**：規模化後的 multi-tenant 隔離、quota 管理、observability 建設
+- **跨團隊治理**（從 3.C6 Uber 跨案例補充）：規模化後的 multi-tenant 隔離、quota 管理、observability 建設
 
 判讀含義：Self-managed Kafka 在中小團隊可能比 Pub/Sub 便宜（雲端費用低）；但規模化後人力成本壓過雲端費用差、managed service 反而划算。對應 [3.C2 VMware Tanzu Kafka → MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/) 同樣是「自管 → managed」的決策。
 
 **Managed service 的取捨**：
 
-- Pub/Sub 自動 scaling、但 vendor lock-in、cost-per-message 累積、message ordering / latency 特性跟 Kafka 不同
-- 業務語意對映（Kafka partition / offset / consumer group 在 Pub/Sub 對映成 subscription / ordering key / message attribute）不是 1:1
-- 遷移本身要驗證業務語意 — 對應 [1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 的同類流程
+- Pub/Sub 自動 scaling、伴隨 vendor lock-in、cost-per-message 累積、message ordering / latency 特性跟 Kafka 差異
+- 業務語意對映（Kafka partition / offset / consumer group 在 Pub/Sub 對映成 subscription / ordering key / message attribute）需重新校準、見 [3.7 跨 broker 業務語意對映](/backend/03-message-queue/event-contract-replay-boundary/)
+- 遷移本身需驗證業務語意 — 對應 [1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 的同類流程
 
 ## Broker 遷移的階段流程
 
-對應 [9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移本身是高併發容量工程、不能停機、不能丟 message。Spotify 採分階段：
+對應 [9.C9 Spotify](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移屬高併發容量工程、需維持 producer 連續寫入、保證 message 不丟。Spotify case 列三階段（dual write → shadow → cutover）、本章補第四階段（Decommission）作為清理收尾。replay 模型差異見 [3.6 Replay 跟 Idempotency 共設計](/backend/03-message-queue/processing-recovery-semantics/)。
 
 1. **Dual-write**：producer 同時寫兩個 broker、確保 cutover 前新 broker 有完整資料
 2. **Shadow consume**：新 broker 有獨立 consumer group 消費、驗證業務結果跟舊 broker 一致
 3. **Cutover**：流量逐步切到新 broker、保留舊 broker 為 fallback
-4. **Decommission**：確認新 broker 穩定後關掉舊 broker、清理舊架構
+4. **Decommission**（本章補充、case 未明文）：確認新 broker 穩定後關掉舊 broker、清理舊架構
 
 遷移期容量規劃含義：
 

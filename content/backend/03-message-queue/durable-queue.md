@@ -50,30 +50,30 @@ durable queue 在順序與吞吐之間需要明確取捨。全域順序通常成
 
 ## 訊息系統的「通知 vs 訊息」分類
 
-訊息系統設計要區分 *transactional 通知*（不可丟失、有業務後果）跟 *broadcast 訊息*（可接受部分遺失、重點是 throughput）。兩者用不同 SLO、不同 storage、不同重試策略。
+訊息系統設計區分兩種 SLO 不同的傳遞責任：*transactional 通知* 承擔業務副作用的可靠送達、*broadcast 訊息* 承擔大量低成本傳播。兩者用不同 storage、不同重試策略、不同投遞保證。
 
-對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — 行動支付每日 3 億訊息、付款通知是「不可丟失 + 不可延遲」雙重需求（用戶付完款 30 秒沒收到通知會懷疑系統壞了、會打客服 / 重複扣款）。這層需求比 OTA 推播嚴格、必須有 durable queue + retry + 重複偵測。
+對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — 行動支付每日 3 億訊息、付款通知承擔「確認交易完成」的業務責任、SLO 包含秒級延遲跟高投遞率（用戶付完款後若 30 秒沒收到通知會打客服、產生重複扣款風險）。這層需求嚴於 OTA 推播、需要 durable queue + retry + 重複偵測。
 
 **分類設計**：
 
-- **Transactional 通知**（付款收據、訂單狀態變更、配額警告）：必須 durable、必須 idempotency key 去重、SLO 通常是 *秒級延遲 + 99.99% 投遞率*
-- **Broadcast 訊息**（行銷推播、新片發布通知、社群動態）：可丟失少數、SLO 是 *吞吐量* 而非投遞率、允許 best-effort retry
+- **Transactional 通知**（付款收據、訂單狀態變更、配額警告）：承擔業務副作用確認、需 durable + idempotency key 去重、SLO 通常是 *秒級延遲 + 99.99% 投遞率*
+- **Broadcast 訊息**（行銷推播、新片發布通知、社群動態）：承擔大量低成本傳播、SLO 是 *吞吐量* 跟覆蓋率、允許 best-effort retry
 
-判讀含義：規模化訊息系統的容量規劃要 *按類別* 分開、不是套同一個 broker capacity。3 億訊息 / 天看起來大、但 *通知* 跟 *訊息* 的工程負擔差數量級。
+判讀含義：規模化訊息系統的容量規劃要按類別分開、避免套同一個 broker capacity。3 億訊息 / 天看似一致、但 *通知* 跟 *訊息* 的工程負擔差數量級。
 
 ## 下游推送是隱性瓶頸
 
-訊息系統的真正瓶頸常常不在 broker、在 *下游推送通道*（APNs、FCM、SMS gateway、email provider）。broker 寫入可以撐 3K msg/sec、但 APNs 一天的 quota 是有限的、超過會被 throttle。
+訊息系統的真正瓶頸常落在 *下游推送通道*（APNs、FCM、SMS gateway、email provider）、不在 broker。下游 quota 是 hard ceiling、超過會被 throttle、訊息積壓回 broker 形成 backlog。
 
-對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — DynamoDB 寫入容量充裕、但 APNs 推送額度可能成為事故當下的隱性瓶頸。容量規劃要把 *下游 quota* 算進去、不只看 broker 吞吐。
+對應 [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) — DynamoDB 寫入可以撐 3K msg/sec 平均（PayPay 本身用 DynamoDB 作訊息後端、不是傳統 broker）、但 APNs 推送額度成為事故當下的隱性瓶頸。容量規劃要把下游 quota 算進去、不只看訊息後端吞吐。
 
 **設計含義**：
 
-- **下游 quota 視為容量上限**：APNs / FCM / SMS 的 daily quota 是 hard ceiling、broker 規劃要對應
-- **下游降級路徑**：APNs 不可用時 fallback 到 FCM、FCM 不可用時 fallback 到 in-app notification、保留多個推送通道
-- **重試節奏跟下游容量對齊**：consumer 重試節奏要看下游 *剩餘 quota*、不是固定 backoff、避免重試把剩餘 quota 用光
+- **下游 quota 視為容量上限**：APNs / FCM / SMS 的 daily quota 是 hard ceiling、訊息後端規劃要對應
+- **下游通道多元化**：用 APNs / FCM / SMS / in-app notification 多通道分攤 quota 壓力、單通道飽和時其他通道仍可送出（具體降級策略需依各組織業務規則設計）
+- **重試節奏跟下游容量對齊**：consumer 重試節奏依下游剩餘 quota 動態調整、讓重試節奏跟容量同步
 
-判讀重點：訊息系統事故當下、先看下游推送通道狀態（APNs status、FCM error rate），再看 broker。下游 throttle 引發 backlog 是規模化訊息系統最常見的瓶頸來源。
+判讀重點：訊息系統事故當下、先看下游推送通道狀態（APNs status、FCM error rate）、再看訊息後端。下游 throttle 引發 backlog 是規模化訊息系統最常見的瓶頸來源。下游推送 quota 的攻擊面對照見 [3.5 multi-tenant broker 配額耗盡](/backend/03-message-queue/red-team-delivery-layer/)。
 
 ## 案例回寫
 

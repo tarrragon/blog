@@ -76,27 +76,26 @@ replay window 要能被明確描述與回放，不可用「重播昨天全部」
 
 ## Job queue 的拓樸分工
 
-當背景工作同時要 *高吞吐* 跟 *快速反應*、單一通道模型會變成瓶頸、要把不同工作類型切到不同傳遞路徑。job queue 的擴展通常是 *拓樸重整*、不是單點替換。
+當背景工作同時要 *高吞吐* 跟 *快速反應*、單一通道模型會變成瓶頸。job queue 的擴展通常是 *拓樸重整*、把不同工作類型切到不同傳遞路徑、而非單點替換。
 
-對應 [3.C5 Slack Job Queue 演進到 Kafka + Redis](/backend/03-message-queue/cases/slack-job-queue-kafka-redis/) — Slack 在 job queue 擴展時、不是擴 broker、是把不同工作類型切到不同傳遞路徑。Kafka 跟 Redis 分別承擔持久性跟即時性目標、分開治理 lag、重試跟失敗重播。
+對應 [3.C5 Slack Job Queue 演進到 Kafka + Redis](/backend/03-message-queue/cases/slack-job-queue-kafka-redis/) — Slack 在 job queue 擴展時把工作切到不同傳遞路徑、Kafka 跟 Redis 分別承擔持久性跟即時性目標、分開治理 lag、重試跟失敗重播。
 
-**拓樸分工的判讀**：
+**拓樸分工的判讀**（基於 Slack case 揭露的雙通道分工方向）：
 
 - **持久性主導的 job**（發票、付款通知、合規記錄）→ Kafka / 持久 queue、保證 at-least-once
 - **即時性主導的 job**（線上提醒、playback control、UI 更新）→ Redis / 輕量 queue、low latency
-- **混合需求 job**（搜尋索引更新、推薦計算）→ 雙通道：先進輕量 queue 即時觸發、再用持久 queue 保證最終一致
 
-**設計含義**：同一 consumer 不該同時承擔高吞吐 + 即時 + 持久三個目標、要拆分到對應路徑。對應 [3.4 consumer-design 三個工程議題鐵三角](/backend/03-message-queue/consumer-design/) — idempotency / 重播流程 / 下游承載能力三件事要一起設計、單一通道全包會在規模化時暴露。
+設計含義：同一 consumer 應專注單一目標（高吞吐 / 即時 / 持久擇一）、其他目標拆到對應路徑。對應 [3.4 consumer-design 三個工程議題鐵三角](/backend/03-message-queue/consumer-design/) — idempotency / 重播流程 / 下游承載能力是 consumer 內部設計、拓樸分工是 *跨 consumer* 的責任拆分、兩者互補。
 
 ## Job queue 規模差異的治理重點
 
-不同規模服務的 job queue 治理問題差異大、不是同一套 SLO / 流程能套用。對應 [3.C10 對照：規模差異下的佇列模型](/backend/03-message-queue/cases/contrast-queue-model-by-scale/)：
+不同規模服務的 job queue 治理問題差異大、SSoT 在本章。對應 [3.C10 對照：規模差異下的佇列模型](/backend/03-message-queue/cases/contrast-queue-model-by-scale/)：
 
-- **小型服務**：優先用 managed queue（SQS / Pub/Sub）、運維成本最低。最容易忽略的是語意邊界（重試次數、死信規則、重播責任）、規模一上來會出現資料重複與漏處理
-- **中型服務**：常見問題是 lag 與 DLQ 長期累積。不是 broker 效能單點問題、而是 consumer idempotency + 重播流程 + 下游承載能力沒一起設計。對應前段 Job queue 拓樸分工
+- **小型服務**：優先用 managed queue（SQS / Pub/Sub）、運維成本最低。最容易忽略的是語意邊界（重試次數、死信規則、重播責任）、規模一上來會出現資料重複與漏處理。**升級訊號**：team 數超 3-5 個、各自寫 consumer 開始出現 idempotency 不一致、進中型階段
+- **中型服務**：常見問題是 lag 與 DLQ 長期累積。原因是 consumer idempotency + 重播流程 + 下游承載能力沒一起設計。對應前段 Job queue 拓樸分工。**升級訊號**：DLQ 累積速度高於排空速度連續 7 天、單一 tenant 流量尖峰拖垮其他 tenant、進大型階段
 - **大型服務**：需要處理跨租戶跟跨區壓力。單叢集思維會讓任何一類流量尖峰拖垮整體。對應 [3.C4 LinkedIn Tiered Clusters](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/) 跟 [3.1 broker-basics 分層治理平台](/backend/03-message-queue/broker-basics/)、重點從「怎麼送訊息」轉成「怎麼隔離失敗」
 
-判讀重點：當前服務規模決定要處理的 *主要* 問題、不是「全部都要」。早期服務硬上 multi-tenant 隔離治理是過度設計、規模化服務只看 broker 效能會漏掉隔離問題。
+判讀重點：當前服務規模決定要處理的 *主要* 問題。規模尚小的服務硬上 multi-tenant 隔離治理屬過度設計、規模化服務應同時考慮 broker 容量是否充足跟隔離邊界是否完整。判斷自己在哪個階段、看 *升級訊號* 對應的指標。
 
 ## Evidence Package
 
