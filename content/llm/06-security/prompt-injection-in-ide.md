@@ -31,7 +31,7 @@ weight: 4
   例如：
     - LLM 讀了一份 README、README 內藏 prompt
     - LLM 讀了一份 PR、PR 描述藏 prompt
-    - LLM 讀了 RAG 取得的文件、文件藏 prompt
+    - LLM 讀了 [RAG](/llm/knowledge-cards/rag/) 取得的文件、文件藏 prompt
   → 個人 dev 場景的主要威脅形態
 ```
 

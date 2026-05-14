@@ -8,7 +8,7 @@ weight: 1
 
 LLM 生字慢的核心原因有兩個：**[自回歸架構](/llm/knowledge-cards/autoregressive/)**（autoregressive）讓模型一次生一個 [token](/llm/knowledge-cards/token/)、**[記憶體頻寬](/llm/knowledge-cards/memory-bandwidth/)瓶頸**讓 Apple Silicon 在算力之外有一個獨立的速度上限。這兩個瓶頸結合起來、才能解釋為什麼 32GB Mac 跑 31B 模型約 30 [tok/s](/llm/knowledge-cards/tokens-per-second/)、而資料中心的 H100 跑同樣模型能到 200 tok/s。
 
-理解這個機制不只是為了知識本身。後續所有加速技巧（speculative decoding、MTP、KV cache、量化）都是在攻擊這兩個瓶頸的不同部分；不懂瓶頸在哪，看到「2x 加速」「3x 加速」這種廣告詞就無從判讀。
+理解這個機制不只是為了知識本身。後續所有加速技巧（[speculative decoding](/llm/knowledge-cards/speculative-decoding/)、[MTP](/llm/knowledge-cards/mtp/)、[KV cache](/llm/knowledge-cards/kv-cache/)、[量化](/llm/knowledge-cards/quantization/)）都是在攻擊這兩個瓶頸的不同部分；不懂瓶頸在哪，看到「2x 加速」「3x 加速」這種廣告詞就無從判讀。
 
 ## 本章目標
 

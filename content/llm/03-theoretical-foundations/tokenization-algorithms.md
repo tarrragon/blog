@@ -8,7 +8,7 @@ weight: 6
 
 [Tokenization](/llm/knowledge-cards/token/) 是把文字切成模型可處理的 token 序列的過程。看似簡單的「切字」實際上有完整算法、且 tokenizer 的選擇深刻影響模型能力、context window 利用率、跨語言表現、跟一些奇怪 bug 的成因（GPT 在某些字串上表現異常的「glitch tokens」就源於 tokenizer 設計）。
 
-本章拆開四個主流 tokenization 算法（BPE、WordPiece、Unigram、SentencePiece）、解釋 vocabulary 怎麼學出來、為什麼中文 / 中日韓字幾乎一字一 token、tokenizer 為什麼影響 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的相容性。
+本章拆開四個主流 tokenization 算法（BPE、[WordPiece](/llm/knowledge-cards/wordpiece/)、[Unigram](/llm/knowledge-cards/unigram-tokenizer/)、SentencePiece）、解釋 vocabulary 怎麼學出來、為什麼中文 / 中日韓字幾乎一字一 token、tokenizer 為什麼影響 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的相容性。
 
 ## 本章目標
 

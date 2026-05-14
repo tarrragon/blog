@@ -20,7 +20,7 @@ weight: 3
 
 ## tool use 跟 MCP server 在哪一層
 
-tool use 跟 MCP server 同時跨[三層架構](/llm/00-foundations/three-layer-architecture/) 的兩層、但跟模型本身的權限模型分離：
+tool use 跟 MCP server 同時跨[三層架構](/llm/knowledge-cards/three-layer-architecture/) 的兩層、但跟模型本身的權限模型分離：
 
 ```text
 介面層（VS Code / Continue.dev / CLI）

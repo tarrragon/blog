@@ -61,7 +61,7 @@ PCIe = 兩塊預算之間的橋
 1. **「全載 VRAM」跟「卸載」是兩種選型**。全載生字較快但模型較小、卸載生字較慢但能跑較大模型；MoE 結構讓兩者的速度差距小於 Dense 模型。
 2. **量化等級可以調整**。16GB VRAM 跑 30B MoE Q4 比跑 30B MoE Q5 留下更多 VRAM 餘量、給 KV cache 跟併發數使用。
 3. **RAM 容量影響選型**。32GB RAM 配 16GB VRAM 時、可卸載層數有限、能跑的最大 MoE 規模受限；64GB RAM 配 16GB VRAM 通常足以支撐 30B 級 MoE 的重度卸載。
-4. **多卡升級建議在單卡跑穩後評估**。雙 GPU 在 llama.cpp 上要設定 tensor split、實際速度提升依模型與配置變化；消費級主機板的 PCIe lane 分配（常見一條 x16 + 一條 x4）也會影響多卡效益。建議先把單卡跑熟、再依瓶頸決定是否多卡。
+4. **多卡升級建議在單卡跑穩後評估**。雙 GPU 在 llama.cpp 上要設定 [tensor split](/llm/knowledge-cards/llama-cpp-tensor-split/)、實際速度提升依模型與配置變化；消費級主機板的 PCIe lane 分配（常見一條 x16 + 一條 x4）也會影響多卡效益。建議先把單卡跑熟、再依瓶頸決定是否多卡。
 
 ## 為什麼 16GB VRAM + 64GB RAM 常被列為寫 code 場景的合理起點
 

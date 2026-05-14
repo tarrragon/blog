@@ -8,7 +8,7 @@ weight: 5
 
 LLM 的輸出本質是「下一個 [token](/llm/knowledge-cards/token/) 的機率分佈」、不是直接的 token。從機率分佈挑下一個 token 的具體方法、就是 sampling / decoding 策略。同一個模型、同一個 prompt、不同 sampling 策略會給出顯著不同的輸出。
 
-本章拆開主流 sampling 策略的機制、各自適合的場景、以及 `temperature`、`top_p` 這些常見參數在這條鏈上的位置。
+本章拆開主流 sampling 策略的機制、各自適合的場景、以及 [`temperature`](/llm/knowledge-cards/sampling-constraint/)、`top_p` 這些常見參數在這條鏈上的位置。
 
 ## 本章目標
 
@@ -30,15 +30,15 @@ final hidden states → output projection → logits → temperature → softmax
 
 各環節在 sampling 中的位置：
 
-| 環節                                     | 對 sampling 的影響                        |
-| ---------------------------------------- | ----------------------------------------- |
-| [logits](/llm/knowledge-cards/logit/)    | 模型給每個 token 的原始分數、還沒正規化   |
-| temperature                              | 在 softmax 前除以 T、調整分佈尖銳度       |
-| [softmax](/llm/knowledge-cards/softmax/) | 把 logits 轉成機率分佈                    |
-| top-k / top-p / min-p                    | 過濾低機率 token、把候選集縮小            |
-| 重新正規化                               | 把過濾後的剩餘 token 重新正規化成機率分佈 |
-| 取樣                                     | 從正規化分佈中隨機選一個 token            |
-| repetition penalty                       | 對已出現的 token 降權、避免重複           |
+| 環節                                                     | 對 sampling 的影響                        |
+| -------------------------------------------------------- | ----------------------------------------- |
+| [logits](/llm/knowledge-cards/logit/)                    | 模型給每個 token 的原始分數、還沒正規化   |
+| [temperature](/llm/knowledge-cards/sampling-constraint/) | 在 softmax 前除以 T、調整分佈尖銳度       |
+| [softmax](/llm/knowledge-cards/softmax/)                 | 把 logits 轉成機率分佈                    |
+| top-k / top-p / min-p                                    | 過濾低機率 token、把候選集縮小            |
+| 重新正規化                                               | 把過濾後的剩餘 token 重新正規化成機率分佈 |
+| 取樣                                                     | 從正規化分佈中隨機選一個 token            |
+| repetition penalty                                       | 對已出現的 token 降權、避免重複           |
 
 實際參數順序視推論伺服器實作而異、但概念上是這條鏈。
 
@@ -251,10 +251,10 @@ OpenAI、Ollama 等多數推論伺服器支援 logit_bias 參數。
 
 ## Structured Output / Constrained Decoding
 
-Structured output 的核心想法是「sampling 時加 grammar 約束、強制輸出符合特定結構（JSON、SQL、regex 等）」。實作方法：
+[Structured output](/llm/knowledge-cards/structured-output/) 的核心想法是「sampling 時加 grammar 約束、強制輸出符合特定結構（JSON、SQL、regex 等）」。實作方法：
 
 - **JSON mode**：每步只允許「能讓 JSON 仍合法」的 token。
-- **Grammar-based**：用 BNF / lark / etc. 定義語法、sampling 時 reject 違反語法的 token。
+- **Grammar-based**：用 [BNF](/llm/knowledge-cards/bnf/) / lark / etc. 定義語法、sampling 時 reject 違反語法的 token。
 - **Token mask**：依當前狀態決定哪些 token 合法、不合法的 logit 設 -∞。
 
 實務工具：

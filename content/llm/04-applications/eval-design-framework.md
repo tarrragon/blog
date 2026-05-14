@@ -6,7 +6,7 @@ tags: ["llm", "applications", "evaluation", "evals", "methodology"]
 weight: 13
 ---
 
-LLM 應用的「怎麼測」問題大家都在問、但答案常常是「跑某個 benchmark」「找個 LLM judge」這類**工具層**回答。實務上工具是末端、設計重點是**先選測什麼軸、再選工具**。軸選錯了、再好的工具也測不出有用訊號——用 subjective 工具測 objective 行為（例如用 LLM judge 看金額計算對不對）、或用 end-to-end 工具測 component bug（例如看 user satisfaction 但其實是 retrieval pipeline 在漏 chunk）、都是常見的軸誤選。
+LLM 應用的「怎麼測」問題大家都在問、但答案常常是「跑某個 benchmark」「找個 [LLM judge](/llm/knowledge-cards/llm-as-judge/)」這類**工具層**回答。實務上工具是末端、設計重點是**先選測什麼軸、再選工具**。軸選錯了、再好的工具也測不出有用訊號——用 subjective 工具測 objective 行為（例如用 LLM judge 看金額計算對不對）、或用 end-to-end 工具測 component bug（例如看 user satisfaction 但其實是 retrieval pipeline 在漏 chunk）、都是常見的軸誤選。
 
 本章寫 eval 設計的座標系：三個 binary 軸、八個象限、每個象限對應什麼工具、軸選錯的訊號怎麼識別。這層 framing 是 meta、不是具體 eval 方法——具體方法在 [4.14 benchmarking](/llm/04-applications/benchmarking-and-evaluation/) 跟 [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)。
 

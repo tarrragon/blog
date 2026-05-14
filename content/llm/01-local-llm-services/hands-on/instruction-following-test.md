@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "ollama", "gemma", "qwen", "instruction-following"]
 weight: 7
 ---
 
-本篇是個讓本地 LLM 在「**讀兩個資料夾、學風格、寫新章節**」任務上自我評估的實驗。任務本身內容無關緊要（隨便挑了一份私人創作資料夾）、要看的是**不同模型在 instruction following / format consistency / 篇幅控制三個維度的差距**。
+本篇是個讓本地 LLM 在「**讀兩個資料夾、學風格、寫新章節**」任務上自我評估的實驗。任務本身內容無關緊要（隨便挑了一份私人創作資料夾）、要看的是**不同模型在 [instruction following](/llm/knowledge-cards/instruction-following/) / format consistency / 篇幅控制三個維度的差距**。
 
 實驗跑了四個本地模型對比：
 
@@ -18,7 +18,7 @@ weight: 7
 對應 [4.4 Agent 架構](/llm/04-applications/agent-architecture/) 「規劃能力是雲端旗艦的明顯強項、本地小模型的明顯弱項」這條觀察、用具體 structural metrics 驗證、並揭示**「最新世代 + 較大 size」未必比「跨家族 / 較強訓練」勝出**。
 
 > **驗證日期**：2026-05-12
-> **環境**：Ollama 0.23.2、Apple Silicon、MPS backend
+> **環境**：Ollama 0.23.2、Apple Silicon、[MPS backend](/llm/knowledge-cards/gpu-compute-backend/)
 > **任務**：讀資料夾 A（風格參考、5 章已寫完）+ 資料夾 B（同類型、5 章已寫完、需寫 v06）→ 為 B 生成 v06
 > **評估方式**：純 structural metrics、不評論內容品質
 

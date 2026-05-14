@@ -6,7 +6,7 @@ tags: ["llm", "theory", "attention"]
 weight: 2
 ---
 
-Attention（注意力）是 Transformer 的核心創新、也是 LLM 能處理長 context 的關鍵。它的核心想法是「每個 token 決定該關注前面哪幾個 token」、用 [embedding](/llm/03-theoretical-foundations/embedding-spaces/) 之間的[內積](/llm/02-math-foundations/linear-algebra-for-llm/) 量化「相關性」。理解 attention 後、Multi-head、KV cache、Flash Attention、attention sink 等術語都能放到正確位置。
+[Attention](/llm/knowledge-cards/attention/)（注意力）是 Transformer 的核心創新、也是 LLM 能處理長 context 的關鍵。它的核心想法是「每個 token 決定該關注前面哪幾個 token」、用 [embedding](/llm/03-theoretical-foundations/embedding-spaces/) 之間的[內積](/llm/02-math-foundations/linear-algebra-for-llm/) 量化「相關性」。理解 attention 後、[Multi-head](/llm/knowledge-cards/multi-head-attention/)、KV cache、Flash Attention、attention sink 等術語都能放到正確位置。
 
 本章從「為什麼需要 attention」開始、拆 scaled dot-product attention 公式、再展開 multi-head attention 跟 causal masking、最後接到 KV cache 與長 context 場景。
 
@@ -151,7 +151,7 @@ Flash Attention 何時收益有限：
 - **CPU 推論**：Flash Attention 的 tiling 設計針對 GPU memory hierarchy（HBM ↔ SRAM）、CPU 上的記憶體層級不同、收益遠小於 GPU。
 - **配合 GQA 的場景**：GQA 已大幅減少 KV cache、Flash Attention 的相對收益縮小。
 
-## Grouped Query Attention（GQA）
+## [Grouped Query Attention（GQA）](/llm/knowledge-cards/grouped-query-attention/)
 
 Grouped Query Attention 是 multi-head attention 的變體、減少 KV cache 佔用。核心想法：「不同 head 共用 K、V、只有 Q 各自獨立」。
 

@@ -10,7 +10,7 @@ LLM Agent 的核心概念是「把控制流的所有權從人類交給 LLM」。
 
 ## 概念位置
 
-Agent 是應用層的工作流模式、建立在 [tool use](/llm/knowledge-cards/tool-use/)、[function calling](/llm/knowledge-cards/function-calling/)、structured output、[autoregressive](/llm/knowledge-cards/autoregressive/) 生成之上。Agent loop 五步骨架（感知 → 推理 → 行動 → 觀察 → 判斷終止）是所有 agent framework 的共通結構、不論具體實作。本地 LLM 受 tool use 訓練不足、長 context prefill 痛點（見 [TTFT](/llm/knowledge-cards/ttft/)、[prefill](/llm/knowledge-cards/prefill/)）、規劃能力弱等限制、跑 agent 現階段失敗率高於雲端旗艦。
+Agent 是應用層的工作流模式、建立在 [tool use](/llm/knowledge-cards/tool-use/)、[function calling](/llm/knowledge-cards/function-calling/)、[structured output](/llm/knowledge-cards/structured-output/)、[autoregressive](/llm/knowledge-cards/autoregressive/) 生成之上。Agent loop 五步骨架（感知 → 推理 → 行動 → 觀察 → 判斷終止）是所有 agent framework 的共通結構、不論具體實作。本地 LLM 受 tool use 訓練不足、長 context prefill 痛點（見 [TTFT](/llm/knowledge-cards/ttft/)、[prefill](/llm/knowledge-cards/prefill/)）、規劃能力弱等限制、跑 agent 現階段失敗率高於雲端旗艦。
 
 ## 可觀察訊號與例子
 

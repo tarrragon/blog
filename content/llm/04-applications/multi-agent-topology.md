@@ -8,7 +8,7 @@ weight: 8
 
 [4.7 workflow patterns](/llm/04-applications/workflow-patterns/) 寫的是「多次 LLM call 怎麼組合」、四個基本模式（pipeline / router / parallel / [reflection](/llm/knowledge-cards/reflection/)）解的是 single-thread 多 call 問題。當問題進一步複雜——需要平行的多個專業化角色、需要跨產品的 [agent](/llm/knowledge-cards/agent/) 重用、需要 agent 之間互相呼叫——就進入 [multi-agent system](/llm/knowledge-cards/multi-agent-system/) 的領域。
 
-本章寫的是 multi-agent 系統的**拓樸結構**：何時值得從多 call 走到多 agent、flat 跟 hierarchical 兩種拓樸的差異、agent-as-tool 的 MCP 視角、specialization 跟 orchestration overhead 的核心 trade-off。具體 framework（CrewAI、AutoGen、LangGraph 多 agent 等）半年一個世代、本章不寫具體 API。
+本章寫的是 multi-agent 系統的**拓樸結構**：何時值得從多 call 走到多 agent、flat 跟 hierarchical 兩種拓樸的差異、[agent-as-tool](/llm/knowledge-cards/agent-as-tool/) 的 MCP 視角、specialization 跟 orchestration overhead 的核心 trade-off。具體 framework（CrewAI、AutoGen、LangGraph 多 agent 等）半年一個世代、本章不寫具體 API。
 
 ## 本章目標
 
@@ -105,7 +105,7 @@ Agent A
 ```
 
 - **適用**：agent 之間有清楚的「誰呼叫誰」、不是平等協商；想透過標準協議（function calling / MCP）讓 agent 跨系統重用。
-- **典型場景**：[MCP](/llm/knowledge-cards/mcp/) 的 tool primitive 視角下、agent-as-tool 可以包成 MCP server 暴露、client agent 把它當 tool 用。跨組織 agent 互通常走這個模式。注意 MCP 還有 resources / prompts 另外兩類 primitive、不是所有 MCP server 都是 agent-as-tool。
+- **典型場景**：[MCP](/llm/knowledge-cards/mcp/) 的 tool primitive 視角下、[agent-as-tool](/llm/knowledge-cards/agent-as-tool/) 可以包成 MCP server 暴露、client agent 把它當 tool 用。跨組織 agent 互通常走這個模式。注意 MCP 還有 resources / prompts 另外兩類 primitive、不是所有 MCP server 都是 agent-as-tool。
 - **跟 hierarchical 的關係**：agent-as-tool 是 hierarchical 的一個實作策略——orchestrator 把 specialist agent 當 tool。差異在於：hierarchical 可能是同進程內的緊耦合、agent-as-tool 走標準協議、跨進程 / 跨組織 / 可替換。
 - **失敗模式**：
   - **協議的 schema 太薄**：agent 跟 agent 之間的 input/output 用 string 傳、丟結構資訊、下游難解析。

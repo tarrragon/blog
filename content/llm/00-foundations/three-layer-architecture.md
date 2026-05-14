@@ -6,7 +6,7 @@ tags: ["llm", "foundations", "architecture"]
 weight: 2
 ---
 
-本地 LLM 生態的核心心智模型是**三層架構**：介面層（CLI / UI / Plugin）→ 伺服器層（推論引擎與 API）→ 模型本身（權重檔）。三層之間有明確邊界，每層可以獨立替換；理解這個分層後，看到任何新工具都能立刻判斷它在解哪一層的問題。
+本地 LLM 生態的核心心智模型是**[三層架構](/llm/knowledge-cards/three-layer-architecture/)**：介面層（CLI / UI / Plugin）→ 伺服器層（推論引擎與 API）→ 模型本身（權重檔）。三層之間有明確邊界，每層可以獨立替換；理解這個分層後，看到任何新工具都能立刻判斷它在解哪一層的問題。
 
 對應到你已經熟悉的雲端世界：ChatGPT 網頁是介面層，OpenAI 的後端服務是伺服器層，GPT-5 模型是模型層。Cursor 是另一個介面層，連到的也是同一批雲端伺服器。介面跟伺服器各自獨立演化，這就是為什麼換介面不用換模型、換模型不用換介面。
 
@@ -53,7 +53,7 @@ weight: 2
 - **[Ollama](/llm/01-local-llm-services/ollama/)**：最主流的本地推論伺服器、預設聽 [`localhost:11434`](/llm/knowledge-cards/port-and-localhost/)、提供 OpenAI 相容 API 與自己的原生 API。內建 model registry、`ollama pull gemma4:31b` 會自動下載權重檔。
 - **[LM Studio](/llm/01-local-llm-services/lm-studio/)**：GUI 工具、內建模型瀏覽器與本地伺服器。可以在 UI 上開啟 server、預設聽 `localhost:1234`。適合喜歡可視化操作、不熟悉終端機的使用者。
 - **[llama.cpp `server`](/llm/01-local-llm-services/llama-cpp/)**：底層推論引擎附帶的 HTTP server、需要手動編譯與配置。Ollama 內部其實是用 llama.cpp 當推論引擎。
-- **oMLX**：建在 MLX 之上的特化伺服器、主打 paged SSD KV cache、針對 coding agent 長 context 場景的首字延遲優化。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
+- **[oMLX](/llm/knowledge-cards/omlx/)**：建在 MLX 之上的特化伺服器、主打 paged SSD KV cache、針對 coding agent 長 context 場景的首字延遲優化。詳見 [0.4 MLX / MTP / oMLX](/llm/00-foundations/mlx-mtp-omlx/)。
 
 伺服器層的選擇影響：
 

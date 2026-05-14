@@ -8,7 +8,7 @@ weight: 8
 
 [4.21 LLM-as-judge](/llm/04-applications/llm-as-judge/) 寫的是原理。本篇用 Ollama / LM Studio 在本地跑一個最小可行的 judge harness、對自己工作流的真實案例做 systematic eval。隱私敏感場景特別合用 — eval 資料（user query、agent output、可能含 PII）不需要送雲端。
 
-本篇 framing 是「**真的能跑、不只跑 demo**」、所以包含：硬體預算估算、judge model 選型、bias 緩解、calibration 流程、跟 production trace 串接的延伸。
+本篇 framing 是「**真的能跑、不只跑 demo**」、所以包含：硬體預算估算、judge model 選型、bias 緩解、calibration 流程、跟 production trace 串接的延伸；術語對應 [LLM-as-Judge](/llm/knowledge-cards/llm-as-judge/) 與 [LLM Tracing](/llm/knowledge-cards/llm-tracing/)。
 
 > **驗證日期**：2026-05-12
 > **環境**：M4 Max 64GB / 或 24GB+ VRAM PC + Ollama

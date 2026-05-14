@@ -6,7 +6,7 @@ tags: ["llm", "applications", "workflow", "orchestration"]
 weight: 7
 ---
 
-LLM 應用很少是單一 call、多半是多次 LLM call 的組合。Multi-call 組合的模式雖然各 framework（LangGraph、LlamaIndex Workflow、各家 DAG runner）包裝不同、本質上可歸納成幾種基本模式：pipeline、router、parallel、reflection。理解這幾個模式、看到任何 LLM application 都能拆解成基本元件、判斷複雜度合不合理、識別常見反模式。
+LLM 應用很少是單一 call、多半是多次 LLM call 的組合。Multi-call 組合的模式雖然各 framework（LangGraph、LlamaIndex Workflow、各家 DAG runner）包裝不同、本質上可歸納成幾種基本模式：pipeline、router、parallel、[reflection](/llm/knowledge-cards/reflection/)。理解這幾個模式、看到任何 LLM application 都能拆解成基本元件、判斷複雜度合不合理、識別常見反模式。
 
 本章寫的是這四種模式的本質、它們的失敗模式、彼此組合的方式、何時退化成 single call 更好。具體 framework 的 DAG syntax / workflow API 不在本章——這些跨 framework 差異大、半年一變、原理層級更穩。
 

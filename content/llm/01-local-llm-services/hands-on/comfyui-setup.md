@@ -15,14 +15,14 @@ weight: 1
 
 ## 前置設定
 
-| 項目         | 檢查指令                                            | 預期                                             |
-| ------------ | --------------------------------------------------- | ------------------------------------------------ |
-| Git          | `which git`                                         | `/usr/bin/git` 或 brew 版                        |
-| Python 3.10+ | `python3 --version`                                 | 3.10 ~ 3.14 都可、本 demo 用 3.14                |
-| 磁碟空間     | `df -h ~`                                           | 至少 15 GB（runtime 3 GB + SDXL 6.5 GB + cache） |
-| 統一記憶體   | `system_profiler SPHardwareDataType \| grep Memory` | 至少 16 GB、推薦 32 GB+                          |
+| 項目                                               | 檢查指令                                            | 預期                                             |
+| -------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------ |
+| Git                                                | `which git`                                         | `/usr/bin/git` 或 brew 版                        |
+| Python 3.10+                                       | `python3 --version`                                 | 3.10 ~ 3.14 都可、本 demo 用 3.14                |
+| 磁碟空間                                           | `df -h ~`                                           | 至少 15 GB（runtime 3 GB + SDXL 6.5 GB + cache） |
+| [統一記憶體](/llm/knowledge-cards/unified-memory/) | `system_profiler SPHardwareDataType \| grep Memory` | 至少 16 GB、推薦 32 GB+                          |
 
-ComfyUI 在 Apple Silicon 跑 Diffusion 用 MPS（Metal Performance Shaders）backend、不需要 NVIDIA CUDA。但跑 SDXL 至少要 12 GB 統一記憶體留給 model + activation、16 GB Mac 跟其他 app 一起會吃緊。
+ComfyUI 在 Apple Silicon 跑 Diffusion 用 [MPS（Metal Performance Shaders）backend](/llm/knowledge-cards/gpu-compute-backend/)、不需要 NVIDIA CUDA。但跑 SDXL 至少要 12 GB 統一記憶體留給 model + activation、16 GB Mac 跟其他 app 一起會吃緊。
 
 ## Clone ComfyUI
 

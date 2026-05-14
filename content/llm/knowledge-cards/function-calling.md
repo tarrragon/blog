@@ -10,7 +10,7 @@ Function Calling 的核心概念是「模型在訓練階段學到的呼叫工具
 
 ## 概念位置
 
-Function calling 是**模型能力**層、跟 structured output（**sampling 約束**層）、[MCP](/llm/knowledge-cards/mcp/)（**server 協議**層）正交。三者解的問題層級不同、可獨立或組合使用。模型訓練支撐 vs sampling 強制的差別決定行為穩定性：function calling 訓練好的模型「自然」輸出合法呼叫、不需要強約束；訓練不足靠 structured output 兜底。
+Function calling 是**模型能力**層、跟 [structured output](/llm/knowledge-cards/structured-output/)（**[sampling 約束](/llm/knowledge-cards/sampling-constraint/)**層）、[MCP](/llm/knowledge-cards/mcp/)（**server 協議**層）正交。三者解的問題層級不同、可獨立或組合使用。模型訓練支撐 vs sampling 強制的差別決定行為穩定性：function calling 訓練好的模型「自然」輸出合法呼叫、不需要強約束；訓練不足靠 structured output 兜底。
 
 ## 可觀察訊號與例子
 
@@ -18,4 +18,4 @@ Function calling 是**模型能力**層、跟 structured output（**sampling 約
 
 ## 設計責任
 
-選擇 function calling 還是 free-form + structured output、依模型規模跟跨 model 可移植需求決定：主流大模型走 function calling 開箱即用、跨 model / 較弱模型走 free-form + grammar 約束較穩。實務常組合：function calling 「正常情況」、structured output 兜底保證合法、retry + fallback 處理失敗。詳細展開見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/) 與 [4.6 應用層協議](/llm/04-applications/application-protocols/)。
+選擇 function calling 還是 free-form + structured output、依模型規模跟跨 model 可移植需求決定：主流大模型走 function calling 開箱即用、跨 model / 較弱模型走 free-form + [grammar](/llm/knowledge-cards/grammar/) 約束較穩。實務常組合：function calling 「正常情況」、structured output 兜底保證合法、retry + fallback 處理失敗。詳細展開見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/) 與 [4.6 應用層協議](/llm/04-applications/application-protocols/)。

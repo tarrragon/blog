@@ -16,7 +16,7 @@ llama.cpp 是 PC 場景跑本地 LLM 的主流 [推論伺服器](/llm/knowledge-
 2. 看懂 PC 場景常用旗標的分組與互相關係。
 3. 用 `llama-server` 啟動 OpenAI 相容 server、接到 VS Code Continue.dev。
 4. 用 `llama-bench` 校準 prefill 跟 generation throughput。
-5. 認識多卡 tensor split 的入門設定。
+5. 認識多卡 [tensor split](/llm/knowledge-cards/llama-cpp-tensor-split/) 的入門設定。
 6. 知道 ROCm（AMD）跟 Vulkan backend 的相對成熟度。
 
 ## 取得 llama.cpp build

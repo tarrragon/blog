@@ -6,7 +6,7 @@ tags: ["llm", "applications", "mcp", "function-calling", "structured-output"]
 weight: 6
 ---
 
-[Function calling](/llm/knowledge-cards/function-calling/)、structured output、[MCP](/llm/knowledge-cards/mcp/) 是 LLM 應用落地時最常被混為一談的三個術語。三者解的問題層級完全不同：function calling 是**模型能力**（訓練階段建立）、structured output 是**sampling 約束**（推論階段控制）、MCP 是**server 協議**（架構層標準化）。把三者放回正確層級、應用設計就會變清楚；混為一談會看到「我啟用了 function calling 為什麼還需要 structured output」「MCP 跟 function calling 衝突嗎」這類根本誤解。
+[Function calling](/llm/knowledge-cards/function-calling/)、[structured output](/llm/knowledge-cards/structured-output/)、[MCP](/llm/knowledge-cards/mcp/) 是 LLM 應用落地時最常被混為一談的三個術語。三者解的問題層級完全不同：function calling 是**模型能力**（訓練階段建立）、structured output 是**[sampling 約束](/llm/knowledge-cards/sampling-constraint/)**（推論階段控制）、MCP 是**server 協議**（架構層標準化）。把三者放回正確層級、應用設計就會變清楚；混為一談會看到「我啟用了 function calling 為什麼還需要 structured output」「MCP 跟 function calling 衝突嗎」這類根本誤解。
 
 本章把三者的層級差異拆開、解釋為什麼會出現 MCP、跟它們在實際應用中怎麼組合。具體 spec 細節（OpenAI function calling JSON 格式、Anthropic tools API、MCP server 實作）不在本章——這些半年一變、本章寫的是「換 spec 之後仍成立」的概念結構。
 
@@ -53,16 +53,16 @@ Function calling 是模型在訓練階段建立的能力：[SFT 階段](/llm/03-
 - Llama 3 / Gemma 4 / Qwen3 開源旗艦模型 SFT 階段也加 function calling、但範例量不一、表現有落差。
 - 小型開源模型（< 14B）function calling 訓練嚴重不足；tool schema 複雜、多工具選擇、巢狀參數時失敗率高、單一工具 + 平坦 schema 仍可用。
 
-理解這點的價值：看到「這個模型支援 function calling」的宣稱、要追問「訓練範例 coverage 多廣」、不是 binary 的支援 / 不支援、是 spectrum 的訓練深度。
+理解這點的價值：看到「這個模型支援 function calling」的宣稱、要追問「[訓練範例 coverage](/llm/knowledge-cards/training-example-coverage/) 多廣」、不是 binary 的支援 / 不支援、是 [spectrum](/llm/knowledge-cards/capability-spectrum/) 的訓練深度。
 
 ## Structured Output 是 Sampling 約束
 
-Structured output 是推論階段的技巧、跟模型訓練無關：在 [sampling](/llm/03-theoretical-foundations/sampling-and-decoding/)（從機率分佈挑下一個 token 的步驟）時對每個 token 做 grammar / schema 約束、不合法 token 的機率（logit、token 機率的對數）被歸零、把不合法輸出的可能性壓到不會被 sample。
+[Structured output](/llm/knowledge-cards/structured-output/) 是推論階段的技巧、跟模型訓練無關：在 [sampling](/llm/03-theoretical-foundations/sampling-and-decoding/)（從機率分佈挑下一個 token 的步驟）時對每個 token 做 [grammar](/llm/knowledge-cards/grammar/) / schema 約束、不合法 token 的機率（logit、token 機率的對數）被歸零、把不合法輸出的可能性壓到不會被 sample。
 
 主要實作機制（適用 / 限制條件附在每項下）：
 
 - **JSON mode**：每步 sampling 過濾、只允許「保持 JSON 仍合法」的 token。適用：絕大多數 OpenAI 相容 API 都有支援；限制：只保 JSON 合法、不保 schema 對位。
-- **Grammar-constrained sampling**：用 grammar（描述合法語法的形式化規則、實作上常用 BNF 或 lark grammar）描述完整輸出形狀、推論時逐 token 過濾。適用：需要嚴格自訂格式（DSL、特定 query language）；限制：要伺服器層支援（llama.cpp、vLLM 有、有些雲端 API 沒）。
+- **Grammar-constrained sampling**：用 [grammar](/llm/knowledge-cards/grammar/)（描述合法語法的形式化規則、實作上常用 [BNF](/llm/knowledge-cards/bnf/) 或 [Lark grammar](/llm/knowledge-cards/lark-grammar/)）描述完整輸出形狀、推論時逐 token 過濾。適用：需要嚴格自訂格式（[DSL](/llm/knowledge-cards/dsl/)、特定 query language）；限制：要伺服器層支援（llama.cpp、vLLM 有、有些雲端 API 沒）。
 - **Schema-guided**：依 JSON Schema 動態決定每步允許哪些 token、強制 enum / type / required 等約束。適用：複雜結構化資料；限制：實作複雜度高、跨伺服器一致性差。
 - **Logit bias**：對特定 token 加 bias、間接引導 sampling、最弱但最靈活的方式。適用：簡單的 token 黑名單 / 白名單；限制：無法保證結構合法。
 

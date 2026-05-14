@@ -254,7 +254,7 @@ messages = [
 
 **為什麼這樣設計**：
 
-- **為什麼 system prompt 約束四件事**（角色、忠於 context、資料不足時明說、引用來源）：
+- **為什麼 [system prompt](/llm/knowledge-cards/system-prompt/) 約束四件事**（角色、忠於 context、資料不足時明說、引用來源）：
     - **角色**：「技術文件問答助手」框定模型行為、減少 off-topic 回應。
     - **忠於 context**：對抗 RAG 最常見的失敗模式——LLM 看到 context 但用自己訓練的 knowledge 補完、結果跟 corpus 不一致。明確要求 follow context 能降低（雖然不能完全消除、見實測 1）。
     - **資料不足時明說**：避免 LLM「硬要回答」造成 hallucination。對 weak model 這條 follow 度差、但對 large model 有效。

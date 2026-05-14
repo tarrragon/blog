@@ -6,7 +6,7 @@ tags: ["llm", "security", "supply-chain", "gguf", "model-trust"]
 weight: 1
 ---
 
-模型權重是本地 LLM 的最上游、信任邊界從這裡開始。本章把「該不該裝這個模型」「裝下來的檔案有沒有被動過」「ollama pull / hf download 拉到的是不是作者發布的版本」這類問題、整理成可操作的判讀。判讀的主要資訊來源是 [model card](/llm/knowledge-cards/model-card/)；通用 artifact 信任機制見 backend [artifact-provenance](/backend/knowledge-cards/artifact-provenance/) 卡片。本章 framing 是個人 dev 視角；production 部署的模型供應鏈見 [backend/07 LLM Deployment 供應鏈](/backend/07-security-data-protection/llm-deployment-supply-chain/)。
+[模型供應鏈信任](/llm/knowledge-cards/model-supply-chain-trust/) 從本地 LLM 的最上游開始：模型權重本身就是第一個信任邊界。本章把「該不該裝這個模型」「裝下來的檔案有沒有被動過」「ollama pull / hf download 拉到的是不是作者發布的版本」這類問題、整理成可操作的判讀。判讀的主要資訊來源是 [model card](/llm/knowledge-cards/model-card/)；通用 artifact 信任機制見 backend [artifact-provenance](/backend/knowledge-cards/artifact-provenance/) 卡片。本章 framing 是個人 dev 視角；production 部署的模型供應鏈見 [backend/07 LLM Deployment 供應鏈](/backend/07-security-data-protection/llm-deployment-supply-chain/)。
 
 讀完本章後、你應該能對自己用的模型回答：來源是不是作者本人 / 官方鏡像、檔案完整性怎麼驗、量化版本是不是社群常用的、第三方再上傳的版本該不該用。
 
@@ -53,7 +53,7 @@ Ollama registry / LM Studio 內建瀏覽器
 
 「中等」跟「較高」的差別主要在「企業簽章」這個維度——Hugging Face verified organization 對應「該組織確實是 Meta / Google / Qwen 等主體」、但不對「該組織內部 release process 是否安全」做擔保。即使是官方發布、仍是「人類團隊發布的權重」、不是密碼學意義的零信任。
 
-## GGUF 檔案完整性的基本檢查
+## [GGUF](/llm/knowledge-cards/gguf/) 檔案完整性的基本檢查
 
 下載完 GGUF 檔案後、可以做幾個輕量檢查確認檔案完整性：
 
@@ -114,7 +114,7 @@ ls -la Qwen3-30B-A3B-Q4_K_M.gguf
 2. **下載後立刻記錄 hash**：作為日後比對基準；若日後同一 model name 但 hash 變了、值得查 history。
 3. **大型 codebase 任務前先用簡單 prompt 試模型**：例如「`fn main() { println!("hi"); }`」這類；確認模型行為基本合理、再用於真實任務。
 
-## 第三方 plugin / MCP server 的供應鏈
+## 第三方 plugin / [MCP server](/llm/knowledge-cards/mcp/) 的供應鏈
 
 模型本身的供應鏈之外、Continue.dev / MCP server / Ollama plugin 等也構成供應鏈、且風險形態不同：
 

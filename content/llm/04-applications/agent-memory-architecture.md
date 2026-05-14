@@ -149,7 +149,7 @@ Session 啟動：
 
 實務 production 多採 hybrid。
 
-## 跟 RAG 的邊界
+## 跟 [RAG](/llm/knowledge-cards/rag/) 的邊界
 
 Agent memory 跟 RAG 容易混淆、實際上是不同概念：
 

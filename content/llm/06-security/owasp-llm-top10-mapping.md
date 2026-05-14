@@ -154,7 +154,7 @@ OWASP（Open Worldwide Application Security Project）的 LLM 應用安全清單
 **模組六對應**：**部分**
 
 - **覆蓋**：[4.16 靜態 RAG 資安](/llm/04-applications/static-and-serverless-rag-deployment/) 的「rate limit / abuse」段、靜態前端被 scrape 後燒 LLM quota 的情境
-- **補充**：[4.18 prompt caching](/llm/04-applications/prompt-caching-engineering/)（cost 控制）、[4.4 agent](/llm/04-applications/agent-architecture/) 的 termination（max steps / cost cap）、[4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 budget management
+- **補充**：[4.18 prompt caching](/llm/04-applications/prompt-caching-engineering/)（[Prompt Cache](/llm/knowledge-cards/prompt-cache/)、cost 控制）、[4.4 agent](/llm/04-applications/agent-architecture/) 的 termination（max steps / cost cap）、[4.17 coding agent harness](/llm/04-applications/coding-agent-harness/) 的 budget management
 - **不在 M6 範圍**：production rate limiting / DDoS 防護屬 [backend/07 entrypoint protection](/backend/07-security-data-protection/entrypoint-and-server-protection/)
 
 **個人 dev 場景的最低 control**：agent 設 max_steps / max_cost、API key 不放前端 JS、用 edge function 加 rate limit

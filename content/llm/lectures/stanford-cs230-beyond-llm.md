@@ -65,7 +65,7 @@ Analogy to search: when you search, you still find sources. There's detailed tra
 Two axes when improving LLM-based products:
 
 1. **Foundation model axis** — move from GPT-3.5 Turbo → GPT-4 → GPT-4o → GPT-5. Each step (in theory) improves base performance.
-2. **Engineering axis** — keep the same base model, but engineer how you leverage it: better prompts, RAG, agentic workflow, multi-agent system.
+2. **Engineering axis** — keep the same base model, but engineer how you leverage it: better prompts, [RAG](/llm/knowledge-cards/rag/), agentic workflow, multi-agent system.
 
 This lecture is about the vertical axis: which LLM are you using, and how do you maximize its performance?
 
@@ -106,17 +106,17 @@ Common techniques to make it even better:
 - **Role prompting**: "Act as a renewable energy expert giving a conference at Davos"
 - **Praise**: "You are the best in the world at this"
 - **Reflection / self-critique**: ask the model to critique its own output and revise
-- **Chain of thought**: break the task into explicit steps, "think step by step, do not skip any step." Step 1 identify the three most important findings; Step 2 explain impact; Step 3 write the five-bullet summary.
+- **[Chain of thought](/llm/knowledge-cards/chain-of-thought/)**: break the task into explicit steps, "think step by step, do not skip any step." Step 1 identify the three most important findings; Step 2 explain impact; Step 3 write the five-bullet summary.
 
-Andrew Ng recommends looking at other people's prompts. Repos like "awesome prompt template" on GitHub have many examples engineers have built. Many start with "Act as a Linux terminal", "Act as an English translator", "Act as a position interviewer", etc.
+Andrew Ng recommends looking at other people's prompts. Repos like "awesome [prompt template](/llm/knowledge-cards/scaffold-vs-harness/)" on GitHub have many examples engineers have built. Many start with "Act as a Linux terminal", "Act as an English translator", "Act as a position interviewer", etc.
 
 ### Prompt templates
 
 The advantage of a template is you can put it in your code and scale across many user requests. Example from Workera: the HR system has "Jane is a Product Manager Level 3, US, preferred language English." That metadata gets inserted into a prompt template that personalizes for Jane. Same template, different metadata for Joe (preferred language Spanish).
 
-Foundation models likely use system prompts you don't see — e.g. ChatGPT may inject "Act like a helpful assistant" plus user memories from a database before your prompt. That doesn't stop you from adding your own template on top.
+Foundation models likely use [system prompts](/llm/knowledge-cards/system-prompt/) you don't see — e.g. ChatGPT may inject "Act like a helpful assistant" plus user memories from a database before your prompt. That doesn't stop you from adding your own template on top.
 
-### Zero-shot vs few-shot prompting
+### Zero-shot vs [few-shot prompting](/llm/knowledge-cards/few-shot-prompting/)
 
 Zero-shot:
 
@@ -172,7 +172,7 @@ To scale, use platforms (e.g. **Promptfoo**) that let you:
 - Run the same prompt across multiple LLMs side by side in a table
 - Define **LLM judges**
 
-Flavors of LLM judges:
+Flavors of [LLM judges](/llm/knowledge-cards/llm-as-judge/):
 
 - **Pairwise comparison**: "Which summary is better?"
 - **Single-answer grading**: "Grade this summary 1–5"
@@ -260,7 +260,7 @@ This is just two of many RAG variants — research from 2020–2025 has many bra
 
 ## 6. Agentic AI workflows
 
-Andrew Ng coined "agentic AI workflows" because everyone uses "agent" to mean very different things — sometimes a single prompt, sometimes a complex multi-agent system. Calling everything an "agent" doesn't do it justice. Better term: **agentic workflow** — a multi-step process to complete a task, built from prompts, tools, additional resources, and API calls. This also avoids confusion with the RL definition of "agent" (interacts with environment, state transitions, reward, observation).
+Andrew Ng coined "agentic AI workflows" because everyone uses "agent" to mean very different things — sometimes a single prompt, sometimes a complex multi-agent system. Calling everything an "agent" doesn't do it justice. Better term: **[agentic workflow](/llm/knowledge-cards/agent/)** — a multi-step process to complete a task, built from prompts, tools, additional resources, and API calls. This also avoids confusion with the RL definition of "agent" (interacts with environment, state transitions, reward, observation).
 
 ### One-shot vs agentic example
 
@@ -295,7 +295,7 @@ Example from Workera:
 - **Deterministic item types**: multiple choice, multi-select, drag-and-drop, ordering, matching — one correct answer.
 - **Fuzzy item types**: voice questions, voice + coding role-plays — the scoring algorithm can make mistakes, and mistakes are costly.
 
-Mitigation: a **human in the loop** — e.g. the appeal feature at the end of an assessment that lets users challenge the agent, bringing a human in to fix and align it.
+Mitigation: a **[human in the loop](/llm/knowledge-cards/human-in-the-loop/)** — e.g. the appeal feature at the end of an assessment that lets users challenge the agent, bringing a human in to fix and align it.
 
 Advice for building a company: get as much done deterministically as possible. Then for the fuzzy parts (back-and-forth interaction), design guardrails up front.
 
@@ -341,7 +341,7 @@ From least to most autonomous:
 
 With **APIs**, you teach the LLM to ping a specific API: give it documentation, define how to call it, what it returns. You do this one-off per API. Doesn't scale well.
 
-With **MCP** (Anthropic-coined), there's a system in the middle. Agents communicate with an MCP server:
+With **[MCP](/llm/knowledge-cards/mcp/)** (Anthropic-coined), there's a system in the middle. Agents communicate with an MCP server:
 
 > "What do you need to give me flight info?"
 > "I need origin, destination, and what you're looking for."

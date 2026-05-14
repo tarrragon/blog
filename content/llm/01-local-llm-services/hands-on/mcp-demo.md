@@ -37,7 +37,7 @@ MCP 不管「模型怎麼呼叫工具」、它管「工具怎麼被暴露給 app
 
 ## MCP 協議的最小子集
 
-MCP server 要 handle 的核心 method：
+[MCP server](/llm/knowledge-cards/mcp/) 要 handle 的核心 method：
 
 | Method                      | 角色                                                      |
 | --------------------------- | --------------------------------------------------------- |

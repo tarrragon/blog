@@ -17,7 +17,7 @@ Embedding 是 LLM 把離散 [token](/llm/knowledge-cards/token/) 轉成連續向
 1. 解釋 embedding layer 在 LLM 中的位置。
 2. 看到「embedding dimension = 4096」時、知道指什麼。
 3. 解釋 RAG / semantic search 為什麼用 embedding similarity。
-4. 區分 word2vec、句子 embedding、contextual embedding 的差別。
+4. 區分 [word2vec](/llm/knowledge-cards/word2vec/)、句子 embedding、contextual embedding 的差別。
 
 ## [Embedding Layer](/llm/knowledge-cards/embedding-layer/)：從 token ID 到向量
 
@@ -145,7 +145,7 @@ Embedding similarity 在多數 retrieval / semantic search 場景能用、但有
 
 ## 位置編碼：把順序資訊加進 embedding
 
-純 embedding layer 沒有「順序資訊」、`[cat, dog]` 跟 `[dog, cat]` 的 embedding 序列只是 order 不同的 set。Transformer 用 [positional encoding](/llm/03-theoretical-foundations/transformer-architecture/) 把位置資訊加進去。
+純 embedding layer 沒有「順序資訊」、`[cat, dog]` 跟 `[dog, cat]` 的 embedding 序列只是 order 不同的 set。Transformer 用 [positional encoding](/llm/knowledge-cards/positional-encoding/) 把位置資訊加進去。
 
 主流位置編碼方法：
 

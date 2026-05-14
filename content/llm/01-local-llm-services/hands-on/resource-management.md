@@ -6,7 +6,7 @@ tags: ["llm", "hands-on", "resource", "lifecycle", "ollama", "comfyui"]
 weight: 8
 ---
 
-跑本地 LLM 的核心 invariant 跟雲端不一樣：**Mac 是 shared resource、不是 dedicated GPU**。雲端 inference server 跑進 dedicated container、結束 instance 自然回收所有資源；本地[推論伺服器](/llm/knowledge-cards/inference-server/)跑在你日常用的 Mac、忘記管理會 silently 吃光 RAM、磁碟、port、最後讓系統變慢甚至 swap。
+跑本地 LLM 的核心 invariant 跟雲端不一樣：**Mac 是 shared resource、不是 dedicated GPU**。雲端 inference server 跑進 dedicated container、結束 instance 自然回收所有資源；本地[推論伺服器](/llm/knowledge-cards/inference-server/)跑在你日常用的 Mac、跟 [統一記憶體](/llm/knowledge-cards/unified-memory/) 共享同一塊容量，忘記管理會 silently 吃光 RAM、磁碟、port、最後讓系統變慢甚至 swap。
 
 本篇紀錄三個 dimension（RAM / 磁碟 / port）的觀察工具跟釋放姿勢、對比 Ollama 跟 ComfyUI 兩種典型 lifecycle、加上實測釋放數字。對應 [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)「每個 hop 都要 audit」這條思維——資源管理也是 hop 級的 audit、不是「裝完就忘」。
 

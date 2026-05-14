@@ -180,7 +180,7 @@ LoRA 何時不適用 / 必須走 full fine-tune：
 
 ### QLoRA
 
-QLoRA = Quantized LoRA、把 base model 量化到 4-bit、再做 LoRA。記憶體進一步降低、犧牲少量品質。
+[QLoRA](/llm/knowledge-cards/qlora/) = Quantized LoRA、把 base model 量化到 4-bit、再做 LoRA。記憶體進一步降低、犧牲少量品質。
 
 ### 為什麼 fine-tuning 可能讓模型變差
 

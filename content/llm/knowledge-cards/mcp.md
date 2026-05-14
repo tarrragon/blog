@@ -10,7 +10,7 @@ MCP（Model Context Protocol、2024 年由 Anthropic 提出）的核心概念是
 
 ## 概念位置
 
-MCP 在**架構協議**層、跟 [function calling](/llm/knowledge-cards/function-calling/)（模型能力層）、structured output（sampling 約束層）正交。它跟模型怎麼呼叫工具無關、只管「工具怎麼被暴露給 application」。複用 [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/) 的標準化模式：定義最小可用標準、讓生態繞著標準長、所有 player 受益。
+MCP 在**架構協議**層、跟 [function calling](/llm/knowledge-cards/function-calling/)（模型能力層）、[structured output](/llm/knowledge-cards/structured-output/)（[sampling 約束](/llm/knowledge-cards/sampling-constraint/)層）正交。它跟模型怎麼呼叫工具無關、只管「工具怎麼被暴露給 application」。複用 [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/) 的標準化模式：定義最小可用標準、讓生態繞著標準長、所有 player 受益。
 
 ## 可觀察訊號與例子
 

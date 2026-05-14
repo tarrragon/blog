@@ -6,7 +6,7 @@ tags: ["llm", "discrete-gpu", "moe", "cpu-offload", "llama-cpp"]
 weight: 2
 ---
 
-MoE CPU 卸載是 PC 場景相對 Mac 統一記憶體場景多出來的工程選項：把 [Mixture-of-Experts (MoE)](/llm/knowledge-cards/moe/) 模型不活躍的專家層權重留在系統 RAM、活躍時走 PCIe 拉到 GPU。本章不再重複[卡片定義](/llm/knowledge-cards/moe-cpu-offload/)、而是處理「實際要不要用、用多少」的判讀。卸載判讀的關鍵變數是 [active parameter](/llm/knowledge-cards/active-parameter/) 比例。
+MoE CPU 卸載是 PC 場景相對 Mac 統一記憶體場景多出來的工程選項：把 [Mixture-of-Experts (MoE)](/llm/knowledge-cards/moe/) 模型不活躍的專家層權重留在系統 RAM、活躍時走 [PCIe](/llm/knowledge-cards/pcie/) 拉到 GPU。本章不再重複[卡片定義](/llm/knowledge-cards/moe-cpu-offload/)、而是處理「實際要不要用、用多少」的判讀。卸載判讀的關鍵變數是 [active parameter](/llm/knowledge-cards/active-parameter/) 比例。
 
 讀完本章後、你應該能對自己的硬體配置回答：這個模型適不適合用 MoE 卸載、卸幾層是合理起點、卸到讓 prefill 變慢時該怎麼調、跟 KV cache 量化怎麼搭配。
 

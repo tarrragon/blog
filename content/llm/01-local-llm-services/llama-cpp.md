@@ -6,7 +6,7 @@ tags: ["llm", "llama-cpp", "server"]
 weight: 2
 ---
 
-llama.cpp 是本地 LLM 生態的**底層推論引擎**、2023 年由 ggerganov 釋出、後來成為 Ollama、LM Studio 等高層工具的內部 backend。它的核心承諾是「用純 C++ 寫一個高效能的 GGUF 模型推論器、跨平台、CPU/GPU/Apple Metal 都能跑」。
+llama.cpp 是本地 LLM 生態的**底層推論引擎**、2023 年由 ggerganov 釋出、後來成為 Ollama、LM Studio 等高層工具的內部 backend。它的核心承諾是「用純 C++ 寫一個高效能的 [GGUF](/llm/knowledge-cards/gguf/) 模型推論器、跨平台、CPU/GPU/Apple Metal 都能跑」。
 
 對寫 code 場景的多數讀者來說、**Ollama 已涵蓋 llama.cpp 的直接使用情境**。Ollama 已經把它包好、使用者看到的是 model tag 跟 CLI；llama.cpp 自己的編譯、量化、參數設定都被抽象掉。本章的目的是澄清網路上「llama.cpp 才是真本地、Ollama 是壓榨版」這類迷思、並給少數需要直接用 llama.cpp 的場景一條路。
 

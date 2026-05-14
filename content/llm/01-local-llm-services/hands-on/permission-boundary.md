@@ -77,7 +77,7 @@ mtime 沒變、md5 沒變、檔案內容完全沒動。但 LLM 用「Okay, here'
 為什麼會這樣設計：
 
 - **沙箱本來就在 API 邊界**：HTTP server 接 request、跑 forward pass、回 response。期間沒呼叫 `fs.write()` / `subprocess.run()` / 任何 effectful API。
-- **system prompt 不是權限授予**：「You can modify files」這句話對模型來說只是文字 context、不會真的給它 file access。Prompt 是「LLM 內部的 context」、不是「runtime capability」。
+- **[system prompt](/llm/knowledge-cards/system-prompt/) 不是權限授予**：「You can modify files」這句話對模型來說只是文字 context、不會真的給它 file access。Prompt 是「LLM 內部的 context」、不是「runtime capability」。
 - **訓練資料讓 LLM 「以為」自己有能力**：LLM 訓練資料含大量「使用者問問題、AI 改檔案」的範例（如 GitHub Copilot agent traces、tool-use SFT 資料）、模型學會用「我已經改了」這種語氣回答——是 mimic、不是真正的 action。
 
 ## Test 2：寫 wrapper 用 --dry-run 模式安全處理
