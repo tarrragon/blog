@@ -133,13 +133,13 @@ LLM 內部用的是 contextual embedding。輸入端的 embedding layer 是 word
 
 Embedding similarity 在多數 retrieval / semantic search 場景能用、但有幾類已知失效模式、影響 RAG / `@codebase` 的回答品質：
 
-| 失效模式                   | 判讀訊號                                              | 修法                                                                    |
-| -------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------- |
-| Anisotropy（向量擠在窄錐） | 隨機 query 對的 cosine score 平均 > 0.7、相對排序失準 | 換較強 embedding model、做 mean-centering / whitening 後處理            |
-| 否定句被當相似             | 「我能買牛奶」跟「我不能買牛奶」cosine 接近           | 結構性區分 / 補 BM25 lexical retrieval 取交集、或用 reranker 做最終排序 |
-| Lexical mismatch           | query 用同義詞、retrieval 找不到原文                  | 加 hybrid retrieval（embedding + BM25）、或在 query expansion 做改寫    |
-| 長尾稀有詞                 | 專有名詞 / 縮寫 / domain 術語 retrieval 結果飄        | 跑 domain fine-tune embedding、或保留 BM25 作為 backup 排序             |
-| 跨語言混合 token           | 中英混雜文件查不準                                    | 用多語言 embedding（BGE-m3 / multilingual-e5）取代英文 only embedding   |
+| 失效模式                   | 判讀訊號                                              | 修法                                                                                                          |
+| -------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Anisotropy（向量擠在窄錐） | 隨機 query 對的 cosine score 平均 > 0.7、相對排序失準 | 換較強 embedding model、做 mean-centering / whitening 後處理                                                  |
+| 否定句被當相似             | 「我能買牛奶」跟「我不能買牛奶」cosine 接近           | 結構性區分 / 補 BM25 lexical retrieval 取交集、或用 reranker 做最終排序                                       |
+| Lexical mismatch           | query 用同義詞、retrieval 找不到原文                  | 加 hybrid retrieval（embedding + BM25）、或在 [query expansion](/llm/knowledge-cards/query-expansion/) 做改寫 |
+| 長尾稀有詞                 | 專有名詞 / 縮寫 / domain 術語 retrieval 結果飄        | 跑 domain fine-tune embedding、或保留 BM25 作為 backup 排序                                                   |
+| 跨語言混合 token           | 中英混雜文件查不準                                    | 用多語言 embedding（BGE-m3 / multilingual-e5）取代英文 only embedding                                         |
 
 實作層級的修法多半是 hybrid retrieval（embedding + BM25 / TF-IDF 各跑一次、合併分數）或加 reranker 做最終排序、純依賴 cosine similarity 風險高的場景值得納入這層。
 

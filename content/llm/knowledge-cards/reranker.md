@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "rag", "retrieval"]
 ---
 
-Reranker 的核心概念是「**對 [retrieval](/llm/knowledge-cards/rag/) 第一階段拿到的 top-K（如 50）結果、用 cross-encoder 模型重新評分、排出 top-N（如 5）給 LLM**」。是 RAG 第二階段、補 bi-encoder（[embedding model](/llm/knowledge-cards/embedding-model/)）對 query-document 細粒度匹配的不足、品質提升明顯（recall@5 通常 +10-30%）但成本 / latency 增加。
+Reranker 的核心概念是「**對 [retrieval](/llm/knowledge-cards/rag/) 第一階段拿到的 top-K（如 50）結果、用 cross-encoder 模型重新評分、排出 top-N（如 5）給 LLM**」。是 RAG 第二階段、補 bi-encoder（[embedding model](/llm/knowledge-cards/embedding-model/)）對 [query-document gap](/llm/knowledge-cards/query-document-gap/) 的細粒度匹配不足、品質提升明顯（recall@5 通常 +10-30%）但成本 / latency 增加。
 
 ## 概念位置
 

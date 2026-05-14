@@ -179,10 +179,14 @@ weight: -1
 
 ### Retrieval 進階
 
-| 卡片                                                 | 核心問題                                                |
-| ---------------------------------------------------- | ------------------------------------------------------- |
-| [Reranker](/llm/knowledge-cards/reranker/)           | Cross-encoder 對 retrieval top-K 重新排序、RAG 第二階段 |
-| [Hybrid Search](/llm/knowledge-cards/hybrid-search/) | BM25（字面）+ embedding（語意）合併、補單一路線盲點     |
+| 卡片                                                           | 核心問題                                                |
+| -------------------------------------------------------------- | ------------------------------------------------------- |
+| [Retrieval Source](/llm/knowledge-cards/retrieval-source/)     | RAG 從哪個 corpus / index / tool 取回內容、如何追溯來源 |
+| [Retrieval Cost](/llm/knowledge-cards/retrieval-cost/)         | 每次 retrieve 與增強帶來的 latency / token / 維護成本   |
+| [Query-Document Gap](/llm/knowledge-cards/query-document-gap/) | query 與 document 語言形狀落差造成 retrieval miss       |
+| [Retrieval Recall](/llm/knowledge-cards/retrieval-recall/)     | expected chunk 是否出現在 retrieval top-k 結果中        |
+| [Reranker](/llm/knowledge-cards/reranker/)                     | Cross-encoder 對 retrieval top-K 重新排序、RAG 第二階段 |
+| [Hybrid Search](/llm/knowledge-cards/hybrid-search/)           | BM25（字面）+ embedding（語意）合併、補單一路線盲點     |
 
 ### Constrained / Structured Output
 
@@ -244,8 +248,11 @@ weight: -1
 | ------------------------------------------------------------------ | ------------------------------------------------------------- |
 | [RAG](/llm/knowledge-cards/rag/)                                   | 怎麼給 LLM 動態外掛知識                                       |
 | [Query Rewriting](/llm/knowledge-cards/query-rewriting/)           | 檢索前把 query 改寫成更接近文件語言                           |
+| [Query Expansion](/llm/knowledge-cards/query-expansion/)           | 把一個 query 擴成多個語意變體再合併結果                       |
+| [Query Decomposition](/llm/knowledge-cards/query-decomposition/)   | 把複合 query 拆成可獨立檢索的子 query                         |
 | [Multi-Step Retrieval](/llm/knowledge-cards/multi-step-retrieval/) | 多輪 retrieve → 判斷 → 再 retrieve 的控制流                   |
 | [Adaptive Retrieval](/llm/knowledge-cards/adaptive-retrieval/)     | 先判斷是否需要檢索、再決定 retrieve                           |
+| [Context Packing](/llm/knowledge-cards/context-packing/)           | retrieve 後把 chunks 去重、排序、壓縮、標來源再塞進 prompt    |
 | [LLM Agent](/llm/knowledge-cards/agent/)                           | 把控制流交給 LLM 的應用模式                                   |
 | [Agent Loop](/llm/knowledge-cards/agent-loop/)                     | plan → act → observe 的自我循環、injection 放大器             |
 | [Context Drift](/llm/knowledge-cards/context-drift/)               | Agent 長任務中累積 context 偏離原始目標                       |
@@ -259,7 +266,7 @@ weight: -1
 | [Chunking](/llm/knowledge-cards/chunking/)                         | 把長文件切成 retrieval 片段的 resolution vs context loss 取捨 |
 | [Vector Database](/llm/knowledge-cards/vector-database/)           | 高維向量儲存 + ANN 檢索、RAG production 的關鍵元件            |
 | [Multi-agent system](/llm/knowledge-cards/multi-agent-system/)     | 多 agent 協作系統、跟 multi-call 差在控制流跟責任邊界         |
-| [HyDE](/llm/knowledge-cards/hyde/)                                 | 用假設文件 embedding 繞過 query-document phrasing 落差        |
+| [HyDE](/llm/knowledge-cards/hyde/)                                 | 用假設文件 embedding 繞過 query-document gap                  |
 
 ### Prompt 技術
 

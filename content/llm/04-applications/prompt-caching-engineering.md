@@ -118,7 +118,7 @@ RAG 場景把 retrieved chunks 放 prefix、user query 放後面、可以 cache 
 [user query]
 ```
 
-注意：每次 retrieval 不同 chunks 就 cache miss、所以 cache 適合「同個對話多輪、retrieval 結果穩定」、不適合「每 query 都 fresh retrieve」。
+注意：每次 retrieval 不同 chunks 就 cache miss、所以 cache 適合「同個對話多輪、retrieval 結果穩定」、不適合「每 query 都 fresh retrieve」；後者要回到 [retrieval cost](/llm/knowledge-cards/retrieval-cost/) 評估。
 
 ## 場景 3：Long document Q&A
 

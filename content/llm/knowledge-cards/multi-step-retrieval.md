@@ -18,4 +18,4 @@ Multi-step retrieval 的核心概念是「**讓 [RAG](/llm/knowledge-cards/rag/)
 
 ## 設計責任
 
-Multi-step retrieval 只有在問題確實需要多 hop、latency budget 允許、且有停止條件時才划算。沒有 stop condition 時容易無限 retrieve；沒有資訊足夠性判斷時容易多花 cost 卻沒提升。
+Multi-step retrieval 只有在問題確實需要多 hop、latency budget 允許、且有停止條件時才划算。沒有 stop condition 時容易無限 retrieve；沒有資訊足夠性判斷時容易提高 [retrieval cost](/llm/knowledge-cards/retrieval-cost/) 卻沒提升。

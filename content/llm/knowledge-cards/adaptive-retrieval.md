@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "rag", "retrieval"]
 ---
 
-Adaptive retrieval 的核心概念是「**先判斷問題是否需要 [RAG](/llm/knowledge-cards/rag/) 外部檢索，再決定要不要 retrieve**」。它避免每個 query 都塞入外部 chunk，降低成本，也減少無關內容干擾模型。
+Adaptive retrieval 的核心概念是「**先判斷問題是否需要 [RAG](/llm/knowledge-cards/rag/) 外部檢索，再決定要不要 retrieve**」。它避免每個 query 都塞入外部 chunk，降低 [retrieval cost](/llm/knowledge-cards/retrieval-cost/)，也減少無關內容干擾模型。
 
 ## 概念位置
 

@@ -57,16 +57,16 @@ Eval 設計的三個正交軸：
 
 3 個 binary 軸 = 8 象限。每個象限的常見對應工具：
 
-| 象限                                   | 典型問題                                 | 對應工具                                           |
-| -------------------------------------- | ---------------------------------------- | -------------------------------------------------- |
-| Objective + Component + Quantitative   | 這個函數 / tool / RAG 元件對嗎           | Unit test、deterministic check、retrieval recall@k |
-| Objective + Component + Qualitative    | 這個元件失敗 pattern 是什麼              | Error log 分析、trace inspection                   |
-| Objective + End-to-end + Quantitative  | 整套系統的 success rate / latency        | E2E test、success metric、latency p95              |
-| Objective + End-to-end + Qualitative   | 整套系統的 catastrophic 失敗 case 是什麼 | Production incident review、抽樣 trace 讀          |
-| Subjective + Component + Quantitative  | 這個 step 的輸出評分                     | LLM-as-judge pairwise / rubric、human rating       |
-| Subjective + Component + Qualitative   | 這個 step 的 output 哪裡讓人不舒服       | Human review、error analysis with comments         |
-| Subjective + End-to-end + Quantitative | User 整體 NPS / 滿意度評分               | CSAT、thumbs up/down、appeal rate                  |
-| Subjective + End-to-end + Qualitative  | User 想要的是什麼、現在哪裡沒滿足        | User 訪談、開放問卷、social listening              |
+| 象限                                   | 典型問題                                 | 對應工具                                                                                     |
+| -------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Objective + Component + Quantitative   | 這個函數 / tool / RAG 元件對嗎           | Unit test、deterministic check、[retrieval recall@k](/llm/knowledge-cards/retrieval-recall/) |
+| Objective + Component + Qualitative    | 這個元件失敗 pattern 是什麼              | Error log 分析、trace inspection                                                             |
+| Objective + End-to-end + Quantitative  | 整套系統的 success rate / latency        | E2E test、success metric、latency p95                                                        |
+| Objective + End-to-end + Qualitative   | 整套系統的 catastrophic 失敗 case 是什麼 | Production incident review、抽樣 trace 讀                                                    |
+| Subjective + Component + Quantitative  | 這個 step 的輸出評分                     | LLM-as-judge pairwise / rubric、human rating                                                 |
+| Subjective + Component + Qualitative   | 這個 step 的 output 哪裡讓人不舒服       | Human review、error analysis with comments                                                   |
+| Subjective + End-to-end + Quantitative | User 整體 NPS / 滿意度評分               | CSAT、thumbs up/down、appeal rate                                                            |
+| Subjective + End-to-end + Qualitative  | User 想要的是什麼、現在哪裡沒滿足        | User 訪談、開放問卷、social listening                                                        |
 
 不是「八個都要做」、是「先看你的問題在哪個象限、用對應工具」。
 

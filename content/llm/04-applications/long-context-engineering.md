@@ -60,14 +60,14 @@ Recall accuracy vs 答案位置（10K context）：
 
 兩者解的問題重疊但**不完全替代**：
 
-| 維度               | Long context                             | [RAG](/llm/knowledge-cards/rag/)    |
-| ------------------ | ---------------------------------------- | ----------------------------------- |
-| 知識量上限         | Context window（128K-1M token）          | 無上限（向量資料庫可存任意大）      |
-| 知識動態更新       | 每次 query 把 context 全塞進去、可變     | Retrieval 階段可隨時更新            |
-| 知識來源 traceable | 整段塞、無明確「答案來自哪一段」         | 每個 chunk 有 source、可 cite       |
-| Prompt 成本        | 每次 query 都付 full context token 成本  | 只付 retrieved chunks 的 token 成本 |
-| 適合場景           | 知識集中、< context window、需要整體理解 | 知識量大、零散、明確 retrieval key  |
-| 失敗模式           | Lost-in-the-middle、context degradation  | Retrieval miss、chunk 邊界切壞      |
+| 維度               | Long context                             | [RAG](/llm/knowledge-cards/rag/)                                                |
+| ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------- |
+| 知識量上限         | Context window（128K-1M token）          | 無上限（向量資料庫可存任意大）                                                  |
+| 知識動態更新       | 每次 query 把 context 全塞進去、可變     | Retrieval 階段可隨時更新                                                        |
+| 知識來源 traceable | 整段塞、無明確「答案來自哪一段」         | 每個 chunk 有 source、可 cite                                                   |
+| Prompt 成本        | 每次 query 都付 full context token 成本  | 只付 retrieved chunks 的 [retrieval cost](/llm/knowledge-cards/retrieval-cost/) |
+| 適合場景           | 知識集中、< context window、需要整體理解 | 知識量大、零散、明確 retrieval key                                              |
+| 失敗模式           | Lost-in-the-middle、context degradation  | Retrieval miss、chunk 邊界切壞                                                  |
 
 判讀流程：
 

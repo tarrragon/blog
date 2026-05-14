@@ -212,7 +212,7 @@ Hard negative 是 embedding fine-tune 品質的關鍵差距 — 沒做的 fine-t
 
 ```text
 1. Build in-domain test set（held-out、跟 training 完全分開）
-2. 算 hit_rate@K（query 的 expected doc 是否在 top-K retrieval result）
+2. 算 [hit_rate@K](/llm/knowledge-cards/retrieval-recall/)（query 的 expected doc 是否在 top-K retrieval result）
 3. 跟「base model 未 fine-tune」對比：
    - Fine-tune 後 hit_rate@5 提升 ≥ 10 percentage point → 成功
    - 提升 < 5pp → fine-tune 沒效益、不如優化 retrieval pipeline

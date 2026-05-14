@@ -160,7 +160,7 @@ with open("scripts/rag-demo/index.pkl", "wb") as f:
 - **為什麼要 strip frontmatter**：Frontmatter 是 `title`、`date`、`tags` 等 metadata、不是文章正文。embed 進去會稀釋向量語意（讓「date」「2026-05-11」等 keyword 影響相似度計算）。Strip 後 embedding 只 capture 內容語意。
 - **為什麼 records 是 list of dict 而不是 numpy array**：兩個原因。(1) 每個 record 含 source / chunk_index / text / embedding 四種異質欄位、numpy 處理不直接。(2) 463 chunks 規模、純 Python list 跑 cosine 也只是毫秒級、不需要 vectorize。十萬 chunk 以上才考慮 numpy array + batched dot product。
 - **為什麼 pickle 而不是 JSON**：embedding 是 768-float list、JSON 序列化會把每個 float 變成 ASCII 字串（每個 ~20 bytes）、檔案大很多、parse 也慢。Pickle 是 binary format、保留原本資料結構、檔案小、loader 快。代價：pickle 有 Python 版本相依、跨語言不能讀——但本 demo 索引只給自家 query.py / mcp_server.py 用、可接受。
-- **為什麼存 `text` 跟 `embedding`、不只 embedding**：retrieval 要回 chunk 原文給 LLM 看、不能只有 source path（不然每次 query 還要再讀檔）。Pickle 多存原文成本低（~100 byte / chunk）、查詢時方便很多。
+- **為什麼存 `text` 跟 `embedding`、不只 embedding**：retrieval 要回 chunk 原文給 LLM 看、不能只有 source path（不然每次 query 還要再讀檔）。這裡的 corpus 檔案就是 [retrieval source](/llm/knowledge-cards/retrieval-source/)；Pickle 多存原文成本低（~100 byte / chunk）、查詢時方便很多。
 
 ### 跑 ingest
 

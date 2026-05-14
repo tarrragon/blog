@@ -206,7 +206,7 @@ Production trace + eval result
    Hypothesis：哪一層有問題？
    ├── Prompt 層 → 改 prompt → A/B test → 看 eval 收斂
    ├── Tool 層   → 改 tool / schema → 跑 component eval → 收斂
-   ├── RAG 層    → 改 chunking / query rewriting → 跑 retrieval recall → 收斂
+   ├── RAG 層    → 改 chunking / query rewriting → 跑 [retrieval recall](/llm/knowledge-cards/retrieval-recall/) → 收斂
    ├── Policy 層 → 改 deterministic rule → 跑 step 3 component eval → 收斂
    └── Model 層  → 換 model → 跑全 eval set → 收斂
    ↓
