@@ -12,12 +12,12 @@ Frozen baseline 的核心概念是「**把某個特定 prompt + 特定 model 跑
 
 跟其他 eval 概念對照：
 
-| 概念                | 角色                                          |
-| ------------------- | --------------------------------------------- |
-| Eval set            | 測試 input 的集合                             |
-| Frozen baseline     | 固定的「對照組」prompt + model 版本           |
-| Regression set      | Failed case 進來、防止改 prompt 又壞同樣 case |
-| Production trace    | 實際 traffic、抽樣補進 eval set / baseline    |
+| 概念             | 角色                                          |
+| ---------------- | --------------------------------------------- |
+| Eval set         | 測試 input 的集合                             |
+| Frozen baseline  | 固定的「對照組」prompt + model 版本           |
+| Regression set   | Failed case 進來、防止改 prompt 又壞同樣 case |
+| Production trace | 實際 traffic、抽樣補進 eval set / baseline    |
 
 工作流：
 

@@ -195,7 +195,7 @@ find scripts -name __pycache__ -type d -exec rm -rf {} +
 | 「不同 model 在 instruction following 上的差距」 | [Instruction following test](/llm/01-local-llm-services/hands-on/instruction-following-test/)                                                                      |
 | 「跑 demo 占多少 RAM、怎麼釋放」                 | [Resource management](/llm/01-local-llm-services/hands-on/resource-management/) + [RAG/MCP 資源 footprint](/llm/01-local-llm-services/hands-on/rag-mcp-resources/) |
 | 「production 部署該怎麼想」                      | [4.9 Production resource planning](/llm/04-applications/production-resource-planning/)                                                                             |
-| 「什麼該進 git、什麼不該」                       | [4.10 衍生產物管理原理](/llm/04-applications/artifact-management/)                                                                                                  |
+| 「什麼該進 git、什麼不該」                       | [4.10 衍生產物管理原理](/llm/04-applications/artifact-management/)                                                                                                 |
 
 ## 跑不過時
 

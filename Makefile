@@ -8,7 +8,7 @@ MDTOOLS_SRC := $(shell find scripts/mdtools -type f -name '*.go' 2>/dev/null)
 MDTOOLS_MOD := scripts/mdtools/go.mod scripts/mdtools/go.sum
 MDTOOLS_BIN := bin/mdtools
 
-.PHONY: build check fix lint cards install-hooks clean help site test verify-red-green
+.PHONY: build check fix lint cards install-hooks hooks-status clean help site test verify-red-green
 
 help:
 	@echo "Blog mdtools targets:"
@@ -18,7 +18,8 @@ help:
 	@echo "  make fix             Apply fmt --fix to content/**"
 	@echo "  make lint            Run lint on content/**"
 	@echo "  make cards           Run cards on content/**"
-	@echo "  make install-hooks   Point git at .githooks/ for pre-commit"
+	@echo "  make install-hooks   Point git at .githooks/ for pre-commit + pre-push"
+	@echo "  make hooks-status    Show current git hooksPath"
 	@echo "  make site            Build Hugo + Pagefind search index into public/"
 	@echo "  make test            Run Playwright tests (requires make site first)"
 	@echo "  make verify-red-green Verify a test catches the bug it claims to (#69)"
@@ -48,7 +49,12 @@ cards: build
 install-hooks:
 	@git config core.hooksPath .githooks
 	@echo "hooks installed: git config core.hooksPath .githooks"
-	@echo "run 'make build' once to produce bin/mdtools"
+	@echo "pre-commit: staged markdown fmt/lint/cards guard"
+	@echo "pre-push: full make check guard matching CI"
+
+hooks-status:
+	@printf "core.hooksPath="
+	@git config --get core.hooksPath || true
 
 clean:
 	@rm -rf bin/

@@ -187,7 +187,7 @@
 
 `content/**` 所有 markdown 的排版與結構規範，以 `content/posts/markdown-writing-spec.md` 為單一真實來源。本章只保留給 agent 的最小提要：
 
-- 工具鏈：`scripts/mdtools`（Go + goldmark AST）在 pre-commit 與 CI 強制執行。
+- 工具鏈：`scripts/mdtools`（Go + goldmark AST）在 pre-commit、pre-push 與 CI 強制執行。
 - 核心規則摘要：
   - **標題**：正文禁止 H1（front matter `title` 已產生 H1）；siblings_only 重複偵測；標題尾禁標點（MD026）；禁用粗體當標題（MD036）。
   - **URL**：裸 URL 禁止；顯示文字若含 TLD 字樣（`.com` / `.org` / `.gov` / `.net` / `.io` / `.dev` / `.tw`），domain 必須與 href 一致（反釣魚）。
@@ -197,7 +197,7 @@
   - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。
 - 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
 - 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
-- 寫作時遇到 pre-commit 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。
+- 寫作時遇到 pre-commit / pre-push 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。
 - **Recommended warning 基線處理**：`description` / `tags` 是警告層，但不是可新增的技術債。新增內容一律補齊；修改既有 `content/**` 檔案時，若同檔缺 recommended 欄位，應在同次變更補上。
 - **驗證輸出分層**：提交前以「changed-set scoped lint」判斷本次變更品質；full lint 可用來觀察歷史基線，但回報時要把既有 warning 與本次新增問題分開，避免 tags recommended warning 淹沒真正錯誤。
 - **路徑大小寫一致性（強制）**：`content/` 下資料夾、檔名與站內連結 route 一律用小寫（例如 `content/ci` 對應 `/ci/`）。macOS 預設檔案系統不區分大小寫，Linux CI 會區分；若目錄是 `content/CI` 但連結寫 `/ci/`，`mdtools cards` 在 CI 會判定 broken link。

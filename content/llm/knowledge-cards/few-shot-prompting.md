@@ -30,12 +30,12 @@ Few-shot：
 
 Few-shot 跟 fine-tune 對照：
 
-| 維度       | Few-shot in prompt                | Fine-tune                              |
-| ---------- | --------------------------------- | -------------------------------------- |
-| Iteration  | 分鐘級、改 prompt 即可            | 天級、要 retrain                       |
-| 範例容量   | 受 context window 限制（10–50）   | 可以幾千幾萬、整個 dataset 都行        |
-| Cost       | 每次 inference 多付 token         | 一次性訓練 cost、之後 inference 不變   |
-| 模型遷移   | 跨模型即時換、prompt 直接搬       | 綁特定 base model、換模型要 retrain    |
+| 維度      | Few-shot in prompt              | Fine-tune                            |
+| --------- | ------------------------------- | ------------------------------------ |
+| Iteration | 分鐘級、改 prompt 即可          | 天級、要 retrain                     |
+| 範例容量  | 受 context window 限制（10–50） | 可以幾千幾萬、整個 dataset 都行      |
+| Cost      | 每次 inference 多付 token       | 一次性訓練 cost、之後 inference 不變 |
+| 模型遷移  | 跨模型即時換、prompt 直接搬     | 綁特定 base model、換模型要 retrain  |
 
 ## 設計責任
 

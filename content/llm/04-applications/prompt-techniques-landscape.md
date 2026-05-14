@@ -35,11 +35,11 @@ Prompt 知識可以分兩層：**易變層**是具體寫法（特定模型偏好
 
 把 prompt 技術放到三軸座標、看到任何新手法都能定位：
 
-| 軸             | 解決什麼問題                   | 代表技術                                       |
-| -------------- | ------------------------------ | ---------------------------------------------- |
-| Context 提供   | 模型「缺資料 / 缺對齊範例」    | zero-shot、few-shot、retrieval-augmented       |
-| 推理引導       | 模型「直接答錯、需要 think」   | chain-of-thought、decomposition、reflection    |
-| 角色與格式     | 模型「不知該以什麼姿態回應」   | role prompting、persona、output template       |
+| 軸           | 解決什麼問題                 | 代表技術                                    |
+| ------------ | ---------------------------- | ------------------------------------------- |
+| Context 提供 | 模型「缺資料 / 缺對齊範例」  | zero-shot、few-shot、retrieval-augmented    |
+| 推理引導     | 模型「直接答錯、需要 think」 | chain-of-thought、decomposition、reflection |
+| 角色與格式   | 模型「不知該以什麼姿態回應」 | role prompting、persona、output template    |
 
 每個技術可能跨軸（如 few-shot CoT 同時 context + 推理）、但歸到主軸有助判讀「這技術在解哪一類問題」。看到新技術時、先問「它放哪一軸」、再看它跟既有技術的關係。
 
@@ -62,13 +62,13 @@ Prompt 知識可以分兩層：**易變層**是具體寫法（特定模型偏好
 
 Few-shot 跟 fine-tune 是「對齊」這件事的兩個 endpoint。Trade-off：
 
-| 維度       | Few-shot in prompt                | Fine-tune                              |
-| ---------- | --------------------------------- | -------------------------------------- |
-| Iteration  | 分鐘級、改 prompt 即可            | 天級、要 retrain                       |
-| 範例容量   | 受 context window 限制（10–50）   | 可以幾千幾萬、整個 dataset 都行        |
-| Cost       | 每次 inference 多付 token         | 一次性訓練 cost、之後 inference 不變   |
-| 模型遷移   | 跨模型即時換、prompt 直接搬       | 綁特定 base model、換模型要 retrain    |
-| 知識更新   | 改 prompt 即可                    | 要 retrain                             |
+| 維度      | Few-shot in prompt              | Fine-tune                            |
+| --------- | ------------------------------- | ------------------------------------ |
+| Iteration | 分鐘級、改 prompt 即可          | 天級、要 retrain                     |
+| 範例容量  | 受 context window 限制（10–50） | 可以幾千幾萬、整個 dataset 都行      |
+| Cost      | 每次 inference 多付 token       | 一次性訓練 cost、之後 inference 不變 |
+| 模型遷移  | 跨模型即時換、prompt 直接搬     | 綁特定 base model、換模型要 retrain  |
+| 知識更新  | 改 prompt 即可                  | 要 retrain                           |
 
 實務啟示：先 few-shot、等到範例真的多到撐爆 context 又每天都用、再考慮 fine-tune。本指南對 fine-tune 的整體看法見 [3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/)。
 
@@ -134,12 +134,12 @@ Few-shot 跟 fine-tune 是「對齊」這件事的兩個 endpoint。Trade-off：
 
 每個 prompt 技術都可以用這四維評估：
 
-| 維度            | 意義                                       | 典型代價                                    |
-| --------------- | ------------------------------------------ | ------------------------------------------- |
-| Accuracy        | 任務完成品質                               | —                                           |
-| Latency         | 從 request 到 final response 的時間        | Token 累積拉長生成時間                      |
-| Cost            | 每次 inference 的 token 成本               | Token 累積放大成本                          |
-| Debuggability   | 失敗時能不能定位是哪一步出問題             | Single 大 prompt 失敗難排查                 |
+| 維度          | 意義                                | 典型代價                    |
+| ------------- | ----------------------------------- | --------------------------- |
+| Accuracy      | 任務完成品質                        | —                           |
+| Latency       | 從 request 到 final response 的時間 | Token 累積拉長生成時間      |
+| Cost          | 每次 inference 的 token 成本        | Token 累積放大成本          |
+| Debuggability | 失敗時能不能定位是哪一步出問題      | Single 大 prompt 失敗難排查 |
 
 四維是 trade-off、不是「都拉到最高」。Few-shot 提高 accuracy 但加 cost 跟 latency；CoT 提高 accuracy 但顯著拉長 latency；reflection 進一步提高 accuracy 但 cost / latency 翻倍以上。
 
@@ -176,13 +176,13 @@ Stack 有效的必要條件是**兩技術解不同軸的問題、且底層假設
 
 Prompt 技術不是萬能、有些問題該換層解：
 
-| 問題                       | Prompt 層能解到哪                     | 該換的層                                                     |
-| -------------------------- | ------------------------------------- | ------------------------------------------------------------ |
-| 模型不知道某個事實         | few-shot 塞少量、不夠                 | RAG（[4.1](/llm/04-applications/rag-principles/)）           |
-| 模型完全不會某個任務       | few-shot 撐不住、頻繁失敗             | Fine-tune（[3.4](/llm/03-theoretical-foundations/training-pipeline/)） |
-| 任務要多步、每步要不同 context | single prompt 塞不下、邏輯混          | Chaining / workflow（[4.7](/llm/04-applications/workflow-patterns/)） |
-| 任務要外部資料 / API       | prompt 描述不出、需要實際呼叫         | Tool use（[4.3](/llm/04-applications/tool-use-principles/)） |
-| 任務要 LLM 自主推進        | prompt 無法表達「持續決定下一步」     | Agent（[4.4](/llm/04-applications/agent-architecture/)）     |
+| 問題                           | Prompt 層能解到哪                 | 該換的層                                                               |
+| ------------------------------ | --------------------------------- | ---------------------------------------------------------------------- |
+| 模型不知道某個事實             | few-shot 塞少量、不夠             | RAG（[4.1](/llm/04-applications/rag-principles/)）                     |
+| 模型完全不會某個任務           | few-shot 撐不住、頻繁失敗         | Fine-tune（[3.4](/llm/03-theoretical-foundations/training-pipeline/)） |
+| 任務要多步、每步要不同 context | single prompt 塞不下、邏輯混      | Chaining / workflow（[4.7](/llm/04-applications/workflow-patterns/)）  |
+| 任務要外部資料 / API           | prompt 描述不出、需要實際呼叫     | Tool use（[4.3](/llm/04-applications/tool-use-principles/)）           |
+| 任務要 LLM 自主推進            | prompt 無法表達「持續決定下一步」 | Agent（[4.4](/llm/04-applications/agent-architecture/)）               |
 
 判讀訊號：prompt 改了五版、accuracy 還是不到 baseline、就該往這個表的右欄移、不是再改 prompt 第六版。
 

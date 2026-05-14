@@ -54,14 +54,14 @@ User: 「我搬家了、訂單編號 #12345、新地址是 ___」
 
 對每個 step 做典範定位（deterministic / fuzzy）：
 
-| Step                       | 典範             | 為什麼                                              |
-| -------------------------- | ---------------- | --------------------------------------------------- |
-| 1. 解析意圖 + 抽取訊息     | Fuzzy            | 自由文字 input、需要 LLM 理解                       |
-| 2. 查訂單狀態              | Deterministic    | 結構化 query（給 order_id、回 status）              |
-| 3. 查 policy               | Deterministic    | 規則可窮舉、policy as code                          |
-| 4. 執行改地址              | Deterministic    | API call、有 schema 跟錯誤碼                        |
-| 5. 解釋 / 給替代方案       | Fuzzy            | 要寫人話、要 tailored to 情境                       |
-| 6. 草擬 email + 發出       | Fuzzy（草擬）+ Deterministic（發送）| 寫 email 是 fuzzy、發 API call 是 deterministic |
+| Step                   | 典範                                 | 為什麼                                          |
+| ---------------------- | ------------------------------------ | ----------------------------------------------- |
+| 1. 解析意圖 + 抽取訊息 | Fuzzy                                | 自由文字 input、需要 LLM 理解                   |
+| 2. 查訂單狀態          | Deterministic                        | 結構化 query（給 order_id、回 status）          |
+| 3. 查 policy           | Deterministic                        | 規則可窮舉、policy as code                      |
+| 4. 執行改地址          | Deterministic                        | API call、有 schema 跟錯誤碼                    |
+| 5. 解釋 / 給替代方案   | Fuzzy                                | 要寫人話、要 tailored to 情境                   |
+| 6. 草擬 email + 發出   | Fuzzy（草擬）+ Deterministic（發送） | 寫 email 是 fuzzy、發 API call 是 deterministic |
 
 判讀的重點是**邊界各歸各位**：規則跟政策走 code、人話跟意圖解析走 LLM。
 
@@ -77,14 +77,14 @@ User: 「我搬家了、訂單編號 #12345、新地址是 ___」
 
 對每個 step 選對應的工具：
 
-| Step                       | 設計選擇                                                                                                |
-| -------------------------- | ------------------------------------------------------------------------------------------------------- |
-| 1. 解析意圖 + 抽取訊息     | Vanilla LLM call + structured output（output 強制 JSON schema：intent / order_id / new_address）         |
-| 2. 查訂單狀態              | Tool call → 內部 order API                                                                              |
-| 3. 查 policy               | Tool call → policy engine（純 deterministic、不過 LLM）                                                 |
-| 4. 執行改地址              | Tool call → logistics API、寫操作前要 pre-act HITL（高風險 + 不可逆）                                   |
-| 5. 解釋 / 給替代方案       | LLM call + few-shot（從 case 庫 retrieve「類似情境怎麼解釋」、配 RAG）                                   |
-| 6. 草擬 email + 發出       | LLM call 寫 email + structured output 含 subject/body、發送透過 email API                               |
+| Step                   | 設計選擇                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| 1. 解析意圖 + 抽取訊息 | Vanilla LLM call + structured output（output 強制 JSON schema：intent / order_id / new_address） |
+| 2. 查訂單狀態          | Tool call → 內部 order API                                                                       |
+| 3. 查 policy           | Tool call → policy engine（純 deterministic、不過 LLM）                                          |
+| 4. 執行改地址          | Tool call → logistics API、寫操作前要 pre-act HITL（高風險 + 不可逆）                            |
+| 5. 解釋 / 給替代方案   | LLM call + few-shot（從 case 庫 retrieve「類似情境怎麼解釋」、配 RAG）                           |
+| 6. 草擬 email + 發出   | LLM call 寫 email + structured output 含 subject/body、發送透過 email API                        |
 
 兩個容易選錯的 step 展開：
 
@@ -128,15 +128,15 @@ User: 「我搬家了、訂單編號 #12345、新地址是 ___」
 
 每個 step 要記：
 
-| 欄位              | 為什麼                                                       |
-| ----------------- | ------------------------------------------------------------ |
-| Input（完整）     | Debug 時要重現                                               |
-| Output（完整）    | 比對預期、做 regression set                                  |
-| Latency           | 找 bottleneck                                                |
-| Token cost        | 算成本                                                       |
-| Step name + version | 追蹤是哪個版本的 prompt / tool                              |
-| Decision branch   | Step 3 的 router 走哪邊                                       |
-| Error（若有）     | 結構化 error、不是 string                                    |
+| 欄位                | 為什麼                         |
+| ------------------- | ------------------------------ |
+| Input（完整）       | Debug 時要重現                 |
+| Output（完整）      | 比對預期、做 regression set    |
+| Latency             | 找 bottleneck                  |
+| Token cost          | 算成本                         |
+| Step name + version | 追蹤是哪個版本的 prompt / tool |
+| Decision branch     | Step 3 的 router 走哪邊        |
+| Error（若有）       | 結構化 error、不是 string      |
 
 整段 trace 要綁同一個 conversation_id、可以後面 join 起來看完整流程。
 
@@ -217,16 +217,16 @@ Production trace + eval result
 
 判讀「該改哪一層」的反射：
 
-| 失敗訊號                              | 該改的層                                  |
-| ------------------------------------- | ----------------------------------------- |
-| Step 1 抽錯訊息                       | Prompt / structured output schema         |
-| Tool call 參數錯                      | Prompt 內 tool description / few-shot     |
-| Tool 跑掛                             | Tool 實作（不是 LLM 問題）                |
-| RAG retrieve 不到相關案例             | Chunking / embedding / query rewriting    |
-| Policy judgment 錯                    | Deterministic rule（不是 LLM 問題）       |
-| Email tone 不對                       | Prompt（role / few-shot）                 |
-| Email hallucinate 承諾                | Output validator（不只是 prompt）         |
-| 整體 latency 太高                     | 找 trace bottleneck、可能要 cache / 並行  |
+| 失敗訊號                  | 該改的層                                 |
+| ------------------------- | ---------------------------------------- |
+| Step 1 抽錯訊息           | Prompt / structured output schema        |
+| Tool call 參數錯          | Prompt 內 tool description / few-shot    |
+| Tool 跑掛                 | Tool 實作（不是 LLM 問題）               |
+| RAG retrieve 不到相關案例 | Chunking / embedding / query rewriting   |
+| Policy judgment 錯        | Deterministic rule（不是 LLM 問題）      |
+| Email tone 不對           | Prompt（role / few-shot）                |
+| Email hallucinate 承諾    | Output validator（不只是 prompt）        |
+| 整體 latency 太高         | 找 trace bottleneck、可能要 cache / 並行 |
 
 引用原理：
 
@@ -261,15 +261,15 @@ Production trace + eval result
 
 本案例每階段引用的原理章節彙整：
 
-| 階段                                   | 引用章節                                                                                              |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| 1. 觀察人類工作流                      | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                      |
-| 2. 典範定位                            | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                      |
-| 3. 工作流設計（prompt / tool / RAG / HITL）| [4.0](/llm/04-applications/prompt-techniques-landscape/)、[4.1](/llm/04-applications/rag-principles/)、[4.3](/llm/04-applications/tool-use-principles/)、[4.5](/llm/04-applications/human-ai-collaboration/) |
-| 4. 結構決定（multi-call vs agent vs multi-agent）| [4.4](/llm/04-applications/agent-architecture/)、[4.7](/llm/04-applications/workflow-patterns/)、[4.8](/llm/04-applications/multi-agent-topology/) |
-| 5. Trace instrumentation               | [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)                               |
-| 6. Eval 設計                           | [4.13 eval framework](/llm/04-applications/eval-design-framework/)、[4.14](/llm/04-applications/benchmarking-and-evaluation/)、[4.21](/llm/04-applications/llm-as-judge/) |
-| 7. Iteration loop                      | [4.0 prompt 光譜](/llm/04-applications/prompt-techniques-landscape/) systematic vs random error 段     |
+| 階段                                              | 引用章節                                                                                                                                                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1. 觀察人類工作流                                 | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                                                                                                                             |
+| 2. 典範定位                                       | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                                                                                                                             |
+| 3. 工作流設計（prompt / tool / RAG / HITL）       | [4.0](/llm/04-applications/prompt-techniques-landscape/)、[4.1](/llm/04-applications/rag-principles/)、[4.3](/llm/04-applications/tool-use-principles/)、[4.5](/llm/04-applications/human-ai-collaboration/) |
+| 4. 結構決定（multi-call vs agent vs multi-agent） | [4.4](/llm/04-applications/agent-architecture/)、[4.7](/llm/04-applications/workflow-patterns/)、[4.8](/llm/04-applications/multi-agent-topology/)                                                           |
+| 5. Trace instrumentation                          | [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)                                                                                                                                      |
+| 6. Eval 設計                                      | [4.13 eval framework](/llm/04-applications/eval-design-framework/)、[4.14](/llm/04-applications/benchmarking-and-evaluation/)、[4.21](/llm/04-applications/llm-as-judge/)                                    |
+| 7. Iteration loop                                 | [4.0 prompt 光譜](/llm/04-applications/prompt-techniques-landscape/) systematic vs random error 段                                                                                                           |
 
 ## 小結
 

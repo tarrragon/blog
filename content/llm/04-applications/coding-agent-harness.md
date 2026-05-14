@@ -151,7 +151,7 @@ main agent 拿到 summary、繼續推進
 | [4.3 Tool use](/llm/04-applications/tool-use-principles/)               | Tool spec 是 scaffold 的核心、tool dispatch 在 harness         |
 | [4.4 Agent 架構](/llm/04-applications/agent-architecture/)              | Agent loop 是 harness 的內部執行迴圈                           |
 | [4.6 應用層協議](/llm/04-applications/application-protocols/)           | Function calling / MCP 是 tool 跟 subagent 之間的協議          |
-| [4.11 Long context](/llm/04-applications/long-context-engineering/)      | Context budget 是 long context 的工程實務面                    |
+| [4.11 Long context](/llm/04-applications/long-context-engineering/)     | Context budget 是 long context 的工程實務面                    |
 | [4.18 Prompt caching](/llm/04-applications/prompt-caching-engineering/) | 是 scaffold 部分（system + tool schema）的 cost / latency 優化 |
 | [4.19 Agent memory](/llm/04-applications/agent-memory-architecture/)    | History 跟 long-term memory 是 harness 跟 storage 的界面       |
 

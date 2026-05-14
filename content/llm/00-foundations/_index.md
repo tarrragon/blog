@@ -12,16 +12,16 @@ weight: 0
 
 ## 章節列表
 
-| 章節                                                 | 主題                         | 關鍵收穫                                                    |
-| ---------------------------------------------------- | ---------------------------- | ----------------------------------------------------------- |
-| [0.0](/llm/00-foundations/local-vs-cloud/)           | 本地 vs 雲端 LLM             | 從隱私、成本、速度、能力四個維度建立基本對照                |
-| [0.1](/llm/00-foundations/why-llm-feels-slow/)       | 為什麼 LLM 生字慢            | 自回歸架構 + 記憶體頻寬瓶頸：一次只能吐一個 token           |
-| [0.2](/llm/00-foundations/three-layer-architecture/) | 介面 / 伺服器 / 模型三層架構 | 把任何本地 LLM 工具放回正確的層級，看懂工具關係             |
-| [0.3](/llm/00-foundations/openai-compatible-api/)    | OpenAI 相容 API              | 為什麼幾乎所有工具不用改就能切到本地：背後是同一套 API 形狀 |
-| [0.4](/llm/00-foundations/mlx-mtp-omlx/)             | MLX / MTP / oMLX 的區別      | 三者疊加而非互斥：framework、加速技巧、特化 server          |
-| [0.5](/llm/00-foundations/hardware-memory-budget/)   | Apple Silicon 記憶體預算     | 記憶體決定能跑什麼，Q4 量化下的可運作模型對照與系統保留     |
-| [0.6](/llm/00-foundations/info-judgment-frames/)     | 判讀本地 LLM 資訊的五個框架  | 版本時間、量化變數、三層架構、載入 vs 好用、隱私資料流      |
-| [0.7](/llm/00-foundations/privacy-data-flow/)        | 隱私 / 資安的資料流原理      | 從「位置」到「資料流」思考、信任邊界、零信任原則            |
+| 章節                                                           | 主題                                    | 關鍵收穫                                                       |
+| -------------------------------------------------------------- | --------------------------------------- | -------------------------------------------------------------- |
+| [0.0](/llm/00-foundations/local-vs-cloud/)                     | 本地 vs 雲端 LLM                        | 從隱私、成本、速度、能力四個維度建立基本對照                   |
+| [0.1](/llm/00-foundations/why-llm-feels-slow/)                 | 為什麼 LLM 生字慢                       | 自回歸架構 + 記憶體頻寬瓶頸：一次只能吐一個 token              |
+| [0.2](/llm/00-foundations/three-layer-architecture/)           | 介面 / 伺服器 / 模型三層架構            | 把任何本地 LLM 工具放回正確的層級，看懂工具關係                |
+| [0.3](/llm/00-foundations/openai-compatible-api/)              | OpenAI 相容 API                         | 為什麼幾乎所有工具不用改就能切到本地：背後是同一套 API 形狀    |
+| [0.4](/llm/00-foundations/mlx-mtp-omlx/)                       | MLX / MTP / oMLX 的區別                 | 三者疊加而非互斥：framework、加速技巧、特化 server             |
+| [0.5](/llm/00-foundations/hardware-memory-budget/)             | Apple Silicon 記憶體預算                | 記憶體決定能跑什麼，Q4 量化下的可運作模型對照與系統保留        |
+| [0.6](/llm/00-foundations/info-judgment-frames/)               | 判讀本地 LLM 資訊的五個框架             | 版本時間、量化變數、三層架構、載入 vs 好用、隱私資料流         |
+| [0.7](/llm/00-foundations/privacy-data-flow/)                  | 隱私 / 資安的資料流原理                 | 從「位置」到「資料流」思考、信任邊界、零信任原則               |
 | [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/) | Deterministic vs Fuzzy Engineering 典範 | 兩個典範的四維對照、guardrail 設計、跟 agent / workflow 的關係 |
 
 ## 為什麼先讀模組零

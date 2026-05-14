@@ -24,11 +24,11 @@ Reflection 三步：
 
 跟其他模式對照：
 
-| 模式            | 結構                                | 主要解的問題                  |
-| --------------- | ----------------------------------- | ----------------------------- |
-| CoT             | Think step by step、單次生成        | 隱式推理變 explicit           |
-| Reflection      | Generate → critique → refine        | 一次生成不夠好、需要二次審視  |
-| Multi-step      | Retrieve / decide / retrieve again  | 資訊不足、要動態補資料        |
+| 模式       | 結構                               | 主要解的問題                 |
+| ---------- | ---------------------------------- | ---------------------------- |
+| CoT        | Think step by step、單次生成       | 隱式推理變 explicit          |
+| Reflection | Generate → critique → refine       | 一次生成不夠好、需要二次審視 |
+| Multi-step | Retrieve / decide / retrieve again | 資訊不足、要動態補資料       |
 
 ## 設計責任
 

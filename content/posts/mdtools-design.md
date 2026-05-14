@@ -172,7 +172,7 @@ func CheckSiblingsOnlyHeadings(doc ast.Node, src []byte) []Violation {
 
 ## Pre-commit 與 CI 整合
 
-### 本地開發：`.githooks/pre-commit`
+### 本地開發：`.githooks/pre-commit` 與 `.githooks/pre-push`
 
 ```bash
 #!/usr/bin/env bash
@@ -192,10 +192,17 @@ bin/mdtools lint        # 結構檢查，失敗即阻擋
 bin/mdtools cards       # 跨文件檢查，失敗即阻擋
 ```
 
+`pre-push` 補上全量 gate：
+
+```bash
+make check
+```
+
 關鍵設計：
 
 - `mdtools fmt --fix` 會改檔，改完後要 `git add` 回 staged，否則 commit 進去的還是舊內容。
 - `lint` 和 `cards` 不改檔，只讀與報告。
+- `pre-commit` 保持 staged-file scoped，讓 commit 回饋夠快；`pre-push` 跑全量 `make check`，讓本機結果和 CI 同步。
 - Binary mtime 檢查避免每次 commit 都 rebuild。
 - `bin/mdtools` 本身 gitignore，不 commit 進 repo。
 

@@ -50,7 +50,7 @@ hugo server
 # 完整 build：Hugo + Pagefind 搜尋 index
 make site
 
-# 安裝 git pre-commit hook（mdtools 自動 fmt / lint / cards）
+# 安裝 git hooks（commit 前守 staged markdown；push 前跑 CI 同款全量檢查）
 make install-hooks
 
 # 手動跑檢查（CI 跑同樣三項）
@@ -63,7 +63,7 @@ make check
 
 ### mdtools
 
-自家寫的 markdown 工具鏈、走 goldmark AST、不靠 regex。三個子命令在 pre-commit 與 CI 同時執行：
+自家寫的 markdown 工具鏈、走 goldmark AST、不靠 regex。三個子命令在 pre-commit、pre-push 與 CI 同時執行：
 
 | 命令                | 角色                                                               |
 | ------------------- | ------------------------------------------------------------------ |
@@ -73,15 +73,21 @@ make check
 
 設計 rationale 見 [`content/posts/mdtools-design.md`](./content/posts/mdtools-design.md)、規則合約見 [`content/posts/markdown-writing-spec.md`](./content/posts/markdown-writing-spec.md)。
 
-### Pre-commit hook
+### Git hooks
 
-`.githooks/pre-commit` 對 staged markdown 檔案跑：
+`.githooks/pre-commit` 對 staged markdown 檔案跑快速檢查：
 
 1. `fmt --fix` 後 re-stage（自動修排版）
 2. `lint` 阻擋格式錯誤
 3. `cards` 阻擋連結 / 卡片完整性錯誤
 
-`make install-hooks` 一次設定 — 之後 commit 時自動跑。
+`.githooks/pre-push` 跑 `make check`，也就是 CI 的同款全量檢查：
+
+1. `mdtools fmt --check content/`
+2. `mdtools lint content/`
+3. `mdtools cards content/`
+
+`make install-hooks` 一次設定 — 之後 commit 與 push 時自動跑。用 `make hooks-status` 確認目前 repo 是否已指向 `.githooks`。
 
 ### CI
 

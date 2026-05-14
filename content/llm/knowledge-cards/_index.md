@@ -223,36 +223,36 @@ weight: -1
 
 ### 應用層模式
 
-| 卡片                                                       | 核心問題                                                      |
-| ---------------------------------------------------------- | ------------------------------------------------------------- |
-| [RAG](/llm/knowledge-cards/rag/)                           | 怎麼給 LLM 動態外掛知識                                       |
-| [LLM Agent](/llm/knowledge-cards/agent/)                   | 把控制流交給 LLM 的應用模式                                   |
-| [Agent Loop](/llm/knowledge-cards/agent-loop/)             | plan → act → observe 的自我循環、injection 放大器             |
-| [Tool Use](/llm/knowledge-cards/tool-use/)                 | LLM 透過結構化呼叫外部工具擴展能力的設計                      |
-| [Function Calling](/llm/knowledge-cards/function-calling/) | 模型訓練建立的呼叫工具能力                                    |
-| [MCP](/llm/knowledge-cards/mcp/)                           | LLM application ↔ tool server 的標準化協議                    |
-| [System Prompt](/llm/knowledge-cards/system-prompt/)       | 開發者預設、不直接顯示給使用者的指令層                        |
-| [Chunking](/llm/knowledge-cards/chunking/)                 | 把長文件切成 retrieval 片段的 resolution vs context loss 取捨 |
-| [Vector Database](/llm/knowledge-cards/vector-database/)   | 高維向量儲存 + ANN 檢索、RAG production 的關鍵元件            |
+| 卡片                                                           | 核心問題                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------- |
+| [RAG](/llm/knowledge-cards/rag/)                               | 怎麼給 LLM 動態外掛知識                                       |
+| [LLM Agent](/llm/knowledge-cards/agent/)                       | 把控制流交給 LLM 的應用模式                                   |
+| [Agent Loop](/llm/knowledge-cards/agent-loop/)                 | plan → act → observe 的自我循環、injection 放大器             |
+| [Tool Use](/llm/knowledge-cards/tool-use/)                     | LLM 透過結構化呼叫外部工具擴展能力的設計                      |
+| [Function Calling](/llm/knowledge-cards/function-calling/)     | 模型訓練建立的呼叫工具能力                                    |
+| [MCP](/llm/knowledge-cards/mcp/)                               | LLM application ↔ tool server 的標準化協議                    |
+| [System Prompt](/llm/knowledge-cards/system-prompt/)           | 開發者預設、不直接顯示給使用者的指令層                        |
+| [Chunking](/llm/knowledge-cards/chunking/)                     | 把長文件切成 retrieval 片段的 resolution vs context loss 取捨 |
+| [Vector Database](/llm/knowledge-cards/vector-database/)       | 高維向量儲存 + ANN 檢索、RAG production 的關鍵元件            |
 | [Multi-agent system](/llm/knowledge-cards/multi-agent-system/) | 多 agent 協作系統、跟 multi-call 差在控制流跟責任邊界         |
-| [HyDE](/llm/knowledge-cards/hyde/)                         | 用假設文件 embedding 繞過 query-document phrasing 落差        |
+| [HyDE](/llm/knowledge-cards/hyde/)                             | 用假設文件 embedding 繞過 query-document phrasing 落差        |
 
 ### Prompt 技術
 
-| 卡片                                                              | 核心問題                                                       |
-| ----------------------------------------------------------------- | -------------------------------------------------------------- |
-| [Chain-of-Thought](/llm/knowledge-cards/chain-of-thought/)        | 讓 LLM 先輸出推理步驟再給最終答案                              |
-| [Few-shot prompting](/llm/knowledge-cards/few-shot-prompting/)    | 在 prompt 內塞範例對齊任務、跟 fine-tune 是兩個 endpoint        |
-| [Reflection](/llm/knowledge-cards/reflection/)                    | 模型先生成再 critique 再修改、有 systematic error 失敗模式       |
+| 卡片                                                           | 核心問題                                                   |
+| -------------------------------------------------------------- | ---------------------------------------------------------- |
+| [Chain-of-Thought](/llm/knowledge-cards/chain-of-thought/)     | 讓 LLM 先輸出推理步驟再給最終答案                          |
+| [Few-shot prompting](/llm/knowledge-cards/few-shot-prompting/) | 在 prompt 內塞範例對齊任務、跟 fine-tune 是兩個 endpoint   |
+| [Reflection](/llm/knowledge-cards/reflection/)                 | 模型先生成再 critique 再修改、有 systematic error 失敗模式 |
 
 ### 設計典範 / 人機協作
 
-| 卡片                                                                       | 核心問題                                                       |
-| -------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [Deterministic vs Fuzzy engineering](/llm/knowledge-cards/deterministic-vs-fuzzy/) | LLM 軟體 vs 傳統軟體的典範差異、決定 guardrail 設計              |
-| [Human-in-the-loop（HITL）](/llm/knowledge-cards/human-in-the-loop/)       | 人類介入 LLM 工作流的三時機 + 四條件                            |
-| [Jagged frontier](/llm/knowledge-cards/jagged-frontier/)                   | AI 能力分佈不規則的 framing、「全自動」是 over-trust            |
-| [Frozen baseline](/llm/knowledge-cards/frozen-baseline/)                   | Eval 的長期對照基準、讓行為漂移可見                              |
+| 卡片                                                                               | 核心問題                                             |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [Deterministic vs Fuzzy engineering](/llm/knowledge-cards/deterministic-vs-fuzzy/) | LLM 軟體 vs 傳統軟體的典範差異、決定 guardrail 設計  |
+| [Human-in-the-loop（HITL）](/llm/knowledge-cards/human-in-the-loop/)               | 人類介入 LLM 工作流的三時機 + 四條件                 |
+| [Jagged frontier](/llm/knowledge-cards/jagged-frontier/)                           | AI 能力分佈不規則的 framing、「全自動」是 over-trust |
+| [Frozen baseline](/llm/knowledge-cards/frozen-baseline/)                           | Eval 的長期對照基準、讓行為漂移可見                  |
 
 ### 模型行為與安全
 

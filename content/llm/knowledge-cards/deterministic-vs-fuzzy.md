@@ -12,14 +12,14 @@ Deterministic vs Fuzzy engineering 的核心概念是「**LLM 軟體跟傳統軟
 
 四維對照：
 
-| 維度        | Deterministic 軟體                | Fuzzy 軟體                           |
-| ----------- | --------------------------------- | ------------------------------------ |
-| 資料形狀    | 結構化（JSON、DB row）            | 半結構化 / 非結構化                  |
-| 邏輯來源    | 人類寫死規則                      | 模型推論、依 prompt + context 浮動   |
-| 行為一致性  | 同 input → 同 output              | 同 input → 分佈                      |
-| 分解原則    | 按職責 / 模組                     | 按角色 / agent                       |
-| 測試方式    | unit test、覆蓋率                 | eval、judge、distribution metric     |
-| 實驗成本    | 高                                | 低（改 prompt 即可）                 |
+| 維度       | Deterministic 軟體     | Fuzzy 軟體                         |
+| ---------- | ---------------------- | ---------------------------------- |
+| 資料形狀   | 結構化（JSON、DB row） | 半結構化 / 非結構化                |
+| 邏輯來源   | 人類寫死規則           | 模型推論、依 prompt + context 浮動 |
+| 行為一致性 | 同 input → 同 output   | 同 input → 分佈                    |
+| 分解原則   | 按職責 / 模組          | 按角色 / agent                     |
+| 測試方式   | unit test、覆蓋率      | eval、judge、distribution metric   |
+| 實驗成本   | 高                     | 低（改 prompt 即可）               |
 
 典型 LLM 應用的混合：
 

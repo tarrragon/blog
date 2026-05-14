@@ -44,13 +44,13 @@ Centaur 跟 cyborg 是兩種人類跟 LLM 共事的姿態。概念起源於 Kasp
 
 ### 該用哪種
 
-| 任務性質                      | 預設模式 |
-| ----------------------------- | -------- |
-| 邊界清楚、需求可事先描述完整  | Centaur  |
-| 探索性、邊做邊定義            | Cyborg   |
-| 大量重複（如 100 篇文章）     | Centaur  |
-| 創意 / 設計、要看回饋微調     | Cyborg   |
-| 高代價、要 rollback 控制      | Centaur + 強 review |
+| 任務性質                     | 預設模式            |
+| ---------------------------- | ------------------- |
+| 邊界清楚、需求可事先描述完整 | Centaur             |
+| 探索性、邊做邊定義           | Cyborg              |
+| 大量重複（如 100 篇文章）    | Centaur             |
+| 創意 / 設計、要看回饋微調    | Cyborg              |
+| 高代價、要 rollback 控制     | Centaur + 強 review |
 
 學生 / 個人開發更常 cyborg 工作、企業自動化更常 centaur 工作。看到一個產品設計時、問「它鼓勵 user 走 centaur 還是 cyborg」、就能判讀它的設計取向。
 
@@ -58,12 +58,12 @@ Centaur 跟 cyborg 是兩種人類跟 LLM 共事的姿態。概念起源於 Kasp
 
 [Jagged frontier](/llm/knowledge-cards/jagged-frontier/) 是觀察 AI 能力分佈的 framing。直覺上「AI 能做的任務」應該是一個 smooth 的連續區、簡單的能做、難的不能。實際上不是——AI 能做的任務分佈是**鋸齒狀（jagged）**：某些看起來難的任務 AI 做得很好、某些看起來簡單的任務 AI 反而做不好。
 
-| 看起來簡單但 AI 容易壞 | 看起來複雜但 AI 做得好           |
-| ---------------------- | -------------------------------- |
-| 精確算術               | 寫一段風格指定的程式碼           |
-| 計數（這段有幾個字）   | 翻譯複雜技術文章                 |
-| 嚴格遵守冷僻格式       | 從一段文字抽取關鍵 entity        |
-| 引用真實的 URL         | 解釋複雜概念                     |
+| 看起來簡單但 AI 容易壞 | 看起來複雜但 AI 做得好    |
+| ---------------------- | ------------------------- |
+| 精確算術               | 寫一段風格指定的程式碼    |
+| 計數（這段有幾個字）   | 翻譯複雜技術文章          |
+| 嚴格遵守冷僻格式       | 從一段文字抽取關鍵 entity |
+| 引用真實的 URL         | 解釋複雜概念              |
 
 這張表是 2024-2025 的觀察、**frontier 會隨模型升級漂移**——reasoning model + tool use 普及後、算術跟計數已經部分往「能做」那邊移、URL 也可以靠 web search tool 補救。表的價值在於 framing「能力分佈不規則」、不是把具體 4 個 case 當定論。
 
@@ -146,11 +146,11 @@ Agent produces result → User sees result
 
 ### 三個時機的選擇
 
-| 時機       | 適合任務                                | 不適合                                  |
-| ---------- | --------------------------------------- | --------------------------------------- |
-| Pre-act    | 高代價、不可逆、副作用範圍大            | 高頻率動作（會把人類淹死）              |
-| Mid-stream | 路徑分歧、需要 domain judgment          | 路徑可由 agent 自決的低代價任務         |
-| Post-hoc   | 評分 / 評估、低代價、user 數量大        | 不可逆動作（事後 appeal 來不及）        |
+| 時機       | 適合任務                         | 不適合                           |
+| ---------- | -------------------------------- | -------------------------------- |
+| Pre-act    | 高代價、不可逆、副作用範圍大     | 高頻率動作（會把人類淹死）       |
+| Mid-stream | 路徑分歧、需要 domain judgment   | 路徑可由 agent 自決的低代價任務  |
+| Post-hoc   | 評分 / 評估、低代價、user 數量大 | 不可逆動作（事後 appeal 來不及） |
 
 實務多重組合：pre-act 擋高代價、mid-stream 處理 agent 的不確定性、post-hoc 收 user 回饋改善系統。**三者各自處理不同 risk class、不互斥**。
 
@@ -186,13 +186,13 @@ User 的 approve / reject pattern 進 trace、定期 analyze、把「總是 appr
 
 [4.4 agent 架構](/llm/04-applications/agent-architecture/) 列了五種人類審查協作模型：full auto、checkpoint、step-by-step approval、plan first then auto、human-in-the-loop。本章三種 HITL 時機跟這五種協作模型的對應：
 
-| Agent 自主度分層        | 主要 HITL 時機      | 設計重點                            |
-| ----------------------- | ------------------- | ----------------------------------- |
-| Full auto               | Post-hoc            | Appeal 流程、抽樣審查、distribution monitoring |
-| Checkpoint              | Pre-act（每 N 步）  | 分級 approval、diff 必須 show       |
-| Step-by-step approval   | Pre-act（每步）     | UI 簡潔、reject 路徑清楚、避免疲勞  |
-| Plan first, then auto   | Pre-act（plan 階段）+ Post-hoc | Plan diff + 執行後審查           |
-| Human-in-the-loop（mid-stream）| Mid-stream  | Agent 知道自己該問人類、不該問的事不問 |
+| Agent 自主度分層                | 主要 HITL 時機                 | 設計重點                                       |
+| ------------------------------- | ------------------------------ | ---------------------------------------------- |
+| Full auto                       | Post-hoc                       | Appeal 流程、抽樣審查、distribution monitoring |
+| Checkpoint                      | Pre-act（每 N 步）             | 分級 approval、diff 必須 show                  |
+| Step-by-step approval           | Pre-act（每步）                | UI 簡潔、reject 路徑清楚、避免疲勞             |
+| Plan first, then auto           | Pre-act（plan 階段）+ Post-hoc | Plan diff + 執行後審查                         |
+| Human-in-the-loop（mid-stream） | Mid-stream                     | Agent 知道自己該問人類、不該問的事不問         |
 
 選哪一層、看 [4.3 工具副作用範圍](/llm/04-applications/tool-use-principles/) 等級：等級 1-2 用 full auto + post-hoc、等級 3 用 checkpoint、等級 4-5 強制 step-by-step。
 

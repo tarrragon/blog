@@ -106,7 +106,7 @@ weight: 36
 | 想做 LLM 應用開發（RAG / agent / tool use）           | 直接適合   | [模組四](/llm/04-applications/) 從 4.0 RAG 依序讀                                                                                                  |
 | 想在自家 Hugo / Astro 等靜態網站加 RAG                | 直接適合   | [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)（含資安取捨）                                  |
 | 想用 VLM 看截圖 / 設計稿輔助寫 code                   | 直接適合   | [4.15 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)                                                                  |
-| 想評估 LLM benchmark 數字、做 in-house eval           | 直接適合   | [4.14 Benchmarking 方法論](/llm/04-applications/benchmarking-and-evaluation/)                                                                       |
+| 想評估 LLM benchmark 數字、做 in-house eval           | 直接適合   | [4.14 Benchmarking 方法論](/llm/04-applications/benchmarking-and-evaluation/)                                                                      |
 | 想在本機 fine-tune 模型懂自家 codebase 慣例           | 直接適合   | [3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/) 原理 + [QLoRA hands-on](/llm/01-local-llm-services/hands-on/local-fine-tuning/) |
 | 想做 large-scale fine-tune / 從頭訓練                 | 部分適合   | 讀完模組三後進入 [推薦的公開課程](/llm/03-theoretical-foundations/going-deeper-theory/) 跟 Stanford CS336                                          |
 | 用 Windows / Linux + NVIDIA / AMD 獨立 GPU 跑本地 LLM | 直接適合   | [模組零](/llm/00-foundations/) 建心智模型 + [模組五](/llm/05-discrete-gpu/) 處理 VRAM 預算、MoE 卸載、KV cache 量化                                |

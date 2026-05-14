@@ -12,21 +12,21 @@ Multi-agent system 的核心概念是「**多個 LLM [agent](/llm/knowledge-card
 
 跟 multi-call 對照：
 
-| 維度       | Multi-call workflow                  | Multi-agent system                          |
-| ---------- | ------------------------------------ | ------------------------------------------- |
-| 控制流     | 主程式編排                           | Agent 自決                                  |
-| 角色       | Step 是函數、無「身份」              | 每個 agent 有 role / 工具集                 |
-| Context    | 主程式傳 context                     | Agent 自帶 memory                           |
-| 重用       | Step 是函數、容易 import             | Agent 跨系統重用透過協議                    |
-| 失敗歸屬   | Step 失敗、主程式接                  | Agent 失敗可能 cascading                    |
+| 維度     | Multi-call workflow      | Multi-agent system          |
+| -------- | ------------------------ | --------------------------- |
+| 控制流   | 主程式編排               | Agent 自決                  |
+| 角色     | Step 是函數、無「身份」  | 每個 agent 有 role / 工具集 |
+| Context  | 主程式傳 context         | Agent 自帶 memory           |
+| 重用     | Step 是函數、容易 import | Agent 跨系統重用透過協議    |
+| 失敗歸屬 | Step 失敗、主程式接      | Agent 失敗可能 cascading    |
 
 三種主流拓樸：
 
-| 拓樸           | 結構                              | 適用                                    |
-| -------------- | --------------------------------- | --------------------------------------- |
-| Flat           | All-to-all、無 orchestrator       | 2-4 個 agent、動態協商                  |
-| Hierarchical   | Orchestrator + specialists        | 多專業 agent、單一對外介面              |
-| Agent-as-tool  | Agent 互通像 tool call（如 MCP）  | 跨組織重用、標準協議                    |
+| 拓樸          | 結構                             | 適用                       |
+| ------------- | -------------------------------- | -------------------------- |
+| Flat          | All-to-all、無 orchestrator      | 2-4 個 agent、動態協商     |
+| Hierarchical  | Orchestrator + specialists       | 多專業 agent、單一對外介面 |
+| Agent-as-tool | Agent 互通像 tool call（如 MCP） | 跨組織重用、標準協議       |
 
 ## 設計責任
 

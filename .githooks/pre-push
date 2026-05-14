@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Blog pre-push hook — runs the same markdown quality gate as CI.
+#
+# Pre-commit stays fast and staged-file scoped. Pre-push is the full-content
+# gate that catches drift before GitHub Actions reports it.
+#
+# Bypass only when the remote CI signal is intentionally preferred:
+#   COMMIT_SKIP_MD_CHECK=1 git push
+
+set -euo pipefail
+
+if [[ "${COMMIT_SKIP_MD_CHECK:-0}" == "1" ]]; then
+    echo "[pre-push] COMMIT_SKIP_MD_CHECK=1; skipping markdown quality gate"
+    exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "[pre-push] running markdown quality gate: make check"
+if ! make check; then
+    cat >&2 <<'EOF'
+[pre-push] markdown quality gate failed.
+
+Run the fixer, review the diff, then push again:
+  make fix
+  make check
+EOF
+    exit 1
+fi
+
+exit 0

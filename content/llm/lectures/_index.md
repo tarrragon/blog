@@ -17,6 +17,6 @@ weight: 99
 
 ## 章節列表
 
-| 章節 | 主題 | 講者 / 來源 |
-| --- | --- | --- |
+| 章節                                                                               | 主題                                                                         | 講者 / 來源                  |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------- |
 | [Beyond LLM: Enhancing LLM Applications](/llm/lectures/stanford-cs230-beyond-llm/) | Prompt engineering、RAG、agentic workflow、evals、多 agent 系統的全景 survey | Stanford CS230 Deep Learning |

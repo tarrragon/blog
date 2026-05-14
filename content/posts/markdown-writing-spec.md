@@ -36,11 +36,11 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 
 ## 1. 工具總覽
 
-| 子命令                         | 職責                                                           | 改檔         | 觸發時機                               |
-| ------------------------------ | -------------------------------------------------------------- | ------------ | -------------------------------------- |
-| `mdtools fmt [--fix\|--check]` | 格式正規化（URL、表格、空行、列表間距、trailing newline）      | `--fix` 會改 | pre-commit（`--fix`）、CI（`--check`） |
-| `mdtools lint`                 | 結構檢查（標題、反釣魚、code block 語言、front matter schema） | 否           | pre-commit、CI                         |
-| `mdtools cards`                | 跨文件完整性（連結、orphan、K4）                               | 否           | pre-commit、CI                         |
+| 子命令                         | 職責                                                           | 改檔         | 觸發時機                                          |
+| ------------------------------ | -------------------------------------------------------------- | ------------ | ------------------------------------------------- |
+| `mdtools fmt [--fix\|--check]` | 格式正規化（URL、表格、空行、列表間距、trailing newline）      | `--fix` 會改 | pre-commit（`--fix`）、pre-push / CI（`--check`） |
+| `mdtools lint`                 | 結構檢查（標題、反釣魚、code block 語言、front matter schema） | 否           | pre-commit、pre-push、CI                          |
+| `mdtools cards`                | 跨文件完整性（連結、orphan、K4）                               | 否           | pre-commit、pre-push、CI                          |
 
 工具原始碼在 `scripts/mdtools/`，binary build 到 `bin/mdtools`（已 gitignore）。
 
@@ -358,6 +358,10 @@ L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字
 2. `mdtools lint` — 結構檢查；失敗阻擋 commit。
 3. `mdtools cards` — 完整性檢查；失敗阻擋 commit。
 
+### Pre-push hook（`.githooks/pre-push`）
+
+`pre-push` 的責任是把 CI 同款全量檢查提前到本機。`pre-commit` 為了速度只處理 staged markdown；`pre-push` 會跑 `make check`，也就是 `mdtools fmt --check content/`、`mdtools lint content/`、`mdtools cards content/`，讓整個 `content/` 的格式與連結 drift 在推送前被攔下。
+
 啟用 hook：
 
 ```bash
@@ -373,7 +377,7 @@ git config core.hooksPath .githooks
 
 ## 9. 寫作者使用指引
 
-- 寫作時優先遵循本規範。pre-commit 報錯時讀訊息修正；**不可用 `git commit --no-verify` 繞過 hook**。
+- 寫作時優先遵循本規範。pre-commit / pre-push 報錯時讀訊息修正；**不可用 `git commit --no-verify` 或跳過 hook 的方式繞過檢查**。
 - 新增案例平行章節（例如多個「工具評測」「事件時序」）時不需登記到任何白名單 — siblings_only 自動判讀。
 - 新增 URL 時優先採用 §3.1 分級形式；若顯示文字含 TLD 字樣，確認 domain 與 href 完全一致。
 - 新增卡片時確認首段與「概念位置」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（§6.3）。

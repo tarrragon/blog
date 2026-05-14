@@ -57,16 +57,16 @@ Eval 設計的三個正交軸：
 
 3 個 binary 軸 = 8 象限。每個象限的常見對應工具：
 
-| 象限                                         | 典型問題                                | 對應工具                                              |
-| -------------------------------------------- | --------------------------------------- | ----------------------------------------------------- |
-| Objective + Component + Quantitative         | 這個函數 / tool / RAG 元件對嗎          | Unit test、deterministic check、retrieval recall@k    |
-| Objective + Component + Qualitative          | 這個元件失敗 pattern 是什麼             | Error log 分析、trace inspection                      |
-| Objective + End-to-end + Quantitative        | 整套系統的 success rate / latency       | E2E test、success metric、latency p95                 |
-| Objective + End-to-end + Qualitative         | 整套系統的 catastrophic 失敗 case 是什麼 | Production incident review、抽樣 trace 讀             |
-| Subjective + Component + Quantitative        | 這個 step 的輸出評分                    | LLM-as-judge pairwise / rubric、human rating          |
-| Subjective + Component + Qualitative         | 這個 step 的 output 哪裡讓人不舒服      | Human review、error analysis with comments           |
-| Subjective + End-to-end + Quantitative       | User 整體 NPS / 滿意度評分              | CSAT、thumbs up/down、appeal rate                     |
-| Subjective + End-to-end + Qualitative        | User 想要的是什麼、現在哪裡沒滿足       | User 訪談、開放問卷、social listening                 |
+| 象限                                   | 典型問題                                 | 對應工具                                           |
+| -------------------------------------- | ---------------------------------------- | -------------------------------------------------- |
+| Objective + Component + Quantitative   | 這個函數 / tool / RAG 元件對嗎           | Unit test、deterministic check、retrieval recall@k |
+| Objective + Component + Qualitative    | 這個元件失敗 pattern 是什麼              | Error log 分析、trace inspection                   |
+| Objective + End-to-end + Quantitative  | 整套系統的 success rate / latency        | E2E test、success metric、latency p95              |
+| Objective + End-to-end + Qualitative   | 整套系統的 catastrophic 失敗 case 是什麼 | Production incident review、抽樣 trace 讀          |
+| Subjective + Component + Quantitative  | 這個 step 的輸出評分                     | LLM-as-judge pairwise / rubric、human rating       |
+| Subjective + Component + Qualitative   | 這個 step 的 output 哪裡讓人不舒服       | Human review、error analysis with comments         |
+| Subjective + End-to-end + Quantitative | User 整體 NPS / 滿意度評分               | CSAT、thumbs up/down、appeal rate                  |
+| Subjective + End-to-end + Qualitative  | User 想要的是什麼、現在哪裡沒滿足        | User 訪談、開放問卷、social listening              |
 
 不是「八個都要做」、是「先看你的問題在哪個象限、用對應工具」。
 
@@ -171,12 +171,12 @@ Production trace 不只是 debug 工具、是 eval set 的活泉。Trace + eval 
 
 ## 跟其他 Eval 章節的分工
 
-| 章節                                                             | 焦點                                                            |
-| ---------------------------------------------------------------- | --------------------------------------------------------------- |
-| [4.13 本章](/llm/04-applications/eval-design-framework/)         | **Meta**：先選軸、再選工具的設計座標系                          |
-| [4.14 Benchmarking](/llm/04-applications/benchmarking-and-evaluation/) | 具體 benchmark 跟自家 eval set 的方法論                          |
-| [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) | Trace 怎麼接 eval、production observability                     |
-| [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)          | Subjective eval 的核心工具、rubric / pairwise / bias 緩解        |
+| 章節                                                                    | 焦點                                                      |
+| ----------------------------------------------------------------------- | --------------------------------------------------------- |
+| [4.13 本章](/llm/04-applications/eval-design-framework/)                | **Meta**：先選軸、再選工具的設計座標系                    |
+| [4.14 Benchmarking](/llm/04-applications/benchmarking-and-evaluation/)  | 具體 benchmark 跟自家 eval set 的方法論                   |
+| [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/) | Trace 怎麼接 eval、production observability               |
+| [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)                 | Subjective eval 的核心工具、rubric / pairwise / bias 緩解 |
 
 讀法建議：先讀本章建立座標系、再依當前痛點往對應章節展開。Subjective eval 痛點 → 4.21；自家 benchmark 設計 → 4.14；production observability → 4.20。
 

@@ -281,12 +281,12 @@ In SF you'll see billboards: AI software engineer, AI skill mentor, AI SDR, AI l
 
 ### Paradigm shift: traditional software vs agentic AI software
 
-| Dimension | Traditional software | Agentic AI software |
-| --- | --- | --- |
-| Data | Structured: JSON, databases, forms | Free-form text, images, video; dynamic interpretation |
-| Logic | Deterministic | Fuzzy |
-| Decomposition | Monolith / microservices | Think as a manager: delegate to roles (graphic designer → marketing manager → performance marketing → data scientist) |
-| Cost of experimentation | High; you rarely throw away code | Low; AI companies are more comfortable throwing away code |
+| Dimension               | Traditional software               | Agentic AI software                                                                                                   |
+| ----------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Data                    | Structured: JSON, databases, forms | Free-form text, images, video; dynamic interpretation                                                                 |
+| Logic                   | Deterministic                      | Fuzzy                                                                                                                 |
+| Decomposition           | Monolith / microservices           | Think as a manager: delegate to roles (graphic designer → marketing manager → performance marketing → data scientist) |
+| Cost of experimentation | High; you rarely throw away code   | Low; AI companies are more comfortable throwing away code                                                             |
 
 Fuzzy engineering is truly hard. If you let users ask anything, the chance of breakage and attack is high. Companies have been bitten because a user did something authorized that broke the database.
 

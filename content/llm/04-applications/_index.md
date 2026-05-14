@@ -14,31 +14,31 @@ weight: 4
 
 ## 章節列表
 
-| 章節                                                               | 主題                                                   | 關鍵收穫                                                                                                      |
-| ------------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| [4.0](/llm/04-applications/prompt-techniques-landscape/)           | Prompt 技術光譜                                        | 三軸（context / 推理 / 格式）+ 四維 trade-off + stack 判讀 + 跟 fine-tune/RAG/chaining 的邊界                  |
-| [4.1](/llm/04-applications/rag-principles/)                        | RAG 原理：retrieval + augmentation 模式                | 為什麼要外掛知識、語意相似 vs 字面相似、chunking 取捨、失敗的根本原因                                         |
-| [4.2](/llm/04-applications/rag-retrieval-enhancements/)            | RAG 檢索增強：query rewriting / HyDE / multi-step / packing | 四層增強分類、何時 stack 何時不要、adaptive retrieval                                                          |
-| [4.3](/llm/04-applications/tool-use-principles/)                   | Tool use 原理：LLM 跟外部世界互動                      | structured output 是橋、function calling 取捨、為什麼小模型 tool use 崩                                       |
-| [4.4](/llm/04-applications/agent-architecture/)                    | Agent 架構原理                                         | Agent loop 結構、失敗模式、什麼任務適合 vs 不適合、人類審查模型                                               |
-| [4.5](/llm/04-applications/human-ai-collaboration/)                | 人機協作拓樸：何時人介入、怎麼介入                     | Centaur vs Cyborg、jagged frontier、HITL 三時機（pre-act / mid-stream / post-hoc）、避免橡皮圖章化            |
-| [4.6](/llm/04-applications/application-protocols/)                 | 應用層協議：function calling / structured output / MCP | 三者層級差異、為什麼出現 MCP、組合工作流                                                                      |
-| [4.7](/llm/04-applications/workflow-patterns/)                     | Workflow 編排模式                                      | Pipeline / router / parallel / reflection 四種基本模式、退化條件                                              |
-| [4.8](/llm/04-applications/multi-agent-topology/)                  | Multi-Agent 拓樸                                       | Flat / hierarchical / agent-as-tool、specialization gain vs orchestration overhead、特有失敗模式              |
-| [4.9](/llm/04-applications/production-resource-planning/)          | Production 部署的資源評估原理                          | 6 個 dimension：concurrency / latency / cost / storage / observability / reliability                          |
-| [4.10](/llm/04-applications/artifact-management/)                  | 衍生產物管理原理：什麼進 git、什麼不該                 | Source / derived / external 三分類、`.gitignore` 設計模式、prompt + eval 版本管理、production deployment 對接 |
-| [4.11](/llm/04-applications/long-context-engineering/)             | Long context engineering                               | claimed vs effective context、lost-in-the-middle、跟 RAG 的取捨                                               |
-| [4.12](/llm/04-applications/embedding-model-internals/)            | Embedding model 內部                                   | contrastive learning、選型、MTEB、in-domain fine-tune                                                         |
-| [4.13](/llm/04-applications/eval-design-framework/)                | Eval 設計座標系：三軸、八象限                          | Objective / component / quantitative 三軸 × 工具選擇、軸誤選的訊號、eval 演化路徑                              |
-| [4.14](/llm/04-applications/benchmarking-and-evaluation/)          | Benchmarking 與評估方法論                              | capability vs performance、in-house benchmark、`llama-bench`                                                  |
-| [4.15](/llm/04-applications/vision-in-coding-workflow/)            | Vision in coding workflow                              | VLM 在 coding 場景的 use cases、本地 VLM 選型、IDE 整合現狀                                                   |
-| [4.16](/llm/04-applications/static-and-serverless-rag-deployment/) | 靜態 / serverless RAG deployment                       | 沒 backend 的 RAG 四方案、API key 暴露、CORS、abuse、SaaS 供應鏈、跟模組六 routing                            |
-| [4.17](/llm/04-applications/coding-agent-harness/)                 | Coding agent harness                                   | Scaffold vs harness 分層、context budget 25% 規則、subagent 設計、跟 Claude Code / Cursor / Aider 的 mapping  |
-| [4.18](/llm/04-applications/prompt-caching-engineering/)           | Prompt caching 工程實務                                | Cache breakpoint 設計、coding agent / RAG 場景 pattern、anti-pattern、cost / latency 槓桿                     |
-| [4.19](/llm/04-applications/agent-memory-architecture/)            | Agent memory 分層架構                                  | Working / session / episodic / semantic / procedural 四層、寫入時機、retrieval 設計、失敗模式                 |
-| [4.20](/llm/04-applications/llm-tracing-and-observability/)        | LLM tracing 與 observability                           | OTel GenAI semconv、cost / latency / failure debug、trace → eval 閉環                                         |
-| [4.21](/llm/04-applications/llm-as-judge/)                         | LLM-as-Judge 評估方法                                  | Rubric 設計、pairwise vs direct、三大 bias 緩解、calibration、跟 production trace 的閉環                      |
-| [Hands-on](/llm/04-applications/hands-on/)                         | 端到端案例：把所有原理串成具體 case study              | Customer support agent 從 task decomposition 到 eval 全流程                                                   |
+| 章節                                                               | 主題                                                        | 關鍵收穫                                                                                                      |
+| ------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [4.0](/llm/04-applications/prompt-techniques-landscape/)           | Prompt 技術光譜                                             | 三軸（context / 推理 / 格式）+ 四維 trade-off + stack 判讀 + 跟 fine-tune/RAG/chaining 的邊界                 |
+| [4.1](/llm/04-applications/rag-principles/)                        | RAG 原理：retrieval + augmentation 模式                     | 為什麼要外掛知識、語意相似 vs 字面相似、chunking 取捨、失敗的根本原因                                         |
+| [4.2](/llm/04-applications/rag-retrieval-enhancements/)            | RAG 檢索增強：query rewriting / HyDE / multi-step / packing | 四層增強分類、何時 stack 何時不要、adaptive retrieval                                                         |
+| [4.3](/llm/04-applications/tool-use-principles/)                   | Tool use 原理：LLM 跟外部世界互動                           | structured output 是橋、function calling 取捨、為什麼小模型 tool use 崩                                       |
+| [4.4](/llm/04-applications/agent-architecture/)                    | Agent 架構原理                                              | Agent loop 結構、失敗模式、什麼任務適合 vs 不適合、人類審查模型                                               |
+| [4.5](/llm/04-applications/human-ai-collaboration/)                | 人機協作拓樸：何時人介入、怎麼介入                          | Centaur vs Cyborg、jagged frontier、HITL 三時機（pre-act / mid-stream / post-hoc）、避免橡皮圖章化            |
+| [4.6](/llm/04-applications/application-protocols/)                 | 應用層協議：function calling / structured output / MCP      | 三者層級差異、為什麼出現 MCP、組合工作流                                                                      |
+| [4.7](/llm/04-applications/workflow-patterns/)                     | Workflow 編排模式                                           | Pipeline / router / parallel / reflection 四種基本模式、退化條件                                              |
+| [4.8](/llm/04-applications/multi-agent-topology/)                  | Multi-Agent 拓樸                                            | Flat / hierarchical / agent-as-tool、specialization gain vs orchestration overhead、特有失敗模式              |
+| [4.9](/llm/04-applications/production-resource-planning/)          | Production 部署的資源評估原理                               | 6 個 dimension：concurrency / latency / cost / storage / observability / reliability                          |
+| [4.10](/llm/04-applications/artifact-management/)                  | 衍生產物管理原理：什麼進 git、什麼不該                      | Source / derived / external 三分類、`.gitignore` 設計模式、prompt + eval 版本管理、production deployment 對接 |
+| [4.11](/llm/04-applications/long-context-engineering/)             | Long context engineering                                    | claimed vs effective context、lost-in-the-middle、跟 RAG 的取捨                                               |
+| [4.12](/llm/04-applications/embedding-model-internals/)            | Embedding model 內部                                        | contrastive learning、選型、MTEB、in-domain fine-tune                                                         |
+| [4.13](/llm/04-applications/eval-design-framework/)                | Eval 設計座標系：三軸、八象限                               | Objective / component / quantitative 三軸 × 工具選擇、軸誤選的訊號、eval 演化路徑                             |
+| [4.14](/llm/04-applications/benchmarking-and-evaluation/)          | Benchmarking 與評估方法論                                   | capability vs performance、in-house benchmark、`llama-bench`                                                  |
+| [4.15](/llm/04-applications/vision-in-coding-workflow/)            | Vision in coding workflow                                   | VLM 在 coding 場景的 use cases、本地 VLM 選型、IDE 整合現狀                                                   |
+| [4.16](/llm/04-applications/static-and-serverless-rag-deployment/) | 靜態 / serverless RAG deployment                            | 沒 backend 的 RAG 四方案、API key 暴露、CORS、abuse、SaaS 供應鏈、跟模組六 routing                            |
+| [4.17](/llm/04-applications/coding-agent-harness/)                 | Coding agent harness                                        | Scaffold vs harness 分層、context budget 25% 規則、subagent 設計、跟 Claude Code / Cursor / Aider 的 mapping  |
+| [4.18](/llm/04-applications/prompt-caching-engineering/)           | Prompt caching 工程實務                                     | Cache breakpoint 設計、coding agent / RAG 場景 pattern、anti-pattern、cost / latency 槓桿                     |
+| [4.19](/llm/04-applications/agent-memory-architecture/)            | Agent memory 分層架構                                       | Working / session / episodic / semantic / procedural 四層、寫入時機、retrieval 設計、失敗模式                 |
+| [4.20](/llm/04-applications/llm-tracing-and-observability/)        | LLM tracing 與 observability                                | OTel GenAI semconv、cost / latency / failure debug、trace → eval 閉環                                         |
+| [4.21](/llm/04-applications/llm-as-judge/)                         | LLM-as-Judge 評估方法                                       | Rubric 設計、pairwise vs direct、三大 bias 緩解、calibration、跟 production trace 的閉環                      |
+| [Hands-on](/llm/04-applications/hands-on/)                         | 端到端案例：把所有原理串成具體 case study                   | Customer support agent 從 task decomposition 到 eval 全流程                                                   |
 
 ## 為什麼這個順序
 
@@ -71,7 +71,7 @@ weight: 4
 | -------------------------------------------- | -------------------------------------------- |
 | 寫過 Ollama + Continue.dev、想懂「然後呢」   | 直接適合、從 4.0 依序讀                      |
 | 已經試過 LangChain / aider / Cline、想看原理 | 直接適合、本模組補足「為什麼這樣設計」的視角 |
-| 想做 LLM 應用開發                            | 重點讀 4.0、4.1–4.3、4.4–4.5、4.7–4.8、4.13   |
+| 想做 LLM 應用開發                            | 重點讀 4.0、4.1–4.3、4.4–4.5、4.7–4.8、4.13  |
 | 只想用本地 LLM 寫 code、不做應用             | 跳過本模組無妨、模組零 + 模組一已足夠        |
 
 ## 不在本模組內的主題
