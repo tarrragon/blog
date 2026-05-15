@@ -32,6 +32,8 @@ tags: ["backend", "service-selection"]
 | [0.13](/backend/00-service-selection/operations-control-vertical-slice/)    | 操作控制 vertical slice 實作入口       | 用一個服務串起 evidence package、verification handoff、decision log 與 write-back                                                                                                                                                                        |
 | [0.14](/backend/00-service-selection/enterprise-selection-case-atlas/)      | 企業選型案例圖譜                       | 以企業型態與規模階段分組案例，建立跨產業、跨規模的選型壓力對照                                                                                                                                                                                           |
 | [0.15](/backend/00-service-selection/implementation-teaching-outline/)      | 後端實作教學大綱                       | 規劃各模組從觀念網路補完到服務路徑實作示範的寫作順序                                                                                                                                                                                                     |
+| [0.16](/backend/00-service-selection/service-path-implementation-outlines/) | 後端服務路徑實作細綱                   | 把資料庫 migration、cache migration、queue replay 與 deployment rollout 拆成可撰寫的業務路徑                                                                                                                                                             |
+| [0.17](/backend/00-service-selection/service-entity-discussion-outline/)    | 後端真實服務討論大綱                   | 規劃各分類從共同觀念與服務路徑示範，推進到 PostgreSQL、Redis、Kafka、Kubernetes、k6 等真實服務討論                                                                                                                                                       |
 
 ## 需求討論順序
 
@@ -78,7 +80,7 @@ tags: ["backend", "service-selection"]
 
 ## 企業選型案例補充
 
-模組零的案例補充重點是「企業如何說明選型取捨」，不是背誦哪一個技術名稱。閱讀時先抓它在解什麼需求壓力，再對照本模組的需求分類與成本取捨章節。
+模組零的案例補充重點是「企業如何說明選型取捨」。閱讀時先抓它在解什麼需求壓力，再對照本模組的需求分類與成本取捨章節。
 
 | 企業案例                                                                                                                                                                       | 主要選型問題                             | 優先回讀章節                                                                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -136,3 +138,5 @@ tags: ["backend", "service-selection"]
 - [0.12](/backend/00-service-selection/operations-control-service-selection/) 觀測、可靠性與事故服務選型
 - [0.13](/backend/00-service-selection/operations-control-vertical-slice/) 操作控制 vertical slice 實作入口
 - [0.15](/backend/00-service-selection/implementation-teaching-outline/) 後端實作教學大綱
+- [0.16](/backend/00-service-selection/service-path-implementation-outlines/) 後端服務路徑實作細綱
+- [0.17](/backend/00-service-selection/service-entity-discussion-outline/) 後端真實服務討論大綱

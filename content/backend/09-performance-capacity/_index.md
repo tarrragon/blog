@@ -86,7 +86,7 @@ tags: ["backend", "performance", "capacity"]
 | [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)                | Peak Event Readiness      | 活動、季節性流量、推廣事件的 capacity readiness 流程                   |
 | [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/) | SLO Coupling              | performance budget 跟 SLO / error budget 的對接                        |
 
-> 12 個章節大綱（outline）已完成。後續工作是擴成完整正文。
+> 12 個主章已完成首輪正文。後續工作是補 `vendors/` 工具入口、提升案例回寫密度，並校正各章與 06 reliability 的分工。
 
 主章撰寫順序：9.1 → 9.2 → 9.4 → 9.5 → 9.6 → 9.3 → 9.8 → 9.9 → 9.7 → 9.10 → 9.11 → 9.12。理論與模型先行，工具落地放在 saturation 與 bottleneck 概念成熟之後，最後處理成本與 production 驗證的進階主題。
 
@@ -133,7 +133,7 @@ tags: ["backend", "performance", "capacity"]
 
 每個討論具體壓測工具或容量服務的章節（k6、JMeter、Gatling、Locust、Vegeta、Grafana k6 Cloud、AWS Distributed Load Testing、Datadog Synthetics、Akamas），都必須包含「成本權衡與機會成本」段落，至少回答：
 
-1. 這個工具降低哪一種風險（不知道容量、不能持續驗證、不能定位瓶頸）。
+1. 這個工具降低哪一種風險（容量未知、缺少持續驗證、缺少瓶頸定位）。
 2. 工具本身的維運成本：runner、artifact、結果儲存、CI 整合成本。
 3. 在大規模壓測下會增加哪些雲端成本（流量費、跨區、目標服務的容量壓力）。
 4. 團隊需要承擔哪些前置成本：workload model 設計、結果判讀、baseline 維護。
@@ -142,7 +142,7 @@ tags: ["backend", "performance", "capacity"]
 
 ## Vendor 清單
 
-實作工具見 `vendors/`（待建）— 預計收錄四類：壓測工具（k6 / JMeter / Gatling / Locust / Vegeta）、production traffic replay（GoReplay、Mirroring、Service Mesh shadow）、capacity / cost analysis（Akamas、Vantage、CloudHealth）、APM / continuous profiling（Datadog Continuous Profiler、Pyroscope、Parca）。跟 [06 vendors](/backend/06-reliability/vendors/) 的差異：06 收錄壓測工具是為了「驗證流程的工具鏈」、09 收錄是為了「效能工程的工具鏈」、選型角度不同。
+實作工具見 [vendors](/backend/09-performance-capacity/vendors/) — 已建立 k6 / JMeter / Gatling / Locust / Vegeta 五個壓測工具頁、GoReplay / Service Mesh Mirroring / AWS VPC Traffic Mirroring 三個 production traffic replay 頁，Datadog Continuous Profiler / Pyroscope / Parca 三個 continuous profiling 頁，以及 Akamas / Vantage / CloudHealth / AWS Cost Explorer 四個 capacity / cost analysis 頁。跟 [06 vendors](/backend/06-reliability/vendors/) 的差異：06 收錄壓測工具是為了「驗證流程的工具鏈」、09 收錄是為了「效能工程的工具鏈」、選型角度不同。具體撰寫順序見 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)。
 
 ## 09 模組專屬知識卡片
 
@@ -216,7 +216,7 @@ tags: ["backend", "performance", "capacity"]
 
 本模組的核心是把模組架構為「容量量化問題 + 服務級實踐案例」兩層結構。
 
-1. **問題節點先行**：9.1-9.6 主章建立基礎（理論、模型、工具、saturation、瓶頸、容量），9.7-9.12 處理進階主題（成本、可觀測性、改進閉環、production 驗證、高峰準備、SLO 對接）。
+1. **問題節點先行**：9.1-9.12 主章已建立理論、模型、工具、saturation、瓶頸、容量、成本、可觀測性、改進閉環、production 驗證、高峰準備與 SLO 對接的基礎。
 2. **服務級案例庫**：以公開效能與容量實踐（Shopify BFCM / Netflix scale / Amazon cost / Google performance budget / LinkedIn capacity planning）作 cases，每個服務累積容量規劃脈絡。
 3. **跟 06 共用案例但不同讀法**：服務 case 同一批、但 06 讀「失敗模式驗證」、09 讀「容量量化實踐」、避免重複案例蒐集成本。
 
@@ -233,10 +233,10 @@ tags: ["backend", "performance", "capacity"]
 
 ## 模組完成狀態
 
-模組骨架建立中。本輪輸出 `_index.md` 概念層、主章規劃、案例庫規劃與 Tripwire。後續工作排序：先補 9.1-9.6 的基礎主章，再進案例庫第一批正文（Shopify BFCM 與 Netflix scale），最後處理 9.7-9.12 進階主題。
+模組主章與案例庫已完成首輪正文，`vendors/` 已建立壓測工具、production traffic replay 與 continuous profiling 第一批工具頁。後續工作排序：先補 capacity / cost analysis 工具頁，再提高 9.7-9.12 對案例的回寫密度，最後整理跟 06 reliability 共用案例的分工。
 
 ---
 
 _文件版本：v0.1.0_
 _最後更新：2026-05-12_
-_系列狀態：模組骨架建立中_
+_系列狀態：主章首輪完成，進入工具入口與案例回寫補強_

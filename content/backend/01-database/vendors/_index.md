@@ -1,26 +1,53 @@
 ---
 title: "資料庫 Vendor 清單"
 date: 2026-05-01
-description: "後端資料庫實作時的常用選擇，預先建立引用路徑"
+description: "規劃 SQL、managed SQL、document、KV 與 distributed SQL 的服務頁撰寫順序與教學大綱"
 weight: 90
 tags: ["backend", "database", "vendor"]
 ---
 
-本清單列出 backend 服務實作會選用的 database vendor / platform。每個 vendor 一個資料夾，先建定位與取捨骨架，實作話題隨後續擴充。
+資料庫 Vendor 清單的核心責任是把 database 服務名稱放回正式狀態、交易邊界、查詢模型、schema 演進、容量與資料治理的判斷。每個服務頁先說明它承擔的資料責任，再比較適用場景、容量邊界、替代服務、操作成本、案例對照與下一步路由。
 
-## T1 vendor（全部完整 page）
+資料庫服務頁的共同讀法見 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)。閱讀時先用 PostgreSQL / MySQL 建立 SQL baseline，再看 managed SQL、KV / document 與 global distributed SQL 如何改變團隊責任。
 
-- [postgresql](/backend/01-database/vendors/postgresql/) — 多用途 OLTP 主流、Aurora / Cosmos / Spanner / CockroachDB / Aurora DSQL 的相容目標
-- [mysql](/backend/01-database/vendors/mysql/) — 高併發網路服務、Vitess / PlanetScale 分片生態、GitHub / Shopify 規模驗證
-- [sqlite](/backend/01-database/vendors/sqlite/) — embedded、test fixture、+ 新興 Cloudflare D1 / Turso 場景
-- [mongodb](/backend/01-database/vendors/mongodb/) — document DB 代表、Atlas 跨雲 managed
-- [dynamodb](/backend/01-database/vendors/dynamodb/) — AWS managed KV、9 個 09 case（Amazon Ads、Tixcraft、Zoom、Capcom、Disney+ 等）
-- [aurora](/backend/01-database/vendors/aurora/) — AWS managed PostgreSQL / MySQL、5 個 09 case（DraftKings、Standard Chartered、Netflix、FanDuel）
-- [spanner](/backend/01-database/vendors/spanner/) — GCP 全球分散式 strong-consistency OLTP、TrueTime
-- [cosmosdb](/backend/01-database/vendors/cosmosdb/) — Azure 全球分散式 multi-model、5 [consistency level](/backend/knowledge-cards/consistency-level/)s
-- [cockroachdb](/backend/01-database/vendors/cockroachdb/) — 分散式 SQL、Spanner 的開源 / 跨雲替代
+## T1 服務頁大綱
+
+| 服務                                                     | 類型                  | 頁面要回答的核心問題                                                          |
+| -------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------- |
+| [PostgreSQL](/backend/01-database/vendors/postgresql/)   | SQL baseline          | transaction、schema、query、extension 與操作成熟度如何成為比較基準            |
+| [MySQL](/backend/01-database/vendors/mysql/)             | SQL baseline          | 高併發 OLTP、replication、online schema change 與 sharding 生態如何取捨       |
+| [SQLite](/backend/01-database/vendors/sqlite/)           | Embedded SQL          | 單機正式狀態、測試資料、edge / local DB 與低操作成本如何成立                  |
+| [MongoDB](/backend/01-database/vendors/mongodb/)         | Document database     | document shape、index、schema flexibility 與 transaction 邊界如何治理         |
+| [DynamoDB](/backend/01-database/vendors/dynamodb/)       | Managed KV / document | partition key、access pattern、容量計費與 hot partition 如何設計              |
+| [Aurora](/backend/01-database/vendors/aurora/)           | Managed SQL           | storage / compute 分離、failover、replica 與 AWS operation model 如何轉移責任 |
+| [Spanner](/backend/01-database/vendors/spanner/)         | Global SQL            | TrueTime、strong consistency、multi-region latency 與成本如何取捨             |
+| [Cosmos DB](/backend/01-database/vendors/cosmosdb/)      | Global multi-model    | consistency level、API model、partition 與 Azure 約束如何影響架構             |
+| [CockroachDB](/backend/01-database/vendors/cockroachdb/) | Distributed SQL       | SQL 相容、range lease、multi-region 與自管 / managed 邊界如何判斷             |
+
+## 服務頁標準章節
+
+| 章節                 | 資料庫服務頁要補的內容                                                      |
+| -------------------- | --------------------------------------------------------------------------- |
+| 服務定位             | 它是正式狀態、embedded store、managed SQL、KV/document 還是 distributed SQL |
+| 本章目標             | 讀者能判斷資料形狀、交易需求、查詢邊界、容量與操作責任                      |
+| 最短判讀路徑         | 用「資料是否需要 transaction / ad-hoc query / global consistency」快速定位  |
+| 日常操作與決策形狀   | schema migration、backup、restore、replica、index、connection、quota        |
+| 核心取捨表           | SQL baseline、managed SQL、KV/document、distributed SQL 的機會成本          |
+| 進階主題             | sharding、multi-region、online migration、CDC、global consistency           |
+| 排錯與失敗快速判讀   | connection exhaustion、slow query、lock、replication lag、hot partition     |
+| 何時改走其他服務     | query 變複雜時回 SQL、replay 需求轉 event log、全文搜尋轉 search            |
+| 不在本頁內的主題     | ORM 語法、語言 driver 細節、完整 DBA 手冊                                   |
+| 案例回寫與下一步路由 | 回到 01 主章、09 capacity case、08 incident decision log                    |
 
 ## 後續擴充
 
-- T2 候選：planetscale-vitess、tidb、yugabytedb、neon、supabase、azure-sql-hyperscale
-- T3 候選：firestore、couchdb、clickhouse（OLAP）、scylladb（Cassandra-compat）
+| 層級 | 候選服務                                                                     | 補充理由                                                    |
+| ---- | ---------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| T2   | Oracle Database、Microsoft SQL Server、MariaDB                               | enterprise / commercial SQL 與 MySQL 相鄰生態               |
+| T2   | PlanetScale / Vitess、TiDB、YugabyteDB、Neon、Supabase、Azure SQL Hyperscale | sharding、distributed SQL、serverless Postgres、managed SQL |
+| T2   | Apache Cassandra、ScyllaDB、Firestore                                        | wide-column、high-write、mobile / serverless document       |
+| T2   | OpenSearch / Elasticsearch                                                   | search engine 與 log / document search 邊界                 |
+| T3   | ClickHouse、BigQuery、Snowflake                                              | OLAP / analytics，先作相鄰路由                              |
+| T3   | CouchDB、Couchbase                                                           | sync / document database 的特殊場景                         |
+
+主流覆蓋檢查的重點是區分 OLTP、search 與 analytics。Oracle、SQL Server、MariaDB 補 enterprise SQL；Cassandra / ScyllaDB 補 wide-column；OpenSearch / Elasticsearch 補 search；ClickHouse、BigQuery、Snowflake 先保留 analytics 路由，避免資料庫服務頁承擔整個數倉教材。

@@ -55,6 +55,10 @@ weight: 7
 
 各章節在「從本章到實作」段給該章的具體 control-name 例子跟交接路由 list、本段是模組級的共用規格。
 
+## Vendor / Platform 清單
+
+資安控制服務見 [vendors](/backend/07-security-data-protection/vendors/) — 先以 index 大綱規劃身份、IAM、Secrets、KMS、WAF、PKI、供應鏈、SIEM 與 DLP 服務頁。這層目前只做服務頁教學大綱，不展開個別服務正文。
+
 ## 章節列表
 
 | 章節                                                                                                                                        | 主題                                              | 核心責任                                                                                              |

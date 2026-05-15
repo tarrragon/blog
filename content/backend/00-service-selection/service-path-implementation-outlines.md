@@ -6,7 +6,7 @@ weight: 16
 tags: ["backend", "implementation", "outline", "service-path"]
 ---
 
-服務路徑實作細綱的核心責任是把分類觀念落到可撰寫的服務實例。後續正文要從服務壓力出發，說明這條路徑為什麼需要某種 evidence、gate、decision log 與 write-back；共用欄位只作為交接語言，文章敘事要保留各分類自己的情境差異。
+服務路徑實作細綱的核心責任是把分類觀念落到可撰寫的業務路徑。後續正文要從服務壓力出發，說明這條路徑為什麼需要某種 evidence、gate、decision log 與 write-back；共用欄位只作為交接語言，文章敘事要保留各分類自己的情境差異。真實服務或 vendor 層的取捨，另由 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/) 承接。
 
 ## 寫作交接原則
 
@@ -144,8 +144,8 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 ## 後續正文派發順序
 
-後續正文派發的第一批應完成 01 / 02 / 03 / 05，因為這四篇會補齊尚未落地的服務路徑實作。01 已完成，建議後續順序維持 02 → 03 → 05：先寫副本保護，再寫非同步副作用，最後寫平台流量切換。
+服務路徑正文的第一批已完成 01 / 02 / 03 / 05。這四篇補齊資料庫 migration、cache migration、queue replay 與 deployment rollout 的 artifact backbone，後續可作為真實服務頁的判準來源。
 
-第二批再擴充 04 / 06 / 07 / 08 的同層級服務實例。這樣做可以讓 04/06/07/08 先吃到 01/02/03/05 新文章產出的 evidence、gate 與 decision log，再用具體服務素材擴充既有 artifact backbone。
+第二批可擴充 04 / 06 / 07 / 08 的同層級服務路徑。這樣做可以讓 04/06/07/08 吃到 01/02/03/05 文章產出的 evidence、gate 與 decision log，再用具體服務素材擴充既有 artifact backbone。
 
-每篇正文完成後要回寫三個位置：該分類 `_index.md` 的實作探討入口、[0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/) 的 backlog 狀態，以及相關案例或反例的「回寫目標」段。
+每篇正文完成後要回寫三個位置：該分類 `_index.md` 的實作探討入口、[0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/) 的 backlog 狀態，以及相關案例或反例的「回寫目標」段。進入 PostgreSQL、Redis、Kafka、Kubernetes 或 k6 這類真實服務頁時，改依 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/) 的服務責任、適用壓力、替代邊界、操作成本、案例回寫與下一步路由檢查。

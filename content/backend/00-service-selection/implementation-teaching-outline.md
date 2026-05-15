@@ -45,7 +45,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 這張表的判斷結論是：下一輪可以規劃實體服務或 App 層。服務路徑示範文章作為案例承接點，共同觀念正文提供分類基線。
 
-服務實例層級的正文細綱已拆到 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/)。0.15 保留系列順序與 backlog 判讀，0.16 負責把每個分類的服務實例、前置概念、artifact 交接、案例回寫與不適用邊界拆到後續正文撰寫可直接接手的粒度。
+服務路徑層級的正文細綱已拆到 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/)。0.15 保留系列順序與 backlog 判讀，0.16 負責把每個分類的服務路徑、前置概念、artifact 交接、案例回寫與不適用邊界拆到後續正文撰寫可直接接手的粒度；真實服務層的後續順序則交給 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)。
 
 ## 01 Database / Storage 補完方向
 
@@ -140,7 +140,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 | 07 Security / Data Protection | Credential rotation with scoped evidence                                                 | webhook secret / API credential rotation | 已完成首篇示範   |
 | 08 Incident Workflow          | Control plane decision log and write-back                                                | rule/config rollout incident             | 已完成首篇示範   |
 
-這份 backlog 的順序應以依賴關係安排。01/02/03/05 的首篇服務路徑示範與分類通用認知已完成，下一批主軸可以進入實體服務或 App 討論。各服務實例的段落責任、案例路由與不適用邊界，依 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/) 執行。
+這份 backlog 的順序應以依賴關係安排。01/02/03/05 的首篇服務路徑示範與分類通用認知已完成，下一批主軸可以進入實體服務或 App 討論。服務路徑示範的段落責任、案例路由與不適用邊界，依 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/) 執行；真實服務介紹、同類服務取捨與 vendor / tool 導覽，依 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/) 執行。
 
 ## 後續寫作順序
 
@@ -150,7 +150,7 @@ tags: ["backend", "implementation", "outline", "service-path"]
 2. 再規劃 02 的 Redis / Valkey / Memcached / CDN / local cache 類文章。
 3. 接著規劃 03 的 Kafka / RabbitMQ / SQS / NATS / Redis Streams 類文章。
 4. 最後規劃 05 的 Kubernetes / systemd / load balancer / service mesh / secret manager 類文章。
-5. 每篇實體服務文章都要回扣對應共同認知，不直接從工具設定起手。
+5. 每篇實體服務文章都要回扣對應共同認知，不直接從工具設定起手；具體批次與完成判準見 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)。
 
 ## 完成判準
 

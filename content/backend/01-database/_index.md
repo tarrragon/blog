@@ -10,7 +10,7 @@ tags: ["backend", "database", "storage"]
 
 ## Vendor / Platform 清單
 
-實作時的常用選擇見 [vendors](/backend/01-database/vendors/) — T1 收錄 PostgreSQL / MySQL / SQLite / MongoDB / DynamoDB / CockroachDB / Aurora，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。
+實作時的常用選擇見 [vendors](/backend/01-database/vendors/) — T1 收錄 PostgreSQL / MySQL / SQLite / MongoDB / DynamoDB / CockroachDB / Aurora，每個服務頁提供定位、適用場景、取捨、容量判準、案例對照與下一步路由。
 
 ## 暫定分類
 
