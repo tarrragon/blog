@@ -10,6 +10,17 @@ tags: ["backend", "message-queue", "broker"]
 
 訊息代理（broker）的核心責任是解耦 producer 與 consumer，讓非同步工作具備可排隊、可重試、可隔離的傳遞路徑。它定位在傳遞與協調層。
 
+## broker 跟 protocol 是兩個獨立的軸
+
+Broker 是訊息分發的具體實作產品（RabbitMQ、Kafka、NATS、EMQX）、protocol 是訊息交換的線路規格（AMQP、MQTT、STOMP、Kafka wire protocol）。兩個軸獨立、形成多對多關係：
+
+- 一個 broker 可實作多個 protocol：RabbitMQ 主走 AMQP、透過 plugin 也支援 MQTT 跟 STOMP；NATS 主走自家 protocol、JetStream 額外提供 KV 與 Object Store API
+- 一個 protocol 可被多個 broker 實作：MQTT 由 EMQX / HiveMQ / Mosquitto / RabbitMQ MQTT plugin 各自實作；AMQP 主要是 RabbitMQ 跟 Apache Qpid
+
+選型討論時要分清「我需要的是 protocol（如 device 端要 MQTT 因為輕量 / IoT 標準）」還是「broker 產品（如 RabbitMQ vs EMQX 的運維 / 生態取捨）」。當 protocol 跟 broker 都需要、會出現 protocol 橋接場景 — 例：device 端透過 MQTT 連 RabbitMQ MQTT plugin、broker 內部把 MQTT topic 自動映射成 AMQP routing key、AMQP-side consumer 用 routing key 訂閱。
+
+這層分離也影響故障判讀：device 連不上是 protocol 層問題、broker 之間 routing 錯是 broker 內部 plugin / mapping 問題、consumer 收不到是 AMQP binding 問題 — 三層各自獨立、不能混為一談。
+
 ## broker、queue、consumer 的分工
 
 [broker](/backend/knowledge-cards/broker/) 管理訊息儲存、分發與確認流程；queue 或 topic 承載傳遞單位；consumer 承擔業務處理。分工清楚後，故障判讀才能定位在正確層級：投遞故障、消費故障或下游依賴故障。

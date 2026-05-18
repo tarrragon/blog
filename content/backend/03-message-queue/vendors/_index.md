@@ -67,13 +67,63 @@ tags: ["backend", "message-queue", "vendor"]
 | 路由模型           | partition + key          | exchange + routing key     | subject + wildcard              | stream key（無 partition）  | queue URL                | topic + subscription    |
 | 持久化模型         | log + retention policy   | durable queue + TTL        | JetStream storage               | append-only log（RAM）      | managed durable          | managed durable         |
 | Schema 治理        | Schema Registry          | （無原生）                 | （無原生、靠 JSON Schema 慣例） | （無）                      | （無）                   | Schema enforcement      |
-| 主討論案例         | C1/C3/C4/C6/C7           | 待補（C9/C10 通用）        | 待補（C8/C10 通用）             | C5 / C10 通用               | C2 反面 / C8 / C10       | C8 / C10                |
+| 主討論案例         | C1/C3-C7 + C11-C22       | C23-C33                    | C34-C41                         | C42-C47                     | C48-C59 + C2 反面        | C60-C69                 |
 
 對照表的用途有三：
 
 - 寫某 vendor 頁時、檢查橫向議題是否都有對應的進階主題子段、避免缺漏
 - 讀者在 vendor 間遷移時、知道對應旋鈕在另一個 vendor 叫什麼
-- 補案例時、看哪幾個 vendor 案例稀薄（RabbitMQ / NATS / Redis Streams / Pub/Sub）、優先補
+- 未來擴充案例時、依 [cases/_index 的「案例覆蓋缺口」段](/backend/03-message-queue/cases/) 判定優先補的章節
+
+下面 8 段把對照表的每行展開、避免單純的表格成為「終點」。每段先解釋議題本質、再展開不同 vendor 的 mechanism 差異、最後給選型判讀。
+
+### 路由模型
+
+路由模型決定「訊息怎麼送到對的 consumer」、不是同概念換名字。**Kafka** partition + key 透過 hash 把訊息落在固定 partition、consumer group 靠 rebalance 綁定 partition 跟 consumer；**RabbitMQ** exchange + routing key 透過 binding rule 比對、可 broadcast（fanout）/ 精準（direct）/ pattern（topic + `*` 單層 / `#` 多層）；**NATS** subject + wildcard（`*` 單層、`>` 多層）讓 subscriber 用 pattern 訂閱主題層級；**Redis Streams** 是單一 stream key、無 partition、跨 shard 要靠 hash tag 強制分散；**SQS** queue URL 直接對應、無 routing 邏輯；**Pub/Sub** topic + subscription、subscription 是 first-class entity（跟 Kafka topic + consumer group 不同）。
+
+選型判讀：需要 fan-out 多 subscriber → fanout exchange / subject pattern / multi-subscription；需要 per-key ordering → Kafka partition+key / RabbitMQ consistent hash exchange / NATS queue group；不需 routing 邏輯 → SQS 最簡單。
+
+### Delivery 機制
+
+Delivery 機制是「broker 怎麼保證訊息被處理」、不同 vendor 用不同協議層級達成同語意。詳見 [3.1 broker-basics 的「語意保證的不同實作機制」](/backend/03-message-queue/broker-basics/#語意保證的不同實作機制)。三層核心旋鈕：**Kafka** acks（0/1/all）+ idempotence + ISR（min.insync.replicas）；**RabbitMQ** manual ack + DLX + prefetch；**NATS** JetStream ack + AckWait + MaxDeliver；**Redis Streams** XACK + XCLAIM + PEL；**SQS** visibility timeout + DLQ + maxReceiveCount；**Pub/Sub** ack deadline + DLT + ack extension。
+
+選型判讀：寫入即承諾（事件流）→ Kafka acks=all + ISR；處理即承諾（任務隊列）→ RabbitMQ manual ack / SQS visibility timeout / Pub/Sub ack deadline；wire-level handshake（device 端）→ MQTT QoS（透過 RabbitMQ MQTT plugin 或 EMQX）。
+
+### 持久化模型
+
+持久化模型決定「訊息能保留多久、能不能 replay」。**Kafka** log + retention policy（time / size、compact / delete）— 訊息保留到 retention 過期、consumer 可任意 offset replay；**RabbitMQ** durable queue + TTL — 訊息持久化但 ack 後即刪、不能 replay；**NATS** JetStream storage（file / memory、配 MaxMsgs / MaxBytes / MaxAge）— 介於 log 跟 queue 之間；**Redis Streams** append-only log 但受 RAM 限制 — retention 短期、replay 視 MAXLEN 設定；**SQS / Pub/Sub** managed durable — SQS 最長 14 天、Pub/Sub 7 天、不適合長期 archive。
+
+選型判讀：需要事件 replay（多 consumer 各自進度、長期保留）→ Kafka / Pulsar / JetStream；任務處理即刪（worker pool）→ RabbitMQ / SQS / Pub/Sub；中期 stream 但已在 Redis 生態 → Redis Streams + MAXLEN。
+
+### Topic 生命週期治理
+
+當 topic / queue 數量上萬、metadata 本身變成 broker 壓力。**Kafka** 早期靠人工管 topic、規模化後需 TopicGC（自動清理 unused topic）+ partition 數量上限；**RabbitMQ** vhost / queue lifecycle 通常手動、queue auto-delete + TTL 是常見 pattern；**NATS** JetStream stream 有 lifecycle policy（DiscardPolicy / MaxAge）；**Redis Streams** MAXLEN / XTRIM 手動修剪、無自動 GC；**SQS** DLQ + redrive policy 是 lifecycle 核心、queue 本身不自動刪；**Pub/Sub** subscription expiration policy（閒置 N 天自動刪）。
+
+選型判讀：metadata 量大（topic 數 / partition 數）→ 需 Kafka TopicGC 模式；任務隊列 → 需 DLQ + redrive 規範；長期 stream → 需明示 retention policy。
+
+### 自動修復
+
+自動修復把 SRE 從人工值班轉到自動化、但層次不同。**Kafka** Self-healing（disk full / broker offline / under-replicated partition 自動處理）；**RabbitMQ** cluster_partition_handling（ignore / autoheal / pause_minority）— 偏向「腦裂處理策略」、不是全自動 SRE；**NATS** JetStream raft 自動 leader election + replica sync；**Redis Streams** 靠 Sentinel / Cluster failover、failover 期間 PEL 可能不一致；**SQS / Pub/Sub** managed 內建、不需用戶管。
+
+選型判讀：自管要 24/7 → Kafka self-healing 或 NATS raft；不要值班 → managed（SQS / Pub/Sub）；中等規模容忍人工 → RabbitMQ cluster_partition_handling。
+
+### 多租戶配額 / 隔離
+
+隔離粒度跟 mechanism 不同。**Kafka** quota（byte rate / request rate）+ ACL（principal / resource / operation）— 流量級 + identity 級；**RabbitMQ** vhost + user permission — namespace 級隔離（最強）；**NATS** account + subject ACL — account 是 namespace、subject ACL 是細粒度權限；**Redis Streams** Redis ACL — command-level 權限；**SQS / Pub/Sub** IAM policy + Service Account — identity 級、無 namespace 概念。
+
+選型判讀：跨 team 共用 cluster → 需 namespace 隔離（vhost / account）；多 client app → identity 隔離（IAM）；流量公平 → 需 quota（Kafka quota / 自建 rate limit）。
+
+### 跨區 / 全球交付
+
+跨區拓樸三類：mesh（broker 自己同步）vs hub-spoke（單向轉發）vs managed global。**Kafka** MirrorMaker 2 是 mesh（active-active / active-passive）；**RabbitMQ** Federation 是 hub-spoke（upstream → downstream 鬆耦合）、Shovel 是點對點搬運；**NATS** Supercluster + Leaf node 是 mesh + edge（適合 IoT 廠區）；**Redis Cluster** 跨區受限（Cluster 是 shard、不是 region）；**SQS** Cross-region replication（managed）；**Pub/Sub** 內建 global routing — 無需設定。
+
+選型判讀：自管要 mesh → MirrorMaker 2 / NATS Supercluster；hub-spoke 簡單 → Federation；不想處理跨區 → Pub/Sub global 或 SQS replication。
+
+### Schema 治理
+
+Schema 強制度跨 vendor 差異最大。**Kafka** Schema Registry（Confluent / Apicurio）+ Avro / Protobuf — 強制 producer 帶 schema ID、enforce compatibility；**RabbitMQ** 無原生 schema 機制 — 靠 application 層約定；**NATS** 無原生、靠 JSON Schema 慣例；**Redis Streams** 無 schema 概念；**SQS** message attribute + body string — 無 enforce；**Pub/Sub** Schema enforcement（topic 綁 Avro / Protobuf schema）。
+
+選型判讀：跨服務契約嚴 → Kafka + Schema Registry / Pub/Sub Schema enforcement；內部簡單通訊 → RabbitMQ / NATS 靠慣例；schema 演進頻繁 → 需 forward / backward / full compatibility 規範。
 
 ## 服務頁大綱對齊
 
