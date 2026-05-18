@@ -9,7 +9,7 @@ Stale read 的核心概念是「讀到的資料不是最新提交狀態」。它
 
 ## 概念位置
 
-Stale read 常出現在 read replica、跨區同步、cache 與異步 projection。它不是一定錯誤，而是需要先定義可接受窗口與超標處置。
+Stale read 常出現在 [replication-lag](/backend/knowledge-cards/replication-lag/) 拉開的 read replica、跨區同步、[cache-aside](/backend/knowledge-cards/cache-aside/) 與異步 [projection](/backend/knowledge-cards/projection/)。它不是一定錯誤、而是需要先定義可接受窗口與超標處置；判讀粒度跟 [consistency-level](/backend/knowledge-cards/consistency-level/) 跟 [bounded-staleness](/backend/knowledge-cards/bounded-staleness/) 對齊。
 
 ## 可觀察訊號與例子
 
