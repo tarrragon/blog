@@ -172,7 +172,7 @@ self-contained 論述的價值在於**論述本身就是完整的、code 是 cas
 
 ## Self-case：本卡的觸發來源
 
-本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的踩坑實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 時、讀者指出某段論述「重點混淆 + 過於口語 + 預設讀者看過原始碼」。
+本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的事故實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 時、讀者指出某段論述「重點混淆 + 過於口語 + 預設讀者看過原始碼」。
 
 問題段（修補前）：
 > 「技術上這需求很乾淨：service 早就在事件 payload 第二段帶了『這次變動是哪筆』，現在只要有人訂閱、把它記錄下來，UI 就能用。於是收銀主畫面的 controller 加了第二個訂閱。」

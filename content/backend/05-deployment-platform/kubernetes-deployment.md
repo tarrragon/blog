@@ -57,7 +57,7 @@ probe 設計若只回傳固定成功，rollout 期間會出現「容器在線但
 3. **可控流量分批切換**：用 DNS 加權、service mesh 流量切分或 LB 規則把流量分批從舊叢集導到新叢集。每批切換後驗證 SLI 偏差、再進下一批。
 4. **每批保留回退路徑**：舊叢集服務不立即下線，保留作為回退目標。回退條件先驗證（rollback script、流量切回 DNS / LB 規則），再開始下一批切換。
 
-延伸 5.C1 揭露的「跨叢集服務依賴是難點」、5.C10 中型組織判讀「服務本身切過去了、但資料面、認證面、觀測面還沒同步」也指向同類問題。跨叢集遷移最容易踩的坑是「服務切過去了、依賴沒切過去」。Database、cache、message queue、observability pipeline、auth service 的切換時機要分別規劃，避免應用層在新叢集但仍跨網路打舊叢集的依賴，造成隱性 latency 或單點失效。規模差異下的同類問題見 [5.C10 對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)。
+延伸 5.C1 揭露的「跨叢集服務依賴是難點」、5.C10 中型組織判讀「服務本身切過去了、但資料面、認證面、觀測面還沒同步」也指向同類問題。跨叢集遷移最容易出的事故是「服務切過去了、依賴沒切過去」。Database、cache、message queue、observability pipeline、auth service 的切換時機要分別規劃，避免應用層在新叢集但仍跨網路打舊叢集的依賴，造成隱性 latency 或單點失效。規模差異下的同類問題見 [5.C10 對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)。
 
 ## 大規模 K8s 的設計取捨
 

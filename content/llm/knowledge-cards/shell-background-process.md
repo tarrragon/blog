@@ -34,7 +34,7 @@ shell 控制 process 的關鍵操作：
 | `pkill -f "ollama serve"` | 用 pattern 匹配 process 命令列、送 SIGTERM 終止                              |
 | `ps aux \| grep ollama`   | 列出所有跟 ollama 有關的 process                                             |
 
-對 macOS 新手最常踩的兩個坑：一個是「前景跑 server 後不知道怎麼脫身」、解法是 `Ctrl+Z` 暫停 + `bg` 改背景、或下次改用 `&` 啟動；另一個是「pkill 沒指定夠精確的 pattern、誤殺其他 process」、解法是先用 `ps aux` 加 `grep` 確認 PID 再 kill。
+對 macOS 新手最常遇到的兩個事故：一個是「前景跑 server 後不知道怎麼脫身」、解法是 `Ctrl+Z` 暫停 + `bg` 改背景、或下次改用 `&` 啟動；另一個是「pkill 沒指定夠精確的 pattern、誤殺其他 process」、解法是先用 `ps aux` 加 `grep` 確認 PID 再 kill。
 
 ## 設計責任
 

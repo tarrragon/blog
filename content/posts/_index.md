@@ -16,7 +16,7 @@ layout: "list"
 - [什麼是 AST — 從字串到語法樹的視角轉換](/posts/what-is-ast/) — 為什麼 blog 選 AST-based linter 而非 regex
 - [mdtools：Go + goldmark 的 markdown 工具鏈設計](/posts/mdtools-design/) — 子命令架構、語言選擇 tripwire、pre-commit 與 CI 整合
 
-**Hugo 與 Markdown 操作經驗** — 具體寫作與渲染問題的踩坑紀錄。
+**Hugo 與 Markdown 操作經驗** — 具體寫作與渲染問題的事故紀錄。
 
 **AI 協作與工程心得** — CI 自動除錯、技術寫作結構、專案經營相關反思。
 

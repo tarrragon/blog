@@ -101,7 +101,7 @@ Hindsight 論述**偏向**個人歸因——「設計者沒預見」「沒多想
 
 ### 面向 4：個人 retrospective
 
-事後諸葛自我檢討：「上次我沒考慮 X、結果踩坑 → 下次要考慮 X」
+事後諸葛自我檢討：「上次我沒考慮 X、結果出事 → 下次要考慮 X」
 
 當下三軸自我檢討：「上次的選擇在當下三軸論述下對齊嗎？對齊 → 不算判斷力問題、是環境變化；不對齊 → 找出當時該抓到的訊號是什麼」
 
@@ -109,7 +109,7 @@ Hindsight 論述**偏向**個人歸因——「設計者沒預見」「沒多想
 
 ### 面向 5：技術文章寫作
 
-事後諸葛寫作：「[工具] 預設為 [限制版本]、被當 [通用版本] 用了一段時間沒事、後來踩坑 → 設計缺陷」
+事後諸葛寫作：「[工具] 預設為 [限制版本]、被當 [通用版本] 用了一段時間沒事、後來出問題 → 設計缺陷」
 
 當下三軸寫作：「[工具] 在當下零成本差異條件下選了限制更高的選項、領域先驗指向通用版本 → 設計缺陷」
 
@@ -188,7 +188,7 @@ Hindsight 論述**偏向**個人歸因——「設計者沒預見」「沒多想
 
 ## Self-case：本卡的觸發來源
 
-本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的踩坑實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 時的反思。
+本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的事故實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 時的反思。
 
 文章 v1 寫「StreamController() 預設為單訂閱、被當廣播用了一段時間沒事、加第二個 listener 立刻炸」——典型 hindsight 論述。
 

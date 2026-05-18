@@ -431,7 +431,7 @@ class DbOrderSearcher implements OrderSearcher {
 
 ---
 
-## 常見踩坑場景
+## 常見事故場景
 
 ### 場景 1：改 bug 時順手改壞註解
 

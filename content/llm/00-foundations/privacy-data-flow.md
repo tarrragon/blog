@@ -157,7 +157,7 @@ NDA 跟企業合規場景的隱私要求比個人使用嚴格、判讀方式：
 
 - **核心要求**：客戶明示「不得送第三方 AI 服務」、本地是預設選擇。
 - **不夠的地方**：本地推論只保證模型呼叫不出去、要 audit 整條資料流（IDE telemetry、雲端同步、plugin 行為）。
-- **常踩的坑**：以為 Ollama 跑就安全、但 Cursor / Copilot 同時開著還送 prompt 給自家 service、NDA 已穿透。
+- **常見的事故**：以為 Ollama 跑就安全、但 Cursor / Copilot 同時開著還送 prompt 給自家 service、NDA 已穿透。
 - **強化做法**：NDA 客戶程式碼專案開獨立 IDE workspace、停雲端同步、移除第三方 plugin、明確隔離。
 
 ### 企業合規場景

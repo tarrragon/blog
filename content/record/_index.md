@@ -42,11 +42,11 @@ slug: "record"
 | 議題                                     | 該放                               |
 | ---------------------------------------- | ---------------------------------- |
 | 從具體 case 抽出可重用的工程原則         | `report/`（case-driven、編號連續） |
-| 工作中遇到的具體事件 / 工具坑            | `work-log/`                        |
+| 工作中遇到的具體事件 / 工具事故          | `work-log/`                        |
 | blog 本身的設計 / 規範                   | `posts/`                           |
 | 中性 frame 的方法論說明（不綁特定 case） | **本資料夾**                       |
 
-**跟 `report/` 的區別**：record 是「方法論本身怎麼用」（教學 / 中性說明）、report 是「從某個 case 抽出來的原則」（事後檢討 / case-driven）。同一個議題若先有方法論再有 case、方法論寫 record、case 抽出的原則寫 report；若是先踩坑再抽原則、直接寫 report。
+**跟 `report/` 的區別**：record 是「方法論本身怎麼用」（教學 / 中性說明）、report 是「從某個 case 抽出來的原則」（事後檢討 / case-driven）。同一個議題若先有方法論再有 case、方法論寫 record、case 抽出的原則寫 report；若是先出問題再抽原則、直接寫 report。
 
 ---
 

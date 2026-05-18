@@ -6,7 +6,7 @@ tags: ["llm", "applications", "human-in-the-loop", "collaboration", "ux"]
 weight: 5
 ---
 
-[HITL（human-in-the-loop）](/llm/knowledge-cards/human-in-the-loop/) 設計的本質是**在「人類介入頻率」spectrum 上選位置**——位置由 risk（副作用範圍 + 失敗代價）跟自動 validator 能力決定。risk 高 + validator 弱、人類介入頻率高；risk 低 + validator 強、人類介入頻率低。落點選錯就會踩兩種坑：自動化過度跑 production migration 是 over-trust、每個 tool call 都要 approval 是 under-trust。
+[HITL（human-in-the-loop）](/llm/knowledge-cards/human-in-the-loop/) 設計的本質是**在「人類介入頻率」spectrum 上選位置**——位置由 risk（副作用範圍 + 失敗代價）跟自動 validator 能力決定。risk 高 + validator 弱、人類介入頻率高；risk 低 + validator 強、人類介入頻率低。落點選錯就會出兩種事故：自動化過度跑 production migration 是 over-trust、每個 tool call 都要 approval 是 under-trust。
 
 本章寫人機協作的拓樸設計：兩種工作模式（centaur / cyborg）、能力邊界的不規則性（jagged frontier）、三種 HITL 觸發時機、跟 [4.4 agent 自主度分層](/llm/04-applications/agent-architecture/) 的對應。這層問題是跨產品 / 跨領域通用、跟具體 framework 無關。
 

@@ -99,7 +99,7 @@ func BuildGraph(roots []string) (*Graph, error) {
 }
 ```
 
-**兩段式的理由**：第一段邊 parse 邊 append，slice 可能重新分配 underlying array，之前取的 `*FileNode` 指標會失效。第一段收斂後才取指標，保證穩定。這是 Go slice 常見的踩坑。
+**兩段式的理由**：第一段邊 parse 邊 append，slice 可能重新分配 underlying array，之前取的 `*FileNode` 指標會失效。第一段收斂後才取指標，保證穩定。這是 Go slice 常見的事故。
 
 如果用 `[]*FileNode`（指標 slice）就沒這問題，但對這個情境 `[]FileNode` 空間效率較好。兩種都 OK，選一種就要注意對應的陷阱。
 

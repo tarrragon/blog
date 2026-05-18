@@ -42,9 +42,9 @@ Claude Code Hook 有五個觸發點：`SessionStart`、`UserPromptSubmit`、`Pre
 
 程式碼變更後，hook 根據檔案類型判斷哪些文件需要同步更新。API 異動對應 API 文件，架構異動對應架構文件，這類規則很難靠人記，但 hook 記得。
 
-### 一個反覆踩到的坑
+### 一個反覆遇到的事故
 
-hook 開發過程中踩了同一個坑不只一次。
+hook 開發過程中出過同一個事故不只一次。
 
 Claude Code hook 系統的設計是：任何寫入 `stderr` 的輸出都會被視為 hook error 顯示給使用者。Python 的 `logging` 模組預設輸出到 stderr，所以即使 hook 正常執行，只要有 logging 輸出，UI 上就會冒出 hook error 警告。
 

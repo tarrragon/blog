@@ -324,6 +324,6 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 **Last Updated**: 2026-04-28 — 第六輪新增 #92 視覺手段對齊錯誤層次（從 blog 文章寫作 retrospective 抽出 — emoji 圖例斷行的 trigger 揭露「multi-pass review 缺 vertical 軸」、跟 #82 並列為 sibling、補 #83 缺的 layer 維度）、新增路徑 15 給寫作 / UI 中誤判層次的情境。
 
-**Last Updated**: 2026-04-28 — 新增 #93 URL slug 必須顯式定義為 fact（從 #92 的 mermaid cross-link broken 踩坑揭露 — 175 篇內容文章 0 篇有顯式 slug、檔名 / hugo title 推導 / frontmatter 三處散落、典型 #44 SSoT 違反在 toolchain integration 維度）、新增路徑 16 給跨工具 identifier 議題。
+**Last Updated**: 2026-04-28 — 新增 #93 URL slug 必須顯式定義為 fact（從 #92 的 mermaid cross-link broken 事故揭露 — 175 篇內容文章 0 篇有顯式 slug、檔名 / hugo title 推導 / frontmatter 三處散落、典型 #44 SSoT 違反在 toolchain integration 維度）、新增路徑 16 給跨工具 identifier 議題。
 
 **Last Updated**: 2026-04-26 — 五輪實作 43 篇 + 第六輪抽象層 9 篇（#42-45, #67-71）+ 第七輪 Pattern 卡片 12 篇（#46-51, #54, #60-62, #65-66）+ 第八輪 Filter × Source 議題 7 篇（#55-59, #63-64）。八輪迭代完成 — 最新一輪：retrospective Checkpoint 1（修 search bug 後跳過的「列使用者意圖完整集合」）發現 3 個 silent 缺口（URL state / tab order / filter UI hint）、抽兩張新抽象層卡（#70 URL 儲存層 + #71 Tab Order 三對齊）、#68 加 Checkpoint 1 跳過的 self-case。

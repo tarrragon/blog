@@ -198,7 +198,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作"]
 
 ## Self-case：本卡的觸發來源
 
-本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的踩坑實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 的第二輪審查。
+本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的事故實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 的第二輪審查。
 
 讀者指出該文有四處口語化問題：「stream 一輩子只能被 listen 一次」「進入頁面就炸」「現在只要有人訂閱、把它記錄下來，UI 就能用」「碰巧能用掩蓋了設計缺陷」。修補時的觀察是這些不是孤立問題、是「**口語修辭代替技術描述**」這個共通 frame 在不同句子的展現。
 

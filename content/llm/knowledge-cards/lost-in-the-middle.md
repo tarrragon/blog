@@ -48,4 +48,4 @@ Recall accuracy vs 答案位置（典型 10K context）：
 2. **長 context 不是「塞越多越好」**：超過 effective context（典型 8-16K）後、邊際效用急降
 3. **RAG 比 long context 仍有價值**：把相關片段 retrieve 出來放 prompt 開頭、比把整份文件塞進 100K context 效果更穩定
 4. **驗證自己模型的 effective context**：用 needle-in-haystack 或自製測試、看模型在 8K / 16K / 32K 表現掉到哪
-5. **Reasoning model 的 thinking trace 不踩這坑嗎？** — 仍會踩、但 reasoning 過程會主動重新引用前文、部分緩解；不過 thinking trace 本身會擠壓 context budget、可能反而觸發 degradation
+5. **Reasoning model 的 thinking trace 不會遇到這事故嗎？** — 仍會遇到、但 reasoning 過程會主動重新引用前文、部分緩解；不過 thinking trace 本身會擠壓 context budget、可能反而觸發 degradation

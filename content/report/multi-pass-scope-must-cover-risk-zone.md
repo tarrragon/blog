@@ -92,7 +92,7 @@ tags: ["report", "事後檢討", "工程方法論", "寫作", "原則"]
 - **[#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)**：本卡跟 #82 互補。#82 是「驗證粒度」要對齊、本卡是「驗證範圍」要對齊 — 兩個都是把 review 結構錯位、結果都是 false confidence。
 - **[#83 寫作的 multi-pass review](../writing-multi-pass-review/)**：本卡補強 #83 沒覆蓋的 scope 軸。#83 講「每輪換 frame」（horizontal）、本卡講「每輪 scope 由原則適用範圍決定」（範圍）— frame × scope 兩軸都對齊、multi-pass 才有意義。
 - **[#72 高 ROI 無外部觸發的工作會被結構性跳過](../external-trigger-for-high-roi-work/)**：「擴大 scope 跑 corpus-wide review」是高 ROI 但無強制 trigger 的工作、本卡指出該動作預設會被「改動區便利 scope」結構性取代。
-- **[#94 正向改寫要保留對照論據](../positive-rewrite-preserves-contrast/)**：本卡跟 #94 是同次踩坑串接 — #94 抓到「改寫違規」、本卡抓到「review scope 漏掉的違規」、兩條一起才是完整的「正向改寫流程」。
+- **[#94 正向改寫要保留對照論據](../positive-rewrite-preserves-contrast/)**：本卡跟 #94 是同次事故串接 — #94 抓到「改寫違規」、本卡抓到「review scope 漏掉的違規」、兩條一起才是完整的「正向改寫流程」。
 
 ---
 

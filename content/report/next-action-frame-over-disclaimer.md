@@ -97,7 +97,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "原則"]
 
 Disclaimer 給 reader 的 actionable 是「不要做」、但「該做什麼」reader 自己腦補。多 reader 各自腦補不同 next step、結果各不相同。Next-action frame 把 next step 寫進文字、跨 reader 一致。
 
-### Self-case：本系列實際踩過
+### Self-case：本系列實際遇到
 
 寫資安章節「從本章到實作」段時：
 

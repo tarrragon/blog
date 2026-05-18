@@ -269,7 +269,7 @@ framework 不會自我批判——跑 100 篇文章、catch 的都是 framework 
 
 ## Self-case：本卡的觸發來源
 
-本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的踩坑實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 時、跑了 4 輪 multi-pass review 後仍漏 catch 4 類字句層問題、由讀者點出。
+本卡的觸發是修 [Dart StreamController：single-subscription vs broadcast 的事故實錄](../../work-log/dart_stream_controller_single_vs_broadcast/) 時、跑了 4 輪 multi-pass review 後仍漏 catch 4 類字句層問題、由讀者點出。
 
 讀者反饋的問題類型：
 

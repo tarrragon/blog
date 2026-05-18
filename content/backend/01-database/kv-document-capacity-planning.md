@@ -110,7 +110,7 @@ KV DB 的吞吐彈性等於 partition key 均勻分布的結果。partition key 
 
 對應 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — 售票 IOPS 從 20 衝到 135K 的 6,750 倍彈性、前提是 partition key 把流量分散到大量 partition（合理做法是 composite key `event_id + user_id_hash` 或 write sharding `event_id + random_suffix`）。若用裸 `event_id` 當 partition key、同一場演唱會所有訂單擠進同一個 partition、實際 IOPS 上限被鎖在 1000 WCU、跟 partition 總數無關。
 
-判讀重點：讀「Amazon Ads 9000 萬 reads/sec」、「DynamoDB 1.51 億 RPS」這類數字、要追問「partition 設計是什麼」、再判斷自己的服務能否複製。換 DynamoDB 是必要前提、partition key 設計是充分前提；只換 DB 而沒解決 partition key、會踩到「換了 DB 但 hot partition 依舊」的坑。
+判讀重點：讀「Amazon Ads 9000 萬 reads/sec」、「DynamoDB 1.51 億 RPS」這類數字、要追問「partition 設計是什麼」、再判斷自己的服務能否複製。換 DynamoDB 是必要前提、partition key 設計是充分前提；只換 DB 而沒解決 partition key、會出「換了 DB 但 hot partition 依舊」的事故。
 
 ## Capacity mode：on-demand vs provisioned
 

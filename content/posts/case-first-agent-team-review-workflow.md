@@ -74,7 +74,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 1. **這段揭露什麼判讀條件**？（是不是純技術推導不易浮現的議題）
 2. **這段揭露什麼數字 / 設計細節**？（規模、percentile、partition key 數量、replication lag 量級）
-3. **這段揭露什麼失敗模式**？（事故當下會踩什麼坑、有什麼反直覺結論）
+3. **這段揭露什麼失敗模式**？（事故當下會出什麼問題、有什麼反直覺結論）
 
 寫進 findings 列表時、要附上 *case 來源* 跟 *該對應到哪個章節*。例：
 
@@ -150,7 +150,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 當同一 finding 或 frame 在 *多個章節* 都有用、要在開始寫之前 *先定 SSoT 對應*、否則 case-driven 擴章必然出現 frame 重複展開。
 
-實作中觀察到的反例（02 / 03 模組都踩過）：
+實作中觀察到的反例（02 / 03 模組都遇到過）：
 
 - **02 cache**：「cache 角色變化」frame 在 2.1 主寫但實際屬模組層級、應在 `_index`；Tubi 案例在 2.1 / 2.2 / 2.8 三章各自展開 mini-finding；Snap KeyDB 在 2.1 / 2.7 / 2.8 三章重複
 - **03 message-queue**（最嚴重）：「三層語意（delivery / processing / recovery）」在 3.4 / 3.6 / 3.8 三章各自定義；「Slack Kafka+Redis 拓樸」在 3.4 跟 3.8 兩章逐字重複；「規模對照（小 / 中 / 大型）」在 3.4 / 3.6 / 3.8 三章拆用、結論散落讀者拼不出總圖
