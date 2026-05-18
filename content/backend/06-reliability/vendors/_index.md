@@ -57,6 +57,52 @@ tags: ["backend", "reliability", "vendor"]
 | 不在本頁內的主題     | 完整 pipeline cookbook、每個 test framework、所有 chaos experiment 範本            |
 | 案例回寫與下一步路由 | 回到 06 cases、6.8 release gate、6.20 experiment safety boundary                   |
 
+## 跨 vendor 議題對照
+
+本模組 12 個 vendor 跨 4 個 sub-category（CI/CD / load test / chaos / SLO）、不是同類選一。對照表用「橫向 reliability gate 議題」標明每個議題在哪個 sub-category 落地。
+
+| 議題         | GH Actions    | CircleCI    | k6          | Gatling          | JMeter       | Locust      | Chaos Mesh     | Litmus     | Gremlin      | Toxiproxy   | Nobl9          | Sloth         |
+| ------------ | ------------- | ----------- | ----------- | ---------------- | ------------ | ----------- | -------------- | ---------- | ------------ | ----------- | -------------- | ------------- |
+| 主責任       | CI gate       | CI gate     | Load test   | Load test        | Load test    | Load test   | K8s chaos      | K8s chaos  | 跨平台 chaos | TCP fault   | SLO governance | SLO generator |
+| 整合 CI gate | 原生          | 原生        | threshold   | assertion        | non-GUI mode | headless    | workflow       | workflow   | scenario     | client SDK  | error budget   | rule gen      |
+| 配置模式     | YAML          | YAML        | JS          | Scala / Java     | XML GUI      | Python      | CRD            | CRD        | UI / API     | API         | YAML / UI      | YAML          |
+| 環境支援     | GitHub-hosted | cross-VCS   | OSS / Cloud | OSS / Enterprise | OSS          | OSS         | K8s only       | K8s only   | 跨平台       | TCP layer   | multi-source   | Prometheus    |
+| 進階產出     | matrix / OIDC | parallelism | extension   | feeder           | plugins      | distributed | scope control  | ChaosHub   | GameDay      | toxic types | composite SLO  | multi-burn    |
+| 商業 / 開源  | 商業 + SaaS   | 商業 + SaaS | OSS + Cloud | OSS + Enterprise | OSS          | OSS         | OSS            | OSS + 商業 | 商業 SaaS    | OSS         | 商業 SaaS      | OSS           |
+| 主討論案例   | 待補          | 待補        | 待補        | 待補             | 待補         | 待補        | Netflix/Google | 待補       | 待補         | Shopify     | Google SRE     | 待補          |
+
+對照表的用途有三：
+
+- 寫某 vendor 頁時、看相同 sub-category 對手如何處理同一議題
+- 讀者組 reliability stack：CI gate + load test + chaos + SLO 各選 1
+- 評估 OSS vs 商業 trade-off
+
+下面 4 段把對照表的 sub-category 展開、不是每行都展開。
+
+### CI gate（GitHub Actions / CircleCI）
+
+CI gate 是 release 前最後一道驗證、決定哪些工件可發。**GitHub Actions** 跟 GitHub 深度整合（PR check / environment protection / OIDC cloud auth）、marketplace action 生態最廣；**CircleCI** 強進階 cache + parallelism + macOS / GPU resource class、cross-VCS（GitHub / Bitbucket / GitLab）。
+
+選型判讀：GitHub-hosted + 普通用 → GitHub Actions；極致 build speed / macOS / 跨 VCS → CircleCI；複雜 DAG → Tekton / Argo。
+
+### Load test（k6 / Gatling / JMeter / Locust）
+
+Load test 提供 performance regression evidence。差異主要在語言生態：**k6** JS / CLI-first / Grafana 生態；**Gatling** Scala / Java / 強型別 / 複雜 scenario；**JMeter** GUI / 老牌 / 多 protocol；**Locust** Python / 自訂邏輯極彈性。
+
+選型判讀：CI-first JS → k6；JVM 生態 → Gatling；既有 .jmx 資產 → JMeter；Python 團隊 / 複雜邏輯 → Locust。詳見 [9 performance capacity 模組](/backend/09-performance-capacity/) 的 capacity planning 角度。
+
+### Chaos engineering（Chaos Mesh / LitmusChaos / Gremlin / Toxiproxy）
+
+Chaos 工具按 scope 跟運維模式分四類：**Chaos Mesh** K8s-native CRD-driven 多 fault types；**LitmusChaos** K8s + ChaosHub experiment 庫；**Gremlin** 商業 SaaS / 跨平台 / GameDay；**Toxiproxy** TCP-level / integration test 用。
+
+選型判讀：K8s production + OSS → Chaos Mesh / Litmus；跨平台 + 商業 → Gremlin；CI integration test → Toxiproxy。對應 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 的 blast radius 設計。
+
+### SLO governance（Nobl9 / Sloth）
+
+SLO 工具按 source 跟運維模式分兩類：**Nobl9** 商業 SaaS / multi-source / OpenSLO 主導 / 企業 governance；**Sloth** OSS / Prometheus-only / 產生 Prometheus rules。
+
+選型判讀：multi-source / SaaS / governance → Nobl9；Prometheus-only / OSS → Sloth / Pyrra；vendor 內建夠 → Datadog SLO / Grafana SLO / Honeycomb SLO。對應 [knowledge cards burn-rate](/backend/knowledge-cards/burn-rate/)。
+
 ## 撰寫批次
 
 | 批次 | 服務頁                                         | 撰寫目的                                                  |
