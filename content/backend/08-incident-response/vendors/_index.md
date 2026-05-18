@@ -54,6 +54,54 @@ tags: ["backend", "incident-response", "vendor"]
 | 不在本頁內的主題     | 完整組織設計、HR 輪值政策、法律公告模板、每個聊天平台 automation                       |
 | 案例回寫與下一步路由 | 回到 08 cases、8.19 decision log、8.22 evidence write-back                             |
 
+## 跨 vendor 議題對照
+
+本模組 9 個 vendor 跨 4 個 sub-category（on-call paging / IR coordination / status page / learning）、覆蓋 incident 全流程。對照表用「橫向 incident 流程節點」標明每個議題在哪個 sub-category 落地。
+
+| 議題            | PagerDuty           | Opsgenie            | Grafana OnCall | incident.io     | FireHydrant      | Rootly            | Statuspage  | Instatus    | Jeli                  |
+| --------------- | ------------------- | ------------------- | -------------- | --------------- | ---------------- | ----------------- | ----------- | ----------- | --------------------- |
+| 主責任          | On-call SaaS        | Atlassian on-call   | OSS on-call    | IR coordination | IR coordination  | IR coordination   | Status page | Status page | Learning / postmortem |
+| Paging          | ✅ 核心             | ✅ 核心             | ✅ 核心        | ✅ 後加         | ✅ 後加          | ✅ 後加           | N/A         | N/A         | N/A                   |
+| IR coordination | ✅ Response Play    | 中等                | 弱             | ✅ 核心 (Slack) | ✅ 核心 (Teams)  | ✅ 核心 (no-code) | N/A         | N/A         | N/A                   |
+| Status page     | 整合外部            | 整合 Statuspage     | 整合外部       | 整合外部        | ✅ 內建          | 整合外部          | ✅ 核心     | ✅ 核心     | N/A                   |
+| Retrospective   | Jeli (整合)         | Confluence          | 弱             | ✅ template     | ✅ facilitator   | ✅ AI             | N/A         | N/A         | ✅ 核心 (narrative)   |
+| 配置模式        | UI + Terraform      | UI                  | UI / Helm      | Slack + UI      | Slack/Teams + UI | No-code UI        | UI + API    | UI + API    | UI                    |
+| 整合 IR 工具    | ✅                  | ✅                  | 中等           | ✅              | ✅               | ✅ 200+           | ✅ IR push  | ✅ IR push  | PagerDuty 整合        |
+| 商業 / 開源     | 商業 SaaS           | 商業 SaaS           | OSS / Cloud    | 商業 SaaS       | 商業 SaaS        | 商業 SaaS         | 商業 SaaS   | 商業 SaaS   | 商業（PD 旗下）       |
+| 平台支援        | iOS / Android / Web | iOS / Android / Web | Web            | Slack first     | Slack + Teams    | Slack + Teams     | Web         | Web         | Web                   |
+
+對照表的用途有三：
+
+- 寫某 vendor 頁時、看相同 sub-category 對手如何處理同議題
+- 讀者組 IR stack：paging + IR coordination + status page + learning 各選 1
+- 評估 best-of-breed vs all-in-one 取捨
+
+下面 4 段把對照表的 sub-category 展開。
+
+### Paging（PagerDuty / Opsgenie / Grafana OnCall）
+
+Paging 是 alert 找對人的入口。**PagerDuty** 業界標準、完整 IR 平台演化、Jeli 收購補 learning；**Opsgenie** Atlassian 生態最強、跟 JSM / Statuspage / Confluence 一站式；**Grafana OnCall** OSS / 預算敏感替代、跟 Grafana 觀測生態整合。
+
+選型判讀：成熟 + 跨生態 → PagerDuty；Atlassian 用戶 → Opsgenie；OSS / Grafana 用戶 → Grafana OnCall。
+
+### IR coordination（incident.io / FireHydrant / Rootly）
+
+IR coordination 是事故當下的協作平台、把 incident lifecycle 自動化。**incident.io** Slack-first、UX 最簡潔；**FireHydrant** 雙平台（Slack + Teams）、內建 status page + retrospective facilitator；**Rootly** no-code workflow + AI 輔助、200+ integration。
+
+選型判讀：Slack-only + 簡潔 → incident.io；Microsoft Teams + 完整 retro → FireHydrant；no-code 客製 + AI → Rootly。三者都有 paging 模組、可不另外用 PagerDuty。
+
+### Status page（Atlassian Statuspage / Instatus）
+
+Status page 是對外溝通入口、是法律 / SLA / 客戶信任的 evidence。**Statuspage** 事實標準、enterprise SLA、跟 Opsgenie / PagerDuty / IR 平台廣泛整合；**Instatus** 輕量 / 價格親民 / 現代 UI / startup 友善。
+
+選型判讀：enterprise / 既有 Atlassian 投資 → Statuspage；budget / startup → Instatus；OSS 自管 → Cachet（不在本表）；IR 平台內建夠 → FireHydrant 內建 status page。
+
+### Learning（Jeli）
+
+Learning 是事故後的組織學習、不是 retro template、是 longitudinal pattern analysis。**Jeli**（2023 PagerDuty 收購）narrative-based investigation + cross-incident pattern detection、源自 Honeycomb Production Excellence 文化。Jeli 跟 IR 平台的 retrospective 模組 complement、不取代 — IR retro 是單事故、Jeli 是跨事故學習。
+
+選型判讀：深度 learning + multi-incident pattern → Jeli（PagerDuty 用戶）；單事故 retro template → IR 平台內建即可；組織學習 / 文化變革 → Jeli + 對應流程。
+
 ## 撰寫批次
 
 | 批次 | 服務頁                                | 撰寫目的                                                  |
