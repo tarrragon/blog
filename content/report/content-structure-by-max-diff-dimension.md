@@ -245,3 +245,19 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 ---
 
 承認 limitation 本身是 dogfood — [#122 cadence 同質化](../cadence-homogenization-in-batch-writing/) 講「natural attractor 不規劃就 collapse」、本卡的 5 type 就是 *5 個 sample 的 natural attractor*；不在卡內承認、就重複了 [#125 隱形預設](../collapse-is-implicit-default/) 的 collapse pattern。本段是 self-correction、不是 disclaimer。
+
+### Update（2026-05-19）：第二輪 migration batch 驗證 limitation
+
+第二輪 migration batch（5 篇）跑完、self-aware limitation 三項預測得到驗證：
+
+| 預測（self-aware limitation 段）              | 第二輪實證                                                                                            |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 漏類確實存在、未來累積更多 sample 後可能重構  | major version upgrade（[postgresql/major-version-upgrade](/backend/01-database/vendors/postgresql/major-version-upgrade/)）跟 re-sharding（[redis/cluster-resharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/)）結構跟 5 type 完全不同、各有自己的 anatomy；漏類確認 |
+| Multi-axis 處理規則（主導維度 + 高維度獨立段）| [postgresql/migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/) 三維皆 High、結構 = Type E 主結構 + Type A schema gap 段 + Type C operational redesign 段、不強迫單一 type 標籤；規則成立 |
+| Type A / Type C 標準形態仍適用                | [mysql/migrate-to-postgresql](/backend/01-database/vendors/mysql/migrate-to-postgresql/)（Type A）+ [mongodb/migrate-to-atlas](/backend/01-database/vendors/mongodb/migrate-to-atlas/)（Type C）走標準模板、跟第一輪同 type 對應；標準形態驗證 |
+
+新發現（不在 self-aware limitation 預測內、需要後續處理）：
+
+- **新 audit 維度浮現**：re-sharding 揭露「data topology」是 5 維沒有的軸；未來 audit 可能要擴 6 維（加 topology 軸）
+- **「為什麼這篇不套」是漏類文章的好結構模板**：major-version-upgrade 跟 cluster-resharding 都用這個 frame 開頭、明示跟 5 type 的邊界
+- **「高維度獨立段」對照表**自然在 multi-axis 文章浮現（cockroachdb 篇）— 應該升級為 multi-axis migration 的標準結構元素

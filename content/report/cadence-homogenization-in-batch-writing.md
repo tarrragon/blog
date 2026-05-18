@@ -111,14 +111,15 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 **3/5 collapse、2/5 錯開** = partial collapse。
 
-四批 cadence rate 對照：
+五批 cadence rate 對照：
 
-| 批次                              | Sample | Variant 規劃    | Collapse rate |
-| --------------------------------- | ------ | --------------- | ------------- |
-| backend/07 vendor batch           | N=51   | 無               | 51/51 (100%)  |
-| Deep article 第一批（跨 vendor）   | N=4    | 主動             | 0/4 (0%)      |
-| Deep article 第二批（同 vendor）   | N=5    | 主動             | 0/5 (0%)      |
-| Migration playbook（混合）         | N=5    | **3 被動 + 2 主動** | **3/5 (60%)** |
+| 批次                                     | Sample | Variant 規劃                  | Collapse rate |
+| ---------------------------------------- | ------ | ----------------------------- | ------------- |
+| backend/07 vendor batch                  | N=51   | 無                            | 51/51 (100%)  |
+| Deep article 第一批（跨 vendor）          | N=4    | 主動                          | 0/4 (0%)      |
+| Deep article 第二批（同 vendor）          | N=5    | 主動                          | 0/5 (0%)      |
+| Migration playbook 第一輪（混合）         | N=5    | **3 被動 + 2 主動**           | **3/5 (60%)** |
+| Migration playbook 第二輪（漏類 + 標準） | N=5    | **全 5 主動（學第一輪教訓）** | **0/5 (0%)**  |
 
 **主題語意 attractor 定義（atomic）**：批量寫作中、*主題本身的語意結構* 對 framing 選擇產生的隱形吸引力 — 例如 migration 主題天然引出「為什麼遷：X / Y / Z driver」開頭、SIEM rule 翻譯天然引出「先 audit 再 translate」開頭。這是 [#123 多重硬規範收斂 cadence](../compliance-optimum-converges-cadence/) 的 *內容驅動子類型*：#123 處理的是 *外部 constraint*（章節結構 + lint 規則）收斂 cadence、本概念處理的是 *主題內部語意* 收斂 cadence；兩者機制同骨、attractor 來源不同。
 
@@ -127,6 +128,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 6. **主題語意 attractor 跟主題相似性正相關**：5 篇 migration playbook 都圍繞「為什麼換 vendor」、entry 自然收斂到「driver list」格式；migration 主題的語意 attractor 比結構 constraint 更強
 7. **Sample size 不能解 cadence collapse**：N=5 跟前批 N=5 全錯開差異在 *variant 規劃*、不是 sample size；證實本卡論斷「variant 規劃必須主動、不是 N≥5 自動避免」
 8. **Partial collapse 是 natural attractor 訊號、不是 principle 強化證據**：本批 3/5 collapse 提供 *主題語意 attractor 強度* 的量化訊號（在無 variant 規劃時 60% 同質化）、但不增強既有 principle 的論證力 — principle 在前兩批已穩定、本批只是揭露新 attractor 來源；後續寫作流程應 *預期* 主題相似批次的 collapse 風險、不是樂觀假設
+9. **第二輪 migration playbook 全主動 variant 在 N=5 同主題下 collapse 0/5**：學第一輪教訓、第二輪 5 篇寫前 *主動列 5 種 entry framing variant*（meta-reflection / paradox / decision matrix / code-led / reverse definition）、跨檔 cadence audit 結果 0/5 collapse；同主題（migration playbook）+ 同 N=5、唯一變數是 *variant 規劃完整度*；證實 variant 規劃是 *cadence 結果的唯一因果變數*、不是「主題不同自然錯開」
 
 ---
 

@@ -135,6 +135,21 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 詳細 SOP 跟 5 種 type 的具體應用見 [Migration playbook methodology](/posts/migration-playbook-methodology/) — 該 methodology 從 5 篇 migration playbook batch 抽出 stage 0 variant 規劃流程、本卡的「checkpoint 不夠」訊號是該流程的觸發實證。
 
+### Update（2026-05-19）：第二輪 migration batch 全主動 variant 驗證
+
+第二輪 migration batch（5 篇）寫前主動列 5 種 entry framing variant、cadence audit 結果 0/5 collapse；跟第一輪 3/5 collapse 對照、唯一差異是 *variant 規劃完整度*：
+
+| 批次              | Sample | Variant 規劃               | Stage-internal checkpoint 結果 | Collapse rate |
+| ----------------- | ------ | -------------------------- | ------------------------------ | ------------- |
+| 第一輪（混合）     | N=5    | 前 3 篇被動、後 2 篇主動    | 被動段 checkpoint 失效         | 3/5 (60%)     |
+| 第二輪（全主動）   | N=5    | 寫前列 5 種 variant、執行對應 | Checkpoint 監測通過             | 0/5 (0%)      |
+
+第二輪確認本卡核心論斷：
+
+5. **Checkpoint + Stage 0 兩層在全主動下成功**：第二輪 5 篇 stage 0 全列 variant、checkpoint 監測無 collapse alarm、最終 audit 0/5；證實兩層防護在 *都執行* 下達成 principle 目標
+6. **Stage 0 規劃的標準動作**：第二輪 stage 0 動作為「列 5 種 distinct entry framing 候選、對應 5 篇主題分配」— 不是「想到才換」、是 *寫第一篇前就完成* 的設計步驟
+7. **主題相似性不會自動解決 cadence**：第二輪 5 篇都是 migration playbook、主題相似性跟第一輪一樣高；唯一差異是 stage 0 是否做、結果差 60% collapse vs 0% — 確認本卡論斷「checkpoint 不夠變體規劃才是 root」在 *主題相似性高* 場景下仍成立
+
 ---
 
 ## Batch 完成後 reviewer 為什麼太晚

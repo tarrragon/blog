@@ -328,7 +328,9 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ---
 
-**Last Updated**: 2026-05-19 — 新增 #127 Process content 結構由最大差異維度決定（從 5 篇 migration playbook batch 抽出、5 種 type 結構分類）+ #122 / #124 補 partial collapse 實證段（migration batch 3/5 collapse、natural attractor「為什麼遷 X/Y/Z driver」浮現、證實 *variant 規劃必須主動* 非 N≥5 自動避免）。
+**Last Updated**: 2026-05-19（later）— #122 / #124 / #127 補第二輪 migration batch（5 篇）驗證段：collapse 0/5（vs 第一輪 3/5、唯一變數是 stage 0 variant 規劃完整度）、漏類確認（major version upgrade / topology re-sharding 結構跟 5 type 完全不同）、multi-axis 規則成立（三維 High 用 Type E + 高維度獨立段）。同步更新 methodology backlog 標完成 2 項 + Update 段補新議題（data topology audit 維度 / 漏類「為什麼這篇不套」frame / multi-axis 高維度獨立段升 standard）。
+
+2026-05-19 — 新增 #127 Process content 結構由最大差異維度決定（從 5 篇 migration playbook batch 抽出、5 種 type 結構分類）+ #122 / #124 補 partial collapse 實證段（migration batch 3/5 collapse、natural attractor「為什麼遷 X/Y/Z driver」浮現、證實 *variant 規劃必須主動* 非 N≥5 自動避免）。
 
 2026-05-18 — 新增 #122-126 cadence 同質化系列 + meta-卡（5 張卡）：#122 cadence 是模板隱形維度 / #123 多重硬規範收斂 cadence / #124 emergence 違規要 stage 內抽樣（atomic 三軸：症狀 / 機制 / enforcement 時機）+ #125 Collapse 是隱形預設（跨 surface meta、串 #79 #80 #123）+ #126 寫作 review 是多軸完整性（review 設計 meta、串 #83 #95 #97 #114 #121 #122 #124）。從 backend/07 51 vendor 批量 review 反向抽出 + 跨既有卡 wedge 浮現。同批微調 #82（補 #124 三類分法 cross-link）+ #42（補第 7 個跨檔 emergence 面向）。待後續評估如何轉化進 `compositional-writing` 跟 `case-first-module-workflow` skill。
 
