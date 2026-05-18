@@ -81,7 +81,11 @@ Opsgenie 是 Atlassian 出品的 on-call 平台、承擔三個責任：alert rou
 
 ## 案例回寫
 
-**待補 Opsgenie case**：Atlassian 自家 incident 多用 Opsgenie / JSM。
+**Opsgenie 是 Atlassian 自家產品**：Atlassian 內部 incident routing / on-call 走 Opsgenie + Jira Service Management、其多租戶事故的協作流程是 Opsgenie 在大型 IR 場景的代表樣本。
+
+| 案例                                                              | 對應主題                                          |
+| ----------------------------------------------------------------- | ------------------------------------------------- |
+| [Atlassian cases](/backend/08-incident-response/cases/atlassian/) | 14 天事故的 incident commander 輪值與 paging 節奏 |
 
 ## 下一步路由
 

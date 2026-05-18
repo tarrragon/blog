@@ -70,9 +70,9 @@ Evidence package 的核心用途是區分目標瓶頸與 runner 瓶頸。Locust 
 
 ## 案例回寫
 
-Locust 適合回寫需要高度自訂 user behavior 的案例。它可接 [FanDuel 雙峰 workload](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 的投注行為模型、[SeatGeek waiting room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 admission / token flow，以及 [PayPay mobile payment messaging](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) 的外部推送與下游 quota 模擬。
+Locust 適合回寫需要高度自訂 user behavior 的案例。它可接 [9.C28 FanDuel 雙峰 workload](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 的投注行為模型、[9.C16 SeatGeek waiting room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 admission / token flow、[9.C26 PayPay mobile payment messaging](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/) 的外部推送與下游 quota 模擬、[9.C8 Niantic Pokémon GO 50x surge](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/) 的玩家移動 + 互動混合行為，以及 [9.C18 Zoom COVID 30x surge](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/) 的會議建立 / 加入 / 離開行為混合。
 
-這些案例的重點是 domain behavior。Locust 頁引用案例時，要把 case 轉成 user class、task weight、custom client、downstream mock 與 worker capacity，再把總 RPS 放回這些行為條件下判讀。
+這些案例的重點是 domain behavior。Locust 頁引用案例時，要把 case 轉成 user class、task weight、custom client、downstream mock 與 worker capacity，再把總 RPS 放回這些行為條件下判讀 — 例如 Pokémon GO 玩家行為跟一般 web user 完全不同（持續 GPS 上報 + 偶發互動），不能直接用 HTTP RPS 衡量。
 
 ## 下一步路由
 

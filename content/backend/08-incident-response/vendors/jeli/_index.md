@@ -78,11 +78,15 @@ Jeli（2023 被 PagerDuty 收購、整合進 PagerDuty 平台）是聚焦 incide
 
 ## 案例回寫
 
-**Jeli founder Nora Jones 推 Production Excellence 文化**：Honeycomb / Slack / Netflix 等公司案例。
+**Jeli founder Nora Jones 推 Production Excellence 文化**：Jeli 案例多以工作坊 / interview 形式呈現、非單一事故 post-mortem、本案例庫尚未收錄直接揭露 Jeli 流程的事故。
 
-| 案例方向                        | 對應主題               |
-| ------------------------------- | ---------------------- |
-| 跨多公司 incident learning case | Multi-incident pattern |
+**待補 candidate**：
+
+| 案例方向                                                            | 對應主題                                   |
+| ------------------------------------------------------------------- | ------------------------------------------ |
+| Slack / Honeycomb / Netflix 等公司 learning 流程                    | Production Excellence 文化、跨事故 pattern |
+| Nora Jones 公開演講 / interview 中的事故學習案例                    | Incident interview methodology             |
+| 對照閱讀：[Slack cases](/backend/08-incident-response/cases/slack/) | Slack 內部事故 retro 結構（外部視角）      |
 
 ## 下一步路由
 

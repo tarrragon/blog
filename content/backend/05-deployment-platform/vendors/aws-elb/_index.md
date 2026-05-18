@@ -160,12 +160,21 @@ AWS ELB 是 AWS managed load balancer 系列、承擔三個責任：流量入口
 
 ## 案例回寫
 
+### 直接相關案例
+
+| 案例                                                                                                            | 主討論議題                                                         |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) | 遷 EKS 時 ALB / NLB 是入口、切流批次跟 target group 權重連動       |
+| [5.C2 Condé Nast EKS](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)             | 多集群整併 EKS、AWS Load Balancer Controller 統一 ingress 入口     |
+| [5.C4 Mobileye EKS](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)                           | 大規模 workload 遷 EKS、ALB target group health check 是切流驗證點 |
+| [5.C5 Miro EKS](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)                              | Managed EKS 後 ALB / NLB 治理回到平台團隊                          |
+
 ### 跨 vendor 對照
 
-| 案例                                                                                                        | 對 AWS ELB 的對應             |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| [5.C9 cutover without drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) | ALB deregistration delay 配置 |
-| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)               | AWS 生態場景 ALB 首選         |
+| 案例                                                                                                        | 對 AWS ELB 的對應                                                     |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [5.C9 cutover without drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) | ALB deregistration delay / NLB connection draining 是切流的關鍵回退面 |
+| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)               | AWS 生態小型 ALB + EC2 / 中型 ALB + EKS / 大型 NLB + 多 region + WAF  |
 
 **待補 AWS ELB 案例**：大規模 AWS Load Balancer Controller 客戶案例、NLB static IP 場景、AWS WAF + ALB 安全整合。
 

@@ -165,17 +165,20 @@ Sentry 是 error tracking 的事實標準、承擔三個責任：跨 frontend / 
 
 ## 案例回寫
 
-### 直接相關案例（待補 Sentry 案例）
+### 直接相關案例（待補 frontend Sentry case）
 
-Sentry 是 04 observability 模組第二大 SaaS（次 Datadog）、但 04 cases 庫主要聚焦 OTel / Prometheus / Grafana / ELK 場景、Sentry 直接案例待補。
+Sentry 是 04 observability 模組第二大 SaaS（次 Datadog）、但 04 cases 庫主要聚焦 OTel / Prometheus / Grafana / ELK 等後端 telemetry pipeline 場景、Sentry 直接案例（frontend error / release health）待補。
 
 ### 跨 vendor 對照
 
-| 案例                                                                                       | 對 Sentry 的對應                           |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------ |
-| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/) | Frontend / mobile-heavy team 通常選 Sentry |
+| 案例                                                                                                     | 對 Sentry 的對應                                   |
+| -------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| [4.C1 Fintech audit](/backend/04-observability/cases/fintech-audit-evidence-observability/)              | Issue 跟 audit evidence 串聯、release 對應監管要求 |
+| [4.C2 Gaming peak](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)        | 高峰下 issue noise / rate limit / inbound filter   |
+| [4.C9 OTel migration signal drift](/backend/04-observability/cases/failure-otel-migration-signal-drift/) | Sentry SDK ↔ OTel context propagation 雙軌驗證     |
+| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)               | Frontend / mobile-heavy team 通常選 Sentry         |
 
-**待補 Sentry 案例**：大規模前端團隊（Shopify / Slack / GitHub frontend）error tracking 案例、release health 落地、跟 incident.io / PagerDuty 整合案例。
+**待補 frontend Sentry case**：大規模前端團隊（Shopify / Slack / GitHub frontend）error tracking 案例、release health 落地、跟 incident.io / PagerDuty 整合案例。
 
 ## 下一步路由
 

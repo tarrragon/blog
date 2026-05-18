@@ -147,6 +147,12 @@ jobs:
 
 ## 案例回寫
 
+| 案例方向                                                                                                                 | 對應主題                                               |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| [Google：Error Budget 與 Release Gating](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)   | 把 SLO 消耗轉成 release gate / freeze 的 workflow 入口 |
+| [Stripe：Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)        | canary deploy / staged rollout 的 CI 節奏              |
+| [Microsoft：變更治理與可靠性門檻](/backend/06-reliability/cases/microsoft/change-management-and-reliability-governance/) | environment protection + approval gate 對應變更分層    |
+
 **待補 GitHub Actions customer case**：大規模 monorepo Actions 採用、OIDC migration、self-hosted runner scaling 案例。
 
 ## 下一步路由

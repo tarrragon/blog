@@ -174,9 +174,12 @@ Terraform 是 HashiCorp 出品的 IaC 工具、承擔三個責任：declarative 
 
 ### 跨 vendor 對照
 
-| 案例                                                                                          | 對 Terraform 的對應       |
-| --------------------------------------------------------------------------------------------- | ------------------------- |
-| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) | 規模化 IaC 跟 GitOps 對接 |
+| 案例                                                                                                            | 對 Terraform 的對應                                                            |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) | 平台遷移期間舊 / 新叢集共通配置基線靠 IaC 表達、批次切流時 module 版本要凍結   |
+| [5.C2 Condé Nast EKS](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)             | 多團隊異質集群盤點後、用 module + workspace 把平台基線變成統一可審計的 IaC     |
+| [5.C5 Miro EKS](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)                              | Managed EKS 後平台團隊把手動操作改成 IaC + GitOps、自動化取代手動操作          |
+| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)                   | 小型 CLI / 中型單 workspace / 大型 multi-workspace + Atlantis / Spacelift 治理 |
 
 **待補 Terraform 案例**：HashiCorp Cloud 大客戶案例、OpenTofu fork 後企業遷移案例、Drift detection 治理案例。
 

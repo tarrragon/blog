@@ -75,11 +75,11 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 - Prometheus 沒原生 HA — 跑兩個 instance scrape 同 target、靠下游去重
 - Thanos：sidecar 模式、跨 Prometheus instance 查詢統一
 - Mimir：fully replicated metric storage（多 Prometheus → Mimir）
-- 對應案例 [4.C6 Airbnb K8s scale signals](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)
+- 對應案例 [4.C8 Airbnb K8s scale signals](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)
 
 ### Cardinality 管理
 
-對應案例 [4.C7 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)。子議題：
+對應案例 [4.C2 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)。子議題：
 
 - Cardinality = unique label combinations 數量
 - High-cardinality label（user_id / request_id / trace_id）會炸 Prometheus
@@ -112,7 +112,7 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 - CRD：Prometheus / ServiceMonitor / PodMonitor / PrometheusRule / Alertmanager
 - 自動發現 ServiceMonitor 物件、不手動改 scrape config
 - kube-prometheus-stack Helm chart
-- 對應 [4.C1 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/) 對照
+- 對應 [4.C6 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/) 對照
 
 ### Pull vs Push model
 
@@ -140,7 +140,7 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 # TODO: 查 `prometheus_tsdb_head_series` 跟 `prometheus_tsdb_head_active_appenders`
 ```
 
-對應 [4.C7 Gaming peak](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) 的處理路徑。
+對應 [4.C2 Gaming peak](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) 的處理路徑。
 
 ### Query 過慢
 
@@ -179,15 +179,17 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 
 | 案例                                                                                                          | 主討論議題                        |
 | ------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [4.C6 Airbnb K8s scale](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)              | K8s metrics + Prometheus 規模化   |
-| [4.C7 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) | Cardinality 管理 / freshness 取捨 |
-| [4.C1 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)                   | AWS Distro + Prometheus 整合      |
+| [4.C2 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) | Cardinality 管理 / freshness 取捨 |
+| [4.C6 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)                   | AWS Distro + Prometheus 整合      |
+| [4.C8 Airbnb K8s scale](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)              | K8s metrics + Prometheus 規模化   |
 
 ### 跨 vendor 對照
 
-| 案例                                                                                       | 對 Prometheus 的對應                           |
-| ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
-| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/) | 小型單 instance / 中型 Operator / 大型 + Mimir |
+| 案例                                                                                                     | 對 Prometheus 的對應                           |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)          | 從 Prometheus + Datadog 雙軌走向 OTel 對齊     |
+| [4.C9 OTel migration signal drift](/backend/04-observability/cases/failure-otel-migration-signal-drift/) | （反例）Prometheus 指標跟新管線的語意對不齊    |
+| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)               | 小型單 instance / 中型 Operator / 大型 + Mimir |
 
 ## 下一步路由
 

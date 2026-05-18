@@ -69,7 +69,14 @@ Instatus 是輕量 status page SaaS、承擔三個責任：簡潔現代 UI 的 s
 
 ## 案例回寫
 
-**待補 Instatus case**：startup / mid-size 採用、從 Statuspage 遷移 cost case。
+**Instatus 主打輕量、低成本公開狀態頁**：本案例庫的案例皆為大型平台，多以 Atlassian Statuspage 揭露事故；Instatus 缺乏直接 case，可參照的閱讀脈絡是「事故對外揭露的最小可行樣式」。
+
+| 案例                                                          | 對應主題                              |
+| ------------------------------------------------------------- | ------------------------------------- |
+| [Heroku cases](/backend/08-incident-response/cases/heroku/)   | 平台型服務的 component 拆分與訂閱範例 |
+| [Discord cases](/backend/08-incident-response/cases/discord/) | 事件導向產品的最小事故時序揭露對照    |
+
+待補 candidate：從 Statuspage 遷移至 Instatus 的中小型 SaaS cost-saving story。
 
 ## 下一步路由
 

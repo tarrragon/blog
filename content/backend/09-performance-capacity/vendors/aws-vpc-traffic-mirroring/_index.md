@@ -68,9 +68,9 @@ Evidence package 的核心用途是把網路層觀察接回效能判斷。Review
 
 ## 案例回寫
 
-AWS VPC Traffic Mirroring 適合回寫網路與平台層效能案例。它可接 [GCP 130K node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/) 的大規模網路觀測需求、[Wayfair GCP burst capacity](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/) 的跨雲容量觀測，以及 [Prime Day readiness](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) 的 pre-event network evidence。
+AWS VPC Traffic Mirroring 適合回寫網路與平台層效能案例。它可接 [9.C34 GCP 130K node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/) 的大規模網路觀測需求（雖在 GCP、但網路證據的層次拆解可類比）、[9.C22 Wayfair GCP burst capacity](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/) 的跨雲容量觀測、[9.C1 Prime Day readiness](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) 的 pre-event network evidence、[9.C12 Riot Games 246 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 跨 cluster 的網路流量觀測、以及 [9.C24 Genesys DynamoDB 15-region](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) 的 99.999% 可用性下封包層 evidence 補強。
 
-這些案例的重點是網路層 evidence。VPC Traffic Mirroring 頁引用案例時，要把 case 轉成 mirror source、filter、target capacity、packet metric、cross-AZ cost 與 L7 correlation。
+這些案例的重點是網路層 evidence。VPC Traffic Mirroring 頁引用案例時，要把 case 轉成 mirror source、filter、target capacity、packet metric、cross-AZ cost 與 L7 correlation — 例如 Riot Games 35ms 延遲門檻下、cross-AZ traffic mirror 本身會增加成本、必須先用 filter 收斂到關鍵 ENI。
 
 ## 下一步路由
 

@@ -162,9 +162,10 @@ Traefik 是 cloud-native reverse proxy / ingress、承擔三個責任：auto-dis
 
 ### 跨 vendor 對照
 
-| 案例                                                                                          | 對 Traefik 的對應                    |
-| --------------------------------------------------------------------------------------------- | ------------------------------------ |
-| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) | Docker / K8s 中小規模選 Traefik 簡潔 |
+| 案例                                                                                                        | 對 Traefik 的對應                                                                     |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [5.C9 cutover without drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) | Traefik auto-discovery 在 service 下線時、要靠 health check + grace period 等價 drain |
+| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)               | Docker / K8s 中小規模選 Traefik 簡潔、大規模通常升階到 Envoy / ingress-nginx 或 mesh  |
 
 **待補 Traefik 案例**：Traefik Labs customer story、IngressRoute CRD 大規模採用、Traefik Hub 早期 adopter。
 

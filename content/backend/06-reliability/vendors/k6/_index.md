@@ -148,9 +148,10 @@ k6 是 Grafana Labs 出品的 load test 工具、承擔三個責任：CLI-first 
 
 ## 案例回寫
 
-| 案例方向                                                            | 對應主題            |
-| ------------------------------------------------------------------- | ------------------- |
-| [Shopify reliability cases](/backend/06-reliability/cases/shopify/) | Load test + CI gate |
+| 案例方向                                                                                                           | 對應主題                                        |
+| ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| [Shopify：BFCM 容量治理與 Game Day](/backend/06-reliability/cases/shopify/bfcm-capacity-and-game-day/)             | 峰值前 load test 對齊 capacity model + CI gate  |
+| [LinkedIn：Capacity 與 On-call 分層](/backend/06-reliability/cases/linkedin/capacity-headroom-and-oncall-tiering/) | automated load testing 變成日常流程的工程化做法 |
 
 **待補 k6 customer case**：Grafana Labs / k6 customer engineering blog、企業遷移 JMeter → k6 案例。
 

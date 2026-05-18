@@ -134,10 +134,12 @@ Chaos Mesh 是 PingCAP 開源、CNCF incubating 的 Kubernetes-native chaos engi
 
 ## 案例回寫
 
-| 案例方向                                                          | 對應主題                         |
-| ----------------------------------------------------------------- | -------------------------------- |
-| [Netflix chaos cases](/backend/06-reliability/cases/netflix/)     | Chaos engineering 文化 / GameDay |
-| [Google reliability cases](/backend/06-reliability/cases/google/) | Steady state + chaos 對應 SLO    |
+| 案例方向                                                                                                               | 對應主題                                                 |
+| ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [Netflix：Steady State、Chaos 與 FIT](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/)               | steady state hypothesis 對應 Chaos Workflow Probe        |
+| [Netflix：Business-Hours Guardrails](/backend/06-reliability/cases/netflix/chaos-monkey-business-hours-guardrails/)    | blast radius / pause / mode 控制對應時段策略             |
+| [Pinterest：快取可靠性與容量驚奇](/backend/06-reliability/cases/pinterest/cache-reliability-and-capacity-surprises/)   | NetworkChaos / StressChaos 模擬熱點與 cache failure mode |
+| [Google：Error Budget 與 Release Gating](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/) | chaos finding 對應 SLO burn rate 的回寫                  |
 
 **待補 Chaos Mesh customer case**：PingCAP / TiDB 客戶 Chaos Mesh 案例、CNCF Chaos Mesh adopters。
 

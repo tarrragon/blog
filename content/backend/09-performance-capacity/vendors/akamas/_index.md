@@ -70,9 +70,9 @@ Evidence package 的核心用途是讓成本調校可以被審查。Akamas recom
 
 ## 案例回寫
 
-Akamas 目前在 09 案例庫中適合作為 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的工具承接點。Zomato、Riot Games、Capcom 這類成本最佳化案例可回寫 workload constraint、Kubernetes capacity、database cost 與 managed service trade-off。
+Akamas 目前在 09 案例庫中適合作為 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 的工具承接點。它可回寫到 [9.C20 Zomato TiDB → DynamoDB 遷移](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 的成本下降 50% 取捨、[9.C12 Riot Games 246 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 的年省 1000 萬美金的 Kubernetes capacity 調校、[9.C19 Capcom 遊戲後端](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 的營運成本下降 30%、以及 [9.C2 GR8 Tech 體育博彩](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 的需求降低時成本下降 25% 彈性曲線。
 
-這些案例的重點是優化條件。文章引用 Akamas 時，應把「某公司節省成本」轉成 workload window、SLO constraint、調整參數、驗證方式與回退條件。
+這些案例的重點是優化條件。Akamas 頁引用案例時，應把「某公司節省成本」轉成 workload window、SLO constraint、調整參數、驗證方式與回退條件 — 例如 Zomato 的 4x throughput / 90% latency 改善是同時優化目標、不是只看成本欄位。
 
 ## 下一步路由
 

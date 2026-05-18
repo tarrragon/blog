@@ -138,6 +138,11 @@ JMeter 是 Apache 出品的老牌 load test 工具、承擔三個責任：GUI-dr
 
 ## 案例回寫
 
+| 案例方向                                                                                                           | 對應主題                                                |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| [LinkedIn：Capacity 與 On-call 分層](/backend/06-reliability/cases/linkedin/capacity-headroom-and-oncall-tiering/) | 企業內部 load test pipeline + headroom 驗證             |
+| [Shopify：BFCM 容量治理與 Game Day](/backend/06-reliability/cases/shopify/bfcm-capacity-and-game-day/)             | 峰值前 load test scenario 與 capacity baseline 的對照組 |
+
 **待補 JMeter customer case**：企業內部 JMeter 大規模採用案例、JMeter → k6 遷移案例。
 
 ## 下一步路由

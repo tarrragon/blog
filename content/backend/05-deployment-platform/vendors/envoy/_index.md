@@ -73,7 +73,7 @@ Envoy 是 CNCF graduated 的 service proxy、承擔三個責任：cloud-native L
 - LDS / RDS / CDS / EDS / SDS / RTDS / ECDS
 - ADS（Aggregated Discovery Service）統一通道
 - Delta xDS（incremental）vs SOTW（State of the World）
-- 對應案例 [5.C5 Airbnb Istio](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)
+- 對應案例 [5.C7 Airbnb Istio](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)
 
 ### Filter chain（HTTP / network filter）
 
@@ -109,7 +109,7 @@ Envoy 是 CNCF graduated 的 service proxy、承擔三個責任：cloud-native L
 - Istio：control plane + Envoy sidecar
 - Linkerd2：自家 Rust proxy（不是 Envoy）— Linkerd2-proxy
 - Cilium Service Mesh：eBPF + Envoy
-- 對應 [5.C5 Airbnb Istio governance](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)
+- 對應 [5.C7 Airbnb Istio governance](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)
 
 ### WebAssembly extension
 
@@ -172,15 +172,17 @@ Envoy 是 CNCF graduated 的 service proxy、承擔三個責任：cloud-native L
 
 ### 直接相關案例
 
-| 案例                                                                                                   | 主討論議題                    |
-| ------------------------------------------------------------------------------------------------------ | ----------------------------- |
-| [5.C5 Airbnb Istio governance](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/) | Envoy-based mesh upgrade 治理 |
+| 案例                                                                                                   | 主討論議題                                                  |
+| ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| [5.C7 Airbnb Istio governance](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/) | Envoy-based service mesh 在大規模叢集的分批升級與可重播流程 |
 
 ### 跨 vendor 對照
 
-| 案例                                                                                          | 對 Envoy 的對應                    |
-| --------------------------------------------------------------------------------------------- | ---------------------------------- |
-| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) | 大規模 / 複雜 traffic → Envoy mesh |
+| 案例                                                                                                            | 對 Envoy 的對應                                                        |
+| --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) | Tradeshift 選 Linkerd（非 Envoy）做切流、對照 Envoy/Istio 的取捨       |
+| [5.C9 cutover without drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)     | Envoy outlier detection / circuit breaker / draining listener 是回退面 |
+| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)                   | 大規模 / 複雜 traffic / 多 DC → Envoy mesh 才能撐住協同節奏            |
 
 **待補 Envoy 案例**：Lyft 自家 Envoy production 案例、Stripe / Reddit 用 Envoy 邊緣案例、Envoy Gateway 早期 adopter。
 

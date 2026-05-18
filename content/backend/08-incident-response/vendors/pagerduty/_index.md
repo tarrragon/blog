@@ -84,7 +84,14 @@ PagerDuty 是 on-call / alerting 的事實標準 SaaS、承擔三個責任：ale
 
 ## 案例回寫
 
-**待補 PagerDuty case**：Atlassian / GitHub / Cloudflare incident 多用 PagerDuty paging。
+**PagerDuty 公開 customer 多為大型 SaaS / 平台**：GitHub / Cloudflare / Slack / Datadog 等皆為 PagerDuty 公開引用之案例（PagerDuty.com customer stories）。下列案例可作為「paging 設計如何影響事故 detect → ack → mitigate 時間」的閱讀脈絡。
+
+| 案例                                                                | 對應主題                                   |
+| ------------------------------------------------------------------- | ------------------------------------------ |
+| [GitHub cases](/backend/08-incident-response/cases/github/)         | 大型平台事故的多輪 paging 與輪值           |
+| [Cloudflare cases](/backend/08-incident-response/cases/cloudflare/) | 控制面 vs data plane 的 paging 分軌        |
+| [Slack cases](/backend/08-incident-response/cases/slack/)           | 通訊平台失效時 paging 通道的退路           |
+| [Datadog cases](/backend/08-incident-response/cases/datadog/)       | 觀測平台事故的 self-paging 與外部 fallback |
 
 ## 下一步路由
 

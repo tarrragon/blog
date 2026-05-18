@@ -83,7 +83,7 @@ AWS ElastiCache 是 AWS managed cache 服務、承擔三個責任：託管 Redis
 - Multi-AZ 部署：primary 失敗、replica 自動晉升
 - Failover 時間：~30 秒到幾分鐘（依 client 重連)
 - Client 影響：DNS 切到新 primary、client 要 reconnect
-- 對應 [2.C5 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/) 跨 AZ 對照
+- 對應 [2.C6 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/) 跨 AZ 對照
 
 ### ElastiCache Serverless
 
@@ -192,19 +192,23 @@ AWS ElastiCache 是 AWS managed cache 服務、承擔三個責任：託管 Redis
 
 ### 直接相關案例
 
-| 案例                                                                                              | 對 ElastiCache 的對應                 |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| [2.C5 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/)         | 跨 AZ + 跨 region replication 對照    |
-| [2.C8 Shopify write-through](/backend/02-cache-redis/cases/shopify-write-through-cache-at-scale/) | Write-through 在 managed cache 的實作 |
+| 案例                                                                                               | 對 ElastiCache 的對應                                                                                 |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [2.C6 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/)          | EVCache 為 Netflix 自管 Memcached based 全域 cache、對應 ElastiCache for Memcached + Global Datastore |
+| [2.C5 Shopify write-through](/backend/02-cache-redis/cases/shopify-write-through-cache-at-scale/)  | Write-through 在 managed cache 的實作、ElastiCache 提供同樣 Redis/Valkey API、無 self-host 維運負擔   |
+| [2.C3 Shopify serialization](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/) | Payload 雙軌遷移 client-side 實作、ElastiCache 對應為 engine version upgrade + parameter group 滾動   |
+
+**待補 ElastiCache-specific 案例**：Airbnb / Lyft / Pinterest 等公開的 ElastiCache 規模化案例、re:Invent talks（如 ElastiCache for Valkey 遷移、Serverless 採用、Global Datastore active-passive DR 實作）。
 
 ### 跨 vendor 對照
 
-| 案例                                                                                            | 對 ElastiCache 的對應                                                      |
-| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) | Managed 也會 stampede、需 client 端設計                                    |
-| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)               | 小型 single primary / 中型 Multi-AZ / 大型 Cluster mode + Global Datastore |
-
-**待補 ElastiCache 案例**：Airbnb / Lyft / Pinterest 等公開的 ElastiCache 規模化案例、re:Invent talks。
+| 案例                                                                                                    | 對 ElastiCache 的對應                                                                                    |
+| ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)         | Managed 也會 stampede、AWS 不會幫你做 client-side jitter / singleflight、需自行設計                      |
+| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)                       | 小型 single primary / 中型 Multi-AZ replica / 大型 Cluster mode enabled + Global Datastore               |
+| [2.C2 Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)                 | ElastiCache 對應為 Cluster mode + Configuration Endpoint（client-side discovery）、無原生 protocol proxy |
+| [2.C1 Meta cache consistency](/backend/02-cache-redis/cases/meta-cache-consistency-upgrade/)            | Failover / replica promotion 期間 ElastiCache 也會出現一致性議題、CloudWatch ReplicationLag 是主要訊號   |
+| [2.C7 Cloudflare Cache Reserve](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) | 分層儲存對照、AWS 對應為 ElastiCache（hot）+ S3 / DynamoDB（cold）的應用層分層設計                       |
 
 ## 下一步路由
 

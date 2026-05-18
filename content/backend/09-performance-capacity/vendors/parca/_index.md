@@ -68,9 +68,9 @@ Evidence package 的核心用途是把平台層 profile 變成容量決策。Rev
 
 ## 案例回寫
 
-Parca 適合回寫平台層與 multi-service 成本案例。它可接 [GCP 130K node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/) 的 cluster-scale profiling 需求、[Riot Games EKS multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 的平台成本治理，以及 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的 shared platform noise 降低。
+Parca 適合回寫平台層與 multi-service 成本案例。它可接 [9.C34 GCP 130K node GKE cluster](/backend/09-performance-capacity/cases/gcp-130k-node-gke-cluster/) 的 cluster-scale profiling 需求、[9.C12 Riot Games EKS multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 的 246 cluster 平台成本治理、[9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的 shared platform noise 降低、[9.C33 Maersk + Bosch Azure AKS](/backend/09-performance-capacity/cases/maersk-bosch-azure-aks/) 的傳統產業多 BU 平台層歸因，以及 [9.C19 Capcom DynamoDB + EKS](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 跨遊戲共用後端的 profile 切分。
 
-這些案例的重點是平台視角。Parca 頁引用案例時，要把 case 轉成 cluster / namespace / service label、compare window、symbolization、shared library cost 與 owner routing。
+這些案例的重點是平台視角。Parca 頁引用案例時，要把 case 轉成 cluster / namespace / service label、compare window、symbolization、shared library cost 與 owner routing — 例如 GCP 130K-node 規模下，Parca 自身的 storage / scrape capacity 也成為 profile target、不只是觀測 application。
 
 ## 下一步路由
 

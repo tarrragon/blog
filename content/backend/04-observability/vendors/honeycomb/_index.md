@@ -41,7 +41,7 @@ Honeycomb 跟 metrics-aggregation 平台不同。子議題：
 - Event = 一個 trace span（包含 dozens of attributes）
 - 不預先 aggregate、查詢時 group by 任意 attribute
 - High-cardinality 不是問題、是設計目標
-- 對應 [4.C7 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)
+- 對應 [4.C2 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)
 
 ### Instrumentation
 
@@ -97,7 +97,7 @@ Honeycomb 跟 metrics-aggregation 平台不同。子議題：
 - Honeycomb 接受 OTLP（gRPC / HTTP）
 - 應用層用 OTel SDK、傳給 Honeycomb 不用改 SDK
 - Multi-backend 支援：同一份 OTel data 送 Honeycomb + 其他
-- 對應 [4.C2 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)
+- 對應 [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)
 
 ### 結構化 events 設計
 
@@ -161,16 +161,18 @@ Honeycomb 跟 metrics-aggregation 平台不同。子議題：
 
 ### 直接相關案例
 
-| 案例                                                                                                          | 主討論議題                     |
-| ------------------------------------------------------------------------------------------------------------- | ------------------------------ |
-| [4.C7 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) | High-cardinality debug pattern |
+| 案例                                                                                                          | 主討論議題                            |
+| ------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| [4.C2 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) | High-cardinality debug pattern        |
+| [4.C9 OTel signal drift](/backend/04-observability/cases/failure-otel-migration-signal-drift/)                | （反例）Refinery / dual ship 對齊驗證 |
 
 ### 跨 vendor 對照
 
-| 案例                                                                                           | 對 Honeycomb 的對應                              |
-| ---------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [4.C9 OTel signal drift](/backend/04-observability/cases/failure-otel-migration-signal-drift/) | Dual ship Honeycomb + 其他需驗證                 |
-| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)     | Honeycomb 適合中大型 + observability-driven team |
+| 案例                                                                                                     | 對 Honeycomb 的對應                              |
+| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)          | 從 Datadog APM 遷出時 Honeycomb 是 events 替代   |
+| [4.C8 Airbnb K8s scale signals](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/) | 動態叢集下 wide events 補 metrics 維度不足       |
+| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)               | Honeycomb 適合中大型 + observability-driven team |
 
 **待補 Honeycomb 案例**：Charity Majors 的 production talks、Honeycomb customer engineering blog、Refinery scale-up case。
 

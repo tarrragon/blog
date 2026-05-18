@@ -65,7 +65,7 @@ CloudWatch 是 AWS 原生 observability 服務、承擔三個責任：AWS 服務
 - 各語言 X-Ray SDK
 - Sampling rule（rate-based / reservoir）
 - Service map 自動 build
-- 對應 [4.C8 X-Ray to OpenTelemetry](/backend/04-observability/cases/xray-to-opentelemetry-migration/) 遷移案例
+- 對應 [4.C4 X-Ray to OpenTelemetry](/backend/04-observability/cases/xray-to-opentelemetry-migration/) 遷移案例
 
 ## 進階主題（按需閱讀）
 
@@ -101,7 +101,7 @@ CloudWatch 是 AWS 原生 observability 服務、承擔三個責任：AWS 服務
 - Logs ingestion charge（per GB）
 - Metrics storage charge（custom metrics + high-resolution）
 - API call charge（GetMetricData / Logs Insights query）
-- 對應 [4.C5 Fintech audit](/backend/04-observability/cases/fintech-audit-evidence-observability/)
+- 對應 [4.C1 Fintech audit](/backend/04-observability/cases/fintech-audit-evidence-observability/)
 
 ### CloudWatch Managed Prometheus（AMP）
 
@@ -109,7 +109,7 @@ CloudWatch 是 AWS 原生 observability 服務、承擔三個責任：AWS 服務
 
 - AMP：AWS managed Prometheus、scrape EKS / ECS
 - 跟 CloudWatch 互補（CloudWatch 是 AWS-native、AMP 是 OSS standard）
-- 對應 [4.C4 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)
+- 對應 [4.C6 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)
 
 ### AWS Distro for OpenTelemetry（ADOT）
 
@@ -118,7 +118,7 @@ CloudWatch 是 AWS 原生 observability 服務、承擔三個責任：AWS 服務
 - AWS-supported OTel distribution
 - 跟 X-Ray / AMP / CloudWatch 都整合
 - 推薦的 OTel adoption 路徑
-- 對應 [4.C4 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)
+- 對應 [4.C6 ADOT EKS](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)
 
 ## 排錯快速判讀
 
@@ -169,15 +169,16 @@ CloudWatch 是 AWS 原生 observability 服務、承擔三個責任：AWS 服務
 
 | 案例                                                                                                 | 主討論議題            |
 | ---------------------------------------------------------------------------------------------------- | --------------------- |
-| [4.C4 ADOT EKS pipeline](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/) | AWS Distro + EKS 觀測 |
-| [4.C8 X-Ray to OTel](/backend/04-observability/cases/xray-to-opentelemetry-migration/)               | X-Ray 遷出到 OTel     |
+| [4.C4 X-Ray to OTel](/backend/04-observability/cases/xray-to-opentelemetry-migration/)               | X-Ray 遷出到 OTel     |
+| [4.C6 ADOT EKS pipeline](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/) | AWS Distro + EKS 觀測 |
 
 ### 跨 vendor 對照
 
-| 案例                                                                                        | 對 CloudWatch 的對應         |
-| ------------------------------------------------------------------------------------------- | ---------------------------- |
-| [4.C5 Fintech audit](/backend/04-observability/cases/fintech-audit-evidence-observability/) | Logs 作為 audit evidence     |
-| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)  | AWS-only 場景優先 CloudWatch |
+| 案例                                                                                                       | 對 CloudWatch 的對應                             |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [4.C1 Fintech audit](/backend/04-observability/cases/fintech-audit-evidence-observability/)                | CloudWatch Logs / S3 archive 作為 audit evidence |
+| [4.C3 Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/) | Logs lifecycle / retention 對應資料主權限制      |
+| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)                 | AWS-only 場景優先 CloudWatch                     |
 
 ## 下一步路由
 

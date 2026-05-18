@@ -145,7 +145,15 @@ Sloth 是 OSS Prometheus SLO generator、承擔三個責任：輸入簡單 YAML 
 
 ## 案例回寫
 
-**待補 Sloth customer case**：Prometheus 重度團隊採用、Kubernetes Operator 落地案例。
+| 案例方向                                                                                                               | 對應主題                                              |
+| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| [Google：Error Budget 與 Release Gating](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/) | SLI / SLO 原典、用來生成 Prometheus rule 的對齊對象   |
+| [Honeycomb：Burn Rate 驅動可靠性](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)    | multi-window multi-burn-rate alert 的 PromQL 落地語意 |
+
+**Case 庫稀薄**：本 cases/ 目錄目前沒有以 Sloth 為主軸的案例。
+
+- **待補 Sloth customer case**：Prometheus 重度團隊採用、Kubernetes Operator 落地案例
+- **候選 case**：Spotify（Backstage + Prometheus 結合 SLO metadata）、LinkedIn（self-service metrics + SLO rule generation）— 若未來收錄需先在 cases/ 補正文
 
 ## 下一步路由
 

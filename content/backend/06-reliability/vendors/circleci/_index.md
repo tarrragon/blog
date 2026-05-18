@@ -143,6 +143,12 @@ workflows:
 
 ## 案例回寫
 
+| 案例方向                                                                                                                 | 對應主題                                |
+| ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| [Stripe：Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)        | canary deploy / approval job 的部署節奏 |
+| [Shopify：BFCM 容量治理與 Game Day](/backend/06-reliability/cases/shopify/bfcm-capacity-and-game-day/)                   | 峰值前 CI workflow 跑 capacity test     |
+| [Microsoft：變更治理與可靠性門檻](/backend/06-reliability/cases/microsoft/change-management-and-reliability-governance/) | approval job 對應變更分層審查           |
+
 **待補 CircleCI customer case**：大規模 CircleCI 採用、macOS / iOS CI 加速案例、CircleCI → GitHub Actions 遷移案例。
 
 ## 下一步路由

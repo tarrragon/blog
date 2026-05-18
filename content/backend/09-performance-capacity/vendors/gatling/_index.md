@@ -70,9 +70,9 @@ Evidence package 的核心用途是讓 simulation 可回放。Reviewer 要能從
 
 ## 案例回寫
 
-Gatling 適合回寫多步驟與多負載模型案例。它可接 [FanDuel 雙峰 workload](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 的直播與投注雙模型、[SeatGeek waiting room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 token / admission flow，以及 [BookMyShow ticketing](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) 的售票流程壓力。
+Gatling 適合回寫多步驟與多負載模型案例。它可接 [9.C28 FanDuel 雙峰 workload](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 的直播與投注雙模型、[9.C16 SeatGeek waiting room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/) 的 token / admission flow、[9.C17 BookMyShow ticketing](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) 的售票流程壓力、[9.C4 DraftKings Aurora 金融帳本](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 的「比賽期讀爆量 + payout 時寫爆量」雙峰錯位，以及 [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 的「投注 / 結算 / 賠率更新」三類請求 group 的 injection profile。
 
-這些案例的重點是 scenario 與 injection profile。Gatling 頁引用案例時，要把業務流程拆成 request group、session state、feeder、assertion 與 stop condition。
+這些案例的重點是 scenario 與 injection profile。Gatling 頁引用案例時，要把業務流程拆成 request group、session state、feeder、assertion 與 stop condition — 例如 DraftKings 雙峰錯位要寫成兩個 scenario 平行注入、各自有獨立 assertion budget。
 
 ## 下一步路由
 

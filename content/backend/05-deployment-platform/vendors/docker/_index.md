@@ -167,9 +167,10 @@ Docker 是最早 popularize container 的工具、承擔三個責任：container
 
 ### 跨 vendor 對照
 
-| 案例                                                                                          | 對 Docker 的對應            |
-| --------------------------------------------------------------------------------------------- | --------------------------- |
-| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) | 小規模直接 Docker / Compose |
+| 案例                                                                                                      | 對 Docker 的對應                                                      |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [5.C3 Orbitera managed K8s](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/) | Container image 是平台遷移的可攜介面、orchestrator 換但 image 不換    |
+| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)             | 小規模直接 Docker / Compose、中大型才走 K8s（Docker 退到 build only） |
 
 **待補 Docker 案例**：Docker Hub rate limit incident、企業 license 遷移到 Podman 案例、image scanning supply chain 案例。
 

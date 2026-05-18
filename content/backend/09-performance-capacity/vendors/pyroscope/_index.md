@@ -68,9 +68,9 @@ Evidence package 的核心用途是讓 profile diff 成為 release artifact。Re
 
 ## 案例回寫
 
-Pyroscope 適合回寫 OSS observability 與 release diff 案例。它可接 [Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的 profile noise 降低、[Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) 的 hot path 定位，以及 [9.9 Improvement Loop](/backend/09-performance-capacity/improvement-loop/) 的 baseline / candidate profile diff。
+Pyroscope 適合回寫 OSS observability 與 release diff 案例。它可接 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的 profile noise 降低、[9.C25 Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) 的 hot path 定位、[9.C12 Riot Games EKS multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 的 single-tenant per game profile 隔離、[9.C19 Capcom 遊戲後端](/backend/09-performance-capacity/cases/capcom-gaming-dynamodb-eks/) 的 30% 成本下降 hot path 分析，以及 [9.9 Improvement Loop](/backend/09-performance-capacity/improvement-loop/) 的 baseline / candidate profile diff。
 
-這些案例的重點是可比較 profile。Pyroscope 頁引用案例時，要把 case 轉成 tag schema、baseline window、candidate window、flame graph diff 與 release gate evidence。
+這些案例的重點是可比較 profile。Pyroscope 頁引用案例時，要把 case 轉成 tag schema、baseline window、candidate window、flame graph diff 與 release gate evidence — 例如 Riot Games 246 cluster 的 tag schema 必須涵蓋 game / region / cluster 三維、才能避免「跨遊戲混合 profile」的歸因錯誤。
 
 ## 下一步路由
 

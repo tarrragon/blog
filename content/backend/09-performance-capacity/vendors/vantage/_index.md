@@ -70,9 +70,9 @@ Evidence package 的核心用途是把成本問題交給正確 owner。Vantage r
 
 ## 案例回寫
 
-Vantage 目前適合作為 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 與 [04 cost attribution](/backend/04-observability/cost-attribution/) 的工具承接點。它可回寫 shared Kubernetes cluster、multi-account AWS、network egress 與 service-level cost review 的案例。
+Vantage 目前適合作為 [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/) 與 [04 cost attribution](/backend/04-observability/cost-attribution/) 的工具承接點。它可回寫到 [9.C12 Riot Games 246 EKS cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 的多 cluster 成本歸屬與年省 1000 萬美金驗證、[9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的 28% 成本下降跨 DB 整併、[9.C17 BookMyShow modern data architecture](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) 的儲存 90% / 分析 80% 成本下降，以及 [9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 的 on-demand cost model 50% 降幅。
 
-這些案例的重點是成本歸屬。文章引用 Vantage 時，要把 report filter、owner dimension、成本變化、action item 與驗證結果寫清楚，避免停在 dashboard 截圖。
+這些案例的重點是成本歸屬。Vantage 頁引用案例時，要把 report filter、owner dimension、成本變化、action item 與驗證結果寫清楚 — 例如 Netflix 的 28% 下降需要拆到 DB tier、replication topology 與 read replica 比例，避免停在帳單 dashboard 截圖。
 
 ## 下一步路由
 

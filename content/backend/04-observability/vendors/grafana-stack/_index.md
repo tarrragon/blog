@@ -73,7 +73,7 @@ Grafana Stack 是 Grafana Labs 提供的 OSS observability 全棧、承擔三個
 - Storage：S3 / GCS / 本地、按 stream 切 chunks
 - Label cardinality 跟 Prometheus 一樣敏感（不是 stream content）
 - LogQL 不適合 high-cardinality content search（用 Elastic）
-- 對應 [4.C6 Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)
+- 對應 [4.C3 Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)
 
 ### Tempo trace 採集
 
@@ -82,7 +82,7 @@ Grafana Stack 是 Grafana Labs 提供的 OSS observability 全棧、承擔三個
 - 接受 OTLP / Jaeger / Zipkin protocol
 - Storage：S3 / GCS、cheap object storage
 - Trace ID lookup 為主、no full-text search（用 traces metrics 反向查）
-- 對應 [4.C8 X-Ray to OTel](/backend/04-observability/cases/xray-to-opentelemetry-migration/)
+- 對應 [4.C4 X-Ray to OTel](/backend/04-observability/cases/xray-to-opentelemetry-migration/)
 
 ### Mimir 長期 metrics 儲存
 
@@ -91,7 +91,7 @@ Grafana Stack 是 Grafana Labs 提供的 OSS observability 全棧、承擔三個
 - Prometheus remote write 接收 metric
 - Horizontally scalable（multi-tenant）
 - 跟 Thanos / Cortex 的對照（Mimir 是 Cortex fork + improvements）
-- 對應 [4.C11 Airbnb K8s scale](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)
+- 對應 [4.C8 Airbnb K8s scale](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)
 
 ### Pyroscope continuous profiling
 
@@ -169,17 +169,19 @@ Grafana Stack 是 Grafana Labs 提供的 OSS observability 全棧、承擔三個
 
 ### 直接相關案例
 
-| 案例                                                                                                       | 主討論議題                        |
-| ---------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| [4.C6 Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/) | Loki retention / compliance       |
-| [4.C11 Airbnb K8s scale](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)          | Mimir scale / Prometheus 長期儲存 |
+| 案例                                                                                                          | 主討論議題                                     |
+| ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [4.C2 Gaming peak cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) | Loki / Mimir 高峰下的 ingestion lag 與標籤治理 |
+| [4.C3 Healthcare retention](/backend/04-observability/cases/healthcare-access-traceability-and-retention/)    | Loki retention / compliance                    |
+| [4.C8 Airbnb K8s scale](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/)              | Mimir scale / Prometheus 長期儲存              |
 
 ### 跨 vendor 對照
 
-| 案例                                                                                       | 對 Grafana Stack 的對應                                               |
-| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/) | 小型 single Grafana / 中型加 Loki+Tempo / 大型 Grafana Cloud 或 Mimir |
-| [4.C5 Datadog OTel](/backend/04-observability/cases/datadog-otel-migration-practice/)      | 從 Datadog 遷出可去 Grafana Cloud                                     |
+| 案例                                                                                            | 對 Grafana Stack 的對應                                               |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [4.C4 X-Ray to OTel](/backend/04-observability/cases/xray-to-opentelemetry-migration/)          | 從 X-Ray 遷出後 Tempo 是 OSS trace backend 候選                       |
+| [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/) | 從 Datadog 遷出可去 Grafana Cloud                                     |
+| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)      | 小型 single Grafana / 中型加 Loki+Tempo / 大型 Grafana Cloud 或 Mimir |
 
 ## 下一步路由
 

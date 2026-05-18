@@ -82,7 +82,14 @@ Rootly 是 IR 平台、承擔三個責任：no-code workflow builder（拖拉式
 
 ## 案例回寫
 
-**待補 Rootly case**：startup / mid-size customer story。
+**Rootly 主打 Slack-native + AI-assisted IR**：本案例庫尚無直接揭露 Rootly 使用細節的事故；可參照的閱讀脈絡是「Slack-centric 協作 + 自動化 retro」的服務事故。
+
+| 案例                                                        | 對應主題                                       |
+| ----------------------------------------------------------- | ---------------------------------------------- |
+| [Slack cases](/backend/08-incident-response/cases/slack/)   | Slack-native IR 平台在通訊平台自身事故下的回退 |
+| [Reddit cases](/backend/08-incident-response/cases/reddit/) | mid-size 平台升級事故的 retro 結構（對照素材） |
+
+待補 candidate：NVIDIA / Figma / Canva 等 Rootly 公開 customer story。
 
 ## 下一步路由
 

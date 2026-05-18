@@ -170,9 +170,10 @@ systemd 是 Linux 主流 init system、承擔三個責任：service unit lifecyc
 
 ### 跨 vendor 對照
 
-| 案例                                                                                          | 對 systemd 的對應          |
-| --------------------------------------------------------------------------------------------- | -------------------------- |
-| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) | 小規模 VM 服務首選 systemd |
+| 案例                                                                                                        | 對 systemd 的對應                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [5.C9 cutover without drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) | systemd 服務切換要靠 ExecStop / TimeoutStopSec / SIGTERM trap 等價 drain  |
+| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)               | 小規模 VM 服務首選 systemd、跨規模升階到 K8s 時要保留 unit-level 回退腳本 |
 
 **待補 systemd 案例**：大規模 fleet（HashiCorp Nomad 跟 systemd 整合）、IoT / edge appliance 案例、systemd portable services 落地案例。
 

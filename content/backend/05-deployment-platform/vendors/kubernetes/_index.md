@@ -79,7 +79,7 @@ Pod lifecycle 是 K8s 的核心抽象。子議題：
 - Ingress controller 選擇（[nginx](/backend/05-deployment-platform/vendors/nginx/) / [Traefik](/backend/05-deployment-platform/vendors/traefik/) / ALB Controller）
 - Gateway API（next gen Ingress）
 - Service mesh integration（[Envoy](/backend/05-deployment-platform/vendors/envoy/)-based Istio / Linkerd）
-- 對應 [5.C5 Airbnb Istio](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)
+- 對應 [5.C7 Airbnb Istio](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)
 
 ### Operator pattern / CRD
 
@@ -91,7 +91,7 @@ Pod lifecycle 是 K8s 的核心抽象。子議題：
 
 ### Managed vs self-managed
 
-對應案例 [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)、[5.C2 Condé Nast EKS](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)、[5.C4 Mobileye EKS](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)、[5.C8 Miro EKS](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)。子議題：
+對應案例 [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)、[5.C2 Condé Nast EKS](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)、[5.C3 Orbitera managed K8s](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/)、[5.C4 Mobileye EKS](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)、[5.C5 Miro EKS](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)。子議題：
 
 - Self-managed（kubeadm / Cluster API）的 control plane 維運成本
 - Managed（GKE / EKS / AKS）的限制（版本鎖定 / managed addon）
@@ -103,7 +103,7 @@ Pod lifecycle 是 K8s 的核心抽象。子議題：
 
 - Federation v2 / Cluster API multi-cluster
 - Cross-cluster service mesh（Istio multi-cluster）
-- 對應 [5.C3 Airbnb cluster scaling](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/)
+- 對應 [5.C6 Airbnb cluster scaling](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/)
 
 ### Cluster autoscaling
 
@@ -166,13 +166,14 @@ Pod lifecycle 是 K8s 的核心抽象。子議題：
 
 | 案例                                                                                                              | 主討論議題                                   |
 | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)   | 自管 K8s 遷 managed                          |
-| [5.C2 Condé Nast EKS](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)               | 平台現代化遷 EKS                             |
-| [5.C3 Airbnb cluster scaling](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/) | Cluster scale 演進                           |
-| [5.C4 Mobileye EKS](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)                             | Workload 遷 EKS                              |
-| [5.C5 Airbnb Istio](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)                       | Service mesh 升級治理                        |
-| [5.C8 Miro EKS](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)                                | Managed K8s 遷移                             |
-| [5.C9 反例：cutover without drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) | Drain 沒做的傷                               |
+| [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/)   | 自管 K8s 遷 managed、零停機切流              |
+| [5.C2 Condé Nast EKS](/backend/05-deployment-platform/cases/conde-nast-platform-modernization-eks/)               | 多團隊異質集群整併到單一控制面               |
+| [5.C3 Orbitera managed K8s](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/)         | 平台重置不中斷產品的能力遷移                 |
+| [5.C4 Mobileye EKS](/backend/05-deployment-platform/cases/mobileye-workloads-to-eks/)                             | 大規模 workload 分批遷 EKS                   |
+| [5.C5 Miro EKS](/backend/05-deployment-platform/cases/miro-managed-eks-migration/)                                | Managed K8s 跟團隊維運模型對齊               |
+| [5.C6 Airbnb cluster scaling](/backend/05-deployment-platform/cases/airbnb-kubernetes-cluster-scaling-evolution/) | 手動擴縮 → 自動化容量治理                    |
+| [5.C7 Airbnb Istio](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)                       | Service mesh 升級分批治理                    |
+| [5.C9 反例：cutover without drain](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/) | Rolling update / drain 沒做的傷              |
 | [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)                     | 小型 systemd → 中型 K8s → 大型 multi-cluster |
 
 ## 下一步路由

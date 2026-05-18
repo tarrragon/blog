@@ -72,9 +72,9 @@ Evidence package 的核心用途是讓 release gate 能判斷。k6 的 threshold
 
 ## 案例回寫
 
-k6 目前在 09 案例庫中主要作為工具類承接點，案例主角仍是負載形狀與驗證節奏。它可回寫到 [Tixcraft 售票壓測](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的 pre-event load test 判讀、[Prime Day readiness](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) 的 staged validation，以及 [FanDuel 雙峰 workload](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 的多模型壓測需求。
+k6 目前在 09 案例庫中主要作為工具類承接點，案例主角仍是負載形狀與驗證節奏。它可回寫到 [9.C15 Tixcraft 售票壓測](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 的 pre-event load test 判讀、[9.C1 Prime Day readiness](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) 的 staged validation、[9.C28 FanDuel 雙峰 workload](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/) 的多模型壓測需求、[9.C2 GR8 Tech FIFA World Cup readiness](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 的 54000 TPS @ 25ms p95 驗證、以及 [9.C7 Lyft 8x peak](/backend/09-performance-capacity/cases/lyft-microservice-eight-x-peak/) 跨 100+ 微服務的獨立 threshold 設計。
 
-這些案例提供的是負載形狀與工程節奏。工具頁引用案例時，要把 case 轉成 workload model、ramp-up、threshold、runner 規模與 stop condition，並讓工具回到可替換的承載選項。
+這些案例提供的是負載形狀與工程節奏。k6 頁引用案例時，要把 case 轉成 workload model、ramp-up、threshold、runner 規模與 stop condition，並讓工具回到可替換的承載選項 — 例如 GR8 Tech 25ms p95 是 threshold pass / fail 的硬目標、Lyft 的「8x 是特定服務、不是全部 8x」要拆成 per-service scenario。
 
 ## 下一步路由
 

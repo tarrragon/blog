@@ -79,7 +79,14 @@ FireHydrant 是 IR 平台、承擔三個責任：incident response lifecycle（d
 
 ## 案例回寫
 
-**待補 FireHydrant case**：customer story、Microsoft Teams + IR 用戶案例。
+**FireHydrant 偏向 Microsoft Teams + Jira 生態的 IR 平台**：本案例庫尚無直接揭露 FireHydrant 使用細節的事故；可參照的閱讀脈絡是「企業套件 + 跨產品 IR」的事故。
+
+| 案例                                                                      | 對應主題                         |
+| ------------------------------------------------------------------------- | -------------------------------- |
+| [Microsoft 365 cases](/backend/08-incident-response/cases/microsoft-365/) | Teams + 套件級事故的 IR 協作對照 |
+| [Azure AD cases](/backend/08-incident-response/cases/azure-ad/)           | 身份控制面事故的跨產品依賴對照   |
+
+待補 candidate：Snyk / Vercel / 大型 Microsoft 生態 customer 公開 story。
 
 ## 下一步路由
 

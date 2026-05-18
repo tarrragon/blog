@@ -176,9 +176,11 @@ Consul 是 HashiCorp 出品的 service networking 平台、承擔三個責任：
 
 ### 跨 vendor 對照
 
-| 案例                                                                                          | 對 Consul 的對應              |
-| --------------------------------------------------------------------------------------------- | ----------------------------- |
-| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/) | 非 K8s 多 DC 場景 Consul 首選 |
+| 案例                                                                                                            | 對 Consul 的對應                                                              |
+| --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [5.C1 Tradeshift self-managed → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) | Tradeshift 用 Linkerd 做切流、對照 Consul Connect 做跨叢集 mTLS 的取捨        |
+| [5.C7 Airbnb Istio](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)                     | 大規模 mesh 升級節奏的對照、Consul Connect 在類似治理上要設計分批與回退窗口   |
+| [5.C10 規模對照](/backend/05-deployment-platform/cases/contrast-platform-migration-by-scale/)                   | 非 K8s 多 DC 場景 Consul 首選、K8s-only 場景則退到 K8s 內建 service discovery |
 
 **待補 Consul 案例**：HashiCorp customer story、Bloomberg / Cloudflare / Stripe 等大規模 Consul 案例、Consul → K8s service mesh 遷移案例。
 

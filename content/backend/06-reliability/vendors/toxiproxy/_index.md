@@ -132,11 +132,15 @@ Toxiproxy 是 Shopify 開源的 TCP-level fault injection proxy、承擔三個�
 
 **Shopify 自家**：Toxiproxy 是 Shopify 開源、Shopify reliability cases 多有引用。
 
-| 案例方向                                                            | 對應主題               |
-| ------------------------------------------------------------------- | ---------------------- |
-| [Shopify reliability cases](/backend/06-reliability/cases/shopify/) | Integration test chaos |
+| 案例方向                                                                                                          | 對應主題                                                         |
+| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [Shopify：BFCM 容量治理與 Game Day](/backend/06-reliability/cases/shopify/bfcm-capacity-and-game-day/)            | resiliency matrix + TCP-level fault injection 的原生使用脈絡     |
+| [Stripe：Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/) | integration test 模擬 dependency 失敗、驗證 retry 與 idempotency |
 
-**待補 Toxiproxy adopter case**：其他公司用 Toxiproxy 做 dependency failure 測試。
+**Case 庫稀薄**：Toxiproxy 主要 case 集中在 Shopify 自家、其他 adopter 案例待補。
+
+- **待補 Toxiproxy adopter case**：其他公司用 Toxiproxy 做 dependency failure 測試
+- **候選 case**：Pinterest（cache failure mode integration test）、Spotify（squad 自管 integration chaos）— 若未來收錄需先在 cases/ 補正文
 
 ## 下一步路由
 

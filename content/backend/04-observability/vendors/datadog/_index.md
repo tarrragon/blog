@@ -52,7 +52,7 @@ Datadog 是 all-in-one SaaS observability 平台、承擔三個責任：覆蓋 A
 - 各語言 tracer：dd-trace-java / dd-trace-py / dd-trace-js / dd-trace-go
 - Auto-instrumentation 廣度（業界最廣）
 - Service / Resource / Operation 三層 trace 結構
-- 對應 [4.C2 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)
+- 對應 [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)
 
 ### Logs 配置
 
@@ -70,7 +70,7 @@ Datadog 是 all-in-one SaaS observability 平台、承擔三個責任：覆蓋 A
 - Custom metrics（DogStatsD / Agent / API）
 - Metric Type：count / gauge / histogram / distribution
 - Cardinality 控制：每 metric 收 tags 數限制
-- 對應 [4.C7 Gaming cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)
+- 對應 [4.C2 Gaming cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)
 
 ## 進階主題（按需閱讀）
 
@@ -90,7 +90,7 @@ Datadog 是 all-in-one SaaS observability 平台、承擔三個責任：覆蓋 A
 
 - Datadog Agent 接受 OTLP（gRPC + HTTP）
 - 對 OTel SDK 用戶的優勢（avoid Datadog SDK lock-in）
-- 對應 [4.C2 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)
+- 對應 [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)
 - Datadog 自家 SDK vs OTel：feature parity 取捨
 
 ### Monitor as code
@@ -179,14 +179,16 @@ Datadog 是 all-in-one SaaS observability 平台、承擔三個責任：覆蓋 A
 
 | 案例                                                                                            | 主討論議題                |
 | ----------------------------------------------------------------------------------------------- | ------------------------- |
-| [4.C5 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/) | OTLP ingestion + SDK 移轉 |
+| [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/) | OTLP ingestion + SDK 移轉 |
 
 ### 跨 vendor 對照
 
-| 案例                                                                                                     | 對 Datadog 的對應               |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| [4.C7 Gaming cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) | Custom metrics cardinality 治理 |
-| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)               | 中大型常選 Datadog turnkey      |
+| 案例                                                                                                     | 對 Datadog 的對應                               |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| [4.C1 Fintech audit](/backend/04-observability/cases/fintech-audit-evidence-observability/)              | Datadog Logs Indexing / Archives 作為審計證據面 |
+| [4.C2 Gaming cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) | Custom metrics cardinality 治理                 |
+| [4.C9 OTel migration signal drift](/backend/04-observability/cases/failure-otel-migration-signal-drift/) | （反例）Datadog SDK ↔ OTLP 雙軌語意漂移         |
+| [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)               | 中大型常選 Datadog turnkey                      |
 
 **待補 Datadog 案例**：客戶 cost optimization stories、large scale 部署（Shopify / Coinbase / Zoom 等）engineering blog。
 

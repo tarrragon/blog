@@ -78,7 +78,7 @@ OpenTelemetry（OTel）是 CNCF 開放標準、承擔三個責任：定義 trace
 
 ### Sampling 策略
 
-對應案例 [4.C5 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)。子議題：
+對應案例 [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)。子議題：
 
 - **Head-based sampling**：trace 開始時決定保留與否、低成本但 lose context
 - **Tail-based sampling**：trace 完成後決定（依錯誤 / 延遲）、Collector 要 buffer 整個 trace
@@ -105,7 +105,7 @@ OpenTelemetry（OTel）是 CNCF 開放標準、承擔三個責任：定義 trace
 
 ### Vendor SDK vs OTel SDK 遷移
 
-對應案例 [4.C8 X-Ray to OpenTelemetry](/backend/04-observability/cases/xray-to-opentelemetry-migration/) 與 [4.C5 Datadog OTel](/backend/04-observability/cases/datadog-otel-migration-practice/)。子議題：
+對應案例 [4.C4 X-Ray to OpenTelemetry](/backend/04-observability/cases/xray-to-opentelemetry-migration/) 與 [4.C7 Datadog OTel](/backend/04-observability/cases/datadog-otel-migration-practice/)。子議題：
 
 - 動機：避免 vendor lock-in、多 backend 並存、開源治理
 - 風險：vendor-specific feature 損失（profiling / RUM 整合）
@@ -144,7 +144,7 @@ OpenTelemetry（OTel）是 CNCF 開放標準、承擔三個責任：定義 trace
 
 ### Auto-instrumentation 不生效
 
-操作原則：確認 SDK 版本跟 library version 對應、agent 啟動方式正確。對應 [4.C2 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/) 的踩坑經驗。
+操作原則：確認 SDK 版本跟 library version 對應、agent 啟動方式正確。對應 [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/) 的踩坑經驗。
 
 ### Sampling 過頭 / 不足
 
@@ -173,18 +173,19 @@ OpenTelemetry（OTel）是 CNCF 開放標準、承擔三個責任：定義 trace
 
 ### 直接相關案例
 
-| 案例                                                                                                 | 主討論議題                       |
-| ---------------------------------------------------------------------------------------------------- | -------------------------------- |
-| [4.C2 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)      | OTLP ingestion / vendor SDK 移轉 |
-| [4.C3 Cloud Trace OTLP](/backend/04-observability/cases/cloud-trace-otlp-adoption/)                  | GCP Cloud Trace 接受 OTLP        |
-| [4.C4 ADOT EKS pipeline](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/) | AWS Distro for OTel + EKS        |
-| [4.C8 X-Ray to OTel](/backend/04-observability/cases/xray-to-opentelemetry-migration/)               | 從 vendor SDK 遷出 OTel          |
+| 案例                                                                                                     | 主討論議題                       |
+| -------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| [4.C4 X-Ray to OTel](/backend/04-observability/cases/xray-to-opentelemetry-migration/)                   | 從 vendor SDK 遷出 OTel          |
+| [4.C5 Cloud Trace OTLP](/backend/04-observability/cases/cloud-trace-otlp-adoption/)                      | GCP Cloud Trace 接受 OTLP        |
+| [4.C6 ADOT EKS pipeline](/backend/04-observability/cases/adot-eks-observability-pipeline-migration/)     | AWS Distro for OTel + EKS        |
+| [4.C7 Datadog OTel migration](/backend/04-observability/cases/datadog-otel-migration-practice/)          | OTLP ingestion / vendor SDK 移轉 |
+| [4.C9 OTel migration signal drift](/backend/04-observability/cases/failure-otel-migration-signal-drift/) | （反例）雙軌遷移期的 signal 漂移 |
 
 ### 跨 vendor 對照
 
 | 案例                                                                                                     | 對 OTel 的對應                                       |
 | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [4.C9 OTel migration signal drift](/backend/04-observability/cases/failure-otel-migration-signal-drift/) | （反例）遷移期間 signal 不一致                       |
+| [4.C8 Airbnb K8s scale signals](/backend/04-observability/cases/airbnb-observability-k8s-scale-signals/) | K8s 規模化下 OTel Collector 拓撲 / 資源訊號分層      |
 | [4.C10 規模對照](/backend/04-observability/cases/contrast-observability-rollout-by-scale/)               | 小型直接 SDK / 中型加 Collector / 大型 multi-backend |
 
 ## 下一步路由

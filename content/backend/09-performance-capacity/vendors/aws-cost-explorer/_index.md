@@ -70,9 +70,9 @@ Evidence package 的核心用途是讓 AWS 成本 review 可以重跑。Cost Exp
 
 ## 案例回寫
 
-AWS Cost Explorer 目前適合作為 AWS-first 成本案例的 baseline 工具。它可回寫到 EC2 rightsizing、RDS cost review、NAT Gateway egress、S3 storage class、Savings Plans / Reserved Instances 與 account-level forecast。
+AWS Cost Explorer 目前適合作為 AWS-first 成本案例的 baseline 工具。它可回寫到 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 的跨 DB 整併與 28% 成本下降驗證、[9.C17 BookMyShow modern data architecture](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) 的 80 TB 多副本 → 單一 source of truth + 80% 分析成本下降、[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) 的 on-demand vs over-provisioned 對照、以及 [9.C22 Wayfair GCP burst](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/) 的 hybrid 模式 AWS-side baseline 釐清（即使是跨雲案例、AWS 側的 review 仍可用 Cost Explorer 跑）。
 
-這些案例的重點是成本訊號到工程行動的轉換。文章引用 Cost Explorer 時，要把 report 維度、變化原因、服務 owner、容量調整與驗證方式寫成可重跑流程。
+這些案例的重點是成本訊號到工程行動的轉換。Cost Explorer 頁引用案例時，要把 report 維度、變化原因、服務 owner、容量調整與驗證方式寫成可重跑流程 — Netflix 28% 下降要對應 Aurora cluster 數、IO-Optimized 切換時機與 reader replica 配比。
 
 ## 下一步路由
 

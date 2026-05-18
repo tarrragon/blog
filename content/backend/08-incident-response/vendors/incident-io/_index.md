@@ -83,7 +83,14 @@ incident.io 是 Slack-native IR 平台、承擔三個責任：把 incident lifec
 
 ## 案例回寫
 
-**待補 incident.io case**：Lightspeed / Snyk 等早期 adopter customer story。
+**incident.io 主打 Slack-native IR**：本案例庫尚無直接揭露 incident.io 使用細節的事故；可參照的閱讀脈絡是「以 Slack 為主要協作通道、事故 channel + 公開 status 同步運作」的服務。
+
+| 案例                                                          | 對應主題                                     |
+| ------------------------------------------------------------- | -------------------------------------------- |
+| [Slack cases](/backend/08-incident-response/cases/slack/)     | 通訊平台失效時 IR channel 的退路設計         |
+| [Discord cases](/backend/08-incident-response/cases/discord/) | 即時通訊產品事故的多通道協作節奏（對照素材） |
+
+待補 candidate：Lightspeed / Linear / Etsy 等 incident.io 公開 customer story。
 
 ## 下一步路由
 

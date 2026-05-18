@@ -138,7 +138,14 @@ Locust 是 Python-based load test 工具、承擔三個責任：Python class-bas
 
 ## 案例回寫
 
-**待補 Locust customer case**：Python-heavy 團隊 load test 採用案例、distributed Locust 大規模部署案例。
+| 案例方向                                                                                                           | 對應主題                                                 |
+| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| [LinkedIn：Capacity 與 On-call 分層](/backend/06-reliability/cases/linkedin/capacity-headroom-and-oncall-tiering/) | automated load testing 對齊 headroom 預測（Python 場景） |
+
+**Case 庫稀薄**：本 cases/ 目錄目前沒有以 Locust 為主軸的案例。可參考候選方向：
+
+- **待補 Locust customer case**：Python-heavy 團隊 load test 採用案例、distributed Locust 大規模部署案例
+- **候選 case**：Pinterest（ML serving / 推薦系統壓測場景）、Spotify（squad-based 各團隊自管壓測）— 若未來收錄需先在 cases/ 補正文，本欄再寫實際 link
 
 ## 下一步路由
 
