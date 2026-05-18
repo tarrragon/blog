@@ -60,6 +60,22 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 這個做法的關鍵是 *變體不是事後抽出來的、是設計階段就準備好的*。一旦寫過 5 篇還沒主動製造變體、就會默認複製第一篇 framing 到所有後續檔案。
 
+### Dogfood evidence (2026-05-18、N=4 sub-threshold 驗證)
+
+本卡浮現後立即跑了一次小批量 dogfood：4 篇 deep article（Vault dynamic credential / K8s graceful shutdown / Splunk RBA / Cloudflare Page Shield）寫作前主動規劃 4 種不同 entry framing（標準問題情境 / 痛點宣告 / 概念反向定義 / 對照表驅動）、跨檔 cadence audit 結果：
+
+| 維度                                | backend/07 51 vendor（前批、無 variant 規劃） | deep article 4 篇（本批、pilot variant） |
+| ----------------------------------- | --------------------------------------------- | ---------------------------------------- |
+| Cadence collapse「任一缺失」族重複  | 51/51 (100%)                                  | 0/4 (0%)                                 |
+| 章節 1 entry framing 種類           | 1 種                                          | 4 種                                     |
+| 過渡詞密度（實際上 / 進一步 等）     | 未量化（同質化嚴重）                           | 全 0 hits                                |
+| Lint / emoji / MD036 違規           | 0                                             | 0                                        |
+
+兩個重點驗證：
+
+1. **Sub-threshold（N < 5）仍適用**：原本 pilot 表格寫「第 1-3 篇刻意寫 3 種變體」、預設批量 ≥ 5 篇；實測 N=4 sub-threshold 配 4 種 variant 也能完全錯開 cadence
+2. **Pilot phase 邊際成本低於 batch 後 polish**：寫作前花 ~5 分鐘規劃 4 種 framing variant、vs backend/07 51 vendor 批量後 polish ~30-60 分鐘改 51 處 cadence — 預先設計成本 < 事後修正成本 ~10 倍
+
 ---
 
 ## 反模式

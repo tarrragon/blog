@@ -72,6 +72,15 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Revi
 
 七題都回答後、再判斷該不該補軸。如果某軸沒覆蓋、不一定要補（cost vs risk）、但要 *知道沒覆蓋對應什麼盲點*。
 
+### Cadence + Timing 軸 dogfood (2026-05-18)
+
+4 篇 deep article batch 驗證 cadence + timing 兩軸的設計、不靠 reviewer 補、是靠 stage 2 寫作流程內抽樣：
+
+- **Cadence 軸**：4 篇 pilot phase 主動規劃 4 種 framing variant、跨檔 cadence audit 顯示「任一缺失」collapse 族 0/4、entry framing 種類 4 種
+- **Timing 軸**：每篇寫作前做 cadence check（生成中 checkpoint）、不等 batch 完成後 reviewer；修正成本 ~5 分鐘 / 篇 vs 前批 batch 後 polish ~30-60 分鐘
+
+詳細數據見 [#122 cadence dogfood evidence](../cadence-homogenization-in-batch-writing/#dogfood-evidence-2026-05-18-n4-sub-threshold-驗證) 跟 [#124 dogfood](../emergence-violations-need-in-stream-sampling/#dogfood-evidence-2026-05-18-n4-sub-threshold-驗證) — 兩軸都不必加 reviewer instance、是 Stage 2 寫作流程設計即可解。
+
 ---
 
 ## 七軸不是隨機湊出來、有結構

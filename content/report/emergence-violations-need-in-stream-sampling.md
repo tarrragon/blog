@@ -47,6 +47,30 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 關鍵：抽樣不是「Reviewer 在 batch 完成後跑」、是「寫作者在生成中跑」。寫第 5 篇之前先回頭看前 5 篇、發現問題就在第 5 篇修方向、不是寫完 50 篇才回頭改 50 個。
 
+### Dogfood evidence (2026-05-18、N=4 sub-threshold 驗證)
+
+本卡浮現後立即跑 4 篇 deep article 小批量 dogfood、用 *寫作中抽樣 + pilot phase variant* 取代 batch 後 reviewer：
+
+| Checkpoint 位置          | 動作                                                                       | 結果                                                            |
+| ------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| 第 1 篇寫完              | 確認自然 framing（標準問題情境）                                            | OK、為第 2 篇 variant 比對 baseline                              |
+| 第 2 篇寫前              | 主動換 variant（痛點宣告 case-led）                                         | 段首句骨架明顯異於第 1 篇 ✓                                      |
+| 第 3 篇寫前              | 第三種 variant（概念反向定義）                                              | 三種骨架完全錯開 ✓                                              |
+| 第 4 篇寫前              | 第四種 variant（對照表驅動）+ 抽前 3 篇章節 1 entry sample audit            | 四種骨架完全錯開、過渡詞密度 0、cadence 「任一缺失」族 0 hits   |
+
+對照前批 backend/07 51 vendor（無寫作中 checkpoint）：
+
+| 維度                              | backend/07 51 vendor（batch 後才 review） | deep article 4 篇（生成中抽樣） |
+| --------------------------------- | ----------------------------------------- | ------------------------------- |
+| 修正成本                          | ~30-60 分鐘 polish 51 處                   | ~5 分鐘 / 篇前規劃 + 0 polish   |
+| Cadence collapse 比例             | 51/51 (100%)                              | 0/4 (0%)                        |
+| 發現 collapse 時的 sample 數      | 51（已寫完才發現）                          | 1-3（生成中即時調方向）          |
+
+兩個驗證：
+
+1. **Stage 內抽樣在 sub-threshold N=4 仍有效**：原本 checkpoint 表格寫第 5 / 10 篇抽樣、預設批量 ≥ 5；實測 *寫每篇前都做一次 entry framing variant check* 在 N=4 也能完全錯開 cadence
+2. **生成中抽樣的邊際成本 << batch 後 polish 成本**：每篇前 ~1-2 分鐘 cadence check vs batch 後修 51 處 ~30-60 分鐘 — 比例 ~10-15 倍。本卡論斷「修正成本 N 倍」獲實證
+
 ---
 
 ## Batch 完成後 reviewer 為什麼太晚
