@@ -6,27 +6,167 @@ weight: 2
 tags: ["backend", "cache", "vendor"]
 ---
 
-Valkey 是 2024 年從 Redis 7.2.4 fork 的開源專案、由 Linux Foundation 託管、AWS / Google / Oracle / Ericsson 等支援。維持 Redis API 相容、避免 Redis 授權變動的疑慮。
+Valkey 是 2024 年從 Redis 7.2.4 fork 的開源專案、承擔三個責任：維持 Redis API 相容（drop-in 替換）、提供 OSI 認可的開源授權（BSD 3-clause）、由 Linux Foundation 託管避免單一公司控制。設計取捨偏向「相容 Redis 既有 client / 工具 + 開源治理透明 + 多雲廠商共同維護」、不追求功能超越 Redis Inc。
 
-## 適用場景
+對「既有 Redis 部署、需要 OSI 認可授權、多雲避免 vendor lock-in、合規敏感」這條路徑、Valkey 是 Redis 的替代首選。AWS / Google / Oracle / Ericsson 等共同支援、AWS ElastiCache 已把 Valkey 設為 default engine。
 
-- 既有 Redis 使用案例、需要 OSI 認可的開源授權
-- 多雲 / 跨平台部署、避免 vendor lock-in
-- 開源合規需求（公部門 / 企業政策）
+## 本章目標
 
-## 不適用場景
+讀完本章後、你應該能：
 
-- 依賴 Redis Stack 商業 modules（RedisJSON / Search 等）— 部分有 fork 但生態未跟上
-- 需要 Redis Inc 商業支援
+1. 跑起 Valkey、用 redis-cli 驗證 API 相容性
+2. 評估從 Redis 遷移到 Valkey 的相容性風險（module / Stack 功能）
+3. 看懂 Valkey vs Redis Inc 的版本對應跟功能差距
+4. 評估管雲端 managed Valkey（ElastiCache）的選用判斷
+5. 區分 Valkey 跟 Redis 商業版本對你的合規 / 採購 / SLA 影響
 
-## 跟其他 vendor 的取捨
+## 最短路徑：5 分鐘把 Valkey 跑起來
 
-- vs `redis`：API 相容、授權自由；功能可能落後 Redis Inc 版本（如新 module）
-- vs `dragonflydb`：Valkey 是 Redis 直系；DragonflyDB 是重寫高效能版本
+```bash
+# 1. 啟動 Valkey（Redis API 相容、可直接用 redis-cli）
+# TODO: docker run -d --name valkey -p 6379:6379 valkey/valkey:7
 
-## 預計實作話題
+# 2. 驗證 redis-cli 連得上
+# TODO: docker exec -it valkey valkey-cli SET foo bar / GET foo
 
-- 從 Redis 遷移
-- 授權合規評估
-- Module 生態相容性
-- 雲端 managed 支援（AWS ElastiCache for Valkey）
+# 3. 驗證 Redis client library 可用
+# TODO: 既有 Python redis / Go go-redis 直接連、無需改 code
+```
+
+實際遷移路徑見[進階主題：從 Redis 遷移](#從-redis-遷移)。
+
+## 日常操作與決策形狀
+
+### CLI 與 client API
+
+子議題：
+
+- valkey-cli vs redis-cli：兩個 binary 都可連 Valkey、命令一致
+- Client library 配置：所有 Redis client 自動相容（無需 Valkey-specific client）
+- 對應指令範例：`INFO server` 顯示 valkey_version 而非 redis_version
+
+### 跟 Redis 的相容邊界
+
+子議題：
+
+- Core data types / commands：100% 相容（fork 自 Redis 7.2.4）
+- Eviction / persistence / cluster：相容
+- Pub/Sub / Streams：相容
+- **不相容**：Redis 7.4+ 引入的功能、Redis Stack 商業 modules
+
+### 遷移評估
+
+子議題：
+
+- AOF / RDB 文件格式相容、可直接拷貝資料目錄
+- Client library 完全相容、無需改 code
+- 監控工具相容（RedisInsight 雖偏 Redis Inc、但基本命令通用）
+- 需確認 modules 使用狀況（Stack modules 未必有 Valkey fork）
+
+## 進階主題（按需閱讀）
+
+### 從 Redis 遷移
+
+子議題：
+
+- 評估 module 使用：列出當前使用的 Redis modules、確認 Valkey 對應替代
+- 評估 Redis 7.4+ 功能使用（Functions、CLIENT NO-TOUCH 等）
+- 遷移路徑：rolling restart with replica swap / 雙寫 / 直接 cutover
+- 對應雲端 managed：AWS ElastiCache for Valkey 自動遷移工具
+
+### 授權合規評估
+
+子議題：
+
+- 為何 Redis 改 RSALv2 / SSPL — OSI 認知（不算 OSI 認可開源）
+- Valkey BSD 3-clause — 商業使用無限制
+- 對 SaaS 供應商：Redis 限制把 Redis 當成 service 對外提供、Valkey 無此限制
+- 對企業 / 公部門：開源合規政策可能要求 OSI 認可、Valkey 通過、Redis 不過
+
+### Module 生態相容性
+
+子議題：
+
+- Valkey 計畫自有 modules（valkey-search / valkey-bloom 等）
+- Redis Stack modules（RedisJSON / RedisSearch）部分有 fork
+- 評估你用的 modules 是否有 Valkey 替代、否則考慮遷 module-free 設計
+
+### 雲端 managed Valkey
+
+子議題：
+
+- AWS ElastiCache for Valkey（成本比 Redis 低 ~20%、AWS 推）
+- GCP Memorystore（規劃 Valkey 支援）
+- Azure Cache（規劃中）
+- managed 邊界跟 ElastiCache for Redis 一致
+
+### 跟 Redis 8 的功能差距
+
+子議題：
+
+- Redis 8 新功能對 Valkey 的影響（功能落後幾個月）
+- Valkey 自有 roadmap（valkey.io/blog 追蹤）
+- 何時 Redis 新功能值得遷回（罕見、通常 Valkey 跟上）
+
+## 排錯快速判讀
+
+### Client 連不上（API 相容問題）
+
+操作原則：先確認 Valkey version、再對照 client library 對 Redis 哪個版本相容。
+
+```bash
+# TODO: valkey-cli INFO server | grep valkey_version
+```
+
+絕大多數情況直接相容、若失敗多是 client library 太舊（< Redis 7 對應版本）。
+
+### Module 不可用
+
+操作原則：Valkey 對 Redis Stack modules 不一定有 fork、看 Valkey modules 清單。
+
+### 監控工具相容性
+
+操作原則：RedisInsight 連 Valkey 可能 partial 工作（部分 vendor-specific 命令缺）、用通用工具（valkey-cli、Prometheus + redis_exporter）較穩。
+
+### Performance regression（vs Redis）
+
+操作原則：Valkey 跟 Redis 7.2.4 為 baseline、效能應接近、差距 < 5% 屬於正常。明顯回歸要看 Valkey roadmap 是否有 known issue。
+
+## 何時改走其他服務
+
+| 需求形狀                      | 改走                                                                                     |
+| ----------------------------- | ---------------------------------------------------------------------------------------- |
+| 依賴 Redis Stack 商業 modules | [Redis](/backend/02-cache-redis/vendors/redis/)（Redis Inc 商業版）                      |
+| 純 KV cache 不需 data types   | [Memcached](/backend/02-cache-redis/vendors/memcached/)                                  |
+| 極高 throughput / 多核        | [DragonflyDB](/backend/02-cache-redis/vendors/dragonflydb/)                              |
+| AWS managed                   | [AWS ElastiCache](/backend/02-cache-redis/vendors/aws-elasticache/)（已 default Valkey） |
+| Durable Redis-compatible      | AWS MemoryDB                                                                             |
+| 跨雲 fully-portable           | Valkey self-host（無 vendor lock-in）                                                    |
+
+## 不在本頁內的主題
+
+- 完整 Valkey command reference（valkey.io/commands）
+- Linux Foundation governance 細節
+- 各語言 client compatibility matrix
+- Redis Stack module 對應替代清單
+
+## 案例回寫
+
+### 直接相關案例（待補 Valkey-specific case）
+
+Valkey 2024 才 fork、公開 production case 累積中。可追蹤方向：AWS ElastiCache for Valkey 客戶遷移案例、Linux Foundation Valkey 案例頁。
+
+### 跨 vendor 對照
+
+| 案例                                                                                            | 對 Valkey 的對應                                         |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)               | Valkey 跟 Redis 規模化路徑一致（fork 同源）              |
+| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) | TTL jitter / singleflight 通用、Valkey 行為跟 Redis 一致 |
+
+**待補 Valkey 案例**：Linux Foundation Valkey customer adoption stories、AWS re:Invent talks、企業遷移路徑公開分享（追蹤 2026 累積）。
+
+## 下一步路由
+
+- 上游概念：[2.2 Cache Aside](/backend/02-cache-redis/cache-aside/)
+- 平行 vendor：[Redis](/backend/02-cache-redis/vendors/redis/)（fork 源頭）、[ElastiCache](/backend/02-cache-redis/vendors/aws-elasticache/)
+- 下游能力：跟 Redis 完全一致、見 Redis vendor 頁的下游連結

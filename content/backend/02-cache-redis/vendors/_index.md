@@ -52,6 +52,78 @@ tags: ["backend", "cache", "vendor"]
 | 不在本頁內的主題     | Redis command 百科、語言 client API 細節、完整調參手冊                           |
 | 案例回寫與下一步路由 | 回到 2.C cases、9.C cache capacity cases、4.20 evidence package                  |
 
+## 跨 vendor 議題對照
+
+橫向議題在不同 vendor 用不同 mechanism 達成。本表列同一議題在 5 個 vendor 的對應位置、確保大綱不缺漏、讀者跨 vendor 查找時有索引。
+
+| 議題              | Redis                                  | Valkey                     | Memcached                    | DragonflyDB                            | AWS ElastiCache                                    |
+| ----------------- | -------------------------------------- | -------------------------- | ---------------------------- | -------------------------------------- | -------------------------------------------------- |
+| Redis API 相容度  | 原生（最高）                           | 100%（fork 7.2.4）         | 不相容（純 KV）              | 高（少數 commands 不支援）             | Engine 決定（Redis/Valkey 100%、Memcached 不適用） |
+| Data types        | 6 大 + Stream / Geo                    | 跟 Redis 一致              | 純 string KV                 | 跟 Redis 一致                          | 跟 engine 一致                                     |
+| 多核 / 多執行緒   | I/O threads（main 仍單線）             | 跟 Redis 一致              | 原生多執行緒                 | 完全 shared-nothing 多核               | 跟 engine 一致                                     |
+| Cluster mode      | Cluster + Sentinel                     | 跟 Redis 一致              | Client-side ketama hashing   | Single instance scale-up（無 Cluster） | Cluster mode enabled/disabled                      |
+| 持久化策略        | AOF + RDB                              | 跟 Redis 一致              | 無持久化                     | Fork-less snapshot                     | Automatic + manual snapshot                        |
+| 跨 AZ / 多 region | Sentinel + replication / Cluster geo   | 跟 Redis 一致              | 需 Mcrouter / EVCache 等代理 | Replica 模式                           | Multi-AZ + Global Datastore                        |
+| 授權模式          | RSALv2 / SSPL（非 OSI）                | BSD 3-clause（OSI）        | BSD（OSI）                   | BSL（4 年後轉 Apache 2.0）             | AWS managed pricing                                |
+| Managed level     | 自管                                   | 自管 / managed Valkey 可選 | 自管                         | 自管（無 Dragonfly managed）           | Fully managed                                      |
+| 主討論案例        | 2.C1-C8（跨 Meta / Netflix / Shopify） | 待補（fork 較新）          | 2.C4 Mcrouter / 2.C5 EVCache | 待補（採用較新）                       | 2.C5 EVCache / 2.C8 Shopify                        |
+
+對照表的用途有三：
+
+- 寫某 vendor 頁時、檢查橫向議題是否都有對應的進階主題子段
+- 讀者在 vendor 間遷移時、知道對應 mechanism 在另一個 vendor 叫什麼
+- 評估遷移風險：相容度 + 授權 + 生態三維度合併判讀
+
+下面 8 段把對照表的每行展開、避免裸表格成為終點。
+
+### Redis API 相容度
+
+API 相容度決定 client / 工具 / module 是否能直接遷移。**Redis** 是 reference 實作；**Valkey** 100% 相容（直接 drop-in、所有 client library 可用）；**DragonflyDB** 相容核心 commands 但部分 module / Lua 行為差異、不支援 Redis Cluster mode；**Memcached** 跟 Redis 完全不相容（protocol 不同、無 data types）；**ElastiCache** 取決於 engine（Redis / Valkey 100%、Memcached 是另一條線）。
+
+選型判讀：既有 Redis 部署遷移 → Valkey 最低風險；要 scale up single instance → DragonflyDB 可評估但確認 module 跟 Cluster mode 影響；純 KV 從 Redis 改 Memcached → 等同重寫（不是相容問題、是 capability 差異）。
+
+### Data types
+
+Data types 影響可用場景。**Redis / Valkey** 提供 string / hash / list / set / sorted set / stream / hyperloglog / geo — leaderboard / session / counter / distributed lock 等都有原生支援；**Memcached** 純 string KV — 任何複雜結構要在 application 層自己處理（serialize JSON 等）；**DragonflyDB** 跟 Redis 一致；**ElastiCache** 取決於 engine。
+
+選型判讀：需要 sorted set / streams / hash → Redis 系列；純 cache GET/SET → Memcached 更輕；想用 Redis data types 但要極高 throughput → DragonflyDB。
+
+### 多核 / 多執行緒
+
+多核利用度差異大。**Redis** 主執行緒 + I/O threads（Redis 6+）— main thread 仍處理所有 command；**Valkey** 跟 Redis 一致；**Memcached** 原生 multi-threaded（`-t` 指定 thread 數）— 適合多核機器；**DragonflyDB** 完全 shared-nothing 多核 — 宣稱比 Redis 高 25× throughput；**ElastiCache** 取決於 engine、不能改變。
+
+選型判讀：單 instance 想充分利用 16+ core → DragonflyDB / Memcached；4-8 core 中等場景 → Redis 加 I/O threads 已夠；需要 Redis API + 高 throughput → DragonflyDB 是 sweet spot。
+
+### Cluster mode
+
+擴展拓樸不同。**Redis** Cluster mode（16384 hash slot、可加減 shard）跟 Sentinel mode（HA 無 sharding）；**Valkey** 跟 Redis 一致；**Memcached** 沒有 server-side cluster、靠 client-side consistent hashing（ketama）；**DragonflyDB** 完全沒有 Cluster mode — 哲學是「single instance 撐到很大規模」；**ElastiCache** 提供 Cluster mode enabled / disabled 兩選項、disabled 上限 ~340GB。
+
+選型判讀：超 single instance 容量 → Redis Cluster / ElastiCache Cluster enabled；HA 但容量在單 master → Redis Sentinel / ElastiCache disabled；scale up 機制 → DragonflyDB；極簡 client-side sharding → Memcached。
+
+### 持久化策略
+
+cache 是否需要持久化、view 不一。**Redis** AOF（append-only）+ RDB（snapshot）+ 混合模式；**Valkey** 跟 Redis 一致；**Memcached** 無持久化 — 重啟即 cold cache（嚴格 cache 哲學）；**DragonflyDB** fork-less snapshot（大記憶體場景比 Redis fork 高效）；**ElastiCache** 自動 snapshot + manual snapshot、跨 region 複製。
+
+選型判讀：cache warmup 後不想全失 → Redis AOF / Valkey；純 cache 接受 cold start → Memcached；大記憶體 + snapshot 頻繁 → DragonflyDB fork-less；managed snapshot 不想處理 → ElastiCache。
+
+### 跨 AZ / 多 region
+
+HA 拓樸三類。**Redis** Sentinel + replication（單 region 多 AZ）/ Cluster geo replication（規劃中）；**Valkey** 跟 Redis 一致；**Memcached** 沒有原生 — 靠 Mcrouter / EVCache 等代理做跨 AZ；**DragonflyDB** Replica 模式（primary-replica）跨 AZ 可行、跨 region 需自建；**ElastiCache** Multi-AZ replica（內建）+ Global Datastore（跨 region active-passive）。
+
+選型判讀：自管跨 AZ → Redis Sentinel / Valkey；自管跨 region → Mcrouter 或自建；不想處理跨區 → ElastiCache Multi-AZ + Global Datastore。
+
+### 授權模式
+
+授權直接影響商業使用權利。**Redis** 2024 起 RSALv2 / SSPL（非 OSI 認可）— SaaS 提供 Redis-as-service 受限；**Valkey** BSD 3-clause（OSI 認可）— 商業使用無限制；**Memcached** BSD（OSI）— 開源無限制；**DragonflyDB** BSL（Business Source License）— 4 年後轉 Apache 2.0、目前商業 managed service 提供受限；**ElastiCache** AWS managed pricing — 跟 license 無關（你付的是 AWS 服務費）。
+
+選型判讀：開源合規敏感（公部門 / 企業政策）→ Valkey / Memcached；新部署不在乎 license → Redis / DragonflyDB；不想處理 license → ElastiCache（AWS 處理）。
+
+### Managed level
+
+運維責任轉移程度。**Redis / Valkey** 自管或選 managed（ElastiCache / Memorystore / Azure Cache）；**Memcached** 自管或 ElastiCache；**DragonflyDB** 目前只能自管（無 fully managed offering）；**ElastiCache** 完全 managed（auto failover / snapshot / patching）— 付 managed premium。
+
+選型判讀：team 沒運維 Redis 經驗 → managed（ElastiCache / Memorystore）；要極致控制 → 自管；DragonflyDB 必自管（無 managed）。
+
 ## 撰寫批次
 
 | 批次 | 服務頁                     | 撰寫目的                                                   |
