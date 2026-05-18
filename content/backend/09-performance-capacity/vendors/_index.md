@@ -71,6 +71,56 @@ Capacity / cost analysis 工具頁要保留 owner 與行動閉環。成本報表
 | 不在本頁內的主題     | 完整工具 CLI 教學、供應商 pricing 細節、所有 dashboard 設定                      |
 | 案例回寫與下一步路由 | 回到 09 cases、6.13 regression gate、4.20 evidence package                       |
 
+## 跨 vendor 議題對照
+
+本模組 15 個 vendor 跨 5 個 sub-category（load test / production replay / continuous profiling / optimization / FinOps）、解不同效能與容量工程問題、不是同類選一。
+
+| Sub-category         | 典型 vendor                                 | 輸出證據                                   | Production 風險                | 操作成本                                 | Owner             |
+| -------------------- | ------------------------------------------- | ------------------------------------------ | ------------------------------ | ---------------------------------------- | ----------------- |
+| Load test            | k6 / JMeter / Gatling / Locust / Vegeta     | threshold pass/fail / p95 p99 / throughput | 低（測試環境）                 | scenario 維護 / runner 規模 / 測試資料   | Engineering / QA  |
+| Production replay    | GoReplay / Service Mesh Mirroring / AWS VPC | response diff / shadow load                | 高（PII / side effect / 配額） | masking / isolation / rate limit         | SRE + Security    |
+| Continuous profiling | Datadog Profiler / Pyroscope / Parca        | flame graph diff / regression detection    | 中（採樣 overhead）            | symbolization / storage / baseline 維護  | Engineering       |
+| Optimization         | Akamas                                      | recommendation / SLO-constrained config    | 中（autopilot rollout）        | objective model / approval workflow      | SRE + FinOps      |
+| FinOps               | Vantage / CloudHealth / AWS Cost Explorer   | cost report / forecast / rightsizing       | 無(reporting)                  | tag governance / owner mapping / cadence | FinOps + Eng lead |
+
+對照表的用途有三：
+
+- 對齊 sub-category 跟問題節點：缺 saturation → load test；缺 production gap → replay；缺 瓶頸定位 → profiler；缺 capacity / cost 閉環 → optimizer + FinOps
+- 評估 production 風險：load test 安全、replay / mirror 要明示 side effect 邊界、profiler 要看採樣 overhead、FinOps reporting 無風險
+- 對齊 owner：load test 多 Engineering / QA、replay 多 SRE + Security、optimization + FinOps 跨團隊
+
+下面 5 段把對照表的 sub-category 展開、每段帶 vendor 選型判讀。
+
+### Load test（k6 / JMeter / Gatling / Locust / Vegeta）
+
+Load test 是 09 模組的主要 saturation 探測工具、跟 [06 reliability load test 章節](/backend/06-reliability/vendors/) 同 vendor 但角度不同 — 06 看 CI gate / regression evidence、09 看 capacity planning / saturation discovery / peak event readiness。
+
+選型判讀：CI-first JS → [k6](/backend/09-performance-capacity/vendors/k6/)；JVM + 複雜 scenario → [Gatling](/backend/09-performance-capacity/vendors/gatling/)；既有 .jmx 資產 → [JMeter](/backend/09-performance-capacity/vendors/jmeter/)；Python custom behavior → [Locust](/backend/09-performance-capacity/vendors/locust/)；快速 HTTP probe / fixed rate → [Vegeta](/backend/09-performance-capacity/vendors/vegeta/)（單一 HTTP attack 模式、不適合多 step scenario）。
+
+### Production replay（GoReplay / Service Mesh Mirroring / AWS VPC Traffic Mirroring）
+
+Production replay 把實際流量重播到 shadow target、補 load test 的「人工 scenario 跟真實流量差距」缺口。**GoReplay** 應用層 HTTP traffic capture + replay；**Service Mesh Mirroring** 用 Envoy / Istio proxy mirror、適合 K8s 內部；**AWS VPC Traffic Mirroring** L4 封包鏡像、適合非 HTTP / 低侵入。
+
+選型判讀：HTTP application 層 → GoReplay；K8s 內 service mesh → Service Mesh Mirroring；非 HTTP / 跨 VPC / 低侵入 → AWS VPC。共同議題：PII 遮罩、idempotency boundary、downstream 配額 — 不可省。
+
+### Continuous profiling（Datadog Continuous Profiler / Pyroscope / Parca）
+
+Continuous profiling 在 production 持續採樣、退化時可 profile diff 找瓶頸。**Datadog Continuous Profiler** SaaS APM 整合、deploy marker 自動關聯；**Pyroscope** OSS / Grafana 生態、可自管或 Grafana Cloud；**Parca** eBPF-based、infrastructure-wide profile（不需 application instrumentation）。
+
+選型判讀：已用 Datadog APM → Datadog Profiler；Grafana 生態 / OSS → Pyroscope；不想 instrument application + eBPF 友善 → Parca。共同議題：採樣 overhead（CPU / memory）、symbolization、storage cost、敏感資訊。
+
+### Optimization（Akamas）
+
+Optimization 把 workload + SLO + cost 放進同一閉環、產出 configuration recommendation。**Akamas** 是 09 模組唯一 optimizer vendor、適合已有可量測 workload 跟成本壓力的服務。
+
+選型判讀：Kubernetes rightsizing + runtime tuning + cost target → Akamas；純 FinOps reporting 不夠（要主動建議）→ Akamas。Akamas 不替代 FinOps tool — Vantage / CloudHealth 看歷史成本、Akamas 提產出未來 recommendation。
+
+### FinOps（Vantage / CloudHealth / AWS Cost Explorer）
+
+FinOps 提供 cost visibility + forecast + allocation。**Vantage** Kubernetes cost + forecast 友善的 startup-friendly 平台；**CloudHealth** enterprise FinOps governance + policy + chargeback；**AWS Cost Explorer** AWS-native cost analysis baseline（免費、限 AWS）。
+
+選型判讀：純 AWS 啟動 → Cost Explorer；多雲 + startup / mid-size → Vantage；enterprise + 多 BU chargeback → CloudHealth；K8s workload cost → Kubecost / OpenCost（不在本表、後續候選）。共同議題：tag governance、cost center mapping、cadence。
+
 ## 下一步路由
 
 - 上游：[9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)
