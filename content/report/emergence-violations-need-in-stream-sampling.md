@@ -71,6 +71,34 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 1. **Stage 內抽樣在 sub-threshold N=4 仍有效**：原本 checkpoint 表格寫第 5 / 10 篇抽樣、預設批量 ≥ 5；實測 *寫每篇前都做一次 entry framing variant check* 在 N=4 也能完全錯開 cadence
 2. **生成中抽樣的邊際成本 << batch 後 polish 成本**：每篇前 ~1-2 分鐘 cadence check vs batch 後修 51 處 ~30-60 分鐘 — 比例 ~10-15 倍。本卡論斷「修正成本 N 倍」獲實證
 
+### Update: N=5 full-threshold checkpoint 排程驗證
+
+第一次 N=4 後立即跑 N=5 full-threshold batch（5 篇 PostgreSQL sub-tool）、驗證 checkpoint 排程在 ≥ 5 真實閾值的表現：
+
+| Checkpoint 位置        | N=4 batch 動作                         | N=5 batch 動作                                                  | 結果                                |
+| ---------------------- | -------------------------------------- | --------------------------------------------------------------- | ----------------------------------- |
+| 第 1 篇寫完（20%）     | 確認 baseline framing                  | 確認 baseline framing（lifecycle）                              | OK、N=5 抽樣訊號比 N=4 略強          |
+| 第 2 篇寫前（20%）     | 主動換 variant                         | 主動換 variant（pain-driven）                                   | 兩種 framing 對照成立                |
+| 第 3 篇寫前（40-60%）  | 第三種 variant                         | 第三種 variant（concept-reversed）                              | 三種對照、cadence drift 機率變大     |
+| 第 4 篇寫前（60-80%）  | 第四種 variant + 抽前 3 篇 audit       | 第四種 variant（table-driven）+ 抽前 3 篇 entry sample audit    | 四種對照、確認 framing 不耗盡        |
+| 第 5 篇寫前（80%）     | -                                      | 第五種 variant（standard 6-section）+ 抽前 4 篇 audit            | 五種對照、進度 80% audit 信號最強    |
+| 批次完成（100%）       | 全 batch 跨檔 cadence audit            | 全 batch 跨檔 cadence audit                                      | N=5 audit 樣本大、訊號更強           |
+
+兩批對照：
+
+| 維度                              | N=4 batch（跨 vendor） | N=5 batch（同 vendor sub-tool 系列）|
+| --------------------------------- | ---------------------- | ---------------------------------- |
+| 修正成本 / 篇前規劃                | ~5 分鐘 / 篇            | ~5 分鐘 / 篇（不變）                |
+| Cadence collapse 比例             | 0/4 (0%)               | 0/5 (0%)                           |
+| 進度 20% (1 篇後) 抽樣可發現性    | 訊號弱（1 樣本）        | 訊號弱（仍 1 樣本）                 |
+| 進度 80% (4 篇後) 抽樣可發現性    | 訊號強（4 對照）        | 訊號更強（4 對照 + 進入第 5 篇）    |
+| 同 vendor 共同 context 影響        | 較低（4 篇跨 vendor）  | 高（5 篇同 vendor、collapse 風險最高）|
+
+額外驗證：
+
+3. **進度 10-20% 抽樣訊號偏弱、80% 抽樣最強**：N=5 batch 確認 *進度 80% audit* 是 emergence 訊號最強位置；原 principle 寫「進度 10-20% 抽樣」是過早、實際 *寫前 variant 規劃 + 進度 60-80% audit* 組合更穩
+4. **同 vendor 同 type 是 collapse 最高風險、checkpoint 仍 cover**：N=5 batch 共同 context 比 N=4 多（同 vendor / 同 audience / 同 article type）、本卡論斷 emergence 風險 = 共同 context × N 成立；checkpoint 設計能 cover 是因為 *variant 規劃在 stage 0*、不靠 sample size 補
+
 ---
 
 ## Batch 完成後 reviewer 為什麼太晚

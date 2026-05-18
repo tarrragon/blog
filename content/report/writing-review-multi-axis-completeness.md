@@ -79,6 +79,8 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Revi
 - **Cadence 軸**：4 篇 pilot phase 主動規劃 4 種 framing variant、跨檔 cadence audit 顯示「任一缺失」collapse 族 0/4、entry framing 種類 4 種
 - **Timing 軸**：每篇寫作前做 cadence check（生成中 checkpoint）、不等 batch 完成後 reviewer；修正成本 ~5 分鐘 / 篇 vs 前批 batch 後 polish ~30-60 分鐘
 
+N=5 full-threshold 補強驗證（同日第二批）：再跑 5 篇 PostgreSQL sub-tool deep article、用 5 種 variant 覆蓋 *同 vendor 同 audience* 的 cadence collapse 最高風險場景；結果 5/5 framing 全錯開、過渡詞密度 0、cadence collapse 0/5。確認 Cadence 軸 + Timing 軸 *不靠 sample size、靠 stage 0 variant 規劃*。
+
 詳細數據見 [#122 cadence dogfood evidence](../cadence-homogenization-in-batch-writing/#dogfood-evidence-2026-05-18-n4-sub-threshold-驗證) 跟 [#124 dogfood](../emergence-violations-need-in-stream-sampling/#dogfood-evidence-2026-05-18-n4-sub-threshold-驗證) — 兩軸都不必加 reviewer instance、是 Stage 2 寫作流程設計即可解。
 
 ---

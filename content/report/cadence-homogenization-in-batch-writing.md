@@ -76,6 +76,25 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 1. **Sub-threshold（N < 5）仍適用**：原本 pilot 表格寫「第 1-3 篇刻意寫 3 種變體」、預設批量 ≥ 5 篇；實測 N=4 sub-threshold 配 4 種 variant 也能完全錯開 cadence
 2. **Pilot phase 邊際成本低於 batch 後 polish**：寫作前花 ~5 分鐘規劃 4 種 framing variant、vs backend/07 51 vendor 批量後 polish ~30-60 分鐘改 51 處 cadence — 預先設計成本 < 事後修正成本 ~10 倍
 
+### Update: N=5 full-threshold + 同 vendor sub-tool 系列驗證
+
+第一次 N=4 驗證後、立即再跑 N=5 full-threshold batch — 5 篇 PostgreSQL sub-tool deep article（Patroni HA / autovacuum tuning / declarative partitioning / logical replication + Debezium / PITR + WAL archiving）。這批比第一批 *cadence collapse 風險更高* — 同 vendor、同 article type、同 6-section structure、同 audience。
+
+三批 cadence 比較：
+
+| 維度                                | backend/07 51 vendor（無規劃） | deep article 第一批 N=4（跨 vendor）| deep article 第二批 N=5（同 vendor）|
+| ----------------------------------- | ----------------------------- | ---------------------------------- | ----------------------------------- |
+| Cadence collapse「任一缺失」族重複  | 51/51 (100%)                  | 0/4 (0%)                           | 0/5 (0%)                           |
+| 章節 1 entry framing 種類           | 1                             | 4                                  | 5                                   |
+| 過渡詞密度                          | 未量化                         | 全 0 hits                          | 全 0 hits                          |
+| 共同變數                            | 11 章節結構 + 表格深化         | 6-section deep article            | 6-section + 同 vendor + 同 audience |
+
+額外驗證（補既有 sub-threshold 驗證）：
+
+3. **Full-threshold N=5 variant 不耗盡**：5 種 variant（lifecycle-driven / pain-driven / concept-reversed / table-driven / standard 6-section）都對應主題本質、沒有「為了不同而不同」、5 篇骨架完全錯開
+4. **同 vendor 同 article type 仍可錯開**：理論上 *同 vendor 同 type* 是 cadence collapse 最高風險場景（共同變數最多）；實測 variant 設計仍能覆蓋、collapse 風險不來自共同 context、來自 *寫作前是否主動規劃 variant*
+5. **批次間 sample size 邊界更寬**：原 principle 寫 ≥ 5 才適用、實測 *N=4 跟 N=5 一樣有效*、threshold 5 是 emergence 訊號偵測的閾值、不是 *principle 適用* 的閾值；變體規劃在 N ≥ 2 就該做
+
 ---
 
 ## 反模式
