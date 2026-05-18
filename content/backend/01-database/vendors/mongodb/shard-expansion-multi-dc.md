@@ -201,21 +201,24 @@ Application-level read pattern 必須區分「accept stale read」vs「require f
 **修法**：
 
 ```javascript
-// 1. 給 shard 加 zone tag
-sh.addShardTag("rs-shard1", "us-east");
-sh.addShardTag("rs-shard2", "us-east");
-sh.addShardTag("rs-shard3", "us-east");
-sh.addShardTag("rs-shard4", "us-west");
-sh.addShardTag("rs-shard5", "us-west");
+// 注意: MongoDB 4.2+ API、舊版 sh.addShardTag / sh.addTagRange 已 deprecated
+// 對應改 sh.addShardToZone / sh.updateZoneKeyRange
 
-// 2. 對 collection 加 zone range（按 region key）
-sh.addTagRange(
+// 1. 給 shard 加 zone (MongoDB 4.2+)
+sh.addShardToZone("rs-shard1", "us-east");
+sh.addShardToZone("rs-shard2", "us-east");
+sh.addShardToZone("rs-shard3", "us-east");
+sh.addShardToZone("rs-shard4", "us-west");
+sh.addShardToZone("rs-shard5", "us-west");
+
+// 2. 對 collection 加 zone range
+sh.updateZoneKeyRange(
   "myapp.events",
   { region: "us-east", _id: MinKey },
   { region: "us-east", _id: MaxKey },
   "us-east"
 );
-sh.addTagRange(
+sh.updateZoneKeyRange(
   "myapp.events",
   { region: "us-west", _id: MinKey },
   { region: "us-west", _id: MaxKey },

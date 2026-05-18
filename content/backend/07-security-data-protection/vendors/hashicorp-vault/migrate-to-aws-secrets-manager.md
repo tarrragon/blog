@@ -268,4 +268,5 @@ Migration scope 應該 *降級* dynamic credential 場景、用 Lambda rotation 
 - Target vendor：[AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/)
 - 平行 deep article：[Vault Dynamic Credential](/backend/07-security-data-protection/vendors/hashicorp-vault/dynamic-credential/)
 - 平行 migration playbook (Type C)：[PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)（標準 Type C） / [MongoDB → Atlas](/backend/01-database/vendors/mongodb/migrate-to-atlas/)
+- 平行 axis 候選驗證 (sibling)：[DynamoDB Consistency Model](/backend/01-database/vendors/dynamodb/consistency-model-optimization/)（consistency 候選） / [PostgreSQL Multi-Region GDPR Rollout](/backend/01-database/vendors/postgresql/multi-region-gdpr-rollout/)（residency 候選）
 - Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [#128 self-aware limitation 第 1 點](/report/data-topology-as-audit-dimension/)（identity axis 候選驗證、本文是該驗證的 dogfood）

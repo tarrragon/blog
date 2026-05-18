@@ -329,7 +329,9 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ---
 
-**Last Updated**: 2026-05-19（later 3、4-reviewer audit Phase 1+2+3a 全修）— #128 / #127 / methodology「5 → 6」cross-file 對齊（title / description / lead / H2 / 核心收尾 / 主導維度優先序全升 6、re-sharding 漏類 row strikethrough 標 resolved）+ #128 章節 1 補 anchor sentence + 章節 5 Type F anatomy 加註「規範形態 vs 實作可 inline」+ Sub-dim row 3 example 改純 replication 變動跟 row 4 區隔 + Cassandra row 補明示「雙變」+ #128 / #127 加 Self-aware limitation Update 段承認 4-reviewer audit 揭露的 6 個結構性質疑（6 維非窮盡 / Type F 跟 Type B 重疊 / parallel run 例外 / 主導維度 audience-dependent / 拒絕理由依賴 narrow 定義 / 既有 5 篇 silent grandfathering）。
+**Last Updated**: 2026-05-19（later 4、第三輪 migration batch + retrospective）— #128 補 Update 段紀錄第三輪 batch 跑完 4 條 tripwire 的結果：Type F dogfood × 2 確認 anatomy 通用性、Type F sub-type 浮現（F-cluster vs F-multi-region、後者需 parallel run）、identity/consistency/residency 3 軸候選各 1 case 驗證工作量分佈支持獨立軸（45% / 85% / 40%）、residency 是 cross-cutting constraint 不只是 driver；methodology 加「第三輪 batch 完成」段、5 篇 1,292 行 collapse 0/5。
+
+2026-05-19（later 3、4-reviewer audit Phase 1+2+3a 全修）— #128 / #127 / methodology「5 → 6」cross-file 對齊（title / description / lead / H2 / 核心收尾 / 主導維度優先序全升 6、re-sharding 漏類 row strikethrough 標 resolved）+ #128 章節 1 補 anchor sentence + 章節 5 Type F anatomy 加註「規範形態 vs 實作可 inline」+ Sub-dim row 3 example 改純 replication 變動跟 row 4 區隔 + Cassandra row 補明示「雙變」+ #128 / #127 加 Self-aware limitation Update 段承認 4-reviewer audit 揭露的 6 個結構性質疑（6 維非窮盡 / Type F 跟 Type B 重疊 / parallel run 例外 / 主導維度 audience-dependent / 拒絕理由依賴 narrow 定義 / 既有 5 篇 silent grandfathering）。
 
 2026-05-19（later 2）— 新增 #128 Data topology 是 process content 的第 6 audit 維度、從 Redis cluster re-sharding dogfood 抽出 + #127 self-aware limitation 段「audit 維度補新軸」預測命中後升級執行；#127 audit table 5 → 6 維、結構 type 5 → 6 種（新增 Type F）+ multi-axis 主導維度優先序加入 topology；methodology Step 1 audit 維度 5 → 6、加 Type F 結構模板、「何時不該套」段 re-sharding 條改寫（現在 Type F 涵蓋、不再排除）。
 

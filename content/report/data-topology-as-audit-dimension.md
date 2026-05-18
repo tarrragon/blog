@@ -155,3 +155,25 @@ Topology 是 *獨立的問題軸*、5 維 audit 漏掉時會誤判結構。
 - 若浮現 *Type F 跟 Type B 結構真同構*、考慮降級為 variant
 - 若浮現 *identity / consistency / residency 真的獨立軸*、再擴 audit 到 7 維
 - 既有 5 篇 retroactive audit 在累積到 10+ migration playbook 後做、單獨成 retrospective report
+
+### Update（2026-05-19 第三輪 migration batch 後）：4 條 tripwire 全驗證
+
+第三輪 migration batch（5 篇）執行了上述 4 條 trigger、各自結果：
+
+| Tripwire 預測                              | 第三輪結果                                                                                                 |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Type F dogfood × 2 驗證 anatomy 通用性     | **完成**：[PG partition redesign](/backend/01-database/vendors/postgresql/partition-redesign/) + [MongoDB shard+multi-DC](/backend/01-database/vendors/mongodb/shard-expansion-multi-dc/)；anatomy 在 PG / MongoDB 上仍適用、跟 Redis re-sharding 對齊 |
+| Type F vs Type B 結構同構驗證              | **部分浮現**：PG partition / Redis re-sharding 不需 parallel run、MongoDB multi-DC 需要；建議 Type F 拆 *F-cluster*（單 cluster 內、不需 parallel run）+ *F-multi-region*（跨 region、需 parallel run）兩 sub-type、未來累積更多 case 後 commit |
+| Identity / consistency / residency 三軸候選驗證 | **三軸各 1 case 驗證、工作量分佈支持獨立軸**：[Vault → AWS Secrets Manager](/backend/07-security-data-protection/vendors/hashicorp-vault/migrate-to-aws-secrets-manager/)（identity、45% 工作量）/ [DynamoDB consistency](/backend/01-database/vendors/dynamodb/consistency-model-optimization/)（consistency、85% 工作量）/ [PG GDPR multi-region](/backend/01-database/vendors/postgresql/multi-region-gdpr-rollout/)（residency、40% 工作量）；累積到 3-5 case / 軸後 commit 升 7-9 維 audit |
+| 既有 5 篇 retroactive audit                | 暫不執行、累積到 10+ migration playbook 後再做（當前共 10 篇 migration、剛達 trigger threshold、留下輪 retrospective 處理） |
+
+3 軸候選驗證 detail：
+
+- **Identity axis**：Vault → AWS Secrets Manager 45% 工作量在 identity model 對位（Vault token vs IAM principal）、不歸 schema / operational / application change；驗證 identity 可獨立發生 + 帶獨立工作量
+- **Consistency axis**：DynamoDB strong → eventual 85% 工作量在 per-call-site contract review、不歸 paradigm / application change；驗證 consistency 可獨立發生 + 帶獨立工作量
+- **Residency axis**：GDPR multi-region 40% 工作量在 compliance（DPIA / evidence collection / DPO sign-off）、reverse-constrain topology + operational + application；驗證 residency 不只是 driver、是 cross-cutting constraint
+
+新浮現議題（不在原 tripwire 內）：
+
+- **Residency 是 cross-cutting constraint vs 獨立軸**：reviewer 把 residency 歸為 driver、實證上是 *cross-cutting constraint* — 反向約束其他維度 + 帶獨立合規工作量；可能需要 *constraint layer* 概念跟 axis 並列
+- **Type F sub-type 浮現**：multi-region rollout 跟 cluster re-sharding 是不同 sub-type；前者需 parallel run、後者不需；anatomy 在 sub-type 之間有差異

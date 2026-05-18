@@ -245,5 +245,5 @@ Aurora read replica 也涉 eventual read decision；application 路由策略類�
 
 - 上游 vendor 頁：[DynamoDB](/backend/01-database/vendors/dynamodb/)
 - 平行 deep article：[Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/)（Type B drop-in 對照）
-- 平行 axis 候選驗證：[Vault → AWS Secrets Manager](/backend/07-security-data-protection/vendors/hashicorp-vault/migrate-to-aws-secrets-manager/)（identity axis 候選）
+- 平行 axis 候選驗證 (sibling)：[Vault → AWS Secrets Manager](/backend/07-security-data-protection/vendors/hashicorp-vault/migrate-to-aws-secrets-manager/)（identity 候選） / [PostgreSQL Multi-Region GDPR Rollout](/backend/01-database/vendors/postgresql/multi-region-gdpr-rollout/)（residency 候選）
 - Methodology：[Migration playbook methodology](/posts/migration-playbook-methodology/) / [#128 self-aware limitation 第 1 點](/report/data-topology-as-audit-dimension/)（consistency axis 候選驗證、本文是該驗證的 dogfood）
