@@ -109,7 +109,7 @@ production 階段不是「把團隊共用放大」、是「另一個複雜度等
 
 ## 跨層升級的常見 anti-pattern
 
-從各層往上跨時、常見的踩坑：
+從各層往上跨時、常見的意外：
 
 1. **把個人 dev 的 LLM client config 直接放上 production**：autocomplete model、default model、API key 都不對；production 場景需要重新設計 model 路由。
 2. **把個人習慣的 prompt injection 防護當 production 防護**：「我 git track 工作流」對個人 dev 夠、production agent 場景下、git 不在迴路裡、要改用 tool spec + review checkpoint。
@@ -157,4 +157,4 @@ production 階段不是「把團隊共用放大」、是「另一個複雜度等
 
 個人 dev → 團隊共用 → production 是三個複雜度等級不同的部署形態、安全議題的 framing 跟控制機制隨之升級。本模組前五章建立個人 dev 視角；要跨進團隊共用、補基本 auth + 入口 + TLS + secret + 內部供應鏈；要跨進 production、補多租戶 isolation + deployment 供應鏈 + agent 後果管理 + log/PII + 偵測 + IR + 合規。多數議題從 backend/07 既有卡片讀、LLM-specific 補充在 backend/07 的 LLM 相關章節。
 
-本章是模組六的最後一章。下一步可以回到 [模組六 _index](/llm/06-security/) 看其他章節、或進入 [Backend 模組七 資安與資料保護](/backend/07-security-data-protection/) 接 production 場景。
+本章是模組六的最後一章。下一步可以回到 [模組六 \_index](/llm/06-security/) 看其他章節、或進入 [Backend 模組七 資安與資料保護](/backend/07-security-data-protection/) 接 production 場景。

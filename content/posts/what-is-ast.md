@@ -31,8 +31,8 @@ Regex 工具處理 markdown 的方式是「逐行掃描 + pattern matching」。
 事件中攻擊者取得 `session_token`，參考：
 https://www.uber.com/newsroom/security-update/
 
-| 事件 | 來源 |
-| --- | --- |
+| 事件      | 來源             |
+| --------- | ---------------- |
 | Uber 2022 | https://uber.com |
 ```
 
@@ -73,7 +73,7 @@ Document
 
 這個差異乍看像技術細節，實際影響的是能寫出什麼樣的規則。
 
-## 典型踩坑情境：regex 會誤判的三個 case
+## 典型意外情境：regex 會誤判的三個 case
 
 ### 程式碼區塊內的 URL
 
@@ -105,11 +105,14 @@ Regex 看到 `^#` 就當 heading 記一筆（title 裡面有 `#` 字元）。AST
 
 ```markdown
 ## 【案例一】Uber 2022
-### 弱點環節        ← 第 1 次出現
+
+### 弱點環節 ← 第 1 次出現
+
 ### 攻擊路徑
 
 ## 【案例二】Okta 2023
-### 弱點環節        ← 第 2 次出現，regex 會直接報重複
+
+### 弱點環節 ← 第 2 次出現，regex 會直接報重複
 ```
 
 要用 regex 實作「不同父標題下允許重複」這種 `siblings_only` 規則，需要自己維護狀態機追蹤「目前 H2 是誰」「遇到 H3 時算哪個 H2 底下」。遇到 H4/H5 階層更複雜。

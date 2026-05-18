@@ -48,7 +48,7 @@ content/backend/<MODULE_ID>/cases/ 下：
 3. **引用是否把 case 作者判讀層當 case fact 引用**？— 主要是 rich case 風險
 4. **引用是否把通用 best practice 包裝成 case 揭露**？
 
-特別檢查容易踩坑的「具體斷言」：
+特別檢查容易出問題的「具體斷言」：
 
 - 「揭露 X、Y、Z 三個方向」：實際 case 是否提這三個方向？
 - 「揭露具體場景數字 / 規模」：skeleton case 不該有這類引用
@@ -98,8 +98,8 @@ Agent({
   description: "<MODULE_ID> Reviewer B: 案例引用準確性",
   subagent_type: "general-purpose",
   run_in_background: true,
-  prompt: "<把上面 template 填入具體值後的內容>"
-})
+  prompt: "<把上面 template 填入具體值後的內容>",
+});
 ```
 
 ## 預期輸出

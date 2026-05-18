@@ -124,7 +124,7 @@ Continue.dev 內部會把 `provider: ollama` 翻成 OpenAI 相容請求送到 `a
 3. **進階參數**：OpenAI 自己的新功能（function calling 進階模式、structured output 強制 JSON 輸出、reasoning effort 控制推理深度等）不一定被本地伺服器完整支援。寫 code 場景常見問題是設定了 `tools` 參數但本地模型不會主動呼叫。模組四會展開這些進階特性、見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)。
 4. **模型清單**：呼叫 `GET /v1/models` 回的清單、本地是你已下載的模型、雲端是 OpenAI 提供的模型；介面層要把兩邊清單視為各自獨立的資料。
 
-接近真實的踩坑：
+接近真實的意外事件：
 
 - 設定 `response_format: { type: "json_object" }` 強制 JSON 輸出，本地某些舊模型不認，會直接回普通文字。
 - 設定 `tool_choice: "required"` 強制使用工具，本地許多模型不支援，行為退化成普通對話。
