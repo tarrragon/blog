@@ -1,0 +1,195 @@
+---
+title: "Process content 結構由最大差異維度決定、不是 universal phased"
+date: 2026-05-19
+weight: 127
+description: "跨 X process content（migration / upgrade / rollout / playbook）的結構由 source / target 之間 *最大差異維度* 決定、不存在 universal phased 模板；5 種 migration type 實證（schema 差 / drop-in / operational / multi-tool / paradigm）跑出 5 種不同結構（6-phase / 6-section + audit / hybrid / parallel streams / partial + 混合）；寫作前必須做 *diff dimension audit* 才能決定結構、跳過會套錯模板"
+tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Content-design", "Process-writing"]
+---
+
+## 結論
+
+跨 X process content（migration / upgrade / rollout / 演練 / playbook）的結構不是 universal、由 source 跟 target 之間 *最大差異維度* 決定。固定套「6-phase playbook」「6-section deep article」會在 *結構錯位* 的場景失效。
+
+實證：5 種 migration type 產出 5 種不同結構：
+
+| Migration type        | 最大差異維度        | 結構                          | 章節數 | 週期       |
+| --------------------- | ------------------- | ----------------------------- | ------ | ---------- |
+| 高 schema 差          | Schema / API        | 6-phase rule translation      | 12     | 4-9 個月   |
+| Drop-in compatible    | 無顯著差異          | 6-section + audit prefix      | 8      | 1-4 週     |
+| Operational redesign  | Operational model   | Hybrid (3-phase op + drop-in cutover) | 12 | 6-12 週    |
+| Multi-tool 拆分       | 一站式 → 多 component | Parallel migration streams    | 11     | 2-4 個月   |
+| Paradigm shift        | Abstraction model   | Partial + 混合架構            | 10     | 不收斂     |
+
+5 種結構不是「不同產品的個別處理」、是 *最大差異維度* 的對映。
+
+---
+
+## 為什麼 universal phased 模板會失效
+
+寫第一篇 migration playbook 時自然會想：「6 phase 是 migration 的標準結構吧」 — 套到 drop-in compatible migration 後發現 80% phase 不需要、文章變成「為了 phase 而 phase」；套到 paradigm shift 後發現 phased 假設 *線性收斂*、實際是 *永遠混合架構*、phased 模板強迫一個 *不存在* 的「cleanup phase」。
+
+Universal phased 失效的三個機制：
+
+1. **Schema 差不顯著時、phased 多數 phase 變空白**：drop-in compatible（如 Redis → DragonflyDB）的「Schema translation phase」內容空、強寫變廢話
+2. **Operational 差是主軸時、phased 把 operational redesign 壓進「phase 1」變太薄**：PostgreSQL → Aurora 的 *operational model 重設計* 是核心、不該壓在一個 phase
+3. **Paradigm 差時、phased 假設 source 完全消失**：Kafka ↔ NATS 是 *永遠共存*、phased cleanup phase 假設不存在
+
+→ **結構必須跟差異維度對位、不能反向假設**。
+
+---
+
+## Diff dimension audit：寫作前的必要 step
+
+寫 process content 前先做 audit、列出 source 跟 target 在 5 個維度的差異程度：
+
+| 維度                 | 評估問題                                                            | High / Medium / Low |
+| -------------------- | ------------------------------------------------------------------- | ------------------- |
+| Schema / API         | source 跟 target 的 API、data model、wire protocol 差異多大？        | -                   |
+| Operational model    | HA / backup / monitoring / capacity 邏輯差異多大？                   | -                   |
+| Abstraction / paradigm | 兩端是否同類產品（同抽象層）？                                       | -                   |
+| Number of components | 一站式 vs multi-tool 是否需要拆分？                                  | -                   |
+| Application change   | application code 需要改多少？                                        | -                   |
+
+最大差異維度決定結構：
+
+- **Schema = High** → phased rule translation
+- **Operational = High（其他 Low）** → operational redesign hybrid
+- **Paradigm = High** → partial + 混合架構
+- **Components = High（一站式 → multi-tool）** → parallel streams
+- **全 Low** → drop-in、6-section + audit prefix
+
+---
+
+## 5 種結構的 anatomy
+
+### Type A：Phased translation（schema 差為主）
+
+```text
+Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
+→ Phase 3 parallel run → Phase 4 cutover → Phase 5 cleanup
+```
+
+特徵：
+
+- *線性* 流程、phase 之間有 dependency
+- 每 phase 有獨立 *回退邊界*
+- Schema translation 是工作量主軸（4-12 週）
+
+適用：Splunk → Elastic / Datadog APM → New Relic / MySQL → Postgres
+
+### Type B：6-section + audit prefix（drop-in compatible）
+
+```text
+為什麼遷 → 結構 differentiator → 相容性 audit
+→ Step-by-step cutover → 故障演練 → Capacity → 整合
+```
+
+特徵：
+
+- 接近 deep article 6-section
+- 多一段 *相容性 audit*（在 cutover 前列出風險點）
+- 不需要 phased、單次 cutover
+
+適用：Redis → DragonflyDB / OpenJDK → Adoptium / MariaDB → MySQL（部分版本）
+
+### Type C：Operational redesign hybrid
+
+```text
+為什麼遷 → 結構 differentiator → Operational redesign 對位
+→ 3-phase operational migration → Drop-in cutover → 故障演練 → Capacity → 整合
+```
+
+特徵：
+
+- application code 不變、operational model 全換
+- *operational 表格對位* 是內容主軸
+- Cutover 本身簡單（protocol 相容）、operational 準備複雜
+
+適用：PostgreSQL → Aurora / Self-managed Redis → ElastiCache / Self-managed Kafka → MSK
+
+### Type D：Parallel streams（multi-tool 拆分）
+
+```text
+為什麼遷 → 五個責任、五個 component → 5 parallel migration stream
+→ Stream-level audit / deploy / dual-ship / cutover → 故障演練 → Capacity → 整合
+```
+
+特徵：
+
+- source 一站式、target N 個專責 component
+- 每個 stream 獨立 audit / deploy / cutover、stream 間少 dependency
+- 整體不是線性、是 *staggered parallel*
+
+適用：Datadog → Grafana Stack / Splunk → Elastic + Tines + PagerDuty / Atlassian Suite → 各 specialized tool
+
+### Type E：Partial + 混合架構（paradigm shift）
+
+```text
+「不是 migration、是 paradigm 重設計」→ Paradigm 對位
+→ 什麼情境真的能換 → Application 重設計 → 部分 stream cutover → 長期混合架構
+```
+
+特徵：
+
+- 不存在「complete migration」、是 *按 use case 拆分 + 共存*
+- application 模式重設計（不是 SDK 換）
+- *混合架構是 long-term default*
+
+適用：Kafka ↔ NATS / REST → gRPC / SQL → NoSQL / VM → Serverless
+
+---
+
+## 跟 deep article methodology 的關係
+
+[Deep article methodology](/posts/vendor-deep-article-methodology/) 的 6-section structure（問題情境 → 概念 → 配置 → 演練 → 容量 → 整合）是 *single feature implementation* 的模板、不是 *cross-vendor process* 的模板。Migration playbook 是 *新 content category*、需要自己的 methodology。
+
+兩者關係：
+
+- **Single feature deep article**：6-section、200-400 行、focused on *how to implement / debug feature X*
+- **Migration playbook**：5 種 structure（依 diff dimension）、200-400 行 / 篇、focused on *how to move from A to B*
+- 共同：問題情境 / 故障演練 / 容量 / 整合段；差異：中間「process / structure」段
+
+寫前的 *content category 判讀* 是新方法論議題、不是 deep article methodology 涵蓋。
+
+---
+
+## 反模式
+
+| 反模式                                                  | 後果                                                                |
+| ------------------------------------------------------- | ------------------------------------------------------------------- |
+| 寫 migration playbook 前不做 diff dimension audit       | 套錯結構模板、phase 變空白或 process 強行線性                       |
+| 假設「migration 都 phased」                             | drop-in / paradigm shift 套 phased 結構失真                          |
+| 假設「跟 deep article methodology 一樣」                | 6-section 套 cross-vendor process 缺 differentiation                |
+| 跨 type 強行套同一個結構                                | 5 種 type 內容差異被壓平、跨篇連讀預期化                            |
+| 沒列「結構 differentiator」段                           | 讀者不知道為什麼這篇結構跟其他 migration playbook 不同              |
+| Diff dimension audit 只看 schema                        | 忽略 operational / paradigm / components 維度、套錯結構             |
+| 把混合架構 paradigm shift 寫成 phased                   | 假設 source 會消失、cleanup phase 變 fiction                         |
+| 把 drop-in 寫成 phased                                  | 多 phase 變空白、文章拉長但無內容                                   |
+
+---
+
+## 跟其他抽象層原則的關係
+
+| 原則                                                                                            | 關係                                                                                                                              |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [#122 Cadence 同質化是模板的隱形維度](../cadence-homogenization-in-batch-writing/)              | 補位 — #122 處理 *同 type 內的 framing collapse*、本卡處理 *跨 type 套錯結構*；兩者都跟「主題語意 attractor」相關                |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                       | 同骨 — 套既有結構模板最便利（不用判 diff dimension）、但意圖（跟主題本質對位）失準                                              |
+| [#125 Collapse 是隱形預設](../collapse-is-implicit-default/)                                   | 子實例 — 結構模板 collapse 到單一 type 是 #125 在「content structure」surface 的具體形態                                          |
+| [#118 Standard-driven vs case-driven domain judgment](../standard-driven-vs-case-driven-domain-judgment/) | Sibling — 兩卡都是 *寫作前的 domain audit*、#118 判 case-driven vs standard-driven、本卡判 process structure type           |
+| [#119 章節已有 routing skeleton 走補強段](../routing-layer-chapter-recognition/)                | 同骨 — 都是「結構辨識先於內容生成」、#119 是章節內、本卡是文章層                                                                |
+
+---
+
+## 判讀徵兆
+
+| 訊號                                              | 該做的事                                                              |
+| ------------------------------------------------- | --------------------------------------------------------------------- |
+| 寫 migration playbook 前直覺套「6 phase」         | 先跑 diff dimension audit、可能 type A-E 對應不同結構                |
+| 寫到一半某 phase 內容空白                         | 結構錯位、可能不需要這個 phase                                       |
+| 兩篇同 category content 連讀差異不大              | 結構過於 universal、缺結構 differentiator 段                          |
+| 「cleanup phase」寫不出內容                       | 可能是 paradigm shift type、source 不會消失                          |
+| 章節數 ≥ 15 還沒寫完                               | 結構過 phased、考慮是不是 type B / E 不需要這麼多                    |
+| 章節 4 「故障演練」段比其他段都簡單                | 結構過 abstract、實作層細節缺                                        |
+| 寫作前沒列 source / target 的 diff dimension      | 結構 risk、補 audit                                                  |
+
+**核心**：Process content 的結構由 *source / target 最大差異維度* 決定、不是 universal phased / 6-section 模板。寫作前必須跑 *diff dimension audit*（schema / operational / paradigm / components / application change 5 維度）、再選對應 type 結構；跳過 audit 會套錯模板、phase 變空白或 process 強行線性。

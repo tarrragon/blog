@@ -99,6 +99,35 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 3. **進度 10-20% 抽樣訊號偏弱、80% 抽樣最強**：N=5 batch 確認 *進度 80% audit* 是 emergence 訊號最強位置；原 principle 寫「進度 10-20% 抽樣」是過早、實際 *寫前 variant 規劃 + 進度 60-80% audit* 組合更穩
 4. **同 vendor 同 type 是 collapse 最高風險、checkpoint 仍 cover**：N=5 batch 共同 context 比 N=4 多（同 vendor / 同 audience / 同 article type）、本卡論斷 emergence 風險 = 共同 context × N 成立；checkpoint 設計能 cover 是因為 *variant 規劃在 stage 0*、不靠 sample size 補
 
+### Update: 被動寫作下 stage-internal checkpoint 仍失效
+
+第三輪 5 篇 migration playbook 中 *前 3 篇被動寫作*（沒主動規劃 variant）— stage-internal checkpoint 雖然按時 fired、但因為 *沒 variant 預先準備*、checkpoint 看到的「不同主題」誤以為 framing 會自然錯開、實際 collapse 到「為什麼遷：X/Y/Z driver」格式：
+
+| 進度       | Checkpoint 觸發    | 看到的訊號                                  | 行動                            | 結果                          |
+| ---------- | ------------------ | ------------------------------------------- | ------------------------------- | ----------------------------- |
+| 第 1 篇    | baseline 確認      | 「為什麼遷：cost / multi-vendor / cloud-native」| 沒設變體規劃                    | 第 2 篇預設複製 framing       |
+| 第 2 篇    | 應該抽樣 audit     | 跟第 1 篇都「為什麼遷 X/Y/Z」               | **被動接受、認為主題不同就 OK** | 第 3 篇也複製                 |
+| 第 3 篇    | 應該抽樣 audit     | 連續 3 篇相同 framing                       | **發現問題、決定後 2 篇換 variant**| 後 2 篇主動 variant、cadence 部分挽救 |
+| 第 4 篇    | active variant     | cost-driven entry、跟前 3 篇骨架不同        | 持續 variant                    | OK                            |
+| 第 5 篇    | active variant     | paradigm contrast entry                     | 全 batch audit                  | 3/5 collapse、2/5 不同        |
+
+兩個關鍵 finding：
+
+5. **Checkpoint 不夠、變體規劃才是 root**：stage-internal checkpoint 確實 fire、但 *沒準備 variant* 時 checkpoint 變被動驗證、不是主動防護；本卡原論斷「checkpoint 取代 batch 後 reviewer」需修正為「checkpoint + 預先 variant 規劃 兩層」
+6. **主題語意 attractor 是新失效源**：N=5 batch 中前 3 篇都圍繞「為什麼換 vendor」、entry 自然 collapse 到 driver list；這個 attractor 比結構 constraint 更強、未來寫作要 *預先列 framing 變體* 而不是 *依賴 checkpoint 提醒換*
+
+修正後的 Stage 內 checkpoint 排程（補 stage 0 變體規劃）：
+
+| 寫作進度                  | Checkpoint 動作                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------- |
+| **Stage 0（寫前）**       | **列 N 種 framing 變體 + 對應 N 篇主題分配**（新增、原本缺失）                                |
+| 第 1-3 篇（pilot phase）  | 按 stage 0 分配執行、人類 / Claude 自審「實際 entry framing 跟 stage 0 規劃對齊嗎」          |
+| 第 5 篇                  | 抽 5 個段首句並列、確認 framing 變體仍在輪替                                                 |
+| 第 10 篇                 | 抽 10 個段末收尾語並列、確認句型分佈 ≥ 3 種                                                  |
+| 每 + 10 篇               | 重複抽樣、發現 collapse 立即回頭加變體                                                       |
+
+關鍵：*Stage 0 變體規劃是必要 step*、不能跳；checkpoint 是 *監測* 工具、不是 *設計* 工具。
+
 ---
 
 ## Batch 完成後 reviewer 為什麼太晚

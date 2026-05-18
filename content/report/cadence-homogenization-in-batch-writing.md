@@ -95,6 +95,35 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 4. **同 vendor 同 article type 仍可錯開**：理論上 *同 vendor 同 type* 是 cadence collapse 最高風險場景（共同變數最多）；實測 variant 設計仍能覆蓋、collapse 風險不來自共同 context、來自 *寫作前是否主動規劃 variant*
 5. **批次間 sample size 邊界更寬**：原 principle 寫 ≥ 5 才適用、實測 *N=4 跟 N=5 一樣有效*、threshold 5 是 emergence 訊號偵測的閾值、不是 *principle 適用* 的閾值；變體規劃在 N ≥ 2 就該做
 
+### Update: Partial collapse 實證（被動 vs 主動 variant 對照）
+
+第三輪 batch 寫 5 篇 migration playbook（跨 vendor、不同 module）、*前 3 篇被動寫作、後 2 篇主動規劃 variant*。結果：
+
+| 篇 | Variant 規劃 | 章節 1 entry framing                          |
+| --- | ----------- | -------------------------------------------- |
+| 1 Splunk → Elastic     | 被動 | 「為什麼遷：X / Y / Z 三條 driver」          |
+| 2 Redis → DragonflyDB  | 被動 | 「為什麼遷：X / Y / Z 三條 driver」          |
+| 3 Postgres → Aurora    | 被動 | 「為什麼遷：X / Y / Z 三條 driver」          |
+| 4 Datadog → Grafana    | 主動 | 「$50K/month bill 拆解」                     |
+| 5 Kafka ↔ NATS         | 主動 | 「『Kafka → NATS migration』字面上不成立」    |
+
+**3/5 collapse、2/5 錯開** = partial collapse。
+
+四批 cadence rate 對照：
+
+| 批次                              | Sample | Variant 規劃    | Collapse rate |
+| --------------------------------- | ------ | --------------- | ------------- |
+| backend/07 vendor batch           | N=51   | 無               | 51/51 (100%)  |
+| Deep article 第一批（跨 vendor）   | N=4    | 主動             | 0/4 (0%)      |
+| Deep article 第二批（同 vendor）   | N=5    | 主動             | 0/5 (0%)      |
+| Migration playbook（混合）         | N=5    | **3 被動 + 2 主動** | **3/5 (60%)** |
+
+三個關鍵 finding：
+
+6. **Natural attractor 跟主題相似性正相關**：5 篇 migration playbook 都圍繞「為什麼換 vendor」、entry 自然收斂到「driver list」格式；同類主題的 *語意 attractor* 比結構 constraint 更強
+7. **Sample size 不能解 cadence collapse**：N=5 跟前批 N=5 全錯開差異在 *variant 規劃*、不是 sample size；證實本卡論斷「variant 規劃必須主動、不是 N≥5 自動避免」
+8. **Partial collapse 比 0% collapse 教育價值高**：負面 evidence（natural attractor 不規劃就 collapse）比正面 evidence（規劃就錯開）更證明 principle；後續寫作流程應 *預期* 主題相似批次的 collapse 風險、不是樂觀假設
+
 ---
 
 ## 反模式
