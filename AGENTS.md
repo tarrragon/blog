@@ -195,6 +195,7 @@
   - **列表與代碼**：列表 / code block 前後空行；有序列表 `1./2./3.` 一致；code block 需語言標示。
   - **Front matter**：通用層 `title` + `date` 必填；新文章必填 `description` + `tags`；卡片層加 `description` + `weight` 必填。
   - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。
+  - **裝飾符號禁用**：正文（含表格、列表、行內）不可用 emoji（✅ ❌ ⚠️ 🚨 等）跟裝飾性 unicode（✓ ✗）；表格 status 改用純文字、列表優缺點改用 `**優點**：` / `**缺點**：` 標題段；理由與替換策略見 spec §5.9。**目前未進 `mdtools lint` 自動掃描、靠人工 grep**：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗" content/`。
 - 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
 - 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
 - 寫作時遇到 pre-commit / pre-push 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。

@@ -211,13 +211,13 @@ Rotation 流程通常自己實作（GCP 沒提供類似 AWS 的 Rotation Lambda 
 
 ### 三者比較
 
-| 維度               | AWS Secrets Manager             | HashiCorp Vault               | GCP Secret Manager           |
-| ------------------ | ------------------------------- | ----------------------------- | ---------------------------- |
-| 排程觸發           | ✅ 內建                         | ✅ 內建（periodic）           | ❌ 自己排（Cloud Scheduler） |
-| 雙密期支援         | ✅ AWSCURRENT / PREVIOUS labels | ⚠️ Static 需自寫、Dynamic 不需 | ✅ Version-based             |
-| Dynamic credential | ❌（要 custom Lambda）          | ✅ Native support             | ❌                           |
-| 跨雲 / 跨 region   | ❌（AWS-only）                  | ✅                            | ❌（GCP-only）               |
-| 維運成本           | 低（managed）                   | 高（自管 Vault cluster）      | 低（managed）                |
+| 維度               | AWS Secrets Manager          | HashiCorp Vault             | GCP Secret Manager               |
+| ------------------ | ---------------------------- | --------------------------- | -------------------------------- |
+| 排程觸發           | 內建                         | 內建（periodic）            | 不內建（自己排 Cloud Scheduler） |
+| 雙密期支援         | AWSCURRENT / PREVIOUS labels | Static 需自寫、Dynamic 不需 | Version-based                    |
+| Dynamic credential | 需 custom Lambda             | Native support              | 不支援                           |
+| 跨雲 / 跨 region   | AWS-only                     | 跨雲                        | GCP-only                         |
+| 維運成本           | 低（managed）                | 高（自管 Vault cluster）    | 低（managed）                    |
 
 ### 自建 rotation 系統的最小元件
 
