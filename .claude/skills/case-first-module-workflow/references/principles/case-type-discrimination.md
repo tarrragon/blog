@@ -106,6 +106,80 @@ backend/01-07 七個模組驗證：
 - 不要把 skeleton case 的方向跟 rich case 的數字混合成單一斷言
 - 跨類型引用時 disclaimer 要明示哪段屬通用、哪段屬 case fact
 
+## 其他 case 屬性維度（多 lens 分類）
+
+skeleton / medium / rich 是「**內容深度**」維度。但實作上 case 還有其他屬性、影響採集策略跟引用方式。這些維度跟內容深度正交、同一個 case 可以同時是「rich + anchor + vendor-specific + 正例」。
+
+### 議題覆蓋廣度：Anchor case vs 邊緣 case
+
+| 類別            | 特性                                   | 採集策略                                               |
+| --------------- | -------------------------------------- | ------------------------------------------------------ |
+| **Anchor case** | 單一案例覆蓋多個議題、可在多個章節引用 | 每個 vendor 案例庫該有 1-3 個 anchor、是寫作主軸       |
+| **邊緣 case**   | 單一議題深度、無法跨多章節             | 每個 vendor 3-6 個、補強特定議題、避免單一 anchor 過載 |
+
+判讀條件：
+
+- Anchor case 通常是 medium 或 rich case、且涵蓋 vendor 大綱 3+ 個進階主題
+- 例：NATS 的 Form3 case（跨雲 + JetStream + Leaf Node）、MachineMetrics case（Leaf node + KV + Object Store + Auth）、Choria case（Request/Reply + Queue group + Federation）— 都是 anchor、可在 3+ 章節引用
+- 邊緣 case 通常是 skeleton 或 short medium、單一焦點明確
+- 例：NATS 的 i-flow case 只涵蓋 Leaf node 一個主題、是邊緣
+
+採集失衡訊號：
+
+- 全是 anchor case → 案例庫過度集中、寫作會反覆引用同 3 個 case、讀者疲乏
+- 全是邊緣 case → 缺主軸、各章節各自小 case、難以建立跨章節 narrative
+
+### 引用範圍：Vendor-specific case vs Cross-vendor case
+
+| 類別                | 特性                                             | 在 `_index.md` 的位置                |
+| ------------------- | ------------------------------------------------ | ------------------------------------ |
+| **Vendor-specific** | 屬該 vendor 專屬、別 vendor 不引用               | `{vendor} 案例` section              |
+| **Cross-vendor**    | 跨 vendor 通用（反例 / 規模對照 / 全球交付對比） | `通用案例` section、多 vendor 都引用 |
+
+判讀條件：
+
+- Vendor-specific case 主題明確綁該 vendor 的 mechanism（如 RabbitMQ 的 vhost、Kafka 的 partition）
+- Cross-vendor case 主題是跨 vendor 通用議題（如 delivery semantics 誤配、規模差異下選型、全球交付對比）
+- 例：C9「at-least-once / exactly-once 語義誤配」是 cross-vendor 反例、可在 Kafka / RabbitMQ / SQS / Redis Streams 都引用
+- 例：C8 Cloudflare Queues 全球交付是 cross-vendor 對照、可在 Pub/Sub / NATS / Kafka 都引用對照
+
+採集策略：
+
+- 採集 vendor-specific case 為主（80%）、cross-vendor 為輔（20%）
+- 採集到 cross-vendor case 時、在 `_index.md` 列為「通用案例」、不放某一 vendor 下
+- 各 vendor 頁的「案例回寫」section 分「專屬案例」+「跨 vendor 對照」兩段
+
+### 教學功能：正例 vs 反例
+
+| 類別     | 教學價值                               | 採集比例         |
+| -------- | -------------------------------------- | ---------------- |
+| **正例** | 揭露「該怎麼做」、mechanism / 設計取捨 | 每 vendor 5-8 個 |
+| **反例** | 揭露「不該做什麼」、退場 / 失敗 / 誤配 | 每 vendor 1-2 個 |
+
+反例的權重：
+
+- 反例比正例教學意義更高 — 揭露盲點、提供「何時轉走其他方案」的判讀
+- 反例可以是「該 vendor 適用範圍外的 case」（如 Spotify 從 Kafka 遷出、Learning.com 退場 Redis event store）
+- 反例也可以是「該 vendor 用錯方式的 case」（如 C9 語義誤配）
+
+每個 vendor 案例庫**至少要有 1 個反例**、最多 2 個。少於 1 個會讓案例庫變「都是成功案例」的偏向、讀者建立不出「何時不用」的直覺。
+
+採集時主動列反例候選方向：
+
+- 「該公司從 {vendor} 遷出 / 遷到 {alternative}」
+- 「該公司退場 {vendor} {feature}」
+- 「{vendor} {feature} 在 {scenario} 不適用」
+
+### 三維度的綜合判讀範例
+
+採集 Kafka 案例時：
+
+- Pinterest Tiered Storage = rich + anchor（多章節）+ vendor-specific + 正例 — 寫作主軸首選
+- Spotify Event Delivery 遷出 Kafka = medium + 邊緣 + cross-vendor（也跟 Pub/Sub 章節對照）+ **反例** — 反例 anchor
+- Trivago KEDA = medium + 邊緣 + vendor-specific + 正例 — 補強 consumer lag autoscaling 議題
+
+採集時三維度同時標明、stage 1 audit 時可以快速判斷該 case 在寫作中的角色。
+
 ## 自掃描提示
 
 寫作完後、檢查每處 case 引用是否：

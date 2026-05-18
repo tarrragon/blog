@@ -9,7 +9,9 @@ metadata:
 
 # Case-First Module Workflow
 
-跨多章節教學模組（5+ 章）撰寫的五階段流程。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 7 個模組驗證、385 個 review issue / case fidelity 70-93% 區間。
+跨多章節教學模組（5+ 章）撰寫的六階段流程（stage 0 採集 + stage 1-5 audit / write / review / fix / polish）。用真實案例驅動 scope 擴展、用 agent team 平行多輪審查補 LLM 自盲點、用 polish pass 處理系統性殘留。已在 7 個模組驗證、385 個 review issue / case fidelity 70-93% 區間。
+
+Stage 0 是後加入的階段、來自 backend/03-message-queue 模組的 6 vendor case 庫採集經驗 — 既有 stage 1-5 假設「case 庫已存在」、但實作上常碰到 case 庫從零或覆蓋不足、需要先採集再進 audit。
 
 ## 適用情境
 
@@ -63,7 +65,21 @@ Standard-driven 章節的寫作策略：
 | **Agent team review**    | 3 個專責 reviewer 平行 background 跑、各維度獨立、不污染主 context |
 | **Pattern-aware polish** | 系統性 pattern（負向骨架、模板化）跨檔批次處理、不一個個改         |
 
-## 五階段流程
+## 六階段流程
+
+### Stage 0：案例採集（從零或補強建 case 庫）
+
+當 case 庫從零、或既有 case 庫覆蓋不足某些章節 / vendor / 主題時、走 stage 0 採集流程。
+
+關鍵紀律：
+
+- **平行 agent 採集**：spawn N 個 `subagent_type: general-purpose`、`run_in_background: true` agent、每個負責一個 vendor / 主題、各自跑 WebSearch + WebFetch
+- **WebFetch 驗證硬閘門**：每個 URL 都要 WebFetch 確認可訪 + 內容真的提到目標 vendor / 主題、不能編造
+- **採集目標 5-10 case per vendor**：含 anchor（1-3 個、覆蓋多議題）+ 邊緣（3-6 個）+ 反例（1-2 個）
+- **薄殼形態**：採集只寫薄殼（觀察 + 判讀 + 對應大綱 + 引用源、~15-20 行）、不寫策略 / 詳細路由、後續 stage 1 audit 可升 rich
+- **誠實標明缺口**：採集後在 `_index.md` 加「案例覆蓋缺口」段、明示哪些章節公開 case 稀薄
+
+詳見 [stage-0-case-collection](./references/stage-0-case-collection.md) 跟 [stage-0-collection-checklist](./references/stage-0-collection-checklist.md)。對應 [principles/case-collection-coverage-gap](./references/principles/case-collection-coverage-gap.md)。
 
 ### Stage 1：案例庫 audit + findings 抽取
 
@@ -131,9 +147,12 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 當使用者要寫跨章節教學模組時：
 
 1. **先判讀領域該走 case-driven 還是 standard-driven**：對照「Standard-driven vs case-driven」段四維度（議題穩定度 / case 公開度 / standard 成熟度 / 維護半衰期）— standard-driven 領域不建 case 庫、直接用 standard framework 寫章節 + Last reviewed cadence
-2. 確認有 case 庫（rich + skeleton 案例 5+ 篇）— *case-driven 領域*：沒有的話本流程不適用、要先建 case 庫；*standard-driven 領域*：跳過此步、直接走章節寫作
+2. **確認 case 庫狀態**（case-driven 領域）：
+   - 既有案例 5+ 篇且覆蓋目標章節 → 跳到 stage 1 audit
+   - 案例 < 5 篇或部分章節缺案例 → **走 stage 0 採集**、補到 5-10 per vendor / 主題
+   - 整個領域是 standard-driven → 跳過 case 庫、直接走章節寫作
 3. 確認模組規模 5+ 章節 — 單篇文章用 [compositional-writing](../compositional-writing/SKILL.md) 即可
-4. （case-driven 領域）按 stage 1-5 順序執行、不跳階段
+4. （case-driven 領域）按 stage 0 → 1 → 2 → 3 → 4 → 5 順序執行、不跳階段
 5. 每個 stage 完成 commit 一次、保留可追溯歷史
 6. 模組完成後做 retrospective、把新浮現 pattern 寫回方法論
 
@@ -150,6 +169,9 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 7. **Medium case 實作層擴寫過頭**（06 模組新發現）— 用 mechanism 名稱精準引用、不擴寫到 case 沒提的具體實作細節、詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md)
 8. **跨 case 合成 frame 升級成 case 揭露**（07 模組新發現）— 當段落把多個 case 失效訊號抽象為更高層 frame（如「跨工具回查壓力」「平台責任切分」）、要 explicit 標為「本章合成、非 case 原文」。07 batch 1 reviewer B 的 2 個 high issue 都屬此類、發生在跨 case 合成場景。詳見 [principles/fact-vs-derive-layering](./references/principles/fact-vs-derive-layering.md)
 9. **Case 引用句構同質化**（07 模組新發現）— 跨章 13+ 段 case 引用用同一句構（「揭露 N 層失效控制面 — A、B、C。案例『可落地檢查點』標明 mechanism 為 X、前提是 Y」）會讓讀者把 case 引用當儀式而非論證、stage 5 polish pass 要主動分流。詳見 [principles/case-citation-three-part](./references/principles/case-citation-three-part.md)
+10. **採集階段編造案例**（backend/03 模組新發現）— LLM 會把訓練資料 + 真實公司名混合成不存在的案例、單純串行採集無法擋。Stage 0 必須 WebFetch 驗證 URL + 內容、agent 採集 prompt 要明示「不能編造、URL 失效要列入捨棄候選」。詳見 [stage-0-case-collection](./references/stage-0-case-collection.md)
+11. **採集階段跨網域引用觸發 anti-phishing**（backend/03 模組新發現）— 第三方平台（Synadia 寫 NATS、CloudAMQP 寫 RabbitMQ）的 customer case 引用時、link display 含 vendor TLD 字樣會觸發 markdown lint anti-phishing 規則。採集 checklist 要驗證 display 跟 href domain 一致。詳見 [stage-0-collection-checklist](./references/stage-0-collection-checklist.md)
+12. **採集階段全是正例、缺反例**（backend/03 模組新發現）— 採集容易偏向 success story（vendor 客戶 story、規模化案例）、忽略反例 / 退場 / 誤配案例。反例教學價值高於正例、每個 vendor 案例庫至少要有 1 個反例。詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md) 的「教學功能」維度
 
 ## 跟其他 skill 的關係
 
