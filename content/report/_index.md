@@ -167,7 +167,7 @@ Meta-卡（#125-126、從 #122-124 + 既有卡跨 surface 抽出）：
 Cadence + 結構雙軸延伸（#127、從 5 篇 migration playbook batch 抽出、跟 cadence 系列形成「framing layer + structure layer」雙軸）：
 
 - [#127 Process content 結構由最大差異維度決定](content-structure-by-max-diff-dimension/) — 跨 X process content（migration / upgrade / rollout）結構不是 universal、由 source / target 的 *最大差異維度* 決定；6 種 migration / process type 實證（schema 差 / drop-in / operational / multi-tool / paradigm / topology re-layout）跑出 6 種結構；寫前必須跑 *diff dimension audit*、跳過會套錯模板（phase 變空白或 process 強行線性）；補 #122 在「結構 layer」的對偶、同時是 #125 在 content structure surface 的子實例；6 type 是 *axis-aligned simplification*、非窮盡分類（見卡內 limitation 段）
-- [#128 Data topology 是 process content 的第 6 audit 維度](data-topology-as-audit-dimension/) — #127 原 5 維 audit 漏 data topology（sharding / partition / region / replication 拓樸）；topology 不在既有 5 維任一個、但決定 re-sharding / partition redesign / multi-region rollout 的結構；本卡擴 audit 到 6 維、新增 Type F「Topology re-layout」結構；從 Redis cluster re-sharding dogfood 抽出、是 #127 self-aware limitation 段「audit 維度補新軸」預測命中的結果
+- [#128 Data topology 是 process content 的第 6 audit 維度](data-topology-as-audit-dimension/) — #127 原 5 維 audit 漏 data topology（sharding / partition / replication / region / co-location 5 sub-dimension）；topology 不在既有 5 維任一個、但決定 re-sharding / partition redesign / multi-region rollout 的結構；本卡擴 audit 到 6 維、新增 Type F「Topology re-layout」結構；從 Redis cluster re-sharding dogfood 抽出、是 #127 self-aware limitation 段「audit 維度補新軸」預測命中的結果
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -329,7 +329,9 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ---
 
-**Last Updated**: 2026-05-19（later 2）— 新增 #128 Data topology 是 process content 的第 6 audit 維度、從 Redis cluster re-sharding dogfood 抽出 + #127 self-aware limitation 段「audit 維度補新軸」預測命中後升級執行；#127 audit table 5 → 6 維、結構 type 5 → 6 種（新增 Type F）+ multi-axis 主導維度優先序加入 topology；methodology Step 1 audit 維度 5 → 6、加 Type F 結構模板、「何時不該套」段 re-sharding 條改寫（現在 Type F 涵蓋、不再排除）。
+**Last Updated**: 2026-05-19（later 3、4-reviewer audit Phase 1+2+3a 全修）— #128 / #127 / methodology「5 → 6」cross-file 對齊（title / description / lead / H2 / 核心收尾 / 主導維度優先序全升 6、re-sharding 漏類 row strikethrough 標 resolved）+ #128 章節 1 補 anchor sentence + 章節 5 Type F anatomy 加註「規範形態 vs 實作可 inline」+ Sub-dim row 3 example 改純 replication 變動跟 row 4 區隔 + Cassandra row 補明示「雙變」+ #128 / #127 加 Self-aware limitation Update 段承認 4-reviewer audit 揭露的 6 個結構性質疑（6 維非窮盡 / Type F 跟 Type B 重疊 / parallel run 例外 / 主導維度 audience-dependent / 拒絕理由依賴 narrow 定義 / 既有 5 篇 silent grandfathering）。
+
+2026-05-19（later 2）— 新增 #128 Data topology 是 process content 的第 6 audit 維度、從 Redis cluster re-sharding dogfood 抽出 + #127 self-aware limitation 段「audit 維度補新軸」預測命中後升級執行；#127 audit table 5 → 6 維、結構 type 5 → 6 種（新增 Type F）+ multi-axis 主導維度優先序加入 topology；methodology Step 1 audit 維度 5 → 6、加 Type F 結構模板、「何時不該套」段 re-sharding 條改寫（現在 Type F 涵蓋、不再排除）。
 
 2026-05-19（later）— #122 / #124 / #127 補第二輪 migration batch（5 篇）驗證段：collapse 0/5（vs 第一輪 3/5、唯一變數是 stage 0 variant 規劃完整度）、漏類確認（major version upgrade / topology re-sharding 結構跟 5 type 完全不同）、multi-axis 規則成立（三維 High 用 Type E + 高維度獨立段）。同步更新 methodology backlog 標完成 2 項 + Update 段補新議題（data topology audit 維度 / 漏類「為什麼這篇不套」frame / multi-axis 高維度獨立段升 standard）。
 

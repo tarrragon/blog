@@ -19,6 +19,8 @@ Process content 的 [diff dimension audit](../content-structure-by-max-diff-dime
 | Application change  | application code 改動量              | topology 變不必然 application 改 |
 | **Data topology**   | **slot / shard / partition / region 分佈** | **本卡新增的第 6 維**      |
 
+**Data topology 是 *資料分佈* 層級的概念** — 跟資料結構（schema）、運維機制（operational）、抽象模型（paradigm）、組件數量（components）、application code 改動量（application change）並列為第 6 軸；topology 變動時其他 5 維可能完全不變、但 *資料在 cluster / partition / region 之間的擺放方式* 改變、需要獨立的結構處理。
+
 擴 audit 到 6 維、新增 [Type F「Topology re-layout」](../content-structure-by-max-diff-dimension/) 結構對映 *topology 高差異* 的 process content。
 
 ## Topology 的 5 個 sub-dimension
@@ -29,7 +31,7 @@ Process content 的 [diff dimension audit](../content-structure-by-max-diff-dime
 | ---------------------- | ----------------------------------------------------------------- | ------------------------------------------- |
 | Sharding strategy      | Slot / hash / range / consistent hash / key-based                | Redis cluster slot 重分配                   |
 | Partition strategy     | Declarative / range / list / hash / sub-partition                | PostgreSQL monthly → daily partition       |
-| Replication topology   | Single primary / multi-master / star / hub-spoke / mesh           | Single-region → multi-region active-active |
+| Replication topology   | Single primary / multi-master / star / hub-spoke / mesh           | Single primary → multi-master 切換、或加 logical replication subscriber |
 | Region distribution    | Single / multi-AZ / multi-region / global                         | Cassandra single DC → multi-DC             |
 | Co-location / locality | Locality-aware queries / row-level region pinning                 | CockroachDB region 強制 row 對應           |
 
@@ -56,7 +58,7 @@ Topology 是 *獨立的問題軸*、5 維 audit 漏掉時會誤判結構。
 | Multi-master rollout              | Replication topology 從 single primary 變 multi-master | yes                 |
 | DynamoDB GSI / global tables    | Sharding + replication 雙變                            | yes                 |
 | Kafka topic re-partitioning      | Sharding strategy 變                                   | yes                 |
-| Cassandra keyspace re-balance    | Replication factor + token range 變                    | yes                 |
+| Cassandra keyspace re-balance    | Replication factor（sub-dim 3）+ token range（sub-dim 1）雙變 | yes        |
 | MongoDB sharded cluster 加 shard | Sharding 重分布                                        | yes                 |
 
 多數 Type F 場景是 *同 vendor* — 跟 [#127](../content-structure-by-max-diff-dimension/) Type A-E 預設「跨 vendor」對應、Type F 是 *同 vendor 內 topology 重劃*。
@@ -87,12 +89,20 @@ Topology 是 *獨立的問題軸*、5 維 audit 漏掉時會誤判結構。
 3. Pre-layout analysis（current topology audit / hot key / slot 分佈）
 4. Re-layout 機制（slot migration / partition split / shard rebalance）
 5. Execution flow（per-step、含 rollback boundary）
-6. 5 production 故障演練
+6. Production 故障演練
 7. Capacity / cost
 8. 整合 / 下一步
 ```
 
-7-9 章節、200-260 行。跟 Type B 對照、Type F 多了「topology audit」段、Step-by-step 比 Type B 細（per-step 不是 per-cutover）；跟 Type A phased 對照、Type F 不需要 schema translation / parallel run / cleanup phase（source / target 同 cluster）。
+7-9 章節、200-260 行。三個 *新元素* 是 Type F 的核心承擔：
+
+- **Pre-layout analysis 段**：在執行前列出當前 topology（slot 分佈 / hot key / replica lag / partition imbalance）、決定 *re-layout 的範圍跟順序*；缺這段、後續執行階段沒 baseline 可比、failure 偵測延遲
+- **Re-layout 機制段**：解釋 vendor 的 *slot migration / partition split / shard rebalance* protocol —讀者要理解 vendor 內部機制才能預估 latency / locking / atomicity 邊界
+- **Execution flow per-step + rollback boundary**：跟 Type A 的 phased 對照、Type F per-step 粒度更細（單 slot migration vs 整個 phase）、每 step 都要明示 *能否回退、回退時資料狀態*
+
+跟 Type B 對照、Type F 多了「topology audit」段、Step-by-step 比 Type B 細（per-step 不是 per-cutover）；跟 Type A phased 對照、Type F 多數情境不需要 schema translation / parallel run / cleanup phase（source / target 同 cluster）；但 *multi-region rollout* 子情境例外、仍需 parallel run（兩 region 同跑後切流量）— 此時 Type F + Type A parallel run 段組合應用、見「多重歸類」規則。
+
+注意 anatomy 列 8 row 是 *規範形態*、不是強制機械對映 — 實作上「結構 differentiator」+「pre-layout analysis」段可 inline 到開頭 audit 段（如 [Redis cluster re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/) 的「Source = Target，但 topology 重劃」段內聯處理）、實作 H2 數可能比 anatomy 列 row 少 1-2 個。
 
 ## Production 反模式
 
@@ -125,3 +135,23 @@ Topology 是 *獨立的問題軸*、5 維 audit 漏掉時會誤判結構。
 | 多個 sub-dimension 同時變                          | Complex topology migration、結構複雜度 +1 階                          |
 
 **核心**：5 維 audit 漏 topology 是初始框架的盲點；topology 是 *資料分佈* 而非 *資料結構 / 元件 / 抽象*、需要獨立 audit 軸。Type F「Topology re-layout」對映 topology = High 的 process content、跟 Type A-E 並列；多軸 High 配對按 [#127](../content-structure-by-max-diff-dimension/) 多重歸類規則處理。
+
+---
+
+## Self-aware limitation：本卡的 6 個未解結構性質疑
+
+第二輪 4-reviewer audit 揭露 6 項結構性 issue、本卡選擇 *meta-acknowledgment*（記錄）而非 *substantive restructure*（重寫）— 跟 [#127 self-aware limitation](../content-structure-by-max-diff-dimension/) spirit 一致：
+
+1. **6 維仍可能漏類**：reviewer 提 identity / authorization / consistency / transactional / data residency 三軸候選；本卡確認 *6 維是 current best understanding、不是窮盡*；下一輪 batch 跑前優先驗證這些候選軸是否真的獨立
+2. **Type F 跟 Type B 結構重疊度高**：anatomy 8 row 中 6 row 跟 Type B 對齊、實質差異在「pre-layout analysis + re-layout 機制」兩段；可能下次 evolution 是 *Type B 的 variant* 而非並列 type；保留現狀因為「同 cluster」邊界對讀者區分有用
+3. **「不需要 parallel run」claim 部分不成立**：multi-region rollout 子情境仍需 parallel run（兩 region 同跑然後切流量）— anatomy 已加註此例外、跟「多重歸類」規則組合應用
+4. **主導維度優先序是 audience-dependent heuristic**：DBA 視角 Topology 可能 > Operational、application developer 視角 Schema > Paradigm；當前 `Schema > Paradigm > Operational > Topology > Components` 預設是「跨 audience 平均」、非 universal；reviewer 識別此 stipulation 性質
+5. **「topology 不能塞進既有 5 維」拒絕理由的窄定義依賴**：4 個拒絕點都靠 narrow 既有 5 維定義成立；換個合理定義（如「component = 任何 cluster-internal primitive、包含 partition」）topology 跟 components 邊界會 collapse；保留現狀因為當前定義對寫作判讀有用
+6. **既有 5 篇 playbook 沒 retroactive audit**：6 維框架 retroactively 對既有 Type A-E 文章未重審；Splunk → Elastic / Datadog → Grafana / Postgres → Aurora 按 6 維可能變 multi-axis；這是已知 *silent grandfathering*、不是清白「擴張」
+
+下一輪 batch trigger：
+
+- 寫 1-2 篇 Type F dogfood 驗證 anatomy 通用性（Cassandra re-balance / PG partition redesign 是候選）
+- 若浮現 *Type F 跟 Type B 結構真同構*、考慮降級為 variant
+- 若浮現 *identity / consistency / residency 真的獨立軸*、再擴 audit 到 7 維
+- 既有 5 篇 retroactive audit 在累積到 10+ migration playbook 後做、單獨成 retrospective report

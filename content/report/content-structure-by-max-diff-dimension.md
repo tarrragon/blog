@@ -2,7 +2,7 @@
 title: "Process content 結構由最大差異維度決定、不是 universal phased"
 date: 2026-05-19
 weight: 127
-description: "跨 X process content（migration / upgrade / rollout / playbook）的結構由 source / target 之間 *最大差異維度* 決定、不存在 universal phased 模板；5 種 migration type 實證（schema 差 / drop-in / operational / multi-tool / paradigm）跑出 5 種不同結構（6-phase / 6-section + audit / hybrid / parallel streams / partial + 混合）；寫作前必須做 *diff dimension audit* 才能決定結構、跳過會套錯模板"
+description: "跨 X process content（migration / upgrade / rollout / playbook）的結構由 source / target 之間 *差異維度組合* 決定、不存在 universal phased 模板；6 種 migration / process type 實證（schema 差 / drop-in / operational / multi-tool / paradigm / topology re-layout）跑出 6 種不同結構；寫作前必須做 *6 維 diff dimension audit* 才能決定結構、跳過會套錯模板"
 tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Content-design", "Process-writing"]
 ---
 
@@ -69,7 +69,7 @@ Universal phased 失效的三個機制：
 
 | 情境                                  | 例                                                              | 處理規則                                                                                       |
 | ------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| 兩維度都 High                          | PostgreSQL → CockroachDB（Schema + Operational + Paradigm 三 High）| 主結構選 *讀者最關心* 的維度（多數情境 Schema > Paradigm > Operational > Components）、其他維度抽出獨立段補充 |
+| 兩維度都 High                          | PostgreSQL → CockroachDB（Schema + Operational + Paradigm 三 High）| 主結構選 *讀者最關心* 的維度（多數情境 Schema > Paradigm > Operational > Topology > Components）、其他維度抽出獨立段補充 |
 | 三維度都 High                          | 同上                                                            | 結構走 Type E（paradigm 為主、partial + 混合）、用「為什麼這不是 drop-in」段交代另外兩維度        |
 | 全 Medium（無 High）                   | Redis → KeyDB（API 微差 + ops 微差）                            | 走 Type B drop-in、用「相容性 audit」段列 medium 差異點                                       |
 | 一維 High 但 *application change* 連帶 High | MySQL → PostgreSQL（Schema High + SQL dialect 連帶 application 改）| 走 Type A、application change 章節獨立段、不壓進 Phase 4 cutover                              |
@@ -77,22 +77,22 @@ Universal phased 失效的三個機制：
 
 關鍵原則：**主導維度決定主結構、其他高維度獨立加段**、不強迫單一 type 標籤。Backlog 的「Type A/D 混合」「Type B/D 混合」標示是 *維度組合* 的簡記、不是承認 5 type 互斥失效；下表多重歸類處理規則才是正式判讀。
 
-## 5 type 是 axis-aligned simplification、非窮盡
+## 6 type 是 axis-aligned simplification、非窮盡
 
-本卡 5 type 來自 5 篇 migration playbook 的 dogfood 觀察、是 *已浮現的 type*、不是 *涵蓋所有 migration 的完備分類*。已知漏類至少 4 種：
+本卡 6 type 來自兩輪 migration playbook 的 dogfood 觀察（第一輪 5 篇 → Type A-E、第二輪 Redis cluster re-sharding → Type F）、是 *已浮現的 type*、不是 *涵蓋所有 migration 的完備分類*。已知漏類至少 3 種：
 
-| 漏類                            | 例                                            | 為何 5 type 不覆蓋                                                       |
+| 漏類                            | 例                                            | 為何現有 type 不覆蓋                                                       |
 | ------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------ |
-| 同 vendor major version upgrade | PostgreSQL 14 → 17 / Kafka 3 → 4              | Source / target 是同 vendor、5 type 預設跨 vendor、deep article methodology 也不完全 cover |
-| 政策 / 合規驅動                 | Atlassian server EOL / PCI 強制資料 region    | Driver 在外部、但資料層仍走 type A-E 之一；audit 重點是 evidence collection、不是結構 |
-| 容量重新規劃 / re-sharding      | 單實例 → sharded / 單 region → multi-region   | Source / target 同 vendor、無 schema / paradigm 差、但 data topology 重劃；5 維度沒「topology」軸 |
-| Acquisition / merger consolidation | 兩 Datadog org 合併 / 兩 K8s cluster federate | Source / target 同產品、要處理 identity / RBAC / 歷史資料合併；5 type 不覆蓋 |
+| 同 vendor major version upgrade | PostgreSQL 14 → 17 / Kafka 3 → 4              | Source / target 是同 vendor、現有 type 預設跨 vendor、deep article methodology 也不完全 cover |
+| 政策 / 合規驅動                 | Atlassian server EOL / PCI 強制資料 region    | Driver 在外部、但資料層仍走 type A-F 之一；audit 重點是 evidence collection、不是結構 |
+| ~~容量重新規劃 / re-sharding~~ resolved | ~~單實例 → sharded / 單 region → multi-region~~ | ~~Source / target 同 vendor、無 schema / paradigm 差、但 data topology 重劃；5 維度沒「topology」軸~~ — **第二輪後已被 Type F 涵蓋**、見 [#128](../data-topology-as-audit-dimension/) |
+| Acquisition / merger consolidation | 兩 Datadog org 合併 / 兩 K8s cluster federate | Source / target 同產品、要處理 identity / RBAC / 歷史資料合併；6 type 不覆蓋 |
 
-未來累積更多 migration playbook 後、可能浮現第 6-9 type、或對 5 type 重構。本卡的 type 集合是 *open*、不是 *closed*。
+未來累積更多 migration playbook 後、可能浮現第 7-9 type（identity / consistency / residency 候選 — 對應 [#128](../data-topology-as-audit-dimension/) 跟 self-aware limitation update 揭露的候選軸）、或對 6 type 重構。本卡的 type 集合是 *open*、不是 *closed*。
 
 ---
 
-## 5 種結構的 anatomy
+## 6 種結構的 anatomy
 
 **「結構 differentiator」**是本系列引入的概念：每篇 process content 在開頭加一段、*明示這篇用什麼結構、跟其他同 category content 的結構差異在哪*。功能類似 type signature — 讓讀者一開始就知道接下來的章節組織方式、避免套錯預期。例：drop-in migration 的「結構 differentiator」段會說「跟 phased migration 對照、本篇是 6-section + audit、不是 6-phase」。
 
@@ -200,7 +200,7 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 兩者關係：
 
 - **Single feature deep article**：6-section、200-400 行、focused on *how to implement / debug feature X*
-- **Migration playbook**：5 種 structure（依 diff dimension）、200-400 行 / 篇、focused on *how to move from A to B*
+- **Migration playbook**：6 種 structure（依 diff dimension）、200-400 行 / 篇、focused on *how to move from A to B*
 - 共同：問題情境 / 故障演練 / 容量 / 整合段；差異：中間「process / structure」段
 
 寫前的 *content category 判讀* 是新方法論議題、不是 deep article methodology 涵蓋。
@@ -247,7 +247,7 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 | 章節 4 「故障演練」段比其他段都簡單                | 結構過 abstract、實作層細節缺                                        |
 | 寫作前沒列 source / target 的 diff dimension      | 結構 risk、補 audit                                                  |
 
-**核心**：Process content 的結構由 *source / target 差異維度組合* 決定、不是 universal phased / 6-section 模板。寫作前必須跑 *diff dimension audit*（schema / operational / paradigm / components / application change 5 維度）、選對應主結構、其他高維度獨立加段；跳過 audit 會套錯模板、phase 變空白或 process 強行線性。
+**核心**：Process content 的結構由 *source / target 差異維度組合* 決定、不是 universal phased / 6-section 模板。寫作前必須跑 *6 維 diff dimension audit*（schema / operational / paradigm / components / application change / data topology）、選對應主結構、其他高維度獨立加段；跳過 audit 會套錯模板、phase 變空白或 process 強行線性。
 
 ---
 
@@ -259,7 +259,7 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 | --------------------------- | -------------- |
 | 5 type 非窮盡（漏 4 種主流情境）| 「5 type 是 axis-aligned simplification、非窮盡」段、未來累積更多 sample 後可能重構 |
 | 5 type 互斥失效（多軸 High 配對）| 「多重歸類跟 tie-breaking」段、不強迫單一 type 標籤 |
-| 「最大維度」沒處理 tie       | 主導維度判讀規則（Schema > Paradigm > Operational > Components）|
+| 「最大維度」沒處理 tie       | 主導維度判讀規則（Schema > Paradigm > Operational > Topology > Components；audience-dependent heuristic）|
 | 「Partial collapse 教育價值高」是 post-hoc | 修正為 [#122 Update 段第 8 點](../cadence-homogenization-in-batch-writing/) — partial collapse 是 attractor 訊號、不增強 principle |
 
 本卡是 *current best understanding*、不是 *已驗證的完備理論*。Tripwire：
@@ -287,3 +287,16 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 - **新 audit 維度浮現**：re-sharding 揭露「data topology」是 5 維沒有的軸；audit 擴張為 6 維（加 topology 軸）已執行、見 [#128 Data topology 是 process content 的第 6 audit 維度](../data-topology-as-audit-dimension/) + 本卡 audit table 新加 row 跟 Type F anatomy
 - **「為什麼這篇不套」是漏類文章的好結構模板**：major-version-upgrade 跟 cluster-resharding 都用這個 frame 開頭、明示跟 5 type 的邊界
 - **「高維度獨立段」對照表**自然在 multi-axis 文章浮現（cockroachdb 篇）— 應該升級為 multi-axis migration 的標準結構元素
+
+### Update（2026-05-19 第三輪 4-reviewer audit 後）：6 維擴張的未解結構性質疑
+
+第三輪 audit 揭露本卡擴 6 維 + Type F 仍有 6 項未解結構性 issue。完整列表跟 acknowledgment 見 [#128 Self-aware limitation 段](../data-topology-as-audit-dimension/)、本卡這裡 cross-reference：
+
+1. **6 維非窮盡**：identity / consistency / residency 三軸候選
+2. **Type F 跟 Type B 結構重疊度高**：實質差異只 2 段、可能下次 evolution 降為 Type B variant
+3. **「不需要 parallel run」claim 部分不成立**（multi-region rollout 例外）
+4. **主導維度優先序是 audience-dependent heuristic**、非 universal
+5. **「topology 不能塞進既有 5 維」拒絕理由依賴 narrow 既有 5 維定義**
+6. **既有 5 篇 playbook 沒 retroactive audit**（silent grandfathering）
+
+本卡的 6 type / 6 維框架是 *current best understanding*、不是 *final taxonomy*；累積到 10+ migration playbook 後可能觸發 retroactive audit + framework restructure。
