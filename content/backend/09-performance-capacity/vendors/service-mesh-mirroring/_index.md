@@ -8,6 +8,19 @@ tags: ["backend", "performance", "capacity", "vendor", "service-mesh", "traffic-
 
 Service mesh mirroring 的核心責任是在 proxy 層複製 production traffic 到 shadow service，讓新版本接受真實請求形狀，同時把使用者回應留在原本路徑。它適合已經落地 Istio、Linkerd 或類似 mesh 的平台，重點在用 routing policy 控制 mirror ratio、target、隔離與觀測。
 
+跟 [GoReplay](/backend/09-performance-capacity/vendors/goreplay/) 比、Service Mesh Mirroring 在 *proxy / sidecar* 層、是 K8s mesh-native 的 L7 HTTP request mirror、不需要 application 或 host 端 capture binary；GoReplay 在 *application host* 層、適合無 mesh 的環境或要 capture artifact 離線 replay。跟 [AWS VPC Traffic Mirroring](/backend/09-performance-capacity/vendors/aws-vpc-traffic-mirroring/) 比、Service Mesh Mirroring 在 L7（HTTP route / header / subset 可控）、VPC Traffic Mirroring 在 L3-L4 packet 層、見度更底層但缺 application 語意。三者組合常見於 K8s + 多 cloud 混合環境。
+
+## 最短判讀路徑
+
+判斷 Service Mesh Mirroring 部署是否健康、最少看四件事：
+
+- **Mesh implementation 對齊**：用哪套 mesh（Istio / Linkerd / Envoy gateway / Consul Connect）、control plane 版本、sidecar injection coverage、跨 namespace policy 邊界是否清楚
+- **VirtualService mirror config**：mirror destination 是否限制在同 namespace / 同 cluster、mirror_percent 是否從 1% 漸進、route / header filter 是否排除 write-heavy 或 PII path
+- **Target service capacity**：shadow target deployment 是否有獨立 HPA、跟 primary 同 node pool 還是隔離、DB / cache / external API 是否導 mock 或 sandbox、不會 share connection pool 造成 primary 飽和
+- **Response handling**：mirrored response 是 fire-and-forget（Istio 預設）還是有 logging、shadow 端是否能辨識 mirrored request（`X-Envoy-Internal` / custom header）、side effect（payment / notification / webhook）是否走 dry-run
+
+四件事任一缺失、就是 [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/) shadow traffic 治理的待補項目。
+
 ## 定位
 
 Service mesh mirroring 適合平台已經有 proxy control plane 的團隊。當 service-to-service traffic 都經過 sidecar 或 gateway，mirror policy 可以把部分 production request 複製到新版本，不需要在 application code 中加 capture / replay 邏輯。
@@ -65,6 +78,44 @@ Service mesh mirroring 結果應回寫到 evidence package。最小欄位包括 
 | Known gap    | 未 mirror route、side effect mock、mesh overhead |
 
 Evidence package 的核心用途是讓 mirror 實驗可關閉。Reviewer 要能看到 mirror policy 何時啟動、何時停止、覆蓋哪些 route、消耗哪些下游資源，以及 shadow target 是否接近 production。
+
+## 進階主題
+
+**Istio VirtualService mirror / mirror_percent**：Istio 用 `VirtualService` 的 `mirror` 欄位指定 shadow destination、`mirrorPercentage`（v1.7+；舊版 `mirror_percent`）控制比例。production 操作慣例是從 1% 起步、每 30-60min 觀察 shadow target latency / error / saturation 再放大、達到 100% 後維持一週收 evidence 才 promote。route-level config 比 mesh-wide policy 安全、blast radius 限定在指定 host / path。
+
+**Linkerd traffic split**：Linkerd 用 SMI `TrafficSplit` CRD 或 native `HTTPRoute` 分流、走 *active-active* shadow 模式而非 fire-and-forget。Linkerd mirror 預設較輕量、proxy overhead 比 Istio 低、適合資源敏感的 K8s cluster；但 L7 policy 表達力不如 Istio EnvoyFilter。
+
+**Envoy MirrorPolicy**：直接寫 Envoy config（不透過 Istio control plane）時、`route.RouteAction.request_mirror_policies` 是底層 primitive。多 cluster 邊緣 gateway（Contour / Emissary-Ingress / Gloo）都是這層的 abstraction、適合不想引入 full Istio 但要 mirror 能力的場景。
+
+**跟 Argo Rollouts canary 整合 — shadow deployment**：Argo Rollouts 的 `analysis` step 可以接 mesh mirror — *shadow stage* 先用 mirror 收 evidence、*canary stage* 才放真實流量。對應 [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/) 的「shadow 先於 canary」原則、避免把使用者當小白鼠。
+
+**跟 [Datadog](/backend/04-observability/vendors/datadog/) APM trace correlation**：mirrored request 應該有獨立的 trace tag（`env:shadow` 或 `traffic.mirror:true`）、讓 Datadog APM / [observability stack](/backend/04-observability/) 能 filter 出 shadow path 的 p95 / error rate、不混入 primary SLO dashboard。trace propagation header 要保留、否則 distributed trace 斷在 mesh 邊界。
+
+## 排錯與失敗快速判讀
+
+- **Mirror target capacity 不足 / shadow service OOM**：shadow deployment 沒獨立 HPA、跟 primary 共用 node pool — 拆 node pool、shadow 設獨立 resource request、mirror_percent 從 1% 起步
+- **Mirrored response 漏處理（fire-and-forget 副作用）**：Istio 預設丟棄 mirrored response、shadow 端的 error 沒被 collect — shadow service 自己 emit metric / log、不依賴 mirror response、加 `X-Shadow-Request` header 讓 shadow 端可辨識並走 dry-run 路徑
+- **PII / sensitive data 進 staging**：mirrored request 帶真實 user token / payment info 打到 staging — header / body filter 走 EnvoyFilter 做 PII redaction、或在 mesh 邊界跑 [data masking proxy](/backend/07-security-data-protection/) 再 mirror
+- **Side effect 真的發生（payment double charge / notification 真寄）**：shadow service 沒辨識 mirrored request 就走正式邏輯 — 強制 shadow 端用 sandbox credential、external API client 走 mock / dry-run mode、write 改 read-only replica
+- **Mesh control plane 飽和 / mirror policy drift**：mirror rule 散落各 namespace 沒 owner、policy version 不一致 — 走 GitOps（Argo CD / Flux）+ policy as code、定期 audit `kubectl get virtualservice -A`
+- **Cross-cluster mirror blast radius 失控**：mirror destination 指向其他 cluster 導致跨 cluster 流量爆增 — mirror destination 限 same-cluster、跨 cluster 要走獨立的 gateway 並設 quota
+- **Shadow trace 混進 SLO dashboard**：APM 沒分 primary / shadow tag、p95 看起來變差但其實是 shadow 拖累 — trace tag `env:shadow` 強制、observability dashboard filter
+
+## 何時改走其他服務
+
+| 需求形狀                                      | 改走                                                                                                              |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 無 mesh 環境 / 要 capture artifact 離線重播   | [GoReplay](/backend/09-performance-capacity/vendors/goreplay/)                                                    |
+| L3-L4 packet 層分析（IDS / network forensic） | [AWS VPC Traffic Mirroring](/backend/09-performance-capacity/vendors/aws-vpc-traffic-mirroring/)                  |
+| 合成負載 / load test 而非 production mirror   | [k6](/backend/09-performance-capacity/vendors/k6/) / [Gatling](/backend/09-performance-capacity/vendors/gatling/) |
+| Production-side 整體治理                      | [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)                              |
+
+## 不在本頁內的主題
+
+- Istio / Linkerd / Envoy 完整 install / 升級 / control plane HA 細節
+- Service mesh 安全模型（mTLS / SPIFFE / authorization policy）— 屬 [7 security](/backend/07-security-data-protection/) 邊界
+- Mesh-level retry / timeout / circuit breaker 等 resilience pattern
+- Multi-cluster mesh federation（Istio multi-primary、Linkerd multicluster）
 
 ## 案例回寫
 

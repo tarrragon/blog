@@ -10,9 +10,20 @@ Datadog Continuous Profiler 的核心責任是把 production profile 接到 SaaS
 
 ## 定位
 
-Datadog Continuous Profiler 適合 all-in-one observability 團隊。當服務已經用 Datadog agent、APM trace、runtime metrics 與 deployment tracking，profiler 可以把 CPU、allocation、wall time、lock 與 runtime profile 加進同一個服務視角。
+Datadog Continuous Profiler 是 [Datadog](/backend/04-observability/vendors/datadog/) APM 的 *production profiling* add-on、跟 Datadog Logs / Metrics / Traces 同 plane、共用 service tag、env tag、version tag 與 query bar。它的核心責任是把 production profile 接到 SaaS APM、deployment marker、service tag 與 release regression workflow，讓 slow request、resource saturation、deploy version 與 profile diff 能在同一個操作介面中對齊。
+
+跟 [Pyroscope](/backend/09-performance-capacity/vendors/pyroscope/) / [Parca](/backend/09-performance-capacity/vendors/parca/) 這類 OSS profiler 比、Datadog Continuous Profiler 走 *ecosystem-bundled* 路線 — profiler 本身不獨立計費、跟 APM host 一起進 business unit 預算、profile data 直接跟 trace_id、deploy marker、log query 在同一介面 cross-link。OSS profiler 走 *standalone deployment*、profile store 自管（ClickHouse / object storage）、跟 observability 其他 plane 要自己 wire（grafana correlation、自寫 trace_id mapping）。差異不在 *flame graph 本身的視覺呈現*、而在 *跨 signal 的 query continuity 跟組織計費歸屬*。
 
 這個定位讓 Datadog Continuous Profiler 接到 [9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/) 與 [4.9 Continuous Profiling](/backend/04-observability/continuous-profiling/)。它的價值在於降低 profile diff 的交接成本；它的代價在於 SaaS 成本、agent 設定、資料保留與 vendor 約束。
+
+## 最短判讀路徑
+
+判斷 Datadog Continuous Profiler deployment 是否健康、最少看四件事：
+
+- **Agent / SDK profiling 是否真的 enabled**：Datadog Agent 跑著不等於 profiler 開了 — 各語言要在 SDK init 加 `profiling_enabled=true` 或環境變數 `DD_PROFILING_ENABLED=true`、Go / Java / Python / Node / Ruby / .NET 的開啟方式跟覆蓋的 profile type（CPU / heap / goroutine / lock / wall time）各不同
+- **Service / version / env tag 紀律**：profile 沒有 `service` + `env` + `version` tag 就無法 diff、release marker 也對不上 — CI 要把 git SHA 或 release tag 注入 `DD_VERSION`、deploy pipeline 要打 deployment marker API
+- **Sampling rate 跟 production coverage**：profiler 預設 60s 採一次、低流量服務或 short-lived 任務可能 sample 不到 hot path — 對 ultra-low latency / burst workload 要評估 sampling 是否還抓得到 regression signal
+- **Profile ingestion cost / retention**：profile 是按 APM host 計費、但 profile event 量隨 service 數量 + sampling rate 漲、retention 預設 7 天（custom retention 另計）— 大型 deployment 要做 service-level enable/disable governance
 
 ## 適用場景
 
@@ -35,13 +46,44 @@ APM 整合價值來自上下文連續。Metrics 告訴你 CPU 上升，trace 告
 
 Deployment marker 價值來自 release gate。Profile diff 如果能對齊 commit、version、environment 與 canary cohort，就能成為 [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/) 的 evidence。
 
-## 跟其他工具的取捨
+## 核心取捨表
 
-Datadog Continuous Profiler 和 Pyroscope 的主要差異是操作模型。Datadog 偏 SaaS all-in-one 與 APM 整合；Pyroscope 偏 Grafana / OSS 生態與可自管。
+| 取捨維度          | Datadog Continuous Profiler                            | Pyroscope                                         | Parca                                   |
+| ----------------- | ------------------------------------------------------ | ------------------------------------------------- | --------------------------------------- |
+| 部署模型          | SaaS only、跟 Datadog Agent / APM 綁                   | OSS self-host / Grafana Cloud SaaS                | OSS self-host（Polar Signals SaaS 選）  |
+| 計費模型          | 跟 APM host 計費（profile 不獨立 metering）            | OSS 免費 / Grafana Cloud 按 ingestion             | OSS 免費 / SaaS 按 host                 |
+| Profile 採集方式  | Language SDK（pull 採樣）                              | SDK + eBPF agent                                  | eBPF-first、language-agnostic           |
+| Trace correlation | 強 — trace_id 自動 link 到 flame graph                 | 中 — 要自己 wire OTel trace_id                    | 弱 — 偏 eBPF profile、trace 整合較淺    |
+| 視覺 / Workflow   | APM service view + Profile diff + Code Hotspot in IDE  | Grafana flame graph + diff、跟 Loki / Tempo 同 UI | Parca UI 簡潔、偏單純 profile 探索      |
+| 多語言支援        | Go / Java / Python / Node / Ruby / .NET / PHP 官方 SDK | 同 + 社群 SDK；eBPF 補 native binary              | eBPF-only、不挑語言但 symbol 解析較吃力 |
+| Vendor lock-in    | 高 — profile 跟 APM workflow 綁、退場要重建 dashboard  | 低 — OSS、profile 格式相對開放                    | 低 — OSS、pprof 格式相容                |
+| 適合場景          | Datadog-heavy org、APM / log / metric 已用             | Grafana stack 已用、要省 license                  | eBPF-first、low-overhead always-on      |
 
-Datadog Continuous Profiler 和 Parca 的主要差異是 profiling 方法與平台責任。Datadog 偏 agent + SaaS product workflow；Parca 偏 eBPF / always-on profiling 與開源平台治理。
+選 Datadog Continuous Profiler 的核心訴求：*Datadog 已是 observability backbone* + 要 *APM trace ↔ profile drilldown 是 first-class workflow* + 接受 SaaS 計費 + 接受 SDK overhead trade-off。如果 Datadog 不是既有平台、單純為了 profiling 引入 Datadog 通常成本不划算、改走 Pyroscope / Parca。
 
-Datadog Continuous Profiler 和一次性 runtime profiler 的主要差異是時間維度。一次性 profiler 適合本機或 incident 當下調查；continuous profiler 適合 baseline、release diff 與長期退化治理。
+跟一次性 runtime profiler（`pprof`、`async-profiler` 手動跑）的差異是時間維度。一次性 profiler 適合本機或 incident 當下調查；continuous profiler 適合 baseline、release diff 與長期退化治理 — 兩者互補、不互斥。
+
+## 進階主題
+
+**APM trace ↔ profile correlation**：Datadog SDK 把 `trace_id` 注入 profile sample 的 label、APM trace view 上每個 span 可以直接點到「執行這段 span 時的 flame graph」。意義是 *p99 latency 異常 trace 不只看 span 等待時間、能直接看到該 span 期間 CPU / lock / allocation 真正花在哪段 code*。需要 SDK 版本支援 + trace context propagation 正確接上、舊版 SDK 或自寫 instrumentation 容易斷鏈。
+
+**Endpoint profiling**：profile 按 HTTP endpoint / RPC method 切片、不只看 service 整體 hot path。意義是 *新加的 endpoint 即便 traffic 小、也能單獨看它的 CPU / allocation cost*、不會被 service 主流量稀釋。對 multi-tenant API、A/B test endpoint、internal admin endpoint 的退化偵測特別有用。
+
+**Code Hotspot in IDE**：Datadog IDE plugin（IntelliJ / VS Code）把 production profile 的 hot line 直接 overlay 到 source code、工程師 review PR 時能看到「這個 function 在 production 佔 service CPU 12%」。降低 *看 flame graph → 找 source 對應行* 的 cognitive cost。對應 [9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/) 中「production signal → code change」的 feedback loop 縮短。
+
+**Profile diff（baseline vs candidate）**：Datadog 內建 diff view、選兩個 time window 或兩個 version tag、直接看 flame graph 哪些 frame 變寬 / 變窄。是 [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/) 的核心 evidence — canary 跑完 30min、自動拉 baseline vs candidate diff 報告、超過 threshold 阻擋 promote。
+
+**Notebooks correlation**：Datadog Notebooks 可以把 profile flame graph、APM trace、metric chart、log query 排在同一份文件。incident post-mortem 跟 release review 寫一份 notebook 比散落多個 dashboard tab 更可追溯、也接 [evidence package](/backend/04-observability/observability-evidence-package/) 規範。
+
+## 排錯與失敗快速判讀
+
+- **SDK overhead 在 production 過高**：profiler 預設 overhead < 2% CPU、但 wall-time profiling / allocation profiling 全開可能到 5%+ — canary 一台量測、按 profile type 分別 enable、不要全部一次開
+- **Sampling rate 太低 / false negative**：short-lived job（< 60s）或 low-traffic service 可能整個生命週期沒被 sample 到、看不到 hot path — 改成事件觸發 profile（on-demand profiling API）或拉高該 service 的 sampling rate
+- **Profile 沒有 version tag / 無法 diff**：deploy pipeline 沒注入 `DD_VERSION`、release marker 對不上 — 補 CI 環境變數、用 `dd-trace` SDK 自動讀 git commit SHA、跑 staging 驗證 diff view 能顯示 version
+- **Trace ↔ profile drilldown 斷鏈**：SDK 版本太舊、或 trace context 在非同步 / queue handler 沒 propagate — 升 SDK + 補 trace context propagation、用一條已知慢 trace 驗證能不能跳到 flame graph
+- **Profiling cost spike**：新 service 開啟 profiling、或某 service profile event 暴增（exception 路徑反覆採樣）— 看 Datadog usage dashboard 的 profile host hour、對嫌疑 service 暫關 profiling 觀察 cost 曲線、再 tune sampling rate
+- **Flame graph symbol 解析失敗 / 顯示 `?` frame**：缺 debug symbol、stripped binary、或語言 runtime 版本不支援 — 補 build 時保留 symbol、確認 SDK 版本 vs runtime 版本對應表
+- **Lock profile 看不出 contention**：某些語言（Go / Java）的 lock profiling 需要額外 flag（`DD_PROFILING_BLOCK_ENABLED` / `DD_PROFILING_LOCK_ENABLED`）— 預設沒開、要明確 enable 才看得到 lock contention flame graph
 
 ## 操作成本
 
