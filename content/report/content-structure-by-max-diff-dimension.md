@@ -10,17 +10,18 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Cont
 
 跨 X process content（migration / upgrade / rollout / 演練 / playbook）的結構不是 universal、由 source 跟 target 之間的 *差異維度組合* 決定。固定套「6-phase playbook」「6-section deep article」會在 *結構錯位* 的場景失效。
 
-實證：5 種 migration type 產出 5 種不同結構：
+實證：6 種 migration / process type 產出 6 種不同結構：
 
-| Migration type        | 主導差異維度        | 結構                                        | 結構元素數 | 週期       |
-| --------------------- | ------------------- | ------------------------------------------- | --------- | ---------- |
-| 高 schema 差          | Schema / API        | 6-phase rule translation                    | 11-12     | 4-9 個月   |
-| Drop-in compatible    | 無顯著差異          | 6-section + audit prefix                    | 7-8       | 1-4 週     |
-| Operational redesign  | Operational model   | Hybrid (4-phase 含 audit + drop-in cutover)| 11-12     | 6-12 週    |
-| Multi-tool 拆分       | 一站式 → 多 component | Parallel migration streams                  | 10-11     | 2-4 個月   |
-| Paradigm shift        | Abstraction model   | Partial + 混合架構                          | 10-11     | 不收斂     |
+| Migration / process type | 主導差異維度        | 結構                                        | 結構元素數 | 週期       |
+| ------------------------ | ------------------- | ------------------------------------------- | --------- | ---------- |
+| 高 schema 差             | Schema / API        | 6-phase rule translation                    | 11-12     | 4-9 個月   |
+| Drop-in compatible       | 無顯著差異          | 6-section + audit prefix                    | 7-8       | 1-4 週     |
+| Operational redesign     | Operational model   | Hybrid (4-phase 含 audit + drop-in cutover)| 11-12     | 6-12 週    |
+| Multi-tool 拆分          | 一站式 → 多 component | Parallel migration streams                  | 10-11     | 2-4 個月   |
+| Paradigm shift           | Abstraction model   | Partial + 混合架構                          | 10-11     | 不收斂     |
+| Topology re-layout       | Data topology       | 機制 + execution flow（同 cluster 內重劃）   | 7-9       | 1 天-2 週   |
 
-5 種結構是 *常見 type*、不是窮盡分類；source / target 配對可能同時屬多 type（多軸 High）、或不屬任一 type（5 維皆 Medium）— 處理規則見「多重歸類跟 tie-breaking」段。本卡前身是「最大差異維度決定結構」、實證後修正為「主導差異維度 + 多軸組合」。
+6 種結構是 *常見 type*、不是窮盡分類；source / target 配對可能同時屬多 type（多軸 High）、或不屬任一 type（6 維皆 Medium）— 處理規則見「多重歸類跟 tie-breaking」段。本卡前身是「最大差異維度決定結構」+ 5 維 audit、Redis re-sharding dogfood 揭露 *data topology* 是漏掉的第 6 維、Type F 是對應的第 6 type；本卡擴張為 6 維 audit + 6 type。
 
 ---
 
@@ -40,7 +41,7 @@ Universal phased 失效的三個機制：
 
 ## Diff dimension audit：寫作前的必要 step
 
-寫 process content 前先做 audit、列出 source 跟 target 在 5 個維度的差異程度：
+寫 process content 前先做 audit、列出 source 跟 target 在 6 個維度的差異程度：
 
 | 維度                 | 評估問題                                                            | High / Medium / Low |
 | -------------------- | ------------------------------------------------------------------- | ------------------- |
@@ -49,6 +50,7 @@ Universal phased 失效的三個機制：
 | Abstraction / paradigm | 兩端是否同類產品（同抽象層）？                                       | -                   |
 | Number of components | 一站式 vs multi-tool 是否需要拆分？                                  | -                   |
 | Application change   | application code 需要改多少？                                        | -                   |
+| **Data topology**    | **Sharding / partition / region / replication 拓樸是否變動？**       | -                   |
 
 主導差異維度對映常見 type：
 
@@ -56,7 +58,10 @@ Universal phased 失效的三個機制：
 - **Operational = High（其他 Low）** → Type C operational redesign hybrid
 - **Paradigm = High** → Type E partial + 混合架構
 - **Components = High（一站式 → multi-tool）** → Type D parallel streams
+- **Topology = High（其他 Low）** → Type F topology re-layout（見 [#128](../data-topology-as-audit-dimension/)）
 - **全 Low** → Type B drop-in、6-section + audit prefix
+
+第 6 維 *Data topology* 是後續從 Redis cluster re-sharding dogfood 浮現補位、見 [#128 Data topology 是 process content 的第 6 audit 維度](../data-topology-as-audit-dimension/)；本卡原為 5 維 audit、被第二輪 batch evidence 揭露盲點後擴張為 6 維。
 
 ## 多重歸類跟 tie-breaking
 
@@ -166,6 +171,26 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 
 適用：Kafka ↔ NATS / REST → gRPC / SQL → NoSQL / VM → Serverless
 
+### Type F：Topology re-layout（data topology = High）
+
+```text
+為什麼 re-layout → 結構 differentiator（re-layout 不是 migration）
+→ Pre-layout analysis（topology audit）→ Re-layout 機制
+→ Execution flow（per-step + rollback boundary）
+→ 故障演練 → Capacity / cost → 整合
+```
+
+特徵：
+
+- Source / target 多數是 *同 cluster 不同 state*、不是跨 vendor
+- 主軸是 *topology audit + 重劃機制*、不是 schema translation / paradigm shift
+- Pre-layout analysis（識別 hot key / 當前 distribution）是 Type F 的核心 audit 段
+- Execution flow per-step、含 *rollback boundary*
+
+適用：Redis cluster re-sharding / PostgreSQL partition redesign / Kafka topic re-partitioning / Cassandra keyspace re-balance / 加 region / multi-master rollout
+
+詳細 audit dimension 跟 sub-dimension 見 [#128 Data topology 是 process content 的第 6 audit 維度](../data-topology-as-audit-dimension/)。
+
 ---
 
 ## 跟 deep article methodology 的關係
@@ -206,6 +231,7 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 | [#125 Collapse 是隱形預設](../collapse-is-implicit-default/)                                   | 子實例 — 結構模板 collapse 到單一 type 是 #125 在「content structure」surface 的具體形態                                          |
 | [#118 Standard-driven vs case-driven domain judgment](../standard-driven-vs-case-driven-domain-judgment/) | Sibling — 兩卡都是 *寫作前的 domain audit*、#118 判 case-driven vs standard-driven、本卡判 process structure type           |
 | [#119 章節已有 routing skeleton 走補強段](../routing-layer-chapter-recognition/)                | 同骨 — 都是「結構辨識先於內容生成」、#119 是章節內、本卡是文章層                                                                |
+| [#128 Data topology 是 process content 的第 6 audit 維度](../data-topology-as-audit-dimension/) | 子卡 — 本卡 audit 框架從 5 維擴張到 6 維、新增 Type F；#128 是 6 維 audit 的 atomic 定義跟 Type F 詳細 anatomy                  |
 
 ---
 
@@ -258,6 +284,6 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 
 新發現（不在 self-aware limitation 預測內、需要後續處理）：
 
-- **新 audit 維度浮現**：re-sharding 揭露「data topology」是 5 維沒有的軸；未來 audit 可能要擴 6 維（加 topology 軸）
+- **新 audit 維度浮現**：re-sharding 揭露「data topology」是 5 維沒有的軸；audit 擴張為 6 維（加 topology 軸）已執行、見 [#128 Data topology 是 process content 的第 6 audit 維度](../data-topology-as-audit-dimension/) + 本卡 audit table 新加 row 跟 Type F anatomy
 - **「為什麼這篇不套」是漏類文章的好結構模板**：major-version-upgrade 跟 cluster-resharding 都用這個 frame 開頭、明示跟 5 type 的邊界
 - **「高維度獨立段」對照表**自然在 multi-axis 文章浮現（cockroachdb 篇）— 應該升級為 multi-axis migration 的標準結構元素

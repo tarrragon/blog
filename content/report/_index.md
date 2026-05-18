@@ -166,7 +166,8 @@ Meta-卡（#125-126、從 #122-124 + 既有卡跨 surface 抽出）：
 - [#126 寫作 review 是多軸完整性、不是單軸深度](writing-review-multi-axis-completeness/) — Review 完整性是七軸（frame / instance / surface / scope / cadence / timing / granularity）交集、缺軸不缺深度；對應 #83 / #121 / #97 / #95 / #122 / #124 / #114；單軸越做越深會 systematic miss 對應軸盲點；設計 review 流程時 enumerate 七軸覆蓋狀況、不是加輪數
 Cadence + 結構雙軸延伸（#127、從 5 篇 migration playbook batch 抽出、跟 cadence 系列形成「framing layer + structure layer」雙軸）：
 
-- [#127 Process content 結構由最大差異維度決定](content-structure-by-max-diff-dimension/) — 跨 X process content（migration / upgrade / rollout）結構不是 universal、由 source / target 的 *最大差異維度* 決定；5 種 migration type 實證（schema 差 / drop-in / operational / multi-tool / paradigm）跑出 5 種結構（6-phase / 6-section + audit / hybrid / parallel streams / partial + 混合）；寫前必須跑 *diff dimension audit*、跳過會套錯模板（phase 變空白或 process 強行線性）；補 #122 在「結構 layer」的對偶、同時是 #125 在 content structure surface 的子實例；5 type 是 *axis-aligned simplification*、非窮盡分類（見卡內 limitation 段）
+- [#127 Process content 結構由最大差異維度決定](content-structure-by-max-diff-dimension/) — 跨 X process content（migration / upgrade / rollout）結構不是 universal、由 source / target 的 *最大差異維度* 決定；6 種 migration / process type 實證（schema 差 / drop-in / operational / multi-tool / paradigm / topology re-layout）跑出 6 種結構；寫前必須跑 *diff dimension audit*、跳過會套錯模板（phase 變空白或 process 強行線性）；補 #122 在「結構 layer」的對偶、同時是 #125 在 content structure surface 的子實例；6 type 是 *axis-aligned simplification*、非窮盡分類（見卡內 limitation 段）
+- [#128 Data topology 是 process content 的第 6 audit 維度](data-topology-as-audit-dimension/) — #127 原 5 維 audit 漏 data topology（sharding / partition / region / replication 拓樸）；topology 不在既有 5 維任一個、但決定 re-sharding / partition redesign / multi-region rollout 的結構；本卡擴 audit 到 6 維、新增 Type F「Topology re-layout」結構；從 Redis cluster re-sharding dogfood 抽出、是 #127 self-aware limitation 段「audit 維度補新軸」預測命中的結果
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -328,7 +329,9 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ---
 
-**Last Updated**: 2026-05-19（later）— #122 / #124 / #127 補第二輪 migration batch（5 篇）驗證段：collapse 0/5（vs 第一輪 3/5、唯一變數是 stage 0 variant 規劃完整度）、漏類確認（major version upgrade / topology re-sharding 結構跟 5 type 完全不同）、multi-axis 規則成立（三維 High 用 Type E + 高維度獨立段）。同步更新 methodology backlog 標完成 2 項 + Update 段補新議題（data topology audit 維度 / 漏類「為什麼這篇不套」frame / multi-axis 高維度獨立段升 standard）。
+**Last Updated**: 2026-05-19（later 2）— 新增 #128 Data topology 是 process content 的第 6 audit 維度、從 Redis cluster re-sharding dogfood 抽出 + #127 self-aware limitation 段「audit 維度補新軸」預測命中後升級執行；#127 audit table 5 → 6 維、結構 type 5 → 6 種（新增 Type F）+ multi-axis 主導維度優先序加入 topology；methodology Step 1 audit 維度 5 → 6、加 Type F 結構模板、「何時不該套」段 re-sharding 條改寫（現在 Type F 涵蓋、不再排除）。
+
+2026-05-19（later）— #122 / #124 / #127 補第二輪 migration batch（5 篇）驗證段：collapse 0/5（vs 第一輪 3/5、唯一變數是 stage 0 variant 規劃完整度）、漏類確認（major version upgrade / topology re-sharding 結構跟 5 type 完全不同）、multi-axis 規則成立（三維 High 用 Type E + 高維度獨立段）。同步更新 methodology backlog 標完成 2 項 + Update 段補新議題（data topology audit 維度 / 漏類「為什麼這篇不套」frame / multi-axis 高維度獨立段升 standard）。
 
 2026-05-19 — 新增 #127 Process content 結構由最大差異維度決定（從 5 篇 migration playbook batch 抽出、5 種 type 結構分類）+ #122 / #124 補 partial collapse 實證段（migration batch 3/5 collapse、natural attractor「為什麼遷 X/Y/Z driver」浮現、證實 *variant 規劃必須主動* 非 N≥5 自動避免）。
 
