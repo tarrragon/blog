@@ -52,6 +52,61 @@ tags: ["backend", "deployment", "vendor"]
 | 不在本頁內的主題     | 完整 YAML / HCL 語法百科、雲端平台所有產品線、語言 framework deployment      |
 | 案例回寫與下一步路由 | 回到 5.C migration cases、6 release gate、8 decision log                     |
 
+## 跨 vendor 議題對照
+
+本模組 9 個 vendor 跨 6 個 category（orchestrator / container / process / proxy / LB / IaC / registry）、不是同類產品的多個選項。對照表用「橫向工程議題」標明每個議題在哪些 vendor 是核心責任、哪些不適用。
+
+| 議題              | K8s             | Docker                     | systemd            | nginx             | Envoy              | AWS ELB       | Terraform          | Traefik          | Consul          |
+| ----------------- | --------------- | -------------------------- | ------------------ | ----------------- | ------------------ | ------------- | ------------------ | ---------------- | --------------- |
+| 主責任            | orchestration   | container build/run        | process supervisor | reverse proxy     | service proxy      | managed LB    | IaC state          | ingress proxy    | registry / mesh |
+| 服務生命週期      | pod lifecycle   | container run              | service unit       | N/A               | N/A                | target health | N/A                | N/A              | health check    |
+| 流量入口          | Service/Ingress | port mapping               | listen socket      | HTTP server       | listener           | listener      | N/A                | entrypoint       | N/A             |
+| 配置模式          | declarative     | imperative                 | declarative        | static config     | xDS dynamic        | API / IaC     | declarative        | dynamic provider | KV + watch      |
+| Service discovery | K8s DNS         | N/A                        | N/A                | manual upstream   | xDS EDS            | target group  | provider data      | provider 自動    | registry 原生   |
+| Health check      | probe           | healthcheck                | restart policy     | upstream check    | active/passive     | health check  | N/A                | health check     | health check    |
+| TLS / mTLS        | cert-manager    | N/A                        | N/A                | ssl module        | filter chain       | ACM           | provider data      | ACME 自動        | Connect mTLS    |
+| Multi-cluster     | federation      | N/A                        | N/A                | manual            | mesh control plane | cross-region  | provider chain     | per cluster      | DC federation   |
+| 授權模式          | Apache 2        | Apache 2 / Desktop license | LGPL               | BSD-2 / Plus 商業 | Apache 2           | AWS managed   | BSL / OpenTofu MPL | MIT / Hub 商業   | BSL             |
+| 主討論案例        | C1/C2/C3/C4/C8  | 待補                       | 待補               | 待補              | C5                 | C9            | 待補               | 待補             | 待補            |
+
+對照表的用途有三：
+
+- 寫某 vendor 頁時、檢查橫向議題該怎麼定位（不該強塞跟它無關的議題）
+- 讀者理解「9 vendor 不是同類選一個、是不同 layer 各自一個」
+- 評估部署 stack：選 orchestrator + container + proxy + LB + IaC + registry 各 1-2 個組合
+
+下面 5 段把對照表的關鍵橫向議題展開（不是每行都展開 — 部分行如「主責任」「授權模式」直接看表即可）。
+
+### 配置模式
+
+配置模式跨 vendor 差異大、影響 dev workflow 跟 GitOps 整合度。**K8s** declarative（kubectl apply / YAML）；**Terraform** declarative（HCL）；**systemd** declarative（unit file）；**Docker** imperative（CLI）+ Compose declarative；**nginx** static config + reload；**Envoy** xDS dynamic（control plane push）；**Traefik** dynamic（provider 自動 sync）；**AWS ELB** API + IaC；**Consul** KV + watch。
+
+選型判讀：要 GitOps → declarative（K8s + Terraform + systemd unit）；要 zero-reload → dynamic config（Envoy / Traefik）；要 manual control → imperative（Docker / 純 CLI）。
+
+### Service discovery + Health check
+
+Service discovery 是 5 模組多個 vendor 共同關心的議題、但實作差異大。**K8s** 內建（Service + DNS + kube-proxy）；**Consul** registry first + DNS interface + health check 內建；**Envoy** EDS（xDS endpoint discovery）；**Traefik** provider 自動發現；**nginx / AWS ELB** 配置 upstream target；**Docker / systemd** N/A（單機 / 不負責 discovery）。
+
+選型判讀：K8s-only → 內建；非 K8s 多平台 → Consul；K8s + service mesh → Istio + Envoy；單機 → nginx + manual config。
+
+### Multi-cluster / 跨 DC
+
+跨多 cluster / DC 拓樸差異大。**K8s** federation（v2 / Cluster API multi-cluster）；**Consul** 一級公民跨 DC（WAN federation）；**Envoy + Istio** multi-cluster mesh；**Terraform** 用 provider chain 管多 cloud / 多 cluster；**AWS ELB** cross-region replication；**nginx / Traefik** 一般 per cluster；**systemd / Docker** N/A。
+
+選型判讀：跨 DC 為核心需求 → Consul / Istio；單一 cluster + cross-region LB → ELB / Global LB；多 cluster K8s → Cluster API + federation。
+
+### TLS / mTLS
+
+TLS / mTLS 在不同 vendor 由不同 layer 負責。**K8s** cert-manager（Let's Encrypt / 內部 CA）；**AWS ELB** ACM 自動憑證；**Traefik** ACME 自動 TLS；**nginx** ssl module + manual cert / cert-manager；**Envoy** filter chain（SDS 動態 cert）；**Consul Connect** mTLS 自動 sidecar；**Terraform** 不負責 TLS、提供 provider；**Docker / systemd** 不負責（交給 application 或上游 proxy）。
+
+選型判讀：cluster 內 mTLS → cert-manager / Consul Connect；外部 TLS → ACME（Traefik / 自管 cert-manager）；managed → AWS ELB / Cloudflare。
+
+### 授權模式（2023-2024 BSL 變動）
+
+2023-2024 多個 HashiCorp 產品改 BSL（Terraform / Vault / Consul / Boundary / Vagrant）— 影響採用決策。**Terraform** → OpenTofu fork（Linux Foundation、MPL 2.0）；**Consul** → 暫無大型 fork；**Docker Desktop** → 商業 license（員工 > 250 / 收入 > $10M）→ Podman Desktop 替代；**nginx** → F5 後 OSS 不滿 → Freenginx / angie fork；**K8s / Envoy / Traefik** → 仍 OSI 開源。
+
+選型判讀：商業 SaaS 提供類似服務 → 避 BSL（用 OpenTofu / 自評）；企業內部使用 → BSL 多數無影響；公部門 / 嚴格合規 → 仍要 OSI 認可 license。
+
 ## 撰寫批次
 
 | 批次 | 服務頁                            | 撰寫目的                                                        |
