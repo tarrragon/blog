@@ -195,3 +195,5 @@ tags: ["report", "事後檢討", "抽象層", "工程方法論"]
 第 5 個面向：**驗收訊號** — 「畫面對一次」是低資訊量訊號、跟「程式跑通一次」「測試過一次」是同類錯誤。詳見 [#56 視覺完成 ≠ 功能完成](../visual-completion-vs-functional-completion/) 把驗收訊號的時間軸跟 2 次門檻接起來、[#68 驗收的時間軸：四個 checkpoint](../verification-timeline-checkpoints/) 把驗收分散到多個時點。
 
 第 6 個面向：**測試訊號** — 「測試 PASS 一次」是低資訊量訊號（測試本身可能有 bug、可能太寬）。要 RED → GREEN 兩個訊號 — 一次 fail 一次 pass — 才能相信測試真的會 catch。詳見 [#69 Test-First：先看到 RED 才相信 GREEN](../test-first-red-before-green/)。
+
+第 7 個面向：**跨檔 emergence 訊號** — 在批量寫作 / 批量產出情境下、「第 2 次」要區分 *同檔* vs *跨檔* 兩種強度。同檔同 pattern 第 2 次出現 = 直接訊號、立即升級；跨檔同 cadence 第 2 次出現 = 弱訊號、樣本數通常要到 5-10 才強到 catch。對應 [#122 Cadence 同質化是模板的隱形維度](../cadence-homogenization-in-batch-writing/) 跟 [#124 Emergence-class 違規規則化不了](../emergence-violations-need-in-stream-sampling/) — 跨檔 emergence 的 2 次門檻不在「寫第 2 篇就 catch」、而在「寫到 batch 進度 10-20% 時抽樣 catch」、過了這位置修正成本就會 N 倍上升。

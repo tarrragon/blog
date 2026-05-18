@@ -91,13 +91,14 @@ Standard-driven 章節的寫作策略：
 
 **寫作前 30 分鐘做 SSoT 對應**（這步不做必踩 frame 重複坑）：列出 cross-chapter findings、每個 frame 指定唯一主寫章節、其他章節只 link。跨模組層級概念 → 模組索引（module index、本 blog Hugo 結構下為 `_index.md`、其他靜態網站可能是 `README.md` 或 `index.md`）。
 
-寫作時主動防範以下反覆陷阱（完整 9 條清單見「反覆陷阱」段、本段給寫作當下必須意識的核心 5 條）：
+寫作時主動防範以下反覆陷阱（完整清單見「反覆陷阱」段、本段給寫作當下必須意識的核心 6 條）：
 
 1. **負向陳述骨架**：避免「不是 X、是 Y」推進論證、避免「核心責任不是 X、而是 Y」變體段首
 2. **模板化**：L1/L2/L3 三層、三選一表格、四步驟流程出現前先問「真的對等嗎？」
 3. **首句結構**：每段首句先寫「這個概念是什麼、承擔什麼責任」、不是「對應 [case] 揭露 X」
 4. **Case 引用三段式**（06 模組強化）：每處 case 引用要走「概念定義 → case 引用 → 通用展開」三段、case 引用不能取代段首概念定義。詳見 [principles/case-citation-three-part](./references/principles/case-citation-three-part.md)
 5. **跨 case 合成 frame 必須標明**（07 模組新發現）：當段落把多個 case 的失效訊號抽象為更高層 frame（如「跨工具回查壓力」「平台責任切分」）、要 explicit 標為「本章合成、非 case 原文」、避免把章節 derive 包裝成 case 揭露。詳見 [principles/fact-vs-derive-layering](./references/principles/fact-vs-derive-layering.md)
+6. **批量寫作 cadence 抽樣**（07 vendor batch 新發現）：寫 ≥ 5 個同類檔時、第 1-3 篇刻意產出 3 種 framing 變體（pilot phase）、進度 10-20% 跑跨檔抽樣（段首句 / 段末收尾語 / 過渡詞密度）、發現 cadence 同質化立即回頭加變體；不要等 Stage 3 reviewer 才發現連讀預期化、修正成本 N 倍。詳見 [principles/cadence-sampling-in-batch-writing](./references/principles/cadence-sampling-in-batch-writing.md)
 
 寫完每章後 commit 一次或合併 commit。
 
@@ -108,6 +109,8 @@ Stage 2 commit 後、平行 spawn 3 個 reviewer（`subagent_type: general-purpo
 - **Reviewer A**：寫作規範（AGENTS.md 八原則）— prompt 見 [reviewer-prompts/reviewer-a-standards](./references/reviewer-prompts/reviewer-a-standards.md)
 - **Reviewer B**：案例引用準確性（對照原始 case、含 fact vs derive 分層）— prompt 見 [reviewer-prompts/reviewer-b-case-fidelity](./references/reviewer-prompts/reviewer-b-case-fidelity.md)
 - **Reviewer C**：跨章一致性（重複 frame / cross-link / 邊界）— prompt 見 [reviewer-prompts/reviewer-c-consistency](./references/reviewer-prompts/reviewer-c-consistency.md)
+
+**Review 七軸對照**（07 vendor batch 新發現）：Reviewer A/B/C 三個 instance 已 cover Frame / Instance / Granularity 主軸跟部分 Surface / Scope；**Cadence 軸 + Timing 軸** 不靠 reviewer 補、是靠 Stage 2 寫作流程內抽樣（pilot phase 變體 + 進度 10-20% 抽樣）。設計新 reviewer 維度時先列七軸對照表、看哪些軸由 reviewer 覆蓋、哪些由 Stage 2 補。詳見 [principles/review-multi-axis-completeness](./references/principles/review-multi-axis-completeness.md)。
 
 **為什麼 background**：reviewer 要讀完整 commit + 案例 + 章節、自身 context 會被佔滿；用 background 把 reviewer context 跟主 context 分開、主 context 只接收精煉摘要、節省 ~80% context。
 
@@ -172,6 +175,8 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 10. **採集階段編造案例**（backend/03 模組新發現）— LLM 會把訓練資料 + 真實公司名混合成不存在的案例、單純串行採集無法擋。Stage 0 必須 WebFetch 驗證 URL + 內容、agent 採集 prompt 要明示「不能編造、URL 失效要列入捨棄候選」。詳見 [stage-0-case-collection](./references/stage-0-case-collection.md)
 11. **採集階段跨網域引用觸發 anti-phishing**（backend/03 模組新發現）— 第三方平台（Synadia 寫 NATS、CloudAMQP 寫 RabbitMQ）的 customer case 引用時、link display 含 vendor TLD 字樣會觸發 markdown lint anti-phishing 規則。採集 checklist 要驗證 display 跟 href domain 一致。詳見 [stage-0-collection-checklist](./references/stage-0-collection-checklist.md)
 12. **採集階段全是正例、缺反例**（backend/03 模組新發現）— 採集容易偏向 success story（vendor 客戶 story、規模化案例）、忽略反例 / 退場 / 誤配案例。反例教學價值高於正例、每個 vendor 案例庫至少要有 1 個反例。詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md) 的「教學功能」維度
+13. **跨檔 cadence 同質化**（07 vendor batch 新發現）— 寫 ≥ 5 個同類檔時、找到一個「都過 lint + 章節齊 + 表格深化」的 framing 後、批量會複製到所有檔；單篇合規、連讀預期化；屬 *emergence 違規*、規則化不了、不能丟給 Stage 3 reviewer 才發現（修正成本 N 倍）。Stage 2 進度 10-20% 必須抽樣 catch。詳見 [principles/cadence-sampling-in-batch-writing](./references/principles/cadence-sampling-in-batch-writing.md)
+14. **Review 設計 collapse 到單軸**（07 vendor batch 新發現）— 「找一個 reviewer 跑就好」「跑一輪就好」「body review 就夠」這類便利選擇會 collapse 掉七軸中的某幾條（Cadence / Timing / Surface / Scope）、對應違規 systematic miss；設計新 reviewer 維度時要 enumerate 七軸覆蓋狀況、不是直接寫 prompt。詳見 [principles/review-multi-axis-completeness](./references/principles/review-multi-axis-completeness.md)
 
 ## 跟其他 skill 的關係
 

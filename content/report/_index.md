@@ -154,6 +154,17 @@ Case-driven 寫作方法論系列（#115-119、從 [case-first-module-workflow s
 - [#120 案例引用三段式段落結構：概念定義 → case 引用 → 通用展開](case-citation-three-part-structure/) — Case 引用段落要走三段式結構紀律——段首是概念定義句、case 引用退到第二位置、最後通用工程知識展開；段首被 case 引用取代是 06 模組最大宗 systemic 違規（11/12 段都犯）；本卡跟 #115/#116/#117 是 case 引用紀律的不同 axis（引用深度 / 內部分層 / 跨 case 合成 / 段落結構）
 - [#121 Agent team context 隔離設計：用不同 instance 換 frame、平行 background 保護主 context](agent-team-context-isolation/) — Multi-pass review 跨輪 frame（#83）跟跨 reviewer instance 隔離（本卡）是兩個 axis；context 隔離設計讓主 context 只接精煉摘要、節省 ~80% token；跟 #114 同 reviewer 多輪 catch 同類錯形成互補解法
 
+Cadence 同質化系列（#122-124、從 backend/07 51 vendor 批量 review 反向抽出、症狀 / 機制 / enforcement 時機三軸）：
+
+- [#122 Cadence 同質化是模板的隱形維度](cadence-homogenization-in-batch-writing/) — 規範定義「模板」通常只指內容欄位（規模對照 / tripwire / 失敗模式）、忽略句型骨架 / 段首語 / 段末收尾語 / 表格前導句 / 過渡詞也是模板；批量寫作時最易讓 cadence 同質化、單篇看起來合規、連讀多篇才浮現預期化；自檢要 grep 首句 / 段末句 / 表格前導句、不是只看欄位；51 vendor 都用「四件事 → 任一缺失就是 X 邊界的待補項目」是案例
+- [#123 多重硬規範同時生效會把 cadence 推向便利解](compliance-optimum-converges-cadence/) — N 個硬 constraint 同時 enforce 時、找到一個「都通過」的 framing 後批量寫作會把它複製到所有檔；cadence 同質化是合規最佳解的副作用、不是違規；對策是拉開 constraint 或加 anti-template constraint、或 pilot phase 強制變體；不是只發生在寫作、code gen / API doc 批量同骨；是 #67 在「批量寫作」的具體機制
+- [#124 Emergence-class 違規規則化不了、要 stage 內抽樣](emergence-violations-need-in-stream-sampling/) — 違規分字面 / 結構 / emergence 三類、enforcement 時機對應；字面（emoji）可 hook、結構（章節缺失）可 lint、emergence（cadence 同質）只能 stage 內抽樣；最佳時機 batch 進度 10-20%（emergence 訊號剛夠強且修正成本還可控）；補 #82 的 timing 軸、補 #83 multi-pass 的時間分散軸
+
+Meta-卡（#125-126、從 #122-124 + 既有卡跨 surface 抽出）：
+
+- [#125 Collapse 是隱形預設](collapse-is-implicit-default/) — 跨 surface meta；decision (#80) / dialogue (#79) / output (#123) 三個 surface 都有同一個 collapse pattern — 高維選擇空間被便利驅動 reduce 到 1-2 個窄格、且因為「便利 / 合規 / 簡潔」被當預設、不被覺察；對策不是消除 collapse、是讓設計者主動選擇要 collapse 哪一維；預設展開、選窄要證明
+- [#126 寫作 review 是多軸完整性、不是單軸深度](writing-review-multi-axis-completeness/) — Review 完整性是七軸（frame / instance / surface / scope / cadence / timing / granularity）交集、缺軸不缺深度；對應 #83 / #121 / #97 / #95 / #122 / #124 / #114；單軸越做越深會 systematic miss 對應軸盲點；設計 review 流程時 enumerate 七軸覆蓋狀況、不是加輪數
+
 ### 第七輪：Pattern 卡片（待補完）
 
 從實作篇的「設計取捨」段落抽出、單一做法的深入卡片。每張卡片只討論一個 pattern：什麼時候用、什麼時候不用、跟其他做法的取捨。實作篇在取捨段落引用對應卡片。
@@ -314,7 +325,9 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ---
 
-**Last Updated**: 2026-05-13 — 新增 #115-121 case-driven 寫作方法論系列（7 張卡：#115 case 類型決定引用深度 / #116 fact vs derive 分層引用 / #117 跨 case 合成 frame 必須標明 / #118 standard-driven vs case-driven 領域判讀 / #119 章節已有 routing skeleton 走補強段 / #120 案例引用三段式段落結構 / #121 Agent team context 隔離設計），從 [case-first-module-workflow skill](/posts/case-first-agent-team-review-workflow/) 反向抽出原子化原則；新增路徑 20 給寫教學模組的引用紀律。#120 跟 #121 是評估後拓展卡（#120 案例引用「結構」axis 跟 #115-117 引用深度 / 分層 / 合成 axis 正交、#121 reviewer instance 軸跟 #83 frame 軸正交）。
+**Last Updated**: 2026-05-18 — 新增 #122-126 cadence 同質化系列 + meta-卡（5 張卡）：#122 cadence 是模板隱形維度 / #123 多重硬規範收斂 cadence / #124 emergence 違規要 stage 內抽樣（atomic 三軸：症狀 / 機制 / enforcement 時機）+ #125 Collapse 是隱形預設（跨 surface meta、串 #79 #80 #123）+ #126 寫作 review 是多軸完整性（review 設計 meta、串 #83 #95 #97 #114 #121 #122 #124）。從 backend/07 51 vendor 批量 review 反向抽出 + 跨既有卡 wedge 浮現。同批微調 #82（補 #124 三類分法 cross-link）+ #42（補第 7 個跨檔 emergence 面向）。待後續評估如何轉化進 `compositional-writing` 跟 `case-first-module-workflow` skill。
+
+2026-05-13 — 新增 #115-121 case-driven 寫作方法論系列（7 張卡：#115 case 類型決定引用深度 / #116 fact vs derive 分層引用 / #117 跨 case 合成 frame 必須標明 / #118 standard-driven vs case-driven 領域判讀 / #119 章節已有 routing skeleton 走補強段 / #120 案例引用三段式段落結構 / #121 Agent team context 隔離設計），從 [case-first-module-workflow skill](/posts/case-first-agent-team-review-workflow/) 反向抽出原子化原則；新增路徑 20 給寫教學模組的引用紀律。#120 跟 #121 是評估後拓展卡（#120 案例引用「結構」axis 跟 #115-117 引用深度 / 分層 / 合成 axis 正交、#121 reviewer instance 軸跟 #83 frame 軸正交）。
 
 **Last Updated**: 2026-05-04 — 新增 #107-#109 術語翻譯 review 系列（原文錨點 / 完整名詞頭 / 概念角色），從 `paternalism`、`多步驟 perplexity 盲`、`Steelman` 三個 case 抽出翻譯檢查流程；新增路徑 19 給文章轉譯與術語 review。
 

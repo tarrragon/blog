@@ -120,7 +120,7 @@ Azure Key Vault 的核心定位是 *三合一 secret + key + cert service 加 Az
 
 ## 下一步路由
 
-- 上游：[7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)、[7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
+- 上游：[7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)、[7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/)（Key Vault Certificate + Managed HSM 為 TLS / signing key 的 root custodian）、[7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
 - 平行（secret store）：[AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/)、[Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/)、[HashiCorp Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/)
 - 平行（KMS-class）：[AWS KMS](/backend/07-security-data-protection/vendors/aws-kms/)、[Google Cloud KMS](/backend/07-security-data-protection/vendors/google-cloud-kms/)、[CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/)（Key Vault 是跨類 vendor、同時是 secret store 跟 key management）
 - 下游：[Azure RBAC](/backend/07-security-data-protection/vendors/azure-rbac/)（Managed Identity + RBAC 取用模型）

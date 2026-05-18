@@ -148,8 +148,9 @@ ceiling 訊號：
 | [#83 Writing 的 multi-pass review](../writing-multi-pass-review/)                        | 本卡在「寫」這個動作的具體實例 — review 是 multi-pass、不是 hook                          |
 | [#84 Naming 是 iterated artifact](../naming-as-iterated-artifact/)                       | 本卡在「命名」這個動作的具體實例 — 命名 lint 只擋字面、grep / 一致性 / impl 洩漏靠 review |
 | [#85 Methodology 的 multi-pass 該 embed 在 pillar](../methodology-multi-pass-embedding/) | 本卡在「方法論設計本身」這一層的展現 — multi-pass 升 pillar 才結構性執行                  |
+| [#124 Emergence-class 違規規則化不了、要 stage 內抽樣](../emergence-violations-need-in-stream-sampling/) | 三類分法擴展 — 本卡是 2 類分法（字面 / 行為）、#124 擴展為 3 類（字面 / 結構 / emergence）並補 timing 軸；emergence 是行為層中跨檔 / 跨樣本才浮現的子類 |
 
-本卡是 #72 的 sibling / 補強 — #72 推 L3-L5 結構性對策最強、本卡指出 L5 也有 ceiling、不是萬能。組合解：**字面用 L5 hook、行為用 L4 pair + multi-pass**。
+本卡是 #72 的 sibling / 補強 — #72 推 L3-L5 結構性對策最強、本卡指出 L5 也有 ceiling、不是萬能。組合解：**字面用 L5 hook、行為用 L4 pair + multi-pass**。#124 進一步把行為層細分出 emergence 子類、補上對應 enforcement 時機。
 
 ---
 

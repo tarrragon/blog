@@ -39,7 +39,8 @@ tags: ["backend", "security", "data-protection", "vendor"]
 | 排錯與失敗快速判讀   | over-permission、stale secret、broken rotation、WAF false positive、missing audit trail |
 | 何時改走其他服務     | 觀測訊號回 04、release gate 回 06、入口部署回 05、事故處理回 08                         |
 | 不在本頁內的主題     | 合規逐條法規解讀、完整 SOC 2 / HIPAA 流程、所有攻擊技術細節                             |
-| 案例回寫與下一步路由 | 回到 7.C cases、7.B blue-team materials、8 incident write-back                          |
+| 案例回寫             | 回到 7.C cases、7.B blue-team materials、8 incident write-back 連到對應 vendor 事件     |
+| 下一步路由           | 上游 chapter（7.X）、平行 vendor、下游模組（04 / 05 / 06 / 08）的交接                   |
 
 ## 撰寫批次
 
