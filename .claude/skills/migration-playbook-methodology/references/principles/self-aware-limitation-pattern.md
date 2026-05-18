@@ -17,15 +17,16 @@ Reviewer D 通常揭露 *結構性質疑*（分類不窮盡 / 框架邊界含糊
 
 ## 為什麼 default 選 Phase 3a
 
-20 篇 migration playbook 過 3 輪 4-reviewer audit、Reviewer D 每輪都揭露 *結構性質疑*：
+30 篇 migration playbook 過 4 輪 4-reviewer audit、Reviewer D 每輪都揭露 *結構性質疑*：
 
-| 輪次   | Reviewer D 揭露                                             | 選擇路徑          |
-| ------ | ----------------------------------------------------------- | ----------------- |
-| 第 1 輪 | N=5 sample over-fit 5 type / 5 type 互斥失效                 | Phase 3a          |
-| 第 2 輪 | 6 維仍漏類 / Type F 跟 Type B 重疊 / 拒絕理由依賴 narrow 定義 | Phase 3a          |
-| 第 3 輪 | 工作量 % 是 post-hoc / 3 軸 overlap / Type F 應拆 3 sub-type | Phase 3a (current)|
+| 輪次   | Reviewer D 揭露                                             | 選擇路徑                          |
+| ------ | ----------------------------------------------------------- | --------------------------------- |
+| 第 1 輪 | N=5 sample over-fit 5 type / 5 type 互斥失效                 | Phase 3a                          |
+| 第 2 輪 | 6 維仍漏類 / Type F 跟 Type B 重疊 / 拒絕理由依賴 narrow 定義 | Phase 3a                          |
+| 第 3 輪 | 工作量 % 是 post-hoc / 3 軸 overlap / Type F 應拆 3 sub-type | Phase 3a                          |
+| 第 4 輪 (meta-audit on skill) | Multi-element collapse skill 自陷 / limitation 30+ 條 / 跟 case-first 重疊 / Phase 3a/3b binary 太嚴 | Phase 3a (partial)、含 multi-element 補卡 |
 
-3 輪都選 Phase 3a 的理由：
+4 輪都 *主要* 選 Phase 3a 的理由：
 
 1. **Reviewer D 揭露的結構性質疑深度 ≥ 當前 sample 重寫的依據**：第 1 輪 N=5 樣本不足以 commit 重寫 5 type、第 3 輪 N=15 仍不足以 commit 重寫 6 type
 2. **重寫成本 > 修補成本**：每輪 audit 後重寫 framework 會 invalidate 既有 dogfood、循環往復

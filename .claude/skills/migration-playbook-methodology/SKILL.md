@@ -1,6 +1,6 @@
 ---
 name: migration-playbook-methodology
-description: "跨 vendor migration playbook 寫作方法論：6 維 diff dimension audit (schema / operational / paradigm / components / application change / data topology) + 6 type 結構模板 (Type A phased translation / Type B drop-in / Type C operational hybrid / Type D parallel streams / Type E paradigm shift / Type F topology re-layout) + Stage 0 variant 規劃 + 4-reviewer audit pattern + Self-aware limitation。觸發詞：migration playbook、cross-vendor migration、Type A B C D E F、diff dimension audit、data topology audit、stage 0 variant、migration 結構、cross-vendor process、Type F re-layout、major version upgrade、re-sharding、partition redesign、policy-driven migration。Trigger when writing migration playbook / cross-vendor process content."
+description: "跨 vendor migration playbook 寫作方法論：6 維 diff dimension audit (schema / operational / paradigm / components / application change / data topology) + 6 type 結構模板 (Type A phased translation / Type B drop-in / Type C operational hybrid / Type D parallel streams / Type E paradigm shift / Type F topology re-layout) + Stage 0 variant 規劃 (含 multi-element planning) + 4-reviewer audit pattern + Self-aware limitation。觸發詞：migration playbook、cross-vendor migration、Type A B C D E F、diff dimension audit、data topology audit、stage 0 variant、multi-element variant planning、migration 結構、cross-vendor process、Type F re-layout、major version upgrade、re-sharding、partition redesign、policy-driven migration、acquisition consolidation、compliance evidence migration。Trigger when writing migration playbook / cross-vendor process content."
 license: MIT
 metadata:
   version: 1.0.0
@@ -9,7 +9,7 @@ metadata:
 
 # Migration Playbook Methodology
 
-Cross-vendor migration playbook 寫作方法論 — 從 20 篇 migration / process content 抽出的 audit / structure / discipline 框架。
+Cross-vendor migration playbook 寫作方法論 — 從 30 篇 migration / process content（6 個 dogfood batch）抽出的 audit / structure / discipline 框架。
 
 跟 [single feature deep article methodology](../compositional-writing/) 對照、migration playbook 是 *不同 content category*：
 
@@ -91,18 +91,17 @@ Step 7: 評估候選軸（current open question）
 | C    | Operational     | Hybrid (4-phase 含 audit + drop-in cutover)                                      | 11-12 | 6-12 週     |
 | D    | Components 拆分 | Parallel migration streams                                                       | 10-11 | 2-4 個月    |
 | E    | Paradigm        | Partial + 混合架構                                                               | 10-11 | 不收斂       |
-| F    | Data topology   | 機制 + execution flow per-step（可拆 sub-type：F-cluster / F-multi-region）       | 7-9  | 1 天-2 週   |
+| F    | Data topology   | 機制 + execution flow per-step（可拆 3 sub-type：F-table-internal / F-cluster-internal / F-multi-region；後者需 parallel run）| 7-9  | 1 天-2 週   |
 
-詳細 anatomy + 寫作範例見 [anatomies/](references/anatomies/) 各 type 個別檔。
+詳細 anatomy 規格在 [six-dimension-audit-framework](references/principles/six-dimension-audit-framework.md) 對映 type；個別 dogfood 篇是 anatomy 實證、不額外維護 anatomy doc。
 
 ## Stage 0 variant 規劃
 
-寫批量 migration playbook（≥ 5 同類檔）必須做 Stage 0 variant 規劃、避免 cadence collapse：
+寫批量 migration playbook（≥ 3 同類檔）必須做 Stage 0 variant 規劃、避免 cadence collapse。Variant 規劃要 cover *多個 element axis*（entry / driver framing / audit / case / closing）、不只 entry framing。
+
+10 種 entry framing variant（A-J）：
 
 ```text
-寫前先列 N 種 entry framing variant、對映 N 篇主題分配：
-
-Variant 範例（從 dogfood 收集）：
 - Variant A: 標準 6-section「問題情境」開頭
 - Variant B: 痛點宣告 case-led「為什麼 X 越跑越慢」
 - Variant C: 概念反向定義「X 不是 Y、是 Z」
@@ -111,11 +110,15 @@ Variant 範例（從 dogfood 收集）：
 - Variant F: meta-reflection「為什麼這篇不套 N 種 type」
 - Variant G: paradox「字面 migration 不成立」/「same protocol, different contract」
 - Variant H: cost / bill 拆解開頭
-
-對 N 篇主題、選 N 種不同 variant、寫前完成設計
+- Variant I: reviewer / question 回應
+- Variant J: code-led example sample
 ```
 
-詳細 cadence dogfood evidence + variant 準備見 [principles/stage-0-variant-discipline](references/principles/stage-0-variant-discipline.md)。
+對 N 篇主題、選 N 種不同 entry variant、寫前完成設計。
+
+10 種 driver framing variant（α-κ）+ 5 個 element axis 完整規劃：見 [multi-element-variant-planning](references/principles/multi-element-variant-planning.md)（第六輪 audit dogfood 揭露 entry-only 規劃 leaves driver framing 5/5 collapse）。
+
+詳細 cadence dogfood evidence + variant 準備見 [stage-0-variant-discipline](references/principles/stage-0-variant-discipline.md)。
 
 ## 4-reviewer audit pattern
 
@@ -126,7 +129,7 @@ Variant 範例（從 dogfood 收集）：
 - **Reviewer C**：案例引用準確性 + 數據準確性（行數 / 章節數 / 工作量 % / 死鏈）
 - **Reviewer D**：自一致性 + 邏輯漏洞 + 反例搜尋（結構性質疑、最深的批判）
 
-詳細 reviewer prompt 模板見 [reviewer-prompts](references/reviewer-prompts/)。
+每 reviewer 用 background Agent + 各自 prompt、寫獨立 output file、主 context 只接精煉彙整摘要。prompt 範本目前內嵌在 dogfood 過程的 Agent 呼叫、未抽出獨立 reference 檔（避免 over-spec）。
 
 ## Self-aware limitation 模式
 
@@ -177,3 +180,22 @@ Variant 範例（從 dogfood 收集）：
 5. **工作量 % 包裝成 measured value**：用 hedge 詞（「主要工作量塊」「明顯多於其他維度」）、不亂寫 %
 6. **N=1 sample 互引強化「N=多」假象**：3 篇 axis 候選驗證互引強化、實際 evidence weight 仍是 N=1
 7. **「擴張不是重構」修辭**：擴 audit 維度時實質 retroactively 暴露既有分類不完整、是 silent grandfathering、不該假裝清白
+8. **Variant 規劃只 cover entry framing**（第六輪 audit dogfood 揭露）：5/5 章節 2 都 collapse 到「為什麼遷：X / Y / Z 三條 driver」格式；Stage 0 規劃必須 cover 5 個 element axis（entry / driver framing / audit presentation / case enumeration / closing CTA）、詳見 [multi-element-variant-planning](references/principles/multi-element-variant-planning.md)
+
+## Self-aware limitation：本 skill meta-audit（2026-05-19 第 1 輪）
+
+第 1 輪 meta-audit 揭露 6 項結構性質疑、按 [self-aware-limitation-pattern](references/principles/self-aware-limitation-pattern.md) 處理為 *meta-acknowledgment*、不立即 substantive restructure：
+
+1. **Multi-element collapse skill 自陷**：本 skill 寫的時候 variant 規劃 narrow 在 entry framing、忽略其他 element axis；第六輪 batch 5/5 driver framing collapse 是 *skill 設計盲點*。本輪補 [multi-element-variant-planning](references/principles/multi-element-variant-planning.md) 卡修補。
+2. **Limitation 累積跨「documented but not action」threshold**：累計 30+ 條 limitation / 反模式、超出 self-aware-limitation-pattern 自查清單 ≤ 8 條建議；表示 framework 結構不穩、Phase 3b restructure 應該考慮。
+3. **Phase 3a / 3b 切換 threshold 是錯誤 binary**：自查條件「同 limitation 連續 3 輪」抓不到「異種 limitation 累積」；需要 partial Phase 3b 概念。
+4. **6 type 「open framework」name 已 stale**：Type F sub-type 浮現、Type B/F 重疊；name「6 type」是 *current snapshot*、不該當穩定 framework。
+5. **6 維 audit ↔ 候選軸 interim usage protocol 缺**：寫 Vault → AWS Secrets Manager 時應用 6 維 audit 還是 7 維？卡內未明示。
+6. **跟 case-first-module-workflow 高度重疊**：兩 skill 共用「批量寫作 + reviewer audit」結構；未來可能抽 common skill。
+
+下一輪 trigger（累積到觸發 Phase 3b restructure）：
+
+- Multi-element collapse 在新批次 *再現*（即使加 multi-element-variant-planning 卡後）— 表示 *element axis 列法本身* 不夠
+- 30+ limitation 中 *同類議題* 重複出現 ≥ 3 次 — 跨輪 audit 中 *結構性質疑* 措辭從「考慮」升到「必須」
+- 新 type 浮現（第 7 type 候選累積 ≥ 3 case）— framework 名「6 type」明顯誤導
+- case-first-module-workflow 跟本 skill 共用結構獨立浮現第 3 次 — 抽 common skill trigger

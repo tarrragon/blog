@@ -10,16 +10,20 @@
 
 ## 為什麼必須
 
-20 篇 migration / process content 跨 6 批次 cadence audit 結果：
+30 篇 migration / process content 跨 6 dogfood batch cadence audit 結果（截至 2026-05-19）：
 
-| 批次                              | Sample | Variant 規劃                  | Collapse rate |
-| --------------------------------- | ------ | ----------------------------- | ------------- |
-| backend/07 vendor batch（無規劃）  | N=51   | 無                            | 51/51 (100%)  |
-| Deep article 第一批（跨 vendor）   | N=4    | 主動                          | 0/4 (0%)      |
-| Deep article 第二批（同 vendor）   | N=5    | 主動                          | 0/5 (0%)      |
-| Migration playbook 第一輪          | N=5    | 3 被動 + 2 主動               | 3/5 (60%)     |
-| Migration playbook 第二輪          | N=5    | 全主動（學第一輪教訓）        | 0/5 (0%)      |
-| Migration playbook 第三輪          | N=5    | 全主動                        | 0/5 (0%)      |
+| 批次                              | Sample | Variant 規劃                  | Entry framing collapse |
+| --------------------------------- | ------ | ----------------------------- | ---------------------- |
+| backend/07 vendor batch（無規劃）  | N=51   | 無                            | 51/51 (100%)           |
+| Deep article 第一批（跨 vendor）   | N=4    | 主動                          | 0/4 (0%)               |
+| Deep article 第二批（同 vendor）   | N=5    | 主動                          | 0/5 (0%)               |
+| Migration playbook 第一輪          | N=5    | 3 被動 + 2 主動               | 3/5 (60%)              |
+| Migration playbook 第二輪          | N=5    | 全主動                        | 0/5 (0%)               |
+| Migration playbook 第三輪          | N=5    | 全主動                        | 0/5 (0%)               |
+| Migration playbook 第四輪          | N=5    | 全主動 entry layer            | 0/5 (0%) entry / **5/5 (100%) section 2** |
+| Migration playbook 第五輪（驗證）  | N=5    | 全主動 entry layer            | 0/5 (0%) entry / **5/5 (100%) section 2** |
+
+**注意**：上表 batch 4-5 揭露 *entry framing variant 解決不了 section 2+ collapse*；entry 0% 不代表整篇 cadence 健康。詳見 [multi-element-variant-planning](./multi-element-variant-planning.md) 處理 driver framing + 其他 element axis 的 collapse 風險。
 
 關鍵 finding：
 
@@ -31,7 +35,7 @@
 
 | Variant | Frame                                                      | 範例篇                                                  |
 | ------- | ---------------------------------------------------------- | ------------------------------------------------------- |
-| A       | 標準「問題情境」開頭                                       | pgBouncer / Vault dynamic credential                    |
+| A       | 標準「問題情境」開頭                                       | New Relic → Datadog（migration playbook 第五輪）         |
 | B       | 痛點宣告 case-led「為什麼 X 越跑越慢」                       | K8s graceful shutdown / PG partition redesign            |
 | C       | 概念反向定義「X 不是 Y、是 Z」                              | Partition 不是切表 / Atlas 不是 Mongo + managed         |
 | D       | 對照表 / 矩陣 / 決策表開頭                                 | Cloudflare Page Shield / DynamoDB consistency           |
@@ -88,7 +92,7 @@ Step 5: 整批完成後跨檔 cadence audit
 
 寫批量 migration playbook 前：
 
-1. **批量 N ≥ 3 嗎**？小批量也建議 Stage 0、大批量必須
+1. **批量 N ≥ 3 嗎**？SKILL.md 表面寫 ≥ 3 必做、實務上 N=3-4 小批量也建議 Stage 0
 2. **N 篇主題列了嗎**？
 3. **每篇對映了 variant 嗎**？
 4. **N 個 variant 不重複嗎**？
