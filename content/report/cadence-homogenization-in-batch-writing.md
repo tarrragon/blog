@@ -58,7 +58,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 | 第 10+ 篇             | 加入第 4-5 個新 framing 變體、避免變體耗盡再變單調                            |
 | 批量結束前            | 抽樣 5 個檔做 cadence 對照、發現同質化提前修                                  |
 
-這個做法的關鍵是 *變體不是事後抽出來的、是設計階段就準備好的*。一旦寫過 5 篇還沒主動製造變體、就會默認複製第一篇 framing 到所有後續檔案。
+這個做法的關鍵是 *變體不是事後抽出來的、是設計階段就準備好的*。一旦寫過 5 篇還沒主動製造變體、就會預設複製第一篇 framing 到所有後續檔案。
 
 ### Dogfood evidence (2026-05-18、N=4 sub-threshold 驗證)
 
@@ -97,6 +97,8 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 ### Update: Partial collapse 實證（被動 vs 主動 variant 對照）
 
+**Partial collapse 定義**：批量內 *部分檔案 cadence 收斂、部分錯開*、collapse rate 在 0% 跟 100% 之間（典型 30-70%）。跟全 collapse（100%）跟全錯開（0%）的差異在於 *混合訊號*：同批內存在不同寫作行為（被動 vs 主動 variant 規劃）、cadence 結果反映行為差異。
+
 第三輪 batch 寫 5 篇 migration playbook（跨 vendor、不同 module）、*前 3 篇被動寫作、後 2 篇主動規劃 variant*。結果：
 
 | 篇 | Variant 規劃 | 章節 1 entry framing                          |
@@ -118,11 +120,13 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 | Deep article 第二批（同 vendor）   | N=5    | 主動             | 0/5 (0%)      |
 | Migration playbook（混合）         | N=5    | **3 被動 + 2 主動** | **3/5 (60%)** |
 
+**主題語意 attractor 定義（atomic）**：批量寫作中、*主題本身的語意結構* 對 framing 選擇產生的隱形吸引力 — 例如 migration 主題天然引出「為什麼遷：X / Y / Z driver」開頭、SIEM rule 翻譯天然引出「先 audit 再 translate」開頭。這是 [#123 多重硬規範收斂 cadence](../compliance-optimum-converges-cadence/) 的 *內容驅動子類型*：#123 處理的是 *外部 constraint*（章節結構 + lint 規則）收斂 cadence、本概念處理的是 *主題內部語意* 收斂 cadence；兩者機制同骨、attractor 來源不同。
+
 三個關鍵 finding：
 
-6. **Natural attractor 跟主題相似性正相關**：5 篇 migration playbook 都圍繞「為什麼換 vendor」、entry 自然收斂到「driver list」格式；同類主題的 *語意 attractor* 比結構 constraint 更強
+6. **主題語意 attractor 跟主題相似性正相關**：5 篇 migration playbook 都圍繞「為什麼換 vendor」、entry 自然收斂到「driver list」格式；migration 主題的語意 attractor 比結構 constraint 更強
 7. **Sample size 不能解 cadence collapse**：N=5 跟前批 N=5 全錯開差異在 *variant 規劃*、不是 sample size；證實本卡論斷「variant 規劃必須主動、不是 N≥5 自動避免」
-8. **Partial collapse 比 0% collapse 教育價值高**：負面 evidence（natural attractor 不規劃就 collapse）比正面 evidence（規劃就錯開）更證明 principle；後續寫作流程應 *預期* 主題相似批次的 collapse 風險、不是樂觀假設
+8. **Partial collapse 是 natural attractor 訊號、不是 principle 強化證據**：本批 3/5 collapse 提供 *主題語意 attractor 強度* 的量化訊號（在無 variant 規劃時 60% 同質化）、但不增強既有 principle 的論證力 — principle 在前兩批已穩定、本批只是揭露新 attractor 來源；後續寫作流程應 *預期* 主題相似批次的 collapse 風險、不是樂觀假設
 
 ---
 
@@ -148,6 +152,8 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 | [#94 正向改寫要保留對照論據](../positive-rewrite-preserves-contrast/)                          | 同骨 pattern — 寫作規則執行時、字面合規（正向陳述 / 不模板化）但行為失準（cadence 同質 / 結論空降）                              |
 | [#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/) | 互補軸 — #114 是 frame 顆粒度（規則 vs 字句層）、本卡是 cadence 維度（內容 vs 形式層）                                            |
 | [#117 跨多 case 合成的 frame 必須標為章節合成](../cross-case-synthesized-frame-must-be-labeled/)| Sibling — 都是「合規但有隱形偏差」族；#117 是引用層、本卡是骨架層                                                                |
+| [#127 Process content 結構由最大差異維度決定](../content-structure-by-max-diff-dimension/)     | 結構 layer 對偶 — 本卡處理「同 type 內 framing collapse」、#127 處理「跨 type 套錯結構」；兩者都跟「主題語意 attractor」相關     |
+| [Migration playbook methodology](/posts/migration-playbook-methodology/)                       | 具體 SOP — 本卡 update 段引用的 5 篇 migration playbook batch 是該 methodology 的 dogfood、partial collapse 案例都在那批       |
 
 ---
 

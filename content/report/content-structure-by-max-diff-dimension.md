@@ -8,19 +8,19 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Cont
 
 ## 結論
 
-跨 X process content（migration / upgrade / rollout / 演練 / playbook）的結構不是 universal、由 source 跟 target 之間 *最大差異維度* 決定。固定套「6-phase playbook」「6-section deep article」會在 *結構錯位* 的場景失效。
+跨 X process content（migration / upgrade / rollout / 演練 / playbook）的結構不是 universal、由 source 跟 target 之間的 *差異維度組合* 決定。固定套「6-phase playbook」「6-section deep article」會在 *結構錯位* 的場景失效。
 
 實證：5 種 migration type 產出 5 種不同結構：
 
-| Migration type        | 最大差異維度        | 結構                          | 章節數 | 週期       |
-| --------------------- | ------------------- | ----------------------------- | ------ | ---------- |
-| 高 schema 差          | Schema / API        | 6-phase rule translation      | 12     | 4-9 個月   |
-| Drop-in compatible    | 無顯著差異          | 6-section + audit prefix      | 8      | 1-4 週     |
-| Operational redesign  | Operational model   | Hybrid (3-phase op + drop-in cutover) | 12 | 6-12 週    |
-| Multi-tool 拆分       | 一站式 → 多 component | Parallel migration streams    | 11     | 2-4 個月   |
-| Paradigm shift        | Abstraction model   | Partial + 混合架構            | 10     | 不收斂     |
+| Migration type        | 主導差異維度        | 結構                                        | 結構元素數 | 週期       |
+| --------------------- | ------------------- | ------------------------------------------- | --------- | ---------- |
+| 高 schema 差          | Schema / API        | 6-phase rule translation                    | 11-12     | 4-9 個月   |
+| Drop-in compatible    | 無顯著差異          | 6-section + audit prefix                    | 7-8       | 1-4 週     |
+| Operational redesign  | Operational model   | Hybrid (4-phase 含 audit + drop-in cutover)| 11-12     | 6-12 週    |
+| Multi-tool 拆分       | 一站式 → 多 component | Parallel migration streams                  | 10-11     | 2-4 個月   |
+| Paradigm shift        | Abstraction model   | Partial + 混合架構                          | 10-11     | 不收斂     |
 
-5 種結構不是「不同產品的個別處理」、是 *最大差異維度* 的對映。
+5 種結構是 *常見 type*、不是窮盡分類；source / target 配對可能同時屬多 type（多軸 High）、或不屬任一 type（5 維皆 Medium）— 處理規則見「多重歸類跟 tie-breaking」段。本卡前身是「最大差異維度決定結構」、實證後修正為「主導差異維度 + 多軸組合」。
 
 ---
 
@@ -50,17 +50,46 @@ Universal phased 失效的三個機制：
 | Number of components | 一站式 vs multi-tool 是否需要拆分？                                  | -                   |
 | Application change   | application code 需要改多少？                                        | -                   |
 
-最大差異維度決定結構：
+主導差異維度對映常見 type：
 
-- **Schema = High** → phased rule translation
-- **Operational = High（其他 Low）** → operational redesign hybrid
-- **Paradigm = High** → partial + 混合架構
-- **Components = High（一站式 → multi-tool）** → parallel streams
-- **全 Low** → drop-in、6-section + audit prefix
+- **Schema = High（其他 Low）** → Type A phased rule translation
+- **Operational = High（其他 Low）** → Type C operational redesign hybrid
+- **Paradigm = High** → Type E partial + 混合架構
+- **Components = High（一站式 → multi-tool）** → Type D parallel streams
+- **全 Low** → Type B drop-in、6-section + audit prefix
+
+## 多重歸類跟 tie-breaking
+
+實際 source / target 配對 *很少* 完美對映單一 type；常見情境跟處理規則：
+
+| 情境                                  | 例                                                              | 處理規則                                                                                       |
+| ------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| 兩維度都 High                          | PostgreSQL → CockroachDB（Schema + Operational + Paradigm 三 High）| 主結構選 *讀者最關心* 的維度（多數情境 Schema > Paradigm > Operational > Components）、其他維度抽出獨立段補充 |
+| 三維度都 High                          | 同上                                                            | 結構走 Type E（paradigm 為主、partial + 混合）、用「為什麼這不是 drop-in」段交代另外兩維度        |
+| 全 Medium（無 High）                   | Redis → KeyDB（API 微差 + ops 微差）                            | 走 Type B drop-in、用「相容性 audit」段列 medium 差異點                                       |
+| 一維 High 但 *application change* 連帶 High | MySQL → PostgreSQL（Schema High + SQL dialect 連帶 application 改）| 走 Type A、application change 章節獨立段、不壓進 Phase 4 cutover                              |
+| Schema High + Components High         | Splunk → Elastic + Tines + PagerDuty                            | 主結構走 Type A（Schema 為主驅動 phased translation）、Type D 的 multi-tool 用「target stack 拆分」獨立段 |
+
+關鍵原則：**主導維度決定主結構、其他高維度獨立加段**、不強迫單一 type 標籤。Backlog 的「Type A/D 混合」「Type B/D 混合」標示是 *維度組合* 的簡記、不是承認 5 type 互斥失效；下表多重歸類處理規則才是正式判讀。
+
+## 5 type 是 axis-aligned simplification、非窮盡
+
+本卡 5 type 來自 5 篇 migration playbook 的 dogfood 觀察、是 *已浮現的 type*、不是 *涵蓋所有 migration 的完備分類*。已知漏類至少 4 種：
+
+| 漏類                            | 例                                            | 為何 5 type 不覆蓋                                                       |
+| ------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------ |
+| 同 vendor major version upgrade | PostgreSQL 14 → 17 / Kafka 3 → 4              | Source / target 是同 vendor、5 type 預設跨 vendor、deep article methodology 也不完全 cover |
+| 政策 / 合規驅動                 | Atlassian server EOL / PCI 強制資料 region    | Driver 在外部、但資料層仍走 type A-E 之一；audit 重點是 evidence collection、不是結構 |
+| 容量重新規劃 / re-sharding      | 單實例 → sharded / 單 region → multi-region   | Source / target 同 vendor、無 schema / paradigm 差、但 data topology 重劃；5 維度沒「topology」軸 |
+| Acquisition / merger consolidation | 兩 Datadog org 合併 / 兩 K8s cluster federate | Source / target 同產品、要處理 identity / RBAC / 歷史資料合併；5 type 不覆蓋 |
+
+未來累積更多 migration playbook 後、可能浮現第 6-9 type、或對 5 type 重構。本卡的 type 集合是 *open*、不是 *closed*。
 
 ---
 
 ## 5 種結構的 anatomy
+
+**「結構 differentiator」**是本系列引入的概念：每篇 process content 在開頭加一段、*明示這篇用什麼結構、跟其他同 category content 的結構差異在哪*。功能類似 type signature — 讓讀者一開始就知道接下來的章節組織方式、避免套錯預期。例：drop-in migration 的「結構 differentiator」段會說「跟 phased migration 對照、本篇是 6-section + audit、不是 6-phase」。
 
 ### Type A：Phased translation（schema 差為主）
 
@@ -96,7 +125,7 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 
 ```text
 為什麼遷 → 結構 differentiator → Operational redesign 對位
-→ 3-phase operational migration → Drop-in cutover → 故障演練 → Capacity → 整合
+→ 4-phase operational migration（Phase 0 audit + 3 active phase）→ Drop-in cutover → 故障演練 → Capacity → 整合
 ```
 
 特徵：
@@ -192,4 +221,27 @@ Phase 0 audit → Phase 1 schema 對位 → Phase 2 translation
 | 章節 4 「故障演練」段比其他段都簡單                | 結構過 abstract、實作層細節缺                                        |
 | 寫作前沒列 source / target 的 diff dimension      | 結構 risk、補 audit                                                  |
 
-**核心**：Process content 的結構由 *source / target 最大差異維度* 決定、不是 universal phased / 6-section 模板。寫作前必須跑 *diff dimension audit*（schema / operational / paradigm / components / application change 5 維度）、再選對應 type 結構；跳過 audit 會套錯模板、phase 變空白或 process 強行線性。
+**核心**：Process content 的結構由 *source / target 差異維度組合* 決定、不是 universal phased / 6-section 模板。寫作前必須跑 *diff dimension audit*（schema / operational / paradigm / components / application change 5 維度）、選對應主結構、其他高維度獨立加段；跳過 audit 會套錯模板、phase 變空白或 process 強行線性。
+
+---
+
+## Self-aware limitation：本卡的 sample-driven over-fit 風險
+
+本卡 5 type 來自 5 篇 migration playbook 的 dogfood 觀察、本身就是 *N=5 sample 推導出 5 type taxonomy* — 跟本卡批判的「universal phased 模板」「[#122](../cadence-homogenization-in-batch-writing/) cadence collapse」「[#125](../collapse-is-implicit-default/) reduce 多維到單格」是 *同骨錯誤*。
+
+| Reviewer 揭露的本卡 over-fit | 對應的本卡建議 |
+| --------------------------- | -------------- |
+| 5 type 非窮盡（漏 4 種主流情境）| 「5 type 是 axis-aligned simplification、非窮盡」段、未來累積更多 sample 後可能重構 |
+| 5 type 互斥失效（多軸 High 配對）| 「多重歸類跟 tie-breaking」段、不強迫單一 type 標籤 |
+| 「最大維度」沒處理 tie       | 主導維度判讀規則（Schema > Paradigm > Operational > Components）|
+| 「Partial collapse 教育價值高」是 post-hoc | 修正為 [#122 Update 段第 8 點](../cadence-homogenization-in-batch-writing/) — partial collapse 是 attractor 訊號、不增強 principle |
+
+本卡是 *current best understanding*、不是 *已驗證的完備理論*。Tripwire：
+
+- 若下一輪 migration batch 浮現 *無法歸進現有 5 type 的新 structure*、應該擴充 type 集合而不是強行歸類
+- 若同一 source/target 配對出現 *結構翻轉*（例 PostgreSQL → CockroachDB 在不同 application context 走不同主結構）、應該檢視 *主導維度* 規則是否需要動態化
+- 若 type 數量擴張到 8+、應該評估是否該重構為 *維度 × 維度 grid* 而不是 type list
+
+---
+
+承認 limitation 本身是 dogfood — [#122 cadence 同質化](../cadence-homogenization-in-batch-writing/) 講「natural attractor 不規劃就 collapse」、本卡的 5 type 就是 *5 個 sample 的 natural attractor*；不在卡內承認、就重複了 [#125 隱形預設](../collapse-is-implicit-default/) 的 collapse pattern。本段是 self-correction、不是 disclaimer。

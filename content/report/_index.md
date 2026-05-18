@@ -164,7 +164,9 @@ Meta-卡（#125-126、從 #122-124 + 既有卡跨 surface 抽出）：
 
 - [#125 Collapse 是隱形預設](collapse-is-implicit-default/) — 跨 surface meta；decision (#80) / dialogue (#79) / output (#123) 三個 surface 都有同一個 collapse pattern — 高維選擇空間被便利驅動 reduce 到 1-2 個窄格、且因為「便利 / 合規 / 簡潔」被當預設、不被覺察；對策不是消除 collapse、是讓設計者主動選擇要 collapse 哪一維；預設展開、選窄要證明
 - [#126 寫作 review 是多軸完整性、不是單軸深度](writing-review-multi-axis-completeness/) — Review 完整性是七軸（frame / instance / surface / scope / cadence / timing / granularity）交集、缺軸不缺深度；對應 #83 / #121 / #97 / #95 / #122 / #124 / #114；單軸越做越深會 systematic miss 對應軸盲點；設計 review 流程時 enumerate 七軸覆蓋狀況、不是加輪數
-- [#127 Process content 結構由最大差異維度決定](content-structure-by-max-diff-dimension/) — 跨 X process content（migration / upgrade / rollout）結構不是 universal、由 source / target 的 *最大差異維度* 決定；5 種 migration type 實證（schema 差 / drop-in / operational / multi-tool / paradigm）跑出 5 種結構（6-phase / 6-section + audit / hybrid / parallel streams / partial + 混合）；寫前必須跑 *diff dimension audit*、跳過會套錯模板（phase 變空白或 process 強行線性）；補 #122 在「結構 layer」的對偶
+Cadence + 結構雙軸延伸（#127、從 5 篇 migration playbook batch 抽出、跟 cadence 系列形成「framing layer + structure layer」雙軸）：
+
+- [#127 Process content 結構由最大差異維度決定](content-structure-by-max-diff-dimension/) — 跨 X process content（migration / upgrade / rollout）結構不是 universal、由 source / target 的 *最大差異維度* 決定；5 種 migration type 實證（schema 差 / drop-in / operational / multi-tool / paradigm）跑出 5 種結構（6-phase / 6-section + audit / hybrid / parallel streams / partial + 混合）；寫前必須跑 *diff dimension audit*、跳過會套錯模板（phase 變空白或 process 強行線性）；補 #122 在「結構 layer」的對偶、同時是 #125 在 content structure surface 的子實例；5 type 是 *axis-aligned simplification*、非窮盡分類（見卡內 limitation 段）
 
 ### 第七輪：Pattern 卡片（待補完）
 

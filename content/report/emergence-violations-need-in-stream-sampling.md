@@ -1,20 +1,25 @@
 ---
-title: "Emergence-class 違規規則化不了、要 stage 內抽樣"
+title: "Emergence-class 違規規則化不了、要 stage 0 變體規劃 + stage 內抽樣兩層"
 date: 2026-05-18
 weight: 124
-description: "違規分三類（字面 / 結構 / emergence）、enforcement 時機要對應違規類型；字面違規（emoji / 裸 URL）可 regex hook 在 pre-commit 攔、結構違規（章節缺失 / frontmatter）可 linter 攔、emergence 違規（cadence 同質化 / 跨檔語氣漂移）規則化不了、只能 stage 內抽樣；review 時機要從「batch 完成後」往「生成中」推、不然 emergence 違規永遠晚一個 batch 才發現；補 #82 字面 vs 行為的「時機」軸"
+description: "違規分三類（字面 / 結構 / emergence）、enforcement 時機要對應違規類型；字面違規（emoji / 裸 URL）可 regex hook 在 pre-commit 攔、結構違規（章節缺失 / frontmatter）可 linter 攔、emergence 違規（cadence 同質化 / 跨檔語氣漂移）規則化不了、需要 *stage 0 變體規劃（主動設計）* + *stage 內抽樣（被動監測）* 兩層；checkpoint 只是監測工具、若 stage 0 沒準備 variant、被動抽樣不會自動發現 collapse；補 #82 字面 vs 行為的「時機」軸"
 tags: ["report", "事後檢討", "工程方法論", "Review-timing", "Enforcement-design", "Writing"]
 ---
 
 ## 結論
 
-違規類型決定 enforcement 時機。把所有違規都丟給 batch 完成後的 reviewer 是錯的：
+違規類型決定 enforcement *時機 + 機制*。把所有違規都丟給 batch 完成後的 reviewer 是錯的；同樣錯的是 *只靠生成中抽樣*、沒有 stage 0 的主動變體規劃。Emergence 違規需要 *兩層防護*：
 
-| 違規類型      | 識別形式                                                       | Enforcement 時機       | 工具                           |
-| ------------- | -------------------------------------------------------------- | ---------------------- | ------------------------------ |
-| 字面違規      | 單檔可 regex 偵測（emoji、裸 URL、粗體當標題）                 | Pre-commit / pre-push  | mdtools / regex hook           |
-| 結構違規      | 單檔可機制偵測（章節缺失、frontmatter 必填、broken link）     | Linter / build         | mdtools lint                   |
-| Emergence 違規 | 跨檔比對才偵測（cadence 同質化、語氣漂移、frame 重複）        | **Stage 內抽樣**       | 寫作流程內 checkpoint、不是 hook |
+- **Stage 0 主動設計層**：寫批量前列 N 種 framing variant、分配給對應主題；這層決定 *cadence 是否錯開的根因*
+- **Stage 內被動監測層**：生成中抽樣 audit、發現 collapse 立即修方向；這層 *偵測* 而不是 *設計*
+
+兩層缺一不可：跳過 stage 0、被動抽樣不會自動發現 *主題語意 attractor*（相似主題天然引出的 framing collapse、見 [#122 cadence 同質化](../cadence-homogenization-in-batch-writing/) Update 段定義；migration playbook 3/5 collapse 即此實證、見本卡「Update: 被動寫作下...」段）；跳過 stage 內抽樣、stage 0 設計可能在中途 drift 沒被 catch。
+
+| 違規類型      | 識別形式                                                       | Enforcement 時機                       | 工具                                                  |
+| ------------- | -------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------- |
+| 字面違規      | 單檔可 regex 偵測（emoji、裸 URL、粗體當標題）                 | Pre-commit / pre-push                  | mdtools / regex hook                                  |
+| 結構違規      | 單檔可機制偵測（章節缺失、frontmatter 必填、broken link）     | Linter / build                         | mdtools lint                                          |
+| Emergence 違規 | 跨檔比對才偵測（cadence 同質化、語氣漂移、frame 重複）        | **Stage 0 設計 + Stage 內監測 兩層**   | Stage 0 variant 規劃 + 寫作流程內 checkpoint、不是 hook |
 
 backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emergence 違規（cadence 同質化）51/51；後者三個 reviewer 中只有一個 footnote 提到、是因為 reviewer 一次審 51 檔、emergence 訊號夠強才看出 — *如果只審 5 檔、emergence 訊號還不夠強、會被漏掉*。
 
@@ -54,8 +59,8 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 | Checkpoint 位置          | 動作                                                                       | 結果                                                            |
 | ------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | 第 1 篇寫完              | 確認自然 framing（標準問題情境）                                            | OK、為第 2 篇 variant 比對 baseline                              |
-| 第 2 篇寫前              | 主動換 variant（痛點宣告 case-led）                                         | 段首句骨架明顯異於第 1 篇 ✓                                      |
-| 第 3 篇寫前              | 第三種 variant（概念反向定義）                                              | 三種骨架完全錯開 ✓                                              |
+| 第 2 篇寫前              | 主動換 variant（痛點宣告 case-led）                                         | 段首句骨架明顯異於第 1 篇                                        |
+| 第 3 篇寫前              | 第三種 variant（概念反向定義）                                              | 三種骨架完全錯開                                                |
 | 第 4 篇寫前              | 第四種 variant（對照表驅動）+ 抽前 3 篇章節 1 entry sample audit            | 四種骨架完全錯開、過渡詞密度 0、cadence 「任一缺失」族 0 hits   |
 
 對照前批 backend/07 51 vendor（無寫作中 checkpoint）：
@@ -128,6 +133,8 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 關鍵：*Stage 0 變體規劃是必要 step*、不能跳；checkpoint 是 *監測* 工具、不是 *設計* 工具。
 
+詳細 SOP 跟 5 種 type 的具體應用見 [Migration playbook methodology](/posts/migration-playbook-methodology/) — 該 methodology 從 5 篇 migration playbook batch 抽出 stage 0 variant 規劃流程、本卡的「checkpoint 不夠」訊號是該流程的觸發實證。
+
 ---
 
 ## Batch 完成後 reviewer 為什麼太晚
@@ -146,7 +153,7 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 字面違規（emoji）的 enforcement 鏈：
 
-- 寫作中：Claude 默認不寫 emoji（pre-trained behavior + system prompt）
+- 寫作中：Claude 預設不寫 emoji（pre-trained behavior + system prompt）
 - Pre-commit：mdtools / regex hook 攔
 - CI：full lint sweep
 
