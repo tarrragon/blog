@@ -52,6 +52,82 @@ tags: ["backend", "observability", "vendor"]
 | 不在本頁內的主題     | 每種語言 SDK 完整教學、dashboard 美術、所有 query cookbook                         |
 | 案例回寫與下一步路由 | 回到 4.20 evidence package、9.8 performance observability、8 incident cases        |
 
+## 跨 vendor 議題對照
+
+橫向議題在不同 vendor 用不同 mechanism 達成。本表列同一議題在 9 個 vendor 的對應位置、確保大綱不缺漏、讀者跨 vendor 查找時有索引。
+
+| 議題          | OTel            | Prometheus      | Grafana Stack        | Datadog         | Elastic Stack | Honeycomb       | CloudWatch      | Cloud Ops       | Sentry         |
+| ------------- | --------------- | --------------- | -------------------- | --------------- | ------------- | --------------- | --------------- | --------------- | -------------- |
+| 訊號類型      | 全（標準）      | metrics         | 全 stack             | 全 + Security   | logs + APM    | events / traces | 全 AWS-native   | 全 GCP-native   | errors + APM   |
+| 採集模式      | SDK + Collector | Pull scrape     | mixed                | Agent push      | Beats / Agent | SDK / OTLP      | Agent / native  | Agent / native  | SDK push       |
+| 查詢語言      | N/A             | PromQL          | PromQL/LogQL/TraceQL | Datadog query   | KQL / ES DSL  | Honeycomb query | Logs Insights   | Logs query      | Issue filter   |
+| Cardinality   | 由 backend 決定 | 受限（series）  | Mimir / Loki 各自    | 計費 per dim    | Mapping limit | 設計目標 (high) | 計費 per metric | 計費 per metric | issue grouping |
+| 部署模式      | OSS standard    | OSS self-host   | OSS / Cloud          | SaaS only       | OSS / Cloud   | SaaS only       | AWS managed     | GCP managed     | OSS / SaaS     |
+| 成本模型      | 取決 backend    | self-host CapEx | self-host / Cloud    | hosts + signals | self-host     | events volume   | ingestion + API | ingestion + API | events volume  |
+| 多雲 / 跨平台 | 是（標準）      | 是 (OSS)        | 是                   | 是              | 是            | 是              | AWS-only        | GCP-only        | 是             |
+| OTel 相容度   | 原生            | exporter        | OTLP receiver        | OTLP ingestion  | OTLP ES 7.16+ | OTLP 原生       | ADOT            | OTLP Trace 2.0+ | OTel context   |
+| 主討論案例    | C2/C3/C4/C5/C8  | C1/C6/C7        | C6/C11               | C5              | C5/C6         | C7              | C1/C8           | C3              | 待補           |
+
+對照表的用途有三：
+
+- 寫某 vendor 頁時、檢查橫向議題是否有對應的進階主題子段
+- 讀者選型時、知道對應 mechanism 在不同 vendor 的形態
+- 評估遷移風險：訊號類型 + 部署模式 + OTel 相容度三維度合併判讀
+
+下面 8 段把對照表的每行展開、避免裸表格成為終點。
+
+### 訊號類型
+
+訊號類型決定 vendor 解決哪一段觀測問題。**OpenTelemetry** 是 standard、覆蓋 traces / metrics / logs；**Prometheus** 純 metrics；**Grafana Stack** 全 stack（各 backend 各司其職、Loki + Tempo + Mimir + Pyroscope）；**Datadog** 全 + Security + RUM + CI；**Elastic Stack** logs 為主 + APM；**Honeycomb** events-based（不是 metrics aggregation）；**CloudWatch / Cloud Operations** 雲原生全 stack（含 traces / profiler）；**Sentry** 專精 error tracking + 簡易 APM。
+
+選型判讀：缺哪個訊號 → 補對應 vendor；想 turnkey 全棧 → Datadog / cloud-native；想 OSS 全棧 → Grafana Stack；error tracking 已有 → Sentry / Bugsnag 補強。
+
+### 採集模式
+
+採集模式影響部署複雜度跟 instrumentation 工作量。**OTel** 是 SDK + Collector 兩層；**Prometheus** 是 pull scrape（service discovery）；**Grafana Stack** 各 backend 模式不同（Loki push / Tempo OTLP / Mimir remote write）；**Datadog** Agent push；**Elastic** Beats / Logstash / Agent；**Honeycomb** SDK push 或 OTLP；**CloudWatch / Cloud Ops** 雲服務內建 + Agent；**Sentry** SDK push。
+
+選型判讀：服務在 K8s + 想自管 → Prometheus pull + Operator；應用層 push → OTel SDK + Collector；不想配 instrumentation → Datadog / cloud-native 自動。
+
+### 查詢語言
+
+查詢語言差異影響 dashboard / alert 設計成本。**Prometheus PromQL**（業界 metrics query 標準）；**Grafana** 支援 PromQL（Mimir）/ LogQL（Loki）/ TraceQL（Tempo）；**Datadog** 自家 query syntax；**Elastic** KQL / Lucene / ES DSL / ES|QL；**Honeycomb** point-and-click + 簡單 query；**CloudWatch** Logs Insights syntax；**Cloud Ops** 類似但 GCP-specific；**Sentry** 是 issue filter、不算 query language。
+
+選型判讀：跨 vendor 統一 → 學 PromQL + LogQL（Grafana 通用）；vendor-specific → 依該 vendor 學；OTel 不解決 query 問題（純 instrumentation 標準）。
+
+### Cardinality 處理
+
+Cardinality 是 observability 成本跟可用性的關鍵。**Prometheus** 受限（series 爆炸會 OOM）；**Datadog** custom metrics 計費 per dimension；**CloudWatch / Cloud Ops** metrics 計費 per metric；**Elastic** mapping field limit；**Honeycomb** 設計目標就是 high-cardinality（events-based）；**Grafana Stack** Mimir 多 tenant 各自 cardinality budget；**Sentry** 用 issue grouping 替代 cardinality 概念。
+
+選型判讀：high-cardinality 是核心需求（per-user / per-request debug）→ Honeycomb；中等 cardinality + 成本敏感 → Prometheus + 設計謹慎；任意 cardinality + 計費承擔 → Datadog。
+
+### 部署模式
+
+部署模式決定運維責任歸屬。**OTel** 是 standard、各 backend 各自部署；**Prometheus** OSS self-host；**Grafana Stack** OSS self-host / Grafana Cloud；**Datadog / Honeycomb / Sentry** SaaS（Sentry 有 self-host OSS）；**Elastic** OSS / Elastic Cloud / OpenSearch fork；**CloudWatch / Cloud Ops** 雲原生 managed。
+
+選型判讀：要極致控制 → self-host OSS；不想運維 → SaaS（Datadog / Honeycomb / Sentry）；已在 AWS / GCP → 雲原生 + 補強；混合模式 → OTel 抽象層 + 多 backend。
+
+### 成本模型
+
+成本模型差異大、容易誤判。**OTel** 本身無成本、取決下游 backend；**Prometheus** self-host CapEx（compute + storage）；**Grafana Stack** self-host CapEx 或 Grafana Cloud OpEx；**Datadog** hosts + signal 各自計費（容易堆疊）；**Elastic** self-host CapEx 或 Elastic Cloud；**Honeycomb** events volume；**CloudWatch / Cloud Ops** ingestion + API call；**Sentry** events / users / replays 計費。
+
+選型判讀：可預期固定成本 → self-host（CapEx）；流量不穩 → SaaS（OpEx + 預警）；多訊號類型 → Datadog 容易爆、Honeycomb 計費單純；AWS / GCP-only 場景 → 雲原生通常 cheaper than 第三方 SaaS。
+
+### 多雲 / 跨平台
+
+多雲決定 vendor 鎖定風險。**OTel** 是抽象層、最不 lock-in；**Prometheus / Grafana Stack / Elastic / Datadog / Honeycomb / Sentry** 都支援多雲；**CloudWatch** AWS-only；**Cloud Ops** GCP-only；**Azure Monitor** Azure-only（T2 候選）。
+
+選型判讀：多雲 → 避免 AWS / GCP-only vendor、用 Datadog / Grafana Stack / OTel + multi-backend；單一雲 → 雲原生通常成本最低；既有混合 → OTel 標準化 + 漸進遷移。
+
+### OTel 相容度
+
+OTel 相容度影響 vendor 切換成本。各 vendor 接受程度：
+
+- 完全相容（drop-in）：Honeycomb / Grafana Tempo / Cloud Trace（2.0+）
+- 接受但 feature 落後 vendor SDK：Datadog / CloudWatch（X-Ray 整合）/ Elastic APM
+- 跟 OTel 互補但設計不同：Prometheus（exporter pattern）/ Sentry（OTel context）
+
+選型判讀：未來想換 vendor → 從 day 1 用 OTel SDK；不換 vendor → vendor SDK 較深；多 backend dual ship → OTel 唯一可行。
+
 ## 撰寫批次
 
 | 批次 | 服務頁                                | 撰寫目的                                                  |
