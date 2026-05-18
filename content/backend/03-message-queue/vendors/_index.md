@@ -53,6 +53,45 @@ tags: ["backend", "message-queue", "vendor"]
 | 不在本頁內的主題     | 完整 client API、framework adapter、所有 broker plugin                    |
 | 案例回寫與下一步路由 | 回到 3.C cases、6.12 replay verification、8.19 decision log               |
 
+## 跨 vendor 議題對照
+
+橫向議題在不同 vendor 用不同旋鈕達成。本表把同一議題在 6 個 vendor 的對應位置列出、確保大綱不缺漏議題、且讀者跨 vendor 查找對照位置時有索引。
+
+| 議題               | Kafka                    | RabbitMQ                   | NATS                            | Redis Streams               | AWS SQS                  | Pub/Sub                 |
+| ------------------ | ------------------------ | -------------------------- | ------------------------------- | --------------------------- | ------------------------ | ----------------------- |
+| 多租戶配額 / 隔離  | quota + ACL              | vhost + user permission    | account + subject ACL           | Redis ACL                   | IAM policy               | IAM + Service Account   |
+| 跨區 / 全球交付    | MirrorMaker 2            | Federation / Shovel        | Supercluster + Leaf node        | Redis Cluster（受限）       | Cross-region replication | 內建 global routing     |
+| Topic 生命週期治理 | TopicGC、auto-cleanup    | vhost / queue lifecycle    | Stream lifecycle                | MAXLEN / XTRIM              | DLQ + redrive policy     | Subscription expiration |
+| 自動修復           | Self-healing automation  | cluster_partition_handling | JetStream raft                  | Sentinel / Cluster failover | managed 內建             | managed 內建            |
+| Delivery 機制      | acks + idempotence + ISR | manual ack + DLX           | JetStream ack + AckWait         | XACK + XCLAIM + PEL         | visibility timeout + DLQ | ack deadline + DLT      |
+| 路由模型           | partition + key          | exchange + routing key     | subject + wildcard              | stream key（無 partition）  | queue URL                | topic + subscription    |
+| 持久化模型         | log + retention policy   | durable queue + TTL        | JetStream storage               | append-only log（RAM）      | managed durable          | managed durable         |
+| Schema 治理        | Schema Registry          | （無原生）                 | （無原生、靠 JSON Schema 慣例） | （無）                      | （無）                   | Schema enforcement      |
+| 主討論案例         | C1/C3/C4/C6/C7           | 待補（C9/C10 通用）        | 待補（C8/C10 通用）             | C5 / C10 通用               | C2 反面 / C8 / C10       | C8 / C10                |
+
+對照表的用途有三：
+
+- 寫某 vendor 頁時、檢查橫向議題是否都有對應的進階主題子段、避免缺漏
+- 讀者在 vendor 間遷移時、知道對應旋鈕在另一個 vendor 叫什麼
+- 補案例時、看哪幾個 vendor 案例稀薄（RabbitMQ / NATS / Redis Streams / Pub/Sub）、優先補
+
+## 服務頁大綱對齊
+
+6 個 vendor 頁套同樣的章節結構、方便讀者跨 vendor 跳讀。對齊參考 [LLM 模組 1.0 Ollama](/llm/01-local-llm-services/ollama/) 的「觀念 → 原理 → 操作指令」分層寫法：
+
+1. **服務定位**（段首段、3 個責任 + 設計取捨）
+2. **本章目標**（5 條可驗證能力 checklist）
+3. **最短路徑**（5 分鐘可跑通的 install + verify、bash 範例 placeholder）
+4. **日常操作與決策形狀**（CLI / API、路由設計、ack 策略三個子段）
+5. **進階主題**（按需閱讀、每子段對應一個 case 或 vendor 專長議題）
+6. **排錯快速判讀**（每情境：操作原則 + 指令 + 解法）
+7. **何時改走其他服務**（對照表）
+8. **不在本頁內的主題**（明確邊界）
+9. **案例回寫**（cases/ 引用 + 主討論議題）
+10. **下一步路由**（上游概念 / 平行 vendor / 下游能力）
+
+每個章節「要回答的問題」「要包含的指令範例 placeholder」「對應 case」都已寫在各 vendor 頁的大綱、但未寫實際正文 — 等到撰寫批次（見下節）開始時才展開。
+
 ## 撰寫批次
 
 | 批次 | 服務頁                      | 撰寫目的                                                          |
