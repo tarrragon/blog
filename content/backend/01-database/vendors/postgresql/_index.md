@@ -203,17 +203,48 @@ PostgreSQL 沒有「vendor 給的容量數字」、要靠 instance 配置 + tuni
 - GIN / GiST 對 JSON / full-text / GIS
 - index 太多會拖累寫入、定期 review 未用 index（pg_stat_user_indexes）
 
-## 預計實作話題（後續擴充）
+## Deep article + Migration playbook（已完成）
 
-- pgBouncer / PgCat 配置 best practice
-- streaming replication + Patroni HA 部署
-- Logical decoding 跟 Debezium CDC
-- 從 PostgreSQL 升級到 Aurora 的遷移流程
-- Schema migration 工具對比（Flyway / Liquibase / golang-migrate / Atlas）
-- Index 選型決策樹
-- Vacuum / autovacuum tuning
-- Partitioning 設計（range / list / hash）
-- Foreign data wrapper（query 跨 DB）
+| 主題                                                  | 文章                                                          | 類型                         |
+| ----------------------------------------------------- | ------------------------------------------------------------- | ---------------------------- |
+| Streaming replication topology + LSN + slot           | [replication-topology](replication-topology/)                 | Deep article                 |
+| pg_repack / pg-osc 跟 PG 內建 ALTER 行為              | [online-schema-change](online-schema-change/)                 | Deep article                 |
+| Connection-per-process model + pooler 必要性          | [connection-scaling](connection-scaling/)                     | Deep article                 |
+| pgBouncer + PgCat connection pool                     | [pgbouncer-config](pgbouncer-config/)                         | Deep article                 |
+| Patroni HA + DCS-based failover                       | [patroni-ha](patroni-ha/)                                     | Deep article                 |
+| Autovacuum tuning + bloat 治理                        | [autovacuum-tuning](autovacuum-tuning/)                       | Deep article                 |
+| Logical replication + Debezium CDC                    | [logical-replication-debezium](logical-replication-debezium/) | Deep article                 |
+| Citus distributed extension                           | [citus-distributed](citus-distributed/)                       | Deep article                 |
+| BDR / pgEdge / Bucardo multi-master                   | [bdr-multi-master](bdr-multi-master/)                         | Deep article                 |
+| MVCC + lock model（PG 並行控制核心）                  | [mvcc-lock-model](mvcc-lock-model/)                           | Deep article                 |
+| EXPLAIN / auto_explain / pg_hint_plan                 | [query-optimization](query-optimization/)                     | Deep article                 |
+| Index method 選型決策樹（B-tree / GIN / GiST / BRIN） | [index-selection](index-selection/)                           | Deep article                 |
+| Declarative partitioning + pg_partman                 | [declarative-partitioning](declarative-partitioning/)         | Deep article                 |
+| JSONB binary storage + GIN index                      | [jsonb-deep-dive](jsonb-deep-dive/)                           | Deep article                 |
+| Full-text search（tsvector + pg_trgm）                | [full-text-search](full-text-search/)                         | Deep article                 |
+| Extension ecosystem（pgvector / TimescaleDB 等）      | [extension-ecosystem](extension-ecosystem/)                   | Deep article                 |
+| TimescaleDB hypertable + CAGG + compression           | [timescaledb-deep-dive](timescaledb-deep-dive/)               | Deep article                 |
+| pgvector HNSW / IVFFlat ANN search                    | [pgvector-deep-dive](pgvector-deep-dive/)                     | Deep article                 |
+| PostGIS geometry / geography + GiST                   | [postgis-deep-dive](postgis-deep-dive/)                       | Deep article                 |
+| PITR + WAL archiving                                  | [pitr-wal-archiving](pitr-wal-archiving/)                     | Deep article                 |
+| Replication slot management（含 PG 17 failover slot） | [replication-slot-management](replication-slot-management/)   | Deep article                 |
+| SQL features baseline + MySQL 對比                    | [sql-features-baseline](sql-features-baseline/)               | Deep article                 |
+| Major version upgrade（N → N+1 pg_upgrade）           | [major-version-upgrade](major-version-upgrade/)               | Migration playbook（Type E） |
+| → Aurora PostgreSQL                                   | [migrate-to-aurora](migrate-to-aurora/)                       | Migration playbook（Type C） |
+| → Aurora DSQL（PG wire-compat distributed）           | [migrate-to-aurora-dsql](migrate-to-aurora-dsql/)             | Migration playbook（Type E） |
+| → CockroachDB                                         | [migrate-to-cockroachdb](migrate-to-cockroachdb/)             | Migration playbook（Type E） |
+| Multi-region + GDPR rollout                           | [multi-region-gdpr-rollout](multi-region-gdpr-rollout/)       | Migration playbook（Type F） |
+| Partition redesign                                    | [partition-redesign](partition-redesign/)                     | Migration playbook（Type F） |
+
+## 後續擴充候選
+
+當前 21 deep article + 6 migration playbook 已 cover replication / HA / OSC / connection / CDC / sharding / multi-master / MVCC / query opt / index / partitioning / JSONB / FTS / extension（含 TimescaleDB / pgvector / PostGIS）/ backup / slot / SQL features / upgrade / migration 21 大維度。下一階段擴充方向：
+
+- **Logical decoding plugins deep dive**：wal2json / pgoutput / decoderbufs 對位、CDC pipeline 整合
+- **pg_partman advanced**：retention 跟 child partition 自動 management
+- **Connection pooler comparison**：PgBouncer vs Pgcat vs Odyssey 細部對比
+- **Aurora I/O-Optimized vs standard**：cost model 取捨
+- **AlloyDB / Cloud SQL 比較**：GCP managed PG 選型
 
 ## 案例對照
 
