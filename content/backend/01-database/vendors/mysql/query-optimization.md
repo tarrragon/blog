@@ -407,5 +407,7 @@ Production 持續 monitor：
 - [MySQL InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)（buffer pool 對 plan estimate）
 - [MySQL ProxySQL 配置](/backend/01-database/vendors/mysql/proxysql-config/)（query rewrite 整合）
 - [MySQL Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/)（add index 走 OSC）
+- [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)（PG sibling、EXPLAIN ANALYZE / pg_hint_plan / auto_explain 三層工具）
+- [PostgreSQL Index Selection](/backend/01-database/vendors/postgresql/index-selection/)（B-tree / GIN / GiST / BRIN 決策樹 vs MySQL B-tree only）
 - [PostgreSQL vendor page](/backend/01-database/vendors/postgresql/)（EXPLAIN ANALYZE 對比）
 - 官方：[MySQL Optimization](https://dev.mysql.com/doc/refman/8.0/en/optimization.html) / [Optimizer Hints](https://dev.mysql.com/doc/refman/8.0/en/optimizer-hints.html)

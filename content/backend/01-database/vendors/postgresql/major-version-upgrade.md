@@ -2,7 +2,7 @@
 title: "PostgreSQL major version upgrade (14 → 17)：為什麼這篇不套 5 type migration"
 date: 2026-05-19
 description: "PostgreSQL major version upgrade 是 *5 type 漏類* 的實證 — source/target 同 vendor、5 維度都 Low 但 *upgrade-specific audit* 是核心；本文結構接近 deep article methodology 的 6-section + 額外 upgrade audit 段；涵蓋 pg_upgrade / logical replication / blue-green 三方法、extension 相容性、5 production 踩雷"
-weight: 16
+weight: 40
 tags: ["backend", "database", "postgresql", "version-upgrade", "deep-article"]
 ---
 
@@ -12,13 +12,13 @@ tags: ["backend", "database", "postgresql", "version-upgrade", "deep-article"]
 
 跑 [diff dimension audit](/report/content-structure-by-max-diff-dimension/) 對 PostgreSQL 14 → 17：
 
-| 維度                 | 評估                                                  | 等級 |
-| -------------------- | ----------------------------------------------------- | ---- |
-| Schema / API         | 同 PostgreSQL wire protocol、SQL syntax 99%+ 相容    | Low  |
-| Operational model    | 同 PostgreSQL operational stack、tooling 不變         | Low  |
-| Abstraction / paradigm | 同 OLTP RDBMS                                       | Low  |
-| Number of components | 同 1 個                                              | Low  |
-| Application change   | 多數 application 不改                                | Low  |
+| 維度                   | 評估                                              | 等級 |
+| ---------------------- | ------------------------------------------------- | ---- |
+| Schema / API           | 同 PostgreSQL wire protocol、SQL syntax 99%+ 相容 | Low  |
+| Operational model      | 同 PostgreSQL operational stack、tooling 不變     | Low  |
+| Abstraction / paradigm | 同 OLTP RDBMS                                     | Low  |
+| Number of components   | 同 1 個                                           | Low  |
+| Application change     | 多數 application 不改                             | Low  |
 
 5 維皆 Low — 對映 Type B drop-in。但 *實際工作量* 跟 drop-in 完全不同：
 
@@ -122,11 +122,11 @@ major version upgrade 後：
 
 三種主流方法、依 downtime 容忍跟 DB 大小：
 
-| 方法                  | Downtime         | 風險                                              | 適用                                  |
-| --------------------- | ---------------- | ------------------------------------------------- | ------------------------------------- |
-| `pg_upgrade --link`   | 10-30 分鐘       | data dir 跟 OS package 同 host、回退複雜          | < 500GB、可接受 30 分鐘 downtime      |
-| Logical replication   | 切換瞬間（< 1 分鐘）| 設定複雜、long-running migration window           | TB 級、低 downtime 需求               |
-| Blue-green deployment | 切換瞬間         | 雙倍硬體、cutover 期間需嚴格 traffic shifting     | Cloud-managed（Aurora / RDS 內建）   |
+| 方法                  | Downtime             | 風險                                          | 適用                               |
+| --------------------- | -------------------- | --------------------------------------------- | ---------------------------------- |
+| `pg_upgrade --link`   | 10-30 分鐘           | data dir 跟 OS package 同 host、回退複雜      | < 500GB、可接受 30 分鐘 downtime   |
+| Logical replication   | 切換瞬間（< 1 分鐘） | 設定複雜、long-running migration window       | TB 級、低 downtime 需求            |
+| Blue-green deployment | 切換瞬間             | 雙倍硬體、cutover 期間需嚴格 traffic shifting | Cloud-managed（Aurora / RDS 內建） |
 
 ### `pg_upgrade --link` 流程
 
@@ -226,12 +226,12 @@ Patroni HA 環境：用 *rolling upgrade* — 先升 sync standby、failover 過
 
 ## Capacity / downtime trade-off
 
-| 方法                  | Downtime 估算（500GB DB）        | 硬體成本                            | 風險       |
-| --------------------- | -------------------------------- | ----------------------------------- | ---------- |
-| `pg_upgrade --link`   | 15-30 分鐘（含 ANALYZE 1st stage）| 同當前                              | 高（不可逆）|
-| `pg_upgrade --clone`  | 1-3 小時                          | 暫時 2x storage                     | 中         |
-| Logical replication   | < 1 分鐘 cutover                  | 暫時 2x compute + storage           | 中（複雜）|
-| Blue-green            | 切換瞬間（< 30 秒）               | 持續 2x（cutover 後可拆）           | 低（cloud managed）|
+| 方法                 | Downtime 估算（500GB DB）          | 硬體成本                  | 風險                |
+| -------------------- | ---------------------------------- | ------------------------- | ------------------- |
+| `pg_upgrade --link`  | 15-30 分鐘（含 ANALYZE 1st stage） | 同當前                    | 高（不可逆）        |
+| `pg_upgrade --clone` | 1-3 小時                           | 暫時 2x storage           | 中                  |
+| Logical replication  | < 1 分鐘 cutover                   | 暫時 2x compute + storage | 中（複雜）          |
+| Blue-green           | 切換瞬間（< 30 秒）                | 持續 2x（cutover 後可拆） | 低（cloud managed） |
 
 實務 default：
 

@@ -82,9 +82,11 @@ PG 17 加 *failover slot synchronization*：
 
 ```sql
 -- PG 17+：標 slot 為 failover-tracked
-SELECT pg_create_logical_replication_slot('my_slot', 'pgoutput', false, true);
---                                                                   ↑
---                                                              failover=true
+-- signature: pg_create_logical_replication_slot(slot_name, plugin, temporary, two_phase, failover)
+SELECT pg_create_logical_replication_slot('my_slot', 'pgoutput', false, false, true);
+--                                                                          ↑
+--                                                                     failover=true（第 5 個參數）
+-- 注意：第 4 個參數是 two_phase（這裡 false）、第 5 個才是 failover
 
 -- Standby 上 enable sync_replication_slots
 ALTER SYSTEM SET sync_replication_slots = on;
@@ -225,7 +227,7 @@ Production 大 cluster 多 slot、命名 convention 重要：
 
 - [Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)：physical slot 給 streaming replication 用
 - [Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)：logical slot 給 CDC
-- [BDR / Multi-Master](/backend/01-database/vendors/postgresql/bdr-multi-master.md)：multi-master 大量用 logical slot
+- [BDR / Multi-Master](/backend/01-database/vendors/postgresql/bdr-multi-master/)：multi-master 大量用 logical slot
 - [PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/)：WAL archive 跟 slot 是兩種 WAL retention 機制、可並行
 
 ## 監控 metric
@@ -245,6 +247,6 @@ Production 持續監控：
 - [PostgreSQL vendor overview](/backend/01-database/vendors/postgresql/)
 - [PG Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)（physical slot 用途）
 - [PG Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)（logical slot 用途）
-- [PG BDR / Multi-Master](/backend/01-database/vendors/postgresql/bdr-multi-master.md)（multi-master 大量 slot）
+- [PG BDR / Multi-Master](/backend/01-database/vendors/postgresql/bdr-multi-master/)（multi-master 大量 slot）
 - [PG PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/)（WAL retention 兩種機制）
 - 官方：[PG Replication Slots](https://www.postgresql.org/docs/current/warm-standby.html#STREAMING-REPLICATION-SLOTS) / [Logical Replication Slot](https://www.postgresql.org/docs/current/logicaldecoding.html)

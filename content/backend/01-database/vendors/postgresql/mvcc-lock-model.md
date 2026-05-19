@@ -118,12 +118,12 @@ PG SSI 對 *寫入吞吐影響低*（不 pre-lock）、但 *transaction rollback
 
 PG 預設 READ COMMITTED、跟 MySQL InnoDB 預設 REPEATABLE READ 不同：
 
-| Isolation        | PG 行為                                           | MySQL InnoDB 對應      |
-| ---------------- | ------------------------------------------------- | ---------------------- |
-| READ UNCOMMITTED | PG 視為 READ COMMITTED（不真的支援 dirty read）   | MySQL 真支援           |
-| READ COMMITTED   | 每 statement 看當下 committed snapshot（PG 預設） | 一致                   |
-| REPEATABLE READ  | Transaction 內 fixed snapshot（PG 用 MVCC 達成）  | MySQL 用 gap lock 達成 |
-| SERIALIZABLE     | SSI、commit 時偵測 anomaly                        | MySQL 強 lock + gap    |
+| Isolation        | PG 行為                                           | MySQL InnoDB 對應                                                                                                                              |
+| ---------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| READ UNCOMMITTED | PG 視為 READ COMMITTED（不真的支援 dirty read）   | MySQL 真支援                                                                                                                                   |
+| READ COMMITTED   | 每 statement 看當下 committed snapshot（PG 預設） | 一致                                                                                                                                           |
+| REPEATABLE READ  | Transaction 內 fixed snapshot（純 MVCC）          | MVCC snapshot + gap lock 防 phantom（兩者都 MVCC、差在 phantom 防護機制：PG 靠 snapshot version visibility、InnoDB 加 gap lock pre-lock 範圍） |
+| SERIALIZABLE     | SSI、commit 時偵測 anomaly                        | 強 lock + gap                                                                                                                                  |
 
 **對 application code 含意**：
 

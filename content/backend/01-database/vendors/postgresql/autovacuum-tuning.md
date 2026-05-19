@@ -2,7 +2,7 @@
 title: "PostgreSQL autovacuum tuning：為什麼你的 autovacuum 永遠追不上 bloat"
 date: 2026-05-18
 description: "MVCC 怎麼產生 dead tuple、autovacuum cost-based throttle 為什麼預設保守、per-table tuning 怎麼設、5 個 production 踩雷（cost_limit 太低 / 長 transaction blocks vacuum / anti-wraparound 在 peak / partition vacuum 滿 worker / index bloat 沒處理）、跟 partitioning + monitoring 整合"
-weight: 12
+weight: 32
 tags: ["backend", "database", "postgresql", "autovacuum", "vacuum", "performance", "deep-article"]
 ---
 
@@ -135,14 +135,14 @@ ALTER TABLE audit_log SET (
 
 vacuum capacity 用 *跟得上 dead tuple 產生速度* 衡量：
 
-| 維度                            | 估算方式                                                            | 警戒                                         |
-| ------------------------------- | ------------------------------------------------------------------- | -------------------------------------------- |
-| dead tuple 產生 rate            | `UPDATE/s + DELETE/s + ~10% INSERT/s（HOT update miss）`            | 跟 vacuum rate 對比                          |
-| vacuum 處理 rate                | `cost_limit / cost_delay × page_size`、~MB/s 數量級                  | 跟 dead tuple rate 對比                      |
-| autovacuum_max_workers          | partition 數 + hot table 數 / 3-5                                   | 100+ partition 必須拉 worker                 |
-| maintenance_work_mem            | 1-2GB / vacuum worker                                                | 全 worker 跑時的記憶體上限要 sizing          |
-| anti-wraparound 觸發頻率        | 預設 200M xid、write-heavy ~ 1-2 週觸發一次                          | 拉到 1B 後 ~ 2-3 月一次                      |
-| Bloat ratio                     | `pg_stat_user_tables.n_dead_tup / n_live_tup`                       | > 50% 表示 vacuum 追不上                     |
+| 維度                     | 估算方式                                                 | 警戒                                |
+| ------------------------ | -------------------------------------------------------- | ----------------------------------- |
+| dead tuple 產生 rate     | `UPDATE/s + DELETE/s + ~10% INSERT/s（HOT update miss）` | 跟 vacuum rate 對比                 |
+| vacuum 處理 rate         | `cost_limit / cost_delay × page_size`、~MB/s 數量級      | 跟 dead tuple rate 對比             |
+| autovacuum_max_workers   | partition 數 + hot table 數 / 3-5                        | 100+ partition 必須拉 worker        |
+| maintenance_work_mem     | 1-2GB / vacuum worker                                    | 全 worker 跑時的記憶體上限要 sizing |
+| anti-wraparound 觸發頻率 | 預設 200M xid、write-heavy ~ 1-2 週觸發一次              | 拉到 1B 後 ~ 2-3 月一次             |
+| Bloat ratio              | `pg_stat_user_tables.n_dead_tup / n_live_tup`            | > 50% 表示 vacuum 追不上            |
 
 實務 default：
 
@@ -198,5 +198,5 @@ VACUUM FREEZE 在 backup 前跑能減少 backup size（freeze tuple 不需要 sp
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 上游 chapter：[High Concurrency Access](/backend/01-database/high-concurrency-access/) — vacuum 是 concurrency 治理一環
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/)
+- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [Declarative Partitioning](/backend/01-database/vendors/postgresql/declarative-partitioning/) / [MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)（為什麼會有 dead tuple、跟 lock 互動）
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

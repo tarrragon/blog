@@ -148,9 +148,9 @@ LIMIT 10;
 但這裡有個 *pgvector 的踩雷*：filter 跟 ANN index 互動有兩種模式：
 
 1. **Pre-filter**（planner 選）：先 filter 出符合條件的 row、再對 subset 跑 vector ordering → 不用 ANN index、可能慢
-2. **Post-filter**（pgvector 0.5+ iterative scan）：用 ANN index 找 top-N、再 filter、可能 N 不夠補
+2. **Post-filter**：用 ANN index 找 top-N、再 filter、可能 N 不夠補
 
-PG 17 + pgvector 0.7+ 支援 *iterative index scan*：HNSW 一邊掃 graph 一邊 filter、效能比 pre-filter 好 5-10x。
+pgvector 0.8+（2024-10 release）加入 *iterative index scan*：HNSW / IVFFlat 一邊掃 graph 一邊 filter、效能比 pre-filter 好 5-10x。0.7+（2024-07）加 halfvec / binary quantization / parallel HNSW build。
 
 實務：filter selectivity 高（< 10%）時、考慮對 filter column 加 index 走 pre-filter；selectivity 低（> 50%）走 iterative scan。
 
@@ -236,7 +236,7 @@ SET max_parallel_maintenance_workers = 7;
 
 - `EXPLAIN` 看 planner 選 pre-filter 還是 vector-first
 - 對 `user_id` 加 B-tree index、強 planner pre-filter（hint 不容易、用 statistics）
-- pgvector 0.7+ 用 iterative scan、自動處理
+- pgvector 0.8+ 用 iterative scan、自動處理
 - 設計 schema：高選擇性 filter（user_id）建議走 pre-filter；低選擇性（category）走 iterative
 
 ### Case 5：Memory budget 沒抓
@@ -273,10 +273,12 @@ SET max_parallel_maintenance_workers = 7;
 
 **選專業 vector DB 的場景**：
 
-- Vector 量 > 100M
+- Vector 量 > 5-20M（依 dim / QPS / recall 要求、pgvector 在這個級別 + 高 QPS 已開始痛、不必撐到 100M 才換）
 - 純 vector workload（沒 relational integration）
 - 需要 multi-tenant SaaS
 - Throughput 要求極高（> 10K QPS）
+- 不想自管 HNSW build / memory budget / recall drift（managed Pinecone 把這層 ops 轉嫁、cost 換 ops 時間）
+- 需要 dim > 2000（pgvector vector type 限制、halfvec 可到 4000、再大需 dimension reduction）
 
 ## 相關連結
 

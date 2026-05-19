@@ -333,6 +333,8 @@ Window function / CTE / JSON_TABLE 的 query *結果* replicate（row-level binl
 - [InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)（JSON column 對 buffer pool 影響）
 - [Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/)（JSON column 大表 ALTER）
 - [Replication Topology](/backend/01-database/vendors/mysql/replication-topology/)（ROW-format binlog 對 window function）
+- [PostgreSQL SQL Features Baseline](/backend/01-database/vendors/postgresql/sql-features-baseline/)（PG 反向視角、哪些特性 PG 早 5-15 年、MySQL 8.0 補齊後 PG 仍領先）
+- [PostgreSQL JSONB Deep Dive](/backend/01-database/vendors/postgresql/jsonb-deep-dive/)（PG sibling、binary storage + GIN index 跟 MySQL JSON_TABLE 對比）
 - [PostgreSQL vendor page](/backend/01-database/vendors/postgresql/)（JSON / SQL feature 對比 source）
 - [MongoDB vendor page](/backend/01-database/vendors/mongodb/)（document-heavy workload 替代）
 - 官方：[MySQL 8.0 What's New](https://dev.mysql.com/doc/refman/8.0/en/mysql-nutshell.html)

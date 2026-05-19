@@ -343,6 +343,7 @@ Production 持續 monitor：
 - [MySQL InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)（lock_wait_timeout）
 - [MySQL Group Replication](/backend/01-database/vendors/mysql/group-replication/)（cert vs lock）
 - [MySQL Online Schema Change](/backend/01-database/vendors/mysql/online-schema-change-tools/)（metadata lock）
+- [PostgreSQL MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)（PG sibling、為什麼 PG 比 MySQL 少 deadlock — pure MVCC vs MVCC + gap lock）
 - [PostgreSQL vendor page](/backend/01-database/vendors/postgresql/)（MVCC vs lock model）
 - [Isolation Level 卡片](/backend/knowledge-cards/isolation-level/)
 - 官方：[InnoDB Locking](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html)

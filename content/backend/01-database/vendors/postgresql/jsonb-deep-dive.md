@@ -263,7 +263,7 @@ JSONB query 的 planner 行為：
 
 ### 跟 SQL Features Baseline
 
-JSONB 是 PG 結構性領先特性之一、詳見 [SQL Features Baseline](/backend/01-database/vendors/postgresql/sql-features-baseline.md)。
+JSONB 是 PG 結構性領先特性之一、詳見 [SQL Features Baseline](/backend/01-database/vendors/postgresql/sql-features-baseline/)。
 
 ### 跟 MVCC + Lock Model
 
@@ -288,7 +288,7 @@ PG JSONB GIN 是 *結構性領先*、MySQL 短期內難對應。詳見 [MySQL Mo
 ## 相關連結
 
 - [PostgreSQL vendor overview](/backend/01-database/vendors/postgresql/)
-- [PG SQL Features Baseline](/backend/01-database/vendors/postgresql/sql-features-baseline.md)（JSONB 是 PG 結構領先之一）
+- [PG SQL Features Baseline](/backend/01-database/vendors/postgresql/sql-features-baseline/)（JSONB 是 PG 結構領先之一）
 - [PG Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)（JSONB index 用對）
 - [PG MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)（JSONB update 跟 MVCC）
 - [MySQL Modern SQL Features](/backend/01-database/vendors/mysql/modern-sql-features/)（JSON_TABLE vs JSONB 對比）

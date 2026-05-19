@@ -325,6 +325,7 @@ Aurora 跟 Vitess 是 *不同 scale 路徑*：
 - [MySQL Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/)（Vitess 不用 gh-ost / pt-osc）
 - [MySQL ProxySQL 配置](/backend/01-database/vendors/mysql/proxysql-config/)（Vitess 取代 ProxySQL）
 - [MySQL Orchestrator failover](/backend/01-database/vendors/mysql/orchestrator-failover/)（VTOrc fork）
+- [PostgreSQL Citus Distributed](/backend/01-database/vendors/postgresql/citus-distributed/)（PG sibling、coordinator + worker 模型 vs Vitess VTGate + tablet）
 - [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)（Vitess vs CockroachDB vs Spanner）
 - [Partition 卡片](/backend/knowledge-cards/partition/)（sharding 跟 partitioning 對比）
 - 官方：[Vitess Documentation](https://vitess.io/docs/) / [Vitess Operator](https://github.com/planetscale/vitess-operator)

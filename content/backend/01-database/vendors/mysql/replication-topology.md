@@ -278,8 +278,10 @@ Maxwell（Zendesk 出品、MySQL-only）跟 Debezium（Red Hat、MySQL / PG / Mo
 ## 相關連結
 
 - [MySQL vendor overview](/backend/01-database/vendors/mysql/)
+- [PostgreSQL Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)（PG sibling、streaming + LSN + slot 機制 vs MySQL binlog 對位）
 - [PostgreSQL Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/)（PG sibling、不同 HA 機制）
 - [PostgreSQL Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)（PG CDC sibling、不同 replication 抽象層）
+- [PostgreSQL Replication Slot Management](/backend/01-database/vendors/postgresql/replication-slot-management/)（PG slot 治理、MySQL 無對應概念）
 - [Aurora vendor page](/backend/01-database/vendors/aurora/)（managed MySQL、replication 交給 storage layer）
 - [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)（transaction 行為跟 replication 互動）
 - [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) / [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)（替代路徑）

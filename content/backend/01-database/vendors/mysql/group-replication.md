@@ -246,6 +246,7 @@ Member 跨 region：*不推薦*。GR 對 latency 敏感、跨 region 50-200ms RT
 - [MySQL Orchestrator Failover](/backend/01-database/vendors/mysql/orchestrator-failover/)（GR / InnoDB Cluster 不必 Orchestrator）
 - [MySQL ProxySQL 配置](/backend/01-database/vendors/mysql/proxysql-config/)（routing layer 對比）
 - [MySQL InnoDB Tuning](/backend/01-database/vendors/mysql/innodb-tuning/)（GR durability 需求）
+- [PostgreSQL BDR / Multi-Master](/backend/01-database/vendors/postgresql/bdr-multi-master/)（PG sibling、active-active 寫入 3 種路徑跟 conflict 治理）
 - [PostgreSQL Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/)（PG sibling、不同 consensus）
 - [quorum 卡片](/backend/knowledge-cards/quorum/) / [Paxos / Raft 對比](/backend/knowledge-cards/quorum/)
 - 官方：[MySQL Group Replication](https://dev.mysql.com/doc/refman/8.0/en/group-replication.html) / [InnoDB Cluster](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-innodb-cluster.html)

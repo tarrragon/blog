@@ -2,7 +2,7 @@
 title: "PostgreSQL Multi-Region GDPR Rollout：政策驅動的 migration 屬本 methodology 嗎"
 date: 2026-05-19
 description: "PostgreSQL 單 region → multi-region 同時滿足 GDPR EU residency 是 *政策驅動* 兼 *topology 變動* 兼 *operational redesign* 的多軸 migration；驗證 [#128](/report/data-topology-as-audit-dimension/) self-aware limitation 提出的 residency axis 候選 — residency 是 driver 還是獨立 audit 軸；涵蓋 logical replication 配 GDPR / 5 個 production 踩雷 / cross-region cost"
-weight: 18
+weight: 45
 tags: ["backend", "database", "postgresql", "multi-region", "gdpr", "residency", "migration", "axis-candidate"]
 ---
 
@@ -24,14 +24,14 @@ GDPR 對 PostgreSQL multi-region rollout 的影響在三個層次：
 
 跑 [6 維 diff dimension audit](/report/content-structure-by-max-diff-dimension/) 對「single us-east → us-east + eu-west」：
 
-| 維度                 | 評估                                              | 等級     |
-| -------------------- | ------------------------------------------------- | -------- |
-| Schema / API         | 同 PostgreSQL、可能加 region column               | Low      |
-| Operational model    | HA / backup / monitoring 跨 region 重設計          | **High** |
-| Paradigm             | 同 OLTP RDBMS                                    | Low      |
-| Components           | 同 PostgreSQL instance + Patroni                 | Low      |
-| Application change   | Routing logic by user region、必改                | Medium   |
-| Data topology        | Single → multi-region replication                | **High** |
+| 維度                   | 評估                                                 | 等級     |
+| ---------------------- | ---------------------------------------------------- | -------- |
+| Schema / API           | 同 PostgreSQL、可能加 region column                  | Low      |
+| Operational model      | HA / backup / monitoring 跨 region 重設計            | **High** |
+| Paradigm               | 同 OLTP RDBMS                                        | Low      |
+| Components             | 同 PostgreSQL instance + Patroni                     | Low      |
+| Application change     | Routing logic by user region、必改                   | Medium   |
+| Data topology          | Single → multi-region replication                    | **High** |
 | **Residency contract** | **EU 資料禁止離開 EU、log + replication 範圍受約束** | **High** |
 
 6 維 audit 抓不到「Residency contract = High」這軸。用既有 6 維歸類、會走 Type F multi-axis（topology + operational + application change 多 High）+ 政策合規補強段；但這個歸類 *漏掉合規對 topology / operational / application 的反向約束*：
@@ -109,18 +109,18 @@ Residency rule → Application constraint:
 
 10 step、跨 5 個月：
 
-| Phase    | Step                                          | 對應 6 維 / 合規           |
-| -------- | --------------------------------------------- | -------------------------- |
-| 0 Pre-migration | 1. DPIA（Data Protection Impact Assessment） | Compliance pre-requisite  |
-| 0        | 2. 法務 review 跨境傳輸 agreement              | Compliance               |
-| 1 Setup  | 3. EU PostgreSQL cluster build + Patroni      | Operational + Topology   |
-| 1        | 4. EU KMS + audit log + monitoring stack       | Operational + Residency  |
-| 2 Data   | 5. Logical replication 設 filter（exclude EU table from us-east）| Topology + Residency |
-| 2        | 6. Initial sync EU table 到 EU cluster        | Topology                 |
-| 3 App    | 7. Application 端加 region detection + routing | Application change       |
-| 3        | 8. Cross-region query banning（cross-region join 拒絕 EU table）| Application + Residency |
-| 4 Verify | 9. Compliance audit + evidence package         | Residency                |
-| 4        | 10. DPO sign-off + DR drill                    | Residency + Operational  |
+| Phase           | Step                                                              | 對應 6 維 / 合規         |
+| --------------- | ----------------------------------------------------------------- | ------------------------ |
+| 0 Pre-migration | 1. DPIA（Data Protection Impact Assessment）                      | Compliance pre-requisite |
+| 0               | 2. 法務 review 跨境傳輸 agreement                                 | Compliance               |
+| 1 Setup         | 3. EU PostgreSQL cluster build + Patroni                          | Operational + Topology   |
+| 1               | 4. EU KMS + audit log + monitoring stack                          | Operational + Residency  |
+| 2 Data          | 5. Logical replication 設 filter（exclude EU table from us-east） | Topology + Residency     |
+| 2               | 6. Initial sync EU table 到 EU cluster                            | Topology                 |
+| 3 App           | 7. Application 端加 region detection + routing                    | Application change       |
+| 3               | 8. Cross-region query banning（cross-region join 拒絕 EU table）  | Application + Residency  |
+| 4 Verify        | 9. Compliance audit + evidence package                            | Residency                |
+| 4               | 10. DPO sign-off + DR drill                                       | Residency + Operational  |
 
 Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
 
@@ -193,15 +193,15 @@ Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
 
 ## Capacity / cost
 
-| 維度                | Single region                 | Multi-region GDPR-compliant         |
-| ------------------- | ----------------------------- | ----------------------------------- |
-| Infrastructure cost | baseline                      | +60-100%（雙 cluster + cross-region replication） |
-| Operational FTE     | 0.5-1                         | 1-2 FTE（雙 region SRE + compliance） |
-| Compliance cost     | 0                             | $50-200K USD setup（DPIA / audit / DPO time）+ ongoing |
-| Egress cost         | Low                           | High（cross-region replication 流量） |
-| Application latency  | Single AZ                     | EU customer 連 EU、低；US customer 連 US、低 |
-| DR RTO              | 30 分鐘 (single region)        | EU regional 1 小時 / global 24-48 小時 |
-| Audit cost          | Minimal                       | 季度 DPIA + 年度 compliance audit    |
+| 維度                | Single region           | Multi-region GDPR-compliant                            |
+| ------------------- | ----------------------- | ------------------------------------------------------ |
+| Infrastructure cost | baseline                | +60-100%（雙 cluster + cross-region replication）      |
+| Operational FTE     | 0.5-1                   | 1-2 FTE（雙 region SRE + compliance）                  |
+| Compliance cost     | 0                       | $50-200K USD setup（DPIA / audit / DPO time）+ ongoing |
+| Egress cost         | Low                     | High（cross-region replication 流量）                  |
+| Application latency | Single AZ               | EU customer 連 EU、低；US customer 連 US、低           |
+| DR RTO              | 30 分鐘 (single region) | EU regional 1 小時 / global 24-48 小時                 |
+| Audit cost          | Minimal                 | 季度 DPIA + 年度 compliance audit                      |
 
 **判讀**：GDPR multi-region 成本 1.5-2.5x、但合規不是 cost optimization — 是 *必要 spend*；多數歐洲業務 7+ 年回本（避免 4% revenue fine）。
 

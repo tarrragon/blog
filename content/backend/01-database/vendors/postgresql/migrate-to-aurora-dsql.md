@@ -1,19 +1,23 @@
 ---
 title: "PostgreSQL → Aurora DSQL Migration：PG wire-compatible Distributed SQL 的 Paradigm Shift"
 date: 2026-05-19
-description: "Aurora DSQL（2024 GA）是 AWS 推的 PG wire-compatible *active-active distributed SQL*、跟 self-managed PG / Aurora PG 不同 paradigm（distributed transaction + multi-region strong consistency）。Migration 結構是 *protocol drop-in + paradigm shift*：app SQL 不太改、但 transaction retry / extension 缺位 / 多 region 一致性需重設計。本文走 DSQL vs Aurora PG vs self-managed PG 三軸對比、為什麼遷的三條 driver（global write / operational zero-touch / region resiliency）、Type E phased plan、5 production 踩雷（transaction retry 沒處理 / extension 缺位 / sequence 跟 distributed semantic / Aurora PG 直升 DSQL 不可行 / region failover semantic）、跟 PG → Aurora 跟 PG → CockroachDB 對比"
-weight: 19
+description: "Aurora DSQL（2024-12 re:Invent preview / 2025-05 GA）是 AWS 推的 PG wire-compatible *active-active distributed SQL*、跟 self-managed PG / Aurora PG 不同 paradigm（OCC + snapshot isolation + multi-region strong consistency）。Migration 結構是 *protocol drop-in + paradigm shift*：app SQL 不太改、但 transaction retry / extension 缺位 / 多 region 一致性需重設計。本文走 DSQL vs Aurora PG vs self-managed PG 三軸對比、為什麼遷的三條 driver（global write / operational zero-touch / region resiliency）、Type E phased plan、5 production 踩雷（transaction retry 沒處理 / extension 缺位 / sequence throughput 限制 / Aurora PG 直升 DSQL 不可行 / region failover semantic）、跟 PG → Aurora 跟 PG → CockroachDB 對比"
+weight: 42
 tags: ["backend", "database", "postgresql", "aurora-dsql", "migration", "distributed-sql", "cloud-managed"]
 ---
 
 > 本文是跨 vendor migration playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/)（source）跟 [Aurora](/backend/01-database/vendors/aurora/)（DSQL 也屬 Aurora family、但 paradigm 不同）。跟 [migrate-to-aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)（PG → Aurora PG、protocol drop-in + operational redesign）跟 [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/)（PG → CRDB、Type E paradigm shift）對照、本篇是 *Aurora 內 PG → DSQL 的 paradigm shift*。
 
+> **時間錨點**：Aurora DSQL 在 **2024-12 re:Invent preview**、**2025-05-27 GA**。本文 vendor claim 以 2025-2026 公開狀態為準、實際 migration 前請以 AWS docs 為準（feature 持續演進中）。
+
 ## 為什麼遷：Global Write / Operational Zero-touch / Region Resiliency 三條 driver
+
+PG → DSQL 不是「自然演進」、是 *application 需求超出 single-primary 模型* 時的 paradigm 換軌。三條典型 driver 各自對應一種 application 約束、不是「三選一」、而是「至少其中一條剛性、其他兩條是 bonus」：
 
 | Driver                     | 觸發場景                                                                                                     |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | **Global write**           | Application 需要多 region active-active write（不是 Aurora PG 的 single-writer + read replica）              |
-| **Operational zero-touch** | 不想管 Patroni / pgBouncer / autovacuum / failover / backup retention、Aurora PG 已減一半、DSQL 進一步零接觸 |
+| **Operational zero-touch** | 不想管 Patroni / PgBouncer / autovacuum / failover / backup retention、Aurora PG 已減一半、DSQL 進一步零接觸 |
 | **Region resiliency**      | 整 region 失效時應用無感切換（Aurora PG 是 cross-region replica 異步、DSQL 是 strong consistency 多 region） |
 
 反向 driver（DSQL → Aurora PG）也存在：
@@ -26,39 +30,41 @@ tags: ["backend", "database", "postgresql", "aurora-dsql", "migration", "distrib
 
 DSQL 是 PG wire-compatible（用 `psql` 連得上）、但內部是 *distributed SQL engine*：
 
-| 維度               | self-managed PG         | Aurora PG                       | Aurora DSQL                        |
-| ------------------ | ----------------------- | ------------------------------- | ---------------------------------- |
-| Wire protocol      | PG                      | PG                              | PG                                 |
-| Architecture       | Single primary          | Single primary + shared storage | **Active-active distributed**      |
-| Multi-region write | 不支援（async replica） | 不支援（async replica）         | **Strong consistency 多 region**   |
-| Transaction model  | MVCC + 2PL              | MVCC + 2PL                      | **Optimistic + retry**             |
-| Extension          | 任意                    | AWS whitelist                   | **無 extension 支援**              |
-| Operational        | 全部自管                | AWS 管 storage / failover       | AWS 管全部、零接觸                 |
-| Failover           | Patroni 15-60s          | Aurora 30s                      | 自動、無感（< 1s）                 |
-| Cost model         | Self-managed instance   | Instance hour + storage         | Per-request + multi-AZ replication |
+| 維度               | self-managed PG           | Aurora PG                       | Aurora DSQL                                 |
+| ------------------ | ------------------------- | ------------------------------- | ------------------------------------------- |
+| Wire protocol      | PG                        | PG                              | PG（subset）                                |
+| Architecture       | Single primary            | Single primary + shared storage | **Active-active distributed**               |
+| Multi-region write | 不支援（async replica）   | 不支援（async replica）         | **Strong consistency 多 region**            |
+| Transaction model  | MVCC + snapshot isolation | MVCC + snapshot isolation       | **OCC + strong snapshot isolation**         |
+| Extension          | 任意                      | AWS whitelist                   | **無 extension 支援**                       |
+| Operational        | 全部自管                  | AWS 管 storage / failover       | AWS 管全部、零接觸                          |
+| Failover           | Patroni 15-60s            | Aurora 30s                      | N/A（永遠 active-active、無 failover 概念） |
+| Cost model         | Self-managed instance     | Instance hour + storage         | Per-DPU + multi-AZ replication              |
 
 **Paradigm shift 的核心**：
 
-1. **Transaction semantic**：DSQL 用 OCC（Optimistic Concurrency Control）+ retry、不是 PG 的 pessimistic MVCC + 2PL — application 要 handle `40001` serialization error
-2. **No extension**：PostGIS / pgvector / TimescaleDB 都不能用、依賴這些 feature 的 application 要拆出去
-3. **No connection pool stateful**：DSQL 內建 connection pool、application 不能依賴 session state（temp table / prepared statement）
+1. **Transaction semantic**：DSQL 用 OCC（Optimistic Concurrency Control）+ strong snapshot isolation、跟 PG 預設 read committed / repeatable read snapshot 不同 — 同 row 有 concurrent write 時、commit 階段才偵測衝突 + abort、application 要 handle `40001` serialization_failure
+2. **No extension**：PostGIS / pgvector / TimescaleDB / pg_partman 都不能用、依賴這些 feature 的 application 要拆出去
+3. **No connection pool stateful**：DSQL 內建 connection pool、application 不能依賴 session state（temp table / prepared statement / advisory lock）
 
 ## Schema gap：PG 對 DSQL 限制
 
 DSQL 是 PG-compatible *subset*、有幾類功能不支援：
 
-| 類別                         | PG 支援 | DSQL 支援                   |
-| ---------------------------- | ------- | --------------------------- |
-| Extension                    | 是      | 否（沒 `CREATE EXTENSION`） |
-| Foreign data wrapper         | 是      | 否                          |
-| Stored procedure（PL/pgSQL） | 是      | 部分（限制多）              |
-| Trigger                      | 是      | 部分                        |
-| Materialized view            | 是      | 否                          |
-| LISTEN / NOTIFY              | 是      | 否                          |
-| `SELECT ... FOR UPDATE`      | 是      | 部分（DSQL semantic）       |
-| Sequence（serial）           | 是      | 用 UUID 替代                |
-| Table partition              | 是      | 部分                        |
-| Logical replication slot     | 是      | 否                          |
+| 類別                          | PG 支援 | DSQL 支援                                    |
+| ----------------------------- | ------- | -------------------------------------------- |
+| Extension                     | 是      | 否（沒 `CREATE EXTENSION`）                  |
+| Foreign key constraint        | 是      | 否（application 維護 referential integrity） |
+| View / Materialized view      | 是      | View 部分 / Materialized view 否             |
+| JSON / JSONB                  | 是      | 部分（無 GIN index 加速）                    |
+| Foreign data wrapper          | 是      | 否                                           |
+| Stored procedure（PL/pgSQL）  | 是      | 部分（限制多）                               |
+| Trigger                       | 是      | 部分                                         |
+| LISTEN / NOTIFY               | 是      | 否                                           |
+| `SELECT ... FOR UPDATE`       | 是      | 部分（DSQL OCC semantic）                    |
+| Sequence（serial / identity） | 是      | 支援、但高吞吐有 coordination overhead       |
+| Table partition               | 是      | 部分                                         |
+| Logical replication slot      | 是      | 否                                           |
 
 **Migration 必做 schema audit**：
 
@@ -90,7 +96,7 @@ SELECT * FROM pg_trigger WHERE NOT tgisinternal;
 | Storage               | Local / EBS            | Shared 6 副本                     | Distributed log + replicated state |
 | HA                    | Patroni                | Aurora failover                   | 永遠 HA（無 failover 概念）        |
 | Backup                | pgBackRest / WAL-G     | 內建 continuous                   | 內建 continuous（更深整合）        |
-| Connection pool       | PgBouncer / Pgcat      | RDS Proxy 推薦                    | 內建（無需配置）                   |
+| Connection pool       | PgBouncer / PgCat      | RDS Proxy 推薦                    | 內建（無需配置）                   |
 | Major version upgrade | 手動 + 停機            | Aurora blue/green                 | 完全 transparent（AWS 升）         |
 | Read replica          | Streaming replication  | Reader endpoint                   | 無分（每 region 都讀寫）           |
 | Monitoring            | Prometheus / pg_stat_* | CloudWatch + Performance Insights | CloudWatch（簡化）                 |
@@ -171,17 +177,17 @@ def with_retry(fn, max_attempts=5):
 
 實務常見拓撲：DSQL 跑 transactional core、附 PG（vector） + PG（GIS） + Timestream（metrics）。
 
-### Case 3：Sequence 跟 Distributed Semantic 衝突
+### Case 3：Sequence 高吞吐撞 Coordination Overhead
 
-**情境**：`SERIAL` PK 在 DSQL 用、insert 量 1000+/s 時撞 coordination overhead、insert latency 100ms+。
+**情境**：`SERIAL` / `GENERATED AS IDENTITY` PK 在 DSQL 用、insert 量 1000+/s 時 sequence nextval 變成 bottleneck、insert latency 從 5ms 跳到 80-100ms+。
 
-DSQL sequence 不是「local atomic counter」、是分散式 counter、每次 nextval 需 coordination。
+DSQL 有支援 sequence、但不是「local atomic counter」、是分散式 counter — 每次 nextval 需跨 region coordination 保證唯一性。低吞吐 OK、高吞吐撞牆。
 
 修法：
 
-- PK 換 UUID v7（time-sortable）：`gen_random_uuid()`
-- 或用 application-side ULID
-- 完全避免依賴「連續 integer PK」的 application 邏輯
+- 高吞吐表 PK 換 UUID v7（time-sortable、無 coordination）：`gen_random_uuid()` 或 application-side UUID v7 library
+- 或 application-side ULID（time-sortable、12-byte 緊湊）
+- 完全避免依賴「連續 integer PK」的 application 邏輯（reporting / paging 改用 `ORDER BY created_at, id`）
 
 ```sql
 -- 換 UUID PK
@@ -190,6 +196,8 @@ CREATE TABLE orders (
     ...
 );
 ```
+
+低吞吐表（settings / config）保留 sequence OK；high-volume transactional 表（orders / events）建議 UUID。
 
 ### Case 4：Aurora PG 直升 DSQL 想當 in-place
 

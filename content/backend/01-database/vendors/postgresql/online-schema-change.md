@@ -38,7 +38,7 @@ PG 9.4+ / 11+ 多數 ALTER 已 catalog-only：
 
 需要 *rewrite 整張 table*、ACCESS EXCLUSIVE lock 整個 ALTER 期間：
 
-- `ALTER COLUMN ... TYPE` 不相容類型（`INT → BIGINT` PG 12 之前、`TEXT → INT` 永遠）
+- `ALTER COLUMN ... TYPE` binary 不相容類型（`INT → BIGINT` 永遠 rewrite、`TEXT → INT` 也是）— 雖然語意「擴大」、底層 4-byte 跟 8-byte storage 不同、全表 rewrite + ACCESS EXCLUSIVE 不可省
 - `ALTER COLUMN ... SET NOT NULL` 對既有 nullable column（要 scan 整 table）
 - `ALTER COLUMN ... DROP IDENTITY`
 - `ALTER TABLE ... SET TABLESPACE`

@@ -2,7 +2,7 @@
 title: "PostgreSQL PITR + WAL archiving：從 base backup 到 point-in-time recovery 的完整鏈"
 date: 2026-05-18
 description: "Base backup + WAL archive 構成 PITR 的雙軌資料、archive_command + restore_command 配置、用 pgBackRest / WAL-G 替代手寫腳本、5 個 production 踩雷（archive 靜默失敗 / archive lag / 錯誤 target time / base backup 過期未清 / timeline 分歧 recovery 模糊）、跟 Patroni + monitoring 整合"
-weight: 15
+weight: 35
 tags: ["backend", "database", "postgresql", "pitr", "backup", "wal-archive", "deep-article"]
 ---
 
@@ -123,10 +123,13 @@ production 多用 timestamp、application log 有時間戳容易定位。
 1. **絕對不要靜默 exit code**：archive_command 必須 *fail loud*、exit code 非 0
 2. **用 pgBackRest / WAL-G**、不自寫 shell 腳本
 3. **monitoring**：對 archive lag 寫 alert
+
 ```sql
 SELECT pg_last_archived_xact_time(), now() - pg_last_archived_xact_time() AS lag;
 ```
+
 alert if lag > 5 minutes
+
 4. **定期測試 restore**：每月跑一次 PITR drill、實際從 archive restore + 驗證 timestamp
 
 ### Case 2：WAL archive lag、primary disk 壓力
@@ -151,10 +154,12 @@ alert if lag > 5 minutes
 **修法**：
 
 1. **`recovery_target_action = pause`**（PG 13+）：到 target time 後 *暫停*、不自動 promote；DBA 手動 query 確認資料對才 promote
+
 ```ini
 recovery_target_time = '2026-05-18 14:30:00+00'
 recovery_target_action = pause
 ```
+
 2. **多次 PITR 試錯**：用 *獨立 staging cluster* restore、驗證 target time 對、再對 production 跑
 3. **記錄 target time 來源**：application log / event timestamp 多比對、避免時區錯亂（`+00` UTC 跟 local time 差）
 
@@ -189,23 +194,25 @@ storage budgeting：
 **修法**：
 
 1. **`recovery_target_timeline`** 明示要 follow 哪個 timeline
+
 ```ini
 recovery_target_time = '2026-05-15 10:00:00+00'
 recovery_target_timeline = '3'                 # 要 follow timeline 3
 ```
+
 2. **熟悉 `.history` 檔**：`/wal_archive/000000XX.history` 記錄 timeline 切換點、PITR 前先看
 3. **預防**：每次 promote 後 *立刻* 跑新的 base backup、簡化未來 PITR 流程（不用跨 timeline）
 
 ## 容量 / cost 規劃
 
-| 維度                | 估算                                                       | 警戒                                              |
-| ------------------- | ---------------------------------------------------------- | ------------------------------------------------- |
-| Base backup size    | 跟 DB data dir 大小成正比（PostgreSQL 內部 compression 後）| 每 backup ~ 0.5-1x DB size                       |
-| WAL archive size    | ~5-50GB / day depending on write volume                    | 1TB DB / write-heavy 可能 100GB+ / day            |
-| Storage retention   | 4-12 weeks 典型                                            | 30-60x DB size budget                             |
-| Base backup time    | TB 級 1-4 小時                                             | 跑在 maintenance window                           |
-| Restore time        | base backup restore + WAL replay                           | TB 級 PITR 通常 2-6 小時                          |
-| Network bandwidth   | full backup 期間 100-500 Mbps                              | 跨 region 注意 egress cost                        |
+| 維度              | 估算                                                        | 警戒                                   |
+| ----------------- | ----------------------------------------------------------- | -------------------------------------- |
+| Base backup size  | 跟 DB data dir 大小成正比（PostgreSQL 內部 compression 後） | 每 backup ~ 0.5-1x DB size             |
+| WAL archive size  | ~5-50GB / day depending on write volume                     | 1TB DB / write-heavy 可能 100GB+ / day |
+| Storage retention | 4-12 weeks 典型                                             | 30-60x DB size budget                  |
+| Base backup time  | TB 級 1-4 小時                                              | 跑在 maintenance window                |
+| Restore time      | base backup restore + WAL replay                            | TB 級 PITR 通常 2-6 小時               |
+| Network bandwidth | full backup 期間 100-500 Mbps                               | 跨 region 注意 egress cost             |
 
 實務 default：
 

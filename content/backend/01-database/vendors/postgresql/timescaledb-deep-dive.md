@@ -43,6 +43,14 @@ CREATE EXTENSION timescaledb;
 - 不需 InfluxDB 級寫入速度（< 100K rows/s）
 - Team SQL 熟、PromQL / Flux 學習成本不想付
 
+**何時選 InfluxDB / Prometheus（不選 TimescaleDB）**：
+
+- High-cardinality metric（10M+ unique series）— TSDB-purpose-built engine 在 cardinality 跟 retention 上比 hypertable 高效
+- Pull-based scrape model（Prometheus）跟 alerting / Grafana 生態深整合
+- PromQL operator（`rate()` / `histogram_quantile()`）對 metric query 比 SQL 直覺
+- TSL license 不能接受（TimescaleDB 部分功能在 Timescale License、不是純 Apache 2.0）
+- Operational team 已熟 InfluxDB / Prometheus、不想多學 PG 維運
+
 ## Hypertable：自動 Time-based Partitioning
 
 普通 PG 表變 hypertable：
@@ -265,12 +273,15 @@ SELECT compress_chunk(...);
 
 TimescaleDB 跟 PG 版本對齊矩陣：
 
-| TimescaleDB | 支援 PG version |
-| ----------- | --------------- |
-| 2.11+       | 13, 14, 15      |
-| 2.13+       | 13, 14, 15, 16  |
-| 2.15+       | 14, 15, 16      |
-| 2.17+       | 14, 15, 16, 17  |
+| TimescaleDB | 支援 PG version    | 備註                               |
+| ----------- | ------------------ | ---------------------------------- |
+| 2.11+       | 13, 14, 15         |                                    |
+| 2.13+       | 13, 14, 15, 16     | 加 PG 16 支援                      |
+| 2.15.x      | 13, 14, 15, 16     | 最後支援 PG 13 的 minor            |
+| 2.16+       | 14, 15, 16         | PG 13 drop                         |
+| 2.17+       | 14, 15, 16, 17     | PG 17 加入（需 17.2+ binary 對齊） |
+| 2.18+       | 14, 15, 16, 17     | PG 17 完整支援                     |
+| 2.23+       | 14, 15, 16, 17, 18 | PG 18 加入                         |
 
 修法：
 

@@ -16,7 +16,7 @@ tags: ["backend", "database", "postgresql", "citus", "sharding", "distributed", 
 2. **Citus**：PG extension、自動 routing + cross-shard query
 3. **Distributed SQL**（CockroachDB / Aurora DSQL / Spanner）：不同 engine
 
-選 Citus 的核心 driver：*保留 PG SQL + extension 生態 + 應用層幾乎不必改*。代價是 *coordinator / worker 部署複雜度 + cross-shard query 限制*。
+選 Citus 的核心 driver：*保留 PG SQL syntax + extension 生態*。但「應用層幾乎不必改」是樂觀說法 — 實際上 application 必須圍繞 distribution column 重設計（query 加 filter / transaction 限定同 shard / reference table 量控制）、跟 Vitess 比 cross-shard query 自動化弱。代價是 *coordinator / worker 部署複雜度 + cross-shard query 限制 + application schema 改造工作量*。
 
 跟 [MySQL Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/) 的核心差異：Citus 是 *PG extension*（PG 自己跑）、Vitess 是 *獨立 proxy + tablet 系統*（包 MySQL）。Citus 用 PG 原生機制（FDW / extension hook）、Vitess 是 *外部包裝*。
 

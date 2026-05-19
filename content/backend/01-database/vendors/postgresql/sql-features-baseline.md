@@ -198,24 +198,24 @@ MySQL 8.0 是 *補齊 9 年 SQL standard 落後*、不是 *新領先 PG*。
 
 ## PG 仍領先的特性
 
-對應「MySQL 8.0 補了 → PG 仍沒輸」的視角：
+對應「MySQL 8.0 補了 → PG 仍沒輸」的視角。以下 14 條中、*production 影響最大* 的是 Materialized view / Partial index / JSONB GIN / Full-text search 跟 Range / Exclusion constraints（schema-level expressiveness）；*次要但常用* 的是 Multi-column statistics 跟 Procedural language；*非典型但 niche 重要* 的是 User-defined DOMAIN / Generic table inheritance（讀者不必然知道、但 ORM 跟 schema migration 工具會用）：
 
-| PG 領先特性               | MySQL 對應狀態                              |                                   |
-| ------------------------- | ------------------------------------------- | --------------------------------- |
-| Materialized view         | 無原生                                      |                                   |
-| Partial index             | 無（functional index 不等同）               |                                   |
-| FDW                       | 弱（FEDERATED engine 不推薦）               |                                   |
-| JSONB GIN index           | 無（generated column workaround）           |                                   |
-| Range types               | 無                                          |                                   |
-| Exclusion constraints     | 無                                          |                                   |
-| User-defined DOMAIN       | 無                                          |                                   |
-| Extension ecosystem       | 弱                                          |                                   |
-| Full-text search 成熟     | InnoDB FTS 較弱                             |                                   |
-| Multi-column statistics   | 8.0 histograms 部分對應、PG 更廣            |                                   |
-| Procedural language       | PL/pgSQL + 多語言（PL/Python / PL/Perl 等） | Stored procedure（不擴語言）      |
-| Recursive CTE 深度        | Unlimited                                   | 1000（cte_max_recursion_depth）   |
-| LSN-based replication     | 簡潔                                        | binlog file+position（GTID 緩解） |
-| Generic table inheritance | 早就有                                      | 無                                |
+| PG 領先特性               | MySQL 對應狀態                              | 補充                                  |
+| ------------------------- | ------------------------------------------- | ------------------------------------- |
+| Materialized view         | 無原生                                      | application-side 重算成本高           |
+| Partial index             | 無（functional index 不等同）               | 對 boolean / status column 救 storage |
+| FDW                       | 弱（FEDERATED engine 不推薦）               | 跨 DB query escape hatch              |
+| JSONB GIN index           | 無（generated column workaround）           | JSON workload 結構性差                |
+| Range types               | 無                                          | booking / availability schema 救命    |
+| Exclusion constraints     | 無                                          | range overlap 防護                    |
+| User-defined DOMAIN       | 無                                          | column-level type constraint          |
+| Extension ecosystem       | 弱                                          | pgvector / TimescaleDB / PostGIS      |
+| Full-text search 成熟     | InnoDB FTS 較弱                             | tsvector + GIN + pg_trgm 三層         |
+| Multi-column statistics   | 8.0 histograms 部分對應、PG 更廣            | planner 更準                          |
+| Procedural language       | PL/pgSQL + 多語言（PL/Python / PL/Perl 等） | Stored procedure（不擴語言）          |
+| Recursive CTE 深度        | Unlimited                                   | 1000（cte_max_recursion_depth）       |
+| LSN-based replication     | 簡潔                                        | binlog file+position（GTID 緩解）     |
+| Generic table inheritance | 早就有                                      | 無（multi-tenant schema 結構用）      |
 
 ## 對「從 MySQL 評估 PG」的讀者
 
@@ -243,7 +243,7 @@ MySQL 8.0 是 *補齊 9 年 SQL standard 落後*、不是 *新領先 PG*。
 
 - [MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)：PG MVCC 是 SQL feature 的並行控制基礎
 - [Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)：PG planner 對 window / CTE / hash join 成熟
-- [Citus Distributed](/backend/01-database/vendors/postgresql/citus-distributed.md)：extension 之一、體現 extension 生態
+- [Citus Distributed](/backend/01-database/vendors/postgresql/citus-distributed/)：extension 之一、體現 extension 生態
 - [Autovacuum Tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)：MVCC 代價、跟 SQL feature 並行控制相關
 
 ## 相關連結
@@ -251,7 +251,7 @@ MySQL 8.0 是 *補齊 9 年 SQL standard 落後*、不是 *新領先 PG*。
 - [PostgreSQL vendor overview](/backend/01-database/vendors/postgresql/)
 - [PG MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)（concurrency 基礎）
 - [PG Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)（planner 成熟度）
-- [PG Citus Distributed](/backend/01-database/vendors/postgresql/citus-distributed.md)（extension example）
+- [PG Citus Distributed](/backend/01-database/vendors/postgresql/citus-distributed/)（extension example）
 - [PG Autovacuum Tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)（MVCC 維護）
 - [MySQL Modern SQL Features](/backend/01-database/vendors/mysql/modern-sql-features/)（sibling、反向視角）
 - 官方：[PostgreSQL Features](https://www.postgresql.org/about/featurematrix/)

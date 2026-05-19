@@ -2,7 +2,7 @@
 title: "PostgreSQL Logical Replication + Debezium CDC：replication slot × failure × recovery 對照"
 date: 2026-05-18
 description: "PostgreSQL logical replication slot 跟 Debezium CDC 的失效模式對照表：slot lag 撐爆 primary disk / schema change 斷流 / 初始 COPY 鎖表 / zombie slot 不釋放 / replay storm 後 offset reset；publication / subscription / pgoutput 配置、跟 Kafka outbox pattern 整合"
-weight: 14
+weight: 34
 tags: ["backend", "database", "postgresql", "logical-replication", "debezium", "cdc", "deep-article"]
 ---
 
@@ -12,15 +12,15 @@ tags: ["backend", "database", "postgresql", "logical-replication", "debezium", "
 
 Logical replication 跟 Debezium CDC 的 production 議題集中在 *replication slot* — 它是 PostgreSQL 內保證 WAL 不被回收的 anchor point；slot 設不對、整個 CDC pipeline 失效。各 failure mode 對 slot 的影響跟 recovery 路徑：
 
-| Failure mode               | 對 slot 影響                                | Primary 端徵兆                          | Recovery 路徑                                   |
-| -------------------------- | ------------------------------------------- | --------------------------------------- | ----------------------------------------------- |
-| Consumer 卡住 / lag        | slot LSN 不前進、WAL 留著                  | `pg_wal` 目錄持續長大、disk 撐爆        | 修 consumer / 加 throttle / 必要時 drop slot   |
-| Consumer crash 無 restart  | slot 留在 active state                     | 跟 lag 同、不會自動清                   | 手動 `SELECT pg_drop_replication_slot('name')` |
-| Schema change（ADD COLUMN） | 多數 plugin 自動處理、無感                  | 通常無感                                | -                                               |
-| Schema change（DROP / RENAME COLUMN）| 多數 plugin 直接斷                  | Consumer log 報錯、slot active 卻不前進 | 重建 publication / 重 init load                |
-| Initial COPY               | slot 建立時跑 snapshot、long-running tx     | 大表 COPY 期間鎖跟 WAL 都受影響        | 用 `CREATE_REPLICATION_SLOT ... NOEXPORT_SNAPSHOT` 分階段 |
-| Promotion (failover)       | physical slot 跟 logical slot 處理不同      | logical slot 在 PG 16- 不跨 failover     | PG 16+ logical slot 持久化、或 consumer 重 init load |
-| Replay storm（offset 重置）| slot 不變、consumer 重讀                   | Kafka 端流量爆、application 看 duplicate | Idempotent consumer 設計、或 transactional outbox |
+| Failure mode                          | 對 slot 影響                            | Primary 端徵兆                           | Recovery 路徑                                             |
+| ------------------------------------- | --------------------------------------- | ---------------------------------------- | --------------------------------------------------------- |
+| Consumer 卡住 / lag                   | slot LSN 不前進、WAL 留著               | `pg_wal` 目錄持續長大、disk 撐爆         | 修 consumer / 加 throttle / 必要時 drop slot              |
+| Consumer crash 無 restart             | slot 留在 active state                  | 跟 lag 同、不會自動清                    | 手動 `SELECT pg_drop_replication_slot('name')`            |
+| Schema change（ADD COLUMN）           | 多數 plugin 自動處理、無感              | 通常無感                                 | -                                                         |
+| Schema change（DROP / RENAME COLUMN） | 多數 plugin 直接斷                      | Consumer log 報錯、slot active 卻不前進  | 重建 publication / 重 init load                           |
+| Initial COPY                          | slot 建立時跑 snapshot、long-running tx | 大表 COPY 期間鎖跟 WAL 都受影響          | 用 `CREATE_REPLICATION_SLOT ... NOEXPORT_SNAPSHOT` 分階段 |
+| Promotion (failover)                  | physical slot 跟 logical slot 處理不同  | logical slot 在 PG 16- 不跨 failover     | PG 16+ logical slot 持久化、或 consumer 重 init load      |
+| Replay storm（offset 重置）           | slot 不變、consumer 重讀                | Kafka 端流量爆、application 看 duplicate | Idempotent consumer 設計、或 transactional outbox         |
 
 每個 failure mode 對應的詳細配置 + recovery 步驟、下面分段展開。
 
@@ -130,6 +130,7 @@ SELECT pg_drop_replication_slot('debezium_app');
 **修法**：
 
 1. **分階段 init**：
+
 ```sql
 -- Primary：建 publication 不 copy
 CREATE PUBLICATION app_changes FOR TABLE big_table;
@@ -143,6 +144,7 @@ CREATE SUBSCRIPTION app_sub
 -- 手動跑 partition-by-partition COPY（若是 partition table）
 -- 或用 pg_dump / pg_basebackup 拿 snapshot
 ```
+
 2. **PG 16+ parallel init**：`max_sync_workers_per_subscription = 4` 平行 COPY 多個表
 3. **Debezium replacement**：用 incremental snapshot（Debezium 1.6+）、background trickle copy、不鎖長 transaction
 
@@ -160,14 +162,14 @@ CREATE SUBSCRIPTION app_sub
 
 ## 容量規劃
 
-| 維度                          | 估算                                                          | 警戒                                              |
-| ----------------------------- | ------------------------------------------------------------- | ------------------------------------------------- |
-| Replication slot lag          | `pg_wal_lsn_diff(pg_current_wal_lsn(), confirmed_flush_lsn)`  | > 1GB lag 訊號 consumer 跟不上                    |
-| Primary `pg_wal` size         | retention × peak WAL rate                                     | 預留 disk 容量 = max_slot_wal_keep_size + 30% buffer |
-| Debezium throughput           | ~5-10K row/s 單 connector、多表平行可拉                       | 跟 primary write rate 對比                        |
-| Initial COPY time             | 100GB ~ 10-30 分鐘（看 network + subscriber IO）              | TB 級必須分階段                                   |
-| Slot 數量                     | 每 slot 佔 primary 一份 WAL 保留 buffer                       | 5+ slot 同時跑 disk 壓力倍增                      |
-| max_replication_slots         | 預設 10、production 跑 CDC + standby 各佔 slot 要拉到 20-50   | 達上限會拒新 slot 建立                            |
+| 維度                  | 估算                                                         | 警戒                                                 |
+| --------------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
+| Replication slot lag  | `pg_wal_lsn_diff(pg_current_wal_lsn(), confirmed_flush_lsn)` | > 1GB lag 訊號 consumer 跟不上                       |
+| Primary `pg_wal` size | retention × peak WAL rate                                    | 預留 disk 容量 = max_slot_wal_keep_size + 30% buffer |
+| Debezium throughput   | ~5-10K row/s 單 connector、多表平行可拉                      | 跟 primary write rate 對比                           |
+| Initial COPY time     | 100GB ~ 10-30 分鐘（看 network + subscriber IO）             | TB 級必須分階段                                      |
+| Slot 數量             | 每 slot 佔 primary 一份 WAL 保留 buffer                      | 5+ slot 同時跑 disk 壓力倍增                         |
+| max_replication_slots | 預設 10、production 跑 CDC + standby 各佔 slot 要拉到 20-50  | 達上限會拒新 slot 建立                               |
 
 實務 default：
 
@@ -221,5 +223,5 @@ partitioned table 的 logical replication：
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 上游 chapter：[Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) — schema change × CDC 對應
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/)
+- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/) / [Replication Slot Management](/backend/01-database/vendors/postgresql/replication-slot-management/)（slot lifecycle / orphan / failover sync）/ [Replication Topology](/backend/01-database/vendors/postgresql/replication-topology/)（streaming + LSN 基礎）
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

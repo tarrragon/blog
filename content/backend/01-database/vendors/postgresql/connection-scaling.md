@@ -1,7 +1,7 @@
 ---
-title: "PostgreSQL Connection Scaling：connection-per-process model 跟為什麼 pooler 是必裝"
+title: "PostgreSQL Connection Scaling：process-per-connection model 跟為什麼 pooler 是必裝"
 date: 2026-05-19
-description: "PG 每個 client connection fork 一個 backend process（不是 thread）、RAM 成本 5-15MB/connection、context switch 跟 fork() cost 在 100+ connection 後線性放大、所以 pooler 不是 *optional optimization* 而是 *production prerequisite*。本文走 connection-per-process model 跟 MySQL thread-per-connection 對比、max_connections + shared_buffers + work_mem 三 GUC 互動、application-side pool vs middleware pool vs RDS Proxy 三層選擇、5 production 踩雷（connection storm / fork() cost 在 burst 流量 / shared_buffers 跟 connection 數壓縮 / double-pool 配置錯誤 / max_connections 設太大反而慢）、跟 PgBouncer config 互補不重複"
+description: "PG 每個 client connection fork 一個 backend process（不是 thread）、RAM 成本 5-15MB/connection、context switch 跟 fork() cost 在 100+ connection 後線性放大、所以 pooler 不是 *optional optimization* 而是 *production prerequisite*。本文走 process-per-connection model 跟 MySQL thread-per-connection 對比、max_connections + shared_buffers + work_mem 三 GUC 互動、application-side pool vs middleware pool vs RDS Proxy 三層選擇、5 production 踩雷（connection storm / fork() cost 在 burst 流量 / shared_buffers 跟 connection 數壓縮 / double-pool 配置錯誤 / max_connections 設太大反而慢）、跟 PgBouncer config 互補不重複"
 weight: 14
 tags: ["backend", "database", "postgresql", "connection", "pooler", "scaling", "deep-article"]
 ---
@@ -16,13 +16,13 @@ PG 接受 client connection 時的行為跟多數現代 DB 不同：每個 conne
 
 對比常見 DB 的 connection model：
 
-| Vendor                 | Connection model               | 每 connection 資源             |
-| ---------------------- | ------------------------------ | ------------------------------ |
-| PostgreSQL             | Process-per-connection（fork） | 5-15MB RAM、獨立 PID           |
-| MySQL                  | Thread-per-connection          | 256KB-2MB RAM、共享 process    |
-| Oracle                 | Shared server / dedicated 可選 | 配置決定                       |
-| SQL Server             | Thread-per-connection（pooled）| ~512KB                         |
-| MongoDB                | Thread-per-connection          | ~1MB                           |
+| Vendor     | Connection model                | 每 connection 資源          |
+| ---------- | ------------------------------- | --------------------------- |
+| PostgreSQL | Process-per-connection（fork）  | 5-15MB RAM、獨立 PID        |
+| MySQL      | Thread-per-connection           | 256KB-2MB RAM、共享 process |
+| Oracle     | Shared server / dedicated 可選  | 配置決定                    |
+| SQL Server | Thread-per-connection（pooled） | ~512KB                      |
+| MongoDB    | Thread-per-connection           | ~1MB                        |
 
 PG 選 process 不選 thread 是 1990s 設計決定 — 當時 thread library 在多 UNIX 平台不穩定、process 隔離性更好（一個 backend crash 不會帶倒整個 DB）。這個 trade-off 一路保留到今天、是 PG 在 high-connection-count workload 的 *結構性負擔*。
 
@@ -36,11 +36,11 @@ backend_rss ≈ shared_buffers_attach + process_private + work_mem 高水位
 
 `shared_buffers` 是所有 backend 共享的、不重複計、但 `process_private`（catalog cache / plan cache / temp buffer）跟 `work_mem` 是 per-backend：
 
-| Workload 類型              | process_private | work_mem 高水位 | 單 backend RAM |
-| -------------------------- | --------------- | --------------- | -------------- |
-| Idle / 簡單 OLTP           | 3-5MB           | 4MB             | 7-9MB          |
-| 中等 query（join / sort）  | 5-8MB           | 16-64MB         | 21-72MB        |
-| Heavy analytical（CTE / window）| 8-15MB     | 256MB+          | 264MB+         |
+| Workload 類型                    | process_private | work_mem 高水位 | 單 backend RAM |
+| -------------------------------- | --------------- | --------------- | -------------- |
+| Idle / 簡單 OLTP                 | 3-5MB           | 4MB             | 7-9MB          |
+| 中等 query（join / sort）        | 5-8MB           | 16-64MB         | 21-72MB        |
+| Heavy analytical（CTE / window） | 8-15MB          | 256MB+          | 264MB+         |
 
 500 個 connection、平均 30MB 各 ≈ 15GB RAM 給 backend processes（還沒算 shared_buffers）。這是 PG 在 cloud instance 上很快撞到 RAM ceiling 的根因。
 
@@ -56,13 +56,13 @@ total_RAM ≈ shared_buffers + (max_connections × work_mem 高水位) + OS over
 
 實務 sizing 規則（16GB instance、OLTP workload）：
 
-| GUC                | 建議值                            | 理由                                                                |
-| ------------------ | --------------------------------- | ------------------------------------------------------------------- |
-| `shared_buffers`   | 25% RAM（4GB）                    | 太大 OS file cache 收益遞減、< 25% wastes RAM                       |
-| `work_mem`         | 8-32MB                            | 每 query operation 用一份、不是每 connection 一份                   |
-| `max_connections`  | 100-200                           | 超過 200 需 pooler、不是調更大                                      |
-| `effective_cache_size` | 50-75% RAM                    | planner 估 cost 用、不是實際配置                                    |
-| `maintenance_work_mem` | 64-512MB                      | VACUUM / CREATE INDEX 用                                            |
+| GUC                    | 建議值         | 理由                                              |
+| ---------------------- | -------------- | ------------------------------------------------- |
+| `shared_buffers`       | 25% RAM（4GB） | 太大 OS file cache 收益遞減、< 25% wastes RAM     |
+| `work_mem`             | 8-32MB         | 每 query operation 用一份、不是每 connection 一份 |
+| `max_connections`      | 100-200        | 超過 200 需 pooler、不是調更大                    |
+| `effective_cache_size` | 50-75% RAM     | planner 估 cost 用、不是實際配置                  |
+| `maintenance_work_mem` | 64-512MB       | VACUUM / CREATE INDEX 用                          |
 
 `max_connections = 1000` 是常見 anti-pattern — 真實 active query 可能只 50-100、剩下都 idle、但每個還是吃 RAM 跟 process slot、context switch overhead 還在。
 
@@ -75,7 +75,7 @@ Pooler 的核心責任是 *把 N 個 application connection multiplex 成 M 個 
 ```text
 Application (3000 connection)
    ↓
-Pooler（PgBouncer / Pgcat）
+Pooler（PgBouncer / PgCat）
    ↓
 PostgreSQL (50 backend process)
 ```
@@ -88,11 +88,11 @@ Application 看到的是 *無限 connection 池*、PG 看到的是 *穩定 50 �
 
 Pooler 有三種 pool mode、各有 application 層相容性 trade-off：
 
-| Pool mode    | Session 隔離              | 適用 application                          | PG feature 限制                    |
-| ------------ | ------------------------- | ----------------------------------------- | ---------------------------------- |
-| Session      | 每 client 獨佔 1 backend  | 用 prepared statement、SET、temp table    | 等同沒 pool、僅救 fork cost        |
-| Transaction  | 每 transaction 換 backend | 多數 stateless API（最常用）              | 不能用 session-level state         |
-| Statement    | 每 statement 換 backend   | Read-only / analytical                    | 不能用 transaction                 |
+| Pool mode   | Session 隔離              | 適用 application                       | PG feature 限制             |
+| ----------- | ------------------------- | -------------------------------------- | --------------------------- |
+| Session     | 每 client 獨佔 1 backend  | 用 prepared statement、SET、temp table | 等同沒 pool、僅救 fork cost |
+| Transaction | 每 transaction 換 backend | 多數 stateless API（最常用）           | 不能用 session-level state  |
+| Statement   | 每 statement 換 backend   | Read-only / analytical                 | 不能用 transaction          |
 
 Production 多數選 transaction pool — 救 RAM 又保留 transaction semantics、代價是 application 不能用 session-level `SET`、`LISTEN/NOTIFY`、prepared statement（部分 pooler 已支援）。
 
@@ -100,11 +100,11 @@ Production 多數選 transaction pool — 救 RAM 又保留 transaction semantic
 
 三層 pool 都能解 connection 問題、但解的問題不同：
 
-| 層級                       | 代表                              | 解的問題                                              | 限制                                          |
-| -------------------------- | --------------------------------- | ----------------------------------------------------- | --------------------------------------------- |
-| Application-side（driver） | HikariCP（Java）/ pgx pool（Go）/ asyncpg / Sequelize | Connection 重用 + lifecycle 管理 | 仍每 app instance 開 N 個到 PG、總量沒收斂    |
-| Middleware pooler          | PgBouncer / Pgcat                 | Multiplex 所有 application instance 到少數 backend    | 多一跳 latency 0.1-1ms、需自管 HA             |
-| Cloud-managed proxy        | RDS Proxy / Cloud SQL Proxy       | Multiplex + IAM auth + Secrets Manager integration    | Latency 1-3ms、cost premium、PG feature 受限  |
+| 層級                       | 代表                                                  | 解的問題                                           | 限制                                         |
+| -------------------------- | ----------------------------------------------------- | -------------------------------------------------- | -------------------------------------------- |
+| Application-side（driver） | HikariCP（Java）/ pgx pool（Go）/ asyncpg / Sequelize | Connection 重用 + lifecycle 管理                   | 仍每 app instance 開 N 個到 PG、總量沒收斂   |
+| Middleware pooler          | PgBouncer / PgCat                                     | Multiplex 所有 application instance 到少數 backend | 多一跳 latency 0.1-1ms、需自管 HA            |
+| Cloud-managed proxy        | RDS Proxy / Cloud SQL Proxy                           | Multiplex + IAM auth + Secrets Manager integration | Latency 1-3ms、cost premium、PG feature 受限 |
 
 **典型 production 拓撲**：
 
@@ -189,13 +189,13 @@ Application 願意開 2500 個 connection、PgBouncer 只給 20 個 backend、ap
 
 ## 跟 MySQL connection model 對比
 
-| 維度                  | PostgreSQL                          | MySQL                                  |
-| --------------------- | ----------------------------------- | -------------------------------------- |
-| Connection 模型       | Process-per-connection（fork）      | Thread-per-connection                  |
-| 單 connection RAM     | 5-15MB（idle）/ 30-200MB（heavy）   | 256KB-2MB                              |
-| Fork / spawn cost     | 1-3ms                               | < 100μs                                |
-| Pooler 必要性         | **強烈必要**（300+ connection 必裝）| 中等（ProxySQL 對特定 case 有用）      |
-| 主流 pooler           | PgBouncer / Pgcat                   | ProxySQL / MySQL Router                |
+| 維度              | PostgreSQL                           | MySQL                             |
+| ----------------- | ------------------------------------ | --------------------------------- |
+| Connection 模型   | Process-per-connection（fork）       | Thread-per-connection             |
+| 單 connection RAM | 5-15MB（idle）/ 30-200MB（heavy）    | 256KB-2MB                         |
+| Fork / spawn cost | 1-3ms                                | < 100μs                           |
+| Pooler 必要性     | **強烈必要**（300+ connection 必裝） | 中等（ProxySQL 對特定 case 有用） |
+| 主流 pooler       | PgBouncer / PgCat                    | ProxySQL / MySQL Router           |
 
 MySQL thread-per-connection model 讓它在 high-connection-count workload 上 *看起來* 更省 — 但 PG 透過 PgBouncer 達到的 application 看到的容量跟 MySQL 直連是一樣的、只是多一層 indirection。
 
@@ -213,7 +213,7 @@ PG 17（2024）對 connection 仍維持 process-per-connection、但有幾個減
 - **Subscriber-side parallel apply**：logical replication 減少 connection 開銷
 - **`io_combine_limit`**：buffered read 合併、降 syscall overhead
 
-但 *connection-per-process model 本身* 沒換 — 短期內 PG 仍需 pooler。長期方向（PG 18+ 討論）可能引入 thread-based backend、但目前是 experimental patch。
+但 *process-per-connection model 本身* 沒換 — 短期內 PG 仍需 pooler。長期方向（PG 18+ 討論）可能引入 thread-based backend、但目前是 experimental patch。
 
 ## 相關連結
 

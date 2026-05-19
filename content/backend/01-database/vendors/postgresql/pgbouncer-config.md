@@ -255,6 +255,7 @@ SHOW SERVERS;
 ## 相關連結
 
 - [PostgreSQL vendor overview](/backend/01-database/vendors/postgresql/) — 本文是該頁尾「pgBouncer / PgCat 配置 best practice」backlog 的深度展開
+- [Connection Scaling Deep Dive](/backend/01-database/vendors/postgresql/connection-scaling/) — connection-per-process model 跟為什麼 pooler 是必裝（根因 vs 配置）
 - [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) — 上游：什麼時候需要 connection pool
 - [Connection Pool 卡片](/backend/knowledge-cards/connection-pool/) — 概念基底
 - [Vendor 深度技術文章方法論](/posts/vendor-deep-article-methodology/) — 本文是該方法論的 demo #1

@@ -2,7 +2,7 @@
 title: "PostgreSQL declarative partitioning：partition 不是切表、是讓 planner pruning"
 date: 2026-05-18
 description: "Declarative partitioning 的真實價值是 query planner pruning + maintenance scope 縮小、不是「把大表切小」；RANGE / LIST / HASH 取捨、partition key 選法、5 個 production 踩雷（key 選錯不 prune / unique 不 enforce 跨 partition / ATTACH 鎖太久 / partition 數爆 / DETACH 不 reclaim 空間）、跟 autovacuum + index 設計整合"
-weight: 13
+weight: 33
 tags: ["backend", "database", "postgresql", "partitioning", "performance", "deep-article"]
 ---
 
@@ -190,13 +190,13 @@ DROP TABLE events_2025_04;
 
 ## 容量規劃
 
-| 維度                    | 估算                                                      | 警戒                                              |
-| ----------------------- | --------------------------------------------------------- | ------------------------------------------------- |
-| 單 partition size       | 跟單表 vacuum 上限對齊（10-100GB sweet spot）            | > 200GB 時考慮 sub-partition 或細化 granularity   |
-| Partition 數量          | 對應 retention × granularity                              | > 200 partition 時 planning time 開始浮現         |
-| Partition key cardinality | LIST：< 100 / HASH：自定 modulus / RANGE：時間 + 維度    | 太多獨立 partition value 用 HASH                  |
-| Cross-partition query 比例 | EXPLAIN 看 partition scan 數                            | > 30% query 掃 > 50% partition 表示 key 選錯     |
-| Maintenance window      | DROP / DETACH / ATTACH 各 partition 各自管               | hot partition 維護仍在 maintenance window         |
+| 維度                       | 估算                                                  | 警戒                                            |
+| -------------------------- | ----------------------------------------------------- | ----------------------------------------------- |
+| 單 partition size          | 跟單表 vacuum 上限對齊（10-100GB sweet spot）         | > 200GB 時考慮 sub-partition 或細化 granularity |
+| Partition 數量             | 對應 retention × granularity                          | > 200 partition 時 planning time 開始浮現       |
+| Partition key cardinality  | LIST：< 100 / HASH：自定 modulus / RANGE：時間 + 維度 | 太多獨立 partition value 用 HASH                |
+| Cross-partition query 比例 | EXPLAIN 看 partition scan 數                          | > 30% query 掃 > 50% partition 表示 key 選錯    |
+| Maintenance window         | DROP / DETACH / ATTACH 各 partition 各自管            | hot partition 維護仍在 maintenance window       |
 
 實務 default：
 
@@ -239,5 +239,6 @@ partition 不是 backup 替代品 — 但能加速 *partial restore*：
 
 - 上游 vendor 頁：[PostgreSQL](/backend/01-database/vendors/postgresql/)
 - 上游 chapter：[Schema Design](/backend/01-database/schema-design/) — partition 是 schema 決策
-- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [autovacuum tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/)
+- 平行 deep article：[Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/) / [autovacuum tuning](/backend/01-database/vendors/postgresql/autovacuum-tuning/) / [TimescaleDB Deep Dive](/backend/01-database/vendors/postgresql/timescaledb-deep-dive/)（hypertable 是 partition 自動化）
+- 後續路由：[Partition Redesign](/backend/01-database/vendors/postgresql/partition-redesign/)（重排 partition strategy 的 migration playbook）
 - Methodology：[Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/)

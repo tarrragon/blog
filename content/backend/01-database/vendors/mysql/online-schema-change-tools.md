@@ -267,6 +267,7 @@ PlanetScale（managed Vitess）走 *branch-based schema migration* — 建 schem
 
 - [MySQL vendor overview](/backend/01-database/vendors/mysql/)
 - [MySQL Replication Topology](/backend/01-database/vendors/mysql/replication-topology/)（binlog ROW format + GTID 是 pre-requisite）
+- [PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/)（PG sibling、為什麼 PG 比 MySQL 少用 ghost table — fast ALTER 覆蓋多數變更）
 - [Aurora vendor page](/backend/01-database/vendors/aurora/)（managed MySQL fast DDL）
 - [PlanetScale](https://planetscale.com/)（branch-based 不用 ghost table）
 - [1.6 Database Migration Playbook](/backend/01-database/database-migration-playbook/)（schema migration 治理）

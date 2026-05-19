@@ -254,7 +254,7 @@ Topology `primary → standby1 → standby2 → ...`（每層遞迴 stream）。
 
 - 避免超過 2 層 cascade（primary → tier1 → tier2 是上限）
 - 跨 region 用 *region-local tier1 + cross-region tier2*、不是長 chain
-- 真的大規模、改用 *binlog server* style：[Citus / pgcat](https://github.com/postgresml/pgcat) 等中介、或 logical replication 解耦
+- 真的大規模、改用 *binlog server* style：[Citus / PgCat](https://github.com/postgresml/PgCat) 等中介、或 logical replication 解耦
 
 ### 5. Failover 後 timeline 分歧
 
@@ -301,9 +301,9 @@ Primary 失敗、standby1 promote 為新 primary、其他 standby（standby2 / 3
 
 兩者使用同一 WAL stream、不衝突。
 
-### Connection 路由（pgBouncer + read/write split）
+### Connection 路由（PgBouncer + read/write split）
 
-[pgBouncer](/backend/01-database/vendors/postgresql/pgbouncer-config/) 不做 read/write split（transaction pool 不看 SQL）。Read replica routing 通常用 *application-level* 或 *HAProxy 監控 standby health*。
+[PgBouncer](/backend/01-database/vendors/postgresql/pgbouncer-config/) 不做 read/write split（transaction pool 不看 SQL）。Read replica routing 通常用 *application-level* 或 *HAProxy 監控 standby health*。
 
 ### 跟 MySQL Replication Topology 對比
 
@@ -314,7 +314,7 @@ Primary 失敗、standby1 promote 為新 primary、其他 standby（standby2 / 3
 | Sync 機制          | `synchronous_commit` + standby names       | semi-sync plugin                            |
 | Quorum             | `ANY N` syntax                             | `rpl_semi_sync_master_wait_for_slave_count` |
 | Replay parallelism | Single startup process                     | Multi-thread (logical clock / writeset)     |
-| Replica routing    | pgBouncer 不看 SQL、需外接                 | ProxySQL 內建 query routing                 |
+| Replica routing    | PgBouncer 不看 SQL、需外接                 | ProxySQL 內建 query routing                 |
 
 兩者 high-level 對等、低層機制有顯著差異。詳見 [MySQL Replication Topology](/backend/01-database/vendors/mysql/replication-topology/)。
 
@@ -324,7 +324,7 @@ Primary 失敗、standby1 promote 為新 primary、其他 standby（standby2 / 3
 - [PG Patroni HA](/backend/01-database/vendors/postgresql/patroni-ha/)（HA failover、依賴本文 replication topology）
 - [PG Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)（不同 abstraction、共用 WAL）
 - [PG PITR + WAL Archiving](/backend/01-database/vendors/postgresql/pitr-wal-archiving/)（streaming + archive 並行）
-- [PG pgBouncer](/backend/01-database/vendors/postgresql/pgbouncer-config/)（connection pool、不做 read/write split）
+- [PG PgBouncer](/backend/01-database/vendors/postgresql/pgbouncer-config/)（connection pool、不做 read/write split）
 - [MySQL Replication Topology](/backend/01-database/vendors/mysql/replication-topology/)（sibling、不同機制）
 - [quorum 卡片](/backend/knowledge-cards/quorum/) / [stale-read 卡片](/backend/knowledge-cards/stale-read/) / [eventual-consistency 卡片](/backend/knowledge-cards/eventual-consistency/)
 - 官方：[PG Streaming Replication](https://www.postgresql.org/docs/current/warm-standby.html) / [pg_basebackup](https://www.postgresql.org/docs/current/app-pgbasebackup.html)
