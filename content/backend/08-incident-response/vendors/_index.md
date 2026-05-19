@@ -30,9 +30,15 @@ tags: ["backend", "incident-response", "vendor"]
 
 ## 內容覆蓋進度
 
-每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。
+每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、「← X」代表從 X 遷入。
 
-目前章節仍處於 vendor 服務頁骨架階段、尚無 deep article 或 migration playbook。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+| Vendor                                        | Deep article | Migration playbook                                               |
+| --------------------------------------------- | ------------ | ---------------------------------------------------------------- |
+| [PagerDuty](pagerduty/)                       | —            | [→ incident.io (Type E)](pagerduty/migrate-to-incident-io/)      |
+| [Opsgenie](opsgenie/)                         | —            | [← PagerDuty (Type A)](opsgenie/migrate-from-pagerduty/)         |
+| [Atlassian Statuspage](atlassian-statuspage/) | —            | [→ Instatus (Type B)](atlassian-statuspage/migrate-to-instatus/) |
+
+其他 T1 vendor（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 
 ## 服務頁撰寫欄位
 
