@@ -14,6 +14,10 @@ tags: ["backend", "performance", "capacity", "vendor", "tools"]
 
 工具頁的任務是承接這些問題節點。k6、JMeter、Gatling、Locust 與 Vegeta 都能產生負載，但它們在腳本語言、protocol 覆蓋、分散式執行、CI integration、報表與團隊學習成本上不同；production replay、profiling 與 cost analysis 工具則承擔不同的證據責任。
 
+## 教學順序同步
+
+效能與容量工具頁的教學順序是先建立 load test，再進入 replay / mirroring、profiling、optimization 與 FinOps。這個順序對齊 checkout E7：讀者先理解 workload model、saturation evidence 與 capacity gate，再比較 production traffic evidence、profile evidence、rightsizing 建議與成本 owner 如何形成改善閉環。
+
 ## T1 工具頁
 
 | 工具                                                                                                 | 類型           | 核心責任                                                     |
@@ -136,5 +140,6 @@ FinOps 提供 cost visibility + forecast + allocation。**Vantage** Kubernetes c
 
 - 上游：[9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)
 - 上游：[9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)
+- 服務路徑：[0.16 Checkout Episode Map](/backend/00-service-selection/service-path-implementation-outlines/#checkout-episode-map)
 - 平行：[06 Reliability vendors](/backend/06-reliability/vendors/) — 06 從驗證流程看工具，09 從容量量化與效能工程看工具
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

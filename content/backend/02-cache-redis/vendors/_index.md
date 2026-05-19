@@ -12,6 +12,10 @@ tags: ["backend", "cache", "vendor"]
 
 快取服務要從資料生命週期進入。讀者如果要保護資料庫讀取壓力，先回到 [2.2 Cache Aside](/backend/02-cache-redis/cache-aside/)；如果要判斷 TTL 與淘汰，先回到 [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)；如果服務已經把 cache 當主要 serving layer，先回到 [2.7 Cache Copy Boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
 
+## 教學順序同步
+
+快取服務頁的教學順序是先建立 Redis / Valkey baseline，再比較 Memcached、DragonflyDB 與 managed cache。這個順序對齊 checkout E2：讀者先理解可重建副本、新鮮度與回源保護，再比較同類服務如何改變相容性、memory model、failover 與 managed operation。
+
 ## T1 服務頁大綱
 
 | 服務                                                                | 類型                 | 頁面要回答的核心問題                                    |
@@ -136,12 +140,12 @@ HA 拓樸三類。**Redis** Sentinel + replication（單 region 多 AZ）/ Clust
 
 ## 撰寫批次
 
-| 批次 | 服務頁                     | 撰寫目的                                                   |
-| ---- | -------------------------- | ---------------------------------------------------------- |
-| C1   | Redis / Valkey             | 建立 Redis baseline、授權治理與相容性判準                  |
-| C2   | Memcached / DragonflyDB    | 建立低語意 KV cache 與高吞吐相容替代的取捨                 |
-| C3   | AWS ElastiCache            | 建立 managed cache、failover、upgrade 與成本邊界           |
-| C4   | KeyDB / Momento / Caffeine | 補 multi-threaded fork、serverless cache、local cache 對照 |
+| 批次 | 服務頁                        | 撰寫目的                                                   |
+| ---- | ----------------------------- | ---------------------------------------------------------- |
+| C1   | Redis / Valkey                | 建立 Redis baseline、開源治理與相容性判準                  |
+| C2   | Memcached                     | 建立 simple KV cache、低語意副本與水平擴張邊界             |
+| C3   | DragonflyDB / AWS ElastiCache | 建立高吞吐 Redis-compatible 與 managed cache 的操作取捨    |
+| C4   | KeyDB / Momento / Caffeine    | 補 multi-threaded fork、serverless cache、local cache 對照 |
 
 ## 後續候選
 
@@ -160,4 +164,5 @@ HA 拓樸三類。**Redis** Sentinel + replication（單 region 多 AZ）/ Clust
 - 上游：[2.2 Cache Aside](/backend/02-cache-redis/cache-aside/)
 - 上游：[2.7 Cache Copy Boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)
 - 案例：[2.C 快取案例正文](/backend/02-cache-redis/cases/)
+- 服務路徑：[2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

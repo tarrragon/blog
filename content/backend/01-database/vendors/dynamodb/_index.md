@@ -8,6 +8,18 @@ tags: ["backend", "database", "vendor", "dynamodb", "kv"]
 
 DynamoDB 是 AWS managed key-value store、用 partition-based scaling 提供 *可預測 P99 latency* 跟 *elastic capacity*。Amazon 自家 Ads（9000 萬 RPS）、Disney+、Zoom（COVID 30x surge）、Capcom（billions of requests / single-digit ms）都用 DynamoDB 撐核心 workload — 它是目前公開 case 最多、最被驗證的 managed KV 服務。
 
+## 教學路線：Access pattern 與 partition capacity
+
+DynamoDB 服務頁的教學目標是把 access pattern 轉成 partition key、sort key、GSI、capacity mode 與 global tables 的設計判斷。讀者讀完後要能從查詢路徑反推資料模型，並估算 hot partition、成本與 consistency trade-off。
+
+| 學習段         | 核心問題                                                  | 對應段落                       |
+| -------------- | --------------------------------------------------------- | ------------------------------ |
+| Access pattern | 查詢形狀如何先於資料表設計                                | 定位、適用場景                 |
+| Partition key  | hot partition、single-digit latency、GSI 如何成為設計核心 | 容量規劃要點、常見陷阱         |
+| Capacity mode  | on-demand、provisioned、auto scaling 如何對應高峰與成本   | 容量特性、案例對照             |
+| Global tables  | multi-region availability 與 consistency 會付出哪些代價   | 適用場景、跟其他 vendor 的取捨 |
+| 替代路由       | 何時回 SQL、MongoDB、Cosmos DB 或 cache / queue           | 不適用場景、下一步路由         |
+
 ## 定位：partition-based KV scale
 
 DynamoDB 的核心設計是「partition 透明、capacity 抽象化」。不像 MongoDB 要主動 shard、不像 Cassandra 要管 ring topology、不像 PostgreSQL 要選 instance type — DynamoDB 把所有底層 scaling 隱藏在 RCU / WCU 抽象層後。
@@ -130,6 +142,11 @@ DynamoDB 的核心設計是「partition 透明、capacity 抽象化」。不像 
 - 選 DynamoDB：團隊不想養 DBA
 - 選 Cassandra / ScyllaDB：有 DBA、想 lock-in 風險低、需要極限 throughput tuning
 
+**vs PostgreSQL（SQL baseline）**：
+
+- 詳見 [PostgreSQL vendor page](/backend/01-database/vendors/postgresql/) 取捨段、跟 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 的 connection model 對比
+- 摘要：DynamoDB 不是 PostgreSQL 替代、是 *access pattern 固定 + 不能 connection-bound* 場景才考慮；ad-hoc query / 複雜 transaction 留 PostgreSQL
+
 ## 容量規劃要點
 
 從 09 案例庫提煉的 DynamoDB 容量規劃實踐：
@@ -206,6 +223,7 @@ DynamoDB 的核心設計是「partition 透明、capacity 抽象化」。不像 
 
 ## 下一步路由
 
+- 完整 T1 對照：[01-database vendors index](/backend/01-database/vendors/)
 - 平行：[Aurora vendor page](/backend/01-database/vendors/aurora/)（SQL 對比）
 - 上游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)
 - 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（從 RDBMS 遷 DynamoDB 案例）

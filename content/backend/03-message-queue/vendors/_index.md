@@ -12,6 +12,10 @@ tags: ["backend", "message-queue", "vendor"]
 
 佇列服務要從處理語意進入。讀者如果要處理一般工作佇列，先回到 [3.2 durable queue](/backend/03-message-queue/durable-queue/)；如果要處理事件流與 replay，先回到 [3.4 consumer design](/backend/03-message-queue/consumer-design/)；如果問題是資料庫交易與事件發布一致性，先回到 [3.3 outbox pattern](/backend/03-message-queue/outbox-pattern/)。
 
+## 教學順序同步
+
+佇列服務頁的教學順序是先建立 work queue baseline，再進入 event log、managed delivery、lightweight messaging 與 embedded stream。這個順序對齊 checkout E3：讀者先理解 delivery、processing、recovery 三層語意，再比較 broker、managed queue、pub/sub 與 stream 如何影響 retry、DLQ、ordering 與 replay。
+
 ## T1 服務頁大綱
 
 | 服務                                                                     | 類型               | 頁面要回答的核心問題                                                 |
@@ -156,10 +160,11 @@ Schema 強制度跨 vendor 差異最大。**Kafka** Schema Registry（Confluent 
 
 | 批次 | 服務頁                      | 撰寫目的                                                          |
 | ---- | --------------------------- | ----------------------------------------------------------------- |
-| Q1   | RabbitMQ / AWS SQS          | 建立 work queue、ack、visibility timeout 與 DLQ baseline          |
-| Q2   | Kafka / Google Pub/Sub      | 建立 event log、managed pub/sub、retention 與 replay 判準         |
-| Q3   | NATS / Redis Streams        | 建立 lightweight messaging 與 embedded stream 的邊界              |
-| Q4   | Pulsar / Kinesis / Temporal | 補 multi-tenant streaming、managed stream 與 workflow engine 對照 |
+| Q1   | RabbitMQ                    | 建立 work queue、routing、ack/nack 與 DLQ baseline                |
+| Q2   | Kafka                       | 建立 event log、partition、retention 與 replay 判準               |
+| Q3   | AWS SQS / Google Pub/Sub    | 建立 managed delivery、visibility timeout 與 cloud pub/sub 邊界   |
+| Q4   | NATS / Redis Streams        | 建立 lightweight messaging 與 embedded stream 的邊界              |
+| Q5   | Pulsar / Kinesis / Temporal | 補 multi-tenant streaming、managed stream 與 workflow engine 對照 |
 
 ## 後續候選
 
@@ -179,4 +184,5 @@ Schema 強制度跨 vendor 差異最大。**Kafka** Schema Registry（Confluent 
 - 上游：[3.2 durable queue](/backend/03-message-queue/durable-queue/)
 - 上游：[3.4 consumer design](/backend/03-message-queue/consumer-design/)
 - 案例：[3.C 佇列案例正文](/backend/03-message-queue/cases/)
+- 服務路徑：[3.8 Queue Consumer Retry 與 Replay Handoff](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

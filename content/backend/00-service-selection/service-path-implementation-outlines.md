@@ -21,6 +21,36 @@ tags: ["backend", "implementation", "outline", "service-path"]
 - Incident decision 對齊 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 與 [8.23 Control Plane Decision Log and Write-back 實作示範](/backend/08-incident-response/control-plane-decision-log-write-back/)。
 - Security / audit 邊界只在服務路徑涉及 credential、PII、管理面、資料修復權限或供應鏈 artifact 時接到 [7.27 Credential Rotation with Scoped Evidence 實作示範](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)。
 
+## Checkout Episode Map
+
+Checkout episode map 的責任是把總體教學設計轉成正文派發順序。每個 episode 都是一段可獨立撰寫的服務演進，並且要產出可被 04、06、08 或 07 接手的 artifact。
+
+| Episode | 服務問題                        | 主分類         | 交接分類     | 正文產出                                             | 服務頁回寫方向                             |
+| ------- | ------------------------------- | -------------- | ------------ | ---------------------------------------------------- | ------------------------------------------ |
+| E1      | 付款狀態欄位演進                | 01 Database    | 04 / 06 / 08 | migration plan、validation query、rollback condition | PostgreSQL / MySQL / Aurora / Spanner      |
+| E2      | 商品價格快取改版與回源保護      | 02 Cache       | 04 / 06 / 08 | cache evidence、origin protection gate、warmup plan  | Redis / Valkey / Memcached / ElastiCache   |
+| E3      | 訂單事件 consumer 失敗與 replay | 03 Queue       | 04 / 06 / 08 | idempotency evidence、DLQ handling、replay runbook   | Kafka / RabbitMQ / SQS / Pub/Sub / NATS    |
+| E4      | Checkout service 分批 rollout   | 05 Deployment  | 04 / 06 / 08 | rollout plan、canary evidence、drain signal          | Kubernetes / systemd / nginx / ELB / Envoy |
+| E5      | Payment provider timeout 變更   | 06 Reliability | 04 / 08 / 09 | release gate、SLO evidence、fallback stop condition  | CI gate / load test / SLO tool             |
+| E6      | Webhook secret rotation         | 07 Security    | 04 / 06 / 08 | scope map、audit evidence、rollback window           | IAM / secrets / KMS / PKI / detection      |
+| E7      | Flash-sale peak readiness       | 09 Performance | 02 / 03 / 06 | workload model、saturation evidence、capacity gate   | k6 / JMeter / replay / profiler / FinOps   |
+
+這張表的使用方式是先選 episode，再決定正文層級。若目標是補服務路徑正文，就以「正文產出」欄為章節骨架；若目標是補真實服務頁，就以「服務頁回寫方向」欄決定服務頁案例、訊號與下一步路由。
+
+## 最小正文批次
+
+最小正文批次的責任是控制下一輪寫作範圍。每批只補能讓讀者完成一個教學判斷的最小集合，並在完成後回寫 0.15、0.16、0.17 與相關分類首頁。
+
+| 批次 | 目標                        | 建議正文或大綱項目                                                | 完成訊號                                               |
+| ---- | --------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------ |
+| B1   | 補齊資料與副本服務頁座標    | SQL baseline 對照、Redis / Valkey / Memcached 對照                | 讀者能分辨正式狀態與可重建副本的服務選型               |
+| B2   | 補齊非同步交接與部署座標    | Kafka / RabbitMQ / SQS 分流、Kubernetes / systemd / ELB 分層      | 讀者能分辨 broker、managed delivery、traffic lifecycle |
+| B3   | 補齊 artifact backbone 擴充 | Async workflow evidence、schema migration gate、cache warmup gate | 04 / 06 能接住 01 / 02 / 03 的正文產物                 |
+| B4   | 補齊控制面與事故協作座標    | identity / secret / edge 分組、paging / command / status 分層     | 07 / 08 能把控制與協作接回 checkout episode            |
+| B5   | 補齊容量與成本工具座標      | load test、replay、profiling、FinOps 工具路由                     | 09 能把 E7 的 workload、saturation、cost 串起          |
+
+批次之間的排序以教學依賴為主。B1 與 B2 建立服務能力座標，B3 補 artifact 交接，B4 補控制與協作，B5 補容量與成本；後續若某批已有足夠正文素材，可以直接進入對應服務頁補強。
+
 ## 01 Database / Storage：Schema Migration Rollout 證據
 
 資料庫服務路徑的核心問題是正式狀態如何在不中斷服務的前提下演進。正文已完成於 [1.7 Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)，服務實例以訂單資料表欄位演進為主，例如新增 `payment_state`、拆分 `status`，或把第三方付款狀態從文字欄位改成可驗證狀態欄位。

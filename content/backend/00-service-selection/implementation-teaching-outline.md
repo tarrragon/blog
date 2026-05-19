@@ -47,6 +47,37 @@ tags: ["backend", "implementation", "outline", "service-path"]
 
 服務路徑層級的正文細綱已拆到 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/)。0.15 保留系列順序與 backlog 判讀，0.16 負責把每個分類的服務路徑、前置概念、artifact 交接、案例回寫與不適用邊界拆到後續正文撰寫可直接接手的粒度；真實服務層的後續順序則交給 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)。
 
+## 分類缺口盤點
+
+分類缺口盤點的責任是把「能力地圖」改成「學習路線」。Backend 目前已經有完整的服務能力分類，但教學設計要進一步回答讀者如何從一個 checkout 系統問題，依序理解正式狀態、暫存副本、非同步交接、訊號證據、部署生命週期、可靠性驗證、控制面風險、事故協作與容量成本。
+
+| 學習分類         | 現況判讀                             | 主要教學缺口                                       | 大綱動作                                                        | Checkout episode |
+| ---------------- | ------------------------------------ | -------------------------------------------------- | --------------------------------------------------------------- | ---------------- |
+| 00 選型入口      | 已有服務分類與總體教學設計           | 需要把讀者入口固定成 learning journey              | 以本頁作為分類 backlog，0.17 作為服務層 backlog                 | E0               |
+| 01 Database      | 主章、共同認知與首篇路徑已完成       | 實體服務順序需要回扣正式狀態與 migration           | 先排 SQL baseline，再排 embedded、document / KV、global SQL     | E1               |
+| 02 Cache         | 主章、共同認知與 stampede 路徑已完成 | 服務頁要先分清副本語意與回源保護                   | 先排 Redis / Valkey，再排 Memcached、DragonflyDB、managed cache | E2               |
+| 03 Queue         | 主章、共同認知與 replay 路徑已完成   | 服務頁要分開 delivery、processing、recovery        | 先排 broker baseline，再排 managed delivery、event log、stream  | E3               |
+| 04 Observability | artifact backbone 已完成             | 服務頁需要回到 signal quality 與 evidence package  | 服務頁先排 telemetry baseline，再排 SaaS / cloud provider       | E1-E7            |
+| 05 Deployment    | 主章、共同認知與 rollout 路徑已完成  | 服務頁需要分開 workload、traffic、infra state      | 先排 workload runtime，再排 traffic、config、infra state        | E4               |
+| 06 Reliability   | artifact backbone 已完成             | 工具頁需要分開 release gate、load test、chaos、SLO | 先排 gate / CI，再排 load、fault injection、SLO governance      | E5               |
+| 07 Security      | 主章與大量控制服務頁已成形           | 缺口在群組順序與控制面路由                         | 以 identity、secret、edge、supply chain、detection 分組         | E6               |
+| 08 Incident      | 主章與協作工具頁已成形               | deep article 密度低於服務頁密度                    | 先排 paging，再排 incident command、status、postmortem          | E4 / E6          |
+| 09 Performance   | 主章、case 與 vendor 入口已成形      | 需要把工具選型接回容量與成本決策                   | 先排 workload / load test，再排 replay、profiling、FinOps       | E7               |
+
+這份缺口表的判斷結論是：下一輪先調整章節順序與服務頁路由，再進入正文撰寫。已完成首篇服務路徑示範的分類，可以直接把真實服務頁排成教學序列；artifact backbone 成熟的分類，則優先補服務頁與案例回寫的密度。
+
+## 章節順序調整原則
+
+章節順序調整的責任是讓讀者沿著服務責任逐步擴張，而非沿著工具名稱跳讀。每一批新章節都先回答「這個服務責任在 checkout journey 的哪一段出現」，再決定要補分類共同認知、服務路徑示範、真實服務頁或案例回寫。
+
+1. 先補正式狀態與副本責任：01 Database 與 02 Cache 先建立 source of truth、freshness、origin protection 與資料修復語言。
+2. 再補跨程序交接：03 Message Queue 接在資料與快取之後，讓讀者理解同步請求外的副作用如何投遞、處理與恢復。
+3. 接著補訊號與部署交接：04 Observability 與 05 Deployment 把變更、流量、readiness、drain 與 rollback 變成可檢查 artifact。
+4. 再補驗證與控制面：06 Reliability 與 07 Security 用 release gate、experiment、identity、secret 與供應鏈控制，保護前面已建立的服務責任。
+5. 最後補協作、容量與成本：08 Incident 與 09 Performance 把事故決策、容量預測、效能退化與成本曲線回寫到前面分類。
+
+章節順序可以依讀者入口調整，但每條路線都要保留這個依賴關係。若某篇服務頁需要先談 Kubernetes、Kafka 或 Redis，也要在開頭把它接回正式狀態、副本、交接、訊號或控制面中的一個責任。
+
 ## 01 Database / Storage 補完方向
 
 資料庫模組的實作前提是先把「正式狀態如何演進」講清楚。資料庫集中承擔服務的 [source of truth](/backend/knowledge-cards/source-of-truth/)、交易邊界、查詢邊界、migration 風險與資料修復責任。

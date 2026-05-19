@@ -12,6 +12,10 @@ tags: ["backend", "deployment", "vendor"]
 
 部署服務要從服務生命週期進入。讀者如果要處理 container 與 runtime，先回到 [5.1 container runtime](/backend/05-deployment-platform/container-runtime/)；如果要處理 rollout 與 probe，先回到 [5.2 Kubernetes deployment](/backend/05-deployment-platform/kubernetes-deployment/)；如果要處理入口與 drain，先回到 [5.3 Load Balancer Contract](/backend/05-deployment-platform/load-balancer-contract/)。
 
+## 教學順序同步
+
+部署平台服務頁的教學順序是先建立 workload runtime，再進入 orchestration、traffic entry、infra state 與 discovery。這個順序對齊 checkout E4：讀者先理解服務如何啟動、接流量、drain 與 rollback，再比較 Kubernetes、systemd、Docker、load balancer、proxy、Terraform 與 Consul 分別承擔哪一層平台責任。
+
 ## T1 服務頁大綱
 
 | 服務                                                                       | 類型               | 頁面要回答的核心問題                                                    |
@@ -121,12 +125,13 @@ TLS / mTLS 在不同 vendor 由不同 layer 負責。**K8s** cert-manager（Let'
 
 ## 撰寫批次
 
-| 批次 | 服務頁                            | 撰寫目的                                                        |
-| ---- | --------------------------------- | --------------------------------------------------------------- |
-| D1   | Kubernetes / Docker / systemd     | 建立 workload lifecycle、runtime 與 process supervisor baseline |
-| D2   | nginx / AWS ELB / Envoy / Traefik | 建立 traffic entry、drain、timeout 與 proxy policy 對照         |
-| D3   | Terraform / OpenTofu / Consul     | 建立 infra state、service registry 與 control-plane boundary    |
-| D4   | ECS / Fargate / Cloud Run / Nomad | 補 managed runtime、platform abstraction 與自管調度對照         |
+| 批次 | 服務頁                            | 撰寫目的                                                          |
+| ---- | --------------------------------- | ----------------------------------------------------------------- |
+| D1   | Docker / systemd                  | 建立 runtime、entrypoint、process supervisor 與單機服務 baseline  |
+| D2   | Kubernetes                        | 建立 workload lifecycle、orchestration、probe 與 rollout contract |
+| D3   | nginx / AWS ELB / Envoy / Traefik | 建立 traffic entry、drain、timeout 與 proxy policy 對照           |
+| D4   | Terraform / OpenTofu / Consul     | 建立 infra state、service registry 與 control-plane boundary      |
+| D5   | ECS / Fargate / Cloud Run / Nomad | 補 managed runtime、platform abstraction 與自管調度對照           |
 
 ## 後續候選
 
@@ -146,4 +151,5 @@ TLS / mTLS 在不同 vendor 由不同 layer 負責。**K8s** cert-manager（Let'
 - 上游：[5.2 Kubernetes deployment](/backend/05-deployment-platform/kubernetes-deployment/)
 - 上游：[5.3 Load Balancer Contract](/backend/05-deployment-platform/load-balancer-contract/)
 - 案例：[5.C 部署平台案例正文](/backend/05-deployment-platform/cases/)
+- 服務路徑：[5.8 Deployment Rollout with Drain and Rollback](/backend/05-deployment-platform/deployment-rollout-drain-rollback/)
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

@@ -8,6 +8,18 @@ tags: ["backend", "database", "vendor", "mysql", "sql"]
 
 MySQL 是大型網路服務的常見選擇、簡單 query 效能跟分片生態（Vitess / PlanetScale）成熟。GitHub、Shopify、Slack、Facebook（YouTube 從 MySQL 起家）等大規模服務的核心 OLTP 多採 MySQL。InnoDB engine 的 row-level lock、clustered index、buffer pool tuning 都被深度驗證。
 
+## 教學路線：高併發 OLTP 與分片生態
+
+MySQL 服務頁的教學目標是把「簡單 SQL 查詢」推進到高併發 OLTP、replication、online schema change 與 sharding governance。讀者讀完後要能判斷 MySQL 何時是成熟預設、何時已經進入 Vitess / PlanetScale 或 application sharding 的討論。
+
+| 學習段        | 核心問題                                                 | 對應段落                   |
+| ------------- | -------------------------------------------------------- | -------------------------- |
+| OLTP 基線     | MySQL 適合哪種大量簡單查詢與交易路徑                     | 定位、適用場景             |
+| Replication   | replica、failover、lag 與 read scaling 如何影響服務      | 容量特性、容量規劃要點     |
+| Schema change | online schema change 與 migration 如何保護高流量服務     | 容量規劃要點、預計實作話題 |
+| Sharding      | Vitess、PlanetScale 與 application sharding 何時變成主線 | 跟其他 vendor 的取捨       |
+| 替代路由      | 何時轉 PostgreSQL、Aurora、DynamoDB 或 distributed SQL   | 不適用場景、下一步路由     |
+
 ## 定位：高併發簡單 SQL + 強分片生態
 
 MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
@@ -130,6 +142,29 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 - 由 YouTube 設計、捐贈 CNCF
 - 適合超大規模 MySQL 集群、需要透明 sharding
 
+**vs DynamoDB（document/KV 替代）**：
+
+- MySQL：SQL、有 transaction、ad-hoc query、connection-based
+- DynamoDB：KV、partition 透明、無 connection 限制、5 個 9 SLA
+- 選 MySQL：需要 ad-hoc query、複雜 JOIN、SQL transaction
+- 選 DynamoDB：access pattern 固定、AWS-only、想避免 connection limit 問題
+- 詳見 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 的 connection model 對比
+
+**vs Spanner / CockroachDB / Aurora DSQL（distributed SQL）**：
+
+- MySQL + Vitess：自管 sharding、operational 重、跨雲可用
+- Spanner / CockroachDB / Aurora DSQL：分散式 SQL、跨 region 強一致、transparent sharding
+- 選 MySQL + Vitess：已有 MySQL 投資、有能力管 Vitess、預算敏感
+- 選 distributed SQL：需要 multi-region 強一致、不想自管 sharding
+- 詳見 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
+
+**vs MongoDB（document 替代）**：
+
+- MySQL：SQL + JSON column 補充
+- MongoDB：document 為主、aggregation pipeline 強、schema-flexible
+- 選 MySQL：主要結構化、少量半結構化
+- 選 MongoDB：document 占主要 schema、aggregation 工作負載
+
 ## 容量規劃要點
 
 **1. Sharding 是 MySQL 大規模的核心**：
@@ -202,6 +237,7 @@ MySQL 沒有直接的 09 case（大規模 MySQL 多在 engineering blog、不在
 
 ## 下一步路由
 
+- 完整 T1 對照：[01-database vendors index](/backend/01-database/vendors/)
 - 平行：[PostgreSQL vendor](/backend/01-database/vendors/postgresql/)、[Aurora vendor](/backend/01-database/vendors/aurora/)（managed MySQL）
 - 上游：[1.1 高併發資料存取](/backend/01-database/high-concurrency-access/)、[1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)
 - 下游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)（MySQL 不適用時的替代）

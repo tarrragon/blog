@@ -14,6 +14,10 @@ tags: ["backend", "reliability", "vendor"]
 
 可靠性工具要從驗證流程進入。讀者如果要處理 release gate，先回到 [6.8 Release Gate](/backend/06-reliability/release-gate/)；如果要處理 load test 與 regression，先回到 [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)；如果要處理 chaos，先回到 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)。
 
+## 教學順序同步
+
+可靠性工具頁的教學順序是先建立 CI / release gate，再進入 load test、chaos / fault injection 與 SLO governance。這個順序對齊 checkout E5：讀者先理解變更如何被放行與停止，再比較哪些工具產生 regression evidence、experiment evidence 與 error budget evidence。
+
 ## T1 服務頁大綱
 
 | 服務                                                              | 類型              | 頁面要回答的核心問題                                                       |
@@ -118,7 +122,7 @@ SLO 工具按 source 跟運維模式分兩類：**Nobl9** 商業 SaaS / multi-so
 | 批次 | 服務頁                                         | 撰寫目的                                                  |
 | ---- | ---------------------------------------------- | --------------------------------------------------------- |
 | R1   | GitHub Actions / CircleCI                      | 建立 CI gate、artifact 與 approval baseline               |
-| R2   | k6 / Gatling / JMeter / Locust                 | 建立可靠性驗證視角的壓測工具對照                          |
+| R2   | k6 / Gatling / JMeter / Locust                 | 建立 release gate 視角的 load test 與 regression evidence |
 | R3   | Chaos Mesh / LitmusChaos / Gremlin / Toxiproxy | 建立 fault injection 與 experiment safety 對照            |
 | R4   | Nobl9 / Sloth                                  | 建立 SLO governance、error budget 與 rule generation 判準 |
 
@@ -138,5 +142,6 @@ SLO 工具按 source 跟運維模式分兩類：**Nobl9** 商業 SaaS / multi-so
 
 - 上游：[6.8 Release Gate](/backend/06-reliability/release-gate/)
 - 上游：[6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)
+- 服務路徑：[6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)
 - 平行：[09 效能與容量工具清單](/backend/09-performance-capacity/vendors/)
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

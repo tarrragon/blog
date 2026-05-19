@@ -14,6 +14,10 @@ tags: ["backend", "incident-response", "vendor"]
 
 事故工具要從協作節點進入。讀者如果要處理告警與輪值，先回到 [Drills and On-call Readiness](/backend/08-incident-response/drills-and-oncall-readiness/)；如果要處理決策紀錄，先回到 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)；如果要處理復盤與回寫，先回到 [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)。
 
+## 教學順序同步
+
+事故工具頁的教學順序是先建立 paging，再進入 incident command、status page 與 learning loop。這個順序對齊 checkout E4 與 E6：讀者先理解告警如何找到 owner，再比較事故指揮、對外更新、復盤學習與 action item 如何回寫到 release gate、資安控制與服務路徑。
+
 ## T1 服務頁大綱
 
 | 服務                                                                                | 類型                  | 頁面要回答的核心問題                                                             |
@@ -140,4 +144,5 @@ Learning 是事故後的組織學習、不是 retro template、是 longitudinal 
 - 上游：[Drills and On-call Readiness](/backend/08-incident-response/drills-and-oncall-readiness/)
 - 上游：[8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
 - 上游：[8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)
+- 服務路徑：[8.23 Control Plane Decision Log and Write-back 實作示範](/backend/08-incident-response/control-plane-decision-log-write-back/)
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

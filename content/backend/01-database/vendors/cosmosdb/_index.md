@@ -8,6 +8,18 @@ tags: ["backend", "database", "vendor", "cosmosdb", "multi-model", "global"]
 
 Azure Cosmos DB 是 Microsoft 全球分散式 multi-model database、提供 SQL / MongoDB / Cassandra / Gremlin / Table 五種 API、五個 consistency levels、自動 multi-region write。Microsoft 自家 Microsoft 365 用它做 analytics、ASOS 在 Black Friday 撐 1.67 億請求 24 小時、Minecraft Earth 測試 1M RU/s — 是 Azure 上 NoSQL / Document 工作負載的旗艦。
 
+## 教學路線：Multi-model API 與全球寫入
+
+Cosmos DB 服務頁的教學目標是把 API model、consistency level、RU/s、logical partition 與 multi-region write 放在同一個 Azure 服務決策中。讀者讀完後要能判斷 Cosmos DB 是遷移相容層、全球 NoSQL 平台，還是特定 Azure workload 的容量抽象。
+
+| 學習段            | 核心問題                                                        | 對應段落                   |
+| ----------------- | --------------------------------------------------------------- | -------------------------- |
+| API model         | SQL API、MongoDB API、Cassandra API 各自服務哪種遷移或資料形狀  | 定位、跟其他 vendor 的取捨 |
+| Consistency level | session、bounded staleness、strong consistency 如何改變產品語意 | 容量規劃要點、常見陷阱     |
+| RU/s capacity     | request unit 如何把 query、index、payload 轉成成本與節流        | 容量特性、案例對照         |
+| Global write      | multi-region write 何時值得承擔衝突與一致性成本                 | 適用場景、案例對照         |
+| 替代路由          | 何時用 MongoDB、DynamoDB、Spanner、PostgreSQL 或 analytics      | 不適用場景、下一步路由     |
+
 ## 定位：multi-model + multi-region write
 
 Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 5 種 API、每個 API 對應不同資料模型。應用層選擇用哪個 API、底層是同一個分散式 KV store。
@@ -133,6 +145,26 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 - 選 Azure SQL：SQL workload、應用已用 SQL Server
 - 對應 [9.C32 Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — SQL 工作負載選 Hyperscale 不是 Cosmos
 
+**vs PostgreSQL（SQL baseline）**：
+
+- PostgreSQL：SQL、強一致、single-primary、跨雲可用
+- Cosmos DB：NoSQL / multi-model、AP 系統、Azure-only、global 分散
+- 選 PostgreSQL：SQL workload、跨雲、需要進階 SQL 特性
+- 選 Cosmos DB：Azure 生態、document / KV / multi-model、需要 global distribution
+
+**vs Aurora（AWS managed SQL）**：
+
+- Aurora：AWS、SQL（PostgreSQL / MySQL）、single-region scaling
+- Cosmos DB：Azure、NoSQL / multi-model、global write
+- 兩者不是替代、是 cloud + data model 的兩個維度差異；同需求下選自家雲（AWS → Aurora、Azure → Cosmos / Azure SQL）
+
+**vs CockroachDB（cross-cloud distributed SQL）**：
+
+- CockroachDB：跨雲、PostgreSQL wire、distributed SQL、強一致
+- Cosmos DB：Azure-only、multi-model、5 consistency levels、AP 系統
+- 選 CockroachDB：要 SQL + 跨雲 + 強一致
+- 選 Cosmos DB：要 NoSQL + Azure 生態 + 細粒度 consistency 選擇
+
 ## 容量規劃要點
 
 **1. RU/s 抽象化把 read / write / query 統一**：
@@ -199,6 +231,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 ## 下一步路由
 
+- 完整 T1 對照：[01-database vendors index](/backend/01-database/vendors/)
 - 平行：[DynamoDB vendor](/backend/01-database/vendors/dynamodb/)、[Spanner vendor](/backend/01-database/vendors/spanner/)、[MongoDB vendor](/backend/01-database/vendors/mongodb/)
 - 上游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) / [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 - 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（MongoDB → Cosmos 範例）

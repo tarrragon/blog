@@ -8,6 +8,18 @@ tags: ["backend", "database", "vendor", "spanner", "sql", "global"]
 
 Cloud Spanner 是 Google 內部 2007 年起跑、2017 年開放為 GCP 服務的 *全球分散式 SQL OLTP*。內部撐 Google Ads / Play / Search 計費、外部支援 Blockchain.com、Sharechat、ZEE5 等。它是 *唯一公開撐每秒 10 億請求* 同時維持線性擴展 + 強一致 + global distribution 的 OLTP 系統。
 
+## 教學路線：全球強一致與 TrueTime 成本
+
+Spanner 服務頁的教學目標是把 global strong consistency、TrueTime、Paxos、region layout 與 processing unit 連成一條產品決策線。讀者讀完後要能判斷何時需要全球一致 SQL，並理解這種能力的 latency、成本與雲平台邊界。
+
+| 學習段             | 核心問題                                                   | 對應段落                         |
+| ------------------ | ---------------------------------------------------------- | -------------------------------- |
+| Global consistency | 強一致 SQL 為什麼需要時間邊界與 consensus                  | 定位、適用場景                   |
+| Region layout      | instance config、leader region、replica 如何影響 latency   | 容量規劃要點、常見陷阱           |
+| Capacity unit      | node / processing unit 如何取代傳統 shard 心智模型         | 容量特性、案例對照               |
+| Use-case pressure  | billing、subscription、ticketing、金融交易何時需要 Spanner | 適用場景、案例對照               |
+| 替代路由           | 何時用 PostgreSQL、CockroachDB、Aurora DSQL、DynamoDB      | 不適用場景、跟其他 vendor 的取捨 |
+
 ## 定位：TrueTime + Paxos 的全球線性 SQL
 
 Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地理位置* 同時拿到 strong consistency + linear scalability + global availability。
@@ -123,6 +135,13 @@ Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地
 - Bigtable：wide-column、eventual replication、時序 / IoT / 大資料
 - 兩者不是替代、是互補（Bigtable 大資料、Spanner OLTP）
 
+**vs PostgreSQL（baseline）**：
+
+- PostgreSQL：single-primary、跨 region async replication、90% 場景夠用
+- Spanner：全球線性化、強一致跨 region、需要 GCP + 接受 latency / 成本
+- 從 PostgreSQL 升級 Spanner 的判準：流量真的跨 region + 跨 region 一致性是 product requirement（不是 nice-to-have）
+- 詳見 [PostgreSQL vendor page](/backend/01-database/vendors/postgresql/) 取捨段 + [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
+
 ## 容量規劃要點
 
 從 09 案例庫 + Spanner 文件提煉：
@@ -181,6 +200,7 @@ Spanner 解決一個過去 30 年分散式 DB 認為不可能的問題：*跨地
 
 ## 下一步路由
 
+- 完整 T1 對照：[01-database vendors index](/backend/01-database/vendors/)
 - 平行：[Aurora vendor](/backend/01-database/vendors/aurora/)、[DynamoDB vendor](/backend/01-database/vendors/dynamodb/)、[CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)
 - 上游：[1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 - 跨模組：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) — 全球 OLTP 的容量規劃特殊性

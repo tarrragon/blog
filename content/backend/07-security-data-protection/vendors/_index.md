@@ -12,6 +12,10 @@ tags: ["backend", "security", "data-protection", "vendor"]
 
 資安服務要從控制問題進入。讀者如果要處理身份與授權，先回到 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)；如果要處理秘密與機器憑證，先回到 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)；如果要處理入口與伺服器暴露，先回到 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
 
+## 教學順序同步
+
+資安服務頁的教學順序是先建立 identity / IAM，再進入 secrets / KMS / PKI、edge、supply chain、detection / DLP。這個順序對齊 checkout E6：讀者先理解誰能做什麼、秘密與金鑰如何生命週期化，再比較入口防護、artifact trust、偵測訊號與資料控制如何接到 release gate、evidence package 與 incident handoff。
+
 ## T1 服務頁大綱
 
 | 服務群             | 候選服務                                                                                                                                                                                                                                                                                                                                                                       | 頁面要回答的核心問題                                                     |
@@ -109,4 +113,5 @@ Stack 不是一次到位、按 [Path A → B → C](#reading-paths33-個-vendor-
 - 上游：[7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)
 - 上游：[7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)
 - 案例：[7.C 資安案例正文](/backend/07-security-data-protection/cases/)
+- 服務路徑：[7.27 Credential Rotation with Scoped Evidence 實作示範](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

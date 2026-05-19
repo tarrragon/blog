@@ -10,6 +10,10 @@ tags: ["backend", "database", "vendor"]
 
 資料庫服務頁的共同讀法見 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)。閱讀時先用 PostgreSQL / MySQL 建立 SQL baseline，再看 managed SQL、KV / document 與 global distributed SQL 如何改變團隊責任。
 
+## 教學順序同步
+
+資料庫服務頁的教學順序是先建立 SQL baseline，再處理 embedded / local、document / KV、managed SQL 與 global distributed SQL。這個順序對齊 checkout E1：讀者先理解正式狀態、transaction、schema migration 與 query boundary，再比較哪些服務把操作責任交給平台，哪些服務改變資料模型或一致性成本。
+
 ## T1 服務頁大綱
 
 | 服務                                                     | 類型                  | 頁面要回答的核心問題                                                          |
@@ -37,19 +41,21 @@ tags: ["backend", "database", "vendor"]
 
 其他 T1 vendor（Aurora / CockroachDB / SQLite / Spanner / Cosmos DB）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 
-## 服務頁標準章節
+## 服務頁教學功能
 
-| 章節                 | 資料庫服務頁要補的內容                                                      |
+資料庫服務頁的共同檢查軸是教學功能，而非固定章節順序。PostgreSQL、SQLite、MongoDB、DynamoDB 與 Spanner 的服務對象不同，頁面可以用不同標題展開，但都要讓讀者學會正式狀態、資料形狀、交易需求、查詢邊界、容量與操作責任的判斷。
+
+| 教學功能             | 資料庫服務頁要交付的內容                                                    |
 | -------------------- | --------------------------------------------------------------------------- |
 | 服務定位             | 它是正式狀態、embedded store、managed SQL、KV/document 還是 distributed SQL |
-| 本章目標             | 讀者能判斷資料形狀、交易需求、查詢邊界、容量與操作責任                      |
-| 最短判讀路徑         | 用「資料是否需要 transaction / ad-hoc query / global consistency」快速定位  |
+| 學習目標             | 讀者能判斷資料形狀、交易需求、查詢邊界、容量與操作責任                      |
+| 最短判讀路徑         | 用 transaction、ad-hoc query、local state 或 global consistency 快速定位    |
 | 日常操作與決策形狀   | schema migration、backup、restore、replica、index、connection、quota        |
-| 核心取捨表           | SQL baseline、managed SQL、KV/document、distributed SQL 的機會成本          |
+| 核心取捨             | SQL baseline、managed SQL、KV/document、distributed SQL 的機會成本          |
 | 進階主題             | sharding、multi-region、online migration、CDC、global consistency           |
-| 排錯與失敗快速判讀   | connection exhaustion、slow query、lock、replication lag、hot partition     |
-| 何時改走其他服務     | query 變複雜時回 SQL、replay 需求轉 event log、全文搜尋轉 search            |
-| 不在本頁內的主題     | ORM 語法、語言 driver 細節、完整 DBA 手冊                                   |
+| 失敗快速判讀         | connection exhaustion、slow query、lock、replication lag、hot partition     |
+| 替代服務路由         | query 變複雜時回 SQL、replay 需求轉 event log、全文搜尋轉 search            |
+| Scope boundary       | ORM 語法、語言 driver 細節、完整 DBA 手冊                                   |
 | 案例回寫與下一步路由 | 回到 01 主章、09 capacity case、08 incident decision log                    |
 
 ## 後續擴充
@@ -64,3 +70,19 @@ tags: ["backend", "database", "vendor"]
 | T3   | CouchDB、Couchbase                                                           | sync / document database 的特殊場景                         |
 
 主流覆蓋檢查的重點是區分 OLTP、search 與 analytics。Oracle、SQL Server、MariaDB 補 enterprise SQL；Cassandra / ScyllaDB 補 wide-column；OpenSearch / Elasticsearch 補 search；ClickHouse、BigQuery、Snowflake 先保留 analytics 路由，避免資料庫服務頁承擔整個數倉教材。
+
+## 撰寫批次
+
+| 批次 | 服務頁                                     | 撰寫目的                                                            |
+| ---- | ------------------------------------------ | ------------------------------------------------------------------- |
+| DB1  | PostgreSQL / MySQL                         | 建立 SQL baseline、transaction、schema evolution 與 connection 判準 |
+| DB2  | SQLite                                     | 建立 embedded / local formal state 與低操作成本邊界                 |
+| DB3  | MongoDB / DynamoDB                         | 建立 document / KV、access pattern、partition 與資料形狀判準        |
+| DB4  | Aurora / Spanner / Cosmos DB / CockroachDB | 建立 managed / global SQL、多 region、consistency 與 vendor 約束    |
+
+## 下一步路由
+
+- 上游：[1.2 schema design 與資料建模](/backend/01-database/schema-design/)
+- 上游：[1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)
+- 服務路徑：[1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)
+- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

@@ -12,6 +12,10 @@ tags: ["backend", "observability", "vendor"]
 
 可觀測性服務要從訊號責任進入。讀者如果要建立 metrics baseline，先回到 [Metrics Basics](/backend/04-observability/metrics-basics/)；如果要處理資料品質，先回到 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)；如果要交付 evidence，先回到 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 
+## 教學順序同步
+
+可觀測性服務頁的教學順序是先建立 OpenTelemetry 標準入口，再比較 metrics / logs / traces backend、SaaS observability 與 cloud-native 工具。這個順序服務 E1-E7 所有 checkout episode：每個服務變更都要把訊號整理成 evidence package，讀者要先理解 signal quality，再進入 vendor 能力與成本模型。
+
 ## T1 服務頁大綱
 
 | 服務                                                                            | 類型              | 頁面要回答的核心問題                                                    |
@@ -143,12 +147,12 @@ OTel 相容度影響 vendor 切換成本。各 vendor 接受程度：
 
 ## 撰寫批次
 
-| 批次 | 服務頁                                | 撰寫目的                                                  |
-| ---- | ------------------------------------- | --------------------------------------------------------- |
-| O1   | OpenTelemetry / Prometheus            | 建立標準、metrics baseline 與 cardinality 判準            |
-| O2   | Grafana Stack / Elastic Stack         | 建立 OSS 平台、logs / traces / retention 取捨             |
-| O3   | Datadog / Honeycomb / Sentry          | 建立 SaaS APM、high-cardinality 與 error tracking 對照    |
-| O4   | AWS CloudWatch / GCP Cloud Operations | 建立 cloud-native observability 與 account / project 邊界 |
+| 批次 | 服務頁                                       | 撰寫目的                                                       |
+| ---- | -------------------------------------------- | -------------------------------------------------------------- |
+| O1   | OpenTelemetry                                | 建立 instrumentation standard、collector 與 vendor portability |
+| O2   | Prometheus / Grafana Stack                   | 建立 metrics baseline、cardinality 與 OSS platform 判準        |
+| O3   | Elastic Stack / Datadog / Honeycomb / Sentry | 建立 logs / APM / high-cardinality / error tracking 對照       |
+| O4   | AWS CloudWatch / GCP Cloud Operations        | 建立 cloud-native observability 與 account / project 邊界      |
 
 ## 後續候選
 
@@ -167,5 +171,6 @@ OTel 相容度影響 vendor 切換成本。各 vendor 接受程度：
 
 - 上游：[4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)
 - 上游：[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)
+- 服務路徑：[4.22 Checkout API Evidence Package 實作示範](/backend/04-observability/checkout-api-evidence-package/)
 - 跨模組：[9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)
 - 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

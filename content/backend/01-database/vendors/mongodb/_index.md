@@ -8,6 +8,18 @@ tags: ["backend", "database", "vendor", "mongodb", "document"]
 
 MongoDB 是 document database 的事實標準。schema flexibility、aggregation pipeline、跨雲 managed（Atlas）讓它成為許多 startup 的 default 選擇。Microsoft 365、Disney+ 早期、Uber 等大規模平台都從 MongoDB 起家、後來部分遷移到 KV / 雲商專屬服務（Cosmos DB、DynamoDB）。
 
+## 教學路線：Document shape 與 schema governance
+
+MongoDB 服務頁的教學目標是把 document model、schema flexibility、index、aggregation pipeline 與 sharding 放回資料形狀治理。讀者讀完後要能判斷資料是否適合 aggregate root，並知道 schema governance 如何影響長期維護成本。
+
+| 學習段            | 核心問題                                                 | 對應段落                         |
+| ----------------- | -------------------------------------------------------- | -------------------------------- |
+| Document shape    | 哪些資料適合 aggregate root 與 nested document           | 定位、適用場景                   |
+| Schema governance | schema flexibility 如何搭配 validation、版本與 migration | 容量規劃要點、預計實作話題       |
+| Query / index     | index、aggregation pipeline、ad-hoc query 如何影響成本   | 容量特性、常見陷阱               |
+| Sharding          | shard key、chunk、balancer 如何把資料形狀變容量問題      | 容量規劃要點                     |
+| 替代路由          | 何時轉 PostgreSQL、DynamoDB、Cosmos DB 或 search         | 不適用場景、跟其他 vendor 的取捨 |
+
 ## 定位：JSON document + 跨雲彈性
 
 MongoDB 是 *主要* document model 的 DB（不是 PostgreSQL 那種「主要 SQL + 可塞 JSON」）。設計圍繞 BSON document、aggregation pipeline、sharding。最近版本（6.0+）加入 time series、change streams、queryable encryption、CSFLE。
@@ -195,6 +207,7 @@ MongoDB 是 *主要* document model 的 DB（不是 PostgreSQL 那種「主要 S
 
 ## 下一步路由
 
+- 完整 T1 對照：[01-database vendors index](/backend/01-database/vendors/)
 - 平行：[Cosmos DB vendor](/backend/01-database/vendors/cosmosdb/)（MongoDB API replacement）、[DynamoDB vendor](/backend/01-database/vendors/dynamodb/)（KV alternative）
 - 上游：[1.2 schema design](/backend/01-database/schema-design/)、[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)
 - 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（MongoDB 遷出範例）
