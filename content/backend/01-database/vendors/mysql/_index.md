@@ -40,8 +40,8 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 **Connection 上限**：
 
 - 預設 max_connections = 151、實務常設 1000-5000
-- 每個 connection ~3MB RAM（比 PostgreSQL 輕）
-- 仍建議 ProxySQL / connection pool
+- 每個 connection thread stack ~3 MB + session buffer 累積、active 高峰時 ~8-10 MB（thread + sort/join buffer）
+- 仍建議 ProxySQL / connection pool 限制 backend connection 數
 
 **Replication**：
 
@@ -194,20 +194,53 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 
 **5. InnoDB tuning**：
 
-- innodb_buffer_pool_size：通常設 system RAM 70%
+- innodb_buffer_pool_size：dedicated server 70-75%、shared server 30-50%（詳見 [InnoDB Tuning](innodb-tuning/)）
 - innodb_flush_log_at_trx_commit：1（durable）vs 2（faster）vs 0（fastest, 不安全）
 - innodb_io_capacity：依 storage 類型調整
 
-## 預計實作話題（後續擴充）
+## Deep article + Migration playbook（已完成）
 
-- Replication topology（async / semi-sync / GTID）配置
-- gh-ost / pt-online-schema-change 對比
-- Vitess sharding 設計
-- ProxySQL 配置跟 query routing
-- Orchestrator failover 設計
-- 從自管 MySQL 遷到 Aurora MySQL / PlanetScale
-- InnoDB tuning（buffer pool、log、IO）
-- Binary log + Maxwell / Debezium CDC
+| 主題                                                 | 文章                                                            | 類型                         |
+| ---------------------------------------------------- | --------------------------------------------------------------- | ---------------------------- |
+| Replication topology（async / semi-sync / GTID）配置 | [replication-topology](replication-topology/)                   | Deep article                 |
+| gh-ost / pt-online-schema-change 對比                | [online-schema-change-tools](online-schema-change-tools/)       | Deep article                 |
+| ProxySQL 配置跟 query routing                        | [proxysql-config](proxysql-config/)                             | Deep article                 |
+| Orchestrator failover 設計                           | [orchestrator-failover](orchestrator-failover/)                 | Deep article                 |
+| InnoDB tuning（buffer pool / log / IO）              | [innodb-tuning](innodb-tuning/)                                 | Deep article                 |
+| Binary log + Maxwell / Debezium CDC                  | [binlog-cdc](binlog-cdc/)                                       | Deep article                 |
+| Vitess sharding 設計                                 | [vitess-sharding](vitess-sharding/)                             | Deep article                 |
+| 8.0 modern SQL（CTE / window / JSON_TABLE）          | [modern-sql-features](modern-sql-features/)                     | Deep article                 |
+| Group Replication / InnoDB Cluster 部署              | [group-replication](group-replication/)                         | Deep article                 |
+| Query optimization deep dive                         | [query-optimization](query-optimization/)                       | Deep article                 |
+| Partitioning（range / list / hash / sub-partition）  | [partitioning](partitioning/)                                   | Deep article                 |
+| PITR + Backup strategy                               | [pitr-backup](pitr-backup/)                                     | Deep article                 |
+| Lock contention（gap / next-key / deadlock）         | [lock-contention](lock-contention/)                             | Deep article                 |
+| 5.7 → 8.0 major version upgrade                      | [major-version-upgrade](major-version-upgrade/)                 | Migration playbook（Type E） |
+| 從自管 MySQL 遷到 Aurora MySQL                       | [migrate-to-aurora](migrate-to-aurora/)                         | Migration playbook（Type C） |
+| 從自管 MySQL 遷到 PlanetScale                        | [migrate-to-planetscale](migrate-to-planetscale/)               | Migration playbook（Type E） |
+| 自管 Vitess 遷到 PlanetScale                         | [migrate-vitess-to-planetscale](migrate-vitess-to-planetscale/) | Migration playbook（Type C） |
+| 從 MySQL 遷到 PostgreSQL                             | [migrate-to-postgresql](migrate-to-postgresql/)                 | Migration playbook           |
+
+## 後續擴充候選
+
+當前 deep article + migration playbook 已 cover 17 個主題、涵蓋 ops / schema / failover / tuning / SQL features / sharding / backup / migration 八大維度。未來可考慮深化：
+
+- **Encryption at rest + TLS in transit + key management**：對應 PG TLS-mTLS 議題
+- **Audit log + SIEM 整合**：MySQL Enterprise Audit Plugin 跟 Splunk / Elastic Security 整合
+- **MySQL Document Store（X-Protocol）**：少用但對特定 use case 有興趣
+- **Multi-source replication topology**：1 個 replica 從 N 個 primary 拉、用於 sharded environment 整合
+- **HeatWave（MySQL OLAP add-on）**：Oracle 推的 HTAP solution、跟 ClickHouse / Snowflake 對比
+- **Cross-buffer memory contention deep dive**：buffer pool / connection thread / temp table / sort buffer 之間的 RAM 競爭、跟 OS swap 互動
+- **Metadata lock deep dive**：DDL / long-running SELECT / FK 互動造成的 stalls
+
+## 已知 limitation（多輪 audit 結論）
+
+17 篇 batch 跑過 4-reviewer audit（寫作規範 / 跨檔一致性 / 技術準確性 / 結構性質疑）後留下的 limitation：
+
+- *Framework bias*：5 篇 migration playbook 全落在 Type A / C / E、沒一篇 Type B / D / F。這反映 *MySQL 領域 migration 的本質*（多數情境是 schema 差 / operational 轉手 / paradigm shift）、也可能反映 [6 type framework](/posts/migration-playbook-methodology/) 的覆蓋限制
+- *Anti-recommendation 分布不均*：deep article（13 篇）多數沒有「何時不必管這個」段、容易 push 讀者 over-engineer；migration playbook（5 篇）有「何時不要遷」、deep article 之後輪可補
+- *Synthetic case 為主*：17 篇用合成案例（5K WPS / 64 GB RAM 等典型配置）說明踩雷、未引用真實 incident（GitHub 2018 / Shopify BFCM / Slack）作 case anchor。下輪可加 real incident reference
+- *PG 對比 narrative*：對比段公允度尚可、但 PG 弱點（vacuum ops 開銷 / connection-per-process model / replication slot 治理）較少在 MySQL 視角展開、單方面對比偶有偏 MySQL 不利
 
 ## 案例對照
 

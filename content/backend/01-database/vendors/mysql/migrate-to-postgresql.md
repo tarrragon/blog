@@ -50,13 +50,13 @@ SELECT data->>'name' FROM events;  -- 取出 text
 
 5 個 sample 看出 MySQL → PostgreSQL 主要工作是 *SQL dialect translation*；不是 5-10 個函數差、是 *跨整個 application SQL surface 的 audit + 改寫*。對應 [diff dimension audit](/report/content-structure-by-max-diff-dimension/) 結果：
 
-| 維度                 | 評估                                                   | 等級     |
-| -------------------- | ------------------------------------------------------ | -------- |
-| Schema / API         | SQL dialect 差大、CREATE TABLE / INDEX / function 都差 | **High** |
-| Operational model    | 兩者都 OLTP RDBMS、replication 概念對等但語法不同     | Medium   |
-| Abstraction / paradigm | 同 SQL RDBMS                                          | Low      |
-| Number of components | 同 1 個                                                | Low      |
-| Application change   | ORM 多數能 cover、raw SQL 必改                        | Medium   |
+| 維度                   | 評估                                                   | 等級     |
+| ---------------------- | ------------------------------------------------------ | -------- |
+| Schema / API           | SQL dialect 差大、CREATE TABLE / INDEX / function 都差 | **High** |
+| Operational model      | 兩者都 OLTP RDBMS、replication 概念對等但語法不同      | Medium   |
+| Abstraction / paradigm | 同 SQL RDBMS                                           | Low      |
+| Number of components   | 同 1 個                                                | Low      |
+| Application change     | ORM 多數能 cover、raw SQL 必改                         | Medium   |
 
 主導維度 Schema = High、走 [Type A 6-phase playbook](/posts/migration-playbook-methodology/) 標準結構。
 
@@ -89,22 +89,22 @@ Audit 主要產出三類清單：
 
 ## Phase 1：schema 對位
 
-| MySQL                                       | PostgreSQL                                                       |
-| ------------------------------------------- | ---------------------------------------------------------------- |
-| `INT AUTO_INCREMENT`                        | `INT GENERATED ALWAYS AS IDENTITY` 或 `SERIAL`                  |
-| `TINYINT(1)` (boolean usage)                | `BOOLEAN`                                                        |
-| `DATETIME`                                  | `TIMESTAMP WITHOUT TIME ZONE`                                    |
-| `DATETIME(6)` (microsecond)                 | `TIMESTAMP(6)`                                                   |
-| `VARCHAR(N)` with charset                   | `VARCHAR(N)` (UTF-8 always)                                      |
-| `TEXT`                                      | `TEXT` (no length limit)                                         |
-| `LONGTEXT`                                  | `TEXT`                                                           |
-| `JSON`                                      | `JSONB` (推薦、indexed) 或 `JSON`                                |
-| `ENUM('a','b','c')`                         | 自定 `TYPE foo AS ENUM('a','b','c')` 或 `VARCHAR + CHECK`        |
-| `SET('a','b')`                              | Array `TEXT[]` + CHECK                                           |
-| `BINARY(N)`                                 | `BYTEA`                                                          |
-| Index prefix `KEY (col(10))`                | Functional index `CREATE INDEX ON t (LEFT(col, 10))`              |
-| `FULLTEXT INDEX`                            | `tsvector` + GIN index                                            |
-| Geographic types                            | PostGIS extension（必須先裝）                                    |
+| MySQL                        | PostgreSQL                                                |
+| ---------------------------- | --------------------------------------------------------- |
+| `INT AUTO_INCREMENT`         | `INT GENERATED ALWAYS AS IDENTITY` 或 `SERIAL`            |
+| `TINYINT(1)` (boolean usage) | `BOOLEAN`                                                 |
+| `DATETIME`                   | `TIMESTAMP WITHOUT TIME ZONE`                             |
+| `DATETIME(6)` (microsecond)  | `TIMESTAMP(6)`                                            |
+| `VARCHAR(N)` with charset    | `VARCHAR(N)` (UTF-8 always)                               |
+| `TEXT`                       | `TEXT` (no length limit)                                  |
+| `LONGTEXT`                   | `TEXT`                                                    |
+| `JSON`                       | `JSONB` (推薦、indexed) 或 `JSON`                         |
+| `ENUM('a','b','c')`          | 自定 `TYPE foo AS ENUM('a','b','c')` 或 `VARCHAR + CHECK` |
+| `SET('a','b')`               | Array `TEXT[]` + CHECK                                    |
+| `BINARY(N)`                  | `BYTEA`                                                   |
+| Index prefix `KEY (col(10))` | Functional index `CREATE INDEX ON t (LEFT(col, 10))`      |
+| `FULLTEXT INDEX`             | `tsvector` + GIN index                                    |
+| Geographic types             | PostGIS extension（必須先裝）                             |
 
 Schema 對位表存版控、application code refactor 時對照。
 
@@ -163,7 +163,7 @@ Application ──→ MySQL (write + read primary)
 
 **徵兆**：cutover 後某 batch job 跑得比 MySQL 慢 5-10x、PG log 顯示 sequence 競爭。
 
-**根因**：MySQL `AUTO_INCREMENT` 是 *table-level lock*、PG `SERIAL` 是 *sequence-level non-transactional*；高並發 batch insert 行為差異大。
+**根因**：MySQL `AUTO_INCREMENT` 取值受 `innodb_autoinc_lock_mode` 控制（8.0 預設 mode=2 interleaved 可並行、mode=0 才是 table-level lock；詳見 [Lock contention](/backend/01-database/vendors/mysql/lock-contention/)）、PG `SERIAL` 是 *sequence-level non-transactional*；mode=0 場景跟 PG SERIAL 差異最大、mode=2 跟 PG SERIAL 行為較接近（皆可亂號、皆可並行）。
 
 **修法**：
 
@@ -221,16 +221,16 @@ Application ──→ MySQL (write + read primary)
 
 ## Capacity / cost
 
-| 維度                 | MySQL                                | PostgreSQL                                    |
-| -------------------- | ------------------------------------ | --------------------------------------------- |
-| Instance cost        | 對等（同 EC2 / RDS spec）            | 對等                                           |
-| Operational FTE      | 對等                                  | 對等                                           |
-| Connection pooling   | proxysql / mysql-proxy                | PgBouncer（更成熟）                           |
-| Index performance    | 對等                                  | 對等                                           |
-| JSON performance     | Improving                             | JSONB 領先                                    |
-| Replication          | Async binlog                          | Async streaming + logical                     |
-| Extension ecosystem  | 少                                    | 大（PostGIS / TimescaleDB / pgvector）        |
-| Migration cost (one-time) | -                              | 2-6 FTE 月 × project length（含 application） |
+| 維度                      | MySQL                     | PostgreSQL                                    |
+| ------------------------- | ------------------------- | --------------------------------------------- |
+| Instance cost             | 對等（同 EC2 / RDS spec） | 對等                                          |
+| Operational FTE           | 對等                      | 對等                                          |
+| Connection pooling        | proxysql / mysql-proxy    | PgBouncer（更成熟）                           |
+| Index performance         | 對等                      | 對等                                          |
+| JSON performance          | Improving                 | JSONB 領先                                    |
+| Replication               | Async binlog              | Async streaming + logical                     |
+| Extension ecosystem       | 少                        | 大（PostGIS / TimescaleDB / pgvector）        |
+| Migration cost (one-time) | -                         | 2-6 FTE 月 × project length（含 application） |
 
 Migration 主要 cost 在 *application code refactor + dual-write window operational*、不是 DB itself。
 
