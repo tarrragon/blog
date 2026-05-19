@@ -18,28 +18,28 @@ tags: ["backend", "database", "mongodb", "atlas", "managed", "migration", "type-
 
 但 *operational surface 完全不同*：
 
-| Operational concept | Self-managed MongoDB                              | Atlas                                               |
-| ------------------- | ------------------------------------------------- | --------------------------------------------------- |
-| Cluster bootstrap   | mongod + replica set config + cfgsvr + shard 手動 | UI / API 一鍵建集群、全自動                         |
-| HA                  | Replica set 自管 + arbiter + priority             | 自動跨 AZ replica + automatic failover              |
-| Backup              | mongodump + S3 archive 自管                       | 內建 cloud backup + PITR（按 region 設）           |
-| Network access      | VPC + security group + IP whitelist 自管         | Atlas private endpoint / VPC peering / IP access list |
-| Authentication      | mongod 內部 user / x.509 自管                    | Atlas Database User + 整合 LDAP / SSO / AWS IAM    |
-| Monitoring          | Self-deploy Prometheus + grafana                  | Atlas Performance Advisor + APM 內建               |
-| Sizing              | Manual instance class + scale                     | Auto-tier scaling + tier-based pricing             |
-| Patching            | Manual + outage window                            | Automatic（可配置 maintenance window）             |
+| Operational concept | Self-managed MongoDB                              | Atlas                                                 |
+| ------------------- | ------------------------------------------------- | ----------------------------------------------------- |
+| Cluster bootstrap   | mongod + replica set config + cfgsvr + shard 手動 | UI / API 一鍵建集群、全自動                           |
+| HA                  | Replica set 自管 + arbiter + priority             | 自動跨 AZ replica + automatic failover                |
+| Backup              | mongodump + S3 archive 自管                       | 內建 cloud backup + PITR（按 region 設）              |
+| Network access      | VPC + security group + IP whitelist 自管          | Atlas private endpoint / VPC peering / IP access list |
+| Authentication      | mongod 內部 user / x.509 自管                     | Atlas Database User + 整合 LDAP / SSO / AWS IAM       |
+| Monitoring          | Self-deploy Prometheus + grafana                  | Atlas Performance Advisor + APM 內建                  |
+| Sizing              | Manual instance class + scale                     | Auto-tier scaling + tier-based pricing                |
+| Patching            | Manual + outage window                            | Automatic（可配置 maintenance window）                |
 
 Migration 主要工作不在 *資料層* — protocol drop-in 已 cover；是 *operational stack 全換*：SRE runbook、monitoring dashboard、access control、IAM 整合、cost 預估全要重做。「Atlas 是 managed MongoDB」這個 framing 低估了 operational 工作量。
 
 跑 [diff dimension audit](/report/content-structure-by-max-diff-dimension/)：
 
-| 維度                 | 評估                                              | 等級     |
-| -------------------- | ------------------------------------------------- | -------- |
-| Schema / API         | MongoDB protocol / API 完全相容                   | Low      |
-| Operational model    | HA / backup / monitoring / IAM / network 全換     | **High** |
-| Abstraction / paradigm | 同 document DB                                   | Low      |
-| Number of components | 同 1 個 cluster                                   | Low      |
-| Application change   | Connection string / IAM 整合改、application logic 不改 | Low/Medium |
+| 維度                   | 評估                                                   | 等級       |
+| ---------------------- | ------------------------------------------------------ | ---------- |
+| Schema / API           | MongoDB protocol / API 完全相容                        | Low        |
+| Operational model      | HA / backup / monitoring / IAM / network 全換          | **High**   |
+| Abstraction / paradigm | 同 document DB                                         | Low        |
+| Number of components   | 同 1 個 cluster                                        | Low        |
+| Application change     | Connection string / IAM 整合改、application logic 不改 | Low/Medium |
 
 主導維度 Operational = High、Schema / Paradigm 都 Low — 對映 [Type C operational redesign hybrid](/posts/migration-playbook-methodology/)。
 
@@ -310,14 +310,14 @@ const client = new MongoClient(uri, {
 
 ## Capacity / cost
 
-| 維度                 | Self-managed MongoDB              | Atlas                                                |
-| -------------------- | --------------------------------- | ---------------------------------------------------- |
-| Cluster cost (M80)   | EC2 r6g.4xlarge × 3 ≈ $1.5K / mo  | M80 + storage + backup ≈ $3K / mo                   |
-| Operational FTE      | 0.5-1.5 FTE                       | 0.1-0.3 FTE                                           |
-| Backup cost          | S3 + tooling 自管                  | 內建 + tiered storage                                |
-| Cross-region DR cost | Manual + 2x infrastructure        | 1-click + 1.5-2x billing                             |
-| Time to value        | 1-3 個月（HA + ops setup）        | 1-2 週（cluster ready + IAM）                       |
-| Migration cost       | -                                  | 1-3 FTE × 2-3 個月                                   |
+| 維度                 | Self-managed MongoDB             | Atlas                             |
+| -------------------- | -------------------------------- | --------------------------------- |
+| Cluster cost (M80)   | EC2 r6g.4xlarge × 3 ≈ $1.5K / mo | M80 + storage + backup ≈ $3K / mo |
+| Operational FTE      | 0.5-1.5 FTE                      | 0.1-0.3 FTE                       |
+| Backup cost          | S3 + tooling 自管                | 內建 + tiered storage             |
+| Cross-region DR cost | Manual + 2x infrastructure       | 1-click + 1.5-2x billing          |
+| Time to value        | 1-3 個月（HA + ops setup）       | 1-2 週（cluster ready + IAM）     |
+| Migration cost       | -                                | 1-3 FTE × 2-3 個月                |
 
 **Break-even**：~200GB / 中型 workload、Atlas operational savings 平攤 1-2 年後比 self-managed cheaper；TB+ 大型 workload self-managed 仍可能便宜、但需要 ops team。
 

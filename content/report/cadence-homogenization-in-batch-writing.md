@@ -10,10 +10,10 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 「模板」有兩個維度、寫作規範通常只 enforce 第一維、第二維是隱形維度：
 
-| 維度          | 內容                                                                                | 規範狀態                                                                          |
-| ------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| 內容欄位模板  | 規模對照表、tripwire 條件、失敗模式、回退路徑                                       | 已被 AGENTS.md §1 原則八 enforce（情境優先於模板）                                |
-| Cadence 模板  | 段首句句型、段末收尾語、表格前導句、過渡詞、列表收尾結構                            | **未被規範涵蓋** — 51 vendor 同 cadence、各篇單看都合規、連讀才預期化            |
+| 維度         | 內容                                                     | 規範狀態                                                              |
+| ------------ | -------------------------------------------------------- | --------------------------------------------------------------------- |
+| 內容欄位模板 | 規模對照表、tripwire 條件、失敗模式、回退路徑            | 已被 AGENTS.md §1 原則八 enforce（情境優先於模板）                    |
+| Cadence 模板 | 段首句句型、段末收尾語、表格前導句、過渡詞、列表收尾結構 | **未被規範涵蓋** — 51 vendor 同 cadence、各篇單看都合規、連讀才預期化 |
 
 實際案例（backend/07 批量 51 vendor）：51 個 vendor 個別頁的「最短判讀路徑」段都收尾在「四件事任一缺失、就是 X 邊界的待補項目」。51/51 同骨、跨 9 個 service group、跨不同 vendor 性質。每一篇單看符合規範、表格有延伸、無 emoji、章節結構齊、案例正確；連讀 5 篇後讀者預期化、cadence 變成「閱讀時自動跳過的雜訊」。
 
@@ -35,13 +35,13 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 寫批量內容（≥ 5 個同類檔案）時、加入 cadence 抽樣 pass。不是讀全文、是抽固定位置的句子做骨架對照：
 
-| 抽樣位置         | 比對方式                                                                       | 預期分佈                                       |
-| ---------------- | ------------------------------------------------------------------------------ | ---------------------------------------------- |
-| 段首句           | 把每篇每段的第一句並列、看句型骨架是否相同（「X 的 first-class concept 是 Y」）| ≥ 3 種不同骨架、不是全篇都同一個               |
-| 段末收尾語       | 把每篇每段的最後一句並列、看是否反覆用同一個 frame（「四件事任一缺失就是 X」）| 跨同類段落、收尾語句型該有 50% 以上變化       |
-| 表格前導句       | 表格前的引導句、看是否反覆用「下表整理 N 個面向」「以下從 X 維度比較」         | 不該所有表格都用同一個前導模板                 |
-| 列表收尾結構     | 列表後的承接段、看是否反覆用「以上 N 點任一缺失就是 X」                        | 列表收尾不該全都是「N 點任一缺失」結構         |
-| 過渡詞密度       | 跨檔 grep「實際上 / 換句話說 / 換個角度 / 同樣 / 類似 / 進一步」               | 任一過渡詞在 N 篇中出現率 > 60% 是警訊         |
+| 抽樣位置     | 比對方式                                                                        | 預期分佈                                |
+| ------------ | ------------------------------------------------------------------------------- | --------------------------------------- |
+| 段首句       | 把每篇每段的第一句並列、看句型骨架是否相同（「X 的 first-class concept 是 Y」） | ≥ 3 種不同骨架、不是全篇都同一個        |
+| 段末收尾語   | 把每篇每段的最後一句並列、看是否反覆用同一個 frame（「四件事任一缺失就是 X」）  | 跨同類段落、收尾語句型該有 50% 以上變化 |
+| 表格前導句   | 表格前的引導句、看是否反覆用「下表整理 N 個面向」「以下從 X 維度比較」          | 不該所有表格都用同一個前導模板          |
+| 列表收尾結構 | 列表後的承接段、看是否反覆用「以上 N 點任一缺失就是 X」                         | 列表收尾不該全都是「N 點任一缺失」結構  |
+| 過渡詞密度   | 跨檔 grep「實際上 / 換句話說 / 換個角度 / 同樣 / 類似 / 進一步」                | 任一過渡詞在 N 篇中出現率 > 60% 是警訊  |
 
 抽樣不需要全做、選 *最容易反覆使用* 的 2-3 個位置即可；批量越大、抽樣位置越要多。
 
@@ -51,12 +51,12 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 寫第 1-3 篇時就該意識：cadence 會被複製到下 N 篇。對策不是「寫完後 review 改」、是「寫第一篇時就刻意製造 N 種 framing 變體、之後在這 N 種裡輪替」：
 
-| 寫作階段             | Cadence 策略                                                                   |
-| -------------------- | ------------------------------------------------------------------------------ |
-| 第 1-3 篇（pilot）    | 刻意寫 3 種不同 framing 變體（如「四件事 / 三條紅線 / 兩個 attestation 點」）  |
-| 第 4-10 篇（早期 batch）| 輪替使用 pilot 階段的 3 種變體、不固定一個                                   |
-| 第 10+ 篇             | 加入第 4-5 個新 framing 變體、避免變體耗盡再變單調                            |
-| 批量結束前            | 抽樣 5 個檔做 cadence 對照、發現同質化提前修                                  |
+| 寫作階段                 | Cadence 策略                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| 第 1-3 篇（pilot）       | 刻意寫 3 種不同 framing 變體（如「四件事 / 三條紅線 / 兩個 attestation 點」） |
+| 第 4-10 篇（早期 batch） | 輪替使用 pilot 階段的 3 種變體、不固定一個                                    |
+| 第 10+ 篇                | 加入第 4-5 個新 framing 變體、避免變體耗盡再變單調                            |
+| 批量結束前               | 抽樣 5 個檔做 cadence 對照、發現同質化提前修                                  |
 
 這個做法的關鍵是 *變體不是事後抽出來的、是設計階段就準備好的*。一旦寫過 5 篇還沒主動製造變體、就會預設複製第一篇 framing 到所有後續檔案。
 
@@ -64,12 +64,12 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 本卡浮現後立即跑了一次小批量 dogfood：4 篇 deep article（Vault dynamic credential / K8s graceful shutdown / Splunk RBA / Cloudflare Page Shield）寫作前主動規劃 4 種不同 entry framing（標準問題情境 / 痛點宣告 / 概念反向定義 / 對照表驅動）、跨檔 cadence audit 結果：
 
-| 維度                                | backend/07 51 vendor（前批、無 variant 規劃） | deep article 4 篇（本批、pilot variant） |
-| ----------------------------------- | --------------------------------------------- | ---------------------------------------- |
-| Cadence collapse「任一缺失」族重複  | 51/51 (100%)                                  | 0/4 (0%)                                 |
-| 章節 1 entry framing 種類           | 1 種                                          | 4 種                                     |
-| 過渡詞密度（實際上 / 進一步 等）     | 未量化（同質化嚴重）                           | 全 0 hits                                |
-| Lint / emoji / MD036 違規           | 0                                             | 0                                        |
+| 維度                               | backend/07 51 vendor（前批、無 variant 規劃） | deep article 4 篇（本批、pilot variant） |
+| ---------------------------------- | --------------------------------------------- | ---------------------------------------- |
+| Cadence collapse「任一缺失」族重複 | 51/51 (100%)                                  | 0/4 (0%)                                 |
+| 章節 1 entry framing 種類          | 1 種                                          | 4 種                                     |
+| 過渡詞密度（實際上 / 進一步 等）   | 未量化（同質化嚴重）                          | 全 0 hits                                |
+| Lint / emoji / MD036 違規          | 0                                             | 0                                        |
 
 兩個重點驗證：
 
@@ -82,12 +82,12 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 三批 cadence 比較：
 
-| 維度                                | backend/07 51 vendor（無規劃） | deep article 第一批 N=4（跨 vendor）| deep article 第二批 N=5（同 vendor）|
-| ----------------------------------- | ----------------------------- | ---------------------------------- | ----------------------------------- |
-| Cadence collapse「任一缺失」族重複  | 51/51 (100%)                  | 0/4 (0%)                           | 0/5 (0%)                           |
-| 章節 1 entry framing 種類           | 1                             | 4                                  | 5                                   |
-| 過渡詞密度                          | 未量化                         | 全 0 hits                          | 全 0 hits                          |
-| 共同變數                            | 11 章節結構 + 表格深化         | 6-section deep article            | 6-section + 同 vendor + 同 audience |
+| 維度                               | backend/07 51 vendor（無規劃） | deep article 第一批 N=4（跨 vendor） | deep article 第二批 N=5（同 vendor） |
+| ---------------------------------- | ------------------------------ | ------------------------------------ | ------------------------------------ |
+| Cadence collapse「任一缺失」族重複 | 51/51 (100%)                   | 0/4 (0%)                             | 0/5 (0%)                             |
+| 章節 1 entry framing 種類          | 1                              | 4                                    | 5                                    |
+| 過渡詞密度                         | 未量化                         | 全 0 hits                            | 全 0 hits                            |
+| 共同變數                           | 11 章節結構 + 表格深化         | 6-section deep article               | 6-section + 同 vendor + 同 audience  |
 
 額外驗證（補既有 sub-threshold 驗證）：
 
@@ -101,13 +101,13 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 第三輪 batch 寫 5 篇 migration playbook（跨 vendor、不同 module）、*前 3 篇被動寫作、後 2 篇主動規劃 variant*。結果：
 
-| 篇 | Variant 規劃 | 章節 1 entry framing                          |
-| --- | ----------- | -------------------------------------------- |
-| 1 Splunk → Elastic     | 被動 | 「為什麼遷：X / Y / Z 三條 driver」          |
-| 2 Redis → DragonflyDB  | 被動 | 「為什麼遷：X / Y / Z 三條 driver」          |
-| 3 Postgres → Aurora    | 被動 | 「為什麼遷：X / Y / Z 三條 driver」          |
-| 4 Datadog → Grafana    | 主動 | 「$50K/month bill 拆解」                     |
-| 5 Kafka ↔ NATS         | 主動 | 「『Kafka → NATS migration』字面上不成立」    |
+| 篇                    | Variant 規劃 | 章節 1 entry framing                       |
+| --------------------- | ------------ | ------------------------------------------ |
+| 1 Splunk → Elastic    | 被動         | 「為什麼遷：X / Y / Z 三條 driver」        |
+| 2 Redis → DragonflyDB | 被動         | 「為什麼遷：X / Y / Z 三條 driver」        |
+| 3 Postgres → Aurora   | 被動         | 「為什麼遷：X / Y / Z 三條 driver」        |
+| 4 Datadog → Grafana   | 主動         | 「$50K/month bill 拆解」                   |
+| 5 Kafka ↔ NATS        | 主動         | 「『Kafka → NATS migration』字面上不成立」 |
 
 **3/5 collapse、2/5 錯開** = partial collapse。
 
@@ -116,9 +116,9 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 | 批次                                     | Sample | Variant 規劃                  | Collapse rate |
 | ---------------------------------------- | ------ | ----------------------------- | ------------- |
 | backend/07 vendor batch                  | N=51   | 無                            | 51/51 (100%)  |
-| Deep article 第一批（跨 vendor）          | N=4    | 主動                          | 0/4 (0%)      |
-| Deep article 第二批（同 vendor）          | N=5    | 主動                          | 0/5 (0%)      |
-| Migration playbook 第一輪（混合）         | N=5    | **3 被動 + 2 主動**           | **3/5 (60%)** |
+| Deep article 第一批（跨 vendor）         | N=4    | 主動                          | 0/4 (0%)      |
+| Deep article 第二批（同 vendor）         | N=5    | 主動                          | 0/5 (0%)      |
+| Migration playbook 第一輪（混合）        | N=5    | **3 被動 + 2 主動**           | **3/5 (60%)** |
 | Migration playbook 第二輪（漏類 + 標準） | N=5    | **全 5 主動（學第一輪教訓）** | **0/5 (0%)**  |
 
 **主題語意 attractor 定義（atomic）**：批量寫作中、*主題本身的語意結構* 對 framing 選擇產生的隱形吸引力 — 例如 migration 主題天然引出「為什麼遷：X / Y / Z driver」開頭、SIEM rule 翻譯天然引出「先 audit 再 translate」開頭。這是 [#123 多重硬規範收斂 cadence](../compliance-optimum-converges-cadence/) 的 *內容驅動子類型*：#123 處理的是 *外部 constraint*（章節結構 + lint 規則）收斂 cadence、本概念處理的是 *主題內部語意* 收斂 cadence；兩者機制同骨、attractor 來源不同。
@@ -134,41 +134,41 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 
 ## 反模式
 
-| 反模式                                             | 後果                                                                |
-| -------------------------------------------------- | ------------------------------------------------------------------- |
-| 規範只列「內容欄位不可模板化」、沒列 cadence       | Cadence 同質化合規無感、批量產出後才浮現                            |
-| 批量寫作前不準備 framing 變體                      | 第一篇 cadence 被複製到 N 篇、修正成本 = N × 重寫                   |
-| Review 用單檔 frame                                | 跨檔同質化抓不到、需要跨檔抽樣對照                                  |
-| 看到 cadence 過齊就改個別檔                        | 修不到根因 — 沒準備變體、改完一個下次還是會同質化                   |
-| Cadence 視為「寫作風格、不算違規」                 | 對單篇成立、對批量不成立；連讀預期化就是品質損失                    |
-| Reviewer prompt 沒明示「比對跨檔 first/closing」   | Reviewer 抓不到 emergence-class 違規                                |
+| 反模式                                           | 後果                                              |
+| ------------------------------------------------ | ------------------------------------------------- |
+| 規範只列「內容欄位不可模板化」、沒列 cadence     | Cadence 同質化合規無感、批量產出後才浮現          |
+| 批量寫作前不準備 framing 變體                    | 第一篇 cadence 被複製到 N 篇、修正成本 = N × 重寫 |
+| Review 用單檔 frame                              | 跨檔同質化抓不到、需要跨檔抽樣對照                |
+| 看到 cadence 過齊就改個別檔                      | 修不到根因 — 沒準備變體、改完一個下次還是會同質化 |
+| Cadence 視為「寫作風格、不算違規」               | 對單篇成立、對批量不成立；連讀預期化就是品質損失  |
+| Reviewer prompt 沒明示「比對跨檔 first/closing」 | Reviewer 抓不到 emergence-class 違規              |
 
 ---
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                            | 關係                                                                                                                              |
-| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                       | 本卡是 #67 在「寫作骨架」維度的具體實例 — 複製第一篇 framing 最便利、但意圖（情境化敘事）失準                                     |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                  | 補一條 frame — multi-pass 該加「跨檔 cadence 抽樣」這輪、單檔 frame 抓不到本卡反模式                                              |
-| [#94 正向改寫要保留對照論據](../positive-rewrite-preserves-contrast/)                          | 同骨 pattern — 寫作規則執行時、字面合規（正向陳述 / 不模板化）但行為失準（cadence 同質 / 結論空降）                              |
-| [#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/) | 互補軸 — #114 是 frame 顆粒度（規則 vs 字句層）、本卡是 cadence 維度（內容 vs 形式層）                                            |
-| [#117 跨多 case 合成的 frame 必須標為章節合成](../cross-case-synthesized-frame-must-be-labeled/)| Sibling — 都是「合規但有隱形偏差」族；#117 是引用層、本卡是骨架層                                                                |
-| [#127 Process content 結構由最大差異維度決定](../content-structure-by-max-diff-dimension/)     | 結構 layer 對偶 — 本卡處理「同 type 內 framing collapse」、#127 處理「跨 type 套錯結構」；兩者都跟「主題語意 attractor」相關     |
-| [Migration playbook methodology](/posts/migration-playbook-methodology/)                       | 具體 SOP — 本卡 update 段引用的 5 篇 migration playbook batch 是該 methodology 的 dogfood、partial collapse 案例都在那批       |
+| 原則                                                                                             | 關係                                                                                                                         |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                        | 本卡是 #67 在「寫作骨架」維度的具體實例 — 複製第一篇 framing 最便利、但意圖（情境化敘事）失準                                |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                   | 補一條 frame — multi-pass 該加「跨檔 cadence 抽樣」這輪、單檔 frame 抓不到本卡反模式                                         |
+| [#94 正向改寫要保留對照論據](../positive-rewrite-preserves-contrast/)                            | 同骨 pattern — 寫作規則執行時、字面合規（正向陳述 / 不模板化）但行為失準（cadence 同質 / 結論空降）                          |
+| [#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/)  | 互補軸 — #114 是 frame 顆粒度（規則 vs 字句層）、本卡是 cadence 維度（內容 vs 形式層）                                       |
+| [#117 跨多 case 合成的 frame 必須標為章節合成](../cross-case-synthesized-frame-must-be-labeled/) | Sibling — 都是「合規但有隱形偏差」族；#117 是引用層、本卡是骨架層                                                            |
+| [#127 Process content 結構由最大差異維度決定](../content-structure-by-max-diff-dimension/)       | 結構 layer 對偶 — 本卡處理「同 type 內 framing collapse」、#127 處理「跨 type 套錯結構」；兩者都跟「主題語意 attractor」相關 |
+| [Migration playbook methodology](/posts/migration-playbook-methodology/)                         | 具體 SOP — 本卡 update 段引用的 5 篇 migration playbook batch 是該 methodology 的 dogfood、partial collapse 案例都在那批     |
 
 ---
 
 ## 判讀徵兆
 
-| 訊號                                              | 該做的事                                                              |
-| ------------------------------------------------- | --------------------------------------------------------------------- |
-| 連讀同 batch 3-5 篇後、感覺「節奏一樣」           | Cadence 同質化、跑跨檔抽樣對照確認                                    |
-| 段末收尾語在 batch 內出現率 > 60%                 | 收尾語模板化、改寫部分檔的收尾                                        |
-| 段首句句型在 batch 內反覆出現                     | 段首模板化、補 framing 變體                                          |
-| 批量 ≥ 5 篇但寫作前沒準備 framing 變體            | 預設會同質化、補 pilot 階段 3 種變體                                  |
-| Reviewer 報告沒提到「cadence」字眼                | Reviewer prompt 沒明示跨檔 frame、要補                                |
-| 「四件事 / 三點 / 兩個 trade-off」反覆出現        | 列表收尾結構模板化、改用敘事段或重組視角                              |
-| 想拿 batch 內某一篇當下次寫作參考                 | 警訊 — 該篇 cadence 可能會被複製到下批、應準備變體再起筆              |
+| 訊號                                       | 該做的事                                                 |
+| ------------------------------------------ | -------------------------------------------------------- |
+| 連讀同 batch 3-5 篇後、感覺「節奏一樣」    | Cadence 同質化、跑跨檔抽樣對照確認                       |
+| 段末收尾語在 batch 內出現率 > 60%          | 收尾語模板化、改寫部分檔的收尾                           |
+| 段首句句型在 batch 內反覆出現              | 段首模板化、補 framing 變體                              |
+| 批量 ≥ 5 篇但寫作前沒準備 framing 變體     | 預設會同質化、補 pilot 階段 3 種變體                     |
+| Reviewer 報告沒提到「cadence」字眼         | Reviewer prompt 沒明示跨檔 frame、要補                   |
+| 「四件事 / 三點 / 兩個 trade-off」反覆出現 | 列表收尾結構模板化、改用敘事段或重組視角                 |
+| 想拿 batch 內某一篇當下次寫作參考          | 警訊 — 該篇 cadence 可能會被複製到下批、應準備變體再起筆 |
 
 **核心**：模板不只是內容欄位的模板、cadence / 句型骨架 / 收尾語也是。批量寫作前準備 framing 變體、寫作中跨檔抽樣對照、不要等 batch 完成後 reviewer 才發現連讀預期化。

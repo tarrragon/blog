@@ -12,13 +12,13 @@ tags: ["backend", "database", "postgresql", "patroni", "ha", "failover", "deep-a
 
 PostgreSQL 原生沒有 auto-failover；primary 掛了、application 卡死、SRE 手動 promote standby — 整個過程通常 5-30 分鐘。Patroni 把這條鏈拆成 *自動化的 5 段 lifecycle*、每段有自己的 trigger、配置、失敗模式：
 
-| 段                     | 觸發                                          | 動作                                                                          | 失敗模式                                        |
-| ---------------------- | --------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------- |
-| **1. Detection**       | Leader heartbeat 在 DCS（etcd / Consul）失聯 | Standby 們開始觀察、累積失聯時間到 TTL                                        | DCS 本身分裂 → false detection 啟動失敗 failover |
-| **2. Election**        | TTL 過、DCS 開放 leader lock                  | Standby 競爭寫 leader key（DCS quorum-based）                                  | Network partition → 兩邊都自認 leader（split-brain）|
-| **3. Promotion**       | 新 leader 寫 DCS key 成功                     | 跑 `pg_ctl promote`、停 streaming replication、開始接寫                       | Standby 落後太多 → 拒 promote 或承接時資料缺   |
-| **4. Reconfiguration** | Patroni REST API 通知 routing 層              | HAProxy / PgBouncer 切流量到新 leader                                          | Routing 層 health check 慢 → 流量持續打舊 leader |
-| **5. Recovery**        | 舊 leader 恢復（手動 / 自動）                  | 跑 `pg_rewind` + 重接 streaming replication 為 standby                        | WAL divergence 太大 → 必須重 base backup        |
+| 段                     | 觸發                                         | 動作                                                    | 失敗模式                                             |
+| ---------------------- | -------------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------- |
+| **1. Detection**       | Leader heartbeat 在 DCS（etcd / Consul）失聯 | Standby 們開始觀察、累積失聯時間到 TTL                  | DCS 本身分裂 → false detection 啟動失敗 failover     |
+| **2. Election**        | TTL 過、DCS 開放 leader lock                 | Standby 競爭寫 leader key（DCS quorum-based）           | Network partition → 兩邊都自認 leader（split-brain） |
+| **3. Promotion**       | 新 leader 寫 DCS key 成功                    | 跑 `pg_ctl promote`、停 streaming replication、開始接寫 | Standby 落後太多 → 拒 promote 或承接時資料缺         |
+| **4. Reconfiguration** | Patroni REST API 通知 routing 層             | HAProxy / PgBouncer 切流量到新 leader                   | Routing 層 health check 慢 → 流量持續打舊 leader     |
+| **5. Recovery**        | 舊 leader 恢復（手動 / 自動）                | 跑 `pg_rewind` + 重接 streaming replication 為 standby  | WAL divergence 太大 → 必須重 base backup             |
 
 每段都有獨立配置、不是「設一個 timeout 就好」。後面分段展開。
 
@@ -193,15 +193,15 @@ postgresql:
 
 ## 容量規劃
 
-| 維度                    | 估算                                                       | 警戒                                         |
-| ----------------------- | ---------------------------------------------------------- | -------------------------------------------- |
-| Cluster size            | 3-5 node（含 leader + 2-4 standby）                        | < 3 不能 HA（單 standby 失敗整 cluster 掛） |
-| DCS size                | 3 / 5 / 7 node（奇數 quorum）                              | etcd 5 node 是 prod standard                 |
-| TTL                     | 30s（default 30、production 20-60）                        | < 15s 過敏、> 60s 過鈍                       |
-| maximum_lag_on_failover | 1MB（default）                                              | 大表 write-heavy 可放 10-100MB              |
-| Synchronous standby     | 1 個 sync + N 個 async 是 production 預設                  | 全 async 容易丟資料、全 sync write latency 爆 |
-| RTO                     | 10-30 秒（detection 30s 內 + promotion 5-10s + reconfig 5s）| > 60s 要 audit 鏈路                        |
-| RPO                     | sync mode 接近 0、async mode 跟 lag 同數量級                | async 在 disk IO 慢時 lag 可能 MB-GB level   |
+| 維度                    | 估算                                                         | 警戒                                          |
+| ----------------------- | ------------------------------------------------------------ | --------------------------------------------- |
+| Cluster size            | 3-5 node（含 leader + 2-4 standby）                          | < 3 不能 HA（單 standby 失敗整 cluster 掛）   |
+| DCS size                | 3 / 5 / 7 node（奇數 quorum）                                | etcd 5 node 是 prod standard                  |
+| TTL                     | 30s（default 30、production 20-60）                          | < 15s 過敏、> 60s 過鈍                        |
+| maximum_lag_on_failover | 1MB（default）                                               | 大表 write-heavy 可放 10-100MB                |
+| Synchronous standby     | 1 個 sync + N 個 async 是 production 預設                    | 全 async 容易丟資料、全 sync write latency 爆 |
+| RTO                     | 10-30 秒（detection 30s 內 + promotion 5-10s + reconfig 5s） | > 60s 要 audit 鏈路                           |
+| RPO                     | sync mode 接近 0、async mode 跟 lag 同數量級                 | async 在 disk IO 慢時 lag 可能 MB-GB level    |
 
 ## 整合 / 下一步
 

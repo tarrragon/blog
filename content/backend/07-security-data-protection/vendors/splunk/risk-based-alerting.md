@@ -20,11 +20,11 @@ RBA 不是 *寫 detection rule 的替代*、是 *aggregation 跟 prioritization 
 
 Risk 流程的三個 first-class object：
 
-| Object              | 責任                                                                                                  | 例                                                          |
-| ------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| **Risk modifier**   | 一條 detection rule 產出、提供「給誰加多少分、為什麼、什麼類別」                                       | user `alice@corp` +25 分、reason `unusual_login_geo`        |
-| **Risk index**      | 累積所有 modifier、依時間衰減；query 出「user / asset 當前 score」                                     | `index=risk earliest=-7d`                                   |
-| **Risk notable**    | 當 score 累積超過 threshold 觸發、進 SOC case management                                              | user 累積 50 分 → 開 incident                                |
+| Object            | 責任                                                               | 例                                                   |
+| ----------------- | ------------------------------------------------------------------ | ---------------------------------------------------- |
+| **Risk modifier** | 一條 detection rule 產出、提供「給誰加多少分、為什麼、什麼類別」   | user `alice@corp` +25 分、reason `unusual_login_geo` |
+| **Risk index**    | 累積所有 modifier、依時間衰減；query 出「user / asset 當前 score」 | `index=risk earliest=-7d`                            |
+| **Risk notable**  | 當 score 累積超過 threshold 觸發、進 SOC case management           | user 累積 50 分 → 開 incident                        |
 
 關鍵設計選擇都在 modifier 層：
 
@@ -148,12 +148,12 @@ Notable 進入 ES Incident Review、SOC analyst 看到的不只 score、還有 *
 
 RBA 的 capacity 三個面向：
 
-| 維度                    | 估算方式                                                                       | 警戒值                                                |
-| ----------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| Risk index event/day    | `總 detection rule × 平均 trigger 次數/day`                                    | 中型 SOC ~100K-500K / day                            |
-| Risk datamodel size     | `event/day × 365 day × 1KB avg`                                                | 100K/day × 365 × 1KB ≈ 36GB / year                  |
-| Search head load        | RBA tstats 比 raw search 便宜 ~10x、但 by-user aggregation 在 1M+ user 仍重    | 跑 hourly notable trigger search、不是 streaming    |
-| Indexer ingest          | RBA 不大增 ingest（已 ingest 的 log 處理出 modifier）、但 datamodel acceleration 要 CPU | 每 indexer 預留 10-15% CPU 給 datamodel accel |
+| 維度                 | 估算方式                                                                                | 警戒值                                           |
+| -------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Risk index event/day | `總 detection rule × 平均 trigger 次數/day`                                             | 中型 SOC ~100K-500K / day                        |
+| Risk datamodel size  | `event/day × 365 day × 1KB avg`                                                         | 100K/day × 365 × 1KB ≈ 36GB / year               |
+| Search head load     | RBA tstats 比 raw search 便宜 ~10x、但 by-user aggregation 在 1M+ user 仍重             | 跑 hourly notable trigger search、不是 streaming |
+| Indexer ingest       | RBA 不大增 ingest（已 ingest 的 log 處理出 modifier）、但 datamodel acceleration 要 CPU | 每 indexer 預留 10-15% CPU 給 datamodel accel    |
 
 實務 sizing：500K modifier/day、用戶 5K、tstats hourly trigger search、需要 *3 indexer + 1 search head*（含 RBA 之外的工作）。
 

@@ -10,50 +10,50 @@ tags: ["backend", "observability", "prometheus", "grafana-cloud", "mimir", "mana
 
 ## Feature / ops / cost 三維對照
 
-| 維度 | Self-managed Prometheus | Grafana Cloud Metrics |
-|---|---|---|
-| Storage backend | Local disk + remote_write (optional) | Mimir + S3 (auto cold tier) |
-| Retention | TSDB local 15 天 default | 13 個月 default、可延長 |
-| HA | Two Prometheus + sidecar | Built-in multi-AZ |
-| Cardinality limit | 自管 limit + recording rule | 1.5M active series / tier、scale-up 配額 |
-| Query API | PromQL + Prometheus HTTP API | 完全相容 |
-| Alert | Alertmanager self-managed | Grafana Cloud Alerting |
-| Dashboard | Grafana self-managed | Grafana Cloud (included) |
-| Long-term storage | Thanos / Cortex / Mimir 自管 | Mimir 內建 |
-| Cost (mid-tier) | $500-2000 / mo + ops FTE | $300-1500 / mo (按 series) |
-| Operational FTE | 0.3-0.8 | 0.05-0.15 |
+| 維度              | Self-managed Prometheus              | Grafana Cloud Metrics                    |
+| ----------------- | ------------------------------------ | ---------------------------------------- |
+| Storage backend   | Local disk + remote_write (optional) | Mimir + S3 (auto cold tier)              |
+| Retention         | TSDB local 15 天 default             | 13 個月 default、可延長                  |
+| HA                | Two Prometheus + sidecar             | Built-in multi-AZ                        |
+| Cardinality limit | 自管 limit + recording rule          | 1.5M active series / tier、scale-up 配額 |
+| Query API         | PromQL + Prometheus HTTP API         | 完全相容                                 |
+| Alert             | Alertmanager self-managed            | Grafana Cloud Alerting                   |
+| Dashboard         | Grafana self-managed                 | Grafana Cloud (included)                 |
+| Long-term storage | Thanos / Cortex / Mimir 自管         | Mimir 內建                               |
+| Cost (mid-tier)   | $500-2000 / mo + ops FTE             | $300-1500 / mo (按 series)               |
+| Operational FTE   | 0.3-0.8                              | 0.05-0.15                                |
 
 跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
-| 維度 | 等級 |
-|---|---|
-| Schema / API | Low（PromQL + API 完全相容）|
-| Operational | **High**（HA / retention / scaling 全託管）|
-| Paradigm | Low（同 Prometheus metric paradigm）|
-| Components | Low |
-| Application change | Low（remote_write endpoint 改）|
-| Data topology | Low |
+| 維度               | 等級                                        |
+| ------------------ | ------------------------------------------- |
+| Schema / API       | Low（PromQL + API 完全相容）                |
+| Operational        | **High**（HA / retention / scaling 全託管） |
+| Paradigm           | Low（同 Prometheus metric paradigm）        |
+| Components         | Low                                         |
+| Application change | Low（remote_write endpoint 改）             |
+| Data topology      | Low                                         |
 
 Operational = High → Type C standard。
 
 ## 為什麼遷：retention / ops / vendor consolidation 三條 driver
 
-| Driver | 觸發 |
-|---|---|
-| Retention | Prometheus TSDB local 預設 15 天、長期 retention 需要 Thanos / Cortex / Mimir 自管 |
-| Ops FTE | Self-managed Prometheus + Alertmanager + Grafana 自管全部加起來 0.5-1 FTE |
-| Vendor consolidation | 已用 Grafana Cloud（logs / traces）、metric 加進 stack 統一 |
+| Driver               | 觸發                                                                               |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| Retention            | Prometheus TSDB local 預設 15 天、長期 retention 需要 Thanos / Cortex / Mimir 自管 |
+| Ops FTE              | Self-managed Prometheus + Alertmanager + Grafana 自管全部加起來 0.5-1 FTE          |
+| Vendor consolidation | 已用 Grafana Cloud（logs / traces）、metric 加進 stack 統一                        |
 
 ## Operational redesign
 
-| Concept | Self-managed | Grafana Cloud Metrics |
-|---|---|---|
-| Cluster bootstrap | Helm chart + manual config | UI 一鍵建 |
-| HA | Two Prometheus 配置 | 內建 multi-AZ Mimir |
-| Long-term retention | Thanos / Cortex / Mimir 自管 | Built-in (S3-backed) |
+| Concept             | Self-managed                    | Grafana Cloud Metrics                 |
+| ------------------- | ------------------------------- | ------------------------------------- |
+| Cluster bootstrap   | Helm chart + manual config      | UI 一鍵建                             |
+| HA                  | Two Prometheus 配置             | 內建 multi-AZ Mimir                   |
+| Long-term retention | Thanos / Cortex / Mimir 自管    | Built-in (S3-backed)                  |
 | Cardinality control | Manual recording rule + relabel | Adaptive sampling + cardinality limit |
-| Alerting | Alertmanager 自管 | Grafana Cloud Alerting (integrated) |
-| Dashboard | Grafana self-host | Grafana Cloud (free tier 包含) |
+| Alerting            | Alertmanager 自管               | Grafana Cloud Alerting (integrated)   |
+| Dashboard           | Grafana self-host               | Grafana Cloud (free tier 包含)        |
 
 ## Migration 4-phase
 
@@ -161,13 +161,13 @@ remote_write:
 
 ## Capacity / cost
 
-| 維度 | Self-managed | Grafana Cloud Metrics |
-|---|---|---|
-| Compute (100 host, 100K series) | $500-1000 / mo + ops | $300-800 / mo |
-| Operational FTE | 0.3-0.8 = $3K-8K | 0.05-0.15 = $500-1500 |
-| Long-term retention | Thanos / Cortex / Mimir 自管 | Built-in 13 個月 |
-| Total (mid-tier) | $4K-9K / mo (含 FTE) | $1K-2.5K / mo |
-| Migration cost | - | 1-2 FTE × 1-2 個月 |
+| 維度                            | Self-managed                 | Grafana Cloud Metrics |
+| ------------------------------- | ---------------------------- | --------------------- |
+| Compute (100 host, 100K series) | $500-1000 / mo + ops         | $300-800 / mo         |
+| Operational FTE                 | 0.3-0.8 = $3K-8K             | 0.05-0.15 = $500-1500 |
+| Long-term retention             | Thanos / Cortex / Mimir 自管 | Built-in 13 個月      |
+| Total (mid-tier)                | $4K-9K / mo (含 FTE)         | $1K-2.5K / mo         |
+| Migration cost                  | -                            | 1-2 FTE × 1-2 個月    |
 
 ## 整合 / 下一步
 

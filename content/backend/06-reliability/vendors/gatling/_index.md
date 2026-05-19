@@ -125,14 +125,14 @@ Gatling 是 JVM 生態的 load test 工具、承擔三個責任：code-first 強
 
 ## 何時改走其他服務
 
-| 需求形狀                    | 改走                                                              |
-| --------------------------- | ----------------------------------------------------------------- |
-| 非 JVM 團隊 / JS DX         | [k6](/backend/06-reliability/vendors/k6/)                         |
-| Python + 動態 user behavior | [Locust](/backend/06-reliability/vendors/locust/)                 |
-| GUI 設計 / 既有資產         | [JMeter](/backend/06-reliability/vendors/jmeter/)                 |
-| Browser flow load           | k6 browser / Playwright + 自製 load harness                       |
-| Cloud managed               | Gatling Enterprise / BlazeMeter / k6 Cloud                        |
-| Capacity planning（非 CI）  | [09 performance capacity](/backend/09-performance-capacity/)      |
+| 需求形狀                    | 改走                                                         |
+| --------------------------- | ------------------------------------------------------------ |
+| 非 JVM 團隊 / JS DX         | [k6](/backend/06-reliability/vendors/k6/)                    |
+| Python + 動態 user behavior | [Locust](/backend/06-reliability/vendors/locust/)            |
+| GUI 設計 / 既有資產         | [JMeter](/backend/06-reliability/vendors/jmeter/)            |
+| Browser flow load           | k6 browser / Playwright + 自製 load harness                  |
+| Cloud managed               | Gatling Enterprise / BlazeMeter / k6 Cloud                   |
+| Capacity planning（非 CI）  | [09 performance capacity](/backend/09-performance-capacity/) |
 
 ## 不在本頁內的主題
 

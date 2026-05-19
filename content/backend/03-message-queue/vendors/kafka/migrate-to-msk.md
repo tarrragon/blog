@@ -12,31 +12,31 @@ tags: ["backend", "message-queue", "kafka", "msk", "managed", "migration", "type
 
 跟 [Datadog → Grafana Stack](/backend/04-observability/vendors/datadog/migrate-to-grafana-stack/)（H cost variant）同 framing — 用 cost 拆解開頭、不是「為什麼遷」driver list：
 
-| Self-managed Kafka cost 項                  | 中型 (3 broker + 3 ZK + monitoring) / month |
-| ------------------------------------------- | ------------------------------------------- |
-| EC2 (3× r6g.xlarge broker)                  | $660                                        |
-| EBS (3× 1TB io2)                            | $1,500                                      |
-| EC2 (3× t3.medium ZK / KRaft)              | $90                                         |
-| Monitoring (Prometheus + Grafana on EC2)    | $200                                        |
-| Backup S3 (1TB)                             | $25                                         |
-| Cross-AZ traffic                            | $300                                        |
-| **Operational FTE (0.5)**                   | **$5,000-8,000**                            |
-| Patching window cost                        | $200 (downtime opportunity)                 |
-| Total infrastructure                        | $7,975-10,975                               |
-| Total with FTE                              | **$13,000-18,975**                          |
+| Self-managed Kafka cost 項               | 中型 (3 broker + 3 ZK + monitoring) / month |
+| ---------------------------------------- | ------------------------------------------- |
+| EC2 (3× r6g.xlarge broker)               | $660                                        |
+| EBS (3× 1TB io2)                         | $1,500                                      |
+| EC2 (3× t3.medium ZK / KRaft)            | $90                                         |
+| Monitoring (Prometheus + Grafana on EC2) | $200                                        |
+| Backup S3 (1TB)                          | $25                                         |
+| Cross-AZ traffic                         | $300                                        |
+| **Operational FTE (0.5)**                | **$5,000-8,000**                            |
+| Patching window cost                     | $200 (downtime opportunity)                 |
+| Total infrastructure                     | $7,975-10,975                               |
+| Total with FTE                           | **$13,000-18,975**                          |
 
 **最大成本塊是 operational FTE、不是 infrastructure**。MSK 把 50-80% operational 工作轉嫁 AWS、留 application + cost monitoring 給 SRE。
 
 跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
-| 維度                 | 評估                                              | 等級       |
-| -------------------- | ------------------------------------------------- | ---------- |
-| Schema / API         | 同 Kafka protocol、client SDK 不改               | Low        |
-| Operational model    | Self-managed → AWS managed、HA / patch / backup 全託管 | **High** |
-| Paradigm             | 同 Kafka log-based                                | Low        |
-| Components           | 同 1 個 Kafka cluster                             | Low        |
-| Application change   | Auth config 改（IAM / SASL）、其他不變            | Low-Medium |
-| Data topology        | 同 broker + partition 配置                       | Low        |
+| 維度               | 評估                                                   | 等級       |
+| ------------------ | ------------------------------------------------------ | ---------- |
+| Schema / API       | 同 Kafka protocol、client SDK 不改                     | Low        |
+| Operational model  | Self-managed → AWS managed、HA / patch / backup 全託管 | **High**   |
+| Paradigm           | 同 Kafka log-based                                     | Low        |
+| Components         | 同 1 個 Kafka cluster                                  | Low        |
+| Application change | Auth config 改（IAM / SASL）、其他不變                 | Low-Medium |
+| Data topology      | 同 broker + partition 配置                             | Low        |
 
 Operational = High（其他 Low-Medium）→ **Type C operational redesign hybrid**。
 
@@ -56,18 +56,18 @@ Operational = High（其他 Low-Medium）→ **Type C operational redesign hybri
 
 跟 [PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/) / [MongoDB → Atlas](/backend/01-database/vendors/mongodb/migrate-to-atlas/) 同 Type C pattern：
 
-| Operational concept       | Self-managed Kafka                       | MSK                                              |
-| ------------------------- | ---------------------------------------- | ------------------------------------------------ |
-| Cluster bootstrap         | 手動配置 broker + ZK + brokers.properties | UI / Terraform 一鍵建                            |
-| HA                        | 自管 replica + ISR + broker placement     | 自動 multi-AZ + auto-recovery                    |
-| Patching                  | Rolling restart 手動 / 工具               | MSK 自動 monthly maintenance window              |
-| Backup                    | 自管 MirrorMaker / cluster snapshot       | MSK 內建 backup（S3、自動）                      |
-| Authentication            | SASL/SCRAM / mTLS 自管                    | IAM auth（推薦）/ SASL/SCRAM via Secrets Manager |
-| Monitoring                | Prometheus + JMX exporter 自建            | CloudWatch + open monitoring + Prometheus       |
-| Sizing                    | 手動 broker instance class                | MSK broker size（kafka.m5.large+）              |
-| Configuration             | server.properties 全控                    | Configuration set（限制可調 parameter）          |
-| Cluster topology          | 自管 placement / rack awareness           | MSK 自動 multi-AZ + rack-aware                  |
-| Tiered storage            | Kafka 3.6+ 自管                           | MSK Tiered Storage（auto-tier 到 S3）            |
+| Operational concept | Self-managed Kafka                        | MSK                                              |
+| ------------------- | ----------------------------------------- | ------------------------------------------------ |
+| Cluster bootstrap   | 手動配置 broker + ZK + brokers.properties | UI / Terraform 一鍵建                            |
+| HA                  | 自管 replica + ISR + broker placement     | 自動 multi-AZ + auto-recovery                    |
+| Patching            | Rolling restart 手動 / 工具               | MSK 自動 monthly maintenance window              |
+| Backup              | 自管 MirrorMaker / cluster snapshot       | MSK 內建 backup（S3、自動）                      |
+| Authentication      | SASL/SCRAM / mTLS 自管                    | IAM auth（推薦）/ SASL/SCRAM via Secrets Manager |
+| Monitoring          | Prometheus + JMX exporter 自建            | CloudWatch + open monitoring + Prometheus        |
+| Sizing              | 手動 broker instance class                | MSK broker size（kafka.m5.large+）               |
+| Configuration       | server.properties 全控                    | Configuration set（限制可調 parameter）          |
+| Cluster topology    | 自管 placement / rack awareness           | MSK 自動 multi-AZ + rack-aware                   |
+| Tiered storage      | Kafka 3.6+ 自管                           | MSK Tiered Storage（auto-tier 到 S3）            |
 
 每行 operational concept 都需要 migration plan、application code 不變但 *運維知識體系全換*。
 
@@ -241,17 +241,17 @@ checkpoints.topic.replication.factor=3
 
 ## Capacity / cost
 
-| 維度                | Self-managed Kafka                | MSK                                          |
-| ------------------- | --------------------------------- | -------------------------------------------- |
-| Cluster cost (3 broker) | $660 EC2 + $1500 EBS = $2,160 | $2,500-3,500（含 storage + multi-AZ）       |
-| Operational FTE     | 0.5-1 FTE = $5K-10K               | 0.1-0.3 FTE = $1K-3K                         |
-| Patch / maintenance | Manual + downtime opportunity     | Auto + maintenance window scheduled          |
-| Backup              | Self-managed MirrorMaker          | Built-in（S3 archive、auto）                |
-| Metric / monitoring | Prometheus + Grafana self-deploy   | CloudWatch + open monitoring                 |
-| Cross-AZ traffic    | Limited by VPC layout             | Auto multi-AZ、cross-AZ traffic cost 注意    |
-| Tiered storage      | Kafka 3.6+ self-managed           | MSK built-in tiered storage                  |
-| Total (3 broker, 中型) | $7K-11K / mo (含 FTE)            | $3.5K-6.5K / mo (含 FTE)                     |
-| Migration cost      | -                                 | 1-3 FTE × 1-2 個月                          |
+| 維度                    | Self-managed Kafka               | MSK                                       |
+| ----------------------- | -------------------------------- | ----------------------------------------- |
+| Cluster cost (3 broker) | $660 EC2 + $1500 EBS = $2,160    | $2,500-3,500（含 storage + multi-AZ）     |
+| Operational FTE         | 0.5-1 FTE = $5K-10K              | 0.1-0.3 FTE = $1K-3K                      |
+| Patch / maintenance     | Manual + downtime opportunity    | Auto + maintenance window scheduled       |
+| Backup                  | Self-managed MirrorMaker         | Built-in（S3 archive、auto）              |
+| Metric / monitoring     | Prometheus + Grafana self-deploy | CloudWatch + open monitoring              |
+| Cross-AZ traffic        | Limited by VPC layout            | Auto multi-AZ、cross-AZ traffic cost 注意 |
+| Tiered storage          | Kafka 3.6+ self-managed          | MSK built-in tiered storage               |
+| Total (3 broker, 中型)  | $7K-11K / mo (含 FTE)            | $3.5K-6.5K / mo (含 FTE)                  |
+| Migration cost          | -                                | 1-3 FTE × 1-2 個月                        |
 
 **判讀**：< 50 broker organization MSK ROI 通常 6-12 月持平、之後省 FTE；50+ broker 大 organization 自管 cost 可能反而低。
 

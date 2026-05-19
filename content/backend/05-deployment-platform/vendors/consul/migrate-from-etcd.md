@@ -10,33 +10,33 @@ tags: ["backend", "deployment-platform", "etcd", "consul", "paradigm-shift", "mi
 
 ## KV + N 個 extras：feature matrix
 
-| 概念                | etcd                                  | Consul                                           |
-| ------------------- | ------------------------------------- | ------------------------------------------------ |
-| 核心 paradigm       | Pure KV with Raft consensus           | Service mesh（KV + 6 個其他）                    |
-| Data store          | KV with versioned values + watch      | KV + service catalog + health checks + sessions  |
-| API style           | gRPC + HTTP/REST                      | HTTP/REST + gRPC（Connect）+ DNS                 |
-| Service discovery   | 無（application 自管）                | Built-in（DNS / HTTP API）                       |
-| Health check        | 無                                    | Built-in（HTTP / TCP / script / TTL）           |
-| Service mesh        | 無                                    | Connect（mTLS + intentions + service-to-service）|
-| Multi-DC            | 不支援（per-cluster only）            | Built-in WAN federation                          |
-| ACL system          | RBAC (etcd 3.5+)                      | Token-based ACL + namespaces (Enterprise)        |
-| Lock primitive       | Lease + transaction                  | Session + KV check-and-set                       |
-| Watch event model   | Event stream（gRPC stream）           | Long-polling blocking query (X-Consul-Index)     |
-| Distributed config  | KV + watch                            | KV + watch + template rendering (consul-template)|
-| Use case 對映        | K8s control plane / 純 distributed KV | Service mesh + service discovery + config + KV  |
+| 概念               | etcd                                  | Consul                                            |
+| ------------------ | ------------------------------------- | ------------------------------------------------- |
+| 核心 paradigm      | Pure KV with Raft consensus           | Service mesh（KV + 6 個其他）                     |
+| Data store         | KV with versioned values + watch      | KV + service catalog + health checks + sessions   |
+| API style          | gRPC + HTTP/REST                      | HTTP/REST + gRPC（Connect）+ DNS                  |
+| Service discovery  | 無（application 自管）                | Built-in（DNS / HTTP API）                        |
+| Health check       | 無                                    | Built-in（HTTP / TCP / script / TTL）             |
+| Service mesh       | 無                                    | Connect（mTLS + intentions + service-to-service） |
+| Multi-DC           | 不支援（per-cluster only）            | Built-in WAN federation                           |
+| ACL system         | RBAC (etcd 3.5+)                      | Token-based ACL + namespaces (Enterprise)         |
+| Lock primitive     | Lease + transaction                   | Session + KV check-and-set                        |
+| Watch event model  | Event stream（gRPC stream）           | Long-polling blocking query (X-Consul-Index)      |
+| Distributed config | KV + watch                            | KV + watch + template rendering (consul-template) |
+| Use case 對映      | K8s control plane / 純 distributed KV | Service mesh + service discovery + config + KV    |
 
 **核心差異不在「Consul 多功能」、在「Consul 是 service mesh paradigm」**：service discovery / health check / Connect mTLS 是 first-class、KV 只是其中一個 sub-feature。
 
 跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
-| 維度                 | 評估                                                | 等級       |
-| -------------------- | --------------------------------------------------- | ---------- |
-| Schema / API         | KV API 對位 + 多 N 個 extra API                     | Medium     |
-| Operational model    | 兩者 Raft-based、ops similar                        | Low        |
-| Paradigm             | Pure KV → service mesh                              | **High**   |
-| Components           | 同 1 cluster                                        | Low        |
-| Application change   | KV API 改 + 新增 service registration / health      | Medium     |
-| Data topology        | 單 DC → multi-DC（如果用 federation）               | Low-Medium |
+| 維度               | 評估                                           | 等級       |
+| ------------------ | ---------------------------------------------- | ---------- |
+| Schema / API       | KV API 對位 + 多 N 個 extra API                | Medium     |
+| Operational model  | 兩者 Raft-based、ops similar                   | Low        |
+| Paradigm           | Pure KV → service mesh                         | **High**   |
+| Components         | 同 1 cluster                                   | Low        |
+| Application change | KV API 改 + 新增 service registration / health | Medium     |
+| Data topology      | 單 DC → multi-DC（如果用 federation）          | Low-Medium |
 
 Paradigm = High（其他 Low-Medium）→ **Type E paradigm shift**；KV 是 sub-feature、不是 migration scope 全部。
 
@@ -250,16 +250,16 @@ Production setup 第一步就 bootstrap ACL、不可以延後。
 
 ## Capacity / cost
 
-| 維度                | etcd                              | Consul                                      |
-| ------------------- | --------------------------------- | ------------------------------------------- |
-| Cluster baseline    | 3-5 node Raft cluster             | 3-5 server + N agent (per host)             |
-| Memory per node     | 2-8GB                             | 4-16GB（含 agent）                         |
-| Operational FTE     | 0.2-0.5                           | 0.5-1.0（多 features 多運維）              |
-| Feature surface     | Pure KV                           | KV + service mesh + multi-DC + ACL          |
-| Setup complexity    | Low                               | Medium-High                                 |
-| Multi-DC support    | 不支援                            | Built-in WAN federation                     |
-| License             | Apache 2.0 (open)                 | MPL 2.0 (community) / commercial (enterprise) |
-| Migration cost      | -                                 | 1-3 FTE × 2-4 個月                         |
+| 維度             | etcd                  | Consul                                        |
+| ---------------- | --------------------- | --------------------------------------------- |
+| Cluster baseline | 3-5 node Raft cluster | 3-5 server + N agent (per host)               |
+| Memory per node  | 2-8GB                 | 4-16GB（含 agent）                            |
+| Operational FTE  | 0.2-0.5               | 0.5-1.0（多 features 多運維）                 |
+| Feature surface  | Pure KV               | KV + service mesh + multi-DC + ACL            |
+| Setup complexity | Low                   | Medium-High                                   |
+| Multi-DC support | 不支援                | Built-in WAN federation                       |
+| License          | Apache 2.0 (open)     | MPL 2.0 (community) / commercial (enterprise) |
+| Migration cost   | -                     | 1-3 FTE × 2-4 個月                            |
 
 **判讀**：純 KV use case 走 etcd；service mesh / multi-DC / discovery 需求大走 Consul；混合 deployment 是 long-term default（K8s control plane 仍跑 etcd、service mesh 跑 Consul）。
 

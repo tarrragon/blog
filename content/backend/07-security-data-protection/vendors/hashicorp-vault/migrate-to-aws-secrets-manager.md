@@ -12,30 +12,30 @@ tags: ["backend", "security", "vault", "aws-secrets-manager", "identity", "migra
 
 把 Vault → AWS Secrets Manager 當成「secret store 替換」是最常見的誤判 — 兩家的「secret」概念跨完全不同的 identity model：
 
-| 概念                     | HashiCorp Vault                               | AWS Secrets Manager                          |
-| ------------------------ | --------------------------------------------- | -------------------------------------------- |
-| Secret 本身              | 一個 secret path（`secret/data/myapp/db`）   | 一個 ARN（`arn:aws:secretsmanager:us-east-1:...`）|
-| 存取者身份               | Vault token（self-managed token TTL）        | AWS principal（IAM user / role / federation）|
-| 授權模型                 | Vault policy（capabilities：read/create/...）| IAM policy + Resource policy（雙層）         |
-| Authentication           | AppRole / Kubernetes / LDAP / OIDC / 自管 auth method | AWS Sigv4 + STS token / Identity Federation |
-| Dynamic credential       | Vault database secrets engine（lease + renew）| Lambda rotation（無 lease 概念）             |
-| Audit log                | Vault audit log（自管 endpoint）              | CloudTrail event（AWS 統一）                 |
-| Multi-tenant 隔離        | Namespace + path-level policy                 | Account boundary + resource policy           |
-| Tooling 整合              | Application 端 Vault SDK / agent injector    | AWS SDK + Lambda                             |
+| 概念               | HashiCorp Vault                                       | AWS Secrets Manager                                |
+| ------------------ | ----------------------------------------------------- | -------------------------------------------------- |
+| Secret 本身        | 一個 secret path（`secret/data/myapp/db`）            | 一個 ARN（`arn:aws:secretsmanager:us-east-1:...`） |
+| 存取者身份         | Vault token（self-managed token TTL）                 | AWS principal（IAM user / role / federation）      |
+| 授權模型           | Vault policy（capabilities：read/create/...）         | IAM policy + Resource policy（雙層）               |
+| Authentication     | AppRole / Kubernetes / LDAP / OIDC / 自管 auth method | AWS Sigv4 + STS token / Identity Federation        |
+| Dynamic credential | Vault database secrets engine（lease + renew）        | Lambda rotation（無 lease 概念）                   |
+| Audit log          | Vault audit log（自管 endpoint）                      | CloudTrail event（AWS 統一）                       |
+| Multi-tenant 隔離  | Namespace + path-level policy                         | Account boundary + resource policy                 |
+| Tooling 整合       | Application 端 Vault SDK / agent injector             | AWS SDK + Lambda                                   |
 
 **核心差異不在「存 secret 的地方」、在「身份從哪來、怎麼 enforce、怎麼 audit」。** Migration 的真實工作量在 *identity model 重設計*、不是 secret 搬遷。
 
 跑 [6 維 diff dimension audit](/report/content-structure-by-max-diff-dimension/)：
 
-| 維度                 | 評估                                            | 等級       |
-| -------------------- | ----------------------------------------------- | ---------- |
-| Schema / API         | API 完全不同（Vault HTTP API vs AWS SDK）       | Medium     |
-| Operational model    | Self-managed Vault cluster → AWS managed         | **High**   |
-| Paradigm             | 兩家都是 secret store paradigm                  | Low        |
-| Components           | Vault binary + storage backend → AWS SaaS       | Low        |
-| Application change   | 必改（SDK 換、auth method 換、retry pattern 換）| **High**   |
-| Data topology        | 同 single instance, no sharding               | Low        |
-| **Identity model**   | **完全不同（Vault token vs IAM principal）**    | **High**   |
+| 維度               | 評估                                             | 等級     |
+| ------------------ | ------------------------------------------------ | -------- |
+| Schema / API       | API 完全不同（Vault HTTP API vs AWS SDK）        | Medium   |
+| Operational model  | Self-managed Vault cluster → AWS managed         | **High** |
+| Paradigm           | 兩家都是 secret store paradigm                   | Low      |
+| Components         | Vault binary + storage backend → AWS SaaS        | Low      |
+| Application change | 必改（SDK 換、auth method 換、retry pattern 換） | **High** |
+| Data topology      | 同 single instance, no sharding                  | Low      |
+| **Identity model** | **完全不同（Vault token vs IAM principal）**     | **High** |
 
 6 維 audit 抓不到「Identity model = High」這軸 — 用既有 6 維歸類、會走 Type C operational redesign + Application change 高維獨立段；但實際工作量分佈：
 
@@ -228,16 +228,16 @@ secret = sm.get_secret_value(SecretId='myapp/db')['SecretString']
 
 ## Capacity / cost
 
-| 維度                | Vault self-managed              | AWS Secrets Manager                          | Trade-off                                   |
-| ------------------- | ------------------------------- | -------------------------------------------- | ------------------------------------------- |
-| Setup cost          | Mid（自管 cluster + storage + HA）| Low（一鍵建 secret）                        | AWS 顯著低                                   |
-| Operational FTE     | 0.3-1 FTE                       | 0.05-0.1 FTE                                 | AWS 省 SRE                                   |
-| Per-secret cost     | ~$0（含在 cluster）             | $0.40 / month                                | AWS 按 secret 數計費                        |
-| API call cost       | ~$0（含在 cluster）             | $0.05 / 10K call                             | High-frequency app 顯著貴                   |
-| Cross-region        | 自管 replication                | 內建 `ReplicaRegions`                        | AWS 簡化                                     |
-| Audit               | Vault audit device              | CloudTrail（內建）                           | AWS 跟 SOC pipeline 統一                    |
-| Identity integration | 多 auth method                  | IAM + IRSA + Identity Center                 | AWS 跟 cloud-native 整合好                  |
-| Total cost (100 secret, 50K read/day) | $200 / mo (含 ops) | $40 + $7 + replication = ~$50 / mo + ops 省  | AWS 1/4 cost、若 read 不爆                  |
+| 維度                                  | Vault self-managed                 | AWS Secrets Manager                         | Trade-off                  |
+| ------------------------------------- | ---------------------------------- | ------------------------------------------- | -------------------------- |
+| Setup cost                            | Mid（自管 cluster + storage + HA） | Low（一鍵建 secret）                        | AWS 顯著低                 |
+| Operational FTE                       | 0.3-1 FTE                          | 0.05-0.1 FTE                                | AWS 省 SRE                 |
+| Per-secret cost                       | ~$0（含在 cluster）                | $0.40 / month                               | AWS 按 secret 數計費       |
+| API call cost                         | ~$0（含在 cluster）                | $0.05 / 10K call                            | High-frequency app 顯著貴  |
+| Cross-region                          | 自管 replication                   | 內建 `ReplicaRegions`                       | AWS 簡化                   |
+| Audit                                 | Vault audit device                 | CloudTrail（內建）                          | AWS 跟 SOC pipeline 統一   |
+| Identity integration                  | 多 auth method                     | IAM + IRSA + Identity Center                | AWS 跟 cloud-native 整合好 |
+| Total cost (100 secret, 50K read/day) | $200 / mo (含 ops)                 | $40 + $7 + replication = ~$50 / mo + ops 省 | AWS 1/4 cost、若 read 不爆 |
 
 **判讀**：少 secret + 中頻 read 走 AWS Secrets Manager；高頻 read + multi-cloud / on-prem 約束走 Vault。
 

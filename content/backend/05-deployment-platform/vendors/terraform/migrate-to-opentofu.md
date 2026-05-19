@@ -54,14 +54,14 @@ terraform {
 
 跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
-| 維度                 | 評估                                              | 等級 |
-| -------------------- | ------------------------------------------------- | ---- |
-| Schema / API         | HCL 完全相容、CLI command 對映 (terraform → tofu) | Low  |
-| Operational model    | 同 workflow (init / plan / apply)                | Low  |
-| Paradigm             | 同 IaC declarative                                | Low  |
-| Components           | 同 single binary                                  | Low  |
-| Application change   | 無（不是 application、是 infrastructure tool）   | Low  |
-| Data topology        | 同 single state file backend                      | Low  |
+| 維度               | 評估                                              | 等級 |
+| ------------------ | ------------------------------------------------- | ---- |
+| Schema / API       | HCL 完全相容、CLI command 對映 (terraform → tofu) | Low  |
+| Operational model  | 同 workflow (init / plan / apply)                 | Low  |
+| Paradigm           | 同 IaC declarative                                | Low  |
+| Components         | 同 single binary                                  | Low  |
+| Application change | 無（不是 application、是 infrastructure tool）    | Low  |
+| Data topology      | 同 single state file backend                      | Low  |
 
 6 維皆 Low → Type B drop-in。
 
@@ -69,11 +69,11 @@ terraform {
 
 跟前批 [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) 不同（cost / performance driver）、Terraform → OpenTofu 主要 driver 在 governance：
 
-| Driver               | 觸發場景                                                                                  |
-| -------------------- | ----------------------------------------------------------------------------------------- |
-| **License**          | Terraform 在 2023-08 改 BSL（Business Source License）、商業使用限制；OpenTofu 維持 MPL 2.0 開源 |
-| **Vendor neutrality** | 多雲 / 多客戶情境想避免 HashiCorp lock-in、用 Linux Foundation 治理的 OpenTofu             |
-| **Community / feature** | OpenTofu 1.6+ 加 state encryption、跟 Terraform 商業版差異化、社群驅動 feature             |
+| Driver                  | 觸發場景                                                                                         |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| **License**             | Terraform 在 2023-08 改 BSL（Business Source License）、商業使用限制；OpenTofu 維持 MPL 2.0 開源 |
+| **Vendor neutrality**   | 多雲 / 多客戶情境想避免 HashiCorp lock-in、用 Linux Foundation 治理的 OpenTofu                   |
+| **Community / feature** | OpenTofu 1.6+ 加 state encryption、跟 Terraform 商業版差異化、社群驅動 feature                   |
 
 反向 driver（OpenTofu → Terraform）：
 
@@ -84,14 +84,14 @@ terraform {
 
 Pre-cutover 必跑：
 
-| 議題                                                                | 處理方式                                                                                       |
-| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Terraform version pin（`required_version = ">= 1.5.0, < 1.6.0"`） | 改 `>= 1.6.0` 涵蓋 OpenTofu / 移除 upper bound                                                  |
-| Provider 來源 (registry path)                                       | 主流 provider（aws / azurerm / gcp / k8s）都同源、自家 / 第三方 provider 確認 OpenTofu registry mirror |
-| Terraform Cloud / Enterprise feature                                | Sentinel policy → OpenTofu OPA / Conftest；workspace API 對等性逐項 check                     |
-| CLI binary name 在 CI pipeline                                       | `terraform plan` → `tofu plan`、或 alias `terraform=tofu` 保留兼容                            |
-| State backend (S3 / GCS / Azure / Consul / Terraform Cloud)        | S3/GCS/Azure 完全相容；Consul backend 兩家都支援；Terraform Cloud 走自家 remote backend、不直通  |
-| Module source                                                       | git-based module 完全相容；registry module 確認 OpenTofu registry 有 mirror                   |
+| 議題                                                              | 處理方式                                                                                               |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Terraform version pin（`required_version = ">= 1.5.0, < 1.6.0"`） | 改 `>= 1.6.0` 涵蓋 OpenTofu / 移除 upper bound                                                         |
+| Provider 來源 (registry path)                                     | 主流 provider（aws / azurerm / gcp / k8s）都同源、自家 / 第三方 provider 確認 OpenTofu registry mirror |
+| Terraform Cloud / Enterprise feature                              | Sentinel policy → OpenTofu OPA / Conftest；workspace API 對等性逐項 check                              |
+| CLI binary name 在 CI pipeline                                    | `terraform plan` → `tofu plan`、或 alias `terraform=tofu` 保留兼容                                     |
+| State backend (S3 / GCS / Azure / Consul / Terraform Cloud)       | S3/GCS/Azure 完全相容；Consul backend 兩家都支援；Terraform Cloud 走自家 remote backend、不直通        |
+| Module source                                                     | git-based module 完全相容；registry module 確認 OpenTofu registry 有 mirror                            |
 
 Audit output：列「100% drop-in」block + 「需處理」block；後者通常 < 5% 範圍。
 
@@ -195,14 +195,14 @@ tofu apply tfplan
 
 ## Capacity / cost
 
-| 維度                | Terraform                          | OpenTofu                           |
-| ------------------- | ---------------------------------- | ---------------------------------- |
-| Binary cost         | 免費 (community edition)            | 免費（永遠）                       |
+| 維度                 | Terraform                         | OpenTofu                                     |
+| -------------------- | --------------------------------- | -------------------------------------------- |
+| Binary cost          | 免費 (community edition)          | 免費（永遠）                                 |
 | Terraform Cloud cost | $20 / user / month、enterprise 高 | 無對等服務（用 Atlantis / Spacelift / env0） |
-| State storage       | S3 / 自家 backend、低              | S3 / 自家 backend、低              |
-| Migration cost      | -                                   | 1-5 person-day（含 audit + cutover + CI 改）|
-| License risk        | BSL 限制商業使用                    | MPL 2.0 開源、無 license risk      |
-| Long-term governance | HashiCorp 單一供應商               | Linux Foundation + 多廠商貢獻      |
+| State storage        | S3 / 自家 backend、低             | S3 / 自家 backend、低                        |
+| Migration cost       | -                                 | 1-5 person-day（含 audit + cutover + CI 改） |
+| License risk         | BSL 限制商業使用                  | MPL 2.0 開源、無 license risk                |
+| Long-term governance | HashiCorp 單一供應商              | Linux Foundation + 多廠商貢獻                |
 
 **判讀**：純 IaC 用戶切 OpenTofu 風險低 + 省 license 風險；重度依賴 Terraform Cloud feature 的 organization 保留或評估 commercial alternatives（Spacelift / env0）。
 

@@ -12,13 +12,13 @@ tags: ["backend", "deployment-platform", "docker-swarm", "kubernetes", "paradigm
 
 從 2020-2024 觀察 5 個中型 organization 的 Swarm production cluster lifecycle、典型撞牆點：
 
-| Cluster | 規模 (peak) | 撞牆點 | 觸發遷移時間 |
-|---|---|---|---|
-| A (SaaS startup) | 80 service / 12 node | service discovery latency 升、無 sidecar mesh | 2022 |
-| B (E-commerce) | 150 service / 25 node | rolling update + canary 邏輯自寫複雜 | 2023 |
-| C (Fintech) | 60 service / 15 node | secret rotation + RBAC 自管、合規難 | 2023 |
-| D (Media) | 200 service / 40 node | autoscaling 自寫、預測流量失敗 | 2024 |
-| E (Logistics) | 100 service / 20 node | multi-region 不支援 | 2024 |
+| Cluster          | 規模 (peak)           | 撞牆點                                        | 觸發遷移時間 |
+| ---------------- | --------------------- | --------------------------------------------- | ------------ |
+| A (SaaS startup) | 80 service / 12 node  | service discovery latency 升、無 sidecar mesh | 2022         |
+| B (E-commerce)   | 150 service / 25 node | rolling update + canary 邏輯自寫複雜          | 2023         |
+| C (Fintech)      | 60 service / 15 node  | secret rotation + RBAC 自管、合規難           | 2023         |
+| D (Media)        | 200 service / 40 node | autoscaling 自寫、預測流量失敗                | 2024         |
+| E (Logistics)    | 100 service / 20 node | multi-region 不支援                           | 2024         |
 
 5 個共同 pattern：
 
@@ -31,11 +31,11 @@ tags: ["backend", "deployment-platform", "docker-swarm", "kubernetes", "paradigm
 
 ## 為什麼遷：ceiling / ecosystem / multi-region 三條 driver
 
-| Driver | 觸發 |
-|---|---|
-| Ceiling | Swarm 跑 100-200 service 後 service discovery latency / scheduling 跟不上 |
-| Ecosystem | K8s ecosystem (Helm / Operator / mesh / GitOps) 成熟、Swarm 對等工具缺 |
-| Multi-region | Swarm 不支援、K8s 多 cluster federation 成熟 |
+| Driver       | 觸發                                                                      |
+| ------------ | ------------------------------------------------------------------------- |
+| Ceiling      | Swarm 跑 100-200 service 後 service discovery latency / scheduling 跟不上 |
+| Ecosystem    | K8s ecosystem (Helm / Operator / mesh / GitOps) 成熟、Swarm 對等工具缺    |
+| Multi-region | Swarm 不支援、K8s 多 cluster federation 成熟                              |
 
 反向 driver（K8s → Swarm）：
 
@@ -44,33 +44,33 @@ tags: ["backend", "deployment-platform", "docker-swarm", "kubernetes", "paradigm
 
 ## 6 維 audit
 
-| 維度 | 等級 |
-|---|---|
-| Schema / API | **High**（docker-compose stack.yml → K8s YAML、syntax 完全不同）|
-| Operational | Medium（Swarm 自管 → K8s self-host or managed）|
-| Paradigm | **High**（簡單 container orchestration → declarative resource model）|
-| Components | Low（同 1 個 orchestration 系統）|
-| Application change | Low（container image 不變）|
-| Data topology | Low |
+| 維度               | 等級                                                                  |
+| ------------------ | --------------------------------------------------------------------- |
+| Schema / API       | **High**（docker-compose stack.yml → K8s YAML、syntax 完全不同）      |
+| Operational        | Medium（Swarm 自管 → K8s self-host or managed）                       |
+| Paradigm           | **High**（簡單 container orchestration → declarative resource model） |
+| Components         | Low（同 1 個 orchestration 系統）                                     |
+| Application change | Low（container image 不變）                                           |
+| Data topology      | Low                                                                   |
 
 Schema + Paradigm 雙 High → **Type E paradigm shift** 為主、Schema 高維獨立段。
 
 ## Paradigm 對位
 
-| 概念 | Swarm | K8s |
-|---|---|---|
-| Workload unit | Service | Deployment + Pod + Service |
-| Stack 定義 | stack.yml (docker-compose 格式) | YAML manifest (multiple resources) |
-| Networking | Overlay network (built-in) | CNI plugin (Calico / Cilium / etc) |
-| Service discovery | DNS-based built-in | DNS-based (CoreDNS) + Service object |
-| Load balancing | Built-in routing mesh | Service + Ingress + LoadBalancer |
-| Secret management | Docker secrets | K8s Secret + 外部 Vault / Secrets Manager |
-| Rolling update | `docker service update --image ...` | Deployment + rolling update + readiness probe |
-| Autoscaling | 手動 scale | HPA (Horizontal Pod Autoscaler) |
-| RBAC | Limited (Swarm enterprise) | First-class (Role / RoleBinding / ServiceAccount) |
-| Persistent storage | Volume + driver plugin | PV / PVC + CSI driver |
-| Service mesh | 無 (要外掛 Traefik) | Istio / Linkerd / Cilium |
-| GitOps | 無 native | Argo CD / Flux (first-class) |
+| 概念               | Swarm                               | K8s                                               |
+| ------------------ | ----------------------------------- | ------------------------------------------------- |
+| Workload unit      | Service                             | Deployment + Pod + Service                        |
+| Stack 定義         | stack.yml (docker-compose 格式)     | YAML manifest (multiple resources)                |
+| Networking         | Overlay network (built-in)          | CNI plugin (Calico / Cilium / etc)                |
+| Service discovery  | DNS-based built-in                  | DNS-based (CoreDNS) + Service object              |
+| Load balancing     | Built-in routing mesh               | Service + Ingress + LoadBalancer                  |
+| Secret management  | Docker secrets                      | K8s Secret + 外部 Vault / Secrets Manager         |
+| Rolling update     | `docker service update --image ...` | Deployment + rolling update + readiness probe     |
+| Autoscaling        | 手動 scale                          | HPA (Horizontal Pod Autoscaler)                   |
+| RBAC               | Limited (Swarm enterprise)          | First-class (Role / RoleBinding / ServiceAccount) |
+| Persistent storage | Volume + driver plugin              | PV / PVC + CSI driver                             |
+| Service mesh       | 無 (要外掛 Traefik)                 | Istio / Linkerd / Cilium                          |
+| GitOps             | 無 native                           | Argo CD / Flux (first-class)                      |
 
 ## Schema gap：docker-compose vs K8s YAML
 
@@ -250,14 +250,14 @@ spec:
 
 ## Capacity / cost
 
-| 維度 | Docker Swarm | Kubernetes (managed) |
-|---|---|---|
-| Cluster cost (mid-tier) | $300-800 / mo | $500-1500 / mo（EKS/GKE/AKS control plane + nodes）|
-| Operational FTE | 0.3-0.8 | 0.5-1.5（除非 managed、降到 0.3-0.7）|
-| Ecosystem maturity | 低、衰退 | 高、active growth |
-| Multi-region | 不支援 | 多 cluster federation 成熟 |
-| Migration cost | - | 2-4 FTE × 3-6 個月 |
-| Long-term ROI | Negative（社群縮）| Positive（feature growth）|
+| 維度                    | Docker Swarm       | Kubernetes (managed)                                |
+| ----------------------- | ------------------ | --------------------------------------------------- |
+| Cluster cost (mid-tier) | $300-800 / mo      | $500-1500 / mo（EKS/GKE/AKS control plane + nodes） |
+| Operational FTE         | 0.3-0.8            | 0.5-1.5（除非 managed、降到 0.3-0.7）               |
+| Ecosystem maturity      | 低、衰退           | 高、active growth                                   |
+| Multi-region            | 不支援             | 多 cluster federation 成熟                          |
+| Migration cost          | -                  | 2-4 FTE × 3-6 個月                                  |
+| Long-term ROI           | Negative（社群縮） | Positive（feature growth）                          |
 
 **判讀**：< 30 service 小 organization 可不切；50+ service 開始撞 Swarm ceiling、值得評估；100+ service / multi-region 必切。
 

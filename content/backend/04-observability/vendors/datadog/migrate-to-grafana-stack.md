@@ -12,18 +12,18 @@ tags: ["backend", "observability", "datadog", "grafana", "mimir", "loki", "tempo
 
 中型 SaaS（100-500 host、5K-50K metric series、TB-level log/day）的 Datadog 月帳單長這樣：
 
-| 計費項                    | 平均單價                          | 中型 SaaS 估算 / month                |
-| ------------------------- | --------------------------------- | ------------------------------------- |
-| Infrastructure host       | $15-23 / host                      | 200 host × $20 = $4,000               |
-| APM host                  | $31 / host                         | 100 host × $31 = $3,100               |
-| Custom metrics            | $0.05 / 100 series                 | 30K series × $0.05 = $1,500           |
-| Log ingest                | $0.10 / GB ingested                | 50TB × $0.10 = $5,000                 |
-| Log retention（15-day）   | $1.27 / million events            | 50G event × $1.27 = $6,350           |
-| Log indexing              | $1.70 / million events             | 50G × $1.70 = $8,500                 |
-| Network                   | $5 / host                          | 200 × $5 = $1,000                    |
-| RUM / Session             | $1.50 / 1000 session              | 30M session × $1.5 = $4,500          |
-| Synthetics                | $5 / 10K test runs                 | 50K test = $25                       |
-| Total                     | -                                  | **$34,000 / month**（保守估）         |
+| 計費項                  | 平均單價               | 中型 SaaS 估算 / month        |
+| ----------------------- | ---------------------- | ----------------------------- |
+| Infrastructure host     | $15-23 / host          | 200 host × $20 = $4,000       |
+| APM host                | $31 / host             | 100 host × $31 = $3,100       |
+| Custom metrics          | $0.05 / 100 series     | 30K series × $0.05 = $1,500   |
+| Log ingest              | $0.10 / GB ingested    | 50TB × $0.10 = $5,000         |
+| Log retention（15-day） | $1.27 / million events | 50G event × $1.27 = $6,350    |
+| Log indexing            | $1.70 / million events | 50G × $1.70 = $8,500          |
+| Network                 | $5 / host              | 200 × $5 = $1,000             |
+| RUM / Session           | $1.50 / 1000 session   | 30M session × $1.5 = $4,500   |
+| Synthetics              | $5 / 10K test runs     | 50K test = $25                |
+| Total                   | -                      | **$34,000 / month**（保守估） |
 
 擴張到 500 host / 100TB log 的 production：$80K-150K / month 範圍。Grafana stack（self-hosted on K8s + Grafana Cloud 部分服務）對等 capacity 通常 $8K-30K / month — *2.5-5x cost reduction*。
 
@@ -37,13 +37,13 @@ tags: ["backend", "observability", "datadog", "grafana", "mimir", "loki", "tempo
 
 Datadog 是 *一站式 SaaS*、單一 agent + 單一 UI 包 5 個責任。Grafana stack 把責任拆給 5 個專責 component：
 
-| 責任             | Datadog 處理            | Grafana Stack 對應                                       |
-| ---------------- | ----------------------- | -------------------------------------------------------- |
-| Metric           | Datadog metric          | Mimir（Prometheus-compatible long-term）                |
-| Log              | Datadog Logs            | Loki（label-indexed log）                                |
-| Trace            | Datadog APM             | Tempo（trace-only object storage）                       |
-| Dashboard        | Datadog dashboard       | Grafana                                                  |
-| Agent / shipper  | Datadog Agent           | Alloy（OTel-based collector）+ Grafana Agent / Promtail |
+| 責任            | Datadog 處理      | Grafana Stack 對應                                      |
+| --------------- | ----------------- | ------------------------------------------------------- |
+| Metric          | Datadog metric    | Mimir（Prometheus-compatible long-term）                |
+| Log             | Datadog Logs      | Loki（label-indexed log）                               |
+| Trace           | Datadog APM       | Tempo（trace-only object storage）                      |
+| Dashboard       | Datadog dashboard | Grafana                                                 |
+| Agent / shipper | Datadog Agent     | Alloy（OTel-based collector）+ Grafana Agent / Promtail |
 
 Migration 是 *五個獨立 stream*、不是單一 cutover。SRE 對「一個 agent 包所有」的心智模型要拆。
 
@@ -176,17 +176,17 @@ Migration 期間 *dual-shipper* 是標準作法：
 
 ## Capacity / cost 對照
 
-| 維度                       | Datadog                                | Grafana Stack（self-hosted on K8s）              |
-| -------------------------- | -------------------------------------- | ------------------------------------------------ |
-| Setup cost                 | 低（SaaS）                            | 中高（K8s deploy + storage backend）             |
-| Operational cost (200 host) | $34K / month                          | $8-12K / month（含 S3 + K8s）                    |
-| Operational cost (500 host) | $80-150K / month                       | $15-30K / month                                  |
-| Operational FTE            | 0.1-0.3                                | 1-2 FTE（K8s + storage + Grafana operator）      |
-| Long-term retention        | $1.27 / million event for 15+ day      | S3 + Loki：~$0.02 / GB / month                  |
-| Multi-cloud / hybrid       | 受 Datadog region 限                   | 自由部署                                          |
-| Vendor lock-in             | 高                                     | 低（OSS + OTel）                                 |
-| Time to value              | 1-2 週                                  | 4-8 週                                            |
-| Migration cost (one-time)  | -                                      | 1-3 FTE × 3 個月                                  |
+| 維度                        | Datadog                           | Grafana Stack（self-hosted on K8s）         |
+| --------------------------- | --------------------------------- | ------------------------------------------- |
+| Setup cost                  | 低（SaaS）                        | 中高（K8s deploy + storage backend）        |
+| Operational cost (200 host) | $34K / month                      | $8-12K / month（含 S3 + K8s）               |
+| Operational cost (500 host) | $80-150K / month                  | $15-30K / month                             |
+| Operational FTE             | 0.1-0.3                           | 1-2 FTE（K8s + storage + Grafana operator） |
+| Long-term retention         | $1.27 / million event for 15+ day | S3 + Loki：~$0.02 / GB / month              |
+| Multi-cloud / hybrid        | 受 Datadog region 限              | 自由部署                                    |
+| Vendor lock-in              | 高                                | 低（OSS + OTel）                            |
+| Time to value               | 1-2 週                            | 4-8 週                                      |
+| Migration cost (one-time)   | -                                 | 1-3 FTE × 3 個月                            |
 
 **Break-even point**：~150 host 規模、3 年 amortized 後 self-hosted cheaper；< 100 host 規模 SaaS 較 ROI 高。
 

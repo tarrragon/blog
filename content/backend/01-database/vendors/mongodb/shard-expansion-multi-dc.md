@@ -16,13 +16,13 @@ tags: ["backend", "database", "mongodb", "sharded", "multi-dc", "topology", "typ
 
 本文是該 claim 的 *正面實證* — MongoDB sharded cluster 從 single-DC 加 shard + 加 secondary DC、確實需要 parallel run + 流量切換、跟 Type A phased migration 局部同構：
 
-| Type F 假設                          | Single-DC re-sharding（Redis case）| **Multi-DC expansion（本文）**         |
-| ------------------------------------ | ---------------------------------- | --------------------------------------- |
-| 同 cluster 不同 state                | yes                                | yes（同 MongoDB cluster）               |
-| 不需 schema translation              | yes                                | yes                                     |
-| 不需 parallel run                    | yes（slot migration 內部完成）    | **no — 兩 DC 同跑後切流量**            |
-| 不需 cleanup phase                   | yes                                | partial（舊 DC 角色降為 standby）       |
-| Step-by-step + rollback boundary     | yes                                | yes                                     |
+| Type F 假設                      | Single-DC re-sharding（Redis case） | **Multi-DC expansion（本文）**    |
+| -------------------------------- | ----------------------------------- | --------------------------------- |
+| 同 cluster 不同 state            | yes                                 | yes（同 MongoDB cluster）         |
+| 不需 schema translation          | yes                                 | yes                               |
+| 不需 parallel run                | yes（slot migration 內部完成）      | **no — 兩 DC 同跑後切流量**       |
+| 不需 cleanup phase               | yes                                 | partial（舊 DC 角色降為 standby） |
+| Step-by-step + rollback boundary | yes                                 | yes                               |
 
 → Type F anatomy 仍適用、但「不需 parallel run」是 *子情境條件*、不是 universal claim。
 
@@ -35,14 +35,14 @@ tags: ["backend", "database", "mongodb", "sharded", "multi-dc", "topology", "typ
 
 兩個操作的 [diff dimension audit](/report/content-structure-by-max-diff-dimension/)：
 
-| 維度                 | Shard 加（單獨）  | Multi-DC（單獨）  | 兩者同跑              |
-| -------------------- | ------------------ | ----------------- | --------------------- |
-| Schema / API         | Low                | Low               | Low                   |
-| Operational model    | Low                | Medium（跨 DC ops）| Medium                |
-| Paradigm             | Low                | Low               | Low                   |
-| Components           | Low（加 shard、同 cluster）| Low      | Low                   |
-| Application change   | Low                | Low-Medium（cross-DC latency aware）| Low-Medium |
-| **Data topology**    | **High**（sharding strategy）| **High**（replication + region）| **High**（雙變、複合 topology）|
+| 維度               | Shard 加（單獨）              | Multi-DC（單獨）                     | 兩者同跑                        |
+| ------------------ | ----------------------------- | ------------------------------------ | ------------------------------- |
+| Schema / API       | Low                           | Low                                  | Low                             |
+| Operational model  | Low                           | Medium（跨 DC ops）                  | Medium                          |
+| Paradigm           | Low                           | Low                                  | Low                             |
+| Components         | Low（加 shard、同 cluster）   | Low                                  | Low                             |
+| Application change | Low                           | Low-Medium（cross-DC latency aware） | Low-Medium                      |
+| **Data topology**  | **High**（sharding strategy） | **High**（replication + region）     | **High**（雙變、複合 topology） |
 
 兩者主導維度都是 topology = High、組合走 Type F multi-axis 子情境。
 
@@ -122,16 +122,16 @@ const client = new MongoClient(uri, {
 
 8 step、包含 *parallel run + 切流量* 段——驗證 [#128 self-aware limitation](/report/data-topology-as-audit-dimension/) 第 3 點：
 
-| Step              | 動作                                       | Parallel run? | Rollback boundary                          |
-| ----------------- | ------------------------------------------ | ------------- | ------------------------------------------ |
-| 1 Pre-check       | 量化當前 topology、確認 cluster 健康       | no            | -                                          |
-| 2 加 us-east shard | sh.addShard、balancer migrate chunk        | no（cluster 內）| removeShard、chunk migrate 回             |
-| 3 加 us-west member | 對每 shard rs.add 跨 DC member            | no            | rs.remove、initial sync 投入廢棄           |
-| 4 **Initial sync wait** | 等所有 us-west member catch up        | **parallel run starts**：兩 DC 同時 serve | -                          |
-| 5 **Cross-DC dual-serve** | 兩 DC 都跑 read traffic（不切 write）| **yes、parallel run**：app 用 secondary preferred us-west | readPref 切回 us-east primary |
-| 6 **流量切換**     | application us-west traffic 走 us-west read | **yes** | DNS / readPref 切回                       |
-| 7 Promote us-west（optional） | 一個 shard 的 us-west member priority 提到 1 | post-cutover | demote priority 回 0   |
-| 8 Cleanup         | Verify、archive log、document new topology | no            | -                                          |
+| Step                          | 動作                                         | Parallel run?                                             | Rollback boundary                |
+| ----------------------------- | -------------------------------------------- | --------------------------------------------------------- | -------------------------------- |
+| 1 Pre-check                   | 量化當前 topology、確認 cluster 健康         | no                                                        | -                                |
+| 2 加 us-east shard            | sh.addShard、balancer migrate chunk          | no（cluster 內）                                          | removeShard、chunk migrate 回    |
+| 3 加 us-west member           | 對每 shard rs.add 跨 DC member               | no                                                        | rs.remove、initial sync 投入廢棄 |
+| 4 **Initial sync wait**       | 等所有 us-west member catch up               | **parallel run starts**：兩 DC 同時 serve                 | -                                |
+| 5 **Cross-DC dual-serve**     | 兩 DC 都跑 read traffic（不切 write）        | **yes、parallel run**：app 用 secondary preferred us-west | readPref 切回 us-east primary    |
+| 6 **流量切換**                | application us-west traffic 走 us-west read  | **yes**                                                   | DNS / readPref 切回              |
+| 7 Promote us-west（optional） | 一個 shard 的 us-west member priority 提到 1 | post-cutover                                              | demote priority 回 0             |
+| 8 Cleanup                     | Verify、archive log、document new topology   | no                                                        | -                                |
 
 Step 4-6 是 *parallel run + 切流量* — **Type F 有此例外、跟 Type A phase 3 機制同構**；anatomy 中「Execution flow per-step」段必須含 parallel run 子段。
 
@@ -251,15 +251,15 @@ const client = new MongoClient(uri, {
 
 ## Capacity / cost
 
-| 維度                | Single-DC 3-shard            | Multi-DC 5-shard                 | Trade-off                                              |
-| ------------------- | ---------------------------- | -------------------------------- | ------------------------------------------------------ |
-| Node count          | 9                            | 25                                | ~3x infrastructure cost                                |
-| Storage redundancy  | 3 replica                    | 5 replica (3 east + 2 west)       | +2 copy、storage cost +66%                            |
-| Network egress      | 內部 VPC、低                 | Cross-DC、高（需 zone sharding）  | $500 → $8000 / month if no zone sharding            |
-| Latency p99 (write) | 5-10ms                       | 5-15ms（primary 仍 us-east）      | 略升                                                   |
-| Latency p99 (read)  | 5-10ms                       | 2-5ms (local DC)                  | Multi-DC 區域 read 加快                                |
-| Disaster recovery   | RTO 30 分鐘（rebuild）       | RTO < 1 分鐘（auto failover）     | 顯著改善                                               |
-| Operational complexity | 低                          | 高（zone sharding / DR drill）   | +1 SRE FTE 維護                                       |
+| 維度                   | Single-DC 3-shard      | Multi-DC 5-shard                 | Trade-off                                |
+| ---------------------- | ---------------------- | -------------------------------- | ---------------------------------------- |
+| Node count             | 9                      | 25                               | ~3x infrastructure cost                  |
+| Storage redundancy     | 3 replica              | 5 replica (3 east + 2 west)      | +2 copy、storage cost +66%               |
+| Network egress         | 內部 VPC、低           | Cross-DC、高（需 zone sharding） | $500 → $8000 / month if no zone sharding |
+| Latency p99 (write)    | 5-10ms                 | 5-15ms（primary 仍 us-east）     | 略升                                     |
+| Latency p99 (read)     | 5-10ms                 | 2-5ms (local DC)                 | Multi-DC 區域 read 加快                  |
+| Disaster recovery      | RTO 30 分鐘（rebuild） | RTO < 1 分鐘（auto failover）    | 顯著改善                                 |
+| Operational complexity | 低                     | 高（zone sharding / DR drill）   | +1 SRE FTE 維護                          |
 
 **判讀**：multi-DC 是 *DR 投資*、不是 cost optimization；只在 *availability SLA > 99.9% 或合規要求* 場景值得。
 

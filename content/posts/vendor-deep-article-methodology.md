@@ -135,13 +135,13 @@ deep article 的 *差異化價值* 在故障演練段。Production 經驗、debu
 
 6 段內容指引（問題情境 → 概念 → 配置 → 演練 → 容量 → 整合）在 5 篇都成立、但章節 1 entry 的 framing 因主題本質不同自然分化：
 
-| 篇                       | 章節 1 entry framing                                     |
-| ------------------------ | -------------------------------------------------------- |
-| pgBouncer                | 標準「問題情境」                                          |
-| Vault dynamic credential | 標準「問題情境」                                          |
-| K8s graceful shutdown    | 痛點宣告「沒做對、500 期間每次 deploy 都吃 502」         |
-| Splunk RBA               | 概念反向定義「alert fatigue 是 detection 天花板」        |
-| Cloudflare Page Shield   | 對照表驅動「Attack pattern × Defense mechanism」          |
+| 篇                       | 章節 1 entry framing                              |
+| ------------------------ | ------------------------------------------------- |
+| pgBouncer                | 標準「問題情境」                                  |
+| Vault dynamic credential | 標準「問題情境」                                  |
+| K8s graceful shutdown    | 痛點宣告「沒做對、500 期間每次 deploy 都吃 502」  |
+| Splunk RBA               | 概念反向定義「alert fatigue 是 detection 天花板」 |
+| Cloudflare Page Shield   | 對照表驅動「Attack pattern × Defense mechanism」  |
 
 5 種 entry framing 都成立、章節 1 不必死守「問題情境」標題。內容仍對應「為什麼會踩到這個」、只是 framing 因主題本質不同。
 
@@ -149,12 +149,12 @@ deep article 的 *差異化價值* 在故障演練段。Production 經驗、debu
 
 方法論寫作時、[backend/07 51 vendor batch](/backend/07-security-data-protection/vendors/) 揭露 *批量寫作 cadence 同質化* 系統性問題（51/51 都用「四件事任一缺失就是 X 邊界」cadence、跨章連讀預期化）。本批後 4 篇（Vault / K8s / Splunk / Cloudflare）寫作前主動規劃 4 種 framing variant、跨檔 cadence audit 結果：
 
-| 維度                              | backend/07 51 vendor | deep article 後 4 篇 |
-| --------------------------------- | -------------------- | -------------------- |
-| Cadence 「任一缺失」族重複        | 51/51 (100%)         | 0/4 (0%)             |
-| 章節 1 entry framing 種類         | 1 種                 | 4 種                 |
-| 過渡詞密度（實際上 / 進一步 等）   | 未量化               | 全 0 hits            |
-| Lint / emoji / MD036 違規         | 0                    | 0                    |
+| 維度                             | backend/07 51 vendor | deep article 後 4 篇 |
+| -------------------------------- | -------------------- | -------------------- |
+| Cadence 「任一缺失」族重複       | 51/51 (100%)         | 0/4 (0%)             |
+| 章節 1 entry framing 種類        | 1 種                 | 4 種                 |
+| 過渡詞密度（實際上 / 進一步 等） | 未量化               | 全 0 hits            |
+| Lint / emoji / MD036 違規        | 0                    | 0                    |
 
 證實 *寫作前主動規劃 variant* 在 sub-threshold N=4 仍有效。對應 case-first-module-workflow skill 的 cadence-sampling principle — 寫作前準備 N 種 framing 變體、不是寫完再 polish；批次 ≥ 5 篇時抽樣 checkpoint 設在進度 10-20%。
 
@@ -178,26 +178,26 @@ deep article 的 *差異化價值* 在故障演練段。Production 經驗、debu
 
 第一輪驗證完成後當日、立即跑第二輪 N=5 batch — 5 篇 PostgreSQL sub-tool deep article（Patroni HA / autovacuum tuning / declarative partitioning / logical replication + Debezium / PITR + WAL archiving）。第二輪設計刻意選 *cadence collapse 最高風險場景*：同 vendor、同 article type、同 audience、同 6-section framework — 比第一輪跨 vendor 共同 context 更多。
 
-| 篇                              | Variant                  | 章節 1 entry framing                                                                  | 行數 |
-| ------------------------------- | ------------------------ | ------------------------------------------------------------------------------------- | ---- |
-| Patroni HA                      | E lifecycle-driven       | 「Failover lifecycle 5 段不是一條曲線」                                                | 243  |
-| autovacuum tuning               | B pain-driven            | 「你的 autovacuum 永遠追不上 bloat — 為什麼」                                          | 202  |
-| declarative partitioning        | C concept-reversed       | 「Partition 不是『把大表切小』、是『讓 planner pruning + 縮小 maintenance scope』」    | 243  |
-| logical replication + Debezium  | D table-driven           | 「Replication slot × Failure × Recovery 對照」                                         | 225  |
-| PITR + WAL archiving            | A standard 6-section     | 「問題情境」                                                                           | 266  |
+| 篇                             | Variant              | 章節 1 entry framing                                                                | 行數 |
+| ------------------------------ | -------------------- | ----------------------------------------------------------------------------------- | ---- |
+| Patroni HA                     | E lifecycle-driven   | 「Failover lifecycle 5 段不是一條曲線」                                             | 243  |
+| autovacuum tuning              | B pain-driven        | 「你的 autovacuum 永遠追不上 bloat — 為什麼」                                       | 202  |
+| declarative partitioning       | C concept-reversed   | 「Partition 不是『把大表切小』、是『讓 planner pruning + 縮小 maintenance scope』」 | 243  |
+| logical replication + Debezium | D table-driven       | 「Replication slot × Failure × Recovery 對照」                                      | 225  |
+| PITR + WAL archiving           | A standard 6-section | 「問題情境」                                                                        | 266  |
 
 5 篇 1,179 行、單篇 200-266 行、全 sweet spot。
 
 ### 跨兩輪 batch 對照
 
-| 維度                                | 第一輪 N=4（跨 vendor） | 第二輪 N=5（同 vendor sub-tool 系列）|
-| ----------------------------------- | ---------------------- | ----------------------------------- |
-| Variant 種類                        | 4（A / B / C / D）       | 5（A / B / C / D / E）                |
-| Cadence collapse「任一缺失」族重複  | 0/4 (0%)               | 0/5 (0%)                            |
-| 章節 1 entry framing 種類           | 4                      | 5                                   |
-| 過渡詞密度                          | 全 0 hits              | 全 0 hits                           |
-| 共同 context                        | 6-section framework    | 6-section + 同 vendor + 同 audience |
-| 寫作時間 / 篇                       | 1-2 hr                 | 1-2 hr                              |
+| 維度                               | 第一輪 N=4（跨 vendor） | 第二輪 N=5（同 vendor sub-tool 系列） |
+| ---------------------------------- | ----------------------- | ------------------------------------- |
+| Variant 種類                       | 4（A / B / C / D）      | 5（A / B / C / D / E）                |
+| Cadence collapse「任一缺失」族重複 | 0/4 (0%)                | 0/5 (0%)                              |
+| 章節 1 entry framing 種類          | 4                       | 5                                     |
+| 過渡詞密度                         | 全 0 hits               | 全 0 hits                             |
+| 共同 context                       | 6-section framework     | 6-section + 同 vendor + 同 audience   |
+| 寫作時間 / 篇                      | 1-2 hr                  | 1-2 hr                                |
 
 關鍵驗證：
 

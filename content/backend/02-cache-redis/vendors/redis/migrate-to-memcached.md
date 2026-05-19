@@ -12,18 +12,18 @@ tags: ["backend", "cache", "redis", "memcached", "paradigm-shift", "migration", 
 
 把 Redis → Memcached 當「移除 Redis 功能」是最常見的誤判：
 
-| 概念                 | Redis                                              | Memcached                                |
-| -------------------- | -------------------------------------------------- | ---------------------------------------- |
-| 核心 paradigm        | Multi-paradigm（KV + 資料結構 + pub/sub + script） | Pure cache（KV + TTL）                  |
-| Value 類型           | String / Hash / List / Set / Sorted Set / Stream / Bitmap / HyperLogLog | byte string only |
-| Atomic operations    | 100+（INCR / LPUSH / ZADD / ...）                  | INCR / DECR / APPEND / CAS              |
-| Server-side scripting | Lua scripts (`EVAL`)                              | 無                                       |
-| Pub/Sub              | Native                                             | 無                                       |
-| Persistence          | RDB / AOF                                          | 無（restart 全失）                       |
-| Replication          | Async / sync replication                           | 無                                       |
-| Cluster              | Redis Cluster + Sentinel HA                        | Memcached cluster（client-side sharding）|
-| Eviction policy      | 8 種（LRU / LFU / random / ...）                   | LRU only                                 |
-| Expiration accuracy  | TTL 精確到 ms                                       | TTL 精確到 second、lazy expiration       |
+| 概念                  | Redis                                                                   | Memcached                                 |
+| --------------------- | ----------------------------------------------------------------------- | ----------------------------------------- |
+| 核心 paradigm         | Multi-paradigm（KV + 資料結構 + pub/sub + script）                      | Pure cache（KV + TTL）                    |
+| Value 類型            | String / Hash / List / Set / Sorted Set / Stream / Bitmap / HyperLogLog | byte string only                          |
+| Atomic operations     | 100+（INCR / LPUSH / ZADD / ...）                                       | INCR / DECR / APPEND / CAS                |
+| Server-side scripting | Lua scripts (`EVAL`)                                                    | 無                                        |
+| Pub/Sub               | Native                                                                  | 無                                        |
+| Persistence           | RDB / AOF                                                               | 無（restart 全失）                        |
+| Replication           | Async / sync replication                                                | 無                                        |
+| Cluster               | Redis Cluster + Sentinel HA                                             | Memcached cluster（client-side sharding） |
+| Eviction policy       | 8 種（LRU / LFU / random / ...）                                        | LRU only                                  |
+| Expiration accuracy   | TTL 精確到 ms                                                           | TTL 精確到 second、lazy expiration        |
 
 **核心差異不在「Memcached 少了 Redis 功能」、在「Memcached 是不同的 cache paradigm」。** Redis 的 features（hash / sorted set / pub/sub）多數 *不該移除*、是 *重新分配到對應 specialized service*：
 
@@ -45,14 +45,14 @@ tags: ["backend", "cache", "redis", "memcached", "paradigm-shift", "migration", 
 
 ## 跑 6 維 audit
 
-| 維度                 | 評估                                                  | 等級       |
-| -------------------- | ----------------------------------------------------- | ---------- |
-| Schema / API         | Redis 命令集 → Memcached 命令集、相容度 < 20%         | **High**   |
-| Operational model    | 兩者都簡單、Memcached 略簡單                          | Low        |
-| Paradigm             | Multi-paradigm → pure cache                          | **High**   |
-| Components           | 同 1 個 cache service                                 | Low        |
-| Application change   | 必改（任何 hash / list / sorted set / pubsub 用法）   | **High**   |
-| Data topology        | 同 single instance / cluster                          | Low        |
+| 維度               | 評估                                                | 等級     |
+| ------------------ | --------------------------------------------------- | -------- |
+| Schema / API       | Redis 命令集 → Memcached 命令集、相容度 < 20%       | **High** |
+| Operational model  | 兩者都簡單、Memcached 略簡單                        | Low      |
+| Paradigm           | Multi-paradigm → pure cache                         | **High** |
+| Components         | 同 1 個 cache service                               | Low      |
+| Application change | 必改（任何 hash / list / sorted set / pubsub 用法） | **High** |
+| Data topology      | 同 single instance / cluster                        | Low      |
 
 3 維 High（Schema / Paradigm / Application change）多軸高、主導維度 = Paradigm → **Type E paradigm shift**；Schema + Application change 抽獨立段補充。
 
@@ -232,15 +232,15 @@ mc.incr(key)    # always works after add
 
 ## Capacity / cost
 
-| 維度                | Redis                              | Memcached                                   |
-| ------------------- | ---------------------------------- | ------------------------------------------- |
-| Memory efficiency   | baseline                           | +10-20%（無 metadata overhead）             |
-| Throughput          | ~100K ops/s single-thread          | ~500K-1M ops/s multi-threaded               |
-| Latency p99         | 1-3ms                              | 0.5-1ms                                     |
-| Persistence overhead | 5-15% CPU                          | 0                                           |
-| Operational FTE     | 0.3-0.8                            | 0.1-0.3                                     |
-| Application complexity | Low（feature 豐富）              | Higher（feature 移到 application）          |
-| Cost per GB memory  | baseline                           | 略低（無 persistence I/O / replication overhead） |
+| 維度                   | Redis                     | Memcached                                         |
+| ---------------------- | ------------------------- | ------------------------------------------------- |
+| Memory efficiency      | baseline                  | +10-20%（無 metadata overhead）                   |
+| Throughput             | ~100K ops/s single-thread | ~500K-1M ops/s multi-threaded                     |
+| Latency p99            | 1-3ms                     | 0.5-1ms                                           |
+| Persistence overhead   | 5-15% CPU                 | 0                                                 |
+| Operational FTE        | 0.3-0.8                   | 0.1-0.3                                           |
+| Application complexity | Low（feature 豐富）       | Higher（feature 移到 application）                |
+| Cost per GB memory     | baseline                  | 略低（無 persistence I/O / replication overhead） |
 
 **判讀**：純 cache use case 走 Memcached 省 ops + 略省 cost；application 已用 Redis-specific feature 不該切；混合架構是 long-term default。
 

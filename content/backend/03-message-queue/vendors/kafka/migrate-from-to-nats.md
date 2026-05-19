@@ -12,31 +12,31 @@ tags: ["backend", "message-queue", "kafka", "nats", "jetstream", "migration", "p
 
 前面四篇 migration 都隱含一個前提：source 跟 target 是 *同類產品*、只是不同實作或 deployment 模型。「Kafka → NATS」字面上看起來也是 *messaging migration*、但實際上：
 
-| 維度                  | Kafka                                                                | NATS Core                                                | NATS JetStream                                            |
-| --------------------- | -------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------- |
-| Core abstraction      | Distributed log（partition + offset）                                | Pub/Sub subject（fire-and-forget）                       | Stream（subject group + retention）                       |
-| Message persistence   | Default persistent（log retention）                                  | **不持久化**（subscriber 缺席 = lost）                   | 持久化（K/V backend / file）                              |
-| Delivery semantic     | At-least-once / exactly-once（事務）                                  | At-most-once                                              | At-least-once / exactly-once                              |
-| Consumer model        | Consumer group + offset                                              | Subscriber + subject pattern                              | Durable consumer + pull / push                            |
-| Ordering              | Per partition strict                                                 | 無 ordering guarantee                                     | Per stream / per consumer                                 |
-| Replay                | 隨意 from offset                                                     | **無**                                                    | from sequence number                                      |
-| Throughput            | 高（M msg/s）                                                         | 極高（10M+ msg/s）                                        | 中（100K-1M msg/s）                                       |
-| Latency               | 5-50ms                                                                | < 1ms                                                     | 5-20ms                                                    |
+| 維度                | Kafka                                 | NATS Core                              | NATS JetStream                      |
+| ------------------- | ------------------------------------- | -------------------------------------- | ----------------------------------- |
+| Core abstraction    | Distributed log（partition + offset） | Pub/Sub subject（fire-and-forget）     | Stream（subject group + retention） |
+| Message persistence | Default persistent（log retention）   | **不持久化**（subscriber 缺席 = lost） | 持久化（K/V backend / file）        |
+| Delivery semantic   | At-least-once / exactly-once（事務）  | At-most-once                           | At-least-once / exactly-once        |
+| Consumer model      | Consumer group + offset               | Subscriber + subject pattern           | Durable consumer + pull / push      |
+| Ordering            | Per partition strict                  | 無 ordering guarantee                  | Per stream / per consumer           |
+| Replay              | 隨意 from offset                      | **無**                                 | from sequence number                |
+| Throughput          | 高（M msg/s）                         | 極高（10M+ msg/s）                     | 中（100K-1M msg/s）                 |
+| Latency             | 5-50ms                                | < 1ms                                  | 5-20ms                              |
 
 Kafka 跟 NATS Core 是 *不同類產品* — 一個是 durable event log、一個是 transient pub/sub。「migration」需要先決定 *target 是 NATS Core 還是 JetStream*、然後判斷 *application 模式能否重設計* 對應。
 
 ## 什麼情境真的能換、什麼不能
 
-| Application 模式                     | Kafka 適配度 | NATS Core 適配 | NATS JetStream 適配 | 「migration」可行性 |
-| ------------------------------------ | ------------ | -------------- | ------------------- | ------------------- |
-| Event sourcing（replay 過去事件）     | 強           | 不可（無 replay）| 中（JetStream replay）| 部分（移到 JetStream）|
-| Microservice async messaging         | 強           | 強             | 強                  | 高                  |
-| Real-time pub/sub（低延遲、可丟）     | 中           | 強             | 中                  | 高（移到 Core）     |
-| 跨 service 命令 / RPC                | 弱（不適合）| 強（request-reply）| 弱                | 不需要遷            |
-| 大量 log / metric / event collection | 強           | 弱             | 中                  | 低（保留 Kafka）    |
-| Multi-tenant message bus             | 中           | 強             | 強                  | 高                  |
-| Strict ordering + transactional      | 強           | 不可           | 中（per stream）     | 部分（部分功能犧牲）|
-| 5+ 年歷史 retention                  | 強           | 不可           | 中（retention 設長） | 部分                |
+| Application 模式                     | Kafka 適配度 | NATS Core 適配      | NATS JetStream 適配    | 「migration」可行性    |
+| ------------------------------------ | ------------ | ------------------- | ---------------------- | ---------------------- |
+| Event sourcing（replay 過去事件）    | 強           | 不可（無 replay）   | 中（JetStream replay） | 部分（移到 JetStream） |
+| Microservice async messaging         | 強           | 強                  | 強                     | 高                     |
+| Real-time pub/sub（低延遲、可丟）    | 中           | 強                  | 中                     | 高（移到 Core）        |
+| 跨 service 命令 / RPC                | 弱（不適合） | 強（request-reply） | 弱                     | 不需要遷               |
+| 大量 log / metric / event collection | 強           | 弱                  | 中                     | 低（保留 Kafka）       |
+| Multi-tenant message bus             | 中           | 強                  | 強                     | 高                     |
+| Strict ordering + transactional      | 強           | 不可                | 中（per stream）       | 部分（部分功能犧牲）   |
+| 5+ 年歷史 retention                  | 強           | 不可                | 中（retention 設長）   | 部分                   |
 
 **判讀**：
 
@@ -174,17 +174,17 @@ Application 邏輯改動 30-60%、不是 SDK 換。
 
 ## Capacity / cost 對照
 
-| 維度                          | Kafka（self-managed）                        | NATS（JetStream）                              |
-| ----------------------------- | -------------------------------------------- | ---------------------------------------------- |
-| Cluster size baseline         | 3-5 broker + ZooKeeper / KRaft               | 3 server（含 JetStream cluster）              |
-| RAM / broker baseline         | 16-64GB                                       | 2-16GB                                          |
-| Storage requirement           | 高（log retention）                          | 中（JetStream file backend）                  |
-| Operational FTE               | 0.5-2 FTE                                     | 0.1-0.3 FTE                                    |
-| Throughput / single node      | 100K-1M msg/s                                 | NATS Core：10M+、JetStream：100K-1M           |
-| Latency p99                   | 5-50ms                                        | NATS Core：< 1ms、JetStream：5-20ms          |
-| Retention 1TB / month cost    | $400-800（含 HA）                            | $200-400                                       |
-| Operational complexity        | 高（Schema Registry / Connect / Streams）    | 低                                              |
-| Ecosystem maturity           | 高（10+ 年）                                  | 中（JetStream 2021+）                          |
+| 維度                       | Kafka（self-managed）                     | NATS（JetStream）                   |
+| -------------------------- | ----------------------------------------- | ----------------------------------- |
+| Cluster size baseline      | 3-5 broker + ZooKeeper / KRaft            | 3 server（含 JetStream cluster）    |
+| RAM / broker baseline      | 16-64GB                                   | 2-16GB                              |
+| Storage requirement        | 高（log retention）                       | 中（JetStream file backend）        |
+| Operational FTE            | 0.5-2 FTE                                 | 0.1-0.3 FTE                         |
+| Throughput / single node   | 100K-1M msg/s                             | NATS Core：10M+、JetStream：100K-1M |
+| Latency p99                | 5-50ms                                    | NATS Core：< 1ms、JetStream：5-20ms |
+| Retention 1TB / month cost | $400-800（含 HA）                         | $200-400                            |
+| Operational complexity     | 高（Schema Registry / Connect / Streams） | 低                                  |
+| Ecosystem maturity         | 高（10+ 年）                              | 中（JetStream 2021+）               |
 
 **判讀**：簡單 messaging workload NATS 顯著便宜；complex event streaming（Schema Registry / Streams / Connect 重度用）Kafka 不替代。
 
@@ -213,13 +213,13 @@ CDC pipeline 設計：
 
 ### 跟前 4 篇 migration 的結構對照
 
-| 篇                          | Schema 差 | Operational 差 | Paradigm 差 | 結構               |
-| --------------------------- | --------- | -------------- | ----------- | ------------------ |
-| Splunk → Elastic            | 高        | 中             | 低          | 6-phase            |
-| Redis → DragonflyDB         | 無        | 低             | 低          | 6-section + audit |
-| PostgreSQL → Aurora         | 無        | 高             | 低          | hybrid             |
-| Datadog → Grafana Stack     | 中        | 中             | 低          | parallel streams   |
-| Kafka ↔ NATS（本篇）        | 中        | 中             | **高**      | partial + 混合     |
+| 篇                      | Schema 差 | Operational 差 | Paradigm 差 | 結構              |
+| ----------------------- | --------- | -------------- | ----------- | ----------------- |
+| Splunk → Elastic        | 高        | 中             | 低          | 6-phase           |
+| Redis → DragonflyDB     | 無        | 低             | 低          | 6-section + audit |
+| PostgreSQL → Aurora     | 無        | 高             | 低          | hybrid            |
+| Datadog → Grafana Stack | 中        | 中             | 低          | parallel streams  |
+| Kafka ↔ NATS（本篇）    | 中        | 中             | **高**      | partial + 混合    |
 
 **結論**：migration 結構由 *最大差異維度* 決定、不是 universal phased playbook。
 

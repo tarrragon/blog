@@ -12,48 +12,48 @@ tags: ["backend", "observability", "elastic-stack", "elastic-cloud", "managed", 
 
 跟前批 [PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/) 同 Type C、本文用 *lifecycle-driven* entry — 看 5 年 ELK 集群典型壽命曲線：
 
-| 年份 | Phase             | 集群狀態                                                         |
-| ---- | ----------------- | ---------------------------------------------------------------- |
-| 0-1  | Build             | 3 node、簡單部署、SOC 學 Lucene query / dashboard / alert        |
+| 年份 | Phase            | 集群狀態                                                             |
+| ---- | ---------------- | -------------------------------------------------------------------- |
+| 0-1  | Build            | 3 node、簡單部署、SOC 學 Lucene query / dashboard / alert            |
 | 1-2  | Scale-out        | 5-7 node、shard 計畫、hot/warm/cold tier、index lifecycle management |
-| 2-3  | Degrade          | 10+ node、shard 過多、query latency 升、upgrade window 開始痛   |
-| 3-4  | Save             | 加 dedicated master / cross-cluster replication、ops cost 飛漲   |
-| 4-5  | Migrate decision | 評估走 Elastic Cloud（managed）或下一個 SIEM vendor              |
+| 2-3  | Degrade          | 10+ node、shard 過多、query latency 升、upgrade window 開始痛        |
+| 3-4  | Save             | 加 dedicated master / cross-cluster replication、ops cost 飛漲       |
+| 4-5  | Migrate decision | 評估走 Elastic Cloud（managed）或下一個 SIEM vendor                  |
 
 多數中型 organization 在 lifecycle 第 4-5 年遇到 *operational ceiling* — SRE team 0.5-1.5 FTE 跑 ELK ops、新 feature 開發停滯、cost 跟 alternative observability vendor 比較。Elastic Cloud 把 operational stack 全託管、SOC 留在 *Lucene query + dashboard + alert* 層、不再管 cluster sizing。
 
 ## 為什麼遷：FTE / availability / version cadence 三條 driver
 
-| Driver | 觸發 |
-|---|---|
-| FTE | Self-managed ELK 0.5-1.5 FTE 跑 ops、Elastic Cloud 降到 0.1-0.3 FTE |
-| Availability | Cross-AZ failover 自管太複雜、Cloud 內建 |
+| Driver          | 觸發                                                                                |
+| --------------- | ----------------------------------------------------------------------------------- |
+| FTE             | Self-managed ELK 0.5-1.5 FTE 跑 ops、Elastic Cloud 降到 0.1-0.3 FTE                 |
+| Availability    | Cross-AZ failover 自管太複雜、Cloud 內建                                            |
 | Version cadence | Elasticsearch 8.x quarterly release、self-managed upgrade window 是痛點、Cloud 自動 |
 
 ## 6 維 audit
 
-| 維度 | 等級 |
-|---|---|
-| Schema / API | Low（Elasticsearch API 完全相容）|
-| Operational | **High**（cluster mgmt 全託管）|
-| Paradigm | Low（同 Elasticsearch + Kibana + Beats / Logstash）|
-| Components | Low |
-| Application change | Low-Medium（連線 endpoint + auth 改）|
-| Data topology | Low |
+| 維度               | 等級                                                |
+| ------------------ | --------------------------------------------------- |
+| Schema / API       | Low（Elasticsearch API 完全相容）                   |
+| Operational        | **High**（cluster mgmt 全託管）                     |
+| Paradigm           | Low（同 Elasticsearch + Kibana + Beats / Logstash） |
+| Components         | Low                                                 |
+| Application change | Low-Medium（連線 endpoint + auth 改）               |
+| Data topology      | Low                                                 |
 
 Operational = High → Type C standard。
 
 ## Operational redesign 對位
 
-| Concept | Self-managed ELK | Elastic Cloud |
-|---|---|---|
-| Cluster bootstrap | 手動 install + config | UI / API 一鍵建 deployment |
-| HA | 自管 master / dedicated voting / cross-AZ | 內建 multi-AZ |
-| Upgrade | 手動 rolling restart 6-12 小時 | 自動 patch + minor version |
-| Backup | 自管 snapshot to S3 | 內建 snapshot lifecycle |
-| Shard management | 手動 ILM policy | UI-driven ILM |
-| Security | 自管 X-Pack / SSL cert | 內建 + 自動 cert rotation |
-| Monitoring | 自管 Metricbeat → 自己集群 | 內建 deployment monitoring |
+| Concept           | Self-managed ELK                          | Elastic Cloud              |
+| ----------------- | ----------------------------------------- | -------------------------- |
+| Cluster bootstrap | 手動 install + config                     | UI / API 一鍵建 deployment |
+| HA                | 自管 master / dedicated voting / cross-AZ | 內建 multi-AZ              |
+| Upgrade           | 手動 rolling restart 6-12 小時            | 自動 patch + minor version |
+| Backup            | 自管 snapshot to S3                       | 內建 snapshot lifecycle    |
+| Shard management  | 手動 ILM policy                           | UI-driven ILM              |
+| Security          | 自管 X-Pack / SSL cert                    | 內建 + 自動 cert rotation  |
+| Monitoring        | 自管 Metricbeat → 自己集群                | 內建 deployment monitoring |
 
 ## Migration 4-phase
 
@@ -140,13 +140,13 @@ Operational = High → Type C standard。
 
 ## Capacity / cost
 
-| 維度 | Self-managed ELK | Elastic Cloud |
-|---|---|---|
-| Compute cost (5 node) | $1,000-2,000 / mo | $1,500-3,000 / mo |
-| Storage cost | EBS | included + 加 S3 cold tier |
-| Operational FTE | 0.5-1.5 = $5K-15K | 0.1-0.3 = $1K-3K |
-| Total (5 node, mid-tier) | $6K-17K / mo | $2.5K-6K / mo |
-| Migration cost | - | 1-2 FTE × 1-2 個月 |
+| 維度                     | Self-managed ELK  | Elastic Cloud              |
+| ------------------------ | ----------------- | -------------------------- |
+| Compute cost (5 node)    | $1,000-2,000 / mo | $1,500-3,000 / mo          |
+| Storage cost             | EBS               | included + 加 S3 cold tier |
+| Operational FTE          | 0.5-1.5 = $5K-15K | 0.1-0.3 = $1K-3K           |
+| Total (5 node, mid-tier) | $6K-17K / mo      | $2.5K-6K / mo              |
+| Migration cost           | -                 | 1-2 FTE × 1-2 個月         |
 
 ## 整合 / 下一步
 

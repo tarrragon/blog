@@ -15,11 +15,11 @@ tags: ["report", "事後檢討", "工程方法論", "Review-timing", "Enforcemen
 
 兩層缺一不可：跳過 stage 0、被動抽樣不會自動發現 *主題語意 attractor*（相似主題天然引出的 framing collapse、見 [#122 cadence 同質化](../cadence-homogenization-in-batch-writing/) Update 段定義；migration playbook 3/5 collapse 即此實證、見本卡「Update: 被動寫作下...」段）；跳過 stage 內抽樣、stage 0 設計可能在中途 drift 沒被 catch。
 
-| 違規類型      | 識別形式                                                       | Enforcement 時機                       | 工具                                                  |
-| ------------- | -------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------- |
-| 字面違規      | 單檔可 regex 偵測（emoji、裸 URL、粗體當標題）                 | Pre-commit / pre-push                  | mdtools / regex hook                                  |
-| 結構違規      | 單檔可機制偵測（章節缺失、frontmatter 必填、broken link）     | Linter / build                         | mdtools lint                                          |
-| Emergence 違規 | 跨檔比對才偵測（cadence 同質化、語氣漂移、frame 重複）        | **Stage 0 設計 + Stage 內監測 兩層**   | Stage 0 variant 規劃 + 寫作流程內 checkpoint、不是 hook |
+| 違規類型       | 識別形式                                                  | Enforcement 時機                     | 工具                                                    |
+| -------------- | --------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| 字面違規       | 單檔可 regex 偵測（emoji、裸 URL、粗體當標題）            | Pre-commit / pre-push                | mdtools / regex hook                                    |
+| 結構違規       | 單檔可機制偵測（章節缺失、frontmatter 必填、broken link） | Linter / build                       | mdtools lint                                            |
+| Emergence 違規 | 跨檔比對才偵測（cadence 同質化、語氣漂移、frame 重複）    | **Stage 0 設計 + Stage 內監測 兩層** | Stage 0 variant 規劃 + 寫作流程內 checkpoint、不是 hook |
 
 backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emergence 違規（cadence 同質化）51/51；後者三個 reviewer 中只有一個 footnote 提到、是因為 reviewer 一次審 51 檔、emergence 訊號夠強才看出 — *如果只審 5 檔、emergence 訊號還不夠強、會被漏掉*。
 
@@ -42,13 +42,13 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 對 [case-first-module-workflow](/posts/case-first-agent-team-review-workflow/) 補強：stage 2（內容生成）內部加入 cadence checkpoint、不要等 stage 3 reviewer 才發現。
 
-| 寫作進度       | Checkpoint 動作                                                                              |
-| -------------- | -------------------------------------------------------------------------------------------- |
-| 第 1-3 篇      | 刻意產出 3 種不同 framing 變體（pilot phase）、人類 / Claude 自審「這 3 篇 cadence 是否真不同」 |
-| 第 5 篇        | 抽 5 個段首句並列、確認 framing 變體仍在輪替、沒有 collapse 到 dominant                       |
-| 第 10 篇       | 抽 10 個段末收尾語並列、確認收尾語句型分佈 ≥ 3 種                                            |
-| 每 + 10 篇     | 重複上述抽樣、發現 collapse 立即回頭加變體、不要繼續寫                                       |
-| Batch 結束前   | 全 batch 跨檔 cadence audit、確認 framing 分佈                                              |
+| 寫作進度     | Checkpoint 動作                                                                                 |
+| ------------ | ----------------------------------------------------------------------------------------------- |
+| 第 1-3 篇    | 刻意產出 3 種不同 framing 變體（pilot phase）、人類 / Claude 自審「這 3 篇 cadence 是否真不同」 |
+| 第 5 篇      | 抽 5 個段首句並列、確認 framing 變體仍在輪替、沒有 collapse 到 dominant                         |
+| 第 10 篇     | 抽 10 個段末收尾語並列、確認收尾語句型分佈 ≥ 3 種                                               |
+| 每 + 10 篇   | 重複上述抽樣、發現 collapse 立即回頭加變體、不要繼續寫                                          |
+| Batch 結束前 | 全 batch 跨檔 cadence audit、確認 framing 分佈                                                  |
 
 關鍵：抽樣不是「Reviewer 在 batch 完成後跑」、是「寫作者在生成中跑」。寫第 5 篇之前先回頭看前 5 篇、發現問題就在第 5 篇修方向、不是寫完 50 篇才回頭改 50 個。
 
@@ -56,20 +56,20 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 本卡浮現後立即跑 4 篇 deep article 小批量 dogfood、用 *寫作中抽樣 + pilot phase variant* 取代 batch 後 reviewer：
 
-| Checkpoint 位置          | 動作                                                                       | 結果                                                            |
-| ------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| 第 1 篇寫完              | 確認自然 framing（標準問題情境）                                            | OK、為第 2 篇 variant 比對 baseline                              |
-| 第 2 篇寫前              | 主動換 variant（痛點宣告 case-led）                                         | 段首句骨架明顯異於第 1 篇                                        |
-| 第 3 篇寫前              | 第三種 variant（概念反向定義）                                              | 三種骨架完全錯開                                                |
-| 第 4 篇寫前              | 第四種 variant（對照表驅動）+ 抽前 3 篇章節 1 entry sample audit            | 四種骨架完全錯開、過渡詞密度 0、cadence 「任一缺失」族 0 hits   |
+| Checkpoint 位置 | 動作                                                             | 結果                                                          |
+| --------------- | ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| 第 1 篇寫完     | 確認自然 framing（標準問題情境）                                 | OK、為第 2 篇 variant 比對 baseline                           |
+| 第 2 篇寫前     | 主動換 variant（痛點宣告 case-led）                              | 段首句骨架明顯異於第 1 篇                                     |
+| 第 3 篇寫前     | 第三種 variant（概念反向定義）                                   | 三種骨架完全錯開                                              |
+| 第 4 篇寫前     | 第四種 variant（對照表驅動）+ 抽前 3 篇章節 1 entry sample audit | 四種骨架完全錯開、過渡詞密度 0、cadence 「任一缺失」族 0 hits |
 
 對照前批 backend/07 51 vendor（無寫作中 checkpoint）：
 
-| 維度                              | backend/07 51 vendor（batch 後才 review） | deep article 4 篇（生成中抽樣） |
-| --------------------------------- | ----------------------------------------- | ------------------------------- |
-| 修正成本                          | ~30-60 分鐘 polish 51 處                   | ~5 分鐘 / 篇前規劃 + 0 polish   |
-| Cadence collapse 比例             | 51/51 (100%)                              | 0/4 (0%)                        |
-| 發現 collapse 時的 sample 數      | 51（已寫完才發現）                          | 1-3（生成中即時調方向）          |
+| 維度                         | backend/07 51 vendor（batch 後才 review） | deep article 4 篇（生成中抽樣） |
+| ---------------------------- | ----------------------------------------- | ------------------------------- |
+| 修正成本                     | ~30-60 分鐘 polish 51 處                  | ~5 分鐘 / 篇前規劃 + 0 polish   |
+| Cadence collapse 比例        | 51/51 (100%)                              | 0/4 (0%)                        |
+| 發現 collapse 時的 sample 數 | 51（已寫完才發現）                        | 1-3（生成中即時調方向）         |
 
 兩個驗證：
 
@@ -80,24 +80,24 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 第一次 N=4 後立即跑 N=5 full-threshold batch（5 篇 PostgreSQL sub-tool）、驗證 checkpoint 排程在 ≥ 5 真實閾值的表現：
 
-| Checkpoint 位置        | N=4 batch 動作                         | N=5 batch 動作                                                  | 結果                                |
-| ---------------------- | -------------------------------------- | --------------------------------------------------------------- | ----------------------------------- |
-| 第 1 篇寫完（20%）     | 確認 baseline framing                  | 確認 baseline framing（lifecycle）                              | OK、N=5 抽樣訊號比 N=4 略強          |
-| 第 2 篇寫前（20%）     | 主動換 variant                         | 主動換 variant（pain-driven）                                   | 兩種 framing 對照成立                |
-| 第 3 篇寫前（40-60%）  | 第三種 variant                         | 第三種 variant（concept-reversed）                              | 三種對照、cadence drift 機率變大     |
-| 第 4 篇寫前（60-80%）  | 第四種 variant + 抽前 3 篇 audit       | 第四種 variant（table-driven）+ 抽前 3 篇 entry sample audit    | 四種對照、確認 framing 不耗盡        |
-| 第 5 篇寫前（80%）     | -                                      | 第五種 variant（standard 6-section）+ 抽前 4 篇 audit            | 五種對照、進度 80% audit 信號最強    |
-| 批次完成（100%）       | 全 batch 跨檔 cadence audit            | 全 batch 跨檔 cadence audit                                      | N=5 audit 樣本大、訊號更強           |
+| Checkpoint 位置       | N=4 batch 動作                   | N=5 batch 動作                                               | 結果                              |
+| --------------------- | -------------------------------- | ------------------------------------------------------------ | --------------------------------- |
+| 第 1 篇寫完（20%）    | 確認 baseline framing            | 確認 baseline framing（lifecycle）                           | OK、N=5 抽樣訊號比 N=4 略強       |
+| 第 2 篇寫前（20%）    | 主動換 variant                   | 主動換 variant（pain-driven）                                | 兩種 framing 對照成立             |
+| 第 3 篇寫前（40-60%） | 第三種 variant                   | 第三種 variant（concept-reversed）                           | 三種對照、cadence drift 機率變大  |
+| 第 4 篇寫前（60-80%） | 第四種 variant + 抽前 3 篇 audit | 第四種 variant（table-driven）+ 抽前 3 篇 entry sample audit | 四種對照、確認 framing 不耗盡     |
+| 第 5 篇寫前（80%）    | -                                | 第五種 variant（standard 6-section）+ 抽前 4 篇 audit        | 五種對照、進度 80% audit 信號最強 |
+| 批次完成（100%）      | 全 batch 跨檔 cadence audit      | 全 batch 跨檔 cadence audit                                  | N=5 audit 樣本大、訊號更強        |
 
 兩批對照：
 
-| 維度                              | N=4 batch（跨 vendor） | N=5 batch（同 vendor sub-tool 系列）|
-| --------------------------------- | ---------------------- | ---------------------------------- |
-| 修正成本 / 篇前規劃                | ~5 分鐘 / 篇            | ~5 分鐘 / 篇（不變）                |
-| Cadence collapse 比例             | 0/4 (0%)               | 0/5 (0%)                           |
-| 進度 20% (1 篇後) 抽樣可發現性    | 訊號弱（1 樣本）        | 訊號弱（仍 1 樣本）                 |
-| 進度 80% (4 篇後) 抽樣可發現性    | 訊號強（4 對照）        | 訊號更強（4 對照 + 進入第 5 篇）    |
-| 同 vendor 共同 context 影響        | 較低（4 篇跨 vendor）  | 高（5 篇同 vendor、collapse 風險最高）|
+| 維度                           | N=4 batch（跨 vendor） | N=5 batch（同 vendor sub-tool 系列）   |
+| ------------------------------ | ---------------------- | -------------------------------------- |
+| 修正成本 / 篇前規劃            | ~5 分鐘 / 篇           | ~5 分鐘 / 篇（不變）                   |
+| Cadence collapse 比例          | 0/4 (0%)               | 0/5 (0%)                               |
+| 進度 20% (1 篇後) 抽樣可發現性 | 訊號弱（1 樣本）       | 訊號弱（仍 1 樣本）                    |
+| 進度 80% (4 篇後) 抽樣可發現性 | 訊號強（4 對照）       | 訊號更強（4 對照 + 進入第 5 篇）       |
+| 同 vendor 共同 context 影響    | 較低（4 篇跨 vendor）  | 高（5 篇同 vendor、collapse 風險最高） |
 
 額外驗證：
 
@@ -108,13 +108,13 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 第三輪 5 篇 migration playbook 中 *前 3 篇被動寫作*（沒主動規劃 variant）— stage-internal checkpoint 雖然按時 fired、但因為 *沒 variant 預先準備*、checkpoint 看到的「不同主題」誤以為 framing 會自然錯開、實際 collapse 到「為什麼遷：X/Y/Z driver」格式：
 
-| 進度       | Checkpoint 觸發    | 看到的訊號                                  | 行動                            | 結果                          |
-| ---------- | ------------------ | ------------------------------------------- | ------------------------------- | ----------------------------- |
-| 第 1 篇    | baseline 確認      | 「為什麼遷：cost / multi-vendor / cloud-native」| 沒設變體規劃                    | 第 2 篇預設複製 framing       |
-| 第 2 篇    | 應該抽樣 audit     | 跟第 1 篇都「為什麼遷 X/Y/Z」               | **被動接受、認為主題不同就 OK** | 第 3 篇也複製                 |
-| 第 3 篇    | 應該抽樣 audit     | 連續 3 篇相同 framing                       | **發現問題、決定後 2 篇換 variant**| 後 2 篇主動 variant、cadence 部分挽救 |
-| 第 4 篇    | active variant     | cost-driven entry、跟前 3 篇骨架不同        | 持續 variant                    | OK                            |
-| 第 5 篇    | active variant     | paradigm contrast entry                     | 全 batch audit                  | 3/5 collapse、2/5 不同        |
+| 進度    | Checkpoint 觸發 | 看到的訊號                                       | 行動                                | 結果                                  |
+| ------- | --------------- | ------------------------------------------------ | ----------------------------------- | ------------------------------------- |
+| 第 1 篇 | baseline 確認   | 「為什麼遷：cost / multi-vendor / cloud-native」 | 沒設變體規劃                        | 第 2 篇預設複製 framing               |
+| 第 2 篇 | 應該抽樣 audit  | 跟第 1 篇都「為什麼遷 X/Y/Z」                    | **被動接受、認為主題不同就 OK**     | 第 3 篇也複製                         |
+| 第 3 篇 | 應該抽樣 audit  | 連續 3 篇相同 framing                            | **發現問題、決定後 2 篇換 variant** | 後 2 篇主動 variant、cadence 部分挽救 |
+| 第 4 篇 | active variant  | cost-driven entry、跟前 3 篇骨架不同             | 持續 variant                        | OK                                    |
+| 第 5 篇 | active variant  | paradigm contrast entry                          | 全 batch audit                      | 3/5 collapse、2/5 不同                |
 
 兩個關鍵 finding：
 
@@ -123,13 +123,13 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 修正後的 Stage 內 checkpoint 排程（補 stage 0 變體規劃）：
 
-| 寫作進度                  | Checkpoint 動作                                                                              |
-| ------------------------- | -------------------------------------------------------------------------------------------- |
-| **Stage 0（寫前）**       | **列 N 種 framing 變體 + 對應 N 篇主題分配**（新增、原本缺失）                                |
-| 第 1-3 篇（pilot phase）  | 按 stage 0 分配執行、人類 / Claude 自審「實際 entry framing 跟 stage 0 規劃對齊嗎」          |
-| 第 5 篇                  | 抽 5 個段首句並列、確認 framing 變體仍在輪替                                                 |
-| 第 10 篇                 | 抽 10 個段末收尾語並列、確認句型分佈 ≥ 3 種                                                  |
-| 每 + 10 篇               | 重複抽樣、發現 collapse 立即回頭加變體                                                       |
+| 寫作進度                 | Checkpoint 動作                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| **Stage 0（寫前）**      | **列 N 種 framing 變體 + 對應 N 篇主題分配**（新增、原本缺失）                      |
+| 第 1-3 篇（pilot phase） | 按 stage 0 分配執行、人類 / Claude 自審「實際 entry framing 跟 stage 0 規劃對齊嗎」 |
+| 第 5 篇                  | 抽 5 個段首句並列、確認 framing 變體仍在輪替                                        |
+| 第 10 篇                 | 抽 10 個段末收尾語並列、確認句型分佈 ≥ 3 種                                         |
+| 每 + 10 篇               | 重複抽樣、發現 collapse 立即回頭加變體                                              |
 
 關鍵：*Stage 0 變體規劃是必要 step*、不能跳；checkpoint 是 *監測* 工具、不是 *設計* 工具。
 
@@ -139,10 +139,10 @@ backend/07 案例對照：51 個 vendor 字面違規 0、結構違規 0、emerge
 
 第二輪 migration batch（5 篇）寫前主動列 5 種 entry framing variant、cadence audit 結果 0/5 collapse；跟第一輪 3/5 collapse 對照、唯一差異是 *variant 規劃完整度*：
 
-| 批次              | Sample | Variant 規劃               | Stage-internal checkpoint 結果 | Collapse rate |
-| ----------------- | ------ | -------------------------- | ------------------------------ | ------------- |
-| 第一輪（混合）     | N=5    | 前 3 篇被動、後 2 篇主動    | 被動段 checkpoint 失效         | 3/5 (60%)     |
-| 第二輪（全主動）   | N=5    | 寫前列 5 種 variant、執行對應 | Checkpoint 監測通過             | 0/5 (0%)      |
+| 批次             | Sample | Variant 規劃                  | Stage-internal checkpoint 結果 | Collapse rate |
+| ---------------- | ------ | ----------------------------- | ------------------------------ | ------------- |
+| 第一輪（混合）   | N=5    | 前 3 篇被動、後 2 篇主動      | 被動段 checkpoint 失效         | 3/5 (60%)     |
+| 第二輪（全主動） | N=5    | 寫前列 5 種 variant、執行對應 | Checkpoint 監測通過            | 0/5 (0%)      |
 
 第二輪確認本卡核心論斷：
 
@@ -194,12 +194,12 @@ Emergence 違規目前的 enforcement：
 
 ## 不只是寫作：emergence 違規的其他例子
 
-| 任務類型      | 字面違規例                | 結構違規例              | Emergence 違規例                                   |
-| ------------- | ------------------------- | ----------------------- | -------------------------------------------------- |
-| 寫作          | emoji / 裸 URL            | 章節缺失 / frontmatter  | Cadence 同質化、語氣漂移、frame 重複              |
-| Code review   | console.log / typo        | 缺型別 / 缺 test        | 抽象層級不一致、命名漂移、相似函式散落             |
-| Schema 設計   | 缺 NOT NULL / 缺 index    | 缺 FK / 缺 unique       | 命名慣例分裂、欄位順序不一致、表間關係風格不齊     |
-| API doc       | 拼字 / broken link        | 缺參數說明 / 缺範例     | 例子風格不一、術語使用漂移、章節長短差異懸殊       |
+| 任務類型    | 字面違規例             | 結構違規例             | Emergence 違規例                               |
+| ----------- | ---------------------- | ---------------------- | ---------------------------------------------- |
+| 寫作        | emoji / 裸 URL         | 章節缺失 / frontmatter | Cadence 同質化、語氣漂移、frame 重複           |
+| Code review | console.log / typo     | 缺型別 / 缺 test       | 抽象層級不一致、命名漂移、相似函式散落         |
+| Schema 設計 | 缺 NOT NULL / 缺 index | 缺 FK / 缺 unique      | 命名慣例分裂、欄位順序不一致、表間關係風格不齊 |
+| API doc     | 拼字 / broken link     | 缺參數說明 / 缺範例    | 例子風格不一、術語使用漂移、章節長短差異懸殊   |
 
 三類違規對應三層 enforcement、不能混用工具。
 
@@ -207,40 +207,40 @@ Emergence 違規目前的 enforcement：
 
 ## 反模式
 
-| 反模式                                                       | 後果                                                                |
-| ------------------------------------------------------------ | ------------------------------------------------------------------- |
-| 把 emergence 違規丟給 hook 解決                              | Hook 抓不到、false confidence                                       |
-| 把 emergence 違規丟給 batch 完成後 reviewer                  | 修正成本 N 倍、cadence 已內化                                       |
-| 寫 batch 不在中段抽樣                                        | Emergence collapse 後才發現、無法即時修方向                         |
-| Reviewer prompt 不明示跨檔比對                               | Reviewer 用單檔 frame 審 N 檔、emergence 漏抓                       |
-| 把 cadence 抽樣只列在「Batch 結束前」                        | 太晚、跟「Reviewer batch 後跑」沒差                                  |
-| 規範裡寫「不可 cadence 同質化」但不提抽樣機制                | 規範文字成立、執行落空                                              |
+| 反模式                                        | 後果                                          |
+| --------------------------------------------- | --------------------------------------------- |
+| 把 emergence 違規丟給 hook 解決               | Hook 抓不到、false confidence                 |
+| 把 emergence 違規丟給 batch 完成後 reviewer   | 修正成本 N 倍、cadence 已內化                 |
+| 寫 batch 不在中段抽樣                         | Emergence collapse 後才發現、無法即時修方向   |
+| Reviewer prompt 不明示跨檔比對                | Reviewer 用單檔 frame 審 N 檔、emergence 漏抓 |
+| 把 cadence 抽樣只列在「Batch 結束前」         | 太晚、跟「Reviewer batch 後跑」沒差           |
+| 規範裡寫「不可 cadence 同質化」但不提抽樣機制 | 規範文字成立、執行落空                        |
 
 ---
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                            | 關係                                                                                                                              |
-| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)                  | 本卡是 #82 的時機軸延伸 — #82 分字面 / 行為兩類、本卡分字面 / 結構 / emergence 三類並對應 enforcement 時機                       |
-| [#122 Cadence 同質化是模板的隱形維度](../cadence-homogenization-in-batch-writing/)              | 配對 — #122 定義違規類型、本卡解 enforcement 時機；兩張一起解 cadence 問題                                                        |
-| [#123 多重硬規範同時生效會把 cadence 推向便利解](../compliance-optimum-converges-cadence/)      | 配對 — #123 解釋成因（constraint 收斂）、本卡解 enforcement（時機 + 抽樣）                                                        |
-| [#68 驗收的時間軸：四個 checkpoint](../verification-timeline-checkpoints/)                     | 同骨 pattern — #68 把驗收切「寫之前 / 開發中 / ship 前 / ship 後」、本卡把寫作 review 切時機；都是 enforcement 時機軸             |
-| [#95 Multi-pass review 的 scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)     | 補 timing 軸 — #95 是 scope（橫向）、本卡是 timing（縱向）；兩軸都要對齊才完整                                                    |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                  | 補一條時機 — #83 把 multi-pass 描述成「N 輪 frame」、本卡點出「N 輪要分散在生成時間軸」、不是全集中 batch 後                      |
+| 原則                                                                                       | 關係                                                                                                                  |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)              | 本卡是 #82 的時機軸延伸 — #82 分字面 / 行為兩類、本卡分字面 / 結構 / emergence 三類並對應 enforcement 時機            |
+| [#122 Cadence 同質化是模板的隱形維度](../cadence-homogenization-in-batch-writing/)         | 配對 — #122 定義違規類型、本卡解 enforcement 時機；兩張一起解 cadence 問題                                            |
+| [#123 多重硬規範同時生效會把 cadence 推向便利解](../compliance-optimum-converges-cadence/) | 配對 — #123 解釋成因（constraint 收斂）、本卡解 enforcement（時機 + 抽樣）                                            |
+| [#68 驗收的時間軸：四個 checkpoint](../verification-timeline-checkpoints/)                 | 同骨 pattern — #68 把驗收切「寫之前 / 開發中 / ship 前 / ship 後」、本卡把寫作 review 切時機；都是 enforcement 時機軸 |
+| [#95 Multi-pass review 的 scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/) | 補 timing 軸 — #95 是 scope（橫向）、本卡是 timing（縱向）；兩軸都要對齊才完整                                        |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                             | 補一條時機 — #83 把 multi-pass 描述成「N 輪 frame」、本卡點出「N 輪要分散在生成時間軸」、不是全集中 batch 後          |
 
 ---
 
 ## 判讀徵兆
 
-| 訊號                                              | 該做的事                                                              |
-| ------------------------------------------------- | --------------------------------------------------------------------- |
-| Hook / linter 全綠但批量讀完感覺品質下滑          | Emergence 違規、改 stage 內抽樣機制                                   |
-| Reviewer 報告抓到大量同類問題且都集中在 batch 末段 | Review 時機太晚、移到生成中                                           |
-| 想加新 lint rule 解決 cadence 問題                | 警訊 — regex 攔不到、改 stage 內抽樣                                  |
-| 同 batch 修正 PR 改動 ≥ 20% 檔                    | Stage 3 才發現 emergence、預設下一批要加 stage 2 抽樣                |
-| 「寫完 N 篇後抽樣」的 N 跟 batch size 同數量級    | 抽樣等於 batch 後 review、N 應該 ≤ batch size × 20%                  |
-| 寫作流程沒有「checkpoint」概念                    | Enforcement 缺生成中這層、emergence 違規會持續產生                    |
-| Reviewer 只跑單檔 frame                           | 跨檔 emergence 看不到、補 reviewer prompt 要求跨檔比對                |
+| 訊號                                               | 該做的事                                               |
+| -------------------------------------------------- | ------------------------------------------------------ |
+| Hook / linter 全綠但批量讀完感覺品質下滑           | Emergence 違規、改 stage 內抽樣機制                    |
+| Reviewer 報告抓到大量同類問題且都集中在 batch 末段 | Review 時機太晚、移到生成中                            |
+| 想加新 lint rule 解決 cadence 問題                 | 警訊 — regex 攔不到、改 stage 內抽樣                   |
+| 同 batch 修正 PR 改動 ≥ 20% 檔                     | Stage 3 才發現 emergence、預設下一批要加 stage 2 抽樣  |
+| 「寫完 N 篇後抽樣」的 N 跟 batch size 同數量級     | 抽樣等於 batch 後 review、N 應該 ≤ batch size × 20%    |
+| 寫作流程沒有「checkpoint」概念                     | Enforcement 缺生成中這層、emergence 違規會持續產生     |
+| Reviewer 只跑單檔 frame                            | 跨檔 emergence 看不到、補 reviewer prompt 要求跨檔比對 |
 
 **核心**：違規分字面 / 結構 / emergence 三類、enforcement 時機要對應類型。Emergence 違規規則化不了、不能丟給 hook 或 batch 後 reviewer、要在生成中（batch 進度 10-20% 時）抽樣 catch；最佳時機是 emergence 訊號剛夠強、且修正成本還可控的位置。

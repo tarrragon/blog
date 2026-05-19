@@ -12,13 +12,13 @@ tags: ["backend", "security", "cloudflare", "page-shield", "client-side", "suppl
 
 Client-side supply chain attack 不會被 WAF 看到 — 攻擊發生在 browser 渲染 page 時、不在 origin server 跟 client 之間的網路層。Page Shield 是 *browser-side script execution* 的監測 + 防禦層、跟 WAF 處理 *server-side request inspection* 互補不重疊。
 
-| Attack pattern              | 表現                                                         | Page Shield 對應防禦              |
-| --------------------------- | ------------------------------------------------------------ | --------------------------------- |
-| Magecart 信用卡 skimmer    | 第三方 JS 被注入惡意 form listener、信用卡資訊送外部 endpoint | CSP `connect-src` + script alert |
-| 第三方 SDK 被 compromise   | 廠商 CDN 被攻擊、SDK 改版內含 malicious payload              | SRI hash mismatch + script alert |
-| Formjacking                | 結帳頁 form action 被改、submit 送外部 server                 | CSP `form-action` directive       |
-| Inline script injection    | XSS / DOM-based injection 插入 `<script>` 跑外部 source       | CSP `script-src` + nonce          |
-| Storage abuse              | malicious JS 讀 localStorage / cookies 送外部                | CSP `connect-src` + CSP report   |
+| Attack pattern           | 表現                                                          | Page Shield 對應防禦             |
+| ------------------------ | ------------------------------------------------------------- | -------------------------------- |
+| Magecart 信用卡 skimmer  | 第三方 JS 被注入惡意 form listener、信用卡資訊送外部 endpoint | CSP `connect-src` + script alert |
+| 第三方 SDK 被 compromise | 廠商 CDN 被攻擊、SDK 改版內含 malicious payload               | SRI hash mismatch + script alert |
+| Formjacking              | 結帳頁 form action 被改、submit 送外部 server                 | CSP `form-action` directive      |
+| Inline script injection  | XSS / DOM-based injection 插入 `<script>` 跑外部 source       | CSP `script-src` + nonce         |
+| Storage abuse            | malicious JS 讀 localStorage / cookies 送外部                 | CSP `connect-src` + CSP report   |
 
 三層防禦對應不同 attack 階段：
 
@@ -157,12 +157,12 @@ Dashboard → Page Shield → Scripts 列出所有偵測到的 script、含 *建
 
 Page Shield 是 *Enterprise plan + Page Shield add-on*、cost 維度：
 
-| 維度                | 影響                                                                                 |
-| ------------------- | ------------------------------------------------------------------------------------ |
-| CSP report 量       | Cloudflare 端聚合、不另外計費；report endpoint 自管要 sizing            |
-| Script monitoring   | 不影響 page load latency（async detection）                                          |
-| Per-zone pricing    | 跨子域 + apex domain 多 zone 各算一份                                                |
-| SOC operation       | 第一週 report 量大、需要 1-2 analyst FTE 跑 tuning；穩定後低人力               |
+| 維度              | 影響                                                             |
+| ----------------- | ---------------------------------------------------------------- |
+| CSP report 量     | Cloudflare 端聚合、不另外計費；report endpoint 自管要 sizing     |
+| Script monitoring | 不影響 page load latency（async detection）                      |
+| Per-zone pricing  | 跨子域 + apex domain 多 zone 各算一份                            |
+| SOC operation     | 第一週 report 量大、需要 1-2 analyst FTE 跑 tuning；穩定後低人力 |
 
 Page load 影響：
 

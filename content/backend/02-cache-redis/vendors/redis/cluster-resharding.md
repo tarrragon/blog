@@ -26,14 +26,14 @@ source 跟 target 是 *同 cluster*、區別在 *slot 對 node 的 mapping*。Ap
 
 跑 [diff dimension audit](/report/content-structure-by-max-diff-dimension/) 對 Redis cluster re-sharding：
 
-| 維度                 | 評估                                  | 等級         |
-| -------------------- | ------------------------------------- | ------------ |
-| Schema / API         | 同 Redis、無變                        | Low          |
-| Operational model    | 同 Redis Cluster、operational 不變    | Low          |
-| Abstraction / paradigm | 同 Redis Cluster、無 paradigm 差    | Low          |
-| Number of components | 同 1 個（cluster）                    | Low          |
-| Application change   | 多數不改、client cluster mode 自處理   | Low          |
-| **Data topology**    | **重劃** — slot mapping 跟 node 數    | **New axis** |
+| 維度                   | 評估                                 | 等級         |
+| ---------------------- | ------------------------------------ | ------------ |
+| Schema / API           | 同 Redis、無變                       | Low          |
+| Operational model      | 同 Redis Cluster、operational 不變   | Low          |
+| Abstraction / paradigm | 同 Redis Cluster、無 paradigm 差     | Low          |
+| Number of components   | 同 1 個（cluster）                   | Low          |
+| Application change     | 多數不改、client cluster mode 自處理 | Low          |
+| **Data topology**      | **重劃** — slot mapping 跟 node 數   | **New axis** |
 
 5 維皆 Low、對映 Type B drop-in；但 *data topology* 是 5 type 沒有的 *第 6 維度*。本文採用 *re-sharding-specific 結構*、不是 5 type 任一個。
 
@@ -41,12 +41,12 @@ source 跟 target 是 *同 cluster*、區別在 *slot 對 node 的 mapping*。Ap
 
 不同 driver 對應不同 re-sharding 策略：
 
-| Driver                | 觸發場景                                                     | 對應 re-sharding 操作                                    |
-| --------------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
-| Slot imbalance        | 業務熱點打到部分 slot、單 node CPU / memory 80%+              | Rebalance（slot 重分配、不加 node）                      |
-| Capacity expansion    | 整 cluster memory / throughput 上限快到、要加 node            | Add node + slot migration（從現有 node 搬部分 slot 過去）|
-| Node decommission     | 老 node 硬體淘汰 / cloud instance 換代                        | Drain（該 node 的 slot 全搬走）+ remove                  |
-| Hash tag refactor     | 業務 access pattern 變、需要 co-located key 群重分組          | Application-side migration（不是 cluster-level）         |
+| Driver             | 觸發場景                                             | 對應 re-sharding 操作                                     |
+| ------------------ | ---------------------------------------------------- | --------------------------------------------------------- |
+| Slot imbalance     | 業務熱點打到部分 slot、單 node CPU / memory 80%+     | Rebalance（slot 重分配、不加 node）                       |
+| Capacity expansion | 整 cluster memory / throughput 上限快到、要加 node   | Add node + slot migration（從現有 node 搬部分 slot 過去） |
+| Node decommission  | 老 node 硬體淘汰 / cloud instance 換代               | Drain（該 node 的 slot 全搬走）+ remove                   |
+| Hash tag refactor  | 業務 access pattern 變、需要 co-located key 群重分組 | Application-side migration（不是 cluster-level）          |
 
 前 3 種是 cluster-internal、用 `redis-cli --cluster` 工具完成；第 4 種需要 application 端 dual-write + migration、本文不展開。
 
@@ -205,13 +205,13 @@ redis-cli --cluster del-node 10.0.0.1:6379 <node-to-remove>
 
 ## Capacity / cost
 
-| 維度                    | 估算                                                        | 警戒                                                          |
-| ----------------------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
-| Slot migration 速度     | 1-10K key / sec（依 key size + network）                     | TB 級 10K key / sec → 1 天                                  |
-| Application latency impact | p99 +50-200% during migration                             | 設 latency budget、超出暫停                                  |
-| Memory / node           | 不變、但 temporary 雙寫期間 +5-15%                          | 不能在 memory 90%+ 時 reshard                                |
-| Network bandwidth       | 跨 node 大流量、~100-500 Mbps per migration stream         | 跨 AZ reshard egress cost 注意                                |
-| Recovery time           | Reshard 失敗回退 = 反向 reshard（時間相同）                 | 不能在 incident 期間 reshard                                  |
+| 維度                       | 估算                                               | 警戒                           |
+| -------------------------- | -------------------------------------------------- | ------------------------------ |
+| Slot migration 速度        | 1-10K key / sec（依 key size + network）           | TB 級 10K key / sec → 1 天     |
+| Application latency impact | p99 +50-200% during migration                      | 設 latency budget、超出暫停    |
+| Memory / node              | 不變、但 temporary 雙寫期間 +5-15%                 | 不能在 memory 90%+ 時 reshard  |
+| Network bandwidth          | 跨 node 大流量、~100-500 Mbps per migration stream | 跨 AZ reshard egress cost 注意 |
+| Recovery time              | Reshard 失敗回退 = 反向 reshard（時間相同）        | 不能在 incident 期間 reshard   |
 
 實務 default：
 

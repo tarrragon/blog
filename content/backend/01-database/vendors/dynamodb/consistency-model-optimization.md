@@ -12,28 +12,28 @@ tags: ["backend", "database", "dynamodb", "consistency", "migration", "axis-cand
 
 DynamoDB 的 read 操作支援兩種 consistency：
 
-| 屬性                    | Strongly Consistent Read           | Eventually Consistent Read         |
-| ----------------------- | ---------------------------------- | ---------------------------------- |
-| Protocol                | 同（DynamoDB API）                 | 同                                 |
-| API call                | 同 `GetItem` / `Query` / `Scan`    | 同（多 `ConsistentRead=false` flag）|
-| 結果                    | 最新 commit 的值                   | 可能 stale 0-100ms                 |
-| Latency p99             | 5-15ms                             | 1-5ms                              |
-| Throughput cost (RCU)   | 1 RCU per 4KB read                 | **0.5 RCU per 4KB read**           |
-| Cross-AZ                | 跨 AZ 讀（quorum）                 | 單 AZ 讀                           |
-| 故障行為                | leader unavailable 時 read 失敗     | secondary alive 時 read 仍 work    |
+| 屬性                  | Strongly Consistent Read        | Eventually Consistent Read           |
+| --------------------- | ------------------------------- | ------------------------------------ |
+| Protocol              | 同（DynamoDB API）              | 同                                   |
+| API call              | 同 `GetItem` / `Query` / `Scan` | 同（多 `ConsistentRead=false` flag） |
+| 結果                  | 最新 commit 的值                | 可能 stale 0-100ms                   |
+| Latency p99           | 5-15ms                          | 1-5ms                                |
+| Throughput cost (RCU) | 1 RCU per 4KB read              | **0.5 RCU per 4KB read**             |
+| Cross-AZ              | 跨 AZ 讀（quorum）              | 單 AZ 讀                             |
+| 故障行為              | leader unavailable 時 read 失敗 | secondary alive 時 read 仍 work      |
 
 兩者 *同 protocol, same API, same table* — 唯一差異是 *application contract*：能否接受 0-100ms 的 staleness。
 
 跑 [6 維 diff dimension audit](/report/content-structure-by-max-diff-dimension/) 對「strongly consistent → eventually consistent」遷移：
 
-| 維度                 | 評估                                      | 等級       |
-| -------------------- | ----------------------------------------- | ---------- |
-| Schema / API         | 同 API、只改 ConsistentRead flag         | Low        |
-| Operational model    | 同 cluster、operational stack 不變        | Low        |
-| Paradigm             | 同 NoSQL document store                   | Low        |
-| Components           | 同 1 個 table                             | Low        |
-| Application change   | 每個 read site 評估、可改                 | Medium     |
-| Data topology        | 同 partition / replication                | Low        |
+| 維度                     | 評估                                               | 等級     |
+| ------------------------ | -------------------------------------------------- | -------- |
+| Schema / API             | 同 API、只改 ConsistentRead flag                   | Low      |
+| Operational model        | 同 cluster、operational stack 不變                 | Low      |
+| Paradigm                 | 同 NoSQL document store                            | Low      |
+| Components               | 同 1 個 table                                      | Low      |
+| Application change       | 每個 read site 評估、可改                          | Medium   |
+| Data topology            | 同 partition / replication                         | Low      |
 | **Consistency contract** | **strong → eventual、application semantic 完全改** | **High** |
 
 6 維 audit 抓不到「Consistency contract = High」這軸。用既有 6 維歸類、會走 Type B drop-in + application change 中維獨立段；但這個歸類 *漏掉真正的工作量*：
@@ -95,14 +95,14 @@ $ grep -r "table.get_item\|table.query\|table.scan" src/
 
 Audit 分類矩陣（典型 application）：
 
-| Read pattern                            | 預設 consistency       | Eventual 是否可接受 | 估佔比 |
-| --------------------------------------- | ---------------------- | ------------------- | ------ |
-| User read 自己剛 commit 的 data          | Strong（read-your-write）| 通常 NO            | 5-10%  |
-| List query（顯示用 / search 結果）       | Strong（過度保守）     | YES                 | 30-40% |
-| Background job / analytics              | Strong（過度保守）     | YES                 | 20-30% |
-| Real-time dashboard refresh             | Strong                 | depends（refresh 間隔）| 10-15% |
-| 跟 strongly consistent write 同 transaction | Strong（必要）      | NO                  | 5-10%  |
-| Health check / monitoring               | Strong（不必要）       | YES                 | 5-10%  |
+| Read pattern                                | 預設 consistency          | Eventual 是否可接受     | 估佔比 |
+| ------------------------------------------- | ------------------------- | ----------------------- | ------ |
+| User read 自己剛 commit 的 data             | Strong（read-your-write） | 通常 NO                 | 5-10%  |
+| List query（顯示用 / search 結果）          | Strong（過度保守）        | YES                     | 30-40% |
+| Background job / analytics                  | Strong（過度保守）        | YES                     | 20-30% |
+| Real-time dashboard refresh                 | Strong                    | depends（refresh 間隔） | 10-15% |
+| 跟 strongly consistent write 同 transaction | Strong（必要）            | NO                      | 5-10%  |
+| Health check / monitoring                   | Strong（不必要）          | YES                     | 5-10%  |
 
 audit 完後 application 端 60-80% read site 可改 eventual、剩餘 20-40% 保留 strong；整體 RCU cost 降 30-40%。
 
@@ -210,14 +210,14 @@ Decision document 寫進 ADR、之後新 read site 直接套規則。
 
 ## Capacity / cost
 
-| 維度                | All strongly consistent             | Mixed（70% eventual + 30% strong）| All eventually consistent      |
-| ------------------- | ----------------------------------- | --------------------------------- | ------------------------------ |
-| RCU per read        | 1 RCU per 4KB                       | 0.65 RCU per 4KB（avg）            | 0.5 RCU per 4KB                |
-| Read latency p99    | 10-15ms                             | 5-10ms                            | 1-5ms                          |
-| Cost saving         | baseline                            | ~35%                              | ~50%                           |
-| Application complexity | Low                              | Medium（per-site decision）        | Low                            |
-| Audit / migration cost | -                                | 2-3 FTE 月 × audit                | 同 mixed                       |
-| Cross-AZ failure    | Strong read fail                    | Strong fail, eventual work        | All work                       |
+| 維度                   | All strongly consistent | Mixed（70% eventual + 30% strong） | All eventually consistent |
+| ---------------------- | ----------------------- | ---------------------------------- | ------------------------- |
+| RCU per read           | 1 RCU per 4KB           | 0.65 RCU per 4KB（avg）            | 0.5 RCU per 4KB           |
+| Read latency p99       | 10-15ms                 | 5-10ms                             | 1-5ms                     |
+| Cost saving            | baseline                | ~35%                               | ~50%                      |
+| Application complexity | Low                     | Medium（per-site decision）        | Low                       |
+| Audit / migration cost | -                       | 2-3 FTE 月 × audit                 | 同 mixed                  |
+| Cross-AZ failure       | Strong read fail        | Strong fail, eventual work         | All work                  |
 
 **判讀**：完全 strong 是 *過度保守*、完全 eventual 是 *過度激進*；mixed 是 sweet spot、但 audit 工作量大。
 

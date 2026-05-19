@@ -10,11 +10,11 @@ tags: ["backend", "cache", "redis", "dragonflydb", "migration", "drop-in"]
 
 ## 為什麼遷：cost / single-thread / multi-tenancy 三條 driver
 
-| Driver               | 觸發場景                                                                            |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| **Memory cost**      | Redis 6.x cluster 跑 1-10 TB 時、機器成本爆；DragonflyDB 記憶體效率提升 ~30%、相同 dataset 少 30% RAM |
+| Driver                       | 觸發場景                                                                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Memory cost**              | Redis 6.x cluster 跑 1-10 TB 時、機器成本爆；DragonflyDB 記憶體效率提升 ~30%、相同 dataset 少 30% RAM                          |
 | **Single-thread bottleneck** | Redis 主執行緒在單一 hot key 寫入時是瓶頸、scale-up 受限；DragonflyDB 多執行緒 + shared-nothing 設計、單機 throughput 號稱 25x |
-| **Multi-tenancy**    | Redis Cluster 多 namespace 需要 cluster-per-tenant、運維成本爆；DragonflyDB 設計上 namespace 隔離成本低 |
+| **Multi-tenancy**            | Redis Cluster 多 namespace 需要 cluster-per-tenant、運維成本爆；DragonflyDB 設計上 namespace 隔離成本低                        |
 
 反向 driver（DragonflyDB → Redis）也存在 — 主要是 *Redis Modules 依賴*（RedisJSON / RedisSearch / RedisGraph）DragonflyDB 不支援、或 *Lua script 用了 redis.call 進階 API*。
 
@@ -22,14 +22,14 @@ tags: ["backend", "cache", "redis", "dragonflydb", "migration", "drop-in"]
 
 跟前一篇 Splunk → Elastic 的 6-phase playbook 不同、Redis → DragonflyDB 的 migration *結構接近 standard deep article*：
 
-| 維度                 | Splunk → Elastic（phased）                  | Redis → DragonflyDB（drop-in）           |
-| -------------------- | ------------------------------------------- | ---------------------------------------- |
-| Schema 對位          | 需要（SPL ↔ KQL / CIM ↔ ECS）             | 不需要（RESP protocol 相容）             |
-| Rule translation     | 4-12 週 SOC engineering 工作                 | 不需要（command 直接相容）               |
-| Parallel run         | 4-8 週 dual-SIEM 跑                          | 1-7 天 dual-write 觀察                   |
-| Cutover 邊界         | 軟邊界（routing 切換、可逆 30 分鐘）         | 硬邊界（client 配置切換、單次完成）      |
-| 不可逆 cleanup       | 1 年後 archive                               | 立刻（DragonflyDB 接管後 Redis 可關）    |
-| 整體週期             | 4-9 個月                                     | 1-4 週                                   |
+| 維度             | Splunk → Elastic（phased）           | Redis → DragonflyDB（drop-in）        |
+| ---------------- | ------------------------------------ | ------------------------------------- |
+| Schema 對位      | 需要（SPL ↔ KQL / CIM ↔ ECS）        | 不需要（RESP protocol 相容）          |
+| Rule translation | 4-12 週 SOC engineering 工作         | 不需要（command 直接相容）            |
+| Parallel run     | 4-8 週 dual-SIEM 跑                  | 1-7 天 dual-write 觀察                |
+| Cutover 邊界     | 軟邊界（routing 切換、可逆 30 分鐘） | 硬邊界（client 配置切換、單次完成）   |
+| 不可逆 cleanup   | 1 年後 archive                       | 立刻（DragonflyDB 接管後 Redis 可關） |
+| 整體週期         | 4-9 個月                             | 1-4 週                                |
 
 **判斷依據**：migration 結構由 *source 跟 target 的 schema / protocol 差異程度* 決定、不是 universal phased playbook。本批第 2 篇驗證 *deep article methodology 的 6-section 框架* 在 drop-in migration 仍適用（只需前置 *相容性驗證* 段、其他 6 段對位）。
 
@@ -37,19 +37,19 @@ tags: ["backend", "cache", "redis", "dragonflydb", "migration", "drop-in"]
 
 DragonflyDB 號稱 Redis drop-in、但「drop-in」涵蓋範圍依 Redis feature 使用程度而定。Pre-migration 必跑的相容性 audit：
 
-| Redis feature                  | DragonflyDB 支援程度                                | Action                                       |
-| ------------------------------ | --------------------------------------------------- | -------------------------------------------- |
-| Basic data types (String / Hash / List / Set / ZSet) | 完全相容                          | 無需處理                                     |
-| RESP protocol v2 / v3          | 完全相容                                            | 無需處理                                     |
-| RDB load                       | Redis 6.x RDB 完全相容；7.x 部分 feature 待測       | 用 BGSAVE → 切換 → load 驗證                |
-| AOF                            | DragonflyDB 不用 AOF、改 *snapshotting* 模式        | 不直接 import AOF、需經 RDB 中介             |
-| Lua scripts                    | 90% 相容、部分 redis.call API + EVAL 邊界 case 差異  | Lua script audit 必跑、不能假設全相容        |
-| Pub/Sub                        | 相容、但 message fanout 行為差異（多 thread 處理）   | 高 fanout pub/sub 場景需測 latency           |
-| Cluster mode                   | DragonflyDB *單機* 即可達 cluster throughput、不必 cluster；emulated cluster mode 部分相容 | 評估是否仍需 cluster |
-| Sentinel HA                    | 不直接支援、用 DragonflyDB 自家 replication       | HA 架構重設計                                |
-| Redis Modules (RedisJSON / Search / Graph) | **不支援**                                | 必須前置改寫 application                     |
-| Streams                        | 相容、但 consumer group 行為部分差異                 | Stream consumer 跑 dual-write 觀察           |
-| Keyspace notifications         | 相容                                                | 無需處理                                     |
+| Redis feature                                        | DragonflyDB 支援程度                                                                       | Action                                |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------- |
+| Basic data types (String / Hash / List / Set / ZSet) | 完全相容                                                                                   | 無需處理                              |
+| RESP protocol v2 / v3                                | 完全相容                                                                                   | 無需處理                              |
+| RDB load                                             | Redis 6.x RDB 完全相容；7.x 部分 feature 待測                                              | 用 BGSAVE → 切換 → load 驗證          |
+| AOF                                                  | DragonflyDB 不用 AOF、改 *snapshotting* 模式                                               | 不直接 import AOF、需經 RDB 中介      |
+| Lua scripts                                          | 90% 相容、部分 redis.call API + EVAL 邊界 case 差異                                        | Lua script audit 必跑、不能假設全相容 |
+| Pub/Sub                                              | 相容、但 message fanout 行為差異（多 thread 處理）                                         | 高 fanout pub/sub 場景需測 latency    |
+| Cluster mode                                         | DragonflyDB *單機* 即可達 cluster throughput、不必 cluster；emulated cluster mode 部分相容 | 評估是否仍需 cluster                  |
+| Sentinel HA                                          | 不直接支援、用 DragonflyDB 自家 replication                                                | HA 架構重設計                         |
+| Redis Modules (RedisJSON / Search / Graph)           | **不支援**                                                                                 | 必須前置改寫 application              |
+| Streams                                              | 相容、但 consumer group 行為部分差異                                                       | Stream consumer 跑 dual-write 觀察    |
+| Keyspace notifications                               | 相容                                                                                       | 無需處理                              |
 
 **Audit 的關鍵 output**：列「不相容功能」清單 + 對應 application code 修改範圍；若 Modules 在 production 使用、migration *退役*。
 
@@ -155,16 +155,16 @@ redis-cli -h redis-primary DBSIZE
 
 ## Capacity / cost 對照
 
-| 維度                      | Redis（self-managed）                                      | DragonflyDB                                               | 取捨                                                       |
-| ------------------------- | ---------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------- |
-| Single-node throughput   | ~100K-200K ops/s                                            | ~2-5M ops/s（號稱 25x）                                   | DragonflyDB 領先、實測依 workload 而定                     |
-| Memory efficiency         | baseline                                                   | -30% 平均、依資料分佈                                     | DragonflyDB 領先                                          |
-| Persistence               | RDB / AOF 雙模式                                            | Snapshotting 為主、不用 AOF                              | Redis 對 durability 要求高的 workload 仍領先              |
-| HA / Replication          | Sentinel + Cluster 成熟                                     | 自家 replication、HA 文件相對少                          | Redis 領先                                                |
-| Modules ecosystem         | RedisJSON / Search / Graph / TimeSeries                    | 不支援                                                    | Redis 領先                                                |
-| Cluster scaling           | Cluster mode 成熟                                            | 單機效能高、cluster 仍 emerging                          | Redis 領先、但 DragonflyDB 單機已能 cover 多數 use case   |
-| Total cost (10TB cache)   | $8-15K USD / month                                          | $2-5K USD / month                                         | DragonflyDB 顯著便宜                                       |
-| Operational maturity      | 高（10+ 年 production）                                     | 中（2022+、production 案例 1000+）                       | Redis 領先                                                |
+| 維度                    | Redis（self-managed）                   | DragonflyDB                        | 取捨                                                    |
+| ----------------------- | --------------------------------------- | ---------------------------------- | ------------------------------------------------------- |
+| Single-node throughput  | ~100K-200K ops/s                        | ~2-5M ops/s（號稱 25x）            | DragonflyDB 領先、實測依 workload 而定                  |
+| Memory efficiency       | baseline                                | -30% 平均、依資料分佈              | DragonflyDB 領先                                        |
+| Persistence             | RDB / AOF 雙模式                        | Snapshotting 為主、不用 AOF        | Redis 對 durability 要求高的 workload 仍領先            |
+| HA / Replication        | Sentinel + Cluster 成熟                 | 自家 replication、HA 文件相對少    | Redis 領先                                              |
+| Modules ecosystem       | RedisJSON / Search / Graph / TimeSeries | 不支援                             | Redis 領先                                              |
+| Cluster scaling         | Cluster mode 成熟                       | 單機效能高、cluster 仍 emerging    | Redis 領先、但 DragonflyDB 單機已能 cover 多數 use case |
+| Total cost (10TB cache) | $8-15K USD / month                      | $2-5K USD / month                  | DragonflyDB 顯著便宜                                    |
+| Operational maturity    | 高（10+ 年 production）                 | 中（2022+、production 案例 1000+） | Redis 領先                                              |
 
 **判讀**：cache use case 簡單（pure cache / session store）走 DragonflyDB；複雜 use case（Modules / Pub/Sub fanout / strict durability）保留 Redis。
 

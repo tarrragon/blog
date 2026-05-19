@@ -16,11 +16,11 @@ tags: ["backend", "observability", "new-relic", "datadog", "apm", "migration", "
 
 ## 為什麼遷：cost / k8s-native / vendor consolidation 三條 driver
 
-| Driver               | 觸發場景                                                          |
-| -------------------- | ----------------------------------------------------------------- |
-| **Cost**             | New Relic per-host pricing + custom event + synthetic 加總爆、Datadog 在 K8s 場景單 host 多 container 更划算 |
-| **K8s-native**       | Datadog agent 對 K8s sidecar / DaemonSet / autodiscovery 更深     |
-| **Vendor consolidation** | 已用 Datadog log / metric、APM 統一 vendor 降工具切換 cost     |
+| Driver                   | 觸發場景                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| **Cost**                 | New Relic per-host pricing + custom event + synthetic 加總爆、Datadog 在 K8s 場景單 host 多 container 更划算 |
+| **K8s-native**           | Datadog agent 對 K8s sidecar / DaemonSet / autodiscovery 更深                                                |
+| **Vendor consolidation** | 已用 Datadog log / metric、APM 統一 vendor 降工具切換 cost                                                   |
 
 反向 driver（Datadog → New Relic）：
 
@@ -29,16 +29,16 @@ tags: ["backend", "observability", "new-relic", "datadog", "apm", "migration", "
 
 ## Schema 對位
 
-| New Relic concept    | Datadog 對應                                              |
-| -------------------- | --------------------------------------------------------- |
-| APM agent (NR Java / Python / Node)    | Datadog agent + APM tracer library     |
-| NRQL query           | Datadog query (Metric / Log / Trace)                      |
-| Synthetic monitor    | Datadog Synthetic Tests                                   |
-| Custom event         | Datadog custom metric / log event                         |
-| NRQL alert condition | Datadog monitor                                           |
-| New Relic dashboard  | Datadog dashboard (need rebuild)                          |
-| Apdex score          | Datadog APM `apm.service.errors` + `apm.service.latency`  |
-| Distributed trace    | Datadog APM trace（OpenTelemetry-compatible）             |
+| New Relic concept                   | Datadog 對應                                             |
+| ----------------------------------- | -------------------------------------------------------- |
+| APM agent (NR Java / Python / Node) | Datadog agent + APM tracer library                       |
+| NRQL query                          | Datadog query (Metric / Log / Trace)                     |
+| Synthetic monitor                   | Datadog Synthetic Tests                                  |
+| Custom event                        | Datadog custom metric / log event                        |
+| NRQL alert condition                | Datadog monitor                                          |
+| New Relic dashboard                 | Datadog dashboard (need rebuild)                         |
+| Apdex score                         | Datadog APM `apm.service.errors` + `apm.service.latency` |
+| Distributed trace                   | Datadog APM trace（OpenTelemetry-compatible）            |
 
 ## Phase 0：Audit + classify
 
@@ -121,12 +121,12 @@ tags: ["backend", "observability", "new-relic", "datadog", "apm", "migration", "
 
 ## Capacity / cost
 
-| 維度                | New Relic                          | Datadog                                   |
-| ------------------- | ---------------------------------- | ----------------------------------------- |
-| Pricing model       | per-host + custom event / synthetic | per-host APM + log indexing + custom metric |
-| K8s-friendly        | 中、autodiscovery 有但配置複雜      | 高、K8s-native autodiscovery first-class   |
-| Migration cost      | -                                   | 2-4 FTE × 2-3 個月                        |
-| Operational FTE     | 0.3-0.6                             | 0.3-0.6（相當）                            |
+| 維度            | New Relic                           | Datadog                                     |
+| --------------- | ----------------------------------- | ------------------------------------------- |
+| Pricing model   | per-host + custom event / synthetic | per-host APM + log indexing + custom metric |
+| K8s-friendly    | 中、autodiscovery 有但配置複雜      | 高、K8s-native autodiscovery first-class    |
+| Migration cost  | -                                   | 2-4 FTE × 2-3 個月                          |
+| Operational FTE | 0.3-0.6                             | 0.3-0.6（相當）                             |
 
 ## 整合 / 下一步
 

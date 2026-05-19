@@ -18,13 +18,13 @@ tags: ["backend", "deployment", "kubernetes", "graceful-shutdown", "deep-article
 
 K8s 收到 delete pod 請求後、發生的事 *按時間* 是：
 
-| 時序 | 事件                                          | 動作來源              |
-| ---- | --------------------------------------------- | --------------------- |
-| t=0  | API server 標 pod 為 Terminating              | kubelet 收到 delete   |
-| t=0  | Pod 從 Service Endpoints 移除（**async**）    | endpoint controller   |
-| t=0  | kubelet 跑 preStop hook（若有定義）           | container runtime     |
-| t=preStop 結束 | container 收到 SIGTERM                | container runtime     |
-| t=SIGTERM + terminationGracePeriodSeconds | container 收到 SIGKILL | container runtime |
+| 時序                                      | 事件                                       | 動作來源            |
+| ----------------------------------------- | ------------------------------------------ | ------------------- |
+| t=0                                       | API server 標 pod 為 Terminating           | kubelet 收到 delete |
+| t=0                                       | Pod 從 Service Endpoints 移除（**async**） | endpoint controller |
+| t=0                                       | kubelet 跑 preStop hook（若有定義）        | container runtime   |
+| t=preStop 結束                            | container 收到 SIGTERM                     | container runtime   |
+| t=SIGTERM + terminationGracePeriodSeconds | container 收到 SIGKILL                     | container runtime   |
 
 關鍵誤解：
 
@@ -160,12 +160,12 @@ logger.Sync()
 
 Graceful shutdown 的成本主要在 *deploy 時間* 跟 *capacity buffer*：
 
-| 規模因素                  | 影響                                                                                             |
-| ------------------------- | ------------------------------------------------------------------------------------------------ |
-| terminationGracePeriod 60s | 單 pod deploy ~70-80s（含 preStop + grace + new pod startup）                                  |
-| Deployment 100 replica + maxSurge 25% | 全 deploy ~5-10 分鐘、需要 *25% extra capacity*（25 replica buffer）                |
-| StatefulSet 串行 + 60s grace | 10 replica 約 10-12 分鐘、deploy window 要在低流量時段                                      |
-| HPA scale-down 跟 graceful 一起跑 | scale-down 觸發 → preStop + grace + new metric → 下次 scale 判斷、avg 反應週期 ≈ 3-5 分鐘 |
+| 規模因素                              | 影響                                                                                      |
+| ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| terminationGracePeriod 60s            | 單 pod deploy ~70-80s（含 preStop + grace + new pod startup）                             |
+| Deployment 100 replica + maxSurge 25% | 全 deploy ~5-10 分鐘、需要 *25% extra capacity*（25 replica buffer）                      |
+| StatefulSet 串行 + 60s grace          | 10 replica 約 10-12 分鐘、deploy window 要在低流量時段                                    |
+| HPA scale-down 跟 graceful 一起跑     | scale-down 觸發 → preStop + grace + new metric → 下次 scale 判斷、avg 反應週期 ≈ 3-5 分鐘 |
 
 實務 default：
 

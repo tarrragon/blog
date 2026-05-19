@@ -12,15 +12,15 @@ tags: ["backend", "observability", "sentry", "honeycomb", "paradigm-shift", "mig
 
 把 Sentry → Honeycomb 當「trace tool 替換」是最常見的誤判 — Sentry trace 是 *error 上下文*、Honeycomb trace 是 *observability 第一性*：
 
-| 概念 | Sentry | Honeycomb |
-|---|---|---|
-| 核心 paradigm | Error tracking + transaction trace | High-cardinality wide-event observability |
-| 第一性 unit | Error event | Wide event (span with N fields) |
-| Trace 角色 | Error 的「附帶 context」 | Observability 主軸、每 event 是 trace span |
-| Sampling | Error 全收 + transaction sample | Adaptive sampling、保留 *anomaly* |
-| Query model | Filter + group by + aggregation | High-cardinality 多維 query (BubbleUp / heatmap) |
-| User base | Developer (debug error) | SRE + Platform (debug system behavior) |
-| Cost model | Per-error event + transaction | Per-event (wide event volume) |
+| 概念          | Sentry                             | Honeycomb                                        |
+| ------------- | ---------------------------------- | ------------------------------------------------ |
+| 核心 paradigm | Error tracking + transaction trace | High-cardinality wide-event observability        |
+| 第一性 unit   | Error event                        | Wide event (span with N fields)                  |
+| Trace 角色    | Error 的「附帶 context」           | Observability 主軸、每 event 是 trace span       |
+| Sampling      | Error 全收 + transaction sample    | Adaptive sampling、保留 *anomaly*                |
+| Query model   | Filter + group by + aggregation    | High-cardinality 多維 query (BubbleUp / heatmap) |
+| User base     | Developer (debug error)            | SRE + Platform (debug system behavior)           |
+| Cost model    | Per-error event + transaction      | Per-event (wide event volume)                    |
 
 **核心差異不在「Honeycomb 是 better Sentry」、在「兩者是不同 observability paradigm」**：
 
@@ -31,11 +31,11 @@ tags: ["backend", "observability", "sentry", "honeycomb", "paradigm-shift", "mig
 
 ## 為什麼遷：observability 成熟度 / cardinality / cost 三條 driver
 
-| Driver | 觸發 |
-|---|---|
+| Driver               | 觸發                                                                                                                   |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Observability 成熟度 | Application 規模到 *跨多 service / multi-tenant*、Sentry error tracking 不夠細、SRE 要看 *high-cardinality* 多維 query |
-| High-cardinality | Sentry tag system 限制 cardinality（~1000 unique value）、Honeycomb native 支援 millions cardinality |
-| Cost | Per-error pricing 對 high-error volume 場景爆、Honeycomb per-event 在 *wide event* 場景更可預測 |
+| High-cardinality     | Sentry tag system 限制 cardinality（~1000 unique value）、Honeycomb native 支援 millions cardinality                   |
+| Cost                 | Per-error pricing 對 high-error volume 場景爆、Honeycomb per-event 在 *wide event* 場景更可預測                        |
 
 反向 driver（Honeycomb → Sentry）：
 
@@ -44,14 +44,14 @@ tags: ["backend", "observability", "sentry", "honeycomb", "paradigm-shift", "mig
 
 ## 6 維 audit
 
-| 維度 | 等級 |
-|---|---|
-| Schema / API | Medium（event schema 概念不同、SDK 完全換）|
-| Operational | Low（兩者都 SaaS、operational 對等）|
-| Paradigm | **High**（error tracking ↔ wide-event observability）|
-| Components | Low（同 1 個 observability vendor）|
-| Application change | **High**（SDK 換 + instrumentation 重設計）|
-| Data topology | Low |
+| 維度               | 等級                                                  |
+| ------------------ | ----------------------------------------------------- |
+| Schema / API       | Medium（event schema 概念不同、SDK 完全換）           |
+| Operational        | Low（兩者都 SaaS、operational 對等）                  |
+| Paradigm           | **High**（error tracking ↔ wide-event observability） |
+| Components         | Low（同 1 個 observability vendor）                   |
+| Application change | **High**（SDK 換 + instrumentation 重設計）           |
+| Data topology      | Low                                                   |
 
 Paradigm = High（其他 Low-Medium）→ Type E paradigm shift；application change 雖 High 但是 paradigm 的 downstream。
 
@@ -186,14 +186,14 @@ with tracer.start_as_current_span('process_order') as span:
 
 ## Capacity / cost
 
-| 維度 | Sentry | Honeycomb |
-|---|---|---|
-| Pricing model | Per-error + transaction | Per-event (wide event) |
-| Cost (mid-tier) | $500-2000 / mo | $400-3000 / mo (依 event volume) |
-| Sampling | Built-in transaction sampling | Refinery (additional component) |
-| Cardinality | ~1000 unique value / tag | Millions / field |
+| 維度                   | Sentry                        | Honeycomb                             |
+| ---------------------- | ----------------------------- | ------------------------------------- |
+| Pricing model          | Per-error + transaction       | Per-event (wide event)                |
+| Cost (mid-tier)        | $500-2000 / mo                | $400-3000 / mo (依 event volume)      |
+| Sampling               | Built-in transaction sampling | Refinery (additional component)       |
+| Cardinality            | ~1000 unique value / tag      | Millions / field                      |
 | Application complexity | Low (SDK + capture exception) | Medium (OTel + wide event instrument) |
-| Migration cost | - | 2-4 FTE × 2-3 個月 |
+| Migration cost         | -                             | 2-4 FTE × 2-3 個月                    |
 
 ## 整合 / 下一步
 
