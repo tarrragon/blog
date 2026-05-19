@@ -342,6 +342,8 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ---
 
+**Last Updated**: 2026-05-19（later 6、MySQL 17 篇 batch + 4-reviewer audit retro）— 新增 4 張 retrospective 卡：#135 Sibling Coverage Asymmetry Blindspot（priority 評估漏「對稱性」維度、案例 MySQL 18 篇後 PG 11 篇被 priority 列表排除）+ #136 Sibling Vendor Cross-Link 雙向性 Audit（A → B 9 條 vs B → A 0 條 asymmetry、batch 結束必跑）+ #137 Vendor Feature 時間敏感性 Claim Verification（PlanetScale FK 過時 claim invalidates 整段 Phase 1 audit、需 *Last verified* date 紀律）+ #138 Cross-Reviewer Convergence Priority Weighting（4-reviewer audit、A+B 收斂 flag「缺 weight」是 2 軸 convergence、信號比單軸高 severity 強）。從 MySQL 17 篇 5715 行 batch 跟 4-reviewer audit dogfood 抽出 priority / audit pattern 原則。
+
 **Last Updated**: 2026-05-19（later 5、Backend 服務頁教材合約）— 新增 #133 服務頁教材合約：把「每個服務頁要接近成熟單篇教材」抽象成 report 原則，避免用特定目錄名稱當規格名；服務頁完成標準從 vendor 收錄 / 選型摘要升級為教學功能完整、服務對象清楚、學習路線漸進；明確反對統一章節模板，SQLite / MongoDB / PostgreSQL 這類同分類服務也要依服務對象設計各自章節。0.17 同步落成服務頁教材合約規格與 audit 分級。
 
 2026-05-19（later 4、第三輪 migration batch + retrospective）— #128 補 Update 段紀錄第三輪 batch 跑完 4 條 tripwire 的結果：Type F dogfood × 2 確認 anatomy 通用性、Type F sub-type 浮現（F-cluster vs F-multi-region、後者需 parallel run）、identity/consistency/residency 3 軸候選各 1 case 驗證工作量分佈支持獨立軸（45% / 85% / 40%）、residency 是 cross-cutting constraint 不只是 driver；methodology 加「第三輪 batch 完成」段、5 篇 1,292 行 collapse 0/5。
