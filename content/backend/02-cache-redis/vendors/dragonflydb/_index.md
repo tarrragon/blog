@@ -49,10 +49,10 @@ DragonflyDB 是 C++ 重寫的 in-memory store、承擔三個責任：Redis / Mem
 
 DragonflyDB 相容大多數 Redis commands、但部分行為差異。子議題：
 
-- ✅ Core data types / commands / persistence / pub-sub / transactions
-- ⚠️ 部分 Module 不支援（RedisJSON 有自家版、RedisSearch 沒有）
-- ⚠️ Lua scripting：支援但效能取捨不同
-- ❌ Cluster mode：DragonflyDB 是 single-instance scale-up、沒有 Redis Cluster mode（單 instance 已能處理 Redis Cluster 規模）
+- 支援：Core data types / commands / persistence / pub-sub / transactions
+- 注意：部分 Module 不支援（RedisJSON 有自家版、RedisSearch 沒有）
+- 注意：Lua scripting 支援但效能取捨不同
+- 限制：Cluster mode 採 single-instance scale-up、沒有 Redis Cluster mode（單 instance 已能處理 Redis Cluster 規模）
 
 對應指令：`INFO server` 確認 dragonfly version + 配置。
 

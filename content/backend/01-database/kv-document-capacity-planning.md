@@ -239,10 +239,10 @@ KV / Document DB 通常提供多個 [consistency level](/backend/knowledge-cards
 
 **Multi-model 的優缺**：
 
-- ✅ 同一團隊不必管多個 vendor、ops 簡化
-- ✅ 不同 use case 用同一 datastore、減少 data sync
-- ❌ vendor lock-in 加深、難換
-- ❌ 每個 API 都不是 *最好* 的（compromise）— MongoDB API 跟 native MongoDB 有 behavior 差異
+- 優勢：同一團隊不必管多個 vendor、ops 簡化
+- 優勢：不同 use case 用同一 datastore、減少 data sync
+- 限制：vendor lock-in 加深、難換
+- 限制：每個 API 都不是 *最好* 的（compromise）— MongoDB API 跟 native MongoDB 有 behavior 差異
 
 **選型建議**：
 

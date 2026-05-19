@@ -70,17 +70,17 @@ tags: ["backend", "incident-response", "vendor"]
 
 本模組 9 個 vendor 跨 4 個 sub-category（on-call paging / IR coordination / status page / learning）、覆蓋 incident 全流程。對照表用「橫向 incident 流程節點」標明每個議題在哪個 sub-category 落地。
 
-| 議題            | PagerDuty           | Opsgenie            | Grafana OnCall | incident.io     | FireHydrant      | Rootly            | Statuspage  | Instatus    | Jeli                  |
-| --------------- | ------------------- | ------------------- | -------------- | --------------- | ---------------- | ----------------- | ----------- | ----------- | --------------------- |
-| 主責任          | On-call SaaS        | Atlassian on-call   | OSS on-call    | IR coordination | IR coordination  | IR coordination   | Status page | Status page | Learning / postmortem |
-| Paging          | ✅ 核心             | ✅ 核心             | ✅ 核心        | ✅ 後加         | ✅ 後加          | ✅ 後加           | N/A         | N/A         | N/A                   |
-| IR coordination | ✅ Response Play    | 中等                | 弱             | ✅ 核心 (Slack) | ✅ 核心 (Teams)  | ✅ 核心 (no-code) | N/A         | N/A         | N/A                   |
-| Status page     | 整合外部            | 整合 Statuspage     | 整合外部       | 整合外部        | ✅ 內建          | 整合外部          | ✅ 核心     | ✅ 核心     | N/A                   |
-| Retrospective   | Jeli (整合)         | Confluence          | 弱             | ✅ template     | ✅ facilitator   | ✅ AI             | N/A         | N/A         | ✅ 核心 (narrative)   |
-| 配置模式        | UI + Terraform      | UI                  | UI / Helm      | Slack + UI      | Slack/Teams + UI | No-code UI        | UI + API    | UI + API    | UI                    |
-| 整合 IR 工具    | ✅                  | ✅                  | 中等           | ✅              | ✅               | ✅ 200+           | ✅ IR push  | ✅ IR push  | PagerDuty 整合        |
-| 商業 / 開源     | 商業 SaaS           | 商業 SaaS           | OSS / Cloud    | 商業 SaaS       | 商業 SaaS        | 商業 SaaS         | 商業 SaaS   | 商業 SaaS   | 商業（PD 旗下）       |
-| 平台支援        | iOS / Android / Web | iOS / Android / Web | Web            | Slack first     | Slack + Teams    | Slack + Teams     | Web         | Web         | Web                   |
+| 議題            | PagerDuty           | Opsgenie            | Grafana OnCall | incident.io     | FireHydrant      | Rootly          | Statuspage  | Instatus    | Jeli                  |
+| --------------- | ------------------- | ------------------- | -------------- | --------------- | ---------------- | --------------- | ----------- | ----------- | --------------------- |
+| 主責任          | On-call SaaS        | Atlassian on-call   | OSS on-call    | IR coordination | IR coordination  | IR coordination | Status page | Status page | Learning / postmortem |
+| Paging          | 核心                | 核心                | 核心           | 後加            | 後加             | 後加            | N/A         | N/A         | N/A                   |
+| IR coordination | Response Play       | 中等                | 弱             | 核心 (Slack)    | 核心 (Teams)     | 核心 (no-code)  | N/A         | N/A         | N/A                   |
+| Status page     | 整合外部            | 整合 Statuspage     | 整合外部       | 整合外部        | 內建             | 整合外部        | 核心        | 核心        | N/A                   |
+| Retrospective   | Jeli (整合)         | Confluence          | 弱             | template        | facilitator      | AI              | N/A         | N/A         | 核心 (narrative)      |
+| 配置模式        | UI + Terraform      | UI                  | UI / Helm      | Slack + UI      | Slack/Teams + UI | No-code UI      | UI + API    | UI + API    | UI                    |
+| 整合 IR 工具    | 支援                | 支援                | 中等           | 支援            | 支援             | 200+ 整合       | IR push     | IR push     | PagerDuty 整合        |
+| 商業 / 開源     | 商業 SaaS           | 商業 SaaS           | OSS / Cloud    | 商業 SaaS       | 商業 SaaS        | 商業 SaaS       | 商業 SaaS   | 商業 SaaS   | 商業（PD 旗下）       |
+| 平台支援        | iOS / Android / Web | iOS / Android / Web | Web            | Slack first     | Slack + Teams    | Slack + Teams   | Web         | Web         | Web                   |
 
 對照表的用途有三：
 
