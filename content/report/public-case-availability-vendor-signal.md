@@ -3,7 +3,7 @@ title: "公開案例量是 vendor 社群活躍度 signal"
 date: 2026-05-18
 description: "Vendor 選型時、公開 customer engineering case 的累積量是社群活躍度與長期可維護性的信號、不只是「案例庫不完整」的偶然現象"
 tags: ["vendor-selection", "signal", "report"]
-weight: 60
+weight: 129
 ---
 
 ## 結論

@@ -1,16 +1,75 @@
 ---
 title: "Backend 服務實務指南"
 date: 2026-04-22
-description: "整理資料庫、快取、訊息佇列、觀測、部署、可靠性驗證與資安等後端服務能力"
+description: "用跨語言教學路線整理資料庫、快取、訊息佇列、觀測、部署、可靠性、資安、事故與容量等後端服務能力"
 weight: 34
 tags: ["backend"]
 ---
 
-Backend 教材的核心目標是整理「應該被 application interface 隔離」的外部服務能力。語言教材負責各自的語法、標準庫、並發或非同步模型、測試方法與 interface / [protocol](/backend/knowledge-cards/protocol/) 邊界；Backend 教材負責資料庫、快取、訊息佇列、觀測平台、部署平台、系統可靠性與資安資料保護。
+Backend 教材的核心目標是教讀者理解後端服務如何共同支撐一個 production system。資料庫、快取、訊息佇列、觀測平台、部署平台、可靠性驗證、資安資料保護、事故處理與容量規劃，各自承擔一段服務責任；本教材把這些責任整理成可學習、可操作、可演進的跨語言知識路線。
 
-這個切分讓不同語言的學習保持清楚：Go、Python 或其他後端語言可以各自說明如何定義抽象邊界、處理取消與逾時、回傳錯誤、寫 fake 或 [contract](/backend/knowledge-cards/contract/) test；Backend 章節則說明 SQLite、PostgreSQL、Redis、RabbitMQ、[broker](/backend/knowledge-cards/broker)、[migration](/backend/knowledge-cards/migration)、[metrics](/backend/knowledge-cards/metrics)、tracing、Kubernetes、identity、permission、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[WAF](/backend/knowledge-cards/waf/)、[Secret Management](/backend/knowledge-cards/secret-management/)、[Audit Log](/backend/knowledge-cards/audit-log/) 等具體技術如何運作。
+服務能力、風險、成本與決策是理解後端服務的必要概念框架。讀者學資料庫時需要知道 transaction、schema migration、replication lag 與資料修復；學快取時需要知道 freshness、origin protection、eviction 與 hot key；學 queue 時需要知道 delivery、processing、replay 與 idempotency。這些判準服務教學目標：讓讀者能看懂一個後端問題該交給哪類能力處理，並理解多個能力如何串接。
 
-Backend 是多個後端語言系列共用的實作層。未來若新增 frontend、data engineering、machine learning、mobile 或其他非後端主題，也可以用同樣方式把共用實作知識抽成獨立資料夾，讓特定語言教材保留在語言本身的能力邊界。
+語言教材負責各自的語法、標準庫、並發或非同步模型、測試方法與 interface / [protocol](/backend/knowledge-cards/protocol/) 邊界；Backend 教材負責「應該被 application interface 隔離」的外部服務能力。Go、Python 或其他後端語言可以各自說明如何定義抽象邊界、處理取消與逾時、回傳錯誤、寫 fake 或 [contract](/backend/knowledge-cards/contract/) test；Backend 章節則說明 SQLite、PostgreSQL、Redis、RabbitMQ、[broker](/backend/knowledge-cards/broker)、[migration](/backend/knowledge-cards/migration)、[metrics](/backend/knowledge-cards/metrics)、tracing、Kubernetes、identity、permission、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[WAF](/backend/knowledge-cards/waf/)、[Secret Management](/backend/knowledge-cards/secret-management/)、[Audit Log](/backend/knowledge-cards/audit-log/) 等具體技術如何運作。
+
+Backend 是多個後端語言系列共用的教學層。未來若新增 frontend、data engineering、machine learning、mobile 或其他非後端主題，也可以用同樣方式把共用實作知識抽成獨立資料夾，讓特定語言教材保留在語言本身的能力邊界。
+
+## 總體教學設計
+
+Backend 教材用三層學習結構組織內容。第一層是心智模型，先讓讀者理解資料、快取、事件、觀測、部署、驗證、資安、事故與容量分別承擔什麼責任；第二層是服務路徑，用一條具體業務流程串起多個模組的 artifact 與交接；第三層是具體服務與工具，討論 PostgreSQL、Redis、Kafka、Kubernetes、PagerDuty、k6 等服務如何落到真實操作。
+
+| 層級     | 教學責任                                                               | 主要入口                                                                                                                                                                           |
+| -------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 心智模型 | 建立服務分類、責任邊界與共同術語                                       | [模組零](/backend/00-service-selection/) + [前置知識卡片](/backend/knowledge-cards/)                                                                                               |
+| 服務路徑 | 用同一條業務流程演練資料、快取、事件、觀測、部署、驗證、資安與事故交接 | [0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/) + [0.16 服務路徑細綱](/backend/00-service-selection/service-path-implementation-outlines/) |
+| 真實服務 | 把分類語言落到 vendor / platform / tool 的能力、成本與遷移             | [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/) + 各模組 `vendors/`                                                                  |
+
+這三層對應三種讀者問題。讀者想知道「這是什麼問題」時，先讀心智模型；想知道「一個服務流程怎麼把多個能力接起來」時，讀服務路徑；想知道「具體要選哪個工具、怎麼遷移」時，再進入真實服務與 vendor 頁。
+
+### 學習路線
+
+Backend 教材可以依讀者目的分成五條路線。每條路線都有起點、主要順序與完成判準，讓讀者不用從能力地圖自行推導閱讀順序。
+
+| 路線                       | 適合讀者                              | 建議順序                                                                       | 讀完能做什麼                                                                |
+| -------------------------- | ------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| 系統心智模型               | 想理解後端服務分工                    | 00 → knowledge cards → 01 / 02 / 03 的共同觀念                                 | 能把需求分類成正式狀態、暫存副本、非同步交接、觀測、部署或可靠性問題        |
+| API 到資料流               | 想設計 API 背後的資料、快取與事件流程 | 01 Database → 02 Cache → 03 Queue → 04 Evidence                                | 能說明一次 checkout 如何跨 DB、cache、queue 與 evidence package             |
+| Production 操作            | 想學上線、觀測、驗證與事故閉環        | 04 Observability → 05 Deployment → 06 Reliability → 08 Incident                | 能把 release、alert、gate、incident decision log 與 write-back 串成操作閉環 |
+| Security / Data Protection | 想理解權限、秘密、資料、偵測與回應    | 07 Security → 04 audit evidence → 06 control validation → 08 security incident | 能從身份、資料、入口、秘密與 audit evidence 判讀控制面                      |
+| Vendor / Migration         | 已懂分類、要比較工具或遷移            | 對應模組主章 → `vendors/` → migration playbook → cases                         | 能先判斷分類責任，再比較具體服務、操作成本與遷移風險                        |
+
+這些路線共享同一組後端語言。讀者可以只走一條，也可以從「系統心智模型」開始，再按工作需求轉入 API、production、security 或 vendor 專題。
+
+### 貫穿式案例：Checkout 服務演進
+
+貫穿式案例的責任是把平行模組串成同一個服務演進路徑。本系列使用簡化的 checkout / order / payment / notification 流程作為主案例：使用者建立訂單、付款服務回應、商品或價格資料被快取、事件送到下游通知與報表、服務上線時產出觀測與驗證證據，事故發生時留下決策紀錄並回寫改善。
+
+| Episode | 問題                            | 主要模組          | 主要產物                                                         |
+| ------- | ------------------------------- | ----------------- | ---------------------------------------------------------------- |
+| E1      | 新增付款狀態欄位                | 01 + 04 + 08      | migration plan、validation query、incident decision route        |
+| E2      | 商品價格快取失效與回源保護      | 02 + 04 + 06      | cache evidence、origin protection gate、warmup plan              |
+| E3      | 訂單事件 consumer 失敗與 replay | 03 + 06 + 08      | idempotency evidence、DLQ handling、replay runbook               |
+| E4      | Checkout service rollout        | 05 + 04 + 08      | rollout plan、canary evidence、drain signal、rollback condition  |
+| E5      | Payment provider timeout 變更   | 06 + 04 + 09      | release gate、SLO evidence、capacity baseline                    |
+| E6      | Webhook secret rotation         | 07 + 04 + 08      | scope map、audit evidence、rollback window                       |
+| E7      | Flash-sale peak readiness       | 09 + 02 + 03 + 06 | workload model、saturation evidence、queue / cache capacity gate |
+
+每個模組可以獨立閱讀；貫穿式案例提供跨模組記憶。讀者看到資料庫章節時，知道它處理 E1 的正式狀態演進；看到 queue 章節時，知道它處理 E3 的跨程序交接；看到事故章節時，知道它收斂 E1、E3、E4、E6 的決策與回寫。
+
+### 教材完成判準
+
+Backend 教材的完成判準是讀者能沿著一條路線走完並做出可操作判斷。內容覆蓋率、案例數與 vendor 數量只是素材面進度；教學面要看讀者能否取得起點、順序、案例與下一步路由。
+
+| 判準            | 具體訊號                                                                      |
+| --------------- | ----------------------------------------------------------------------------- |
+| 學習路線成立    | 入口頁能依目的給出閱讀順序與完成判準                                          |
+| 概念梯度成立    | 讀者先建立分類語言，再進入服務路徑，最後看 vendor / migration                 |
+| 貫穿案例成立    | 多個模組能回到同一條 checkout 服務演進路徑                                    |
+| Artifact 可演練 | Evidence package、release gate、decision log、rollback condition 能被讀者填寫 |
+| 案例能回寫      | 07 / 09 案例庫能支撐主章判讀，也能揭露缺口                                    |
+| Vendor 回到分類 | 具體服務頁先回扣分類責任，再比較功能、成本與遷移                              |
+
+這套設計來自三張寫作反省卡：[教材目標先於決策框架](/report/teaching-goal-before-decision-frame/)、[教材完整性要用讀者旅程驗證](/report/teaching-completeness-by-learner-journey/) 與 [貫穿式案例是服務教材的教學骨架](/report/throughline-case-as-teaching-spine/)。
 
 ## 教材邊界
 

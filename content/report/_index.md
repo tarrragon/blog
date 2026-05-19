@@ -164,10 +164,18 @@ Meta-卡（#125-126、從 #122-124 + 既有卡跨 surface 抽出）：
 
 - [#125 Collapse 是隱形預設](collapse-is-implicit-default/) — 跨 surface meta；decision (#80) / dialogue (#79) / output (#123) 三個 surface 都有同一個 collapse pattern — 高維選擇空間被便利驅動 reduce 到 1-2 個窄格、且因為「便利 / 合規 / 簡潔」被當預設、不被覺察；對策不是消除 collapse、是讓設計者主動選擇要 collapse 哪一維；預設展開、選窄要證明
 - [#126 寫作 review 是多軸完整性、不是單軸深度](writing-review-multi-axis-completeness/) — Review 完整性是七軸（frame / instance / surface / scope / cadence / timing / granularity）交集、缺軸不缺深度；對應 #83 / #121 / #97 / #95 / #122 / #124 / #114；單軸越做越深會 systematic miss 對應軸盲點；設計 review 流程時 enumerate 七軸覆蓋狀況、不是加輪數
+
 Cadence + 結構雙軸延伸（#127、從 5 篇 migration playbook batch 抽出、跟 cadence 系列形成「framing layer + structure layer」雙軸）：
 
 - [#127 Process content 結構由最大差異維度決定](content-structure-by-max-diff-dimension/) — 跨 X process content（migration / upgrade / rollout）結構不是 universal、由 source / target 的 *最大差異維度* 決定；6 種 migration / process type 實證（schema 差 / drop-in / operational / multi-tool / paradigm / topology re-layout）跑出 6 種結構；寫前必須跑 *diff dimension audit*、跳過會套錯模板（phase 變空白或 process 強行線性）；補 #122 在「結構 layer」的對偶、同時是 #125 在 content structure surface 的子實例；6 type 是 *axis-aligned simplification*、非窮盡分類（見卡內 limitation 段）
 - [#128 Data topology 是 process content 的第 6 audit 維度](data-topology-as-audit-dimension/) — #127 原 5 維 audit 漏 data topology（sharding / partition / replication / region / co-location 5 sub-dimension）；topology 不在既有 5 維任一個、但決定 re-sharding / partition redesign / multi-region rollout 的結構；本卡擴 audit 到 6 維、新增 Type F「Topology re-layout」結構；從 Redis cluster re-sharding dogfood 抽出、是 #127 self-aware limitation 段「audit 維度補新軸」預測命中的結果
+- [#129 公開案例量是 vendor 社群活躍度 signal](public-case-availability-vendor-signal/) — vendor 選型時、公開 customer engineering case 的累積量是社群活躍度與長期可維護性的合併信號；案例少不等於技術差、但可能代表社群稀薄、DevRel 投入低或議題公開度低；應跟 release 節奏、文件品質、issue 回應與生態整合一起判讀
+
+教材設計反省系列（#130-132、從 Backend 教學定位對照 LLM / Go 目錄抽出）：
+
+- [#130 教材目標先於決策框架](teaching-goal-before-decision-frame/) — 教材的上位目標是讓讀者學會領域心智模型、操作語意與演進路徑；服務能力、風險、成本與決策只是教學中的必要概念框架；若決策框架取代教材目標、文章會變成選型分析或治理文件
+- [#131 教材完整性要用讀者旅程驗證](teaching-completeness-by-learner-journey/) — 章節數、案例數、vendor 覆蓋度只能證明素材充足；成熟教材要能回答不同讀者從哪開始、按什麼順序讀、讀完能做什麼；LLM / Go 的成熟訊號是讀者旅程、學習梯度與主題導讀
+- [#132 貫穿式案例是服務教材的教學骨架](throughline-case-as-teaching-spine/) — 服務型教材需要一條可重播的貫穿式案例，把資料庫、快取、queue、觀測、部署、可靠性、資安、事故與容量串成同一個服務演進路徑；沒有主線案例時、章節各自正確但交接難學
 
 ### 第七輪：Pattern 卡片（待補完）
 
