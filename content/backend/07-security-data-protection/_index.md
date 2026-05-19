@@ -59,6 +59,8 @@ weight: 7
 
 資安控制服務見 [vendors](/backend/07-security-data-protection/vendors/) — 先以 index 大綱規劃身份、IAM、Secrets、KMS、WAF、PKI、供應鏈、SIEM 與 DLP 服務頁。這層目前只做服務頁教學大綱，不展開個別服務正文。
 
+Deep article（vendor 自身的配置、故障、容量）跟 migration playbook（跨 vendor 遷移流程）的撰寫進度見 [vendors/](/backend/07-security-data-protection/vendors/) 的「內容覆蓋進度」段。
+
 ## 章節列表
 
 | 章節                                                                                                                                        | 主題                                              | 核心責任                                                                                              |

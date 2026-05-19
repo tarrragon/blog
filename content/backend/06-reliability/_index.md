@@ -50,6 +50,8 @@ tags: ["backend", "reliability", "sre"]
 
 進入工具比較前，先回到 [觀測、可靠性與事故服務選型](/backend/00-service-selection/operations-control-service-selection/) 判斷目前缺的是驗證層能力，還是缺少可觀測性的訊號 baseline 或事故處理的接手流程。可靠性工具選型要以「能否安全驗證失敗」為主軸，CI、load、chaos 或 SLO 工具名稱只是落地選項。
 
+Deep article（工具自身的配置、故障、容量）跟 migration playbook（跨工具遷移流程）的撰寫進度見 [vendors/](/backend/06-reliability/vendors/) 的「內容覆蓋進度」段。
+
 ## 規劃方向
 
 本輪規劃的核心是把模組從「驗證手段列表」升級成「失敗風險節點 + 服務級案例庫」兩層結構：

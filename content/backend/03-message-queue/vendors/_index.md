@@ -23,6 +23,16 @@ tags: ["backend", "message-queue", "vendor"]
 | [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/)                    | Managed queue      | standard / FIFO、visibility timeout 與 DLQ 如何支援 managed delivery |
 | [Google Cloud Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/) | Managed pub/sub    | topic / subscription、push / pull 與 global delivery 如何取捨        |
 
+## 內容覆蓋進度
+
+每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、「↔ X」代表雙向遷移、其他形式代表 same-vendor 的 topology / version / config 變動。
+
+| Vendor          | Deep article | Migration playbook                                                     |
+| --------------- | ------------ | ---------------------------------------------------------------------- |
+| [Kafka](kafka/) | —            | [↔ NATS](kafka/migrate-from-to-nats/) / [→ MSK](kafka/migrate-to-msk/) |
+
+其他 T1 vendor（RabbitMQ / NATS / Redis Streams / AWS SQS / Google Pub/Sub）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+
 ## 服務頁撰寫欄位
 
 | 欄位     | 佇列服務頁要保留的問題                                                             |

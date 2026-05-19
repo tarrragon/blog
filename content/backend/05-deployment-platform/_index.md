@@ -12,6 +12,8 @@ tags: ["backend", "deployment", "platform"]
 
 實作時的常用選擇見 [vendors](/backend/05-deployment-platform/vendors/) — T1 收錄 Kubernetes / Docker / systemd / nginx / Envoy / AWS ELB / Terraform / Traefik / Consul，每個 vendor 有定位、適用場景、取捨與預計實作話題的骨架。
 
+Deep article（vendor 自身的配置、故障、容量）跟 migration playbook（跨 vendor 遷移流程）的撰寫進度見 [vendors/](/backend/05-deployment-platform/vendors/) 的「內容覆蓋進度」段。
+
 ## 暫定分類
 
 | 分類                                                             | 內容方向                                                                                                                                                                                                                   |

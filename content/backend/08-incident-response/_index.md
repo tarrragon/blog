@@ -74,6 +74,8 @@ tags: ["backend", "incident-response", "operations"]
 
 進入工具比較前，先回到 [觀測、可靠性與事故服務選型](/backend/00-service-selection/operations-control-service-selection/) 判斷目前缺的是響應層能力，還是缺少可觀測性的證據來源或可靠性驗證的事前演練。事故工具選型要以「事故能否被接住、分工、通訊與回寫」為主軸，on-call 或 IR 平台功能清單只是落地選項。
 
+Deep article（vendor 自身的配置、故障、容量）跟 migration playbook（跨 vendor 遷移流程）的撰寫進度見 [vendors/](/backend/08-incident-response/vendors/) 的「內容覆蓋進度」段。
+
 ## 規劃方向
 
 本輪規劃的核心是把模組從「章節列表」升級成「問題節點 + 服務級案例庫」兩層結構：

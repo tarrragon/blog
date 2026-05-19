@@ -12,6 +12,8 @@ tags: ["backend", "database", "storage"]
 
 實作時的常用選擇見 [vendors](/backend/01-database/vendors/) — T1 收錄 PostgreSQL / MySQL / SQLite / MongoDB / DynamoDB / CockroachDB / Aurora，每個服務頁提供定位、適用場景、取捨、容量判準、案例對照與下一步路由。
 
+Deep article（vendor 自身的配置、故障、容量）跟 migration playbook（跨 vendor 遷移流程）的撰寫進度見 [vendors/](/backend/01-database/vendors/) 的「內容覆蓋進度」段。
+
 ## 暫定分類
 
 | 分類                                                               | 內容方向                                                                                                                                                                                            |

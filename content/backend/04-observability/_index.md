@@ -14,6 +14,8 @@ tags: ["backend", "observability", "operations"]
 
 進入 vendor 比較前，先回到 [觀測、可靠性與事故服務選型](/backend/00-service-selection/operations-control-service-selection/) 判斷目前缺的是訊號層、驗證層、響應層還是閉環層。可觀測性 vendor 選型只處理訊號層與部分告警入口；可靠性驗證與事故協作要交給可靠性與事故流程。
 
+Deep article（vendor 自身的配置、故障、容量）跟 migration playbook（跨 vendor 遷移流程）的撰寫進度見 [vendors/](/backend/04-observability/vendors/) 的「內容覆蓋進度」段。
+
 ## 暫定分類
 
 | 分類                                            | 內容方向                                                                                                                                                      |

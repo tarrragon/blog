@@ -28,6 +28,12 @@ tags: ["backend", "incident-response", "vendor"]
 | [Instatus](/backend/08-incident-response/vendors/instatus/)                         | Status page           | 輕量 status page、custom domain 與低操作成本如何取捨                             |
 | [Jeli](/backend/08-incident-response/vendors/jeli/)                                 | Learning platform     | postmortem、interview、timeline 與 learning review 如何支援組織學習              |
 
+## 內容覆蓋進度
+
+每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。
+
+目前章節仍處於 vendor 服務頁骨架階段、尚無 deep article 或 migration playbook。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+
 ## 服務頁撰寫欄位
 
 | 欄位     | 事故處理服務頁要保留的問題                                                                     |

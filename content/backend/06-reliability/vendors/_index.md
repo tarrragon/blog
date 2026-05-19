@@ -31,6 +31,16 @@ tags: ["backend", "reliability", "vendor"]
 | [Nobl9](/backend/06-reliability/vendors/nobl9/)                   | SLO platform      | SLO、error budget、alerting 與 governance 如何整合                         |
 | [Sloth](/backend/06-reliability/vendors/sloth/)                   | SLO generator     | OpenSLO / Prometheus rule 生成如何降低 SLO 維護成本                        |
 
+## 內容覆蓋進度
+
+每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「← X」代表從 X 遷入。
+
+| Vendor                            | Deep article | Migration playbook                                |
+| --------------------------------- | ------------ | ------------------------------------------------- |
+| [GitHub Actions](github-actions/) | —            | [← Jenkins](github-actions/migrate-from-jenkins/) |
+
+其他 T1 vendor（CircleCI / k6 / Gatling / JMeter / Locust / Chaos Mesh / LitmusChaos / Gremlin / Toxiproxy / Nobl9 / Sloth）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+
 ## 服務頁撰寫欄位
 
 | 欄位     | 可靠性服務頁要保留的問題                                                        |

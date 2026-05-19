@@ -26,6 +26,19 @@ tags: ["backend", "observability", "vendor"]
 | [GCP Cloud Operations](/backend/04-observability/vendors/gcp-cloud-operations/) | GCP-native        | Cloud Monitoring、Logging、Trace 與 GCP resource model 如何整合         |
 | [Sentry](/backend/04-observability/vendors/sentry/)                             | Error tracking    | error event、release、trace、session replay 如何連到 owner action       |
 
+## 內容覆蓋進度
+
+每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、「← X」代表從 X 遷入、其他形式代表 same-vendor 的 topology / version / config 變動。
+
+| Vendor                          | Deep article | Migration playbook                                                                                    |
+| ------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------- |
+| [Datadog](datadog/)             | —            | [← New Relic](datadog/migrate-from-new-relic/) / [→ Grafana Stack](datadog/migrate-to-grafana-stack/) |
+| [Elastic Stack](elastic-stack/) | —            | [→ Elastic Cloud](elastic-stack/migrate-to-elastic-cloud/)                                            |
+| [Grafana Stack](grafana-stack/) | —            | [Prometheus → Cloud Metrics](grafana-stack/migrate-prometheus-to-cloud-metrics/)                      |
+| [Honeycomb](honeycomb/)         | —            | [← Sentry](honeycomb/migrate-from-sentry/)                                                            |
+
+其他 T1 vendor（OpenTelemetry / Prometheus / AWS CloudWatch / GCP Cloud Operations / Sentry）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+
 ## 服務頁撰寫欄位
 
 | 欄位     | 可觀測性服務頁要保留的問題                                                       |

@@ -26,21 +26,33 @@ tags: ["backend", "security", "data-protection", "vendor"]
 | SIEM / Detection   | [Splunk](/backend/07-security-data-protection/vendors/splunk/)、[Elastic Security](/backend/07-security-data-protection/vendors/elastic-security/)、[Datadog Security](/backend/07-security-data-protection/vendors/datadog-security/)、[Google Security Operations](/backend/07-security-data-protection/vendors/google-security-operations/)                                 | 偵測訊號、log pipeline、alert quality 與 incident handoff 如何治理       |
 | DLP / Data control | [Google DLP](/backend/07-security-data-protection/vendors/google-dlp/)、[Microsoft Purview](/backend/07-security-data-protection/vendors/microsoft-purview/)、[Cloud-native Data Policy (BigQuery + S3)](/backend/07-security-data-protection/vendors/cloud-data-policy/)                                                                                                      | 資料分類、遮罩、匯出、資料駐留與證據鏈如何落地                           |
 
+## 內容覆蓋進度
+
+每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook。
+
+| Vendor                              | Deep article                                               | Migration playbook                                                       |
+| ----------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [Cloudflare WAF](cloudflare-waf/)   | [page-shield-csp-sri](cloudflare-waf/page-shield-csp-sri/) | —                                                                        |
+| [HashiCorp Vault](hashicorp-vault/) | [dynamic-credential](hashicorp-vault/dynamic-credential/)  | [→ AWS Secrets Manager](hashicorp-vault/migrate-to-aws-secrets-manager/) |
+| [Splunk](splunk/)                   | [risk-based-alerting](splunk/risk-based-alerting/)         | [→ Elastic Security](splunk/migrate-to-elastic-security/)                |
+
+本章節 vendor 服務頁覆蓋率高（51 個 vendor 服務頁、上方「T1 服務頁大綱」跟「後續候選」段已全部建立），但 deep article / migration playbook 還在早期階段。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務群要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+
 ## 服務頁標準章節
 
-| 章節                 | 資安服務頁要補的內容                                                                    |
-| -------------------- | --------------------------------------------------------------------------------------- |
-| 服務定位             | 它是 identity、IAM、secret、KMS、WAF、PKI、supply chain、SIEM 還是 DLP                  |
-| 本章目標             | 讀者能判斷控制面責任、信任邊界、證據需求、例外與事故交接                                |
-| 最短判讀路徑         | 用「誰能做什麼、憑證在哪裡、入口如何暴露、證據是否可回查」快速定位                      |
-| 日常操作與決策形狀   | onboarding、policy、rotation、rule update、exception、audit、handoff                    |
-| 核心取捨表           | managed service、self-hosted control、cloud-native、SaaS security tool 的機會成本       |
-| 進階主題             | federation、workload identity、mTLS、SBOM、DLP、multi-cloud policy                      |
-| 排錯與失敗快速判讀   | over-permission、stale secret、broken rotation、WAF false positive、missing audit trail |
-| 何時改走其他服務     | 觀測訊號回 04、release gate 回 06、入口部署回 05、事故處理回 08                         |
-| 不在本頁內的主題     | 合規逐條法規解讀、完整 SOC 2 / HIPAA 流程、所有攻擊技術細節                             |
-| 案例回寫             | 回到 7.C cases、7.B blue-team materials、8 incident write-back 連到對應 vendor 事件     |
-| 下一步路由           | 上游 chapter（7.X）、平行 vendor、下游模組（04 / 05 / 06 / 08）的交接                   |
+| 章節               | 資安服務頁要補的內容                                                                    |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| 服務定位           | 它是 identity、IAM、secret、KMS、WAF、PKI、supply chain、SIEM 還是 DLP                  |
+| 本章目標           | 讀者能判斷控制面責任、信任邊界、證據需求、例外與事故交接                                |
+| 最短判讀路徑       | 用「誰能做什麼、憑證在哪裡、入口如何暴露、證據是否可回查」快速定位                      |
+| 日常操作與決策形狀 | onboarding、policy、rotation、rule update、exception、audit、handoff                    |
+| 核心取捨表         | managed service、self-hosted control、cloud-native、SaaS security tool 的機會成本       |
+| 進階主題           | federation、workload identity、mTLS、SBOM、DLP、multi-cloud policy                      |
+| 排錯與失敗快速判讀 | over-permission、stale secret、broken rotation、WAF false positive、missing audit trail |
+| 何時改走其他服務   | 觀測訊號回 04、release gate 回 06、入口部署回 05、事故處理回 08                         |
+| 不在本頁內的主題   | 合規逐條法規解讀、完整 SOC 2 / HIPAA 流程、所有攻擊技術細節                             |
+| 案例回寫           | 回到 7.C cases、7.B blue-team materials、8 incident write-back 連到對應 vendor 事件     |
+| 下一步路由         | 上游 chapter（7.X）、平行 vendor、下游模組（04 / 05 / 06 / 08）的交接                   |
 
 ## 撰寫批次
 

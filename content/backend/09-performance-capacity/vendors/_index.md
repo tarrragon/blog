@@ -36,6 +36,12 @@ tags: ["backend", "performance", "capacity", "vendor", "tools"]
 
 這批工具頁已完成 load test、production traffic replay、continuous profiling 與 capacity / cost analysis 的主要分流。k6 承接 scriptable scenario，JMeter 承接企業測試資產，Gatling 承接 JVM simulation，Locust 承接 Python custom behavior，Vegeta 承接快速 HTTP probe；GoReplay、Service Mesh Mirroring 與 AWS VPC Traffic Mirroring 承接不同層級的 production traffic evidence；Datadog Continuous Profiler、Pyroscope 與 Parca 承接不同操作模型的 profile evidence；Akamas、Vantage、CloudHealth 與 AWS Cost Explorer 承接 cost visibility、optimization 與 FinOps governance。
 
+## 內容覆蓋進度
+
+每個工具頁下會擴充兩類文章：deep article（工具自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨工具遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。
+
+目前章節仍處於工具頁骨架階段、尚無 deep article 或 migration playbook。跟 [06 vendors](/backend/06-reliability/vendors/) 共用部分工具（k6 / JMeter / Gatling / Locust），未來寫 deep article 時需明確區分「驗證流程的工具鏈」（06）跟「效能工程的工具鏈」（09）的角度。對應的 backlog 議題見上方「T1 工具頁」段每個工具頁要回答的核心責任、跟各工具 `_index.md` 的「預計實作話題」段。
+
 ## 後續候選
 
 | 類型                       | 候選工具                                                                                                                | 寫作重點                                                   |

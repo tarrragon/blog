@@ -144,6 +144,8 @@ tags: ["backend", "performance", "capacity"]
 
 實作工具見 [vendors](/backend/09-performance-capacity/vendors/) — 已建立 k6 / JMeter / Gatling / Locust / Vegeta 五個壓測工具頁、GoReplay / Service Mesh Mirroring / AWS VPC Traffic Mirroring 三個 production traffic replay 頁，Datadog Continuous Profiler / Pyroscope / Parca 三個 continuous profiling 頁，以及 Akamas / Vantage / CloudHealth / AWS Cost Explorer 四個 capacity / cost analysis 頁。跟 [06 vendors](/backend/06-reliability/vendors/) 的差異：06 收錄壓測工具是為了「驗證流程的工具鏈」、09 收錄是為了「效能工程的工具鏈」、選型角度不同。具體撰寫順序見 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)。
 
+Deep article（工具自身的配置、故障、容量）跟 migration playbook（跨工具遷移流程）的撰寫進度見 [vendors/](/backend/09-performance-capacity/vendors/) 的「內容覆蓋進度」段。
+
 ## 09 模組專屬知識卡片
 
 09 模組已建立 22 張效能工程與容量規劃專屬卡片、覆蓋理論基礎、量測方法、規劃決策、production 驗證與 SLO 治理四個面向。

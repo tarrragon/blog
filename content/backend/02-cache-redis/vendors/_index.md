@@ -22,6 +22,16 @@ tags: ["backend", "cache", "vendor"]
 | [DragonflyDB](/backend/02-cache-redis/vendors/dragonflydb/)         | Redis-compatible     | 多核心架構、相容性與高吞吐 cache workload 如何評估      |
 | [AWS ElastiCache](/backend/02-cache-redis/vendors/aws-elasticache/) | Managed cache        | managed Redis / Valkey / Memcached 如何轉移維運責任     |
 
+## 內容覆蓋進度
+
+每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、其他形式代表 same-vendor 的 topology / version / config 變動。
+
+| Vendor          | Deep article | Migration playbook                                                                                                                            |
+| --------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Redis](redis/) | —            | [cluster-resharding](redis/cluster-resharding/) / [→ DragonflyDB](redis/migrate-to-dragonflydb/) / [→ Memcached](redis/migrate-to-memcached/) |
+
+其他 T1 vendor（Valkey / Memcached / DragonflyDB / AWS ElastiCache）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+
 ## 服務頁撰寫欄位
 
 | 欄位     | 快取服務頁要保留的問題                                                            |
