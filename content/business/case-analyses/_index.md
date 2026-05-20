@@ -84,5 +84,6 @@ WRAP 框架（Widen Options / Reality Test / Attain Distance / Prepare to be Wro
 - 跑「標題對齊測試」：列每段佔多少篇幅、跟標題暗示的主題比對。不在標題承諾範圍的段落佔 > 20% 就要瘦身或 cross-link 出去（[#142](/report/article-body-must-align-with-title-commitment/)）
 - Source citation 是否真實可 verify？「a16z / Sequoia / Andreessen」這類列舉不確定就改 hedged claim
 - 解釋順序：source 在後、解釋本身在前
+- 目標讀者層級檢查：case-analyses 的目標讀者是「工程背景、想理解商業分析」、不是「VC / 創辦人」。每段檢查術語密度、3 個以上術語連發或因果鏈跳躍 2 步以上、用 [降一級寫法](/business/reading-frameworks/writing-down-a-level/) 拆細
 
 如果一個事件無法產出可遷移框架（只是孤立特例），不要硬寫成案例文章—放筆記裡即可。

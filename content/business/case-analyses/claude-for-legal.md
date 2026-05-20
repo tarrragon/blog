@@ -20,9 +20,17 @@ Claude for Legal 是 2025 末 Anthropic 推出的法律事務所專屬 AI 工作
 
 ## 第一層擠壓：應用層 SaaS 的毛利結構性下移
 
-[Vertical SaaS](/business/knowledge-cards/vertical-saas/) 用 AI 功能必須付給上游基礎模型供應商、[COGS](/business/knowledge-cards/cogs/) 從接近零變成可觀的成本、[毛利](/business/knowledge-cards/gross-margin/) 從傳統 SaaS 的 70-80% 被擠到 50% 出頭。具體機制與 30 個百分點差距的算式見 [FDE 軍備競賽：SaaS 三支柱鬆動](/business/case-analyses/fde-arms-race/)。
+[Vertical SaaS](/business/knowledge-cards/vertical-saas/) 用 AI 功能必須付給上游基礎模型供應商、[COGS](/business/knowledge-cards/cogs/)（賣出產品時直接發生的成本）從接近零變成可觀的成本、[毛利](/business/knowledge-cards/gross-margin/)（收入扣掉 COGS 後的比例）從傳統 SaaS 的 70-80% 被擠到 50% 出頭。具體機制與 30 個百分點差距的算式見 [FDE 軍備競賽：SaaS 三支柱鬆動](/business/case-analyses/fde-arms-race/)。
 
-毛利下降是讓 [P&L](/business/knowledge-cards/pnl/) 跑不過去的差距。[PLG](/business/knowledge-cards/plg/) 的數學算不過來、要轉成 Sales-led 或 [FDE](/business/knowledge-cards/fde/)、但這又拉高 [CAC](/business/knowledge-cards/cac/)。兩頭夾擊—[單位經濟](/business/knowledge-cards/unit-economics/) 受傷、[估值](/business/knowledge-cards/valuation/) 倍數被壓。
+這個毛利下降會連動三件事。
+
+**第一、賺到的錢不夠付業務跟行銷。** 傳統 SaaS 賣 100 元、扣掉伺服器費用後剩 70-80 元（毛利 70-80%）、即使花 30% 在業務跟行銷也還能賺；AI 應用賣 100 元、要付給上游模型供應商的 token 費後只剩 50 元出頭（毛利 50%）、同樣花 30% 在業務跟行銷只剩 20% 利潤、[損益表 P&L](/business/knowledge-cards/pnl/)（公司一段期間內賺賠的財務報表）從正轉負。
+
+**第二、免費試用變成燒錢。** 傳統 SaaS 的「免費試用」幾乎零成本—多開帳號伺服器頂多多用一點；AI 應用的免費試用每次都在燒 GPU 算力、是真實的成本支出。[PLG](/business/knowledge-cards/plg/)（Product-Led Growth、靠產品自己吸引用戶上來、不靠業務推銷）模式靠的就是「免費試用零成本」這個前提、毛利掉到 50% 時這套數學就跑不下去了。
+
+**第三、被迫轉成更貴的銷售模式。** PLG 不能用、改回業務面對面賣（Sales-led）、或乾脆派工程師駐點客戶辦公室（[FDE](/business/knowledge-cards/fde/)、Forward Deployed Engineer）、但這兩條路都讓 [CAC](/business/knowledge-cards/cac/)（Customer Acquisition Cost、獲取一個新客戶要花的所有成本）從 PLG 的幾十美元跳到 Sales-led 的幾千美元、再到 FDE 的幾萬甚至幾十萬美元。
+
+收入端（毛利從 70% 掉到 50%）被壓縮、支出端（CAC 上升 100 倍）被拉高—兩頭夾擊讓 [單位經濟](/business/knowledge-cards/unit-economics/)（每個客戶能不能帶來足夠收入回本獲客成本）受傷。投資人計算 [估值](/business/knowledge-cards/valuation/) 倍數時看到這個結構性壓縮、給的估值就低、新創 [burn rate](/business/knowledge-cards/burn-rate/)（每月燒錢速度）變相加速、生存難度提高。
 
 對應用層 SaaS 公司來說、第一層的應對手段是：找方法降低對上游模型供應商的依賴（自有模型、混合架構、開源替代）、或往上游做整合（不能只當應用層）。
 
