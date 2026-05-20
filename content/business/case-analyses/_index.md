@@ -31,27 +31,30 @@ WRAP 框架（Widen Options / Reality Test / Attain Distance / Prepare to be Wro
 
 每篇案例文章在背後要做完的 WRAP 工作：
 
-| WRAP 工作                                | 在文章中的呈現方式                                                               |
-| ---------------------------------------- | -------------------------------------------------------------------------------- |
-| Widen Options（探索多個合理因果解釋）    | 不單獨成段、融進「為什麼供應商選擇 X / 為什麼買方出手」這類教學段落              |
-| Reality Test（用 evidence 驗證每個解釋） | 同一段、用「對照已知觀察、可以估每個解釋的權重」narrative 展開、給每個解釋配佔比 |
-| Attain Distance（跳出短期看長期）        | 改寫成「長期影響與機會成本」教學段、移除 process 標籤                            |
-| Prepare to be Wrong（列關鍵假設）        | 合併進「預警訊號」段、用「假設一 / 假設二 / 假設三」教學語氣                     |
-| Tripwire（設定何時重新評估）             | 同上段、用表格列「什麼訊號出現要重新評估」                                       |
+| WRAP 工作                                | 在文章中的呈現方式                                                          |
+| ---------------------------------------- | --------------------------------------------------------------------------- |
+| Widen Options（探索多個合理因果解釋）    | 寫作者腦中跑完、主結論塞進「事件本身」一兩句、不獨立成段做完整 Widen 展開   |
+| Reality Test（用 evidence 驗證每個解釋） | 寫作者腦中跑完、判讀結果摘要為一句結論、prior 不寫具體 source 除非能 verify |
+| Attain Distance（跳出短期看長期）        | 改寫成「長期影響與機會成本」教學段、移除 process 標籤                       |
+| Prepare to be Wrong（列關鍵假設）        | 合併進「預警訊號」段、用「假設一 / 假設二 / 假設三」教學語氣                |
+| Tripwire（設定何時重新評估）             | 同上段、用表格列「什麼訊號出現要重新評估」                                  |
 
 文章章節結構建議：
 
-| 章節                         | 教學責任                                                            |
-| ---------------------------- | ------------------------------------------------------------------- |
-| 開頭（1 段）                 | 直接描述事件 + 一句帶到本篇拆解什麼、無預設讀者認知、不對抗他人敘事 |
-| 事件本身                     | 把事件講清楚、包括同期動作、為什麼值得拆                            |
-| 「為什麼 X」教學段           | 把 Widen + Reality 內嵌進教學 narrative、含並陳因果 + evidence 配重 |
-| 結構性機制章節（按層或維度） | 把分析結果展開成讀者可吸收的結構知識                                |
-| 長期影響                     | Attain Distance 內容、移除 process 標籤                             |
-| 預警訊號                     | Prepare to be Wrong + Tripwire 合併、教學語氣                       |
-| 可遷移框架                   | 結論、給讀者帶走的判讀工具                                          |
+| 章節                             | 教學責任                                                                                       |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| 開頭（1 段）                     | 直接描述事件 + 一句帶到本篇拆解什麼（對齊標題承諾）、無預設讀者認知、不對抗他人敘事            |
+| 事件本身                         | 把事件講清楚、包括同期動作、為什麼值得拆；上游動機塞一兩句 + cross-link 到處理該動機的對應文章 |
+| 標題承諾的主體章節（按層或維度） | 把分析結果展開成讀者可吸收的結構知識—標題承諾什麼這裡就拆什麼                                  |
+| 主體章節之間的因果關聯（若需要） | 簡短銜接段、不展開完整 WRAP 分析                                                               |
+| 長期影響                         | Attain Distance 內容、移除 process 標籤                                                        |
+| 預警訊號                         | Prepare to be Wrong + Tripwire 合併、教學語氣                                                  |
+| 可遷移框架                       | 結論、給讀者帶走的判讀工具                                                                     |
 
-每篇順序可微調、但避免在文章中暴露 WRAP process metadata—不寫「我們不討論什麼」「錨點問題是什麼」這類分析報告 frame 的內部 dialogue。
+每篇順序可微調、但兩條鐵則：
+
+1. 避免在文章中暴露 WRAP process metadata（章節標題不寫 Anchor Check / Step 0 / Widen Options / Reality Test）—見 [#141](/report/wrap-as-internal-tool-not-section-structure/)。
+2. 文章主體必須對齊標題承諾、WRAP 內部分析（含 prior 引用）不獨立成段、不喧賓奪主—見 [#142](/report/article-body-must-align-with-title-commitment/)。
 
 ## 收錄文章
 
@@ -74,9 +77,12 @@ WRAP 框架（Widen Options / Reality Test / Attain Distance / Prepare to be Wro
 
 完稿前過一遍：
 
-- 章節標題是否還有「Anchor Check / Step 0 / Widen Options / Reality Test / Tripwire」這類 WRAP process metadata？有就改成教學標題
+- 章節標題是否還有「Anchor Check / Step 0 / Widen Options / Reality Test / Tripwire」這類 WRAP process metadata？有就改成教學標題（[#141](/report/wrap-as-internal-tool-not-section-structure/)）
 - 開頭段是否預設讀者已有某種認知（例如「律師會被取代」）？有就改成正向陳述事件
 - 是否有「我們不討論什麼」這類分析報告內部 dialogue？有就刪
 - 同一論點是否被預告三次以上？有就只在開頭給一次
+- 跑「標題對齊測試」：列每段佔多少篇幅、跟標題暗示的主題比對。不在標題承諾範圍的段落佔 > 20% 就要瘦身或 cross-link 出去（[#142](/report/article-body-must-align-with-title-commitment/)）
+- Source citation 是否真實可 verify？「a16z / Sequoia / Andreessen」這類列舉不確定就改 hedged claim
+- 解釋順序：source 在後、解釋本身在前
 
 如果一個事件無法產出可遷移框架（只是孤立特例），不要硬寫成案例文章—放筆記裡即可。
