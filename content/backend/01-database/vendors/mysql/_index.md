@@ -6,11 +6,11 @@ weight: 2
 tags: ["backend", "database", "vendor", "mysql", "sql"]
 ---
 
-MySQL 是大型網路服務的常見選擇、簡單 query 效能跟分片生態（Vitess / PlanetScale）成熟。GitHub、Shopify、Slack、Facebook（YouTube 從 MySQL 起家）等大規模服務的核心 OLTP 多採 MySQL。InnoDB engine 的 row-level lock、clustered index、buffer pool tuning 都被深度驗證。
+MySQL 是大型網路服務的常見選擇、簡單 query 效能跟 [database sharding](/backend/knowledge-cards/database-sharding/) 生態（Vitess / PlanetScale）成熟。GitHub、Shopify、Slack、Facebook（YouTube 從 MySQL 起家）等大規模服務的核心 OLTP 多採 MySQL。InnoDB engine 的 row-level lock、clustered index、buffer pool tuning 都被深度驗證。
 
 ## 教學路線：高併發 OLTP 與分片生態
 
-MySQL 服務頁的教學目標是把「簡單 SQL 查詢」推進到高併發 OLTP、replication、online schema change 與 sharding governance。讀者讀完後要能判斷 MySQL 何時是成熟預設、何時已經進入 Vitess / PlanetScale 或 application sharding 的討論。
+MySQL 服務頁的教學目標是把「簡單 SQL 查詢」推進到高併發 OLTP、replication、online schema change 與 [sharding governance](/backend/knowledge-cards/database-sharding/)。讀者讀完後要能判斷 MySQL 何時是成熟預設、何時已經進入 Vitess / PlanetScale 或 application sharding 的討論。
 
 | 學習段        | 核心問題                                                 | 對應段落                   |
 | ------------- | -------------------------------------------------------- | -------------------------- |
@@ -24,7 +24,7 @@ MySQL 服務頁的教學目標是把「簡單 SQL 查詢」推進到高併發 OL
 
 MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 
-- MySQL 偏 *簡單 query 效能 + 分片生態* — InnoDB clustered index 對 primary key range query 特別快、Vitess 提供超大規模透明 sharding
+- MySQL 偏 *簡單 query 效能 + 分片生態* — InnoDB clustered index 對 primary key range query 特別快、Vitess 提供超大規模透明 [database sharding](/backend/knowledge-cards/database-sharding/)
 - PostgreSQL 偏 *特性深度* — 詳見 [PostgreSQL vendor page](/backend/01-database/vendors/postgresql/)
 
 選 MySQL 的核心訴求：需要超大規模分片（> 100 TB、> 100K WPS）、簡單 query 為主、已用 MySQL 生態工具鏈（gh-ost、pt-online-schema-change）。
@@ -35,7 +35,7 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 
 - 標準 InnoDB：10K-30K WPS（依 row size、commit sync、index 數量）
 - 高階 instance + 優化 schema：50K-100K WPS
-- 超過此級別 → Vitess sharding 或 PlanetScale
+- 超過此級別 → [Vitess sharding](vitess-sharding/) 或 PlanetScale
 
 **Connection 上限**：
 
@@ -58,7 +58,7 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 
 **1. 大規模 OLTP + 分片需求**：
 
-- 流量 > 50K WPS、必須 sharding
+- 流量 > 50K WPS、必須進入 [database sharding](/backend/knowledge-cards/database-sharding/) 設計
 - 用 Vitess / PlanetScale 透明 sharding、應用層幾乎不必改
 - 對應產業：超大網路服務（GitHub、Shopify、Slack）
 
@@ -73,7 +73,7 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 - gh-ost / pt-online-schema-change（online schema migration）
 - Orchestrator（HA topology 管理）
 - ProxySQL（query routing + connection pool）
-- Maxwell / Debezium MySQL（CDC）
+- Maxwell / Debezium MySQL（[CDC](/backend/knowledge-cards/change-data-capture/)）
 
 **4. 強一致 transaction 但容忍部分 SQL 功能缺失**：
 
@@ -100,7 +100,7 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 
 **3. 大規模 OLAP**：
 
-- MySQL 不是 OLAP DB
+- MySQL 定位在 OLTP，analytics workload 交給 OLAP 系統
 - 替代：ClickHouse、BigQuery、Snowflake
 
 **4. KV 簡單查詢 + sub-10ms p99**：
@@ -198,6 +198,27 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 - innodb_flush_log_at_trx_commit：1（durable）vs 2（faster）vs 0（fastest, 不安全）
 - innodb_io_capacity：依 storage 類型調整
 
+## Anti-recommendation 與升級路由
+
+MySQL 的成熟生態容易讓讀者過早引入重工具。這一段補上 deep article audit 提到的 anti-recommendation 缺口：先說何時維持簡單 MySQL 路徑，再說何時升級到 ProxySQL、Orchestrator、gh-ost、Vitess、PlanetScale 或 distributed SQL。
+
+| 機制                 | 維持簡單設計的條件                                            | 升級訊號                                                     | 主要引用路徑                                                                                                                  |
+| -------------------- | ------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Replication          | 單 primary + 1-2 replica，lag 可被 read routing 容忍          | failover 反覆手動、GTID gap、semi-sync fallback              | [Replication Topology](replication-topology/)、[Orchestrator Failover](orchestrator-failover/)                                |
+| Online schema change | 小表、maintenance window 足夠、MySQL 8.0 instant DDL 可 cover | 大表 ALTER 需 hours、metadata lock 影響 production           | [Online Schema Change Tools](online-schema-change-tools/)、[6.11 Migration Safety](/backend/06-reliability/migration-safety/) |
+| ProxySQL             | application pool + primary endpoint 已能控制連線              | read/write routing、lag-aware routing、connection storm      | [ProxySQL Config](proxysql-config/)、[Connection Pool](/backend/knowledge-cards/connection-pool/)                             |
+| Vitess / sharding    | 單 primary 寫入與資料量仍在可維護範圍                         | > 50K WPS、> 100 TB、shard key 已明確、跨 shard query 可接受 | [Vitess Sharding](vitess-sharding/)、[Database Sharding](/backend/knowledge-cards/database-sharding/)                         |
+| PlanetScale          | 團隊已有 DBA / SRE 能力管理 Vitess 或自管 MySQL               | 想把 Vitess ops、schema branch workflow 與 failover 交給平台 | [→ PlanetScale](migrate-to-planetscale/)、[Vitess → PlanetScale](migrate-vitess-to-planetscale/)                              |
+| Distributed SQL      | workload 仍是 single-region OLTP 或 Vitess 可解               | multi-region 強一致、cross-shard transaction 是核心需求      | [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)                                                         |
+
+Replication 的簡單路徑是 GTID + async replica + 明確 read routing。當 failover 仍靠人工判斷、replica re-pointing 反覆出錯、或 semi-sync fallback 沒有被監控時，才需要把 Orchestrator、ProxySQL 與 incident runbook 放進同一條 HA 路徑。
+
+Online schema change 的簡單路徑是先判斷 MySQL 8.0 instant / inplace DDL 能否 cover。只有大表 rewrite、長時間 metadata lock、FK / trigger 複雜互動或 maintenance window 不足時，才讓 gh-ost / pt-online-schema-change 成為主線工具。
+
+Sharding 的簡單路徑是延後到資料形狀穩定後再做。Vitess 能把 MySQL 推到超大規模，但它也引入 VTGate、VTTablet、VReplication、VSchema、resharding workflow 與跨 shard transaction 邊界；[shard key](/backend/knowledge-cards/database-sharding/) 還沒穩定時，應先用 schema、index、read replica、partition 與容量治理延長單 primary 壽命。
+
+Managed sharding 的簡單路徑是先確認團隊想轉移哪一層責任。PlanetScale 解的是 Vitess operation、branch-based schema workflow 與 managed failover；FK、cross-shard query、connection pool 與 cost model 仍要在 migration playbook 中驗證。
+
 ## Deep article + Migration playbook（已完成）
 
 | 主題                                                 | 文章                                                            | 類型                         |
@@ -233,13 +254,15 @@ MySQL 跟 PostgreSQL 是 SQL OLTP 兩大主流、但設計取捨明顯不同：
 - **Cross-buffer memory contention deep dive**：buffer pool / connection thread / temp table / sort buffer 之間的 RAM 競爭、跟 OS swap 互動
 - **Metadata lock deep dive**：DDL / long-running SELECT / FK 互動造成的 stalls
 
+上述候選先接既有路由。Encryption / TLS / key management 先接 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/) 與 [Secret Management](/backend/knowledge-cards/secret-management/)；audit log 先接 [Audit Log](/backend/knowledge-cards/audit-log/) 與 07 資安資料保護；Document Store 先接 [MongoDB vendor](/backend/01-database/vendors/mongodb/) 與 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)；multi-source replication 先接 [Replication Topology](replication-topology/)；HeatWave 先接 OLAP 替代路由；memory contention 先接 [InnoDB Tuning](innodb-tuning/)；metadata lock 先接 [Lock Contention](lock-contention/) 與 [Online Schema Change Tools](online-schema-change-tools/)。
+
 ## 已知 limitation（多輪 audit 結論）
 
 17 篇 batch 跑過 4-reviewer audit（寫作規範 / 跨檔一致性 / 技術準確性 / 結構性質疑）後留下的 limitation：
 
 - *Framework bias*：5 篇 migration playbook 全落在 Type A / C / E、沒一篇 Type B / D / F。這反映 *MySQL 領域 migration 的本質*（多數情境是 schema 差 / operational 轉手 / paradigm shift）、也可能反映 [6 type framework](/posts/migration-playbook-methodology/) 的覆蓋限制
-- *Anti-recommendation 分布不均*：deep article（13 篇）多數沒有「何時不必管這個」段、容易 push 讀者 over-engineer；migration playbook（5 篇）有「何時不要遷」、deep article 之後輪可補
-- *Synthetic case 為主*：17 篇用合成案例（5K WPS / 64 GB RAM 等典型配置）說明踩雷、未引用真實 incident（GitHub 2018 / Shopify BFCM / Slack）作 case anchor。下輪可加 real incident reference
+- *Anti-recommendation 已補 overview 路由*：本頁新增「Anti-recommendation 與升級路由」作為總入口；各 deep article 之後仍可逐篇補「何時維持簡單設計」段。
+- *Real case anchor 已補 overview 路由*：本頁新增「真實案例 anchor」把 Shopify、Slack、GitHub gh-ost、YouTube / Vitess 與既有 09 case 串回 deep article；各 deep article 後續可把這些 anchor 下沉到對應機制段。
 - *PG 對比 narrative*：對比段公允度尚可、但 PG 弱點（vacuum ops 開銷 / connection-per-process model / replication slot 治理）較少在 MySQL 視角展開、單方面對比偶有偏 MySQL 不利
 
 ## 案例對照
@@ -252,12 +275,20 @@ MySQL 沒有直接的 09 case（大規模 MySQL 多在 engineering blog、不在
 | [9.C20 Zomato TiDB → DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)         | TiDB（MySQL 相容）→ DynamoDB 對比           |
 | [9.C29 Lemino RDB connection limit](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) | MySQL connection 限制問題（同 PostgreSQL）  |
 
-業界 large MySQL 規模案例（engineering blog 來源）：
+## 真實案例 anchor
 
-- GitHub：完全 MySQL OLTP、gh-ost 是他們開源工具
-- Shopify：pod-based MySQL sharding、BFCM peak
-- Slack：per-team MySQL sharding
-- YouTube：Vitess 起源、超大 MySQL 集群
+MySQL 真實案例的責任是把大規模 OLTP 的機制壓力放回正文。案例不只證明「某公司使用 MySQL」，而是提供 schema change、CDC、sharding、connection、queue 整合或 managed migration 的壓力來源。
+
+| 案例 / 來源                                                                                                       | 回收的工程訊號                                                                                 | 對應正文路由                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Shopify Debezium CDC over sharded MySQL](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/)            | 100+ shard、~150 Debezium connector、BFCM 100K records/sec、snapshot lock 與 oversized payload | [Binary Log + CDC](binlog-cdc/)、[Database Sharding](/backend/knowledge-cards/database-sharding/)、[Kafka vendor](/backend/03-message-queue/vendors/kafka/) |
+| [Slack Job Queue 演進到 Kafka + Redis](/backend/03-message-queue/cases/slack-job-queue-kafka-redis/)              | 成長期把背景工作拆成多條傳遞路徑，揭露單一資料路徑與 queue 路徑分工                            | MySQL 只承擔 OLTP [source of truth](/backend/knowledge-cards/source-of-truth/)；queue / cache 路徑回 [03 Message Queue](/backend/03-message-queue/)         |
+| gh-ost / GitHub operation workflow                                                                                | 大表 schema change 需要 throttle、pause / resume、cutover 控制                                 | [Online Schema Change Tools](online-schema-change-tools/)                                                                                                   |
+| YouTube / Vitess                                                                                                  | MySQL sharding layer 需要 VTGate、VTTablet、VReplication、VSchema                              | [Vitess Sharding](vitess-sharding/)、[Database Sharding](/backend/knowledge-cards/database-sharding/)、[→ PlanetScale](migrate-to-planetscale/)             |
+| [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)        | 多套 RDBMS 整併到 managed Aurora，揭露 operation transfer driver                               | [→ Aurora](migrate-to-aurora/)、[Aurora vendor](/backend/01-database/vendors/aurora/)                                                                       |
+| [9.C29 Lemino RDB connection limit](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) | surge 場景 connection limit 讓 RDB 退到 DynamoDB 類 access pattern                             | [ProxySQL Config](proxysql-config/)、[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)                                  |
+
+案例下沉規則是先放 overview，再進 deep article。當某個案例只支撐服務定位，留在本頁；當案例提供具體操作訊號，例如 Shopify 的 Debezium connector scaling、GitHub 的 gh-ost workflow 或 YouTube 的 Vitess topology，後續再把它下沉到對應 deep article 的 production case 段。
 
 ## 常見陷阱
 

@@ -1,7 +1,7 @@
 ---
 title: "PostgreSQL Citus Distributed：用 extension 把 PG 變成 sharded cluster"
 date: 2026-05-19
-description: "Citus 是 PG extension（不是 fork）、把單機 PG 變成 *coordinator + worker* sharded cluster、保留 PG SQL + 加 distributed table + reference table + columnar storage。本文走 Citus 架構（coordinator / worker / distribution column）、3 種 table type（distributed / reference / local）、配置 step-by-step、5 production 踩雷（distribution column 選錯 / cross-shard transaction / reference table 過大 / colocate 不對齊 / worker failover）、跟 MySQL Vitess sharding sibling 對比"
+description: "Citus 是 PG extension、把單機 PG 變成 *coordinator + worker* sharded cluster、保留 PG SQL + 加 distributed table + reference table + columnar storage。本文走 Citus 架構（coordinator / worker / distribution column）、3 種 table type（distributed / reference / local）、配置 step-by-step、5 production 踩雷（distribution column 選錯 / cross-shard transaction / reference table 過大 / colocate 不對齊 / worker failover）、跟 MySQL Vitess sharding sibling 對比"
 weight: 18
 tags: ["backend", "database", "postgresql", "citus", "sharding", "distributed", "deep-article"]
 ---
@@ -17,6 +17,8 @@ tags: ["backend", "database", "postgresql", "citus", "sharding", "distributed", 
 3. **Distributed SQL**（CockroachDB / Aurora DSQL / Spanner）：不同 engine
 
 選 Citus 的核心 driver：*保留 PG SQL syntax + extension 生態*。但「應用層幾乎不必改」是樂觀說法 — 實際上 application 必須圍繞 distribution column 重設計（query 加 filter / transaction 限定同 shard / reference table 量控制）、跟 Vitess 比 cross-shard query 自動化弱。代價是 *coordinator / worker 部署複雜度 + cross-shard query 限制 + application schema 改造工作量*。
+
+閱讀本文前可先對齊 [Database Sharding](/backend/knowledge-cards/database-sharding/) 的 shard key、routing、resharding 與 cross-shard query 語意；容量失衡時再接 [Hot Partition](/backend/knowledge-cards/hot-partition/)。
 
 跟 [MySQL Vitess sharding](/backend/01-database/vendors/mysql/vitess-sharding/) 的核心差異：Citus 是 *PG extension*（PG 自己跑）、Vitess 是 *獨立 proxy + tablet 系統*（包 MySQL）。Citus 用 PG 原生機制（FDW / extension hook）、Vitess 是 *外部包裝*。
 
@@ -285,7 +287,7 @@ Coordinator + worker 各跑 PG streaming replication、Citus 不取代 PG replic
 
 ### 跟 PG Extensions
 
-Citus 跟其他 PG extension 多數兼容（pgvector / TimescaleDB / pg_stat_statements）— 是 *extension*、不是 fork。詳見 *PG Extension Ecosystem* 篇（待寫）。
+Citus 跟其他 PG extension 多數兼容（pgvector / TimescaleDB / pg_stat_statements）— 它維持 *extension* 形態，保留 PostgreSQL 生態接點。詳見 *PG Extension Ecosystem* 篇（待寫）。
 
 ### 跟 MySQL Vitess
 

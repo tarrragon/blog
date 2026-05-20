@@ -12,9 +12,9 @@ weight: -1
 
 ## 術語建卡判準
 
-知識卡片的建卡判準是術語是否承擔理解成本與判斷成本，而不是只看它是否已經在多篇文章重複出現。讀者如果不知道某個名詞，就無法理解服務路徑、風險邊界、artifact 欄位或下一步決策，這個名詞就值得建卡。
+知識卡片的建卡判準是術語是否承擔理解成本與判斷成本，核心重點在它如何影響服務理解，而非只看它是否已經在多篇文章重複出現。讀者如果缺少某個名詞的服務語意，就會難以理解服務路徑、風險邊界、artifact 欄位或下一步決策，這個名詞就值得建卡。
 
-適合建卡的術語通常有三個特徵：第一，它不是單純字面翻譯，而是包含服務責任、操作條件或失敗代價；第二，它會影響讀者對實作路線的判斷，例如 validation query、rollback window、fallback read；第三，它可以被獨立說明成「概念位置、可觀察訊號、例子、設計責任」。多篇重複使用可以當補充訊號，但不參與「是否要建卡」的必要判準。
+適合建卡的術語通常有三個特徵：第一，它超過單純字面翻譯，並包含服務責任、操作條件或失敗代價；第二，它會影響讀者對實作路線的判斷，例如 validation query、rollback window、fallback read；第三，它可以被獨立說明成「概念位置、可觀察訊號、例子、設計責任」。多篇重複使用可以當補充訊號，但不參與「是否要建卡」的必要判準。
 
 不適合建卡的是過度寬泛、沒有明確服務責任的詞。若名詞只是文章中的普通形容詞、單一欄位值、或只能在該句子內成立，優先在正文補清楚，不硬拆成卡片。
 
@@ -49,10 +49,11 @@ weight: -1
 | [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)     | 回滾流程如何在正式事故前演練       | rollback strategy、migration         |
 | [Rollback Window](/backend/knowledge-cards/rollback-window/)           | 變更後還能用哪種方式回退或改路線   | cutover、rollback strategy           |
 | [Rollback Condition](/backend/knowledge-cards/rollback-condition/)     | 決策後何時要撤回、回退或改路線     | incident decision、rollback          |
-| [Fail-forward](/backend/knowledge-cards/fail-forward/)                 | 無法回到舊狀態時如何受控前進修復   | rollback window、incident decision   |
+| [Fail-forward](/backend/knowledge-cards/fail-forward/)                 | 舊狀態已失效時如何受控前進修復     | rollback window、incident decision   |
 | [Stop Condition](/backend/knowledge-cards/stop-condition/)             | 何時必須暫停、回退或改路線         | release gate、incident decision      |
 | [Isolation Level](/backend/knowledge-cards/isolation-level/)           | 並發交易彼此看見哪些資料           | transaction、lock、retry             |
 | [Connection Pool](/backend/knowledge-cards/connection-pool/)           | application 如何限制下游連線壓力   | database、Redis、broker              |
+| [Database Sharding](/backend/knowledge-cards/database-sharding/)       | 資料庫如何依 shard key 分散與路由  | Vitess、Citus、tenant key            |
 
 ## 快取與流量
 
@@ -84,7 +85,7 @@ weight: -1
 | [Queue](/backend/knowledge-cards/queue/)                               | 等待處理的工作如何形成容量邊界        | producer、consumer、backlog  |
 | [Socket](/backend/knowledge-cards/socket/)                             | 網路連線如何成為資料讀寫與資源邊界    | network、connection、timeout |
 | [Fallback](/backend/knowledge-cards/fallback/)                         | 主要路徑失敗時使用什麼替代結果        | degradation、circuit breaker |
-| [Fail Fast](/backend/knowledge-cards/fail-fast/)                       | 已知無法完成時如何快速回應            | circuit breaker、validation  |
+| [Fail Fast](/backend/knowledge-cards/fail-fast/)                       | 已知會失敗時如何快速回應              | circuit breaker、validation  |
 | [Retry Budget](/backend/knowledge-cards/retry-budget/)                 | 重試量如何受整體容量限制              | retry、SLO、token bucket     |
 | [Cache Aside](/backend/knowledge-cards/cache-aside/)                   | application 如何讀快取與正式來源      | Redis、read path             |
 | [Cache Hit / Miss](/backend/knowledge-cards/cache-hit-miss/)           | 讀取是否命中快取                      | cache、database pressure     |
@@ -332,7 +333,7 @@ weight: -1
 | [Least Privilege](/backend/knowledge-cards/least-privilege/)                                     | 身份如何只取得必要權限               | IAM、database user               |
 | [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/)                 | 設定錯誤如何暴露內部能力             | CORS、debug、cloud               |
 | [Attack Surface](/backend/knowledge-cards/attack-surface/)                                       | 系統哪些對外暴露面最先被探測         | public API、admin route、webhook |
-| [Trust Boundary](/backend/knowledge-cards/trust-boundary/)                                       | 哪些位置開始不能沿用原本信任假設     | auth boundary、tenant、network   |
+| [Trust Boundary](/backend/knowledge-cards/trust-boundary/)                                       | 哪些位置要重建信任假設               | auth boundary、tenant、network   |
 | [Abuse Case](/backend/knowledge-cards/abuse-case/)                                               | 合法功能如何被惡意轉用               | export、invite、reset            |
 | [WAF](/backend/knowledge-cards/waf/)                                                             | 入口層如何過濾常見攻擊與濫用         | edge、bot、attack                |
 | [Feature Flag](/backend/knowledge-cards/feature-flag/)                                           | 功能開關如何分離部署與啟用           | rollout、experiment、rollback    |
