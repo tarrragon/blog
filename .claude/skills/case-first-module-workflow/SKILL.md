@@ -177,12 +177,14 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 12. **採集階段全是正例、缺反例**（backend/03 模組新發現）— 採集容易偏向 success story（vendor 客戶 story、規模化案例）、忽略反例 / 退場 / 誤配案例。反例教學價值高於正例、每個 vendor 案例庫至少要有 1 個反例。詳見 [principles/case-type-discrimination](./references/principles/case-type-discrimination.md) 的「教學功能」維度
 13. **跨檔 cadence 同質化**（07 vendor batch 新發現）— 寫 ≥ 5 個同類檔時、找到一個「都過 lint + 章節齊 + 表格深化」的 framing 後、批量會複製到所有檔；單篇合規、連讀預期化；屬 *emergence 違規*、規則化不了、不能丟給 Stage 3 reviewer 才發現（修正成本 N 倍）。Stage 2 進度 10-20% 必須抽樣 catch。詳見 [principles/cadence-sampling-in-batch-writing](./references/principles/cadence-sampling-in-batch-writing.md)
 14. **Review 設計 collapse 到單軸**（07 vendor batch 新發現）— 「找一個 reviewer 跑就好」「跑一輪就好」「body review 就夠」這類便利選擇會 collapse 掉七軸中的某幾條（Cadence / Timing / Surface / Scope）、對應違規 systematic miss；設計新 reviewer 維度時要 enumerate 七軸覆蓋狀況、不是直接寫 prompt。詳見 [principles/review-multi-axis-completeness](./references/principles/review-multi-axis-completeness.md)
+15. **外部分析文章被誤當 case fact** — analyst article / investor memo / industry commentary 是 source，不是 case 本體。Stage 0 若採集到這類材料，先用 compositional-writing 的 [source-to-teaching-analysis](../compositional-writing/references/source-to-teaching-analysis.md) 拆成事實、原作者判讀、本文推導；只有可驗證事實能進 case findings，原作者判讀只能當 hypothesis prior 或對照 frame。
 
 ## 跟其他 skill 的關係
 
 本 skill 跟 [compositional-writing](../compositional-writing/SKILL.md) skill 互補：
 
 - compositional-writing 管 *單篇* 寫作的原子化跟意圖
+- compositional-writing 的 [source-to-teaching-analysis](../compositional-writing/references/source-to-teaching-analysis.md) 管 *外部分析材料 → 教學文章* 的 source 分層與讀者降層；case-first 遇到 analyst source 時先跑這個前處理
 - case-first-module-workflow 管 *跨章模組* 的 scope 跟一致性
 
 跟 [requirement-protocol](../requirement-protocol/SKILL.md) skill 互補：
