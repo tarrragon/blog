@@ -170,6 +170,7 @@
 - [ ] 未依賴特定專案背景知識
 - [ ] 關鍵術語已連到對應卡片
 - [ ] 有明確下一步路由（章節/模組連結）
+- [ ] 新增頂層 `content/<module>/` 資料夾時、已同步更新 `content/_index.md` 對應分類段（見 [#139](/report/top-level-content-folder-needs-homepage-entry/)）
 
 ---
 
