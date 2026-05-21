@@ -6,7 +6,7 @@ tags: ["CD", "rollback", "knowledge-card"]
 weight: 8
 ---
 
-Rollback Strategy 的核心概念是「在異常發布後縮小影響範圍並回到可用狀態」。它是部署設計的一部分，不是事故後才補的程序。
+Rollback Strategy 的核心概念是「在異常發布後縮小影響範圍並回到可用狀態」。它屬於部署設計的一部分，需要在事故前完成。
 
 ## 概念位置
 

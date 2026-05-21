@@ -38,8 +38,15 @@ Test 階段負責驗證服務契約。單元測試只能覆蓋局部邏輯，int
 - Config rollout 需要版本化與回退路徑（深入見 [Config Rollout](/backend/knowledge-cards/config-rollout/)）。
 - Rollback 不只回程式，也要處理資料與外部副作用（深入見 [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)）。
 
+## 學習路線
+
+| 章節                                                                         | 主題                           | 核心責任                         |
+| ---------------------------------------------------------------------------- | ------------------------------ | -------------------------------- |
+| [後端 migration、rollout 與 rollback 流程](migration-rollout-rollback-flow/) | Migration rollout and rollback | 拆分資料變更、流量推進與回復路徑 |
+
 ## 下一步路由
 
+- 後端發布主流程：讀 [後端 migration、rollout 與 rollback 流程](migration-rollout-rollback-flow/)。
 - Gate 原理：讀 [CI gate 與 workflow 邊界](../ci-gate-workflow-boundary/)。
 - Backend reliability：讀 [模組六：可靠性驗證流程](/backend/06-reliability/)。
 - Release gate：讀 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)。

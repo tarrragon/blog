@@ -15,7 +15,7 @@ App Signing 位在 app build 與 release channel 之間，涉及 certificate、p
 ## 可觀察訊號
 
 - 發布因簽章失敗中斷。
-- 憑證過期導致無法發版。
+- 憑證過期導致發版中斷。
 - 金鑰輪替缺乏演練造成交付風險。
 
 ## 接近真實服務的例子

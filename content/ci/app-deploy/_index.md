@@ -38,7 +38,14 @@ Release 階段負責把 artifact 送進發行通道。Store review、phased roll
 - Client / server contract 要支援多版本共存。
 - Crash reporting 與 phased rollout 是發布後 gate 的一部分。
 
+## 學習路線
+
+| 章節                                                            | 主題                        | 核心責任                             |
+| --------------------------------------------------------------- | --------------------------- | ------------------------------------ |
+| [App 簽章、商店審核與分批發布流程](signing-store-rollout-flow/) | Signing, review and rollout | 管理簽章、審核、分批發布與多版本共存 |
+
 ## 下一步路由
 
+- App 發布主流程：讀 [App 簽章、商店審核與分批發布流程](signing-store-rollout-flow/)。
 - Gate 原理：讀 [CI gate 與 workflow 邊界](../ci-gate-workflow-boundary/)。
 - 失敗處理：讀 [CI 失敗到修復發布流程](../github-actions-failure-flow/)。

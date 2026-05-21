@@ -28,5 +28,16 @@ CI/CD 知識卡片的核心責任是建立共同語言。流程文章會使用 p
 | [Rollout Strategy](/ci/knowledge-cards/rollout-strategy/)               | 新版本如何分批推進以控制風險       | rolling、canary、phased rollout             |
 | [Rollback Strategy](/ci/knowledge-cards/rollback-strategy/)             | 發布異常時如何回到已知可用狀態     | deploy rollback、hotfix、forward fix        |
 | [Deployment Dry Run](/ci/knowledge-cards/deployment-dry-run/)           | 發布前如何先驗證流程條件與權限     | preflight check、artifact check、permission |
+| [Backfill](/ci/knowledge-cards/backfill/)                               | 歷史資料如何受控補算               | migration、data pipeline、repair            |
+| [Checkpoint](/ci/knowledge-cards/checkpoint/)                           | 長時間任務如何保存接續位置         | backfill、stream processor、rerun           |
+| [Rerun](/ci/knowledge-cards/rerun/)                                     | 重跑流程如何避免擴大副作用         | flaky test、data repair、pipeline recovery  |
+| [Image Digest](/ci/knowledge-cards/image-digest/)                       | container image 如何取得不可變身分 | registry、scan、runtime handoff             |
+| [SBOM](/ci/knowledge-cards/sbom/)                                       | artifact 內含元件如何被揭露        | image scan、release evidence、compliance    |
+| [Release Channel](/ci/knowledge-cards/release-channel/)                 | 版本如何依使用者範圍分流           | app、desktop、beta、stable                  |
+| [Update Feed](/ci/knowledge-cards/update-feed/)                         | 已安裝客戶端如何取得新版本         | desktop auto-update、rollback channel       |
+| [Infrastructure Drift](/ci/knowledge-cards/infrastructure-drift/)       | 真實環境與 IaC 宣告如何分叉        | Terraform、Pulumi、manual hotfix            |
+| [State Lock](/ci/knowledge-cards/state-lock/)                           | IaC apply 如何避免併發覆寫 state   | Terraform backend、workspace、apply         |
+| [Function Alias](/ci/knowledge-cards/function-alias/)                   | serverless 入口如何指向特定版本    | alias rollback、traffic shift               |
+| [Event Source](/ci/knowledge-cards/event-source/)                       | 事件來源如何影響 retry 與回復      | queue、topic、HTTP trigger、scheduler       |
 
 卡片與流程文章分工清楚。卡片負責名詞與邊界，流程文章負責情境判讀與操作路由。

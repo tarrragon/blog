@@ -16,7 +16,7 @@ Artifact Handoff 位在 build、test、deploy 之間，透過 upload / download 
 
 - 測試通過但部署後行為與測試結果不一致。
 - 多環境重新 build 造成版本漂移。
-- 事故追查時無法從部署版本反查 build run。
+- 事故追查時缺少從部署版本反查 build run 的路徑。
 
 ## 接近真實服務的例子
 
