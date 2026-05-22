@@ -234,6 +234,12 @@ DynamoDB overview 目前完成 KV / access pattern 判斷。下一輪 deep artic
 
 DynamoDB case 的讀法是先分類 access pattern，再看容量模式。Amazon Ads / Capcom / Disney+ 說明高吞吐 KV，Zoom / Tixcraft / Lemino 說明 surge 與 connection-free scaling，Zomato 則說明 on-demand cost model 如何改變 over-provision 壓力。
 
+## 反向 sibling 路由
+
+DynamoDB 的反向 sibling 路由用來把 RDBMS 退場條件寫清楚。若讀者從 PostgreSQL / MySQL 的 connection bottleneck 過來，先讀 [Lemino case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) 與 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)；若需求仍需要 ad hoc SQL、join 與 transaction report，回 [Aurora vendor](/backend/01-database/vendors/aurora/) 或 [PostgreSQL vendor](/backend/01-database/vendors/postgresql/)；若需求是 global document model 與 Azure 生態，再對照 [Cosmos DB vendor](/backend/01-database/vendors/cosmosdb/)。
+
+這條路由的判準是 access pattern 是否穩定到可以先設計 key。DynamoDB 擅長固定 lookup、寫入尖峰、connection-free scaling 與 TTL 類生命週期；資料探索、報表 join 與多條件查詢仍應留在 SQL / search / analytics service。
+
 ## 常見陷阱
 
 從公開 incident 跟 case 提煉：
@@ -251,4 +257,5 @@ DynamoDB case 的讀法是先分類 access pattern，再看容量模式。Amazon
 - 上游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)
 - 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（從 RDBMS 遷 DynamoDB 案例）
 - 跨模組：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)
+- Last reviewed：2026-05-22（capacity mode / Global Tables / best practices 屬時間敏感 claim）
 - 官方：[Amazon DynamoDB Customers](https://aws.amazon.com/dynamodb/customers/)、[DynamoDB 設計 best practices](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)

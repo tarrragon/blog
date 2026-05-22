@@ -1,7 +1,7 @@
 ---
-title: "MySQL Binary Log + CDC：Maxwell / Debezium 不是 logical replication、是 binlog 第二消費者"
+title: "MySQL Binary Log + CDC：Maxwell / Debezium 是 binlog 第二消費者"
 date: 2026-05-19
-description: "MySQL CDC 跟 PostgreSQL logical decoding 是不同 abstraction — PG logical decoding 是 *logical event*（INSERT / UPDATE / DELETE）、MySQL CDC 是 *讀 binlog row-level event*。Maxwell / Debezium 是 binlog 第二消費者（跟 replica 共享 binlog stream）、不是 logical replication 系統。本文走 binlog 三種 format（STATEMENT / ROW / MIXED）、ROW format 的 raw event 結構、Maxwell vs Debezium 對比、配置 step-by-step、5 production 踩雷（binlog retention / DDL event / row image / Kafka producer 跟 binlog reader 速度差 / schema change 跟 CDC consumer 同步）"
+description: "MySQL CDC 跟 PostgreSQL logical decoding 是不同 abstraction — PG logical decoding 是 *logical event*（INSERT / UPDATE / DELETE）、MySQL CDC 是 *讀 binlog row-level event*。Maxwell / Debezium 是 binlog 第二消費者（跟 replica 共享 binlog stream），並非 PostgreSQL 式 logical replication 系統。本文走 binlog 三種 format（STATEMENT / ROW / MIXED）、ROW format 的 raw event 結構、Maxwell vs Debezium 對比、配置 step-by-step、5 production 踩雷（binlog retention / DDL event / row image / Kafka producer 跟 binlog reader 速度差 / schema change 跟 CDC consumer 同步）"
 weight: 17
 tags: ["backend", "database", "mysql", "binlog", "cdc", "debezium", "maxwell", "deep-article"]
 ---
@@ -10,7 +10,7 @@ tags: ["backend", "database", "mysql", "binlog", "cdc", "debezium", "maxwell", "
 
 ---
 
-MySQL CDC 不是 *logical replication*。
+MySQL CDC 的核心定位是 *binlog consumer*。
 
 這個誤解來自跟 PostgreSQL CDC（[Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/)）混用名詞。PG 的 logical decoding 是 *MySQL 沒有的能力* — PG 有 logical event（INSERT / UPDATE / DELETE 加上欄位 metadata）、輸出格式是 logical（人可讀、schema-aware）。MySQL 的 binlog 是 *physical* — 紀錄的是 row 的 binary image、不帶 schema 資訊。
 
@@ -23,7 +23,7 @@ Primary MySQL → binlog
               └→ Maxwell / Debezium（讀 binlog 解析、發 Kafka）
 ```
 
-跟 replica 同一份 binlog stream、不是 separate logical decoding output。這個結構決定 CDC consumer 的設計：必須 *自己處理 schema*（從 information_schema 拉、跟 binlog event 對齊）、必須 *自己 track position*（binlog file + position 或 GTID）。
+跟 replica 同一份 binlog stream，並非 separate logical decoding output。這個結構決定 CDC consumer 的設計：必須 *自己處理 schema*（從 information_schema 拉、跟 binlog event 對齊）、必須 *自己 track position*（binlog file + position 或 GTID）。
 
 ## Binlog format：STATEMENT / ROW / MIXED
 
@@ -53,7 +53,7 @@ log_bin_use_v1_row_events = 0  # 用新版 event format
 
 ## ROW format 的 raw event 結構
 
-Binlog ROW event 不是 *INSERT INTO orders VALUES (1, 'foo', 100)*、是 *binary row image*：
+Binlog ROW event 的資料形狀是 *binary row image*，而非 *INSERT INTO orders VALUES (1, 'foo', 100)*：
 
 ```text
 TABLE_MAP_EVENT     - 對應 table schema metadata (table id + column type)
@@ -121,7 +121,7 @@ Debezium 是 Kafka Connect plugin、整套 stack：
     "include.schema.changes": "true",
 
     "snapshot.mode": "initial",              # 或 schema_only / when_needed / never
-    "snapshot.locking.mode": "minimal",      # 不要 FLUSH TABLES WITH READ LOCK
+    "snapshot.locking.mode": "minimal",      # 避免 FLUSH TABLES WITH READ LOCK
 
     "gtid.source.includes": "...",           # 可選 GTID filter
     "tombstones.on.delete": "true",          # DELETE event 同 partition 跟一個 null tombstone
@@ -183,8 +183,8 @@ CDC consumer 失聯（Kafka Connect cluster down、network issue）超過 binlog
 
 修法：
 
-- *Production binlog retention >= 7 天*（不要為了 disk 省）
-- 監控 `Master_Log_File` 是否還在（如果 retention 設 7 天、看當前 file 是不是仍存在）
+- *Production binlog retention >= 7 天*（避免為了 disk 過度縮短）
+- 監控 `Master_Log_File` 是否還在（如果 retention 設 7 天、確認當前 file 仍存在）
 - CDC consumer 失聯 alert 設 *早於 retention 期*（例如 6 天告警、給 24 小時修）
 - 真的 missed binlog、必須 *re-snapshot table*（用 Debezium `snapshot.new.tables`）— 24 小時級工作
 
@@ -204,7 +204,7 @@ CDC consumer 失聯（Kafka Connect cluster down、network issue）超過 binlog
 
 修法（兩者通用）：
 
-- 用 [Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/) 而不是直接 ALTER — 工具操作的 DDL 對 CDC consumer 更可預期
+- 用 [Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/) 取代直接 ALTER — 工具操作的 DDL 對 CDC consumer 更可預期
 - Schema 改動 *優先 add column 為 nullable*、避免 backfill 期間 CDC consumer 看到 mid-state
 
 ### 3. `binlog_row_image=MINIMAL` 讓下游錯亂
@@ -213,9 +213,9 @@ CDC consumer 失聯（Kafka Connect cluster down、network issue）超過 binlog
 
 修法：
 
-- CDC 需要 full payload 的場景 *必須 `FULL`*、不能省
+- CDC 需要 full payload 的場景 *必須 `FULL`*、這項成本要納入容量規劃
 - 如果空間真緊、考慮 `NOBLOB`（BLOB / TEXT 只在 changed 時包含、其他 column 仍 FULL）
-- *不要 mixed*：production 全部 server 同一 binlog_row_image 設定
+- *統一設定*：production 全部 server 同一 binlog_row_image 設定
 
 ### 4. Kafka producer 跟 binlog reader 速度差 — lag 累積
 
@@ -226,7 +226,7 @@ Binlog reader 從 MySQL 讀 1000 event/sec、Kafka producer 寫得只有 800 eve
 - 監控 *CDC consumer lag*：對 Debezium 看 Kafka Connect 的 `source-record-poll-rate` vs `source-record-write-rate`
 - Kafka producer tuning：`batch.size` / `linger.ms` / `compression.type=snappy`
 - Kafka broker capacity：partition 數量 ≥ Debezium task 數量、避免 partition 瓶頸
-- 不要把 *過多 table* 給單一 Debezium connector — 用 *table grouping*（按 traffic 拆 connector）
+- 避免把 *過多 table* 給單一 Debezium connector — 用 *table grouping*（按 traffic 拆 connector）
 
 ### 5. Schema change 跟 downstream consumer 不同步
 
@@ -276,13 +276,21 @@ CDC 是 *binlog 第二消費者*、需要 *GTID + binlog ROW format*（[Replicat
 | 啟用成本        | binlog ROW + GTID（基本 MySQL replication setup） | logical replication slot + publication                      |
 | Snapshot        | `SELECT *` + binlog catchup                       | logical replication initial sync                            |
 
-詳見 [PostgreSQL Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/) — 不是替代、是不同 abstraction。
+詳見 [PostgreSQL Logical Replication + Debezium](/backend/01-database/vendors/postgresql/logical-replication-debezium/) — 這是 sibling 對照，用來區分不同 abstraction。
 
 ### 跟 Aurora MySQL
 
 Aurora MySQL 5.7 / 8.0 都支援 binlog + GTID、CDC 可用。但 Aurora 推薦走 *Aurora-native database activity streams*（不同 abstraction）— 跟 Debezium 共存但有 overlapping。生產上 Debezium 仍是 cross-cloud 跟 vendor-neutral 選項、優先用 Debezium。
 
 詳見 [Aurora vendor page](/backend/01-database/vendors/aurora/)。
+
+## Production case：Shopify sharded MySQL CDC
+
+Sharded MySQL CDC 的核心責任是把多個 shard 的 binlog 轉成可消費、可回放、可觀測的事件流。[Shopify Debezium CDC over sharded MySQL](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/) 提供的工程訊號是 100+ shard、約 150 個 Debezium connector、BFCM 期間 100K records/sec，以及 snapshot lock 與 oversized payload 對 CDC pipeline 的壓力。
+
+這個案例要回收到三個操作判準。第一，connector 數量應跟 shard 拓撲一起設計，避免單一 connector 變成跨 shard bottleneck。第二，snapshot window 要排進 schema migration 與 event consumer 的變更計畫，避免 initial snapshot 把 production read path 壓滿。第三，oversized payload 要在 schema / outbox / topic 分流階段處理，避免 Kafka partition 與 downstream consumer 同時承受大訊息。
+
+Shopify 案例的下一步路由是把本篇和 [Database Sharding](/backend/knowledge-cards/database-sharding/) 一起讀。若讀者關心 broker 層的 partition、consumer lag 與 replay 策略，接到 [Kafka vendor](/backend/03-message-queue/vendors/kafka/)；若關心資料庫端壓力，回到 [Replication Topology](/backend/01-database/vendors/mysql/replication-topology/) 與 [Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/)。
 
 ## 相關連結
 

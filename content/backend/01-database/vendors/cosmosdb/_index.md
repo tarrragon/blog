@@ -245,6 +245,12 @@ Cosmos DB overview 目前完成 Azure global NoSQL 判斷。下一輪 deep artic
 
 Cosmos DB case 的讀法是分開看三種壓力：Minecraft Earth 提供 global partition 與 RU/s 訊號，ASOS 提供季節性零售尖峰訊號，Microsoft 365 提供 MongoDB API 相容遷移與 Azure dogfood 訊號。
 
+## 反向 sibling 路由
+
+Cosmos DB 的反向 sibling 路由用來把 Azure global NoSQL、DynamoDB 與 document migration 分開。若讀者從 DynamoDB 過來，先比較 RU/s、partition key、multi-region conflict 與 API model；若讀者從 MongoDB 過來，先把 API compatibility 當 migration hypothesis，再用 aggregation、index、change stream / Change Feed 行為驗證；若需求其實是 SQL strong consistency，轉到 [Spanner vendor](/backend/01-database/vendors/spanner/) 或 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)。
+
+這條路由的判準是 API model 是否已固定。Cosmos DB 的 multi-model 是產品入口，不代表同一套資料可以在多個 API 之間自由切換；partition key、index policy、RU/s 與 consistency level 一旦進 production，就會成為 migration 與成本邊界。
+
 ## 常見陷阱
 
 - **Strong consistency 用太多**：多數互動式業務用 session consistency 就能滿足讀寫體驗
@@ -260,4 +266,5 @@ Cosmos DB case 的讀法是分開看三種壓力：Minecraft Earth 提供 global
 - 上游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) / [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 - 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（MongoDB → Cosmos 範例）
 - 跨模組：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)
+- Last reviewed：2026-05-22（API compatibility / consistency / RU model 屬時間敏感 claim）
 - 官方：[Azure Cosmos DB](https://azure.microsoft.com/products/cosmos-db/)、[Cosmos DB consistency levels](https://learn.microsoft.com/azure/cosmos-db/consistency-levels)

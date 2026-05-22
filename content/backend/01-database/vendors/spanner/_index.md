@@ -213,6 +213,12 @@ Spanner overview 目前完成 global SQL 判斷。下一輪 deep article / playb
 
 Spanner case 的讀法是先看一致性需求，再看容量數字。10 億 req/sec 證明它能水平擴展，但讀者真正要回收的是「計費、訂閱、庫存、交易順序」這類需要 global external consistency 的產品壓力。
 
+## 反向 sibling 路由
+
+Spanner 的反向 sibling 路由用來把 global strong consistency 和雲端代管責任一起判讀。若讀者從 PostgreSQL / MySQL 過來，先確認是否真的需要 external consistency；若只是 managed SQL 與 replica scaling，回 [Aurora vendor](/backend/01-database/vendors/aurora/)；若要 PostgreSQL-like distributed SQL 且需要自管或多雲彈性，對照 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)；若 access pattern 是固定 KV / document，先看 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) 或 [Cosmos DB vendor](/backend/01-database/vendors/cosmosdb/)。
+
+這條路由的判準是交易順序是否跨 region 影響產品正確性。Spanner 的價值在 external consistency、schema 與 SQL 能力、全球 deployment 與 Google Cloud operation model 的組合；若產品只需要 eventual / session consistency，較輕的 NoSQL 或 managed SQL 常有更低成本。
+
 ## 常見陷阱
 
 - **誤以為跨 region 強一致沒有延遲代價**：跨洲 quorum 100-200ms 是物理成本
@@ -227,4 +233,5 @@ Spanner case 的讀法是先看一致性需求，再看容量數字。10 億 req
 - 平行：[Aurora vendor](/backend/01-database/vendors/aurora/)、[DynamoDB vendor](/backend/01-database/vendors/dynamodb/)、[CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)
 - 上游：[1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 - 跨模組：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) — 全球 OLTP 的容量規劃特殊性
+- Last reviewed：2026-05-22（processing units / PostgreSQL interface / TrueTime 文件屬時間敏感 claim）
 - 官方：[Cloud Spanner](https://cloud.google.com/spanner)、[TrueTime: Time Distributed in Spanner](https://cloud.google.com/spanner/docs/true-time-external-consistency)

@@ -234,6 +234,12 @@ Aurora overview 目前完成 managed SQL 判斷。下一輪 deep article / playb
 
 Aurora case 的讀法是看 operation transfer 如何變成容量與成本結果。DraftKings 與 FanDuel 提供 peak OLTP 訊號，Standard Chartered 提供合規分區訊號，Netflix 則提供多套 RDBMS 整併到 managed SQL 的組織與成本訊號。
 
+## 反向 sibling 路由
+
+Aurora 的反向 sibling 路由用來避免把 managed SQL 誤讀成唯一升級方向。若讀者從 PostgreSQL / MySQL 章節過來，先對照 [PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/) 與 [MySQL → Aurora](/backend/01-database/vendors/mysql/migrate-to-aurora/)；若核心需求是 connection surge，補讀 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) 與 [Lemino case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)；若核心需求是 multi-region active-active write，轉到 [Spanner vendor](/backend/01-database/vendors/spanner/) 或 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)。
+
+這條路由的判準是先問「保留 SQL + 轉移 operation」是否足夠。答案成立時，Aurora 是 RDS / 自管 MySQL / 自管 PostgreSQL 的 managed endpoint；答案需要改成 global quorum、partition-key access pattern 或 document API 時，Aurora 應退到對照組，而非成為最後選項。
+
 ## 常見陷阱
 
 - **誤以為 Aurora 等於無限擴**：寫吞吐仍受 primary 限制，容量曲線和 distributed SQL 不同
@@ -249,4 +255,5 @@ Aurora case 的讀法是看 operation transfer 如何變成容量與成本結果
 - 上游：[1.3 Transaction Boundary](/backend/01-database/transaction-boundary/) / [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 - 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（從 RDS / 自管遷到 Aurora）
 - 跨模組：[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)
+- Last reviewed：2026-05-22（Aurora storage / Serverless / Global Database / I/O-Optimized 屬時間敏感 claim）
 - 官方：[Amazon Aurora](https://aws.amazon.com/rds/aurora/)、[Aurora storage architecture](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.StorageReliability.html)
