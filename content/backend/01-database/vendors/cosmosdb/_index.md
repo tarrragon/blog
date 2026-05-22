@@ -1,7 +1,7 @@
 ---
 title: "Azure Cosmos DB"
 date: 2026-05-13
-description: "全球分散式 multi-model DB、5 個 [consistency level](/backend/knowledge-cards/consistency-level/)s、Microsoft 自家 dogfood 證據"
+description: "全球分散式 multi-model DB、5 個 consistency levels、Microsoft 自家 dogfood 證據"
 weight: 9
 tags: ["backend", "database", "vendor", "cosmosdb", "multi-model", "global"]
 ---
@@ -12,13 +12,13 @@ Azure Cosmos DB 是 Microsoft 全球分散式 multi-model database、提供 SQL 
 
 Cosmos DB 服務頁的教學目標是把 API model、consistency level、RU/s、logical partition 與 multi-region write 放在同一個 Azure 服務決策中。讀者讀完後要能判斷 Cosmos DB 是遷移相容層、全球 NoSQL 平台，還是特定 Azure workload 的容量抽象。
 
-| 學習段            | 核心問題                                                        | 對應段落                   |
-| ----------------- | --------------------------------------------------------------- | -------------------------- |
-| API model         | SQL API、MongoDB API、Cassandra API 各自服務哪種遷移或資料形狀  | 定位、跟其他 vendor 的取捨 |
-| Consistency level | session、bounded staleness、strong consistency 如何改變產品語意 | 容量規劃要點、常見陷阱     |
-| RU/s capacity     | request unit 如何把 query、index、payload 轉成成本與節流        | 容量特性、案例對照         |
-| Global write      | multi-region write 何時值得承擔衝突與一致性成本                 | 適用場景、案例對照         |
-| 替代路由          | 何時用 MongoDB、DynamoDB、Spanner、PostgreSQL 或 analytics      | 不適用場景、下一步路由     |
+| 學習段            | 核心問題                                                        | 對應段落                                                                       |
+| ----------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| API model         | SQL API、MongoDB API、Cassandra API 各自服務哪種遷移或資料形狀  | 定位、跟其他 vendor 的取捨                                                     |
+| Consistency level | session、bounded staleness、strong consistency 如何改變產品語意 | 容量規劃要點、[Consistency Level](/backend/knowledge-cards/consistency-level/) |
+| RU/s capacity     | request unit 如何把 query、index、payload 轉成成本與節流        | 容量特性、案例對照                                                             |
+| Global write      | multi-region write 何時值得承擔衝突與一致性成本                 | 適用場景、案例對照                                                             |
+| 替代路由          | 何時用 MongoDB、DynamoDB、Spanner、PostgreSQL 或 analytics      | 不適用場景、下一步路由                                                         |
 
 ## 定位：multi-model + multi-region write
 
@@ -34,7 +34,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 **5 個 consistency levels**（從強到弱）：
 
-1. **Strong**：linearizable、跨 region [quorum](/backend/knowledge-cards/quorum/)、最高 latency
+1. **Strong**：在支援的 account / region 配置內提供最強一致性，通常帶來最高 latency
 2. **Bounded staleness**：訂版本 / 時間差異上限
 3. **Session**：同 session 內強一致（最常用）
 4. **Consistent prefix**：保證寫入順序
@@ -53,7 +53,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 **1. Azure 生態的 multi-model 需求**：
 
 - 同一服務多種 use case（document、graph、KV 共存）
-- 不想管多個 DB vendor
+- 想把多個 NoSQL 資料模型集中在 Azure 服務邊界內治理
 - 對應案例：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 自家用 Cosmos DB 撐分析平台
 
 **2. 全球零售 + 季節性高峰**：
@@ -70,14 +70,14 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 **4. MongoDB 應用想要 *managed + 全球分散***：
 
 - Cosmos DB MongoDB API wire protocol compatible
-- 應用層幾乎不必改、底層改成分散式架構
+- 應用層主要驗證相容差異，底層改成分散式架構
 - 對應案例：[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — MongoDB → Cosmos DB MongoDB API、planet-scale 分析
 
 **5. 想用 multi-region active-active write**：
 
 - 不像 Spanner / Aurora DSQL 是 PC 系統、Cosmos DB 是 AP 系統
 - 用 LWW（Last-Writer-Wins）或 stored procedure 處理 conflict
-- 不保證 [linearizability](/backend/knowledge-cards/linearizability/)、可接受 eventual / session consistency
+- 適合可接受 eventual / session consistency 的 multi-region write workload；需要 global SQL linearizability 時轉 Spanner / Aurora DSQL
 
 ## 不適用場景
 
@@ -88,7 +88,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 **2. Linearizable 全球 OLTP**：
 
-- Cosmos DB Strong consistency 是 *線性化 within region*、跨 region 不是 linearizable
+- Cosmos DB Strong consistency 的適用範圍要按 account / region 配置判讀；全球 linearizable SQL 需求通常轉 Spanner / Aurora DSQL
 - 替代：Spanner / Aurora DSQL（真正全球 linearizable）
 
 **3. 預算極敏感的小 workload**：
@@ -98,13 +98,13 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 **4. 純 OLAP 分析**：
 
-- Cosmos DB 是 OLTP / document、不是 OLAP
+- Cosmos DB 定位在 OLTP / document，analytics workload 交給 Synapse、BigQuery 或 Snowflake
 - 替代：Azure Synapse、BigQuery、Snowflake
 
 **5. 嚴格 ACID 跨 partition transaction**：
 
 - Cosmos DB Transaction 限 same logical partition
-- 跨 partition 的 multi-row transaction 不支援
+- 跨 partition 的 multi-row transaction 要改用 workflow、stored procedure 邊界或 distributed SQL
 - 替代：Spanner / Aurora DSQL
 
 ## 跟其他 vendor 的取捨
@@ -112,7 +112,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 **vs DynamoDB（AWS）**：
 
 - Cosmos DB：multi-model（5 API）、5 consistency levels、multi-region write
-- DynamoDB：KV only、binary consistency（strong / eventual）、Global Tables（multi-region write 但只是 LWW）
+- DynamoDB：KV 為主、strong / eventual consistency、Global Tables 以 LWW 處理 multi-region conflict
 - 選 Cosmos DB：Azure 生態、需要 multi-model、需要 consistency 細粒度控制
 - 選 DynamoDB：AWS 生態、純 KV、AWS-native 整合（Lambda、Streams）
 
@@ -121,7 +121,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 - Cosmos DB：AP 系統、5 consistency levels、multi-model
 - Spanner：CP 系統、external consistency、SQL only
 - 選 Cosmos DB：可接受 eventual / session、需要 multi-model
-- 選 Spanner：必須 linearizable、SQL workload
+- 選 Spanner：需要 [linearizability](/backend/knowledge-cards/linearizability/) 與 SQL workload
 
 **vs MongoDB Atlas**：
 
@@ -134,7 +134,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 - Cosmos DB Cassandra API：managed Azure
 - Cassandra / ScyllaDB：自管、跨雲
-- 選 Cosmos DB：Azure 生態、想 zero ops
+- 選 Cosmos DB：Azure 生態、想把 operation 交給 managed service
 - 選 Cassandra：跨雲、自管、極限 throughput tuning
 
 **vs Azure SQL Hyperscale**：
@@ -143,7 +143,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 - Azure SQL Hyperscale：傳統 SQL OLTP、storage / compute 分離、AWS Aurora 對應
 - 選 Cosmos DB：document model、global 分散
 - 選 Azure SQL：SQL workload、應用已用 SQL Server
-- 對應 [9.C32 Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — SQL 工作負載選 Hyperscale 不是 Cosmos
+- 對應 [9.C32 Clearent Azure SQL Hyperscale](/backend/09-performance-capacity/cases/clearent-azure-sql-hyperscale-payments/) — SQL 工作負載選 Hyperscale，document / NoSQL workload 才進 Cosmos DB
 
 **vs PostgreSQL（SQL baseline）**：
 
@@ -156,7 +156,7 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 
 - Aurora：AWS、SQL（PostgreSQL / MySQL）、single-region scaling
 - Cosmos DB：Azure、NoSQL / multi-model、global write
-- 兩者不是替代、是 cloud + data model 的兩個維度差異；同需求下選自家雲（AWS → Aurora、Azure → Cosmos / Azure SQL）
+- 兩者分別站在 cloud provider 與 data model 兩個維度；同需求下通常先看既有雲平台（AWS → Aurora、Azure → Cosmos / Azure SQL）
 
 **vs CockroachDB（cross-cloud distributed SQL）**：
 
@@ -194,11 +194,11 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 **5. Autoscale provisioned throughput**：
 
 - 訂 max RU/s、實際用多少算多少（10% min）
-- 適合：流量 unpredictable、不想 manage on-demand 成本
+- 適合：流量 unpredictable、想降低 on-demand 成本治理負擔
 
 **6. Serverless mode**：
 
-- 完全 on-demand、按 request 計費
+- 按 request 計費，適合稀疏與小流量 workload
 - 適合：dev / test、小流量、稀疏 workload
 
 ## 預計實作話題（後續擴充）
@@ -213,6 +213,28 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 - Cosmos DB for PostgreSQL（2022 新增、不同產品）
 - 跟 Azure Synapse Link 整合（OLTP / OLAP [federation](/backend/knowledge-cards/federation/)）
 
+## Anti-recommendation 與升級路由
+
+Cosmos DB 的 multi-model 能把遷移阻力降到很低，也會讓 API compatibility、RU/s、partition key 與 consistency level 同時變成設計責任。這一段先說何時維持單一 API model，再說何時升級 multi-region write、Synapse Link、MongoDB Atlas、Spanner 或 Azure SQL。
+
+| 機制 / 路線           | 維持簡單設計的條件                                  | 升級訊號                                                           | 主要引用路徑                                                                                                                   |
+| --------------------- | --------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| 單一 API model        | document / MongoDB / Cassandra / Table 語意清楚分工 | 多 API 共用同一資料語意、相容層行為差異開始影響 production         | [MongoDB vendor](/backend/01-database/vendors/mongodb/)、[Database](/backend/knowledge-cards/database/)                        |
+| Session consistency   | user session 內讀寫一致已滿足產品需求               | 金融 / 庫存 / 票務需要更強順序承諾                                 | [Consistency Level](/backend/knowledge-cards/consistency-level/)、[Linearizability](/backend/knowledge-cards/linearizability/) |
+| Provisioned RU/s      | 流量可預測、partition key 均勻                      | Black Friday、遊戲上線、全球事件帶來突發尖峰                       | [Hot Partition](/backend/knowledge-cards/hot-partition/)、[Peak Forecast](/backend/knowledge-cards/peak-forecast/)             |
+| Multi-region write    | single-region write + global read 已足夠            | regional write latency、region residency、active-active 是產品需求 | [RPO](/backend/knowledge-cards/rpo/)、[RTO](/backend/knowledge-cards/rto/)、[Stale Read](/backend/knowledge-cards/stale-read/) |
+| MongoDB Atlas         | Azure global distribution 是主訴求                  | 跨雲、原生 MongoDB 行為、Atlas ecosystem 是主訴求                  | [MongoDB vendor](/backend/01-database/vendors/mongodb/)                                                                        |
+| Spanner / CockroachDB | session / eventual consistency 可接受               | global SQL、strong transaction、cross-partition ACID 是核心需求    | [Spanner vendor](/backend/01-database/vendors/spanner/)、[CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)       |
+| Azure SQL Hyperscale  | document / NoSQL 是主要資料形狀                     | JOIN-heavy、transaction-heavy、SQL Server 生態是主需求             | [Aurora vendor](/backend/01-database/vendors/aurora/)                                                                          |
+
+Cosmos DB 的簡單路徑是先固定 API model 與 consistency level。每個 API 的相容範圍、index 行為與 query cost 都不同；單純因為「同一服務支援多模型」而混用 API，後續 migration、debug 與容量估算會變複雜。
+
+RU/s 的升級路徑要把 partition key 與 query shape 放在同一張圖。單純提高 RU/s 只能提高名義容量；logical partition 熱點、跨 partition query、index policy 與 payload size 仍會決定真實成本。
+
+## 已知 limitation 與後續路由
+
+Cosmos DB overview 目前完成 Azure global NoSQL 判斷。下一輪 deep article / playbook 應補 consistency level 選擇、RU/s cost model、partition key design、multi-region conflict、Change Feed、MongoDB API migration、Cassandra API migration 與 Synapse Link。
+
 ## 案例對照
 
 | 案例                                                                                              | 規模                                      | 教學重點                                                        |
@@ -221,12 +243,14 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 | [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)                 | 1.67 億 req / 24h、48ms p99               | 全球零售 Black Friday                                           |
 | [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)  | planet-scale analytics                    | MongoDB → Cosmos DB API-compatible 遷移、Microsoft 自家 dogfood |
 
+Cosmos DB case 的讀法是分開看三種壓力：Minecraft Earth 提供 global partition 與 RU/s 訊號，ASOS 提供季節性零售尖峰訊號，Microsoft 365 提供 MongoDB API 相容遷移與 Azure dogfood 訊號。
+
 ## 常見陷阱
 
-- **Strong consistency 用太多**：90% 業務用 session 就夠、不必每個讀都 strong
+- **Strong consistency 用太多**：多數互動式業務用 session consistency 就能滿足讀寫體驗
 - **partition key 只用 user_id**：某些業務 user 集中（VIP、bot）會 hot
-- **不用 Change Feed**：寫入 + 通知都自己寫、應該 leverage Change Feed
-- **MongoDB API behavior 假設**：API compat 不等於行為完全相同、要驗證 aggregation pipeline / index 行為
+- **忽略 Change Feed**：寫入後通知、投影與同步流程適合先評估 Change Feed
+- **MongoDB API behavior 假設**：API compat 仍要驗證 aggregation pipeline / index 行為
 - **忽略 multi-region 成本乘數**：開 3 region active-active = 3 倍 RU 成本
 
 ## 下一步路由

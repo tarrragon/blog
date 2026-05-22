@@ -236,25 +236,26 @@ Managed sharding 的簡單路徑是先確認團隊想轉移哪一層責任。Pla
 | Partitioning（range / list / hash / sub-partition）  | [partitioning](partitioning/)                                   | Deep article                 |
 | PITR + Backup strategy                               | [pitr-backup](pitr-backup/)                                     | Deep article                 |
 | Lock contention（gap / next-key / deadlock）         | [lock-contention](lock-contention/)                             | Deep article                 |
+| Hands-on 操作路線                                    | [hands-on](hands-on/)                                           | 操作型章節群                 |
 | 5.7 → 8.0 major version upgrade                      | [major-version-upgrade](major-version-upgrade/)                 | Migration playbook（Type E） |
 | 從自管 MySQL 遷到 Aurora MySQL                       | [migrate-to-aurora](migrate-to-aurora/)                         | Migration playbook（Type C） |
 | 從自管 MySQL 遷到 PlanetScale                        | [migrate-to-planetscale](migrate-to-planetscale/)               | Migration playbook（Type E） |
 | 自管 Vitess 遷到 PlanetScale                         | [migrate-vitess-to-planetscale](migrate-vitess-to-planetscale/) | Migration playbook（Type C） |
 | 從 MySQL 遷到 PostgreSQL                             | [migrate-to-postgresql](migrate-to-postgresql/)                 | Migration playbook           |
 
-## 後續擴充候選
+## 補充正文路由
 
-當前 deep article + migration playbook 已 cover 17 個主題、涵蓋 ops / schema / failover / tuning / SQL features / sharding / backup / migration 八大維度。未來可考慮深化：
+當前 deep article、migration playbook、補充正文與 hands-on 已 cover ops / schema / failover / tuning / SQL features / sharding / backup / migration / security / audit / document / OLAP / memory / metadata lock 等維度。下列補充正文用來承接 overview 中提到的延伸議題：
 
-- **Encryption at rest + TLS in transit + key management**：對應 PG TLS-mTLS 議題
-- **Audit log + SIEM 整合**：MySQL Enterprise Audit Plugin 跟 Splunk / Elastic Security 整合
-- **MySQL Document Store（X-Protocol）**：少用但對特定 use case 有興趣
-- **Multi-source replication topology**：1 個 replica 從 N 個 primary 拉、用於 sharded environment 整合
-- **HeatWave（MySQL OLAP add-on）**：Oracle 推的 HTAP solution、跟 ClickHouse / Snowflake 對比
-- **Cross-buffer memory contention deep dive**：buffer pool / connection thread / temp table / sort buffer 之間的 RAM 競爭、跟 OS swap 互動
-- **Metadata lock deep dive**：DDL / long-running SELECT / FK 互動造成的 stalls
+- **[Encryption at rest + TLS in transit + key management](encryption-tls-key-management/)**：對應 PG TLS-mTLS 議題
+- **[Audit log + SIEM 整合](audit-log-siem/)**：MySQL Enterprise Audit Plugin 跟 Splunk / Elastic Security 整合
+- **[MySQL Document Store（X-Protocol）](document-store-x-protocol/)**：少用但對特定 use case 有興趣
+- **[Multi-source replication topology](multi-source-replication/)**：1 個 replica 從 N 個 primary 拉、用於 sharded environment 整合
+- **[HeatWave（MySQL OLAP add-on）](heatwave-olap-addon/)**：Oracle 推的 HTAP solution、跟 ClickHouse / Snowflake 對比
+- **[Cross-buffer memory contention deep dive](cross-buffer-memory-contention/)**：buffer pool / connection thread / temp table / sort buffer 之間的 RAM 競爭、跟 OS swap 互動
+- **[Metadata lock deep dive](metadata-lock-deep-dive/)**：DDL / long-running SELECT / FK 互動造成的 stalls
 
-上述候選先接既有路由。Encryption / TLS / key management 先接 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/) 與 [Secret Management](/backend/knowledge-cards/secret-management/)；audit log 先接 [Audit Log](/backend/knowledge-cards/audit-log/) 與 07 資安資料保護；Document Store 先接 [MongoDB vendor](/backend/01-database/vendors/mongodb/) 與 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)；multi-source replication 先接 [Replication Topology](replication-topology/)；HeatWave 先接 OLAP 替代路由；memory contention 先接 [InnoDB Tuning](innodb-tuning/)；metadata lock 先接 [Lock Contention](lock-contention/) 與 [Online Schema Change Tools](online-schema-change-tools/)。
+上述補充篇已完成正文，並保留既有路由。Encryption / TLS / key management 接 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/) 與 [Secret Management](/backend/knowledge-cards/secret-management/)；audit log 接 [Audit Log](/backend/knowledge-cards/audit-log/) 與 07 資安資料保護；Document Store 接 [MongoDB vendor](/backend/01-database/vendors/mongodb/) 與 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)；multi-source replication 接 [Replication Topology](replication-topology/)；HeatWave 接 OLAP 替代路由；memory contention 接 [InnoDB Tuning](innodb-tuning/)；metadata lock 接 [Lock Contention](lock-contention/) 與 [Online Schema Change Tools](online-schema-change-tools/)。
 
 ## 已知 limitation（多輪 audit 結論）
 
@@ -303,6 +304,7 @@ MySQL 真實案例的責任是把大規模 OLTP 的機制壓力放回正文。�
 
 - 完整 T1 對照：[01-database vendors index](/backend/01-database/vendors/)
 - 平行：[PostgreSQL vendor](/backend/01-database/vendors/postgresql/)、[Aurora vendor](/backend/01-database/vendors/aurora/)（managed MySQL）
+- 操作：[MySQL Hands-on](/backend/01-database/vendors/mysql/hands-on/)（local lab、ProxySQL、OSC、replication failover、backup restore、Vitess sandbox）
 - 上游：[1.1 高併發資料存取](/backend/01-database/high-concurrency-access/)、[1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)
 - 下游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)（MySQL 不適用時的替代）
 - 跨模組：[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) — connection / replication / lock contention 常見 MySQL bottleneck
