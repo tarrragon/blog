@@ -25,7 +25,7 @@ RPO 要由業務定義。若付款、訂單、庫存只允許秒級遺失，back
 
 ## Physical vs Logical
 
-Physical vs logical 的核心責任是區分 byte-level recovery 與 row-level replication。Physical replica 保留 PostgreSQL cluster 層級狀態；logical replication 提供 table / publication 層級彈性。
+Physical vs logical 的核心責任是區分 byte-level recovery 與 row-level replication。Physical replica 保留 PostgreSQL cluster 層級狀態；[logical replication](/backend/knowledge-cards/logical-replication/) 提供 table / publication 層級彈性。
 
 | 面向     | Physical standby          | Logical replication                 |
 | -------- | ------------------------- | ----------------------------------- |

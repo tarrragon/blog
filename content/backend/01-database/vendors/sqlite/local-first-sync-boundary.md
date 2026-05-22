@@ -89,7 +89,7 @@ Delete propagation 的核心責任是讓 server、device、backup 與 sync queue
 | Hard delete | privacy / compliance        | local purge、backup exclusion、sync confirmation |
 | Redaction   | support bundle / log        | export 時遮罩 sensitive fields                   |
 
-刪除在同步系統裡是一個跨裝置生命週期。若資料跨裝置同步，delete 需要 tombstone、ack、retry、backup retention 與 evidence；這些責任要接到 [Data Protection](/backend/07-security-data-protection/data-protection-and-masking-governance/)。
+刪除在同步系統裡是一個跨裝置生命週期。若資料跨裝置同步，delete 需要 [tombstone](/backend/knowledge-cards/tombstone/)、ack、retry、backup retention 與 evidence；這些責任要接到 [Data Protection](/backend/07-security-data-protection/data-protection-and-masking-governance/)。
 
 ## Production 踩雷
 

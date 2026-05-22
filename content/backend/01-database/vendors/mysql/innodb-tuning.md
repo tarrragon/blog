@@ -33,7 +33,7 @@ tags: ["backend", "database", "mysql", "innodb", "performance", "tuning", "deep-
 
 ## Knob 1：Buffer pool — 把 working set 拉進 RAM
 
-InnoDB buffer pool 是 *page cache* — 從 disk 讀過的 16 KB page 快取在 RAM、下次 query 直接 RAM 讀。Buffer pool 越大、cache hit ratio 越高、disk IO 越少。
+[InnoDB buffer pool](/backend/knowledge-cards/buffer-pool/) 是 *page cache* — 從 disk 讀過的 16 KB page 快取在 RAM、下次 query 直接 RAM 讀。Buffer pool 越大、cache hit ratio 越高、disk IO 越少。
 
 **Sizing**：
 

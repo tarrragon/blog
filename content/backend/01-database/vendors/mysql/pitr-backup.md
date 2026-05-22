@@ -12,7 +12,7 @@ tags: ["backend", "database", "mysql", "backup", "pitr", "deep-article"]
 
 「我們每天 mysqldump 一次、放 S3、沒問題吧」是個常見錯誤。問「能不能 restore 到 5 分鐘前」、答案會是 *不能*。Dump-based backup 只能 restore 到 *dump 那個瞬間*、5 分鐘前的事故無法 recover、必須等下次 dump。
 
-**真正的 backup strategy 是 PITR（point-in-time recovery）**：
+**真正的 backup strategy 是 [PITR（point-in-time recovery）](/backend/knowledge-cards/point-in-time-recovery/)**：
 
 - *能 restore 到任意過去時間點*（RPO 取決於 binlog flush 頻率、可接近 0）
 - 由 *full backup 基線* + *binlog 連續流*（從 backup 點到目標時間點的 incremental delta）組成

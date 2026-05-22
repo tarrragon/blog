@@ -7,7 +7,7 @@ tags: ["backend", "database", "mysql", "replication", "multi-source"]
 
 MySQL multi-source replication 的核心責任是讓一個 replica 從多個 source 接收資料。這種拓撲常用於資料整併、分庫匯總、migration staging、報表集中或多個 bounded context 的 read consolidation。
 
-本文的判讀錨點是：multi-source replication 是 consolidation pattern，而非 multi-primary conflict resolution。每個 channel 要有獨立 source、schema scope、lag、error handling 與 ownership。
+本文的判讀錨點是：multi-source replication 是 consolidation pattern，而非 multi-primary conflict resolution。每個 [replication channel](/backend/knowledge-cards/replication-channel/) 要有獨立 source、schema scope、lag、error handling 與 ownership。
 
 ## Use Cases
 

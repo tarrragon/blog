@@ -7,7 +7,7 @@ tags: ["backend", "database", "mysql", "memory", "performance"]
 
 MySQL cross-buffer memory contention 的核心責任是把 MySQL memory tuning 從單一 buffer pool 參數擴展到整體記憶體競爭。InnoDB buffer pool、redo log buffer、sort buffer、join buffer、tmp table、thread stack、connection memory、OS page cache 與 container limit 會共同決定 latency 與 OOM 風險。
 
-本文的判讀錨點是：MySQL memory 問題常來自「每連線 / 每操作」記憶體乘上 concurrency，而非只來自全域 buffer pool。調大單一 buffer 前，要先看 workload 與同時執行的 query。
+本文的判讀錨點是：MySQL memory 問題常來自[「每連線 / 每操作」記憶體](/backend/knowledge-cards/per-connection-memory/)乘上 concurrency，而非只來自全域 buffer pool。調大單一 buffer 前，要先看 workload 與同時執行的 query。
 
 ## Memory Surfaces
 

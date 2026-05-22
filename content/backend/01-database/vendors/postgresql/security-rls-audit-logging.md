@@ -81,7 +81,7 @@ Operational evidence 的核心責任是讓安全設定可驗證。每次 release
 2. RLS test：tenant A / tenant B / support / admin 的可見性測試。
 3. Audit sample：DDL、sensitive read、failed access 是否進 log。
 4. Pooler compatibility：`SET LOCAL app.tenant_id` 是否跟 transaction 對齊。
-5. Break-glass drill：emergency access 是否可申請、可回收、可審查。
+5. [Break-glass](/backend/knowledge-cards/break-glass-access/) drill：emergency access 是否可申請、可回收、可審查。
 
 Evidence 要保存在 release artifact。Security 設定只有文件描述時，incident 後難以證明它真的生效。
 

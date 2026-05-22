@@ -11,7 +11,7 @@ SQLite SQL dialect and index limits 的核心責任是說明 SQLite 和 server S
 
 ## Type Affinity
 
-Type affinity 的核心責任是定義資料寫入時如何被保存與比較。SQLite 官方 [Datatypes](https://www.sqlite.org/datatype3.html) 文件說明 SQLite 使用 dynamic typing，型別關聯在 value 層與 column affinity 層共同作用；[STRICT tables](https://www.sqlite.org/stricttables.html) 則提供較嚴格的型別檢查。
+[Type affinity](/backend/knowledge-cards/type-affinity/) 的核心責任是定義資料寫入時如何被保存與比較。SQLite 官方 [Datatypes](https://www.sqlite.org/datatype3.html) 文件說明 SQLite 使用 dynamic typing，型別關聯在 value 層與 column affinity 層共同作用；[STRICT tables](https://www.sqlite.org/stricttables.html) 則提供較嚴格的型別檢查。
 
 | 議題      | SQLite 行為重點                   | Production 影響                             |
 | --------- | --------------------------------- | ------------------------------------------- |

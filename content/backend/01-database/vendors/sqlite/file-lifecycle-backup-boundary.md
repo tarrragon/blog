@@ -70,7 +70,7 @@ Restore drill 的交付物應接回 [Observability Evidence Package](/backend/04
 
 ## Corruption recovery：先保全證據，再決定修復或還原
 
-SQLite corruption recovery 的核心責任是區分「資料庫檔案本身受損」與「application 寫入了錯誤資料」。前者要走 file-level evidence、`.recover`、backup restore 與 filesystem / hardware investigation；後者要走資料修復、migration rollback 或 business reconciliation。
+SQLite [corruption recovery](/backend/knowledge-cards/corruption-recovery/) 的核心責任是區分「資料庫檔案本身受損」與「application 寫入了錯誤資料」。前者要走 file-level evidence、`.recover`、backup restore 與 filesystem / hardware investigation；後者要走資料修復、migration rollback 或 business reconciliation。
 
 | 觀察訊號                      | 優先判讀                    | 下一步路由                                                                                                          |
 | ----------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
