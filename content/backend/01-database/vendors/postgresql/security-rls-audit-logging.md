@@ -5,7 +5,7 @@ description: "PostgreSQL role、grant、Row Level Security、pgAudit、log polic
 tags: ["backend", "database", "postgresql", "security", "rls", "audit"]
 ---
 
-PostgreSQL security / RLS / audit logging 的核心責任是把資料庫安全拆成存取邊界、資料列可見性與操作證據。PostgreSQL role / grant 決定誰能連線與操作 schema；Row Level Security 決定同一張表中哪些 row 對某個 role 可見；audit logging 則把敏感操作轉成可查詢、可保留、可告警的證據。
+PostgreSQL security / RLS / audit logging 的核心責任是把資料庫安全拆成存取邊界、資料列可見性與操作證據。PostgreSQL role / grant 決定誰能連線與操作 schema；[Row Level Security](/backend/knowledge-cards/row-level-security/) 決定同一張表中哪些 row 對某個 role 可見；audit logging 則把敏感操作轉成可查詢、可保留、可告警的證據。
 
 本文的判讀錨點是：資料庫安全是 application auth 的下游防線。Application 仍要負責身份、session、租戶與 workflow；PostgreSQL security layer 負責在資料邊界補上 least privilege、tenant isolation 與 forensic evidence。
 

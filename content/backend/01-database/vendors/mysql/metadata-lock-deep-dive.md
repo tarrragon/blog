@@ -5,7 +5,7 @@ description: "MySQL metadata lock、DDL blocking、long transaction、online sch
 tags: ["backend", "database", "mysql", "metadata-lock", "ddl"]
 ---
 
-MySQL metadata lock deep dive 的核心責任是說明 DDL、transaction 與 table metadata 之間的阻塞關係。MySQL 在查詢 table 時會取得 metadata lock；DDL 需要等待既有 metadata lock 釋放，等待中的 DDL 又會阻塞後續查詢，形成 production 常見雪崩。
+MySQL metadata lock deep dive 的核心責任是說明 DDL、transaction 與 table metadata 之間的阻塞關係。MySQL 在查詢 table 時會取得 [metadata lock](/backend/knowledge-cards/metadata-lock/)；DDL 需要等待既有 metadata lock 釋放，等待中的 DDL 又會阻塞後續查詢，形成 production 常見雪崩。
 
 本文的判讀錨點是：MDL 事故通常來自 DDL 排隊在長交易後面，並把後續 query 一起擋住。解法要同時處理 long transaction、DDL window、OSC 工具與 observability。
 

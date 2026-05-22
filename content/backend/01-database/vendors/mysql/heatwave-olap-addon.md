@@ -7,7 +7,7 @@ tags: ["backend", "database", "mysql", "heatwave", "olap"]
 
 MySQL HeatWave OLAP add-on 的核心責任是判斷 OLTP database 內建 analytics 加速何時比拆出 OLAP 系統更划算。HeatWave 這類 add-on 的價值是降低資料搬運與平台數量，但它也把 analytics workload、成本、freshness 與 query governance 帶回 MySQL 生態。
 
-本文的判讀錨點是：OLAP add-on 解決的是特定 analytics workload 的 proximity 問題，而非 data warehouse 的完整替代。選型要看資料量、query pattern、freshness、concurrency、成本與團隊能力。
+本文的判讀錨點是：OLAP add-on 做的是把分析查詢從 OLTP 路徑[卸載](/backend/knowledge-cards/olap-offload/)到專用引擎，解決特定 analytics workload 的 proximity 問題，而非 data warehouse 的完整替代。選型要看資料量、query pattern、freshness、concurrency、成本與團隊能力。
 
 官方文件路由的核心責任是固定 HeatWave claim。實作前先查 [MySQL HeatWave User Guide](https://dev.mysql.com/doc/heatwave/en/index.html)；本文最後檢查日是 2026-05-22。
 

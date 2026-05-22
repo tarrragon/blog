@@ -5,7 +5,7 @@ description: "PostgreSQL logical decoding output plugin、pgoutput、wal2json、
 tags: ["backend", "database", "postgresql", "cdc", "logical-decoding"]
 ---
 
-PostgreSQL logical decoding plugins 的核心責任是把 WAL 中的變更轉成外部消費者可理解的事件格式。PostgreSQL 官方 logical decoding 文件說明，logical decoding 透過 replication slot 將 WAL 變更解碼成 plugin output；output plugin 決定外部看到的是 PostgreSQL protocol、JSON、測試文字或自訂格式。
+PostgreSQL logical decoding plugins 的核心責任是把 WAL 中的變更轉成外部消費者可理解的事件格式。PostgreSQL 官方 logical decoding 文件說明，logical decoding 透過 [replication slot](/backend/knowledge-cards/replication-slot/) 將 WAL 變更解碼成 plugin output；output plugin 決定外部看到的是 PostgreSQL protocol、JSON、測試文字或自訂格式。
 
 本文的判讀錨點是：plugin 選型是 CDC contract 決策。它影響 schema evolution、事件欄位、delete 表示、transaction boundary、consumer compatibility、slot lag 與故障復原。
 

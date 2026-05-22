@@ -7,7 +7,7 @@ tags: ["backend", "database", "sqlite", "wal", "locking", "deep-article"]
 
 > 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 的 single-file / embedded 定位；本文聚焦 *WAL concurrency、single writer boundary、`SQLITE_BUSY` 與 checkpoint strategy*。
 
-SQLite WAL concurrency 的核心責任是讓 reader / writer 衝突下降，同時保留單檔案資料庫的寫入邊界。WAL mode 把寫入 append 到 `-wal` sidecar file，reader 可以從 main database file 加 WAL snapshot 讀取一致視圖；這讓 read-heavy workload 能比 rollback journal mode 更順。但 SQLite 仍只有一條 writer path，長交易、背景 migration、慢 disk 或多 process 寫入都會在這條 path 上排隊。
+SQLite WAL concurrency 的核心責任是讓 reader / writer 衝突下降，同時保留單檔案資料庫的寫入邊界。[WAL mode](/backend/knowledge-cards/write-ahead-log/) 把寫入 append 到 `-wal` sidecar file，reader 可以從 main database file 加 WAL snapshot 讀取一致視圖；這讓 read-heavy workload 能比 rollback journal mode 更順。但 SQLite 仍遵循 [single writer model](/backend/knowledge-cards/single-writer-model/)、只有一條 writer path，長交易、背景 migration、慢 disk 或多 process 寫入都會在這條 path 上排隊。
 
 本文的判讀錨點是：WAL 提升的是 reader concurrency，治理的是 writer queue。當服務看到 `SQLITE_BUSY`、WAL file 持續變大、checkpoint duration 變長或偶發 commit latency spike，問題通常在 transaction duration、checkpoint cadence、filesystem lock 或 process ownership，而非單純「資料庫太小」。
 

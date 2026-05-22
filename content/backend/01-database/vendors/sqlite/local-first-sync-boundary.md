@@ -7,9 +7,9 @@ tags: ["backend", "database", "sqlite", "local-first", "sync", "deep-article"]
 
 > 本文是 [SQLite](/backend/01-database/vendors/sqlite/) overview 的 implementation-layer deep article。Overview 已說明 SQLite 適合 local-first / offline-first 場景；本文聚焦 *SQLite local store 與 multi-device sync protocol 的責任分界*。
 
-SQLite local-first sync boundary 的核心責任是把「本機可用」和「多端一致」分成兩個問題。SQLite 很適合保存 device-local state；但它不提供 identity、transport、conflict resolution、delete propagation、server authority 或 audit trail。當資料要跨裝置、跨使用者或跨服務同步時，SQLite 只是 local replica / working copy。
+SQLite local-first sync boundary 的核心責任是把「本機可用」和「多端一致」分成兩個問題。SQLite 很適合保存 device-local state；但它不提供 identity、transport、[conflict resolution](/backend/knowledge-cards/conflict-resolution/)、delete propagation、server authority 或 audit trail。當資料要跨裝置、跨使用者或跨服務同步時，SQLite 只是 local replica / working copy。
 
-本文的判讀錨點是：local-first 的產品價值來自離線可用，工程成本來自同步語意。SQLite 解的是 local durability；sync layer 解的是資料合併、順序、權威來源與錯誤修復。
+本文的判讀錨點是：[local-first](/backend/knowledge-cards/local-first/) 的產品價值來自離線可用，工程成本來自同步語意。SQLite 解的是 local durability；sync layer 解的是資料合併、順序、權威來源與錯誤修復。
 
 ## Local state taxonomy
 

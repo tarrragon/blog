@@ -5,7 +5,7 @@ description: "MySQL Document Store、X Protocol、JSON collection、SQL interope
 tags: ["backend", "database", "mysql", "document-store", "json"]
 ---
 
-MySQL Document Store / X Protocol 的核心責任是說明 MySQL 如何在 relational engine 內提供 JSON document workflow。Document Store 讓 application 透過 X Protocol 與 CRUD API 操作 collection，但資料仍落在 MySQL 的 storage、transaction、backup 與 permission 模型裡。
+MySQL Document Store / X Protocol 的核心責任是說明 MySQL 如何在 relational engine 內提供 JSON document workflow。[Document Store](/backend/knowledge-cards/document-store/) 讓 application 透過 X Protocol 與 CRUD API 操作 collection，但資料仍落在 MySQL 的 storage、transaction、backup 與 permission 模型裡。
 
 本文的判讀錨點是：Document Store 是 MySQL 內的 document access pattern，而非 MongoDB 等專用 document database 的完整替代。它適合 relational schema 旁邊的 flexible JSON，但不適合把主要資料模型都藏進無治理 JSON。
 

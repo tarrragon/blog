@@ -5,7 +5,7 @@ description: "PostgreSQL pg_partman 自動分區、premake、retention、mainten
 tags: ["backend", "database", "postgresql", "partitioning", "pg-partman"]
 ---
 
-PostgreSQL pg_partman advanced 的核心責任是把 declarative partitioning 的日常維護自動化。pg_partman 可以協助建立未來 partition、管理 retention、執行 maintenance job，讓 time-based 或 serial-based partition 不再依賴人工 DDL。
+PostgreSQL pg_partman advanced 的核心責任是把 [declarative partitioning](/backend/knowledge-cards/table-partitioning/) 的日常維護自動化。pg_partman 可以協助建立未來 partition、管理 retention、執行 maintenance job，讓 time-based 或 serial-based partition 不再依賴人工 DDL。
 
 本文的判讀錨點是：pg_partman 解決的是 partition lifecycle operation，而非 partition strategy 本身。Partition key、query pattern、retention、index、foreign key 與 migration 仍要先在 [Declarative Partitioning](../declarative-partitioning/) 與 [Partition Redesign](../partition-redesign/) 做對。
 

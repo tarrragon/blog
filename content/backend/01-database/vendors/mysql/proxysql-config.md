@@ -21,7 +21,7 @@ tags: ["backend", "database", "mysql", "proxysql", "connection-pool", "deep-arti
 4. Response 返回          →  將 result set 回 application、connection 可被 reuse
 ```
 
-每段都有獨立配置 + failure mode + 觀測 metric。ProxySQL 不是 *簡單的 connection pool*、是 *query-aware proxy* — 看得到 SQL 內容才能做 read/write split、replica lag-aware routing、query mirroring。
+每段都有獨立配置 + failure mode + 觀測 metric。ProxySQL 不是 *簡單的 connection pool*、是 *query-aware proxy* — 看得到 SQL 內容才能做 [read/write split](/backend/knowledge-cards/read-write-split/)、replica lag-aware routing、query mirroring。
 
 跟 [PostgreSQL pgBouncer](/backend/01-database/vendors/postgresql/pgbouncer-config/) 比、pgBouncer 是 *transaction-level pool*（只看連線、不看 SQL）、ProxySQL 是 *query-level proxy*（看 SQL、做 routing decision）。能力不同、target use case 不同。
 
