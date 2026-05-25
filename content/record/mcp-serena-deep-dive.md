@@ -111,7 +111,7 @@ serena 的 tool 數量比 cbm / codegraph 都多、覆蓋更廣的工作流：
 
 **`execute_shell_command`** 是 LSP-only 工具裡的「逃生門」——LSP 本身不執行命令、但實務上 agent 需要跑 test / build / git status / 任意 CLI 工具來驗證自己的修改。這條等於把 LSP-based 工具補成「能 query 又能執行」的完整 workflow 工具。安全考量：因為它能跑任意 shell command、Claude Code 對 serena 的 trust level 要跟 Bash tool 對齊看待、不要假設它「只是讀取工具」。
 
-**Memory system** 不是知識圖譜、而是「跨 session 的 markdown 筆記檔」。用途接近 agent 的本地長期記憶——存「這個專案的 setup 注意事項」、「上次 refactor 的決策紀錄」、「常用的 codebase pattern」。跟 [cbm]({{< relref "mcp-codebase-memory-deep-dive.md" >}}) 的 `manage_adr`（結構化 ADR）取向不同，serena memory 是自由格式。
+**Memory system** 是「跨 session 的 markdown 筆記檔」、不是結構化的知識圖譜。用途接近 agent 的本地長期記憶——存「這個專案的 setup 注意事項」、「上次 refactor 的決策紀錄」、「常用的 codebase pattern」。跟 [cbm]({{< relref "mcp-codebase-memory-deep-dive.md" >}}) 的 `manage_adr`（結構化 ADR）取向不同，serena memory 是自由格式。
 
 **Project 類**（`activate_project` / `get_current_config` / `onboarding` / `initial_instructions`）是 serena 對「agent 第一次接觸新專案要先讀什麼」的明確協議。`onboarding` 讓 agent 主動 read 專案 onboarding doc、`initial_instructions` 給 agent 一份 serena 自己的使用手冊、`activate_project` 切 project root、`get_current_config` 暴露當前 session 的配置給 agent debug。這層降低盲目探索成本、是把 serena 從「LSP wrapper」抬升到「agent-first」的關鍵。
 
