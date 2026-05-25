@@ -24,7 +24,7 @@ tree-sitter parse → per-language query 抽 nodes/edges
                   → 寫進 SQLite + FTS5
 ```
 
-關鍵設計：**對每個語言寫專屬的 tree-sitter query**，而不是用一份通用的 AST visitor。
+關鍵設計：**對每個語言寫專屬的 tree-sitter query**——比起通用 AST visitor 路線、這個設計能對特定語言的 dispatch pattern 抽到更精確的 node 跟 edge。
 
 > Language-specific queries extract nodes (functions, classes, methods) and edges (calls, imports, extends, implements).
 
@@ -71,9 +71,9 @@ samplePrice.multiplyByRate(rate);   // ← codegraph 抽不到這條 edge
 
 ## Caller 跟 callsite 的計數單位差異
 
-codegraph 的 `codegraph_callers` 回的是「**caller symbol 數**」、不是「callsite 數」。同一個 method 內呼叫目標兩次仍然只算 1 個 caller。
+codegraph 的 `codegraph_callers` 採用的計數單位是「**caller symbol 數**」（同一個 method 內呼叫目標兩次仍然只算 1 個 caller）——跟「callsite 數」屬於兩種不同的統計方式。
 
-這個設計的影響：跟 LSP-based 工具（如 [serena]({{< relref "mcp-serena-deep-dive.md" >}})）對比時，數字會看起來「少」，但這是計數規則差異而非精度差異。寫實測 baseline 時要把這個單位寫死，避免「codegraph 回 3、serena 回 9」被誤判成「codegraph 漏 6 個」。
+這個設計的影響：跟 LSP-based 工具（如 [serena]({{< relref "mcp-serena-deep-dive.md" >}})）對比時，數字會看起來「少」，但這是計數規則的差異、跟精度差距屬於兩個不同議題。寫實測 baseline 時要把這個單位寫死，避免「codegraph 回 3、serena 回 9」被誤判成「codegraph 漏 6 個」。
 
 實際上這 3 vs 9 的差距要分兩段看：codegraph 抓到的 3 個 caller symbol 對應 6 個 callsite（同一個 method 內有多處呼叫、被計數規則合併成 1 caller）、剩下的 3 個 callsite 在第 4 個檔案（`product.dart`）、是真的漏（type-inferred dispatch）。算術：6 callsite（codegraph 算 3 caller）+ 3 callsite（真的漏）= serena 的 9。要拆開看才知道哪部分是計數差異、哪部分是能力差距。
 
@@ -167,7 +167,7 @@ CLI mode 是另一個方便點：所有 MCP tool 在 CLI 都有對應指令（`c
 
 - 主力語言在 19+ 支援列表內，且需要可靠的 caller / impact / trace 查詢
 - 「邊改邊問」工作流（auto-sync 2s debounce 比較貼近 IDE）
-- 希望 MCP 保持原生 grep / glob 行為、把決策權留給 agent 而非 hook 攔截
+- 希望 MCP 保持原生 grep / glob 行為、把決策權留給 agent 自主判斷（避開 hook 層強制介入）
 - 要 CLI 跟 MCP 雙管道使用（CLI 可先試、MCP 給 agent 用）
 
 **不適用情境**：

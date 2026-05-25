@@ -66,7 +66,7 @@ serena 的 editing tool 都是 symbol-level：
 | 同名 method 在多個 class     | 要 match 含 class 名上下文      | 用 `ClassName/methodName` 路徑唯一定位     |
 | Rename 跨檔                  | 要全 repo grep + 逐檔 patch     | 一次 call 完成 + LSP 保證 reference 全更新 |
 
-實務上的價值：**type-sensitive refactor 的事故率大幅降低**。改 method 不會手抖把 indentation 改錯、rename 不會漏改 reference。代價是 symbol 路徑要寫對（`ClassName/methodName` 而非單純 `methodName`）。
+實務上的價值：**type-sensitive refactor 的事故率大幅降低**。改 method 不會手抖把 indentation 改錯、rename 不會漏改 reference。代價是 symbol 路徑必須寫成包含父層的完整形式（`ClassName/methodName`）。
 
 判讀訊號：寫 `replace_symbol_body` 後若 LSP 報 syntax error、先 `get_diagnostics_for_file` 看具體錯在哪、別直接 retry 同個 patch。
 
@@ -111,7 +111,7 @@ serena 的 tool 數量比 cbm / codegraph 都多、覆蓋更廣的工作流：
 
 **`execute_shell_command`** 是 LSP-only 工具裡的「逃生門」——LSP 本身不執行命令、但實務上 agent 需要跑 test / build / git status / 任意 CLI 工具來驗證自己的修改。這條等於把 LSP-based 工具補成「能 query 又能執行」的完整 workflow 工具。安全考量：因為它能跑任意 shell command、Claude Code 對 serena 的 trust level 要跟 Bash tool 對齊看待、不要假設它「只是讀取工具」。
 
-**Memory system** 是「跨 session 的 markdown 筆記檔」、不是結構化的知識圖譜。用途接近 agent 的本地長期記憶——存「這個專案的 setup 注意事項」、「上次 refactor 的決策紀錄」、「常用的 codebase pattern」。跟 [cbm]({{< relref "mcp-codebase-memory-deep-dive.md" >}}) 的 `manage_adr`（結構化 ADR）取向不同，serena memory 是自由格式。
+**Memory system** 採用「跨 session 的 markdown 筆記檔」形式、屬於自由格式存儲。用途接近 agent 的本地長期記憶——存「這個專案的 setup 注意事項」、「上次 refactor 的決策紀錄」、「常用的 codebase pattern」。跟 [cbm]({{< relref "mcp-codebase-memory-deep-dive.md" >}}) 的 `manage_adr`（結構化 ADR）走相反取向：serena 把 schema 留給使用者自定、manage_adr 給定 ADR 欄位結構。
 
 **Project 類**（`activate_project` / `get_current_config` / `onboarding` / `initial_instructions`）是 serena 對「agent 第一次接觸新專案要先讀什麼」的明確協議。`onboarding` 讓 agent 主動 read 專案 onboarding doc、`initial_instructions` 給 agent 一份 serena 自己的使用手冊、`activate_project` 切 project root、`get_current_config` 暴露當前 session 的配置給 agent debug。這層降低盲目探索成本、是把 serena 從「LSP wrapper」抬升到「agent-first」的關鍵。
 
