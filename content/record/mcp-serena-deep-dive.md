@@ -70,7 +70,7 @@ serena 的 editing tool 都是 symbol-level：
 
 判讀訊號：寫 `replace_symbol_body` 後若 LSP 報 syntax error、先 `get_diagnostics_for_file` 看具體錯在哪、別直接 retry 同個 patch。
 
-## find_referencing_symbols：LSP 唯一可信的 caller 來源
+## find_referencing_symbols：LSP 路線的型別精確 caller 來源
 
 對 Dart / Swift / Kotlin 這類 tree-sitter 工具支援薄弱的語言，`find_referencing_symbols` 是少數能拿到「**型別精確的 caller 清單**」的 MCP tool。
 

@@ -17,9 +17,23 @@ tags: ["MCP", "AI協作心得", "工具評估", "Claude Code", "Dart"]
 
 在 Go / TypeScript 上跑同樣對照，結論會反過來——cbm 的 hybrid resolution 在那裡會接近 LSP 精度，三刀流的必要性會降低。所以這篇結論限定「LSP 成熟但 cbm 不在 hybrid resolution 名單」的語言。
 
+## 本質差異：tree-sitter syntactic vs LSP type-aware
+
+三個工具在 Dart 上的能力差距，根源是兩條技術路線的本質落差：
+
+**tree-sitter syntactic**：只看語法結構。看到 `a.b()` 知道有個 method call、不知道 `a` 是什麼型別、不知道 `b()` 連到哪個 declaration。對 receiver 是 literal 或顯式型別宣告的 callsite 可以解、對 local variable / parameter / 推斷型別的 callsite 會漏。
+
+**LSP type-aware**：走 language server 內建的型別推斷引擎。跟 IDE 用同一套後端、能解出 `a` 的真實型別、再從 type declaration 找到對應的 method。所以 reference 是型別精確的。
+
+cbm 的 hybrid type resolution（限 Go / C / C++ / TS / JS）是把 LSP 的型別解析算法 clean-room 重寫進 binary、所以那幾個語言上 cbm 等於有 LSP 級精度但沒 LSP 依賴。Dart 沒得到這個待遇，所以 cbm 在 Dart 上只剩純 syntactic 結構抽取。
+
+判讀訊號：看一個工具對某語言的能力強弱，問「**它在這語言上做型別解析嗎？**」——做的話接近 LSP，不做的話只是個結構抽取器。
+
+這個 framework 建立後、下節展開到 9 個維度的設計對照。
+
 ## 三個工具的設計差異對照
 
-三個工具雖然都是「code intelligence MCP」，設計取向其實互補：
+三個工具雖然都是「code intelligence MCP」，設計取向互補：
 
 | 維度               | [cbm]({{< relref "mcp-codebase-memory-deep-dive.md" >}}) | [codegraph]({{< relref "mcp-codegraph-deep-dive.md" >}})     | [serena]({{< relref "mcp-serena-deep-dive.md" >}}) |
 | ------------------ | -------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------- |
@@ -44,18 +58,6 @@ tags: ["MCP", "AI協作心得", "工具評估", "Claude Code", "Dart"]
 **持久化模式決定跨 session 的累積成本**。cbm / codegraph 寫 SQLite、跨 session 重用；serena per-session、每次 spawn LSP warm up。對「短任務反覆 ad-hoc 查詢」cbm / codegraph 邊際成本更低、對「會做 symbol-level edit 跟 diagnostic」serena 的 per-session warm up 是必要 cost。判讀訊號：第一次 query 慢、之後快——LSP indexing warm up、正常；每次 query 都慢——LSP 可能因記憶體不足重啟、需排查。
 
 下面的實測是這張表在 Dart 上的數字驗證。
-
-## 本質差異：tree-sitter syntactic vs LSP type-aware
-
-三個工具在 Dart 上的能力差距，根源是兩條技術路線的本質落差：
-
-**tree-sitter syntactic**：只看語法結構。看到 `a.b()` 知道有個 method call、不知道 `a` 是什麼型別、不知道 `b()` 連到哪個 declaration。對 receiver 是 literal 或顯式型別宣告的 callsite 可以解、對 local variable / parameter / 推斷型別的 callsite 會漏。
-
-**LSP type-aware**：走 language server 內建的型別推斷引擎。跟 IDE 用同一套後端、能解出 `a` 的真實型別、再從 type declaration 找到對應的 method。所以 reference 是型別精確的。
-
-cbm 的 hybrid type resolution（限 Go / C / C++ / TS / JS）是把 LSP 的型別解析算法 clean-room 重寫進 binary、所以那幾個語言上 cbm 等於有 LSP 級精度但沒 LSP 依賴。Dart 沒得到這個待遇，所以 cbm 在 Dart 上只剩純 syntactic 結構抽取。
-
-判讀訊號：看一個工具對某語言的能力強弱，問「**它在這語言上做型別解析嗎？**」——做的話接近 LSP，不做的話只是個結構抽取器。
 
 ## Dart 實測對照：同題不同工具
 
@@ -122,7 +124,7 @@ serena 透過 `dart analysis_server` 拿到完整型別資訊、知道 `samplePr
 
 Dart `extension type` 是相對新的特性、tree-sitter grammar 對它的支援深度不一。serena 走 LSP 直接拿到 `dart analysis_server` 對 extension type 的完整解析。
 
-對需要「列出某 class / extension 所有 member」的場景、serena 是 Dart 上唯一可信的選擇。
+對需要「列出某 class / extension 所有 member」的場景、serena 是 Dart 上 LSP 級精度最可信的選項（其他 MCP 在 Dart extension type 上做不到完整 member 列舉）。
 
 ### 查詢 4：概念性搜尋「金額顯示」相關函式
 
@@ -176,7 +178,7 @@ graph 上根本沒這條 edge（漏掉的 product.dart 那 3 個 callsite 正是
 
 ```text
 找東西（不知道精確名稱、概念性 query）
-  → cbm search_graph(query="...")           ← 11-signal scoring 唯一勝任
+  → cbm search_graph(query="...")           ← 11-signal scoring 對概念性 query 最強
 
 知道精確名稱、找 caller / callee
   → codegraph_callers / codegraph_callees   ← auto-sync 2s 反應最快
@@ -191,7 +193,7 @@ graph 上根本沒這條 edge（漏掉的 product.dart 那 3 個 callsite 正是
   → serena replace_symbol_body / rename     ← symbol-level atomic edit
 
 跨 service HTTP/RPC 鏈接（若 monorepo 含 client + server）
-  → cbm HTTP_CALLS edge                     ← 唯一有這層的工具
+  → cbm HTTP_CALLS edge                     ← 三個工具中只有 cbm 有這層
 ```
 
 幾個關鍵的判讀原則：
@@ -210,7 +212,7 @@ graph 上根本沒這條 edge（漏掉的 product.dart 那 3 個 callsite 正是
 
 這層是 cbm 的甜蜜點：hybrid type resolution 涵蓋這四個語族、CALLS edge 抽得到、cbm 的 caller / blast radius 精度接近 LSP。實務影響是「cbm 在 Dart 上需要 codegraph + serena 補位」的場景大幅縮小——cbm 自己就能處理 caller / impact、加上它原本就強的 11-signal 概念搜尋跟跨 service HTTP_CALLS，等於一個工具撐住「找東西」「caller / impact」「cross-service」三層。
 
-serena 在這個 stack 仍是 symbol-level edit 跟 compile diagnostic 的唯一來源——cbm 純讀、沒 rename / replace_symbol_body、沒 LSP 診斷整合。所以合理組合是「cbm + serena 雙刀流」、codegraph 的角色被 cbm 取代掉。判讀訊號：在自家 repo 跑 cbm `trace_call_path` 對 5 個熱門 class、若 caller 數跟 serena 的 `find_referencing_symbols` 對得上、codegraph 確實可以省下。
+serena 在這個 stack 仍是 symbol-level edit 跟 compile diagnostic 的關鍵來源——cbm 純讀、沒 rename / replace_symbol_body、沒 LSP 診斷整合。所以合理組合是「cbm + serena 雙刀流」、codegraph 的角色被 cbm 取代掉。判讀訊號：在自家 repo 跑 cbm `trace_call_path` 對 5 個熱門 class、若 caller 數跟 serena 的 `find_referencing_symbols` 對得上、codegraph 確實可以省下。
 
 ### Swift / Kotlin / Rust 主力
 

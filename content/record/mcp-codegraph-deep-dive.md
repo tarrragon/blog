@@ -157,7 +157,7 @@ cd your-project && codegraph init -i
 
 `codegraph install` 會把 MCP server 條目寫進 `~/.claude.json` 的 `mcpServers`、`codegraph init -i` 在當前 repo 建 `.codegraph/codegraph.db`、啟動 watcher。
 
-跟 [cbm]({{< relref "mcp-codebase-memory-deep-dive.md" >}}) 不一樣：codegraph **不寫 PreToolUse hook**、不攔截 Grep/Glob。它純粹當 MCP server 提供 tool、決策權留給 agent，比較不會干擾既有工作流。
+跟 [cbm]({{< relref "mcp-codebase-memory-deep-dive.md" >}}) 不一樣：codegraph **不寫 PreToolUse hook**、不攔截 Grep/Glob。它純粹當 MCP server 提供 tool、決策權留給 agent，對既有工作流的干擾較小。
 
 CLI mode 是另一個方便點：所有 MCP tool 在 CLI 都有對應指令（`codegraph callers X` / `codegraph trace X Y`），不必等 Claude Code 重啟載入 MCP 就能先在 terminal 驗證效果。
 
