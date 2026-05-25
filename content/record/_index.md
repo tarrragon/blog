@@ -1,6 +1,8 @@
 ---
 title: "開發記錄"
 slug: "record"
+description: "方法論記錄 — 中性 frame 的工作模式 / 流程 / 原則說明。涵蓋自察與認知方法論、設計判斷與選型、敏捷與工程流程、寫作與溝通標準、文件與 API 設計、AI 協作工具評估等議題。"
+tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 ---
 
 這個資料夾收錄**方法論記錄** — 寫法是中性 frame 的「某個工作模式 / 流程 / 原則是什麼、怎麼用」、不一定有具體 case 觸發。
@@ -34,6 +36,12 @@ slug: "record"
 - [型別取代 doc 的收益曲線](types-replacing-docs/)
 - [測試命名作為文件](test-naming-as-documentation/)
 - [Commit message vs source code doc](commit-message-vs-source-doc/)
+
+**AI 協作工具評估** — Claude Code / Codex / MCP server 等 AI 協作工具的設計拆解、能力邊界、選型對照。包含個別工具的 deep-dive 跟「同題不同工具」的實測。例：
+
+- [三 MCP 工作流與 Dart 實測](mcp-three-way-workflow-and-dart-experiment/)：cbm / codegraph / serena 的職責分工與三刀流（附三個工具各自的 deep-dive：[cbm](mcp-codebase-memory-deep-dive/) / [codegraph](mcp-codegraph-deep-dive/) / [serena](mcp-serena-deep-dive/)）
+- [LSP-first 開發方法論](lsp-first-development-methodology/)：LSP 路線跟其他 code intelligence 路線的取捨
+- [Background agent 並行研究](background-agent-parallel-research/)：用 Claude Code background agent 平行做研究的工作流
 
 ---
 
