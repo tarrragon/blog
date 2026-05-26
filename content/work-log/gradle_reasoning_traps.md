@@ -9,7 +9,6 @@ tags: ["gradle", "debugging", "flutter"]
 
 排查 Gradle JVM target inconsistency 時走了七個節點才收斂。這篇復盤每個節點的完整決策流：
 
-
 ---
 
 ## 節點 A：第一次錯誤出現
@@ -29,7 +28,7 @@ Execution failed for task ':flutter_broadcasts_4m:compileDebugKotlin'.
 
 Android 專案的每個 module（主 app 或第三方 plugin）會分別編譯 Java 跟 Kotlin 原始碼，各自產出 JVM bytecode。每個 bytecode 檔案有一個「target version」，決定它能在多舊的 JVM runtime 上執行，以及可以使用哪些語言特性。
 
-同一個 module 內的 Java 跟 Kotlin 若產出不同 target 的 bytecode，執行時可能踩到 API 相容性問題（例如 Java 17 的 class 呼叫到 Kotlin 1.8 runtime 不存在的方法）。Kotlin 2.2 把這個原本只是 warning 的情境提升為 strict error，直接中止 build。
+同一個 module 內的 Java 跟 Kotlin 若產出不同 target 的 bytecode，執行時可能觸發 API 相容性問題（例如 Java 17 的 class 呼叫到 Kotlin 1.8 runtime 不存在的方法）。Kotlin 2.2 把這個原本只是 warning 的情境提升為 strict error，直接中止 build。
 
 所以 `Inconsistent JVM Target Compatibility` 這類錯誤的本質是：**某個 module 裡面 Java 跟 Kotlin 編譯產出的 bytecode 不是同一個版本**。
 
@@ -515,7 +514,7 @@ Gradle 的 project 有生命週期：建立 → 配置中 → **evaluate 完成*
 
 **完整推論鏈**：
 
-```
+```text
 subprojects {} 執行 → 對 :app 呼叫 afterEvaluate(Closure)
 → :app 已 evaluate（因 evaluationDependsOn）→ 訂閱失敗
 ```

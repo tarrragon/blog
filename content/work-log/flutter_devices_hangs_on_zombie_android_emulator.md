@@ -8,7 +8,7 @@ tags: ["flutter", "android", "adb", "emulator", "debugging", "tooling"]
 
 `flutter devices` 卡住時，最有用的訊號是「device 清單是否穩定」。這次的關鍵訊號是連續兩次掃描從 `Found 4 connected devices` 變成 `Found 3 connected devices`，再加上 `Error -2 retrieving device properties for sdk gphone64 arm64`。這代表 ADB server 看得到某個 emulator entry，但對該 entry 的 property 查詢已經不穩定。
 
-這類狀態可以稱為 Android emulator 半活（zombie）：emulator host process 還在、ADB 清單仍殘留 device，但 emulator 內的 `adbd` 或 Android system 已停止回應。Flutter 在掃描階段會對每個 Android device 查 properties，碰到這個半活 device 就卡在 timeout。
+這類狀態可以稱為 Android emulator 半活（zombie）：emulator host process 還在、ADB 清單仍殘留 device，但 emulator 內的 `adbd` 或 Android system 已停止回應。Flutter 在掃描階段會對每個 Android device 查 properties，掃描到這個半活 device 就卡在 timeout。
 
 ---
 

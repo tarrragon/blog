@@ -97,7 +97,7 @@ issued → DB 存 hash  →  Bearer 驗證    →   row deleted
                            但不會自動跨到其他系統
 ```
 
-Bearer Token 是 capability credential — 任何持有它的 client 都能以該使用者身分發 request。這也是為什麼 token 一旦離開原本的 API server，就會碰到下一層問題：B 系統收到 A 系統的 token、根本不知道該怎麼驗證、也不該驗證。
+Bearer Token 是 capability credential — 任何持有它的 client 都能以該使用者身分發 request。這也是為什麼 token 一旦離開原本的 API server，就會引發下一層問題：B 系統收到 A 系統的 token、根本不知道該怎麼驗證、也不該驗證。
 
 ---
 
