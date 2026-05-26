@@ -2,11 +2,11 @@
 title: "寫測試時 sync try-catch 接不到 BotToast 的 async 錯誤：fire-and-forget API 的接管設計"
 date: 2026-05-26
 draft: false
-description: "寫測試會撞到 type system 看不到的三類 runtime 契約：service locator 注入、widget tree state、late init。以 BotToast 的 sync assert + async LateInit 雙失敗模式為例，拆解為什麼 sync try-catch 不夠、用 runZonedGuarded 同時罩 sync 與 async、以及 fallback 訊息的可識別 signature 設計。"
+description: "寫測試會觸及 type system 看不到的三類 runtime 契約：service locator 注入、widget tree state、late init。以 BotToast 的 sync assert + async LateInit 雙失敗模式為例，拆解為什麼 sync try-catch 不夠、用 runZonedGuarded 同時罩 sync 與 async、以及 fallback 訊息的可識別 signature 設計。"
 tags: ["dart", "flutter", "test", "async", "zone", "runZonedGuarded", "service-locator", "fallback-design"]
 ---
 
-> **核心議題**：寫測試時撞到 type system 看不到的 runtime contract — service locator 的注入契約、widget tree 的 framework state、async error 的 try-catch 邊界。三類都要 runtime 才會炸、test 跑到才會曝光。
+> **核心議題**：寫測試時觸及 type system 看不到的 runtime contract — service locator 的注入契約、widget tree 的 framework state、async error 的 try-catch 邊界。三類都要 runtime 才會炸、test 跑到才會曝光。
 > **案例骨幹**：`Popup.hint` 同一條呼叫路徑同時持有 sync 與 async 兩條失敗路徑（缺 service 注入、BotToast 同步 assert、BotToast 從 async gap 後拋 `LateInitializationError`）。用 `runZonedGuarded` 把兩條路徑收斂到同一個 fallback handler、用 fallback signature 設計讓訊息不被誤判為 error。
 
 ---
@@ -25,9 +25,9 @@ tags: ["dart", "flutter", "test", "async", "zone", "runZonedGuarded", "service-l
 
 ---
 
-## 2. 案例：一條呼叫路徑撞到三類邊界
+## 2. 案例：一條呼叫路徑觸及三類邊界
 
-下面以 `Popup.hint` 對 `BotToast.showNotification` 的呼叫為例。寫一個跑 `AuthService.afterLogin` 的 unit test 時，這條呼叫一次撞到 §1 列的三類邊界：service locator 注入缺失、widget tree 缺 `BotToastInit`、`late` 變數在 async 排程後讀取。三組訊號攤開：
+下面以 `Popup.hint` 對 `BotToast.showNotification` 的呼叫為例。寫一個跑 `AuthService.afterLogin` 的 unit test 時，這條呼叫一次觸及 §1 列的三類邊界：service locator 注入缺失、widget tree 缺 `BotToastInit`、`late` 變數在 async 排程後讀取。三組訊號攤開：
 
 | 訊號                                                                                                               | 性質                                                                                                              | sync try-catch 能接？           |
 | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ------------------------------- |
@@ -60,7 +60,7 @@ Popup.hint() {
 
 `async` 函式內的 try-catch 是常見混淆點：寫成 `try { await x; } catch (e)` 時，try-catch **能**接住 `await` 的 future rejection（`await` 把 async error rewire 成 sync throw）。但對沒 await 的 fire-and-forget 排程（直接呼叫一個會內部 schedule microtask 的 API），try-catch 的覆蓋範圍止於同步路徑。
 
-### 風險：fire-and-forget API 特別容易踩
+### 風險：fire-and-forget API 的 error 路徑跨 async 邊界
 
 BotToast、analytics、Toast、SnackBar 這類 API 通常**同步返回**（讓 caller 不必 await），內部排到下一個 frame 或 microtask 做 UI 工作。caller 看到的是同步呼叫，但錯誤可能從 async 邊界後跑出來。caller 端的 sync try-catch 看起來罩住了，實際接不到。
 
@@ -108,7 +108,7 @@ runZonedGuarded(() {
 
 ### 注意事項：何時不該用
 
-Zone 歸屬以 schedule 時的 zone 為準、不是執行時 — async 物件「屬於」schedule 它的那個 zone。這個規則讓跨 zone 操作 Timer、Stream 的行為偏離直覺。實務上踩雷最常見的場景是 `WidgetsFlutterBinding.ensureInitialized()` 在 root zone 註冊了 framework binding 後、才用 `runZonedGuarded` 包 `runApp`，binding 內部 callback 已綁在 root zone、外層 zone 接不到。[Flutter 官方明確建議](https://docs.flutter.dev/release/breaking-changes/zone-errors) `ensureInitialized()` 跟 `runApp()` 都在同一個 `runZonedGuarded` 內。
+Zone 歸屬以 schedule 時的 zone 為準、不是執行時 — async 物件「屬於」schedule 它的那個 zone。這個規則讓跨 zone 操作 Timer、Stream 的行為偏離直覺。實務上最常見的觸發場景是 `WidgetsFlutterBinding.ensureInitialized()` 在 root zone 註冊了 framework binding 後、才用 `runZonedGuarded` 包 `runApp`，binding 內部 callback 已綁在 root zone、外層 zone 接不到。[Flutter 官方明確建議](https://docs.flutter.dev/release/breaking-changes/zone-errors) `ensureInitialized()` 跟 `runApp()` 都在同一個 `runZonedGuarded` 內。
 
 zone 適合包「整個邊界」：整個 isolate entry、整個 best-effort UI 工作、整個 background task。**不適合包關鍵 transaction logic** — 那是 try-catch + Future error handling 的責任，zone 是 fallback 收斂層、不是主要錯誤處理。
 
@@ -151,7 +151,7 @@ Fallback path 跑通之後，留在 console 的訊息會被讀到很多次（每
 
 ## 7. 設計副產物：修主程式對缺依賴的容錯
 
-`Popup.hint` 對「沒有 widget tree」連環倒，這個失敗不只 unit test 會碰到 — isolate 內、background task 內、任何非 UI 環境都會炸。修 test 順手把主程式對缺依賴的容錯加上，是合理副產物：unit test 是觸發訊號、主程式被觸發後變得更能適應多元 caller 環境，這個改動的受益面大於原本 test 暴露的那個情境。
+`Popup.hint` 對「沒有 widget tree」連環倒，這個失敗不只 unit test 會遇到 — isolate 內、background task 內、任何非 UI 環境都會炸。修 test 順手把主程式對缺依賴的容錯加上，是合理副產物：unit test 是觸發訊號、主程式被觸發後變得更能適應多元 caller 環境，這個改動的受益面大於原本 test 暴露的那個情境。
 
 **主程式變 robust 的價值大於「讓 test 過」**。修主程式對 caller 環境的容錯時要分辨「容錯」與「掩蓋」的界線：log 仍要留、fallback signature 仍要可識別（§6），錯誤完全靜默會讓 dev app 真壞掉時也看不見。
 
