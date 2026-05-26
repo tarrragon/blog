@@ -212,14 +212,24 @@ CockroachDB overview 目前完成 distributed SQL 判斷。下一輪 deep articl
 
 ## 案例對照
 
-CockroachDB 沒有直接的 09 case（多數 09 case 在 vendor managed 上）、但作為「全球分散式 SQL 開源替代」在多處被討論：
+CockroachDB 在 09 案例庫已有三條直接 case 軸線（OLTP 寫入擴展、polyglot 補位、合規邊界），另外兩條對比參考軸線（Spanner 設計理念、受監管金融）一併保留。
+
+### Direct case（CockroachDB 為主角）
+
+| 案例                                                                                                            | 主要工程議題                                                         |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)                  | Aurora Postgres single-primary 1.6 M QPS 撞牆 → multi-primary 解寫入 |
+| [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)                 | 380+ cluster 艦隊、Cassandra 不夠用的 transactional workload 補位    |
+| [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) | AWS Outposts + 跨州單一邏輯 DB、Wire Act 合規 + 賽季型擴縮容         |
+
+### 對比參考案例
 
 | 案例（對比參考）                                                                                      | 跟 CockroachDB 的關係                           |
 | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)         | 設計理念對標、CockroachDB 是開源版本            |
 | [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) | 受監管金融、CockroachDB 可作為 on-prem 替代候選 |
 
-CockroachDB case 的讀法是把它放在 Spanner 與受監管金融之間。Spanner 提供 global consistency 的成熟對照，Standard Chartered 類案例則提醒讀者：部署位置、合規邊界與自管能力常和一致性需求同時決定 vendor。
+CockroachDB direct case 的讀法是「寫入擴展（DoorDash）→ polyglot 補位（Netflix）→ 合規邊界（Hard Rock Digital）」三條軸線；對比案例則提醒讀者：Spanner 提供 global consistency 的成熟對照，受監管金融類案例提醒部署位置、合規邊界與自管能力常和一致性需求同時決定 vendor。
 
 ## 反向 sibling 路由
 
