@@ -14,6 +14,8 @@ tags: ["backend", "database", "dynamodb", "partition-key", "hot-partition", "wri
 
 > **DynamoDB 適用度前置判讀**：本篇假設 workload 已通過 DynamoDB 適用度 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)、本篇不重複展開。Partition key 反模式是 *已選 DynamoDB 後* 的 schema 修補議題；若 4 軸不成立、改回 SQL 比補 composite key 更合理。
 
+> **跨 vendor 可逆性對照 SSoT**：MongoDB / DynamoDB / Cosmos DB 三家 partition key 可逆性不在同一光譜（DynamoDB 走 backfill 到新 table、屬中度可逆）、跨 vendor 對照 SSoT 主寫位置在 [DB3 entry — 三 vendor 對比 10 軸](/backend/01-database/vendors/db3-vendor-selection/#三-vendor-對比-10-軸) + 對應的[軸的延伸子段](/backend/01-database/vendors/db3-vendor-selection/#軸的延伸子段)。本篇聚焦 DynamoDB 內部如何識別 partition key 反模式 + composite key / write sharding 修法、不重複跨 vendor 比較。
+
 ## 核心機制：partition 上限是工程硬天花板
 
 DynamoDB 把 capacity 抽象成 RCU / WCU、但底下仍是物理 partition。理解 partition 的 4 條硬規則：

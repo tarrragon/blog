@@ -12,7 +12,7 @@ B2B SaaS 跟客戶 SLA 寫 99.99%、單 region 跑了一年遇過兩次 region-l
 
 但 Global Tables 不只是 conflict 痛點。Disney+ 用同一個機制處理 cross-device sync（手機看一半回家用電視繼續）、Genesys 用同一個機制做 15 region B2B 客服平台的 99.999% 可用性。本文先講正向 access pattern（避免讓讀者誤以為 Global Tables 只是「跨 region 寫入會 conflict、所以痛苦」）、再展開 conflict resolution 跟 reconciliation 設計。
 
-> **DynamoDB 適用度前置判讀**：本篇假設 workload 已通過 DynamoDB 適用度 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)、本篇不重複展開。Global Tables 是 *已選 DynamoDB 後* 的拓樸決策；strong global consistency 必要的 workload 應走 Spanner / Cosmos DB strong consistency level、不是用 LWW 補。
+> **Workload 適配本 vendor 才繼續**：DynamoDB 4 軸判讀（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）軸見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)。Global Tables 是 *已選 DynamoDB 後* 的拓樸決策；strong global consistency 必要的 workload 應走 Spanner / Cosmos DB strong consistency level、不是用 LWW 補。
 
 ## B2B SaaS vs B2C 業務 driver 對比
 

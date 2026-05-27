@@ -227,6 +227,8 @@ Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Dat
 
 ## Cluster boundary 顆粒：per-app cluster vs 邏輯一個 cluster（CockroachDB cluster boundary SSoT）
 
+> **位置標**：本段是 _module-outline.md Section G「CockroachDB cluster boundary 顆粒」的 SSoT 主寫段、是 *已選 CockroachDB 後* 的拓樸決策（跟前面七問題 vendor 選擇分流）。其他 vendor cluster boundary 議題不在本段重複展開 — Aurora fleet 治理（business sharding / 200 cluster 模式）見 [aurora/read-replica-scaling](../../aurora/read-replica-scaling/)、MongoDB blast radius 切多 cluster（Toyota 20 DB 模式）見 [mongodb/shard-key-selection](../../mongodb/shard-key-selection/)。
+
 選完 vendor 還有一個正交的拓樸決策：CockroachDB cluster 的「顆粒」要切多細。一個微服務一個 cluster（per-app）、還是多個微服務共用一個邏輯 cluster（shared / 邏輯一個 cluster）。這條軸的判讀獨立於跨雲 / 風險預算 / 管理負擔等七問題、是 *cluster 拓樸* 議題、不是 vendor 選擇議題。判讀核心是 [blast radius](/backend/knowledge-cards/blast-radius/) 的取捨 — 是把故障半徑限縮在單服務（per-app）、還是接受邏輯 cluster 內事故跨業務影響但換 transactional cross-domain 能力（邏輯一個 cluster）。本段是 CockroachDB cluster boundary 顆粒的主寫位置、其他 sibling 文章（[hlc-raft-consensus](../hlc-raft-consensus/)、[survival-goals](../survival-goals/)、[locality-aware-schema](../locality-aware-schema/)）cross-link 不重複展開。
 
 ### Per-app cluster（Netflix 380+ 路徑、F4.7 揭露）

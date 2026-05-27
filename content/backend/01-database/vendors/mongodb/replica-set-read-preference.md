@@ -10,7 +10,7 @@ MongoDB replica set 在小規模時 read preference 五擇一就夠用、`primar
 
 本文不重複 [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) 已寫過的 replica set 簡介 — 而是 production 部署 + 跨層協作 + 失敗修復的實作層教學。
 
-> **MongoDB 適用度前置判讀**：進到 read preference 設計前先確認 workload 在 MongoDB 適用區（document shape 主導 / contract layer 該放哪 / 跨雲 hedging 是否需要）— 詳見 [schema-design-pattern 開頭 3 軸前置判讀](../schema-design-pattern/#問題情境document-自由的後座力)、本篇不重複展開。Read scaling 是 *已選 MongoDB 後* 的容量決策。
+> **進本文前先確認 MongoDB 已通過適配判讀**：workload 是否落在 MongoDB 適用區（document shape 主導 / contract layer 該放哪 / 跨雲 hedging 是否需要）— 判讀軸見 [schema-design-pattern 開頭 3 軸前置判讀](../schema-design-pattern/#問題情境document-自由的後座力)。Read scaling 是 *已選 MongoDB 後* 的容量決策、判讀通不過時 read preference 修補無法救回 vendor 選錯。
 
 ## 問題情境：read scaling 撞牆的兩種長相
 

@@ -73,6 +73,8 @@ Chunk 是 MongoDB 在 collection 上劃出的 64MB（預設）邏輯區塊。Bal
 
 ### Partition key 可逆性跨 vendor 對照
 
+> **跨 vendor 可逆性對照 SSoT**：MongoDB / DynamoDB / Cosmos DB 三家可逆性不在同一光譜、跨 vendor 對照的 SSoT 主寫位置在 [DB3 entry — 三 vendor 對比 10 軸](/backend/01-database/vendors/db3-vendor-selection/#三-vendor-對比-10-軸) + 對應的[軸的延伸子段](/backend/01-database/vendors/db3-vendor-selection/#軸的延伸子段)。本段聚焦 MongoDB 5.0+ `reshardCollection` 對 shard key 設計的影響、不重複展開三 vendor 全光譜比較。
+
 不同 vendor 對 partition key 可逆性紀律完全不在同一光譜：
 
 | Vendor    | 機制                           | 可逆性                                          | 成本                                   |

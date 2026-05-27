@@ -79,6 +79,8 @@ az cosmosdb sql container create \
 
 ### 跟其他 vendor 的可逆性對照（本章合成 frame）
 
+> **跨 vendor 可逆性對照 SSoT**：MongoDB / DynamoDB / Cosmos DB 三家 partition key 可逆性不在同一光譜（Cosmos DB 屬不可改、不可逆性最高）、跨 vendor 對照 SSoT 主寫位置在 [DB3 entry — 三 vendor 對比 10 軸](/backend/01-database/vendors/db3-vendor-selection/#三-vendor-對比-10-軸) + 對應的[軸的延伸子段](/backend/01-database/vendors/db3-vendor-selection/#軸的延伸子段)。本段聚焦 Cosmos DB 不可改特性對 selection 階段 access pattern audit 嚴格度的影響、不重複展開三 vendor 全光譜比較。
+
 partition / shard key 的可逆性在 vendor 間差異懸殊：
 
 | Vendor    | 可逆性                           | 機制                                      | 工程成本         |

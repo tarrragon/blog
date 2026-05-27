@@ -10,7 +10,7 @@ Cosmos DB 文件列 *5 個 consistency level*（Strong / Bounded staleness / Ses
 
 本文不是 Cosmos DB overview（請看 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/)）— 而是 *consistency level 工程選擇邏輯* 的深度展開。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（用 session consistency 撐 AR 全球同步、5 level 跨 collection 分流）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 用較弱 consistency 換 throughput）。
 
-> **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（API model 三型遷移路徑 / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)、本篇不重複展開。Consistency level 選擇是 *已選 Cosmos DB 後* 的 read / write 語義決策；若 workload 不適用 Cosmos DB、level 選擇無法救回 vendor 選錯的取捨。
+> **Cosmos DB workload 適配判讀（四層 framing）**：API model 三型遷移路徑 / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in — 判讀軸詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)。本文聚焦 consistency level 選擇操作層、是 *已選 Cosmos DB 後* 的 read / write 語義決策；若 workload 不適用 Cosmos DB、level 選擇無法救回 vendor 選錯的取捨。
 
 ## 問題情境
 
