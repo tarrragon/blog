@@ -1,12 +1,10 @@
----
-title: "0.16 後端服務路徑實作細綱"
-date: 2026-05-08
-description: "把後端各分類的服務實例拆成可交給後續正文撰寫階段使用的實作細綱"
-weight: 16
-tags: ["backend", "implementation", "outline", "service-path"]
----
+# 後端服務路徑實作細綱
 
-服務路徑實作細綱的核心責任是把分類觀念落到可撰寫的業務路徑。後續正文要從服務壓力出發，說明這條路徑為什麼需要某種 evidence、gate、decision log 與 write-back；共用欄位只作為交接語言，文章敘事要保留各分類自己的情境差異。真實服務或 vendor 層的取捨，另由 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/) 承接。
+> **Status**: backend 教材 author-facing outline — 把後端各分類的服務實例拆成可交給後續正文撰寫階段使用的實作細綱。原為 `content/backend/00-service-selection/service-path-implementation-outlines.md`（weight 0.16）、2026-05-27 移到 `.codex/outlines/backend/`。
+>
+> **適用對象**：寫 backend 模組正文時、用本檔的服務路徑與 artifact 欄位設計交接給正文撰寫。Vendor 取捨層的順序大綱見 `./service-entity-discussion-outline.md`。
+
+服務路徑實作細綱的核心責任是把分類觀念落到可撰寫的業務路徑。後續正文要從服務壓力出發，說明這條路徑為什麼需要某種 evidence、gate、decision log 與 write-back；共用欄位只作為交接語言，文章敘事要保留各分類自己的情境差異。真實服務或 vendor 層的取捨，另由 `./service-entity-discussion-outline.md` 承接。
 
 ## 寫作交接原則
 

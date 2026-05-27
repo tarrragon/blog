@@ -145,4 +145,3 @@ Learning 是事故後的組織學習、不是 retro template、是 longitudinal 
 - 上游：[8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
 - 上游：[8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)
 - 服務路徑：[8.23 Control Plane Decision Log and Write-back 實作示範](/backend/08-incident-response/control-plane-decision-log-write-back/)
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

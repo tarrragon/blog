@@ -224,3 +224,6 @@ schema 設計會直接影響後續可靠性與事故處理。
 - 平行：[1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)、[1.8 State Ownership](/backend/01-database/state-ownership-query-boundary/)
 - 下游：[1.6 Database Migration Playbook](/backend/01-database/database-migration-playbook/) / [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/) / [1.10 KV / Document 容量規劃](/backend/01-database/kv-document-capacity-planning/)
 - Vendor：[PostgreSQL index 設計](/backend/01-database/vendors/postgresql/)、[MySQL InnoDB clustered index](/backend/01-database/vendors/mysql/)、[DynamoDB single-table design](/backend/01-database/vendors/dynamodb/)
+- DynamoDB schema 深入：[single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) / [partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/) / [GSI / LSI 設計](/backend/01-database/vendors/dynamodb/gsi-lsi-design/)
+- MongoDB schema 深入：[schema design pattern](/backend/01-database/vendors/mongodb/schema-design-pattern/) / [shard key 選型](/backend/01-database/vendors/mongodb/shard-key-selection/)
+- Cosmos DB schema 深入：[partition key 設計](/backend/01-database/vendors/cosmosdb/partition-key-design/)

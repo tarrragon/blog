@@ -114,4 +114,3 @@ Stack 不是一次到位、按 [Path A → B → C](#reading-paths33-個-vendor-
 - 上游：[7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)
 - 案例：[7.C 資安案例正文](/backend/07-security-data-protection/cases/)
 - 服務路徑：[7.27 Credential Rotation with Scoped Evidence 實作示範](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

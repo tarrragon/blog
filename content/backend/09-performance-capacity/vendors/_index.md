@@ -140,6 +140,5 @@ FinOps 提供 cost visibility + forecast + allocation。**Vantage** Kubernetes c
 
 - 上游：[9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)
 - 上游：[9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)
-- 服務路徑：[0.16 Checkout Episode Map](/backend/00-service-selection/service-path-implementation-outlines/#checkout-episode-map)
+- 服務路徑：[Checkout 服務演進](/backend/#貫穿式案例checkout-服務演進)
 - 平行：[06 Reliability vendors](/backend/06-reliability/vendors/) — 06 從驗證流程看工具，09 從容量量化與效能工程看工具
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

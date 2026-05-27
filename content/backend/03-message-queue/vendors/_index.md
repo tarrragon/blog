@@ -185,4 +185,3 @@ Schema 強制度跨 vendor 差異最大。**Kafka** Schema Registry（Confluent 
 - 上游：[3.4 consumer design](/backend/03-message-queue/consumer-design/)
 - 案例：[3.C 佇列案例正文](/backend/03-message-queue/cases/)
 - 服務路徑：[3.8 Queue Consumer Retry 與 Replay Handoff](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

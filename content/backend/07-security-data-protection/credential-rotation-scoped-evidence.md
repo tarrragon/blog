@@ -71,4 +71,4 @@ CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secret
 
 ## 下一步路由
 
-要回到全模組實作串接，接著讀 [0.15 後端實作教學大綱](/backend/00-service-selection/implementation-teaching-outline/) 的「完成判準」與後續 backlog。
+要回到全模組實作串接，接著讀 [Backend 學習路線](/backend/#學習路線) 進入下一條服務路徑。

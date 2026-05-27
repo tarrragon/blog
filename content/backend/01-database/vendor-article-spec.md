@@ -7,7 +7,7 @@ tags: ["backend", "database", "vendor", "writing-spec"]
 
 資料庫 Vendor 文章撰寫規格的核心責任是把服務頁、深度文章與遷移 playbook 的分工固定下來。PostgreSQL 與 MySQL 已經提供 SQL baseline 的完整樣本；後續撰寫 SQLite、MongoDB、DynamoDB、Aurora、Spanner、Cosmos DB 與 CockroachDB 時，應沿用同一組教學功能檢查，但保留每個服務自己的資料形狀、操作責任與失敗語言。
 
-這份規格承接 [0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)、[Vendor 深度技術文章寫作方法論](/posts/vendor-deep-article-methodology/) 與 [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)。本文只處理資料庫模組的落地規格：哪些內容留在 vendor overview，哪些議題升級成 deep article，哪些變更需要 migration playbook。
+這份規格承接 [Vendor 深度技術文章寫作方法論](/posts/vendor-deep-article-methodology/) 與 [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)。本文只處理資料庫模組的落地規格：哪些內容留在 vendor overview，哪些議題升級成 deep article，哪些變更需要 migration playbook。
 
 ## 判讀錨點
 

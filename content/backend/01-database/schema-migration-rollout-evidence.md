@@ -383,4 +383,10 @@ Dual-write 跟 shadow read 的 divergence 要分開看 — 兩者偵測不同層
 
 ## 下一步路由
 
-要把資料庫 migration 的 evidence 交給 release gate，接著讀 [6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)，並把 provider 依賴示範中的 gate 欄位改寫成 migration gate 欄位。要看下一條分類服務路徑，接著進 [0.16 後端服務路徑實作細綱](/backend/00-service-selection/service-path-implementation-outlines/) 的 02 Cache / Redis：`Cache migration and stampede rollback`。
+要把資料庫 migration 的 evidence 交給 release gate，接著讀 [6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)，並把 provider 依賴示範中的 gate 欄位改寫成 migration gate 欄位。要看下一條分類服務路徑，接著進 [02 Cache / Redis 模組](/backend/02-cache-redis/) 的 `Cache migration and stampede rollback` 服務路徑。
+
+跨 vendor schema migration 深入：
+
+- [Spanner interleaved table 的 schema migration](/backend/01-database/vendors/spanner/schema-migration-interleaved-tables/) — 全球分散式表結構變更的 evidence shape
+- [Aurora 從自管 PostgreSQL / MySQL 遷入](/backend/01-database/vendors/aurora/migrate-from-self-managed-pg-mysql/) — schema 比對與 dual-write 證據鏈
+- [Cosmos DB MongoDB API vs SQL API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/) — multi-API document 在 rollout 階段的相容性 evidence

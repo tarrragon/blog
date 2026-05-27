@@ -144,4 +144,3 @@ SLO 工具按 source 跟運維模式分兩類：**Nobl9** 商業 SaaS / multi-so
 - 上游：[6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)
 - 服務路徑：[6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)
 - 平行：[09 效能與容量工具清單](/backend/09-performance-capacity/vendors/)
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

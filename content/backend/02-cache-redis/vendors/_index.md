@@ -165,4 +165,3 @@ HA 拓樸三類。**Redis** Sentinel + replication（單 region 多 AZ）/ Clust
 - 上游：[2.7 Cache Copy Boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)
 - 案例：[2.C 快取案例正文](/backend/02-cache-redis/cases/)
 - 服務路徑：[2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

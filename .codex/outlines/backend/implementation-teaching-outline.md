@@ -1,10 +1,8 @@
----
-title: "0.15 後端實作教學大綱"
-date: 2026-05-08
-description: "規劃後端各模組從觀念網路補完到服務路徑實作示範的寫作順序"
-weight: 15
-tags: ["backend", "implementation", "outline", "service-path"]
----
+# 後端實作教學大綱
+
+> **Status**: backend 教材 author-facing outline — 規劃各模組從觀念網路補完到服務路徑實作示範的寫作順序。原為 `content/backend/00-service-selection/implementation-teaching-outline.md`（weight 0.15）、屬寫作 SoP、不是讀者面內容、2026-05-27 移到 `.codex/outlines/backend/`。
+>
+> **適用對象**：寫 backend 系列章節的 author / Codex / Claude agent。寫稿前讀本檔對齊三層教學順序（分類通用認知 → 服務路徑示範 → 實體服務討論）。
 
 後端實作教學的核心責任是先把分類層的共同認知補完整，再把模組觀念網路落到具體服務路徑。這一系列以概念、案例、交接路由與知識卡四層作為前置檢查，先讓讀者理解資料庫、快取、佇列與部署平台各自承擔的服務責任，再進入 MySQL、PostgreSQL、Redis、Kafka、Kubernetes 或其他實體服務的討論。
 

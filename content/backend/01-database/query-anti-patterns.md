@@ -160,7 +160,7 @@ DoorDash 案例是這條反向追問最直接的應用 — 寫入瓶頸的判讀
 3. 與 [04 observability](/backend/04-observability/) 的交接：slow query log、APM、query trace 是判讀反模式的主要訊號來源。
 4. 與 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 的交接：先在應用層查反模式，再考慮 DB 配置升級。
 5. 與 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 的交接：規模成長路線上、9.13 解擴展軸選擇後、1.13 是緊接著的下一站 — 在加機器或加 replica 前、先用本章反模式清單收回單機能撐住的容量。
-6. 與 [0.18 服務拆分](/backend/00-service-selection/service-decomposition-boundaries/) 的交接：拆服務常被用來「解決 DB 慢」，但本章的反模式優化通常比拆服務 ROI 更高、應該優先嘗試。
+6. 與 [10.1 服務拆分](/backend/10-system-evolution/service-decomposition-boundaries/) 的交接：拆服務常被用來「解決 DB 慢」，但本章的反模式優化通常比拆服務 ROI 更高、應該優先嘗試。
 
 ## 下一步路由
 

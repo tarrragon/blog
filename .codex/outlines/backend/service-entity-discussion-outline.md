@@ -1,10 +1,8 @@
----
-title: "0.17 後端真實服務討論大綱"
-date: 2026-05-15
-description: "規劃各 backend 分類從共同觀念與服務路徑示範，推進到真實服務介紹、取捨與案例回寫的寫作順序"
-weight: 17
-tags: ["backend", "service-entity", "outline", "vendor"]
----
+# 後端真實服務討論大綱
+
+> **Status**: backend 教材 author-facing outline — 規劃各 backend 分類從共同觀念與服務路徑示範、推進到真實服務介紹、取捨與案例回寫的寫作順序。原為 `content/backend/00-service-selection/service-entity-discussion-outline.md`（weight 0.17）、2026-05-27 移到 `.codex/outlines/backend/`。
+>
+> **適用對象**：寫 backend 各分類 vendor / 服務實體章節時、用本檔對齊真實服務層的順序與取捨敘事。
 
 後端真實服務討論的核心責任是把分類觀念落到具體服務能力。PostgreSQL、Redis、Kafka、Kubernetes、k6 或 PagerDuty 這些名稱本身是服務能力入口；它們各自承擔某種資料、流量、交付、驗證或協作責任，文章要先說清楚這個責任，再討論適用場景、替代方案、操作成本與案例回寫。
 

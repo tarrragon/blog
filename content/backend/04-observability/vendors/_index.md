@@ -173,4 +173,3 @@ OTel 相容度影響 vendor 切換成本。各 vendor 接受程度：
 - 上游：[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)
 - 服務路徑：[4.22 Checkout API Evidence Package 實作示範](/backend/04-observability/checkout-api-evidence-package/)
 - 跨模組：[9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

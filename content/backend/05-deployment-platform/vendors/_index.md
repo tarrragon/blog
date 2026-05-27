@@ -152,4 +152,3 @@ TLS / mTLS 在不同 vendor 由不同 layer 負責。**K8s** cert-manager（Let'
 - 上游：[5.3 Load Balancer Contract](/backend/05-deployment-platform/load-balancer-contract/)
 - 案例：[5.C 部署平台案例正文](/backend/05-deployment-platform/cases/)
 - 服務路徑：[5.8 Deployment Rollout with Drain and Rollback](/backend/05-deployment-platform/deployment-rollout-drain-rollback/)
-- 規劃：[0.17 後端真實服務討論大綱](/backend/00-service-selection/service-entity-discussion-outline/)

@@ -350,6 +350,7 @@ Long-lived repeatable export artifact 是事故後仍能持續產出資料的工
 6. 與 7.7 的交接：audit trail — [Audit Trail and Accountability Boundary](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/)
 7. 與 7.13 的交接：detection coverage — [Detection Coverage and Signal Governance](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
 8. 與 8.19 的交接：事故時的資料層判讀 — [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)
+9. 合規驅動的多 region 部署選型：[Aurora global database 多 region](/backend/01-database/vendors/aurora/global-database-multi-region/)、[Aurora 跨 AZ failover RTO](/backend/01-database/vendors/aurora/cross-az-failover-rto/)、[Data Residency 知識卡](/backend/knowledge-cards/data-residency/)
 
 ## 關聯卡片
 

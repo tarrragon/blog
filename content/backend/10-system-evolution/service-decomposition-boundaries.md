@@ -1,9 +1,9 @@
 ---
-title: "0.18 服務拆分與邊界判讀"
+title: "10.1 服務拆分與邊界判讀"
 date: 2026-05-27
 description: "整理 monolith vs microservice 取捨、服務邊界判讀訊號、拆分時機與回退路徑"
-weight: 18
-tags: ["backend", "service-selection", "microservice", "architecture"]
+weight: 1
+tags: ["backend", "evolution", "microservice", "architecture"]
 ---
 
 Monolith 與 microservice 是兩種耦合策略、各自承擔代價：monolith 用單一程式碼庫換低協作成本、microservice 用獨立邊界換團隊與部署彈性。本章處理「演進速度跟組織能力對齊」這個決策邊界 — 起點是辨識當下壓力來源、再選擇拆分軸、流行度與堅持習慣都是次要訊號。

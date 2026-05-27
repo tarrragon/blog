@@ -174,4 +174,4 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 - 資料庫 vendor 細節對比 → [01 模組 vendors/](/backend/01-database/vendors/)
 - 部署平台 vendor 細節對比 → [05 模組 vendors/](/backend/05-deployment-platform/vendors/)
 
-本章不在規模成長路線上、是 sibling 工具型入口。要進規模成長路線、從 [0.18 服務拆分](/backend/00-service-selection/service-decomposition-boundaries/) 或 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 開始。
+本章不在規模成長路線上、是 sibling 工具型入口。要進規模成長路線、從 [10.1 服務拆分](/backend/10-system-evolution/service-decomposition-boundaries/) 或 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 開始。

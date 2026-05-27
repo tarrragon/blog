@@ -359,6 +359,9 @@ flash-sale 或極端負載場景的限流可能分散在多層元件、不是單
 - 平行：[1.1 高併發資料存取](/backend/01-database/high-concurrency-access/)（OLTP 版本）/ [1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)
 - 下游：[1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)、[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（含「預設 DB 治理 pattern」— KV 在大規模平台的選型治理）
 - 跨模組：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)（hot partition 量測）、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[9.7 成本邊界](/backend/09-performance-capacity/cost-engineering/)
+- DynamoDB 深入：[partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)、[on-demand vs provisioned 切換](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)、[single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/)、[GSI / LSI 設計](/backend/01-database/vendors/dynamodb/gsi-lsi-design/)
+- Cosmos DB 深入：[partition key 設計](/backend/01-database/vendors/cosmosdb/partition-key-design/)、[RU 成本模型](/backend/01-database/vendors/cosmosdb/ru-cost-model-sizing/)、[一致性層次工程](/backend/01-database/vendors/cosmosdb/consistency-levels-engineering/)
+- MongoDB 深入：[shard key 選型](/backend/01-database/vendors/mongodb/shard-key-selection/)、[schema design pattern](/backend/01-database/vendors/mongodb/schema-design-pattern/)、[connection 管理與 cache 層](/backend/01-database/vendors/mongodb/connection-management-and-cache-layer/)
 
 ## 既建知識卡片
 

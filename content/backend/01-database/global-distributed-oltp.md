@@ -341,6 +341,10 @@ distributed SQL 跟 single-cluster SQL 之間還有一層：**多個獨立 clust
 - 平行：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)（KV 全球分散）
 - 下游：[1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（含「預設 DB 治理 pattern」— 平台規模化階段的 OLTP 選型治理）
 - 跨模組：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/)、[0.2 State Storage Selection](/backend/00-service-selection/state-storage-selection/)、[7.11 Data Residency](/backend/07-security-data-protection/data-residency-deletion-and-evidence-chain/)
+- Spanner 深入：[TrueTime API 深入](/backend/01-database/vendors/spanner/truetime-api-depth/)、[一致性模型對照](/backend/01-database/vendors/spanner/consistency-models-comparison/)、[interleaved table schema migration](/backend/01-database/vendors/spanner/schema-migration-interleaved-tables/)
+- CockroachDB / Aurora DSQL 深入：[Aurora DSQL / Spanner / CockroachDB 決策樹](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)、[CockroachDB transaction retry pattern](/backend/01-database/vendors/cockroachdb/transaction-retry-pattern/)、[survival goals](/backend/01-database/vendors/cockroachdb/survival-goals/)、[locality-aware schema](/backend/01-database/vendors/cockroachdb/locality-aware-schema/)
+- Aurora 多 region 深入：[global database multi-region](/backend/01-database/vendors/aurora/global-database-multi-region/)、[跨 AZ failover RTO](/backend/01-database/vendors/aurora/cross-az-failover-rto/)
+- Cosmos DB 多 region 深入：[一致性層次工程](/backend/01-database/vendors/cosmosdb/consistency-levels-engineering/)、[多 region write 衝突](/backend/01-database/vendors/cosmosdb/multi-region-write-conflict/)
 
 ## 既建知識卡片
 

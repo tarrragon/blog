@@ -288,3 +288,4 @@ adapter 邊界可用 [3.C9 反例](/backend/03-message-queue/cases/failure-queue
 - 平行：[1.2 Schema Design](/backend/01-database/schema-design/)、[1.3 Transaction Boundary](/backend/01-database/transaction-boundary/)
 - 下游：[1.6 Database Migration Playbook](/backend/01-database/database-migration-playbook/) / [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)
 - 跨模組：[6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/) / [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)
+- 跨 vendor adapter 深入：[DynamoDB single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/)（document KV adapter 邊界）、[MongoDB schema design pattern](/backend/01-database/vendors/mongodb/schema-design-pattern/)（document adapter 的 ODM 取捨）、[Cosmos DB MongoDB API vs SQL API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/)（multi-API adapter 取捨）
