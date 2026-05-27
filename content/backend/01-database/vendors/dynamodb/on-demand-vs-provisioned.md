@@ -199,7 +199,7 @@ aws dynamodb update-table \
 
 ## 失敗模式
 
-6 個 production 常見踩雷：
+production 觀察到的 6 個典型 anti-pattern：
 
 #### Case 1：on-demand 後 cost 翻 3 倍
 

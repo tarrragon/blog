@@ -51,6 +51,8 @@ Lemino 案例揭露三個現代串流服務啟動的工程重點。
 - 想理解 connection limit 議題 → [01 資料庫模組](/backend/01-database/) + [9.C20 Zomato 遷移](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)
 - 想做 DAX / cache 加速 → [02 快取模組](/backend/02-cache-redis/) + [9.C25 Tubi ML feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/)
 - 想規劃 managed-only 串流 stack → [05 部署平台模組](/backend/05-deployment-platform/) + [00 服務選型模組](/backend/00-service-selection/)
+- 想做串流 metadata 的 partition / GSI 設計 → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/) + [DynamoDB GSI / LSI 設計](/backend/01-database/vendors/dynamodb/gsi-lsi-design/)
+- 想評估 on-demand vs provisioned 給直播 / VOD 用 → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 ## 引用源
 

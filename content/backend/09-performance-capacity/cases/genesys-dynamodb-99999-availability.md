@@ -54,6 +54,8 @@ Genesys 案例揭露三個 B2B SaaS 平台容量規劃重點。
 - 想設計多 region 資料層 → [01 資料庫模組](/backend/01-database/) + [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想做 DB 統一治理 → [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) + [00 服務選型模組](/backend/00-service-selection/)
 - 想規劃跨 region 容量 → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [9.C12 Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)
+- 想理解 DynamoDB 99.999% 背後的 partition / GSI 設計 → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/) + [DynamoDB GSI / LSI 設計](/backend/01-database/vendors/dynamodb/gsi-lsi-design/)
+- 想對應 global tables 多 region 寫衝突 → [DynamoDB global tables 寫衝突](/backend/01-database/vendors/dynamodb/global-tables-conflict/)
 
 ## 引用源
 

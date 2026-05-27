@@ -54,6 +54,8 @@ Netflix Aurora 整合揭露三個大規模平台 DB 治理重點。
 - 想理解 Aurora 設計 → [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) + [01 資料庫模組](/backend/01-database/)
 - 想做 polyglot persistence 選型 → [00 服務選型模組](/backend/00-service-selection/) + [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)
 - 想做 DB consolidation 規劃 → [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)
+- 想理解 +75% 的 storage / compute 解耦根因 → [Aurora 儲存層架構](/backend/01-database/vendors/aurora/storage-architecture/)
+- 想規劃自管 PostgreSQL / MySQL 遷入 Aurora 的步驟 → [從自管 PostgreSQL/MySQL 遷入 Aurora](/backend/01-database/vendors/aurora/migrate-from-self-managed-pg-mysql/)
 
 ## 引用源
 

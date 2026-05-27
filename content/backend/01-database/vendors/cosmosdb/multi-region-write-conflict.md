@@ -197,7 +197,7 @@ proc throw exception 時 Cosmos DB 行為：conflict 留 feed、不會自動 ret
 
 ### Failure 5：期待 multi-region write 還有 Strong consistency
 
-兩者互斥、開啟 multi-region write 後 Strong 自動 downgrade（或拒絕設定、時間敏感、查最新文件）。團隊以為「multi-region + Strong = 全球 linearizable」、實際上是設計 incompatibility。
+兩者互斥、開啟 multi-region write 後 Strong 自動 downgrade（或拒絕設定、時間敏感、查最新文件）。團隊以為「multi-region + Strong = 全球 linearizable」、底層是設計 incompatibility。
 
 修：在 selection 階段就決定「要 active-active write 還是要 Strong」 — 兩者只能擇一。要全球 linearizable 轉 Spanner / Aurora DSQL、要 active-active 就接受 eventual / session / bounded staleness。
 

@@ -45,6 +45,8 @@ PayPay 案例揭露三個行動支付訊息系統的工程重點。
 - 想設計行動支付訊息 → [03 訊息佇列模組](/backend/03-message-queue/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
 - 對照其他 KV 高吞吐 → [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/) / [9.C18 Zoom](/backend/09-performance-capacity/cases/zoom-covid-surge-dynamodb/)
 - 想做訊息系統容量規劃 → [9.6 容量規劃模型](/backend/09-performance-capacity/) + [9.2 Workload Modeling](/backend/09-performance-capacity/)
+- 想避免訊息熱點打爆單一 partition → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
+- 想評估訊息系統的 capacity mode → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 ## 引用源
 

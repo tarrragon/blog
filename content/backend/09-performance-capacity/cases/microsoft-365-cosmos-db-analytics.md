@@ -52,6 +52,8 @@ Microsoft 365 案例揭露三個全球 SaaS 分析平台的工程重點。
 - 對照其他 dogfood 案例 → [9.C1 AWS Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) / [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想做 MongoDB-compatible 遷移 → [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)
 - 想理解 multi-model 取捨 → [01 資料庫模組](/backend/01-database/) + [00 服務選型模組](/backend/00-service-selection/)
+- 想對比 Cosmos DB MongoDB API vs SQL API 的選型 → [Cosmos DB MongoDB API vs SQL API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/)
+- 想做 RU 成本模型與容量 sizing → [Cosmos DB RU 成本模型](/backend/01-database/vendors/cosmosdb/ru-cost-model-sizing/)
 
 ## 引用源
 

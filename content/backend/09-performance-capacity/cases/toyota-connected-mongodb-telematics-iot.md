@@ -67,6 +67,9 @@ Toyota Connected 的 MongoDB 選擇揭露三個 IoT / telematics 工程決策的
 - 想做 multi-region 高可用性 → [9.C24 Genesys 99.999%](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)
 - 想對照不同 IoT 資料層選擇 → [9.C5 Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)（KV）/ [9.C26 PayPay](/backend/09-performance-capacity/cases/paypay-mobile-payment-messaging/)（高頻訊息）
 - 想理解 event-driven IoT 架構 → [03 訊息佇列模組](/backend/03-message-queue/)
+- 想做 IoT 寫入吞吐的 shard key 選型 → [MongoDB shard key 選型](/backend/01-database/vendors/mongodb/shard-key-selection/)
+- 想規劃 telemetry schema design → [MongoDB schema design pattern](/backend/01-database/vendors/mongodb/schema-design-pattern/)
+- 想處理 IoT 高 client 數的 connection storm → [MongoDB connection 管理與 cache 層](/backend/01-database/vendors/mongodb/connection-management-and-cache-layer/)
 
 ## 引用源
 

@@ -46,6 +46,8 @@ Zoom surge 揭露三個 SaaS 突發成長的工程重點。
 - 對照 product surge → [9.C8 Pokemon GO](/backend/09-performance-capacity/cases/niantic-pokemon-go-fifty-x-surge-gcp/)
 - 想理解 control plane vs data plane → [9.5 瓶頸定位流程](/backend/09-performance-capacity/) + [05 部署平台模組](/backend/05-deployment-platform/)
 - 想規劃 surge 後的 SLO → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/) + [04.16 SLI / SLO 訊號](/backend/04-observability/sli-slo-signal/)
+- 想評估 surge 下的 on-demand vs provisioned 切換 → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
+- 想避免 surge 觸發 hot partition → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
 
 ## 引用源
 

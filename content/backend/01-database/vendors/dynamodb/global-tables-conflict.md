@@ -155,7 +155,7 @@ merge logic 視業務而定：
 
 ## 失敗模式
 
-5 個 production 常見踩雷：
+實際部署常見的 5 種失敗：
 
 #### Case 1：LWW 默默吃掉 write
 

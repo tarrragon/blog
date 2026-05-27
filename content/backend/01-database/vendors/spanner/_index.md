@@ -119,7 +119,7 @@ Spanner 解決的是跨地理位置同時追求 strong consistency、linear scal
 
 - Spanner：全球分散式
 - Aurora：single-region scaling
-- 選 Spanner：流量真的跨 region + 需要強一致
+- 選 Spanner：流量明確跨 region + 需要強一致
 - 選 Aurora：流量集中一個 region（多數情況）
 
 **vs Cosmos DB（multi-region write）**：
@@ -139,7 +139,7 @@ Spanner 解決的是跨地理位置同時追求 strong consistency、linear scal
 
 - PostgreSQL：single-primary、跨 region async replication、90% 場景夠用
 - Spanner：全球線性化、強一致跨 region、需要 GCP + 接受 latency / 成本
-- 從 PostgreSQL 升級 Spanner 的判準：流量真的跨 region，且跨 region 一致性是 product requirement
+- 從 PostgreSQL 升級 Spanner 的判準：流量明確跨 region，且跨 region 一致性是 product requirement
 - 詳見 [PostgreSQL vendor page](/backend/01-database/vendors/postgresql/) 取捨段 + [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
 
 ## 容量規劃要點
@@ -224,7 +224,7 @@ Spanner case 的讀法是先看一致性需求，再看容量數字。10 億 req
 
 ## 反向 sibling 路由
 
-Spanner 的反向 sibling 路由用來把 global strong consistency 和雲端代管責任一起判讀。若讀者從 PostgreSQL / MySQL 過來，先確認是否真的需要 external consistency；若只是 managed SQL 與 replica scaling，回 [Aurora vendor](/backend/01-database/vendors/aurora/)；若要 PostgreSQL-like distributed SQL 且需要自管或多雲彈性，對照 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)；若 access pattern 是固定 KV / document，先看 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) 或 [Cosmos DB vendor](/backend/01-database/vendors/cosmosdb/)。
+Spanner 的反向 sibling 路由用來把 global strong consistency 和雲端代管責任一起判讀。若讀者從 PostgreSQL / MySQL 過來，先確認是否具產品契約等級的 external consistency 需求；若只是 managed SQL 與 replica scaling，回 [Aurora vendor](/backend/01-database/vendors/aurora/)；若要 PostgreSQL-like distributed SQL 且需要自管或多雲彈性，對照 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)；若 access pattern 是固定 KV / document，先看 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) 或 [Cosmos DB vendor](/backend/01-database/vendors/cosmosdb/)。
 
 這條路由的判準是交易順序是否跨 region 影響產品正確性。Spanner 的價值在 external consistency、schema 與 SQL 能力、全球 deployment 與 Google Cloud operation model 的組合；若產品只需要 eventual / session consistency，較輕的 NoSQL 或 managed SQL 常有更低成本。
 

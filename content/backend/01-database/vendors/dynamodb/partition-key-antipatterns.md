@@ -131,7 +131,7 @@ def write_user_event(user_id: str, event_data: dict):
 
 ## 失敗模式
 
-5 個 production 常見踩雷：
+production case 揭露的 5 個踩雷情境：
 
 #### Case 1：時間序 PK 集中
 

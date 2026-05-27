@@ -139,7 +139,7 @@ Rollback boundary：
 
 **Connection storm during deploy**：blue-green 部署 instance 數 ×2、connection 隨之爆、新 deploy 連不上 cluster、cascade 失敗。修法是 proxy 層 + cluster connection limit 預留 headroom（典型留 30% buffer、屬通用工程估算）。
 
-**Proxy 變成單點瓶頸**：mongobetween / pgbouncer 風格 proxy 自己變熱點、proxy 故障時下游全死。修法是 proxy 集群 + health check + 客戶端 retry、跟 application 同 region 共部署降低 proxy ↔ application 的網路 RTT。
+**Proxy 變成單點瓶頸**：mongobetween / pgbouncer 風格 proxy 自己變熱點、proxy 故障時下游全死。修法是 proxy 叢集 + health check + 客戶端 retry、跟 application 同 region 共部署降低 proxy ↔ application 的網路 RTT。
 
 **Cache hit rate 崩塌**：cache 失效 + 大量 read bypass、DB 突然吃 100% 流量、cluster 飽和。修法是 freshness token 設計時要監控 bypass rate、過高表示 cache invalidation 邏輯有問題、cache 沒在 write 後 update / invalidate。
 

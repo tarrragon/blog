@@ -67,6 +67,8 @@ tags: ["backend", "performance", "capacity", "case-study", "db-kv", "aws", "flas
 - 想做明確限流 / 排隊機制 → [9.C16 SeatGeek Virtual Waiting Room](/backend/09-performance-capacity/cases/seatgeek-virtual-waiting-room/)
 - 想預熱 ELB / Auto Scaling → [05 部署平台模組](/backend/05-deployment-platform/) + [9.11 高峰事件準備](/backend/09-performance-capacity/)
 - 對照其他售票市場 → [9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/)（印度市場、年售 2 億張）
+- 想理解 flash-sale 場景的 partition key 反模式 → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
+- 想評估 on-demand vs provisioned 在 flash-sale 的搭配 → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 ## 引用源
 

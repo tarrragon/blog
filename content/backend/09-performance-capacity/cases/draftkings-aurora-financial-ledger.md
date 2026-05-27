@@ -52,6 +52,8 @@ DraftKings 的工程選擇揭露三個 OLTP 容量設計重點。
 - 想搞清楚事件型 vs 突發型峰值 → [9.C2 GR8 Tech](/backend/09-performance-capacity/cases/gr8-tech-ai-predicted-betting-peak/) 對照
 - 想做 read replica 容量設計 → [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
 - 想理解 replication lag 對 transaction boundary 的影響 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/)
+- 想理解 6 寫 / 4 讀 quorum 跟 200 cluster fleet 治理 → [Aurora 儲存層架構](/backend/01-database/vendors/aurora/storage-architecture/)
+- 想規劃 read replica scaling 與 reader endpoint 路由 → [Aurora read replica scaling](/backend/01-database/vendors/aurora/read-replica-scaling/)
 
 ## 引用源
 

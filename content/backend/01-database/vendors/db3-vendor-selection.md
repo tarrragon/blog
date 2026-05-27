@@ -110,6 +110,16 @@ MongoDB → Cosmos DB MongoDB API、或 MongoDB → DocumentDB — wire protocol
 
 KV → SQL 或 SQL → distributed SQL 屬 paradigm shift、應進 [DB4 entry point: Aurora DSQL / Spanner / CockroachDB decision tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)。本文範圍是 DB3 三家內部選型、不展開 paradigm shift。
 
+## 從 RDB 撞牆來的快速路徑
+
+讀者若從 PostgreSQL / Aurora connection limit 撞牆過來、想評估 KV 替代、依撞牆訊號直接 route 到對應 article、不必先跑完三軸前置判讀：
+
+- **撞 connection limit**（surge 下 pool 1K-5K 隱性天花板、long-lived TCP 占滿）→ HTTP API 模型（no long-lived connection）的 KV 直接接寫入緩衝、進 [dynamodb/single-table-design-pattern](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) 的「durable queue / write buffer」段（Tixcraft 9.C15 路徑：DynamoDB 接訂單、傳統 server 慢消費）、或評估 [Cosmos DB Table API](/backend/01-database/vendors/cosmosdb/mongodb-api-vs-sql-api/)
+- **撞單 primary 寫入上限**（單 leader 寫吞吐天花板、read replica 無法分擔寫）→ multi-primary distributed SQL 路徑、進 [DB4 entry point: Aurora DSQL / Spanner / CockroachDB decision tree](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/) 的 Path A（DoorDash 1.636 M QPS 單主寫入撞牆）
+- **撞單一 DB 撐不下 + 多 workload 形狀並存**（read-heavy / write-heavy / analytics 混在一個 DB）→ federated DB 模式、看 [9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/)（MongoDB + DynamoDB + Memcached + mongobetween）+ [9.C29 Lemino](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)（PostgreSQL → DynamoDB 揭露 RDB connection limit 隱性 bottleneck）
+
+進 [dynamodb/single-table-design-pattern](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) 前先確認軸 1 / 軸 2 的 access pattern 穩定度跟 PK 天然均勻度 — connection limit 訊號 *必要但不充分*、KV 適用度 4 軸還是要走完、避免「為了解 connection 把不穩定 access pattern 硬塞 single-table」反模式。
+
 ## Federated DB + system role 視角（跨 case 合成 frame）
 
 > 本段也是 *跨 case 合成 frame*（F2.18 + F1.6）— 三個 rich case（Coinbase / Toyota / Forbes）都揭露 production 系統是 *DB + 周邊工具* 組合、不是單一 DB monolithic 撐起來。

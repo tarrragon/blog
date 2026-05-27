@@ -66,6 +66,9 @@ Hard Rock Digital 的工程選擇揭露三個受監管 OLTP 的設計重點。
 - 想規劃 multi-region OLTP survival goal → [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) + [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)
 - 對照其他 distributed SQL 案例 → [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) / [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想理解合規驅動的拓樸設計 → [05 部署平台模組](/backend/05-deployment-platform/) + [01.4 database migration playbook](/backend/01-database/database-migration-playbook/)
+- 想拆 CockroachDB survival goal 與合規拓樸對齊 → [CockroachDB survival goals](/backend/01-database/vendors/cockroachdb/survival-goals/)
+- 想做 region pinning 與在地化 schema → [CockroachDB locality-aware schema](/backend/01-database/vendors/cockroachdb/locality-aware-schema/)
+- 想對比 Aurora DSQL / Spanner / CockroachDB 給博彩 OLTP → [Aurora DSQL / Spanner / CockroachDB 決策樹](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)
 
 ## 引用源
 

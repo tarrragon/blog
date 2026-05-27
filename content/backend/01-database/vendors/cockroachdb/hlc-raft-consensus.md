@@ -18,7 +18,7 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "consensus", "ra
 
 - Spanner 用 TrueTime 原子鐘做線性化、CockroachDB 沒硬體時鐘怎麼保證 ordering？
 - Raft 每次寫要等 majority ack、不是比 PostgreSQL 慢得多？
-- HLC clock skew 真的大會發生什麼？節點隨機 panic 嗎？
+- HLC clock skew 超出容忍區間時會發生什麼？節點隨機 panic 嗎？
 
 三題都不只是 spec 問題、而是 *production 容量規劃跟 incident 訊號的根本前置*。
 

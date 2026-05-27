@@ -53,6 +53,9 @@ Cosmos DB 設計揭露三個全球 KV / document DB 的容量設計重點。
 - 想對照強一致全球 OLTP → [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想對照單區 KV 高吞吐 → [9.C5 Amazon Ads DynamoDB](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)
 - 想理解 consistency level 的取捨 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/)
+- 想理解 Cosmos DB 五層一致性的工程選擇 → [Cosmos DB 一致性層次工程](/backend/01-database/vendors/cosmosdb/consistency-levels-engineering/)
+- 想做全球 multi-region write 衝突收斂 → [Cosmos DB 多 region write 衝突](/backend/01-database/vendors/cosmosdb/multi-region-write-conflict/)
+- 想拆 partition key 設計與全球分散搭配 → [Cosmos DB partition key 設計](/backend/01-database/vendors/cosmosdb/partition-key-design/)
 
 ## 引用源
 

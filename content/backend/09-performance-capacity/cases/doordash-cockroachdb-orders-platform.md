@@ -58,6 +58,8 @@ DoorDash 的工程選擇揭露三個 OLTP 寫入容量設計重點。
 - 對照其他 OLTP 規模化案例 → [9.C4 DraftKings Aurora](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)（按業務切 cluster）/ [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/)（DB 種類整合）
 - 想對照其他 distributed SQL 案例 → [9.C40 Netflix CockroachDB fleet](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) / [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)
 - 想理解全球一致性 OLTP 選型 → [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)
+- 想拆 CockroachDB transaction retry 與 contention 模式 → [CockroachDB transaction retry pattern](/backend/01-database/vendors/cockroachdb/transaction-retry-pattern/)
+- 想對比 Aurora DSQL / Spanner / CockroachDB 的選型 → [Aurora DSQL / Spanner / CockroachDB 決策樹](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)
 
 ## 引用源
 

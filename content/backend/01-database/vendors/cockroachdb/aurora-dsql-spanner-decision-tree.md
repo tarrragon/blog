@@ -21,7 +21,7 @@ tags: ["backend", "database", "cockroachdb", "aurora-dsql", "spanner", "distribu
 - 我是不是真該換 distributed SQL、還是 Aurora / Cloud SQL 還能撐？
 - Spanner 在 Google 跑了 10 年、CockroachDB 跟 DSQL 比較新、成熟度差多少？
 - 我有 PostgreSQL 應用、三家相容性差在哪？
-- 跨雲是真的硬需求還是被 fear 推的？
+- 跨雲是硬需求還是被 fear 推的？
 - DSQL 2024 才 GA、production 風險多大？
 - 我團隊 50 人能不能養 self-managed CockroachDB？
 - Spanner 100 pu 起跳對我中小 PG workload 划算嗎？
@@ -85,6 +85,8 @@ Hard Rock concrete reference：跨 8 州（AZ / IN / TN / FL / OH / IL / NJ / VA
 - 無跨 boundary 合規需求
 
 → PostgreSQL / Aurora 足夠、distributed SQL overhead（寫入 2-5x latency、ops 複雜度）不划算。對應 [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 走 Aurora + application sharding 的路徑、不換引擎也能解單主寫入瓶頸。
+
+> **數字口徑**：本段「2-5x latency」屬通用工程估算（Raft / Paxos round trip 跟 single-leader replication 的 latency ratio）、case 未直接揭露對照數字、實際值依拓樸 / 寫入大小 / 一致性層次而異、應該以自家 benchmark 驗證。
 
 ## 核心機制：三軸 vendor 對比
 
@@ -168,7 +170,9 @@ Spanner 100 processing unit 起跳是 *最小 footprint* — 對中小 PostgreSQ
 跨雲是 *硬需求* 而不是 *fear-driven* 訊號：
 
 - 真硬需求：法規明文跨雲、acquisition 後多雲整合、vendor risk 政策強制
-- fear-driven：「萬一 AWS 全球 outage」（90% 公司其實 single-cloud、跨雲 portability premium 卻沒實際 multi-cloud 部署）
+- fear-driven：「萬一 AWS 全球 outage」（多數公司實際走 single-cloud、跨雲 portability premium 卻沒實際 multi-cloud 部署）
+
+> **數字口徑**：本段「多數公司 single-cloud」屬通用工程估算、case 未揭露明確比例、實際分佈依產業 / 監管 / 規模而異。判斷自己是否需要跨雲時、看具體規範跟 risk 條款、不直接套通用比例。
 
 ### 問題 2：已在 AWS 還是 GCP 還是中立？
 
@@ -292,7 +296,7 @@ CockroachDB cluster boundary 的問題不一樣 — CockroachDB 本身就是 dis
 
 ### 過度 fear AWS / GCP lock-in
 
-90% 公司其實 single-cloud、跨雲是想像中需求。選 CockroachDB 付 portability premium（自管 ops + Cockroach Cloud 較新）卻沒實際 multi-cloud 部署 — 結果付的是 lock-in 保險、實際沒用上。
+承接 *問題 1：是否硬需求跨雲* 段的 fear-driven 訊號（多數場景單雲、跨雲是想像中需求）— 把 fear 當硬需求選 CockroachDB，付 portability premium（自管 ops + Cockroach Cloud 較新）卻沒實際 multi-cloud 部署，結果付的是 lock-in 保險、實際沒用上。
 
 判讀：跨雲訊號要 *具體場景*（acquisition 後整合 / 法規明文 / vendor risk 政策強制）、不是 fear。
 

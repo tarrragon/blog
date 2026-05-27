@@ -48,6 +48,8 @@ Capcom 案例揭露三個遊戲後端 KV 的工程重點。
 - 對照其他遊戲後端 → [9.C12 Riot Games EKS](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)（cluster 隔離 vs 共用）
 - 想設計遊戲 KV → [01 資料庫模組](/backend/01-database/) + [9.C5 Amazon Ads](/backend/09-performance-capacity/cases/amazon-ads-dynamodb-extreme-kv/)
 - 想理解 sub-ms latency 反推 → [9.C3 Coinbase](/backend/09-performance-capacity/cases/coinbase-ultra-low-latency-exchange-2023/) + [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/)
+- 想規劃遊戲 KV access pattern 與 single-table design → [DynamoDB single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/)
+- 想評估遊戲流量的 on-demand vs provisioned → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 ## 引用源
 

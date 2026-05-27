@@ -51,6 +51,8 @@ FanDuel 案例揭露三個雙重峰值對齊的工程重點。
 - 想設計多 SLO 對齊 → [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/)
 - 想做受監管多地區部署 → [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) + [9.C12 Riot Games](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/)
 - 想做 edge / Local Zone 規劃 → [05 部署平台模組](/backend/05-deployment-platform/)
+- 想理解雙峰下 Aurora storage / replica scaling → [Aurora 儲存層架構](/backend/01-database/vendors/aurora/storage-architecture/) + [Aurora read replica scaling](/backend/01-database/vendors/aurora/read-replica-scaling/)
+- 想評估 distributed SQL 在 betting 場景的 fit → [Aurora DSQL / Spanner / CockroachDB 決策樹](/backend/01-database/vendors/cockroachdb/aurora-dsql-spanner-decision-tree/)
 
 ## 引用源
 

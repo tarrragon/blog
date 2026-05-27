@@ -145,7 +145,7 @@ CREATE TABLE `Order` (
 3. 用 Dataflow / `gcloud spanner databases import` 把資料倒回
 4. 應用層 cutover（feature flag / dual write）
 
-這個流程基本上是 mini-migration、要走完整 [migration playbook](../migrate-from-cloud-sql-pg/) 的 phase plan。Schema 設計階段就決定好 interleave、避免後悔成本。
+這個流程是 mini-migration、要走完整 [migration playbook](../migrate-from-cloud-sql-pg/) 的 phase plan。Schema 設計階段就決定好 interleave、避免後悔成本。
 
 ### Rollback boundary
 

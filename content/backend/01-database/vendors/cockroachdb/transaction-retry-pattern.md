@@ -251,6 +251,21 @@ transaction read 開始時間早、commit 時 conflict window 大、retry 機率
 - kill long-running query（`SHOW SESSIONS` + `CANCEL QUERY`）
 - 把 batch update 拆成多個小 transaction、加 idempotency key
 
+### Distributed deadlock 跟 retry 互動
+
+CockroachDB 用 distributed deadlock detection（每個 node 維護 wait-for graph、定期跨 node 交換）跟 PostgreSQL local lock 表的 deadlock detection 不同。一般情況下、被 detector 選為 victim 的 transaction 會直接 abort、application retry loop 應該收到 `40001` 後重跑。但在三種 corner case 下會跟 retry loop 形成雪崩 pattern：
+
+- 多 transaction 同時撞同一組熱 row、deadlock detector 跨節點時間窗有 lag、多個 victim 同時 abort 後同時 retry、撞回同一個 deadlock window
+- 跨節點的 distributed deadlock 偵測週期（預設 200ms+）放大 application retry latency、application 的 retry backoff 沒對齊偵測週期、形成「detect → abort → 快速 retry → 再 deadlock」迴圈
+- Application 把 deadlock victim 當 `40001` 直接 retry、不分流出來看、就難以從 metric 區分「serialization conflict retry」跟「distributed deadlock retry」、調 schema / contention 的策略會用錯方向
+
+修法（屬通用工程議題、case 未直接揭露）：
+
+- Retry backoff 至少對齊 distributed deadlock 偵測週期、避免在偵測窗內快速 retry
+- 加 jitter、不同 session 的 retry 不同步
+- Application metric 分桶記錄 `serialization_conflict_retry` vs `distributed_deadlock_retry`、避免 contention 改善方向判錯
+- Schema 設計階段避免「跨節點熱 row 環形依賴」（例：兩個服務交叉 update 對方的 counter row）
+
 ### 跨 case 合成 Scope warning：DraftKings 對照
 
 DraftKings ledger 對照 — **DraftKings case 沒寫 PostgreSQL READ COMMITTED retry pattern**、case 內容是「Aurora 內 business sharding 路徑」、用 200 個獨立 cluster 解 Aurora single-primary 撞牆。本章把 DraftKings 拿來當「假想若遷 CockroachDB 需改 SERIALIZABLE + retry loop」的合成對照、不是 case 揭露的 fact。

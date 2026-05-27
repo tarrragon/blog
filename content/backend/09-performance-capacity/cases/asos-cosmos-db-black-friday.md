@@ -51,6 +51,8 @@ ASOS 案例揭露三個全球零售 KV 容量規劃重點。
 - 對照 flash-sale-spike → [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/)
 - 想對照其他 Cosmos DB 使用 → [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)
 - 想規劃全球電商 → [01 資料庫模組](/backend/01-database/) + [9.6 容量規劃模型](/backend/09-performance-capacity/)
+- 想拆 Black Friday 容量背後的 RU 成本與 sizing → [Cosmos DB RU 成本模型與 sizing](/backend/01-database/vendors/cosmosdb/ru-cost-model-sizing/)
+- 想做電商 partition key 設計 → [Cosmos DB partition key 設計](/backend/01-database/vendors/cosmosdb/partition-key-design/)
 
 ## 引用源
 

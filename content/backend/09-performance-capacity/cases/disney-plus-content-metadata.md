@@ -47,6 +47,8 @@ Disney+ 案例揭露三個串流平台 metadata 層的工程重點。
 - 想理解 metadata 層 → [01 資料庫模組](/backend/01-database/) + [9.5 瓶頸定位流程](/backend/09-performance-capacity/)
 - 想做內容發布 pre-scaling → [9.11 高峰事件準備](/backend/09-performance-capacity/) + [9.C1 Prime Day](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/)
 - 想做跨裝置同步設計 → [9.C24 Genesys multi-region](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/)
+- 想拆 metadata 的 single-table 與 GSI 設計 → [DynamoDB single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) + [DynamoDB GSI / LSI 設計](/backend/01-database/vendors/dynamodb/gsi-lsi-design/)
+- 想做跨 region metadata 一致性 → [DynamoDB global tables 寫衝突](/backend/01-database/vendors/dynamodb/global-tables-conflict/)
 
 ## 引用源
 

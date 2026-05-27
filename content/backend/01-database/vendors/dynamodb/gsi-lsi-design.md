@@ -128,7 +128,7 @@ CloudWatch GSI metric：看每個 GSI 的 WCU usage 跟主表的比例；GSI WCU
 
 ## 失敗模式
 
-6 個 production 常見踩雷：
+7 個 production 常見踩雷：
 
 #### Case 1：GSI 寫入 throttle 拖累主表 write
 
@@ -157,6 +157,24 @@ application 用 GSI 做 `Scan` 而非 `Query`、全 GSI 掃過去、cost 跟 lat
 #### Case 6：把 DAX 當預設配置
 
 寫密集 workload / cache hit rate 低的場景加 DAX、cache invalidation 成本超過 cache 收益、cost 上升 latency 沒降。修法：DAX 是「讀峰值持續高」的補位、不是預設（Lemino 揭露的觸發條件、Capcom 是 derive 不是 case fact）；先觀察 read pattern + 評估 cache hit rate 預期、再決定。
+
+#### Case 7：GSI capacity mode 跟 base table 不一致
+
+GSI 的 capacity mode 跟 base table 是 *獨立* 設定、不會自動繼承 — base table 是 provisioned + auto-scaling、開新 GSI 預設仍是 provisioned 但 WCU / RCU 預設值跟 base table 不同步、或誤把某個 GSI 切 on-demand 而 base table 維持 provisioned、實際 production 寫入 throttle / 成本失衡都會出現。屬通用工程議題、case 未直接揭露具體 mode 錯配狀況。
+
+徵兆：
+
+- Base table `ConsumedWriteCapacityUnits` 健康、卻看到 GSI `WriteThrottleEvents` 持續觸發、application 端寫入 latency p99 拉高
+- GSI 切 on-demand 後成本「不知為何」翻 X 倍、查 Cost Explorer 才發現 GSI WCU 計費跟 base table 的 provisioned 是完全不同帳單路徑
+- Auto-scaling policy 只設了 base table、GSI 沒設、流量上來時 base table 自動擴、GSI 卻 throttle
+
+修法：
+
+- 建 GSI 時把 capacity mode 當成獨立決策、不要假設「base 怎麼設、GSI 跟著走」
+- 流量穩定 workload 同時把 base + GSI 都設 provisioned + auto-scaling、auto-scaling target 對齊
+- Spiky workload 改 on-demand 時整批切（base table + 全部 GSI 同時切）、避免單側切換造成 partial throttle
+- CloudWatch alarm 對每個 GSI 獨立設 `WriteThrottleEvents` / `ReadThrottleEvents`、不要只盯 base table
+- 詳細 mode 切換時機看 sibling [on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 **Anti-recommendation**：access pattern < 3 個、主表 PK 已能覆蓋 → 不要預先建 GSI；GSI 從少到多容易、從多到少要 application 端配合 cutover。
 

@@ -52,6 +52,8 @@ Zomato 遷移揭露三個 DB 選型決策的判讀重點。
 - 想理解一致性取捨 → [01.5 transaction boundary](/backend/01-database/transaction-boundary/) + [9.C10 Spanner](/backend/09-performance-capacity/cases/spanner-planetary-scale-database-gcp/)
 - 想做總成本評估 → [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/)
 - 對照其他 DB 遷移 → [9.C9 Spotify Kafka→Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/)
+- 想拆 access pattern 對應的 DynamoDB schema → [DynamoDB single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/) + [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
+- 想評估搬遷後的 capacity mode → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 ## 引用源
 

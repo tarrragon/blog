@@ -46,6 +46,9 @@ Amazon Ads 在 DynamoDB 的關鍵數字（引自 [DynamoDB customers](https://aw
 - 想規劃 KV 高吞吐架構 → [9.5 瓶頸定位流程](/backend/09-performance-capacity/) + [01 資料庫模組](/backend/01-database/)
 - 想避免 hot partition → [01.6 高併發資料存取](/backend/01-database/high-concurrency-access/) + [9.4 Saturation Discovery](/backend/09-performance-capacity/)
 - 想對照其他 KV 案例 → [9.C11 Minecraft Earth Cosmos DB](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（Azure 全球分散）
+- 想深入 DynamoDB hot partition 反模式 → [DynamoDB partition key 反模式](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)
+- 想拆 access pattern 對應的 single-table design → [DynamoDB single-table design](/backend/01-database/vendors/dynamodb/single-table-design-pattern/)
+- 想評估 on-demand vs provisioned 切換時機 → [DynamoDB on-demand vs provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)
 
 ## 引用源
 
