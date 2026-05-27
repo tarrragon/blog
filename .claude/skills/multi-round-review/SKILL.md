@@ -1,9 +1,9 @@
 ---
 name: multi-round-review
-description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、cadence 同骨化、enumeration 不窮盡、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
+description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   category: writing-methodology
 ---
 
@@ -34,13 +34,20 @@ metadata:
 
 ### Round 1：Compliance / 基線 audit
 
-最先用「規範遵循」frame、抓 surface 層問題。常見三個 reviewer 平行 background：
+最先用「規範遵循」frame、抓 surface 層問題。**Round 1-A 寫作規範 reviewer 啟動時、必須同步 invoke `compositional-writing` skill 的字句層 grep keyword bank**（正向陳述優先 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）— 寫作規範 audit 漏這層、會把字句層問題推到 Round 2 才被 catch。常見三個 reviewer 平行 background：
 
 - **A: 寫作規範 audit** — AGENTS.md / markdown-writing-spec / compositional-writing 規範遵循
+  - **字句層 grep（必跑）**：
+    - 正向陳述優先：`rg "不[行可是要能該支對符夠必]|無法|沒[做有]|而非|而不是" <files>` — 不主導段落的少量負向（反例對照）可保留、主要敘述要正向
+    - 口語修辭（#111）：`rg "其實|實務上|真的|碰巧|立刻撞牆|沒事" <files>`
+    - 地區用語（#112）：`rg "集群|默認|質量|視頻|函數|文件夾|接口" <files>`
+    - 廢話前綴：`rg "值得注意的是|需要說明的是|實際上|基本上|事實上" <files>`
+    - 裝飾符號：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗" <files>`
+  - 詳細 grep keyword bank 跟 frame 路由見 [`compositional-writing` skill](../compositional-writing/SKILL.md)。
 - **B: 案例 / fact-check audit** — 案例引用準確性、編號 mis-cite、跨章節引用
 - **C: 跨章一致性 audit** — 編號、學習路線、模組整合、frontmatter 一致
 
-預期 finding 類型：編號錯、broken link、案例 mis-citation、規範違反、cadence 散點。
+預期 finding 類型：編號錯、broken link、案例 mis-citation、規範違反、字句層負向 / 口語 / 廢話、cadence 散點。
 
 ### Round 2：Cadence / 讀者旅程 frame
 
@@ -118,7 +125,8 @@ Round 3 之後是否需要 Round 4？四個停止訊號齊備、停：
 ## 跟既有 skill 的關係
 
 - [`case-first-module-workflow`](../case-first-module-workflow/SKILL.md) 的 Stage 4 含「agent team review」但偏 case-driven 單輪。Multi-round-review 補完跨輪 frame 切換維度、可以接在 case-first 的 Stage 5 之後或同時使用。
-- [`compositional-writing`](../compositional-writing/SKILL.md) 提供寫作原則（intent-revealing、grep-friendly）、本 skill 不重複、reviewer prompt 直接引用其檢查 pattern。
+- [`compositional-writing`](../compositional-writing/SKILL.md) 提供寫作原則（intent-revealing、grep-friendly）+ 字句層 grep keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）。**本 skill 啟動時應同步 invoke compositional-writing** — Round 1-A 寫作規範 reviewer 必須跑 compositional-writing 的字句 grep（見上）、Round 2-A cadence reviewer 引用其 multi-pass review 第 6 原則跟 cadence-homogenization 原則卡。兩個 skill 是垂直協同：multi-round-review 給 frame 切換結構、compositional-writing 給每輪 frame 的具體檢查清單。
+- **協同觸發**：用戶說「多輪審查 / 寫作 audit / batch review」時、兩個 skill 都該 surface — multi-round-review 規劃 frame、compositional-writing 提供每 frame 的 keyword bank。單獨用 multi-round-review 容易漏字句層、單獨用 compositional-writing 容易漏跨輪 frame 規劃。
 
 ## 反模式
 
