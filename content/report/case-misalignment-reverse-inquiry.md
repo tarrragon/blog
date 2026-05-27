@@ -66,6 +66,11 @@ Reviewer fact-check 結果：
 
 跟 [#116 引用案例要分觀察層 / 判讀層](/report/fact-vs-derive-citation-layering/) 也有張力：#116 強調觀察層 / 判讀層分明、本卡的反向追問可以視為一種「明示分層」的特殊型 — 把整個引用標為「反向讀法」、相當於把整段都歸到判讀層。
 
+補兩張上位卡：
+
+- [#114 Multi-pass review 的 frame 顆粒度盲點](/report/multi-pass-review-frame-granularity-blindspot/) — #146 的「抽象斷言訊號」（「看 X 如何 Y」）就是 #114「keyword bank」機制的具體 keyword 條目。本卡是 #114 機制 1 的應用實例 — 給作者一份可直接 grep 的關鍵字清單。
+- [#117 跨多 case 合成的 frame 必須標為章節合成](/report/cross-case-synthesized-frame-must-be-labeled/) — #117 處理「合成必須明示標示」、本卡的「反向追問」也是明示標示的一種 — 把「我用反向讀法解釋案例」明確告知讀者、避免讀者誤以為 case 直接示範了主題。兩者都處理引用層的誠實標示、是姊妹卡。
+
 ## 沒這樣做的麻煩
 
 強掛 case 在以下節點會引爆：

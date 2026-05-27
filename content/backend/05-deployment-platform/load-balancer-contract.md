@@ -99,6 +99,7 @@ load balancer contract 是部署平台與操作控制面的匯流點。
 2. 與 06 的交接：canary 放行與回退條件進入 [Release Gate](/backend/06-reliability/release-gate/)。
 3. 與 07 的交接：入口治理與管理面保護進入 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
 4. 與 08 的交接：切換與回退判斷記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+5. 與 [5.9 邊緣分發](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的交接：CDN 是 origin LB 的上游、edge miss 後流量進 origin LB、timeout / retry 設定要協調。
 
 ## 下一步路由
 

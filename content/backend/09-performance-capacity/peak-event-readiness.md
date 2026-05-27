@@ -186,6 +186,8 @@ T+7 retro 是讓 readiness 持續改進的關鍵。
 ## 下一步路由
 
 - 上游：[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) / [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)
+- 上游：[9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/)（pre-scaling 前要分辨可不可水平擴展）
+- 跨模組：[5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)（CDN pre-warm / origin protection 是 T-2 核心）
 - 跨模組：[06.20 experiment safety boundary](/backend/06-reliability/experiment-safety-boundary/) / [08 事故處理模組](/backend/08-incident-response/)
 
 ## 既建知識卡片

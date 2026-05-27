@@ -82,6 +82,8 @@ rg "展示 .{1,30}效應|展示 .{1,30}邏輯|本案展示|案例展示" content
 - [#122 Cadence 同質化是模板的隱形維度](/report/cadence-homogenization-in-batch-writing/) — 解釋「為什麼同 batch 會有 systemic 違規」的成因機制（主題語意 attractor）。本卡補完：規範化動作本身無法解這個 attractor、需要主動 sweep 才能切斷。
 - [#124 Emergence-class 違規規則化不了、要 stage 內抽樣](/report/emergence-violations-need-in-stream-sampling/) — 解釋「什麼時候 enforcement 最有效」（batch 進度 10-20%）。本卡補一個更早的時機點：立規範當下立刻 sweep 同 batch、不必等 batch 進度推進。
 - [#114 Multi-pass review 的 frame 顆粒度盲點](/report/multi-pass-review-frame-granularity-blindspot/) — 解釋「為什麼同 reviewer 多輪抓不到不同東西」、提出 keyword bank / reader simulation / self-criticism 三機制。本卡是 #114 在「規範作者本人」這個 reviewer 角色的具體實例：作者剛寫完規範、仍需主動換 frame 才能自審。
+- [#125 Collapse 是隱形預設](/report/collapse-is-implicit-default/) — 「規範化耗光認知頻寬、自審視角沒上線」是 collapse 的具體機制：規範化動作把高維注意力 reduce 到單軸（pattern 共同特徵）、其他軸（同 batch 自己稿件）被預設關閉。本卡是 #125 在「規範化 surface」的子實例。
+- [#126 寫作 review 是多軸完整性、不是單軸深度](/report/writing-review-multi-axis-completeness/) — 本卡揭露的「規範化 ≠ 自審」是 #126「Timing 軸」+「Granularity 軸」的具體交集：立規範當下不掃 = timing collapse、規範字面 vs 同 batch 違規 = granularity collapse。
 - [#146 案例庫不對齊章節主題時用反向追問取代強掛](/report/case-misalignment-reverse-inquiry/) — 本卡的 case 來源。#146 才剛立規範、同 batch 仍犯該規範、是「規範化 ≠ 自審」最直接的諷刺證據。本卡跟 #146 互為驗證關係：#146 給出規範本身、本卡解釋為什麼立完規範還需要主動 sweep。
 
 ## 判讀徵兆

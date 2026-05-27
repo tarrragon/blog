@@ -28,7 +28,7 @@ origin protection 的核心策略包含三個方向：
 
 1. **cache hit ratio 優化**：把高頻、可共用的內容做成可快取資源（含正確的 cache-control header、ETag 跟 vary 設計）。命中率每提升 10 個百分點，origin 流量幾乎等比例下降。
 2. **回源行為控制**：edge 沒命中時用 [Cache Stampede](/backend/knowledge-cards/cache-stampede/) 保護機制（origin shield 是 CDN 內部多一層中央節點集中回源、coalescing / request collapsing 把同時打進來的 N 個請求合併成一次 origin 呼叫）、避免擊穿。
-3. **failure fallback**：origin 不健康時、edge 可以回傳舊版本（stale-while-revalidate 是「先回舊版、背景去更新」、stale-if-error 是「origin 出錯時用舊版頂著」）、避免使用者直接看到 5xx。代價是 [Stale Data](/backend/knowledge-cards/stale-data/) 風險暫時提高、需要在 freshness budget 內。
+3. **failure fallback**：origin 不健康時、edge 可以回傳舊版本（[stale-while-revalidate / stale-if-error](/backend/knowledge-cards/stale-while-revalidate/)）、避免使用者直接看到 5xx。代價是 [Stale Data](/backend/knowledge-cards/stale-data/) 風險暫時提高、需要在 freshness budget 內。
 
 這三項決定了「能不能撐住高峰」。三項做齊才能形成保護網；缺項時邊緣層僅能發揮降低延遲的效果。
 

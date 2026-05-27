@@ -92,4 +92,9 @@ cache aside 的設計會直接影響觀測、驗證與事故處理。
 
 ## 下一步路由
 
-要進一步處理 TTL、容量與淘汰策略，接著讀 [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)。要看快取策略在真實事件中的失敗與修復，接著讀 [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)。
+**規模成長路線下一站 → [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)**：應用層快取上面還有 CDN 邊緣層、兩層失效時序要對齊（先 purge 應用層、再 purge 邊緣層、避免邊緣回填到應用層舊資料）。
+
+其他延伸方向：
+
+- 進一步處理 TTL、容量與淘汰策略 → [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)
+- 快取策略在真實事件中的失敗與修復 → [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)

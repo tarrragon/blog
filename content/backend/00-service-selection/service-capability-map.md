@@ -103,6 +103,8 @@ tags: ["backend", "service-selection"]
 
 下一步可讀：[部署平台與網路入口](/backend/05-deployment-platform/)。
 
+進入規模成長路線時、能力地圖之外還要看四條額外章節：[0.18 服務拆分與邊界判讀](/backend/00-service-selection/service-decomposition-boundaries/) 處理「該不該拆服務」、[0.19 雲端服務對照地圖](/backend/00-service-selection/cloud-vendor-capability-mapping/) 處理「該選哪家 vendor」、[9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/) 處理「該怎麼擴容」、[1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/) 處理「擴容前先優化什麼」。
+
 ## 小結
 
 後端服務選型先從需求類型開始。資料長期存在先看資料庫，讀取壓力集中先看快取，工作跨出 request 先看訊息傳遞，系統行為缺少可見性先看觀測平台，服務交付不穩先看部署平台。分類清楚後，後續產品選型與實作細節才會有正確位置。
