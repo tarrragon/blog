@@ -201,19 +201,25 @@ DynamoDB 的簡單路徑是先把每個 query path 寫成契約。table、partit
 
 Global Tables 的升級路徑要先處理 conflict 與讀寫語意。它提供 multi-region availability，但 LWW conflict resolution、region-local capacity 與跨 region reconciliation 仍要由 application contract 承擔。
 
-## 已知 limitation 與後續路由
+## Deep article（已完成）
 
-DynamoDB overview 目前完成 KV / access pattern 判斷。下一輪 deep article 應補 single-table design、GSI/LSI、DAX、Streams + Lambda、Global Tables conflict、capacity cost model 與 RDBMS / MongoDB → DynamoDB migration playbook。
+本批新增 5 篇 deep article、加上既有的 [consistency-model-optimization](consistency-model-optimization/)、覆蓋 DynamoDB 從 access pattern 反推到 multi-region 寫入的核心 production 議題：
 
-## 預計實作話題（後續擴充）
+| 主題                                                            | 文章                                                              | 對應 production 議題                                                           |
+| --------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 適用度 4 軸前置判讀 + access pattern 反推 PK/SK + durable queue | [single-table-design-pattern](single-table-design-pattern/)       | 適用度判讀 + control plane vs data plane + 9.C15 Tixcraft Stream durable queue |
+| 1000 WCU partition 上限 + composite key / calculated shard 修法 | [partition-key-antipatterns](partition-key-antipatterns/)         | 9.C15 Tixcraft 6750x 擴展、mode × partition 在 provisioned / on-demand 表現    |
+| GSI / LSI projection 三型、sparse、DAX 補位                     | [gsi-lsi-design](gsi-lsi-design/)                                 | GSI 自己會 hot partition、Capcom derive vs Lemino case fact 分層               |
+| 6 軸 capacity mode 決策 + auto-scaling 邊界 + cost crossover    | [on-demand-vs-provisioned](on-demand-vs-provisioned/)             | Zomato 50% 成本下降、Zoom 30x permanent surge、Amazon Ads sustained workload   |
+| Multi-region active-active + LWW conflict + cross-device sync   | [global-tables-conflict](global-tables-conflict/)                 | Genesys 99.999% / 15 region、Disney+ 跨裝置同步                                |
+| Strongly / eventually consistent read 取捨                      | [consistency-model-optimization](consistency-model-optimization/) | 既有：read consistency 成本選擇                                                |
 
-- Single-table design pattern（Rick Houlihan 設計法）
-- Partition key / sort key 設計反模式跟修正
-- GSI / LSI 使用時機
+跨 vendor entry：先看 [DB3 vendor selection](../db3-vendor-selection/)（MongoDB / DynamoDB / Cosmos DB 三方選型 + workload shape 前置判讀），再進本 vendor 的 deep article。
+
+## 後續擴充（仍待補）
+
 - DAX cache 配置跟 invalidation
 - Stream / Lambda event-driven 模式
-- Global Tables 配置跟 conflict resolution
-- on-demand vs provisioned 成本對比
 - DynamoDB Transaction 跟 conditional write
 - TTL 自動清理 best practice
 - 從 RDS / MongoDB 遷移到 DynamoDB

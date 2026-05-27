@@ -201,14 +201,24 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 - 按 request 計費，適合稀疏與小流量 workload
 - 適合：dev / test、小流量、稀疏 workload
 
-## 預計實作話題（後續擴充）
+## Deep article（已完成）
 
-- 5 個 consistency levels 的工程選擇邏輯
-- partition key 設計（synthetic、composite、hierarchical）
-- Multi-region write 跟 conflict resolution
+本批 5 篇 deep article 已完成、覆蓋 Cosmos DB 從 consistency level 選擇到 multi-region write conflict 的核心 production 議題：
+
+| 主題                                                                 | 文章                                                              | 對應 production 議題                                                                        |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Session 預設、Bounded staleness、Strong 邊界跟跨 collection 分流策略 | [consistency-levels-engineering](consistency-levels-engineering/) | Session 為何是 production 預設、per-request override、Strong + multi-region 互斥 cross-link |
+| Synthetic / composite / hierarchical partition key + 不可逆性硬約束  | [partition-key-design](partition-key-design/)                     | 10000 RU/s 上限、不可改、跟 DynamoDB / MongoDB 可逆性對比                                   |
+| RU/s 思維、payload、index、provisioned vs autoscale vs serverless    | [ru-cost-model-sizing](ru-cost-model-sizing/)                     | ASOS Black Friday + Minecraft Earth 1M RU/s 壓測、autoscale reactive 限制                   |
+| MongoDB API vs SQL API：三型遷移、dogfood、multi-model、跨雲 hedging | [mongodb-api-vs-sql-api](mongodb-api-vs-sql-api/)                 | Microsoft 365 dogfood 邊界、document model 遷移三型 SSoT                                    |
+| Multi-region active-active + LWW / custom merge / Strong 互斥        | [multi-region-write-conflict](multi-region-write-conflict/)       | Strong + multi-region 互斥的 AP 取捨 SSoT、廣告 SLA vs 實測可用性鏈路                       |
+
+跨 vendor entry：先看 [DB3 vendor selection](../db3-vendor-selection/)（MongoDB / DynamoDB / Cosmos DB 三方選型 + workload shape 前置判讀），再進本 vendor 的 deep article。
+
+## 後續擴充（仍待補）
+
 - Change Feed（CDC）整合
 - Stored procedure / trigger（JavaScript）
-- MongoDB API vs native SQL API trade-off
 - 從 MongoDB / Cassandra 遷到 Cosmos DB
 - Cosmos DB for PostgreSQL（2022 新增、不同產品）
 - 跟 Azure Synapse Link 整合（OLTP / OLAP [federation](/backend/knowledge-cards/federation/)）

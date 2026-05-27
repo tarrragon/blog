@@ -85,7 +85,7 @@ partition / shard key 的可逆性在 vendor 間差異懸殊：
 | DynamoDB  | 可改                             | 建新 table、backfill + dual-write 切換    | 中、要 backfill  |
 | Cosmos DB | *不可改*                         | 必須 export → recreate container → import | 最高、需停機窗口 |
 
-**對照表是本章合成 frame、9.C11 Minecraft Earth 沒直接揭露此對比、是從 outline knowledge 跟 MongoDB shard-key-selection 對照得出**。寫稿時必須明示：Cosmos DB partition key 不可改是 *設計選型的硬約束*、不是「先選錯再改」可承擔的風險 — 這個約束直接決定 selection 階段的 partition key audit 嚴格度該多高。
+**對照表是本章合成 frame、9.C11 Minecraft Earth 沒直接揭露此對比、是從 outline knowledge 跟 MongoDB shard-key-selection 對照得出**。引用時必須明示：Cosmos DB partition key 不可改是 *設計選型的硬約束*、不是「先選錯再改」可承擔的風險 — 這個約束直接決定 selection 階段的 partition key audit 嚴格度該多高。
 
 對 selection 的意義：若團隊對 access pattern 不確定、不能用「先上 Cosmos DB 再說、不行再改」的心態、要先用 MongoDB / DynamoDB 試 access pattern、確定後再評估 Cosmos DB。
 
@@ -237,7 +237,7 @@ partition skew 累積幾個月、直到事故才發現。production 上線初期
 
 ### Latency budget 拆解：vendor SLA vs end-to-end 實測
 
-9.C21 ASOS 觀察「48ms 平均響應 = 全球分散下 Cosmos DB 的代表性數字」段揭露：48ms 包含 *網路 + DB + 應用層*、DB 本身可能只佔 5-10ms、其他是網路與應用層。寫稿時不能把 vendor 廣告的 5-10ms p99 當「使用者體驗」、要明示「48ms 是 9.C21 ASOS 案例的 end-to-end 觀察、Cosmos DB 自身可能只佔 5-10ms（case 揭露的拆解推論、不是 case fact）」。
+9.C21 ASOS 觀察「48ms 平均響應 = 全球分散下 Cosmos DB 的代表性數字」段揭露：48ms 包含 *網路 + DB + 應用層*、DB 本身可能只佔 5-10ms、其他是網路與應用層。引用時不能把 vendor 廣告的 5-10ms p99 當「使用者體驗」、要明示「48ms 是 9.C21 ASOS 案例的 end-to-end 觀察、Cosmos DB 自身可能只佔 5-10ms（case 揭露的拆解推論、不是 case fact）」。
 
 操作上要把 end-to-end latency 拆 budget：
 

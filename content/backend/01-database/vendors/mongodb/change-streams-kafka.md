@@ -179,7 +179,7 @@ Migration playbook：
 - MongoDB → 其他 sink 的 bulk migration 走 [→ Atlas Migration Service](/backend/01-database/vendors/mongodb/migrate-to-atlas/)
 - 遷出 MongoDB 時 change stream 是 catch-up 機制（先 bulk export、再 change stream 補增量）
 
-跟 1.x 互引：[1.6 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 處理 schema drift 時 CDC pipeline 的對賬；[1.7 reconciliation data repair](/backend/01-database/reconciliation-data-repair/) 處理 CDC 失準後的對賬流程。
+跟 1.x 互引：[1.7 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 處理 schema drift 時 CDC pipeline 的對賬；[1.9 reconciliation data repair](/backend/01-database/reconciliation-data-repair/) 處理 CDC 失準後的對賬流程。
 
 ## 相關連結
 

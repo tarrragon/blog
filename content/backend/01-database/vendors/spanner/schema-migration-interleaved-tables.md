@@ -261,12 +261,3 @@ Observability evidence：backfill 開始 timestamp、operation id、predicted du
 ### Anti-recommendation
 
 讀者讀完本文應該能判斷：interleaved 不是「強制使用」的 feature、是「access pattern 固定時的 latency benefit」。小規模 OLTP、access pattern 不確定的 workload、用 standard PostgreSQL FK 就好、為 interleaved 付 schema 後悔成本的判準很高。
-
-## 完稿檢查（讀者導向）
-
-- [ ] DDL 是 long-running operation 的核心機制在「核心機制」第一段就明示
-- [ ] Interleaved 是 storage-level、不是 logical FK、用物理 layout 圖具象化
-- [ ] backfill 時間在大表上的 capacity impact 明示（不是「不停機 = 瞬間完成」）
-- [ ] 跟 PostgreSQL Online Schema Change 對照
-- [ ] 9.C10 dogfood 邊界明示：本文無 schema migration 強案例、用通用 pattern 補
-- [ ] transaction-boundary 卡互引

@@ -238,7 +238,7 @@ multi-region write 已是 active-active、*不需要 manual failover* — 一個
 - 多 region active-active 可解 *DB 端可用性*、但網路 / 應用層任一掉、實測仍 < 99.99%
 - 廣告 99.999% 是 multi-region availability zone 級、*不是* 「使用者 request 成功率」
 
-寫稿時必須明示：Cosmos DB multi-region 廣告 99.999% 是 DB 端、要算實測可用性必須補網路 / 應用層 SLA 乘積、Toyota case 的「99% 實測」揭露的就是這個鏈路問題、跨 vendor 都適用。
+引用時必須明示：Cosmos DB multi-region 廣告 99.999% 是 DB 端、要算實測可用性必須補網路 / 應用層 SLA 乘積、Toyota case 的「99% 實測」揭露的就是這個鏈路問題、跨 vendor 都適用。
 
 跟 conflict resolution 的關係：多 region 高可用性 *買來* 的代價是 conflict、conflict rate 是 reliability 的暗稅 — 廣告 SLA 不計 conflict 處理成本。production 設計要把「conflict resolution 的工程成本」加進 multi-region write 的 ROI 評估。
 

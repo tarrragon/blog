@@ -73,7 +73,7 @@ Netflix 60+ multi-region cluster 揭露的反直覺結論：*主要動機是 reg
 
 Gaming cluster 48-node 跨 4 region 就是為了「region failover 不停服」、不是讓玩家延遲變低。**Scope warning**：case 沒揭露 Gaming cluster 具體 p99 數字、只揭露「48-node、跨 4 region、region failure 不停服」這個拓樸 fact 跟業務動機釐清。
 
-寫稿時若引用「region survival 怎麼提升用戶體驗」、要 *釐清成 survival、不是 latency 優化*。讓讀者誤把跨 region 當成 latency 解法、是這條決策最常見的源頭錯誤。
+引用時若提到「region survival 怎麼提升用戶體驗」、要 *釐清成 survival、不是 latency 優化*。讓讀者誤把跨 region 當成 latency 解法、是這條決策最常見的源頭錯誤。
 
 ## 操作流程：從業務 SLO 倒推 survival goal
 

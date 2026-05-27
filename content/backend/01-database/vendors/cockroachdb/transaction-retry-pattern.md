@@ -300,7 +300,7 @@ retry rate 是 *容量規劃必納入* 的變數 — 沒算 retry 就會 underes
 
 PostgreSQL READ COMMITTED 是 default、application 沒 retry loop 是 acceptable。遷 CockroachDB *必須* 重塑 application transaction contract — 這是 migration 階段最容易 underestimate 的成本。
 
-對應 PostgreSQL MVCC + SSI 機制細節、見 [PostgreSQL MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model.md)。
+對應 PostgreSQL MVCC + SSI 機制細節、見 [PostgreSQL MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)。
 
 ### Migration playbook
 
@@ -328,6 +328,6 @@ PG → CockroachDB 的 application audit 必看 transaction shape：
 - [HLC + Raft consensus](../hlc-raft-consensus/)
 - [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（trigger context — PG wire 相容警語）
 - [9.C4 DraftKings](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/)（合成對照 — Aurora sharding 路徑）
-- [PostgreSQL MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model.md)
+- [PostgreSQL MVCC + Lock Model](/backend/01-database/vendors/postgresql/mvcc-lock-model/)
 - [isolation level 卡](/backend/knowledge-cards/isolation-level/) / [transaction boundary 卡](/backend/knowledge-cards/transaction-boundary/)
 - 官方：[CockroachDB Transactions](https://www.cockroachlabs.com/docs/stable/transactions.html) / [Transaction Retry Error Reference](https://www.cockroachlabs.com/docs/stable/transaction-retry-error-reference.html) / [READ COMMITTED v23.2 announcement](https://www.cockroachlabs.com/docs/stable/read-committed.html)

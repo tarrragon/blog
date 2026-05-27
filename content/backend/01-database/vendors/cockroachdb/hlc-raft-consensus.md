@@ -229,7 +229,7 @@ DoorDash case 揭露的 1.636 M QPS 是 *Aurora Postgres single-primary 在 2020
 
 - 寫成「Aurora 撞牆訊號」、不寫成「CockroachDB 容量證明」
 - single-primary 撞牆的轉折點是 *primary CPU + WAL flush rate*（DoorDash 策略段 1）、不是 IOPS
-- 「換引擎」前先評估「兩階段紓壓」— DoorDash 路徑是先把 hot table 拆到獨立 Aurora cluster（紓壓）、再規劃 Aurora → CockroachDB 換引擎（[01.4 database migration playbook](/backend/01-database/database-migration-playbook/)）
+- 「換引擎」前先評估「兩階段紓壓」— DoorDash 路徑是先把 hot table 拆到獨立 Aurora cluster（紓壓）、再規劃 Aurora → CockroachDB 換引擎（[1.6 database migration playbook](/backend/01-database/database-migration-playbook/)）
 
 ### 回路徑
 

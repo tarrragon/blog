@@ -195,7 +195,7 @@ Migration playbook：
 - document 形狀走樣到無法治理時的 [→ MongoDB → PostgreSQL 拆 normalize](/backend/01-database/large-scale-db-migration/) 路徑
 - 保留 document model 換 vendor 三型對照 — 保留主 DB 補周邊（Coinbase）/ 同 DB 換託管（Forbes Atlas）/ 同 model 換 vendor（[Microsoft 365 Cosmos DB MongoDB API](/backend/01-database/vendors/cosmosdb/)）
 
-跟 1.x 互引：[1.2 schema design](/backend/01-database/schema-design/) 處理通用 schema 演進原則、本文是 MongoDB-specific 落地；[1.4 transaction boundary](/backend/01-database/transaction-boundary/) 對齊 aggregate = atomic 邊界。
+跟 1.x 互引：[1.2 schema design](/backend/01-database/schema-design/) 處理通用 schema 演進原則、本文是 MongoDB-specific 落地；[1.3 transaction boundary](/backend/01-database/transaction-boundary/) 對齊 aggregate = atomic 邊界。
 
 ## 相關連結
 

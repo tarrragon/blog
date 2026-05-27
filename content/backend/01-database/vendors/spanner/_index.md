@@ -173,15 +173,24 @@ Spanner 解決的是跨地理位置同時追求 strong consistency、linear scal
 - Spanner 還有 schema migration without downtime、change streams、interleaved tables
 - 評估 Spanner 要同時看跨 region 強一致與整體 SQL 工程能力
 
-## 預計實作話題（後續擴充）
+## Deep article（已完成）
 
-- TrueTime API 深度（為什麼 GPS + 原子鐘）
-- External consistency vs serializability vs [linearizability](/backend/knowledge-cards/linearizability/)
-- Schema migration 跟 interleaved tables
+本批 4 篇 deep article 已完成、覆蓋 Spanner 從 TrueTime 到 Cloud SQL 遷移的核心 production 議題：
+
+| 主題                                                                  | 文章                                                                        | 對應 production 議題                                                                                     |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| TrueTime 是手段、line-rate scaling 才是設計目的、commit wait 數學     | [truetime-api-depth](truetime-api-depth/)                                   | 9.C10 Google internal dogfood 線性擴展模式、ε 暴衝失敗模式、cross-region voting latency 影響             |
+| external consistency / serializability / linearizability 精確定義差異 | [consistency-models-comparison](consistency-models-comparison/)             | PG SSI / CockroachDB / Spanner / Aurora DSQL line-rate scaling 對照、9.C10 cross-region quorum 100-200ms |
+| Schema migration without downtime + interleaved tables 物理 layout    | [schema-migration-interleaved-tables](schema-migration-interleaved-tables/) | TrueTime version timestamp、5 production 踩雷、跟 PostgreSQL online schema change 對照                   |
+| Cloud SQL for PostgreSQL → Spanner（Type E paradigm shift）playbook   | [migrate-from-cloud-sql-pg](migrate-from-cloud-sql-pg/)                     | sizing barrier（100 pu 起跳）+ < 50ms write latency no-go、cost crossover 報告、9.C10 dogfood 邊界       |
+
+DB4 cross-vendor entry：先看 [CockroachDB / Aurora DSQL / Spanner 決策樹](../cockroachdb/aurora-dsql-spanner-decision-tree/) 識別 driver path、再進本 vendor 深度。
+
+## 後續擴充（仍待補）
+
 - Change streams（CDC）
-- Spanner PostgreSQL dialect
+- Spanner PostgreSQL dialect deep dive
 - Spanner Graph（2024）
-- 從 Cloud SQL / PostgreSQL 遷到 Spanner
 - 跟 BigQuery 整合（OLTP / OLAP [federation](/backend/knowledge-cards/federation/)）
 
 ## Anti-recommendation 與升級路由

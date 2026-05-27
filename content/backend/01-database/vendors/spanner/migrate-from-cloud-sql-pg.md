@@ -3,7 +3,7 @@ title: "Migration Playbook：Cloud SQL for PostgreSQL → Cloud Spanner"
 date: 2026-05-27
 description: "Cloud SQL → Spanner 是 paradigm shift 級遷移、不是 drop-in。本 playbook 走 6 規格面 Driver / Diff / Phase / Evidence / Cutover / Cleanup：Driver 段明示 sizing barrier（100 pu 起跳）跟 < 50ms write latency 兩條 no-go；Diff 段加 sizing / cost 第 7 規格面；Phase 0 含 sizing audit；Evidence 段補 cost crossover 報告；對照 9.C10 Google internal dogfood 邊界跟 Standard Chartered 受監管 banking case"
 weight: 33
-tags: ["backend", "database", "spanner", "global-sql", "migration", "playbook", "postgresql", "cloud-sql"]
+tags: ["backend", "database", "spanner", "global-sql", "migration", "playbook", "postgresql", "cloud-sql", "deep-article"]
 ---
 
 > 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 migration playbook。走 [vendor-article-spec](/backend/01-database/vendor-article-spec/) Migration Playbook 規格 + [migration-playbook-methodology](/posts/migration-playbook-methodology/) Type E（paradigm shift）。
@@ -344,15 +344,3 @@ postgres operation runbook 標記 deprecated、Spanner runbook 上線。新 runb
 - 若 cost crossover 證明不出來 → halt migration、不升
 
 Driver 是真正跨 region write residency / external consistency 對帳契約 / 單 primary 容量天花板 → 才升。Migration playbook 的目標不是把所有 Cloud SQL workload 升到 Spanner、是把「適合升」的部分用低風險路徑遷過去。
-
-## 完稿檢查（讀者導向）
-
-- [ ] Driver 段含基礎 no-go + sizing barrier no-go（100 pu 起跳）+ < 50ms write no-go
-- [ ] 9.C10 數字引用都明示「Google internal dogfood、不是 customer-facing capacity」
-- [ ] Diff Audit 含 sizing / cost 第 7 規格面
-- [ ] Phase 0 含 sizing audit step
-- [ ] Evidence 段含 cost crossover 報告模板
-- [ ] Cutover decision owner 含受監管產業加合規 owner
-- [ ] rollback-window / rollback-condition / external-consistency 三張卡互引
-- [ ] 跟 9.C14 Standard Chartered case 對照（受監管 banking 遷移特殊性）
-- [ ] anti-recommendation 段明示「想用新技術」這種空泛動機不該升
