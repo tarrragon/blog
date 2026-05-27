@@ -58,7 +58,7 @@ CockroachDB 預設 `SERIALIZABLE` — 最強 isolation level、保證 transactio
 
 ### Conflict detection：read / write set 衝突就 abort
 
-CockroachDB 追蹤每個 transaction 的 read set 跟 write set。當兩個並行 transaction 的 read / write set 衝突、CockroachDB abort 後到的那個、發 `40001 serialization_failure`。
+CockroachDB 追蹤每個 transaction 的 read set 跟 write set。當兩個並行 transaction 的 read / write set 衝突、CockroachDB abort 後到的那個、發 [Serialization Failure](/backend/knowledge-cards/serialization-failure/)（`40001 serialization_failure`）。
 
 對比 PostgreSQL serializable（SSI）：兩者都是「post-detect」、commit 時偵測 anomaly、不是 pre-lock。差別在 *衝突偵測時機* 跟 *成本*：
 

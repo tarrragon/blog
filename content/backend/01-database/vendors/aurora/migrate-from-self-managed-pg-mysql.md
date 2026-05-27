@@ -43,13 +43,13 @@ tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "
 
 跨雲 / on-prem 需求觸動 [vendor lock-in](/backend/knowledge-cards/vendor-lock-in/) — Aurora storage layer 是 AWS 專屬、wire protocol 相容不代表退出成本低、long-term 跨雲策略未定時 self-managed PG / MySQL 反而保留路徑。
 
-| 條件                      | 為什麼是 no-go                                                                                         |
-| ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| 跨雲 / on-prem 需求       | Aurora AWS-only、wire protocol 相容但 storage 是 AWS 專屬                                              |
-| 需要 latest upstream 特性 | Aurora 通常落後 upstream PostgreSQL / MySQL 1-2 major version                                          |
-| 預算極敏感                | Aurora 比 self-managed PostgreSQL / MySQL 貴 20-30%                                                    |
-| 合規禁止跨境複製          | 受監管市場資料 *不能跨境複製*、Aurora Global Database 在這種場景 *違反合規* — 要改用每市場獨立 cluster |
-| 客製化 storage / I/O      | Aurora storage 是 AWS managed、不能客製化（vs self-managed 可以做 cgroup / quota / 自訂 storage 配置） |
+| 條件                      | 為什麼是 no-go                                                                                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 跨雲 / on-prem 需求       | Aurora AWS-only、wire protocol 相容但 storage 是 AWS 專屬                                                                                                     |
+| 需要 latest upstream 特性 | Aurora 通常落後 upstream PostgreSQL / MySQL 1-2 major version                                                                                                 |
+| 預算極敏感                | Aurora 比 self-managed PostgreSQL / MySQL 貴 20-30%                                                                                                           |
+| 合規禁止跨境複製          | 受監管市場 [Data Residency](/backend/knowledge-cards/data-residency/) *禁止跨境複製*、Aurora Global Database 在這種場景 *違反合規* — 要改用每市場獨立 cluster |
+| 客製化 storage / I/O      | Aurora storage 是 AWS managed、不能客製化（vs self-managed 可以做 cgroup / quota / 自訂 storage 配置）                                                        |
 
 **合規禁止跨境複製 no-go**（[9.C14 Standard Chartered 揭露](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/)）：
 

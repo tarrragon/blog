@@ -185,7 +185,7 @@ aws rds failover-global-cluster \
 
 [9.C14 Standard Chartered case](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 「判讀」段第 1 點原文：「7 個受監管市場代表 7 個獨立 cluster（資料不能跨境）、容量規劃變成『7 個獨立規劃 × 各自合規門檻』」。
 
-原因：受監管市場資料 *不能跨境複製*、Global Database 本質上就是跨 region storage replication、配置了就違反合規。Standard Chartered 的選擇是 *每市場獨立 cluster*、跨市場 DR 走應用層市場切換、不靠 Global Database。
+原因：受監管市場資料 *不能跨境複製*（[Data Residency](/backend/knowledge-cards/data-residency/) 硬約束）、Global Database 本質上就是跨 region storage replication、配置了就違反合規。Standard Chartered 的選擇是 *每市場獨立 cluster*、跨市場 DR 走應用層市場切換、不靠 Global Database。
 
 修：
 

@@ -9,6 +9,8 @@ Cross-region quorum 的核心概念是「multi-region distributed SQL（Spanner 
 
 ## 概念位置
 
+Cross-region quorum 跟相鄰卡片有清楚的角色分工 — [Quorum](/backend/knowledge-cards/quorum/) 是抽象機制（多數 ack 即可 commit）、[Latency Budget](/backend/knowledge-cards/latency-budget/) 是把跨 region RTT 寫進 SLO 的決策框架、[Commit Wait](/backend/knowledge-cards/commit-wait/) 是 Spanner TrueTime 的另一段獨立延遲、不能混算同一個 latency 數字。
+
 Cross-region quorum 的 latency 由 voting replica 之間的網路 RTT 主導、跟 instance config 強相關：
 
 - Regional（單 region 多 zone）：voting 在同 region 內、quorum RTT < 5ms

@@ -77,18 +77,18 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 PostgreSQL DDL → Spanner PostgreSQL dialect 對照：
 
-| PostgreSQL 特性          | Spanner 對應                           | 動作                                           |
-| ------------------------ | -------------------------------------- | ---------------------------------------------- |
-| `SERIAL`                 | bit-reversed sequence                  | 改 primary key 策略、避免 hot split            |
-| `JSONB`                  | `JSON` type                            | 大部分相容、複雜 path query 重寫               |
-| `ARRAY`                  | `ARRAY`                                | OK                                             |
-| `PARTITION BY`           | 不直接支援                             | 改成 interleaved table 或單表                  |
-| `FOREIGN KEY`            | 保留 FK constraint + 考慮 INTERLEAVE   | parent-child access pattern 改 interleaved     |
-| `B-tree INDEX`           | OK                                     | 直接遷                                         |
-| `GIN / GiST INDEX`       | 不支援                                 | 用 `STORING` column 取代部分需求、其餘改應用層 |
-| `CHECK constraint`       | 部分支援（time-sensitive、查最新文件） | audit 每條 constraint                          |
-| `UDF / stored procedure` | 少數支援                               | 改應用層或 client-side compute                 |
-| `TRIGGER`                | 不支援                                 | 改 application 層或 Spanner change streams     |
+| PostgreSQL 特性          | Spanner 對應                                                                               | 動作                                           |
+| ------------------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| `SERIAL`                 | bit-reversed sequence                                                                      | 改 primary key 策略、避免 hot split            |
+| `JSONB`                  | `JSON` type                                                                                | 大部分相容、複雜 path query 重寫               |
+| `ARRAY`                  | `ARRAY`                                                                                    | OK                                             |
+| `PARTITION BY`           | 不直接支援                                                                                 | 改成 interleaved table 或單表                  |
+| `FOREIGN KEY`            | 保留 FK constraint + 考慮 [Interleaved Table](/backend/knowledge-cards/interleaved-table/) | parent-child access pattern 改 interleaved     |
+| `B-tree INDEX`           | OK                                                                                         | 直接遷                                         |
+| `GIN / GiST INDEX`       | 不支援                                                                                     | 用 `STORING` column 取代部分需求、其餘改應用層 |
+| `CHECK constraint`       | 部分支援（time-sensitive、查最新文件）                                                     | audit 每條 constraint                          |
+| `UDF / stored procedure` | 少數支援                                                                                   | 改應用層或 client-side compute                 |
+| `TRIGGER`                | 不支援                                                                                     | 改 application 層或 Spanner change streams     |
 
 interleaved table 設計參考 [schema-migration-interleaved-tables](../schema-migration-interleaved-tables/)。讀者要在 schema audit 階段就決定哪些 parent-child 該 interleave、避免後悔成本。
 
@@ -112,7 +112,7 @@ interleaved table 設計參考 [schema-migration-interleaved-tables](../schema-m
 
 從 single-primary OLTP → 跨 region distributed SQL：
 
-- transaction commit latency：< 5ms → 50-200ms（跨洲）
+- transaction commit latency：< 5ms → 50-200ms（跨洲、含 [Commit Wait](/backend/knowledge-cards/commit-wait/) + cross-region quorum）
 - external consistency 是 default（不再是 isolation level 選擇題）
 - transaction 上限：Cloud SQL 無硬限 → Spanner 10s timeout、要重構成短交易
 - read consistency：default eventual → default strong、需顯式選 bounded staleness

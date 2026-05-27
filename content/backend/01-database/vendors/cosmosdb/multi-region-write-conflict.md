@@ -217,7 +217,7 @@ multi-region write 已是 active-active、*不需要 manual failover* — 一個
 
 - 必看 metric：`ConflictCount`、`ReplicationLatency` per region pair、conflict feed lag
 - Conflict rate 監控：正常 < 0.01%、突增代表 hot key 或 region 同步異常
-- Cost 影響：multi-region write 開啟後、寫入成本 × region 數（每個 region 都 replicate）— 3 region active-active = 3x write RU cost
+- Cost 影響：multi-region write 開啟後、寫入成本 × region 數（每個 region 都 replicate）— 3 region active-active = 3x write [Request Unit](/backend/knowledge-cards/request-unit/) cost
 - 對應 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)：multi-region write multiplier 進 sizing
 - 對應 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)：conflict rate 當 reliability evidence
 - Alert：conflict rate > 0.1%、conflict feed lag > 5 min、cross-region replication lag > SLA

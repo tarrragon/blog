@@ -6,7 +6,7 @@ weight: 40
 tags: ["backend", "database", "cosmosdb", "ru-sizing", "capacity-planning", "deep-article"]
 ---
 
-Cosmos DB 用單一 Request Unit（RU）抽象 read / write / query / replace 的成本。這個抽象 *簡化* 容量規劃（不用拆 RCU/WCU、不用估 CPU + IOPS）、但也引入 *團隊知識遷移* 成本 — 從 MongoDB / PostgreSQL 自管團隊轉過來、工程師要重新學「query 為什麼吃 200 RU」「payload 從 1KB 變 10KB cost 怎麼變」「index 改一個欄位 write RU 漲 30%」這些 RU 思維問題。本文先講 RU 思維的學習曲線、再進操作流程（依負載形狀選容量模式）、再進失敗模式（autoscale reactive 限制等）。
+Cosmos DB 用單一 [Request Unit](/backend/knowledge-cards/request-unit/)（RU）抽象 read / write / query / replace 的成本。這個抽象 *簡化* 容量規劃（不用拆 RCU/WCU、不用估 CPU + IOPS）、但也引入 *團隊知識遷移* 成本 — 從 MongoDB / PostgreSQL 自管團隊轉過來、工程師要重新學「query 為什麼吃 200 RU」「payload 從 1KB 變 10KB cost 怎麼變」「index 改一個欄位 write RU 漲 30%」這些 RU 思維問題。本文先講 RU 思維的學習曲線、再進操作流程（依負載形狀選容量模式）、再進失敗模式（autoscale reactive 限制等）。
 
 本文不是 Cosmos DB overview（請看 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/)）— 而是 *RU 成本模型 + sizing* 的深度展開。Case anchor 是 [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（24h 1.67 億 request、autoscale + RU budgeting）+ [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（測試到 1M RU/s、RU 抽象單位定義）。
 

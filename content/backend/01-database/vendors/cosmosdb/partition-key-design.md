@@ -6,7 +6,7 @@ weight: 60
 tags: ["backend", "database", "cosmosdb", "partition-key", "hot-partition", "deep-article"]
 ---
 
-Cosmos DB 的 *logical partition 上限是 10,000 RU/s + 20 GB storage*、partition key 一旦上 production *改不了*（要 export → recreate container → import）。partition key 選錯的後果是 Black Friday / 上線日 / VIP 用戶把流量壓在少數 partition、p99 latency 從 50ms 飆到 5s、整體 container 還有 70% RU 剩餘卻全 throttle。Cosmos DB partition key 設計是 *selection 階段就要決定的硬約束*、不是「先選錯再改」可承擔的風險 — 這個不可逆性跟 MongoDB（`reshardCollection` 線上完成）跟 DynamoDB（建新 table backfill）形成關鍵對比。
+Cosmos DB 的 *logical partition 上限是 10,000 [Request Unit](/backend/knowledge-cards/request-unit/)/s + 20 GB storage*、partition key 一旦上 production *改不了*（要 export → recreate container → import）。partition key 選錯的後果是 Black Friday / 上線日 / VIP 用戶把流量壓在少數 partition、p99 latency 從 50ms 飆到 5s、整體 container 還有 70% RU 剩餘卻全 throttle。Cosmos DB partition key 設計是 *selection 階段就要決定的硬約束*、不是「先選錯再改」可承擔的風險 — 這個不可逆性跟 MongoDB（`reshardCollection` 線上完成）跟 DynamoDB（建新 table backfill）形成關鍵對比。
 
 本文不是 Cosmos DB overview（請看 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/)）— 而是 partition key 設計 + 故障演練的深度展開。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（synthetic partition key 強制分散、AR 遊戲玩家位置）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 流量分散 + latency budget 拆解）。
 
@@ -58,7 +58,7 @@ partition key 選錯的隱性成本：要改就是 *export → recreate containe
 
 #### Composite（多欄位合成）
 
-機制：用 `{tenantId}_{deviceId}` 兩個欄位合成、避免單一 high-cardinality 欄位 hot。適合 *多租戶 SaaS*、單一 tenant 內又有多個 device、避免大 tenant 把所有寫入集中。
+機制：用 `{tenantId}_{deviceId}` 兩個欄位合成（[Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) 通用樣式）、避免單一 high-cardinality 欄位 hot。適合 *多租戶 SaaS*、單一 tenant 內又有多個 device、避免大 tenant 把所有寫入集中。
 
 副作用：read 必須帶兩個欄位、否則 cross-partition query；query API 設計要強制帶 tenant + device。
 

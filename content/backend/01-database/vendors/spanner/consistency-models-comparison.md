@@ -65,7 +65,7 @@ transaction 層級的 serializability + 全序跟 real-time 一致 — 等同於
 
 ## Cross-region quorum 100-200ms 物理硬限：強一致 + 全球不是免費
 
-external consistency + multi-region 不是「免費全球」、是「用 latency 換 consistency」。讀者若沒看到具體數量級、會誤把 Spanner 當作「強一致 + 全球 + 低延遲」的奇蹟、實際 cross-region write 在物理光速硬限下必須付跨洲 round-trip cost。
+[Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/) + external consistency + multi-region 不是「免費全球」、是「用 latency 換 consistency」。讀者若沒看到具體數量級、會誤把 Spanner 當作「強一致 + 全球 + 低延遲」的奇蹟、實際 cross-region write 在物理光速硬限下必須付跨洲 round-trip cost。
 
 ### 9.C10 揭露的數量級
 
@@ -74,7 +74,7 @@ external consistency + multi-region 不是「免費全球」、是「用 latency
 ### Latency 拆解模型（cross-region write）
 
 ```text
-total write latency ≈ 2ε（commit wait、TrueTime ε 兩倍 ≈ 2-14ms）
+total write latency ≈ 2ε（[Commit Wait](/backend/knowledge-cards/commit-wait/)、TrueTime ε 兩倍 ≈ 2-14ms）
                     + quorum RTT across voting regions
                        跨洲：50-100ms one-way、來回 100-200ms
                        跨大陸內：10-30ms
@@ -82,7 +82,7 @@ total write latency ≈ 2ε（commit wait、TrueTime ε 兩倍 ≈ 2-14ms）
                     + Spanner internal processing
 ```
 
-跨洲 quorum 在這個模型裡是 *dominant term*、不是 commit wait — 判讀時要明示「commit wait 跟跨 region quorum 是兩個獨立的物理 cost、不能混用一個 latency 數字解釋兩者」。讀者常見的誤解是把 100-200ms 寫成「Spanner commit wait」、實際 commit wait 只是其中 2-14ms、剩下 100ms+ 是物理光速限定的 quorum RTT。
+跨洲 quorum 在這個模型裡是 *dominant term*、不是 [commit wait](/backend/knowledge-cards/commit-wait/) — 判讀時要明示「commit wait 跟跨 region quorum 是兩個獨立的物理 cost、不能混用一個 latency 數字解釋兩者」。讀者常見的誤解是把 100-200ms 寫成「Spanner commit wait」、實際 commit wait 只是其中 2-14ms、剩下 100ms+ 是物理光速限定的 quorum RTT。
 
 ### Scope warning：實際 latency 依 region 配置
 

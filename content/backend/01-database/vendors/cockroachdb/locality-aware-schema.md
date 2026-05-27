@@ -35,7 +35,7 @@ tags: ["backend", "database", "cockroachdb", "distributed-sql", "locality", "mul
 
 ### 三種 locality 模式
 
-CockroachDB 把 multi-region table 抽象成三種 locality：
+CockroachDB 用 [Range Sharding](/backend/knowledge-cards/range-sharding/) 把 multi-region table 抽象成三種 locality、配合 [Data Residency](/backend/knowledge-cards/data-residency/) 合規邊界決定 row 落在哪個 region：
 
 | Locality            | Read 行為                                  | Write 行為                    | 適用場景                                  |
 | ------------------- | ------------------------------------------ | ----------------------------- | ----------------------------------------- |
@@ -75,11 +75,11 @@ CockroachDB planner 自動感知 `crdb_region`、把 read / write 路由到 row 
 CockroachDB 區分 voting 跟 non-voting replica：
 
 - voting replica 參與 Raft majority、決定 commit
-- non-voting replica 不參與 commit、只 serve follower read
+- non-voting replica 不參與 commit、只 serve [Follower Read](/backend/knowledge-cards/follower-read/)
 
-`REGIONAL BY ROW` + `SURVIVE REGION FAILURE` 配合時：row 所在 region 是 voting + leaseholder、其他 region 有 voting replica（survival 需要）+ non-voting replica（本地 follower read）。
+`REGIONAL BY ROW` + `SURVIVE REGION FAILURE` 配合時：row 所在 region 是 voting + [Leaseholder](/backend/knowledge-cards/leaseholder/)、其他 region 有 voting replica（survival 需要）+ non-voting replica（本地 follower read）。
 
-follower read 讀到的是 *closed timestamp* 之前的資料 — strong consistency 場景不能用（read-after-write 會 stale）、但 dashboard / reporting / 風控分析等 *容忍 stale* 場景大幅降低 cross-region latency。
+Follower read 讀到的是 *closed timestamp* 之前的資料 — strong consistency 場景不能用（read-after-write 會 stale）、但 dashboard / reporting / 風控分析等 *容忍 stale* 場景大幅降低 cross-region latency。
 
 ### 配置語法跟驗證
 
@@ -285,7 +285,7 @@ Aurora 不支援 row-level locality — 跨 region 只能 cluster-per-region + a
 
 ### 跟 Spanner interleaved tables 對照
 
-Spanner 的 interleaved tables 跟 CockroachDB 的 `REGIONAL BY ROW` 概念類似（parent-child row co-location）、語法不同。Spanner 在 GCP region 內 placement、無 Outposts 等效 — Hard Rock 場景下 Spanner 不能直接套用。
+Spanner 的 [Interleaved Table](/backend/knowledge-cards/interleaved-table/) 跟 CockroachDB 的 `REGIONAL BY ROW` 概念類似（parent-child row co-location）、語法不同。Spanner 在 GCP region 內 placement、無 Outposts 等效 — Hard Rock 場景下 Spanner 不能直接套用。
 
 ### Aurora DSQL / Spanner 對比
 

@@ -14,7 +14,7 @@ tags: ["backend", "database", "spanner", "global-sql", "truetime", "external-con
 
 TrueTime 的設計目的是消滅 single coordinator bottleneck、讓 OLTP 拿到 line-rate scaling — external consistency 只是這條路徑上拿到的副產品。讀者若把 TrueTime 當成「一個保證 external consistency 的精巧時間 trick」、會誤把工具當目標、後續所有 commit wait / Paxos / GPS 細節都解錯方向。
 
-傳統 OLTP（PostgreSQL、MySQL、Cloud SQL）跨節點交易要靠一個 coordinator 決定全局順序、coordinator 本身就是 bottleneck。`1x node = 1x throughput` 的線性擴展在 single-primary 模型撞牆、想 scale 只能往應用層 sharding 走、付管理 shard key / 跨 shard query / resharding 的代價。Spanner 換掉這條路徑：TrueTime 把 wall-clock 變成跨 datacenter 可比較的 *interval*、Paxos 把 coordinator 變成「拓樸感知的多 leader」（每個 split 自己的 Paxos group 各自前進）、commit timestamp 用 TrueTime 對齊到 real-time 順序、不再需要一個全局 coordinator 串行所有 transaction。
+傳統 OLTP（PostgreSQL、MySQL、Cloud SQL）跨節點交易要靠一個 coordinator 決定全局順序、coordinator 本身就是 bottleneck。`1x node = 1x throughput` 的線性擴展在 single-primary 模型撞牆、想 scale 只能往應用層 sharding 走、付管理 shard key / 跨 shard query / resharding 的代價。Spanner 換掉這條路徑：TrueTime 把 wall-clock 變成跨 datacenter 可比較的 *interval*、Paxos 把 coordinator 變成「拓樸感知的多 leader」（每個 [Range Sharding](/backend/knowledge-cards/range-sharding/) split 自己的 Paxos group 各自前進）、commit timestamp 用 TrueTime 對齊到 real-time 順序、不再需要一個全局 coordinator 串行所有 transaction。
 
 9.C10 Cloud Spanner planetary scale case 揭露的線性擴展證據：「2 nodes → 45K reads/sec、4 nodes → 90K reads/sec」是 Spanner 設計目標的直接證據、不只是 marketing 數字。這條揭露 Spanner external consistency 不是「加強版 serializable isolation」、是「coordinator 換拓樸」的 paradigm shift。寫到這裡讀者該意識到一件事：選 Spanner 不是選一個更貴更強的 SQL、是選一條 *把 coordinator 拆掉* 的 scaling 路徑。
 
@@ -46,7 +46,7 @@ TrueTime 對外只有兩個 primitive — `TT.now()` 回傳一個 *interval* `[e
 
 ### Commit wait 機制：external consistency 的核心
 
-read-write transaction 要拿 commit timestamp s 時、Spanner 設 `s = TT.now().latest`、然後 *等待* 直到 `TT.after(s)` 才回 ACK。這段「等」就是 commit wait。
+read-write transaction 要拿 commit timestamp s 時、Spanner 設 `s = TT.now().latest`、然後 *等待* 直到 `TT.after(s)` 才回 ACK。這段「等」就是 [Commit Wait](/backend/knowledge-cards/commit-wait/) — Spanner 特有的物理延遲、由 TrueTime ε 主導、跟 [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/) 的網路 RTT 是兩個獨立的延遲來源、不能混算。
 
 ```text
 T1 開始 commit            T1 確定可回 ACK
@@ -83,6 +83,8 @@ strong              → 等 TrueTime 確認可讀最新、付完整 commit wait 
 exact_staleness(t)  → 讀 t 秒前快照、避開 commit wait、適合 reporting / analytics
 bounded_staleness(t)→ 容忍 t 秒、可讀最近的本地 replica 副本、不跨 region quorum
 ```
+
+stale / bounded staleness 走的是 Spanner 版的 [Follower Read](/backend/knowledge-cards/follower-read/) — 本地 replica serve 不參與 commit 的 read、避開跨 region quorum 把 read latency 降到 single-region 等級。
 
 三者 trade-off 在 SDK 層顯式設定、不是 isolation level：
 

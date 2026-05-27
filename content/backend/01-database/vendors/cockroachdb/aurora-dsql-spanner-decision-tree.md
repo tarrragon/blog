@@ -131,13 +131,13 @@ DoorDash case 揭露 PG wire *protocol-level* 相容、SQL 行為「仍要驗證
 
 ### Consensus 機制差
 
-| Vendor      | 共識                      | 硬體依賴                       |
-| ----------- | ------------------------- | ------------------------------ |
-| CockroachDB | HLC + Raft                | 純軟體 + NTP                   |
-| Spanner     | TrueTime + Paxos          | GPS + atomic clock             |
-| Aurora DSQL | 類 Spanner 概念、AWS 專屬 | AWS timing infra（未完全公開） |
+| Vendor      | 共識                                                                          | 硬體依賴                       |
+| ----------- | ----------------------------------------------------------------------------- | ------------------------------ |
+| CockroachDB | [Hybrid Logical Clock](/backend/knowledge-cards/hybrid-logical-clock/) + Raft | 純軟體 + NTP                   |
+| Spanner     | TrueTime + Paxos                                                              | GPS + atomic clock             |
+| Aurora DSQL | 類 Spanner 概念、AWS 專屬                                                     | AWS timing infra（未完全公開） |
 
-三家共識機制的差異直接決定 [external consistency](/backend/knowledge-cards/external-consistency/) 的實作路徑：Spanner 用 TrueTime + commit-wait 撐 external consistency；CockroachDB 用 HLC + max-offset 撐 linearizability、不保證 external consistency；Aurora DSQL 走類 Spanner 路徑但細節未完全公開。詳細機制見 [HLC + Raft consensus](../hlc-raft-consensus/)。
+三家共識機制的差異直接決定 [external consistency](/backend/knowledge-cards/external-consistency/) 的實作路徑：Spanner 用 TrueTime + commit-wait 撐 external consistency；CockroachDB 用 HLC + max-offset 撐 linearizability、不保證 external consistency；Aurora DSQL 走類 Spanner 路徑但細節未完全公開。三家 multi-region 配置都吃 [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/) 的物理 latency tax。詳細機制見 [HLC + Raft consensus](../hlc-raft-consensus/)。
 
 ### Pricing model 差
 
@@ -282,8 +282,8 @@ CockroachDB cluster boundary 的問題不一樣 — CockroachDB 本身就是 dis
 ### 跨 vendor 路徑對照
 
 - **Aurora fleet**（DraftKings 200 cluster）— business sharding 繞 single-primary 上限、每 cluster 仍可多 service、平均負載低（[9.C4 case](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 揭露單 cluster ~80 ops/sec、200 cluster 加總 17K ops/sec）
-- **CockroachDB per-app**（Netflix 380+）— 微服務級拆 cluster、artery of small DBs、需要專屬 Database Platform Team
-- **CockroachDB 邏輯一個**（Hard Rock）— 跨地理單一 cluster、locality + placement 撐合規 + transactional 跨域
+- **CockroachDB per-app**（Netflix 380+）— 微服務級拆 cluster、artery of small DBs、需要專屬 Database Platform Team；單 cluster 內 [Range Sharding](/backend/knowledge-cards/range-sharding/) + [Leaseholder](/backend/knowledge-cards/leaseholder/) 負責內部 scaling
+- **CockroachDB 邏輯一個**（Hard Rock）— 跨地理單一 cluster、locality + placement 撐合規 + transactional 跨域、本地化讀靠 [Follower Read](/backend/knowledge-cards/follower-read/) 降低跨 region cost
 - **CockroachDB fleet per-jurisdiction**（Standard Chartered）— 每監管市場一個 cluster、合規 *禁止* 跨市場資料流動時的 forced pattern、跟 Hard Rock 對照（合規顆粒粗到要拆 vs 細到能用 placement）
 
 進階閱讀：合規驅動的 cluster boundary 選擇見 [locality-aware-schema](../locality-aware-schema/)；單 cluster 容量規劃見 [hlc-raft-consensus](../hlc-raft-consensus/) 容量與觀測段。

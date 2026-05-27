@@ -207,7 +207,7 @@ DynamoDB Streams + Lambda：抓 conflict event、寫進獨立 audit table；reco
 
 ### Frame 5：region-pinned Global Tables 吸收合規邊界
 
-Global Tables 不只是高可用工具、也是 *合規邊界* 的吸收層。DynamoDB 在 vendor capability 層級支援 *region-pinned replication* — 每張 table 可獨立決定哪些 region 參與 replication group、部分 region 可不加入。這個 capability 同時服務三類場景：合規分離（受監管市場資料不跨境）、cost / latency 取捨（資料只在主要服務 region 同步）、災備拓樸（少數 region 純讀備援）。`9.C24 Genesys` 15 region 揭露的是 *延遲就近接入* 的 B2B SaaS 拓樸（客戶服務延遲敏感、必須在客戶所在地有 region）— case 原文沒明示合規應用、但 region-pinned capability 在 Genesys 規模下天然能容納合規市場分離、是同 capability 的 *可能應用維度*、不是 case 已驗證的具體實踐。
+Global Tables 不只是高可用工具、也是 *合規邊界*（[Data Residency](/backend/knowledge-cards/data-residency/) 拓樸）的吸收層。DynamoDB 在 vendor capability 層級支援 *region-pinned replication* — 每張 table 可獨立決定哪些 region 參與 replication group、部分 region 可不加入。這個 capability 同時服務三類場景：合規分離（受監管市場資料不跨境）、cost / latency 取捨（資料只在主要服務 region 同步）、災備拓樸（少數 region 純讀備援）。`9.C24 Genesys` 15 region 揭露的是 *延遲就近接入* 的 B2B SaaS 拓樸（客戶服務延遲敏感、必須在客戶所在地有 region）— case 原文沒明示合規應用、但 region-pinned capability 在 Genesys 規模下天然能容納合規市場分離、是同 capability 的 *可能應用維度*、不是 case 已驗證的具體實踐。
 
 跨 vendor 對照：
 

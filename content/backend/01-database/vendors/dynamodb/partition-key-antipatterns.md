@@ -72,7 +72,7 @@ N = 單 logical key 預期峰值 WCU / 800（最小 shard 數）
 
 #### Step 3：composite key 設計（random shard）
 
-寫入時把 logical key 加上 random suffix：
+[Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) 把 logical key 加上 random suffix、把 hot logical 值分散到多個 partition：
 
 ```python
 import random

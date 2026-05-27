@@ -16,7 +16,7 @@ team 用 RDBMS 設計思維建多個 DynamoDB table（`user` / `order` / `order_
 
 ### 軸 1：Partition key 是否天然均勻
 
-DynamoDB 容量 = 每 partition 上限 × partition 數量、最熱 partition saturation 就是 workload 的天花板。`meeting_id`（Zoom）/ `player_id`（Capcom）/ `message_id`（PayPay）/ `user_id`（Disney+）這類 ID 天然散布、不會集中在少數 partition；反之 `event_id`（Tixcraft 售票）/ `date`（時間序）/ `status`（少數枚舉值）這類 PK 天然不均勻、要 composite key 修補才能 single-table。修補成本見 [partition-key-antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)。
+DynamoDB 容量 = 每 partition 上限 × partition 數量、最熱 partition saturation 就是 workload 的天花板。`meeting_id`（Zoom）/ `player_id`（Capcom）/ `message_id`（PayPay）/ `user_id`（Disney+）這類 ID 天然散布、不會集中在少數 partition；反之 `event_id`（Tixcraft 售票）/ `date`（時間序）/ `status`（少數枚舉值）這類 PK 天然不均勻、要 [Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) 修補才能 single-table。修補成本見 [partition-key-antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)。
 
 `9.C18 Zoom`、`9.C19 Capcom`、`9.C26 PayPay`、`9.C27 Disney+` 4 個 case 都揭露 partition key 天然均勻是 DynamoDB 「能撐」的前提之一。
 

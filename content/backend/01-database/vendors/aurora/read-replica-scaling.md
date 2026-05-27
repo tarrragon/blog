@@ -285,7 +285,7 @@ Netflix 每微服務各自有 private Aurora cluster、不共用 — 跟 monolit
 
 ### Driver 3：合規市場 boundary（Standard Chartered 7 cluster）
 
-Standard Chartered 7 個受監管市場 = 7 個獨立 cluster。資料 *不能跨境複製*、[Aurora Global Database](../global-database-multi-region/) 在這種場景違反合規。
+Standard Chartered 7 個受監管市場 = 7 個獨立 cluster。[Data Residency](/backend/knowledge-cards/data-residency/) 規範資料 *不能跨境複製*、[Aurora Global Database](../global-database-multi-region/) 在這種場景違反合規。
 
 工程含義：
 

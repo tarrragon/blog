@@ -42,7 +42,7 @@ Shard key 三特性決定 sharded cluster 行為：
 
 - **Hashed shard key**：hash function 把 key 打散、寫入分布均勻、但 range query 變 scatter-gather（每個 shard 都問）
 - **Ranged shard key**：相同 key 相近 → 同 chunk → range query 高效；但單調 key + ranged → 所有寫打最後 chunk
-- **Compound shard key**（5.0+ 是常用做法）：例如 `{ tenantId: 1, _id: "hashed" }` — 先 tenant 隔離、再 hash 避免 tenant 內熱點
+- **Compound shard key**（5.0+ 是常用做法、對應 [Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) 的 MongoDB 實作）：例如 `{ tenantId: 1, _id: "hashed" }` — 先 tenant 隔離、再 hash 避免 tenant 內熱點
 - **Zone sharding**：把特定 chunk 釘到特定 shard（地域 / 合規 / 硬體分層）
 
 Chunk 是 MongoDB 在 collection 上劃出的 64MB（預設）邏輯區塊。Balancer 在 shard 間搬 chunk 達成均衡。**Chunk 不可 split 的條件**是 shard key 在該範圍只有一個值（low cardinality / 大 tenant 獨佔範圍）— chunk split 不了、balancer 也搬不開。
