@@ -10,7 +10,7 @@ tags: ["backend", "database", "query", "anti-patterns"]
 
 ## 為什麼查詢反模式比 vendor 細節更重要
 
-多數團隊面對「資料庫變慢」時，會先去看 vendor 的調校（buffer pool、配置升級、replica 加開）。這些調校通常把基礎效能拉高一倍，而一個 N+1 query 反模式可以讓回應時間慢 100 倍。先解掉應用層的反模式、再去調 vendor 配置，整體效益遠高於反過來。
+多數團隊面對「資料庫變慢」時，會先去看 vendor 的調校（buffer pool、配置升級、replica 加開）。這些調校通常把基礎效能拉高 1-2 倍；一個 N+1 query 反模式可以讓回應時間慢 10-1000 倍（具體倍數取決於 N 跟 RTT — N=100 + RTT=1ms 約慢 100 倍）。先解掉應用層的反模式、再去調 vendor 配置，整體效益遠高於反過來。
 
 這條優先序也對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 的精神：先定位真正的瓶頸再決定是否加資源。應用層 query 是最常被忽略的瓶頸來源。
 
@@ -22,7 +22,7 @@ N+1 query 指「先發一個 query 取回 N 筆資料、再對每一筆各發一
 
 N+1 在 ORM 環境特別隱性，因為它常被框架的 lazy loading 機制隱藏。Django ORM 的 `order.customer` 看起來像存取 attribute，背後對應一次 query。寫程式時看不到 SQL，發布後才從 slow log 發現問題。
 
-判讀方式：開啟 ORM 的 query log（debug mode）、看一個 API request 跑出幾個 query。預期是個位數，若出現超過 50 個 query 就要懷疑 N+1。
+判讀方式：開啟 ORM 的 query log（debug mode）、看一個 API request 跑出幾個 query。預期是個位數；若 query 數隨著資料集大小線性成長（例如 list 100 筆觸發 100 query、list 1000 筆觸發 1000 query），這條 scaling 訊號就是 N+1 — 比固定閾值更可靠的判讀。
 
 修正方向：
 
@@ -90,6 +90,18 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 
 修正方向是把 transaction 範圍縮到最小：只包住「需要原子性」的那幾個 SQL 操作。外部呼叫、計算、檔案 I/O 都要在 transaction 之外。詳見 [1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)。
 
+## 其他常見反模式
+
+上面五個是讀路徑高頻反模式。實務上其他幾類在 slow log 出現頻率不低、要一併列入發布前檢查：
+
+- **Cardinality explosion / cross join 誤用**：兩個多對多關聯 join 沒加 filter、結果集從 N 行炸成 N×M 行。判讀訊號：query 結果行數遠超業務直覺、`EXPLAIN` 估計 rows 異常大。修正方向：補 filter、改 EXISTS / IN 半連接、或拆兩段 query。
+- **OFFSET-based pagination on large tables**：`LIMIT 20 OFFSET 100000` 在大表退化成「掃描 100020 行 + skip 100000 行」。修正方向：用 keyset / cursor pagination（`WHERE id > last_seen_id LIMIT 20`）— 一致 O(LIMIT) 而非 O(OFFSET + LIMIT)。
+- **隱式型別轉換讓 index 失效**：`WHERE varchar_col = 123` 把 column 轉成 int 比較、index 失效退到 full scan。判讀訊號：EXPLAIN 顯示 index 沒命中但 schema 上有 index。修正方向：明示型別（`WHERE varchar_col = '123'`）。
+- **應用層做大結果集排序 / 聚合**：把 100 萬行拉回應用、在記憶體 sort 或 group。應該 push 給 DB 做 `ORDER BY` / `GROUP BY` + `LIMIT`。判讀訊號：應用程式記憶體用量隨 endpoint 流量線性升高。
+- **N+1 write**：在 loop 內單筆 insert / update 而非 bulk insert。每筆觸發一次 round trip + 可能的 fsync。修正方向：用 `INSERT ... VALUES (), (), ()` 或 `executemany` / `bulk_create`。
+
+NoSQL / KV DB 也有 sibling 反模式（hot partition、read amplification、scan-and-filter），不在本章 SQL 範疇但邏輯類似 — 詳見 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)。
+
 ## 每請求的 Query 預算
 
 把上面這些反模式收斂成一個發布前可檢查的判準：每個 API request 允許發多少個 query。
@@ -102,6 +114,8 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 | Complex（多步驟業務） | 5–15 個         | 視業務複雜度，但每多 1 個都要能講出為什麼            |
 
 超過預算不一定錯，但需要解釋。CI / staging 可以加 middleware 統計每個 endpoint 的 query 數，超過閾值在 PR review 時觸發討論。這比事後從 slow log 找問題更有效。
+
+這張表以 OLTP API 為主。Dashboard / report / search endpoint 常需要 10-30 query 解 join / aggregation、用「Complex」涵蓋不夠精確；batch / bulk write（一次寫入 1000 筆訂單）不該用 query count 評估、應該看 batch size 跟 transaction 範圍。預算是判讀工具、不是硬閾值。
 
 ## 判讀訊號
 

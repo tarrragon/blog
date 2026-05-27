@@ -45,19 +45,23 @@ origin protection 的核心策略包含三個方向：
 | 個人化推薦           | 不適合       | 每個請求結果不同，命中率近於零                 |
 | 寫入 API             | 不適合       | 邊緣層不該攔截狀態改變                         |
 
+這張表覆蓋傳統靜態 / 動態二分情境。邊緣層演化出來的中間態超出表格範圍 — 包含 API responses with short TTL（GET、idempotent）、SSR / SSG 混合頁、signed URL / per-user 私有 asset（CloudFront / Cloudflare 可帶簽章對特定 user 快取）、i18n / 地理變體用 Vary header 處理跨 locale 共用、以及 edge personalization / edge compute（Cloudflare Workers、Lambda@Edge、Akamai EdgeWorkers）。進入這層要評估 edge compute 成本與 cache key 設計複雜度、不是簡單套表決定。
+
 判讀後仍要再對齊 freshness：商品價格在限時活動期間每 5 分鐘改一次，10 分鐘 TTL 就會出現超賣或顯示差價。這類情境要把價格放應用層快取、頁面結構放 CDN，整頁邊緣化會超出 freshness budget。
 
 ## Purge 與 Invalidation 的操作模型
 
-CDN 的 [Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 跟應用層的失效路徑不一樣：應用層 purge 在自家 cluster 內可控，CDN purge 要等全球節點同步。多數商業 CDN 的全球 purge 需要數秒到數十秒，活動切換或緊急下架時這段延遲就是業務代價。
+CDN 的 [Cache Invalidation](/backend/knowledge-cards/cache-invalidation/) 跟應用層的失效路徑不一樣：應用層 purge 在自家 cluster 內可控，CDN purge 要等全球節點同步。傳統 origin-pull CDN 的全球 purge 需要數秒到數十秒；現代 push-based CDN（Cloudflare、Fastly 等）的 instant purge 在 150ms 級別、語意接近同步、但這條能力依 vendor 而異、要事前驗證。
 
 操作上的三種策略各有適用場景：
 
-- **TTL 自然過期**：適合內容變動慢、不需要立即生效的資源。優點是不依賴 purge API，缺點是無法應對緊急下架。
+- **TTL 自然過期**：適合內容變動慢、不需要立即生效的資源。優點是不依賴 purge API，缺點是無法應對緊急下架。搭配 stale-while-revalidate 後可以兼顧低 origin 壓力與最終新鮮度、是現代 default 而非「弱版本」。
 - **顯式 purge**：適合內容變動時要立刻生效的場景（價格更新、文章下架、合規移除）。要把 purge 列入發布流程，事故期能在分鐘內收回錯誤內容。
 - **版本化路徑**：適合 JS/CSS 等可永久快取的資源。檔名含 hash（`app.a3f1b2.js`），新版本上線時直接換路徑、舊版本自然失效。這是命中率最高的策略，因為可以設定 `max-age=31536000, immutable`。
 
-選錯策略的代價會在事故時放大。把限時優惠的價格用「TTL 自然過期」策略佈在 CDN，活動結束後仍有客人看到舊價格繼續下單，客服與退款成本會壓回業務端。
+這三種策略以 origin pull 模型為主、是基底但不窮盡。現代 CDN 還有兩種重要策略：**Tag-based / surrogate-key purge**（Fastly cache tag、Cloudflare cache tag、Akamai surrogate key）是大型內容系統的事實標準、用一個 tag 同時 purge 多個資源；**Push-based instant purge**（Cloudflare、Fastly 規格 <150ms 全球同步）讓全球 purge 從「分鐘級」變成「準同步」。選擇策略時要按 vendor 能力跟資源更新模式組合、不只看本表三條。
+
+選錯策略的代價會在事故時放大。把限時優惠的價格用「TTL 自然過期」策略佈在 CDN、活動結束後仍有客人看到舊價格繼續下單、客服與退款成本會壓回業務端。
 
 ## 判讀訊號
 

@@ -37,6 +37,8 @@ tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 | Identity / IAM    | IAM                                  | IAM                         | Entra ID（前 AAD） + Azure RBAC         | 跨服務 policy、token lifetime、federation     |
 | CI/CD             | CodePipeline / CodeBuild             | Cloud Build / Cloud Deploy  | Azure Pipelines                         | 整合 Git 平台、執行環境彈性、計價單位         |
 
+這張表以全球 hyperscaler 三巨頭為主、不是市場全貌。**Oracle Cloud (OCI)** 在 enterprise / Java workload 跟金融受監管環境有顯著市佔；**Alibaba Cloud** 在亞太 / 跨境電商是主流；**IBM Cloud** 在金融 / 受監管環境仍存在；**Hetzner / DigitalOcean / Vultr** 在 cost-leader 區段提供完全不同的計價模型；**Sovereign cloud**（GDPR Schrems II 後在歐洲、JEDI / JWCC 在美國政府）是另一條獨立軸、跟資料主權合規綁定、比較對象不在這張表內。對照判讀邏輯（「對應 ≠ 等價」）可以同樣套用、但具體 vendor 名稱與差異維度要按目標廠商各自查證。
+
 ## 三家雲共同缺的能力分類
 
 對照表覆蓋的能力都有 vendor 直接對應，但有兩類能力三家雲廠商都沒有提供等價的原生服務，要靠第三方工具補完。把這兩類獨立成段，避免在對照表中用「（無原生）」填空造成模板化。
@@ -53,14 +55,14 @@ tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 
 ### 失效切換時間差異（RDS vs Cloud SQL vs Azure SQL）
 
-同樣是 managed PostgreSQL，三家在 failover 時間上有顯著差異：
+同樣是 managed PostgreSQL，三家 vendor 文件給的 failover 時間參考值差距明顯。下列數字以各雲廠商公開文件為基準、實測長尾可能拖到更長：
 
-- AWS RDS Multi-AZ：通常 60–120 秒
-- AWS Aurora：通常 30 秒內
-- GCP Cloud SQL HA：通常 1–2 分鐘
-- Azure SQL Business Critical：通常 30 秒內
+- AWS RDS Multi-AZ：vendor 文件寫「typically 60–120 seconds」、P99 實測可達數分鐘
+- AWS Aurora：vendor 文件寫「typically less than 30 seconds」、實測 30–90 秒常見
+- GCP Cloud SQL HA：vendor 文件寫「1–2 minutes」
+- Azure SQL Business Critical：vendor 文件寫「around 30 seconds」、實測 30–60 秒
 
-選擇關鍵不是「哪個快」，而是「業務能容忍多少 downtime」。30 秒對 banking、ticketing 是不能接受的；對內部後台是無感的。失效切換時間直接影響 SLO 設定跟業務連續性，不能單看 vendor 名稱對應就決定。
+選擇關鍵不是「哪個快」、而是「業務能容忍多少 downtime」。30 秒對 banking、ticketing 是不能接受的；對內部後台是無感的。失效切換時間直接影響 SLO 設定跟業務連續性 — 數字以 vendor 公開文件為參考、實際決策時要用該 vendor 自己的 SLA 條款跟 incident report 驗證。
 
 ### 一致性模型差異（DynamoDB vs Firestore vs Cosmos DB）
 
@@ -80,7 +82,7 @@ tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 - Cloud Functions：請求數 + 執行時間 + 網路流量
 - Azure Functions：執行次數 + 執行時間 + 記憶體（Consumption Plan）或固定費用（Premium / Dedicated Plan）
 
-對於低流量服務，三家差異不大；對於高頻率短時間函式，計價差異可能放大 2-3 倍。選型時要用實際 workload 估算，不能看單位價格表面數字。
+對於低流量服務、三家差異不大；對於高頻率短時間函式、計價差異可能放大數倍（具體倍數視 memory size / 執行時間 / 流量分布、用 vendor calculator 算）。選型時要用實際 workload 估算、不能看單位價格表面數字。
 
 ### 跨服務整合差異（消息佇列 vs 觸發器）
 
@@ -92,12 +94,15 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 把這張對照表反過來讀，就是跨雲遷移的 gap 分析起點。但實際遷移要看四類風險：
 
-| 風險類型 | 判讀重點                                               | 對應緩解                                      |
-| -------- | ------------------------------------------------------ | --------------------------------------------- |
-| 語意差異 | 兩家「對應」服務的一致性 / 失效 / 順序語意是否一致     | 在抽象層（repository、queue adapter）封裝差異 |
-| 配額差異 | 限制（每秒請求數、partition 上限、batch size）是否相當 | 對照新平台配額重新設計批次大小                |
-| 計價差異 | 計價單位不同，舊有 cost model 在新平台失準             | 用新平台計價重做 cost engineering             |
-| 生態差異 | 周邊工具（監控、log、IAM）整合不對等                   | 預估遷移成本要含「重建 observability / IAM」  |
+| 風險類型                      | 判讀重點                                               | 對應緩解                                               |
+| ----------------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| 語意差異                      | 兩家「對應」服務的一致性 / 失效 / 順序語意是否一致     | 在抽象層（repository、queue adapter）封裝差異          |
+| 配額差異                      | 限制（每秒請求數、partition 上限、batch size）是否相當 | 對照新平台配額重新設計批次大小                         |
+| 計價差異                      | 計價單位不同，舊有 cost model 在新平台失準             | 用新平台計價重做 cost engineering                      |
+| 生態差異                      | 周邊工具（監控、log、IAM）整合不對等                   | 預估遷移成本要含「重建 observability / IAM」           |
+| Data gravity / egress lock-in | PB 級資料的 egress fee 跟一致性轉移時程                | 決定資料「同步轉移 / 漸進複製 / 保留在原雲、運算跨雲」 |
+
+第五類風險常被低估：以 AWS S3 為例、egress 約 $0.09/GB、PB 級資料即 $90k 帶寬費；GCP / Azure 同等級。跨雲遷移最大單筆成本經常是 data gravity、需要先決策資料拓樸再算其他三類風險。
 
 跨雲遷移不是把服務名稱換掉就完成。每一個對應都要做 deep audit，這是 [01 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/) 等模組的責任。
 
@@ -135,7 +140,7 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 把 vendor 對照表當「採購清單」，看完直接照表選。選型必須回到需求，不是看哪家有對應名稱就選。
 
-把雲廠商當「commodity 商品」，假設換家就好。三家的整合生態、配額限制、計價單位都有差異，遷移成本通常被低估 2-3 倍。
+把雲廠商當「commodity 商品」，假設換家就好。三家的整合生態、配額限制、計價單位都有差異、遷移成本經常被嚴重低估（特別是 data gravity / IAM / 監控重建這三類隱性成本）。
 
 把單一雲廠商當「永遠不會變」。雲廠商會調整定價、棄用服務、改 API。設計時要有抽象邊界，避免直接綁定 vendor SDK 到業務邏輯，方便未來換家或多雲。
 
