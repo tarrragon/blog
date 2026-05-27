@@ -71,23 +71,24 @@ tags: ["backend", "performance", "capacity"]
 
 ## 主章規劃
 
-| 章節                                                                                       | 主題                      | 核心責任                                                               |
-| ------------------------------------------------------------------------------------------ | ------------------------- | ---------------------------------------------------------------------- |
-| [9.1 壓測理論與系統行為](/backend/09-performance-capacity/performance-theory/)             | Performance Theory        | Little's Law、queueing theory、USL、saturation curve 的工程意義        |
-| [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)               | Workload Modeling         | 把 production traffic shape 翻成可重播的壓測模型                       |
-| [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)                    | Load Test Tooling         | k6 / JMeter / Gatling / Locust / Vegeta / Production Replay 的選型判讀 |
-| [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)         | Saturation Discovery      | 找出 throughput plateau 與 latency knee 的方法                         |
-| [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)              | Bottleneck Localization   | 從 app 到 DB、cache、broker、第三方 quota 的逐層定位                   |
-| [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)                    | Capacity Planning         | peak forecast、headroom、growth curve、autoscaling sizing              |
-| [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/)            | Cost Engineering          | cost per request、cost curve、降級成本、over-provisioning trade-off    |
-| [9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)            | Performance Observability | saturation metric、USE / RED method、cost dashboard                    |
-| [9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/)     | Improvement Loop          | 壓測 → profile → fix → re-test → release gate 的閉環                   |
-| [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)       | Production Validation     | shadow traffic、dark launch、canary、production-like load test         |
-| [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)                | Peak Event Readiness      | 活動、季節性流量、推廣事件的 capacity readiness 流程                   |
-| [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/) | SLO Coupling              | performance budget 跟 SLO / error budget 的對接                        |
-| [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)             | Scaling Axes              | 垂直 / 水平擴展取捨、stateless 前提、auto scaling 操作模型             |
+| 章節                                                                                       | 主題                          | 核心責任                                                                |
+| ------------------------------------------------------------------------------------------ | ----------------------------- | ----------------------------------------------------------------------- |
+| [9.1 壓測理論與系統行為](/backend/09-performance-capacity/performance-theory/)             | Performance Theory            | Little's Law、queueing theory、USL、saturation curve 的工程意義         |
+| [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/)               | Workload Modeling             | 把 production traffic shape 翻成可重播的壓測模型                        |
+| [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)                    | Load Test Tooling             | k6 / JMeter / Gatling / Locust / Vegeta / Production Replay 的選型判讀  |
+| [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)         | Saturation Discovery          | 找出 throughput plateau 與 latency knee 的方法                          |
+| [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)              | Bottleneck Localization       | 從 app 到 DB、cache、broker、第三方 quota 的逐層定位                    |
+| [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)                    | Capacity Planning             | peak forecast、headroom、growth curve、autoscaling sizing               |
+| [9.7 成本邊界與 efficiency](/backend/09-performance-capacity/cost-engineering/)            | Cost Engineering              | cost per request、cost curve、降級成本、over-provisioning trade-off     |
+| [9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)            | Performance Observability     | saturation metric、USE / RED method、cost dashboard                     |
+| [9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/)     | Improvement Loop              | 壓測 → profile → fix → re-test → release gate 的閉環                    |
+| [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)       | Production Validation         | shadow traffic、dark launch、canary、production-like load test          |
+| [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)                | Peak Event Readiness          | 活動、季節性流量、推廣事件的 capacity readiness 流程                    |
+| [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/) | SLO Coupling                  | performance budget 跟 SLO / error budget 的對接                         |
+| [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)             | Scaling Axes                  | 垂直 / 水平擴展取捨、stateless 前提、auto scaling 操作模型              |
+| [9.14 連線池放大解法](/backend/09-performance-capacity/connection-pool-amplification/)     | Connection Pool Amplification | PgBouncer / RDS Proxy / ProxySQL 對比、解 9.13 提出的連線池放大隱性成本 |
 
-> 13 個主章已完成首輪正文。後續工作是補 `vendors/` 工具入口、提升案例回寫密度，並校正各章與 06 reliability 的分工。
+> 14 個主章已完成首輪正文。後續工作是補 `vendors/` 工具入口、提升案例回寫密度，並校正各章與 06 reliability 的分工。
 
 主章撰寫順序：9.1 → 9.2 → 9.4 → 9.5 → 9.6 → 9.3 → 9.8 → 9.9 → 9.7 → 9.10 → 9.11 → 9.12。理論與模型先行，工具落地放在 saturation 與 bottleneck 概念成熟之後，最後處理成本與 production 驗證的進階主題。
 
