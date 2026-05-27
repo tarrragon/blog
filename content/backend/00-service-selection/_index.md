@@ -34,6 +34,8 @@ tags: ["backend", "service-selection"]
 | [0.15](/backend/00-service-selection/implementation-teaching-outline/)      | 後端實作教學大綱                       | 規劃各模組從觀念網路補完到服務路徑實作示範的寫作順序                                                                                                                                                                                                     |
 | [0.16](/backend/00-service-selection/service-path-implementation-outlines/) | 後端服務路徑實作細綱                   | 把資料庫 migration、cache migration、queue replay 與 deployment rollout 拆成可撰寫的業務路徑                                                                                                                                                             |
 | [0.17](/backend/00-service-selection/service-entity-discussion-outline/)    | 後端真實服務討論大綱                   | 規劃各分類從共同觀念與服務路徑示範，推進到 PostgreSQL、Redis、Kafka、Kubernetes、k6 等真實服務討論                                                                                                                                                       |
+| [0.18](/backend/00-service-selection/service-decomposition-boundaries/)     | 服務拆分與邊界判讀                     | 判讀 monolith / microservice 取捨、四條拆分軸（資料 / 團隊 / 部署 / 流量）、拆分時機與回退路徑                                                                                                                                                           |
+| [0.19](/backend/00-service-selection/cloud-vendor-capability-mapping/)      | 雲端服務對照地圖（AWS / GCP / Azure）  | 後端能力分類對照三家雲廠商、failover / 一致性 / 計價差異、跨雲遷移判讀                                                                                                                                                                                   |
 
 ## 需求討論順序
 

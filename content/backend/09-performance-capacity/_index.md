@@ -85,8 +85,9 @@ tags: ["backend", "performance", "capacity"]
 | [9.10 Production-Side 驗證](/backend/09-performance-capacity/production-validation/)       | Production Validation     | shadow traffic、dark launch、canary、production-like load test         |
 | [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)                | Peak Event Readiness      | 活動、季節性流量、推廣事件的 capacity readiness 流程                   |
 | [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/slo-performance-budget/) | SLO Coupling              | performance budget 跟 SLO / error budget 的對接                        |
+| [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)             | Scaling Axes              | 垂直 / 水平擴展取捨、stateless 前提、auto scaling 操作模型             |
 
-> 12 個主章已完成首輪正文。後續工作是補 `vendors/` 工具入口、提升案例回寫密度，並校正各章與 06 reliability 的分工。
+> 13 個主章已完成首輪正文。後續工作是補 `vendors/` 工具入口、提升案例回寫密度，並校正各章與 06 reliability 的分工。
 
 主章撰寫順序：9.1 → 9.2 → 9.4 → 9.5 → 9.6 → 9.3 → 9.8 → 9.9 → 9.7 → 9.10 → 9.11 → 9.12。理論與模型先行，工具落地放在 saturation 與 bottleneck 概念成熟之後，最後處理成本與 production 驗證的進階主題。
 

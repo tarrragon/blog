@@ -25,6 +25,12 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | Distributed lock                                                                     | lock 語意、租約、失效與風險                                                            |
 | [Pub/Sub](/backend/knowledge-cards/pub-sub)                                          | 即時通知、跨節點 [fan-out](/backend/knowledge-cards/fan-out)、可靠性限制               |
 
+## 快取分層與邊緣層
+
+本模組討論的是「應用層快取」（Redis、in-memory cache），跟 CDN / edge cache 是不同責任：CDN 解決「請求是否需要進到應用程式」（網路入口層），本模組討論的快取解決「應用程式如何降低資料層讀寫成本」（應用層）。完整三層快取分工（邊緣層 → 應用層 → DB buffer pool）跟 origin protection 設計見 [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)。
+
+兩層快取的失效路徑要協調設計：應用層 purge 在自家 cluster 內可控、CDN purge 要等全球節點同步。寫入路徑變更時，要先 purge 應用層、再 purge 邊緣層，避免短時間內邊緣回填到應用層舊資料。
+
 ## 選型入口
 
 快取選型的核心判斷是資料是否可以重建，以及讀取壓力是否集中。當正式狀態已經存在於資料庫或下游服務，但熱門讀取造成延遲、成本或容量壓力時，快取與 Redis 值得優先評估。
