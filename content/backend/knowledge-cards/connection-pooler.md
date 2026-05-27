@@ -16,7 +16,7 @@ Connection pooler 在 DB topology 中是「應用層跟 DB 之間的 multiplexer
 - **ProxySQL**（MySQL）：規則型 routing + connection pooling + query rewriting
 - **PgCat**（PostgreSQL）：Rust 寫的 PgBouncer 替代、支援 sharding
 
-PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說不是 multiplexing、只是 connection caching；transaction mode 是多數場景的 default、但不支援 transaction-scoped state（`SET LOCAL`、prepared statement、temp table）；statement mode 不支援 transaction、極少用。
+PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說屬 connection caching（單 client 跟 backend 1:1 綁定整個 session）；transaction mode 是多數場景的 default、但限於不依賴 transaction-scoped state 的應用（`SET LOCAL`、prepared statement、temp table 在 transaction mode 下會丟失）；statement mode 限於純無狀態 query workload、極少用。
 
 ## 可觀察訊號與例子
 
@@ -24,4 +24,4 @@ PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說不是 multipl
 
 ## 設計責任
 
-選 PgBouncer 自管要付 HA / failover / 監控的運維成本；選 RDS Proxy 換掉運維、付 per vCPU 計價。Transaction mode 配置前要 audit ORM / driver 行為 — JDBC / asyncpg 的 default prepared statement 跟 transaction mode 衝突、要明示配置 protocol-level prepared statement 或避開 `SET LOCAL`。Pooler 解的是連線數放大、不是 N+1 query — 兩個問題正交、各自要解。
+選 PgBouncer 自管要付 HA / failover / 監控的運維成本；選 RDS Proxy 換掉運維、付 per vCPU 計價。Transaction mode 配置前要 audit ORM / driver 行為 — JDBC / asyncpg 的 default prepared statement 跟 transaction mode 衝突、要明示配置 protocol-level prepared statement 或改寫成 inline parameter。Pooler 解的是連線數放大、N+1 query 屬另一層議題 — 兩個問題正交、各自要解。

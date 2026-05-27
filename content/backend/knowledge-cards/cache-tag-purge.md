@@ -5,13 +5,13 @@ description: "CDN / cache 用 tag / surrogate key 批量失效多個關聯資源
 weight: 358
 ---
 
-Cache tag purge（也稱 surrogate key purge）的核心責任是讓 CDN / cache 批量失效操作可控 — 寫入快取時除了 cache key 還附加多個 tag；purge 時用 tag 觸發、一次失效所有帶該 tag 的資源、不必逐一指定 cache key。是大型內容系統的事實標準 — 比版本化路徑通用、比逐個 purge 可控。跟 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 是執行手段關係（cache invalidation 規定「何時清」、本卡提供「怎麼批量清」）。
+Cache tag purge（也稱 surrogate key purge）的核心責任是讓 CDN / cache 批量失效操作可控 — 寫入快取時除了 cache key 還附加多個 tag；purge 時用 tag 觸發、一次失效所有帶該 tag 的資源、用單一 tag 取代逐個 cache key 列舉。是大型內容系統的事實標準 — 比版本化路徑通用、比逐個 purge 可控。跟 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 是執行手段關係（cache invalidation 規定「何時清」、本卡提供「怎麼批量清」）。
 
 ## 概念位置
 
 Cache tag purge 處於 CDN / cache 失效策略的「批量失效機制」層、是 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 的執行手段。常見 vendor 實作：Fastly Cache Tag（`Surrogate-Key` header、purge 用 `POST /service/.../purge/<tag>`）、Cloudflare Cache Tag（Enterprise plan、用 `Cache-Tag` header）、Akamai Surrogate Key、Varnish（用 `X-Cache-Tag` header + ban-list）。
 
-CDN 用 cache key（通常是 URL + Vary header）做快取存取。批量失效的三條路是：逐個 URL purge（拿到所有受影響 URL 清單）、wildcard purge（粗、容易誤傷）、tag purge（寫入時就標 tag、失效時用 tag 觸發、精準批量）。tag purge 的優勢是失效範圍在寫入時就規劃好、不是事後用 wildcard 猜。
+CDN 用 cache key（通常是 URL + Vary header）做快取存取。批量失效的三條路是：逐個 URL purge（拿到所有受影響 URL 清單）、wildcard purge（粗、容易誤傷）、tag purge（寫入時就標 tag、失效時用 tag 觸發、精準批量）。tag purge 的優勢是失效範圍在寫入時就規劃好、屬「寫入時規劃」型 invalidation、跟 wildcard 的「事後猜」型對比。
 
 ## 可觀察訊號與例子
 
@@ -19,4 +19,4 @@ CDN 用 cache key（通常是 URL + Vary header）做快取存取。批量失效
 
 ## 設計責任
 
-Tag 設計要避免兩種極端：tag 太粗（所有頁面都帶 `site:main` tag、每次小更新都全站 purge）、tag 太細（每個資源獨立 tag、batch purge 需要 enumerate 所有 tag、退化成逐個 purge）。Vendor 對 tag 數量、tag 長度、purge API rate 都有上限、要事前 audit。跨服務 tag 不同步（CDN 有 tag、應用層快取沒對應機制）會讓 CDN purge 後應用層仍 stale、回填到 CDN — 兩層失效要設計成同步協議、不該各自獨立。
+Tag 粒度設計要在兩端之間取捨：tag 太粗（所有頁面都帶 `site:main` tag、每次小更新都全站 purge）、tag 太細（每個資源獨立 tag、batch purge 需要 enumerate 所有 tag、退化成逐個 purge）。Vendor 對 tag 數量、tag 長度、purge API rate 都有上限、要事前 audit。跨服務 tag 設計要同步 — 若 CDN 有 tag、應用層快取缺對應機制、CDN purge 後應用層仍 stale、會回填到 CDN。兩層失效要設計成同步協議、視為單一 invalidation pipeline。

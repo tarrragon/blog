@@ -15,8 +15,8 @@ SWR 處於 HTTP cache 失效策略層、跟 [TTL](/backend/knowledge-cards/ttl/)
 
 `Cache-Control: max-age=60, stale-while-revalidate=600` 的服務行為：60 秒內 cache 完全新鮮、60-660 秒之間 client 仍立即拿到舊版（但 cache 已背景重整）、660 秒後才強制等 origin response。Cloudflare / Fastly / Varnish 都支援、瀏覽器 cache 也尊重這個 directive。
 
-新鮮度敏感的場景（庫存、價格、權限）不該全域開 SWR、會放大 stale 風險；blog 文章、商品描述、靜態 metadata 適合 SWR 降低 origin 壓力。
+新鮮度敏感的場景（庫存、價格、權限）應限縮 SWR 範圍或關閉、保住 stale 風險的上限；blog 文章、商品描述、靜態 metadata 適合 SWR 降低 origin 壓力。
 
 ## 設計責任
 
-選擇 SWR window 要在「origin 壓力」跟「freshness budget」間取捨。Window 越長、origin 壓力越低、stale 容忍度越高；window 越短、freshness 越接近 TTL、但 cache stampede 緩解效果下降。常見組合是 `stale-while-revalidate` 設成 `max-age` 的 5-10 倍。要在資料新鮮度敏感場景做白名單而非全域 default。
+選擇 SWR window 要在「origin 壓力」跟「freshness budget」間取捨。Window 越長、origin 壓力越低、stale 容忍度越高；window 越短、freshness 越接近 TTL、但 cache stampede 緩解效果下降。常見組合是 `stale-while-revalidate` 設成 `max-age` 的 5-10 倍。資料新鮮度敏感場景要走白名單路徑、由 endpoint 個別 opt-in 開啟 SWR。
