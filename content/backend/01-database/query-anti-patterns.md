@@ -94,8 +94,8 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 
 上面五個是讀路徑高頻反模式。實務上其他幾類在 slow log 出現頻率不低、要一併列入發布前檢查：
 
-- **Cardinality explosion / cross join 誤用**：兩個多對多關聯 join 沒加 filter、結果集從 N 行炸成 N×M 行。判讀訊號：query 結果行數遠超業務直覺、`EXPLAIN` 估計 rows 異常大。修正方向：補 filter、改 EXISTS / IN 半連接、或拆兩段 query。
-- **OFFSET-based pagination on large tables**：`LIMIT 20 OFFSET 100000` 在大表退化成「掃描 100020 行 + skip 100000 行」。修正方向：用 keyset / cursor pagination（`WHERE id > last_seen_id LIMIT 20`）— 一致 O(LIMIT) 而非 O(OFFSET + LIMIT)。
+- **[Cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) / cross join 誤用**：兩個多對多關聯 join 沒加 filter、結果集從 N 行炸成 N×M 行。判讀訊號：query 結果行數遠超業務直覺、`EXPLAIN` 估計 rows 異常大。修正方向：補 filter、改 EXISTS / IN 半連接、或拆兩段 query。
+- **OFFSET-based pagination on large tables**：`LIMIT 20 OFFSET 100000` 在大表退化成「掃描 100020 行 + skip 100000 行」。修正方向：用 [keyset / cursor pagination](/backend/knowledge-cards/keyset-pagination/)（`WHERE id > last_seen_id LIMIT 20`）— 一致 O(LIMIT) 而非 O(OFFSET + LIMIT)。
 - **隱式型別轉換讓 index 失效**：`WHERE varchar_col = 123` 把 column 轉成 int 比較、index 失效退到 full scan。判讀訊號：EXPLAIN 顯示 index 沒命中但 schema 上有 index。修正方向：明示型別（`WHERE varchar_col = '123'`）。
 - **應用層做大結果集排序 / 聚合**：把 100 萬行拉回應用、在記憶體 sort 或 group。應該 push 給 DB 做 `ORDER BY` / `GROUP BY` + `LIMIT`。判讀訊號：應用程式記憶體用量隨 endpoint 流量線性升高。
 - **N+1 write**：在 loop 內單筆 insert / update 而非 bulk insert。每筆觸發一次 round trip + 可能的 fsync。修正方向：用 `INSERT ... VALUES (), (), ()` 或 `executemany` / `bulk_create`。

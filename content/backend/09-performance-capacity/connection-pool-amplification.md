@@ -18,7 +18,7 @@ PostgreSQL / MySQL 每個連線都會在 DB server 端配一個 backend process 
 
 問題的根因不是「連線多」、是「連線**生命週期跟使用率不對齊**」。應用層 connection pool 通常維持「每臺機器 N 個常駐連線、避免每個 request 重新建連」、但 100 臺機器各自 keep 10 個常駐就是 1000 個 idle 連線。
 
-解法的方向不是「砍應用層連線數」（會讓 connection acquisition 變慢、影響 latency）、是「在 DB 跟應用層之間放一層 multiplexer」— 把多個應用層連線複用到少數 DB 連線上。這層中介就是 **connection pooler**。
+解法的方向不是「砍應用層連線數」（會讓 connection acquisition 變慢、影響 latency）、是「在 DB 跟應用層之間放一層 multiplexer」— 把多個應用層連線複用到少數 DB 連線上。這層中介就是 [connection pooler](/backend/knowledge-cards/connection-pooler/)。
 
 ## Connection Pooler 三大選項
 
