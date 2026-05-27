@@ -19,4 +19,4 @@ SIE 處於 HTTP cache 失效策略層、是 cache 從「降延遲工具」升級
 
 ## 設計責任
 
-開啟 SIE 是明示「在 origin 故障期間、業務願意接受 stale data 換 availability」。要在 freshness-sensitive 場景做白名單而非全域 default。SIE window 通常比 SWR 長（後者是常態、前者是故障 fallback）— 實務上 SIE 設一天、SWR 設十分鐘是常見組合。同時搭配 origin 監控、避免 SIE 遮掉真實事故。
+開啟 SIE 是明示「在 origin 故障期間、業務願意接受 stale data 換 availability」。要在 freshness-sensitive 場景做白名單而非全域 default。SIE window 通常比 SWR 長（後者是常態、前者是故障 fallback）— 常見組合是 SIE 設一天、SWR 設十分鐘。同時搭配 origin 監控、避免 SIE 遮掉真實事故。

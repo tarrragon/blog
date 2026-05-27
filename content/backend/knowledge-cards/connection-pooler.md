@@ -20,7 +20,7 @@ PgBouncer 的 `pool_mode` 是核心配置：session mode 嚴格說不是 multipl
 
 ## 可觀察訊號與例子
 
-該裝 pooler 的訊號：應用層機器數 ≥ 20、每臺機器連線數 ≥ 10、DB `max_connections` 使用率 ≥ 70%、P99 connection wait time 升高。`pg_stat_activity` 顯示大量 idle 連線是裝 pooler 的明確指標。實務上中型 PostgreSQL 服務裝 PgBouncer 後、DB 連線數可從 1000+ 壓到 50-100。
+該裝 pooler 的訊號：應用層機器數 ≥ 20、每臺機器連線數 ≥ 10、DB `max_connections` 使用率 ≥ 70%、P99 connection wait time 升高。`pg_stat_activity` 顯示大量 idle 連線是裝 pooler 的明確指標。中型 PostgreSQL 服務裝 PgBouncer 後、DB 連線數常從 1000+ 壓到 50-100。
 
 ## 設計責任
 

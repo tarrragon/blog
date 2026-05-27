@@ -15,7 +15,7 @@ Strangler Fig 處於系統演進的策略層、不是單一技術。完整執行
 
 ## 可觀察訊號與例子
 
-大型 monolith 重寫、microservice 拆分、資料庫遷移、第三方 SaaS 換家都用 strangler。實務上完整四階段通常 3-12 個月、雙寫期 1-4 週收斂、切流期 4-12 週逐步推進。Routing layer（API gateway / proxy / feature flag）是核心基礎設施、決定每個 request 走新或舊、出問題能瞬間切回。
+大型 monolith 重寫、microservice 拆分、資料庫遷移、第三方 SaaS 換家都用 strangler。完整四階段通常 3-12 個月、雙寫期 1-4 週收斂、切流期 4-12 週逐步推進。Routing layer（API gateway / proxy / feature flag）是核心基礎設施、決定每個 request 走新或舊、出問題能瞬間切回。
 
 ## 設計責任
 
