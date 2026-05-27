@@ -47,6 +47,38 @@ Backend 教材可以依讀者目的分成六條路線。每條路線都有起點
 
 這條路線跟「API 到資料流」路線的差別：API 路線教讀者「怎麼把功能做出來」，規模路線教讀者「做出來之後怎麼撐住」。兩條路線可以分開讀、也可以順序讀，建議寫完第一個 MVP 後就回到規模路線盤點。
 
+#### 從影片觀眾的詞彙進入
+
+若讀者剛從「用 Claude Code 做 SaaS 最常撞到的那堵牆」這類入門影片進來、可以用以下對照表把影片名詞橋接到本系列章節：
+
+| 影片名詞                   | Blog 對應章節                                                                                                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scale up / Scale out       | [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)                                                                                         |
+| CDN / 邊緣節點 / 物料配送  | [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)                                                                                |
+| 微服務 / 拆分丁丁茶業      | [0.18 服務拆分與邊界判讀](/backend/00-service-selection/service-decomposition-boundaries/)                                                                             |
+| Read replica / 主從複製    | [1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/) + [9.13 stateless 前提中的 stateful 分支](/backend/09-performance-capacity/scaling-axes/) |
+| 快取 / 保溫桶              | [02 模組 快取與 Redis](/backend/02-cache-redis/)                                                                                                                       |
+| Queue + Rate limiter       | [03 模組 訊息佇列](/backend/03-message-queue/) + [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)                                           |
+| 索引 / N+1 / 倉庫整理      | [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)                                                                                        |
+| 雲端服務（RDS / ECS / S3） | [0.19 雲端服務對照地圖](/backend/00-service-selection/cloud-vendor-capability-mapping/)                                                                                |
+
+影片用具象比喻幫助理解、blog 用工程術語幫助操作；兩者承擔的目標不同、把詞彙橋接起來後可以兩邊互相印證。
+
+#### 規模成長階段對照
+
+每個影片觀眾最想要的答案是「現在系統長這樣、下一步該做什麼」。下表把規模成長路線拆成 6 個典型階段、每階段對應一個撞牆訊號跟該做的下一件事：
+
+| 階段 | 撞牆訊號                                    | 該做的事                                            | 對應章節                                                                                                                 |
+| ---- | ------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| A    | 一臺機器 CPU / 記憶體吃滿                   | 評估垂直 vs 水平擴展、確認 stateless 前提           | [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/)                                                            |
+| B    | DB 變慢、加機器看起來只是 workaround        | 先用反模式清單收回單機容量、再考慮 vendor 升級      | [1.13 query 反模式](/backend/01-database/query-anti-patterns/)                                                           |
+| C    | DB 寫入 OK 但讀取壓爆 primary               | 開 read replica、應用層配讀寫路由                   | [1.1 高併發 SQL](/backend/01-database/high-concurrency-access/) + [02 cache aside](/backend/02-cache-redis/cache-aside/) |
+| D    | 活動 / KOL 引流時 origin 被靜態資源請求打爆 | 把靜態 / 半靜態內容放到邊緣層、保護 origin          | [5.9 邊緣分發 + Origin Protection](/backend/05-deployment-platform/edge-cdn-static-distribution/)                        |
+| E    | 同步呼叫卡住事務流、付款 / 通知互相阻塞     | 拆事件、非同步化、加 idempotency                    | [03 訊息佇列](/backend/03-message-queue/)                                                                                |
+| F    | 業務分化、團隊發版互相阻擋                  | 沿真實邊界拆服務（資料 / 團隊 / 部署 / 流量四選一） | [0.18 服務拆分](/backend/00-service-selection/service-decomposition-boundaries/)                                         |
+
+階段不是嚴格時序、可能跳階段或反覆。階段 F（服務拆分）有些團隊會在 A-E 之前先做、有些團隊永遠不會做。階段 D 之後若要應對可預期高峰活動（雙 11、新片上線、活動推廣）、加 [9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)；平日的容量規劃靠 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
+
 ### 貫穿式案例：Checkout 服務演進
 
 貫穿式案例的責任是把平行模組串成同一個服務演進路徑。本系列使用簡化的 checkout / order / payment / notification 流程作為主案例：使用者建立訂單、付款服務回應、商品或價格資料被快取、事件送到下游通知與報表、服務上線時產出觀測與驗證證據，事故發生時留下決策紀錄並回寫改善。

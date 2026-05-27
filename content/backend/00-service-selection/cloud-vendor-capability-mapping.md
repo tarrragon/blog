@@ -6,7 +6,7 @@ weight: 19
 tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 ---
 
-雲端服務對照地圖的核心責任是讓讀者在「能力分類」跟「具體 vendor」之間建立翻譯，避免在同一張對照表裡損失情境判讀。AWS、GCP、Azure 在大部分能力上都有對應產品，但「對應」不等於「等價」：同樣是 managed SQL，AWS RDS、GCP Cloud SQL、Azure SQL 在備份頻率、replica 行為、failover 時間、跨區複製成本上都有差異。讀者要把這張表當入口、不是當決策本身。
+面對「我該選 AWS 還是 GCP？」這類問題、第一步通常不是看技術細節、而是把後端能力分類對應到三家雲廠商的具體服務名稱。本章提供這份對照地圖、同時警告一件事：AWS、GCP、Azure 在大部分能力上都有對應產品，但「對應」不等於「等價」— 同樣是 managed SQL、AWS RDS、GCP Cloud SQL、Azure SQL 在備份頻率、replica 行為、failover 時間、跨區複製成本上都有差異。對照表是入口、不是決策本身。
 
 ## 為什麼需要這張對照地圖
 
@@ -41,7 +41,7 @@ tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 
 對照表覆蓋的能力都有 vendor 直接對應，但有兩類能力三家雲廠商都沒有提供等價的原生服務，要靠第三方工具補完。把這兩類獨立成段，避免在對照表中用「（無原生）」填空造成模板化。
 
-**壓測 / 流量重放**：三家雲都沒有像 RDS 對 PostgreSQL 那樣的「managed 壓測服務」。實務上要從 k6、JMeter、Gatling、Locust、Vegeta、AWS Distributed Load Testing（這是 reference architecture 而非 managed service）這類第三方工具選擇。選型考量在於：是否支援該團隊熟悉的腳本語言（k6 用 JS / Gatling 用 Scala / Locust 用 Python）、能否分散執行、能否在 CI 整合、能否重放 production traffic（GoReplay、AWS VPC Traffic Mirroring）。各工具的選型細節見 [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)。
+**壓測 / 流量重放**：三家雲都沒有像 RDS 對 PostgreSQL 那樣的「managed 壓測服務」。團隊要從 k6、JMeter、Gatling、Locust、Vegeta、AWS Distributed Load Testing（這是 reference architecture 而非 managed service）這類第三方工具選擇。選型考量在於：是否支援該團隊熟悉的腳本語言（k6 用 JS / Gatling 用 Scala / Locust 用 Python）、能否分散執行、能否在 CI 整合、能否重放 production traffic（GoReplay、AWS VPC Traffic Mirroring）。各工具的選型細節見 [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/)。
 
 **事故管理 / on-call 通知**：三家雲都沒有原生的 incident management 平台。CloudWatch / Cloud Monitoring / Azure Monitor 只到 alert 層、不負責 escalation、on-call rotation、incident timeline 與 retrospective。這層責任目前由 PagerDuty、Opsgenie、Splunk On-Call（前 VictorOps）、Grafana OnCall 等第三方平台承擔。三家雲提供的 alert 可以 webhook 到這些平台，但 incident workflow 本身不在 cloud vendor scope 內。事故管理流程見 [08 事故處理模組](/backend/08-incident-response/)。
 
@@ -103,7 +103,7 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 ## 混合雲與多雲的情境
 
-實務上常見混合或多雲組合：
+常見的混合或多雲組合：
 
 - **資料留 AWS、ML 跑 GCP**：因為 BigQuery、Vertex AI 在資料分析優勢
 - **主要 Azure、ML 跑 AWS**：因為 SageMaker 跟 Bedrock 提供的選項
@@ -147,12 +147,12 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 雲端服務選型可用以下案例回寫：
 
-- [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) — 看實際企業如何在三家雲廠商之間做決策；對照本章「跨雲遷移的判讀重點」段。
-- [9.C20 Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 看跨 vendor 遷移的具體 gap 分析；對照本章「對應 ≠ 等價」段。
+- [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) — 0.14 收錄不同產業、不同規模階段企業的雲端選型決策；對照本章「跨雲遷移的判讀重點」段：合規、計價、IAM 整合是三家雲決策的主要分歧軸。
+- [9.C20 Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 把 SQL 介面（TiDB）換成 KV 介面（DynamoDB）、用一致性語意差異換取 4 倍吞吐 + 50% 成本；對照本章「對應 ≠ 等價」段中的一致性模型差異子段。
 - [9.C23 Netflix：Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 案例是 AWS 內 DB 種類整併（多 RDB → Aurora），可對照本章「對應 ≠ 等價」段中的計價模型與整合成熟度差異。雖然不涉及跨雲，但同樣展示「在同一個 vendor 生態內收斂可降低運維 cost」的選型邏輯。
-- [5.C1 Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) — 看 self-managed vs managed 的差異；對照本章「容器執行平台」對照行。
+- [5.C1 Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) — Tradeshift 從自管 K8s control plane 遷到 EKS managed control plane、運維責任邊界從「整套 cluster」收斂到「workload + worker node」。對照本章「容器執行平台」對照行：managed 程度是同一能力分類下的主要分歧軸。
 
-引用時的判讀順序：先看案例的源端 / 目標端對應，對照本章對照表；再看案例揭露的差異點，對照「對應 ≠ 等價」段；最後看案例的遷移代價與時間，對照「跨雲遷移的判讀重點」段。
+對照表查 vendor 名稱對應是第一層、用案例做 gap 分析是第二層。Zomato / Tradeshift 展示「對應 ≠ 等價」的具體計價與介面差異；Netflix Aurora 展示同一雲內 consolidation 的決策邏輯；0.14 提供完整的企業選型語境。三個案例不必照順序讀、按手邊問題對應即可。
 
 ## 跨模組路由
 
@@ -163,4 +163,10 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 ## 下一步路由
 
-要看具體企業選型案例，接著讀 [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/)。要看資料庫 vendor 的細節對比，接著讀 [01 模組 vendors/](/backend/01-database/vendors/)。要看部署平台 vendor 的細節對比，接著讀 [05 模組 vendors/](/backend/05-deployment-platform/vendors/)。
+對照表是查 vendor 名稱的第一層、進入細節要走 deep article：
+
+- 實際企業選型案例 → [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/)
+- 資料庫 vendor 細節對比 → [01 模組 vendors/](/backend/01-database/vendors/)
+- 部署平台 vendor 細節對比 → [05 模組 vendors/](/backend/05-deployment-platform/vendors/)
+
+本章不在規模成長路線上、是 sibling 工具型入口。要進規模成長路線、從 [0.18 服務拆分](/backend/00-service-selection/service-decomposition-boundaries/) 或 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 開始。

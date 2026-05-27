@@ -6,11 +6,11 @@ weight: 13
 tags: ["backend", "database", "query", "anti-patterns"]
 ---
 
-查詢反模式的核心責任是讓讀者在資料層撞牆之前，先在應用層發現問題。資料庫本身的能力（索引、連線池、isolation level）通常已經到位，真正讓服務變慢的是應用程式發給資料庫的查詢方式。本章把常見的查詢反模式列成可診斷、可修正的清單，並提出「每請求的 query 預算」作為發布前的判讀基準。
+應用程式變慢、第一個直覺常常是「資料庫不夠力」。多數團隊的真實瓶頸卻不在資料庫本身、而在應用程式發給資料庫的查詢方式：N+1、select \*、缺索引、ORM lazy load、長 transaction。本章把這些反模式列成可診斷、可修正的清單、並提出「每請求的 query 預算」作為發布前的判讀基準 — 讓讀者在資料層撞牆之前、先在應用層發現問題。
 
 ## 為什麼查詢反模式比 vendor 細節更重要
 
-多數團隊面對「資料庫變慢」時，會先去看 vendor 的調校（buffer pool、配置升級、replica 加開）。但實務上，這些調校是把基礎效能拉高一倍，而一個 N+1 query 反模式可以讓回應時間慢 100 倍。先解掉應用層的反模式、再去調 vendor 配置，整體效益遠高於反過來。
+多數團隊面對「資料庫變慢」時，會先去看 vendor 的調校（buffer pool、配置升級、replica 加開）。這些調校通常把基礎效能拉高一倍，而一個 N+1 query 反模式可以讓回應時間慢 100 倍。先解掉應用層的反模式、再去調 vendor 配置，整體效益遠高於反過來。
 
 這條優先序也對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 的精神：先定位真正的瓶頸再決定是否加資源。應用層 query 是最常被忽略的瓶頸來源。
 
@@ -20,7 +20,7 @@ N+1 query 指「先發一個 query 取回 N 筆資料、再對每一筆各發一
 
 典型範例：列出 100 個訂單跟每筆訂單的客戶資料。錯誤寫法是先 `SELECT * FROM orders LIMIT 100` 拿到 100 筆訂單、再對每一筆訂單做 `SELECT * FROM customers WHERE id = ?`，總共 101 次 query。正確寫法是 JOIN 或 IN 一次取回：`SELECT o.*, c.* FROM orders o JOIN customers c ON o.customer_id = c.id LIMIT 100`，1 次 query 完成。
 
-N+1 在 ORM 環境特別隱性，因為它常被框架的 lazy loading 機制隱藏。Django ORM 的 `order.customer` 看起來像存取一個 attribute，背後其實是個 query。寫程式時看不到 SQL，發布後才從 slow log 發現問題。
+N+1 在 ORM 環境特別隱性，因為它常被框架的 lazy loading 機制隱藏。Django ORM 的 `order.customer` 看起來像存取 attribute，背後對應一次 query。寫程式時看不到 SQL，發布後才從 slow log 發現問題。
 
 判讀方式：開啟 ORM 的 query log（debug mode）、看一個 API request 跑出幾個 query。預期是個位數，若出現超過 50 個 query 就要懷疑 N+1。
 
@@ -133,9 +133,9 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 
 09 案例庫的主軸是規模、vendor 與容量壓力，直接以「query 反模式」為主題的案例較少。下列案例可以反向讀：每一個都展示了「在沒有先用 query 反模式優化收回壓力的前提下、團隊直接走 vendor 遷移或 scale-out 路徑」的決策。讀者讀完應追問：這些 case 啟動遷移前、是否有可能用本章的反模式清單先收回一部分容量？
 
-- [9.C39 DoorDash：Aurora Postgres 寫入瓶頸 → CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — 看 single-primary write 撞天花板的訊號跟 multi-primary 遷移取捨。對照本章可問：寫入熱點是否伴隨長 transaction 或熱 row 競爭？這些是 vendor 遷移前可以先用本章「Long-Running Transaction」清單檢查的點。
-- [9.C20 Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — 看一致性語意換取性能與成本的決策。對照本章可問：遷移前每筆業務動作平均發了多少 query、是否有 N+1 或 select \* 在放大壓力？把這條問題擺進「每請求 Query 預算」段一起讀。
-- [9.C14 Standard Chartered：Aurora 4000 TPS 合規容量](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 看合規驅動的容量規劃。對照本章可問：query 預算假設是否進入容量模型？如果預算寫鬆、規劃出的 TPS 上限會偏低。
+- [9.C39 DoorDash：Aurora Postgres 寫入瓶頸 → CockroachDB](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — DoorDash 撞到 Aurora single-primary write 天花板（瓶頸在 primary CPU + WAL flush rate）、用 PostgreSQL wire protocol 相容的 CockroachDB 換成多主寫入、ORM 不必重寫。對照本章可問：寫入熱點是否伴隨長 transaction 或熱 row 競爭？這些是 vendor 遷移前可以先用本章「Long-Running Transaction」清單檢查的點。
+- [9.C20 Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 判斷 billing 事件本身可接受 eventually consistent、用一致性語意換取 4 倍吞吐 + 50% 成本。對照本章可問：遷移前每筆業務動作平均發了多少 query、是否有 N+1 或 select \* 在放大壓力？把這條問題擺進「每請求 Query 預算」段一起讀。
+- [9.C14 Standard Chartered：Aurora 4000 TPS 合規容量](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — Standard Chartered 在 7 個受監管市場各跑獨立 Aurora cluster（資料不能跨境）、容量規劃單位是「per 市場」、合規邊界決定了 cluster 拓樸。對照本章可問：query 預算假設是否進入容量模型？預算寫鬆、規劃出的 per-cluster TPS 上限會偏低。
 
 引用判讀順序：先看案例的撞牆訊號（寫入飽和 / 一致性瓶頸 / 合規容量）、再用本章反模式清單反問「這條撞牆是否被應用層 query 放大」、最後對照 vendor 遷移或 scale-out 決策中的 query pattern 盤點完整度。這條讀法承認案例本身不直接示範 query 反模式，而是用「反向追問」把案例當成 query 反模式重要性的反證。
 
@@ -150,4 +150,10 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 
 ## 下一步路由
 
-要看具體 schema 與索引設計，接著讀 [1.2 schema design 與資料建模](/backend/01-database/schema-design/)。要看 transaction 範圍如何收斂，接著讀 [1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)。要看瓶頸定位的完整流程，接著讀 [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)。
+**規模成長路線下一站 → [1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/)**：query 反模式收完後、處理連線池與 read replica 的擴展。
+
+其他延伸方向：
+
+- Schema 與索引設計 → [1.2 schema design 與資料建模](/backend/01-database/schema-design/)
+- Transaction 範圍收斂 → [1.3 transaction 與一致性邊界](/backend/01-database/transaction-boundary/)
+- 瓶頸定位完整流程 → [9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)
