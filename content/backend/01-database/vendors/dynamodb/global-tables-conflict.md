@@ -12,6 +12,8 @@ B2B SaaS 跟客戶 SLA 寫 99.99%、單 region 跑了一年遇過兩次 region-l
 
 但 Global Tables 不只是 conflict 痛點。Disney+ 用同一個機制處理 cross-device sync（手機看一半回家用電視繼續）、Genesys 用同一個機制做 15 region B2B 客服平台的 99.999% 可用性。本文先講正向 access pattern（避免讓讀者誤以為 Global Tables 只是「跨 region 寫入會 conflict、所以痛苦」）、再展開 conflict resolution 跟 reconciliation 設計。
 
+> **DynamoDB 適用度前置判讀**：本篇假設 workload 已通過 DynamoDB 適用度 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)、本篇不重複展開。Global Tables 是 *已選 DynamoDB 後* 的拓樸決策；strong global consistency 必要的 workload 應走 Spanner / Cosmos DB strong consistency level、不是用 LWW 補。
+
 ## B2B SaaS vs B2C 業務 driver 對比
 
 Global Tables 不是預設選擇、是 *業務性質* 決定的工程投資。`9.C24 Genesys` 揭露兩條關鍵 frame — 可用性目標的業務 driver、跟每多一個 9 的 cost 指數成長。
@@ -202,6 +204,23 @@ DynamoDB Streams + Lambda：抓 conflict event、寫進獨立 audit table；reco
 接回 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)。
 
 ## 邊界與整合
+
+### Frame 5：region-pinned Global Tables 吸收合規邊界
+
+Global Tables 不只是高可用工具、也是 *合規邊界* 的吸收層。`9.C24 Genesys` 15 region active-active 不全為「跨 region 同步」、也為「各市場合規分離」— 受監管市場的客服資料 pin 在當地 region、跨 region replication 只在合規允許的範圍內開啟。
+
+跨 vendor 對照（[模組 outline Section B Frame 5](../../../_index.md)）：
+
+| Vendor              | 合規吸收機制                                                            | 拓樸特性                                             |
+| ------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| DynamoDB            | region-pinned Global Tables（按 region 開關 replication、各市場可分離） | 仍是 active-active、但 replication 範圍可控          |
+| Aurora              | fleet 拓樸（每市場獨立 cluster、合規禁止跨境 = Global Database 反指標） | active-passive per market、跨市場不複製              |
+| CockroachDB         | locality + placement（邏輯一個 cluster + region pinning + Outposts）    | 單 logical cluster、physical row 鎖在合規 region     |
+| MongoDB / Cosmos DB | cluster-per-region（無 row-level locality 等價物、整 cluster 切割）     | 各 region 獨立 cluster、application 層做市場 routing |
+
+**為什麼 DynamoDB 在這個 frame 退化得最輕**：Global Tables 的 region 開關是 *attribute 級* 設計（每張 table 可獨立決定哪些 region 參與）、不像 Aurora 必須整 cluster 拆。讀者要把「跨境合規 + 高可用」雙重需求兼顧時、DynamoDB 是最少結構性改造的路徑 — 但代價是 LWW conflict 跟 reconciliation 設計仍要自己做。
+
+**何時 region-pinned 而非 active-active**：受監管金融 / 個資跨境禁止的市場（如 GDPR strict 條款區、中國個資法 PIPL、巴西 LGPD）— 該 region 仍開 DynamoDB table、但 *不加入 Global Tables replication group*、跟其他 region 完全切割。Genesys 15 region 中部分市場屬此型、不是 15 個 region 全互相 replicate。
 
 ### Disney+ vs Genesys：兩種 Global Tables 工程動機
 

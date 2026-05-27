@@ -226,6 +226,15 @@ aws application-autoscaling put-scaling-policy \
 | 季冠軍賽 championship | 4-5x  | FanDuel case 揭露事件分級     |
 | Super Bowl            | 5-10x | FanDuel case 揭露事件分級     |
 
+**Frame 8 event-driven scaling 5 模式（跨 vendor 共寫）**：本表是 Aurora 端從讀峰視角切入的事件分級、跟 [DynamoDB on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) 的 5 模式分類（flash-sale spike / predictable peak / sustained growth / season cycle / surge baseline permanent shift / B2B 高可用）共軸。Aurora 端的 FanDuel 季賽 cycle 對應 DynamoDB 端的 *season cycle* 模式（Hard Rock NFL/NBA 100→33→100 node 也屬同模式）。
+
+**KV 層 vs SQL 層的 mode 決策差異**：DynamoDB 端的 on-demand vs provisioned mode 是 KV vendor 的容量抽象（軸 1 peak/avg ratio / 軸 4 predictable-peak vs flash-sale）、詳見 [DynamoDB on-demand-vs-provisioned 6 軸決策](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)、本篇不展開。Aurora 端對應的決策是 *read replica 數量 + auto-scaling vs scheduled scaling vs headroom 預留*、靠的不是 mode 切換而是 replica fleet size。
+
+兩 vendor 在 Frame 8 各自承擔：
+
+- **DynamoDB on-demand-vs-provisioned**：5 模式分類 SSoT、mode × 事件型分類的合成判讀
+- **Aurora read-replica-scaling（本篇）**：read 峰值的 headroom 預留 + 雙 SLO 並行（FanDuel 分級 + DraftKings 讀寫雙峰錯位）+ fleet 治理
+
 **case 自帶警示（scope warning 必保留）**：
 
 - 「5-10x」是 *峰值倍數*、不是 *peak 持續時間*。Super Bowl 的關鍵 30 分鐘可能 8-10x、其他 3 小時可能 3-5x（case「需要警惕」段）

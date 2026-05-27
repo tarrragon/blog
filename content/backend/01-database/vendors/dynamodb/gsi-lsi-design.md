@@ -10,6 +10,8 @@ tags: ["backend", "database", "dynamodb", "gsi", "lsi", "dax", "deep-article"]
 
 single-table design 上線後第三個月、PM 提了三個新 query 需求：「依商品分類查訂單」、「依 status 查 user」、「依時間 range 取最近活動」。team 第一反應是加 GSI、結果 GSI 從 1 個變 6 個、cost 跟 latency 一起上升。打開 AWS Cost Explorer 一看、GSI 的 storage + WCU 合計已經超過 base table。這時 team 開始懷疑「single-table 是不是錯了」— 那是 *誤判*。GSI 多到 cost 超過 base table 通常是 *主 PK 沒設計好*、不是 single-table 錯。本文展開 GSI / LSI 的正確補位、projection 的三型選擇、sparse index、以及 DAX 作為讀峰值補位的觸發條件。
 
+> **DynamoDB 適用度前置判讀**：本篇假設 workload 已通過 DynamoDB 適用度 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)、本篇不重複展開。GSI / LSI 補位是 *已選 DynamoDB + access pattern 已穩定* 的 schema 設計議題。
+
 ## 核心機制：GSI vs LSI 的工程差異
 
 DynamoDB 的兩種 secondary index 解的問題不同：

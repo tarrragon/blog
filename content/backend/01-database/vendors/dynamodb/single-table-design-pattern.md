@@ -182,6 +182,23 @@ TTL 是 storage cost 防爆的標配（特別在 message-class workload）— Pa
 
 ## 邊界與整合
 
+### Frame 3：DynamoDB 在 fleet 治理 frame 的退化
+
+跨 vendor 共通 frame：production scale 走 *fleet of clusters*（[模組 outline Section B Frame 3](../../../_index.md)、Aurora 200 cluster / CockroachDB 380+ cluster / MongoDB Atlas 20 DB 都是這個 frame）。DynamoDB 在這 frame 退化得最徹底 — *不走 fleet of clusters*、是用 partition 內部自動切。
+
+對照其他 vendor：
+
+| Vendor      | Scale-out 拓樸                                      | 容量決策層                             |
+| ----------- | --------------------------------------------------- | -------------------------------------- |
+| DynamoDB    | 單 table、partition 自動 split / merge              | mode 選擇 + PK 均勻 + GSI 補位         |
+| Aurora      | Fleet of clusters（business / microservice / 合規） | Cluster boundary + replica 數量        |
+| CockroachDB | Fleet of clusters or 邏輯一個 cluster + locality    | Per-app vs shared cluster 決策         |
+| MongoDB     | Sharded cluster + 多 cluster（blast radius）        | Shard key + cluster ownership boundary |
+
+**DynamoDB 退化點**：partition 是 *vendor 內部物理層*、不暴露給應用 — application 看到的永遠是「一張 table」、不需要規劃 cluster boundary。代價是 *partition key 設計責任全壓在 schema 上*（[partition-key-antipatterns](/backend/01-database/vendors/dynamodb/partition-key-antipatterns/)）、不能用「拆 cluster 解 blast radius」當逃避路徑。
+
+**例外情境**：DynamoDB 在 *合規場景* 仍可能走「多 table per market」拓樸（見 Frame 5 [global-tables-conflict](/backend/01-database/vendors/dynamodb/global-tables-conflict/) region-pinned 段）— 但動機是合規 boundary 而非 capacity scale、跟 Aurora fleet driver 結構不同。
+
 ### DynamoDB 在系統中的角色：control plane / metadata / state
 
 DynamoDB 不是 universal store、不是 SQL 替代品。3 個 case 重複揭露同一定位：

@@ -10,6 +10,8 @@ MongoDB shard key 是 sharded cluster 上線時最難回頭的決策。Shard key
 
 本文不重複 [MongoDB vendor overview](/backend/01-database/vendors/mongodb/) 已寫過的 sharding 簡介 — 而是 production 設計 + 失敗修復的實作層教學。
 
+> **MongoDB 適用度前置判讀**：進到 shard key 設計前先確認 workload 在 MongoDB 適用區（document shape 主導 / contract layer 該放哪 / 跨雲 hedging 是否需要）— 詳見 [schema-design-pattern 開頭 3 軸前置判讀](../schema-design-pattern/#問題情境document-自由的後座力)、本篇不重複展開。Sharded cluster 是 *已選 MongoDB 後* 的容量決策、不是 vendor 選型決策。
+
 ## 問題情境：橫向擴展不是只有 sharded cluster 一條路
 
 典型觸發場景：single replica set 撐到上限、writes 已經把 primary 推到 CPU 90% / disk IO 飽和、working set 超出 RAM。讀者下意識會想到「分 shard」、但同時還有「分 cluster」這條路徑、兩者 trigger 完全不同：

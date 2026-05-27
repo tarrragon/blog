@@ -29,7 +29,7 @@ Surge 形狀又不規則：加密貨幣 surge（隨外部市場波動）/ 媒體
 - Atlas auto-scaling event log 顯示 *triggered too late*
 - Cache hit rate 跟 read latency 反向相關
 
-Case anchor：[9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 是 rich case，含具體數字（60K → ~2K connections / 1.5M reads/sec 含 cache / 70 → 25 分鐘擴容）；[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 雙模式負載敘事（持續 sensor + 緊急事件）、[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 媒體爆量形狀。
+Case anchor：[9.C36 Coinbase](/backend/09-performance-capacity/cases/coinbase-mongodb-document-platform/) 是 rich case，含具體數字（deploy 尖峰 *connection event rate* ~60K connections / 分鐘 / mongobetween 後 *steady-state concurrent connections* 由 ~30K 降到 ~2K — 兩者口徑不同、不是同一數字的連續變化；1.5M reads/sec 含 cache / 70 → 25 分鐘擴容）；[9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/) 雙模式負載敘事（持續 sensor + 緊急事件）、[9.C37 Forbes](/backend/09-performance-capacity/cases/forbes-mongodb-atlas-multi-cloud-migration/) 媒體爆量形狀。
 
 ## 核心機制：三層合成 frame
 
@@ -52,7 +52,7 @@ Connection storm 的具體 trigger：
 - **部署模型放大 process 數**：CRuby + GVL 強制每 CPU core 一 process、blue-green 部署 instance 數 ×2、連線數隨之 ×2（9.C36 Coinbase 揭露：單 cluster 看到 60K connections/min）
 - **微服務數量多**：50+ microservice 各自連 cluster、每服務 connection 加總後撞上限（9.C37 Forbes 50+ 微服務情境對照）
 
-mongobetween proxy（Coinbase 自建）：把多 application process 的連線合成少量到 MongoDB cluster 的連線、connection 從 60K 降到 ~2K（一個量級）。
+mongobetween proxy（Coinbase 自建）：把多 application process 的連線合成少量到 MongoDB cluster 的連線。9.C36 揭露兩個獨立口徑、不是同一數字的連續變化：deploy 尖峰時 *connection event rate* 是 ~60K connections / 分鐘（unique connection 事件量、rate）；mongobetween 介入後 *steady-state concurrent connection 數* 由 ~30K 降到 ~2K（瞬時量、前後對比、一個量級）。引用時把 rate 跟瞬時 concurrent count 分開、不要壓成「60K 收斂到 2K」。
 
 **Scope warning（必明示）**：mongobetween 是 Coinbase 為 Ruby + GVL 需求自建、case 自承「Go / Java / Node.js 應用因原生支援連線多工、通常不需要這層 proxy」。寫進設計文件時不可寫成「MongoDB 在大規模都需要 mongobetween」、要寫成「特定部署模型才需要」。
 

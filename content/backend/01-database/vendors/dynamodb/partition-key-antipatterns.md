@@ -12,6 +12,8 @@ tags: ["backend", "database", "dynamodb", "partition-key", "hot-partition", "wri
 
 本文展開 partition key 反模式的識別、composite key / write sharding 兩種修法、mode × partition 在 provisioned / on-demand 下的不同表現、以及 9.C15 拓元 6750x IOPS 擴展案例的工程細節。
 
+> **DynamoDB 適用度前置判讀**：本篇假設 workload 已通過 DynamoDB 適用度 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)、本篇不重複展開。Partition key 反模式是 *已選 DynamoDB 後* 的 schema 修補議題；若 4 軸不成立、改回 SQL 比補 composite key 更合理。
+
 ## 核心機制：partition 上限是工程硬天花板
 
 DynamoDB 把 capacity 抽象成 RCU / WCU、但底下仍是物理 partition。理解 partition 的 4 條硬規則：

@@ -42,7 +42,7 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 | 單 region 即可滿足合規        | 跨 region replication cost 是純浪費              |
 | Cloud SQL HA 設定已 cover SLA | 升 Spanner 沒 marginal benefit                   |
 
-觸發任一條 → 強烈建議走 Cloud SQL HA、不升 Spanner。寫稿時要把 Cloud SQL HA cost vs Spanner 100 pu cost 對比清楚、避免讀者「想用新技術」而升級。
+觸發任一條 → 強烈建議走 Cloud SQL HA、不升 Spanner。判讀時要把 Cloud SQL HA cost vs Spanner 100 pu cost 對比清楚、避免讀者「想用新技術」而升級。
 
 ### No-go condition（應用層延遲容忍）
 
@@ -67,7 +67,7 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 
 ### Case anchor + dogfood 邊界
 
-**無強 customer case**。9.C10 是 Google 內部 dogfood、不是公開遷移 case；本 playbook 用 Spanner overview 的 PostgreSQL dialect 路徑 + 官方 migration guide + 通用 pattern。寫稿時必須明示「9.C10 揭露的線性 scaling / line-rate 設計目標是 Spanner 設計依據、不等於客戶遷移後可獲得的 capacity」。
+**無強 customer case**。9.C10 是 Google 內部 dogfood、不是公開遷移 case；本 playbook 用 Spanner overview 的 PostgreSQL dialect 路徑 + 官方 migration guide + 通用 pattern。引用時必須明示「9.C10 揭露的線性 scaling / line-rate 設計目標是 Spanner 設計依據、不等於客戶遷移後可獲得的 capacity」。
 
 對照 case：[9.C14 Standard Chartered Aurora 受監管 banking](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — 雖然是 Aurora、不是 Spanner、但揭露「受監管 OLTP 遷移要算合規 lead time」「資料駐留限制 = 容量規劃 per-市場」這兩條結論在 Spanner 遷移同樣適用。讀者若是受監管產業、跨 region instance config 還要疊上 voting region 是否落在合規市場的 audit。
 
