@@ -149,10 +149,10 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 - [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) — 0.14 收錄不同產業、不同規模階段企業的雲端選型決策；對照本章「跨雲遷移的判讀重點」段：合規、計價、IAM 整合是三家雲決策的主要分歧軸。
 - [9.C20 Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 把 SQL 介面（TiDB）換成 KV 介面（DynamoDB）、用一致性語意差異換取 4 倍吞吐 + 50% 成本；對照本章「對應 ≠ 等價」段中的一致性模型差異子段。
-- [9.C23 Netflix：Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 案例是 AWS 內 DB 種類整併（多 RDB → Aurora），可對照本章「對應 ≠ 等價」段中的計價模型與整合成熟度差異。雖然不涉及跨雲，但同樣展示「在同一個 vendor 生態內收斂可降低運維 cost」的選型邏輯。
+- [9.C23 Netflix：Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 案例是 AWS 內 DB 種類整併（多 RDB → Aurora），可對照本章「對應 ≠ 等價」段中的計價模型與整合成熟度差異。雖然不涉及跨雲，但在同一家雲廠商內整併服務、跟跨雲整併共用同一條決策邏輯：權衡 vendor lock-in 代價 vs 運維碎片化代價。
 - [5.C1 Tradeshift：self-managed K8s → EKS](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) — Tradeshift 從自管 K8s control plane 遷到 EKS managed control plane、運維責任邊界從「整套 cluster」收斂到「workload + worker node」。對照本章「容器執行平台」對照行：managed 程度是同一能力分類下的主要分歧軸。
 
-對照表查 vendor 名稱對應是第一層、用案例做 gap 分析是第二層。Zomato / Tradeshift 展示「對應 ≠ 等價」的具體計價與介面差異；Netflix Aurora 展示同一雲內 consolidation 的決策邏輯；0.14 提供完整的企業選型語境。三個案例不必照順序讀、按手邊問題對應即可。
+這些案例回答的是不同問題、不是同一個問題的不同切面。對照表本身只回答「叫什麼名字」；Zomato / Tradeshift 補「換掉名字後實際差多少」（介面 / 計價 / 一致性差異）；Netflix Aurora 補「同一雲內怎麼收斂」；0.14 補「真實企業在什麼壓力下選什麼」。讀者按手邊的問題進入對應案例、不需要也不適合串成同一條 narrative。
 
 ## 跨模組路由
 

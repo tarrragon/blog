@@ -137,7 +137,7 @@ ORM 的 lazy load 預設行為是「存取 attribute 時才發 query」，這在
 - [9.C20 Zomato：TiDB 遷到 DynamoDB](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/) — Zomato 判斷 billing 事件本身可接受 eventually consistent、用一致性語意換取 4 倍吞吐 + 50% 成本。對照本章可問：遷移前每筆業務動作平均發了多少 query、是否有 N+1 或 select \* 在放大壓力？把這條問題擺進「每請求 Query 預算」段一起讀。
 - [9.C14 Standard Chartered：Aurora 4000 TPS 合規容量](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) — Standard Chartered 在 7 個受監管市場各跑獨立 Aurora cluster（資料不能跨境）、容量規劃單位是「per 市場」、合規邊界決定了 cluster 拓樸。對照本章可問：query 預算假設是否進入容量模型？預算寫鬆、規劃出的 per-cluster TPS 上限會偏低。
 
-引用判讀順序：先看案例的撞牆訊號（寫入飽和 / 一致性瓶頸 / 合規容量）、再用本章反模式清單反問「這條撞牆是否被應用層 query 放大」、最後對照 vendor 遷移或 scale-out 決策中的 query pattern 盤點完整度。這條讀法承認案例本身不直接示範 query 反模式，而是用「反向追問」把案例當成 query 反模式重要性的反證。
+DoorDash 案例是這條反向追問最直接的應用 — 寫入瓶頸的判讀不該停在 vendor 規格、而是先檢查 transaction 範圍跟熱 row 競爭。Zomato 跟 Standard Chartered 的反向追問則退一步問「query 預算假設是否進入容量模型」。三條追問共享同一條診斷邏輯：應用層 query 不是事後解釋的細節、是事前可以收回的容量。這個讀法承認案例本身不直接示範 query 反模式、是用反向追問把案例當成 query 反模式重要性的反證。
 
 ## 跨模組路由
 
