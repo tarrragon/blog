@@ -6,7 +6,7 @@ weight: 43
 tags: ["backend", "database", "postgresql", "cockroachdb", "migration", "multi-axis", "paradigm-shift"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/) 跟 [CockroachDB](/backend/01-database/vendors/cockroachdb/)。本文是 [#127 多重歸類跟 tie-breaking](/report/content-structure-by-max-diff-dimension/) 規則的實證 — 三維皆 High 配對的處理方式不是「選 type A 或 type C 或 type E」、是 *主導維度走 Type E、其他高維度獨立加段*。
+> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/) 跟 [CockroachDB](/backend/01-database/vendors/cockroachdb/)。本文是 [#127 多重歸類跟 tie-breaking](/report/content-structure-by-max-diff-dimension/) 規則的實證 — 三維皆 High 配對的處理方式不是「選 type A 或 type C 或 type E」、是 *主導維度走 Type E、其他高維度獨立加段*。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
 
 ## 三維皆 High：決策矩陣
 

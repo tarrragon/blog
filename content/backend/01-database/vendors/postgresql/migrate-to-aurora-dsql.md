@@ -6,7 +6,7 @@ weight: 42
 tags: ["backend", "database", "postgresql", "aurora-dsql", "migration", "distributed-sql", "cloud-managed"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/)（source）跟 [Aurora](/backend/01-database/vendors/aurora/)（DSQL 也屬 Aurora family、但 paradigm 不同）。跟 [migrate-to-aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)（PG → Aurora PG、protocol drop-in + operational redesign）跟 [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/)（PG → CRDB、Type E paradigm shift）對照、本篇是 *Aurora 內 PG → DSQL 的 paradigm shift*。
+> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/)（source）跟 [Aurora](/backend/01-database/vendors/aurora/)（DSQL 也屬 Aurora family、但 paradigm 不同）。跟 [migrate-to-aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)（PG → Aurora PG、protocol drop-in + operational redesign）跟 [migrate-to-cockroachdb](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/)（PG → CRDB、Type E paradigm shift）對照、本篇是 *Aurora 內 PG → DSQL 的 paradigm shift*。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
 
 > **時間錨點**：Aurora DSQL 在 **2024-12 re:Invent preview**、**2025-05-27 GA**。本文 vendor claim 以 2025-2026 公開狀態為準、實際 migration 前請以 AWS docs 為準（feature 持續演進中）。
 

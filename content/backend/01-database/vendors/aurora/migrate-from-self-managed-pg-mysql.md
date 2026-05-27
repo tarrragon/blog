@@ -6,7 +6,7 @@ weight: 70
 tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "mysql", "deep-article"]
 ---
 
-從自管 PostgreSQL / MySQL 遷到 Aurora 是 *operational redesign hybrid*（Type C migration）— wire protocol 相容、application 不改、但 HA / backup / monitoring / capacity 模型完全不同。本 playbook 走 [migration playbook 6 規格面](/posts/migration-playbook-methodology/)（Driver / Diff audit / Phase plan / Evidence / Cutover / Cleanup）、補三個 Aurora-specific 議題：(1) 合規禁止跨境複製的 no-go condition、(2) 合規驅動遷移的時程模型（市場數 × 平均審查月份）、(3) Aurora 不是 all-purpose store 邊界。
+從自管 PostgreSQL / MySQL 遷到 Aurora 是 *operational redesign hybrid*（Type C [migration](/backend/knowledge-cards/migration/)）— wire protocol 相容、application 不改、但 HA / backup / monitoring / capacity 模型完全不同。本 playbook 走 [migration playbook 6 規格面](/posts/migration-playbook-methodology/)（Driver / Diff audit / Phase plan / Evidence / Cutover / Cleanup）、補三個 Aurora-specific 議題：(1) 合規禁止跨境複製的 no-go condition、(2) 合規驅動遷移的時程模型（市場數 × 平均審查月份）、(3) Aurora 不是 all-purpose store 邊界。每階段進入下一步前都要過 [migration gate](/backend/knowledge-cards/migration-gate/) — Evidence 段列出的證據是 gate 條件、不是 nice-to-have。
 
 本 playbook 不重複 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 前置閱讀建議 [Aurora storage architecture](../storage-architecture/)（理解為什麼 operational redesign）、[Aurora cross-AZ failover RTO](../cross-az-failover-rto/)（HA redesign 主項）、[Aurora read replica scaling](../read-replica-scaling/)（fleet 治理 SSoT、含合規 driver）。
 
@@ -40,6 +40,8 @@ tags: ["backend", "database", "aurora", "migration", "playbook", "postgresql", "
 - Multi-region DR 需求（[Aurora Global Database](../global-database-multi-region/)、但合規場景例外）
 
 ### No-go condition（嚴格遵守）
+
+跨雲 / on-prem 需求觸動 [vendor lock-in](/backend/knowledge-cards/vendor-lock-in/) — Aurora storage layer 是 AWS 專屬、wire protocol 相容不代表退出成本低、long-term 跨雲策略未定時 self-managed PG / MySQL 反而保留路徑。
 
 | 條件                      | 為什麼是 no-go                                                                                         |
 | ------------------------- | ------------------------------------------------------------------------------------------------------ |

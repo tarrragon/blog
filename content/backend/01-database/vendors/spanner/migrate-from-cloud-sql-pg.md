@@ -6,7 +6,7 @@ weight: 33
 tags: ["backend", "database", "spanner", "global-sql", "migration", "playbook", "postgresql", "cloud-sql", "deep-article"]
 ---
 
-> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 migration playbook。走 [vendor-article-spec](/backend/01-database/vendor-article-spec/) Migration Playbook 規格 + [migration-playbook-methodology](/posts/migration-playbook-methodology/) Type E（paradigm shift）。
+> 本文是 [Cloud Spanner](/backend/01-database/vendors/spanner/) overview 的 [migration](/backend/knowledge-cards/migration/) playbook。走 [vendor-article-spec](/backend/01-database/vendor-article-spec/) Migration Playbook 規格 + [migration-playbook-methodology](/posts/migration-playbook-methodology/) Type E（paradigm shift）。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關 — Evidence 段列的證據是 gate 通過條件、不是 nice-to-have。
 
 ---
 

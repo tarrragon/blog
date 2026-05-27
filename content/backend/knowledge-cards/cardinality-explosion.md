@@ -5,13 +5,13 @@ description: "Query 結果行數因 join / cross product / 條件缺失爆炸性
 weight: 356
 ---
 
-Query cardinality explosion 的核心責任是命名「query 結果行數遠超業務直覺」這類反模式 — 通常源於多對多 join 沒加 filter、或誤用 cross join。一個應該回 100 行的 query 變成回 10000 行（10000 × M）、應用層拉回 deserialize 後記憶體爆掉、DB 也付出不必要的 scan + serialization 成本。跟 [keyset pagination](/backend/knowledge-cards/keyset-pagination/) 是 query 結果集大小判讀的雙刃 — cardinality 是「沒控制 join 行數爆掉」、keyset 是「沒控制 offset 跳行爆掉」、修法方向不同但都屬 result-set sizing 維度。
+Query cardinality explosion 的核心責任是命名「query 結果行數遠超業務直覺」這類反模式 — 通常源於多對多 join 缺 filter、或誤用 cross join。一個應該回 100 行的 query 變成回 10000 行（10000 × M）、應用層拉回 deserialize 後記憶體爆掉、DB 也付出大量的 scan + serialization 成本。跟 [keyset pagination](/backend/knowledge-cards/keyset-pagination/) 是 query 結果集大小判讀的雙刃 — cardinality 處理「join 行數失控的爆量」、keyset 處理「offset 跳行的線性退化」、修法方向不同但同屬 result-set sizing 維度。
 
 ## 概念位置
 
-Cardinality explosion 處於 SQL query 設計的「結果集大小判讀」維度、跟 [keyset pagination](/backend/knowledge-cards/keyset-pagination/) 都是大表查詢反模式修法。常見成因：多對多 join 缺 filter（100 訂單 × 10 item × 5 tag × 5 評論 = 25000 行）、誤用 CROSS JOIN（忘了 JOIN 條件、結果是 N × M 笛卡兒積）、遞迴 CTE 沒終止條件（可能跑出百萬行）。
+Cardinality explosion 處於 SQL query 設計的「結果集大小判讀」維度、跟 [keyset pagination](/backend/knowledge-cards/keyset-pagination/) 都是大表查詢反模式修法。常見成因：多對多 join 缺 filter（100 訂單 × 10 item × 5 tag × 5 評論 = 25000 行）、誤用 CROSS JOIN（漏 JOIN 條件、結果是 N × M 笛卡兒積）、遞迴 CTE 缺終止條件（可能跑出百萬行）。
 
-跟 metric cardinality（time-series 維度爆）不同情境、本卡專指 query result-set 行數爆 — 是兩個獨立議題、不混寫。
+本卡專指 query result-set 行數爆、跟 metric cardinality（time-series 維度爆）是兩個獨立議題、各自獨立成卡。
 
 ## 可觀察訊號與例子
 

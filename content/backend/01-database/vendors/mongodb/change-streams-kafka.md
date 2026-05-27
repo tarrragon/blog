@@ -142,7 +142,7 @@ Rollback boundary：source connector 是 read-only 對 MongoDB 無傷；sink con
 
 Anti-recommendation：
 
-- 簡單的 outbox pattern + application transactional write 對於低吞吐 / 單 sink 的場景比 change stream + Kafka 簡單；不是所有「需要 event 通知」的場景都要 CDC pipeline
+- 簡單的 [outbox pattern](/backend/knowledge-cards/outbox-pattern/) + application transactional write 對於低吞吐 / 單 sink 的場景比 change stream + Kafka 簡單；不是所有「需要 event 通知」的場景都要 CDC pipeline
 - 若 downstream 只是同一 region 同團隊的 Elasticsearch index、`$merge` 寫進中介 collection 或 application 雙寫 + 對賬可能成本更低
 - Resume token 過期是這條路徑最痛的事故、oplog sizing 是 *投資而不是成本* — 不要為了省 storage 把 oplog 設太小
 

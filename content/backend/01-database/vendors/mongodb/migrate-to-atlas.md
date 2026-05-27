@@ -6,7 +6,7 @@ weight: 11
 tags: ["backend", "database", "mongodb", "atlas", "managed", "migration", "type-c"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [MongoDB](/backend/01-database/vendors/mongodb/) 跟 MongoDB Atlas。本文是 [Migration playbook methodology](/posts/migration-playbook-methodology/) Type C operational redesign hybrid 的標準形態實證。
+> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [MongoDB](/backend/01-database/vendors/mongodb/) 跟 MongoDB Atlas。本文是 [Migration playbook methodology](/posts/migration-playbook-methodology/) Type C operational redesign hybrid 的標準形態實證。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關 — 4 phase 之間的驗證條件就是 gate。
 
 ## Atlas 不是 MongoDB + managed、是另一個 product
 

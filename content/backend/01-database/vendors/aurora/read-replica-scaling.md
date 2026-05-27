@@ -6,7 +6,7 @@ weight: 50
 tags: ["backend", "database", "aurora", "read-replica", "capacity", "fleet", "deep-article"]
 ---
 
-Aurora 「最多 15 read replica」是文件數字、實際 production 部署常常更早遇到拆 cluster 的決策點 — 不是 15 replica 不夠用、是 blast radius、業務 sharding、微服務 ownership、合規 boundary 早在 15 replica 之前就推動拆 cluster。本文同時展開兩個議題：(1) 單 cluster 內 read replica 怎麼用、容量怎麼規劃、lag 怎麼管；(2) Aurora fleet 治理的 3 條 driver、什麼條件下拆 cluster vs 加 replica。後者是 Aurora 系列的 *fleet 治理 SSoT* — [Aurora storage architecture](../storage-architecture/) / [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) / [Aurora Global Database](../global-database-multi-region/) / [Aurora migration playbook](../migrate-from-self-managed-pg-mysql/) 都 cross-link 到本篇、不重複展開。
+Aurora 「最多 15 read replica」是文件數字、實際 production 部署常常更早遇到拆 cluster 的決策點 — 不是 15 replica 不夠用、是 [blast radius](/backend/knowledge-cards/blast-radius/)、業務 sharding、微服務 ownership、合規 boundary 早在 15 replica 之前就推動拆 cluster。本文同時展開兩個議題：(1) 單 cluster 內 read replica 怎麼用、容量怎麼規劃、lag 怎麼管；(2) Aurora fleet 治理的 3 條 driver、什麼條件下拆 cluster vs 加 replica。後者是 Aurora 系列的 *fleet 治理 SSoT* — [Aurora storage architecture](../storage-architecture/) / [Aurora cross-AZ failover RTO](../cross-az-failover-rto/) / [Aurora Global Database](../global-database-multi-region/) / [Aurora migration playbook](../migrate-from-self-managed-pg-mysql/) 都 cross-link 到本篇、不重複展開。
 
 本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 read replica 跟 fleet 拓樸的實作層教學。前置閱讀建議 [Aurora storage architecture](../storage-architecture/)（理解共享 storage 為什麼能養大量 replica）。
 
@@ -166,7 +166,7 @@ aws application-autoscaling put-scaling-policy \
 
 工程含義：
 
-- Peak workload 預知（賽事 / 促銷）用 *headroom 預留 + 提前預配*、不靠 auto-scale 接秒級
+- Peak workload 預知（賽事 / 促銷）用 *headroom 預留 + [scheduled scaling](/backend/knowledge-cards/scheduled-scaling/) 提前預配*、不靠 auto-scale 接秒級
 - Auto-scale 是 unpredictable burst 才用（突發新聞、KOL 推廣、未預期事件）
 - DraftKings 的「不流汗」是 *系統設計* 結果、不是 Aurora 特殊能力
 

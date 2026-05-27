@@ -137,7 +137,7 @@ DoorDash case 揭露 PG wire *protocol-level* 相容、SQL 行為「仍要驗證
 | Spanner     | TrueTime + Paxos          | GPS + atomic clock             |
 | Aurora DSQL | 類 Spanner 概念、AWS 專屬 | AWS timing infra（未完全公開） |
 
-詳細機制見 [HLC + Raft consensus](../hlc-raft-consensus/)。
+三家共識機制的差異直接決定 [external consistency](/backend/knowledge-cards/external-consistency/) 的實作路徑：Spanner 用 TrueTime + commit-wait 撐 external consistency；CockroachDB 用 HLC + max-offset 撐 linearizability、不保證 external consistency；Aurora DSQL 走類 Spanner 路徑但細節未完全公開。詳細機制見 [HLC + Raft consensus](../hlc-raft-consensus/)。
 
 ### Pricing model 差
 
@@ -223,7 +223,7 @@ Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Dat
 
 ## Cluster boundary 顆粒：per-app cluster vs 邏輯一個 cluster（CockroachDB cluster boundary SSoT）
 
-選完 vendor 還有一個正交的拓樸決策：CockroachDB cluster 的「顆粒」要切多細。一個微服務一個 cluster（per-app）、還是多個微服務共用一個邏輯 cluster（shared / 邏輯一個 cluster）。這條軸的判讀獨立於跨雲 / 風險預算 / 管理負擔等七問題、是 *cluster 拓樸* 議題、不是 vendor 選擇議題。本段是 CockroachDB cluster boundary 顆粒的主寫位置、其他 sibling 文章（[hlc-raft-consensus](../hlc-raft-consensus/)、[survival-goals](../survival-goals/)、[locality-aware-schema](../locality-aware-schema/)）cross-link 不重複展開。
+選完 vendor 還有一個正交的拓樸決策：CockroachDB cluster 的「顆粒」要切多細。一個微服務一個 cluster（per-app）、還是多個微服務共用一個邏輯 cluster（shared / 邏輯一個 cluster）。這條軸的判讀獨立於跨雲 / 風險預算 / 管理負擔等七問題、是 *cluster 拓樸* 議題、不是 vendor 選擇議題。判讀核心是 [blast radius](/backend/knowledge-cards/blast-radius/) 的取捨 — 是把故障半徑限縮在單服務（per-app）、還是接受邏輯 cluster 內事故跨業務影響但換 transactional cross-domain 能力（邏輯一個 cluster）。本段是 CockroachDB cluster boundary 顆粒的主寫位置、其他 sibling 文章（[hlc-raft-consensus](../hlc-raft-consensus/)、[survival-goals](../survival-goals/)、[locality-aware-schema](../locality-aware-schema/)）cross-link 不重複展開。
 
 ### Per-app cluster（Netflix 380+ 路徑、F4.7 揭露）
 

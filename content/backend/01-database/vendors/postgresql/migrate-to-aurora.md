@@ -6,7 +6,7 @@ weight: 41
 tags: ["backend", "database", "postgresql", "aurora", "migration", "cloud-managed"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/)（self-managed source）跟 [Aurora](/backend/01-database/vendors/aurora/)（cloud-managed target）。跟前兩篇 migration（[Splunk → Elastic](/backend/07-security-data-protection/vendors/splunk/migrate-to-elastic-security/) 高 schema 差 / [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) drop-in）對照、本篇是 *middle ground*：wire protocol drop-in、但 operational model 重設計。
+> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [PostgreSQL](/backend/01-database/vendors/postgresql/)（self-managed source）跟 [Aurora](/backend/01-database/vendors/aurora/)（cloud-managed target）。跟前兩篇 migration（[Splunk → Elastic](/backend/07-security-data-protection/vendors/splunk/migrate-to-elastic-security/) 高 schema 差 / [Redis → DragonflyDB](/backend/02-cache-redis/vendors/redis/migrate-to-dragonflydb/) drop-in）對照、本篇是 *middle ground*：wire protocol drop-in、但 operational model 重設計。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
 
 ## 為什麼遷：operational cost / HA / DR 三條 driver
 

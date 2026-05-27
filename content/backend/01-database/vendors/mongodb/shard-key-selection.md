@@ -17,7 +17,7 @@ MongoDB shard key 是 sharded cluster 上線時最難回頭的決策。Shard key
 典型觸發場景：single replica set 撐到上限、writes 已經把 primary 推到 CPU 90% / disk IO 飽和、working set 超出 RAM。讀者下意識會想到「分 shard」、但同時還有「分 cluster」這條路徑、兩者 trigger 完全不同：
 
 - **單 cluster 切 shard**：解的是 *單一資料域寫入飽和*、collection 大到單 replica set 撐不住
-- **多 cluster 切 DB**：解的是 *blast radius / ownership / 合規邊界*、不一定是吞吐問題
+- **多 cluster 切 DB**：解的是 *[blast radius](/backend/knowledge-cards/blast-radius/) / ownership / 合規邊界*、不一定是吞吐問題
 
 混淆兩者的後果：吞吐沒撞牆但 blast radius 是議題、強行分 shard → aggregation / transaction / `$lookup` 成本全部跳一級、業務 ownership 仍混在一起。或反過來：吞吐撞牆但選了分 cluster → 跨 cluster transaction 不存在、單一 collection 跨多 cluster 要在 application 層拼。
 

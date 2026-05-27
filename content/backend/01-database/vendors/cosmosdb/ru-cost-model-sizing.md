@@ -110,7 +110,7 @@ az cosmosdb sql container update \
 
 不同負載形狀的容量決策完全不同、不能用同一個模板：
 
-**持續高峰（24h 整天高）** — Provisioned + scheduled scaling
+**持續高峰（24h 整天高）** — Provisioned + [scheduled scaling](/backend/knowledge-cards/scheduled-scaling/)
 
 - Trigger 訊號：峰值 / 平均 < 2x、預測性高
 - Case anchor：[9.C21 ASOS Black Friday](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/) — 24h 1.67 億 request、峰值 / 平均 = 1.81、整天高

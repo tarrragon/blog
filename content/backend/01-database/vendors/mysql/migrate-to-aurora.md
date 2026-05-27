@@ -6,7 +6,7 @@ weight: 26
 tags: ["backend", "database", "mysql", "vendor", "migration", "type-c", "operational-hybrid", "aurora"]
 ---
 
-> 本文是跨 vendor migration playbook、cross-link 到 [MySQL](/backend/01-database/vendors/mysql/) 跟 [Aurora](/backend/01-database/vendors/aurora/)。走 [Migration playbook methodology](/posts/migration-playbook-methodology/) Type C operational hybrid 結構。
+> 本文是跨 vendor [migration](/backend/knowledge-cards/migration/) playbook、cross-link 到 [MySQL](/backend/01-database/vendors/mysql/) 跟 [Aurora](/backend/01-database/vendors/aurora/)。走 [Migration playbook methodology](/posts/migration-playbook-methodology/) Type C operational hybrid 結構。每階段切換用 [migration gate](/backend/knowledge-cards/migration-gate/) 把關。
 
 | Ops 責任          | 自管 MySQL                        | Aurora MySQL                                      |
 | ----------------- | --------------------------------- | ------------------------------------------------- |

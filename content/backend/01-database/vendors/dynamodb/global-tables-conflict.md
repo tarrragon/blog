@@ -177,7 +177,7 @@ primary region outage 切到 secondary、舊 primary 恢復後仍把 outdated da
 
 #### Case 5：跨 region transaction 失敗
 
-application 試圖跨 region `TransactWriteItems`、API 不支援跨 region transaction、原子性破裂。修法：transaction 限同 region 內、跨 region 用 saga + idempotent + reconciliation；不要把同 region 的 transaction 假設搬到跨 region。
+application 試圖跨 region `TransactWriteItems`、API 不支援跨 region transaction、原子性破裂。修法：transaction 限同 region 內、跨 region 用 [saga](/backend/knowledge-cards/saga/) + idempotent + reconciliation；不要把同 region 的 transaction 假設搬到跨 region。
 
 **Anti-recommendation**：single-region availability 已達 99.95% + RTO 可接受 1 小時 + 預算敏感（特別 B2C 場景）→ 用 PITR + 跨 region backup 而非 Global Tables；Global Tables cost = N × single region cost 不止（對應 B2B vs B2C driver 對比）。
 

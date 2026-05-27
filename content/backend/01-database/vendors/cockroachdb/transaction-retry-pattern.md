@@ -170,7 +170,7 @@ SELECT * FROM crdb_internal.cluster_contention_events ORDER BY count DESC LIMIT 
 
 ### Idempotency 設計：transaction body 必須冪等
 
-retry-safe transaction body 必須冪等 — 同樣 input 多次執行結果一致：
+retry-safe transaction body 必須冪等 — 同樣 input 多次執行結果一致。這是 [idempotency](/backend/knowledge-cards/idempotency/) 在 distributed SQL retry contract 下的具體展開、不是 optional：
 
 | Transaction body                             | 是否冪等       | 為什麼                                 |
 | -------------------------------------------- | -------------- | -------------------------------------- |

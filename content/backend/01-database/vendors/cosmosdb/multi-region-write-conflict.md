@@ -6,7 +6,7 @@ weight: 50
 tags: ["backend", "database", "cosmosdb", "multi-region", "active-active", "conflict-resolution", "deep-article"]
 ---
 
-Cosmos DB 是 *AP 系統*（CAP 三選二、放棄跨 region linearizability 換取 multi-region write 可用性）。跨 region 寫同一筆 document 必然有 conflict、Cosmos DB 提供三種 resolution policy 處理：LWW（Last-Writer-Wins）、custom merge stored procedure、conflict feed manual reconciliation。本文先講 AP 取捨的硬約束（為什麼 Strong consistency 跟 multi-region write 互斥）、再進三種 resolution 機制、再進廣告 SLA vs 實測可用性的鏈路拆解（DB 端 SLA 不等於使用者體驗）。
+Cosmos DB 是 *AP 系統*（[CAP](/backend/knowledge-cards/cap/) 三選二、放棄跨 region linearizability 換取 multi-region write 可用性）。跨 region 寫同一筆 document 必然有 conflict、Cosmos DB 提供三種 resolution policy 處理：LWW（Last-Writer-Wins）、custom merge stored procedure、conflict feed manual reconciliation。本文先講 AP 取捨的硬約束（為什麼 Strong consistency 跟 multi-region write 互斥）、再進三種 resolution 機制、再進廣告 SLA vs 實測可用性的鏈路拆解（DB 端 SLA 不等於使用者體驗）。
 
 本文是 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/) 的深度展開、也是 *Strong + multi-region 互斥* 議題的 SSoT 主寫位置（[consistency-levels-engineering](../consistency-levels-engineering/) cross-link 過來、不展開）。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（AR 遊戲跨 region 寫入、5 consistency level + multi-region SLA）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 全球零售）+ [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/)（鏈路 SLA 拆解、跨 vendor 適用做 frame anchor）。
 

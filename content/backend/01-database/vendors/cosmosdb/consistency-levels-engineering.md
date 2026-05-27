@@ -6,7 +6,7 @@ weight: 70
 tags: ["backend", "database", "cosmosdb", "consistency", "session-token", "deep-article"]
 ---
 
-Cosmos DB 文件列 *5 個 consistency level*（Strong / Bounded staleness / Session / Consistent prefix / Eventual）、用 PACELC 講概念、但沒給具體工程判準。team 啟動 Cosmos DB 第一個要決定的就是 account 預設 level、再決定哪些 query 要 per-request override。本文先講 5 個 level 的精確語義、再進 Session 為什麼是 production 預設、再進「同一 application 內不同操作選不同 level」的進階策略；*Strong + multi-region write 互斥*議題 cross-link 到 [multi-region-write-conflict](../multi-region-write-conflict/)、本篇不展開。
+Cosmos DB 文件列 *5 個 consistency level*（Strong / Bounded staleness / Session / Consistent prefix / Eventual）、用 [PACELC](/backend/knowledge-cards/pacelc/) 講概念、但沒給具體工程判準。team 啟動 Cosmos DB 第一個要決定的就是 account 預設 level、再決定哪些 query 要 per-request override。本文先講 5 個 level 的精確語義、再進 Session 為什麼是 production 預設、再進「同一 application 內不同操作選不同 level」的進階策略；*Strong + multi-region write 互斥*議題 cross-link 到 [multi-region-write-conflict](../multi-region-write-conflict/)、本篇不展開。
 
 本文不是 Cosmos DB overview（請看 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/)）— 而是 *consistency level 工程選擇邏輯* 的深度展開。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（用 session consistency 撐 AR 全球同步、5 level 跨 collection 分流）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 用較弱 consistency 換 throughput）。
 
