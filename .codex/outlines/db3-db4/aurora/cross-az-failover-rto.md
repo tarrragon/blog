@@ -1,6 +1,8 @@
 # Aurora Cross-AZ Failover：RTO 量測、endpoint routing 與 application reconnect 契約
 
 > **Status**: L5 outline skeleton（planning artifact、非 published article）。寫作參照 [vendor-article-spec](/backend/01-database/vendor-article-spec/) 與 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+>
+> **Stage 3 校準（case-first）**：Standard Chartered anchor 充分（F3.6）、keep 狀態。可選補：明示「Standard Chartered 用每市場獨立 cluster 而非 Global Database 跨 region failover」的合規 driver、Fleet 治理 cross-link 到 `read-replica-scaling.md` 邊界段。
 
 ## 問題情境（Production pressure）
 
@@ -35,7 +37,7 @@
 - Reader endpoint 假設：failover 期間 reader endpoint 短暫包含 promoted replica（已升 primary）、reader query 打到 primary、寫鎖競爭
 - In-flight transaction 全 abort：failover 不保留 transaction 狀態、application 沒做 retry 會丟失 commit
 - PromotionTier 配置忽略：cross-region replica 設 tier 0 會優先升、跨 region 升 primary 後 application latency 暴漲
-- Case 對應根因：[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 用每市場獨立 cluster 而非 Global Database 跨 region failover、跟「合規要求 + RTO 預算」綁定
+- Case 對應根因：[9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) 用每市場獨立 cluster 而非 Global Database 跨 region failover、跟「合規要求 + RTO 預算」綁定 — 合規 driver 揭露：受監管市場資料 *不能跨境複製*、Global Database 在這種場景違反合規（case「判讀」段第 1 點）、每市場用獨立 cluster 的 cross-AZ failover 吸收 RTO 預算、不是用跨 region failover。Fleet 拓樸（7 個合規 cluster）詳見 [Aurora read replica scaling](./read-replica-scaling.md) fleet 治理 SSoT 邊界段。
 
 ## 容量與觀測（Capacity & observability）
 

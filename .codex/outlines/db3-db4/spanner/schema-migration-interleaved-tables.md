@@ -7,7 +7,7 @@
 - 啟動壓力：傳統 PostgreSQL / MySQL DDL 拿 ACCESS EXCLUSIVE / metadata lock、線上跑 ALTER TABLE 動輒鎖表幾分鐘、大型 schema change 要 pt-osc / gh-ost / pg_repack 等外掛工具；Spanner 宣稱「schema change 不停機」、但團隊不知道實際機制跟邊界
 - 讀者徵兆：「Spanner ALTER 真的不卡寫入嗎」「INDEX backfill 跑了 12 小時是正常嗎」「parent-child 的 INTERLEAVE IN PARENT 是什麼黑魔法」「ON DELETE CASCADE 在 interleaved table 為什麼是 storage-level 而不是 application-level」
 - 真實壓力：multi-tenant SaaS 要對 100 億 row 的 orders 表加 column + 加 index、不能停機、不能讓 p99 write latency 超過 SLA
-- Case anchor: 缺案例（9.C10 沒展開 schema migration 細節）— 第一次寫時用通用 pattern + 官方文件 + 反向回 PostgreSQL [Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/) 對照
+- Case anchor: 缺案例（9.C10 沒展開 schema migration 細節、且 9.C10 是 Google internal dogfood 不是 customer-facing capacity reference、finding F3.17）— 第一次寫時用通用 pattern + 官方文件 + 反向回 PostgreSQL [Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/) 對照
 
 ## 核心機制（Vendor-specific mechanism）
 
@@ -67,7 +67,7 @@
 
 ## 寫作前置 checklist
 
-- [ ] case anchor 確認：*無強案例*、用通用 pattern + 官方文件 + PostgreSQL 對照組
+- [ ] case anchor 確認：*無強案例*、用通用 pattern + 官方文件 + PostgreSQL 對照組；9.C10 是 Google internal dogfood 不展開 schema migration 細節（finding F3.17）
 - [ ] knowledge card 雙引用：transaction-boundary、可考慮新建 storage-locality 卡（若沒既有卡）
 - [ ] sibling 對比：PostgreSQL online schema change、MySQL gh-ost
 - [ ] 預估寫作長度：240-300 行（schema change + interleaved table 兩主題並行、避免太細）

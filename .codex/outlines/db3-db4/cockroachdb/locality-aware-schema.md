@@ -4,9 +4,9 @@
 
 ## 問題情境（Production pressure）
 
-- 啟動壓力：global SaaS 用 CockroachDB 跨 region 部署、歐洲用戶查詢卻 latency 100ms+（資料在美國 region）、要把資料 partition 到用戶 local region 但 query 又要保證強一致
-- 讀者徵兆：「Regional table 跟 global table 差在哪？」「Partition by region 後 cross-region query 還能 join 嗎？」「`REGIONAL BY ROW` 跟 `REGIONAL BY TABLE` 怎麼選？」「Global table 為什麼讀快寫慢？」
-- Case anchor: primary [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（60+ multi-region cluster、最大 Gaming 48-node 跨 4 region、locality 配置直接影響 cluster 規模治理）、secondary [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（跨 8 州單一邏輯 cluster + AWS Outposts、Wire Act 合規逼出 row-level locality 配置）
+- 啟動壓力（Hard Rock concrete case 主導、F4.10）：美國 sportsbook 受 Wire Act 規範、betting data 必須在下注州內處理 → 每個營運州都要有州內運算資源。傳統路徑「每州一個獨立 silo」撞牆於跨州統一帳戶、跨州 reporting、欺詐偵測 — 玩家在 NJ 與 FL 兩州都有帳戶、統計與風控需要跨州看。Hard Rock Digital 跨 8 州（AZ / IN / TN / FL / OH / IL / NJ / VA）用 AWS Outposts 把運算放進州內、但邏輯上仍是 *一個* CockroachDB cluster — region placement 配置決定哪些 range 釘在哪個 Outpost / AWS region，合規與單一邏輯 DB 同時成立（case 觀察段「跨所有 region 一個 logical database」+ 判讀段 1）
+- 讀者徵兆：「合規逼我每州一 cluster、但跨州帳戶 / 風控 / 欺詐偵測撞牆怎麼辦？」「Regional table 跟 global table 差在哪？」「`REGIONAL BY ROW` 跟 `REGIONAL BY TABLE` 怎麼選？」「Global table 為什麼讀快寫慢？」「AWS Outposts 是 latency 工具還是合規工具？」
+- Case anchor: primary [9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/)（跨 8 州單一邏輯 cluster + AWS Outposts / Local Zones / Regions 混合部署、Wire Act 合規逼出「邏輯一個 cluster + 物理跨地理 placement」拓樸創新、F4.10 / F4.13）、secondary [9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/)（60+ multi-region cluster、最大 Gaming 48-node 跨 4 region、locality 配置直接影響 cluster 規模治理）；對照 [9.C14 Standard Chartered](/backend/09-performance-capacity/cases/standard-chartered-aurora-banking/) Aurora 7 cluster fleet 拓樸 — Aurora 沒 row-level locality、靠 fleet 拓樸吸收合規 boundary（cluster-per-市場）、CockroachDB 靠 locality + placement 吸收（邏輯一個 cluster + range 釘到州內 Outpost）、兩種架構策略 trigger 不同（合規顆粒 + 跨 boundary 業務邏輯需求）
 
 ## 核心機制（Vendor-specific mechanism）
 
@@ -45,13 +45,18 @@ ALTER TABLE orders_us SET LOCALITY REGIONAL BY TABLE IN "us-east1";
 
 ## 失敗模式（Failure modes）
 
+- **「拆獨立 cluster 解合規但破壞業務邏輯」反模式（Hard Rock 對比 Standard Chartered 揭露、F4.10）**：直覺路徑是「合規要求資料留某地理邊界 → 每邊界開一個獨立 cluster」、但獨立 cluster 之間玩家統一帳戶、跨州 reporting、欺詐偵測會撞牆。Hard Rock 選 *邏輯一個 cluster + 物理跨州 Outpost placement* — 合規 boundary 用 region placement 表達、不是 cluster fragmentation。對比：
+    - **Standard Chartered Aurora 7 cluster fleet**：銀行業跨國合規邊界、跨 cluster 業務邏輯需求弱（每市場用戶獨立、跨境統一帳戶不是核心 driver）→ 用 fleet 拓樸吸收合規可行
+    - **Hard Rock Wire Act 跨州**：跨州統一帳戶 + 跨州 reporting + 欺詐偵測是核心業務需求 → 必須邏輯一個 cluster、用 locality + placement 吸收合規
+    - 寫稿時引用對比要明示：兩條路徑沒有對錯、trigger 條件不同（合規顆粒 × 跨 boundary 業務邏輯需求）
+- **「把 Outposts 當 latency 工具」動機誤判（F4.13、case 反直覺判讀）**：AWS Outposts 主要為「資料留某地理邊界」存在、latency 改善是 *副作用*。Hard Rock 策略段 2 明確警告「決策時先看合規驅動力、latency 改善列為 bonus」。若把 Outposts 當跨州 latency 改善工具、會在沒合規驅動的場景過度投資 — Outposts 硬體成本 + 維運複雜度遠高於純 AWS region 部署
 - Global table write 太慢：global table 每次 write 跨 region quorum、p99 100ms+、用在 high-write workload 是錯配；應只用在 reference data（國家代碼、貨幣表）
 - Regional by row 但 row 沒設 region：default `gateway_region()` 把 row 放在 application 連到的 region、跨 region access pattern 不對；要明確設 `crdb_region`
 - Cross-region join 跑爆 latency：兩個 regional by row table join、planner 要跨 region 拉資料、p99 暴漲；要 partition by 同樣 key
 - Follower read 假設 strong consistency：non-voting replica 是 *closed timestamp* 之前的 data、read-after-write 場景仍會 stale
-- Data residency 違規：歐洲用戶資料應留歐洲、但 application 從 us-east1 寫入 row 沒設 region、資料跑去美國、GDPR 違規
+- Data residency 違規：受監管州 / 國資料應留 boundary 內、但 application 從別 region 寫入 row 沒設 `crdb_region`、資料跑出 boundary、合規 violation（Wire Act / GDPR / 各州博彩牌照都有類似條款）
 - Schema change locality：ALTER TABLE 改 locality 期間 query plan 改變、p99 短期 spike
-- Case 對應根因：global SaaS 為什麼 user table 用 REGIONAL BY ROW、config table 用 GLOBAL、order_history table 用 REGIONAL BY TABLE per region
+- Case 對應根因（Hard Rock 9.C41）：bet placement / settlement / account management 都需要跨州資料存取 + 州內合規 placement、`REGIONAL BY ROW` + `crdb_region` 標州別 + region placement pin Outpost 是滿足條件的組合
 
 ## 容量與觀測（Capacity & observability）
 
@@ -72,8 +77,10 @@ ALTER TABLE orders_us SET LOCALITY REGIONAL BY TABLE IN "us-east1";
 
 ## 寫作前置 checklist
 
-- [ ] case anchor 確認：等 C2 agent 補；無 case 時用合成 global SaaS user table 範例（GDPR 合規場景）
+- [ ] case anchor 確認：Hard Rock Digital 9.C41（primary、concrete case 主導 framing、跨 8 州 + Outposts + 邏輯一個 cluster）+ Netflix 9.C40（secondary、多 region locality 規模治理）+ Standard Chartered 9.C14（對照 fleet 拓樸 vs locality 兩條合規路徑）— 三 case 已備、*不再依賴合成 GDPR 場景*
 - [ ] knowledge card 雙引用：[stale-read](/backend/knowledge-cards/stale-read/) + [data-residency](/backend/knowledge-cards/data-residency/)（若已建、否則建卡）
-- [ ] sibling 對比：跟 Spanner interleaved tables 對照、跟 Aurora Global Database cluster-per-region 對照
-- [ ] 預估寫作長度：240-280 行（三種 locality + placement + 合規場景）
-- [ ] 寫作難度：中（CockroachDB docs 充分、合規場景具體、case 缺時合成 GDPR + financial reference data 場景）
+- [ ] sibling 對比：跟 Spanner interleaved tables 對照、跟 Aurora Global Database / fleet 拓樸對照（Standard Chartered 路徑）
+- [ ] Framing 紀律：第一段問題情境必須是 Hard Rock Wire Act concrete case（不是合成 GDPR）；GDPR 場景可作為 secondary 應用例、不主導 framing
+- [ ] Outposts 動機紀律：每處提 Outposts 必須明示「合規驅動、latency 改善為副作用」（F4.13）、避免把 Outposts 描述為「跨州延遲改善」
+- [ ] 預估寫作長度：260-320 行（三種 locality + placement + Hard Rock framing + Standard Chartered 對比 + Outposts 動機釐清）
+- [ ] 寫作難度：中（CockroachDB docs 充分、Hard Rock case 提供 concrete framing、case 對比 Standard Chartered 強化拓樸決策）

@@ -1,6 +1,8 @@
 # Aurora Global Database：跨 region async replication、< 1 秒 lag 與 DR / read-route 取捨
 
 > **Status**: L5 outline skeleton（planning artifact、非 published article）。寫作參照 [vendor-article-spec](/backend/01-database/vendor-article-spec/) 與 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+>
+> **Stage 3 校準（case-first）**：anti-recommendation 設計（合規禁止跨境 → 用 fleet 不用 Global Database）正確（F3.6 已支撐）、keep 狀態。可選補：(1) 若 FanDuel 雙峰 case 引用、明示「betting 走 Aurora、streaming 走 CDN」分開（F3.12 scope warning），(2) Fleet 治理 cross-link 到 `read-replica-scaling.md` 邊界段。
 
 ## 問題情境（Production pressure）
 
@@ -32,9 +34,10 @@
 - DNS 不跨 region 自動切：cross-AZ failover writer endpoint 自動跟、cross-region 不會、application 要管 region-specific connection string
 - 跨 region read 假設 strong consistency：lag < 1 秒不是 zero、read-after-write 場景仍會看到 stale data
 - Lag spike during bulk operation：DDL / bulk insert 期間 cross-region lag 可能跳到秒級、不該假設 < 1 秒永遠成立
-- 合規邊界誤用 Global Database：Standard Chartered 案例顯示受監管市場資料*不能跨境複製*、Global Database 違反合規、要改用每市場獨立 cluster
+- 合規邊界誤用 Global Database：Standard Chartered 案例顯示受監管市場資料*不能跨境複製*、Global Database 違反合規、要改用每市場獨立 cluster（fleet 拓樸吸收合規邊界、見 [read-replica-scaling.md](./read-replica-scaling.md) fleet 治理 SSoT）
 - Cost trap：cross-region data transfer 收費、heavy write workload 跨 region 月費可能 doubled
 - Case 對應根因：Standard Chartered 為什麼選 7 個獨立 cluster 而非 1 個 Global Database、合規邊界比 DR 簡化更重要
+- 若引 FanDuel 雙峰 case 對照 multi-region 場景（**scope warning 必明示**）：FanDuel 5-10x 是 *betting 服務的 Aurora 擴容*、streaming 走 CDN 不走 Aurora（[case「判讀」段第 1 點](/backend/09-performance-capacity/cases/fanduel-dual-peak-betting-streaming/)）；引用時不能壓成「Aurora 撐 5-10x」單一數字、且 betting transaction TPS / concurrent streams 案例自承未公開、不能 over-extrapolate
 
 ## 容量與觀測（Capacity & observability）
 

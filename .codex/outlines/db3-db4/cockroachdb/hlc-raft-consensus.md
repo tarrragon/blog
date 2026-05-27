@@ -39,8 +39,12 @@
 
 - CockroachDB Console metric：`Raft log queue size`、`Range count per node`、`Leaseholder count per node`、`HLC offset distribution`、`Transaction retry rate`
 - 容量公式：write QPS / range / Raft latency = node count；考慮 replication factor（3-replica → write amplification 3x）
-- p99 latency 預算：single-region 3-replica write p99 3-5ms；multi-region 跨洲 100-150ms（物理光速）
-- 容量上限：單一 range 寫 throughput ~1000 QPS、整 cluster scale-out 加 range
+- **Per-cluster 容量規劃顆粒（9.C40 Netflix 揭露、F4.7）**：production scale 不是「全公司一條容量曲線」、而是 *artery of small DBs* — Netflix 380+ cluster / 160+ production / 60+ multi-region、cluster sizing 從幾個 node 到 60 nodes、最大單區 cluster 60 nodes / 26.5 TB（case 觀察段表格）。容量規劃顆粒對齊 application boundary、每個 cluster 各自規劃；避免 multi-tenant 大 cluster、blast radius 限縮在單一 app。SSoT：per-app cluster vs shared cluster 決策軸主寫於 [aurora-dsql-spanner-decision-tree](./aurora-dsql-spanner-decision-tree.md)、本篇 cross-link 不展開
+- **Scope warning：以下 latency 數字屬通用工程估算、case 未揭露具體數字**（3 個 direct case — DoorDash / Netflix / Hard Rock — 都沒揭露單一 cluster p99 latency；DoorDash 揭露的「1.636 M QPS」是 *Aurora 主 cluster 在那個時間點撞牆的痛點* 而非 CockroachDB 撐到的水位、case 自己警示、F4.1）：
+    - p99 latency 預算（通用工程估算）：single-region 3-replica write p99 3-5ms；multi-region 跨洲 100-150ms（物理光速下界）
+    - 容量上限（通用工程估算）：單一 range 寫 throughput ~1000 QPS、整 cluster scale-out 加 range
+    - 寫稿時引用這些數字必須明示「屬通用工程估算 / 物理光速下界推導、case 沒揭露 p99 數字」、避免陷阱 1（skeleton case 擴寫成 case 事實）
+- **DoorDash 1.636 M QPS 引用紀律（F4.1、case 自帶警示）**：1.636 M QPS 是 Aurora Postgres single-primary 撞牆的痛點（2020-04-17 高峰、multi-hour outage）、*不是* CockroachDB throughput claim。case 沒揭露遷移後單一 CockroachDB cluster 的峰值、只說「跑更多 cluster、alert volume 反而下降」。寫稿時引用要明示口徑「Aurora 撞牆訊號」而非「CockroachDB 容量證明」
 - 回路徑：[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/) 判斷 Raft-bound vs storage-bound、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) replication factor 跟 latency budget
 
 ## 邊界與整合（Boundary & next steps）

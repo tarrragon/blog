@@ -81,6 +81,27 @@
 - 回 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/) 把 multi-region write cost multiplier 進 sizing
 - Alert：conflict rate > 0.1%、conflict feed lag > 5 min、cross-region replication lag > SLA
 
+### 廣告 SLA vs 實測可用性鏈路拆解（F2.7 本章合成）
+
+- 9.C11 Minecraft Earth 平台揭露的 Cosmos DB SLA：single-region 99.99%、multi-region 99.999% — 這是 *DB 端* SLA、不是 *端到端系統* SLA
+- 真實 production 系統的可用性是鏈路乘積：
+
+  ```text
+  實測可用性 = DB SLA × 網路 SLA × 應用層 SLA × 客戶端可達性
+  ```
+
+- 9.C38 Toyota Connected「99.99% target vs 99% 實測」段揭露：兩個 9 的差距 *不是* MongoDB / Atlas 自身問題、是 end-to-end 鏈路（車輛無線網路 / cellular tower / cloud network / event bus / microservice / DB cluster 任一環節掉都會打掉可用性）。Cosmos DB multi-region write 同模型：
+  - 多 region active-active 可解 DB 端可用性、但網路 / 應用層任一掉、實測仍 < 99.99%
+  - 廣告 99.999% 是 multi-region availability zone 級、不是「使用者 request 成功率」
+- 寫稿時必須明示「Cosmos DB multi-region 廣告 99.999% 是 DB 端、要算實測可用性必須補網路 / 應用層 SLA 乘積、Toyota case 的『99% 實測』揭露的就是這個鏈路問題、跨 vendor 都適用」
+- 跟 conflict resolution 的關係：多 region 高可用性 *買來* 的代價是 conflict、conflict rate 是 reliability 的暗稅 — 廣告 SLA 不計 conflict 處理成本
+
+### SSoT 對齊備註：Strong + multi-region 互斥（F2.14、本篇主寫位置）
+
+- 本篇主寫「為什麼 Strong + multi-region write 互斥」（AP 取捨硬約束、CAP 三選二、Strong = quorum-based linearizable / multi-region write = LWW-based eventual、兩者技術上無法並存）
+- [consistency-levels-engineering](./consistency-levels-engineering.md) Strong 段只 cross-link 過來、不展開 conflict resolution 細節
+- 依 _module-outline.md Section G SSoT 規則：避免兩篇 outline 重複展開「Strong + multi-region 互斥」議題、降低 audit 維護成本
+
 ## 邊界與整合（Boundary & next steps）
 
 - Sibling deep articles：[consistency-levels-engineering](./consistency-levels-engineering.md)（multi-region write 跟 Strong 互斥）、[partition-key-design](./partition-key-design.md)（hot partition 會放大 conflict）、[ru-cost-model-sizing](./ru-cost-model-sizing.md)（multi-region cost × region 數）
@@ -91,7 +112,12 @@
 
 ## 寫作前置 checklist
 
-- [ ] case anchor 確認：9.C11 Minecraft Earth（active-active write）+ 9.C21 ASOS 補季節壓力
+- [ ] case anchor 確認：9.C11 Minecraft Earth（active-active write、平台特性「5 well-defined consistency levels」+「partition 動態分裂」段）+ 9.C21 ASOS 補季節壓力 + 9.C38 Toyota Connected（鏈路 SLA 拆解、跨 vendor 適用、本篇引用做 frame anchor）
 - [ ] knowledge card 雙引用：stale-read、rpo、rto
 - [ ] sibling 對比：Spanner（CP 無 conflict）、DynamoDB Global Tables（LWW only）
-- [ ] 預估寫作長度：300-360 行（3 種 resolution policy + 7 失敗模式 + 跨 vendor 對比）
+- [ ] fact vs derive 分層：
+  - 9.C11「multi-region 99.999%」+「single-region 99.99%」是 case fact
+  - 「實測可用性 = DB SLA × 網路 × 應用層」是本章合成 frame、跨 9.C11 / 9.C38 合成、case 原文無此公式
+  - 「Strong + multi-region 互斥」是 outline knowledge + 9.C11 隱含（5 level + multi-region 揭露兩者並陳但未明示互斥）、寫稿時要從 vendor 文件補佐證
+- [ ] SSoT 對齊：本篇是 Strong + multi-region 互斥的主寫位置、consistency-levels-engineering cross-link 過來不展開
+- [ ] 預估寫作長度：320-380 行（3 種 resolution policy + 7 失敗模式 + 跨 vendor 對比 + SLA 鏈路拆解段）

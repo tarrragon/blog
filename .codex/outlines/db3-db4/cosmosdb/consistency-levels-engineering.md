@@ -23,6 +23,16 @@
 - 跟 [linearizability](/backend/knowledge-cards/linearizability/) 的關係：Strong = single-region linearizable、不是跨 region external consistency（跟 Spanner 不同）
 - 對應 knowledge card：[consistency-level](/backend/knowledge-cards/consistency-level/)、[linearizability](/backend/knowledge-cards/linearizability/)、[stale-read](/backend/knowledge-cards/stale-read/)
 
+### 進階設計策略：同一 application 內不同操作選不同 level
+
+- 9.C11 Minecraft Earth 平台特性「一致性是 spectrum、不是 binary」段揭露：AR 遊戲玩家位置稍 stale OK（用 session / eventual）、庫存交易需要 strong；同一 application 內不同 collection / container 配不同 consistency 是進階策略、不一定是 account 一刀切
+- 用 RequestOptions per-request override 把「寫入後立即讀」場景升 Bounded、批次分析降 Eventual；container 層無法獨立設定（時間敏感、查最新文件）、所以分流靠 *collection 切分* + *per-request override*
+- 配合 [partition-key-design](./partition-key-design.md)：partition 失衡時即使 Strong 也看到 throttle、consistency 跟 partition 共同決定真實一致性體驗
+
+### SSoT 對齊備註
+
+- **Strong + multi-region write 互斥** 議題的主寫位置是 [multi-region-write-conflict](./multi-region-write-conflict.md)（容量觀測 + AP 取捨敘事）；本篇 Strong 段只說明「single-region linearizable / multi-region write 互斥」一句、cross-link 過去、不重複展開 conflict resolution 細節（依 _module-outline.md Section G SSoT 規則）
+
 ## 操作流程（Operations）
 
 - account 層設定：portal / ARM template / CLI `az cosmosdb update --default-consistency-level Session`

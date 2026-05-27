@@ -1,6 +1,8 @@
 # MongoDB Change Streams + Kafka 整合：resume token、scope 選擇與 connector 治理
 
 > **Status**: L5 outline skeleton（planning artifact、非 published article）。寫作參照 [vendor-article-spec](/backend/01-database/vendor-article-spec/) 與 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+>
+> **校準說明**：本 outline 由 case-first audit 判定為 keep — findings 沒有 high-impact 對機制深化的衝擊。resume token 過期導致全量重灌的 incident case 仍標記為 `needs new case`、寫稿時若沒拿到具體事件、failure mode 段改寫成「常見 failure pattern」+ 容量公式、不憑空編造數字。
 
 ## 問題情境（Production pressure）
 
@@ -70,13 +72,13 @@
 
 ## 邊界與整合（Boundary & next steps）
 
-- Sibling deep articles：[shard key selection](./shard-key-selection.md)（cluster-wide vs collection-level change stream 在 sharded cluster 的選擇）、[replica set read preference](./replica-set-read-preference.md)（change stream 對 primary load 的影響、能否走 secondary）、[schema design pattern](./schema-design-pattern.md)（schema validator 對下游 sink 的契約意義）
+- Sibling deep articles：[shard key selection](./shard-key-selection.md)（cluster-wide vs collection-level change stream 在 sharded cluster 的選擇）、[replica set read preference](./replica-set-read-preference.md)（change stream 對 primary load 的影響、能否走 secondary）、[schema design pattern](./schema-design-pattern.md)（schema validator 對下游 sink 的契約意義）、[connection management and cache layer](./connection-management-and-cache-layer.md)（CDC sink 在 production 跨層架構裡的角色 — cache invalidation / federated DB 同步）
 - Migration playbook：MongoDB → 其他 sink 的 bulk migration 走 [→ Atlas](/backend/01-database/vendors/mongodb/migrate-to-atlas/) 用 Atlas Migration Service；遷出 MongoDB 時 change stream 是 catch-up 機制 [→ MongoDB → DynamoDB / Cosmos DB](/backend/01-database/vendors/mongodb/)
 - 跟 1.x 互引：[1.6 schema migration rollout evidence](/backend/01-database/schema-migration-rollout-evidence/) 處理 schema drift 時 CDC pipeline 的對賬；[1.7 reconciliation data repair](/backend/01-database/reconciliation-data-repair/) 處理 CDC 失準後的對賬流程
 
 ## 寫作前置 checklist
 
-- [ ] Case anchor：resume token 過期導致全量重灌的具體 incident 強烈需要新建 case（含 oplog retention 設定、影響時間、修法）
+- [ ] Case anchor：resume token 過期導致全量重灌的具體 incident 強烈需要新建 case（含 oplog retention 設定、影響時間、修法）；目前標記為 `needs new case`、寫稿時若沒拿到具體事件、failure mode 段改寫成「常見 pattern」+ 容量公式（oplog size >= peak write rate × max downtime）、不憑空生 incident 數字
 - [ ] Knowledge card 雙引用：change-data-capture + replication-channel 都已存在
 - [ ] Sibling 對比清楚：跟 PostgreSQL logical replication + Debezium、MySQL binlog + Debezium、DynamoDB Streams 對比；本文是 MongoDB-specific（change stream API + resume token + cluster-wide scope）
 - [ ] 預估寫作長度：260-320 行（CDC pipeline 議題大、需要 connector config + 6 個 failure mode + idempotency 治理）

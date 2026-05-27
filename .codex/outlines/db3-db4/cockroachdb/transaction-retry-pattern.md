@@ -1,14 +1,19 @@
 # CockroachDB Transaction Retry Pattern：serializable default 與 application contract 重塑
 
 > **Status**: L5 outline skeleton（planning artifact、非 published article）。寫作參照 [vendor-article-spec](/backend/01-database/vendor-article-spec/) 與 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+>
+> **Scope warning（最高、F4 Frame 2）**：本篇整篇是 *跨 case 合成 frame*、不是單一 case 揭露。3 個 CockroachDB direct case（9.C39 DoorDash / 9.C40 Netflix / 9.C41 Hard Rock Digital）對 application transaction retry contract 重塑的揭露 *都偏弱* — DoorDash case 只寫 PostgreSQL wire protocol *protocol-level* 相容、SQL 行為（serializable default / retry semantics / partial index）「仍要驗證」、*沒* 直接寫 `40001 serialization_failure` / `SAVEPOINT cockroach_restart` / hot row contention / retry loop pattern。Netflix / Hard Rock case 完全沒寫 retry pattern。本章 retry pattern 議題從 Cockroach Labs 官方 SQL Layer docs + PG → CockroachDB 通用 contract 重塑視角合成、DoorDash 只作為 trigger context（撞牆訊號 + 觸發遷移）、不是 ground truth case study。寫稿時每處引用必須 *明示* fact vs derive 分層（陷阱 8 防護）。
 
 ## 問題情境（Production pressure）
 
 - 啟動壓力：從 PostgreSQL（default `READ COMMITTED`）遷到 CockroachDB（default `SERIALIZABLE`）、application transaction retry 突然爆增、user-facing latency p99 高 5 倍、error rate 顯著上升
 - 讀者徵兆：「為什麼同樣的 transaction 在 CockroachDB 一直 retry？」「`40001 serialization_failure` error 怎麼處理？」「我要把 application 改 retry loop 包起來嗎？」「能不能改 isolation level 回 READ COMMITTED？」
-- Case anchor: primary [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/)（Aurora Postgres → CockroachDB 遷移時 application retry contract 重塑的真實案例、orders / dispatch hot path 的 retry pattern 是核心議題）；對照 [9.C4 DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 提供 *PostgreSQL READ COMMITTED + Aurora* 的另一條路徑（用 application-level sharding 避開 retry 而非處理 retry）
+- **Scope warning explicit label**：DoorDash case *沒* 直接揭露 serializable retry contract / 40001 / SAVEPOINT pattern / hot row contention。case 只寫「PostgreSQL wire protocol 相容、實際 SQL 行為（serializable default、retry semantics、partial index）*仍要驗證*」（DoorDash 觀察段 / 策略段 3、F4.4）。本章 retry pattern 議題是從 PG → CockroachDB 通用 contract 重塑視角合成、不是 DoorDash case 直接揭露。寫稿時引用 DoorDash 必須用「DoorDash 揭露 Aurora Postgres 1.636 M QPS 撞牆 → 引出 distributed SQL retry contract 需求」這種 trigger-context 語法、不要寫成「DoorDash retry pattern」
+- Case anchor（trigger context、不是 ground truth）: [9.C39 DoorDash](/backend/09-performance-capacity/cases/doordash-cockroachdb-orders-platform/) — 提供「PG wire 相容、SQL 行為仍要 audit」的 case 警語（F4.4），作為本章 *為什麼 retry contract 要重塑* 的觸發訊號；retry pattern 本體走 standard-driven（Cockroach Labs 官方 SQL Layer docs / Transaction Retry docs）。Sibling 對照 [9.C4 DraftKings Aurora financial ledger](/backend/09-performance-capacity/cases/draftkings-aurora-financial-ledger/) 提供 *PostgreSQL READ COMMITTED + Aurora* 的另一條路徑（用 application-level sharding 避開 retry 而非處理 retry）— **scope warning**：DraftKings case *沒* 寫 PostgreSQL READ COMMITTED retry pattern、case 是 Aurora 內 business sharding 路徑、本章引用為「假想若把 DraftKings 遷 CockroachDB 會撞到 retry contract 重塑」合成對照、不是 case 直接揭露
 
 ## 核心機制（Vendor-specific mechanism）
+
+> **來源分層**：本段機制來源是 Cockroach Labs 官方 SQL Layer docs + Transaction Retry docs（standard-driven）、*不是* 從 case 抽取。3 個 direct case 都沒揭露這些機制細節。
 
 - Serializable default：CockroachDB default `SERIALIZABLE`（最強 isolation）、保證 transaction 結果等同某個 serial order
 - Conflict detection：read / write set 衝突 → abort 後 transaction、發 `40001 serialization_failure`
@@ -17,6 +22,7 @@
 - Savepoint pattern：`SAVEPOINT cockroach_restart` + `ROLLBACK TO SAVEPOINT` 是官方推薦 retry 寫法
 - 對應 knowledge card：[isolation-level](/backend/knowledge-cards/isolation-level/)、[transaction-boundary](/backend/knowledge-cards/transaction-boundary/)、[serialization-failure](/backend/knowledge-cards/serialization-failure/)（若已建）
 - 跟 PostgreSQL serializable 差在哪：PostgreSQL serializable 用 SSI（Serializable Snapshot Isolation）+ predicate lock、CockroachDB 用 timestamp ordering + write intent；衝突偵測時機與成本不同
+- **DoorDash case 對接點（trigger context only）**：case 揭露 PG wire *protocol-level* 相容、明示 SQL 行為（serializable default / retry semantics / partial index）「仍要驗證」（F4.4）— 本章機制段就是回答「audit 什麼」的具體展開、但 audit checklist 本體屬通用工程知識、case 沒 ground truth
 
 ## 操作流程（Operations）
 
@@ -45,7 +51,7 @@ for retry < MAX:
 - Hot row contention：高頻 update 同一 row（例：全局 counter）、serializable 衝突率 100%、改 sequence 或 distributed counter
 - 改 READ COMMITTED 後忘了驗證業務語意：金融 ledger 用 READ COMMITTED 可能讓 balance 變負、必須留 serializable
 - Long-running transaction：read 開始時間早、commit 時 conflict window 大、retry 機率隨 transaction duration 線性上升
-- Case 對應根因：DraftKings ledger 在 PostgreSQL / Aurora 用 READ COMMITTED + application-level locking、遷 CockroachDB 必須改 SERIALIZABLE + retry loop 才能保留正確性
+- **Scope warning（跨 case 合成）**：DraftKings ledger 對照 — **DraftKings case *沒* 寫 PostgreSQL READ COMMITTED retry pattern**，case 內容是「Aurora 內 business sharding 路徑」、用 200 個獨立 cluster 解 Aurora single-primary 撞牆。本章把 DraftKings 拿來當「假想若遷 CockroachDB 需改 SERIALIZABLE + retry loop」的合成對照、不是 case 揭露的 fact
 
 ## 容量與觀測（Capacity & observability）
 
@@ -65,8 +71,9 @@ for retry < MAX:
 
 ## 寫作前置 checklist
 
-- [ ] case anchor 確認：等 C2 agent 補 application retry contract case；無 case 時 DraftKings ledger 對照「PostgreSQL READ COMMITTED」是 anti-recommendation 起點
+- [ ] **Scope warning fact vs derive 分層（陷阱 8 防護、最高優先）**：每段引用必須區分（a）DoorDash case 揭露的 fact（PG wire protocol-level 相容、SQL 行為仍要 audit）、（b）Cockroach Labs 官方 doc 揭露的 standard（40001 / SAVEPOINT / READ COMMITTED v23.2+）、（c）outline 合成的 frame（retry contract 重塑、DraftKings 假想對照）。寫稿時禁用「DoorDash retry pattern」這類把合成包成 case fact 的語法
+- [ ] case anchor 確認：DoorDash 作為 trigger context（撞牆訊號 + audit 警語）已備、retry pattern 本體走 standard-driven（Cockroach Labs 官方 SQL Layer docs + Transaction Retry docs）
 - [ ] knowledge card 雙引用：[isolation-level](/backend/knowledge-cards/isolation-level/) + [transaction-boundary](/backend/knowledge-cards/transaction-boundary/)
 - [ ] sibling 對比：跟 PostgreSQL serializable SSI 對照、跟 Spanner external consistency 對照
 - [ ] 預估寫作長度：240-280 行（retry pattern + idempotency design + 5 種失敗模式展開）
-- [ ] 寫作難度：中高（retry pattern 是 application contract 改寫、需要具體 Go / Python / Java code 示例、case 缺時用合成 ledger 場景）
+- [ ] 寫作難度：中高（retry pattern 是 application contract 改寫、需要具體 Go / Python / Java code 示例、case 沒 ground truth、走 standard-driven + 合成 ledger / hot row 場景；最高 scope warning 風險檔）

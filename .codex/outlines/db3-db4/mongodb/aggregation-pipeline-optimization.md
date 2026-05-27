@@ -1,6 +1,8 @@
 # MongoDB Aggregation Pipeline Optimization：stage 順序、index 配合與 memory 邊界
 
 > **Status**: L5 outline skeleton（planning artifact、非 published article）。寫作參照 [vendor-article-spec](/backend/01-database/vendor-article-spec/) 與 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
+>
+> **校準說明**：本 outline 由 case-first audit 判定為 keep — findings 沒有 high-impact 對機制深化的衝擊。但 anti-recommendation 段補一條「report dashboard 跑爆 primary」、明示為 `needs new case`、不憑空編造 incident 數字。
 
 ## 問題情境（Production pressure）
 
@@ -43,6 +45,8 @@
 - **Aggregation 把 working set 擠走**：OLTP 的 hot page 被 aggregation 的 cold scan 擠出 cache、整體 query latency 一起退化
 - **`$facet` 滿載**：四個 facet 各跑大 pipeline、共享 100MB 限制立刻爆
 - Anti-recommendation：報表 / BI / analytics workload 跑 MongoDB primary 是反模式；應該 (a) 設定 analytical secondary + read preference (b) 用 `$merge` 寫到 reporting collection (c) 進階用 BI Connector / data lake / 把 analytical workload 整批搬到 ClickHouse / BigQuery
+- **「report dashboard 跑爆 primary」典型 anti-pattern**（needs new case、不憑空編造）：BI 工具直連 MongoDB primary 跑長 pipeline、cache eviction 把 OLTP working set 擠走、p99 latency 在報表時段集體升；寫稿時若沒拿到具體 incident 跟時間軸數字、改寫成「常見 anti-pattern」+ 推到 sibling 段、避免假裝有 case
+- **Aggregation 不能解 read scaling**：寫作時要明示 aggregation 是 OLTP 的補位、不是 read scaling 的主路；read scaling 在大規模 OLTP 走 cache + freshness token（見 [connection management and cache layer](./connection-management-and-cache-layer.md)）、不是把 aggregation 跑爆 secondary
 
 ## 容量與觀測（Capacity & observability）
 
@@ -54,13 +58,13 @@
 
 ## 邊界與整合（Boundary & next steps）
 
-- Sibling deep articles：[schema design pattern](./schema-design-pattern.md)（embedded 設計可消除大部分 `$lookup`）、[shard key selection](./shard-key-selection.md)（決定 aggregation 是 shard-local 還是 cross-shard）、[replica set read preference](./replica-set-read-preference.md)（aggregation 跑 secondary 的 stale read trade-off）
+- Sibling deep articles：[schema design pattern](./schema-design-pattern.md)（embedded 設計可消除大部分 `$lookup`）、[shard key selection](./shard-key-selection.md)（決定 aggregation 是 shard-local 還是 cross-shard）、[replica set read preference](./replica-set-read-preference.md)（aggregation 跑 secondary 的 stale read trade-off）、[connection management and cache layer](./connection-management-and-cache-layer.md)（report dashboard 跑爆 primary 時的 cache + read scaling 主路）
 - Migration playbook：analytical workload 大到不能繼續混在 MongoDB → split 出 [→ Cosmos DB MongoDB API + Synapse](/backend/01-database/vendors/mongodb/) 或 [→ DynamoDB + Athena/Glue](/backend/01-database/vendors/mongodb/)（access pattern 重設計）
 - 跟 1.x 互引：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/) 把 aggregation 列為 read-shape 的成本維度；[1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) 處理「OLTP + analytical 同 cluster」的反模式
 
 ## 寫作前置 checklist
 
-- [ ] Case anchor：aggregation 跑爆 primary 的具體 incident 強烈需要新建 case（含 dashboard timestamp 對應的 cache eviction 圖）
+- [ ] Case anchor：aggregation 跑爆 primary 的具體 incident 強烈需要新建 case（含 dashboard timestamp 對應的 cache eviction 圖）；目前標記為 `needs new case`、寫稿時若沒拿到具體事件、anti-recommendation 段改寫成「常見 anti-pattern」、不憑空生數字
 - [ ] Knowledge card 雙引用：document-store + hot-partition + stale-read 三張都已存在
 - [ ] Sibling 對比清楚：跟 PostgreSQL aggregation（CTE / window function + planner-based optimization）對比，MongoDB 是 stage stream + 手動 reorder 為主；跟 BigQuery / ClickHouse 等真 analytical engine 對比劃出邊界
 - [ ] 預估寫作長度：260-320 行（stage-by-stage 解釋 + 5 個 failure mode + materialized view 操作流程）

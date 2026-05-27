@@ -23,6 +23,16 @@
   - Cosmos DB：hierarchical key 是原生功能、不靠 adaptive；單 logical partition 限制嚴格、必須前期設計
 - 對應 knowledge card：[hot-partition](/backend/knowledge-cards/hot-partition/)、[database-sharding](/backend/knowledge-cards/database-sharding/)
 
+### Partition / shard key 可逆性跨 vendor 對照（F2.15 本章合成）
+
+| Vendor    | 可逆性       | 機制                                          | 成本             |
+| --------- | ------------ | --------------------------------------------- | ---------------- |
+| MongoDB   | 可改（4.4+） | `reshardCollection`、線上完成、cluster 內搬移 | 高、但 in-place  |
+| DynamoDB  | 可改         | 建新 table、backfill + dual-write 切換        | 中、要 backfill  |
+| Cosmos DB | 不可改       | 必須 export → recreate container → import     | 最高、需停機窗口 |
+
+**本章合成 frame**：三 vendor 的「partition / shard key 可逆性」不在同一光譜、Cosmos DB 最嚴格 — F2.15 跨 case 合成、9.C11 Minecraft Earth 沒直接揭露此對比、是從 outline knowledge 跟 MongoDB shard-key-selection 對照得出。寫稿時必須明示「Cosmos DB partition key 不可改是設計選型的硬約束、不是『先選錯再改』可承擔的風險」。
+
 ## 操作流程（Operations）
 
 - 設定 partition key：建 container 時指定、*無法事後修改*
@@ -59,6 +69,17 @@
 - 回到 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)：把 partition skew 當 saturation signal
 - Alert：單 partition RU 利用 > 80% 持續 5 min；429 error rate 突增
 
+### Latency budget 拆解：vendor SLA vs end-to-end 實測（F2.13）
+
+- 9.C21 ASOS 觀察「48ms 平均響應 = 全球分散下 Cosmos DB 的代表性數字」段揭露：48ms 包含 *網路 + DB + 應用層*、DB 本身可能只佔 5-10ms、其他是網路與應用層
+- 操作上要把 end-to-end latency 拆 budget：
+  - DB 端 latency（vendor SLA、p99 < 10ms 地區內讀、9.C11 揭露）
+  - 跨 region replication latency（multi-region read 從就近 region 拿、不會跨洲、但 cross-region write 不同）
+  - 應用層 latency（serialize / business logic / HTTP overhead）
+  - 客戶端網路 latency（mobile / 跨洲）
+- 寫稿時不能把 vendor 廣告的 5-10ms p99 當「使用者體驗」、要明示「48ms 是 9.C21 ASOS 案例的 end-to-end 觀察、Cosmos DB 自身可能只佔 5-10ms（case 揭露的拆解推論）」
+- 跟 partition skew 的關係：partition 失衡時即使 vendor 端 SLA 達標、實測 p99 仍會被 hot partition 拉高（單一 partition 的 RU consumption 飽和 → 429 retry → 應用層 latency 暴漲）
+
 ## 邊界與整合（Boundary & next steps）
 
 - Sibling deep articles：[ru-cost-model-sizing](./ru-cost-model-sizing.md)（partition skew 直接影響 RU sizing）、[consistency-levels-engineering](./consistency-levels-engineering.md)（partition 失衡時即使設 Strong 也看到 throttle）、[multi-region-write-conflict](./multi-region-write-conflict.md)（partition key 影響 conflict 分布）
@@ -69,7 +90,11 @@
 
 ## 寫作前置 checklist
 
-- [ ] case anchor 確認：9.C11 Minecraft Earth（synthetic key 主案例）+ DynamoDB hot partition 案例當對照
+- [ ] case anchor 確認：9.C11 Minecraft Earth（synthetic key 主案例、平台特性「partition 動態分裂：透明」段）+ 9.C21 ASOS（latency budget 拆解、「48ms 平均響應」段）+ DynamoDB hot partition 案例當對照
 - [ ] knowledge card 雙引用：hot-partition、database-sharding
 - [ ] sibling 對比：DynamoDB partition key + adaptive capacity、MongoDB shard key
-- [ ] 預估寫作長度：260-320 行（3 種設計模式 + 5 失敗模式 + DynamoDB 對比）
+- [ ] fact vs derive 分層：
+  - 9.C11「partition 動態分裂：透明」是 case fact、synthetic partition key 設計細節是 outline knowledge（case 沒揭露具體 schema）
+  - 9.C21「48ms 平均響應」是 case fact、「DB 本身 5-10ms / 其他是網路與應用層」是 case 判讀層拆解、不是 fact
+  - 跨 vendor 可逆性對照表是本章合成 frame、case 沒直接揭露此對比
+- [ ] 預估寫作長度：280-340 行（3 種設計模式 + 5 失敗模式 + DynamoDB 對比 + latency budget 段 + 可逆性對照）
