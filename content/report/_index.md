@@ -204,6 +204,10 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 
 - [#147 規範化跟自審是兩種認知任務、立規範當下無法保護同批稿件](rule-codification-vs-self-audit/) — 把反模式抽象成規範卡跟在自己稿件辨識該反模式實例是兩種不同認知任務、視角分別是 outside-in（歸納）vs inside-out（比對）；案例：#146 才剛立「看 X 如何 Y」是反模式、同 batch 5 篇章節仍有 11 處未被察覺、Round 2 reviewer 才 catch；修法三層機制 — grep keyword（字面層）/ checklist 自審（結構層）/ reviewer in-stream（frame 層）；補 #114 在「規範作者本人 reviewer」的具體實例、補 #122 / #124 在「規範化動作本身」這個介入點的修法
 
+跨輪 review 停止判讀（#148、從 backend 3 輪 review 38 個 finding 零重疊的實證抽出）：
+
+- [#148 跨輪 review 停止訊號是 frame 涵蓋、不是 finding 數遞減](cross-round-review-stopping-signal/) — 判斷「該不該再來一輪 review」的訊號是「frame 軸是否還有未動」、不是「finding 變少」；多輪 review 的 ROI 不是 monotonically decreasing、Round 3 finding 數可能比 Round 1 / 2 多、但內容從 surface 往 structural / meta 層走；停止判讀 4 訊號（新 frame 卡住 / finding 退回 surface / 修法成本超過邊際價值 / frame 重複）；補 #114 / #126 / #147 沒覆蓋的「何時停止」缺口
+
 ### 第七輪：Pattern 卡片（待補完）
 
 從實作篇的「設計取捨」段落抽出、單一做法的深入卡片。每張卡片只討論一個 pattern：什麼時候用、什麼時候不用、跟其他做法的取捨。實作篇在取捨段落引用對應卡片。
