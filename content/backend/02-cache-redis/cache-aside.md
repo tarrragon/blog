@@ -24,6 +24,26 @@ tags: ["backend", "cache", "redis"]
 
 [stale data](/backend/knowledge-cards/stale-data/) 不是例外事件，而是快取系統的常態成本。設計時要先定義可接受的 stale 形式，再設計對應補償與回退路徑。
 
+### 應用層 + 邊緣層 Invalidation Pipeline
+
+當系統同時用應用層快取（Redis、本機 cache）跟邊緣層快取（[CDN](/backend/05-deployment-platform/edge-cdn-static-distribution/)）時、失效策略要把兩層當「一條 pipeline」設計、不能各自獨立 purge。兩層失效的物理特性差異：
+
+| 層級         | Purge 控制                        | Purge 延遲                                               | 失敗代價                             |
+| ------------ | --------------------------------- | -------------------------------------------------------- | ------------------------------------ |
+| 應用層 cache | 自家 cluster 內、application 控制 | 毫秒 - 秒級（cache cluster 內傳播）                      | Cluster 內 stale、用戶感受立即修正   |
+| CDN edge     | Vendor API 控制、全球節點同步     | 秒 - 分鐘級（傳統 origin pull）或 150ms 級（push-based） | 全球節點 stale、回填到應用層污染快取 |
+
+正確順序是「先應用層、再 CDN」：
+
+1. 業務寫入完成、source of truth 更新
+2. Purge 應用層 cache（毫秒級完成）
+3. Purge CDN（秒級到分鐘級）
+4. 等 CDN purge 完成的 ack（或設等待窗口）
+
+順序顛倒會出事 — 若先 purge CDN、CDN 全球節點 miss 後到 origin 拉資料、若 origin 應用層還是舊 cache、CDN 會把舊資料回填到全球節點、stale 被「重新永久化」一個 TTL 週期。
+
+實務上的權衡是「CDN purge ack 是否要等」。等了會讓 write API latency 升高到秒級、不等則必須接受短暫雙層不一致。價格 / 庫存類資料適合「短 TTL + 等 purge ack」、blog 文章類適合「長 TTL + 不等 ack」。詳見 [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的 purge 操作模型。
+
 ## Cache aside vs write-through 的選擇
 
 選 cache 模式由 *miss 成本* 跟 *寫入頻率* 的取捨決定。Cache aside、write-through、write-behind 三種主流模式各自適合不同業務壓力。

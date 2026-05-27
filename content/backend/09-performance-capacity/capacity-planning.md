@@ -12,6 +12,8 @@ tags: ["backend", "performance", "capacity", "planning"]
 
 跟 [9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/) 的關係：9.4 提供「當前配置能撐多少」、9.6 用這個數字加上 forecast 推「該規劃多少」。沒有 9.4 的 baseline、9.6 只是猜；沒有 9.6 的 forecast、9.4 的 baseline 只是 snapshot。
 
+跟 [9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/) 的關係：9.13 先決定「沿哪條軸擴」（垂直 / 水平 / Y 軸拆服務 / Z 軸 partition），9.6 才能算出「該擴多少」。同樣是「處理 10 倍流量」、選垂直擴展要算單機規格上限、選水平擴展要算協調成本跟連線池放大、選 Y 軸拆服務要算跨服務 latency budget — 三條軸的容量公式參數完全不同。沒先做 9.13、9.6 的數字會落到錯誤的擴展軸上。
+
 本章是「規劃決策」的章節、不是執行手冊。讀完後讀者能回答：peak 怎麼預測、headroom 訂多少、autoscaler 怎麼配、不可水平擴的服務怎麼處理。
 
 ## 容量公式三項

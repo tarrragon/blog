@@ -31,6 +31,17 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 
 [sticky session](/backend/knowledge-cards/sticky-session/) 適合需要短期會話一致性的場景，但它會提高特定節點負載不均與失效轉移成本。採用 sticky policy 前要先定義會話狀態落點與失效時的回復路徑。
 
+### LB + CDN 連線生命週期協調
+
+當 LB 上游有 [CDN](/backend/05-deployment-platform/edge-cdn-static-distribution/) 時、兩層的 timeout / retry 行為要對齊、否則會出現「使用者已經 timeout 但 origin 還在處理」這類雙層不一致：
+
+- **CDN edge timeout** 通常比 origin LB timeout 短（5-30 秒）— edge 認定 origin 慢就放棄。若 origin LB timeout 是 60 秒、edge 在 30 秒已放棄回 504、origin 還在處理一個沒人在意的 request。應對齊兩邊的 timeout 上限。
+- **CDN retry policy** 在 edge miss 後若拿不到 origin response、預設不會重試（避免雙倍 origin 流量）— LB 端的 idle timeout 設計要假設「只有一次機會」、不依賴上游重試
+- **長連線（WebSocket、SSE、gRPC）通常繞過 CDN** — 直接連到 origin LB。這些連線的 idle timeout 跟一般 HTTP 不同、要單獨配置
+- **Edge cache HIT 時 LB 完全沒收到 request** — 容量規劃時要把 cache hit ratio 算進 origin RPS、不是用使用者 RPS 直接 size LB
+
+詳見 [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的 origin protection 段。
+
 ## 切流失敗的回退判讀
 
 切流失敗的回退判讀第一步是先分辨「平台問題」跟「流量生命週期問題」、再決定回退手法。平台問題用重啟服務恢復、流量生命週期問題用凍結切換並等待震盪收斂。回退手法錯位會把事故推進第二階段。

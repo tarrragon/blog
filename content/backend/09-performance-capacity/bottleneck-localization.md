@@ -47,6 +47,8 @@ USE 跟 [RED method](/backend/knowledge-cards/red-method/)（rate / errors / dur
 - lock contention（row lock、table lock）
 - transaction queue depth
 
+定位到 DB 層瓶頸時、優先檢查 [1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/) 清單 — 多數 DB 層瓶頸的根因是「應用程式發給 DB 的 query 寫法」、不是 DB 規格不夠。N+1 query 放大 connection 占用、long-running transaction 放大 lock contention、缺索引讓 slow query frequency 升高、`SELECT *` 放大 transaction queue。這層判讀走完、再考慮 DB 規格升級或加 replica。
+
 **3. Cache 層**：
 
 - hit rate（突然下降是訊號）

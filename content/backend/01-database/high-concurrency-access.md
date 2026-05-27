@@ -94,6 +94,17 @@ SQL DB 在 surge 場景的 *first bottleneck* 不是 CPU、也不是 disk I/O、
 
 對應 [9.C29 Lemino case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) — RDB connection limit 是 surge 場景的隱性 bottleneck、Lemino 選擇遷移到 DynamoDB 而不是擴 connection pool（因為 HTTP-based KV 沒這個問題）。
 
+### Query 反模式如何放大連線池壓力
+
+連線池被占滿的根本原因不只是「連線數不夠」、還有「單一連線被占用的時間太長」。Query 反模式直接放大每筆 request 的連線占用時間：
+
+- **N+1 query** 讓一個 request 占用連線從 1 個 round trip 拉長到 N+1 個。同樣的 throughput、需要 N+1 倍的連線數來 sustain
+- **Long-running transaction** 把一個連線從幾毫秒占用變成幾秒，相當於把連線池的有效容量除以幾百倍
+- **缺索引的 query** 在熱表上跑 full scan、單筆 query 從 10ms 變成 1-5 秒、連線占用時間放大兩個數量級
+- **`SELECT *` 載入大欄位**：reader 在反序列化大物件期間連線一直 hold、不是 query 本身慢、是 serialization overhead 拉長占用
+
+這些反模式單獨看是「query 寫法問題」、但放到連線池語境就是「連線池容量被間接削減」。先用 [1.13 query 反模式](/backend/01-database/query-anti-patterns/) 的清單收回連線占用時間、再考慮加 [9.14 connection pooler](/backend/09-performance-capacity/connection-pool-amplification/) 中介層 — 順序顛倒會讓 pooler 治標不治本。
+
 ## 【策略】讀取與寫入要分開看
 
 讀取的核心風險通常是慢查詢、掃描過大、N+1、熱點資料與連線被占住太久。寫入的核心風險則常常是 transaction 太大、衝突太高、鎖時間太長、重試邏輯不清楚。

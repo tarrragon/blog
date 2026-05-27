@@ -64,6 +64,17 @@ T-2 階段的 pre-scaling 是「不依賴 autoscaler 反應」的容量保險。
 - Cache warmup 時間（cold cache 命中率低、要時間 populate）
 - Connection pool 預熱（DB connection establish 有 latency）
 
+### CDN Pre-warm 操作細節
+
+CDN pre-warm 在 T-2 階段是 high-impact 操作、但跟其他 pre-scaling 的特性不同。具體做法：
+
+- **找出活動會大量被讀取的 URL 清單**：商品頁、活動 landing page、新 release 內容
+- **在每個 CDN edge POP 觸發 cache populate**：可以用 vendor warmup API（Cloudflare Argo、Fastly Image Optimizer pre-fetch、Akamai NetStorage push），或從多個 region 發 synthetic request 強制 edge 拉取
+- **驗證 hit ratio 已升高**：用 vendor dashboard 觀察 cache_status=HIT 比例、確認 pre-warm 生效
+- **預估 origin 流量曲線**：pre-warm 完成後、活動開始時 edge miss 流量應該大幅降低、origin 容量規劃可以對應放鬆
+
+跟其他 pre-scaling 不同的是 **CDN pre-warm 沒有「容量上限」這個概念** — edge cache 是被動填的、warm 完就是 warm、不像 EC2 / Lambda 那樣需要 reserve 容量。風險不在「填不夠」、在「填錯」（key 不對、TTL 設錯讓 pre-warm 立刻過期）。詳見 [5.9 邊緣分發](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的 purge 與 cacheable 判讀。
+
 **事件結束後也要 *scheduled scale down***：autoscaler 通常 scale up 快、scale down 慢、長期 over-provision 浪費錢。
 
 對應案例：[Tixcraft 30 分鐘擴 130 倍](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) — pre-scaling + Auto Scaling Group + AMI prebuild + ELB warmup 組合；[Prime Day pre-scaling](/backend/09-performance-capacity/cases/aws-prime-day-extreme-scale-2025/) — predictive scaling + scheduled scaling 兩種組合。
