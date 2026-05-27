@@ -226,7 +226,7 @@ aws application-autoscaling put-scaling-policy \
 | 季冠軍賽 championship | 4-5x  | FanDuel case 揭露事件分級     |
 | Super Bowl            | 5-10x | FanDuel case 揭露事件分級     |
 
-**Frame 8 event-driven scaling 5 模式（跨 vendor 共寫）**：本表是 Aurora 端從讀峰視角切入的事件分級、跟 [DynamoDB on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) 的 5 模式分類（flash-sale spike / predictable peak / sustained growth / season cycle / surge baseline permanent shift / B2B 高可用）共軸。Aurora 端的 FanDuel 季賽 cycle 對應 DynamoDB 端的 *season cycle* 模式（Hard Rock NFL/NBA 100→33→100 node 也屬同模式）。
+**Frame 8 event-driven scaling 5 模式（跨 vendor 共寫）**：本表是 Aurora 端從讀峰視角切入的事件分級、跟 [DynamoDB on-demand-vs-provisioned](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/) 的 5 模式分類（flash-sale spike / predictable peak / sustained growth / surge baseline permanent shift / B2B sustained + 高可用）共軸。Aurora 端的 FanDuel 季賽 cycle 在 5 模式分類中對應 *predictable peak* 的時間序列展開 — 事件 tier 已知（賽季 → 季後賽 → 季冠軍賽 → Super Bowl）、按 tier 預配 read replica 數量、本質是「峰值已知 + 重複出現」的 predictable peak 在多 tier 結構下的延伸。
 
 **KV 層 vs SQL 層的 mode 決策差異**：DynamoDB 端的 on-demand vs provisioned mode 是 KV vendor 的容量抽象（軸 1 peak/avg ratio / 軸 4 predictable-peak vs flash-sale）、詳見 [DynamoDB on-demand-vs-provisioned 6 軸決策](/backend/01-database/vendors/dynamodb/on-demand-vs-provisioned/)、本篇不展開。Aurora 端對應的決策是 *read replica 數量 + auto-scaling vs scheduled scaling vs headroom 預留*、靠的不是 mode 切換而是 replica fleet size。
 

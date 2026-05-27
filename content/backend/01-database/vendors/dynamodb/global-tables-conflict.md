@@ -207,9 +207,9 @@ DynamoDB Streams + Lambda：抓 conflict event、寫進獨立 audit table；reco
 
 ### Frame 5：region-pinned Global Tables 吸收合規邊界
 
-Global Tables 不只是高可用工具、也是 *合規邊界* 的吸收層。`9.C24 Genesys` 15 region active-active 不全為「跨 region 同步」、也為「各市場合規分離」— 受監管市場的客服資料 pin 在當地 region、跨 region replication 只在合規允許的範圍內開啟。
+Global Tables 不只是高可用工具、也是 *合規邊界* 的吸收層。DynamoDB 在 vendor capability 層級支援 *region-pinned replication* — 每張 table 可獨立決定哪些 region 參與 replication group、部分 region 可不加入。這個 capability 同時服務三類場景：合規分離（受監管市場資料不跨境）、cost / latency 取捨（資料只在主要服務 region 同步）、災備拓樸（少數 region 純讀備援）。`9.C24 Genesys` 15 region 揭露的是 *延遲就近接入* 的 B2B SaaS 拓樸（客戶服務延遲敏感、必須在客戶所在地有 region）— case 原文沒明示合規應用、但 region-pinned capability 在 Genesys 規模下天然能容納合規市場分離、是同 capability 的 *可能應用維度*、不是 case 已驗證的具體實踐。
 
-跨 vendor 對照（[模組 outline Section B Frame 5](../../../_index.md)）：
+跨 vendor 對照：
 
 | Vendor              | 合規吸收機制                                                            | 拓樸特性                                             |
 | ------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
@@ -220,7 +220,7 @@ Global Tables 不只是高可用工具、也是 *合規邊界* 的吸收層。`9
 
 **為什麼 DynamoDB 在這個 frame 退化得最輕**：Global Tables 的 region 開關是 *attribute 級* 設計（每張 table 可獨立決定哪些 region 參與）、不像 Aurora 必須整 cluster 拆。讀者要把「跨境合規 + 高可用」雙重需求兼顧時、DynamoDB 是最少結構性改造的路徑 — 但代價是 LWW conflict 跟 reconciliation 設計仍要自己做。
 
-**何時 region-pinned 而非 active-active**：受監管金融 / 個資跨境禁止的市場（如 GDPR strict 條款區、中國個資法 PIPL、巴西 LGPD）— 該 region 仍開 DynamoDB table、但 *不加入 Global Tables replication group*、跟其他 region 完全切割。Genesys 15 region 中部分市場屬此型、不是 15 個 region 全互相 replicate。
+**何時 region-pinned 而非 active-active**：受監管金融 / 個資跨境禁止的市場（如 GDPR strict 條款區、中國個資法 PIPL、巴西 LGPD）— 該 region 仍開 DynamoDB table、但 *不加入 Global Tables replication group*、跟其他 region 完全切割。capability 設計上支援這種按 region 開關 replication 的拓樸；具體是否套用、要看 *讀者自己的市場合規清單*、不是把 Genesys 規模當必然證據（Genesys case 揭露的是延遲就近接入、未明示合規分離實踐）。
 
 ### Disney+ vs Genesys：兩種 Global Tables 工程動機
 

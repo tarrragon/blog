@@ -184,7 +184,7 @@ TTL 是 storage cost 防爆的標配（特別在 message-class workload）— Pa
 
 ### Frame 3：DynamoDB 在 fleet 治理 frame 的退化
 
-跨 vendor 共通 frame：production scale 走 *fleet of clusters*（[模組 outline Section B Frame 3](../../../_index.md)、Aurora 200 cluster / CockroachDB 380+ cluster / MongoDB Atlas 20 DB 都是這個 frame）。DynamoDB 在這 frame 退化得最徹底 — *不走 fleet of clusters*、是用 partition 內部自動切。
+跨 vendor 共通 frame：production scale 走 *fleet of clusters*（Aurora 200 cluster / CockroachDB 380+ cluster / MongoDB Atlas 20 DB 都是這個 frame）。DynamoDB 在這 frame 退化得最徹底 — *不走 fleet of clusters*、是用 partition 內部自動切。
 
 對照其他 vendor：
 

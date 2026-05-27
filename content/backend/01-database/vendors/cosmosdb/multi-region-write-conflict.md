@@ -10,6 +10,8 @@ Cosmos DB 是 *AP 系統*（CAP 三選二、放棄跨 region linearizability 換
 
 本文是 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/) 的深度展開、也是 *Strong + multi-region 互斥* 議題的 SSoT 主寫位置（[consistency-levels-engineering](../consistency-levels-engineering/) cross-link 過來、不展開）。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（AR 遊戲跨 region 寫入、5 consistency level + multi-region SLA）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 全球零售）+ [9.C38 Toyota Connected](/backend/09-performance-capacity/cases/toyota-connected-mongodb-telematics-iot/)（鏈路 SLA 拆解、跨 vendor 適用做 frame anchor）。
 
+> **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（API model 三型遷移路徑 / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)、本篇不重複展開。Multi-region write + conflict resolution 是 *已選 Cosmos DB 後* 的拓樸決策；strong global consistency 必要的 workload 應走 Spanner 或 Cosmos DB Strong（單一 write region）、不是用 LWW 補。
+
 ## 問題情境：active-active 的 conflict 是必然代價
 
 典型觸發場景：產品要 global active-active（每個 region 都能寫、低延遲）、Cosmos DB 是 AP 系統、不像 Spanner 用 quorum 強一致；跨 region 寫同一筆 document 必然有 conflict、團隊不知道「conflict 真的發生時、誰贏 / 怎麼處理 / 業務語義保不保得住」。
@@ -41,7 +43,7 @@ Cosmos DB 是 AP 系統（在 partition 的情況下選 availability 跟 partiti
 
 對 selection 的意義：產品要「全球都能寫」就接受 eventual consistency；產品要「全球 linearizable」就轉 Spanner / Aurora DSQL、Cosmos DB 不是替代品。把 Cosmos DB Strong 跟 Spanner external consistency 等同視之是 *常見的選型誤判*。
 
-[consistency-levels-engineering](../consistency-levels-engineering/) 的 Strong 段只 cross-link 過來、不展開 conflict resolution 細節 — 本篇是 SSoT 主寫位置（依 module outline Section G）。
+[consistency-levels-engineering](../consistency-levels-engineering/) 的 Strong 段只 cross-link 過來、不展開 conflict resolution 細節 — 本篇是 SSoT 主寫位置。
 
 ### Conflict 偵測
 

@@ -10,6 +10,8 @@ Cosmos DB 的 *logical partition 上限是 10,000 RU/s + 20 GB storage*、partit
 
 本文不是 Cosmos DB overview（請看 [Cosmos DB vendor 頁](/backend/01-database/vendors/cosmosdb/)）— 而是 partition key 設計 + 故障演練的深度展開。Case anchor 是 [9.C11 Minecraft Earth](/backend/09-performance-capacity/cases/minecraft-earth-cosmos-db-global/)（synthetic partition key 強制分散、AR 遊戲玩家位置）+ [9.C21 ASOS](/backend/09-performance-capacity/cases/asos-cosmos-db-black-friday/)（Black Friday 流量分散 + latency budget 拆解）。
 
+> **Cosmos DB 適用度前置判讀**：本篇假設 workload 已通過 Cosmos DB 適用度四層 framing（API model 三型遷移路徑 / RU 思維轉換成本 / multi-model 差異化是否真用上 / 跨雲 hedging vs 單雲 lock-in）— 詳見 [mongodb-api-vs-sql-api 開頭四層 framing](../mongodb-api-vs-sql-api/#四層-framingvendor-selection-的真實決策軸)、本篇不重複展開。Partition key 設計是 *已選 Cosmos DB 後* 的硬約束議題；若 workload 不適用 Cosmos DB、partition key 設計無法救回 vendor 選錯的不可逆性風險。
+
 ## 問題情境
 
 典型觸發場景：團隊用 user_id 當 partition key 上 production、平常正常、Black Friday 或 VIP 大客戶上線當天 — application 收到 `429 TooManyRequests`、p99 從 50ms 飆到 5s；查 portal Metrics 發現 *整體 RU 使用率才 30%* 但少數 partition 100% 滿、其他 partition 閒置。Cosmos DB 設了 10000 RU/s、實際只能用 2000 就 throttle。
