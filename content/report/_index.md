@@ -207,6 +207,11 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 跨輪 review 停止判讀（#148、從 backend 3 輪 review 38 個 finding 零重疊的實證抽出）：
 
 - [#148 跨輪 review 停止訊號是 frame 涵蓋、不是 finding 數遞減](cross-round-review-stopping-signal/) — 判斷「該不該再來一輪 review」的訊號是「frame 軸是否還有未動」、不是「finding 變少」；多輪 review 的 ROI 不是 monotonically decreasing、Round 3 finding 數可能比 Round 1 / 2 多、但內容從 surface 往 structural / meta 層走；停止判讀 4 訊號（新 frame 卡住 / finding 退回 surface / 修法成本超過邊際價值 / frame 重複）；補 #114 / #126 / #147 沒覆蓋的「何時停止」缺口
+- [#149 字句層 review：keyword bank 命中是候選、不是判決](keyword-bank-hit-is-candidate-not-verdict/) — 偵測（grep 命中可疑訊號）跟判定（這個命中是不是違規）是兩個認知步驟；reviewer 容易把「不是 A 而是 B」的命中合理化成「可接受反例對照」而放行、偵測成功判定失敗；判定準則用「概念位置」—— 否定在建立核心概念就改正向、只在明示反例段落才保留；另有訴諸群體贅語（「很多人卡在」）無固定關鍵詞、keyword bank 結構上抓不到、靠 reader-simulation 補；是 #114（偵測層）的判定層 sibling、夾在 #94（別過度刪對照）與正向陳述優先之間的判別線
+- [#150 教材用中性陳述、不對讀者喊話](teaching-register-states-not-addresses-reader/) — 教材的 register 是中性陳述概念、不是對讀者說話；三形式（安撫「很多人卡在」/ 第二人稱「你天天寫」/ 祈使「先讀懂、別搞混」）共用「把讀者當要管理的對話對象」的違反；問題不在精度（「你天天寫的 int count」精度完全正確）、在 stance；修法換中性指稱或描述性名詞標題；是 #111（精度軸）的 register sibling、#149（review-process）的 content 對偶、補 AGENTS 原則六沒覆蓋的 stance 維度；邊界是 hook / narrative 段落輕度第二人稱可留
+- [#151 教材給技術理由、不替方案下品質評價](teaching-gives-reasons-not-quality-verdicts/) — 自評誇飾（教科書級 / 堪稱經典 / 完美契合 / 漂亮地解決）傳遞作者滿意度而非概念、且品質 verdict 會頂替技術理由（寫「X 是教科書級的適配」就少寫「X 為什麼適配」）；修法把評價換成機制 / 條件；跟 #111 同屬誇飾大類但評價對象不同（#111 誇張技術屬性、本卡評價方案品質）、#150 的 stance sibling（#150 管理讀者、本卡評價方案）、#94 空降斷言在品質評價維度的變體、違反 AGENTS 原則七；邊界 narrative / 復盤型內容的評價是合理 register
+- [#152 教材把設計選擇講成選擇、不講成必然或天性](design-choices-framed-as-choices-not-necessity/) — 本質主義 / 必然性框架（天生 / 本質就是 / 必然 / 唯一）把設計選擇講成自然法則、抹掉設計能動性；是「機會成本語氣 vs 絕對主義」的 subtype、比命令式絕對（應該做 X）更隱形（必然式偽裝成事實、躲過 review）；sharp feature 是常局部牴觸作者自己在別處的條件性立場（HOF 文章通篇講條件性、唯獨「天生」講成必然）；修法還原條件性（在選了某前提後 X 才以此形式成立）；是 #151 / #94 空降家族的 sibling（必然框架空降 vs 品質 verdict 空降 vs 刪對照空降）、補 compositional-writing 原則三的必然性維度；邊界物理 / 法律 / 數學事實可講必然
+- [#153 Review 漏抓先分 design gap 與 execution gap](review-miss-diagnose-design-vs-execution-gap/) — review 漏抓某類問題有兩成因：design gap（框架沒對應 frame）vs execution gap（框架有 frame、reviewer 沒跑）；修法相反（前者改框架、後者改執行），診斷前先分清否則 framework bloat 或永遠漏同類；「加 keyword」是最誘人的假修法（只解 design gap 偵測 sub-type、對沒跑的輪無效）；case 是 register 類漏抓（兩 gap 都有：跳過輪 9/10 + 輪 9 缺 register lens）；是 #114（design gap 一面向）的上位、#147（execution 側）的一般化、#149（偵測 vs 判定）的成因分層 sibling
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -370,7 +375,21 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 `#130 教材目標先於決策框架` → `#131 教材完整性要用讀者旅程驗證` → `#132 貫穿式案例是服務教材的教學骨架` → `#133 服務頁教材合約` — 先確認服務頁服務的是教材目標，再確認它能放進讀者旅程與 checkout episode；最後用服務頁教材合約檢查教學功能是否完整，章節路線則依服務對象與責任形狀設計。
 
+### 路徑 22：跑字句層 review（正向陳述 / 口語修辭）卻仍漏 catch
+
+`#114 Multi-pass review 的 frame 顆粒度盲點` → `#149 keyword bank 命中是候選、不是判決` → `#94 正向改寫要保留對照論據` → `#111 口語化修辭會稀釋技術精度` → `#147 規範化跟自審是兩種認知任務` → `#148 跨輪 review 停止訊號` — 先用 #114 把規則展開成 keyword bank 解偵測層（別靠記憶 sweep）；再用 #149 處理判定層（grep 命中後別把「建立概念的否定」合理化成「反例對照」放行、用「概念位置」判別）；判定的兩極由 #94（別過度刪對照）跟正向陳述優先（別過度留否定）夾出；#111 給字句層的具體訊號清單；#150 補「register/stance」軸（教材不對讀者喊話、跟 #111 精度軸正交）；#151 補「自評誇飾」（品質 verdict 頂替技術理由、跟 #111 同誇飾大類但評價對象不同）；#152 補「必然性框架」（把設計選擇講成天性、機會成本語氣的必然式 subtype）；#147 提醒「立了規範 / 跑了 grep」不等於判得對；#153 提醒漏抓先分 design gap（改框架）vs execution gap（改執行、別只加 keyword）；最後用 #148 判斷何時停止。
+
 ---
+
+**Last Updated**: 2026-06-01（multi-pass review 失效 WRAP 檢討 retro）— 新增 #153 Review 漏抓先分 design gap 與 execution gap：對 HOF 文章 review 失誤（多輪 review 報 clean、使用者卻 catch 出 register 類問題）做 WRAP Consider the Opposite 檢驗、發現失敗有兩成因 —— execution gap（只跑臨時子集、跳過框架既有的輪 9/10）+ design gap（輪 9 定義聚焦自包含性、缺 register lens、且 register 類無穩定關鍵詞 keyword bank 抓不到）；修法相反（design 改框架、execution 改紀律）、「加 keyword」是只解 design 偵測 sub-type 的假修法；是 #114 的上位（先驗證「問題在框架」這個預設）、#147 的一般化、#149 的成因分層 sibling；觸發 case 是 #150-152 register 卡。下一步據此更新 compositional-writing skill（輪 9 擴 register lens）。
+
+**Last Updated**: 2026-06-01（HOF/typedef 文章必然性框架 retro）— 新增 #152 教材把設計選擇講成選擇、不講成必然或天性：同篇「更新的本質天生就是一個函式」被讀者指出「不會有天生這件事、update 是設計出來的」；WRAP 再分析揭露三層 —— 表層語義場錯置、中層把設計選擇講成必然抹掉能動性、深層牴觸文章自己的條件性論點（通篇講 HOF 條件性、唯獨此句講天生）；本卡是「機會成本語氣 vs 絕對主義」的必然式 subtype（比命令式「應該做 X」更隱形、偽裝成事實躲過 review）、#151 / #94 空降家族 sibling、補 compositional-writing 原則三未 report 化的必然性維度；修法還原條件性（補上游前提）；邊界物理 / 法律 / 數學事實可講必然；路徑 22 補入 #152。
+
+**Last Updated**: 2026-06-01（HOF/typedef 文章自評誇飾 retro）— 新增 #151 教材給技術理由、不替方案下品質評價：同篇「HOF 是教科書級的適配」被讀者指為「像個人檢討、沒有教學會說這是教科書寫法」；自評誇飾（教科書級 / 堪稱經典 / 完美 / 漂亮地）傳遞作者滿意度而非概念、且品質 verdict 會頂替技術理由（寫「X 是教科書級的適配」就少寫「X 為什麼適配」）；本卡跟 #111 同屬誇飾大類但靠評價對象區分（#111 誇張技術屬性、本卡評價方案品質）、是 #150 的 stance sibling、#94 空降斷言在品質維度的變體、違反原則七；建卡正當性來自教學需求（誇飾寫法常見）非本 case 頻率（1 實例）、對應 §3 建卡判準；路徑 22 補入 #151。同步建記憶（教材不自評誇飾）。
+
+**Last Updated**: 2026-06-01（HOF/typedef 文章對讀者喊話 retro）— 新增 #150 教材用中性陳述、不對讀者喊話：同篇 review 連續抓到三種對讀者喊話（安撫「很多人卡在」/ 第二人稱「你天天寫」/ 祈使標題「先讀懂、別搞混」）；共用違反是「把讀者當要管理的對話對象、而非陳述概念」；問題不在精度（「你天天寫的 int count」精度正確、grep 乾淨）、在 register/stance；本卡是 #111（精度軸）的 register sibling、#149（review-process）的 content 對偶、補 AGENTS 原則六（禁貼標籤）沒覆蓋的 stance 維度（禁稱呼 / 指揮）；邊界 hook / narrative 段落輕度第二人稱可留；路徑 22 補入 #150。同步把對讀者喊話三形式併入既有記憶（教材中性陳述）。
+
+**Last Updated**: 2026-06-01（HOF/typedef 文章字句層 review 漏判 retro）— 新增 #149 字句層 review：keyword bank 命中是候選、不是判決：review HOF/typedef 文章時跑了字句層 grep、命中「不是 A 而是 B」卻判成「可接受反例對照」放行、由讀者 catch；另「很多人卡在」訴諸群體贅語連關鍵詞都沒有、bank 結構上抓不到；本卡把失敗從 #114 的偵測層延伸到判定層 —— 偵測（grep 命中）跟判定（這命中是不是違規）是兩個認知步驟、reviewer 容易把命中合理化放行；判定準則用「概念位置」（建立概念的否定改正向、明示反例段落才保留）；是 #114 的判定層 sibling、夾在 #94（別過度刪對照）與正向陳述優先之間；新增路徑 22 給字句層 review 漏 catch 情境。同步把兩條字句層判準寫進記憶（正向陳述 grep 盲點 / 教學文不安撫讀者）。
 
 **Last Updated**: 2026-05-20（3 篇 case-analyses 主體對齊標題承諾 retro）— 新增 #142 文章主體要對齊標題承諾、WRAP 內部分析不該喧賓奪主：#141 修了章節標題暴露 process metadata、但讀者再次 feedback 指出更深問題—即使標題改成教學風格、章節內容仍是 WRAP 內部分析（「供應商為什麼選擇 enterprise 包裝」段佔 30%+ 篇幅）、且為了支撐 prior 引用「a16z、Sequoia 公開報告」這類 hallucinated source；本卡把這個 pattern 從 surface 議題延伸到 scope 議題、加上 source citation 真實性紀律；是 #141 的姊妹卡—#141 處理章節標題、本卡處理章節內容；3 篇 case-analyses Round 4 重寫：移除「為什麼 X」獨立段、把核心動機塞進「事件本身」一兩句 + cross-link、文章主體留給標題承諾的內容。
 
