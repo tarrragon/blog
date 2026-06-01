@@ -35,6 +35,40 @@ controller.update((s) => s.copyWith(fontSize: v));
 
 `update` 的參數不是資料，是「一個函式」。這就是 higher-order function。
 
+### 先讀懂這個簽章的每個部分
+
+很多人卡在「這串到底哪裡是型別、哪裡是名字」。其實它就是一個普通的參數宣告，只是型別換成函式型別。Dart 參數的順序是 **`型別 名字`**：
+
+```dart
+void update(SettingsModel Function(SettingsModel current)  mutate)
+//          └──────────── 型別（函式型別）────────────┘  └名字┘
+```
+
+拿熟悉的對照就懂了：
+
+| 寫法                                                   | 型別                                            | 名字     |
+| ------------------------------------------------------ | ----------------------------------------------- | -------- |
+| `int count`                                            | `int`                                           | `count`  |
+| `Color color`                                          | `Color`                                         | `color`  |
+| `SettingsModel Function(SettingsModel current) mutate` | `SettingsModel Function(SettingsModel current)` | `mutate` |
+
+`mutate` 是**這個參數的名字** — 方法內部靠它指涉傳進來的那個函式：
+
+```dart
+void update(SettingsModel Function(SettingsModel current) mutate) {
+  final SettingsModel next = mutate(value);  // ← 用名字 mutate「呼叫」傳進來的函式
+}
+```
+
+至於型別裡面那個 `current`，和 `mutate` 不同層級，別搞混：
+
+| 識別字    | 是什麼                                     | 有沒有實際作用                                                                                             |
+| --------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `mutate`  | 外層 `update` 的**參數名**                 | 有 — 方法內部靠它呼叫傳入的函式                                                                            |
+| `current` | 函式型別裡，標記「傳入函式那個參數」的名字 | **純文件性** — 寫成 `SettingsModel Function(SettingsModel)` 行為完全一樣，`current` 只是讓型別讀起來更清楚 |
+
+換句話說：前半的函式型別規定「這個名字必須是什麼形狀的函式」，最後的 `mutate` 則是「這個函式參數叫什麼」。下一節先補 HOF 的基礎，第 4 節再回頭談「前半那串型別裸寫在簽章」造成的閱讀摩擦。
+
 ---
 
 ## 2. Higher-order function 是什麼（最小定義）
