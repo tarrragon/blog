@@ -1,6 +1,6 @@
 ---
 name: multi-round-review
-description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
+description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
   version: 1.1.0
@@ -43,6 +43,10 @@ metadata:
     - 地區用語（#112）：`rg "集群|默認|質量|視頻|函數|文件夾|接口" <files>`
     - 廢話前綴：`rg "值得注意的是|需要說明的是|實際上|基本上|事實上" <files>`
     - 裝飾符號：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗" <files>`
+    - 對讀者喊話：`rg "很多人|大家|不少人|你天天|你會|你可能|先讀懂|先釐清|別搞混|別被" <files>` — 教材中性陳述、不安撫 / 不第二人稱 / 不祈使（hook / narrative 輕度第二人稱可留）
+    - 自評誇飾：`rg "教科書級|堪稱|可謂|完美|經典|範本級|大師級|漂亮地|優雅地|最佳實踐|best practice" <files>` — 品質 verdict 頂替技術理由
+    - 必然性框架：`rg "天生|與生俱來|本質就是|本來就是|必然|唯一|註定|理所當然" <files>` — 把設計選擇講成自然法則（物理 / 法律 / 數學事實除外）
+  - **命中是候選、不是判決**：grep 命中後仍要一個語意判定步驟——這個命中是「建立核心概念的違規」（段首 / 小節開場）、還是「合規的反例對照 / hook / 真必然」。reviewer 容易把違規合理化成「可接受對照」放行（偵測成功、判定失敗）；判定用「概念位置」、不用「有沒有對照意味」。回報「字句層 clean」前先確認 clean 不是判定放水。
   - 詳細 grep keyword bank 跟 frame 路由見 [`compositional-writing` skill](../compositional-writing/SKILL.md)。
 - **B: 案例 / fact-check audit** — 案例引用準確性、編號 mis-cite、跨章節引用
 - **C: 跨章一致性 audit** — 編號、學習路線、模組整合、frontmatter 一致
@@ -134,3 +138,4 @@ Round 3 之後是否需要 Round 4？四個停止訊號齊備、停：
 - **同 reviewer 跑多輪**：per #114、同 frame 多輪 catch 高度重複、無增益
 - **跳過 frame 規劃直接派 reviewer**：「再來一輪 audit」沒指定 frame 切換、reviewer 用同方向掃同類問題、是 #114 的具體實例
 - **單跑字面 grep 修法**：修完字面層（編號、broken link）就以為到位、漏掉結構層（cadence）跟同義變體（per #147）
+- **跑臨時子集卻當成跑完整框架**：只派幾個臨時擬的 reviewer frame + 一次 grep、就回報「review 完成 / clean」—— 漏抓後容易誤判成「框架不足」（design gap）而去加 frame / keyword、實際是「沒跑完該跑的輪」（execution gap）。漏抓先分 design gap（改框架）vs execution gap（改執行、別只加 keyword）；register/stance 類（喊話 / 誇飾 / 必然）尤其要靠 reader simulation + external cold-read、不是加 keyword（per compositional-writing 的 multi-pass-review-frame-granularity 原則）
