@@ -80,6 +80,24 @@ void update(SettingsModel Function(SettingsModel current) mutate) {
 }
 ```
 
+### 先釐清：什麼是「函式型別裸寫在簽章」
+
+這是整個討論的起點，值得單獨講清楚。把術語拆三個詞：
+
+- **函式型別**：描述「一個函式長什麼樣」的型別，例如 `SettingsModel Function(SettingsModel current)` — 收一個 `SettingsModel`、回傳一個 `SettingsModel`。
+- **裸寫**：把完整型別**整串攤開寫出來**，沒有先取名包裝（對比「裸數字 / magic number」直接寫 `120` 而非具名常數）。
+- **在簽章**：寫在方法的參數列（signature）裡。
+
+合起來就是：**把那串 `SettingsModel Function(SettingsModel current)` 原封不動塞進參數位，而不是先用 `typedef` 取個名字再引用。**
+
+```dart
+// 裸寫：函式型別整串長在簽章裡
+void update(SettingsModel Function(SettingsModel current) mutate)
+//          └────────── 這一整串就是「裸寫的函式型別」──────────┘
+```
+
+為什麼偏偏是「函式型別」會因為裸寫而卡住，一般型別卻不會？因為 `int`、`Color` 這類型別已經是短名稱，裸寫毫無負擔；而函式型別的完整語法 `X Function(Y)` 較長、巢狀時更難讀，**讀者得當場在腦中解析「這是收什麼、回什麼的函式」**。讀程式碼第一眼卡住的，正是這串裸寫的函式型別 — 它才是這篇要討論「要不要抽 typedef」的真正觸發點。下面的優缺點，都圍繞「裸寫 vs 取名」這個軸展開。
+
 **優點**
 
 - **型別就地可見**：函式的形狀（收什麼、回什麼）直接寫在簽章上，讀者不必跳到別處查定義。
