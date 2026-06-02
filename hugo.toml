@@ -51,8 +51,12 @@ summaryLength = 200  # 摘要字數限制
     name = "標籤"
     url = "/tags/"
     weight = 10
-  
- 
+
+  [[menu.main]]
+    name = "Now"
+    url = "/now/"
+    weight = 15
+
 
 [params]
   # 網站描述
