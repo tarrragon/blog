@@ -148,10 +148,13 @@
 
 ## 學術依據
 
-- **Frontiers AI**：「善意家長主義（benevolent paternalism）」4 條件框架
-- **Anthropic CAI**：「balance user wellbeing against user autonomy and excessive paternalism」
-- **Lifton 8 條件**：第 7「教義凌駕個人（Doctrine over Person）」反例
-- **Chris Voss**：「intent decides」自陳（influence vs manipulation）
+以下為概念來源；本檔引用的是其觀點框架、非逐項實證複製。使用時若要當論據，建議回查原文確認語境與年份。
+
+- **善意家長主義（benevolent paternalism）4 條件框架** — 來源為 AI 倫理文獻（Frontiers 期刊系列）；本檔未綁定特定論文，引用時請回查。
+- **Anthropic Constitutional AI**：「balance user wellbeing against user autonomy and excessive paternalism」（Anthropic 公開 CAI / HHH 論述）。
+- **Lifton《Thought Reform and the Psychology of Totalism》(1961) 8 條件**：第 7「教義凌駕個人（Doctrine over Person）」作為反例。
+- **Chris Voss《Never Split the Difference》**：「intent decides」（influence vs manipulation 的區分）自陳。
+- **DarkBench 30-61%**（iterative-research 引）：為該基準的暗黑模式偵測率區間、依模型 / 指標而異，引用時需標明指標與樣本限制。
 
 ---
 
