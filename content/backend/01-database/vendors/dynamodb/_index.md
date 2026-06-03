@@ -203,26 +203,31 @@ Global Tables 的升級路徑要先處理 conflict 與讀寫語意。它提供 m
 
 ## Deep article（已完成）
 
-本批新增 5 篇 deep article、加上既有的 [consistency-model-optimization](consistency-model-optimization/)、覆蓋 DynamoDB 從 access pattern 反推到 multi-region 寫入的核心 production 議題：
+本 vendor 現有 deep article 覆蓋 DynamoDB 從 access pattern 反推到寫一致性、讀加速、事件驅動與資料生命週期的核心 production 議題：
 
-| 主題                                                            | 文章                                                              | 對應 production 議題                                                           |
-| --------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| 適用度 4 軸前置判讀 + access pattern 反推 PK/SK + durable queue | [single-table-design-pattern](single-table-design-pattern/)       | 適用度判讀 + control plane vs data plane + 9.C15 Tixcraft Stream durable queue |
-| 1000 WCU partition 上限 + composite key / calculated shard 修法 | [partition-key-antipatterns](partition-key-antipatterns/)         | 9.C15 Tixcraft 6750x 擴展、mode × partition 在 provisioned / on-demand 表現    |
-| GSI / LSI projection 三型、sparse、DAX 補位                     | [gsi-lsi-design](gsi-lsi-design/)                                 | GSI 自己會 hot partition、Capcom derive vs Lemino case fact 分層               |
-| 6 軸 capacity mode 決策 + auto-scaling 邊界 + cost crossover    | [on-demand-vs-provisioned](on-demand-vs-provisioned/)             | Zomato 50% 成本下降、Zoom 30x permanent surge、Amazon Ads sustained workload   |
-| Multi-region active-active + LWW conflict + cross-device sync   | [global-tables-conflict](global-tables-conflict/)                 | Genesys 99.999% / 15 region、Disney+ 跨裝置同步                                |
-| Strongly / eventually consistent read 取捨                      | [consistency-model-optimization](consistency-model-optimization/) | 既有：read consistency 成本選擇                                                |
+| 主題                                                               | 文章                                                                | 對應 production 議題                                                           |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 適用度 4 軸前置判讀 + access pattern 反推 PK/SK + durable queue    | [single-table-design-pattern](single-table-design-pattern/)         | 適用度判讀 + control plane vs data plane + 9.C15 Tixcraft Stream durable queue |
+| 1000 WCU partition 上限 + composite key / calculated shard 修法    | [partition-key-antipatterns](partition-key-antipatterns/)           | 9.C15 Tixcraft 6750x 擴展、mode × partition 在 provisioned / on-demand 表現    |
+| GSI / LSI projection 三型、sparse、DAX 補位                        | [gsi-lsi-design](gsi-lsi-design/)                                   | GSI 自己會 hot partition、Capcom derive vs Lemino case fact 分層               |
+| 6 軸 capacity mode 決策 + auto-scaling 邊界 + cost crossover       | [on-demand-vs-provisioned](on-demand-vs-provisioned/)               | Zomato 50% 成本下降、Zoom 30x permanent surge、Amazon Ads sustained workload   |
+| Multi-region active-active + LWW conflict + cross-device sync      | [global-tables-conflict](global-tables-conflict/)                   | Genesys 99.999% / 15 region、Disney+ 跨裝置同步                                |
+| Strongly / eventually consistent read 取捨                         | [consistency-model-optimization](consistency-model-optimization/)   | read consistency 成本選擇                                                      |
+| 跨 item 原子性 + conditional write + optimistic lock + idempotency | [transactions-conditional-writes](transactions-conditional-writes/) | 雙寫不一致、超賣 race、transaction 2x 成本邊界                                 |
+| DAX cluster + item/query cache + write-through + invalidation 邊界 | [dax-caching-strategy](dax-caching-strategy/)                       | 讀峰值 p99 尖刺、query cache 只靠 TTL 失效、strong read 繞過 cache             |
+| Streams CDC + shard 順序 + Lambda 消費 + 失敗處理                  | [streams-lambda-event-driven](streams-lambda-event-driven/)         | 下游即時反應、at-least-once 冪等、毒丸 record 隔離                             |
+| TTL 自動過期 + 48h 刪除延遲 + 過期仍可讀 + storage 成本            | [ttl-data-lifecycle](ttl-data-lifecycle/)                           | 9.C26 PayPay 每日上億訊息 storage 清理、過期未刪 item 讀取陷阱                 |
+
+Migration playbook：[從 RDS / MongoDB 遷移到 DynamoDB](migrate-rds-mongodb-to-dynamodb/)（Type E paradigm shift、access-pattern-first 重建模 + 混合架構 + Zomato cost crossover）。
 
 跨 vendor entry：先看 [DB3 vendor selection](../db3-vendor-selection/)（MongoDB / DynamoDB / Cosmos DB 三方選型 + workload shape 前置判讀），再進本 vendor 的 deep article。
 
 ## 後續擴充（仍待補）
 
-- DAX cache 配置跟 invalidation
-- Stream / Lambda event-driven 模式
-- DynamoDB Transaction 跟 conditional write
-- TTL 自動清理 best practice
-- 從 RDS / MongoDB 遷移到 DynamoDB
+- DynamoDB Streams 進階 lab：Kinesis Data Streams for DynamoDB 多消費者 fan-out 與長 retention 重播（Lambda vs Kinesis 比較層已在 [streams-lambda-event-driven](streams-lambda-event-driven/) 覆蓋、此處指可操作的深度 hands-on lab）
+- Export to S3 / point-in-time export 做離線分析
+- DynamoDB → SQL / search / analytics split（遷出方向 playbook）
+- Backup / PITR restore drill（hands-on lab）
 
 ## 案例對照
 
