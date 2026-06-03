@@ -183,15 +183,19 @@ Spanner 解決的是跨地理位置同時追求 strong consistency、linear scal
 | external consistency / serializability / linearizability 精確定義差異 | [consistency-models-comparison](consistency-models-comparison/)             | PG SSI / CockroachDB / Spanner / Aurora DSQL line-rate scaling 對照、9.C10 cross-region quorum 100-200ms |
 | Schema migration without downtime + interleaved tables 物理 layout    | [schema-migration-interleaved-tables](schema-migration-interleaved-tables/) | TrueTime version timestamp、5 production 踩雷、跟 PostgreSQL online schema change 對照                   |
 | Cloud SQL for PostgreSQL → Spanner（Type E paradigm shift）playbook   | [migrate-from-cloud-sql-pg](migrate-from-cloud-sql-pg/)                     | sizing barrier（100 pu 起跳）+ < 50ms write latency no-go、cost crossover 報告、9.C10 dogfood 邊界       |
+| Change Streams (CDC)：data change record、watch partition、下游整合   | [change-streams-cdc](change-streams-cdc/)                                   | OLTP 變更餵搜尋 / 快取 / 分析、child partition 接力、retention 失敗、跟 DynamoDB Streams 對照            |
+| PostgreSQL dialect vs GoogleSQL、相容子集邊界、dialect 不可逆         | [postgresql-dialect](postgresql-dialect/)                                   | PostgreSQL 生態遷入、相容性 audit、dialect 鎖定的高代價回退、何時選 PG dialect                           |
+| Spanner Graph (2024)：property graph、跟 relational 共存、GQL         | [spanner-graph](spanner-graph/)                                             | 多跳關係查詢、edge table layout 不可逆設計代價、super node 扇出、何時用專用 graph DB                     |
+| Spanner ↔ BigQuery federation：OLTP/OLAP 分工、Data Boost             | [bigquery-federation](bigquery-federation/)                                 | 分析查詢拖垮 OLTP、Data Boost workload 隔離、federation vs change-stream 落地、何時分出去                |
 
 DB4 cross-vendor entry：先看 [CockroachDB / Aurora DSQL / Spanner 決策樹](../cockroachdb/aurora-dsql-spanner-decision-tree/) 識別 driver path、再進本 vendor 深度。
 
 ## 後續擴充（仍待補）
 
-- Change streams（CDC）
-- Spanner PostgreSQL dialect deep dive
-- Spanner Graph（2024）
-- 跟 BigQuery 整合（OLTP / OLAP [federation](/backend/knowledge-cards/federation/)）
+- Spanner Graph 進階查詢 lab（GQL pattern、super node 處理、遍歷效能調校）
+- Data Boost 容量規劃與成本模型 deep dive
+- Change Streams → Dataflow hands-on lab（建 stream、部署 pipeline、驗證 end-to-end）
+- Spanner regional → multi-region topology 升級 playbook
 
 ## Anti-recommendation 與升級路由
 

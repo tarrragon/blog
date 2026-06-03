@@ -213,15 +213,30 @@ Cosmos DB 跟其他 DB 最大差異是 *multi-model*。一個服務同時支援 
 | MongoDB API vs SQL API：三型遷移、dogfood、multi-model、跨雲 hedging | [mongodb-api-vs-sql-api](mongodb-api-vs-sql-api/)                 | Microsoft 365 dogfood 邊界、document model 遷移三型 SSoT                                    |
 | Multi-region active-active + LWW / custom merge / Strong 互斥        | [multi-region-write-conflict](multi-region-write-conflict/)       | Strong + multi-region 互斥的 AP 取捨 SSoT、廣告 SLA vs 實測可用性鏈路                       |
 
+第二批 deep article 把 Cosmos DB 從核心容量 / 一致性議題推進到 server-side 邏輯、CDC、不同產品釐清與 OLTP / OLAP federation：
+
+| 主題                                                                                           | 文章                                                  | 對應 production 議題                                                               |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Change Feed (CDC)：persistent change log、Azure Functions trigger                              | [change-feed-cdc](change-feed-cdc/)                   | latest-version vs all-versions-and-deletes、lease container、DynamoDB Streams 對照 |
+| Stored procedure / trigger（JavaScript）：partition-scoped 交易                                | [stored-procedure-trigger](stored-procedure-trigger/) | single-partition atomicity、bounded execution、多數邏輯應在 application 層         |
+| Cosmos DB for PostgreSQL（Citus-based 分散式 PG、不同產品）                                    | [cosmos-for-postgresql](cosmos-for-postgresql/)       | 定位釐清、distribution column、何時選它而非核心 Cosmos / single-node PG            |
+| Cosmos DB ↔ Azure Synapse Link：OLTP / OLAP [federation](/backend/knowledge-cards/federation/) | [synapse-link-federation](synapse-link-federation/)   | analytical store、HTAP、RU 隔離、何時 federate 到專用 OLAP                         |
+
+Migration playbook：
+
+| 主題                                  | 文章                                                              | 對應遷移議題                                                                                                |
+| ------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 從 MongoDB / Cassandra 遷入 Cosmos DB | [migrate-from-mongodb-cassandra](migrate-from-mongodb-cassandra/) | protocol-compat API drop-in（Type B）vs native API paradigm shift（Type E）、相容性邊界、dual-write cutover |
+
 跨 vendor entry：先看 [DB3 vendor selection](../db3-vendor-selection/)（MongoDB / DynamoDB / Cosmos DB 三方選型 + workload shape 前置判讀），再進本 vendor 的 deep article。
 
 ## 後續擴充（仍待補）
 
-- Change Feed（CDC）整合
-- Stored procedure / trigger（JavaScript）
-- 從 MongoDB / Cassandra 遷到 Cosmos DB
-- Cosmos DB for PostgreSQL（2022 新增、不同產品）
-- 跟 Azure Synapse Link 整合（OLTP / OLAP [federation](/backend/knowledge-cards/federation/)）
+- Hierarchical partition key 與 partition split / merge 運維
+- Autoscale vs serverless 的成本切換決策樹
+- Hands-on lab 入口（對齊 PostgreSQL / MySQL / SQLite hands-on 形態）
+- Backup / PITR 與 continuous backup tier 選擇
+- Gremlin / Table API 的適用邊界與遷入
 
 ## Anti-recommendation 與升級路由
 
