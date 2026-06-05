@@ -357,7 +357,7 @@ def check_path():
 ### 常見錯誤模式
 
 ```python
-# ❌ 錯誤：全域狀態未加鎖保護
+# 錯誤：全域狀態未加鎖保護
 cache = {}
 
 def get_cached(key):
@@ -365,7 +365,7 @@ def get_cached(key):
         cache[key] = expensive_compute(key)  # 競爭條件！
     return cache[key]
 
-# ✅ 正確：使用 Lock 保護
+# 正確：使用 Lock 保護
 import threading
 
 cache = {}
@@ -379,14 +379,14 @@ def get_cached_safe(key):
 ```
 
 ```python
-# ❌ 錯誤：依賴內建型別的「隱式」執行緒安全
+# 錯誤：依賴內建型別的「隱式」執行緒安全
 results = []
 
 def worker(n):
     result = compute(n)
     results.append(result)  # 在 free-threaded 中可能不安全
 
-# ✅ 正確：返回結果，由主執行緒收集
+# 正確：返回結果，由主執行緒收集
 def worker_safe(n):
     return compute(n)
 

@@ -664,7 +664,7 @@ for e in errors:
 ### 決策清單
 
 ```text
-✅ 應該使用 Rust：
+應該使用 Rust：
 
 1. 效能瓶頸明確
    □ profiler 顯示特定函式占用大量時間
@@ -685,7 +685,7 @@ for e in errors:
    □ 需要支援多個作業系統
    □ 需要支援多個 Python 版本
 
-❌ 可能不需要 Rust：
+可能不需要 Rust：
 
 1. 效能不是主要瓶頸
 2. 團隊沒有 Rust 經驗且時間緊迫

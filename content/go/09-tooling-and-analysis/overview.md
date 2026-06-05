@@ -89,10 +89,10 @@ func main() {
 
 | 情境                                      | 偏好 Go | 偏好其他                             |
 | ----------------------------------------- | ------- | ------------------------------------ |
-| 單一 binary 跨平台分發                    | ✓       | shell / Python 要求受眾處理執行環境  |
-| 大量檔案 I/O + 併發加速                   | ✓       | shell 慢、Python GIL 是 CPU 瓶頸     |
-| Parse 複雜格式（markdown、AST、protobuf） | ✓       | shell 寫起來會變成 awk/sed 煉金術    |
-| 整合 Go 生態（goldmark、go/ast、x/tools） | ✓       | 跨語言整合成本（FFI、serialization） |
+| 單一 binary 跨平台分發                    | 是      | shell / Python 要求受眾處理執行環境  |
+| 大量檔案 I/O + 併發加速                   | 是      | shell 慢、Python GIL 是 CPU 瓶頸     |
+| Parse 複雜格式（markdown、AST、protobuf） | 是      | shell 寫起來會變成 awk/sed 煉金術    |
+| 整合 Go 生態（goldmark、go/ast、x/tools） | 是      | 跨語言整合成本（FFI、serialization） |
 | 一次性 one-liner（grep、sed 可解）        |         | shell                                |
 | 要用 ML / 資料科學套件                    |         | Python（PyTorch、pandas）            |
 | 快速 prototype、throw-away 腳本           |         | Python（動筆 3 倍快）                |

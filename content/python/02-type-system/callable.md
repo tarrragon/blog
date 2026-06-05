@@ -28,8 +28,8 @@ from typing import Callable
 def apply(operation: Callable[[int], int], value: int) -> int:
     return operation(value)
 
-apply(lambda x: x * 2, 10)  # ✓ 型別檢查通過
-apply("not callable", 10)   # ✗ IDE / mypy 立即標紅
+apply(lambda x: x * 2, 10)  # 型別檢查通過
+apply("not callable", 10)   # IDE / mypy 立即標紅
 ```
 
 讀者看簽名就知道：`operation` 必須接受一個 `int`、回傳一個 `int`。
@@ -207,8 +207,8 @@ def log_calls(func: Callable[P, R]) -> Callable[P, R]:
 def greet(name: str, greeting: str = "Hi") -> str:
     return f"{greeting}, {name}"
 
-greet("Ada")           # ✓ 保留原本簽名
-greet(123)             # ✗ mypy 偵測：name 應該是 str
+greet("Ada")           # 保留原本簽名
+greet(123)             # mypy 偵測：name 應該是 str
 ```
 
 裝飾後的 `greet` 仍然具有 `(name: str, greeting: str = "Hi") -> str` 的精確簽名。沒有 `ParamSpec`，decorator 會把一切磨成 `Callable[..., object]`。
@@ -244,7 +244,7 @@ class Logger:
         print(msg)
 
 # 直接傳 Logger 的 log method（綁定方法）
-cb: Callable[[str], None] = Logger().log  # ✓
+cb: Callable[[str], None] = Logger().log  # 正確用法
 
 # 直接傳 unbound class method（需要 self）
 cb: Callable[[Logger, str], None] = Logger.log  # 另一種簽名
@@ -255,7 +255,7 @@ Bound method（實例呼叫的）已經把 `self` 隱藏起來，型別從簽名
 ### lambda 的型別推斷有限
 
 ```python
-handler: Callable[[int], str] = lambda x: f"got {x}"  # ✓
+handler: Callable[[int], str] = lambda x: f"got {x}"  # 正確用法
 handler = lambda x: f"got {x}"                          # lambda 參數型別推斷為 Any
 ```
 

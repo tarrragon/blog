@@ -5,16 +5,15 @@ description: "基於 Hook 系統的 asyncio 實戰案例"
 weight: 10
 ---
 
-
 本系列案例基於 `.claude/lib` 的實際程式碼，展示如何用 asyncio 解決實際問題。
 
 ## 案例列表
 
-| 案例                                                                            | 素材         | 進階技術                       | 難度   |
-| ------------------------------------------------------------------------------- | ------------ | ------------------------------ | ------ |
-| [非同步 subprocess](/python-advanced/01-asyncio/case-studies/async-subprocess/) | git_utils.py | asyncio.create_subprocess_exec | ⭐⭐   |
-| [並行 I/O 操作](/python-advanced/01-asyncio/case-studies/parallel-io/)          | git_utils.py | asyncio.gather, TaskGroup      | ⭐⭐   |
-| [同步/非同步橋接](/python-advanced/01-asyncio/case-studies/sync-async-bridge/)  | 整個 lib     | run_in_executor                | ⭐⭐⭐ |
+| 案例                                                                            | 素材         | 進階技術                       | 難度 |
+| ------------------------------------------------------------------------------- | ------------ | ------------------------------ | ---- |
+| [非同步 subprocess](/python-advanced/01-asyncio/case-studies/async-subprocess/) | git_utils.py | asyncio.create_subprocess_exec | 中階 |
+| [並行 I/O 操作](/python-advanced/01-asyncio/case-studies/parallel-io/)          | git_utils.py | asyncio.gather, TaskGroup      | 中階 |
+| [同步/非同步橋接](/python-advanced/01-asyncio/case-studies/sync-async-bridge/)  | 整個 lib     | run_in_executor                | 高階 |
 
 ## 學習路徑
 

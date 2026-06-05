@@ -5,7 +5,6 @@ description: "結合泛型、異常、上下文、插件建立完整系統"
 weight: 5
 ---
 
-
 本章透過兩個完整案例，展示如何將前四章的設計模式結合應用。每個案例都會說明各模式的協作關係。
 
 ## 先備知識
@@ -800,9 +799,9 @@ results = scheduler.run()
 # 檢查結果
 for task_id, result in results.items():
     if result.success:
-        print(f"✓ {task_id}: {result.value} ({result.duration:.3f}s)")
+        print(f"[OK] {task_id}: {result.value} ({result.duration:.3f}s)")
     else:
-        print(f"✗ {task_id}: {result.error}")
+        print(f"[FAIL] {task_id}: {result.error}")
 ```
 
 ## 模式協作關係圖

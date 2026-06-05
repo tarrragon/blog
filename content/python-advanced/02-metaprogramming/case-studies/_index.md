@@ -5,16 +5,15 @@ description: "基於 Hook 系統的元編程實戰案例"
 weight: 10
 ---
 
-
 本系列案例基於 `.claude/lib` 的實際程式碼，展示如何用元編程技術解決實際問題。
 
 ## 案例列表
 
-| 案例                                                                                    | 素材              | 進階技術               | 難度   |
-| --------------------------------------------------------------------------------------- | ----------------- | ---------------------- | ------ |
-| [宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    | ⭐⭐   |
-| [自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)     | hook_validator.py | Metaclass              | ⭐⭐⭐ |
-| [類似 Django Field](/python-advanced/02-metaprogramming/case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass | ⭐⭐⭐ |
+| 案例                                                                                    | 素材              | 進階技術               | 難度 |
+| --------------------------------------------------------------------------------------- | ----------------- | ---------------------- | ---- |
+| [宣告式驗證](/python-advanced/02-metaprogramming/case-studies/declarative-validation/)  | hook_validator.py | Descriptor Protocol    | 中階 |
+| [自動註冊機制](/python-advanced/02-metaprogramming/case-studies/auto-registration/)     | hook_validator.py | Metaclass              | 高階 |
+| [類似 Django Field](/python-advanced/02-metaprogramming/case-studies/field-descriptor/) | hook_io.py        | Descriptor + dataclass | 高階 |
 
 ## 學習路徑
 

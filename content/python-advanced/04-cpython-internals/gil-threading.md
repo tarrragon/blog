@@ -5,7 +5,6 @@ description: "深入理解 GIL 的設計與實現"
 weight: 4
 ---
 
-
 GIL（Global Interpreter Lock）是 CPython 中最具爭議的設計之一。本章深入探討 GIL 的歷史、實現，以及 Python 3.13+ Free-threading 的技術細節。
 
 ## 先備知識
@@ -306,7 +305,7 @@ is_free_threaded = check_environment()
 ```python
 import threading
 
-# ❌ 不安全：共享可變狀態
+# 不安全：共享可變狀態
 counter = 0
 
 def unsafe_increment():
@@ -314,7 +313,7 @@ def unsafe_increment():
     for _ in range(100000):
         counter += 1  # 競爭條件！
 
-# ✅ 安全：使用鎖
+# 安全：使用鎖
 counter = 0
 lock = threading.Lock()
 
@@ -324,7 +323,7 @@ def safe_increment():
         with lock:
             counter += 1
 
-# ✅ 更好：使用原子操作或不可變資料
+# 更好：使用原子操作或不可變資料
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
@@ -387,10 +386,10 @@ def compute(data):
 
 | 任務類型   | threading (有 GIL) | threading (Free) | multiprocessing |
 | ---------- | ------------------ | ---------------- | --------------- |
-| I/O 密集   | ✅ 好              | ✅ 好            | ⚠️ 過重          |
-| CPU 密集   | ❌ 無效            | ✅ 好            | ✅ 好           |
-| 記憶體共享 | ✅ 簡單            | ✅ 簡單          | ❌ 複雜         |
-| 啟動成本   | ✅ 低              | ✅ 低            | ❌ 高           |
+| I/O 密集   | 好                 | 好               | 過重            |
+| CPU 密集   | 無效               | 好               | 好              |
+| 記憶體共享 | 簡單               | 簡單             | 複雜            |
+| 啟動成本   | 低                 | 低               | 高              |
 
 ---
 
@@ -412,10 +411,10 @@ Python 3.15/3.16:   可能成為預設
 # pip index versions package-name
 
 # 主要框架的支援狀態（2025年底）
-# NumPy 2.1+:       ✅ 支援
-# pandas 2.2+:      ✅ 支援
-# scikit-learn 1.6+: ✅ 支援
-# PyTorch 2.6+:     ✅ 支援
+# NumPy 2.1+:       支援
+# pandas 2.2+:      支援
+# scikit-learn 1.6+: 支援
+# PyTorch 2.6+:     支援
 ```
 
 ---
