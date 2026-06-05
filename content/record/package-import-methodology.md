@@ -41,11 +41,11 @@ tags: ["方法論", "程式碼品質", "架構設計", "跨語言開發", "AI協
 每個導入都必須清楚表達來源的架構位置：
 
 ```dart
-// ✅ 正確：清楚表達架構層級
+// 正例：清楚表達架構層級
 import 'package:book_overview_app/domains/library/entities/book.dart';
 import 'package:book_overview_app/core/errors/standard_error.dart';
 
-// ❌ 錯誤：隱藏架構關係
+// 反例：隱藏架構關係
 import '../entities/book.dart';
 import '../../../core/errors/standard_error.dart';
 ```
@@ -78,7 +78,7 @@ import { StandardError } from '@app/core/errors/standard-error';
 #### 錯誤的別名解決方案
 
 ```dart
-// ❌ 錯誤：使用別名掩蓋設計問題
+// 反例：使用別名掩蓋設計問題
 import 'package:app/domains/library/entities/book.dart' as LibBook;
 import 'package:app/domains/search/entities/book.dart' as SearchBook;
 
@@ -90,7 +90,7 @@ SearchBook.Book searchResult = SearchBook.Book();
 #### 正確的重構解決方案
 
 ```dart
-// ✅ 正確：重構命名，消除重名衝突
+// 正例：重構命名，消除重名衝突
 import 'package:app/domains/library/entities/book.dart';
 import 'package:app/domains/search/entities/search_result.dart';
 

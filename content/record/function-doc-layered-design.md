@@ -209,7 +209,7 @@ void removeFromLocalCart(CartItem item);
 ### 該寫的：實作特有的 invariant、workaround、tradeoff
 
 ```dart
-// ✅ 實作特有的 invariant
+// 該寫：實作特有的 invariant
 @override
 void increaseItemQuantity(CartItem item) {
   // 順序關鍵：先 set lastChangedItem 再動 list，
@@ -218,13 +218,13 @@ void increaseItemQuantity(CartItem item) {
   localCartItems[index] = ...;
 }
 
-// ✅ bug workaround
+// 該寫：bug workaround
 // Workaround for SQLite issue #1234: integer overflow on 32-bit Android,
 // 拆成兩步 query 避開
 final ids = await db.rawQuery('SELECT id FROM ...');
 return await db.query('items', where: 'id IN (${ids.join(",")})');
 
-// ✅ 性能 tradeoff
+// 該寫：性能 tradeoff
 // 用 LinkedHashMap 而非普通 Map：插入 1k 次後查詢效能差 3-5 倍
 final cache = LinkedHashMap<String, Item>();
 ```
@@ -236,7 +236,7 @@ final cache = LinkedHashMap<String, Item>();
 實作 doc 的職責跟介面 doc 互補——契約描述歸介面層、實作層只補「該實作的特殊性」。同一條契約規則寫第二次（在實作層複述介面已寫的承諾）會破壞「契約只寫一次」原則：規則改的時候要同步兩處、少改一處就出現自相矛盾的文件、讀者看到也分不清以哪份為準。
 
 ```dart
-// ❌ 介面 doc 已寫的規則，實作不再重複
+// 不該寫：介面 doc 已寫的規則，實作不再重複
 @override
 // 移除不視為「最後變更」，不更新 lastChangedItem
 void removeFromLocalCart(CartItem item) {

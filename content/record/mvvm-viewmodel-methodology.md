@@ -12,7 +12,7 @@ tags: ["AI協作心得","ViewModel","方法論"]
 
 為了提升AI開發前端的穩定性，我想依賴MVVM確實定義前端的狀態跟模型，以及責任分層，這樣可以降低除錯的複雜度
 
-## 📚 核心概念
+## 核心概念
 
 ### ViewModel 定位
 
@@ -52,7 +52,7 @@ tags: ["AI協作心得","ViewModel","方法論"]
 
 ---
 
-## 🏗 ViewModel 命名規範
+## ViewModel 命名規範
 
 ### 命名格式
 
@@ -84,9 +84,9 @@ lib/presentation/
 
 ---
 
-## 📋 ViewModel 職責定義
+## ViewModel 職責定義
 
-### ✅ 包含的職責
+### 包含的職責
 
 #### 1. Domain → UI 轉換
 
@@ -148,19 +148,19 @@ Color get progressColor {
 }
 ```
 
-### ❌ 不包含的內容
+### 不包含的內容
 
 #### 1. Widget 程式碼
 
 ```dart
-// ❌ 錯誤：ViewModel 中包含 Widget
+// 反例：ViewModel 中包含 Widget
 class EnrichmentProgressViewModel {
   Widget buildProgressBar() {  // 違規
     return LinearProgressIndicator(...);
   }
 }
 
-// ✅ 正確：Widget 在 Extension 中
+// 正例：Widget 在 Extension 中
 extension EnrichmentProgressWidgets on Widget {
   Widget enrichmentProgressBar(EnrichmentProgressViewModel vm) {
     return LinearProgressIndicator(
@@ -174,14 +174,14 @@ extension EnrichmentProgressWidgets on Widget {
 #### 2. 直接依賴 Flutter 框架（除 ChangeNotifier）
 
 ```dart
-// ❌ 錯誤：依賴 Flutter Material
+// 反例：依賴 Flutter Material
 import 'package:flutter/material.dart';
 
 class MyViewModel {
   BuildContext? context;  // 違規
 }
 
-// ✅ 正確：使用 Dart 原生類型
+// 正例：使用 Dart 原生類型
 class MyViewModel {
   Color progressColor;  // 可以使用 Color（來自 dart:ui）
   IconData statusIcon;  // 可以使用 IconData
@@ -191,7 +191,7 @@ class MyViewModel {
 #### 3. 業務邏輯
 
 ```dart
-// ❌ 錯誤：在 ViewModel 中執行業務邏輯
+// 反例：在 ViewModel 中執行業務邏輯
 class EnrichmentProgressViewModel {
   Future<void> enrichBook(Book book) {
     // 呼叫 API、驗證資料、儲存到資料庫
@@ -199,7 +199,7 @@ class EnrichmentProgressViewModel {
   }
 }
 
-// ✅ 正確：業務邏輯在 Domain Service
+// 正例：業務邏輯在 Domain Service
 class IBookInfoEnrichmentService {
   Future<EnrichedBookInfo> enrichBookInfo(Book book);
 }
@@ -213,7 +213,7 @@ class EnrichmentProgressViewModel {
 
 ---
 
-## 🔧 ViewModel 結構範本
+## ViewModel 結構範本
 
 ### 基本結構
 
@@ -422,7 +422,7 @@ class BookSummary {
 
 ---
 
-## 🔄 Mapper 模式
+## Mapper 模式
 
 ### Mapper 職責
 
@@ -504,7 +504,7 @@ class EnrichmentProgressMapper {
 
 ---
 
-## 🔌 Provider 整合模式
+## Provider 整合模式
 
 ### StreamProvider 整合
 
@@ -611,7 +611,7 @@ final libraryDisplayViewModelProvider =
 
 ---
 
-## 🧪 Widget 使用方式
+## Widget 使用方式
 
 ### StreamProvider 使用
 
@@ -697,7 +697,7 @@ class LibraryDisplayPage extends ConsumerWidget {
 
 ---
 
-## ✅ 測試要求
+## 測試要求
 
 ### 單元測試覆蓋率
 
@@ -861,7 +861,7 @@ void main() {
 
 ---
 
-## 📊 ViewModel 開發檢查清單
+## ViewModel 開發檢查清單
 
 ### Phase 1: 設計階段
 
@@ -896,17 +896,17 @@ void main() {
 
 ---
 
-## 🚨 常見問題和最佳實踐
+## 常見問題和最佳實踐
 
 ### Q1: ViewModel 可以包含 StatefulWidget 的狀態嗎？
 
 **A**: 不可以。ViewModel 應該是純資料模型，不包含 Widget 生命週期邏輯。
 
 ```dart
-// ❌ 錯誤
+// 反例
 class MyViewModel extends StatefulWidget { }
 
-// ✅ 正確
+// 正例
 class MyViewModel {
   final MyDomainModel domainModel;
   // 純資料模型
@@ -918,7 +918,7 @@ class MyViewModel {
 **A**: 使用 Notifier 管理狀態，定義 State 類別。
 
 ```dart
-// ✅ 正確
+// 正例
 class MyState {
   final DisplayMode mode;
   final List<Item> items;
@@ -935,13 +935,13 @@ class MyViewModel extends Notifier<MyState> { }
 **A**: 可以，但建議透過 Provider 整合而非直接呼叫。
 
 ```dart
-// ✅ 推薦：透過 Provider 整合
+// 推薦：透過 Provider 整合
 final myViewModelProvider = Provider((ref) {
   final domainData = ref.watch(domainServiceProvider);
   return MyMapper.toViewModel(domainData);
 });
 
-// ⚠️ 可接受但不推薦：直接呼叫
+// 可接受但不推薦：直接呼叫
 class MyViewModel {
   final MyDomainService service;
 

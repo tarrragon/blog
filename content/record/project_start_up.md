@@ -21,11 +21,11 @@ tags: [ "AI協作心得"]
 ```bash
  完成！已建立專案文件管理架構並設定版本為 0.0.1：
 
-  ✅ CHANGELOG.md - 在根目錄，記錄使用者導向的版本更新
-  ✅ docs/todo.md - 開發規劃與進度追蹤
-  ✅ docs/work-logs/ - 資料夾已建立
-  ✅ docs/work-logs/v0.0.1-work-log.md - 詳細記錄開發過程
-  ✅ pubspec.yaml - 版本已更新為 0.0.1+1
+  [完成] CHANGELOG.md - 在根目錄，記錄使用者導向的版本更新
+  [完成] docs/todo.md - 開發規劃與進度追蹤
+  [完成] docs/work-logs/ - 資料夾已建立
+  [完成] docs/work-logs/v0.0.1-work-log.md - 詳細記錄開發過程
+  [完成] pubspec.yaml - 版本已更新為 0.0.1+1
 ```
 
 2.接下來，請閱讀需求文件
@@ -41,13 +41,13 @@ tags: [ "AI協作心得"]
 ```bash
 完成！已建立：
 
-  ✅ 事件驅動架構設計文件 (docs/event-driven-architecture-design.md)
+  [完成] 事件驅動架構設計文件 (docs/event-driven-architecture-design.md)
   - DDD 領域模型（Book、Library、ImportTask、ScanTask）
   - 完整事件流程（符合 MODULE.ACTION.STATE 格式）
   - 四個核心用例的事件流實作
   - 事件優先級設定
 
-  ✅ 第一個失敗的 TDD 測試 (test/domain/book_test.dart)
+  [完成] 第一個失敗的 TDD 測試 (test/domain/book_test.dart)
   - 6 個測試案例涵蓋核心功能
   - 測試如預期失敗（Red Phase）
   - 所有 domain 層程式碼尚未實作
@@ -394,14 +394,14 @@ lib/
 
 ### 完成的核心功能
 
-✅ **專案基礎架構** - 完整的 Flutter 跨平台專案
-✅ **事件驅動架構** - 支援 MODULE.ACTION.STATE 模式
-✅ **狀態管理系統** - Riverpod 3.0.0 完整整合
-✅ **國際化支援** - 中文/英文多語言準備
-✅ **Material 3 設計** - 書籍主題 UI 系統
-✅ **跨平台權限** - Android/iOS/Windows/macOS 設定完成
-✅ **套件相依性** - 所有核心套件整合無衝突
-✅ **文件管理** - CHANGELOG、TODO、工作日誌系統建立
+- **專案基礎架構** - 完整的 Flutter 跨平台專案
+- **事件驅動架構** - 支援 MODULE.ACTION.STATE 模式
+- **狀態管理系統** - Riverpod 3.0.0 完整整合
+- **國際化支援** - 中文/英文多語言準備
+- **Material 3 設計** - 書籍主題 UI 系統
+- **跨平台權限** - Android/iOS/Windows/macOS 設定完成
+- **套件相依性** - 所有核心套件整合無衝突
+- **文件管理** - CHANGELOG、TODO、工作日誌系統建立
 
 ### 技術債務
 
@@ -417,7 +417,7 @@ lib/
 
 ### 專案狀態
 
-- **版本**: v0.0.1 ✅ 基礎架構完成
+- **版本**: v0.0.1，基礎架構完成
 - **架構版本**: α (Alpha) - 核心架構建立完成
 - **開發階段**: 準備進入 TDD 開發
 - **整體進度**: 基礎建設完成 (100%)，準備開始功能開發

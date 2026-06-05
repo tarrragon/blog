@@ -32,10 +32,10 @@ Code Smell 檢查清單是基於層級隔離原則的程式品質檢測工具，
 
 **核心特性**:
 
-- ✅ **不是 Bug**: Code Smell 不會導致程式崩潰或功能錯誤
-- ✅ **設計問題**: 暗示程式架構或設計上的缺陷
-- ✅ **可檢測**: 透過明確的指標可以識別
-- ✅ **可修正**: 透過重構可以消除
+- **不是 Bug**: Code Smell 不會導致程式崩潰或功能錯誤
+- **設計問題**: 暗示程式架構或設計上的缺陷
+- **可檢測**: 透過明確的指標可以識別
+- **可修正**: 透過重構可以消除
 
 **與 Bug 的區別**:
 
@@ -65,17 +65,17 @@ Code Smell（程式異味）:
 
 **傳統問題**:
 
-- ❌ 依賴個人經驗判斷 Code Smell（主觀且不一致）
-- ❌ 問題發現太晚（實作完成後才發現設計缺陷）
-- ❌ 缺少量化標準（難以判斷是否需要重構）
-- ❌ 修正成本高（架構問題需要大規模修改）
+- 依賴個人經驗判斷 Code Smell（主觀且不一致）
+- 問題發現太晚（實作完成後才發現設計缺陷）
+- 缺少量化標準（難以判斷是否需要重構）
+- 修正成本高（架構問題需要大規模修改）
 
 **檢查清單優勢**:
 
-- ✅ **標準化**: 提供統一的檢測標準，避免主觀判斷
-- ✅ **及早發現**: 從 Ticket 設計階段就能發現問題
-- ✅ **量化指標**: 明確的數字標準（如行數、層級跨度）
-- ✅ **降低成本**: 設計階段修正成本遠低於實作後修正
+- **標準化**: 提供統一的檢測標準，避免主觀判斷
+- **及早發現**: 從 Ticket 設計階段就能發現問題
+- **量化指標**: 明確的數字標準（如行數、層級跨度）
+- **降低成本**: 設計階段修正成本遠低於實作後修正
 
 **Ticket 粒度檢測的價值**:
 
@@ -211,7 +211,7 @@ C. Ticket 粒度相關 Code Smells
 ```text
 需求：書籍新增「出版社」欄位
 
-❌ Shotgun Surgery 模式：
+反例 Shotgun Surgery 模式：
 - Layer 1 (UI): BookDetailWidget 新增 publisher Text
 - Layer 2 (Behavior): BookDetailController 新增 publisher 屬性
 - Layer 3 (UseCase): GetBookDetailUseCase 新增 publisher 參數
@@ -223,7 +223,7 @@ C. Ticket 粒度相關 Code Smells
 - 違反單層修改原則
 - 風險：任一層級修改錯誤都會影響整個功能
 
-✅ 正確做法（引入 Facade）：
+正例 正確做法（引入 Facade）：
 - Phase 1 [Layer 5]: Book Entity 新增 publisher 欄位
 - Phase 2 [Layer 3]: BookDetailFacade 更新回傳資料
 - Phase 3 [Layer 2]: Presenter 轉換新增 publisher
@@ -238,7 +238,7 @@ C. Ticket 粒度相關 Code Smells
 **好壞對比程式碼**:
 
 ```dart
-// ❌ Shotgun Surgery：新增欄位需要修改 4 層
+// 反例：Shotgun Surgery：新增欄位需要修改 4 層
 
 // Layer 5 (Domain)
 class Book {
@@ -278,7 +278,7 @@ class BookDetailWidget {
   }
 }
 
-// ✅ 正確：引入 Facade 隔離變更
+// 正例：引入 Facade 隔離變更
 
 // Layer 4 (Domain Interface)
 abstract class IBookDetailFacade {
@@ -346,21 +346,21 @@ class BookDetailWidget {
 **範例說明**:
 
 ```dart
-// ❌ Feature Envy：UI 直接存取 Domain Entity
+// 反例：Feature Envy：UI 直接存取 Domain Entity
 
 import 'package:book_overview_app/domains/library/entities/book.dart';
-// ❌ UI 層不應 import Domain Entity
+// 反例：UI 層不應 import Domain Entity
 
 class BookDetailWidget extends StatelessWidget {
-  final Book book; // ❌ 直接依賴 Domain Entity
+  final Book book; // 反例：直接依賴 Domain Entity
 
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(book.title.value),        // ❌ 存取內部欄位
-        Text(book.isbn.value),         // ❌ 存取內部欄位
-        Text(book.author.name),        // ❌ 存取內部欄位
-        Text(book.isNewRelease() ? '新書' : ''), // ❌ 呼叫 Domain 方法
+        Text(book.title.value),        // 反例：存取內部欄位
+        Text(book.isbn.value),         // 反例：存取內部欄位
+        Text(book.author.name),        // 反例：存取內部欄位
+        Text(book.isNewRelease() ? '新書' : ''), // 反例：呼叫 Domain 方法
       ],
     );
   }
@@ -372,7 +372,7 @@ class BookDetailWidget extends StatelessWidget {
 - UI 呼叫 Domain 業務方法（職責混亂）
 - Domain 修改會影響 UI（高風險）
 
-// ✅ 正確：透過 ViewModel 轉換
+// 正例：透過 ViewModel 轉換
 
 // Layer 2: 定義 ViewModel
 import 'package:book_overview_app/presentation/view_models/book_view_model.dart';
@@ -405,15 +405,15 @@ class BookPresenter {
 
 // Layer 1: UI 使用 ViewModel
 class BookDetailWidget extends StatelessWidget {
-  final BookViewModel viewModel; // ✅ 依賴 ViewModel
+  final BookViewModel viewModel; // 正例：依賴 ViewModel
 
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(viewModel.title),    // ✅ 使用轉換後的資料
-        Text(viewModel.isbn),     // ✅ 使用轉換後的資料
-        Text(viewModel.author),   // ✅ 使用轉換後的資料
-        Text(viewModel.isNew ? '新書' : ''), // ✅ 使用轉換後的狀態
+        Text(viewModel.title),    // 正例：使用轉換後的資料
+        Text(viewModel.isbn),     // 正例：使用轉換後的資料
+        Text(viewModel.author),   // 正例：使用轉換後的資料
+        Text(viewModel.isNew ? '新書' : ''), // 正例：使用轉換後的狀態
       ],
     );
   }
@@ -449,19 +449,19 @@ class BookDetailWidget extends StatelessWidget {
 **範例說明**:
 
 ```dart
-// ❌ Inappropriate Intimacy：Domain 依賴 UseCase
+// 反例：Inappropriate Intimacy：Domain 依賴 UseCase
 
 // Layer 5 (Domain)
 import 'package:book_overview_app/application/use_cases/add_book_to_favorite_use_case.dart';
-// ❌ Domain 不應 import UseCase
+// 反例：Domain 不應 import UseCase
 
 class Book {
   final String id;
   final Title title;
-  final AddBookToFavoriteUseCase favoriteUseCase; // ❌ Domain 依賴 UseCase
+  final AddBookToFavoriteUseCase favoriteUseCase; // 反例：Domain 依賴 UseCase
 
   void addToFavorite() {
-    favoriteUseCase.execute(this.id); // ❌ Domain 不應呼叫 UseCase
+    favoriteUseCase.execute(this.id); // 反例：Domain 不應呼叫 UseCase
   }
 }
 
@@ -471,16 +471,16 @@ class Book {
 - Domain 失去獨立性和可重用性
 - 測試困難（Domain 測試需要 Mock UseCase）
 
-// ✅ 正確：Domain 只定義業務邏輯
+// 正例：Domain 只定義業務邏輯
 
 // Layer 5 (Domain) - 獨立且純淨
 class Book {
   final String id;
   final Title title;
-  bool isFavorited = false; // ✅ 只記錄狀態
+  bool isFavorited = false; // 正例：只記錄狀態
 
   void markAsFavorite() {
-    this.isFavorited = true; // ✅ 只處理業務邏輯
+    this.isFavorited = true; // 正例：只處理業務邏輯
   }
 
   void unmarkFromFavorite() {
@@ -498,7 +498,7 @@ class AddBookToFavoriteUseCase {
     final book = await bookRepository.findById(bookId);
 
     // 2. 執行 Domain 方法
-    book.markAsFavorite(); // ✅ UseCase 呼叫 Domain 方法
+    book.markAsFavorite(); // 正例：UseCase 呼叫 Domain 方法
 
     // 3. 儲存狀態
     await bookRepository.save(book);
@@ -511,7 +511,7 @@ class BookDetailController {
   final AddBookToFavoriteUseCase addToFavoriteUseCase;
 
   void onFavoriteButtonPressed(String bookId) async {
-    await addToFavoriteUseCase.execute(bookId); // ✅ 正確的呼叫方向
+    await addToFavoriteUseCase.execute(bookId); // 正例：呼叫方向
   }
 }
 
@@ -544,13 +544,13 @@ class BookDetailController {
 **範例說明**:
 
 ```dart
-// ❌ Leaky Abstraction：介面洩漏實作細節
+// 反例：Leaky Abstraction：介面洩漏實作細節
 
 // Layer 4 (Domain Interface)
 abstract class IBookRepository {
-  Future<Book> findBySql(String sql);        // ❌ 洩漏 SQL 實作
-  Future<List<Book>> queryWithCursor(Cursor cursor); // ❌ 洩漏資料庫 Cursor
-  Future<void> saveToSqlite(Book book);      // ❌ 洩漏 SQLite 實作
+  Future<Book> findBySql(String sql);        // 反例：洩漏 SQL 實作
+  Future<List<Book>> queryWithCursor(Cursor cursor); // 反例：洩漏資料庫 Cursor
+  Future<void> saveToSqlite(Book book);      // 反例：洩漏 SQLite 實作
 }
 
 問題分析：
@@ -559,15 +559,15 @@ abstract class IBookRepository {
 - 無法更換實作（綁定 SQLite）
 - 違反介面契約原則
 
-// ✅ 正確：抽象介面
+// 正例：抽象介面
 
 // Layer 4 (Domain Interface) - 抽象且純淨
 abstract class IBookRepository {
-  Future<Book> findById(String id);          // ✅ 隱藏實作細節
-  Future<List<Book>> findByAuthor(String author); // ✅ 業務概念
-  Future<List<Book>> findAll();              // ✅ 簡單明確
-  Future<void> save(Book book);              // ✅ 抽象操作
-  Future<void> delete(String id);            // ✅ 抽象操作
+  Future<Book> findById(String id);          // 正例：隱藏實作細節
+  Future<List<Book>> findByAuthor(String author); // 正例：業務概念
+  Future<List<Book>> findAll();              // 正例：簡單明確
+  Future<void> save(Book book);              // 正例：抽象操作
+  Future<void> delete(String id);            // 正例：抽象操作
 }
 
 // Layer 5 (Infrastructure) - 具體實作可替換
@@ -625,7 +625,7 @@ class FirestoreBookRepository implements IBookRepository {
 **範例說明**:
 
 ```dart
-// ❌ Divergent Change：單一 Controller 承擔多個職責
+// 反例：Divergent Change：單一 Controller 承擔多個職責
 
 class BookController {
   // 群組 A：列表頁面邏輯（3 個方法）
@@ -676,7 +676,7 @@ class BookController {
 - 類別名稱過於籠統（BookController）
 - 違反 SRP 原則
 
-// ✅ 正確：拆分為多個單一職責 Controller
+// 正例：拆分為多個單一職責 Controller
 
 // Controller 1：只負責列表
 class BookListController {
@@ -728,7 +728,7 @@ class BookSearchController {
 **範例說明**:
 
 ```dart
-// ❌ Large Class：職責過多（500+ 行）
+// 反例：Large Class：職責過多（500+ 行）
 
 class BookService { // 總行數：500+ 行
   // 新增書籍（20 個方法）
@@ -762,7 +762,7 @@ class BookService { // 總行數：500+ 行
 - 4 種不同職責（新增、查詢、統計、匯出）
 - 違反 SRP 原則
 
-// ✅ 正確：拆分為多個職責明確的 Service
+// 正例：拆分為多個職責明確的 Service
 
 // Service 1：書籍管理（新增、更新、刪除）
 class BookManagementService {
@@ -816,7 +816,7 @@ class BookReportService {
 **範例說明**:
 
 ```dart
-// ❌ Long Method：80 行方法
+// 反例：Long Method：80 行方法
 
 Future<void> processBookOrder(Order order) async {
   // 驗證訂單（20 行）
@@ -882,7 +882,7 @@ Future<void> processBookOrder(Order order) async {
 - 巢狀層級: 3 層（for + if）
 - 難以理解和測試
 
-// ✅ 正確：拆分為多個小方法
+// 正例：拆分為多個小方法
 
 Future<void> processBookOrder(Order order) async {
   _validateOrder(order);              // 步驟 1
@@ -995,7 +995,7 @@ grep -r "^[[:space:]]*//.*{" lib/
 **範例說明**:
 
 ```dart
-// ❌ Dead Code 範例
+// 反例：Dead Code 範例
 
 class BookService {
   // 未使用的方法（dart analyze 會警告）
@@ -1007,7 +1007,7 @@ class BookService {
   void processBook(Book book) {
     return; // 提前返回
 
-    // ❌ 以下程式碼永遠不會執行
+    // 反例：以下程式碼永遠不會執行
     print('處理書籍');
     saveBook(book);
   }
@@ -1022,7 +1022,7 @@ class BookService {
   final String unusedVariable = 'never used';
 }
 
-// ✅ 正確：移除 Dead Code
+// 正例：移除 Dead Code
 
 class BookService {
   // 只保留實際使用的方法
@@ -1064,8 +1064,8 @@ class BookService {
 步驟 1: 計算 Ticket 涉及的檔案數
 步驟 2: 判斷檔案所屬的層級
 步驟 3: 計算跨幾個層級
-  ├─ > 3 層級 → God Ticket ❌
-  └─ 1 層級 → 良好 Ticket ✅
+  ├─ > 3 層級 → God Ticket
+  └─ 1 層級 → 良好 Ticket
 ```
 
 **範例說明**:
@@ -1092,7 +1092,7 @@ Ticket: 新增「書籍評分」完整功能
 - 檔案數: 12 個（> 10 個標準）
 - 層級跨度: 4 層（Layer 1, 2, 3, 5）
 - 預估工時: 24 小時（> 16 小時標準）
-- 判斷: God Ticket ❌
+- 判斷: God Ticket
 
 建議拆分（引用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 5.4 節拆分指引）:
 - Ticket 1 [Layer 5]: Rating Value Object 和 Entity 設計
@@ -1127,15 +1127,15 @@ Ticket 缺少必要的測試、文件或驗收條件。
 
 ```text
 完整 Ticket 必須包含:
-- ✅ Phase 1: 功能設計完成
-- ✅ Phase 2: 測試設計完成（測試檔案存在）
-- ✅ Phase 3: 實作完成（程式碼檔案）
-- ✅ Phase 4: 重構評估完成
+- Phase 1: 功能設計完成
+- Phase 2: 測試設計完成（測試檔案存在）
+- Phase 3: 實作完成（程式碼檔案）
+- Phase 4: 重構評估完成
 
 Incomplete Ticket 特徵:
-- ❌ 缺少測試檔案（Phase 2 未完成）
-- ❌ 缺少驗收條件（Phase 1 設計不完整）
-- ❌ 缺少工作日誌（無法追蹤進度）
+- 缺少測試檔案（Phase 2 未完成）
+- 缺少驗收條件（Phase 1 設計不完整）
+- 缺少工作日誌（無法追蹤進度）
 ```
 
 **檢測流程（Code Review 階段）**:
@@ -1183,7 +1183,7 @@ Ticket 的職責定義不明確，無法判斷屬於哪一層級。
 **範例說明**:
 
 ```text
-❌ 職責模糊 Ticket:
+反例 職責模糊 Ticket:
 標題: 實作書籍詳情頁面
 描述: 實作書籍詳情頁面的所有功能
 驗收: 可以顯示書籍詳情
@@ -1193,7 +1193,7 @@ Ticket 的職責定義不明確，無法判斷屬於哪一層級。
 - 「所有功能」範圍不明確
 - 驗收條件過於籠統
 
-✅ 職責明確 Ticket:
+正例 職責明確 Ticket:
 標題: [Layer 2] 實作書籍詳情頁面事件處理
 描述: 實作 BookDetailController 的事件處理方法，
       整合 GetBookDetailUseCase 並轉換為 ViewModel
@@ -1297,9 +1297,9 @@ Shotgun Surgery（散彈槍手術）:
 步驟 1: 列出 Ticket 涉及的所有檔案
 步驟 2: 使用[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 2.4 節的決策樹判斷每個檔案屬於哪一層
 步驟 3: 統計跨幾個層級
-  ├─ 1 層級 → 良好設計 ✅
-  ├─ 2 層級 → 需要檢查是否可拆分 ⚠️
-  └─ > 2 層級 → Shotgun Surgery ❌
+  ├─ 1 層級 → 良好設計
+  ├─ 2 層級 → 需要檢查是否可拆分
+  └─ > 2 層級 → Shotgun Surgery
 
 步驟 4: 如果檢測到 Shotgun Surgery
   ├─ 檢查是否為特殊場景（架構遷移、Hotfix）
@@ -1344,8 +1344,8 @@ Feature Envy:
   └─ 是否直接將 Entity 傳給 UI？
 
 步驟 3: 統計內層欄位存取次數
-  ├─ 存取 Entity 內部欄位（如 .value）> 3 次 → Feature Envy ❌
-  └─ 透過 ViewModel 存取 → 良好設計 ✅
+  ├─ 存取 Entity 內部欄位（如 .value）> 3 次 → Feature Envy
+  └─ 透過 ViewModel 存取 → 良好設計
 ```
 
 ---
@@ -1365,22 +1365,22 @@ Feature Envy:
 Layer 1 → Layer 2 → Layer 3 → Layer 4 ← Layer 5
 
 違反依賴方向（Inappropriate Intimacy）:
-- Layer 5 → Layer 3（Domain 依賴 UseCase）❌
-- Layer 5 → Layer 2（Domain 依賴 Controller）❌
-- Layer 3 ← → Layer 5（循環依賴）❌
+- Layer 5 → Layer 3（Domain 依賴 UseCase）
+- Layer 5 → Layer 2（Domain 依賴 Controller）
+- Layer 3 ← → Layer 5（循環依賴）
 ```
 
 **檢測流程**:
 
 ```text
 步驟 1: 檢查 Domain Entity 的 import 語句
-  ├─ 是否 import UseCase？ → ❌
-  ├─ 是否 import Controller？ → ❌
-  └─ 只 import 同層或 Layer 4 介面？ → ✅
+  ├─ 是否 import UseCase？ →
+  ├─ 是否 import Controller？ →
+  └─ 只 import 同層或 Layer 4 介面？ →
 
 步驟 2: 檢查 UseCase 的依賴
-  ├─ 是否依賴 Layer 4 介面？ → ✅
-  └─ 是否依賴 Layer 5 具體類別？ → ❌（應透過介面）
+  ├─ 是否依賴 Layer 4 介面？ →
+  └─ 是否依賴 Layer 5 具體類別？ →（應透過介面）
 
 步驟 3: 使用工具檢測循環依賴
   └─ dart analyze 會報告循環依賴錯誤
@@ -1415,15 +1415,15 @@ Leaky Abstraction:
 ```text
 步驟 1: 檢查 Repository 介面定義
   ├─ 方法名稱是否包含實作關鍵字？
-  │  - findBySql() → ❌ 洩漏 SQL
-  │  - findById() → ✅ 抽象概念
+  │  - findBySql() → 洩漏 SQL
+  │  - findById() → 抽象概念
   │
   └─ 參數類型是否為 Domain 類型？
-     - String sql → ❌ 技術細節
-     - String id → ✅ Domain 概念
+     - String sql → 技術細節
+     - String id → Domain 概念
 
 步驟 2: 檢查 Event 定義
-  └─ 是否包含 UI 特定資料（如 BuildContext）？ → ❌
+  └─ 是否包含 UI 特定資料（如 BuildContext）？ →
 ```
 
 ---
@@ -1459,9 +1459,9 @@ Divergent Change:
   └─ 將方法按職責分組
 
 步驟 2: 統計分組數量
-  ├─ 1 組 → 單一職責 ✅
-  ├─ 2 組 → 考慮拆分 ⚠️
-  └─ > 2 組 → Divergent Change ❌
+  ├─ 1 組 → 單一職責
+  ├─ 2 組 → 考慮拆分
+  └─ > 2 組 → Divergent Change
 
 步驟 3: 檢查歷史修改記錄
   └─ git log --oneline {file}
@@ -1623,9 +1623,9 @@ God Ticket:
 步驟 5: 評估預估工時
 
 判斷:
-  ├─ 符合良好標準 → 可執行 ✅
-  ├─ 符合需要拆分標準 → 建議拆分 ⚠️
-  └─ 符合 God Ticket 標準 → 強制拆分 ❌
+  ├─ 符合良好標準 → 可執行
+  ├─ 符合需要拆分標準 → 建議拆分
+  └─ 符合 God Ticket 標準 → 強制拆分
 ```
 
 ---
@@ -1642,15 +1642,15 @@ God Ticket:
 
 ```text
 完整 Ticket:
-- ✅ Phase 1: 功能設計完成
-- ✅ Phase 2: 測試設計完成（測試檔案存在）
-- ✅ Phase 3: 實作完成（程式碼檔案）
-- ✅ Phase 4: 重構評估完成
+- Phase 1: 功能設計完成
+- Phase 2: 測試設計完成（測試檔案存在）
+- Phase 3: 實作完成（程式碼檔案）
+- Phase 4: 重構評估完成
 
 Incomplete Ticket:
-- ❌ 缺少測試檔案（Phase 2 未完成）
-- ❌ 缺少驗收條件（Phase 1 設計不完整）
-- ❌ 缺少工作日誌（無法追蹤進度）
+- 缺少測試檔案（Phase 2 未完成）
+- 缺少驗收條件（Phase 1 設計不完整）
+- 缺少工作日誌（無法追蹤進度）
 ```
 
 **檢測流程**（Code Review 階段）:
@@ -1696,15 +1696,15 @@ Incomplete Ticket:
 
 ```text
 步驟 1: 檢查 Ticket 標題格式
-  ├─ 符合 [Layer X] 格式？ → ✅
-  └─ 無層級標示？ → ❌
+  ├─ 符合 [Layer X] 格式？ →
+  └─ 無層級標示？ →
 
 步驟 2: 分析 Ticket 描述
   └─ 能否用一句話描述單一層級的職責？
 
 步驟 3: 檢查驗收條件
-  ├─ 所有驗收條件都屬於同一層級？ → ✅
-  └─ 驗收條件跨多層？ → ❌
+  ├─ 所有驗收條件都屬於同一層級？ →
+  └─ 驗收條件跨多層？ →
 ```
 
 ---
@@ -1776,13 +1776,13 @@ Incomplete Ticket:
 **完整範例**:
 
 ```dart
-// ❌ Before: 新增欄位需要修改 4 層
+// 反例：Before: 新增欄位需要修改 4 層
 // Layer 1: UI 新增 Widget
 // Layer 2: Controller 新增屬性
 // Layer 3: UseCase 新增參數
 // Layer 5: Entity 新增欄位
 
-// ✅ After: 引入 BookDetailFacade
+// 正例：After: 引入 BookDetailFacade
 
 // Layer 4: 定義介面
 abstract class IBookDetailFacade {
@@ -1922,9 +1922,9 @@ class BookDetailFacade implements IBookDetailFacade {
 
 | Code Smell             | 影響範圍 | 業務風險 | 累積速度 | 分數 | 優先級 |
 | ---------------------- | -------- | -------- | -------- | ---- | ------ |
-| Inappropriate Intimacy | 4        | 5        | 3        | 26   | 高 ⚠️   |
-| Shotgun Surgery        | 5        | 4        | 2        | 25   | 高 ⚠️   |
-| God Ticket             | 5        | 3        | 3        | 24   | 高 ⚠️   |
+| Inappropriate Intimacy | 4        | 5        | 3        | 26   | 高     |
+| Shotgun Surgery        | 5        | 4        | 2        | 25   | 高     |
+| God Ticket             | 5        | 3        | 3        | 24   | 高     |
 | Feature Envy           | 3        | 3        | 3        | 15   | 中     |
 | Large Class            | 2        | 3        | 4        | 16   | 中     |
 | Long Method            | 1        | 2        | 3        | 8    | 低     |
@@ -2261,21 +2261,21 @@ flutter test --coverage
 #### 違規模式 1: UI 層包含業務邏輯
 
 ```dart
-// ❌ 違規
+// 反例：違規
 class BookDetailWidget {
   Widget build(BuildContext context) {
-    // ❌ 業務規則不應在 UI 層
+    // 反例：業務規則不應在 UI 層
     if (book.publicationDate.year >= 2024) {
       return Text('新書');
     }
 
-    // ❌ 業務計算不應在 UI 層
+    // 反例：業務計算不應在 UI 層
     final discountedPrice = book.price * 0.9;
     return Text('優惠價: $discountedPrice');
   }
 }
 
-// ✅ 正確：業務邏輯在 Domain 層
+// 正例：業務邏輯在 Domain 層
 class Book {
   bool isNewRelease() {
     return publicationDate.year >= 2024;
@@ -2286,7 +2286,7 @@ class Book {
   }
 }
 
-// ✅ UI 使用 ViewModel
+// 正例：UI 使用 ViewModel
 class BookDetailWidget {
   Widget build(BuildContext context) {
     return Column(
@@ -2302,17 +2302,17 @@ class BookDetailWidget {
 #### 違規模式 2: Controller 包含業務規則
 
 ```dart
-// ❌ 違規
+// 反例：違規
 class BookController {
   void validateBook(Book book) {
-    // ❌ 業務規則應在 Domain 層
+    // 反例：業務規則應在 Domain 層
     if (book.isbn.length != 13) {
       throw ValidationException('ISBN 必須是 13 碼');
     }
   }
 }
 
-// ✅ 正確：業務規則在 Domain 層
+// 正例：業務規則在 Domain 層
 class ISBN {
   final String value;
 
@@ -2327,23 +2327,23 @@ class ISBN {
 #### 違規模式 3: UseCase 包含 UI 邏輯
 
 ```dart
-// ❌ 違規
+// 反例：違規
 class GetBookDetailUseCase {
   Future<String> execute(String id) async {
     final book = await repository.findById(id);
-    // ❌ UI 格式化不應在 UseCase
+    // 反例：UI 格式化不應在 UseCase
     return '書名: ${book.title}';
   }
 }
 
-// ✅ 正確：UseCase 回傳 Domain 類型
+// 正例：UseCase 回傳 Domain 類型
 class GetBookDetailUseCase {
   Future<Book> execute(String id) async {
     return await repository.findById(id);
   }
 }
 
-// ✅ Presenter 負責轉換
+// 正例：Presenter 負責轉換
 class BookPresenter {
   static BookViewModel toViewModel(Book book) {
     return BookViewModel(
@@ -2368,8 +2368,7 @@ class BookPresenter {
 
 ---
 
-## 📊 檢測總結
-
+## 檢測總結
 - **高優先級問題**: 1 個
 - **中優先級問題**: 1 個
 - **低優先級問題**: 0 個
@@ -2377,10 +2376,8 @@ class BookPresenter {
 
 ---
 
-## 🚨 高優先級問題
-
-### ❌ Shotgun Surgery 檢測結果
-
+## 高優先級問題
+### Shotgun Surgery 檢測結果
 **檔案清單**:
 - lib/presentation/widgets/book_detail_widget.dart (Layer 1)
 - lib/presentation/controllers/book_detail_controller.dart (Layer 2)
@@ -2390,7 +2387,7 @@ class BookPresenter {
 **分析**:
 - 檔案數: 4 個
 - 層級跨度: 4 層（Layer 1, 2, 3, 5）
-- 判斷: Shotgun Surgery ❌
+- 判斷: Shotgun Surgery
 
 **建議**:
 - 拆分為 4 個獨立 Ticket
@@ -2405,8 +2402,7 @@ class BookPresenter {
 
 ---
 
-## ⚠️ 中優先級問題
-
+## 中優先級問題
 ### 警告 Large Class 檢測結果
 
 **檔案**: `lib/presentation/controllers/book_controller.dart`
@@ -2428,26 +2424,23 @@ class BookPresenter {
 
 ---
 
-## ✅ 無檢測到的 Code Smell
-
-- Long Method ✅
-- Dead Code ✅
-- Feature Envy ✅
-- Inappropriate Intimacy ✅
-- Leaky Abstraction ✅
+## 無檢測到的 Code Smell
+- Long Method
+- Dead Code
+- Feature Envy
+- Inappropriate Intimacy
+- Leaky Abstraction
 
 ---
 
-## 📋 測試覆蓋率
-
+## 測試覆蓋率
 - **覆蓋率**: 98%
 - **未覆蓋檔案**: `book_controller.dart` line 285-290
 - **建議**: 補充測試覆蓋未測試部分
 
 ---
 
-## 🎯 總體建議
-
+## 總體建議
 1. **立即處理**: Shotgun Surgery（高優先級）
    - 拆分 PR 為 4 個獨立 Ticket
    - 每個 Ticket 遵循單層修改原則
@@ -2461,7 +2454,7 @@ class BookPresenter {
 
 ---
 
-**審查結論**: ❌ 建議重構後再合併 PR
+**審查結論**: 建議重構後再合併 PR
 **預估修正時間**: 4 小時
 ```
 
@@ -2795,7 +2788,7 @@ Ticket: 新增「書籍評分」功能
 
 步驟 2: 統計層級跨度
 - 層級: Layer 1, 2, 3, 5（4 層）
-- 判斷: Shotgun Surgery ❌
+- 判斷: Shotgun Surgery
 
 步驟 3: 計算優先級分數
 - 影響範圍: 4 分（6 個檔案，跨 2+ 層）
@@ -2858,10 +2851,10 @@ Ticket 5 [Layer 1]: UI 新增評分元件
 - 風險: 低（單層修改，逐步整合）
 
 改善效果:
-✅ 符合單層修改原則
-✅ 風險可控
-✅ 可並行開發（Layer 5 和 Layer 1 可同時開發）
-✅ 易於測試和驗證
+正例 符合單層修改原則
+正例 風險可控
+正例 可並行開發（Layer 5 和 Layer 1 可同時開發）
+正例 易於測試和驗證
 ```
 
 ---
@@ -2875,14 +2868,14 @@ Ticket 5 [Layer 1]: UI 新增評分元件
 **檢測過程**:
 
 ```dart
-// ❌ 發現的問題程式碼
+// 反例：發現的問題程式碼
 // lib/presentation/widgets/book_detail_widget.dart
 
 import 'package:book_overview_app/domains/library/entities/book.dart';
-// ❌ UI 不應 import Domain Entity
+// 反例：UI 不應 import Domain Entity
 
 class BookDetailWidget extends StatelessWidget {
-  final Book book; // ❌ 直接依賴 Entity
+  final Book book; // 反例：直接依賴 Entity
 
   Widget build(BuildContext context) {
     return Column(
@@ -2898,9 +2891,7 @@ class BookDetailWidget extends StatelessWidget {
 }
 
 // 檢測結果:
-// - 直接依賴 Domain Entity ❌
-// - 存取內部欄位 5 次（> 3 次標準）❌
-// - 判斷: Feature Envy
+// - 直接依賴 Domain Entity// - 存取內部欄位 5 次（> 3 次標準）// - 判斷: Feature Envy
 ```
 
 **重構步驟**:
@@ -2941,12 +2932,12 @@ class BookDetailPresenter {
 // 步驟 3: 重構 UI（Layer 1）
 
 class BookDetailWidget extends StatelessWidget {
-  final BookDetailViewModel viewModel; // ✅ 依賴 ViewModel
+  final BookDetailViewModel viewModel; // 正例：依賴 ViewModel
 
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(viewModel.title),           // ✅ 使用轉換後的資料
+        Text(viewModel.title),           // 正例：使用轉換後的資料
         Text(viewModel.isbn),
         Text(viewModel.author),
         Text(viewModel.publisher),
@@ -2964,7 +2955,7 @@ class BookDetailController {
 
   void loadBookDetail(String id) async {
     final book = await getBookDetailUseCase.execute(id);
-    viewModel = BookDetailPresenter.toViewModel(book); // ✅ 轉換
+    viewModel = BookDetailPresenter.toViewModel(book); // 正例：轉換
     notifyListeners();
   }
 }
@@ -2974,15 +2965,15 @@ class BookDetailController {
 
 ```text
 重構前:
-- UI 直接依賴 Domain Entity ❌
-- 存取內部欄位 5 次 ❌
-- 緊耦合，Domain 修改影響 UI ❌
+- UI 直接依賴 Domain Entity
+- 存取內部欄位 5 次
+- 緊耦合，Domain 修改影響 UI
 
 重構後:
-- UI 依賴 ViewModel ✅
-- Presenter 集中處理轉換 ✅
-- Domain 修改不影響 UI ✅
-- 測試更容易（Mock ViewModel）✅
+- UI 依賴 ViewModel
+- Presenter 集中處理轉換
+- Domain 修改不影響 UI
+- 測試更容易（Mock ViewModel）
 
 測試改善:
 // 重構前：需要 Mock 整個 Domain Entity
@@ -3048,9 +3039,9 @@ Layer 5 (Domain + Infrastructure):
 15. lib/infrastructure/database/bookshelf_book_table.dart
 
 步驟 2: God Ticket 判斷
-- 檔案數: 15 個（> 10 個標準）❌
-- 層級跨度: 4 層 ❌
-- 預估工時: 32 小時（> 16 小時標準）❌
+- 檔案數: 15 個（> 10 個標準）
+- 層級跨度: 4 層
+- 預估工時: 32 小時（> 16 小時標準）
 - 判斷: God Ticket
 
 步驟 3: 計算優先級分數
@@ -3122,10 +3113,10 @@ Ticket 4: 搜尋和排序功能
   - 檔案數: 4 個，預估: 6 小時
 
 選擇策略 1（按層級拆分）的理由:
-✅ 符合從內而外實作順序（[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 4.1 節）
-✅ 每個 Ticket 單層修改
-✅ 可並行開發（Layer 5 和 Layer 1 可同時開發）
-✅ 依賴關係清晰
+正例 符合從內而外實作順序（[層級隔離派工方法論](/record/layered-ticket-methodology/) 第 4.1 節）
+正例 每個 Ticket 單層修改
+正例 可並行開發（Layer 5 和 Layer 1 可同時開發）
+正例 依賴關係清晰
 ```
 
 **效果驗證**:
@@ -3148,10 +3139,10 @@ Ticket 4: 搜尋和排序功能
 - 可並行開發（Ticket 1-2, Ticket 6-7 可並行）
 
 實際改善效果:
-✅ 開發時間縮短 20%（並行開發）
-✅ Bug 數量減少 60%（單層修改，易於測試）
-✅ Code Review 時間縮短 40%（每個 PR 更小）
-✅ 團隊協作效率提升（可分配給不同開發人員）
+正例 開發時間縮短 20%（並行開發）
+正例 Bug 數量減少 60%（單層修改，易於測試）
+正例 Code Review 時間縮短 40%（每個 PR 更小）
+正例 團隊協作效率提升（可分配給不同開發人員）
 ```
 
 ---
@@ -3174,8 +3165,8 @@ grep -c "void\|Future" lib/presentation/controllers/book_controller.dart
 # 輸出: 25
 
 # 分析結果:
-# - 總行數: 450 行（> 300 行標準）❌
-# - public 方法: 25 個（> 15 個標準）❌
+# - 總行數: 450 行（> 300 行標準）
+# - public 方法: 25 個（> 15 個標準）
 # - 判斷: Large Class
 ```
 
@@ -3308,8 +3299,8 @@ class BookSearchScreen extends StatelessWidget {
 - BookDetailController: 110 行，5 個方法
 - BookSearchController: 100 行，4 個方法
 - BookRatingController: 80 行，4 個方法
-- 每個 Controller 單一職責 ✅
-- 每個 Controller 單一變更原因 ✅
+- 每個 Controller 單一職責
+- 每個 Controller 單一變更原因
 - 測試困難度: 低（每個 Controller 獨立測試）
 - 測試檔案: 每個 150-200 行
 
@@ -3335,19 +3326,19 @@ class BookSearchScreen extends StatelessWidget {
 **檢測過程**:
 
 ```dart
-// ❌ 發現的問題程式碼
+// 反例：發現的問題程式碼
 // lib/domain/entities/book.dart
 
 import 'package:book_overview_app/application/use_cases/add_book_to_favorite_use_case.dart';
-// ❌ Domain 不應 import UseCase
+// 反例：Domain 不應 import UseCase
 
 class Book {
   final String id;
   final Title title;
-  final AddBookToFavoriteUseCase favoriteUseCase; // ❌ Domain 依賴 UseCase
+  final AddBookToFavoriteUseCase favoriteUseCase; // 反例：Domain 依賴 UseCase
 
   void addToFavorite() {
-    favoriteUseCase.execute(this.id); // ❌ 呼叫 UseCase
+    favoriteUseCase.execute(this.id); // 反例：呼叫 UseCase
   }
 
   void removeFromFavorite() {
@@ -3356,10 +3347,7 @@ class Book {
 }
 
 // 檢測結果:
-// - Domain 依賴外層（UseCase）❌
-// - 違反依賴方向規則 ❌
-// - Domain 失去獨立性 ❌
-// - 判斷: Inappropriate Intimacy
+// - Domain 依賴外層（UseCase）// - 違反依賴方向規則// - Domain 失去獨立性// - 判斷: Inappropriate Intimacy
 ```
 
 **重構步驟**:
@@ -3367,13 +3355,13 @@ class Book {
 ```dart
 // 步驟 1: 重新設計 Domain（移除外層依賴）
 
-// ✅ 正確的 Domain 設計
+// 正例： Domain 設計
 class Book {
   final String id;
   final Title title;
-  bool isFavorited = false; // ✅ 只記錄狀態
+  bool isFavorited = false; // 正例：只記錄狀態
 
-  // ✅ Domain 只處理業務邏輯
+  // 正例：Domain 只處理業務邏輯
   void markAsFavorite() {
     if (isFavorited) {
       throw AlreadyFavoritedException('書籍已在我的最愛');
@@ -3388,12 +3376,12 @@ class Book {
     isFavorited = false;
   }
 
-  // ✅ Domain 方法完全獨立，無外層依賴
+  // 正例：Domain 方法完全獨立，無外層依賴
 }
 
 // 步驟 2: UseCase 協調業務流程
 
-// ✅ UseCase 負責協調
+// 正例：UseCase 負責協調
 class AddBookToFavoriteUseCase {
   final IBookRepository bookRepository;
   final IFavoriteRepository favoriteRepository;
@@ -3403,7 +3391,7 @@ class AddBookToFavoriteUseCase {
     final book = await bookRepository.findById(bookId);
 
     // 2. 執行 Domain 方法
-    book.markAsFavorite(); // ✅ UseCase 呼叫 Domain
+    book.markAsFavorite(); // 正例：UseCase 呼叫 Domain
 
     // 3. 儲存狀態
     await bookRepository.save(book);
@@ -3421,7 +3409,7 @@ class BookDetailController {
 
   void onFavoriteButtonPressed(String bookId) async {
     try {
-      await addToFavoriteUseCase.execute(bookId); // ✅ 正確的呼叫方向
+      await addToFavoriteUseCase.execute(bookId); // 正例：呼叫方向
       // 更新 UI 狀態
     } catch (e) {
       // 錯誤處理
@@ -3434,13 +3422,13 @@ class BookDetailController {
 
 ```text
 重構前（錯誤的依賴方向）:
-Layer 5 (Domain) → Layer 3 (UseCase) ❌
+Layer 5 (Domain) → Layer 3 (UseCase)
 - Book Entity 依賴 AddBookToFavoriteUseCase
 - 違反依賴倒置原則
 - Domain 失去獨立性和可重用性
 
 重構後（正確的依賴方向）:
-Layer 2 → Layer 3 → Layer 5 ✅
+Layer 2 → Layer 3 → Layer 5
 - Controller → UseCase → Domain
 - 符合依賴倒置原則
 - Domain 獨立且純淨
@@ -3449,30 +3437,30 @@ Layer 2 → Layer 3 → Layer 5 ✅
 重構前:
 Book (Layer 5) ──┐
                  ↓
-AddBookToFavoriteUseCase (Layer 3) ❌ 內層依賴外層
+AddBookToFavoriteUseCase (Layer 3) 內層依賴外層
 
 重構後:
 BookDetailController (Layer 2)
         ↓
 AddBookToFavoriteUseCase (Layer 3)
         ↓
-Book (Layer 5) ✅ 正確的依賴方向
+Book (Layer 5) 正確的依賴方向
 ```
 
 **效果驗證**:
 
 ```text
 重構前:
-- Domain 依賴 UseCase ❌
-- Domain 無法獨立測試 ❌
-- Domain 無法重用 ❌
-- 違反 Clean Architecture ❌
+- Domain 依賴 UseCase
+- Domain 無法獨立測試
+- Domain 無法重用
+- 違反 Clean Architecture
 
 重構後:
-- Domain 完全獨立 ✅
-- Domain 可獨立測試 ✅
-- Domain 可重用（可在不同 UseCase 中使用）✅
-- 符合 Clean Architecture ✅
+- Domain 完全獨立
+- Domain 可獨立測試
+- Domain 可重用（可在不同 UseCase 中使用）
+- 符合 Clean Architecture
 
 測試改善:
 // 重構前：Domain 測試需要 Mock UseCase
@@ -3491,10 +3479,10 @@ test('should mark book as favorite', () {
 });
 
 架構改善:
-✅ Domain 層純淨（無外層依賴）
-✅ 依賴方向正確（外層→內層）
-✅ 可在不同 UseCase 中重用 Domain 邏輯
-✅ 易於測試和維護
+正例 Domain 層純淨（無外層依賴）
+正例 依賴方向正確（外層→內層）
+正例 可在不同 UseCase 中重用 Domain 邏輯
+正例 易於測試和維護
 ```
 
 ---
@@ -3522,7 +3510,7 @@ test('should mark book as favorite', () {
 void calculateTotal(List<Item> items) {
   double total = 0;
   for (var item in items) {
-    total += item.price; // ❌ Bug: 沒有考慮數量
+    total += item.price; // 反例：Bug: 沒有考慮數量
   }
   return total;
 }
@@ -3730,13 +3718,13 @@ Phase 4 重構:
 ```dart
 // 情境：新增「書籍語言」核心欄位
 
-// ❌ 錯誤：直接跨層修改
+// 反例：直接跨層修改
 // - Layer 5: Book Entity 新增 language
 // - Layer 3: GetBookDetailUseCase 處理 language
 // - Layer 2: Controller 新增 language 屬性
 // - Layer 1: UI 顯示 language
 
-// ✅ 正確：使用 Facade 隔離變更
+// 正例：使用 Facade 隔離變更
 // 步驟 1 [Layer 5]: Book Entity 新增 language
 // 步驟 2 [Layer 3]: BookDetailFacade 更新（統一處理）
 //   - Facade 內部整合新欄位
@@ -3759,10 +3747,10 @@ Phase 4 重構:
 
 ```text
 良好大小類別:
-- < 200 行 → 優秀 ✅
-- 200-300 行 → 良好（可接受）✅
-- 300-400 行 → 需要注意（考慮拆分）⚠️
-- > 400 行 → 需要拆分 ❌
+- < 200 行 → 優秀
+- 200-300 行 → 良好（可接受）
+- 300-400 行 → 需要注意（考慮拆分）
+- > 400 行 → 需要拆分
 
 例外情況（可以超過 300 行）:
 
@@ -3785,8 +3773,7 @@ Phase 4 重構:
 class AppConfig {
   // 統一管理所有應用程式配置
   // 職責單一且明確：「應用程式配置管理」
-  // 雖然超過 300 行，但職責清晰 → 可接受 ✅
-
+  // 雖然超過 300 行，但職責清晰 → 可接受
   final String appName = '書籍管理';
   final String apiBaseUrl = 'https://api.example.com';
   // ... 100+ 個配置項
@@ -3796,8 +3783,7 @@ class AppConfig {
 // BookService.dart (280 行)
 class BookService {
   // 職責：書籍管理 + 查詢 + 統計 + 報表
-  // 雖然未超過 300 行，但職責不單一 → 應該拆分 ❌
-
+  // 雖然未超過 300 行，但職責不單一 → 應該拆分
   void addBook() { }
   void searchBooks() { }
   void getStatistics() { }
@@ -3858,9 +3844,9 @@ Sprint 規劃:
    - 優先處理高優先級 Code Smell
 
 3. 平衡指標
-   - 新功能交付速度 ✅
-   - 技術債務控制在可接受範圍 ✅
-   - 測試覆蓋率維持 95%+ ✅
+   - 新功能交付速度
+   - 技術債務控制在可接受範圍
+   - 測試覆蓋率維持 95%+
 ```
 
 ---
@@ -3968,7 +3954,7 @@ Sprint 規劃:
 
 **爭議**: 是否屬於 Large Class？
 
-**團隊決議**: ✅ 可接受
+**團隊決議**: 可接受
 **理由**: 職責單一（應用程式配置管理），雖超過 300 行但不拆分
 
 **標準**: 配置類別可以超過 300 行，但職責必須單一
@@ -3979,7 +3965,7 @@ Sprint 規劃:
 
 **爭議**: 未超過 300 行，是否需要拆分？
 
-**團隊決議**: ❌ 需要拆分
+**團隊決議**: 需要拆分
 **理由**: 雖未超過 300 行，但有 4 種職責（Divergent Change）
 
 **標準**: 判斷依據是「職責是否單一」，不只是「行數」
@@ -4175,10 +4161,10 @@ done
 
 **原則**:
 
-- ✅ 檢測：手寫程式碼
-- ❌ 不檢測：自動生成的程式碼（*.g.dart, *.freezed.dart）
-- ❌ 不檢測：第三方程式碼（dependencies）
-- ❌ 不檢測：測試 Mock 程式碼（*.mocks.dart）
+- 檢測：手寫程式碼
+- 不檢測：自動生成的程式碼（*.g.dart, *.freezed.dart）
+- 不檢測：第三方程式碼（dependencies）
+- 不檢測：測試 Mock 程式碼（*.mocks.dart）
 
 ---
 
@@ -4278,8 +4264,8 @@ genhtml coverage/lcov.info -o coverage/html
   └─ 可能是 Dead Code 或缺少測試
 
 步驟 3: 交叉驗證
-  ├─ dart analyze 有 unused 警告？ → Dead Code ✅
-  └─ dart analyze 無警告？ → 缺少測試 ⚠️
+  ├─ dart analyze 有 unused 警告？ → Dead Code
+  └─ dart analyze 無警告？ → 缺少測試
 
 步驟 4: 採取行動
   ├─ Dead Code → 刪除
@@ -4296,9 +4282,9 @@ genhtml coverage/lcov.info -o coverage/html
   └─ 新增程式碼覆蓋率是否達到 100%？
 
 步驟 3: 判斷
-  ├─ 無測試檔案 → Incomplete Ticket ❌
-  ├─ 覆蓋率 < 100% → Incomplete Ticket ⚠️
-  └─ 覆蓋率 = 100% → 完整 Ticket ✅
+  ├─ 無測試檔案 → Incomplete Ticket
+  ├─ 覆蓋率 < 100% → Incomplete Ticket
+  └─ 覆蓋率 = 100% → 完整 Ticket
 ```
 
 ---

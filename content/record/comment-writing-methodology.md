@@ -169,7 +169,7 @@ ReadingSpeed calculateReadingSpeed(
 UI 層特別容易出現這類問題。以 Widget 選取回饋設計為例，錯誤做法是列出技術細節：
 
 ```dart
-/// ❌ 錯誤：重複描述程式碼內容
+/// 反例：重複描述程式碼內容
 /// BookListItem - 書庫列表項目 Widget
 ///
 /// 視覺設計：

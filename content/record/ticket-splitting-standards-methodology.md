@@ -23,10 +23,10 @@ tags: ["AI協作心得","Ticket","方法論"]
 
 **傳統拆分方法的問題**:
 
-- ❌ **經驗導向**：依賴個人經驗判斷，缺乏客觀標準
-- ❌ **時間估算**：受個人能力和環境影響，難以標準化
-- ❌ **模糊描述**：「不要太大」「保持適中」等描述無法執行
-- ❌ **後驗調整**：任務執行後才發現過大，增加返工成本
+- **經驗導向**：依賴個人經驗判斷，缺乏客觀標準
+- **時間估算**：受個人能力和環境影響，難以標準化
+- **模糊描述**：「不要太大」「保持適中」等描述無法執行
+- **後驗調整**：任務執行後才發現過大，增加返工成本
 
 ---
 
@@ -59,16 +59,16 @@ Ticket 設計派工方法論 (主方法論)
 
 ## 第一章：量化指標體系
 
-### 1.1 指標 1：職責數量（Responsibilities）⭐ 最優先
+### 1.1 指標 1：職責數量（Responsibilities） 最優先
 
 **定義**：Ticket 需要完成的獨立職責數量。
 
 **為什麼職責是第一指標**：
 
-- ✅ **最客觀**：不受個人能力影響
-- ✅ **最穩定**：不受環境和參考資料影響
-- ✅ **最易溝通**：PM 和工程師都能理解
-- ✅ **最精確**：直接對應業務需求
+- **最客觀**：不受個人能力影響
+- **最穩定**：不受環境和參考資料影響
+- **最易溝通**：PM 和工程師都能理解
+- **最精確**：直接對應業務需求
 
 #### 職責的精確定義
 
@@ -100,18 +100,18 @@ Ticket 設計派工方法論 (主方法論)
 
 #### 職責數量標準
 
-| 等級            | 職責數量 | 判定      | 說明                   |
-| --------------- | -------- | --------- | ---------------------- |
-| **簡單 Ticket** | 1 個     | ✅ 理想   | 單一職責，最易管理     |
-| **中等 Ticket** | 2-3 個   | ✅ 可接受 | 少數相關職責，可控範圍 |
-| **複雜 Ticket** | 3-5 個   | ⚠️ 需檢查  | 多職責，建議拆分       |
-| **必須拆分**    | > 5 個   | ❌ 禁止   | 範圍失控，必須拆分     |
+| 等級            | 職責數量 | 判定   | 說明                   |
+| --------------- | -------- | ------ | ---------------------- |
+| **簡單 Ticket** | 1 個     | 理想   | 單一職責，最易管理     |
+| **中等 Ticket** | 2-3 個   | 可接受 | 少數相關職責，可控範圍 |
+| **複雜 Ticket** | 3-5 個   | 需檢查 | 多職責，建議拆分       |
+| **必須拆分**    | > 5 個   | 禁止   | 範圍失控，必須拆分     |
 
 **強制規則**：
 
-- ⚠️ **超過 5 個職責 = 必須拆分**，無例外
-- ⚠️ **3-5 個職責 = 評估是否可拆分**，優先拆分
-- ✅ **1-2 個職責 = 理想狀態**，鼓勵維持
+- **超過 5 個職責 = 必須拆分**，無例外
+- **3-5 個職責 = 評估是否可拆分**，優先拆分
+- **1-2 個職責 = 理想狀態**，鼓勵維持
 
 #### 職責識別實例
 
@@ -121,10 +121,10 @@ Ticket 設計派工方法論 (主方法論)
 任務：定義 SelectionManager 介面方法簽名
 
 職責分析：
-✅ 職責 1：定義 toggleSelection、clearSelection、getSelectedIds 三個方法簽名
+職責 1：定義 toggleSelection、clearSelection、getSelectedIds 三個方法簽名
 
 總計：1 個職責
-判定：簡單 Ticket ✅
+判定：簡單 Ticket
 ```
 
 **實例 2：中等 Ticket（2-3 職責）**
@@ -133,12 +133,12 @@ Ticket 設計派工方法論 (主方法論)
 任務：實作 SelectionManager 基礎功能
 
 職責分析：
-✅ 職責 1：實作 toggleSelection 方法
-✅ 職責 2：實作 clearSelection 方法
-✅ 職責 3：實作 ChangeNotifier 通知機制
+職責 1：實作 toggleSelection 方法
+職責 2：實作 clearSelection 方法
+職責 3：實作 ChangeNotifier 通知機制
 
 總計：3 個職責
-判定：中等 Ticket ✅（可接受）
+判定：中等 Ticket（可接受）
 ```
 
 **實例 3：複雜 Ticket（3-5 職責）- 建議拆分**
@@ -147,14 +147,14 @@ Ticket 設計派工方法論 (主方法論)
 任務：實作完整的 BookRepository
 
 職責分析：
-⚠️ 職責 1：實作 getBookByIsbn CRUD 方法
-⚠️ 職責 2：實作 saveBook CRUD 方法
-⚠️ 職責 3：實作 Data Mapper 轉換
-⚠️ 職責 4：實作錯誤處理
-⚠️ 職責 5：實作 Cache 管理
+職責 1：實作 getBookByIsbn CRUD 方法
+職責 2：實作 saveBook CRUD 方法
+職責 3：實作 Data Mapper 轉換
+職責 4：實作錯誤處理
+職責 5：實作 Cache 管理
 
 總計：5 個職責
-判定：複雜 Ticket ⚠️（建議拆分為 2-3 個 Ticket）
+判定：複雜 Ticket（建議拆分為 2-3 個 Ticket）
 ```
 
 **實例 4：必須拆分（> 5 職責）**
@@ -163,17 +163,17 @@ Ticket 設計派工方法論 (主方法論)
 任務：實作書籍評分完整功能（包含 UI、UseCase、Repository）
 
 職責分析：
-❌ 職責 1：定義 Rating Value Object
-❌ 職責 2：定義 Rating Entity
-❌ 職責 3：建立 RatingWidget UI
-❌ 職責 4：實作 RateBookUseCase
-❌ 職責 5：定義 IRatingRepository
-❌ 職責 6：實作 SQLiteRatingRepository
-❌ 職責 7：處理各種異常情境
-❌ 職責 8：撰寫完整測試
+職責 1：定義 Rating Value Object
+職責 2：定義 Rating Entity
+職責 3：建立 RatingWidget UI
+職責 4：實作 RateBookUseCase
+職責 5：定義 IRatingRepository
+職責 6：實作 SQLiteRatingRepository
+職責 7：處理各種異常情境
+職責 8：撰寫完整測試
 
 總計：8 個職責
-判定：God Ticket ❌ 必須拆分
+判定：God Ticket 必須拆分
 ```
 
 **拆分建議**：
@@ -195,9 +195,9 @@ Ticket 設計派工方法論 (主方法論)
 
 **為什麼需要行數指標**：
 
-- ✅ **可量化**：使用 `git diff --stat` 精確統計
-- ✅ **可驗證**：執行後可驗證預估準確性
-- ✅ **風險指標**：行數越多，出錯風險越高
+- **可量化**：使用 `git diff --stat` 精確統計
+- **可驗證**：執行後可驗證預估準確性
+- **風險指標**：行數越多，出錯風險越高
 
 #### 行數統計標準
 
@@ -220,26 +220,26 @@ test/unit/domain/book_test.dart      | 40 ++++++++++++++++++++
 
 **計算規則**：
 
-- ✅ 包含新增行數
-- ✅ 包含修改行數
-- ✅ 包含刪除行數
-- ❌ 不包含空行（pure whitespace changes）
-- ❌ 不包含純註解行（comment-only changes）
+- 包含新增行數
+- 包含修改行數
+- 包含刪除行數
+- 不包含空行（pure whitespace changes）
+- 不包含純註解行（comment-only changes）
 
 #### 行數標準
 
-| 等級            | 行數範圍  | 判定      | 說明                              |
-| --------------- | --------- | --------- | --------------------------------- |
-| **簡單 Ticket** | < 30 行   | ✅ 理想   | Interface 定義、簡單 Value Object |
-| **中等 Ticket** | 30-70 行  | ✅ 可接受 | 中等實作、含測試                  |
-| **複雜 Ticket** | 70-100 行 | ⚠️ 需檢查  | 複雜實作、多測試案例              |
-| **必須拆分**    | > 100 行  | ❌ 禁止   | 範圍過大，必須拆分                |
+| 等級            | 行數範圍  | 判定   | 說明                              |
+| --------------- | --------- | ------ | --------------------------------- |
+| **簡單 Ticket** | < 30 行   | 理想   | Interface 定義、簡單 Value Object |
+| **中等 Ticket** | 30-70 行  | 可接受 | 中等實作、含測試                  |
+| **複雜 Ticket** | 70-100 行 | 需檢查 | 複雜實作、多測試案例              |
+| **必須拆分**    | > 100 行  | 禁止   | 範圍過大，必須拆分                |
 
 **強制規則**：
 
-- ⚠️ **超過 100 行 = 必須拆分**
-- ⚠️ **70-100 行 = 評估是否可拆分**
-- ✅ **< 70 行 = 可接受範圍**
+- **超過 100 行 = 必須拆分**
+- **70-100 行 = 評估是否可拆分**
+- **< 70 行 = 可接受範圍**
 
 #### 行數估算實例
 
@@ -261,7 +261,7 @@ abstract class IBookRepository {
 }
 
 // 預估行數：~20 行（含註解）
-// 判定：簡單 Ticket ✅
+// 判定：簡單 Ticket
 ```
 
 **實例 2：中等 Ticket（30-70 行）**
@@ -291,7 +291,7 @@ void main() {
 }
 
 // 總計：~65 行
-// 判定：中等 Ticket ✅
+// 判定：中等 Ticket
 ```
 
 **實例 3：複雜 Ticket（70-100 行）- 建議拆分**
@@ -328,7 +328,7 @@ class SQLiteBookRepository implements IBookRepository {
 // repository_test.dart (~80 行)
 // ... 8 個測試案例
 
-// 總計：~160 行 ❌
+// 總計：~160 行
 // 判定：超過 100 行，必須拆分
 ```
 
@@ -350,9 +350,9 @@ class SQLiteBookRepository implements IBookRepository {
 
 **為什麼需要檔案數指標**：
 
-- ✅ **架構層級指標**：檔案數反映任務的架構範圍
-- ✅ **風險管控**：修改越多檔案，影響範圍越大
-- ✅ **測試複雜度**：檔案數越多，測試整合越複雜
+- **架構層級指標**：檔案數反映任務的架構範圍
+- **風險管控**：修改越多檔案，影響範圍越大
+- **測試複雜度**：檔案數越多，測試整合越複雜
 
 #### 檔案統計標準
 
@@ -372,26 +372,26 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 
 **計算規則**：
 
-- ✅ 包含新建檔案
-- ✅ 包含修改檔案
-- ✅ 包含刪除檔案
-- ❌ 不包含測試檔案（測試檔案另計為「測試數量」指標）
-- ❌ 不包含配置檔案（如 pubspec.yaml, analysis_options.yaml）
+- 包含新建檔案
+- 包含修改檔案
+- 包含刪除檔案
+- 不包含測試檔案（測試檔案另計為「測試數量」指標）
+- 不包含配置檔案（如 pubspec.yaml, analysis_options.yaml）
 
 #### 檔案數標準
 
-| 等級            | 檔案數量 | 判定      | 說明                 |
-| --------------- | -------- | --------- | -------------------- |
-| **簡單 Ticket** | 1 個     | ✅ 理想   | 單一檔案修改         |
-| **中等 Ticket** | 2-3 個   | ✅ 可接受 | 相關檔案修改         |
-| **複雜 Ticket** | 3-5 個   | ⚠️ 需檢查  | 多檔案修改，建議拆分 |
-| **必須拆分**    | > 5 個   | ❌ 禁止   | 範圍過大，必須拆分   |
+| 等級            | 檔案數量 | 判定   | 說明                 |
+| --------------- | -------- | ------ | -------------------- |
+| **簡單 Ticket** | 1 個     | 理想   | 單一檔案修改         |
+| **中等 Ticket** | 2-3 個   | 可接受 | 相關檔案修改         |
+| **複雜 Ticket** | 3-5 個   | 需檢查 | 多檔案修改，建議拆分 |
+| **必須拆分**    | > 5 個   | 禁止   | 範圍過大，必須拆分   |
 
 **強制規則**：
 
-- ⚠️ **超過 5 個檔案 = 必須拆分**
-- ⚠️ **3-5 個檔案 = 評估是否可拆分**
-- ✅ **1-2 個檔案 = 理想狀態**
+- **超過 5 個檔案 = 必須拆分**
+- **3-5 個檔案 = 評估是否可拆分**
+- **1-2 個檔案 = 理想狀態**
 
 #### 檔案數實例
 
@@ -401,10 +401,10 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 任務：建立 Rating Value Object
 
 涉及檔案：
-✅ lib/domain/value_objects/rating.dart
+lib/domain/value_objects/rating.dart
 
 總計：1 個檔案
-判定：簡單 Ticket ✅
+判定：簡單 Ticket
 ```
 
 **實例 2：中等 Ticket（2-3 個檔案）**
@@ -413,11 +413,11 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 任務：更新 Book Entity 增加評分欄位
 
 涉及檔案：
-✅ lib/domain/entities/book.dart         （修改）
-✅ lib/domain/value_objects/rating.dart  （新增）
+lib/domain/entities/book.dart         （修改）
+lib/domain/value_objects/rating.dart  （新增）
 
 總計：2 個檔案
-判定：中等 Ticket ✅
+判定：中等 Ticket
 ```
 
 **實例 3：複雜 Ticket（3-5 個檔案）- 建議拆分**
@@ -426,14 +426,14 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 任務：實作完整的書籍評分功能
 
 涉及檔案：
-⚠️ lib/domain/entities/rating.dart
-⚠️ lib/domain/entities/book.dart
-⚠️ lib/domain/repositories/i_rating_repository.dart
-⚠️ lib/infrastructure/repositories/sqlite_rating_repository.dart
-⚠️ lib/infrastructure/mappers/rating_mapper.dart
+lib/domain/entities/rating.dart
+lib/domain/entities/book.dart
+lib/domain/repositories/i_rating_repository.dart
+lib/infrastructure/repositories/sqlite_rating_repository.dart
+lib/infrastructure/mappers/rating_mapper.dart
 
 總計：5 個檔案
-判定：複雜 Ticket ⚠️（建議拆分）
+判定：複雜 Ticket（建議拆分）
 ```
 
 **實例 4：必須拆分（> 5 個檔案）**
@@ -442,16 +442,16 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 任務：實作評分功能（含 UI、UseCase、Repository）
 
 涉及檔案：
-❌ lib/presentation/widgets/rating_widget.dart
-❌ lib/presentation/controllers/rating_controller.dart
-❌ lib/application/use_cases/rate_book_use_case.dart
-❌ lib/domain/entities/rating.dart
-❌ lib/domain/entities/book.dart
-❌ lib/domain/repositories/i_rating_repository.dart
-❌ lib/infrastructure/repositories/sqlite_rating_repository.dart
-❌ lib/infrastructure/mappers/rating_mapper.dart
+lib/presentation/widgets/rating_widget.dart
+lib/presentation/controllers/rating_controller.dart
+lib/application/use_cases/rate_book_use_case.dart
+lib/domain/entities/rating.dart
+lib/domain/entities/book.dart
+lib/domain/repositories/i_rating_repository.dart
+lib/infrastructure/repositories/sqlite_rating_repository.dart
+lib/infrastructure/mappers/rating_mapper.dart
 
-總計：8 個檔案 ❌
+總計：8 個檔案
 判定：God Ticket，必須拆分
 ```
 
@@ -460,10 +460,10 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 ```markdown
 按 Clean Architecture 分層拆分為 4 個 Ticket：
 
-- Ticket 1: Domain 層（檔案 4, 5, 6）             - 3 個檔案 ✅
-- Ticket 2: Infrastructure 層（檔案 7, 8）        - 2 個檔案 ✅
-- Ticket 3: Application 層（檔案 3）              - 1 個檔案 ✅
-- Ticket 4: Presentation 層（檔案 1, 2）          - 2 個檔案 ✅
+- Ticket 1: Domain 層（檔案 4, 5, 6）             - 3 個檔案
+- Ticket 2: Infrastructure 層（檔案 7, 8）        - 2 個檔案
+- Ticket 3: Application 層（檔案 3）              - 1 個檔案
+- Ticket 4: Presentation 層（檔案 1, 2）          - 2 個檔案
 ```
 
 ---
@@ -474,9 +474,9 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 
 **為什麼需要測試數量指標**：
 
-- ✅ **品質保證指標**：測試數量反映功能複雜度
-- ✅ **執行時間預估**：測試數量影響 TDD 循環時間
-- ✅ **維護成本**：過多測試增加維護負擔
+- **品質保證指標**：測試數量反映功能複雜度
+- **執行時間預估**：測試數量影響 TDD 循環時間
+- **維護成本**：過多測試增加維護負擔
 
 #### 測試統計標準
 
@@ -498,25 +498,25 @@ void main() {
 
 **計算規則**：
 
-- ✅ 每個 `test('...', () {...})` 算一個測試
-- ✅ 每個 `testWidgets('...', () {...})` 算一個測試
-- ✅ 包含單元測試和整合測試
-- ❌ 不包含 `group()` 本身（只是測試組織）
+- 每個 `test('...', () {...})` 算一個測試
+- 每個 `testWidgets('...', () {...})` 算一個測試
+- 包含單元測試和整合測試
+- 不包含 `group()` 本身（只是測試組織）
 
 #### 測試數量標準
 
-| 等級            | 測試數量 | 判定      | 說明                 |
-| --------------- | -------- | --------- | -------------------- |
-| **簡單 Ticket** | 1-3 個   | ✅ 理想   | 基本功能測試         |
-| **中等 Ticket** | 3-6 個   | ✅ 可接受 | 含邊界和異常測試     |
-| **複雜 Ticket** | 6-10 個  | ⚠️ 需檢查  | 複雜邏輯，多測試案例 |
-| **必須拆分**    | > 10 個  | ❌ 禁止   | 測試過多，必須拆分   |
+| 等級            | 測試數量 | 判定   | 說明                 |
+| --------------- | -------- | ------ | -------------------- |
+| **簡單 Ticket** | 1-3 個   | 理想   | 基本功能測試         |
+| **中等 Ticket** | 3-6 個   | 可接受 | 含邊界和異常測試     |
+| **複雜 Ticket** | 6-10 個  | 需檢查 | 複雜邏輯，多測試案例 |
+| **必須拆分**    | > 10 個  | 禁止   | 測試過多，必須拆分   |
 
 **強制規則**：
 
-- ⚠️ **超過 10 個測試 = 必須拆分**
-- ⚠️ **6-10 個測試 = 評估是否可拆分**
-- ✅ **1-6 個測試 = 可接受範圍**
+- **超過 10 個測試 = 必須拆分**
+- **6-10 個測試 = 評估是否可拆分**
+- **1-6 個測試 = 可接受範圍**
 
 #### 測試數量實例
 
@@ -543,7 +543,7 @@ void main() {
 }
 
 // 總計：3 個測試
-// 判定：簡單 Ticket ✅
+// 判定：簡單 Ticket
 ```
 
 **實例 2：中等 Ticket（3-6 個測試）**
@@ -562,7 +562,7 @@ void main() {
 }
 
 // 總計：5 個測試
-// 判定：中等 Ticket ✅
+// 判定：中等 Ticket
 ```
 
 **實例 3：複雜 Ticket（6-10 個測試）- 建議拆分**
@@ -592,7 +592,7 @@ void main() {
   });
 }
 
-// 總計：10 個測試 ⚠️
+// 總計：10 個測試
 // 判定：複雜 Ticket（達上限，建議拆分）
 ```
 
@@ -601,9 +601,9 @@ void main() {
 ```markdown
 拆分為 3 個 Ticket：
 
-- Ticket 1: getBookByIsbn + 測試（2 個測試）     ✅
-- Ticket 2: saveBook + 測試（3 個測試）          ✅
-- Ticket 3: deleteBook + Mapper + 測試（5 個測試）✅
+- Ticket 1: getBookByIsbn + 測試（2 個測試）    
+- Ticket 2: saveBook + 測試（3 個測試）         
+- Ticket 3: deleteBook + Mapper + 測試（5 個測試）
 ```
 
 ---
@@ -638,12 +638,12 @@ where 複雜度等級：
 
 指標評估：
 
-- 職責數量：1 個職責 → 簡單 ✅
-- 程式碼行數：25 行 → 簡單 ✅
-- 涉及檔案：1 個檔案 → 簡單 ✅
-- 測試用例：3 個測試 → 簡單 ✅
+- 職責數量：1 個職責 → 簡單
+- 程式碼行數：25 行 → 簡單
+- 涉及檔案：1 個檔案 → 簡單
+- 測試用例：3 個測試 → 簡單
 
-最終判定：簡單 Ticket ✅（最理想狀態）
+最終判定：簡單 Ticket（最理想狀態）
 ```
 
 **實例 2：有一個指標是中等 → 中等 Ticket**
@@ -653,12 +653,12 @@ where 複雜度等級：
 
 指標評估：
 
-- 職責數量：2 個職責（建立、驗證）→ 中等 ⚠️
-- 程式碼行數：45 行 → 中等 ⚠️
-- 涉及檔案：1 個檔案 → 簡單 ✅
-- 測試用例：5 個測試 → 中等 ⚠️
+- 職責數量：2 個職責（建立、驗證）→ 中等
+- 程式碼行數：45 行 → 中等
+- 涉及檔案：1 個檔案 → 簡單
+- 測試用例：5 個測試 → 中等
 
-最終判定：中等 Ticket ⚠️（可接受）
+最終判定：中等 Ticket（可接受）
 ```
 
 **實例 3：有一個指標是複雜 → 複雜 Ticket（建議拆分）**
@@ -668,12 +668,12 @@ where 複雜度等級：
 
 指標評估：
 
-- 職責數量：3 個職責（查詢、轉換、異常處理）→ 複雜 ⚠️⚠️
-- 程式碼行數：65 行 → 中等 ⚠️
-- 涉及檔案：2 個檔案 → 中等 ⚠️
-- 測試用例：6 個測試 → 複雜 ⚠️⚠️
+- 職責數量：3 個職責（查詢、轉換、異常處理）→ 複雜
+- 程式碼行數：65 行 → 中等
+- 涉及檔案：2 個檔案 → 中等
+- 測試用例：6 個測試 → 複雜
 
-最終判定：複雜 Ticket ⚠️⚠️（建議拆分）
+最終判定：複雜 Ticket（建議拆分）
 ```
 
 **實例 4：有任一指標超標 → 必須拆分**
@@ -683,12 +683,12 @@ where 複雜度等級：
 
 指標評估：
 
-- 職責數量：8 個職責 → 必須拆分 ❌
-- 程式碼行數：180 行 → 必須拆分 ❌
-- 涉及檔案：7 個檔案 → 必須拆分 ❌
-- 測試用例：15 個測試 → 必須拆分 ❌
+- 職責數量：8 個職責 → 必須拆分
+- 程式碼行數：180 行 → 必須拆分
+- 涉及檔案：7 個檔案 → 必須拆分
+- 測試用例：15 個測試 → 必須拆分
 
-最終判定：God Ticket ❌ 必須立即拆分
+最終判定：God Ticket 必須立即拆分
 ```
 
 #### 評估決策流程
@@ -698,10 +698,10 @@ where 複雜度等級：
     ↓
 步驟 2：取最高複雜度等級
     ↓
-    ├─ 簡單 ✅ → 可直接建立 Ticket
-    ├─ 中等 ⚠️ → 可直接建立 Ticket（可選：評估是否拆分為更小 Ticket）
-    ├─ 複雜 ⚠️⚠️ → 強烈建議拆分（可選：無法拆分時勉強接受）
-    └─ 必須拆分 ❌ → 阻止建立，必須先拆分再重新評估
+    ├─ 簡單 → 可直接建立 Ticket
+    ├─ 中等 → 可直接建立 Ticket（可選：評估是否拆分為更小 Ticket）
+    ├─ 複雜 → 強烈建議拆分（可選：無法拆分時勉強接受）
+    └─ 必須拆分 → 阻止建立，必須先拆分再重新評估
 ```
 
 **評估檢查清單**：
@@ -722,43 +722,43 @@ where 複雜度等級：
 
 **4 級複雜度體系**：
 
-| 等級              | 職責   | 行數      | 檔案   | 測試    | 描述                   | 處理方式           |
-| ----------------- | ------ | --------- | ------ | ------- | ---------------------- | ------------------ |
-| **Level 1: 簡單** | 1 個   | < 30 行   | 1 個   | 1-3 個  | 單一職責，單一檔案     | ✅ 直接建立 Ticket |
-| **Level 2: 中等** | 2-3 個 | 30-70 行  | 2-3 個 | 3-6 個  | 少數相關職責，少數檔案 | ✅ 直接建立 Ticket |
-| **Level 3: 複雜** | 3-5 個 | 70-100 行 | 3-5 個 | 6-10 個 | 多職責，多檔案         | ⚠️ 建議拆分         |
-| **Level 4: 超標** | > 5 個 | > 100 行  | > 5 個 | > 10 個 | 範圍失控               | ❌ 必須拆分        |
+| 等級              | 職責   | 行數      | 檔案   | 測試    | 描述                   | 處理方式        |
+| ----------------- | ------ | --------- | ------ | ------- | ---------------------- | --------------- |
+| **Level 1: 簡單** | 1 個   | < 30 行   | 1 個   | 1-3 個  | 單一職責，單一檔案     | 直接建立 Ticket |
+| **Level 2: 中等** | 2-3 個 | 30-70 行  | 2-3 個 | 3-6 個  | 少數相關職責，少數檔案 | 直接建立 Ticket |
+| **Level 3: 複雜** | 3-5 個 | 70-100 行 | 3-5 個 | 6-10 個 | 多職責，多檔案         | 建議拆分        |
+| **Level 4: 超標** | > 5 個 | > 100 行  | > 5 個 | > 10 個 | 範圍失控               | 必須拆分        |
 
 **複雜度特徵**：
 
 **Level 1: 簡單**
 
-- ✅ **特徵**: 最小可交付單元，職責明確
-- ✅ **適用**: Interface 定義、單一 Value Object、單一方法實作
-- ✅ **優點**: 風險低、易測試、易 Review
-- ⏱️ **預估時間**: 5-20 分鐘
+- **特徵**: 最小可交付單元，職責明確
+- **適用**: Interface 定義、單一 Value Object、單一方法實作
+- **優點**: 風險低、易測試、易 Review
+- **預估時間**: 5-20 分鐘
 
 **Level 2: 中等**
 
-- ✅ **特徵**: 少數相關職責，內聚性高
-- ✅ **適用**: 含業務邏輯的 Entity、基礎 Repository 方法
-- ⚠️ **注意**: 確保職責相關性，避免職責分散
-- ⏱️ **預估時間**: 20-40 分鐘
+- **特徵**: 少數相關職責，內聚性高
+- **適用**: 含業務邏輯的 Entity、基礎 Repository 方法
+- **注意**: 確保職責相關性，避免職責分散
+- **預估時間**: 20-40 分鐘
 
 **Level 3: 複雜**
 
-- ⚠️ **特徵**: 多職責或跨檔案，整合性高
-- ⚠️ **適用**: 完整 UseCase、Repository CRUD、複雜業務邏輯
-- ⚠️ **風險**: 測試複雜、Review 困難、易出錯
-- ⏱️ **預估時間**: 40-60 分鐘
-- 💡 **建議**: 優先評估是否可拆分為 Level 1-2
+- **特徵**: 多職責或跨檔案，整合性高
+- **適用**: 完整 UseCase、Repository CRUD、複雜業務邏輯
+- **風險**: 測試複雜、Review 困難、易出錯
+- **預估時間**: 40-60 分鐘
+- **建議**: 優先評估是否可拆分為 Level 1-2
 
 **Level 4: 超標**
 
-- ❌ **特徵**: 任一指標超標，範圍失控
-- ❌ **問題**: God Ticket、高風險、難以管理
-- ❌ **處理**: 必須拆分，無例外
-- 🚫 **禁止**: 禁止建立此等級 Ticket
+- **特徵**: 任一指標超標，範圍失控
+- **問題**: God Ticket、高風險、難以管理
+- **處理**: 必須拆分，無例外
+- **禁止**: 禁止建立此等級 Ticket
 
 ---
 
@@ -777,9 +777,9 @@ where 複雜度等級：
     ↓
 步驟 3: 拆分決策（基於等級決定）
     ↓
-    ├─ Level 1-2 ✅ → 可直接建立 Ticket
-    ├─ Level 3 ⚠️ → 評估是否可拆分
-    └─ Level 4 ❌ → 必須拆分
+    ├─ Level 1-2 → 可直接建立 Ticket
+    ├─ Level 3 → 評估是否可拆分
+    └─ Level 4 → 必須拆分
 ```
 
 #### 步驟 1：初步評估
@@ -837,12 +837,12 @@ where 複雜度等級：
 ```text
 對應 4 個指標到複雜度等級：
 
-職責數量：4 個 → Level 3（複雜）⚠️⚠️
-程式碼行數：90 行 → Level 3（複雜）⚠️⚠️
-檔案數量：2 個（1 生產 + 1 測試）→ Level 2（中等）⚠️
-測試數量：5 個 → Level 2（中等）⚠️
+職責數量：4 個 → Level 3（複雜）
+程式碼行數：90 行 → Level 3（複雜）
+檔案數量：2 個（1 生產 + 1 測試）→ Level 2（中等）
+測試數量：5 個 → Level 2（中等）
 
-取最高等級：Level 3（複雜）⚠️⚠️
+取最高等級：Level 3（複雜）
 ```
 
 **確認檢查清單**:
@@ -861,15 +861,15 @@ where 複雜度等級：
 **決策規則**:
 
 ```text
-Level 1-2 ✅ → 可直接建立 Ticket
+Level 1-2 → 可直接建立 Ticket
     ├─ 無需拆分
     └─ 直接進入 Phase 2（測試設計）
 
-Level 3 ⚠️ → 評估是否可拆分
+Level 3 → 評估是否可拆分
     ├─ 可拆分為 Level 1-2 → 執行拆分
     └─ 無法拆分 → 勉強接受，加強 Review
 
-Level 4 ❌ → 必須拆分
+Level 4 → 必須拆分
     ├─ 阻止建立 Ticket
     ├─ 執行拆分（使用第三章拆分策略）
     └─ 重新評估每個拆分後的子 Ticket
@@ -890,22 +890,22 @@ Level 4 ❌ → 必須拆分
    - 行數：~45 行
    - 檔案：1 個
    - 測試：3 個
-   → Level 2（中等）✅
+   → Level 2（中等）
 
    Ticket B: 補充 Book Entity 完整功能
    - 職責：toString + 完整測試
    - 行數：~45 行
    - 檔案：1 個（修改）
    - 測試：2 個
-   → Level 1（簡單）✅
+   → Level 1（簡單）
 
 3. 拆分後依賴關係？
    → Ticket B 依賴 Ticket A（B 在 A 完成後執行）
 
 4. 拆分價值評估？
-   → ✅ 降低風險：兩個 Level 1-2 比一個 Level 3 更易管理
-   → ✅ 易於 Review：分兩次 Review，每次範圍更小
-   → ⚠️ 成本：增加一個 Ticket，但風險降低值得
+   → 降低風險：兩個 Level 1-2 比一個 Level 3 更易管理
+   → 易於 Review：分兩次 Review，每次範圍更小
+   → 成本：增加一個 Ticket，但風險降低值得
 
 結論：建議拆分
 ```
@@ -917,10 +917,10 @@ Level 4 ❌ → 必須拆分
 
 當前狀態：
 
-- 職責：8 個 → Level 4 ❌
-- 行數：180 行 → Level 4 ❌
-- 檔案：7 個 → Level 4 ❌
-- 測試：15 個 → Level 4 ❌
+- 職責：8 個 → Level 4
+- 行數：180 行 → Level 4
+- 檔案：7 個 → Level 4
+- 測試：15 個 → Level 4
 
 拆分決策：必須拆分（無選項）
 
@@ -942,13 +942,13 @@ Level 4 ❌ → 必須拆分
     ↓
     ├─ Level 1（簡單）
     │   ↓
-    │   [✅ 可直接建立 Ticket]
+    │   [可直接建立 Ticket]
     │   ↓
     │   [進入 Phase 2：測試設計]
     │
     ├─ Level 2（中等）
     │   ↓
-    │   [✅ 可直接建立 Ticket]
+    │   [可直接建立 Ticket]
     │   ↓
     │   [（可選）評估是否拆分為更小 Ticket]
     │   ↓
@@ -956,7 +956,7 @@ Level 4 ❌ → 必須拆分
     │
     ├─ Level 3（複雜）
     │   ↓
-    │   [⚠️ 評估是否可拆分]
+    │   [評估是否可拆分]
     │   ↓
     │   ├─ 可拆分？
     │   │   ├─ Yes → [執行拆分]
@@ -975,7 +975,7 @@ Level 4 ❌ → 必須拆分
     │
     └─ Level 4（超標）
         ↓
-        [❌ 禁止建立 Ticket]
+        [禁止建立 Ticket]
         ↓
         [阻止進入 Phase 2]
         ↓
@@ -1053,14 +1053,14 @@ Level 4 無需評估，必須拆分
 - 測試數量：0 個（Interface 不需測試）
 
 步驟 2：複雜度確認
-- 職責：1 個 → Level 1 ✅
-- 行數：20 行 → Level 1 ✅
-- 檔案：1 個 → Level 1 ✅
-- 測試：0 個 → Level 1 ✅
+- 職責：1 個 → Level 1
+- 行數：20 行 → Level 1
+- 檔案：1 個 → Level 1
+- 測試：0 個 → Level 1
 → 最高等級：Level 1
 
 步驟 3：拆分決策
-- Level 1 → ✅ 可直接建立 Ticket
+- Level 1 → 可直接建立 Ticket
 - 無需拆分
 - 進入 Phase 2
 ```
@@ -1077,14 +1077,14 @@ Level 4 無需評估，必須拆分
 - 測試數量：5 個
 
 步驟 2：複雜度確認
-- 職責：2 個 → Level 2 ⚠️
-- 行數：50 行 → Level 2 ⚠️
-- 檔案：1 個 → Level 1 ✅
-- 測試：5 個 → Level 2 ⚠️
+- 職責：2 個 → Level 2
+- 行數：50 行 → Level 2
+- 檔案：1 個 → Level 1
+- 測試：5 個 → Level 2
 → 最高等級：Level 2
 
 步驟 3：拆分決策
-- Level 2 → ✅ 可直接建立 Ticket
+- Level 2 → 可直接建立 Ticket
 - 評估：可選拆分，但不必要（職責內聚性高）
 - 進入 Phase 2
 ```
@@ -1101,14 +1101,14 @@ Level 4 無需評估，必須拆分
 - 測試數量：10 個
 
 步驟 2：複雜度確認
-- 職責：5 個 → Level 3 ⚠️⚠️
-- 行數：160 行 → Level 4 ❌（超過 100 行）
-- 檔案：2 個 → Level 2 ⚠️
-- 測試：10 個 → Level 3 ⚠️⚠️
+- 職責：5 個 → Level 3
+- 行數：160 行 → Level 4（超過 100 行）
+- 檔案：2 個 → Level 2
+- 測試：10 個 → Level 3
 → 最高等級：Level 4（行數超標）
 
 步驟 3：拆分決策
-- Level 4 → ❌ 必須拆分
+- Level 4 → 必須拆分
 - 拆分方式：按 CRUD 方法拆分
 
   Ticket A: 實作 getBookByIsbn
@@ -1116,23 +1116,23 @@ Level 4 無需評估，必須拆分
   - 行數：~50 行
   - 檔案：2 個
   - 測試：3 個
-  → Level 2 ✅
+  → Level 2
 
   Ticket B: 實作 saveBook
   - 職責：2 個（儲存 + 錯誤處理）
   - 行數：~60 行
   - 檔案：1 個（修改 repository.dart）
   - 測試：4 個
-  → Level 2 ✅
+  → Level 2
 
   Ticket C: 實作 deleteBook
   - 職責：2 個（刪除 + 錯誤處理）
   - 行數：~50 行
   - 檔案：1 個（修改 repository.dart）
   - 測試：3 個
-  → Level 2 ✅
+  → Level 2
 
-結果：拆分為 3 個 Level 2 Ticket ✅
+結果：拆分為 3 個 Level 2 Ticket
 ```
 
 #### 案例 4：God Ticket 評估與拆分
@@ -1147,14 +1147,14 @@ Level 4 無需評估，必須拆分
 - 測試數量：20 個
 
 步驟 2：複雜度確認
-- 職責：8 個 → Level 4 ❌
-- 行數：300 行 → Level 4 ❌
-- 檔案：8 個 → Level 4 ❌
-- 測試：20 個 → Level 4 ❌
+- 職責：8 個 → Level 4
+- 行數：300 行 → Level 4
+- 檔案：8 個 → Level 4
+- 測試：20 個 → Level 4
 → 最高等級：Level 4（所有指標都超標）
 
 步驟 3：拆分決策
-- Level 4 → ❌ 必須拆分（God Ticket）
+- Level 4 → 必須拆分（God Ticket）
 - 拆分方式：使用 Clean Architecture 分層拆分策略
 
   Ticket 1: Domain 層實作（Layer 5）
@@ -1163,7 +1163,7 @@ Level 4 無需評估，必須拆分
   - 行數：~60 行
   - 檔案：2 個
   - 測試：6 個
-  → Level 2 ✅
+  → Level 2
 
   Ticket 2: Repository 層實作（Layer 4-5 Interface + Infra）
   - IRatingRepository + SQLiteRatingRepository + Mapper
@@ -1171,7 +1171,7 @@ Level 4 無需評估，必須拆分
   - 行數：~90 行
   - 檔案：3 個
   - 測試：8 個
-  → Level 3 ⚠️（可接受）
+  → Level 3（可接受）
 
   Ticket 3: UseCase 層實作（Layer 3）
   - RateBookUseCase
@@ -1179,7 +1179,7 @@ Level 4 無需評估，必須拆分
   - 行數：~60 行
   - 檔案：1 個
   - 測試：4 個
-  → Level 2 ✅
+  → Level 2
 
   Ticket 4: Presentation 層實作（Layer 1-2）
   - RatingWidget + RatingController
@@ -1187,9 +1187,9 @@ Level 4 無需評估，必須拆分
   - 行數：~90 行
   - 檔案：2 個
   - 測試：4 個（Widget 測試）
-  → Level 2 ✅
+  → Level 2
 
-結果：拆分為 4 個 Ticket（3 個 Level 2 + 1 個 Level 3）✅
+結果：拆分為 4 個 Ticket（3 個 Level 2 + 1 個 Level 3）
 依賴順序：Ticket 1 → Ticket 2 → Ticket 3 → Ticket 4
 ```
 
@@ -1202,19 +1202,19 @@ Level 4 無需評估，必須拆分
 **架構分層拆分的核心價值**:
 
 1. **單層修改原則**（Single Layer Modification Principle）
-   - ✅ 每個 Ticket 專注於單一架構層級
-   - ✅ 降低跨層依賴帶來的複雜度
-   - ✅ 提升程式碼審查效率
+   - 每個 Ticket 專注於單一架構層級
+   - 降低跨層依賴帶來的複雜度
+   - 提升程式碼審查效率
 
 2. **依賴方向一致性**
-   - ✅ 遵循 Clean Architecture 依賴規則（內層不依賴外層）
-   - ✅ 避免循環依賴
-   - ✅ 確保架構穩定性
+   - 遵循 Clean Architecture 依賴規則（內層不依賴外層）
+   - 避免循環依賴
+   - 確保架構穩定性
 
 3. **測試可獨立性**
-   - ✅ 每層有明確的測試策略
-   - ✅ 可獨立測試不依賴其他層
-   - ✅ 簡化 Mock 和 Stub
+   - 每層有明確的測試策略
+   - 可獨立測試不依賴其他層
+   - 簡化 Mock 和 Stub
 
 **本章內容結構**:
 
@@ -1273,20 +1273,20 @@ Layer 5 (Domain Implementation - 最內層)
 **依賴規則（Dependency Rule）**:
 
 ```text
-外層 → 內層 ✅ 允許
-內層 → 外層 ❌ 禁止
+外層 → 內層 允許
+內層 → 外層 禁止
 
 範例：
 
-- Layer 2 (Behavior) → Layer 3 (UseCase) ✅
-- Layer 3 (UseCase) → Layer 2 (Behavior) ❌
+- Layer 2 (Behavior) → Layer 3 (UseCase)
+- Layer 3 (UseCase) → Layer 2 (Behavior)
 ```
 
 **單層修改原則**:
 
-- ✅ **理想**: 每個 Ticket 只修改單一層級
-- ⚠️ **可接受**: Ticket 修改相鄰兩層（如 Interface + Implementation）
-- ❌ **禁止**: Ticket 跨越超過 2 層（如 UI → Domain 直接跨越）
+- **理想**: 每個 Ticket 只修改單一層級
+- **可接受**: Ticket 修改相鄰兩層（如 Interface + Implementation）
+- **禁止**: Ticket 跨越超過 2 層（如 UI → Domain 直接跨越）
 
 ---
 
@@ -1300,16 +1300,16 @@ Layer 5 (Domain Implementation - 最內層)
 
 **職責範圍**:
 
-- ✅ 定義 Interface 簽名
-- ✅ 定義輸入參數類型
-- ✅ 定義回傳類型
-- ✅ 撰寫文檔註解（含業務需求編號）
+- 定義 Interface 簽名
+- 定義輸入參數類型
+- 定義回傳類型
+- 撰寫文檔註解（含業務需求編號）
 
 **禁止包含**:
 
-- ❌ 具體實作邏輯
-- ❌ 資料庫操作
-- ❌ 業務邏輯
+- 具體實作邏輯
+- 資料庫操作
+- 業務邏輯
 
 **Ticket 範本**:
 
@@ -1380,7 +1380,7 @@ REQ-LIB-001: 書籍資料存取功能
 - 檔案: 1 個
 - 測試: 0 個（Interface 不需單元測試）
 
-→ Level 1（簡單）✅
+→ Level 1（簡單）
 
 ```
 
@@ -1395,15 +1395,15 @@ REQ-LIB-001: 書籍資料存取功能
 - Layer 5 (Infrastructure): Repository 實作, Service 實作
 
 **職責範圍**:
-- ✅ 實作類別邏輯
-- ✅ 實現介面方法
-- ✅ 處理異常
-- ✅ 撰寫單元測試
+- 實作類別邏輯
+- 實現介面方法
+- 處理異常
+- 撰寫單元測試
 
 **禁止包含**:
-- ❌ UI 元件
-- ❌ 跨層整合（如直接呼叫 UseCase）
-- ❌ 測試以外的其他層修改
+- UI 元件
+- 跨層整合（如直接呼叫 UseCase）
+- 測試以外的其他層修改
 
 **Ticket 範本**:
 
@@ -1476,7 +1476,7 @@ REQ-LIB-001: 書籍資料存取功能
 - 行數: ~80 行（含測試）
 - 檔案: 1 個
 - 測試: 6 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 ```
 
 ---
@@ -1493,17 +1493,17 @@ REQ-LIB-001: 書籍資料存取功能
 
 **職責範圍**:
 
-- ✅ 撰寫單元測試
-- ✅ 覆蓋正常流程
-- ✅ 覆蓋邊界條件
-- ✅ 覆蓋異常處理
-- ✅ 確保測試通過
+- 撰寫單元測試
+- 覆蓋正常流程
+- 覆蓋邊界條件
+- 覆蓋異常處理
+- 確保測試通過
 
 **禁止包含**:
 
-- ❌ 修改生產程式碼（除非是修正測試發現的 Bug）
-- ❌ 新增功能
-- ❌ 重構（測試 Ticket 專注於驗證，不做重構）
+- 修改生產程式碼（除非是修正測試發現的 Bug）
+- 新增功能
+- 重構（測試 Ticket 專注於驗證，不做重構）
 
 **Ticket 範本**:
 
@@ -1572,7 +1572,7 @@ REQ-LIB-001: 書籍資料存取功能
 - 行數: ~60 行（純測試）
 - 檔案: 1 個（測試檔案）
 - 測試: 7 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 ```
 
 ---
@@ -1589,16 +1589,16 @@ REQ-LIB-001: 書籍資料存取功能
 
 **職責範圍**:
 
-- ✅ 連接 Use Case 和 Repository
-- ✅ 實作依賴注入
-- ✅ 撰寫整合測試
-- ✅ 驗證端到端流程
+- 連接 Use Case 和 Repository
+- 實作依賴注入
+- 撰寫整合測試
+- 驗證端到端流程
 
 **禁止包含**:
 
-- ❌ 修改核心業務邏輯（應在具體實作 Ticket 完成）
-- ❌ 跨越超過 2 層的整合
-- ❌ UI 實作（應獨立為 Presentation 層 Ticket）
+- 修改核心業務邏輯（應在具體實作 Ticket 完成）
+- 跨越超過 2 層的整合
+- UI 實作（應獨立為 Presentation 層 Ticket）
 
 **Ticket 範本**:
 
@@ -1681,7 +1681,7 @@ REQ-LIB-001: 書籍查詢功能
 - 檔案: 1 個（修改 UseCase）
 - 測試: 3 個
 
-→ Level 2（中等）✅
+→ Level 2（中等）
 
 ```
 
@@ -1702,7 +1702,7 @@ REQ-LIB-001: 書籍查詢功能
     │   │
     │   └─ No → 跨層修改？
     │       ├─ 相鄰兩層整合 → 策略 4: 整合連接
-    │       └─ 跨越超過 2 層 → ❌ 必須拆分為多個 Ticket
+    │       └─ 跨越超過 2 層 → 必須拆分為多個 Ticket
 ```
 
 **決策準則**:
@@ -1712,8 +1712,8 @@ REQ-LIB-001: 書籍查詢功能
 ```markdown
 問題: Ticket 是否只修改單一架構層級？
 
-- ✅ Yes → 選擇策略 1-3（Interface / 實作 / 測試）
-- ❌ No → 評估是否可拆分為多個單層 Ticket
+- Yes → 選擇策略 1-3（Interface / 實作 / 測試）
+- No → 評估是否可拆分為多個單層 Ticket
 ```
 
 **準則 2: 相鄰層整合可接受**
@@ -1723,9 +1723,9 @@ REQ-LIB-001: 書籍查詢功能
 
 範例：
 
-- Layer 3 (UseCase) + Layer 4-5 (Repository) ✅ 可接受
-- Layer 2 (Controller) + Layer 3 (UseCase) ✅ 可接受
-- Layer 1 (UI) + Layer 5 (Domain) ❌ 禁止（跨越太多層）
+- Layer 3 (UseCase) + Layer 4-5 (Repository) 可接受
+- Layer 2 (Controller) + Layer 3 (UseCase) 可接受
+- Layer 1 (UI) + Layer 5 (Domain) 禁止（跨越太多層）
 
 決策：
 
@@ -1753,7 +1753,7 @@ REQ-LIB-001: 書籍查詢功能
 
 決策：
 
-- 實作 Ticket < Level 2 → 整合測試到實作 Ticket ✅
+- 實作 Ticket < Level 2 → 整合測試到實作 Ticket
 - 實作 Ticket = Level 2-3 → 可選擇獨立測試 Ticket
 - 測試案例 > 10 個 → 必須獨立測試 Ticket（策略 3）
 ```
@@ -1774,7 +1774,7 @@ REQ-LIB-001: 書籍查詢功能
 - 行數: ~300 行
 - 檔案: 8 個
 - 測試: 20 個
-→ Level 4（所有指標都超標）❌ 必須拆分
+→ Level 4（所有指標都超標）必須拆分
 ```
 
 #### 分層拆分方案
@@ -1817,7 +1817,7 @@ REQ-RATING-001: 書籍評分功能
 - 行數: ~50 行
 - 檔案: 1 個
 - 測試: 5 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 ```
 
 ---
@@ -1856,7 +1856,7 @@ REQ-RATING-001: 書籍評分功能
 - 行數: ~40 行
 - 檔案: 1 個
 - 測試: 3 個
-→ Level 1（簡單）✅
+→ Level 1（簡單）
 ```
 
 ---
@@ -1892,7 +1892,7 @@ REQ-RATING-001: 書籍評分功能
 - 行數: ~20 行
 - 檔案: 1 個
 - 測試: 0 個
-→ Level 1（簡單）✅
+→ Level 1（簡單）
 ```
 
 ---
@@ -1933,7 +1933,7 @@ REQ-RATING-001: 書籍評分功能
 - 行數: ~90 行
 - 檔案: 1 個
 - 測試: 6 個
-→ Level 3（複雜）⚠️ 可接受
+→ Level 3（複雜）可接受
 ```
 
 ---
@@ -1975,7 +1975,7 @@ REQ-RATING-001: 書籍評分功能
 - 行數: ~60 行
 - 檔案: 1 個
 - 測試: 4 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 ```
 
 ---
@@ -2017,7 +2017,7 @@ REQ-RATING-001: 書籍評分功能
 - 行數: ~80 行
 - 檔案: 2 個
 - 測試: 4 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 ```
 
 ---
@@ -2026,21 +2026,21 @@ REQ-RATING-001: 書籍評分功能
 
 **拆分前後對比**:
 
-| 項目       | 拆分前（God Ticket） | 拆分後（6 個 Ticket）               |
-| ---------- | -------------------- | ----------------------------------- |
-| 職責數量   | 8 個 ❌              | 平均 1.7 個 ✅                      |
-| 程式碼行數 | ~300 行 ❌           | 平均 57 行 ✅                       |
-| 檔案數量   | 8 個 ❌              | 平均 1.2 個 ✅                      |
-| 測試數量   | 20 個 ❌             | 平均 4 個 ✅                        |
-| 複雜度等級 | Level 4 ❌           | 5 個 Level 1-2 ✅<br>1 個 Level 3 ⚠️ |
+| 項目       | 拆分前（God Ticket） | 拆分後（6 個 Ticket）          |
+| ---------- | -------------------- | ------------------------------ |
+| 職責數量   | 8 個                 | 平均 1.7 個                    |
+| 程式碼行數 | ~300 行              | 平均 57 行                     |
+| 檔案數量   | 8 個                 | 平均 1.2 個                    |
+| 測試數量   | 20 個                | 平均 4 個                      |
+| 複雜度等級 | Level 4              | 5 個 Level 1-2<br>1 個 Level 3 |
 
 **拆分效益**:
 
-- ✅ **風險降低**: 從 1 個高風險任務 → 6 個低風險任務
-- ✅ **並行開發**: 可 2-3 人同時開發不同層級
-- ✅ **易於 Review**: 每個 PR 範圍小，Review 時間縮短
-- ✅ **依賴明確**: 清楚的 Ticket 依賴順序
-- ✅ **測試獨立**: 每層可獨立測試，Mock 簡單
+- **風險降低**: 從 1 個高風險任務 → 6 個低風險任務
+- **並行開發**: 可 2-3 人同時開發不同層級
+- **易於 Review**: 每個 PR 範圍小，Review 時間縮短
+- **依賴明確**: 清楚的 Ticket 依賴順序
+- **測試獨立**: 每層可獨立測試，Mock 簡單
 
 **執行順序**:
 
@@ -2075,10 +2075,10 @@ Phase 4:
 
 **適用場景**：
 
-- ✅ Interface 定義
-- ✅ 單一 Value Object
-- ✅ 單一方法實作
-- ✅ 簡單配置修改
+- Interface 定義
+- 單一 Value Object
+- 單一方法實作
+- 簡單配置修改
 
 ---
 
@@ -2114,7 +2114,7 @@ REQ-LIB-001: 書籍資料存取功能
 - 程式碼行數：~20 行
 - 涉及檔案：1 個
 - 測試用例：0 個（Interface 不需單元測試）
-→ Level 1（簡單）✅
+→ Level 1（簡單）
 
 ### 預估時間
 10-15 分鐘
@@ -2159,7 +2159,7 @@ REQ-RATING-001: 書籍評分功能
 - 程式碼行數：~25 行（含測試）
 - 涉及檔案：1 個
 - 測試用例：3 個
-→ Level 1（簡單）✅
+→ Level 1（簡單）
 
 ### 預估時間
 15-20 分鐘
@@ -2178,10 +2178,10 @@ REQ-RATING-001: 書籍評分功能
 
 **適用場景**：
 
-- ✅ 含業務邏輯的 Entity
-- ✅ 基礎 Repository 方法
-- ✅ 簡單 UseCase
-- ✅ 單一功能的 Controller
+- 含業務邏輯的 Entity
+- 基礎 Repository 方法
+- 簡單 UseCase
+- 單一功能的 Controller
 
 ---
 
@@ -2226,7 +2226,7 @@ REQ-LIB-001: 書籍資料模型
 - 程式碼行數：~50 行（含測試）
 - 涉及檔案：1 個
 - 測試用例：4 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 
 ### 預估時間
 25-35 分鐘
@@ -2276,7 +2276,7 @@ REQ-LIB-001: 查詢書籍功能
 - 程式碼行數：~55 行（含測試）
 - 涉及檔案：1 個
 - 測試用例：4 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 
 ### 預估時間
 30-40 分鐘
@@ -2295,9 +2295,9 @@ REQ-LIB-001: 查詢書籍功能
 
 **適用場景**：
 
-- ⚠️ 完整 Repository CRUD
-- ⚠️ 複雜 UseCase（含多重驗證）
-- ⚠️ 複雜業務邏輯實作
+- 完整 Repository CRUD
+- 複雜 UseCase（含多重驗證）
+- 複雜業務邏輯實作
 
 **注意**：Level 3 Ticket 建議優先評估是否可拆分為更小 Ticket
 
@@ -2319,7 +2319,7 @@ REQ-LIB-001: 書籍資料存取功能
 ### 依賴 Ticket
 - Ticket #1: 定義 IBookRepository 介面（必須先完成）
 
-### ⚠️ 複雜度警告
+### 複雜度警告
 此 Ticket 為 Level 3（複雜），建議拆分為 3 個 Level 2 Ticket：
 
 - Ticket A: 實作 getBookByIsbn + 測試
@@ -2356,7 +2356,7 @@ REQ-LIB-001: 書籍資料存取功能
 - 程式碼行數：~160 行（含測試）
 - 涉及檔案：2 個
 - 測試用例：9 個
-→ Level 3（複雜）⚠️ 建議拆分
+→ Level 3（複雜）建議拆分
 
 ### 預估時間
 60-90 分鐘
@@ -2378,25 +2378,25 @@ REQ-LIB-001: 書籍資料存取功能
 
 **處理方式**：
 
-- ❌ **禁止建立 Level 4 Ticket**
-- ❌ **必須拆分為多個 Level 1-2 Ticket**
-- ⚠️ **拆分後可接受少數 Level 3 Ticket**
+- **禁止建立 Level 4 Ticket**
+- **必須拆分為多個 Level 1-2 Ticket**
+- **拆分後可接受少數 Level 3 Ticket**
 
 ---
 
 #### 範例 6：God Ticket 檢測與拆分
 
 ```markdown
-## ❌ 禁止：實作完整書籍評分功能
+## 禁止：實作完整書籍評分功能
 
 ### 原始任務描述
 實作書籍評分功能，包含 UI、Controller、UseCase、Repository
 
 ### God Ticket 檢測結果
-- 職責數量：8 個 → Level 4 ❌
-- 程式碼行數：~300 行 → Level 4 ❌
-- 涉及檔案：8 個 → Level 4 ❌
-- 測試用例：20 個 → Level 4 ❌
+- 職責數量：8 個 → Level 4
+- 程式碼行數：~300 行 → Level 4
+- 涉及檔案：8 個 → Level 4
+- 測試用例：20 個 → Level 4
 → **所有指標都超標，必須拆分**
 
 ### 拆分決策
@@ -2410,7 +2410,7 @@ REQ-LIB-001: 書籍資料存取功能
 5. Ticket #205: RateBookUseCase（Level 2）
 6. Ticket #206: RatingWidget UI（Level 2）
 
-結果：5 個 Level 1-2 + 1 個 Level 3 ✅ 全部可接受
+結果：5 個 Level 1-2 + 1 個 Level 3 全部可接受
 ```
 
 ---
@@ -2424,13 +2424,13 @@ REQ-LIB-001: 書籍資料存取功能
 | **1 簡單** | 1    | <30    | 1    | 1-3  | 5-20分鐘  | Interface 定義、簡單 VO |
 | **2 中等** | 2-3  | 30-70  | 2-3  | 3-6  | 20-40分鐘 | Entity、基礎 UseCase    |
 | **3 複雜** | 3-5  | 70-100 | 3-5  | 6-10 | 40-90分鐘 | 完整 Repository CRUD    |
-| **4 超標** | >5   | >100   | >5   | >10  | N/A       | ❌ 禁止建立             |
+| **4 超標** | >5   | >100   | >5   | >10  | N/A       | 禁止建立                |
 
 **決策建議**：
 
-- ✅ Level 1-2：直接建立 Ticket
-- ⚠️ Level 3：優先評估是否可拆分
-- ❌ Level 4：必須拆分，無例外
+- Level 1-2：直接建立 Ticket
+- Level 3：優先評估是否可拆分
+- Level 4：必須拆分，無例外
 
 ---
 
@@ -2447,13 +2447,13 @@ REQ-LIB-001: 書籍資料存取功能
     ↓
 [取最高複雜度等級]
     ↓
-    ├─ Level 1-2 ✅
+    ├─ Level 1-2
     │   ↓
     │   [直接建立 Ticket]
     │   ↓
     │   [進入 Phase 2（測試設計）]
     │
-    ├─ Level 3 ⚠️
+    ├─ Level 3
     │   ↓
     │   [拆分評估決策]
     │   ↓
@@ -2463,7 +2463,7 @@ REQ-LIB-001: 書籍資料存取功能
     │   ↓
     │   [進入 Phase 2]
     │
-    └─ Level 4 ❌
+    └─ Level 4
         ↓
         [阻止建立 Ticket]
         ↓
@@ -2504,13 +2504,13 @@ REQ-LIB-001: 書籍資料存取功能
 原始任務：實作 BookRepository CRUD
 職責分析：
 
-- 職責 1：getBookByIsbn → 可獨立 ✅
-- 職責 2：saveBook → 可獨立 ✅（依賴職責 1 的測試模式）
-- 職責 3：deleteBook → 可獨立 ✅
-- 職責 4：Data Mapper → 可整合到職責 1-3 ⚠️
-- 職責 5：異常處理 → 可整合到職責 1-3 ⚠️
+- 職責 1：getBookByIsbn → 可獨立
+- 職責 2：saveBook → 可獨立（依賴職責 1 的測試模式）
+- 職責 3：deleteBook → 可獨立
+- 職責 4：Data Mapper → 可整合到職責 1-3
+- 職責 5：異常處理 → 可整合到職責 1-3
 
-結論：可拆分為 3 個 Ticket（每個職責對應 1 個 Ticket）✅
+結論：可拆分為 3 個 Ticket（每個職責對應 1 個 Ticket）
 ```
 
 #### 準則 2：拆分後複雜度降低
@@ -2534,23 +2534,23 @@ REQ-LIB-001: 書籍資料存取功能
 - 行數：50 行
 - 檔案：2 個
 - 測試：3 個
-→ Level 2 ✅
+→ Level 2
 
 拆分後 Ticket B：saveBook
 - 職責：2 個（儲存 + 異常處理）
 - 行數：60 行
 - 檔案：1 個（修改）
 - 測試：3 個
-→ Level 2 ✅
+→ Level 2
 
 拆分後 Ticket C：deleteBook
 - 職責：2 個（刪除 + 異常處理）
 - 行數：50 行
 - 檔案：1 個（修改）
 - 測試：3 個
-→ Level 2 ✅
+→ Level 2
 
-結論：拆分成功，所有子 Ticket 都降為 Level 2 ✅
+結論：拆分成功，所有子 Ticket 都降為 Level 2
 ```
 
 #### 準則 3：拆分成本合理性
@@ -2560,8 +2560,8 @@ REQ-LIB-001: 書籍資料存取功能
 
 成本考量：
 
-- ✅ 收益：風險降低、易於 Review、可並行開發
-- ⚠️ 成本：增加 Ticket 數量、需要管理依賴關係
+- 收益：風險降低、易於 Review、可並行開發
+- 成本：增加 Ticket 數量、需要管理依賴關係
 
 決策：
 
@@ -2581,7 +2581,7 @@ REQ-LIB-001: 書籍資料存取功能
 - 管理成本：需要管理 3 個 Ticket 依賴
 - 整合測試：需要額外的整合測試（但本來就需要）
 
-結論：拆分收益 > 拆分成本，建議拆分 ✅
+結論：拆分收益 > 拆分成本，建議拆分
 ```
 
 ---
@@ -2615,7 +2615,7 @@ REQ-LIB-001: 書籍資料存取功能
 - Ticket 3: Layer 3 UseCase
 - Ticket 4: Layer 1-2 Presentation（UI + Controller）
 
-結果：4 個 Level 1-2 Ticket ✅
+結果：4 個 Level 1-2 Ticket
 ```
 
 **策略 2：按職責拆分（次之）**
@@ -2640,7 +2640,7 @@ REQ-LIB-001: 書籍資料存取功能
 - Ticket B: saveBook + error（2 職責）
 - Ticket C: deleteBook + error（2 職責）
 
-結果：3 個 Level 2 Ticket ✅
+結果：3 個 Level 2 Ticket
 ```
 
 **策略 3：按檔案拆分（最後）**
@@ -2870,12 +2870,12 @@ REQ-SEARCH-001: 實作書籍搜尋功能
 
 複雜度評估：
 
-- 職責：10 個 → Level 4 ❌
-- 行數：400 行 → Level 4 ❌
-- 檔案：10 個 → Level 4 ❌
-- 測試：25 個 → Level 4 ❌
+- 職責：10 個 → Level 4
+- 行數：400 行 → Level 4
+- 檔案：10 個 → Level 4
+- 測試：25 個 → Level 4
 
-結論：God Ticket ❌ 必須拆分
+結論：God Ticket 必須拆分
 ```
 
 ---
@@ -2941,7 +2941,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 - 行數：~30 行
 - 檔案：1 個
 - 測試：4 個
-→ Level 1（簡單）✅
+→ Level 1（簡單）
 
 ### 預估時間
 15-20 分鐘
@@ -2981,7 +2981,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 - 行數：~15 行
 - 檔案：1 個（修改）
 - 測試：0 個
-→ Level 1（簡單）✅
+→ Level 1（簡單）
 
 ### 預估時間
 10 分鐘
@@ -3027,7 +3027,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 - 行數：~95 行
 - 檔案：1 個（修改）
 - 測試：8 個
-→ Level 3（複雜）⚠️ 可接受
+→ Level 3（複雜）可接受
 （註：3 個搜尋方法邏輯相似，整合實作較有效率）
 
 ### 預估時間
@@ -3073,7 +3073,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 - 行數：~65 行
 - 檔案：1 個
 - 測試：5 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 
 ### 預估時間
 35-45 分鐘
@@ -3118,7 +3118,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 - 行數：~70 行
 - 檔案：1 個
 - 測試：5 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 
 ### 預估時間
 40 分鐘
@@ -3167,7 +3167,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 - 行數：~90 行
 - 檔案：2 個
 - 測試：6 個
-→ Level 2（中等）✅
+→ Level 2（中等）
 
 ### 預估時間
 50-60 分鐘
@@ -3179,14 +3179,14 @@ REQ-SEARCH-001: 書籍搜尋功能
 
 **拆分前後對比**：
 
-| 項目       | 拆分前（God Ticket） | 拆分後（6 個 Ticket）               |
-| ---------- | -------------------- | ----------------------------------- |
-| 職責數量   | 10 個 ❌             | 平均 1.8 個 ✅                      |
-| 程式碼行數 | ~400 行 ❌           | 平均 61 行 ✅                       |
-| 檔案數量   | 10 個 ❌             | 平均 1.2 個 ✅                      |
-| 測試數量   | 25 個 ❌             | 平均 4.7 個 ✅                      |
-| 複雜度等級 | Level 4 ❌           | 5 個 Level 1-2 ✅<br>1 個 Level 3 ⚠️ |
-| 預估總時間 | N/A（無法估算）      | 210-250 分鐘                        |
+| 項目       | 拆分前（God Ticket） | 拆分後（6 個 Ticket）          |
+| ---------- | -------------------- | ------------------------------ |
+| 職責數量   | 10 個                | 平均 1.8 個                    |
+| 程式碼行數 | ~400 行              | 平均 61 行                     |
+| 檔案數量   | 10 個                | 平均 1.2 個                    |
+| 測試數量   | 25 個                | 平均 4.7 個                    |
+| 複雜度等級 | Level 4              | 5 個 Level 1-2<br>1 個 Level 3 |
+| 預估總時間 | N/A（無法估算）      | 210-250 分鐘                   |
 
 **拆分效益分析**：
 
@@ -3241,7 +3241,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 **解決方案**：
 
 ```markdown
-✅ 保持原始 Level 2 Ticket 不拆分
+保持原始 Level 2 Ticket 不拆分
 
 判斷準則：
 
@@ -3279,7 +3279,7 @@ Ticket 6 → Ticket 7 → Ticket 8
 **解決方案**：
 
 ```markdown
-✅ 使用線性或樹狀依賴結構
+使用線性或樹狀依賴結構
 
 優化後的依賴關係：
 Phase 1（並行）:
@@ -3330,7 +3330,7 @@ Phase 4:
 **解決方案**：
 
 ```markdown
-✅ 確保每個子 Ticket 可獨立完成
+確保每個子 Ticket 可獨立完成
 
 正確拆分：
 
@@ -3358,10 +3358,10 @@ Phase 4:
 優先按照 Clean Architecture 分層拆分。
 
 優點：
-✅ 依賴方向清晰（內層不依賴外層）
-✅ 測試策略明確（每層有標準測試方法）
-✅ 可並行開發（不同層可由不同開發者負責）
-✅ 符合單一職責原則
+依賴方向清晰（內層不依賴外層）
+測試策略明確（每層有標準測試方法）
+可並行開發（不同層可由不同開發者負責）
+符合單一職責原則
 ```
 
 **範例**：
@@ -3369,7 +3369,7 @@ Phase 4:
 ```markdown
 原始任務：實作書籍評分功能（跨越 4 層）
 
-❌ 錯誤：按功能模組拆分
+錯誤：按功能模組拆分
 - Ticket A：評分輸入功能（UI + Controller + UseCase）
 - Ticket B：評分儲存功能（Repository + Mapper）
 
@@ -3378,7 +3378,7 @@ Phase 4:
 - Ticket A 跨越 3 層，依賴關係複雜
 - 測試困難（需要 Mock 多層）
 
-✅ 正確：按架構分層拆分
+正確：按架構分層拆分
 - Ticket 1：Rating Domain 模型（Layer 5）
 - Ticket 2：IRatingRepository + Impl（Layer 4-5）
 - Ticket 3：RateBookUseCase（Layer 3）
@@ -3402,8 +3402,8 @@ Phase 4:
 避免複雜的網狀依賴關係。
 
 建議結構：
-✅ 線性依賴：Ticket 1 → Ticket 2 → Ticket 3 → Ticket 4
-✅ 樹狀依賴：
+線性依賴：Ticket 1 → Ticket 2 → Ticket 3 → Ticket 4
+樹狀依賴：
    Ticket 1
    ├─ Ticket 2
    │  └─ Ticket 4
@@ -3411,7 +3411,7 @@ Phase 4:
       └─ Ticket 5
 
 避免結構：
-❌ 網狀依賴：多個交叉依賴，難以追蹤
+網狀依賴：多個交叉依賴，難以追蹤
 ```
 
 **實施方法**：
@@ -3442,9 +3442,9 @@ Phase 4:
 不要將測試獨立為單獨 Ticket（除非測試數量 > 10）。
 
 優點：
-✅ TDD 紅綠燈循環完整
-✅ 每個 Ticket 交付時就是可測試的
-✅ 避免「實作完成但測試缺失」的情況
+TDD 紅綠燈循環完整
+每個 Ticket 交付時就是可測試的
+避免「實作完成但測試缺失」的情況
 ```
 
 **實施方法**：
@@ -3486,13 +3486,13 @@ Phase 4:
 ## Ticket #NNN: [Layer X] {動詞} {目標}
 
 範例：
-✅ 好的標題：
+好的標題：
 
 - [Layer 4] 定義 IBookRepository 介面
 - [Layer 5] 實作 SQLiteBookRepository
 - [Layer 3] 實作 GetBookUseCase
 
-❌ 不好的標題：
+不好的標題：
 
 - 書籍資料存取功能（沒有層級、目標不明確）
 - 實作 Repository（沒有層級、範圍不清楚）
@@ -3516,9 +3516,9 @@ Phase 4:
 建立 `IBookRepository` 介面，定義書籍資料存取的契約
 
 這樣可以：
-✅ 快速識別 Ticket 的架構位置
-✅ 理解 Ticket 的目的（定義 / 實作 / 整合）
-✅ 追蹤依賴關係（內層 → 外層）
+快速識別 Ticket 的架構位置
+理解 Ticket 的目的（定義 / 實作 / 整合）
+追蹤依賴關係（內層 → 外層）
 ```
 
 ---
@@ -3676,9 +3676,9 @@ Phase 4: 重構（cinnamon-refactor-owl）
 
 **協作方式**：
 
-- ✅ Phase 1 完成時，所有 Ticket 都應該 ≤ Level 3
-- ✅ 理想狀態：所有 Ticket 都是 Level 1-2
-- ⚠️ 如有 Level 3 Ticket，應標記為「需要額外 Review」
+- Phase 1 完成時，所有 Ticket 都應該 ≤ Level 3
+- 理想狀態：所有 Ticket 都是 Level 1-2
+- 如有 Level 3 Ticket，應標記為「需要額外 Review」
 
 ---
 
@@ -3750,9 +3750,9 @@ Code Smell 品質閘門在 Ticket 執行後檢測（Runtime）
 
 ```markdown
 如果在設計階段使用本方法論：
-✅ C1 God Ticket 失敗率應該降至 0%
-✅ C3 Ambiguous Responsibility 失敗率應該降至接近 0%
-⚠️ C2 Incomplete Ticket 仍需要 Code Smell 檢測補強
+C1 God Ticket 失敗率應該降至 0%
+C3 Ambiguous Responsibility 失敗率應該降至接近 0%
+C2 Incomplete Ticket 仍需要 Code Smell 檢測補強
 ```
 
 ---
@@ -3823,9 +3823,9 @@ Clean Architecture 實作方法論：
 
 完整的 Ticket 設計派工流程請參考：
 
-- [📚 Ticket 設計派工方法論](/record/ticket-design-dispatch-methodology/) - 主方法論
-- [🏗 Clean Architecture 實作方法論](/record/clean-architecture-implementation-methodology/) - 架構基礎
-- [🎯 層級隔離派工方法論](/record/layered-ticket-methodology/) - 派工策略
-- 🔬 TDD 四階段方法論 - 開發流程
+- [Ticket 設計派工方法論](/record/ticket-design-dispatch-methodology/) - 主方法論
+- [Clean Architecture 實作方法論](/record/clean-architecture-implementation-methodology/) - 架構基礎
+- [層級隔離派工方法論](/record/layered-ticket-methodology/) - 派工策略
+- TDD 四階段方法論 - 開發流程
 
 ---
