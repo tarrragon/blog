@@ -139,41 +139,41 @@ RAG 場景把 retrieved chunks 放 prefix、user query 放後面、可以 cache 
 1. **在 prefix 插入 timestamp / request-id**
 
 ```text
-❌ System prompt: "你是 coding assistant、當前時間 2026-05-12 16:30:42、..."
+反例：System prompt: "你是 coding assistant、當前時間 2026-05-12 16:30:42、..."
    → 每秒不同 cache key、永遠 cache miss、付 1.25× write 不回本
-✅ 把 timestamp 放後段、或省略（多數場景模型不需要精確時間）
+正解：把 timestamp 放後段、或省略（多數場景模型不需要精確時間）
 ```
 
 2. **在 prefix 動態插入 user metadata**
 
 ```text
-❌ System prompt: "User: alice@example.com, plan: premium、..."
+反例：System prompt: "User: alice@example.com, plan: premium、..."
    → 每個 user 不同 cache、命中率低
-✅ User metadata 放後段、prefix 保持 user-agnostic
+正解：User metadata 放後段、prefix 保持 user-agnostic
 ```
 
 3. **Tool schema 順序不固定**
 
 ```text
-❌ 每次 request 把 tool list 隨機 shuffle
+反例：每次 request 把 tool list 隨機 shuffle
    → 同樣 tool 但 token sequence 不同、cache miss
-✅ Tool list 順序固定、新加 tool 都 append 到末尾
+正解：Tool list 順序固定、新加 tool 都 append 到末尾
 ```
 
 4. **太短的 prompt 也想 cache**
 
 ```text
-❌ 500 token system prompt 開 cache
+反例：500 token system prompt 開 cache
    → 多數服務商 minimum 1K-4K、不到門檻不 cache、且 write cost 不回本
-✅ Cache 留給 > 1K 的 prefix、短 prompt 不必開
+正解：Cache 留給 > 1K 的 prefix、短 prompt 不必開
 ```
 
 5. **混用 stream + cache 卻不檢查命中**
 
 ```text
-❌ 開 cache 後不檢查 response 的 cache_read_input_tokens 欄位
+反例：開 cache 後不檢查 response 的 cache_read_input_tokens 欄位
    → 不知道實際命中率、可能 anti-pattern 已在燒 cost 沒察覺
-✅ 監控 cache_read / cache_creation token 比例、低於 80% 命中率時 debug
+正解：監控 cache_read / cache_creation token 比例、低於 80% 命中率時 debug
 ```
 
 ## Cache miss 訊號跟診斷

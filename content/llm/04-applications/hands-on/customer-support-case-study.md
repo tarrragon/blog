@@ -105,9 +105,9 @@ User: 「我搬家了、訂單編號 #12345、新地址是 ___」
 
 **該用什麼結構**：
 
-- ❌ Multi-agent：步驟順序固定、角色差異不大、orchestration overhead 純增。
-- ❌ Single agent loop（model 自決下一步）：本案例假設 single-turn / 短多 turn、步驟順序明確、不需要 agent 自決。若 user 互動多輪 + turn 數不固定（如 user 中途補資訊、改主意、追問）、可考慮 agent loop。
-- ✓ Multi-call pipeline + router：寫成 deterministic pipeline、step 3 後有 router 分流。
+- **不適用 Multi-agent**：步驟順序固定、角色差異不大、orchestration overhead 純增。
+- **不適用 Single agent loop（model 自決下一步）**：本案例假設 single-turn / 短多 turn、步驟順序明確、不需要 agent 自決。若 user 互動多輪 + turn 數不固定（如 user 中途補資訊、改主意、追問）、可考慮 agent loop。
+- **採用 Multi-call pipeline + router**：寫成 deterministic pipeline、step 3 後有 router 分流。
 
 引用原理：
 

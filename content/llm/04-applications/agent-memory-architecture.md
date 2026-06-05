@@ -58,12 +58,12 @@ LLM 本身無狀態 — 每次 [forward pass](/llm/knowledge-cards/forward-pass/
 
 | 用例                                 | Working | Session | Episodic | Semantic | Procedural |
 | ------------------------------------ | ------- | ------- | -------- | -------- | ---------- |
-| Autocomplete（單行補完）             | ✅      | ❌      | ❌       | ❌       | ❌         |
-| Single-turn Q&A                      | ✅      | ❌      | ❌       | ❌       | ❌         |
-| Chat IDE assistant（短對話）         | ✅      | ✅      | ❌       | ❌       | ❌         |
-| Chat IDE assistant（長期使用）       | ✅      | ✅      | 可選     | ✅       | 可選       |
-| 長期 coding agent（持續同 codebase） | ✅      | ✅      | ✅       | ✅       | ✅         |
-| Multi-session research agent         | ✅      | ✅      | ✅       | ✅       | ✅         |
+| Autocomplete（單行補完）             | 需要    | 不需要  | 不需要   | 不需要   | 不需要     |
+| Single-turn Q&A                      | 需要    | 不需要  | 不需要   | 不需要   | 不需要     |
+| Chat IDE assistant（短對話）         | 需要    | 需要    | 不需要   | 不需要   | 不需要     |
+| Chat IDE assistant（長期使用）       | 需要    | 需要    | 可選     | 需要     | 可選       |
+| 長期 coding agent（持續同 codebase） | 需要    | 需要    | 需要     | 需要     | 需要       |
+| Multi-session research agent         | 需要    | 需要    | 需要     | 需要     | 需要       |
 
 實務啟示：從「最少 memory」開始、有具體 trigger 才加。memory 不是越多越好、每加一層都增加複雜度跟失敗面。
 
