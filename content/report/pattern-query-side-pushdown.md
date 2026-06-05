@@ -79,7 +79,7 @@ const r = await pagefind.search('keyword', {
 // pagefind 不支援「只搜 title」
 // 因為 pagefind 的 search 對 full-text、不分區
 const r = await pagefind.search('keyword', {
-  scope: 'title-only',  // ❌ 不存在
+  scope: 'title-only',  // 不存在（不支援）
 });
 ```
 

@@ -23,13 +23,13 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Veri
 
 Hook / lint / type checker 的本質是 **字串匹配 / structural check** — 看得到形狀、看不到意圖。所以：
 
-- ✅ 抓得到「commit message 沒含 issue 號」 — 字面 pattern
-- ✅ 抓得到「test file 沒對應 source file」 — 結構檢查
-- ✅ 抓得到「YAML frontmatter 缺欄位」 — schema check
-- ❌ 抓不到「這個推薦不夠明確、騎牆」 — 需要理解語意
-- ❌ 抓不到「決策 collapse 到 yes/no、漏五維」 — 需要判斷意圖
-- ❌ 抓不到「思考路徑跳過 RED phase」 — 需要追溯 reasoning
-- ❌ 抓不到「過度疊加策略、超過必要」 — 需要 judgment
+- 抓得到「commit message 沒含 issue 號」 — 字面 pattern
+- 抓得到「test file 沒對應 source file」 — 結構檢查
+- 抓得到「YAML frontmatter 缺欄位」 — schema check
+- 抓不到「這個推薦不夠明確、騎牆」 — 需要理解語意
+- 抓不到「決策 collapse 到 yes/no、漏五維」 — 需要判斷意圖
+- 抓不到「思考路徑跳過 RED phase」 — 需要追溯 reasoning
+- 抓不到「過度疊加策略、超過必要」 — 需要 judgment
 
 **Hook 試圖用字串規則模擬語意檢查 = 規則永遠 over-fit 或 under-fit**：寫太嚴 → 大量 false positive 把好的也擋掉、寫太鬆 → 行為錯誤照樣通過。
 

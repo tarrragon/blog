@@ -12,11 +12,11 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "UX",
 
 | 儲存層         | 可分享 | 可 reload 恢復 | 可 back/forward 導航 | 跨 tab 同步     | 跨 device 同步   |
 | -------------- | ------ | -------------- | -------------------- | --------------- | ---------------- |
-| In-memory      | ❌     | ❌             | ❌                   | ❌              | ❌               |
-| URL            | ✅     | ✅             | ✅                   | 部分（同 URL）  | 部分（複製連結） |
-| sessionStorage | ❌     | ✅             | ❌                   | ❌              | ❌               |
-| localStorage   | ❌     | ✅             | ❌                   | ✅（同 origin） | ❌               |
-| Server         | ✅     | ✅             | ❌                   | ✅              | ✅               |
+| In-memory      | 否     | 否             | 否                   | 否              | 否               |
+| URL            | 是     | 是             | 是                   | 部分（同 URL）  | 部分（複製連結） |
+| sessionStorage | 否     | 是             | 否                   | 否              | 否               |
+| localStorage   | 否     | 是             | 否                   | 是（同 origin） | 否               |
+| Server         | 是     | 是             | 否                   | 是              | 是               |
 
 寫 stateful UI 時、每個 state 的儲存位置是個設計選擇 — 不選 = 預設用 in-memory = 預設犧牲所有上面五個特性。
 

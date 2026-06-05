@@ -83,7 +83,7 @@ Tab 順序：scope radios → search input。但 mental model 是「先打字再
 ```html
 <form>
   <input name="email">
-  <button type="submit">送出</button>  <!-- ❌ 太早 -->
+  <button type="submit">送出</button>  <!-- 太早 -->
   <textarea name="message"></textarea>
 </form>
 ```
@@ -165,7 +165,7 @@ drawer.parentElement.insertBefore(scope, drawer);
 ### 第三順位（不推薦）：tabindex 強制
 
 ```html
-<input tabindex="1" name="search">  <!-- ❌ tabindex > 0 -->
+<input tabindex="1" name="search">  <!-- 反模式：tabindex > 0 -->
 <div tabindex="2" class="search-scope">...</div>
 ```
 

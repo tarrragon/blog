@@ -23,11 +23,11 @@ LLM 應用的 codebase 不只 source code、還含 [embedding](/llm/knowledge-ca
 
 ## 三類產物 framework
 
-| 類別         | 定義                       | 例子                                                  | 該進 git？               |
-| ------------ | -------------------------- | ----------------------------------------------------- | ------------------------ |
-| **Source**   | 人類撰寫、是真理來源       | code、prompt template、test fixture、config schema    | ✓ 必須                   |
-| **Derived**  | 從 source 自動產出、可重建 | binary、index、cache、compiled output、generated docs | ✗ 不該                   |
-| **External** | 從外部下載、跟 source 解耦 | model weights、dependency package、dataset            | ✗ 用 registry / manifest |
+| 類別         | 定義                       | 例子                                                  | 該進 git？             |
+| ------------ | -------------------------- | ----------------------------------------------------- | ---------------------- |
+| **Source**   | 人類撰寫、是真理來源       | code、prompt template、test fixture、config schema    | 必須                   |
+| **Derived**  | 從 source 自動產出、可重建 | binary、index、cache、compiled output、generated docs | 不該                   |
+| **External** | 從外部下載、跟 source 解耦 | model weights、dependency package、dataset            | 用 registry / manifest |
 
 判讀問題：「**刪掉重來、用什麼能 reconstruct 一模一樣？**」
 
@@ -186,15 +186,15 @@ logs/
 
 幾個容易誤判的：
 
-| 產物                                | 該不該 commit                        | 為什麼                                |
-| ----------------------------------- | ------------------------------------ | ------------------------------------- |
-| `package-lock.json` / `poetry.lock` | ✓ commit                             | 是 manifest、保證 reproducibility     |
-| `node_modules/`                     | ✗ 不 commit                          | 是 derived、可從 lockfile 重建        |
-| 小型 fixture data（< 1 MB）         | ✓ commit（作 source）                | 是 test 的一部分、不 reconstruct      |
-| 大型 eval dataset（> 100 MB）       | ✗ 用 dvc / S3 manifest               | 量大、改用 dvc / S3 manifest 管理     |
-| Pre-built model 用於 demo           | ✗ 用 release artifact / Hugging Face | 量大、版本要可追蹤                    |
-| Prompt template (markdown / yaml)   | ✓ commit                             | 是 source、影響行為、要 diff          |
-| 從 LLM 生的 sample output           | ✗ 不 commit（除非當 fixture）        | 是 demo artifact、不 reconstruct 來源 |
+| 產物                                | 該不該 commit                      | 為什麼                                |
+| ----------------------------------- | ---------------------------------- | ------------------------------------- |
+| `package-lock.json` / `poetry.lock` | commit                             | 是 manifest、保證 reproducibility     |
+| `node_modules/`                     | 不 commit                          | 是 derived、可從 lockfile 重建        |
+| 小型 fixture data（< 1 MB）         | commit（作 source）                | 是 test 的一部分、不 reconstruct      |
+| 大型 eval dataset（> 100 MB）       | 用 dvc / S3 manifest               | 量大、改用 dvc / S3 manifest 管理     |
+| Pre-built model 用於 demo           | 用 release artifact / Hugging Face | 量大、版本要可追蹤                    |
+| Prompt template (markdown / yaml)   | commit                             | 是 source、影響行為、要 diff          |
+| 從 LLM 生的 sample output           | 不 commit（除非當 fixture）        | 是 demo artifact、不 reconstruct 來源 |
 
 判讀 heuristic：
 

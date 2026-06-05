@@ -148,8 +148,8 @@ Apple Silicon 統一記憶體被 PyTorch 報成 VRAM 是預期、不是 bug：mp
 
 關鍵驗證：
 
-- `Device: mps` → Apple Silicon GPU 啟用 ✓
-- `Starting server` + `http://127.0.0.1:8188` → server 跑了 ✓
+- `Device: mps` → Apple Silicon GPU 啟用
+- `Starting server` + `http://127.0.0.1:8188` → server 跑了
 
 開瀏覽器到 `http://127.0.0.1:8188`、看到節點式 UI 就成功。第一次開啟會載入預設 workflow（一個簡單 text-to-image）。
 

@@ -148,13 +148,13 @@ lsof -i :8188 | head -3
 
 ## 跟其他本地 server 對比
 
-| Server                   | Auto-unload                  | 主動 unload 指令               | 占 RAM 觀察              |
-| ------------------------ | ---------------------------- | ------------------------------ | ------------------------ |
-| Ollama                   | ✓（5 分鐘 idle）             | `keep_alive: 0` 或 stop daemon | `ollama ps`              |
-| LM Studio                | ✗（GUI 主動關閉 model 才釋） | GUI Eject Model                | Activity Monitor         |
-| llama.cpp `llama-server` | ✗                            | kill process                   | `lsof -i :8080`          |
-| ComfyUI                  | ✗                            | kill process                   | `ps aux \| grep ComfyUI` |
-| oMLX                     | ✓（per model 可配）          | API endpoint                   | server log               |
+| Server                   | Auto-unload                   | 主動 unload 指令               | 占 RAM 觀察              |
+| ------------------------ | ----------------------------- | ------------------------------ | ------------------------ |
+| Ollama                   | 有（5 分鐘 idle）             | `keep_alive: 0` 或 stop daemon | `ollama ps`              |
+| LM Studio                | 無（GUI 主動關閉 model 才釋） | GUI Eject Model                | Activity Monitor         |
+| llama.cpp `llama-server` | 無                            | kill process                   | `lsof -i :8080`          |
+| ComfyUI                  | 無                            | kill process                   | `ps aux \| grep ComfyUI` |
+| oMLX                     | 有（per model 可配）          | API endpoint                   | server log               |
 
 **結論**：只有 Ollama 跟 oMLX 內建 auto-unload、其他都要手動釋放。GUI server（LM Studio）通常給 user 一個「Eject」按鈕、CLI server 通常要 kill process。
 

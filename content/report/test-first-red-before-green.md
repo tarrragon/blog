@@ -53,9 +53,9 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "TDD"
 
 ```text
 1. 先寫一個 test 重現 bug 為失敗 — 例：「filter 後 0 筆但 source 還有未載入時、應該顯示 explicit empty 而非 silent」
-2. 跑測試 → RED ✓（證明測試抓到 bug、bug 真的存在）
+2. 跑測試 → RED（證明測試抓到 bug、bug 真的存在）
 3. 修 code
-4. 跑測試 → GREEN ✓（證明修對了 + 測試會抓回歸）
+4. 跑測試 → GREEN（證明修對了 + 測試會抓回歸）
 ```
 
 跳過第 2 步 = 不知道測試會不會抓到、不知道 bug 真的有沒有。
@@ -64,9 +64,9 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "TDD"
 
 ```text
 1. 寫 acceptance test 描述新 feature 該有的行為
-2. 跑測試 → RED ✓（feature 還沒實作、應該 fail；如果 GREEN 就表示 feature 已經存在或測試太寬）
+2. 跑測試 → RED（feature 還沒實作、應該 fail；如果 GREEN 就表示 feature 已經存在或測試太寬）
 3. 實作 feature
-4. 跑測試 → GREEN ✓
+4. 跑測試 → GREEN
 ```
 
 加 feature 時跳過 RED 風險：feature 被誤以為實作但實際是 stub、或測試根本沒驗到 feature。
@@ -76,7 +76,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "TDD"
 ```text
 1. 確認當前測試 GREEN（baseline）
 2. Refactor（不改 behavior）
-3. 跑測試 → 仍 GREEN ✓
+3. 跑測試 → 仍 GREEN
 ```
 
 Refactor **不需要** RED — 因為 behavior 沒變。如果 refactor 後變 RED、表示 refactor 改到了 behavior（變成隱性 bug）、要回頭看。
@@ -184,7 +184,7 @@ git cherry-pick <test-commit>
 
 # 3. Build + 跑測試
 make site && npm test
-# 預期：RED ✓（測試抓到 bug）
+# 預期：RED（測試抓到 bug）
 
 # 4. 切回 main / 修後版本
 git checkout main
@@ -192,7 +192,7 @@ git stash pop
 
 # 5. 跑測試
 npm test
-# 預期：GREEN ✓
+# 預期：GREEN
 ```
 
 兩次跑 + 兩個訊號（RED + GREEN）都對、測試才被驗證。**Retrospective 補驗證 ≠ 不能補** — 比完全跳過 RED 好、比 test-first 弱。
