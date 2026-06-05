@@ -212,6 +212,7 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 - [#151 教材給技術理由、不替方案下品質評價](teaching-gives-reasons-not-quality-verdicts/) — 自評誇飾（教科書級 / 堪稱經典 / 完美契合 / 漂亮地解決）傳遞作者滿意度而非概念、且品質 verdict 會頂替技術理由（寫「X 是教科書級的適配」就少寫「X 為什麼適配」）；修法把評價換成機制 / 條件；跟 #111 同屬誇飾大類但評價對象不同（#111 誇張技術屬性、本卡評價方案品質）、#150 的 stance sibling（#150 管理讀者、本卡評價方案）、#94 空降斷言在品質評價維度的變體、違反 AGENTS 原則七；邊界 narrative / 復盤型內容的評價是合理 register
 - [#152 教材把設計選擇講成選擇、不講成必然或天性](design-choices-framed-as-choices-not-necessity/) — 本質主義 / 必然性框架（天生 / 本質就是 / 必然 / 唯一）把設計選擇講成自然法則、抹掉設計能動性；是「機會成本語氣 vs 絕對主義」的 subtype、比命令式絕對（應該做 X）更隱形（必然式偽裝成事實、躲過 review）；sharp feature 是常局部牴觸作者自己在別處的條件性立場（HOF 文章通篇講條件性、唯獨「天生」講成必然）；修法還原條件性（在選了某前提後 X 才以此形式成立）；是 #151 / #94 空降家族的 sibling（必然框架空降 vs 品質 verdict 空降 vs 刪對照空降）、補 compositional-writing 原則三的必然性維度；邊界物理 / 法律 / 數學事實可講必然
 - [#153 Review 漏抓先分 design gap 與 execution gap](review-miss-diagnose-design-vs-execution-gap/) — review 漏抓某類問題有兩成因：design gap（框架沒對應 frame）vs execution gap（框架有 frame、reviewer 沒跑）；修法相反（前者改框架、後者改執行），診斷前先分清否則 framework bloat 或永遠漏同類；「加 keyword」是最誘人的假修法（只解 design gap 偵測 sub-type、對沒跑的輪無效）；case 是 register 類漏抓（兩 gap 都有：跳過輪 9/10 + 輪 9 缺 register lens）；是 #114（design gap 一面向）的上位、#147（execution 側）的一般化、#149（偵測 vs 判定）的成因分層 sibling
+- [#154 教材的『重點 / 總結』段是內容發散的訊號、該重組正文不該補丁](summary-section-signals-scattered-prose/) — 單篇文章尾端「重述自己」的總結段（重點 / 小結 / TL;DR）是正文組織不佳的補丁；判準是「刪掉總結段、正文站不站得住」—— 站得住證明總結冗餘、站不住是正文要重組、兩種結果都指向不該留總結段；處理段內容先分提醒（養成習慣 / 回頭確認、刪）vs 概念（為何這樣設計、併回正文對應段）；補丁掩蓋發散會持續累積、概念被埋在尾端反而讓正文缺角違反「核心原則先行」；邊界是跨章模組的導覽型 summary（傳遞結構 / 路由這個新資訊）不適用；是 #64（在 source 同層修、不在下游補）的寫作層同構、#150 的結構層 sibling（#150 字句 stance、本卡整段結構）、#151 的「不貢獻新概念就刪」同判準、#153 的 diagnose 先於修法同類動作
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -380,6 +381,8 @@ Filter × Source 合成三選（從 #59 抽出）：
 `#114 Multi-pass review 的 frame 顆粒度盲點` → `#149 keyword bank 命中是候選、不是判決` → `#94 正向改寫要保留對照論據` → `#111 口語化修辭會稀釋技術精度` → `#147 規範化跟自審是兩種認知任務` → `#148 跨輪 review 停止訊號` — 先用 #114 把規則展開成 keyword bank 解偵測層（別靠記憶 sweep）；再用 #149 處理判定層（grep 命中後別把「建立概念的否定」合理化成「反例對照」放行、用「概念位置」判別）；判定的兩極由 #94（別過度刪對照）跟正向陳述優先（別過度留否定）夾出；#111 給字句層的具體訊號清單；#150 補「register/stance」軸（教材不對讀者喊話、跟 #111 精度軸正交）；#151 補「自評誇飾」（品質 verdict 頂替技術理由、跟 #111 同誇飾大類但評價對象不同）；#152 補「必然性框架」（把設計選擇講成天性、機會成本語氣的必然式 subtype）；#147 提醒「立了規範 / 跑了 grep」不等於判得對；#153 提醒漏抓先分 design gap（改框架）vs execution gap（改執行、別只加 keyword）；最後用 #148 判斷何時停止。
 
 ---
+
+**Last Updated**: 2026-06-05（git stash `-u` 筆記 review retro）— 新增 #154 教材的『重點 / 總結』段是內容發散的訊號、該重組正文不該補丁：git stash `-u` 筆記尾端「重點」段被使用者指為沒有必要 ——「如果文章一定要寫重點才能讓讀者記住、表示內容太發散、該重新拆分組織、而不是為設計不佳又補一個重點章節」；核心判準是「刪掉總結段、正文站不站得住」（站得住=冗餘、站不住=正文要重組、都指向不留總結）；處理段內容先分提醒（刪）vs 概念（併回正文對應段）；是 #64（source 同層修、不下游補）的寫作層同構、#150（字句 stance）的結構層 sibling、#151（不貢獻新概念就刪）同判準、#153（diagnose 先於修法）同類動作；邊界是跨章導覽型 summary（傳遞結構 / 路由新資訊）不適用。同步建記憶（總結段是發散訊號）。
 
 **Last Updated**: 2026-06-01（multi-pass review 失效 WRAP 檢討 retro）— 新增 #153 Review 漏抓先分 design gap 與 execution gap：對 HOF 文章 review 失誤（多輪 review 報 clean、使用者卻 catch 出 register 類問題）做 WRAP Consider the Opposite 檢驗、發現失敗有兩成因 —— execution gap（只跑臨時子集、跳過框架既有的輪 9/10）+ design gap（輪 9 定義聚焦自包含性、缺 register lens、且 register 類無穩定關鍵詞 keyword bank 抓不到）；修法相反（design 改框架、execution 改紀律）、「加 keyword」是只解 design 偵測 sub-type 的假修法；是 #114 的上位（先驗證「問題在框架」這個預設）、#147 的一般化、#149 的成因分層 sibling；觸發 case 是 #150-152 register 卡。下一步據此更新 compositional-writing skill（輪 9 擴 register lens）。
 
