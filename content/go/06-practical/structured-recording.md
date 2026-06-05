@@ -29,7 +29,7 @@ weight: 5
 | domain event log | 記錄已發生事實、audit、replay | `notification.created`、`job.failed`                                         |
 | state repository | 查詢目前狀態或投影            | job current status、notification summary                                     |
 
-structured log 服務操作診斷，event log 保存 normalized fact，state repository 回答目前狀態。先分清楚用途，才知道欄位該放哪裡。
+structured log 服務操作診斷，event log 保存 normalized fact，state repository 回答目前狀態。先分清楚用途，才知道欄位該放哪裡。這個用途判斷比選擇哪個 logging package 更關鍵 — 工具決定怎麼寫，用途決定寫什麼、放哪裡。
 
 ## 【判讀】structured log 是操作訊號
 
@@ -388,7 +388,3 @@ event log 記錄的是 normalized fact。若把暫時性錯誤、debug 訊息與
 - [Go：如何新增 repository port](/go/06-practical/repository-port/)
 - [Go：用 interface 隔離外部依賴](/go/07-refactoring/interface-boundary/)
 - [Go：結構化日誌欄位設計](/go-advanced/06-production-operations/log-fields/)
-
-## 小結
-
-結構化記錄的重點是用途分流。structured log 幫工程師除錯，domain event log 保存已發生事實，state repository 提供目前狀態查詢。新增欄位前先問「這筆資訊要服務誰」，再決定它該進 log、event log 還是 repository。這個判斷比選擇任何 logging package 都重要。

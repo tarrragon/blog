@@ -54,7 +54,7 @@ func (c Counter) Value() int {
 }
 ```
 
-`(c *Counter)` 和 `(c Counter)` 就是 receiver。它放在 `func` 和方法名稱之間，表示這個函式是 `Counter` 的方法。
+`(c *Counter)` 和 `(c Counter)` 就是 receiver。它放在 `func` 和方法名稱之間，表示這個函式是 `Counter` 的方法。receiver 只表示「這個函式以這個型別作為操作對象」，不代表繼承關係 — Go 沒有類別繼承，方法只是綁定到型別的函式。
 
 呼叫方式：
 
@@ -150,7 +150,3 @@ func (s *Server) Start() error {
     // 啟動 Server，適合方法
 }
 ```
-
-## 小結
-
-Go 用函式處理一般邏輯，用方法把行為綁到資料型別上。receiver 不代表繼承，只代表「這個函式以這個型別作為操作對象」。理解這一點，Go 的物件模型就會變得很直接。

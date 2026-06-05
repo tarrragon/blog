@@ -47,7 +47,7 @@ server := NewHTTPServer(repo, notifications)
 2. 元件彼此怎麼連接？
 3. 程式關閉時誰負責停止？
 
-Go 偏好把這些答案留在表面。當你看到 `NewWorker(repo, events, notifications)`，你不需要先理解框架規則，就能知道 worker 依賴 repository，從事件 channel 讀資料，輸出通知到另一個 channel。
+Go 偏好把這些答案留在表面。當你看到 `NewWorker(repo, events, notifications)`，你不需要先理解框架規則，就能知道 worker 依賴 repository，從事件 channel 讀資料，輸出通知到另一個 channel。抽象的責任是讓資料流更容易判讀；抽象若讓讀者需要猜測背後規則，就削弱了 Go 在長期維護上的主要價值。
 
 ## 【策略】閱讀 Go 程式先找資料流
 
@@ -78,7 +78,3 @@ file / HTTP / timer ──> events ──> Worker ──> notifications
 ```
 
 這張圖比逐行閱讀更重要。它先回答「系統如何運作」，再讓你回到個別函式確認細節。
-
-## 小結
-
-Go 的簡單哲學要求抽象必須讓資料流更容易判讀。抽象若讓讀者需要猜測背後規則，就會削弱 Go 在長期維護上的主要價值。

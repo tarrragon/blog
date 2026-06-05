@@ -178,8 +178,6 @@ func (r *UserRepository) Users() map[string]User {
 - **Goroutine 數量**：少（< 10）時 contention 微、多（> 1000）時 RWMutex 不適合、要 shard 或換 lock-free 結構
 - **持鎖時間**：鎖內 microsecond 級 OK、毫秒級會堆隊；鎖內絕不做 I/O / 網路呼叫
 
-## 小結
+## 選擇 RWMutex 前先問四件事
 
-`sync.RWMutex` 用來保護多 goroutine 共享 **可變狀態的 data race**。讀取用 `RLock`，寫入用 `Lock`；鎖要保護完整資料不變式，回傳 map 或 slice 時要複製。
-
-但 `RWMutex` 只解 data race subset——不解 deadlock / starvation / atomicity violation / context cancellation / 多核 contention scaling。狀態可表達為 atomic op、單 owner channel、或大量獨立 key 時、`sync/atomic` / channel-based / `sync.Map` 通常更合適。選擇前先問：「不變式跨幾個欄位？讀寫比例？goroutine 數量？持鎖時間？」
+`RWMutex` 只解 data race subset——不解 deadlock / starvation / atomicity violation / context cancellation / 多核 contention scaling。狀態可表達為 atomic op、單 owner channel、或大量獨立 key 時、`sync/atomic` / channel-based / `sync.Map` 通常更合適。選擇前先問：「不變式跨幾個欄位？讀寫比例？goroutine 數量？持鎖時間？」
