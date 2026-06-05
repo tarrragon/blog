@@ -30,6 +30,8 @@ Git 把工作目錄的檔案分成幾種狀態，跟 stash 有關的是這三種
 
 「untracked」就是 `git status` 裡出現在 `Untracked files:` 區塊的新檔案。
 
+Git 預設不收 untracked，是因為這類檔案常是編譯產物、log、暫存檔，全收進 stash 反而把雜物一起搬動；要求用 `-u` 明確表態，是把「要不要連新檔一起暫存」的決定權留給操作者。`-a`（`--all`）範圍更大，連 `.gitignore` 忽略的也一起收，日常少用。
+
 ---
 
 ## 正確流程（拉主線變更）
@@ -39,16 +41,6 @@ git stash push -u -m "暫存"    # -u 連 untracked 新檔案一起收
 git pull --rebase origin main  # 或 git fetch + git rebase
 git stash pop                  # 把修改倒回工作目錄
 ```
-
----
-
-## 重點
-
-- **開新功能幾乎一定有 untracked 檔案**（新增的 model、service 等），
-  所以「開新功能 + stash」要養成順手加 `-u` 的習慣。
-- 為什麼 Git 預設不收 untracked？因為 untracked 常是編譯產物、log、暫存檔，
-  全收進 stash 反而危險，所以 Git 要求用 `-u` 明確表態。
-- 記憶法：`-u` = untracked；`-a`（`--all`）= untracked **加** `.gitignore` 忽略的一起收（範圍比 `-u` 更大、少用）。
 
 ---
 
