@@ -103,7 +103,3 @@ type Config struct {
 ```
 
 這樣的設計讓資料層次在 Go 程式中也看得見。
-
-## 小結
-
-struct 是 Go 程式的資料骨架，JSON tag 是對外 contract。讀 model 時應同時看欄位型別與 tag，因為 tag 會揭露 API 或檔案格式的必要性、可選性與命名邊界。

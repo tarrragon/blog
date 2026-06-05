@@ -422,7 +422,3 @@ handler 透過 repository 或 state owner 修改 projection，可以讓狀態規
 - [Go：如何新增一種 domain event](/go/06-practical/new-event-type/)
 - [Go：狀態管理的安全邊界](/go/07-refactoring/state-boundary/)
 - [Go 進階：Source of Truth](/backend/knowledge-cards/source-of-truth/)
-
-## 小結
-
-擴展狀態投影欄位時，先判斷資料責任，再決定它應該放在 domain state、read model 還是 response view。狀態轉移要集中，查詢要保護 copy boundary，response 要表達穩定 JSON contract。欄位新增看似只是改 struct，但真正需要保護的是寫入規則、相容性與測試邊界。

@@ -163,7 +163,3 @@ writeJSONError(w, http.StatusInternalServerError, "create user failed")
 | ------------- | -------------------------- |
 | 內部 error    | 幫工程師定位問題           |
 | 對外 response | 給呼叫者穩定、可理解的訊息 |
-
-## 小結
-
-Go 的錯誤處理看似重複，但它讓失敗路徑保持可見。用 early return 保持成功路徑扁平，用 `fmt.Errorf(... %w ...)` 補上脈絡，再在邊界層把錯誤轉成合適的回應。

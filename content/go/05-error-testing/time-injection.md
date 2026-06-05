@@ -169,9 +169,7 @@ localTime := time.Date(2026, 4, 22, 18, 0, 0, 0, loc)
 
 不要讓測試默默依賴 `time.Local`，除非測試目的就是驗證本機時區設定。
 
-## 小結
-
-時間注入讓測試從「依賴現在」改成「指定現在」。純邏輯函式可以直接傳入 `now time.Time`，長生命週期元件可以接收 `func() time.Time`，timeout 與 retry 應優先測 duration 與狀態轉移，而不是讓測試真的等待。
+## 下一章
 
 下一章會進入並發行為測試，說明如何驗證 goroutine、channel 與共享狀態。
 

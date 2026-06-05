@@ -124,7 +124,3 @@ case <-time.After(2 * time.Second):
 ```
 
 在較大的系統中，通常更偏好 `context.WithTimeout`，讓 timeout 可以沿呼叫鏈傳遞。
-
-## 小結
-
-`select` 是 Go 並發程式的事件路由器。長期 goroutine 用它同時等待工作、取消、定時器與 fallback；`default` 代表不等待，ticker 要記得 Stop，必要結果不要用 default 過早跳出。

@@ -503,7 +503,3 @@ JSON tag 是 transport contract。domain model 若直接承擔對外格式，未
 - [Go：如何新增一個即時訊息 action](/go/06-practical/new-websocket-action/)
 - [Go：如何新增 repository port](/go/06-practical/repository-port/)
 - [Go：如何擴展狀態投影欄位](/go/06-practical/state-fields/)
-
-## 小結
-
-handler 重構的重點是讓 HTTP 邊界變薄。request DTO 描述外部輸入，command 描述 application 行為，usecase 保存規則，response struct 描述對外 contract，error mapping 負責 HTTP 狀態碼。當 handler 只做轉換，核心邏輯就能被普通單元測試覆蓋，也能被 WebSocket、worker 或 CLI 重用。

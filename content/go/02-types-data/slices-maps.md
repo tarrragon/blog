@@ -217,7 +217,3 @@ m["x"] = 1
 ### 檢查三：需要順序時先排序 key
 
 map 的順序不能拿來做穩定輸出、測試 snapshot 或 UI 排序。需要順序就額外維護 slice。
-
-## 小結
-
-slice 適合有順序的資料，map 適合 key-value 查詢。slice 的重點是 append、len、cap 與底層 array；map 的重點是初始化、`value, ok` 讀取與不保證迭代順序。

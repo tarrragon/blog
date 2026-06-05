@@ -145,10 +145,6 @@ logger.Info("job started", "jobID", "j_1", "userID", "u_1")
 
 log 會被保存與轉發。密碼、token、完整信用卡號等敏感資訊不應寫入 log。
 
-## 小結
-
-`slog` 的價值是把 log 變成可查詢資料。訊息描述事件，欄位保存穩定上下文；level 表示嚴重度，欄位名稱要一致，敏感資訊不要進 log。
-
 ## 延伸閱讀
 
 本章只介紹標準庫 `log/slog` 的基本用法。服務開始有 domain event、state repository 或查詢需求時，可以接著閱讀 [如何新增結構化記錄欄位](/go/06-practical/structured-recording/)；進入生產操作後，再閱讀 [Go 進階：結構化日誌欄位設計](/go-advanced/06-production-operations/log-fields/) 與 [Observability pipeline、metrics 與 tracing](/go-advanced/07-distributed-operations/observability-pipeline/)。

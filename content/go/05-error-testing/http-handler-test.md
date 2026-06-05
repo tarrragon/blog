@@ -150,8 +150,6 @@ func TestHandleCreateUserServiceError(t *testing.T) {
 
 這不是完整整合測試，而是 handler 單元測試。資料庫連線、[migration](/backend/knowledge-cards/migration/)、真實網路等行為應該放在更高層級的整合測試處理。
 
-## 小結
-
-`httptest` 讓 handler 測試保持快速且可控：建立 request、用 recorder 接 response、檢查 status、header 與 body。好的 handler 測試會隔離外部依賴，專注於 HTTP 協定行為，讓 API 邊界在重構時不容易被破壞。
+## 下一章
 
 下一章會處理時間注入，說明如何避免測試依賴真實現在時間。

@@ -140,7 +140,3 @@ defer cancel()
 ### 用 context 傳一般參數
 
 context value 適合 request-scoped metadata，例如 [request ID](/backend/knowledge-cards/request-id/)。一般業務參數應放在函式參數或 struct 裡。
-
-## 小結
-
-`context.Context` 是工作生命週期的傳遞工具。上層建立與取消 context，下層接收並尊重取消訊號；逾時用 `WithTimeout`，主動停止用 `WithCancel`，背景 goroutine 必須有清楚退出路徑。

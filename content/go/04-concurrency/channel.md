@@ -112,7 +112,3 @@ func consumer(in <-chan int) {
 ```
 
 接收端不應關閉自己沒有所有權的 channel；否則送出端可能在送資料時遇到 panic。
-
-## 小結
-
-channel 的重點是資料流、同步點與所有權邊界。buffer 大小、方向限制、blocking 或 non-blocking send 都是設計決策，會直接影響程式在壓力下的行為。

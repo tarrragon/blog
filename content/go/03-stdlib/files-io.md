@@ -154,6 +154,4 @@ func printLines(r io.Reader) error {
 
 ## 小結
 
-Go 的 I/O 設計以 `io.Reader` 與 `io.Writer` 為中心。小檔案可以用 `os.ReadFile` 與 `os.WriteFile` 快速處理；需要控制資源生命週期時使用 `os.Open`、`defer Close`；資料量大或來源不固定時，改用 reader/writer 與 streaming。
-
 下一章會進入 JSON，說明 Go 如何把 struct 與外部資料格式互相轉換。

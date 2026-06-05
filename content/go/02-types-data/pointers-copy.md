@@ -194,7 +194,3 @@ func CloneProfile(p Profile) Profile {
 ```
 
 這種 copy 邊界在共享狀態、快取、API response、測試資料中都很重要。
-
-## 小結
-
-Go 的值傳遞讓資料流預設比較安全，但 pointer、slice、map 都會引入共享修改的可能。設計 API 時要明確決定資料是否可以被外部修改；不希望被改，就建立 copy 邊界。

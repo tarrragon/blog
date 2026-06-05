@@ -156,7 +156,3 @@ JSON 來自外部輸入，解析錯誤是正常情境。忽略錯誤會讓後續
 ### 把內部錯誤直接回給外部
 
 對外 response 應該穩定且安全；內部錯誤細節留在 [log](/backend/knowledge-cards/log/) 或 error chain 裡，不直接暴露給使用者。
-
-## 小結
-
-`encoding/json` 是 Go struct 和外部 JSON 格式之間的轉換層。bytes 用 `Marshal` / `Unmarshal`，stream 用 `Encoder` / `Decoder`；所有外部 JSON 都應先進入明確 struct，再進入後續業務邏輯。

@@ -167,6 +167,4 @@ func run(ctx context.Context) {
 
 ## 小結
 
-Go 的時間模型分成兩個核心型別：`time.Time` 表示時間點，`time.Duration` 表示時間長度。時間格式化使用固定參考時間作為 layout，timer 用於一次性等待，ticker 用於週期性事件。
-
 下一章會進入 `os` 與 `io`，說明檔案、輸入輸出與 streaming API 的共同抽象。

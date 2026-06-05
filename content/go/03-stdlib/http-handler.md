@@ -176,6 +176,4 @@ func (h UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 ## 小結
 
-`net/http` 的核心模型很小：request 進來，handler 寫出 response，`ServeMux` 負責把路由分派到 handler。好的 handler 會清楚處理 HTTP method、輸入驗證、錯誤狀態與輸出格式，並把真正的業務規則留給內部函式或服務。
-
 下一章會回到 logging，說明如何用 `slog` 讓服務輸出可搜尋、可關聯的結構化資訊。

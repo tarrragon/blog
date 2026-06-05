@@ -174,7 +174,3 @@ go test -race ./...
 `-race` 會讓測試變慢，但能抓出許多一般斷言看不見的並發錯誤。只要程式有 goroutine 與共享資料，定期跑 race test 就很有價值。
 
 race detector 不是邏輯正確性的完整證明。它能檢查資料競爭，但不能保證事件順序、[buffer](/backend/knowledge-cards/buffer/) 策略或 timeout 行為都符合需求；這些仍然要靠明確測試案例。
-
-## 小結
-
-並發測試應該觀察同步訊號，而不是等待運氣。channel 可以驗證資料傳遞與完成，context 可以控制退出，WaitGroup 可以等待一組工作，race detector 可以檢查共享狀態的資料競爭。好的並發測試會讓 goroutine 的生命週期可見，讓失敗可以被穩定重現。

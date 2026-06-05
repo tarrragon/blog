@@ -163,7 +163,3 @@ const StringActive = "active" // 不佳
 ```go
 const TaskStatusActive TaskStatus = "active"
 ```
-
-## 小結
-
-常數讓固定值有名稱，typed string 讓一組固定字串有語意邊界。當字串代表狀態、事件、action 或 log 訊號時，集中命名能降低拼錯、誤用與搜尋成本。

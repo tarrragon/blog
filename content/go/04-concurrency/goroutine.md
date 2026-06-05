@@ -156,7 +156,3 @@ if err := <-errCh; err != nil {
 ### 長時間工作要有退出條件
 
 長時間 worker 至少要監聽 context 或 channel close。永遠 `for {}` 會讓 goroutine 生命週期失去 owner，服務停止時也難以清理。
-
-## 小結
-
-goroutine 讓函式可以並發執行，但它不會自動解決等待、錯誤回傳或資源釋放問題。每個 goroutine 都要有明確生命週期：誰啟動、誰等待、誰取消、如何回報錯誤。

@@ -171,7 +171,3 @@ Java / C# 生態可能比 Go 更貼近主問題。
 - [Go 的簡單哲學與認知負擔](/go/00-philosophy/simplicity/)
 - [組合優先：小介面與明確依賴](/go/00-philosophy/composition/)
 - [Go 並發模型](/go/04-concurrency/)
-
-## 小結
-
-Go 的差異不只是「能處理並發」。它把低成本 goroutine、context、標準庫、簡單語法與單一 binary 交付組成一套後端服務模型。當工作負載是大量 I/O、長生命週期、背景處理、事件流或清楚 API 邊界時，Go 的工程價值會很明顯；當主要問題在企業框架、底層控制、動態產品流程或 actor 容錯時，其他語言可能更適合優先評估。

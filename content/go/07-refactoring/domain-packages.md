@@ -390,7 +390,3 @@ package 重構應先保持行為不變。若同時改規則與搬檔案，測試
 - [Go：狀態管理的安全邊界](/go/07-refactoring/state-boundary/)
 - [Go：如何新增 repository port](/go/06-practical/repository-port/)
 - [Go：如何新增一種 domain event](/go/06-practical/new-event-type/)
-
-## 小結
-
-以 domain 重新整理 package 的重點是讓程式結構反映業務語意。平面多檔案是 Go 程式自然成長階段，只有當語意邊界變模糊時才需要拆 package。搬移時先搬純型別，再搬純規則，最後處理 usecase 與 adapter；domain 不依賴 adapter，測試保護行為不變。

@@ -97,7 +97,3 @@ if err := doWork(ctx, job); err != nil {
 - 系統已進入明顯積壓
 
 這時候回傳 `429`、`503` 或 domain-level rejection，往往比讓請求默默堆積更健康。
-
-## 小結
-
-高併發控制是 Go 服務場景裡需要掌握的核心能力。goroutine 讓你能放大並發；bounded concurrency、backpressure 與 cancellation 則讓系統能長時間穩定運行。

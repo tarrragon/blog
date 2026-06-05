@@ -159,6 +159,4 @@ func parsePair(input string) (string, string, error) {
 
 ## 小結
 
-`fmt` 解決資料如何呈現成文字，`strings` 解決文字如何被查找、裁切、切割與組合。入門階段應先熟悉這兩個 package，因為它們會出現在 CLI、設定處理、錯誤訊息、HTTP handler 與測試輸出中。
-
 下一章會進入 `time`，說明時間點、時間長度與 [timeout](/backend/knowledge-cards/timeout/) 的標準表示方式。
