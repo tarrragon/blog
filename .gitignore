@@ -40,3 +40,7 @@ playwright/.cache/
 scripts/rag-demo/index.pkl
 scripts/rag-demo/__pycache__/
 scripts/mcp-demo/__pycache__/
+
+# 編輯器 markdown 預覽暫存檔（Notepad++ 等）
+.npp-md-preview.html
+*-md-preview.html
