@@ -244,8 +244,6 @@ Ollama / LM Studio / llama.cpp 自身的 prompt cache：
 - Breakpoint 上限數量
 - 本地推論伺服器的 cache 功能（持續演化）
 
-## 小結
-
-Prompt cache 是 cost / latency 的最大單一槓桿、coding agent / long-context / RAG / long-document Q&A 都是命中區。設計原則「不變放 prefix、變動放後段」、breakpoint 分層讓 invalidation 局部化。Anti-pattern（timestamp、user id、tool 順序、太短 prompt）會把 cache 變廢、診斷靠 cache_read_input_tokens 欄位。本地推論場景對應 prefix cache、機制同源但定價跟 control 是雲端 API 商業 feature。
+## 下一章
 
 下一章：[4.19 Agent memory 分層](/llm/04-applications/agent-memory-architecture/)、看 agent 如何在 context window 之外管理長期狀態。

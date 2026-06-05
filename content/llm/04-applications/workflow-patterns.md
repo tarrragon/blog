@@ -252,9 +252,7 @@ Classifier 本身就需要強模型、變成 router「省 cost」反而花更多
 
 看到新 workflow framework 時、回到本章四模式 framing、看它支援哪些模式、有沒有解決常見反模式、能不能跟你的應用場景對齊。Framework 換代不影響這四個模式的本質結構。
 
-## 小結
-
-LLM 應用是 multi-call 組合、本質歸納成四個基本模式：pipeline、router、parallel、reflection。每個模式各自解不同問題、各有失敗模式、實際應用組合使用。Workflow 設計的核心反射是「先 single call baseline、不夠再分解」、過早優化是最常見的失敗源。
+## 下一章
 
 下一章：[4.8 Multi-Agent 拓樸](/llm/04-applications/multi-agent-topology/)、當 single-thread 多 call 不夠用、需要平行專業化角色 / 跨產品 agent 重用時、進入 multi-agent 系統的拓樸設計。
 

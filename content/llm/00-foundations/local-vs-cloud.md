@@ -113,8 +113,6 @@ weight: 0
 
 把本地 LLM 當成「免費的初階 pair programmer」而不是「Claude 替代品」，期望管理就會對齊現實。後續章節會回到這個心態，特別是 [模型選型](/llm/01-local-llm-services/model-selection-priority/) 與 [期望管理](/llm/01-local-llm-services/expectation-management/)。
 
-## 小結
-
-本地與雲端在隱私、成本、速度、能力四個維度上的取捨方向都不一樣，沒有單一維度可以決定誰勝出。本地的優勢在隱私與長期成本，劣勢在絕對能力與長 context 速度；雲端反過來。理解這四個維度後，後續所有工具選擇都會自然落到「本地解哪一塊、雲端解哪一塊」的混用思考。
+## 下一章
 
 下一章：[0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-slow/)，解釋為什麼即使你的 Mac 看起來算力很強，生字速度仍受記憶體頻寬限制。

@@ -271,8 +271,6 @@ Production users
 - Bias 的具體量化（人類 agreement 數字會隨時間 / 任務變）
 - 新興 bias 跟緩解方法
 
-## 小結
-
-LLM-as-Judge 把「in-house benchmark」從理論變成可操作、production AI app 的 eval 事實標準。設計核心：四段式 prompt（task / input-output / rubric / format）、pairwise 或 direct scoring 看場景、三大 bias（position / verbosity / self-preference）要緩解、必須 calibrate。Production trace + judge 形成自動 eval 閉環、是 quality engineering 的標準路徑。不替代 human eval 在高 stake 任務、不替代 rule-based 在可機械驗證任務。
+## 下一步
 
 下一步：模組四到此覆蓋從基礎（4.0 prompt 技術光譜 / 4.1-4.2 RAG / 4.3 tool / 4.4 agent / 4.5 HITL）、協議與編排（4.6 protocols / 4.7 workflow / 4.8 multi-agent）、production 細節（4.9-4.12 resource / artifact / long-context / embedding）、到 eval 跟 production observability 閉環（4.13 eval 框架 / 4.14 benchmarking / 4.17-4.21 harness / caching / memory / tracing / judge）的完整應用層地圖。Hands-on 端到端案例見 [hands-on 子分類](/llm/04-applications/hands-on/)。可進入 [模組五](/llm/05-discrete-gpu/) 看本地推論硬體、進入 [模組六](/llm/06-security/) 看安全議題（特別是 [6.6 OWASP LLM Top 10 對照](/llm/06-security/owasp-llm-top10-mapping/)、把 production eval 的安全議題對應到企業合規詞彙）、或回 [4.13 Eval 設計座標系](/llm/04-applications/eval-design-framework/) 看 judge 在 meta eval 框架中的定位。

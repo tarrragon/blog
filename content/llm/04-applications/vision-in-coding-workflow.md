@@ -221,8 +221,6 @@ Tripwire（什麼時候值得評估 multimodal RAG）：
 - Vision encoder 設計（CLIP → SigLIP → DFN → ...）
 - 雲端跟本地的品質差距（會持續縮小）
 
-## 小結
+## 跟其他章節的關係
 
-VLM 把 coding 工作流的 vision 任務（UI debug、mockup → code、OCR）從「人類手寫描述」升級到「LLM 直接看圖」。本地 VLM 選型按硬體預算對應：M4 Pro 24GB+ 可跑 Qwen2.5-VL-7B、M4 Max 32GB+ 可跑 32B 級模型。Image token 計入 context budget、配合 long context 模型用。本地 vs 雲端按隱私分流、NDA / 內部截圖走本地。IDE plugin 整合 2026/5 仍演化中、雲端 IDE 領先、本地組合仍在追趕；trigger 訊號響時再升級到 vision-native workflow。
-
-跟其他章節的關係：本章是 [4.1 RAG](/llm/04-applications/rag-principles/) / [4.3 Tool use](/llm/04-applications/tool-use-principles/) / [4.12 embedding model](/llm/04-applications/embedding-model-internals/) 在 vision 延伸的補完；隱私 / 跨雲端分流邏輯沿用 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)；本地 VLM 配 IDE 的 hands-on 屬於 [模組一 hands-on](/llm/01-local-llm-services/hands-on/) 範圍、視推論伺服器支援度成熟度補。
+本章是 [4.1 RAG](/llm/04-applications/rag-principles/) / [4.3 Tool use](/llm/04-applications/tool-use-principles/) / [4.12 embedding model](/llm/04-applications/embedding-model-internals/) 在 vision 延伸的補完；隱私 / 跨雲端分流邏輯沿用 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)；本地 VLM 配 IDE 的 hands-on 屬於 [模組一 hands-on](/llm/01-local-llm-services/hands-on/) 範圍、視推論伺服器支援度成熟度補。

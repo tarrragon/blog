@@ -136,8 +136,6 @@ WAN 暴露的進一步後果：
 4. **若 bind 到 LAN / WAN、加 API key**：別假設「沒人會掃到」、做最低 auth。
 5. **記下當前配置**：寫在 `~/llm/server-config.md` 之類、避免日後忘了哪台是哪個 mode。
 
-## 小結
-
-bind address 是本地 LLM 的第一個對外接觸面。個人 dev 場景下、預設 loopback 是合理起點、要開到 LAN 時需要明確意圖 + 最低 auth + firewall、要上 WAN 時優先用 mesh VPN 而不是反代直接公開。Docker / dotfile / 社群教學貼指令是常見的誤暴露路徑、值得每次配置完用 `lsof` 確認實際狀態。tool use 啟用時、bind 暴露的後果會放大、見下一章。
+## 下一章
 
 下一章：[6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)、處理伺服器跑起來後最大的副作用面。

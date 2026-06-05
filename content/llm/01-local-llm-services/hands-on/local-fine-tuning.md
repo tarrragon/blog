@@ -444,7 +444,3 @@ VS Code restart 後、Continue panel 下拉就能切換。
 - Fine-tune 後的模型評估見 [4.14 Benchmarking](/llm/04-applications/benchmarking-and-evaluation/)
 - 隱私 / 供應鏈面：fine-tune 後 model 怎麼分享（給 team / 上 HuggingFace）見 [6.0 模型供應鏈](/llm/06-security/model-supply-chain-trust/)
 - 跟 RAG 的取捨見 [4.1 RAG 原理](/llm/04-applications/rag-principles/) 的「RAG vs Fine-tuning vs Long Context」段
-
-## 小結
-
-QLoRA 在消費級硬體上 fine-tune 30B+ 模型已經可行、是「教模型懂自己 codebase 慣例」的最短路徑。流程：估算硬體 → 蒐集資料（500-5000 對是甜蜜點）→ 跑 QLoRA → evaluate（in-domain + 通用 benchmark）→ merge → 轉 GGUF → 部署 Ollama。最大失敗模式是 catastrophic forgetting、用 LoRA + 資料 mixing + 低 epochs 緩解。Fine-tune 不能取代 RAG、是補 RAG 不足的特殊情境工具。

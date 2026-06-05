@@ -158,8 +158,6 @@ oMLX 解的是 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-s
 
 順序設計的核心是「先解決日常路徑、再針對痛點做特化」。先鑽 MLX 細節或安裝 oMLX、會在還沒驗證痛點存在時就承擔額外的學習與維護成本。
 
-## 小結
-
-[MLX](/llm/knowledge-cards/mlx/) 是 framework、[MTP](/llm/knowledge-cards/mtp/) 是技巧、oMLX 是特化伺服器、三者疊加而非互斥。看到混用層級的句子時、回到本章的三層定位就能精準判讀。
+## 下一章
 
 下一章：[0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)、把心智模型對到自己 Mac 的真實規格。

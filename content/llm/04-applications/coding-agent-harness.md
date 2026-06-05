@@ -228,8 +228,6 @@ Coding agent 常見失敗：
 - Tool schema 標準化（MCP 是其中一條路）
 - 本地小模型的 agent 能力（會逐步追上）
 
-## 小結
-
-Coding agent = scaffold（建構時靜態結構：system prompt / tool schema / subagent 拓樸）+ harness（runtime 動態運作：dispatch / budget / safety / recovery）。Context budget 25% 規則是核心工程實務、超標訊號要立刻處理。Subagent 是 budget 不夠 + specialty 邊界清楚時的合理選擇、不是萬靈丹。具體 coding agent（Claude Code / Cursor / Aider / Continue.dev）都遵循這 framing、差異在 scaffold 多複雜跟 harness 多強。
+## 下一章
 
 下一章：[4.18 Prompt caching 工程實務](/llm/04-applications/prompt-caching-engineering/)、看 scaffold 部分的 cost / latency 優化。

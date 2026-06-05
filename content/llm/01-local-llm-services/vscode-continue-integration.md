@@ -242,8 +242,6 @@ Continue 的甜蜜點是「VS Code 內、單檔到中型專案、人在駕駛位
 
 對「本地 LLM 為主」的使用者，Continue.dev 是更直接的選擇。Cursor 是「雲端 LLM 為主、偶爾本地」的選擇。
 
-## 小結
-
-VS Code + Continue.dev 是 2026 年 5 月本地 LLM 寫 code 工作流的主流組合。設定不複雜：擴充套件裝完、`config.json` 設好 Ollama endpoint、Cmd+L 開對話、Cmd+I 行內編輯就能用。同時設本地與雲端模型可以按任務切換，是現階段的合理姿勢。
+## 下一章
 
 下一章：[1.4 寫 code 場景的模型選型優先順序](/llm/01-local-llm-services/model-selection-priority/)，回答「Ollama 跑起來該裝哪個 model」。

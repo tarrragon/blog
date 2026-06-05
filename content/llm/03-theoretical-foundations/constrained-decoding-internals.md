@@ -254,8 +254,6 @@ streaming UX 跳字
 - JSON schema spec 標準化（新版會出）
 - Function calling + constrained decoding 是否會被 native multimodal 取代
 
-## 小結
-
-Constrained decoding 在 sampling 階段（softmax 之前）用 grammar 算合法 token mask、把不合法 token 機率歸零。三種 grammar：JSON schema（最常見、function calling 用）、regex（受限文字格式）、CFG（最強表達力、SQL / code）。XGrammar 等 pre-compile 實作把 overhead 趨近 0、跳過 boilerplate token 反而**加速** 1.5-3×。跟 function calling 是獨立但常疊用的兩條軸：function calling 是訓練、constrained decoding 是推論。失敗模式以「grammar 太嚴」「grammar 跟訓練分佈不符」為主。
+## 下一章
 
 下一章：[3.11 想學更深](/llm/03-theoretical-foundations/going-deeper-theory/)、整個模組三理論基礎走完。

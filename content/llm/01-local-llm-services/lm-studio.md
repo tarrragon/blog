@@ -182,8 +182,6 @@ LM Studio 的最佳定位是「需要 GUI、桌面 session 內探索、有人在
 
 LM Studio 對寫 code 場景不是 Anthropic Console 的替代品，但作為「本地版 console」的體驗很完整。
 
-## 小結：LM Studio 的副廚定位
-
-LM Studio 是 GUI-first 的本地推論伺服器、定位跟 Ollama 互補。對探索新模型、調整推論參數、自組 speculative decoding 設定的使用者來說、它比 Ollama 更直覺；對日常寫 code 主力來說、Ollama 通常更穩。建議讓兩個並存、各司其職。
+## 下一章
 
 下一章：[1.2 llama.cpp 底層引擎](/llm/01-local-llm-services/llama-cpp/)，澄清網路上「llama.cpp 才是真本地」這類迷思。

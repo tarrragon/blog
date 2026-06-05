@@ -280,8 +280,6 @@ OpenAI、Ollama 等多數推論伺服器支援 logit_bias 參數。
 
 實務建議：寫 code 場景下 temperature=0.2 ~ 0.4、top_p=0.9 ~ 0.95、其他保留預設就好。Continue.dev 等 IDE 整合多半自動調整。
 
-## 小結
-
-從機率分佈挑下一個 token、是 LLM 輸出端的最後一步。Temperature 調分佈尖銳度、top-k / top-p / min-p 過濾低機率候選、repetition penalty 避免重複、seed 控制確定性。各策略可組合、寫 code 場景下「temperature=0.2 ~ 0.4 + top_p=0.9」是常見起點；reproducible 評估場景則回到 greedy（T=0）；creative writing 場景拉高 T 跟 repetition penalty。
+## 下一章
 
 下一章：[3.6 tokenization 算法](/llm/03-theoretical-foundations/tokenization-algorithms/)、補完 input / output 端的細節。

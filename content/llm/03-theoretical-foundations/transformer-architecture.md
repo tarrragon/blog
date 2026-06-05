@@ -267,8 +267,6 @@ MoE 的常見失敗模式：
 
 GPT-3 證明這套之後、整個產業靠攏 decoder-only。Encoder-decoder（T5 系列）仍有研究價值、但商業 LLM 主流都是 decoder-only。
 
-## 小結
-
-Transformer 是 LLM 的核心架構。Decoder-only 結構由「embedding + positional encoding + N 個 Transformer block + output projection」組成。每個 block 包含 attention sub-layer 跟 FFN sub-layer、各自前後加 RMSNorm 跟 residual connection。現代 LLM 常用 RoPE 位置編碼、SwiGLU FFN、GQA attention、RMSNorm。理解這個結構、看 LLM paper 跟 model architecture 比較就有完整地圖。
+## 下一章
 
 下一章：[3.4 訓練流程](/llm/03-theoretical-foundations/training-pipeline/)、解釋這些權重怎麼學出來。

@@ -218,8 +218,6 @@ Prompt 修改沒效、定位是 systematic 還是 random error：
 - CoT 的必要性（reasoning model 普及後、explicit CoT 的場景縮小）。
 - Output format 強制手段（從 prompt-only 走向 structured output API、再走向 constrained decoding）。
 
-## 小結
-
-Prompt 技術 landscape 的結構穩、具體寫法易變。三軸（context / 推理 / 格式）+ 四維 trade-off（accuracy / latency / cost / debuggability）+ 一個 stack 判讀原則（不同軸可疊、同軸抵消）+ 邊界判讀（prompt 層不夠時往 RAG / fine-tune / chaining / tool / agent 移）——這套座標讓你看到任何新 prompt 技術都能定位、不會被技術更替的 noise 淹沒。
+## 下一章
 
 下一章：[4.1 RAG 原理](/llm/04-applications/rag-principles/)、把「prompt 層塞不下知識」這個邊界往外推、進入 LLM 跟外部資料互動的領域。Prompt 跟 fine-tune 的對齊取捨見 [3.4](/llm/03-theoretical-foundations/training-pipeline/)、跟 chaining 的邊界完整討論見 [4.7](/llm/04-applications/workflow-patterns/)、跟 fuzzy engineering 典範的關係見 [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)。

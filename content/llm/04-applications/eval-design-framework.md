@@ -225,8 +225,6 @@ Production trace 持續抽樣補進 eval set、每季 review eval set 跟 traffi
 - LLM-as-judge 的具體 prompt 模板跟 bias 緩解技巧。
 - 各 benchmark 的權威性（半年一換）。
 
-## 小結
-
-Eval 設計先選軸、再選工具——這是 meta 層的設計反射。三軸（objective↔subjective、component↔end-to-end、quantitative↔qualitative）正交、八象限各有對應工具。軸選錯時、工具會給出「看似合理但無用」的訊號、最常見三類誤選是 subjective 測 objective、e2e 測 component、quantitative 找 qualitative。Eval 演化按階段補：MVP 先 E2E objective quantitative、user 階段補 component objective、優化階段才上 subjective、規模化標準化。Eval 跟 trace 形成閉環、production 流量是 eval set 的活泉。
+## 下一章
 
 下一章：[4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)、把座標系落到具體 benchmark 設計。Subjective eval 的工具見 [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)、production trace 怎麼接 eval 見 [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)、跟 fuzzy engineering 典範的關係見 [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)（fuzzy 行為的測試本質就是 distribution metric）。

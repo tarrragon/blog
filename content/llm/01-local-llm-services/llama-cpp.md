@@ -223,8 +223,6 @@ Continue.dev 可以同時連兩個：
 | 需要 vLLM / TGI 等資料中心級 inference server     | 不在本指南範圍、需找專門資料中心 inference 教材                                             |
 | 想自己訓練 / fine-tune                            | 模組三 [訓練流程](/llm/03-theoretical-foundations/training-pipeline/)、推論伺服器不負責訓練 |
 
-## 小結
-
-llama.cpp 是 Ollama 與 LM Studio 的底層推論引擎，定位是 library 而不是面向終端使用者的工具。多數寫 code 場景的讀者不需要直接接觸；Ollama 已經把 GGUF、量化、Metal backend、speculative decoding 都包好。看到「llama.cpp 整合 X」的消息時，回到本章追問版本與時間點，避開過時或錯誤資訊。
+## 下一章
 
 下一章：[1.3 VS Code + Continue.dev 整合](/llm/01-local-llm-services/vscode-continue-integration/)，把伺服器接到日常編輯器，這才是寫 code 的真正起點。

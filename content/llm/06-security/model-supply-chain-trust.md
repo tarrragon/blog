@@ -136,8 +136,6 @@ MCP server 的權限模型詳見 [6.2 tool use 與 MCP server 的權限模型](/
 4. **試模型基本行為**：用簡單 prompt 確認模型行為合理。
 5. **若是新 MCP server**：分開判讀供應鏈（看 6.2）、不要把 GGUF 跟 MCP 的信任邊界混在一起。
 
-## 小結
-
-模型供應鏈是本地 LLM 信任邊界的最上游。個人 dev 場景下、靠「選主流作者 / 量化者 + 基本 hash 比對 + inventory 記錄」就能建立合理的信任基線；不需要 enterprise-grade 簽章驗證、但「不知道從哪裡下載的就不要用」是底線。模型權重以外、MCP server 跟 Continue.dev 擴充套件構成的另一條供應鏈、權限影響更大、見 [6.2 tool use 權限模型](/llm/06-security/tool-use-permission-model/)。
+## 下一章
 
 下一章：[6.1 推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/)、處理伺服器跑起來後的第一個對外接觸面。

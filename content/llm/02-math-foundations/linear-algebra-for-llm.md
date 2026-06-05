@@ -118,9 +118,7 @@ output = activation(input @ W₁) @ W₂
 
 PyTorch、MLX 等 framework 的核心型別都叫 Tensor、所有運算（矩陣乘法、norm、softmax 等）都對 tensor 做。
 
-## 小結
-
-線性代數提供 LLM 內部運算的詞彙：向量是 token 的內部表示、內積算相關性、矩陣乘法是每個 layer 的核心、張量是把這些打包成可批次處理的結構。後續章節（[機率與資訊論](/llm/02-math-foundations/probability-and-information/)、[最佳化](/llm/02-math-foundations/calculus-and-optimization/)）會在這個基底上建立 LLM 訓練與推論的完整數學圖像。
+## 下一章
 
 想看完整推導跟練習、見 [2.4 公開課推薦](/llm/02-math-foundations/going-deeper-math/) 的 MIT 18.06、3Blue1Brown 線性代數系列等資源。
 

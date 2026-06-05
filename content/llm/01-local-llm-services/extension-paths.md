@@ -169,8 +169,8 @@ aider 會把當前 repo 的相關檔案打進 prompt、把 LLM 生成的 diff ap
 
 需要這些方向時請另尋專門資源；硬塞進來會稀釋本指南「Mac 本地寫 code」這條最短路徑。
 
-## 小結
+## 下一步
 
-延伸方向有三條：Web UI（Open WebUI、低成本、擴展使用情境）、coding agent（aider / Cline、進階、現階段本地能力受限）、產圖（完全獨立領域、工具鏈跟概念體系另起一套）。先把寫 code 跑穩再做延伸；想做產圖就承認它是另一個學習主題、另開戰場。實作範例（含 ComfyUI / Whisper / Piper TTS / RAG / MCP）見 [Hands-on 章節](/llm/01-local-llm-services/hands-on/)。
+實作範例（含 ComfyUI / Whisper / Piper TTS / RAG / MCP）見 [Hands-on 章節](/llm/01-local-llm-services/hands-on/)。
 
 讀到這裡、本指南的核心內容就完了。下一步是回到 [模組零](/llm/00-foundations/) 或 [模組一](/llm/01-local-llm-services/) 任一章節做深度閱讀、或實際打開終端機跑第一個 `ollama run`、把概念變成肌肉記憶。

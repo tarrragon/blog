@@ -217,8 +217,6 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 看到新 agent framework 時、回到本章的 5 步骨架、3 類失敗模式、5 種人類審查協作模型——這些 dimension 不變、看新工具能很快理解它的定位跟限制。
 
-## 小結
-
-Agent 把控制流的所有權從人類交給 LLM、帶來新的設計問題：失敗從「答錯」變「跑偏」、終止從「使用者結束」變「模型自判」、人類角色從「主導」變「監督」。Agent loop 五步骨架是骨架、context drift / 目標漂移 / tool 誤判是三類典型失敗、「適合 agent vs single-call」要看客觀驗證訊號跟失敗代價、人類審查協作模型要看副作用範圍。本地 LLM 跑 agent 現階段受訓練 + context + 規劃三方面限制、雲端仍是主場。
+## 下一章
 
 下一章：[4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)、把上文的人類審查 spectrum 落到「人類什麼時候介入、怎麼介入」的三時機設計。應用層協議（function calling / structured output / MCP）的層級差異見 [4.6](/llm/04-applications/application-protocols/)。Agent 對本機資源副作用的個人 dev 權限判讀見 [6.2](/llm/06-security/tool-use-permission-model/)、個人工作流跨進 production 服務時的 routing 中樞見 [6.5](/llm/06-security/routing-to-production-security/)。

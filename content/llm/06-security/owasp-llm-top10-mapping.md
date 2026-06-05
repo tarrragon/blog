@@ -203,8 +203,6 @@ OWASP LLM Top 10 是兩邊共用詞彙、不限本地或 production。
 - 具體 vendor security audit 的範本（不同 vendor / industry 不同）
 - 跟其他 framework（NIST AI RMF、ISO/IEC 42001）的對照
 
-## 小結
+## 下一步
 
-OWASP LLM Top 10 是跟企業安全 team / vendor audit 溝通的共同詞彙、模組六大部分章節都有對應 OWASP 項目。LLM01 prompt injection、LLM03 supply chain、LLM05 improper output、LLM06 excessive agency 是模組六完整覆蓋的核心；LLM02 / LLM04 / LLM07 / LLM08 / LLM10 是部分覆蓋（部分屬模組四或 backend/07）；LLM09 misinformation 是跨章節議題（benchmark + eval + RAG）。讀者可用本章速查表從 OWASP 編號反查找對應 control 位置、跟企業安全溝通時 align。
-
-本章是模組六最後一章。模組六完整覆蓋了「個人 dev 跑本地 LLM」的安全議題、production 多租戶服務化資安見 [backend 模組七](/backend/07-security-data-protection/)。
+本章是模組六最後一章。production 多租戶服務化資安見 [backend 模組七](/backend/07-security-data-protection/)。

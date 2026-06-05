@@ -109,10 +109,6 @@ Apple Silicon 的**[統一記憶體](/llm/knowledge-cards/unified-memory/)**（U
 
 判讀效能數字時的反射動作：先問「dense 還是 MoE」「batch 多少」「任務 pattern 強弱」、再決定能不能套頻寬公式。
 
-## 小結
-
-LLM 生字慢的根源是自回歸架構（一次只能吐一個 token）與記憶體頻寬瓶頸（每個 token 都要讀一次完整模型權重）。Apple Silicon 的統一記憶體讓 Mac 在「能跑多大」上佔優勢，但頻寬仍輸給資料中心 GPU，所以「跑得多快」會有量級差距。
-
-量化（用精度換頻寬）、KV cache（避免重算）、speculative decoding / MTP（並行驗證多個 token）都是攻擊這兩個瓶頸的具體技巧；後續看到任何「N 倍加速」的廣告詞，回到這兩個瓶頸推導一次就知道合不合理。
+## 下一章
 
 下一章：[0.2 三層架構](/llm/00-foundations/three-layer-architecture/)，把任何本地 LLM 工具放回正確的層級。

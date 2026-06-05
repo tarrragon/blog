@@ -216,8 +216,6 @@ llama-bench -m gemma-4-31b-Q4_K_M.gguf \
 - 模型廠商是否內建 MTP（目前 Gemma 4、DeepSeek 等先行、未來普及）
 - Reasoning model 是否會有 reasoning-aware speculative 變體
 
-## 小結
-
-Speculative decoding 攻擊 memory bandwidth bound 留下的算力閒置：drafter 猜、target 並行驗證、接受邏輯確保輸出分佈不變。實際加速 = K × acceptance rate / (1 + K × C)、acceptance rate 主要靠「drafter 跟 target 同 family / 同分佈」拉高。MTP 是 acceptance rate 更高、操作更簡單的內建變體、現代模型開始普及。寫 code 場景判讀：有 MTP 就用 MTP、沒有就找同 family drafter、配不上就用單純推論。
+## 下一步
 
 下一步：模組三的內容到此完整、進入 [模組四 應用層原理](/llm/04-applications/) 看 LLM 作為系統元件的設計取捨。

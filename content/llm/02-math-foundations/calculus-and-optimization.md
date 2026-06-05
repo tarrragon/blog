@@ -166,9 +166,7 @@ Backpropagation（反向傳播）就是前面 [chain rule](#chain-rule把-gradie
 
 這就是為什麼 32GB Mac 可以推論 31B 模型、訓練同個模型要動用整個 H100 cluster。
 
-## 小結
-
-LLM 訓練是「最小化 loss」的最佳化問題、用 chain rule + backpropagation 算 gradient、用 SGD / AdamW 更新權重。Learning rate 是最關鍵的 hyperparameter、AdamW 的 optimizer state 是訓練記憶體的主要消耗源。寫 code 場景的推論只跑 forward pass、成本只有訓練的零頭。
+## 下一章
 
 想看完整最佳化理論（凸最佳化、二階方法、Hessian、Newton's method 等）、見 [2.4 公開課推薦](/llm/02-math-foundations/going-deeper-math/) 的 Stanford EE364 / CS229 等課程。
 

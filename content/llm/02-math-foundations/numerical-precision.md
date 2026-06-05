@@ -164,9 +164,7 @@ bf16 的 exponent 8 bits、跟 fp32 同範圍、在 LLM gradient 的典型範圍
 
 所以「Q4 模型」內部運算精度其實是 fp16 / bf16、只有「儲存」是 4 bits。這是為什麼量化主要省記憶體與頻寬、不省算力（算力差距小）。
 
-## 小結
-
-浮點數的位元結構（sign + exponent + mantissa）決定不同 format 的取捨。bf16 在訓練主流、保留 fp32 範圍；推論主流是 Q4_K_M、平均 4.5 bits / 權重、用 K-quants 跟 block-wise 維持品質。理解這條鏈、模型大小推算、量化等級選擇、品質衰減判讀都變得可計算。
+## 下一章
 
 想看完整數值分析（IEEE 754 細節、條件數、誤差傳播等）、見 [2.4 公開課推薦](/llm/02-math-foundations/going-deeper-math/) 的相關資源。
 

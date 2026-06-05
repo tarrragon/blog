@@ -295,8 +295,8 @@ Hard negative 是 embedding fine-tune 品質的關鍵差距 — 沒做的 fine-t
 - Embedding model 的 context window 上限（推升中）
 - Long-context embedding 的研究（如 ColBERT-style late interaction）
 
-## 小結
+## 下一章
 
-Embedding model 是 RAG 品質的核心驅動。訓練 paradigm 是 contrastive learning + hard negative mining、跟 LLM 的 next-token prediction 不同。選型看 domain、大小、context limit、normalize 預設；MTEB 是參考、in-domain benchmark 是 final test。Fine-tune 通常不需要、特殊 domain 且資料足夠才考慮。本地 vs 雲端的選擇看隱私 / 成本 / 品質需求；沒 backend 的靜態場景（個人 blog / docs site）做 embedding 搜尋的 deployment 選擇見 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
+沒 backend 的靜態場景（個人 blog / docs site）做 embedding 搜尋的 deployment 選擇見 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
 
 下一章：[4.13 Eval 設計座標系](/llm/04-applications/eval-design-framework/)、看 eval 三軸八象限 meta 框架（先選軸再選工具）、再進 [4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/) 看具體 benchmark 設計。

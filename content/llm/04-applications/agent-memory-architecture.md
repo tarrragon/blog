@@ -269,8 +269,6 @@ Coding agent 場景的 memory 案例：
 - Memory consolidation 的最佳實踐
 - 整合 LLM 跟 vector store / DB 的最佳方式
 
-## 小結
-
-Agent memory 把 stateless LLM 包裝成有狀態 agent、分五層（working 在 context 內、short-term/session 是 scratchpad、long-term 含 episodic / semantic / procedural 三種）。設計核心是「何時寫」（task-end 為主、reflection 補強）+「何時讀」（inject + retrieval hybrid）。五大失敗模式（drift / PII / 污染 / hallucination boost / 跨 user 污染）都有對應緩解。跟 RAG 邊界看內容類型跟 per-user 性。
+## 下一章
 
 下一章：[4.20 LLM tracing 與 observability](/llm/04-applications/llm-tracing-and-observability/)、看 production debug 跟 cost 監控的工具層。

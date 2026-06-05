@@ -186,8 +186,6 @@ logits (shape: [seq_len, vocab_size])
 
 每個 Transformer block 內部都對向量做變換、向量維度保持 hidden_dim 不變、只有 input embedding 跟 output projection 在 vocab_size 跟 hidden_dim 之間轉換。
 
-## 小結
-
-Embedding 是 LLM 把離散 token 轉成連續向量的機制、讓「語意」可以用向量空間幾何衡量。Word-level embedding（Word2Vec）是早期實作、現代 LLM 用 contextual embedding。Embedding 模型跟 chat model 是不同訓練流程、向量空間互不相容。理解 embedding 的角色、能解釋 RAG、semantic search、`@codebase` 命令等實務應用的底層機制。
+## 下一章
 
 下一章：[3.2 attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)、Transformer 的招牌技術。

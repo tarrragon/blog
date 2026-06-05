@@ -169,8 +169,6 @@ Agent 跟 multi-call workflow 是「fuzzy 軟體」最複雜的型態。[4.4 age
 - 各家 framework 的 guardrail SDK（隨工具世代換）。
 - Fuzzy / deterministic 的邊界位置會隨模型能力移動——模型越強、能 fuzzy 處理的範圍越大、但「該包 guardrail」的原則不變。
 
-## 小結
-
-LLM 不是 deterministic 工具的下一代、是另一條工具線。Deterministic 軟體建立在「同 input → 同 output」假設上、fuzzy 軟體建立在「同 input → 分佈」假設上。兩者在資料、邏輯、分解、實驗成本四個維度都不同、設計直覺要分開。實務上一個 LLM 應用是兩者混合：使用者輸入解析、回應生成走 fuzzy、業務規則、資料庫操作、發送動作走 deterministic。Fuzzy 部分要用 schema / validator / gating / monitoring 四種 guardrail 包邊界、不是試圖把 fuzzy 變 deterministic。
+## 下一章
 
 下一章：[模組一 本地 LLM 服務](/llm/01-local-llm-services/) 進入工具層、或跳到 [模組四 LLM 應用層](/llm/04-applications/) 看這個典範怎麼落到 RAG / agent / workflow 設計。Agent 設計怎麼把 fuzzy / deterministic 邊界體現在 loop 結構上見 [4.4 agent 架構](/llm/04-applications/agent-architecture/)、人類介入點的設計選擇見 [4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)、跨多 call workflow 的 fuzzy 邊界設計見 [4.7 workflow 編排模式](/llm/04-applications/workflow-patterns/)。

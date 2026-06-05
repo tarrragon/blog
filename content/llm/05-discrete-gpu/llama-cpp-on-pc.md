@@ -293,8 +293,6 @@ Continue.dev 可以同時接：
 
 實務上、多數情況只需要一個推論伺服器；同時跑多個的場景是「比較同一模型在不同 backend / 旗標下的差異」、屬於調參階段、不是常態。
 
-## 小結
-
-llama.cpp 在 PC 上的核心差異是「選對 GPU backend」「設對 MoE 卸載 + KV cache 量化的搭配」「用 `llama-bench` 校準 throughput」。CUDA build 是 NVIDIA GPU 的預設選項、ROCm / Vulkan 對非 NVIDIA GPU 的支援度依版本演進、多卡 tensor split 對單人寫 code 場景邊際效益通常較小。完整旗標表 + 啟動範例可作為起點、實際數值需依自己硬體、模型版本、工作流校準。
+## 下一章
 
 下一章：[5.4 LM Studio 在 Windows](/llm/05-discrete-gpu/lm-studio-on-windows/)、給「不想直接面對 CLI」的讀者另一條路。

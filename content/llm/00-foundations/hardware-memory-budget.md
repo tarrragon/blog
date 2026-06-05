@@ -148,8 +148,6 @@ Apple Silicon Mac 跑本地 LLM 會持續滿載 CPU / GPU。實際體感：
 
 陷阱是把 96GB+ 配置當成「未來證明」。模型架構演進可能讓現在的記憶體預算明年就不重要（例如 1-bit 量化、新的稀疏架構）。買超大記憶體前先確認有具體現有需求支撐；「以後可能跑得到 100B+ 模型」這類期待風險很高。
 
-## 小結
-
-Apple Silicon Mac 跑本地 LLM 的關鍵是記憶體預算，不是 CPU / GPU。32GB 是寫 code 場景的甜蜜點，能跑 Gemma 4 31B MTP；16GB 是現實下界，多數情況該升級或回到雲端；48GB+ 開始接近 GPT-4 mini 能力等級。KV cache、系統保留、fanless 降頻都是常被忽略的成本，要納入預算。
+## 下一章
 
 下一章：[0.6 判讀本地 LLM 資訊的五個框架](/llm/00-foundations/info-judgment-frames/)、把心智模型轉成判讀資訊的反射。

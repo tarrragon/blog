@@ -233,8 +233,8 @@ RAG 適用面有邊界、下列情境改用其他方案更划算：
 
 當這篇文章「過時」的時候、過時的是參考數字跟工具選型；retrieval 本質、失敗模式、跟其他路線的取捨判讀仍會成立。看到新 RAG 工具時、回到本章的 framing：它解的是哪類問題、它的 chunking 策略是什麼、它如何處理五類失敗模式——能很快判斷它解的問題跟你的場景是否對齊。
 
-## 小結
+## 下一章
 
-RAG 是「retrieval + augmentation」的二段式結構、把 LLM 的知識限制（cutoff、私有資料、長尾壓縮損失）從根本繞開。Retrieval 階段是設計重點：語意 vs 字面相似的互補、chunking 的 resolution vs context 取捨、五類失敗模式各自的根因。RAG / fine-tuning / long context 三條路線的選擇取決於知識變動頻率、量級、結構化程度。本章預設「有 backend」、沒 backend 的場景（個人 blog、docs site 加 RAG）的 deployment 取捨見 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
+本章預設「有 backend」、沒 backend 的場景（個人 blog、docs site 加 RAG）的 deployment 取捨見 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)。
 
 下一章：[4.2 RAG 檢索增強](/llm/04-applications/rag-retrieval-enhancements/)、看 vanilla RAG 不夠用時的下一層工具箱（query rewriting / HyDE / multi-step / [context packing](/llm/knowledge-cards/context-packing/)）。把 LLM 從讀資料延伸到對外部世界做事見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)。Retrieval 把外部內容引入 prompt 本身就是攻擊面（同個機制讓 codebase 內容、外部文件、剪貼簿都能間接影響模型輸出）、IDE 場景的 prompt injection 判讀見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。

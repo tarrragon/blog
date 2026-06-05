@@ -224,8 +224,6 @@ User 的 approve / reject pattern 進 trace、定期 analyze、把「總是 appr
 - HITL 的 UI / UX 工具（隨產品 framework 演化）。
 - Approval 自動化的程度（更強的 distribution monitoring 可能讓部分 HITL 變得不必要）。
 
-## 小結
-
-人機協作不是「人類監督 AI」這麼單一、是 spectrum：centaur 委派 / cyborg 共事兩種姿態、jagged frontier 決定 AI 哪些能放手、HITL 三個時機（pre-act / mid-stream / post-hoc）各擋不同 risk class、橡皮圖章化是最常見的失敗模式。設計反射動作：先看 [4.3 副作用範圍](/llm/04-applications/tool-use-principles/) 等級、對應到 [4.4 自主度分層](/llm/04-applications/agent-architecture/)、再選 HITL 時機跟確認流程。HITL 是 [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/) guardrail 的一種、不是預設要有、看 risk 跟自動 validator 能力決定。
+## 下一章
 
 下一章：[4.6 應用層協議](/llm/04-applications/application-protocols/)、把 function calling / structured output / MCP 三個概念放回正確層級、銜接 agent 跟外部系統的協議設計。Agent 自主度分層完整討論見 [4.4](/llm/04-applications/agent-architecture/)、工具副作用範圍見 [4.3](/llm/04-applications/tool-use-principles/)、HITL 在 fuzzy engineering 中的定位見 [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)。

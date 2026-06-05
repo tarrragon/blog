@@ -234,8 +234,6 @@ Embedding 模型的選擇對 codebase 搜尋品質有影響，但邊際效益遠
 
 決策表的兩個閱讀方式：先按「你的情境」找對應 model、再注意「觸發回退條件」決定何時切換到下一行。回退條件常被忽略、導致讀者在條件變化時還抱著原本的選擇。
 
-## 小結
-
-寫 code 場景的本地模型優先順序在 2026 年 5 月很清楚：Gemma 4 31B MTP 是預設首選（速度最快），Qwen3-Coder 30B 是 coding 專科次選（benchmark 最強），Qwen3 14B 是通用備案，gpt-oss 20B 是 OpenAI 風味補充。記憶體預算決定能跑哪一級；量化等級用 Q4_K_M 是甜蜜點。
+## 下一章
 
 下一章：[1.5 期望管理](/llm/01-local-llm-services/expectation-management/)，把本地 LLM 放在「免費的初階 pair programmer」這個正確位置，避免錯誤期待造成的挫折。

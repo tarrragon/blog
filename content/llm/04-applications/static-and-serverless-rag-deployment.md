@@ -397,8 +397,6 @@ RAG SaaS 供應鏈（本章新增）：
 - 哪些 LLM vendor 允許 browser 直 call（CORS 政策會變）
 - 純文字 search 工具（Pagefind 等持續改進）
 
-## 小結
-
-靜態 / serverless RAG 是「沒 backend、想加 RAG」場景的工程選擇、四方案（純前端 / edge / SaaS / 純文字）覆蓋不同規模跟隱私需求。**最大資安特徵是「藏不了 secret」**、要嗎用「不需要 secret」的方案（純前端 + WebLLM）、要嗎用「藏 secret」的方案（edge serverless）、要嗎接受「使用者授信」（user-key）；絕對不該寫死 API key 在前端 JS。本章資安段補了模組六沒覆蓋的議題（API key 暴露、CORS、client-side abuse、模型 CDN 完整性）、跟 06 模組的本地 dev 視角互補。
+## 下一步
 
 本章是 [模組四](/llm/04-applications/) 最後一章。讀完整個模組四、完整覆蓋 LLM 作為系統元件的設計取捨。下一步可進入 [模組五 PC 獨立 GPU](/llm/05-discrete-gpu/) 或 [模組六 安全](/llm/06-security/) 補本地 dev 視角的安全議題。

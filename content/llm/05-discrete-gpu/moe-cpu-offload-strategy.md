@@ -142,8 +142,6 @@ MoE 卸載騰出 VRAM、KV cache 量化讓騰出的 VRAM 拿去開大 context。
 
 完成這六步後、再進入 [5.3 llama.cpp 在 PC 上](/llm/05-discrete-gpu/llama-cpp-on-pc/) 了解更全面的旗標組合。
 
-## 小結
-
-MoE CPU 卸載是 PC 場景因應 VRAM 容量限制的工程選項、不是必選配置。Dense 模型多數情況不適合卸載、MoE 模型在「總參數大、active parameter 小」的結構下、卸載的速度代價較小。卸載層數的調參要跟 KV cache 量化、context 長度、併發數一起決定、社群常見回報 16GB VRAM + 30B MoE 起點落在 `--n-cpu-moe 25 ~ 35` 區間、具體值依模型結構與工作流校準。
+## 下一章
 
 下一章：[5.2 KV cache 量化策略](/llm/05-discrete-gpu/kv-cache-quantization-strategy/)、深入 K=Q8 / V=Q4 跟 context 長度的權衡。

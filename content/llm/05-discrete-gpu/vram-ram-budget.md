@@ -190,10 +190,6 @@ PCIe 在「載入模型」階段較常成為瓶頸、單人推論時通常不是
 
 升級到能跑 70B 級之前、建議先確認痛點是「模型能力不夠」還是「生字速度不夠」。本地 30B MoE 在多數寫 code 任務上已能勝任、社群多數使用者回報不是每個工作流都需要 70B 級模型；具體判斷需用自己的任務實測。
 
-## 小結
-
-PC 場景跑本地 LLM 的關鍵在於 **VRAM × RAM 兩塊預算的搭配**、單看 VRAM 容量不足以判讀完整圖像。16GB VRAM + 64GB RAM 配 30B MoE + CPU 卸載、在 2026 年的 PC 本地 LLM 社群中、常被列為寫 code 場景的合理起點之一；24GB / 32GB VRAM 則開始能勝任 70B Dense；雙卡跟資料中心級配置的價值主要在大量並發推論場景、單人使用的邊際效益依工作流而定。KV cache 量化（K=Q8 / V=Q4）值得認識、能在不大幅犧牲品質的前提下開大 context、是 PC 場景相對 Mac 多出來的工程選項。
-
-本章引用的具體數字（VRAM 頻寬、KV cache 體積、生成速度範圍）以廠商規格、官方文件、社群常見回報為來源、實際吞吐受硬體配置、驅動版本、模型量化方式與工作流類型影響、建議讀者用 `llama-bench`、實際工作流任務與 [llama.cpp 官方 benchmark](https://github.com/ggml-org/llama.cpp/discussions) 校準。
+## 下一章
 
 下一章：[5.1 MoE 模型與 CPU 卸載策略](/llm/05-discrete-gpu/moe-cpu-offload-strategy/)、深入 `--n-cpu-moe` 的判讀。

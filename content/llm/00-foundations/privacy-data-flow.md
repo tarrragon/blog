@@ -245,8 +245,6 @@ Cursor 預設 telemetry 強、Copilot 本來就送 prompt 給 GitHub。即使在
 
 新工具、新法規、新雲端服務出來時、回到本章的方法重新跑一遍資料流分析、信任邊界評估——framework 不變、實例更新。
 
-## 小結
+## 下一步
 
-LLM 隱私設計從「位置 thinking」升級到「資料流 thinking」、辨識整條資料流的信任邊界、用零信任原則重新評估每個 hop。本地推論提供物理保證（可技術驗證、能力上限受硬體限制）、雲端 + 合約提供合約保證（不可單機驗證、能力無上限），兩種模型按場景組合。NDA / 合規 / 個人場景的判讀程度不同、過度跟不足都是浪費。
-
-讀到這裡、模組零的心智模型完整收尾。下一步：[模組一：本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/)（Apple Silicon Mac）或 [模組五：Windows / Linux + 獨立 GPU](/llm/05-discrete-gpu/) 把心智模型落到實際操作。模組一 / 五跑穩之後、回到 [模組六：本地 LLM 的安全與權限](/llm/06-security/) 把本章建立的「資料流 thinking」「信任邊界」「物理 vs 合約保證」三組框架落到具體決策（伺服器綁定、tool use 權限、prompt injection、跨雲端 routing）。
+下一步：[模組一：本地 LLM 服務的安裝與應用](/llm/01-local-llm-services/)（Apple Silicon Mac）或 [模組五：Windows / Linux + 獨立 GPU](/llm/05-discrete-gpu/) 把心智模型落到實際操作。模組一 / 五跑穩之後、回到 [模組六：本地 LLM 的安全與權限](/llm/06-security/) 把本章建立的「資料流 thinking」「信任邊界」「物理 vs 合約保證」三組框架落到具體決策（伺服器綁定、tool use 權限、prompt injection、跨雲端 routing）。

@@ -205,8 +205,6 @@ LLM application 把結果塞進 context、回到推論伺服器繼續
 
 看到新協議或新 spec 時、回到本章三層 framing 問：它解的是哪一層？能不能跟既有的另兩層組合？這個問題的答案能很快定位新東西在 stack 中的位置。
 
-## 小結
-
-Function calling 是模型能力、structured output 是 sampling 約束、MCP 是 server 協議——三者層級不同、解的問題互不重疊、組合使用而非競爭。MCP 複用 OpenAI 相容 API 的標準化模式、把 N×M 整合成本降到 N+M、是 LLM application 生態規模化的必要基礎建設。實務應用不必一步到位、依複雜度演化、最終穩定 stack 三者組合。
+## 下一章
 
 下一章：[4.7 Workflow 編排模式](/llm/04-applications/workflow-patterns/)、把多 LLM call 組合的設計模式整理出來。

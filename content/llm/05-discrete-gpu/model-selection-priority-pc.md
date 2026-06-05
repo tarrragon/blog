@@ -180,8 +180,6 @@ VRAM 較小的場景、候選清單較短：
 
 過早跳到新模型的常見代價：量化版本不穩、社群 issue 還在湧現、自己的旗標設定要從頭調。
 
-## 小結
-
-PC 場景的模型選型有「全載 Dense vs 卸載 MoE」這條 Mac 沒有的軸、16GB VRAM + 64GB RAM 配置下、Qwen3-30B-A3B MoE 卸載跟 Qwen3 14B Dense 全載是兩條主要候選；24GB / 32GB VRAM 則開始能跑 Dense 32B / 70B 級。量化版本起點建議 Q4_K_M、coding 專用模型適合純補完工作流。選型決策依硬體 + 工作流 + 觀察期、建立校準腳本可降低換模型的成本。
+## 下一章
 
 下一章：[5.6 GPU 廠商差異](/llm/05-discrete-gpu/gpu-vendor-differences/)、處理 NVIDIA / AMD / Intel 在 llama.cpp 生態的相對位置。

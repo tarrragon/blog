@@ -191,9 +191,7 @@ H(p, q) = H(p) + KL(p || q)
 
 Cross-entropy 等於「真實分佈的 entropy」加上「模型預測偏離真實的 KL distance」。訓練 LLM 是最小化 H(p, q)、等同於最小化 KL(p || q)、因為 H(p) 是常數（資料本身的不確定性）。
 
-## 小結
-
-LLM 輸出端的數學鏈是「logit → softmax → 機率分佈 → sampling」、訓練端的鏈是「預測分佈跟真實 one-hot 的 cross-entropy → gradient → 更新權重」。理解這條鏈、各種推論參數（temperature、top-k、top-p）跟訓練概念（loss、perplexity、KL constraint）就能落到正確位置。
+## 下一章
 
 想看完整資訊論推導（Shannon's coding theorem、mutual information 等）、見 [2.4 公開課推薦](/llm/02-math-foundations/going-deeper-math/) 的 MIT 6.050J / Stanford EE376A 等資源。
 

@@ -269,8 +269,6 @@ llama-bench -m target.gguf --draft-model drafter.gguf \
 - LLM-as-judge model 的偏好（隨 judge model 更新而變）
 - 新 benchmark 出現（特別是 reasoning / long-context 領域）
 
-## 小結
-
-Benchmark 評估有兩條軸：capability（會什麼）跟 performance（跑多快）。Capability 要看多個 benchmark + 自己 in-house benchmark、看分佈跟絕對分數同樣重要；performance 用 `llama-bench` 標準工具量自己硬體上的真實數字。Benchmark 常見陷阱包含訓練污染、飽和、single-task overfit、prompt sensitivity；LLM-as-judge 的 bias 要透過 rubric + 多 judge + 人工 review 緩解。實務最重要的是 in-house benchmark — 公開 benchmark 是 filter、自己案例是 final test。
+## 下一章
 
 下一章：[4.15 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)、把 vision 維度加進 coding 工作流的設計取捨。讀完 4.10、模組四覆蓋了 LLM 作為系統元件的設計取捨（RAG、tool use、agent、應用層協議、workflow、resource planning、long context、embedding、benchmarking、vision）、寫 code 場景需要的應用層概念完整、之後可進入 [模組五 PC 獨立 GPU](/llm/05-discrete-gpu/) 或 [模組六 安全](/llm/06-security/)。

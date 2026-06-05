@@ -291,9 +291,7 @@ Ollama 設計上可以跟 LM Studio、llama.cpp 同時在一台 Mac 跑、預設
 
 並存的好處是「主力穩定跑 Ollama、實驗模型用 LM Studio」、Continue.dev 等介面層可以同時設多個 model、UI 上下拉切換。並存設定範例見 [1.1 LM Studio](/llm/01-local-llm-services/lm-studio/#與-ollama-並存)。
 
-## 小結
-
-Ollama 是 2026 年 5 月本地 LLM 生態的預設選擇：學習曲線低、Gemma 4 MTP 一鍵支援、OpenAI 相容 API 出廠就有、生態最成熟。多數讀者只需要這一個伺服器、靠 model tag 切換不同 model 即可覆蓋日常工作。
+## 下一章
 
 下一章可選擇：
 

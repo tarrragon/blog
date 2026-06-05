@@ -271,8 +271,6 @@ Production trace + eval result
 | 6. Eval 設計                                      | [4.13 eval framework](/llm/04-applications/eval-design-framework/)、[4.14](/llm/04-applications/benchmarking-and-evaluation/)、[4.21](/llm/04-applications/llm-as-judge/)                                    |
 | 7. Iteration loop                                 | [4.0 prompt 光譜](/llm/04-applications/prompt-techniques-landscape/) systematic vs random error 段                                                                                                           |
 
-## 小結
-
-實際做一個 LLM 應用、設計反射動作的順序是：observe → decompose → 典範定位 → workflow 設計 → trace → eval → iterate。每階段都對應到模組四的某個原理章節、不是各自獨立的工作。新手最常跳過階段 1、2、5、6、直接寫 prompt——這條路會走進「prompt 改了沒效但不知為何」的死巷。把這七階段做完、每階段的設計選擇都有原理可援引、debug 跟 iteration 才能高效。
+## 下一步
 
 返回：[模組四首頁](/llm/04-applications/)、或回到 [hands-on 索引](/llm/04-applications/hands-on/)。

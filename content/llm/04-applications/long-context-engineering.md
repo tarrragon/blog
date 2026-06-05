@@ -190,8 +190,6 @@ Recall accuracy vs 答案位置（10K context）：
 - Lost-in-the-middle 的減緩進展（可能透過新訓練方法部分解決）
 - Benchmark 工具（NIH → RULER → 未來新 benchmark）
 
-## 小結
-
-Long context 模型的聲稱 / NIH / effective 三層落差是 long context engineering 的核心議題。Lost-in-the-middle 是主要失敗模式、緩解靠「關鍵資訊放開頭結尾」「重要內容重複」「拆 prompt」三個策略。Long context vs RAG 不是替代、是互補；混用是實務常見配置。Reasoning model + long context 有特殊衝突、需要為 reasoning trace 預留 context budget。判讀模型實用性看 effective context、不看聲稱 context；量測靠 NIH + 真實任務評估。
+## 下一章
 
 下一章：[4.12 Embedding model 內部](/llm/04-applications/embedding-model-internals/)、看 RAG retrieval 階段背後的 embedding 是怎麼運作。

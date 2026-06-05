@@ -253,8 +253,6 @@ Tokenizer 設計的副作用：
 - 計算 API 費用要用該模型的 tokenizer 算 token 數。
 - 中文 prompt 用 Llama 2 比 Llama 3 / Gemma 4 吃 context 多。
 
-## 小結
-
-Tokenization 是把文字切成模型可處理的 token 序列、主流算法是 byte-level BPE 跟 SentencePiece。Vocabulary 大小決定 context 利用效率與跨語言支援。Tokenizer 是 model identity 的一部分、影響 speculative decoding 配對、chat template 解析、glitch token 行為。同段文字在不同 tokenizer 上的 token 數可能差 2 倍、影響 API 費用與 context window 利用。
+## 下一章
 
 下一章：[3.7 想學更深：推薦公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)。

@@ -148,8 +148,6 @@ MCP server 是可執行程式碼、信任邊界比 GGUF 模型權重高一個層
 [ ] 啟用後跑簡單測試、確認 tool call 行為符合預期
 ```
 
-## 小結
-
-tool use 跟 MCP server 對主機資源的副作用面、是個人 dev 場景下安全議題的最大來源。風險不在「LLM 變壞」、而在「tool 本身的權限沒設好」+「LLM 容易被 prompt injection 操縱」。個人 dev 場景的合理防護是「讀取類 tool 注意 prompt 走向、副作用類 tool 用 git track + sandbox + confirm」、不需要 enterprise-grade 沙箱、但 git working tree 跟最小權限是底線。
+## 下一章
 
 下一章：[6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)、處理 tool use 副作用最常見的觸發來源。

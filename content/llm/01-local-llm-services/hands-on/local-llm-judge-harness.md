@@ -322,7 +322,3 @@ python judge_harness.py
 - Reasoning model 選型見 [3.8](/llm/03-theoretical-foundations/reasoning-models/)
 - 隱私 / 跨雲端邊界判讀見 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)
 - Benchmark 跟 in-house eval 的層次見 [4.14](/llm/04-applications/benchmarking-and-evaluation/)
-
-## 小結
-
-本地 LLM judge harness 是 4.16 LLM-as-judge 在隱私敏感 / cost 敏感場景的具體實作。Reasoning model（QwQ-32B / DeepSeek-R1-Distill-32B）當 judge 比 instruct model 穩、但 latency 長。最小 harness（< 100 行 Python）+ 4 段式 rubric + Ollama API 就能跑。Calibration（跟 human eval 對齊）是建立信任的必要 step。跟 production trace 串接是 production quality engineering 閉環的本地版。

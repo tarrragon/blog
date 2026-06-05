@@ -260,8 +260,6 @@ Client Agent
 - MCP server 生態的成熟度（普及度會大幅影響 agent-as-tool 的工程成本）。
 - 各家 framework 對 multi-agent 失敗模式的 handling 工具（debugging / tracing tooling）。
 
-## 小結
-
-Multi-agent 不是「更高級的 agent」、是當 multi-call 不夠用時的下一層工具。三種拓樸（flat / hierarchical / agent-as-tool）各擋不同 trade-off、實務常組合使用。Specialization gain 跟 orchestration overhead 是核心 trade-off、「先粗再細」是合理演化路徑。Multi-agent 特有的失敗（循環依賴 / 責任歸屬 / context 重複 / orchestrator 瓶頸 / 互相 hallucinate）要對應的 guardrail 設計、不是預設就有。Agent-as-tool 直接對應 MCP、agent 跨組織重用就是 MCP 普及問題。
+## 下一章
 
 下一章：[4.9 Production 部署資源評估](/llm/04-applications/production-resource-planning/)、把多 LLM call / 多 agent 系統的 cost / latency / capacity 落到具體 production 評估。Multi-agent 跟 multi-call 的對比基礎見 [4.7 workflow patterns](/llm/04-applications/workflow-patterns/)、agent 自身的失敗模式見 [4.4 agent 架構](/llm/04-applications/agent-architecture/)、MCP 協議層討論見 [4.6 應用層協議](/llm/04-applications/application-protocols/)。

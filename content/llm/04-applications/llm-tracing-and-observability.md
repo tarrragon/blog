@@ -231,8 +231,6 @@ A/B test on production traces
 - Auto-instrumentation 的支援度（持續擴展）
 - 跟具體 framework 的整合方式
 
-## 小結
-
-LLM tracing 是 production LLM 應用 debug / cost 監控 / quality eval 的事實標準。用 OpenTelemetry GenAI semconv 標準化 span 結構、避免 vendor lock-in。三大 use case：cost monitoring（trace attribute 內建 token usage）、latency / failure debug（trace tree 自然編碼）、production trace 餵回 LLM-as-judge 形成 eval 閉環。選型看流量、隱私需求、既有 stack。設計上避免 over-instrument、PII 流出、無 sampling 三個常見坑。
+## 下一章
 
 下一章：[4.21 LLM-as-judge 評估方法](/llm/04-applications/llm-as-judge/)、把 production trace 變成系統性 eval 的閉環。

@@ -159,8 +159,6 @@ prompt injection → LLM 輸出 → 下游動作
 4. **設定對應防護**：RAG exclude、tool confirm、git track、明確標記 untrusted 內容。
 5. **跑簡單測試**：對自己的工作流、故意放一個假 injection 試試、看 LLM client 跟 tool 的反應。
 
-## 小結
-
-prompt injection 是 IDE LLM 工作流最常見的攻擊面、形態以間接注入為主（codebase、依賴文件、issue / PR、Web 內容、剪貼簿）。本地 LLM 對 injection 的抵抗能力通常較弱、但個人 dev 場景的真正防護重點是「LLM 輸出後的下游動作要有 review 環節」、而非試圖完全擋住 injection。git track + tool confirm + RAG exclude 是底線、agent mode 要設 max steps。
+## 下一章
 
 下一章：[6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)、處理混用雲端跟本地 LLM 時 prompt 的洩漏軌跡。
