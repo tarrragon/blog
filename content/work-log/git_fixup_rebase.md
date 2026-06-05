@@ -20,8 +20,8 @@ gitGraph
    commit id: "D (feat)" type: REVERSE
 ```
 
-> 🟢 HIGHLIGHT = 要修改的目標 commit（A）
-> 🔴 REVERSE = 意外包含同一檔案變更的 commit（D）
+> HIGHLIGHT = 要修改的目標 commit（A）
+> REVERSE = 意外包含同一檔案變更的 commit（D）
 
 - **目標**：透過 fixup 修改 commit A，移除 `table_service.dart` 中的 try-catch
 - **問題**：commit D 在開發時意外 stage 了 `table_service.dart` 的變更，導致 rebase 後 commit D 重新套用了舊的內容，覆蓋了 commit A 的修改

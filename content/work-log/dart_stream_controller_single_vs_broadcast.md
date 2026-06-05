@@ -85,7 +85,7 @@ Bad state: Stream has already been listened to.
 final c = StreamController<int>();
 c.stream.listen(print);
 c.stream.listen(print);
-// ❌ Bad state: Stream has already been listened to.
+// 錯誤：Bad state: Stream has already been listened to.
 
 final b = StreamController<int>.broadcast();
 b.stream.listen((v) => print('A: $v'));
@@ -500,9 +500,9 @@ name.trigger('A');           // 強制通知，且 set value
 
 ```dart
 final user = User(name: 'A').obs;
-user.value.name = 'B';                         // ❌ 不觸發，reference 沒變
-user.refresh();                                // ✅ 強制觸發
-user.value = user.value.copyWith(name: 'B');   // ✅ 換新 reference 自然觸發
+user.value.name = 'B';                         // 不觸發，reference 沒變
+user.refresh();                                // 強制觸發
+user.value = user.value.copyWith(name: 'B');   // 換新 reference 自然觸發
 ```
 
 這跟 immutable 風格（Freezed、Equatable）配合最自然，`copyWith` 一定產出新 reference。
@@ -510,8 +510,8 @@ user.value = user.value.copyWith(name: 'B');   // ✅ 換新 reference 自然觸
 #### 3. Obx 必須讀到至少一個 `.value`
 
 ```dart
-Obx(() => Text('hello'))                  // ⚠️ warning: improper use
-Obx(() => Text('${counter.value}'))       // ✅
+Obx(() => Text('hello'))                  // warning: improper use
+Obx(() => Text('${counter.value}'))       // 正確
 ```
 
 `Obx` 靠 build 期間攔截 `.value` getter 建立訂閱關係，build callback 內完全沒讀任何 Rx 就不知道要 subscribe 誰。
@@ -520,9 +520,9 @@ Obx(() => Text('${counter.value}'))       // ✅
 
 ```dart
 final items = <int>[].obs;
-items.add(1);          // ✅ 觸發（RxList 重寫了 add）
-items.value.add(2);    // ❌ 不觸發（操作的是底層 List）
-items[0] = 99;         // ✅ 觸發（RxList 重寫了 []=）
+items.add(1);          // 觸發（RxList 重寫了 add）
+items.value.add(2);    // 不觸發（操作的是底層 List）
+items[0] = 99;         // 觸發（RxList 重寫了 []=）
 items.refresh();       // 補救
 ```
 

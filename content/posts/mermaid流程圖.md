@@ -52,7 +52,7 @@ graph TD
 
 在 `layouts/partials/custom_head.html` 中添加 Mermaid.js：
 
-{{< details summary="📝 點擊查看引入程式碼" >}}
+{{< details summary="點擊查看引入程式碼" >}}
 
 ```html
 <!-- Mermaid.js 支援 -->
@@ -65,7 +65,7 @@ graph TD
 
 添加 JavaScript 來轉換 Markdown 渲染的程式碼區塊：
 
-{{< details summary="📝 點擊查看語法轉換 JavaScript 程式碼" >}}
+{{< details summary="點擊查看語法轉換 JavaScript 程式碼" >}}
 
 ```html
 <!-- Mermaid 初始化與樣式 -->
@@ -106,7 +106,7 @@ graph TD
 
 添加 Mermaid 圖表的 CSS 樣式：
 
-{{< details summary="📝 點擊查看 CSS 樣式程式碼" >}}
+{{< details summary="點擊查看 CSS 樣式程式碼" >}}
 
 ```html
 <style>
@@ -136,7 +136,7 @@ graph TD
 
 ### 3.1 custom_head.html 完整程式碼
 
-{{< details summary="📝 點擊查看完整實現程式碼" >}}
+{{< details summary="點擊查看完整實現程式碼" >}}
 
 ```html
 <!-- Mermaid.js 支援 -->
@@ -300,7 +300,7 @@ mermaid.initialize({
 
 通過 `themeVariables` 自定義顏色：
 
-{{< details summary="📝 點擊查看自定義顏色程式碼" >}}
+{{< details summary="點擊查看自定義顏色程式碼" >}}
 
 ```javascript
 mermaid.initialize({
@@ -344,7 +344,7 @@ mermaid.initialize({
 
 ### 6.2 手機版適配
 
-{{< details summary="📝 點擊查看手機版適配 CSS" >}}
+{{< details summary="點擊查看手機版適配 CSS" >}}
 
 ```css
 @media (max-width: 768px) {
@@ -375,7 +375,7 @@ mermaid.initialize({
 
 可以通過 CSS 進一步自定義圖表外觀：
 
-{{< details summary="📝 點擊查看進階自定義樣式 CSS" >}}
+{{< details summary="點擊查看進階自定義樣式 CSS" >}}
 
 ```css
 .mermaid .node rect {
@@ -434,7 +434,7 @@ mermaid.initialize({
 
 對於包含大量圖表的頁面，可以考慮延遲載入：
 
-{{< details summary="📝 點擊查看延遲載入程式碼" >}}
+{{< details summary="點擊查看延遲載入程式碼" >}}
 
 ```javascript
 // 只在圖表進入視窗時才初始化

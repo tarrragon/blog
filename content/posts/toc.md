@@ -21,7 +21,7 @@ description: "詳細說明如何在 Hugo 部落格中實現響應式側邊章節
 
 在 `hugo.toml` 中啟用 TOC 功能：
 
-{{< details summary="📝 點擊查看配置程式碼" >}}
+{{< details summary="點擊查看配置程式碼" >}}
 
 ```toml
 [markup]
@@ -45,13 +45,13 @@ description: "詳細說明如何在 Hugo 部落格中實現響應式側邊章節
 
 在 `layouts/_default/single.html` 中實現新的佈局結構：
 
-{{< details summary="📝 點擊查看完整 HTML 佈局程式碼" >}}
+{{< details summary="點擊查看完整 HTML 佈局程式碼" >}}
 
 ```html
 {{ define "main" }}
 <!-- 側邊章節導航 - 獨立於主內容區域 -->
 <aside class="toc-sidebar">
-  <h3>📋 章節目錄</h3>
+  <h3>章節目錄</h3>
   {{ if .TableOfContents }}
     {{ .TableOfContents }}
   {{ else }}
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 在 `layouts/partials/custom_head.html` 中添加 CSS：
 
-{{< details summary="📝 點擊查看側邊欄 CSS 樣式" >}}
+{{< details summary="點擊查看側邊欄 CSS 樣式" >}}
 
 ```css
 /* 側邊章節導航樣式 - 獨立側邊欄 */
@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ### 3.2 回到頂部按鈕樣式
 
-{{< details summary="📝 點擊查看回到頂部按鈕 CSS 樣式" >}}
+{{< details summary="點擊查看回到頂部按鈕 CSS 樣式" >}}
 
 ```css
 /* 回到頂部按鈕樣式 */
@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ### 3.3 響應式設計
 
-{{< details summary="📝 點擊查看響應式設計 CSS 樣式" >}}
+{{< details summary="點擊查看響應式設計 CSS 樣式" >}}
 
 ```css
 /* 響應式設計 */
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ### 4.1 改善文章可讀性
 
-{{< details summary="📝 點擊查看標題間距 CSS 樣式" >}}
+{{< details summary="點擊查看標題間距 CSS 樣式" >}}
 
 ```css
 /* 調整標題間距 */

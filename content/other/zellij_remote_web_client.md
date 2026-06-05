@@ -86,7 +86,7 @@ C:\Certbot\live\your-domain.com\privkey.pem
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 ```
 
-> ⚠️ 自簽憑證瀏覽器會顯示安全警告，僅建議測試使用。
+> 注意：自簽憑證瀏覽器會顯示安全警告，僅建議測試使用。
 
 ---
 

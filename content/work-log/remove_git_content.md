@@ -66,7 +66,7 @@ pip install git-filter-repo
 
 ### 重要提醒
 
-⚠️ `git filter-repo` 會**重寫 Git 歷史**，這意味著：
+注意：`git filter-repo` 會**重寫 Git 歷史**，這意味著：
 
 1. 所有 commit hash 都會改變
 2. 需要 force push 到遠端
