@@ -18,6 +18,7 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 **設計判斷與選型** — 技術決策框架，避免過度設計與設計瑕疵的判斷標準（如 YAGNI 的真實適用條件、成本不對稱性下的選擇邏輯）。例：
 
 - [YAGNI 的真實適用條件](yagni-boundary-three-axes/)
+- [SaaS 選型訪談方法論](saas-selection-interview-methodology/)
 
 **敏捷 / 工程流程** — 敏捷實作、重構流程、文件分層。例：
 
