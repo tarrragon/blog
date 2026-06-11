@@ -3,7 +3,7 @@ name: saas-tech-selection
 description: "初始化 SaaS repo 時的設計與選型訪談協議：定錨後先過交付形態 gate（託管平台 / 垂直 SaaS / 辦公生態自動化 / BaaS / 半託管 CMS / 自建）、自建成立才從使用者操作（BDD）推導功能與風險、依 SRP / OCP 切分 domain 與 event（DDD）、再把技術維度掛在領域骨架下逐項確認、每個維度附不可沉默跳過的防護底線、產出設計決策記錄與 scaffold 建議。Triggers: 初始化 repo, 新專案, 開新服務, SaaS 選型, 技術選型, tech stack, 要不要自建, 託管平台, Shopify, Wix, Firebase, WordPress, Apps Script, DDD, domain 切分, event 驅動, event storming, BDD, 行為情境, 使用者操作盤點, 選資料庫, 選 queue, 要不要 redis, 要不要 k8s, MVP 架構, repo scaffold, 專案起手, stack 評估, 選型訪談, 架構訪談."
 license: MIT
 metadata:
-  version: 0.4.0
+  version: 0.5.0
   category: selection-protocol
 ---
 
@@ -70,6 +70,7 @@ metadata:
 3. **每階段帶反向問**：使用者描述的是想要的功能、沒想到的東西藏在失敗面 — 「使用者做完馬上後悔怎麼辦」「這批資料外洩的代價」「凌晨三點誰起床」「Order 的表加欄位要通知誰」。反向問是「確認使用者沒想到的東西」的主要工具。
 4. **底線告知協議**：防護底線逐項過、使用者可延後但要記錄；「先跳過、之後再說」轉寫成「延後 + 具體重評條件」、見 `references/baseline-protections.md`。
 5. **行為情境是收斂判準**：任何功能爭論回到「使用者在什麼情境做什麼、預期看到什麼」收斂；情境寫得出來才進下一階段。
+6. **訪談問句去重**：同一個風險在操作盤點風險表、核心問題、維度訪談各出現一次 — 這是宣告層的雙重核對設計、保留；訪談問句層要去重 — 語意重複的問句、後出現者改用「引用前答確認」句式（「操作盤點時提過重複扣款不可接受 — 佇列重試的情境下這仍成立嗎」）、不重新開放問同一題。
 
 ---
 
