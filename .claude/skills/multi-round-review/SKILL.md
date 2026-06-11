@@ -3,7 +3,7 @@ name: multi-round-review
 description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
-  version: 1.1.0
+  version: 1.2.0
   category: writing-methodology
 ---
 
@@ -115,16 +115,27 @@ Round 3 之後是否需要 Round 4？四個停止訊號齊備、停：
 - **「不要做」段必填**：排除已被前面 round 覆蓋的 frame、強制 reviewer 進入新維度、避免 finding 重疊
 - **平行 background 跑**：3 個 reviewer 同時跑、主 context 節省 ~80% token
 - **輸出限長**（1500 字）：避免報告自我膨脹、強制 reviewer 精煉
+- **輸出格式是欄位契約**：每個 finding 帶固定欄位（位置、問題描述、嚴重度、建議修法）、下游的整合 punch list 靠欄位運作 — 漏欄位的 finding 整合時只能退回原報告重讀、平行 reviewer 省 context 的效益就被吃掉。位置欄用「檔案 + 段落語意標題」、行號在多 reviewer 平行修復中會漂移
 
 ## 整合 finding 跟 fix 工作流
 
 每輪結束後：
 
 1. **跨 reviewer convergence**：3 個 reviewer 報告中重疊的 finding 優先序最高（per [#138 cross-reviewer convergence](references/principles/cross-reviewer-convergence.md)）
-2. **整合 punch list**：列嚴重 / 建議 / 不修三層、估每項修法成本
+2. **整合 punch list**：列嚴重 / 建議 / 不修三層、估每項修法成本。轉述 reviewer 報告進 punch list 時、保留原報告的嚴重度與義務模態 — 「必修」在摘要裡降級成「可改」、後續的修法範圍確認就建立在失真清單上；摘要壓縮要保留模態、不只保留內容
 3. **跟用戶確認修法範圍**：「修必修 + 建議全部修 / 只修必修 / 全部 backlog」用 AskUserQuestion 取得方向
 4. **拆 commit**：按 frame 拆 2-3 個 commit（如 commit 1 處理規範 frame finding、commit 2 處理 cadence frame）
 5. **驗證 + commit**：mdtools lint / cards / fmt 跑過、各 commit 帶清楚的修法描述
+
+### 跨 batch 的 finding 升級
+
+同類 finding 第二次出現、代表 review 端攔截已證明不夠、把規則往上游升一級。升級階梯：
+
+1. **Review 端**（第一次出現）：寫進 reviewer prompt 的審查維度、由 reviewer 掃
+2. **生成端**（第二次出現）：寫進生成前的輪替表 / 檢查清單、寫的時候就避開（per [cadence 同質化](references/principles/cadence-homogenization.md)的生成端輪替）
+3. **工具鏈**（偵測 pattern 穩定後）：規則的偵測面若能用 regex 表達、進專案 lint 的警告層。警告層的設計沿用「命中是候選、不是判決」— 自動掃描只負責曝光候選、語意判定留給人；自動化的價值是存量 debt 持續可見、不再依賴 review 記憶
+
+升級判準兩條：偵測規則已穩定（同一 pattern 連兩個 batch 有效）、誤判可控（有明確的豁免形態、如引號內的反例引用）。register / stance 類規則（喊話 / 誇飾 / 必然性框架）的判定無法 regex 化、停在生成端、不硬升工具鏈。
 
 ## 跟既有 skill 的關係
 
