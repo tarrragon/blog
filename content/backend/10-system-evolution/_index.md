@@ -34,25 +34,27 @@ tags: ["backend", "evolution", "migration"]
 | 雲端能力對照（AWS / GCP / Azure）          | 00 留（0.19） | —                                          |
 | 跨雲遷移執行劇本                           | —             | 模組十收（未來）                           |
 | 9.x 擴展軸、容量規劃                       | 09 留         | —                                          |
+| 交付形態該不該遷、升級 tripwire 判讀       | 00 留（0.21） | —                                          |
+| 託管形態遷出的執行劇本                     | —             | 模組十收（10.3）                           |
 | 拆分後造成的容量重平衡 runbook             | —             | 模組十收（未來）                           |
 
 判別問題是「這個變更失敗時、回退範圍跨幾個服務 / 模組？」。跨多模組的演進劇本進模組十、單模組內的小範圍變更留原模組。
 
 ## 章節列表
 
-| 章節                                                                          | 主題                 | 關鍵收穫                                                                                                                                                                |
-| ----------------------------------------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [10.1](/backend/10-system-evolution/service-decomposition-boundaries/)        | 服務拆分與邊界判讀   | 整理 monolith vs microservice 取捨、服務邊界判讀訊號、拆分時機與回退路徑                                                                                                |
-| [10.2](/backend/10-system-evolution/service-decomposition-execution-runbook/) | 服務拆分執行 Runbook | 10.1 決定該拆之後、實際怎麼動手 — [Strangler Fig](/backend/knowledge-cards/strangler-fig/)、[雙寫期](/backend/knowledge-cards/dual-write/) 管理、切流策略、回退條件設計 |
+| 章節                                                                          | 主題                 | 關鍵收穫                                                                                                                                                                                       |
+| ----------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [10.1](/backend/10-system-evolution/service-decomposition-boundaries/)        | 服務拆分與邊界判讀   | 整理 monolith vs microservice 取捨、服務邊界判讀訊號、拆分時機與回退路徑                                                                                                                       |
+| [10.2](/backend/10-system-evolution/service-decomposition-execution-runbook/) | 服務拆分執行 Runbook | 10.1 決定該拆之後、實際怎麼動手 — [Strangler Fig](/backend/knowledge-cards/strangler-fig/)、[雙寫期](/backend/knowledge-cards/dual-write/) 管理、切流策略、回退條件設計                        |
+| [10.3](/backend/10-system-evolution/managed-platform-exit/)                   | 託管形態遷出         | [0.21](/backend/00-service-selection/delivery-mode-selection/) tripwire 觸發之後、從託管平台 / BaaS 遷往自建的執行 — 資料 / 身分 / 流量 / 整合的資產線盤點、並行期與回切窗口、部分遷出中繼形態 |
 
 ## 後續擴充方向
 
-本模組目前收兩章服務拆分議題。未來會擴充的演進類議題：
+本模組目前收服務拆分與託管形態遷出議題。未來會擴充的演進類議題：
 
 - **跨服務 schema 演進**：API contract migration、event schema versioning、跨服務的 backfill 策略
 - **大型雲端遷移**：on-prem → cloud、跨雲遷移的 cutover 劇本、流量切換策略
 - **基礎設施替換**：資料庫引擎切換（如 MySQL → Postgres、自建 → managed）、cache vendor 切換、queue broker 切換的執行紀律
 - **容量重平衡**：拆分後的服務間流量分佈、shard 重分佈、tenant 隔離調整
-- **託管形態遷出**：從託管平台 / BaaS 遷往自建的執行紀律 — 平台資料搬遷、會員密碼雜湊不可攜的重設遷移、訂閱金流授權轉移、URL / SEO 保全、cutover 劇本；承接 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/) 升級 tripwire 觸發後的執行
 
 這些議題的共同特徵：跨多個技術模組、失敗代價遠超「該技術的小範圍變更」、需要獨立的執行劇本跟回退條件。
