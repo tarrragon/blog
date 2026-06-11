@@ -63,6 +63,8 @@ tags: ["backend", "service-selection"]
 
 ## 【判讀】使用成本要看成長曲線
 
+本章的成本取捨發生在自建世界內；更早一層的成本交叉 — 託管平台月費加抽成、對上自建的工程薪資加雲端帳單 — 屬於交付形態的判斷、見 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)。
+
 使用成本的核心問題是「流量與資料量成長後，費用如何變化」。儲存、查詢、訊息傳遞、log、trace、egress、compute 都可能隨使用量成長。
 
 接近真實網路服務的例子包括：

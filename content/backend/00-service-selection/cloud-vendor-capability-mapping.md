@@ -146,6 +146,8 @@ AWS SQS + Lambda 整合非常成熟、有 native trigger；GCP Pub/Sub + Cloud F
 
 ## 定位邊界
 
+本章預設「自建於雲端基礎設施」已成立；讀者若在對照表看到 Firestore 而想問「乾脆整個用 Firebase？」、那是 BaaS / 託管平台層的交付形態判斷、見 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)。
+
 本章專注「能力分類到 vendor 名稱的翻譯與對應差異」。當問題進入具體 vendor 配置（例如 RDS 怎麼設 backup）、跨 vendor 遷移流程（例如從 MySQL 遷到 Aurora），分別交給各模組的 `vendors/` 目錄跟 migration playbook。當問題進入需求分類（這個業務需要強一致還是最終一致？）回到 [0.0 後端需求分類地圖](/backend/00-service-selection/backend-demand-taxonomy/)。
 
 ## 案例回寫

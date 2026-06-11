@@ -53,5 +53,6 @@ tags: ["backend", "evolution", "migration"]
 - **大型雲端遷移**：on-prem → cloud、跨雲遷移的 cutover 劇本、流量切換策略
 - **基礎設施替換**：資料庫引擎切換（如 MySQL → Postgres、自建 → managed）、cache vendor 切換、queue broker 切換的執行紀律
 - **容量重平衡**：拆分後的服務間流量分佈、shard 重分佈、tenant 隔離調整
+- **託管形態遷出**：從託管平台 / BaaS 遷往自建的執行紀律 — 平台資料搬遷、會員密碼雜湊不可攜的重設遷移、訂閱金流授權轉移、URL / SEO 保全、cutover 劇本；承接 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/) 升級 tripwire 觸發後的執行
 
 這些議題的共同特徵：跨多個技術模組、失敗代價遠超「該技術的小範圍變更」、需要獨立的執行劇本跟回退條件。

@@ -8,6 +8,8 @@ tags: ["backend", "service-selection"]
 
 後端服務選型的核心目標是把「需求類型」轉成「服務能力」。資料庫、快取、訊息佇列、觀測平台與部署平台都能提升系統能力，但它們解決的是不同問題；選型時要先辨識需求、流量、資料量、失敗代價與成本模型，再進入具體產品比較。
 
+進入需求分類之前、先確認一個更早的判斷：**這個服務值得自建嗎**。差異化在商品、內容或服務品質、需求落在 Wix / Shopify、Google Apps Script、Firebase、WordPress 這類現成平台標準域的業務、託管形態可能是成本上更誠實的起點；判讀方式與可遷出保險見 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)。本模組其餘章節預設自建已成立。
+
 本模組先建立跨分類的選型語言。後續進入 [database](/backend/knowledge-cards/database/)、Redis、message [queue](/backend/knowledge-cards/queue/)、observability 或 deployment 資料夾時，每個資料夾開頭都應延續同一個形式：先說明這類服務解決什麼問題，再比較同質服務的差異，最後才進入實作細節。
 
 閱讀本模組前，建議先把 [前置知識卡片](/backend/knowledge-cards/) 當成共同詞彙索引。選型文章會使用 [consumer lag](/backend/knowledge-cards/consumer-lag/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)、[replay](/backend/knowledge-cards/replay-runbook/)、[降級](/backend/knowledge-cards/degradation/)、[停機](/backend/knowledge-cards/downtime/)、[readiness](/backend/knowledge-cards/readiness/) 等概念；這些概念的完整 domain knowhow 放在卡片中，章節本文則專注於需求判讀與服務能力取捨。
@@ -32,12 +34,15 @@ tags: ["backend", "service-selection"]
 | [0.13](/backend/00-service-selection/operations-control-vertical-slice/)    | 操作控制 vertical slice 實作入口       | 用一個服務串起 evidence package、verification handoff、decision log 與 write-back                                                                                                                                                                        |
 | [0.14](/backend/00-service-selection/enterprise-selection-case-atlas/)      | 企業選型案例圖譜                       | 以企業型態與規模階段分組案例，建立跨產業、跨規模的選型壓力對照                                                                                                                                                                                           |
 | [0.19](/backend/00-service-selection/cloud-vendor-capability-mapping/)      | 雲端服務對照地圖（AWS / GCP / Azure）  | 後端能力分類對照三家雲廠商、failover / 一致性 / 計價差異、跨雲遷移判讀                                                                                                                                                                                   |
+| [0.21](/backend/00-service-selection/delivery-mode-selection/)              | 交付形態選型：託管平台、BaaS 與自建    | 在自建選型之前先判斷該用 Wix / Shopify、Apps Script、Firebase、WordPress 還是自建、並保留可遷出路徑與升級 tripwire                                                                                                                                       |
 
 服務拆分判讀（原 0.18）與執行 Runbook（原 0.20）已移到 [模組十：系統演進與遷移](/backend/10-system-evolution/) — 設計階段的選型判讀留本模組、執行階段的高風險變更收斂到模組十。
 
 ## 需求討論順序
 
-後端選型討論的核心順序是先問「問題長什麼樣」，再問「哪種能力能解決」。討論一開始就跳到產品名稱，容易把資料庫、快取、queue、觀測平台或部署平台當成固定答案；比較穩定的做法是先確認下列五件事。
+這個討論順序預設自建已成立；交付形態的判讀見本頁開頭的分流與 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)。
+
+後端選型討論的核心順序是先問「問題長什麼樣」，再問「哪種能力能解決」。討論一開始就跳到產品名稱，容易把資料庫、快取、queue、觀測平台或部署平台當成固定答案；比較穩定的做法是先確認下列事項。
 
 1. 需求類型：這是狀態保存、讀取加速、非同步處理、即時推送、診斷、交付，還是可靠性驗證問題？
 2. 流量形狀：流量是穩定、尖峰、長尾、單一 hot key，還是週期性批次？
