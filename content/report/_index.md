@@ -367,7 +367,7 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 17：寫作 review 要同步檢查 metadata surface
 
-`#97 Metadata surface 要納入寫作 review 範圍` → `#96 適用範圍要展開成 file enumeration` → `#95 Multi-pass scope 要蓋同類風險區` → `#83 Writing 的 multi-pass review` → `#94 正向改寫要保留對照論據` — 先列 file scope，再列每個檔內的 title / description / heading / MOC hook / link label；最後用正向陳述與對照論據判準檢查讀者入口是否跟正文共用同一個概念錨點
+`#97 Metadata surface 要納入寫作 review 範圍` → `#96 適用範圍要展開成 file enumeration` → `#95 Multi-pass scope 要蓋同類風險區` → `#83 Writing 的 multi-pass review` → `#94 正向改寫要保留對照論據` — 先列 file scope，再列每個檔內的 title / description / heading / MOC hook / link label；最後用正向陳述與對照論據判準檢查讀者入口是否跟正文共用同一個概念錨點。description 對規則壓縮時的模態一致見 [#161](summary-compression-preserves-modality/)（可以丟細節、不可改模態）、入口頁開頭段的分流位置見 [#159](audience-fork-before-jargon-wall/)（分流要在最外圈讀者的存活範圍內）
 
 ### 路徑 18：對既有資安內容跑學術級 audit
 
@@ -395,7 +395,15 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 24：在活文件中命名與引用章節 / 階段 / 條列項
 
-`#156 集合命名用角色、不內嵌數量` → `#157 語意錨用單一字串` → `#155 引用章節用語意標題、不用位置編號` → `#44 Single Source of Truth` → `#84 Naming 是 iterated artifact` — 先用 #156 淨化命名端：集合名稱抽掉成員數（「核心問題」不是「核心七問」）、否則標題一半是 derivation、引用端怎麼修都錨在會漂移的字串上；再用 #157 確認語意名是單一 canonical 字串（同義雙名讓 grep 掃 A 漏 B、重排修復退回人腦對應）；再用 #155 修引用端：「見 Stage N」「如第 N 點」換成語意標題（編號是排列的 derivation、重排時 silent 指向錯內容）；標題本身要通過 #84 的 cross-call-site 檢驗（單獨出現時讀者知道指什麼）；發布方凍結的編號與數量（RFC 段號 / 法條 / SOLID 五原則）是 fact、可用。結構重排或成員增減的 commit 要全 repo 掃、可用 `rg "Stage [0-9]|第 ?[一二三四五六七八九十0-9]+ ?(章|節|點|步|輪)|§[0-9]"`（引用端）跟 `rg "[一二三四五六七八九十0-9]+ ?(大|問|階段|支柱|原則|步驟|件事|個維度)"`（命名端）抓候選後逐處判讀。三卡各守一層（引用錨點 / 命名內容 / 命名唯一性）、檢查互不替代 — 只跑其中一層、另外兩層的違規仍然隱形。
+`#156 集合命名用角色、不內嵌數量` → `#157 語意錨用單一字串` → `#155 引用章節用語意標題、不用位置編號` → `#44 Single Source of Truth` → `#84 Naming 是 iterated artifact` — 先用 #156 淨化命名端：集合名稱抽掉成員數（「核心問題」不是「核心七問」）、否則標題一半是 derivation、引用端怎麼修都錨在會漂移的字串上；再用 #157 確認語意名是單一 canonical 字串（同義雙名讓 grep 掃 A 漏 B、重排修復退回人腦對應）；再用 #155 修引用端：「見 Stage N」「如第 N 點」換成語意標題（編號是排列的 derivation、重排時 silent 指向錯內容）；標題本身要通過 #84 的 cross-call-site 檢驗（單獨出現時讀者知道指什麼）；發布方凍結的編號與數量（RFC 段號 / 法條 / SOLID 五原則）是 fact、可用。結構重排或成員增減的 commit 要全 repo 掃、可用 `rg "Stage [0-9]|第 ?[一二三四五六七八九十0-9]+ ?(章|節|點|步|輪)|§[0-9]"`（引用端）跟 `rg "[一二三四五六七八九十0-9]+ ?(大|問|階段|支柱|原則|步驟|件事|個維度)"`（命名端）抓候選後逐處判讀。三卡各守一層（引用錨點 / 命名內容 / 命名唯一性）、檢查互不替代 — 只跑其中一層、另外兩層的違規仍然隱形。引用他卡的關係宣告另有一層：用被引卡自己的分類詞彙、逐條找支撐句、見 [#162](cite-cards-with-their-own-taxonomy/)。
+
+### 路徑 25：設計判讀框架 / 多階段流程協議
+
+`#158 決策表矛盾列 = 缺上游維度` → `#163 多階段 artifact 欄位契約` → `#153 design gap vs execution gap` → `#69 Test-First` — 設計判讀表或多階段流程後、用帶完整語境的真實案例 dry-run（#69 的 RED 精神：乾淨例子只會命中預想列）；兩列同時命中且結論相反 → 補前置澄清問（#158）；下游宣稱以上游為輸入 → 逐欄走查標「直給 / 明文推導 / 缺」（#163）；缺口歸因時先分 design gap（改框架）vs execution gap（改執行、#153）。
+
+### 路徑 26：批量寫 sibling 文檔（多卡 / 多章）之前與之後
+
+`#122 cadence 同質化` → `#123 多重硬規範收斂便利解` → `#160 跨 surface 重新語境化` → `#161 摘要模態` → `#147 規範化跟自審` → `#148 停止訊號` — 寫之前排開場 frame / 條目形態 / 敘事視角的輪替表（#122 的生成端防範）；同主題落兩個 surface 時憑概念重寫、不開雙視窗對照抄（#160）；每份的 description 跟本體比對模態（#161）；寫完的批次連讀比句式骨架、單份 review 抓不到同骨（#122）；自己立的規範要靠 reviewer 抓自己（#147）；同類 finding 第二次出現、把規則從 review 端升到生成端。
 
 ---
 

@@ -76,7 +76,7 @@ tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 
 ### 計價模型差異（Lambda vs Cloud Functions vs Azure Functions）
 
-三家的 serverless 在計價單位有差異：
+三家的 [serverless](/backend/knowledge-cards/serverless/) 在計價單位有差異：
 
 - Lambda：請求數 + 執行時間 (GB-秒)
 - Cloud Functions：請求數 + 執行時間 + 網路流量
