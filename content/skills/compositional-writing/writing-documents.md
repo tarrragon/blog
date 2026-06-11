@@ -87,6 +87,12 @@ Given many atomic documents, how does a reader find the right one?
 
 > A reference without intent ("see X.md") is a broken signpost. Always say what the reader gains by clicking.
 
+### Reference anchors: semantic titles, not positional numbers
+
+引用另一個章節 / 階段 / 條列項時、錨點用語意標題、不用位置編號（「見核心問題」、不是「見 Stage 3」；「如『底線告知協議』所述」、不是「如第 4 點」）。編號是結構排列的 derivation — 插入或搬移一個單位、後續編號全部位移、引用句字面完好、語意卻 silent 指向錯的內容（misdirected 比 broken link 難偵測：連結斷掉會報錯、編號錯位會成功解析到錯的東西）。對應要求：每個結構單位的標題要承載核心意義（「Stage 3：核心問題」、編號只是排序前綴）、引用一律取語意半邊。例外是發布方凍結的編號（RFC 段號、法條）— 那是 fact、可引用。重排結構的 commit 要全 repo 掃編號式引用。完整判準與失效案例見 [reference-by-semantic-title-not-number](/report/reference-by-semantic-title-not-number/)。
+
+標題要能當穩定錨、名稱本身得先是純 fact：集合命名（問題清單 / 階段序列 / 原則組）只承載角色與層級、把成員數量留給清單呈現 —「核心七問」加一問就在每個複製過名稱的地方失真、「核心問題」承受任意成員增減。判準與邊界（外部凍結品牌 / 概念閾值可留數字）見 [name-collections-by-role-not-count](/report/name-collections-by-role-not-count/)。
+
 ### Indexing by document type
 
 - **Worklog**: The worklog itself is an index of tickets. Each ticket row points into a detail file.
@@ -98,11 +104,12 @@ Given many atomic documents, how does a reader find the right one?
 
 ### Anti-patterns
 
-| Anti-pattern                                              | What happens                                  |
-| --------------------------------------------------------- | --------------------------------------------- |
-| README that says "this folder contains various utilities" | Provides no routing; reader opens every file  |
-| Spec referencing a ticket ID                              | Spec stability breaks when ticket is archived |
-| Methodology A references methodology B which references A | Circular chase; no real content at the end    |
+| Anti-pattern                                                          | What happens                                                                |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| README that says "this folder contains various utilities"             | Provides no routing; reader opens every file                                |
+| Spec referencing a ticket ID                                          | Spec stability breaks when ticket is archived                               |
+| Methodology A references methodology B which references A             | Circular chase; no real content at the end                                  |
+| "See Stage 3" / "as listed in item 2" pointing into a living document | Structure reorder shifts numbers; reference silently lands on wrong content |
 
 ---
 
@@ -401,19 +408,19 @@ When the document is an experience-sharing write-up (not a methodology), six add
 
 ## Multi-pass Re-read（refinement protocol）
 
-The checklist above is a single-frame final sweep — not multi-pass. Multi-pass requires each round to use a **different frame** to catch errors at different layers ([#82](/report/literal-interception-vs-behavioral-refinement/) / [#83](/report/writing-multi-pass-review/)).
+The checklist above is a single-frame final sweep — not multi-pass. Multi-pass requires each round to use a **different frame** to catch errors at different layers ([literal-interception-vs-behavioral-refinement](/report/literal-interception-vs-behavioral-refinement/) / [writing-multi-pass-review](/report/writing-multi-pass-review/)).
 
 For documents (worklog / spec / methodology / error-pattern):
 
-| Round | Frame                                                        | Document-specific checklist                                                                 |
-| ----- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| 1     | Generation                                                   | Get content end-to-end; expect rough phrasing                                               |
-| 2     | Intent ([#67](/report/ease-of-writing-vs-intent-alignment/)) | Does the document type match the structure used? Spec / process / methodology not mixed?    |
-| 3     | Opportunity-cost tone                                        | Grep "must / should / always / never" — translate absolutes to "A in scenario X / B in Y"   |
-| 4     | Grep-ability / naming                                        | Headings contain concept keywords (not "Overview"); cross-references explain *why* to click |
-| 5     | Counter-cases / boundaries                                   | "When not to apply" section present? Examples cover edge cases not just happy path?         |
-| 6'    | Stability layer                                              | If this is a stable document (spec/methodology), are ticket IDs / commit hashes scrubbed?   |
-| 7'    | Atomic check                                                 | < 500 lines OR single concept despite length? Sections each answer one question?            |
+| Round | Frame                                                                                        | Document-specific checklist                                                                 |
+| ----- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 1     | Generation                                                                                   | Get content end-to-end; expect rough phrasing                                               |
+| 2     | Intent ([ease-of-writing-vs-intent-alignment](/report/ease-of-writing-vs-intent-alignment/)) | Does the document type match the structure used? Spec / process / methodology not mixed?    |
+| 3     | Opportunity-cost tone                                                                        | Grep "must / should / always / never" — translate absolutes to "A in scenario X / B in Y"   |
+| 4     | Grep-ability / naming                                                                        | Headings contain concept keywords (not "Overview"); cross-references explain *why* to click |
+| 5     | Counter-cases / boundaries                                                                   | "When not to apply" section present? Examples cover edge cases not just happy path?         |
+| 6'    | Stability layer                                                                              | If this is a stable document (spec/methodology), are ticket IDs / commit hashes scrubbed?   |
+| 7'    | Atomic check                                                                                 | < 500 lines OR single concept despite length? Sections each answer one question?            |
 
 Skip rules: quick worklog notes can skip rounds 4-7'; stable specs / methodology should run all rounds twice.
 

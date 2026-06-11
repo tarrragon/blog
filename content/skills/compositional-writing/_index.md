@@ -1,7 +1,7 @@
 ---
 title: "Compositional Writing — 組合式寫作方法論"
 date: 2026-04-25
-description: "以 Zettelkasten 為核心、針對程式碼註解、文件、log、prompt、欄位、長篇技術文章、外部分析材料轉教學文章、跨多篇 collection 結構的寫作方法論。六大原則 + 觸發路由 + 情境 reference。"
+description: "以 Zettelkasten 為核心、針對程式碼註解、文件、log、prompt、欄位、長篇技術文章、外部分析材料轉教學文章、跨多篇 collection 結構的寫作方法論。核心原則 + 觸發路由 + 情境 reference。"
 tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing"]
 ---
 
@@ -17,7 +17,7 @@ tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing
 
 | 順序 | 檔案                                                           | 目的                              |
 | ---- | -------------------------------------------------------------- | --------------------------------- |
-| 1    | [SKILL.md](/skills/compositional-writing/skill/)               | 三大支柱 + 六大原則速查、觸發路由 |
+| 1    | [SKILL.md](/skills/compositional-writing/skill/)               | 核心支柱 + 核心原則速查、觸發路由 |
 | 2    | 依情境挑一份 reference（見下表）                               | 把原則翻譯成可套用的檢查項與範例  |
 | 3    | [meta-metrics.md](/skills/compositional-writing/meta-metrics/) | 用 M1–M2 自評寫作成果             |
 

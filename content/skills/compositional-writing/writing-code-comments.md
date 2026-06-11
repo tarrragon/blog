@@ -1,11 +1,11 @@
 ---
 title: "Writing Code Comments — 程式碼註解撰寫指引"
 date: 2026-04-24
-description: "compositional-writing reference：將五大原則翻譯成程式碼註解 / doc comment 的具體檢查項與範例。"
+description: "compositional-writing reference：將核心原則翻譯成程式碼註解 / doc comment 的具體檢查項與範例。"
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
-本 reference 提供撰寫程式碼註解的完整指引，整合五大寫作原則在註解情境的具體應用。讀者只需讀本文件，即可獨立寫出合格的註解，不需再讀其他 reference。
+本 reference 提供撰寫程式碼註解的完整指引，整合核心寫作原則在註解情境的具體應用。讀者只需讀本文件，即可獨立寫出合格的註解，不需再讀其他 reference。
 
 > **核心命題**：註解不是程式碼的翻譯，而是業務需求和設計意圖的守護者。註解的認知依賴必須跟著程式依賴一起降低——介面的註解只寫契約，不洩漏實作；實作的註解說明業務規則，不描述語法選擇。
 
@@ -397,19 +397,19 @@ class DbOrderSearcher implements OrderSearcher {
 
 ## 多輪 Re-read Pass（multi-pass refinement）
 
-寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[#82](/report/literal-interception-vs-behavioral-refinement/) / [#83](/report/writing-multi-pass-review/)）。
+寫完上方自檢還不是 done — 自檢是「同 frame 的最後一掃」、不是 multi-pass。Multi-pass 要求每輪用**不同 frame** catch 不同層的錯（[literal-interception-vs-behavioral-refinement](/report/literal-interception-vs-behavioral-refinement/) / [writing-multi-pass-review](/report/writing-multi-pass-review/)）。
 
 註解用的核心三輪 + 兩輪程式碼專屬：
 
-| 輪  | Frame                                                         | 程式碼註解專用 checklist                                                     |
-| --- | ------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| 1   | 生成                                                          | 把「為什麼」寫出來、預期語句不順                                             |
-| 2   | 對意圖（[#67](/report/ease-of-writing-vs-intent-alignment/)） | 寫的是「為什麼這樣做」嗎、不是「程式在做什麼」？業務需求 vs 語法選擇分清楚？ |
-| 3   | 機會成本語氣                                                  | 「必須」「不可」翻成「在 X 情境下選擇 A 因為 ⋯⋯」                            |
-| 4'  | 介面 vs 實作分層                                              | doc comment 不洩漏 impl、inline comment 講 why 不講 what、抽象層對齊嗎？     |
-| 5'  | 時間軸 robust                                                 | 5 個月後讀還看得懂嗎？依賴的 ticket / 連結還活著嗎？                         |
+| 輪  | Frame                                                                                         | 程式碼註解專用 checklist                                                     |
+| --- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1   | 生成                                                                                          | 把「為什麼」寫出來、預期語句不順                                             |
+| 2   | 對意圖（[ease-of-writing-vs-intent-alignment](/report/ease-of-writing-vs-intent-alignment/)） | 寫的是「為什麼這樣做」嗎、不是「程式在做什麼」？業務需求 vs 語法選擇分清楚？ |
+| 3   | 機會成本語氣                                                                                  | 「必須」「不可」翻成「在 X 情境下選擇 A 因為 ⋯⋯」                            |
+| 4'  | 介面 vs 實作分層                                                                              | doc comment 不洩漏 impl、inline comment 講 why 不講 what、抽象層對齊嗎？     |
+| 5'  | 時間軸 robust                                                                                 | 5 個月後讀還看得懂嗎？依賴的 ticket / 連結還活著嗎？                         |
 
-### Naming 子場景：四輪 review（[#84](/report/naming-as-iterated-artifact/)）
+### Naming 子場景：四輪 review（[naming-as-iterated-artifact](/report/naming-as-iterated-artifact/)）
 
 註解寫完該 review 一次「這段程式碼涉及的命名」。命名是 iterated artifact、第一版幾乎不對：
 
@@ -427,11 +427,11 @@ class DbOrderSearcher implements OrderSearcher {
 - 跨 team API / DB schema：每輪都跑、跑兩遍
 - Production-facing URL / endpoint：不可跳
 
-詳見 [#84](/report/naming-as-iterated-artifact/)。
+詳見 [naming-as-iterated-artifact](/report/naming-as-iterated-artifact/)。
 
 ---
 
-## 常見事故場景
+## 常見意外場景
 
 ### 場景 1：改 bug 時順手改壞註解
 
