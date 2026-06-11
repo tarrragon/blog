@@ -40,6 +40,10 @@ func Check(path string, cfg rules.Config) ([]report.Violation, error) {
 	// blocks / front matter. Code block tabs are legitimate Go source
 	// indentation, so the rule is scoped to plain content lines.
 	out = append(out, checkProseTabs(path, lines, ctx)...)
+	// REF1 / REF2 drift-anchor candidates: positional references in
+	// prose and count-bearing names in headings / titles. Warn-level
+	// only — hits are candidates that need a semantic judgment.
+	out = append(out, checkDriftAnchors(path, lines, ctx)...)
 	// Front matter schema check always runs; rules.Config.FrontMatter
 	// describes which fields are required / recommended / disallowed.
 	out = append(out, checkFrontMatter(path, lines, cfg.FrontMatter, cfg.Cards.CardsRoot)...)
