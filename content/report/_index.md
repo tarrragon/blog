@@ -213,6 +213,15 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 - [#152 教材把設計選擇講成選擇、不講成必然或天性](design-choices-framed-as-choices-not-necessity/) — 本質主義 / 必然性框架（天生 / 本質就是 / 必然 / 唯一）把設計選擇講成自然法則、抹掉設計能動性；是「機會成本語氣 vs 絕對主義」的 subtype、比命令式絕對（應該做 X）更隱形（必然式偽裝成事實、躲過 review）；sharp feature 是常局部牴觸作者自己在別處的條件性立場（HOF 文章通篇講條件性、唯獨「天生」講成必然）；修法還原條件性（在選了某前提後 X 才以此形式成立）；是 #151 / #94 空降家族的 sibling（必然框架空降 vs 品質 verdict 空降 vs 刪對照空降）、補 compositional-writing 原則三的必然性維度；邊界物理 / 法律 / 數學事實可講必然
 - [#153 Review 漏抓先分 design gap 與 execution gap](review-miss-diagnose-design-vs-execution-gap/) — review 漏抓某類問題有兩成因：design gap（框架沒對應 frame）vs execution gap（框架有 frame、reviewer 沒跑）；修法相反（前者改框架、後者改執行），診斷前先分清否則 framework bloat 或永遠漏同類；「加 keyword」是最誘人的假修法（只解 design gap 偵測 sub-type、對沒跑的輪無效）；case 是 register 類漏抓（兩 gap 都有：跳過輪 9/10 + 輪 9 缺 register lens）；是 #114（design gap 一面向）的上位、#147（execution 側）的一般化、#149（偵測 vs 判定）的成因分層 sibling
 - [#154 教材的『重點 / 總結』段是內容發散的訊號、該重組正文不該補丁](summary-section-signals-scattered-prose/) — 單篇文章尾端「重述自己」的總結段（重點 / 小結 / TL;DR）是正文組織不佳的補丁；判準是「刪掉總結段、正文站不站得住」—— 站得住證明總結冗餘、站不住是正文要重組、兩種結果都指向不該留總結段；處理段內容先分提醒（養成習慣 / 回頭確認、刪）vs 概念（為何這樣設計、併回正文對應段）；補丁掩蓋發散會持續累積、概念被埋在尾端反而讓正文缺角違反「核心原則先行」；邊界是跨章模組的導覽型 summary（傳遞結構 / 路由這個新資訊）不適用；是 #64（在 source 同層修、不在下游補）的寫作層同構、#150 的結構層 sibling（#150 字句 stance、本卡整段結構）、#151 的「不貢獻新概念就刪」同判準、#153 的 diagnose 先於修法同類動作
+- [#155 引用章節用語意標題、不用位置編號](reference-by-semantic-title-not-number/) — 編號是結構排列的 derivation、不是 fact；結構重排時編號位移、引用點不報錯而是 silent 指向錯的內容（misdirected 比 dangling 難偵測 — broken link 會 404、錯位編號會成功解析到錯的東西）；修法是每個結構單位給語意標題、引用一律取語意半邊、編號只作當下排序導覽；邊界是發布方凍結的編號（RFC 段號 / 法條）是 fact 可引用；是 #44 SSoT 在結構引用維度的實例、#93 identifier-as-fact 家族 sibling、#84 命名 cross-call-site 檢驗在標題的應用、#97 的 surface 掃描面在引用句（navigation surface）的延伸
+- [#156 集合命名用角色、不內嵌數量](name-collections-by-role-not-count/) — 「核心七問」「成長六階段」「四大支柱」把成員數烤進名字、數量是 membership 的 derivation、成員增減時名稱先失真、且名稱是被複製最多次的字串、缺陷隨引用繁殖；修法是命名只承載角色與層級（核心問題 / 撞牆階段）、數量讓清單自己呈現；邊界三種數字可留（外部凍結品牌 SOLID / OWASP Top 10、數字是概念內容的 #42 兩次門檻、緊鄰清單的行內計數）；是 #155 的命名端 sibling（#155 修引用端、本卡讓「語意標題是穩定錨」前提成立 — #155 初版自用「見核心七問」當正面範例而未察覺、證明是獨立檢查維度）、#44 SSoT 擴散最快形態、#84 命名 review 的數量維度、#67 便利驅動命名的實例
+- [#157 語意錨用單一字串](semantic-anchor-single-string/) — 同一結構單位有兩個同義名稱（標題「決策記錄 + scaffold 建議」、引用「決策收斂階段」）時、語意引用的兩收益同時失效：grep 掃 A 漏 B、重排修復退回人腦對應；canonical 取標題語意半邊、全部引用統一；是 #155 / #156 之後的第三塊（引用端 → 命名內容 → 命名唯一性）、#44 在「同語意雙字串」的隱蔽形態、#84 輪 3 同概念同名檢查在結構單位引用場景的應用
+- [#158 決策表兩列同時命中且結論相反：缺的是上游區分維度](decision-table-conflict-reveals-missing-dimension/) — 真實案例 dry-run 同時命中兩列且結論相反時、修法在表外：案例承載兩種身分（要賣的產品 vs 業務的工具）、補前置澄清問把身分拆開、兩列各回適用域（拆不出身分的才是規則真衝突、回表內改規則）；表內加優先序 / 改窄列是蓋住矛盾；單列正確的表仍可能整體矛盾、逐列 review 抓不到、要用帶語境的真實案例 dry-run；是 #127/#128 維度補軸家族、#153 design gap 的決策表形態、#69 dry-run = 先看 RED
+- [#159 入口分流要放在詞彙牆之前](audience-fork-before-jargon-wall/) — 為門外讀者補的章節、入口頁開頭全是門內詞彙、分流句埋在數十行後 = 目標讀者活不到分流點；分流位置由最外圈讀者的存活範圍決定、不由內容邏輯歸屬決定；是 #131 讀者旅程在入口單點的特化、#139 結構性不可達之外的體驗性不可達（link checker 與結構審查都會通過、只有 reader simulation 抓得到）、把入口頁開頭段視為 #97 navigation surface 的延伸（本卡的擴張、原卡分類未列）
+- [#160 跨 surface 同主題內容要重新語境化、不是搬運](cross-surface-recontextualize-not-transplant/) — 「各寫一份、語境化在各 surface 內」用複製貼上執行 = 最差組合：兩份字面綁定（隱性同源、改一邊另一邊 silent 漂移）、卻各自沒為自己的讀者最佳化；可操作判準是跨 surface grep 逐字相同的完整句；教材版長成「為什麼 + 案例」、協議版長成「步驟 + 條件」、句子自然不同；是 #44 未宣告多源、#122 的跨 surface 對應、#147 字面合規 vs 實質合規、#150 register 是語境化最敏感維度
+- [#161 摘要壓縮可以丟細節、不可以改模態](summary-compression-preserves-modality/) — description / hook 濃縮規則時可以丟細節、不可改模態：「可延後但要記錄」壓成「不可跳過」= 條件允許變絕對禁令、規則設計的出口被摘要抹掉；判準是讀者只依摘要行動會不會做出本體不要求的事；模態詞長、壓縮時最先被砍、「更有力」就是失真訊號；是 #97 的模態維度、#142 的反向對齊軸、#152 模態失真家族的壓縮層形態、#67 摘要字數壓力放大便利重力
+- [#162 引用卡片用被引卡自己的分類詞彙](cite-cards-with-their-own-taxonomy/) — 關係宣告憑記憶轉述、把被引卡明確分開的兩類（metadata vs navigation surface）併成一類；記憶存概念不存分類結構、被引卡越熟越不會打開查；修法是寫關係段前重開被引卡的結論段與分類表、逐條關係配一次「找到支撐句」核對；是 #109 跨卡片版、#107 錨點在引用句的對應、#116 引用準確性家族、#97 的觸發 case 恰為引用它時錯置分類
+- [#163 多階段流程的 artifact 欄位契約](pipeline-artifact-field-contract/) — 下游宣稱「以上游 X 為輸入」的成立條件是欄位層級可推導：下游每欄對到上游欄或明文推導規則；缺口安靜（上游七欄、下游要的第八種資訊沒人說從哪來）、執行者自由心證、且缺的常是分支開關欄；檢查法是逐欄走查標「直給 / 明文推導 / 缺」；是 #153 design gap 的交接形態、#68 交接處 checkpoint、#158 同族組合失效（規則間矛盾 vs 階段間缺口）、#44 推導規則要收斂成明文單源
 
 ### 第七輪：Pattern 卡片（待補完）
 
@@ -354,7 +363,7 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 16：跨工具 identifier（slug / route / ID）broken / 不一致
 
-`#93 URL slug 是 fact` → `#44 Single Source of Truth` → `#82 字面攔截 vs 行為精煉` — 多工具各自推導 identifier 是 SSoT 違反、解法是把 identifier 升成 fact（顯式定義）、不要教工具學別人的推導規則；補 lint 規則作為 trigger（[#91](escalation-trigger-quantification/)）防止 debt 累積
+`#93 URL slug 是 fact` → `#44 Single Source of Truth` → `#82 字面攔截 vs 行為精煉` — 多工具各自推導 identifier 是 SSoT 違反、解法是把 identifier 升成 fact（顯式定義）、不要教工具學別人的推導規則；補 lint 規則作為 trigger（[#91](escalation-trigger-quantification/)）防止 debt 累積；引用錨點若是章節 / 階段編號這類位置推導值、同屬此家族、見 [#155](reference-by-semantic-title-not-number/)
 
 ### 路徑 17：寫作 review 要同步檢查 metadata surface
 
@@ -384,7 +393,17 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 `#154 總結段是內容發散的訊號` → `#64 在 source 同層修、不下游補` → `#150 教材不對讀者喊話` → `#42 兩次門檻` — 寫完文章看到尾端有「重點 / 小結 / 結論 / TL;DR」段、先用 #154 的判準「刪掉它、正文站不站得住」診斷：站得住=冗餘（刪）、站不住=正文發散（重組、不靠總結救）。處理段內容分提醒（刪）vs 概念（按 #64 併回正文 source 位置、不在尾端打補丁）；提醒型常同時是 #150 的對讀者喊話。真實樣本以「重述+路由混合型」最多、修法是外科式（切重述、留路由）；系統性出現（整個模組每章一個小結）時在模組層級統一決定、別逐章補丁 —— 此泛化暫按 #42 兩次門檻留 backlog、第二個系統性 smell 出現時抽獨立卡。
 
+### 路徑 24：在活文件中命名與引用章節 / 階段 / 條列項
+
+`#156 集合命名用角色、不內嵌數量` → `#157 語意錨用單一字串` → `#155 引用章節用語意標題、不用位置編號` → `#44 Single Source of Truth` → `#84 Naming 是 iterated artifact` — 先用 #156 淨化命名端：集合名稱抽掉成員數（「核心問題」不是「核心七問」）、否則標題一半是 derivation、引用端怎麼修都錨在會漂移的字串上；再用 #157 確認語意名是單一 canonical 字串（同義雙名讓 grep 掃 A 漏 B、重排修復退回人腦對應）；再用 #155 修引用端：「見 Stage N」「如第 N 點」換成語意標題（編號是排列的 derivation、重排時 silent 指向錯內容）；標題本身要通過 #84 的 cross-call-site 檢驗（單獨出現時讀者知道指什麼）；發布方凍結的編號與數量（RFC 段號 / 法條 / SOLID 五原則）是 fact、可用。結構重排或成員增減的 commit 要全 repo 掃、可用 `rg "Stage [0-9]|第 ?[一二三四五六七八九十0-9]+ ?(章|節|點|步|輪)|§[0-9]"`（引用端）跟 `rg "[一二三四五六七八九十0-9]+ ?(大|問|階段|支柱|原則|步驟|件事|個維度)"`（命名端）抓候選後逐處判讀。三卡各守一層（引用錨點 / 命名內容 / 命名唯一性）、檢查互不替代 — 只跑其中一層、另外兩層的違規仍然隱形。
+
 ---
+
+**Last Updated**: 2026-06-11（multi-round review Round 1-2 findings 抽象化）— 新增 #157-#163 七張卡：對 backend 0.21 + report #155/#156 + saas-tech-selection skill 的三輪 agent team review（compliance / fact-check / 一致性 → cadence / reader-sim / title 對齊）把 finding 分流成「既有卡實例」（第二人稱 → #150、必然性 → #152、三段同構 → #122、regex 漂移 → #44）與七個新原則：#157 語意錨單一字串（R1-C 抓到 Stage 5 標題與引用雙名）、#158 決策表矛盾列 = 缺上游維度（R2-B 用健身教練案例 dry-run 抓到 gate 兩列同時命中結論相反）、#159 入口分流在詞彙牆之前（R2-B reader-sim 抓到目標讀者活不到第 41 行的分流句）、#160 跨 surface 重新語境化不是搬運（R2-A 抓到三句逐字相同）、#161 摘要壓縮保留約束模態（R2-C 抓到 description 把「可延後但要記錄」壓成「不可跳過」）、#162 引用卡片用被引卡的分類詞彙（R1-B 抓到 #97 的 navigation surface 被轉述成 metadata surface）、#163 多階段 artifact 欄位契約（R2-B 抓到 BDD 七欄表推不出 event catalog 的失敗語意欄）。路徑 24 補 #157 進命名-引用鏈。
+
+**Last Updated**: 2026-06-11（集合命名內嵌數量 retro）— 新增 #156 集合命名用角色、不內嵌數量：#155 立卡後使用者隨即指出「核心七問」「成長六階段」是另一層問題 — 核心問題加一問、「七」就在標題 / 引用 / 索引全面失真、且這跟編號引用是不同議題（編號寄生在引用句、數量寄生在名稱本身、名稱是被複製最多次的字串）；同 skill 當天已實際發生一次（四大支柱 → 六大支柱被迫全面改名）；最深訊號是 #155 卡初版自用「見核心七問」當正面範例而未察覺 — 修引用端時命名端的同型缺陷完全隱形、證明兩卡是獨立檢查維度；修法是命名只承載角色與層級、數量讓清單自己呈現；邊界三種數字可留（外部凍結品牌 / 概念閾值 / 緊鄰清單行內計數）；路徑 24 擴成「命名與引用」雙端檢查、補命名端掃描 regex。下一步同步 compositional-writing skill 與 saas-tech-selection 改名（核心七問 → 核心問題等）。
+
+**Last Updated**: 2026-06-11（saas-tech-selection skill 階段重編號 retro）— 新增 #155 引用章節用語意標題、不用位置編號：設計多階段訪談 skill 時各檔用「Stage 1 核心七問」「Stage 3 收斂」互相引用、下一版流程從四階段改六階段、十多處跨檔引用 silent 錯位（「Stage 3 收斂」字面完好、語意已指向新的核心七問階段）、grep 只能抓字面、語意要人工逐處判讀、實修中兩處漏網靠第二輪掃描補上；核心判準是「編號是結構排列的 derivation、不是該單位的 fact」、引用一律錨在語意標題、編號只作當下排序導覽；失效模式是 misdirected（成功解析到錯內容）比 dangling（404）更難偵測；邊界是發布方凍結編號（RFC 段號 / 法條）是 fact 可引用；是 #44 SSoT 在結構引用維度的實例、#93 identifier-as-fact 家族 sibling、#84 命名 cross-call-site 檢驗在標題的應用、#97 metadata surface 在引用句的延伸；新增路徑 24。下一步同步 compositional-writing skill（自包含版、不引卡號）。
 
 **Last Updated**: 2026-06-05（git stash `-u` 筆記 review retro）— 新增 #154 教材的『重點 / 總結』段是內容發散的訊號、該重組正文不該補丁：git stash `-u` 筆記尾端「重點」段被使用者指為沒有必要 ——「如果文章一定要寫重點才能讓讀者記住、表示內容太發散、該重新拆分組織、而不是為設計不佳又補一個重點章節」；核心判準是「刪掉總結段、正文站不站得住」（站得住=冗餘、站不住=正文要重組、都指向不留總結）；處理段內容先分提醒（刪）vs 概念（併回正文對應段）；是 #64（source 同層修、不下游補）的寫作層同構、#150（字句 stance）的結構層 sibling、#151（不貢獻新概念就刪）同判準、#153（diagnose 先於修法）同類動作；邊界是跨章導覽型 summary（傳遞結構 / 路由新資訊）不適用。同步建記憶（總結段是發散訊號）。
 
