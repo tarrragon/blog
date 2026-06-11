@@ -42,11 +42,11 @@ tags: ["backend", "evolution", "migration"]
 
 ## 章節列表
 
-| 章節                                                                          | 主題                 | 關鍵收穫                                                                                                                                                                                       |
-| ----------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [10.1](/backend/10-system-evolution/service-decomposition-boundaries/)        | 服務拆分與邊界判讀   | 整理 monolith vs microservice 取捨、服務邊界判讀訊號、拆分時機與回退路徑                                                                                                                       |
-| [10.2](/backend/10-system-evolution/service-decomposition-execution-runbook/) | 服務拆分執行 Runbook | 10.1 決定該拆之後、實際怎麼動手 — [Strangler Fig](/backend/knowledge-cards/strangler-fig/)、[雙寫期](/backend/knowledge-cards/dual-write/) 管理、切流策略、回退條件設計                        |
-| [10.3](/backend/10-system-evolution/managed-platform-exit/)                   | 託管形態遷出         | [0.21](/backend/00-service-selection/delivery-mode-selection/) tripwire 觸發之後、從託管平台 / BaaS 遷往自建的執行 — 資料 / 身分 / 流量 / 整合的資產線盤點、並行期與回切窗口、部分遷出中繼形態 |
+| 章節                                                                          | 主題                 | 關鍵收穫                                                                                                                                                                                                |
+| ----------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [10.1](/backend/10-system-evolution/service-decomposition-boundaries/)        | 服務拆分與邊界判讀   | 整理 monolith vs microservice 取捨、服務邊界判讀訊號、拆分時機與回退路徑                                                                                                                                |
+| [10.2](/backend/10-system-evolution/service-decomposition-execution-runbook/) | 服務拆分執行 Runbook | 10.1 決定該拆之後、實際怎麼動手 — [Strangler Fig](/backend/knowledge-cards/strangler-fig/)、[雙寫期](/backend/knowledge-cards/dual-write/) 管理、切流策略、回退條件設計                                 |
+| [10.3](/backend/10-system-evolution/managed-platform-exit/)                   | 託管形態遷出         | [0.21](/backend/00-service-selection/delivery-mode-selection/) 升級自建 tripwire 觸發之後、從託管平台 / BaaS 遷往自建的執行 — 資料 / 身分 / 流量 / 整合的資產線盤點、並行期與回切窗口、部分遷出中繼形態 |
 
 ## 後續擴充方向
 

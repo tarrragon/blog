@@ -8,7 +8,7 @@ tags: ["backend", "service-selection"]
 
 後端服務選型的核心目標是把「需求類型」轉成「服務能力」。資料庫、快取、訊息佇列、觀測平台與部署平台都能提升系統能力，但它們解決的是不同問題；選型時要先辨識需求、流量、資料量、失敗代價與成本模型，再進入具體產品比較。
 
-進入需求分類之前、先確認一個更早的判斷：**這個服務值得自建嗎**。差異化在商品、內容或服務品質、需求落在 Wix / Shopify、Google Apps Script、Firebase、WordPress 這類現成平台標準域的業務、託管形態可能是成本上更誠實的起點；判讀方式與可遷出保險見 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)。本模組其餘章節預設自建已成立。
+進入需求分類之前、先確認一個更早的判斷：**這個服務值得自建嗎**。差異化在商品、內容或服務品質、需求落在 Wix / Shopify、Google Apps Script、Firebase、WordPress 這類現成平台標準域的業務、託管形態可能是成本上更誠實的起點；判讀方式與可遷出保險見 [0.21 交付形態選型](/backend/00-service-selection/delivery-mode-selection/)、日後升級自建 tripwire 觸發的遷出執行見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)。本模組其餘章節預設自建已成立。
 
 本模組先建立跨分類的選型語言。後續進入 [database](/backend/knowledge-cards/database/)、Redis、message [queue](/backend/knowledge-cards/queue/)、observability 或 deployment 資料夾時，每個資料夾開頭都應延續同一個形式：先說明這類服務解決什麼問題，再比較同質服務的差異，最後才進入實作細節。
 
