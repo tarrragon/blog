@@ -6,7 +6,7 @@ weight: 1
 tags: ["backend", "security", "vendor", "okta", "identity"]
 ---
 
-Okta 是 SaaS Identity Provider 的事實標準。它承擔三個責任：human identity 的 SSO 與 MFA、application / cloud account 的 federation gateway、SCIM-based lifecycle 自動化（joiners / movers / leavers）。當公司把 SSO 集中到 Okta、員工的工作信任邊界就從「每個應用各自的密碼」變成「Okta tenant + 客服流程 + signing key」三件事是否安全。
+Okta 是 SaaS Identity Provider 的事實標準。它承擔三個責任：human identity 的 SSO 與 MFA、application / cloud account 的 federation gateway、SCIM-based lifecycle 自動化（joiners / movers / leavers）。當公司把 SSO 集中到 Okta、員工的工作信任邊界就從「每個應用各自的密碼」變成「Okta tenant + 客服流程 + signing key」三件事是否安全。在 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/) 的光譜上、把企業 SSO 交給 Okta 是認證 commodity「買」的代表選擇（feature SaaS 深度）；這個外包深度與遷出代價的權衡見 [外包深度](/backend/knowledge-cards/capability-outsourcing-depth/) 卡。
 
 ## 服務定位
 

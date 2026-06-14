@@ -6,7 +6,7 @@ weight: 3
 tags: ["backend", "security", "vendor", "keycloak", "identity", "self-hosted", "open-source"]
 ---
 
-Keycloak 是 open source 自管 Identity Provider、Red Hat 主導維護（商業支援版本為 Red Hat build of Keycloak、前身 Red Hat SSO）。它承擔的責任跟 SaaS IdP 相同 — SSO、MFA、federation、user lifecycle — 但 *整個控制面留在組織自己手上*：issuer signing key、support tooling、底層 PostgreSQL、HA cluster、CVE patch cadence 全部自管。決定上 Keycloak 不是技術偏好、是組織決定把 SaaS IdP 的「第三方信任成本」換成「自家 SRE 運維成本 + 安全責任」。
+Keycloak 是 open source 自管 Identity Provider、Red Hat 主導維護（商業支援版本為 Red Hat build of Keycloak、前身 Red Hat SSO）。它承擔的責任跟 SaaS IdP 相同 — SSO、MFA、federation、user lifecycle — 但 *整個控制面留在組織自己手上*：issuer signing key、support tooling、底層 PostgreSQL、HA cluster、CVE patch cadence 全部自管。決定上 Keycloak 不是技術偏好、是組織決定把 SaaS IdP 的「第三方信任成本」換成「自家 SRE 運維成本 + 安全責任」。在 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/) 的光譜上、Keycloak 是認證能力「建」側的 canonical 例子 — 把 feature SaaS（Auth0 / Okta）的第三方信任成本、換成自管控制面的運維成本；什麼訊號該翻到這一側、見 0.22 與 [外包深度](/backend/knowledge-cards/capability-outsourcing-depth/) 卡。
 
 ## 服務定位
 
