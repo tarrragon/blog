@@ -36,7 +36,7 @@ tags: ["backend", "service-selection", "buy-vs-build", "baas"]
 
 ## 【判讀】三種外包深度與 no-code 到 dev-tool 光譜
 
-外包一塊能力不是一個二元動作、而是有深度的（見 [Capability Outsourcing Depth](/backend/knowledge-cards/capability-outsourcing-depth/) 卡片）。同樣是「不自己寫」、把維運交出去跟把整塊能力連業務邏輯一起交出去、控制權與遷出代價差一個量級。下面這三層講的是把能力交給雲端託管側時、交出多少 — 自架 OSS 或買 on-prem 授權、只租控制平面的自管形態是另一條平行軸（鎖定點在運維 know-how 與授權、不在 vendor API）、不收在這三層裡。下表把三種深度分開、每種附代表服務與遷出代價：
+外包一塊能力有深度之分、不是非黑即白的二元動作（見 [Capability Outsourcing Depth](/backend/knowledge-cards/capability-outsourcing-depth/) 卡片）。同樣是「不自己寫」、把維運交出去跟把整塊能力連業務邏輯一起交出去、控制權與遷出代價差一個量級。下面這三層講的是把能力交給雲端託管側時、交出多少 — 自架 OSS 或買 on-prem 授權、只租控制平面的自管形態是另一條平行軸（鎖定點在運維 know-how 與授權、不在 vendor API）、不收在這三層裡。下表把三種深度分開、每種附代表服務與遷出代價：
 
 | 外包深度                   | 你外包什麼、還擁有什麼                 | dev-tool 代表                    | no-code / low-code 代表               | 遷出代價 |
 | -------------------------- | -------------------------------------- | -------------------------------- | ------------------------------------- | -------- |
