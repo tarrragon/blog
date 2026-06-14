@@ -10,7 +10,7 @@ Auth0 是 Customer Identity Cloud 的代表選項。它承擔三段責任：B2C 
 
 ## 服務定位
 
-Auth0 是 *customer identity 的控制面*、不是員工 SSO（員工走 [Okta Workforce](/backend/07-security-data-protection/vendors/okta/) 或 [AWS IAM Identity Center](/backend/07-security-data-protection/vendors/aws-iam-identity-center/)）。雖然 Auth0 於 2021 被 Okta 收購、目前屬「Customer Identity Cloud」產品線、跟 Workforce Okta 是 *同公司不同 control plane*：tenant 集群、事件分布、signing key 託管路徑都分開、Okta Workforce 的事故（2022 Sitel、2023 support system HAR）並未直接打到 Auth0 customer。
+Auth0 是 *customer identity 的控制面*、不是員工 SSO（員工走 [Okta Workforce](/backend/07-security-data-protection/vendors/okta/) 或 [AWS IAM Identity Center](/backend/07-security-data-protection/vendors/aws-iam-identity-center/)）。雖然 Auth0 於 2021 被 Okta 收購、目前屬「Customer Identity Cloud」產品線、跟 Workforce Okta 是 *同公司不同 control plane*：tenant 叢集、事件分布、signing key 託管路徑都分開、Okta Workforce 的事故（2022 Sitel、2023 support system HAR）並未直接打到 Auth0 customer。
 
 跟自管 [Keycloak](/backend/07-security-data-protection/vendors/keycloak/) 比、Auth0 把 Universal Login UI、social connection 預建、Rules / Action runtime、attack protection 都託管出去 — 代價是 *SaaS 計費、token issuance / login attempt 都計量*、流量大的 B2C 場景遇到 credential stuffing 不擋會吃成本。跟 [AWS Cognito](https://docs.aws.amazon.com/cognito/) / [Firebase Auth](https://firebase.google.com/docs/auth) 比、Auth0 的核心優勢是 *developer-first tenant 體驗 + 預建 social connection（Google / Facebook / Apple / Microsoft 等數十種）+ Action hook 寫 JS 客製*。
 
