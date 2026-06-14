@@ -44,6 +44,10 @@ func Check(path string, cfg rules.Config) ([]report.Violation, error) {
 	// prose and count-bearing names in headings / titles. Warn-level
 	// only — hits are candidates that need a semantic judgment.
 	out = append(out, checkDriftAnchors(path, lines, ctx)...)
+	// POS-negation-lead candidate: 「不是 X 而是 Y」prose that buries the
+	// core concept after 而是. Warn-level — detection is mechanizable but
+	// the lead-with-the-point judgment needs reading the sentence (#166).
+	out = append(out, checkNegationLead(path, lines, ctx)...)
 	// Front matter schema check always runs; rules.Config.FrontMatter
 	// describes which fields are required / recommended / disallowed.
 	out = append(out, checkFrontMatter(path, lines, cfg.FrontMatter, cfg.Cards.CardsRoot)...)

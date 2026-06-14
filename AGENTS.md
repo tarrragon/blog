@@ -197,6 +197,7 @@
   - **Front matter**：通用層 `title` + `date` 必填；新文章必填 `description` + `tags`；卡片層加 `description` + `weight` 必填。
   - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。
   - **位置引用與數量命名（警告層）**：`mdtools lint` 掃位置式引用候選（REF1：「見第 N 章」「§N」）與標題內嵌成員數的集合命名（REF2：「六大原則」）；命中是候選不是判決 — 凍結外部編號（RFC / 法條）、緊鄰清單的行內計數、「」內的反例引用合規。判讀依 [#155](/report/reference-by-semantic-title-not-number/) / [#156](/report/name-collections-by-role-not-count/)、細節見 spec §5.10。
+  - **否定起手（警告層）**：`mdtools lint` 掃「不是 X、而是 Y」「與其 X、不如 Y」重點後置候選（POS-negation-lead）；核心概念被擠到「而是 / 不如」之後是資訊結構效率問題、跨語言（非中文特有句型）。命中是候選不是判決 — 判定用「核心概念在不在句首」、明示反例對照與「」內引用合規、講此句型的 meta 卡會自我觸發。判讀依 [#166](/report/lead-with-the-point-cross-language/) / [#165](/report/register-violation-needs-cross-style-eyes/)、細節見 spec §5.11。
   - **裝飾符號禁用**：正文（含表格、列表、行內）不可用 emoji（✅ ❌ ⚠️ 🚨 等）跟裝飾性 unicode（✓ ✗）；表格 status 改用純文字、列表優缺點改用 `**優點**：` / `**缺點**：` 標題段；理由與替換策略見 spec §5.9。**目前未進 `mdtools lint` 自動掃描、靠人工 grep**：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗" content/`。
 - 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
 - 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
