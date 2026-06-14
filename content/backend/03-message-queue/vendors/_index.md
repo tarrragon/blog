@@ -6,7 +6,7 @@ weight: 90
 tags: ["backend", "message-queue", "vendor"]
 ---
 
-訊息佇列 Vendor 清單的核心責任是把 broker 名稱放回 delivery semantics、processing semantics、replay boundary 與操作治理的判斷。每個服務頁先回答它提供哪種投遞與消費模型，再討論 ordering、retention、consumer group、DLQ、managed 邊界與案例回寫。
+訊息佇列 Vendor 清單的核心責任是把 broker 名稱放回 delivery semantics、processing semantics、replay boundary 與操作治理的判斷。每個服務頁先回答它提供哪種投遞與消費模型，再討論 ordering、retention、consumer group、DLQ、managed 邊界與案例回寫。在挑單一 broker 之前先有一個更上層的判斷：這塊佇列能力該自管 broker（RabbitMQ、Kafka）、用 managed（SQS、SNS、MSK、Confluent Cloud），還是用雲端原生的事件匯流 — 逐能力的買 vs 建判讀見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
 
 ## 讀法
 

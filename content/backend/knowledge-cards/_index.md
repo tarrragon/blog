@@ -151,24 +151,25 @@ weight: -1
 
 ## 邊界與治理
 
-| 卡片                                                                             | 核心問題                                      | 常見出現位置                                                              |
-| -------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------- |
-| [Boundary Contract](/backend/knowledge-cards/contract/)                          | 邊界兩端如何維持一致約定                      | API contract、deployment contract、queue contract、load balancer contract |
-| [API Contract](/backend/knowledge-cards/api-contract/)                           | request / response 如何維持相容               | client、SDK、public API                                                   |
-| [Deployment Contract](/backend/knowledge-cards/deployment-contract/)             | application 與 platform 如何對齊生命週期      | readiness、shutdown、rollout                                              |
-| [Queue Contract](/backend/knowledge-cards/queue-contract/)                       | producer / broker / consumer 如何對齊交付語意 | ack、retry、DLQ、redelivery                                               |
-| [Load Balancer Contract](/backend/knowledge-cards/load-balancer-contract/)       | 服務與流量入口如何對齊健康與切流              | health check、draining、idle timeout                                      |
-| [Integration Adapter](/backend/knowledge-cards/adapter/)                         | 外部系統如何轉成內部需要的形狀                | repository、payment、notification                                         |
-| [Repository Adapter](/backend/knowledge-cards/repository-adapter/)               | 持久化存取如何對齊應用模型                    | SQL、transaction、row mapping                                             |
-| [Provider Adapter](/backend/knowledge-cards/provider-adapter/)                   | 第三方服務如何被包裝成穩定介面                | payment、email、SMS、storage                                              |
-| [Notification Adapter](/backend/knowledge-cards/notification-adapter/)           | 通知通道如何轉成外部發送格式                  | email、push、webhook                                                      |
-| [Request Middleware](/backend/knowledge-cards/middleware/)                       | 共通請求處理如何放在邊界上                    | auth、logging、tracing、validation                                        |
-| [Authentication Middleware](/backend/knowledge-cards/authentication-middleware/) | 請求進入前如何驗證身份                        | token、session、signature                                                 |
-| [Authorization Middleware](/backend/knowledge-cards/authorization-middleware/)   | 請求進入前如何判斷權限                        | role、tenant、resource owner                                              |
-| [Observability Middleware](/backend/knowledge-cards/observability-middleware/)   | 請求如何補上觀測欄位                          | request id、trace context                                                 |
-| [Security Middleware](/backend/knowledge-cards/security-middleware/)             | 請求如何套用共通安全控制                      | rate limit、redaction                                                     |
-| [Validation Middleware](/backend/knowledge-cards/validation-middleware/)         | 請求如何先做共通驗證                          | schema、header、payload shape                                             |
-| [Vendor Lock-In](/backend/knowledge-cards/vendor-lock-in/)                       | 供應商 API 滲入程式碼如何造成退出成本         | adapter、exit route、選型                                                 |
+| 卡片                                                                                   | 核心問題                                       | 常見出現位置                                                              |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
+| [Boundary Contract](/backend/knowledge-cards/contract/)                                | 邊界兩端如何維持一致約定                       | API contract、deployment contract、queue contract、load balancer contract |
+| [API Contract](/backend/knowledge-cards/api-contract/)                                 | request / response 如何維持相容                | client、SDK、public API                                                   |
+| [Deployment Contract](/backend/knowledge-cards/deployment-contract/)                   | application 與 platform 如何對齊生命週期       | readiness、shutdown、rollout                                              |
+| [Queue Contract](/backend/knowledge-cards/queue-contract/)                             | producer / broker / consumer 如何對齊交付語意  | ack、retry、DLQ、redelivery                                               |
+| [Load Balancer Contract](/backend/knowledge-cards/load-balancer-contract/)             | 服務與流量入口如何對齊健康與切流               | health check、draining、idle timeout                                      |
+| [Integration Adapter](/backend/knowledge-cards/adapter/)                               | 外部系統如何轉成內部需要的形狀                 | repository、payment、notification                                         |
+| [Repository Adapter](/backend/knowledge-cards/repository-adapter/)                     | 持久化存取如何對齊應用模型                     | SQL、transaction、row mapping                                             |
+| [Provider Adapter](/backend/knowledge-cards/provider-adapter/)                         | 第三方服務如何被包裝成穩定介面                 | payment、email、SMS、storage                                              |
+| [Notification Adapter](/backend/knowledge-cards/notification-adapter/)                 | 通知通道如何轉成外部發送格式                   | email、push、webhook                                                      |
+| [Request Middleware](/backend/knowledge-cards/middleware/)                             | 共通請求處理如何放在邊界上                     | auth、logging、tracing、validation                                        |
+| [Authentication Middleware](/backend/knowledge-cards/authentication-middleware/)       | 請求進入前如何驗證身份                         | token、session、signature                                                 |
+| [Authorization Middleware](/backend/knowledge-cards/authorization-middleware/)         | 請求進入前如何判斷權限                         | role、tenant、resource owner                                              |
+| [Observability Middleware](/backend/knowledge-cards/observability-middleware/)         | 請求如何補上觀測欄位                           | request id、trace context                                                 |
+| [Security Middleware](/backend/knowledge-cards/security-middleware/)                   | 請求如何套用共通安全控制                       | rate limit、redaction                                                     |
+| [Validation Middleware](/backend/knowledge-cards/validation-middleware/)               | 請求如何先做共通驗證                           | schema、header、payload shape                                             |
+| [Vendor Lock-In](/backend/knowledge-cards/vendor-lock-in/)                             | 供應商 API 滲入程式碼如何造成退出成本          | adapter、exit route、選型                                                 |
+| [Capability Outsourcing Depth](/backend/knowledge-cards/capability-outsourcing-depth/) | 外包一塊能力的三種深度如何決定控制權與遷出代價 | managed 基礎設施、feature SaaS、BaaS bundle                               |
 
 ## 訊息與事件
 

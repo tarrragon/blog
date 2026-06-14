@@ -6,7 +6,7 @@ weight: 90
 tags: ["backend", "security", "data-protection", "vendor"]
 ---
 
-資安與資料保護 Vendor 清單的核心責任是把安全服務名稱放回控制面、信任邊界、證據鏈與交接路由的判斷。每個服務頁先回答它承擔身份、秘密、傳輸、入口、資料保護、供應鏈或偵測哪一段控制責任，再討論導入條件、操作成本、例外治理與事故回寫。
+資安與資料保護 Vendor 清單的核心責任是把安全服務名稱放回控制面、信任邊界、證據鏈與交接路由的判斷。每個服務頁先回答它承擔身份、秘密、傳輸、入口、資料保護、供應鏈或偵測哪一段控制責任，再討論導入條件、操作成本、例外治理與事故回寫。多數控制面都有「自建 vs 買託管」的選擇：自建認證 vs Auth0 / Okta / Cognito、自管 secret store vs managed KMS / Vault、自架 WAF vs 雲端 WAF — 把整塊控制責任外包給專做合規的 vendor 是常見且合理的起點，逐控制面的買 vs 建判讀見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
 
 ## 讀法
 
