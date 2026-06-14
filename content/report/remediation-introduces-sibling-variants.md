@@ -61,13 +61,13 @@ tags: ["report", "事後檢討", "工程方法論", "review-process", "原則"]
 
 ### 補 pattern 永遠追不上變體
 
-把希望放在「補完所有 pattern 變體」上、就會無限打地鼠——每補一個、下一個浮現。四次補 pattern 仍漏第五個（「、是」），證明表面層的窮舉追不上成因層。
+把希望放在「補完所有 pattern 變體」上、就會無限打地鼠——每補一個、下一個浮現。連接詞清單擴兩次仍冒出第四個變體（「、是」），證明表面層的窮舉追不上成因層。
 
 ---
 
 ## 跟其他抽象層原則的關係
 
-- **[#166 重點優先陳述是跨語言的資訊結構原則](../lead-with-the-point-cross-language/)**：#166 講「句型 grep 枚舉不完、判準是重點位置」（靜態原則），本卡是它的過程面——修法 / 補 pattern 的動作會反覆暴露同類變體，正是「枚舉不完」在 remediation 過程的動態展現。#166 self-case 記了完整的四次補 pattern 軌跡。
+- **[#166 重點優先陳述是跨語言的資訊結構原則](../lead-with-the-point-cross-language/)**：#166 講「句型 grep 枚舉不完、判準是重點位置」（靜態原則），本卡是它的過程面——修法 / 補 pattern 的動作會反覆暴露同類變體，正是「枚舉不完」在 remediation 過程的動態展現。#166 self-case 記了完整的 pattern 連接詞擴展軌跡。
 - **[#95 Multi-pass review scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)**：#95 是空間軸（同類違規分布整個 corpus），本卡是時間軸（修法後的產物是剛產生的同類風險區）——兩個一起才是完整 scope：橫向蓋 corpus、縱向蓋修法產物。
 - **[#153 Review 漏抓先分 design gap 與 execution gap](../review-miss-diagnose-design-vs-execution-gap/)**：本卡補一類 gap 的來源——修法本身引入的新 gap。修法後沒重審，是把「修法產物」排除在 scope 外的 execution gap。
 - **[#148 跨輪 review 停止訊號是 frame 涵蓋](../cross-round-review-stopping-signal/)**：本卡補「修法產生新批」這個維度——停止判斷不能停在「修完這批」、要含修法產物的重審。
