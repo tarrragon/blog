@@ -30,6 +30,8 @@
 
 **SaaS day one 預設**：managed relational DB + object storage。理由：MVP 階段存取模式未知、relational 的 ad-hoc 查詢自由度是「需求還會變」的保險；managed 把備份、升級、failover 外包給平台、符合小團隊定錨。使用者點名 document / KV 時、回到資料形狀與查詢模式確認 — 確認成立就採納、選型沒有標準答案、只有跟需求對齊的答案。
 
+**外包深度與 bundle 判讀**：「managed」本身有深度差（見 `principles/capability-outsourcing-depth.md`）：純 managed 關聯式 DB（RDS / Cloud SQL / Neon 類、只外包 DB 維運、schema 與 query 仍是你的）、跟跨能力 bundle（同時給 DB + 認證 + 物件儲存 + 即時推送的後端平台）是不同深度。資料庫是 bundle 的核心、所以這個維度常是 bundle 決策的錨點：選了 bundle、要回頭看 security（認證可不可以用它的）、cache、async-queue（即時推送）哪幾塊一起用它、把這幾塊收進同一筆 bundle 決策、而不是各維度各接一個獨立服務。逐塊判「用它值不值得換整包遷出代價」、bundle 的整包遷出代價記進 tripwire。
+
 **多租戶資料模型**：預設 shared schema + 每表 `tenant_id` + 查詢層強制 scope（ORM default scope 或 row-level security）。schema-per-tenant 與 db-per-tenant 在「合規要求實體隔離」或「大客戶要獨立備份 / 還原」時才引入、代價是 migration 與維運成本乘上租戶數。
 
 ---

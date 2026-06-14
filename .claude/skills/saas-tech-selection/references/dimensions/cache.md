@@ -27,6 +27,8 @@
 
 **引入順序建議**：HTTP 層（最便宜、零新元件）→ in-process（一行 LRU）→ Redis（確認需要跨實例共享才上）。使用者點名 Redis 時、確認需求是「跨實例共享」還是「覺得該有快取」— 後者先回到讀壓力證據。
 
+**外部託管判讀**：確認要上 Redis 後、這塊仍是一個外包深度選擇（見 `principles/capability-outsourcing-depth.md`）：自管 Redis（自己跑、自己備援）、managed cache（ElastiCache / Upstash serverless 類、把維運外包）、或折進跨能力 bundle 自帶的快取 / KV。小團隊預設 managed —— 快取掛了回源風暴的處理已經夠燒、再加一個有狀態服務的維運多半不划算。若 state-storage 已選了某個 bundle、先確認它的快取能力夠不夠、避免多接一個獨立 Redis 又多一道接縫。
+
 ---
 
 ## 防護底線（non-negotiable）
