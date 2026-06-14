@@ -6,7 +6,7 @@ weight: 90
 tags: ["backend", "observability", "vendor"]
 ---
 
-可觀測性 Vendor 清單的核心責任是把工具名稱放回 telemetry contract、signal ownership、data quality、cardinality 與成本治理的判斷。每個服務頁先回答它承擔 metrics、logs、traces、errors、APM 或平台原生觀測的哪一段，再討論資料模型、查詢能力、成本與案例回寫。
+可觀測性 Vendor 清單的核心責任是把工具名稱放回 telemetry contract、signal ownership、data quality、cardinality 與成本治理的判斷。每個服務頁先回答它承擔 metrics、logs、traces、errors、APM 或平台原生觀測的哪一段，再討論資料模型、查詢能力、成本與案例回寫。觀測這塊能力的買 vs 建特別現實：自建 telemetry stack（Prometheus、Grafana、Loki）、買 observability SaaS（Datadog、New Relic、Grafana Cloud），還是用雲端原生（CloudWatch、Cloud Monitoring）— 取捨與遷出代價見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
 
 ## 讀法
 

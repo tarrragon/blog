@@ -6,7 +6,7 @@ weight: 90
 tags: ["backend", "deployment", "vendor"]
 ---
 
-部署平台 Vendor 清單的核心責任是把平台名稱放回 runtime contract、lifecycle contract、traffic contract、control plane 與 rollout governance 的判斷。每個服務頁先回答它承擔啟動、調度、入口、設定、基礎設施狀態或 service discovery 的哪一段，再討論操作成本與案例回寫。
+部署平台 Vendor 清單的核心責任是把平台名稱放回 runtime contract、lifecycle contract、traffic contract、control plane 與 rollout governance 的判斷。每個服務頁先回答它承擔啟動、調度、入口、設定、基礎設施狀態或 service discovery 的哪一段，再討論操作成本與案例回寫。部署這塊能力的買 vs 建是一條深度光譜：自管 Kubernetes、用 managed K8s（EKS、GKE、AKS）、用 PaaS（Fly、Render、Railway），到完全 serverless — 越往右維運越少、客製與可攜性也越受限，取捨見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
 
 ## 讀法
 

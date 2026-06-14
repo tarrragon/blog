@@ -6,7 +6,7 @@ weight: 90
 tags: ["backend", "cache", "vendor"]
 ---
 
-快取 Vendor 清單的核心責任是把 cache 服務名稱放回副本語意、資料新鮮度、回源保護與操作成本的判斷。每個服務頁先回答它承擔哪種暫存責任，再討論資料型別、失效策略、容量模型、HA / managed 邊界與案例回寫。
+快取 Vendor 清單的核心責任是把 cache 服務名稱放回副本語意、資料新鮮度、回源保護與操作成本的判斷。每個服務頁先回答它承擔哪種暫存責任，再討論資料型別、失效策略、容量模型、HA / managed 邊界與案例回寫。在挑單一服務之前先有一個更上層的判斷：這塊快取能力該自管 Redis、用 managed cache（ElastiCache、MemoryDB）、還是用 serverless cache（Upstash）或含 cache 的 BaaS bundle — 逐能力的買 vs 建判讀見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
 
 ## 讀法
 
