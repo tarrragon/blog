@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "security", "vendor", "auth0", "identity", "customer-identity"]
 ---
 
-Auth0 是 Customer Identity Cloud 的代表選項。它承擔三段責任：B2C / B2B app 的*使用者登入流程*託管、社交與企業 connection 的 token broker、user profile 與 metadata 的 store。當產品把登入交給 Auth0、信任邊界從「我的 app 自管密碼表」變成「tenant 配置 + Action hook 程式碼 + signing key 託管」三件事是否健康。
+Auth0 是 Customer Identity Cloud 的代表選項。它承擔三段責任：B2C / B2B app 的*使用者登入流程*託管、社交與企業 connection 的 token broker、user profile 與 metadata 的 store。當產品把登入交給 Auth0、信任邊界從「我的 app 自管密碼表」變成「tenant 配置 + Action hook 程式碼 + signing key 託管」三件事是否健康。認證在 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/) 裡是 commodity 買的典型、Auth0 正是它的 feature SaaS（dev-tool 端）例子；要不要買、外包到多深、見 [外包深度](/backend/knowledge-cards/capability-outsourcing-depth/) 卡。
 
 ## 服務定位
 
