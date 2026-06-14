@@ -42,7 +42,7 @@ metadata:
 
 ### Stage 2：Domain / Event 切分（DDD）
 
-把操作清單轉成 domain map 與 event catalog：操作 → command → 唯一歸屬 domain → event。Domain 依 SRP 切（一個變更理由）、依 OCP 分公開面（別的 domain 需要知道的：event schema、查詢介面）與內部面（不需要知道的：表結構、狀態機）；event 依 SRP 定（一個事實、過去式命名）。切完 domain map 後逐 domain 過 **commodity domain check**：認證、金流、表單、搜尋、通知、後台 CRUD 這類非差異化能力、現成 feature SaaS 已做完的就標「外包 + 整合邊界」、整塊移出 build scope、不模內部 event。協議見 `references/domain-event-modeling.md`、深度判讀見 `references/principles/capability-outsourcing-depth.md`。
+把操作清單轉成 domain map 與 event catalog：操作 → command → 唯一歸屬 domain → event。Domain 依 SRP 切（一個變更理由）、依 OCP 分公開面（別的 domain 需要知道的：event schema、查詢介面）與內部面（不需要知道的：表結構、狀態機）；event 依 SRP 定（一個事實、過去式命名）。切完 domain map 後逐 domain 過 **commodity domain check**：認證、金流、表單、搜尋、通知、後台 CRUD 這類非差異化能力、現成 feature SaaS 已做完的就標「外包 + 整合邊界」、整塊移出 build scope、不模內部 event。命中後用該能力自己的買 vs 建問題集追（每塊的判準形狀不同 —— 認證問 hash 可攜與企業 SSO、搜尋問計費模型與規模拐點、金流問 PCI 與 orchestration、表單問資料怎麼接回來、後台問 per-seat 計費與客製天花板）。協議與逐能力問題集見 `references/domain-event-modeling.md`、深度判讀見 `references/principles/capability-outsourcing-depth.md`。
 
 ### Stage 3：核心問題（技術需求判讀）
 
