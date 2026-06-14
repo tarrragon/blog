@@ -19,14 +19,19 @@ import (
 //	reader processes a rejected X before reaching the point. The defect
 //	is cross-language (English "not X but Y", Japanese "X ではなく Y"),
 //	so the signal is the sentence shape, not a Chinese-specific token —
-//	detection is mechanizable but the judgment is not.
+//	detection is mechanizable but the judgment is not. The regex covers
+//	the 而是 / 「— 是」/ 不如 connectives, but enumerating variants is
+//	inherently incomplete (#166): the real judgment is whether the core
+//	concept leads, not which connective appears — a missed variant just
+//	keeps a candidate silent until a reader catches it (which is exactly
+//	how 「不是 X — 是 Y」 slipped past the first version of this rule).
 //
 // Two legitimate forms stay out of scope and are handled by exemptions:
 // anti-example citations wrapped in 「」 (skipped via quotedAt, e.g. the
 // spec and report cards that quote the pattern), and contrast inside an
 // explicit 反例 / 對照 section (#94) — that judgment is left to the
 // reader, which is why the rule only warns.
-var negationLeadRe = regexp.MustCompile(`不是[^。\n「」]{0,30}而是|與其[^。\n「」]{0,25}不如`)
+var negationLeadRe = regexp.MustCompile(`不是[^。\n「」]{0,30}而是|不是[^。\n「」—–]{0,25}[—–]\s*是|與其[^。\n「」]{0,25}不如`)
 
 func checkNegationLead(path string, lines []string, ctx mdfmt.LineContext) []report.Violation {
 	var out []report.Violation
