@@ -25,6 +25,8 @@ Provider boundary 的核心責任是定義 vendor 接手哪些資料庫操作。
 
 Provider boundary 要寫成 responsibility matrix。誰負責 backup restore、major upgrade、extension enable、failover、connection proxy、audit export、encryption key、support ticket 與 incident decision。
 
+Serverless / branching PG 這一列的 Neon 與 Supabase 不在同一個外包深度。Neon 是純 serverless PostgreSQL（managed 基礎設施）；Supabase 是把 Postgres 當其中一塊的 BaaS bundle（同時含 Auth、Storage、Realtime）。只需要資料庫、兩者皆可比較且 Neon 更輕；要連認證、儲存一起到位、才是 Supabase 的賣點。這個外包深度差異與「該買整個 bundle 還是只用它的 Postgres」的判讀、見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
+
 ## Evaluation Dimensions
 
 Evaluation dimensions 的核心責任是讓比較避免只看價格或品牌。

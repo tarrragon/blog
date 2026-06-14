@@ -126,6 +126,7 @@ tripwire 是重評承諾、不是遷移保證 — 觸發後每拖一季、資料
 ## 下一步路由
 
 - 判斷落在自建：從 [0.0 後端需求分類地圖](/backend/00-service-selection/backend-demand-taxonomy/) 開始走本模組的選型順序。
+- 判斷落在自建、但周邊能力仍想逐塊外包（認證、搜尋、金流、表單、後台）：見 [0.22 能力級買 vs 建](/backend/00-service-selection/capability-buy-vs-build/)。
 - 判斷落在託管形態：完成上方可遷出保險清單、把 tripwire 寫進選型記錄、定期回看。
 - 成本曲線的算法：見 [0.6 成本、風險與選型取捨](/backend/00-service-selection/cost-risk-tradeoffs/)。
 - 託管形態下仍需要的資安底線（帳號安全、權限、資料匯出管控）：見 [0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/)。
