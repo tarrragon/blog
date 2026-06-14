@@ -137,6 +137,17 @@ Round 3 之後是否需要 Round 4？四個停止訊號齊備、停：
 
 升級判準兩條：偵測規則已穩定（同一 pattern 連兩個 batch 有效）、誤判可控（有明確的豁免形態、如引號內的反例引用）。register / stance 類規則（喊話 / 誇飾 / 必然性框架）的判定無法 regex 化、停在生成端、不硬升工具鏈。
 
+## register 違規的異源複核操作
+
+register 違規（重點後置、喊話、誇飾）的同源自審有上限（見「命中是候選、不是判決」段）。對這類要做窮盡複核時、跑一套「降低同源慣性 + 交接異源」的操作、而不是再疊一輪同源 reviewer（加再多輪都跨不過同源盲區）：
+
+1. **機械候選曝光**：先用工具鏈（lint 警告層 / grep keyword bank）對 review 範圍跑、得一份客觀候選池。這層不靠 LLM 判斷、不受同源盲區影響、確保「偵測」不漏 —— 判定才是同源弱點，偵測交給機械最可靠。
+2. **對抗文體 agent**：指派 reviewer agent、prompt 明確採對抗姿態 ——「挑剔否定起手 / 概念後置、預設違規除非能證明合規（核心概念在句首 / 明示反例段 / 「」內引用）」。對抗姿態抵銷「讀起來自然就放行」的同源慣性、但它仍是 LLM、不是真異源。
+3. **複核清單分層交接**：agent 回報不當定論。把結果分兩層 ——「機械可確認」（pattern / keyword 命中、客觀）跟「register 判定」（這個命中是不是違規、同源判斷）。前者可信、後者標「需異源複核」。
+4. **人異源定奪**：把「register 判定」那層攤成清單、交給作者以外的眼睛（人類冷讀）定奪。這是唯一真異源、register 違規的最後一關。
+
+關鍵紀律：agent 回報的 register 層「clean」不可當真。這套操作降低同源慣性、提高候選曝光率、但不取代人異源 —— 它的產出是「給人複核的清單」、不是「已複核乾淨」。
+
 ## 跟既有 skill 的關係
 
 - [`case-first-module-workflow`](../case-first-module-workflow/SKILL.md) 的 Stage 4 含「agent team review」但偏 case-driven 單輪。Multi-round-review 補完跨輪 frame 切換維度、可以接在 case-first 的 Stage 5 之後或同時使用。
