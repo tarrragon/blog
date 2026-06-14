@@ -3,7 +3,7 @@ name: saas-tech-selection
 description: "初始化 SaaS repo 時的設計與選型訪談協議：定錨後先過交付形態 gate（託管平台 / 垂直 SaaS / 辦公生態自動化 / BaaS / 半託管 CMS / 自建）、自建成立才從使用者操作（BDD）推導功能與風險、依 SRP / OCP 切分 domain 與 event（DDD）、再把技術維度掛在領域骨架下逐項確認、每個維度附不可沉默跳過的防護底線、產出設計決策記錄與 scaffold 建議。Triggers: 初始化 repo, 新專案, 開新服務, SaaS 選型, 技術選型, tech stack, 要不要自建, 託管平台, Shopify, Wix, Firebase, WordPress, Apps Script, DDD, domain 切分, event 驅動, event storming, BDD, 行為情境, 使用者操作盤點, 選資料庫, 選 queue, 要不要 redis, 要不要 k8s, MVP 架構, repo scaffold, 專案起手, stack 評估, 選型訪談, 架構訪談."
 license: MIT
 metadata:
-  version: 0.5.0
+  version: 0.6.0
   category: selection-protocol
 ---
 
@@ -42,7 +42,7 @@ metadata:
 
 ### Stage 2：Domain / Event 切分（DDD）
 
-把操作清單轉成 domain map 與 event catalog：操作 → command → 唯一歸屬 domain → event。Domain 依 SRP 切（一個變更理由）、依 OCP 分公開面（別的 domain 需要知道的：event schema、查詢介面）與內部面（不需要知道的：表結構、狀態機）；event 依 SRP 定（一個事實、過去式命名）。協議見 `references/domain-event-modeling.md`。
+把操作清單轉成 domain map 與 event catalog：操作 → command → 唯一歸屬 domain → event。Domain 依 SRP 切（一個變更理由）、依 OCP 分公開面（別的 domain 需要知道的：event schema、查詢介面）與內部面（不需要知道的：表結構、狀態機）；event 依 SRP 定（一個事實、過去式命名）。切完 domain map 後逐 domain 過 **commodity domain check**：認證、金流、表單、搜尋、通知、物件儲存、後台 CRUD 這類非差異化能力、現成 feature SaaS 已做完的就標「外包 + 整合邊界」、整塊移出 build scope、不模內部 event。命中後用該能力自己的買 vs 建問題集追（每塊的判準形狀不同 —— 認證問 hash 可攜與企業 SSO、搜尋問計費模型與規模拐點、金流問 PCI 與 orchestration、表單問資料怎麼接回來、後台問 per-seat 計費與客製天花板）。協議與逐能力問題集見 `references/domain-event-modeling.md`、深度判讀見 `references/principles/capability-outsourcing-depth.md`。
 
 ### Stage 3：核心問題（技術需求判讀）
 
@@ -56,6 +56,8 @@ metadata:
 - **觸發展開**（操作盤點 / domain / event 切分 / 核心問題的訊號命中才進）：cache、async-queue、capacity-performance。event catalog 中存在不可丟 event 時、async-queue 直接升級為必展開。
 
 每個維度的 reference 自帶訪談問題、候選類型差異、防護底線與 tripwire；展開時把該維度的問題錨在 domain map 與操作清單上（「Order domain 的不可丟 event 用什麼機制送」、不是抽象的「要不要 queue」）。
+
+每個維度的選型還帶一個 **外包深度** 判斷（self-host / managed 基礎設施 / feature SaaS / 折進跨能力 bundle、見 `references/principles/capability-outsourcing-depth.md`）：交付形態 gate 判「自建」的流程、不等於每個維度都自己跑機器 —— 維度的 day-one 託管預設與領域層的 commodity 買掉是 gate 之外的另一層外包判讀。候選若是跨能力 bundle（一個 vendor 同時給資料庫 + 認證 + 物件儲存 + 即時推送）、逐維度判斷哪幾塊用它、收進同一筆 bundle 決策、整包遷出代價記進 tripwire。
 
 ### Stage 5：決策收斂（決策記錄 + scaffold 建議）
 
@@ -76,21 +78,22 @@ metadata:
 
 ## 觸發路由
 
-| 訊號                                                                             | 讀哪份 reference                                                                                |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 使用者的需求看起來用託管平台 / BaaS 就能解決（電商、表單流程、內容站、app 後端） | `references/interview-core.md`（定錨段的交付形態 gate）                                         |
-| 開始盤點功能、使用者說「我要做一個 X 的服務」                                    | `references/user-operations-bdd.md`（操作盤點）                                                 |
-| 操作清單完成、要切 domain / 定 event                                             | `references/domain-event-modeling.md`（domain / event 切分）                                    |
-| 領域模型完成、要判讀技術需求                                                     | `references/interview-core.md`（定錨 + 核心問題）                                               |
-| 正式狀態保存（帳號、訂單、合約、金流）                                           | `references/dimensions/state-storage.md`（必）                                                  |
-| 任何對外服務                                                                     | `references/dimensions/deployment-platform.md`（必）+ `references/dimensions/security.md`（必） |
-| 任何 production 服務                                                             | `references/dimensions/observability.md`（必）+ `references/dimensions/reliability.md`（必）    |
-| event catalog 有不可丟 event、或 request 外的可靠工作                            | `references/dimensions/async-queue.md`                                                          |
-| 同一資料高頻重複讀、昂貴計算共用、session / presence                             | `references/dimensions/cache.md`                                                                |
-| 明確高峰活動、成本敏感、規模假設首年破十萬用戶                                   | `references/dimensions/capacity-performance.md`                                                 |
-| 使用者問「之後長大怎麼辦」、或要寫 tripwire 總表                                 | `references/scale-stage-triggers.md`                                                            |
-| 防護底線逐項確認、或使用者要求跳過某條底線                                       | `references/baseline-protections.md`                                                            |
-| 訪談收斂、要產出決策文件與 scaffold 建議                                         | `references/decision-record-template.md`                                                        |
+| 訊號                                                                                        | 讀哪份 reference                                                                                |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 使用者的需求看起來用託管平台 / BaaS 就能解決（電商、表單流程、內容站、app 後端）            | `references/interview-core.md`（定錨段的交付形態 gate）                                         |
+| 開始盤點功能、使用者說「我要做一個 X 的服務」                                               | `references/user-operations-bdd.md`（操作盤點）                                                 |
+| 操作清單完成、要切 domain / 定 event                                                        | `references/domain-event-modeling.md`（domain / event 切分）                                    |
+| 判斷一塊 domain / 維度該自建還是買、或候選 vendor 一次 cover 多維度（跨能力 bundle / BaaS） | `references/principles/capability-outsourcing-depth.md`（外包深度三分層）                       |
+| 領域模型完成、要判讀技術需求                                                                | `references/interview-core.md`（定錨 + 核心問題）                                               |
+| 正式狀態保存（帳號、訂單、合約、金流）                                                      | `references/dimensions/state-storage.md`（必）                                                  |
+| 任何對外服務                                                                                | `references/dimensions/deployment-platform.md`（必）+ `references/dimensions/security.md`（必） |
+| 任何 production 服務                                                                        | `references/dimensions/observability.md`（必）+ `references/dimensions/reliability.md`（必）    |
+| event catalog 有不可丟 event、或 request 外的可靠工作                                       | `references/dimensions/async-queue.md`                                                          |
+| 同一資料高頻重複讀、昂貴計算共用、session / presence                                        | `references/dimensions/cache.md`                                                                |
+| 明確高峰活動、成本敏感、規模假設首年破十萬用戶                                              | `references/dimensions/capacity-performance.md`                                                 |
+| 使用者問「之後長大怎麼辦」、或要寫 tripwire 總表                                            | `references/scale-stage-triggers.md`                                                            |
+| 防護底線逐項確認、或使用者要求跳過某條底線                                                  | `references/baseline-protections.md`                                                            |
+| 訪談收斂、要產出決策文件與 scaffold 建議                                                    | `references/decision-record-template.md`                                                        |
 
 每份 reference 自包含：以該階段或維度為核心、把訪談問題、判準、防護底線與 tripwire 收在同一檔。閱讀任一 reference 不需要回來看其他 reference。
 
@@ -120,6 +123,8 @@ saas-tech-selection/
     ├── scale-stage-triggers.md           # 規模成長撞牆訊號 → 決策文件 tripwire 總表寫法
     ├── baseline-protections.md           # 跨維度防護底線清單 + 延後記錄協議
     ├── decision-record-template.md       # 設計決策記錄模板（操作風險表 / domain map / event catalog / 維度決策）+ scaffold 格式
+    ├── principles/
+    │   └── capability-outsourcing-depth.md  # 外包深度三分層（managed 基礎設施 / feature SaaS / 跨能力 bundle）+ commodity domain / 接縫成本判讀
     └── dimensions/
         ├── state-storage.md              # 正式狀態與資料儲存：DB 類型、多租戶資料模型、migration / 備份底線
         ├── cache.md                      # 快取：何時需要、失效策略先行、不可當 source of truth
