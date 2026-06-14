@@ -14,7 +14,7 @@ weight: 375
 
 ## 可觀察訊號與例子
 
-辨識深度看「撞牆時你改得動的邊界在哪」。managed 基礎設施撞到慢查詢、自己加 index、自己改 schema — 邊界很寬、只有底層硬體與維運在 vendor 手上、代表服務是 Aurora、ElastiCache、Neon。feature SaaS 撞到 vendor 沒開放的客製、就只能在它之外再搭一層、邊界縮到 vendor 的擴展點為止 — Auth0、Algolia、Stripe 屬 dev-tool 端、Ragic、SurveyCake、Airtable 屬同深度的 no-code 端、差別在誰來維護。BaaS bundle 撞牆時要把一塊能力跟它和其他能力的整合關係一起拆 — Supabase 把 Postgres、Auth、Storage、Realtime 用同一套身分綁在一起、搬走資料層要連帶處理它跟認證、儲存的接點。
+辨識深度看「撞牆時你改得動的邊界在哪」。一個跑在 Aurora 或 Neon 上的服務撞到慢查詢、可以自己加 index、改 schema、重寫 query — 能動的邊界很寬、只有底層硬體與維運落在 vendor 手上、這是 managed 基礎設施。換成 Auth0 或 Algolia、撞到的是 vendor 沒開放的客製：它的擴展點到哪、邊界就到哪、再過去只能在它之外另搭一層 — 這是 feature SaaS、Auth0、Algolia、Stripe 在 dev-tool 端、Ragic、SurveyCake、Airtable 在同深度的 no-code 端、差別在誰來維護。最深一層撞牆時連邊界都不只一條：Supabase 把 Postgres、Auth、Storage、Realtime 用同一套身分綁在一起、想搬走資料層、得連帶拆掉它跟認證、儲存的接點 — 這是 BaaS bundle。
 
 ## 設計責任
 
