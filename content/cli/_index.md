@@ -17,6 +17,8 @@ tags: ["cli", "tui", "remote"]
 - **檔案管理器** — `broot`（樹狀）/ `yazi` / `ranger`（Miller 欄狀），像 IDE 側邊欄那樣瀏覽目錄與預覽檔案。
 - **SQL 客戶端** — `harlequin`（IDE 風）/ `lazysql`（瀏覽器風）/ `pgcli`、`litecli`（增強 REPL），在終端機連資料庫跑查詢。
 
+這個系列的每篇文章都用實機驗證導向的流程生產（裝起來實跑、TUI 交人互動驗、驗不了的標 caveat）。要擴展新類別時，照 [驗證導向的 CLI 工具文章生產流程](/posts/verification-driven-cli-tool-articles/) 走。
+
 ---
 
 ## 跟其他資料夾的邊界
