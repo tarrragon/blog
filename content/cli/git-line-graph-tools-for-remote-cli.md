@@ -93,12 +93,12 @@ TUI 工具負責把 git 歷史開成全螢幕的互動介面，讓游標在 comm
 
 ```yaml
 git:
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never --side-by-side
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never --side-by-side
 ```
 
-`--side-by-side` 是讓 `delta` 左右並排的關鍵旗標，`--paging=never` 讓 `delta` 只負責上色與排版、捲動分頁仍由 `lazygit` 處理。在窄螢幕（手機、平板遠端）下，並排會把每欄壓得很窄，這種情境改回垂直單欄反而好讀 — side-by-side 的適用條件是螢幕夠寬。
+`--side-by-side` 是讓 `delta` 左右並排的關鍵旗標，`--paging=never` 讓 `delta` 只負責上色與排版、捲動分頁仍由 `lazygit` 處理。`git.pagers`（list）是現行 lazygit 的設定鍵；舊版的 `git.paging.pager`（單數）仍可用，新版啟動時會自動 migrate 成上面的形式並改寫設定檔。在窄螢幕（手機、平板遠端）下，並排會把每欄壓得很窄，這種情境改回垂直單欄反而好讀 — side-by-side 的適用條件是螢幕夠寬。
 
 ## 下一步路由
 

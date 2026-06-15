@@ -92,7 +92,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 
 ## 步驟二：開放防火牆 Port
 
-Zellij web server 預設只綁本機 `127.0.0.1:8082`，要讓外網連入必須顯式綁到對外位址（見步驟四的 `--bind 0.0.0.0`）並開放對應 port。本教學以 port `3000` 為例（port 可自選），需對外開放這個 port：
+Zellij web server 預設只綁本機 `127.0.0.1:8082`，要讓外網連入必須顯式綁到對外位址（見步驟四的 `--ip 0.0.0.0`）並開放對應 port。本教學以 port `3000` 為例（port 可自選），需對外開放這個 port：
 
 ### Linux（ufw）
 
@@ -152,7 +152,7 @@ zellij
 
 ```bash
 zellij web \
-  --bind 0.0.0.0:3000 \
+  --ip 0.0.0.0 --port 3000 \
   --cert /etc/letsencrypt/live/your-domain.com/fullchain.pem \
   --key /etc/letsencrypt/live/your-domain.com/privkey.pem
 ```
@@ -161,7 +161,7 @@ zellij web \
 
 ```bash
 zellij web -d \
-  --bind 0.0.0.0:3000 \
+  --ip 0.0.0.0 --port 3000 \
   --cert /path/to/cert.pem \
   --key /path/to/key.pem
 ```
@@ -178,7 +178,7 @@ zellij web --stop
 zellij web --status
 ```
 
-Zellij web 預設綁 `127.0.0.1:8082`、只接受本機連線；對外服務必須用 `--bind 0.0.0.0:<port>` 顯式綁到對外位址（本教學用 `3000`）。改用其他 port 時把 `--bind` 的 port 一併調整（例如 `--bind 0.0.0.0:8443`），防火牆規則也要同步改成該 port。
+Zellij web 預設綁 `127.0.0.1:8082`、只接受本機連線；對外服務必須用 `--ip 0.0.0.0` 顯式綁到對外位址、並用 `--port` 指定埠（本教學用 `3000`）。改用其他 port 時把 `--port` 一併調整（例如 `--port 8443`），防火牆規則也要同步改成該 port。
 
 ---
 
