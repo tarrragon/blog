@@ -11,8 +11,6 @@ tags: ["雜項", "工具技巧"]
 
 - [Android 無線除錯設定](android_wireless_debug/)
 - [macOS 多桌面快捷鍵](macos_muti_spaces/)
-- [Zellij pane 操作](zellij_pane/)
-- [Zellij 遠端 web client](zellij_remote_web_client/)
 - [Snippet template skeleton](snippet_template_skeleton/)
 
 ---

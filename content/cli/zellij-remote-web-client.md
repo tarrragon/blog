@@ -2,11 +2,11 @@
 title: "Zellij Web Client 外網連線教學"
 date: 2026-03-09
 draft: false
-description: "讓別人透過瀏覽器連線到你的 Zellij session，包含 SSL 憑證申請、防火牆設定、Token 管理等完整步驟。"
+description: "讓他人透過瀏覽器連線到指定的 Zellij session，包含 SSL 憑證申請、防火牆設定、Token 管理等完整步驟。"
 tags: ["zellij", "terminal", "remote", "web"]
 ---
 
-讓別人透過瀏覽器連線到你的 Zellij session。
+Zellij Web Client 讓他人透過瀏覽器連線到指定的 Zellij session，承擔的責任是把終端機多工環境分享給沒有 SSH 連線的協作者。本文承接 [終端機圖形化工具總覽](/cli/cli-graphical-tools-overview/) 的多工器分類；zellij 的本機 pane 操作見 [Zellij 多終端機操作指南](/cli/zellij-pane/)、tmux 的持久化基礎見 [tmux 基礎](/cli/tmux-persistence-and-basics/)。
 
 ---
 
@@ -60,7 +60,7 @@ choco install certbot
 # 或使用 win-acme（Windows 原生替代方案）：https://www.win-acme.com/
 ```
 
-申請憑證（將 `your-domain.com` 換成你的網域）：
+申請憑證（將 `your-domain.com` 換成實際網域）：
 
 ```bash
 sudo certbot certonly --standalone -d your-domain.com
@@ -86,13 +86,13 @@ C:\Certbot\live\your-domain.com\privkey.pem
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 ```
 
-> 注意：自簽憑證瀏覽器會顯示安全警告，僅建議測試使用。
+> 注意：自簽憑證會讓瀏覽器在連線時顯示安全警告，於測試環境手動選擇繼續即可；正式對外服務改用上面的 Let's Encrypt 憑證。
 
 ---
 
 ## 步驟二：開放防火牆 Port
 
-Zellij web server 預設使用 port `3000`，需要對外開放：
+Zellij web server 預設只綁本機 `127.0.0.1:8082`，要讓外網連入必須顯式綁到對外位址（見步驟四的 `--bind 0.0.0.0`）並開放對應 port。本教學以 port `3000` 為例（port 可自選），需對外開放這個 port：
 
 ### Linux（ufw）
 
@@ -172,6 +172,14 @@ zellij web -d \
 zellij web --stop
 ```
 
+確認 web server 執行狀態：
+
+```bash
+zellij web --status
+```
+
+Zellij web 預設綁 `127.0.0.1:8082`、只接受本機連線；對外服務必須用 `--bind 0.0.0.0:<port>` 顯式綁到對外位址（本教學用 `3000`）。改用其他 port 時把 `--bind` 的 port 一併調整（例如 `--bind 0.0.0.0:8443`），防火牆規則也要同步改成該 port。
+
 ---
 
 ## 步驟五：產生登入 Token
@@ -193,10 +201,10 @@ zellij web --create-token
 對方在瀏覽器輸入：
 
 ```text
-https://your-domain.com:3000/你的-session-名稱
+https://your-domain.com:3000/實際-session-名稱
 ```
 
-首次連線會要求輸入 token，驗證後即可進入 session。
+首次連線會要求輸入 token，驗證後即可進入 session。若連線後畫面沒有回應，多半是 port 未對外開放，確認防火牆與雲端主機安全群組是否放行該 port。
 
 ---
 
@@ -221,24 +229,8 @@ https://your-domain.com:3000/你的-session-名稱
 
 ---
 
-## 常見問題
+## 下一步路由
 
-**Q：連線後畫面沒有回應？**
-檢查 port 3000 是否有被防火牆擋住。
-
-**Q：瀏覽器顯示「不安全的連線」？**
-使用了自簽憑證，在瀏覽器手動選擇繼續即可（測試環境）。正式使用請改用 Let's Encrypt。
-
-**Q：如何確認 web server 是否在執行？**
-
-```bash
-zellij web --status
-```
-
-**Q：想換不同 port？**
-
-```bash
-zellij web --bind 0.0.0.0:8443 ...
-```
-
-記得同步更新防火牆規則。
+- zellij 的本機 pane 操作（查看佈局、讀取其他 pane、調整大小）：[Zellij 多終端機操作指南](/cli/zellij-pane/)。
+- 不需要瀏覽器、純 SSH 的多工器持久化：[tmux 基礎](/cli/tmux-persistence-and-basics/)。
+- 多工器在整個遠端工具選型中的定位：[終端機圖形化工具總覽](/cli/cli-graphical-tools-overview/)。
