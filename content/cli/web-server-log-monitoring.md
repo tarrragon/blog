@@ -49,7 +49,7 @@ ngxtop -l access.log --no-follow \
 
 持續的生產監控，不用終端機。沒有人 24 小時盯著 GoAccess。生產環境的請求監控走 pipeline：指標面用 nginx 的 `stub_status`（基礎）或 VTS 模組／`nginx-prometheus-exporter`（細到 per-status、per-upstream 的請求率），由 Prometheus 抓、Grafana 畫儀表板並設告警；日誌面把 access log 送到 Loki／ELK／Datadog 之類做查詢與長期保存。
 
-分界濃縮成一句：終端機 TUI 答「這台機器現在怎樣」，pipeline 答「趨勢如何、超標叫我」。所以請求一直都有被監控，只是持續監控的那份在 Prometheus 與日誌平台、不在終端機。生產 pipeline 的設計屬後端觀測性的範圍，比這條純文字遠端工具的路線更廣。
+分界濃縮成一句：終端機 TUI 答「這台機器現在怎樣」，pipeline 答「趨勢如何、超標叫我」。所以請求一直都有被監控，只是持續監控的那份在 Prometheus 與日誌平台、不在終端機。生產 pipeline 的設計（metrics、dashboard、SLO、告警與 vendor 選型）屬後端觀測性的範圍，見 [可觀測性平台](/backend/04-observability/)；當排查升級成事故、需要止血與復盤的協作流程時，見 [事故處理與復盤](/backend/08-incident-response/)。
 
 ## 下一步路由
 
