@@ -44,6 +44,8 @@ zellij --version
 
 外網連線強制使用 HTTPS，必須提供 SSL 憑證。
 
+> 取得 Let's Encrypt 憑證的 `certbot` 指令需真實網域、本機未實機驗證；自簽憑證的 `openssl` 指令、以及 zellij web server 啟停與 token 管理已在 localhost 實機驗證。
+
 ### 使用 Let's Encrypt（免費，推薦）
 
 需要先安裝 `certbot`：
@@ -93,6 +95,8 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 ## 步驟二：開放防火牆 Port
 
 Zellij web server 預設只綁本機 `127.0.0.1:8082`，要讓外網連入必須顯式綁到對外位址（見步驟四的 `--ip 0.0.0.0`）並開放對應 port。本教學以 port `3000` 為例（port 可自選），需對外開放這個 port：
+
+> 以下防火牆指令（`ufw` / `pf` / Windows Defender）依各平台官方用法、環境特定、本機未實機驗證。
 
 ### Linux（ufw）
 
