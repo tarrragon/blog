@@ -19,7 +19,7 @@ SQS 沒有「ack」這個動作——它用 visibility timeout 模擬。consumer
 - 設**太短**：訊息還在處理中就到期、重新變可見、被另一個 consumer 取走重複處理。同一筆業務跑兩次。
 - 設**太長**：consumer 真的掛了之後，訊息要等滿這個（過長的）timeout 才會重新可見，retry 被拖慢、恢復遲緩。
 
-沒有「正確的萬用值」——它取決於你的處理時間分布。本文展開 visibility 與 in-flight 的生命週期、redrive 到 DLQ 的機制、以及這個旋鈕怎麼被設錯成事故。
+沒有「正確的萬用值」——它取決於處理時間分布。本文展開 visibility 與 in-flight 的生命週期、redrive 到 DLQ 的機制、以及這個旋鈕怎麼被設錯成事故。
 
 ## 核心概念：in-flight 與 visibility 的生命週期
 
