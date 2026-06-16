@@ -30,11 +30,13 @@ tags: ["backend", "cache", "vendor"]
 
 每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、其他形式代表 same-vendor 的 topology / version / config 變動。
 
-| Vendor          | Deep article | Migration playbook                                                                                                                            |
-| --------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Redis](redis/) | —            | [cluster-resharding](redis/cluster-resharding/) / [→ DragonflyDB](redis/migrate-to-dragonflydb/) / [→ Memcached](redis/migrate-to-memcached/) |
+| Vendor          | Deep article                                                                                                                                                                                                                                                                                      | Migration playbook                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [Redis](redis/) | [memory-eviction-tuning](redis/memory-eviction-tuning/) / [persistence-fork-latency](redis/persistence-fork-latency/) / [sentinel-ha-failover](redis/sentinel-ha-failover/) / [connection-pipeline-latency](redis/connection-pipeline-latency/) / [cluster-resharding](redis/cluster-resharding/) | [→ DragonflyDB](redis/migrate-to-dragonflydb/) / [→ Memcached](redis/migrate-to-memcached/) |
 
-其他 T1 vendor（Valkey / Memcached / DragonflyDB / AWS ElastiCache）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+備註：[cluster-resharding](redis/cluster-resharding/) 是同 cluster 的 topology 重劃（5 type migration 漏類驗證、形式上歸在 deep article 欄、不是跨 vendor 遷移）。
+
+其他 T1 vendor（Valkey / Memcached / DragonflyDB / AWS ElastiCache）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 
 ## 服務頁撰寫欄位
 
