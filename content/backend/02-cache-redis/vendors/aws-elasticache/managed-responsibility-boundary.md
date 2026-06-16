@@ -100,7 +100,7 @@ aws elasticache modify-cache-parameter-group \
 1. 寫後需要立即一致讀的路徑，強制 read from primary
 2. 監控 CloudWatch `ReplicationLag`，持續高代表寫入超過複製能力，要 scale up node 或降寫入
 3. 接受 cache 的最終一致性——這是 cache copy 的本質，不是 bug（見 [cache copy boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)）
-4. 需要強一致 + durability 走 [MemoryDB](#capacity--cost-邊界)
+4. 需要強一致 + durability 走 MemoryDB（見本文 Capacity / cost 邊界段）
 
 ### Case 3：Serverless 計費超出預期
 

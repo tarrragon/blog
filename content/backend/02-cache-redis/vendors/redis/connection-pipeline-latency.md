@@ -8,7 +8,7 @@ tags: ["backend", "cache", "redis", "connection", "pipeline", "latency", "deep-a
 
 > 本文是 [Redis](/backend/02-cache-redis/vendors/redis/) overview 的 implementation-layer deep article。連線與往返是 application 端量到的延遲主因，跟 server 端的[記憶體](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/)、[持久化](/backend/02-cache-redis/vendors/redis/persistence-fork-latency/)調校互補。pipeline 機制以 [Redis pipelining 官方文件](https://redis.io/docs/latest/develop/use/pipelining/) 為準、最後檢查日 2026-06-16。
 
-## 你的延遲不在 Redis、在往返
+## 延遲不在 Redis、在往返
 
 把單一 `GET` 丟進 `redis-cli --latency`，會看到 server 端執行時間是微秒級。但 application 端的 APM 量到的 Redis 呼叫卻是 1-3ms。這個差距不是 Redis 變慢了，是網路往返（round-trip time，RTT）——命令從 application 送到 Redis、結果送回來，這趟來回就是毫秒級，而 Redis 的執行只佔其中一小部分。
 

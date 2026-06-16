@@ -112,7 +112,7 @@ docker run -d --name memcached -p 11211:11211 memcached:1.6 \
 1. `-t` 對齊實體核數，不要超配（多數場景 4-8 已足夠，極高核機器再往上調並壓測）
 2. 用實際 workload 壓測對比不同 `-t` 的 throughput，找拐點
 3. hot key 集中時 lock contention 更明顯（同 bucket），這是資料分布問題不是 thread 數問題
-4. 跨機器水平擴展（client-side consistent hashing）比單機堆 thread 更能解規模，見[整合](#整合--下一步)
+4. 跨機器水平擴展（client-side consistent hashing）比單機堆 thread 更能解規模，見本文整合段
 
 ### Case 5：連線數打到上限、新連線被拒
 

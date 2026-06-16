@@ -110,7 +110,7 @@ Data types 影響可用場景。**Redis / Valkey** 提供 string / hash / list /
 
 ### 多核 / 多執行緒
 
-多核利用度差異大。**Redis** 主執行緒 + I/O threads（Redis 6+）— main thread 仍處理所有 command；**Valkey** 8.x 強化 async I/O threading、把更多 I/O 路徑非同步化、多核吞吐超出 Redis（這是 Valkey fork 後第一個實質技術分歧、見 [Valkey deep article](/backend/02-cache-redis/vendors/valkey/redis-compatibility-and-io-threads/)）；**Memcached** 原生 multi-threaded（`-t` 指定 thread 數）— 適合多核機器；**DragonflyDB** 完全 shared-nothing 多核 — 宣稱比 Redis 高 25× throughput；**ElastiCache** 取決於 engine、不能改變。
+多核利用度差異大。**Redis** 主執行緒 + I/O threads（Redis 6+）— main thread 仍處理所有 command；**Valkey** 8.x 強化 async I/O threading、把更多 I/O 路徑非同步化、多核吞吐超出 Redis（這是 Valkey fork 後第一個實質技術分歧、見 [Valkey deep article](/backend/02-cache-redis/vendors/valkey/redis-compatibility-and-io-threads/)）；**Memcached** 原生 multi-threaded（`-t` 指定 thread 數）— 適合多核機器；**DragonflyDB** 完全 shared-nothing 多核 — 官方宣稱比 Redis 高 25× throughput（依 workload、以官方 benchmark 為準）；**ElastiCache** 取決於 engine、不能改變。
 
 選型判讀：單 instance 想充分利用 16+ core → DragonflyDB / Memcached；4-8 core 中等場景 → Redis 加 I/O threads 已夠；需要 Redis API + 高 throughput → DragonflyDB 是 sweet spot。
 
