@@ -25,7 +25,7 @@ tags: ["backend", "security", "red-team"]
 | 身分異常事件在短時間擴大   | 身分邊界已進入擴散節奏     | 先收斂高風險身份，再追蹤橫向路徑 | [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)                          |
 | 供應商事件後內部憑證仍活躍 | 供應商事件已傳導到內部環節 | 盤點與輪替要一起啟動             | [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) |
 | 邊界修補完成後異常會話持續 | 修補節奏與信任收斂節奏脫鉤 | 會話失效與狀態驗證要同步         | [7.5 傳輸信任與憑證生命週期](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) |
-| 交付事件影響 artifact 信任 | 供應鏈風險已跨到發佈節奏   | 發佈凍結條件要先於恢復條件定義   | [5.5 平台與入口弱點判讀](/backend/05-deployment-platform/attacker-view-platform-entry-risks/)                 |
+| 交付事件影響 artifact 信任 | 供應鏈風險已跨到發佈節奏   | 發佈凍結條件要先於恢復條件定義   | [5.5 平台與入口威脅建模](/backend/05-deployment-platform/attacker-view-platform-entry-risks/)                 |
 | 外送事件伴隨跨部門通報壓力 | 技術時序與業務時序需要並行 | 受影響清單與通報節奏要先對齊     | [8.8 事故報告轉 workflow](/backend/08-incident-response/incident-report-to-workflow/)                         |
 
 ## 到實作前的最後一層

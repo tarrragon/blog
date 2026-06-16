@@ -105,7 +105,7 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.2](/backend/04-observability/metrics-basics/)                    | metrics 與 SLI/SLO                     | 用 counter、gauge、histogram 描述服務健康                                                      |
 | [4.3](/backend/04-observability/tracing-context/)                   | tracing 與 context link                | 追蹤跨服務 request path                                                                        |
 | [4.4](/backend/04-observability/dashboard-alert/)                   | dashboard 與 alert 設計                | 讓告警能對應 runbook 與容量趨勢                                                                |
-| [4.5](/backend/04-observability/attacker-view-observability-risks/) | 攻擊者視角（紅隊）：可觀測性弱點判讀   | 用盲區、告警失真與資料暴露風險檢查觀測系統                                                     |
+| [4.5](/backend/04-observability/attacker-view-observability-risks/) | 可觀測性威脅建模（Threat Modeling）    | 用盲區、告警失真與資料暴露風險盤點觀測系統                                                     |
 | [4.6](/backend/04-observability/sli-slo-signal/)                    | SLI 量測與 SLO 訊號設計                | 把可靠性目標轉成可量測訊號、餵給 6.6 SLO 政策                                                  |
 | [4.7](/backend/04-observability/cardinality-cost-governance/)       | Cardinality 治理與成本邊界             | 把 cardinality 與保留階梯作為平台一級治理                                                      |
 | [4.8](/backend/04-observability/signal-governance-loop/)            | 訊號治理閉環                           | 把 [post-incident review](/backend/knowledge-cards/post-incident-review/) 偵測缺口回寫成新訊號 |
