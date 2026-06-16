@@ -90,9 +90,11 @@ docker restart valkey
 valkey-cli -h valkey-host -p 6380 DBSIZE          # 對齊 Redis DBSIZE
 valkey-cli -h valkey-host -p 6380 INFO server | grep redis_version  # 7.2.4
 
-# 6. 替代方案：用 replicaof 讓 Valkey 當 Redis 的 replica、即時同步後 promote
+# 6. 替代方案（零停機）：用 replicaof 讓 Valkey 當 Redis 的 replica、即時同步後 promote
 #    valkey-cli -h valkey-host REPLICAOF redis-primary 6379
-#    （Valkey 可當 Redis 的 replica、複製協定相容）
+#    重要邊界：此路徑只在 source 是 Redis 7.2 或更早版本時成立。
+#    Redis 7.4+（Community Edition）改了複製格式、Valkey 無法當其 replica
+#    → source 為 7.4+ 時改走上面的 RDB 拷貝路徑（步驟 2-4）。
 
 # 7. Cutover：client 配置切到 Valkey endpoint、Redis 留 standby
 ```
@@ -100,7 +102,7 @@ valkey-cli -h valkey-host -p 6380 INFO server | grep redis_version  # 7.2.4
 關鍵時間點：
 
 - **RDB 拷貝 + load**：100GB 約 5-15 分鐘（無版本轉換、比 DragonflyDB 少一道風險）
-- **replicaof 路徑**：要零停機可讓 Valkey 當 Redis replica 即時同步、確認 lag 趨零後 promote + 切 client
+- **replicaof 路徑**：要零停機可讓 Valkey 當 Redis replica 即時同步、確認 lag 趨零後 promote + 切 client（僅限 source 為 Redis 7.2 或更早；7.4+ 複製格式已分歧、不適用、改走 RDB 拷貝）
 - **Cutover**：client 配置切換（單次完成、硬邊界）、Redis 留 standby 1-2 週
 - **Decom**：無相容問題後關閉 Redis
 

@@ -24,7 +24,7 @@ active-active 不是「分散式交易」，它是「雙向非同步複製 + LWW
 
 **複製是非同步的**。本地寫入立即回 OK 給 client，之後才非同步傳給對方節點。這意味著兩個節點之間永遠有一個複製延遲窗口——在這個窗口內，兩邊看到的資料可能不同。這是 active-active 是 AP（可用性 + 分區容忍）而非 CP 的根本原因。
 
-**衝突用 last-write-wins 解決**。同一個 key 在兩個節點被並發修改時，KeyDB 比較版本（基於時間戳），保留較晚的寫入、丟棄較早的。沒有 merge、沒有 vector clock、沒有 application callback——就是時間戳比大小。時鐘不同步（clock skew）會直接影響哪一筆被判定為「較晚」。
+**衝突用 last-write-wins 解決**。同一個 key 在兩個節點被並發修改時，KeyDB 比較版本，保留較晚的寫入、丟棄較早的。沒有 merge、沒有 vector clock、沒有 application callback——就是比誰較晚。KeyDB 用 hybrid logical clock（HLC）排序、不是純 wall-clock，但 HLC 仍綁節點實體時鐘——時鐘不同步（clock skew）會直接影響哪一筆被判定為「較晚」。同步的是 key 的「值」不是「操作」，這也是為什麼並發 INCR 會互相覆蓋而非累加（見故障演練 Case 1）。
 
 **每筆寫入帶來源標記避免無限迴圈**。A 的寫入同步給 B 後，B 不會再把它當成新寫入傳回 A（否則會無限循環）。KeyDB 用來源標記處理這個，但複製拓樸設計錯（例如環狀多節點）仍可能放大流量。
 

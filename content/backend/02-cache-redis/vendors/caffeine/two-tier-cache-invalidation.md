@@ -12,7 +12,7 @@ tags: ["backend", "cache", "caffeine", "two-tier", "invalidation", "deep-article
 
 L1 Caffeine + L2 Redis 的兩層 cache，讀寫路徑三十行 Java 就寫完：讀的時候先查 L1（process-local、奈秒級），miss 再查 L2（Redis、毫秒級），再 miss 才回源。它擋掉了大部分 Redis 的網路往返，對「每個請求重複讀同一份小資料」的場景效果立竿見影。
 
-真正的難度不在搭兩層，在「每個 JVM 實例有自己的 L1 副本」這個事實。你有 10 個 application 實例，就有 10 份獨立的 Caffeine cache。實例 A 更新了某個 user 的資料、寫進 L2 Redis，但實例 B、C、D... 的 L1 還握著舊值——它們不知道資料變了。下一個打到實例 B 的請求，L1 命中，回的是舊值。Redis 是對的，但讀不到 Redis，因為 L1 先攔截了。
+真正的難度不在搭兩層，在「每個 JVM 實例有自己的 L1 副本」這個事實。假設有 10 個 application 實例，就有 10 份獨立的 Caffeine cache。實例 A 更新了某個 user 的資料、寫進 L2 Redis，但實例 B、C、D... 的 L1 還握著舊值——它們不知道資料變了。下一個打到實例 B 的請求，L1 命中，回的是舊值。Redis 是對的，但讀不到 Redis，因為 L1 先攔截了。
 
 這就是兩層 cache 的核心問題：L1 的速度來自「不跟任何人協調」，而一致性恰恰需要協調。本文聚焦這個矛盾——兩層讀寫路徑只是背景，跨實例 invalidation 才是全部的工程量。
 
@@ -66,7 +66,7 @@ Cache<String, User> l1 = Caffeine.newBuilder()
 // 寫入：更新 L2 + 廣播失效
 public void updateUser(User u) {
     userRepository.save(u);
-    redis.set("user:" + u.id(), serialize(u));   // 更新 L2
+    redis.setex("user:" + u.id(), 300, serialize(u));  // 更新 L2（TTL 對齊讀路徑的 300s）
     redis.publish("cache:invalidate", u.id());   // 廣播給所有實例
     l1.invalidate(u.id());                        // 清自己的 L1
 }
