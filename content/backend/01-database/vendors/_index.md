@@ -48,6 +48,8 @@ tags: ["backend", "database", "vendor"]
 
 DB1（PostgreSQL / MySQL）/ DB2（SQLite）/ DB3（MongoDB / DynamoDB）/ DB4（Aurora / Spanner / Cosmos DB / CockroachDB）四批 vendor 的 deep article 都已鋪滿。DB3 跟 DB4 batch 共新增 31 篇 deep article + 1 篇 DB3 entry article（[db3-vendor-selection](db3-vendor-selection/)）+ 1 篇 DB4 entry article（[cockroachdb/aurora-dsql-spanner-decision-tree](cockroachdb/aurora-dsql-spanner-decision-tree/)）。PostgreSQL 與 MySQL 也保留 hands-on 子目錄，集中放可重現的 lab；hands-on 與覆蓋表互補、不重複列在這張表。SQLite 的 [teaching-structure](sqlite/teaching-structure/) 是該服務章節群的大綱、不視為 deep article。後續批次 backlog 見下方各 vendor _index.md 的「後續擴充（仍待補）」段。
 
+DB5 batch（BaaS 資料層）新增 [Firestore](firestore/) overview（serverless document、client 直連 + Security Rules、查詢邊界、realtime / offline）+ [→ 自建 relational](firestore/migrate-to-relational/) 遷移 playbook（Type E paradigm shift、存取模型反轉）+ 4 篇 deep article：[Security Rules 授權建模](firestore/security-rules-authz-modeling/)、[distributed counter 高頻寫入](firestore/distributed-counter-high-frequency-write/)、[document 反正規化與一致性](firestore/denormalization-fanout-consistency/)、[realtime listener 扇出與成本](firestore/realtime-listener-fanout-cost/)。這批的定位是把 BaaS（[Firebase](/backend/knowledge-cards/baas/) / Firestore）的資料層面放回 vendor 視角：要不要採用 BaaS 這種交付形態本身是 [0.21](/backend/00-service-selection/delivery-mode-selection/) / [0.22](/backend/00-service-selection/capability-buy-vs-build/) 的選型層決策、本模組只負責「Firestore 作為 document store 承擔什麼狀態責任、撞牆後如何遷往自建」。deep article 章節群讀法見 [Firestore overview 的 Deep article 章節群段](firestore/#deep-article-章節群)；[hands-on 章節群](firestore/hands-on/) 提供 3 個 Firebase Emulator lab（emulator quickstart、Security Rules 測試、distributed counter）。Supabase 的資料層不另開 vendor 頁 — 它的 Postgres 面寫在 [managed-pg-comparison](postgresql/managed-pg-comparison/) 的比較表一行、選型層錨點在 [0.22](/backend/00-service-selection/capability-buy-vs-build/)（見該章「跨能力 bundle 的特殊判讀」段）、SSoT 不重複。
+
 ## Cross-vendor SSoT 主寫位置
 
 跨 vendor 共寫 frame 在多篇 deep article 之間 cross-link、但每個 frame 都有 *單一 SSoT 主寫位置*、其他 article 只 cross-link 不重複展開。讀者從 entry article 或覆蓋表進來時、可以直接跳對應 SSoT 看完整推導：
@@ -96,7 +98,7 @@ DB3 / DB4 entry article（[db3-vendor-selection](db3-vendor-selection/) + [cockr
 | ---- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | T2   | Oracle Database、Microsoft SQL Server、MariaDB                               | enterprise / commercial SQL 與 MySQL 相鄰生態                                                                                                           |
 | T2   | PlanetScale / Vitess、TiDB、YugabyteDB、Neon、Supabase、Azure SQL Hyperscale | [sharding](/backend/knowledge-cards/database-sharding/)、[distributed SQL](/backend/knowledge-cards/distributed-sql/)、serverless Postgres、managed SQL |
-| T2   | Apache Cassandra、ScyllaDB、Firestore                                        | wide-column、high-write、mobile / serverless document                                                                                                   |
+| T2   | Apache Cassandra、ScyllaDB                                                   | wide-column、high-write（mobile / serverless document 已由 [Firestore](firestore/) 覆蓋）                                                               |
 | T2   | OpenSearch / Elasticsearch                                                   | search engine 與 log / document search 邊界                                                                                                             |
 | T3   | ClickHouse、BigQuery、Snowflake                                              | OLAP / analytics，先作相鄰路由                                                                                                                          |
 | T3   | CouchDB、Couchbase                                                           | sync / document database 的特殊場景                                                                                                                     |
@@ -111,6 +113,7 @@ DB3 / DB4 entry article（[db3-vendor-selection](db3-vendor-selection/) + [cockr
 | DB2  | SQLite                                     | 建立 embedded / local formal state 與低操作成本邊界                 |
 | DB3  | MongoDB / DynamoDB                         | 建立 document / KV、access pattern、partition 與資料形狀判準        |
 | DB4  | Aurora / Spanner / Cosmos DB / CockroachDB | 建立 managed / global SQL、多 region、consistency 與 vendor 約束    |
+| DB5  | Firestore                                  | 建立 BaaS 資料層視角：client 直連 document store 與撞牆後遷往自建   |
 
 ## DB3 / DB4 batch 完成紀錄
 
