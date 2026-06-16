@@ -10,7 +10,7 @@ tags: ["backend", "cache", "memcached", "redis", "migration", "capability-upgrad
 
 ## cache 遷移不搬資料、搬存取層
 
-一般 migration 最重、最危險的部分是搬資料——schema 要對、一致性要保、cutover 要不丟。Memcached → Redis 把這塊幾乎拿掉了，因為 **cache 的資料本來就是可重建的副本**。你不需要把 Memcached 裡的東西搬到 Redis；你讓 Redis 空著上線、cache miss 自然回源、慢慢 warm 起來就好。Memcached 那邊在 warm-up 期間繼續服務，等 Redis 命中率追上來再切。
+一般 migration 最重、最危險的部分是搬資料——schema 要對、一致性要保、cutover 要不丟。Memcached → Redis 把這塊幾乎拿掉了，因為 **cache 的資料本來就是可重建的副本**。遷移不需要把 Memcached 裡的東西搬到 Redis；讓 Redis 空著上線、cache miss 自然回源、命中率慢慢 warm 起來即可。Memcached 在 warm-up 期間繼續服務，等 Redis 命中率追上來再切。
 
 這個性質讓 Memcached → Redis 的工作重心完全不同：不在資料層，在**存取層**（換 client library、換協定）跟**可選的能力升級**。觸發這個遷移的通常是「outgrew pure KV」——本來只用 Memcached 存 string，後來需要 counter（用 application 層讀-改-寫硬湊、有 race）、需要 session 物件（serialize 整包 JSON、改一個欄位要全寫）、需要 leaderboard（在 app 排序、慢）。這些 Redis 用 INCR / Hash / Sorted Set 原生解，把 application 層硬湊的邏輯收回 cache 層。
 
@@ -27,7 +27,7 @@ tags: ["backend", "cache", "memcached", "redis", "migration", "capability-upgrad
 | Application change     | client library 換、可選改用 data types                       | High    |
 | **Data topology**      | **cache 可重建、不搬資料、re-warm**                          | **Low** |
 
-主導維度是 Schema/API + application change（存取層），但這個 migration 的特徵是 **data topology Low**——這是 cache 類遷移獨有的性質，讓它比一般 Type A 簡單一截。結構上採兩階段：**Phase 1 drop-in 替換（維持 pure KV 用法、先把 client 換掉）**，**Phase 2 漸進採用 data types（把 application 層硬湊的邏輯收回 Redis）**。Phase 2 是可選的、可以慢慢來。
+主導維度是 Schema/API + application change（存取層），但這個 migration 的特徵是 **data topology Low**——這是 cache 類遷移獨有的性質。對映 [migration 方法論](/posts/migration-playbook-methodology/) 的 type：本文是 **cache 類 Type A 的簡化變體**（phased translation 的存取層翻譯，但因 data topology Low 省掉了資料遷移階段）。結構上採兩階段：**Phase 1 drop-in 替換（維持 pure KV 用法、先把 client 換掉）**，**Phase 2 漸進採用 data types（把 application 層硬湊的邏輯收回 Redis）**。Phase 2 是可選的、可以慢慢來。
 
 ## Phase 1：drop-in 替換（pure KV、不搬資料）
 
