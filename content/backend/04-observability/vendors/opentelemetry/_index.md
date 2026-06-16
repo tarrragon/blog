@@ -63,6 +63,8 @@ OpenTelemetry（OTel）是 CNCF 開放標準、承擔三個責任：定義 trace
 - **Sidecar**：K8s sidecar pattern、跟 pod 同生命週期
 - 對應配置：receivers / processors / exporters pipeline
 
+深入：[OTel Collector 部署模式：agent / gateway / sidecar 與 pipeline 設計](/backend/04-observability/vendors/opentelemetry/collector-deployment-patterns/)（三種位置責任分工、pipeline 設計、collector 失效 / 記憶體壓力 / backpressure 故障演練、容量成本邊界）。
+
 ## 進階主題（按需閱讀）
 
 ### Auto-instrumentation 跨語言成熟度
