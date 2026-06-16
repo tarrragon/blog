@@ -151,6 +151,7 @@ Caffeine 是 library 層元件、本 blog cache case 庫（Meta / Shopify / Netf
 
 ## 下一步路由
 
+- deep article：[Caffeine + Redis 兩層 cache 與跨實例失效](/backend/02-cache-redis/vendors/caffeine/two-tier-cache-invalidation/)（L1+L2 + pub/sub 廣播失效）
 - 上游概念：[2.6 high concurrency](/backend/02-cache-redis/high-concurrency-access/)（hot key 兩層解法）、[2.3 TTL eviction](/backend/02-cache-redis/ttl-eviction/)
 - 平行 vendor：[Redis](/backend/02-cache-redis/vendors/redis/)（兩層 cache 的 L2）、[Momento](/backend/02-cache-redis/vendors/momento/)（另一端：serverless）
 - 下游能力：[2.7 cache copy boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)（跨實例一致性窗口）

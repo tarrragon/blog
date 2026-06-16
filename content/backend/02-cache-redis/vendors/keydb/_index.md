@@ -152,6 +152,7 @@ KeyDB 跟 Redis I/O threads 的差異是核心賣點。子議題：
 
 ## 下一步路由
 
+- deep article：[KeyDB active-active 多主複製](/backend/02-cache-redis/vendors/keydb/active-active-replication/)（last-write-wins 衝突與跨區寫入）
 - 上游概念：[2.6 high concurrency](/backend/02-cache-redis/high-concurrency-access/)（單執行緒邊界的四個選項）
 - 平行 vendor：[DragonflyDB](/backend/02-cache-redis/vendors/dragonflydb/)、[Valkey](/backend/02-cache-redis/vendors/valkey/)、[Redis](/backend/02-cache-redis/vendors/redis/)
 - 下游能力：[2.7 cache copy boundary](/backend/02-cache-redis/cache-copy-freshness-boundary/)（跨區資料引力）
