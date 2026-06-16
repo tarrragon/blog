@@ -31,11 +31,14 @@ tags: ["backend", "message-queue", "vendor"]
 
 每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、「↔ X」代表雙向遷移、其他形式代表 same-vendor 的 topology / version / config 變動。
 
-| Vendor          | Deep article | Migration playbook                                                     |
-| --------------- | ------------ | ---------------------------------------------------------------------- |
-| [Kafka](kafka/) | —            | [↔ NATS](kafka/migrate-from-to-nats/) / [→ MSK](kafka/migrate-to-msk/) |
+<!-- TODO(merge): main 與 feat/backend_03 worktree 並行開發 03。feat/backend_03 深化 6 個 vendor 的 per-vendor _index.md overview；main（本表 + RabbitMQ deep article）寫 deep article。合併時須對齊本覆蓋表、並確認 deep article 與對方 overview 深化無重複。 -->
 
-其他 T1 vendor（RabbitMQ / NATS / Redis Streams / AWS SQS / Google Pub/Sub）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+| Vendor                | Deep article                                                                                                            | Migration playbook                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [Kafka](kafka/)       | —                                                                                                                       | [↔ NATS](kafka/migrate-from-to-nats/) / [→ MSK](kafka/migrate-to-msk/) |
+| [RabbitMQ](rabbitmq/) | [dlq-retry-escalation](rabbitmq/dlq-retry-escalation/) / [quorum-vs-mirrored-queue](rabbitmq/quorum-vs-mirrored-queue/) | —                                                                      |
+
+其他 T1 vendor（NATS / Redis Streams / AWS SQS / Google Pub/Sub）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 
 ## 服務頁撰寫欄位
 
