@@ -75,6 +75,8 @@ gcloud pubsub subscriptions pull demo-sub --auto-ack
 
 ## 進階主題（按需閱讀）
 
+ordering key、dead-letter topic 與 schema enforcement 已展開為 deep article：[ordering key / DLT / schema enforcement](ordering-dlt-schema/)。下列子議題段保留選題判讀入口。
+
 ### Ordering key
 
 子議題：

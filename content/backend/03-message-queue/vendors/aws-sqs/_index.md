@@ -74,6 +74,8 @@ aws sqs receive-message --queue-url <url> --wait-time-seconds 20
 
 ## 進階主題（按需閱讀）
 
+visibility timeout、polling、Lambda event source 與 cost 已展開為 deep article：[visibility timeout / long polling / Lambda + cost](visibility-polling-lambda-cost/)。下列子議題段保留選題判讀入口。
+
 ### Long polling vs Short polling
 
 子議題：

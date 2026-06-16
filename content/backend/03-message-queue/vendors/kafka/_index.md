@@ -74,6 +74,8 @@ docker exec kafka /opt/kafka/bin/kafka-console-consumer.sh --topic demo \
 
 ## 進階主題（按需閱讀）
 
+本段主題多數已展開為 deep article：[consumer rebalance 與 lag 診斷](consumer-rebalance-lag-diagnosis/)、[replication / ISR / exactly-once](replication-isr-exactly-once/)、[retention 與 tiered storage](retention-tiered-storage/)、[Schema Registry 與 schema 演進](schema-registry-evolution/)、[multi-tenant quota 與 ACL 治理](multi-tenant-quota-acl/)。下列子議題段保留每個主題的選題判讀入口。
+
 ### Multi-tenant 與配額治理
 
 對應案例 [3.C6 Uber Kafka 事件平台](/backend/03-message-queue/cases/uber-kafka-infrastructure-evolution/)。子議題：

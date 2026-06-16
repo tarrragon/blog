@@ -72,6 +72,8 @@ docker exec rabbitmq rabbitmqctl list_bindings
 
 ## 進階主題（按需閱讀）
 
+本段主題已展開為 deep article：[classic vs quorum vs stream 選型](queue-types-classic-quorum-stream/)、[network partition 與 cluster 一致性](network-partition-clustering/)。下列子議題段保留選題判讀入口。
+
 ### Classic queue vs Quorum queue vs Stream
 
 子議題：

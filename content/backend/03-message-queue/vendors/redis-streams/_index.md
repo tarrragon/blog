@@ -70,6 +70,8 @@ docker exec redis redis-cli XREADGROUP GROUP mygroup consumer1 COUNT 10 STREAMS 
 
 ## 進階主題（按需閱讀）
 
+PEL 失敗接管、retention 與 cluster 影響已展開為 deep article：[XCLAIM/PEL 失敗接管與 cluster 影響](xclaim-pel-recovery/)。下列子議題段保留選題判讀入口。
+
 ### XCLAIM 與 consumer 失敗接管
 
 子議題：
