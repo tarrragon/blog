@@ -85,4 +85,4 @@ ML inference 場景的 feature lookup 是多層 cache 的典型應用。[9.C25 T
 
 ## 下一步路由
 
-要處理 TTL 與容量策略，接著讀 [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)。要處理 presence 類即時狀態，接著讀 [2.5 presence store 與即時狀態](/backend/02-cache-redis/presence-store/)。
+要處理 TTL 與容量策略，接著讀 [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)。要看選定形狀後各型別的操作語意、原子性與記憶體曲線，接著讀 [2.11 Redis data types 實作](/backend/02-cache-redis/redis-data-types/)。要處理 presence 類即時狀態，接著讀 [2.5 presence store 與即時狀態](/backend/02-cache-redis/presence-store/)。

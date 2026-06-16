@@ -20,9 +20,9 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
 | [Cache aside](/backend/knowledge-cards/cache-aside)                                  | read-through 思路、cache [miss](/backend/knowledge-cards/cache-hit-miss)、invalidation |
 | [TTL](/backend/knowledge-cards/ttl) 與 [eviction](/backend/knowledge-cards/eviction) | 過期策略、容量控制、熱點資料                                                           |
-| Redis data types                                                                     | string、hash、set、sorted set、stream 的適用場景                                       |
-| Presence store                                                                       | 即時連線狀態、過期清理、跨節點查詢                                                     |
-| Distributed lock                                                                     | lock 語意、租約、失效與風險                                                            |
+| [Redis data types](/backend/02-cache-redis/redis-data-types/)                        | string、hash、set、sorted set、stream 的適用場景                                       |
+| [Presence store](/backend/02-cache-redis/presence-store/)                            | 即時連線狀態、過期清理、跨節點查詢                                                     |
+| [Distributed lock](/backend/02-cache-redis/distributed-lock/)                        | lock 語意、租約、失效與風險                                                            |
 | [Pub/Sub](/backend/knowledge-cards/pub-sub)                                          | 即時通知、跨節點 [fan-out](/backend/knowledge-cards/fan-out)、可靠性限制               |
 
 ## 快取分層與邊緣層
@@ -70,10 +70,12 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 | [2.3](/backend/02-cache-redis/ttl-eviction/)                      | TTL 與 eviction                               | 規劃過期、淘汰與容量控制                                                                                                                  |
 | [2.4](/backend/02-cache-redis/distributed-lock/)                  | distributed lock 與租約                       | 分辨鎖語意、租約風險與適用場景                                                                                                            |
 | [2.5](/backend/02-cache-redis/presence-store/)                    | presence store 與即時狀態                     | 追蹤線上狀態、跨節點查詢與過期清理                                                                                                        |
-| [2.6](/backend/02-cache-redis/attacker-view-cache-risks/)         | 攻擊者視角（紅隊）：快取弱點判讀              | 用一致性、污染與放大流量風險檢查快取設計                                                                                                  |
+| [2.6](/backend/02-cache-redis/attacker-view-cache-risks/)         | 快取威脅建模（Threat Modeling）               | 用一致性、污染、放大與 side-channel 風險盤點快取設計                                                                                      |
 | [2.7](/backend/02-cache-redis/cache-copy-freshness-boundary/)     | Cache Copy Boundary 與 Freshness              | 分辨快取副本、正式狀態、新鮮度與回源保護                                                                                                  |
 | [2.8](/backend/02-cache-redis/cache-data-shape-access-pattern/)   | Cache Data Shape 與 Access Pattern            | 用 key space、value shape 與 access pattern 判讀資料形狀                                                                                  |
 | [2.9](/backend/02-cache-redis/cache-migration-stampede-rollback/) | Cache Migration 與 Stampede Rollback 實作示範 | 以商品詳情或價格快取示範 evidence、gate 與 rollback trigger                                                                               |
+| [2.10](/backend/02-cache-redis/pub-sub/)                          | Pub/Sub 與即時 fan-out                        | 用 at-most-once 邊界判讀即時廣播何時夠用、何時升級到 Streams 或 message queue                                                             |
+| [2.11](/backend/02-cache-redis/redis-data-types/)                 | Redis data types 實作                         | 用 sorted set、bitmap、HLL、counter、hash 各自的原子性與記憶體曲線選型                                                                    |
 | [2.C](/backend/02-cache-redis/cases/)                             | 轉換案例正文                                  | 把快取策略、路由層與序列化遷移轉成可回寫實作                                                                                              |
 
 反例與規模對照入口： [2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) / [2.C10 對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)。
@@ -82,7 +84,7 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 ## 觀念網路補完方向
 
-快取章節下一輪的核心責任是把「暫存副本」和「正式狀態」的界線寫清楚。現有章節已經有 cache aside、TTL、distributed lock 與 presence store，但還需要補上資料新鮮度、失效語意、回源保護與快取遷移之間的引用關係，讓讀者知道快取策略何時只是加速，何時已經變成服務正確性風險。
+快取章節下一輪的核心責任是把「暫存副本」和「正式狀態」的界線寫清楚。現有章節已經有 cache aside、TTL、distributed lock、presence store，並補上了 Pub/Sub 即時 fan-out（2.10）與 data types 型別實作（2.11）兩個向度；仍可深化的是資料新鮮度、失效語意、回源保護與快取遷移之間的引用關係，讓讀者知道快取策略何時只是加速，何時已經變成服務正確性風險。
 
 | 補完方向            | 需要回答的問題                                       | 主要路由                                                                                                                                          |
 | ------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -98,11 +100,11 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 快取模組的 knowledge card 缺口集中在「新鮮度」與「回源保護」。已有 [cache hit rate](/backend/knowledge-cards/cache-hit-rate/)、[cache warmup](/backend/knowledge-cards/cache-warmup/)、[cache prefetching](/backend/knowledge-cards/cache-prefetching/) 與 [stale data](/backend/knowledge-cards/stale-data/) 可以先引用。
 
-下一批候選卡片包括 freshness window、origin protection、request coalescing、negative cache、cache key versioning 與 cache serialization migration。這些卡片要讓讀者能分辨「可短暫不新鮮」和「錯誤會直接影響交易或權限」的差異。
+下一批候選卡片包括 freshness window、origin protection、request coalescing（single-flight）、negative cache、cache key versioning 與 cache serialization migration。這些卡片要讓讀者能分辨「可短暫不新鮮」和「錯誤會直接影響交易或權限」的差異。2.4 帶入的 fencing token 是跨模組的分散式術語、且是「鎖不是正確性保證」這個核心論點的依據，值得獨立建卡（候選）。
 
 ## 實作探討入口
 
-快取的第一條實作路徑是 [2.9 Cache Migration 與 Stampede Rollback（實作示範）](/backend/02-cache-redis/cache-migration-stampede-rollback/)。這篇以商品詳情或價格快取為例，說明 cache evidence package、origin protection gate、warmup plan 與 rollback trigger 如何一起成立。
+快取的第一條實作路徑是 [2.9 Cache Migration 與 Stampede Rollback（實作示範）](/backend/02-cache-redis/cache-migration-stampede-rollback/)。這篇以商品詳情或價格快取為例，說明 cache evidence package、origin protection gate、warmup plan 與 rollback trigger 如何一起成立。型別實作層面的具體入口是 [2.11 Redis data types 實作](/backend/02-cache-redis/redis-data-types/)，聚焦 sorted set、bitmap、HLL、counter、hash 各自的操作語意、原子性與容量行為。
 
 這條路徑的前置引用應該是 2.2 cache aside、2.3 TTL / eviction、[2.C9 反例](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)、[4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 與 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)。完成後可依 [Backend 學習路線](/backend/#學習路線) 進入下一條服務路徑。
 

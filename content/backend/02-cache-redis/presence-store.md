@@ -59,7 +59,8 @@ presence 模型可用 [2.C2 Meta：mcrouter 跨區路由](/backend/02-cache-redi
 2. 與 4.17 的交接：presence 資料品質與延遲偏差回到 [Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)。
 3. 與 6.22 的交接：穩態定義與高峰演練回到 [Steady State Definition](/backend/06-reliability/steady-state-definition/)。
 4. 與 8.20 的交接：即時狀態誤判造成客戶影響回到 [Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)。
+5. 與 2.10 的交接：presence 狀態變更如何即時廣播給其他節點回到 [Pub/Sub 與即時 fan-out](/backend/02-cache-redis/pub-sub/)。
 
 ## 下一步路由
 
-要看快取層一致性與失效策略，接著讀 [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)。要看跨規模 presence 路由案例，接著讀 [2.C2 Meta：mcrouter 跨區路由](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)。
+要看快取層一致性與失效策略，接著讀 [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)。要看 presence 狀態變更如何即時扇出給其他節點，接著讀 [2.10 Pub/Sub 與即時 fan-out](/backend/02-cache-redis/pub-sub/)。要看跨規模 presence 路由案例，接著讀 [2.C2 Meta：mcrouter 跨區路由](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)。
