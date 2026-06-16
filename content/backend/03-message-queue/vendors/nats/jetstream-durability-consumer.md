@@ -6,9 +6,7 @@ weight: 11
 tags: ["backend", "message-queue", "nats", "jetstream", "consumer", "deep-article"]
 ---
 
-<!-- TODO(merge): feat/backend_03 worktree 同時在深化 03 vendor overview。本檔是 main 上新增的 deep article、未動 nats/_index.md。合併後須檢查：(1) 與對方主題重複 (2) nats/_index.md 是否加 deep-article 指標 (3) vendors/_index.md 覆蓋表合併。 -->
-
-> 本文是 [NATS](/backend/03-message-queue/vendors/nats/) overview 的 implementation-layer deep article。選型層（NATS vs Kafka / RabbitMQ）見 overview；本文只處理「決定用 NATS 後，core 跟 JetStream 的邊界與 consumer 怎麼設」。JetStream 實機驗證於 nats:latest（-js）、最後檢查日 2026-06-16；機制以 [NATS JetStream 官方文件](https://docs.nats.io/nats-concepts/jetstream) 為準。
+> 本文是 [NATS](/backend/03-message-queue/vendors/nats/) overview 的 implementation-layer deep article、定位在「要不要從 core NATS 跨進 JetStream」的決策入口。選型層（NATS vs Kafka / RabbitMQ）見 overview；本文只處理 core 與 JetStream 的邊界與基本 consumer 設定。決定採用 JetStream 後的完整實作（stream / consumer 每個旋鈕、跨區拓樸、多租戶）見 [JetStream 設計與 supercluster / leaf node](/backend/03-message-queue/vendors/nats/jetstream-supercluster-design/)。JetStream 實機驗證於 nats:latest（-js）、最後檢查日 2026-06-16；機制以 [NATS JetStream 官方文件](https://docs.nats.io/nats-concepts/jetstream) 為準。
 
 ## fire-and-forget 在 rolling deploy 那一刻掉訊息
 

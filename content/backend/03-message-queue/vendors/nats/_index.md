@@ -78,7 +78,7 @@ nats --server nats://localhost:4222 consumer add demo worker \
 
 ## 進階主題（按需閱讀）
 
-JetStream 設計、cluster / supercluster / leaf node 拓樸與多租戶已展開為 deep article：[JetStream 設計與 supercluster/leaf node](jetstream-supercluster-design/)。下列子議題段保留選題判讀入口。
+JetStream 已展開為兩篇 deep article：[core 到 JetStream 邊界](jetstream-durability-consumer/)（採用決策入口）、[JetStream 設計與 supercluster/leaf node](jetstream-supercluster-design/)（stream / consumer / 跨區拓樸 / 多租戶完整實作）。下列子議題段保留選題判讀入口。
 
 ### JetStream stream 設計
 

@@ -6,7 +6,7 @@ weight: 11
 tags: ["backend", "message-queue", "nats", "jetstream", "supercluster", "leaf-node", "deep-article"]
 ---
 
-> 本文是 [NATS](/backend/03-message-queue/vendors/nats/) overview 的 implementation-layer deep article。Overview 回答「NATS 該不該選、Core NATS vs JetStream 怎麼分」；本文回答「JetStream stream / consumer 的每個旋鈕怎麼設、設錯踩什麼坑、跨區拓樸怎麼鋪、多租戶怎麼隔離」。寫作結構依 [Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/) 的 6 段框架。
+> 本文是 [NATS](/backend/03-message-queue/vendors/nats/) overview 的 implementation-layer deep article。Overview 回答「NATS 該不該選、Core NATS vs JetStream 怎麼分」；要不要從 core NATS 跨進 JetStream 的決策入口見 [core 到 JetStream 的邊界](/backend/03-message-queue/vendors/nats/jetstream-durability-consumer/)；本文回答「JetStream stream / consumer 的每個旋鈕怎麼設、設錯踩什麼坑、跨區拓樸怎麼鋪、多租戶怎麼隔離」。寫作結構依 [Vendor 深度技術文章的寫作方法論](/posts/vendor-deep-article-methodology/) 的 6 段框架。
 
 ## JetStream 把 fire-and-forget 升級成 durable log
 
