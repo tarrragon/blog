@@ -6,9 +6,7 @@ weight: 11
 tags: ["backend", "message-queue", "nats", "jetstream", "consumer", "deep-article"]
 ---
 
-<!-- TODO(merge): feat/backend_03 worktree 同時在深化 03 vendor overview。本檔是 main 上新增的 deep article、未動 nats/_index.md。合併後須檢查：(1) 與對方主題重複 (2) nats/_index.md 是否加 deep-article 指標 (3) vendors/_index.md 覆蓋表合併。 -->
-
-> 本文是 [NATS](/backend/03-message-queue/vendors/nats/) overview 的 implementation-layer deep article。選型層（NATS vs Kafka / RabbitMQ）見 overview；本文只處理「決定用 NATS 後，core 跟 JetStream 的邊界與 consumer 怎麼設」。JetStream 實機驗證於 nats:latest（-js）、最後檢查日 2026-06-16；機制以 [NATS JetStream 官方文件](https://docs.nats.io/nats-concepts/jetstream) 為準。
+> 本文是 [NATS](/backend/03-message-queue/vendors/nats/) overview 的 implementation-layer deep article、定位在「要不要從 core NATS 跨進 JetStream」的決策入口。選型層（NATS vs Kafka / RabbitMQ）見 overview；本文只處理 core 與 JetStream 的邊界與基本 consumer 設定。決定採用 JetStream 後的完整實作（stream / consumer 每個旋鈕、跨區拓樸、多租戶）見 [JetStream 設計與 supercluster / leaf node](/backend/03-message-queue/vendors/nats/jetstream-supercluster-design/)。JetStream 實機驗證於 nats:latest（-js）、最後檢查日 2026-06-16；機制以 [NATS JetStream 官方文件](https://docs.nats.io/nats-concepts/jetstream) 為準。
 
 ## fire-and-forget 在 rolling deploy 那一刻掉訊息
 
@@ -101,12 +99,7 @@ nats consumer next ORDERS workers --count 3
 
 **根因**：`ack_wait`（等 ack 的逾時）設得比任務處理時間短。JetStream 以為訊息處理失敗（沒在 ack_wait 內 ack），重送給別人——但其實第一個 worker 還在跑。ML 長尾任務（幾秒到幾分鐘）特別容易踩。
 
-**修法**：
-
-1. `ack_wait` 設成大於任務的 p99 處理時間，留足處理窗口
-2. 長任務用 `in-progress ack`（處理中定期發 working ack 延長 deadline），不必一開始就設超長 ack_wait
-3. 消費端冪等——at-least-once 本來就可能重送，重複執行不該產生重複副作用（見 [6.12 idempotency](/backend/06-reliability/idempotency-replay/)）
-4. 監控 redelivery 次數，異常高代表 ack_wait 太短或處理卡住
+**修法（本文層級的判讀）**：ack_wait 必須涵蓋任務的 p99 處理時間，否則長任務會在處理中被重送。設值方法（量測 p99、長任務用 in-progress ack 延長 deadline、消費端冪等兜底）與實機重現（AckWait 設 1s 觀察 tries 1→2、Redelivered 計數）在 [JetStream 設計與 supercluster/leaf node](/backend/03-message-queue/vendors/nats/jetstream-supercluster-design/) 的故障演練有完整步驟，採用 JetStream 後依該篇落地。
 
 ### Case 4：retention 選 workqueue 但想多 consumer fanout
 

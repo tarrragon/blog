@@ -23,14 +23,19 @@ NATS 是 lightweight high-performance messaging system、承擔三個責任：su
 ## 最短路徑：5 分鐘把 NATS 跑起來
 
 ```bash
-# 1. 啟動 NATS server（含 JetStream）
-# TODO: nats-server -js -m 8222 placeholder
+# 1. 啟動 NATS server（-js 開 JetStream、-m 8222 開監控埠）
+docker run -d --name nats -p 4222:4222 -p 8222:8222 nats:latest -js -m 8222
 
-# 2. 用 nats CLI publish / subscribe
-# TODO: nats sub "demo.>" / nats pub demo.hello "world"
+# 2. 用 nats CLI publish / subscribe（CLI 可用 natsio/nats-box 容器）
+#    docker run --rm --network host natsio/nats-box nats <subcommand>
+nats --server nats://localhost:4222 pub demo.hello "world"
+nats --server nats://localhost:4222 sub "demo.>"   # 另開一個 shell 持續訂閱
 
-# 3. 建 stream + consumer（JetStream）
-# TODO: nats stream add / nats consumer add
+# 3. 建 JetStream stream + pull consumer（持久化 + ack）
+nats --server nats://localhost:4222 stream add demo --subjects 'demo.>' \
+  --storage file --retention limits --discard old --defaults
+nats --server nats://localhost:4222 consumer add demo worker \
+  --pull --deliver all --ack explicit --filter 'demo.>' --defaults
 ```
 
 最短路徑驗證「Core NATS + JetStream 都可用」。實際寫程式用 nats client library、見[日常操作](#日常操作與決策形狀)。
@@ -72,6 +77,8 @@ NATS 是 lightweight high-performance messaging system、承擔三個責任：su
 - Pub/Sub vs Queue groups 的差異
 
 ## 進階主題（按需閱讀）
+
+JetStream 已展開為兩篇 deep article：[core 到 JetStream 邊界](jetstream-durability-consumer/)（採用決策入口）、[JetStream 設計與 supercluster/leaf node](jetstream-supercluster-design/)（stream / consumer / 跨區拓樸 / 多租戶完整實作）。下列子議題段保留選題判讀入口。
 
 ### JetStream stream 設計
 
@@ -123,7 +130,8 @@ NATS 是 lightweight high-performance messaging system、承擔三個責任：su
 操作原則：先看 pending 是 ack-pending 還是 stream backlog、再定位 consumer 慢 vs stream 寫入過快。
 
 ```bash
-# TODO: nats consumer info <stream> <consumer>
+nats --server nats://localhost:4222 consumer info <stream> <consumer>
+# 看 Unprocessed Messages（stream backlog）與 Redelivered / Acknowledgment Pending（ack-pending）區分兩種累積
 ```
 
 ### Stream 超 retention limit

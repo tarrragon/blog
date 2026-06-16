@@ -6,8 +6,6 @@ weight: 11
 tags: ["backend", "message-queue", "rabbitmq", "dlq", "retry", "deep-article"]
 ---
 
-<!-- TODO(merge): feat/backend_03 worktree 同時在深化 03 vendor overview。本檔是 main 上新增的 deep article、未動 rabbitmq/_index.md。合併 feat/backend_03 後須檢查：(1) 本檔與對方是否有重複主題 (2) rabbitmq/_index.md 是否該加本檔的 deep-article 指標 (3) vendors/_index.md 覆蓋表合併。 -->
-
 > 本文是 [RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/) overview 的 implementation-layer deep article。選型層（RabbitMQ vs Kafka / SQS、何時選 RabbitMQ）見 overview；本文只處理「決定用 RabbitMQ 後，失敗訊息怎麼 retry 才不會卡死隊列」。DLX 拓樸實機驗證於 rabbitmq:3-management、最後檢查日 2026-06-16；機制以 [RabbitMQ DLX 官方文件](https://www.rabbitmq.com/docs/dlx) 為準。
 
 ## 失敗訊息 requeue 回隊首，會卡住整條隊列
@@ -139,7 +137,7 @@ app.dlq（死信終點：無自動重試、人工 / 專門 consumer 處理）
 1. DLQ 要有處理流程：告警 + 人工 / 自動修復 consumer（冪等地重新投遞或記錄）
 2. DLQ 設 `x-max-length` 或自己的 TTL，避免無限成長（但要先確認丟棄可接受）
 3. 監控 DLQ 深度與成長速率，持續成長代表上游有系統性失敗、要根治而非堆 DLQ
-4. quorum queue 對 DLQ 是合理選擇（持久、不純靠記憶體），見 [quorum vs mirrored queue deep article](/backend/03-message-queue/vendors/rabbitmq/quorum-vs-mirrored-queue/)
+4. quorum queue 對 DLQ 是合理選擇（持久、不純靠記憶體），見 [quorum vs mirrored queue deep article](/backend/03-message-queue/vendors/rabbitmq/queue-types-classic-quorum-stream/)
 
 ## Capacity / cost 邊界
 
@@ -157,7 +155,7 @@ app.dlq（死信終點：無自動重試、人工 / 專門 consumer 處理）
 
 - **重試量大、delay 隊列堆積**：重試治標、下游系統性故障要根治；考慮 circuit breaker 在上游擋住而非無限重試。
 - **需要精準延遲排程**：TTL 模擬的延遲不精準（惰性求值），用 rabbitmq-delayed-message-exchange plugin。
-- **DLQ / 隊列要持久可靠**：classic queue 靠記憶體 + 鏡像，大量積壓有風險；用 [quorum queue](/backend/03-message-queue/vendors/rabbitmq/quorum-vs-mirrored-queue/)（Raft 持久）。
+- **DLQ / 隊列要持久可靠**：classic queue 靠記憶體 + 鏡像，大量積壓有風險；用 [quorum queue](/backend/03-message-queue/vendors/rabbitmq/queue-types-classic-quorum-stream/)（Raft 持久）。
 - **吞吐 / 保留需求超過 RabbitMQ**：retry / replay 是 log-based broker 的強項，大規模 replay 走 [Kafka](/backend/03-message-queue/vendors/kafka/)（consumer 各自 offset、可重讀）。
 
 ## 整合 / 下一步
@@ -167,11 +165,11 @@ app.dlq（死信終點：無自動重試、人工 / 專門 consumer 處理）
 - **跟 [3.2 durable queue](/backend/03-message-queue/durable-queue/)**：DLQ 要持久才不會在 broker 重啟時丟失死信。
 - **跟 [3.4 consumer design](/backend/03-message-queue/consumer-design/)**：prefetch / ack 策略決定毒訊息影響範圍，跟 retry 拓樸一起設計。
 - **跟 [6.12 idempotency / replay](/backend/06-reliability/idempotency-replay/)**：retry 與 DLQ 重新投遞都要求消費冪等，否則重試造成重複副作用。
-- **跟 [quorum vs mirrored queue](/backend/03-message-queue/vendors/rabbitmq/quorum-vs-mirrored-queue/)**：DLQ 與重試隊列的持久性選 quorum queue，避開 mirrored queue 的網路成本。
+- **跟 [quorum vs mirrored queue](/backend/03-message-queue/vendors/rabbitmq/queue-types-classic-quorum-stream/)**：DLQ 與重試隊列的持久性選 quorum queue，避開 mirrored queue 的網路成本。
 
 ## 相關連結
 
 - 上游 vendor 頁：[RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/)
-- 同 vendor deep article：[quorum vs mirrored queue](/backend/03-message-queue/vendors/rabbitmq/quorum-vs-mirrored-queue/)
+- 同 vendor deep article：[quorum vs mirrored queue](/backend/03-message-queue/vendors/rabbitmq/queue-types-classic-quorum-stream/)
 - 對應案例：[3.C25 Indeed delay queue + DLQ 三層 escalation](/backend/03-message-queue/cases/rabbitmq-indeed-delay-dlq-escalation/)
 - 上游概念：[3.2 durable queue](/backend/03-message-queue/durable-queue/)、[3.4 consumer design](/backend/03-message-queue/consumer-design/)

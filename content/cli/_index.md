@@ -9,13 +9,14 @@ tags: ["cli", "tui", "remote"]
 
 這裡講的「圖形化」是用 ASCII 與 Unicode 製圖字元畫出來的介面，而不是把 PNG／JPG 渲染進終端機。這類介面只傳純文字，傳輸量小、不依賴終端機的影像協定，在低頻寬與手機連線下最穩。
 
-內容大致分五類：
+內容大致分六類：
 
 - **TUI 監控與儀表板** — `btop` / `htop` / `k9s` / `ncdu` 等系統監控的全螢幕互動介面；版控專用的 git 線圖工具（`tig` / `lazygit` / `gitui`）是同類 TUI 但獨立的子題。
 - **ASCII 與文字圖表** — `gnuplot` / `termgraph` / `plotext` 等把資料畫成終端機圖表的工具。
 - **終端機多工器** — `tmux` / `zellij`，分割畫面、連線斷了 session 還在。
 - **檔案管理器** — `broot`（樹狀）/ `yazi` / `ranger`（Miller 欄狀），像 IDE 側邊欄那樣瀏覽目錄與預覽檔案。
 - **SQL 客戶端** — `harlequin`（IDE 風）/ `lazysql`（瀏覽器風）/ `pgcli`、`litecli`（增強 REPL），在終端機連資料庫跑查詢。
+- **訊息佇列客戶端** — Kafka 的 `kaskade` / `yozefu` / `ktea`（全螢幕 TUI）、Redis 的 `iredis`（增強 REPL），在終端機連 broker 瀏覽 topic 與訊息。
 
 這個系列的每篇文章都用實機驗證導向的流程生產（裝起來實跑、TUI 交人互動驗、驗不了的標 caveat）。要擴展新類別時，照 [驗證導向的 CLI 工具文章生產流程](/posts/verification-driven-cli-tool-articles/) 走。
 

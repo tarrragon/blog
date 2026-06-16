@@ -25,14 +25,20 @@ Kafka 是 distributed event streaming platform、承擔三個責任：log-based 
 最短路徑用 KRaft 模式（取代 ZooKeeper、單節點即可跑）、避免初學者卡在 ZK 安裝。
 
 ```bash
-# 1. 啟動 Kafka（KRaft 模式、單節點 docker-compose）
-# TODO: docker-compose.yml + KAFKA_PROCESS_ROLES=broker,controller placeholder
+# 1. 啟動 Kafka（apache/kafka 內建 KRaft、單一容器即含 broker + controller）
+docker run -d --name kafka -p 9092:9092 apache/kafka:latest
 
-# 2. 建 topic
-# TODO: kafka-topics.sh --create --topic demo --partitions 3 ...
+# 2. 建 topic（CLI 在容器內 /opt/kafka/bin/）
+docker exec kafka /opt/kafka/bin/kafka-topics.sh --create --topic demo --partitions 3 \
+  --bootstrap-server localhost:9092
+docker exec kafka /opt/kafka/bin/kafka-topics.sh --describe --topic demo \
+  --bootstrap-server localhost:9092
 
 # 3. 驗證 produce / consume
-# TODO: kafka-console-producer.sh / kafka-console-consumer.sh
+docker exec kafka bash -c "echo hello | /opt/kafka/bin/kafka-console-producer.sh \
+  --topic demo --bootstrap-server localhost:9092"
+docker exec kafka /opt/kafka/bin/kafka-console-consumer.sh --topic demo \
+  --from-beginning --max-messages 1 --bootstrap-server localhost:9092
 ```
 
 最短路徑只驗證「broker 起來、能寫能讀」。實際寫程式用 producer / consumer client、見[日常操作](#日常操作與決策形狀)。
@@ -67,6 +73,8 @@ Kafka 是 distributed event streaming platform、承擔三個責任：log-based 
 - 對應指令：producer 配置範例、consumer 配置範例、`kafka-consumer-groups.sh --describe`
 
 ## 進階主題（按需閱讀）
+
+本段主題多數已展開為 deep article：[consumer rebalance 與 lag 診斷](consumer-rebalance-lag-diagnosis/)、[replication / ISR / exactly-once](replication-isr-exactly-once/)、[retention 與 tiered storage](retention-tiered-storage/)、[Schema Registry 與 schema 演進](schema-registry-evolution/)、[multi-tenant quota 與 ACL 治理](multi-tenant-quota-acl/)。下列子議題段保留每個主題的選題判讀入口。
 
 ### Multi-tenant 與配額治理
 
@@ -140,7 +148,8 @@ Kafka 是 distributed event streaming platform、承擔三個責任：log-based 
 操作原則：先看 lag 是「均勻分布」還是「集中在少數 partition」、再定位 consumer 慢 vs partition 不平衡。
 
 ```bash
-# TODO: kafka-consumer-groups.sh --describe --group <id>
+kafka-consumer-groups.sh --describe --group <id> --bootstrap-server localhost:9092
+# 輸出含 CURRENT-OFFSET / LOG-END-OFFSET / LAG 逐 partition 列、可看 lag 集中在哪幾個 partition
 ```
 
 判讀路徑：consumer 慢（CPU / GC / 下游 I/O）→ producer 突增 → partition 不平衡（key 分布）。
@@ -150,7 +159,8 @@ Kafka 是 distributed event streaming platform、承擔三個責任：log-based 
 操作原則：ISR 縮小代表 follower 跟不上 leader、看 broker 健康 / 網路 / disk。
 
 ```bash
-# TODO: kafka-topics.sh --describe --under-replicated-partitions
+kafka-topics.sh --describe --under-replicated-partitions --bootstrap-server localhost:9092
+# 輸出為空代表所有 partition 同步正常；列出的 partition 即 ISR 落後者
 ```
 
 ### Rebalance storm
