@@ -8,7 +8,7 @@ tags: ["backend", "cache", "vendor"]
 
 KeyDB 是 Redis 的 multi-threaded fork、承擔三個責任：把 Redis 的命令執行從單執行緒改成多執行緒（不只 I/O、連命令處理都多核）、提供 active-active 多主複製（兩個 master 互相同步、都可寫）、維持 Redis protocol 相容（drop-in 替換）。設計取捨偏向「沿用 Redis 生態 + 單實例榨多核 + 多主寫入」、是 Redis 單執行緒撞牆但又不想重寫 client 的中間選項。
 
-對「單 key 極熱、Redis Cluster 切不開、需要單實例多執行緒撐單 partition」這條路徑、KeyDB 是值得評估的 fork。[Snap 在 GCP 上用 KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) 替代原生 Redis 撐超高吞吐 cache，是這條路線最大的公開採用者。
+對「單 key 極熱、Redis Cluster 切不開、需要單實例多執行緒撐單 partition」這條路徑、KeyDB 是值得評估的 fork。[Snap 在 GCP 上用 KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) 是這條路線最大的公開採用者——但要注意該案例的主因是 multi-cloud 架構下的 cross-cloud latency 治理（把 cache 跟 application 放同一個 cloud），KeyDB 的 multi-threaded 單實例吞吐是附帶優勢、不是 Snap 採用的主要驅動。
 
 ## 本章目標
 
@@ -136,9 +136,9 @@ KeyDB 跟 Redis I/O threads 的差異是核心賣點。子議題：
 
 ### 直接相關案例
 
-| 案例                                                                                               | 對 KeyDB 的對應                                                                                          |
-| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [9.C35 Snap KeyDB cross-cloud](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) | Snap 在 GCP 部署 KeyDB cluster 替代原生 Redis、9.C35 判讀「單實例 throughput 提升 5-10x」（依 workload） |
+| 案例                                                                                               | 對 KeyDB 的對應                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [9.C35 Snap KeyDB cross-cloud](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) | Snap 在 GCP 部署 KeyDB cluster、主因是 multi-cloud 的 cross-cloud latency 治理（cache 與 application 共置同 cloud）；9.C35 另記 KeyDB multi-threaded「單實例 throughput 提升 5-10x」（通則、依 workload） |
 
 **待補 KeyDB-specific 案例**：Snap 收購後的公開技術分享、KeyDB on FLASH 的 production 成本案例、active-active 多主複製的跨區衝突治理實例。
 

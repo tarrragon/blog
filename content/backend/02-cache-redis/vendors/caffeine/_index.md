@@ -23,11 +23,11 @@ Caffeine 是 JVM 上的 high-performance process-local cache library、承擔三
 ## 最短路徑：引入 Caffeine 寫一個 cache
 
 ```xml
-<!-- Maven 依賴（版本以 Maven Central 最新為準、最後檢查日 2026-06-16）-->
+<!-- Maven 依賴（version 為範例、實際以 Maven Central 最新為準、最後檢查日 2026-06-16）-->
 <dependency>
   <groupId>com.github.ben-manes.caffeine</groupId>
   <artifactId>caffeine</artifactId>
-  <version>3.1.8</version>
+  <version>3.2.4</version>
 </dependency>
 ```
 
