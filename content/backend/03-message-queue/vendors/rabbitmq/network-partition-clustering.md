@@ -174,9 +174,9 @@ Classic queue 立即接受寫入。它沒有 Raft、leader 節點獨自決定、
 
 ## 真實 cluster 治理：以 Zalando 為例
 
-[3.C27 Zalando RabbitMQ on AWS](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 案例揭露了 K8s 普及之前、雲端 RabbitMQ cluster 治理的工程模式、跟 partition 處理直接相關。
+[3.C27 Zalando RabbitMQ on AWS](/backend/03-message-queue/cases/rabbitmq-zalando-aws-master-selection/) 案例揭露了 K8s 普及之前、雲端 RabbitMQ cluster 治理的工程模式（master selection 與成員協調），跟 cluster 拓樸治理相關。
 
-Zalando 的 communication platform 把 RabbitMQ cluster 跑在 EC2 上、自建 sidekick 服務查 AWS API 動態識別 cluster 成員、指定「最老的 instance」當 master、master 死後晉升下一個最老的節點。這套機制本質是在 RabbitMQ 內建的 partition handling 之外、額外加一層 *外部協調者* 來決定 cluster 拓樸——因為當時 mirrored queue（quorum queue 的前身）的 partition 行為不夠可預測、需要外部邏輯補強節點角色的確定性。
+Zalando 的 communication platform 把 RabbitMQ cluster 跑在 EC2 上、自建 sidekick 服務查 AWS API 動態識別 cluster 成員、指定「最老的 instance」當 master、master 死後晉升下一個最老的節點。這套機制本質是在 RabbitMQ 內建的 partition handling 之外、額外加一層 *外部協調者* 來決定 cluster 拓樸（case 記載的直接動機是用 AWS API 動態識別成員、配合每 region 5 個 Elastic IP 的限制處理 master 角色）。把它讀作「早期雲端 RabbitMQ 在節點角色確定性上需要外部補強」是本文的判讀、非 case 明述的結論。
 
 這個案例對映到本文的判讀是：早期 RabbitMQ cluster 的 partition 一致性需要大量外部工程（sidekick + AWS API + 自訂 master selection）來補足。Quorum queue 用 Raft 把這套外部協調內化進 broker——Raft 的 leader election 與 majority commit 取代了 Zalando 手寫的「最老 instance 當 master」邏輯。現代部署若用 quorum queue + pause_minority、不再需要外部 sidekick 來決定誰是 master。
 

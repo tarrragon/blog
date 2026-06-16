@@ -142,7 +142,7 @@ Tiered storage 的核心責任是把 broker 的「儲存容量」跟「保留期
 
 [Pinterest 的 broker-decoupled 做法](/backend/03-message-queue/cases/kafka-pinterest-tiered-storage/)把 ~200 TB/day 熱資料卸到 S3、讓 consumer 直接從 S3 拉冷資料、broker 不再是冷讀的熱路徑。它揭露的設計判讀是「broker 運算資源」跟「跨 AZ 網路成本」其實該分開治理、而不是綁在 broker 容量擴張上——保留期變長不該等於 broker 機群變大。
 
-[LinkedIn 的分層叢集策略](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/)是另一個層次的「分層」：把不同業務特性與可靠性需求的 workload 拆到不同叢集（critical / standard / experimental）、避免混在同一叢集時故障與資源競爭互相放大。這裡的「分層」指叢集隔離、不是儲存的冷熱分層。兩種「分層」常被混談、但解的是不同問題：tiered storage 解單一 topic 的儲存成本、tiered clusters 解多 workload 的隔離治理。
+[LinkedIn 的分層叢集策略](/backend/03-message-queue/cases/linkedin-kafka-tiered-clusters/)是另一個層次的「分層」：把不同業務特性與可靠性需求的 workload 拆到不同叢集（依關鍵程度分群、例如關鍵 / 一般 / 實驗性，分層名稱為示意而非案例原文用詞）、避免混在同一叢集時故障與資源競爭互相放大。這裡的「分層」指叢集隔離、不是儲存的冷熱分層。兩種「分層」常被混談、但解的是不同問題：tiered storage 解單一 topic 的儲存成本、tiered clusters 解多 workload 的隔離治理。
 
 ## 故障演練
 

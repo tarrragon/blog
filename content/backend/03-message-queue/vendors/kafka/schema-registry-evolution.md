@@ -205,7 +205,7 @@ FULL 同時滿足兩者，代價是只能做「加帶 default 的欄位」與「
 
 ### 跟 CDC pipeline 的銜接
 
-[Shopify Debezium CDC 案例](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/) 的 100+ MySQL shard、150 個 Debezium connector 場景，schema 演進壓力來自 *上游 DB schema 變更自動傳導到 Kafka topic*：DDL 一改，Debezium 產生的 Kafka record schema 跟著變，下游所有 consumer 受影響。這裡 Schema Registry 的 compatibility 檢查是把 DB schema 演進的衝擊在進 Kafka 時就攔下的關卡——選錯 compatibility level，一次 ALTER TABLE 就可能透過 CDC 打穿整條 pipeline。Debezium 與 Kafka Connect 原生整合 Schema Registry，connector 設定裡指定 registry URL 與 naming strategy。
+[Shopify Debezium CDC 案例](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/) 跑在 100+ MySQL shard、150 個 Debezium connector 的規模（該案例記載的重點是 lock-free snapshot 與 oversized record 處理）。CDC pipeline 有一個一般性的 schema 演進壓力，以下依 CDC 機制推導、非該案例的結論：上游 DDL 一改，Debezium 產生的 Kafka record schema 跟著變，下游 consumer 受影響。Schema Registry 的 compatibility 檢查就是把這道衝擊在進 Kafka 時攔下的關卡——選錯 compatibility level，一次 ALTER TABLE 就可能透過 CDC 打穿整條 pipeline。Debezium 與 Kafka Connect 原生整合 Schema Registry，connector 設定裡指定 registry URL 與 naming strategy。
 
 ### 跟 replay 邊界與事件契約
 

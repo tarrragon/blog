@@ -109,7 +109,7 @@ aws sqs set-queue-attributes \
   --attributes '{"RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:demo-dlq\",\"maxReceiveCount\":\"5\"}"}'
 ```
 
-DLQ 不是訊息的墳場、是待診斷的暫存區。對應 [poison message quarantine](/backend/knowledge-cards/poison-message-quarantine/) 的思路、DLQ 累積要分兩種根因處理：訊息格式錯（永遠失敗、需要修 producer 或人工丟棄）vs 下游服務暫時 down（訊息本身沒問題、修好下游後可以重放）。後者用 redrive 把訊息從 DLQ 批次放回主 queue 重新處理、對應 [dlq drain](/backend/knowledge-cards/dlq-drain/) 的排空流程。判斷之前先看 DLQ 裡訊息的內容、不要無腦 redrive — 把毒訊息 redrive 回去只會再走一輪 maxReceiveCount 又回到 DLQ。
+DLQ 不是訊息的墳場、是待診斷的暫存區。對應 [poison message quarantine](/backend/knowledge-cards/poison-message-quarantine/) 的思路、DLQ 累積要分兩種根因處理：訊息格式錯（永遠失敗、需要修 producer 或人工丟棄）vs 下游服務暫時 down（訊息本身沒問題、修好下游後可以重放）。後者用 redrive 把訊息從 DLQ 批次放回主 queue 重新處理、對應 [dlq drain](/backend/knowledge-cards/dlq-drain/) 的排空流程。判斷之前先看 DLQ 裡訊息的內容、不要不加判斷地 redrive — 把毒訊息 redrive 回去只會再走一輪 maxReceiveCount 又回到 DLQ。
 
 `maxReceiveCount` 設多少是取捨：太小（例如 1-2）會讓「下游短暫抖動」這種暫時性失敗被誤判成毒訊息、過早送進 DLQ；太大（例如 100）會讓真正的毒訊息浪費大量 consumer 重試。多數 task queue 設 3-5 是合理起點 — 足以吸收幾次暫時性失敗、又不至於讓確定性失敗的訊息空轉太久。
 
@@ -139,7 +139,7 @@ aws sqs send-message-batch \
 
 Data transfer cost 只在跨 region 時出現 — 同 region 內 producer / consumer 與 SQS 之間的傳輸不計流量費。把 producer、consumer、queue 放在同一個 region 是預設、跨 region 設計要把 egress 成本明確算進來。FIFO queue 的 per-request 單價比 standard 高、是用成本換 ordering 與去重保證 — 不需要嚴格順序的場景用 standard、把這筆溢價省下來。
 
-Rapid7 的規模參考點說明這個計費模型在極端規模下的份量：Rapid7 公開引述 SQS 撐住「每天數百億則訊息」。在這個量級、per-request 計費乘以訊息數是一筆需要認真建模的成本 — batch、long polling、避免不必要的 visibility 延長、控制 retry 次數、每一項節省都被訊息量放大。SQS 在百億級可用、但成本結構必須被當作架構參數對待、不是事後才看帳單。
+Rapid7 的規模參考點說明這個計費模型在極端規模下的份量：Rapid7 公開引述 SQS 撐住「每天數十億則訊息」。在這個量級、per-request 計費乘以訊息數是一筆需要認真建模的成本 — batch、long polling、避免不必要的 visibility 延長、控制 retry 次數、每一項節省都被訊息量放大。SQS 在數十億級可用、但成本結構必須被當作架構參數對待、不是事後才看帳單。
 
 ## Production 故障演練
 

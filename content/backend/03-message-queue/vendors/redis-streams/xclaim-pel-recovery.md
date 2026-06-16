@@ -135,7 +135,7 @@ $ redis-cli XCLAIM mystream g1 c4 60000 1781584105278-0
 
 回空陣列代表 claim 失敗、owner 不變、訊息留在 c3 手上。這就是 min-idle-time 的作用：**門檻 = 我願意相信 owner consumer 還活著的最長時間**。
 
-門檻設定是接管設計的核心取捨、沒有通用值、由訊息處理時間分佈決定。門檻設太短、正常處理中的訊息被當成孤兒搶走、變成多 consumer 重複處理同一筆——這正是 [Harness event-driven 案例](/backend/03-message-queue/cases/redis-streams-harness-event-driven-state/) 揭露的 XAUTOCLAIM head-of-line 風險。門檻設太長、真正 crash 的訊息要等很久才有人接管、recovery 延遲拉高。實務基準是「門檻 > p99 處理時間 + 安全係數」：若單筆處理 p99 是 2 秒、門檻設 30-60 秒、確保只有真的死掉（遠超正常處理時間）的 owner 才被接管。
+門檻設定是接管設計的核心取捨、沒有通用值、由訊息處理時間分佈決定。門檻設太短、正常處理中的訊息被當成孤兒搶走、變成多 consumer 重複處理同一筆。門檻設太長、真正 crash 的訊息要等很久才有人接管、recovery 延遲拉高。[Harness 的 event-driven 案例](/backend/03-message-queue/cases/redis-streams-harness-event-driven-state/) 正是用 XAUTOCLAIM 重派來解 head-of-line blocking（慢訊息阻塞 consumer 進度）、並自設 redelivery 策略避免上述反覆搶單。實務基準是「門檻 > p99 處理時間 + 安全係數」：若單筆處理 p99 是 2 秒、門檻設 30-60 秒、確保只有真的死掉（遠超正常處理時間）的 owner 才被接管。
 
 接管後仍需 application 層去重。XCLAIM 改寫 owner、不代表原 consumer 真的沒處理完——它可能正在 ack 的瞬間被 claim、結果兩邊都處理一次。at-least-once 的去重責任永遠在 application、靠 [idempotency](/backend/knowledge-cards/idempotency/) 兜底、這跟接管門檻設多準無關。
 
@@ -154,7 +154,7 @@ $ redis-cli XLEN mystream
 3                           # 精確修剪到剛好 3 筆
 ```
 
-stream 不受 `maxmemory-policy` eviction 管理——一般 key 在記憶體壓力下會被 evict、stream entry 不會。這代表 stream 是「只進不出、除非主動修剪」的記憶體成長源。[Learning.com 把 Redis Streams 當長期事件儲存、最後壓垮 Redis](/backend/03-message-queue/cases/redis-streams-learning-com-event-source-retreat/) 就是沒設修剪上限的反例：retention 沒上限、記憶體一路漲到 OOM。判讀訊號是 `MEMORY USAGE mystream` 對比實例 `maxmemory`、超過預算就調低 MAXLEN。
+stream 不受 `maxmemory-policy` eviction 管理——一般 key 在記憶體壓力下會被 evict、stream entry 不會。這代表 stream 是「只進不出、除非主動修剪」的記憶體成長源。[Learning.com 把 Redis 當長期事件儲存、最終因成本與延遲退場](/backend/03-message-queue/cases/redis-streams-learning-com-event-source-retreat/) 就是沒設修剪上限的反例（該案例涵蓋 Redis 事件儲存整體、Stream 是其中一塊）：事件量每週以 GB 成長、AOF fsync 與 EBS I/O 變成 latency 痛點、最終退回 PostgreSQL。判讀訊號是 `MEMORY USAGE mystream` 對比實例 `maxmemory`、超過預算就調低 MAXLEN。
 
 ## 故障演練
 
@@ -180,7 +180,7 @@ $ redis-cli XAUTOCLAIM mystream g1 self_consumer_id 60000 0
 
 **徵兆**：同一筆訊息被多個 consumer 處理、下游出現重複副作用（重複扣款、重複發信）；`XPENDING` 展開看到某些 entry 的 delivery count 異常高（5、10+）但 stream 流量正常、沒有 consumer crash。
 
-**根因**：接管門檻低於正常處理時間。consumer A 拿到一筆要處理 10 秒的訊息、門檻設了 5 秒、consumer B 跑 `XAUTOCLAIM` 時這筆 idle 已過 5 秒、B 把還在 A 手上處理的訊息搶走、兩邊都處理一次。這是 [Harness 案例](/backend/03-message-queue/cases/redis-streams-harness-event-driven-state/) 的 XAUTOCLAIM head-of-line 問題——一筆慢訊息被反覆搶、delivery count 暴衝、卻沒人真正完成。
+**根因**：接管門檻低於正常處理時間。consumer A 拿到一筆要處理 10 秒的訊息、門檻設了 5 秒、consumer B 跑 `XAUTOCLAIM` 時這筆 idle 已過 5 秒、B 把還在 A 手上處理的訊息搶走、兩邊都處理一次。這是接管門檻設計的通用競態——一筆慢訊息被反覆搶、delivery count 暴衝、卻沒人真正完成。（[Harness 案例](/backend/03-message-queue/cases/redis-streams-harness-event-driven-state/) 用 XAUTOCLAIM 重派解 head-of-line blocking 時、正是靠門檻與 redelivery 策略避開這種搶單。）
 
 **修法**：
 

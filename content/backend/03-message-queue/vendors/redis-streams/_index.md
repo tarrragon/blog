@@ -168,7 +168,7 @@ redis-cli XPENDING mystream mygroup
 | [3.C43 Arcjet 取代 Kafka](/backend/03-message-queue/cases/redis-streams-arcjet-replace-kafka/)              | Janitor 自寫 retention / 6 位數 → $1k          |
 | [3.C44 Harness event-driven](/backend/03-message-queue/cases/redis-streams-harness-event-driven-state/)     | XAUTOCLAIM head-of-line / 監控缺口             |
 | [3.C45 Klaxit Rust + Logplex](/backend/03-message-queue/cases/redis-streams-klaxit-rust-log-pipeline/)      | High-throughput log ingestion / consumer group |
-| [3.C46 Learning.com 退場](/backend/03-message-queue/cases/redis-streams-learning-com-event-source-retreat/) | （反例）長期事件儲存壓垮 Redis                 |
+| [3.C46 Learning.com 退場](/backend/03-message-queue/cases/redis-streams-learning-com-event-source-retreat/) | （反例）長期事件儲存因成本與延遲退場           |
 | [3.C47 PHP + S3 hybrid](/backend/03-message-queue/cases/redis-streams-mateusz-php-microservices/)           | Payload 大小限制 / hybrid storage              |
 
 ### 跨 vendor 對照

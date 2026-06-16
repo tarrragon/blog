@@ -54,7 +54,7 @@ q-stream   stream   true     rabbit@<node>       [rabbit@<node>]
 
 這個限制反映設計意圖：quorum 與 stream 存在的理由是 *資料安全*、transient 模式與該目標矛盾、所以從宣告層就封死。Classic queue 保留 transient 選項、是因為它要同時服務「臨時隊列」與「持久隊列」兩種場景。
 
-第二、**quorum 與 stream 有 leader / members、classic 沒有**。Classic queue 的訊息只存在宣告它的節點上（mirrored policy 另算）；quorum 與 stream 天生是 *cluster-aware* 的 replicated 結構、leader 處理讀寫、members 列出 replica 所在節點。單節點環境下 members 只有一個、但欄位本身揭露了複製拓樸的存在。
+第二、**quorum 與 stream 有 leader / members、classic 沒有**。Classic queue 的訊息只存在宣告它的節點上（mirrored policy 另算）；quorum 與 stream 在設計上就是 *cluster-aware* 的 replicated 結構、leader 處理讀寫、members 列出 replica 所在節點。單節點環境下 members 只有一個、但欄位本身揭露了複製拓樸的存在。
 
 Stream 的 retention 與 segment 參數在宣告時設定、宣告後可查：
 
@@ -181,7 +181,7 @@ throughput 排序大致是 stream > classic ≈ quorum（quorum 因 Raft round-t
 1. **新 queue 先建、binding 並存**：用新 routing key 或新 queue 名建立 quorum queue、舊 classic queue 暫不刪。
 2. **consumer 先切、publisher 後切**：先讓 consumer 同時消費新舊兩個 queue、確認新 queue 路徑正常、再把 publisher 切到只發新 queue。順序顛倒（publisher 先切）會讓舊 queue 的 in-flight 訊息沒人消費。
 3. **排空舊 queue 再刪**：publisher 切換後、等舊 classic queue `messages` 歸零（用 `list_queues name messages` 確認）、才刪除舊 queue。
-4. **依賴 idempotency 兜底**：遷移窗口內訊息可能重複投遞、consumer 端的 [idempotency](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 是最後一道防線、不要假設遷移零重複。
+4. **依賴 idempotency 兜底**：遷移窗口內訊息可能重複投遞、consumer 端的 [idempotency](/backend/knowledge-cards/idempotency/) 是最後一道防線（語義誤配的後果見 [3.C9](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/)）、不要假設遷移零重複。
 5. **用 federation / shovel 做大規模搬移**：跨 cluster 或跨版本場景、用 federation upstream 把舊 cluster 訊息引流到新 cluster、避免一次性硬切（Zalando case 的做法）。
 
 ## 容量與成本規劃

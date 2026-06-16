@@ -99,12 +99,7 @@ nats consumer next ORDERS workers --count 3
 
 **根因**：`ack_wait`（等 ack 的逾時）設得比任務處理時間短。JetStream 以為訊息處理失敗（沒在 ack_wait 內 ack），重送給別人——但其實第一個 worker 還在跑。ML 長尾任務（幾秒到幾分鐘）特別容易踩。
 
-**修法**：
-
-1. `ack_wait` 設成大於任務的 p99 處理時間，留足處理窗口
-2. 長任務用 `in-progress ack`（處理中定期發 working ack 延長 deadline），不必一開始就設超長 ack_wait
-3. 消費端冪等——at-least-once 本來就可能重送，重複執行不該產生重複副作用（見 [6.12 idempotency](/backend/06-reliability/idempotency-replay/)）
-4. 監控 redelivery 次數，異常高代表 ack_wait 太短或處理卡住
+**修法（本文層級的判讀）**：ack_wait 必須涵蓋任務的 p99 處理時間，否則長任務會在處理中被重送。設值方法（量測 p99、長任務用 in-progress ack 延長 deadline、消費端冪等兜底）與實機重現（AckWait 設 1s 觀察 tries 1→2、Redelivered 計數）在 [JetStream 設計與 supercluster/leaf node](/backend/03-message-queue/vendors/nats/jetstream-supercluster-design/) 的故障演練有完整步驟，採用 JetStream 後依該篇落地。
 
 ### Case 4：retention 選 workqueue 但想多 consumer fanout
 

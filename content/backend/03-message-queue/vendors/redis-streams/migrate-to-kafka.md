@@ -46,7 +46,7 @@ Arcjet 的判讀對遷移方向的啟示：當 workload 是低延遲、資料量
 
 決定遷移的依據是 Redis Streams 的三個能力邊界被實際 workload 突破：retention 需求超出 RAM 的成本曲線、需要長期 replay、consumer group 或 partition 規模超出單一 Redis 行程。三個訊號中任一個被觸發、且自建工具補不回來時，遷去 Kafka 才划算。
 
-第一個訊號是 retention 超出 RAM 的成本翻轉。Redis Streams 的資料活在記憶體，保留越久、stream 越長、佔的 RAM 越多，而 RAM 是 Redis 叢集裡最貴的資源。當 retention 需求從「幾小時的緩衝」長到「數天到數週的事件保留」，把這些資料留在 RAM 的成本會快速超過 Kafka 把同樣資料留在 broker 磁碟（甚至 tiered storage 到 S3）的成本。[Learning.com 退場案例](/backend/03-message-queue/cases/redis-streams-learning-com-event-source-retreat/)就是這條線被突破的反例 — 把 Redis Streams 當長期事件儲存，最終壓垮 Redis。成本曲線翻轉是最常見、也最該觸發遷移的訊號。
+第一個訊號是 retention 超出 RAM 的成本翻轉。Redis Streams 的資料活在記憶體，保留越久、stream 越長、佔的 RAM 越多，而 RAM 是 Redis 叢集裡最貴的資源。當 retention 需求從「幾小時的緩衝」長到「數天到數週的事件保留」，把這些資料留在 RAM 的成本會快速超過 Kafka 把同樣資料留在 broker 磁碟（甚至 tiered storage 到 S3）的成本。[Learning.com 退場案例](/backend/03-message-queue/cases/redis-streams-learning-com-event-source-retreat/)就是這條線被突破的反例 — 把 Redis 當長期事件儲存（Stream 是其中一塊），事件量每週以 GB 成長、AOF fsync 與 EBS I/O 變成 latency 痛點，最終退回 PostgreSQL。成本曲線翻轉是最常見、也最該觸發遷移的訊號。
 
 第二個訊號是需要長期 replay。事件溯源（event sourcing）或合規稽核場景，需要保留並重播數週、數月甚至數年的歷史事件。Redis Streams 的 replay 只能重讀 retention 內還在的資料，而 retention 受 RAM 限制無法拉得很長；Kafka 的磁碟保留加 tiered storage 讓長期 replay 變成 first-class 能力。當 replay 視窗的需求超出 RAM 能承受的 retention，這個訊號成立。
 
