@@ -23,18 +23,26 @@ AWS ElastiCache 是 AWS managed cache 服務、承擔三個責任：託管 Redis
 ## 最短路徑：5 分鐘把 ElastiCache 跑起來
 
 ```bash
-# 1. 建立 Valkey cluster（cluster mode disabled、單 primary + replica）
-# TODO: aws elasticache create-replication-group --replication-group-id demo \
-#   --engine valkey --cache-node-type cache.t4g.micro --num-cache-clusters 2
+# 1. 建立 Valkey replication group（cluster mode disabled、單 primary + 1 replica、Multi-AZ）
+aws elasticache create-replication-group \
+  --replication-group-id demo \
+  --replication-group-description "demo cache" \
+  --engine valkey \
+  --cache-node-type cache.t4g.micro \
+  --num-cache-clusters 2 \
+  --automatic-failover-enabled \
+  --multi-az-enabled
 
-# 2. 取得 endpoint
-# TODO: aws elasticache describe-replication-groups --replication-group-id demo
+# 2. 取得 primary endpoint（建立需數分鐘、status 變 available 才有 endpoint）
+aws elasticache describe-replication-groups \
+  --replication-group-id demo \
+  --query "ReplicationGroups[0].NodeGroups[0].PrimaryEndpoint.Address" --output text
 
-# 3. 用 redis-cli 連線（從 VPC 內 EC2 / Lambda）
-# TODO: redis-cli -h <endpoint> -p 6379
+# 3. 從 VPC 內（EC2 / Lambda）用 redis-cli 連線（ElastiCache 只在 VPC 內可達）
+redis-cli -h <primary-endpoint> -p 6379 PING   # → PONG
 ```
 
-最短路徑驗證 cluster 起來、能讀寫。實際 production 需要評估 cluster mode、節點大小、replica 數、AZ 分布。
+指令依 [AWS ElastiCache CLI 官方文件](https://docs.aws.amazon.com/cli/latest/reference/elasticache/)、最後檢查日 2026-06-16（managed 服務需 AWS 帳號與 VPC、本機無法 docker 驗證、引數以官方為準）。ElastiCache 端點只在 VPC 內可達、不對公網開放。實際 production 需要評估 cluster mode、節點大小、replica 數、AZ 分布。
 
 ## 日常操作與決策形狀
 
@@ -144,8 +152,10 @@ AWS ElastiCache 是 AWS managed cache 服務、承擔三個責任：託管 Redis
 操作原則：先確認 VPC + security group + subnet group 配置正確。
 
 ```bash
-# TODO: aws elasticache describe-replication-groups --replication-group-id <id>
-# TODO: 從 VPC 內測試 redis-cli -h <endpoint> ping
+aws elasticache describe-replication-groups --replication-group-id <id> \
+  --query "ReplicationGroups[0].Status"
+# 從 VPC 內 EC2 測試連通性
+redis-cli -h <primary-endpoint> -p 6379 PING
 ```
 
 判讀路徑：security group 沒開 6379 → VPC peering 不通 → DNS 解析失敗。
@@ -155,7 +165,8 @@ AWS ElastiCache 是 AWS managed cache 服務、承擔三個責任：託管 Redis
 操作原則：failover 期間 client 重連需要時間、確認 client 有 reconnect 邏輯。
 
 ```bash
-# TODO: aws elasticache describe-events --source-identifier <id>
+aws elasticache describe-events --source-identifier <id> --source-type replication-group
+# 看 failover 開始 / 完成事件、對照 client 重連時間軸
 ```
 
 ### Replication lag 高
