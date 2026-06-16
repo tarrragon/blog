@@ -33,13 +33,14 @@ tags: ["backend", "message-queue", "vendor"]
 
 <!-- TODO(merge): main 與 feat/backend_03 worktree 並行開發 03。feat/backend_03 深化 6 個 vendor 的 per-vendor _index.md overview；main（本表 + RabbitMQ deep article）寫 deep article。合併時須對齊本覆蓋表、並確認 deep article 與對方 overview 深化無重複。 -->
 
-| Vendor                | Deep article                                                                                                            | Migration playbook                                                     |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [Kafka](kafka/)       | —                                                                                                                       | [↔ NATS](kafka/migrate-from-to-nats/) / [→ MSK](kafka/migrate-to-msk/) |
-| [RabbitMQ](rabbitmq/) | [dlq-retry-escalation](rabbitmq/dlq-retry-escalation/) / [quorum-vs-mirrored-queue](rabbitmq/quorum-vs-mirrored-queue/) | —                                                                      |
-| [NATS](nats/)         | [jetstream-durability-consumer](nats/jetstream-durability-consumer/)                                                    | —                                                                      |
+| Vendor                          | Deep article                                                                                                            | Migration playbook                                                     |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [Kafka](kafka/)                 | —                                                                                                                       | [↔ NATS](kafka/migrate-from-to-nats/) / [→ MSK](kafka/migrate-to-msk/) |
+| [RabbitMQ](rabbitmq/)           | [dlq-retry-escalation](rabbitmq/dlq-retry-escalation/) / [quorum-vs-mirrored-queue](rabbitmq/quorum-vs-mirrored-queue/) | —                                                                      |
+| [NATS](nats/)                   | [jetstream-durability-consumer](nats/jetstream-durability-consumer/)                                                    | —                                                                      |
+| [Redis Streams](redis-streams/) | [consumer-group-pel-recovery](redis-streams/consumer-group-pel-recovery/)                                               | —                                                                      |
 
-其他 T1 vendor（Redis Streams / AWS SQS / Google Pub/Sub）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+其他 T1 vendor（AWS SQS / Google Pub/Sub）的 deep article 尚未開始（兩者為 managed SaaS、本機無法 docker 驗證、待以官方文件 + case 補）。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 
 ## 服務頁撰寫欄位
 
