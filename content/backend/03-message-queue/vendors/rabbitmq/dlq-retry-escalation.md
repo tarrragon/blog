@@ -44,9 +44,9 @@ rabbitmqadmin declare binding source=dlx destination=dlq routing_key=app.work
 rabbitmqadmin declare queue name=app.work \
   arguments='{"x-message-ttl":2000,"x-dead-letter-exchange":"dlx","x-dead-letter-routing-key":"app.work"}'
 
-# 驗證：發一則、等 TTL 到期、它從 app.work 搬到 dlq
+# 驗證：發一則、等 2s TTL 到期、它從 app.work 搬到 dlq
 rabbitmqadmin publish routing_key=app.work payload="poison-msg"
-# 4 秒後：
+# 等 TTL（2s）過期後（實測等 4s 確保）：
 rabbitmqctl list_queues name messages
 # app.work   0     ← TTL 到期被搬走
 # dlq        1     ← 落到 DLQ（訊息帶 x-death header、reason=expired）

@@ -12,9 +12,9 @@ tags: ["backend", "message-queue", "nats", "jetstream", "consumer", "deep-articl
 
 ## fire-and-forget 在 rolling deploy 那一刻掉訊息
 
-Core NATS 快得驚人，因為它什麼都不記——一則訊息發布出去，當下有訂閱者就送達、沒有就丟棄。沒有儲存、沒有 ack、沒有重送。這對「即時但可丟」的場景（metrics、presence、即時通知）完美：訂閱者暫時離線錯過幾則無所謂，下一則馬上來。
+Core NATS 的低延遲來自它什麼都不記——一則訊息發布出去，當下有訂閱者就送達、沒有就丟棄。沒有儲存、沒有 ack、沒有重送。這適合「即時但可丟」的場景（metrics、presence、即時通知）：訂閱者暫時離線錯過幾則無所謂，下一則馬上來。
 
-但這個設計有一條清楚的邊界。[Clarifai 用 NATS 跑 ML 模型訓練的非同步任務](/backend/03-message-queue/cases/nats-clarifai-async-task-queue/)，任務從幾秒到幾分鐘，原本同步呼叫——結果每次 rolling deployment（pod 輪流重啟）就掉訊息：訊息發布的瞬間目標 worker 正在重啟，core NATS 找不到訂閱者就丟了。他們的解法是改用 NATS（Streaming / JetStream）的 **at-least-once delivery + redelivery + queue group**，每日 100k+ 訊息做到 100% 不丟。這個案例揭露的邊界是——**ML 長尾任務不能容忍 rolling deploy 掉訊息，core NATS 的 fire-and-forget 到此為止，要跨進 JetStream。**
+但這個設計有一條清楚的邊界。[Clarifai 用 NATS 跑 ML 模型訓練的非同步任務](/backend/03-message-queue/cases/nats-clarifai-async-task-queue/)，任務從幾秒到幾分鐘，原本同步呼叫——結果每次 rolling deployment（pod 輪流重啟）就掉訊息：訊息發布的瞬間目標 worker 正在重啟，core NATS 找不到訂閱者就丟了。他們的解法是改用 NATS（當時是 NATS Streaming、JetStream 的前身）的 **at-least-once delivery + redelivery + queue group**，每日 100k+ 訊息、達成 100% uptime。這個案例揭露的邊界是——**ML 長尾任務不能容忍 rolling deploy 掉訊息，core NATS 的 fire-and-forget 到此為止，要跨進 JetStream。**
 
 JetStream 在 core NATS 之上加了一層持久化的 stream + 可重送的 consumer。本文處理這條邊界：什麼時候 core 夠用、什麼時候要 JetStream、跨過去的 consumer 模型怎麼設才不會丟訊息或重投風暴。
 

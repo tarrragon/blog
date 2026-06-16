@@ -39,12 +39,12 @@ rabbitmqctl list_queues name type durable
 # q.quorum    quorum    true    ← 永遠 durable、Raft 複製
 # q.classic   classic   true
 
-# quorum queue 的 Raft 成員
+# quorum queue 的 Raft 成員（多節點 cluster 示意輸出）
 rabbitmqctl list_queues name type members
 # q.quorum    quorum    [rabbit@node-a, rabbit@node-b, rabbit@node-c]
 ```
 
-實機驗證於 rabbitmq:3-management（最後檢查日 2026-06-16）：quorum queue 回報 `type=quorum`、永遠 `durable=true`、`members` 列出 Raft group 成員（單節點時只有自己）。
+實機驗證於 rabbitmq:3-management 單節點（最後檢查日 2026-06-16）：quorum queue 回報 `type=quorum`、永遠 `durable=true`；單節點下 `members` 只列出自己，上面的三節點輸出是多節點 cluster 的示意。
 
 ## 配置：mirrored → quorum 的遷移
 
@@ -149,16 +149,16 @@ rabbitmqadmin declare queue name=orders.v2 \
 
 quorum vs mirrored 的容量判讀：
 
-| 維度                | classic mirrored queue     | quorum queue              |
-| ------------------- | -------------------------- | ------------------------- |
-| 複製模型            | 全量盡力同步（無共識）     | Raft 多數共識             |
-| failover 訊息保證   | 可能丟未同步完的訊息       | committed（多數持久）不丟 |
-| 一致性傾向          | AP 盡力                    | CP（少數分區拒寫）        |
-| 複製網路成本        | 隨 mirror 數線性、易被低估 | 可預測（多數確認）        |
-| per-queue 開銷      | 低                         | 高（每個是 Raft group）   |
-| 持久性              | 可 transient               | 永遠 durable              |
-| 原生 delivery-limit | 無（靠 x-death 手動）      | 有（x-delivery-limit）    |
-| 官方狀態            | 已棄用（4.0 移除）         | 推薦的 HA 隊列            |
+| 維度                | classic mirrored queue                      | quorum queue              |
+| ------------------- | ------------------------------------------- | ------------------------- |
+| 複製模型            | 全量盡力同步（無共識）                      | Raft 多數共識             |
+| failover 訊息保證   | 可能丟未同步完的訊息                        | committed（多數持久）不丟 |
+| 一致性傾向          | AP 盡力                                     | CP（少數分區拒寫）        |
+| 複製網路成本        | 隨 mirror 數線性、易被低估                  | 可預測（多數確認）        |
+| per-queue 開銷      | 低                                          | 高（每個是 Raft group）   |
+| 持久性              | 可 transient                                | 永遠 durable              |
+| 原生 delivery-limit | 無（靠 x-death 手動）                       | 有（x-delivery-limit）    |
+| 官方狀態            | 已棄用（依官方：3.13 deprecated、4.0 移除） | 推薦的 HA 隊列            |
 
 撞牆後的路由判斷：
 
