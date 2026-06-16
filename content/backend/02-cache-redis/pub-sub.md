@@ -6,11 +6,11 @@ weight: 10
 tags: ["backend", "cache", "redis", "pub-sub"]
 ---
 
-Redis Pub/Sub 的核心責任是把一則訊息即時推送給當下所有訂閱者，讓跨節點的狀態變更可以在同一瞬間擴散。它承擔的是「現在發生的事，立刻讓所有人知道」，正式的可靠投遞與重播責任由 [message queue](/backend/knowledge-cards/queue) 與 [Redis Streams](/backend/03-message-queue/) 承擔。把這條邊界放在最前面，是因為 Pub/Sub 的多數事故都來自把它當成可靠訊息系統使用。
+Redis [Pub/Sub](/backend/knowledge-cards/pub-sub/) 的核心責任是把一則訊息即時推送給當下所有訂閱者，讓跨節點的狀態變更可以在同一瞬間擴散。它承擔的是「現在發生的事，立刻讓所有人知道」，正式的可靠投遞與重播責任由 [message queue](/backend/knowledge-cards/queue) 與 [Redis Streams](/backend/03-message-queue/) 承擔。把這條邊界放在最前面，是因為 Pub/Sub 的多數事故都來自把它當成可靠訊息系統使用。
 
 ## at-most-once：訊息只送給此刻在線的訂閱者
 
-訊息投遞語意有三種：at-most-once（最多送一次、可能漏）、at-least-once（至少送一次、可能重複）、exactly-once（剛好一次、最難實作）。Pub/Sub 採 [at-most-once](/backend/knowledge-cards/duplicate-delivery/)，用「可能漏」換取低延遲與無狀態，後兩種語意由 Streams 或 message queue 承擔。具體來說：`PUBLISH` 把訊息送給發布當下已經 `SUBSCRIBE` 該 channel 的連線，沒有訂閱者就直接丟棄，訊息不寫入任何持久結構。訂閱者離線、重連、或處理速度跟不上時，那段時間的訊息不會補送。
+訊息[投遞語意](/backend/knowledge-cards/delivery-semantics/)有三種：at-most-once（最多送一次、可能漏）、at-least-once（至少送一次、可能重複）、[exactly-once](/backend/knowledge-cards/exactly-once/)（剛好一次、最難實作）。Pub/Sub 採 [at-most-once](/backend/knowledge-cards/duplicate-delivery/)，用「可能漏」換取低延遲與無狀態，後兩種語意由 Streams 或 message queue 承擔。具體來說：`PUBLISH` 把訊息送給發布當下已經 `SUBSCRIBE` 該 channel 的連線，沒有訂閱者就直接丟棄，訊息不寫入任何持久結構。訂閱者離線、重連、或處理速度跟不上時，那段時間的訊息不會補送。
 
 這個語意決定了 Pub/Sub 適合承擔什麼。可以接受「偶爾漏一則、下一則狀態會蓋過來」的場景，Pub/Sub 的低延遲與簡單模型是優勢；要求「每一則都不能掉」的場景，例如訂單事件、扣款通知、稽核軌跡，這些責任屬於 durable queue，不該放在 Pub/Sub。
 

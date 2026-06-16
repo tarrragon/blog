@@ -28,9 +28,9 @@ tags: ["backend", "cache"]
 
 第二層看失效面，檢查 [cache invalidation](/backend/knowledge-cards/cache-invalidation/)、[ttl](/backend/knowledge-cards/ttl/) 與 [eviction](/backend/knowledge-cards/eviction/) 規則是否一致。失效面的弱點是「stale 窗口可被預測或延長」：若失效只靠廣播通知而沒有 TTL 兜底，攻擊者讓廣播漏送就能讓某節點長期持有舊值；若 TTL 設得過長，污染或過期資料的影響期就被拉長。
 
-第三層看放大面，檢查 [cache stampede](/backend/knowledge-cards/cache-stampede/)、[thundering herd](/backend/knowledge-cards/thundering-herd/) 與回源壓力保護。放大面的攻擊是 cache penetration：攻擊者枚舉大量必定不存在的 key（不連續的 id、構造的非法 slug），這些查詢全部 miss 並穿透到資料庫，把快取的保護作用繞過、直接打垮 origin。防線是對不存在的 key 也做短期 negative cache（把「查無此 key」這個結果也快取一小段時間，擋掉重複穿透），以及對回源路徑加 [rate limit](/backend/knowledge-cards/rate-limit/) 與單飛（single-flight，讓同一 key 的並發回源只有一個真正打到資料庫、其餘等結果）保護。negative cache 自身有代價：真實資料建立後要等 negative 項過期才會被命中，TTL 要夠短，避免新上架資料被「查無」結果短暫遮擋。
+第三層看放大面，檢查 [cache stampede](/backend/knowledge-cards/cache-stampede/)、[thundering herd](/backend/knowledge-cards/thundering-herd/) 與回源壓力保護。放大面的攻擊是 [cache penetration](/backend/knowledge-cards/cache-penetration/)：攻擊者枚舉大量必定不存在的 key（不連續的 id、構造的非法 slug），這些查詢全部 miss 並穿透到資料庫，把快取的保護作用繞過、直接打垮 origin。防線是對不存在的 key 也做短期 [negative cache](/backend/knowledge-cards/negative-cache/)（把「查無此 key」這個結果也快取一小段時間，擋掉重複穿透），以及對回源路徑加 [rate limit](/backend/knowledge-cards/rate-limit/) 與單飛（[single-flight](/backend/knowledge-cards/singleflight/)，讓同一 key 的並發回源只有一個真正打到資料庫、其餘等結果）保護。negative cache 自身有代價：真實資料建立後要等 negative 項過期才會被命中，TTL 要夠短，避免新上架資料被「查無」結果短暫遮擋。
 
-第四層看污染面，檢查 key 設計、租戶隔離與欄位遮罩是否防止快取污染與越權讀取。污染面最常見的弱點是 key 命名沒有把租戶或權限維度編進去：若兩個租戶的資料共用同一個快取 key，一個租戶就能讀到另一個租戶的快取值。key 設計要讓隔離維度成為 key 的一部分，而非依賴應用層在讀取後才過濾。
+第四層看污染面，檢查 key 設計、[租戶隔離](/backend/knowledge-cards/tenant-boundary/)與欄位遮罩是否防止快取污染與越權讀取。污染面最常見的弱點是 key 命名沒有把租戶或權限維度編進去：若兩個租戶的資料共用同一個快取 key，一個租戶就能讀到另一個租戶的快取值。key 設計要讓隔離維度成為 key 的一部分，而非依賴應用層在讀取後才過濾。
 
 第五層看推斷面，檢查 cache 命中與否是否會透過回應時間洩漏資訊。cache hit 與 miss 的延遲差異本身是一個 side-channel：攻擊者用一批查詢的回應時間分布，可以推斷某個帳號、商品或 slug 是否存在，即使回應內容本身有做存在性遮罩。對帳號存在性、未上架商品這類敏感判斷，要讓 hit 與 miss 的可觀察延遲一致（例如 miss 也走一段固定延遲），或把存在性判斷的快取與對外查詢路徑分離。這層在敏感資料才需要盤點，一般可重建副本不受此威脅。
 
