@@ -30,13 +30,14 @@ tags: ["backend", "cache", "vendor"]
 
 每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「→ X」代表遷移到 X 的 playbook、其他形式代表 same-vendor 的 topology / version / config 變動。
 
-| Vendor          | Deep article                                                                                                                                                                                                                                                                                      | Migration playbook                                                                          |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| [Redis](redis/) | [memory-eviction-tuning](redis/memory-eviction-tuning/) / [persistence-fork-latency](redis/persistence-fork-latency/) / [sentinel-ha-failover](redis/sentinel-ha-failover/) / [connection-pipeline-latency](redis/connection-pipeline-latency/) / [cluster-resharding](redis/cluster-resharding/) | [→ DragonflyDB](redis/migrate-to-dragonflydb/) / [→ Memcached](redis/migrate-to-memcached/) |
+| Vendor            | Deep article                                                                                                                                                                                                                                                                                      | Migration playbook                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [Redis](redis/)   | [memory-eviction-tuning](redis/memory-eviction-tuning/) / [persistence-fork-latency](redis/persistence-fork-latency/) / [sentinel-ha-failover](redis/sentinel-ha-failover/) / [connection-pipeline-latency](redis/connection-pipeline-latency/) / [cluster-resharding](redis/cluster-resharding/) | [→ DragonflyDB](redis/migrate-to-dragonflydb/) / [→ Memcached](redis/migrate-to-memcached/) |
+| [Valkey](valkey/) | [redis-compatibility-and-io-threads](valkey/redis-compatibility-and-io-threads/)                                                                                                                                                                                                                  | —                                                                                           |
 
 備註：[cluster-resharding](redis/cluster-resharding/) 是同 cluster 的 topology 重劃（5 type migration 漏類驗證、形式上歸在 deep article 欄、不是跨 vendor 遷移）。
 
-其他 T1 vendor（Valkey / Memcached / DragonflyDB / AWS ElastiCache）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+其他 T1 vendor（Memcached / DragonflyDB / AWS ElastiCache）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 
 ## 服務頁撰寫欄位
 
@@ -72,17 +73,17 @@ tags: ["backend", "cache", "vendor"]
 
 橫向議題在不同 vendor 用不同 mechanism 達成。本表列同一議題在 5 個 vendor 的對應位置、確保大綱不缺漏、讀者跨 vendor 查找時有索引。
 
-| 議題              | Redis                                  | Valkey                     | Memcached                    | DragonflyDB                            | AWS ElastiCache                                    |
-| ----------------- | -------------------------------------- | -------------------------- | ---------------------------- | -------------------------------------- | -------------------------------------------------- |
-| Redis API 相容度  | 原生（最高）                           | 100%（fork 7.2.4）         | 不相容（純 KV）              | 高（少數 commands 不支援）             | Engine 決定（Redis/Valkey 100%、Memcached 不適用） |
-| Data types        | 6 大 + Stream / Geo                    | 跟 Redis 一致              | 純 string KV                 | 跟 Redis 一致                          | 跟 engine 一致                                     |
-| 多核 / 多執行緒   | I/O threads（main 仍單線）             | 跟 Redis 一致              | 原生多執行緒                 | 完全 shared-nothing 多核               | 跟 engine 一致                                     |
-| Cluster mode      | Cluster + Sentinel                     | 跟 Redis 一致              | Client-side ketama hashing   | Single instance scale-up（無 Cluster） | Cluster mode enabled/disabled                      |
-| 持久化策略        | AOF + RDB                              | 跟 Redis 一致              | 無持久化                     | Fork-less snapshot                     | Automatic + manual snapshot                        |
-| 跨 AZ / 多 region | Sentinel + replication / Cluster geo   | 跟 Redis 一致              | 需 Mcrouter / EVCache 等代理 | Replica 模式                           | Multi-AZ + Global Datastore                        |
-| 授權模式          | RSALv2 / SSPL（非 OSI）                | BSD 3-clause（OSI）        | BSD（OSI）                   | BSL（4 年後轉 Apache 2.0）             | AWS managed pricing                                |
-| Managed level     | 自管                                   | 自管 / managed Valkey 可選 | 自管                         | 自管（無 Dragonfly managed）           | Fully managed                                      |
-| 主討論案例        | 2.C1-C8（跨 Meta / Netflix / Shopify） | 待補（fork 較新）          | 2.C4 Mcrouter / 2.C5 EVCache | 待補（採用較新）                       | 2.C5 EVCache / 2.C8 Shopify                        |
+| 議題              | Redis                                  | Valkey                                          | Memcached                    | DragonflyDB                            | AWS ElastiCache                                    |
+| ----------------- | -------------------------------------- | ----------------------------------------------- | ---------------------------- | -------------------------------------- | -------------------------------------------------- |
+| Redis API 相容度  | 原生（最高）                           | 100%（fork 7.2.4）                              | 不相容（純 KV）              | 高（少數 commands 不支援）             | Engine 決定（Redis/Valkey 100%、Memcached 不適用） |
+| Data types        | 6 大 + Stream / Geo                    | 跟 Redis 一致                                   | 純 string KV                 | 跟 Redis 一致                          | 跟 engine 一致                                     |
+| 多核 / 多執行緒   | I/O threads（main 仍單線）             | Valkey 8 強化 async I/O threading（超出 Redis） | 原生多執行緒                 | 完全 shared-nothing 多核               | 跟 engine 一致                                     |
+| Cluster mode      | Cluster + Sentinel                     | 跟 Redis 一致                                   | Client-side ketama hashing   | Single instance scale-up（無 Cluster） | Cluster mode enabled/disabled                      |
+| 持久化策略        | AOF + RDB                              | 跟 Redis 一致                                   | 無持久化                     | Fork-less snapshot                     | Automatic + manual snapshot                        |
+| 跨 AZ / 多 region | Sentinel + replication / Cluster geo   | 跟 Redis 一致                                   | 需 Mcrouter / EVCache 等代理 | Replica 模式                           | Multi-AZ + Global Datastore                        |
+| 授權模式          | RSALv2 / SSPL（非 OSI）                | BSD 3-clause（OSI）                             | BSD（OSI）                   | BSL（4 年後轉 Apache 2.0）             | AWS managed pricing                                |
+| Managed level     | 自管                                   | 自管 / managed Valkey 可選                      | 自管                         | 自管（無 Dragonfly managed）           | Fully managed                                      |
+| 主討論案例        | 2.C1-C8（跨 Meta / Netflix / Shopify） | 待補（fork 較新）                               | 2.C4 Mcrouter / 2.C5 EVCache | 待補（採用較新）                       | 2.C5 EVCache / 2.C8 Shopify                        |
 
 對照表的用途有三：
 
@@ -106,7 +107,7 @@ Data types 影響可用場景。**Redis / Valkey** 提供 string / hash / list /
 
 ### 多核 / 多執行緒
 
-多核利用度差異大。**Redis** 主執行緒 + I/O threads（Redis 6+）— main thread 仍處理所有 command；**Valkey** 跟 Redis 一致；**Memcached** 原生 multi-threaded（`-t` 指定 thread 數）— 適合多核機器；**DragonflyDB** 完全 shared-nothing 多核 — 宣稱比 Redis 高 25× throughput；**ElastiCache** 取決於 engine、不能改變。
+多核利用度差異大。**Redis** 主執行緒 + I/O threads（Redis 6+）— main thread 仍處理所有 command；**Valkey** 8.x 強化 async I/O threading、把更多 I/O 路徑非同步化、多核吞吐超出 Redis（這是 Valkey fork 後第一個實質技術分歧、見 [Valkey deep article](/backend/02-cache-redis/vendors/valkey/redis-compatibility-and-io-threads/)）；**Memcached** 原生 multi-threaded（`-t` 指定 thread 數）— 適合多核機器；**DragonflyDB** 完全 shared-nothing 多核 — 宣稱比 Redis 高 25× throughput；**ElastiCache** 取決於 engine、不能改變。
 
 選型判讀：單 instance 想充分利用 16+ core → DragonflyDB / Memcached；4-8 core 中等場景 → Redis 加 I/O threads 已夠；需要 Redis API + 高 throughput → DragonflyDB 是 sweet spot。
 
