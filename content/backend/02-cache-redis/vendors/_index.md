@@ -37,10 +37,13 @@ tags: ["backend", "cache", "vendor"]
 | [Memcached](memcached/)             | [slab-allocator-memory-economics](memcached/slab-allocator-memory-economics/)                                                                                                                                                                                                                     | —                                                                                           |
 | [DragonflyDB](dragonflydb/)         | [shared-nothing-multicore-architecture](dragonflydb/shared-nothing-multicore-architecture/)                                                                                                                                                                                                       | —                                                                                           |
 | [AWS ElastiCache](aws-elasticache/) | [managed-responsibility-boundary](aws-elasticache/managed-responsibility-boundary/)                                                                                                                                                                                                               | —                                                                                           |
+| [KeyDB](keydb/)                     | overview（multi-threaded Redis fork）                                                                                                                                                                                                                                                             | —                                                                                           |
+| [Momento](momento/)                 | overview（serverless cache）                                                                                                                                                                                                                                                                      | —                                                                                           |
+| [Caffeine](caffeine/)               | overview（process-local cache）                                                                                                                                                                                                                                                                   | —                                                                                           |
 
 備註：[cluster-resharding](redis/cluster-resharding/) 是同 cluster 的 topology 重劃（5 type migration 漏類驗證、形式上歸在 deep article 欄、不是跨 vendor 遷移）。
 
-5 個 T1 vendor 各至少 1 篇 deep article（批次 C1-C5、2026-06-16）：Redis 4 篇（記憶體 / 持久化 / Sentinel / 連線）+ Valkey / Memcached / DragonflyDB / ElastiCache 各 1 篇。下一輪候選見各 vendor `_index.md` 「進階主題」段尚未深入的話題（Redis distributed lock / modules、Memcached CAS、ElastiCache Global Datastore DR 演練）跟撰寫批次表的 C4（KeyDB / Momento / Caffeine local cache）。
+進度（2026-06-16）：5 個 T1 vendor 各至少 1 篇 deep article（批次 C1-C5）：Redis 4 篇（記憶體 / 持久化 / Sentinel / 連線）+ Valkey / Memcached / DragonflyDB / ElastiCache 各 1 篇。批次 C4 補齊 cache 四層覆蓋缺口的 3 個 vendor overview：KeyDB（multi-threaded fork）/ Momento（serverless）/ Caffeine（process-local）。下一輪候選：C4 三個新 vendor 的 deep article、各 T1 vendor `_index.md` 「進階主題」段尚未深入的話題（Redis distributed lock / modules、Memcached CAS、ElastiCache Global Datastore DR 演練）、各 vendor 的 migration playbook。
 
 ## 服務頁撰寫欄位
 
@@ -146,24 +149,26 @@ HA 拓樸三類。**Redis** Sentinel + replication（單 region 多 AZ）/ Clust
 
 ## 撰寫批次
 
-| 批次 | 服務頁                        | 撰寫目的                                                   |
-| ---- | ----------------------------- | ---------------------------------------------------------- |
-| C1   | Redis / Valkey                | 建立 Redis baseline、開源治理與相容性判準                  |
-| C2   | Memcached                     | 建立 simple KV cache、低語意副本與水平擴張邊界             |
-| C3   | DragonflyDB / AWS ElastiCache | 建立高吞吐 Redis-compatible 與 managed cache 的操作取捨    |
-| C4   | KeyDB / Momento / Caffeine    | 補 multi-threaded fork、serverless cache、local cache 對照 |
+| 批次 | 服務頁                        | 撰寫目的                                                                               |
+| ---- | ----------------------------- | -------------------------------------------------------------------------------------- |
+| C1   | Redis / Valkey                | 建立 Redis baseline、開源治理與相容性判準                                              |
+| C2   | Memcached                     | 建立 simple KV cache、低語意副本與水平擴張邊界                                         |
+| C3   | DragonflyDB / AWS ElastiCache | 建立高吞吐 Redis-compatible 與 managed cache 的操作取捨                                |
+| C4   | KeyDB / Momento / Caffeine    | 補 multi-threaded fork、serverless cache、local cache 對照（overview 完成 2026-06-16） |
 
 ## 後續候選
 
-| 類型                | 候選服務                                        | 寫作重點                                           |
-| ------------------- | ----------------------------------------------- | -------------------------------------------------- |
-| Redis fork / compat | KeyDB、Garnet                                   | 相容性、multi-threading、client behavior           |
-| Managed cache       | Momento、Azure Cache for Redis、GCP Memorystore | serverless cost、managed SLA、vendor boundary      |
-| Distributed cache   | Hazelcast、Aerospike                            | cluster memory、near-cache、durability boundary    |
-| Local cache         | Caffeine、Guava Cache                           | process-local cache、invalidation、memory pressure |
-| HTTP / edge cache   | Varnish、Cloudflare Cache、Fastly、CloudFront   | edge TTL、origin protection、purge workflow        |
+C4 已建立 [KeyDB](keydb/) / [Momento](momento/) / [Caffeine](caffeine/) overview。剩餘候選：
 
-主流覆蓋檢查的重點是把 cache 分成 process-local、service-local、distributed 與 edge 四層。Redis 系列解 service-local / distributed data structure cache；Caffeine / Guava 解 process-local；Varnish、Cloudflare、Fastly、CloudFront 解 HTTP / edge cache；Hazelcast、Aerospike 解更重的 distributed data / cache 邊界。
+| 類型                | 候選服務                                      | 寫作重點                                           |
+| ------------------- | --------------------------------------------- | -------------------------------------------------- |
+| Redis fork / compat | Garnet（Microsoft）                           | 相容性、multi-threading、client behavior           |
+| Managed cache       | Azure Cache for Redis、GCP Memorystore        | managed SLA、vendor boundary                       |
+| Distributed cache   | Hazelcast、Aerospike                          | cluster memory、near-cache、durability boundary    |
+| Local cache         | Guava Cache、Ehcache（off-heap）              | process-local cache、invalidation、memory pressure |
+| HTTP / edge cache   | Varnish、Cloudflare Cache、Fastly、CloudFront | edge TTL、origin protection、purge workflow        |
+
+主流覆蓋檢查的重點是把 cache 分成 process-local、service-local、distributed 與 edge 四層。Redis 系列 / KeyDB / DragonflyDB 解 service-local / distributed data structure cache；[Caffeine](caffeine/) 解 process-local、[Momento](momento/) 解 serverless cache；Varnish、Cloudflare、Fastly、CloudFront 解 HTTP / edge cache；Hazelcast、Aerospike 解更重的 distributed data / cache 邊界。
 
 ## 下一步路由
 

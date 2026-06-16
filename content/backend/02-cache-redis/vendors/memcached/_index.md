@@ -162,7 +162,7 @@ printf 'stats\r\nquit\r\n' | nc localhost 11211 | grep -E "get_hits|get_misses|e
 | 需要 Pub/Sub / Streams               | Redis / Kafka / NATS                                                                                |
 | 多核高 throughput                    | [DragonflyDB](/backend/02-cache-redis/vendors/dragonflydb/)                                         |
 | AWS managed                          | [AWS ElastiCache for Memcached](/backend/02-cache-redis/vendors/aws-elasticache/)                   |
-| Process-local cache                  | Caffeine / Guava Cache（T4 候選）                                                                   |
+| Process-local cache                  | [Caffeine](/backend/02-cache-redis/vendors/caffeine/) / Guava Cache（JVM 內、無網路）               |
 
 ## 不在本頁內的主題
 

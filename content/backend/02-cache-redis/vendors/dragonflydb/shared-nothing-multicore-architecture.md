@@ -146,7 +146,7 @@ DragonflyDB 的容量判讀，核心在 scale-up 的天花板與多核效率：
 DragonflyDB 的定位是「Redis 相容 + 激進多核」，它在 Redis 相容服務的光譜上有明確座標：
 
 - **跟 [Valkey](/backend/02-cache-redis/vendors/valkey/)**：兩者都打「Redis 相容 + 更好的多核」，但 Valkey 是 fork（同源、最高相容、漸進加 thread），DragonflyDB 是 C++ 重寫（相容核心但架構激進、多核更徹底）。相容度要極致選 Valkey，多核吞吐要極致選 DragonflyDB。
-- **跟 KeyDB / Garnet**：KeyDB 是 Redis 的 multi-threaded fork（[Snap 採用](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/)、Snap 收購後相對停滯）；Garnet 是 Microsoft 的研究型高吞吐 store（生態淺）。DragonflyDB 是這個「高吞吐 Redis 替代」群裡商業化最積極、生態最活躍的。
+- **跟 [KeyDB](/backend/02-cache-redis/vendors/keydb/) / Garnet**：KeyDB 是 Redis 的 multi-threaded fork（[Snap 採用](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/)、Snap 收購後相對停滯）；Garnet 是 Microsoft 的研究型高吞吐 store（生態淺）。DragonflyDB 是這個「高吞吐 Redis 替代」群裡商業化最積極、生態最活躍的。
 - **跟 [Redis Cluster re-sharding](/backend/02-cache-redis/vendors/redis/cluster-resharding/)**：如果你的 Redis Cluster re-sharding 頻繁觸發、運維負擔重，DragonflyDB 的 scale-up 模型可能用單機取代整個 Cluster——這是評估遷移的主要動機。
 - **跟 [Shopify write-through](/backend/02-cache-redis/cases/shopify-write-through-cache-at-scale/)**：write-through 在 DragonflyDB 上行為一致，但單進程多核能承接比單 Redis 進程更大的 throughput，是 read-heavy + write-through 場景的 scale-up 選項。
 

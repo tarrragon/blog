@@ -116,7 +116,7 @@ Redis command 執行至今仍 single-threaded、單實例 command 吞吐受 CPU 
 
 **2. Redis 6.0+ I/O thread**：保留 Redis protocol、I/O 處理 multi-threaded、command 執行仍 single-threaded。提升 read-heavy 場景吞吐、實測倍數依 workload 跟 thread 數而定。適合「主要瓶頸在 I/O syscall 不在 command CPU」的場景、是低改動量的階段性升級、不換 broker。
 
-**3. KeyDB / Dragonfly（multi-threaded fork）**：command 執行也 multi-threaded。對應 [9.C35 Snap KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) — Snap 採用 KeyDB 在 GCP 上替代原生 Redis、9.C35 判讀段提出「單實例 throughput 提升 5-10x」（屬案例 derived 推論、實測倍數依 workload）。適合「單 key 極熱、cluster 切不開、需要單實例多執行緒撐單 partition」的壓力。代價是 vendor lock-in、fork 治理走向不確定（KeyDB 公司被收購後策略未明）。
+**3. [KeyDB](/backend/02-cache-redis/vendors/keydb/) / [Dragonfly](/backend/02-cache-redis/vendors/dragonflydb/)（multi-threaded fork）**：command 執行也 multi-threaded。對應 [9.C35 Snap KeyDB](/backend/09-performance-capacity/cases/snap-gcp-keydb-cross-cloud/) — Snap 採用 KeyDB 在 GCP 上替代原生 Redis、9.C35 判讀段提出「單實例 throughput 提升 5-10x」（屬案例 derived 推論、實測倍數依 workload）。適合「單 key 極熱、cluster 切不開、需要單實例多執行緒撐單 partition」的壓力。代價是 vendor lock-in、fork 治理走向不確定（KeyDB 公司被收購後策略未明）。
 
 **4. Memcached（multi-threaded、功能少）**：純 KV 不支援複雜資料結構（hash / sorted set / stream）、適合「資料形狀單純、要 multi-threaded」的 cache-only 場景。如果 application 不需要 Redis 的進階資料結構、Memcached 通常單實例吞吐更高、運維更簡單。
 

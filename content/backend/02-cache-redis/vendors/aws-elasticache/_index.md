@@ -190,7 +190,7 @@ aws elasticache describe-events --source-identifier <id> --source-type replicati
 | 極端 throughput single instance | [DragonflyDB](/backend/02-cache-redis/vendors/dragonflydb/) self-host                                    |
 | Edge / HTTP cache               | CloudFront / Cloudflare Cache（T4 候選）                                                                 |
 | 不在 AWS 生態                   | GCP Memorystore / Azure Cache for Redis                                                                  |
-| 完全 serverless 計費            | ElastiCache Serverless（同模組內）/ Momento                                                              |
+| 完全 serverless 計費            | ElastiCache Serverless（同模組內）/ [Momento](/backend/02-cache-redis/vendors/momento/)                  |
 
 ## 不在本頁內的主題
 
