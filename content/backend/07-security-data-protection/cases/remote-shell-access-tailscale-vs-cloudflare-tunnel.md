@@ -6,7 +6,9 @@ weight: 11
 tags: ["backend", "security", "case-study", "tailscale", "cloudflare", "remote-access"]
 ---
 
-這篇選型比較的核心情境是**單人自用遠端 shell 存取**：人在外、手機操作家中或辦公室本機的真實終端機（zsh）。兩個候選方案代表兩種根本不同的安全模型——「公開端點 + 多層防護」vs「私有網路 + 端點不存在」。
+本案例屬於 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/) 的選型比較。
+
+選型情境是**單人自用遠端 shell 存取**：人在外、手機操作家中或辦公室本機的真實終端機（zsh）。兩個候選方案代表兩種根本不同的安全模型——「公開端點 + 多層防護」vs「私有網路 + 端點不存在」。
 
 ## 情境約束
 
@@ -19,7 +21,7 @@ tags: ["backend", "security", "case-study", "tailscale", "cloudflare", "remote-a
 
 ### 方案 A：Cloudflare Tunnel + Cloudflare Access
 
-```
+```text
 Flutter app（Face ID）
    │  WSS，帶三組憑證
    ▼
@@ -36,7 +38,7 @@ zsh
 
 ### 方案 B：Tailscale mesh VPN
 
-```
+```text
 Flutter app（Face ID）
    │  WS，帶 ttyd basic auth
    ▼
@@ -51,19 +53,20 @@ zsh
 
 ## 核心選型維度
 
-| 維度 | Cloudflare Tunnel + Access | Tailscale |
-|------|---------------------------|-----------|
-| **網路模型** | 出站連線到 CF 邊緣，產生**公開 URL** | WireGuard mesh VPN，裝置間**私有 IP**，無公開端點 |
-| **攻擊面** | 公開 URL 存在，需層層防護 | 服務端點不存在於公開網路，攻擊者連 IP 都到不了 |
-| **認證層數** | 三層：CF Access + proxy token + ttyd | 兩層：Tailscale 裝置認證 + ttyd |
-| **Go proxy 職責** | 驗 token + 稽核 log + 轉發 | 稽核 log + 轉發（不做認證） |
-| **元件數** | 5（app → CF → CF Access → proxy → ttyd） | 3（app → Tailscale → proxy/ttyd） |
-| **需要自有網域** | 是 | 否（MagicDNS 自動分配） |
-| **啟停行程數** | 3（cloudflared + ttyd + proxy） | 2（ttyd + proxy），Tailscale daemon 常駐 |
-| **憑證包欄位** | 8 欄（含 CF Access 憑證 + proxy token） | ~5 欄（endpoint + ttyd 帳密） |
-| **密鑰管理複雜度** | 高（proxy token 需可插拔後端 keychain/file/env） | 低（僅 ttyd 帳密） |
-| **費用** | 免費（Cloudflare 個人方案） | 免費（Tailscale 個人方案，100 裝置內） |
-| **外部依賴** | Cloudflare 邊緣網路 + CF Access 控制面 | Tailscale 協調伺服器 + DERP relay |
+| 維度                   | Cloudflare Tunnel + Access                       | Tailscale                                                                       |
+| ---------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| **網路模型**           | 出站連線到 CF 邊緣，產生**公開 URL**             | [WireGuard](https://www.wireguard.com/) mesh VPN，裝置間**私有 IP**，無公開端點 |
+| **攻擊面**             | 公開 URL 存在，需層層防護                        | 服務端點不存在於公開網路，攻擊者連 IP 都到不了                                  |
+| **認證層數**           | 三層：CF Access + proxy token + ttyd             | 兩層：Tailscale 裝置認證 + ttyd                                                 |
+| **Go proxy 職責**      | 驗 token + 稽核 log + 轉發                       | 稽核 log + 轉發（不做認證）                                                     |
+| **元件數**             | 5（app → CF → CF Access → proxy → ttyd）         | 3（app → Tailscale → proxy/ttyd）                                               |
+| **需要自有網域**       | 是                                               | 否（MagicDNS 自動分配）                                                         |
+| **啟停行程數**         | 3（cloudflared + ttyd + proxy）                  | 2（ttyd + proxy），Tailscale daemon 常駐                                        |
+| **憑證包欄位**         | 8 欄（含 CF Access 憑證 + proxy token）          | ~5 欄（endpoint + ttyd 帳密）                                                   |
+| **密鑰管理複雜度**     | 高（proxy token 需可插拔後端 keychain/file/env） | 低（僅 ttyd 帳密）                                                              |
+| **費用**               | 免費（Cloudflare 個人方案）                      | 免費（Tailscale 個人方案，100 裝置內）                                          |
+| **外部依賴**           | Cloudflare 邊緣網路 + CF Access 控制面           | Tailscale 協調伺服器 + DERP relay                                               |
+| **供應商不可用時降級** | 邊緣不可用 = 全部連不進來；已建立連線可能存活    | 協調伺服器不可用時已建立的 WireGuard 連線存活；DERP relay 不可用只影響 NAT 穿越 |
 
 ## 選型判讀
 
@@ -79,13 +82,13 @@ zsh
 
 - **需要對外提供服務**（非自用）：CF 的 WAF / CDN / rate limit / bot protection 生態豐富
 - **需要 HTTP 層細粒度存取控制**：CF Access 的 Application + Policy 模型適合管多個 internal web app
-- **需要 Device Posture 檢查**：CF 整合 CrowdStrike / SentinelOne 等 EDR 做裝置健康判斷
+- **需要 Device Posture 檢查**：CF 整合 CrowdStrike / SentinelOne 等 EDR 做裝置健康判斷（Device Posture：在授權前先檢查裝置的安全狀態 — 作業系統版本、磁碟加密、防毒軟體是否啟用）
 - **已在用 Cloudflare 生態**：共用控制面的管理紅利（同一 Logpush / API token / Audit Log）
 - **多人 / 多團隊 / 合規場景**：CF Access 的 IdP 整合 + Service Auth + Audit Log 比 Tailscale 個人方案完整
 
 ### 邊界情境
 
-- **多人但仍小規模**（2-5 人）：Tailscale ACL 足以控制；超過此規模再評估 CF Access 或 Teleport
+- **多人但仍小規模**（2-5 人）：Tailscale ACL（存取控制清單，定義哪些裝置可存取哪些服務）足以控制；超過此規模再評估 CF Access 或 Teleport
 - **需要 session recording**：兩者都沒有一流方案——Tailscale 需 Enterprise tier，CF Access 只記 metadata 不錄 keystroke。重 audit 走 [Teleport](/backend/07-security-data-protection/vendors/teleport/)
 - **需要從固定 IP 出網**：Tailscale Exit Node 可做但不是設計核心；CF 有更成熟的方案
 
@@ -93,22 +96,23 @@ zsh
 
 即使 Tailscale 攻擊面更小，仍需維持以下底線：
 
-| 底線 | 說明 |
-|------|------|
-| ttyd 綁 Tailscale 介面或 localhost | 不監聽公開網路介面 |
-| Tailscale ACL 限制裝置 | 只有 owner 裝置可存取 proxy port |
-| ttyd basic auth | Tailscale 萬一被穿越的最後防線 |
-| 稽核 log | proxy 記錄每次連線（client_ip，不含 PTY 內容） |
-| 不開機自啟（ttyd/proxy） | 手動起停最小化服務暴露窗 |
+| 底線                               | 說明                                           |
+| ---------------------------------- | ---------------------------------------------- |
+| ttyd 綁 Tailscale 介面或 localhost | 不監聽公開網路介面                             |
+| Tailscale ACL 限制裝置             | 只有 owner 裝置可存取 proxy port               |
+| ttyd basic auth                    | Tailscale 萬一被穿越的最後防線                 |
+| 稽核 log                           | proxy 記錄每次連線（client_ip，不含 PTY 內容） |
+| 不開機自啟（ttyd/proxy）           | 手動起停最小化服務暴露窗                       |
 
 ## 此選型的 tripwire
 
-| 訊號 | 觸發後重評 |
-|------|-----------|
-| 從單人變多人 | Tailscale ACL 是否足夠，或需升級為 Teleport / CF Access |
-| 需要對外暴露服務 | Tailscale Funnel 不適合 production hardened ingress，改走 CF |
-| 需要合規 session recording | Tailscale Enterprise 或改走 Teleport |
-| 需要 WAF / bot protection | Tailscale 沒有應用層防護，改走 CF |
+| 訊號                       | 觸發後重評                                                   |
+| -------------------------- | ------------------------------------------------------------ |
+| 從單人變多人               | Tailscale ACL 是否足夠，或需升級為 Teleport / CF Access      |
+| 需要對外暴露服務           | Tailscale Funnel 不適合 production hardened ingress，改走 CF |
+| 需要合規 session recording | Tailscale Enterprise 或改走 Teleport                         |
+| 需要 WAF / bot protection  | Tailscale 沒有應用層防護，改走 CF                            |
+| Tailscale key 即將到期     | 確認 key expiry 政策（預設 180 天）、設提醒避免裝置靜默掉線  |
 
 ## 從本情境到 vendor 詳頁
 

@@ -31,7 +31,7 @@
 
 **SaaS day one 預設**：PaaS 或單機 container。理由：把 LB、TLS、部署管線、health check 整合外包、團隊專注產品。Kubernetes 的進入條件寫成 tripwire（多服務 + 部署互相阻擋 + 有人能維運它）、而不是 day one 的預設 — 使用者點名 k8s 時、確認三個條件是否已成立。
 
-**入口層**：不論平台、入口統一收斂到一個 LB / reverse proxy：TLS 終止、基本限流、請求大小上限、health check 探測。PaaS 內建即用；自管平台用 nginx / caddy 類補齊。CDN / 邊緣層在靜態資源流量成為主要成分時引入（tripwire）。自架而不想暴露公網入口時、入口形態改為 **outbound tunnel**（cloudflared / Tailscale）：本機主動外連、路由器零開 port、對公網零入站面；代價是 tunnel 網址只是位址不是密碼、前面必須疊認證閘道（service token / 反向代理驗密鑰）、且 readiness 要在 tunnel 就緒後才回 true。
+**入口層**：不論平台、入口統一收斂到一個 LB / reverse proxy：TLS 終止、基本限流、請求大小上限、health check 探測。PaaS 內建即用；自管平台用 nginx / caddy 類補齊。CDN / 邊緣層在靜態資源流量成為主要成分時引入（tripwire）。自架而不想暴露公網入口時、入口形態改為 **outbound tunnel**（cloudflared / Tailscale）：本機主動外連、路由器零開 port、對公網零入站面；代價是 tunnel 網址只是位址不是密碼、前面必須疊認證閘道（service token / 反向代理驗密鑰）、且 tunnel 對外宣告 ready 要 gate 在後端 readiness 之後。
 
 ---
 
