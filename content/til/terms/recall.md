@@ -21,5 +21,5 @@ recall 只看「漏了沒」，不管「報出來的準不準」（那是 [preci
 ## 連到家族
 
 - 被它懲罰的錯誤：[false negative](../false-negative/)。
-- 統計裡的對應：[Type II error](../type-ii-error/)（recall 高 ≈ 檢定力高）。
+- 統計裡的對應：[Type II error](../type-ii-error/)（recall 高對應檢定力高，兩者是同概念的不同 framing）。
 - 成對指標：[precision](../precision/)。
