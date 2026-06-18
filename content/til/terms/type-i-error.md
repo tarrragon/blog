@@ -26,4 +26,4 @@ tags: ["til", "術語", "跨領域", "統計", "type-i-error"]
 ## 連到其他領域
 
 - 概念本身與源頭：[false positive](../false-positive/)。
-- 計算領域描述「偵測器誤觸」的本土詞（spurious、flaky）與這裡的 Type I error 是同一件事的不同領域 framing：[spurious、flaky、noise](../spurious-and-flaky/)。
+- 程式領域描述「偵測器誤觸」的本土詞（spurious、flaky）與這裡的 Type I error 是同一件事的不同領域 framing：[spurious、flaky、noise](../spurious-and-flaky/)。

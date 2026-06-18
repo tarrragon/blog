@@ -1,14 +1,14 @@
 ---
-title: "spurious、flaky、noise：計算領域怎麼描述假陽性"
+title: "spurious、flaky、noise：程式領域怎麼描述假陽性"
 slug: "spurious-and-flaky"
 date: 2026-06-18
-description: "在計算領域 false positive 是本土第一線詞，但描述偵測器誤觸還有更精準的同義詞：spurious / over-match（過寬匹配）、flaky（間歇假失敗）、noise（誤報噪音）。本篇整理它們各自貼合的情境"
-tags: ["til", "術語", "跨領域", "計算", "spurious", "flaky"]
+description: "在程式領域 false positive 是本土第一線詞，但描述偵測器誤觸還有更精準的同義詞：spurious / over-match（過寬匹配）、flaky（間歇假失敗）、noise（誤報噪音）。本篇整理它們各自貼合的情境"
+tags: ["til", "術語", "跨領域", "程式", "spurious", "flaky"]
 ---
 
-計算領域不必向別的領域借「假陽性」這個詞——[false positive](../false-positive/) 在這裡就是本土第一線詞，遍布 linter、靜態分析、資安掃描、垃圾郵件過濾、入侵偵測、監控告警。
+程式領域不必向別的領域借「假陽性」這個詞——[false positive](../false-positive/) 在這裡就是本土第一線詞，遍布 linter、靜態分析、資安掃描、垃圾郵件過濾、入侵偵測、監控告警。
 
-不過依**情境**，計算領域有更精準的本土同義詞，各自貼合不同的誤報樣態。
+不過依**情境**，程式領域有更精準的本土同義詞，各自貼合不同的誤報樣態。
 
 ## 依情境的精準詞
 
