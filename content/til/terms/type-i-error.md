@@ -26,4 +26,6 @@ tags: ["til", "術語", "跨領域", "統計", "type-i-error"]
 ## 連到其他領域
 
 - 概念本身與源頭：[false positive](../false-positive/)。
-- 程式領域描述「偵測器誤觸」的本土詞（spurious、flaky）與這裡的 Type I error 是同一件事的不同領域 framing：[spurious、flaky、noise](../spurious-and-flaky/)。
+- 對偶錯誤：[Type II error](../type-ii-error/)（= false negative）。
+- 量化的尺：[precision](../precision/)（誤報多則 precision 低）。
+- 程式領域描述同一件事的本土詞：[over-match](../over-match/)、[false trigger](../false-trigger/)、[spurious warning](../spurious-warning/) 等。
