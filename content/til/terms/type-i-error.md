@@ -6,6 +6,8 @@ description: "統計假設檢定把 false positive 叫 Type I error、false nega
 tags: ["til", "術語", "跨領域", "統計", "type-i-error"]
 ---
 
+> 這個詞出現在「[你的自動判斷會犯兩種錯：誤報與漏接](../detection-errors/)」這個問題裡——它是統計學給「誤報」的編號。
+
 統計學的假設檢定，把 [false positive](../false-positive/) 編號叫 **Type I error**、把 false negative 叫 **Type II error**。
 
 ## 兩個編號的意思
@@ -23,7 +25,7 @@ tags: ["til", "術語", "跨領域", "統計", "type-i-error"]
 
 哪個是 Type I、哪個是 Type II 容易記混。一個記法：**Type I 是「太急著宣稱有」（過度反應、誤報），Type II 是「太保守而漏掉」**。可把編號順序記成「先有過度反應，才談漏接」——這純為助記，不是 Neyman-Pearson 當初編號的歷史定義。
 
-## 連到其他領域
+## 相關概念
 
 - 概念本身與源頭：[false positive](../false-positive/)。
 - 對偶錯誤：[Type II error](../type-ii-error/)（= false negative）。

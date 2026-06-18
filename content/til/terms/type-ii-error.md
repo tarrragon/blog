@@ -6,6 +6,8 @@ description: "Type II error 是 false negative 在假設檢定裡的稱呼：沒
 tags: ["til", "術語", "跨領域", "統計", "type-ii-error"]
 ---
 
+> 這個詞出現在「[你的自動判斷會犯兩種錯：誤報與漏接](../detection-errors/)」這個問題裡——它是統計學給「漏接」的編號。
+
 Type II error（型二錯誤）是 [false negative](../false-negative/) 在統計假設檢定裡的編號：**虛無假設 H₀ 其實為假，卻沒拒絕它**——漏掉了真實存在的效果。
 
 它和 [Type I error](../type-i-error/)（誤報、宣稱有實無）成對：
@@ -19,7 +21,7 @@ Type II error 的機率記為 **β**。與它互補的是**檢定力（statistic
 
 把 β 對應到偵測語境，「少漏接」就是提高 [recall](../recall/)——兩者衡量的是同一件事的不同領域 framing。
 
-## 連到家族
+## 相關概念
 
 - 對偶錯誤：[false positive](../false-positive/) / [Type I error](../type-i-error/)。
 - 同概念的偵測語境：[false negative](../false-negative/)。
