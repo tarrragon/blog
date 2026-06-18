@@ -45,6 +45,8 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 3. 修補節奏：把隔離、修補、驗證綁成同一個交付鏈，不讓修補停在部署完成。
 4. 會話收斂：把入口事件後的會話失效與權限回收納入標準流程。
 
+outbound tunnel（cloudflared / Tailscale）作為入口形態的部署合約見 [5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)。
+
 ## 判讀流程
 
 判讀流程的責任是把「入口異常」快速轉成「防護動作」。
@@ -95,6 +97,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 邊界設備高風險窗口： [PAN-OS 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)
 - VPN 路徑被鏈式利用： [Ivanti 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/ivanti-2024-vpn-chain/)
 - 管理平面被快速接管： [Cisco IOS XE 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/cisco-ios-xe-cve-2023-20198-webui-chain/)
+- 單人遠端 shell 的入口選型： [7.C11 選型：單人遠端 Shell — Tailscale vs Cloudflare Tunnel](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)
 
 ## 下一步路由
 

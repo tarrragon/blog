@@ -94,6 +94,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [7.26 資安素材庫如何支援工程推演](/backend/07-security-data-protection/security-material-library-for-engineering-simulation/)               | Materials for Simulation                          | 把來源、案例、情境與模式組成推演流程                                                                  |
 | [7.27](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)                                                           | Credential Rotation with Scoped Evidence 實作示範 | 以 webhook/API credential 為基線、用控制面 token 與 CI 平台壓測場景示範 scope map、證據欄位與回退窗口 |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
+| [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
 
 ## 模組完成狀態
 

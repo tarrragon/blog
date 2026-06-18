@@ -144,7 +144,7 @@ OTel 相容度影響 vendor 切換成本。各 vendor 接受程度：
 - 接受但 feature 落後 vendor SDK：Datadog / CloudWatch（X-Ray 整合）/ Elastic APM
 - 跟 OTel 互補但設計不同：Prometheus（exporter pattern）/ Sentry（OTel context）
 
-選型判讀：未來想換 vendor → 從 day 1 用 OTel SDK；不換 vendor → vendor SDK 較深；多 backend dual ship → OTel 唯一可行。
+選型判讀：未來想換 vendor → 從 day 1 用 OTel SDK；不換 vendor → vendor SDK 較深；多 backend dual ship → OTel 幾乎是唯一可行路徑。
 
 ## 撰寫批次
 
