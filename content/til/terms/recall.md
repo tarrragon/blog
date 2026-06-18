@@ -10,7 +10,7 @@ tags: ["til", "術語", "跨領域", "指標", "recall"]
 
 recall（召回率，又稱敏感度 sensitivity）回答另一個問題：**真實存在的那些，偵測器抓到了多少？**
 
-公式是 `recall = TP / (TP + FN)`：分母是「所有真的陽性」，分子是其中被抓到的。所以 [false negative](../false-negative/) 越多，recall 越低——漏接直接拉低「抓全的能力」。
+公式是 `recall = TP / (TP + FN)`（TP = 真陽性、FN = 假陰性）：分母是「所有真的陽性」，分子是其中被抓到的。所以 [false negative](../false-negative/) 越多，recall 越低——漏接直接拉低「抓全的能力」。
 
 ## 與 precision 成對
 

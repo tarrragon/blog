@@ -10,7 +10,7 @@ tags: ["til", "術語", "跨領域", "指標", "precision"]
 
 precision（精確率）回答一個問題：**偵測器說「有」的那些，有多少是真的？**
 
-公式是 `precision = TP / (TP + FP)`：分母是「所有被判為陽性的」，分子是其中真的陽性。所以 [false positive](../false-positive/) 越多，precision 越低——誤報直接稀釋了「報出來的可信度」。
+公式是 `precision = TP / (TP + FP)`（TP = 真陽性、FP = 假陽性）：分母是「所有被判為陽性的」，分子是其中真的陽性。所以 [false positive](../false-positive/) 越多，precision 越低——誤報直接稀釋了「報出來的可信度」。
 
 ## 與 recall 成對
 

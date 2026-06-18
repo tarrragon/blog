@@ -8,7 +8,7 @@ tags: ["til", "術語", "跨領域", "統計", "type-ii-error"]
 
 > 這個詞出現在「[你的自動判斷會犯兩種錯：誤報與漏接](../detection-errors/)」這個問題裡——它是統計學給「漏接」的編號。
 
-Type II error（型二錯誤）是 [false negative](../false-negative/) 在統計假設檢定裡的編號：**虛無假設 H₀ 其實為假，卻沒拒絕它**——漏掉了真實存在的效果。
+Type II error（型二錯誤）是 [false negative](../false-negative/) 在統計假設檢定裡的編號：**虛無假設（H₀，預設「沒有效果 / 沒有差異」）其實為假，卻沒拒絕它**——漏掉了真實存在的效果。
 
 它和 [Type I error](../type-i-error/)（誤報、宣稱有實無）成對：
 

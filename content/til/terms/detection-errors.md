@@ -13,7 +13,7 @@ tags: ["til", "術語", "跨領域", "議題hub"]
 - **說「有」但其實沒有 → 誤報**（[false positive](../false-positive/)）。
 - **說「沒有」但其實有 → 漏接**（[false negative](../false-negative/)）。
 
-把判斷（有/無）對上真實（有/無），剛好四格，[false positive](../false-positive/) 那篇有完整的混淆矩陣。
+把判斷（有/無）對上真實（有/無），剛好四格——這張判斷×真實的對照表叫混淆矩陣，[false positive](../false-positive/) 那篇有完整版。
 
 ## 為什麼值得分清楚
 
