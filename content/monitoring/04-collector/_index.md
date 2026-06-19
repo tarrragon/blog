@@ -10,11 +10,11 @@ tags: ["monitoring", "collector", "go", "storage", "rule-engine"]
 
 ## 待寫章節
 
-- [ ] Collector 架構（HTTP endpoint → JSON Schema 驗證 → JSONL 儲存 → CLI 查詢 → rule engine）
-- [ ] JSONL 儲存設計（一天一檔、保留策略、gzip 壓縮）
-- [ ] 查詢 API 設計（CLI grep 友好 vs HTTP 查詢 endpoint）
-- [ ] Rule engine 設計（條件 → 動作 → 模板）
-- [ ] 規模演進：grep → SQLite → 時間序列 DB 的觸發條件
+- [x] Collector 架構（HTTP endpoint → JSON Schema 驗證 → JSONL 儲存 → CLI 查詢 → rule engine）
+- [x] JSONL 儲存設計（一天一檔、保留策略、gzip 壓縮）
+- [x] 查詢 API 設計（CLI grep 友好 vs HTTP 查詢 endpoint）
+- [x] Rule engine 設計（條件 → 動作 → 模板）
+- [x] 規模演進：grep → SQLite → 時間序列 DB 的觸發條件
 
 ## 跨分類引用
 

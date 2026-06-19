@@ -10,10 +10,10 @@ tags: ["monitoring", "schema", "json", "event-format"]
 
 ## 待寫章節
 
-- [ ] event.schema.json 完整欄位解說
-- [ ] 欄位設計原則（source 標明來源 / data 自由欄位 / v 版本演進）
-- [ ] Schema 版本演進策略（backward compatible 的增量變更）
-- [ ] 跟 OpenTelemetry 的 schema 差異對照
+- [x] event.schema.json 完整欄位解說
+- [x] 欄位設計原則（source 標明來源 / data 自由欄位 / v 版本演進）
+- [x] Schema 版本演進策略（backward compatible 的增量變更）
+- [x] 跟 OpenTelemetry 的 schema 差異對照
 
 ## 跨分類引用
 

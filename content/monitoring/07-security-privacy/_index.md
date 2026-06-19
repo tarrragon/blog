@@ -10,12 +10,12 @@ tags: ["monitoring", "security", "privacy", "redaction", "gdpr"]
 
 ## 待寫章節
 
-- [ ] SDK redaction API 設計（預設 redaction rule + 自訂 pattern）
-- [ ] Transport 安全（HTTPS / basic auth / 同區網也要加密的理由）
-- [ ] Collector access control 實作（認證 / 授權 / access log）
-- [ ] 去識別化策略（IP 截斷 / user agent 簡化 / stack trace 路徑清理 / session UUID）
-- [ ] GDPR 最小化原則的工程落地
-- [ ] 「監控資料洩漏」的 threat model
+- [x] SDK redaction API 設計（預設 redaction rule + 自訂 pattern）
+- [x] Transport 安全（HTTPS / basic auth / 同區網也要加密的理由）
+- [x] Collector access control 實作（認證 / 授權 / access log）
+- [x] 去識別化策略（IP 截斷 / user agent 簡化 / stack trace 路徑清理 / session UUID）
+- [x] GDPR 最小化原則的工程落地
+- [x] 「監控資料洩漏」的 threat model
 
 ## 跨分類引用
 
