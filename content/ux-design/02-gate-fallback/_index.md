@@ -17,11 +17,11 @@ tags: ["ux-design", "gate", "fallback", "biometric", "authentication"]
 
 ## 待寫章節
 
-- [ ] Gate 分類與三問設計法（成功 / 失敗 / 使用者不知道發生什麼）
-- [ ] Biometric fallback 完整設計（iOS/Android 差異）
-- [ ] 網路斷線 UX 模式（offline-first / retry / degraded mode）
-- [ ] Permission 請求時機與措辭
-- [ ] 開發環境 vs 真機的 gate 行為差異表
+- [x] Gate 分類與三問設計法（成功 / 失敗 / 使用者不知道發生什麼）
+- [x] Biometric fallback 完整設計（iOS/Android 差異）
+- [x] 網路斷線 UX 模式（offline-first / retry / degraded mode）
+- [x] Permission 請求時機與措辭
+- [x] 開發環境 vs 真機的 gate 行為差異表
 
 ## 跨分類引用
 
