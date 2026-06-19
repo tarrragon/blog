@@ -6,7 +6,7 @@ weight: 1
 tags: ["monitoring", "security", "redaction", "sdk", "privacy"]
 ---
 
-Redaction 是在事件資料離開 client 之前，把敏感欄位的值替換成遮罩或移除。Redaction 在 SDK 端執行的設計原則是「敏感資料不離開 client」— 一旦資料送到 collector，即使 collector 有 access control，資料已經在網路上傳輸過，多了一層洩漏面。
+Redaction 是在事件資料離開 client 之前，把敏感欄位的值替換成遮罩或移除。本章聚焦 redaction 的策略面 — 哪些資訊需要保護、保護的判斷依據和適用範圍。SDK 的 API 實作細節（初始化方式、helper 函式設計、和 flush 管線的整合）見 [SDK redaction helper](/monitoring/03-sdk-design/redaction-helper/)。Redaction 在 SDK 端執行的設計原則是「敏感資料不離開 client」— 一旦資料送到 collector，即使 collector 有 access control，資料已經在網路上傳輸過，多了一層洩漏面。
 
 ## 預設 Redaction Rule
 

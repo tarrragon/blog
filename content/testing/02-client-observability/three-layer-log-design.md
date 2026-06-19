@@ -72,3 +72,4 @@ Protocol log 在 release mode 應該能關閉。這層 log 量大（每次鍵盤
 - 在功能規格中定義 log 點 → [功能規格中的 log 點定義方法](/testing/02-client-observability/log-point-in-spec/)
 - 事後補 log 和設計產物 log 的品質差異 → [「事後補 log」vs「設計產物 log」的品質差異](/testing/02-client-observability/hotfix-log-vs-designed-log/)
 - Log 收集方案選擇 → [自架 log endpoint vs 商業方案](/testing/02-client-observability/log-endpoint-tradeoff/)
+- 事件分類與收集策略 → [monitoring 模組一 監控心智模型](/monitoring/01-mental-model/)

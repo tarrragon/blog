@@ -28,7 +28,7 @@ app_tunnel 的 auth handshake 缺失就是典型案例。ttyd 要求連線後發
 
 ### Screen State Test：驗證畫面狀態完整性
 
-Screen state test 驗證的對象是「使用者可見的畫面狀態是否覆蓋所有情境」。它的關注點不是程式碼邏輯（unit test 的職責），也不是協議行為（protocol integration test 的職責），而是畫面層級的狀態機 — loading、connected、error、reconnecting 等狀態之間的轉換是否完整，每個狀態下使用者看到什麼、能操作什麼。
+Screen state test 驗證的對象是「使用者可見的畫面狀態是否覆蓋所有情境」。它的關注點是畫面層級的狀態機 — loading、connected、error、reconnecting 等狀態之間的轉換是否完整，每個狀態下使用者看到什麼、能操作什麼。
 
 Screen state test 和 unit test 的區別在於斷言對象：unit test 斷言「函式回傳值是否正確」，screen state test 斷言「使用者看到的畫面是否正確」。同一段程式碼邏輯可能 unit test 通過（回傳值正確）但 screen state test 失敗（畫面沒顯示對應狀態），因為 UI 層的 binding 有問題。
 
