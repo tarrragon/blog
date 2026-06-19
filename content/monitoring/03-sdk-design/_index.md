@@ -10,11 +10,11 @@ tags: ["monitoring", "sdk", "js", "flutter", "python"]
 
 ## 待寫章節
 
-- [ ] SDK 公開 API 設計（init / event / error / metric / flush / close）
-- [ ] 自動攔截機制（JS window.onerror / Flutter FlutterError / Python sys.excepthook）
-- [ ] 攢批送出策略（flush interval / buffer size / flush on close）
-- [ ] 離線 buffer 與重試（FIFO 丟棄 / 本地 persistence / 恢復後補發的取捨）
-- [ ] SDK redaction helper（模組七的實作層）
+- [x] SDK 公開 API 設計（init / event / error / metric / flush / close）
+- [x] 自動攔截機制（JS window.onerror / Flutter FlutterError / Python sys.excepthook）
+- [x] 攢批送出策略（flush interval / buffer size / flush on close）
+- [x] 離線 buffer 與重試（FIFO 丟棄 / 本地 persistence / 恢復後補發的取捨）
+- [x] SDK redaction helper（模組七的實作層）
 
 ## 跨分類引用
 

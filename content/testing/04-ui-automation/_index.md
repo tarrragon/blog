@@ -10,10 +10,10 @@ tags: ["testing", "widget-test", "playwright", "ui-test"]
 
 ## 待寫章節
 
-- [ ] Widget test 的狀態覆蓋策略（從狀態矩陣推導 test case）
-- [ ] 導航路徑 test（back 按鈕、route 可達性）
-- [ ] Playwright 瀏覽器驗證流程
-- [ ] 螢幕截圖比對（visual regression）
+- [x] Widget test 的狀態覆蓋策略（從狀態矩陣推導 test case）
+- [x] 導航路徑 test（back 按鈕、route 可達性）
+- [x] Playwright 瀏覽器驗證流程
+- [x] 螢幕截圖比對（visual regression）
 
 ## 跨分類引用
 
