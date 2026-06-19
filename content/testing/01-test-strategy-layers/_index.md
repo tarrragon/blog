@@ -18,11 +18,11 @@ tags: ["testing", "mock", "integration-test", "strategy"]
 
 ## 待寫章節
 
-- [ ] 三層定義與職責表（從 _index.md 的表格擴展為完整論述）
-- [ ] Mock 遮蔽機制分析（API 層 vs 協議層 vs 環境層的斷裂點）
-- [ ] 「名義 integration test」的識別與修正
-- [ ] 判斷原則：什麼時候需要 protocol integration test（決策表）
-- [ ] 反模式：用 mock 數量彌補 mock 盲區
+- [x] 三層定義與職責表（從 _index.md 的表格擴展為完整論述）
+- [x] Mock 遮蔽機制分析（API 層 vs 協議層 vs 環境層的斷裂點）
+- [x] 「名義 integration test」的識別與修正
+- [x] 判斷原則：什麼時候需要 protocol integration test（決策表）
+- [x] 反模式：用 mock 數量彌補 mock 盲區
 
 ## 跨分類引用
 
