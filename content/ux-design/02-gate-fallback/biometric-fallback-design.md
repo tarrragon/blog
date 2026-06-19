@@ -6,7 +6,7 @@ weight: 2
 tags: ["ux-design", "biometric", "authentication", "fallback", "ios", "android"]
 ---
 
-Biometric gate 的 fallback 設計需要理解兩件事：平台的認證 API 在不同情境下的行為差異，以及安全收益和可用性代價之間的顯式取捨。
+Biometric [gate](/ux-design/knowledge-cards/gate/) 的 [fallback](/ux-design/knowledge-cards/ux-fallback/) 設計需要理解兩件事：平台的認證 API 在不同情境下的行為差異，以及安全收益和可用性代價之間的顯式取捨。
 
 ## 生物辨識失敗的情境
 

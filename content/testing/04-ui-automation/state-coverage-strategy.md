@@ -6,7 +6,7 @@ weight: 1
 tags: ["testing", "widget-test", "state-machine", "coverage", "flutter"]
 ---
 
-Widget test 的狀態覆蓋策略是用畫面狀態矩陣（[ux-design 模組一](/ux-design/01-screen-state-machine/state-matrix-definition/)）作為 test case 的來源。矩陣的每一行（一個狀態）對應至少一個 test case，矩陣的每一欄（顯示 / 可用操作 / 退出路徑）對應該 test case 中的斷言。
+Widget test 的狀態覆蓋策略是用[畫面狀態矩陣](/ux-design/knowledge-cards/screen-state-matrix/)（[ux-design 模組一](/ux-design/01-screen-state-machine/state-matrix-definition/)）作為 test case 的來源。矩陣的每一行（一個狀態）對應至少一個 test case，矩陣的每一欄（顯示 / 可用操作 / 退出路徑）對應該 test case 中的斷言。
 
 ## 從矩陣到 test case 的轉換規則
 
