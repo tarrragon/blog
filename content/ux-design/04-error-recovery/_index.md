@@ -10,10 +10,10 @@ tags: ["ux-design", "error", "recovery", "retry"]
 
 ## 待寫章節
 
-- [ ] 錯誤訊息撰寫原則（使用者能讀懂 + 能行動）
-- [ ] Retry 機制 UX（自動 vs 手動 / 指數退避 vs 立即重試）
-- [ ] Degraded mode 設計（部分功能不可用時怎麼告知）
-- [ ] error → retry → error 循環的逃生口設計
+- [x] 錯誤訊息撰寫原則（使用者能讀懂 + 能行動）
+- [x] Retry 機制 UX（自動 vs 手動 / 指數退避 vs 立即重試）
+- [x] Degraded mode 設計（部分功能不可用時怎麼告知）
+- [x] error → retry → error 循環的逃生口設計
 
 ## 跨分類引用
 
