@@ -20,13 +20,16 @@
 
 ## 候選類型差異
 
-| 類型                             | 適合                                    | 代價                                                    |
-| -------------------------------- | --------------------------------------- | ------------------------------------------------------- |
-| Relational（PostgreSQL / MySQL） | 關聯密集、需要 transaction、schema 明確 | schema 變更要走 migration 紀律                          |
-| Document（MongoDB 類）           | schema 高頻變動、文件自包含             | 跨文件一致性弱、關聯查詢成本高、事後補 transaction 困難 |
-| Key-value（DynamoDB 類）         | 存取模式固定且已知、規模極大            | 查詢模式要先於 schema 設計、ad-hoc 查詢幾乎不可行       |
-| Embedded（SQLite）               | 單機工具、邊緣場景                      | 多寫入者與水平擴展受限                                  |
-| Object storage（S3 類）          | 檔案、備份、報表產物                    | 沒有查詢能力、要配 metadata 索引                        |
+| 類型                                 | 適合                                    | 代價                                                    |
+| ------------------------------------ | --------------------------------------- | ------------------------------------------------------- |
+| Relational（PostgreSQL / MySQL）     | 關聯密集、需要 transaction、schema 明確 | schema 變更要走 migration 紀律                          |
+| Document（MongoDB 類）               | schema 高頻變動、文件自包含             | 跨文件一致性弱、關聯查詢成本高、事後補 transaction 困難 |
+| Key-value（DynamoDB 類）             | 存取模式固定且已知、規模極大            | 查詢模式要先於 schema 設計、ad-hoc 查詢幾乎不可行       |
+| Embedded（SQLite）                   | 單機工具、邊緣場景                      | 多寫入者與水平擴展受限                                  |
+| Object storage（S3 類）              | 檔案、備份、報表產物                    | 沒有查詢能力、要配 metadata 索引                        |
+| 檔案系統（JSONL / CSV / plain text） | append-only 事件流、log、設定檔         | 無 transaction、無索引、查詢用 grep/jq、單寫入者        |
+
+**檔案系統作為儲存**：開發者工具和自架服務經常用檔案系統（JSONL 一天一檔、CSV、plain text config）作為正式儲存。適用條件：資料是 append-only（不需要 update/delete）、查詢用 grep/jq 足夠、零外部依賴。升級路徑：JSONL → SQLite（需要索引或 JOIN）→ PostgreSQL / 時間序列 DB（需要高併發寫入或聚合查詢）。Tripwire：grep 查詢超過 5 秒、需要跨檔案 JOIN、需要聚合查詢（count / sum / avg over time range）。檔案輪轉設計（日切檔 + gzip 壓縮 + 保留策略）是檔案系統儲存的必備機制、和 DB 的備份對應。
 
 **SaaS day one 預設**：managed relational DB + object storage。理由：MVP 階段存取模式未知、relational 的 ad-hoc 查詢自由度是「需求還會變」的保險；managed 把備份、升級、failover 外包給平台、符合小團隊定錨。使用者點名 document / KV 時、回到資料形狀與查詢模式確認 — 確認成立就採納、選型沒有標準答案、只有跟需求對齊的答案。
 

@@ -33,6 +33,22 @@
 
 ---
 
+## Observability 工具的自我監控（bootstrapping problem）
+
+產品本身是 observability 工具（監控 SDK、collector、log 聚合器）時，會遇到 bootstrapping 問題：如果 monitor 掛了，誰監控 monitor？用自己監控自己會形成循環依賴 — monitor 掛掉時它自己的告警也跟著掛。
+
+解法是**外部層級隔離**：用一個結構上獨立於 monitor 的機制監控 monitor 本身。
+
+| 機制                    | 做法                                                         |
+| ----------------------- | ------------------------------------------------------------ |
+| 外部 uptime check       | cron + curl health endpoint、失敗時用系統通知（mail / ntfy） |
+| Collector 的 stderr log | collector 自己的錯誤寫 stderr、systemd journal 收            |
+| Process 存活監控        | systemd watchdog / supervisor 重啟                           |
+
+原則：monitor 不用自己的 SDK 監控自己的 collector。Health endpoint + process supervisor + 系統級 log 是三層獨立的自我監控、不依賴 monitor 的事件收集管線。
+
+---
+
 ## 防護底線（non-negotiable）
 
 1. **掛了有人知道**：uptime 監控 + 會吵醒人的通知管道。使用者比團隊先發現停機、每次都在消耗信任。
