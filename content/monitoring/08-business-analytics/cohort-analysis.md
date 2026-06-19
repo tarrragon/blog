@@ -6,7 +6,7 @@ weight: 3
 tags: ["monitoring", "analytics", "cohort", "retention", "segmentation"]
 ---
 
-Cohort analysis 把使用者按共同特徵分群（cohort），比較不同群體在同一個指標上的表現差異。整體平均留存率 40% 可能隱藏了「1 月註冊的使用者留存 60%、3 月註冊的留存 20%」的差異。Cohort analysis 揭露平均值遮蔽的趨勢。
+[Cohort analysis](/monitoring/knowledge-cards/cohort-analysis/) 把使用者按共同特徵分群（cohort），比較不同群體在同一個指標上的表現差異。整體平均留存率 40% 可能隱藏了「1 月註冊的使用者留存 60%、3 月註冊的留存 20%」的差異。Cohort analysis 揭露平均值遮蔽的趨勢。
 
 ## Cohort 的定義方式
 

@@ -6,7 +6,7 @@ weight: 4
 tags: ["monitoring", "security", "privacy", "anonymization", "gdpr"]
 ---
 
-去識別化是把監控資料中可以關聯到特定個人的欄位，轉換成無法回溯到個人但仍保留分析價值的形式。去識別化和 redaction 的差別在於：redaction 完全移除資訊（`[REDACTED]`），去識別化保留結構化的資訊但移除可識別性。
+去識別化是把監控資料中可以關聯到特定個人的欄位，轉換成無法回溯到個人但仍保留分析價值的形式。去識別化和 [redaction](/monitoring/knowledge-cards/redaction/) 的差別在於：redaction 完全移除資訊（`[REDACTED]`），去識別化保留結構化的資訊但移除可識別性。
 
 ## IP 截斷
 

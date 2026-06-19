@@ -6,7 +6,7 @@ weight: 5
 tags: ["monitoring", "sdk", "redaction", "security", "privacy"]
 ---
 
-SDK redaction helper 在事件離開 SDK（進入 HTTP POST payload）前掃描事件內容，把匹配敏感資訊 pattern 的欄位值替換為 `[REDACTED]`。Redaction 在 SDK 端執行，確保敏感資訊不會經過網路傳輸到 collector — 即使 transport 層被攔截，攻擊者看到的也是脫敏後的資料。
+SDK [redaction](/monitoring/knowledge-cards/redaction/) helper 在事件離開 SDK（進入 HTTP POST payload）前掃描事件內容，把匹配敏感資訊 pattern 的欄位值替換為 `[REDACTED]`。Redaction 在 SDK 端執行，確保敏感資訊不會經過網路傳輸到 collector — 即使 transport 層被攔截，攻擊者看到的也是脫敏後的資料。
 
 ## 預設 redaction rule
 

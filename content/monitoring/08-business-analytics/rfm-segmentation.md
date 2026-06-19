@@ -6,7 +6,7 @@ weight: 7
 tags: ["monitoring", "analytics", "rfm", "segmentation", "retention", "marketing"]
 ---
 
-RFM 分群用三個維度衡量使用者的價值：Recency（最近一次互動是多久前）、Frequency（互動的頻率）、Monetary（互動的金額或價值）。三個維度各自獨立評分，組合成使用者的 RFM profile，驅動差異化的營運策略。
+[RFM](/monitoring/knowledge-cards/rfm/) 分群用三個維度衡量使用者的價值：Recency（最近一次互動是多久前）、Frequency（互動的頻率）、Monetary（互動的金額或價值）。三個維度各自獨立評分，組合成使用者的 RFM profile，驅動差異化的營運策略。
 
 ## 三個維度
 
