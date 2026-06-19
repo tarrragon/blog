@@ -16,11 +16,11 @@ tags: ["ux-design", "navigation", "router", "flutter", "mobile"]
 
 ## 待寫章節
 
-- [ ] Mobile 導航模式分類（push/pop / declarative router / tab / drawer）
-- [ ] Flutter GoRouter 導航設計
-- [ ] iOS HIG vs Material Design 導航差異
-- [ ] Deep link 設計
-- [ ] go vs push vs pushReplacement 的 UX 語意表
+- [x] Mobile 導航模式分類（push/pop / declarative router / tab / drawer）
+- [x] Flutter GoRouter 導航設計
+- [x] iOS HIG vs Material Design 導航差異
+- [x] Deep link 設計
+- [x] go vs push vs pushReplacement 的 UX 語意表
 
 ## 跨分類引用
 
