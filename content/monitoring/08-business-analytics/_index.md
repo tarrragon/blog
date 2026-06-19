@@ -10,14 +10,14 @@ tags: ["monitoring", "analytics", "funnel", "ab-test", "recommendation", "market
 
 ## 待寫章節
 
-- [ ] 行為事件設計（事件命名規範 / 屬性設計 / funnel 定義）
-- [ ] Funnel analysis（使用者在哪一步流失）
-- [ ] Cohort analysis（不同族群的留存率差異）
-- [ ] Attribution（使用者從哪來、哪個廣告帶來轉換）
-- [ ] A/B test 的統計基礎（假設檢定 / 樣本量 / 多重比較）
-- [ ] 推薦系統概論（collaborative filtering / content-based / 混合）
-- [ ] RFM 分群（Recency / Frequency / Monetary 的工程實作）
-- [ ] 從 collector 資料做基礎 funnel 分析（自架方案能做到哪裡）
+- [x] 行為事件設計（事件命名規範 / 屬性設計 / funnel 定義）
+- [x] Funnel analysis（使用者在哪一步流失）
+- [x] Cohort analysis（不同族群的留存率差異）
+- [x] Attribution（使用者從哪來、哪個廣告帶來轉換）
+- [x] A/B test 的統計基礎（假設檢定 / 樣本量 / 多重比較）
+- [x] 推薦系統概論（collaborative filtering / content-based / 混合）
+- [x] RFM 分群（Recency / Frequency / Monetary 的工程實作）
+- [x] 從 collector 資料做基礎 funnel 分析（自架方案能做到哪裡）
 
 ## 跨分類引用
 
