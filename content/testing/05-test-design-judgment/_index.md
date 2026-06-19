@@ -17,10 +17,10 @@ tags: ["testing", "assertion", "flaky", "test-data", "mock"]
 
 ## 待寫章節
 
-- [ ] Mock 邊界判斷決策表（什麼時候 mock 夠、什麼時候需要 real）
-- [ ] Test data 代表性（手寫 vs 錄製 vs 生成）
-- [ ] Assertion 品質三問（斷言的是行為嗎？能區分正確和錯誤嗎？會 flaky 嗎？）
-- [ ] Flaky test 根因分類（計時依賴 / 環境差異 / 資源競爭 / 非確定性）
+- [x] Mock 邊界判斷決策表（什麼時候 mock 夠、什麼時候需要 real）
+- [x] Test data 代表性（手寫 vs 錄製 vs 生成）
+- [x] Assertion 品質三問（斷言的是行為嗎？能區分正確和錯誤嗎？會 flaky 嗎？）
+- [x] Flaky test 根因分類（計時依賴 / 環境差異 / 資源競爭 / 非確定性）
 
 ## 跨分類引用
 
