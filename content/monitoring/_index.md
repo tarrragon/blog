@@ -125,13 +125,99 @@ tags: ["monitoring"]
 | 需要 session replay / funnel | 自建成本高 | 適合           |
 | 需要合規稽核（SOC 2 / GDPR） | 自建困難   | 適合（已認證） |
 
+跟模組八的關係：模組六比較「自架 vs 商業」的功能和成本；模組八把行為資料視為商業資產，討論精準行銷、推薦系統、A/B test attribution — 這些是商業方案的核心賣點，也是自架方案最難自建的部分。
+
+### 模組七：資安與隱私
+
+回答「蒐集的資料本身就是風險資產，怎麼保護」。同一份監控資料在不同角色眼中有不同身份：
+
+| 角色     | 看到的是   | 關心的問題                     |
+| -------- | ---------- | ------------------------------ |
+| 開發者   | debug 資訊 | 錯誤在哪、使用者做了什麼       |
+| 安全團隊 | 風險資產   | 含 secret 嗎、被入侵會洩漏什麼 |
+| 法務團隊 | 合規負債   | 蒐集合法嗎、保留多久、跨境嗎   |
+| 行銷團隊 | 商業原料   | 能做 funnel 嗎、能投廣告嗎     |
+
+**三層防護設計**（影響 SDK 和 collector 的實作）：
+
+| 層                          | 在哪裡做                          | 做什麼                                                                                    | 影響 monitor repo 哪裡                         |
+| --------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| SDK 端 redaction            | sdk-js / sdk-flutter / sdk-python | 送出前自動遮蔽已知 secret pattern（API key / password / token / file path 中的 username） | SDK 的 `redact()` helper + 預設 redaction rule |
+| Transport 加密              | SDK → collector                   | HTTPS 或至少 basic auth（即使同區網）                                                     | transport 規格 + collector TLS 設定            |
+| Collector 端 access control | collector                         | 儲存加密 at rest、查詢需認證、access log 記錄誰查了什麼                                   | collector 的 auth middleware + 加密儲存        |
+
+**去識別化策略**：
+
+| 資料類型        | 去識別方法                                         | 時機                      |
+| --------------- | -------------------------------------------------- | ------------------------- |
+| IP 地址         | 截斷最後一段（192.168.1.x）                        | SDK 端或 collector 收到時 |
+| User agent      | 保留 OS + browser 版本，去除 fingerprint 細節      | collector 收到時          |
+| 自由欄位 `data` | regex 掃描已知 secret pattern，替換為 `[REDACTED]` | SDK 端送出前              |
+| Stack trace     | 去除絕對路徑中的 username                          | SDK 端送出前              |
+| Session ID      | 不跟真實使用者身份綁定（匿名 UUID）                | SDK 初始化時              |
+
+跟 [Backend 07 資安與資料保護](/backend/07-security-data-protection/) 的關係：Backend 07 聚焦 server-side 的權限、秘密管理、稽核追蹤；本模組聚焦「蒐集來的監控資料本身」的保護。交叉點是 [Secret Management](/backend/knowledge-cards/secret-management/) — 監控資料裡意外包含 secret 時，去識別化機制需要知道什麼 pattern 算 secret。
+
+> 後續章節預定：SDK redaction API 設計、collector access control 實作、GDPR 最小化原則的工程落地、「監控資料洩漏」的 threat model
+
+### 模組八：行為資料的商業利用
+
+回答「蒐集到的行為資料除了 debug，還能做什麼」。這是監控體系從「開發工具」翻轉成「商業資產」的轉折點。
+
+**前提：模組七的去識別化是本模組的入場條件。** 沒做好去識別化就做精準行銷 = 法律風險。本模組假設資料已經過去識別化處理。
+
+**行為資料的商業價值鏈**：
+
+```
+蒐集（SDK 埋點）
+  → 清洗（去識別 + 去噪）
+    → 分析（funnel / cohort / attribution）
+      → 決策（投放 / 改版 / 定價）
+        → 驗證（A/B test → 回到蒐集）
+```
+
+| 分析類型        | 回答什麼問題                     | 需要的事件                                              | 商業方案                         |
+| --------------- | -------------------------------- | ------------------------------------------------------- | -------------------------------- |
+| Funnel analysis | 使用者在哪一步流失？             | `event`（page.view / button.click / checkout.complete） | Mixpanel / Amplitude / GA4       |
+| Cohort analysis | 不同族群的留存率差異？           | `event` + `lifecycle`（session.begin 時間）             | Mixpanel / Amplitude             |
+| Attribution     | 使用者從哪來？哪個廣告帶來轉換？ | `event`（install / first_open / conversion）            | Adjust / AppsFlyer / GA4         |
+| A/B test        | 哪個版本的按鈕轉換率更高？       | `event`（variant_shown / conversion）                   | Optimizely / LaunchDarkly / 自建 |
+| 推薦系統        | 這個使用者可能對什麼感興趣？     | `event`（view / click / purchase 歷史）                 | 自建 / AWS Personalize           |
+| RFM 分群        | 誰是高價值客戶？誰快流失？       | `event`（purchase 頻率 / 金額 / 最近一次）              | 自建 / CRM 工具                  |
+
+**跟監控的邊界**：
+
+|              | 監控（模組一~六）                  | 商業利用（本模組）                 |
+| ------------ | ---------------------------------- | ---------------------------------- |
+| 看的事件     | 全部四類（error 為主）             | 主要 `event` 類                    |
+| 分析粒度     | 單筆事件（這個錯誤的 stack trace） | 聚合統計（過去 30 天的轉換率）     |
+| 決策輸出     | 修 bug、改架構                     | 投廣告、改定價、改 UI              |
+| 資料保留     | 短期（30 天，debug 用完即丟）      | 長期（年級，行為趨勢需要歷史資料） |
+| 去識別化要求 | 中（開發者看 raw data 可接受）     | 高（行銷分析必須去識別）           |
+
+**自架方案能做到哪裡**：
+
+- Funnel / cohort 基礎分析：collector 的聚合查詢 + 簡單腳本可做
+- Attribution / 推薦系統：需要專門的資料管線，超出 collector 範圍
+- A/B test：需要 feature flag 系統 + 統計檢定，屬獨立基礎設施
+
+> 後續章節預定：行為事件設計（事件命名規範 / 屬性設計 / funnel 定義）、從 collector 資料做基礎 funnel 分析、A/B test 的統計基礎、推薦系統概論、RFM 分群實作
+>
+> 跨系列連結：
+> - 精準行銷的資料管線設計 → 待建 `data-engineering/` 或放 [Backend 01 資料庫](/backend/01-database/)
+> - A/B test 的統計檢定 → 待建 `statistics/` 或放 [Backend 09 效能容量](/backend/09-performance-capacity/)
+> - 推薦系統架構 → 待建 `machine-learning/` 或放 [Backend](/backend/) 延伸模組
+> - 隱私法規（GDPR / CCPA / 個資法） → 待建 `compliance/` 或放 [Backend 07](/backend/07-security-data-protection/) 延伸
+
 ## 學習路線
 
-| 路線             | 適合讀者                            | 建議順序              | 讀完能做什麼                 |
-| ---------------- | ----------------------------------- | --------------------- | ---------------------------- |
-| 自架監控快速上手 | 想在自己的 app/script 加監控        | 模組一 → 二 → 四 → 三 | 能部署 collector + 埋點 SDK  |
-| SDK 開發者       | 想理解監控 SDK 怎麼設計             | 模組三 → 二 → 五      | 能設計跨平台一致的監控 SDK   |
-| 商業方案評估     | 想知道什麼時候該用 Sentry / Datadog | 模組一 → 六           | 能評估自架 vs 商業方案的取捨 |
+| 路線             | 適合讀者                            | 建議順序                   | 讀完能做什麼                      |
+| ---------------- | ----------------------------------- | -------------------------- | --------------------------------- |
+| 自架監控快速上手 | 想在自己的 app/script 加監控        | 模組一 → 二 → 四 → 三      | 能部署 collector + 埋點 SDK       |
+| SDK 開發者       | 想理解監控 SDK 怎麼設計             | 模組三 → 二 → 五           | 能設計跨平台一致的監控 SDK        |
+| 商業方案評估     | 想知道什麼時候該用 Sentry / Datadog | 模組一 → 六                | 能評估自架 vs 商業方案的取捨      |
+| 資安合規         | 想確保蒐集的資料不會變成負債        | 模組七 → 二（schema 設計） | 能設計去識別化 + access control   |
+| 商業利用         | 想把行為資料變成商業決策            | 模組一 → 七 → 八           | 能設計行為事件 + 基礎 funnel 分析 |
 
 ## 教學 × 實作互補循環
 
