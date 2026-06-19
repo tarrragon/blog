@@ -18,11 +18,11 @@ tags: ["ux-design", "input", "keyboard", "mobile", "ime"]
 
 ## 待寫章節
 
-- [ ] 輸入機制四維度決策表（keyboard type / submit model / IME policy / special keys）
-- [ ] Terminal app 輸入設計（CLI 特殊需求）
-- [ ] 表單 UX 模式（validate / auto-fill / error feedback）
-- [ ] 搜尋 UX 模式（debounce / instant / suggestion）
-- [ ] 安全敏感輸入框的 IME 控制 checklist
+- [x] 輸入機制四維度決策表（keyboard type / submit model / IME policy / special keys）
+- [x] Terminal app 輸入設計（CLI 特殊需求）
+- [x] 表單 UX 模式（validate / auto-fill / error feedback）
+- [x] 搜尋 UX 模式（debounce / instant / suggestion）
+- [x] 安全敏感輸入框的 IME 控制 checklist
 
 ## 跨分類引用
 
