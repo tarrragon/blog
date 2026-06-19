@@ -94,6 +94,7 @@ metadata:
 | 訊號                                                                                        | 讀哪份 reference                                                                                                            |
 | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | 使用者的需求看起來用託管平台 / BaaS 就能解決（電商、表單流程、內容站、app 後端）            | `references/interview-core.md`（定錨段的交付形態 gate）                                                                     |
+| 產品是開源自架工具（開發者工具 / CLI 工具 / 自架服務、源碼公開）                            | `references/interview-core.md`（開源自架工具中間流程 + 開源替代品 check）                                                   |
 | 開始盤點功能、使用者說「我要做一個 X 的服務」                                               | `references/user-operations-bdd.md`（操作盤點）                                                                             |
 | 操作清單完成、產品有 UI 元件、要展開畫面狀態矩陣                                            | `references/user-operations-bdd.md`（Stage 1.5 畫面狀態矩陣展開）+ `references/principles/screen-state-matrix-expansion.md` |
 | 操作清單完成、要切 domain / 定 event                                                        | `references/domain-event-modeling.md`（domain / event 切分）                                                                |
