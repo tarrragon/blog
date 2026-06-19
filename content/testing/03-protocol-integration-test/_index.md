@@ -16,11 +16,11 @@ tags: ["testing", "integration-test", "websocket", "protocol", "contract-test"]
 
 ## 待寫章節
 
-- [ ] Protocol integration test 定義（跟 unit test / E2E 的邊界）
-- [ ] WebSocket 協議測試實作（對真實 ttyd 驗證 frame type + auth handshake）
-- [ ] HTTP contract test 設計
-- [ ] CI 中的服務 fixture 管理（啟動/停止真實服務的 test harness）
-- [ ] 成本判斷表：什麼時候值得、什麼時候用 contract test 替代
+- [x] Protocol integration test 定義（跟 unit test / E2E 的邊界）
+- [x] WebSocket 協議測試實作（對真實 ttyd 驗證 frame type + auth handshake）
+- [x] HTTP contract test 設計
+- [x] CI 中的服務 fixture 管理（啟動/停止真實服務的 test harness）
+- [x] 成本判斷表：什麼時候值得、什麼時候用 contract test 替代
 
 ## 跨分類引用
 
