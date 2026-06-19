@@ -30,7 +30,5 @@ tags: ["testing", "case-study"]
 | [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)   | WebSocket text/binary frame 被 mock 遮蔽 | app_tunnel | protocol-integration | mock 不區分 frame type |
 | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | Auth handshake 邏輯缺失被 mock 遮蔽      | app_tunnel | protocol-integration | mock 不需認證          |
 
-待補案例（Stage 0 後續輪次）：
-
-- T.C3：ANSI parser 測試資料不覆蓋真實 shell output（unit-test-data 盲區）
-- T.C4：Client-side log 缺失導致 debug 只能靠實機（可觀測性缺口）
+| [T.C3](/testing/cases/ansi-parser-test-data-blindspot/) | ANSI parser 測試資料不覆蓋真實 shell output | app_tunnel | unit-test-data | 手寫測試字串是乾淨子集 |
+| [T.C4](/testing/cases/client-log-absent-debug-cost/)    | Client-side log 缺失導致 debug 只能靠實機   | app_tunnel | observability  | 企劃階段未設計 log 點  |
