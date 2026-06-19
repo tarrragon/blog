@@ -46,8 +46,4 @@ Drawer 的缺點是功能的可見性低 — 隱藏在側邊的功能不如 tab 
 
 組合使用時的注意點：back 按鈕的行為在不同模式下需要一致。在 tab A 的第三層按 back 應該回到第二層（push/pop 行為），而非切換到上一個 tab。
 
-## 下一步路由
-
-- Flutter GoRouter 的具體實作 → [Flutter GoRouter 導航設計](/ux-design/05-navigation-patterns/flutter-gorouter/)
-- go vs push 的 UX 語意差異 → [go vs push vs pushReplacement 語意表](/ux-design/05-navigation-patterns/go-push-semantics/)
-- 路由可達性檢查 → [ux-design 模組一 路由可達性](/ux-design/01-screen-state-machine/route-reachability/)
+分類建立後，在 Flutter 的實作層面用 [GoRouter 導航設計](/ux-design/05-navigation-patterns/flutter-gorouter/)把導航模式對應到具體的 router 設定。不同導航操作（go / push / pushReplacement）的 UX 語意差異在 [go vs push vs pushReplacement 語意表](/ux-design/05-navigation-patterns/go-push-semantics/)中逐一比對。確認導航實作正確後，用[路由可達性檢查](/ux-design/01-screen-state-machine/route-reachability/)驗證所有路由從 UI 可達。

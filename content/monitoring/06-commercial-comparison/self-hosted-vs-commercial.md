@@ -51,8 +51,4 @@ tags: ["monitoring", "comparison", "self-hosted", "commercial", "decision"]
 
 四個維度中三個以上指向同一方向 → 選那個方向。兩兩對半 → 從自架開始（成本低、可逆），需求增長後再評估切換。
 
-## 下一步路由
-
-- Sentry 的架構和功能 → [Sentry 深入](/monitoring/06-commercial-comparison/sentry-deep-dive/)
-- Firebase 的整合方案 → [Firebase 套件](/monitoring/06-commercial-comparison/firebase-suite/)
-- 自架方案的 collector 設計 → [模組四 Collector 設計](/monitoring/04-collector/)
+決策表指向商業方案後，[Sentry 深入](/monitoring/06-commercial-comparison/sentry-deep-dive/)和 [Firebase 套件](/monitoring/06-commercial-comparison/firebase-suite/)分別展開兩個主流方案的架構和能力邊界。決策表指向自架時，[模組四 Collector 設計](/monitoring/04-collector/)提供從 HTTP endpoint 到 rule engine 的完整實作藍圖。

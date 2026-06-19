@@ -72,8 +72,4 @@ testWidgets('connecting transitions to connected on ws success', (tester) async 
 
 狀態轉換 test 的數量 = 矩陣中的狀態轉換邊數。五個狀態的畫面可能有 8-12 條轉換邊，每條邊一個 test case。
 
-## 下一步路由
-
-- 導航路徑的 test → [導航路徑 test](/testing/04-ui-automation/navigation-path-test/)
-- 畫面狀態矩陣的定義和填寫 → [ux-design 模組一 畫面狀態矩陣](/ux-design/01-screen-state-machine/state-matrix-definition/)
-- 視覺比對 → [螢幕截圖比對](/testing/04-ui-automation/visual-regression/)
+狀態覆蓋和轉換覆蓋確認畫面的邏輯正確性後，[導航路徑 test](/testing/04-ui-automation/navigation-path-test/) 進一步驗證 back 按鈕和 route 可達性。矩陣本身的填寫方法和四欄定義見 [ux-design 模組一 畫面狀態矩陣](/ux-design/01-screen-state-machine/state-matrix-definition/)。如果需要在視覺層面確認 UI 呈現的一致性，[螢幕截圖比對](/testing/04-ui-automation/visual-regression/)提供 visual regression 的實作方式。

@@ -43,8 +43,4 @@ Happy path 偏差不只發生在單一畫面。首頁只放 Connect Terminal 按
 
 狀態矩陣的價值在於機械式的完整性檢查。填完所有狀態的四欄是一個 10 分鐘的工作（以 5 個狀態的畫面為例），產出是一張可以直接轉為 test case 的表格，同時能在實作前發現所有退出路徑缺口。
 
-## 下一步路由
-
-- 畫面狀態矩陣的完整定義與填寫方法 → [畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)
-- 從 BDD 操作盤點展開到狀態矩陣 → [從 BDD 操作盤點展開到狀態矩陣](/ux-design/01-screen-state-machine/bdd-to-state-matrix/)
-- 狀態矩陣轉 widget test case → [testing 模組四 UI 自動化](/testing/04-ui-automation/)
+矩陣的四欄定義和填寫步驟在[畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)中完整展開。如果畫面設計從 BDD 操作盤點出發，[從 BDD 操作盤點展開到狀態矩陣](/ux-design/01-screen-state-machine/bdd-to-state-matrix/)提供五步驟的展開流程。填完的矩陣可以直接轉成 widget test case — 具體方法見 [testing 模組四 UI 自動化](/testing/04-ui-automation/)。

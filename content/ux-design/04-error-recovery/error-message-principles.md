@@ -52,8 +52,4 @@ tags: ["ux-design", "error-recovery", "error-message", "copywriting"]
 
 三層不需要都顯示。輕微錯誤（Snackbar）可以只有標題 + 一個行動按鈕。嚴重錯誤（全螢幕）三層都需要。
 
-## 下一步路由
-
-- 重試機制的 UX 設計 → [Retry 機制 UX](/ux-design/04-error-recovery/retry-mechanism-ux/)
-- 錯誤狀態的退出路徑 → [error → retry → error 循環的逃生口](/ux-design/04-error-recovery/error-loop-escape/)
-- 畫面狀態矩陣中的 error 狀態 → [ux-design 模組一 畫面狀態機](/ux-design/01-screen-state-machine/)
+錯誤訊息寫完後，使用者看到訊息的下一步通常是重試 — [Retry 機制 UX](/ux-design/04-error-recovery/retry-mechanism-ux/) 設計重試按鈕的行為和回饋。如果重試反覆失敗，使用者需要退路而非重試迴圈，[error → retry → error 循環的逃生口](/ux-design/04-error-recovery/error-loop-escape/)提供逃生設計。Error 狀態在畫面層級的定位和退出路徑回到 [ux-design 模組一 畫面狀態機](/ux-design/01-screen-state-machine/)的矩陣框架。

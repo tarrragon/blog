@@ -51,8 +51,4 @@ Unit test 和 integration test 通常 mock 掉所有 gate — `FakeBiometricServ
 
 Review 涉及 gate 的程式碼時，對照差異表確認 fallback 路徑是否存在。如果 review 的程式碼用了 `biometricOnly: true`，差異表立刻提示「模擬器上看不到這個問題，需要上真機確認 fallback」。
 
-## 下一步路由
-
-- Gate 設計的通用方法論 → [Gate 分類與三問設計法](/ux-design/02-gate-fallback/gate-three-questions/)
-- Biometric gate 的完整 fallback 設計 → [Biometric fallback 完整設計](/ux-design/02-gate-fallback/biometric-fallback-design/)
-- Mock 遮蔽問題的系統性分析 → [testing 模組一 Mock 遮蔽機制](/testing/01-test-strategy-layers/mock-masking-mechanism/)
+差異表揭露的問題和 testing 領域的 mock 遮蔽在結構上相同 — [testing 模組一 Mock 遮蔽機制](/testing/01-test-strategy-layers/mock-masking-mechanism/)從 API 層 vs 協議層的角度分析同一類問題。差異表本身是[三問設計法](/ux-design/02-gate-fallback/gate-three-questions/)在實機驗證階段的延伸，biometric gate 的完整 fallback 設計見 [Biometric fallback 完整設計](/ux-design/02-gate-fallback/biometric-fallback-design/)。

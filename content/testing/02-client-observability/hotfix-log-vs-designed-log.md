@@ -59,8 +59,4 @@ developer.log('auth token sent');
 
 **新功能走設計產物流程**：從下一個新功能開始，功能規格中包含可觀測性欄位。新功能的 log 從一開始就是設計產物品質。
 
-## 下一步路由
-
-- log 點規格的定義方法 → [功能規格中的 log 點定義方法](/testing/02-client-observability/log-point-in-spec/)
-- 三層 log 的職責劃分 → [三層 log 設計](/testing/02-client-observability/three-layer-log-design/)
-- Log 收集方案選擇 → [自架 log endpoint vs 商業方案](/testing/02-client-observability/log-endpoint-tradeoff/)
+過渡的第一步是建立統一入口，具體的 log 點規格格式見[功能規格中的 log 點定義方法](/testing/02-client-observability/log-point-in-spec/)。規格中的每個 log 點屬於哪一層（連線生命週期 / protocol / 使用者行為），在[三層 log 設計](/testing/02-client-observability/three-layer-log-design/)中定義。收集到 log 之後用自架還是商業方案處理，見[自架 log endpoint vs 商業方案](/testing/02-client-observability/log-endpoint-tradeoff/)的判斷流程。

@@ -69,8 +69,4 @@ App 需要系統權限（相機、位置、通知）才能使用特定功能。
 
 失敗欄和不確定欄為空的 gate 就是 UX 死胡同的候選 — 和[畫面狀態矩陣](/ux-design/01-screen-state-machine/state-matrix-definition/)的退出路徑檢查同樣的邏輯。
 
-## 下一步路由
-
-- Biometric gate 的平台差異和完整 fallback 設計 → [Biometric fallback 完整設計](/ux-design/02-gate-fallback/biometric-fallback-design/)
-- 開發環境如何遮蔽 gate 問題 → [開發環境 vs 真機的 gate 行為差異表](/ux-design/02-gate-fallback/dev-vs-real-gate-behavior/)
-- Gate 和畫面狀態矩陣的結合 → [ux-design 模組一 畫面狀態機](/ux-design/01-screen-state-machine/)
+三問設計法的具體應用在 [Biometric fallback 完整設計](/ux-design/02-gate-fallback/biometric-fallback-design/)中以生物辨識 gate 為例展開。Gate 在開發環境的行為可能和真機不同，[開發環境 vs 真機的 gate 行為差異表](/ux-design/02-gate-fallback/dev-vs-real-gate-behavior/)列出每個 gate 在模擬器和真機上的差異。Gate 設計表的「失敗」欄和[畫面狀態矩陣](/ux-design/01-screen-state-machine/)的「退出路徑」欄是同一個問題在不同層級的表達。

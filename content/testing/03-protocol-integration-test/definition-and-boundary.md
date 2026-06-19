@@ -49,8 +49,4 @@ Protocol integration test 填補 unit test 和 E2E test 之間的空隙。Unit t
 
 這個 test 不需要 Flutter UI、不需要 FakeWebSocketChannel，直接驗證「我的程式碼送出的資料，真實 ttyd 是否正確處理」。
 
-## 下一步路由
-
-- WebSocket 的 protocol test 實作 → [WebSocket 協議測試實作](/testing/03-protocol-integration-test/websocket-protocol-test/)
-- 什麼時候值得寫 protocol integration test → [成本判斷表](/testing/03-protocol-integration-test/cost-judgment/)
-- Protocol integration test 和 mock test 的關係 → [testing 模組一 測試策略分層](/testing/01-test-strategy-layers/)
+以 WebSocket 為例的具體實作在 [WebSocket 協議測試實作](/testing/03-protocol-integration-test/websocket-protocol-test/)中展開。在投入建置之前，用[成本判斷表](/testing/03-protocol-integration-test/cost-judgment/)評估服務啟動成本和協議複雜度是否值得這一層 test。Protocol integration test 和 mock test 的分工邊界回到 [testing 模組一 測試策略分層](/testing/01-test-strategy-layers/)的三層框架。
