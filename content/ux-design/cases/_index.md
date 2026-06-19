@@ -27,7 +27,5 @@ tags: ["ux-design", "case-study"]
 | [U.C1](/ux-design/cases/five-states-zero-exits/)     | 五個狀態零個退出路徑               | app_tunnel | 模組一 | 狀態機退出路徑未設計 |
 | [U.C2](/ux-design/cases/biometric-only-no-fallback/) | biometricOnly=true 無密碼 fallback | app_tunnel | 模組二 | Gate 無 fallback     |
 
-待補案例（Stage 0 後續輪次）：
-
-- U.C3：終端機文字輸入機制未設計（輸入機制是事後 hotfix）
-- U.C4：首頁缺配對入口按鈕（導航流未完整列出）
+| [U.C3](/ux-design/cases/terminal-input-mechanism-absent/) | 終端機文字輸入機制未設計 | app_tunnel | 模組三 | 輸入機制是事後 hotfix |
+| [U.C4](/ux-design/cases/missing-enrollment-entry-point/)  | 首頁缺配對入口按鈕       | app_tunnel | 模組一 | 導航流未完整列出      |
