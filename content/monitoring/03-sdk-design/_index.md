@@ -20,4 +20,5 @@ tags: ["monitoring", "sdk", "js", "flutter", "python"]
 
 - → [testing 模組三 協議整合測試](/testing/03-protocol-integration-test/)：SDK 的 HTTP POST 行為需要 protocol test
 - → [monitoring 模組七 資安](/monitoring/07-security-privacy/)：redaction 在 SDK 端做
+- ← [testing 模組一 測試策略](/testing/01-test-strategy-layers/)：mock 遮蔽機制影響 SDK 的 auto-intercept 行為驗證
 - 實作 repo：tarrragon/monitor 的 sdk-js / sdk-flutter / sdk-python

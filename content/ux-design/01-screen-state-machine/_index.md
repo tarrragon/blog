@@ -29,4 +29,5 @@ tags: ["ux-design", "state-machine", "navigation"]
 - → [testing 模組四 UI 自動化](/testing/04-ui-automation/)：狀態矩陣轉 widget test case
 - → [testing 模組二 客戶端可觀測性](/testing/02-client-observability/)：狀態矩陣可加「可觀測性」欄位
 - → [monitoring 模組八 商業利用](/monitoring/08-business-analytics/)：狀態轉換事件是 funnel 分析的原料
+- ← [testing 模組一 測試策略](/testing/01-test-strategy-layers/)：三層測試中 screen state test 對應狀態矩陣
 - ← work-log：[每個畫面都需要出口](/work-log/ux_screen_state_machine_design/)

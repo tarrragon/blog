@@ -6,7 +6,7 @@ weight: 2
 tags: ["testing", "mock", "protocol", "api-contract", "blindspot"]
 ---
 
-Mock 遮蔽是 mock 的設計邊界。Mock 的職責是模擬程式語言層面的 API 契約 — 方法簽名、參數型別、回傳值結構。協議層行為（frame type、handshake 步驟、編碼格式）不在 API 契約的描述範圍內，mock 沒有模擬這些行為的義務，也不應該被期待模擬。
+Mock 遮蔽是 mock 的設計邊界。「遮蔽」描述的是機制 — mock 讓協議層差異變得不可見；「盲區」描述的是結果 — 被遮蔽的範圍形成結構性的驗證缺口。Mock 的職責是模擬程式語言層面的 API 契約 — 方法簽名、參數型別、回傳值結構。協議層行為（frame type、handshake 步驟、編碼格式）不在 API 契約的描述範圍內，mock 沒有模擬這些行為的義務，也不應該被期待模擬。
 
 ## 三層語意與斷裂點
 

@@ -21,5 +21,6 @@ tags: ["monitoring", "security", "privacy", "redaction", "gdpr"]
 
 - → [backend 07 資安](/backend/07-security-data-protection/)：server-side 的 secret management 跟本模組的 redaction 互補
 - ← [ux-design 模組三 輸入機制](/ux-design/03-input-mechanism/)：IME 個人化學習 = secret 洩漏
+- ← [testing 模組二 客戶端可觀測性](/testing/02-client-observability/)：log 內容可能含 secret，需要 redaction
 - → [monitoring 模組八](/monitoring/08-business-analytics/)：去識別化是商業利用的入場條件
 - 待建連結 → `compliance/`（隱私法規教學分類）

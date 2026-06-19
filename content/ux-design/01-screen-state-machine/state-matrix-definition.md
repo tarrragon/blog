@@ -46,7 +46,7 @@ tags: ["ux-design", "state-machine", "state-matrix", "navigation"]
 
 退出路徑為空的狀態是 UX 死胡同。使用者進入後無法靠自己的操作離開，只能殺掉 app 或等系統逾時。
 
-app_tunnel 的 Terminal 畫面有五個 enum 狀態（idle / connecting / connected / error / disconnected），每個狀態的退出路徑都是空的。使用者從首頁點 Connect Terminal 進入後，無論處於哪個狀態都無法返回首頁（[U.C1](/ux-design/cases/five-states-zero-exits/)）。10 分鐘填完這張表格就能發現全部五個缺口。
+app_tunnel 的 Terminal 畫面有五個 enum 狀態（idle / connecting / connected / error / disconnected），每個狀態的退出路徑都是空的。使用者從首頁點 Connect Terminal 進入後，無論處於哪個狀態都無法返回首頁（[U.C1](/ux-design/cases/five-states-zero-exits/)）。10 分鐘填完這張表格就能發現全部五個缺口（本章合成，UF-3 Derive）。
 
 ### 第四步：檢查操作欄
 
@@ -85,3 +85,5 @@ app_tunnel 的 Terminal 畫面有五個 enum 狀態（idle / connecting / connec
 - 從 BDD 操作盤點展開到狀態矩陣 → [從 BDD 操作盤點展開到狀態矩陣](/ux-design/01-screen-state-machine/bdd-to-state-matrix/)
 - 路由可達性檢查 → [路由可達性檢查](/ux-design/01-screen-state-machine/route-reachability/)
 - 狀態矩陣轉 widget test case → [testing 模組四 UI 自動化](/testing/04-ui-automation/)
+- 狀態矩陣加「可觀測性」欄位 → [testing 模組二 客戶端可觀測性](/testing/02-client-observability/)
+- 狀態轉換事件作為 funnel 分析原料 → [monitoring 模組八 行為資料的商業利用](/monitoring/08-business-analytics/)

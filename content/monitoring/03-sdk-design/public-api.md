@@ -17,7 +17,7 @@ SDK 初始化。設定 collector endpoint、app 識別資訊、flush 間隔、bu
 ```text
 Monitor.init({
   endpoint: 'https://collector.example.com/v1/events',
-  app: 'app_tunnel',
+  app: 'my_app',
   version: '1.2.0',
   flushInterval: 30000,   // 毫秒
   bufferSize: 100,

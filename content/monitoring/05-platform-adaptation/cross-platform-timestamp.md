@@ -16,7 +16,7 @@ tags: ["monitoring", "platform", "timestamp", "timezone", "clock-drift"]
 2026-06-19T14:30:00.123+08:00
 ```
 
-避免使用 Unix timestamp（秒或毫秒）作為唯一的時間表示 — Unix timestamp 沒有時區資訊，如果 SDK 端和 collector 端在不同時區，需要額外的 metadata 才能正確轉換。
+避免使用 Unix timestamp（秒或毫秒）作為僅有的時間表示 — Unix timestamp 沒有時區資訊，如果 SDK 端和 collector 端在不同時區，需要額外的 metadata 才能正確轉換。
 
 避免使用「本地時間不帶時區」的格式（`2026-06-19T14:30:00`）— 無法區分 UTC+8 的 14:30 和 UTC+0 的 14:30。
 

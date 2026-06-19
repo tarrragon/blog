@@ -19,7 +19,7 @@ Sentry 的核心概念是 error tracking，但已擴展到 performance monitorin
 | Metric    | Transaction + Span       | Performance monitoring 的度量單位                  |
 | Lifecycle | Breadcrumb（navigation） | app 生命週期記錄為 navigation/system breadcrumb    |
 
-Sentry 的設計假設是「error 是主角，其他事件是 error 的 context」。Event 和 lifecycle 都以 breadcrumb 形式附加在 error 報告上，獨立查看的能力有限。如果主要需求是行為分析而非 error tracking，Sentry 的 breadcrumb 模型可能不夠用。
+Sentry 的設計假設是「error 是主角，其他事件是 error 的 context」。Event 和 lifecycle 都以 breadcrumb 形式附加在 error 報告上，獨立查看的能力有限。Breadcrumb 預設保留最近 100 條且不可獨立查詢 — 它是 error 報告的附件，不是獨立的事件資料庫。Metric 對應的 Transaction + Span 則有獨立的 Performance 頁面可以查看，和 error 是不同的 UI 入口。如果主要需求是行為分析而非 error tracking，Sentry 的 breadcrumb 模型可能不夠用。
 
 ## Firebase Crashlytics + Analytics
 
@@ -32,7 +32,7 @@ Firebase 把 error tracking 和行為分析拆成兩個獨立產品。
 | Metric    | Analytics event + parameters | 用 event 的 parameters 記錄數值（無原生 metric） |
 | Lifecycle | Analytics auto events        | screen_view、app_open 等自動收集                 |
 
-Firebase 的特點是 Crashlytics 和 Analytics 各自獨立運作 — error 資料在 Crashlytics console，行為資料在 Analytics console。兩者的關聯需要手動（在 Crashlytics 的 custom key 中設定 user ID，再到 Analytics 用同一個 ID 查行為）。
+Firebase 的特點是 Crashlytics 和 Analytics 各自獨立運作 — error 資料在 Crashlytics console，行為資料在 Analytics console。Metric 沒有原生支援，只能用 Analytics event 的 parameters 欄位記錄數值（例如 `event: 'page_load', parameters: {duration_ms: 320}`），查詢時需要在 BigQuery export 中自行聚合。兩個 console 之間的關聯需要手動（在 Crashlytics 的 custom key 中設定 user ID，再到 Analytics 用同一個 ID 查行為）。
 
 ## Datadog RUM
 
