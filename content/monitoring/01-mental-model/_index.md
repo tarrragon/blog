@@ -10,10 +10,10 @@ tags: ["monitoring", "mental-model", "event-classification"]
 
 ## 待寫章節
 
-- [ ] 四類事件的完整定義（event / error / metric / lifecycle）
-- [ ] 事件命名規範（namespace.action 格式）
-- [ ] 商業方案的事件類型對應（Sentry / Crashlytics / GA4 / Datadog RUM）
-- [ ] 從需求推導「該收集哪些事件」的方法
+- [x] 四類事件的完整定義（event / error / metric / lifecycle）
+- [x] 事件命名規範（namespace.action 格式）
+- [x] 商業方案的事件類型對應（Sentry / Crashlytics / GA4 / Datadog RUM）
+- [x] 從需求推導「該收集哪些事件」的方法
 
 ## 跨分類引用
 
