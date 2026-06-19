@@ -18,10 +18,10 @@ tags: ["testing", "observability", "logging", "client-side"]
 
 ## 待寫章節
 
-- [ ] 三層 log 設計（連線生命週期 / protocol 訊息 / 使用者行為）
-- [ ] 功能規格中的 log 點定義方法
-- [ ] 自架 log endpoint vs 商業方案的取捨判斷
-- [ ] 「事後補 log」vs「設計產物 log」的品質差異
+- [x] 三層 log 設計（連線生命週期 / protocol 訊息 / 使用者行為）
+- [x] 功能規格中的 log 點定義方法
+- [x] 自架 log endpoint vs 商業方案的取捨判斷
+- [x] 「事後補 log」vs「設計產物 log」的品質差異
 
 ## 跨分類引用
 
