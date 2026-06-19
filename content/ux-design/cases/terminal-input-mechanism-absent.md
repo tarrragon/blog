@@ -52,6 +52,6 @@ TextField(
 
 ## 下一步路由
 
-- 想設計 mobile 輸入機制 → [模組三：輸入機制設計](/ux-design/)
+- 想設計 mobile 輸入機制 → [輸入機制決策表](/ux-design/03-input-mechanism/four-dimension-decision/)
 - 想看 protocol 跟輸入的關聯 → [T.C1 WS frame type](/testing/cases/ws-text-binary-frame-mock-blindspot/)（sendData 的型別決策）
 - 想做安全審查 → 待補：CLI 輸入安全 checklist

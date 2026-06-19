@@ -120,3 +120,7 @@ Gate = 使用者必須通過的關卡（biometric、network、auth）。每個 g
 5. **輸入機制列決策表**：keyboard type / submit model / IME policy / special keys
 
 這不是額外的文件負擔 — 是操作盤點本來就該產出的下一層。一張表能在 10 分鐘內暴露所有 UX 死胡同，省掉實機測試才發現的成本。
+
+## 延伸閱讀
+
+本文的觀察和判讀在 [UX Design 畫面設計](/ux-design/) 教學系列中展開為系統性的教學模組：[畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)、[Gate 分類與三問設計法](/ux-design/02-gate-fallback/gate-three-questions/)、[輸入機制決策表](/ux-design/03-input-mechanism/four-dimension-decision/)。

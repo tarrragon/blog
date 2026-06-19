@@ -149,3 +149,7 @@ Widget test 覆蓋所有畫面狀態的 UI 行為：每個狀態顯示什麼 wid
 「192 個 test 全過」給了虛假的信心。常見的反應是「測試不夠多」然後再加更多 mock test，但問題不在數量 — 300 個用同一個 `FakeWebSocketChannel` 的 test 仍然抓不到 text vs binary frame。
 
 **測試策略的品質不是用數量衡量、而是用層級覆蓋衡量。** 一個對真實 ttyd 的 5 行 protocol test，比 50 個新增的 mock test 更能防止實機部署失敗。
+
+## 延伸閱讀
+
+本文的觀察和判讀在 [Testing 測試策略](/testing/) 教學系列中展開為系統性的教學模組：[三層定義與職責表](/testing/01-test-strategy-layers/three-layer-definition/)、[Mock 遮蔽機制分析](/testing/01-test-strategy-layers/mock-masking-mechanism/)、[Protocol integration test](/testing/03-protocol-integration-test/)。

@@ -30,5 +30,8 @@ tags: ["首頁", "教學", "工程筆記"]
 - [本地 LLM 寫 code 實務指南](/llm/)：在 Apple Silicon Mac 上跑本地 LLM、整合 VS Code 寫 code 的最短可行路徑
 - [CLI 圖形化工具](/cli/)：在純文字終端機用 TUI、ASCII 圖表、多工器、檔案管理器與 SQL 客戶端做遠端操作，含 SSH 伺服器、手機平板、低頻寬情境的選型判讀
 - [商業概念與策略分析](/business/)：整理商業模式、單位經濟、競爭護城河等術語卡片，並用 WRAP 框架拆解具體市場案例
+- [Testing 測試策略](/testing/)：三層測試分層、mock 遮蔽機制、protocol integration test、客戶端可觀測性，從 app_tunnel 實機測試教訓出發
+- [UX Design 畫面設計](/ux-design/)：畫面狀態矩陣、gate fallback、輸入機制、錯誤回復、導航模式，mobile app 的 UX 設計判斷
+- [Monitoring 監控體系](/monitoring/)：四類事件分類、SDK 設計、collector 架構、商業方案比較、資安與隱私、行為資料商業利用
 
 ---

@@ -36,6 +36,6 @@ ttyd WebSocket 協議要求連線建立後發送一個 JSON frame 包含 base64 
 
 ## 下一步路由
 
-- 想區分 mock 層級 → [模組一：測試策略分層](/testing/)
-- 想建 protocol integration test → [模組三：協議整合測試](/testing/)
+- 想區分 mock 層級 → [模組一：測試策略分層](/testing/01-test-strategy-layers/)
+- 想建 protocol integration test → [模組三：協議整合測試](/testing/03-protocol-integration-test/)
 - 想設計 auth 機制的 UX fallback → [U.C2 biometricOnly 無 fallback](/ux-design/cases/biometric-only-no-fallback/)

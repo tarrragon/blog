@@ -48,6 +48,6 @@ W2-001 修復加入 `OutlinedButton.icon` 連結到 `/enrollment`，並用 `cont
 
 ## 下一步路由
 
-- 想設計完整導航流 → [模組五：導航模式](/ux-design/)
+- 想設計完整導航流 → [模組五：導航模式](/ux-design/05-navigation-patterns/)
 - 想檢查畫面狀態矩陣的退出路徑 → [U.C1 五狀態零退出](/ux-design/cases/five-states-zero-exits/)
 - 想做路由可達性自動化檢查 → 待補：Flutter GoRouter 路由可達性 lint

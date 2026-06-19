@@ -48,6 +48,6 @@ options: const AuthenticationOptions(
 
 ## 下一步路由
 
-- 想設計 Gate fallback 體系 → [模組二：Gate 與 Fallback 設計](/ux-design/)
+- 想設計 Gate fallback 體系 → [Gate 分類與三問設計法](/ux-design/02-gate-fallback/gate-three-questions/)
 - 想了解 biometric 在不同平台的行為差異 → 待補：iOS/Android biometric API 行為對照
 - 類似案例（導航死胡同）→ [U.C1 五個狀態零個退出](/ux-design/cases/five-states-zero-exits/)
