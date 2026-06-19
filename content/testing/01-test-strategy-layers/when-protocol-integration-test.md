@@ -6,7 +6,7 @@ weight: 4
 tags: ["testing", "protocol-integration", "decision", "strategy", "mock"]
 ---
 
-Protocol integration test 有成本 — 需要真實服務實例、環境準備、執行速度較慢、結果可能因環境差異而不穩定。判斷是否需要這一層測試，依據的是服務架構的特徵，而非主觀的「寫多一點比較安心」。
+[Protocol integration test](/testing/knowledge-cards/protocol-integration-test/) 有成本 — 需要真實服務實例、環境準備、執行速度較慢、結果可能因環境差異而不穩定。判斷是否需要這一層測試，依據的是服務架構的特徵，而非主觀的「寫多一點比較安心」。
 
 ## 三個判斷維度
 

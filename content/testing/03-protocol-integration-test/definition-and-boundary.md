@@ -6,7 +6,7 @@ weight: 1
 tags: ["testing", "integration-test", "protocol", "definition", "boundary"]
 ---
 
-Protocol integration test 驗證的是程式碼和真實外部服務之間的協議互動 — 連線方式、認證流程、資料編碼、回應格式。它和 unit test 的差別是不用 mock，和 E2E test 的差別是不經過 UI。
+[Protocol integration test](/testing/knowledge-cards/protocol-integration-test/) 驗證的是程式碼和真實外部服務之間的協議互動 — 連線方式、認證流程、資料編碼、回應格式。它和 unit test 的差別是不用 mock，和 E2E test 的差別是不經過 UI。
 
 ## 三種 test 的邊界
 

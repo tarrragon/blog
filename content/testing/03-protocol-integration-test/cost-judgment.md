@@ -6,7 +6,7 @@ weight: 5
 tags: ["testing", "integration-test", "protocol", "cost", "decision"]
 ---
 
-Protocol integration test 的價值在於用自動化方式驗證 mock 遮蔽的協議層盲區。但它有建置成本（服務 fixture 管理）和維護成本（服務更新時 test 要跟著改）。判斷是否值得投資，依據的是兩個維度：服務啟動成本和協議複雜度。
+[Protocol integration test](/testing/knowledge-cards/protocol-integration-test/) 的價值在於用自動化方式驗證 [mock 遮蔽](/testing/knowledge-cards/mock-masking/)的協議層盲區。但它有建置成本（服務 fixture 管理）和維護成本（服務更新時 test 要跟著改）。判斷是否值得投資，依據的是兩個維度：服務啟動成本和協議複雜度。
 
 ## 服務啟動成本
 

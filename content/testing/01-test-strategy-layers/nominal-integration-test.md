@@ -6,7 +6,7 @@ weight: 3
 tags: ["testing", "integration-test", "mock", "naming", "test-design"]
 ---
 
-名義 integration test 是指 test 的名稱或檔案路徑包含「integration」或「端對端」，但實際上核心外部依賴全部被 fake 替換，驗證的是內部狀態機而非真實服務互動。這類 test 的核心問題是命名造成的認知偏差：團隊以為「integration test 有寫」，實際上協議層完全沒被驗證。它們驗證的邏輯可能完全正確 — 問題在命名，不在品質。
+[名義 integration test](/testing/knowledge-cards/nominal-integration-test/) 是指 test 的名稱或檔案路徑包含「integration」或「端對端」，但實際上核心外部依賴全部被 fake 替換，驗證的是內部狀態機而非真實服務互動。這類 test 的核心問題是命名造成的認知偏差：團隊以為「integration test 有寫」，實際上協議層完全沒被驗證。它們驗證的邏輯可能完全正確 — 問題在命名，不在品質。
 
 ## 辨識特徵
 
