@@ -1,23 +1,23 @@
 ---
 title: "模組七：突發流量應對"
 date: 2026-06-20
-description: "行銷活動、新聞曝光、產品上線 — 預期和非預期的流量高峰如何準備和應對"
+description: "行銷活動或新聞曝光帶來 10x-100x 流量時怎麼撐 — 突發分類、降級策略、queue 緩衝、規模分級應對"
 weight: 7
-tags: ["devops", "burst-traffic", "scaling", "queue", "degradation"]
+tags: ["devops", "burst-traffic", "degradation", "queue", "scaling"]
 ---
 
-回答「流量突然變成平常的 10 倍到 100 倍時怎麼辦」。預期高峰可以預先擴容，非預期高峰靠降級和緩衝。
+回答「流量突然暴增時怎麼不掛」。突發流量和穩定高流量的處理策略不同 — 突發有時間限制，撐過去就恢復正常。
 
 ## 待寫章節
 
-- [ ] 預期高峰的準備（容量預估、預先擴容、warm-up、CDN 預快取）
-- [ ] 非預期高峰的應對（自動擴縮、Queue 緩衝、動態取樣、降級模式）
-- [ ] Queue 做突發緩衝（Kafka / NATS / Redis Streams — 和 backend/03 互補但聚焦 burst 場景）
-- [ ] 降級決策（什麼功能先關、什麼功能最後關、降級的自動化 vs 手動決策）
-- [ ] 高峰後的回復（queue 積壓消化、快取重建、資料補齊）
+- [x] 突發流量的分類（可預期 vs 不可預期、持續時間和倍率）
+- [x] 降級策略（動態取樣、事件優先級、功能降級、聚合前移）
+- [x] Queue 緩衝（Kafka / NATS / Redis Streams 做 burst buffer）
+- [x] 規模分級應對表（自用 → 中型 → 大型 → 商業網站）
 
 ## 跨分類引用
 
-- ← [monitoring 模組四 Ingestion Scaling](/monitoring/04-collector/ingestion-scaling/)：監控系統自身的突發流量應對
-- → [devops 模組三 流量管控](/devops/03-traffic-management/)：流量管控是突發流量應對的基礎工具
-- → [devops 模組五 容量規劃](/devops/05-capacity-planning/)：容量規劃決定「正常多少、高峰多少」
+- ← [devops 模組三 流量管控](/devops/03-traffic-management/)：背壓和 rate limit 是突發應對的基礎元件
+- → [monitoring 模組四 Collector](/monitoring/04-collector/)：Collector 的 ingestion scaling 是本模組的應用場景
+- → [backend 非同步佇列](/backend/03-message-queue/)：Queue 的選型和操作實務
+- → [devops 模組五 容量規劃](/devops/05-capacity-planning/)：預期突發的容量預備
