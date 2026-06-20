@@ -262,6 +262,21 @@ SDK 埋點是已解決問題 — `window.onerror` 攔截錯誤、`http.post` 送
 
 這些挑戰的共同特徵是：**在自用場景（1 人、1 台機器、每天幾百筆）完全不存在，在小規模場景（100 人、每天 10 萬筆）開始浮現，在中規模場景（1000+ 人、每天百萬筆）成為核心問題。** 自架方案從「grep 就夠」演進到「需要時間序列資料庫」的過程，正好是理解商業方案為什麼那樣設計的最佳路徑。
 
+### SQLite 實機驗證優先
+
+Monitor repo 進入實作後，第一個驗證目標是 SQLite backend 的實機效能基準。教學的 [SQLite Backend 效能基準](/monitoring/04-collector/sqlite-performance-baseline/) 提供了基於技術特性和業界數據推導的預期範圍，但這些數字必須在目標硬體上用實測確認。
+
+SQLite 版本和 PostgreSQL 版本的根本差異是 **SQLite 無法擴充硬體** — 它是嵌入式資料庫，和 collector 跑在同一台機器上。PostgreSQL 可以透過更大的主機、read replica、connection pool 擴展，但 SQLite 的天花板就是那台機器的 CPU + 磁碟 I/O + 記憶體。這意味著 SQLite 版本的效能邊界是硬限制，撞到就只能切換 backend，沒有「加機器」這個選項。
+
+實機驗證的優先順序：
+
+1. **寫入吞吐和 database is locked 的實際閾值**：教學推導的「Mac SSD 約 5,000 inserts/sec」需要在目標環境（可能是 Linux VPS 或 Raspberry Pi）實測。`database is locked` 出現的條件比理論預測更依賴硬體 — SD card 的隨機寫入延遲可能讓 WAL checkpoint 卡住數秒。
+2. **Dashboard 查詢在真實資料量下的延遲**：教學推導的「10 萬筆有索引 < 100ms」需要用真實事件資料（不是生成的 dummy data）驗證 — 真實事件的 JSON 大小和欄位分佈影響索引效率。
+3. **降採樣 job 和 purge 的執行時間**：這兩個定期 job 在執行期間持有 write lock。如果 job 跑太久（數秒以上），ingestion 會 block — 需要確認在目標資料量下 job 的執行時間。
+4. **長時間運行的穩定性**：SQLite 的 WAL 檔案會持續增長直到 checkpoint。Collector 連續運行數天後的 WAL 大小、checkpoint 行為、記憶體是否有 leak — 這些只有長時間運行才會浮現。
+
+實測結果寫進 monitor repo 的 `docs/benchmarks/sqlite-baseline.md`，和教學的預期範圍對照。偏差超過 2 倍的項目回補教學章節，修正預期範圍或補充環境特定的注意事項。
+
 ### 實作驅動的教學章節回補
 
 當實作撞牆時，回補流程：
