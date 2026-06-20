@@ -13,6 +13,8 @@ type Storage interface {
     Store(event Event) error
     Query(filter QueryFilter) ([]Event, error)
     Aggregate(spec AggregateSpec) (AggregateResult, error)
+    Downsample() error  // 定期：原始事件 → 小時摘要 → 天摘要
+    Purge() error       // 定期：按層級保留期限清理過期資料
     Close() error
 }
 ```
@@ -39,6 +41,57 @@ SQLite 是嵌入式資料庫，編譯進 collector binary 中，不需要額外 
 ### 適用規模
 
 單日事件量在十萬筆以下、SQLite 資料庫在 1GB 以下。索引查詢在毫秒級完成。自用工具和小型團隊的日常使用通常在這個範圍。
+
+### 分層保留與降採樣
+
+保留策略從查詢需求反推，每一種查詢需要的資料粒度和回溯深度不同。回溯越深的查詢需要的粒度越粗 — debug 需要最近幾天的逐筆事件，cohort 留存需要一整年的資料但每週一筆聚合數字就夠。
+
+| 查詢用途   | 需要的粒度 | 回溯深度 | 對應表          |
+| ---------- | ---------- | -------- | --------------- |
+| Debug 定位 | 逐筆原始   | 天       | events          |
+| Funnel     | 逐筆 event | 週～月   | events          |
+| Error 趨勢 | 每小時計數 | 月～季   | hourly_summary  |
+| Cohort     | 每天計數   | 季～年   | daily_summary   |
+| RFM 分群   | 每月聚合   | 年       | monthly_summary |
+
+SQLite 中的實作是三張摘要表加定期 job：
+
+```sql
+-- 摘要表
+CREATE TABLE hourly_summary (
+    hour TEXT, type TEXT, name TEXT,
+    count INTEGER, error_count INTEGER
+);
+CREATE TABLE daily_summary (
+    date TEXT, type TEXT, name TEXT,
+    count INTEGER, unique_sessions INTEGER
+);
+
+-- 降採樣（Downsample，每小時跑一次）
+INSERT INTO hourly_summary (hour, type, name, count, error_count)
+SELECT strftime('%Y-%m-%dT%H:00:00', ts), type, name,
+       COUNT(*), SUM(CASE WHEN type='error' THEN 1 ELSE 0 END)
+FROM events
+WHERE ts >= datetime('now', '-1 hour')
+GROUP BY 1, 2, 3;
+
+-- 清理（Purge，每天跑一次）
+DELETE FROM events WHERE ts < datetime('now', '-7 days');
+DELETE FROM hourly_summary WHERE hour < datetime('now', '-90 days');
+DELETE FROM daily_summary WHERE date < datetime('now', '-365 days');
+```
+
+保留期限由 collector config 設定，數字的來源是「哪些查詢需要回溯多遠」：
+
+```yaml
+retention:
+  raw_events: 7d
+  hourly_summary: 90d
+  daily_summary: 365d
+  monthly_summary: forever
+```
+
+Storage interface 的 `Downsample()` 和 `Purge()` 由 collector 的定時排程觸發（Go 的 `time.Ticker`）。每個 storage backend 各自實作 — SQLite 用上述 SQL、PostgreSQL 用相同邏輯但可以加 partial index 加速、時間序列 DB 的 continuous aggregate 和 retention policy 原生支援。
 
 ### 觸發切換到 PostgreSQL 的訊號
 
