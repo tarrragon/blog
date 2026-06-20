@@ -21,4 +21,6 @@ tags: ["monitoring", "collector", "go", "storage", "rule-engine"]
 
 - → [backend 01 資料庫](/backend/01-database/)：PostgreSQL backend 的資料庫設計
 - → [backend 09 效能容量](/backend/09-performance-capacity/)：高併發寫入 / 大資料查詢的效能挑戰
+- → [DevOps 流量管控](/devops/03-traffic-management/)：背壓、rate limit、熔斷的基礎概念
+- → [DevOps 突發流量](/devops/07-burst-traffic/)：突發流量分類、降級策略、queue 緩衝
 - 實作 repo：tarrragon/monitor 的 collector/ + docs/challenges/（撞牆記錄）

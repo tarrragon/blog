@@ -19,7 +19,7 @@ tags: ["devops", "traffic-management", "backpressure", "buffer", "429"]
 | 訊號       | HTTP 429 + Retry-After / TCP 窗口縮小 / channel 阻塞 | HTTP 429 + 固定的 rate limit header |
 | 發送者行為 | 根據 Retry-After 動態調整                            | 等待限速窗口重設                    |
 
-背壓在系統真的撐不住時才觸發，rate limit 在到達預設上限時就觸發（即使系統還有餘裕）。兩者互補：rate limit 防止單一來源打爆系統，背壓防止所有來源加起來打爆系統。
+背壓在系統承載達到上限時才觸發，rate limit 在到達預設上限時就觸發（即使系統還有餘裕）。兩者互補：rate limit 防止單一來源打爆系統，背壓防止所有來源加起來打爆系統。
 
 ## 實作模式
 
