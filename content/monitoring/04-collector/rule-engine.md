@@ -93,6 +93,40 @@ rules:
 
 規則檔案版本控制在 git 中，和 collector 的其他設定一起管理。規則變更歷史可追溯。
 
+## Shell 執行的安全邊界
+
+Rule engine 的「執行腳本」動作在 collector 主機上執行 shell command。這個能力和 collector 的認證狀態組合後產生不同的風險等級。
+
+### 攻擊鏈
+
+無認證模式下，攻擊者可以向 collector 的 `/v1/events` endpoint 注入偽造事件。如果偽造事件匹配了一條規則、且規則的動作是執行 free-form shell command，攻擊者等於取得了 collector 主機的命令執行權（RCE — Remote Code Execution）。
+
+攻擊路徑：注入假事件 → 匹配 rule → 執行 shell → RCE。
+
+### 防護措施
+
+**Rule 定義不可透過 API 新增**。Rule 只能由管理員透過配置檔或 CLI 設定，collector 的 HTTP API 不提供 rule CRUD endpoint。攻擊者即使能注入事件也無法新增 rule — 但現有 rule 的條件如果太寬（例如 `type: error` 沒有進一步限定 name），偽造的 error 事件仍可能匹配。
+
+**Shell command 使用 allowlist**。Rule 的 action 指定 command name（如 `restart-ttyd`），command 的實際路徑在配置檔的 allowlist 中定義。Rule 不接受 free-form shell string（如 `sh -c "rm -rf /"`）。
+
+```yaml
+# 配置檔
+allowed_commands:
+  restart-ttyd: /usr/local/bin/restart-ttyd.sh
+  notify-slack: /usr/local/bin/notify-slack.sh
+
+rules:
+  - name: fatal-error-response
+    condition:
+      type: error
+      data.severity: fatal
+    action:
+      type: command
+      command: restart-ttyd  # 只接受 allowlist 中的 name
+```
+
+**無認證模式下的額外限制**。Collector 無認證時（同區網信任），建議禁用 command 類型的動作、只允許通知和 webhook。認證啟用後才解鎖 command 動作 — 認證確保只有授權的 SDK 實例能送事件，降低偽造事件觸發 rule 的風險。
+
 ## 下一步路由
 
 - Collector 的完整架構 → [Collector 架構](/monitoring/04-collector/architecture/)

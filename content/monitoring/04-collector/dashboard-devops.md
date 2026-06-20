@@ -97,6 +97,44 @@ Collector 的 health endpoint 連續 N 次回應失敗（由外部 uptime check 
 
 自動恢復後 collector 送出 `collector.started` 事件，dashboard 的服務狀態卡從紅轉綠。如果連續重啟（10 分鐘內重啟 3 次以上），systemd 的 `StartLimitBurst` 阻止無限重啟、改為發送告警通知人工介入。
 
+## 存取控制
+
+Day-one 的 dashboard 預設無認證 — 同區網內的任何裝置都能打開 dashboard URL。這是同區網信任模型的設計選擇，和 collector 的 HTTP endpoint 無認證一致。
+
+### 風險告知
+
+無認證的 dashboard 暴露以下資訊給同區網的所有裝置：
+
+- **DevOps dashboard**：SDK 版本、平台、IP、collector 的磁碟用量
+- **Developer dashboard**：error stack trace（可能包含檔案路徑和程式碼片段）、session 回放（使用者操作序列）
+- **中台 dashboard**：行為事件明細、funnel 轉換率
+
+家用 LAN 的場景下，家裡的其他裝置（IoT、家人的電腦）也能存取這些資訊。
+
+### 最小防護
+
+Go 的 `net/http` middleware 可以用幾行程式碼加 basic auth：
+
+```go
+func basicAuth(next http.Handler, user, pass string) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        u, p, ok := r.BasicAuth()
+        if !ok || u != user || p != pass {
+            w.Header().Set("WWW-Authenticate", `Basic realm="monitor"`)
+            http.Error(w, "Unauthorized", 401)
+            return
+        }
+        next.ServeHTTP(w, r)
+    })
+}
+```
+
+帳密在 collector 的配置檔設定。Day-one 可選（不設就不啟用），但配置檔中應有 commented-out 的範例讓使用者知道這個選項存在。
+
+### Tripwire
+
+Collector 暴露到公網或跨網路存取時，dashboard 的認證從可選變成必要。公網上的無認證 dashboard 等於公開了 error stack trace 和行為資料。
+
 ## 下一步路由
 
 - Developer dashboard 設計 → [Developer Dashboard 設計](/monitoring/04-collector/dashboard-developer/)

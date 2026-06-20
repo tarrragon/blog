@@ -168,7 +168,7 @@ tags: ["monitoring"]
 
 **行為資料的商業價值鏈**：
 
-```
+```text
 蒐集（SDK 埋點）
   → 清洗（去識別 + 去噪）
     → 分析（funnel / cohort / attribution）
@@ -230,6 +230,21 @@ tags: ["monitoring"]
 | 例子     | 「四類事件分類」「SDK API 一致性原則」 | 「collector 收到 10 萬筆/天時 JSONL grep 多慢？」 |
 
 **互補循環的運作方式**：教學先建立理論框架（四類事件、log schema、transport 規格），實作按框架建 SDK 和 collector，實作過程撞到理論沒覆蓋的挑戰（高併發寫入、大資料查詢、儲存生命週期），挑戰回過頭成為教學的新章節。
+
+### 教學與 repo 文件分工
+
+教學和 monitor repo 的文件各自有不同的讀者和目的。教學讀者想理解「為什麼這樣設計」，repo 讀者想知道「怎麼跑起來」。
+
+| 內容                              | 位置                       | 理由         |
+| --------------------------------- | -------------------------- | ------------ |
+| 設計原則和判斷框架                | 教學（本系列）             | 跨專案可重用 |
+| Quick Start（5 分鐘跑起來）       | monitor repo README        | 專案綁定     |
+| 部署指南（systemd / config 範例） | monitor repo docs/         | 專案綁定     |
+| SDK 整合範例（Flutter / Python）  | monitor repo 各 SDK README | 語言綁定     |
+| Troubleshooting                   | monitor repo docs/         | 專案綁定     |
+| Migration（SQLite → PostgreSQL）  | monitor repo docs/         | 版本綁定     |
+
+教學讀者想要直接跑起來的步驟，見 [monitor repo](https://github.com/tarrragon/monitor) 的 README Quick Start 段。
 
 ### 挑戰在 collector 端，不在 SDK 端
 

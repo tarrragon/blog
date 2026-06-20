@@ -6,23 +6,26 @@ weight: 5
 tags: ["monitoring", "collector", "scaling", "sqlite", "postgresql", "timeseries", "evolution"]
 ---
 
-Collector 的儲存方案是可插拔 storage backend — 同一個 binary 透過啟動參數選擇不同的 storage implementation。Go 的 interface 機制讓 storage 的公開面（Store / Query / Aggregate / Funnel / Cohort）和內部實作（SQLite / PostgreSQL / 時間序列 DB）分離，切換是 config change 而非重寫程式碼。
+Collector 的儲存方案是可插拔 storage backend — 同一個 binary 透過啟動參數選擇不同的 storage implementation。Go 的 interface composition 讓 storage 分成 BasicStorage（所有 backend 共用）和 AnalyticsStorage（PostgreSQL 層新增），內部實作（SQLite / PostgreSQL / 時間序列 DB）分離，切換是 config change 而非重寫程式碼。
 
 ```go
-type Storage interface {
-    // 兩層共用
+type BasicStorage interface {
     Store(event Event) error
     Query(filter QueryFilter) ([]Event, error)
     Close() error
     Downsample() error
     Purge() error
+}
 
-    // PostgreSQL 層新增
+type AnalyticsStorage interface {
+    BasicStorage
     Aggregate(spec AggregateSpec) (AggregateResult, error)
     Funnel(steps []string, timeWindow Duration) (FunnelResult, error)
     Cohort(groupBy string, metric string) (CohortResult, error)
 }
 ```
+
+SQLite implementation 只實作 `BasicStorage`。PostgreSQL implementation 實作 `AnalyticsStorage`。Dashboard 用 Go 的 type assertion（`if as, ok := storage.(AnalyticsStorage); ok { ... }`）判斷能力 — funnel/cohort 視圖在 SQLite 模式下不顯示入口，而非顯示後報錯。
 
 選擇哪個 backend 取決於部署場景和查詢需求：
 
@@ -34,7 +37,7 @@ type Storage interface {
 
 ## SQLite Backend（day-one 預設）
 
-SQLite 是嵌入式資料庫，編譯進 collector binary 中，不需要額外 server。Go 用 `modernc.org/sqlite`（pure Go、無 CGO 依賴），開源使用者 `go build && ./collector` 就能跑，部署步驟為零。
+SQLite 是嵌入式資料庫，編譯進 collector binary 中，不需要額外 server。Go 用 `modernc.org/sqlite`（pure Go、無 CGO 依賴、效能約為 CGO driver mattn/go-sqlite3 的 60-80%，自用規模下足夠），開源使用者 `go build && ./collector` 就能跑，部署步驟為零。WAL mode 允許讀寫並行 — dashboard 的 SELECT 查詢不會被 ingestion 的 INSERT 阻塞，反之亦然。寫入之間的競爭由 busy_timeout 處理。
 
 ### 能力範圍
 
@@ -42,6 +45,18 @@ SQLite 是嵌入式資料庫，編譯進 collector binary 中，不需要額外 
 - **SQL 聚合**：`SELECT name, COUNT(*) FROM events WHERE type='error' GROUP BY name` — 一行 SQL 完成分群計數
 - **跨欄位過濾**：`WHERE type='error' AND name LIKE 'terminal.%' AND ts > '2026-06-18'`
 - **寫入**：WAL mode 下每秒數千筆 append 寫入
+
+### 建議索引
+
+建表時一起建索引，覆蓋 dashboard 的核心查詢模式：
+
+```sql
+CREATE INDEX idx_type_ts ON events(type, ts);    -- 按 type + 時間過濾（error 列表、趨勢圖）
+CREATE INDEX idx_session ON events(session_id);   -- 按 session 回放
+CREATE INDEX idx_name ON events(name);            -- 按 name 分群計數（功能使用排行）
+```
+
+Day-one 建表時就建，不是效能出問題後才加。
 
 ### 適用規模
 
@@ -65,23 +80,28 @@ SQLite 中的實作是三張摘要表加定期 job：
 -- 摘要表
 CREATE TABLE hourly_summary (
     hour TEXT, type TEXT, name TEXT,
-    count INTEGER, error_count INTEGER
+    count INTEGER, error_count INTEGER,
+    UNIQUE(hour, type, name)
 );
 CREATE TABLE daily_summary (
     date TEXT, type TEXT, name TEXT,
-    count INTEGER, unique_sessions INTEGER
+    count INTEGER, unique_sessions INTEGER,
+    UNIQUE(date, type, name)
 );
 
--- 降採樣（Downsample，每小時跑一次）
-INSERT INTO hourly_summary (hour, type, name, count, error_count)
+-- 降採樣（Downsample，每小時跑一次，幂等 — 重跑只更新不重複）
+INSERT OR REPLACE INTO hourly_summary (hour, type, name, count, error_count)
 SELECT strftime('%Y-%m-%dT%H:00:00', ts), type, name,
        COUNT(*), SUM(CASE WHEN type='error' THEN 1 ELSE 0 END)
 FROM events
 WHERE ts >= datetime('now', '-1 hour')
 GROUP BY 1, 2, 3;
 
--- 清理（Purge，每天跑一次）
-DELETE FROM events WHERE ts < datetime('now', '-7 days');
+-- 清理（Purge，每天跑一次，分批刪除避免長時間鎖定）
+DELETE FROM events WHERE rowid IN (
+  SELECT rowid FROM events WHERE ts < datetime('now', '-7 days') LIMIT 10000
+);
+-- 重複執行直到影響行數為 0
 DELETE FROM hourly_summary WHERE hour < datetime('now', '-90 days');
 DELETE FROM daily_summary WHERE date < datetime('now', '-365 days');
 ```
