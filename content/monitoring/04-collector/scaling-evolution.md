@@ -1,108 +1,111 @@
 ---
 title: "規模演進"
 date: 2026-06-19
-description: "grep → SQLite → 時間序列 DB 的三階段演進路徑 — 每個階段的觸發條件、遷移成本和能力增量"
+description: "可插拔 Storage Backend 架構 — SQLite 預設、PostgreSQL 觸發切換、時間序列 DB 長期演進"
 weight: 5
-tags: ["monitoring", "collector", "scaling", "sqlite", "timeseries", "evolution"]
+tags: ["monitoring", "collector", "scaling", "sqlite", "postgresql", "timeseries", "evolution"]
 ---
 
-Collector 的儲存和查詢方案應該隨資料規模演進，每個階段用最簡單的方案滿足當前需求。過早引入複雜方案增加維護成本但不增加實際價值；過晚演進讓查詢變慢、開發者失去對監控資料的信任。演進的判斷依據是可觀察的效能指標，不是預測的成長曲線。
+Collector 的儲存方案是可插拔 storage backend — 同一個 binary 透過啟動參數選擇不同的 storage implementation。Go 的 interface 機制讓 storage 的公開面（Store / Query / Aggregate）和內部實作（SQLite / PostgreSQL / 時間序列 DB）分離，切換是 config change 而非重寫程式碼。
 
-## 第一階段：JSONL + grep
+```go
+type Storage interface {
+    Store(event Event) error
+    Query(filter QueryFilter) ([]Event, error)
+    Aggregate(spec AggregateSpec) (AggregateResult, error)
+    Close() error
+}
+```
 
-JSONL 檔案 + grep/jq 查詢。Collector 的起始方案。
+選擇哪個 backend 取決於部署場景和查詢需求：
+
+| 場景                 | Backend     | 啟動參數                        |
+| -------------------- | ----------- | ------------------------------- |
+| 自架簡單版（零依賴） | SQLite      | `--storage=sqlite`              |
+| 需要聚合分析的自用版 | PostgreSQL  | `--storage=postgres --dsn=...`  |
+| 高併發 + 長期保留    | 時間序列 DB | `--storage=timescale --dsn=...` |
+
+## SQLite Backend（day-one 預設）
+
+SQLite 是嵌入式資料庫，編譯進 collector binary 中，不需要額外 server。Go 用 `modernc.org/sqlite`（pure Go、無 CGO 依賴），開源使用者 `go build && ./collector` 就能跑，部署步驟為零。
 
 ### 能力範圍
 
-- 寫入：append-only，每秒數千筆
-- 查詢：grep 全文搜尋 + jq 結構化過濾
-- 聚合：`jq + sort + uniq -c` 手動組合
-- 儲存：一天一檔，gzip 壓縮歷史檔
-
-### 適用規模
-
-單日事件量在萬筆以下、JSONL 單檔在 10MB 以下。grep 查詢在秒級完成。自用工具和小型團隊的開發期通常在這個範圍。
-
-### 觸發演進的訊號
-
-**查詢變慢**：grep 查詢單日檔案超過 5 秒。使用者開始避免查詢或只查最近幾小時的資料。
-
-**聚合查詢太痛苦**：「過去 7 天每天的 error 數量」需要寫多行 shell 組合跨檔 jq，而這類查詢頻率從偶爾變成每天。
-
-**跨欄位過濾需求增加**：grep 的字串匹配處理 `AND` 條件（`grep A | grep B`）尚可，但 `OR` 和 `NOT` 條件讓 grep pipeline 變得難以維護。
-
-## 第二階段：SQLite
-
-把 JSONL 匯入 SQLite 資料庫，用 SQL 查詢。Collector 可以同時寫 JSONL（原始記錄）和 SQLite（查詢索引）。
-
-### 能力增量
-
 - **索引查詢**：按 type、name、timestamp 建索引，查詢從全表掃描變成索引查找
-- **SQL 聚合**：`SELECT name, COUNT(*) FROM events WHERE type='error' GROUP BY name` — 一行 SQL 替代多行 shell
+- **SQL 聚合**：`SELECT name, COUNT(*) FROM events WHERE type='error' GROUP BY name` — 一行 SQL 完成分群計數
 - **跨欄位過濾**：`WHERE type='error' AND name LIKE 'terminal.%' AND ts > '2026-06-18'`
-- **JOIN**：事件和 metadata 的關聯查詢
-
-### 遷移成本
-
-SQLite 是嵌入式資料庫，不需要額外的 server 程序。Go 用 `mattn/go-sqlite3` 或 `modernc.org/sqlite`（pure Go，無 CGO 依賴）。
-
-遷移步驟：
-
-1. 定義 events 表結構（id、type、name、ts、data JSON 欄位）
-2. Collector 寫入時同時寫 JSONL 和 INSERT 到 SQLite
-3. 查詢 API 從讀 JSONL 改為執行 SQL
-4. 歷史 JSONL 用匯入腳本灌入 SQLite
-
-JSONL 保留作為原始記錄和備份 — SQLite 資料庫損壞時可以從 JSONL 重建。
+- **寫入**：WAL mode 下每秒數千筆 append 寫入
 
 ### 適用規模
 
-單日事件量在十萬筆以下、SQLite 資料庫在 1GB 以下。索引查詢在毫秒級完成。
+單日事件量在十萬筆以下、SQLite 資料庫在 1GB 以下。索引查詢在毫秒級完成。自用工具和小型團隊的日常使用通常在這個範圍。
 
-### 觸發演進的訊號
+### 觸發切換到 PostgreSQL 的訊號
 
-**寫入爭搶**：SQLite 是單寫者模型。高併發寫入（每秒數百筆以上持續發生）會出現 `database is locked` 錯誤。WAL mode 能緩解但不能根治。
+**寫入爭搶**：SQLite 是單寫者模型。高併發寫入（多個 SDK 同時 flush、每秒數百筆以上持續發生）會出現 `database is locked` 錯誤。WAL mode 能緩解但不能根治。
 
-**時間序列查詢效能不足**：「過去 30 天每小時的 error P95 回應時間」這類時間序列聚合在 SQLite 中需要全表掃描加排序，資料量大時變慢。
+**聚合查詢效能不足**：Dashboard 需要的聚合查詢（「過去 30 天每小時的 error 數量趨勢」「funnel 的每步轉換率」）在資料量成長後變慢。SQLite 沒有 parallel query 和 partial index 等進階 OLAP 能力。
 
-**資料量超過單機磁碟**：SQLite 資料庫超過 10GB 時，備份和恢復時間變長，查詢效能下降明顯。
+**跨實例需求**：需要多個 collector 實例共用同一個資料庫時，SQLite 的單檔案模型無法跨主機存取。
 
-## 第三階段：時間序列 DB
+## PostgreSQL Backend（分析觸發）
 
-引入專門為時間序列資料設計的資料庫（InfluxDB、TimescaleDB、VictoriaMetrics）。
+PostgreSQL 是獨立的資料庫 server，提供多連線並行寫入、進階索引（GIN for JSONB、partial index）和完整的 SQL 分析能力。切換到 PostgreSQL 意味著 collector 從「零依賴單一 binary」變成「binary + 外部 DB」，運維複雜度上升。
+
+### 觸發條件
+
+SQLite 的寫入爭搶或聚合效能成為瓶頸時切換。具體訊號：`database is locked` 錯誤頻率超過每分鐘一次、或 dashboard 的聚合查詢超過 3 秒。
+
+### 切換方式
+
+切換是 config change：把 `--storage=sqlite` 改成 `--storage=postgres --dsn=postgres://...`。資料遷移用匯出 + 匯入完成：
+
+1. 從 SQLite 匯出事件為 JSONL（`monitor export --format=jsonl`）
+2. 在 PostgreSQL 建立 events 表（schema 和 SQLite 相同，data 欄位改用 JSONB）
+3. 匯入 JSONL 到 PostgreSQL（`monitor import --storage=postgres --file=events.jsonl`）
+4. 切換啟動參數、確認查詢正常後停用 SQLite 檔案
+
+Storage interface 保證 collector 的 ingestion、query、rule engine 邏輯不需要改動 — 只有 storage implementation 層切換。
 
 ### 能力增量
 
-- **時間序列原生操作**：downsampling、retention policy、continuous query 內建
-- **高併發寫入**：設計上支援每秒數萬筆以上的 append 寫入
-- **高效聚合**：時間分桶（per-minute、per-hour）的聚合在引擎層面優化
-- **長期儲存**：壓縮和 tiered storage 讓 TB 級資料可查詢
+- **並行寫入**：多個 SDK 同時 flush 不會 lock
+- **JSONB 索引**：對 data 欄位的特定 key 建索引（`CREATE INDEX ON events ((data->>'name'))`）
+- **Window function**：funnel 和 cohort 分析的 SQL 基礎
+- **Read replica**：寫入和查詢分離，dashboard 的查詢不影響 ingestion 效能
 
-### 遷移成本
+## 時間序列 DB Backend（長期演進）
 
-時間序列 DB 是獨立的 server 程序，需要部署、設定、監控。從「一個 binary」變成「兩個 server」（collector + DB），運維複雜度顯著上升。
+時間序列資料庫（TimescaleDB、InfluxDB、VictoriaMetrics）專門為高頻 append 寫入和時間分桶聚合設計。TimescaleDB 基於 PostgreSQL 擴展，Storage interface 的 PostgreSQL implementation 可以直接複用、加上 hypertable 和 continuous aggregate。
 
-遷移需要考慮：
+### 觸發條件
 
-- DB server 的部署和維護
-- 資料 schema 重新設計（時間序列 DB 的 measurement / tag / field 模型和 JSONL / SQL 不同）
-- 查詢語言切換（InfluxQL / Flux / PromQL）
-- 備份和恢復策略
+每秒數萬筆以上的持續寫入、或需要自動 downsampling（每分鐘的原始資料保留 7 天、每小時的聚合保留 90 天、每天的聚合永久保留）。多數自用工具和小型團隊不會到達這個規模。
 
-### 判斷是否需要
+### 能力增量
 
-多數自用工具和小型團隊不需要到第三階段。時間序列 DB 的核心價值是高併發寫入和長期時間序列分析 — 如果寫入量在 SQLite 的承受範圍內、且不需要自動 downsampling，留在第二階段成本更低。
+- **時間分桶原生操作**：`time_bucket('1 hour', ts)` 替代手動 DATE_TRUNC
+- **Continuous aggregate**：預計算的聚合結果自動更新
+- **壓縮**：歷史資料自動壓縮，TB 級資料可查詢
+- **Retention policy**：按時間自動清理舊資料
+
+## JSONL 匯出（debug 用途）
+
+JSONL 不作為主要 storage backend，而是作為匯出格式保留人類可讀性和 grep 友好性。`monitor export --format=jsonl` 把 storage 中的事件匯出為每行一個 JSON 物件的檔案，讓開發者可以用 grep / jq 做臨時查詢或把資料搬到其他工具。
+
+JSONL 匯出也是備份和遷移的中介格式 — SQLite 損壞時從 JSONL 重建、切換到 PostgreSQL 時從 JSONL 匯入。
 
 ## 演進原則
 
-**按觀察到的瓶頸演進**。grep 查詢超過 5 秒是可觀察的訊號；「未來可能有百萬筆事件」是預測。按訊號行動，不按預測行動。
+**按觀察到的瓶頸切換**。`database is locked` 錯誤頻率、聚合查詢延遲、磁碟使用量 — 這些是可觀察的訊號。「未來可能有百萬筆事件」是預測。按訊號行動，不按預測行動。
 
-**保留原始 JSONL**。每一階段都保留 JSONL 作為原始記錄。SQLite 損壞時從 JSONL 重建；遷移到時間序列 DB 時從 JSONL 重新匯入。JSONL 是 source of truth。
+**切換是 config change**。Storage interface 確保切換 backend 時 collector 的其他邏輯（ingestion、query API、rule engine、dashboard）不需要改動。切換的成本是資料遷移，不是程式碼重寫。
 
-**遷移是漸進的**。第一階段到第二階段可以並行運作（同時寫 JSONL 和 SQLite），確認 SQLite 查詢正常後再關閉 JSONL 的查詢入口。
+**SQLite 是安全的起點**。多數開源使用者會停留在 SQLite backend — 單日萬筆以下、索引查詢毫秒級、零依賴部署。只有明確的效能瓶頸才值得引入外部 DB 的運維成本。
 
 ## 下一步路由
 
-- Collector 的起始架構 → [Collector 架構](/monitoring/04-collector/architecture/)
-- JSONL 儲存的設計取捨 → [JSONL 儲存設計](/monitoring/04-collector/jsonl-storage/)
+- Collector 的整體架構 → [Collector 架構](/monitoring/04-collector/architecture/)
+- 查詢 API 的設計（跨 backend 統一） → [查詢 API 設計](/monitoring/04-collector/query-api/)
 - 資料庫選型的通用指南 → [backend 01 資料庫](/backend/01-database/)
+- 效能瓶頸的判讀方法 → [backend 09 效能容量](/backend/09-performance-capacity/)
