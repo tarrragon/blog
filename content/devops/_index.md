@@ -10,11 +10,13 @@ tags: ["devops"]
 
 ## 和其他系列的關係
 
-| 系列                       | 聚焦                                           | 和 DevOps 的交集                                    |
-| -------------------------- | ---------------------------------------------- | --------------------------------------------------- |
-| [Backend](/backend/)       | 服務內部的設計（資料庫、快取、佇列、可觀測性） | Backend 的部署和可靠性維度在這裡展開                |
-| [Monitoring](/monitoring/) | 客戶端監控體系（SDK、Collector、Dashboard）    | Collector 的 ingestion scaling 是這裡的流量管控應用 |
-| [CI/CD](/ci/)              | 驗證、建置、發布 gate                          | CI/CD 管線的產出（artifact）是這裡部署的輸入        |
+| 系列                       | 聚焦                                           | 和 DevOps 的交集                                      |
+| -------------------------- | ---------------------------------------------- | ----------------------------------------------------- |
+| [Backend](/backend/)       | 服務內部的設計（資料庫、快取、佇列、可觀測性） | Backend 的部署和可靠性維度在這裡展開                  |
+| [Monitoring](/monitoring/) | 客戶端監控體系（SDK、Collector、Dashboard）    | Collector 的 ingestion scaling 是這裡的流量管控應用   |
+| [CI/CD](/ci/)              | 驗證、建置、發布 gate                          | CI/CD 管線的產出（artifact）是這裡部署的輸入          |
+| [Testing](/testing/)       | 測試策略與 mock 邊界                           | 服務 fixture 的 health check 和服務探活概念共通       |
+| [UX Design](/ux-design/)   | 畫面設計與 gate fallback                       | Server 端限速（429）影響 client 端的重試 UX 和離線 UX |
 
 Backend 教「服務怎麼設計」，DevOps 教「設計好的服務怎麼在 production 活下來」。
 
