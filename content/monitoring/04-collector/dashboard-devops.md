@@ -38,6 +38,8 @@ Collector 存活的判斷依據是 health endpoint 回應。各 SDK 實例的狀
 
 需要的事件：`sdk.init`（帶 source 完整資訊）、`sdk.heartbeat`（定期更新最後回報時間）。
 
+Heartbeat 的觸發機制是 flush timer 的副作用 — SDK 的 flush timer 觸發時，如果 buffer 為空且距上次 heartbeat 超過設定間隔（預設 5 分鐘），自動注入一筆 `sdk.heartbeat` 事件後送出。不需要獨立的 heartbeat timer。App idle 時 heartbeat 仍會送出，dashboard 的 SDK 連線列表因此能偵測 SDK 是否仍存活。
+
 ## 告警觸發視圖
 
 告警由 rule engine 觸發，觸發後開發者進入 dashboard 查看細節。每種告警條件對應一個排障路徑。

@@ -66,6 +66,18 @@ Buffer 滿時把事件寫入本地檔案（SQLite、JSONL 檔案、SharedPrefere
 
 自用工具 1 MB 足夠（離線場景少）。行動 app 10-50 MB 合理（使用者可能整天離線）。超過上限時用 FIFO 丟棄最舊的本地檔案。
 
+## 各平台的本地儲存路徑
+
+本地 persistence 的檔案路徑和格式因平台而異。MVP 階段全用記憶體 FIFO（最簡單策略），本地 persistence 標為第二階段。
+
+| 平台    | 建議路徑                                                        | 檔案格式 | 備註                                                        |
+| ------- | --------------------------------------------------------------- | -------- | ----------------------------------------------------------- |
+| Flutter | `getApplicationSupportDirectory()`                              | JSONL    | 不會被 iCloud 備份（和 Documents 不同）、不會被系統自動清理 |
+| Python  | `~/.cache/monitor/` 或 `platformdirs.user_cache_dir('monitor')` | JSONL    | 遵循 XDG 標準、`platformdirs` 套件處理跨平台                |
+| JS/Web  | `localStorage` 或 `IndexedDB`                                   | JSON     | localStorage 有 5MB 限制、IndexedDB 更大但 API 較複雜       |
+
+App 被強制終止時（iOS 的 `kill`、Android 的 process death），記憶體 buffer 中未 flush 的事件會遺失。Flutter 的 `AppLifecycleState.detached` 不保證有時間執行 flush。接受這個遺失 — 強制終止是極端情境，下次啟動時 SDK 重新開始收集。
+
 ## 下一步路由
 
 - 攢批送出策略 → [攢批送出策略](/monitoring/03-sdk-design/batch-flush/)
