@@ -46,6 +46,35 @@ SQLite 是嵌入式資料庫，編譯進 collector binary 中，不需要額外 
 - **跨欄位過濾**：`WHERE type='error' AND name LIKE 'terminal.%' AND ts > '2026-06-18'`
 - **寫入**：WAL mode 下每秒數千筆 append 寫入
 
+### Events 主表 DDL
+
+Events 表的欄位從 [event.schema.json](/monitoring/02-log-schema/event-schema-fields/) 的 JSON 結構推導。Source 的 nested object 攤平成獨立 column — 方便 SQL 查詢和索引，不需要每次從 JSON 裡 extract。
+
+```sql
+CREATE TABLE events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    v INTEGER NOT NULL DEFAULT 1,
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    ts TEXT NOT NULL,
+    source_app TEXT,
+    source_version TEXT,
+    source_platform TEXT,
+    source_os TEXT,
+    session_id TEXT,
+    session_started TEXT,
+    level TEXT,
+    data TEXT,
+    error_message TEXT,
+    error_type TEXT,
+    receive_ts TEXT
+);
+```
+
+`data` 用 TEXT 存 JSON。SQLite 沒有原生 JSON 型別，但 3.38+ 支援 `json_extract()` 函數做查詢（`WHERE json_extract(data, '$.duration_ms') > 1000`）。`session_id` 獨立成 column 讓 session 回放的 JOIN 不需要 JSON extract。`receive_ts` 是 collector 收到事件的時間，和 SDK 端的 `ts` 對照可估算 clock drift。
+
+PostgreSQL 版本的差異：`data` 改成 `JSONB` 型別（原生索引和查詢）、`source_*` 可保持為 nested JSON（PostgreSQL 的 JSONB 查詢效能足夠）或維持攤平（和 SQLite 版本保持一致）。
+
 ### 建議索引
 
 建表時一起建索引，覆蓋 dashboard 的核心查詢模式：

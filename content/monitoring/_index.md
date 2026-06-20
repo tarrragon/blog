@@ -246,6 +246,33 @@ tags: ["monitoring"]
 
 教學讀者想要直接跑起來的步驟，見 [monitor repo](https://github.com/tarrragon/monitor) 的 README Quick Start 段。
 
+### MVP 驗收標準
+
+Monitor 的 MVP 完成定義是「一筆事件從 SDK 到 dashboard 可見」的端到端路徑跑通。
+
+**Collector 核心（必須）**：
+
+1. `POST /v1/events` 接收 JSON 事件、schema 驗證、寫入 SQLite
+2. `GET /v1/query` 按 type / name / time range 查詢事件
+3. `GET /health` 回傳 collector 狀態
+4. 分層保留的 Downsample + Purge 定期執行
+5. 至少一個 rule（error count > N → 寫檔案）
+
+**SDK（至少一個語言）**：
+
+6. init / event / error / flush / close 五個 API 可用
+7. 攢批送出（buffer + flush interval）
+8. Collector 不可達時 buffer 不丟事件（記憶體 FIFO）
+
+**Dashboard（至少一個視圖）**：
+
+9. Error 列表（最近 N 筆 error、按 name 分群）
+10. 事件時間軸（按時間排序的事件流）
+
+**驗收方式**：啟動 collector → SDK init → SDK 送 3 筆事件（1 event + 1 error + 1 lifecycle）→ dashboard 看到這 3 筆 → query API 查到這 3 筆。
+
+不在 MVP 範圍：PostgreSQL backend、水平擴展、funnel / cohort 分析、A/B test、TUI dashboard、container image 發佈。
+
 ### 挑戰在 collector 端，不在 SDK 端
 
 SDK 埋點是已解決問題 — `window.onerror` 攔截錯誤、`http.post` 送出事件、攢批 flush，前端技術成熟且各商業方案已驗證過。SDK 的設計決策（自動攔截 vs 手動上報、flush interval、buffer 上限）有最佳實踐可循。
