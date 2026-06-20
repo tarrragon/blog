@@ -65,3 +65,4 @@ Flutter 有兩個攔截層：
 - SDK 公開 API → [SDK 公開 API 設計](/monitoring/03-sdk-design/public-api/)
 - 各平台的深入適配問題 → [模組五 平台適配](/monitoring/05-platform-adaptation/)
 - Buffer 和 flush → [攢批送出策略](/monitoring/03-sdk-design/batch-flush/)
+- 主動感測器設計（和被動攔截互補）→ [前端感測器設計](/monitoring/03-sdk-design/frontend-sensor-design/)

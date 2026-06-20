@@ -95,3 +95,4 @@ tags: ["monitoring", "mental-model", "event-enumeration", "event-design", "compl
 - 事件命名規範 → [事件命名規範](/monitoring/01-mental-model/event-naming-convention/)
 - 行為事件的 funnel 設計 → [行為事件設計](/monitoring/08-business-analytics/behavior-event-design/)
 - 事件 schema 的欄位定義 → [event.schema.json 完整欄位解說](/monitoring/02-log-schema/event-schema-fields/)
+- 動機驅動的具體事件對應 → [動機驅動的事件設計](/monitoring/01-mental-model/motivation-to-event-mapping/)

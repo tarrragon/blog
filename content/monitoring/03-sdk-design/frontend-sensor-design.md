@@ -109,6 +109,8 @@ new PerformanceObserver((list) => {
 }).observe({ type: 'largest-contentful-paint', buffered: true });
 ```
 
+實務上依 entryType 分別取值（LCP 用 `startTime`、CLS 用 `value`、FID 用 `processingStart - startTime`），上述範例簡化示意。
+
 ### Flutter frame timing
 
 Flutter 用 `SchedulerBinding.addTimingsCallback` 偵測掉幀：
