@@ -92,3 +92,4 @@ close 在 app 關閉時呼叫。呼叫後 SDK 進入已關閉狀態，後續的 
 - 自動攔截未捕獲的錯誤 → [自動攔截機制](/monitoring/03-sdk-design/auto-intercept/)
 - Buffer 和 flush 的策略 → [攢批送出策略](/monitoring/03-sdk-design/batch-flush/)
 - SDK 端的資料脫敏 → [SDK redaction helper](/monitoring/03-sdk-design/redaction-helper/)
+- SDK 的 HTTP POST 行為需要 protocol test → [testing 模組三 協議整合測試](/testing/03-protocol-integration-test/)

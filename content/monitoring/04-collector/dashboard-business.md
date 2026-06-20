@@ -121,3 +121,4 @@ Scope 的實作可以是 API key 分級（不同 key 有不同 scope）、或 HT
 - Funnel 分析的完整方法 → [Funnel analysis](/monitoring/08-business-analytics/funnel-analysis/)
 - 功能分層與 Backend 選擇 → [功能分層與 Backend 選擇](/monitoring/04-collector/feature-tier-boundary/)
 - 去識別化是中台 dashboard 的入場條件 → [模組七 資安與隱私](/monitoring/07-security-privacy/)
+- 畫面狀態矩陣定義了 funnel 步驟的操作來源 → [畫面狀態矩陣](/ux-design/01-screen-state-machine/state-matrix-definition/)

@@ -63,3 +63,5 @@ Funnel analysis 回答「使用者在哪一步流失」（單次流程），coho
 - 使用者從哪來 → [Attribution](/monitoring/08-business-analytics/attribution/)
 - 單次流程的流失分析 → [Funnel analysis](/monitoring/08-business-analytics/funnel-analysis/)
 - 使用者分群的工程實作 → [RFM 分群](/monitoring/08-business-analytics/rfm-segmentation/)
+- 客戶終身價值 → [LTV](/business/knowledge-cards/ltv/)
+- 留存率 → [Retention](/business/knowledge-cards/retention/)

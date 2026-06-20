@@ -70,3 +70,4 @@ Clock drift 的影響：
 - JS 平台適配 → [JS/TS 平台適配](/monitoring/05-platform-adaptation/js-ts-platform/)
 - Flutter 平台適配 → [Flutter 平台適配](/monitoring/05-platform-adaptation/flutter-platform/)
 - Log schema 中的 timestamp 欄位 → [模組二 event.schema.json 欄位解說](/monitoring/02-log-schema/event-schema-fields/)
+- 各平台的 error 攔截差異影響 test 設計 → [testing 模組五 測試設計判斷](/testing/05-test-design-judgment/)

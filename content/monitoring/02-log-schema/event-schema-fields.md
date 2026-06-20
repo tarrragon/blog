@@ -106,3 +106,4 @@ Schema 版本號。整數，從 1 開始遞增。
 - 欄位設計的原則 → [欄位設計原則](/monitoring/02-log-schema/field-design-principles/)
 - Schema 版本演進 → [Schema 版本演進策略](/monitoring/02-log-schema/schema-versioning/)
 - 和 OpenTelemetry 的差異 → [跟 OpenTelemetry 的 schema 差異對照](/monitoring/02-log-schema/otel-comparison/)
+- Log 點的設計方法 → [testing 模組二 客戶端可觀測性](/testing/02-client-observability/)
