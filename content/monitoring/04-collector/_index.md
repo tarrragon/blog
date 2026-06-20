@@ -16,6 +16,13 @@ tags: ["monitoring", "collector", "go", "storage", "rule-engine"]
 - [x] Rule engine 設計（條件 → 動作 → 模板）
 - [x] 規模演進：可插拔 Storage Backend（SQLite 預設 / PostgreSQL 觸發）
 - [x] 功能分層與 Backend 選擇（SQLite 層 vs PostgreSQL 層的功能邊界）
+- [x] SQLite Backend 效能基準（寫入吞吐 / 查詢延遲 / 資源消耗的量化預期）
+- [x] Ingestion Scaling（四層防線 — SDK 取樣 → Collector 背壓 → 水平擴展 → Queue 解耦）
+- [x] 查詢消費模式（Debug / Alerting / 產品決策 / 安全審計 / 效能監控）
+- [x] DevOps Dashboard 設計
+- [x] Developer Dashboard 設計
+- [x] 中台 Dashboard 設計
+- [x] Container 部署設計（SQLite 在 container 中的 I/O 考量、volume mount、graceful shutdown）
 
 ## 跨分類引用
 

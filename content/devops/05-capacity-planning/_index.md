@@ -15,6 +15,7 @@ tags: ["devops", "capacity-planning", "load-testing", "peak-estimation", "cost-m
 - [ ] 峰值估算（行銷活動的倍率、歷史峰值的安全係數）
 - [ ] 成本模型（資源規格 × 使用時間 × 計費模式 — reserved / on-demand / spot）
 - [ ] 規模拐點判斷（什麼訊號代表該擴容、什麼訊號代表可以縮容）
+- [x] 容器化資源設計（memory / CPU / 磁碟限制、overlay fs、health check）
 
 ## 跨分類引用
 
