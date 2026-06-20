@@ -1,7 +1,7 @@
 ---
 title: "Collector 架構"
 date: 2026-06-19
-description: "HTTP endpoint → JSON Schema 驗證 → JSONL 儲存 → CLI 查詢 → rule engine 的五段式處理鏈路"
+description: "HTTP endpoint → JSON Schema 驗證 → 儲存 → 查詢 → rule engine 的五段式處理鏈路"
 weight: 1
 tags: ["monitoring", "collector", "architecture", "go", "pipeline"]
 ---
@@ -26,15 +26,13 @@ Schema 驗證是 collector 的品質閘門。沒有驗證的 collector 會累積
 
 驗證的粒度是事件級 — 批次中的一個事件驗證失敗不影響其他事件。回應中標明哪些事件被接受、哪些被拒絕及原因。
 
-### 第三段：JSONL 儲存
+### 第三段：儲存
 
-通過驗證的事件以 JSONL 格式（每行一個 JSON 物件）寫入檔案。JSONL 是 append-only 的格式 — 新事件追加到檔案尾端，不修改既有內容。
+通過驗證的事件寫入 Storage Backend。Collector 使用可插拔的 Storage interface — day-one 預設用 SQLite（零依賴、嵌入式），分析需求觸發時切換到 PostgreSQL。具體的 backend 選擇和功能分層見 [功能分層與 Backend 選擇](/monitoring/04-collector/feature-tier-boundary/)，可插拔架構見 [規模演進](/monitoring/04-collector/scaling-evolution/)。
 
-JSONL 的設計取捨見 [JSONL 儲存設計](/monitoring/04-collector/jsonl-storage/)。
+### 第四段：查詢
 
-### 第四段：CLI 查詢
-
-儲存的 JSONL 檔案可以用 `grep` + `jq` 直接查詢。Collector 額外提供 HTTP 查詢 endpoint 讓非 CLI 使用者也能查詢。
+儲存的事件透過 CLI 指令或 HTTP 查詢 endpoint 存取。SQLite backend 下用 SQL 查詢；匯出為 JSONL 格式後也可用 `grep` + `jq` 做臨時分析。
 
 查詢設計見 [查詢 API 設計](/monitoring/04-collector/query-api/)。
 
@@ -50,11 +48,12 @@ Collector 用 Go 編譯成單一 binary，不依賴外部 runtime（JVM、Python
 
 這個選擇在自用工具場景下有特定優勢：server 和 collector 在同一台機器上，部署流程是 `scp collector user@host:` + `ssh user@host ./collector`。不需要 package manager、不需要 container registry、不需要 orchestration。
 
-Go 的 `net/http` 標準庫提供 production-ready 的 HTTP server，JSON 處理用標準庫的 `encoding/json`，JSONL 寫入用標準庫的 `os.OpenFile` + `bufio.Writer`。整個 collector 的核心邏輯可以在 500 行以內完成。
+Go 的 `net/http` 標準庫提供 production-ready 的 HTTP server，JSON 處理用標準庫的 `encoding/json`，SQLite 用 `modernc.org/sqlite`（pure Go、無 CGO 依賴）。整個 collector 的核心邏輯可以在 500 行以內完成。
 
 ## 下一步路由
 
-- JSONL 儲存的設計取捨 → [JSONL 儲存設計](/monitoring/04-collector/jsonl-storage/)
+- 功能分層與 Backend 選擇 → [功能分層與 Backend 選擇](/monitoring/04-collector/feature-tier-boundary/)
+- 可插拔 Storage Backend 架構 → [規模演進](/monitoring/04-collector/scaling-evolution/)
+- JSONL 匯出與備份格式 → [JSONL 儲存設計](/monitoring/04-collector/jsonl-storage/)
 - 查詢 API 的設計 → [查詢 API 設計](/monitoring/04-collector/query-api/)
 - Rule engine → [Rule engine 設計](/monitoring/04-collector/rule-engine/)
-- 規模成長後的演進路徑 → [規模演進](/monitoring/04-collector/scaling-evolution/)

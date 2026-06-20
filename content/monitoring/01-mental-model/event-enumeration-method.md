@@ -25,7 +25,7 @@ tags: ["monitoring", "mental-model", "event-enumeration", "event-design", "compl
 | lifecycle | ws.connected              | WebSocket 連線狀態轉換           | `{url}`                              |
 | lifecycle | ws.disconnected           | WebSocket 斷線                   | `{url, reason, code}`                |
 
-一個操作推導出六個事件 — 因為這個操作跨越了使用者行為（event）、可能失敗（error）、有效能測量（metric）、涉及系統狀態轉換（lifecycle）四個面向。
+一個操作推導出六個事件 — 因為這個操作跨越了使用者行為（event）、可能失敗（error）、有效能測量（metric）、涉及系統狀態轉換（lifecycle）四個面向。其中 `connect.done` 和 `connect.duration` 記錄的是同一事實的兩個面向（見下方邊界案例段），自用場景合併成 `connect.done` 帶 `duration_ms` 欄位更簡潔。
 
 ## 四類補齊檢查
 

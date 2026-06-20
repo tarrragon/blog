@@ -6,16 +6,21 @@ weight: 5
 tags: ["monitoring", "collector", "scaling", "sqlite", "postgresql", "timeseries", "evolution"]
 ---
 
-Collector 的儲存方案是可插拔 storage backend — 同一個 binary 透過啟動參數選擇不同的 storage implementation。Go 的 interface 機制讓 storage 的公開面（Store / Query / Aggregate）和內部實作（SQLite / PostgreSQL / 時間序列 DB）分離，切換是 config change 而非重寫程式碼。
+Collector 的儲存方案是可插拔 storage backend — 同一個 binary 透過啟動參數選擇不同的 storage implementation。Go 的 interface 機制讓 storage 的公開面（Store / Query / Aggregate / Funnel / Cohort）和內部實作（SQLite / PostgreSQL / 時間序列 DB）分離，切換是 config change 而非重寫程式碼。
 
 ```go
 type Storage interface {
+    // 兩層共用
     Store(event Event) error
     Query(filter QueryFilter) ([]Event, error)
-    Aggregate(spec AggregateSpec) (AggregateResult, error)
-    Downsample() error  // 定期：原始事件 → 小時摘要 → 天摘要
-    Purge() error       // 定期：按層級保留期限清理過期資料
     Close() error
+    Downsample() error
+    Purge() error
+
+    // PostgreSQL 層新增
+    Aggregate(spec AggregateSpec) (AggregateResult, error)
+    Funnel(steps []string, timeWindow Duration) (FunnelResult, error)
+    Cohort(groupBy string, metric string) (CohortResult, error)
 }
 ```
 

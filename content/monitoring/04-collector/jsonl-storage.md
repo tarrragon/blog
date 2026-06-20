@@ -1,12 +1,14 @@
 ---
-title: "JSONL 儲存設計"
+title: "JSONL 匯出與備份格式"
 date: 2026-06-19
-description: "一天一檔、append-only、gzip 壓縮、保留策略 — JSONL 作為監控資料儲存格式的設計取捨"
+description: "JSONL 作為匯出和備份格式的設計 — 人類可讀、grep 友好、SQLite 損壞時的重建來源"
 weight: 2
-tags: ["monitoring", "collector", "storage", "jsonl", "compression"]
+tags: ["monitoring", "collector", "storage", "jsonl", "export", "backup"]
 ---
 
-JSONL（JSON Lines）是每行一個 JSON 物件的文字格式。作為監控資料的儲存格式，JSONL 的核心優勢是簡單 — 寫入是 append 一行文字，讀取是逐行 parse，查詢用 grep。不需要 database server、不需要 schema migration、不需要連線管理。
+Collector 的 day-one 主要儲存是 SQLite（見 [規模演進](/monitoring/04-collector/scaling-evolution/)）。JSONL（JSON Lines）保留作為匯出和備份格式 — 人類可讀、grep 友好、SQLite 資料庫損壞時可以從 JSONL 重建。Collector 提供 `monitor export --format=jsonl` 指令匯出事件，也可以設定同步寫入 JSONL 作為即時備份。
+
+JSONL 的格式是每行一個 JSON 物件。作為匯出格式，核心優勢是工具鏈成熟 — `grep` 過濾、`jq` 結構化查詢、`tail -f` 即時監控，不需要 database client。
 
 ## 一天一檔
 
@@ -46,21 +48,17 @@ Append-only 的操作特性：
 
 **查詢壓縮檔用 zgrep / zcat**。`zgrep "error" events-2026-06-18.jsonl.gz` 不需要先解壓。
 
-## 保留策略
+## JSONL 備份的保留
 
-保留策略決定資料保留多久。自用工具場景下，保留天數的判斷依據是「最遠需要回溯多久的資料」。
+JSONL 備份檔的保留策略和 SQLite 主要儲存的分層保留獨立 — JSONL 是最後的重建來源，保留期限可以比 SQLite 中的原始事件更長。
 
-**Debug 用途**：保留 7-14 天。問題通常在發生後幾天內被發現和調查。
-
-**趨勢分析用途**：保留 30-90 天。觀察月度趨勢需要至少兩個月的資料。
-
-**合規用途**：依法規要求。某些法規要求 access log 保留一年以上。
-
-保留策略的執行是 cron job 刪除超過保留天數的檔案：
+典型配置：JSONL 備份保留 30 天（即使 SQLite 中的原始事件只保留 7 天），提供 SQLite 損壞時的 30 天重建窗口。超過 30 天的 JSONL 壓縮檔用 cron job 清理：
 
 ```bash
 find /var/lib/collector/events/ -name "events-*.jsonl.gz" -mtime +30 -delete
 ```
+
+主要儲存的查詢驅動分層保留策略見 [規模演進](/monitoring/04-collector/scaling-evolution/)。
 
 ## 下一步路由
 
