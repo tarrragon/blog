@@ -68,6 +68,8 @@ Collector 用 Go 編譯成單一 binary，不依賴外部 runtime（JVM、Python
 
 Go 的 `net/http` 標準庫提供 production-ready 的 HTTP server，JSON 處理用標準庫的 `encoding/json`，SQLite 用 `modernc.org/sqlite`（pure Go、無 CGO 依賴）。整個 collector 的核心邏輯可以在 500 行以內完成。
 
+具體的部署步驟（systemd service 檔案、啟動參數、設定檔格式）和 Quick Start（從零到第一筆事件出現在 collector）見 monitor repo 的 deployment guide。
+
 ## 下一步路由
 
 - 功能分層與 Backend 選擇 → [功能分層與 Backend 選擇](/monitoring/04-collector/feature-tier-boundary/)

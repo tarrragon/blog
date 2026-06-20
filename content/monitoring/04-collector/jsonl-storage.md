@@ -60,6 +60,12 @@ find /var/lib/collector/events/ -name "events-*.jsonl.gz" -mtime +30 -delete
 
 主要儲存的查詢驅動分層保留策略見 [規模演進](/monitoring/04-collector/scaling-evolution/)。
 
+## 匯出的實作注意
+
+匯出使用 streaming — 從 storage 逐筆讀取、逐行寫出，記憶體使用和事件總量無關。300 萬筆事件（約 900MB JSONL）不需要整批載入記憶體。
+
+匯出的 JSONL 檔案包含事件明文（已 redaction 的欄位除外）。匯出後的檔案不受 collector 的存取控制保護，注意存放位置和存取權限。
+
 ## 下一步路由
 
 - Collector 的完整架構 → [Collector 架構](/monitoring/04-collector/architecture/)

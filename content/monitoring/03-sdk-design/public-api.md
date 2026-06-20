@@ -87,6 +87,8 @@ close 在 app 關閉時呼叫。呼叫後 SDK 進入已關閉狀態，後續的 
 
 **init 和 close 成對出現**。init 開始 session，close 結束 session。兩者界定 SDK 的活躍期間。
 
+各平台的 SDK 整合範例（Flutter 的 pubspec.yaml + main.dart init、Python 的 pip install + init code、JS 的 script tag + init）見 monitor repo 各 SDK 的 README。
+
 ## 下一步路由
 
 - 自動攔截未捕獲的錯誤 → [自動攔截機制](/monitoring/03-sdk-design/auto-intercept/)

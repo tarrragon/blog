@@ -81,6 +81,8 @@ sensors:
 
 SDK 啟動時從 collector 的 `/config` endpoint 拉取當前的感測器設定。Collector 端修改設定後，下一次 SDK 重啟或定期 refresh（每 5 分鐘）時生效。適合需要動態調整但不值得接 feature flag 服務的場景。
 
+MVP 階段跳過 collector 下發，只用 SDK 本地 config。下發 API 的定義和實作標為第二階段 — 感測器的開關在 SDK 本地 config 已經能完全控制。
+
 ### Feature flag 服務整合
 
 SDK 在送出事件前查詢 feature flag 判斷感測器是否啟用。適合 A/B 測試 — flag 可以按使用者 / 百分比 / 條件分群啟用。
