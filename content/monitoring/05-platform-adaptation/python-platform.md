@@ -38,6 +38,46 @@ atexit 不執行的場景：
 
 實務影響：`os._exit()` 和 SIGKILL 導致的事件遺失無法避免。使用本地 persistence（[離線 buffer](/monitoring/03-sdk-design/offline-buffer/)）可以降低影響 — 事件在寫入本地檔案後，即使 process 被強制終止，下次啟動時仍可補發。
 
+## 短生命週期腳本
+
+SDK 的預設設計假設長期運行的 app — flush interval 定期觸發、daemon thread 持續運行、atexit 是最後防線。但 Python SDK 的一個重要場景是短命腳本（CI/CD hook、pre-commit hook、CLI 工具的子命令），生命週期可能 < 1 秒。這個場景下 SDK 的行為和長期 app 完全不同。
+
+### 什麼會壞
+
+**flush interval 來不及觸發**。預設 30 秒的 flush interval，但腳本在 200ms 內結束。計時器還沒觸發，buffer 中的事件從未送出。
+
+**daemon thread 隨主 thread 結束**。SDK 用 daemon thread 執行 flush 計時器。Python 的 daemon thread 在最後一個非 daemon thread 結束時被殺 — 不會等待 daemon thread 完成當前工作。如果 flush 正在進行中（HTTP POST 送到一半），daemon thread 被殺，HTTP 請求中斷，事件丟失。
+
+**atexit 的執行順序不確定**。atexit handler 在 daemon thread 被殺之後執行。如果 SDK 的 atexit handler 嘗試在 daemon thread 中 flush，會失敗（thread 已死）。atexit handler 必須在主 thread 中同步 flush。
+
+### 正確的短命腳本模式
+
+```python
+from monitor import Monitor
+
+Monitor.init(endpoint="http://localhost:9090/v1/events", app="my-hook")
+
+# 做事...
+Monitor.event("hook.run", {"hook": "branch-check"})
+
+# 結束前必須呼叫 close
+Monitor.close()  # close 內同步 flush，不依賴 daemon thread
+```
+
+`close()` 是唯一可靠的 flush 時機。`close()` 的實作在短命腳本場景下必須：
+
+1. **同步執行 HTTP POST**，不委託給 daemon thread — 主 thread 呼叫 `close()` 時直接在當前 thread 送出
+2. **設 HTTP timeout** — 短命腳本不能等太久，3 秒的 timeout 是合理的
+3. **flush 失敗時靜默放棄** — 短命腳本的主要職責不是監控，SDK 失敗不應影響腳本的 exit code
+
+`atexit` 仍然註冊，作為開發者忘記呼叫 `close()` 的備份。但 atexit 是 best-effort — 在 `os._exit()` 和 SIGKILL 下不執行。
+
+### flush interval 在短命腳本中的角色
+
+flush interval 對短命腳本無意義 — 腳本在第一次 interval 觸發前就結束了。SDK 可以偵測「init 到 close 的間隔 < flush interval」的模式，在 debug log 中提示開發者考慮降低 interval 或直接依賴 `close()` flush。
+
+但不建議把 flush interval 設為 0（停用）— 同一個 SDK 設定可能同時用於長期 app 和短命腳本，interval 對長期 app 仍然有用。
+
 ## Subprocess 監控
 
 Python 程式中的 `subprocess.Popen` 啟動的子程序是獨立的 process，不共享 SDK 的 buffer 和網路連線。子程序的錯誤和事件需要獨立的監控機制。

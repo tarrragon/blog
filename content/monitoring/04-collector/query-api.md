@@ -75,6 +75,59 @@ HTTP 查詢 endpoint 的底層實作可以直接讀取 JSONL 檔案 — 根據 f
 
 當查詢效能成為問題時，在 JSONL 之上加一層索引（按 type/name 建立反向索引），或演進到 SQLite 儲存（見 [規模演進](/monitoring/04-collector/scaling-evolution/)）。
 
+## 聚合查詢
+
+逐筆查詢回答「發生了什麼」，聚合查詢回答「發生了多少」。Error 調查的第一步通常不是「列出所有 error」，而是「哪些 error 最多」— 這需要按 name 分群計數的聚合結果。
+
+### Endpoint 設計
+
+```text
+GET /v1/events/summary?type=error&from=2026-06-18T00:00:00Z&to=2026-06-19T00:00:00Z&group_by=name
+```
+
+回傳按 name 分群的統計：
+
+```json
+{
+  "groups": [
+    { "name": "hook.failure", "count": 15, "last_seen": "2026-06-19T08:42:00Z" },
+    { "name": "terminal.connect.failed", "count": 3, "last_seen": "2026-06-19T07:10:00Z" }
+  ],
+  "total": 18,
+  "from": "2026-06-18T00:00:00Z",
+  "to": "2026-06-19T00:00:00Z"
+}
+```
+
+查詢參數和逐筆查詢共用（type、name、from、to），額外的 `group_by` 指定分群欄位（name 或 type）。
+
+### SQL 實作
+
+SQLite backend 下直接用 GROUP BY：
+
+```sql
+SELECT name, COUNT(*) as count, MAX(timestamp) as last_seen
+FROM events
+WHERE type = 'error' AND timestamp BETWEEN ? AND ?
+GROUP BY name
+ORDER BY count DESC
+LIMIT 100
+```
+
+有 type + timestamp 複合索引時，這個查詢在 10 萬筆資料內的效能和逐筆查詢相當 — GROUP BY 在索引掃描後做，不需要全表掃描。
+
+### 和逐筆查詢的定位差異
+
+| 面向       | 逐筆查詢 `/v1/events`                  | 聚合查詢 `/v1/events/summary`        |
+| ---------- | -------------------------------------- | ------------------------------------ |
+| 回答       | 發生了什麼（事件列表）                 | 發生了多少（統計摘要）               |
+| 用途       | 看單筆 error 的 stack trace            | 找出最頻繁的 error                   |
+| 回傳       | 事件陣列（含完整 JSON）                | 分群摘要（name + count + last_seen） |
+| 資料量     | 大（完整事件 body）                    | 小（只有統計值）                     |
+| 典型工作流 | 聚合查詢找到問題 name → 逐筆查詢看細節 | 首先使用                             |
+
+兩者是互補的工作流 — 聚合查詢定位問題方向，逐筆查詢深入細節。Dashboard 的 Error 列表頁面直接消費聚合查詢的結果。
+
 ## CLI vs HTTP 的定位
 
 | 面向   | CLI (grep + jq)       | HTTP endpoint          |

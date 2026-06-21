@@ -26,6 +26,10 @@ Monitor.init({
 
 init 負責建立 session、記錄 lifecycle.session.start 事件、啟動 flush 計時器。init 之前呼叫其他方法應該拋出明確錯誤（SDK 未初始化），而非靜默忽略。
 
+**連線驗證策略：lazy**。init 不驗證 collector 是否可達 — 不發 HTTP 請求、不 ping endpoint。init 的失敗只代表配置錯誤（缺少 endpoint 參數），不代表網路問題。網路問題在第一次 flush 時才浮現，flush 失敗時事件保留在 buffer 等待重試。
+
+Lazy 策略的理由：SDK 不應阻塞主程式的啟動流程。如果 init 驗證連線，collector 暫時不可用時 app 會啟動失敗 — 監控工具反而變成可用性的瓶頸。短生命週期腳本（[Python 平台適配：短生命週期腳本](/monitoring/05-platform-adaptation/python-platform/)）對這一點更敏感 — hook 腳本不能因為 collector 沒啟動就拒絕執行。
+
 ### event
 
 記錄使用者操作事件（[四類事件中的 Event 類](/monitoring/01-mental-model/four-event-types/)）。接受事件名稱和可選的 data 物件。
