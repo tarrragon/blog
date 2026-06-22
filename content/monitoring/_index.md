@@ -286,6 +286,7 @@ SDK 埋點是已解決問題 — `window.onerror` 攔截錯誤、`http.post` 送
 | 儲存生命週期 | JSONL 無限增長 → 磁碟滿                                    | 保留策略（TTL）、壓縮（gzip）、歸檔（冷儲存）、清除（定期 purge） |
 | 聚合查詢     | 「過去 7 天 hook.failure 的趨勢」→ 掃描 700 萬筆做 count   | 預聚合（每小時統計寫入摘要表）、物化視圖                          |
 | 錯誤回報查詢 | 「最近 10 個 uncaught exception 的 stack trace」→ 全文搜尋 | 錯誤去重（fingerprint）、stack trace 索引                         |
+| 讀寫競爭     | Dashboard 聚合查詢跟 ingestion INSERT 搶 I/O 跟連線池      | 預聚合 summary 表、read replica、讀寫分離                         |
 
 這些挑戰的共同特徵是：**在自用場景（1 人、1 台機器、每天幾百筆）完全不存在，在小規模場景（100 人、每天 10 萬筆）開始浮現，在中規模場景（1000+ 人、每天百萬筆）成為核心問題。** 自架方案從「grep 就夠」演進到「需要時間序列資料庫」的過程，正好是理解商業方案為什麼那樣設計的最佳路徑。
 

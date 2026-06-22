@@ -23,10 +23,12 @@ tags: ["monitoring", "collector", "go", "storage", "rule-engine"]
 - [x] Developer Dashboard 設計
 - [x] 中台 Dashboard 設計
 - [x] Container 部署設計（SQLite 在 container 中的 I/O 考量、volume mount、graceful shutdown）
+- [x] 讀寫分離與查詢擴展（讀寫競爭辨識、Read Replica、預聚合、CQRS 判讀訊號）
 
 ## 跨分類引用
 
-- → [backend 01 資料庫](/backend/01-database/)：PostgreSQL backend 的資料庫設計
+- → [backend 01 資料庫](/backend/01-database/)：PostgreSQL backend 的資料庫設計、[State Ownership 與 Query Boundary](/backend/01-database/state-ownership-query-boundary/)
+- → [backend 04 觀測查詢設計](/backend/04-observability/observability-query-design/)：觀測領域的讀取路徑設計、CQRS 特化應用
 - → [backend 09 效能容量](/backend/09-performance-capacity/)：高併發寫入 / 大資料查詢的效能挑戰
 - → [DevOps 流量管控](/devops/03-traffic-management/)：背壓、rate limit、熔斷的基礎概念
 - → [DevOps 突發流量](/devops/07-burst-traffic/)：突發流量分類、降級策略、queue 緩衝
