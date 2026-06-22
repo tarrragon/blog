@@ -45,7 +45,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 3. 修補節奏：把隔離、修補、驗證綁成同一個交付鏈，不讓修補停在部署完成。
 4. 會話收斂：把入口事件後的會話失效與權限回收納入標準流程。
 
-outbound tunnel（cloudflared / Tailscale）作為入口形態的部署合約見 [5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)。
+[outbound tunnel](/backend/knowledge-cards/outbound-tunnel/)（cloudflared / Tailscale）作為入口形態的部署合約見 [5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)。
 
 ## 判讀流程
 
