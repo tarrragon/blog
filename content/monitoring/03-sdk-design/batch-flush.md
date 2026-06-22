@@ -72,12 +72,14 @@ SDK 在 flush 時把 buffer 中所有事件包裝成一個 batch，帶上 `batch
 
 ```json
 {
-  "batch_id": "b-20260619-084200123",
+  "batch_id": "019537a0-7b2c-7def-8a2b-3c4d5e6f7890",
   "events": [ ... ]
 }
 ```
 
-`batch_id` 由 SDK 在 flush 時產生。格式：`b-{YYYYMMDD}-{HHMMSSfff}`（日期加毫秒級時間戳），用於追蹤和 debug（collector log 中標記同一批事件的來源）。Collector 不依賴 batch_id 做去重 — 同一批事件被 SDK 重試時會帶不同的 batch_id（每次 flush 重新產生），collector 按事件內容（timestamp + source + name）判斷是否重複。
+`batch_id` 由 SDK 在 flush 時產生。使用 UUID v7（`uuid.uuid7()`，Python 3.14+ 標準庫）——時間戳前綴保證有序（debug 時按 batch_id 排序即時間順序），隨機後綴保證唯一（高負載下多個 SDK 同時 flush 不碰撞）。用途是追蹤和 debug（collector log 中標記同一批事件的來源）。Collector 不依賴 batch_id 做去重 — 同一批事件被 SDK 重試時會帶不同的 batch_id（每次 flush 重新產生），collector 按事件內容（timestamp + source + name）判斷是否重複。
+
+UUID v7 而非時間戳格式的選型理由：時間戳格式（`b-{YYYYMMDD}-{HHMMSSfff}`）在同毫秒多次 flush 時會碰撞，雖然 MVP 的 debug 用途碰撞無害，但 batch_id 碰撞在後續版本的離線補發去重場景（見 [離線 buffer 與重試](/monitoring/03-sdk-design/offline-buffer/)）會造成歧義。UUID v7 兼顧有序和唯一，一次到位。
 
 ## Heartbeat 和 flush 的整合
 
