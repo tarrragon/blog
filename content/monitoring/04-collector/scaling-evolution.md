@@ -73,7 +73,7 @@ CREATE TABLE events (
 );
 ```
 
-`source_sdk` 獨立成 column 讓「按 SDK 來源篩選」（`WHERE source_sdk = 'python'`）不需要從 JSON extract。`data` 用 TEXT 存 JSON。SQLite 沒有原生 JSON 型別，但 3.38+ 支援 `json_extract()` 函數做查詢（`WHERE json_extract(data, '$.duration_ms') > 1000`）。`session_id` 獨立成 column 讓 session 回放的 JOIN 不需要 JSON extract。`error_stack` 獨立成 column 讓 error 調查時全文搜尋 stack trace 不需要 JSON extract。`receive_ts` 是 collector 收到事件的時間，和 SDK 端的 `ts` 對照可估算 clock drift。
+`source_sdk` 獨立成 column 讓「按 SDK 來源篩選」（`WHERE source_sdk = 'python'`）不需要從 JSON extract。`data` 用 TEXT 存 JSON。SQLite 沒有原生 JSON 型別，但 3.38+ 支援 `json_extract()` 函式做查詢（`WHERE json_extract(data, '$.duration_ms') > 1000`）。`session_id` 獨立成 column 讓 session 回放的 JOIN 不需要 JSON extract。`error_stack` 獨立成 column 讓 error 調查時全文搜尋 stack trace 不需要 JSON extract。`receive_ts` 是 collector 收到事件的時間，和 SDK 端的 `ts` 對照可估算 clock drift。
 
 PostgreSQL 版本的差異：`data` 改成 `JSONB` 型別（原生索引和查詢）、`source_*` 可保持為 nested JSON（PostgreSQL 的 JSONB 查詢效能足夠）或維持攤平（和 SQLite 版本保持一致）。
 

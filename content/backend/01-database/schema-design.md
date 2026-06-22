@@ -208,7 +208,7 @@ schema 從 day 1 就要為演進設計、不能假設「以後不會改」。
 
 **Evolution-friendly schema 原則**：
 
-1. **欄位 nullable by default**：除非業務真的不能 null、否則先 nullable、之後再 tighten
+1. **欄位 nullable by default**：除非業務不允許 null、否則先 nullable、之後再 tighten
 2. **避免大表 ALTER TABLE**：用 [Expand / Contract](/backend/knowledge-cards/expand-contract/) 模式
 3. **predict breaking changes**：訂版本、跟 application code 同步演進
 4. **schema version column**：每 row 帶 version、應用層按版本處理
