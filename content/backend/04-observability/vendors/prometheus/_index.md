@@ -22,18 +22,35 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 
 ## 最短路徑：5 分鐘把 Prometheus 跑起來
 
-```bash
-# 1. 啟動 Prometheus（含 sample config）
-# TODO: docker run -p 9090:9090 -v ./prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+先建最小 config 檔（Prometheus scrape 自己）：
 
-# 2. 配置 scrape target（prometheus.yml）
-# TODO: scrape_configs with static_configs / kubernetes_sd_configs
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
 
-# 3. 查詢驗證
-# TODO: 瀏覽器訪 http://localhost:9090、用 PromQL 查 `up`
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
 ```
 
-最短路徑驗證 Prometheus 起來、能 scrape 跟查詢。實際 production 要配 retention + alerting + HA。
+啟動並驗證：
+
+```bash
+# 1. 啟動 Prometheus
+docker run -d --name prom -p 9090:9090 \
+  -v "$(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml" \
+  prom/prometheus
+
+# 2. 確認 target 正常（等 15 秒讓第一次 scrape 完成）
+curl -s http://localhost:9090/api/v1/targets | jq '.data.activeTargets[].health'
+
+# 3. 查詢驗證
+curl -s 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result[].value[1]'
+```
+
+`up` 回傳 `"1"` 代表 Prometheus 能 scrape 自己。瀏覽器訪 `http://localhost:9090` 可用 PromQL UI 互動查詢。實際 production 要配 retention、alerting rules 與 HA。
 
 ## 日常操作與決策形狀
 
@@ -135,7 +152,7 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 操作原則：先看 target 是否健康、再看 network 跟認證。
 
 ```bash
-# TODO: HTTP /targets endpoint 看 scrape status
+curl -s http://localhost:9090/api/v1/targets | jq '.data.activeTargets[] | {job: .labels.job, health, lastError}'
 ```
 
 ### Cardinality explosion
@@ -143,7 +160,7 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 操作原則：series 數量持續增長、可能 OOM。
 
 ```bash
-# TODO: 查 `prometheus_tsdb_head_series` 跟 `prometheus_tsdb_head_active_appenders`
+curl -s 'http://localhost:9090/api/v1/query?query=prometheus_tsdb_head_series' | jq '.data.result[].value[1]'
 ```
 
 對應 [4.C2 Gaming peak](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/) 的處理路徑。
