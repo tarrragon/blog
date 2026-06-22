@@ -69,6 +69,31 @@ GET /v1/events?type=error&name=terminal.connect.*&from=2026-06-18T00:00:00Z&to=2
 | limit  | 回傳筆數上限                             | 100       |
 | offset | 分頁偏移                                 | 0         |
 
+### 回應格式
+
+```json
+{
+  "events": [
+    {
+      "v": 1,
+      "type": "error",
+      "timestamp": "2026-06-19T08:42:00Z",
+      "source": { "sdk": "python", "platform": "macos", "app": "claude-hooks" },
+      "name": "hook.failure",
+      "level": "error",
+      "data": { "hook": "branch-status-reminder", "step": "validation" },
+      "error": { "message": "KeyError: 'status'", "stack": "Traceback...", "type": "KeyError" },
+      "context": { "session_id": "sess-abc-123" }
+    }
+  ],
+  "total": 42,
+  "limit": 100,
+  "offset": 0
+}
+```
+
+`events` 陣列按 `timestamp` 降序排列。`total` 是符合篩選條件的全量筆數（不受 limit 截斷），讓呼叫端計算分頁（`total_pages = ceil(total / limit)`）。分頁用 offset-based（`offset=100` 取第二頁），適合資料量在十萬筆以下的場景。資料量大到 offset 效能不足時，改用 cursor-based（`after=<last_event_id>`），但 cursor-based 是 PostgreSQL 層的演進，SQLite 層用 offset 足夠。
+
 ### 實作策略
 
 HTTP 查詢 endpoint 的底層實作可以直接讀取 JSONL 檔案 — 根據 from/to 確定要讀哪些日期的檔案，逐行 parse 並過濾。這個實作在資料量小（單日萬筆以下）時足夠快。

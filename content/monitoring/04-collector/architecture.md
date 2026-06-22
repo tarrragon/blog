@@ -26,6 +26,54 @@ Schema 驗證是 collector 的品質閘門。沒有驗證的 collector 會累積
 
 驗證的粒度是事件級 — 批次中的一個事件驗證失敗不影響其他事件。回應中標明哪些事件被接受、哪些被拒絕及原因。
 
+### Ingestion 回應格式
+
+回應格式把「接受了幾筆、拒絕了幾筆、拒絕原因」三件事用一套一致的結構表達。SDK 端只需要判斷 status code 就知道怎麼處理 buffer。
+
+```json
+// 200 OK — 單筆成功或批次全部成功
+{ "accepted": 1 }
+
+// 207 Multi-Status — 批次部分失敗
+{
+  "accepted": 1,
+  "rejected": 1,
+  "errors": [
+    { "index": 1, "message": "missing required field: type", "fields": ["type"] }
+  ]
+}
+
+// 400 Bad Request — 單筆失敗或批次全部失敗
+{
+  "error": "schema validation failed",
+  "details": [
+    { "field": "type", "message": "missing required field" }
+  ]
+}
+
+// 503 Service Unavailable — 寫入端暫時不可用
+{ "error": "service temporarily unavailable", "retry_after": 5 }
+```
+
+設計選擇：207 的 `errors` 陣列用 `index` 標明失敗事件在原始 batch 中的位置（0-based），SDK 可以用 index 對照原始事件做 debug log。合法事件不因部分失敗而被丟棄 — 部分成功是 batch 收集的核心價值。400 和 207 的差異是「全軍覆沒 vs 部分存活」，SDK 端的處理策略不同：400 直接清 buffer（schema 問題重試也不會過），207 只清成功的部分。
+
+### Health endpoint 回應
+
+Health endpoint 回傳 collector 自身的運行狀態，不包含事件內容。用途是 SDK 端確認 collector 可達、監控腳本定期探測。
+
+```json
+// GET /health → 200 OK
+{
+  "status": "ok",
+  "uptime_seconds": 3600,
+  "total_events": 1234,
+  "storage_bytes": 5242880,
+  "version": "0.1.0"
+}
+```
+
+`total_events` 和 `storage_bytes` 讓監控腳本判斷 collector 的負載趨勢。`version` 讓 SDK 確認 collector 版本（schema 不匹配時的第一個 debug 線索）。
+
 ### 第三段：儲存
 
 通過驗證的事件寫入 Storage Backend。Collector 使用可插拔的 Storage interface — day-one 預設用 SQLite（零依賴、嵌入式），分析需求觸發時切換到 PostgreSQL。具體的 backend 選擇和功能分層見 [功能分層與 Backend 選擇](/monitoring/04-collector/feature-tier-boundary/)，可插拔架構見 [規模演進](/monitoring/04-collector/scaling-evolution/)。
