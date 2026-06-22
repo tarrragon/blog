@@ -66,6 +66,10 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 - Alertmanager：去重 / 抑制 / 分組 / routing
 - 對應配置：`rule_files`
 
+## Deep Article
+
+- [Prometheus 容量規劃與故障模式](capacity-failure-modes/)：單機容量邊界、cardinality 與 retention 的資源模型、常見故障模式與判讀
+
 ## 進階主題（按需閱讀）
 
 ### High availability

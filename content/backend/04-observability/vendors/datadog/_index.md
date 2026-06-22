@@ -72,6 +72,10 @@ Datadog 是 all-in-one SaaS observability 平台、承擔三個責任：覆蓋 A
 - Cardinality 控制：每 metric 收 tags 數限制
 - 對應 [4.C2 Gaming cardinality](/backend/04-observability/cases/gaming-peak-signal-freshness-and-cardinality/)
 
+## Deep Article
+
+- [Datadog 成本治理與 Agent 配置](cost-governance-agent-config/)：計價模型、custom metrics 成本控制、Agent 部署配置與常見故障
+
 ## 進階主題（按需閱讀）
 
 ### 成本治理

@@ -148,3 +148,4 @@ Retention 漂移的偵測手段：把 retention compliance 變成可查詢的訊
 - [07 資料保護](/backend/07-security-data-protection/)：[PII](/backend/knowledge-cards/pii/) redaction 與責任邊界
 - [8.5 post-incident review](/backend/knowledge-cards/post-incident-review/)：事故證據鏈引用 audit log
 - [8.17 security vs operational IR](/backend/08-incident-response/security-vs-operational-incident/)：證據鏈來源
+- [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)：鑑識回溯查詢模式跟 audit log 的長期查詢設計

@@ -47,82 +47,54 @@ State ownership 的責任是判斷哪些資料是 [source of truth](/backend/kno
 - 寫入永遠先寫 canonical、再 propagate 到 derived
 - derived 出錯只能 rebuild、不能拿來「修正 canonical」
 
-## CQRS 模式
+## CQRS 在資料庫情境的應用
 
-CQRS（Command Query Responsibility Segregation）把寫入跟讀取分開、用不同 model。
+[CQRS](/backend/knowledge-cards/cqrs/) 的概念定義、設計判準與代價見知識卡。本段聚焦在資料庫層面：state ownership 的決策如何影響你要不要分離讀寫模型。
 
-**經典 CQRS**：
+State ownership 跟 CQRS 的交叉點是：當 canonical state 的 schema 為寫入正確性最佳化（normalize、強一致、transaction boundary 清楚），但讀取面的多種消費者各自需要不同的反正規化形狀（列表頁要扁平 summary、報表要聚合、搜尋要全文索引），canonical schema 無法同時服務這些讀取需求。這時候分離 write model 跟 [read model](/backend/knowledge-cards/read-model/) 是解決形狀不對稱的方式。
 
-- Command（寫入）走 canonical schema、強一致
-- Query（讀取）走 derived schema（為 query 優化）
-- 兩個 model 透過 event / async sync
+資料庫情境的 CQRS 有不同的實作強度：
 
-**為什麼用 CQRS**：
+**最輕量 — 同 DB 不同 query path**：寫入走 canonical table，讀取走 [materialized view](/backend/knowledge-cards/materialized-view/) 或反正規化 view。同一個 PostgreSQL 裡用 materialized view 就能實現最基本的讀寫分離，不需要兩個 DB、不需要事件同步。適合讀寫形狀不同但流量規模還不需要獨立擴展的階段。
 
-- 寫入 schema 為 *正確性* 優化（normalize、強一致）
-- 讀取 schema 為 *查詢效率* 優化（denormalize、precompute）
-- 兩個目標衝突時、不要硬塞同一 schema
+**中度 — 同 DB 加 read replica**：寫入走 primary，列表跟報表走 read replica。Replica lag 決定哪些 query 能走 replica（見下方 Replica Lag 段）。適合讀取流量開始壓迫寫入的階段。
 
-**簡化 CQRS**：
+**完整 — 獨立 read store**：寫入走 OLTP DB，讀取走獨立的 analytics store（BigQuery、Athena）或搜尋引擎（Elasticsearch）。透過 CDC 或事件同步維護 read store。適合讀取形狀、流量、SLA 都跟寫入完全不同的階段。
 
-- 不一定要兩個 DB / 兩個 model
-- 同 DB 可以用 *materialized view* 實現 read model
-- 應用層用 *DTO / response shape* 不同也算
+對應案例：[9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) — 交易層（OLTP）跟資料層（BigQuery / Athena）分開。[9.C22 Wayfair](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/) — on-prem OLTP + GCP BigQuery analytics。
 
-**對應案例**：
+## Event Sourcing 與 State Ownership
 
-- [9.C17 BookMyShow](/backend/09-performance-capacity/cases/bookmyshow-indian-ticketing-platform/) — 交易層（OLTP）跟資料層（BigQuery / Athena）分開
-- [9.C22 Wayfair](/backend/09-performance-capacity/cases/wayfair-gcp-burst-capacity/) — on-prem OLTP + GCP BigQuery analytics
+[Event sourcing](/backend/knowledge-cards/event-sourcing/) 的概念定義、設計判準與代價見知識卡。本段聚焦在資料庫層面：event sourcing 怎麼改變 state ownership 跟 query boundary。
 
-## Event Sourcing
+Event sourcing 把 state ownership 的正式紀錄從 mutable row 改成 append-only [event log](/backend/knowledge-cards/event-log/)。這個改變影響本章的每一個面向：
 
-event sourcing 不存 *current state*、存 *event history*、current state 從 event 推出來。
+**對 canonical / derived 分類的影響**：採用 event sourcing 後，event log 是 canonical state，current state 變成 derived state。這跟傳統 CRUD 架構相反 — 傳統架構中 current state（mutable row）是 canonical，歷史紀錄（audit log）是 derived。
 
-**特徵**：
+**對 query boundary 的影響**：event log 不適合直接服務交易查詢跟列表查詢（每次 replay 整條事件流太慢）。Event sourcing 幾乎必然搭配 [projection](/backend/knowledge-cards/projection/) 維護 read model — projection 持續消費事件流、更新反正規化的查詢 view。交易查詢讀 projection 的輸出而非直接讀 event log。
 
-- 寫入：append-only event log
-- 讀取：replay event 算出 current state、或維護 read model（projection）
-- 永遠可以「回到任一時刻」的 state
-- 對應 [Event Log 卡片](/backend/knowledge-cards/event-log/) 跟 [Projection 卡片](/backend/knowledge-cards/projection/)
+**對修復流程的影響**：傳統架構的資料修復是「直接改 row」；event sourcing 的修復是「發一筆補償事件（compensating event）」。修復本身也是事件、會被記錄在 event log 裡、提供完整的修復 audit trail。
 
-**適合場景**：
+Event sourcing 的設計門檻在於 projection 的維護跟 event schema evolution。Projection 數量增長後，每次 event schema 改版都需要同步更新所有 projection；projection 的 replay 跟 reconciliation 是長期運維的主要成本。這些代價決定了 event sourcing 適合「需要完整變更歷史」的業務場景（金融帳務、訂單流程、法規合規），而非所有資料存取場景。
 
-- 金融帳戶（需要 audit 任何時刻 balance）
-- 訂單流程（每個 state 變化是 business event）
-- 法規要求保留全變更歷史
+## Materialized View 在資料庫的應用
 
-**不適合場景**：
+[Materialized view](/backend/knowledge-cards/materialized-view/) 的概念定義見知識卡。本段聚焦在 OLTP 資料庫裡 materialized view 作為最輕量 read model 的具體實作。
 
-- 簡單 CRUD（complexity overhead）
-- 需要直接 query current state（每次 replay 慢）
+Materialized view 是「同 DB 內最簡單的讀寫分離」。不需要事件同步、不需要獨立 read store、不需要 projection consumer — 資料庫自己定期執行查詢、存放結果。
 
-**搭配 CQRS**：event sourcing 是典型的 *write model*、read model 用 projection 維護快查 view。
-
-## Materialized View
-
-materialized view 是 *預計算的 query 結果*、定期 refresh。
-
-**vs regular view**：
-
-- regular view：只是 SQL 別名、每次 query 重跑
-- materialized view：實際 store 結果、query 時直接讀
-
-**何時用**：
-
-- 複雜 JOIN / aggregation 重複跑
-- query 結果變化頻率 < 重跑頻率（每天 refresh、每小時 query 千次）
-- 可接受 refresh window 內看舊資料
+**跟 regular view 的差別**：regular view 是 SQL 別名，每次 query 重跑底層查詢；materialized view 有實體儲存，query 時直接讀預計算結果。差別在 query-time cost — 複雜 JOIN / aggregation 重複跑時，materialized view 把計算推到 refresh 時、query 時接近零成本。
 
 **Refresh 策略**：
 
-- 全量 refresh（PostgreSQL `REFRESH MATERIALIZED VIEW`）
-- 增量 refresh（PostgreSQL `pg_ivm`、其他 DB 有 native incremental）
-- Trigger-based（特定 event 觸發 refresh）
+- **全量 refresh**：PostgreSQL 的 `REFRESH MATERIALIZED VIEW`，refresh 期間 view 預設 unavailable。
+- **Concurrent refresh**：PostgreSQL 的 `CONCURRENTLY` 模式，refresh 期間 view 仍可讀但資料可能 stale。
+- **增量 refresh**：PostgreSQL 的 `pg_ivm`、Oracle 的 fast refresh — 只更新變更的部分，成本低但配置複雜。
+- **Trigger-based**：特定 event 觸發 refresh，適合低頻變更的資料。
 
-**注意**：
+**在 state ownership 的定位**：materialized view 是 derived state，修復方式是 refresh（重建）而非直接修改。大量 materialized view 會拖累寫入吞吐 — 每次 base table 變更都可能觸發 refresh 計算。設計時要平衡 refresh 頻率跟 query freshness 需求。
 
-- refresh 期間 view 可能 unavailable（PostgreSQL 預設）或 stale（CONCURRENTLY 模式）
-- 大量 materialized view 拖累寫入吞吐
+**跟觀測領域的對照**：觀測領域的 [recording rule](/backend/knowledge-cards/recording-rule/) 在概念上等同於 TSDB 層的 materialized view — 定期執行 query expression、把結果寫成新 series。兩者面對同樣的設計問題：refresh 頻率、freshness lag、維護成本與儲存增長。觀測領域的 CQRS 特化應用見 [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)。
 
 ## Query Boundary 四種
 

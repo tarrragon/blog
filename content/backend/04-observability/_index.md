@@ -123,8 +123,9 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.20](/backend/04-observability/observability-evidence-package/)   | Observability Evidence Package         | 把 log、metric、trace、audit 與資料品質限制包成可交接證據                                      |
 | [4.21](/backend/04-observability/rule-level-cpu-signal-governance/) | Rule-level CPU Signal Governance       | 把規則執行成本變成可觀測訊號，避免小變更在全域 rollout 後形成 CPU 熱點                         |
 | [4.22](/backend/04-observability/checkout-api-evidence-package/)    | Checkout API Evidence Package 實作示範 | 以 checkout 路徑示範 evidence package 如何交接到 gate 與 incident                              |
+| [4.23](/backend/04-observability/observability-query-design/)       | 觀測查詢設計                           | 把讀取路徑當系統設計問題：三種查詢模式、storage tiering、pre-aggregation 與資源治理            |
 
-> 註：4.1-4.22 已完成概念層與第一篇實作示範正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。
+> 註：4.1-4.23 已完成概念層與第一篇實作示範正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。
 
 ## 個案前拓展空間
 
