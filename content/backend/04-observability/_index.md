@@ -60,6 +60,15 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 - **觀測 → 資安**：log、trace、audit log 與 service topology 提供資安 triage 的事實基礎，讓 [稽核追蹤與責任邊界](/backend/07-security-data-protection/audit-trail-and-accountability-boundary/) 能把責任鏈落到可查證資料。
 - **詳細閉環說明**：見 [Observability / Reliability / Incident Response 閉環](/backend/08-incident-response/observability-reliability-incident-loop/)。
 
+## 跟 Monitoring 模組的串接
+
+[Monitoring 模組](/monitoring/) 聚焦非 server 端 runtime — mobile app、web 頁面、本機腳本的行為蒐集、錯誤回報與 SDK 設計。本模組聚焦 server-side observability。兩者的交叉點是 trace context propagation 和 event transport format。
+
+- [4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/)：概念定位、RUM 與 synthetic 的 server-side 整合
+- [4.24 Client-to-Server 觀測串接](/backend/04-observability/client-server-trace-integration/)：從 browser click 到 server span 的完整 trace 鏈路
+- [監控資料的雙重用途](/monitoring/telemetry-data-dual-use/)：同一份 event data 如何同時服務行為分析（monitoring/08）與訊號治理（04）
+- [0.15 跨模組 Checkout Episode](/backend/00-service-selection/cross-module-checkout-episode/)：從 DB write 到 observability evidence 的四層端到端串聯
+
 ## 與語言教材的分工
 
 語言教材處理如何產生穩定欄位與執行環境訊號。Backend observability 模組處理收集、儲存、查詢、視覺化、告警與跨服務關聯。
@@ -124,8 +133,9 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.21](/backend/04-observability/rule-level-cpu-signal-governance/) | Rule-level CPU Signal Governance       | 把規則執行成本變成可觀測訊號，避免小變更在全域 rollout 後形成 CPU 熱點                         |
 | [4.22](/backend/04-observability/checkout-api-evidence-package/)    | Checkout API Evidence Package 實作示範 | 以 checkout 路徑示範 evidence package 如何交接到 gate 與 incident                              |
 | [4.23](/backend/04-observability/observability-query-design/)       | 觀測查詢設計                           | 把讀取路徑當系統設計問題：三種查詢模式、storage tiering、pre-aggregation 與資源治理            |
+| [4.24](/backend/04-observability/client-server-trace-integration/)  | Client-to-Server 端到端觀測串接        | 用一個結帳場景走完 browser click → trace context → server span → 統一 waterfall 的完整實作鏈路 |
 
-> 註：4.1-4.23 已完成概念層與第一篇實作示範正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。
+> 註：4.1-4.24 已完成概念層、實作示範與端到端串接正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。
 
 ## 個案前拓展空間
 

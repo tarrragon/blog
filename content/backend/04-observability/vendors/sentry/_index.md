@@ -69,6 +69,11 @@ Sentry 是 error tracking 的事實標準、承擔三個責任：跨 frontend / 
 - Web Vitals（前端 LCP / FID / CLS）
 - 跟 OTel trace 互操作
 
+## Deep Article
+
+- [Error Grouping 與 Fingerprinting 策略](error-grouping-fingerprinting/)：預設 grouping 演算法、自訂 fingerprint rules、merge/unmerge、grouping 不準的判讀與大量 unique errors 的治理
+- [Release Tracking 與 Session Replay](release-tracking-session-replay/)：release health、deploy tracking、session replay 隱私設定、performance monitoring 與 OTel 整合、self-hosted vs SaaS
+
 ## 進階主題（按需閱讀）
 
 ### Session Replay
@@ -122,6 +127,12 @@ Sentry 是 error tracking 的事實標準、承擔三個責任：跨 frontend / 
 - Sentry SDK 接受 OTel context（trace_id / span_id）
 - 跟其他 OTel backend dual ship
 - Sentry 自家 SDK feature 較深（vs 純 OTel）
+
+## 跟 Monitoring 模組的分工
+
+本頁從 server-side 觀測平台角度說明 Sentry — error grouping 的告警整合、performance monitoring 的 SLI 指標設計、self-hosted vs SaaS 成本、跟 OTel 的 context 整合。Client-side 的使用體驗（SDK 自動攔截設計、error grouping 的 client 端行為、session replay 的操作重播、跟自架 monitor 的比較）見 [Monitoring 模組 Sentry 深入](/monitoring/06-commercial-comparison/sentry-deep-dive/)。
+
+兩者的交叉點是 error event 的格式和 trace context propagation — client SDK 捕獲的 error 帶 trace context，server-side 的 Sentry 用同一個 trace 串接完整路徑。
 
 ## 排錯快速判讀
 

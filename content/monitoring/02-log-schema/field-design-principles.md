@@ -12,7 +12,7 @@ tags: ["monitoring", "log-schema", "design", "principles"]
 
 每筆事件的 source 欄位記錄「這筆事件從哪裡來」。App 名稱、版本、平台、OS 版本 — 這些資訊在事件產生時由 SDK 自動填入，不依賴使用者或開發者手動標記。
 
-source 的設計要點是「足夠區分但不過度」。App 名稱和版本是最低要求 — 能區分「這是哪個 app 的哪個版本送來的事件」。平台和 OS 版本用於分析平台特定的問題（「這個 error 只出現在 iOS 17」）。
+source 的設計要點是「足夠區分但不過度」。`sdk` 和 `platform` 是必填——sdk 標明事件由哪個 SDK 實作產生（`js` / `flutter` / `python` / `go`），platform 標明運行平台（`ios` / `android` / `web` / `macos`）。兩者不能互相推導：同一個 platform（iOS）上可能有不同的 SDK（Flutter SDK 或 Swift 原生 SDK），同一個 SDK（Flutter）可能跑在不同 platform（iOS / Android / Web）。App 名稱和版本能區分「這是哪個 app 的哪個版本送來的事件」。OS 版本用於分析平台特定的問題（「這個 error 只出現在 iOS 17.4」）。
 
 不需要在 source 放裝置 ID 或使用者 ID — 這些屬於個人識別資訊，放在 source 會讓每一筆事件都攜帶 PII，增加去識別化的複雜度。Session ID 用於關聯同次使用的事件，已足夠取代裝置/使用者級別的追蹤。
 

@@ -132,6 +132,12 @@ Datadog 是 all-in-one SaaS observability 平台、承擔三個責任：覆蓋 A
 - Cloud Security Posture Management
 - 跟 [07 security 模組](/backend/07-security-data-protection/) 對照
 
+## 跟 Monitoring 模組的分工
+
+本頁從 server-side APM 平台角度說明 Datadog — agent 部署、cost governance、OTel 遷移、跟 Grafana Stack 的對照。Client-side 的 RUM 體驗（RUM SDK 四種事件、session replay、全棧追蹤的 client 端視角）見 [Monitoring 模組 Datadog RUM](/monitoring/06-commercial-comparison/datadog-rum/)。
+
+兩者的交叉點是 trace context — RUM SDK 注入的 trace header 讓 client action 跟 server span 串在同一個 trace。沒有 server-side APM 的團隊用 RUM 也有價值（client-side error + performance），但全棧追蹤需要兩邊都部署。
+
 ## 排錯快速判讀
 
 ### Agent 連不上 Datadog

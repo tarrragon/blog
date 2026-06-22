@@ -124,3 +124,4 @@ Cost attribution 的核心目標是讓成本對應到能採取行動的 [owner](
 - [4.18 operating model](/backend/04-observability/observability-operating-model/)：platform team 跟 service team 的 cost ownership
 - [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)：query 成本的 estimation 跟治理
 - [6.9 capacity / cost](/backend/06-reliability/capacity-cost/)：observability 成本作為整體容量規劃的一部分
+- [4.C14 觀測平台成本治理](/backend/04-observability/cases/observability-cost-governance-at-scale/)：從帳單驚嚇到可預測成本的綜合情境

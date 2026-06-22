@@ -6,6 +6,8 @@ weight: 2
 tags: ["monitoring", "sentry", "error-tracking", "performance", "session-replay"]
 ---
 
+> **跟 Backend 04 的分工**：本文從 client-side 使用角度說明 Sentry 的 error tracking、performance monitoring 與 session replay — SDK 怎麼埋、error 怎麼分群、release 怎麼追蹤。Server-side 平台治理（告警路由整合、SLI 指標設計、self-hosted vs SaaS 成本治理、跟 OTel 的整合）見 [Backend 04 Sentry vendor page](/backend/04-observability/vendors/sentry/)。
+
 Sentry 的核心是 error tracking — 自動捕獲未處理的例外、提供 stack trace、自動分群（grouping）相同 root cause 的 error。在 error tracking 的基礎上，Sentry 擴展了 performance monitoring（transaction / span）和 session replay（重播使用者操作）。
 
 ## Error tracking

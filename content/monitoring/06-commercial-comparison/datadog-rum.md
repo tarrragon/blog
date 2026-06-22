@@ -6,6 +6,8 @@ weight: 4
 tags: ["monitoring", "datadog", "rum", "apm", "full-stack"]
 ---
 
+> **跟 Backend 04 的分工**：本文從 client-side RUM 角度說明 Datadog 的全棧追蹤、四種 RUM 事件與 session replay。Server-side 的 APM 平台治理（agent 配置、成本治理、OTel 相容遷移、從 New Relic 或 Grafana Stack 遷移）見 [Backend 04 Datadog vendor page](/backend/04-observability/vendors/datadog/)。
+
 Datadog Real User Monitoring（RUM）從全棧 APM 的角度設計 client-side 監控。核心特徵是 client 端的使用者操作可以關聯到 server 端的 trace，形成從按鈕點擊到 database query 的完整請求鏈路。
 
 ## 全棧追蹤

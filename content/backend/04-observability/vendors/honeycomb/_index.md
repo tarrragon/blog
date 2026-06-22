@@ -61,6 +61,14 @@ Honeycomb 跟 metrics-aggregation 平台不同。子議題：
 - Filter：WHERE clause
 - 對應 SLO query：`heatmap(duration_ms) GROUP BY service.name WHERE http.status_code = 500`
 
+## Deep Article
+
+- [High-Cardinality Query Model 與 BubbleUp](high-cardinality-query-bubbleup/)：event-based 資料模型、high-cardinality 查詢設計、BubbleUp 異常偵測、SLO / burn rate、derived columns、dataset 設計與 OTLP ingestion
+
+## Migration Playbook
+
+- [Sentry 遷移到 Honeycomb](migrate-from-sentry/)：error tracking 轉 event-based observability
+
 ## 進階主題（按需閱讀）
 
 ### BubbleUp 分析

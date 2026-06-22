@@ -69,6 +69,8 @@ Prometheus 是 CNCF graduated 的 metrics 系統、承擔三個責任：pull-bas
 ## Deep Article
 
 - [Prometheus 容量規劃與故障模式](capacity-failure-modes/)：單機容量邊界、cardinality 與 retention 的資源模型、常見故障模式與判讀
+- [PromQL 與 Recording Rules 實務](promql-recording-rules/)：常見 SLI 查詢模式、recording rules 設計慣例、效能陷阱與故障判讀
+- [Remote Write 與長期儲存整合](remote-write-long-term-storage/)：remote write 配置、Mimir / Thanos / Cortex 三家比較、故障模式與容量規劃
 
 ## 進階主題（按需閱讀）
 

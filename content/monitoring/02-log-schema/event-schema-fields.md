@@ -30,11 +30,12 @@ Timestamp 由 SDK 在事件發生時記錄，不是 collector 收到時記錄。
 
 ### source（必填）
 
-事件來源的識別資訊。包含 app 名稱、版本、平台、OS 版本。
+事件來源的識別資訊。包含產生事件的 SDK、app 名稱、版本、平台、OS 版本。
 
 ```json
 {
   "source": {
+    "sdk": "flutter",
     "app": "app_tunnel",
     "version": "1.2.0",
     "platform": "ios",
@@ -43,7 +44,9 @@ Timestamp 由 SDK 在事件發生時記錄，不是 collector 收到時記錄。
 }
 ```
 
-Source 讓同一個 collector 接收多個 app 的事件時可以區分來源。也用於分析「哪個版本的 error 率最高」。
+`sdk` 標明產生事件的 SDK 種類（`js` / `flutter` / `python` / `go`）。同一個平台可能有不同的 SDK——iOS 上可能是 Flutter SDK 或未來的 Swift 原生 SDK——sdk 欄位讓 collector 區分事件來自哪個 SDK 實作，platform 無法替代這個識別。`sdk` 和 `platform` 為必填，`app`、`version`、`os` 為選填。
+
+Source 讓同一個 collector 接收多個 app 的事件時可以區分來源。也用於分析「哪個版本的 error 率最高」、「哪個 OS 版本有特定問題」。
 
 ### session（選填）
 
@@ -84,6 +87,7 @@ Schema 版本號。整數，從 1 開始遞增。
   "name": "terminal.connect.failed",
   "timestamp": "2026-06-19T14:30:00.123+08:00",
   "source": {
+    "sdk": "flutter",
     "app": "app_tunnel",
     "version": "1.2.0",
     "platform": "ios",

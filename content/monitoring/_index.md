@@ -209,6 +209,12 @@ tags: ["monitoring"]
 > - 推薦系統架構 → 待建 `machine-learning/` 或放 [Backend](/backend/) 延伸模組
 > - 隱私法規（GDPR / CCPA / 個資法） → 待建 `compliance/` 或放 [Backend 07](/backend/07-security-data-protection/) 延伸
 
+### 跨模組橋接：監控資料的雙重用途
+
+SDK 送出的同一份 event data 同時服務行為分析（funnel / cohort / attribution）和 server-side 訊號治理（cardinality / cost / signal governance）。兩條消費路徑的保留期、粒度、PII 處理和取樣策略互相衝突，解法是在 transport 層分流而非在 SDK 層複製。
+
+完整的資料格式交叉、治理衝突與分流架構見 [監控資料的雙重用途](/monitoring/telemetry-data-dual-use/)。Client-side event 到 server-side trace 的完整串接見 [4.24 Client-to-Server 觀測串接](/backend/04-observability/client-server-trace-integration/)。
+
 ## 學習路線
 
 | 路線             | 適合讀者                            | 建議順序                   | 讀完能做什麼                      |

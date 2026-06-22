@@ -67,6 +67,11 @@ CloudWatch 是 AWS 原生 observability 服務、承擔三個責任：AWS 服務
 - Service map 自動 build
 - 對應 [4.C4 X-Ray to OpenTelemetry](/backend/04-observability/cases/xray-to-opentelemetry-migration/) 遷移案例
 
+## Deep Article
+
+- [Logs Insights 查詢與日誌治理](logs-insights-governance/)：log group 設計、query syntax、retention policy、cross-account aggregation、subscription filter 與 cost governance
+- [Alarms 與 Composite Alarms 操作實務](alarms-composite-operations/)：Metric Alarm、Anomaly Detection、Composite Alarm 設計、alarm actions、missing data 處理與 cost
+
 ## 進階主題（按需閱讀）
 
 ### Container Insights / Lambda Insights

@@ -76,3 +76,4 @@ Prometheus 原生的資源隔離有限，但 Thanos Query Frontend、Mimir Query
 - 04.7 [metric cardinality](/backend/knowledge-cards/metric-cardinality/) / cost：label 治理與成本邊界
 - 04.9 continuous profiling：metrics 之外的第四角觀測訊號
 - 04.23 [觀測查詢設計](/backend/04-observability/observability-query-design/)：跨訊號類型的讀取路徑系統設計
+- [4.C11 Uber M3](/backend/04-observability/cases/uber-m3-metrics-platform-scale/)：單機 Prometheus 到平台級 metrics 系統的演進

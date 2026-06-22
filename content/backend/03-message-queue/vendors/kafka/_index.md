@@ -177,16 +177,16 @@ kafka-topics.sh --describe --under-replicated-partitions --bootstrap-server loca
 
 ## 何時改走其他服務
 
-| 需求形狀                           | 改走                                                                                         |
-| ---------------------------------- | -------------------------------------------------------------------------------------------- |
-| 任務隊列（中等吞吐、複雜 routing） | [RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/)                                      |
-| Managed queue（AWS 生態、簡單）    | [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/)                                        |
-| Managed pub/sub（GCP 生態）        | [Google Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/)                           |
-| 輕量 messaging + 微服務通訊        | [NATS](/backend/03-message-queue/vendors/nats/)                                              |
-| Redis 生態內 stream                | [Redis Streams](/backend/03-message-queue/vendors/redis-streams/)                            |
-| Managed Kafka                      | AWS MSK / Confluent Cloud（見 [3.C2](/backend/03-message-queue/cases/vmware-kafka-to-msk/)） |
-| Kafka 相容、單 binary              | Redpanda（T2 候選）                                                                          |
-| 多租戶 + 分層儲存原生              | Apache Pulsar（T2 候選）                                                                     |
+| 需求形狀                           | 改走                                                                                                                                                                    |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 任務隊列（中等吞吐、複雜 routing） | [RabbitMQ](/backend/03-message-queue/vendors/rabbitmq/)                                                                                                                 |
+| Managed queue（AWS 生態、簡單）    | [AWS SQS](/backend/03-message-queue/vendors/aws-sqs/)                                                                                                                   |
+| Managed pub/sub（GCP 生態）        | [Google Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/)（遷移路徑見 [Kafka → Pub/Sub](/backend/03-message-queue/vendors/google-pubsub/migrate-from-kafka/)） |
+| 輕量 messaging + 微服務通訊        | [NATS](/backend/03-message-queue/vendors/nats/)                                                                                                                         |
+| Redis 生態內 stream                | [Redis Streams](/backend/03-message-queue/vendors/redis-streams/)                                                                                                       |
+| Managed Kafka                      | AWS MSK / Confluent Cloud（見 [3.C2](/backend/03-message-queue/cases/vmware-kafka-to-msk/)）                                                                            |
+| Kafka 相容、單 binary              | Redpanda（T2 候選）                                                                                                                                                     |
+| 多租戶 + 分層儲存原生              | Apache Pulsar（T2 候選）                                                                                                                                                |
 
 ## 不在本頁內的主題
 

@@ -202,3 +202,4 @@ DragonflyDB 2022 年開源、wire-protocol 與 Redis 相容、Redis 上的 cache
 - 上游概念：[2.2 Cache Aside](/backend/02-cache-redis/cache-aside/)、[2.3 TTL eviction](/backend/02-cache-redis/ttl-eviction/)
 - 平行 vendor：[Redis](/backend/02-cache-redis/vendors/redis/)、[Valkey](/backend/02-cache-redis/vendors/valkey/)
 - 下游能力：[2.6 high concurrency](/backend/02-cache-redis/high-concurrency-access/)
+- 回退路徑：[DragonflyDB → Redis/Valkey](/backend/02-cache-redis/vendors/dragonflydb/migrate-to-redis/)
