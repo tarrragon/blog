@@ -29,6 +29,22 @@ tags: ["backend", "deployment", "load-balancer"]
 
 idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體驗的平衡點。timeout 太短會增加重連與錯誤，太長會占用連線與資源。設定時依請求型態與峰值流量校準、按 SLI 訊號迭代閾值。
 
+### Timeout 層級串聯
+
+一條請求路徑上的 timeout 分佈在多個層級，每層各自有預設值。全路徑的 timeout 設計原則是由外到內遞減：外層（離使用者近）的 timeout 要大於內層（離資料源近），否則外層先放棄，內層還在處理一個已經沒人等的請求。
+
+| 層級             | 典型 timeout 範圍 | 設定位置                                   |
+| ---------------- | ----------------- | ------------------------------------------ |
+| Client / Browser | 30-120 秒         | 前端 fetch / axios / SDK 設定              |
+| CDN edge         | 5-30 秒           | CDN vendor 設定（Cloudflare / CloudFront） |
+| Load balancer    | 30-60 秒          | LB idle timeout / request timeout          |
+| Application      | 5-30 秒           | HTTP server read/write timeout             |
+| Database / Cache | 1-5 秒            | 連線池 query timeout / connect timeout     |
+
+這張表的每一層 timeout 都要比它的下一層大。如果 LB timeout 30 秒但 application 設了 60 秒，LB 會在 30 秒回 504 給使用者，但 application 仍然持有連線等 DB 回應——佔用連線資源卻無法交付結果。
+
+timeout 設計的常見失誤是只調 LB 層：團隊看到使用者回報 timeout，直接把 LB timeout 從 30 秒調到 120 秒。結果是慢請求佔用 LB 連線更久、連線池被慢請求填滿、其他正常請求也開始排隊 timeout。穩定做法是先在 application 或 DB 層找出延遲根因，而非放大外層 timeout 來「等更久」。
+
 [sticky session](/backend/knowledge-cards/sticky-session/) 適合需要短期會話一致性的場景，但它會提高特定節點負載不均與失效轉移成本。採用 sticky policy 前要先定義會話狀態落點與失效時的回復路徑。
 
 ### LB + CDN 連線生命週期協調
