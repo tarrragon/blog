@@ -24,14 +24,55 @@ Envoy 是 CNCF graduated 的 service proxy、承擔三個責任：cloud-native L
 
 ```bash
 # 1. 啟動 Envoy
-# TODO: docker run -p 9901:9901 -p 10000:10000 -v ./envoy.yaml:/etc/envoy/envoy.yaml envoyproxy/envoy:v1.30-latest
+docker run -d --name envoy-demo \
+  -p 9901:9901 -p 10000:10000 \
+  -v "$(pwd)/envoy.yaml:/etc/envoy/envoy.yaml:ro" \
+  envoyproxy/envoy:v1.31-latest
+```
 
-# 2. Static config 範例
-# TODO: listener / route / cluster YAML
+Static config 範例（`envoy.yaml`）：
 
+```yaml
+static_resources:
+  listeners:
+  - name: listener_0
+    address: { socket_address: { address: 0.0.0.0, port_value: 10000 } }
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          route_config:
+            virtual_hosts:
+            - name: backend
+              domains: ["*"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: service_backend }
+          http_filters:
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+  clusters:
+  - name: service_backend
+    connect_timeout: 5s
+    type: STRICT_DNS
+    load_assignment:
+      cluster_name: service_backend
+      endpoints:
+      - lb_endpoints:
+        - endpoint: { address: { socket_address: { address: app, port_value: 8080 } } }
+admin:
+  address: { socket_address: { address: 0.0.0.0, port_value: 9901 } }
+```
+
+```bash
 # 3. 驗證 + admin endpoint
-# TODO: curl http://localhost:10000
-# TODO: curl http://localhost:9901/stats / /clusters / /config_dump
+curl http://localhost:10000                    # proxy 路徑
+curl http://localhost:9901/stats               # metrics
+curl http://localhost:9901/clusters            # upstream health
+curl http://localhost:9901/config_dump         # running config
 ```
 
 ## 日常操作與決策形狀

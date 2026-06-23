@@ -23,16 +23,18 @@ Docker 是最早 popularize container 的工具、承擔三個責任：container
 ## 最短路徑：5 分鐘把 Docker 跑起來
 
 ```bash
-# 1. 安裝 Docker / Podman / Rancher Desktop
-# TODO: macOS: Docker Desktop / brew install --cask docker
+# 1. 安裝（macOS 擇一）
+brew install --cask docker            # Docker Desktop（商業企業需付費授權）
+# brew install podman                 # 替代方案：Podman（無 daemon、免費）
 
 # 2. 跑 container
-# TODO: docker run -d -p 8080:80 nginx
-# TODO: docker ps / docker logs / docker exec
+docker run -d -p 8080:80 --name web nginx:stable-alpine
+docker ps && docker logs web
 
-# 3. Build image
-# TODO: docker build -t myapp:1 .
-# TODO: docker push <registry>/myapp:1
+# 3. Build + push image
+docker build -t myapp:1 .
+docker tag myapp:1 ghcr.io/<org>/myapp:1
+docker push ghcr.io/<org>/myapp:1
 ```
 
 ## 日常操作與決策形狀
@@ -126,7 +128,8 @@ Docker 是最早 popularize container 的工具、承擔三個責任：container
 操作原則：COPY 順序錯、`.dockerignore` 缺、變動的 layer 在前面。
 
 ```bash
-# TODO: docker build --progress=plain --no-cache 比對
+docker build --progress=plain --no-cache -t myapp:debug .   # 逐層輸出、比對哪層吃時間
+docker history myapp:debug                                  # 看每層大小
 ```
 
 ### Image 過大

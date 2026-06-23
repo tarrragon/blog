@@ -23,16 +23,16 @@ Kubernetes 是 container orchestration 事實標準、承擔三個責任：workl
 ## 最短路徑：5 分鐘把 Kubernetes 跑起來
 
 ```bash
-# 1. 本機跑 kind / minikube
-# TODO: kind create cluster / minikube start
+# 1. 本機跑 kind（需先安裝 kind + docker）
+kind create cluster --name dev
 
-# 2. 部署 Deployment
-# TODO: kubectl create deployment nginx --image=nginx
-# TODO: kubectl expose deployment nginx --port=80 --type=ClusterIP
+# 2. 部署 Deployment + Service
+kubectl create deployment nginx --image=nginx:stable-alpine
+kubectl expose deployment nginx --port=80 --type=ClusterIP
 
 # 3. 驗證
-# TODO: kubectl get pods / svc / deploy
-# TODO: kubectl port-forward / kubectl exec
+kubectl get pods,svc,deploy
+kubectl port-forward svc/nginx 8080:80
 ```
 
 ## 日常操作與決策形狀
@@ -120,8 +120,8 @@ Pod lifecycle 是 K8s 的核心抽象。子議題：
 操作原則：先 `kubectl describe pod` 看 events、再 `kubectl logs` 看 container 訊息。
 
 ```bash
-# TODO: kubectl describe pod <name>（看 events 段）
-# TODO: kubectl logs <name> --previous（看 crash 前 log）
+kubectl describe pod <name>           # 看 Events 段的 scheduling / pull / probe 訊息
+kubectl logs <name> --previous        # 看 crash 前一輪的 container log
 ```
 
 判讀路徑：Pending → resource 不足 / nodeSelector 不匹配；CrashLoopBackOff → exit code + log 找原因。

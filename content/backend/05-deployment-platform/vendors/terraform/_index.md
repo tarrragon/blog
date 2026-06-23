@@ -24,16 +24,25 @@ Terraform 是 HashiCorp 出品的 IaC 工具、承擔三個責任：declarative 
 
 ```bash
 # 1. 安裝
-# TODO: brew install terraform / opentofu
+brew install hashicorp/tap/terraform   # 或 brew install opentofu
+```
 
+```hcl
 # 2. 寫 main.tf
-# TODO: provider "aws" { region = "us-east-1" }
-# TODO: resource "aws_s3_bucket" "demo" { bucket = "..." }
+terraform {
+  required_providers {
+    aws = { source = "hashicorp/aws", version = "~> 5.0" }
+  }
+}
+provider "aws" { region = "us-east-1" }
+resource "aws_s3_bucket" "demo" { bucket = "my-tf-demo-bucket" }
+```
 
+```bash
 # 3. init + plan + apply
-# TODO: terraform init
-# TODO: terraform plan
-# TODO: terraform apply
+terraform init
+terraform plan -out=plan.tfplan
+terraform apply plan.tfplan
 ```
 
 ## 日常操作與決策形狀

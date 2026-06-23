@@ -23,17 +23,28 @@ systemd 是 Linux 主流 init system、承擔三個責任：service unit lifecyc
 ## 最短路徑：5 分鐘把 systemd service 跑起來
 
 ```bash
-# 1. 建 unit file
-# TODO: /etc/systemd/system/myapp.service
-# TODO: [Service] ExecStart=/usr/bin/myapp / Restart=on-failure
+# 1. 建 unit file（需 root 或 sudo）
+cat > /etc/systemd/system/myapp.service <<'UNIT'
+[Unit]
+Description=My Application
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/myapp --config /etc/myapp/config.yaml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+UNIT
 
 # 2. 啟用 + 啟動
-# TODO: systemctl daemon-reload
-# TODO: systemctl enable --now myapp
+systemctl daemon-reload
+systemctl enable --now myapp
 
 # 3. 驗證
-# TODO: systemctl status myapp
-# TODO: journalctl -u myapp -f
+systemctl status myapp
+journalctl -u myapp -f
 ```
 
 ## 日常操作與決策形狀
@@ -128,8 +139,8 @@ systemd 是 Linux 主流 init system、承擔三個責任：service unit lifecyc
 操作原則：先 `systemctl status`、再 `journalctl -u` 看 log。
 
 ```bash
-# TODO: systemctl status myapp（看 Active state + Main PID）
-# TODO: journalctl -u myapp --since=-5m
+systemctl status myapp                # 看 Active state + Main PID + 最近 log
+journalctl -u myapp --since=-5m       # 最近 5 分鐘的完整 log
 ```
 
 ### Restart loop

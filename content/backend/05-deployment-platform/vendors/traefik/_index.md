@@ -24,13 +24,15 @@ Traefik 是 cloud-native reverse proxy / ingress、承擔三個責任：auto-dis
 
 ```bash
 # 1. Docker 跑 Traefik + dashboard
-# TODO: docker run -d -p 80:80 -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock traefik:v3
+docker run -d -p 80:80 -p 8080:8080 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  traefik:v3 --api.insecure=true --providers.docker
 
 # 2. 用 docker label 配置 routing
-# TODO: docker run -d --label "traefik.http.routers.demo.rule=Host(`demo.local`)" nginx
+docker run -d --label "traefik.http.routers.demo.rule=Host(\`demo.local\`)" nginx
 
 # 3. 訪 dashboard 驗證
-# TODO: curl http://localhost:8080/api/http/routers
+curl -s http://localhost:8080/api/http/routers | jq '.[].rule'
 ```
 
 ## 日常操作與決策形狀
@@ -121,7 +123,7 @@ Traefik 是 cloud-native reverse proxy / ingress、承擔三個責任：auto-dis
 操作原則：先看 provider 是否啟用、再看 label / annotation / CRD 配置。
 
 ```bash
-# TODO: curl http://localhost:8080/api/http/services 看 discovered services
+curl -s http://localhost:8080/api/http/services | jq '.[].name'
 ```
 
 ### Route 衝突

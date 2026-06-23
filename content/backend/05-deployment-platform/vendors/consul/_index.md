@@ -24,14 +24,18 @@ Consul 是 HashiCorp 出品的 service networking 平台、承擔三個責任：
 
 ```bash
 # 1. 啟動 dev mode
-# TODO: consul agent -dev -client=0.0.0.0
+consul agent -dev -client=0.0.0.0
 
-# 2. 註冊 service
-# TODO: consul services register service.json
+# 2. 註冊 service（用 JSON 定義）
+cat > web.json <<'SVC'
+{"service": {"name": "web", "port": 8080,
+  "check": {"http": "http://localhost:8080/health", "interval": "10s"}}}
+SVC
+consul services register web.json
 
-# 3. 查詢
-# TODO: dig @127.0.0.1 -p 8600 service.consul SRV
-# TODO: curl http://localhost:8500/v1/catalog/service/<name>
+# 3. 查詢（DNS + HTTP API）
+dig @127.0.0.1 -p 8600 web.service.consul SRV
+curl -s http://localhost:8500/v1/catalog/service/web | jq .
 ```
 
 ## 日常操作與決策形狀
@@ -134,8 +138,9 @@ Consul 是 HashiCorp 出品的 service networking 平台、承擔三個責任：
 操作原則：先確認 registration API 成功、再看 health check state。
 
 ```bash
-# TODO: consul catalog services
-# TODO: consul members
+consul catalog services
+consul members
+consul catalog nodes -service=web
 ```
 
 ### Health check flapping

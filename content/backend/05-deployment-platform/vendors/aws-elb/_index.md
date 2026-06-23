@@ -21,16 +21,36 @@ AWS ELB 是 AWS managed load balancer 系列、承擔三個責任：流量入口
 ## 最短路徑：5 分鐘把 AWS ELB 跑起來
 
 ```bash
-# 1. 建 ALB（CLI）
-# TODO: aws elbv2 create-load-balancer --name demo --subnets ... --security-groups ...
+# 1. 建 ALB
+aws elbv2 create-load-balancer \
+  --name demo-alb \
+  --subnets subnet-aaa subnet-bbb \
+  --security-groups sg-xxx \
+  --scheme internet-facing \
+  --type application
 
 # 2. 建 target group + register targets
-# TODO: aws elbv2 create-target-group --name demo-tg ...
-# TODO: aws elbv2 register-targets --target-group-arn ... --targets Id=i-xxx
+aws elbv2 create-target-group \
+  --name demo-tg \
+  --protocol HTTP --port 8080 \
+  --vpc-id vpc-xxx \
+  --target-type instance \
+  --health-check-path /health \
+  --health-check-interval-seconds 15
+
+aws elbv2 register-targets \
+  --target-group-arn arn:aws:elasticloadbalancing:...:targetgroup/demo-tg/... \
+  --targets Id=i-0abc123 Id=i-0def456
 
 # 3. 建 listener + 驗證
-# TODO: aws elbv2 create-listener --load-balancer-arn ... --protocol HTTP --port 80 ...
-# TODO: curl <alb-dns>
+aws elbv2 create-listener \
+  --load-balancer-arn arn:aws:elasticloadbalancing:...:loadbalancer/app/demo-alb/... \
+  --protocol HTTP --port 80 \
+  --default-actions Type=forward,TargetGroupArn=arn:aws:...
+
+ALB_DNS=$(aws elbv2 describe-load-balancers --names demo-alb \
+  --query 'LoadBalancers[0].DNSName' --output text)
+curl "http://${ALB_DNS}"
 ```
 
 ## 日常操作與決策形狀
@@ -121,7 +141,10 @@ AWS ELB 是 AWS managed load balancer 系列、承擔三個責任：流量入口
 操作原則：health check path 不對 / security group 沒開 / backend 反應慢。
 
 ```bash
-# TODO: aws elbv2 describe-target-health --target-group-arn ...
+aws elbv2 describe-target-health \
+  --target-group-arn arn:aws:elasticloadbalancing:...:targetgroup/demo-tg/...
+# HealthState: unhealthy → 查 Reason（Target.Timeout / Elb.InternalError / Target.ResponseCodeMismatch）
+# 常見根因：security group 沒開 health check port、health check path 回 404、backend 回應超過 timeout
 ```
 
 ### 504 Gateway Timeout
