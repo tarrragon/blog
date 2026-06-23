@@ -67,6 +67,7 @@ Grafana Stack 是 Grafana Labs 提供的 OSS observability 全棧、承擔三個
 ## Deep Article
 
 - [LGTM Stack 組合運維](lgtm-stack-operations/)：四個元件的責任分工、部署模式、常見故障與 dashboard provisioning
+- [Loki 設計與操作限制](loki-design-operational-limits/)：label-based index 設計、LogQL 查詢模式、cardinality 治理與 Elasticsearch 差異
 
 ## 進階主題（按需閱讀）
 

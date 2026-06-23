@@ -75,6 +75,7 @@ Datadog 是 all-in-one SaaS observability 平台、承擔三個責任：覆蓋 A
 ## Deep Article
 
 - [Datadog 成本治理與 Agent 配置](cost-governance-agent-config/)：計價模型、custom metrics 成本控制、Agent 部署配置與常見故障
+- [OTLP Ingestion 與 OTel 整合](otlp-ingestion-otel-integration/)：Agent OTLP receiver 配置、OTel SDK feature parity、resource mapping 與故障判讀
 
 ## 進階主題（按需閱讀）
 
