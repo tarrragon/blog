@@ -6,7 +6,7 @@ weight: 8
 tags: ["backend", "deployment", "implementation", "rollout", "incident"]
 ---
 
-Deployment rollout with drain and rollback 的核心責任是把版本、流量、連線、設定與回退條件拆成可驗證批次。這篇以 checkout service 為例，示範平台切換如何從 preflight、canary、drain 到事故回退都保留一致證據。
+Deployment rollout with drain and rollback 的核心責任是把版本、流量、連線、設定與回退條件拆成可驗證批次。這篇以 checkout service 為例，示範平台切換如何從 preflight、[canary](/backend/knowledge-cards/canary-release/)、drain 到事故回退都保留一致證據。
 
 本篇以 [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/) 與 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/) 為前置知識——rollout 批次、probe 對齊、drain contract 等概念在該兩篇定義，本篇直接操作化。lifecycle 狀態的完整定義見 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/)。
 

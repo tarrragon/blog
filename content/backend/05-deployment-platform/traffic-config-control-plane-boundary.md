@@ -12,7 +12,7 @@ Traffic、config 與 [control plane](/backend/knowledge-cards/control-plane/) bo
 
 Traffic boundary 的責任是決定 request 如何進入服務、如何分流、如何回退。它包含 load balancer、routing rule、health check、sticky session、timeout 與 drain。
 
-流量切換要能回答三個問題：哪一批 request 會到新版本、失敗時如何停止擴批、舊版本是否仍能承接回退流量。這三個答案明確後，canary 才能從比例設定變成可回退策略。
+流量切換要能回答三個問題：哪一批 request 會到新版本、失敗時如何停止擴批、舊版本是否仍能承接回退流量。這三個答案明確後，[canary](/backend/knowledge-cards/canary-release/) 才能從比例設定變成可回退策略。
 
 Traffic boundary 的判讀重點是 customer impact 如何被分批限制。小比例 canary、區域切流、tenant 切流與 route rule 都是不同切換單位；切換單位越清楚，[rollback window](/backend/knowledge-cards/rollback-window/) 越容易被驗證。
 
