@@ -41,6 +41,29 @@ func quotedAt(line string, idx int) bool {
 	return idx >= 3 && line[idx-3:idx] == "「"
 }
 
+// inlineCodeAt reports whether byte position idx falls inside a
+// backtick-delimited inline code span (`...`). Matches inside inline
+// code are technical content (grep patterns, regex, identifiers), not
+// prose — they should not trigger prose-quality lint rules.
+func inlineCodeAt(line string, idx int) bool {
+	inside := false
+	for i := 0; i < len(line); {
+		if line[i] == '`' {
+			if i == idx {
+				return inside
+			}
+			inside = !inside
+			i++
+			continue
+		}
+		if i == idx {
+			return inside
+		}
+		i++
+	}
+	return false
+}
+
 // precededByDi reports whether the rune right before idx is 第, which
 // turns a count-in-name candidate（三階段）into an ordinal（第三階段）
 // that REF2 does not target.

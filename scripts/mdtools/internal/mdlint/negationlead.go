@@ -27,11 +27,13 @@ import (
 //	exactly how 「不是 X — 是 Y」 and 「不在 X、而在 Y」 each slipped past an
 //	earlier version of this rule, caught later by adversarial review).
 //
-// Two legitimate forms stay out of scope and are handled by exemptions:
+// Three legitimate forms stay out of scope and are handled by exemptions:
 // anti-example citations wrapped in 「」 (skipped via quotedAt, e.g. the
-// spec and report cards that quote the pattern), and contrast inside an
-// explicit 反例 / 對照 section (#94) — that judgment is left to the
-// reader, which is why the rule only warns.
+// spec and report cards that quote the pattern), inline code spans
+// (skipped via inlineCodeAt — grep patterns and regex are technical
+// content, not prose), and contrast inside an explicit 反例 / 對照
+// section (#94) — that judgment is left to the reader, which is why
+// the rule only warns.
 var negationLeadRe = regexp.MustCompile(`不是[^。\n「」]{0,30}而是|不是[^。\n「」—–]{0,25}[—–]\s*是|不在[^。\n「」]{0,30}而在|與其[^。\n「」]{0,25}不如`)
 
 func checkNegationLead(path string, lines []string, ctx mdfmt.LineContext) []report.Violation {
@@ -41,7 +43,7 @@ func checkNegationLead(path string, lines []string, ctx mdfmt.LineContext) []rep
 			continue
 		}
 		for _, loc := range negationLeadRe.FindAllStringIndex(line, -1) {
-			if quotedAt(line, loc[0]) {
+			if quotedAt(line, loc[0]) || inlineCodeAt(line, loc[0]) {
 				continue
 			}
 			out = append(out, report.Violation{
