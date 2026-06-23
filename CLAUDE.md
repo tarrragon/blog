@@ -80,6 +80,27 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 掃到 blog route、`content/` path、`/report/`、`/posts/`、`/skills/`、Hugo-only `_index.md` 時，改成 skill 內部 principle、相對連結或中性名詞（collection index / MOC / article / reference）。
 
+## Skill 庫同步
+
+本專案的 `.claude/skills/` 與遠端 skill 庫 `https://github.com/tarrragon/claude.git`（路徑 `skills/`）共用同一組 skill。兩邊各自可能有改動，修改 skill 後要雙向同步：
+
+- **本地 → 遠端**：本專案修改 skill 內容後，clone 遠端 repo、複製改動過去、commit + push。
+- **遠端 → 本地**：遠端有新 skill 或更新時，clone 下來比對、選擇性合併到本地。
+
+同步判斷原則：
+
+- 版本號相同但檔案有差異 → 本地是客製版，以本地為準推回遠端。
+- 遠端版本較新 → diff 審查後決定是否合併。
+- 本地版本較高 → 不覆蓋，本地為準。
+- 遠端有新增檔案（原則卡、hooks）→ 取用到本地，再推合併版回遠端。
+- `compositional-writing` 的 `hooks/` 目錄只存在遠端、本地不使用 — 推回時要 `git checkout` 保留。
+
+注意事項：
+
+- 本專案 AGENTS.md 禁 emoji（§8），遠端若加了 emoji 是倒退、要修正推回。
+- Skill 內連結必須是相對路徑（portable 原則），遠端若改成絕對路徑要修正推回。
+- 同步完本地 `.claude/skills/` 後，有 `content/skills/` 鏡像的 skill 要同步更新鏡像（pre-commit hook 會提醒）。
+
 ## 跟 Codex / 其他 agent 的差異
 
 本 repo 同時支援 Claude Code 跟 Codex。差異點：
