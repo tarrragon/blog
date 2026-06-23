@@ -71,11 +71,11 @@ Rollback 或 DR 路徑在事故前沒被驗證過。團隊假設 rollback 可用
 
 FMEA 傳統用 severity × probability × detectability 三軸評估風險優先序。在可靠性驗證的語境中，這三軸可以簡化為可操作判讀：
 
-| 軸               | 判讀問題                       | 量測方式                                                                                |
-| ---------------- | ------------------------------ | --------------------------------------------------------------------------------------- |
-| Severity         | 失效的 [blast radius](/backend/knowledge-cards/blast-radius/) 有多大 | 單服務 / 跨服務 / 跨區 / 跨租戶                                                       |
-| Probability      | 這個失效路徑多常被觸及         | 變更頻率、歷史事故率、依賴穩定度                                                       |
-| Detectability    | 問題被發現需要多久             | MTTD、alert 覆蓋率、synthetic probe 頻率             |
+| 軸            | 判讀問題                                                             | 量測方式                                 |
+| ------------- | -------------------------------------------------------------------- | ---------------------------------------- |
+| Severity      | 失效的 [blast radius](/backend/knowledge-cards/blast-radius/) 有多大 | 單服務 / 跨服務 / 跨區 / 跨租戶          |
+| Probability   | 這個失效路徑多常被觸及                                               | 變更頻率、歷史事故率、依賴穩定度         |
+| Detectability | 問題被發現需要多久                                                   | MTTD、alert 覆蓋率、synthetic probe 頻率 |
 
 三軸的交叉決定驗證投資順序：high severity + high probability + low detectability 的缺口最先處理。反過來，low severity + low probability 的缺口可以先記錄在 [6.21 reliability debt](/backend/06-reliability/reliability-debt-backlog/)，不需要立即補驗證。
 
@@ -83,12 +83,12 @@ FMEA 傳統用 severity × probability × detectability 三軸評估風險優先
 
 ## 服務環節問題地圖
 
-| 環節         | 失效分類   | 主要問題                           | 案例                                                                                                                                             |
-| ------------ | ---------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Release Gate | Gate       | 高風險變更缺少差異化 gate          | [TeamCity 2023](/backend/07-security-data-protection/red-team/cases/supply-chain/teamcity-cve-2023-42793-ci-entrypoint/)                         |
-| 負載驗證模型 | Load       | 測試流量與實際失敗節奏脫鉤         | [WS_FTP 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)                    |
-| 失敗模式演練 | Recovery   | partial failure 與連鎖失效覆蓋不足 | [Change Healthcare 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/)               |
-| 回復路徑驗證 | Recovery   | rollback 與 runbook 缺少時限驗證   | [VMware ESXiArgs 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/) |
+| 環節         | 失效分類 | 主要問題                           | 案例                                                                                                                                             |
+| ------------ | -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Release Gate | Gate     | 高風險變更缺少差異化 gate          | [TeamCity 2023](/backend/07-security-data-protection/red-team/cases/supply-chain/teamcity-cve-2023-42793-ci-entrypoint/)                         |
+| 負載驗證模型 | Load     | 測試流量與實際失敗節奏脫鉤         | [WS_FTP 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/progress-wsftp-2023-file-service-breach/)                    |
+| 失敗模式演練 | Recovery | partial failure 與連鎖失效覆蓋不足 | [Change Healthcare 2024](/backend/07-security-data-protection/red-team/cases/data-exfiltration/change-healthcare-2024-ops-impact/)               |
+| 回復路徑驗證 | Recovery | rollback 與 runbook 缺少時限驗證   | [VMware ESXiArgs 2023](/backend/07-security-data-protection/red-team/cases/data-exfiltration/vmware-esxiargs-2023-ransomware-recovery-pressure/) |
 
 TeamCity 案例暴露的是 gate failure：CI 入口本身被繞過時，後續所有 gate 都失效。判讀條件是 CI pipeline 的存取控制是否被納入驗證範圍，而不只是 pipeline 內容。
 
@@ -101,7 +101,7 @@ Change Healthcare 案例暴露的是 recovery failure：事故影響擴散到營
 | CI 綠燈但線上回滾率上升    | Gate      | gate 覆蓋與實際風險未對齊    | [6.8 release gate](/backend/06-reliability/release-gate/)          |
 | 壓測通過但事故時連鎖降速   | Load      | 負載模型缺少失敗流量特徵     | [6.2 load test](/backend/06-reliability/load-testing/)             |
 | 演練記錄完整但回復時間偏長 | Recovery  | 演練內容與實戰決策節奏不一致 | [6.7 DR rehearsal](/backend/06-reliability/dr-rollback-rehearsal/) |
-| 使用者先於告警發現問題     | Detection | 訊號覆蓋不足或門檻過寬      | [04 可觀測性](/backend/04-observability/)                          |
+| 使用者先於告警發現問題     | Detection | 訊號覆蓋不足或門檻過寬       | [04 可觀測性](/backend/04-observability/)                          |
 
 [Google 的 error budget 政策](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)把 gate 門檻跟 budget 消耗綁在一起：budget 健康時走正常 gate，budget 快速消耗時提高門檻。這種做法讓 gate failure 的偵測從「事後觀察回滾率」轉成「事前看 budget 消耗趨勢」。
 
@@ -119,14 +119,14 @@ Pre-mortem 與 FMEA 的產出需要路由到三個下游：
 
 ## 判讀訊號
 
-| 訊號                                     | 判讀條件                                                                 |
-| ---------------------------------------- | ------------------------------------------------------------------------ |
-| 高風險變更走一般 gate、無差異化控制       | gate failure — 回到 6.8 確認是否有風險分層                               |
-| 壓測通過但 production 事故來自 retry/queue | load failure — workload model 是否涵蓋失敗流量                           |
-| rollback 路徑上次驗證超過 90 天           | recovery failure — 回到 6.7 確認 rehearsal 節奏                          |
-| 事故 MTTD 超過 SLO window                | detection failure — 回到 04 確認 alert 覆蓋與門檻                       |
-| pre-mortem 有做但缺口無 owner            | 流程失效 — 結論沒路由到 6.19 或 6.21                                    |
-| FMEA 評分定期更新但驗證沒跟著動          | 評估與行動脫鉤 — 評分的責任是排序投資，改完要回寫驗證狀態               |
+| 訊號                                       | 判讀條件                                                  |
+| ------------------------------------------ | --------------------------------------------------------- |
+| 高風險變更走一般 gate、無差異化控制        | gate failure — 回到 6.8 確認是否有風險分層                |
+| 壓測通過但 production 事故來自 retry/queue | load failure — workload model 是否涵蓋失敗流量            |
+| rollback 路徑上次驗證超過 90 天            | recovery failure — 回到 6.7 確認 rehearsal 節奏           |
+| 事故 MTTD 超過 SLO window                  | detection failure — 回到 04 確認 alert 覆蓋與門檻         |
+| pre-mortem 有做但缺口無 owner              | 流程失效 — 結論沒路由到 6.19 或 6.21                      |
+| FMEA 評分定期更新但驗證沒跟著動            | 評估與行動脫鉤 — 評分的責任是排序投資，改完要回寫驗證狀態 |
 
 ## 交接路由
 
