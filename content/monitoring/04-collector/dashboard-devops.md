@@ -86,6 +86,8 @@ Collector 的 health endpoint 連續 N 次回應失敗（由外部 uptime check 
 
 這些事件是 collector 自身的營運事件，和被監控 app 的事件走同一個 Storage interface 儲存。Collector 同時是事件的生產者和消費者 — `collector.ingestion.count` 由 collector 自己產生、自己儲存、自己在 dashboard 顯示。
 
+`deployment.started` / `deployment.completed` 這兩個 lifecycle event 在 server-side 部署流程中對應 [Backend 5.8 Deployment Rollout](/backend/05-deployment-platform/deployment-rollout-drain-rollback/) 的 evidence package——rollout 的每一批切換需要可判讀的部署事件作為證據。自架 collector 場景的部署追蹤規模遠小於 production server-side rollout，但 event schema 設計（timestamp / version / environment / result）可以跟 server-side 的 evidence 欄位對齊，讓未來規模成長時 event 格式不用重新設計。
+
 ## 自動恢復設計
 
 自用工具場景下「凌晨三點 collector 掛了」的處理策略是自動恢復，不需要人介入。
