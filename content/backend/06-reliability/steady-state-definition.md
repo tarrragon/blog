@@ -80,6 +80,16 @@ Degraded mode 的定義需要區分核心 gameplay loop 與周邊系統。排行
 
 穩態 breach 的判準對應兩個升級門檻：tick rate 低於感知門檻時，遊戲體驗開始劣化，需要啟動 load shedding 或關閉新 match 入口；session drop rate 超過門檻時，代表大量玩家掉線，需要升級事故等級並啟動 rollback。
 
+## 產業情境：SaaS 與 B2B 服務的穩態定義
+
+SaaS 服務的穩態需要按租戶層級定義。全域指標健康但特定租戶劣化的情境在多租戶系統很常見 — 全域 error rate 正常但某個大客戶的 latency 已超出其 SLA 承諾，只用全域穩態定義會讓這類局部退化被平均值隱藏。
+
+租戶級 SLI 是 SaaS 穩態定義的核心擴充。按 tenant_id label 拆分 SLI（success rate / latency / queue lag），讓穩態判讀能對齊個別客戶的 SLA 承諾。enterprise 客戶的穩態門檻通常比 self-serve 更嚴格，拆分後才能分別判讀。拆分的成本是 cardinality 上升（每個 SLI × 租戶數），需要搭配 recording rule 或 rollup 控制 Prometheus / metrics backend 的壓力。
+
+Noisy neighbor 是 SaaS 穩態的特有威脅。一個租戶的流量爆增或異常 query pattern 會拖垮共享資源（DB connection pool / cache throughput / queue depth），其他租戶的穩態被連帶破壞。穩態定義需要包含「單租戶資源消耗不超過共享資源配額的 X%」的條件，X 的值取決於隔離策略的強度 — [Amazon A1 的 shuffle sharding](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/) 讓租戶間擴散受限於 shard 重疊機率，[Shopify H2 的 pod 隔離](/backend/06-reliability/cases/shopify/pod-architecture-and-resiliency-matrix/) 讓租戶群組有獨立 pod 的穩態邊界。
+
+Chaos 實驗在 SaaS 場景需要同時驗證全域穩態與租戶穩態。注入 DB latency 後，全域 success rate 可能只掉 0.1%（被其他健康租戶稀釋），但受影響的租戶群組可能已經 breach SLA。實驗的 steady state probe 需要同時查詢全域 SLI 和 top-N 租戶 SLI，才能判斷退化是否在可接受範圍。
+
 ## 可接受退化
 
 可接受退化的責任是定義故障期間哪些能力要維持、哪些能力可以暫停、哪些能力需要補償。它讓團隊在壓力下有一致的降級語言。

@@ -118,6 +118,16 @@ Chaos 的設計在不同規模下差異顯著。單服務 chaos 與跨區 chaos 
 
 兩者共同的判讀重點是：故障是否被限制在預期邊界內。單服務 chaos 的邊界是 instance 與 dependency；跨區 chaos 的邊界是 region、cell 與 shared dependency。blast radius 越大，stop condition 與 rollback path 的設計要求越高。
 
+## 產業情境：串流與媒體服務
+
+串流服務的故障注入需要考慮觀眾正在觀看的即時性。CDN 節點失效、origin server 延遲或 transcoding pipeline 中斷都會直接造成 buffering 或畫質降級，使用者的容忍窗口以秒計。
+
+串流的 [steady state](/backend/knowledge-cards/steady-state/) 指標跟一般 web service 不同：buffering ratio（觀眾看到轉圈的時間比例）、bitrate stability（畫質是否頻繁跳動）、video start time（按下播放到第一幀的延遲）。這些指標直接反映觀看體驗，chaos 實驗的假設必須用這些指標定義穩態，而非只用 HTTP success rate。
+
+CDN 有多層快取（edge / mid-tier / origin），某一層失效時流量會 fallback 到下一層。chaos 要驗證的是 fallback 路徑能否承受突增的回源流量，以及 adaptive bitrate 策略是否能平滑過渡到較低畫質，而非直接中斷播放。回源流量的放大倍數取決於該層的快取命中率 — 命中率越高的層失效，回源放大越劇烈。
+
+直播事件的 chaos 約束更嚴格。VOD 內容可重試、可重播，直播沒有第二次機會。直播前的 chaos 演練需要模擬「直播進行中 CDN 節點失效」的場景，驗證備援路徑的切換速度是否在觀眾可感知門檻（通常 2-5 秒）內。Netflix 的 chaos 實踐原始動機即是保護串流觀看體驗，其 [steady state hypothesis](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/) 的設計直接適用於串流場景。
+
 ## 案例對照
 
 - [Netflix：Steady State、Chaos 與 FIT](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/)：把故障注入變成科學化驗證循環，四元素（steady state / hypothesis / blast radius / abort condition）提供 chaos 設計的結構。FIT 把注入粒度推進到 request path，讓測試更接近真實依賴路徑。

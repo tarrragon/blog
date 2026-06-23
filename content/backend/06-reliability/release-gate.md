@@ -100,6 +100,20 @@ Gate 通過條件需要包含交易專屬欄位。[idempotency](/backend/knowled
 
 Rollback 決策需要考慮已完成交易的一致性。當新版已處理交易且交易已進入結算流程，rollback 可能比繼續 roll-forward 更危險 — 退回舊版的 schema / 邏輯可能無法正確處理新版產生的交易紀錄。這個判斷跟 [6.7 rollback vs roll-forward 的判斷條件](/backend/06-reliability/dr-rollback-rehearsal/) 對齊，但金融場景的資料不可逆性更高。
 
+## 產業情境：IoT 與製造系統
+
+IoT 的 release gate 需要處理「一旦推出就難以全面回收」的不可逆壓力。雲端服務的 deploy 可以秒級 rollback；IoT firmware 一旦推送到裝置，回收需要每台裝置個別 OTA，受限於連線狀態與頻寬。
+
+裝置碎片化要求 gate 按硬體版本分群驗證。同一產品線可能有多個硬體版本（rev A / B / C），每個版本的 firmware 相容性不同。release gate 需要按硬體版本群組各自跑 checks，通過的群組才放行推送，不能全域一次放行。
+
+IoT 的 canary 是按裝置群組分批推送，而非按流量百分比分流。推送順序通常是：內部測試裝置 → beta 用戶 → 特定區域 → 全域。每批的觀察窗需要比雲端更長（天到週），因為裝置的 failure mode 可能在特定環境條件下才觸發 — 溫度、濕度、網路品質、電力穩定度都是變數。
+
+OTA 推送一旦開始，中途停止意味著部分裝置已更新、部分未更新。stop condition 需要同時監控「已更新裝置的健康度」和「混合版本之間的相容性」。若新舊版本的通訊協議不相容，部分更新的裝置群可能會觸發新的 failure mode。
+
+安全關鍵系統（車載、醫療設備、工業控制）的 gate 需要額外的功能安全驗證（IEC 61508 / ISO 26262 等），通過合規驗證是放行的前置條件。這類 gate 的 owner 通常跨越工程與合規兩個團隊。
+
+[Amazon A2 的 static stability](/backend/06-reliability/cases/amazon/static-stability-and-constant-work/) 跟 IoT 的離線運作需求對齊 — 裝置在控制面（OTA server）不可用時，用本地快取的配置繼續運作，回復路徑不依賴已故障的控制面。
+
 ## 交接路由
 
 - [6.1 CI pipeline](/backend/06-reliability/ci-pipeline/)：CI evidence 是 release gate 的主要輸入

@@ -105,6 +105,16 @@ Gate 攔住 regression 後，下一步是定位來源並決定行動。
 - **接受**：regression 是預期的 trade-off（例如安全性改善帶來的加密成本）。此時更新 baseline，並在 [6.23 evidence handoff](/backend/06-reliability/verification-evidence-handoff/) 記錄接受理由。
 - **延後**：regression 來源複雜、修復需要大幅重構。記錄到 [6.21 reliability debt backlog](/backend/06-reliability/reliability-debt-backlog/) 並設定修復期限。延後的風險是多次延後累積成使用者可感知的退化。
 
+## 產業情境：串流與媒體服務
+
+串流服務的效能 regression 量測維度跟一般 web service 不同。API latency 只是其中一層，媒體交付品質才是使用者直接感受的指標。
+
+串流特有的 regression 指標包含 video start time（TTFB to first frame）、rebuffering rate（播放中斷頻率）、bitrate switches per session（畫質跳動次數）與 ABR algorithm response time（adaptive bitrate 的反應速度）。這些指標需要專門的量測管線，CI 環境的 mock player 很難完全模擬真實觀看行為，canary 階段的 real user monitoring 是更可靠的 regression 偵測來源。
+
+Transcoding pipeline 的 regression 需要三維判讀。新 codec 或 encoder 版本可能改善壓縮率但增加 encoding latency，CI gate 需要同時量化 encoding speed、output quality 與 cost — 只看其中一個維度會漏掉 trade-off。例如 AV1 encoder 比 H.264 壓縮率更好，但 encoding 時間可能增加數倍，若 gate 只看 latency 就會擋住合理的品質升級。
+
+CDN cache hit rate 是隱性的 regression 指標。code 變更如果改變了 cache key 策略或 content fingerprint，CDN cache hit rate 會下降，回源流量上升，間接造成 origin latency 惡化與成本跳升。這類 regression 在 staging 壓測中看不到（staging 沒有 CDN 快取層），需要 canary 階段的 CDN 層監控才能偵測。
+
 ## 案例對照
 
 - [Google G1](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)：效能退化會加速 error budget 消耗。當 latency regression 導致 SLO breach 頻率上升，perf gate 的門檻應與 error budget 政策連動 — budget 健康時接受較寬鬆的門檻，budget 緊繃時收緊。
