@@ -6,7 +6,7 @@ weight: 325
 tags: ["backend", "observability"]
 ---
 
-Rollup 用降低時間精度換取儲存成本與查詢效能。原始資料以秒級或分鐘級採集，隨時間推移被聚合成更粗的粒度（5 分鐘、1 小時、1 天），舊的高精度資料可以刪除或歸檔。
+Rollup 用降低時間精度換取儲存成本與查詢效能。原始資料以秒級或分鐘級採集，隨時間推移被聚合成更粗的粒度（5 分鐘、1 小時、1 天），舊的高精度資料可以刪除或歸檔。它是 [storage tiering](/backend/knowledge-cards/storage-tiering/) 在時間維度的具體實作，跟 [recording rule](/backend/knowledge-cards/recording-rule/) 分工互補。
 
 ## 概念位置
 

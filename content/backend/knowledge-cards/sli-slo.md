@@ -6,7 +6,7 @@ weight: 34
 tags: ["backend", "observability"]
 ---
 
-SLI / SLO 的核心概念是「用可量測訊號表達服務承諾」。SLI（Service Level Indicator）是服務品質指標 — 成功率、延遲、可用性；SLO（Service Level Objective）是這些指標的目標 — 99.9% request 在 300ms 內成功回應。
+SLI / SLO 的核心概念是「用可量測訊號表達服務承諾」。SLI（Service Level Indicator）是服務品質指標 — 成功率、延遲、可用性；SLO（Service Level Objective）是這些指標的目標 — 99.9% request 在 300ms 內成功回應。SLO 的執行力來自 [error budget](/backend/knowledge-cards/error-budget/) — 預算耗盡就暫停發版。
 
 ## 概念位置
 

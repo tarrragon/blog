@@ -6,7 +6,7 @@ weight: 104
 tags: ["backend", "observability"]
 ---
 
-Correlation ID 的核心概念是「把同一個業務流程中的多筆紀錄關聯起來的識別碼」。它可以跨 request、queue message、background job、log、trace 與外部 API 呼叫。
+Correlation ID 的核心概念是「把同一個業務流程中的多筆紀錄關聯起來的識別碼」。它是 [log schema](/backend/knowledge-cards/log-schema/) 的核心欄位，可以跨 request、queue message、background job、log、trace 與外部 API 呼叫。
 
 ## 概念位置
 

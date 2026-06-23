@@ -6,7 +6,7 @@ weight: 237
 tags: ["backend", "observability"]
 ---
 
-Continuous profiling 的核心概念是「在 production 持續以低 overhead 採集 CPU / heap / lock profile，讓 baseline 隨時可用、不需要等事故才開 profiler」。
+Continuous profiling 的核心概念是「在 production 持續以低 overhead 採集 CPU / heap / lock profile，讓 baseline 隨時可用、不需要等事故才開 profiler」。它是 [metrics](/backend/knowledge-cards/metrics/)、[trace](/backend/knowledge-cards/trace/) 之外能精確到 callstack level 的觀測訊號。
 
 ## 概念位置
 

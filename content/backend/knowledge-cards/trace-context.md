@@ -10,7 +10,7 @@ Trace context 的核心概念是「讓同一個 request 在跨服務呼叫中保
 
 ## 概念位置
 
-Trace context 是跨服務診斷的關聯層。它的傳遞機制決定 trace 能不能完整串起 — context 斷掉的地方，trace 就從「完整路徑」退化成需要人工拼接的局部紀錄。
+Trace context 是跨服務診斷的關聯層，跟 [correlation id](/backend/knowledge-cards/correlation-id/) 互補 — correlation id 關聯業務流程、trace context 關聯技術呼叫路徑。它的傳遞機制決定 [trace](/backend/knowledge-cards/trace/) 能不能完整串起 — context 斷掉的地方，trace 就從「完整路徑」退化成需要人工拼接的局部紀錄。
 
 W3C Trace Context 標準定義了 HTTP 的傳遞格式：`traceparent` header 帶 version + trace id + parent span id + trace flags，`tracestate` header 帶 vendor-specific 附加資訊。OpenTelemetry SDK 預設使用 W3C 格式。部分 vendor 有自己的 header（Datadog 用 `x-datadog-trace-id`、AWS X-Ray 用 `X-Amzn-Trace-Id`），跨 vendor 時需要在 collector 層轉換。
 

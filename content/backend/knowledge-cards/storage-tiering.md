@@ -6,7 +6,7 @@ weight: 326
 tags: ["backend", "observability"]
 ---
 
-Storage tiering 按資料被查詢的頻率與時間壓力，把資料放在不同速度與成本的儲存層。最近的資料放在快速儲存（hot tier），較舊的資料依序移到較慢但便宜的儲存（warm tier、cold tier），最終可歸檔到 object storage 或離線備份。
+Storage tiering 按資料被查詢的頻率與時間壓力，把資料放在不同速度與成本的儲存層。最近的資料放在快速儲存（hot tier），較舊的資料依序移到較慢但便宜的儲存（warm tier、cold tier），最終可歸檔到 object storage 或離線備份。它跟 [rollup](/backend/knowledge-cards/rollup/) 共同構成觀測資料的生命週期管理，受 [retention](/backend/knowledge-cards/retention/) 期限驅動。
 
 ## 概念位置
 

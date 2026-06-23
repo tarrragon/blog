@@ -6,7 +6,7 @@ weight: 324
 tags: ["backend", "observability"]
 ---
 
-Recording rule 把重複的聚合計算從查詢時推到寫入時。當 dashboard 或 alert 反覆對同一組 raw series 做 rate / sum / histogram_quantile，每次查詢都重新掃描原始資料；recording rule 把計算結果預先寫成新的 time series，查詢時直接讀取結果。
+Recording rule 把重複的聚合計算從查詢時推到寫入時。當 dashboard 或 alert 反覆對同一組 raw [metrics](/backend/knowledge-cards/metrics/) 做 rate / sum / histogram_quantile，每次查詢都重新掃描原始資料；recording rule 把計算結果預先寫成新的 time series，查詢時直接讀取結果。
 
 ## 概念位置
 

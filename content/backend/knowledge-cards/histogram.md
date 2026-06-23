@@ -6,7 +6,7 @@ weight: 98
 tags: ["backend", "observability"]
 ---
 
-Histogram 的核心概念是「把觀測值分到多個 bucket，記錄每個範圍的累積數量」。它常用來觀察 latency、request size、payload size、queue wait time 與處理耗時。
+Histogram 的核心概念是「把觀測值分到多個 bucket，記錄每個範圍的累積數量」。它是 [metrics](/backend/knowledge-cards/metrics/) 中描述分布的工具，常用來觀察 latency、request size、payload size、queue wait time 與處理耗時，支援 [percentile](/backend/knowledge-cards/percentile/) 計算。
 
 ## 概念位置
 

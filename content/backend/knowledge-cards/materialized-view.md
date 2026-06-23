@@ -6,7 +6,7 @@ weight: 327
 tags: ["backend", "observability", "database"]
 ---
 
-Materialized view 把查詢結果預先計算並持久儲存，讓後續讀取直接取用結果而非重新掃描原始資料。它跟一般 view 的差別在於 materialized view 有實體儲存，查詢時讀取的是快照而非即時計算。
+Materialized view 把查詢結果預先計算並持久儲存，是 [read model](/backend/knowledge-cards/read-model/) 的一種實作方式。它跟一般 view 的差別在於 materialized view 有實體儲存，查詢時讀取的是快照而非即時計算。
 
 ## 概念位置
 

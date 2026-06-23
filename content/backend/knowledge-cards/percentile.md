@@ -6,7 +6,7 @@ weight: 100
 tags: ["backend", "observability"]
 ---
 
-Percentile 的核心概念是「某比例的觀測值低於某個門檻」。p95 latency 表示 95% 的 request 延遲低於該值；p99 觀察更長尾的慢請求。Percentile 描述的是分布的尾端，用來捕捉 average 掩蓋的使用者體驗問題。
+Percentile 的核心概念是「某比例的觀測值低於某個門檻」。p95 latency 表示 95% 的 request 延遲低於該值；p99 觀察更長尾的慢請求。Percentile 描述的是分布的尾端，從 [histogram](/backend/knowledge-cards/histogram/) 資料計算而來，用來捕捉 average 掩蓋的使用者體驗問題。
 
 ## 概念位置
 

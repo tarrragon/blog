@@ -6,7 +6,7 @@ weight: 145
 tags: ["backend", "architecture", "database"]
 ---
 
-Event log 按時間保存已發生事件的不可變紀錄。每一筆事件記錄一次狀態變更，整條事件流構成完整的變更歷史。
+Event log 按時間保存已發生事件的不可變紀錄，是 [event sourcing](/backend/knowledge-cards/event-sourcing/) 的儲存層。每一筆事件記錄一次狀態變更，整條事件流構成完整的變更歷史。
 
 ## 概念位置
 

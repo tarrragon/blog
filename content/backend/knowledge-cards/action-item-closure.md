@@ -6,7 +6,7 @@ weight: 316
 tags: ["backend", "observability", "incident-response"]
 ---
 
-Action item closure 的核心概念是「把復盤行動項變成可驗證完成的工程責任」。它關心的是每一項是否有 owner、完成標準、驗證方式與截止時間，而非列出多少待辦。
+Action item closure 的核心概念是「把復盤行動項變成可驗證完成的工程責任」。它承接 [post-incident review](/backend/knowledge-cards/post-incident-review/) 的產出，關心的是每一項是否有 owner、完成標準、驗證方式與截止時間，而非列出多少待辦。
 
 ## 概念位置
 

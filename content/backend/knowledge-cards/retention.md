@@ -6,7 +6,7 @@ weight: 75
 tags: ["backend", "observability"]
 ---
 
-Retention 的核心概念是「資料或事件在系統中保留多久」。它影響 storage cost、audit 能力、replay 能力、debug 時間窗口、合規義務與資料刪除責任。
+Retention 的核心概念是「資料或事件在系統中保留多久」。它影響 storage cost、audit 能力、replay 能力、debug 時間窗口、合規義務與資料刪除責任，跟 [storage tiering](/backend/knowledge-cards/storage-tiering/) 與 [rollup](/backend/knowledge-cards/rollup/) 共同構成資料生命週期管理。
 
 ## 概念位置
 

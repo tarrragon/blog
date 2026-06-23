@@ -6,7 +6,7 @@ weight: 74
 tags: ["backend", "message-queue"]
 ---
 
-Offset 的核心概念是「consumer 在事件流中的讀取位置」。它讓 consumer 知道自己已經處理到哪裡，也讓系統可以從某個位置繼續或重放。
+Offset 的核心概念是「consumer 在事件流中的讀取位置」。它是 [consumer group](/backend/knowledge-cards/consumer-group/) 的進度記錄，讓 consumer 知道自己已經處理到哪裡，也讓系統可以從某個位置繼續或重放。
 
 ## 概念位置
 

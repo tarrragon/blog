@@ -6,7 +6,7 @@ weight: 153
 tags: ["backend", "observability", "incident-response"]
 ---
 
-Incident timeline 的核心概念是「按時間順序記錄事故中的觀測、決策與操作」。時間線是事故的共同事實來源，讓團隊可以對齊發生順序與影響變化。
+Incident timeline 的核心概念是「按時間順序記錄事故中的觀測、決策與操作」。時間線是事故的共同事實來源，連接 [alert](/backend/knowledge-cards/alert/) 觸發到 [post-incident review](/backend/knowledge-cards/post-incident-review/) 復盤，讓團隊可以對齊發生順序與影響變化。
 
 ## 概念位置
 

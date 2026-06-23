@@ -6,7 +6,7 @@ weight: 161
 tags: ["backend", "observability", "incident-response"]
 ---
 
-On-call 的核心概念是「在指定時段由明確責任角色承接運行事件」。它把告警回應、事故分級、升級決策與交接責任固定化，讓事故處理不依賴臨時找人。
+On-call 的核心概念是「在指定時段由明確責任角色承接運行事件」。它是 [alert](/backend/knowledge-cards/alert/) 與 [escalation policy](/backend/knowledge-cards/escalation-policy/) 的執行入口，把告警回應、事故分級、升級決策與交接責任固定化，讓事故處理不依賴臨時找人。
 
 ## 概念位置
 

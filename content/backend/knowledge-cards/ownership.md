@@ -6,7 +6,7 @@ weight: 208
 tags: ["backend", "observability", "incident-response"]
 ---
 
-Ownership 的核心概念是「把責任固定到可執行角色」。它讓團隊在事件、變更與回寫流程中能快速判斷誰主責、誰協作、誰做決策。
+Ownership 的核心概念是「把責任固定到可執行角色」。它讓團隊在事件、變更與回寫流程中能快速判斷誰主責、誰協作、誰做決策，是 [on-call](/backend/knowledge-cards/on-call/) 與 [escalation policy](/backend/knowledge-cards/escalation-policy/) 運作的前提。
 
 ## 概念位置
 

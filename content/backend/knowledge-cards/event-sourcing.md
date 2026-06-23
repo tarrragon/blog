@@ -6,7 +6,7 @@ weight: 329
 tags: ["backend", "architecture", "database"]
 ---
 
-Event sourcing 的核心概念是「不存 current state、存產生 current state 的所有事件」。每一次狀態變更被記錄為一筆不可變的事件（event），current state 透過重播（replay）事件序列推算出來。正式紀錄是事件流本身，current state 是派生物。
+Event sourcing 的核心概念是「不存 current state、存產生 current state 的所有事件」。儲存層是 [event log](/backend/knowledge-cards/event-log/)，讀取面透過 [projection](/backend/knowledge-cards/projection/) 推算 current state。每一次狀態變更被記錄為一筆不可變的事件（event），current state 透過重播（replay）事件序列推算出來。正式紀錄是事件流本身，current state 是派生物。
 
 ## 概念位置
 

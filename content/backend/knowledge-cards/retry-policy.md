@@ -6,7 +6,7 @@ weight: 24
 tags: ["backend", "message-queue"]
 ---
 
-Retry policy 的核心概念是「定義失敗後何時再試、試幾次、用什麼間隔、何時停止」。重試可以吸收暫時性故障（網路抖動、下游短暫不可用），但也可能放大下游壓力或重複造成副作用。
+Retry policy 的核心概念是「定義失敗後何時再試、試幾次、用什麼間隔、何時停止」。重試可以吸收暫時性故障（網路抖動、下游短暫不可用），但也可能放大下游壓力或重複造成副作用，因此跟 [idempotency](/backend/knowledge-cards/idempotency/) 與 [dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) 是成對設計。
 
 ## 概念位置
 

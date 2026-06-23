@@ -6,7 +6,7 @@ weight: 143
 tags: ["backend", "observability", "incident-response"]
 ---
 
-Runbook 的核心概念是「把事故判斷與操作步驟標準化」。它描述看到特定訊號時如何確認影響、查哪些資料、採取哪些緩解、何時升級，以及如何驗證恢復。
+Runbook 的核心概念是「把事故判斷與操作步驟標準化」。它是 [alert](/backend/knowledge-cards/alert/) 的行動指南，描述 [on-call](/backend/knowledge-cards/on-call/) 工程師看到特定訊號時如何確認影響、查哪些資料、採取哪些緩解、何時升級，以及如何驗證恢復。
 
 ## 概念位置
 
