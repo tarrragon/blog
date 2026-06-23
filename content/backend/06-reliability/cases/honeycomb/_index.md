@@ -58,7 +58,8 @@ Honeycomb 把觀測責任直接拉到每個工程團隊，這和 Google 的 SLO 
 
 | 章節                                                                                    | 主題                 | 核心責任                            |
 | --------------------------------------------------------------------------------------- | -------------------- | ----------------------------------- |
-| [HC1](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/) | Burn Rate 驅動可靠性 | 把 SLO 消耗速度轉成值班與改善優先序 |
+| [HC1](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)         | Burn Rate 驅動可靠性                  | 把 SLO 消耗速度轉成值班與改善優先序                  |
+| [HC2](/backend/06-reliability/cases/honeycomb/production-excellence-and-test-in-production/) | Production Excellence 與 Test in Prod | 用 observability 把 production 變成安全的驗證環境 |
 
 ## 引用源
 

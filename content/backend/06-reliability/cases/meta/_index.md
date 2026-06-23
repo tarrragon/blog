@@ -56,9 +56,10 @@ Meta 的價值在於把超大規模網路事故和恢復工具放在一起看，
 
 ## 章節列表
 
-| 章節                                                                                 | 主題                     | 核心責任                         |
-| ------------------------------------------------------------------------------------ | ------------------------ | -------------------------------- |
-| [M1](/backend/06-reliability/cases/meta/region-failover-and-reliability-boundaries/) | Region Failover 邊界治理 | 把跨區故障擴散限制在可回復邊界內 |
+| 章節                                                                                 | 主題                     | 核心責任                                              |
+| ------------------------------------------------------------------------------------ | ------------------------ | ----------------------------------------------------- |
+| [M1](/backend/06-reliability/cases/meta/region-failover-and-reliability-boundaries/) | Region Failover 邊界治理 | 把跨區故障擴散限制在可回復邊界內                      |
+| [M2](/backend/06-reliability/cases/meta/bgp-control-plane-recovery-ordering/)        | BGP 事故與控制面恢復順序 | 恢復工具依賴已故障系統時的恢復順序與 out-of-band 設計 |
 
 ## 引用源
 

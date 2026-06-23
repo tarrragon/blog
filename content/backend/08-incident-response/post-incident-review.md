@@ -33,3 +33,5 @@ tags: ["backend", "incident-response"]
 - 08.16 runbook lifecycle：事故後 runbook 修訂
 - 06.18 reliability metrics：[MTTR](/backend/knowledge-cards/mttr/) 計算的事件來源
 - 08.17 security vs operational：證據保全與 [RCA](/backend/knowledge-cards/rca/) 範圍
+- [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)：復盤 action item 回寫成 reliability debt
+- [6.4 Chaos Testing](/backend/06-reliability/chaos-testing/)：復盤教訓轉成下一輪 chaos 演練題目

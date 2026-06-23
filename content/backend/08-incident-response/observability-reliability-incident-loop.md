@@ -38,14 +38,14 @@ tags: ["backend", "incident-response"]
 
 事故 [post-incident review](/backend/knowledge-cards/post-incident-review/) 的 action items 不應該只是「補 runbook」這類局部修正、而應該回寫到事前驗證設計、讓下一次同類事故在 production 前被攔截。
 
-交接點是 [post-incident review](/backend/knowledge-cards/post-incident-review/) action items 的分類：哪些回到 6.4 chaos experiment、哪些回到 6.7 DR rehearsal、哪些回到 6.8 release gate、哪些回到 6.6 SLO 政策。
+交接點是 [post-incident review](/backend/knowledge-cards/post-incident-review/) action items 的分類：哪些回到 [6.4 chaos experiment](/backend/06-reliability/chaos-testing/)、哪些回到 [6.7 DR rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)、哪些回到 [6.8 release gate](/backend/06-reliability/release-gate/)、哪些回到 [6.6 SLO 政策](/backend/06-reliability/slo-error-budget/)。
 
 具體例子：
 
-- 事故揭露 cache 失效時 DB 雪崩 → 回寫到 6.4 chaos experiment（注入 cache failure）
-- 事故揭露 region failover 演練不足 → 回寫到 6.7 DR rehearsal 排程
-- 事故揭露 migration 沒測 rollback → 回寫到 6.8 release gate（migration check）
-- 事故揭露 SLO 太鬆、導致客戶感知問題前沒人發現 → 回寫到 6.6 SLO 政策收緊
+- 事故揭露 cache 失效時 DB 雪崩 → 回寫到 [6.4 chaos experiment](/backend/06-reliability/chaos-testing/)（注入 cache failure）
+- 事故揭露 region failover 演練不足 → 回寫到 [6.7 DR rehearsal](/backend/06-reliability/dr-rollback-rehearsal/) 排程
+- 事故揭露 migration 沒測 rollback → 回寫到 [6.8 release gate](/backend/06-reliability/release-gate/)（migration check）
+- 事故揭露 SLO 太鬆、導致客戶感知問題前沒人發現 → 回寫到 [6.6 SLO 政策](/backend/06-reliability/slo-error-budget/)收緊
 
 ### 06 → 04：驗證需求驅動訊號設計
 
@@ -55,9 +55,9 @@ tags: ["backend", "incident-response"]
 
 具體例子：
 
-- 6.4 Chaos experiment 注入 broker partition、需要新 metric 看 consumer rebalance 時間 → 4.2 補
-- 6.6 SLO 定義要求 burn rate alert → 4.4 補對應 alert rule
-- 6.7 DR rehearsal 需要看 cross-region replication lag → 4.4 補 dashboard
+- [6.4 Chaos experiment](/backend/06-reliability/chaos-testing/) 注入 broker partition、需要新 metric 看 consumer rebalance 時間 → 4.2 補
+- [6.6 SLO](/backend/06-reliability/slo-error-budget/) 定義要求 burn rate alert → 4.4 補對應 alert rule
+- [6.7 DR rehearsal](/backend/06-reliability/dr-rollback-rehearsal/) 需要看 cross-region replication lag → 4.4 補 dashboard
 
 ### 08 → 04：事故揭露偵測缺口
 
@@ -95,5 +95,5 @@ tags: ["backend", "incident-response"]
 
 判讀完閉環現況後沿兩條 chain 進入 implementation：
 
-1. **方向強化 chain**：找出最弱的方向、補對應模組的章節 — 04 → 08 弱補 4.4 alert design + 8.2 command；08 → 06 弱補 8.5 [post-incident review](/backend/knowledge-cards/post-incident-review/) 模板 + 6.6 / 6.7；06 → 04 弱補 6.6 SLO + 4.2 metrics；08 → 04 弱補 8.5 + 4.4。
+1. **方向強化 chain**：找出最弱的方向、補對應模組的章節 — 04 → 08 弱補 4.4 alert design + 8.2 command；08 → 06 弱補 8.5 [post-incident review](/backend/knowledge-cards/post-incident-review/) 模板 + [6.6](/backend/06-reliability/slo-error-budget/) / [6.7](/backend/06-reliability/dr-rollback-rehearsal/)；06 → 04 弱補 [6.6 SLO](/backend/06-reliability/slo-error-budget/) + 4.2 metrics；08 → 04 弱補 8.5 + 4.4。
 2. **跨模組演練 chain**：用 6.6 [game day](/backend/knowledge-cards/game-day/) 同時驗證三個方向是否串通 — 注入故障、看 04 是否觸發、08 是否響應、[post-incident review](/backend/knowledge-cards/post-incident-review/) 是否回寫 06 / 04。

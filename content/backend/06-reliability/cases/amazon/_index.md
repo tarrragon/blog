@@ -28,9 +28,10 @@ Amazon 是 cell-based architecture 與 shuffle sharding 的代表、AWS Builders
 
 ## 章節列表
 
-| 章節                                                                           | 主題                          | 核心責任                                     |
-| ------------------------------------------------------------------------------ | ----------------------------- | -------------------------------------------- |
-| [A1](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/) | Shuffle Sharding 與 Cell 邊界 | 用局部隔離限制多租戶擴散，讓恢復可以分批收斂 |
+| 章節                                                                           | 主題                                      | 核心責任                                     |
+| ------------------------------------------------------------------------------ | ----------------------------------------- | -------------------------------------------- |
+| [A1](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/) | Shuffle Sharding 與 Cell 邊界             | 用局部隔離限制多租戶擴散，讓恢復可以分批收斂 |
+| [A2](/backend/06-reliability/cases/amazon/static-stability-and-constant-work/) | Static Stability 與 Constant Work Pattern | 控制面失效時資料面用快取與固定工作量維持服務 |
 
 ## 案例定位
 

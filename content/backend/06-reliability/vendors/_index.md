@@ -39,11 +39,14 @@ tags: ["backend", "reliability", "vendor"]
 
 每個 vendor 服務頁下會擴充兩類文章：deep article（vendor 自身的配置、故障、容量、走 [6-section 模板](/posts/vendor-deep-article-methodology/)）跟 migration playbook（跨 vendor 遷移流程、走 [6-type 結構](/posts/migration-playbook-methodology/)）。「← X」代表從 X 遷入。
 
-| Vendor                            | Deep article | Migration playbook                                |
-| --------------------------------- | ------------ | ------------------------------------------------- |
-| [GitHub Actions](github-actions/) | —            | [← Jenkins](github-actions/migrate-from-jenkins/) |
+| Vendor                            | Deep article                                                                                          | Migration playbook                                |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| [GitHub Actions](github-actions/) | [Environment Protection + OIDC](github-actions/environment-protection-and-oidc-cloud-auth/)           | [← Jenkins](github-actions/migrate-from-jenkins/) |
+| [k6](k6/)                         | [Threshold CI Gate + Scenario](k6/threshold-ci-gate-and-scenario-design/)                             | —                                                 |
+| [Chaos Mesh](chaos-mesh/)         | [Workflow + Scope + Steady State Probe](chaos-mesh/workflow-experiment-scope-and-steady-state-probe/) | —                                                 |
+| [Sloth](sloth/)                   | [SLO YAML + Multi-burn-rate Alert](sloth/slo-yaml-and-multi-burn-rate-alert-generation/)              | —                                                 |
 
-其他 T1 vendor（CircleCI / k6 / Gatling / JMeter / Locust / Chaos Mesh / LitmusChaos / Gremlin / Toxiproxy / Nobl9 / Sloth）尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
+其他 T1 vendor（CircleCI / Gatling / JMeter / Locust / LitmusChaos / Gremlin / Toxiproxy / Nobl9）的 deep article 尚未開始。對應的 backlog 議題見上方「T1 服務頁大綱」段每個服務頁要回答的核心問題、跟各 vendor `_index.md` 的「預計實作話題」段。
 
 ## 服務頁撰寫欄位
 

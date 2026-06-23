@@ -68,6 +68,18 @@ Client signal 能補 server-side 盲區。CDN、mobile network、browser runtime
 
 Data signal 能保護正確性。failover、migration、replay 與 DR drill 都需要確認資料沒有遺失，或至少有明確補償與 reconciliation 路徑。
 
+## 產業情境：遊戲服務的穩態定義
+
+遊戲伺服器的穩態指標跟一般 web service 有結構性差異。即時互動遊戲的關鍵衡量是 tick rate stability（伺服器每秒處理的遊戲邏輯循環數）和 player session continuity（玩家連線不中斷），HTTP success rate 只能反映 API 層健康，無法代表 gameplay 品質。
+
+穩態訊號需要覆蓋四個面向：tick rate 維持在目標頻率（如 64 tick/s 的射擊遊戲降到 32 就會被感知）、matchmaking latency 在可接受範圍、session persistence 不因後端變更掉線、state synchronization lag 不讓玩家看到不一致的遊戲狀態。
+
+遊戲的高峰型態跟電商不同。峰值可能是新版本上線首日、季賽開始或限時活動開放，持續時間通常以天計（而非 BFCM 的數小時），流量曲線有明顯的日週期（每日晚間尖峰）。workload model 需要反映這種「多日高原 + 日內尖峰」的形狀，而非單一爆量。
+
+Degraded mode 的定義需要區分核心 gameplay loop 與周邊系統。排行榜、成就系統、社交功能、商城可以暫停或降級，但核心對戰邏輯必須維持。玩家對 gameplay 中斷的容忍度遠低於周邊功能 — 排行榜延遲更新是可接受的退化，比賽中角色動作不同步則直接導致玩家離開。
+
+穩態 breach 的判準對應兩個升級門檻：tick rate 低於感知門檻時，遊戲體驗開始劣化，需要啟動 load shedding 或關閉新 match 入口；session drop rate 超過門檻時，代表大量玩家掉線，需要升級事故等級並啟動 rollback。
+
 ## 可接受退化
 
 可接受退化的責任是定義故障期間哪些能力要維持、哪些能力可以暫停、哪些能力需要補償。它讓團隊在壓力下有一致的降級語言。

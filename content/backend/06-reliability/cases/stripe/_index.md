@@ -28,9 +28,10 @@ Stripe 是金流場景的可靠性教學標竿、deploy strategy 與 idempotency
 
 ## 章節列表
 
-| 章節                                                                                | 主題                     | 核心責任                                     |
-| ----------------------------------------------------------------------------------- | ------------------------ | -------------------------------------------- |
-| [S1](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/) | Idempotency 與零停機遷移 | 把交易重試與資料遷移放在同一套一致性安全模型 |
+| 章節                                                                                | 主題                                 | 核心責任                                     |
+| ----------------------------------------------------------------------------------- | ------------------------------------ | -------------------------------------------- |
+| [S1](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/) | Idempotency 與零停機遷移             | 把交易重試與資料遷移放在同一套一致性安全模型 |
+| [S2](/backend/06-reliability/cases/stripe/canary-deploy-and-progressive-rollout/)   | Canary Deploy 與 Progressive Rollout | 用交易指標驅動放行節奏，延遲確認與自動回退   |
 
 ## 案例定位
 

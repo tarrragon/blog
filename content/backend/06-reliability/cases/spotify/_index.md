@@ -56,9 +56,10 @@ Spotify 的重點是把可靠性做成平台能力，這和 LinkedIn 的 operabi
 
 ## 章節列表
 
-| 章節                                                                                         | 主題                 | 核心責任                           |
-| -------------------------------------------------------------------------------------------- | -------------------- | ---------------------------------- |
-| [SP1](/backend/06-reliability/cases/spotify/platform-engineering-and-reliability-contracts/) | 平台工程與可靠性契約 | 讓分散團隊共用可靠性基線與交付契約 |
+| 章節                                                                                             | 主題                                              | 核心責任                                    |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------- |
+| [SP1](/backend/06-reliability/cases/spotify/platform-engineering-and-reliability-contracts/)     | 平台工程與可靠性契約                              | 讓分散團隊共用可靠性基線與交付契約          |
+| [SP2](/backend/06-reliability/cases/spotify/backstage-service-catalog-and-reliability-metadata/) | Backstage Service Catalog 與 Reliability Metadata | 用 service catalog 治理分散團隊的可靠性資訊 |
 
 ## 引用源
 

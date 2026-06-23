@@ -134,6 +134,18 @@ CI 綠燈即上線會讓可靠性停在程式正確性層。production 可靠性
 
 Rollback 只寫文件會在事故現場暴露落差。回復流程需要在類 production 條件下演練過，才能知道權限、資料、流量、相容性與通訊是否接得上。
 
+## 產業情境：醫療系統
+
+醫療系統上線前的 readiness review 需要額外的合規維度。可靠性準備度跟醫療法規準備度是同一個放行判斷的兩個面向，缺任何一個都應 block。
+
+Readiness checklist 需要包含合規項目：PHI（受保護健康資訊）加密狀態、存取控制驗證、audit trail 完整性、backup encryption 驗證。這些項目跟可靠性項目（SLO、load baseline、rollback path）平行檢查，合規缺口的阻擋權重跟核心旅程缺口相同。
+
+合規驗證跟可靠性驗證有時存在張力。為了 HIPAA compliance 加密所有 backup 會增加 restore 時間，[RTO](/backend/knowledge-cards/rto/) 可能不符合臨床需求。為了最小資料揭露限制 staging 資料量會降低環境 parity。這類 trade-off 需要在 readiness review 中明確記錄，包含選擇理由與風險接受者。
+
+醫療系統的 readiness review 需要臨床代表參與。技術 readiness 回答的是「系統能否穩定運作」，臨床 readiness 回答的是「臨床 workflow 能否安全繼續」。EMR 升級後的畫面配置變更、醫囑流程的步驟調整、報告格式的差異，這些在技術指標上可能正常，但在臨床操作上可能造成用藥錯誤或判讀延遲。
+
+高風險變更（EMR 升級、PACS 遷移、醫囑系統切換）需要 go-live support window。變更後的前 24-72 小時維持加強值班，因為臨床問題的反饋延遲通常比技術指標長 — 護理站的操作異常可能在換班時才被回報，藥局的處方錯誤可能在調劑時才被發現。support window 的長度由臨床回饋延遲決定，技術團隊單獨設定容易低估。
+
 ## 與 Release Gate 的關係
 
 Reliability readiness review 是 release gate 的上游資料。readiness 負責整理風險與證據，release gate 負責根據政策做放行、暫停、縮小範圍或例外核准。

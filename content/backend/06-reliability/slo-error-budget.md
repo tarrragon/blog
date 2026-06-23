@@ -149,6 +149,18 @@ SLO policy 需要定期校準。服務規模、使用者旅程、依賴型態與
 
 SLO policy 也需要例外流程。重大資安修補、合規變更、資料修復或客戶承諾可能需要在 budget 緊張時繼續推進；例外應記錄 owner、理由、風險與回退條件。
 
+## 產業情境：金融科技
+
+金融服務的 error budget 治理需要把合規週期納入凍結條件。交易關鍵路徑（payment / settlement / reconciliation）的 SLO 破壞可能直接觸發監管通報義務，budget 消耗到門檻時的升級路徑必須包含合規人員。
+
+交易路徑的 SLI 選型需要涵蓋 correctness（reconciliation error rate），availability 和 latency 通過但對帳失敗仍然是 SLO 破壞。correctness SLI 的量測來源通常是日終或即時的 reconciliation pipeline，跟 availability SLI 的即時 request-level 量測有不同的時間粒度。
+
+Budget 凍結的觸發條件除了 burn rate，還要對齊監管報告週期。若 budget 在季末報告前已消耗過多，凍結應提前啟動，因為報告期間內的可靠性退化會被放大審視。這個提前量取決於報告週期長度與修復節奏 — 月報制的提前量比季報制短。
+
+Error budget 政策的升級路徑需要跟 compliance team 對齊。budget warning 階段通知工程 owner；budget critical 階段同時通知合規人員；budget exhausted 階段啟動合規審查流程。這個分層讓合規介入的時機跟工程介入同步，避免事後才發現可靠性退化已觸發通報義務。
+
+金融場景的 budget 恢復比一般 SaaS 慢。恢復期間需要額外的 reconciliation 驗證（確認退化期間無交易錯漏）才能宣告 budget 回補。若 reconciliation 發現差異，budget 恢復會被延後直到差異被解決。這個約束讓金融服務的 freeze 持續時間通常比一般服務長。
+
 ## 常見反模式
 
 SLO 反模式通常來自把目標數字當成可靠性制度本身。數字需要對應旅程、資料、owner 與決策，才有工程意義。
