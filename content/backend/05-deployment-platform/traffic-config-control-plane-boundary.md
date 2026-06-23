@@ -16,29 +16,72 @@ Traffic boundary 的責任是決定 request 如何進入服務、如何分流、
 
 Traffic boundary 的判讀重點是 customer impact 如何被分批限制。小比例 canary、區域切流、tenant 切流與 route rule 都是不同切換單位；切換單位越清楚，[rollback window](/backend/knowledge-cards/rollback-window/) 越容易被驗證。
 
+### 切換單位的選擇
+
+切換單位決定故障的 [blast radius](/backend/knowledge-cards/blast-radius/) 與回退的精準度。常見切換單位各有不同操作特性：
+
+| 切換單位    | blast radius | 回退精準度 | 操作複雜度 | 適用場景                   |
+| ----------- | ------------ | ---------- | ---------- | -------------------------- |
+| 比例（%）   | 按流量比例   | 粗（全域） | 低         | 通用 canary                |
+| 區域 / AZ   | 限定地理範圍 | 中         | 中         | 跨區部署的服務             |
+| 租戶 / 組織 | 限定特定客戶 | 高         | 高         | 多租戶 SaaS                |
+| 路由規則    | 限定特定路徑 | 高         | 高         | API 版本切換、功能漸進上線 |
+
+比例切換最簡單但 blast radius 不可控——5% 的流量中可能包含大客戶的關鍵路徑。租戶切換精準度最高但操作複雜度也最高——需要在 routing 層維護租戶到版本的映射。穩定做法是從比例切換開始，遇到需要精準控制 impact 時再升級到租戶或路由規則切換。
+
 ## Config Boundary
 
-Config boundary 的責任是決定設定如何下發、如何生效、如何回退。[config rollout](/backend/knowledge-cards/config-rollout/) 和應用版本不一定同步，因此要保留相容窗口。
+設定如何下發、如何生效、如何回退——Config boundary 回答這三個問題。[config rollout](/backend/knowledge-cards/config-rollout/) 和應用版本不一定同步，因此要保留相容窗口。
 
 高風險設定包含 payment provider endpoint、feature flag、rate limit、routing rule、timeout 與 fallback policy。這些設定變更可能不需要新 image，卻能改變 production 行為，因此要進 release gate。
 
+### Config 變更的風險分級
+
+設定變更的風險不一致——有些設定改了只影響 log level，有些設定改了直接影響付款路徑。分級後才能對不同風險的設定套用對應的 review 與 rollout 強度。
+
+| 風險等級 | 設定類型                                            | review 與 rollout 要求                            |
+| -------- | --------------------------------------------------- | ------------------------------------------------- |
+| 高       | payment endpoint、auth provider URL、encryption key | 等同 code review + staged rollout + rollback 驗證 |
+| 中       | rate limit、timeout、feature flag、CORS 設定        | 變更 review + 觀測窗口                            |
+| 低       | log level、debug flag、非關鍵 UI 文案               | 變更紀錄即可                                      |
+
+風險分級的判讀依據是「這個設定改錯時、使用者會看到什麼」。改錯 payment endpoint 會讓付款打到錯誤目標；改錯 rate limit 可能讓合法流量被擋；改錯 log level 最多是 log 太吵或太安靜。設定的注入方式與版本追蹤見 [5.1 配置注入方式與取捨](/backend/05-deployment-platform/container-runtime/)。
+
 ## Secret Boundary
 
-Secret boundary 的責任是讓 credential、token、certificate 與 machine identity 可輪替、可稽核、可回退。Secret 變更同時影響平台、應用與外部依賴，應使用比普通 config 更嚴格的 evidence 與 rollback window。
+Credential、token、certificate 與 machine identity 需要可輪替、可稽核、可回退——Secret boundary 管理這組生命週期。Secret 變更同時影響平台、應用與外部依賴，應使用比普通 config 更嚴格的 evidence 與 rollback window。
 
 Secret rollout 要回答版本相容、雙軌驗證、舊 secret 撤除時間與失敗回退。這裡要接到 [7.27 Credential Rotation with Scoped Evidence](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)。
 
+### Secret Rollout 的雙軌驗證
+
+Secret 輪替跟應用版本部署有本質差異：rollback secret 不是「換回舊版本」那麼單純——舊 secret 可能已經被撤銷、過期、或在外部系統中標記為失效。Secret rollout 的安全做法是雙軌驗證：
+
+1. **新 secret 先加入、舊 secret 暫不移除**：應用先驗證能用新 secret 正常運作。
+2. **觀測窗口確認新 secret 穩定**：auth 成功率、API 呼叫成功率、certificate handshake 成功率都在 baseline 內。
+3. **確認後移除舊 secret**：舊 secret 的撤除要有明確時間點，而且要在撤除前確認沒有服務還在用舊 secret。
+
+這個流程的風險點是第 3 步：撤除舊 secret 後發現某個遺漏的服務或 job 還在用、導致該服務認證失敗。盤點覆蓋率的做法是在觀測窗口內搜尋 audit log，確認所有 secret 使用都已切到新版本。
+
 ## Service Discovery Boundary
 
-Service discovery 的責任是維持可用 endpoint 集合。它回答服務應該連到哪些實例；業務設定與版本正確性則分別交給 config boundary 與 rollout gate。
+Service discovery 的責任是維持可用 endpoint 集合。它回答服務應該連到哪些實例；業務設定與版本正確性則分別交給 config boundary 與 rollout gate。Discovery 的 DNS / registry 運作模式與註冊時序見 [5.4 Service Discovery](/backend/05-deployment-platform/service-discovery/)。
 
 Discovery 失準常見於 rollout、擴縮容與區域故障。判讀時要拆成註冊時序、健康判斷、DNS/registry 新鮮度與 fallback 存活時間。
 
 ## Control Plane Boundary
 
-[management plane](/backend/knowledge-cards/management-plane/) 的責任是管理設定、策略、部署與路由規則。Control plane 變更會影響大量服務，因此需要更嚴格的 evidence、gate 與 decision log。
+設定、策略、部署與路由規則的管理落在 [management plane](/backend/knowledge-cards/management-plane/)。Control plane 變更會影響大量服務，因此需要更嚴格的 evidence、gate 與 decision log。
 
 Control plane 事故常見於規則推送、routing 誤配、secret 下發失敗與 registry 異常。這類事故要先保留 decision timeline，避免事後只看到資料面錯誤率。
+
+### Control Plane 變更的 Blast Radius 控制
+
+Control plane 變更的 blast radius 跟 data plane 變更不同——一條 routing rule 推送錯誤可能同時影響所有服務的流量。控制 blast radius 的做法：
+
+1. **分批推送**：規則變更先推到 staging / canary namespace、驗證後再推到 production。推送結果的觀測應包含受影響服務的 error rate 與 latency。
+2. **approval gate**：高影響變更（network policy、admission webhook、RBAC binding）需要多人 review。變更的 blast radius 估算（影響多少 namespace / service）應在 review 時可見。
+3. **decision log**：所有 control plane 變更記入 [8.23 Control Plane Decision Log](/backend/08-incident-response/control-plane-decision-log-write-back/)，包含時間、操作者、受影響範圍、預期效果與回退條件。事故時對照 decision log 跟 data plane 症狀的時間序列，可以快速判斷因果。
 
 ## 平台元件升級的可重播流程
 

@@ -33,13 +33,35 @@ tunnel 入口的就緒判讀比 LB 多一層。LB 的 health check 打後端 ins
 
 隧道建立後進入穩態：tunnel 進程與邊緣之間維持長連線，邊緣用心跳（keepalive）偵測連線是否存活。心跳間隔與超時由供應商決定（cloudflared 預設每 5 秒心跳、連續失敗觸發重連；Tailscale 由 WireGuard 層的 persistent keepalive 維持 NAT 映射）。穩態下不需要額外操作，但要理解一個語意：邊緣側判定「連線已斷」到本機進程偵測到斷線之間有延遲，這段時間外部請求會 timeout 而非立即拿到錯誤。
 
-連線中斷後 tunnel 進程自動重連，重連策略的關鍵是 backoff：首次斷線立即重試、連續失敗拉長間隔、避免在邊緣側故障時打滿重連請求。重連成功後 readiness 要重新驗證 — 隧道恢復不等於後端仍然健康，特別是斷線期間後端可能已經被別的事件影響。
+連線中斷後 tunnel 進程自動重連，重連策略的關鍵是 backoff：首次斷線立即重試、連續失敗拉長間隔、避免在邊緣側故障時打滿重連請求。重連成功後 readiness 要重新驗證——隧道恢復不等於後端仍然健康，特別是斷線期間後端可能已經被別的事件影響。
 
-## 故障模式：network 層、不是 application 層
+### 隧道多連線與冗餘
 
-tunnel 斷線跟 LB health check 失敗是不同層的故障。LB health check 失敗多半是 application 層（後端掛了、依賴不通）;tunnel 斷線常是 network 層（邊緣連線中斷、本機外連受阻、供應商側問題）、而後端服務本身完全健康。事故判讀要先分清這兩層：後端 log 一切正常、但外部全部連不進來、第一個要看的是 tunnel 進程的連線狀態、不是後端。
+cloudflared 預設對每個 tunnel 建立 4 條連線到不同邊緣節點（Cloudflare 在不同 data center 的 edge server）。單條連線斷線時，流量自動切到其餘連線，外部使用者感受不到中斷。4 條連線全部斷開才會觸發完全不可達。
 
-這也改變監控訊號的設計。LB 場景看後端 5xx 與 latency 就能覆蓋多數入口問題;tunnel 場景要額外監控隧道本身的連線狀態與重連次數 — 隧道靜默斷掉時、後端指標一片祥和、唯一的訊號在 tunnel 進程那邊。
+Tailscale 的冗餘模型不同：WireGuard tunnel 是點對點連線，沒有多邊緣節點分散。Tailscale 的高可用靠 DERP relay server 做中繼——直連失敗時退到 relay，延遲增加但可達性維持。
+
+這個差異在穩定性預期上很重要：cloudflared 的可達性依賴 Cloudflare 邊緣網路的多點冗餘，Tailscale 的可達性依賴直連品質與 DERP 中繼。選擇時要問「我的網路環境是否穩定到不需要多連線冗餘」。
+
+## 故障模式：network 層與 application 層的分離
+
+tunnel 斷線跟 LB health check 失敗是不同層的故障。LB health check 失敗多半是 application 層（後端掛了、依賴不通）；tunnel 斷線常是 network 層（邊緣連線中斷、本機外連受阻、供應商側問題）、而後端服務本身完全健康。事故判讀要先分清這兩層：後端 log 一切正常、但外部全部連不進來、第一個要看的是 tunnel 進程的連線狀態、不是後端。
+
+這也改變監控訊號的設計。LB 場景看後端 5xx 與 latency 就能覆蓋多數入口問題；tunnel 場景要額外監控隧道本身的連線狀態與重連次數——隧道靜默斷掉時、後端指標一片祥和、唯一的訊號在 tunnel 進程那邊。
+
+### 故障分類與判讀順序
+
+tunnel 環境下的故障可按層級分類，判讀順序從外到內：
+
+| 層級        | 症狀                               | 判讀第一步                         |
+| ----------- | ---------------------------------- | ---------------------------------- |
+| 供應商邊緣  | 所有 tunnel 用戶同時受影響         | 查供應商 status page               |
+| 本機外連    | 單一 tunnel 斷線、其他外連也有問題 | 查本機網路、NAT、防火牆            |
+| tunnel 進程 | tunnel 進程 crash 或 hang          | 查 tunnel 進程 log 與 restart 狀態 |
+| 後端服務    | tunnel 正常但外部拿到 502          | 查後端服務 readiness               |
+| 認證閘道    | tunnel + 後端正常但外部拿到 403    | 查認證設定（token / ACL 過期）     |
+
+判讀順序的重點是「先確認 tunnel 層是否正常、再往內看」。如果跳過 tunnel 層直接排查後端，會在後端 log 一切正常的情況下浪費時間。
 
 ## 認證必須疊在 tunnel 之後
 

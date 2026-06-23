@@ -28,6 +28,10 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [Runtime Config](/backend/knowledge-cards/runtime-config/)       | environment variable、[Secret Management](/backend/knowledge-cards/secret-management/)、[Feature Flag](/backend/knowledge-cards/feature-flag/)                                                                             |
 | CDN 與邊緣分發                                                   | 邊緣快取、origin protection、purge 與 invalidation、stale-while-revalidate                                                                                                                                                 |
 
+## 建議閱讀順序
+
+章節編號是主題分類，不是閱讀順序。建議先讀 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 理解 startup / readiness / liveness / shutdown / drain 的責任分類，再按 5.1 → 5.2 → 5.3 → 5.4 進入平台實作層。5.5（威脅建模）和 5.7（boundary 分類）適合讀完 5.1-5.4 後做概念整理。5.8（實作示範）是 5.2 + 5.3 的操作化，適合最後讀。
+
 ## 選型入口
 
 部署平台選型的核心判斷是服務如何被啟動、更新、接流量、擴容與停止。當問題集中在 container image、rolling update、health check、[load balancer](/backend/knowledge-cards/load-balancer/)、[service registry](/backend/knowledge-cards/service-registry/)、[service discovery](/backend/knowledge-cards/service-discovery/) 或 [Runtime Config](/backend/knowledge-cards/runtime-config/) 時，應先評估部署平台能力。

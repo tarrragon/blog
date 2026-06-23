@@ -3,7 +3,7 @@ title: "5.5 平台與入口威脅建模（Threat Modeling）"
 date: 2026-04-24
 description: "以概念層判讀部署平台弱點，聚焦入口、生命週期、設定與交付節奏"
 weight: 5
-tags: ["backend", "deployment"]
+tags: ["backend", "deployment", "threat-modeling"]
 ---
 
 平台與入口威脅建模的核心責任是把部署平台的弱點維持在可操作的概念層。本章的輸出是平台問題地圖、案例對照與交接條件，讓實作前決策可先對齊，避免進入 YAML / unit file / LB rule 前就已經漏掉攻擊面。
@@ -19,13 +19,47 @@ tags: ["backend", "deployment"]
 | 設定與密鑰下發 | 設定漂移與權限擴張同時發生               | 高風險設定要進 release gate，並分離 [management plane](/backend/knowledge-cards/management-plane/) | [F5 BIG-IP 2023](/backend/07-security-data-protection/red-team/cases/edge-exposure/f5-bigip-cve-2023-46747-auth-bypass/)             |
 | 交付切換節奏   | 回滾與切換條件不清晰                     | 先定停損條件再定交付速度                                                                           | [TeamCity 2024](/backend/07-security-data-protection/red-team/cases/supply-chain/teamcity-2024-cve-27198-27199-auth-path-traversal/) |
 
-**入口暴露面**的主要弱點判讀是「實際可達範圍是否超過設計意圖」。容器化、service mesh、ingress controller 升級、新增 LoadBalancer 都可能無意中把內部服務暴露到公網。入口清單跟責任鏈先對齊、能避免發版本就改變了攻擊面。升級流程跟回退窗口設計見 [5.7 平台元件升級的可重播流程](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#平台元件升級的可重播流程)。
+### 入口暴露面
 
-**生命週期訊號**的弱點聚焦於脆弱窗口期被攻擊者利用：readiness 過早通過、shutdown 階段仍在處理 [in-flight](/backend/knowledge-cards/in-flight/) request、drain 視窗內接收新請求，都會把短暫的脆弱窗口拉長。
+入口暴露面的主要弱點判讀是「實際可達範圍是否超過設計意圖」。容器化、service mesh、ingress controller 升級、新增 LoadBalancer 都可能無意中把內部服務暴露到公網。入口清單跟責任鏈先對齊、能避免發版本就改變了攻擊面。升級流程跟回退窗口設計見 [5.7 平台元件升級的可重播流程](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#平台元件升級的可重播流程)。
 
-**設定與密鑰下發**是最容易被忽略的維度。Image 沒變但 config / secret 變了、權限因 RBAC 漂移擴張、feature flag 在 production 偷偷開啟未經 review 的新行為。這些變更不走 release gate 的話，攻擊者有大量低噪音入口可以利用。
+入口暴露面的盤點要區分三類入口，各自有不同的失分模式：
 
-**交付切換節奏**的弱點判讀是「在不穩定窗口期、系統是否還有防禦能力」。Canary / rollout / rollback 期間 5xx 升高、connection 重建、auth 短暫失敗，會掩蓋同期間的攻擊訊號。沒有先定停損條件就推交付速度、是把切換期變成攻擊期的常見做法。
+1. **設計意圖內的入口**（Ingress / LoadBalancer Service / API Gateway）：這些入口有明確 owner、有 WAF / TLS 保護。弱點在於設定漂移——port 範圍擴大、路由規則放寬、wildcard host 引入。盤點方式是定期比對實際 Ingress 規則與設計意圖。
+2. **隱性入口**（NodePort、hostNetwork pod、debug endpoint、metrics endpoint）：這些入口在設計時不被視為外部可達，但在特定網路拓樸下可能從外部存取。NodePort 預設 range 30000-32767 在某些雲端 security group 設定下可能對外開放。metrics endpoint（/metrics、/debug/pprof）常不帶認證、暴露服務內部狀態。
+3. **暫態入口**（kubectl port-forward、臨時 LoadBalancer、tunnel 測試）：開發或除錯時臨時打開的入口，使用後忘記關閉。這類入口沒有 WAF、沒有 TLS、沒有 audit log，是攻擊面中最難盤點的部分。
+
+Tunnel 形態的入口（cloudflared、Tailscale Funnel）有獨立的弱點盤點框架，見 [5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/) 的認證疊法段。
+
+### 生命週期訊號
+
+生命週期訊號的弱點聚焦於脆弱窗口期被利用：readiness 過早通過、shutdown 階段仍在處理 [in-flight](/backend/knowledge-cards/in-flight/) request、drain 視窗內接收新請求，都會把短暫的脆弱窗口拉長。
+
+脆弱窗口的判讀要跟 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 的生命週期狀態對齊：
+
+- **startup → readiness 窗口**：服務正在初始化、依賴尚未驗證、安全中介軟體（WAF sidecar、auth proxy）可能還沒就緒。此時如果 readiness 過早通過讓流量進來，請求可能繞過安全層直接打到後端。
+- **readiness → drain 窗口**：正常服務狀態，弱點集中在 readiness 條件太鬆——只檢查 port 可達但 auth middleware 沒初始化。
+- **drain → shutdown 窗口**：服務正在收斂，此時安全元件（rate limiter、WAF）可能已停止更新規則但仍在處理請求。攻擊者若在 drain 窗口送入惡意請求，安全元件可能無法正常攔截。
+
+### 設定與密鑰下發
+
+設定與密鑰下發是最容易被忽略的維度。Image 沒變但 config / secret 變了、權限因 RBAC 漂移擴張、feature flag 在 production 偷偷開啟未經 review 的新行為。這些變更不走 release gate 的話，攻擊者有大量低噪音入口可以利用。
+
+設定變更的弱點盤點要分兩個方向：
+
+**顯式設定變更**（ConfigMap、Secret、feature flag 更新）：變更本身是可追蹤的，弱點在於 review 機制是否涵蓋高風險設定。payment endpoint、auth provider URL、rate limit 閾值、CORS 允許來源——這些設定的變更影響跟程式碼變更等量，應走同等 review 流程。設定變更的 review 與 rollout 策略見 [5.7 Config Boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)。
+
+**隱式設定漂移**（RBAC 逐步放寬、network policy 例外累積、service account 權限擴張）：這類變更是多次小修改累積的結果，單次變更看起來合理但累積後超出安全邊界。盤點方式是定期用 policy-as-code（OPA/Gatekeeper、Kyverno）掃描 cluster 內的 RBAC binding、network policy、pod security 設定，跟 baseline 比對偏移程度。
+
+### 交付切換節奏
+
+交付切換節奏的弱點判讀是「在不穩定窗口期、系統是否還有防禦能力」。Canary / rollout / rollback 期間 5xx 升高、connection 重建、auth 短暫失敗，會掩蓋同期間的攻擊訊號。沒有先定停損條件就推交付速度、是把切換期變成攻擊期的常見做法。
+
+交付窗口期的防禦能力退化有兩個機制：
+
+**訊號淹沒**：rollout 本身產生的短暫錯誤（5xx spike、reconnect、auth retry）跟攻擊訊號長得一樣。事故團隊在切流期把所有異常歸因於部署變更，攻擊者剛好利用這個注意力盲區。對策是把切流期 alert 跟安全 alert 分流到不同 channel，安全訊號走獨立通道、由 security on-call 獨立判讀。
+
+**防禦元件版本不一致**：canary 期間新舊版本同時在線，WAF 規則、rate limit 設定、auth middleware 版本可能不同。攻擊者可以針對舊版本的已知弱點送流量，利用 canary 期間的路由特性讓流量到達舊版本。對策是把安全元件的更新跟應用版本解耦——WAF 規則、rate limit 是平台層設定，應在所有版本一致生效。
 
 ## 案例對照表（情境 → 判讀 → 注意事項 → 路由章節）
 

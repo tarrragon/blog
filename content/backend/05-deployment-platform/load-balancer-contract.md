@@ -21,7 +21,7 @@ tags: ["backend", "deployment", "load-balancer"]
 
 ## draining 與 shutdown
 
-[draining](/backend/knowledge-cards/draining/) 的責任是讓舊實例在下線前完成現有請求。短請求 API 的 drain 視窗可較短；長連線、串流或 websocket 場景需要更長窗口與明確 reconnect 策略。
+[draining](/backend/knowledge-cards/draining/) 的責任是讓舊實例在下線前完成現有請求。drain 視窗的 workload 分類詳見 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/)，本段聚焦 LB 如何配合 drain：短請求 API 的 drain 視窗可較短；長連線、串流或 websocket 場景需要更長窗口與明確 reconnect 策略。
 
 部署流程中，LB 摘流量、服務停止接新請求、服務完成在途請求、實例退出，這四步要有固定順序。順序穩定後，rollback 才能在同一套機制下運作。
 
@@ -88,9 +88,9 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 
 ## 常見誤區
 
-把 load balancer 當成「只做轉發」的元件，會忽略它在部署與事故中的決策角色。LB 設定其實定義了流量切換節奏、回退可行性與故障擴散速度。
+把 load balancer 當成「只做轉發」的元件，會忽略它在部署與事故中的決策角色。LB 設定定義了流量切換節奏、回退可行性與故障擴散速度。
 
-把 health check 視為固定 URL 檢查，會讓複雜服務在切換時暴露隱性風險。health contract 要反映服務真實 readiness — 含依賴連線池、必要 config、關鍵背景任務狀態 — 而非停在單一探針成功訊號。
+Health check 跟 readiness 的混淆會在切換時暴露隱性風險。health contract 要反映服務真實 readiness — 含依賴連線池、必要 config、關鍵背景任務狀態 — 而非停在單一探針成功訊號。
 
 把「LB 顯示節點 healthy」當作「服務可承受流量」的訊號，也是事故中的常見誤判。健康檢查通過跟承受重連潮是不同層級的訊號。
 
@@ -106,11 +106,12 @@ idle [timeout](/backend/knowledge-cards/timeout/) 是連線資源與使用者體
 
 load balancer contract 是部署平台與操作控制面的匯流點。
 
-1. 與 04 的交接：版本切換訊號與錯誤率證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
-2. 與 06 的交接：canary 放行與回退條件進入 [Release Gate](/backend/06-reliability/release-gate/)。
-3. 與 07 的交接：入口治理與管理面保護進入 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
-4. 與 08 的交接：切換與回退判斷記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
-5. 與 [5.9 邊緣分發](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的交接：CDN 是 origin LB 的上游、edge miss 後流量進 origin LB、timeout / retry 設定要協調。
+1. 與 5.6 的交接：drain 的生命週期定義與 workload 分類回到 [Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/)。
+2. 與 04 的交接：版本切換訊號與錯誤率證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
+3. 與 06 的交接：canary 放行與回退條件進入 [Release Gate](/backend/06-reliability/release-gate/)。
+4. 與 07 的交接：入口治理與管理面保護進入 [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
+5. 與 08 的交接：切換與回退判斷記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+6. 與 [5.9 邊緣分發](/backend/05-deployment-platform/edge-cdn-static-distribution/) 的交接：CDN 是 origin LB 的上游、edge miss 後流量進 origin LB、timeout / retry 設定要協調。
 
 ## 下一步路由
 
