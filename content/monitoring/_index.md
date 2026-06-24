@@ -109,6 +109,8 @@ tags: ["monitoring"]
 
 自用場景的 collector 跟 production 級 observability 平台的差異：沒有 dashboard（用 grep / jq）、沒有 alerting（用 rule engine + 腳本）、沒有 HA（單機就夠）。這些是刻意的設計選擇——零依賴、零運維、grep 友好。
 
+從 SDK 到 storage 的每個環節都有丟失事件的可能。[端到端資料完整性](/monitoring/04-collector/data-integrity/)整理了整條鏈路的損失地圖、控制策略、完整性指標，以及被自己 SDK DDoS 時的防護方式。[Error Fingerprint 與去重分群](/monitoring/04-collector/error-fingerprint/)把相同根因的 error 歸組，讓 dashboard 從逐筆列表演進到可管理的 issue 列表。
+
 ### 模組五：平台適配
 
 回答「各平台有什麼特殊考量」。JS 的 CORS 限制、Flutter 的 isolate 安全、Python 的 GIL 與 atexit、Go 的 graceful shutdown。
@@ -158,7 +160,7 @@ tags: ["monitoring"]
 
 跟 [Backend 07 資安與資料保護](/backend/07-security-data-protection/) 的關係：Backend 07 聚焦 server-side 的權限、秘密管理、稽核追蹤；本模組聚焦「蒐集來的監控資料本身」的保護。交叉點是 [Secret Management](/backend/knowledge-cards/secret-management/) — 監控資料裡意外包含 secret 時，去識別化機制需要知道什麼 pattern 算 secret。
 
-> 後續章節預定：SDK redaction API 設計、collector access control 實作、GDPR 最小化原則的工程落地、「監控資料洩漏」的 threat model
+Client-side SDK 的 credential 嵌在使用者手上的程式碼中（JS bundle / APK / Python script），必然可被提取 — 這是 architecture 限制而非 implementation 問題。[Client-side SDK 認證的根本限制](/monitoring/07-security-privacy/client-sdk-authentication/) 處理「credential 已暴露」前提下的多層緩解策略。
 
 ### 模組八：行為資料的商業利用
 
@@ -201,13 +203,7 @@ tags: ["monitoring"]
 - Attribution / 推薦系統：需要專門的資料管線，超出 collector 範圍
 - A/B test：需要 feature flag 系統 + 統計檢定，屬獨立基礎設施
 
-> 後續章節預定：行為事件設計（事件命名規範 / 屬性設計 / funnel 定義）、從 collector 資料做基礎 funnel 分析、A/B test 的統計基礎、推薦系統概論、RFM 分群實作
->
-> 跨系列連結：
-> - 精準行銷的資料管線設計 → 待建 `data-engineering/` 或放 [Backend 01 資料庫](/backend/01-database/)
-> - A/B test 的統計檢定 → 待建 `statistics/` 或放 [Backend 09 效能容量](/backend/09-performance-capacity/)
-> - 推薦系統架構 → 待建 `machine-learning/` 或放 [Backend](/backend/) 延伸模組
-> - 隱私法規（GDPR / CCPA / 個資法） → 待建 `compliance/` 或放 [Backend 07](/backend/07-security-data-protection/) 延伸
+跨系列的延伸主題（目前放在各章節的下一步路由中，尚未獨立成教學分類）：精準行銷的資料管線設計、A/B test 的統計檢定方法、推薦系統架構、隱私法規工程落地（GDPR / CCPA / 個資法）。
 
 ### 跨模組橋接：監控資料的雙重用途
 
@@ -217,13 +213,14 @@ SDK 送出的同一份 event data 同時服務行為分析（funnel / cohort / a
 
 ## 學習路線
 
-| 路線             | 適合讀者                            | 建議順序                   | 讀完能做什麼                      |
-| ---------------- | ----------------------------------- | -------------------------- | --------------------------------- |
-| 自架監控快速上手 | 想在自己的 app/script 加監控        | 模組一 → 二 → 四 → 三      | 能部署 collector + 埋點 SDK       |
-| SDK 開發者       | 想理解監控 SDK 怎麼設計             | 模組三 → 二 → 五           | 能設計跨平台一致的監控 SDK        |
-| 商業方案評估     | 想知道什麼時候該用 Sentry / Datadog | 模組一 → 六                | 能評估自架 vs 商業方案的取捨      |
-| 資安合規         | 想確保蒐集的資料不會變成負債        | 模組七 → 二（schema 設計） | 能設計去識別化 + access control   |
-| 商業利用         | 想把行為資料變成商業決策            | 模組一 → 七 → 八           | 能設計行為事件 + 基礎 funnel 分析 |
+| 路線             | 適合讀者                               | 建議順序                                                                                 | 讀完能做什麼                                     |
+| ---------------- | -------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| 自架監控快速上手 | 想在自己的 app/script 加監控           | 模組一 → 二 → 四 → 三 → data-integrity（延伸）                                           | 能部署 collector + 埋點 SDK + 評估資料損失容忍度 |
+| SDK 開發者       | 想理解監控 SDK 怎麼設計                | 模組三 → 二 → 五                                                                         | 能設計跨平台一致的監控 SDK                       |
+| 商業方案評估     | 想知道什麼時候該用 Sentry / Datadog    | 模組一 → 六                                                                              | 能評估自架 vs 商業方案的取捨                     |
+| 資安合規         | 想確保蒐集的資料不會變成負債           | 模組七 → 二（schema 設計）→ client-sdk-auth（延伸）                                      | 能設計去識別化 + access control + 認證策略       |
+| 商業利用         | 想把行為資料變成商業決策               | 模組一 → 七 → 八                                                                         | 能設計行為事件 + 基礎 funnel 分析                |
+| 可靠性工程       | 想確保自架監控系統的資料完整性和安全性 | 模組四（架構）→ data-integrity → ingestion-scaling → error-fingerprint → client-sdk-auth | 能設計端到端的損失控制 + SDK 認證策略            |
 
 ## 教學 × 實作互補循環
 

@@ -133,3 +133,4 @@ Developer dashboard 的多數視圖在 SQLite 層就能運作 — 都是單表 G
 - 中台 dashboard 設計 → [中台 Dashboard 設計](/monitoring/04-collector/dashboard-business/)
 - Error 事件的枚舉方法 → [事件枚舉與補齊檢查](/monitoring/01-mental-model/event-enumeration-method/)
 - 功能分層與 Backend 選擇 → [功能分層與 Backend 選擇](/monitoring/04-collector/feature-tier-boundary/)
+- Error fingerprint 分群取代 name 分群 → [Error Fingerprint 與去重分群](/monitoring/04-collector/error-fingerprint/)

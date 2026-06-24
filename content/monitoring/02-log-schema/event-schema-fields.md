@@ -95,6 +95,56 @@ Schema 版本號。整數，從 1 開始遞增。
 
 版本號讓 collector 知道用哪個版本的 schema 驗證這筆事件。Schema 演進時，舊版本的事件仍可被正確處理。
 
+## Collector 附加欄位（底線前綴）
+
+Collector 在事件寫入 storage 時可以附加系統層的 metadata。這些欄位使用底線前綴（`_flags`、`_fingerprint`），和 SDK 端產生的業務欄位區隔。SDK 送出的事件中不包含這些欄位 — 它們由 collector pipeline 在處理過程中計算並附加。
+
+### _flags（選填，collector 附加）
+
+Collector 端的行為分析或規則引擎偵測到異常時，在事件中附加標記。Dashboard 查詢可用 `_flags` 過濾可疑事件。
+
+```json
+{
+  "_flags": {
+    "suspicious": true,
+    "reason": "rate_anomaly"
+  }
+}
+```
+
+`suspicious` 標記的事件不被刪除 — 直接丟棄有誤殺正常流量的風險（行銷活動的真實流量暴增可能觸發異常偵測）。Dashboard 預設排除 `_flags.suspicious = true` 的事件，需要調查時可包含。
+
+標記來源和 reason 值的定義見 [Client-side SDK 認證](/monitoring/07-security-privacy/client-sdk-authentication/) 的事後標記策略段。
+
+### _fingerprint（選填，collector 附加）
+
+Error 事件的去重識別碼。Collector 從 error 的 type、normalized message、stack trace 計算 hash，用於把相同根因的 error 歸組。
+
+```json
+{
+  "_fingerprint": "a3f8c2e1b7d94f06"
+}
+```
+
+Fingerprint 的計算邏輯和 error grouping 機制見 [Error Fingerprint 與去重分群](/monitoring/04-collector/error-fingerprint/)。
+
+### SDK 自監控指標
+
+監控系統自身的資料完整性需要獨立的指標追蹤 — SDK 用 metric 類事件回報自己的送出量和丟棄量，collector 用 endpoint 暴露處理量和拒絕量。SDK 端的指標每次 flush 成功後作為標準 schema 事件一起送出，name 以 `sdk.` 前綴標識。
+
+| name                  | 含義                                         |
+| --------------------- | -------------------------------------------- |
+| `sdk.events.produced` | 事件產生總數（取樣前）                       |
+| `sdk.events.sampled`  | 取樣後保留的事件數                           |
+| `sdk.events.sent`     | 成功送出的事件數（收到 200/207 的 accepted） |
+| `sdk.events.dropped`  | 被 FIFO 丟棄或重試耗盡的事件數               |
+| `sdk.flush.failures`  | flush 失敗次數（429 / 5xx / timeout）        |
+| `sdk.sampling.rate`   | 當前動態取樣率                               |
+
+Collector 端對應暴露 `collector.events.received`、`collector.events.rejected`、`collector.events.stored`、`collector.events.backpressure` 等指標，透過 `/metrics` endpoint 或 health endpoint 的擴展欄位提供。
+
+完整的指標定義、端到端比對方法和損失率閾值見 [端到端資料完整性](/monitoring/04-collector/data-integrity/) 的監控損失段。
+
 ## 完整 schema 範例
 
 ```json

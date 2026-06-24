@@ -21,3 +21,4 @@ tags: ["devops", "burst-traffic", "degradation", "queue", "scaling"]
 - → [monitoring 模組四 Collector](/monitoring/04-collector/)：Collector 的 ingestion scaling 是本模組的應用場景
 - → [backend 非同步佇列](/backend/03-message-queue/)：Queue 的選型和操作實務
 - → [devops 模組五 容量規劃](/devops/05-capacity-planning/)：預期突發的容量預備
+- → [端到端資料完整性](/monitoring/04-collector/data-integrity/)：被自己 SDK DDoS 的三種場景

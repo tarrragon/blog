@@ -132,3 +132,4 @@ rules:
 - Collector 的完整架構 → [Collector 架構](/monitoring/04-collector/architecture/)
 - 規模成長後的演進路徑 → [規模演進](/monitoring/04-collector/scaling-evolution/)
 - 事件的分類和命名 → [監控心智模型 四類事件](/monitoring/01-mental-model/four-event-types/)
+- Rule engine 在偽造流量偵測的應用 → [Client-side SDK 認證](/monitoring/07-security-privacy/client-sdk-authentication/)

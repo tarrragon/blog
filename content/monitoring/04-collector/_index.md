@@ -24,6 +24,8 @@ tags: ["monitoring", "collector", "go", "storage", "rule-engine"]
 - [x] 中台 Dashboard 設計
 - [x] Container 部署設計（SQLite 在 container 中的 I/O 考量、volume mount、graceful shutdown）
 - [x] 讀寫分離與查詢擴展（讀寫競爭辨識、Read Replica、預聚合、CQRS 判讀訊號）
+- [x] 端到端資料完整性（資料損失地圖、完整性指標、被自己 SDK DDoS 的防護）
+- [x] Error Fingerprint 與去重分群（fingerprint 演算法、message normalization、error_groups 表）
 
 ## 跨分類引用
 

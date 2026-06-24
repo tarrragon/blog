@@ -82,3 +82,4 @@ tags: ["monitoring", "security", "threat-model", "attack-surface", "risk"]
 - Transport 層保護 → [Transport 安全](/monitoring/07-security-privacy/transport-security/)
 - Collector 端保護 → [Collector Access Control 實作](/monitoring/07-security-privacy/collector-access-control/)
 - 去識別化技術 → [去識別化策略](/monitoring/07-security-privacy/anonymization-strategy/)
+- Client-side SDK 認證的多層緩解策略 → [Client-side SDK 認證](/monitoring/07-security-privacy/client-sdk-authentication/)

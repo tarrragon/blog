@@ -83,3 +83,4 @@ Access log 本身也是監控資料，但和業務事件分開儲存。Access lo
 - SDK 端的 redaction → [SDK Redaction API 設計](/monitoring/07-security-privacy/sdk-redaction-api/)
 - Transport 層的加密 → [Transport 安全](/monitoring/07-security-privacy/transport-security/)
 - 資料儲存後的去識別化 → [去識別化策略](/monitoring/07-security-privacy/anonymization-strategy/)
+- Client-side credential 暴露的根本限制 → [Client-side SDK 認證](/monitoring/07-security-privacy/client-sdk-authentication/)

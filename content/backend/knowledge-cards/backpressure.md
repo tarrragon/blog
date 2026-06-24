@@ -6,7 +6,6 @@ description: "說明下游處理速度不足時系統如何讓上游依下游能
 weight: 27
 ---
 
-
 Backpressure 的核心概念是「下游處理能力不足時，讓上游感知並放慢」。它把上游從「盲目送出」轉為「依下游能力送出」，讓系統在壓力下排隊、拒絕、降級或削峰，以保護下游資源並維持整體可預測性。Backpressure 的本質是「壓力從下游往上游傳遞」的訊號通道，覆蓋範圍比單純的拒絕策略更廣。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。
 
 ## 概念位置
@@ -28,6 +27,8 @@ Backpressure 與 [rate limit](/backend/knowledge-cards/rate-limit/) 的差別在
 Backpressure 導入後，團隊需要定義以下邊界：[buffer](/backend/knowledge-cards/buffer/) 大小、排隊上限、等待期限、拒絕策略、[retry policy](/backend/knowledge-cards/retry-policy/)、[load shedding](/backend/knowledge-cards/load-shedding/) 與對使用者的回饋（429 / 503 / 延後通知）。觀測上應能看到 [queue depth](/backend/knowledge-cards/queue-depth/)、in-flight 數量、處理耗時、drop count、[timeout](/backend/knowledge-cards/timeout/)、下游 error rate，並把關鍵指標放進 [dashboard](/backend/knowledge-cards/dashboard/)。
 
 設計取捨的核心是 buffer 尺度：buffer 太小會讓瞬間尖峰被過度拒絕，流失可接受的請求；buffer 太大則延遲失控並可能拖累記憶體。穩定做法是「有限 buffer + 明確拒絕策略」，讓系統在超載時 fail fast，避免把壓力延後累積成更大的雪崩。
+
+監控系統中 collector 用 HTTP 429 向 SDK 傳遞背壓的具體實作見 [監控知識卡：Backpressure](/monitoring/knowledge-cards/backpressure/)。
 
 <!--
 codex-check:

@@ -61,3 +61,4 @@ Sentry 的核心價值在 issue grouping 和趨勢分析 — 把大量 error eve
 - Firebase 的整合方案 → [Firebase 套件](/monitoring/06-commercial-comparison/firebase-suite/)
 - Datadog 的全棧 APM → [Datadog RUM](/monitoring/06-commercial-comparison/datadog-rum/)
 - 自架 vs 商業的判斷 → [自架 vs 商業的判斷決策表](/monitoring/06-commercial-comparison/self-hosted-vs-commercial/)
+- 自架方案的 error fingerprint 實作 → [Error Fingerprint 與去重分群](/monitoring/04-collector/error-fingerprint/)

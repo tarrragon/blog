@@ -16,6 +16,7 @@ tags: ["monitoring", "security", "privacy", "redaction", "gdpr"]
 - [x] 去識別化策略（IP 截斷 / user agent 簡化 / stack trace 路徑清理 / session UUID）
 - [x] GDPR 最小化原則的工程落地
 - [x] 「監控資料洩漏」的 threat model
+- [x] Client-side SDK 認證的根本限制（credential 必然暴露、多層緩解策略）
 
 ## 跨分類引用
 
