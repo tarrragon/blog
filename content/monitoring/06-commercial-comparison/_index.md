@@ -15,6 +15,7 @@ tags: ["monitoring", "sentry", "crashlytics", "datadog", "mixpanel"]
 - [x] Firebase 套件（Crashlytics + Analytics + Remote Config 的整合）
 - [x] Datadog RUM（全棧 APM 的 client-side 觀點）
 - [x] Mixpanel / Amplitude（行為分析專用 vs 通用監控的差異）
+- [x] 部署光譜（BaaS + Serverless / PaaS / 完全自架 / 商業 SaaS 四條路徑）
 
 ## 跨分類引用
 

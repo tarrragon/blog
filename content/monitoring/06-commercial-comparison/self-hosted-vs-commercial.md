@@ -52,3 +52,7 @@ tags: ["monitoring", "comparison", "self-hosted", "commercial", "decision"]
 四個維度中三個以上指向同一方向 → 選那個方向。兩兩對半 → 從自架開始（成本低、可逆），需求增長後再評估切換。
 
 決策表指向商業方案後，[Sentry 深入](/monitoring/06-commercial-comparison/sentry-deep-dive/)和 [Firebase 套件](/monitoring/06-commercial-comparison/firebase-suite/)分別展開兩個主流方案的架構和能力邊界。決策表指向自架時，[模組四 Collector 設計](/monitoring/04-collector/)提供從 HTTP endpoint 到 rule engine 的完整實作藍圖。Server-side 的可觀測性（OTLP、Prometheus、Grafana）見 [Backend 模組四 可觀測性](/backend/04-observability/)。
+
+## 中間路線
+
+上表是「完全自架 vs 專業監控 SaaS」的兩端。中間還有兩條路徑 — 用 BaaS（Supabase + Vercel）搭出託管版 collector，或用 PaaS（Railway / Fly.io）跑自架 collector 原始碼但不管 server。APP 上線初期用免費方案零成本起步、保留自訂 schema 彈性是常見的起步策略。完整的四條路徑比較、架構差異、免費方案限額和遷移路線見[部署光譜](/monitoring/06-commercial-comparison/deployment-spectrum/)。
