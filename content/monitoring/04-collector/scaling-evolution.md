@@ -149,6 +149,14 @@ retention:
 
 Storage interface 的 `Downsample()` 和 `Purge()` 由 collector 的定時排程觸發（Go 的 `time.Ticker`）。每個 storage backend 各自實作 — SQLite 用上述 SQL、PostgreSQL 用相同邏輯但可以加 partial index 加速、時間序列 DB 的 continuous aggregate 和 retention policy 原生支援。
 
+### 為什麼是聚合而非抽樣
+
+降採樣有兩種思路。**抽樣保留**是同 name 同小時保留一筆原始事件、刪除其餘，保留了逐筆查詢能力但喪失準確計數。**聚合摘要**是把一小時內的事件壓成一筆計數記錄，喪失逐筆細節但保留準確統計。
+
+Collector 選擇聚合摘要。降採樣後的資料用途是趨勢圖和長期統計——這些查詢需要「過去 30 天每小時的 error 總數」而非「某一筆原始 error 的 stack trace」。準確計數比保留個別事件更有價值。
+
+這意味著原始事件 purge 後，超過保留期的逐筆查詢會回傳空結果。Dashboard 在回溯超過原始事件保留期的時間範圍時，應切換到摘要表查詢——顯示趨勢圖而非事件列表。查詢 API 的 `from` 參數超過 `retention.raw_events` 時，collector 可以自動降級到摘要表，或回傳提示告知 client 該時間範圍只有聚合資料。
+
 ### 觸發切換到 PostgreSQL 的訊號
 
 **寫入爭搶**：SQLite 是單寫者模型。高併發寫入（多個 SDK 同時 flush、每秒數百筆以上持續發生）會出現 `database is locked` 錯誤。WAL mode 能緩解但不能根治。

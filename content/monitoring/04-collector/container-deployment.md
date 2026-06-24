@@ -64,9 +64,11 @@ chown 1000:1000 monitor-data
 1. 停止接受新的 HTTP request
 2. 等待 in-flight request 完成（context timeout）
 3. Flush pending writes（channel 中排隊的事件）
-4. SQLite WAL checkpoint（把 WAL 內容合併回主 DB 檔案）
-5. 關閉 DB connection
-6. 退出
+4. Flush rule engine state（待評估的規則和未送出的 alert）
+5. Flush JSONL mirror buffer（確保 mirror 檔案寫入完整）
+6. SQLite WAL checkpoint（把 WAL 內容合併回主 DB 檔案）
+7. 關閉 DB connection 和檔案 handle
+8. 退出
 
 這個序列對應 [Backend 5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 的 shutdown → drain 狀態：步驟 1-2 是 drain（停接新工作、等在途完成），步驟 3-5 是 shutdown（釋放資源）。Collector 屬於短 request API 的 workload 類型（drain 窗口 5-30 秒），但多了 SQLite WAL checkpoint 這個 flush 步驟，讓 drain 時間可能超過一般 HTTP 服務。PID 1 信號處理的設計考量（exec form、避免 shell 攔截 SIGTERM）見 [Backend 5.1 PID 1 與信號處理](/backend/05-deployment-platform/container-runtime/)。
 

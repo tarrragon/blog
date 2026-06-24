@@ -48,6 +48,18 @@ Timestamp 由 SDK 在事件發生時記錄，不是 collector 收到時記錄。
 
 Source 讓同一個 collector 接收多個 app 的事件時可以區分來源。也用於分析「哪個版本的 error 率最高」、「哪個 OS 版本有特定問題」。
 
+#### platform 合法值與自動偵測
+
+`platform` 由 SDK init 時自動偵測，開發者不需手動設定。各 SDK 的偵測來源和映射規則：
+
+| SDK     | 偵測來源                   | 映射規則                                                              |
+| ------- | -------------------------- | --------------------------------------------------------------------- |
+| Python  | `sys.platform`             | `darwin`→`macos`、`linux`→`linux`、`win32`→`windows`、其他直接傳原值  |
+| Flutter | `Platform.operatingSystem` | 回傳值（`ios`/`android`/`macos`/`linux`/`windows`）即合法值，無需映射 |
+| JS      | 瀏覽器環境                 | 固定為 `web`；OS 偵測（如需要）從 `navigator.userAgentData` 解析      |
+
+Python 的 `sys.platform` 回傳 `darwin` 和 `win32` 不是使用者友善的名稱，SDK 負責映射到標準名稱。Flutter 的 `dart:io Platform.operatingSystem` 恰好回傳合法值。JS SDK 在瀏覽器環境中無法可靠偵測 OS，platform 統一為 `web`。
+
 ### session（選填）
 
 使用者 session 的識別資訊。Session ID（UUID）和 session 開始時間。
