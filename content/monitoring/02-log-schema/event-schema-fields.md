@@ -52,13 +52,18 @@ Source 讓同一個 collector 接收多個 app 的事件時可以區分來源。
 
 `platform` 由 SDK init 時自動偵測，開發者不需手動設定。各 SDK 的偵測來源和映射規則：
 
-| SDK     | 偵測來源                   | 映射規則                                                              |
-| ------- | -------------------------- | --------------------------------------------------------------------- |
-| Python  | `sys.platform`             | `darwin`→`macos`、`linux`→`linux`、`win32`→`windows`、其他直接傳原值  |
-| Flutter | `Platform.operatingSystem` | 回傳值（`ios`/`android`/`macos`/`linux`/`windows`）即合法值，無需映射 |
-| JS      | 瀏覽器環境                 | 固定為 `web`；OS 偵測（如需要）從 `navigator.userAgentData` 解析      |
+| SDK     | 偵測來源                   | 映射規則                                                                  |
+| ------- | -------------------------- | ------------------------------------------------------------------------- |
+| Python  | `sys.platform`             | `darwin`→`macos`、`linux`→`linux`、`win32`→`windows`、其他直接傳原值      |
+| Flutter | `Platform.operatingSystem` | 回傳值（`ios`/`android`/`macos`/`linux`/`windows`）即合法值，無需映射     |
+| JS      | 瀏覽器環境                 | 固定為 `web`；OS 偵測（如需要）從 `navigator.userAgentData` 解析          |
+| Go      | `runtime.GOOS`             | `darwin`→`macos`、`linux`→`linux`、`windows`→`windows`、映射邏輯同 Python |
 
-Python 的 `sys.platform` 回傳 `darwin` 和 `win32` 不是使用者友善的名稱，SDK 負責映射到標準名稱。Flutter 的 `dart:io Platform.operatingSystem` 恰好回傳合法值。JS SDK 在瀏覽器環境中無法可靠偵測 OS，platform 統一為 `web`。
+以上映射是 SDK init 時的預設自動偵測行為。Python 和 Go 的 runtime 回傳系統內部名稱（`darwin`、`win32`），SDK 負責映射到 schema 定義的標準名稱。Flutter 的 `dart:io Platform.operatingSystem` 恰好回傳合法值。JS SDK 在瀏覽器環境中無法可靠偵測 OS，platform 統一為 `web`。
+
+自動偵測之外，SDK 也接受手動覆蓋 platform 值。短生命週期的命令列腳本（如 CI pipeline step、pre-commit hook）可手動將 platform 設為 `script`，表示非互動式 OS session——這類場景中 OS 名稱不是有意義的區分維度，`script` 讓查詢時能篩選出所有腳本來源的事件。
+
+SDK 不做映射的話，collector 會收到不一致的 platform 值——同是 macOS 的事件有些標 `darwin` 有些標 `macos`，查詢篩選會漏事件。各平台 SDK 的執行環境適配細節見[模組五：平台適配](/monitoring/05-platform-adaptation/)。
 
 ### session（選填）
 

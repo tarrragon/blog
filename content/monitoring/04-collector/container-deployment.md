@@ -61,16 +61,15 @@ chown 1000:1000 monitor-data
 
 `docker stop` 送 SIGTERM → collector 收到後執行 shutdown 序列：
 
-1. 停止接受新的 HTTP request
-2. 等待 in-flight request 完成（context timeout）
-3. Flush pending writes（channel 中排隊的事件）
-4. Flush rule engine state（待評估的規則和未送出的 alert）
-5. Flush JSONL mirror buffer（確保 mirror 檔案寫入完整）
-6. SQLite WAL checkpoint（把 WAL 內容合併回主 DB 檔案）
-7. 關閉 DB connection 和檔案 handle
-8. 退出
+1. 停止接受新的 HTTP request（listener close）
+2. 等待 in-flight request 完成（5 秒 context timeout）
+3. Flush pending writes（尚未寫入 storage 的事件，5 秒）
+4. 停止定期 job（downsample / purge / rule engine 定期評估）
+5. SQLite WAL checkpoint（TRUNCATE mode，15 秒）
+6. 關閉 DB connection
+7. 退出
 
-這個序列對應 [Backend 5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 的 shutdown → drain 狀態：步驟 1-2 是 drain（停接新工作、等在途完成），步驟 3-5 是 shutdown（釋放資源）。Collector 屬於短 request API 的 workload 類型（drain 窗口 5-30 秒），但多了 SQLite WAL checkpoint 這個 flush 步驟，讓 drain 時間可能超過一般 HTTP 服務。PID 1 信號處理的設計考量（exec form、避免 shell 攔截 SIGTERM）見 [Backend 5.1 PID 1 與信號處理](/backend/05-deployment-platform/container-runtime/)。
+步驟 2-5 合計超時上限 25 秒。這個序列對應 [Backend 5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/) 的 shutdown → drain 狀態：步驟 1-2 是 drain（停接新工作、等在途完成），步驟 3-6 是 shutdown（flush 狀態和釋放資源）。Collector 屬於短 request API 的 workload 類型（drain 窗口 5-30 秒），但多了 WAL checkpoint 步驟，讓 shutdown 時間可能超過一般 HTTP 服務。PID 1 信號處理的設計考量（exec form、避免 shell 攔截 SIGTERM）見 [Backend 5.1 PID 1 與信號處理](/backend/05-deployment-platform/container-runtime/)。
 
 `docker stop` 預設等 10 秒後送 SIGKILL。如果 WAL checkpoint 在大量未 checkpoint 的資料下需要超過 10 秒，Docker Compose 可以調 `stop_grace_period: 30s`。
 

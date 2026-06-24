@@ -92,11 +92,13 @@ Rule engine 設計見 [Rule engine 設計](/monitoring/04-collector/rule-engine/
 
 ## 多獨立 client 併發寫入
 
+上述五段鏈路描述的是單一 request 的路徑。實際運行時，多個 SDK 會同時送事件——以下先描述場景，下方[並發寫入策略](#並發寫入策略)再詳述 collector 如何處理。
+
 常見部署場景中，多個完全獨立的 SDK 實例同時送事件到同一個 collector——不同 process、不同 app、甚至不同語言的 SDK。這和「一個 app 內的多 thread 併發」不同：每個 SDK 有自己的 buffer 和 HTTP 連線，不共享任何狀態。
 
-具體案例：Claude Code 的 Hook 系統。多個 Hook 可能同時觸發（例如 SessionStart 的多個 Hook 並行執行），每個 Hook 是獨立的 Python process，各自初始化 SDK、產生事件、flush 到同一個 collector。
+SDK 端不需要知道其他 SDK 的存在。每個 SDK 獨立 init、獨立 buffer、獨立 flush、獨立 close。SDK 端的唯一接觸點是 collector 的 HTTP endpoint——併發安全由 storage backend 的併發策略保證（見下方[並發寫入策略](#並發寫入策略)），不需要 SDK 端協調。多 client 同時 flush 時的背壓機制見 [Ingestion 背壓與流量管控](/monitoring/04-collector/ingestion-scaling/)。
 
-SDK 端不需要知道其他 SDK 的存在。每個 SDK 獨立 init、獨立 buffer、獨立 flush、獨立 close。唯一的共享資源是 collector 的 HTTP endpoint——併發安全由 collector 端的 channel pipeline 和 storage backend 保證，不需要 SDK 端協調。
+例如 CI pipeline 的多個 job 同時送 build 事件，或微服務架構中多個 service 各自送事件到同一個 collector。另一個具體案例是 Claude Code 的 Hook 系統——多個 Hook 同時觸發時，每個 Hook 是獨立的 Python process，各自初始化 SDK、產生事件、flush 到同一個 collector。
 
 ## 並發寫入策略
 
