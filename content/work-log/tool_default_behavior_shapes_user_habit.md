@@ -1,115 +1,150 @@
 ---
-title: "工具的預設行為決定使用者習慣 — 從版本錯置事件看 CLI 設計的 opinion 責任"
+title: "工具的預設行為決定使用者習慣 — 為什麼你的 CLI 應該有 opinion"
 date: 2026-06-25
 draft: false
-description: "ticket create 不引導版本歸屬，使用者直覺用當前 active 大版本，導致改善類 ticket 錯放。version-release 不檢查前版本 status，舊版本 active 殘留。兩者都是工具沒有 opinion 的後果。好的工具應該有 opinion 並在預設行為中引導正確做法。"
+description: "從一個版本錯置事件，反思內部工具設計中常被忽略的責任：工具的預設路徑就是團隊的實際流程。文件上寫的規範，和工具預設引導的行為不一致時，工具會贏。"
 tags: ["process", "cli-design", "version-management", "tool-design", "retrospective"]
 ---
 
-> **觸發場景**：v0.3.0 版本檢討時建立的 reset 根因分析（ANA）和 State Registry 重構（IMP）ticket 被放進 v0.4.0（PostgreSQL scope），事後需手動遷移到 v0.3.2
-> **第二觸發**：`ticket track board` 顯示 v0.2.0 有未完成任務，查證後發現 v0.2.0/0.2.1/0.2.2 三個已完成版本的 todolist status 仍為 active
-> **整理目的**：記錄「工具的預設行為如何形塑使用者（含 AI agent）的決策慣性」這個 pattern
-> **本文邊界**：這是一篇檢討卡片，聚焦於 CLI 工具設計的 opinion 責任，不涉及版本策略本身的對錯
+> **整理目的**：這不是一次性事件的檢討報告，而是對「工具設計者的責任邊界」的反思。當工具的使用者包含 AI agent 時，預設行為的影響更深遠。
+> **本文邊界**：聚焦於內部開發工具（CLI）的 opinion 設計，不涉及面向終端使用者的產品 UX。
 
 ---
 
-## 事件一：改善類 ticket 錯放大版本
+## 背景：我們怎麼管理版本和工作項目
 
-### 發生了什麼
+先交代脈絡，否則後面的事件沒有參照點。
 
-v0.3.0 的 JS SDK 開發過程中，`__reset()` 方法漏重置 `retryCount`/`flushing`/`lastHeartbeat` 三個 private 欄位，導致跨 test case 狀態洩漏。v0.3.1 做了 hotfix 後，需要深入分析根因並建立系統性防護。
+我們的專案用 semver（語意化版本）管理發布節奏。每個版本（如 v0.3.0）有明確的功能 scope，由數個提案（Proposal）定義。版本內部再拆成多個工作項目（ticket），按波次（Wave）排序執行。
 
-建立分析 ticket 時，`ticket create --version 0.4.0` 直接指定了下一個大版本。原因很直覺——v0.3.0 和 v0.3.1 都已發布，v0.4.0 是當前 active 的版本，CLI 也沒有提示「這個 ticket 的性質不適合放在大版本」。
+版本的生命週期很單純：`planned → active → completed`。一個版本的所有 ticket 完成後，跑發布流程、打 tag、標記 completed。
 
-結果：reset 根因分析（ANA）、State Registry 重構（IMP）、quality-common 規則更新（DOC）三張 ticket 全部放進 v0.4.0，和 PostgreSQL Storage Backend 混在一起。事後用戶發現錯置，需要建立 v0.3.2、遷移三張 ticket、重新發布。
+圍繞這個流程，我們自建了兩個 CLI 工具：
 
-### 為什麼會這樣
+| 工具              | 用途                                          |
+| ----------------- | --------------------------------------------- |
+| `ticket create`   | 建立工作項目，指定歸屬版本                    |
+| `version-release` | 版本發布（pre-flight 檢查、文件更新、打 tag） |
 
-根本原因不是「使用者判斷錯誤」，而是**工具沒有提供判斷依據**。
+這兩個工具在設計時，都選擇了「彈性優先」——接受任何合法輸入，不對使用者的選擇做判斷。
 
-`ticket create` 接受 `--version` 參數時，只做格式驗證（版本號是否存在於 todolist），不分析需求類型與版本 scope 的匹配度。對工具來說，把 bug fix 放進 v0.4.0 和把新功能放進 v0.4.0 沒有區別——兩者都是「合法操作」。
+這個選擇在後來被證明是錯的。
 
-但從版本語意來看，這是兩件完全不同的事：
+## 版本語意：大版本和小版本的分工
 
-| 需求類型         | 版本語意         | 應歸屬 |
-| ---------------- | ---------------- | ------ |
-| 新功能（feat）   | minor/major bump | v0.4.0 |
-| 修復（fix）      | patch bump       | v0.3.x |
-| 改善（improve）  | patch bump       | v0.3.x |
-| 重構（refactor） | patch bump       | v0.3.x |
-| 文件（docs）     | patch bump       | v0.3.x |
+semver 的 `MAJOR.MINOR.PATCH` 有明確的語意分工：
 
-工具不表達 opinion，使用者（尤其是 AI agent，傾向選擇當前 active 的最大版本）用直覺決定，版本錯置。
+| 層級                   | 語意              | 觸發條件                  |
+| ---------------------- | ----------------- | ------------------------- |
+| MAJOR（0.x → 1.0）     | 不相容的 API 變更 | 破壞既有介面              |
+| MINOR（0.3 → 0.4）     | 新功能            | 新增 Proposal / 新 Spec   |
+| PATCH（0.3.0 → 0.3.1） | 修復和改善        | bug fix / 重構 / 規則更新 |
 
-## 事件二：已完成版本 status 殘留
+這個語意不只是「版本號怎麼跳」的問題，它決定了**工作項目應該放在哪裡**。一個 bug fix 放進 MINOR 版本，語意上等於說「這個 bug fix 和下一批新功能綁定發布」——多數情況下這不是你想要的。
 
-### 發生了什麼
+我們的工具沒有表達這個語意。
 
-`ticket track board` 顯示 v0.2.0 有未完成任務。查證後發現 v0.2.0（38/38 完成）、v0.2.1（7/7 完成）、v0.2.2 三個版本在 todolist.yaml 中仍標記為 `status: active`。
+## 事件：改善類工作放進了新功能版本
 
-### 為什麼會這樣
+v0.3.0 發布了 JS SDK、Collector 背壓、Error Fingerprint 三個新功能。發布後的版本檢討發現了一個設計問題——JS SDK 的 `__reset()` 方法沒有重置所有 private 欄位，導致測試隔離失敗。v0.3.1 做了 hotfix。
 
-v0.2.x 時期的版本發布可能是手動操作或早期 CLI 版本，未觸發 todolist status 同步。而 `version-release check` 的 pre-flight 檢查只看「當前版本的 ticket 是否完成」，不掃描「前版本是否遺留 active status」。
+接下來要做根因分析和系統性防護（State Registry Pattern 重構、品質規則更新）。建立工作項目時，自然地指定了 `--version 0.4.0`——因為 v0.3.0 和 v0.3.1 都已發布，v0.4.0 是當前唯一 active 的版本。
 
-結果：已完成版本在系統中看起來像未完成，board 顯示混亂，新使用者（或新 session）看到 v0.2.0 未完成會困惑。
+CLI 接受了這個輸入，沒有任何提示。
 
-## 共通 pattern：工具沒有 opinion 的後果
+三張改善類的工作項目（根因分析、重構、規則文件）就這樣和 PostgreSQL Storage Backend（v0.4.0 的核心功能）混在一起。直到使用者檢視版本看板時才發現不對——改善類工作和新功能綁在同一個發布週期，語意混亂。
 
-兩個事件的共通根因是**工具在應該有 opinion 的地方保持沉默**。
+修正方式：建立 v0.3.2、遷移三張 ticket、重新發布。額外花了一輪操作成本。
 
-### 什麼時候工具應該有 opinion？
+## 事件二：已完成版本的幽靈
 
-當存在一個「多數情況下正確的預設行為」時，工具應該把它表達出來。使用者可以覆蓋，但預設路徑應該引導正確做法。
+同一次檢視中發現另一個問題：看板顯示 v0.2.0 有未完成任務。
 
-| 場景                  | 工具應有的 opinion                                  | 實際行為                     |
-| --------------------- | --------------------------------------------------- | ---------------------------- |
-| 建 fix/improve ticket | 「建議放 v0.3.x+1（patch bump）」                   | 無引導，接受任何 active 版本 |
-| 發布版本後            | 「前版本 v0.2.x 仍為 active，是否標記 completed？」 | 只更新當前版本 status        |
-| board 顯示            | 「v0.2.0 所有 ticket 已完成但 status 為 active」    | 靜默顯示為未完成             |
+查證後發現 v0.2.0（38 張 ticket 全部完成）、v0.2.1（7 張全完成）、v0.2.2 三個版本在版本清單中仍標記為 `active`。它們在數個月前就該標為 `completed`，但沒有。
 
-### Convention over Configuration
+原因是版本發布工具的 pre-flight 檢查只看「當前版本的 ticket 是否完成」，不掃描「更早的版本是否有 active 殘留」。早期版本可能是手動發布的，跳過了狀態同步步驟。工具沒有補救機制，殘留就一直留著。
 
-Rails 的「Convention over Configuration」原則在這裡完全適用：工具應該用約定（convention）引導使用者走正確路徑，而不是提供無限彈性讓使用者自己判斷。
+看板靜默地把這些版本顯示為「有未完成工作」，產生誤導。
 
-「無 opinion 的工具」看起來更靈活，但實際上把判斷成本轉嫁給每次使用的人。當使用者是 AI agent 時，這個問題更嚴重——agent 沒有跨 session 記憶，每次都會用最直覺的路徑（當前 active 最大版本）。
+## 為什麼會這樣：工具沒有 opinion
 
-## 改善方向
+兩個事件的共通根因：**工具在應該有立場的地方選擇了沉默。**
 
-### ticket create 版本歸屬引導
+### 建立工作項目時
 
-CLI 在 `--version` 未指定時，根據 ticket type + action 建議版本：
+`ticket create --version 0.4.0 --type ANA --action "分析"` — 工具知道這是一張分析類（ANA）的 ticket，也知道 v0.4.0 的 scope 是 PostgreSQL Storage。但它不認為自己有責任判斷「分析類 ticket 放在新功能版本是否合理」。
+
+它只檢查：版本號存在嗎？格式合法嗎？通過就建立。
+
+### 發布版本時
+
+`version-release release --version 0.3.0` — 工具知道版本清單中有 v0.2.0 / v0.2.1 仍為 active。但它不認為自己有責任提醒「這些前版本可能需要清理」。
+
+它只檢查：當前版本的 ticket 都完成了嗎？CHANGELOG 更新了嗎？通過就發布。
+
+兩者都是「工具做了它被要求做的事，但沒做它應該做的事」。
+
+## 工具什麼時候應該有 opinion？
+
+不是所有情境都需要工具有立場。有一個簡單的判斷標準：
+
+> **當存在一個「多數情況下正確的預設行為」時，工具應該把它表達出來。使用者可以覆蓋，但預設路徑應該引導正確做法。**
+
+改善類 ticket 放 patch 版本，在多數情況下是正確的。這不是「每次都對」，但「多數情況下對」已經足夠讓工具表達立場：
 
 ```
 $ ticket create --type IMP --action "修復" --target "retry test"
-[建議] 此 ticket 為修復類（fix），建議放 v0.3.2（當前最新 patch）
-       而非 v0.4.0（下一個 feature 版本）
-       使用 --version 0.3.2 或 --version 0.4.0 覆蓋
+[建議] 此 ticket 為修復類，建議放 v0.3.2（patch bump）
+       而非 v0.4.0（下一個功能版本）
+       使用 --version 覆蓋此建議
 ```
 
-### version-release check 前版本掃描
-
-pre-flight check 加入「前版本 active 殘留偵測」：
+前版本 status 掃描也是。已完成版本仍為 active 在所有情況下都是異常——工具不需要猜，只需要報告：
 
 ```
 $ version-release check
-[WARN] v0.2.0 所有 38 ticket 已完成但 status 仍為 active
-[WARN] v0.2.1 所有 7 ticket 已完成但 status 仍為 active
-       建議執行: version-release cleanup-stale
+[WARN] v0.2.0：38 張 ticket 全部完成但 status 仍為 active
 ```
 
-### 設計原則提煉
+## 為什麼使用者是 AI agent 時問題更嚴重
+
+這個 pattern 在人類使用者身上已經存在——人類也會走阻力最小的路徑。但人類有跨次記憶：「上次放錯版本被糾正過，這次注意一下。」
+
+AI agent 沒有這個。
+
+每個 session 是一個全新的 agent，它讀到的是：版本清單中 v0.4.0 是 active、CLI 接受 `--version 0.4.0`、沒有警告。於是它每次都會用最直覺的選擇——當前 active 的最大版本。
+
+上次的教訓不會自動傳遞到下次。除非教訓被固化成工具行為。
+
+這把「工具應該有 opinion」從「最佳實踐」升級為「必要條件」：
+
+- **人類使用者**：opinion 是提醒，有助於減少錯誤
+- **AI agent 使用者**：opinion 是唯一的防線，因為 agent 不會從上次的錯誤中學習（除非錯誤被轉化為工具規則）
+
+## 設計原則
 
 > **工具的預設行為，就是團隊的實際流程。**
->
-> 文件上寫的流程，和工具預設引導的流程不一致時，工具會贏。因為使用者（和 AI agent）走的是阻力最小的路徑，而阻力最小的路徑就是工具的預設行為。
->
-> 所以：如果你希望使用者做 X，不要寫文件說「請做 X」——把工具的預設行為設成 X。
 
----
+文件上寫「改善類工作放 patch 版本」沒有用——如果工具不引導，使用者（人類和 AI 都是）會走工具預設的路徑。文件說的和工具做的不一致時，工具會贏。
 
-## 追蹤
+這不是說文件沒有價值。文件定義「應該是什麼樣」，工具實現「實際是什麼樣」。兩者不一致時，優先修工具——而非加更多文件提醒使用者「請遵守文件」。
 
-| Ticket       | 內容                           | 版本   |
-| ------------ | ------------------------------ | ------ |
-| 0.3.3-W1-001 | ticket create 版本歸屬引導機制 | v0.3.3 |
-| 0.3.3-W1-002 | 版本發布檢查遺漏根因分析       | v0.3.3 |
+> **如果你希望使用者做 X，不要寫文件說「請做 X」——把工具的預設行為設成 X。**
+
+這個原則適用於所有內部工具設計，不限於版本管理：
+
+| 場景              | 寫文件的做法            | 改工具的做法                  |
+| ----------------- | ----------------------- | ----------------------------- |
+| commit 前跑測試   | README 寫「請先跑測試」 | pre-commit hook 自動跑        |
+| PR 描述格式       | 貢獻指南寫範本          | PR template 預填結構          |
+| 改善放 patch 版本 | 版本策略文件寫規則      | CLI 根據 ticket type 建議版本 |
+
+每一個「寫文件提醒」都是承認「工具沒做到位」的信號。
+
+## Convention over Configuration
+
+Rails 的「Convention over Configuration」是同一個觀念的先驅表達：框架應該用約定引導開發者走正確路徑，而不是提供無限彈性讓每個人自己決定檔案放哪裡、命名怎麼取。
+
+「無 opinion 的工具」看起來更靈活，但靈活的代價是：每次使用都需要判斷，而判斷需要 context。人類可能忘記 context，AI agent 根本沒有 context。
+
+有 opinion 的工具把判斷成本從「每次使用時」前移到「設計工具時」——一次判斷，永久生效。
