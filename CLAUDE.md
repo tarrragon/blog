@@ -97,12 +97,23 @@ skill-sync push <skill-name> -m "commit message"
 skill-sync pull <skill-name>
 ```
 
+### 版號規則（強制）
+
+修改 skill 內容後必須更新 SKILL.md 末尾的版本號，格式為 `**Version**: X.Y.Z — 變更摘要`。版號遵循 semver：
+
+- **patch**（0.1.0 → 0.1.1）：修錯字、補連結、格式調整
+- **minor**（0.1.0 → 0.2.0）：新增 reference / principle 卡、擴充段落、加觸發詞
+- **major**（0.X → 1.0.0）：結構重組、支柱變動、破壞既有行為
+
+未標版號的 skill 首次補標用 `1.0.0`。變更摘要簡述改了什麼，參考 compositional-writing 的版本紀錄格式。
+
 ### 標準操作流程
 
 1. 在本地 `.claude/skills/<name>/` 修改 skill 內容
-2. commit 到 blog repo（`git add` + `git commit`）
-3. 逐一推送到 skill repo：`skill-sync push <name> -m "描述"`
-4. 驗證：`skill-sync list` 確認在清單中
+2. 更新 SKILL.md 末尾版本號（見上方版號規則）
+3. commit 到 blog repo（`git add` + `git commit`）
+4. 逐一推送到 skill repo：`skill-sync push <name> -m "描述"`
+5. 驗證：`skill-sync list` 確認在清單中
 
 批量推送多個 skill 時逐一執行 `skill-sync push`，不要嘗試手動 clone 遠端 repo 操作。
 
