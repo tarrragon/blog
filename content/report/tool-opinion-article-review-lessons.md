@@ -19,8 +19,6 @@ tags: ["report", "事後檢討", "Writing", "multi-round-review", "ai-writing"]
 | Fact-check | semver 表格混用專案術語和標準定義                | 準確性 |
 | 冷讀零脈絡 | 「Proposal」「Wave」行話洩漏、缺進入動機         | 可讀性 |
 
-Round 1 抓的是 surface 層——讀者第一眼看到的問題。這些問題不深但數量多（22 個），每個修法成本低。
-
 ### Round 2：Cadence + 讀者旅程 + Title commitment
 
 | Frame             | 代表 finding                             | 類型   |
@@ -29,16 +27,12 @@ Round 1 抓的是 surface 層——讀者第一眼看到的問題。這些問題
 | Reader simulation | 事件段佔比高、原則到得晚、CoC 結尾像附錄 | 節奏層 |
 | Title commitment  | title 承諾「為什麼」但 L86 才正式交付    | 對齊層 |
 
-Round 2 抓的是**結構層**——單句合規但連讀時才浮現的問題。同骨化和結尾收束力是 Round 1 的字句掃描完全看不到的。Reader simulation 的「會不會轉發」判斷提供了 Round 1 無法給的讀者視角。
-
 ### Round 3：Self-application + Steelman
 
 | Frame            | 代表 finding                                          | 類型    |
 | ---------------- | ----------------------------------------------------- | ------- |
 | Self-application | 文章主張「用結構引導」但自己的標題路徑偏事件          | Meta 層 |
 | Steelman         | 缺 soft/hard opinion 區分、缺 cost-benefit 不對稱論證 | 論證層  |
-
-Round 3 抓的是**論證完整性**——論點有沒有被公平對待、有沒有留下容易被反駁的漏洞。Self-application 用文章自己的主張檢查文章本身，是所有 frame 中最有洞察力的（但需要 Round 1-2 先把 surface/structure 問題清掉，否則 meta 層的判斷會被 surface noise 干擾）。
 
 ## 三輪漏抓鏈：為什麼前一輪漏了
 
