@@ -32,10 +32,10 @@ Cross-vendor migration playbook 寫作方法論 — 從 30 篇 migration / proce
 
 ## 三大支柱
 
-| 支柱                          | 意義                                                                                          |
-| ----------------------------- | --------------------------------------------------------------------------------------------- |
-| **6 維 diff dimension audit** | 寫前判主導維度、選對應 type 結構；不靠直覺套既有模板                                          |
-| **6 type 結構模板**           | Type A-F 對應不同 source/target 差異組合、結構模板隨 type 變動                               |
+| 支柱                                        | 意義                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **6 維 diff dimension audit**               | 寫前判主導維度、選對應 type 結構；不靠直覺套既有模板                                 |
+| **6 type 結構模板**                         | Type A-F 對應不同 source/target 差異組合、結構模板隨 type 變動                       |
 | **Stage 0 variant 規劃 + 4-reviewer audit** | 寫批量內容前主動準備 framing variant 避免 cadence collapse、寫後跑 multi-axis review |
 
 ## 6 維 diff dimension audit
@@ -84,14 +84,14 @@ Step 7: 評估候選軸（current open question）
 
 每 type 對應不同 anatomy、200-400 行：
 
-| Type | 主導維度        | Anatomy（章節骨架）                                                              | 行數 | 週期         |
-| ---- | --------------- | -------------------------------------------------------------------------------- | ---- | ------------ |
-| A    | Schema / API    | 6-phase phased translation                                                       | 11-12 | 4-9 個月    |
-| B    | 無顯著差異      | 6-section + compatibility audit prefix                                           | 7-8  | 1-4 週       |
-| C    | Operational     | Hybrid (4-phase 含 audit + drop-in cutover)                                      | 11-12 | 6-12 週     |
-| D    | Components 拆分 | Parallel migration streams                                                       | 10-11 | 2-4 個月    |
-| E    | Paradigm        | Partial + 混合架構                                                               | 10-11 | 不收斂       |
-| F    | Data topology   | 機制 + execution flow per-step（可拆 3 sub-type：F-table-internal / F-cluster-internal / F-multi-region；後者需 parallel run）| 7-9  | 1 天-2 週   |
+| Type | 主導維度        | Anatomy（章節骨架）                                                                                                            | 行數  | 週期      |
+| ---- | --------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----- | --------- |
+| A    | Schema / API    | 6-phase phased translation                                                                                                     | 11-12 | 4-9 個月  |
+| B    | 無顯著差異      | 6-section + compatibility audit prefix                                                                                         | 7-8   | 1-4 週    |
+| C    | Operational     | Hybrid (4-phase 含 audit + drop-in cutover)                                                                                    | 11-12 | 6-12 週   |
+| D    | Components 拆分 | Parallel migration streams                                                                                                     | 10-11 | 2-4 個月  |
+| E    | Paradigm        | Partial + 混合架構                                                                                                             | 10-11 | 不收斂    |
+| F    | Data topology   | 機制 + execution flow per-step（可拆 3 sub-type：F-table-internal / F-cluster-internal / F-multi-region；後者需 parallel run） | 7-9   | 1 天-2 週 |
 
 詳細 anatomy 規格在 [six-dimension-audit-framework](references/principles/six-dimension-audit-framework.md) 對映 type；個別 dogfood 篇是 anatomy 實證、不額外維護 anatomy doc。
 
@@ -199,3 +199,7 @@ Step 7: 評估候選軸（current open question）
 - 30+ limitation 中 *同類議題* 重複出現 ≥ 3 次 — 跨輪 audit 中 *結構性質疑* 措辭從「考慮」升到「必須」
 - 新 type 浮現（第 7 type 候選累積 ≥ 3 case）— framework 名「6 type」明顯誤導
 - case-first-module-workflow 跟本 skill 共用結構獨立浮現第 3 次 — 抽 common skill trigger
+
+---
+
+**Version**: 1.0.0

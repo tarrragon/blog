@@ -191,3 +191,7 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 
 - requirement-protocol 管 *對話協議*（澄清需求、確認方向）
 - case-first-module-workflow 管 *內容生產*（5 階段執行）
+
+---
+
+**Version**: 1.0.0
