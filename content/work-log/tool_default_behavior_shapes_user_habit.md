@@ -6,7 +6,7 @@ description: "從一個版本錯置事件，反思內部工具設計中常被忽
 tags: ["process", "cli-design", "version-management", "tool-design", "retrospective"]
 ---
 
-如果你維護內部 CLI 工具，尤其是會被 CI/CD 或 AI agent 呼叫的工具，這篇討論的 pattern 可能正在你的工具中靜默發生。
+如果你設計過任何給團隊使用的工具——CLI、API、表單、自動化流程——這篇討論的 pattern 可能正在你的工具中靜默發生。
 
 ---
 
