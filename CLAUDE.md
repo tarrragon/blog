@@ -82,20 +82,39 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 ## Skill 庫同步
 
-本專案的 `.claude/skills/` 與遠端 skill 庫 `https://github.com/tarrragon/claude.git`（路徑 `skills/`）共用同一組 skill。兩邊各自可能有改動，修改 skill 後要雙向同步：
+本專案的 `.claude/skills/` 與遠端 skill 庫 `https://github.com/tarrragon/claude-skills.git` 共用同一組 skill。使用 `skill-sync` CLI 工具同步（透過 `uv tool` 安裝在 `~/.local/bin/skill-sync`）。
 
-- **本地 → 遠端**：本專案修改 skill 內容後，clone 遠端 repo、複製改動過去、commit + push。
-- **遠端 → 本地**：遠端有新 skill 或更新時，clone 下來比對、選擇性合併到本地。
+### skill-sync 指令
 
-同步判斷原則：
+```bash
+# 列出遠端所有 skill
+skill-sync list
+
+# 本地 → 遠端（修改 skill 後推送）
+skill-sync push <skill-name> -m "commit message"
+
+# 遠端 → 本地（拉取遠端 skill）
+skill-sync pull <skill-name>
+```
+
+### 標準操作流程
+
+1. 在本地 `.claude/skills/<name>/` 修改 skill 內容
+2. commit 到 blog repo（`git add` + `git commit`）
+3. 逐一推送到 skill repo：`skill-sync push <name> -m "描述"`
+4. 驗證：`skill-sync list` 確認在清單中
+
+批量推送多個 skill 時逐一執行 `skill-sync push`，不要嘗試手動 clone 遠端 repo 操作。
+
+### 同步判斷原則
 
 - 版本號相同但檔案有差異 → 本地是客製版，以本地為準推回遠端。
-- 遠端版本較新 → diff 審查後決定是否合併。
+- 遠端版本較新 → diff 審查後決定是否合併（`skill-sync pull` + 本地比對）。
 - 本地版本較高 → 不覆蓋，本地為準。
-- 遠端有新增檔案（原則卡、hooks）→ 取用到本地，再推合併版回遠端。
-- `compositional-writing` 的 `hooks/` 目錄只存在遠端、本地不使用 — 推回時要 `git checkout` 保留。
+- 遠端有新增檔案（原則卡、hooks）→ `skill-sync pull` 取用到本地，再推合併版回遠端。
+- `compositional-writing` 的 `hooks/` 目錄只存在遠端、本地不使用 — 推回時工具會保留。
 
-注意事項：
+### 注意事項
 
 - 本專案 AGENTS.md 禁 emoji（§8），遠端若加了 emoji 是倒退、要修正推回。
 - Skill 內連結必須是相對路徑（portable 原則），遠端若改成絕對路徑要修正推回。
