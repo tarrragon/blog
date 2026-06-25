@@ -8,6 +8,8 @@ tags: ["ai-agent", "parallel-dispatch", "git", "conflict-resolution", "retrospec
 
 ## 事件
 
+多人（或多 agent）並行開發時，如果修改集中在同一個檔案，協調成本可能抵消並行的收益。以下是一個具體案例。
+
 v0.3.0 的 JS SDK 開發中，五張 ticket 被並行派發給五個 AI agent：flush 邏輯、離線容錯、自動攔截、頁面生命週期、rate limiting。前四個都需要修改同一個檔案 `monitor.ts`。
 
 結果：
