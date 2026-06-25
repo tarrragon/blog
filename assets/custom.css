@@ -222,6 +222,7 @@ a:hover {
   background-size: 0 !important;
   transition: border-color 0.2s ease, background-color 0.2s ease !important;
   text-decoration: none !important;
+  overflow: hidden;
 }
 
 .article-nav-link:hover {
