@@ -30,4 +30,4 @@ tags: ["report", "事後檢討", "Writing", "topic-drift", "audience-awareness"]
 
 ## 延伸
 
-AI 生成的文章容易出現這類偏移——prompt context 中的系統知識會被 AI 當作「相關因此應寫入」。但「推理中相關」和「讀者需要知道」是兩件事。同類問題（AI 把內部推理殘留外露到文章中）的另一面見 [reader-does-not-need-to-know](../report/reader-does-not-need-to-know.md)。
+AI 生成的文章容易出現這類偏移——prompt context 中的系統知識會被 AI 當作「相關因此應寫入」。但「推理中相關」和「讀者需要知道」是兩件事。同類問題（AI 把內部推理殘留外露到文章中）的另一面見 [reader-does-not-need-to-know](/report/reader-does-not-need-to-know/)。
