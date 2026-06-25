@@ -90,11 +90,14 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 # 列出遠端所有 skill
 skill-sync list
 
-# 本地 → 遠端（修改 skill 後推送）
-skill-sync push <skill-name> -m "commit message"
+# 批次更新已安裝的 skill（比對 versions.json，只更新有差異者）
+skill-sync pull
 
-# 遠端 → 本地（拉取遠端 skill）
+# 拉取指定 skill（新安裝或強制更新）
 skill-sync pull <skill-name>
+
+# 本地 → 遠端（修改 skill 後推送，自動更新 versions.json）
+skill-sync push <skill-name> -m "commit message"
 ```
 
 ### 版號規則（強制）
