@@ -3,12 +3,23 @@
 {{ $fg := resources.Get "images/social_card_fg.png"}}
 {{ $bg := resources.Get "images/social_card_bg.png"}}
 
-{{ if gt (len .Title) 45 }}
+{{ $bylineY := 425 }}
+{{ if gt (len .Title) 80 }}
   {{ $fg = $fg.Filter (images.Text .Title (dict
     "font" $font
     "color" "#fafafa"
-    "size" 95
-    "linespacing" 16
+    "size" 65
+    "linespacing" 12
+    "x" 0
+    "y" 0
+  )) }}
+  {{ $bylineY = 400 }}
+{{ else if gt (len .Title) 45 }}
+  {{ $fg = $fg.Filter (images.Text .Title (dict
+    "font" $font
+    "color" "#fafafa"
+    "size" 85
+    "linespacing" 14
     "x" 0
     "y" 0
   )) }}
@@ -16,8 +27,8 @@
   {{ $fg = $fg.Filter (images.Text .Title (dict
     "font" $font
     "color" "#fafafa"
-    "size" 130
-    "linespacing" 20
+    "size" 120
+    "linespacing" 18
     "x" 0
     "y" 0
   )) }}
@@ -25,8 +36,8 @@
 
 {{ $date := .Date.Format (default "2006-01-02" .Site.Params.dateFormat) }}
 {{ $author := "" }}
-{{ if $.Param "author" }}
-  {{ $author = $.Param "author" }}
+{{ if .Params.author }}
+  {{ $author = .Params.author }}
 {{ else if $.Site.Params.author.name }}
   {{ $author = $.Site.Params.author.name }}
 {{ end }}
@@ -41,7 +52,7 @@
     "size" 60
     "linespacing" 30
     "x" 0
-    "y" 425
+    "y" $bylineY
 )) }}
 
 {{ $card := $bg.Filter (images.Overlay $fg 112 140 ) }}
