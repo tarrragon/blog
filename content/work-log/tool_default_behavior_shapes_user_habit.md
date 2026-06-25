@@ -6,7 +6,7 @@ description: "從一個版本錯置事件，反思內部工具設計中常被忽
 tags: ["process", "tool-design", "version-management", "opinionated-software", "retrospective"]
 ---
 
-如果你設計過任何給團隊使用的工具——CLI、API、表單、自動化流程——這篇討論的 pattern 可能正在你的工具中靜默發生。
+這篇從一個版本錯置的經驗出發，討論工具設計中一個容易忽略的面向：工具接受自由輸入時，預設路徑如何影響使用者的決策。適用於 CLI、API、表單、自動化流程——任何需要使用者做選擇的介面。
 
 ---
 
