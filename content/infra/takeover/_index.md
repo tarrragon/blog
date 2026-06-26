@@ -12,11 +12,15 @@ tags: ["infra", "takeover", "legacy", "migration"]
 
 ## 章節文章
 
-| 文章                                                                    | 主題                                                              |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-shared-hosting/) | 沒有 SSH、沒有 CLI、只有 FTP 和 phpMyAdmin 的 legacy 環境怎麼接管 |
-| [有 SSH 但沒有 IaC 的雲端環境接管](/infra/takeover/cloud-no-iac/)       | 有 Console 和 CLI 存取、但資源全是手動建的雲端環境怎麼盤點和接管  |
-| [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/) | IaC 覆蓋不完整、部分資源在 state 外、文件缺失的環境怎麼收斂       |
+| 文章                                                                                | 主題                                                                      |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-shared-hosting/)             | 沒有 SSH、沒有 CLI、只有 FTP 和 phpMyAdmin 的 legacy 環境怎麼接管（總覽） |
+| [共享主機的資料庫備份與變更管理](/infra/takeover/legacy-database-backup-migration/) | phpMyAdmin 的限制與對策、備份策略、migration 紀律、還原演練               |
+| [程式碼版控與 FTP 部署紀律](/infra/takeover/legacy-code-versioning-deployment/)     | 本地 Git 工作流、config 分離、FTP 部署風險控制、CI 化 FTP                 |
+| [Legacy PHP 的安全盤點](/infra/takeover/legacy-php-security-audit/)                 | credential 掃描、PHP 版本風險、SQL injection/XSS 模式、.htaccess 防護     |
+| [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/)              | 外部 HTTP check、錯誤追蹤、效能基線、流量異常偵測                         |
+| [有 SSH 但沒有 IaC 的雲端環境接管](/infra/takeover/cloud-no-iac/)                   | 有 Console 和 CLI 存取、但資源全是手動建的雲端環境怎麼盤點和接管          |
+| [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/)             | IaC 覆蓋不完整、部分資源在 state 外、文件缺失的環境怎麼收斂               |
 
 ## 跟其他模組的關係
 
