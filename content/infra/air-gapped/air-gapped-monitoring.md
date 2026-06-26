@@ -206,3 +206,5 @@ server ntp.internal iburst
 - → [斷網環境的容器管理](/infra/air-gapped/air-gapped-container/)：Prometheus/Grafana/Loki 的容器映像搬運
 - → [模組六：可觀測性與 log](/infra/06-observability-logging/)：連網環境的可觀測性 IaC
 - → [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/)：另一個極端——完全外部監控
+- → [Monitoring 04：Collector 架構與部署](/monitoring/04-collector/)：SDK 和 Collector 的應用層監控，斷網環境需要把 Collector endpoint 指向 self-hosted backend
+- → [Monitoring 06：Self-hosted vs Commercial](/monitoring/06-commercial-comparison/self-hosted-vs-commercial/)：斷網環境只能走 self-hosted 路線

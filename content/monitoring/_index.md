@@ -26,6 +26,8 @@ tags: ["monitoring"]
 
 [Infra 模組六：可觀測性與 log](/infra/06-observability-logging/) 聚焦基礎設施層 — log group、CloudWatch metric、alarm 跟資源同生命週期的 IaC 管理。那是「基礎設施怎麼知道自己出問題」。本系列跟 Backend 可觀測性、Infra 可觀測性三者的分界是觀測對象：infra 觀測資源健康（CPU、磁碟、網路連通）、backend 觀測服務行為（延遲、錯誤率、trace）、本系列觀測客戶端行為（使用者操作、前端錯誤、效能指標）。事故排查時三者合流。
 
+斷網環境（air-gapped）裡這三層都要 self-hosted——infra 層用 Prometheus + Grafana、backend 層用自架的 trace/log collector、本系列的 SDK 和 Collector 也要部署在內網。斷網環境的 infra 層監控設定見[斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/)。
+
 ## 教學範圍
 
 | 放在本系列                                         | 放在其他系列                                                              |

@@ -137,6 +137,14 @@ Volume mount 後效能差異只有 ~10%（Go HTTP handler 的 overhead 大於 vo
 | Kubernetes 部署         | Container        | pod spec 標準化                   |
 | Raspberry Pi / 邊緣設備 | Binary           | 低資源環境避免 container overhead |
 
+## 斷網環境的部署考量
+
+Collector 在斷網環境（air-gapped）裡的部署跟連網環境的主要差異有三點。第一，SDK 的 endpoint 從外部 URL（`https://collect.example.com`）改為內網地址（`http://collector.internal:8080`），SDK 設定檔裡的 endpoint 要能按環境切換。第二，Collector 的 container image 無法從 Docker Hub 拉取——需要透過 content ferry 搬運映像、推送到內網的 private registry（Harbor 或 Docker Registry），Dockerfile 的 base image 來源也要改指 private registry。第三，Collector 的 storage backend 只能用本地磁碟或 NFS，不能用雲端物件儲存——SQLite backend 在斷網環境反而是優勢（零外部依賴），儲存容量規劃要在部署前就確定，因為斷網環境的磁碟擴容流程可能需要數週。
+
+SDK 的 offline buffer（見[SDK 設計：offline-buffer](/monitoring/03-sdk-design/offline-buffer/)）在斷網環境更重要——如果 Collector 重啟或暫時不可達，SDK 端的 buffer 是唯一能保住事件的機制。
+
+斷網環境的 infra 層監控（Prometheus / Grafana / Loki）設定見[斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/)。
+
 ## 下一步路由
 
 - SQLite 效能基準的詳細數字 → [SQLite Backend 效能基準](/monitoring/04-collector/sqlite-performance-baseline/)
