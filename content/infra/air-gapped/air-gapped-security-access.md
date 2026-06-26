@@ -40,7 +40,7 @@ tags: ["infra", "air-gapped", "security", "access-control"]
 
 ## 身分與認證（沒有雲端 IAM）
 
-連網環境用 OIDC / SSO / 雲端 IAM 管理身分。斷網環境沒有這些——需要自建身分基礎設施。
+連網環境用 OIDC / SSO / 雲端 [IAM](/infra/knowledge-cards/iam/) 管理身分。斷網環境沒有這些——需要自建身分基礎設施。
 
 **集中身分管理**：FreeIPA（整合 LDAP + Kerberos + DNS + CA）或 OpenLDAP 作為統一的使用者目錄。所有內部服務（GitLab、Nexus、Harbor、Vault、Grafana）都配置 LDAP 認證，避免每個服務各自管一套使用者帳號。FreeIPA 的優勢是把 LDAP、Kerberos、DNS 和 CA 整合在一個管理介面——在資源有限的斷網環境裡減少維運面。
 

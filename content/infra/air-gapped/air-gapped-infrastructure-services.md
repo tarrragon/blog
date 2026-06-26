@@ -6,7 +6,7 @@ weight: 8
 tags: ["infra", "air-gapped", "dns", "ntp", "ca", "vault"]
 ---
 
-斷網環境裡的 GitLab、Harbor、Prometheus、Nexus 都有一個共同前提：它們需要名稱解析（DNS）才能互相找到、需要時間同步（NTP）才能讓 log 和憑證有效、需要 TLS 憑證（CA）才能走 HTTPS、需要機密儲存（Vault）才能安全管理密碼和 token。這四個是「服務的服務」——沒有它們，其他自建服務要麼無法啟動、要麼只能用不安全的 HTTP 明文通訊。
+斷網環境裡的 GitLab、[Harbor](/infra/knowledge-cards/harbor/)、[Prometheus](/infra/knowledge-cards/prometheus/)、Nexus 都有一個共同前提：它們需要名稱解析（[DNS](/infra/knowledge-cards/dns/)）才能互相找到、需要時間同步（NTP）才能讓 log 和憑證有效、需要 [TLS](/infra/knowledge-cards/ssl-tls/) 憑證（CA）才能走 HTTPS、需要機密儲存（[Vault](/infra/knowledge-cards/vault/)）才能安全管理密碼和 token。這四個是「服務的服務」——沒有它們，其他自建服務要麼無法啟動、要麼只能用不安全的 HTTP 明文通訊。
 
 ## Internal DNS：內部名稱解析
 

@@ -6,7 +6,7 @@ weight: 2
 tags: ["infra", "air-gapped", "iac", "terraform"]
 ---
 
-Terraform 在連網環境執行 `init` 時會自動從 HashiCorp 的 registry 下載 provider plugin 和 module。斷網環境沒有這個路徑——provider、module、state backend 全部要用離線替代。IaC 的核心價值（宣告式描述 + state 追蹤 + plan 預覽）不因斷網而改變，改變的只是依賴的取得方式和 state 的存放位置。
+Terraform 在連網環境執行 `init` 時會自動從 HashiCorp 的 registry 下載 provider plugin 和 module。斷網環境沒有這個路徑——provider、module、[state](/infra/knowledge-cards/state/) backend 全部要用離線替代。[IaC](/infra/knowledge-cards/iac/) 的核心價值（宣告式描述 + state 追蹤 + [plan 預覽](/infra/knowledge-cards/terraform-plan-apply/)）不因斷網而改變，改變的只是依賴的取得方式和 state 的存放位置。
 
 ## Provider 離線管理
 
