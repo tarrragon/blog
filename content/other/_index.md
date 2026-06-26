@@ -11,6 +11,9 @@ tags: ["雜項", "工具技巧"]
 
 - [Android 無線除錯設定](android_wireless_debug/)
 - [macOS 多桌面快捷鍵](macos_muti_spaces/)
+- [macOS 新機初始化清單](macos_new_machine_setup/)
+- [macOS 磁碟空間診斷流程](macos_disk_space_diagnosis/)
+- [macOS App 聚合佔用報告](macos_app_footprint_report/)
 - [Snippet template skeleton](snippet_template_skeleton/)
 
 ---

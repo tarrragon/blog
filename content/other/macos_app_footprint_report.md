@@ -11,7 +11,7 @@ tags: ["macos", "disk-space", "tooling", "homebrew", "troubleshooting"]
 
 判斷一個 App 吃多少空間，要算的是它的總足跡（footprint），而不是 `/Applications` 裡那顆 `.app` 的大小。`.app` 只是程式本體，App 跑起來產生的資料——下載內容、快取、登入狀態、設定、日誌——絕大多數寫在 `~/Library` 底下的好幾個不同位置，跟 `.app` 完全分家。
 
-這台機器上最極端的例子是 Steam：它的 `.app` 只有 10.8M，但遊戲資料佔了 8.1G，兩者差了近 800 倍。只看 `/Applications` 的大小排序，Steam 會排在很後面，完全看不出它其實是全機第一大戶。同樣地，Amazon Kindle 的 `.app` 才 138M，書庫卻在沙箱容器裡佔了 3.2G。這就是為什麼「按目錄統計」和「按 App 統計」會給出完全不同的排行——要回答「哪個 App 該清」，必須把佔用聚合回 App。
+這台機器上最極端的例子是 Steam：它的 `.app` 只有 10.8M，但遊戲資料佔了 8.1G，兩者差了近 800 倍。只看 `/Applications` 的大小排序，Steam 會排在很後面，完全看不出它是全機第一大戶。同樣地，Amazon Kindle 的 `.app` 才 138M，書庫卻在沙箱容器裡佔了 3.2G。這就是為什麼「按目錄統計」和「按 App 統計」會給出完全不同的排行——要回答「哪個 App 該清」，必須把佔用聚合回 App。
 
 ## 佔用散落在 ~/Library 的哪些地方
 
@@ -36,7 +36,7 @@ tags: ["macos", "disk-space", "tooling", "homebrew", "troubleshooting"]
 
 把資料夾正確歸給某個 App 的難點在於：macOS 對這些目錄沒有統一的命名規則。有些 App 用它的 bundle id（例如 `com.valvesoftware.steam`）當目錄名，有些直接用 App 的顯示名稱（例如 `Steam`），同一個 App 的不同位置甚至各用一種。
 
-所以腳本對每個 App 先讀出它的 bundle id，然後 `Caches`、`Application Support`、`Logs` 這幾個位置兩種命名都比對一次，bundle id 專屬的位置（`Containers`、`HTTPStorages`、`Saved Application State`）則用 bundle id 找。`Group Containers` 又是另一種格式——名稱前面多一段開發商的 team id（像 `9XXXXXXX.group.com.foo`），所以改用 bundle id 做子字串比對。這套規則涵蓋了絕大多數 App，但用罕見自訂命名的資料仍可能漏抓，這是聚合式估算的固有邊界，腳本在輸出裡據實標明「可能漏抓」而不假裝是精確值。
+所以腳本對每個 App 先讀出它的 bundle id，然後 `Caches`、`Application Support`、`Logs` 這幾個位置兩種命名都比對一次，bundle id 專屬的位置（`Containers`、`HTTPStorages`、`Saved Application State`）則用 bundle id 找。`Group Containers` 又是另一種格式——名稱前面多一段開發商的 team id（10 碼英數，像 `ABCDE12345.group.com.foo`），所以改用 bundle id 做子字串比對。這套規則涵蓋了絕大多數 App，但用罕見自訂命名的資料仍可能漏抓，這是聚合式估算的固有邊界，腳本在輸出裡據實標明「可能漏抓」而不假裝是精確值。
 
 ## Homebrew 要分開算
 
@@ -46,7 +46,7 @@ tags: ["macos", "disk-space", "tooling", "homebrew", "troubleshooting"]
 
 ## 同樣用實際佔用值，避開 sparse 假大小
 
-量大小一律用 `du -skx`，理由和 [disk-report](../macos_disk_space_diagnosis/) 那篇完全一致：`du` 給的是實際佔用的磁碟區塊，而 `ls` 或 `find` 印的是邏輯大小，對 sparse 檔（VM 映像、容器磁碟）兩者可以差數十倍。App 的容器與資料目錄裡正好常有這類檔案，用顯示大小排序會把排行帶歪。
+App 各位置的聚合一律用 `du -skx`，理由和 [disk-report](../macos_disk_space_diagnosis/) 那篇完全一致：`du` 給的是實際佔用的磁碟區塊，而 `ls` 顯示、`find -size` 篩選用的是邏輯大小，對 sparse 檔（VM 映像、容器磁碟）兩者可以差數十倍。App 的容器與資料目錄裡正好常有這類檔案，用顯示大小排序會把排行帶歪。
 
 `-x` 讓 `du` 不跨越檔案系統邊界，避免把掛載進來的卷重複計入；`-k` 統一用 KB 當單位，方便把各位置的數字加總後再換算成人類可讀的 G / M。
 
@@ -66,7 +66,16 @@ tags: ["macos", "disk-space", "tooling", "homebrew", "troubleshooting"]
 
 ## 固化成 app-report 腳本
 
-把這套聚合邏輯寫成腳本，往後想知道「誰在吃空間」就一行重跑，不必每次重想要比對哪些目錄、要怎麼處理命名差異。腳本和 `disk-report` 放在一起、都連到個人的 `~/.local/bin`（已在 PATH 上），維持「跟專案無關的系統工具放個人 bin」的一致做法。
+把這套聚合邏輯寫成腳本，往後想知道「誰在吃空間」就一行重跑，不必每次重想要比對哪些目錄、要怎麼處理命名差異。腳本和 `disk-report` 收在同一個公開 repo [tarrragon/scripts](https://github.com/tarrragon/scripts) 裡，維持「跟專案無關的系統工具放個人 bin」的一致做法。
+
+安裝方式是把 repo clone 下來，再把腳本本體 symlink 到個人的 `~/.local/bin`，這樣本機呼叫的永遠是 repo 的最新版：
+
+```bash
+git clone https://github.com/tarrragon/scripts.git ~/Projects/scripts
+ln -s ~/Projects/scripts/app-report/app-report ~/.local/bin/app-report
+```
+
+這一步預設 `~/.local/bin` 已在 PATH 上。若還沒設定，做法見 [macOS 新機初始化清單](../macos_new_machine_setup/) 的對應項目。裝好後就能直接呼叫：
 
 ```bash
 app-report           # 完整報告：App 聚合排行 + Homebrew

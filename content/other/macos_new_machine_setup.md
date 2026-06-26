@@ -15,7 +15,7 @@ tags: ["macos", "setup", "homebrew", "bash", "tooling"]
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-裝完還要把 Homebrew 的執行檔目錄加進 PATH，shell 才找得到 `brew` 與之後用它裝的工具。Apple Silicon 機器的 Homebrew 裝在 `/opt/homebrew`，安裝腳本結尾會提示要執行的設定指令，把它寫進 `~/.zprofile` 讓每次開 shell 都生效：
+裝完還要把 Homebrew 的執行檔目錄加進 PATH，shell 才找得到 `brew` 與之後用它裝的工具。Homebrew 的安裝前綴依晶片而異：Apple Silicon 機器裝在 `/opt/homebrew`、Intel 機器裝在 `/usr/local`。安裝腳本結尾會印出對應這台機器的設定指令，照它印的路徑寫進 `~/.zprofile` 讓每次開 shell 都生效。以下以 Apple Silicon 為例，Intel 機器把前綴換成 `/usr/local` 即可：
 
 ```bash
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
@@ -26,7 +26,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ## 把 bash 更新到 5.x
 
-裝完 Homebrew 後第一個補的是 bash，因為 macOS 內建的 `/bin/bash` 永遠停在 3.2.57（2007 年的版本）。Apple 從那之後就凍結它，原因是 bash 4 之後改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。
+裝完 Homebrew 後第一個補的是 bash，因為 macOS 內建的 `/bin/bash` 永遠停在 3.2 系列（2006 年釋出的版本，目前是 patchlevel 57）。Apple 從那之後就凍結它，原因是 bash 4 之後改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。
 
 正確做法是用 Homebrew 另外裝一份新版並排存在，而不是覆寫系統版。`/bin/bash` 在唯讀的系統卷上、受 SIP 保護，本來就不該也不能改：
 
@@ -42,6 +42,23 @@ env bash --version   # 應顯示 5.x
 ```
 
 要留意的是互動 shell 在現代 macOS 預設是 zsh，這一步不影響它——更新 bash 的目的是給 `#!/usr/bin/env bash` 腳本一個現代執行環境，而不是換登入 shell。真要把新版 bash 當登入 shell，才需要額外把它加進 `/etc/shells` 再 `chsh`。
+
+## 把 ~/.local/bin 加進 PATH，放個人腳本
+
+接著建立一個放個人腳本的目錄並掛上 PATH，因為跟專案無關的小工具（例如 [disk-report](../macos_disk_space_diagnosis/) 與 [app-report](../macos_app_footprint_report/) 這類系統診斷腳本）需要一個能在任何地方直接呼叫、又不污染專案 repo 的家。慣例是個人的 `~/.local/bin`。
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zprofile
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+設定完成後，把腳本 symlink 進這個目錄就能直接當指令用。確認它確實在 PATH 上：
+
+```bash
+echo "$PATH" | tr ':' '\n' | grep "$HOME/.local/bin"
+```
+
+這一步做完，前面提到的那些個人腳本才能裝起來直接呼叫。
 
 ## 後續項目
 
