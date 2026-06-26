@@ -89,18 +89,20 @@ grep -rn "password\|passwd\|secret\|api_key\|apikey\|api_secret" \
 
 ### 選型：Docker vs 本地堆疊
 
-| 工具           | 平台            | 適用情境                                            |
-| -------------- | --------------- | --------------------------------------------------- |
-| Docker Compose | 跨平台          | 最精確對齊 prod 版本，特別是 PHP 5.6/7.0 這類舊版本 |
-| MAMP Pro       | macOS           | 圖形介面切 PHP 版本，不熟 Docker 時最快上手         |
-| Laragon        | Windows         | 比 XAMPP 現代、內建 PHP 版本切換與虛擬網域          |
-| XAMPP          | Windows / macOS | 最老牌、社群資源多，但 PHP 版本切換較麻煩           |
-| Laravel Valet  | macOS           | 輕量 CLI 為主，適合已經熟悉 CLI 的開發者            |
-| ServBay        | macOS           | 較新、支援多 PHP 版本共存、內建資料庫管理           |
+| 工具           | 平台                    | 費用              | 適用情境                                            |
+| -------------- | ----------------------- | ----------------- | --------------------------------------------------- |
+| Docker Compose | 跨平台                  | 免費              | 最精確對齊 prod 版本，特別是 PHP 5.6/7.0 這類舊版本 |
+| MAMP Pro       | macOS                   | 付費（約 $50/年） | 圖形介面切 PHP 版本，不熟 Docker 時最快上手         |
+| Laragon        | Windows                 | 免費              | 比 XAMPP 現代、內建 PHP 版本切換與虛擬網域          |
+| XAMPP          | Windows / macOS / Linux | 免費              | 最老牌、社群資源多，但 PHP 版本切換較麻煩           |
+| Laravel Valet  | macOS                   | 免費              | 輕量 CLI 為主，適合已經熟悉 CLI 的開發者            |
+| ServBay        | macOS                   | 免費版可用        | 較新、支援多 PHP 版本共存、內建資料庫管理           |
 
 選型判準：如果 prod 的 PHP 版本是 5.6 或 7.0 這類已停止維護的舊版，Docker 是唯一能精確對齊的選項——MAMP/XAMPP 通常只提供仍在維護的版本。常見版本（7.4、8.0、8.1、8.2）用 MAMP/Laragon 會比 Docker 更快跑起來。
 
 ### Docker 方式
+
+Docker Compose V2（`docker compose` 指令）不需要 `version` 欄位。如果使用舊版 `docker-compose` CLI，在檔案開頭加 `version: '3.8'`。
 
 ```yaml
 # docker-compose.yml
@@ -294,6 +296,10 @@ $db_password = getenv('DB_PASSWORD') ?: parse_ini_file(__DIR__ . '/.env')['DB_PA
 UptimeRobot 的免費方案提供 50 個 monitor、每 5 分鐘檢查一次，夠用於一個站台的首頁 + 幾個關鍵頁面（登入頁、API endpoint、金流回呼 URL）。Better Stack（原 Better Uptime）提供類似功能並附帶 status page。兩者都只需要填入 URL 和通知方式（email / Slack / webhook），不需要在 server 上裝任何東西。
 
 設定後至少加三個 monitor：首頁（網站是否活著）、登入或後台入口（PHP 是否正常執行）、以及任何有外部依賴的頁面（金流 callback、API endpoint）。這不是完整的可觀測性，但至少讓「網站掛了」這件事從「使用者打電話來」變成「手機收到通知」。
+
+## 時程參考
+
+完整走完盤點（FTP mirror + DB dump + 環境記錄）約需半天到一天。本地環境建立與驗證約需半天到一天（取決於 PHP 版本對齊的難度）。紀律建立（changelog + 部署流程）是持續的、但框架搭建約需 2-3 小時。CI 化 FTP 部署約需半天。整體從接手到穩定維運約 2-3 個工作天。
 
 ## 升級路徑的切入點
 

@@ -86,3 +86,4 @@ aws ec2 describe-security-groups \
 - → [模組三：網路地基](/infra/03-network-foundation/)：手動階段網路大改的回退考量、之後的系統性設計
 - → [模組八：治理好習慣](/infra/08-governance-habits/)：tagging 在成本歸因與批次操作的後續價值
 - → [模組九：怎麼把 infra 推動起來](/infra/09-driving-adoption/)：資源不足時怎麼跟上層談優先級
+- → [接手維運：別人建的環境怎麼接管](/infra/takeover/)：接手前人的專案時的盤點與接管流程

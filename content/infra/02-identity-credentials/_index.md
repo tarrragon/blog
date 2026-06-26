@@ -88,3 +88,4 @@ data "aws_iam_policy_document" "ci_trust" {
 - → [模組三：網路地基](/infra/03-network-foundation/)：身分備妥後，劃清服務之間的網路邊界
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：Secret Management 與這裡的憑證管理交集
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：CI/CD 用 OIDC 取得短期權限
+- → [接手維運](/infra/takeover/)：接手時的 credential 盤點與輪替

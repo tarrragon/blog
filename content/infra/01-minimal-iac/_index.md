@@ -91,3 +91,4 @@ import 只把資源 ID 寫進 state，不會幫忙生程式碼。那個資源在
 - → [模組三：網路地基](/infra/03-network-foundation/)：最小集合裡的 VPC 與 subnet 怎麼設計
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：state 的 key 怎麼依環境切分、state 跟環境怎麼對應
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：state 變更與 apply 怎麼納入 review
+- → [接手維運](/infra/takeover/)：接手既有環境後的 IaC 導入路徑
