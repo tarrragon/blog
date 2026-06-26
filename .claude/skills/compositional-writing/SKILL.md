@@ -61,6 +61,8 @@ metadata:
 
 **技術教材內嵌管理層可彙報的資訊**：技術段落旁嵌入成本量級、時程估算、進度指標與決策簽核點（各 1-2 句），讓讀者學完技術做法的同時拿到向上彙報的素材。成本用量級不用精確數、時程用範圍不用單點、進度用可查詢指標。詳見 [management-reportable-info-in-technical-content](references/principles/management-reportable-info-in-technical-content.md)。
 
+**操作步驟帶環境專屬工具路徑**：操作型文章的每一步至少帶一條工具路徑（用什麼軟體、輸入什麼指令）。同一個動作在不同環境（container / VM / 共享主機）的工具路徑可能完全不同——「拍下現況」在 container 是 `docker commit`、在 VM 是 AMI 快照、在共享主機是 FTP mirror + phpinfo。文章涵蓋多種環境時、每一步要按環境分列工具、或標明適用環境。自測問題：「讀者坐在電腦前，下一個動作是打開什麼軟體？」答不出來就是缺口。per [操作指引要帶環境專屬工具路徑](/report/operational-how-needs-environment-specific-tooling/)。
+
 **Case 引用段落的三段式結構**：三段式是案例引用段落的順序紀律 — 把「概念 → 案例 → 操作」三層分開承擔（段首給概念定義、case 引用居中、通用工程知識展開）、讓段落結構跟讀者學習新概念的認知順序對齊。LLM 從 case 反推內容容易把 case 揭露當概念出發點、實證觀察 11/12 段都犯這個錯。詳見 [case-citation-three-part-structure](references/principles/case-citation-three-part-structure.md)。
 
 **原子筆記要有向上的議題入口**：承載知識的原子筆記（Zettelkasten 卡 / glossary / 術語條目）不是字典條目 — 字典答「這個詞是什麼」、承載知識答「你在討論什麼、撞到什麼問題、才需要這知識」。撰寫者有預設情境讀者沒有、所以每張卡（或其上層）要從情境進入而非劈頭給定義：建議題 hub（以讀者遇到的問題為題）討論再分流到原子卡、卡頂回指議題、讓搜尋直接落地者也有回路。沒這層卡淪字典、讀者沒有觸發點、不知何時用。詳見 [atomic-note-needs-situational-entry](references/principles/atomic-note-needs-situational-entry.md)。
@@ -242,6 +244,7 @@ compositional-writing/
 **Version**: 0.7.4 — 新增 `translation-review.md` 路由：翻譯 / 轉譯文章時，用句內邏輯檢查譯名是否跟主詞、動詞、修飾語、因果與讀者追問方向對位。
 **Version**: 0.7.3 — managing-article-collections 補「素材庫比例」路由：多篇文章需要案例 / source / scenario / pattern 支撐時，主文章情境維持少量、素材庫保留 2-3 倍來源做反向驗證
 **Version**: 0.7.2 — 補 multi-pass 的 surface 軸：review 先列 body / metadata / navigation surface（title、description、tags、heading、link label、MOC hook、slug / filename），每輪 frame 都掃同一份 surface 清單；新增內部 principle `metadata-surface-in-writing-review.md`
+**Version**: 0.21.0 — 原則 3 加「操作步驟帶環境專屬工具路徑」（同動作在 container/VM/共享主機的工具不同）
 **Version**: 0.20.0 — 原則 3 加「讀者定位聲明」生成端前置步驟；從 infra 模組 retrospective 抽出（讀者定位未預設導致宣導語氣通過三輪審查）
 **Version**: 0.19.0 — 新增三張 principle 卡（audience-is-professional-not-layperson / cross-expertise-scenario-not-analogy / management-reportable-info-in-technical-content）、原則 3 加讀者定位與跨專業溝通子原則、keyword bank 加宣導語氣 grep；從 infra 教學模組的寫作 retrospective 抽出
 **Version**: 0.7.0 — Phase B1 結構升級：加第 6 原則「多輪 Re-read Pass」（明示 5 輪 frame）、引用 #83 / #84 / #85 multi-pass 系列。後續 Phase B2 會把各 reference 結尾加「第 2 輪 review checklist」段
