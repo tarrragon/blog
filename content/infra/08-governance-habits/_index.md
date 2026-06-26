@@ -102,6 +102,14 @@ resource "aws_db_instance" "payments" {
 
 這個節奏跟模組零的成熟度階梯是同一套思路：基礎設施的治理跟基礎設施本身一樣，是逐級長出來的，不是一次到位設計完的。過度設計的治理框架跟過度設計的架構一樣，會在還沒帶來價值之前就先收走團隊的速度。把規範變成自動護欄的工程（PR 階段擋缺 tag、CI 掃 secret）值得早投入，因為自動化的護欄維護成本低、且越早接管越省人力 — 這部分怎麼落地在 [infra 模組七：infra 走 PR 流程](/infra/07-infra-as-pr/) 展開。
 
+## 章節文章
+
+| 文章                                                                                | 主題                                                                                      |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [Tagging 規範與 Secrets 不進 code](/infra/08-governance-habits/tagging-secrets/)    | tag 讓資源可盤點可歸屬；密鑰存在專用服務裡而非 code 或 state，兩者都屬於 day-1 治理地基   |
+| [成本可見性與最小可行治理節奏](/infra/08-governance-habits/cost-visibility-rhythm/) | 用 tag 驅動的成本分攤讓帳單有人負責，以及判斷什麼治理該 day-1 就立、什麼等規模逼出來再加  |
+| [職務交接與存取撤銷設計](/infra/08-governance-habits/handover-design/)              | 人員異動時的存取撤銷清單、credential rotation、IaC 降低交接成本、最小交接清單與結構性設計 |
+
 ## 跨分類引用
 
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：secret 管理的更完整討論

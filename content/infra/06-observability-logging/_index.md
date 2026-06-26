@@ -63,9 +63,15 @@ resource "aws_cloudwatch_metric_alarm" "api_5xx" {
 
 收斂成一句判準：資源建立時就該存在的訊號歸本模組的 IaC，功能開發時才埋的客戶端行為訊號歸另一層；各條延伸章節見下方跨分類引用。
 
+## 章節文章
+
+| 文章                                                                                         | 主題                                                                              |
+| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [可觀測性與 log 同生命週期管理](/infra/06-observability-logging/log-metric-alarm-lifecycle/) | log group、metric、alarm 寫進同一套 IaC，讓監控跟資源同生共滅，出事時追得到查得到 |
+
 ## 跨分類引用
 
-- → [monitoring 監控體系](/monitoring/)：客戶端 SDK / Collector 那層的監控
+- → [Monitoring 監控體系](/monitoring/)：客戶端 SDK / Collector 那層的監控
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：每個核心服務帶自己的 log 與 alarm
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：observability 變更也走 PR 與自動化護欄
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：哪些欄位不該進 log、PII 處理

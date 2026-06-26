@@ -94,6 +94,16 @@ data "aws_vpc" "main" {
 
 服務都接上後，下一個關注點是讓它們可被觀測 — log 與 metric 與服務同生命週期建立，這部分在「模組六：可觀測性與 log 同生命週期」展開。
 
+## 章節文章
+
+| 文章                                                                                         | 主題                                                                                     |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [部署順序與資料庫上 IaC](/infra/05-core-services/deployment-order-database/)                 | 依賴圖決定部署順序，RDS 接線、連線管理、read replica 與端點暴露                          |
+| [運算平台上 IaC — ECS 與 EKS](/infra/05-core-services/compute-ecs-eks/)                      | ECS 與 EKS 選型、task definition 與映像版本解耦、IAM task role、auto-scaling             |
+| [儲存上 IaC — S3 bucket 的安全與生命週期](/infra/05-core-services/storage-s3/)               | 加密、版本控制、公開存取封鎖、生命週期規則、bucket policy 與事件通知                     |
+| [入口上 IaC — ALB、TLS 與健康檢查](/infra/05-core-services/loadbalancer-alb/)                | listener、target group、健康檢查閾值設計、ACM 憑證與 DNS 別名                            |
+| [Stateful 資源保護與跨服務依賴表達](/infra/05-core-services/stateful-protection-dependency/) | multi-AZ 邊界、備份保留、刪除保護、stateful vs stateless 操作差異、output 與 data source |
+
 ## 跨分類引用
 
 - → [backend 模組五：部署平台](/backend/05-deployment-platform/)：PaaS / container 平台跑在這層之上

@@ -75,6 +75,14 @@ data "aws_iam_policy_document" "ci_trust" {
 
 這一章談的是身分與憑證 — 誰是誰、怎麼證明、能動什麼。憑證背後引用的應用層 secret（資料庫密碼、第三方 API key）怎麼安全儲存與注入，屬於[模組八：治理好習慣](/infra/08-governance-habits/)的 secret management 範圍，不在這裡處理。兩者的交集是：身分層決定「誰能讀到 secret store」，secret 層決定「secret 怎麼存與輪替」。
 
+## 章節文章
+
+| 文章                                                                                                                  | 主題                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| [身分與憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/) | IAM 的 identity / policy / role 三元件、最小權限的持續收斂、用 OIDC 取代長期 access key，以及 SCP 與 Permissions Boundary 的環境隔離 |
+| [跨帳號策略 — Organizations、SCP 與帳號工廠](/infra/02-identity-credentials/multi-account-strategy/)                  | 用 Organizations 把環境拆成獨立帳號、用 SCP 設定帳號級護欄、用帳號工廠自動化新帳號的建立流程                                         |
+| [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)                                      | 三級權限模型（admin / operator / viewer）、臨時提權、定期 access review、contractor 存取                                             |
+
 ## 跨分類引用
 
 - → [模組三：網路地基](/infra/03-network-foundation/)：身分備妥後，劃清服務之間的網路邊界
