@@ -124,6 +124,11 @@ done < "$SOURCE" >> "$tmpfile"
 
 mv "$tmpfile" "$TARGET"
 
+# 自動跑 fmt
+if command -v ./bin/mdtools &>/dev/null; then
+  ./bin/mdtools fmt --fix "$TARGET" 2>/dev/null && echo "  fmt applied"
+fi
+
 lines=$(wc -l < "$TARGET" | tr -d ' ')
 remaining=$(grep -c 'references/principles/' "$TARGET" 2>/dev/null || echo 0)
 
