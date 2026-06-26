@@ -238,3 +238,7 @@ moved {
 - → [Console 唯讀鐵律](/infra/01-minimal-iac/console-readonly-minimal-viable/)：drift 的來源與偵測
 - → [環境分離與模組化](/infra/04-environment-separation/)：收斂完成後怎麼把單環境拆成 per-env module
 - → [infra 走 PR 流程](/infra/07-infra-as-pr/)：收斂完成後的變更怎麼走 review
+- → [State 修復與清理](/infra/takeover/partial-iac-state-repair/)：state 損壞的操作修復步驟
+- → [Drift 分類處理](/infra/takeover/partial-iac-drift-triage/)：逐項判斷 adopt vs revert
+- → [批次 Import 工作流](/infra/takeover/partial-iac-bulk-import/)：unmanaged resource 的 import 操作
+- → [過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)：兩套真相並存時的安全操作規則

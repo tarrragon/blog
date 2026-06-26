@@ -216,6 +216,8 @@ aws cloudtrail lookup-events \
 
 驗證通過後，這套 OIDC 設定就取代了所有存放在 CI 環境變數裡的 access key。原有的 key 可以排程停用和刪除，排程的節奏見[access key 輪替](/infra/02-identity-credentials/access-key-rotation-playbook/)。trust policy 的持續維護重點是：新增 repo 時 sub condition 要同步更新、組織改名時 issuer 的 repo 路徑要全面修正。
 
+時程參考：OIDC provider 建立 + trust policy 設計 + workflow 驗證約需 1-2 小時。OIDC provider 與 IAM role 本身不產生額外費用。
+
 ## 跨分類引用
 
 - → [身分與憑證地基](/infra/02-identity-credentials/iam-oidc-privilege-boundary/)：OIDC 的概念基礎與權限邊界設計

@@ -29,6 +29,8 @@ aws iam get-credential-report \
 
 用 csvkit 或試算表打開這份報告，按 `access_key_1_last_rotated` 排序，最舊的 key 排最前面。超過 90 天未輪替的 key 列為第一批處理對象。
 
+以下腳本使用 gawk 的 `systime()` 函式。如果系統的 awk 是 mawk（Ubuntu 預設），改用 `gawk` 或用 `date` 指令替代時間計算。
+
 ```bash
 # 快速列出所有啟用中、超過 90 天的 key
 aws iam list-users --query 'Users[].UserName' --output text | tr '\t' '\n' | while read user; do

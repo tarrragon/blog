@@ -2,11 +2,11 @@
 title: "Unmanaged Resource 批次 Import 工作流"
 date: 2026-06-26
 description: "把 Terraform state 外的雲端資源有系統地納入 IaC 管理：優先序判斷、import block 語法、generated HCL 的 review 要點、批次策略與常見失敗處理"
-weight: 12
+weight: 22
 tags: ["infra", "takeover", "terraform", "import"]
 ---
 
-接手一個半套 IaC 的環境後，[盤點階段](/infra/takeover/partial-iac-no-docs/)會產出一份「managed vs unmanaged」的兩欄清單。這篇處理的是 unmanaged 那一欄：怎麼有系統地把這些資源納入 Terraform 管理，而不是一次性 import 全部然後祈禱 plan 是乾淨的。
+盤點階段產出的 managed vs unmanaged 兩欄清單裡（見[盤點流程](/infra/takeover/partial-iac-no-docs/)），unmanaged 那一欄的每個資源都要決定：納入 Terraform 管理、還是維持手動並記錄原因。這篇處理的是「決定要納管」的資源怎麼有系統地 import，而不是一次全部倒進去。
 
 ## 優先序：先 import 什麼
 

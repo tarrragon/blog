@@ -2,7 +2,7 @@
 title: "兩套真相並存的過渡期操作"
 date: 2026-06-26
 description: "部分資源在 IaC、部分在手動時，怎麼安全操作避免比全手動更危險，以及怎麼縮短這個過渡期"
-weight: 13
+weight: 23
 tags: ["infra", "takeover", "terraform", "transition"]
 ---
 

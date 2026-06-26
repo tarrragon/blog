@@ -2,11 +2,11 @@
 title: "Drift 分類處理指南"
 date: 2026-06-26
 description: "接手半套 IaC 環境時，怎麼讀 plan 輸出分類 drift、判斷保留還是回退、處理 stateful 資源的高風險漂移，以及批次收斂的工作流"
-weight: 11
+weight: 21
 tags: ["infra", "takeover", "terraform", "drift"]
 ---
 
-接手一個半套 IaC 的環境後，跑 `terraform plan` 通常會看到一批非零差異。這些差異就是 drift——state 記錄的狀態跟雲端實際狀態之間的落差。每一條 drift 都需要判斷：這是該保留的手動改動，還是該回退的意外漂移？判斷錯誤的代價從「設定被覆蓋」到「stateful 資源被重建導致資料遺失」不等，所以分類要在 apply 之前完成。
+`terraform plan` 跑完後如果出現非零差異，每一行差異都需要判斷：這是該保留的手動改動，還是該回退的意外漂移。這些差異就是 drift — state 記錄的狀態跟雲端實際狀態之間的落差。判斷錯誤的代價從「設定被覆蓋」到「stateful 資源被重建導致資料遺失」不等，所以分類要在 apply 之前完成。半套 IaC 環境的 drift 通常比全 IaC 環境更多，因為有人在 Console 改了 state 不知道的資源。
 
 ## 讀 plan 輸出：三種變更類型
 

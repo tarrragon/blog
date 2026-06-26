@@ -2,7 +2,7 @@
 title: "State 修復與清理"
 date: 2026-06-26
 description: "接手的 Terraform state 損壞、有 orphaned entry、或需要搬遷時，怎麼診斷問題、安全操作、以及從錯誤中回復"
-weight: 10
+weight: 20
 tags: ["infra", "takeover", "terraform", "state"]
 ---
 
@@ -186,6 +186,8 @@ terraform plan  # 應該顯示零變更
 搬遷後驗證：plan 為零變更、新 bucket 裡有 state 檔、舊 bucket 的 state 檔可以保留一段時間作為備份。搬遷過程中 DynamoDB 的 lock 會確保沒有人同時 apply。
 
 搬遷期間的風險：如果有人在你改 backend.tf 之後、跑 init 之前，用舊 backend 跑了 apply，新 backend 的 state 會缺少那次變更。搬遷時通知團隊暫停所有 Terraform 操作，搬遷完成後再恢復。
+
+時程參考：單一 orphaned entry 的 rm 操作約 15-30 分鐘（含備份和驗證）。Backend migration 約 1-2 小時。5-10 個問題項的完整 state 整理約半天到一天。
 
 ## 跨分類引用
 
