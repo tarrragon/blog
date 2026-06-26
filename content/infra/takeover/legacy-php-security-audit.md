@@ -259,5 +259,7 @@ wpscan --url https://example.com --enumerate vp,vt,u
 ## 跨分類引用
 
 - → [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-shared-hosting/)：本文的前置步驟（程式碼與資料庫快照）
+- → [資料庫備份與變更管理](/infra/takeover/legacy-database-backup-migration/)：SQL injection 修復前先備份，避免修補過程造成資料遺失
+- → [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/)：安全事件的持續偵測與錯誤追蹤
 - → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：credential 管理的系統性設計
 - → [Backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：應用層安全的完整討論

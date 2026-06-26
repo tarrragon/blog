@@ -138,6 +138,7 @@ import sprint 的目標是「納管」，不是「重構」。一個手動建的
 ## 跨分類引用
 
 - → [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/)：本篇的前置操作（盤點、state 健康檢查、drift 收斂）
+- → [State 修復與清理](/infra/takeover/partial-iac-state-repair/)：過渡期出問題時可能需要 state surgery
 - → [模組一：Console 唯讀鐵律](/infra/01-minimal-iac/console-readonly-minimal-viable/)：過渡期結束後的操作紀律
 - → [模組四：環境分離 retrofit](/infra/04-environment-separation/single-to-multi-env-retrofit/)：所有資源納管後的下一步
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/plan-review-apply-guardrails/)：過渡期結束後的完整 PR 護欄

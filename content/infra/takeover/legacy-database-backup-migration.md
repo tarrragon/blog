@@ -231,5 +231,7 @@ mysqldump -h db-host.example.com -u dbuser -p \
 ## 跨分類引用
 
 - → [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-shared-hosting/)：主文，涵蓋程式碼備份、部署紀律與整體接管流程
+- → [程式碼版控與 FTP 部署紀律](/infra/takeover/legacy-code-versioning-deployment/)：DB migration 跟 code deploy 要同步——schema 改了但 code 沒跟上會讓服務壞掉
+- → [Legacy PHP 的安全盤點](/infra/takeover/legacy-php-security-audit/)：DB credential 的掃描與保護、SQL injection 風險評估
 - → [Stateful 資源保護與跨服務依賴](/infra/05-core-services/stateful-protection-dependency/)：IaC 環境裡的備份、deletion protection 與 PITR 設計
 - → [治理好習慣](/infra/08-governance-habits/)：tagging、secret 管理與成本可見性的長期治理

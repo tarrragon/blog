@@ -192,5 +192,6 @@ terraform plan  # 應該顯示零變更
 ## 跨分類引用
 
 - → [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/)：本篇的上層操作流程
+- → [Drift 分類處理](/infra/takeover/partial-iac-drift-triage/)：state 修復完成後，下一步是處理 managed resource 的 drift
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：state backend 的設計與 versioning 要求
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：moved block 在環境拆分 retrofit 裡的角色

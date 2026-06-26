@@ -257,6 +257,7 @@ aws cloudtrail describe-trails --query 'trailList[].{Name:Name,S3:S3BucketName,I
 
 ## 跨分類引用
 
+- → [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/)：如果盤點過程中發現環境裡已有部分 Terraform code
 - → [模組負一：還沒有 infra 的環境](/infra/before-infra/)：盤點完成後的操作紀律對齊
 - → [模組零：infra 是什麼](/infra/00-infra-mindset/)：成熟度階梯作為接手後現況評估的座標
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：盤點完成後的第一步 IaC 導入

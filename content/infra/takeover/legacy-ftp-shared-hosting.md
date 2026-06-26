@@ -343,6 +343,7 @@ jobs:
 
 ## 跨分類引用
 
+- → [有 SSH 但沒有 IaC 的雲端環境接管](/infra/takeover/cloud-no-iac/)：搬到 VPS 或雲端後的接管流程
 - → [模組負一：還沒有 infra 的環境](/infra/before-infra/)：接手完成、環境穩定後，操作紀律對齊這裡
 - → [模組零：infra 是什麼](/infra/00-infra-mindset/)：成熟度階梯作為接手後評估現況的座標
 - → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：credential 盤點與輪替的系統性設計

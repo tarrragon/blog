@@ -159,5 +159,6 @@ import 操作本身不改變雲端資源——它只修改 state 檔。失敗時
 ## 跨分類引用
 
 - → [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/)：import 前的盤點與 state 健康檢查
+- → [兩套真相並存的過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)：import 期間就是 dual-truth 狀態，操作規則見此篇
 - → [模組一：IaC 工具選型與 state 地基](/infra/01-minimal-iac/)：state backend 的設定與保護
 - → [模組五：Stateful 資源保護](/infra/05-core-services/stateful-protection-dependency/)：import stateful 資源後的 lifecycle 設定
