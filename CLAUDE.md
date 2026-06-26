@@ -112,11 +112,28 @@ skill-sync push <skill-name> -m "commit message"
 
 ### 標準操作流程
 
-1. 在本地 `.claude/skills/<name>/` 修改 skill 內容
-2. 更新 SKILL.md 末尾版本號（見上方版號規則）
-3. commit 到 blog repo（`git add` + `git commit`）
-4. 逐一推送到 skill repo：`skill-sync push <name> -m "描述"`
-5. 驗證：`skill-sync list` 確認在清單中
+流程從 report 卡開始，不從 skill 修改開始。report 是原則的 SSoT（有情境、根因、理想做法），skill 是 report 的操作化引用。先有 report 才有 skill 引用的依據。
+
+1. **建 report 卡**：在 `content/report/` 建卡，更新 `_index.md` 篇目索引
+2. **評估是否進 skill**：判斷這個原則該進哪個 skill（compositional-writing / multi-round-review / 其他）、進哪個段落
+3. **修改 skill**：在 `.claude/skills/<name>/` 修改 SKILL.md，引用 report 卡的路徑（`.claude/` 用 `references/principles/` 相對連結、`content/` 鏡像會自動轉成 `/report/` 路徑）
+4. **如果新增 principle 卡**：在 `references/principles/` 建卡，並在 `bin/skill-mirror` 的 mapping table 加上 principle slug → report slug 的對應
+5. **更新版本號**：SKILL.md 末尾加版本號（見上方版號規則）
+6. **commit 到 blog repo**
+7. **推送到 skill repo**：`skill-sync push <name> -m "描述" --force`
+8. **同步鏡像**：`bin/skill-mirror <name>`（自動處理 Hugo frontmatter、H1→H2、連結轉換、fmt）
+9. **commit 鏡像**：`git add content/skills/<name>/skill.md && git commit --no-verify`
+10. **push**
+
+簡化版（步驟 6-10）：
+
+```bash
+git add .claude/skills/<name>/ content/report/ && git commit
+skill-sync push <name> -m "vX.Y.Z: 描述" --force
+bin/skill-mirror <name>
+git add content/skills/<name>/skill.md && git commit --no-verify
+git push --no-verify
+```
 
 批量推送多個 skill 時逐一執行 `skill-sync push`，不要嘗試手動 clone 遠端 repo 操作。
 

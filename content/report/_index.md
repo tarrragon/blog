@@ -238,6 +238,7 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 - [多輪審查缺 outside-in 讀者 frame](review-lacks-outside-in-reader-frames/) — review 框架全部從已寫內容出發（inside-out），缺從讀者需求出發的 frame（outside-in）；六個盲點由使用者而非 reviewer 發現：宣導語氣、管理層資訊、接手情境、工具指引、深度拆分、讀者定位；補五個 outside-in frame（persona register / downstream task / persona coverage / executable walkthrough / search landing）
 - [操作指引的「怎麼做」要帶環境專屬的工具路徑](operational-how-needs-environment-specific-tooling/) — 「拍下現況」「匯出資料庫」在 container / VM / 共享主機對應完全不同的工具路徑；只寫動作不寫工具、讀者知道該做什麼但做不到；同根因被指出兩次的機制：第一輪補工具、第二輪補環境替代
 - [跨 surface 鏡像的連結轉換 mapping 要窮盡](mirror-link-mapping-must-be-exhaustive/) — skill 鏡像的 references/principles/ → /report/ 轉換，slug 不匹配被誤判「沒有 report 卡」，三次 CI 失敗才修完；mapping 要用內容搜尋而非 slug 碰運氣
+- [先建 report 卡再進 skill](report-before-skill-not-after/) — report 是原則的 SSoT、skill 是操作化引用；先改 skill 再補 report 會讓規則缺根據、report 被擠到「有空再做」；標準流程從 report 卡開始
 
 ### 第七輪：Pattern 卡片（待補完）
 
