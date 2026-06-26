@@ -189,6 +189,8 @@ CI pipeline 是 infra 變更的自動化執行者，它的安全性等同於 app
 
 **Secret 與 environment variable**：OIDC 取代了存在 repo secrets 裡的 access key，但 workflow 可能還用到其他 secret（Terraform Cloud token、Slack webhook URL）。這些 secret 要限定在特定 environment 才能存取，不開放給所有 branch。
 
+本篇聚焦 GitHub Actions。如果團隊選擇 Atlantis（常駐服務、內建 state lock 與 apply 語意），見[主文章的 Atlantis 段](/infra/07-infra-as-pr/plan-review-apply-guardrails/)的選型討論。
+
 ## 跨分類引用
 
 - → [OIDC Trust Policy 設定](/infra/02-identity-credentials/oidc-trust-policy-setup/)：pipeline 的 credential 來源

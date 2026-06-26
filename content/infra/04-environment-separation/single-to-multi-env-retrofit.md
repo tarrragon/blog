@@ -114,6 +114,8 @@ Plan: 0 to add, 0 to change, 0 to destroy.
 
 修到 plan 顯示零變更才能 apply。apply 之後 state 裡的資源位址從 `aws_vpc.main` 更新成 `module.network.aws_vpc.main`，雲端資源本身不受影響。
 
+安全暫停點：本步完成後 code 已重組、state 位址已更新、雲端資源未變，環境處於自洽狀態，可隔日繼續。
+
 ## 步驟二：把寫死的值換成參數
 
 Module 內部的寫死值搬到 `variables.tf`，module 呼叫端從 `terraform.tfvars` 讀入。這一步的 plan 仍然必須是零變更——因為參數的值就等於原本寫死的值。
@@ -153,6 +155,8 @@ db_backup_retention_days = 30
 ```
 
 再跑一次 plan 確認零變更。值從寫死改成參數傳入，但傳入的值跟原來一樣，所以 Terraform 算出的差異是零。
+
+安全暫停點：本步完成後 module 已參數化、prod 行為不變，可隔日繼續。
 
 ## 步驟三：建立新環境目錄
 
@@ -197,6 +201,8 @@ terraform {
 
 如果原本的 prod 是在根目錄操作（不是在 `environments/prod/` 目錄），這一步還需要把 prod 的操作也搬進 `environments/prod/`。這個搬遷本身又是一次 moved block + zero-change plan 驗證的循環。
 
+安全暫停點：本步是純新增（建目錄和檔案），不影響 prod 的 state 或資源，可隔日繼續。
+
 ## 步驟四：先在 dev apply 驗證
 
 ```bash
@@ -214,6 +220,8 @@ dev 環境 apply 後跑一次 plan 確認零 drift：
 terraform plan -detailed-exitcode
 # 預期 exit code 0
 ```
+
+安全暫停點：dev 環境已驗證、prod 未受影響，可隔日繼續最後的 prod 驗證。
 
 ## 步驟五：驗證 prod 未受影響
 

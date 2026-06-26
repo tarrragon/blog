@@ -6,7 +6,15 @@ weight: 5
 tags: ["infra", "iam", "oidc", "github-actions"]
 ---
 
-OIDC 聯合讓 CI/CD pipeline 用短期 token 取代長期 access key 存取雲端資源。設定本身不複雜，但 trust policy 的 claim 條件寫錯一個字就會變成「任何 repo 都能假扮這個 role」或「完全無法 assume」。本篇是 GitHub Actions 與 AWS 之間的 OIDC 聯合的完整設定步驟，從建立 provider 到 trust policy 設計到測試驗證。其他 CI 平台（GitLab CI、CircleCI）的原理相同，差別只在 issuer URL 和 claim 結構。
+OIDC 聯合讓 CI/CD pipeline 用短期 token 取代長期 access key 存取雲端資源。設定本身不複雜，但 trust policy 的 claim 條件寫錯一個字就會變成「任何 repo 都能假扮這個 role」或「完全無法 assume」。本篇是 GitHub Actions 與 AWS 之間的 OIDC 聯合的完整設定步驟，從建立 provider 到 trust policy 設計到測試驗證。其他 CI 平台（GitLab CI、CircleCI）的原理相同，差別只在 issuer URL 和 claim 結構：
+
+| 平台           | Issuer URL                            | sub claim 格式範例                                        |
+| -------------- | ------------------------------------- | --------------------------------------------------------- |
+| GitHub Actions | `token.actions.githubusercontent.com` | `repo:{org}/{repo}:ref:refs/heads/{branch}`               |
+| GitLab CI      | `gitlab.com`                          | `project_path:{group}/{project}:ref_type:branch:ref:main` |
+| CircleCI       | `oidc.circleci.com/org/{org-id}`      | `org/{org-id}/project/{project-id}/user/{user-id}`        |
+
+本篇以 GitHub Actions 為主，其他平台替換 issuer URL 和 sub condition 即可。
 
 ## 建立 OIDC Provider
 

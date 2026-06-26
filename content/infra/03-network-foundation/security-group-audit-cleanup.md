@@ -175,6 +175,8 @@ prowler aws --services ec2 --checks ec2_securitygroup_allow_ingress_from_interne
 
 [模組七的 checkov/tfsec 護欄](/infra/07-infra-as-pr/plan-review-apply-guardrails/)在 PR 階段攔截新增的 0.0.0.0/0 規則。這是把治理從「事後稽核」推到「事前攔截」的關鍵一步：稽核能發現已存在的問題，PR 護欄能阻止新問題被引入。
 
+AWS Security Hub 啟用 Foundational Security Best Practices 標準後，會自動聚合 SG 相關的合規 finding 並提供統一 dashboard，適合作為管理層報告的來源。Security Hub 整合了 Config rules 和 Prowler 各自能發現的問題，提供單一窗口追蹤合規趨勢。
+
 ## 稽核節奏
 
 第一次稽核最花時間（半天到一天，取決於 SG 數量）。之後的節奏取決於環境變動速度：
