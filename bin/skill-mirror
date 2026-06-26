@@ -65,6 +65,10 @@ find_report_slug() {
       echo "/report/multi-pass-review-frame-granularity-blindspot/" ;;
     cadence-homogenization)
       echo "/report/cadence-homogenization-in-batch-writing/" ;;
+    decorative-symbols-keyword-bank)
+      echo "/report/visual-tool-error-layer-alignment/" ;;
+    risk-asymmetric-audit-standard)
+      echo "/report/security-teaching-rigor-asymmetry/" ;;
     *)
       return 1 ;;
   esac
