@@ -53,6 +53,8 @@ metadata:
 
 **選項數由議題本身的合理選項數決定**：機會成本的精神是「教思考方式」 — 議題有幾個合理選項就寫幾個（2 個寫 A/B、3 個寫 A/B/C、4 個寫 A/B/C/D）。強湊到固定數量會把「教思考」退化成「填格式」、生出「實務上幾乎不存在」的低品質假反模式。真正的反模式直接標「D：反模式 — 違反 X 原則」、給讀者明確的「為什麼這條路該避開」、保持誠實。
 
+**讀者定位聲明（生成端前置步驟）**：每個教學模組在第一篇文章生成前，顯式聲明讀者定位——一段話描述目標讀者的背景、已有能力、缺的經驗。這份聲明是後續所有生成和 review 的可檢查基準。缺少顯式聲明時，LLM 預設用「教外行人」的姿態寫教學內容，這個預設不被 review 挑戰（reviewer 共享同一個預設），導致宣導語氣通過多輪審查。per [outside-in reader frames report](/report/review-lacks-outside-in-reader-frames/)
+
 **讀者定位：缺經驗的專業人士、不是外行人**：技術教材的讀者是在特定領域缺乏經驗的專業人士，不是完全不懂的外行人。寫法是補足經驗缺口（直接描述情境與操作需求），不是從零科普（故事線導入、比喻堆疊、宣導語氣）。宣導式語氣（「你可能沒注意到」「把 X 想成 Y」「跑得好好的」）預設讀者無能、降低教材可信度。詳見 [audience-is-professional-not-layperson](references/principles/audience-is-professional-not-layperson.md)。
 
 **跨專業溝通用情境遞進、不用比喻堆疊**：向非本領域的專業人士（管理層、決策者）解釋技術議題時，減少術語並從簡單情境遞進到複雜情境。比喻傳遞形狀但不傳遞嚴重性、在細節處崩解、且隱含「對方聽不懂」的預設。用決策者熟悉的維度（影響範圍、恢復時間、成本量級）表達。詳見 [cross-expertise-scenario-not-analogy](references/principles/cross-expertise-scenario-not-analogy.md)。
@@ -240,6 +242,7 @@ compositional-writing/
 **Version**: 0.7.4 — 新增 `translation-review.md` 路由：翻譯 / 轉譯文章時，用句內邏輯檢查譯名是否跟主詞、動詞、修飾語、因果與讀者追問方向對位。
 **Version**: 0.7.3 — managing-article-collections 補「素材庫比例」路由：多篇文章需要案例 / source / scenario / pattern 支撐時，主文章情境維持少量、素材庫保留 2-3 倍來源做反向驗證
 **Version**: 0.7.2 — 補 multi-pass 的 surface 軸：review 先列 body / metadata / navigation surface（title、description、tags、heading、link label、MOC hook、slug / filename），每輪 frame 都掃同一份 surface 清單；新增內部 principle `metadata-surface-in-writing-review.md`
+**Version**: 0.20.0 — 原則 3 加「讀者定位聲明」生成端前置步驟；從 infra 模組 retrospective 抽出（讀者定位未預設導致宣導語氣通過三輪審查）
 **Version**: 0.19.0 — 新增三張 principle 卡（audience-is-professional-not-layperson / cross-expertise-scenario-not-analogy / management-reportable-info-in-technical-content）、原則 3 加讀者定位與跨專業溝通子原則、keyword bank 加宣導語氣 grep；從 infra 教學模組的寫作 retrospective 抽出
 **Version**: 0.7.0 — Phase B1 結構升級：加第 6 原則「多輪 Re-read Pass」（明示 5 輪 frame）、引用 #83 / #84 / #85 multi-pass 系列。後續 Phase B2 會把各 reference 結尾加「第 2 輪 review checklist」段
 **Version**: 0.6.0 — 從 references 過載的反思：writing-articles.md 從 780 行瘦身到 ~530 行（拆分判準 / 三類 structure 模板搬到 managing-article-collections.md、focus 集中在「單篇文章內部」）；新增規則八「自我應用 (dogfooding)」（教某條規則的段落本身遵守該規則）；managing-article-collections.md 整合「拆分判準」+「三層 structure 詳細對照 + 模板」；meta-metrics.md M2 加 dogfooding 失敗訊號
