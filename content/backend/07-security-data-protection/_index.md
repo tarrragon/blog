@@ -114,3 +114,8 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 ## 本輪輸出
 
 本輪已完成主章的問題節點、藍隊循環與延伸章節骨架，並把設計輸入、放行判準、可靠性共同控制面、事故回寫與成熟度節奏接回後端實作路由。
+
+## 跨分類引用
+
+- → [infra 模組二：身分與憑證地基](/infra/02-identity-credentials/)：IAM role / policy、OIDC 短期憑證與權限邊界設計，是本模組 secret management 與 credential rotation 的地基層
+- → [infra 模組八：治理好習慣](/infra/08-governance-habits/)：secrets 不進 code 的儲存與引用模式、密鑰命名規範

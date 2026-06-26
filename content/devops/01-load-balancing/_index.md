@@ -20,3 +20,5 @@ tags: ["devops", "load-balancing", "reverse-proxy", "nginx", "health-check"]
 
 - → [monitoring 模組四 Collector 架構](/monitoring/04-collector/)：Collector 多實例部署時的 LB 設計
 - → [backend 部署平台](/backend/05-deployment-platform/)：PaaS / container 的 LB 內建 vs 自管
+- → [infra 模組三：網路地基](/infra/03-network-foundation/)：ALB 掛在 public subnet、後端在 private subnet 的網路分層設計
+- → [infra 模組五：入口上 IaC](/infra/05-core-services/loadbalancer-alb/)：ALB 的 listener、target group、TLS 與健康檢查在 IaC 裡怎麼描述

@@ -167,3 +167,7 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 首篇示範已完成： [4.22 Checkout API Evidence Package 實作示範](/backend/04-observability/checkout-api-evidence-package/)。
 
 完成條件是每篇都能回答四件事：判讀訊號、風險代價、控制面邊界與下一步路由。這樣 06 的 SLO / readiness / experiment safety 與 08 的 intake / decision log / impact assessment 才能引用 04，而不需要在各自章節重寫觀測前提。
+
+## 跟 Infra 可觀測性的分界
+
+[Infra 模組六：可觀測性與 log](/infra/06-observability-logging/) 處理基礎設施層的訊號 — log group、CloudWatch metric、alarm 跟資源同生命週期的 IaC 管理。本模組處理應用層的訊號 — 服務的延遲、錯誤率、trace、業務指標。分界的判讀是：這個訊號是「資源建立時就該存在」還是「功能開發時才埋」——前者進 infra 的 IaC，後者進本模組的應用程式碼。事故排查時兩層合流：infra alarm 告訴你哪個資源異常，本模組的 trace 告訴你哪個請求路徑受影響。
