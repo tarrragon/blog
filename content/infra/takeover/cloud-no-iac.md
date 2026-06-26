@@ -84,6 +84,52 @@ aws cloudtrail lookup-events \
   --output table
 ```
 
+### VM 層級的快照
+
+如果接手的環境包含 EC2 或 GCE 等 VM，在做任何改動之前先對每台 VM 建一個 AMI（AWS）或 machine image（GCP）。這是最粗粒度但最完整的「拍照」——整台機器的 OS、安裝的軟體、設定檔、磁碟內容全部打包成一個可重建的映像。
+
+```bash
+# AWS: 對 EC2 建 AMI（--no-reboot 避免服務中斷）
+aws ec2 create-image \
+  --instance-id i-0abc123 \
+  --name "takeover-baseline-$(date +%Y%m%d)" \
+  --no-reboot
+
+# 確認 AMI 建立完成
+aws ec2 describe-images \
+  --owners self \
+  --filters "Name=name,Values=takeover-baseline-*" \
+  --query 'Images[].[ImageId,Name,State]' \
+  --output table
+```
+
+`--no-reboot` 讓快照過程中服務不中斷，代價是檔案系統快照的一致性不如有 reboot 的版本（記憶體中的寫入可能還沒 flush 到磁碟），但對接手基線已經足夠。AMI 的費用是底層 EBS 快照的儲存費用（按 GB 計費、差異儲存），作為接手保險措施這筆成本值得。
+
+除了 VM 快照，有 SSH 存取時也要拍 VM 內部的軟體環境——AMI 可以還原整台機器，但看不到「裡面裝了什麼、跑了什麼」的摘要：
+
+```bash
+# 作業系統與版本
+cat /etc/os-release
+
+# 已安裝的套件清單
+dpkg -l > ~/takeover/packages-$(date +%Y%m%d).txt   # Debian/Ubuntu
+rpm -qa > ~/takeover/packages-$(date +%Y%m%d).txt    # RHEL/CentOS/Amazon Linux
+
+# 執行中的服務
+systemctl list-units --type=service --state=running > ~/takeover/services.txt
+
+# 所有使用者的 cron jobs
+for user in $(cut -f1 -d: /etc/passwd); do
+  echo "=== $user ===" >> ~/takeover/crontabs.txt
+  crontab -u "$user" -l 2>/dev/null >> ~/takeover/crontabs.txt
+done
+
+# 網路監聽的 port（哪個 process 在聽哪個 port）
+ss -tlnp > ~/takeover/listening-ports.txt
+```
+
+把這些輸出存進盤點 repo，跟 CLI 資源盤點（describe 指令的輸出）放在一起。`listening-ports.txt` 跟 security group 規則對照，可以看出「哪些 port 有服務在聽但 SG 沒開」（可能是內部服務）和「哪些 port SG 開了但沒有服務在聽」（可能是殘留規則）。
+
 ## 依賴關係推導
 
 盤點回答「有什麼」，依賴推導回答「改一個會連帶影響什麼」。手動環境沒有 Terraform 的依賴圖可以看，需要從資源的引用關係反推。

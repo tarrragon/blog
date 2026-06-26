@@ -83,6 +83,47 @@ grep -rn "password\|passwd\|secret\|api_key\|apikey\|api_secret" \
 
 翻 code 找出所有對外部服務的呼叫——金流（綠界、藍新、Stripe）、簡訊（Twilio、三竹）、Email（SendGrid、SMTP）、社群登入（Facebook、Google）、CDN、Analytics。每一個整合都有對應的 API key 或 webhook URL，這些都是接手後需要確認存取權的項目。
 
+### 環境設定的拍照
+
+程式碼和資料庫之外，伺服器的執行環境本身也要記錄。非 container 環境沒有 `docker commit` 可以一次打包整台機器，要逐層拍：
+
+**PHP 設定**：在站台根目錄上傳一個 `phpinfo.php`（內容 `<?php phpinfo();`），用瀏覽器打開後把完整輸出另存為 HTML 檔。記錄完立刻刪掉這個檔案——phpinfo 會暴露伺服器的完整設定與路徑。需要記錄的關鍵項：PHP 版本、載入的模組（`mysqli`、`curl`、`mbstring`、`gd`、`imagick`）、`upload_max_filesize`、`post_max_size`、`max_execution_time`、`memory_limit`、`error_reporting`、`session.save_handler`。這些值直接影響程式碼能不能在本地環境重現相同的行為。
+
+**Cron jobs**：cPanel 的 Cron Jobs 頁面或 Plesk 的排程工作清單，截圖或逐條抄到 `ENVIRONMENT.md`。每一條 cron 記錄三項：排程時間、執行的指令（通常是 `/usr/local/bin/php /home/user/public_html/cron.php`）、這條 cron 的業務用途（如果能從指令或檔案名推斷）。
+
+**SSL 憑證**：記錄域名、簽發者（Let's Encrypt / 自購 / 主機商代管）、到期日。瀏覽器的鎖頭圖示可以查看憑證詳情。從本機也可以用 CLI 確認：
+
+```bash
+echo | openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noout -dates -issuer
+```
+
+如果是 Let's Encrypt 自動續期，要確認續期機制是 cPanel 內建（AutoSSL）還是某個自訂 cron。手動購買的憑證要記錄到期日並設日曆提醒——過期後站台會直接出現瀏覽器安全警告。
+
+**.htaccess 規則**：`.htaccess` 可能散在多個目錄（根目錄、`uploads/`、`wp-admin/`、`api/`）。FTP 下載時已包含在內（前提是 FTP client 有設定顯示隱藏檔案），確認一下這些檔案都在 repo 裡。
+
+**外部服務連線**：除了前一節的第三方整合清單，用 grep 掃程式碼找出所有對外 URL。這些連線在未來遷移時要同步處理——搬了伺服器但 callback URL 沒改，金流通知就收不到。
+
+```bash
+grep -rn "https\?://" --include="*.php" . \
+  | grep -v "localhost\|127\.0\.0\.1\|example\.com" \
+  | sort -u > _environment/external-urls.txt
+```
+
+**檔案權限**：FileZilla 的遠端檔案清單有權限欄。記錄 `uploads/`、`cache/`、`sessions/`、config 檔案的權限。777 的目錄是安全風險（任何使用者都能寫入），在共享主機上尤其危險——同台主機的其他帳戶也能存取。
+
+把以上資料存進 repo 的 `_environment/` 目錄：
+
+```text
+_environment/
+├── phpinfo-20260626.html      # phpinfo 完整輸出
+├── cron-jobs.md               # cron 清單
+├── ssl-cert-info.txt          # 憑證資訊
+├── external-urls.txt          # 外部連線清單
+└── file-permissions.txt       # 目錄權限記錄
+```
+
+`_environment/` 可加進 `.gitignore`（phpinfo 含敏感資訊），或只 ignore HTML 檔、其餘進 Git。
+
 ## 建立本地開發環境
 
 本地能跑起來，才有安全的測試空間。目標是在本機重現 prod 的 PHP + MySQL 版本組合。
