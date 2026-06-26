@@ -1,15 +1,15 @@
 ---
-title: "macOS 新機初始化清單"
+title: "macOS 新機基礎建設：套件管理與個人 bin 的設定順序"
 date: 2026-06-27
-description: "重灌或換機後要逐項補齊的 macOS 設定清單，重點在順序——先裝 Homebrew 當套件管理基礎，再把系統凍結在舊版的內建工具（如 bash）換成現代版本。清單持續增補。"
+description: "重灌或換機後最底層的三項基礎建設與它們的依賴順序：先裝 Homebrew 當套件管理基礎，再用它把凍在舊版的內建 bash 換成現代版本，最後掛上個人 bin 目錄。之後會持續增補。"
 tags: ["macos", "setup", "homebrew", "bash", "tooling"]
 ---
 
-這篇是個人的 macOS 新機初始化清單，記錄重灌或換機後要逐項補齊的設定。重點不只是「裝什麼」，更是順序——有些項目是後面所有項目的基礎，要先做完才動得了下一步。清單會隨著之後遇到的新需求持續增補，所以排在最前面的永遠是基礎建設，越往後越是依賴前面項目的補強。
+重灌或換機後要補的設定很多，但有個底層順序不能跳：套件管理工具要先到位，後面的補強才裝得起來。這篇聚焦最底層的三項基礎建設（Homebrew、bash、個人 bin），按依賴順序排列。重點不只是「裝什麼」，而是「為什麼這個順序」；之後遇到的新需求會接在後面繼續增補。
 
 ## 先裝 Homebrew，它是後面一切的基礎
 
-初始化的第一步是安裝 Homebrew，因為 macOS 本身沒有內建的套件管理工具，而後面幾乎每一項補強——命令列工具、開發語言、甚至部分 GUI App——都透過它安裝。把它排在第一位是因為其他項目都依賴它存在。
+macOS 本身沒有內建的套件管理工具，而後面幾乎每一項補強（命令列工具、開發語言、甚至部分 GUI App）都靠它安裝。沒有 Homebrew，這份清單的其他項目全部無從裝起，所以它排第一。
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -22,11 +22,11 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-這一步做完、`brew --version` 跑得出來，後面的項目才有安裝來源。
+這一步做完、`brew --version` 跑得出來，Homebrew 就能當後面所有項目的安裝來源。
 
 ## 把 bash 更新到 5.x
 
-裝完 Homebrew 後第一個補的是 bash，因為 macOS 內建的 `/bin/bash` 永遠停在 3.2 系列（2006 年釋出的版本，目前是 patchlevel 57）。Apple 從那之後就凍結它，原因是 bash 4 之後改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。
+bash 是裝完 Homebrew 後最值得優先換掉的內建工具。macOS 的 `/bin/bash` 永遠停在 3.2 系列（2006 年釋出，目前是 patchlevel 57），Apple 之後就凍結它，原因是 bash 4 改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本的人來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。
 
 正確做法是用 Homebrew 另外裝一份新版並排存在，而不是覆寫系統版。`/bin/bash` 在唯讀的系統卷上、受 SIP 保護，本來就不該也不能改：
 
@@ -41,11 +41,11 @@ env bash --version   # 應顯示 5.x
 /bin/bash --version  # 系統版仍是 3.2.57，沒被動
 ```
 
-要留意的是互動 shell 在現代 macOS 預設是 zsh，這一步不影響它——更新 bash 的目的是給 `#!/usr/bin/env bash` 腳本一個現代執行環境，而不是換登入 shell。真要把新版 bash 當登入 shell，才需要額外把它加進 `/etc/shells` 再 `chsh`。
+要留意的是互動 shell 在現代 macOS 預設是 zsh，這一步不影響它。更新 bash 的目的是給 `#!/usr/bin/env bash` 腳本一個現代執行環境，不是換登入 shell。真要把新版 bash 當登入 shell，才需要額外把它加進 `/etc/shells` 再 `chsh`。
 
 ## 把 ~/.local/bin 加進 PATH，放個人腳本
 
-接著建立一個放個人腳本的目錄並掛上 PATH，因為跟專案無關的小工具（例如 [disk-report](../macos_disk_space_diagnosis/) 與 [app-report](../macos_app_footprint_report/) 這類系統診斷腳本）需要一個能在任何地方直接呼叫、又不污染專案 repo 的家。慣例是個人的 `~/.local/bin`。
+跟專案無關的小工具（例如 [disk-report](../macos_disk_space_diagnosis/) 與 [app-report](../macos_app_footprint_report/) 這類系統診斷腳本）需要一個能在任何地方直接呼叫、又不污染專案 repo 的家。慣例是個人的 `~/.local/bin`，把它建好並掛上 PATH。
 
 ```bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zprofile
@@ -58,7 +58,7 @@ export PATH="$HOME/.local/bin:$PATH"
 echo "$PATH" | tr ':' '\n' | grep "$HOME/.local/bin"
 ```
 
-這一步做完，前面提到的那些個人腳本才能裝起來直接呼叫。
+PATH 設好，前面提到的那些個人腳本 symlink 進去就能直接呼叫。
 
 ## 後續項目
 

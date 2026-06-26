@@ -5,7 +5,7 @@ description: "從一台 30G 餘裕在幾小時內歸零的 Mac，記錄一套先
 tags: ["macos", "disk-space", "apfs", "time-machine", "troubleshooting", "tooling"]
 ---
 
-這篇記錄一次 macOS 磁碟空間異常的排查：一台原本還有約 30G 餘裕的 Mac，使用幾小時後空間全部歸零，清過系統各種 cache 也沒有改善。這篇的重點是排查的順序與判讀依據——用什麼順序找、用哪個數字判斷——而最後刪了什麼反而是次要的。順序對了，就能避開兩個讓人空轉的陷阱。
+一台原本還有約 30G 餘裕的 Mac，使用幾小時後空間全部歸零，清過系統各種 cache 也沒有改善。這次排查的重點是順序與判讀依據：用什麼順序找、用哪個數字判斷，最後刪了什麼反而次要。順序對了，就能避開兩個讓人空轉的陷阱。
 
 最後把整套診斷固化成一個唯讀的 `disk-report` 腳本，往後同類情況可以一行指令重跑。
 
@@ -26,7 +26,7 @@ diskutil info /System/Volumes/Data | grep -iE "Container Free Space|Volume Free 
 
 空間在幾小時內反覆消長、清 cache 卻無效，最常見的原因是 Time Machine 的本地快照（local snapshots）加上 macOS 的 purgeable 空間，而不是某個看得見的檔案。這是排查時要先排除的一條線。
 
-本地快照的運作方式是：當使用者修改或刪除檔案時，Time Machine 會自動建立快照「凍結」舊資料，好讓本地也能做時光機回溯。這些被凍結的資料，正是先前以為已刪除、卻怎麼清都不會釋放的空間。快照預設在 24 小時後、或磁碟空間壓力過大時才會自動清除——後者就是「過一陣子空間又回來」的來源。
+本地快照的運作方式是：當使用者修改或刪除檔案時，Time Machine 會自動建立快照「凍結」舊資料，好讓本地也能做時光機回溯。這些被凍結的資料，正是先前以為已刪除、卻怎麼清都不會釋放的空間。快照預設在 24 小時後、或磁碟空間壓力過大時才會自動清除；後者正是「過一陣子空間又回來」的來源。
 
 ```bash
 tmutil listlocalsnapshots /System/Volumes/Data
@@ -38,7 +38,7 @@ tmutil listlocalsnapshots /System/Volumes/Data
 
 找佔用大戶要用 `du`（實際佔用的磁碟區塊）排序，不能依賴 `ls -l` 顯示、或 `find -size` 篩選所用的邏輯大小。對一般檔案兩者相同，但對 sparse 檔（稀疏檔）差距可以是好幾十倍，誤判會追錯目標。
 
-這次就踩到這個陷阱。`find` 列出近期修改的大檔時，OrbStack 的虛擬磁碟映像顯示為 228G，看起來像頭號兇手；但用 `du` 一量，實際佔用只有 1.9G。同樣地，macOS Podcasts 在 tmp 塞的一堆 `.tmp.resize.img` 顯示有數十個檔，實際只佔 3.5M。這些都是 sparse 檔：宣告了很大的邏輯大小，但只有寫入過的區塊才真正佔磁碟。
+這次就踩到這個陷阱。`find` 列出近期修改的大檔時，OrbStack（一套容器與 VM 執行環境）的虛擬磁碟映像顯示為 228G，看起來像頭號兇手；但用 `du` 一量，實際佔用只有 1.9G。同樣地，macOS Podcasts 在 tmp 塞的一堆 `.tmp.resize.img` 顯示有數十個檔，實際只佔 3.5M。這些都是 sparse 檔：宣告了很大的邏輯大小，但只有寫入過的區塊才真正佔磁碟。
 
 ```bash
 # 實際佔用（正確）
@@ -59,7 +59,7 @@ du -shx ~/Library/* 2>/dev/null | sort -rh | head -12
 
 ## 這次找到的佔用大戶與處理
 
-定位出來的大戶集中在開發工具鏈與閒置的本地資料，多數可逆、刪了之後需要時會自動重建或可重新下載。以下逐項說明判讀依據，而不是只列清單。
+定位出來的大戶集中在開發工具鏈與閒置的本地資料，多數可逆、刪了之後需要時會自動重建或可重新下載。下面的項目與數字都是這台機器的實測，換一台機器組成會完全不同；值得帶走的是每一項背後的判讀問題，不是這份清單本身。以下逐項說明判讀依據。
 
 | 項目                        | 實際佔用 | 處理判斷                                                |
 | --------------------------- | -------- | ------------------------------------------------------- |
@@ -81,14 +81,14 @@ Claude 桌面的 `vm_bundles` 是最大單一項目（11G）。它是桌面 App 
 
 一次性查完之後，把這套順序寫成腳本的價值是：下次同類情況不必重新回想指令與判讀順序，一行就能重跑，而且固定先看快照、再用實際佔用值，不會又掉進 sparse 假大小的陷阱。
 
-腳本收在公開 repo [tarrragon/scripts](https://github.com/tarrragon/scripts)，而不是放進某個專案的 `bin/`——它是跟任何專案無關的系統工具，連到個人 bin 才能在任何地方直接呼叫，也不會污染專案 repo。安裝方式是 clone 下來、把腳本本體 symlink 到 `~/.local/bin`：
+腳本收在公開 repo [tarrragon/scripts](https://github.com/tarrragon/scripts)，而不是放進某個專案的 `bin/`。它跟任何專案無關，連到個人 bin 才能在任何地方直接呼叫，也不會污染專案 repo。安裝方式是 clone 下來、把腳本本體 symlink 到 `~/.local/bin`：
 
 ```bash
 git clone https://github.com/tarrragon/scripts.git ~/Projects/scripts
 ln -s ~/Projects/scripts/disk-report/disk-report ~/.local/bin/disk-report
 ```
 
-這一步預設 `~/.local/bin` 已在 PATH 上。若還沒設定，做法見 [macOS 新機初始化清單](../macos_new_machine_setup/) 的對應項目。腳本刻意設計成唯讀：只報告、不刪除，刪什麼由人看完報告再決定。
+這一步預設 `~/.local/bin` 已在 PATH 上。若還沒設定，做法見 [macOS 新機基礎建設](../macos_new_machine_setup/) 的對應項目。腳本刻意設計成唯讀：只報告、不刪除，刪什麼由人看完報告再決定。
 
 ```bash
 disk-report              # 完整診斷：總覽 + 快照狀態 + 各層大戶 + 開發環境可清項
@@ -114,3 +114,5 @@ find "$HOME" -type f -size +50M -mmin -180 2>/dev/null \
 3. 用 `du -shx` 由外往內逐層找大戶，全程以實際佔用值判斷，不信 `ls` / `find` 的顯示大小。
 4. 對每個大戶問「現在誰在用它」再決定刪不刪，可逆的優先清。
 5. 把整套順序固化成唯讀腳本，下次一行重跑。
+
+第 3 步若收斂到 `~/Library` 這種多個 App 共用的大目錄，按目錄統計只能告訴你 Caches、Containers 各多大，看不出是哪幾個 App 佔的。把這棵子樹再按 App 拆開的做法，見 [macOS App 聚合佔用報告](../macos_app_footprint_report/)。
