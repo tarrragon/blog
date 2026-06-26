@@ -89,9 +89,9 @@ mysql -u root -p local_testdb < backup_20260626_1430.sql
 mysql -u root -p -e "SELECT COUNT(*) FROM orders;" local_testdb
 ```
 
-## 自動化備份（共享主機的限制下）
+## 自動化備份（無 SSH 環境的限制下）
 
-共享主機的自動化受限程度取決於主機提供的能力。三個層級由好到差：
+無 SSH 環境的自動化受限程度取決於主機提供的能力。三個層級由好到差：
 
 **主機有 cron + mysqldump 路徑**：部分主機在 cPanel 的「cron 工作」裡允許設定排程指令。mysqldump 通常安裝在 `/usr/bin/mysqldump`，可以直接用：
 
@@ -100,7 +100,7 @@ mysql -u root -p -e "SELECT COUNT(*) FROM orders;" local_testdb
 0 3 * * * /usr/bin/mysqldump -u dbuser -p'password' dbname | gzip > /home/user/backups/db_$(date +\%Y\%m\%d).sql.gz
 ```
 
-密碼寫在 cron 指令裡不理想但在共享主機上選擇有限。用 `.my.cnf` 檔案存密碼（`chmod 600`）較安全，但不是所有主機都支援。
+密碼寫在 cron 指令裡不理想但在無 SSH 環境選擇有限。用 `.my.cnf` 檔案存密碼（`chmod 600`）較安全，但不是所有主機都支援。
 
 **主機有遠端 MySQL 但沒 cron**：用本機排程（macOS launchd / Windows Task Scheduler / Linux cron）跑 mysqldump 遠端連線：
 
@@ -205,9 +205,9 @@ mysql -u root -p -e "SELECT COUNT(*) FROM orders;" restore_test
 
 記錄從開始匯入到驗證完成的時間。這個數字就是事故時的最快恢復時間。如果一個 500MB 的資料庫匯入需要 40 分鐘，加上排查原因和決策的時間，實際恢復可能超過一小時。知道這個數字，才能在事故時給管理層一個實際的時間預期。
 
-### 共享主機沒有 PITR
+### 無 SSH 環境沒有 PITR
 
-共享主機的 MySQL 不提供 binlog 層級的 point-in-time recovery。能還原到的最近時間點就是最新備份的時間點——備份是每天凌晨做的、下午三點出事，那就是丟失當天的所有寫入。這是備份頻率需要跟資料變更速率對齊的根本原因。交易密集的站台如果無法接受一天的資料丟失，升級到有 binlog / PITR 的環境（VPS 或 managed MySQL）是必要的投資。
+無 SSH 的主機環境的 MySQL 通常不提供 binlog 層級的 point-in-time recovery。能還原到的最近時間點就是最新備份的時間點——備份是每天凌晨做的、下午三點出事，那就是丟失當天的所有寫入。這是備份頻率需要跟資料變更速率對齊的根本原因。交易密集的站台如果無法接受一天的資料丟失，升級到有 binlog / PITR 的環境（VPS 或 managed MySQL）是必要的投資。
 
 ## 大資料庫的特殊處理
 
@@ -226,7 +226,7 @@ mysqldump -h db-host.example.com -u dbuser -p \
   dbname large_table | gzip > large_table_$(date +%Y%m%d).sql.gz
 ```
 
-資料庫規模成長到備份時間超過維護視窗（例如匯出要兩小時但只有一小時的低流量時段），代表共享主機的備份能力已經到頂，需要評估升級到有 automated snapshot 的 managed MySQL 或 VPS。
+資料庫規模成長到備份時間超過維護視窗（例如匯出要兩小時但只有一小時的低流量時段），代表這類環境的備份能力已經到頂，需要評估升級到有 automated snapshot 的 managed MySQL 或 VPS。
 
 ## 跨分類引用
 

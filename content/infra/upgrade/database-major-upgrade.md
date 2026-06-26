@@ -6,7 +6,7 @@ weight: 4
 tags: ["infra", "upgrade", "database", "mysql", "postgresql"]
 ---
 
-資料庫大版本升級是所有升級類型中風險最高的一種，因為資料庫承載的是不可重建的狀態。Runtime 升級（PHP 5.6→8.x）改壞了可以切回舊版本重新部署；平台遷移（共享主機→雲端）改壞了可以把 DNS 切回去。資料庫升級改壞了，回退手段是從備份還原——而還原需要時間，還原期間服務不可用，且還原點之後的寫入會遺失。這個不對稱決定了資料庫升級的操作模式：每一步都需要驗證通過才進下一步，且每一步都有明確的回退路徑。
+資料庫大版本升級是所有升級類型中風險最高的一種，因為資料庫承載的是不可重建的狀態。Runtime 升級（PHP 5.6→8.x）改壞了可以切回舊版本重新部署（切換 PHP 版本即可回退）；平台遷移（共享主機→雲端）改壞了可以把 DNS 切回去（TTL 期間內生效）。資料庫升級改壞了，回退手段是從備份還原——而還原需要時間，還原期間服務不可用，且還原點之後的寫入會遺失。這個不對稱決定了資料庫升級的操作模式：每一步都需要驗證通過才進下一步，且每一步都有明確的回退路徑。
 
 ## 升級前的相容性評估
 
@@ -202,4 +202,4 @@ mysql -e "SHOW GLOBAL STATUS LIKE 'Slow_queries';"
 
 - → [升級的共通操作框架](/infra/upgrade/upgrade-framework/)：四階段模型的通用說明
 - → [Stateful 資源保護與依賴表達](/infra/05-core-services/stateful-protection-dependency/)：multi-AZ、備份、deletion protection 的 IaC 描述
-- → [共享主機的資料庫備份與變更管理](/infra/takeover/legacy-database-backup-migration/)：接手環境的資料庫備份策略
+- → [無 SSH 環境的資料庫備份與變更管理](/infra/takeover/legacy-database-backup-migration/)：接手環境的資料庫備份策略

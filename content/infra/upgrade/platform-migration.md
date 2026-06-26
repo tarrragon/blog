@@ -1,7 +1,7 @@
 ---
 title: "平台遷移"
 date: 2026-06-26
-description: "共享主機到 VPS、VPS 到雲端、地端到雲端的遷移路徑 — 資料同步策略、DNS 切換、驗證與回退"
+description: "FTP 面板主機到 VPS、VPS 到雲端、地端到雲端的遷移路徑 — 資料同步策略、DNS 切換、驗證與回退"
 weight: 3
 tags: ["infra", "upgrade", "migration", "platform"]
 ---
@@ -132,6 +132,10 @@ VPS 上的每個 process 都需要對應到雲端的服務：
 | 背景 worker     | ECS service / SQS + Lambda      | 依工作模式選型       |
 | 檔案儲存        | S3 + CloudFront                 | 上傳檔案搬到物件儲存 |
 
+### 自動化遷移工具
+
+AWS Application Migration Service（MGN）可以自動化 VM workload 的搬遷——把現有 server 的 block-level data 持續複製到 AWS、切換時啟動 EC2 instance。適合大量 VM 的 lift-and-shift，但不處理應用層的重構（nginx config、cron 轉 EventBridge 等仍需手動）。單台 VM 的遷移用 MGN 反而比手動 dump/restore 多一層設定成本，適用場景是同時搬 5 台以上。
+
 ### IaC 的導入時機
 
 VPS → 雲端是導入 IaC 的最佳時機——新環境從零建起，沒有歷史包袱。用 Terraform 描述 VPC、subnet、RDS、ECS、ALB 等資源，讓新環境可重現（見[模組一：最小可行 IaC](/infra/01-minimal-iac/)）。遷移完成後，這套 IaC 直接成為持續維運的基礎。
@@ -232,6 +236,6 @@ aws route53 change-resource-record-sets --hosted-zone-id Z123 --change-batch '{
 ## 跨分類引用
 
 - → [升級的共通操作框架](/infra/upgrade/upgrade-framework/)：評估差異 → 平行環境 → 切換 → 退役的四階段模型
-- → [接手維運：共享主機](/infra/takeover/legacy-ftp-no-ssh/)：遷移前的環境盤點方法
+- → [接手維運：無 SSH 的 FTP 環境](/infra/takeover/legacy-ftp-no-ssh/)：遷移前的環境盤點方法
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：雲端遷移是導入 IaC 的最佳時機
 - → [模組三：網路地基](/infra/03-network-foundation/)：雲端環境的 VPC / subnet 設計

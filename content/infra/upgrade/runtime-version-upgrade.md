@@ -164,16 +164,16 @@ composer why-not php 8.2
 
 rollback 是把流量切回舊環境。舊環境在確認新環境穩定之前不要關——保留期至少一週。
 
-### 共享主機的情境
+### 面板管理主機（無 SSH）的情境
 
-共享主機的 PHP 版本切換通常是 per-domain 的設定：
+面板管理主機（cPanel / Plesk）的 PHP 版本切換通常是 per-domain 的設定：
 
 - **cPanel**：MultiPHP Manager，選域名 → 選 PHP 版本 → Apply
 - **Plesk**：PHP Settings → PHP version 下拉選單
 
 切換是即時生效的，rollback 也是即時的（選回舊版本）。但沒有「平行環境驗證」的能力——除非主機商提供 staging subdomain 可以先測。
 
-共享主機的升級策略：
+面板管理主機的升級策略：
 
 1. 如果有 staging subdomain：先在 staging 切換版本、驗證、再切 prod
 2. 如果沒有：選流量最低的時段切換（如凌晨），切換後立刻驗證關鍵流程，出問題立刻切回

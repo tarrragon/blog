@@ -16,7 +16,7 @@ tags: ["infra", "upgrade", "migration", "platform"]
 | ------------------------------------------------------------- | --------------------------------------------------------------- |
 | [升級的共通操作框架](/infra/upgrade/upgrade-framework/)       | 評估差異、建平行環境、分批切換、退役舊環境的四階段模型          |
 | [Runtime 版本升級](/infra/upgrade/runtime-version-upgrade/)   | PHP / Node / Python 大版本升級的相容性評估、測試策略、分批部署  |
-| [平台遷移](/infra/upgrade/platform-migration/)                | 共享主機 → VPS → 雲端的遷移路徑、DNS 切換、資料同步             |
+| [平台遷移](/infra/upgrade/platform-migration/)                | FTP 面板主機 → VPS → 雲端的遷移路徑、DNS 切換、資料同步         |
 | [資料庫大版本升級](/infra/upgrade/database-major-upgrade/)    | MySQL / PostgreSQL 大版本升級的相容性、備份、平行驗證、切換策略 |
 | [OS 與基礎軟體更換](/infra/upgrade/os-base-software-upgrade/) | EOL OS 的遷移、套件相容性、服務重新部署                         |
 

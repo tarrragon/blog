@@ -27,6 +27,8 @@ EOL 不是一個時間點、而是一段逐漸惡化的過程：
 
 CentOS 7 在 2024 年 6 月結束支援，但仍有大量 production 環境在使用。CentOS 8 在 2021 年 12 月被轉向 CentOS Stream，打破了原本預期到 2029 年的支援承諾，迫使使用者重新選型。Ubuntu 18.04 的標準支援在 2023 年 4 月結束，Canonical 提供 ESM（Extended Security Maintenance）付費延長到 2028 年，但 ESM 只涵蓋 main 套件庫。
 
+ESM 或類似的付費延長支援（RHEL 的 ELS、CentOS 的第三方 TuxCare）是「買時間做遷移」的合理策略——付月費取得額外 2-5 年的安全修補，讓團隊有餘裕規劃平行建置而非被迫緊急遷移。Ubuntu Pro 免費涵蓋 5 台 instance 的 ESM，超過才需要付費。ESM 不是長期方案（延長支援的套件覆蓋範圍通常比標準期窄），而是給遷移專案爭取時間的保險。
+
 合規的影響很直接：PCI DSS 要求所有面對持卡人資料的系統都執行在有安全修補支援的軟體上；SOC 2 和 ISO 27001 的定期稽核會檢查作業系統的支援狀態。在 EOL OS 上跑的 production 環境會讓稽核結果出現 finding，需要額外的補償控制（compensating control）才能通過——而補償控制的維護成本通常高於遷移本身。
 
 ## 目標 OS 選型

@@ -135,7 +135,7 @@ grep -rn "session_start\|session_regenerate_id\|session\.cookie_httponly\|sessio
 
 ## .htaccess 安全設定
 
-共享主機上 `.htaccess` 是可用的伺服器端安全防線。盤點時確認這些設定是否存在，缺少的補上。
+無 SSH 的 Apache 環境中 `.htaccess` 是可用的伺服器端安全防線。盤點時確認這些設定是否存在，缺少的補上。
 
 ### 基礎安全設定
 
@@ -195,7 +195,7 @@ Header set Referrer-Policy "strict-origin-when-cross-origin"
 
 ## 檔案權限
 
-共享主機的權限控制能力有限——多數情況下透過 FTP client 檢查和調整。
+無 SSH 環境的權限控制能力有限——多數情況下透過 FTP client 檢查和調整。
 
 | 對象                         | 建議權限 | 理由                                                                      |
 | ---------------------------- | -------- | ------------------------------------------------------------------------- |
@@ -204,7 +204,7 @@ Header set Referrer-Policy "strict-origin-when-cross-origin"
 | Config 檔案（含 credential） | 640      | group 可讀（Apache 通常跟 owner 同 group）、other 不可讀                  |
 | 上傳目錄                     | 755      | 跟一般目錄相同，搭配 .htaccess 禁止 PHP 執行                              |
 
-777 權限（所有人可讀寫執行）在共享主機上等於同一台伺服器的其他租戶也能讀寫這些檔案。如果發現任何目錄或檔案是 777，立刻改回 755/644。FileZilla 在檔案上按右鍵 → 「File permissions」可以查看和修改。
+777 權限（所有人可讀寫執行）在多租戶主機上等於同一台伺服器的其他租戶也能讀寫這些檔案。如果發現任何目錄或檔案是 777，立刻改回 755/644。FileZilla 在檔案上按右鍵 → 「File permissions」可以查看和修改。
 
 ## 外部依賴的安全性
 
@@ -258,7 +258,7 @@ wpscan --url https://example.com --enumerate vp,vt,u
 
 ## 跨分類引用
 
-- → [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-no-ssh/)：本文的前置步驟（程式碼與資料庫快照）
+- → [無 SSH 的 FTP / 面板管理環境接管](/infra/takeover/legacy-ftp-no-ssh/)：本文的前置步驟（程式碼與資料庫快照）
 - → [資料庫備份與變更管理](/infra/takeover/legacy-database-backup-migration/)：SQL injection 修復前先備份，避免修補過程造成資料遺失
 - → [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/)：安全事件的持續偵測與錯誤追蹤
 - → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：credential 管理的系統性設計
