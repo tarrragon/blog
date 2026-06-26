@@ -201,6 +201,8 @@ vm_stat | head -3
 
 Models 一旦 `pull` 進 `~/.ollama/models/blobs`、不主動 `rm` 不會減少。半年累積可長到 50 GB+。
 
+Ollama models 只是磁碟大戶之一。整台 Mac 突然被吃光、要從哪裡查起的全機診斷順序（先排除快照浮動、再用實際佔用值逐層找大戶），見 [macOS 磁碟空間診斷流程](/other/macos_disk_space_diagnosis/)——那篇的佔用大戶表也會把 ollama 列為其中一項、再連回本篇的專屬清理 idiom。
+
 ### 觀察累積
 
 ```bash

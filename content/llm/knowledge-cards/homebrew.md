@@ -10,7 +10,7 @@ Homebrew 的核心概念是「macOS 的社群套件管理器、用 `brew install
 
 ## 概念位置
 
-Homebrew 在 macOS 跟使用者要安裝的工具之間、扮演「公開 registry + 本地套件管理」的角色。它維護一份名為「formula」的 Ruby 腳本清單、每個 formula 描述某個工具怎麼下載、編譯、安裝。執行 `brew install ollama` 時、Homebrew 找到 ollama formula、下載對應 bottle（預編譯二進位）、放到 `/opt/homebrew/`（Apple Silicon）或 `/usr/local/`（Intel Mac）、再把可執行檔 symlink 到 `/opt/homebrew/bin/`。
+Homebrew 在 macOS 跟使用者要安裝的工具之間、扮演「公開 registry + 本地套件管理」的角色。它維護一份名為「formula」的 Ruby 腳本清單、每個 formula 描述某個工具怎麼下載、編譯、安裝。執行 `brew install ollama` 時、Homebrew 找到 ollama formula、下載對應 bottle（預編譯二進位）、放到 `/opt/homebrew/`（Apple Silicon）或 `/usr/local/`（Intel Mac）、再把可執行檔 symlink 到 `/opt/homebrew/bin/`。新機從零的完整安裝順序（含第一次裝 Homebrew、PATH 設定與晶片前綴差異）見 [macOS 新機基礎建設](/other/macos_new_machine_setup/)。
 
 `brew services` 是 Homebrew 附帶的服務管理子命令、把指令封裝成 macOS 原生的 [launchd service](/llm/knowledge-cards/launchd-service/)、處理「開機自動啟動 / 停止 / 重啟」需求。
 

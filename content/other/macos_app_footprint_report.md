@@ -64,6 +64,16 @@ App 各位置的聚合一律用 `du -skx` 取實際佔用，而不是 `ls` / `fi
 
 全機掃到 65 個 App、聚合總計 48.2G。這份排行的價值在於它直接指向「該從哪裡下手」，而判讀邏輯可以套到任何人的排行上：本體小、資料大的 App（這台是 Steam、Kindle）要回收就得處理書庫與遊戲本身；純快取大的（這台是 Dia 的 1.6G）清掉零風險；本體就大的開發工具（Xcode、Android Studio）除非不再開發否則動不得。同一個總數字底下，可清的比例天差地別，這正是逐項明細要回答的問題。
 
+## 聚合的邊界：總計不等於整機
+
+這個 48.2G 是「能歸屬到已安裝 App 的部分」之和，不是 `~/Library` 的全量。[disk-report 那篇](../macos_disk_space_diagnosis/)量到的 `~/Library` 約 70G，差額落在幾類刻意不歸進單一 App 的位置。
+
+最大的一塊是 `~/Library/Developer`（這台約 5.5G，幾乎全是 Xcode 的 DerivedData、CoreSimulator 與 iOS DeviceSupport）。它們是 Xcode 與模擬器產生的共用產物，硬塞給 Xcode 會誇大這顆 App、塞給別人又不對，所以 app-report 比照 Homebrew 把它單獨列成一段（`app-report --dev`）。也因為這樣，上面排行裡的 Xcode 只算到 `.app` 本體，它的建置產物要看 Developer 那段——這也是為什麼 disk-report 會把「Xcode DeviceSupport」列為大戶，而逐 App 排行卻看不到：那筆資料正住在這個不歸單一 App 的位置。
+
+其餘排除的還有 iCloud 與雲端硬碟的本地鏡像（`Mobile Documents`、`CloudStorage`）、已移除 App 留下的孤兒資料夾、以及 `Preferences`。排行掃的是 `/Applications`、`~/Applications`、`/Applications/Utilities` 與 Setapp、Mac App Store 裝的 App；直接從 DMG 跑、沒搬進 Applications 的 App 不會出現在排行，但它的 `~/Library` 資料若命名對得上仍可能部分計入。
+
+還有一個方向相反的誤差要記得：這是估算不是精算。同一份資料若以 APFS clone 或硬連結出現在多個被聚合的位置，逐位置加總會重複計到，聚合值可能偏高。要看整個 `~/Library` 到底多大、由誰佔，回到 disk-report 的逐層 `du`。
+
 ## 固化成 app-report 腳本
 
 把這套聚合邏輯寫成腳本，往後想知道「誰在吃空間」就一行重跑，不必每次重想要比對哪些目錄、要怎麼處理命名差異。腳本和 `disk-report` 收在同一個公開 repo [tarrragon/scripts](https://github.com/tarrragon/scripts) 裡，維持「跟專案無關的系統工具放個人 bin」的一致做法。
@@ -78,9 +88,10 @@ ln -s ~/Projects/scripts/app-report/app-report ~/.local/bin/app-report
 這一步預設 `~/.local/bin` 已在 PATH 上。若還沒設定，做法見 [macOS 新機基礎建設](../macos_new_machine_setup/) 的對應項目。裝好後就能直接呼叫：
 
 ```bash
-app-report           # 完整報告：App 聚合排行 + Homebrew
+app-report           # 完整報告：App 聚合排行 + Developer + Homebrew
 app-report --apps    # 只看 App 聚合排行（預設前 30）
 app-report --apps 50 # 排行顯示前 50
+app-report --dev     # 只看 ~/Library/Developer 開發工具共用資料
 app-report --brew    # 只看 Homebrew
 ```
 
