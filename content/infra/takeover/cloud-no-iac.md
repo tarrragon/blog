@@ -16,14 +16,18 @@ tags: ["infra", "takeover", "cloud", "aws"]
 
 ### 用 CLI 拉清單
 
-從有 tag 的資源開始，再補沒有 tag 的。AWS 的 Resource Groups Tagging API 能跨服務撈出所有被標記的資源：
+盤點有三層工具可用，從粗到細：
+
+**全貌掃描**：先用跨服務工具拿到「到底有多少資源」的量級感。AWS Resource Explorer 在 Console 開啟後可以用搜尋語法跨 region、跨 service 查資源（例如搜 `resourcetype:ec2:instance` 列出所有 EC2）。Steampipe 是開源的 SQL 介面雲端查詢工具，用 `select * from aws_ec2_instance` 這類語法查詢，對習慣 SQL 的人比 CLI flag 直覺。兩者都能在幾分鐘內拿到環境的全貌。
+
+**Tag 層掃描**：AWS Resource Groups Tagging API 能跨服務撈出所有被標記的資源，但會漏掉沒有 tag 的 — 而接手環境裡沒 tag 的資源往往是風險最高的（沒人認領、不敢動）。
 
 ```bash
 aws resourcegroupstaggingapi get-resources \
   --output json > inventory/tagged-resources.json
 ```
 
-沒有 tag 的資源不會出現在這裡，需要按服務類型逐一拉。以下是接手時最該優先盤點的四類：
+**Per-service 細節**：全貌掃描只告訴你資源存在，細節（備份設定、SG 規則、IAM policy）要用 per-service describe 拉。以下是接手時最該優先盤點的四類：
 
 ```bash
 # EC2：哪些機器在跑、什麼規格、在哪個 subnet
@@ -53,14 +57,19 @@ done > inventory/s3-versioning.txt
 
 盤點不需要一次做完所有服務，但三件事要第一天就查：
 
-**對外暴露面**：security group 裡有沒有 `0.0.0.0/0` 入站規則指向非 HTTP/HTTPS 的 port（22、3306、5432、6379）。這些規則讓資料庫埠或管理埠直接暴露在公網掃描流量下。
+**對外暴露面**：security group 裡有沒有 `0.0.0.0/0` 入站規則指向非 HTTP/HTTPS 的 port（22、3306、5432、6379）。手動逐條查很慢 — 用安全掃描工具一次跑完更可靠。Prowler 是開源的 AWS 安全掃描工具，一次執行就能產出「哪些 SG 對外開放、哪些 S3 public、哪些 IAM 過寬」的分類報告：
 
 ```bash
-# 找出所有對全網開放的非標準埠
+# 安裝後執行，針對最相關的服務掃描
+prowler aws --services ec2 iam s3 rds -M json-ocsf -o inventory/
+
+# 如果只想快速查 SG 暴露面，用 CLI：
 aws ec2 describe-security-groups \
   --query 'SecurityGroups[].IpPermissions[?contains(IpRanges[].CidrIp, `0.0.0.0/0`)]' \
   --output json | jq '[.[][] | select(.FromPort != 80 and .FromPort != 443)]'
 ```
+
+ScoutSuite 是類似工具、支援多雲（AWS / GCP / Azure）。AWS Trusted Advisor 的免費 tier 也有基本安全檢查（S3 public access、SG 開放埠），但覆蓋面比 Prowler 窄。接手時三者選一跑一次，比手動翻 Console 快且不會漏。
 
 **備份狀態**：RDS 的 `BackupRetentionPeriod` 是不是 0（代表沒有自動備份）。S3 的 versioning 是不是關的。如果是，這是接手後第一個要改的設定 — 改備份設定不影響服務運作，但沒有備份時任何資料操作失誤都不可逆。
 
@@ -90,6 +99,10 @@ aws ec2 describe-network-interfaces \
   --output json > inventory/sg-usage.json
 ```
 
+AWS Console 的 VPC 頁面有 Resource Map 功能，可以視覺化 subnet → instance → SG 的對應關係，接手時第一次瀏覽依賴用它比 CLI 直覺。要產出可存檔的依賴圖，draw.io（有 AWS icon set）或 Lucidchart 都能畫，重點是圖要存進 repo、不是畫完就丟。
+
+如果後續打算導入 Terraform，Former2 可以掃描現有 AWS 資源、自動產出 Terraform / CloudFormation / CDK 程式碼。產出的程式碼不會完美（屬性常漏、命名要改），但作為反推依賴關係的起點比從零寫快。Inframap 則是從 Terraform state 產出依賴關係圖（在 import 階段才用得到）。
+
 從 SG 的引用鏈可以畫出一張粗略的依賴圖：
 
 | 層次 | 資源      | 入站來自      | 出站到          |
@@ -113,6 +126,15 @@ aws ec2 describe-network-interfaces \
 ## credential 盤點與收斂
 
 接手環境時，credential 是風險最高的一類 — 前團隊建立的 IAM user 和 access key 可能還在活躍狀態，而那些人已經不在團隊裡了。
+
+接手後第一件事是用 aws-vault 管理自己的 credential。aws-vault 把 AWS access key 存在 OS keychain（macOS Keychain / Windows Credential Manager），而非明文放在 `~/.aws/credentials`。執行 AWS 指令時由 aws-vault 注入臨時 session，本地磁碟上不留長期 key 的明文。不要沿用前人留下的 AWS CLI profile — 那些 profile 的權限範圍和用途都不確定。
+
+```bash
+# 安裝後設定新的 profile
+aws-vault add takeover-admin
+# 用臨時 session 執行指令
+aws-vault exec takeover-admin -- aws sts get-caller-identity
+```
 
 ### 產出 credential 報告
 
@@ -215,6 +237,10 @@ aws cloudtrail describe-trails --query 'trailList[].{Name:Name,S3:S3BucketName,I
 ## 往 IaC 的銜接
 
 盤點和紀律建立完成後，環境已經從「不知道有什麼」推進到「知道有什麼、知道誰在動、改了有紀錄」。這個狀態對應[成熟度階梯](/infra/00-infra-mindset/)的第零階到第一階之間。
+
+### 成本現況
+
+接手環境通常伴隨「這個月帳單多少」的問題。AWS Cost Explorer（免費）能看過去幾個月的花費分布，按服務類型、帳號、tag 維度拆。接手時先拉一次 Cost Explorer 的月度趨勢，看有沒有異常成長或不預期的高額服務。後續導入 IaC 後，Infracost 可以在 `terraform plan` 階段預估變更的成本影響（例如「升 RDS 規格會多花多少」），讓成本決策在 apply 之前就被看見。
 
 往 IaC 的銜接不需要一次做完。按穩定度和改動風險排序：
 

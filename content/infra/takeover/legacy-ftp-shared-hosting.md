@@ -16,7 +16,11 @@ tags: ["infra", "takeover", "legacy", "ftp", "php"]
 
 ### 程式碼與靜態資源
 
-用 FTP client（FileZilla、WinSCP、Cyberduck）把整個網站目錄下載到本地，然後初始化成 Git repo：
+用 FTP client 把整個網站目錄鏡像到本地。FileZilla 的操作路徑：站台管理員連線後，在遠端面板對根目錄按右鍵 → 「下載」，或用「伺服器 → 同步瀏覽」模式讓本地與遠端目錄結構保持對齊。WinSCP 提供「保持更新（Keep Remote Directory up to Date）」功能，但接手階段只需要一次性的完整下載，不需要持續同步。下載前確認 FTP client 的設定有勾選「顯示隱藏檔案」——`.htaccess`、`.env`、`.user.ini` 這類隱藏檔經常包含關鍵設定。
+
+如果主機有 cPanel，「備份精靈（Backup Wizard）」可以一次打包程式碼 + 資料庫 + email 設定，比手動 FTP 下載更完整。Plesk 的對應功能在「工具與設定 → 備份管理員」。
+
+下載完成後初始化成 Git repo：
 
 ```bash
 mkdir project-takeover && cd project-takeover
@@ -30,7 +34,11 @@ git commit -m "initial snapshot from production FTP"
 
 ### 資料庫
 
-用 phpMyAdmin 的「匯出」功能，選「自訂」模式，勾選所有資料表，格式選 SQL，編碼選 UTF-8。把匯出的 `.sql` 檔存進 repo：
+用 phpMyAdmin 的「匯出」功能：選「自訂」模式 → 勾選所有資料表 → 格式選 SQL → 勾選「加入 DROP TABLE / VIEW / PROCEDURE / FUNCTION / EVENT / TRIGGER 敘述」（讓匯入時能乾淨覆蓋）→ 壓縮選 gzip（大型資料庫避免瀏覽器逾時）→ 編碼選 UTF-8 → 執行。
+
+phpMyAdmin 的匯出在資料庫超過幾百 MB 時容易因 PHP `max_execution_time` 或記憶體限制中斷。替代方案：如果主機有 cPanel，「phpMyAdmin → 匯出」旁邊通常有「MySQL 資料庫備份」或透過 cPanel API 的 `mysqldump` 介面，比 phpMyAdmin 的 PHP 層匯出更可靠。另一個選項是本地安裝 DBeaver（免費、跨平台）或 TablePlus（macOS/Windows），用主機提供的遠端 MySQL 連線（cPanel → 遠端 MySQL → 加入本機 IP 白名單）直接從本機執行 `mysqldump`。HeidiSQL（Windows 免費）也支援同樣的遠端連線匯出。
+
+把匯出的 `.sql` 檔存進 repo：
 
 ```bash
 mkdir db-snapshots
@@ -50,7 +58,7 @@ git commit -m "initial database snapshot from phpMyAdmin"
 ## Production 環境
 
 - **主機商**：[名稱]、方案：[方案名稱]
-- **PHP 版本**：查看 phpinfo() 或控制面板
+- **PHP 版本**：cPanel/Plesk 的 PHP 設定頁直接顯示；沒有控制面板時，FTP 上傳一個 `phpinfo.php`（內容 `<?php phpinfo();`）到站台根目錄、瀏覽器開啟後記錄版本、確認後立刻刪除（phpinfo 會暴露伺服器完整設定）
 - **MySQL 版本**：phpMyAdmin 首頁顯示
 - **Web server**：Apache / LiteSpeed / Nginx（控制面板或 response header）
 - **域名 / DNS**：誰管的、nameserver 指向哪裡
@@ -77,7 +85,20 @@ grep -rn "password\|passwd\|secret\|api_key\|apikey\|api_secret" \
 
 ## 建立本地開發環境
 
-本地能跑起來，才有安全的測試空間。目標是用 Docker 或 MAMP/XAMPP 在本機重現 prod 的 PHP + MySQL 版本組合。
+本地能跑起來，才有安全的測試空間。目標是在本機重現 prod 的 PHP + MySQL 版本組合。
+
+### 選型：Docker vs 本地堆疊
+
+| 工具           | 平台            | 適用情境                                            |
+| -------------- | --------------- | --------------------------------------------------- |
+| Docker Compose | 跨平台          | 最精確對齊 prod 版本，特別是 PHP 5.6/7.0 這類舊版本 |
+| MAMP Pro       | macOS           | 圖形介面切 PHP 版本，不熟 Docker 時最快上手         |
+| Laragon        | Windows         | 比 XAMPP 現代、內建 PHP 版本切換與虛擬網域          |
+| XAMPP          | Windows / macOS | 最老牌、社群資源多，但 PHP 版本切換較麻煩           |
+| Laravel Valet  | macOS           | 輕量 CLI 為主，適合已經熟悉 CLI 的開發者            |
+| ServBay        | macOS           | 較新、支援多 PHP 版本共存、內建資料庫管理           |
+
+選型判準：如果 prod 的 PHP 版本是 5.6 或 7.0 這類已停止維護的舊版，Docker 是唯一能精確對齊的選項——MAMP/XAMPP 通常只提供仍在維護的版本。常見版本（7.4、8.0、8.1、8.2）用 MAMP/Laragon 會比 Docker 更快跑起來。
 
 ### Docker 方式
 
@@ -99,9 +120,15 @@ services:
       - ./db-snapshots/initial.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+    ports:
+      - "8081:80"
 ```
 
-PHP 版本要對齊 prod。如果 prod 是 PHP 7.4，本地用 `php:7.4-apache`。版本差異會導致函式行為不同（`str_contains` 在 8.0 才有、`mysql_*` 系列在 7.0 移除），測試通過但 prod 壞掉。
+PHP 版本要對齊 prod。如果 prod 是 PHP 7.4，本地用 `php:7.4-apache`。版本差異會導致函式行為不同（`str_contains` 在 8.0 才有、`mysql_*` 系列在 7.0 移除），測試通過但 prod 壞掉。phpmyadmin service 讓本地也有跟 prod 相同的資料庫操作介面，方便驗證 phpMyAdmin 上要執行的操作。
 
 ### 匯入資料庫
 
@@ -110,6 +137,8 @@ Docker 啟動後匯入初始快照：
 ```bash
 docker exec -i project-db-1 mysql -uroot -plocaldev project < db-snapshots/20260626-initial.sql
 ```
+
+MAMP/Laragon/XAMPP 的匯入方式：開啟對應的 phpMyAdmin（通常在 `localhost/phpmyadmin`）→ 選資料庫 → 匯入 → 選 `.sql` 檔案 → 執行。或用 DBeaver/TablePlus 連本地 MySQL 後執行 SQL 檔。
 
 ### 常見的「本地跑不起來」原因
 
@@ -178,6 +207,38 @@ FTP 部署沒有 CI pipeline 的自動化保護，但不代表不能有流程。
 
 如果主機面板有自動備份功能（cPanel 的 Backup Wizard），確認它有開並且能還原。但不要把它當唯一備份——主機商的備份可能在主機出問題時一起不見。
 
+### 備份自動化（沒 SSH 也能做）
+
+共享主機沒有 cron + CLI 的組合，但可以用本機排程 + FTP client 的 CLI 模式達成自動化備份。
+
+用 lftp（macOS/Linux 可透過 Homebrew 或 apt 安裝）做定期站台鏡像：
+
+```bash
+# backup.sh — 加入本機的 cron 或 launchd 每日執行
+lftp -e "mirror --verbose /public_html/ /local/backup/site/; quit" \
+  -u username,password ftp.example.com
+```
+
+rclone 是另一個選項，支援 FTP/SFTP 且有更好的增量同步（只傳有變更的檔案）：
+
+```bash
+# 設定 rclone remote（首次）
+rclone config  # 選 FTP、填入主機資訊
+
+# 同步（之後每次只傳差異）
+rclone sync myhost:/public_html/ /local/backup/site/ --progress
+```
+
+macOS 用 launchd plist、Windows 用工作排程器（Task Scheduler）排定每日執行這些腳本，讓備份不再依賴人工記得。
+
+資料庫的自動備份較受限——phpMyAdmin 沒有 CLI 介面。如果主機允許遠端 MySQL 連線，可以在本機 cron 裡加一條 `mysqldump`：
+
+```bash
+mysqldump -h mysql.example.com -u dbuser -p'password' dbname | gzip > /local/backup/db/$(date +%Y%m%d).sql.gz
+```
+
+不允許遠端連線時，退而求其次：每週手動從 phpMyAdmin 匯出一次、存進 repo。
+
 ### 回退方式
 
 FTP 部署沒有 rollback 按鈕。回退的方式是：
@@ -225,6 +286,14 @@ $db_password = getenv('DB_PASSWORD') ?: parse_ini_file(__DIR__ . '/.env')['DB_PA
     Require all denied
 </Files>
 ```
+
+## 外部監控（prod 不用裝東西）
+
+共享主機上裝不了監控 agent，但可以用外部 HTTP 檢查服務從外面看。這類服務從多個地理位置定期對網站發送 HTTP request，回應異常時通知。
+
+UptimeRobot 的免費方案提供 50 個 monitor、每 5 分鐘檢查一次，夠用於一個站台的首頁 + 幾個關鍵頁面（登入頁、API endpoint、金流回呼 URL）。Better Stack（原 Better Uptime）提供類似功能並附帶 status page。兩者都只需要填入 URL 和通知方式（email / Slack / webhook），不需要在 server 上裝任何東西。
+
+設定後至少加三個 monitor：首頁（網站是否活著）、登入或後台入口（PHP 是否正常執行）、以及任何有外部依賴的頁面（金流 callback、API endpoint）。這不是完整的可觀測性，但至少讓「網站掛了」這件事從「使用者打電話來」變成「手機收到通知」。
 
 ## 升級路徑的切入點
 
