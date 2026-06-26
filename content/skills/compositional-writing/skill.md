@@ -82,13 +82,13 @@ metadata:
 
 完稿即進入 review 階段。一次寫對全部維度違反 working memory、實際結果是「每維度都做一半」。設計 N 輪 re-read、每輪用不同 frame：
 
-| 輪  | Frame                                                                                                         | 抓什麼                                                                            |
-| --- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| 1   | 生成                                                                                                          | idea → 字、預期會有錯                                                             |
+| 輪  | Frame                                                                                         | 抓什麼                                                                            |
+| --- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| 1   | 生成                                                                                          | idea → 字、預期會有錯                                                             |
 | 2   | 對意圖（[ease-of-writing-vs-intent-alignment](/report/ease-of-writing-vs-intent-alignment/)） | 正文、title、description、MOC hook 都跟原意對齊                                   |
-| 3   | 機會成本語氣                                                                                                  | 全 surface 的絕對詞翻成 trade-off                                                 |
-| 4   | Grep-ability / 命名 / 術語                                                                                    | title、slug、link label、段首關鍵字可單次 grep 命中；術語保留原文錨點與完整名詞頭 |
-| 5   | 反例 / 邊界                                                                                                   | 「何時不適用」段、反模式列表                                                      |
+| 3   | 機會成本語氣                                                                                  | 全 surface 的絕對詞翻成 trade-off                                                 |
+| 4   | Grep-ability / 命名 / 術語                                                                    | title、slug、link label、段首關鍵字可單次 grep 命中；術語保留原文錨點與完整名詞頭 |
+| 5   | 反例 / 邊界                                                                                   | 「何時不適用」段、反模式列表                                                      |
 
 Surface enumeration 是 multi-pass 的固定前置步驟。寫作產物包含 body surface 與 metadata / navigation surface：`title`、`description`、`tags`、heading、link label、MOC / index entry、slug / filename。每輪 frame 都掃這份 surface 清單，讓正文與讀者入口共用同一個概念錨點。description / hook 對規則做壓縮時、**可以丟細節、不可以改模態** — 把本體的「條件允許（可延後但要記錄）」壓成「絕對禁止（不可跳過）」、讀者依摘要行動就會偏離本體；摘要讀起來比本體「更有力、更乾脆」就是失真訊號、模態詞跟主詞動詞同級、最後砍。實測一批七份文檔有四份的 description 出現模態漂移 — 這個檢查每批都要跑。
 

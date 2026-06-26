@@ -14,12 +14,12 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作"]
 
 操作型教材的一個動作（「拍下現況」「匯出資料庫」「建立備份」）在不同執行環境裡對應完全不同的工具路徑：
 
-| 動作       | Container 環境              | VM（有 SSH）                    | 共享主機（只有 FTP）           |
-| ---------- | --------------------------- | ------------------------------- | ------------------------------ |
-| 拍下現況   | `docker commit` / image tag | AMI / machine image + 軟體清單 | FTP mirror + phpinfo + cron 截圖 |
-| 匯出資料庫 | `docker exec mysqldump`     | `mysqldump` via SSH             | phpMyAdmin 匯出（有 timeout 限制）|
-| 定期備份   | volume snapshot / registry  | cron + mysqldump + S3           | 本機排程 + lftp mirror           |
-| 查執行環境 | `docker inspect`            | `systemctl` / `ss -tlnp`       | phpinfo + 主機面板               |
+| 動作       | Container 環境              | VM（有 SSH）                   | 共享主機（只有 FTP）               |
+| ---------- | --------------------------- | ------------------------------ | ---------------------------------- |
+| 拍下現況   | `docker commit` / image tag | AMI / machine image + 軟體清單 | FTP mirror + phpinfo + cron 截圖   |
+| 匯出資料庫 | `docker exec mysqldump`     | `mysqldump` via SSH            | phpMyAdmin 匯出（有 timeout 限制） |
+| 定期備份   | volume snapshot / registry  | cron + mysqldump + S3          | 本機排程 + lftp mirror             |
+| 查執行環境 | `docker inspect`            | `systemctl` / `ss -tlnp`       | phpinfo + 主機面板                 |
 
 只寫動作不寫工具路徑，等於把「選工具」的認知負擔轉嫁給讀者。讀者知道該做「拍下現況」，但坐在電腦前不知道該打開什麼軟體。
 
