@@ -1,18 +1,18 @@
 ---
-title: "共享主機的資料庫備份與變更管理"
+title: "無 SSH 環境的資料庫備份與變更管理"
 date: 2026-06-26
-description: "在只有 phpMyAdmin 或有限遠端連線的共享主機上，怎麼建立可靠的資料庫備份策略、schema 變更紀律與還原演練流程"
+description: "在只有 phpMyAdmin 或有限遠端連線的無 SSH 環境裡，怎麼建立可靠的資料庫備份策略、schema 變更紀律與還原演練流程"
 weight: 10
 tags: ["infra", "takeover", "database", "backup", "mysql", "php"]
 ---
 
-程式碼可以從 Git repo 重新上傳，資料庫裡的資料一旦遺失或損壞就回不來。在共享主機環境裡，資料庫的備份與變更管理比程式碼更需要紀律，因為可用的工具受限（通常只有 phpMyAdmin）、沒有 point-in-time recovery（PITR）、也沒有自動化快照。本篇從工具限制出發，建立一套在這些約束條件下仍能可靠運作的備份與變更流程。
+程式碼可以從 Git repo 重新上傳，資料庫裡的資料一旦遺失或損壞就回不來。在無 SSH 的環境裡，資料庫的備份與變更管理比程式碼更需要紀律，因為可用的工具受限（通常只有 phpMyAdmin）、沒有 point-in-time recovery（PITR）、也沒有自動化快照。本篇從工具限制出發，建立一套在這些約束條件下仍能可靠運作的備份與變更流程。
 
-本篇是[共享主機與 FTP 環境接管](/infra/takeover/legacy-ftp-shared-hosting/)的延伸，聚焦在資料庫層面。程式碼與部署紀律見主文。
+本篇是[無 SSH 的 FTP / 面板管理環境接管](/infra/takeover/legacy-ftp-no-ssh/)的延伸，聚焦在資料庫層面。程式碼與部署紀律見主文。
 
 ## phpMyAdmin 的限制與對策
 
-phpMyAdmin 是多數共享主機預裝的資料庫管理介面，匯出功能涵蓋完整 SQL dump，但它跑在 PHP 執行環境裡，受限於 `max_execution_time` 和記憶體上限。資料庫超過 50MB 時，匯出經常在執行到一半就因 timeout 中斷，產出不完整的 SQL 檔案——而不完整的 dump 在還原時只會匯入前半段的表、後面的表靜靜消失。
+phpMyAdmin 是多數無 SSH 環境預裝的資料庫管理介面，匯出功能涵蓋完整 SQL dump，但它跑在 PHP 執行環境裡，受限於 `max_execution_time` 和記憶體上限。資料庫超過 50MB 時，匯出經常在執行到一半就因 timeout 中斷，產出不完整的 SQL 檔案——而不完整的 dump 在還原時只會匯入前半段的表、後面的表靜靜消失。
 
 ### 大資料庫的匯出對策
 
@@ -230,7 +230,7 @@ mysqldump -h db-host.example.com -u dbuser -p \
 
 ## 跨分類引用
 
-- → [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-shared-hosting/)：主文，涵蓋程式碼備份、部署紀律與整體接管流程
+- → [無 SSH 的 FTP / 面板管理環境接管](/infra/takeover/legacy-ftp-no-ssh/)：主文，涵蓋程式碼備份、部署紀律與整體接管流程
 - → [程式碼版控與 FTP 部署紀律](/infra/takeover/legacy-code-versioning-deployment/)：DB migration 跟 code deploy 要同步——schema 改了但 code 沒跟上會讓服務壞掉
 - → [Legacy PHP 的安全盤點](/infra/takeover/legacy-php-security-audit/)：DB credential 的掃描與保護、SQL injection 風險評估
 - → [Stateful 資源保護與跨服務依賴](/infra/05-core-services/stateful-protection-dependency/)：IaC 環境裡的備份、deletion protection 與 PITR 設計

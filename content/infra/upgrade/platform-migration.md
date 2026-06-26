@@ -35,7 +35,7 @@ tags: ["infra", "upgrade", "migration", "platform"]
 | SSL 憑證                   | 簽發者、到期日     | VPS 上重新簽發或遷移 |
 | .htaccess 規則             | 從站台下載         | 轉換成 nginx 設定    |
 
-接手維運模組的[環境設定拍照](/infra/takeover/legacy-ftp-shared-hosting/)有更完整的盤點方法。
+接手維運模組的[環境設定拍照](/infra/takeover/legacy-ftp-no-ssh/)有更完整的盤點方法。
 
 ### VPS 環境建立
 
@@ -232,6 +232,6 @@ aws route53 change-resource-record-sets --hosted-zone-id Z123 --change-batch '{
 ## 跨分類引用
 
 - → [升級的共通操作框架](/infra/upgrade/upgrade-framework/)：評估差異 → 平行環境 → 切換 → 退役的四階段模型
-- → [接手維運：共享主機](/infra/takeover/legacy-ftp-shared-hosting/)：遷移前的環境盤點方法
+- → [接手維運：共享主機](/infra/takeover/legacy-ftp-no-ssh/)：遷移前的環境盤點方法
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：雲端遷移是導入 IaC 的最佳時機
 - → [模組三：網路地基](/infra/03-network-foundation/)：雲端環境的 VPC / subnet 設計

@@ -6,7 +6,7 @@ weight: 12
 tags: ["infra", "takeover", "security", "php", "audit"]
 ---
 
-接手的 legacy PHP 專案在做完[程式碼與資料庫的現況快照](/infra/takeover/legacy-ftp-shared-hosting/)之後，下一步是安全盤點。安全狀態在盤點之前是未知的——前一位維護者可能所有表單都用 prepared statement，也可能每個查詢都直接拼接使用者輸入。盤點的範圍涵蓋 credential 散落、PHP 版本風險、程式碼層的漏洞模式、伺服器端的 .htaccess 與權限設定、以及外部依賴的已知漏洞。
+接手的 legacy PHP 專案在做完[程式碼與資料庫的現況快照](/infra/takeover/legacy-ftp-no-ssh/)之後，下一步是安全盤點。安全狀態在盤點之前是未知的——前一位維護者可能所有表單都用 prepared statement，也可能每個查詢都直接拼接使用者輸入。盤點的範圍涵蓋 credential 散落、PHP 版本風險、程式碼層的漏洞模式、伺服器端的 .htaccess 與權限設定、以及外部依賴的已知漏洞。
 
 ## Credential 掃描與處理
 
@@ -23,7 +23,7 @@ grep -rn "password\|passwd\|secret\|api_key\|app_key\|mysql_connect\|mysqli_conn
 
 常見的集中位置是 `config.php`、`wp-config.php`、`database.php`、`settings.php`，以及專案根目錄的 `.env`。但 legacy 專案的 credential 經常散落在意想不到的地方——寫在某個 helper function 的預設參數裡、硬編碼在 cron job 的 PHP 檔案裡、或藏在某個很久沒改的 email 發送模組裡。grep 的涵蓋範圍應該是整個專案目錄，不只是已知的 config 檔案。
 
-如果專案已經在本地 Git repo（見[主文](/infra/takeover/legacy-ftp-shared-hosting/)的快照步驟），檢查 Git 歷史裡有沒有曾經存在但後來被刪除的 credential：
+如果專案已經在本地 Git repo（見[主文](/infra/takeover/legacy-ftp-no-ssh/)的快照步驟），檢查 Git 歷史裡有沒有曾經存在但後來被刪除的 credential：
 
 ```bash
 git log --all -p -- '*.php' | grep -i "password\|secret\|api_key" | head -30
@@ -258,7 +258,7 @@ wpscan --url https://example.com --enumerate vp,vt,u
 
 ## 跨分類引用
 
-- → [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-shared-hosting/)：本文的前置步驟（程式碼與資料庫快照）
+- → [共享主機與 FTP 環境的接管](/infra/takeover/legacy-ftp-no-ssh/)：本文的前置步驟（程式碼與資料庫快照）
 - → [資料庫備份與變更管理](/infra/takeover/legacy-database-backup-migration/)：SQL injection 修復前先備份，避免修補過程造成資料遺失
 - → [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/)：安全事件的持續偵測與錯誤追蹤
 - → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：credential 管理的系統性設計
