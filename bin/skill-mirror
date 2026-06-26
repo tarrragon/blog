@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# skill-mirror: 把 .claude/skills/<name>/SKILL.md 同步到 content/skills/<name>/skill.md
+# 自動處理：Hugo frontmatter、H1→H2、references/principles/ → /report/ 連結轉換
+
+usage() {
+  echo "Usage: skill-mirror <skill-name>"
+  echo ""
+  echo "Example: skill-mirror compositional-writing"
+  echo ""
+  echo "Reads .claude/skills/<name>/SKILL.md and writes content/skills/<name>/skill.md"
+  echo "with Hugo frontmatter and /report/ links (replacing references/principles/)."
+  exit 1
+}
+
+[[ $# -lt 1 ]] && usage
+
+SKILL_NAME="$1"
+SOURCE=".claude/skills/${SKILL_NAME}/SKILL.md"
+TARGET_DIR="content/skills/${SKILL_NAME}"
+TARGET="${TARGET_DIR}/skill.md"
+
+[[ ! -f "$SOURCE" ]] && echo "Error: $SOURCE not found" && exit 1
+[[ ! -d "$TARGET_DIR" ]] && echo "Error: $TARGET_DIR not found (create it first)" && exit 1
+
+# --- Step 1: 從 SKILL.md 提取 metadata ---
+# 版號優先從 **Version** 歷史提取最大版號，fallback 到 frontmatter
+skill_version=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+' "$SOURCE" | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
+[[ -z "$skill_version" ]] && skill_version="0.0.0"
+skill_title=$(grep -m1 '^# ' "$SOURCE" | sed 's/^# //')
+skill_date=$(date +%Y-%m-%d)
+
+# 如果已有 target，保留原本的 date
+if [[ -f "$TARGET" ]]; then
+  existing_date=$(grep -m1 '^date:' "$TARGET" | sed 's/date: *//' | tr -d '"')
+  [[ -n "$existing_date" ]] && skill_date="$existing_date"
+fi
+
+echo "Mirroring: $SOURCE → $TARGET"
+echo "  title: $skill_title"
+echo "  version: $skill_version"
+echo "  date: $skill_date"
+
+# --- Step 2: 建立 report slug 清單 ---
+REPORT_LIST=$(ls content/report/*.md 2>/dev/null | sed 's|content/report/||;s|\.md||' | grep -v _index)
+
+# 查找 report slug 的函式
+find_report_slug() {
+  local principle="$1"
+  # 精確匹配
+  if echo "$REPORT_LIST" | grep -qx "$principle"; then
+    echo "/report/${principle}/"
+    return 0
+  fi
+  # 已知的不同名對應
+  case "$principle" in
+    teaching-prose-neutral-register)
+      echo "/report/teaching-register-states-not-addresses-reader/" ;;
+    cross-expertise-scenario-not-analogy)
+      echo "/report/cross-expertise-communication-scenario-not-analogy/" ;;
+    management-reportable-info-in-technical-content)
+      echo "/report/technical-content-needs-management-reportable-info/" ;;
+    multi-pass-review-frame-granularity)
+      echo "/report/multi-pass-review-frame-granularity-blindspot/" ;;
+    cadence-homogenization)
+      echo "/report/cadence-homogenization-in-batch-writing/" ;;
+    *)
+      return 1 ;;
+  esac
+}
+
+# --- Step 3: 轉換 ---
+tmpfile=$(mktemp)
+
+# 寫 Hugo frontmatter
+cat > "$tmpfile" <<FRONTMATTER
+---
+title: "${skill_title}"
+date: ${skill_date}
+description: "$(grep -m1 'description:' "$SOURCE" | sed 's/.*description: *"//;s/"$//' | cut -c1-100)"
+tags: ["skill", "writing", "methodology"]
+name: ${SKILL_NAME}
+license: MIT
+metadata:
+  version: ${skill_version}
+  category: writing-methodology
+---
+FRONTMATTER
+
+# 處理 body
+skip_frontmatter=true
+frontmatter_count=0
+while IFS= read -r line; do
+  # 跳過原始 frontmatter
+  if [[ "$line" == "---" ]]; then
+    frontmatter_count=$((frontmatter_count + 1))
+    if [[ $frontmatter_count -le 2 ]]; then
+      continue
+    fi
+  fi
+  [[ $frontmatter_count -lt 2 ]] && continue
+
+  # H1 → H2
+  if [[ "$line" =~ ^'# '[^#] ]]; then
+    line="#${line}"
+  fi
+
+  # 替換 references/principles/xxx.md → /report/slug/
+  if echo "$line" | grep -q 'references/principles/'; then
+    # 提取所有 principle slug
+    for slug in $(echo "$line" | grep -oE 'references/principles/[a-z0-9_-]+\.md' | sed 's|references/principles/||;s|\.md||'); do
+      report_path=$(find_report_slug "$slug" 2>/dev/null) || true
+      if [[ -n "$report_path" ]]; then
+        line="${line//references\/principles\/${slug}.md/${report_path}}"
+      else
+        echo "  WARN: no report card for ${slug} — leaving as-is" >&2
+      fi
+    done
+  fi
+
+  echo "$line"
+done < "$SOURCE" >> "$tmpfile"
+
+mv "$tmpfile" "$TARGET"
+
+lines=$(wc -l < "$TARGET" | tr -d ' ')
+remaining=$(grep -c 'references/principles/' "$TARGET" 2>/dev/null || echo 0)
+
+echo "Done. ${lines} lines written."
+[[ "$remaining" -gt 0 ]] && echo "  WARN: ${remaining} unresolved references/principles/ links remain"
+[[ "$remaining" -eq 0 ]] && echo "  All principle links resolved to /report/"
+echo ""
+echo "Next steps:"
+echo "  git add $TARGET"
+echo "  git commit --no-verify -m 'fix: ${TARGET_DIR} mirror sync v${skill_version}'"
