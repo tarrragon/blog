@@ -99,6 +99,16 @@ sudo ipa-server-install --setup-dns --no-forwarders
 
 **Data diode（單向網路裝置）**：在最高安全等級的環境裡，跨邊界的網路連線用 data diode——物理上只允許資料往一個方向流動（外部→內部，或反過來）。這比軟體防火牆更難繞過，因為它是硬體限制。data diode 的限制是不支援雙向協定（如 TCP handshake），需要用 UDP-based 的傳輸工具。
 
+## 主機層入侵偵測
+
+斷網環境的網路流量監控（NIDS）效果有限——內部網路通常扁平、流量加密後難以檢查。主機層入侵偵測（HIDS）是更適合斷網環境的選擇：在每台主機上監控檔案完整性、程序行為、登入模式，而非在網路層攔截。OSSEC 和 Wazuh（OSSEC 的積極維護分支）是開源的 HIDS 方案，agent 裝在每台主機、manager 集中收集告警，不需要連外。
+
+## 時程與管理層溝通
+
+斷網環境的安全管控初始建置時程：FreeIPA 部署 + 跟所有內部服務（GitLab、Nexus、Harbor、Vault）的 LDAP 整合約需 2-3 天。auditd 規則設定 + syslog 聚合到中央 log server 約需 1 天。掃描站建置（防毒 + hash 驗證 + 傳輸日誌）約需半天。HIDS 部署（Wazuh manager + 各主機 agent）約需 1-2 天。整體安全管控從零到運作約需 5-7 個工作天。
+
+持續維護的主要工作是病毒定義更新搬運（跟隨套件更新週期）、稽核日誌的定期審閱（每週）、以及 CVE 修補的分級處理（依 CVSS 嚴重度排程）。
+
 ## 跨分類引用
 
 - → [模組二：身分與憑證地基](/infra/02-identity-credentials/)：連網環境的 IAM 設計，跟本篇的離線身分方案互補
