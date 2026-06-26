@@ -236,6 +236,7 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 - [跨專業溝通用情境遞進、不用比喻堆疊](cross-expertise-communication-scenario-not-analogy/) — 向非本領域專業人士解釋技術議題時、減少術語並從簡單情境遞進到複雜情境、比堆疊比喻有效；比喻傳遞形狀但不傳遞嚴重性、在細節處崩解、且隱含「對方聽不懂」的預設；情境遞進讓對方用自己熟悉的決策維度（成本、風險、時間）消化資訊
 - [技術教材要內嵌管理層可彙報的資訊](technical-content-needs-management-reportable-info/) — 技術段落旁嵌入成本量級、時程估算、進度指標與決策簽核點；工程師讀完技術做法的同時拿到向上彙報的素材、不需要翻另一篇溝通指南；成本用量級不用精確數、時程用範圍不用單點
 - [多輪審查缺 outside-in 讀者 frame](review-lacks-outside-in-reader-frames/) — review 框架全部從已寫內容出發（inside-out），缺從讀者需求出發的 frame（outside-in）；六個盲點由使用者而非 reviewer 發現：宣導語氣、管理層資訊、接手情境、工具指引、深度拆分、讀者定位；補五個 outside-in frame（persona register / downstream task / persona coverage / executable walkthrough / search landing）
+- [操作指引的「怎麼做」要帶環境專屬的工具路徑](operational-how-needs-environment-specific-tooling/) — 「拍下現況」「匯出資料庫」在 container / VM / 共享主機對應完全不同的工具路徑；只寫動作不寫工具、讀者知道該做什麼但做不到；同根因被指出兩次的機制：第一輪補工具、第二輪補環境替代
 
 ### 第七輪：Pattern 卡片（待補完）
 
