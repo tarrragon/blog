@@ -1,0 +1,86 @@
+---
+title: "macOS 每個 App 到底吃多少空間：聚合佔用的 app-report 腳本"
+date: 2026-06-27
+description: "disk-report 能找出 ~/Library 是大戶，卻答不出那是哪些 App 的。這篇記錄一個把每個 App 散落在 ~/Library 各處的佔用聚合成單一數字的 app-report 腳本，以及為什麼 .app 的大小會嚴重低估真實佔用。"
+tags: ["macos", "disk-space", "tooling", "homebrew", "troubleshooting"]
+---
+
+這篇承接 [macOS 磁碟空間診斷流程](../macos_disk_space_diagnosis/)：那次排查用 `disk-report` 定位出 `~/Library` 是 70G 左右的大戶，但停在這裡會卡住下一個問題——這 70G 到底是哪些 App 的。`du ~/Library/*` 給的是「Caches 多大、Containers 多大」這種按目錄切的數字，而我真正想問的是「Steam 這個 App 一共吃了多少」。這篇記錄補上這個缺口的 `app-report` 腳本，核心是把單一 App 散落在系統各處的佔用聚合回它名下。
+
+## 一個 App 的真實佔用不等於它的 .app 大小
+
+判斷一個 App 吃多少空間，要算的是它的總足跡（footprint），而不是 `/Applications` 裡那顆 `.app` 的大小。`.app` 只是程式本體，App 跑起來產生的資料——下載內容、快取、登入狀態、設定、日誌——絕大多數寫在 `~/Library` 底下的好幾個不同位置，跟 `.app` 完全分家。
+
+這台機器上最極端的例子是 Steam：它的 `.app` 只有 10.8M，但遊戲資料佔了 8.1G，兩者差了近 800 倍。只看 `/Applications` 的大小排序，Steam 會排在很後面，完全看不出它其實是全機第一大戶。同樣地，Amazon Kindle 的 `.app` 才 138M，書庫卻在沙箱容器裡佔了 3.2G。這就是為什麼「按目錄統計」和「按 App 統計」會給出完全不同的排行——要回答「哪個 App 該清」，必須把佔用聚合回 App。
+
+## 佔用散落在 ~/Library 的哪些地方
+
+聚合的第一步是知道一個 App 會把資料寫到哪些固定位置。macOS 對這些位置有約定，每個位置承擔不同責任，也決定了它能不能安全清掉。
+
+| 位置                                 | 放什麼                    | 清掉的後果               |
+| ------------------------------------ | ------------------------- | ------------------------ |
+| `/Applications/*.app`                | 程式本體                  | 等於移除 App             |
+| `~/Library/Caches/`                  | 快取                      | 下次自動重建，安全       |
+| `~/Library/HTTPStorages/`            | 網路快取（cookie / 暫存） | 多半要重新登入，大致安全 |
+| `~/Library/Application Support/`     | 設定與使用者資料          | 掉資料                   |
+| `~/Library/Containers/`              | 沙箱 App 的完整家目錄     | 掉資料                   |
+| `~/Library/Group Containers/`        | 同廠商 App 共享的資料     | 掉資料、可能影響多個 App |
+| `~/Library/Saved Application State/` | 視窗位置與復原狀態        | 下次開窗位置重置，無傷   |
+| `~/Library/Logs/`                    | 日誌                      | 安全                     |
+
+這張表的關鍵分界是「快取」與「資料」。`Caches` 和 `HTTPStorages` 是純衍生物——清掉只是讓 App 下次重新下載或重建，最多重新登入一次，所以是回收空間時的首選。`Application Support`、`Containers`、`Group Containers` 則是使用者資料，Steam 的遊戲、Kindle 的書庫、聊天記錄都在這裡，刪了就真的沒了。`Group Containers` 還要多一層留意：它是同一個開發商旗下多個 App 共享的目錄，動它可能同時影響好幾個 App。
+
+腳本對每個 App 把上面這些位置全部找出來、用 `du` 量實際佔用、加總成一個數字，再附上逐項明細，讓人一眼看出「這 4G 裡有多少是可清的快取、多少是動不得的資料」。
+
+## 命名不一致是聚合的主要難點
+
+把資料夾正確歸給某個 App 的難點在於：macOS 對這些目錄沒有統一的命名規則。有些 App 用它的 bundle id（例如 `com.valvesoftware.steam`）當目錄名，有些直接用 App 的顯示名稱（例如 `Steam`），同一個 App 的不同位置甚至各用一種。
+
+所以腳本對每個 App 先讀出它的 bundle id，然後 `Caches`、`Application Support`、`Logs` 這幾個位置兩種命名都比對一次，bundle id 專屬的位置（`Containers`、`HTTPStorages`、`Saved Application State`）則用 bundle id 找。`Group Containers` 又是另一種格式——名稱前面多一段開發商的 team id（像 `9XXXXXXX.group.com.foo`），所以改用 bundle id 做子字串比對。這套規則涵蓋了絕大多數 App，但用罕見自訂命名的資料仍可能漏抓，這是聚合式估算的固有邊界，腳本在輸出裡據實標明「可能漏抓」而不假裝是精確值。
+
+## Homebrew 要分開算
+
+透過 Homebrew 裝的工具不在 `/Applications`，所以要獨立統計。它的佔用集中在自己的目錄樹底下，分兩類：命令列工具與函式庫（formula）在 `Cellar/`，GUI App 與二進位（cask）在 `Caskroom/`。
+
+這台機器的 formula 前幾名是開發語言執行環境——`dotnet@9` 634M、兩個版本的 `openjdk` 合計 600M、`mysql` 292M、`go` 258M。formula 會多版本並存（例如 `python@3.13` 和 `python@3.14` 各算各的），所以腳本把整個 formula 目錄一起計。除了已安裝的部分，腳本還列出 `brew --cache` 的下載快取，以及 `brew cleanup -n` 預估可回收的舊版本——`-n` 是 dry-run，只報告不刪，跟整支腳本的唯讀原則一致。
+
+## 同樣用實際佔用值，避開 sparse 假大小
+
+量大小一律用 `du -skx`，理由和 [disk-report](../macos_disk_space_diagnosis/) 那篇完全一致：`du` 給的是實際佔用的磁碟區塊，而 `ls` 或 `find` 印的是邏輯大小，對 sparse 檔（VM 映像、容器磁碟）兩者可以差數十倍。App 的容器與資料目錄裡正好常有這類檔案，用顯示大小排序會把排行帶歪。
+
+`-x` 讓 `du` 不跨越檔案系統邊界，避免把掛載進來的卷重複計入；`-k` 統一用 KB 當單位，方便把各位置的數字加總後再換算成人類可讀的 G / M。
+
+## 實測結果
+
+在這台機器上跑出來，聚合排行和「按目錄統計」給的印象差很多：
+
+| App           | 總佔用 | 主要落點                             |
+| ------------- | ------ | ------------------------------------ |
+| Steam         | 8.1G   | data 8.1G（`.app` 只有 10.8M）       |
+| Xcode         | 4.8G   | bundle 4.8G                          |
+| Readmoo 看書  | 4.6G   | data 3.8G + bundle 816M              |
+| Dia           | 4.1G   | cache 1.6G + bundle 1.3G + data 1.1G |
+| Amazon Kindle | 3.3G   | container 3.2G（`.app` 才 138M）     |
+
+全機掃到 65 個 App、聚合總計 48.2G。這份排行的價值在於它直接指向「該從哪裡下手」：Steam 和 Kindle 的本體都很小，空間全在資料裡，要回收就得處理書庫與遊戲本身；Dia 有 1.6G 是純快取，清掉零風險；Xcode 和 Android Studio 則是本體就大，除非不再開發否則動不得。同一個總數字底下，可清的比例天差地別，這正是逐項明細要回答的問題。
+
+## 固化成 app-report 腳本
+
+把這套聚合邏輯寫成腳本，往後想知道「誰在吃空間」就一行重跑，不必每次重想要比對哪些目錄、要怎麼處理命名差異。腳本和 `disk-report` 放在一起、都連到個人的 `~/.local/bin`（已在 PATH 上），維持「跟專案無關的系統工具放個人 bin」的一致做法。
+
+```bash
+app-report           # 完整報告：App 聚合排行 + Homebrew
+app-report --apps    # 只看 App 聚合排行（預設前 30）
+app-report --apps 50 # 排行顯示前 50
+app-report --brew    # 只看 Homebrew
+```
+
+腳本和 `disk-report` 一樣刻意設計成唯讀：只統計、不刪任何東西。要清哪個 App 由人看完明細再決定——移掉 `.app` 並清對應的 `~/Library` 資料夾，Homebrew 則用 `brew cleanup -s`。報告負責讓「可清的快取」和「動不得的資料」一目了然，刪除的判斷留給人。
+
+## 兩支腳本的分工
+
+`disk-report` 和 `app-report` 回答的是兩個接力的問題，搭配著用：
+
+1. 先用 `disk-report` 確認是真滿還是浮動假象，並由外往內找出最大的子樹（通常是 `~/Library`）。
+2. 再用 `app-report` 把那棵子樹按 App 拆開，看出具體是哪幾個 App、各自有多少是可清的快取。
+3. 兩支都唯讀，回收與否的判斷一律留給人在看完報告後決定。
