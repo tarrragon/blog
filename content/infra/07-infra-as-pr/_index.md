@@ -102,9 +102,11 @@ jobs:
 
 ## 章節文章
 
-| 文章                                                                                | 主題                                                                                                                                      |
-| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| [infra 走 PR 流程與自動化護欄](/infra/07-infra-as-pr/plan-review-apply-guardrails/) | PR → plan → review diff → 合併 → apply，配 fmt / validate / tflint / checkov / tfsec 與 Atlantis 自動化，讓基礎設施可審查、可回溯、可交接 |
+| 文章                                                                                 | 主題                                                                                                                                      |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [infra 走 PR 流程與自動化護欄](/infra/07-infra-as-pr/plan-review-apply-guardrails/)  | PR → plan → review diff → 合併 → apply，配 fmt / validate / tflint / checkov / tfsec 與 Atlantis 自動化，讓基礎設施可審查、可回溯、可交接 |
+| [Terraform CI Pipeline 設定指南](/infra/07-infra-as-pr/terraform-ci-pipeline-setup/) | GitHub Actions 完整 workflow（fmt → validate → tflint → plan → PR comment → apply）、OIDC credential、環境保護規則                        |
+| [checkov 與 tfsec 規則配置](/infra/07-infra-as-pr/checkov-tfsec-rule-customization/) | 三階段漸進啟用、規則選擇策略、inline vs 集中式豁免管理、自訂規則、false positive 處理                                                     |
 
 ## 跨分類引用
 

@@ -110,6 +110,7 @@ module "database" {
 | 文章                                                                                                                              | 主題                                                                                                        |
 | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | [環境分離與模組化 — 目錄結構、module 參數化與 retrofit 路徑](/infra/04-environment-separation/directory-module-parameterization/) | 用目錄結構隔開 dev 與 prod 的 state，用 module 讓環境共用同一套邏輯只差參數，以及單環境跑起來後怎麼安全拆分 |
+| [單環境到多環境的 Retrofit 操作手冊](/infra/04-environment-separation/single-to-multi-env-retrofit/)                              | moved block 步驟、zero-change plan 驗證、state 備份、forces replacement 風險控制                            |
 
 ## 跨分類引用
 

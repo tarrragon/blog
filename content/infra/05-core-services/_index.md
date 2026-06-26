@@ -103,6 +103,8 @@ data "aws_vpc" "main" {
 | [儲存上 IaC — S3 bucket 的安全與生命週期](/infra/05-core-services/storage-s3/)               | 加密、版本控制、公開存取封鎖、生命週期規則、bucket policy 與事件通知                     |
 | [入口上 IaC — ALB、TLS 與健康檢查](/infra/05-core-services/loadbalancer-alb/)                | listener、target group、健康檢查閾值設計、ACM 憑證與 DNS 別名                            |
 | [Stateful 資源保護與跨服務依賴表達](/infra/05-core-services/stateful-protection-dependency/) | multi-AZ 邊界、備份保留、刪除保護、stateful vs stateless 操作差異、output 與 data source |
+| [ACM 憑證、DNS 與 HTTPS 設定](/infra/05-core-services/acm-tls-dns-setup/)                    | hosted zone、DNS 驗證、TLS listener、HTTP redirect、SAN 憑證、續期監控                   |
+| [ECS Fargate 成本分析與優化](/infra/05-core-services/ecs-fargate-cost-optimization/)         | Fargate vs EC2 成本比較、Fargate Spot、Savings Plans、task rightsizing                   |
 
 ## 跨分類引用
 

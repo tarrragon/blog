@@ -20,7 +20,11 @@ tags: ["infra", "takeover", "legacy", "migration"]
 | [Legacy PHP 的安全盤點](/infra/takeover/legacy-php-security-audit/)                 | credential 掃描、PHP 版本風險、SQL injection/XSS 模式、.htaccess 防護     |
 | [無 SSH 環境的監控與告警](/infra/takeover/legacy-external-monitoring/)              | 外部 HTTP check、錯誤追蹤、效能基線、流量異常偵測                         |
 | [有 SSH 但沒有 IaC 的雲端環境接管](/infra/takeover/cloud-no-iac/)                   | 有 Console 和 CLI 存取、但資源全是手動建的雲端環境怎麼盤點和接管          |
-| [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/)             | IaC 覆蓋不完整、部分資源在 state 外、文件缺失的環境怎麼收斂               |
+| [有半套 IaC 但文件缺失的環境接管](/infra/takeover/partial-iac-no-docs/)             | IaC 覆蓋不完整、部分資源在 state 外、文件缺失的環境怎麼收斂（總覽）       |
+| [State 修復與清理](/infra/takeover/partial-iac-state-repair/)                       | state 損壞診斷、orphaned entry 清理、state surgery、backend 搬遷          |
+| [Drift 分類處理指南](/infra/takeover/partial-iac-drift-triage/)                     | plan 輸出分類、adopt vs revert 決策、stateful replacement 風險            |
+| [Unmanaged Resource 批次 Import](/infra/takeover/partial-iac-bulk-import/)          | 優先序、import block、generated HCL review、批次策略                      |
+| [兩套真相並存的過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)       | 操作規則、ownership 台帳、團隊溝通、import sprint、transition 完成判準    |
 
 ## 跟其他模組的關係
 

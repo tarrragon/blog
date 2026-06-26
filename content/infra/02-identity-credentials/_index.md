@@ -82,6 +82,8 @@ data "aws_iam_policy_document" "ci_trust" {
 | [身分與憑證地基 — IAM 模型、OIDC 短期憑證與權限邊界設計](/infra/02-identity-credentials/iam-oidc-privilege-boundary/) | IAM 的 identity / policy / role 三元件、最小權限的持續收斂、用 OIDC 取代長期 access key，以及 SCP 與 Permissions Boundary 的環境隔離 |
 | [跨帳號策略 — Organizations、SCP 與帳號工廠](/infra/02-identity-credentials/multi-account-strategy/)                  | 用 Organizations 把環境拆成獨立帳號、用 SCP 設定帳號級護欄、用帳號工廠自動化新帳號的建立流程                                         |
 | [團隊權限分級與存取管理](/infra/02-identity-credentials/team-access-management/)                                      | 三級權限模型（admin / operator / viewer）、臨時提權、定期 access review、contractor 存取                                             |
+| [Access Key 輪替手冊](/infra/02-identity-credentials/access-key-rotation-playbook/)                                   | access key 盤點、輪替步驟、Secrets Manager 自動化輪替、key age 監控                                                                  |
+| [OIDC Trust Policy 設定指南](/infra/02-identity-credentials/oidc-trust-policy-setup/)                                 | GitHub Actions OIDC provider 設定、trust policy claim 收斂、plan/apply role 分離、常見錯誤排查                                       |
 
 ## 跨分類引用
 
