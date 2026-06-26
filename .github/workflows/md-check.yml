@@ -6,12 +6,17 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   md-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Go
         uses: actions/setup-go@v6
@@ -24,8 +29,20 @@ jobs:
           mkdir -p bin
           (cd scripts/mdtools && go build -o ../../bin/mdtools .)
 
-      - name: mdtools fmt --check
-        run: ./bin/mdtools fmt --check content/
+      - name: mdtools fmt --fix + auto-commit
+        run: |
+          ./bin/mdtools fmt --fix content/
+
+          if git diff --quiet; then
+            echo "No formatting changes needed"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add content/
+            git commit -m "style: mdtools fmt auto-fix"
+            git push
+            echo "::notice::Auto-fixed formatting and pushed"
+          fi
 
       - name: mdtools lint
         run: ./bin/mdtools lint content/
