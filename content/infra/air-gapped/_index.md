@@ -14,12 +14,17 @@ tags: ["infra", "air-gapped", "offline", "security"]
 
 ## 章節文章
 
-| 文章                                                                 | 主題                                                           |
-| -------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [斷網環境的通用原則](/infra/air-gapped/air-gapped-principles/)       | 離線套件管理、內容搬運、變更追蹤的共通操作模式                 |
-| [斷網環境的 IaC](/infra/air-gapped/air-gapped-iac/)                  | Terraform provider mirror、離線 state backend、plan/apply 流程 |
-| [斷網環境的容器與映像管理](/infra/air-gapped/air-gapped-container/)  | Private registry、映像搬運、離線 base image 更新               |
-| [斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/) | Self-hosted 監控工具、離線告警、log 收集                       |
+| 文章                                                                            | 主題                                                            |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [斷網環境的通用原則](/infra/air-gapped/air-gapped-principles/)                  | 離線套件管理、內容搬運、變更追蹤的共通操作模式                  |
+| [斷網環境的 IaC](/infra/air-gapped/air-gapped-iac/)                             | Terraform provider mirror、離線 state backend、plan/apply 流程  |
+| [斷網環境的容器與映像管理](/infra/air-gapped/air-gapped-container/)             | Private registry、映像搬運、離線 base image 更新                |
+| [斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/)            | Self-hosted 監控工具、離線告警、log 收集                        |
+| [斷網環境要自建的服務清單](/infra/air-gapped/air-gapped-self-hosted-services/)  | 10 類服務的選型、部署順序、統一管理 vs 個別部署、維護成本       |
+| [斷網環境的版控與 CI/CD](/infra/air-gapped/air-gapped-vcs-ci/)                  | GitLab CE / Gitea 離線安裝、CI runner、git bundle 跨邊界傳輸    |
+| [斷網環境的套件與容器 Registry](/infra/air-gapped/air-gapped-package-registry/) | Nexus 統一 proxy、Harbor 容器 registry、映像搬運 SOP、Helm 離線 |
+| [斷網環境的基礎服務](/infra/air-gapped/air-gapped-infrastructure-services/)     | DNS (CoreDNS) + NTP (chrony) + CA (step-ca) + Vault             |
+| [斷網環境的資安與權限控管](/infra/air-gapped/air-gapped-security-access/)       | 威脅模型轉變、實體安全、離線認證、稽核日誌、跨邊界安全審查      |
 
 ## 跟其他模組的關係
 
