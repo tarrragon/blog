@@ -19,4 +19,5 @@ tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-ins
 ## 跨分類引用
 
 - → [devops 模組五 容量規劃](/devops/05-capacity-planning/)：容量規劃的成本面
+- → [infra 模組八 治理好習慣](/infra/08-governance-habits/)：成本歸因的 tagging 地基 — tag 在 IaC 裡強制長出來，這裡的部門歸屬與帳單拆分才有依據
 - → [monitoring 模組六 商業方案](/monitoring/06-commercial-comparison/)：監控 SaaS 的帳單也是成本管理的一部分
