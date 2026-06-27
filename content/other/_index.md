@@ -15,6 +15,7 @@ tags: ["雜項", "工具技巧"]
 - [macOS 磁碟空間診斷流程](macos_disk_space_diagnosis/)
 - [macOS App 聚合佔用報告](macos_app_footprint_report/)
 - [Snippet template skeleton](snippet_template_skeleton/)
+- [工具應用筆記](application/)（子資料夾）
 
 ---
 
