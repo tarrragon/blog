@@ -83,6 +83,23 @@ ul.blog-posts li:last-child {
   }
 }
 
+/* hover 展開 description */
+.list-desc {
+  display: block;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  font-size: calc(var(--size) * 1.4);
+  color: rgba(250, 250, 250, 0.55);
+  line-height: 1.5;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+li.has-desc:hover .list-desc {
+  max-height: 6em;
+  opacity: 1;
+}
+
 /* ===========================================
    超連結樣式選項 - 選擇一種你喜歡的樣式
    =========================================== */
