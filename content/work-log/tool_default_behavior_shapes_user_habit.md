@@ -2,7 +2,7 @@
 title: "工具的預設行為決定使用者習慣 — 從版本錯置看工具設計的 opinion 責任"
 date: 2026-06-25
 draft: false
-description: "文件明明寫了規範、團隊卻一直照工具預設的路徑做事（規範與工具預設不一致時工具會贏）時回來看。從一次版本錯置反思 CLI / API / 表單等任何接受自由輸入的介面，預設路徑就是團隊的實際流程，設計時要負起 opinion 責任。"
+description: "規範與工具預設不一致時工具會贏。預設路徑就是團隊的實際流程，接受自由輸入的介面設計時要負起 opinion 責任。"
 tags: ["process", "tool-design", "version-management", "opinionated-software", "retrospective"]
 ---
 

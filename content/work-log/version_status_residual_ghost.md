@@ -2,7 +2,7 @@
 title: "版本狀態殘留：為什麼已完成的版本在看板上顯示未完成"
 date: 2026-06-25
 draft: false
-description: "看板顯示某個其實早就做完的版本還是 active / 有未完成任務、誤導每個看板的人時回來看。根因是發布工具只檢查當前版本完成度、不掃前版本的狀態殘留；工具的檢查範圍決定了系統的一致性邊界。"
+description: "看板顯示早已完成的版本仍為 active、誤導查看者。根因是發布工具只檢查當前版本完成度、不掃前版本的狀態殘留；工具的檢查範圍決定了系統的一致性邊界。"
 tags: ["version-management", "tool-design", "data-consistency", "retrospective"]
 ---
 

@@ -2,7 +2,7 @@
 title: "在部落格中設置文章資訊與tag"
 date: 2025-09-09
 draft: false
-description: "忘記 Hugo 文章開頭 YAML front matter 該寫哪些欄位、或不確定設了 title 還要不要再下 # 大標題時查這張小抄。給 title / date / draft / tags 範例與 title 取代 H1 的提醒。"
+description: "Hugo front matter 欄位（title / date / draft / tags）範例與 title 取代 H1 的提醒。"
 tags: ["Markdown", "blog心得",]
 ---
 

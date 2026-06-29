@@ -2,7 +2,7 @@
 title: "192 個測試全過、實機全壞：Mock 遮蔽真實行為的三層測試策略"
 date: 2026-06-19
 draft: false
-description: "unit test 全綠、實機部署後功能卻整片壞掉時回來看。揭露 mock-only 策略的結構盲區（text vs binary frame、缺 auth handshake、ANSI 控制序列多樣性都被 FakeWebSocketChannel 遮蔽），提出 unit / protocol-integration / screen-state 三層各抓什麼、各遮蔽什麼。"
+description: "unit test 全綠、實機部署後功能整片壞掉。mock-only 策略的結構盲區（text vs binary frame、缺 auth handshake、ANSI 多樣性被 FakeWebSocketChannel 遮蔽），以及分層測試各抓什麼、各遮蔽什麼。"
 tags: ["testing", "flutter", "websocket", "integration-test", "mock", "ttyd"]
 ---
 

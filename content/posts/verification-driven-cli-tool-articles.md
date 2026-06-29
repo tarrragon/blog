@@ -1,7 +1,7 @@
 ---
 title: "驗證導向的 CLI 工具文章生產流程：用 Docker fixture 實機跑過再寫"
 date: 2026-06-15
-description: "寫 CLI 工具教學、想到光靠官方 docs fact-check 會放過版本差異與實作落差時回來。流程：工具分非互動自驗 vs TUI 人工互動、用 Docker 起可拋棄 fixture、驗過 / caveat / 移除三層標註、把實跑抓到的 gotcha 寫回文章。"
+description: "CLI 工具教學的驗證導向生產流程：分類決定驗證分工、Docker 可拋棄 fixture、分層標註、實跑 gotcha 回寫。官方 docs fact-check 會放過版本差異與實作落差。"
 tags: ["methodology", "writing-workflow", "cli", "verification", "docker", "claude-code"]
 ---
 

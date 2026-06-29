@@ -2,7 +2,7 @@
 title: "Gradle 強制覆寫 plugin 的 JVM target：Kotlin 與 Java 的切入點不對稱"
 date: 2026-04-17
 draft: false
-description: "Kotlin / AGP 升級後 build 報 `Inconsistent JVM-target compatibility between Java and Kotlin tasks` 時回來看。說明為何要強制覆寫 plugin 的 JVM target，以及 Kotlin 與 Java 的設定切入點不對稱、該各自怎麼設。"
+description: "Kotlin / AGP 升級後 build 報 `Inconsistent JVM-target compatibility`。為何要強制覆寫 plugin 的 JVM target，以及 Kotlin 與 Java 設定切入點的不對稱。"
 tags: ["gradle", "flutter", "android"]
 ---
 

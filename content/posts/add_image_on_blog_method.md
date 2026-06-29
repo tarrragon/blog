@@ -2,7 +2,7 @@
 title: "在文章中加入圖片的語法"
 date: 2025-09-17
 draft: false
-description: "Hugo 文章插圖的三種寫法（Markdown / figure shortcode / raw HTML）、width / caption 參數、以及圖片路徑為何要寫成 /section/.../x.png。"
+description: "Hugo 文章插圖的寫法、width / caption 參數、以及圖片路徑規則。"
 tags: ["Hugo", "Bear Cub", "AI協作心得"]
 ---
 

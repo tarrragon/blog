@@ -1,7 +1,7 @@
 ---
 title: "Case-First + Agent Team Review：教學內容的五階段生產流程"
 date: 2026-05-13
-description: "寫跨 5+ 章節教學模組、又怕 LLM 自生內容停在「教科書級」漏掉真實失敗模式時，照這套五階段流程走。帶走：完整讀案例庫抽 findings、3 個專責 reviewer 平行 background 審查、polish pass 收系統性殘留；省下把通用 best practice 誤包裝成「案例揭露」的準確性坑。"
+description: "Case-first + agent team review 的教學內容生產流程：讀案例庫抽 findings、專責 reviewer 平行審查、polish pass 收系統性殘留。防止通用 best practice 被誤包裝成案例揭露。"
 tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-code"]
 ---
 

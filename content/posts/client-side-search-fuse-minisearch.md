@@ -1,7 +1,7 @@
 ---
 title: "Fuse.js / MiniSearch：客戶端載入索引的搜尋方案"
 date: 2026-04-24
-description: "靜態站想要搜尋不出站、可離線、UI 全客製、索引不離開自家網域時，評估 Fuse.js / MiniSearch。帶走：build 時序列化 JSON + runtime in-memory 的骨幹、Hugo custom output format 整合、選 Fuse（fuzzy 容錯）還是 MiniSearch（field boost + prefix）的判準、中文斷詞差異。"
+description: "Fuse.js 與 MiniSearch 的評估：build 時序列化 JSON + runtime in-memory 骨幹、Hugo 整合、fuzzy 容錯 vs field boost 判準、中文斷詞差異。"
 tags: ["Hugo", "搜尋", "Fuse.js", "MiniSearch", "靜態網站"]
 ---
 

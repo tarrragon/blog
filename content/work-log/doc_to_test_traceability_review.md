@@ -2,7 +2,7 @@
 title: "10 個 Ticket、57 個綠燈、0 條追溯：從需求文件到測試的銜接檢討"
 date: 2026-06-23
 draft: false
-description: "單元測試全綠、卻答不出「這些測試覆蓋了哪些 UseCase 場景」、需求到測試只有單向沒有反向追溯時回來看。列五個流程缺口（TDD 起手、靜態語言紅燈存根、反向追溯、邊界回補、Ticket 拆分對齊驗收）與對應的追溯矩陣、存根策略、拆分規則。"
+description: "單元測試全綠、卻答不出「這些測試覆蓋了哪些 UseCase 場景」。需求到測試缺反向追溯時的流程缺口盤點與對應修法（追溯矩陣、存根策略、拆分規則）。"
 tags: ["testing", "tdd", "traceability", "bdd", "go", "python", "monorepo", "process"]
 ---
 

@@ -2,7 +2,7 @@
 title: "Android 無線調試連接指南"
 date: 2025-02-01
 draft: false
-description: "要免 USB 線在實機跑 adb / flutter，或連上後 device offline、用錯端口連不上時翻這篇：含 adb pair 配對碼流程、配對端口與連接端口的差別，以及 AP 隔離、裝置休眠中斷的排查。"
+description: "ADB 無線偵錯的配對與連接流程，含 device offline、端口錯誤、AP 隔離等連線中斷的排查。"
 tags: ["android", "adb", "debug"]
 ---
 

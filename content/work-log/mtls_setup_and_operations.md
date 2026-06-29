@@ -2,7 +2,7 @@
 title: "mTLS 實際怎麼設定與運維：CA 階層、憑證生命週期、撤銷機制"
 date: 2026-05-18
 draft: false
-description: "真的要落地 mTLS、卡在「自簽還是商業 CA、憑證放哪怎麼 rotate、用 CRL 還 OCSP 還 short-lived cert」這些運維決策時回來看。含 nginx / envoy / service mesh 設定模式，以及跟 API Key / OAuth 的成本與安全取捨。"
+description: "mTLS 落地的運維決策（CA 階層、憑證儲存、撤銷機制）與基礎設施整合（nginx / envoy / service mesh），以及跟 API Key / OAuth 的成本與安全取捨。"
 tags: ["security", "mtls", "tls", "pki", "service-mesh", "operations"]
 ---
 

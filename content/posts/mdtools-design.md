@@ -1,7 +1,7 @@
 ---
 title: "mdtools：Go + goldmark 的 markdown 工具鏈設計"
 date: 2026-04-24
-description: "要新增 markdown 檢查規則、或被問為什麼自製工具選 Go + goldmark 而非 Python + regex 時回來。給 tripwire 式選型推導（goldmark 跟 Hugo 同源保證 lint↔render 等價）、單 binary 多子命令架構、pre-commit fmt --fix 要 re-stage 的坑、誤判率 < 1% 才預設開規則的紀律。"
+description: "mdtools 的架構決策：選 Go + goldmark 的理由（與 Hugo 同源保證 lint↔render 等價）、單 binary 多子命令設計、pre-commit 整合、規則開啟紀律。"
 tags: ["Go", "goldmark", "Markdown", "工具設計", "pre-commit"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Blog Markdown 寫作規範與 mdtools 檢查"
 date: 2026-04-24
-description: "pre-commit / CI 被 mdtools 擋下、想查某條規則為什麼存在或怎麼修時，這是規則的權威契約。涵蓋 H1 禁用、MD024 siblings_only、反釣魚 TLD 校驗、卡片雙向完整性、front matter schema 與識別碼白名單；改規則時要與 scripts/mdtools 實作同步。"
+description: "本 blog 的 Markdown 排版規範權威契約。涵蓋 H1 禁用、MD024 siblings_only、反釣魚 TLD 校驗、卡片雙向完整性、front matter schema；改規則時要與 scripts/mdtools 實作同步。"
 tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 ---
 

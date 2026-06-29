@@ -1,7 +1,7 @@
 ---
 title: "什麼是 AST — 從字串到語法樹的視角轉換"
 date: 2026-04-24
-description: "被「要精確就得用 AST 而不是 regex」這句話卡住、想搞懂兩者差在哪、或在猶豫 lint 工具要不要升級 AST 時看這篇。判準：規則只要需要「知道這段文字處在什麼結構中」，regex 就會卡、AST 天生有；附 code block 內 URL、front matter 假標題、平行結構重名三個 regex 誤判 case。"
+description: "AST 與 regex 的差異判準：規則需要知道文字處在什麼結構中時 regex 就不夠。附 regex 誤判的具體 case。"
 tags: ["AST", "Markdown", "goldmark", "lint", "工具設計"]
 ---
 

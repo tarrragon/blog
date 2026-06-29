@@ -1,7 +1,7 @@
 ---
 title: "Pagefind：靜態站搜尋的 build-time 索引方案"
 date: 2026-04-24
-description: "靜態站搜尋想避免「站大 10 倍首次搜尋慢 10 倍」、要索引按需 lazy-load 時評估 Pagefind。帶走：build 時切片索引 + post-build 爬 rendered HTML 的設計、entry / index / fragment 三層結構讓傳輸量與站規模脫鉤、Hugo + GitHub Pages 整合步驟與內在屬性取捨。"
+description: "Pagefind 的設計（build 時切片索引 + post-build 爬 rendered HTML）、分層結構讓傳輸量與站規模脫鉤、Hugo + GitHub Pages 整合與內在屬性取捨。"
 tags: ["Hugo", "搜尋", "Pagefind", "靜態網站", "工具設計"]
 ---
 

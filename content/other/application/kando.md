@@ -2,7 +2,7 @@
 title: "Kando 滑鼠手勢選單的應用場景"
 date: 2026-06-28
 draft: false
-description: "快捷鍵記不住、手在滑鼠不想切鍵盤時，判斷一個動作該不該交給圓盤選單的三條判準；以及要從哪組場景起步（視窗排版最先）。含可直接套用的 menus.json：Magnet 八方位視窗排版、用 ghostty -e zsh -lc 叫出終端機跑腳本，和為什麼要 delayed / login shell。"
+description: "Kando 圓盤選單的適用判準、macOS 工程師的應用場景排序、以及可套用的 menus.json 設定範例。"
 tags: ["kando", "工作流", "macos", "效率工具"]
 ---
 

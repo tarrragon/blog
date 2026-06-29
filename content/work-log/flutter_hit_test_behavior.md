@@ -2,7 +2,7 @@
 title: "Flutter HitTestBehavior：控制點擊命中測試的三種模式"
 date: 2026-04-07
 draft: false
-description: "GestureDetector 點空白 padding 區沒反應、或想讓點擊穿透到下層 widget（或反過來擋住下層）卻不知道調哪個參數時回來看。對比 HitTestBehavior 三種模式 deferToChild / opaque / translucent 各自的命中規則與適用場景。"
+description: "GestureDetector 點空白 padding 區沒反應、或點擊穿透/阻擋行為不符預期。HitTestBehavior 各模式（deferToChild / opaque / translucent）的命中規則與適用場景。"
 tags: ["flutter"]
 ---
 

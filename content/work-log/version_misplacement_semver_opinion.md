@@ -2,7 +2,7 @@
 title: "改善類工作放進新功能版本 — 版本歸屬判斷的工具化"
 date: 2026-06-25
 draft: false
-description: "根因分析、重構這類改善工作被塞進下一個功能版本、跟新功能混在一起發布、語意混亂時回來看。主張工具該依工作類型建議版本歸屬（semver 的 MINOR / PATCH 語意可被工具表達），而非全靠人判斷。"
+description: "根因分析、重構等改善工作被塞進功能版本、語意混亂。主張工具該依工作類型建議版本歸屬（semver 的 MINOR / PATCH 語意可被工具表達）。"
 tags: ["version-management", "semver", "tool-design", "retrospective"]
 ---
 

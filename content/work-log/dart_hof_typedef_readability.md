@@ -3,7 +3,7 @@ title: "為什麼這個場景適合用高階函式？以 Flutter 設定更新為
 date: 2026-06-01
 slug: "dart_hof_typedef_readability"
 draft: false
-description: "猶豫某個場景該不該把變化點抽成 callback（高階函式），或抽了之後在裸函式型別與 typedef 之間選不定時回來看。判準是「流程固定、變化點單一且開放」就抽；附 typedef 改寫前後的可讀性與取捨並排比較。"
+description: "高階函式的適用判準（流程固定、變化點單一且開放）與裸函式型別 vs typedef 的可讀性取捨並排比較。"
 tags: ["dart", "flutter", "higher-order-function", "typedef", "readability", "design-tradeoff", "DRY", "ValueNotifier"]
 ---
 
