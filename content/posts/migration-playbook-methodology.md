@@ -1,7 +1,7 @@
 ---
 title: "Migration Playbook 寫作方法論：6 種 type 對應 6 種結構、不是 universal phased"
 date: 2026-05-19
-description: "要寫跨 vendor migration playbook、卻發現套 deep article 的 6-section 或單一 phased 模板每篇結構都打架時回來。先跑 6 維 diff dimension audit（含 data topology）、再從 6 種 type（schema 差 / drop-in / operational / multi-tool / paradigm shift / topology re-layout）選對應結構；附與 deep article 的 content category 邊界。"
+description: "要寫跨 vendor migration playbook、卻發現套 deep article 模板每篇結構都打架時回來。給 diff dimension audit 選型流程和 6 種結構 type 的判準。"
 tags: ["writing-methodology", "migration-playbook", "cross-vendor", "technical-writing"]
 ---
 
