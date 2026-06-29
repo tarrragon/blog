@@ -10,11 +10,11 @@ tags: ["dotfile", "terminal", "tmux", "neovim"]
 
 ## 章節文章
 
-| 文章                                                                                                  | 主題                                                   |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| [Terminal Emulator 配置](/dotfile/03-terminal-ecosystem/terminal-emulator-config/)                     | 常見 terminal emulator 選型、配置判讀、配色與字型管理  |
-| [Multiplexer：tmux vs zellij](/dotfile/03-terminal-ecosystem/multiplexer-tmux-zellij/)                | tmux 和 zellij 的配置、plugin、選型判讀                |
-| [Neovim 配置](/dotfile/03-terminal-ecosystem/neovim-config/)                                          | neovim 配置結構、預設配置包判讀、dotfile 結構對應      |
+| 文章                                                                                   | 主題                                                  |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| [Terminal Emulator 配置](/dotfile/03-terminal-ecosystem/terminal-emulator-config/)     | 常見 terminal emulator 選型、配置判讀、配色與字型管理 |
+| [Multiplexer：tmux vs zellij](/dotfile/03-terminal-ecosystem/multiplexer-tmux-zellij/) | tmux 和 zellij 的配置、plugin、選型判讀               |
+| [Neovim 配置](/dotfile/03-terminal-ecosystem/neovim-config/)                           | neovim 配置結構、預設配置包判讀、dotfile 結構對應     |
 
 ## 跨分類引用
 

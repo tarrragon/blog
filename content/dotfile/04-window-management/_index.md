@@ -10,11 +10,12 @@ tags: ["dotfile", "window-manager", "tiling", "hyprland", "workflow"]
 
 ## 章節文章
 
-| 文章                                                                      | 主題                                                              |
-| ------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [浮動式 vs 平鋪式](/dotfile/04-window-management/floating-vs-tiling/)     | 兩種視窗管理模式的差異、手動貼齊 vs 自動平鋪的三層差距、適用判讀  |
-| [macOS 視窗管理工具鏈](/dotfile/04-window-management/macos-window-tools/) | Rectangle / Amethyst / AeroSpace / yabai 選型判讀與配置範例       |
-| [Linux Tiling WM 生態](/dotfile/04-window-management/linux-tiling-wm/)    | Wayland vs X11、主流 tiling WM 比較、多螢幕處理、dotfile 中的角色 |
+| 文章                                                                      | 主題                                                                                     |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| [Wayland 顯示協議](/dotfile/04-window-management/wayland-explainer/)      | Wayland 架構、跟 X11 的差異、XWayland 相容層、2026 採用現況、為什麼 tiling WM 選 Wayland |
+| [浮動式 vs 平鋪式](/dotfile/04-window-management/floating-vs-tiling/)     | 兩種視窗管理模式的差異、手動貼齊 vs 自動平鋪的三層差距、適用判讀                         |
+| [macOS 視窗管理工具鏈](/dotfile/04-window-management/macos-window-tools/) | Rectangle / Amethyst / AeroSpace / yabai 選型判讀與配置範例                              |
+| [Linux Tiling WM 生態](/dotfile/04-window-management/linux-tiling-wm/)    | 主流 tiling WM 比較（i3/sway/Hyprland/bspwm/dwm）、多螢幕處理、dotfile 中的角色          |
 
 ## 跨分類引用
 
