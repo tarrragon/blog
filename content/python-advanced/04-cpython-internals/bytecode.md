@@ -6,8 +6,7 @@ weight: 3
 tags: ["python", "python-advanced", "cpython"]
 ---
 
-
-Python 不是直接執行原始碼，而是先編譯成 bytecode，再由虛擬機執行。理解這個過程有助於優化程式碼效能。
+Python 先把原始碼編譯成 bytecode，再由虛擬機執行。理解這個過程有助於優化程式碼效能。
 
 ## 先備知識
 

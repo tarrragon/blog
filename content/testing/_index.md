@@ -6,13 +6,13 @@ weight: 35
 tags: ["testing"]
 ---
 
-開發測試教材的核心目標是教讀者理解「測試通過」和「產品正確」之間的差距如何產生、如何消除。Unit test 用 mock 遮蔽了協議差異、integration test 名為整合實為 fake、widget test 不覆蓋導航路徑 — 這些不是疏忽，而是測試策略的結構性盲區。本教材把品質驗證拆成可分層理解、可分步落地的知識路線。
+開發測試教材的核心目標是教讀者理解「測試通過」和「產品正確」之間的差距如何產生、如何消除。Unit test 用 mock 遮蔽了協議差異、integration test 名為整合實為 fake、widget test 不覆蓋導航路徑 — 這些是測試策略的結構性盲區，來自設計取捨而非疏忽。本教材把品質驗證拆成可分層理解、可分步落地的知識路線。
 
 ## 教學出發點
 
-這個系列從一個具體事件出發：一個 Flutter app 有 192 個 unit test 全部通過，但部署到真實 iOS 裝置後，WebSocket 連線、認證握手、終端機渲染三個核心功能全部失敗。根因不是測試寫得差，而是所有 test 都用同一個 `FakeWebSocketChannel`，永遠不觸碰真實 WebSocket 協議 — text vs binary frame 差異、auth token handshake、ANSI 控制序列多樣性，全部被 mock 完美遮蔽。
+這個系列從一個具體事件出發：一個 Flutter app 有 192 個 unit test 全部通過，但部署到真實 iOS 裝置後，WebSocket 連線、認證握手、終端機渲染三個核心功能全部失敗。根因是所有 test 都用同一個 `FakeWebSocketChannel`，永遠不觸碰真實 WebSocket 協議 — text vs binary frame 差異、auth token handshake、ANSI 控制序列多樣性，全部被 mock 完美遮蔽。
 
-這個事件揭示的不只是 Flutter 或 WebSocket 的問題，而是一個跨語言、跨框架的結構性問題：**當被測元件的正確性取決於與外部服務的協議契約時，mock 從結構上就無法驗證這件事。**
+這個事件揭示的是一個跨語言、跨框架的結構性問題：**當被測元件的正確性取決於與外部服務的協議契約時，mock 從結構上就無法驗證這件事。**
 
 ## 教學範圍
 

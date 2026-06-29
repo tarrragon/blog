@@ -6,7 +6,7 @@ tags: ["CI", "CD", "release", "binary", "installer"]
 weight: 1
 ---
 
-Binary release 是一條**不靠 package registry**、直接把預編譯執行檔掛在 GitHub Release 下供使用者下載的發版通道。它解決的問題是：當套件不是函式庫而是 CLI binary，下游不需要重新編譯、也不一定有對應語言的 toolchain 時，需要一條「平台無關、即拿即用」的安裝路線。本篇用 [`zhtw-mcp`](https://github.com/sysprog21/zhtw-mcp) 為陪跑案例，公開協作軌跡可直接對照 [issue #35](https://github.com/sysprog21/zhtw-mcp/issues/35) 與 [PR #40](https://github.com/sysprog21/zhtw-mcp/pull/40)。
+Binary release 是一條直接把預編譯執行檔掛在 GitHub Release 下供使用者下載的發版通道，跳過 package registry。它解決的問題是：當套件不是函式庫而是 CLI binary，下游不需要重新編譯、也不一定有對應語言的 toolchain 時，需要一條「平台無關、即拿即用」的安裝路線。本篇用 [`zhtw-mcp`](https://github.com/sysprog21/zhtw-mcp) 為陪跑案例，公開協作軌跡可直接對照 [issue #35](https://github.com/sysprog21/zhtw-mcp/issues/35) 與 [PR #40](https://github.com/sysprog21/zhtw-mcp/pull/40)。
 
 ## 為什麼需要這條通道
 
@@ -148,11 +148,11 @@ zhtw-mcp 的 [issue #35](https://github.com/sysprog21/zhtw-mcp/issues/35) 跟 [P
 這個討論留下幾個值得學的點：
 
 - **公開承認還在學是好事**：jserv 直接說「我 Rust 經驗有限、我也在學」、hydai 說「我第一次用 cargo-dist」，這比假裝專家有效率多了。社群協作的核心是大家都看到同一個未完成狀態、一起補。
-- **README 先寫安裝命令再補 release 是常見順序**：這不是 bug、是把 release 路線當作目標釘出來、再倒推實作。先寫文件再補 pipeline 的順序也讓 issue #35 / PR #40 更容易聚焦。
+- **README 先寫安裝命令再補 release 是常見順序**：把 release 路線當作目標釘出來、再倒推實作，是刻意的設計。先寫文件再補 pipeline 的順序也讓 issue #35 / PR #40 更容易聚焦。
 - **特殊 build hook 是 cargo-dist 的明確支援點**：zhtw-mcp 需要在編譯前跑 `gen-s2t-tables.py` 產生 `s2t_data.rs`，這正好是 `github-build-setup` 設計給的場景。如果你的 repo 有類似「編譯前要產生程式碼／下載資料」的需求、不必為此放棄 cargo-dist。
-- **Pre-release 是 pipeline 學習期的合理工具**：與其等到一切完美才發版、不如先用 `v0.1.0-alpha.1` 把 pipeline 跑通、把問題暴露出來。
+- **Pre-release 是 pipeline 學習期的合理工具**：先用 `v0.1.0-alpha.1` 把 pipeline 跑通、把問題暴露出來，比等到一切完美才發版更有效率。
 
-跟著這個 issue 串看完一輪、你就有一個從零搭 cargo-dist 的真實參照框架，比讀官方文件更貼近實際遇到的問題。
+跟著這個 issue 串看完一輪、可以得到一個從零搭 cargo-dist 的真實參照框架，比官方文件更貼近實際遇到的問題。
 
 ## Homebrew 通道：cargo-dist 怎麼幫你出 formula
 

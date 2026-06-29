@@ -30,7 +30,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 - 「DynamoDB GSI 在 backfill 完成前查不到完整資料」這種具體陷阱
 - 「Super Bowl +50% no sweat 的工程意義是 headroom 提前預留、不是 vendor 神奇」這種反直覺判讀
-- 「99.99% → 99.999% 不是 10x 成本而是指數成本」這種規模對照
+- 「99.99% → 99.999% 是指數成本、遠超直覺的 10x 線性想像」這種規模對照
 
 純技術知識推導不出來、要看真實案例才會浮現。
 
