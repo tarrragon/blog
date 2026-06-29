@@ -130,7 +130,37 @@ stow */
 cd ~/dotfiles && stow -D nvim
 ```
 
-stow 適合中等複雜度的配置管理。它的優勢是模組化（每個工具獨立一個 package、可選擇性安裝）和概念直覺（目錄結構就是安裝後的樣子）。它的限制是只管 symlink 映射，不管套件安裝；跨 OS 的路徑差異（macOS 和 Linux 某些工具的配置路徑不同）需要自己處理。
+stow 適合中等複雜度的配置管理。它的優勢是模組化（每個工具獨立一個 package、可選擇性安裝）和概念直覺（目錄結構就是安裝後的樣子）。它的限制是只管 symlink 映射，不管套件安裝；跨 OS 的路徑差異（macOS 和 Linux 某些工具的配置路徑不同）需要自己處理；stow 也不管 file permission——需要 0600 權限的 secret 檔（SSH private key、API token config）靠 symlink 繼承來源檔案權限，不能在部署過程中自動設定。
+
+## yadm：bare repo 的升級版
+
+yadm 包裝了 Git bare repo 的操作，加上三個 bare repo 缺少的能力：alternate files（依 OS、hostname、甚至 user 條件選擇安裝不同版本的配置檔）、encrypt（用 GPG 或 OpenSSL 加密敏感檔案、不依賴外部密碼管理器）、bootstrap script（clone 後自動跑初始化）。
+
+```bash
+# 安裝
+brew install yadm          # macOS
+sudo pacman -S yadm        # Arch
+
+# 初始化（等同 git init --bare + 自動設定 alias）
+yadm init
+yadm remote add origin git@github.com:you/dotfiles.git
+
+# 操作方式跟 Git 完全一樣
+yadm add ~/.zshrc
+yadm commit -m "add zshrc"
+yadm push
+```
+
+Alternate files 的概念是在同一個 repo 裡放多個版本的同一個檔案，yadm 依條件決定用哪一個：
+
+```text
+~/.config/alacritty/alacritty.toml##os.Darwin
+~/.config/alacritty/alacritty.toml##os.Linux
+```
+
+macOS 上 yadm 自動 checkout Darwin 版本、Linux 上 checkout Linux 版本。比 stow 的 shell if-else 判斷更乾淨，比 chezmoi 的 Go template 學習曲線低。
+
+yadm 適合想要 bare repo 的簡單性、但需要條件安裝或 secret 加密的人。它的限制是沒有 stow 的模組化概念（無法選擇性只安裝某些工具的配置）、沒有 chezmoi 的 template 細粒度（alternate files 是整個檔案切換，不是檔案內的段落條件）。
 
 ## Chezmoi：多機器 dotfile 管理工具
 
@@ -210,6 +240,8 @@ chezmoi 適合管理多台異質機器（macOS 工作機 + Linux 伺服器 + Lin
 
 多台異質機器（macOS + Linux）但 secret 需求不高 — stow 加上 OS 分流仍然可行，[跨平台共用一個 Repo](/dotfile/01-dotfile-management/cross-platform-one-repo/) 會完整說明做法。
 
-多台異質機器（macOS + Linux）、有 secret 需求 — chezmoi。template 和 secret 管理是它存在的理由。
+多台異質機器、需要條件安裝但不想學 template 語法 — yadm。alternate files 讓你依 OS/hostname 切換整個配置檔，內建 encrypt 處理 secret，Git 操作方式跟 bare repo 相同。
 
-不確定 — 從 stow 開始。它的概念最直覺（目錄結構 = 安裝後位置）、遷移成本最低（要換到 chezmoi 時，目錄結構的概念是相通的；要換到 bare repo 則是刪掉 symlink、直接追蹤）。
+多台異質機器（macOS + Linux）、有細粒度 template 或密碼管理器整合需求 — chezmoi。檔案內的段落條件、跟 1Password/Bitwarden 的整合、`private_` 前綴的 permission 管理是它存在的理由。
+
+不確定 — 從 stow 開始。它的概念最直覺（目錄結構 = 安裝後位置）、遷移成本最低（要換到 yadm 是加一層 wrapper、要換到 chezmoi 時目錄結構的概念是相通的）。

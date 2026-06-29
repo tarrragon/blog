@@ -8,6 +8,14 @@ tags: ["dotfile", "macos", "window-manager", "aerospace", "yabai"]
 
 macOS 的視窗系統由 WindowServer 控制，第三方工具能做的主要是「排列邏輯」——決定視窗的位置和大小。視覺效果（動畫、模糊、圓角）由系統控制，第三方工具改不了。這是跟 Linux tiling WM 最大的差異。
 
+## macOS 原生 Window Tiling（macOS 15+）
+
+macOS Sequoia（15，2024 年 9 月）內建了 window tiling 功能：鍵盤快捷鍵把視窗貼到螢幕的半邊或四分之一、拖拉到邊緣自動貼齊（edge snap）、相鄰視窗可以組成 tile group 一起調整比例。
+
+原生 tiling 的邊界：沒有多工作區管理、快捷鍵自訂空間有限（只能用系統偏好設定裡的固定選項）、不支援自動平鋪（仍然是手動觸發的 snap，不會在開新視窗時自動重排）。
+
+如果「貼到半邊 + 邊緣吸附」就足夠，原生功能免安裝即可使用。以下第三方工具解決的是原生功能做不到的事：更多排列選項（Rectangle）、自動平鋪（Amethyst）、完整的鍵盤工作流加多工作區（AeroSpace / yabai）。
+
 ## Rectangle
 
 免費、開源。用快捷鍵把視窗貼到螢幕的半邊、三分之一、角落。不是自動平鋪——每個視窗都要你主動下指令。安裝後開箱即用，學習成本最低。

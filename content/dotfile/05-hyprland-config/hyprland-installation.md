@@ -69,7 +69,7 @@ Intel 內顯在 Wayland 上表現穩定，適合筆電和輕度桌面使用。
 
 Hyprland 官方不支援 NVIDIA，但社群有成熟的 workaround。最低版本需求：
 
-- NVIDIA driver >= 555
+- NVIDIA driver >= 555（555 引入完整 GBM 支援和 explicit sync，是 Wayland 硬體渲染的最低依賴。535 系列有 explicit sync 問題，Wayland 下容易 flicker。590+ 修復多數 HDR 和多螢幕邊界問題）
 - xorg-xwayland >= 24.1
 - wayland-protocols >= 1.34
 

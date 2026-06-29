@@ -18,6 +18,8 @@ tags: ["dotfile", "team", "devcontainer", "mdm"]
 
 把環境設定寫成 bootstrap script（同 [Bootstrap Script 設計](/dotfile/07-sync-bootstrap/bootstrap-script-packages/)），新人跑一次就好。CI 裡用相同的 script 或 Docker image 確保環境一致。比文件可靠，但 script 本身的維護和跨 OS 相容性是挑戰。
 
+Runtime 版本管理可以先從 **mise**（前身 rtx）或 **asdf** 開始：專案 repo 裡放一份 `.tool-versions`（或 mise 的 `mise.toml`），定義 Node/Ruby/Python/Go 的版本號，團隊成員跑 `mise install` 就對齊。這比完整 devcontainer 輕量、比純 README 可靠，適合「只需要統一 runtime 版本、不需要容器化整個環境」的小團隊。它的邊界是只管語言版本——系統套件、服務依賴（PostgreSQL、Redis）、OS 層差異不在它的守備範圍。
+
 ### 成熟層：Devcontainer / Nix / 標準化 VM image
 
 環境定義進專案 repo（devcontainer.json 或 flake.nix），每個開發者的環境從同一份定義產生。新人 onboarding 從「照文件設定半天」變成「打開專案等五分鐘」。
@@ -47,6 +49,6 @@ tags: ["dotfile", "team", "devcontainer", "mdm"]
 | 團隊超過五人、OS 組合超過兩種            | devcontainer 或 Nix 的投資報酬率開始正向        |
 | 企業有安全合規要求（核准軟體、版本鎖定） | 需要受管環境 + 內部 registry                    |
 
-向管理層提案標準化時，量化基準有助說服力：手動 onboarding 通常要半天到一天（找文件 + 裝套件 + 跑設定 + 除錯差異），導入 devcontainer 後新人 onboarding 可縮短到十分鐘以內（clone + 等容器 build）。初始投入大約一到兩個工作天（寫 devcontainer.json + 測試 + 文件化），之後維護成本隨專案依賴更新而遞增、但遠低於每次 onboarding 的重複成本。具體數字要從團隊自己的 onboarding 紀錄和 DORA 指標取得——「上一個新人花了幾天才送出第一個 PR」是最直接的 baseline。
+向管理層提案標準化時，量化基準有助說服力：手動 onboarding 通常要半天到一天（找文件 + 裝套件 + 跑設定 + 除錯差異）。導入 devcontainer 後要區分兩個階段：初次 build（拉 base image + 安裝 feature + 跑 postCreateCommand）取決於 image 大小和網路速度，企業 proxy 或 VPN 環境下通常 20-60 分鐘；但之後的 reopen（image 已在本機 cache）只需 1-5 分鐘。日常體驗是後者——第一次 build 是一次性成本，後續每次打開專案都在分鐘級。初始投入大約一到兩個工作天（寫 devcontainer.json + 測試 + 文件化），之後維護成本隨專案依賴更新而遞增、但遠低於每次 onboarding 的重複成本。具體數字要從團隊自己的 onboarding 紀錄和 DORA 指標取得——「上一個新人花了幾天才送出第一個 PR」是最直接的 baseline。
 
 個人 dotfile 是起點，不是終點。當環境一致性的需求從「一個人的舒適」擴展到「團隊的生產力」，就是往上走的時機。
