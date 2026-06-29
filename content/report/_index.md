@@ -205,7 +205,9 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 
 - [#147 規範化跟自審是兩種認知任務、立規範當下無法保護同批稿件](rule-codification-vs-self-audit/) — 把反模式抽象成規範卡跟在自己稿件辨識該反模式實例是兩種不同認知任務、視角分別是 outside-in（歸納）vs inside-out（比對）；案例：#146 才剛立「看 X 如何 Y」是反模式、同 batch 5 篇章節仍有 11 處未被察覺、Round 2 reviewer 才 catch；修法三層機制 — grep keyword（字面層）/ checklist 自審（結構層）/ reviewer in-stream（frame 層）；補 #114 在「規範作者本人 reviewer」的具體實例、補 #122 / #124 在「規範化動作本身」這個介入點的修法
 
-跨輪 review 停止判讀（#148、從 backend 3 輪 review 38 個 finding 零重疊的實證抽出）：
+跨輪 review 停止判讀（#148、從 backend 3 輪 review 38 個 finding 零重疊的實證抽出；#202 從 dotfile 系列三輪 43 個 finding 抽出最低輪數硬底線）：
+
+- [#202 多輪審查至少三輪是硬底線](multi-round-review-minimum-three-rounds/) — Round 3 的 steelman/outbound frame 覆蓋 Round 1-2 結構性盲區（漏選項、反向引用、搜尋落點），每次實測都找出 10+ 項；問「要不要跑 Round 3」等於問「要不要跑一定有產出的審查」；三輪是硬底線、Round 3 結束後才進入停止判讀
 
 - [#148 跨輪 review 停止訊號是 frame 涵蓋、不是 finding 數遞減](cross-round-review-stopping-signal/) — 判斷「該不該再來一輪 review」的訊號是「frame 軸是否還有未動」、不是「finding 變少」；多輪 review 的 ROI 不是 monotonically decreasing、Round 3 finding 數可能比 Round 1 / 2 多、但內容從 surface 往 structural / meta 層走；停止判讀 4 訊號（新 frame 卡住 / finding 退回 surface / 修法成本超過邊際價值 / frame 重複）；補 #114 / #126 / #147 沒覆蓋的「何時停止」缺口
 - [#149 字句層 review：keyword bank 命中是候選、不是判決](keyword-bank-hit-is-candidate-not-verdict/) — 偵測（grep 命中可疑訊號）跟判定（這個命中是不是違規）是兩個認知步驟；reviewer 容易把「不是 A 而是 B」的命中合理化成「可接受反例對照」而放行、偵測成功判定失敗；判定準則用「概念位置」—— 否定在建立核心概念就改正向、只在明示反例段落才保留；另有訴諸群體贅語（「很多人卡在」）無固定關鍵詞、keyword bank 結構上抓不到、靠 reader-simulation 補；是 #114（偵測層）的判定層 sibling、夾在 #94（別過度刪對照）與正向陳述優先之間的判別線
