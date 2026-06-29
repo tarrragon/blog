@@ -1,7 +1,7 @@
 ---
 title: "跨平台共用一個 Repo"
 date: 2026-06-29
-description: "macOS 跟 Linux 要共用同一個 dotfile repo 時回來讀 — stow 選擇性安裝、配置檔 OS 分流、local.zsh 機器專屬設定的三層模型"
+description: "macOS 跟 Linux 要共用同一個 dotfile repo、不想維護兩份時回來讀"
 weight: 2
 tags: ["dotfile", "stow", "cross-platform"]
 ---

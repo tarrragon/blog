@@ -1,7 +1,7 @@
 ---
 title: "Devcontainer 與 Nix：容器化和宣告式的開發環境"
 date: 2026-06-29
-description: "團隊開發環境要標準化時回來讀 — devcontainer 怎麼跟個人 dotfile 互動、nix flake 和 Home Manager 的定位與限制"
+description: "團隊開發環境要標準化、或評估 devcontainer 和 nix 跟個人 dotfile 怎麼共存時回來讀"
 weight: 1
 tags: ["dotfile", "devcontainer", "nix", "team"]
 ---

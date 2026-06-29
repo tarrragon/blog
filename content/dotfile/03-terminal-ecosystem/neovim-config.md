@@ -6,7 +6,7 @@ weight: 3
 tags: ["dotfile", "neovim", "editor"]
 ---
 
-Neovim 的配置是 dotfile 裡最複雜的單一工具——plugin 生態龐大、Lua 配置可以寫成一個完整的小專案。
+Neovim 的配置是 dotfile 裡最複雜的單一工具——plugin 生態龐大、整個配置系統基於 Lua。Lua 語法基礎見 [Lua 腳本語言](/dotfile/knowledge-cards/lua-scripting-language/)。
 
 配置路徑：`~/.config/nvim/`
 

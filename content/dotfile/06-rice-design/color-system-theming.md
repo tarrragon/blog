@@ -1,7 +1,7 @@
 ---
 title: "配色系統、鎖屏與 GTK 主題"
 date: 2026-06-29
-description: "桌面配色散亂看起來雜時回來讀 — Hyprlock 鎖屏配置、配色變數集中管理、GTK/Qt 主題統一、換主題時的檔案清單"
+description: "桌面配色散亂看起來雜、或要換主題不知道該改哪些檔案時回來讀"
 weight: 2
 tags: ["dotfile", "rice", "hyprlock", "catppuccin", "gtk", "linux"]
 ---

@@ -31,7 +31,7 @@ Infra 教「組織的地基怎麼用 code 管理」，Dotfile 教「個人的工
 | [模組一：管理工具與目錄結構](/dotfile/01-dotfile-management/)     | bare repo / stow / chezmoi、目錄設計、版控工作流     | dotfile 怎麼用 Git 管、目錄該怎麼組織     |
 | [模組二：Shell 配置](/dotfile/02-shell-config/)                   | zsh/bash 結構化配置、模組化拆分、alias/function/PATH | .zshrc 該怎麼寫才不會長成一坨             |
 | [模組三：終端機與編輯器](/dotfile/03-terminal-ecosystem/)         | terminal emulator 選型、tmux/zellij、neovim 基礎     | 終端機生態的配置檔有哪些、怎麼管理        |
-| [模組四：視窗管理與自動平鋪](/dotfile/04-window-management/)      | 手動 vs 自動平鋪、macOS 工具鏈、Linux tiling WM      | Rectangle 不夠用的時候該換什麼            |
+| [模組四：視窗管理與平鋪式工作流](/dotfile/04-window-management/)  | 手動 vs 自動平鋪、macOS 工具鏈、Linux tiling WM      | Rectangle 不夠用的時候該換什麼            |
 | [模組五：Hyprland 配置](/dotfile/05-hyprland-config/)             | Hyprland 安裝、核心設定、keybind、monitor、workspace | Hyprland 的配置檔怎麼寫、核心概念是什麼   |
 | [模組六：桌面 Rice 設計](/dotfile/06-rice-design/)                | 狀態列、啟動器、通知、配色系統、desktop shell        | 桌面怎麼從「能用」變成「好看又好用」      |
 | [模組七：同步、Bootstrap 與環境重建](/dotfile/07-sync-bootstrap/) | 跨機器同步、install script、secret 排除、VM 對比     | 換機器時怎麼一鍵還原、哪些東西不該進 repo |

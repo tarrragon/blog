@@ -12,7 +12,7 @@ tags: ["dotfile", "team", "devcontainer", "mdm"]
 
 ### 最低限度：README + onboarding 文件
 
-專案 repo 裡寫一份 `CONTRIBUTING.md` 或 wiki 頁面，列出環境需求和設定步驟。新人照著做。成本最低但最容易過時——文件跟實際環境漂移是必然的。
+專案 repo 裡寫一份 `CONTRIBUTING.md` 或 wiki 頁面，列出環境需求和設定步驟。新人照著做。成本最低但最容易過時——文件跟實際環境的漂移很常見，沒有自動化驗證機制時尤其如此。
 
 ### 中間層：腳本化 + CI 驗證
 
@@ -46,5 +46,7 @@ tags: ["dotfile", "team", "devcontainer", "mdm"]
 | CI 環境跟本機行為不一致                  | 統一 CI 和本機的基底環境（Docker image 或 Nix） |
 | 團隊超過五人、OS 組合超過兩種            | devcontainer 或 Nix 的投資報酬率開始正向        |
 | 企業有安全合規要求（核准軟體、版本鎖定） | 需要受管環境 + 內部 registry                    |
+
+向管理層提案標準化時，量化基準有助說服力：手動 onboarding 通常要半天到一天（找文件 + 裝套件 + 跑設定 + 除錯差異），導入 devcontainer 後新人 onboarding 可縮短到十分鐘以內（clone + 等容器 build）。初始投入大約一到兩個工作天（寫 devcontainer.json + 測試 + 文件化），之後維護成本隨專案依賴更新而遞增、但遠低於每次 onboarding 的重複成本。具體數字要從團隊自己的 onboarding 紀錄和 DORA 指標取得——「上一個新人花了幾天才送出第一個 PR」是最直接的 baseline。
 
 個人 dotfile 是起點，不是終點。當環境一致性的需求從「一個人的舒適」擴展到「團隊的生產力」，就是往上走的時機。

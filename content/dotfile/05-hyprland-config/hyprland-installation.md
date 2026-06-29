@@ -1,7 +1,7 @@
 ---
 title: "Hyprland 安裝與環境建置"
 date: 2026-06-29
-description: "要在 Arch Linux 上從零安裝 Hyprland 桌面環境時回來讀 — 套件清單、GPU 驅動設定、companion packages、登入管理器、首次啟動除錯"
+description: "要在 Arch Linux 上從零安裝 Hyprland 桌面環境時回來讀"
 weight: 1
 tags: ["dotfile", "hyprland", "arch-linux", "installation", "gpu"]
 ---
@@ -81,7 +81,15 @@ sudo pacman -S nvidia-dkms nvidia-utils libva-nvidia-driver
 sudo pacman -S lib32-nvidia-utils
 ```
 
-mkinitcpio MODULES（順序有影響，hybrid GPU 要把 Intel 排前面）：
+mkinitcpio MODULES（依硬體配置選擇）：
+
+純 NVIDIA 桌機：
+
+```text
+MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+```
+
+Intel + NVIDIA hybrid 筆電（Intel 排在 NVIDIA 前面）：
 
 ```text
 MODULES=(i915 nvidia nvidia_modeset nvidia_uvm nvidia_drm)
@@ -328,3 +336,7 @@ Home Manager 也有對應 module，可以宣告式管理 Hyprland 配置。
 ### Ubuntu
 
 不推薦。Ubuntu 的 point-release 模型跟 Hyprland 的 bleeding-edge 更新節奏衝突。沒有官方 PPA，從 source 編譯可行但維護成本高。如果一定要用 Debian 系，Arch 的 rolling release 或 Fedora 的半年週期更適合 Hyprland。
+
+## 安裝後的下一步
+
+安裝完成後，VM 環境的額外設定（環境變數、效能調整、測試矩陣）見 [VM 環境設定與測試矩陣](/dotfile/05-hyprland-config/hyprland-vm-setup/)。配置檔的組織方式和 keybind 設計見 [Hyprland 核心配置](/dotfile/05-hyprland-config/hyprland-core-config/)。

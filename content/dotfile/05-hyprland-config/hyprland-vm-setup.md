@@ -1,8 +1,8 @@
 ---
 title: "Hyprland VM 環境設定與測試矩陣"
 date: 2026-06-29
-description: "在 Mac 上用 UTM/QEMU 跑 Hyprland VM 時需要的環境變數、效能預期、以及哪些設定可以在 VM 驗證、哪些必須到實機測試"
-weight: 5
+description: "要在 VM 裡測試 Hyprland 配置、或判斷某個設定該在 VM 還是實機驗證時回來讀"
+weight: 4
 tags: ["dotfile", "hyprland", "vm", "utm", "testing"]
 ---
 
@@ -45,6 +45,8 @@ env = {
     "WLR_RENDERER, pixman",            -- 強制 pixman 軟體 renderer
 }
 ```
+
+> **[待實測驗證]** Hyprland 0.40+ 從 wlroots 遷移到 Aquamarine 渲染後端，部分 `WLR_` 開頭的環境變數可能已失效。`WLR_RENDERER_ALLOW_SOFTWARE` 和 `WLR_RENDERER` 在新版 Hyprland 的實際行為需在目標版本上測試確認。`AQ_NO_KMS_REQUIREMENT` 是 Aquamarine 的原生變數，預期仍有效。
 
 ## VM 中應該關閉的效果
 

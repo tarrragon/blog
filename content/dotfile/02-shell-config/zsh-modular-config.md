@@ -1,7 +1,7 @@
 ---
 title: "Zsh 模組化配置"
 date: 2026-06-29
-description: ".zshrc 長到數百行不敢動時回來讀 — zsh/bash 載入順序、.zshrc 只做 source 的拆分結構、alias/function/tools/local 各模組的職責"
+description: ".zshrc 長到數百行不敢動時回來讀"
 weight: 1
 tags: ["dotfile", "shell", "zsh", "bash"]
 ---

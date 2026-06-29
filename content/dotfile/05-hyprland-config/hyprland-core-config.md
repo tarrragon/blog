@@ -2,9 +2,11 @@
 title: "Hyprland 核心配置"
 date: 2026-06-29
 description: "Hyprland 的配置檔該怎麼組織、monitor 怎麼設定、keybind 怎麼設計、輸入裝置和環境變數怎麼配時回來讀"
-weight: 1
+weight: 2
 tags: ["dotfile", "hyprland", "wayland", "linux"]
 ---
+
+Hyprland v0.55+ 使用 Lua 作為配置語言。Lua 語法基礎見 [Lua 腳本語言](/dotfile/knowledge-cards/lua-scripting-language/)。
 
 ## 配置檔位置與格式
 
@@ -322,3 +324,5 @@ hl.config({
     },
 })
 ```
+
+> **[待實測驗證]** Hyprland 0.40+ 遷移到 Aquamarine 渲染後端，`WLR_` 開頭的環境變數可能已失效。完整 VM 設定見 [VM 環境設定與測試矩陣](/dotfile/05-hyprland-config/hyprland-vm-setup/)。

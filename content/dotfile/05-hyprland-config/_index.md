@@ -1,7 +1,7 @@
 ---
 title: "模組五：Hyprland 配置"
 date: 2026-06-29
-description: "要在 Linux 上設定 Hyprland 平鋪式桌面時回來讀 — 配置檔結構、keybind 設計、monitor/workspace 設定、常見 plugin"
+description: "要在 Linux 上設定 Hyprland 平鋪式桌面時回來讀"
 weight: 5
 tags: ["dotfile", "hyprland", "wayland", "linux"]
 ---

@@ -1,7 +1,7 @@
 ---
 title: "拍照 vs 重建指令：環境重建的兩種思路"
 date: 2026-06-29
-description: "VM 快照和 dotfile 重建是兩條根本不同的路線 — 要選哪條、各自的限制在哪、什麼場景該搭配使用"
+description: "猶豫該用 VM 快照還是 dotfile 重建來管理環境時回來讀"
 weight: 1
 tags: ["dotfile", "vm", "snapshot", "bootstrap"]
 ---

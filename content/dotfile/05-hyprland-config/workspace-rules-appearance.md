@@ -2,9 +2,11 @@
 title: "Workspace、Window Rules 與外觀"
 date: 2026-06-29
 description: "Hyprland 的 workspace 綁定螢幕、window rules 設定浮動例外、外觀動畫調教、layout 選型、autostart 和 plugin 管理時回來讀"
-weight: 2
+weight: 3
 tags: ["dotfile", "hyprland", "wayland", "linux"]
 ---
+
+本篇的配置範例使用 Lua 語法（Hyprland v0.55+）。Lua 基礎見 [Lua 腳本語言](/dotfile/knowledge-cards/lua-scripting-language/)。
 
 ## Workspace 設定
 

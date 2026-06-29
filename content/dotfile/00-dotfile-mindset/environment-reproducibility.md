@@ -1,7 +1,7 @@
 ---
 title: "環境可重現性與配置分類"
 date: 2026-06-29
-description: "想釐清哪些配置該進 dotfile repo、哪些不該進時回來讀 — 四個需要環境重建的場景、核心層 / 工具層 / 桌面層的判讀準則"
+description: "想釐清哪些配置該進 dotfile repo、哪些不該進時回來讀"
 weight: 1
 tags: ["dotfile", "workflow"]
 ---

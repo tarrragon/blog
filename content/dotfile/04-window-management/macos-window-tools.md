@@ -1,7 +1,7 @@
 ---
 title: "macOS 視窗管理工具鏈"
 date: 2026-06-29
-description: "macOS 上選 Rectangle、Amethyst、AeroSpace 或 yabai 時回來讀 — 控制權遞增、複雜度也遞增的四個選項"
+description: "macOS 上想用鍵盤管理視窗、不確定該用哪個工具時回來讀"
 weight: 2
 tags: ["dotfile", "macos", "window-manager", "aerospace", "yabai"]
 ---

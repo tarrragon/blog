@@ -1,7 +1,7 @@
 ---
 title: "跨機器同步、Secret 管理與環境重建流程"
 date: 2026-06-29
-description: "多台機器的 dotfile 怎麼同步、哪些東西不該進 repo、從空白 Arch 機器到完整 Hyprland 桌面的 end-to-end 重建流程"
+description: "多台機器的 dotfile 怎麼同步、哪些東西不該進 repo 時回來讀"
 weight: 3
 tags: ["dotfile", "sync", "secret", "chezmoi", "bootstrap"]
 ---
@@ -12,7 +12,7 @@ tags: ["dotfile", "sync", "secret", "chezmoi", "bootstrap"]
 
 ### Git push/pull（手動）
 
-最基本的做法：改了就 commit + push，另一台機器 pull + 重新 apply。優點是簡單、沒有額外依賴。缺點是容易忘記——你在公司機器上改了一個 alias，回家忘記 push，隔天公司又改了一版，兩邊 diverge。
+最基本的做法：改了就 commit + push，另一台機器 pull + 重新 apply。優點是簡單、沒有額外依賴。缺點是容易忘記——在公司機器上改了一個 alias，回家忘記 push，隔天公司又改了一版，兩邊 diverge。
 
 適合只有一兩台機器、改動不頻繁的人。
 
@@ -148,7 +148,7 @@ cat ~/.local/share/chezmoi/private_dot_ssh/id_rsa.age
 
 加密存放的好處是 secret 跟著 repo 走、不用另外設密碼管理器。風險是加密 key 本身變成唯一的依賴——丟了 key，加密的 secret 就拿不回來。
 
-層級選擇取決於你的安全需求和便利需求的平衡。多數人從層級一開始，覺得手動處理太煩再往上升級。
+層級選擇取決於安全需求和便利需求的平衡。多數情況從層級一開始，覺得手動處理太煩再往上升級。
 
 ## 環境重建的實際流程
 
@@ -170,7 +170,7 @@ git clone https://github.com/you/dotfiles ~/dotfiles
 cd ~/dotfiles
 ```
 
-如果 repo 是 private，這一步需要先設定 SSH key 或用 HTTPS + token。這是前面提到的 secret 雞生蛋問題——你需要 SSH key 才能 clone 含有 SSH config 的 repo。解法通常是：第一次用 HTTPS clone，deploy 完 SSH config 後把 remote 改成 SSH。
+如果 repo 是 private，這一步需要先設定 SSH key 或用 HTTPS + token。這是前面提到的 secret 雞生蛋問題——clone 含有 SSH config 的 repo 本身就需要 SSH key。解法通常是：第一次用 HTTPS clone，deploy 完 SSH config 後把 remote 改成 SSH。
 
 ### 階段三：執行 bootstrap
 

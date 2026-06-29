@@ -1,7 +1,7 @@
 ---
 title: "管理策略與選型"
 date: 2026-06-29
-description: "要選 dotfile 管理工具時回來讀 — bare repo、stow、chezmoi 三種策略的操作方式、適用場景與選型判讀"
+description: "要選 dotfile 管理工具時回來讀 — bare repo、stow、chezmoi 的適用場景與選型判讀"
 weight: 1
 tags: ["dotfile", "git", "stow", "chezmoi"]
 ---

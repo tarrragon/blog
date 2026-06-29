@@ -1,7 +1,7 @@
 ---
 title: "桌面 Shell 元件：狀態列、啟動器與通知"
 date: 2026-06-29
-description: "Hyprland 桌面要拼哪些元件、各元件的配置檔在哪 — Waybar 狀態列、Wofi/Rofi 啟動器、Mako 通知的配置實務"
+description: "Hyprland 桌面要拼哪些元件、各元件的配置檔怎麼寫時回來讀"
 weight: 1
 tags: ["dotfile", "rice", "waybar", "wofi", "mako", "hyprland", "linux"]
 ---

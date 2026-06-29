@@ -1,7 +1,7 @@
 ---
 title: "Caelestia 總覽：預組裝的 Hyprland 桌面 Shell"
 date: 2026-06-29
-description: "考慮用 Caelestia 取代手動拼裝 waybar+wofi+mako 時回來讀 — 它提供什麼、跟手動拼裝的 trade-off、跟 AGS/Eww 的差異"
+description: "考慮用 Caelestia 取代手動拼裝 waybar+wofi+mako、或評估預組裝桌面 shell 的 trade-off 時回來讀"
 weight: 3
 tags: ["dotfile", "rice", "caelestia", "quickshell", "hyprland"]
 ---

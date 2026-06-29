@@ -1,7 +1,7 @@
 ---
 title: "Caelestia 安裝"
 date: 2026-06-29
-description: "要在 Arch Linux 上安裝 Caelestia 桌面 shell 時回來讀 — 前提條件、AUR 套件、CLI 安裝流程、依賴清單、登入管理器設定"
+description: "要在 Arch Linux 上安裝 Caelestia 桌面 shell 時回來讀"
 weight: 4
 tags: ["dotfile", "rice", "caelestia", "arch", "hyprland"]
 ---

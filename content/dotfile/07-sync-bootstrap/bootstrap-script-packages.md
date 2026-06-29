@@ -1,7 +1,7 @@
 ---
 title: "Bootstrap Script 與套件清單管理"
 date: 2026-06-29
-description: "寫 dotfile 的 install script 時回來讀 — 冪等性設計、OS 分流、Brewfile/packages.txt 套件清單管理"
+description: "寫 dotfile 的 install script、或整理「這台機器裝了什麼」的套件清單時回來讀"
 weight: 2
 tags: ["dotfile", "bootstrap", "brewfile", "pacman"]
 ---

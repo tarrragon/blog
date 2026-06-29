@@ -1,5 +1,5 @@
 ---
-title: "模組四：視窗管理與自動平鋪"
+title: "模組四：視窗管理與平鋪式工作流"
 date: 2026-06-29
 description: "同時開多個視窗時的排列策略 — 手動貼齊跟自動平鋪的差距在哪、macOS 和 Linux 各有哪些工具、多螢幕怎麼處理、什麼情境值得從浮動切換到平鋪"
 weight: 4
@@ -12,10 +12,10 @@ tags: ["dotfile", "window-manager", "tiling", "hyprland", "workflow"]
 
 | 文章                                                                      | 主題                                                                                     |
 | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| [Wayland 顯示協議](/dotfile/04-window-management/wayland-explainer/)      | Wayland 架構、跟 X11 的差異、XWayland 相容層、2026 採用現況、為什麼 tiling WM 選 Wayland |
 | [浮動式 vs 平鋪式](/dotfile/04-window-management/floating-vs-tiling/)     | 兩種視窗管理模式的差異、手動貼齊 vs 自動平鋪的三層差距、適用判讀                         |
 | [macOS 視窗管理工具鏈](/dotfile/04-window-management/macos-window-tools/) | Rectangle / Amethyst / AeroSpace / yabai 選型判讀與配置範例                              |
 | [Linux Tiling WM 生態](/dotfile/04-window-management/linux-tiling-wm/)    | 主流 tiling WM 比較（i3/sway/Hyprland/bspwm/dwm）、多螢幕處理、dotfile 中的角色          |
+| [Wayland 顯示協議](/dotfile/04-window-management/wayland-explainer/)      | Wayland 架構、跟 X11 的差異、XWayland 相容層、2026 採用現況、為什麼 tiling WM 選 Wayland |
 
 ## 跨分類引用
 
