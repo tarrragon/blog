@@ -240,6 +240,7 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 - [跨 surface 鏡像的連結轉換 mapping 要窮盡](mirror-link-mapping-must-be-exhaustive/) — skill 鏡像的 references/principles/ → /report/ 轉換，slug 不匹配被誤判「沒有 report 卡」，三次 CI 失敗才修完；mapping 要用內容搜尋而非 slug 碰運氣
 - [先建 report 卡再進 skill](report-before-skill-not-after/) — report 是原則的 SSoT、skill 是操作化引用；先改 skill 再補 report 會讓規則缺根據、report 被擠到「有空再做」；標準流程從 report 卡開始
 - [常識是相對於讀者背景的](common-knowledge-is-relative-to-reader-background/) — 知識卡的建卡判準看「目標讀者群裡最不熟悉的那端能不能理解」、不看「作者覺得夠不夠常見」；.htaccess 對 PHP 工程師是常識、對 Node.js 工程師完全陌生；跨背景讀者群的教材幾乎所有領域特定術語都需要建卡
+- [#170 Description 是未來自己的 recall trigger、不是文章摘要](description-as-recall-trigger/) — description 要回答「你在什麼情境下需要這篇」（情境索引）、不只「這篇在講什麼」（內容索引）；類比 skill 的 description 讓系統自動觸發載入、文章的 description 讓未來自己在掃列表時自動判斷要不要進去讀；摘要式 description 讓列表頁一片「記錄了 / 介紹 / 整理出」無差異、recall 成本吃掉知識累積效益；是 #169 情境入口在 frontmatter surface 的體現、#131 讀者旅程第一站、#159 入口分流的欄位設計面
 
 ### 第七輪：Pattern 卡片（待補完）
 

@@ -49,7 +49,7 @@ metadata:
   - **命中是候選、不是判決**：grep 命中後仍要一個語意判定步驟——這個命中是「建立核心概念的違規」（段首 / 小節開場）、還是「合規的反例對照 / hook / 真必然」。reviewer 容易把違規合理化成「可接受對照」放行（偵測成功、判定失敗）；判定用「概念位置」、不用「有沒有對照意味」。回報「字句層 clean」前先確認 clean 不是判定放水。**register 違規（否定起手 / 概念前置 / 喊話 / 誇飾）有判定上限**：它的偵測可機械化（grep 抓得到句型）、但判定要讀懂「讀起來對不對」、無法 regex 化；而且 LLM reviewer 跟作者共享文體直覺 ——「不是 X、而是 Y」這種 LLM 高頻自產的定義句型全員讀起來「自然」、同源自審對這類有結構上限、加再多輪都跨不過。register 層的真防線是文體異源視角：external human cold-read、或 prompt 明確採「挑剔否定起手 / 概念後置」對抗姿態的 reviewer。同源 reviewer 回報的「register 層 clean」不可當真、要標「未經異源抽查」。但要分清子集：「重點優先 / 否定起手」（不是 X 而是 Y、與其 X 不如 Y）有可操作判準 —— 逐句問「核心概念第一次正面出現在句首、還是被擠到『而是』之後」、強制執行這個機械步驟就抓大部分、異源只補殘餘；真正主要靠異源的是喊話 / 誇飾這類無單一重點位置的 register。別把「有可操作判準卻沒執行」（execution gap）誤當「判定不可機械化」（design 上限）。
   - 詳細 grep keyword bank 跟 frame 路由見 [`compositional-writing` skill](../compositional-writing/SKILL.md)。
 - **B: 案例 / fact-check audit** — 案例引用準確性、編號 mis-cite、跨章節引用
-- **C: 跨章一致性 audit** — 編號、學習路線、模組整合、frontmatter 一致
+- **C: 跨章一致性 audit** — 編號、學習路線、模組整合、frontmatter 一致（含 description recall trigger 檢查：description 是否回答「什麼情境下需要回來讀」而非只摘要內容，per [description-as-recall-trigger](references/principles/description-as-recall-trigger.md)）
 - **D: Downstream-task audit（outside-in）** — 讀者讀完後的下一個動作是什麼？他需要什麼素材才能完成那個動作？技術文章的讀者常見的下游任務是「向管理層提案」「估算時程」「選型決策」——文章如果只講技術做法、缺成本量級 / 時程估算 / 進度指標 / 決策簽核點，讀者學會了做法卻推不動。操作型文章的下游任務是「照做」——如果步驟停在 WHAT 層沒到 HOW WITH WHAT（具體工具 / 指令），讀者知道該做什麼但不知道用什麼做。per [outside-in reader frames report](/report/review-lacks-outside-in-reader-frames/)
 
 預期 finding 類型：編號錯、broken link、案例 mis-citation、規範違反、字句層負向 / 口語 / 廢話、cadence 散點、**成本 / 時程 / 工具缺口**。
