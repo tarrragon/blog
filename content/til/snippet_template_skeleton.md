@@ -3,7 +3,7 @@ title: "Snippet、Template、Skeleton 的差別"
 date: 2026-04-22
 draft: false
 description: "從一般英文與技術寫作兩個角度，整理 snippet、template、skeleton 三個常見詞的差異。"
-tags: ["writing", "terminology", "documentation"]
+tags: ["til", "writing", "terminology"]
 ---
 
 這三個字都和「可重用的內容結構」有關，但重點不同。

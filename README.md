@@ -1,6 +1,6 @@
 # blog
 
-Tarragon 的個人技術部落格。內容涵蓋 Flutter / 後端開發筆記、開發過程的事後檢討、寫作方法論的 skill、以及給 Claude runtime 直接呼叫的 prompt-friendly skill 庫。
+Tarragon 的個人技術部落格。內容涵蓋後端工程教學系列、開發過程的事後檢討、寫作方法論的 skill、以及給 Claude runtime 直接呼叫的 prompt-friendly skill 庫。
 
 **Live**：<https://tarrragon.github.io/blog/>
 
@@ -18,18 +18,35 @@ Tarragon 的個人技術部落格。內容涵蓋 Flutter / 後端開發筆記、
 
 `content/` 依主題分區、每區自成一個 Hugo section：
 
-| 區塊                                                                       | 內容                                                                        |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [posts/](./content/posts/)                                                 | Blog 規範文件、設計筆記、Hugo / Markdown 操作經驗、AI 協作心得              |
-| [posts/markdown-writing-spec.md](./content/posts/markdown-writing-spec.md) | mdtools 檢查規則的單一真實來源                                              |
-| [report/](./content/report/)                                               | 開發過程的事後檢討（54 篇、含三層結構：抽象原則 / 情境檢討 / Pattern 卡片） |
-| [skills/](./content/skills/)                                               | `.claude/skills/` 的文章版本（Claude runtime + 人類讀者雙重存取）           |
-| [record/](./content/record/)                                               | 開發中的 side project 紀錄                                                  |
-| [work-log/](./content/work-log/)                                           | 工作上遇到的具體問題與解法                                                  |
-| [go/](./content/go/) `go-advanced/`                                        | Go 語言教材（語言精神 + 工程實踐）                                          |
-| [python/](./content/python/) `python-advanced/`                            | Python 教材（以 Hook 系統為範例）                                           |
-| [backend/](./content/backend/)                                             | 語言無關的後端能力、風險、決策                                              |
-| [other/](./content/other/)                                                 | 其他雜項                                                                    |
+### 教學系列
+
+| 區塊                                                                        | 內容                                                             |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [go/](./content/go/) [go-advanced/](./content/go-advanced/)                 | Go 語言教材（語言精神 + 工程實踐 + 並發 / WebSocket / 服務架構） |
+| [python/](./content/python/) [python-advanced/](./content/python-advanced/) | Python 教材（Hook 系統 + 內部機制 / 擴展開發）                   |
+| [backend/](./content/backend/)                                              | 語言無關的後端能力 — 資料庫、快取、訊息佇列、觀測、部署、可靠性  |
+| [ci/](./content/ci/)                                                        | CI/CD 教學 — 驗證、建置、發布 gate 與部署場域流程差異            |
+| [cli/](./content/cli/)                                                      | CLI 圖形化工具 — TUI / ASCII 圖表 / 多工器 / 遠端操作選型        |
+| [devops/](./content/devops/)                                                | DevOps 實務 — 負載平衡、水平擴展、流量管控、容量規劃             |
+| [infra/](./content/infra/)                                                  | 基礎設施建置 — IaC、身分憑證、網路地基、環境分離                 |
+| [llm/](./content/llm/)                                                      | 本地 LLM 寫 code 實務 — Apple Silicon + VS Code 整合             |
+| [monitoring/](./content/monitoring/)                                        | 監控體系 — 事件分類、SDK 設計、collector 架構、行為資料商業利用  |
+| [testing/](./content/testing/)                                              | 測試策略 — 三層分層、mock 遮蔽、protocol integration test        |
+| [ux-design/](./content/ux-design/)                                          | 畫面設計 — 狀態矩陣、gate fallback、輸入機制、導航模式           |
+| [business/](./content/business/)                                            | 商業概念與策略分析 — 商業模式、單位經濟、WRAP 案例拆解           |
+
+### 筆記與檢討
+
+| 區塊                                                                       | 內容                                                                         |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [posts/](./content/posts/)                                                 | Blog 規範文件、設計筆記、Hugo / Markdown 操作經驗、AI 協作心得               |
+| [posts/markdown-writing-spec.md](./content/posts/markdown-writing-spec.md) | mdtools 檢查規則的單一真實來源                                               |
+| [report/](./content/report/)                                               | 開發過程的事後檢討（183 篇、含三層結構：抽象原則 / 情境檢討 / Pattern 卡片） |
+| [record/](./content/record/)                                               | 開發中的 side project 紀錄                                                   |
+| [work-log/](./content/work-log/)                                           | 工作上遇到的具體問題與解法                                                   |
+| [skills/](./content/skills/)                                               | `.claude/skills/` 的公開鏡像（Claude runtime + 人類讀者雙重存取）            |
+| [til/](./content/til/)                                                     | TIL 學習筆記 — 單字字源、概念由來、跨領域術語、冷知識                        |
+| [other/](./content/other/)                                                 | OS / 工具小技巧等雜項                                                        |
 
 每個 section 有自己的 `_index.md` 說明該區的範圍與閱讀路徑。
 
@@ -114,35 +131,41 @@ GitHub Actions 在 push 到 `main` 時：
 
 完整撰寫規範見 [AGENTS.md §9 Skill 撰寫規範](./AGENTS.md#9-skill-撰寫規範區別於文章)。
 
-當前 skill 數量（`.claude/skills/`）：
+當前 skill（`.claude/skills/`）：
 
-| Skill                      | 主題                           | 公開於 `content/skills/`？ |
-| -------------------------- | ------------------------------ | -------------------------- |
-| `requirement-protocol`     | 需求 → 實作對話協議            | ❌ 內部協議                |
-| `frontend-with-playwright` | 前端開發協議 + Playwright 驗證 | ❌ 內部協議                |
-| `compositional-writing`    | 寫作方法論（Zettelkasten）     | ✅ 對外公開                |
+| Skill                            | 主題                                        | 公開鏡像 |
+| -------------------------------- | ------------------------------------------- | -------- |
+| `compositional-writing`          | 寫作方法論（Zettelkasten + 原子卡片）       | 有       |
+| `multi-round-review`             | 多輪 agent reviewer 審查流程                | 無       |
+| `requirement-protocol`           | 需求確認到實作的對話協議                    | 有       |
+| `frontend-with-playwright`       | 前端開發協議 + Playwright 驗證              | 有       |
+| `wrap-decision`                  | WRAP 決策框架 — 認知偏誤防護與選項擴增      | 有       |
+| `case-first-module-workflow`     | Case-first + Agent team review 教學模組流程 | 無       |
+| `content-extension-evaluation`   | 核心章節完成後的延伸內容評估                | 無       |
+| `migration-playbook-methodology` | 跨 vendor migration playbook 寫作方法論     | 無       |
+| `saas-tech-selection`            | SaaS repo 初始化時的設計與選型訪談協議      | 無       |
 
-每個 skill 都自帶 `references/principles/`、跨專案複製即用。
+每個 skill 都自帶 `references/principles/`、跨專案複製即用。Skill 與遠端 skill 庫透過 `skill-sync` CLI 同步。
 
 ## 寫作方法論：compositional-writing
 
 `.claude/skills/compositional-writing/` 是這個專案使用的寫作方法論 skill — 以 Zettelkasten 為核心、把每段文字看成可組合的原子卡片。
 
-| 入口                                                              | 內容                                                                                                               |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [SKILL.md](./.claude/skills/compositional-writing/SKILL.md)       | 三大支柱 + 五大原則速查 + 觸發路由                                                                                 |
-| [references/](./.claude/skills/compositional-writing/references/) | 10 份情境 reference（程式碼註解 / 文件 / log / prompt / 文章 / 欄位 / 多篇 collection / metrics / 規範 / dry-run） |
+| 入口                                                              | 內容                                                                                                                      |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| [SKILL.md](./.claude/skills/compositional-writing/SKILL.md)       | 三大支柱 + 五大原則速查 + 觸發路由                                                                                        |
+| [references/](./.claude/skills/compositional-writing/references/) | 14 份情境 reference（涵蓋程式碼註解 / 文件 / log / prompt / 文章 / 欄位 / 多篇 collection / metrics / 規範 / dry-run 等） |
 
 文章版本（人類讀者直接在 blog 讀）：[content/skills/compositional-writing/](./content/skills/compositional-writing/)
 
 ## 結構決策
 
-| 決策                                          | 來由                                                                                                                                                            |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude/skills/` 與 `content/skills/` 雙存在 | runtime 呼叫用 `.claude/`、人類讀用 `content/`、同內容兩種 surface（細節見「Skill vs 文章」段）                                                                 |
-| `report/` 三層結構（抽象 / 情境 / Pattern）   | 從累積 50+ 篇事後檢討文章中演化、由 [`managing-article-collections.md`](./.claude/skills/compositional-writing/references/managing-article-collections.md) 規範 |
-| Pagefind 而非 Algolia / Lunr                  | 純客戶端、無需後端、零維運成本（見 [`content/posts/pagefind-static-site-search.md`](./content/posts/pagefind-static-site-search.md)）                           |
-| mdtools 用 Go + goldmark AST 而非 regex       | 規則複雜度與正確性兩者都需要、AST 比 regex 穩定（見 [`content/posts/what-is-ast.md`](./content/posts/what-is-ast.md)）                                          |
+| 決策                                          | 來由                                                                                                                                                             |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/` 與 `content/skills/` 雙存在 | runtime 呼叫用 `.claude/`、人類讀用 `content/`、同內容兩種 surface（細節見「Skill vs 文章」段）                                                                  |
+| `report/` 三層結構（抽象 / 情境 / Pattern）   | 從累積 180+ 篇事後檢討文章中演化、由 [`managing-article-collections.md`](./.claude/skills/compositional-writing/references/managing-article-collections.md) 規範 |
+| Pagefind 而非 Algolia / Lunr                  | 純客戶端、無需後端、零維運成本（見 [`content/posts/pagefind-static-site-search.md`](./content/posts/pagefind-static-site-search.md)）                            |
+| mdtools 用 Go + goldmark AST 而非 regex       | 規則複雜度與正確性兩者都需要、AST 比 regex 穩定（見 [`content/posts/what-is-ast.md`](./content/posts/what-is-ast.md)）                                           |
 
 ## 授權
 
