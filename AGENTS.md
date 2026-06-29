@@ -195,7 +195,7 @@
   - **URL**：裸 URL 禁止；顯示文字若含 TLD 字樣（`.com` / `.org` / `.gov` / `.net` / `.io` / `.dev` / `.tw`），domain 必須與 href 一致（反釣魚）。
   - **表格**：aligned 風格，每欄補空白對齊（CJK 雙寬）；分隔線 `| --- |` 長度隨欄寬自動增減。`mdtools fmt --fix` 負責重新對齊。
   - **列表與代碼**：列表 / code block 前後空行；有序列表 `1./2./3.` 一致；code block 需語言標示。
-  - **Front matter**：通用層 `title` + `date` 必填；新文章必填 `description` + `tags`；卡片層加 `description` + `weight` 必填。`description` 的語意要求：寫成 recall trigger（回答「什麼情境下需要回來讀」）而非內容摘要（回答「這篇在講什麼」）；判準是「刪掉 description 後只看 title 能猜出全部內容 → 沒有增量 → 重寫」。詳見 [#170](/report/description-as-recall-trigger/)。
+  - **Front matter**：通用層 `title` + `date` 必填；新文章必填 `description` + `tags`；卡片層加 `description` + `weight` 必填。`description` 的語意要求：寫成 recall trigger（回答「什麼情境下需要回來讀」）而非內容摘要（回答「這篇在講什麼」）；判準是「刪掉 description 後只看 title 能猜出全部內容 → 沒有增量 → 重寫」。寫法三不要：不塞操作細節（留內文）、不加假設前提（「想不起來」「卻發現」）、不用情緒修辭（「別被騙」「打架」）——給人也給機器判斷，每 token 要有資訊量，短能到位就短。詳見 [#170](/report/description-as-recall-trigger/)。
   - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。
   - **位置引用與數量命名（警告層）**：`mdtools lint` 掃位置式引用候選（REF1：「見第 N 章」「§N」）與標題內嵌成員數的集合命名（REF2：「六大原則」）；命中是候選不是判決 — 凍結外部編號（RFC / 法條）、緊鄰清單的行內計數、「」內的反例引用合規。判讀依 [#155](/report/reference-by-semantic-title-not-number/) / [#156](/report/name-collections-by-role-not-count/)、細節見 spec §5.10。
   - **否定起手（警告層）**：`mdtools lint` 掃「不是 X、而是 Y」「與其 X、不如 Y」重點後置候選（POS-negation-lead）；核心概念被擠到「而是 / 不如」之後是資訊結構效率問題、跨語言（非中文特有句型）。命中是候選不是判決 — 判定用「核心概念在不在句首」、明示反例對照與「」內引用合規、講此句型的 meta 卡會自我觸發。判讀依 [#166](/report/lead-with-the-point-cross-language/) / [#165](/report/register-violation-needs-cross-style-eyes/)、細節見 spec §5.11。
