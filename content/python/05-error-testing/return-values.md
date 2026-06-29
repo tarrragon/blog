@@ -92,27 +92,27 @@ def get_project_root() -> str:
 
 ### 優點
 
-1. **明確的錯誤處理**
+#### 明確的錯誤處理
 
-   ```python
-   # 呼叫者必須處理兩種情況
-   success, message = validate()
-   if not success:
-       # 必須處理錯誤
-       pass
-   ```
+```python
+# 呼叫者必須處理兩種情況
+success, message = validate()
+if not success:
+    # 必須處理錯誤
+    pass
+```
 
-2. **錯誤訊息保留**
+#### 錯誤訊息保留
 
-   ```python
-   # 錯誤訊息可以傳遞給使用者
-   success, error = run_command()
-   if not success:
-       logger.error(error)
-       return create_error_response(error)
-   ```
+```python
+# 錯誤訊息可以傳遞給使用者
+success, error = run_command()
+if not success:
+    logger.error(error)
+    return create_error_response(error)
+```
 
-3. **不中斷執行流程**
+#### 不中斷執行流程
 
    ```python
    # 可以收集所有錯誤

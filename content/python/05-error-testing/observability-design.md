@@ -36,7 +36,7 @@ Hook 日誌系統和一般應用程式的日誌有兩個根本差異：
 
 ### 1.2 目錄結構設計
 
-```
+```text
 .claude/hook-logs/
 ├── acceptance-gate-hook/
 │   ├── acceptance-gate-hook-20260304-091523.log
@@ -218,7 +218,7 @@ def _find_project_root() -> Path:
 
 IMP-003 事件是錯誤可見性設計的直接動機。7 個 Hook 因為變數作用域問題（`NameError`）靜默失敗了至少 2 個 session。失敗的流程是：
 
-```
+```text
 Hook 執行 → NameError → run_hook_safely 捕獲 → 寫入日誌檔案 → 返回 EXIT_ERROR
                                                     ↑
                                               用戶看不到這裡
@@ -370,7 +370,7 @@ if should_block:
 
 教訓歸納為一條規則：**Hook 的所有非成功路徑都必須有 stderr 輸出**。不只是 exception，業務邏輯的拒絕也算。
 
-```
+```text
 Hook 執行結果
 ├── 成功（return 0）→ stdout 正常訊息
 ├── 未預期異常（Exception）→ stderr 由 _log_exception 處理
@@ -409,7 +409,7 @@ def run_hook_safely(main_func, hook_name):
 
 日誌檔案中的記錄：
 
-```
+```text
 [2026-03-04 09:15:23] DEBUG - Hook execution time: 0.05s       # 正常
 [2026-03-04 09:15:24] DEBUG - Hook execution time: 2.34s       # 偏慢，值得關注
 [2026-03-04 09:15:25] DEBUG - Hook execution time before failure: 0.00s  # import 階段就失敗了
@@ -440,7 +440,7 @@ def _cleanup_old_logs(log_base_dir: Path, retention_days: int = LOG_RETENTION_DA
         pass
 ```
 
-**為什麼不用 Python 標準庫的 `RotatingFileHandler`？**
+#### 為什麼不用 Python 標準庫的 RotatingFileHandler
 
 `RotatingFileHandler` 按照**單一檔案大小**輪轉，適合長時間運行的服務。但 Hook 系統的日誌模式是每次執行一個新檔案，需要的是按**時間**清理舊檔案。兩者的需求場景不同：
 
@@ -527,7 +527,7 @@ def _setup_logger_handlers(logger, log_base_dir, sanitized_name, is_debug):
 
 三個錯誤模式的共通點，提煉為三條可觀測性設計規則：
 
-**規則 1：錯誤不可靜默**
+#### 規則 1：錯誤不可靜默
 
 ```python
 # 錯誤做法：只寫日誌，用戶不知道
@@ -538,7 +538,7 @@ logger.critical(tb_str)
 print(f"[Hook Error] {hook_name} failed", file=sys.stderr)
 ```
 
-**規則 2：保護必須完整**
+#### 規則 2：保護必須完整
 
 ```python
 # 錯誤做法：只保護 main()
@@ -554,7 +554,7 @@ except ImportError as e:
 sys.exit(run_hook_safely(main, "hook"))
 ```
 
-**規則 3：錯誤要可區分**
+#### 規則 3：錯誤要可區分
 
 ```python
 # 錯誤做法：所有錯誤用同一種訊息
@@ -572,7 +572,7 @@ print(f"[Agent Validation] blocked: {reason}", file=sys.stderr)
 
 把前面的設計串在一起，一個 Hook 的完整執行路徑和可觀測性覆蓋如下：
 
-```
+```text
 Hook 被觸發
 │
 ├─ [階段 1] Import 載入

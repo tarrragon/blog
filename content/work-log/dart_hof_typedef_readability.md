@@ -120,12 +120,12 @@ void update(SettingsModel Function(SettingsModel current) mutate)
 
 為什麼偏偏是「函式型別」會因為裸寫而卡住，一般型別卻不會？因為 `int`、`Color` 這類型別已經是短名稱，裸寫毫無負擔；而函式型別的完整語法 `X Function(Y)` 較長、巢狀時更難讀，**讀者得當場在腦中解析「這是收什麼、回什麼的函式」**。讀程式碼第一眼卡住的，正是這串裸寫的函式型別 — 它才是這篇要討論「要不要抽 typedef」的真正觸發點。下面的優缺點，都圍繞「裸寫 vs 取名」這個軸展開。
 
-**優點**
+### 優點
 
 - **型別就地可見**：函式的形狀（收什麼、回什麼）直接寫在簽章上，讀者不必跳到別處查定義。
 - **零額外宣告**：不需要為了一個參數多定義一個型別別名。
 
-**缺點**
+### 缺點
 
 - **簽章冗長、語法門檻**：`SettingsModel Function(SettingsModel current)` 對不熟函式型別語法的人構成解析負擔，一眼難消化。
 - **命名與語境矛盾**：參數叫 `mutate`（變異／就地修改），但模型不可變、實際是「產生新副本」，名稱會誤導。
@@ -147,7 +147,7 @@ void update(SettingsMutator transform) {
 }
 ```
 
-**優點**
+### 優點
 
 - **簽章簡潔、概念命名**：`SettingsMutator` 把函式型別升格成領域詞彙，認知從「解析 `X Function(Y)`」降到「讀一個名詞」。
 - **命名精準**：`transform`（轉換）貼合不可變語境，不再暗示就地修改。
@@ -155,7 +155,7 @@ void update(SettingsMutator transform) {
 - **錯誤訊息更易讀**：型別對不上時，編譯器印的是 `SettingsMutator` 這個名字，而不是整串 `SettingsModel Function(SettingsModel)`；裸寫版的錯誤訊息會把完整型別攤開，較難一眼定位。
 - **可重用**：同一個 `SettingsMutator` 型別若日後被多個 API 共用，定義集中一處。
 
-**缺點**
+### 缺點
 
 - **多一層 indirection**：想知道 `transform` 的確切型別，得跳到 `typedef` 定義；只看 `update` 簽章看不到形狀。
 - **多一個命名負擔**：`SettingsMutator` 本身要取得好；命名不當反而多一層要理解的東西。

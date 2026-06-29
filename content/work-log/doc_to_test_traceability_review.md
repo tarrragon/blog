@@ -8,7 +8,7 @@ tags: ["testing", "tdd", "traceability", "bdd", "go", "python", "monorepo", "pro
 
 ## 這篇要解決什麼
 
-**57 個 unit test 全綠，但沒有任何機制能回答「這些測試覆蓋了哪些 UseCase 場景」。**
+> 57 個 unit test 全綠，但沒有任何機制能回答「這些測試覆蓋了哪些 UseCase 場景」。
 
 monitor 專案 v0.1.0 從需求文件系統（Proposal → Spec → UseCase）一路走到 Collector 實作，中間經過 BDD 測試設計、紅燈測試撰寫、骨架實作讓綠。流程表面上順暢——10 個根 Ticket 全部完成、Collector 可啟動、所有 unit test 通過。但回頭檢視發現：需求→測試的銜接是單向管道，沒有反向追溯，也沒有邊界回補流程。
 

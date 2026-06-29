@@ -62,7 +62,7 @@ def clear_config_cache() -> None:
 
 ### 這個設計的限制
 
-**問題 1：測試難以隔離**
+#### 問題 1：測試難以隔離
 
 ```python
 def test_load_agents_config():
@@ -77,7 +77,7 @@ def test_load_agents_config_custom():
     # 可能拿到測試 A 的快取結果
 ```
 
-**問題 2：快取生命週期不明確**
+#### 問題 2：快取生命週期不明確
 
 ```python
 def process_hooks():
@@ -88,7 +88,7 @@ def process_hooks():
     # 如果配置檔案改了，這裡會用到舊的快取
 ```
 
-**問題 3：清除快取容易忘記**
+#### 問題 3：清除快取容易忘記
 
 ```python
 def test_something():

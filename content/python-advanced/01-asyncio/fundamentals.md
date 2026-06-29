@@ -400,4 +400,4 @@ asyncio.run(main())
 
 ---
 
-*下一章：[協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)*
+下一章：[協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)

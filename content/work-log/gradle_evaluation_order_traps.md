@@ -49,7 +49,7 @@ sequenceDiagram
 4. `afterEvaluate { ... }` callback：subproject evaluate 完畢後觸發
 5. `tasks.withType(...).configureEach { ... }`：task realize/configure 時才套用
 
-**要覆寫某個設定，必須讓覆寫的時機晚於那個設定的寫入時機。**
+> 要覆寫某個設定，必須讓覆寫的時機晚於那個設定的寫入時機。
 
 ### 多 project 的順序
 

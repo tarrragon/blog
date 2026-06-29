@@ -497,4 +497,4 @@ class MutableBox(Generic[T_co]):  # 錯誤！
 
 ---
 
-*下一章：[3.5.2 異常設計架構](/python-advanced/03-design-patterns/exception-design/)*
+下一章：[3.5.2 異常設計架構](/python-advanced/03-design-patterns/exception-design/)

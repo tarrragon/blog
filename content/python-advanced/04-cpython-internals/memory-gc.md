@@ -190,7 +190,7 @@ print(sys.getsizeof(obj1.__dict__))  # 104
 # obj2 沒有 __dict__
 ```
 
-**為什麼 `__slots__` 省記憶體？**
+#### 為什麼 `__slots__` 省記憶體？
 
 ```text
 沒有 __slots__：
@@ -254,7 +254,7 @@ del obj
 print(weak_ref())  # None（物件已被回收）
 ```
 
-**使用 WeakValueDictionary 實作快取：**
+#### 使用 WeakValueDictionary 實作快取
 
 ```python
 import weakref

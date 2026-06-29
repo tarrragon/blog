@@ -67,7 +67,7 @@ hatch new my-awesome-lib --init
 hatch new --cli my-cli-app
 ```
 
-**預設專案結構：**
+#### 預設專案結構
 
 ```text
 my-awesome-lib/
@@ -82,7 +82,7 @@ my-awesome-lib/
 └── LICENSE.txt
 ```
 
-**生成的 pyproject.toml：**
+#### 生成的 pyproject.toml
 
 ```toml
 [build-system]
@@ -202,7 +202,7 @@ hatch env prune
 
 #### 設定版本來源
 
-**方法 A：從檔案讀取版本**
+##### 方法 A：從檔案讀取版本
 
 ```toml
 [tool.hatch.version]
@@ -214,7 +214,7 @@ path = "src/my_awesome_lib/__about__.py"
 __version__ = "0.1.0"
 ```
 
-**方法 B：從 Git 標籤讀取版本（推薦用於開源專案）**
+##### 方法 B：從 Git 標籤讀取版本（推薦用於開源專案）
 
 ```toml
 [build-system]
@@ -270,7 +270,7 @@ hatch build --target sdist
 hatch build --clean
 ```
 
-**建構產物：**
+##### 建構產物
 
 ```text
 dist/
@@ -291,7 +291,7 @@ hatch publish --repo test
 hatch publish dist/my_awesome_lib-0.1.0-py3-none-any.whl
 ```
 
-**設定 PyPI 認證：**
+##### 設定 PyPI 認證
 
 ```bash
 # 設定 PyPI token
@@ -436,7 +436,7 @@ Poetry：
 
 ### pyproject.toml 比較
 
-**Hatch 風格：**
+#### Hatch 風格
 
 ```toml
 [build-system]
@@ -455,7 +455,7 @@ dev = ["pytest>=8.0"]
 features = ["dev"]
 ```
 
-**Poetry 風格（2.0）：**
+#### Poetry 風格（2.0）
 
 ```toml
 [build-system]
@@ -688,4 +688,4 @@ addopts = "-v"
 
 ---
 
-*返回：[案例研究](/python-advanced/07-packaging/case-studies/)*
+返回：[案例研究](/python-advanced/07-packaging/case-studies/)

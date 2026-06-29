@@ -384,6 +384,6 @@ def main():
 
 ---
 
-_上一章：[非程式碼的重構](/python/07-refactoring/non-code-refactoring/)_
+上一章：[非程式碼的重構](/python/07-refactoring/non-code-refactoring/)
 
-_回到模組總覽：[模組七：重構實戰](/python/07-refactoring/)_
+回到模組總覽：[模組七：重構實戰](/python/07-refactoring/)

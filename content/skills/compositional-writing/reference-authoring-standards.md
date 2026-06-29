@@ -144,7 +144,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 
 在建立新 reference 前，先回答以下問題：
 
-```
+```text
 1. 此情境是否已有 reference 覆蓋？
    是 → 擴充現有 reference（不新增）
    否 → 繼續

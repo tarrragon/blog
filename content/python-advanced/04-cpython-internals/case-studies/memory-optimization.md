@@ -138,7 +138,7 @@ except AttributeError as e:
     print(f"No __dict__: {e}")
 ```
 
-**記憶體結構比較：**
+##### 記憶體結構比較
 
 ```text
 沒有 __slots__:
@@ -169,7 +169,7 @@ except AttributeError as e:
 └──────────────────────────────────┘
 ```
 
-**大量物件的記憶體節省：**
+##### 大量物件的記憶體節省
 
 ```python
 import sys
@@ -238,7 +238,7 @@ print(f"After del: {weak_ref()}")
 # After del: None
 ```
 
-**使用 callback 追蹤物件回收：**
+##### 使用 callback 追蹤物件回收
 
 ```python
 import weakref
@@ -402,7 +402,7 @@ def track_allocations():
 track_allocations()
 ```
 
-**比較記憶體差異的完整腳本：**
+##### 比較記憶體差異的完整腳本
 
 ```python
 import sys

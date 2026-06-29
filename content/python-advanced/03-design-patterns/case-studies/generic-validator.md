@@ -912,7 +912,7 @@ print(result.errors)    # ["[1] Value cannot be empty"]
 
 ### 基礎練習
 
-1. **實作 `RangeValidator[int]` 和 `LengthValidator[str]`**
+#### 1. 實作 `RangeValidator[int]` 和 `LengthValidator[str]`
 
    參考上面的 `RangeValidator` 實作，確保它可以正確驗證整數範圍。
    測試案例：
@@ -924,7 +924,7 @@ print(result.errors)    # ["[1] Value cannot be empty"]
    assert not age_validator.validate(200).is_valid
    ```
 
-2. **實作 `EmailValidator`**
+#### 2. 實作 `EmailValidator`
 
    建立一個 Email 驗證器，組合 `NotEmptyValidator` 和 `PatternValidator`：
 
@@ -936,7 +936,7 @@ print(result.errors)    # ["[1] Value cannot be empty"]
 
 ### 進階練習
 
-1. **實作 `ListValidator[T]` 驗證列表中的每個元素**
+#### 1. 實作 `ListValidator[T]` 驗證列表中的每個元素
 
    建立一個泛型列表驗證器，可以：
    - 驗證列表長度
@@ -952,7 +952,7 @@ print(result.errors)    # ["[1] Value cannot be empty"]
    # errors: ["[2] Value -3 < minimum 0"]
    ```
 
-2. **實作 `ConditionalValidator[T]`**
+#### 2. 實作 `ConditionalValidator[T]`
 
    建立一個條件驗證器，只在條件成立時執行驗證：
 
@@ -966,7 +966,7 @@ print(result.errors)    # ["[1] Value cannot be empty"]
 
 ### 挑戰題
 
-1. **實作 `SchemaValidator` 驗證字典結構**
+#### 1. 實作 `SchemaValidator` 驗證字典結構
 
    建立一個驗證器，可以驗證字典的結構和值：
 

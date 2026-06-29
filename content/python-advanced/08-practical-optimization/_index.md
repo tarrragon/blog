@@ -93,4 +93,4 @@ practical-optimization/
 
 ---
 
-*上一模組：[模組七：打包與發布](/python-advanced/07-packaging/)*
+上一模組：[模組七：打包與發布](/python-advanced/07-packaging/)

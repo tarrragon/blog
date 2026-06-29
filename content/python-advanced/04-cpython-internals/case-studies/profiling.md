@@ -1179,4 +1179,4 @@ if __name__ == "__main__":
 
 ---
 
-*下一章：[記憶體優化](/python-advanced/04-cpython-internals/case-studies/memory-optimization/)*
+下一章：[記憶體優化](/python-advanced/04-cpython-internals/case-studies/memory-optimization/)

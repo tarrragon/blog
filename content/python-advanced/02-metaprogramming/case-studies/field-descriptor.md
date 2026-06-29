@@ -901,7 +901,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
 
 ### 基礎練習
 
-1. **實作 `BoolField` 和 `DateTimeField`**
+#### 1. 實作 `BoolField` 和 `DateTimeField`
 
    完成以下 Field 類別，支援型別驗證和序列化：
 
@@ -915,7 +915,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
        pass  # TODO: implement
    ```
 
-2. **新增欄位的預設值和 required 屬性**
+#### 2. 新增欄位的預設值和 required 屬性
 
    修改 Field 基類，讓以下程式碼能正確運作：
 
@@ -933,7 +933,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
 
 ### 進階練習
 
-3. **實作巢狀 Model（`EmbeddedField`）**
+#### 3. 實作巢狀 Model（`EmbeddedField`）
 
    讓以下程式碼能正確運作：
 
@@ -956,7 +956,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
    data = person.to_dict()
    ```
 
-4. **實作 ListField 的完整驗證**
+#### 4. 實作 ListField 的完整驗證
 
    讓以下程式碼能驗證列表中的每個項目：
 
@@ -981,7 +981,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
 
 ### 挑戰題
 
-5. **實作 Schema 自動生成**
+#### 5. 實作 Schema 自動生成
 
    為 Model 類別新增 `to_json_schema()` 類別方法，自動生成 JSON Schema：
 

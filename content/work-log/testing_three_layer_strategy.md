@@ -8,7 +8,7 @@ tags: ["testing", "flutter", "websocket", "integration-test", "mock", "ttyd"]
 
 ## 這篇要解決什麼
 
-**192 個 unit test 全綠、實機部署後全部功能壞掉。**
+> 192 個 unit test 全綠、實機部署後全部功能壞掉。
 
 這不是測試寫得差 — 每個 test 都有明確斷言、覆蓋了正常和錯誤路徑。問題出在測試策略的結構：所有 test 都用 `FakeWebSocketChannel` 替代真實 WebSocket，永遠不會觸碰真實協議行為。結果是 mock 和真實服務之間的差異，在整個測試套件中完全不可見。
 

@@ -38,4 +38,4 @@ weight: 10
 
 ---
 
-*返回：[模組三：進階設計模式](/python-advanced/03-design-patterns/)*
+返回：[模組三：進階設計模式](/python-advanced/03-design-patterns/)

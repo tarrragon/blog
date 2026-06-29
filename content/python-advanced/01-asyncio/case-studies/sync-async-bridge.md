@@ -5,7 +5,6 @@ description: "用 run_in_executor 和 asyncio.run 在同步與非同步程式碼
 weight: 3
 ---
 
-
 本案例基於 `.claude/lib` 整體架構，展示如何用 `run_in_executor` 和 `asyncio.run` 在同步與非同步程式碼之間建立橋樑。
 
 ## 先備知識
@@ -99,7 +98,7 @@ def validate_hook(hook_path: str) -> ValidationResult:
 
 在非同步環境（如 FastAPI、aiohttp）中使用時：
 
-**問題 1：阻塞事件迴圈**
+#### 問題 1：阻塞事件迴圈
 
 ```python
 from fastapi import FastAPI
@@ -117,7 +116,7 @@ async def get_git_status():
     return {"branch": branch, "worktrees": worktrees}
 ```
 
-**問題 2：無法並行執行**
+#### 問題 2：無法並行執行
 
 ```python
 def validate_all_hooks(hooks_dir: str) -> list[ValidationResult]:
@@ -133,7 +132,7 @@ def validate_all_hooks(hooks_dir: str) -> list[ValidationResult]:
 # With parallelization, could be ~10ms!
 ```
 
-**問題 3：無法有效利用等待時間**
+#### 問題 3：無法有效利用等待時間
 
 ```python
 def check_project_health() -> dict:
@@ -212,7 +211,7 @@ async def run_sync_in_executor(
     return await loop.run_in_executor(_io_executor, func, *args)
 ```
 
-**使用範例：包裝現有同步函式**
+#### 使用範例：包裝現有同步函式
 
 ```python
 from lib.git_utils import get_current_branch, get_worktree_list, run_git_command
@@ -309,7 +308,7 @@ asyncio.run(some_coroutine())
 # RuntimeError: asyncio.run() cannot be called from a running event loop
 ```
 
-**解決方案 A：使用 nest_asyncio（快速修復）**
+##### 解決方案 A：使用 nest_asyncio（快速修復）
 
 ```python
 # pip install nest-asyncio
@@ -337,7 +336,7 @@ def run_async_safe(coro: Coroutine[Any, Any, T]) -> T:
     return loop.run_until_complete(coro)
 ```
 
-**解決方案 B：偵測執行環境（推薦）**
+##### 解決方案 B：偵測執行環境（推薦）
 
 ```python
 import asyncio
@@ -373,7 +372,7 @@ def run_async_adaptive(coro: Coroutine[Any, Any, T]) -> T:
         return asyncio.run(coro)
 ```
 
-**解決方案 C：提供雙重 API（最佳實踐）**
+##### 解決方案 C：提供雙重 API（最佳實踐）
 
 ```python
 class GitUtils:

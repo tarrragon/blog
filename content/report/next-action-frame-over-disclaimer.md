@@ -55,21 +55,25 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "原則"]
 
 ### Frame 選擇判準
 
-1. **本段給 reader 什麼？**
-   - 「不要做 X」→ disclaimer frame（避開）
-   - 「做 Y / Z」→ next-action frame（採用）
+#### 1. 本段給 reader 什麼
 
-2. **能否把「不要 X」翻成「該做 Y / Z」？**
+- 「不要做 X」→ disclaimer frame（避開）
+- 「做 Y / Z」→ next-action frame（採用）
+
+#### 2. 能否把「不要 X」翻成「該做 Y / Z」
+
    - 多數 case 可以、因為 risk 通常對應 missing action
    - 例：「不要把 routing 當 implementation」= 「沿 mechanism + delivery 兩條 chain 走完」
    - 例：「不要用 universal mitigation」= 「對稱寫 in-scope + out-of-scope + 補強路由」（[#101](../threat-model-explicitness/)）
    - 例：「不要用名稱層 mitigation 對位」= 「補 mechanism + 前提兩層」（[#102](../mitigation-threat-alignment/)）
 
-3. **段落主體寫 Y / Z chain、completeness 判準明示**
-   - Chain 步驟具體可執行
-   - 完成判準明示（reader 知道何時 chain 走完）
+#### 3. 段落主體寫 Y / Z chain、completeness 判準明示
 
-4. **若必須提到 risk、放段落結尾、subordinate 結構**
+- Chain 步驟具體可執行
+- 完成判準明示（reader 知道何時 chain 走完）
+
+#### 4. 若必須提到 risk、放段落結尾、subordinate 結構
+
    - Risk 是 chain 不走完的後果、放段尾一行
    - Main flow 仍是 chain、risk 是 chain 失敗的描述
    - 例：「兩條 chain 走完，控制面交付完整。Chain 走不完，章節閱讀只完成 routing 階段。」

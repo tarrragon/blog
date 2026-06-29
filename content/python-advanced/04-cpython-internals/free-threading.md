@@ -48,11 +48,11 @@ Free-threaded Python（無 GIL）：
 
 ### 各平台安裝方式
 
-**Windows / macOS**
+#### Windows / macOS
 
 從 [python.org](https://www.python.org/downloads/) 下載安裝程式，選擇「Customize installation」，勾選「Free threaded mode」。
 
-**Ubuntu / Debian**
+#### Ubuntu / Debian
 
 ```bash
 # 使用 deadsnakes PPA
@@ -65,7 +65,7 @@ sudo apt install python3.14-nogil
 
 安裝後可使用 `python3.13t` 或 `python3.14t` 執行。
 
-**從原始碼編譯**
+#### 從原始碼編譯
 
 ```bash
 ./configure --disable-gil

@@ -34,7 +34,7 @@ weight: 1
 
 在入門系列中，我們學到 I/O 密集任務適合 `ThreadPoolExecutor`。但實際程式碼中，如何快速判斷？
 
-**問自己這個問題：程式在等什麼？**
+#### 問自己這個問題：程式在等什麼？
 
 ```python
 # 模式 1：等待外部資源（I/O 密集）
@@ -186,7 +186,7 @@ def get_optimal_workers(file_count: int) -> int:
     return min(32, cpu_count * 2)
 ```
 
-**為什麼 I/O 密集可以超過 CPU 核心數？**
+#### 為什麼 I/O 密集可以超過 CPU 核心數？
 
 因為執行緒在等待 I/O 時會釋放 GIL，其他執行緒可以繼續執行。如果有 8 個核心，但每個任務有 80% 時間在等待 I/O，那開 16-32 個 worker 可以更充分利用 CPU。
 

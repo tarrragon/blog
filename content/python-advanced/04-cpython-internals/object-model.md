@@ -379,4 +379,4 @@ pool.release(lst)
 
 ---
 
-*下一章：[記憶體管理與垃圾回收](/python-advanced/04-cpython-internals/memory-gc/)*
+下一章：[記憶體管理與垃圾回收](/python-advanced/04-cpython-internals/memory-gc/)

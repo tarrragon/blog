@@ -716,7 +716,7 @@ if __name__ == "__main__":
 
 ### 何時不該用快取
 
-**情況 1：函數不是純函數**
+#### 情況 1：函數不是純函數
 
 ```python
 import os
@@ -734,7 +734,7 @@ os.environ["MY_VAR"] = "new"
 print(get_env_value("MY_VAR"))  # 仍然是 "old"！
 ```
 
-**情況 2：參數不可雜湊**
+#### 情況 2：參數不可雜湊
 
 ```python
 # 錯誤示範：list 不是 hashable
@@ -748,7 +748,7 @@ def process_items(items: tuple) -> int:
     return sum(items)
 ```
 
-**情況 3：計算太簡單**
+#### 情況 3：計算太簡單
 
 ```python
 # 不建議：快取開銷可能大於計算成本
@@ -760,7 +760,7 @@ def is_empty(s: str) -> bool:
 # 快取的雜湊計算和查表可能更慢
 ```
 
-**情況 4：輸入值極度多樣**
+#### 情況 4：輸入值極度多樣
 
 ```python
 # 不建議：每次輸入都不同，快取永遠不會命中
@@ -772,7 +772,7 @@ def process_unique_id(unique_id: str) -> dict:
 # 快取只會一直 miss，浪費記憶體
 ```
 
-**情況 5：需要即時反映外部變化**
+#### 情況 5：需要即時反映外部變化
 
 ```python
 # 不建議：配置可能動態變化

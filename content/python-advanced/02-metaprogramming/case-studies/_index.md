@@ -34,4 +34,4 @@ weight: 10
 
 ---
 
-*返回：[模組二：元編程](/python-advanced/02-metaprogramming/)*
+返回：[模組二：元編程](/python-advanced/02-metaprogramming/)

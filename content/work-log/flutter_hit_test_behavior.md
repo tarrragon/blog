@@ -18,7 +18,7 @@ tags: ["flutter"]
 
 ### `deferToChild`（預設）
 
-**「我自己不算，讓子元件決定」**
+> 「我自己不算，讓子元件決定」
 
 ```text
 GestureDetector (100x100)
@@ -34,7 +34,7 @@ GestureDetector (100x100)
 
 ### `opaque`
 
-**「整個區域都算我的，而且我擋住下面所有人」**
+> 「整個區域都算我的，而且我擋住下面所有人」
 
 ```text
 GestureDetector (100x100)  ← 整個 100x100 都算命中
@@ -50,7 +50,7 @@ GestureDetector (100x100)  ← 整個 100x100 都算命中
 
 ### `translucent`
 
-**「整個區域都算我的，但我不擋別人」**
+> 「整個區域都算我的，但我不擋別人」
 
 ```text
 GestureDetector (100x100)  ← 整個 100x100 都算命中

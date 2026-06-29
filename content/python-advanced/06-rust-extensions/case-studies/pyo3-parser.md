@@ -1341,4 +1341,4 @@ fn parse_line_links(line: &str, line_number: usize) -> Vec<PyMarkdownLink> {
 
 ---
 
-*下一章：[Rust 正則表達式](/python-advanced/06-rust-extensions/case-studies/rust-regex/)*
+下一章：[Rust 正則表達式](/python-advanced/06-rust-extensions/case-studies/rust-regex/)

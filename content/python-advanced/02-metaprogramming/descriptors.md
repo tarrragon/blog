@@ -309,4 +309,4 @@ class User:
 
 ---
 
-*下一章：[Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)*
+下一章：[Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)

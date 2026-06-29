@@ -134,7 +134,7 @@ class ValidationCheck(Protocol):
         ...
 ```
 
-**為什麼用 Protocol 而不是 ABC？**
+##### 為什麼用 Protocol 而不是 ABC？
 
 - Protocol 是「鴨子型別」的靜態版本
 - 不強制繼承，現有類別只要有對應方法就能用

@@ -143,7 +143,7 @@ git commit -m "docs(skills): import <name> skill"
 
 ## 設計決策備忘
 
-**為什麼 `.claude/` 保留 references/、`content/` 扁平？**
+### 為什麼 `.claude/` 保留 references/、`content/` 扁平？
 
 `.claude/` 是 Claude runtime 的 SKILL 執行環境，SKILL.md 的路徑解析（`references/X.md`）是 skill 原生協議的一部分 — 改了會破壞 Claude 讀取行為。
 
@@ -151,7 +151,7 @@ git commit -m "docs(skills): import <name> skill"
 
 兩種結構並行、各自最佳化、用 step 1 的複製動作維持同步。
 
-**為什麼不直接 symlink `content/skills/` → `.claude/skills/`？**
+### 為什麼不直接 symlink `content/skills/` → `.claude/skills/`？
 
 Symlink 會讓兩邊共用 frontmatter 與路徑規範。`.claude/` 版的 frontmatter 是 skill protocol（`name`/`license`/`metadata`），與 Hugo 要的（`title`/`date`）相衝；body 開頭的 `# H1` 是 Claude 讀者的 context signpost，但在 Hugo 會跟 `title` 生的 H1 重複。結構上看似省事，語意上兩邊是不同受眾的產出，應該允許各自演化。
 

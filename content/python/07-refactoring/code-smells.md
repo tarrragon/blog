@@ -5,7 +5,7 @@ description: "從三級分類系統到偵測工具鏈，建立系統化的程式
 weight: 72
 ---
 
-_上一章：[重構的動機與策略](/python/07-refactoring/refactoring-strategy/)_
+上一章：[重構的動機與策略](/python/07-refactoring/refactoring-strategy/)
 
 「程式碼壞味道」(Code Smell) 是 Martin Fowler 在《Refactoring》中提出的概念：程式碼中暗示深層問題的表面跡象。壞味道不是 Bug，程式仍然能正常執行，但它們預告了維護成本的攀升。上一章介紹了認知負擔指數——重複程式碼和難以理解的結構是指數升高的主要原因。本章把這些讓認知負擔上升的具體模式系統化，稱為「壞味道」。
 
@@ -24,7 +24,7 @@ _上一章：[重構的動機與策略](/python/07-refactoring/refactoring-strat
 | IMP-001    | 重複程式碼散落各處 | 同一個函式在 4 個檔案各寫一次 | 中   |
 | IMP-002    | 魔法數字           | `line[9:]` -- 為什麼是 9？    | 低   |
 
-**IMP-001 範例：四份一模一樣的函式**
+#### IMP-001 範例：四份一模一樣的函式
 
 ```python
 # hooks/pre_commit.py
@@ -43,7 +43,7 @@ def run_git_command(cmd):
 
 問題不在於程式碼本身有錯，而在於當你需要加入錯誤處理時，要改四個地方，漏掉一個就是 Bug。
 
-**IMP-002 範例：沒人記得的數字**
+#### IMP-002 範例：沒人記得的數字
 
 ```python
 def parse_worktree_line(line):
@@ -59,7 +59,7 @@ def parse_worktree_line(line):
 | ---------- | ---------------- | ---------------------------- | ---- |
 | ARCH-001   | 配置與程式碼混合 | 800 行的檔案，一半是配置資料 | 高   |
 
-**ARCH-001 範例：被配置淹沒的邏輯**
+#### ARCH-001 範例：被配置淹沒的邏輯
 
 ```python
 # 一個 800+ 行的 Hook 檔案
@@ -87,7 +87,7 @@ def check_branch():
 | IMP-003    | 重構作用域迴歸       | 變數移入函式後，其他函式找不到  | 高   |
 | IMP-005    | 模組遷移 Import 斷裂 | 檔案搬家後，Import 路徑沒跟著改 | 高   |
 
-**IMP-003 範例：搬家沒留新地址**
+#### IMP-003 範例：搬家沒留新地址
 
 ```python
 # 修正前：logger 是全域變數，所有函式都看得到
@@ -238,7 +238,7 @@ python3 hooks/pre_commit.py < /dev/null
 
 ### 完整範例：ARCH-001 配置與程式碼混合
 
-```
+```text
 問題：單一 Hook 檔案超過 800 行，其中約一半是硬編碼的配置資料
 
 Why 1: 為什麼檔案會有 800 行？
@@ -282,7 +282,7 @@ Why 5: 為什麼初期設計沒考慮配置增長？
 
 ### 目錄結構
 
-```
+```text
 .claude/error-patterns/
 ├── README.md              # 系統說明與索引
 ├── test/                  # 測試相關：TEST-001, TEST-002, ...
@@ -343,7 +343,7 @@ Why 5: 為什麼初期設計沒考慮配置增長？
 
 找到壞味道之後，不是每個都要立刻修。用這個流程判斷優先級：
 
-```
+```text
 發現壞味道
     |
     v
@@ -435,7 +435,7 @@ grep -rn "import old_utils" src/*.py
 <details>
 <summary>參考答案</summary>
 
-```
+```text
 Why 1: 為什麼 7 個 Hook 會失敗？
 --> 因為 helper 函式引用了 logger，但 logger 已不在全域作用域
 
@@ -464,4 +464,4 @@ Why 5: 為什麼沒有這個檢查清單？
 - 5 Why 分析追問到「流程或規範的缺失」才是根因
 - Error Patterns 把個人經驗變成團隊資產
 
-_下一章：[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)_
+下一章：[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)

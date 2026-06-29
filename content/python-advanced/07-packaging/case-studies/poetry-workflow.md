@@ -66,7 +66,7 @@ pipx install poetry
 poetry --version
 ```
 
-**設定 Poetry：**
+#### 設定 Poetry
 
 ```bash
 # 在專案目錄中建立虛擬環境（推薦）
@@ -126,7 +126,7 @@ poetry init
 # - Dependencies
 ```
 
-**互動式初始化範例：**
+##### 互動式初始化範例
 
 ```text
 This command will guide you through creating your pyproject.toml config.
@@ -163,7 +163,7 @@ poetry add mkdocs mkdocs-material --group docs
 poetry add pyyaml --optional
 ```
 
-**pyproject.toml 的變化：**
+##### pyproject.toml 的變化
 
 ```toml
 [tool.poetry.dependencies]
@@ -210,7 +210,7 @@ poetry show --outdated
 poetry show --tree
 ```
 
-**相依性樹範例輸出：**
+##### 相依性樹範例輸出
 
 ```text
 requests 2.31.0 Python HTTP for Humans.
@@ -271,7 +271,7 @@ poetry env remove python3.11
 poetry env remove --all
 ```
 
-**環境資訊範例輸出：**
+##### 環境資訊範例輸出
 
 ```text
 Virtualenv
@@ -324,7 +324,7 @@ poetry config pypi-token.testpypi pypi-XXXXXXXXXXXX
 poetry publish --repository testpypi
 ```
 
-**版本管理：**
+##### 版本管理
 
 ```bash
 # 查看當前版本
@@ -694,4 +694,4 @@ poetry env use /usr/bin/python3.11
 
 ---
 
-*返回：[案例研究](/python-advanced/07-packaging/case-studies/)*
+返回：[案例研究](/python-advanced/07-packaging/case-studies/)

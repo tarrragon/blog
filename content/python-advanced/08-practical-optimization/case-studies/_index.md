@@ -66,4 +66,4 @@ python profiling/profile_link_checker.py
 
 ---
 
-*返回：[模組八：實戰效能優化](/python-advanced/08-practical-optimization/)*
+返回：[模組八：實戰效能優化](/python-advanced/08-practical-optimization/)

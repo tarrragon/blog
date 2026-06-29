@@ -5,8 +5,7 @@ description: "學習消除三種硬編碼問題：魔法數字、配置混合、
 weight: 74
 ---
 
-
-*上一章：[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)*
+上一章：[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)
 
 硬編碼問題不只是魔法數字。當專案成長到數十個模組時，三種不同形態的硬編碼會同時出現：看不懂的數字、混在邏輯裡的配置資料、散落各處的使用者訊息。本章整合 Error Pattern IMP-002（魔法數字）和 ARCH-001（配置與邏輯混合）的實戰經驗，並加入 W23 訊息集中化的完整案例。
 
@@ -46,7 +45,7 @@ time.sleep(3)           # 為什麼等 3 秒？
 
 ### 三種消除方法
 
-**方法 1：len() 動態計算（最安全）**
+#### 方法 1：len() 動態計算（最安全）
 
 ```python
 WORKTREE_PREFIX = "worktree "
@@ -59,7 +58,7 @@ def parse_worktree_line(line: str) -> str:
 
 前綴改變時切片自動正確，不需要同步更新數字。
 
-**方法 2：removeprefix（最簡潔，Python 3.9+）**
+#### 方法 2：removeprefix（最簡潔，Python 3.9+）
 
 ```python
 WORKTREE_PREFIX = "worktree "
@@ -70,7 +69,7 @@ def parse_worktree_line(line: str) -> str:
 
 不需要先檢查 `startswith`，沒有前綴時安全返回原字串。
 
-**方法 3：IntEnum 管理相關常數群組**
+#### 方法 3：IntEnum 管理相關常數群組
 
 ```python
 from enum import IntEnum
@@ -151,7 +150,7 @@ PROTECTED_BRANCHES = ["main", "master", "develop"]  # 多了 develop！
 
 ### 實作：config_loader 模式
 
-**步驟 1：抽離配置到 YAML**
+#### 步驟 1：抽離配置到 YAML
 
 ```yaml
 # config/branch_rules.yaml
@@ -170,7 +169,7 @@ error_messages:
   missing_ticket: "缺少 Ticket 引用"
 ```
 
-**步驟 2：建立載入器（含快取）**
+#### 步驟 2：建立載入器（含快取）
 
 ```python
 # lib/config_loader.py
@@ -196,7 +195,7 @@ def load_config(filename: str) -> Dict[str, Any]:
     return config
 ```
 
-**步驟 3：在 Hook 中使用**
+#### 步驟 3：在 Hook 中使用
 
 ```python
 from lib.config_loader import load_config
@@ -338,7 +337,7 @@ def validate_ticket(ticket_id: str):
 
 ### 決策流程
 
-```
+```text
 發現硬編碼
     |
     v
@@ -487,7 +486,7 @@ def process_hook_result(result_line: str) -> str | None:
 - 使用者訊息用 Messages 類別集中化，按角色和情境分組
 - 決策關鍵：**會隨環境改變 → 配置檔；是使用者文字 → Messages；是裸露數字 → 常數**
 
-*下一章：[大規模統一化重構](/python/07-refactoring/unified-infrastructure/)*
+下一章：[大規模統一化重構](/python/07-refactoring/unified-infrastructure/)
 
 ---
 

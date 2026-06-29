@@ -26,7 +26,7 @@ if item in container:
 
 但這行簡單的程式碼，背後的效能差異可能高達 **100 倍以上**，取決於 `container` 是什麼資料結構。
 
-**list 的成員查詢：O(n)**
+#### list 的成員查詢：O(n)
 
 ```python
 my_list = [1, 2, 3, ..., n]
@@ -36,7 +36,7 @@ if x in my_list:  # 最壞情況要檢查 n 個元素
 
 list 是有序的線性結構，Python 必須從頭開始逐一比對，直到找到目標或走完整個 list。
 
-**set 的成員查詢：O(1)**
+#### set 的成員查詢：O(1)
 
 ```python
 my_set = {1, 2, 3, ..., n}

@@ -493,4 +493,4 @@ print(f"Set 查找: {time.perf_counter() - start:.6f}s")
 
 ---
 
-_上一章：[並行處理](/python/03-stdlib/concurrency/)_
+上一章：[並行處理](/python/03-stdlib/concurrency/)

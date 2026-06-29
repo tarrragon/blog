@@ -49,15 +49,15 @@ Pagefind 提供三條值得辨識的邊界：
 
 **核心定義**：Pagefind 的索引流程透過 `--root-selector` 參數控制「哪些 HTML 進索引」。這是組件預期的客製介面。
 
-**這次的觀察**
+### 這次的觀察
 
 theme 的 site header 包含 `<h1>{{ .Site.Title }}</h1>`，每一頁 DOM 上的第一個 h1 都是站名「Tarragon」。Pagefind 預設取頁面第一個 h1 當搜尋結果 title — 結果所有結果都顯示「Tarragon」。
 
-**判讀**
+### 判讀
 
 第一個 h1 是站名而非文章名 — 索引「看到」的範圍跟我們以為的不同。要修的不是 theme（影響其他頁面），是 Pagefind 的 input 範圍。
 
-**執行**
+### 執行
 
 ```bash
 npx -y pagefind --site public --root-selector main
@@ -73,15 +73,15 @@ npx -y pagefind --site public --root-selector main
 
 **核心定義**：CSS reset 的有效範圍與 ancestor class 綁定。元素換位置就換 reset context — 這是 CSS 的基本機制，不是 bug。
 
-**這次的觀察**
+### 這次的觀察
 
 Filter UI（`.pagefind-ui__filter-panel`，本質是 `<fieldset>`）需要從 `.pagefind-ui` 搬到外部 aside（左側 sidebar）。搬完後 fieldset 的瀏覽器預設邊框冒出來。
 
-**判讀**
+### 判讀
 
 `.pagefind-ui--reset` 用 `all: unset` 重置所有後代元素的 UA 樣式。fieldset 搬出 `.pagefind-ui` 後，這個 ancestor 不在了，UA 樣式（包括 fieldset 預設邊框）回到原樣。
 
-**執行**
+### 執行
 
 在 fieldset 落腳處（aside 內）重新關掉 UA 樣式：
 
@@ -101,15 +101,15 @@ Filter UI（`.pagefind-ui__filter-panel`，本質是 `<fieldset>`）需要從 `.
 
 **核心定義**：當組件透過 hash class 把 specificity 拉高到一般客製寫法蓋不過時，邊界落在 CSS 樣式分層機制 — 不在個別 selector 數字。
 
-**這次的觀察**
+### 這次的觀察
 
 Pagefind 透過 svelte 把 class name 加 hash 重複寫進 selector（`.x.svelte-y.svelte-y`），把 specificity 從 10 提升到 30。一般客製 CSS specificity 10-20、蓋不過去。
 
-**判讀**
+### 判讀
 
 Specificity 是線性數字比較 — 跟組件作者比 specificity 是無贏的軍備競賽。要真正解這類覆寫戰、需要跳出「線性比較」這個維度本身。
 
-**執行**
+### 執行
 
 具體做法（`@import url(...) layer(...)`）與升級兼容性、其他外部組件的 layer 策略，由 [#24 CSS Layers 取代 specificity 戰](../css-layers-over-specificity/) 完整展開。在邊界辨識上、本篇要記住的是：**遇到 specificity 30+ 的覆寫戰、不要往 `!important` / `.x.x` 雙寫的方向加碼、改去看 layer 維度**。
 

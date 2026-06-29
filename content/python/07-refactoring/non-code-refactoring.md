@@ -5,7 +5,6 @@ weight: 77
 date: 2026-03-04
 ---
 
-
 前面幾章我們重構的對象都是程式碼：提取函式、消除魔法數字、分離配置。但你有沒有想過，**文件也會腐敗**？
 
 當一份規則文件從 50 行長到 450 行，閱讀者要在腦中同時追蹤的概念數量跟[第一章](/python/07-refactoring/refactoring-strategy/)提到的那個 858 行 Python 檔案沒有本質區別。認知負擔不只存在於程式碼中——任何需要人類閱讀和理解的東西都受它影響。
@@ -14,7 +13,7 @@ date: 2026-03-04
 
 v0.28.0 到 v0.31.0 之間，專案的規則文件經歷了 9 個版本的迭代。每次迭代都在解決真實的問題：補充遺漏的邊界情況、新增流程步驟、記錄決策理由。每一次修改都合理，但累積的結果是：
 
-```
+```text
 parallel-dispatch.md     280 行  ← 原本是「什麼時候可以並行」的簡單指南
 task-splitting.md        230 行  ← 原本是「怎麼拆任務」的清單
 ticket-lifecycle.md      220 行  ← 原本是「Ticket 狀態怎麼轉」的流程
@@ -71,7 +70,7 @@ decision-tree.md         452 行  ← 核心決策樹，每次都在「補一個
 
 以 `parallel-dispatch.md` 為例，精簡過程分三步：
 
-**Step 1：識別「決策入口」和「參考細節」**
+#### Step 1：識別「決策入口」和「參考細節」
 
 閱讀 280 行內容，對每一段問：「讀者在做『能不能並行』這個決策時需要這段嗎？」
 
@@ -84,9 +83,9 @@ decision-tree.md         452 行  ← 核心決策樹，每次都在「補一個
 - Agent Teams 場景表 → 不需要（移出）
 - 進度追蹤模板 → 不需要（移出）
 
-**Step 2：提取到參考文件**
+#### Step 2：提取到參考文件
 
-```
+```text
 # 精簡前
 parallel-dispatch.md (280 行，所有內容混在一起)
 
@@ -95,7 +94,7 @@ parallel-dispatch.md (98 行，決策入口 + 強制規則)
   └→ references/parallel-dispatch-details.md (剩餘細節，按需查閱)
 ```
 
-**Step 3：加入連結**
+#### Step 3：加入連結
 
 ```markdown
 ## 並行派發後驗證（強制）
@@ -196,7 +195,7 @@ Level 3 的內容（多視角分析、安全等級、報告格式）整段移到
 
 按讀者的需求深度分層：
 
-```
+```text
 Level 0: 快查表（一眼就能找到答案）
 Level 1: 強制規則（必須遵守的約束）
 Level 2: 決策流程（判斷邏輯）
@@ -218,7 +217,6 @@ def can_dispatch_parallel(tasks: list[Task]) -> bool:
 
     # Level 2: 核心邏輯（判斷邏輯）
     return not has_file_overlap(tasks)
-
 
 # Level 3: 實作細節（在被呼叫的函式裡）
 def has_file_overlap(tasks):

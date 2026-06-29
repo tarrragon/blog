@@ -94,7 +94,7 @@ claude-hooks-lib/
     └── test_hook_logging.py
 ```
 
-**為什麼選擇 src layout？**
+##### 為什麼選擇 src layout？
 
 ```text
 # Flat layout (不推薦用於套件發布)
@@ -187,7 +187,7 @@ include = [
 packages = ["src/claude_hooks_lib"]
 ```
 
-**關鍵設定說明：**
+##### 關鍵設定說明
 
 1. **build-system**：使用 Hatch 作為建構後端（現代、快速）
 2. **requires-python**：指定最低 Python 版本
@@ -234,7 +234,7 @@ all = [
 ]
 ```
 
-**安裝方式範例：**
+##### 安裝方式範例
 
 ```bash
 # 基本安裝（無可選相依性）
@@ -252,7 +252,7 @@ pip install "claude-hooks-lib[all]"
 
 #### 步驟 4：版本管理策略
 
-**方法 A：單一來源版本（推薦）**
+##### 方法 A：單一來源版本（推薦）
 
 在 `__init__.py` 中定義版本：
 
@@ -326,7 +326,7 @@ dynamic = ["version"]
 path = "src/claude_hooks_lib/__init__.py"
 ```
 
-**方法 B：使用 hatch-vcs（Git tag 版本）**
+##### 方法 B：使用 hatch-vcs（Git tag 版本）
 
 ```toml
 [build-system]
@@ -498,7 +498,7 @@ jobs:
 
 ### 完整程式碼
 
-**完整的 pyproject.toml：**
+#### 完整的 pyproject.toml
 
 ```toml
 [build-system]
@@ -620,7 +620,7 @@ exclude_lines = [
 
 ### 使用範例
 
-**安裝套件：**
+#### 安裝套件
 
 ```bash
 # From PyPI (after publishing)
@@ -635,7 +635,7 @@ cd claude-hooks-lib
 pip install -e ".[dev]"
 ```
 
-**Python 使用範例：**
+##### Python 使用範例
 
 ```python
 # Basic usage
@@ -668,7 +668,7 @@ output = create_pretooluse_output(
 write_hook_output(output)
 ```
 
-**命令列工具使用：**
+#### 命令列工具使用
 
 ```bash
 # Validate a single hook
@@ -714,7 +714,7 @@ hook-validator --all --strict
 
 ## 什麼時候該打包成套件？
 
-**適合打包：**
+### 適合打包
 
 - 多個專案需要使用相同程式碼
 - 程式碼相對穩定，API 不常變動
@@ -722,14 +722,14 @@ hook-validator --all --strict
 - 希望其他人能 pip install 使用
 - 需要明確的相依性管理
 
-**不建議打包：**
+### 不建議打包
 
 - 僅單一專案使用
 - 程式碼還在快速迭代
 - 與專案緊密耦合（如特定的配置路徑）
 - 維護成本超過重用收益
 
-**決策流程圖：**
+### 決策流程圖
 
 ```text
 程式碼需要跨專案使用？
@@ -935,4 +935,4 @@ jobs:
 
 ---
 
-*返回：[模組六：打包與發布](/python-advanced/07-packaging/)*
+返回：[模組六：打包與發布](/python-advanced/07-packaging/)

@@ -222,7 +222,7 @@ static VALID_NAME_REGEX: Lazy<Regex> = Lazy::new(|| {
 });
 ```
 
-**為什麼用 `once_cell::sync::Lazy`？**
+##### 為什麼用 `once_cell::sync::Lazy`？
 
 - **執行緒安全**：`Lazy` 確保初始化只執行一次，即使多執行緒同時存取
 - **延遲初始化**：只在第一次使用時編譯正則表達式

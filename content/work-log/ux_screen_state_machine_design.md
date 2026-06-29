@@ -8,7 +8,7 @@ tags: ["ux", "flutter", "navigation", "state-machine", "mobile", "terminal"]
 
 ## 這篇要解決什麼
 
-**使用者連上遠端終端機後、無法返回首頁。**
+> 使用者連上遠端終端機後、無法返回首頁。
 
 不是 bug — 是設計遺漏。Terminal 畫面的 `connected` 狀態沒有 disconnect 按鈕也沒有 back 按鈕。`error` 和 `disconnected` 狀態也沒有。使用者被困在畫面裡，唯一的出路是殺掉 app。
 

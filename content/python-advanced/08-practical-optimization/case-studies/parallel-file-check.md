@@ -137,7 +137,7 @@ total_time = 100 * 7ms = 700ms = 0.7 秒
 # 時間會快速增長
 ```
 
-**為什麼適合並行化？**
+#### 為什麼適合並行化？
 
 1. **I/O 密集**：大部分時間花在檔案讀取和存在性檢查
 2. **任務獨立**：每個檔案的檢查互不依賴
@@ -841,4 +841,4 @@ class AdaptiveParallelChecker:
 
 ---
 
-*下一章：[並行 Hook 驗證](/python-advanced/08-practical-optimization/case-studies/parallel-hook-validation/)*
+下一章：[並行 Hook 驗證](/python-advanced/08-practical-optimization/case-studies/parallel-hook-validation/)
