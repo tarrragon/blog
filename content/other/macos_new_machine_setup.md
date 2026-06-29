@@ -9,7 +9,9 @@ tags: ["macos", "setup", "homebrew", "bash", "tooling"]
 
 ## 先裝 Homebrew，它是後面一切的基礎
 
-macOS 本身沒有內建的套件管理工具，而後面幾乎每一項補強（命令列工具、開發語言、甚至部分 GUI App）都靠它安裝。沒有 Homebrew，這份清單的其他項目全部無從裝起，所以它排第一。
+macOS 本身沒有內建的第三方套件管理工具，而後面幾乎每一項補強（命令列工具、開發語言、甚至部分 GUI App）都靠它安裝。沒有 Homebrew，這份清單的其他項目全部無從裝起，所以它排第一。
+
+安裝過程會要求輸入登入密碼（sudo），並自動下載 Xcode Command Line Tools，畫面可能停住數分鐘屬正常。
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -22,13 +24,19 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-這一步做完、`brew --version` 跑得出來，Homebrew 就能當後面所有項目的安裝來源。
+這一步做完，驗證安裝成功：
+
+```bash
+brew --version   # 應印出 Homebrew 4.x.x
+```
+
+版本號印出來，[Homebrew](/llm/knowledge-cards/homebrew/) 就能當後面所有項目的安裝來源。
 
 ## 把 bash 更新到 5.x
 
-bash 是裝完 Homebrew 後最值得優先換掉的內建工具。macOS 的 `/bin/bash` 永遠停在 3.2 系列（2006 年釋出，目前是 patchlevel 57），Apple 之後就凍結它，原因是 bash 4 改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本的人來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。
+bash 是裝完 Homebrew 後最值得優先換掉的內建工具。macOS 的 `/bin/bash` 長年凍結在 3.2 系列（2006 年釋出，目前是 patchlevel 57），Apple 不再更新它，原因是 bash 4 改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本的人來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。
 
-正確做法是用 Homebrew 另外裝一份新版並排存在，而不是覆寫系統版。`/bin/bash` 在唯讀的系統卷上、受 SIP 保護，本來就不該也不能改：
+正確做法是用 Homebrew 另外裝一份新版並排存在，而不是覆寫系統版。`/bin/bash` 在唯讀的系統卷上、受 SIP（System Integrity Protection）保護，覆寫會被擋下：
 
 ```bash
 brew install bash
@@ -48,18 +56,21 @@ env bash --version   # 應顯示 5.x
 跟專案無關的小工具（例如 [disk-report](../macos_disk_space_diagnosis/) 與 [app-report](../macos_app_footprint_report/) 這類系統診斷腳本）需要一個能在任何地方直接呼叫、又不污染專案 repo 的家。慣例是個人的 `~/.local/bin`，把它建好並掛上 PATH。
 
 ```bash
+mkdir -p ~/.local/bin
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zprofile
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-設定完成後，把腳本 symlink 進這個目錄就能直接當指令用。確認它確實在 PATH 上：
+目錄建好、PATH 掛上後，確認它確實生效：
 
 ```bash
 echo "$PATH" | tr ':' '\n' | grep "$HOME/.local/bin"
 ```
 
-PATH 設好，前面提到的那些個人腳本 symlink 進去就能直接呼叫。
+之後把腳本 symlink 進這個目錄就能直接當指令用。
 
 ## 後續項目
+
+基礎建設到位後，第一個掛上去的實用腳本就是系統診斷：[磁碟空間診斷的 disk-report](../macos_disk_space_diagnosis/) 與 [按 App 聚合佔用的 app-report](../macos_app_footprint_report/)，兩支都 symlink 進 `~/.local/bin` 直接當指令用。
 
 這份清單會隨著之後遇到的需求往下增補，新項目接在這裡。原則維持不變：基礎建設排前面，依賴它的補強排後面，每一項都寫清楚「為什麼要做」而不只是貼指令。

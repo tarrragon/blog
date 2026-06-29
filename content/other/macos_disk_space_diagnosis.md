@@ -1,7 +1,7 @@
 ---
 title: "macOS 磁碟空間被吃光的診斷流程"
 date: 2026-06-26
-description: "從一台 30G 餘裕在幾小時內歸零的 Mac，記錄一套先看快照、再用實際佔用值排查的磁碟診斷順序，以及把它固化成 disk-report 腳本的過程。"
+description: "從一台 30G 餘裕在幾小時內歸零的 Mac，記錄一套先看快照、再用實際佔用排查的磁碟診斷順序，以及把它固化成 disk-report 腳本的過程。"
 tags: ["macos", "disk-space", "apfs", "time-machine", "troubleshooting", "tooling"]
 ---
 
@@ -11,13 +11,13 @@ tags: ["macos", "disk-space", "apfs", "time-machine", "troubleshooting", "toolin
 
 ## 先確認問題是「真的滿」還是「浮動的假象」
 
-排查磁碟的第一步是分辨空間到底去哪：是被真實檔案佔走，還是被系統的快照與 purgeable 緩衝暫時佔住。這兩者的處理方式完全不同，先分清楚才不會白清。
+排查磁碟的第一步是分辨空間到底去哪：是被真實檔案佔走，還是被系統的快照與 purgeable（系統可隨時回收的緩衝空間）暫時佔住。這兩者的處理方式完全不同，先分清楚才不會白清。
 
-在 APFS 上，根目錄 `/` 是唯讀的系統封印卷，真正存放使用者資料的是 `/System/Volumes/Data`，而它們和其他卷（Preboot、Recovery、VM、模擬器 runtime）共用同一個 container 的空間池。所以判斷「還剩多少」要看整個 container 的可用空間，而不是單一卷的數字。
+在 APFS（Apple File System，macOS 的預設檔案系統）上，根目錄 `/` 是唯讀的系統封印卷，真正存放使用者資料的是 `/System/Volumes/Data`，而它們和其他卷（Preboot、Recovery、VM、模擬器 runtime）共用同一個 container（容器，APFS 管理空間的最上層單位）的空間池。判斷「還剩多少」要看整個 container 的可用空間，而不是單一卷的數字。
 
 ```bash
 df -h /System/Volumes/Data
-diskutil info /System/Volumes/Data | grep -iE "Container Free Space|Volume Free Space"
+diskutil info /System/Volumes/Data | grep -iE "Container Free Space|Container Total Space"
 ```
 
 這次的結果是資料卷 100% 滿、整個 container 只剩約 591MB。確認確實滿載、不是顯示誤差，後面才值得花力氣找佔用大戶。
@@ -26,7 +26,7 @@ diskutil info /System/Volumes/Data | grep -iE "Container Free Space|Volume Free 
 
 空間在幾小時內反覆消長、清 cache 卻無效，最常見的原因是 Time Machine 的本地快照（local snapshots）加上 macOS 的 purgeable 空間，而不是某個看得見的檔案。這是排查時要先排除的一條線。
 
-本地快照的運作方式是：當使用者修改或刪除檔案時，Time Machine 會自動建立快照「凍結」舊資料，好讓本地也能做時光機回溯。這些被凍結的資料，正是先前以為已刪除、卻怎麼清都不會釋放的空間。快照預設在 24 小時後、或磁碟空間壓力過大時才會自動清除；後者正是「過一陣子空間又回來」的來源。
+本地快照的運作方式是：Time Machine 啟用時，系統約每小時自動建立一張快照「凍結」當下狀態，好讓本地也能做時光機回溯。這些被凍結的資料，正是先前以為已刪除、卻怎麼清都不會釋放的空間。快照保留約 24 小時（Apple 的 thinning 策略，觀察值），或在磁碟空間壓力過大時提前清除；後者正是「過一陣子空間又回來」的來源。若從未設定 Time Machine，這條線可跳過——沒啟用就不會有 local snapshot。
 
 ```bash
 tmutil listlocalsnapshots /System/Volumes/Data
@@ -61,7 +61,7 @@ du -shx ~/Library/* 2>/dev/null | sort -rh | head -12
 
 ## 這次找到的佔用大戶與處理
 
-定位出來的大戶集中在開發工具鏈與閒置的本地資料，多數可逆、刪了之後需要時會自動重建或可重新下載。下面的項目與數字都是這台機器的實測，換一台機器組成會完全不同；值得帶走的是每一項背後的判讀問題，不是這份清單本身。以下逐項說明判讀依據。
+定位出來的大戶集中在開發工具鏈與閒置的本地資料，多數可逆、刪了之後需要時會自動重建或可重新下載。下面的項目與數字都是這台機器的實測，換一台機器組成會完全不同；值得帶走的是每一項背後的判讀問題，不是這份清單本身。具體刪除指令因工具而異（Android Studio GUI、`rm -rf`、`ollama rm`），本文只做診斷與定位，刪除操作留給各工具自身的文件。以下逐項說明判讀依據。
 
 | 項目                        | 實際佔用 | 處理判斷                                                |
 | --------------------------- | -------- | ------------------------------------------------------- |
@@ -105,7 +105,7 @@ find "$HOME" -type f -size +50M -mmin -180 2>/dev/null \
   -exec du -h {} \; 2>/dev/null | sort -rh | head -25
 ```
 
-這裡的排序依據同樣是 `du` 的實際佔用值，而不是 `find -size` 的邏輯大小門檻，理由和前面一致：避免 sparse 檔的邏輯大小把排序帶歪。
+50M 的下限是為了過濾日常小檔雜訊、鎖定單一大檔暴增；若懷疑是大量小檔累積吃空間（如快取碎片），這個門檻抓不到，要回逐層 `du` 看目錄總量。排序依據同樣是 `du` 的實際佔用值，而不是 `find -size` 的邏輯大小門檻，理由和前面一致：避免 sparse 檔的邏輯大小把排序帶歪。
 
 ## 排查順序總結
 
@@ -117,4 +117,4 @@ find "$HOME" -type f -size +50M -mmin -180 2>/dev/null \
 4. 對每個大戶問「現在誰在用它」再決定刪不刪，可逆的優先清。
 5. 把整套順序固化成唯讀腳本，下次一行重跑。
 
-第 3 步若收斂到 `~/Library` 這種多個 App 共用的大目錄，按目錄統計只能告訴你 Caches、Containers 各多大，看不出是哪幾個 App 佔的。把這棵子樹再按 App 拆開的做法，見 [macOS App 聚合佔用報告](../macos_app_footprint_report/)。
+第 3 步若收斂到 `~/Library` 這種多個 App 共用的大目錄，按目錄統計只能看出 Caches、Containers 各多大，看不出是哪幾個 App 佔的。把這棵子樹再按 App 拆開的做法，見 [macOS App 聚合佔用報告](../macos_app_footprint_report/)。
