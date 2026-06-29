@@ -2,6 +2,7 @@
 title: "flutter 可以使用的 togglebutton 樣式"
 date: 2025-09-09
 draft: false
+description: "Flutter 要做切換選項的按鈕、在選哪種元件時回來看。並列 ToggleButtons 等三種可用樣式的外觀截圖與程式碼。"
 tags: ["flutter"]
 ---
 

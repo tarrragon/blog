@@ -1,7 +1,7 @@
 ---
 title: "macOS 新機基礎建設：套件管理與個人 bin 的設定順序"
 date: 2026-06-27
-description: "重灌或換機後最底層的三項基礎建設與它們的依賴順序：先裝 Homebrew 當套件管理基礎，再用它把凍在舊版的內建 bash 換成現代版本，最後掛上個人 bin 目錄。之後會持續增補。"
+description: "重灌或換機後照這個依賴順序鋪底，免得後面工具裝不起來：先 Homebrew（含 Apple Silicon / Intel 不同 PATH 前綴），再用它裝 bash 5.x 並排（系統 /bin/bash 凍在 3.2、SIP 擋覆寫），最後把 ~/.local/bin 掛上 PATH 放個人腳本。"
 tags: ["macos", "setup", "homebrew", "bash", "tooling"]
 ---
 

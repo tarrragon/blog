@@ -2,6 +2,7 @@
 title: "為什麼 Bug 在合併後才爆：Gradle Cache 掩蓋潛伏問題的邏輯"
 date: 2026-04-17
 draft: false
+description: "feature branch build 都正常、合併到 main 後就爆、但合併前 main 也沒這錯誤時回來看。破解「合併帶進壞東西」的直覺：根因其實幾個月前就潛伏，Gradle cache 一直掩蓋、合併只是觸發條件。"
 tags: ["gradle", "flutter", "debugging"]
 ---
 

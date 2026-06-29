@@ -1,7 +1,7 @@
 ---
 title: "macOS 磁碟空間被吃光的診斷流程"
 date: 2026-06-26
-description: "從一台 30G 餘裕在幾小時內歸零的 Mac，記錄一套先看快照、再用實際佔用排查的磁碟診斷順序，以及把它固化成 disk-report 腳本的過程。"
+description: "Mac 空間莫名歸零、清 cache 又沒救、或空間掉了又回來時照這條順序走：先看 container 可用空間與 Time Machine 本地快照 / purgeable，再用 du 實際佔用（別信 ls / find 的 sparse 假大小，228G 的 OrbStack 映像實占只有 1.9G）逐層找大戶。含 disk-report 腳本與 --growing 抓現行犯。"
 tags: ["macos", "disk-space", "apfs", "time-machine", "troubleshooting", "tooling"]
 ---
 

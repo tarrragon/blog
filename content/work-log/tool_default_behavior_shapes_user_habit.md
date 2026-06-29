@@ -2,7 +2,7 @@
 title: "工具的預設行為決定使用者習慣 — 從版本錯置看工具設計的 opinion 責任"
 date: 2026-06-25
 draft: false
-description: "從一個版本錯置事件，反思內部工具設計中常被忽略的責任：工具的預設路徑就是團隊的實際流程。文件上寫的規範，和工具預設引導的行為不一致時，工具會贏。"
+description: "文件明明寫了規範、團隊卻一直照工具預設的路徑做事（規範與工具預設不一致時工具會贏）時回來看。從一次版本錯置反思 CLI / API / 表單等任何接受自由輸入的介面，預設路徑就是團隊的實際流程，設計時要負起 opinion 責任。"
 tags: ["process", "tool-design", "version-management", "opinionated-software", "retrospective"]
 ---
 
@@ -89,7 +89,7 @@ CLI 接受了這個輸入，沒有任何提示。
 
 改善類 ticket 放 patch 版本，在多數情況下是正確的。「多數情況下對」已經足夠讓工具表達立場：
 
-```
+```sql
 $ ticket create --type IMP --action "修復" --target "retry test"
 [建議] 此 ticket 為修復類，建議放 v0.3.2（patch bump）
        而非 v0.4.0（下一個功能版本）
@@ -98,7 +98,7 @@ $ ticket create --type IMP --action "修復" --target "retry test"
 
 前版本 status 掃描也是。已完成版本仍為 active 在所有情況下都是異常——工具不需要猜，只需要報告：
 
-```
+```text
 $ version-release check
 [WARN] v0.2.0：38 張 ticket 全部完成但 status 仍為 active
 ```

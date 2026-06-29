@@ -2,7 +2,7 @@
 title: "Freezed 的三層結構解剖：with、_$、以及更好懂的替代路徑"
 date: 2026-05-11
 draft: false
-description: "從實作營運端報表 API 時看到的 `abstract class PeriodReportRow with _$PeriodReportRow implements ReportAmountsView` 出發，解構 freezed 為什麼長這個樣子、`with` 與 `_$` 各自的角色、如果沒有 freezed 在 Dart 怎麼做，以及為什麼中間投影物件可能比 DTO 直接 implements 共用介面更好維護。"
+description: "看到 `class X with _$X implements Y` 這種 freezed 宣告卻看不懂 `with` 跟 `_$` 各自在做什麼，或在猶豫要不要為了共用介面引入 freezed 時回來看。拆解 freezed 三層結構、沒有 freezed 在 Dart 怎麼手做，以及中間投影物件 vs DTO 直接 implements 的維護取捨。"
 tags: ["dart", "flutter", "freezed", "code-generation", "language-design"]
 ---
 

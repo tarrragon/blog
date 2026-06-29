@@ -2,6 +2,7 @@
 title: "Freezed 選型評估"
 date: 2026-03-26
 draft: false
+description: "在 Dart 專案要不要引入 freezed（為了 model 多一道 code generation）時回來看。一次真實選型評估的紀錄：原型階段選 json_serializable + Equatable 取代 freezed 的理由與優缺點對照。"
 tags: ["flutter", "dart", "freezed", "code-generation"]
 ---
 

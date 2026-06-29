@@ -1,7 +1,7 @@
 ---
 title: "用 Claude Code GitHub Actions 自動除錯 CI 建置失敗"
 date: 2026-03-04
-description: "在 GitHub Actions 中整合 Claude Code，讓 Claude 參與 CI 修復和 Code Review"
+description: "想讓 build 失敗時 GitHub Actions 自動觸發 Claude 修復、或搞不清 OAuth token 與 API key 在計費上差在哪時看這篇。給 /install-github-app 設定、continue-on-error + if failure 的觸發寫法、--max-turns 控成本；OAuth 會擠壓 claude.ai 共用額度池、CI 頻繁觸發建議改 API key。"
 tags: ["GitHub Actions", "CI/CD", "Claude Code", "Hugo", "AI協作心得"]
 ---
 

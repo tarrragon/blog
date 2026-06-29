@@ -1,7 +1,7 @@
 ---
 title: "Cards-Skills 系統的活案例：從一個 search bug 到 14 張新卡的閉環"
 date: 2026-04-26
-description: "把 content/report/ 的 atomic cards + .claude/skills/ 的 protocol skills 當成「活的 knowledge infrastructure」、而不是靜態文件。本文以一次 search filter bug 修復為主軸、紀錄 28 個 commits 的閉環過程：從 bug 提出 → 拆卡片 → 抽抽象原則 → 灌進 skill → 指導實作 → retrospective 找漏網 case → 再迭代。八輪迭代讓系統從 54 卡長到 71 卡 + 兩個 skill v0.2、過程中卡片自我修正、修了實作也修了 dogfooding 失敗。"
+description: "想把 report 卡片 + skill 當成會自我修正的活知識庫來跑、卻不確定一個 bug 怎麼滾成卡片與 skill 升級時，照這個 28-commit 閉環走。關鍵教訓：test 過不等於對齊意圖（4 個測試 3 個是 placebo）、dogfooding 失敗要靠 user 外部提問才現形、修 bug 是 case study 起點不是終點。"
 tags: ["case-study", "知識基礎建設", "compositional-writing", "Cards-Skills", "TDD", "Retrospective"]
 ---
 

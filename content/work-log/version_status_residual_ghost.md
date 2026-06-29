@@ -2,7 +2,7 @@
 title: "版本狀態殘留：為什麼已完成的版本在看板上顯示未完成"
 date: 2026-06-25
 draft: false
-description: "版本發布工具只檢查當前版本的完成度，不掃描前版本的狀態殘留。結果是三個月前完成的版本在看板上持續顯示為 active，誤導每一個查看看板的人。工具的檢查範圍決定了系統的一致性邊界。"
+description: "看板顯示某個其實早就做完的版本還是 active / 有未完成任務、誤導每個看板的人時回來看。根因是發布工具只檢查當前版本完成度、不掃前版本的狀態殘留；工具的檢查範圍決定了系統的一致性邊界。"
 tags: ["version-management", "tool-design", "data-consistency", "retrospective"]
 ---
 
@@ -30,7 +30,7 @@ tags: ["version-management", "tool-design", "data-consistency", "retrospective"]
 
 在版本發布的 pre-flight check 加入全局掃描：
 
-```
+```text
 $ version-release check
 [OK] v0.3.0：所有 ticket 完成，可發布
 [WARN] v0.2.0：38 張 ticket 全部完成但 status 仍為 active

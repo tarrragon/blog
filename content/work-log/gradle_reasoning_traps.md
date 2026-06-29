@@ -2,6 +2,7 @@
 title: "Gradle JVM target 除錯復盤：七個節點的策略權衡"
 date: 2026-04-17
 draft: false
+description: "排查 Gradle JVM target 不一致這類問題卡很久、想看別人怎麼一步步收斂而不亂試時回來看。七個節點的除錯決策復盤，重點在每步的策略權衡與走過的彎路。"
 tags: ["gradle", "debugging", "flutter"]
 ---
 

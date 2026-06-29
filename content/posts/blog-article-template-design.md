@@ -2,7 +2,7 @@
 title: "Blog 文章模板設計：作者品質閘門與正文分工"
 date: 2026-05-02
 slug: "blog-article-template-design"
-description: "記錄本 blog 的文章模板定位：模板是作者與 agent 共用的品質閘門，正文仍以技術文章推導為主，填表結構留在作者工作流"
+description: "要決定文章模板放哪、或 Claude Code 與 Codex 各寫各的模板開始分岔時回來。給判準：模板是作者品質閘門（責任 / 判讀 / 風險 / 邊界 / 回寫五欄）、正文仍走技術推導、SSoT 放 content/posts、backend 正文不暴露填表結構。"
 tags: ["Markdown", "AI協作心得", "blog心得", "writing"]
 ---
 

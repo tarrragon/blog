@@ -2,7 +2,7 @@
 title: "並行 AI Agent 修改同一檔案的衝突模式與協調策略"
 date: 2026-06-25
 draft: false
-description: "五個 AI agent 同時修改同一個 TypeScript 檔案，導致 branch protection 阻擋、file modified since read 拒絕編輯、PM 花大量時間協調 commit 策略。問題不在 agent 能力，而在派發策略沒有考慮檔案層級的衝突。"
+description: "並行派多個開發者或 AI agent 同一批 ticket，結果他們狂改同一個檔案、卡在 branch protection 與 file-modified-since-read、協調 commit 吃掉並行省下的時間時回來看。問題不在 agent 能力，而在派發策略沒考慮檔案層級的衝突。"
 tags: ["ai-agent", "parallel-dispatch", "git", "conflict-resolution", "retrospective"]
 ---
 

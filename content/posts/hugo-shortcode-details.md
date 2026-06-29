@@ -2,7 +2,7 @@
 title: "Hugo Shortcode 實現可折疊區塊"
 date: 2025-10-09
 tags: ["hugo", "shortcode", "markdown"]
-description: "說明如何使用 Hugo Shortcode 實現可折疊內容區塊"
+description: "想把文章程式碼預設折疊、又被 MD033 inline-html 警告擋住時回來。用 Hugo details shortcode 取代 <details> 標籤：給 shortcode 模板、CSS 樣式、open / class 進階參數、巢狀用法與 sed 批量遷移腳本。"
 ---
 
 ## 問題背景

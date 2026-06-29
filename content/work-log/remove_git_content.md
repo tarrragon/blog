@@ -2,6 +2,7 @@
 title: "Git Filter-Repo 使用說明"
 date: 2026-01-20
 draft: false
+description: "要從 Git 歷史徹底移除某個檔案或資料夾（誤提交機密、清大檔），用 git filter-repo 重寫歷史時回來看。含安裝與常用操作。"
 tags: ["git"]
 ---
 

@@ -2,6 +2,7 @@
 title: "Gradle Configuration 時序陷阱：afterEvaluate、evaluationDependsOn、finalized properties"
 date: 2026-04-17
 draft: false
+description: "Gradle 報 `Cannot run Project.afterEvaluate(Closure) when the project is already evaluated`、或 `property is final and cannot be changed` 時回來看。三種時序錯誤同源於 callback 註冊太晚或屬性賦值太晚，附 afterEvaluate、evaluationDependsOn、finalized properties 的正確時機。"
 tags: ["gradle", "android"]
 ---
 

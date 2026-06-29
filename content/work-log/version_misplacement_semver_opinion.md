@@ -2,7 +2,7 @@
 title: "改善類工作放進新功能版本 — 版本歸屬判斷的工具化"
 date: 2026-06-25
 draft: false
-description: "根因分析和重構類工作被放進下一個功能版本（v0.4.0），與 PostgreSQL 新功能混在一起。問題不在使用者判斷錯誤，而在工具沒有根據工作類型建議版本歸屬。semver 的 MINOR/PATCH 語意可以被工具表達。"
+description: "根因分析、重構這類改善工作被塞進下一個功能版本、跟新功能混在一起發布、語意混亂時回來看。主張工具該依工作類型建議版本歸屬（semver 的 MINOR / PATCH 語意可被工具表達），而非全靠人判斷。"
 tags: ["version-management", "semver", "tool-design", "retrospective"]
 ---
 

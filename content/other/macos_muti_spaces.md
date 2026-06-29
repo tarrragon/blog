@@ -2,7 +2,7 @@
 title: "如果mac多桌面錯置如何重置"
 date: 2025-09-18
 draft: false
-description: "因為我會用並行裝置連接平板當成額外的螢幕，但是如果中斷再連接有時候會造成MACOS辨識多桌面出錯"
+description: "用並行（Sidecar）接平板當第二螢幕、中斷再連後多桌面跑到錯誤螢幕、桌面切不動時的兩種重置法：defaults delete com.apple.spaces + killall Dock 重置 Spaces，或暫時關「顯示器有單獨的空間」再登出登入。"
 tags: [ "macos"]
 ---
 

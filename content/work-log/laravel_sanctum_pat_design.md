@@ -2,7 +2,7 @@
 title: "Laravel Sanctum 的 Bearer Token 設計剖析：{PK}|{secret} 為什麼這樣設計"
 date: 2026-05-18
 draft: false
-description: "拆解 Laravel Sanctum Personal Access Token 的 {PK}|{secret} 格式設計 — 為什麼把 DB primary key 直接放進 token、hash 儲存的取捨、constant-time 比對的位置，以及跟 GitHub PAT、Stripe API Key 的設計差異。"
+description: "想懂 Laravel Sanctum 的 `{PK}|{secret}` token 為何把 DB primary key 直接放進 token，或要自己設計 API token 格式時回來看。涵蓋 hash 儲存取捨、constant-time 比對的位置，以及跟 GitHub PAT、Stripe API Key 的設計差異。"
 tags: ["security", "authentication", "laravel", "php", "sanctum", "bearer-token"]
 ---
 

@@ -2,7 +2,7 @@
 title: "API 認證的三層信任邊界：使用者、系統、跨系統 Provisioning"
 date: 2026-05-18
 draft: false
-description: "整理 API 認證的兩層信任邊界（使用者 Bearer Token、系統 Shared Secret）與一個跨系統身分對應 workflow（Provisioning），說明各層該用什麼 secret 機制、混用時的風險，以及常見的設計失效模式。"
+description: "設計 API 認證時分不清「發起的人」「呼叫的系統」「跨系統有沒有對應帳號」該各用什麼 secret，或想用一套 token 全包時回來看。三層信任邊界（Bearer Token / Shared Secret / Provisioning）各自的洩漏後果與撤銷方式，以及混用造成的設計失效模式。"
 tags: ["security", "authentication", "api", "backend", "provisioning"]
 ---
 

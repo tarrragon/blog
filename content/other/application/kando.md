@@ -2,7 +2,7 @@
 title: "Kando 滑鼠手勢選單的應用場景"
 date: 2026-06-28
 draft: false
-description: "Kando 是跨平台的圓盤/標記選單工具，本文整理它的核心特性、適用判準，以及 macOS 工程師可以建構的應用場景，作為日後設計自己模式的筆記底稿"
+description: "快捷鍵記不住、手在滑鼠不想切鍵盤時，判斷一個動作該不該交給圓盤選單的三條判準；以及要從哪組場景起步（視窗排版最先）。含可直接套用的 menus.json：Magnet 八方位視窗排版、用 ghostty -e zsh -lc 叫出終端機跑腳本，和為什麼要 delayed / login shell。"
 tags: ["kando", "工作流", "macos", "效率工具"]
 ---
 

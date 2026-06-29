@@ -3,7 +3,7 @@ title: "為什麼這個場景適合用高階函式？以 Flutter 設定更新為
 date: 2026-06-01
 slug: "dart_hof_typedef_readability"
 draft: false
-description: "一個收 callback 的 SettingsController.update（higher-order function + ValueNotifier）。先說明這個場景為什麼適合用 HOF（多欄位共用流程、不可變模型、變化點開放），再把『原始裸函式型別寫法』與『typedef 改寫後』的優缺點並排比較 — 兩者都是 HOF，差別在同一個 pattern 的表達方式與取捨。"
+description: "猶豫某個場景該不該把變化點抽成 callback（高階函式），或抽了之後在裸函式型別與 typedef 之間選不定時回來看。判準是「流程固定、變化點單一且開放」就抽；附 typedef 改寫前後的可讀性與取捨並排比較。"
 tags: ["dart", "flutter", "higher-order-function", "typedef", "readability", "design-tradeoff", "DRY", "ValueNotifier"]
 ---
 

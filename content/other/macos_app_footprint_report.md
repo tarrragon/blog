@@ -1,7 +1,7 @@
 ---
 title: "macOS 每個 App 到底吃多少空間：聚合佔用的 app-report 腳本"
 date: 2026-06-27
-description: "按目錄統計只能看出 Caches、Containers 各佔多少，答不出哪個 App 是大戶。這篇記錄一個把每個 App 散落在 ~/Library 各處的佔用聚合成單一數字的 app-report 腳本，以及為什麼 .app 的大小會嚴重低估真實佔用。"
+description: "想知道「哪個 App 該清、清掉哪些是安全快取、哪些是動不得的資料」時用 app-report 腳本：把散落在 ~/Library 各處（含 bundle id / 顯示名雙命名）的佔用聚回各 App。先記住 .app 大小會嚴重低估真實佔用（Steam .app 10.8M、資料 8.1G），別照 /Applications 排序找大戶。"
 tags: ["macos", "disk-space", "homebrew", "troubleshooting", "tooling"]
 ---
 

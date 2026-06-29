@@ -2,7 +2,7 @@
 title: "寫測試時 sync try-catch 接不到 BotToast 的 async 錯誤：fire-and-forget API 的接管設計"
 date: 2026-05-26
 draft: false
-description: "寫測試會觸及 type system 看不到的三類 runtime 契約：service locator 注入、widget tree state、late init。以 BotToast 的 sync assert + async LateInit 雙失敗模式為例，拆解為什麼 sync try-catch 不夠、用 runZonedGuarded 同時罩 sync 與 async、以及 fallback 訊息的可識別 signature 設計。"
+description: "測試裡 sync try-catch 接不到錯誤，或遇到 BotToast / fire-and-forget API 從 async gap 後拋 `LateInitializationError` 時回來看。用 runZonedGuarded 同時罩 sync 與 async 失敗路徑，並設計可識別的 fallback 訊息 signature，避免被誤判成 error。"
 tags: ["dart", "flutter", "test", "async", "zone", "runZonedGuarded", "service-locator", "fallback-design"]
 ---
 

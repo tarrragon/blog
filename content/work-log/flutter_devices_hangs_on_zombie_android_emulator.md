@@ -2,7 +2,7 @@
 title: "flutter devices 卡住的訊號：device 數從 N 變 N-1 與 emulator 半活"
 date: 2026-05-19
 draft: false
-description: "`flutter devices` / `flutter run` 卡住並印出 `Error -2 retrieving device properties for sdk gphone64 arm64` 時，可用 device 計數變化辨認 Android emulator 半活狀態。本文記錄 ADB 為何看得到 device、Flutter 為何卡在 property 查詢，以及從 ADB server 到 AVD snapshot 的恢復順序。"
+description: "`flutter devices` / `flutter run` 卡住又印 `Error -2 retrieving device properties for sdk gphone64 arm64` 時回來看。關鍵辨識訊號是 device 計數從 N 變 N-1（Android emulator 半活/zombie），附 ADB 為何看得到 device、Flutter 為何卡在 property 查詢、以及從 ADB server 到 AVD snapshot 的恢復順序。"
 tags: ["flutter", "android", "adb", "emulator", "debugging", "tooling"]
 ---
 

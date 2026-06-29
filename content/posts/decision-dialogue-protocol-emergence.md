@@ -1,7 +1,7 @@
 ---
 title: "決策對話協議的浮現：從 #74 到 #81 的多層迭代"
 date: 2026-04-26
-description: "前一篇 case study 紀錄了 search bug → 14 張卡的閉環、本篇紀錄這套系統在純對話場景的另一次迭代：從 user 一句「這些選擇應該被做成卡片」、到 #74-#81 八張新卡 + 一份 reference + skill v0.5 的多層 spiral 浮現過程。重點不是新卡內容、是「卡片如何在對話中浮現」這個 process pattern 本身。"
+description: "對話中反覆出現「呈現選項給 user 選」、想把這些決策模式抽成卡片卻不知從何下手時參考。給「原子卡 → meta 卡 → reference」的 spiral 浮現過程與五維決策對話協議；提醒 yes/no 二選是最隱形的 collapse 反模式、spiral 深度由 user 外部觸發決定、不靠 agent 自律。"
 tags: ["case-study", "知識基礎建設", "Cards-Skills", "Decision Dialogue", "Knowledge Gardening"]
 ---
 

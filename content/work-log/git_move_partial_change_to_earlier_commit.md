@@ -3,6 +3,7 @@ title: "Git：把後面 commit 的部分檔案變更搬到前面的 commit"
 slug: "git_move_partial_change_to_earlier_commit"
 date: 2026-04-28
 draft: false
+description: "想把某個 commit 裡「不該屬於它」的部分檔案變更抽出來、併進前面的 commit、又要保持其他檔案原狀時回來看。"
 tags: ["git"]
 ---
 

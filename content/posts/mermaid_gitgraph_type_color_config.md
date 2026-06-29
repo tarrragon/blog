@@ -4,7 +4,7 @@ slug: "mermaid_gitgraph_type_color_config"
 date: 2026-04-28
 draft: false
 tags: ["mermaid", "hugo", "blog-config"]
-description: "Hugo + Mermaid 10.6.1 中、gitGraph 的 type: HIGHLIGHT / REVERSE 顏色不生效；根因是 themeVariables 缺 gitGraph 專用變數（git0 / git1 / git2）；用 JS 層 + CSS 層雙保險修復"
+description: "Hugo + Mermaid 畫 gitGraph 時 type: HIGHLIGHT / REVERSE 顏色不生效、commit 全變灰色時查這篇。根因是 themeVariables 缺 gitGraph 專用變數（git0 / git1 / git2）；用 JS 補變數 + CSS 針對 SVG [id$=\"_HIGHLIGHT\"] 雙保險。升級 Mermaid 版本時顏色變數命名會變、要重驗。"
 ---
 
 > **背景**：本文是「Hugo 部落格支援 Mermaid 流程圖完整實現指南」的補洞紀錄。原指南建立了 Mermaid 整合的基礎、但 gitGraph 的自訂 commit type 顏色設定沒包含進去、文章用到才發現渲染失效。

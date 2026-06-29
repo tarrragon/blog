@@ -1,7 +1,7 @@
 ---
 title: "Vendor 深度技術文章的寫作方法論：從 overview 到 implementation"
 date: 2026-05-18
-description: "在 vendor overview 已齊全的前提下、如何規劃跟撰寫 vendor 之下的深度技術文章（pgBouncer 配置、Patroni HA、Vault dynamic credential 等）— 結構、選題、寫作流程跟跟 overview 的職責劃分"
+description: "vendor overview 已齊全、要往下寫單一功能的深度實作文章（pgBouncer 配置、Patroni HA、Vault dynamic credential 等）時回來。給選題判準（挑讀者最常問或自己踩最痛、非清單前幾項）、問題 → 概念 → 配置 → 演練 → 邊界 → 整合的 6 段結構、200-400 行 sweet spot、與 overview 的職責劃分。"
 tags: ["writing-methodology", "vendor-article", "technical-writing", "case-first"]
 ---
 

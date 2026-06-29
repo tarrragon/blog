@@ -2,7 +2,7 @@
 title: "新增欄位忘記同步 reset — 跨測試狀態洩漏的系統性根因"
 date: 2026-06-25
 draft: false
-description: "多個開發者（或 AI agent）各自在 class 中新增 private 欄位，但都沒更新 reset 方法。導致跨 test case 狀態洩漏，測試結果取決於執行順序。根因是「新增欄位時同步所有生命週期路徑」這個隱含契約沒有被顯性化。"
+description: "測試結果取決於執行順序、單看像某個功能（retry 等）有 bug、實則是上一個 test case 的狀態沒清乾淨時回來看。根因是新增 private 欄位時沒同步更新 reset 方法，「新增欄位要同步所有生命週期路徑」這個隱含契約沒被顯性化。"
 tags: ["testing", "state-management", "design-pattern", "ai-agent", "retrospective"]
 ---
 
