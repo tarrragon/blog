@@ -46,7 +46,7 @@ def validate_something() -> tuple[bool, str]:
 
 ## 學習路徑
 
-```
+```text
 異常處理 → 返回值設計 → unittest 基礎 → Mock 技巧 → 頂層例外處理機制 → 可觀測性設計
 ```
 

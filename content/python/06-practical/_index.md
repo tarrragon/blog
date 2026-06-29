@@ -49,7 +49,7 @@ weight: 6
 
 ### 新增解析器的流程
 
-```
+```text
 1. 繼承 BaseParser
 2. 實作 parse 方法
 3. 註冊到 ParserFactory

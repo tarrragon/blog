@@ -252,7 +252,7 @@ handler = RotatingFileHandler(
 
 Hook 系統的日誌結構：
 
-```
+```text
 .claude/hook-logs/
 ├── branch-verify/
 │   ├── branch-verify-20240120-153000.log

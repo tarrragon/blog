@@ -293,7 +293,7 @@ python -m unittest -v tests/test_hook_io.py
 
 ### 目錄結構
 
-```
+```text
 .claude/lib/
 ├── __init__.py
 ├── git_utils.py

@@ -44,7 +44,7 @@ TDD有兩種截然不同的流派。
 
 核心差異不在寫法，而在耦合對象：
 
-```
+```text
 Sociable: Test → [Module API] → Module Implementation（黑盒）
 Solitary: Test → Mock(B) → Class A → Class B
                  Mock(C)           → Class C

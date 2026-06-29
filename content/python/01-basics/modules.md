@@ -26,7 +26,7 @@ from git_utils import get_current_branch
 
 包含 `__init__.py` 的目錄就是一個套件。套件可以包含多個模組。
 
-```
+```text
 .claude/lib/
 ├── __init__.py      # 使 lib 成為套件
 ├── git_utils.py     # 模組
@@ -238,7 +238,7 @@ def load_yaml_config():
 
 每個模組應該有單一、明確的職責：
 
-```
+```text
 lib/
 ├── git_utils.py      # Git 操作（單一職責）
 ├── hook_io.py        # 輸入輸出處理（單一職責）

@@ -115,7 +115,7 @@ Ticket 設計派工方法論 (主方法論)
 
 #### 職責識別實例
 
-**實例 1：簡單 Ticket（1 職責）**
+##### 實例 1：簡單 Ticket（1 職責）
 
 ```markdown
 任務：定義 SelectionManager 介面方法簽名
@@ -127,7 +127,7 @@ Ticket 設計派工方法論 (主方法論)
 判定：簡單 Ticket
 ```
 
-**實例 2：中等 Ticket（2-3 職責）**
+###### 實例 2：中等 Ticket（2-3 職責）
 
 ```markdown
 任務：實作 SelectionManager 基礎功能
@@ -141,7 +141,7 @@ Ticket 設計派工方法論 (主方法論)
 判定：中等 Ticket（可接受）
 ```
 
-**實例 3：複雜 Ticket（3-5 職責）- 建議拆分**
+###### 實例 3：複雜 Ticket（3-5 職責）- 建議拆分
 
 ```markdown
 任務：實作完整的 BookRepository
@@ -157,7 +157,7 @@ Ticket 設計派工方法論 (主方法論)
 判定：複雜 Ticket（建議拆分為 2-3 個 Ticket）
 ```
 
-**實例 4：必須拆分（> 5 職責）**
+###### 實例 4：必須拆分（> 5 職責）
 
 ```markdown
 任務：實作書籍評分完整功能（包含 UI、UseCase、Repository）
@@ -243,7 +243,7 @@ test/unit/domain/book_test.dart      | 40 ++++++++++++++++++++
 
 #### 行數估算實例
 
-**實例 1：簡單 Ticket（< 30 行）**
+##### 實例 1：簡單 Ticket（< 30 行）
 
 ```dart
 // 任務：定義 IBookRepository 介面
@@ -264,7 +264,7 @@ abstract class IBookRepository {
 // 判定：簡單 Ticket
 ```
 
-**實例 2：中等 Ticket（30-70 行）**
+###### 實例 2：中等 Ticket（30-70 行）
 
 ```dart
 // 任務：實作 Rating Value Object
@@ -294,7 +294,7 @@ void main() {
 // 判定：中等 Ticket
 ```
 
-**實例 3：複雜 Ticket（70-100 行）- 建議拆分**
+###### 實例 3：複雜 Ticket（70-100 行）- 建議拆分
 
 ```dart
 // 任務：實作完整的 BookRepository
@@ -395,7 +395,7 @@ lib/infrastructure/repositories/sqlite_book_repository.dart
 
 #### 檔案數實例
 
-**實例 1：簡單 Ticket（1 個檔案）**
+##### 實例 1：簡單 Ticket（1 個檔案）
 
 ```markdown
 任務：建立 Rating Value Object
@@ -407,7 +407,7 @@ lib/domain/value_objects/rating.dart
 判定：簡單 Ticket
 ```
 
-**實例 2：中等 Ticket（2-3 個檔案）**
+###### 實例 2：中等 Ticket（2-3 個檔案）
 
 ```markdown
 任務：更新 Book Entity 增加評分欄位
@@ -420,7 +420,7 @@ lib/domain/value_objects/rating.dart  （新增）
 判定：中等 Ticket
 ```
 
-**實例 3：複雜 Ticket（3-5 個檔案）- 建議拆分**
+###### 實例 3：複雜 Ticket（3-5 個檔案）- 建議拆分
 
 ```markdown
 任務：實作完整的書籍評分功能
@@ -436,7 +436,7 @@ lib/infrastructure/mappers/rating_mapper.dart
 判定：複雜 Ticket（建議拆分）
 ```
 
-**實例 4：必須拆分（> 5 個檔案）**
+###### 實例 4：必須拆分（> 5 個檔案）
 
 ```markdown
 任務：實作評分功能（含 UI、UseCase、Repository）
@@ -520,7 +520,7 @@ void main() {
 
 #### 測試數量實例
 
-**實例 1：簡單 Ticket（1-3 個測試）**
+##### 實例 1：簡單 Ticket（1-3 個測試）
 
 ```dart
 // 任務：定義 Rating Value Object
@@ -546,7 +546,7 @@ void main() {
 // 判定：簡單 Ticket
 ```
 
-**實例 2：中等 Ticket（3-6 個測試）**
+###### 實例 2：中等 Ticket（3-6 個測試）
 
 ```dart
 // 任務：實作 BookRepository.getBookByIsbn
@@ -565,7 +565,7 @@ void main() {
 // 判定：中等 Ticket
 ```
 
-**實例 3：複雜 Ticket（6-10 個測試）- 建議拆分**
+###### 實例 3：複雜 Ticket（6-10 個測試）- 建議拆分
 
 ```dart
 // 任務：實作完整的 BookRepository CRUD
@@ -631,7 +631,7 @@ where 複雜度等級：
 
 #### 整合評估實例
 
-**實例 1：所有指標都是簡單 → 簡單 Ticket**
+##### 實例 1：所有指標都是簡單 → 簡單 Ticket
 
 ```markdown
 任務：定義 Rating Value Object
@@ -646,7 +646,7 @@ where 複雜度等級：
 最終判定：簡單 Ticket（最理想狀態）
 ```
 
-**實例 2：有一個指標是中等 → 中等 Ticket**
+###### 實例 2：有一個指標是中等 → 中等 Ticket
 
 ```markdown
 任務：實作 Rating Value Object
@@ -661,7 +661,7 @@ where 複雜度等級：
 最終判定：中等 Ticket（可接受）
 ```
 
-**實例 3：有一個指標是複雜 → 複雜 Ticket（建議拆分）**
+###### 實例 3：有一個指標是複雜 → 複雜 Ticket（建議拆分）
 
 ```markdown
 任務：實作 BookRepository.getBookByIsbn
@@ -676,7 +676,7 @@ where 複雜度等級：
 最終判定：複雜 Ticket（建議拆分）
 ```
 
-**實例 4：有任一指標超標 → 必須拆分**
+###### 實例 4：有任一指標超標 → 必須拆分
 
 ```markdown
 任務：實作完整的書籍評分功能
@@ -731,21 +731,21 @@ where 複雜度等級：
 
 **複雜度特徵**：
 
-**Level 1: 簡單**
+#### Level 1: 簡單
 
 - **特徵**: 最小可交付單元，職責明確
 - **適用**: Interface 定義、單一 Value Object、單一方法實作
 - **優點**: 風險低、易測試、易 Review
 - **預估時間**: 5-20 分鐘
 
-**Level 2: 中等**
+##### Level 2: 中等
 
 - **特徵**: 少數相關職責，內聚性高
 - **適用**: 含業務邏輯的 Entity、基礎 Repository 方法
 - **注意**: 確保職責相關性，避免職責分散
 - **預估時間**: 20-40 分鐘
 
-**Level 3: 複雜**
+###### Level 3: 複雜
 
 - **特徵**: 多職責或跨檔案，整合性高
 - **適用**: 完整 UseCase、Repository CRUD、複雜業務邏輯
@@ -753,7 +753,7 @@ where 複雜度等級：
 - **預估時間**: 40-60 分鐘
 - **建議**: 優先評估是否可拆分為 Level 1-2
 
-**Level 4: 超標**
+###### Level 4: 超標
 
 - **特徵**: 任一指標超標，範圍失控
 - **問題**: God Ticket、高風險、難以管理
@@ -988,7 +988,7 @@ Level 4 → 必須拆分
 
 **決策節點詳細說明**:
 
-**節點 1：Level 3 拆分評估**
+#### 節點 1：Level 3 拆分評估
 
 ```text
 問題：此 Ticket 是否可拆分為更小 Ticket？
@@ -1012,7 +1012,7 @@ Level 4 → 必須拆分
 - 不滿足 1 或 2，但 3 成本高 → 勉強接受 Level 3
 ```
 
-**節點 2：Level 4 強制拆分**
+##### 節點 2：Level 4 強制拆分
 
 ```text
 Level 4 無需評估，必須拆分
@@ -1206,12 +1206,12 @@ Level 4 無需評估，必須拆分
    - 降低跨層依賴帶來的複雜度
    - 提升程式碼審查效率
 
-2. **依賴方向一致性**
+2. 依賴方向一致性
    - 遵循 Clean Architecture 依賴規則（內層不依賴外層）
    - 避免循環依賴
    - 確保架構穩定性
 
-3. **測試可獨立性**
+3. 測試可獨立性
    - 每層有明確的測試策略
    - 可獨立測試不依賴其他層
    - 簡化 Mock 和 Stub
@@ -1382,7 +1382,7 @@ REQ-LIB-001: 書籍資料存取功能
 
 → Level 1（簡單）
 
-```
+```text
 
 ---
 
@@ -1683,7 +1683,7 @@ REQ-LIB-001: 書籍查詢功能
 
 → Level 2（中等）
 
-```
+```text
 
 ---
 
@@ -1707,7 +1707,7 @@ REQ-LIB-001: 書籍查詢功能
 
 **決策準則**:
 
-**準則 1: 優先單層修改**
+#### 準則 1: 優先單層修改
 
 ```markdown
 問題: Ticket 是否只修改單一架構層級？
@@ -1716,7 +1716,7 @@ REQ-LIB-001: 書籍查詢功能
 - No → 評估是否可拆分為多個單層 Ticket
 ```
 
-**準則 2: 相鄰層整合可接受**
+##### 準則 2: 相鄰層整合可接受
 
 ```markdown
 問題: 是否為相鄰兩層的整合？
@@ -1733,7 +1733,7 @@ REQ-LIB-001: 書籍查詢功能
 - 跨越超過 2 層 → 必須拆分為多個 Ticket
 ```
 
-**準則 3: Interface 先行**
+###### 準則 3: Interface 先行
 
 ```markdown
 原則: Interface 定義必須先於實作
@@ -1746,7 +1746,7 @@ REQ-LIB-001: 書籍查詢功能
 依賴關係: Ticket C 依賴 B，B 依賴 A
 ```
 
-**準則 4: 測試獨立或整合**
+###### 準則 4: 測試獨立或整合
 
 ```markdown
 問題: 測試應該獨立 Ticket 還是整合到實作 Ticket？
@@ -1762,7 +1762,7 @@ REQ-LIB-001: 書籍查詢功能
 
 ### 3.4 分層拆分實務案例
 
-**完整案例：書籍評分功能實作**
+#### 完整案例：書籍評分功能實作
 
 #### 原始 God Ticket 分析
 
@@ -1783,7 +1783,7 @@ REQ-LIB-001: 書籍查詢功能
 
 ---
 
-**Ticket 1: 定義 Rating Domain 模型（Layer 5 - Domain Implementation）**
+##### Ticket 1: 定義 Rating Domain 模型（Layer 5 - Domain Implementation）
 
 ```markdown
 ## Ticket #201: 定義 Rating Value Object
@@ -1822,7 +1822,7 @@ REQ-RATING-001: 書籍評分功能
 
 ---
 
-**Ticket 2: 定義 Rating Entity（Layer 5 - Domain Implementation）**
+#### Ticket 2: 定義 Rating Entity（Layer 5 - Domain Implementation）
 
 ```markdown
 ## Ticket #202: 定義 Rating Entity
@@ -1861,7 +1861,7 @@ REQ-RATING-001: 書籍評分功能
 
 ---
 
-**Ticket 3: 定義 IRatingRepository 介面（Layer 4 - Domain Interfaces）**
+#### Ticket 3: 定義 IRatingRepository 介面（Layer 4 - Domain Interfaces）
 
 ```markdown
 ## Ticket #203: 定義 IRatingRepository 介面
@@ -1897,7 +1897,7 @@ REQ-RATING-001: 書籍評分功能
 
 ---
 
-**Ticket 4: 實作 SQLiteRatingRepository（Layer 5 - Infrastructure）**
+#### Ticket 4: 實作 SQLiteRatingRepository（Layer 5 - Infrastructure）
 
 ```markdown
 ## Ticket #204: 實作 SQLiteRatingRepository
@@ -1938,7 +1938,7 @@ REQ-RATING-001: 書籍評分功能
 
 ---
 
-**Ticket 5: 實作 RateBookUseCase（Layer 3 - UseCase）**
+#### Ticket 5: 實作 RateBookUseCase（Layer 3 - UseCase）
 
 ```markdown
 ## Ticket #205: 實作 RateBookUseCase
@@ -1980,7 +1980,7 @@ REQ-RATING-001: 書籍評分功能
 
 ---
 
-**Ticket 6: 實作 RatingWidget UI（Layer 1-2 - Presentation）**
+#### Ticket 6: 實作 RatingWidget UI（Layer 1-2 - Presentation）
 
 ```markdown
 ## Ticket #206: 實作 RatingWidget 和 RatingController
@@ -2588,11 +2588,11 @@ REQ-LIB-001: 書籍資料存取功能
 
 ### 5.3 Level 4 強制拆分策略
 
-**Level 4 無需評估，必須拆分**
+#### Level 4 無需評估，必須拆分
 
 #### 拆分策略優先順序
 
-**策略 1：按 Clean Architecture 分層拆分（優先）**
+##### 策略 1：按 Clean Architecture 分層拆分（優先）
 
 ```text
 適用情況：
@@ -2618,7 +2618,7 @@ REQ-LIB-001: 書籍資料存取功能
 結果：4 個 Level 1-2 Ticket
 ```
 
-**策略 2：按職責拆分（次之）**
+###### 策略 2：按職責拆分（次之）
 
 ```text
 適用情況：
@@ -2643,7 +2643,7 @@ REQ-LIB-001: 書籍資料存取功能
 結果：3 個 Level 2 Ticket
 ```
 
-**策略 3：按檔案拆分（最後）**
+###### 策略 3：按檔案拆分（最後）
 
 ```text
 適用情況：
@@ -2701,7 +2701,7 @@ REQ-LIB-001: 書籍資料存取功能
 
 ### 6.1 拆分前檢查清單
 
-**階段 1：需求理解**
+#### 階段 1：需求理解
 
 ```markdown
 □ 已閱讀完整的業務需求
@@ -2711,7 +2711,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 已確認與其他 Ticket 的依賴關係
 ```
 
-**階段 2：指標計算**
+##### 階段 2：指標計算
 
 ```markdown
 □ 已列出所有職責（功能點 + 邊界條件 + 異常處理）
@@ -2721,7 +2721,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 已取最高複雜度等級作為最終評估
 ```
 
-**階段 3：複雜度確認**
+###### 階段 3：複雜度確認
 
 ```markdown
 □ 已確定 Ticket 的複雜度等級（Level 1-4）
@@ -2734,7 +2734,7 @@ REQ-LIB-001: 書籍資料存取功能
 
 ### 6.2 拆分過程檢查清單
 
-**階段 4：拆分策略選擇**
+#### 階段 4：拆分策略選擇
 
 ```markdown
 □ 已分析 Ticket 涉及的架構層級
@@ -2743,7 +2743,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 已為每個子 Ticket 撰寫初步描述
 ```
 
-**階段 5：子 Ticket 設計**
+##### 階段 5：子 Ticket 設計
 
 ```markdown
 □ 每個子 Ticket 都有明確的目標
@@ -2753,7 +2753,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 每個子 Ticket 都標記了依賴關係
 ```
 
-**階段 6：依賴關係確認**
+###### 階段 6：依賴關係確認
 
 ```markdown
 □ 已識別所有子 Ticket 之間的依賴
@@ -2766,7 +2766,7 @@ REQ-LIB-001: 書籍資料存取功能
 
 ### 6.3 拆分後驗證清單
 
-**階段 7：指標重新評估**
+#### 階段 7：指標重新評估
 
 ```markdown
 □ 已重新計算每個子 Ticket 的 4 個指標
@@ -2775,7 +2775,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 如有 Level 3 子 Ticket，已評估合理性
 ```
 
-**階段 8：完整性驗證**
+##### 階段 8：完整性驗證
 
 ```markdown
 □ 所有子 Ticket 功能總和 = 原始 Ticket 功能
@@ -2785,7 +2785,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 所有測試案例都被包含
 ```
 
-**階段 9：品質檢查**
+###### 階段 9：品質檢查
 
 ```markdown
 □ 每個子 Ticket 都有業務需求引用
@@ -2799,7 +2799,7 @@ REQ-LIB-001: 書籍資料存取功能
 
 ### 6.4 特殊情況檢查清單
 
-**情況 1：無法拆分的 Level 3 Ticket**
+#### 情況 1：無法拆分的 Level 3 Ticket
 
 ```markdown
 □ 已明確記錄為何無法拆分
@@ -2809,7 +2809,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 已準備更長的開發時間
 ```
 
-**情況 2：跨層整合 Ticket**
+##### 情況 2：跨層整合 Ticket
 
 ```markdown
 □ 已確認只涉及相鄰兩層（如 Layer 3 + Layer 4-5）
@@ -2818,7 +2818,7 @@ REQ-LIB-001: 書籍資料存取功能
 □ 已包含整合測試驗收條件
 ```
 
-**情況 3：測試獨立 Ticket**
+###### 情況 3：測試獨立 Ticket
 
 ```markdown
 □ 已確認生產程式碼已完成（依賴 Ticket）
@@ -2882,7 +2882,7 @@ REQ-SEARCH-001: 實作書籍搜尋功能
 
 #### 拆分策略：Clean Architecture 分層拆分
 
-**第一步：按層級分組檔案**
+##### 第一步：按層級分組檔案
 
 ```text
 Layer 5 (Domain + Infrastructure):
@@ -2903,11 +2903,11 @@ Layer 1 (UI):
 - SearchResultList Widget
 ```
 
-**第二步：設計拆分後的 Ticket**
+###### 第二步：設計拆分後的 Ticket
 
 ---
 
-**Ticket 1: 定義 SearchQuery Value Object（Layer 5）**
+###### Ticket 1: 定義 SearchQuery Value Object（Layer 5）
 
 ```markdown
 ## Ticket #301: 定義 SearchQuery Value Object
@@ -2949,7 +2949,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 
 ---
 
-**Ticket 2: 擴充 IBookRepository 查詢方法（Layer 4）**
+#### Ticket 2: 擴充 IBookRepository 查詢方法（Layer 4）
 
 ```markdown
 ## Ticket #302: 定義 IBookRepository 搜尋方法
@@ -2989,7 +2989,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 
 ---
 
-**Ticket 3: 實作 BookRepository 搜尋方法（Layer 5）**
+#### Ticket 3: 實作 BookRepository 搜尋方法（Layer 5）
 
 ```markdown
 ## Ticket #303: 實作 SQLiteBookRepository 搜尋
@@ -3036,7 +3036,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 
 ---
 
-**Ticket 4: 實作 SearchBookUseCase（Layer 3）**
+#### Ticket 4: 實作 SearchBookUseCase（Layer 3）
 
 ```markdown
 ## Ticket #304: 實作 SearchBookUseCase
@@ -3081,7 +3081,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 
 ---
 
-**Ticket 5: 實作 SearchController（Layer 2）**
+#### Ticket 5: 實作 SearchController（Layer 2）
 
 ```markdown
 ## Ticket #305: 實作 SearchController
@@ -3126,7 +3126,7 @@ REQ-SEARCH-001: 書籍搜尋功能
 
 ---
 
-**Ticket 6: 實作搜尋 UI 元件（Layer 1）**
+#### Ticket 6: 實作搜尋 UI 元件（Layer 1）
 
 ```markdown
 ## Ticket #306: 實作 SearchBar 和 SearchResultList

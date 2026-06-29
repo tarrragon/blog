@@ -1984,7 +1984,7 @@ flutter test --coverage
 
 **檢查項目**:
 
-**層級定位檢查**
+#### 層級定位檢查
 
 - [ ] Ticket 標題包含層級標示（如 [Layer 2]）
 - [ ] 職責描述清楚說明修改哪一層
@@ -2002,13 +2002,13 @@ flutter test --coverage
 - [ ] 預估工時: 2-8 小時（1 個工作天內）
 - [ ] 如果超過標準，規劃拆分策略
 
-**Code Smell 預防檢查**
+##### Code Smell 預防檢查
 
 - [ ] 檢查是否有 Shotgun Surgery 風險（層級跨度 > 1）
 - [ ] 檢查是否有 God Ticket 風險（檔案數 > 5）
 - [ ] 檢查是否有 Ambiguous Responsibility 風險（職責不明確）
 
-**依賴關係檢查**
+###### 依賴關係檢查
 
 - [ ] 依賴的內層介面已存在（或同時設計）
 - [ ] 依賴方向正確（外層→內層）
@@ -2028,19 +2028,19 @@ flutter test --coverage
 - [ ] 不需要啟動其他層級（使用 Mock）
 - [ ] 測試檔案路徑對應層級結構
 
-**測試獨立性檢查**
+#### 測試獨立性檢查
 
 - [ ] 測試不依賴外部資源（資料庫、網路）
 - [ ] 測試可以獨立執行（不依賴其他測試）
 - [ ] 使用 Mock/Stub 隔離依賴
 
-**測試完整性檢查**
+##### 測試完整性檢查
 
 - [ ] 正常流程測試（Happy Path）
 - [ ] 異常流程測試（Error Cases）
 - [ ] 邊界條件測試（Boundary Conditions）
 
-**Code Smell 檢查**
+###### Code Smell 檢查
 
 - [ ] 檢查是否有 Incomplete Ticket 風險（缺少測試）
 - [ ] 測試覆蓋率目標設定（100%）
@@ -2053,27 +2053,27 @@ flutter test --coverage
 
 **檢查項目**:
 
-**程式碼品質檢查**
+#### 程式碼品質檢查
 
 - [ ] 方法行數 < 50 行（避免 Long Method）
 - [ ] 類別行數 < 300 行（避免 Large Class）
 - [ ] 巢狀層級 < 3 層
 - [ ] 使用 package 導入格式（避免相對路徑）
 
-**層級隔離檢查**
+##### 層級隔離檢查
 
 - [ ] import 語句只引用內層或同層
 - [ ] 不存在內層依賴外層的情況
 - [ ] 使用介面依賴，不依賴具體實作
 
-**Code Smell 檢查**
+###### Code Smell 檢查
 
 - [ ] 檢查是否有 Feature Envy（UI 直接存取 Domain）
 - [ ] 檢查是否有 Inappropriate Intimacy（依賴方向錯誤）
 - [ ] 檢查是否有 Leaky Abstraction（介面洩漏實作）
 - [ ] 檢查是否有 Divergent Change（方法可分組）
 
-**測試執行檢查**
+###### 測試執行檢查
 
 - [ ] 所有測試 100% 通過
 - [ ] dart analyze 無錯誤和警告
@@ -2087,28 +2087,28 @@ flutter test --coverage
 
 **檢查項目**:
 
-**Code Smell 掃描**
+#### Code Smell 掃描
 
 - [ ] 使用 dart analyze 檢測 unused 警告（Dead Code）
 - [ ] 檢查方法行數和類別行數（Long Method, Large Class）
 - [ ] 檢查方法分組（Divergent Change）
 - [ ] 檢查依賴方向（Inappropriate Intimacy）
 
-**重構優先級評估**
+##### 重構優先級評估
 
 - [ ] 計算影響範圍（1-5）
 - [ ] 評估業務風險（1-5）
 - [ ] 評估累積速度（1-5）
 - [ ] 計算優先級分數
 
-**重構執行檢查**
+###### 重構執行檢查
 
 - [ ] 重構前測試覆蓋率基準
 - [ ] 漸進式重構（每次一個 Code Smell）
 - [ ] 重構後測試覆蓋率不降低
 - [ ] Code Review 確認重構正確性
 
-**重構完成檢查**
+###### 重構完成檢查
 
 - [ ] Code Smell 已修正
 - [ ] 所有測試通過
@@ -2116,7 +2116,7 @@ flutter test --coverage
 
 ---
 
-**第一批次撰寫完成（第一章到第五章）**
+###### 第一批次撰寫完成（第一章到第五章）
 
 ---
 
@@ -2142,7 +2142,7 @@ flutter test --coverage
   - test/ 目錄結構是否對應 lib/ 結構
   - 測試檔案數量是否與程式碼檔案數量相當
 
-**Ticket 粒度快速檢查**
+#### Ticket 粒度快速檢查
 
 - [ ] **檔案數量 < 5 個？**
   - > 5 個檔案 → 可能是 God Ticket
@@ -2151,7 +2151,7 @@ flutter test --coverage
 - [ ] **程式碼變更行數合理（< 500 行）？**
   - 變更行數過多可能暗示 Ticket 範圍過大
 
-**明顯 Code Smell 檢查**
+##### 明顯 Code Smell 檢查
 
 - [ ] **UI 層是否包含業務邏輯？**
   - 檢查 Widget 中是否有業務規則判斷
@@ -2170,15 +2170,15 @@ flutter test --coverage
 
 **目標**: 全面檢查所有類別的 Code Smell
 
-**A 類 Code Smell 檢查（跨層級）**
+#### A 類 Code Smell 檢查（跨層級）
 
-**Shotgun Surgery 檢查**
+##### Shotgun Surgery 檢查
 
 - [ ] 統計 PR 修改的檔案數和層級跨度
 - [ ] 檢查是否有單一變更需要修改多個層級
 - [ ] 評估是否應該引入 Facade 隔離變更
 
-**Feature Envy 檢查**
+###### Feature Envy 檢查
 
 - [ ] 檢查 UI 是否直接依賴 Entity
   - 搜尋 `import .*/domains/.*/entities/`
@@ -2188,7 +2188,7 @@ flutter test --coverage
   - 超過 3 次 → Feature Envy
   - 建議引入 Presenter 轉換
 
-**Inappropriate Intimacy 檢查**
+###### Inappropriate Intimacy 檢查
 
 - [ ] 檢查依賴方向是否正確
   - Domain 不應依賴外層
@@ -2197,7 +2197,7 @@ flutter test --coverage
 - [ ] 檢查是否有循環依賴
   - 執行 `dart analyze` 確認
 
-**Leaky Abstraction 檢查**
+###### Leaky Abstraction 檢查
 
 - [ ] 檢查 Repository 介面是否洩漏實作細節
   - 方法名稱不應包含 SQL、HTTP、Cache 等關鍵字
@@ -2206,15 +2206,15 @@ flutter test --coverage
 - [ ] 檢查 Event 定義是否包含 UI 特定資料
   - 不應包含 BuildContext 等 UI 類型
 
-**B 類 Code Smell 檢查（單層級）**
+###### B 類 Code Smell 檢查（單層級）
 
-**Divergent Change 檢查**
+###### Divergent Change 檢查
 
 - [ ] 分析類別方法是否可以分組
   - > 2 個群組 → Divergent Change
   - 建議拆分為多個單一職責類別
 
-**Large Class 檢查**
+###### Large Class 檢查
 
 - [ ] 檢查類別行數是否超過 300 行
   - 使用 `wc -l {file}` 檢查
@@ -2223,7 +2223,7 @@ flutter test --coverage
 - [ ] 檢查 public 方法數量是否超過 15 個
 - [ ] 檢查屬性數量是否超過 12 個
 
-**Long Method 檢查**
+###### Long Method 檢查
 
 - [ ] 檢查方法行數是否超過 50 行
   - 超過標準 → 建議 Extract Method
@@ -2234,13 +2234,13 @@ flutter test --coverage
 - [ ] 檢查方法名稱是否包含「And」
   - 如 `validateAndSave` → 應拆分
 
-**Dead Code 檢查**
+###### Dead Code 檢查
 
 - [ ] 執行 `dart analyze | grep "unused"`
   - 檢查是否有 unused 警告
   - 確認所有警告都已處理
 
-**測試完整性檢查**
+###### 測試完整性檢查
 
 - [ ] **測試覆蓋率是否達到 100%？**
   - 執行 `flutter test --coverage`
@@ -2474,16 +2474,16 @@ class BookPresenter {
 
 **檢測項目**:
 
-1. **Ticket 粒度檢查**
+1. Ticket 粒度檢查
    - 計算預估修改檔案數
    - 判斷層級跨度
    - 評估預估工時
 
-2. **God Ticket 檢測**
+2. God Ticket 檢測
    - 檔案數 > 10 → 警告並建議拆分
    - 層級跨度 > 2 → 強制拆分
 
-3. **Ambiguous Responsibility 檢測**
+3. Ambiguous Responsibility 檢測
    - 檢查 Ticket 標題是否包含 [Layer X]
    - 檢查職責描述是否明確
 
@@ -2502,15 +2502,15 @@ class BookPresenter {
 
 **檢測項目**:
 
-1. **dart analyze 執行**
+1. dart analyze 執行
    - 檢測 unused 警告（Dead Code）
    - 檢測語法錯誤
 
-2. **檔案行數檢查**
+2. 檔案行數檢查
    - 類別行數 > 300 → 警告 Large Class
    - 方法行數 > 50 → 警告 Long Method
 
-3. **import 語句分析**
+3. import 語句分析
    - 檢測 UI 是否 import Domain Entity（Feature Envy）
    - 檢測依賴方向是否正確（Inappropriate Intimacy）
 
@@ -2529,15 +2529,15 @@ class BookPresenter {
 
 **檢測項目**:
 
-1. **層級隔離檢查**
+1. 層級隔離檢查
    - 執行完整的 A 類 Code Smell 檢測
    - 檢查所有修改檔案的層級定位
 
-2. **測試覆蓋率檢查**
+2. 測試覆蓋率檢查
    - 執行 `flutter test --coverage`
    - 確保覆蓋率 ≥ 95%
 
-3. **Code Smell 掃描**
+3. Code Smell 掃描
    - 執行所有 11 種 Code Smell 檢測
    - 生成 Code Smell 檢測報告
 
@@ -3536,11 +3536,11 @@ void processOrder(Order order) {
    - 實作階段發現 → 修正成本中（需要重寫程式碼）
    - 維護階段發現 → 修正成本高（需要大規模重構）
 
-2. **預防勝於治療**
+2. 預防勝於治療
    - Ticket 設計時檢測到 God Ticket → 拆分為多個 Ticket
    - 避免實作後才發現範圍過大
 
-3. **與 TDD 四階段整合**
+3. 與 TDD 四階段整合
    - Phase 1 設計：檢測 Ticket 粒度（C1, C3, A1）
    - Phase 2 測試：檢測測試範圍（C2）
    - Phase 3 實作：檢測程式碼品質（A2, A3, A4, B2, B3）
@@ -3615,16 +3615,16 @@ Ticket 粒度檢測（Phase 1）:
 
 **正確理解**:
 
-1. **量化指標是參考，不是絕對**
+1. 量化指標是參考，不是絕對
    - 方法行數 > 50 行 → 「建議」拆分，不是「強制」
    - 特殊情況（如配置檔載入）可以例外
 
-2. **檢查清單是輔助，不是束縛**
+2. 檢查清單是輔助，不是束縛
    - 幫助發現潛在問題
    - 提供重構方向
    - 不限制創新設計
 
-3. **重構是投資，不是成本**
+3. 重構是投資，不是成本
    - 短期投入時間重構
    - 長期降低維護成本
    - 提升團隊生產力
@@ -3684,7 +3684,7 @@ Phase 4 重構:
    - 允許：臨時性的大規模修改
    - 要求：完整的測試覆蓋率、詳細的遷移計畫
 
-2. **Hotfix（緊急修復）**
+2. Hotfix（緊急修復）
    - 情境：生產環境緊急 Bug 修復
    - 允許：臨時性跨層修改
    - 要求：事後必須重構、補充測試

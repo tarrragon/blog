@@ -142,7 +142,7 @@ except Exception:
 
 Python 的例外繼承結構：
 
-```
+```text
 BaseException
 ├── KeyboardInterrupt    ← Ctrl+C
 ├── SystemExit           ← sys.exit()
@@ -213,7 +213,7 @@ def _log_exception(logger, hook_name, tb_str):
 
 ### 實際案例
 
-```
+```text
 # 用戶看到的訊息（W25-005 之前）
 SessionStart:startup hook success: Success     ← 看起來正常
 SessionStart:startup hook success: Success

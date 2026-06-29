@@ -82,7 +82,7 @@ def main():
 
 Python 的變數查找遵循 **LEGB 規則**：
 
-```
+```text
 L - Local      : 函式內部
 E - Enclosing  : 外層函式（閉包）
 G - Global     : 模組級
@@ -126,7 +126,7 @@ def run_hook_safely(main_func, hook_name):
 
 流程是這樣的：
 
-```
+```text
 1. main() 被 run_hook_safely 呼叫
 2. main() 內呼叫 check_acceptance_criteria()
 3. check_acceptance_criteria() 引用 logger → NameError
@@ -164,7 +164,7 @@ for node in ast.walk(tree):
 
 輸出：
 
-```
+```text
   check_acceptance_criteria() references logger
   validate_ticket_format() references logger
   check_worklog_sections() references logger

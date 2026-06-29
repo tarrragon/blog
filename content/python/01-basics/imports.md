@@ -21,7 +21,7 @@ for path in sys.path:
 
 典型輸出：
 
-```
+```text
 /current/script/directory     # 腳本所在目錄
 /usr/local/lib/python3.11     # 標準庫
 /usr/local/lib/python3.11/site-packages  # 第三方套件
@@ -33,7 +33,7 @@ for path in sys.path:
 
 Hook 腳本位於 `.claude/hooks/`，共用模組位於 `.claude/lib/`：
 
-```
+```text
 .claude/
 ├── hooks/
 │   └── branch-verify-hook.py    # 需要導入 lib 的模組
@@ -152,7 +152,7 @@ config_path = os.path.join(root, ".claude", "config.json")
 
 ### 錯誤 1: ModuleNotFoundError
 
-```
+```text
 ModuleNotFoundError: No module named 'git_utils'
 ```
 
@@ -160,7 +160,7 @@ ModuleNotFoundError: No module named 'git_utils'
 
 ### 錯誤 2: 相對導入錯誤
 
-```
+```text
 ImportError: attempted relative import with no known parent package
 ```
 
@@ -178,7 +178,7 @@ from lib import git_utils
 
 ### 錯誤 3: 循環導入
 
-```
+```text
 ImportError: cannot import name 'xxx' from partially initialized module
 ```
 
