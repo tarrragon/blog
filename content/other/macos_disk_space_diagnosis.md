@@ -1,7 +1,7 @@
 ---
 title: "macOS 磁碟空間被吃光的診斷流程"
 date: 2026-06-26
-description: "Mac 空間莫名歸零、清 cache 又沒救、或空間掉了又回來時照這條順序走。避開兩個讓人空轉的陷阱：sparse 假大小和本地快照浮動。含 disk-report 腳本一行重跑。"
+description: "Mac 空間莫名歸零、清 cache 沒救、或空間掉了又回來時的排查順序。避開 sparse 假大小和本地快照浮動的誤判。含 disk-report 腳本。"
 tags: ["macos", "disk-space", "apfs", "time-machine", "troubleshooting", "tooling"]
 ---
 

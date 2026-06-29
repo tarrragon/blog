@@ -1,7 +1,7 @@
 ---
 title: "macOS 新機基礎建設：套件管理與個人 bin 的設定順序"
 date: 2026-06-27
-description: "重灌或換機後最底層的三項基礎建設該用什麼順序鋪，免得後面工具裝不起來或路徑互相找不到。"
+description: "重灌或換機後底層基礎建設的依賴順序，免得後面工具裝不起來或路徑互相找不到。"
 tags: ["macos", "setup", "homebrew", "bash", "tooling"]
 ---
 

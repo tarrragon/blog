@@ -1,7 +1,7 @@
 ---
 title: "Vendor 深度技術文章的寫作方法論：從 overview 到 implementation"
 date: 2026-05-18
-description: "vendor overview 已齊全、要往下寫單一功能的深度實作文章時回來。給選題判準、6 段結構骨架、與 overview 的職責劃分。"
+description: "vendor overview 已齊全、要往下寫單一功能的深度實作文章時的選題判準、結構骨架、與 overview 的職責劃分。"
 tags: ["writing-methodology", "vendor-article", "technical-writing", "case-first"]
 ---
 
