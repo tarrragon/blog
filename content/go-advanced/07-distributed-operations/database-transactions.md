@@ -3,6 +3,11 @@ title: "7.1 資料庫 transaction 與 schema migration"
 date: 2026-04-22
 description: "把 repository 邊界延伸到資料庫交易、migration 與一致性語意"
 weight: 1
+tags:
+  - "go"
+  - "go-advanced"
+  - "distributed-systems"
+  - "architecture"
 ---
 
 資料庫整合的核心責任是讓持久化行為符合 application 的狀態規則。Repository port 決定 usecase 需要哪些資料能力；[transaction boundary](/backend/knowledge-cards/transaction-boundary/)、[schema migration](/backend/knowledge-cards/schema-migration/)、[Expand / Contract](/backend/knowledge-cards/expand-contract/) 與 [isolation level](/backend/knowledge-cards/isolation-level/) 則決定這些能力在資料庫中如何保持一致。

@@ -3,6 +3,7 @@ title: "9.2 第三方 parser 整合：goldmark AST 入門"
 date: 2026-04-24
 description: "用 goldmark 把 markdown 解析成 AST，掌握 ast.Walk visitor 模式、block 與 inline 節點的判讀、byte offset 如何定位到行號"
 weight: 2
+tags: ["go", "tooling"]
 ---
 
 第三方 parser 整合的核心責任是**把外部格式的語法細節封裝成可走訪的結構化樹**，讓上層業務邏輯脫離字串處理，直接在 AST 節點上判讀。對 markdown 這類格式，成熟 parser（如 goldmark）提供完整 CommonMark 解析、GFM 擴充、位置資訊；上層工具透過 [AST walker](/go/glossary/#ast-walker) 接住 AST 後再決定要做 lint、[rewrite](/go/09-tooling-and-analysis/ast-idempotent-rewriting/)、render 或 [graph 分析](/go/09-tooling-and-analysis/cross-file-graph-analysis/)。

@@ -3,6 +3,13 @@ title: "模組三：Runtime 與效能診斷"
 date: 2026-04-22
 description: "GC、memory limit、pprof、goroutine leak 與 allocation 壓力"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "runtime"
+  - "profiling"
+  - "pprof"
+  - "gc"
 ---
 
 Runtime 診斷的核心目標是用資料判斷服務壓力來源。Go 服務長時間運行後，問題常出現在 heap 成長、GC 壓力、goroutine 數量、[WebSocket](/backend/knowledge-cards/websocket) [buffer](/backend/knowledge-cards/buffer) 堆積、JSON 配置與共享狀態保留；診斷流程應先看趨勢，再用 profile 定位來源。

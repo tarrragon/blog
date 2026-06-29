@@ -3,6 +3,12 @@ title: "1.1 channel ownership 與關閉責任"
 date: 2026-04-22
 description: "判斷誰能送出、接收與關閉 channel"
 weight: 1
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "channel"
+  - "goroutine"
 ---
 
 Channel ownership 的核心規則是：能保證不再送出資料的一方，才有資格關閉 channel。建立 channel 的程式碼不一定是 owner；真正的 owner 是掌握 send lifecycle 的元件。

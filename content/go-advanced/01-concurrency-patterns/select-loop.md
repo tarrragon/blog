@@ -3,6 +3,12 @@ title: "1.2 select loop 的生命週期設計"
 date: 2026-04-22
 description: "理解長時間運行 goroutine 如何同時處理事件、ticker 與取消"
 weight: 2
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "select"
+  - "goroutine"
 ---
 
 `select` loop 的核心責任是管理長時間 goroutine 的生命週期。它不只是等待多個 channel 的語法，而是決定元件如何接收輸入、處理定時任務、回應取消、釋放資源與停止。

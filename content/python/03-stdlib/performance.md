@@ -3,6 +3,7 @@ title: "3.8 效能迷思與優化策略"
 date: 2026-01-20
 description: "Python 效能的真相、常見誤解與優化方法"
 weight: 8
+tags: ["python", "stdlib", "performance"]
 ---
 
 「Python 很慢」是程式設計社群中最常見的說法之一。本章將探討這個說法的真相、何時效能真的重要，以及如何有效地優化 Python 程式。

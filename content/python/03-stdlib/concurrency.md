@@ -3,6 +3,7 @@ title: "3.7 並行處理 - threading、multiprocessing、concurrent.futures"
 date: 2026-01-20
 description: "Python 並行處理的三種方式與選擇指南"
 weight: 7
+tags: ["python", "stdlib", "performance"]
 ---
 
 

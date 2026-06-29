@@ -3,6 +3,7 @@ title: "5.2 返回值設計"
 date: 2026-01-20
 description: "(bool, str) 模式的應用"
 weight: 2
+tags: ["python", "error-handling"]
 ---
 
 Hook 系統採用 `(bool, str)` 返回值模式，這是一種替代異常處理的設計策略。本章深入探討這個模式的設計理念和最佳實踐。

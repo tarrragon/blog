@@ -3,6 +3,7 @@ title: "4.3 pybind11：現代 C++ 綁定"
 date: 2026-01-20
 description: "使用 pybind11 建立 Python 與 C++ 的綁定"
 weight: 3
+tags: ["python", "python-advanced", "c-extension"]
 ---
 
 

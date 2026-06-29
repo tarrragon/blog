@@ -3,6 +3,7 @@ title: "案例：插件架構設計"
 date: 2026-01-21
 description: "用 Protocol 和註冊機制實現可擴展的插件系統"
 weight: 2
+tags: ["python", "python-advanced", "design-patterns", "case-study"]
 ---
 
 

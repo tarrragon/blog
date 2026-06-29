@@ -3,6 +3,7 @@ title: "6.7 Go 常見服務場景總覽"
 date: 2026-04-23
 description: "整理 Go 最常落地的服務情境：即時、背景、事件、通知與 API 聚合"
 weight: 7
+tags: ["go", "architecture", "best-practices"]
 ---
 
 這一章先整理 Go 常見會被用到的服務場景。對剛從 PHP 或 Python 轉來的讀者來說，先知道 Go 最常做哪些事，會更容易理解前面那些語言特性為什麼重要。

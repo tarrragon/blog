@@ -3,6 +3,7 @@ title: "8.9 ByteDance / CloudWeGo：微服務基礎設施"
 date: 2026-04-23
 description: "看 Go 如何從單一服務語言沉澱成微服務治理與框架"
 weight: 9
+tags: ["go", "case-study", "networking"]
 ---
 
 CloudWeGo 是理解 Go 在大型公司內部如何演化成基礎設施層的好案例。官方介紹指出，它是 ByteDance Infrastructure Service Framework 團隊開源的 middleware 集合，核心關注是高性能、高擴展性、高可靠性與微服務溝通與治理。

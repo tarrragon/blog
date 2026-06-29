@@ -3,6 +3,7 @@ title: "案例：類似 Django Field 的設計"
 date: 2026-01-21
 description: "結合 Descriptor 和 dataclass 設計類似 Django Model Field 的宣告式 API"
 weight: 3
+tags: ["python", "python-advanced", "metaprogramming", "descriptor", "case-study"]
 ---
 
 

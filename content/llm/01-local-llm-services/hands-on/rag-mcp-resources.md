@@ -14,7 +14,7 @@ weight: 9
 > **環境**：M4 Pro 32 GB、Ollama 0.23.2、Python 3.14
 > **Corpus**：本 blog 的 `content/llm/`、71 個 markdown 檔、463 chunks
 
-## 三階段資源 footprint
+## 各階段資源 footprint
 
 RAG / MCP 工作流通常分三階段、各自吃不同資源：
 

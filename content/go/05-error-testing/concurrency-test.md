@@ -3,6 +3,7 @@ title: "5.6 並發行為測試"
 date: 2026-04-22
 description: "測試 channel、goroutine 與狀態更新"
 weight: 6
+tags: ["go", "testing", "concurrency"]
 ---
 
 並發測試的核心目標是驗證可觀察的同步行為，而不是猜測 goroutine 的執行順序。Go 的 goroutine 由 scheduler 安排，測試應該用 channel、context、WaitGroup 與 [timeout](/backend/knowledge-cards/timeout/) 表達「什麼結果必須發生」。

@@ -3,6 +3,7 @@ title: "6.4 如何新增背景工作流程"
 date: 2026-04-22
 description: "接入 context、channel 與 shutdown"
 weight: 4
+tags: ["go", "concurrency", "goroutine"]
 ---
 
 新增背景工作流程的核心規則是先定義生命週期，再定義資料流。worker 是有 context、輸入、輸出、錯誤處理與 shutdown 協定的長期元件。

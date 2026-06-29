@@ -3,6 +3,7 @@ title: "案例：使用 Hatch 完整工作流"
 date: 2026-01-21
 description: "從專案建立到發布的 Hatch 實戰指南"
 weight: 3
+tags: ["python", "python-advanced", "packaging", "hatch", "case-study"]
 ---
 
 

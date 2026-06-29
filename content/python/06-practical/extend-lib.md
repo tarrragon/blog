@@ -3,6 +3,7 @@ title: "6.2 如何擴展共用模組"
 date: 2026-01-20
 description: "為 Hook 系統添加新功能"
 weight: 2
+tags: ["python", "modules"]
 ---
 
 本章介紹如何為 `.claude/lib/` 共用程式庫添加新功能。這是維護和擴展 Hook 系統的關鍵技能。

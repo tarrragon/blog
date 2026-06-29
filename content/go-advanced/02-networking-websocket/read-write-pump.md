@@ -3,6 +3,12 @@ title: "2.1 read pump / write pump 模式"
 date: 2026-04-22
 description: "分離 WebSocket 讀取、寫入與心跳"
 weight: 1
+tags:
+  - "go"
+  - "go-advanced"
+  - "websocket"
+  - "networking"
+  - "goroutine"
 ---
 
 Read pump / write pump 的核心規則是單一 [WebSocket](/backend/knowledge-cards/websocket/) 連線的讀取與寫入必須分成兩個協調的 goroutine。Read pump 擁有讀取權，write pump 擁有寫入權；其他元件不直接操作底層 connection，而是透過 channel 或 method 協作。

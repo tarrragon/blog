@@ -3,6 +3,7 @@ title: "模組一：Python 基礎概念"
 date: 2026-01-20
 description: "Python 語言、script、module、package 與 import 機制的核心概念快速回顧"
 weight: 1
+tags: ["python", "basics", "modules", "imports"]
 ---
 
 

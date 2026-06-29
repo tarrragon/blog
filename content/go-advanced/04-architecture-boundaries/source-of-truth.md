@@ -3,6 +3,11 @@ title: "4.3 Source of Truth：狀態邊界"
 date: 2026-04-22
 description: "集中狀態更新、保護可變資料、設計查詢 projection"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "architecture"
+  - "clean-architecture"
 ---
 
 [Source of truth](/backend/knowledge-cards/source-of-truth/) 的核心原則是系統中只有一個地方負責判定目前狀態。其他元件可以請求更新、讀取快照或訂閱變化，但不能各自保存一份會被當成真相的資料。

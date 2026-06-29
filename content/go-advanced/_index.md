@@ -3,6 +3,12 @@ title: "Go 進階指南"
 date: 2026-04-22
 description: "深入 Go 並發、WebSocket、runtime 與服務架構"
 weight: 33
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "websocket"
+  - "runtime"
 ---
 
 本系列是接在入門教學之後的延伸路線，目標是把 Go 的並發模式、[WebSocket](/backend/knowledge-cards/websocket/) 服務架構、runtime 診斷、狀態邊界與生產環境可觀測性講到能真正用在服務上。語法細節留在入門篇；進階篇聚焦長時間服務會遇到的設計壓力。

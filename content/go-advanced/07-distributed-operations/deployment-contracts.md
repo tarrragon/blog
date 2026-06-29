@@ -3,6 +3,11 @@ title: "7.5 Kubernetes、systemd 與 load balancer 合約"
 date: 2026-04-22
 description: "理解部署平台如何影響 Go 服務的 shutdown、health 與資源限制"
 weight: 5
+tags:
+  - "go"
+  - "go-advanced"
+  - "deployment"
+  - "production"
 ---
 
 部署平台合約的核心責任是讓 Go 服務的生命週期和外部調度系統對齊。程式內部需要清楚的 context、shutdown [timeout](/backend/knowledge-cards/timeout/)、[readiness](/backend/knowledge-cards/readiness/)、[health / liveness](/backend/knowledge-cards/health-check-liveness/) 與 memory limit；Kubernetes、systemd、load balancer 或雲端平台則決定這些訊號何時被觸發與如何被解讀。

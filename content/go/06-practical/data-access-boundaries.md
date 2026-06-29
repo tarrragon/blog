@@ -3,6 +3,7 @@ title: "6.8 高併發下的 Redis 與 SQL 使用原則"
 date: 2026-04-23
 description: "從 Go 服務角度整理 Redis 與 SQL 的高併發存取邊界"
 weight: 8
+tags: ["go", "performance", "architecture"]
 ---
 
 這一章從 Go 服務的角度整理資料存取原則。重點在於：當併發增加時，Go 端要用明確邊界使用 Redis 或 SQL，讓下游維持可承受的請求節奏。

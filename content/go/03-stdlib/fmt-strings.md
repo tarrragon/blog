@@ -3,6 +3,7 @@ title: "3.1 fmt、strings 與基本文字處理"
 date: 2026-04-22
 description: "處理格式化輸出、字串清理、切割與組合"
 weight: 1
+tags: ["go", "stdlib"]
 ---
 
 文字處理的核心規則是：格式化輸出交給 `fmt`，字串查找、裁切、替換與組合交給 `strings`。本章將用 CLI 輸出、設定值清理與簡單 parser 建立標準庫文字處理基礎。

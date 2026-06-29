@@ -3,6 +3,12 @@ title: "6.1 graceful shutdown 與 signal handling"
 date: 2026-04-22
 description: "用 signal 與 context 傳遞停止訊號"
 weight: 1
+tags:
+  - "go"
+  - "go-advanced"
+  - "production"
+  - "context"
+  - "deployment"
 ---
 
 [Graceful shutdown](/backend/knowledge-cards/graceful-shutdown/) 的核心目標是服務收到停止訊號後，不再接受新工作，並給既有工作一段時間完成或清理。Go 服務通常用 signal、root context、`http.Server.Shutdown`、worker context 與 [timeout](/backend/knowledge-cards/timeout/) 串起停止流程。

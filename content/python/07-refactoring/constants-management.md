@@ -3,6 +3,7 @@ title: "配置分離與常數管理"
 date: 2026-03-04
 description: "學習消除三種硬編碼問題：魔法數字、配置混合、散落訊息"
 weight: 74
+tags: ["python", "refactoring", "constants"]
 ---
 
 上一章：[DRY 原則與共用程式庫](/python/07-refactoring/dry-principle/)

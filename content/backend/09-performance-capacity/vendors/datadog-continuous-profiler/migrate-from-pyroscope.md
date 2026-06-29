@@ -1,5 +1,5 @@
 ---
-title: "Pyroscope → Datadog Continuous Profiler：profiling deployment lifecycle 五階段、operational ownership 轉手"
+title: "Pyroscope → Datadog Continuous Profiler：profiling deployment lifecycle 各階段 operational ownership 轉手"
 date: 2026-05-19
 description: "Pyroscope → Datadog Continuous Profiler 是 Type C operational hybrid migration — pprof data model 接近、profile lifecycle 五階段（install / instrument / ingest / query / cost）的 ops ownership 從 self-host 轉到 SaaS。本文走 6 維 audit（Operational High 其他 Low）、4-phase migration（operational audit + agent parallel + tag reconcile + cutover）、5 production 踩雷（agent 重複 overhead / tag schema 不一致 / trace_id correlation 斷 / cost 突增 / retention 政策變動）、何時保留 Pyroscope（資料主權 / 內網 / OSS-first / cost sensitive）"
 tags: ["backend", "performance", "capacity", "vendor", "migration", "type-c", "operational-hybrid"]

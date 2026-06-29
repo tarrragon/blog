@@ -3,6 +3,7 @@ title: "模組七：打包與發布"
 date: 2026-01-20
 description: "學習現代 Python 套件的打包與發布流程"
 weight: 7
+tags: ["python", "python-advanced", "packaging", "pyproject"]
 ---
 
 

@@ -3,6 +3,7 @@ title: "4.0 Go 並發模型總覽"
 date: 2026-04-22
 description: "先理解 goroutine、OS thread 與 runtime 排程，再看高併發應用怎麼設計"
 weight: 0
+tags: ["go", "concurrency", "goroutine", "channel"]
 ---
 
 Go 的並發優勢在於 runtime 讓大量 goroutine 的生命週期、排程與阻塞管理更容易使用。處理高併發時，核心判斷是哪些工作可以並發、哪些資源需要限制，以及 runtime 如何把很多 goroutine 放到有限的 OS thread 上執行。

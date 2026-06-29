@@ -1,5 +1,5 @@
 ---
-title: "Case-First + Agent Team Review：教學內容的五階段生產流程"
+title: "Case-First + Agent Team Review：教學內容的生產流程"
 date: 2026-05-13
 description: "Case-first + agent team review 的教學內容生產流程：讀案例庫抽 findings、專責 reviewer 平行審查、polish pass 收系統性殘留。防止通用 best practice 被誤包裝成案例揭露。"
 tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-code"]
@@ -216,7 +216,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 實作中使用的三個 reviewer：
 
-#### Reviewer A：寫作規範審查（AGENTS.md 八原則）
+#### Reviewer A：寫作規範審查（AGENTS.md 核心原則）
 
 - 對照核心原則先行、正向陳述優先、商業邏輯先於 case、表格不是終點、情境優先於模板、可操作判準等八原則
 - 找首句用否定句切入、表格 / bullet 平鋪沒延伸、表格項硬塞模板等

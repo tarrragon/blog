@@ -3,6 +3,7 @@ title: "案例：記憶體優化"
 date: 2026-01-21
 description: "用 __slots__ 和 weakref 優化快取系統的記憶體使用"
 weight: 2
+tags: ["python", "python-advanced", "cpython", "memory", "optimization", "case-study"]
 ---
 
 

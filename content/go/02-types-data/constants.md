@@ -3,6 +3,7 @@ title: "2.4 常數與 typed string"
 date: 2026-04-22
 description: "管理狀態值、事件類型與協定字串"
 weight: 4
+tags: ["go", "type-system"]
 ---
 
 常數讓程式中的固定值有名稱。typed string 則讓一組字串值形成語意邊界，避免任意字串到處流動。

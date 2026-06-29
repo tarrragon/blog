@@ -3,6 +3,7 @@ title: "案例：快取生命週期管理"
 date: 2026-01-21
 description: "用 Context Manager 控制快取的生命週期，解決全域狀態問題"
 weight: 1
+tags: ["python", "python-advanced", "design-patterns", "case-study"]
 ---
 
 

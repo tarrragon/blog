@@ -3,6 +3,7 @@ title: "模組六：實戰指南"
 date: 2026-01-20
 description: "將所學應用到實際工作中"
 weight: 6
+tags: ["python", "basics"]
 ---
 
 本模組將前五個模組的知識整合起來，透過三個實戰案例，教你如何在 Hook 系統中進行實際開發。

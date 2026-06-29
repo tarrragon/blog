@@ -3,6 +3,7 @@ title: "案例：pybind11 綁定 C++ 類別"
 date: 2026-01-21
 description: "用 pybind11 將 C++ 類別綁定到 Python，展示建構子、方法、屬性、運算子重載與記憶體管理"
 weight: 3
+tags: ["python", "python-advanced", "c-extension", "case-study"]
 ---
 
 

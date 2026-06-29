@@ -3,6 +3,7 @@ title: "模組一：Go 基礎概念"
 date: 2026-04-22
 description: "Go 專案結構、變數、控制流程、package、檔案拆分、函式、應用啟動與日常 tooling"
 weight: 1
+tags: ["go", "basics"]
 ---
 
 本模組帶你建立閱讀 Go 程式需要的基本模型。重點不是背語法，而是理解 module、變數、控制流程、package、檔案拆分、函式、入口程式與 Go tooling 如何組成日常開發流程。

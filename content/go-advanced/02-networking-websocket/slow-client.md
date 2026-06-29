@@ -3,6 +3,12 @@ title: "2.4 慢客戶端與 send buffer 管理"
 date: 2026-04-22
 description: "控制推送佇列與記憶體風險"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "websocket"
+  - "networking"
+  - "memory"
 ---
 
 慢客戶端管理的核心問題是單一 client 的讀取速度可能低於 server 推送速度。若 send [buffer](/backend/knowledge-cards/buffer/) 沒有上限，慢 client 會把訊息堆在記憶體裡；若 hub 使用 blocking send，慢 client 會拖住所有 client。

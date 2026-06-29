@@ -3,6 +3,7 @@ title: "成本思維：軟體開發的隱性代價"
 date: 2026-03-04
 description: "每個技術決策都有成本，學會識別和評估隱性代價"
 weight: 4
+tags: ["python", "philosophy", "cost-thinking"]
 ---
 
 ## 什麼是軟體開發的成本？

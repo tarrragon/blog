@@ -3,6 +3,7 @@ title: "3.4 re - 正規表達式"
 date: 2026-01-20
 description: "文字模式匹配與擷取"
 weight: 4
+tags: ["python", "stdlib"]
 ---
 
 正規表達式（Regular Expression，簡稱 regex 或 re）是一種強大的文字模式匹配工具。在 Hook 系統中，主要用於解析 Markdown 連結和驗證輸入格式。

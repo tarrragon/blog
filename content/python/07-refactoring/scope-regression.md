@@ -3,6 +3,7 @@ title: "作用域迴歸案例研究"
 date: 2026-03-04
 description: "從 IMP-003 事件學習 Python 變數作用域的陷阱"
 weight: 76
+tags: ["python", "refactoring"]
 ---
 
 本章記錄 W24 開發週期中發生的一個真實 bug：在統一 16 個 Hook 的 logger 初始化風格時，7 個 Hook 因為**變數作用域變更**而靜默失敗，影響 41 個函式。

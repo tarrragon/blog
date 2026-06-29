@@ -3,6 +3,7 @@ title: "6.3 如何擴展狀態投影欄位"
 date: 2026-04-22
 description: "更新狀態模型、repository 與 API 輸出"
 weight: 3
+tags: ["go", "architecture"]
 ---
 
 擴展狀態投影欄位的核心流程是先確認欄位屬於 domain state、[read model](/backend/knowledge-cards/read-model/) 還是 response view。欄位加在哪一層，會決定寫入規則、相容性與測試方式。

@@ -3,6 +3,7 @@ title: "6.5 封裝預編譯二進位"
 date: 2026-02-02
 description: "Python 套件如何封裝其他語言編譯的二進位檔案"
 weight: 5
+tags: ["python", "python-advanced", "packaging", "c-extension"]
 ---
 
 本章介紹 Python 套件封裝預編譯二進位的架構模式，讓 Python 能夠調用高效能的原生程式碼。

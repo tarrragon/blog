@@ -3,6 +3,12 @@ title: "1.4 共享狀態與複製邊界"
 date: 2026-04-22
 description: "用 lock 與 copy 保護長期服務的狀態資料"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "goroutine"
+  - "memory"
 ---
 
 共享狀態的核心規則是同一份可變資料若會被多個 goroutine 存取，就必須有明確 owner 與保護邊界。Map 需要同步，slice 回傳前通常要 copy，可變指標不能隨意暴露，修改行為應集中在擁有狀態的型別內。

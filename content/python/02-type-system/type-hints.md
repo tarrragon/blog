@@ -3,6 +3,7 @@ title: "2.1 Type Hints 基礎"
 date: 2026-01-20
 description: "為函式添加型別註解，提升程式碼可讀性"
 weight: 1
+tags: ["python", "type-hints", "typing"]
 ---
 
 Python 3.5 引入了型別提示（Type Hints），讓你可以為變數和函式添加型別註解。型別提示不會影響執行，但能大幅提升程式碼的可讀性和 IDE 的智慧提示功能。

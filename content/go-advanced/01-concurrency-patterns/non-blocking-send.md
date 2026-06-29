@@ -3,6 +3,11 @@ title: "1.3 非阻塞送出與事件丟棄策略"
 date: 2026-04-22
 description: "設計 channel 滿載時的服務行為"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "channel"
 ---
 
 非阻塞送出的核心取捨是用明確降級換取呼叫端可用性。當 channel 滿載時，程式可以等待、回錯、丟棄、覆蓋或轉交可靠儲存；選擇哪一個是服務語意，不是 `select` 語法偏好。

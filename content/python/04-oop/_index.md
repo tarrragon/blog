@@ -3,6 +3,7 @@ title: "模組四：物件導向設計"
 date: 2026-01-20
 description: "Python 的物件導向設計與設計模式"
 weight: 4
+tags: ["python", "oop", "class"]
 ---
 
 Python 支援多種程式設計範式，物件導向是其中最重要的一種。本模組介紹 Hook 系統中使用的 OOP 技巧和設計模式。

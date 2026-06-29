@@ -3,6 +3,7 @@ title: "9.6 Pre-commit hook 與 CI 整合"
 date: 2026-04-24
 description: "工具寫完只是起點；接到 pre-commit hook 跟 CI 才真正守住品質。Re-staging、dry-run vs apply、不能繞過的邊界"
 weight: 6
+tags: ["go", "tooling"]
 ---
 
 工具落地的核心責任是**讓檢查在對的時機自動執行**，把紀律從「勤勞的人手動跑」轉移到「每次 commit / push 都跑」的基礎設施。[Pre-commit hook](/go/glossary/#pre-commit-hook-定位) 守本機開發、CI 守共享 branch；兩者互補、一起把規則失敗成本壓到秒級可回饋，避免 bug 漏到 production。這個模式對 [idempotent](/go/glossary/#idempotent-文字改寫) 工具特別重要 — hook 每次 commit 都會跑，非冪等的工具會累積漂移、讓作者反覆看到「為什麼這個檔案又被改了」的困惑。

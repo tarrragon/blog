@@ -3,6 +3,7 @@ title: "3.6 argparse - CLI 介面"
 date: 2026-01-20
 description: "命令列參數解析"
 weight: 6
+tags: ["python", "stdlib"]
 ---
 
 `argparse` 是 Python 標準庫中用於建立命令列介面（CLI）的模組。它能自動生成幫助訊息、處理各種參數類型，並進行輸入驗證。

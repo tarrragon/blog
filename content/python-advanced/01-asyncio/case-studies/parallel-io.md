@@ -3,6 +3,7 @@ title: "案例：並行 I/O 操作"
 date: 2026-01-21
 description: "用 asyncio.gather 和 TaskGroup 實現高效的並行 I/O 操作"
 weight: 2
+tags: ["python", "python-advanced", "asyncio", "parallel", "case-study"]
 ---
 
 

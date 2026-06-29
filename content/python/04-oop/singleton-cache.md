@@ -3,6 +3,7 @@ title: "4.4 單例與快取模式"
 date: 2026-01-20
 description: "控制物件生命週期"
 weight: 4
+tags: ["python", "oop", "class", "performance"]
 ---
 
 在某些情況下，我們需要控制物件的建立次數或快取計算結果以提升效能。本章介紹 Hook 系統中使用的快取模式。

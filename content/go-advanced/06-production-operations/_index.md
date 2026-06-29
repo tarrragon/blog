@@ -3,6 +3,11 @@ title: "模組六：生產操作"
 date: 2026-04-22
 description: "graceful shutdown、健康檢查、結構化日誌與 feature gate"
 weight: 6
+tags:
+  - "go"
+  - "go-advanced"
+  - "production"
+  - "deployment"
 ---
 
 生產操作的核心目標是讓 Go 服務可停止、可觀測、可診斷、可漸進啟用功能。服務能在本機跑起來只是第一步；長時間運行後，真正重要的是 shutdown 是否可預期、監控訊號是否清楚、[log](/backend/knowledge-cards/log/) 是否可查詢、功能開關是否有降級策略。

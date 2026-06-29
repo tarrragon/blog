@@ -3,6 +3,7 @@ title: "8.8 Stream：Feeds 與 Chat"
 date: 2026-04-23
 description: "看 Go 如何支撐 feeds、chat 與即時訊息 SDK"
 weight: 8
+tags: ["go", "case-study", "networking"]
 ---
 
 Stream 的官方案例很適合教學用途，因為它把 Go 的幾個核心優勢講得很直接：ecosystem、easy onboarding、fast performance、solid support for concurrency 與 productive programming environment。官方案例還特別提到，這讓一個小團隊能支撐超過 5 億使用者的 feeds 與 chat。

@@ -3,6 +3,7 @@ title: "案例：異常設計架構"
 date: 2026-01-21
 description: "設計清晰的異常階層，並用 ExceptionGroup 處理多重錯誤"
 weight: 3
+tags: ["python", "python-advanced", "design-patterns", "case-study"]
 ---
 
 

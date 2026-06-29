@@ -3,6 +3,7 @@ title: "案例：LRU 快取"
 date: 2026-01-21
 description: "用 functools.lru_cache 快取重複計算"
 weight: 4
+tags: ["python", "python-advanced", "optimization", "case-study"]
 ---
 
 

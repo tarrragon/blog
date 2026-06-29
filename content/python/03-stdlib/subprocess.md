@@ -3,6 +3,7 @@ title: "3.3 subprocess - 執行外部命令"
 date: 2026-01-20
 description: "呼叫系統命令和外部程式"
 weight: 3
+tags: ["python", "stdlib"]
 ---
 
 `subprocess` 模組讓你從 Python 程式中執行外部命令。在 Hook 系統中，主要用於執行 Git 命令。

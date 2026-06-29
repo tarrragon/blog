@@ -3,6 +3,7 @@ title: "4.3 select：同時等待多種事件"
 date: 2026-04-22
 description: "用 select 建立事件迴圈"
 weight: 3
+tags: ["go", "concurrency", "channel"]
 ---
 
 `select` 是 Go 用來同時等待多個 channel 操作的控制結構。它的核心用途是讓一個 goroutine 同時處理資料輸入、取消訊號、timer/ticker 與 [fallback](/backend/knowledge-cards/fallback/) 行為。

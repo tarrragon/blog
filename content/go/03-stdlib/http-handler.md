@@ -3,6 +3,7 @@ title: "3.5 net/http 與 handler 設計"
 date: 2026-04-22
 description: "用 net/http 建立健康檢查、API endpoint 與清楚的 handler 邊界"
 weight: 5
+tags: ["go", "stdlib", "networking"]
 ---
 
 Go 的 `net/http` 把 HTTP endpoint 簡化成一個核心模型：handler 接收 request，然後寫出 response。後端服務可以有複雜的資料庫、[queue](/backend/knowledge-cards/queue/)、背景工作或即時連線，但 HTTP 入口本身應該先保持清楚。

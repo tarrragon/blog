@@ -3,6 +3,7 @@ title: "5.3 table-driven test"
 date: 2026-04-22
 description: "用表格整理多組輸入、預期輸出與錯誤情境"
 weight: 3
+tags: ["go", "testing"]
 ---
 
 table-driven test 的核心規則是：同一個行為的多組案例放進表格，測試流程只寫一次。本章將說明如何設計案例欄位、命名子測試，並避免把太多不同行為塞進同一張表。

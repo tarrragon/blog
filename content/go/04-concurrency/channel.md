@@ -3,6 +3,7 @@ title: "4.2 channel：資料傳遞與 backpressure "
 date: 2026-04-22
 description: "理解 channel 如何在 goroutine 之間傳遞資料並形成 backpressure "
 weight: 2
+tags: ["go", "concurrency", "channel"]
 ---
 
 channel 是 Go 用來在 goroutine 之間傳遞資料的同步工具。它的核心意義是建立資料流邊界：誰送出資料、誰接收資料、當接收端跟不上時送出端如何被阻擋或丟棄。

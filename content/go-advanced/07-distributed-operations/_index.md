@@ -3,6 +3,11 @@ title: "模組七：跨節點與平台整合"
 date: 2026-04-22
 description: "把單一 Go 服務延伸到資料庫、queue、跨節點 WebSocket、可觀測性與部署平台"
 weight: 7
+tags:
+  - "go"
+  - "go-advanced"
+  - "distributed-systems"
+  - "deployment"
 ---
 
 跨節點與平台整合的核心目標是把「單一 Go process 內的正確邊界」延伸到外部基礎設施。前六個模組先建立 goroutine lifecycle、[WebSocket](/backend/knowledge-cards/websocket/) 連線、runtime 診斷、事件邊界、測試與操作語意；本模組處理服務進入多節點、多資料來源、多觀測工具與部署平台後會出現的新責任。

@@ -3,6 +3,7 @@ title: "案例：自動註冊機制"
 date: 2026-01-21
 description: "用 Metaclass 實現檢查器的自動註冊，消除手動維護註冊表的負擔"
 weight: 2
+tags: ["python", "python-advanced", "metaprogramming", "metaclass", "case-study"]
 ---
 
 

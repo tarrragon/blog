@@ -3,6 +3,7 @@ title: "4.2 抽象基類 ABC"
 date: 2026-01-20
 description: "定義介面契約"
 weight: 2
+tags: ["python", "oop", "class", "inheritance"]
 ---
 
 抽象基類（Abstract Base Class，ABC）用於定義介面契約，確保子類別實作必要的方法。這在建立可擴展的框架時特別有用。

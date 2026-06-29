@@ -3,6 +3,7 @@ title: "模組五：錯誤處理與測試"
 date: 2026-04-22
 description: "用明確錯誤路徑、testing、table-driven test 與時間注入驗證 Go 程式"
 weight: 5
+tags: ["go", "error-handling", "testing"]
 ---
 
 Go 的錯誤處理偏向顯式：錯誤是回傳值，呼叫者要直接面對。Go 的測試也偏向直接：建立輸入、執行函式、檢查輸出。本模組把錯誤處理、單元測試、table-driven test、HTTP 測試與並發測試串成一組可落地的驗證方法。

@@ -3,6 +3,7 @@ title: "6.5 如何新增結構化記錄欄位"
 date: 2026-04-22
 description: "區分 operational log、domain event log 與狀態資料"
 weight: 5
+tags: ["go", "logging", "observability"]
 ---
 
 新增結構化記錄欄位的核心規則是先判斷這筆資訊是給工程師除錯、給系統重播，還是給使用者查詢。不同用途對應不同記錄邊界，資料應依用途進入 [log](/backend/knowledge-cards/log/)、[event log](/backend/knowledge-cards/event-log/) 或 repository。

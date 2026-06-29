@@ -3,6 +3,7 @@ title: "5.4 HTTP handler 測試"
 date: 2026-04-22
 description: "用 httptest 驗證 request 與 response"
 weight: 4
+tags: ["go", "testing", "networking"]
 ---
 
 HTTP handler 測試的核心規則是不用啟動真實 server，也能驗證 request 進入 handler 後產生的 response。`net/http/httptest` 提供 request builder 與 response recorder，讓 handler 可以像普通函式一樣被測試。

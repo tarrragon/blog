@@ -3,6 +3,7 @@ title: "9.4 跨檔案圖分析：從 lint 走到 static analysis"
 date: 2026-04-24
 description: "Single-file 規則用 AST 搞定；跨檔 orphan 偵測、broken link、backlink 完整性需要把整個 repo 建成圖再走訪。用 mdtools cards 為例"
 weight: 4
+tags: ["go", "tooling"]
 ---
 
 跨檔案靜態分析的核心責任是**把整個 repo 結構化成可查詢的 [link graph](/go/glossary/#跨檔案-link-graph)**，讓「這張卡片有沒有被引用」「這個連結指的目標存在嗎」「這個 section 是否被孤立」這類反向/跨檔問題能在 O(1) 或 O(log n) 的 graph lookup 內回答，而不是每次查詢都重 parse 全部檔案。圖的節點是檔案、邊是檔案間的連結 / 引用 / 依賴關係；一次 parse（用 [AST walker](/go/glossary/#ast-walker) 掃過）之後，所有跨檔 query 都在 in-memory map 上做。

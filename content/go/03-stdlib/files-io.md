@@ -3,6 +3,7 @@ title: "3.3 os/io：檔案與輸入輸出"
 date: 2026-04-22
 description: "讀寫檔案，理解 io.Reader 與 io.Writer"
 weight: 3
+tags: ["go", "stdlib"]
 ---
 
 Go I/O 的核心規則是：資料來源抽象成 `io.Reader`，資料目的地抽象成 `io.Writer`。本章將從檔案讀寫開始，建立 `os`、`io` 與 streaming API 的基本模型。

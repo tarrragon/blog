@@ -3,6 +3,11 @@ title: "2.2 heartbeat、deadline 與連線清理"
 date: 2026-04-22
 description: "用 ping/pong 和 deadline 偵測失效連線"
 weight: 2
+tags:
+  - "go"
+  - "go-advanced"
+  - "websocket"
+  - "networking"
 ---
 
 Heartbeat 的核心目標是讓失效的長連線可以被發現並清理。[Deadline](/backend/knowledge-cards/deadline/) 定義讀寫最多能停滯多久，ping/pong 在沒有業務訊息時確認連線仍然活著，unregister 流程負責釋放連線與訂閱狀態。

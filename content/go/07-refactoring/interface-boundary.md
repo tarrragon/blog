@@ -3,6 +3,7 @@ title: "7.2 用 interface 隔離外部依賴"
 date: 2026-04-22
 description: "建立小而穩定的測試替身"
 weight: 2
+tags: ["go", "refactoring", "interface"]
 ---
 
 interface 邊界重構的核心規則是由使用端定義需要的能力。介面不是為了包裝所有實作，而是為了讓 usecase 不依賴外部技術細節。

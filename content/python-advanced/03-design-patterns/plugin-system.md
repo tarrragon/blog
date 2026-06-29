@@ -3,6 +3,7 @@ title: "3.5.4 插件系統設計"
 date: 2026-01-20
 description: "插件架構模式、動態載入模組、entry_points、實際範例"
 weight: 4
+tags: ["python", "python-advanced", "design-patterns", "metaprogramming"]
 ---
 
 

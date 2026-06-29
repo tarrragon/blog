@@ -3,6 +3,7 @@ title: "5.1 為什麼選擇 Rust？"
 date: 2026-01-20
 description: "比較 Rust 與 C/C++ 作為 Python 擴展語言"
 weight: 1
+tags: ["python", "python-advanced", "rust", "pyo3"]
 ---
 
 本章比較 Rust 與傳統 C/C++ 作為 Python 擴展語言的優缺點。

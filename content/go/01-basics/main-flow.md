@@ -3,6 +3,7 @@ title: "1.7 從入口程式看應用啟動流程"
 date: 2026-04-22
 description: "用入口程式建立 Go 程式的啟動與資料流模型"
 weight: 7
+tags: ["go", "basics", "architecture"]
 ---
 
 入口程式是 Go 應用的系統地圖。它不一定包含最多細節，但應該讓你知道 process 如何初始化、哪些 goroutine 會啟動、HTTP endpoint 如何註冊，以及程式如何關閉。

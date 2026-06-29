@@ -3,6 +3,7 @@ title: "8.2 效能調優實戰"
 date: 2026-01-21
 description: "測量、分析、優化的完整流程"
 weight: 2
+tags: ["python", "python-advanced", "optimization", "profiling"]
 ---
 
 

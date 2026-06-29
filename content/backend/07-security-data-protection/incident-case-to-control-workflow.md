@@ -24,7 +24,7 @@ weight: 86
 2. 哪個控制面在當時缺位或失效。
 3. 哪個 workflow 檢查點可以提前阻斷。
 
-## Case-to-Workflow 五步驟
+## Case-to-Workflow 步驟
 
 ### 第一步：拆事件路徑
 

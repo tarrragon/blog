@@ -3,6 +3,7 @@ title: "4.5 高併發控制與 backpressure "
 date: 2026-04-23
 description: "用 bounded concurrency、backpressure 與 cancellation 控制 goroutine 的成長"
 weight: 5
+tags: ["go", "concurrency", "performance"]
 ---
 
 這一章處理的是一個比「會不會開 goroutine」更重要的問題：當系統真的進入高併發狀態時，怎麼讓工作量保持可控。Go 很容易啟動大量並發工作，但如果沒有邊界，goroutine、channel、下游連線與記憶體都會一起膨脹。

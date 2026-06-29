@@ -3,6 +3,7 @@ title: "0.2 組合優先：小介面與明確依賴"
 date: 2026-04-22
 description: "用小介面與 struct 組合取代大型繼承結構"
 weight: 2
+tags: ["go", "philosophy", "interface", "architecture"]
 ---
 
 Go 組合的核心原則是用小型型別與小介面拼出行為。程式需要什麼能力，就依賴那個能力；型別擁有哪些資料，就把資料明確放在 struct 裡。這種設計讓高併發服務更容易拆解責任，也更容易在選型成立時維持邊界清楚。

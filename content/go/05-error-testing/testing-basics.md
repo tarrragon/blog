@@ -3,6 +3,7 @@ title: "5.2 testing 基礎"
 date: 2026-04-22
 description: "用 testing package 驗證函式行為"
 weight: 2
+tags: ["go", "testing"]
 ---
 
 Go 測試的核心規則是：測試檔以 `_test.go` 結尾，測試函式以 `Test` 開頭並接收 `*testing.T`。本章將說明如何建立第一個單元測試、檢查結果與回報失敗。

@@ -3,6 +3,7 @@ title: "案例：同步/非同步橋接"
 date: 2026-01-21
 description: "用 run_in_executor 和 asyncio.run 在同步與非同步程式碼之間建立橋樑"
 weight: 3
+tags: ["python", "python-advanced", "asyncio", "case-study", "design-patterns"]
 ---
 
 本案例基於 `.claude/lib` 整體架構，展示如何用 `run_in_executor` 和 `asyncio.run` 在同步與非同步程式碼之間建立橋樑。

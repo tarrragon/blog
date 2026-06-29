@@ -3,6 +3,7 @@ title: "模組八：實戰效能優化"
 date: 2026-01-21
 description: "將入門系列的並行處理與效能優化知識應用於真實系統"
 weight: 8
+tags: ["python", "python-advanced", "optimization"]
 ---
 
 

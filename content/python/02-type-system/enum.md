@@ -3,6 +3,7 @@ title: "2.4 Enum 列舉型別"
 date: 2026-01-20
 description: "定義有限選項集合"
 weight: 4
+tags: ["python", "type-hints", "typing"]
 ---
 
 `Enum`（列舉）用於定義一組具名的常數值。當你有一組固定的選項時，使用 Enum 比使用字串或數字更安全、更易讀。

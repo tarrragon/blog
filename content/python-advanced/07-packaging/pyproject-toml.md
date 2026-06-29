@@ -3,6 +3,7 @@ title: "6.1 pyproject.toml 完整指南"
 date: 2026-01-20
 description: "理解現代 Python 套件的設定標準"
 weight: 1
+tags: ["python", "python-advanced", "packaging", "pyproject"]
 ---
 
 

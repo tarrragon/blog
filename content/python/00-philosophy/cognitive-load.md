@@ -3,6 +3,7 @@ title: "認知負擔：程式碼設計的核心目的"
 date: 2026-01-20
 description: "所有設計原則的統一視角：降低閱讀者的認知負擔"
 weight: 1
+tags: ["python", "philosophy", "cognitive-load"]
 ---
 
 ## 什麼是認知負擔？

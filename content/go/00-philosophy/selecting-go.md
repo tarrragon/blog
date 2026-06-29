@@ -3,6 +3,7 @@ title: "0.4 什麼時候選 Go"
 date: 2026-04-23
 description: "用選型條件判斷 Go 是否適合高併發服務、背景工作與長連線場景"
 weight: 4
+tags: ["go", "philosophy", "architecture"]
 ---
 
 選擇 Go 的核心判斷是工作場景是否需要長時間運行、明確邊界、穩定併發與簡單部署。這一章用工程條件判斷 Go 是否適合目前問題；若工作更依賴框架模板、快速表單 CRUD、動態行為或大量 runtime magic，其他語言或框架可能更符合需求。

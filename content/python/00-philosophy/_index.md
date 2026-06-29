@@ -3,6 +3,7 @@ title: "模組零：設計哲學（序章）"
 date: 2026-01-20
 description: "理解程式碼設計原則的核心目的：降低認知負擔"
 weight: 0
+tags: ["python", "philosophy", "cognitive-load"]
 ---
 
 在深入學習 Python 技術細節之前，讓我們先建立一個統一的視角：**所有程式碼設計原則的最終目的都是「降低閱讀者的認知負擔」**。

@@ -3,6 +3,7 @@ title: "1.8 Go tooling 與日常開發流程"
 date: 2026-04-22
 description: "用 go run、go test、go fmt、go mod tidy 建立 Go 專案的基本工作節奏"
 weight: 8
+tags: ["go", "tooling", "best-practices"]
 ---
 
 Go tooling 的核心價值是讓日常開發流程標準化。`go run`、`go test`、`go fmt`、`go mod tidy`、`go build` 是 Go 專案最基本的協作語言。

@@ -3,6 +3,11 @@ title: "4.1 事件來源、處理流程與狀態邊界"
 date: 2026-04-22
 description: "分辨事件來源、事件融合、處理流程、狀態真相與推送邊界"
 weight: 1
+tags:
+  - "go"
+  - "go-advanced"
+  - "architecture"
+  - "clean-architecture"
 ---
 
 事件系統的核心邊界是把「收到訊號」、「轉成事件」、「套用規則」、「更新狀態」與「輸出結果」拆開。每個邊界都應該有自己的型別與測試，否則一個 handler 或 worker 很快就會同時負責協定、驗證、去重、狀態與推送。

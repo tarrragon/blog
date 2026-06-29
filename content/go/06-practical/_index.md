@@ -3,6 +3,7 @@ title: "模組六：實戰指南"
 date: 2026-04-22
 description: "用 Go 的核心概念完成常見服務功能：輸入、事件、狀態、背景工作、記錄與儲存邊界"
 weight: 6
+tags: ["go", "best-practices"]
 ---
 
 本模組把 Go 的核心概念轉成常見服務開發任務。核心順序是：先定義資料與行為語意，再處理輸入邊界，接著更新 usecase、repository、event/[log](/backend/knowledge-cards/log) 邊界，最後補測試。這裡的範例會使用中立的即時通知服務，不要求讀者知道任何特定專案。

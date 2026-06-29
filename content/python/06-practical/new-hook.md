@@ -3,6 +3,7 @@ title: "6.1 如何新增一個 Hook"
 date: 2026-01-20
 description: "完整的 Hook 開發流程"
 weight: 1
+tags: ["python", "basics"]
 ---
 
 本章介紹如何從零開始建立一個 Claude Code Hook 腳本。這是一個實戰指南，整合了前面學到的所有概念。

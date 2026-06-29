@@ -3,6 +3,7 @@ title: "大規模統一化重構"
 date: 2026-03-04
 description: "從 44 種不同實作到統一基礎設施：日誌、訊息、風格的三階段漸進式重構"
 weight: 75
+tags: ["python", "refactoring"]
 ---
 
 

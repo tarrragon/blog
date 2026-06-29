@@ -3,6 +3,7 @@ title: "模組三：標準庫實戰"
 date: 2026-04-22
 description: "使用 fmt、time、encoding/json、net/http、log/slog、context、defer、flag 與 os/env 解決實務問題"
 weight: 3
+tags: ["go", "stdlib"]
 ---
 
 Go 的標準庫是理解 Go 精神的重要入口。它偏好清楚的小 API、明確錯誤處理與組合式設計。本模組從常見任務出發：格式化輸出、時間處理、JSON 編解碼、HTTP handler、結構化日誌、生命週期控制、資源清理與設定讀取。

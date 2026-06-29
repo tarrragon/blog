@@ -3,6 +3,7 @@ title: "案例：並行檔案檢查"
 date: 2026-01-21
 description: "使用 ThreadPoolExecutor 加速 Markdown 連結檢查"
 weight: 1
+tags: ["python", "python-advanced", "optimization", "parallel", "case-study"]
 ---
 
 

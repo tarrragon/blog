@@ -3,6 +3,7 @@ title: "8.1 Google：大規模微服務與索引服務"
 date: 2026-04-23
 description: "看 Go 如何支撐 Google 的大規模微服務與資料索引"
 weight: 1
+tags: ["go", "case-study", "distributed-systems"]
 ---
 
 Google 的官方案例最適合用來理解 Go 的原始定位：這門語言不是為了漂亮語法，而是為了解決大型工程團隊在多核心、網路、模組化與依賴管理上的問題。Google Core Data Solutions 團隊把原本的單體 C++ 索引堆疊拆成多個微服務，並把多數索引服務改寫成 Go。

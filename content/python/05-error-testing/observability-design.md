@@ -3,6 +3,7 @@ title: "5.6 Hook 系統可觀測性設計"
 date: 2026-03-04
 description: "日誌架構、錯誤可見性、健康監控：讓 44 個 Hook 的運行狀態透明可追蹤"
 weight: 6
+tags: ["python", "observability", "logging"]
 ---
 
 [上一章](/python/05-error-testing/error-infrastructure/)介紹了 `run_hook_safely` 這個頂層例外處理器，解決了「44 個 Hook 各自處理錯誤」的問題。但「捕獲錯誤」只是可觀測性的第一步。真正的問題是：

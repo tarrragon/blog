@@ -3,6 +3,7 @@ title: "8.2 PayPal：支付平台與 NoSQL / build pipelines"
 date: 2026-04-23
 description: "看 Go 如何處理支付平台、NoSQL proxy 與內部工程流水線"
 weight: 2
+tags: ["go", "case-study"]
 ---
 
 PayPal 的案例很適合拿來理解 Go 在複雜企業系統中的角色。官方案例提到，他們的 NoSQL 與 DB proxy 原本在多執行緒模式下非常複雜，而 Go 的 channels 與 goroutines 幫助團隊把這些條件收斂成更清楚的結構。之後，PayPal 也把 build、test、release pipelines 建在 Go 上。

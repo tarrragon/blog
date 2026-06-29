@@ -3,6 +3,12 @@ title: "5.2 WebSocket integration test"
 date: 2026-04-22
 description: "驗證 client/server 實際互動"
 weight: 2
+tags:
+  - "go"
+  - "go-advanced"
+  - "testing"
+  - "integration-test"
+  - "websocket"
 ---
 
 [WebSocket](/backend/knowledge-cards/websocket/) integration test 的核心目標是驗證 client 與 server 透過真實連線互動後，協定行為是否正確。它比單元測試慢，但能覆蓋 HTTP upgrade、read/write pump、router、server message、push flow 與 cleanup。

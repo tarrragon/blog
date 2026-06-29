@@ -3,6 +3,7 @@ title: "1.3 控制流程：if、for、switch"
 date: 2026-04-22
 description: "掌握 Go 的條件判斷、迴圈與分支控制"
 weight: 3
+tags: ["go", "basics"]
 ---
 
 Go 控制流程的核心規則是：語法少但語意明確；`if` 處理條件分支，`for` 是唯一迴圈語法，`switch` 用於多分支判斷。本章將建立閱讀 Go 流程控制的基本模型。

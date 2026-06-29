@@ -3,6 +3,7 @@ title: "案例研究"
 date: 2026-01-21
 description: "基於 .claude/lib 實際程式碼的 Rust 擴展案例"
 weight: 100
+tags: ["python", "python-advanced", "rust", "pyo3", "case-study"]
 ---
 
 

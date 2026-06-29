@@ -3,6 +3,7 @@ title: "3.7 context：取消、逾時與生命週期"
 date: 2026-04-22
 description: "用 context 傳遞取消、逾時與請求生命週期"
 weight: 7
+tags: ["go", "stdlib", "concurrency"]
 ---
 
 `context.Context` 是 Go 用來傳遞取消訊號、逾時與 request-scoped 資訊的標準機制。它的核心用途不是保存任意資料，而是讓一串呼叫知道「這件工作是否應該停止」。

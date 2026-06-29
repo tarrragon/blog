@@ -3,6 +3,7 @@ title: "4.1 類別設計原則"
 date: 2026-01-20
 description: "設計清晰的類別介面"
 weight: 1
+tags: ["python", "oop", "class"]
 ---
 
 Python 支援物件導向程式設計，但並不強制使用。本章介紹何時該使用類別，以及如何設計清晰的類別介面。

@@ -3,6 +3,7 @@ title: "5.1 異常處理策略"
 date: 2026-01-20
 description: "何時捕獲、何時拋出"
 weight: 1
+tags: ["python", "error-handling", "exception"]
 ---
 
 異常處理是撰寫穩健程式碼的關鍵。本章介紹 Python 的異常處理機制，以及 Hook 系統中採用的設計策略。

@@ -3,6 +3,12 @@ title: "3.3 goroutine leak 偵測"
 date: 2026-04-22
 description: "判斷背景工作與 client pump 是否正確退出"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "goroutine"
+  - "profiling"
+  - "runtime"
 ---
 
 Goroutine leak 偵測的核心目標是確認已經沒有存在價值的 goroutine 能被停止。它通常不是語法問題，而是生命週期問題：誰取消、誰 close、誰解除 I/O 阻塞、誰停止 ticker。

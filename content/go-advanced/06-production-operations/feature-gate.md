@@ -3,6 +3,11 @@ title: "6.4 版本偵測與 feature gate"
 date: 2026-04-22
 description: "依版本與環境能力啟用功能"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "production"
+  - "deployment"
 ---
 
 Feature gate 的核心目標是在外部能力、部署環境或版本不同時，讓服務保留可預期行為。它不是把不穩定功能藏起來而已，而是明確管理功能何時啟用、關閉時如何降級、錯誤時如何回報。

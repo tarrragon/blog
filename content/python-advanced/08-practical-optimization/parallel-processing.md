@@ -3,6 +3,7 @@ title: "8.1 並行處理實戰"
 date: 2026-01-21
 description: "將 concurrent.futures 應用於真實的 I/O 密集任務"
 weight: 1
+tags: ["python", "python-advanced", "optimization", "parallel", "multiprocessing"]
 ---
 
 

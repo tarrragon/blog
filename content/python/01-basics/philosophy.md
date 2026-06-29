@@ -3,6 +3,7 @@ title: "1.1 Python 哲學與設計理念"
 date: 2026-01-20
 description: "理解 Python 的核心設計原則"
 weight: 1
+tags: ["python", "basics", "philosophy"]
 ---
 
 在學習任何程式語言之前，了解其設計理念能幫助你寫出更符合語言風格的程式碼。Python 有一套廣為人知的設計原則，被稱為「Python 之禪」。

@@ -3,6 +3,10 @@ title: "6.3 結構化日誌欄位設計"
 date: 2026-04-22
 description: "讓 log 可 grep、可聚合、可追蹤"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "production"
 ---
 
 結構化日誌欄位的核心目標是讓 [log](/backend/knowledge-cards/log/) 可查詢、可聚合、可追蹤。Message 給人讀，欄位給系統查；重要資訊應放在穩定欄位，不應只藏在自由文字裡。

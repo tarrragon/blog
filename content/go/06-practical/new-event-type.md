@@ -3,6 +3,7 @@ title: "6.2 如何新增一種 domain event"
 date: 2026-04-22
 description: "擴展事件常數、輸入驗證與處理流程"
 weight: 2
+tags: ["go", "architecture"]
 ---
 
 新增 domain event 的核心流程是先定義事件語意，再決定哪些外部來源可以轉成這個事件。事件是系統內部對「發生了什麼」的穩定合約，常數清單只是其中一種表達方式。

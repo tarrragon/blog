@@ -3,6 +3,7 @@ title: "案例研究：效能優化實戰"
 date: 2026-01-21
 description: "基於 .claude/lib 的效能優化實戰案例"
 weight: 10
+tags: ["python", "python-advanced", "optimization", "case-study"]
 ---
 
 

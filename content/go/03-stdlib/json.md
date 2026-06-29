@@ -3,6 +3,7 @@ title: "3.4 encoding/json：資料交換"
 date: 2026-04-22
 description: "用 encoding/json 在 struct、檔案與 HTTP 之間交換資料"
 weight: 4
+tags: ["go", "stdlib", "struct"]
 ---
 
 `encoding/json` 是 Go 標準庫中負責 JSON 編碼與解碼的 package。它的核心用途是把 Go struct 轉成 JSON，或把 JSON 轉回 Go struct，讓程式能和設定檔、HTTP API、message [queue](/backend/knowledge-cards/queue/) 等外部格式交換資料。

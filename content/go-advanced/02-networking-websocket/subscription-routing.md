@@ -3,6 +3,12 @@ title: "2.3 訂閱模型與訊息路由"
 date: 2026-04-22
 description: "將 client action 對應到主題訂閱狀態"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "websocket"
+  - "networking"
+  - "architecture"
 ---
 
 訂閱模型的核心目標是把 client action 轉成明確的連線狀態與回應訊息。[WebSocket](/backend/knowledge-cards/websocket/) 是長連線，單次 action 失敗通常不應直接關閉連線；router 應把錯誤轉成可理解的 server message。

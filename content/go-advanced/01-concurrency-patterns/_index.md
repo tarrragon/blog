@@ -3,6 +3,12 @@ title: "模組一：進階並發模式"
 date: 2026-04-22
 description: "channel ownership、select loop、非阻塞送出、共享狀態、worker pool 與 rate limiting"
 weight: 1
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "channel"
+  - "goroutine"
 ---
 
 Go 並發設計的核心是明確定義 ownership、生命週期、 [backpressure](/backend/knowledge-cards/backpressure) 與共享狀態邊界。goroutine 很便宜，但失控的 goroutine、關閉錯誤的 channel、無限制堆積的 [buffer](/backend/knowledge-cards/buffer)，以及外洩的可變資料都會讓服務難以維護。

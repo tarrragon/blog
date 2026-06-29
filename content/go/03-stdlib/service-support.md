@@ -3,6 +3,7 @@ title: "3.10 標準庫如何支撐服務型 Go"
 date: 2026-04-23
 description: "把 context、net/http、log/slog、defer 與 time 連成服務底座"
 weight: 10
+tags: ["go", "stdlib", "architecture"]
 ---
 
 Go 標準庫的服務價值在於它直接提供 HTTP、[timeout](/backend/knowledge-cards/timeout/)、取消、日誌與資源管理的基本能力。這一章把前面學過的工具串成服務底座，讓讀者理解標準庫如何支撐後端程式，而不只是個別 API 的使用方式。

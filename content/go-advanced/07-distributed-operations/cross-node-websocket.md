@@ -3,6 +3,11 @@ title: "7.3 跨節點 WebSocket、presence 與重連協定"
 date: 2026-04-22
 description: "把單一 server 的 WebSocket hub 擴展到多節點推送與連線狀態"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "distributed-systems"
+  - "websocket"
 ---
 
 跨節點 [WebSocket](/backend/knowledge-cards/websocket/) 的核心責任是把連線狀態、訂閱狀態與推送路徑從單一記憶體 hub 延伸到多台 server。單一 process 內的 read pump、write pump、heartbeat 與 slow client 策略仍然有效，但跨節點後還需要 [broker](/backend/knowledge-cards/broker/)、presence store、重連協定與授權邊界。

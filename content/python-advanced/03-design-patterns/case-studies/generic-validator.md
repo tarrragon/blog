@@ -3,6 +3,7 @@ title: "案例：泛型驗證器"
 date: 2026-01-21
 description: "用 Generic 和 TypeVar 建立型別安全的通用驗證器"
 weight: 4
+tags: ["python", "python-advanced", "design-patterns", "generics", "case-study"]
 ---
 
 

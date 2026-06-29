@@ -3,6 +3,7 @@ title: "2.1 struct 與 JSON tag"
 date: 2026-04-22
 description: "理解 Go struct 如何表達資料形狀，並透過 JSON tag 對應外部格式"
 weight: 1
+tags: ["go", "struct", "type-system"]
 ---
 
 Go 的 struct 用來描述資料形狀：有哪些欄位、欄位是什麼型別、哪些資料應該放在一起。當資料需要存成 JSON 或透過 API 傳輸時，JSON tag 會把 Go 的欄位命名對應到外部格式。

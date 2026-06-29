@@ -3,6 +3,7 @@ title: "1.4 package、檔案與可見性"
 date: 2026-04-22
 description: "看懂 package main、檔案切分與大小寫可見性"
 weight: 4
+tags: ["go", "basics", "architecture"]
 ---
 
 Go 用 package 組織程式碼。package 不只是資料夾名稱，而是 API 邊界：哪些名稱能被其他 package 使用，哪些名稱只在內部可見，都由 package 與命名共同決定。

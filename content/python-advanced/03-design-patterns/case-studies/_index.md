@@ -3,6 +3,7 @@ title: "案例研究：設計模式實戰"
 date: 2026-01-21
 description: "基於 Hook 系統的進階設計模式實戰案例"
 weight: 10
+tags: ["python", "python-advanced", "design-patterns", "case-study"]
 ---
 
 本系列案例基於 `.claude/lib` 的實際程式碼，展示如何用進階設計模式解決實際問題。

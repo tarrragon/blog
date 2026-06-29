@@ -3,6 +3,11 @@ title: "4.4 多來源 event 融合"
 date: 2026-04-22
 description: "合併 HTTP、queue、timer 與外部事件來源"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "architecture"
+  - "distributed-systems"
 ---
 
 事件融合的核心目標是讓不同來源的同類事件進入同一套內部規則。HTTP callback、[queue](/backend/knowledge-cards/queue/) message、timer scan 與檔案 reader 都只是輸入方式；進入 processor 前，它們應該被轉成一致的 `DomainEvent`。

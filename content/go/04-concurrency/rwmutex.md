@@ -3,6 +3,7 @@ title: "4.4 sync.RWMutex：保護共享狀態"
 date: 2026-04-22
 description: "用讀寫鎖保護共享狀態"
 weight: 4
+tags: ["go", "concurrency", "performance"]
 ---
 
 `sync.RWMutex` 是 Go 用來保護共享狀態的讀寫鎖。它的核心用途是允許多個讀取者同時讀取，但寫入者必須獨占資料，避免 goroutine 同時讀寫 map、slice 或 struct 時產生資料競爭。

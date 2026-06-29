@@ -3,6 +3,7 @@ title: "模組二：型別系統"
 date: 2026-01-20
 description: "現代 Python 的型別提示與資料結構"
 weight: 2
+tags: ["python", "type-hints", "typing"]
 ---
 
 Python 3.5+ 引入的型別系統讓程式碼更易讀、更易維護。本模組介紹如何善用型別提示來提升程式碼品質。

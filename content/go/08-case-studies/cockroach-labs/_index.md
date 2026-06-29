@@ -3,6 +3,7 @@ title: "8.7 Cockroach Labs：分散式 SQL 資料庫"
 date: 2026-04-23
 description: "看 Go 如何支撐分散式資料庫與高一致性系統"
 weight: 7
+tags: ["go", "case-study", "distributed-systems"]
 ---
 
 Cockroach Labs 的案例適合放在 Go 教材裡，因為它把 Go 的工程價值推到很高的門檻：分散式 SQL、交易一致性、可水平擴展、容錯與長期可維護。官方案例直接提到，Go 的 performance、garbage collection 與低入門門檻，是 CockroachDB 的重要選擇原因。

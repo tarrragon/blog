@@ -3,6 +3,11 @@ title: "5.3 race condition 檢查"
 date: 2026-04-22
 description: "用 go test -race 找資料競爭"
 weight: 3
+tags:
+  - "go"
+  - "go-advanced"
+  - "testing"
+  - "concurrency"
 ---
 
 Race detector 的核心作用是找出測試執行期間發生的 data race。它能指出未同步讀寫同一份記憶體的位置，但不能取代 ownership、mutex、channel 與狀態邊界設計。

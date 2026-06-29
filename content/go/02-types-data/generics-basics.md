@@ -3,6 +3,7 @@ title: "2.7 generics 入門：型別參數與約束"
 date: 2026-04-22
 description: "用最小範圍理解 Go generics 的適用場景"
 weight: 7
+tags: ["go", "generics", "type-system"]
 ---
 
 generics 的核心用途是讓重複的型別安全邏輯可以被抽出來。Go 的泛型適合資料結構、集合 helper、測試工具與少量演算法；一般 application flow 仍應優先使用具體型別與小介面。

@@ -3,6 +3,7 @@ title: "2.3 Dataclass 資料結構"
 date: 2026-01-20
 description: "快速定義資料類別"
 weight: 3
+tags: ["python", "type-hints", "typing"]
 ---
 
 `dataclass` 是 Python 3.7+ 引入的裝飾器，用於快速建立主要用於存放資料的類別。它自動產生 `__init__`、`__repr__` 等方法，減少樣板程式碼。

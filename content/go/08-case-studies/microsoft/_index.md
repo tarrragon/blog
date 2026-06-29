@@ -3,6 +3,7 @@ title: "8.4 Microsoft：雲端基礎設施的一部分"
 date: 2026-04-23
 description: "看 Go 如何支撐雲端基礎設施與平台工具"
 weight: 4
+tags: ["go", "case-study", "deployment"]
 ---
 
 Microsoft 的官方案例文字不長，但方向很清楚：Go 被用來支撐雲端基礎設施的一部分。這類案例的重點通常不是某個單一產品，而是平台層、支援工具與雲端服務周邊。

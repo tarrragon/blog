@@ -3,6 +3,7 @@ title: "模組七：重構實戰"
 date: 2026-04-22
 description: "用 Go 的 package、interface、state 與測試邊界重構逐漸變大的服務"
 weight: 7
+tags: ["go", "refactoring"]
 ---
 
 Go 重構的核心目標是讓邊界更清楚、測試更直接、資料競爭更少。抽象只在它能降低耦合或保護行為時才有價值；本模組用一般 Go 服務範例說明如何在程式仍可運行的前提下，從平面檔案結構逐步走向更清楚的 package、interface、state 與 adapter 邊界。

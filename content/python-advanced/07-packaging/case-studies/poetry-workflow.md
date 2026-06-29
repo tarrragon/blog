@@ -3,6 +3,7 @@ title: "案例：使用 Poetry 完整工作流"
 date: 2026-01-21
 description: "從專案建立到發布的 Poetry 完整工作流程"
 weight: 2
+tags: ["python", "python-advanced", "packaging", "poetry", "case-study"]
 ---
 
 

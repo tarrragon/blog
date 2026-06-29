@@ -3,6 +3,7 @@ title: "9.3 AST 驅動的 idempotent 文字改寫"
 date: 2026-04-24
 description: "用 AST 定位位置、用 line-based 或 byte-level 改寫；設計多條 rule 的執行順序；--check 跟 --fix 如何共用邏輯"
 weight: 3
+tags: ["go", "tooling"]
 ---
 
 AST 驅動文字改寫的核心契約是 **[idempotent](/go/glossary/#idempotent-文字改寫)**：對同一輸入跑一次或十次結果相同。這個契約讓工具能安全地接到 [pre-commit hook](/go/glossary/#pre-commit-hook-定位)（每次 commit 都跑不會累積漂移）、能分段除錯（改一條 rule 不會破壞其他 rule 的輸出）、能用 `--check` 跟 `--fix` 共用同一套邏輯（差別只在要不要寫檔）。`gofmt`、`prettier`、`ruff fix` 這類工具在工程界立信譽的基礎就是冪等。

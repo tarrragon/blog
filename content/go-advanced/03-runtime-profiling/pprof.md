@@ -3,6 +3,12 @@ title: "3.2 pprof 基礎診斷流程"
 date: 2026-04-22
 description: "用 pprof endpoint 診斷 heap、goroutine 與 CPU 問題"
 weight: 2
+tags:
+  - "go"
+  - "go-advanced"
+  - "pprof"
+  - "profiling"
+  - "runtime"
 ---
 
 pprof 的核心用途是用實際執行資料定位效能問題。它能協助觀察 heap、goroutine、CPU、block、mutex 與 [trace](/backend/knowledge-cards/trace/)，讓工程師從「感覺哪裡慢」改成「依 profile 判斷哪裡有壓力」。

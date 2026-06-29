@@ -3,6 +3,7 @@ title: "2.2 Optional、Union、泛型"
 date: 2026-01-20
 description: "處理可能為 None 的值和複合型別"
 weight: 2
+tags: ["python", "type-hints", "typing"]
 ---
 
 當函式的參數或返回值可能是多種型別時，我們需要使用 `Optional`、`Union` 或泛型來表達。這些工具讓型別提示更加精確。

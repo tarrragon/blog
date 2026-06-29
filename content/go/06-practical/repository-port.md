@@ -3,6 +3,7 @@ title: "6.6 如何新增 repository port"
 date: 2026-04-22
 description: "先建立儲存邊界，再決定 memory、SQLite 或外部資料庫實作"
 weight: 6
+tags: ["go", "architecture", "interface"]
 ---
 
 新增 repository port 的核心目標是讓 application layer 依賴資料能力，而不是依賴具體儲存技術。先建立 port，才能在 memory、SQLite 或其他資料庫之間替換。

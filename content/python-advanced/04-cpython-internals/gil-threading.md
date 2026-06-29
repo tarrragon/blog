@@ -3,6 +3,7 @@ title: "3.4 GIL 與執行緒模型"
 date: 2026-01-20
 description: "深入理解 GIL 的設計與實現"
 weight: 4
+tags: ["python", "python-advanced", "cpython", "gil", "parallel"]
 ---
 
 GIL（Global Interpreter Lock）是 CPython 中最具爭議的設計之一。本章深入探討 GIL 的歷史、實現，以及 Python 3.13+ Free-threading 的技術細節。

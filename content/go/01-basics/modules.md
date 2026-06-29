@@ -3,6 +3,7 @@ title: "1.1 Go 專案結構與 module"
 date: 2026-04-22
 description: "理解 go.mod、module path 與 Go 專案的依賴邊界"
 weight: 1
+tags: ["go", "tooling", "basics"]
 ---
 
 Go 專案的邊界通常從 `go.mod` 開始。它定義目前程式碼屬於哪個 module、使用哪個 Go 版本，以及依賴哪些外部套件。

@@ -3,6 +3,7 @@ title: "程式碼壞味道偵測"
 date: 2026-03-04
 description: "從三級分類系統到偵測工具鏈，建立系統化的程式碼品質防線"
 weight: 72
+tags: ["python", "refactoring", "code-smell"]
 ---
 
 上一章：[重構的動機與策略](/python/07-refactoring/refactoring-strategy/)

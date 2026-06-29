@@ -3,6 +3,7 @@ title: "模組二：型別、資料與介面"
 date: 2026-04-22
 description: "用 struct、interface、slice、map、常數、embedding、generics 與 JSON tag 表達 Go 資料"
 weight: 2
+tags: ["go", "type-system"]
 ---
 
 Go 的型別系統不追求複雜，而是讓資料形狀、行為需求與程式邊界能被清楚看見。本模組用一般資料處理、設定檔、API message 與狀態資料說明資料如何被定義、序列化、傳遞、組合、泛型化與保護。

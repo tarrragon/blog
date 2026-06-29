@@ -3,6 +3,7 @@ title: "6.3 如何新增語言解析器"
 date: 2026-01-20
 description: "繼承 ABC 實作新解析器"
 weight: 3
+tags: ["python", "oop", "inheritance"]
 ---
 
 本章示範如何透過繼承抽象基類來新增語言解析器。這是一個完整的實作範例，展示了前面學到的 ABC、工廠模式和型別提示等概念。

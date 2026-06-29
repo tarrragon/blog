@@ -3,6 +3,8 @@ title: "文章列表"
 slug: "posts"
 type: "posts"
 layout: "list"
+description: "blog 規範文件、Hugo/Markdown 操作經驗、AI 協作與工程心得的集散地"
+tags: ["posts", "hugo", "markdown", "blog"]
 ---
 
 這個資料夾收錄 blog 本身的**規範文件**、**設計/架構筆記**，以及不屬於特定語言教材區（`content/backend/`、`content/go/`、`content/python/` 等）的雜項技術筆記。

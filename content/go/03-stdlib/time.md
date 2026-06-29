@@ -3,6 +3,7 @@ title: "3.2 time：時間與 duration"
 date: 2026-04-22
 description: "表達時間點、時間差、timer、ticker 與 timeout"
 weight: 2
+tags: ["go", "stdlib"]
 ---
 
 時間處理的核心規則是：時間點使用 `time.Time`，時間長度使用 `time.Duration`。本章將說明 now、parse、format、duration、timer 與 ticker 的基本用法。

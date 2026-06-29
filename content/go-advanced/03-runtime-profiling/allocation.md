@@ -3,6 +3,12 @@ title: "3.4 資料結構與 allocation 壓力"
 date: 2026-04-22
 description: "分析列表、歷史資料與 WebSocket payload 的配置成本"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "memory"
+  - "gc"
+  - "profiling"
 ---
 
 Allocation 分析的核心目標是區分必要的安全複製與可優化的重複配置。Go 服務中很多配置來自 slice 成長、map/list 複製、JSON marshal、[buffer](/backend/knowledge-cards/buffer/) 建立與 [WebSocket](/backend/knowledge-cards/websocket/) payload；優化前要先確認配置是否位於熱路徑，且不能破壞狀態邊界。

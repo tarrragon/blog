@@ -3,6 +3,11 @@ title: "模組五：測試與可靠性"
 date: 2026-04-22
 description: "時間控制、WebSocket integration test、race check 與 table-driven test"
 weight: 5
+tags:
+  - "go"
+  - "go-advanced"
+  - "testing"
+  - "integration-test"
 ---
 
 並發服務測試的核心目標是讓時間、連線、goroutine、共享狀態與錯誤路徑變得可重現。只測 happy path 不足以保護長時間運行的 Go 服務；真正需要測的是取消、[timeout](/backend/knowledge-cards/timeout)、[queue](/backend/knowledge-cards/queue) full、cleanup、data race 與協定邊界。

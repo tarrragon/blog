@@ -3,6 +3,7 @@ title: "1.3 模組與套件組織"
 date: 2026-01-20
 description: "理解 Python 的模組系統和套件結構"
 weight: 3
+tags: ["python", "basics", "modules", "imports"]
 ---
 
 Python 的模組系統是組織程式碼的基礎。理解模組如何運作，是維護和擴展 Hook 系統的關鍵。

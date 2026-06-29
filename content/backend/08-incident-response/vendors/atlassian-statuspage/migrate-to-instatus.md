@@ -108,7 +108,7 @@ Statuspage 跟 Opsgenie / JSM / Confluence 同生態、有原生整合（Opsgeni
 - 如果 Atlassian 整合是核心 workflow、評估走 webhook 工作量
 - 如果是 incident.io / Rootly / FireHydrant 主用、Instatus 反而有原生整合（這條變優勢）
 
-## 4 階段 cutover
+## Cutover 階段
 
 Audit 全過後、Type B drop-in 不需要 11-phase 結構、4 階段：
 

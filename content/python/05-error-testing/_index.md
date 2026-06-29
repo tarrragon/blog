@@ -3,6 +3,7 @@ title: "模組五：錯誤處理與測試"
 date: 2026-01-20
 description: "穩健程式碼的基石：異常處理和單元測試"
 weight: 5
+tags: ["python", "error-handling", "testing"]
 ---
 
 穩健的程式碼需要妥善處理錯誤情況，並透過測試確保品質。本模組介紹 Python 的異常處理策略和測試技巧。

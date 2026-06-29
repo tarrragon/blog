@@ -3,6 +3,7 @@ title: "3.1 PyObject 與物件模型"
 date: 2026-01-20
 description: "深入理解 Python 的物件模型"
 weight: 1
+tags: ["python", "python-advanced", "cpython", "memory"]
 ---
 
 

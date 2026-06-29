@@ -3,6 +3,7 @@ title: "非程式碼的重構"
 description: "用 Progressive Disclosure 精簡膨脹的規則文件，文件重構和程式碼重構是同一套思維"
 weight: 77
 date: 2026-03-04
+tags: ["python", "refactoring", "cognitive-load"]
 ---
 
 前面幾章我們重構的對象都是程式碼：提取函式、消除魔法數字、分離配置。但你有沒有想過，**文件也會腐敗**？

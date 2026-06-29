@@ -3,6 +3,7 @@ title: "模組四：並發模型"
 date: 2026-04-22
 description: "從 goroutine、channel、select 與 RWMutex 理解 Go 並發模型"
 weight: 4
+tags: ["go", "concurrency"]
 ---
 
 Go 的並發不是只會寫 `go func()`。Go 的並發模型包含工作如何啟動、資料如何傳遞、取消如何傳播、共享狀態如何保護。本模組從語言機制出發，再延伸到 worker、事件處理與網路服務情境。

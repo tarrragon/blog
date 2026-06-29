@@ -3,6 +3,7 @@ title: "2.5 Callable 型別與高階函式"
 date: 2026-04-24
 description: "用 Callable 型別描述可呼叫物件與高階函式，讓 callback、decorator 與依賴注入的型別契約清楚起來"
 weight: 5
+tags: ["python", "type-hints", "typing"]
 ---
 
 `Callable` 的核心概念是「這個值可以被呼叫，而且我要求它的參數與回傳型別符合特定形狀」。當程式碼把函式當值傳進傳出（callback、decorator、依賴注入）時，`Callable` 讓型別系統幫你在呼叫前就驗證契約，而不是等 runtime 才 AttributeError。

@@ -3,6 +3,11 @@ title: "6.2 健康檢查與診斷 endpoint"
 date: 2026-04-22
 description: "區分服務可用性與工程診斷入口"
 weight: 2
+tags:
+  - "go"
+  - "go-advanced"
+  - "production"
+  - "deployment"
 ---
 
 健康檢查與診斷 endpoint 的核心差異是使用者與風險不同。`/health` 給監控或負載平衡器判斷 process 是否活著，`/ready` 判斷是否應接流量，`/debug/...` 則給工程師排查問題且必須限制存取。

@@ -3,6 +3,7 @@ title: "5.5 頂層例外處理機制"
 date: 2026-03-04
 description: "run_hook_safely 與統一錯誤基礎設施"
 weight: 5
+tags: ["python", "error-handling", "exception"]
 ---
 
 前面的章節介紹了異常處理的基本語法和 `(bool, str)` 返回值模式。本章進入實務層面：當你有 44 個 Hook 腳本，每個都可能在不同地方失敗時，如何建立一套**統一的錯誤基礎設施**？

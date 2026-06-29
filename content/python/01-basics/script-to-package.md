@@ -3,6 +3,7 @@ title: "1.2 從單一 script 到多檔案專案"
 date: 2026-04-22
 description: "理解 Python 程式如何從單一 .py 檔案長成 module、package 與可測試專案"
 weight: 2
+tags: ["python", "basics", "modules"]
 ---
 
 Python 程式變大的第一個斷點通常不是物件導向或架構分層，而是執行方式與 import 邊界。初學者常從一個 `script.py` 開始，接著拆出 helper module，最後才整理成 package；每一步都會改變程式如何被執行、如何 import，以及測試如何找到程式碼。

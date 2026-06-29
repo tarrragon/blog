@@ -3,6 +3,7 @@ title: "案例：並行 Hook 驗證"
 date: 2026-01-21
 description: "使用 ThreadPoolExecutor 並行驗證 Hook，並實現進度報告"
 weight: 2
+tags: ["python", "python-advanced", "optimization", "parallel", "case-study"]
 ---
 
 

@@ -3,6 +3,7 @@ title: "重構陷阱與防護"
 date: 2026-03-04
 description: "三個真實重構事故的共通模式：部分更新問題與系統性防護方法"
 weight: 76
+tags: ["python", "refactoring"]
 ---
 
 

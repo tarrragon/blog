@@ -3,6 +3,7 @@ title: "7.5 以 domain 重新整理 package"
 date: 2026-04-22
 description: "讓 account、job、event、workflow 這類領域邊界在目錄中可見"
 weight: 5
+tags: ["go", "refactoring", "architecture"]
 ---
 
 以 domain 重新整理 package 的核心目標是讓程式結構反映業務語意，而不是只反映技術元件。當系統開始有 account、job、event、workflow 這些不同概念時，平面檔案會讓邊界越來越難看見。

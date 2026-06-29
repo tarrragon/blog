@@ -3,6 +3,7 @@ title: "從 threading 到 asyncio：轉換指南"
 date: 2026-01-21
 description: "幫助你從傳統執行緒模型平滑過渡到異步程式設計"
 weight: 0
+tags: ["python", "python-advanced", "asyncio", "parallel", "event-loop"]
 ---
 
 

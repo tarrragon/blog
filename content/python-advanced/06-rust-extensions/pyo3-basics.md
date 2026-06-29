@@ -3,6 +3,7 @@ title: "5.2 PyO3 基礎"
 date: 2026-01-20
 description: "使用 PyO3 建立 Rust 與 Python 的綁定"
 weight: 2
+tags: ["python", "python-advanced", "rust", "pyo3"]
 ---
 
 

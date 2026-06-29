@@ -3,6 +3,7 @@ title: "8.10 Go 的高併發服務案例"
 date: 2026-04-23
 description: "從即時服務、邊緣網路與資料平台辨識 Go 的高併發使用情境"
 weight: 10
+tags: ["go", "case-study", "concurrency", "performance"]
 ---
 
 高併發服務案例的核心判斷是「大量工作是否同時存在，且每個工作都需要清楚的生命週期」。Go 適合這類服務，因為 goroutine、channel、context、[timeout](/backend/knowledge-cards/timeout) 與標準網路庫可以共同描述工作如何開始、等待、取消與清理。

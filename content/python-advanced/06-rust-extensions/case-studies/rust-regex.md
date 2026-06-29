@@ -3,6 +3,7 @@ title: "案例：Rust 正則表達式"
 date: 2026-01-21
 description: "用 Rust regex crate 加速 Hook 驗證器的模式匹配"
 weight: 2
+tags: ["python", "python-advanced", "rust", "pyo3", "case-study"]
 ---
 
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Rust 的 regex crate 加速模式匹配。

@@ -3,6 +3,7 @@ title: "4.1 goroutine：輕量並發工作"
 date: 2026-04-22
 description: "用 goroutine 啟動並發工作，並設計清楚的退出條件"
 weight: 1
+tags: ["go", "concurrency", "goroutine"]
 ---
 
 goroutine 是 Go 執行並發工作的基本單位。它的核心用途是讓一段函式和目前流程同時進行，但每個 goroutine 都必須有明確的退出條件，否則長時間程式會累積無法回收的背景工作。

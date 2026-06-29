@@ -3,6 +3,7 @@ title: "DRY 原則與共用程式庫"
 date: 2026-03-04
 description: "學習識別重複程式碼並建立共用模組，含模組演進與漸進遷移策略"
 weight: 73
+tags: ["python", "refactoring", "dry"]
 ---
 
 上一章：[程式碼壞味道偵測](/python/07-refactoring/code-smells/)

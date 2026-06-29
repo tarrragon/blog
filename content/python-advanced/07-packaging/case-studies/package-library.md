@@ -3,6 +3,7 @@ title: "案例：打包共用庫"
 date: 2026-01-21
 description: "將 .claude/lib 打包成可重用的 Python 套件"
 weight: 1
+tags: ["python", "python-advanced", "packaging", "case-study"]
 ---
 
 

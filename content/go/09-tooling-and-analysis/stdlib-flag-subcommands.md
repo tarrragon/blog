@@ -3,6 +3,7 @@ title: "9.1 用 stdlib flag 寫 subcommand CLI"
 date: 2026-04-24
 description: "Go 的 flag 套件足以支撐多層 subcommand 的 CLI，不用過早引入 cobra；本章示範 main → cmd/ → internal/ 的標準 layout"
 weight: 1
+tags: ["go", "tooling", "stdlib"]
 ---
 
 Subcommand CLI 的核心結構是 `<tool> <sub> [flags] [args]`，每層各自承擔獨立決策：dispatcher 決定走到哪個子命令、flag parser 只認該子命令的旗標命名空間、positional args 交給業務邏輯。`flag.NewFlagSet` 為每個子命令建立獨立 flag 命名空間，讓三層以內的 CLI 用 stdlib 就能乾淨解析；cobra 的說服點在 tab completion、generated help、hierarchical commands 等**超出 flag 解析本身**的領域，三層內走 stdlib 成本最低。

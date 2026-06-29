@@ -3,6 +3,7 @@ title: "9.5 工具決策：regex 到 AST、Python 到 Go 的 tripwire"
 date: 2026-04-24
 description: "什麼訊號代表工具該升級到下一個層次；用 WRAP 框架做語言與實作層的技術決策；延遲決策的成本"
 weight: 5
+tags: ["go", "tooling", "best-practices"]
 ---
 
 工具決策的核心責任是**用事前約定的條件決定何時升級，取代事後的模糊直覺**。[Tripwire 決策](/go/glossary/#tripwire-決策)（預設觸發條件）的設計：在某個可量測訊號命中時，主動重新評估現有工具是否夠用、或該升級到下一個層級。這個約定避開兩個常見失敗 —「太早升級」（把 shell 一行解決的事過度工程化）跟「太晚升級」（regex 每週出狀況卻忍著不升，信譽破產）。

@@ -3,6 +3,7 @@ title: "模組三：進階設計模式"
 date: 2026-01-20
 description: "將元編程知識應用於實際架構設計，建立型別安全、可擴展的系統"
 weight: 3
+tags: ["python", "python-advanced", "design-patterns"]
 ---
 
 

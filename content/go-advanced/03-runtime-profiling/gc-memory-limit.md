@@ -3,6 +3,12 @@ title: "3.1 GC 與 memory limit"
 date: 2026-04-22
 description: "理解 debug.SetMemoryLimit 在長時間服務中的用途"
 weight: 1
+tags:
+  - "go"
+  - "go-advanced"
+  - "gc"
+  - "memory"
+  - "runtime"
 ---
 
 GC 與 memory limit 的核心關係是：Go runtime 會根據 heap 成長決定何時執行 GC，而 memory limit 讓 runtime 有一個軟性記憶體目標。Memory limit 不是硬性上限，也不是 leak 修復工具；它是讓 runtime 更早回應記憶體壓力的控制訊號。

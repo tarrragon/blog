@@ -3,6 +3,7 @@ title: "案例：非同步 subprocess"
 date: 2026-01-21
 description: "用 asyncio.create_subprocess_exec 實現非阻塞的外部命令執行"
 weight: 1
+tags: ["python", "python-advanced", "asyncio", "case-study"]
 ---
 
 本案例基於 `.claude/lib/git_utils.py` 的實際程式碼，展示如何用 asyncio 實現非同步的外部命令執行。

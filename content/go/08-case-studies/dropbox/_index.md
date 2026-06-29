@@ -3,6 +3,7 @@ title: "8.3 Dropbox：從 Python 遷移到 Go"
 date: 2026-04-23
 description: "看性能關鍵後端如何從 Python 逐步轉向 Go"
 weight: 3
+tags: ["go", "case-study", "performance"]
 ---
 
 Dropbox 的案例是最典型的「性能關鍵服務遷移」故事之一。官方案例直接寫到，他們把 performance-critical backends 從 Python 轉到 Go，以獲得更好的 concurrency support 與更快的執行速度。

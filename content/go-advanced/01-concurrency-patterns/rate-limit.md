@@ -3,6 +3,11 @@ title: "1.6 rate limiting 與 backpressure "
 date: 2026-04-22
 description: "用本地速率限制與 backpressure 策略保護服務入口與下游依賴"
 weight: 6
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "production"
 ---
 
 rate limiting 的核心責任是把過量輸入轉成可預期的服務行為。服務可以等待、排隊、拒絕、降級或取樣，但這些策略應由程式明確決定，而不是讓 goroutine、channel 或 memory 自行失控。

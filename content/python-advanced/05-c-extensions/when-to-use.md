@@ -3,6 +3,7 @@ title: "4.4 選擇指南與效能比較"
 date: 2026-01-20
 description: "比較不同 C 擴展工具的適用場景"
 weight: 4
+tags: ["python", "python-advanced", "c-extension"]
 ---
 
 本章比較各種 C 擴展工具，幫助你在不同場景下做出正確選擇。

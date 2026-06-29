@@ -3,6 +3,11 @@ title: "1.5 bounded worker pool"
 date: 2026-04-22
 description: "限制同時執行的 goroutine 數量，讓背景工作有明確容量邊界"
 weight: 5
+tags:
+  - "go"
+  - "go-advanced"
+  - "concurrency"
+  - "goroutine"
 ---
 
 bounded [worker pool](/backend/knowledge-cards/worker-pool/) 的核心責任是限制同時執行的工作量。goroutine 很便宜，但工作本身可能佔用 CPU、memory、file descriptor、外部 API quota 或資料庫連線；worker pool 讓容量限制成為程式設計的一部分。

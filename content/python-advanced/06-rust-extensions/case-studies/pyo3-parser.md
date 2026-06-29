@@ -3,6 +3,7 @@ title: "案例：PyO3 文字解析"
 date: 2026-01-21
 description: "用 PyO3 和 Rust 實現高效能的 Markdown 連結解析器"
 weight: 1
+tags: ["python", "python-advanced", "rust", "pyo3", "case-study"]
 ---
 
 

@@ -3,6 +3,12 @@ title: "7.4 Observability pipeline、metrics 與 tracing"
 date: 2026-04-22
 description: "把 structured log、metric、trace 與 profile 組成可操作的診斷系統"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "production"
+  - "profiling"
+  - "distributed-systems"
 ---
 
 Observability pipeline 的核心責任是把服務訊號整理成可查詢、可聚合、可關聯的診斷資料。[Log schema](/backend/knowledge-cards/log-schema/) 描述單次事件，[metrics](/backend/knowledge-cards/metrics/) 描述趨勢，[trace context](/backend/knowledge-cards/trace-context/) 描述跨元件路徑，profile 描述 runtime 成本；它們的責任不同，但應使用一致的識別欄位串起來。

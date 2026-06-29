@@ -3,6 +3,10 @@ title: "5.4 table-driven test 的設計邊界"
 date: 2026-04-22
 description: "避免測試資料混雜太多概念"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "testing"
 ---
 
 Table-driven test 的核心邊界是每張表只描述一個行為維度。它能降低重複並清楚列出案例，但不適合把多種 setup、多種執行方式與多種斷言硬塞進同一個測試。

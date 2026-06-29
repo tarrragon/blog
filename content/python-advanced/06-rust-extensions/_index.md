@@ -3,6 +3,7 @@ title: "模組六：用 Rust 擴展 Python"
 date: 2026-01-20
 description: "學習使用 PyO3 和 Maturin 用 Rust 擴展 Python"
 weight: 6
+tags: ["python", "python-advanced", "rust", "pyo3"]
 ---
 
 

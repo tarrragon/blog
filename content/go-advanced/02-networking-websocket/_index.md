@@ -3,6 +3,12 @@ title: "模組二：WebSocket 服務架構"
 date: 2026-04-22
 description: "WebSocket client lifecycle、heartbeat、訂閱路由與慢客戶端管理"
 weight: 2
+tags:
+  - "go"
+  - "go-advanced"
+  - "websocket"
+  - "networking"
+  - "http"
 ---
 
 [WebSocket](/backend/knowledge-cards/websocket/) 服務的核心難點是連線建立後的長生命週期管理。HTTP upgrade 只是入口；每個 client 都有讀取、寫入、心跳、訂閱、推送佇列與清理流程。任何一個邊界不清楚，都可能造成 goroutine leak、concurrent write、慢 client 拖垮服務或訂閱狀態不一致。

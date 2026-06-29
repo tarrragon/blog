@@ -3,6 +3,7 @@ title: "1.6 函式、方法與 receiver"
 date: 2026-04-22
 description: "區分普通函式、建構函式與帶 receiver 的方法"
 weight: 6
+tags: ["go", "basics", "struct"]
 ---
 
 Go 沒有 class，但有函式、struct 與方法。方法只是帶有 receiver 的函式；receiver 讓函式和某個型別形成關聯，進而表達「這個行為屬於這個資料」。

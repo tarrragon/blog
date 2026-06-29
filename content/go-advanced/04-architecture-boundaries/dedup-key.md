@@ -3,6 +3,11 @@ title: "4.2 事件去重與語義鍵設計"
 date: 2026-04-22
 description: "用 entity ID、event type、來源語意與時間窗口建立去重鍵"
 weight: 2
+tags:
+  - "go"
+  - "go-advanced"
+  - "architecture"
+  - "distributed-systems"
 ---
 
 事件去重的核心規則是用領域語意判斷「哪兩筆事件代表同一件事」。原始 payload、[request ID](/backend/knowledge-cards/request-id/)、收到時間和重試次數常常每次都不同，直接拿來比對會讓去重失效。

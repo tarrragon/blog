@@ -3,6 +3,7 @@ title: "模組九：Go 做工具鏈與靜態分析"
 date: 2026-04-24
 description: "把 Go 的型別、interface 與標準庫用在寫 CLI、靜態分析與內部工具鏈上，補上後端服務之外的另一條常見落地路徑"
 weight: 9
+tags: ["go", "tooling"]
 ---
 
 前八個模組都把 Go 放在後端服務的脈絡下談。這個模組往另一個方向走 — **Go 寫 CLI、lint / migrate 工具、靜態分析、程式碼生成**。這些程式沒有 HTTP handler、沒有 goroutine pool、沒有 PostgreSQL connection；但同樣享受 Go 的型別安全、標準庫深度與跨平台編譯。

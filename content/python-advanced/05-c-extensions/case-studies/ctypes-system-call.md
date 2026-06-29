@@ -3,6 +3,7 @@ title: "案例：使用 ctypes 呼叫系統 API"
 date: 2026-01-21
 description: "透過 ctypes 直接呼叫 C 函式庫的系統函式，實現 Python 標準庫未提供的功能"
 weight: 2
+tags: ["python", "python-advanced", "c-extension", "ctypes", "case-study"]
 ---
 
 

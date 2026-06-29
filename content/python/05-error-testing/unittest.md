@@ -3,6 +3,7 @@ title: "5.3 unittest 基礎"
 date: 2026-01-20
 description: "撰寫第一個單元測試"
 weight: 3
+tags: ["python", "testing", "unittest"]
 ---
 
 `unittest` 是 Python 內建的測試框架，提供了測試組織、斷言和測試執行等功能。Hook 系統的測試都使用 `unittest` 撰寫。

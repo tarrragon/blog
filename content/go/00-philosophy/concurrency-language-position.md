@@ -3,6 +3,7 @@ title: "0.5 Go 和其他並發語言的差異"
 date: 2026-04-23
 description: "比較 Go、Java、C#、Rust、Node.js、Python async、Erlang/Elixir 在並發服務中的工程定位"
 weight: 5
+tags: ["go", "philosophy", "concurrency"]
 ---
 
 Go 在並發語言中的核心定位是「用較低語言複雜度寫出可部署、可維護的高併發服務」。現代語言大多能處理並發；Go 的特色在於 goroutine、channel、context、標準庫與單一 binary 共同形成一套服務工程模型。

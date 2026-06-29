@@ -3,6 +3,7 @@ title: "案例：Cython 加速 Markdown 解析"
 date: 2026-01-21
 description: "用 Cython 加速 Markdown 連結解析器，比較純 Python 與 Cython 的效能差異"
 weight: 1
+tags: ["python", "python-advanced", "c-extension", "case-study"]
 ---
 
 

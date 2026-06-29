@@ -3,6 +3,7 @@ title: "7.6 逐步遷移到 ports/adapters 架構"
 date: 2026-04-22
 description: "用 ports 與 adapters 控制 Go 服務的依賴方向"
 weight: 6
+tags: ["go", "refactoring", "architecture"]
 ---
 
 ports/adapters 遷移的核心目標是讓 application 與 domain 不依賴外部技術細節。HTTP、[WebSocket](/backend/knowledge-cards/websocket/)、callback receiver、[database](/backend/knowledge-cards/database/) 都是 adapters；usecase 透過 ports 使用它們。

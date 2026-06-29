@@ -3,6 +3,7 @@ title: "5.5 時間注入與 deterministic test"
 date: 2026-04-22
 description: "用 time provider 避免測試依賴真實時間"
 weight: 5
+tags: ["go", "testing"]
 ---
 
 時間注入的核心目標是讓測試可以控制「現在時間」。只要函式內部直接呼叫 `time.Now()`，測試結果就可能受執行時間影響；把時間來源改成參數或小介面後，測試就能重現固定情境。

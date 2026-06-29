@@ -3,6 +3,11 @@ title: "模組四：架構邊界與事件系統"
 date: 2026-04-22
 description: "用事件驅動架構拆解事件來源、處理流程、狀態邊界與即時推送"
 weight: 4
+tags:
+  - "go"
+  - "go-advanced"
+  - "architecture"
+  - "clean-architecture"
 ---
 
 架構邊界的核心目標是讓每個元件只承擔一種責任。事件來源負責接收外部訊號，normalize 階段負責轉成內部事件，processor 負責套用規則，repository 負責保存狀態真相，publisher 負責把結果送出去。

@@ -3,6 +3,7 @@ title: "3.6 log/slog：結構化日誌"
 date: 2026-04-22
 description: "用 key-value log 設計可查詢、可過濾的程式訊號"
 weight: 6
+tags: ["go", "stdlib", "logging"]
 ---
 
 `log/slog` 是 Go 標準庫提供的結構化日誌 package。它的核心用途是把 [log](/backend/knowledge-cards/log/) 寫成「訊息 + key-value 欄位」，讓人類能讀，也讓工具能搜尋、過濾與聚合。

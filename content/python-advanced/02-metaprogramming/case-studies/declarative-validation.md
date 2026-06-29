@@ -3,6 +3,7 @@ title: "案例：宣告式驗證"
 date: 2026-01-21
 description: "用 Descriptor Protocol 將驗證邏輯從方法變成屬性定義"
 weight: 1
+tags: ["python", "python-advanced", "metaprogramming", "metaclass", "case-study"]
 ---
 
 

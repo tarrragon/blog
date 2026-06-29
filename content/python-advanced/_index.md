@@ -3,6 +3,7 @@ title: "Python 進階指南"
 date: 2026-01-20
 description: "深入 Python 內部機制與擴展開發"
 weight: 31
+tags: ["python", "python-advanced"]
 ---
 
 

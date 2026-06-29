@@ -3,6 +3,7 @@ title: "模組三：標準庫實戰"
 date: 2026-01-20
 description: "Python 標準庫的常用模組實戰應用"
 weight: 3
+tags: ["python", "stdlib"]
 ---
 
 Python 的「電池內建」哲學意味著標準庫提供了豐富的工具。本模組介紹 Hook 系統中最常用的標準庫模組。

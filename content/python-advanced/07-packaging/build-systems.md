@@ -3,6 +3,7 @@ title: "6.2 建構系統比較"
 date: 2026-01-20
 description: "比較 setuptools、Poetry、Hatch 等建構系統"
 weight: 2
+tags: ["python", "python-advanced", "packaging"]
 ---
 
 本章比較主流的 Python 套件建構系統。

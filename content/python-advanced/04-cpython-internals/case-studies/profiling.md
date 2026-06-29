@@ -3,6 +3,7 @@ title: "案例：效能分析實戰"
 date: 2026-01-21
 description: "用 cProfile 和 line_profiler 分析 Markdown 連結檢查器的效能瓶頸"
 weight: 1
+tags: ["python", "python-advanced", "cpython", "profiling", "case-study"]
 ---
 
 

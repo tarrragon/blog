@@ -3,6 +3,7 @@ title: "案例：資料結構選擇"
 date: 2026-01-21
 description: "選擇正確的資料結構：list vs set 的查詢效能差異"
 weight: 5
+tags: ["python", "python-advanced", "optimization", "case-study"]
 ---
 
 

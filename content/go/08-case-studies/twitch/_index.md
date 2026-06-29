@@ -3,6 +3,7 @@ title: "8.5 Twitch：直播與聊天室系統"
 date: 2026-04-23
 description: "看 Go 如何服務低延遲、高併發的即時系統"
 weight: 5
+tags: ["go", "case-study", "concurrency", "websocket"]
 ---
 
 Twitch 的案例幾乎就是 Go 教材裡高併發與即時系統的縮影。官方說法很直接：Go 被用在很多 busiest systems，上下文是 live video 與 chat，重點是 simplicity、safety、performance 與 readability。

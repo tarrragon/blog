@@ -3,6 +3,7 @@ title: "案例：正則表達式預編譯"
 date: 2026-01-21
 description: "用 re.compile 減少重複編譯開銷"
 weight: 3
+tags: ["python", "python-advanced", "optimization", "case-study"]
 ---
 
 
