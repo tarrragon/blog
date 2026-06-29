@@ -2,7 +2,7 @@
 title: "在文章中加入圖片的語法"
 date: 2025-09-17
 draft: false
-description: "要在 Hugo 文章插圖、卻想不起 figure shortcode 還是 Markdown 語法、或圖片路徑該寫 assets 資料夾還是站台根目錄時查這篇。給三種插圖寫法與 width / caption 參數、說明為何路徑要寫成 /work-log/.../x.png。"
+description: "Hugo 文章插圖的三種寫法（Markdown / figure shortcode / raw HTML）、width / caption 參數、以及圖片路徑為何要寫成 /section/.../x.png。"
 tags: ["Hugo", "Bear Cub", "AI協作心得"]
 ---
 

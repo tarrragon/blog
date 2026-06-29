@@ -2,7 +2,7 @@
 title: "Dart test 的跨檔案 GetX 狀態污染：flaky 真因不是 fail 訊息上的那個 test"
 date: 2026-05-07
 draft: false
-description: "`flutter test` 整套跑隨機 fail、但單獨跑該 file 100% 過時回來看。根因是 GetX state 跨 file 污染，別被 fail 訊息指的 test 騙。"
+description: "`flutter test` 整套跑隨機 fail、單獨跑該 file 卻 100% 過。根因是 dart test runner 同 process 內 GetX state 跨 file 污染，fail 位置看 `+N -1` 累計而非訊息標示的 test。"
 tags: ["dart", "flutter", "test", "getx", "debugging", "flaky"]
 ---
 
