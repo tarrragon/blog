@@ -22,7 +22,7 @@ composition root 的核心責任是集中建立具體依賴。domain 與 applica
 
 ## 【觀察】composition root 是整個應用的接線板
 
-composition root 的核心用途不是做更多抽象，而是把具體依賴集中在一個地方建立。這個地方通常是 `main()`、`cmd/.../main.go` 或啟動層 package。
+composition root 的核心用途是把具體依賴集中在一個地方建立。這個地方通常是 `main()`、`cmd/.../main.go` 或啟動層 package。
 
 當讀者打開入口程式時，應該能直接看到：
 
@@ -75,7 +75,7 @@ func main() {
 
 ## 【策略】typed config 先收斂設定，再進行組裝
 
-composition root 會變亂，通常不是因為依賴太多，而是設定沒有先整理成型別清楚的 config。把環境變數、flag 與預設值先集中讀成結構體，wiring 會清楚很多。
+composition root 會變亂，通常是因為設定沒有先整理成型別清楚的 config。把環境變數、flag 與預設值先集中讀成結構體，wiring 會清楚很多。
 
 ```go
 type Config struct {

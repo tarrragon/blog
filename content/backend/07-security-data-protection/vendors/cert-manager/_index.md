@@ -6,7 +6,7 @@ weight: 8
 tags: ["backend", "security", "vendor", "cert-manager", "pki", "tls", "kubernetes"]
 ---
 
-cert-manager 是 K8s 原生的 *certificate lifecycle automation* — 把「拿 cert、放 cert、定期 renew」這條從以前需要 cron + certbot + 手動 reload 的鏈、轉成 *declarative + controller pattern*。使用者在 cluster 內 apply 一個 `Certificate` resource、cert-manager controller 自動跟 issuer 對話、把 cert 存進 Secret、在 lifetime 2/3 點觸發 renew。它不是 certbot 的 K8s 版本、而是把 cert 這件事接進 K8s 控制循環、跟 Pod / Service / Ingress 同等地位的 first-class resource。
+cert-manager 是 K8s 原生的 *certificate lifecycle automation* — 把「拿 cert、放 cert、定期 renew」這條從以前需要 cron + certbot + 手動 reload 的鏈、轉成 *declarative + controller pattern*。使用者在 cluster 內 apply 一個 `Certificate` resource、cert-manager controller 自動跟 issuer 對話、把 cert 存進 Secret、在 lifetime 2/3 點觸發 renew。它把 cert 這件事接進 K8s 控制循環、跟 Pod / Service / Ingress 同等地位的 first-class resource、層級高於 certbot 的 K8s 移植。
 
 ## 服務定位
 

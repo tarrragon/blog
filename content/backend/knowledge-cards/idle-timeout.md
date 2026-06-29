@@ -6,8 +6,7 @@ description: "說明連線或會話在多久沒有活動後應該被回收"
 weight: 132
 ---
 
-
-Idle Timeout 的核心概念是「一段時間沒有活動就關閉連線或回收會話」。它和一般 request timeout 不同，重點不是等待單次操作完成，而是避免空閒連線長時間佔住資源。 可先對照 [Impact Scope](/backend/knowledge-cards/impact-scope/)。
+Idle Timeout 的核心概念是「一段時間沒有活動就關閉連線或回收會話」。它和一般 request timeout 不同，重點是避免空閒連線長時間佔住資源，跟等待單次操作完成的 request timeout 不同。 可先對照 [Impact Scope](/backend/knowledge-cards/impact-scope/)。
 
 ## 概念位置
 

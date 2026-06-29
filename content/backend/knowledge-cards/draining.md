@@ -6,7 +6,6 @@ description: "說明服務如何先停止接收新流量，再讓既有工作完
 weight: 131
 ---
 
-
 Draining 的核心概念是「先把新的 request 停掉，再讓已經進來的工作在期限內完成或交回」。它是負載切換與停止流程中的保護動作，常出現在 rolling update、縮容、故障切換與 graceful shutdown。 可先對照 [Dual Write](/backend/knowledge-cards/dual-write/)。
 
 ## 概念位置
@@ -27,4 +26,4 @@ Kubernetes rolling update 前先讓 instance 進入 draining、load balancer 在
 
 ## 設計責任
 
-設計時要定義何時開始 draining、draining 多久、超時後怎麼強制終止，以及如何觀察 in-flight request、consumer ack 與長連線狀態。Draining 的目的不是無限等待，而是把切換風險壓到可接受範圍。
+設計時要定義何時開始 draining、draining 多久、超時後怎麼強制終止，以及如何觀察 in-flight request、consumer ack 與長連線狀態。Draining 的目的是把切換風險壓到可接受範圍，無限等待反而製造新風險。

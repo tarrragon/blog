@@ -212,7 +212,7 @@ if (root.querySelector(selector)) {
 
 - **機制**：每隔 N ms 檢查、找到就停
 - **跟 A 的取捨**：B 寫法簡單、A 設計嚴謹；但 B 有最快回應 = N ms 的延遲、CPU 一直跑
-- **B 比 A 好的情境**：等的不是 DOM 元素而是無事件可監聽的狀態（全局變數出現、外部 API 結果且無 promise 介面）
+- **B 比 A 好的情境**：等待對象是無事件可監聽的狀態（全局變數出現、外部 API 結果且無 promise 介面），MutationObserver 無處掛載
 
 ### C：Promise / async（如果 API 提供）
 

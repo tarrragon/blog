@@ -46,7 +46,7 @@ fmt.Println(debug)      // false
 fmt.Println(tags == nil) // true
 ```
 
-零值不是錯誤狀態，而是型別的預設狀態。這是 Go 設計中很重要的精神：讓資料結構在最少初始化下仍然有合理行為。
+零值是型別的預設狀態。這是 Go 設計中很重要的精神：讓資料結構在最少初始化下仍然有合理行為。
 
 ```go
 type Counter struct {
@@ -104,7 +104,7 @@ func greeting(name string) string {
 }
 ```
 
-`message` 的型別可以從字串串接結果推斷，所以不需要寫成 `var message string = ...`。這種省略不是模糊化型別，而是移除讀者已經能從右側看懂的重複資訊。
+`message` 的型別可以從字串串接結果推斷，所以不需要寫成 `var message string = ...`。這種省略是移除讀者已經能從右側看懂的重複資訊。
 
 短變數宣告只能用在函式內。以下寫法不能放在 package 層級：
 

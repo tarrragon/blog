@@ -6,7 +6,7 @@ weight: 1
 tags: ["backend", "incident-response", "case-study", "github"]
 ---
 
-2018 年 GitHub Oct21 事故的核心教訓是：跨區資料庫在 network partition 後，最困難的不是切換本身，而是如何在可用性與資料一致性之間做出可回放的決策。
+2018 年 GitHub Oct21 事故的核心教訓是：跨區資料庫在 network partition 後，最困難的是如何在可用性與資料一致性之間做出可回放的決策，切換本身只是其中一步。
 
 ## 事故摘要
 

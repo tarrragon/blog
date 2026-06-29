@@ -14,7 +14,7 @@ tags: ["backend", "message-queue", "case-study"]
 
 ## 中型服務常見判讀
 
-中型服務常見問題是 lag 與 DLQ 長期累積。這通常不是 broker 效能單點問題，而是 consumer idempotency、重播流程、下游承載能力沒有一起設計。
+中型服務常見問題是 lag 與 DLQ 長期累積。根因通常是 consumer idempotency、重播流程、下游承載能力沒有一起設計，broker 效能本身很少是單點問題。
 
 ## 大型服務常見判讀
 

@@ -50,7 +50,7 @@ Claude for Legal 是 2025 末 Anthropic 推出的法律事務所專屬 AI 工作
 
 這層跟前兩層平行、不是因果連動、但被同一波 AI 進企業浪潮觸發。
 
-知識工作者組織有一個隱性結構叫 [Junior Buffer](/business/knowledge-cards/junior-buffer/)。律師事務所的 partner-associate、投行的 MD-VP-analyst、顧問公司的 partner-consultant、醫院的 attending-resident—資深的判斷不是直接生效、而是先讓 junior 做一版、看過修改、錯了還能擋下來。
+知識工作者組織有一個隱性結構叫 [Junior Buffer](/business/knowledge-cards/junior-buffer/)。律師事務所的 partner-associate、投行的 MD-VP-analyst、顧問公司的 partner-consultant、醫院的 attending-resident—資深的判斷先經過 junior 做一版、看過修改、錯了還能擋下來，不直接生效。
 
 AI 接走的是 buffer 這層—associate 的 due diligence、文件 review、memo 起草、跟 finance junior 的抓資料、拉 Excel、寫報告一樣、全是執行型工作。Junior buffer 沒了之後、資深的判斷直接面對結果、[Judgment Stake](/business/knowledge-cards/judgment-stake/) 被放大。
 

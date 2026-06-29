@@ -203,7 +203,7 @@ Step 1 + 9 + 10 是 *residency-specific*、不在既有 6 維內。
 | DR RTO              | 30 分鐘 (single region) | EU regional 1 小時 / global 24-48 小時                 |
 | Audit cost          | Minimal                 | 季度 DPIA + 年度 compliance audit                      |
 
-**判讀**：GDPR multi-region 成本 1.5-2.5x、但合規不是 cost optimization — 是 *必要 spend*；多數歐洲業務 7+ 年回本（避免 4% revenue fine）。
+**判讀**：GDPR multi-region 成本 1.5-2.5x、但合規是 *必要 spend*、用 cost optimization 的框架看會誤判；多數歐洲業務 7+ 年回本（避免 4% revenue fine）。
 
 ## 整合 / 下一步
 

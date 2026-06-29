@@ -14,7 +14,7 @@ Console 唯讀鐵律是一條操作紀律：雲端 Console 只用來觀察與排
 
 ### drift 的延遲浮現
 
-state 與現實的分歧叫 drift。drift 的後果不在手動改的當下浮現，而在後續某次 apply 時，工具用過時的 state 比對雲端現況、把手動設定判定為「不該存在」並覆蓋掉。手動改的當下一切正常，後果要等到下一次不相關的 apply 才出現。
+state 與現實的分歧叫 drift。drift 的後果在後續某次 apply 時才浮現——工具用過時的 state 比對雲端現況、把手動設定判定為「不該存在」並覆蓋掉，手動改的當下一切正常。手動改的當下一切正常，後果要等到下一次不相關的 apply 才出現。
 
 常見的 drift 路徑：在 Console 手動加了一條 security group 規則（例如讓外部監控系統連進來），state 不知道這條規則存在。後續某次 apply 時，工具比對 state 和雲端現況、把這條規則判定為「不在記憶裡」而刪除。同樣的機制也發生在手動調整的 RDS parameter group（例如增加 `max_connections`）— 後續 apply 會把參數重設回程式碼裡的值。
 

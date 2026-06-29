@@ -373,7 +373,7 @@ func TestJobResponseOmitsFinishedAtWhenNil(t *testing.T) {
 }
 ```
 
-這個測試不是測 `encoding/json` 本身，而是測你對外承諾的欄位語意。
+這個測試是測對外承諾的欄位語意。
 
 ## 實作檢查清單
 

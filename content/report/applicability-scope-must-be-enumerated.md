@@ -31,7 +31,7 @@ tags: ["report", "事後檢討", "工程方法論", "寫作", "原則"]
 
 具體 case：本 blog 跑 #94 + #95 review 時、適用範圍寫「`compositional-writing` skill 的所有 references」、心裡推導 = `.claude/skills/compositional-writing/references/*.md`。漏掉的是：
 
-- `content/skills/compositional-writing/*.md`（同 surface mirror、AGENTS.md §9 規範要求「主體相同」）
+- `content/skills/compositional-writing/*.md`（同 surface mirror、AGENTS.md Skill 撰寫規範要求「主體相同」）
 - 同名檔在兩個物理路徑都存在、語意上是同一份內容
 
 連續兩輪 review（#94 跟 #95）都漏同 5 個 mirror 檔、共 10 處違規透過 mirror 永久躲過 review。**Root cause 不是「我忘了」、是「適用範圍沒 enumerate、每次 review 都要重新心算一次具體 list」**。

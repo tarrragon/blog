@@ -37,7 +37,7 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 
 ### 資料層與儲存架構轉換
 
-資料層轉換通常不是為了追新技術，而是單體資料庫在容量、隔離與可恢復性上出現結構性瓶頸。
+資料層轉換通常源自單體資料庫在容量、隔離與可恢復性上出現結構性瓶頸，追新技術本身很少是真正驅動力。
 
 - 代表案例：GitLab Main/CI split、Notion Postgres sharding、Shopify Vitess、Meta MyRocks
 - 主要動機：解耦不同負載、降低熱點、取得水平擴充、降低儲存成本

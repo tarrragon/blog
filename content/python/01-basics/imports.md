@@ -8,7 +8,7 @@ tags: ["python", "basics", "imports", "modules"]
 
 「ModuleNotFoundError」是 Python 開發者最常遇到的錯誤之一。理解導入機制可以幫助你快速解決這類問題。
 
-> 承接提示：import 問題通常不是單一語法問題，而是 script、module、package 與執行位置共同造成的結果。如果還不確定這幾個概念的差異，請先閱讀 [從單一 script 到多檔案專案](/python/01-basics/script-to-package/)。
+> 承接提示：import 問題通常是 script、module、package 與執行位置共同造成的結果，而非單一語法問題。如果還不確定這幾個概念的差異，請先閱讀 [從單一 script 到多檔案專案](/python/01-basics/script-to-package/)。
 
 ## 模組搜尋路徑
 

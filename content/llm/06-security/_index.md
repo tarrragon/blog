@@ -55,7 +55,7 @@ weight: 6
 
 本模組假設的 threat model：
 
-1. **攻擊者預期**：不是 nation-state APT、而是「不小心被執行的 malicious payload」（誤裝有問題的 GGUF、誤裝有問題的 MCP server、誤點到帶 prompt injection 的網頁 / 文件 / pull request）。
+1. **攻擊者預期**：「不小心被執行的 malicious payload」（誤裝有問題的 GGUF、誤裝有問題的 MCP server、誤點到帶 prompt injection 的網頁 / 文件 / pull request），而非 nation-state APT。
 2. **保護的 asset**：本機檔案、開發中的 codebase（含未公開）、雲端 API key（OpenAI、Anthropic 等）、SSH key 與其他憑證。
 3. **trust boundary**：本機 user account 邊界、prompt 邊界、tool 副作用邊界。
 4. **可接受風險**：個人 dev 不需要 enterprise-grade audit log、IDS / IPS、SOC、紅藍隊演練；用基本權限隔離 + 預設安全配置 + 場景判讀為主。

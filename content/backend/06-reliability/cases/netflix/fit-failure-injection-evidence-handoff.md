@@ -6,7 +6,7 @@ weight: 23
 tags: ["backend", "reliability", "case-study"]
 ---
 
-FIT（Failure Injection Testing）的核心責任不是做故障演示，而是產生可決策的證據。當實驗結果無法直接回答「能不能放行」，FIT 就只是測試活動，不是可靠性控制面。
+FIT（Failure Injection Testing）的核心責任是產生可決策的證據，故障演示只是過程。當實驗結果無法直接回答「能不能放行」，FIT 就只是測試活動，不是可靠性控制面。
 
 ## 問題場景
 

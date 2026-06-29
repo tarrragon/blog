@@ -12,7 +12,7 @@ Vantage 是 *modern multi-cloud FinOps SaaS*、2020 年由 Heroku ex-founder 創
 
 ## 服務定位
 
-Vantage 的差異不在 *指標本身*、而在 *使用者體驗與切入角度*。CloudHealth / Apptio 是傳統 enterprise FinOps platform、面向 procurement、CFO、FinOps governance team；Vantage 把入口換成工程團隊 — 報表能直接 share URL、UI 接近 observability dashboard、connector 走 self-service onboarding 而非 SOW + professional service。
+Vantage 的差異在 *使用者體驗與切入角度*、指標本身跟同類工具相近。CloudHealth / Apptio 是傳統 enterprise FinOps platform、面向 procurement、CFO、FinOps governance team；Vantage 把入口換成工程團隊 — 報表能直接 share URL、UI 接近 observability dashboard、connector 走 self-service onboarding 而非 SOW + professional service。
 
 跟 [CloudHealth](/backend/09-performance-capacity/vendors/cloudhealth/) 比、Vantage *淺但快上手*、適合 100 - 1000 人工程組織自助 FinOps；CloudHealth 走 enterprise governance、policy engine、approval workflow 更深、適合 5000+ 員工跨 BU 治理。跟 Apptio Cloudability 比、定位類似 CloudHealth、但 Apptio 把成本接到 TBM（Technology Business Management）frame、適合需要把 IT 成本對到 business service / product P&L 的組織。跟 [AWS Cost Explorer](/backend/09-performance-capacity/vendors/aws-cost-explorer/) 比、Cost Explorer 是 AWS-only 入口、免費但只有 AWS、跨 provider / Kubernetes / SaaS spend 看不到；Vantage 把 AWS + GCP + Azure + Snowflake + Databricks + Datadog + Fastly 等串成單一視圖。
 
@@ -132,7 +132,7 @@ Vantage 目前適合作為 [9.7 成本邊界與 efficiency](/backend/09-performa
 
 這些案例的重點是成本歸屬。Vantage 頁引用案例時，要把 report filter、owner dimension、成本變化、action item 與驗證結果寫清楚 — 例如 Netflix 的 28% 下降需要拆到 DB tier、replication topology 與 read replica 比例，避免停在帳單 dashboard 截圖。
 
-Vantage 的客戶輪廓偏 *modern startup 與 mid-market* — 工程組織 100-1000 人、cloud-native first、沒有獨立 FinOps team、由 platform / SRE 兼任成本治理。這類組織的痛點不是 governance policy 不足、而是 *誰看 cost report、誰調 anomaly、誰負責 saving validation* 的工程節奏沒建立。引用 Riot Games / Netflix / BookMyShow / Zomato 案例時、重點是把這些 enterprise-scale 的 attribution 機制轉譯成 mid-market 可執行的 weekly review 節奏、而非照搬全部 governance overhead。
+Vantage 的客戶輪廓偏 *modern startup 與 mid-market* — 工程組織 100-1000 人、cloud-native first、沒有獨立 FinOps team、由 platform / SRE 兼任成本治理。這類組織的痛點是 *誰看 cost report、誰調 anomaly、誰負責 saving validation* 的工程節奏沒建立、governance policy 本身反而不缺。引用 Riot Games / Netflix / BookMyShow / Zomato 案例時、重點是把這些 enterprise-scale 的 attribution 機制轉譯成 mid-market 可執行的 weekly review 節奏、而非照搬全部 governance overhead。
 
 ## 下一步路由
 

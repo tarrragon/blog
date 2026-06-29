@@ -6,7 +6,7 @@ weight: 9
 tags: ["backend", "performance", "capacity", "case-study", "mq-stream", "gcp", "sustained-growth"]
 ---
 
-這個案例的核心責任是說明「事件交付系統的容量規劃，靠 managed service 卸載 vs 自管 broker」的長期成本對照。Spotify 從 Kafka 遷到 Pub/Sub 不是因為 Kafka 不能撐、而是因為 *容量規劃的工程成本* 在 sustained growth 下變得不划算。
+這個案例的核心責任是說明「事件交付系統的容量規劃，靠 managed service 卸載 vs 自管 broker」的長期成本對照。Spotify 從 Kafka 遷到 Pub/Sub 的驅動力是 *容量規劃的工程成本* 在 sustained growth 下變得不划算、Kafka 能力本身不是瓶頸。
 
 ## 觀察
 

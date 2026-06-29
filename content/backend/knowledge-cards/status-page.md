@@ -6,7 +6,6 @@ description: "說明事故期間對外狀態頁如何承接可用性承諾"
 weight: 313
 ---
 
-
 Status page 的核心概念是「把事故影響、處理節奏與回復進度公開成單一對外契約」。它和 [incident communication channel](/backend/knowledge-cards/incident-communication-channel/) 與 [incident severity](/backend/knowledge-cards/incident-severity/) 一起決定外部看到的真實版本。
 
 ## 概念位置
@@ -19,4 +18,4 @@ Status page 位在 [incident communication channel](/backend/knowledge-cards/inc
 
 ## 設計責任
 
-Status page 要定義更新頻率、發佈責任、嚴重度標示、影響範圍與下一次更新承諾。它不是公關模板，而是外部信任的最小承諾面。
+Status page 要定義更新頻率、發佈責任、嚴重度標示、影響範圍與下一次更新承諾。它是外部信任的最小承諾面，用公關模板的心態維護會失去可信度。

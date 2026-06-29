@@ -6,7 +6,7 @@ weight: 33
 tags: ["backend", "database", "aurora", "rds-proxy", "connection-pool", "serverless", "deep-article"]
 ---
 
-Lambda 函式在流量尖峰被同時拉起幾百個實例、每個各自開一條到 Aurora 的連線、Aurora 的 connection 上限瞬間被打爆、新請求拿不到連線、整批失敗。這不是 Aurora 容量不夠，而是 *連線管理* 缺位——serverless 與高並發短連線 workload 製造的連線數遠超過資料庫該同時維持的後端連線。RDS Proxy 在 application 與 Aurora 之間做 connection multiplexing，把大量 client 連線收斂成少量後端連線。但它不是「連上去就自動省」——某些 session 操作會讓連線被 pin 住、multiplexing 失效。
+Lambda 函式在流量尖峰被同時拉起幾百個實例、每個各自開一條到 Aurora 的連線、Aurora 的 connection 上限瞬間被打爆、新請求拿不到連線、整批失敗。根因是 *連線管理* 缺位、Aurora 容量本身夠用——serverless 與高並發短連線 workload 製造的連線數遠超過資料庫該同時維持的後端連線。RDS Proxy 在 application 與 Aurora 之間做 connection multiplexing，把大量 client 連線收斂成少量後端連線。但它不是「連上去就自動省」——某些 session 操作會讓連線被 pin 住、multiplexing 失效。
 
 本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 RDS Proxy 連線管理機制與陷阱的實作層教學。
 

@@ -6,7 +6,7 @@ weight: 6
 tags: ["backend", "security", "vendor", "microsoft-purview", "dlp", "information-protection", "azure"]
 ---
 
-Microsoft Purview 是 Microsoft 在 2022 年把原 Microsoft Information Protection (MIP)、Azure Purview data catalog、Microsoft 365 Compliance Center 合併後的統合品牌、定位是 *跨 M365 / Azure / endpoint / 跨平台* 的 data governance + information protection + DLP + audit + insider risk 平台。它跟 [Google DLP](/backend/07-security-data-protection/vendors/google-dlp/) 的本質差異不在功能列表、而在 *控制層級* — Purview 走 *information protection*（document / email / collaboration tool 的 sensitivity label + endpoint inline 攔截）、Google DLP 走 *infrastructure-level discovery + transformation*（GCS / BigQuery 的 content scan + de-identification）— 兩者層級不同、典型大型 Microsoft + GCP 混合環境會並存而非互斥。
+Microsoft Purview 是 Microsoft 在 2022 年把原 Microsoft Information Protection (MIP)、Azure Purview data catalog、Microsoft 365 Compliance Center 合併後的統合品牌、定位是 *跨 M365 / Azure / endpoint / 跨平台* 的 data governance + information protection + DLP + audit + insider risk 平台。它跟 [Google DLP](/backend/07-security-data-protection/vendors/google-dlp/) 的本質差異在 *控制層級*、功能列表反而看起來相似 — Purview 走 *information protection*（document / email / collaboration tool 的 sensitivity label + endpoint inline 攔截）、Google DLP 走 *infrastructure-level discovery + transformation*（GCS / BigQuery 的 content scan + de-identification）— 兩者層級不同、典型大型 Microsoft + GCP 混合環境會並存而非互斥。
 
 ## 服務定位
 

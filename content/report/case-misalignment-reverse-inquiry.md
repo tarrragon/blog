@@ -28,7 +28,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Case-driven", "C
 
 背後動機是「想讓段落看起來完整」、而非「想讓讀者看到證據」。3-5 個 bullet 變成內在配額、引用變成填空、不是工具。這條動機跟 [#122 Cadence 同質化是模板的隱形維度](/report/cadence-homogenization-in-batch-writing/) 的成因同源 — 模板從「輔助結構」滑落為「強制配額」。
 
-## 反向追問的三步驟
+## 反向追問步驟
 
 不對齊時、反向追問的標準操作分三步：
 

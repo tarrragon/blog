@@ -6,7 +6,7 @@ weight: 7
 tags: ["go", "stdlib", "concurrency"]
 ---
 
-`context.Context` 是 Go 用來傳遞取消訊號、逾時與 request-scoped 資訊的標準機制。它的核心用途不是保存任意資料，而是讓一串呼叫知道「這件工作是否應該停止」。
+`context.Context` 是 Go 用來傳遞取消訊號、逾時與 request-scoped 資訊的標準機制。它的核心用途是讓一串呼叫知道「這件工作是否應該停止」。
 
 ## 本章目標
 

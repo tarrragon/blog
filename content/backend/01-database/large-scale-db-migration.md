@@ -345,7 +345,7 @@ DB 遷移期間有特殊的容量挑戰、跟一般 capacity planning 不同。
 
 ## 「預設 DB」治理 pattern
 
-大規模平台選 DB 不是 case-by-case 決定、而是建立「預設 DB」規則、新團隊用其他要 *justify*。這個治理 pattern 簡化 onboarding、降低 DB 種類太多的運維成本。
+大規模平台選 DB 的做法是建立「預設 DB」規則、新團隊用其他要 *justify*、逐案決定在這個規模行不通。這個治理 pattern 簡化 onboarding、降低 DB 種類太多的運維成本。
 
 對應 [9.C24 Genesys](/backend/09-performance-capacity/cases/genesys-dynamodb-99999-availability/) — Genesys Cloud 的 Chief Architect 明確說「Amazon DynamoDB is our primary data layer by default, and teams have to justify the use of something else」。對應 [9.C23 Netflix](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) — 把多套 RDB 整合到 Aurora、降低 DB 種類就是降低運維 surface area。
 

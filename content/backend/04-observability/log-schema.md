@@ -17,7 +17,7 @@ tags: ["backend", "observability"]
 
 [log schema](/backend/knowledge-cards/log-schema/) 是把事件紀錄從文字輸出變成可查詢資料的契約，責任是讓不同服務在事故時能用同一組欄位還原脈絡。
 
-這一頁處理的是欄位與搜尋路徑。log 的價值不在於寫得多，而在於事故時能用穩定欄位找到同一個 request、同一個 tenant、同一個 dependency call 與同一段錯誤鏈。
+這一頁處理的是欄位與搜尋路徑。log 的價值在於事故時能用穩定欄位找到同一個 request、同一個 tenant、同一個 dependency call 與同一段錯誤鏈，寫得多本身沒有幫助。
 
 ## 核心判讀
 

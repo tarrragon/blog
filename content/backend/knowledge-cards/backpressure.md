@@ -37,8 +37,8 @@ codex-check:
   C3-business-first: pass (定義段落說明要解決的問題)
   C4-reasoning-path: pass (概念位置 → 訊號 → 例子 → 設計責任)
   C5-searchable: pass (關鍵詞 backpressure / buffer / queue depth 皆 grep 友善)
-  C6-positive-framing: pass (「避免」僅用於安全警示語境，屬 §4.3 例外)
+  C6-positive-framing: pass (「避免」僅用於安全警示語境，屬正面表述例外（物理限制、安全警示、反模式對照）)
   C7-source-verified: pass
   reviewed-at: 2026-04-23
-  role: reference-sample (brief §3.1 指定正面範例卡片)
+  role: reference-sample (brief 檔案結構段指定正面範例卡片)
 -->

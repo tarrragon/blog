@@ -42,7 +42,7 @@ GitGuardian 的核心定位是 *跨工具的 secret leak detection + incident wo
 
 **Validation endpoint**：detector 抓到字串後、GitGuardian backend *call 該 service API live verify*。AWS key 試 `sts:GetCallerIdentity`、Stripe key 試 retrieve test event、GitHub PAT 試 `GET /user`。verify 結果 *Valid* / *Invalid* / *Unknown* 三態、決定 incident severity。意義是 *只有 active secret 升 incident*、已 revoke 的舊 commit history 不再 noise。
 
-**Incident workflow**：偵測命中後不是直接 alert、而是建 *Incident* 物件、含 source location / detector / validation status / suggested remediation。Incident 可 *assign 給 developer*（developer 在 GitGuardian dashboard 自助 acknowledge / rotate / mark FP）、SecOps 只 review escalated case。對應 [Security Workflow as Code](/backend/07-security-data-protection/security-as-risk-routing-system/) 的 shift-left 模式 — developer 是 first responder、不是 SecOps 全包。
+**Incident workflow**：偵測命中後會建 *Incident* 物件（而非直接 alert）、含 source location / detector / validation status / suggested remediation。Incident 可 *assign 給 developer*（developer 在 GitGuardian dashboard 自助 acknowledge / rotate / mark FP）、SecOps 只 review escalated case。對應 [Security Workflow as Code](/backend/07-security-data-protection/security-as-risk-routing-system/) 的 shift-left 模式 — developer 是 first responder、不是 SecOps 全包。
 
 **Source coverage**：GitGuardian 預設掃 SCM（GitHub / GitLab / Bitbucket / Azure DevOps / 自管 Git），但 *差異化價值在 SaaS scan* — Slack workspace（message / DM / file upload）、Jira issue / comment、Confluence page、Notion workspace、Microsoft Teams 都可接 source connector。Developer 在 Slack 貼 prod DB password 是真實常見 case、SCM-only 工具看不到。
 

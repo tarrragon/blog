@@ -67,7 +67,7 @@ func Status(now time.Time, job Job) string {
 }
 ```
 
-`now` 是明確輸入，因此測試可以建立任何時間點。這也讓讀者一眼看出 `Status` 不是純粹看 `Job`，而是看 `Job` 與目前時間的關係。
+`now` 是明確輸入，因此測試可以建立任何時間點。這也讓讀者一眼看出 `Status` 看的是 `Job` 與目前時間的關係。
 
 ## 【執行】用 table-driven test 描述時間邊界
 

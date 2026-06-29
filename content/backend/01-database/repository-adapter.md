@@ -150,7 +150,7 @@ repository 是 *infrastructure* 層、test 策略不同於 domain layer。
 ### Contract Test
 
 - 驗證 adapter 對外語意穩定：同一輸入是否得到一致輸出、同一錯誤是否被穩定分類、同一查詢語意在 schema 演進後是否保持相容
-- 測試重點不是資料庫產品特性覆蓋、而是邊界語意覆蓋
+- 測試重點是邊界語意覆蓋、資料庫產品特性覆蓋是另一件事
 - 例：「unique 衝突必須回 `ErrAlreadyExists`」這條 contract、不管底層是 PostgreSQL / MySQL / SQLite 都成立
 
 詳見 [Contract 卡片](/backend/knowledge-cards/contract/) 跟 [6.10 Contract Testing](/backend/06-reliability/contract-testing/)。

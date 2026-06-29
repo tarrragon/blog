@@ -8,7 +8,7 @@ tags: ["backend", "database", "dynamodb", "migration", "paradigm-shift", "migrat
 
 > 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 migration playbook。寫作參照 [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)。
 
-「我們要把 RDS 整個搬到 DynamoDB。」這句話本身就藏著最大的誤解 — DynamoDB 遷移不是把 table schema 1:1 搬過去。RDS 的 normalized schema、JOIN、ad-hoc query 在 DynamoDB 沒有對應物；MongoDB 的彈性 document、二級索引、aggregation pipeline 也不能直接映射。字面意義的「遷移」不成立 — 遷移的動作不是搬資料、而是 *從 access pattern 重新設計資料模型*。能不能遷、該遷多少，取決於 workload 的查詢形狀是否固定、一致性需求是否能放寬。本文走 paradigm shift 結構：先講為何字面遷移不成立、再講哪些該遷哪些該留、最後才是階段化執行。
+「我們要把 RDS 整個搬到 DynamoDB。」這句話本身就藏著最大的誤解 — DynamoDB 遷移不是把 table schema 1:1 搬過去。RDS 的 normalized schema、JOIN、ad-hoc query 在 DynamoDB 沒有對應物；MongoDB 的彈性 document、二級索引、aggregation pipeline 也不能直接映射。字面意義的「遷移」不成立 — 遷移的動作是 *從 access pattern 重新設計資料模型*、搬資料只是最後一步。能不能遷、該遷多少，取決於 workload 的查詢形狀是否固定、一致性需求是否能放寬。本文走 paradigm shift 結構：先講為何字面遷移不成立、再講哪些該遷哪些該留、最後才是階段化執行。
 
 ## 6 維 diff audit：主導維度是 paradigm
 
@@ -23,7 +23,7 @@ tags: ["backend", "database", "dynamodb", "migration", "paradigm-shift", "migrat
 | Application change | ORM / query layer 全改、access pattern 先行            | High   |
 | Data topology      | partition key 設計、無跨 region transaction            | Medium |
 
-主導維度是 **paradigm**（其次 schema / application change）。這定義了結構 — 不是 schema 翻譯（Type A）、不是 drop-in（Type B），而是 **Type E paradigm shift**：部分遷移、長期混合架構、不收斂到「全部搬完」。
+主導維度是 **paradigm**（其次 schema / application change）。這定義了結構 — **Type E paradigm shift**（排除 schema 翻譯 Type A 和 drop-in Type B）：部分遷移、長期混合架構、不收斂到「全部搬完」。
 
 > **No-go condition**：workload 需要 ad-hoc 分析查詢、跨實體 JOIN、頻繁 schema 變動下的彈性查詢、或複雜多表交易 → 不該遷 DynamoDB。這些是 relational / document 的主場、硬遷會把複雜度推給 application 層（自己做 JOIN、自己維護冗餘）。
 

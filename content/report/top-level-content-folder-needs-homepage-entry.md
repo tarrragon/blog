@@ -47,7 +47,7 @@ business: 新增商業教材模組 + 首頁入口
 
 ### 第二步：完稿檢查清單加一條
 
-AGENTS.md §6 完稿檢查清單明列：
+AGENTS.md 完稿檢查清單明列：
 
 ```text
 - [ ] 新增頂層 content/<module>/ 資料夾時、已同步更新 content/_index.md 對應分類段
@@ -93,7 +93,7 @@ backend / llm / ci 等過去新模組可能也遇過相同 gap、但當時被建
 | Commit 建了新頂層 `content/<module>/` 但沒動 `content/_index.md` | check 首頁入口、補同 commit 或下個 commit 立刻補 + 寫 retro 卡 |
 | 讀者反饋「我在首頁沒看到 X」                                     | too late、應在建模組同 commit 修；同步紀錄 retro 確認 pattern  |
 | 不確定首頁清單是否自動產生                                       | 不是、`content/_index.md` 是手動 markdown、Hugo 不 auto-list   |
-| 完稿檢查清單沒列「同步首頁入口」                                 | 補進 `AGENTS.md` §6                                            |
+| 完稿檢查清單沒列「同步首頁入口」                                 | 補進 `AGENTS.md` 完稿檢查清單                                  |
 | Sibling 模組 `_index.md` 提到新模組時沒 cross-link               | 同類風險、scope 要蓋所有上游引用點、不只首頁                   |
 
 ---

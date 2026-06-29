@@ -57,7 +57,7 @@ func loadUser(id string) error {
 }
 ```
 
-錯誤訊息不是給機器看的代碼，而是給工程師定位問題的線索。像 `"failed"` 這類訊息太籠統，讀者無法知道是哪個操作失敗。
+錯誤訊息是給工程師定位問題的線索。像 `"failed"` 這類訊息太籠統，讀者無法知道是哪個操作失敗。
 
 ```go
 if err := saveConfig(path, config); err != nil {

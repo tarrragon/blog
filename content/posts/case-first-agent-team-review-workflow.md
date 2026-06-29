@@ -181,7 +181,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 - Data IC 的特殊角色獨立段（300 字、含「為什麼不能讓 Tech IC 兼任」的失誤對照）
 - 事先準備 4 項各自延伸（不只列項目、解釋失效樣態）
 
-這樣 *每個項目都是情境* 而非 *硬塞的欄位*、符合 AGENTS.md §1.4「表格不是終點」原則。
+這樣 *每個項目都是情境* 而非 *硬塞的欄位*、符合 AGENTS.md「表格不是終點」原則。
 
 ### 情境敘事的判讀條件
 
@@ -584,7 +584,7 @@ Medium case（30-50 行、結構化但無具體數字）首次套用時、容易
 
 ### 「章節已有 routing skeleton」的特殊處理（07 模組新發現）
 
-07 模組跟 06 / 09 不同之處：章節在 stage 2 前已有完整 routing layer 結構（threat scope / 從本章到實作 / 問題節點表 / 風險邊界 / 案例觸發 / 路由）— stage 2 不是空白擴章、而是在現有結構內補 case-driven 深化段。
+07 模組跟 06 / 09 不同之處：章節在 stage 2 前已有完整 routing layer 結構（threat scope / 從本章到實作 / 問題節點表 / 風險邊界 / 案例觸發 / 路由）— stage 2 是在現有結構內補 case-driven 深化段，而非空白擴章。
 
 這個情境下：
 

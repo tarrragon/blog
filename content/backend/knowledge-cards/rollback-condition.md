@@ -27,4 +27,4 @@ Rollback condition 位在 [gate decision](/backend/knowledge-cards/gate-decision
 
 ## 設計責任
 
-Rollback condition 要包含訊號、門檻、觀察窗口、對應動作與 owner。它要連到 [query link](/backend/knowledge-cards/query-link/) 與 [time range](/backend/knowledge-cards/time-range/)，讓決策撤回不是口頭判斷，而是可回放的證據判讀。
+Rollback condition 要包含訊號、門檻、觀察窗口、對應動作與 owner。它要連到 [query link](/backend/knowledge-cards/query-link/) 與 [time range](/backend/knowledge-cards/time-range/)，讓決策撤回成為可回放的證據判讀，口頭判斷的準確度和可追溯性都不足。

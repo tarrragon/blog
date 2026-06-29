@@ -34,7 +34,7 @@ Coinbase 在 2023-05 推出國際交易所、上線後關鍵數字（引自 [Coi
 1. **沒有用 Auto Scaling**：交易撮合引擎用 RAFT consensus 維持嚴格順序、節點數量是 consensus 一部分、不能臨時增加。容量規劃完全是 *pre-provision*、不是 reactive。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 必須區分「可水平擴容服務」跟「不可水平擴容服務」、後者的容量公式只有 headroom × peak、沒有 elastic 補救。
 2. **沒有用通用 EC2 實例**：z1d 是 AWS 針對「高頻 CPU + NVMe」設計的特化實例、犧牲了通用性換取單核效能。這層選擇隱含一個容量規劃決策：*單機效能上限* 直接決定 *系統理論吞吐上限*、橫向擴容不能超過 RAFT 節點數限制、那麼縱向就必須榨乾。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 必須先判斷瓶頸屬「可分散」還是「不可分散」。
 3. **沒有用多區域分散**：Cluster Placement Group 把節點壓到同一可用區內、犧牲了 region failover 速度、換取 node-to-node 網路延遲。這跟「高可用性」的常見直覺相反、是「延遲敏感型負載的容量設計優先於可靠性設計」的一個範例。
-4. **延遲是設計輸入、不是設計結果**：sub-millisecond 不是壓測之後發現可以做到、而是先訂目標、再反推所有架構選擇。對應 [9.1 壓測理論與系統行為](/backend/09-performance-capacity/) 中 Little's Law 的反向應用 — 給定延遲目標 + 吞吐目標、反推 concurrency 上限 + 每個 stage 的 latency budget。
+4. **延遲是設計輸入、不是設計結果**：sub-millisecond 是先訂目標、再反推所有架構選擇的結果、壓測只是驗證手段。對應 [9.1 壓測理論與系統行為](/backend/09-performance-capacity/) 中 Little's Law 的反向應用 — 給定延遲目標 + 吞吐目標、反推 concurrency 上限 + 每個 stage 的 latency budget。
 
 需要警惕的判讀盲點：「sub-millisecond latency 達成」這類陳述通常指 *p50 或 p90*、不一定是 p99 或 p999。長尾延遲在 RAFT 系統下可能比平均高一個數量級（leader election、replication lag）。讀案例時要注意延遲分布 vs 平均值的差別。
 

@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "security", "vendor", "elastic-security", "siem", "edr", "detection"]
 ---
 
-Elastic Security 是 Elastic Stack（Elasticsearch + Kibana + Beats / Agent）上的 SIEM + EDR + Cloud Security 套件、OSS 起源、現屬 Elastic 商業版的 Solution。它跟 [Splunk](/backend/07-security-data-protection/vendors/splunk/) / [Datadog Security](/backend/07-security-data-protection/vendors/datadog-security/) / [Google Security Operations](/backend/07-security-data-protection/vendors/google-security-operations/) 的差異不在 *偵測能力本身*、而在 *計費模型 + 查詢語言模型 + ecosystem 開放度* — Elastic 走 *resource-based pricing*（按 cluster size 而非 ingestion volume）、且提供 KQL / EQL / Lucene / ES|QL 四種互補的查詢語言。
+Elastic Security 是 Elastic Stack（Elasticsearch + Kibana + Beats / Agent）上的 SIEM + EDR + Cloud Security 套件、OSS 起源、現屬 Elastic 商業版的 Solution。它跟 [Splunk](/backend/07-security-data-protection/vendors/splunk/) / [Datadog Security](/backend/07-security-data-protection/vendors/datadog-security/) / [Google Security Operations](/backend/07-security-data-protection/vendors/google-security-operations/) 的差異在 *計費模型 + 查詢語言模型 + ecosystem 開放度*、偵測能力本身相近 — Elastic 走 *resource-based pricing*（按 cluster size 而非 ingestion volume）、且提供 KQL / EQL / Lucene / ES|QL 四種互補的查詢語言。
 
 ## 服務定位
 

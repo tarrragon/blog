@@ -8,7 +8,7 @@ tags: ["backend", "reliability", "release-gate", "control-plane"]
 
 ## 概念定位
 
-規則推送安全閘門（rule rollout safety gate）的核心責任是防止控制面錯誤快速擴散到資料面。這個閘門不是取代既有 release gate，而是補上「規則與配置類變更」特有風險：變更體積小、覆蓋範圍大、擴散速度快。
+規則推送安全閘門（rule rollout safety gate）的核心責任是防止控制面錯誤快速擴散到資料面。這個閘門是補上「規則與配置類變更」特有風險，跟既有 release gate 互補而非取代：變更體積小、覆蓋範圍大、擴散速度快。
 
 當變更屬於 WAF rule、routing policy、token/policy、或 Addressing API 相關設定時，判讀重點從程式碼正確性轉為擴散控制。這類變更即使 diff 很短，也可能在數十秒內影響跨區域流量與多產品控制面。
 

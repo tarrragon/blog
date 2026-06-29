@@ -31,7 +31,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "WRAP", "Writing",
 
 第二、那一段內容引用「a16z、Sequoia 公開報告跟 Anthropic 投資人 deck 都強調 enterprise ARR」這類 source—但這些引用沒具體出處（哪份報告、哪一頁、哪一段）、有 hallucination 風險。為了支撐 WRAP Widen Options 的 prior 而引入沒實際出處的 source、是 fidelity 漏洞。
 
-第三、解釋順序錯位—寫成「a16z / Sequoia 等公開報告強調 ARR、背後邏輯是 X」、把 source 放前面、解釋放後面、違反 AGENTS.md §1 原則一 核心原則先行。
+第三、解釋順序錯位—寫成「a16z / Sequoia 等公開報告強調 ARR、背後邏輯是 X」、把 source 放前面、解釋放後面、違反 AGENTS.md 原則一「核心原則先行」。
 
 更深層問題：即使章節標題改成教學風格、WRAP 內部分析（含 prior 引用）的內容仍然喧賓奪主、偏離標題承諾。3 篇都踩同樣的 pattern：
 
@@ -118,7 +118,7 @@ WRAP Widen Options 需要 prior 支撐（「誰持這論」）、寫作者為了
 
 ### 解釋順序錯位、違反核心原則先行
 
-當寫作者重心在「我有 source 支撐」、會把 source 放前面（「a16z 公開報告強調 X」）、解釋放後面。違反 AGENTS.md §1 原則一 核心原則先行—讀者要的是解釋本身、source 是 attribution、不是 lead。
+當寫作者重心在「我有 source 支撐」、會把 source 放前面（「a16z 公開報告強調 X」）、解釋放後面。違反 AGENTS.md 原則一「核心原則先行」—讀者要的是解釋本身、source 是 attribution、不是 lead。
 
 ### WRAP 內部分析方法論價值反而被稀釋
 

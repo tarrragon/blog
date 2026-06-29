@@ -14,7 +14,7 @@ tags: ["backend", "cache", "case-study"]
 
 ## 為什麼會擴大
 
-快取切換如果沒有 warmup、singleflight、節流與降級保護，miss 會引發重試，重試又會增加 origin 壓力。這不是單一 key 的問題，而是讀取路徑同時失去緩衝。
+快取切換如果沒有 warmup、singleflight、節流與降級保護，miss 會引發重試，重試又會增加 origin 壓力。影響面是讀取路徑同時失去緩衝，單一 key 層級的思考抓不到全貌。
 
 ## 回退判讀
 

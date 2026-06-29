@@ -92,7 +92,7 @@ Non-blocking send 不是比較進階的寫法。它只是把 backpressure 從「
 | [metrics](/backend/knowledge-cards/metrics/) sample | 可取樣或丟棄                   | 趨勢比單筆資料重要                                                         |
 | background refresh                                  | 可跳過本輪                     | 下次仍可重新計算                                                           |
 
-這個表格的重點不是固定答案，而是要求每種事件都要有明確策略。若團隊只說「channel 滿了就 default」，通常代表資料語意還沒有想清楚。
+這個表格的重點是要求每種事件都要有明確策略。若團隊只說「channel 滿了就 default」，通常代表資料語意還沒有想清楚。
 
 ## 【執行】HTTP 入口要把滿載轉成狀態碼
 

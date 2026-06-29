@@ -25,7 +25,7 @@ Amazon Ads 在 DynamoDB 的關鍵數字（引自 [DynamoDB customers](https://aw
 
 這個案例最重要的不是「DynamoDB 能撐多少」、而是「為什麼可以這樣設計」。
 
-1. **單表分散到上千個 partition**：DynamoDB 把每個 table 拆成多個 partition、每個 partition 內部還可以再分散。9000 萬 reads / 秒 不是單一節點達成、而是上千個 partition 加總。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的 sharding 邊界、跟 [01 資料庫模組](/backend/01-database/) 的 partition 設計。
+1. **單表分散到上千個 partition**：DynamoDB 把每個 table 拆成多個 partition、每個 partition 內部還可以再分散。9000 萬 reads / 秒 是上千個 partition 加總的結果、單一節點達不到這個量級。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 的 sharding 邊界、跟 [01 資料庫模組](/backend/01-database/) 的 partition 設計。
 2. **partition key 選擇直接決定容量上限**：DynamoDB 的容量是「每 partition 上限 × partition 數量」。partition key 不均勻會出現 hot partition、實際容量遠低於名義容量。對應 [9.4 Saturation Discovery](/backend/09-performance-capacity/) 的 saturation 不一定是整體 saturation、而是 *最熱的 partition* saturation。
 3. **99.999% availability ≈ 5 分鐘 / 年的容錯**：廣告計費 1 分鐘斷線可能損失幾百萬美金廣告收入。這個 SLO 不是行銷數字、是真實的營收邊界。對應 [04.16 SLI / SLO 訊號](/backend/04-observability/sli-slo-signal/) 與 [9.12 SLO 與 Performance Budget](/backend/09-performance-capacity/)。
 

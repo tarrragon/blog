@@ -10,7 +10,7 @@ Opsgenie 是 Atlassian 出品的 on-call 平台、承擔三個責任：alert rou
 
 ## 服務定位
 
-Opsgenie 的核心定位是 *Atlassian 生態內的 on-call 元件*、跟 [PagerDuty](/backend/08-incident-response/vendors/pagerduty/) 比、它的差異不在 *paging 能力本身*、而在 *跟 Jira Service Management / Confluence / Statuspage 的整合深度*：ticket、runbook、status page、incident 都在同一個身份體系（Atlassian Identity）內、不用跨 SaaS 串 SSO 跟 webhook。Atlassian-heavy enterprise 通常已經買了 JSM / Confluence / Statuspage、再買獨立 PagerDuty 等於多一條供應商線、ROI 不一定划算。
+Opsgenie 的核心定位是 *Atlassian 生態內的 on-call 元件*、跟 [PagerDuty](/backend/08-incident-response/vendors/pagerduty/) 比、它的差異在 *跟 Jira Service Management / Confluence / Statuspage 的整合深度*、paging 能力本身相近：ticket、runbook、status page、incident 都在同一個身份體系（Atlassian Identity）內、不用跨 SaaS 串 SSO 跟 webhook。Atlassian-heavy enterprise 通常已經買了 JSM / Confluence / Statuspage、再買獨立 PagerDuty 等於多一條供應商線、ROI 不一定划算。
 
 2025 年 Atlassian 公開宣布 *Opsgenie 將在 2027 年 4 月 EOL*、原 Opsgenie standalone 客戶要遷移到 [Jira Service Management Premium / Enterprise](https://www.atlassian.com/software/jira/service-management) 內建的 on-call 能力。這是現有 Opsgenie 客戶在 2025-2027 期間的最大議題、新案不該再選 Opsgenie standalone。
 

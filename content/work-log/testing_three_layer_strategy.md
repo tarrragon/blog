@@ -79,7 +79,7 @@ void _sendAuthTokenIfNeeded(Credential credential) {
 
 **共同模式**：mock 忠實模擬了 Dart API 的行為契約，但 Dart API 和真實服務之間還有一層協議語意（WebSocket frame type、ttyd auth handshake、shell 完整輸出），mock 把這層完全跳過了。
 
-**這不是 mock 的缺陷，而是 mock 的本質**。Mock 的職責是讓 unit test 快速、確定性、不依賴外部服務。但當被測元件的正確性取決於「與外部服務的協議契約」時，mock 從結構上就無法驗證這件事。
+**這是 mock 的本質**。Mock 的職責是讓 unit test 快速、確定性、不依賴外部服務。但當被測元件的正確性取決於「與外部服務的協議契約」時，mock 從結構上就無法驗證這件事。
 
 ---
 
@@ -146,9 +146,9 @@ Widget test 覆蓋所有畫面狀態的 UI 行為：每個狀態顯示什麼 wid
 
 ## 反模式：用 mock 數量彌補 mock 盲區
 
-「192 個 test 全過」給了虛假的信心。常見的反應是「測試不夠多」然後再加更多 mock test，但問題不在數量 — 300 個用同一個 `FakeWebSocketChannel` 的 test 仍然抓不到 text vs binary frame。
+「192 個 test 全過」給了虛假的信心。常見的反應是「測試不夠多」然後再加更多 mock test，但問題在層級覆蓋 — 300 個用同一個 `FakeWebSocketChannel` 的 test 仍然抓不到 text vs binary frame。
 
-**測試策略的品質不是用數量衡量、而是用層級覆蓋衡量。** 一個對真實 ttyd 的 5 行 protocol test，比 50 個新增的 mock test 更能防止實機部署失敗。
+**測試策略的品質用層級覆蓋衡量，而非數量。** 一個對真實 ttyd 的 5 行 protocol test，比 50 個新增的 mock test 更能防止實機部署失敗。
 
 ## 延伸閱讀
 

@@ -22,7 +22,7 @@ tags: ["backend", "message-queue", "durability"]
 
 ## DLQ 與 requeue 風險
 
-DLQ 的責任是隔離異常訊息，避免拖垮主消費流程。DLQ 不是終點，而是診斷與修復入口。每個進入 DLQ 的訊息，都應能回答：失敗原因是 payload 錯誤、下游不可用、版本不相容，還是消費邏輯缺陷。
+DLQ 的責任是隔離異常訊息，避免拖垮主消費流程。DLQ 是診斷與修復入口，把它當終點會讓問題沉積。每個進入 DLQ 的訊息，都應能回答：失敗原因是 payload 錯誤、下游不可用、版本不相容，還是消費邏輯缺陷。
 
 [requeue](/backend/knowledge-cards/requeue/) 需要明確條件。直接把異常訊息無限 requeue，通常會造成隊列震盪與延遲累積。穩定做法是先隔離、分群、修復，再批次回放。
 

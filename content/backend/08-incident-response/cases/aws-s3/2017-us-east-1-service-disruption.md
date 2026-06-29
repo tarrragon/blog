@@ -35,7 +35,7 @@ AWS 在 2017-02-28 發生 Amazon S3 Northern Virginia（US-EAST-1）服務中斷
 7. AWS 先用 AWS Twitter feed 與 Service Health Dashboard banner text 溝通，直到 SHD individual service status 可以更新。
 8. index subsystem 先恢復足夠容量，再逐步恢復 GET / LIST / DELETE；placement subsystem 完成後，PUT 才恢復正常。
 
-這條路徑顯示：事故起點不是外部流量尖峰，而是內部操作工具缺少數量與容量下限保護。真正放大事故的是共享子系統、區域依賴與通訊入口對同一服務的依賴。
+這條路徑顯示：事故起點是內部操作工具缺少數量與容量下限保護，外部流量尖峰在此無關。真正放大事故的是共享子系統、區域依賴與通訊入口對同一服務的依賴。
 
 ## 可回寫控制面
 

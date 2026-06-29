@@ -10,9 +10,9 @@ tags: ["ux", "flutter", "navigation", "state-machine", "mobile", "terminal"]
 
 > 使用者連上遠端終端機後、無法返回首頁。
 
-不是 bug — 是設計遺漏。Terminal 畫面的 `connected` 狀態沒有 disconnect 按鈕也沒有 back 按鈕。`error` 和 `disconnected` 狀態也沒有。使用者被困在畫面裡，唯一的出路是殺掉 app。
+這是設計遺漏。Terminal 畫面的 `connected` 狀態沒有 disconnect 按鈕也沒有 back 按鈕。`error` 和 `disconnected` 狀態也沒有。使用者被困在畫面裡，唯一的出路是殺掉 app。
 
-這不是「忘記加按鈕」的問題。回頭看企劃文件，§1 操作盤點確實列了「連線失敗顯示無法連線」這個失敗情境，但沒有系統性地問：**這個畫面有幾個狀態？每個狀態能做什麼操作？怎麼離開？**
+這不是「忘記加按鈕」的問題。回頭看企劃文件，操作盤點段確實列了「連線失敗顯示無法連線」這個失敗情境，但沒有系統性地問：**這個畫面有幾個狀態？每個狀態能做什麼操作？怎麼離開？**
 
 本文整理畫面狀態機設計的方法、示範用狀態矩陣捕捉導航缺口、歸納 mobile app UX 的三個設計原則。
 
@@ -119,7 +119,7 @@ Gate = 使用者必須通過的關卡（biometric、network、auth）。每個 g
 4. **每個 gate 標注 fallback**：biometric / network / auth 各有什麼替代方案？
 5. **輸入機制列決策表**：keyboard type / submit model / IME policy / special keys
 
-這不是額外的文件負擔 — 是操作盤點本來就該產出的下一層。一張表能在 10 分鐘內暴露所有 UX 死胡同，省掉實機測試才發現的成本。
+這是操作盤點本來就該產出的下一層。一張表能在 10 分鐘內暴露所有 UX 死胡同，省掉實機測試才發現的成本。
 
 ## 延伸閱讀
 

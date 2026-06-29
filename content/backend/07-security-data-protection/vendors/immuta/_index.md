@@ -6,7 +6,7 @@ weight: 28
 tags: ["backend", "security", "vendor", "immuta", "data-security", "abac", "data-warehouse"]
 ---
 
-Immuta 是 *Universal Data Access Platform*、定位是 *跨多 data warehouse 統一的 query-time access control + masking 抽象層*。它解的問題是 *同一份 policy 要同時在 Snowflake、Databricks、BigQuery、Redshift、Synapse 上生效*、不必到每個 warehouse 內逐表寫 native RLS / masking。跟 [Google DLP](/backend/07-security-data-protection/vendors/google-dlp/) / [Cloud-native data policy](/backend/07-security-data-protection/vendors/cloud-data-policy/) / [Microsoft Purview](/backend/07-security-data-protection/vendors/microsoft-purview/) 的差異不在偵測或 classification、而在 *policy abstraction layer + query-time enforcement + ABAC scale*。
+Immuta 是 *Universal Data Access Platform*、定位是 *跨多 data warehouse 統一的 query-time access control + masking 抽象層*。它解的問題是 *同一份 policy 要同時在 Snowflake、Databricks、BigQuery、Redshift、Synapse 上生效*、不必到每個 warehouse 內逐表寫 native RLS / masking。跟 [Google DLP](/backend/07-security-data-protection/vendors/google-dlp/) / [Cloud-native data policy](/backend/07-security-data-protection/vendors/cloud-data-policy/) / [Microsoft Purview](/backend/07-security-data-protection/vendors/microsoft-purview/) 的差異在 *policy abstraction layer + query-time enforcement + ABAC scale*、偵測或 classification 層面相近。
 
 ## 服務定位
 

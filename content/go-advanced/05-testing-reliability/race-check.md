@@ -107,7 +107,7 @@ func TestRepositoryConcurrentAccess(t *testing.T) {
 }
 ```
 
-這個測試的主要斷言不在輸出值，而在「讓 race detector 執行共享 map 的讀寫路徑」。若 repository 忘記加 lock，`-race` 會指出問題。
+這個測試的主要斷言在「讓 race detector 執行共享 map 的讀寫路徑」。若 repository 忘記加 lock，`-race` 會指出問題。
 
 ## 【執行】WebSocket hub 也需要 race path
 
@@ -163,7 +163,7 @@ Previous write at 0x...
   example.com/app.(*UserRepository).Save()
 ```
 
-這表示 `Find` 和 `Save` 同時碰到同一份資料，且缺少同步。修正方向不是在測試裡加等待，而是在 repository owner 補上 mutex、channel ownership 或其他同步邊界。
+這表示 `Find` 和 `Save` 同時碰到同一份資料，且缺少同步。修正方向是在 repository owner 補上 mutex、channel ownership 或其他同步邊界。
 
 ## 【策略】修正方式要對應狀態形狀
 

@@ -115,7 +115,7 @@ resource "aws_iam_role" "break_glass" {
 }
 ```
 
-如果團隊有 ChatOps 或 ticketing 系統，把 break-glass 的觸發綁進去可以增加一層人為確認：operator 在 Slack 或 ticket 裡申請提權、另一個人核可、系統開放 assume。這層確認不是為了阻止操作，而是為了在事後稽核時有一條清楚的「誰授權了這次提權」紀錄。
+如果團隊有 ChatOps 或 ticketing 系統，把 break-glass 的觸發綁進去可以增加一層人為確認：operator 在 Slack 或 ticket 裡申請提權、另一個人核可、系統開放 assume。這層確認的目的是在事後稽核時留下一條清楚的「誰授權了這次提權」紀錄，而非阻止操作本身。
 
 ### 事後回顧
 

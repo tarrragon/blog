@@ -10,7 +10,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 ESXiArgs 事件顯示 CVE-2021-21974 與 CVE-2021-21972 這類虛擬化平台漏洞可轉為大規模勒索與服務中斷，回復節奏成為關鍵控制面。
 
-**本案例的演示焦點**：虛擬化平台舊漏洞（patch-available 但未套用）→ ESXi host 加密 → 大量 VM 同時不可用的 mass-ransom 事件。重點不在 exfiltration 本身、而在「回復節奏 vs 業務優先級」設計。
+**本案例的演示焦點**：虛擬化平台舊漏洞（patch-available 但未套用）→ ESXi host 加密 → 大量 VM 同時不可用的 mass-ransom 事件。重點在「回復節奏 vs 業務優先級」設計、exfiltration 本身是次要面向。
 
 ## 攻擊路徑
 

@@ -22,7 +22,7 @@ tags: ["backend", "reliability"]
 
 [Schema migration](/backend/knowledge-cards/schema-migration/) 是把 schema migration 從一次性事件變成可逆、可漸進的 rollout 流程，責任是避免資料結構變更直接把 production 推向不可回復狀態。
 
-這一頁關心的是結構變更的節奏。當 code 與 schema 必須一起演進，安全做法不是追求一次到位，而是保留回退與相容窗口。
+這一頁關心的是結構變更的節奏。當 code 與 schema 必須一起演進，安全做法是保留回退與相容窗口，一次到位的思路會壓縮容錯空間。
 
 ## 核心判讀
 

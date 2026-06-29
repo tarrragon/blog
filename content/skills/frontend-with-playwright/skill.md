@@ -11,7 +11,7 @@ tags: ["skills", "frontend-with-playwright", "前端開發", "Playwright", "CSS"
 
 ---
 
-## Core Pillars（三大支柱）
+## Core Pillars（支柱）
 
 | 支柱                                        | 意義                                                                    |
 | ------------------------------------------- | ----------------------------------------------------------------------- |
@@ -21,7 +21,7 @@ tags: ["skills", "frontend-with-playwright", "前端開發", "Playwright", "CSS"
 
 ---
 
-## Five Principles（六大原則速查）
+## Principles（原則速查）
 
 讀者在本區塊能完成大方向判斷；具體展開（步驟 / 範例）依下方「觸發路由」進對應 reference。
 

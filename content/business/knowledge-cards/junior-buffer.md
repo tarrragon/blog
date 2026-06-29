@@ -6,7 +6,7 @@ weight: 66
 tags: ["business", "knowledge-cards", "execution"]
 ---
 
-Junior Buffer 的核心概念是「初階員工作為判斷緩衝層」—資深員工的判斷不是直接生效，而是先讓 junior 做一版、看過修改、錯了還能擋下來。這層緩衝吸收判斷成本，讓資深可以放手做更多決策。Junior Buffer 是傳統知識工作者組織的隱性設計，跟 [Judgment Stake](/business/knowledge-cards/judgment-stake/) 是一體兩面。
+Junior Buffer 的核心概念是「初階員工作為判斷緩衝層」—資深員工的判斷先讓 junior 做一版、看過修改、錯了還能擋下來，不直接生效。這層緩衝吸收判斷成本，讓資深可以放手做更多決策。Junior Buffer 是傳統知識工作者組織的隱性設計，跟 [Judgment Stake](/business/knowledge-cards/judgment-stake/) 是一體兩面。
 
 ## 概念位置
 

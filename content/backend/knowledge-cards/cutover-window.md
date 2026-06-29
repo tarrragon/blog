@@ -6,7 +6,7 @@ weight: 144
 tags: ["backend", "knowledge-card", "migration", "reliability"]
 ---
 
-Cutover window 的核心概念是「正式切換發生並被密集觀察的時間與條件範圍」。它連接 [cutover / switchover](/backend/knowledge-cards/cutover-switchover/)、[migration gate](/backend/knowledge-cards/migration-gate/) 與 [rollback-window](/backend/knowledge-cards/rollback-window/)，讓切換不是一個瞬間按鈕，而是一段可停止、可判讀的窗口。
+Cutover window 的核心概念是「正式切換發生並被密集觀察的時間與條件範圍」。它連接 [cutover / switchover](/backend/knowledge-cards/cutover-switchover/)、[migration gate](/backend/knowledge-cards/migration-gate/) 與 [rollback-window](/backend/knowledge-cards/rollback-window/)，讓切換成為一段可停止、可判讀的窗口，脫離瞬間按鈕的思維。
 
 ## 概念位置
 

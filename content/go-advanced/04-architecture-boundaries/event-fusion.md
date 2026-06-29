@@ -36,7 +36,7 @@ queue message ──> validate B ──> update state B
 timer scan    ──> validate C ──> update state C
 ```
 
-這種結構的問題不是來源多，而是 domain 規則分裂。新增來源時，應該新增 adapter，不應複製 processor。
+這種結構的問題是 domain 規則分裂。新增來源時，應該新增 adapter，不應複製 processor。
 
 ## 【判讀】來源差異應限制在 adapter
 
@@ -63,7 +63,7 @@ timer scan    ─┘
 | timer scan     | 讀取本地狀態、產生內部事件               | 記錄錯誤或下次再掃                                     |
 | file reader    | 讀取增量資料、normalize                  | 記錄 [offset](/backend/knowledge-cards/offset/) 或停下 |
 
-表格不是文件裝飾，而是設計工具。若某一列寫不清楚，代表 adapter 與 processor 的邊界還不清楚。
+表格是設計工具。若某一列寫不清楚，代表 adapter 與 processor 的邊界還不清楚。
 
 ## 【執行】HTTP adapter 轉成 DomainEvent
 

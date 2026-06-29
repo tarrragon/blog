@@ -6,7 +6,7 @@ weight: 23
 tags: ["backend", "security", "vendor", "conftest", "policy-as-code", "ci-cd", "open-source"]
 ---
 
-Conftest 是 *OPA CLI wrapper for static config policy check*、Open Policy Agent project 旗下的 CLI 工具、Apache 2.0 OSS、無商業版。它的核心定位不是 admission runtime、而是 *CI-time policy gate*：在 git commit / PR / merge 階段、用 Rego policy 對 config file（Terraform HCL / K8s YAML / Dockerfile / JSON / TOML / INI / serverless.yml）做 static check、把 misconfiguration 攔在 deploy 之前。跟 [OPA](/backend/07-security-data-protection/vendors/opa/) / [Gatekeeper](/backend/07-security-data-protection/vendors/gatekeeper/) / [Trivy](/backend/07-security-data-protection/vendors/trivy/) Config 的差異不在 *規則表達力*、而在 *執行時機 + 客製化方式*。
+Conftest 是 *OPA CLI wrapper for static config policy check*、Open Policy Agent project 旗下的 CLI 工具、Apache 2.0 OSS、無商業版。它的核心定位是 *CI-time policy gate*、有別於 admission runtime：在 git commit / PR / merge 階段、用 Rego policy 對 config file（Terraform HCL / K8s YAML / Dockerfile / JSON / TOML / INI / serverless.yml）做 static check、把 misconfiguration 攔在 deploy 之前。跟 [OPA](/backend/07-security-data-protection/vendors/opa/) / [Gatekeeper](/backend/07-security-data-protection/vendors/gatekeeper/) / [Trivy](/backend/07-security-data-protection/vendors/trivy/) Config 的差異在 *執行時機 + 客製化方式*、規則表達力反而相近。
 
 ## 服務定位
 

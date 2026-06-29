@@ -14,7 +14,7 @@ Netflix 把 Chaos Monkey 放在 business hours 執行，核心責任是同時驗
 
 ## 驗證機制
 
-Business-hours chaos 不是放大風險，而是把風險放進 guardrails 內驗證。
+Business-hours chaos 是把風險放進 guardrails 內驗證，風險範圍是收斂的。
 
 | 機制         | 核心問題                     | 控制方式                            |
 | ------------ | ---------------------------- | ----------------------------------- |

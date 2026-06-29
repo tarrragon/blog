@@ -10,7 +10,7 @@ PagerDuty 是 on-call / alerting 的事實標準 SaaS、承擔三個責任：ale
 
 ## 服務定位
 
-PagerDuty 的核心定位是 *signal → human → action* 的中介層、把 alert source（觀測、SIEM、合成監控、cloud control plane）變成具體某個人手機震動 + 24 小時內可追蹤的 incident timeline。它不是 alert source、也不是溝通平台、而是 *routing engine + on-call schedule 的事實標準*。
+PagerDuty 的核心定位是 *signal → human → action* 的中介層、把 alert source（觀測、SIEM、合成監控、cloud control plane）變成具體某個人手機震動 + 24 小時內可追蹤的 incident timeline。它是 *routing engine + on-call schedule 的事實標準*、定位有別於 alert source 和溝通平台。
 
 跟上游 07 章的 detection stack 是直接 wire：[Splunk](/backend/07-security-data-protection/vendors/splunk/) ES app 產生的 Notable Event 透過 *Splunk-PagerDuty integration* 或 SOAR playbook 變成 PagerDuty incident、severity 直接帶過來；[Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/) 的高分 rate-limit / bot block 透過 webhook 進 PagerDuty Event API v2、再經 Event Orchestration 判斷是丟 SecOps schedule 還是 platform schedule。這條鏈最常壞在 *severity 對應不一致*（Splunk medium 在 PagerDuty 變 P1）、跟 *integration 沒 deduplication key*（一次 attack 100 個 Notable Event 各起 100 個 incident）。
 

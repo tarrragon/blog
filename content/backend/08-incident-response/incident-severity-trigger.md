@@ -37,7 +37,7 @@ tags: ["backend", "incident-response"]
 
 AWS S3 適合用來看控制面事故如何把區域級影響迅速擴大，因為這類事件最容易讓 severity 上升到需要更大範圍協作。GitHub 適合用來看 replication 與 split-brain 的分級，因為資料一致性問題會直接拉長復原時間。Slack 與 Discord 則提供通訊平台事故的視角，讓我們看到「通訊工具本身失效」時 trigger 與 communication 是怎麼一起被啟動的。
 
-Atlassian 的長尾復原、GCP 的全球控制面失效、Azure AD 的 identity cascading 也都能回扣到同一件事：severity 不是根據直覺標註，而是根據 [impact scope](/backend/knowledge-cards/impact-scope/)、擴散速率與協作成本來路由。這樣的分級，才會讓後續的止血、通訊與復盤有一致的起點。
+Atlassian 的長尾復原、GCP 的全球控制面失效、Azure AD 的 identity cascading 也都能回扣到同一件事：severity 根據 [impact scope](/backend/knowledge-cards/impact-scope/)、擴散速率與協作成本來路由，直覺標註的準確度不足以支撐後續流程。這樣的分級，才會讓後續的止血、通訊與復盤有一致的起點。
 
 ## 交接路由
 

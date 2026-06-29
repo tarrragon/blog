@@ -103,7 +103,7 @@ func loadConfig() config {
 }
 ```
 
-這不是跨 package 呼叫，而是同 package 內的檔案切分。`loadConfig` 即使用小寫開頭，`main.go` 也可以呼叫，因為它們都屬於 `package main`。
+這是同 package 內的檔案切分。`loadConfig` 即使用小寫開頭，`main.go` 也可以呼叫，因為它們都屬於 `package main`。
 
 ## 【策略】先拆檔案，再拆 package
 
@@ -193,7 +193,7 @@ func main() {
 
 ## 【判讀】import cycle 是依賴方向錯了
 
-import cycle 的核心意義是兩個 package 互相依賴，Go 會直接拒絕編譯。這不是 Go 不方便，而是工具鏈強迫你把依賴方向想清楚。
+import cycle 的核心意義是兩個 package 互相依賴，Go 會直接拒絕編譯。Go 工具鏈透過這個限制強迫你把依賴方向想清楚。
 
 例如這種結構容易出問題：
 
@@ -278,7 +278,7 @@ notify/
     └── storage/
 ```
 
-適合服務已經有明確部署入口、內部 package 不想被外部 module 引用的階段。這不是入門預設，而是程式長大後的選擇。
+適合服務已經有明確部署入口、內部 package 不想被外部 module 引用的階段。這是程式長大後的選擇。
 
 ## 設計檢查
 

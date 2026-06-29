@@ -6,7 +6,7 @@ weight: 5
 tags: ["business", "knowledge-cards", "business-model"]
 ---
 
-Enterprise License 的核心概念是「賣給整家公司的軟體授權」—不是按使用者自助訂閱，而是跟企業簽長期合約，按員工數、用量承諾、整合深度收費。ChatGPT Enterprise、Claude Enterprise、Microsoft 365 E5 都是這種模式。它的核心吸引力是極強 [Lock-in](/business/knowledge-cards/lock-in/)。
+Enterprise License 的核心概念是「賣給整家公司的軟體授權」—跟企業簽長期合約，按員工數、用量承諾、整合深度收費，有別於按使用者自助訂閱。ChatGPT Enterprise、Claude Enterprise、Microsoft 365 E5 都是這種模式。它的核心吸引力是極強 [Lock-in](/business/knowledge-cards/lock-in/)。
 
 ## 概念位置
 

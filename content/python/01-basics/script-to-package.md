@@ -6,7 +6,7 @@ weight: 2
 tags: ["python", "basics", "modules"]
 ---
 
-Python 程式變大的第一個斷點通常不是物件導向或架構分層，而是執行方式與 import 邊界。初學者常從一個 `script.py` 開始，接著拆出 helper module，最後才整理成 package；每一步都會改變程式如何被執行、如何 import，以及測試如何找到程式碼。
+Python 程式變大的第一個斷點通常是執行方式與 import 邊界，而非物件導向或架構分層。初學者常從一個 `script.py` 開始，接著拆出 helper module，最後才整理成 package；每一步都會改變程式如何被執行、如何 import，以及測試如何找到程式碼。
 
 > 撰寫提示：本章先保留大綱，詳細內容之後補。補寫時請使用中立範例，例如 `notify.py`、`config.py`、`parser.py`、`service.py`，避免綁定特定專案或 Hook 系統細節。
 
@@ -100,7 +100,7 @@ python -m pytest
 
 ### 5. 測試會推動專案結構
 
-核心原則：當程式需要測試時，專案結構必須讓測試穩定 import 目標程式碼。測試不是最後才加入的附屬品，而是拆分 module 與 package 的重要壓力來源。
+核心原則：當程式需要測試時，專案結構必須讓測試穩定 import 目標程式碼。測試是拆分 module 與 package 的重要壓力來源。
 
 後續補寫範例：
 
@@ -173,4 +173,4 @@ Python 和 Go 在這個主題上的差異應明確說清楚：
 
 ## 小結
 
-Python 程式的成長路線通常是 script、同層 module、package、可安裝專案。這條路線的核心不是目錄變多，而是執行方式、import 邊界與測試方式逐步穩定。
+Python 程式的成長路線通常是 script、同層 module、package、可安裝專案。這條路線的核心是執行方式、import 邊界與測試方式逐步穩定。

@@ -24,7 +24,7 @@ tags: ["report", "事後檢討", "工程方法論", "資安", "Audit", "Threat M
 
 資安寫作有兩個誘因會讓 threat model boundary 被省略：
 
-1. **正向陳述優先**規範（AGENTS.md §1 原則二）會誤把「不防 Y」歸類為負面句、批量改寫時刪掉、跟 [#94 正向改寫保留對照論據](../positive-rewrite-preserves-contrast/) 同病
+1. **正向陳述優先**規範（AGENTS.md 原則二）會誤把「不防 Y」歸類為負面句、批量改寫時刪掉、跟 [#94 正向改寫保留對照論據](../positive-rewrite-preserves-contrast/) 同病
 2. **章節篇幅控制**會把 threat boundary 當成「進階補充」往後丟、留主章節「乾淨主旨」
 
 兩者都會產出 universal-flavored 的 mitigation 句子。讀者讀「使用 X 即可保護 Y」時、Y 會被腦補成「所有 Y 相關攻擊」、X 跟 Y 之間的 scope 配對被 silent 地放大成 universal。

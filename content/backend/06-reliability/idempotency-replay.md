@@ -21,7 +21,7 @@ tags: ["backend", "reliability"]
 
 [Idempotency](/backend/knowledge-cards/idempotency/) 與 replay 驗證是把重試、重播與副作用控制變成可驗證屬性，責任是讓 at-least-once 與 failover 不會把系統推向重複執行。
 
-這一頁處理的是分散式系統的重複輸入問題。只要有 retry、補償或訊息重送，冪等性就不是優化項，而是正確性前提。
+這一頁處理的是分散式系統的重複輸入問題。只要有 retry、補償或訊息重送，冪等性就是正確性前提，把它當優化項會低估風險。
 
 ## 核心判讀
 

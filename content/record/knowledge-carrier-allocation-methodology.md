@@ -49,15 +49,15 @@ tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 
 ## 代理人定義內容規範
 
-| 該裝                                                                                     | 不該裝（外移路由）                                                                    |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| 身份定位與核心使命                                                                       | —                                                                                     |
-| 三區塊：允許產出 / 禁止行為 / 適用情境                                                   | —                                                                                     |
-| 設計偏好：命名習慣、技術手法傾向、文法語氣                                               | 專案級技術選型（→ CLAUDE.md；代理人帶多方案知識，依專案設定選用）                     |
-| 多方案技術知識庫（framework-asset-separation §1 的「框架寫法」，深度以支撐選用傾向為度） | 步驟化操作流程（→ 對應 skill，流程與人格解耦）；知識庫展開成教學長文（→ references/） |
-| 分工路由與升級條件（與誰分工、何時上報）                                                 | 操作流程步驟（→ 對應 skill）                                                          |
-| 品質標準的章節路由（如 quality-common 指定章節，語意錨點）                               | 品質清單全文（複製即漂移，單一來源失效）                                              |
-| 錯誤模式的一行路由（「詳見 IMP-XXX」）                                                   | 錯誤案例全文（error-pattern 才是案例的家）                                            |
+| 該裝                                                                                    | 不該裝（外移路由）                                                                    |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| 身份定位與核心使命                                                                      | —                                                                                     |
+| 三區塊：允許產出 / 禁止行為 / 適用情境                                                  | —                                                                                     |
+| 設計偏好：命名習慣、技術手法傾向、文法語氣                                              | 專案級技術選型（→ CLAUDE.md；代理人帶多方案知識，依專案設定選用）                     |
+| 多方案技術知識庫（framework-asset-separation 的「框架寫法」段，深度以支撐選用傾向為度） | 步驟化操作流程（→ 對應 skill，流程與人格解耦）；知識庫展開成教學長文（→ references/） |
+| 分工路由與升級條件（與誰分工、何時上報）                                                | 操作流程步驟（→ 對應 skill）                                                          |
+| 品質標準的章節路由（如 quality-common 指定章節，語意錨點）                              | 品質清單全文（複製即漂移，單一來源失效）                                              |
+| 錯誤模式的一行路由（「詳見 IMP-XXX」）                                                  | 錯誤案例全文（error-pattern 才是案例的家）                                            |
 
 ## 檢查清單
 
@@ -86,7 +86,7 @@ tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 **Version**: 1.6.0 — root 錯置檔重分配（1.0.0-W8-023.1，第 1/4 批）：`hook-system-reference.md`（Hook 事件索引 / 技術參考）、`code-smell-checklist.md`（Code Smell 檢測清單 / 技術參考）依二軸（受眾＝動作觸發者、形態＝技術參考）歸入既有 `references/` 載體列（line 22），故不另加 map 行；superseded 副本 `code-quality-examples.md`（已遷 `docs/`，DOC-010 W10-102）與 `document-responsibilities.md`（DEPRECATED，已被 `five-document-system-methodology.md` + `doc-flow/references/document-responsibilities.md` 取代）flag 不併入，留 PM follow-up
 **Version**: 1.5.0 — 載體地圖補列 4 個 legit root 資產各一行歸屬（README 框架導覽 / CHANGELOG 變更記錄 / README-subtree-sync 同步機制 / terminology-dictionary 用語規範表，後者經 language-constraints `@` 引用實質載入）（1.0.0-W8-022）
 **Version**: 1.4.0 — multi-round-review Round 4（實例分配演練）修正：步驟 1 補受眾詞彙映射橋（六選項 vs 地圖表受眾欄斷層）、步驟 3 事實類閘門判準明文化（體積與專案特定性約束，非必要性否決）。8 條盲跑 6 條乾淨落點，停止訊號達成收斂
-**Version**: 1.3.0 — multi-round-review Round 3 修正：Scope 句（LLM context 載體限定 + 機器讀取層另計 + memory 受眾軸唯一決定）、rules/core 列量測集合精確化（MEMORY.md 不在 guardian 集合）、規範表補「多方案技術知識庫」劃界列（與 framework-asset-separation §1 對齊）、地圖補 templates / root 遺留行、Reference 補 skill-design-guide
+**Version**: 1.3.0 — multi-round-review Round 3 修正：Scope 句（LLM context 載體限定 + 機器讀取層另計 + memory 受眾軸唯一決定）、rules/core 列量測集合精確化（MEMORY.md 不在 guardian 集合）、規範表補「多方案技術知識庫」劃界列（與 framework-asset-separation「框架寫法」段對齊）、地圖補 templates / root 遺留行、Reference 補 skill-design-guide
 **Version**: 1.2.0 — multi-round-review Round 2 修正：檢查清單與步驟 3/5 的 R1 劃界同步（清單漂移）、步驟 5 拆動作解歧義、地圖欄名補形態軸、定位句「（如有）」、Reference 補寫作 skill SSOT 例外路由
 **Version**: 1.1.0 — multi-round-review Round 1 修正：步驟 3 形態約束劃界（規範類 vs 事實類）、步驟 5 補執法強度對齊、章名對齊 methodology 標準結構、rules/core 列預算範圍精確化、agents 列改路由至專節
 **Version**: 1.0.0 — 初始建立：框架知識載體的頂層責任地圖（受眾 x 形態二軸），整合 W7 token 收斂三層防護與既有分離原則；代理人定義內容規範首次權威化（人格與授權 vs 可重複流程）

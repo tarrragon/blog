@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "transformer"]
 ---
 
-Residual stream 的核心概念是「**[Transformer](/llm/knowledge-cards/transformer/) block 之間持續傳遞、被各層逐步修改的 hidden state 通道**」。它不是單一殘差連接，而是整個模型中資訊流動的主幹。
+Residual stream 的核心概念是「**[Transformer](/llm/knowledge-cards/transformer/) block 之間持續傳遞、被各層逐步修改的 hidden state 通道**」。它是整個模型中資訊流動的主幹，涵蓋範圍超過單一殘差連接。
 
 ## 概念位置
 

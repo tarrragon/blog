@@ -102,7 +102,7 @@ class _PeriodReportRow implements PeriodReportRow {
 }
 ```
 
-這不是生成檔的逐行還原，而是心智模型：`with` 接上 generated surface，`factory = _PeriodReportRow` 接到真正的資料承載類。
+這是心智模型：`with` 接上 generated surface，`factory = _PeriodReportRow` 接到真正的資料承載類。
 
 ---
 
@@ -567,7 +567,7 @@ ReportSummary（domain、貼著 UI / 呈現）
 
 ## 結論
 
-1. **「拆」不是 model 設計不當，而是 Freezed 在 Dart 現有 codegen surface 下的工程妥協**：它用三層結構換掉大量手寫樣板
+1. **「拆」是 Freezed 在 Dart 現有 codegen surface 下的工程妥協**：它用三層結構換掉大量手寫樣板
 2. **`with _$Foo` 和 `part` 是漏出的實作細節**：使用者需要理解 library、mixin、factory redirect，才能讀懂 Freezed 生成模型
 3. **不同 model 層吃到的 Freezed 價值不同**：DTO 常吃到 immutable / JSON / 欄位同步，domain model 更容易吃到 `copyWith` / union / 狀態轉移能力；統一用法換來的一致性，在長期維護的專案上可能值得
 4. **Dart macros 不是可期待的解法路線**：官方已停止 macros 工作，後續改善更可能來自 data features、build_runner 或 augmentations

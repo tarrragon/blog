@@ -68,10 +68,10 @@ LLM 從語料學到「不是 X、而是 Y」是高頻、讀起來優雅的表達
 
 ## 存量候選的漸進判讀
 
-把重點位置判準升進工具鏈（`mdtools lint` 的 POS-negation-lead 警告層、見 [markdown-writing-spec](/posts/markdown-writing-spec/) §5.11）之後、全 `content/` 約 300 個重點後置候選一次曝光 —— 它們之前 silent、靠 review 記憶才偶爾 catch。曝光本身就是價值（候選在每次 lint 持續可見、不再靠記憶）、判讀則漸進進行：
+把重點位置判準升進工具鏈（`mdtools lint` 的 POS-negation-lead 警告層、見 [markdown-writing-spec](/posts/markdown-writing-spec/) 否定起手候選掃描段）之後、全 `content/` 約 300 個重點後置候選一次曝光 —— 它們之前 silent、靠 review 記憶才偶爾 catch。曝光本身就是價值（候選在每次 lint 持續可見、不再靠記憶）、判讀則漸進進行：
 
 - **不一次清倉**：300 裡多數是合法對照（核心概念已先行、「不是 X、而是 Y」只是補充）或 meta / 引用（講此句型的卡與規範），真違規只是子集 —— 一次性全判 ROI 遞減。
-- **changed-set scoped 漸進**：規則讓候選在每次 lint 持續可見、碰到含 POS 警告的檔時用上面三類判準順手判、真違規改重點先行。這是 markdown-writing-spec §5.10 / §5.11 的存量處理原則。
+- **changed-set scoped 漸進**：規則讓候選在每次 lint 持續可見、碰到含 POS 警告的檔時用上面三類判準順手判、真違規改重點先行。這是 markdown-writing-spec 位置引用掃描段與否定起手掃描段的存量處理原則。
 - **本卡承擔這個漸進工作的 backlog**：判讀協議（重點位置 + 三類處置）寫在這、未來遇到候選的人讀本卡就知道怎麼判、不需要另開記錄文件。report 卡比單純的記錄文件更有條理 —— 原則、判讀協議、落地狀態收在同一處。
 
 ---

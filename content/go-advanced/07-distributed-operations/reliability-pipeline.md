@@ -71,7 +71,7 @@ load test 不應只是跑出一個數字，還要能回答：
 
 ## 【執行】chaos test 應該模擬真實失敗
 
-chaos test 的重點不是故意把系統弄壞，而是模擬真實世界常見的失敗：
+chaos test 的重點是模擬真實世界常見的失敗：
 
 - broker 暫時不可用
 - [database](/backend/knowledge-cards/database/) 延遲上升

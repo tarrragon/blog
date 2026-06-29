@@ -6,7 +6,7 @@ weight: 32
 tags: ["backend", "database", "aurora", "multi-cluster", "blast-radius", "fleet", "deep-article"]
 ---
 
-把所有服務的資料塞進一個大 Aurora cluster，平時運維最省事，直到某一天：報表服務跑了一個沒索引的聚合 query、佔滿 connection 與 IOPS、結帳服務跟著變慢、整個平台一起卡。問題的根源不是那個 query 本身，而是「不相關的業務共用同一個 cluster、彼此沒有隔離」。多 cluster 按業務切分要回答的是：哪些業務該各自獨立 cluster、哪些可以共用、切分後 fleet 怎麼維持治理一致。
+把所有服務的資料塞進一個大 Aurora cluster，平時運維最省事，直到某一天：報表服務跑了一個沒索引的聚合 query、佔滿 connection 與 IOPS、結帳服務跟著變慢、整個平台一起卡。問題的根源是「不相關的業務共用同一個 cluster、彼此沒有隔離」，那個 query 只是觸發點。多 cluster 按業務切分要回答的是：哪些業務該各自獨立 cluster、哪些可以共用、切分後 fleet 怎麼維持治理一致。
 
 本文不是 Aurora overview（請看 [Aurora vendor 頁](/backend/01-database/vendors/aurora/)）— 而是 cluster 邊界劃分與多 cluster 治理的實作層教學。
 

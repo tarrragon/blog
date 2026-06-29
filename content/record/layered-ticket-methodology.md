@@ -83,7 +83,7 @@ Ticket：實作書籍收藏功能
 
 ## 這套方法論的定位
 
-這不是要替代 Clean Architecture，而是它的「派工指南」。Clean Architecture 告訴你程式碼怎麼組織，層級隔離告訴你 Ticket 怎麼拆、按什麼順序做。
+這是 Clean Architecture 的「派工指南」。Clean Architecture 告訴你程式碼怎麼組織，層級隔離告訴你 Ticket 怎麼拆、按什麼順序做。
 
 它和 Atomic Ticket 方法論也不衝突：Atomic Ticket 強調職責維度（一個 Action 加一個 Target），層級隔離強調層級維度（一個 Ticket 只動一層），兩個維度同時符合才是最完整的 Ticket 設計。
 

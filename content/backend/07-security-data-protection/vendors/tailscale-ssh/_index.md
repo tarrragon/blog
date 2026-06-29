@@ -6,7 +6,7 @@ weight: 14
 tags: ["backend", "security", "vendor", "tailscale-ssh", "pam", "zero-trust", "mesh-vpn"]
 ---
 
-Tailscale 是 WireGuard-based zero-trust mesh VPN、Tailscale SSH 是其上的 SSH on overlay network 模組。核心 mindset 是 *不用 SSH key、不用 jump host*：所有 device 加入同一個 tailnet、ACL 控制誰能 SSH 到誰、user identity 從 Tailscale 的 IdP 整合（[Okta](/backend/07-security-data-protection/vendors/okta/) / Google / Microsoft / GitHub SSO）來。它跟 [Teleport](/backend/07-security-data-protection/vendors/teleport/) / [Boundary](/backend/07-security-data-protection/vendors/boundary/) / [Cloudflare Access](/backend/07-security-data-protection/vendors/cloudflare-access/) 的差異不在 *能不能管 SSH*、而在 *網路模型 + identity binding + audit 深度* — Tailscale 走 overlay mesh + identity-bound SSH，Teleport 走 Identity-Aware Proxy + first-class session recording，Boundary 走 network broker + dynamic credential。
+Tailscale 是 WireGuard-based zero-trust mesh VPN、Tailscale SSH 是其上的 SSH on overlay network 模組。核心 mindset 是 *不用 SSH key、不用 jump host*：所有 device 加入同一個 tailnet、ACL 控制誰能 SSH 到誰、user identity 從 Tailscale 的 IdP 整合（[Okta](/backend/07-security-data-protection/vendors/okta/) / Google / Microsoft / GitHub SSO）來。它跟 [Teleport](/backend/07-security-data-protection/vendors/teleport/) / [Boundary](/backend/07-security-data-protection/vendors/boundary/) / [Cloudflare Access](/backend/07-security-data-protection/vendors/cloudflare-access/) 的差異在 *網路模型 + identity binding + audit 深度*、SSH 管理能力本身都具備 — Tailscale 走 overlay mesh + identity-bound SSH，Teleport 走 Identity-Aware Proxy + first-class session recording，Boundary 走 network broker + dynamic credential。
 
 ## 服務定位
 

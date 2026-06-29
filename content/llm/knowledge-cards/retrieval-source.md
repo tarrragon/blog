@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "rag", "retrieval"]
 ---
 
-Retrieval source 的核心概念是「**RAG 或 agent 在 retrieve 時實際查詢的資料來源**」。它不是泛稱的 source，而是 [RAG](/llm/knowledge-cards/rag/) pipeline 中可被檢索、可被引用、也可能被污染或過期的 corpus、index、database、file system、tool response 或第三方服務。
+Retrieval source 的核心概念是「**RAG 或 agent 在 retrieve 時實際查詢的資料來源**」。它是 [RAG](/llm/knowledge-cards/rag/) pipeline 中可被檢索、可被引用、也可能被污染或過期的 corpus、index、database、file system、tool response 或第三方服務——比泛稱的 source 更具體。
 
 ## 概念位置
 

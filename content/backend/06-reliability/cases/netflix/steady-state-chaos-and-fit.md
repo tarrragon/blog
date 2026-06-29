@@ -6,7 +6,7 @@ weight: 21
 tags: ["backend", "reliability", "case-study"]
 ---
 
-Netflix chaos 實踐的核心責任是驗證「服務在失效條件下是否仍維持 [steady state](/backend/knowledge-cards/steady-state/)」。重點不是注入了多少故障，而是注入後能否用明確訊號證明系統仍可服務。
+Netflix chaos 實踐的核心責任是驗證「服務在失效條件下是否仍維持 [steady state](/backend/knowledge-cards/steady-state/)」。重點是注入後能否用明確訊號證明系統仍可服務，故障注入數量是次要考量。
 
 ## 問題場景
 

@@ -6,11 +6,11 @@ weight: 12
 tags: ["backend", "reliability", "case-study"]
 ---
 
-Postmortem 的核心責任不是解釋事故，而是把事故轉成會被完成的工程改進。Google 的做法重點在 action item closure：每個改進項都要有 owner、完成條件、追蹤節奏與逾期處理規則。
+Postmortem 的核心責任是把事故轉成會被完成的工程改進，解釋事故只是第一步。Google 的做法重點在 action item closure：每個改進項都要有 owner、完成條件、追蹤節奏與逾期處理規則。
 
 ## 問題場景
 
-很多團隊 postmortem 寫得完整，但事故仍反覆發生。根因通常不是分析能力不足，而是 action item 沒有被制度化追蹤。當改進工作和日常 feature 競爭同一批資源時，沒有 closure 機制的 action item 很容易被延後到失效。
+很多團隊 postmortem 寫得完整，但事故仍反覆發生。根因通常是 action item 沒有被制度化追蹤，分析能力本身不是瓶頸。當改進工作和日常 feature 競爭同一批資源時，沒有 closure 機制的 action item 很容易被延後到失效。
 
 ## 治理機制
 

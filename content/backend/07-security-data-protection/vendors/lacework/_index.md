@@ -6,7 +6,7 @@ weight: 18
 tags: ["backend", "security", "vendor", "lacework", "cnapp", "cspm", "ml-detection"]
 ---
 
-Lacework 是 CNAPP（Cloud-Native Application Protection Platform）走 *Polygraph ML behavioral baseline* 路線的代表廠商、2024 年跟 Fortinet 合併、新品牌叫 *Fortinet Lacework FortiCNAPP*、但 Lacework 名稱與獨立產品線仍在運作。它跟 [Wiz](/backend/07-security-data-protection/vendors/wiz/) / [Prisma Cloud](/backend/07-security-data-protection/vendors/prisma-cloud/) / [CrowdStrike Falcon Cloud Security](/backend/07-security-data-protection/vendors/crowdstrike-falcon-cs/) 的差異不在 *覆蓋面*、而在 *偵測設計哲學* — Lacework 的核心競爭力是 Polygraph 自動從 log + process + network + cloud API call 學 baseline、anomaly 自動觸發、不需 SOC 手寫 detection rule。
+Lacework 是 CNAPP（Cloud-Native Application Protection Platform）走 *Polygraph ML behavioral baseline* 路線的代表廠商、2024 年跟 Fortinet 合併、新品牌叫 *Fortinet Lacework FortiCNAPP*、但 Lacework 名稱與獨立產品線仍在運作。它跟 [Wiz](/backend/07-security-data-protection/vendors/wiz/) / [Prisma Cloud](/backend/07-security-data-protection/vendors/prisma-cloud/) / [CrowdStrike Falcon Cloud Security](/backend/07-security-data-protection/vendors/crowdstrike-falcon-cs/) 的差異在 *偵測設計哲學*、覆蓋面相近 — Lacework 的核心競爭力是 Polygraph 自動從 log + process + network + cloud API call 學 baseline、anomaly 自動觸發、不需 SOC 手寫 detection rule。
 
 ## 服務定位
 

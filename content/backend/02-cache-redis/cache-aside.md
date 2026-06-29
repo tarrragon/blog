@@ -22,7 +22,7 @@ tags: ["backend", "cache", "redis"]
 2. TTL 失效：以時間上限控制資料壽命，適合可短暫不新鮮的資料。
 3. 混合策略：事件失效為主、TTL 為保底，適合多來源寫入或跨區快取。
 
-[stale data](/backend/knowledge-cards/stale-data/) 不是例外事件，而是快取系統的常態成本。設計時要先定義可接受的 stale 形式，再設計對應補償與回退路徑。
+[stale data](/backend/knowledge-cards/stale-data/) 是快取系統的常態成本，視為例外事件會導致設計盲區。設計時要先定義可接受的 stale 形式，再設計對應補償與回退路徑。
 
 ### 應用層 + 邊緣層 Invalidation Pipeline
 

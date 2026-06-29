@@ -6,7 +6,7 @@ weight: 4
 tags: ["backend", "security", "vendor", "google-security-operations", "chronicle", "siem", "soar"]
 ---
 
-Google Security Operations 是 Google 雲端的 SOC 整合平台、2023 年起把前 *Chronicle SIEM* + 2022 收購的 *Siemplify SOAR* + 2022 收購的 *Mandiant threat intel* 三條產品線整合成單一品牌。它跟 [Splunk](/backend/07-security-data-protection/vendors/splunk/) / [Elastic Security](/backend/07-security-data-protection/vendors/elastic-security/) / [Datadog Security](/backend/07-security-data-protection/vendors/datadog-security/) 的差異不在 *偵測能力本身*、而在 *資料規模假設 + 計費哲學 + threat intel 內建程度* — Google 的設計假設是 *PB/day ingestion + Google 級基礎設施 + 固定費率 by data tier*、跟 Splunk per-GB 累進的計費哲學完全相反。
+Google Security Operations 是 Google 雲端的 SOC 整合平台、2023 年起把前 *Chronicle SIEM* + 2022 收購的 *Siemplify SOAR* + 2022 收購的 *Mandiant threat intel* 三條產品線整合成單一品牌。它跟 [Splunk](/backend/07-security-data-protection/vendors/splunk/) / [Elastic Security](/backend/07-security-data-protection/vendors/elastic-security/) / [Datadog Security](/backend/07-security-data-protection/vendors/datadog-security/) 的差異在 *資料規模假設 + 計費哲學 + threat intel 內建程度*、偵測能力本身相近 — Google 的設計假設是 *PB/day ingestion + Google 級基礎設施 + 固定費率 by data tier*、跟 Splunk per-GB 累進的計費哲學完全相反。
 
 ## 服務定位
 

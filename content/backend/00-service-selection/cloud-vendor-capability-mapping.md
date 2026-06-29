@@ -6,7 +6,7 @@ weight: 19
 tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 ---
 
-面對「我該選 AWS 還是 GCP？」這類問題、第一步通常不是看技術細節、而是把後端能力分類對應到三家雲廠商的具體服務名稱。本章提供這份對照地圖、同時警告一件事：AWS、GCP、Azure 在大部分能力上都有對應產品，但「對應」不等於「等價」— 同樣是 managed SQL、AWS RDS、GCP Cloud SQL、Azure SQL 在備份頻率、replica 行為、failover 時間、跨區複製成本上都有差異。對照表是入口、不是決策本身。
+面對「我該選 AWS 還是 GCP？」這類問題、第一步是把後端能力分類對應到三家雲廠商的具體服務名稱、技術細節放後面。本章提供這份對照地圖、同時警告一件事：AWS、GCP、Azure 在大部分能力上都有對應產品，但「對應」不等於「等價」— 同樣是 managed SQL、AWS RDS、GCP Cloud SQL、Azure SQL 在備份頻率、replica 行為、failover 時間、跨區複製成本上都有差異。對照表是入口、不是決策本身。
 
 ## 為什麼需要這張對照地圖
 

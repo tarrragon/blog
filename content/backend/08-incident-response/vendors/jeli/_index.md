@@ -6,7 +6,7 @@ weight: 9
 tags: ["backend", "incident-response", "vendor"]
 ---
 
-Jeli 是 *post-incident learning platform*、2023 [被 PagerDuty 收購整合](https://www.pagerduty.com/blog/welcome-jeli/)、定位跟 [incident.io retro](/backend/08-incident-response/vendors/incident-io/) / [FireHydrant retrospective](/backend/08-incident-response/vendors/firehydrant/) / [PagerDuty 既有 Postmortem](/backend/08-incident-response/vendors/pagerduty/) 的差異不在 *retro template 本身*、而在 *human-in-the-loop interview workflow + narrative reconstruction + cross-incident pattern detection*。源自 Etsy / Honeycomb 等 SRE-mature org 的 learning-from-incident 流派、創辦人 Nora Jones 推 Production Excellence 文化。
+Jeli 是 *post-incident learning platform*、2023 [被 PagerDuty 收購整合](https://www.pagerduty.com/blog/welcome-jeli/)、定位跟 [incident.io retro](/backend/08-incident-response/vendors/incident-io/) / [FireHydrant retrospective](/backend/08-incident-response/vendors/firehydrant/) / [PagerDuty 既有 Postmortem](/backend/08-incident-response/vendors/pagerduty/) 的差異在 *human-in-the-loop interview workflow + narrative reconstruction + cross-incident pattern detection*、retro template 本身相近。源自 Etsy / Honeycomb 等 SRE-mature org 的 learning-from-incident 流派、創辦人 Nora Jones 推 Production Excellence 文化。
 
 ## 服務定位
 

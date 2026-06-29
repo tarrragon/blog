@@ -27,7 +27,7 @@ tags: ["dart", "flutter", "test", "async", "zone", "runZonedGuarded", "service-l
 
 ## 2. 案例：一條呼叫路徑觸及三類邊界
 
-下面以 `Popup.hint` 對 `BotToast.showNotification` 的呼叫為例。寫一個跑 `AuthService.afterLogin` 的 unit test 時，這條呼叫一次觸及 §1 列的三類邊界：service locator 注入缺失、widget tree 缺 `BotToastInit`、`late` 變數在 async 排程後讀取。三組訊號攤開：
+下面以 `Popup.hint` 對 `BotToast.showNotification` 的呼叫為例。寫一個跑 `AuthService.afterLogin` 的 unit test 時，這條呼叫一次觸及 runtime contract 段列的三類邊界：service locator 注入缺失、widget tree 缺 `BotToastInit`、`late` 變數在 async 排程後讀取。三組訊號攤開：
 
 | 訊號                                                                                                               | 性質                                                                                                              | sync try-catch 能接？           |
 | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- | ------------------------------- |
@@ -153,7 +153,7 @@ Fallback path 跑通之後，留在 console 的訊息會被讀到很多次（每
 
 `Popup.hint` 對「沒有 widget tree」連環倒，這個失敗不只 unit test 會遇到 — isolate 內、background task 內、任何非 UI 環境都會炸。修 test 順手把主程式對缺依賴的容錯加上，是合理副產物：unit test 是觸發訊號、主程式被觸發後變得更能適應多元 caller 環境，這個改動的受益面大於原本 test 暴露的那個情境。
 
-**主程式變 robust 的價值大於「讓 test 過」**。修主程式對 caller 環境的容錯時要分辨「容錯」與「掩蓋」的界線：log 仍要留、fallback signature 仍要可識別（§6），錯誤完全靜默會讓 dev app 真壞掉時也看不見。
+**主程式變 robust 的價值大於「讓 test 過」**。修主程式對 caller 環境的容錯時要分辨「容錯」與「掩蓋」的界線：log 仍要留、fallback signature 仍要可識別（Fallback 訊息設計段），錯誤完全靜默會讓 dev app 真壞掉時也看不見。
 
 ---
 

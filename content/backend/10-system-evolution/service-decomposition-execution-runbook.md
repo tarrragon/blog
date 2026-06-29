@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "evolution", "microservice", "runbook"]
 ---
 
-[10.1 服務拆分與邊界判讀](/backend/10-system-evolution/service-decomposition-boundaries/) 處理「該不該拆」、本章處理「決定拆之後實際怎麼動手」。拆服務不是一次性大爆炸（big bang）動作、而是漸進演進。[Strangler Fig pattern](/backend/knowledge-cards/strangler-fig/) 是這層的工程基底 — 用「新功能在新服務、舊功能慢慢搬」的方式、把整個 monolith 包圍、逐步替換。
+[10.1 服務拆分與邊界判讀](/backend/10-system-evolution/service-decomposition-boundaries/) 處理「該不該拆」、本章處理「決定拆之後實際怎麼動手」。拆服務是漸進演進的過程、一次性大爆炸（big bang）的成功率極低。[Strangler Fig pattern](/backend/knowledge-cards/strangler-fig/) 是這層的工程基底 — 用「新功能在新服務、舊功能慢慢搬」的方式、把整個 monolith 包圍、逐步替換。
 
 ## Strangler Fig Pattern 的工程含義
 

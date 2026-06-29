@@ -37,7 +37,7 @@ Shutdown 的核心風險是停止流程不明確。服務可能正在處理 requ
 - [readiness](/backend/knowledge-cards/readiness/) 還是 200，負載平衡器繼續送流量。
 - 測試結束後留下 goroutine 或開放 port。
 
-Graceful shutdown 不是保證所有工作都完成，而是讓停止策略可預期。
+Graceful shutdown 是讓停止策略可預期。
 
 ## 【判讀】shutdown 是多階段流程
 

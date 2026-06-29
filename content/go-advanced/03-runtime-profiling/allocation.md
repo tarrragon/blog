@@ -71,7 +71,7 @@ func BuildNames(users []User) []string {
 
 ## 【判讀】copy boundary 是必要成本
 
-安全複製的核心目的不是效能，而是保護內部可變狀態。Repository 回傳資料時 copy slice 或 map，會增加 allocation，但能避免外部突變與 data race。
+安全複製的核心目的是保護內部可變狀態。Repository 回傳資料時 copy slice 或 map，會增加 allocation，但能避免外部突變與 data race。
 
 ```go
 func (r *UserRepository) ListUsers(ctx context.Context) ([]User, error) {
@@ -92,7 +92,7 @@ func (r *UserRepository) ListUsers(ctx context.Context) ([]User, error) {
 
 ## 【策略】大型 list 優先改資料形狀
 
-大型 list allocation 的核心問題常常不是 copy 本身，而是 API 一次回太多資料。若每次請求都複製整個 repository，配置與延遲都會隨資料量線性成長。
+大型 list allocation 的核心問題常常是 API 一次回太多資料。若每次請求都複製整個 repository，配置與延遲都會隨資料量線性成長。
 
 可選策略：
 

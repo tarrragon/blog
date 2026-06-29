@@ -276,7 +276,7 @@ func TestDeduperSeenSameWindow(t *testing.T) {
 }
 ```
 
-這個測試刻意讓 ID 不同，證明去重不是依賴 raw event ID，而是依賴 domain key。
+這個測試刻意讓 ID 不同，證明去重依賴 domain key。
 
 ## 【執行】跨窗口不去重測試
 

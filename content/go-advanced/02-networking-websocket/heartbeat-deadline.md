@@ -35,11 +35,11 @@ Heartbeat 的核心目標是讓失效的長連線可以被發現並清理。[Dea
 - write pump 卡在慢或失效的 connection。
 - goroutine、send [buffer](/backend/knowledge-cards/buffer/)、記憶體逐步累積。
 
-Heartbeat 的目的不是讓連線永遠保持成功，而是讓失敗可以在合理時間內被觀測並進入清理流程。
+Heartbeat 的目的是讓失敗可以在合理時間內被觀測並進入清理流程。
 
 ## 【判讀】四個時間參數負責不同邊界
 
-Heartbeat 設計的核心是四個時間參數的關係。它們不是任意常數，而是讀寫生命週期的合約。
+Heartbeat 設計的核心是四個時間參數的關係。這些參數是讀寫生命週期的合約。
 
 ```go
 const (
@@ -149,7 +149,7 @@ hub unregisters client
 close send, close conn, remove subscriptions
 ```
 
-實作可以用 hub unregister channel、context cancellation 或 connection manager。重點不是形式，而是所有失效都收斂到同一個 owner。
+實作可以用 hub unregister channel、context cancellation 或 connection manager。重點是所有失效都收斂到同一個 owner。
 
 ## 【策略】read pump 和 write pump 都可能先失敗
 
@@ -237,4 +237,4 @@ func TestUnregisterClientIsIdempotent(t *testing.T) {
 
 ## 小結
 
-Heartbeat/deadline 的目的不是讓 WebSocket 永不斷線，而是讓失效連線在可預期時間內被發現並清理。Read deadline 搭配 pong handler 保護讀取端，write deadline 保護每次寫入，ping ticker 由 write pump 統一執行，所有錯誤最後都應進入同一個 unregister 流程。
+Heartbeat/deadline 的目的是讓失效連線在可預期時間內被發現並清理。Read deadline 搭配 pong handler 保護讀取端，write deadline 保護每次寫入，ping ticker 由 write pump 統一執行，所有錯誤最後都應進入同一個 unregister 流程。

@@ -10,7 +10,7 @@ Gatling 的核心責任是把複雜使用者流程寫成可維護的 JVM simulat
 
 ## 服務定位
 
-Gatling 是 *Scala-origin / 現以 Java DSL 為主流* 的 load testing 工具、跑在 JVM、async / non-blocking engine（基於 Akka / Netty）讓單一 injector node 就能驅動高 RPS。它跟 [k6](/backend/09-performance-capacity/vendors/k6/) / [JMeter](/backend/09-performance-capacity/vendors/jmeter/) / [Locust](/backend/09-performance-capacity/vendors/locust/) 的核心差異不在 *能不能壓出負載*、而在 *語言生態 + engine efficiency + scenario 表達力*：
+Gatling 是 *Scala-origin / 現以 Java DSL 為主流* 的 load testing 工具、跑在 JVM、async / non-blocking engine（基於 Akka / Netty）讓單一 injector node 就能驅動高 RPS。它跟 [k6](/backend/09-performance-capacity/vendors/k6/) / [JMeter](/backend/09-performance-capacity/vendors/jmeter/) / [Locust](/backend/09-performance-capacity/vendors/locust/) 的核心差異在 *語言生態 + engine efficiency + scenario 表達力*、壓出負載的能力都具備：
 
 - vs k6 — k6 走 Go runtime + JavaScript scripting、CLI / Grafana 生態友善；Gatling 走 JVM + Java/Scala/Kotlin DSL、適合既有 JVM 工具鏈與強型別 review
 - vs JMeter — JMeter 走 GUI / XML test plan、適合非工程角色協作；Gatling 走 code-first、適合 PR / build pipeline / refactor 工作流

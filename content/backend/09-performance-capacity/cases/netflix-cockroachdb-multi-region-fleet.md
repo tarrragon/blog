@@ -6,7 +6,7 @@ weight: 40
 tags: ["backend", "performance", "capacity", "case-study", "db-oltp", "aws", "low-latency-sustained"]
 ---
 
-這個案例的核心責任是說明「Cassandra 撐不住 transactional 一致性」如何用 distributed SQL 補位。Netflix 不是把所有 DB 換成 CockroachDB、而是 *用 CockroachDB 補 Cassandra 缺的那塊*：需要 rich transaction + global secondary index + multi-active 寫入的場景。跟 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 對照 — Aurora 整合的是 OLTP single-region workload、CockroachDB 解的是「跨 region 強一致 + 跨 cluster 高彈性」。
+這個案例的核心責任是說明「Cassandra 撐不住 transactional 一致性」如何用 distributed SQL 補位。Netflix *用 CockroachDB 補 Cassandra 缺的那塊*、全面替換從來不是策略：需要 rich transaction + global secondary index + multi-active 寫入的場景。跟 [9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 對照 — Aurora 整合的是 OLTP single-region workload、CockroachDB 解的是「跨 region 強一致 + 跨 cluster 高彈性」。
 
 ## 觀察
 

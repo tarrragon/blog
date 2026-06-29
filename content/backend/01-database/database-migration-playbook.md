@@ -13,7 +13,7 @@ tags: ["backend", "database", "migration"]
 - **1.6 同 DB 內**：schema 演進、資料變更、新舊欄位共存、雙寫驗證、切流。例：加欄位、改欄位、拆表、合表、加 partition。
 - **1.12 跨 DB 引擎**：換 vendor（PostgreSQL → Aurora、MongoDB → Cosmos DB、TiDB → DynamoDB）。例：[9.C20 Zomato](/backend/09-performance-capacity/cases/zomato-tidb-to-dynamodb-migration/)、[9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/)。
 
-兩者用同樣的工程方法論（dual-write、shadow、cutover、rollback）、但 *stakes* 跟 *跨越的邊界* 不同。本章先處理 1.6 的同 DB schema 轉換、1.12 處理更大規模的 cross-engine。若來源不是自建資料庫、而是託管平台（Shopify / Firebase / WordPress）的匯出、整場遷出的資產線盤點與並行期設計見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；資料落地自建後的 schema 演進回到本章、跨引擎搬遷走 1.12。
+兩者用同樣的工程方法論（dual-write、shadow、cutover、rollback）、但 *stakes* 跟 *跨越的邊界* 不同。本章先處理 1.6 的同 DB schema 轉換、1.12 處理更大規模的 cross-engine。若來源是託管平台（Shopify / Firebase / WordPress）的匯出而非自建資料庫、整場遷出的資產線盤點與並行期設計見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；資料落地自建後的 schema 演進回到本章、跨引擎搬遷走 1.12。
 
 ## 實作流程
 

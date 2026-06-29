@@ -7,7 +7,7 @@ tags: ["case-study", "知識基礎建設", "compositional-writing", "Cards-Skill
 
 ## 這篇要說什麼
 
-`content/report/` 累積了 70+ 張原子化事後檢討卡片、`.claude/skills/` 收錄三個 protocol skill。這些不是靜態文件 — 是用來指導下一輪實作、又會被下一輪實作的學習回流修正的活基礎建設。
+`content/report/` 累積了 70+ 張原子化事後檢討卡片、`.claude/skills/` 收錄三個 protocol skill。這些是用來指導下一輪實作、又會被下一輪實作的學習回流修正的活基礎建設。
 
 本文把這套系統實際跑一輪的歷程紀錄下來、當未來「想用這套系統的人」的 onboarding case study。主軸是修一個 search filter bug — 看似一週工作、實際走完八輪迭代、產出 14 張新卡片 + 兩個 skill 的 v0.2 + 4 個 CI test、過程中還抓到自己的 dogfooding 失敗、回頭修一次。
 

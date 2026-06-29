@@ -12,7 +12,7 @@ tags: ["backend", "incident-response", "case-study", "gcp"]
 
 Google Cloud 在 2019-06-02 發生美國多區域 network congestion，官方摘要指出多個 US region 出現 elevated packet loss，影響持續約 3 至 4 小時以上，並牽動多個 GCP 與非 Cloud 服務。
 
-這類事故本質不是單一服務壞掉，而是共享網路資源退化造成的跨產品連鎖事件。
+這類事故本質是共享網路資源退化造成的跨產品連鎖事件，單一服務壞掉反而好處理。
 
 ## 判讀訊號
 

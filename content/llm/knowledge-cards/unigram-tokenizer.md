@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "tokenization"]
 ---
 
-Unigram tokenizer 的核心概念是「**把 [token](/llm/knowledge-cards/token/) 切分視為從候選子詞集合中選最可能切分的機率問題**」。它不是逐步合併字元對，而是先有一組候選 subword，再用機率模型找出最合理的切分。
+Unigram tokenizer 的核心概念是「**把 [token](/llm/knowledge-cards/token/) 切分視為從候選子詞集合中選最可能切分的機率問題**」。它先有一組候選 subword，再用機率模型找出最合理的切分，有別於逐步合併字元對的做法。
 
 ## 概念位置
 

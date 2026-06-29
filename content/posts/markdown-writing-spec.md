@@ -443,8 +443,8 @@ git config core.hooksPath .githooks
 
 - 寫作時優先遵循本規範。pre-commit / pre-push 報錯時讀訊息修正；**不可用 `git commit --no-verify` 或跳過 hook 的方式繞過檢查**。
 - 新增案例平行章節（例如多個「工具評測」「事件時序」）時不需登記到任何白名單 — siblings_only 自動判讀。
-- 新增 URL 時優先採用 §3.1 分級形式；若顯示文字含 TLD 字樣，確認 domain 與 href 完全一致。
-- 新增卡片時確認首段與「概念位置」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（§6.3）。
+- 新增 URL 時優先採用裸 URL 轉換段的分級形式；若顯示文字含 TLD 字樣，確認 domain 與 href 完全一致。
+- 新增卡片時確認首段與「概念位置」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（卡片嚴格層）。
 - 程式碼區塊養成習慣先寫語言標示再填內容；純文字輸出用 `text`。
 
 ---

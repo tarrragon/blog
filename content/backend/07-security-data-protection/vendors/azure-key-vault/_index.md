@@ -6,7 +6,7 @@ weight: 6
 tags: ["backend", "security", "vendor", "azure-key-vault", "kms", "secret-management", "azure"]
 ---
 
-Azure Key Vault 是 Azure 平台把 *secret*、*cryptographic key*、*X.509 certificate* 三類資產 *合進同一個 service* 的設計。Vault instance 本身是 first-class ARM resource、有 FQDN endpoint（`https://<vault-name>.vault.azure.net`）、跟 [Azure RBAC](/backend/07-security-data-protection/vendors/azure-rbac/) 跟 [Entra ID](/backend/07-security-data-protection/vendors/azure-rbac/) Managed Identity 深度整合 — 不是 region-wide service、而是每個 Vault 自己一個邊界。
+Azure Key Vault 是 Azure 平台把 *secret*、*cryptographic key*、*X.509 certificate* 三類資產 *合進同一個 service* 的設計。Vault instance 本身是 first-class ARM resource、有 FQDN endpoint（`https://<vault-name>.vault.azure.net`）、跟 [Azure RBAC](/backend/07-security-data-protection/vendors/azure-rbac/) 跟 [Entra ID](/backend/07-security-data-protection/vendors/azure-rbac/) Managed Identity 深度整合 — 每個 Vault 自己一個邊界、區別於 region-wide service 的模型。
 
 ## 服務定位
 

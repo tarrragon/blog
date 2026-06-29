@@ -62,7 +62,7 @@ tags: ["skills", "compositional-writing", "寫作方法論", "translation"]
 | 因果方向     | 原因是替對方決定，不是父權結構           | 因為限制自主，所以要檢查介入正當性    |
 | 讀者追問方向 | reader 會問「父權在哪？」                | reader 會問「自主性與介入邊界在哪？」 |
 
-修法不是只把詞換掉，而是補定義句讓邏輯回到原文責任：
+修法的重點是補定義句讓邏輯回到原文責任：
 
 ```markdown
 家長主義（paternalism）在本文指「以對方利益之名限制對方自主」。
@@ -71,7 +71,7 @@ tags: ["skills", "compositional-writing", "寫作方法論", "translation"]
 
 ## Case：Steelman 不是最強版本測試
 
-`Steelman` 被翻成「最強版本測試」的問題是概念角色被換掉。這個譯名在 checklist 語境裡看似自然，因為 reviewer 確實會問「有沒有通過」；但 `Steelman` 的核心責任不是測試，而是把被放棄選項或反方立場重建成最有力版本。
+`Steelman` 被翻成「最強版本測試」的問題是概念角色被換掉。這個譯名在 checklist 語境裡看似自然，因為 reviewer 確實會問「有沒有通過」；但 `Steelman` 的核心責任是把被放棄選項或反方立場重建成最有力版本。
 
 | 檢查層     | `最強版本測試` 的問題              | 較合理的對位                |
 | ---------- | ---------------------------------- | --------------------------- |
@@ -80,7 +80,7 @@ tags: ["skills", "compositional-writing", "寫作方法論", "translation"]
 | 動詞搭配   | reader 追問「怎樣算測試通過」      | reader 追問「反方是否重建」 |
 | Surface 面 | heading / checklist 會傳播錯誤角色 | 全文統一同一概念角色        |
 
-修法不是追求唯一標準譯名，而是保留概念角色：
+修法的重點是保留概念角色：
 
 ```markdown
 最強版本論證（Steelman）在本文指：
@@ -143,4 +143,4 @@ tags: ["skills", "compositional-writing", "寫作方法論", "translation"]
 - [ ] reader 看到中文詞會追問原文核心問題
 - [ ] title、heading、description、link label 沒有殘留舊譯名
 
-**核心**：翻譯 review 不是找最漂亮的中文，而是確認語言轉換後，句子仍在說同一件事。
+**核心**：翻譯 review 的核心是確認語言轉換後，句子仍在說同一件事。

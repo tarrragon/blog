@@ -45,4 +45,4 @@ reset 改用 `Object.assign(this, initialState())`。新增欄位只改一處，
 
 ## 適用場景
 
-任何有「重置到初始狀態」需求的 class：測試框架的 setUp/tearDown、物件池的回收、singleton 的 reinit。問題不在語言（TypeScript、Go、Dart 都會遇到），而在「新增欄位」和「同步 reset」是兩個分開的動作——只要是分開的，就有遺漏的可能。State Registry 把兩者合併成一個動作。
+任何有「重置到初始狀態」需求的 class：測試框架的 setUp/tearDown、物件池的回收、singleton 的 reinit。問題在「新增欄位」和「同步 reset」是兩個分開的動作（TypeScript、Go、Dart 都會遇到）——只要是分開的，就有遺漏的可能。State Registry 把兩者合併成一個動作。

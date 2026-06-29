@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "rag", "retrieval", "context"]
 ---
 
-Context packing 的核心概念是「**retrieve 拿到候選 chunks 後，決定哪些內容、以什麼順序、帶哪些 metadata 塞進 prompt**」。它不是 retrieval 本身，而是 [RAG](/llm/knowledge-cards/rag/) 在 retrieval 與 generation 之間的 context 組裝層。
+Context packing 的核心概念是「**retrieve 拿到候選 chunks 後，決定哪些內容、以什麼順序、帶哪些 metadata 塞進 prompt**」。它是 [RAG](/llm/knowledge-cards/rag/) 在 retrieval 與 generation 之間的 context 組裝層，有別於 retrieval 本身。
 
 ## 概念位置
 

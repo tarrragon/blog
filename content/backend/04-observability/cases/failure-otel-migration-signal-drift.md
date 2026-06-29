@@ -6,7 +6,7 @@ weight: 9
 tags: ["backend", "observability", "case-study"]
 ---
 
-這個反例的核心責任是說明 observability 遷移失敗常不是資料丟失，而是語意漂移。
+這個反例的核心責任是說明 observability 遷移失敗常以語意漂移形式出現，資料丟失反而少見。
 
 ## 事故長相
 

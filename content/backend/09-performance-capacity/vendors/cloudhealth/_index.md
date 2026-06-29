@@ -10,7 +10,7 @@ CloudHealth 的核心責任是把大型組織的 cloud spend、governance、poli
 
 ## 服務定位
 
-CloudHealth 跟 AWS Cost Explorer / Azure Cost Management 那種單雲原生工具的差異不在 *單雲帳單細節*、而在 *跨雲一致 schema + enterprise FinOps operating model*。Cost Explorer 在 AWS-only 場景的 granularity 更深、但跨 Azure / GCP 帳單對齊、成本中心 chargeback、policy 治理就需要 CloudHealth 這類 multi-cloud platform。
+CloudHealth 跟 AWS Cost Explorer / Azure Cost Management 那種單雲原生工具的差異在 *跨雲一致 schema + enterprise FinOps operating model*、單雲帳單細節反而是原生工具更深。Cost Explorer 在 AWS-only 場景的 granularity 更深、但跨 Azure / GCP 帳單對齊、成本中心 chargeback、policy 治理就需要 CloudHealth 這類 multi-cloud platform。
 
 跟 Vantage 比、CloudHealth 走 *enterprise governance-first*、Vantage 走 *engineering-friendly dashboard-first*。Vantage 對小到中型 cloud-native 團隊更快上手、但 chargeback 流程、policy violation queue、approval workflow 都不是它的主場。跟 Apptio Cloudability（IBM 收購）比、兩者定位最接近、都吃 large enterprise FinOps 市場；CloudHealth 的差異是 VMware / Broadcom ecosystem 整合（vCenter / Tanzu / on-prem hybrid），Cloudability 強在 TBM（Technology Business Management）財務分攤模型成熟度。
 

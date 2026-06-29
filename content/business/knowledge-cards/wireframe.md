@@ -18,4 +18,4 @@ Wireframe 的訊號：黑白線條、灰塊代表圖、虛擬文字（lorem ipsu
 
 ## 判讀方式
 
-讀到「AI 不能靠 wireframe 描述」時，意味著該產品的核心價值不在 UI 而在 AI 行為—wireframe 畫得再漂亮也描述不出 AI 跑出來會多準確。這是 AI 產品開發跟傳統 SaaS 的根本差異—描述工具失效後，[FDE](/business/knowledge-cards/fde/) 現場迭代成為唯一可行路徑。
+讀到「AI 不能靠 wireframe 描述」時，意味著該產品的核心價值在 AI 行為而非 UI—wireframe 畫得再漂亮也描述不出 AI 跑出來會多準確。這是 AI 產品開發跟傳統 SaaS 的根本差異—描述工具失效後，[FDE](/business/knowledge-cards/fde/) 現場迭代成為唯一可行路徑。

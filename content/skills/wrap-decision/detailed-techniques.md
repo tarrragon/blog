@@ -46,7 +46,7 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 | 2. 同領域 | 官方 GitHub Issues                    | 多個 Issues 報告同樣症狀       |
 | 3. 跨領域 | 其他 extension host 錯誤處理          | 類比：宿主不應被擴充崩潰       |
 
-**教訓**：在第 0 層打轉 3 輪，不如第 1 輪就爬到第 2 層 — 往往 10 分鐘解決。
+**教訓**：在「身邊」層打轉多輪，不如首輪就爬到「同領域」層 — 往往 10 分鐘解決。
 
 ### 向外求解（Find Someone Who's Solved Your Problem）
 

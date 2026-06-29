@@ -30,7 +30,7 @@ DraftKings 帳本系統的關鍵數字（引自 [DraftKings case study](https://
 
 DraftKings 的工程選擇揭露三個 OLTP 容量設計重點。
 
-1. **200 個獨立資料庫 = sharding 預先做好**：不是一個巨型 cluster 撐全部、而是按業務切 200 個 cluster。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 把「單機極限」改成「shard 極限」、每個 shard 的容量規劃變成獨立問題。
+1. **200 個獨立資料庫 = sharding 預先做好**：按業務切 200 個 cluster、用巨型 cluster 撐全部在這個規模行不通。對應 [9.5 瓶頸定位流程](/backend/09-performance-capacity/) 把「單機極限」改成「shard 極限」、每個 shard 的容量規劃變成獨立問題。
 2. **Replication lag 30 秒 → 10-30 ms**：這個改善不只是「快」、而是讓 read-after-write 變得可預測。Aurora 的 storage layer 多 AZ 複製是這個 lag 改善的主因。對應 [01 資料庫模組](/backend/01-database/) 的 replication lag 影響 transaction boundary 設計。
 3. **Super Bowl +50% 「no sweat」**：這句話的工程意義是 *提前做好容量規劃*、不是「Aurora 神奇」。寫 workload 預期可能 + 50%、整個 system headroom 預留至少 50%、加上 read replica 動態加減、才能讓 50% 增幅變成「不流汗」。對應 [9.6 容量規劃模型](/backend/09-performance-capacity/) 的 headroom budget 與 event-driven scheduled scaling。
 

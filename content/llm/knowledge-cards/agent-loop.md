@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "agent", "tool-use"]
 ---
 
-Agent loop 的核心概念是「LLM 不是一次性回答、而是在 plan → act → observe → plan 的循環中推進任務、直到任務完成或停止條件觸發」。它讓 LLM 從「單回合工具呼叫」進化成「自主執行多步驟工作」、但同時放大 [prompt injection](/llm/knowledge-cards/prompt-injection/) 的影響面跟 [tool use](/llm/knowledge-cards/tool-use/) 副作用範圍。
+Agent loop 的核心概念是「LLM 在 plan → act → observe → plan 的循環中推進任務、直到任務完成或停止條件觸發」，有別於一次性回答。它讓 LLM 從「單回合工具呼叫」進化成「自主執行多步驟工作」、但同時放大 [prompt injection](/llm/knowledge-cards/prompt-injection/) 的影響面跟 [tool use](/llm/knowledge-cards/tool-use/) 副作用範圍。
 
 ## 概念位置
 

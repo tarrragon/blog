@@ -76,7 +76,7 @@ OPA 的查詢語言是 *Rego*、Datalog-like declarative language、設計上適
 
 ## 進階主題
 
-**Rego idioms（policy library + base policy）**：production Rego 不是寫一坨 long file、而是分層 — `lib/`（utility function、registry whitelist、CIDR check）、`base/`（concrete policy、引用 lib）、`tests/`（用 `opa test` 跑 unit test）。Policy 也是 code、走 PR review + CI test + staging tenant、不是 console 直改。
+**Rego idioms（policy library + base policy）**：production Rego 走分層結構 — `lib/`（utility function、registry whitelist、CIDR check）、`base/`（concrete policy、引用 lib）、`tests/`（用 `opa test` 跑 unit test）。Policy 也是 code、走 PR review + CI test + staging tenant、不是 console 直改。
 
 **Partial evaluation for SQL row-level filter**：把 policy 寫成「user 能看哪些 row」、用 `opa eval --partial` 把 `user="alice"` 部分 pre-evaluate、output 殘餘 query 變 SQL `WHERE tenant_id IN ('a', 'b', 'c')`、application 拼進 query。意義是 *policy 不在 query path latency 上*、policy 規則仍是 SSoT。對應 RLS（row-level security）的工程化作法。
 

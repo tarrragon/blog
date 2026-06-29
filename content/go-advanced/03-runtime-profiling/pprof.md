@@ -89,7 +89,7 @@ go tool pprof -alloc_space http://localhost:8080/debug/pprof/heap
 
 ## 【判讀】heap profile 要連回資料結構
 
-Heap profile 的核心解讀不是只看函式名稱，而是問「誰持有資料」或「誰反覆配置」。看到某個函式在 top 裡，下一步要回到資料結構與生命週期。
+Heap profile 的核心解讀是問「誰持有資料」或「誰反覆配置」。看到某個函式在 top 裡，下一步要回到資料結構與生命週期。
 
 常見對應：
 

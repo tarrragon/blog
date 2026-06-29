@@ -6,7 +6,7 @@ weight: 24
 tags: ["backend", "security", "vendor", "falco", "runtime-detection", "ebpf", "open-source"]
 ---
 
-Falco 是 CNCF Graduated 的 runtime cloud-native threat detection engine、原 Sysdig 開源、Apache 2.0 license。它在 host / container 上用 eBPF（或 kernel module / userspace fallback）攔截 syscall、跟 Plugin 拉到的 audit log 串成同一條 event stream、丟給 Rule engine 比對 YAML rule、命中後 alert 到 stdout / Falcosidekick / SIEM。它跟商業 CNAPP runtime 模組（[Datadog CWS](/backend/07-security-data-protection/vendors/datadog-security/) / [Lacework Polygraph](/backend/07-security-data-protection/vendors/lacework/) / [Prisma Cloud Defender](/backend/07-security-data-protection/vendors/prisma-cloud/)）的差異不在偵測技術、而在 *OSS rule-based vs SaaS ML-based + 平台廣度 + 自動 response 的工程責任歸屬*。
+Falco 是 CNCF Graduated 的 runtime cloud-native threat detection engine、原 Sysdig 開源、Apache 2.0 license。它在 host / container 上用 eBPF（或 kernel module / userspace fallback）攔截 syscall、跟 Plugin 拉到的 audit log 串成同一條 event stream、丟給 Rule engine 比對 YAML rule、命中後 alert 到 stdout / Falcosidekick / SIEM。它跟商業 CNAPP runtime 模組（[Datadog CWS](/backend/07-security-data-protection/vendors/datadog-security/) / [Lacework Polygraph](/backend/07-security-data-protection/vendors/lacework/) / [Prisma Cloud Defender](/backend/07-security-data-protection/vendors/prisma-cloud/)）的差異在 *OSS rule-based vs SaaS ML-based + 平台廣度 + 自動 response 的工程責任歸屬*、偵測技術本身相近。
 
 ## 服務定位
 

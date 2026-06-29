@@ -11,7 +11,7 @@ tags:
   - "runtime"
 ---
 
-Goroutine leak 偵測的核心目標是確認已經沒有存在價值的 goroutine 能被停止。它通常不是語法問題，而是生命週期問題：誰取消、誰 close、誰解除 I/O 阻塞、誰停止 ticker。
+Goroutine leak 偵測的核心目標是確認已經沒有存在價值的 goroutine 能被停止。它通常是生命週期問題：誰取消、誰 close、誰解除 I/O 阻塞、誰停止 ticker。
 
 ## 本章目標
 
@@ -184,7 +184,7 @@ curl "http://localhost:8080/debug/pprof/goroutine?debug=2"
 | ticker loop     | context 沒接上或 ticker 未 stop                              | select loop lifecycle                                               |
 | mutex lock      | 鎖競爭或死鎖                                                 | shared state owner                                                  |
 
-看到 stack 後，下一步不是只殺 goroutine，而是回到對應 lifecycle 設計：誰負責停止，誰負責釋放阻塞點。
+看到 stack 後，下一步是回到對應 lifecycle 設計：誰負責停止，誰負責釋放阻塞點。
 
 ## 【策略】WebSocket pump leak 要看 read/write/unregister 三方
 
@@ -241,7 +241,7 @@ func TestNoObviousGoroutineLeak(t *testing.T) {
 
 ## 【判讀】goroutine leak 修正要改停止路徑
 
-Goroutine leak 的核心修正不是在 goroutine 裡加更多條件，而是補上停止路徑。
+Goroutine leak 的核心修正是補上停止路徑。
 
 常見修正：
 

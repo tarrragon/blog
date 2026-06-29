@@ -6,7 +6,6 @@ description: "說明重複、手動、無永久價值的工作如何成為工程
 weight: 315
 ---
 
-
 Toil 的核心概念是「重複、手動、無永久價值、可自動化的工作」。它通常和 [on-call](/backend/knowledge-cards/on-call/) 壓力、[alert fatigue](/backend/knowledge-cards/alert-fatigue/) 與 [runbook](/backend/knowledge-cards/runbook/) 綁在一起。
 
 ## 概念位置
@@ -19,4 +18,4 @@ Toil 位在 [alert-fatigue](/backend/knowledge-cards/alert-fatigue/)、[runbook]
 
 ## 設計責任
 
-Toil 治理要定義可自動化優先序、移除條件、owner 與替代路徑。它的目標不是把所有手工流程都消滅，而是把沒有長期價值的重複成本逐步壓下來。
+Toil 治理要定義可自動化優先序、移除條件、owner 與替代路徑。它的目標是把沒有長期價值的重複成本逐步壓下來，消滅所有手工流程既不必要也不現實。

@@ -188,4 +188,4 @@ void update(SettingsMutator transform) {
 - 兩種寫法的取捨：裸函式型別型別就地可見、零宣告；typedef 簽章簡潔、命名成概念、可重用，但多一層 indirection。
 - 選擇依據：函式型別是否多處共用、語法是否造成實際閱讀摩擦。摩擦明顯就抽 typedef，否則裸寫無妨。
 
-> **延伸**：本文 §3.2「模型不可變」是整個 HOF 適配的前提之一。`SettingsModel` 那種 `@immutable` + `copyWith` 結構怎麼產生、以及更好懂的替代路徑，見 [Freezed 的三層結構解剖](/work-log/dart_freezed_anatomy/)。
+> **延伸**：本文「模型不可變」段是整個 HOF 適配的前提之一。`SettingsModel` 那種 `@immutable` + `copyWith` 結構怎麼產生、以及更好懂的替代路徑，見 [Freezed 的三層結構解剖](/work-log/dart_freezed_anatomy/)。

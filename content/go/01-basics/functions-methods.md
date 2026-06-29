@@ -127,7 +127,7 @@ cache.Set("theme", "dark")
 value, ok := cache.Get("theme")
 ```
 
-這裡 `NewCache()` 的價值不是語法必要，而是保證 `items` 一定被初始化。呼叫者不需要知道 `Cache` 內部有 map，也不需要記得手動 `make`。
+這裡 `NewCache()` 的價值是保證 `items` 一定被初始化。呼叫者不需要知道 `Cache` 內部有 map，也不需要記得手動 `make`。
 
 ## 函式還是方法？
 

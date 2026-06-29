@@ -12,7 +12,7 @@ tags: ["backend", "incident-response", "case-study", "cloudflare"]
 
 Cloudflare 在 2026-02-20 17:48 UTC 發生 BYOIP 相關 outage。部分使用 Bring Your Own IP（BYOIP）的客戶，其 IP prefixes 被 Cloudflare 經由 BGP 非預期撤告，導致相關服務從 Internet 無法到達。官方回顧指出，事故總時長為 6 小時 7 分鐘；在 4,306 個 BYOIP prefixes 中，約 1,100 個 prefixes 曾被撤告，約佔 BYOIP prefixes 的 25%。
 
-事故起因不是攻擊，而是 Cloudflare 在 Addressing API / BYOIP pipeline 中引入的自動化清理流程。該流程原本要移除 pending deletion 的 prefixes，但 API query 的 `pending_delete` 參數沒有值，server 端將它解讀成一般查詢，回傳所有 BYOIP prefixes。下游流程接著把回傳結果當成待刪除集合，開始撤告 prefixes 與移除相關 service bindings。
+事故起因是 Cloudflare 在 Addressing API / BYOIP pipeline 中引入的自動化清理流程，與外部攻擊無關。該流程原本要移除 pending deletion 的 prefixes，但 API query 的 `pending_delete` 參數沒有值，server 端將它解讀成一般查詢，回傳所有 BYOIP prefixes。下游流程接著把回傳結果當成待刪除集合，開始撤告 prefixes 與移除相關 service bindings。
 
 ## 判讀訊號
 

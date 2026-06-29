@@ -64,11 +64,12 @@ func inlineCodeAt(line string, idx int) bool {
 	return false
 }
 
-// precededByDi reports whether the rune right before idx is 第, which
-// turns a count-in-name candidate（三階段）into an ordinal（第三階段）
-// that REF2 does not target.
+// precededByOrdinalPrefix reports whether the rune right before idx is
+// 第 or 下, which turns a count-in-name candidate into an ordinal
+// (第三階段) or a sequential reference (下一階段 = "next phase") that
+// REF2 does not target.
 func precededByDi(line string, idx int) bool {
-	return idx >= 3 && line[idx-3:idx] == "第"
+	return idx >= 3 && (line[idx-3:idx] == "第" || line[idx-3:idx] == "下")
 }
 
 func checkDriftAnchors(path string, lines []string, ctx mdfmt.LineContext) []report.Violation {

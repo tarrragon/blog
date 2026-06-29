@@ -10,7 +10,7 @@ Fallback read 的核心概念是「新讀取路徑尚未穩定時，暫時回到
 
 ## 概念位置
 
-Fallback read 位在 [cutover / switchover](/backend/knowledge-cards/cutover-switchover/)、[schema migration](/backend/knowledge-cards/schema-migration/) 與 [rollback strategy](/backend/knowledge-cards/rollback-strategy/) 之間。它不是完整 rollback，而是保留新資料結構、暫時把讀取判斷交回舊語意或舊來源。
+Fallback read 位在 [cutover / switchover](/backend/knowledge-cards/cutover-switchover/)、[schema migration](/backend/knowledge-cards/schema-migration/) 與 [rollback strategy](/backend/knowledge-cards/rollback-strategy/) 之間。它保留新資料結構、暫時把讀取判斷交回舊語意或舊來源，比完整 rollback 成本低且破壞性小。
 
 ## 可觀察訊號
 

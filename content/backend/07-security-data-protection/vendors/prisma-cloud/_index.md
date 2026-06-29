@@ -6,7 +6,7 @@ weight: 17
 tags: ["backend", "security", "vendor", "prisma-cloud", "cnapp", "cspm", "palo-alto"]
 ---
 
-Prisma Cloud 是 Palo Alto Networks 旗下的 CNAPP（Cloud-Native Application Protection Platform）、把 *runtime workload 防護*（Defender agent）跟 *agentless cloud posture* 同一個 Console 整合。它的歷史是多次併購疊起來的 — Twistlock（container security）/ Redlock（CSPM）/ Bridgecrew（IaC scan）/ Aporeto（microsegmentation）— 五個模組各自有獨立的 data model 與 UI 軌跡。它跟 [Wiz](/backend/07-security-data-protection/vendors/wiz/) / [Lacework](/backend/07-security-data-protection/vendors/lacework/) / [CrowdStrike Falcon Cloud Security](/backend/07-security-data-protection/vendors/crowdstrike-falcon-cs/) 的差異不在功能清單、而在 *是否走 host-level agent + 是否綁 Palo Alto 生態*。
+Prisma Cloud 是 Palo Alto Networks 旗下的 CNAPP（Cloud-Native Application Protection Platform）、把 *runtime workload 防護*（Defender agent）跟 *agentless cloud posture* 同一個 Console 整合。它的歷史是多次併購疊起來的 — Twistlock（container security）/ Redlock（CSPM）/ Bridgecrew（IaC scan）/ Aporeto（microsegmentation）— 五個模組各自有獨立的 data model 與 UI 軌跡。它跟 [Wiz](/backend/07-security-data-protection/vendors/wiz/) / [Lacework](/backend/07-security-data-protection/vendors/lacework/) / [CrowdStrike Falcon Cloud Security](/backend/07-security-data-protection/vendors/crowdstrike-falcon-cs/) 的差異在 *是否走 host-level agent + 是否綁 Palo Alto 生態*、功能清單相近。
 
 ## 服務定位
 

@@ -9,7 +9,7 @@ tags: ["backend", "database", "sqlite", "mobile", "embedded", "deep-article"]
 
 SQLite embedded store 的核心責任是讓 application process 在本機持有正式狀態。Mobile app、desktop app、browser profile、CLI tool 與 embedded device 常用 SQLite 保存 local data；這些資料可能只是 cache，也可能是使用者唯一資料來源。教學上要先判斷它是否承擔 [source of truth](/backend/knowledge-cards/source-of-truth/)，再決定 backup、sync、privacy 與 migration 責任。
 
-本文的判讀錨點是：embedded SQLite 的 production boundary 不在 database server，而在 device lifecycle。OS backup、app upgrade、device loss、profile corruption、local PII、multi-device sync 與 user export / delete 都是資料庫責任的一部分。
+本文的判讀錨點是：embedded SQLite 的 production boundary 在 device lifecycle，database server 層的邊界在這裡不適用。OS backup、app upgrade、device loss、profile corruption、local PII、multi-device sync 與 user export / delete 都是資料庫責任的一部分。
 
 ## Embedded state model
 
