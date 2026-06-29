@@ -32,6 +32,19 @@ skill 內容看 `.claude/skills/<name>/SKILL.md`。
 
 跨 surface 的引用會違反規範 — 寫 skill 時複製 principle 卡進 `references/principles/`、不寫外部連結（AGENTS.md §9.2-3）。
 
+## Hugo `_index.md` vs 文章檔案
+
+`content/` 下的 `_index.md` 是 Hugo 的 **section list page**（模組目錄頁），不是放文章內容的地方。文章內容必須是同目錄下的獨立 `.md` 檔案。
+
+| 檔案類型    | 用途                                                                                       | 內容量    |
+| ----------- | ------------------------------------------------------------------------------------------ | --------- |
+| `_index.md` | 模組目錄頁：frontmatter + 簡介（1-3 段）+ 章節文章表格 + 跨分類引用                        | 20-90 行  |
+| `<slug>.md` | 獨立文章：完整教學內容，有自己的 frontmatter（title / date / description / weight / tags） | 50-300 行 |
+
+新建教學模組時，先建 `_index.md` 寫模組簡介和文章表格，再建各篇獨立文章。**不要把文章內容寫進 `_index.md`**——Hugo 會把它渲染成 list page，文章內容不會以正確的單篇頁面呈現。
+
+參考既有模組的結構：`content/infra/00-infra-mindset/`（`_index.md` + 3 篇獨立文章）。
+
 ## 文章寫作避免模板化
 
 Claude Code 寫 `content/` 文章時，不要為了整齊而把案例、反例、規模對照或 tripwire 抽成共通模板。不同情境的業務壓力、資料形狀、流量型態、失敗條件與回退路徑若不同，必須用該情境自己的敘事說明與判讀條件。
