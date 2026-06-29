@@ -24,7 +24,7 @@ tags: ["dotfile", "iac", "workflow"]
 | 影響範圍   | 改錯可能影響 production 服務              | 改錯最多影響自己的工作環境                   |
 | 協作需求   | 團隊共用、需要 PR review                  | 通常個人維護，PR review 是可選的             |
 
-這個平行不只是比喻。[模組八：從個人到團隊](/dotfile/08-team-environment/)會教怎麼把 dotfile 的思想正式擴展到團隊環境——devcontainer 把「開發環境應該長什麼樣」寫成宣告式配置，讓新人 clone repo 就能拿到一致的開發環境，這正是 IaC 思想從組織 infra 往個人工作桌面延伸的具體產物。
+這個平行不只是比喻。[從個人到團隊](/dotfile/08-team-environment/)會教怎麼把 dotfile 的思想正式擴展到團隊環境——devcontainer 把「開發環境應該長什麼樣」寫成宣告式配置，讓新人 clone repo 就能拿到一致的開發環境，這正是 IaC 思想從組織 infra 往個人工作桌面延伸的具體產物。
 
 ## Dotfile 是重建指令，不是備份
 

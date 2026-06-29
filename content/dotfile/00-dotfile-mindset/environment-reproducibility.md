@@ -62,6 +62,6 @@ Unix 系統用檔名開頭的 `.` 標記隱藏檔。shell 配置（`.bashrc`、`
 
 ### 不該進 Dotfile Repo 的
 
-- **私鑰、API key、token、密碼**。用 `.gitignore` 排除，敏感資訊放 secret manager 或加密管理（[模組七](/dotfile/07-sync-bootstrap/)會教具體做法）。
+- **私鑰、API key、token、密碼**。用 `.gitignore` 排除，敏感資訊放 secret manager 或加密管理（具體做法見[同步與 Secret 管理](/dotfile/07-sync-bootstrap/sync-strategy-secret/)）。
 - **暫存檔、cache、log**。`.zsh_history` 很大且含敏感指令；各種工具的 cache 目錄是 generated 檔案，重建時自動產生。
 - **OS 層級的二進位設定**。macOS 的 plist 可以選擇性管理（`defaults write` 指令可以版控），但整個 `~/Library/Preferences/` 不適合直接丟進 Git——檔案格式不穩定、diff 不可讀、很多是應用程式自動產生的。

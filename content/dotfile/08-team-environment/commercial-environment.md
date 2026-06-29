@@ -16,7 +16,7 @@ tags: ["dotfile", "team", "devcontainer", "mdm"]
 
 ### 中間層：腳本化 + CI 驗證
 
-把環境設定寫成 bootstrap script（同[模組七](/dotfile/07-sync-bootstrap/bootstrap-script-packages/)），新人跑一次就好。CI 裡用相同的 script 或 Docker image 確保環境一致。比文件可靠，但 script 本身的維護和跨 OS 相容性是挑戰。
+把環境設定寫成 bootstrap script（同 [Bootstrap Script 設計](/dotfile/07-sync-bootstrap/bootstrap-script-packages/)），新人跑一次就好。CI 裡用相同的 script 或 Docker image 確保環境一致。比文件可靠，但 script 本身的維護和跨 OS 相容性是挑戰。
 
 ### 成熟層：Devcontainer / Nix / 標準化 VM image
 
@@ -28,7 +28,7 @@ tags: ["dotfile", "team", "devcontainer", "mdm"]
 
 ## 跟 Infra 的銜接
 
-[模組零](/dotfile/00-dotfile-mindset/)把 dotfile 定位為「個人的環境 as code」、跟 Infra 的 IaC 平行。這裡的銜接點是：
+[Dotfile 心智模型](/dotfile/00-dotfile-mindset/)把 dotfile 定位為「個人的環境 as code」、跟 Infra 的 IaC 平行。這裡的銜接點是：
 
 - **Infra IaC** 管雲端資源（VPC、EC2、RDS）
 - **CI/CD pipeline** 管建置和部署流程

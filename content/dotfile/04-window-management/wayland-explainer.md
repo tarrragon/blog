@@ -78,7 +78,7 @@ Screen tearing（畫面撕裂）在 X11 上是長年的老問題——需要 com
 
 Layer-shell 定義了 client 可以在螢幕的哪個「層」上建立畫面——background（最底）、bottom、top、overlay（最頂）。Status bar（waybar）、notification daemon（mako）、launcher（wofi）、wallpaper（hyprpaper）、lock screen（hyprlock）都透過 layer-shell 來佔據螢幕空間。
 
-沒有 layer-shell 支援的 compositor，這些桌面元件就無法運作。這也是為什麼模組六（Rice 設計）的所有工具都只能在支援 layer-shell 的 Wayland compositor 上跑——它是可組裝式桌面的基礎設施。
+沒有 layer-shell 支援的 compositor，這些桌面元件就無法運作。這也是為什麼[桌面 Rice 設計](/dotfile/06-rice-design/)的所有工具都只能在支援 layer-shell 的 Wayland compositor 上跑——它是可組裝式桌面的基礎設施。
 
 ### xdg-desktop-portal
 

@@ -10,11 +10,11 @@ tags: ["dotfile", "bootstrap", "sync"]
 
 ## 章節文章
 
-| 文章                                                                                      | 主題                                                                                    |
-| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [拍照 vs 重建指令：環境重建的兩種思路](/dotfile/07-sync-bootstrap/snapshot-vs-rebuild/)   | VM 快照和 dotfile 重建的本質差異、各自的守備範圍與場景判讀                              |
-| [Bootstrap Script 與套件清單管理](/dotfile/07-sync-bootstrap/bootstrap-script-packages/)  | install script 的冪等性設計、OS 分流、Brewfile / packages.txt 套件清單管理              |
-| [跨機器同步、Secret 管理與環境重建流程](/dotfile/07-sync-bootstrap/sync-strategy-secret/) | Git push/pull vs 自動同步、secret 三層級管理、從空白 Arch 到完整 Hyprland 的 end-to-end |
+| 文章                                                                                      | 主題                                                                                                                          |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [拍照 vs 重建指令：環境重建的兩種思路](/dotfile/07-sync-bootstrap/snapshot-vs-rebuild/)   | VM 快照和 dotfile 重建的本質差異、各自的守備範圍與場景判讀                                                                    |
+| [Bootstrap Script 與套件清單管理](/dotfile/07-sync-bootstrap/bootstrap-script-packages/)  | install script 的冪等性設計、OS 分流、Brewfile / packages.txt 套件清單管理                                                    |
+| [跨機器同步、Secret 管理與環境重建流程](/dotfile/07-sync-bootstrap/sync-strategy-secret/) | Git push/pull vs 自動同步、secret 三層級管理、從空白機器到完整工作環境的 end-to-end（範例用 Arch + Hyprland，macOS 同樣適用） |
 
 ## 跨分類引用
 

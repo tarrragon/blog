@@ -265,6 +265,8 @@ Plugin 的配置寫在 hyprland.lua 裡，是 dotfile 的一部分。
 
 ## Dotfile 結構對應
 
+Hyprland 的配置拆成多個 `.lua` 檔，全部放在同一個 stow package 裡。`monitors.lua` 是硬體相關的——跨機器搬移時可能要排除或用 template/local 機制處理（見[跨平台共用一個 Repo](/dotfile/01-dotfile-management/cross-platform-one-repo/)）：
+
 ```text
 ~/dotfiles/
 └── hyprland/
@@ -290,7 +292,7 @@ Hyprland 的開發節奏快、功能更新激進。v0.55 的 Lua 遷移就是一
 - 如果用 Arch 的 rolling release，`pacman -Syu` 前先確認 Hyprland 是否有 breaking change（Arch 社群通常會在論壇預警）
 - 官方提供遷移工具（如 `hyprlang2lua`），格式變更時優先使用
 
-這是[模組四](/dotfile/04-window-management/)提過的代價——把日常桌面建立在高速移動的專案上，持續的配置維護是實際成本。
+這是[視窗管理與平鋪式工作流](/dotfile/04-window-management/)提過的代價——把日常桌面建立在高速移動的專案上，持續的配置維護是實際成本。
 
 ## VM 與實機測試對照
 

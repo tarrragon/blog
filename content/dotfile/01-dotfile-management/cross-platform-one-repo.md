@@ -8,7 +8,7 @@ tags: ["dotfile", "stow", "cross-platform"]
 
 macOS 跟 Linux 可以用同一個 dotfile repo。不需要 fork 成兩個 repo——兩個 repo 的同步成本會隨時間膨脹，改了 git config 或 neovim 設定要在兩邊各 commit 一次，忘了同步就漂移。
 
-一個 repo 跨平台的做法是三層分離，每層處理不同粒度的差異：
+本文的做法基於 GNU Stow——將 dotfile repo 的檔案透過 symlink 對應到家目錄的工具（完整說明見[管理策略與選型](/dotfile/01-dotfile-management/management-strategies/)）。一個 repo 跨平台的做法是三層分離，每層處理不同粒度的差異：
 
 ## 第一層：stow 選擇性安裝
 

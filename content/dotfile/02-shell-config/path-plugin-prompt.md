@@ -60,7 +60,7 @@ PROMPT='%F{blue}%~%f%F{green}${vcs_info_msg_0_}%f %# '
 
 ## Dotfile 結構對應
 
-[模組一](/dotfile/01-dotfile-management/)的 stow 目錄結構裡，shell 配置的對應：
+[管理工具與目錄結構](/dotfile/01-dotfile-management/)裡的 stow 目錄結構，shell 配置的對應：
 
 ```text
 ~/dotfiles/

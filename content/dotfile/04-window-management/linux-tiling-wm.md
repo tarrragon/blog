@@ -32,9 +32,9 @@ bindsym $mod+2 workspace number 2
 
 穩定性是 i3/sway 最大的賣點——配置寫好之後很少因為更新而壞掉。適合想要可靠的平鋪工作流、不需要華麗視覺效果的人。
 
-**Hyprland（Wayland）** 在 tiling WM 裡少見地重視視覺效果。流暢的視窗切換動畫、圓角、視窗模糊、漸層邊框——這些在傳統 tiling WM 社群裡通常被視為不必要的花俏，Hyprland 把它們做成內建功能。配置檔改完即時生效（hot reload），開發節奏快、功能迭代快。
+**Hyprland（Wayland）** 吸引的是在意桌面視覺品質的平鋪使用者——看 r/unixporn 的 Hyprland 截圖就知道，流暢的視窗切換動畫、圓角、視窗模糊、漸層邊框，這些傳統 tiling WM 社群視為不必要的裝飾，Hyprland 做成內建功能並且認真打磨。配置檔改完即時生效（hot reload），迭代調教的回饋循環很短。
 
-代價是穩定性不如 i3/sway。開發活躍意味著偶爾會有 breaking changes——某次更新後配置語法改了、某個選項改名或移除。你的桌面建立在一個高速移動的專案上，要有「更新後可能要調配置」的心理準備。[模組五](/dotfile/05-hyprland-config/)會詳細講它的配置。
+這份視覺投入換來的 trade-off 是穩定性。開發節奏快意味著偶爾會有 breaking changes——某次更新後配置語法改了（2026 年 4 月的 Lua 遷移就是一例）、某個選項改名或移除。把它當主力桌面，要有「更新後可能要回來調配置」的心理準備。[Hyprland 配置](/dotfile/05-hyprland-config/)會詳細講它的設定。
 
 **bspwm（X11）** 是純粹的 BSP 樹狀分割。它只做一件事：管理視窗的樹狀結構。所有操作透過 `bspc` 命令列工具驅動，快捷鍵綁定交給 sxhkd（一個獨立的快捷鍵 daemon）。UNIX 哲學——每個工具只做一件事，組合起來用。
 
@@ -66,6 +66,6 @@ Hyprland 的 workspace 可以動態指派到不同螢幕——workspace 3 現在
 
 macOS 工具的配置檔通常是一個檔案：AeroSpace 的 `~/.aerospace.toml`、yabai 的 `~/.yabairc` + `~/.skhdrc`、Amethyst 的 `~/.amethyst.yml`。把這些檔案放進 dotfile repo，換 Mac 時就能還原整套視窗管理行為。
 
-Linux tiling WM 的配置在 `~/.config/` 下，通常是一個資料夾：Hyprland 的 `~/.config/hypr/`、sway 的 `~/.config/sway/`、i3 的 `~/.config/i3/`。除了 WM 本身，狀態列（waybar 的 `~/.config/waybar/`）、啟動器（rofi 的 `~/.config/rofi/`）、通知（mako 的 `~/.config/mako/`）等周邊元件的配置也各自有檔案。一套完整的 Linux 平鋪桌面，dotfile repo 裡可能會有十幾個配置目錄——這也是為什麼 Linux 桌面客製化社群那麼依賴 dotfile 管理工具（[模組一](/dotfile/01-dotfile-management/)）。
+Linux tiling WM 的配置在 `~/.config/` 下，通常是一個資料夾：Hyprland 的 `~/.config/hypr/`、sway 的 `~/.config/sway/`、i3 的 `~/.config/i3/`。除了 WM 本身，狀態列（waybar 的 `~/.config/waybar/`）、啟動器（rofi 的 `~/.config/rofi/`）、通知（mako 的 `~/.config/mako/`）等周邊元件的配置也各自有檔案。一套完整的 Linux 平鋪桌面，dotfile repo 裡可能會有十幾個配置目錄——這也是為什麼 Linux 桌面客製化社群那麼依賴 dotfile 管理工具（見[管理工具與目錄結構](/dotfile/01-dotfile-management/)）。
 
-跟螢幕硬體綁定的設定（螢幕解析度、縮放比、螢幕排列順序）通常也寫在 WM 配置裡。這部分在跨機器搬移 dotfile 時需要調整——同一份 `hyprland.conf` 裡的 `monitor` 設定，在筆電上是一個螢幕、在桌機上可能是三個。常見做法是把硬體相關設定拆到單獨檔案（如 `monitors.conf`），主配置用 `source` 引入，這樣跨機器時只需要替換這一個檔案。[模組七](/dotfile/07-sync-bootstrap/)會講跨機器同步時怎麼處理這類硬體差異。
+跟螢幕硬體綁定的設定（螢幕解析度、縮放比、螢幕排列順序）通常也寫在 WM 配置裡。這部分在跨機器搬移 dotfile 時需要調整——同一份 Hyprland 配置裡的 `monitor` 設定，在筆電上是一個螢幕、在桌機上可能是三個。常見做法是把硬體相關設定拆到單獨檔案（如 `monitors.lua`），主配置用 `require` 引入，這樣跨機器時只需要替換這一個檔案。[同步與環境重建](/dotfile/07-sync-bootstrap/)會講跨機器搬移時怎麼處理這類硬體差異。

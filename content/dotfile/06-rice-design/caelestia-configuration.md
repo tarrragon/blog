@@ -6,7 +6,7 @@ weight: 5
 tags: ["dotfile", "rice", "caelestia", "quickshell", "hyprland"]
 ---
 
-Caelestia 的配置分兩層：使用者層的 JSON 配置檔控制功能和外觀，token 層控制細部的視覺數值（間距、圓角、字型大小、動畫曲線）。兩層都放在 `~/.config/caelestia/`，修改後 Quickshell 會自動 reload。
+`~/.config/caelestia/` 下有兩類檔案：使用者層的 JSON 配置（`shell.json`、`cli.json`）控制功能和外觀，token 層（`shell-tokens.json`）控制細部視覺數值——間距、圓角、字型大小、動畫曲線。修改後 Quickshell 自動 reload，不需要重啟。
 
 ## 配置檔路徑
 
@@ -165,7 +165,7 @@ pacman -Q quickshell-git
 
 ## Dotfile Repo 結構對應
 
-如果用 stow 管理 Caelestia 的配置：
+Caelestia 的配置只追蹤覆寫用的檔案（`shell.json`、`cli.json`、`hypr-user.lua`），AUR package 安裝的原始檔案不進 repo：
 
 ```text
 ~/dotfiles/
@@ -180,10 +180,10 @@ pacman -Q quickshell-git
             └── templates/          # 如果有自訂配色模板
 ```
 
-monitor 專屬的覆寫（`monitors/<name>/`）是硬體相關的，跟模組五的 monitors.conf 一樣，可能需要排除在 Git 外或用 template/local 機制處理。
+monitor 專屬的覆寫（`monitors/<name>/`）是硬體相關的，跟 [Hyprland 的 monitor 設定](/dotfile/05-hyprland-config/hyprland-core-config/)一樣，可能需要排除在 Git 外或用 template/local 機制處理。
 
 ## VM 測試 vs 實機測試
 
-**VM 可測試**：shell.json 配置語法、各 section 的效果（bar 模組顯示、launcher 搜尋行為、通知過期邏輯）、CLI 指令執行、hypr-user.lua 載入、配色方案切換指令。
+> **[VM 可測試]** shell.json 配置語法、各 section 的效果（bar 模組顯示、launcher 搜尋行為、通知過期邏輯）、CLI 指令執行、hypr-user.lua 載入、配色方案切換指令。
 
-**需實機測試**：動態取色的視覺品質、動畫流暢度、blur 效能影響、token 微調的視覺效果、多螢幕下各元件的佈局、日常使用的回應速度和穩定性、卡頓排查。
+> **[需實機測試]** token 微調的視覺效果（間距和圓角的差異在軟體渲染下難以判讀）。動畫流暢度、blur 效能、動態取色品質、多螢幕佈局、日常穩定性等視覺與效能項目見 [Caelestia 安裝](/dotfile/06-rice-design/caelestia-installation/)的對應段落。

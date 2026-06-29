@@ -8,7 +8,7 @@ tags: ["dotfile", "rice", "waybar", "hyprland", "linux"]
 
 Rice 在 Linux 桌面社群指的是桌面視覺客製化——把系統外觀調教成個人化的美學呈現。這個詞源自汽車改裝文化（Race Inspired Cosmetic Enhancements 的逆向縮寫），在 Linux 圈已轉為中性的圈內用語，r/unixporn 社群就是圍繞這件事運轉的。
 
-[模組五](/dotfile/05-hyprland-config/)教了 Hyprland compositor 本身的配置（平鋪邏輯、keybind、workspace）。這個模組處理的是 compositor 之上的「桌面 shell」層——狀態列、啟動器、通知、鎖屏、桌布、配色系統。做法有兩條路：自己從 Waybar + Wofi + Mako 等獨立工具一個個拼裝，或用 Caelestia 這類預組裝的桌面 shell 一次部署。
+[Hyprland 配置](/dotfile/05-hyprland-config/)教了 compositor（Wayland 下負責視窗排列和畫面合成的程式）本身的設定。這個模組處理的是 compositor 之上的「桌面 shell」層——狀態列、啟動器、通知、鎖屏、桌布、配色系統。做法有兩條路：自己從 Waybar + Wofi + Mako 等獨立工具一個個拼裝，或用 Caelestia 這類預組裝的桌面 shell 一次部署。
 
 ## 章節文章
 

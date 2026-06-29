@@ -17,6 +17,8 @@ tags: ["dotfile", "window-manager", "tiling", "hyprland", "workflow"]
 | [Linux Tiling WM 生態](/dotfile/04-window-management/linux-tiling-wm/)    | 主流 tiling WM 比較（i3/sway/Hyprland/bspwm/dwm）、多螢幕處理、dotfile 中的角色          |
 | [Wayland 顯示協議](/dotfile/04-window-management/wayland-explainer/)      | Wayland 架構、跟 X11 的差異、XWayland 相容層、2026 採用現況、為什麼 tiling WM 選 Wayland |
 
+macOS 讀者的主線是前兩篇（浮動 vs 平鋪、macOS 工具鏈）。Linux Tiling WM 生態和 Wayland 顯示協議是想在 VM 或實機上體驗 Linux 桌面的選讀——macOS 上用 AeroSpace 或 yabai 的讀者可以直接跳到[同步與 Bootstrap](/dotfile/07-sync-bootstrap/)。
+
 ## 跨分類引用
 
 - → [模組五：Hyprland 配置](/dotfile/05-hyprland-config/)：Hyprland 的完整配置實務

@@ -31,7 +31,7 @@ require("appearance")    -- 載入 appearance.lua
 require("env")           -- 載入 env.lua
 ```
 
-`require("monitors")` 會從同目錄載入 `monitors.lua`。拆分的理由跟 shell 配置模組化相同——職責分離、改一類設定不用在一千行裡找位置。
+`require("monitors")` 會從同目錄載入 `monitors.lua`。拆分的理由是職責分離——改 keybind 不用在千行配置裡找位置，每個子檔案可以獨立 diff 和 rollback。
 
 ### 從舊格式遷移
 

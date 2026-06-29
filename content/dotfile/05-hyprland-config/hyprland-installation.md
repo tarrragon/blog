@@ -6,7 +6,7 @@ weight: 1
 tags: ["dotfile", "hyprland", "arch-linux", "installation", "gpu"]
 ---
 
-Hyprland 的安裝分三層：compositor 本身、GPU 驅動、桌面配套工具。Compositor 只負責視窗管理和畫面合成，其餘功能（status bar、launcher、通知、音訊、藍牙、網路）都需要另外裝。本篇以 Arch Linux 為主要說明對象，其他發行版在最後簡述。
+Hyprland 的安裝分三層：compositor（負責視窗管理與畫面合成的核心程式，詳見 [Wayland 顯示協議](/dotfile/04-window-management/wayland-explainer/)）本身、GPU 驅動、桌面配套工具。Compositor 只管視窗排列和畫面輸出，其餘功能（status bar、launcher、通知、音訊、藍牙、網路）都需要另外裝。本篇以 Arch Linux 為主要說明對象，其他發行版在最後簡述。
 
 ## 核心套件
 
@@ -298,7 +298,7 @@ Hyprland v0.55（2026 年 4 月）起，配置格式從 hyprlang（`.conf`）遷
 
 遷移工具：`hyprlang2lua`（Go，有瀏覽器版）、`hyprconf2lua`（Python pip）、`hypr-migrate`。
 
-本系列後續文章（模組五的其他篇章、模組六的 Caelestia）都使用 Lua 格式。如果在網路上看到 `.conf` 格式的教學，多數仍然可用，但建議儘早遷移到 Lua。
+本系列後續文章（[Hyprland 核心配置](/dotfile/05-hyprland-config/hyprland-core-config/)、[Workspace 與外觀](/dotfile/05-hyprland-config/workspace-rules-appearance/)、[Caelestia](/dotfile/06-rice-design/caelestia-overview/)）都使用 Lua 格式。如果在網路上看到 `.conf` 格式的教學，多數仍然可用，但建議儘早遷移到 Lua。
 
 拆分配置用 Lua 原生的 `require()`：
 
