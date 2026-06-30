@@ -84,6 +84,29 @@ tar czf - --exclude '.git' . | ssh user@host 'mkdir -p ~/dotfiles && tar xzf - -
 
 把 dotfile 弄進去之後，跑它的 `install.sh` 完成基礎安裝。如果安裝腳本一開始就要用 sudo，記得 sudo 必須在工具驗證階段就備好——它是 [最小安裝後的工具驗證與補足](../minimal-install-verify/) 的前置，bootstrap 自身補不了。
 
+## 連入後可能遇到的兩個終端機坑
+
+SSH 連線本身通了之後，互動 shell 還可能因為終端機環境不對而出現「打字變亂碼、prompt 重繪錯位」。這類問題在你用現代終端機（Ghostty、Kitty、WezTerm 等）連進一台剛裝好的最小 Linux、又跑了 unicode 較重的 prompt（如 Powerlevel10k）時最容易冒出來，根源是兩個跟字元處理有關的終端機設定，跟你的 shell 配置無關。
+
+第一個是 locale。macOS 的終端機 SSH 連線時常把 `LC_CTYPE=UTF-8` 送到遠端，但 `UTF-8` 不是合法的 Linux locale 名稱，Linux 收到後 fallback 成 `POSIX`/C locale——於是 shell 的行編輯器把輸入當單位元組處理，配上 unicode 字元的 prompt 就重繪成一個字母重複好幾次的累加亂碼。判讀方式是在遠端跑 `locale`，看 `LANG` 是不是空的、`LC_CTYPE` 是不是 `POSIX`。修法是在 shell 設定裡強制一個合法的 UTF-8 locale（前提是該 locale 已生成，見 [安裝選項判讀](../install-option-decisions/) 的 locale 段）：
+
+```bash
+export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
+```
+
+第二個是 terminfo。現代終端機會把 `TERM` 設成自己的值（Ghostty 是 `xterm-ghostty`、Kitty 是 `xterm-kitty`），而一台剛裝好的 Linux 的 terminfo 資料庫沒有這些條目，shell 的行編輯器做「清行重繪」時找不到對應的控制序列、就把畫面畫壞。判讀方式是在遠端 `echo $TERM` 看是哪個值、`toe | grep <值>` 看遠端認不認得。修法有兩條：把你終端機的 terminfo 灌進遠端（保留完整功能），或退而求其次強制一個遠端一定有的 `TERM`：
+
+```bash
+# 把本機終端機的 terminfo 灌進遠端的 ~/.terminfo（推薦）
+infocmp -x "$TERM" | ssh remote 'tic -x -'
+
+# 或：連線時強制遠端一定有的 TERM（功能略降，但保證能用）
+ssh -t remote 'TERM=xterm-256color exec zsh -l'
+```
+
+這兩個坑的共同點是：它們在你裝了 unicode 較重的互動 shell 之後才浮現，而陽春的 shell（ASCII prompt）即使 locale 跟 terminfo 都不對也照樣能用。所以排查時，先確認是不是這層、而不是去懷疑剛裝的 shell 配置壞了。
+
 ## 連入、傳輸、安裝的順序
 
 這三件事有一個固定的先後，順序錯了會在中間卡住。先把 sshd 跑起來、從本機連入，取得一個能貼上的舒適 session；再把 dotfile 弄進機器（公開 repo 走 HTTPS clone、私有或本地走傳輸）；最後在機器上跑 install.sh 完成安裝。SSH key 是讓「連入」從每次打密碼變成免密碼的優化，可以在任何時候補，不是這條鏈的必要環節、也不是 bootstrap 的前置。

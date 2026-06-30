@@ -291,13 +291,31 @@ _待填。_
 - `~/.zshenv` 無條件 `source ~/.cargo/env`（rust 沒裝）→ 每次開 zsh 噴錯。該加 `[[ -f ]]` 守衛。
 - `~/.zshrc` `source $ZSH/oh-my-zsh.sh`（oh-my-zsh 沒裝）→ 噴錯、無主題無外掛。install.sh 沒裝 oh-my-zsh / powerlevel10k / 外掛（README Dependencies 列了但腳本沒實作）。
 
-## 階段三：桌面環境（Hyprland + Rice）
+## 階段四：完整 dotfiles 安裝 + Claude Code（為 step 2 在 VM 內除錯）
 
-_待填。_
+把 dotfiles 補到真的能交付 `.zshrc` 期望的環境，目標是讓 VM 變成能直接跑 CC 除錯的開發環境。
 
-## 階段四：同步與 Bootstrap script
+**補完 install.sh 的缺口**（上面「待修的 shell 缺口」的解）：
 
-_待填。_
+- install.sh 加 `setup_zsh_framework()`：git clone oh-my-zsh + powerlevel10k + zsh-autosuggestions + zsh-syntax-highlighting 進 `~/.oh-my-zsh/custom`（pacman 裝不出 OMZ 的 custom theme/plugin 佈局，要 clone 對齊 `.zshrc` 的 plugin 機制）。
+- `.zshenv` 守衛 `.cargo/env`。
+- packages-arch.txt 加 21 個工具（pacman 原生，Brewfile 保持 macOS 專用）：gh（套件名 `github-cli`）、fzf、ripgrep、fd、bat、lazygit、git-delta、yazi、tig、ranger、nodejs/npm、autojump、ttf-meslo-nerd、broot/btop/zellij（stowed config 但 base 沒裝 binary）、ca-certificates、curl。
+- Claude Code 用原生 installer（`curl -fsSL https://claude.ai/install.sh | bash`）裝進 `~/.local/bin`、免 sudo、自動更新。認證在有瀏覽器的 Mac 跑 `claude setup-token`，或在 VM 跑 `claude` 走 OAuth（URL 複製到 Mac 瀏覽器、code 貼回）。
+
+**兩個 SSH 終端機坑（回寫教材重點，已寫進 ssh-keyless-bootstrap）**：裝了 p10k + plugins 後，從 Ghostty SSH 進 VM 打字變「一字母重複多次」的累加亂碼。陽春 shell 之前正常、是因為沒 unicode 撐得住壞掉的 locale/terminfo。
+
+1. **locale**：macOS 終端機 SSH 送 `LC_CTYPE=UTF-8`（非合法 Linux locale 名）→ VM fallback 成 POSIX → zsh 行編輯器把輸入當單位元組、p10k unicode 重繪亂碼。`locale` 看到 `LANG` 空、`LC_CTYPE=POSIX` 即中。修法：強制 `LANG=LC_CTYPE=en_US.UTF-8`（已加進 dotfiles `.zshenv` 的 Linux 防護段）。
+2. **terminfo**：Ghostty 送 `TERM=xterm-ghostty`，VM 的 terminfo 資料庫沒這條目 → 行編輯器「清行重繪」找不到控制序列、畫面畫壞。修法：`infocmp -x xterm-ghostty | ssh arch-vm 'tic -x -'` 把 terminfo 灌進 VM 的 `~/.terminfo`（保留完整功能），或退而求其次 `TERM=xterm-256color`。
+
+排查教訓：兩個坑都在裝了 unicode 重的 shell 之後才浮現，先懷疑「終端機環境層（locale/terminfo）」而不是「剛裝的 shell 配置壞了」，能省很多時間。
+
+**其他小坑**：
+
+- chsh 在 zsh 已是預設 shell 時報 `Shell not changed`（no-op、無害）。
+- CC installer 警告「`~/.local/bin` not in PATH」是它檢查當下 bash 的誤報；zsh 的 path.zsh 已含 `~/.local/bin`。
+- 桌面 foot 被關掉後 `SUPER+Q`（= Cmd+Q）開不了新終端機（macOS 攔截）；從 host `hyprctl dispatch exec foot` 可補開，但要先從 `$XDG_RUNTIME_DIR/hypr/` 找出**活的** instance signature（crash 留下的 stale socket 連不上、`Hyprland` process 自己的 environ 也沒帶 signature）。
+
+**結果**：VM 裝齊 zsh rice（oh-my-zsh + p10k + plugins）+ 工具鏈 + Claude Code 2.1.197，CC 認證成功、能對話。step 2 rice 可直接在 VM 內用 CC 除錯。
 
 ## 回寫教材的實測發現
 
