@@ -122,9 +122,22 @@ sudo nvidia-smi --gpu-reset
 # 切回機器前面重啟 Hyprland
 ```
 
-方法 C — 如果完全無回應：
+方法 C — 如果完全無回應，先嘗試 Magic SysRq：
 
-按住電源鍵強制關機。這是最後手段。Linux 的 ext4/btrfs 檔案系統有 journal 保護，強制關機通常不會損壞**檔案系統結構**。但 journal 保護的是 metadata 一致性，正在寫入的使用者資料（未存檔的文件、正在下載的檔案）仍然可能遺失或損壞。重開機後正常登入 TTY、啟動 Hyprland 即可。如果開機過程有異常，用 `journalctl -b -1 -p err` 查看上次開機的錯誤訊息，確認是否有檔案系統修復紀錄。
+Magic SysRq 是 kernel 層級的緊急操作介面，即使 userspace 完全卡死也能回應。按住 `Alt+SysRq`（筆電通常是 `Alt+Fn+SysRq`），然後依序按 `R E I S U B`（每個鍵間隔幾秒）：
+
+- `R` — 把鍵盤從 raw mode 搶回來
+- `E` — 對所有 process 送 SIGTERM
+- `I` — 對所有 process 送 SIGKILL
+- `S` — sync 所有檔案系統
+- `U` — remount 所有檔案系統為 read-only
+- `B` — 立即 reboot
+
+這比直接斷電安全——sync + unmount 步驟會盡量保護磁碟上的資料。Arch Linux 預設可能停用 SysRq，需在 `/etc/sysctl.d/` 設定 `kernel.sysrq=1` 啟用。
+
+方法 D — 如果 SysRq 也無效，按住電源鍵強制關機：
+
+這是最後手段。Linux 的 ext4/btrfs 檔案系統有 journal 保護，強制關機通常不會損壞**檔案系統結構**。但 journal 保護的是 metadata 一致性，正在寫入的使用者資料（未存檔的文件、正在下載的檔案）仍然可能遺失或損壞。重開機後正常登入 TTY、啟動 Hyprland 即可。如果開機過程有異常，用 `journalctl -b -1 -p err` 查看上次開機的錯誤訊息，確認是否有檔案系統修復紀錄。
 
 **預防**：
 
