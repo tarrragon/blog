@@ -8,7 +8,7 @@ tags: ["infra", "iac", "terraform", "state"]
 
 ## 動手前的前提
 
-以下步驟是寫第一行 IaC 之前需要就位的前置條件。如果已經備妥可以跳過。
+以下步驟是寫第一行 IaC 之前需要就位的前置條件。如果已經備妥可以跳過。如果是第一次接觸雲端帳號，先讀[拿到雲端帳號的第一天](/infra/00-infra-mindset/first-day-with-cloud-account/)做安全底線和帳號現況判讀。
 
 **雲端帳號**。需要一個 AWS 帳號（或 GCP / Azure，本模組以 AWS 為主要範例）。註冊完成後立刻對 root 帳號啟用 MFA（Multi-Factor Authentication）——root 帳號是整個雲端環境的最高權限，沒有 MFA 等於大門沒鎖。啟用路徑：AWS Console → 右上角帳號名稱 → Security credentials → Multi-factor authentication (MFA) → Assign MFA device。日常操作用 IAM user 或 IAM Identity Center 登入，root 帳號只在需要 root-only 操作時使用。
 
