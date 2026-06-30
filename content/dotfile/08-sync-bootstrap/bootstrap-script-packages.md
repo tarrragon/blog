@@ -54,8 +54,8 @@ deploy_configs() {
 
 post_setup() {
     # 切換預設 shell
-    if [[ "$SHELL" != "$(which zsh)" ]] && command -v zsh >/dev/null; then
-        chsh -s "$(which zsh)"
+    if [[ "$SHELL" != "$(command -v zsh)" ]] && command -v zsh >/dev/null; then
+        chsh -s "$(command -v zsh)"
     fi
 
     # neovim plugin 安裝（headless 模式）
@@ -78,11 +78,13 @@ echo "Done. Log out and back in for shell changes to take effect."
 
 ## 設計原則
 
-**冪等性**是最重要的性質。跑一次和跑十次結果相同。`pacman -S --needed` 只安裝缺少的套件、`stow` 只建立不存在的 symlink、`command -v` 在工具已存在時跳過安裝。冪等的 script 可以放心重跑——改了一個配置後重新 deploy，不會弄壞其他已經正確的部分。
+**冪等性**是最重要的性質。跑一次和跑十次結果相同。`pacman -S --needed` 只安裝缺少的套件、`stow` 只建立不存在的 symlink、`command -v` 在工具已存在時跳過安裝（用 `command -v` 不用 `which`——後者在最小系統可能不存在）。冪等的 script 可以放心重跑——改了一個配置後重新 deploy，不會弄壞其他已經正確的部分。
+
+**失敗可診斷**是這支範例為了聚焦結構而省略、但實際該有的性質。bootstrap 在陌生機器上失敗是常態，怎麼讓它在某一步掛掉時留下可定位的痕跡（全輸出 tee 落地 + ERR trap 點名出錯的行與指令），見 [可除錯的 bootstrap](/dotfile/linux-install/observable-bootstrap/)——那篇是這支腳本的「失敗時看得見」那一層。
 
 **偵測 OS 分流**處理的是跨平台差異。macOS 用 Homebrew、Arch 用 pacman、Debian 系用 apt——套件管理器不同、套件名稱有時也不同（macOS 的 `coreutils` 在 Linux 是預裝的）。分流邏輯集中在 bootstrap script 裡，配置檔本身盡量保持跨平台一致。
 
-**最少依賴**原則：script 本身只依賴 bash 和 curl（幾乎所有系統預裝），其他工具由 script 自己安裝。這確保你可以在一台只有 base system 的機器上直接跑 script。
+**最少依賴**原則：script 本身只依賴 bash 和 curl（幾乎所有系統預裝），其他工具由 script 自己安裝。這確保你可以在一台只有 base system 的機器上直接跑 script。不過「base system 直接跑」有個前提——最小安裝可能連 `sudo` 都沒有，而 script 裝套件正要靠它。跑這支 script 之前該驗證並補齊的前置工具，見 [最小安裝後的工具驗證與補足](/dotfile/linux-install/minimal-install-verify/)。
 
 **可部分執行**的結構：拆成 function，允許只跑某一段。除錯時只想重新 deploy 配置、不想重裝套件，直接呼叫 `deploy_configs` 就好。進一步可以把每段拆成獨立 script（`scripts/install-packages.sh`、`scripts/deploy-configs.sh`），bootstrap 入口只是依序呼叫它們。
 

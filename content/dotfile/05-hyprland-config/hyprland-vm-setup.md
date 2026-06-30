@@ -135,7 +135,7 @@ Sway 比 Hyprland 輕量（基於 wlroots、沒有華麗動畫），如果 Sway 
 
 VM 階段的目標是「把配置寫好、驗證邏輯、確認 bootstrap script 能跑」，不是「體驗 Hyprland 好不好用」。具體做法：
 
-1. 在 VM 中完成 Arch Linux 安裝 + Hyprland 套件安裝
+1. 在 VM 中完成 Arch Linux 安裝 + Hyprland 套件安裝（怎麼把那台 Linux 從 ISO 裝起來、安裝程式選項怎麼判讀、裝完怎麼驗工具與連入，見 [Linux 安裝與機器初始化](/dotfile/linux-install/)）
 2. 關閉所有視覺效果（blur / animation / shadow）
 3. 寫好完整的 Hyprland 配置（keybind / rules / workspace / autostart）
 4. 寫好 waybar / wofi / mako 配置
