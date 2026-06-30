@@ -6,6 +6,50 @@ weight: 1
 tags: ["infra", "iac", "terraform", "state"]
 ---
 
+## 動手前的前提
+
+以下步驟是寫第一行 IaC 之前需要就位的前置條件。如果已經備妥可以跳過。
+
+**雲端帳號**。需要一個 AWS 帳號（或 GCP / Azure，本模組以 AWS 為主要範例）。註冊完成後立刻對 root 帳號啟用 MFA（Multi-Factor Authentication）——root 帳號是整個雲端環境的最高權限，沒有 MFA 等於大門沒鎖。啟用路徑：AWS Console → 右上角帳號名稱 → Security credentials → Multi-factor authentication (MFA) → Assign MFA device。日常操作用 IAM user 或 IAM Identity Center 登入，root 帳號只在需要 root-only 操作時使用。
+
+**本機工具**。安裝 IaC CLI（Terraform 或 OpenTofu）和雲端 CLI（AWS CLI）：
+
+```bash
+# macOS
+brew install opentofu awscli
+
+# Arch Linux（opentofu 和 aws-cli-v2 在 AUR，需要 AUR helper）
+yay -S opentofu-bin aws-cli-v2
+
+# 驗證安裝
+tofu --version
+aws --version
+```
+
+**雲端認證**。本機需要能對雲端 API 認證。最直接的方式是用 AWS CLI 設定 credentials：
+
+```bash
+aws configure
+# 輸入 Access Key ID、Secret Access Key、預設 region（如 ap-northeast-1）
+```
+
+這組 access key 來自 IAM user。如果帳號裡還沒有 IAM user，到 AWS Console → IAM → Users 建立一個、附加 `AdministratorAccess` policy、在 Security credentials 分頁建立 access key。正式環境應該用 SSO 或 short-lived credentials 取代長期 key（[模組二](/infra/02-identity-credentials/)會展開），但起步階段一組 IAM user key 足以讓 `tofu apply` 跑起來。
+
+**Git repo**。IaC 程式碼從 day 1 就應該在版本控制裡——這是[模組零](/infra/00-infra-mindset/)「可重建路徑」的落地前提。建一個 Git repo，後續所有 `.tf` 檔都放在這裡：
+
+```bash
+mkdir infra && cd infra
+git init
+echo '.terraform/' > .gitignore
+echo '*.tfstate'  >> .gitignore
+echo '*.tfstate.*' >> .gitignore
+git add .gitignore && git commit -m "init: gitignore for terraform"
+```
+
+`.gitignore` 排除 `.terraform/`（provider 快取）和 `*.tfstate`（state 檔含敏感值，存放策略見下方 remote state 段落）。
+
+---
+
 踏上[成熟度階梯](/infra/00-infra-mindset/)（從全手動到全程式碼治理的五階分級）第二階（宣告式 IaC，也就是 state 檔誕生那一階）的最小路徑，從兩件事開始：選對工具、把 state 管好。工具決定用什麼語言描述基礎設施，state 則是工具對雲端現實的唯一記憶。這份記憶存在哪、怎麼保護、怎麼防止並行寫壞，是整套 IaC 能不能站穩的地基。
 
 ## IaC 工具選型：宣告式狀態管理 vs 程式語言抽象

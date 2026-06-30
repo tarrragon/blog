@@ -16,6 +16,7 @@ Unix 系統用檔名開頭的 `.` 標記隱藏檔。shell 配置（`.bashrc`、`
 | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
 | [環境可重現性與配置分類](/dotfile/00-dotfile-mindset/environment-reproducibility/)   | 為什麼要管理 dotfile、哪些東西該進 repo、核心層 / 工具層 / 桌面層的分類判讀 |
 | [Dotfile 跟 Infra IaC 的平行關係](/dotfile/00-dotfile-mindset/dotfile-iac-parallel/) | 兩者共用的原則與差異、「重建指令不是備份」的心智模型                        |
+| [環境建置的操作順序](/dotfile/00-dotfile-mindset/setup-order-guide/)                 | 第一次建環境時先做什麼後做什麼——依賴順序路線圖，每步附對應模組連結          |
 
 ## 跨分類引用
 

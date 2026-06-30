@@ -8,6 +8,8 @@ tags: ["dotfile", "git", "stow", "chezmoi"]
 
 Dotfile 管理的核心動作是把散落在家目錄各處的配置檔集中到一個 Git repo 裡版控。工具只是幫你處理「repo 裡的檔案怎麼對應到家目錄正確位置」這一層映射，選型看的是你的機器數量、OS 組合和 secret 需求。
 
+開始之前，確認 SSH key 和 Git 已經設好、dotfile repo 已經 clone 到本機——這些前置步驟見[環境建置的操作順序](/dotfile/00-dotfile-mindset/setup-order-guide/)的階段一。
+
 ## 章節文章
 
 | 文章                                                                                           | 主題                                                                                 |
