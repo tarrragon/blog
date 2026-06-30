@@ -82,7 +82,7 @@ EC2 Dashboard 只顯示當前 region 的資源。Console 右上角有 region 選
 
 ### 不確定 → 先盤點再說
 
-如果帳號裡有東西但你不確定是不是還在用、能不能動，先盤點。以下指令需要 AWS CLI——如果還沒裝，macOS 執行 `brew install awscli`，其他系統見模組一的[前提段](/infra/01-minimal-iac/iac-tool-state-backend/)：
+如果帳號裡有東西但你不確定是不是還在用、能不能動，先盤點。以下指令需要 AWS CLI 並完成認證——安裝和 `aws configure` 設定見模組一的[前提段](/infra/01-minimal-iac/iac-tool-state-backend/)（macOS 快速安裝：`brew install awscli && aws configure`）：
 
 ```bash
 # 列出所有 region 的 EC2 instance
@@ -106,7 +106,7 @@ aws rds describe-db-instances \
 
 ## 雲端 Console 的基本導覽
 
-第一次打開 AWS Console 看到幾百個服務的清單很正常。日常 infra 工作常用的服務集中在以下幾個：
+AWS Console 列出幾百個服務，日常 infra 工作常用的集中在以下幾個：
 
 | 服務       | 做什麼           | 什麼時候用                          |
 | ---------- | ---------------- | ----------------------------------- |
