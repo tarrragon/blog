@@ -20,6 +20,6 @@ Unix 系統用檔名開頭的 `.` 標記隱藏檔。shell 配置（`.bashrc`、`
 ## 跨分類引用
 
 - → [模組一：管理工具與目錄結構](/dotfile/01-dotfile-management/)：怎麼把散落的配置檔收進 Git repo
-- → [模組七：同步、Bootstrap 與環境重建](/dotfile/07-sync-bootstrap/)：環境重建的完整流程
-- → [模組八：從個人到團隊](/dotfile/08-team-environment/)：dotfile 思想往團隊環境延伸
+- → [模組八：同步、Bootstrap 與環境重建](/dotfile/08-sync-bootstrap/)：環境重建的完整流程
+- → [模組九：從個人到團隊](/dotfile/09-team-environment/)：dotfile 思想往團隊環境延伸
 - → [Infra 基礎設施建置指南](/infra/)：組織層級的環境 as code

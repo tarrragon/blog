@@ -152,7 +152,7 @@ cat ~/.local/share/chezmoi/private_dot_ssh/id_rsa.age
 
 ## 環境重建的實際流程
 
-假設拿到一台全新的 Arch Linux 機器，要從零重建完整的 Hyprland 桌面環境。以下是 end-to-end 的步驟，對應 [bootstrap script](/dotfile/07-sync-bootstrap/bootstrap-script-packages/) 的每個階段。
+假設拿到一台全新的 Arch Linux 機器，要從零重建完整的 Hyprland 桌面環境。以下是 end-to-end 的步驟，對應 [bootstrap script](/dotfile/08-sync-bootstrap/bootstrap-script-packages/) 的每個階段。
 
 ### 階段一：最小可用環境
 

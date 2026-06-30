@@ -20,4 +20,4 @@ Dotfile 管理的核心動作是把散落在家目錄各處的配置檔集中到
 
 - → [模組零：Dotfile 心智模型](/dotfile/00-dotfile-mindset/)：為什麼要管理、哪些東西該進 repo
 - → [模組二：Shell 配置](/dotfile/02-shell-config/)：目錄結構裡 zsh package 的具體拆法
-- → [模組七：同步、Bootstrap 與環境重建](/dotfile/07-sync-bootstrap/)：跨機器同步策略與 secret 管理
+- → [模組八：同步、Bootstrap 與環境重建](/dotfile/08-sync-bootstrap/)：跨機器同步策略與 secret 管理

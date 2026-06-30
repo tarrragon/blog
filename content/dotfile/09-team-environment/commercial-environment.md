@@ -16,7 +16,7 @@ tags: ["dotfile", "team", "devcontainer", "mdm"]
 
 ### 中間層：腳本化 + CI 驗證
 
-把環境設定寫成 bootstrap script（同 [Bootstrap Script 設計](/dotfile/07-sync-bootstrap/bootstrap-script-packages/)），新人跑一次就好。CI 裡用相同的 script 或 Docker image 確保環境一致。比文件可靠，但 script 本身的維護和跨 OS 相容性是挑戰。
+把環境設定寫成 bootstrap script（同 [Bootstrap Script 設計](/dotfile/08-sync-bootstrap/bootstrap-script-packages/)），新人跑一次就好。CI 裡用相同的 script 或 Docker image 確保環境一致。比文件可靠，但 script 本身的維護和跨 OS 相容性是挑戰。
 
 Runtime 版本管理可以先從 **mise**（前身 rtx）或 **asdf** 開始：專案 repo 裡放一份 `.tool-versions`（或 mise 的 `mise.toml`），定義 Node/Ruby/Python/Go 的版本號，團隊成員跑 `mise install` 就對齊。這比完整 devcontainer 輕量、比純 README 可靠，適合「只需要統一 runtime 版本、不需要容器化整個環境」的小團隊。它的邊界是只管語言版本——系統套件、服務依賴（PostgreSQL、Redis）、OS 層差異不在它的守備範圍。
 

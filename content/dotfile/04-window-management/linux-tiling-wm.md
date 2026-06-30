@@ -68,4 +68,4 @@ macOS 工具的配置檔通常是一個檔案：AeroSpace 的 `~/.aerospace.toml
 
 Linux tiling WM 的配置在 `~/.config/` 下，通常是一個資料夾：Hyprland 的 `~/.config/hypr/`、sway 的 `~/.config/sway/`、i3 的 `~/.config/i3/`。除了 WM 本身，狀態列（waybar 的 `~/.config/waybar/`）、啟動器（rofi 的 `~/.config/rofi/`）、通知（mako 的 `~/.config/mako/`）等周邊元件的配置也各自有檔案。一套完整的 Linux 平鋪桌面，dotfile repo 裡可能會有十幾個配置目錄——這也是為什麼 Linux 桌面客製化社群那麼依賴 dotfile 管理工具（見[管理工具與目錄結構](/dotfile/01-dotfile-management/)）。
 
-跟螢幕硬體綁定的設定（螢幕解析度、縮放比、螢幕排列順序）通常也寫在 WM 配置裡。這部分在跨機器搬移 dotfile 時需要調整——同一份 Hyprland 配置裡的 `monitor` 設定，在筆電上是一個螢幕、在桌機上可能是三個。常見做法是把硬體相關設定拆到單獨檔案（如 `monitors.lua`），主配置用 `require` 引入，這樣跨機器時只需要替換這一個檔案。[同步與環境重建](/dotfile/07-sync-bootstrap/)會講跨機器搬移時怎麼處理這類硬體差異。
+跟螢幕硬體綁定的設定（螢幕解析度、縮放比、螢幕排列順序）通常也寫在 WM 配置裡。這部分在跨機器搬移 dotfile 時需要調整——同一份 Hyprland 配置裡的 `monitor` 設定，在筆電上是一個螢幕、在桌機上可能是三個。常見做法是把硬體相關設定拆到單獨檔案（如 `monitors.lua`），主配置用 `require` 引入，這樣跨機器時只需要替換這一個檔案。[同步與環境重建](/dotfile/08-sync-bootstrap/)會講跨機器搬移時怎麼處理這類硬體差異。

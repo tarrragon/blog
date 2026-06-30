@@ -1,8 +1,8 @@
 ---
-title: "模組八：從個人到團隊"
+title: "模組九：從個人到團隊"
 date: 2026-06-29
 description: "個人 dotfile 管理的思想要延伸到團隊開發環境標準化時回來讀 — devcontainer、nix、商業環境配置管理"
-weight: 8
+weight: 9
 tags: ["dotfile", "devcontainer", "nix", "team"]
 ---
 
@@ -12,12 +12,12 @@ tags: ["dotfile", "devcontainer", "nix", "team"]
 
 | 文章                                                                               | 主題                                                                              |
 | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [Devcontainer 與 Nix](/dotfile/08-team-environment/devcontainer-nix/)              | 容器化和宣告式的開發環境、devcontainer 跟個人 dotfile 的互動、Home Manager        |
-| [商業環境的開發環境配置管理](/dotfile/08-team-environment/commercial-environment/) | 四個層級的做法（README → 腳本化 → Devcontainer → MDM）、跟 Infra 的銜接、推進判讀 |
+| [Devcontainer 與 Nix](/dotfile/09-team-environment/devcontainer-nix/)              | 容器化和宣告式的開發環境、devcontainer 跟個人 dotfile 的互動、Home Manager        |
+| [商業環境的開發環境配置管理](/dotfile/09-team-environment/commercial-environment/) | 四個層級的做法（README → 腳本化 → Devcontainer → MDM）、跟 Infra 的銜接、推進判讀 |
 
 ## 跨分類引用
 
 - → [模組零：Dotfile 心智模型](/dotfile/00-dotfile-mindset/)：個人環境 as code 跟組織 IaC 的平行
-- → [模組七：同步、Bootstrap 與環境重建](/dotfile/07-sync-bootstrap/)：bootstrap script 是團隊腳本化層級的基礎
+- → [模組八：同步、Bootstrap 與環境重建](/dotfile/08-sync-bootstrap/)：bootstrap script 是團隊腳本化層級的基礎
 - → [Infra 基礎設施建置指南](/infra/)：Infra IaC 是組織層的環境 as code
 - → [Infra 斷網模組](/infra/air-gapped/)：離線環境的 devcontainer 限制
