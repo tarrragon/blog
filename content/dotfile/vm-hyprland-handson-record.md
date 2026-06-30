@@ -317,6 +317,24 @@ _待填。_
 
 **結果**：VM 裝齊 zsh rice（oh-my-zsh + p10k + plugins）+ 工具鏈 + Claude Code 2.1.197，CC 認證成功、能對話。step 2 rice 可直接在 VM 內用 CC 除錯。
 
+## 階段五：把 step 2 交給無人值守的 CC（環境準備）
+
+決定讓 VM 裡的 CC 在無人盯著時自己跑 step 2，目的是用 hands-on 完善教學內容（不是把桌面做完美）。為了讓 CC 能無人值守跑完並把成果送回來，準備了三件事，各對應一個會中斷無人值守執行的障礙——這組 pattern 已抽成教材 [讓機器跑無人值守的長任務](/dotfile/linux-install/unattended-remote-work/)。
+
+- **NOPASSWD sudo**：無人值守程序沒人打 sudo 密碼，跑到 `sudo` 會卡死。寫 `/etc/sudoers.d/20-nopasswd` 放免密碼。取捨：放棄一道安全防線換自動執行，只因這是用完即丟的測試 VM 才划算。
+- **終端機多工器（zellij）**：直接在 SSH session 跑的任務隨斷線而死。放進 zellij、detach，任務在 VM 上續跑、關 SSH 不影響。
+- **推送認證（gh auth login）**：成果留在 VM 看不到；使用者從 GitHub 看推上去的分支，所以要先設好 git push 認證，否則 commit 了也推不出去、隔天撲空。
+- **宿主防睡**：VM 跑在 Mac 上，Mac 一睡 UTM 的 VM 就暫停、CC 跟著停。離開前 `caffeinate -i` 讓 Mac 不睡。
+- **agent 權限放行**：CC 預設每個有風險動作會停下來問，無人值守時沒人答。用 `--dangerously-skip-permissions` 放行。跟 NOPASSWD 同類取捨，靠清楚的 brief 限定範圍（只動哪些目錄、分支上做、產出交 review）降低風險。
+
+另外把任務拆成兩個 repo：dotfiles（建配置=做）+ blog（續寫 record + 蒸餾教學草稿=學），各在自己分支（vm-step2-rice / vm-step2-record），blog commit 用 `--no-verify`（VM 沒 Go、mdtools hook 跑不動）。著作權紀律寫進 brief：參考 repo 只能理解架構、不可複製 config 或在教學引用重現，產出必須原創。
+
 ## 回寫教材的實測發現
+
+把實機跑出來、跟教材 `[待實測驗證]` 標記對得上、或值得抽成獨立教學的 gotcha 收斂在這裡。本次 session 已轉成教材的：
+
+- **bootstrap 要交付完整環境**（install.sh 沒裝 `.zshrc` 引用的 oh-my-zsh/p10k/plugins，README 列了沒實作 → shell 壞）→ 寫進 [bootstrap-script-packages](/dotfile/08-sync-bootstrap/bootstrap-script-packages/) 的「交付完整可用的環境」原則。
+- **兩個 SSH 終端機坑**（macOS 送非法 LC_CTYPE → locale fallback；Ghostty 的 xterm-ghostty terminfo 新機沒有 → ZLE 重繪亂碼）→ 寫進 [ssh-keyless-bootstrap](/dotfile/linux-install/ssh-keyless-bootstrap/) 的「連入後的兩個終端機坑」。
+- **無人值守長任務的三障礙**（NOPASSWD / 多工器 / 推送認證 + 權限放行取捨）→ 抽成 [unattended-remote-work](/dotfile/linux-install/unattended-remote-work/) 獨立篇。
 
 _待填。把實機跑出來、跟教材 `[待實測驗證]` 標記對得上的 gotcha 收斂在這裡，再回頭改對應教材檔案。_
