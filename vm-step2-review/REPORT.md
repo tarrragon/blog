@@ -70,7 +70,11 @@
 ## 四、Push 狀態
 
 - dotfiles `vm-step2-rice`：**已成功 push**（commit：建 package → 實測修正，共 2 個 rice commit 疊在既有 main 之上）。
-- blog `vm-step2-record`：見下方實際結果。
-  - （此段在本機跑完 blog push 後更新；若顯示失敗，補推指令：`cd ~/blog && git push --no-verify -u origin vm-step2-record`）
+  - GitHub：`https://github.com/tarrragon/dotfiles/tree/vm-step2-rice`
+- blog `vm-step2-record`：**已成功 push**（record 續寫 commit + 本 review 目錄 commit）。
+  - GitHub：`https://github.com/tarrragon/blog/tree/vm-step2-record`
+  - 補推指令（若需要）：`cd ~/blog && git push --no-verify origin vm-step2-record`
+
+兩個 push 都已確認成功（push 回傳無 error）。
 
 > blog 用 `--no-verify`：VM 沒裝 Go，repo 的 mdtools pre-commit/pre-push hook 跑不動，排版/lint 驗證留給你在 Mac 上做。
