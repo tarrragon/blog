@@ -17,6 +17,12 @@ tags: ["dotfile", "knowledge-cards"]
 | [Lua 腳本語言](/dotfile/knowledge-cards/lua-scripting-language/) | Hyprland / Neovim 配置檔使用的腳本語言，配置檔需要的最小知識 |
 | [GNU Stow](/dotfile/knowledge-cards/gnu-stow/)                   | symlink farm manager，dotfile 管理的核心工具之一             |
 
+## 系統概念
+
+| 卡片                                 | 主題                                               |
+| ------------------------------------ | -------------------------------------------------- |
+| [TTY](/dotfile/knowledge-cards/tty/) | Linux 核心的純文字終端機介面，桌面故障時的救生通道 |
+
 ## 文化與術語
 
 | 卡片                                                     | 主題                                           |

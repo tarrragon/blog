@@ -157,6 +157,8 @@ glxinfo | grep "OpenGL renderer" # 查看活躍的 renderer
 vulkaninfo --summary             # Vulkan 裝置資訊
 ```
 
+GPU 驅動相關的故障診斷（driver hang、畫面凍結、suspend/resume 後異常）見[桌面環境維護與故障排除](/dotfile/07-desktop-maintenance/)。
+
 ## 桌面配套套件
 
 Hyprland 只管視窗，以下是一個可用桌面需要的配套工具：
