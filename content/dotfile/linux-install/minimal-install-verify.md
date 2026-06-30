@@ -14,7 +14,7 @@ tags: ["dotfile", "linux", "install", "bootstrap"]
 
 `sudo` 是最容易被假設存在、卻最常缺席的工具，而且它的缺席有一個結構性的麻煩：補它的動作本身需要 root 權限。最小安裝通常不含 sudo。某些安裝程式（如本例的 archboot）即使你勾了「把這個使用者設為管理員」，那個動作也往往只是把使用者加進 `wheel` 群組，並沒有真的裝上 sudo、也沒有啟用 sudoers 裡 wheel 群組的授權行。結果就是使用者「名義上是管理員」，但系統裡並沒有 sudo 這支指令。
 
-這形成一個先有雞還是先有蛋的關卡：bootstrap script 要靠 sudo 來裝套件，但 sudo 自己得先存在。它的解法不能是「把 sudo 寫進套件清單」——那份清單正是靠 sudo 來安裝的。sudo 只能是「跑 bootstrap 之前的前置」，用 root 身分手動補上：
+這形成一個先有雞還是先有蛋的關卡：bootstrap script 要靠 sudo 來裝套件，但 sudo 自己得先存在。它的解法不能是「把 sudo 寫進套件清單」——那份清單正是靠 sudo 來安裝的。sudo 只能是「跑 bootstrap 之前的前置」，用 root 身分手動補上（`su -` 成為 root、`echo > 檔案` 重導向、`chmod` 設權限這些基礎操作不熟的話，見 [安裝過程用到的基礎操作](../basic-operations/)）：
 
 ```bash
 su -                                          # 切到 root（輸入 root 密碼）
