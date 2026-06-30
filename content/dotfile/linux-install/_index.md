@@ -41,6 +41,7 @@ tags: ["dotfile", "linux", "install", "bootstrap"]
 - **接手一台別人已裝好的機器**：OS 已經在，從 [最小安裝後的工具驗證與補足](minimal-install-verify/) 切入，確認它缺不缺你流程要的工具。
 - **雲端主機初始化**：雲端主機多半已附 OS image、已有 sudo 與注入的 key，適用的是 [外部連入、SSH key 與無 key 的 bootstrap 路徑](ssh-keyless-bootstrap/) 跟 [可除錯的 bootstrap](observable-bootstrap/)，前兩篇的 ISO 安裝可略過。
 - **bootstrap 失敗來 debug**：直接讀 [可除錯的 bootstrap](observable-bootstrap/)，它也涵蓋「腳本不是你寫的、只想 debug 一次失敗」的情況。
+- **讓機器無人值守跑活**：機器已能連入操作，只想設好讓它在你離開後自己跑長任務或 agent，直接讀 [讓機器跑無人值守的長任務](unattended-remote-work/)。
 
 ## 跟其他模組的交叉引用
 

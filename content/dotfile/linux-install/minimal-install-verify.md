@@ -2,7 +2,7 @@
 title: "最小安裝後的工具驗證與補足"
 date: 2026-07-01
 description: "最小化安裝的 Linux 裝完發現連 sudo 或 which 都沒有、bootstrap 腳本第一行就炸、需要先確認系統缺哪些必要工具再補時回來讀"
-weight: 2
+weight: 3
 tags: ["dotfile", "linux", "install", "bootstrap"]
 ---
 

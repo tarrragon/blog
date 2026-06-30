@@ -2,7 +2,7 @@
 title: "Linux 安裝選項判讀"
 date: 2026-07-01
 description: "在 Linux 安裝程式面對 locale、網路、磁碟分割、檔案系統、bootloader 等選項、需要判斷依據而非靠預設值硬選時回來讀"
-weight: 1
+weight: 2
 tags: ["dotfile", "linux", "install"]
 ---
 
@@ -51,13 +51,13 @@ DNS 能把域名解析成 IP，本身就證明對外連線是通的（DNS 查詢
 
 ### 分區識別方式（PARTUUID）
 
-分區識別方式決定 `fstab`（開機時決定哪個分區掛到哪的設定檔）跟 bootloader 怎麼指涉每個分區，在 GPT（現代 UEFI 機器的分區表格式）磁碟上選 PARTUUID。這個選擇的後果是「重開機後系統找不找得到自己的分區」。PARTUUID 綁在分區本身、跨重開機穩定，而且重新格式化檔案系統也不會變；相對地，檔案系統層級的 UUID 一重格就變，會讓 `fstab` 失效，而 `/dev/vda1` 那種 kernel 名稱會隨偵測順序浮動，最不穩。穩定性的排序是 PARTUUID 優於 FSUUID 優於 kernel 名稱，GPT 磁碟用最穩的那個。
+分區識別方式決定 `fstab`（開機時決定哪個分區掛到哪的設定檔）跟 bootloader 怎麼指涉每個分區，在 GPT（現代 UEFI 機器的分區表格式）磁碟上選 PARTUUID。這個選擇的後果是「重開機後系統找不找得到自己的分區」。PARTUUID 綁在分區本身、跨重開機穩定，而且重新格式化檔案系統也不會變；相對地，檔案系統層級的 UUID 一重格就變，會讓 `fstab` 失效，而 `/dev/vda1` 那種 kernel 名稱會隨偵測順序浮動，最不穩。穩定性的排序是 PARTUUID 優於 FSUUID 優於 kernel 名稱，GPT 磁碟用最穩的那個（這三種識別方式的細節見 [分區識別卡](/dotfile/knowledge-cards/partition-identification/)）。
 
 ### EFI 分區的掛載點與大小
 
 EFI 系統分區（ESP）放開機載入器與 kernel，掛載點的選擇取決於這台機器是不是單一作業系統。把 ESP 掛在 `/boot`（單系統佈局）讓 kernel 跟開機檔住在同一個分區、維護最單純；把 ESP 掛在 `/efi`、kernel 另放（多系統佈局）是為了多個 OS 共用同一個 ESP 才需要的結構。單系統的機器選多系統佈局，只是憑空多一層目錄。
 
-ESP 大小在單系統佈局下要算進 kernel 與 initramfs（開機初期把真正的 root 掛起來之前、用來載入驅動的小型臨時根檔系統）。一個 kernel 加上它的 initramfs（含 fallback）大約一兩百 MB，再加上 FAT32 ESP 約 260 MiB 的實務下限，512 MiB 是在下限之上留餘裕。會需要更大的情境是你要同時保留多個 kernel 版本——但單 kernel 的 VM 用不到，給太大只是浪費。
+ESP 大小在單系統佈局下要算進 kernel 與 [initramfs](/dotfile/knowledge-cards/initramfs/)（開機初期把真正的 root 掛起來之前、用來載入驅動的小型臨時根檔系統）。一個 kernel 加上它的 initramfs（含 fallback）大約一兩百 MB，再加上 FAT32 ESP 約 260 MiB 的實務下限，512 MiB 是在下限之上留餘裕。會需要更大的情境是你要同時保留多個 kernel 版本——但單 kernel 的 VM 用不到，給太大只是浪費。
 
 ### Swap
 
@@ -81,7 +81,7 @@ swap 還有形態的選擇，這裡用分區 swap 是因為在安裝程式階段
 
 ## Bootloader
 
-開機載入器決定韌體怎麼找到並載入 kernel，在虛擬機上選 GRUB 而非直接用 EFISTUB，理由是可靠性。EFISTUB 讓 UEFI 韌體直接載入 kernel、不經過獨立的 bootloader，最精簡，但它完全依賴寫進 UEFI NVRAM（韌體用來存開機項的非揮發記憶體）的開機項。問題在於 QEMU 系的虛擬機（UTM 底層即是）對 EFI 變數的儲存有時不穩，一旦 NVRAM 裡的開機項掉了，韌體就找不到 kernel、機器開不了——這在 VM 環境是會實際踩到的坑。
+開機載入器決定韌體怎麼找到並載入 kernel，在虛擬機上選 GRUB 而非直接用 EFISTUB，理由是可靠性（韌體到 kernel 的整條交棒過程見 [UEFI 開機鏈卡](/dotfile/knowledge-cards/uefi-boot-chain/)）。EFISTUB 讓 UEFI 韌體直接載入 kernel、不經過獨立的 bootloader，最精簡，但它完全依賴寫進 UEFI NVRAM（韌體用來存開機項的非揮發記憶體）的開機項。問題在於 QEMU 系的虛擬機（UTM 底層即是）對 EFI 變數的儲存有時不穩，一旦 NVRAM 裡的開機項掉了，韌體就找不到 kernel、機器開不了——這在 VM 環境是會實際踩到的坑。
 
 GRUB 的容錯來自它（以 removable 模式安裝時）多寫了一份。除了 NVRAM 開機項，`grub-install --removable` 會在 ESP 的標準 fallback 路徑（aarch64 是 `\EFI\BOOT\BOOTAA64.EFI`）也放一份，就算 NVRAM 開機項丟了，韌體仍會從 fallback 路徑找到 GRUB；VM 環境的安裝程式通常以這個模式裝 GRUB，正是看上這層保險。它還附帶一個開機選單，當 kernel 或 initramfs 出問題時，可以進選單救援、加開機參數除錯——演練時的容錯空間大很多。
 

@@ -2,7 +2,7 @@
 title: "可除錯的 bootstrap：把可觀測性內建進安裝腳本"
 date: 2026-07-01
 description: "安裝腳本中途失敗卻只能對著終端機捲動瞎找原因、想在 bootstrap 設計階段就讓失敗可定位時回來讀"
-weight: 4
+weight: 5
 tags: ["dotfile", "linux", "bootstrap", "observability"]
 ---
 
@@ -72,4 +72,4 @@ log "Stowing configs..."
 
 ## 回到系列
 
-這四篇合起來，是把一台機器從「空的」帶到「能接收 dotfile、且部署過程可診斷」的完整地基：[安裝選項判讀](../install-option-decisions/) 處理 OS 怎麼裝、[工具驗證與補足](../minimal-install-verify/) 處理裝完缺什麼、[外部連入與無 key bootstrap](../ssh-keyless-bootstrap/) 處理怎麼連進去把 dotfile 弄進來，這一篇處理當部署失敗時怎麼快速看出原因。地基打好，後面 [模組一到八](/dotfile/01-dotfile-management/) 的 dotfile 管理才有立足點。
+這幾篇合起來，是把一台機器從「空的」帶到「能接收 dotfile、且部署過程可診斷」的完整地基：[安裝選項判讀](../install-option-decisions/) 處理 OS 怎麼裝、[工具驗證與補足](../minimal-install-verify/) 處理裝完缺什麼、[外部連入與無 key bootstrap](../ssh-keyless-bootstrap/) 處理怎麼連進去把 dotfile 弄進來，這一篇處理當部署失敗時怎麼快速看出原因。再往前一步，把這套地基用在無人值守的長任務上、讓機器在你離開後自己跑完工作，見 [讓機器跑無人值守的長任務](../unattended-remote-work/)——無人盯著的任務尤其依賴這篇談的可觀測性。地基打好，後面 [模組一到八](/dotfile/01-dotfile-management/) 的 dotfile 管理才有立足點。
