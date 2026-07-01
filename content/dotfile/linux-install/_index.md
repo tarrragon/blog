@@ -1,7 +1,7 @@
 ---
-title: "Linux 安裝與機器初始化"
+title: "Linux 安裝、初始化與除錯"
 date: 2026-07-01
-description: "在 VM 或新機器從零裝好 Linux、判讀安裝程式的各個選項、確認最小系統缺哪些必要工具、或要從外部連入跑 dotfile bootstrap 時回來讀"
+description: "在 VM 或新機器從零裝好 Linux、判讀安裝程式選項、驗證最小系統、從外部連入跑 bootstrap、或遠端與本地除錯 Linux 的連線與程序狀態問題時回來讀"
 weight: -1
 tags: ["dotfile", "linux", "install", "bootstrap"]
 ---
@@ -34,6 +34,17 @@ tags: ["dotfile", "linux", "install", "bootstrap"]
 | [可除錯的 bootstrap：把可觀測性內建進安裝腳本](observable-bootstrap/)  | bootstrap 失敗時怎麼留下可診斷的痕跡：log 落地、錯誤定位、狀態 dump                          | 安裝腳本失敗時，為什麼我只能瞎找                    |
 | [讓機器跑無人值守的長任務](unattended-remote-work/)                    | 無人值守執行的三個障礙與解：NOPASSWD sudo、終端機多工器、推送認證，以及 agent 權限放行的取捨 | 怎麼讓機器在我離開後自己跑完任務、把成果送回來      |
 
+## 除錯與診斷
+
+前面幾篇把機器從空的帶到能接收 dotfile；這一組處理的是過程中（以及日後）出問題時怎麼判。核心是一套判讀紀律：先讀權威狀態，不靠肉眼猜表象——因為 Linux 上一個現象看起來像 A 卻常常是 B，看畫面就下結論容易猜錯。這組文章特別涵蓋遠端使用與本地除錯兩種情境。
+
+| 文章                                                                        | 主題                                                                                  | 回答什麼問題                              |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------- |
+| [診斷心法：讀權威狀態，不靠肉眼猜表象](diagnosis-read-authoritative-state/) | 貫穿所有除錯的判讀紀律：每種問題的權威狀態來源、讀程式自己的 log、四步流程            | 一個現象看起來像 A 卻可能是 B，怎麼不猜錯 |
+| [遠端連線與終端機問題](ssh-and-terminal-troubleshooting/)                   | SSH 斷線後終端機噴亂碼、遠端打字亂碼（locale/terminfo）、從 SSH 操控圖形桌面          | 連上了但終端機或 session 狀態不對怎麼修   |
+| [機器連不到或起不來](machine-unreachable/)                                  | SSH 突然連不上（ARP 診斷）、虛擬機開不起來（guest vs 宿主側）、磁碟滿的連鎖           | 一台機器連不到或開不了機，從哪一層往下查  |
+| [程序、服務與狀態怎麼判](process-service-state-diagnosis/)                  | 程式活著沒（pgrep 陷阱）、服務由誰提供（busctl）、session 鎖沒鎖、多工器 session 存活 | 判某個東西的狀態時，該讀哪個權威來源      |
+
 ## 依情境的讀法
 
 主線那幾篇照「安裝 → 驗證 → 連入 → 可除錯 → 無人值守」的順序，是「從零開一台新機器、到讓它自己跑活」的完整路線，但不是每個讀者都從零開始：
@@ -42,6 +53,7 @@ tags: ["dotfile", "linux", "install", "bootstrap"]
 - **雲端主機初始化**：雲端主機多半已附 OS image、已有 sudo 與注入的 key，適用的是 [外部連入、SSH key 與無 key 的 bootstrap 路徑](ssh-keyless-bootstrap/) 跟 [可除錯的 bootstrap](observable-bootstrap/)，前兩篇的 ISO 安裝可略過。
 - **bootstrap 失敗來 debug**：直接讀 [可除錯的 bootstrap](observable-bootstrap/)，它也涵蓋「腳本不是你寫的、只想 debug 一次失敗」的情況。
 - **讓機器無人值守跑活**：機器已能連入操作，只想設好讓它在你離開後自己跑長任務或 agent，直接讀 [讓機器跑無人值守的長任務](unattended-remote-work/)。
+- **遇到問題要除錯**：機器已在跑但出狀況（連不上、終端機亂、程式行為怪），先讀 [診斷心法](diagnosis-read-authoritative-state/) 建立判讀紀律，再依症狀進 [遠端連線與終端機問題](ssh-and-terminal-troubleshooting/)、[機器連不到或起不來](machine-unreachable/)、[程序、服務與狀態怎麼判](process-service-state-diagnosis/)。
 
 ## 跟其他模組的交叉引用
 
