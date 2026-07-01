@@ -226,7 +226,7 @@ RAG 適用面有邊界、下列情境改用其他方案更划算：
 **會變的部分**：
 
 - 具體 embedding 模型（nomic-embed、bge、mxbai 等會持續更新）。
-- Vector database 選型（Pinecone / Weaviate / Chroma / pgvector 等市場格局會變）。
+- Vector database 選型（Pinecone / Weaviate / Chroma / pgvector 等市場格局會變）。Storage layer 的工程判讀（規模驅動升級、dependency 約束、index 生命週期）見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)。
 - Framework API（LangChain / LlamaIndex 的具體呼叫方式半年一變）。
 - 最佳 chunk size 數字（隨 embedding 模型跟 LLM context 能力演化）。
 - Hybrid retrieval / re-ranker 的具體實作（會持續優化）。

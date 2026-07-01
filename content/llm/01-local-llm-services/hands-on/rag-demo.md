@@ -42,13 +42,13 @@ curl -s http://localhost:11434/api/embeddings \
 
 實作前先對齊 [4.1 RAG 原理](/llm/04-applications/rag-principles/) 提的設計取捨、決定每段怎麼做：
 
-| 取捨點         | 本 demo 的選擇                        | Trade-off                                                        |
-| -------------- | ------------------------------------- | ---------------------------------------------------------------- |
-| Chunking 粒度  | 段落感知 + 軟 token cap（~400 token） | 簡單、保留段落邊界；不做語意 chunking                            |
-| Embedding 模型 | `nomic-embed-text`（768 維）          | 主流、Ollama 內建、英文為主；中文混合場景仍可運作                |
-| 向量儲存       | Python pickle 檔                      | 463 chunks 用 in-memory 完全夠；production 換 vector DB          |
-| Retrieval      | Cosine similarity、top-K              | 無 hybrid、無 re-ranker；夠驗證、品質受 embedding 限制           |
-| Generation     | `gemma3:1b` 純 Ollama OpenAI 相容 API | 1B 模型能力弱、會編造；用來示範 retrieval 跟 generation 兩段分離 |
+| 取捨點         | 本 demo 的選擇                        | Trade-off                                                                                                            |
+| -------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Chunking 粒度  | 段落感知 + 軟 token cap（~400 token） | 簡單、保留段落邊界；不做語意 chunking                                                                                |
+| Embedding 模型 | `nomic-embed-text`（768 維）          | 主流、Ollama 內建、英文為主；中文混合場景仍可運作                                                                    |
+| 向量儲存       | Python pickle 檔                      | 463 chunks 用 in-memory 完全夠；何時該換見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/) |
+| Retrieval      | Cosine similarity、top-K              | 無 hybrid、無 re-ranker；夠驗證、品質受 embedding 限制                                                               |
+| Generation     | `gemma3:1b` 純 Ollama OpenAI 相容 API | 1B 模型能力弱、會編造；用來示範 retrieval 跟 generation 兩段分離                                                     |
 
 這些選擇都對應到 4.0 章節的「會變的部分」清單——可預期半年後 embedding 模型有新選擇、chunking 有更好策略、re-ranker 變主流。但骨架（retrieval + augmentation 兩段式）不變。
 

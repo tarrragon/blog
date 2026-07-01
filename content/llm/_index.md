@@ -42,6 +42,7 @@ weight: 36
 - **想懂 LLM 內部原理**：模組二（數學） + 模組三（理論、含 reasoning models / speculative decoding）— 跟硬體無關
 - **想做 LLM 應用開發（含 RAG / agent / VLM / 靜態 deployment）**：模組四（12 章、跨工具世代不變的原理）— 跟硬體無關
 - **想懂本地工作流的安全議題**：模組一 / 五跑穩後接模組六（個人 dev 視角）
+- **想選 RAG 的 storage 方案（pickle / vector DB / hosted SaaS）**：直接看 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)
 - **想在靜態網站加 RAG / 智能搜尋**：直接看 [4.16 靜態 / serverless RAG deployment](/llm/04-applications/static-and-serverless-rag-deployment/)
 - **想在本機 fine-tune 模型**：模組三 3.4 訓練流程原理 → [本機 QLoRA hands-on](/llm/01-local-llm-services/hands-on/local-fine-tuning/)
 - **想跟最新進展接軌**：讀完模組後進推薦的公開課程跟 paper（模組二 2.4 + 模組三 3.10）
@@ -131,7 +132,7 @@ weight: 36
 
 - **Speech / audio LLM**：跟核心文字 LLM 是不同方向、本指南不涵蓋。Vision（VLM）原本不放、但因 coding 工作流的 vision use case 進入主流、補上 [4.15 Vision in coding workflow](/llm/04-applications/vision-in-coding-workflow/)；video LLM 仍不放。
 - **資料中心訓練的工程細節**：data parallelism、ZeRO、tensor parallelism 等屬於專門課程的範圍。
-- **向量資料庫的選型**（Pinecone、Weaviate、Chroma 比較等）：交給 RAG 專門教材；RAG 設計原理見 [4.1 RAG 原理](/llm/04-applications/rag-principles/)。
+- **向量資料庫的 vendor 比較**（Pinecone vs Weaviate vs Chroma 等）：vendor 格局半年一變、不適合寫入教材。RAG 的 storage 工程原理（升級判讀、index 生命週期、dependency 約束）見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)。
 - **Kubernetes / 資料中心級分散式推論**：跟個人機器本地 LLM 方向不同、需另尋專門教材。
 - **多卡 NVLink、tensor parallelism**：消費級 PC 場景通常單卡、本指南不涵蓋多卡分散式推論。
 

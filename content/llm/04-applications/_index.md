@@ -38,6 +38,7 @@ weight: 4
 | [4.19](/llm/04-applications/agent-memory-architecture/)            | Agent memory 分層架構                                       | Working / session / episodic / semantic / procedural 四層、寫入時機、retrieval 設計、失敗模式                 |
 | [4.20](/llm/04-applications/llm-tracing-and-observability/)        | LLM tracing 與 observability                                | OTel GenAI semconv、cost / latency / failure debug、trace → eval 閉環                                         |
 | [4.21](/llm/04-applications/llm-as-judge/)                         | LLM-as-Judge 評估方法                                       | Rubric 設計、pairwise vs direct、三大 bias 緩解、calibration、跟 production trace 的閉環                      |
+| [4.22](/llm/04-applications/vector-storage-engineering/)           | RAG storage 工程                                            | 四層可替換結構、storage 演化階梯、升級判讀訊號、index 生命週期、dependency 約束                               |
 | [Hands-on](/llm/04-applications/hands-on/)                         | 端到端案例：把所有原理串成具體 case study                   | Customer support agent 從 task decomposition 到 eval 全流程                                                   |
 
 ## 為什麼這個順序

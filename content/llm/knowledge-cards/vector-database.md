@@ -50,3 +50,5 @@ scale 對照（基於 [4.9 production](/llm/04-applications/production-resource-
 衍生產物管理上、vector DB 屬於 [external 類別](/llm/04-applications/artifact-management/)——index content 不進 git、用 manifest（如 schema definition + ingest script + version tag）描述。Build pipeline 從 source corpus 自動 rebuild。
 
 不適合 vector DB 的情境：knowledge 高度結構化（直接 SQL）、corpus 小（pickle 就好）、單次 retrieval（off-line 跑、不開 server）。
+
+Storage 升級判讀（什麼規模該從 in-memory 升級到 vector DB）、index 生命週期、dependency 約束的工程分析見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)。
