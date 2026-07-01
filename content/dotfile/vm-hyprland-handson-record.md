@@ -120,7 +120,14 @@ curl -L -O "https://release.archboot.eu/aarch64/latest/iso/archboot-2026.07.01-0
 | 顯示卡      | virtio-gpu-gl-pci（GPU Supported，VirGL/Venus 加速）               |
 | OpenGL 加速 | 啟用                                                               |
 
-**顯示卡選型**：UTM 勾「啟用 OpenGL 硬體加速」後會自動把模擬顯示卡設成 `virtio-gpu-gl-pci`。下拉清單裡的對照——`virtio-gpu-pci`（無 gl）沒 3D 加速、Hyprland 會 fallback 軟體渲染或起不來；`virtio-ramfb-gl` 也有加速但 ramfb 偏向開機早期 framebuffer；`apple-gfx-pci` 是 Apple Virtualization 後端用的、走 QEMU 不適用。主顯示卡用 `virtio-gpu-gl-pci` 最穩。
+**顯示卡選型**：建立精靈的 Display Output 下拉清單預設是 `virtio-gpu-pci`（無 3D 加速），需要手動改選 `virtio-gpu-gl-pci (GPU Supported)`。清單裡的選項對照：
+
+- `virtio-gpu-pci`（預設）——無 3D 加速、Hyprland 會 fallback 軟體渲染或起不來
+- `virtio-gpu-gl-pci`（要選這個）——VirGL/Venus 3D 加速、Hyprland + Quickshell 需要
+- `virtio-ramfb-gl`——也有加速但 ramfb 偏向開機早期 framebuffer
+- `apple-gfx-pci`——Apple Virtualization 後端用的、走 QEMU Emulate 不適用
+
+建完 VM 後在設定頁的 Display 區還有一個「啟用 OpenGL 硬體加速」checkbox，效果相同——勾了會自動切成 `virtio-gpu-gl-pci`。兩個入口都能到、在建立精靈直接選比較不容易漏。
 
 **待驗證（回寫教材重點）**：UTM 硬體頁對「啟用 OpenGL 硬體加速」標了警告——「部分新版 Linux 驅動有已知問題：黑畫面、合成畫面破碎、應用程式無法渲染」。這正對應教材 `hyprland-vm-setup.md` 的 `[待實測驗證]`：VirGL/Venus 加速在這組 kernel + UTM 版本上會不會讓 Hyprland 中黑畫面。先勾起來往「能跑」方向走，中了就記錄並回這頁取消重試。結果待開機後填。
 
