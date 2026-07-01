@@ -8,18 +8,26 @@ import (
 )
 
 type Result struct {
-	Record store.Record
-	Score  float64
+	Index int
+	Meta  store.ChunkMeta
+	Score float64
 }
 
-func TopK(records []store.Record, query []float32, k int) []Result {
-	results := make([]Result, len(records))
-	for i, r := range records {
+// TopK finds the top-K most similar records using brute-force cosine similarity.
+// vectors is a flat slice of all embeddings (n * dim float32 values).
+func TopK(metas []store.ChunkMeta, vectors []float32, dim int, query []float32, k int) []Result {
+	n := len(metas)
+	results := make([]Result, n)
+
+	for i := 0; i < n; i++ {
+		vecStart := i * dim
 		results[i] = Result{
-			Record: r,
-			Score:  cosine(query, r.Embedding),
+			Index: i,
+			Meta:  metas[i],
+			Score: cosine(query, vectors[vecStart:vecStart+dim]),
 		}
 	}
+
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Score > results[j].Score
 	})

@@ -24,20 +24,24 @@ func Query(args []string) int {
 	}
 	queryText := strings.Join(fs.Args(), " ")
 
-	records, err := store.Load(*indexDir)
+	metas, vectors, dim, err := store.LoadForSearch(*indexDir)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "load index: %v\n", err)
 		return 1
 	}
 
 	if *section != "" {
-		var filtered []store.Record
-		for _, r := range records {
-			if r.Meta.Section == *section {
-				filtered = append(filtered, r)
+		var filteredMetas []store.ChunkMeta
+		var filteredVecs []float32
+		for i, m := range metas {
+			if m.Section == *section {
+				filteredMetas = append(filteredMetas, m)
+				start := i * dim
+				filteredVecs = append(filteredVecs, vectors[start:start+dim]...)
 			}
 		}
-		records = filtered
+		metas = filteredMetas
+		vectors = filteredVecs
 	}
 
 	qvec, err := embed.Text(queryText)
@@ -46,13 +50,24 @@ func Query(args []string) int {
 		return 1
 	}
 
-	results := search.TopK(records, qvec, *topK)
+	results := search.TopK(metas, vectors, dim, qvec, *topK)
+
+	// Load text only for top-K results
+	indices := make([]int, len(results))
+	for i, r := range results {
+		indices[i] = r.Index
+	}
+	texts, err := store.LoadTexts(*indexDir, indices)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "load texts: %v\n", err)
+		return 1
+	}
 
 	for i, r := range results {
-		fmt.Printf("\n─── %d. [%.3f] %s ───\n", i+1, r.Score, r.Record.Meta.Source)
-		fmt.Printf("    title: %s\n", r.Record.Meta.Title)
-		fmt.Printf("    section: %s | chunk: %d\n", r.Record.Meta.Section, r.Record.Meta.ChunkIdx)
-		preview := r.Record.Text
+		fmt.Printf("\n─── %d. [%.3f] %s ───\n", i+1, r.Score, r.Meta.Source)
+		fmt.Printf("    title: %s\n", r.Meta.Title)
+		fmt.Printf("    section: %s | chunk: %d\n", r.Meta.Section, r.Meta.ChunkIdx)
+		preview := texts[r.Index]
 		if len(preview) > 200 {
 			preview = preview[:200] + "..."
 		}

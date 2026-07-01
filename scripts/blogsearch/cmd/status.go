@@ -13,7 +13,7 @@ func Status(args []string) int {
 	indexDir := fs.String("index", ".blogsearch", "index directory")
 	fs.Parse(args)
 
-	metaPath := filepath.Join(*indexDir, "index.json")
+	metaPath := filepath.Join(*indexDir, "meta.json")
 	f, err := os.Open(metaPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "no index found at %s\n", *indexDir)
@@ -32,12 +32,16 @@ func Status(args []string) int {
 
 	info, _ := os.Stat(metaPath)
 	vecInfo, _ := os.Stat(filepath.Join(*indexDir, "vectors.bin"))
+	textInfo, _ := os.Stat(filepath.Join(*indexDir, "texts.bin"))
 
 	fmt.Printf("index: %s/\n", *indexDir)
 	fmt.Printf("  chunks:     %d\n", idx.Count)
 	fmt.Printf("  dimensions: %d\n", idx.Dim)
 	if vecInfo != nil {
 		fmt.Printf("  vectors:    %.1f MB\n", float64(vecInfo.Size())/(1024*1024))
+	}
+	if textInfo != nil {
+		fmt.Printf("  texts:      %.1f MB\n", float64(textInfo.Size())/(1024*1024))
 	}
 	if info != nil {
 		fmt.Printf("  metadata:   %.1f MB\n", float64(info.Size())/(1024*1024))
