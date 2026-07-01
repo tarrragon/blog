@@ -38,13 +38,15 @@ label {
     monitor =
     text = $TIME
     font_size = 64
-    font_family = JetBrainsMono Nerd Font
+    font_family = MesloLGS Nerd Font
     color = rgba(205, 214, 244, 1)
     position = 0, 80
     halign = center
     valign = center
 }
 ```
+
+鎖屏一旦啟動，桌面的「鎖定」狀態由 compositor 透過 Wayland 的 ext-session-lock 協議持有，殺掉鎖屏 process 不等於解鎖。鎖屏的安全模型與測試時的注意事項見 [Session Lock](/dotfile/knowledge-cards/session-lock/)。
 
 ## 配色系統的統一管理
 

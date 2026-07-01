@@ -230,7 +230,7 @@ hl.config({
         "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1",
         "wl-paste --type text --watch cliphist store",
 
-        -- Idle daemon（閒置鎖屏）
+        -- Idle daemon（閒置鎖屏，鎖屏安全模型見 session-lock 卡）
         "hypridle",
     },
 })

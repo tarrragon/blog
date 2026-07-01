@@ -174,7 +174,7 @@ sudo pacman -S \
   networkmanager network-manager-applet \
   thunar gvfs \
   qt5-wayland qt6-wayland \
-  ttf-jetbrains-mono-nerd noto-fonts noto-fonts-cjk
+  ttf-meslo-nerd noto-fonts noto-fonts-cjk
 ```
 
 | 類別     | 套件                                          | 用途                                      |
@@ -196,7 +196,7 @@ sudo pacman -S \
 | 網路     | `networkmanager` + `nm-applet`                | 網路管理 + system tray 圖示               |
 | 檔案管理 | `thunar` + `gvfs`                             | 圖形檔案管理器 + 回收筒/遠端掛載          |
 | Qt 相容  | `qt5-wayland` + `qt6-wayland`                 | Qt 應用在 Wayland 下正常運行              |
-| 字型     | `ttf-jetbrains-mono-nerd` + `noto-fonts-cjk`  | Nerd Font（waybar icon 需要）+ CJK 字型   |
+| 字型     | `ttf-meslo-nerd` + `noto-fonts-cjk`           | Nerd Font（waybar icon 需要）+ CJK 字型   |
 
 AUR 補充套件（用 `yay` 或 `paru`）：
 
