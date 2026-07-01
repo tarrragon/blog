@@ -268,7 +268,7 @@ Hard negative 是 embedding fine-tune 品質的關鍵差距 — 沒做的 fine-t
 
 關鍵設計決策：
 
-1. **Embedding model 一致性**：ingestion 跟 query 必須用同個 model（換 model = 整批 re-embed）
+1. **Embedding model 一致性**：ingestion 跟 query 必須用同個 model（換 model = 整批 re-embed）；chunk vectors 存進 vector DB 之後的 index 結構、維度成本與生命週期見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)
 2. **Chunking 策略對齊 embedding context**：見 [4.1 RAG chunking](/llm/04-applications/rag-principles/)
 3. **Reranking model 通常用 cross-encoder**：embedding model 是 bi-encoder（query 跟 doc 分開 embed）、reranker 是 cross-encoder（query + doc 一起算）、品質更高但慢、適合在 top-50 → top-5 之間做 reranking
 4. **Hybrid retrieval**：BM25（字面）+ embedding（語意）混用、用 RRF（Reciprocal Rank Fusion）合併、是 production 常見配置

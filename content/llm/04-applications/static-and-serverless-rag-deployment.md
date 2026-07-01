@@ -145,7 +145,7 @@ LLM API（OpenAI / Anthropic / Cloudflare AI Gateway）
 3. **Build-time index 仍重要**：embedding ingestion 通常在 build 階段、不在 runtime
 4. **Edge cold start**：第一次 query latency 略高（~100ms 額外）、後續 hot 路徑快
 
-**適合場景**：規模 1K-100K chunks、想保留近 backend 體驗、可接受少量 cost。
+**適合場景**：規模 1K-100K chunks、想保留近 backend 體驗、可接受少量 cost。這條路線一旦升級到有 backend 的 vector DB、storage 選型（index 結構、維度、成本）就回到 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/) 的判讀。
 
 ## 方案 3：靜態 + RAG SaaS
 

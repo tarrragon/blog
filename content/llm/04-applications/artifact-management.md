@@ -326,3 +326,4 @@ Source change → git push
 - [Hands-on quickstart](/llm/01-local-llm-services/hands-on/quickstart/)：跑通 demo 步驟、為什麼要 rebuild `index.pkl`
 - [4.9 Production resource planning](/llm/04-applications/production-resource-planning/)：production runtime 視角、本章是 deployment 視角
 - [0.7 隱私資料流原理](/llm/00-foundations/privacy-data-flow/)：什麼可以離開機器、本章是「什麼可以進 git」的 sibling
+- [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)：本章把 embedding index 判為 derived（不進 git、`ingest.py` 重建）、該章接手 vector index 存進 backend 之後的生命週期管理
