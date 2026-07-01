@@ -386,7 +386,17 @@ fc-match ":lang=zh-tw"
 # NotoSansCJK-Regular.ttc: "Noto Sans CJK KR"  ← fontconfig 現在有 CJK glyph 可 fallback
 ```
 
-裝完 `fc-match` 已能解析到 Noto Sans CJK，Pango/cairo 走 fontconfig fallback 就有字。（誠實補記：裝完重送的中文通知截圖，因為當下螢幕正卡在下面那段鎖屏失效保護畫面、通知被鎖屏 surface 蓋住，沒能再拍到乾淨的「修好後」畫面；CJK 修復是以 fontconfig 解析層確認，不是像素層確認。豆腐問題本身在 `shot2.png` 有清楚的修復前證據。）一個次要觀察：`fc-match :lang=zh-tw` 回的是 Noto Sans CJK **KR**（韓文排序優先），靠 Han 統一多數字能正常顯示，但要精確拿到台灣字形變體得另設 fontconfig 語言優先序——這是後續可細修的點、不擋用。
+裝完 `fc-match` 已能解析到 Noto Sans CJK。但這裡踩到一個比「裝字型」更深的坑：**光裝字型不夠，已經在跑的 client 不會自動看到新字。** 裝完 `noto-fonts-cjk` 後 `makoctl reload` 再送中文通知，畫面**還是豆腐**（`shot8.png`，注意這張的邊框已是藍色、順帶確認了 normal urgency 的邊框色）。原因是 mako daemon 在啟動時就把 Pango/fontconfig 的 font map 快取住了，而 `makoctl reload` 只重讀 config 檔、**不會重建 font map**——mako 是在裝 CJK 字型之前啟動的，所以它手上那份字集根本沒有 Noto CJK。
+
+修法是**重啟 daemon**（不是 reload）：
+
+```bash
+pkill mako && hyprctl dispatch exec mako
+```
+
+重啟後同一則中文通知正常顯示（`shot9.png`：「中文通知測試（重啟 mako 後）」標題與內文的中文都出來了，跟 Latin 的 `MesloLGS` 混排無縫）。這也解釋了為什麼在真實使用情境裡通常不會遇到——正常開機時 `exec-once = mako` 是在字型都裝好之後才啟動，daemon 一開始就看得到 CJK；只有「系統已在跑、中途才補裝字型」這種當下除錯的時序才會現形。**回寫教材要點**：裝 fallback 字型後，已在執行的 client（mako、waybar 等）要重啟才吃得到；`reload` 類指令通常只重讀設定、不重建字型快取。
+
+一個次要觀察：`fc-match :lang=zh-tw` 回的是 Noto Sans CJK **KR**（韓文排序優先），靠 Han 統一多數字能正常顯示，但要精確拿到台灣字形變體得另設 fontconfig 語言優先序——這是後續可細修的點、不擋用。
 
 `libnotify` 與 `noto-fonts-cjk` 都已補進 `packages-arch.txt`。
 

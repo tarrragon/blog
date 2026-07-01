@@ -5,7 +5,7 @@
 
 ## 起床先看（兩件要事）
 
-1. **VM 螢幕現在是鎖定狀態（hyprlock）**。測 hyprlock 時用 `pkill` 結束它，觸發了 Hyprland 的鎖屏失效保護；我已照官方 restore 路徑把它恢復成乾淨的鎖屏 prompt（不是嚇人的 "lockscreen app died" 畫面）。**用 tar 的密碼正常解鎖即可**，解鎖後 waybar / mako / foot 都還在、桌面照舊。沒有密碼無法解（這是設計）。詳見下面 finding G。
+1. **鎖屏已由你解開（已處理）**。測 hyprlock 時用 `pkill` 結束它觸發了 Hyprland 鎖屏失效保護，我照官方 restore 路徑恢復成乾淨 prompt、你已用密碼解鎖。教訓（pkill ≠ 解鎖、兩層鎖不同）已收斂成 finding G 與草稿。解鎖後我補測了 finding B 的 CJK 修復並補齊像素層證據（見 finding B），waybar / mako 都正常。
 2. **push 狀態**：dotfiles `vm-step2-rice` 已成功推上 GitHub。blog `vm-step2-record` 的 push 結果見本檔最末「Push 狀態」段（若該段標示失敗，照那裡的補推指令處理）。
 
 ## 一、做了哪些 dotfiles 配置（分支 vm-step2-rice）
@@ -35,6 +35,8 @@
 | `04-hyprlock-working.png`                    | hyprlock 模糊背景 + 時鐘/日期/密碼框                      |
 | `05-hyprlock-died-failsafe.png`              | pkill 後的鎖屏失效保護畫面（finding G 證據）              |
 | `06-hyprlock-restored-prompt.png`            | restore 後的乾淨鎖屏 prompt（使用者解鎖用）              |
+| `07-cjk-still-tofu-after-makoctl-reload.png` | 裝 CJK 字型 + `makoctl reload` 後仍豆腐（finding B 深層坑證據）|
+| `08-cjk-fixed-after-mako-restart.png`        | 重啟 mako 後中文正常（finding B 修復的像素層確認）        |
 
 ## 二、實測挖到的 finding + 建議轉成的教學內容（待 review + multi-round）
 
@@ -43,7 +45,7 @@
 | ID | Finding                                                        | 類別 | 建議落點                                                         | 我做到哪 |
 | -- | ------------------------------------------------------------- | ---- | --------------------------------------------------------------- | -------- |
 | A  | 範例字型 `JetBrainsMono` ≠ 實裝 `MesloLGS Nerd Font`，名不符→icon 豆腐 | 配置 | `06-rice-design/desktop-shell-components.md` 範例字型修正        | 草稿（draft-rice-config 修正一）+ dotfiles 已用實裝字族 |
-| B  | Nerd Font 無 CJK，中文通知/標題變豆腐，需 `noto-fonts-cjk`     | 環境 | 同上 + 模組三字型段                                             | 草稿（修正二）+ packages 已補 + 實測確認 fontconfig 修復 |
+| B  | Nerd Font 無 CJK，中文變豆腐，需 `noto-fonts-cjk`；**且已跑的 daemon 要重啟才吃到新字（reload 不夠）** | 環境 | 同上 + 模組三字型段                                             | 草稿（修正二）+ packages 已補 + **像素層確認修復**（shot 08）|
 | C  | mako 只顯示、產生通知要 `libnotify`（notify-send）             | 環境 | `desktop-shell-components.md` Mako 段                            | 草稿（修正三）+ packages 已補 |
 | D  | waybar 模組對缺硬體自動退化（同份 config 通用 VM/實體機）       | 配置 | `desktop-shell-components.md` Waybar 段                          | 草稿（修正四） |
 | E  | stow tree folding/unfolding（多 package 共用 `.config/hypr/`） | 機制 | `knowledge-cards/gnu-stow.md`                                   | **該卡已有 folding/unfolding 概念段**；只缺一個具體實例，優先度低，記在 record |
@@ -63,7 +65,7 @@
 ## 三、卡在哪 / 要你決定的事
 
 - **hyprlock 把畫面鎖住**（finding G）：這是測鎖屏的固有代價，沒你的密碼我無法完整解鎖。已恢復成乾淨 prompt，你解鎖即可。教訓已寫進 record + 草稿：之後自動化測試別碰 hyprlock，或接受它會鎖住。
-- **finding B 的「修好後」截圖沒拍到**：裝 `noto-fonts-cjk` 後重送的中文通知，正好被當下的鎖屏 surface 蓋住，沒能拍到乾淨的修復後畫面。CJK 修復是以 `fc-match :lang=zh-tw` 解析層確認（已從「無中文字」變成 Noto Sans CJK），不是像素層。修復前的豆腐證據在 shot 02 很清楚。
+- **finding B 已補齊像素層確認並挖深**（使用者解鎖後補測）：裝 `noto-fonts-cjk` 後 `makoctl reload` 再送中文通知**仍是豆腐**（shot 07），重啟 mako 才正常（shot 08）。深層原因：daemon 啟動時快取 Pango/fontconfig font map，reload 只重讀 config、不重建 font map——「先啟動、後裝字型」的除錯時序才會踩到，正常開機（exec-once 在字型裝好後才拉 daemon）不會遇到。此坑已補進 record 與草稿修正二。
 - **草稿落點要你拍板**：finding G 該獨立成 knowledge-card 還是併進既有文章？finding A–H 的修正併進 desktop-shell-components 時，是否要連帶調整該文現有的 JetBrainsMono 範例與套件清單一致性。
 - **multi-round-review 我沒跑**：依規範，blog 內容要你 review + 至少三輪審查才談發布；草稿只是把 finding 蒸餾成可審的初稿。
 

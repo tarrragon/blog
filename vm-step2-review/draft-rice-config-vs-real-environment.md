@@ -31,7 +31,9 @@ fc-match ":lang=zh-tw"
 # 回 Noto Sans CJK = fontconfig 有 CJK glyph 可 fallback
 ```
 
-修法是裝一套 CJK fallback（如 `noto-fonts-cjk`）。裝完不必改各工具 config——文字排版引擎走 fontconfig fallback 自動補字。一個細節：`fc-match :lang=zh-tw` 可能回 Noto Sans CJK 的韓文排序（KR）優先，靠 Han 統一多數字能顯示，要精確拿到特定地區字形變體得再設 fontconfig 的語言優先序。
+修法是裝一套 CJK fallback（如 `noto-fonts-cjk`）。裝完不必改各工具 config——文字排版引擎走 fontconfig fallback 自動補字。但有個時序陷阱：**已經在跑的 client 不會自動看到新裝的字型**。像 mako 這類 daemon 在啟動時就把 Pango/fontconfig 的 font map 快取住，`makoctl reload` 只重讀設定檔、不重建 font map，所以「先啟動 daemon、之後才補裝字型」的情況下 reload 完仍是豆腐，得**重啟 daemon**（`pkill mako && mako`）才吃得到新字。正常開機不會遇到——`exec-once` 是在字型都裝好之後才拉 daemon；這個坑只在「系統已在跑、中途補裝字型」的當下除錯時序出現。
+
+一個細節：`fc-match :lang=zh-tw` 可能回 Noto Sans CJK 的韓文排序（KR）優先，靠 Han 統一多數字能顯示，要精確拿到特定地區字形變體得再設 fontconfig 的語言優先序。
 
 ## 修正三：通知 daemon 只負責顯示，產生通知要 libnotify（對應 Mako 段）
 
