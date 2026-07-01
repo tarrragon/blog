@@ -96,8 +96,8 @@ test -f bin/blogsearch && echo "OK" || echo "Need: cd scripts/blogsearch && go b
 
 ## 跟其他流程的關係
 
-- **寫作流程（AGENTS.md 5）**：due-diligence 查重可用 `blogsearch query` 替代手動讀 `_index.md`
-- **4.22 RAG storage 工程**：本工具是 4.22 的 live case study
-- **rag-demo**：`scripts/rag-demo/` 是教學 demo（pickle）、`scripts/blogsearch/` 是 production 工具（flat file），兩者共存
+- **內容查重流程**：due-diligence 查重可用 `blogsearch query` 替代手動翻 collection index
+- **RAG storage 選型**：本工具的向量 index 設計（flat file + brute-force）可作為 RAG storage 選型的參考實作
+- **Demo 與 production 共存**：若專案有 pickle-based RAG demo，blogsearch 是 production 升級版、兩者可共存
 
-**Version**: 1.0.0 — 初版：偵測觸發、標準操作流程、失敗處理、提醒 vs 自動執行原則
+**Version**: 1.1.0 — 去專案化：跟其他流程的關係段移除 blog-specific 編號與路徑依賴
