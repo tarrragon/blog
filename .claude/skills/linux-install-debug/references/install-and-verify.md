@@ -23,7 +23,9 @@ command -v which curl git openssh || true  # base 常缺 which / curl
 
 # 網路真的通
 ip -brief a                                # 有拿到 IP？
-ping -c1 <鏡像或 8.8.8.8>                  # 對外通？
+ping -c1 8.8.8.8                            # 對外通？（IP 層）
+getent hosts archlinux.org                 # DNS 解得出？（域名層，minimal 常沒設 resolv.conf）
+timedatectl                                # 時間對嗎？clock skew 會讓 TLS / 套件簽章驗證失敗
 
 # sudo 能不能用（無 sudo 要先 su - 補裝 + 設 sudoers）
 sudo -v

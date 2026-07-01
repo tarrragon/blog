@@ -2,8 +2,8 @@
 title: "程序、服務與狀態怎麼判"
 date: 2026-07-02
 description: "要判斷一個程式活著沒、某個系統服務現在由誰提供、桌面 session 有沒有被鎖、或終端機多工器的 session 還在不在時，用對的權威來源而不是靠畫面或猜的名字"
-weight: 10
-tags: ["dotfile", "linux", "process", "systemd", "debugging"]
+weight: 4
+tags: ["linux", "process", "systemd", "debugging"]
 ---
 
 判斷「某個東西現在是什麼狀態」——程式活著沒、服務由誰提供、螢幕鎖了沒、session 還在不在——是除錯裡最常做、也最常判錯的一步。判錯多半不是工具不對，是問錯了來源：用一個猜的名字去掃行程、用畫面有沒有反應去推服務狀態、用畫面上有沒有某個元素去斷定 session 狀態。這篇把幾個常見的狀態判斷，對到它們各自的權威來源與正確工具。

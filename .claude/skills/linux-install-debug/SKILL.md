@@ -25,22 +25,23 @@
 
 ## 權威來源速查表
 
-| 症狀類別        | 權威來源                 | 工具                                   |
-| --------------- | ------------------------ | -------------------------------------- |
-| 某程式行為不對  | 程式自己的 log 檔        | log 路徑、`journalctl -u <unit>`       |
-| 服務由誰提供    | D-Bus name / socket 註冊 | `busctl`、`ss -lntp`、`lsof`           |
-| 登入 / 鎖定狀態 | logind                   | `loginctl show-session <id>`           |
-| 服務跑了沒      | systemd unit             | `systemctl status` / `is-active`       |
-| 程式活著沒      | 行程表（比對正確 comm）  | `pgrep -x`、`pgrep -af`、`ps`          |
-| 網路通不通      | 介面 / 路由 / ARP        | `ip -brief a`、`arp -a`、`ss`          |
-| 磁碟 / 記憶體   | 檔案系統 / 記憶體用量    | `df -h`、`du -sh`、`free`              |
-| VT / 主控台     | 前景 VT、getty 狀態      | `fgconsole`、`chvt`、`systemctl` getty |
+| 症狀類別        | 權威來源                 | 工具                                                    |
+| --------------- | ------------------------ | ------------------------------------------------------- |
+| 某程式行為不對  | 程式自己的 log 檔        | log 路徑、`journalctl -u <unit>`                        |
+| 服務由誰提供    | D-Bus name / socket 註冊 | `busctl`、`ss -lntp`、`lsof`                            |
+| 登入 / 鎖定狀態 | logind                   | `loginctl show-session <id>`                            |
+| 服務跑了沒      | systemd unit             | `systemctl status` / `is-active`                        |
+| 程式活著沒      | 行程表（比對正確 comm）  | `pgrep -x`、`pgrep -af`、`ps`                           |
+| 網路通不通      | 介面 / 路由 / 鄰居表     | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）         |
+| 域名解析        | resolver 設定            | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl` |
+| 磁碟 / 記憶體   | 檔案系統 / 記憶體用量    | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`        |
+| VT / 主控台     | 前景 VT、getty 狀態      | `fgconsole`、`chvt`、`systemctl` getty                  |
 
 ## 症狀 → 情境路由
 
 - **安裝新系統 / 首次開機驗證** → [install-and-verify](references/install-and-verify.md)
-- **SSH 連不上、終端機噴亂碼 / 亂碼輸入、要從 SSH 操控圖形桌面** → [remote-access](references/remote-access.md)
-- **機器連不到、虛擬機開不起來、疑似磁碟滿連鎖** → [machine-unreachable](references/machine-unreachable.md)
+- **SSH 連不上（先做 timeout vs refused 分流）、終端機噴亂碼 / 亂碼輸入、要從 SSH 操控圖形桌面** → [remote-access](references/remote-access.md)
+- **（從 remote-access 分流後）機器沒回應、域名解析不了、虛擬機開不起來、疑似磁碟滿 / 檔案系統唯讀連鎖** → [machine-unreachable](references/machine-unreachable.md)
 - **判程式活著沒 / 服務歸誰 / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
 - **要讀某程式的 log 定位根因** → [read-logs](references/read-logs.md)
 - **要挑 / 推薦工具（同一件事有多個選擇：grep vs ripgrep、哪個檔案管理員、遠端用什麼）** → [tool-options](references/tool-options.md)
@@ -51,8 +52,10 @@
 - **讀錯層**：Wayland 合成器層的鎖用 logind 的 `LockedHint` 查（查錯層）；用猜的 process 名 `pgrep`（查詢條件錯）。權威來源對、但問錯地方，一樣誤導。
 - **急著下昂貴結論**：跳到「不相容 / 要重裝」前，先用最廉價的檢查（`df -h`、資源、資源在不在）排除。
 - **一直重試同一個失敗動作**：連不上就一直重連，不去讀網路 / 服務 / 資源的權威狀態。
+- **信終端機 scrollback 殘影**：拿捲過的舊輸出當現況。權威狀態是「現在再查一次」的結果，不是畫面上留著的上一次。
 
 ---
 
+**Version**: 1.2.0 — Round-1 審查修正：`arp -a` 全面改主推 `ip neigh`（現代最小系統無 net-tools）；新增 DNS 解析、systemd failed 判讀、檔案系統唯讀 remount 三個情境；路由標明 remote→machine 分流；反模式加 scrollback 殘影
 **Version**: 1.1.0 — 新增 tool-options reference（依環境 CLI/GUI/遠端挑對工具、現代替代品 vs POSIX 可攜的判準）
 **Version**: 1.0.0 — 初版：四步診斷流程 + 權威來源速查 + 5 情境 reference + 2 原則卡，從一次 Arch/Hyprland VM 實機安裝與除錯（含肉眼猜錯兩次的鎖屏案例）萃取

@@ -19,7 +19,7 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 | 安裝大小       | 約 230 MB（Quickshell 佔 213 MB） | 約 4.5 MB（waybar 3 MB，其餘 KB 級）  |
 | 執行記憶體 RSS | 單一 `qs` 程式約 400 MB           | waybar 約 53 MB + 通知/啟動器（小）   |
 
-差距的來源是 Quickshell 的 Qt6/QML runtime——那 213 MB 不是 Caelestia 的功能程式碼，是它依賴的 UI 框架。手動拼裝的 waybar、wofi、mako 都是輕量的 wlroots/GTK 程式，加起來還不到 5 MB。
+差距的來源是 Quickshell 這個 UI 框架——那 213 MB 是 `quickshell` 套件本身的安裝大小（一個建在 Qt6 上的 QML shell runtime），不是 Caelestia 的功能程式碼；而且 Qt6 的函式庫（`qt6-declarative`、`qt6-base` 等）還是它之上的額外相依，沒算進這 213 MB。手動拼裝的 waybar、wofi、mako 都是輕量的 wlroots/GTK 程式，加起來還不到 5 MB。
 
 這一軸在資源受限的機器上才會咬人：舊筆電、記憶體小的 VPS、或你本來就想把桌面壓到最輕。在一台記憶體充裕的桌機上，400 MB 對 60 MB 的差別多半感覺不到；在一台 2 GB RAM 的機器上，這就是「桌面吃掉五分之一記憶體」跟「幾乎不佔」的差別。
 

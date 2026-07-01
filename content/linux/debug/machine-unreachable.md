@@ -2,8 +2,8 @@
 title: "機器連不到或起不來"
 date: 2026-07-02
 description: "遠端機器突然 SSH 連不上、虛擬機開不了機、或懷疑磁碟滿引發連鎖故障時，從主機側與網路層的權威狀態往下定位是哪一環斷了"
-weight: 9
-tags: ["dotfile", "linux", "vm", "networking", "debugging"]
+weight: 3
+tags: ["linux", "vm", "networking", "debugging"]
 ---
 
 一台原本能連的機器突然連不上，或一台虛擬機根本開不起來，判讀的方向是「從你這端往那台機器，一層一層確認哪裡斷了」，而不是反覆重試同一個連線動作。連線失敗是最終症狀，真正斷掉的可能是網路、可能是那台機器的某個服務沒起來、可能是虛擬機的宿主側出問題、也可能是一個把上面全部拖下水的共同根因：磁碟滿。這篇從網路層與宿主側的權威狀態切入，把「連不上」拆成可定位的環節。
@@ -12,19 +12,25 @@ tags: ["dotfile", "linux", "vm", "networking", "debugging"]
 
 一台昨天還能 SSH 的機器今天連不上，第一步是確認「網路層通不通」，跟「SSH 服務在不在」分開。連線在 TCP 就 timeout（連 port 22 卡住沒回應），多半是網路層或機器沒在跑；連線有回應但被拒（`Connection refused`），是網路通、但那台機器上沒有服務在聽 port 22。
 
-對虛擬機或同網段的機器，一個很有用的權威來源是 **ARP 表**。ARP 記錄「這個 IP 對應到哪個 MAC」，要填起來需要對方在鏈路層有回應。`arp -a` 看目標 IP 的條目：如果是 `incomplete`，代表這個 IP 在鏈路層上根本沒有機器回應——不是 SSH 的問題，是那台機器的網路沒起來、或根本沒在跑。一個實際案例：一台虛擬機 SSH timeout，`arp -a` 顯示整個網段的 guest 位址全是 `incomplete`、只有閘道（宿主那側的橋接口）是好的——這就定位到「宿主的橋沒問題，但橋的另一頭沒有 VM 在講話」，方向立刻從「調 SSH」轉到「去看 VM 的網路或開機狀態」。
+對虛擬機或同網段的機器，一個很有用的權威來源是**鄰居表**（IP 對 MAC 的對應）。要填起來需要對方在鏈路層有回應，所以它直接反映「對方在不在」。用 `ip neigh` 看目標 IP 的條目——優先用 `ip neigh` 而不是 `arp -a`，因為 `ip`（iproute2）在現代最小系統一定有，`arp`（net-tools）常常沒裝、跑了會 command not found 反而誤導。如果狀態是 `INCOMPLETE`（`arp -a` 顯示的是 `incomplete`），代表這個 IP 在鏈路層上根本沒有機器回應——不是 SSH 的問題，是那台機器的網路沒起來、或根本沒在跑。一個實際案例：一台虛擬機 SSH timeout，鄰居表顯示整個網段的 guest 位址全是 incomplete、只有閘道（宿主那側的橋接介面）是好的——這就定位到「宿主的橋沒問題，但橋的另一頭沒有 VM 在講話」，方向立刻從「調 SSH」轉到「去看 VM 的網路或開機狀態」。
 
-定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的東西）確認：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、`arp -a` 的條目從 `incomplete` 變成有 MAC，就通了。
+定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的東西）確認：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、鄰居表的條目從 incomplete 變成有 MAC，就通了。
 
 還有一個常見誤區是 IP 變了。SSH 的別名、金鑰、`known_hosts` 都綁在特定機器身分上；換機器 / 重裝 / DHCP 重配後 IP 或 host key 變了，用舊別名會連錯或被 host key 檢查擋。這條的判讀與修法（`ssh user@新IP` 直連、`ssh-keygen -R`）見 [外部連入與無 key 的 bootstrap 路徑](../../install/ssh-keyless-bootstrap/)。
+
+## 網路通、但域名解析不了
+
+有一種故障看起來像「網路壞了」，其實是 DNS 解析斷了：能連 IP、卻連不上任何用域名的東西——`ping 8.8.8.8` 通、但 `ping google.com`、`pacman -Sy`、`curl https://...` 全失敗。判讀要跟前面「網路沒起來」分開，因為網路層是通的，斷的是「域名 → IP」這一步。權威檢查：`ping <IP>` 通而 `ping <域名>` 不通、或 `getent hosts <域名>`（`resolvectl query <域名>` 若有 systemd-resolved）解不出位址，就定位到 DNS。常見成因是 `/etc/resolv.conf` 沒有可用的 nameserver（新裝或網路重設後沒填），或負責 DNS 的服務沒起來。修：確認 `/etc/resolv.conf` 有一行 `nameserver`（如 `nameserver 1.1.1.1`）、`systemctl status systemd-resolved`（若用它）。這一層在剛裝好的最小系統特別常撞到——`ip -brief a` 明明有 IP，`pacman` 或 bootstrap 卻抓不到套件，看起來像「網路好好的卻裝不了東西」，根因是 DNS 沒設。
 
 ## 虛擬機開不起來：分清 guest 內部還是宿主側
 
 虛擬機開機失敗時，關鍵判斷是「錯誤來自 guest 內部（作業系統層）還是宿主側（虛擬化軟體 / QEMU 層）」。宿主側的錯誤訊息通常來自虛擬機軟體本身、在 guest 還沒開始開機前就跳出來，跟 guest 裡裝了什麼無關。
 
-一個實例是 QEMU 報「找不到某個 ROM 檔」（例如 `efi-virtio.rom`）而拒絕啟動。第一反應可能是「檔案不見了要重裝」，但正確的第一步是**去確認那個檔在不在**——實際去虛擬機軟體的安裝目錄裡找，會發現 ROM 檔明明就在。既然檔案在，「找不到」就不是缺檔，是 QEMU 執行時的路徑 / 狀態問題。這時往這幾個宿主側的權威狀態查：上一次崩潰有沒有留下**殘留的 helper 行程**卡著（`ps` 找虛擬化相關的殘留 process，沒清乾淨會讓下次啟動拿不到正確的資源路徑）、**宿主磁碟是不是滿了**（`df -h`，啟動要寫暫存 / 狀態檔，空間不足會讓啟動流程失敗）、以及 app 有沒有因為隔離屬性被搬到唯讀路徑執行。多數情況下，完全退出虛擬機軟體（清掉殘留 helper）+ 清出宿主磁碟空間 + 重新啟動，就恢復了。
+一個實例是 QEMU 報「找不到某個 ROM 檔」（例如 `efi-virtio.rom`）而拒絕啟動。第一反應可能是「檔案不見了要重裝」，但正確的第一步是**去確認那個檔在不在**——實際去虛擬機軟體的安裝目錄裡找（`find <安裝目錄> -name '<rom名>'`），會發現 ROM 檔明明就在。既然檔案在，「找不到」就不是缺檔，是 QEMU 執行時**在它預期的路徑下找不到**。這種「檔在卻找不到」最直接的成因是**app 因為隔離屬性被搬到唯讀 / 隨機路徑執行**——例如 macOS 的 Gatekeeper app translocation 會把帶隔離屬性的 app 搬到一個隨機唯讀路徑跑，讓 QEMU 解析資源的相對路徑失效，明明存在的檔案在那個執行路徑下就找不到。這是主因。
 
-判讀通則：**虛擬機開不起來，先讀錯誤訊息判斷是 guest 還是宿主側；宿主側報「找不到某資源」時，先確認資源在不在，在的話往殘留行程、磁碟空間、路徑隔離這些宿主狀態查，而不是急著重裝。**
+另外兩個常見的「VM 起不來」故障也順手一起排除，它們不會特定產生「找不到 ROM」但常伴隨出現：上一次崩潰殘留的 helper 行程卡著（`pgrep -af 'qemu|<虛擬機軟體名>'` 找，沒清乾淨會佔住資源），以及宿主磁碟滿（`df -h`，啟動要寫暫存 / 狀態檔）。多數情況下，完全退出虛擬機軟體（連殘留 helper 一起清）+ 清出宿主磁碟空間 + 重新啟動，就恢復了。
+
+判讀通則：**虛擬機開不起來，先讀錯誤訊息判斷是 guest 還是宿主側；宿主側報「找不到某資源」而資源其實存在時，主因往路徑隔離查，再順手排除殘留行程與磁碟滿，而不是急著重裝。**
 
 ## 磁碟滿是連鎖故障的共同根因
 
@@ -34,10 +40,11 @@ tags: ["dotfile", "linux", "vm", "networking", "debugging"]
 
 ## 判讀路由
 
-- SSH timeout（TCP 卡住）→ 網路層或機器沒跑，查 `arp -a`（`incomplete` = 對方沒回應）→ 去主控台看 `ip -brief a` / 網路服務。
+- SSH timeout（TCP 卡住）→ 網路層或機器沒跑，查 `ip neigh`（`INCOMPLETE` = 對方沒回應）→ 去主控台看 `ip -brief a` / 網路服務。
 - `Connection refused` → 網路通、但沒有服務在聽 → 去機器上確認 sshd 起了沒。
+- 能 ping IP、不能用域名（`pacman` / `curl` 失敗）→ DNS 解析問題，查 `/etc/resolv.conf` 有沒有 nameserver、`systemd-resolved` 起了沒，不是網路層斷。
 - 連錯 / host key 被擋 → IP 或身分變了，見 [外部連入與無 key 的 bootstrap 路徑](../../install/ssh-keyless-bootstrap/)。
-- 虛擬機開不起來、宿主側報錯 → 判 guest vs 宿主；宿主報「找不到資源」先確認資源在不在，再查殘留行程 / 磁碟 / 路徑。
+- 虛擬機開不起來、宿主側報「找不到資源」但資源在 → 主因查路徑隔離，再排除殘留行程（`pgrep -af 'qemu\|...'`）/ 磁碟。
 - 一串症狀同時發生 → 早點 `df -h`，宿主與 guest 兩側都查，磁碟滿常是共同根因。
 
 判斷卡住時，回到 [診斷心法](../diagnosis-read-authoritative-state/)：連不上是最終症狀，往網路表、服務狀態、資源用量這些權威來源一層層確認，而不是一直重試連線。

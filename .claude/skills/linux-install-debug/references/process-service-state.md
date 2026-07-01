@@ -24,6 +24,18 @@ ps -o comm= -p "$pid"
 
 停舊 daemon 前擁有者是舊的、停後換新的 = 接管成功。「新的裝了沒作用」常是舊的還佔著名字、新的靜默註冊失敗（只在 log 留 warning）→ 先停舊的。監聽 socket 類似：`ss -lntp` / `lsof -i` 看誰在聽。
 
+## systemd 服務 failed 怎麼判
+
+「服務怪怪的」時，`is-active` 只告訴你 active/inactive，不夠——要看它為什麼失敗、是不是在 restart loop。
+
+- `systemctl status <unit>`：看 `Active:`（`failed` / `activating (auto-restart)` = restart loop）、`Main PID` 的 exit code、最近幾行 log。
+- `systemctl is-failed <unit>`：明確判失敗（比 is-active 直接）。
+- `journalctl -u <unit> -e`：failed 的真正原因在這（exit code 只是結果）。
+- restart loop 徵兆：`status` 顯示 `activating (auto-restart)` 反覆、或 `journalctl` 一直重複同一段啟動→崩潰。根因看 log，不是一直 `restart`。
+- `systemctl list-units --failed`：一次列出所有 failed 的 unit（開機後系統怪怪的、先掃這個）。
+
+判讀：服務問題的權威是 `journalctl -u` 的日誌 + `status` 的 exit code / Result，不是「重啟看看好不好」。
+
 ## session 鎖沒鎖：認清是哪一層的鎖
 
 畫面有密碼框 ≠ 鎖了（可能是內嵌鎖屏樣式 widget 的儀表板）。鎖分層、查錯層得誤導答案：

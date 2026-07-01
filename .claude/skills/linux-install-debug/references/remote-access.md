@@ -6,7 +6,7 @@ SSH 連線本身、以及「你的終端機 ↔ 遠端 session」之間那條連
 
 先分「網路層 vs 服務層」，用症狀分流：
 
-- **TCP timeout（連 port 22 卡住無回應）** → 網路層或機器沒跑。查 `arp -a`（目標 IP 若 `incomplete` = 鏈路層沒回應）→ 見 [machine-unreachable](machine-unreachable.md)。
+- **TCP timeout（連 port 22 卡住無回應）** → 網路層或機器沒跑。查 `ip neigh`（目標 IP 若 `INCOMPLETE` = 鏈路層沒回應；`arp` 常沒裝）→ 見 [machine-unreachable](machine-unreachable.md)。
 - **`Connection refused`** → 網路通、但沒服務在聽 22。去機器上 `systemctl status sshd`；沒裝 / 沒起就 `pacman -S openssh && systemctl enable --now sshd`。
 - **`Permission denied (publickey)`** → key 沒對上。換帳號 + IP 直連走密碼繞過鎖死金鑰的別名：`ssh user@<IP>`；再重新佈 key。
 - **`Host key verification failed`** → 目標身分變了（重裝 / 換機 / IP 重用）。`ssh-keygen -R <IP>` 清舊 host key 再連。
