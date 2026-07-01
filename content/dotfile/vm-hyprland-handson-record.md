@@ -568,7 +568,7 @@ ps -o comm= -p "$pid"
 
 ##### 配色切換（scheme）
 
-caelestia 內建 15 套配色（onedark／nord／dracula／gruvbox／catppuccin… 加 `dynamic` 從桌布取色）乘上 dark／light，用 `caelestia scheme set -n gruvbox -m light` 切。切完 `caelestia scheme get` 回報已是 gruvbox light，但跑著的 shell UI 沒跟著變色。讀 quickshell log 找到根因：shell 的 `services/Colours.qml` 從 `~/.local/state/caelestia/scheme.json` 讀配色，而 shell 啟動當下這個檔還不存在（log：`Read of .../scheme.json failed: File does not exist`）——第一次 `scheme set` 才建出這個檔。所以行為是「開機讀不到配色檔 → 用 fallback 色；之後 CLI 改了狀態、跑著的 shell 這一輪沒重讀套用」。要讓配色確定生效，最穩的順序是先 `scheme set` 建好 state 檔、再（重）啟 shell 讓它開機就讀。（附註：這一輪因為緊接著觸發了下面的鎖屏事故，gruvbox 對桌面 bar／終端機的實際上色效果沒能在同一 session 乾淨截圖確認，留待下次。）
+caelestia 內建 15 套配色（onedark／nord／dracula／gruvbox／catppuccin… 加 `dynamic` 從桌布取色）乘上 dark／light，用 `caelestia scheme set -n gruvbox -m light` 切。切完 `caelestia scheme get` 回報已是 gruvbox light，但跑著的 shell UI 沒跟著變色。讀 quickshell log 找到根因：shell 的 `services/Colours.qml` 從 `~/.local/state/caelestia/scheme.json` 讀配色，而 shell 啟動當下這個檔還不存在（log：`Read of .../scheme.json failed: File does not exist`）——第一次 `scheme set` 才建出這個檔。所以行為是「開機讀不到配色檔 → 用 fallback 色；之後 CLI 改了狀態、跑著的 shell 這一輪沒重讀套用」。要讓配色確定生效，最穩的順序是先 `scheme set` 建好 state 檔、再（重）啟 shell 讓它開機就讀。（後續補確認：解鎖後趕在鎖屏重新觸發前搶到一張乾淨桌面截圖 `shotG-desktop-scheme-check.png`——整個 UI 確實換成 gruvbox light 的暖奶油色，bar／dock／foot 終端機底色全變淺、文字轉為 gruvbox 的橄欖／黃／紅，配色確定生效。所以「scheme set 後沒變色」的根因收斂成啟動時機問題：在 scheme.json 存在之前啟動的 shell 實例讀不到、也不會為一次 CLI 變更熱重繪；在 state 檔就緒後啟動的 shell 實例開機讀取就正確上色。實務結論：改配色後讓 shell 重啟一次最穩。）
 
 ##### 鎖屏機制：一個判斷被更正兩次
 
