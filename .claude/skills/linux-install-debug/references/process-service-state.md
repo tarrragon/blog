@@ -61,7 +61,24 @@ ps -o comm= -p "$pid"
 
 ## 卡住是資源還是相容：先看資源
 
-耗時操作停住時別直接跳「不相容 / 跑不起來」（昂貴結論）。先讀最廉價的權威：`df -h`（磁碟滿？）、`free`（記憶體？）。實測：原始碼編譯停在半路，是宿主磁碟寫滿把 build 打斷，清空間後同份 source 接著編就過，跟相容性無關。先排除資源，再懷疑相容。
+耗時操作停住時別直接跳「不相容 / 跑不起來」（昂貴結論）。先讀最廉價的權威：`df -h`（磁碟滿？）、`free`（記憶體？）。實測：原始碼編譯停在半路，是宿主磁碟寫滿把 build 打斷，清空間後同份 source 接著編就過，跟相容性無關。先排除資源，再懷疑相容。（區隔：只有「這一個操作」卡住 → 看這裡；「連線斷 + 任務失敗 + 服務怪」一串同時發生 → machine-unreachable 的磁碟滿 / fs 唯讀連鎖。）
+
+## 權限被拒（EACCES）：讀是哪一層擋的，別一律 sudo
+
+`Permission denied` / `EACCES` / `Operation not permitted` 有多個根因，`sudo` 蓋過去會掩蓋真正的層別、還可能在 home 留 root-owned 檔製造新問題。先讀哪一層：
+
+- **檔案本身 mode / owner**：`ls -l`、`stat` 看 owner/group/mode；`id` / `groups` 看你在不在對的 group。
+- **路徑中間某層無 x 權限**：`namei -l <path>` 逐段列出路徑每一層的權限——最常被忽略的坑（檔案本身可讀，但父目錄少 x，整條就進不去）。這是「讀權威狀態」對 permission 的專用工具，AI 幾乎不會主動用。
+- **缺 sudo 授權**：`sudo -l` 看被允許跑什麼。
+- **檔案系統唯讀**：只有寫入 EACCES → `mount | grep -w ro`（見 [machine-unreachable](machine-unreachable.md)）。
+- **MAC（SELinux / AppArmor）擋**：mode/owner 都對卻 denied → `ausearch -m avc`（SELinux）/ `aa-status`（AppArmor）；Fedora/RHEL/Ubuntu 常見，Arch 預設無。
+- **capability 不足**：`getcap <binary>`（如非 root 綁 port <1024）。
+
+判讀：`namei -l` + `stat` + `id` 三個先分掉大部分；mode 全對卻還 denied 才往 MAC / capability 查。
+
+## 被 kill / OOM / exit 137：查 kernel log
+
+程式無錯誤訊息就消失、或 systemd 顯示 `Killed` / `OOMKilled` / exit code 137（128+9=SIGKILL），userspace log 看不到原因——權威在 kernel ring buffer：`dmesg -T | grep -iE 'killed process|oom'`、`journalctl -k -b`。OOM killer 殺行程、I/O error、段錯誤都在這裡。
 
 ## 快速路由
 

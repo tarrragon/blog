@@ -23,7 +23,7 @@ IP / host key 變了（別名連錯、host key 被擋）→ 見 [remote-access](
 
 - 權威檢查：`ping <IP>` 通而 `ping <域名>` 不通、或 `getent hosts <域名>`（`resolvectl query <域名>` 若有 systemd-resolved）解不出。
 - 成因：`/etc/resolv.conf` 沒有可用 nameserver（新裝 / 網路重設後沒填）、或 DNS 服務沒起。
-- 修：`/etc/resolv.conf` 補 `nameserver 1.1.1.1`、`systemctl status systemd-resolved`。
+- 修：先看 `/etc/resolv.conf` 是不是 symlink（`ls -l /etc/resolv.conf`）——若指向 `systemd-resolved`（`../run/systemd/resolve/stub-resolv.conf`），手改會被覆寫，要走 `resolvectl` / `systemd-resolved` 設定；若是普通檔，補一行 `nameserver 1.1.1.1`。
 - **剛裝好的最小系統特別常撞**：`ip -brief a` 有 IP 但 `pacman` / bootstrap 抓不到套件，看起來像「網路好好卻裝不了」，根因是 DNS 沒設。
 
 ## 虛擬機開不起來

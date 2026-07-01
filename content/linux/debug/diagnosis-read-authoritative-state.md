@@ -26,15 +26,17 @@ tags: ["linux", "debugging", "diagnosis"]
 
 除錯的第一步，是為眼前的現象找到記錄它的權威來源。不同類別的問題，權威來源不同：
 
-| 問題類別        | 權威狀態來源                 | 讀它的工具                                |
-| --------------- | ---------------------------- | ----------------------------------------- |
-| 某程式的行為    | 那個程式自己的 log 檔        | 程式的 log 路徑、`journalctl -u <服務>`   |
-| 服務由誰提供    | D-Bus / socket 的服務註冊    | `busctl`、`ss`、`lsof`                    |
-| 登入 / 鎖定狀態 | logind                       | `loginctl show-session`                   |
-| 服務有沒有在跑  | systemd unit 狀態            | `systemctl status`、`systemctl is-active` |
-| 程式有沒有活著  | 行程表（比對正確的 comm 名） | `pgrep -x`、`ps`                          |
-| 網路通不通      | 介面 / 路由 / ARP 表         | `ip`、`arp -a`、`ss`                      |
-| 磁碟 / 記憶體   | 檔案系統與記憶體用量         | `df -h`、`du -sh`、`free`                 |
+| 問題類別                  | 權威狀態來源                 | 讀它的工具                                |
+| ------------------------- | ---------------------------- | ----------------------------------------- |
+| 某程式的行為              | 那個程式自己的 log 檔        | 程式的 log 路徑、`journalctl -u <服務>`   |
+| 服務由誰提供              | D-Bus / socket 的服務註冊    | `busctl`、`ss`、`lsof`                    |
+| 登入 / 鎖定狀態           | logind                       | `loginctl show-session`                   |
+| 服務有沒有在跑            | systemd unit 狀態            | `systemctl status`、`systemctl is-active` |
+| 程式有沒有活著            | 行程表（比對正確的 comm 名） | `pgrep -x`、`ps`                          |
+| 網路通不通                | 介面 / 路由 / 鄰居表         | `ip -brief a`、`ip neigh`、`ss`           |
+| 磁碟 / 記憶體             | 檔案系統與記憶體用量         | `df -h`、`du -sh`、`free`                 |
+| 核心 / 硬體 / 被殺行程    | kernel ring buffer           | `dmesg`、`journalctl -k`                  |
+| 程式 log 沉默時的 syscall | 系統呼叫層                   | `strace -f -e trace=file`                 |
 
 這張表的用法不是背它，是養成一個反射：看到現象先問「這件事的權威狀態記在哪張表裡」，再去讀那張表，而不是從畫面推測。下面幾個常見的判錯，都是讀了表象而不是權威來源。
 

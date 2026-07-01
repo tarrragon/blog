@@ -18,6 +18,7 @@ tags: ["linux", "process", "systemd", "debugging"]
 
 - 先確認實際的 comm 名：`ps -eo pid,comm | grep -i <關鍵字>`，或看你啟動它的實際指令。
 - 用精確比對：`pgrep -x <comm>`（`-x` 要求完全相符），或 `pgrep -af <pattern>` 連完整命令列一起比對，避免被 symlink 名 / 縮寫名騙。
+- 另一個 comm 的坑：kernel 把 comm 截在 15 字元（`TASK_COMM_LEN`），名字超過 15 字的程式用 `pgrep -x <完整長名>` 反而 miss——這時改用 `pgrep -af <pattern>` 比對完整命令列。
 - 別用一個「你以為的名字」掃過去就下生死結論——行程表沒騙你，是查詢條件寫錯。
 
 ## 服務由誰提供：問註冊表
@@ -51,15 +52,9 @@ ps -o comm= -p "$pid"
 
 ### 鎖屏程式死掉造成的死局與復原
 
-`ext-session-lock` 有一個安全設計要認得：持鎖的鎖屏程式若在鎖定狀態下崩潰 / 被中止，compositor **會保持鎖定**、不會因為鎖屏程式沒了就解鎖——否則「殺掉鎖屏程式就能繞過鎖」會是個漏洞。表現是畫面卡在一個「鎖屏程式已死」的安全提示，你既進不去也不是原本的鎖屏。
+`ext-session-lock` 有一個安全設計：持鎖的鎖屏程式若在鎖定狀態下崩潰 / 被中止，compositor **會保持鎖定**、不會因為鎖屏程式沒了就解鎖（否則殺掉鎖屏程式就成了繞過鎖的漏洞）。表現是畫面卡在「鎖屏程式已死」的安全提示。復原要從另一個 VT 或 SSH 用 `hyprctl keyword misc:allow_session_lock_restore 1` 允許新鎖屏 client 接管、再 `hyprctl dispatch exec hyprlock` 起一個接管後輸密碼解鎖。完整機制、兩層鎖的關係、各 compositor 的差異，見 [Wayland Session Lock 卡](/linux/dotfile/knowledge-cards/session-lock/)。
 
-復原流程（以 Hyprland 為例，可從另一個 VT 或 SSH 用 `hyprctl` 做，提示畫面通常也把指令寫在上面）：
-
-1. `hyprctl keyword misc:allow_session_lock_restore 1`——允許新的鎖屏程式接管這個孤兒鎖（預設不允許，也是安全設計）。
-2. 起一個鎖屏程式接管：`hyprctl dispatch exec hyprlock`。
-3. 在接管後的鎖屏輸入密碼解鎖。
-
-判讀通則：**測鎖屏、或用 `pkill` 之類手段結束一個持鎖的鎖屏程式時，要預期它會把 session 卡在鎖定狀態——這是協議的安全設計，不是 bug。** 自動化 / 無人值守的流程尤其要避免在持鎖狀態下殺鎖屏程式。
+診斷紀律：**測鎖屏、或 `pkill` 一個持鎖的鎖屏程式時，要預期它把 session 卡在鎖定——這是協議的安全設計，不是 bug。** 自動化 / 無人值守流程尤其要避免在持鎖狀態下殺鎖屏程式。
 
 ## 終端機多工器的 session 還在不在
 

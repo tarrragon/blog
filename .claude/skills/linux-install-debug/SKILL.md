@@ -25,17 +25,20 @@
 
 ## 權威來源速查表
 
-| 症狀類別            | 權威來源                 | 工具                                                                                   |
-| ------------------- | ------------------------ | -------------------------------------------------------------------------------------- |
-| 某程式行為不對      | 程式自己的 log 檔        | log 路徑、`journalctl -u <unit>`                                                       |
-| 服務由誰提供        | D-Bus name / socket 註冊 | `busctl`、`ss -lntp`、`lsof`                                                           |
-| 登入 / 鎖定狀態     | logind                   | `loginctl show-session <id>`                                                           |
-| 服務跑了沒 / failed | systemd unit             | `systemctl status` / `is-active` / `is-failed`、`list-units --failed`、`journalctl -u` |
-| 程式活著沒          | 行程表（比對正確 comm）  | `pgrep -x`、`pgrep -af`、`ps`                                                          |
-| 網路通不通          | 介面 / 路由 / 鄰居表     | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                        |
-| 域名解析            | resolver 設定            | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                |
-| 磁碟 / 記憶體       | 檔案系統 / 記憶體用量    | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                       |
-| VT / 主控台         | 前景 VT、getty 狀態      | `fgconsole`、`chvt`、`systemctl` getty                                                 |
+| 症狀類別                              | 權威來源                       | 工具                                                                                   |
+| ------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------- |
+| 某程式行為不對                        | 程式自己的 log 檔              | log 路徑、`journalctl -u <unit>`                                                       |
+| 服務由誰提供                          | D-Bus name / socket 註冊       | `busctl`、`ss -lntp`、`lsof`                                                           |
+| 登入 / 鎖定狀態                       | logind                         | `loginctl show-session <id>`                                                           |
+| 服務跑了沒 / failed                   | systemd unit                   | `systemctl status` / `is-active` / `is-failed`、`list-units --failed`、`journalctl -u` |
+| 程式活著沒                            | 行程表（比對正確 comm）        | `pgrep -x`、`pgrep -af`、`ps`                                                          |
+| 網路通不通                            | 介面 / 路由 / 鄰居表           | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                        |
+| 域名解析                              | resolver 設定                  | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                |
+| 磁碟 / 記憶體                         | 檔案系統 / 記憶體用量          | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                       |
+| 核心 / 硬體 / 被殺行程(OOM、exit 137) | kernel ring buffer             | `dmesg`、`journalctl -k -b`                                                            |
+| 權限被拒(EACCES)                      | 檔案 mode/owner、路徑逐層、MAC | `namei -l <path>`、`stat`、`id`、`sudo -l`、`getcap`、`ausearch`(SELinux)              |
+| 程式 log 沉默、不知哪個 syscall 失敗  | syscall 層                     | `strace -f -e trace=file <cmd>`                                                        |
+| VT / 主控台                           | 前景 VT、getty 狀態            | `fgconsole`、`chvt`、`systemctl` getty                                                 |
 
 ## 症狀 → 情境路由
 
@@ -43,6 +46,8 @@
 - **SSH 連不上（先做 timeout vs refused 分流）、終端機噴亂碼 / 亂碼輸入、要從 SSH 操控圖形桌面** → [remote-access](references/remote-access.md)
 - **（從 remote-access 分流後）機器沒回應、域名解析不了、虛擬機開不起來、疑似磁碟滿 / 檔案系統唯讀連鎖** → [machine-unreachable](references/machine-unreachable.md)
 - **判程式活著沒 / 服務歸誰 / 服務 failed 或一直重啟(restart loop) / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
+- **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
+- **套件管理器失敗（pacman db lock / keyring 簽章過期 / partial upgrade / mirror）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
 - **要讀某程式的 log 定位根因** → [read-logs](references/read-logs.md)
 - **要挑 / 推薦工具（同一件事有多個選擇：grep vs ripgrep、哪個檔案管理員、遠端用什麼）** → [tool-options](references/tool-options.md)
 
@@ -56,6 +61,7 @@
 
 ---
 
+**Version**: 1.3.0 — Round-3 審查修正：補兩類 AI 最高頻情境——權限被拒(EACCES、namei -l 逐層 / MAC / capability)、套件管理器失敗(pacman db lock / keyring 簽章 / partial upgrade)；被 kill/OOM/exit137 判讀；速查表加 kernel(dmesg)/權限/strace 三列；read-logs 加 strace 回退；DNS resolv.conf symlink caveat、sudoers chmod 0440
 **Version**: 1.2.1 — Round-2 審查修正：systemd-failed 情境接上入口（速查表 + 症狀路由補「服務 failed / restart loop」，原本加了 section 卻路由不到）
 **Version**: 1.2.0 — Round-1 審查修正：`arp -a` 全面改主推 `ip neigh`（現代最小系統無 net-tools）；新增 DNS 解析、systemd failed 判讀、檔案系統唯讀 remount 三個情境；路由標明 remote→machine 分流；反模式加 scrollback 殘影
 **Version**: 1.1.0 — 新增 tool-options reference（依環境 CLI/GUI/遠端挑對工具、現代替代品 vs POSIX 可攜的判準）
