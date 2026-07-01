@@ -529,7 +529,20 @@ ShellRoot {
 
 **gotcha（自己踩的、跟 stow + git 分支有關）**：這次 step 2 → step 3 中間，dotfiles 的 `main` 在 Mac 端被 force-push 重寫過，`themes/` package（`colors.conf`）當時還沒進 main。VM 端 `git reset --hard origin/main` 對齊 main 時，working tree 的 `dotfiles/themes/.config/hypr/colors.conf` 被刪掉——而 `~/.config/hypr/colors.conf` 是 stow 指過去的 symlink，target 一沒就變**懸空 symlink**。Hyprland 會監看 config 檔、偵測到變動自動 reload，於是跳出 config error 橫幅：`source= file ~/.config/hypr/colors.conf is inaccessible` + `$blue`/`$surface0` 未定義導致邊框色解析失敗。把 `themes/` merge 回來、target 檔恢復後 `hyprctl reload` 即清掉錯誤橫幅、邊框色（`col.active_border = ff89b4fa`）正常套用。教訓：**stow symlink 指向的是 git working tree 裡的檔案，切分支 / reset 會讓 symlink 懸空**——動到被 stow 管理的 package 時，要記得部署端的 symlink 跟 working tree 是綁在一起的。
 
-階段 B（Caelestia 完整安裝，需先補 AUR helper）、C（配置驗證）、D（生態對照）待續。
+#### 實測執行記錄：階段 B（Caelestia 完整安裝）——通過
+
+透過 `paru` 從 AUR 編譯 `caelestia-shell`（2.1.0），227 步 C++ 編譯在 aarch64 VM 上完整跑完、產物正常安裝。**先前一次 build 停在 `[120/227]` 不是編譯失敗，是主機磁碟寫滿把 build 中途打斷**——清出空間後同一份 source 接著編就過。這修正了一個容易誤判的方向：build 卡住先查磁碟／資源，不是先懷疑 aarch64 相容性。
+
+`caelestia shell -d` 啟動後 log 收在 `Configuration Loaded`，Material-3 風格的介面（左側直立 dock + 頂列 status bar）在 virtio-gpu 上完整 render（`shotB-caelestia-render.png`）。**階段 A 只證明 Quickshell 能畫一個測試面板，階段 B 證明整套 Caelestia shell 的實際 UI 都能繪製**——go/no-go 的風險到這裡才真正解除。
+
+兩個非致命 warning，都是 VM 環境特性、不是 Caelestia 的 bug：
+
+- **`pw.loop ... can't make support.system handle`（pipewire event loop 建立失敗）**：guest 沒跑 pipewire，Caelestia 的音訊 service 起不來。shell 照常 render，只是音量／音訊 widget 失效。實機或補上 pipewire 即無此問題。
+- **`Could not register notification server at org.freedesktop.Notifications`**：step 2 留下的 mako 還在跑、先佔了 D-Bus 的通知服務名，Caelestia 自帶的通知 service 註冊不上。兩個通知 daemon 不能共存——要讓 Caelestia 接管通知，得先停掉 mako。
+
+**啟動路徑實測（無人值守／遠端的真實障礙）**：重開機後要把 Hyprland 拉起來測，卡在兩件事。其一，`getty@tty1` 是 `enabled` 但開機後沒 active（logind 的 autovt 沒觸發），tty1 沒有登入提示。其二，UTM 顯示停在 serial console（`ttyAMA0`），它跟圖形 VT 是兩個獨立輸出，在 guest 內 `chvt` 只切圖形那側、serial console 不受影響。解法是 SSH 進去 `sudo systemctl start getty@tty1` 補出登入提示、`sudo chvt 1` 切到圖形 VT，再從 UTM 的 Display 輸出登入跑 `Hyprland`。**從 SSH 用 `sudo chvt` 與 `systemctl start getty@tty1` 遠端操控 VM 的 VT，比在 Mac + UTM 下跟 `Ctrl+Alt+Fn` 快捷鍵搏鬥穩定**——這是把桌面 session 從遠端拉起來的一條可靠路徑。
+
+階段 C（配置與客製化驗證）、D（生態對照）待續。
 
 #### 前置確認（VM 開機後先做）
 
