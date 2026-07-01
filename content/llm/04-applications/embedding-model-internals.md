@@ -125,6 +125,19 @@ In-domain 評估的最小可行流程：
 
 跑完這個再決定用哪個 embedding model、比看 MTEB leaderboard 可靠很多。
 
+## 實務選型的 constraint 優先序
+
+上面四個維度（domain / 大小 / context / cosine 設計）跟 MTEB 評估是「品質軸」— 哪個 embedding model 最能解你的 retrieval 問題。但實際選型時，品質軸之前通常有一組**工程 constraint 先砍掉大量選項**，剩下的候選才進品質比較。
+
+常見的工程 constraint 依砍選項力度排序：
+
+1. **Runtime 可用性**：推論伺服器支援哪些模型？Ollama 目前原生支援 `nomic-embed-text`、`mxbai-embed-large`、`snowflake-arctic-embed` 等，但不支援所有 Hugging Face 模型。用 cloud API（OpenAI / Cohere / Voyage）則受 vendor 綁定跟成本約束。這一條通常砍掉最多選項。
+2. **體積 / 記憶體預算**：個人機器常駐 embedding model 跟 chat model 共用記憶體。137M 的 `nomic-embed-text` 跟 7B 的 `e5-mistral` 在記憶體佔用上差一個數量級。
+3. **已有驗證基線**：團隊或前期 demo 已用某個模型跑過、retrieval 品質已確認可用。換模型要重建 index + 重新驗證，成本不只是 MTEB 分數比較。
+4. **向量維度的 storage 成本**：維度影響 index 大小（n × d × 4 bytes）跟 brute-force search 延遲。768 維 vs 1024 維在小規模無感，但 100K+ chunks 時差異開始有意義。詳見 [4.22 RAG storage 工程](/llm/04-applications/vector-storage-engineering/)。
+
+實務流程是：先用 constraint 1-3 收窄到 2-3 個候選，再跑 in-domain benchmark（上段的 hit rate 流程）做最終決定。直接從 MTEB leaderboard 挑最高分的模型、到實際場景才發現 runtime 不支援或體積太大，是常見的繞路。
+
 ## 何時該 fine-tune 自己的 embedding model
 
 通常**不該** fine-tune embedding model — 用現成的 bge-large、jina-v3 已經很好。但下列情境值得評估：
