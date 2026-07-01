@@ -37,35 +37,28 @@ metadata:
 
 ## 標準操作流程
 
-### 1. 檢查前置條件
+所有指令都封裝在 `scripts/blogsearch/Makefile`。以下是對應的 make target：
+
+### 1. 首次設定
 
 ```bash
-# Ollama 在跑嗎？
-curl -s http://localhost:11434/api/tags > /dev/null 2>&1 && echo "OK" || echo "Ollama not running"
-
-# nomic-embed-text 有嗎？
-curl -s http://localhost:11434/api/tags | grep -q nomic-embed-text && echo "OK" || echo "Need: ollama pull nomic-embed-text"
-
-# blogsearch binary 有嗎？
-test -f bin/blogsearch && echo "OK" || echo "Need: cd scripts/blogsearch && go build -o ../../bin/blogsearch ."
+cd scripts/blogsearch && make install    # build binary + pull embedding model
 ```
+
+前提：Ollama 已在跑（`ollama serve &`）。`make install` 會檢查 Ollama 狀態、pull `nomic-embed-text`、build binary。
 
 ### 2. Full rebuild
 
 ```bash
-./bin/blogsearch ingest -content content -out .blogsearch
+cd scripts/blogsearch && make ingest     # build index（全量 ~4 分鐘）
 ```
 
-預期輸出：逐檔列出 chunk 數、最後顯示總 chunk 數與耗時（200 篇約 60-90 秒）。
+預期輸出：逐檔列出 chunk 數、最後顯示總 chunk 數與耗時。
 
 ### 3. 驗證
 
 ```bash
-# 檢查 index 統計
-./bin/blogsearch status
-
-# 用已知答案測試 retrieval
-./bin/blogsearch query "RAG storage 選型"
+cd scripts/blogsearch && make verify     # status + test query
 ```
 
 驗證判準：
@@ -100,4 +93,4 @@ test -f bin/blogsearch && echo "OK" || echo "Need: cd scripts/blogsearch && go b
 - **RAG storage 選型**：本工具的向量 index 設計（flat file + brute-force）可作為 RAG storage 選型的參考實作
 - **Demo 與 production 共存**：若專案有 pickle-based RAG demo，blogsearch 是 production 升級版、兩者可共存
 
-**Version**: 1.1.0 — 去專案化：跟其他流程的關係段移除 blog-specific 編號與路徑依賴
+**Version**: 1.3.0 — SOP 改用 Makefile target（install / ingest / verify）、description 補 ingest 觸發詞
