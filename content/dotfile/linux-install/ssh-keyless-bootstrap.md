@@ -84,6 +84,25 @@ tar czf - --exclude '.git' . | ssh user@host 'mkdir -p ~/dotfiles && tar xzf - -
 
 把 dotfile 弄進去之後，跑它的 `install.sh` 完成基礎安裝。如果安裝腳本一開始就要用 sudo，記得 sudo 必須在工具驗證階段就備好——它是 [最小安裝後的工具驗證與補足](../minimal-install-verify/) 的前置，bootstrap 自身補不了。
 
+## 換一台新機器（或重裝）時，SSH 為什麼突然連不上
+
+SSH 的別名、金鑰、`known_hosts` 都是綁在「某一台特定機器」上的，所以當你重裝、或換一台新 VM，先前設好的 `ssh <別名>` 往往會以看似無關的錯誤失敗——那套設定是為舊機器建的，而重裝後是另一台機器：不同的 IP、不同的 SSH host key、還沒裝 sshd、`authorized_keys` 也是空的。判讀的起點是把重裝後的機器當成全新的一台，重做第一次連線的設定，而不是沿用舊別名。
+
+失敗會以三種形式出現，各對應不同層、各有各的修法：
+
+`Permission denied (publickey)` 是認證被拒，代表 sshd 有在跑、連線有到（這是進度），卡在金鑰這關。常見於你用的別名設了 `IdentitiesOnly yes` 只送某一把 key，而新機器的 `authorized_keys` 還沒有它。修法是改用帳號加 IP 直連、走密碼，繞過那個鎖死金鑰的別名：`ssh user@<新 IP>`，密碼是「這次安裝」為該使用者設的（每次重裝各自獨立，不是舊機器那個）。連進去後再把公鑰貼回新機器的 `authorized_keys`、把別名的 `HostName` 更新成新 IP，免密碼才會恢復。
+
+`Host key verification failed`（或 `REMOTE HOST IDENTIFICATION HAS CHANGED`）發生在新機器剛好拿到跟舊機器一樣的 IP 時：你本機 `known_hosts` 存的是舊機器的 host key，SSH 偵測到同一個 IP 換了 key、當成可能的中間人攻擊而拒連。修法是刪掉那筆舊紀錄，再重連時接受新 key：
+
+```bash
+ssh-keygen -R <IP>       # 刪掉該 IP 的舊 host key
+ssh-keygen -R <別名>     # 有用別名的話一併刪
+```
+
+`Connection refused` 代表沒有 sshd 在監聽，也就是新機器還沒把 SSH server 起來。修法回到最開始——在新機器的 console 裝 openssh、啟動服務（見本篇開頭「啟用 sshd」），這一步在每台全新機器上都要重做。
+
+三個症狀的共同根因是同一件事：SSH 的便利設定（別名、金鑰、host key 快取）綁的是機器身分、不會跟著「重裝」自動轉移。把它們當成「為某一台機器設好的」，換機器就重做第一次連線，能省下對著看似無關的錯誤瞎猜的時間。
+
 ## 連入後可能遇到的兩個終端機問題
 
 SSH 連線本身通了之後，互動 shell 還可能因為終端機環境不對而出現「打字變亂碼、prompt 重繪錯位」。這類問題在你用現代終端機（如 Ghostty、Kitty）連進一台剛裝好的最小 Linux、又跑了 unicode 較重的 prompt（如 Powerlevel10k）時最容易出現，根源是兩個跟字元處理有關的終端機設定，跟你的 shell 配置無關。
