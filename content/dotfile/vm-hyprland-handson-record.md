@@ -562,7 +562,7 @@ ps -o comm= -p "$pid"
 
 停 mako 前擁有者是 mako 的連線、停掉後換成 `qs`（Caelestia 的 quickshell），就確認接管成功。畫面有沒有跳通知會受 idle／專注模式影響，D-Bus 擁有者才是 ground truth。
 
-**附帶觀察（session lock）**：截圖當下 Caelestia 的畫面是它自帶的 dashboard/lock，中央有 `Enter your password` 輸入框——Caelestia shell 起來一段時間後（uptime 約 24 分鐘）觸發了它內建的 session lock。這跟 step 2 的 hyprlock 是不同的鎖屏實作（Caelestia 自己畫），是 step 3 換 shell 後連帶換掉的元件之一，之後階段 C 客製化驗證會再確認它的觸發條件與解鎖流程。
+**附帶觀察（session drawer，不是真的鎖屏——一次誤判與更正）**：shotC 截圖當下畫面中央出現 `Enter your password` 輸入框 + 使用者頭像，配上天氣／大時鐘／媒體／通知的整片 dashboard，第一眼判成「session 被鎖住了」。查證後推翻這個判斷：`caelestia shell -s` 列出的 IPC target 與 `caelestia --help` 的子指令**都沒有 lock**；`pgrep` 找不到任何鎖屏行程；`loginctl` 也沒有 `LockedHint`；隔一下重新 `grim` 截圖，桌面已自己回到正常（foot 終端機 + dock）。真相是這個畫面是 Caelestia 的 `session` drawer——`caelestia shell drawers list` 列出 `bar / osd / session / launcher / dashboard / utilities / sidebar` 七個 drawer，`session` 是其中一個含鎖屏樣式的 session／電源覆蓋層。它長得像鎖屏、也提供鎖定入口，但**單純把這個 drawer 顯示出來，不等於 session 真的被鎖**。教訓：判斷一個 Wayland session 有沒有被鎖，看的是 `loginctl` 的 `LockedHint` 跟有沒有實際的鎖屏行程，不是畫面上有沒有密碼框——現代 shell 的 dashboard 常內嵌鎖屏樣式的 widget，用畫面判鎖會誤判。（另外 `caelestia shell nexus open` 開的是右側那片 `Nexus` 設定面板——Wallpaper & style／Network／Audio／Plugins 等——是又一個獨立 drawer，跟 session drawer 不是同一個。）
 
 階段 C 其餘（配置與客製化驗證）、D（生態對照）待續。
 
