@@ -562,9 +562,41 @@ ps -o comm= -p "$pid"
 
 停 mako 前擁有者是 mako 的連線、停掉後換成 `qs`（Caelestia 的 quickshell），就確認接管成功。畫面有沒有跳通知會受 idle／專注模式影響，D-Bus 擁有者才是 ground truth。
 
-**附帶觀察（session drawer，不是真的鎖屏——一次誤判與更正）**：shotC 截圖當下畫面中央出現 `Enter your password` 輸入框 + 使用者頭像，配上天氣／大時鐘／媒體／通知的整片 dashboard，第一眼判成「session 被鎖住了」。查證後推翻這個判斷：`caelestia shell -s` 列出的 IPC target 與 `caelestia --help` 的子指令**都沒有 lock**；`pgrep` 找不到任何鎖屏行程；`loginctl` 也沒有 `LockedHint`；隔一下重新 `grim` 截圖，桌面已自己回到正常（foot 終端機 + dock）。真相是這個畫面是 Caelestia 的 `session` drawer——`caelestia shell drawers list` 列出 `bar / osd / session / launcher / dashboard / utilities / sidebar` 七個 drawer，`session` 是其中一個含鎖屏樣式的 session／電源覆蓋層。它長得像鎖屏、也提供鎖定入口，但**單純把這個 drawer 顯示出來，不等於 session 真的被鎖**。教訓：判斷一個 Wayland session 有沒有被鎖，看的是 `loginctl` 的 `LockedHint` 跟有沒有實際的鎖屏行程，不是畫面上有沒有密碼框——現代 shell 的 dashboard 常內嵌鎖屏樣式的 widget，用畫面判鎖會誤判。（另外 `caelestia shell nexus open` 開的是右側那片 `Nexus` 設定面板——Wallpaper & style／Network／Audio／Plugins 等——是又一個獨立 drawer，跟 session drawer 不是同一個。）
+**附帶觀察（session lock——一段被更正兩次的判斷）**：shotC 畫面中央的 `Enter your password` 覆蓋層，初判為 caelestia 鎖屏；接著我一度「更正」成「不是鎖、是 session/dashboard drawer」，依據是無 lock 行程、`loginctl` 無 `LockedHint`、`caelestia` 無 lock 子指令。這個更正本身是錯的——後來讀 quickshell log、又意外實際觸發了鎖屏 client 死亡事故，才確認初判才對：它是走 Wayland `ext-session-lock` 協議的真鎖屏。完整機制、兩次誤判的根因、以及鎖屏 client 死亡的復原流程，見下方階段 C-2。
 
-階段 C 其餘（配置與客製化驗證）、D（生態對照）待續。
+#### 實測執行記錄：階段 C 之二（配色切換 + 鎖屏機制 + lock-died 事故）——通過，含兩次誤判更正
+
+##### 配色切換（scheme）
+
+caelestia 內建 15 套配色（onedark／nord／dracula／gruvbox／catppuccin… 加 `dynamic` 從桌布取色）乘上 dark／light，用 `caelestia scheme set -n gruvbox -m light` 切。切完 `caelestia scheme get` 回報已是 gruvbox light，但跑著的 shell UI 沒跟著變色。讀 quickshell log 找到根因：shell 的 `services/Colours.qml` 從 `~/.local/state/caelestia/scheme.json` 讀配色，而 shell 啟動當下這個檔還不存在（log：`Read of .../scheme.json failed: File does not exist`）——第一次 `scheme set` 才建出這個檔。所以行為是「開機讀不到配色檔 → 用 fallback 色；之後 CLI 改了狀態、跑著的 shell 這一輪沒重讀套用」。要讓配色確定生效，最穩的順序是先 `scheme set` 建好 state 檔、再（重）啟 shell 讓它開機就讀。（附註：這一輪因為緊接著觸發了下面的鎖屏事故，gruvbox 對桌面 bar／終端機的實際上色效果沒能在同一 session 乾淨截圖確認，留待下次。）
+
+##### 鎖屏機制：一個判斷被更正兩次
+
+shotC 那個帶 `Enter your password` 的覆蓋層，判讀走了三步：初判是 caelestia 鎖屏（idle 觸發）；一度「更正」成「不是鎖、是 drawer」；最後靠 log 加實際觸發定案——它是**真的 session lock**，走 Wayland `ext-session-lock` 協議、idle 觸發。第二步的更正錯了。
+
+quickshell log 給了關鍵證據：`@modules/lock/center/ProfilePic.qml`（lock 模組）、三個 `idle_notify` 計時器 timeout `180000／300000／600000` ms（3／5／10 分鐘，`respects inhibitors: true`）。對照行為就是 3 分鐘 idle 鎖屏、10 分鐘 `dispatch dpms off` 關螢幕。
+
+前一次為什麼會誤判成「不是鎖」，根因值得記，因為三個訊號都在騙人：
+
+- **`loginctl` 無 `LockedHint`**：`ext-session-lock` 是 **Wayland 合成器層**的鎖，跟 **logind 的 session 鎖**是兩套獨立機制。查 `LockedHint` 查的是 logind 那套，對 Wayland 協議鎖天生查不到——是查錯層，不是沒鎖。
+- **`pgrep` 找不到 lock 行程**：鎖屏由 quickshell **行程內**畫，沒有獨立的 lock 可執行檔可抓。
+- **看起來時有時無**：不是鎖時有時無，是我剛好在 3 分鐘 idle 邊界附近截圖、加上截圖前的 IPC 活動偶爾把 idle resume 掉。
+
+教訓：判斷 Wayland session 有沒有被鎖，看的是**合成器的 session-lock 狀態**（有鎖時 Hyprland 的特定行為、或直接看 lock client 在不在），不是 `loginctl LockedHint`，也不是畫面上有沒有密碼框——現代 shell 這兩個訊號都靠不住。用肉眼判 UI 狀態誤判了兩次，是讀 shell 自己的 log 才定案，呼應可除錯 bootstrap 的原則：找程式自己的 log，別盯著畫面猜。
+
+##### lock-died 事故 + 復原（正是無人值守踩過的雷）
+
+為了測配色，我 `caelestia shell -k` 殺掉 shell 重啟——當下 shell 正握著那個 idle 觸發的 session lock。持鎖 client 一死，Hyprland 跳出安全畫面：`Oopsie daisy, it looks like you locked your screen but the lockscreen app died`。這是 `ext-session-lock` 的**故意設計**：持鎖 client 崩潰時，合成器**保持鎖定**而不解鎖——否則「殺掉鎖屏程式就能解鎖」會變成繞過鎖的漏洞。這正是無人值守那晚撞到的畫面，根因就是「鎖屏 client 在持鎖狀態下死亡」。
+
+復原流程（從另一個 tty 或 SSH 用 hyprctl 做，Hyprland 的 died screen 本身也把指令寫在畫面上）：
+
+1. `hyprctl keyword misc:allow_session_lock_restore 1`——允許新的 lock client 接管這個孤兒鎖（預設不允許，同樣是安全設計）。
+2. 起一個 lock client 接管：`hyprctl dispatch exec hyprlock`。caelestia 的鎖只在 idle 觸發、沒有「立刻鎖」的指令可以隨手叫出來接管，所以改用 step 2 已裝的 hyprlock（`shotF-hyprlock.png`：hyprlock 的鎖屏蓋上，died screen 模糊在後）。
+3. 在鎖屏輸入密碼解鎖，回到桌面。
+
+對無人值守的啟示：跑長任務的圖形 session 若會 idle 鎖屏，鎖屏 client（quickshell／hyprlock）一旦崩潰就會把整個 session 卡在 died screen，SSH 進去用 hyprctl 復原是唯一活路——這也是為什麼無人值守一定要留 SSH 這條帶外通道，不能只靠圖形 session 自救。更根本的做法是無人值守的 session 直接關掉 idle 鎖（改 `hypridle`／shell 的 idle config 或設 inhibitor），從源頭避免長任務跑到一半被鎖。
+
+階段 C 其餘（更深入的客製化項目）、D（生態對照）待續。
 
 #### 前置確認（VM 開機後先做）
 
