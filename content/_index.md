@@ -28,13 +28,12 @@ tags: ["首頁", "教學", "工程筆記"]
 - [Backend 服務實務指南](/backend/)：整理資料庫、快取、訊息佇列、觀測、部署與可靠性驗證等跨語言後端能力
 - [CI/CD 教學](/ci/)：整理驗證、建置、發布 gate 與不同部署場域的流程差異
 - [本地 LLM 寫 code 實務指南](/llm/)：在 Apple Silicon Mac 上跑本地 LLM、整合 VS Code 寫 code 的最短可行路徑
-- [CLI 圖形化工具](/cli/)：在純文字終端機用 TUI、ASCII 圖表、多工器、檔案管理器與 SQL 客戶端做遠端操作，含 SSH 伺服器、手機平板、低頻寬情境的選型判讀
 - [商業概念與策略分析](/business/)：整理商業模式、單位經濟、競爭護城河等術語卡片，並用 WRAP 框架拆解具體市場案例
 - [Testing 測試策略](/testing/)：三層測試分層、mock 遮蔽機制、protocol integration test、客戶端可觀測性，從 app_tunnel 實機測試教訓出發
 - [UX Design 畫面設計](/ux-design/)：畫面狀態矩陣、gate fallback、輸入機制、錯誤回復、導航模式，mobile app 的 UX 設計判斷
 - [Monitoring 監控體系](/monitoring/)：四類事件分類、SDK 設計、collector 架構、商業方案比較、資安與隱私、行為資料商業利用
 - [DevOps 實務指南](/devops/)：負載平衡、水平擴展、流量管控、服務探活、容量規劃、高可用、突發流量應對、成本管理
 - [Infra 基礎設施建置指南](/infra/)：從零循序漸進把雲端基礎設施做起來 — IaC、身分憑證、網路地基、環境分離、核心服務、可觀測性、自動化 review、治理習慣與組織推動
-- [Dotfile 工作環境配置指南](/dotfile/)：個人開發環境的配置管理 — dotfile 結構設計、同步策略、shell 與終端機配置、平鋪式視窗管理、桌面客製化，從個人工具鏈延伸到團隊環境標準化
+- [Linux 完整指南](/linux/)：從零安裝 Linux、出問題怎麼除錯、各情境的工具選擇（CLI / 圖形桌面 / 遠端），以及用 dotfile 管理整個工作環境 — 安裝、除錯、工具選單與 dotfile 管理四大子分類
 
 ---

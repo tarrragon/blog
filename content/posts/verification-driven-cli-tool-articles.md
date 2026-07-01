@@ -40,5 +40,5 @@ tags: ["writing-methodology", "cli", "verification", "docker", "retrospective"]
 ## 相關連結
 
 - Verification-driven CLI skill（`.claude/skills/verification-driven-cli/`）— 操作步驟
-- [終端機圖形化工具總覽](/cli/cli-graphical-tools-overview/) — 用此流程生產的工具文章
+- [終端機圖形化工具總覽](/linux/tools/cli/cli-graphical-tools-overview/) — 用此流程生產的工具文章
 - [#199 一篇文章只承擔一種功能](/report/single-function-per-article-sop-vs-retrospective/) — 本文精簡的依據

@@ -28,7 +28,7 @@ tags: ["monitoring"]
 
 ## 跟 Dotfile 的關係
 
-[Dotfile 工作環境配置指南](/dotfile/) 聚焦個人開發環境的配置管理。Monitoring 系列有獨立的 hands-on 專案做實測，Dotfile 系列也會搭配 VM 實測專案做 Hyprland 桌面配置的驗證——兩者的教材 + 實測專案模式平行。
+[Dotfile 工作環境配置指南](/linux/dotfile/) 聚焦個人開發環境的配置管理。Monitoring 系列有獨立的 hands-on 專案做實測，Dotfile 系列也會搭配 VM 實測專案做 Hyprland 桌面配置的驗證——兩者的教材 + 實測專案模式平行。
 
 斷網環境（air-gapped）裡這三層都要 self-hosted——infra 層用 Prometheus + Grafana、backend 層用自架的 trace/log collector、本系列的 SDK 和 Collector 也要部署在內網。斷網環境的 infra 層監控設定見[斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/)。
 

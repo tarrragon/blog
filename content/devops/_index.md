@@ -18,7 +18,7 @@ tags: ["devops"]
 | [CI/CD](/ci/)              | 驗證、建置、發布 gate                          | CI/CD 管線的產出（artifact）是這裡部署的輸入                                  |
 | [Testing](/testing/)       | 測試策略與 mock 邊界                           | 服務 fixture 的 health check 和服務探活概念共通                               |
 | [UX Design](/ux-design/)   | 畫面設計與 gate fallback                       | Server 端限速（429）影響 client 端的重試 UX 和離線 UX                         |
-| [Dotfile](/dotfile/)       | 個人工作環境配置管理                           | DevOps 工程師的日常工具鏈（多終端機、SSH、log tail）是 dotfile 高度客製的場景 |
+| [Dotfile](/linux/dotfile/) | 個人工作環境配置管理                           | DevOps 工程師的日常工具鏈（多終端機、SSH、log tail）是 dotfile 高度客製的場景 |
 
 Backend 教「服務怎麼設計」，DevOps 教「設計好的服務怎麼在 production 活下來」。
 
