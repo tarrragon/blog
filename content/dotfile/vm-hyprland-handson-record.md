@@ -93,6 +93,20 @@ shasum -a 256 ~/Downloads/archboot-*.iso
 
 **gotcha（archboot 對網路的硬依賴）**：archboot 不是「ISO 內含完整系統、裝完即用」的離線安裝器，而是 Arch 的網路安裝環境——開機進去跑互動式 `setup`，從網路抓最新 Arch ARM 套件。所以這台 VM 從第一次開機就必須能上網（UTM 預設 NAT 即可）。這點教材原本沒講，要回寫。
 
+**gotcha（archboot 鏡像速度差異極大）**：archboot 有三個官方鏡像，預設的 `release.archboot.com`（美國麻州）在台灣下載極慢（~47 KB/s，458 MB 要 2+ 小時）。實測三個鏡像：
+
+| 鏡像                   | 地區         | 從台灣的實測速度         |
+| ---------------------- | ------------ | ------------------------ |
+| `release.archboot.com` | 美國（麻州） | ~47 KB/s                 |
+| `release.archboot.net` | 亞洲（印尼） | ~47 KB/s（跟美國差不多） |
+| `release.archboot.eu`  | 歐洲（法國） | ~390 KB/s（快 8 倍）     |
+
+從台灣下最快的是歐洲鏡像（`.eu`），亞洲鏡像（`.net`，印尼）反而沒比美國快。下載指令改用 `.eu`：
+
+```bash
+curl -L -O "https://release.archboot.eu/aarch64/latest/iso/archboot-2026.07.01-02.09-7.1.2-2-aarch64-ARCH-aarch64.iso"
+```
+
 ### VM 參數定案
 
 | 項目        | 值                                                                 |
