@@ -542,7 +542,29 @@ ShellRoot {
 
 **啟動路徑實測（無人值守／遠端的真實障礙）**：重開機後要把 Hyprland 拉起來測，卡在兩件事。其一，`getty@tty1` 是 `enabled` 但開機後沒 active（logind 的 autovt 沒觸發），tty1 沒有登入提示。其二，UTM 顯示停在 serial console（`ttyAMA0`），它跟圖形 VT 是兩個獨立輸出，在 guest 內 `chvt` 只切圖形那側、serial console 不受影響。解法是 SSH 進去 `sudo systemctl start getty@tty1` 補出登入提示、`sudo chvt 1` 切到圖形 VT，再從 UTM 的 Display 輸出登入跑 `Hyprland`。**從 SSH 用 `sudo chvt` 與 `systemctl start getty@tty1` 遠端操控 VM 的 VT，比在 Mac + UTM 下跟 `Ctrl+Alt+Fn` 快捷鍵搏鬥穩定**——這是把桌面 session 從遠端拉起來的一條可靠路徑。
 
-階段 C（配置與客製化驗證）、D（生態對照）待續。
+#### 實測執行記錄：階段 C 之一（通知服務接管）——通過
+
+Caelestia 自帶通知 service，取代 step 2 rice 用的 mako。實測把 mako 停掉後，Caelestia 的 quickshell 行程自動接手通知，`notify-send` 的訊息由 Caelestia 的面板 render（`shotC-caelestia-notification.png`，右側 `1 notification` 面板顯示測試通知，CJK 標題正常）。
+
+**通知 daemon 是獨佔 D-Bus 服務名的**——這是切換時最容易靜默失效的地方。`org.freedesktop.Notifications` 這個 bus name 同一時間只能有一個擁有者，mako 跟 Caelestia 誰先起誰佔著，後者搶不到。step 3 剛起 Caelestia shell 時 log 就有一行 warning：`Could not register notification server ... presumably because one is already registered`，但畫面上毫無異狀，Caelestia 的通知只是靜靜地不會出現。要讓 Caelestia 接管，得先 `pkill -x mako`；它 log 也說了「若現有 service 取消註冊會再試」，mako 一退出、Caelestia 隔幾秒就自動註冊上。
+
+**驗證「通知到底被誰接管」的可靠手段**是查 D-Bus 服務名的擁有者、不是看畫面有沒有跳通知：
+
+```bash
+# 查 org.freedesktop.Notifications 現在被哪個連線擁有
+owner=$(busctl --user call org.freedesktop.DBus /org/freedesktop/DBus \
+  org.freedesktop.DBus GetNameOwner s org.freedesktop.Notifications | awk '{print $2}' | tr -d '"')
+# 再把那個連線換算成 PID → 行程名
+pid=$(busctl --user call org.freedesktop.DBus /org/freedesktop/DBus \
+  org.freedesktop.DBus GetConnectionUnixProcessID s "$owner" | awk '{print $2}')
+ps -o comm= -p "$pid"
+```
+
+停 mako 前擁有者是 mako 的連線、停掉後換成 `qs`（Caelestia 的 quickshell），就確認接管成功。畫面有沒有跳通知會受 idle／專注模式影響，D-Bus 擁有者才是 ground truth。
+
+**附帶觀察（session lock）**：截圖當下 Caelestia 的畫面是它自帶的 dashboard/lock，中央有 `Enter your password` 輸入框——Caelestia shell 起來一段時間後（uptime 約 24 分鐘）觸發了它內建的 session lock。這跟 step 2 的 hyprlock 是不同的鎖屏實作（Caelestia 自己畫），是 step 3 換 shell 後連帶換掉的元件之一，之後階段 C 客製化驗證會再確認它的觸發條件與解鎖流程。
+
+階段 C 其餘（配置與客製化驗證）、D（生態對照）待續。
 
 #### 前置確認（VM 開機後先做）
 
