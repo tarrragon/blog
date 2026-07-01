@@ -206,7 +206,7 @@ yay -S swww            # 動態桌布（hyprpaper 的替代）
 yay -S rofi-wayland    # 功能比 wofi 更豐富的 launcher
 ```
 
-> **[VM 可測試]** 套件安裝在 VM 中完全可執行。waybar、wofi、mako 在軟體渲染下也能正常使用。
+> **[已驗證]** 套件安裝在 VM 中完全可執行。waybar、wofi、mako、hyprlock 在 virtio-gpu-gl-pci 加速下正常 render（Hyprland 0.55 + UTM 4.7.5 實測）。
 >
 > **[需實機測試]** 藍牙（`bluez`）、亮度（`brightnessctl`）、音訊裝置偵測（`pipewire`）需要實際硬體。
 

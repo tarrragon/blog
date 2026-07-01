@@ -46,7 +46,7 @@ env = {
 }
 ```
 
-> **[待實測驗證]** Hyprland 0.40+ 從 wlroots 遷移到 Aquamarine 渲染後端，部分 `WLR_` 開頭的環境變數可能已失效。`WLR_RENDERER_ALLOW_SOFTWARE` 和 `WLR_RENDERER` 在新版 Hyprland 的實際行為需在目標版本上測試確認。`AQ_NO_KMS_REQUIREMENT` 是 Aquamarine 的原生變數，預期仍有效。
+> **[已驗證]** Hyprland 0.55（Aquamarine）+ UTM virtio-gpu-gl-pci 實測：GPU 加速模式下 Hyprland 直接走 VirGL/Venus，不需要 `WLR_RENDERER` 或 `WLR_RENDERER_ALLOW_SOFTWARE`。`AQ_NO_KMS_REQUIREMENT` 仍有效。軟體渲染 fallback 路徑（`WLR_RENDERER=pixman`）未測試——有 GPU 加速時不需要走這條。
 
 ## VM 中應該關閉的效果
 
