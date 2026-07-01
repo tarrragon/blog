@@ -12,7 +12,7 @@ tags: ["linux", "process", "systemd", "debugging"]
 
 ## 程式活著沒：比對正確的行程名
 
-判斷一個程式在不在，行程表是權威來源，`pgrep` / `ps` 是對的工具，但成敗在於**比對正確的行程名（comm）**。一個實際的坑：某程式的可執行檔叫 `quickshell`，但透過名為 `qs` 的 symlink 啟動時，它在行程表裡的 comm 是 `qs`。這時 `pgrep quickshell` 找不到，很容易誤判成程式掛了、甚至誤觸「重啟」而引發更大的問題，其實它以 `qs` 這個名字活得好好的。
+判斷一個程式在不在，行程表是權威來源，`pgrep` / `ps` 是對的工具，但成敗在於**比對正確的行程名**（comm，行程表裡記的執行檔短名，可從 `/proc/<pid>/comm` 看）。一個實際的坑：某個桌面 shell（畫桌面 UI 的圖形程式，不是 bash/zsh 那種命令列 shell）的可執行檔叫 `quickshell`，但透過名為 `qs` 的 symlink 啟動時，它在行程表裡的 comm 是 `qs`。這時 `pgrep quickshell` 找不到，很容易誤判成程式掛了、甚至誤觸「重啟」而引發更大的問題，實際上它以 `qs` 這個名字好好跑著。
 
 可靠的做法：
 
@@ -22,7 +22,7 @@ tags: ["linux", "process", "systemd", "debugging"]
 
 ## 服務由誰提供：問註冊表
 
-「某個系統服務現在由哪個程式在提供」，權威來源是服務註冊（D-Bus name、監聽中的 socket），不是畫面。以桌面通知為例，`org.freedesktop.Notifications` 這個 D-Bus 服務名同一時間只能有一個擁有者——兩個通知 daemon（例如 mako 跟另一個 shell 內建的通知服務）不能共存，誰先註冊誰佔著，後者只能等前者退出。
+「某個系統服務現在由哪個程式在提供」，權威來源是服務註冊，不是畫面。桌面服務多半註冊在 **D-Bus**（Linux 桌面的行程間訊息匯流排）上：一個服務用一個名字掛在上面，而**同一個名字同一時間只能被一個行程擁有**。以桌面通知為例，`org.freedesktop.Notifications` 這個 D-Bus 名同一時間只有一個擁有者——兩個通知 daemon（例如 mako 跟某個桌面 shell 內建的通知服務）不能共存，誰先註冊誰佔著，後者只能等前者退出。
 
 想知道現在是誰接管，查註冊表而不是送一則通知看畫面：
 
@@ -45,7 +45,7 @@ ps -o comm= -p "$pid"
 關鍵是分清兩種鎖：
 
 - **logind 層的鎖**：systemd 登入管理的 session 鎖，權威狀態是 `loginctl show-session <id> -p LockedHint`。
-- **Wayland 合成器層的鎖**：走 `ext-session-lock` 協議、由 compositor 管的鎖，跟 logind 是獨立機制。這種鎖 `loginctl` 的 `LockedHint` **查不到**——不是沒鎖，是查錯層。
+- **Wayland 合成器層的鎖**：走 `ext-session-lock` 協議、由**合成器**（compositor，Wayland 下負責把各視窗合成到螢幕、管輸入輸出的核心程式，約當 X11 時代的視窗管理器加顯示伺服器；Hyprland、Sway 等都是）管的鎖，跟 logind 是獨立機制。這種鎖 `loginctl` 的 `LockedHint` **查不到**——不是沒鎖，是查錯層。（用 GNOME / KDE 的鎖屏走的機制不同，以下的 `ext-session-lock` 判法與復原針對 wlroots 系的 Wayland 合成器。）
 
 所以「`loginctl` 沒有 `LockedHint`、`pgrep` 找不到獨立鎖屏程式」不足以斷定「沒鎖」：合成器層的鎖不歸 logind、而鎖屏畫面可能由 shell 主程式在自己行程內畫（沒有獨立可執行檔可抓）。這種情況真正的權威來源是那個 shell 自己的 log（有沒有載入鎖屏模組、idle 計時器有沒有觸發鎖定），或直接看 compositor 的 session-lock 狀態。判鎖看合成器 / shell 的 log，不是 `loginctl`、更不是畫面有沒有密碼框。
 
@@ -75,4 +75,4 @@ ps -o comm= -p "$pid"
 - 鎖屏程式死掉卡住 → `allow_session_lock_restore` + 重起鎖屏程式接管解鎖。
 - 判多工器 session 存活 → `zellij ls` / `tmux ls`；可能已死且有在意的產出時，先確認產出已保存 / 已推送再清 session。
 
-任何一步判不準，回到 [診斷心法](../diagnosis-read-authoritative-state/) 的四步：描述症狀、定位權威來源、用對工具讀、權威跟表象矛盾時信權威。
+判不準時，[診斷心法](../diagnosis-read-authoritative-state/) 的四步（描述症狀、定位權威來源、用對工具讀、矛盾時信權威）是通用的回退。

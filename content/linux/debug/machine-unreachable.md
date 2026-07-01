@@ -47,4 +47,4 @@ tags: ["linux", "vm", "networking", "debugging"]
 - 虛擬機開不起來、宿主側報「找不到資源」但資源在 → 主因查路徑隔離，再排除殘留行程（`pgrep -af 'qemu\|...'`）/ 磁碟。
 - 一串症狀同時發生 → 早點 `df -h`，宿主與 guest 兩側都查，磁碟滿常是共同根因。
 
-判斷卡住時，回到 [診斷心法](../diagnosis-read-authoritative-state/)：連不上是最終症狀，往網路表、服務狀態、資源用量這些權威來源一層層確認，而不是一直重試連線。
+連不上只是最終症狀，真正的定位靠網路表、服務狀態、資源用量這些權威來源一層層往回推——完整的判讀紀律見 [診斷心法](../diagnosis-read-authoritative-state/)。

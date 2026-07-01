@@ -27,7 +27,7 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 整合式 shell 把狀態列、通知、鎖屏、啟動器畫在**同一個程式**裡，所以這個程式崩潰時，這些東西會**一起消失**。手動拼裝的每個元件是獨立行程，一個崩掉不影響其他——mako（通知）崩了，waybar（狀態列）還在。
 
-這不只是理論。本系列的 Caelestia 實測就撞到一個具體案例：Caelestia 的鎖屏是由 Quickshell 主程式畫的，當這個持鎖的程式被中止時，Hyprland 依 `ext-session-lock` 協議保持鎖定並顯示「lockscreen app died」的死局——狀態列、通知、鎖屏因為同源，一個環節出事就連帶整個桌面 UI。手動拼裝的 hyprlock 是獨立的鎖屏程式，它崩潰同樣會觸發那個死局，但你的狀態列與通知不會跟著沒。
+這不只是理論。這次 VM 實測就撞到一個具體案例：Caelestia 的鎖屏是由 Quickshell 主程式畫的，當這個持鎖的程式被中止時，Hyprland 依 `ext-session-lock` 協議保持鎖定並顯示「lockscreen app died」的死局——狀態列、通知、鎖屏因為同源，一個環節出事就連帶整個桌面 UI。手動拼裝的 hyprlock 是獨立的鎖屏程式，它崩潰同樣會觸發那個死局，但你的狀態列與通知不會跟著沒。
 
 這一軸在穩定性敏感或無人值守的場景最關鍵。跑長時間無人盯著的任務時，「一個元件崩掉只損失那個元件」的隔離性，比「全部整合在一起」的一致性更值錢——因為沒人在旁邊立刻重啟。
 
@@ -35,7 +35,7 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 讓整個桌面配色一致，是整合式與手動拼裝差別最大、卻最常被忽略的地方。整合式 shell 因為所有元件在同一個程式裡，天生共用一套配色——Caelestia 的 dynamic scheme 從桌布抽一組 Material-3 palette，狀態列、通知、鎖屏、dashboard 全部同時套用，換張桌布整套 UI 跟著變。
 
-手動拼裝要達到同樣的一致，得自己解決一個跨程式的問題：每個元件用不同的設定格式與主題引擎，它們之間不會自動共享顏色。本系列 step 2 手動拼裝時就撞到這點——waybar 的 GTK CSS 引擎讀不到 Hyprland 的 `$` 顏色變數，結果 waybar 的 `style.css` 裡得**手抄一份跟 Hyprland `colors.conf` 相同的 hex 色碼**。換一次配色，就要在 waybar CSS、wofi CSS、mako config、hyprland colors 好幾個地方各改一遍。
+手動拼裝要達到同樣的一致，得自己解決一個跨程式的問題：每個元件用不同的設定格式與主題引擎，它們之間不會自動共享顏色。這次手動拼裝那套時就撞到這點——waybar 的 GTK CSS 引擎讀不到 Hyprland 的 `$` 顏色變數，結果 waybar 的 `style.css` 裡得**手抄一份跟 Hyprland `colors.conf` 相同的 hex 色碼**。換一次配色，就要在 waybar CSS、wofi CSS、mako config、hyprland colors 好幾個地方各改一遍。
 
 解這個手工問題的標準做法，是加一層**模板工具**（matugen、pywal、wallust 之類）：從一張桌布或一套色票，自動生成每個元件的設定檔（例如 `matugen/templates/rofi-colors.rasi` 就是給 rofi 用的顏色模板）。這等於是手動重建 Caelestia 內建的那套 dynamic theming pipeline。所以配色一致這件事的真正取捨是：Caelestia 開箱就有「換桌布全套跟著變」，手動拼裝要嘛手抄 hex、要嘛自己搭一條 templating pipeline。
 
@@ -71,4 +71,4 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 - 手動拼裝那幾個元件（狀態列、啟動器、通知）各自怎麼配置，見 [桌面 Shell 元件](/linux/dotfile/06-rice-design/desktop-shell-components/)。
 - 配色系統本身（不管哪條路線）怎麼設計，見 [配色系統、鎖屏與 GTK 主題](/linux/dotfile/06-rice-design/color-system-theming/)。
 
-這篇的足跡數字（安裝 230 MB vs 4.5 MB、RSS ~400 MB vs ~60 MB）與 lock-died 失敗案例，來自本系列在 Apple Silicon UTM VM 上實際跑過兩種桌面棧的量測。
+這篇的足跡數字（安裝 230 MB vs 4.5 MB、RSS ~400 MB vs ~60 MB）與 lock-died 失敗案例，來自一次在 Apple Silicon UTM VM 上實際跑過兩種桌面棧的量測。
