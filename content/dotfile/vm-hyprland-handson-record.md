@@ -596,6 +596,21 @@ quickshell log 給了關鍵證據：`@modules/lock/center/ProfilePic.qml`（lock
 
 對無人值守的啟示：跑長任務的圖形 session 若會 idle 鎖屏，鎖屏 client（quickshell／hyprlock）一旦崩潰就會把整個 session 卡在 died screen，SSH 進去用 hyprctl 復原是唯一活路——這也是為什麼無人值守一定要留 SSH 這條帶外通道，不能只靠圖形 session 自救。更根本的做法是無人值守的 session 直接關掉 idle 鎖（改 `hypridle`／shell 的 idle config 或設 inhibitor），從源頭避免長任務跑到一半被鎖。
 
+#### 實測執行記錄：階段 C 之三（動態桌布 + Material-You 動態取色）——通過
+
+caelestia 的招牌功能是 `dynamic` 配色：不是套一組預設色，而是**從當前桌布圖片即時抽出一整組 Material-3 tonal palette**。實測這條在 virtio-gpu VM 上完整運作。
+
+**先看抽色本身（dry-run，不改任何東西）**：`caelestia wallpaper -p <圖片>` 會印出「這張圖會生成的配色」JSON 但不套用。預設桌布抽出的是偏藍調的暗色（primary `b4c7ed`、tertiary `eaddff`、background `0c0e12`），mode 自動判成 dark。這個 dry-run 很適合先確認一張圖會抽出什麼色，再決定要不要換上去。
+
+**換桌布 → 動態重抽 → UI 連動**：VM 上沒有現成的彩色桌布，用 Python PIL 生了一張暖色對角漸層（深橘紅 → 洋紅紫），`caelestia wallpaper -f <圖>` 設上去、`caelestia scheme set -n dynamic` 重抽。抽出的主色從藍調翻成暖調（primary `f9b6ac` 鮭魚粉、tertiary `ffe1ba` 暖奶油、background `130d0b` 暗棕），整個 shell UI——bar、dock、terminal 的文字與 prompt——即時換成暖色系（`shotI-dynamic-from-default-wp.png` 藍灰 vs `shotJ-dynamic-warm-wp.png` 暖粉橘）。同一個 dynamic 設定，換張桌布就換一整套 UI 配色，這是它跟固定配色（catppuccin/gruvbox 那種）的本質差別。
+
+實測要點：
+
+- **抽色跟著桌布走，不是隨機**：暖桌布抽暖色、藍桌布抽藍色，`wallpaper -p` 的 dry-run 數據跟實際套用後的 UI 顏色一致。
+- **smart mode 自動判 dark/light**：`wallpaper -f` 預設會依桌布亮度自動選 dark 或 light 模式（`-N` / `--no-smart` 可關掉）。兩張測試桌布都自動判成 dark。
+- **換桌布後要不要手動重抽**：這次是明確 `scheme set -n dynamic` 重抽的。`wallpaper -f` 的 smart mode 會調 dark/light，但要讓 dynamic 從新桌布重新抽整組色，走一次 `scheme set -n dynamic` 最保險。
+- **熱套用**：dynamic 跟前面 tokyonight 一樣即時生效、不必重啟 shell（呼應階段 C-2 的「shell 啟動時 scheme 檔在不在」結論——這個 shell 實例啟動時檔已存在、watcher 有效）。
+
 階段 C 其餘（更深入的客製化項目）、D（生態對照）待續。
 
 #### 前置確認（VM 開機後先做）
