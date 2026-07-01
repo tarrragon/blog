@@ -85,6 +85,33 @@ pgrep mako    # 沒輸出 = 沒在跑
 
 **預防**：改 config 後重啟對應的工具確認語法正確。Waybar 的 config 是 JSON 格式，語法錯誤會導致它無法啟動——改完後先用 `waybar` 前台跑一次看有沒有錯誤訊息。
 
+## 場景二點五：鎖屏卡死（hyprlock 異常結束）
+
+**症狀**：鎖屏畫面消失但桌面沒回來，螢幕顯示 Hyprland 的失效保護訊息（「it looks like you locked your screen but the lockscreen app died」），或畫面全黑但系統有回應（SSH 能連、TTY 可能切得到也可能切不到）。
+
+**原因**：鎖屏工具（Hyprlock、Swaylock）透過 Wayland 的 ext-session-lock 協議向 compositor 請求鎖定。鎖定狀態由 compositor 持有，唯一正常解鎖動作是鎖屏 client 通過認證後呼叫 unlock_and_destroy。如果鎖屏 client 在持鎖狀態下被殺（`pkill`、crash），compositor 沒收到認證信號，會維持鎖定並顯示失效保護畫面。這跟殺 waybar/mako 不同——那些是普通 process，殺了重啟就好；鎖屏 client 持有安全狀態，殺了反而卡住。
+
+**恢復步驟**：
+
+1. 嘗試切到另一個 TTY（`Ctrl+Alt+F2`）。注意：ext-session-lock 的安全語意允許 compositor 攔截 VT 切換快捷鍵，此時 TTY 切不過去，改用 SSH 從另一台機器連入
+2. 允許新的鎖屏 client 接管既有的鎖：
+
+```bash
+hyprctl --instance 0 'keyword misc:allow_session_lock_restore 1'
+```
+
+3. 重新拉一個鎖屏 client：
+
+```bash
+hyprctl --instance 0 'dispatch exec hyprlock'
+```
+
+4. 回到鎖屏畫面，用密碼正常解鎖
+
+**判讀**：`loginctl show-session <id> -p LockedHint` 可能顯示 `LockedHint=no`（logind 層認為沒鎖），但畫面仍進不去——因為擋住畫面的是 compositor 的 ext-session-lock，跟 logind 的提示是獨立的兩層。判斷畫面鎖定狀態看 compositor 層，不看 logind。
+
+**預防**：測試鎖屏時備好恢復路徑（知道密碼、或預先開 SSH）。不要用殺 process 的方式結束鎖屏——要結束就走認證解鎖。自動化流程若會啟動鎖屏，把「需要人工解鎖」算進代價。鎖屏安全模型的完整說明見 [Session Lock](/dotfile/knowledge-cards/session-lock/)。
+
 ## 場景三：GPU driver hang（畫面凍結）
 
 **症狀**：桌面畫面完全凍結——滑鼠不動、鍵盤不回應、`Ctrl+Alt+F2` 切 TTY 也沒反應或延遲很久才回應。但如果從另一台機器 SSH 進來，系統是活的，process 都在跑。

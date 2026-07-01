@@ -284,7 +284,186 @@ UTM-on-Mac 上，Hyprland 的 `$mainMod = SUPER` 對應 Mac 的 Cmd 鍵，但 Cm
 
 ### 第二步：rice（waybar / wofi / mako / hyprlock）
 
-_待填。_
+第一步證明 Hyprland 在 virtio-gpu 上能 render 後，第二步把桌面 shell 拼上去：狀態列、啟動器、通知、鎖屏。做法是照 dotfile 慣例每個元件一個 stow package，配色統一 Catppuccin Mocha，字型對齊「VM 實際裝進來的字族」。產出五個 package：`waybar/` `wofi/` `mako/` `hyprlock/`，外加一個不屬於任何單一工具的 `themes/`（集中配色 `colors.conf`）。
+
+#### 配色與字型的兩個對齊點
+
+配色選 Catppuccin Mocha（公開色票），集中寫進 `themes/.config/hypr/colors.conf` 當 Hyprland 系列的 SSoT。但有個範圍限制要先講清楚：**只有 Hyprland 自家的 `.conf`（`hyprland.conf` / `hyprlock.conf`）能 `source` 這些 `$` 變數**。Waybar 與 Wofi 用的是 GTK CSS、Mako 用的是自己的 ini，三者都引用不到 Hyprland 變數，色碼只能手抄同一組 hex。所以「一份配色檔餵所有工具」在純手寫配置下做不到，得靠 build script / 樣板工具（pywal、flavours）才能從單一來源生成各工具的配色——這次先手動對齊，把限制記下來。
+
+字型踩到第一個實測坑。教材範例（`desktop-shell-components.md`、`color-system-theming.md`）裡 waybar / mako / hyprlock 的字型都寫 `JetBrainsMono Nerd Font`，但 VM 照 `packages-arch.txt` 裝的是 `ttf-meslo-nerd`，實際字族名是 **MesloLGS Nerd Font**：
+
+```bash
+fc-list | grep -i meslo | head -1
+# MesloLGSNerdFont-Regular.ttf: "MesloLGS Nerd Font":style=Regular
+```
+
+字族名對不上的後果不是 fallback 成別的字，而是**狀態列 icon glyph 直接變豆腐方塊**——Nerd Font 的圖示字元落在私有區（PUA），只有那支字有；指定一個沒裝的字族，Pango 找不到 PUA glyph 就畫不出 icon。所以所有 rice config 的字型統一改成 `MesloLGS Nerd Font`（實裝字族）。**回寫教材**：範例字型要嘛改成 `ttf-meslo-nerd` 對應的 `MesloLGS Nerd Font`，要嘛在 `packages-arch.txt` 改裝 `ttf-jetbrains-mono-nerd`，兩邊得對齊，不能教材寫一套、套件清單裝另一套。
+
+#### 部署坑：stow 的 tree folding / unfolding
+
+新 package `stow` 下去時，`themes/` 這步噴出比預期多的動作：
+
+```text
+$ stow themes
+UNLINK: .config/hypr
+MKDIR:  .config/hypr
+LINK:   .config/hypr/hyprland.conf => ../../dotfiles/hyprland/.config/hypr/hyprland.conf
+LINK:   .config/hypr/colors.conf   => ../../dotfiles/themes/.config/hypr/colors.conf
+```
+
+原本 `~/.config/hypr` 是一條**整個目錄的 symlink**（第一步只有 `hyprland/` 這一個 package 提供 `.config/hypr/`，stow 把整個目錄折疊成單一 symlink → `dotfiles/hyprland/.config/hypr`，這叫 tree folding）。這也解釋了第一步一個觀察：`readlink ~/.config/hypr/hyprland.conf` 看起來「不是 symlink、是普通檔」——因為 symlink 在**目錄那一層**，檔案本身是順著目錄 symlink 走到 repo 裡的真實檔。
+
+當 `themes/` 也要往 `.config/hypr/` 放東西時，stow 不能再讓整個目錄指向單一 package，於是 **unfold**：拆掉目錄 symlink、建一個真實的 `.config/hypr/` 目錄、再把每個檔案各自 symlink 回它所屬的 package。`hyprlock/`（提供 `.config/hypr/hyprlock.conf`）接著加進同一個目錄也是同樣機制。最後 `~/.config/hypr/` 是真目錄、底下三條 per-file symlink 各指各家：
+
+```text
+colors.conf   -> ../../dotfiles/themes/.config/hypr/colors.conf
+hyprland.conf -> ../../dotfiles/hyprland/.config/hypr/hyprland.conf
+hyprlock.conf -> ../../dotfiles/hyprlock/.config/hypr/hyprlock.conf
+```
+
+**回寫教材**：這是 stow folding/unfolding 的教科書案例，值得補進 `knowledge-cards/gnu-stow.md`——多個 package 共用同一個目標子目錄（這裡 `.config/hypr/`）時，stow 自動從「折疊的目錄 symlink」過渡到「真目錄 + 逐檔 symlink」。理解這個才看得懂為什麼有時 `~/.config/X` 是 symlink、有時是真目錄。
+
+#### 測試方法：在活的 instance 上手動拉元件
+
+測試走第一步建立的套路：先從 `$XDG_RUNTIME_DIR/hypr/` 找出**活的** instance signature（crash 留下的 stale socket 連不上），用該 sig 操作。改了 `hyprland.conf` 後 `hyprctl reload` 套用新設定，但**`reload` 不會重跑 `exec-once`**（那只在 compositor 啟動時跑一次）——所以 waybar / mako 要用 `hyprctl dispatch exec` 手動拉起來測：
+
+```bash
+export XDG_RUNTIME_DIR=/run/user/1000
+export HYPRLAND_INSTANCE_SIGNATURE=<活的 sig>
+hyprctl reload                                    # 套用 source/keybind/邊框色
+hyprctl dispatch exec "waybar"                    # exec-once 的元件手動拉
+hyprctl configerrors                              # 確認沒解析錯誤
+```
+
+截圖用 grim，但 grim 走 `WAYLAND_DISPLAY` 連 compositor，不是 `HYPRLAND_INSTANCE_SIGNATURE`。要從活 instance 的某個 client process 撈出它連的 socket：
+
+```bash
+cat /proc/$(pgrep -x waybar)/environ | tr '\0' '\n' | grep WAYLAND_DISPLAY
+# WAYLAND_DISPLAY=wayland-1
+WAYLAND_DISPLAY=wayland-1 grim ~/step2/shot.png
+```
+
+#### Waybar：VM 下的模組自動退化
+
+Waybar 起來就正常 render（截圖 `shot1.png`）：左邊工作區 + 視窗標題、中間時鐘、右邊系統狀態，Catppuccin 配色與 MesloLGS icon 都對。值得記的是**同一份 config 在 VM 與實體機都能用、不必為 VM 改**——靠的是 Waybar 對缺硬體的模組自動隱藏：
+
+```text
+[warning] No batteries.
+[info] Bar configured (width: 1280, height: 32) for output: Virtual-1
+```
+
+`battery` 模組在沒有電池硬體的 VM 直接消失、不報錯也不留空位；`pulseaudio` 在沒有 pipewire/音效裝置時顯示為空；`network` 顯示 VM 唯一的有線介面 `enp0s1`。所以 config 裡 wifi / disconnected / battery 等分支留著給實體機用、在 VM 無害。waybar 起來後 `hyprctl monitors` 的 `reserved: 0 32 0 0` 確認它在頂部保留了 32px。
+
+另一行 log 值得知道但無須處理：`Unable to receive desktop appearance: GDBus.Error...ServiceUnknown`——這是 Waybar 想透過 portal 問系統的 light/dark 偏好，但 VM 沒跑 `xdg-desktop-portal`。無害，只影響自動深淺色切換（我們本來就寫死深色）。
+
+#### Mako：通知的兩個缺口
+
+Mako config 用 `makoctl reload` 驗證能 parse、`[urgency=critical]` criteria 區塊生效——送一則 critical 通知，截圖（`shot2.png`）看到**紅框**（`border-color=#f38ba8`）、圓角、右上錨點都對。但測試過程炸出兩個缺口：
+
+**缺口一：mako 只負責「顯示」、不會自己造通知。** 要產生通知得靠 `libnotify` 的 `notify-send`，而最小安裝沒有它（`notify-send: command not found`）。沒有它連自測都做不到，更重要的是**應用程式也是透過 libnotify 發通知**，缺了等於整條通知鏈斷在源頭。臨時自測可改用 `gdbus` 直接打 `org.freedesktop.Notifications` 介面：
+
+```bash
+gdbus call --session --dest org.freedesktop.Notifications \
+  --object-path /org/freedesktop/Notifications \
+  --method org.freedesktop.Notifications.Notify \
+  "test" 0 "" "標題" "內文" "[]" "{}" 5000
+```
+
+但正解是把 `libnotify` 加進 `packages-arch.txt`（已加）。
+
+**缺口二：CJK 變豆腐。** critical 通知的中文內文在截圖裡是一排**豆腐方塊**（`shot2.png` 清楚可見）。根因同字型那段的延伸：MesloLGS Nerd Font 只含 Latin + icon glyph、**沒有 CJK**，而 VM 沒裝任何 CJK fallback 字型：
+
+```bash
+fc-match ":lang=zh-tw"
+# AdwaitaMono-Regular.ttf  ← 不含中文，等於沒有可用的 zh-tw 字
+```
+
+任何中文（通知、視窗標題、應用程式名、本地化的鎖屏日期）都會變豆腐。修法是裝 `noto-fonts-cjk` 當 fallback：
+
+```bash
+sudo pacman -S --needed noto-fonts-cjk
+fc-match ":lang=zh-tw"
+# NotoSansCJK-Regular.ttc: "Noto Sans CJK KR"  ← fontconfig 現在有 CJK glyph 可 fallback
+```
+
+裝完 `fc-match` 已能解析到 Noto Sans CJK。但這裡踩到一個比「裝字型」更深的坑：**光裝字型不夠，已經在跑的 client 不會自動看到新字。** 裝完 `noto-fonts-cjk` 後 `makoctl reload` 再送中文通知，畫面**還是豆腐**（`shot8.png`，注意這張的邊框已是藍色、順帶確認了 normal urgency 的邊框色）。原因是 mako daemon 在啟動時就把 Pango/fontconfig 的 font map 快取住了，而 `makoctl reload` 只重讀 config 檔、**不會重建 font map**——mako 是在裝 CJK 字型之前啟動的，所以它手上那份字集根本沒有 Noto CJK。
+
+修法是**重啟 daemon**（不是 reload）：
+
+```bash
+pkill mako && hyprctl dispatch exec mako
+```
+
+重啟後同一則中文通知正常顯示（`shot9.png`：「中文通知測試（重啟 mako 後）」標題與內文的中文都出來了，跟 Latin 的 `MesloLGS` 混排無縫）。這也解釋了為什麼在真實使用情境裡通常不會遇到——正常開機時 `exec-once = mako` 是在字型都裝好之後才啟動，daemon 一開始就看得到 CJK；只有「系統已在跑、中途才補裝字型」這種當下除錯的時序才會現形。**回寫教材要點**：裝 fallback 字型後，已在執行的 client（mako、waybar 等）要重啟才吃得到；`reload` 類指令通常只重讀設定、不重建字型快取。
+
+一個次要觀察：`fc-match :lang=zh-tw` 回的是 Noto Sans CJK **KR**（韓文排序優先），靠 Han 統一多數字能正常顯示，但要精確拿到台灣字形變體得另設 fontconfig 語言優先序——這是後續可細修的點、不擋用。
+
+`libnotify` 與 `noto-fonts-cjk` 都已補進 `packages-arch.txt`。
+
+#### Wofi：啟動器一次到位
+
+Wofi 是這次最順的元件。`hyprctl dispatch exec "wofi --show drun"` 叫起來（綁 `SUPER+D`），截圖（`shot3.png`）：藍框圓角的搜尋框、放大鏡 icon、drun 列出 `.desktop` 應用程式（ranger、zellij、foot、yazi 等），選中項是藍底反白字（`#entry:selected` 的 CSS 生效）。`mode=drun` 列的是 `.desktop` 應用程式；要 `run`（PATH 執行檔）或 `dmenu`（吃 stdin）模式時用 CLI 旗標臨時切，不寫死在 config。
+
+#### Hyprlock：渲染完成、但測試方式有大坑
+
+Hyprlock config 渲染結果確認（`shot4.png`）：`path = screenshot` 截當下畫面 + `blur_passes = 2` 模糊當背景、64px 時鐘、`cmd[update:60000] date` 產生的日期 label（`Wednesday, 01 July`，locale en_US 下是英文所以無豆腐）、藍框 pill 密碼框。VM 軟體渲染下 `blur_passes` 設 2 是兼顧霧化效果與效能的折衷。
+
+但測試 hyprlock 踩到這趟最嚴重的坑，根因很有教材價值：
+
+**`pkill hyprlock` 不是解鎖、而是讓 compositor 掉進鎖屏失效保護畫面。**
+
+測完想解鎖（我沒有密碼），直覺 `pkill hyprlock`。process 是沒了，但畫面變成 Hyprland 的失效保護（`shot6.png`）：
+
+```text
+Oopsie daisy, it looks like you locked your screen but the lockscreen app died :(
+If you want to unlock your screen, go into another tty ... and run:
+  hyprctl --instance 0 'keyword misc:allow_session_lock_restore 1'
+  hyprctl --instance 0 'dispatch exec hyprlock'
+```
+
+關鍵理解：Wayland 的 `ext-session-lock-v1` 協議下，鎖屏 client（hyprlock）一旦 lock，session 的「安全鎖定」狀態是由 **compositor** 持有的；**只有 lock client 通過認證後呼叫 `unlock_and_destroy` 才能解**。`pkill` 是直接砍掉 client、沒走解鎖流程，compositor 仍保持鎖定、只好顯示這個失效保護畫面。最容易誤判的是**兩層鎖是不同的東西**：
+
+```bash
+loginctl show-session ... -p LockedHint
+# LockedHint=no          ← logind 那層說沒鎖
+pgrep hyprlock
+# (空)                    ← client 死了
+# ……但 compositor 的 session-lock 還在，畫面進不去
+```
+
+`LockedHint=no`（logind 層）會讓人以為已解鎖，但 compositor 層的 `ext-session-lock` 還鎖著——這個假象很坑。
+
+**正確的測試與恢復做法：**
+
+- **別用砍 process 的方式測 hyprlock**。要結束鎖屏就走認證解鎖；自動化測試裡要嘛別碰 hyprlock、要嘛接受它會把畫面鎖住。
+- 已經掉進失效保護時，照畫面指示：`hyprctl keyword misc:allow_session_lock_restore 1` 允許新的 hyprlock 接管既有鎖，再 `hyprctl dispatch exec hyprlock` 重新拉一個**乾淨的鎖屏 prompt**（`shot7.png`），使用者用密碼正常解鎖。
+- **沒有使用者密碼就無法完整解鎖**——這是設計、不是 bug。所以在這台 VM 上，這個測試的代價是畫面留在鎖定狀態，得由知道密碼的人解。`waybar` / `mako` / `foot` 等 process 都還活著，解鎖後桌面照舊。
+
+**回寫教材**：這是「在 VM / 自動化環境裡測鎖屏」的安全守則，值得獨立成卡或進 `color-system-theming.md` 的 hyprlock 段：鎖屏一旦啟動，唯一的正常出口是認證；測試前先想好怎麼回得來（知道密碼、或準備好走 restore 路徑），別用 `pkill` 當「關掉」。
+
+#### 截圖剪貼簿的型別坑
+
+順手測 `hyprland.conf` 綁的截圖 keybind `grim - | wl-copy`，發現複製進剪貼簿的型別不對：
+
+```bash
+grim - | wl-copy
+wl-paste --list-types
+# text/plain  text/plain;charset=utf-8 ...   ← 被當文字、不是圖
+```
+
+`wl-copy` 預設要靠 `xdg-utils`（`xdg-mime`）推斷 stdin 的型別，最小安裝沒裝它，於是把 PNG bytes 誤標成 `text/plain`——貼進影像應用程式就拿不到圖。修法是明確告知型別，不必為此多裝一個 `xdg-utils`：
+
+```bash
+grim - | wl-copy --type image/png
+wl-paste --list-types
+# image/png   ← 正確
+```
+
+keybind 已改成帶 `--type image/png`（全螢幕與 slurp 框選兩條都改）。
+
+#### 第二步小結
+
+`waybar` / `wofi` / `mako` / `hyprlock` 四個元件都在 VM 的 live instance 上實際 render 成功、各有截圖佐證。挖到的缺口集中在「最小安裝缺的相依」與「VM／自動化環境特有的測試陷阱」，不是配置本身寫錯：字族名要對齊實裝字型、CJK 與通知產生各缺一個套件、剪貼簿型別要明指、鎖屏不能用砍 process 測。這些都比「桌面好不好看」更該被學起來，收斂在下一節「回寫教材的實測發現」與 `~/step2/REPORT.md` 的待審清單。
 
 ### 待修的 shell 缺口（step 2 一起處理）
 
@@ -331,10 +510,28 @@ _待填。_
 
 ## 回寫教材的實測發現
 
-把實機跑出來、跟教材 `[待實測驗證]` 標記對得上、或值得抽成獨立教學的 gotcha 收斂在這裡。本次 session 已轉成教材的：
+把實機跑出來、跟教材 `[待實測驗證]` 標記對得上、或值得抽成獨立教學的 gotcha 收斂在這裡。
+
+### 第一步已轉成教材的
 
 - **bootstrap 要交付完整環境**（install.sh 沒裝 `.zshrc` 引用的 oh-my-zsh/p10k/plugins，README 列了沒實作 → shell 壞）→ 寫進 [bootstrap-script-packages](/dotfile/08-sync-bootstrap/bootstrap-script-packages/) 的「交付完整可用的環境」原則。
 - **兩個 SSH 終端機坑**（macOS 送非法 LC_CTYPE → locale fallback；Ghostty 的 xterm-ghostty terminfo 新機沒有 → ZLE 重繪亂碼）→ 寫進 [ssh-keyless-bootstrap](/dotfile/linux-install/ssh-keyless-bootstrap/) 的「連入後的兩個終端機坑」。
 - **無人值守長任務的三障礙**（NOPASSWD / 多工器 / 推送認證 + 權限放行取捨）→ 抽成 [unattended-remote-work](/dotfile/linux-install/unattended-remote-work/) 獨立篇。
 
-_待填。把實機跑出來、跟教材 `[待實測驗證]` 標記對得上的 gotcha 收斂在這裡，再回頭改對應教材檔案。_
+### 第二步 rice 的發現（已三輪審查、已回寫教材）
+
+第二步 rice 的發現分兩類：**配置層**（教材範例與實裝環境對不上、該直接修教材）與 **環境／測試層**（最小安裝缺相依、VM/自動化特有陷阱、該補成卡或教材新段）。
+
+| 發現                                 | 類別 | 回寫落點                                                                                      | 狀態     |
+| ------------------------------------ | ---- | --------------------------------------------------------------------------------------------- | -------- |
+| 字族名 MesloLGS ≠ 範例 JetBrainsMono | 配置 | `desktop-shell-components.md`、`color-system-theming.md`、`hyprland-installation.md` 全域對齊 | 已回寫   |
+| CJK 無字 → 豆腐，需 noto-fonts-cjk   | 環境 | `desktop-shell-components.md` Mako 段後新增 CJK fallback 段                                   | 已回寫   |
+| 字型可用集合在 process 啟動時決定    | 機制 | 新卡 `knowledge-cards/font-availability-at-startup.md`                                        | 已建卡   |
+| mako 要 libnotify 才有通知可發       | 環境 | `desktop-shell-components.md` Mako 段新增 libnotify 說明                                      | 已回寫   |
+| waybar 模組在 VM 自動退化            | 配置 | `desktop-shell-components.md` Waybar 段新增自動退化說明                                       | 已回寫   |
+| stow tree folding/unfolding          | 機制 | `knowledge-cards/gnu-stow.md`                                                                 | backlog  |
+| Hyprland 變數 source 範圍限制        | 配置 | `color-system-theming.md` 配色統一段                                                          | 已有覆蓋 |
+| hyprlock pkill ≠ 解鎖、掉失效保護    | 機制 | 新卡 `knowledge-cards/session-lock.md` + `common-failures-recovery.md` 新場景                 | 已建卡   |
+| grim 截圖需 wl-copy --type image/png | 環境 | `desktop-shell-components.md` 新增 Grim 截圖段                                                | 已回寫   |
+
+另建 `knowledge-cards/fontconfig.md` 傘卡（font-availability 的上游概念）。階段零～二的 `[待驗證]` 標記（virtio-gpu 黑畫面、DHCP 帶進新系統、序列 console vs 圖形 VT）已在階段一、三第一步驗證並記錄。
