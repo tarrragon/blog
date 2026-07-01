@@ -52,11 +52,13 @@
 | F  | Hyprland `$` 變數 source 範圍限於自家 .conf（waybar/wofi/mako 引用不到）| 配置 | `color-system-theming.md` 配色統一段（已提及，可用實測補一句界線）| 記在 record，已有教材覆蓋 |
 | G  | **hyprlock `pkill` ≠ 解鎖、掉進 compositor 失效保護；兩層鎖不同** | 機制 | 新卡 `knowledge-cards/session-lock.md` 或併 `color-system-theming.md` Hyprlock 段 | **草稿 draft-hyprlock-lock-testing-safety.md**（最值得寫、現無任何教材覆蓋）|
 | H  | grim 截圖 `wl-copy` 需 `--type image/png`（無 xdg-utils 推不出型別）| 環境 | `desktop-shell-components.md` 截圖段（或 work-log）             | 草稿（修正五）+ keybind 已修 |
+| I  | **字型的可用集合在 process 啟動時決定**；裝字型後已跑的 client 要重啟才吃到（B 的通則）| 機制 | 新卡 `knowledge-cards/font-availability-at-startup.md`           | **草稿 draft-knowledge-card-font-cache-process-lifecycle.md**（跨 rice 通用）|
 
-### 兩份草稿檔（待 review）
+### 三份草稿檔（待 review）
 
-- `draft-hyprlock-lock-testing-safety.md` — finding G。**這篇最值得獨立**：ext-session-lock 兩層鎖、pkill 失效保護、restore 路徑、測鎖屏的安全守則。建議落點：新 knowledge-card `session-lock.md`，或併進 color-system-theming 的 Hyprlock 段。
+- `draft-hyprlock-lock-testing-safety.md` — finding G。**最值得獨立**：ext-session-lock 兩層鎖、pkill 失效保護、restore 路徑、測鎖屏的安全守則。建議落點：新 knowledge-card `session-lock.md`，或併進 color-system-theming 的 Hyprlock 段。
 - `draft-rice-config-vs-real-environment.md` — finding A/B/C/D/H 合一。多是 `desktop-shell-components.md` 的範例修正 + 環境前提補段，逐項標了對應段落。
+- `draft-knowledge-card-font-cache-process-lifecycle.md` — finding I。把「裝字型後已跑的 client 要重啟才生效、reload 不夠」蒸餾成一張跨 rice 通用的 atomic 卡（fontconfig 系統快取 vs process 內字型資料庫兩層）。建議落點：新 knowledge-card `font-availability-at-startup.md`。
 
 ### 著作權紀律自述
 
