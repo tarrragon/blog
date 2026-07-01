@@ -1,5 +1,5 @@
 ---
-title: "4.22 RAG storage 工程：從 pickle 到 vector database 的升級判讀"
+title: "4.22 RAG storage 工程：從 pickle 到 vector database 的選型判讀"
 date: 2026-07-01
 description: "RAG storage backend 選型：規模到哪個階段該從 in-memory 升級到 vector DB、dependency chain 如何收窄選項"
 tags: ["llm", "applications", "rag", "vector-database", "embedding", "storage"]

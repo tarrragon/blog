@@ -13,12 +13,20 @@ weight: 2
 > **Corpus**：`content/` 全量 2,738 個 markdown 檔、24,216 chunks
 > **前置 demo**：[rag-demo](/llm/01-local-llm-services/hands-on/rag-demo/)（pickle、463 chunks）
 
+### 讀法建議
+
+本案例用 Go 重寫了 RAG storage 層，Go 實作細節佔不少篇幅。依你的背景選讀法：
+
+- **Python 開發者、想選自己專案的 storage 方案**：先跳到「通用可複製流程」（語言無關的五步驟）→「四方案 benchmark」→「二次選型評估」（結論/理由/前提三層框架），這三段跨語言可遷移。Go 實作段（架構、效能優化）可 skim。
+- **Go 開發者、想做類似工具**：從頭讀，每段都跟你相關。
+- **只想看選型框架、不管實作**：直接跳「二次選型評估」。
+
 ## 從 demo 到 production 的重寫動機
 
-[rag-demo](/llm/01-local-llm-services/hands-on/rag-demo/) 用 Python pickle 跑通了 RAG 概念驗證：71 篇 → 463 chunks → pickle 儲存 → cosine retrieval → Ollama 生成。概念層完全正確（4.1 的 retrieval + augmentation 骨架），但作為 blog 日常工具有三個限制：
+[rag-demo](/llm/01-local-llm-services/hands-on/rag-demo/) 用 Python pickle 跑通了 RAG 概念驗證：71 篇 → 463 chunks → pickle 儲存 → cosine retrieval → Ollama 生成。概念層完全正確（4.1 的 retrieval + augmentation 骨架），但作為這個 blog 的日常工具有三個**專案特有的**限制：
 
-1. **Pickle 綁 Python**：blog 的核心工具是 Go（`mdtools` lint / fmt / cards），加 Python dependency 讓其他維護者 clone 後多一步環境設定。
-2. **只索引 LLM 模組**：rag-demo 只跑 `content/llm/`（71 篇），blog 全量有 2,738 篇、24 個 section。
+1. **工具鏈語言不同**：blog 的核心工具是 Go（lint / fmt / cards），加 Python dependency 讓其他維護者 clone 後多一步環境設定。Python 專案不會有這個問題 — pickle 綁 Python 對 Python 專案是優點而非缺點。
+2. **只索引部分 corpus**：rag-demo 只跑 `content/llm/`（71 篇），blog 全量有 2,738 篇、24 個 section。
 3. **Demo 定位**：ingest.py / query.py 是教學程式碼，不是維護工具（沒有 status、沒有 section filter）。
 
 這是一次**完整重寫**、不是漸進升級 — rag-demo 的 Python 程式碼不會被修改或遷移，而是用 Go 重新實作相同的 RAG pipeline（chunk → embed → store → search）、保留相同的概念架構。rag-demo 作為教學 demo 繼續存在。
@@ -115,7 +123,7 @@ Python 實作同流程只是把第 4 步的 binary 檔換成 pickle / FAISS inde
 
 ### 前置依賴
 
-跑 benchmark 前需要先完成 Go 工具的 ingest（benchmark 讀的是 Go index）：
+Benchmark 腳本讀 Go 工具產生的 index（`.blogsearch/` 下的 `vectors.bin` + `meta.json`）。完整指令鏈：
 
 ```bash
 cd scripts/blogsearch && go build -o ../../bin/blogsearch .   # build Go 工具
@@ -125,6 +133,8 @@ ollama pull nomic-embed-text                                    # pull embedding
 uv run --with sqlite-vec --with faiss-cpu --with numpy \
   scripts/blogsearch-bench/bench.py --index .blogsearch         # 跑 benchmark
 ```
+
+若無 Go 環境，可用自己的 Python embedding 腳本產生相同格式的 `vectors.bin`（little-endian float32、n × dim 連續排列）+ `meta.json`（`{"dim": 768, "count": n, "metas": [...]}`），benchmark 腳本只讀這兩個檔案、不依賴 Go binary 本身。Corpus 格式無硬性要求，任何目錄下的 `.md` 檔案都可索引。
 
 ### 方法論
 
