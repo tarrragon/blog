@@ -10,6 +10,16 @@
 - 精確比對：`pgrep -x <comm>` 或 `pgrep -af <pattern>`（連命令列比對）。
 - 別用「你以為的名字」掃過去下生死結論 —— 行程表沒騙你，查詢條件錯。
 
+### 重啟有沒有真的發生：比對 pid + 起始時間
+
+「kill 指令沒報錯 + 之後程式在跑」不等於重啟成功——kill 可能靜默失敗（app 自帶的 `-k`/`stop` 子指令壞掉、錯誤又被 `2>/dev/null` 吃掉），接著新起的實例偵測到舊實例存在就自行退出，結果「重啟前後」一直是同一個 process。實測連錯兩次判斷（把 idle 事件當成重啟後行為）才被拆穿。權威驗證一條：
+
+```bash
+ps -o pid,lstart -p $(pgrep -x <comm>)   # 重啟前後各跑一次、pid 與 STARTED 都要變
+```
+
+殺不掉時退回通用手段：`pkill -x <comm>`（先 `pgrep -x` 確認 comm 名），再確認新 pid。
+
 ## 服務由誰提供：問註冊表
 
 D-Bus name / 監聽 socket 是權威，不是畫面。`org.freedesktop.Notifications` 這種 D-Bus name 同一時間只有一個擁有者（兩個通知 daemon 不能共存，誰先註冊誰佔著）。

@@ -838,6 +838,16 @@ Hyprland 復現通過後接著把 step 3 的 Caelestia 在新 VM 重走一次。
 - **shell 啟動時會改寫 shell.json**：丟掉 schema 不認得的 key（`bar.clock.format` / `notifs.expiration` / `services.*` 在 2.1.0 都不存在）、只留有效子集。教材的 shell.json 範例 key 要對著實際版本驗。
 - **runtime 寫入穿透 folded stow symlink 弄髒 repo**：`~/.config/caelestia` 是目錄層 symlink、shell 寫的 `monitors/` 直接落進 dotfiles repo（btop 的 `themes/` 同理）。修法：repo `.gitignore` 把「app 會自己寫的路徑」列入——自寫型 app 的 config 目錄跟 stow folding 共存時，這條是必要配套。
 
+### Caelestia 配色三功能復現 + 假重啟事件
+
+step 3 的配色切換 / 桌布 / 動態取色在新 VM 全部重現，包括「scheme 熱套用取決於啟動時 scheme.json 在不在」那條精確結論：第一個 shell 實例（啟動時無 scheme.json）對 `scheme set -n gruvbox -m light` 無反應、state 檔已寫入但 UI 不變；真重啟後 gruvbox light 完整上色；之後同一實例 `scheme set -n tokyonight -m dark` 秒切（同 pid 驗證）；暖色漸層桌布 + `dynamic` 抽色讓整套 UI 換成鮭魚粉暖色盤。
+
+過程中踩到一個值得獨立記的**假重啟事件**：`caelestia shell -k` 靜默失敗（沒殺掉 shell、錯誤又被 `2>/dev/null` 吃掉），接著 `hyprctl dispatch exec` 起的新實例偵測到舊實例存在就自行退出——兩次「重啟」都沒發生，pid 從頭到尾是同一個。這造成兩次誤判（把 idle 鎖屏當成重啟後的行為、把 config watcher 的改寫當成重啟後的載入），直到 `ps -o pid,lstart` 比對 process 起始時間才拆穿。教訓進 skill：**驗證重啟看 pid + start time，不是看指令沒報錯**；殺 caelestia shell 的可靠做法是 `pkill -x qs`。
+
+假重啟拆穿後反而分離出一個乾淨的發現：**config 熱重載與 scheme 熱套用是兩個獨立的 watcher**——shell.json 的 file watcher 永遠有效（跑著的實例吃到 git pull 進來的 `general.idle.timeouts`、驗證接受後重排序列化回檔案），scheme.json 的 watcher 只在啟動時檔案存在才建。
+
+**Idle 鎖屏 2 小時設定進 repo**：前一天在舊 VM 把鎖定延長到 2 小時的改動是機器本機改的、沒回寫 dotfiles，新 VM 復現不出來——dotfile 漂移的教科書案例。已把 `general.idle.timeouts: [{timeout: 7200, idleAction: "lock"}]` 寫進 repo 的 shell.json（key 名從安裝的 `caelestia-config.qmltypes` schema 讀出、由 shell 改寫行為驗證接受）。
+
 ### VT 的三層判讀（kmscon 事件）
 
 新 VM 開機後 UTM 圖形視窗顯示的 login 是 `pts/0`（`tty` 指令定案）——archboot 預設用 **kmscon**（userspace console、直接畫在 DRM 上、login 跑在 pts）取代 VT getty，這也回頭修正了稍早「getty@tty1 被 disabled」的理解：不是漏開、是被 kmscon 取代。kmscon 持有 DRM master、跟 compositor 衝突，`chvt` 也救不了（它不是 VT）。換手：`sudo systemctl disable --now kmsconvt@tty1` + `sudo systemctl start getty@tty1`，畫面變真 tty1 login（`tty` 回 `/dev/tty1`）後 Hyprland 正常啟動。判讀鏈已進 linux-install-debug skill v1.7.0。

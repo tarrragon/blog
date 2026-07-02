@@ -78,6 +78,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.8.0 — process-service-state 補「重啟有沒有真的發生」判讀：kill 指令沒報錯 + 程式在跑 ≠ 重啟成功（app 自帶 kill 子指令可能靜默失敗、新實例偵測舊實例後自行退出）；權威驗證 = 重啟前後比對 `ps -o pid,lstart` 的 pid 與起始時間
 **Version**: 1.7.0 — remote-access 補「VT 被 userspace console 接管」case（實測 archboot 預設 kmscon）：登入後 `tty` 回 pts/N 即中、chvt 救不了、compositor 與 kmscon 搶 DRM master；換手 = disable kmsconvt@ + start getty@；同時修正 1.5.0「getty disabled」的不完整理解（真因是 kmscon 取代 VT getty）
 **Version**: 1.6.1 — remote-access 的 VM 雙輸出注意事項補「判讀自己在哪一側」：`who` 的 pts/ttyS/ttyAMA vs tty<N>、`ls /dev/dri/` 分辨「裝置沒掛」vs「視窗停在序列視圖」
 **Version**: 1.6.0 — install-and-verify 套件管理器段補 AUR / 第三方建置失敗判讀（實測 ALARM）：`-bin` 包 libalpm soname skew（改原始碼建置免疫）、python sysconfig 烤入 distcc 路徑（CXX 環境覆寫）、PKGBUILD arch 漏列（--ignorearch）、optdepends 不自動拉的陷阱；pacman 段補 stale db 404
