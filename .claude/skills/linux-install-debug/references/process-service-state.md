@@ -61,7 +61,10 @@ ps -o comm= -p "$pid"
 
 - **原生 `OnFailure` 鉤子（零額外 daemon）**：unit 進 failed 時觸發另一個 unit。做法：`alert@.service`（template、`ExecStart=... %i`）+ 送出腳本（curl ntfy / email）+ 在目標 unit 加 `OnFailure=alert@%n.service`（或放 `service.d/` top-level drop-in 套所有 service）。實測要點：(1) 全域 drop-in 會套到 `alert@` 自己 → 給它清空 `OnFailure=` 擋遞迴；(2) systemd service 環境下 `hostname` 可能回空、用 `uname -n`。
 - **先重啟才告警**：`Restart=on-failure` + `StartLimitBurst`/`StartLimitIntervalSec` 先自動重試。實測坑：`OnFailure` **每次失敗都觸發**（含 auto-restart 中途、不是只在放棄時；一個重試 3 次的 crash 觸發 4 次告警）。要「只在終局告警」，送出腳本開頭 gate 掉中途：`state=$(systemctl show <unit> -p ActiveState --value); [ "$state" = failed ] || exit 0`（auto-restart 中途是 `activating`、撞上限才 `failed`）。config 管重試次數、handler gate 管只在終局吵。
+- **hung 偵測**：`OnFailure` 抓 crash/exit，抓不到「進程活著但不回應」（systemd 看它還 `active`——同本檔「進程活著 ≠ 子系統活著」）。補一個外部探針：timer 定時 curl 服務的 `/health` 設逾時，逾時 = 那個 check 自己 failed → 一樣走 `OnFailure` 告警。systemd 抓進程死、探針抓進程 hung、兩層互補。
+- **canary 驗管線**：養一個可控假服務（極簡 HTTP：`/health` 正常、`/crash` 退出、`/hang` 進程活著不回應）當監控靶子——故意弄掛驗證「失敗→告警」整條通、不必拿 sshd 冒險；它無故告警 = 告警系統本身還活著。防「出事才發現監控早就不會叫」。
 - **整台機器死掉的盲點**：`OnFailure` 靠 systemd 觸發，機器當掉 systemd 自己沒了、發不出告警。要體外心跳（dead-man switch：定時 curl healthchecks.io / Uptime Kuma，訊號停由體外告警）。體內方案報不了自己這台的死。
+- **推送管道安全**：ntfy 公共站（ntfy.sh）無認證、topic 名就是唯一存取控制——用長隨機字串（猜得到 = 別人能讀你告警 + 發假告警）；敏感或正式用自架（開源、Go binary/docker、可加帳號 ACL）。
 - **要指標/門檻**（CPU/磁碟/趨勢，非只 up/down）：Netdata（單機開箱）、Prometheus+Alertmanager（多機）、Monit（每服務檢查+自動動作）。
 
 判準：先分「單一 service 死活 / 整台機器死活 / 資源趨勢」——別拿體內 `OnFailure` 去蓋機器當機（那是它盲點）。

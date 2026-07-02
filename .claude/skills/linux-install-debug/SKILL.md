@@ -82,6 +82,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.12.0 — 監控段補 hung 偵測（外部探針 curl /health 抓進程活著但不回應、補 OnFailure 抓不到的）、canary（可控假服務驗告警管線、不拿真服務冒險）、ntfy topic 安全（公共站無認證、topic 名就是密碼、用長隨機或自架）
 **Version**: 1.11.1 — 修正「先重啟才告警」：實測發現 OnFailure 每次失敗都觸發（含 auto-restart 中途、一個重試3次的 crash 觸發4次告警），不是只在放棄時；要只在終局告警需送出腳本 gate `ActiveState != failed` 就 exit（實測加 gate 後 crash 從 4 次降到 1 次）
 **Version**: 1.11.0 — process-service-state 補「不想肉眼盯：把失敗變成推播（OnFailure）」（實測驗證告警鏈）：systemd OnFailure 鉤子（alert@ template + 送出腳本 + drop-in）、遞迴陷阱與 `uname -n`（hostname 回空）、`Restart=` 先重啟才告警、體外心跳補「機器當掉 systemd 自己沒了發不出告警」盲點、指標堆疊選型；速查表 + 症狀路由加「服務自動告警」
 **Version**: 1.10.0 — process-service-state 補「進程活著 ≠ 內部子系統活著」（實測 Quickshell/caelestia）：GUI shell 進程活著、STAT S 在 poll、CPU 不高，但 QML scene 物件變 null → bar 畫得出來卻點不動、keybind 死、焦點視窗打字正常；`pgrep` 會騙人，權威是程式專屬 log 指令（`<shell> -l`、非 journalctl）+ IPC 回真實狀態（回空=子系統死），修法重啟 shell 重建 scene、驗證看 IPC 不看 pgrep；上游常是 shader/GL pipeline 建失敗
