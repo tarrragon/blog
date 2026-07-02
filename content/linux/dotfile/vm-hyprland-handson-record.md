@@ -120,14 +120,18 @@ curl -L -O "https://release.archboot.eu/aarch64/latest/iso/archboot-2026.07.01-0
 | 顯示卡      | virtio-gpu-gl-pci（GPU Supported，VirGL/Venus 加速）               |
 | OpenGL 加速 | 啟用                                                               |
 
-**顯示卡選型**：建立精靈的 Display Output 下拉清單預設是 `virtio-gpu-pci`（無 3D 加速），需要手動改選 `virtio-gpu-gl-pci (GPU Supported)`。清單裡的選項對照：
+**引擎選型（Virtualize，不是 Emulate——第二次重建踩過的坑）**：UTM 建立精靈第一頁的 Virtualize / Emulate 二選一，同架構（Apple Silicon 跑 ARM64 guest）一律選 **Virtualize**。兩條都是 QEMU，差在 CPU 執行方式：Virtualize 走 hvf 硬體虛擬化（CPU 直通、guest 的 `lscpu` Model name 顯示 `-`）；Emulate 走 TCG 純軟體模擬（Model name 顯示模擬的 Cortex-A72、BogoMIPS 125）。「要用 QEMU 引擎所以選 Emulate」是錯誤推理——Virtualize 也是 QEMU。代價實測：TCG 下 1321 步的 C++ 編譯一小時只跑 37%，網路型作業（裝套件）感覺不出差異、CPU 密集作業慢一個數量級才現形。Emulate 只在跨架構（如 ARM Mac 跑 x86_64 guest）才需要。判別現有 VM 跑哪種：`lscpu` 的 Model name（`-` = 直通、具體型號 = 模擬）比 `systemd-detect-virt` 可靠（hvf 下它也回 `qemu`）。
 
-- `virtio-gpu-pci`（預設）——無 3D 加速、Hyprland 會 fallback 軟體渲染或起不來
+**顯示卡選型**：Display Output 需要是 `virtio-gpu-gl-pci (GPU Supported)`。Virtualize 精靈通常直接給對；Emulate 精靈預設是無加速的 `virtio-gpu-pci`、要手動改。清單裡的選項對照：
+
+- `virtio-gpu-pci`——無 3D 加速、Hyprland 會 fallback 軟體渲染或起不來
 - `virtio-gpu-gl-pci`（要選這個）——VirGL/Venus 3D 加速、Hyprland + Quickshell 需要
 - `virtio-ramfb-gl`——也有加速但 ramfb 偏向開機早期 framebuffer
-- `apple-gfx-pci`——Apple Virtualization 後端用的、走 QEMU Emulate 不適用
+- `apple-gfx-pci`——Apple Virtualization 後端用的、走 QEMU 不適用
 
-建完 VM 後在設定頁的 Display 區還有一個「啟用 OpenGL 硬體加速」checkbox，效果相同——勾了會自動切成 `virtio-gpu-gl-pci`。兩個入口都能到、在建立精靈直接選比較不容易漏。
+建完 VM 後在設定頁的 Display 區還有一個「啟用 OpenGL 硬體加速」checkbox，效果相同——勾了會自動切成 `virtio-gpu-gl-pci`。
+
+**沿用既有磁碟重建 VM 殼**：Virtualize 精靈的「開機映像檔類型」選 **Import existing drive**（先切 radio 再瀏覽——radio 停在 ISO / 核心映像那格就瀏覽，qcow2 會被塞進 `-kernel` 參數、開機報 `could not load kernel '<路徑>.qcow2'`），選舊 VM bundle 裡的 `.qcow2`（右鍵 Show in Finder → 顯示套件內容 → `Data/`）。UTM 會複製一份進新 bundle，舊 VM 不受影響。磁碟內容（系統、config、build cache）全部原封沿用，開機後 DHCP 依 hostname 常拿到同一個 IP。
 
 **待驗證（回寫教材重點）**：UTM 硬體頁對「啟用 OpenGL 硬體加速」標了警告——「部分新版 Linux 驅動有已知問題：黑畫面、合成畫面破碎、應用程式無法渲染」。這正對應教材 `hyprland-vm-setup.md` 的 `[待實測驗證]`：VirGL/Venus 加速在這組 kernel + UTM 版本上會不會讓 Hyprland 中黑畫面。先勾起來往「能跑」方向走，中了就記錄並回這頁取消重試。結果待開機後填。
 

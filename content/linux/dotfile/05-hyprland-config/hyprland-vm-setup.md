@@ -19,8 +19,9 @@ Apple Silicon Mac 用 UTM（基於 QEMU）跑 ARM64 Linux VM：
 
 ### UTM 建 VM 的注意事項
 
+- **第一頁選 Virtualize，不是 Emulate**——同架構（Apple Silicon 跑 ARM64 guest）兩條都是 QEMU，差在 Virtualize 走 hvf 硬體虛擬化（CPU 接近原生）、Emulate 走 TCG 純軟體模擬（CPU 慢一個數量級；實測 C++ 大型編譯一小時只跑 1/3）。Emulate 只在跨架構（ARM Mac 跑 x86_64 guest）才需要。判別現有 VM：guest 裡 `lscpu` 的 Model name 是 `-` 為直通、顯示具體型號（如 Cortex-A72）為模擬
 - 選 「Linux」 虛擬機類型，不是 「Other」
-- Display Card 選 `virtio-gpu-gl-pci`（有 3D 加速），不是 `virtio-gpu-pci`（無加速）
+- Display Card 選 `virtio-gpu-gl-pci`（有 3D 加速），不是 `virtio-gpu-pci`（無加速）；Emulate 精靈預設給無加速的 `virtio-gpu-pci`、Virtualize 精靈通常直接給對
 - 如果用 App Store 版的 UTM（不含 Venus），只有基本的 virtio-gpu-gl 加速
 - GitHub release 版的 UTM 支援 Venus/MoltenVK，效能更好但仍不及裸金屬
 
