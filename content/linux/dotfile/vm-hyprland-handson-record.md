@@ -824,6 +824,24 @@ Step 2 rice 實測中未 clone 這些 repo——手動拼裝的 waybar / wofi / 
 
 **通過**。全新最小 Arch + 三行手打前置（root 裝 sudo/git + NOPASSWD），`git clone` + `./scripts/install.sh` 一鍵跑完：216 套件、全部 stow 部署正確（含 `.config/hypr` 的 unfold 多 package 共用）、OMZ/p10k/plugins、Claude Code、zsh 預設 shell，console 登入打 `Hyprland` 桌面直接起來。附帶一個自我提醒：驗證 stow 時 `ls -la ~/.config/waybar/`（帶斜線）穿透目錄 symlink 列出普通檔案、差點誤判部署失敗——`ls -ld`（不帶斜線）+ `stow --simulate` 才是權威讀法，正是 folding 錯覺的再現。
 
+### Caelestia 復現（AUR 鏈、含 hvf 換裝後續編）
+
+Hyprland 復現通過後接著把 step 3 的 Caelestia 在新 VM 重走一次。AUR 這條鏈比 pacman 套件多三種失敗型態，全部踩到並定案：
+
+- **AUR helper 的 `-bin` 包版本半衰期**：paru-bin 的 aarch64 二進位對 `libalpm.so.15` 連結、`-Syu` 後系統已是 `.so.16`、載入直接斷。改用從原始碼 makepkg 的 yay（Go、編譯快、對系統當下 libalpm 編）免疫這類 skew。
+- **ALARM 的 python sysconfig 烤入 distcc 路徑**：`python-materialyoucolor`（caelestia-cli 依賴）編 C++ extension 時叫 `/usr/lib/distcc/bin/g++`（不存在）——`/etc/makepkg.conf` 的 `!distcc` 管不到它，因為路徑烤在 ALARM 官方 python 套件的 sysconfig 裡（`python -c "import sysconfig; print(sysconfig.get_config_var('CXX'))"` 定案）。修法：`CXX=g++` 環境覆寫。同包還缺 aarch64 架構宣告、`--mflags "-A"` 繞過。
+- **quickshell-git 是 PKGBUILD 層的硬依賴**：caelestia-shell 的 depends 指名 quickshell-git、會跟先裝的 repo 版 quickshell 0.3.0 衝突（`--noconfirm` 下 yay 不自動移除、要手動 `-R` 舊版再 `-U` 裝建好的包）。教材「穩定版是否已夠」的疑問定案：0.3.0 夠跑裸 QML、裝 caelestia-shell 必被 git 版取代。
+- **caelestia-cli 對 shell 是 optdepends**：`yay -S caelestia-cli` 不會拉 shell、要各自明講（教材已修正）。
+
+結果：caelestia-shell 2.1.0 在 virtio-gpu 完整 render（頂列 + Material-3 dock + foot 邊框），從 SSH 以 `hyprctl dispatch exec "caelestia shell -d"` 拉起。兩個 config 層 finding：
+
+- **shell 啟動時會改寫 shell.json**：丟掉 schema 不認得的 key（`bar.clock.format` / `notifs.expiration` / `services.*` 在 2.1.0 都不存在）、只留有效子集。教材的 shell.json 範例 key 要對著實際版本驗。
+- **runtime 寫入穿透 folded stow symlink 弄髒 repo**：`~/.config/caelestia` 是目錄層 symlink、shell 寫的 `monitors/` 直接落進 dotfiles repo（btop 的 `themes/` 同理）。修法：repo `.gitignore` 把「app 會自己寫的路徑」列入——自寫型 app 的 config 目錄跟 stow folding 共存時，這條是必要配套。
+
+### VT 的三層判讀（kmscon 事件）
+
+新 VM 開機後 UTM 圖形視窗顯示的 login 是 `pts/0`（`tty` 指令定案）——archboot 預設用 **kmscon**（userspace console、直接畫在 DRM 上、login 跑在 pts）取代 VT getty，這也回頭修正了稍早「getty@tty1 被 disabled」的理解：不是漏開、是被 kmscon 取代。kmscon 持有 DRM master、跟 compositor 衝突，`chvt` 也救不了（它不是 VT）。換手：`sudo systemctl disable --now kmsconvt@tty1` + `sudo systemctl start getty@tty1`，畫面變真 tty1 login（`tty` 回 `/dev/tty1`）後 Hyprland 正常啟動。判讀鏈已進 linux-install-debug skill v1.7.0。
+
 ## 回寫教材的實測發現
 
 把實機跑出來、跟教材 `[待實測驗證]` 標記對得上、或值得抽成獨立教學的 gotcha 收斂在這裡。
