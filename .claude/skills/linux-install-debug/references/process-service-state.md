@@ -10,6 +10,15 @@
 - 精確比對：`pgrep -x <comm>` 或 `pgrep -af <pattern>`（連命令列比對）。
 - 別用「你以為的名字」掃過去下生死結論 —— 行程表沒騙你，查詢條件錯。
 
+### 進程活著 ≠ 內部子系統活著
+
+`pgrep` 有輸出只證明「進程存在」，不證明「它在正常運作」。實測坑：一個圖形 shell（如 Quickshell/caelestia）進程活著（`pgrep` 找得到、STAT 正常 `S`、在 `poll`、CPU 不高），但它的 QML scene 因上游錯誤（渲染 pipeline 建失敗）某物件變 null，負責互動的模組全失效 —— bar 畫得出來卻點不動、keybind 叫不出東西，但焦點視窗打字正常。`pgrep` 這時會騙你說「在跑」。
+
+- 權威不是行程表，是**程式自己的 log**，且常不在 `journalctl` / 猜的路徑，要用該程式專屬 log 指令（如 `<shell> -l`）。log 裡 `TypeError: Cannot read property 'X' of null` 類訊息才定案。
+- 更精準的活性探針：程式的 **IPC 回不回真實狀態**（正常回資料、子系統死回空）。例：`<shell> ipc call drawers list` 回空 = 子系統死。
+- 修法是重啟該 shell 讓 scene 重建（`<shell> -k` + `<shell> -d`）；**驗證看 IPC 回真實資料 + log 不再噴 null，不是看 `pgrep` 又有輸出**（重啟後進程一定在）。
+- 上游常是渲染：VM / GL 不足時 shader pipeline 建不起來（log 噴 `Failed to build graphics pipeline state`），非致命地存在、卻可能打斷一次 scene 初始化把互動接線弄死。VM 要確認 GPU 提供的 GL/GLSL 版本夠（virtio-gpu 走 mesa/zink 給 GL 3.3+）。
+
 ### 重啟有沒有真的發生：比對 pid + 起始時間
 
 「kill 指令沒報錯 + 之後程式在跑」不等於重啟成功——kill 可能靜默失敗（app 自帶的 `-k`/`stop` 子指令壞掉、錯誤又被 `2>/dev/null` 吃掉），接著新起的實例偵測到舊實例存在就自行退出，結果「重啟前後」一直是同一個 process。實測連錯兩次判斷（把 idle 事件當成重啟後行為）才被拆穿。權威驗證一條：
@@ -104,6 +113,7 @@ ps -o comm= -p "$pid"
 | 判斷         | 權威來源 / 工具                                                 |
 | ------------ | --------------------------------------------------------------- |
 | 程式活著沒   | `pgrep -x <正確 comm>` / `pgrep -af`                            |
+| 進程活著但沒運作 | 程式自己的 log（專屬指令 `<shell> -l`、不在 journalctl）+ IPC 回真實狀態；別信 `pgrep` |
 | 服務歸誰     | `busctl` GetNameOwner→PID→comm / `ss -lntp`                     |
 | 鎖沒鎖       | logind：`loginctl LockedHint`；合成器層：compositor / shell log |
 | 鎖屏死局     | `allow_session_lock_restore 1` + 起新鎖屏接管                   |

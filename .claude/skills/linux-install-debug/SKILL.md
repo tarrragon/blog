@@ -49,6 +49,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 | 登入 / 鎖定狀態                       | logind                         | `loginctl show-session <id>`                                                                |
 | 服務跑了沒 / failed                   | systemd unit                   | `systemctl status` / `is-active` / `is-failed`、`list-units --failed`、`journalctl -u`      |
 | 程式活著沒                            | 行程表（比對正確 comm）        | `pgrep -x`、`pgrep -af`、`ps`                                                               |
+| 進程活著但沒運作（畫得出來卻點不動）  | 程式自己的 log + IPC 回真實狀態 | 專屬 log 指令 `<shell> -l`（非 journalctl）、`<shell> ipc call ...`（回空=子系統死）；別信 `pgrep` |
 | 網路通不通                            | 介面 / 路由 / 鄰居表           | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                             |
 | 域名解析                              | resolver 設定                  | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                     |
 | 磁碟 / 記憶體                         | 檔案系統 / 記憶體用量          | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                            |
@@ -64,6 +65,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 - **SSH 連不上（先做 timeout vs refused 分流）、終端機噴亂碼 / 亂碼輸入、要從 SSH 操控圖形桌面** → [remote-access](references/remote-access.md)
 - **（從 remote-access 分流後）機器沒回應、域名解析不了、虛擬機開不起來、疑似磁碟滿 / 檔案系統唯讀連鎖** → [machine-unreachable](references/machine-unreachable.md)
 - **判程式活著沒 / 服務歸誰 / 服務 failed 或一直重啟(restart loop) / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
+- **進程活著卻不運作（GUI shell / bar 畫得出來但點不動、keybind 叫不出東西、焦點視窗打字正常）** → [process-service-state](references/process-service-state.md) 的「進程活著 ≠ 子系統活著」段（讀 shell 自己的 log + IPC，別信 pgrep）
 - **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
 - **套件管理器失敗（pacman db lock / keyring 簽章過期 / partial upgrade / mirror）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
 - **要讀某程式的 log 定位根因** → [read-logs](references/read-logs.md)
@@ -79,6 +81,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.10.0 — process-service-state 補「進程活著 ≠ 內部子系統活著」（實測 Quickshell/caelestia）：GUI shell 進程活著、STAT S 在 poll、CPU 不高，但 QML scene 物件變 null → bar 畫得出來卻點不動、keybind 死、焦點視窗打字正常；`pgrep` 會騙人，權威是程式專屬 log 指令（`<shell> -l`、非 journalctl）+ IPC 回真實狀態（回空=子系統死），修法重啟 shell 重建 scene、驗證看 IPC 不看 pgrep；上游常是 shader/GL pipeline 建失敗
 **Version**: 1.9.0 — 音訊無聲判讀（實測 pipewire 缺 wireplumber）：無聲多半不報錯、權威是 `wpctl status` 的 graph——Sinks 空 = session manager 缺件、stream `[active]` = 真在播；「管線通不通」（pw-play 本機音檔）與「應用會不會播」拆開驗證
 **Version**: 1.8.0 — process-service-state 補「重啟有沒有真的發生」判讀：kill 指令沒報錯 + 程式在跑 ≠ 重啟成功（app 自帶 kill 子指令可能靜默失敗、新實例偵測舊實例後自行退出）；權威驗證 = 重啟前後比對 `ps -o pid,lstart` 的 pid 與起始時間
 **Version**: 1.7.0 — remote-access 補「VT 被 userspace console 接管」case（實測 archboot 預設 kmscon）：登入後 `tty` 回 pts/N 即中、chvt 救不了、compositor 與 kmscon 搶 DRM master；換手 = disable kmsconvt@ + start getty@；同時修正 1.5.0「getty disabled」的不完整理解（真因是 kmscon 取代 VT getty）

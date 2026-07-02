@@ -112,6 +112,45 @@ hyprctl --instance 0 'dispatch exec hyprlock'
 
 **預防**：測試鎖屏時備好恢復路徑（知道密碼、或預先開 SSH）。不要用殺 process 的方式結束鎖屏——要結束就走認證解鎖。自動化流程若會啟動鎖屏，把「需要人工解鎖」算進代價。鎖屏安全模型的完整說明見 [Session Lock](/linux/dotfile/knowledge-cards/session-lock/)。
 
+## 場景二點六：桌面 shell 畫得出來但互動死掉（進程活著卻 wedged）
+
+**症狀**：bar / 狀態列還在螢幕上、看起來一切正常，但點它的按鈕（工作區切換、系統匣圖示）沒反應，keybind 叫不出啟動器（wofi / 內建 launcher）。同時焦點視窗（例如終端機）打字完全正常——鍵盤到得了應用程式，只是桌面 shell 的互動死了。
+
+**原因**：這是跟場景二（工具掛了）不同的一類故障，關鍵差別在**進程還活著**。場景二是 process 崩潰退出（`pgrep` 沒輸出），殺了重啟就好；這裡的桌面 shell（如 caelestia / Quickshell）進程還在跑（`pgrep` 找得到、STAT 是正常的 `S`、在 `poll` 等事件、CPU 不高），但它內部的某個子系統初始化失敗了——常見是 QML scene 的某個物件因為上游錯誤沒建起來、變成 null，於是負責「keybind → 開抽屜」「bar 按鈕互動」的模組對 null 讀屬性、整條互動接線死掉。bar 之所以還畫得出來，是它還停在初始化失敗前那一幀的畫面：**畫得出來不等於還活著**，跟鎖屏那課（畫面有密碼框不等於真的在鎖）是同一個陷阱。
+
+上游觸發常是渲染層。實測案例：VM 的 GPU 只提供到 GLSL 1.20，而 shell 的 shader 需要 GLES 100/300/330，pipeline 建不起來（log 狂噴 `Failed to build graphics pipeline state`），這次渲染失敗把 scene 初始化打斷，drawers 狀態物件變 null。
+
+**診斷（別看 pgrep，讀 shell 自己的 log）**：
+
+`pgrep` 在這裡會騙你——它回報「在跑」，但那不等於「在運作」。權威來源是 shell 自己的 log，而且這種 log 常常**不在 journalctl、也不在你猜的路徑**，要用該 shell 專屬的 log 指令：
+
+```bash
+# caelestia 的例子：用它自己的 CLI 印 shell log
+caelestia shell -l 2>&1 | tail -40
+# 看的是 QML 的 TypeError：對 null 讀屬性 = 那個子系統死了
+#   scene: @modules/Shortcuts.qml: TypeError: Cannot read property 'launcher' of null
+```
+
+另一個活性探針是 shell 的 **IPC 回不回真實狀態**：正常時查抽屜列表會回傳名字，子系統死掉時回空——這比「進程在不在」精準得多：
+
+```bash
+# 子系統活著 → 列出 bar/launcher/session…；死掉 → 回空
+caelestia shell ipc call drawers list
+```
+
+**恢復步驟**：重啟 shell 讓 scene 重建。以 caelestia 為例：
+
+```bash
+caelestia shell -k     # 殺掉卡住的 shell
+caelestia shell -d     # 重新啟動（detached）
+```
+
+**驗證修好了，看子系統回來、不是看 pgrep**：重啟後 process 一定在（`pgrep` 本來就會有），要確認的是接線恢復——`caelestia shell ipc call drawers list` 從「回空」變成列出真實抽屜名、log 不再噴 null 的 TypeError。這對應「重啟成功要驗子系統狀態、不是驗 process 存在」的通用紀律。
+
+**判讀與其他場景的界線**：`pgrep` 有輸出 + bar 畫得出來 → 別急著判「正常」；點不動 / keybind 死掉就是 wedged 的訊號，往 shell 自己的 log 查。這跟場景二（process 真的沒了、`pgrep` 空）、場景三（compositor 整個凍結、連終端機打字都不行）都不同——這裡 compositor 正常、焦點視窗鍵盤正常，只有 shell 的互動接線死。判「進程活著到底有沒有在運作」的通用招式，見 [程序、服務與狀態怎麼判](/linux/debug/process-service-state-diagnosis/)。
+
+**預防**：留意 shell log 裡持續出現的 shader / 渲染 pipeline 錯誤——在 VM 或 GL 支援不足的環境，這類錯誤可能非致命地存在（shell 大致能用），但一次渲染失敗就可能打斷 scene 初始化、把互動接線弄死。VM 環境要確認 GPU 提供的 GL / GLSL 版本足夠（virtio-gpu 走 mesa/zink 提供 GL 3.3+），或在 shell 設定關掉需要高階 shader 的效果。
+
 ## 場景三：GPU driver hang（畫面凍結）
 
 **症狀**：桌面畫面完全凍結——滑鼠不動、鍵盤不回應、`Ctrl+Alt+F2` 切 TTY 也沒反應或延遲很久才回應。但如果從另一台機器 SSH 進來，系統是活的，process 都在跑。

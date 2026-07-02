@@ -21,6 +21,12 @@ tags: ["linux", "process", "systemd", "debugging"]
 - 另一個 comm 的坑：kernel 把 comm 截在 15 字元（`TASK_COMM_LEN`），名字超過 15 字的程式用 `pgrep -x <完整長名>` 反而 miss——這時改用 `pgrep -af <pattern>` 比對完整命令列。
 - 別用一個「你以為的名字」掃過去就下生死結論——行程表沒騙你，是查詢條件寫錯。
 
+### 進程活著 ≠ 內部子系統活著
+
+比對到了正確的 comm、`pgrep` 也有輸出，只證明「這個進程存在」，不證明「它內部在正常運作」。有一類故障是進程好端端活著（`pgrep` 找得到、STAT 是正常的 `S`、在 `poll` 等事件、CPU 不高），但它內部某個子系統已經 wedged——例如一個圖形 shell 的 QML scene 因為上游錯誤（渲染 pipeline 建失敗之類）某個物件沒建起來變 null，於是負責互動的模組全部失效。表現是 bar 還畫得出來、卻點不動，keybind 叫不出東西，但焦點視窗打字正常。這時 `pgrep` 會騙你說「在跑」。
+
+這種情況權威來源不是行程表，是**程式自己的 log**，而且這種 log 常常不在 `journalctl`、也不在你猜的路徑，要用該程式專屬的 log 指令（例如某桌面 shell 的 `<shell> -l`）。log 裡的 `TypeError: Cannot read property 'X' of null` 這類訊息，才是「進程活著但子系統死了」的定案證據。另一個更精準的活性探針是程式的 **IPC 回不回真實狀態**：正常時查詢會回傳資料、子系統死掉時回空——這比「進程在不在」可靠得多。判「進程活著到底有沒有在運作」時，讀它自己的 log 與 IPC，不是看 `pgrep` 有沒有輸出。桌面 shell 的具體案例與恢復（讀 `caelestia shell -l` 抓到 null 根因、重啟重建 scene）見 [常見故障場景與恢復操作](/linux/dotfile/07-desktop-maintenance/common-failures-recovery/) 的「畫得出來但互動死掉」場景。
+
 ## 服務由誰提供：問註冊表
 
 「某個系統服務現在由哪個程式在提供」，權威來源是服務註冊，不是畫面。桌面服務多半註冊在 **D-Bus**（Linux 桌面的行程間訊息匯流排）上：一個服務用一個名字掛在上面，而**同一個名字同一時間只能被一個行程擁有**。以桌面通知為例，`org.freedesktop.Notifications` 這個 D-Bus 名同一時間只有一個擁有者——兩個通知 daemon（例如 mako 跟某個桌面 shell 內建的通知服務）不能共存，誰先註冊誰佔著，後者只能等前者退出。
@@ -65,6 +71,7 @@ ps -o comm= -p "$pid"
 ## 判讀路由
 
 - 判程式活著 → `pgrep -x <正確 comm>` / `pgrep -af <pattern>`，先確認實際 comm 名，別用猜的名字。
+- 判進程活著但「有沒有在運作」→ 讀程式自己的 log（可能要用它專屬的 log 指令、不在 journalctl）+ 它的 IPC 回不回真實狀態，不是看 `pgrep` 有輸出就當正常。
 - 判服務歸誰 → `busctl` 查 D-Bus name 擁有者 → 換算 PID → comm，不看畫面反應。
 - 判 session 鎖沒鎖 → 分清 logind 層（`loginctl LockedHint`）vs 合成器層（`ext-session-lock`，看 compositor / shell log），不看畫面有沒有密碼框。
 - 鎖屏程式死掉卡住 → `allow_session_lock_restore` + 重起鎖屏程式接管解鎖。
