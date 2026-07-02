@@ -42,20 +42,20 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ## 權威來源速查表
 
-| 症狀類別                              | 權威來源                       | 工具                                                                                   |
-| ------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------- |
-| 某程式行為不對                        | 程式自己的 log 檔              | log 路徑、`journalctl -u <unit>`                                                       |
-| 服務由誰提供                          | D-Bus name / socket 註冊       | `busctl`、`ss -lntp`、`lsof`                                                           |
-| 登入 / 鎖定狀態                       | logind                         | `loginctl show-session <id>`                                                           |
-| 服務跑了沒 / failed                   | systemd unit                   | `systemctl status` / `is-active` / `is-failed`、`list-units --failed`、`journalctl -u` |
-| 程式活著沒                            | 行程表（比對正確 comm）        | `pgrep -x`、`pgrep -af`、`ps`                                                          |
-| 網路通不通                            | 介面 / 路由 / 鄰居表           | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                        |
-| 域名解析                              | resolver 設定                  | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                |
-| 磁碟 / 記憶體                         | 檔案系統 / 記憶體用量          | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                       |
-| 核心 / 硬體 / 被殺行程(OOM、exit 137) | kernel ring buffer             | `dmesg`、`journalctl -k -b`                                                            |
-| 權限被拒(EACCES)                      | 檔案 mode/owner、路徑逐層、MAC | `namei -l <path>`、`stat`、`id`、`sudo -l`、`getcap`、`ausearch`(SELinux)              |
-| 程式 log 沉默、不知哪個 syscall 失敗  | syscall 層                     | `strace -f -e trace=file <cmd>`                                                        |
-| VT / 主控台                           | 前景 VT、getty 狀態            | `fgconsole`、`chvt`、`systemctl` getty                                                 |
+| 症狀類別                              | 權威來源                       | 工具                                                                                        |
+| ------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------- |
+| 某程式行為不對                        | 程式自己的 log 檔              | log 路徑、`journalctl -u <unit>`                                                            |
+| 服務由誰提供                          | D-Bus name / socket 註冊       | `busctl`、`ss -lntp`、`lsof`                                                                |
+| 登入 / 鎖定狀態                       | logind                         | `loginctl show-session <id>`                                                                |
+| 服務跑了沒 / failed                   | systemd unit                   | `systemctl status` / `is-active` / `is-failed`、`list-units --failed`、`journalctl -u`      |
+| 程式活著沒                            | 行程表（比對正確 comm）        | `pgrep -x`、`pgrep -af`、`ps`                                                               |
+| 網路通不通                            | 介面 / 路由 / 鄰居表           | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                             |
+| 域名解析                              | resolver 設定                  | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                     |
+| 磁碟 / 記憶體                         | 檔案系統 / 記憶體用量          | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                            |
+| 核心 / 硬體 / 被殺行程(OOM、exit 137) | kernel ring buffer             | `dmesg`、`journalctl -k -b`                                                                 |
+| 權限被拒(EACCES)                      | 檔案 mode/owner、路徑逐層、MAC | `namei -l <path>`、`stat`、`id`、`sudo -l`、`getcap`、`ausearch`(SELinux)                   |
+| 程式 log 沉默、不知哪個 syscall 失敗  | syscall 層                     | `strace -f -e trace=file <cmd>`                                                             |
+| VT / 主控台（黑畫面 / 沒登入提示）    | getty 狀態（**chvt 前先查**）  | `systemctl is-active/is-enabled getty@tty<N>` → 再 `chvt`；`cat /sys/class/tty/tty0/active` |
 
 ## 症狀 → 情境路由
 
@@ -78,6 +78,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.5.0 — VT / getty 判讀補「先查再切」順序：chvt 前先 `systemctl is-active/is-enabled getty@tty<N>`（黑畫面表象有三種根因、切過去看只是回到肉眼判讀）；實測 archboot 裝的系統 getty@tty1 是 disabled 需 enable 治本；`tty0` 是現行 VT 別名、實際前景讀 /sys/class/tty/tty0/active
 **Version**: 1.4.0 — 新增「第零步：先定平台」：診斷前先以 os-release / uname -m / command -v 建立平台座標；套件名與執行檔名分歧（fd-find/fdfind、batcat、github-cli vs gh）、非互動旗標不對稱（-y vs --noconfirm）、rolling stale-db 404 需 -Syu、ARM 生態縮水——從新 VM 復現驗證的三個非互動 bootstrap finding 萃取
 **Version**: 1.3.0 — Round-3 審查修正：補兩類 AI 最高頻情境——權限被拒(EACCES、namei -l 逐層 / MAC / capability)、套件管理器失敗(pacman db lock / keyring 簽章 / partial upgrade)；被 kill/OOM/exit137 判讀；速查表加 kernel(dmesg)/權限/strace 三列；read-logs 加 strace 回退；DNS resolv.conf symlink caveat、sudoers chmod 0440
 **Version**: 1.2.1 — Round-2 審查修正：systemd-failed 情境接上入口（速查表 + 症狀路由補「服務 failed / restart loop」，原本加了 section 卻路由不到）

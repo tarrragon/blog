@@ -43,12 +43,12 @@ SSH 連線本身、以及「你的終端機 ↔ 遠端 session」之間那條連
 - **圖形程式找不到 display**：SSH shell 無圖形環境變數。對著遠端在跑的 Wayland session 操作要補：`XDG_RUNTIME_DIR=/run/user/<uid>`、`WAYLAND_DISPLAY=<socket 名，如 wayland-1>`、必要時 compositor 的 instance 變數（如 `HYPRLAND_INSTANCE_SIGNATURE`）與 `DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/<uid>/bus`。值從 `/run/user/<uid>/` 或既有行程環境撈。補齊後可下 IPC、`grim` 截圖。
 - **compositor 必須從實體圖形 VT 起、SSH pty 起不來**：Wayland compositor（Hyprland）需要圖形 VT 上的 logind seat + DRM master；從 SSH pty 起會 backend 建立失敗（如 `CBackend::create() failed`）。判讀訊號：從 SSH 起 compositor 報 seat / DRM / backend 錯。這不是設定問題，是資源在 SSH 這條連線不存在。
 
-從 SSH 遠端回到圖形 VT（比在 VM 視窗跟 `Ctrl+Alt+Fn` 搏鬥穩定）：
+從 SSH 遠端回到圖形 VT（比在 VM 視窗跟 `Ctrl+Alt+Fn` 搏鬥穩定），**順序是先查再切**——沒查就 `chvt`，切過去只會看到黑畫面，又回到肉眼判讀（黑畫面這個表象可以是「沒 getty」「顯示輸出沒接」「compositor 掛了」三種不同根因）：
 
-- `sudo chvt <N>` 切目前顯示的 VT。
-- 切過去空白 / 無登入提示 = 該 VT 沒 getty：`sudo systemctl start getty@tty<N>`（開機時常 `enabled` 但 `inactive`，autovt 沒觸發）。
-- `sudo fgconsole` 確認前景 VT。
-- 注意：VM 可能同時有序列主控台 + 圖形顯示兩個獨立輸出，`chvt` 只動圖形側；在 VM 軟體裡要切到 Display view 才看得到圖形桌面。
+1. **切之前先查目標 VT 有沒有 getty**：`systemctl is-active getty@tty<N>`。inactive 就先拉起來：`sudo systemctl start getty@tty<N>`。
+2. **查 enable 狀態決定要不要治本**：`systemctl is-enabled getty@tty<N>`。有些安裝器（實測：archboot）裝出來的系統 `getty@tty1` 是 `disabled`——不是「autovt 沒觸發」的暫時態，而是每次開機都黑畫面；`sudo systemctl enable getty@tty<N>` 治本。
+3. `sudo chvt <N>` 切目前顯示的 VT，`sudo fgconsole` 確認前景 VT。
+4. 注意：VM 可能同時有序列主控台 + 圖形顯示兩個獨立輸出，`chvt` 只動圖形側；在 VM 軟體裡要切到 Display view 才看得到圖形桌面。使用者停在序列 console 時，畫面上的提示可能寫 `tty0`（現行 VT 的別名）——判斷實際前景 VT 讀 `cat /sys/class/tty/tty0/active`，不讀提示字樣。
 
 ## 快速路由
 
