@@ -34,6 +34,7 @@ tags: ["linux", "install", "bootstrap"]
 | [可除錯的 bootstrap：把可觀測性內建進安裝腳本](observable-bootstrap/)  | bootstrap 失敗時怎麼留下可診斷的痕跡：log 落地、錯誤定位、狀態 dump                          | 安裝腳本失敗時，為什麼我只能瞎找                    |
 | [讓機器跑無人值守的長任務](unattended-remote-work/)                    | 無人值守執行的三個障礙與解：NOPASSWD sudo、終端機多工器、推送認證，以及 agent 權限放行的取捨 | 怎麼讓機器在我離開後自己跑完任務、把成果送回來      |
 | [平台與發行版差異的判讀地圖](platform-divergence-map/)                 | 差異的四層（套件管理器 / 套件名 / 存在性 / 版本節奏）、除錯前先定平台、bootstrap 分歧判準    | 跨平台的清單與腳本該怎麼切、除錯時先確認什麼        |
+| [GUI 應用的安裝驗證](gui-apps-install-verify/)                         | 拆包生態（本體與功能模組分離）、首跑同意對話框、播放驗證鏈、VM 硬體解碼回退                  | GUI 應用裝了打不開 / 無聲 / 不能播該查哪一層        |
 
 機器裝好、能連入之後若出問題（連不上、終端機亂、程式行為怪），除錯與診斷自成一組，見同層的 [Linux 除錯與診斷](../debug/)。
 

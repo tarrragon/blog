@@ -877,6 +877,12 @@ UTM 當機重啟、重新登入 Hyprland 後 Caelestia 沒起來——`grep exec
 
 **shell.json 序列化順序遷就**：VM 端 `git pull` 被 shell.json 的 dirty 擋住——shell 每次啟動會驗證後重寫 config、key 順序用它自己的序列化（`idleAction` 在 `timeout` 前）。這檔案是被追蹤的 config、不能走 monitors/ 那種 gitignore 路線，治本是把 repo 檔案的 key 順序改成跟 shell 輸出一致、讓改寫變 no-op。
 
+### VLC 影片播放：拆包兩層 + 首跑同意對話框
+
+VLC 的驗證把「裝了本體不等於裝了功能」踩得更完整：`vlc` 開得起來、UI 正常，播 H.264 直接 `Codec 'h264' is not supported`——Arch 把解碼器拆到 `vlc-plugin-ffmpeg`。補上後又暴露第二層：解碼器先嘗試硬體加速（VDPAU/VAAPI），virtio-gpu 沒有視訊解碼能力、`failed to create video output` 閃一次錯誤對話框後回退軟體解碼穩定播放（log 尾端 late-frame 從 136ms 收斂到 19ms 是啟動追幀）。測試素材用 ffmpeg `testsrc2` + 440Hz sine 本機生成、驗證鏈同前（`hyprctl clients` + `wpctl status` stream `[active]`）。
+
+首跑的「Privacy and Network Access Policy」對話框（明示同意 metadata 網路抓取——封面 / 曲名等於把播放內容暴露給第三方服務）值得教學收錄：決策記在 `~/.config/vlc/vlcrc` 的 `qt-privacy-ask` / `metadata-network-access`、但 VLC 退出時整檔重寫 vlcrc、不適合進 stow。整輪 GUI 發現（拆包 / 首跑對話框 / 播放驗證鏈 / 硬體解碼回退）已抽成教學新篇 [gui-apps-install-verify](/linux/install/gui-apps-install-verify/)。
+
 ## 回寫教材的實測發現
 
 把實機跑出來、跟教材 `[待實測驗證]` 標記對得上、或值得抽成獨立教學的 gotcha 收斂在這裡。
