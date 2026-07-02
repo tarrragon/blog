@@ -14,6 +14,6 @@ systemd 預設配置下有 6 個 virtual console（TTY1-TTY6）。Wayland compos
 
 切換方式：`Ctrl+Alt+F2`（切到 TTY2）到 `Ctrl+Alt+F6`（切到 TTY6）。`Ctrl+Alt+F1` 切回圖形桌面（TTY1）。
 
-TTY 在桌面故障排除中的價值在於它**不依賴 compositor**。Compositor 掛了、GPU driver 出問題導致畫面凍結——只要 kernel 還活著，TTY 就能登入操作。這是 Linux 桌面環境「掛了不等於崩潰」的關鍵機制，詳見[桌面環境維護與故障排除](/linux/dotfile/07-desktop-maintenance/)。
+TTY 在桌面故障排除中的價值在於它**不依賴 [compositor](/linux/dotfile/knowledge-cards/compositor/)**（Wayland 下負責畫面與視窗的核心程式）。Compositor 掛了、GPU driver 出問題導致畫面凍結——只要 kernel 還活著，TTY 就能登入操作。這是 Linux 桌面環境「掛了不等於崩潰」的關鍵機制，詳見[桌面環境維護與故障排除](/linux/dotfile/07-desktop-maintenance/)。
 
 相關概念：[Rice](/linux/dotfile/knowledge-cards/rice/)（桌面客製化）、[GNU Stow](/linux/dotfile/knowledge-cards/gnu-stow/)（dotfile 管理）。
