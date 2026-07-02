@@ -48,6 +48,7 @@ tags: ["linux", "install", "bootstrap"]
 - **bootstrap 失敗來 debug**：直接讀 [可除錯的 bootstrap](observable-bootstrap/)，它也涵蓋「腳本不是你寫的、只想 debug 一次失敗」的情況。
 - **讓機器無人值守跑活**：機器已能連入操作，只想設好讓它在你離開後自己跑長任務或 agent，直接讀 [讓機器跑無人值守的長任務](unattended-remote-work/)。
 - **遇到問題要除錯**：機器已在跑但出狀況（連不上、終端機亂、程式行為怪），進 [Linux 除錯與診斷](../debug/)，從 [診斷心法](../debug/diagnosis-read-authoritative-state/) 建立判讀紀律，再依症狀分流。
+- **裝好後想讓它自己顧**：服務跑起來後，主動確認這台有沒有在監控自己的服務死活（`systemctl show sshd -p OnFailure`），沒有就從最簡單的 OnFailure + ntfy 建起——遠端機器至少把 sshd 掛上，掛了就失聯。見 [服務掛了怎麼自動知道](../debug/service-failure-monitoring/)。
 
 ## 跟其他模組的交叉引用
 
