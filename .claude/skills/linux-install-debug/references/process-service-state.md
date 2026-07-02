@@ -63,6 +63,15 @@ ps -o comm= -p "$pid"
 
 紀律：測鎖屏 / `pkill` 持鎖程式時預期它把 session 卡在鎖定 —— 是安全設計不是 bug。無人值守流程避免在持鎖狀態殺鎖屏程式。
 
+## 應用無聲：sink 在不在、stream 有沒有 active
+
+「無聲」的權威來源是音訊伺服器的 graph（`wpctl status`），不是應用有沒有報錯——音訊棧缺件時多數應用**靜默無聲、不報錯**。兩段判讀：
+
+1. **Sinks 段有沒有輸出裝置**：空的 Sinks 常見根因是 pipewire 被依賴鏈拉進來、但 session manager（wireplumber）是獨立套件沒跟著裝——daemon 在跑、graph 卻沒人建。實測：補 `wireplumber pipewire-pulse pipewire-alsa` 後 sink 立刻出現。「pipewire process 活著」不代表音訊棧完整。
+2. **Streams 段有沒有該應用的 stream 且 `[active]`**：這是「現在有沒有真的在播」的定案來源——比聽喇叭可靠（喇叭沒聲可能是 host / 硬體側），比看播放器 UI 可靠（UI 在播、stream 沒掛上 = 路由問題）。
+
+把「管線通不通」跟「應用會不會播」拆開驗證：先用本機音檔 `pw-play <file>` 打通管線（stream 出現 `[active]` = guest 側音訊路徑無誤），再驗應用層。應用層失敗就跟管線無關——往 codec / DRM / 應用自己的 log 查。
+
 ## 多工器 session 存活
 
 `zellij ls` / `tmux ls` 是權威（多工器常駐遠端、SSH 斷不影響）。機器沒重開 → `attach` 接回；機器重開過 / session 因資源不足（磁碟滿連鎖）被殺 → 顯示 `EXITED` / 不存在，接不回。
@@ -100,3 +109,4 @@ ps -o comm= -p "$pid"
 | 鎖屏死局     | `allow_session_lock_restore 1` + 起新鎖屏接管                   |
 | session 存活 | `zellij ls` / `tmux ls`；先保產出再清                           |
 | 卡住原因     | `df -h` / `free` 先排資源，再懷疑相容                           |
+| 應用無聲     | `wpctl status`：Sinks 空 = 棧缺件；stream `[active]` = 真在播   |

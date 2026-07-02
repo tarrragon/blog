@@ -852,6 +852,25 @@ step 3 的配色切換 / 桌布 / 動態取色在新 VM 全部重現，包括「
 
 新 VM 開機後 UTM 圖形視窗顯示的 login 是 `pts/0`（`tty` 指令定案）——archboot 預設用 **kmscon**（userspace console、直接畫在 DRM 上、login 跑在 pts）取代 VT getty，這也回頭修正了稍早「getty@tty1 被 disabled」的理解：不是漏開、是被 kmscon 取代。kmscon 持有 DRM master、跟 compositor 衝突，`chvt` 也救不了（它不是 VT）。換手：`sudo systemctl disable --now kmsconvt@tty1` + `sudo systemctl start getty@tty1`，畫面變真 tty1 login（`tty` 回 `/dev/tty1`）後 Hyprland 正常啟動。判讀鏈已進 linux-install-debug skill v1.7.0。
 
+### GUI 三類工具安裝驗證（檔案管理 / 瀏覽器 / 串流）
+
+desktop 層的 GUI backlog 這輪放開三類：檔案管理器、瀏覽器、音樂串流。前兩類走 repo 直裝順利，第三類（Spotify）踩出這輪最有教學價值的兩層平台差異。
+
+**Thunar 檔案管理**：`thunar + gvfs + tumbler + thunar-volman + thunar-archive-plugin + file-roller` 全在 ALARM repo。視窗驗證用 `hyprctl clients` 讀 compositor 的視窗表（`class: thunar` 出現即定案）、不靠肉眼。
+
+**音訊棧缺件 finding**：裝串流前檢查發現 **pipewire 在、wireplumber 不在**——pipewire 被依賴鏈拉進來、但 session manager 是獨立套件不會自動跟進。這個組合的症狀是「daemon 在跑、`wpctl status` 的 Sinks 段是空的、應用無聲且不報錯」。補 `wireplumber + pipewire-pulse + pipewire-alsa` 後 UTM 模擬的 Intel HDA 立即出現為 `Built-in Audio Analog Stereo` sink。「有沒有在播」的權威判讀也在同一個地方：`wpctl status` 的 Streams 段有該應用的 stream 且 `[active]`。先用 python 生一段 440Hz 純音 `pw-play` 打通管線、把「音訊路徑」跟「網頁播放」拆成兩個獨立驗證點。
+
+**瀏覽器**：firefox 152 + chromium 149 都有 ALARM aarch64 官方建置、pacman 直裝。YouTube 串流播放成功（Firefox stream 掛上 sink）——確立「無 DRM 串流」這條基線後，Spotify 的失敗就能歸因到 DRM 層。
+
+**Spotify 的兩層平台牆**：
+
+1. **官方 client 不存在**：repo 的 `spotify-launcher` 是去 Spotify 官方 apt repo 抓 deb 的下載器，實跑直接拿到精確錯誤：`There are no packages for your cpu's architecture (cpu="aarch64", supported=["amd64", "i386"])`——存在性層差異的一手案例（工具本身有 aarch64 建置、它要抓的東西沒有）。
+2. **Web Player 需要 Widevine DRM**：Google 不對 Linux aarch64 發行 CDM，唯一來源是 [Asahi Linux 的 widevine-installer](https://github.com/AsahiLinux/widevine-installer)（從 ChromeOS recovery 鏡像抽 arm64 CDM、fixup 二進位格式）。腳本預設 Fedora 路徑，Arch 要覆寫 `LIBDIR=/usr/lib CHROME_WIDEVINE_BASE=/usr/lib/chromium`；本 VM kernel page size 4096、CDM 直接相容不需弱化記憶體權限。
+
+**Widevine 的兩段式啟動坑**：裝完 CDM 後第一個 chromium 實例播不了——log（`--enable-logging=stderr --v=1`）顯示第一次啟動只做「發現預裝 component → 寫 hint 檔」，CDM 要**下一次啟動**才以 `Registering hinted Widevine` 真正註冊可用。「裝完 Widevine 要重啟瀏覽器」的機制層原因就是這個 hint 檔時序。CDM 有沒有真的載入的權威判讀：`grep widevinecdm /proc/<pid>/maps`（dlopen 過就有映射）。最終定案三權威齊備：CDM 映射確認 + Chromium stream 雙聲道 `[active]` + Spotify 實際出聲。
+
+安裝結果已回寫 dotfiles `packages/arch-desktop.txt`（音訊三件套、thunar 六件套、雙瀏覽器從 backlog 轉正）；Widevine 屬系統路徑手動步驟、不進 stow、在 packages 檔以註解記程序。
+
 ## 回寫教材的實測發現
 
 把實機跑出來、跟教材 `[待實測驗證]` 標記對得上、或值得抽成獨立教學的 gotcha 收斂在這裡。
