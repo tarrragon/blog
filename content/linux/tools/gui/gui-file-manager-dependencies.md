@@ -67,6 +67,14 @@ Nemo 那 38 個套件裡，還有一大塊來自它把 `gvfs` 列成硬相依（
 - Nemo 脫離 Cinnamon session 的功能缺損範圍
 - 加進 `packages-arch.txt` 後，bootstrap 一鍵安裝這條路線的實際落地結果
 
+## 為什麼拿 Nemo 當「重」的代表
+
+上表用 Nemo 當桌面環境耦合的代表，是因為它把耦合展示得最乾淨——`cinnamon-desktop` + `xapp` 那層桌面元件加上 gvfs 硬相依，剛好對照出 Thunar / PCManFM-Qt 省掉的是什麼。但它不是最重的：GNOME 的 Nautilus（`nautilus`）與 KDE 的 Dolphin（`dolphin`）是更 canonical 的「裝檔案管理員就拖進半個桌面」例子。Nautilus 深度綁 GNOME 的 GTK4 / libadwaita / tracker 索引棧，在非 GNOME 環境裝它會拉進一串 GNOME 平台庫；Dolphin 綁 KDE 的 Frameworks（KIO、Baloo 等），在非 KDE 環境同理。判讀方式跟 Nemo 一節相同：檔案管理員的相依樹反映它預期跑在哪個桌面裡。真要在裸 Hyprland 上驗，`pacman -S --needed --print nautilus` / `dolphin` 會列出各自那串平台庫——數量通常比 Nemo 更可觀。
+
+## 零相依對照：純終端機檔案管理員
+
+如果你在意的正是相依足跡，還有一條完全繞開圖形棧的路：終端機檔案管理員（`yazi` / `lf` / `nnn` / `ranger`）在終端機裡跑，不需要 GTK / Qt / gvfs / 桌面環境那一整套。`yazi`（Rust、內建預覽與非同步 I/O）與 `lf`、`nnn`（C、極小）在裸 Hyprland 或純 SSH 環境下都是近乎零額外相依的選擇——你已經有終端機，它們就能跑。代價是純鍵盤操作、沒有圖形檔案管理員那種拖放與縮圖牆。這是「圖形 vs 終端機」的取捨，不是同一條路上的輕重之分：要滑鼠拖放、縮圖預覽走圖形檔案管理員；要零相依、鍵盤流、SSH 下也能用走 TUI。TUI 檔案管理員的比較見 [CLI 環境工具的檔案管理器 TUI](../../cli/file-manager-tuis/)。
+
 ## 下一步
 
 - 這篇談的是「加桌面 app 時怎麼判讀相依成本」，套件清單本身怎麼設計、怎麼被 bootstrap 一鍵安裝，見 [模組八：Bootstrap script 與套件清單](/linux/dotfile/08-sync-bootstrap/bootstrap-script-packages/)。
