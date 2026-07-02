@@ -33,6 +33,7 @@ tags: ["linux", "install", "bootstrap"]
 | [外部連入、SSH key 與無 key 的 bootstrap 路徑](ssh-keyless-bootstrap/) | 啟用 sshd、從本機連入、設 SSH key，以及還沒有 key 時怎麼把 dotfile 弄進去                    | 怎麼從舒適的本機終端機操作新機器、沒有 key 時怎麼辦 |
 | [可除錯的 bootstrap：把可觀測性內建進安裝腳本](observable-bootstrap/)  | bootstrap 失敗時怎麼留下可診斷的痕跡：log 落地、錯誤定位、狀態 dump                          | 安裝腳本失敗時，為什麼我只能瞎找                    |
 | [讓機器跑無人值守的長任務](unattended-remote-work/)                    | 無人值守執行的三個障礙與解：NOPASSWD sudo、終端機多工器、推送認證，以及 agent 權限放行的取捨 | 怎麼讓機器在我離開後自己跑完任務、把成果送回來      |
+| [平台與發行版差異的判讀地圖](platform-divergence-map/)                 | 差異的四層（套件管理器 / 套件名 / 存在性 / 版本節奏）、除錯前先定平台、bootstrap 分歧判準    | 跨平台的清單與腳本該怎麼切、除錯時先確認什麼        |
 
 機器裝好、能連入之後若出問題（連不上、終端機亂、程式行為怪），除錯與診斷自成一組，見同層的 [Linux 除錯與診斷](../debug/)。
 

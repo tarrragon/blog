@@ -16,6 +16,23 @@
 
 詳見 [讀權威狀態不靠肉眼](references/principles/read-authoritative-state-not-eyeball.md) 與 [讀程式自己的 log](references/principles/read-the-programs-own-log.md)。
 
+## 第零步：先定平台（診斷與修法都是平台相依的）
+
+判讀工具、套件名、修法都因平台 / 發行版 / 架構而異——把 A 平台的經驗直接套到 B 平台，是「工具行為不對」類誤判的常見根因。開始查之前先用三條指令建立座標：
+
+```bash
+cat /etc/os-release        # 發行版與版本（Linux）；macOS 用 sw_vers
+uname -m                   # CPU 架構：x86_64 / aarch64 — ARM 的套件生態明顯較小
+command -v pacman apt-get dnf brew   # 哪個套件管理器在場
+```
+
+平台定了之後，這些差異才有判讀基準：
+
+- **套件名與執行檔名分歧**：`fd`（Arch）= `fd-find`（Debian，執行檔 `fdfind`）；`bat` 在 Debian 執行檔叫 `batcat`；`github-cli`（Arch）= `gh`（Debian/Fedora）。「command not found」先確認是沒裝、還是這個發行版叫別的名字。
+- **非互動旗標不對稱**：apt 用 `-y`、pacman 用 `--noconfirm`。非 TTY（SSH 一行式、CI、無人值守）下缺對應旗標會卡在 `[Y/n]` 直接失敗。
+- **rolling vs stable 的資料庫時序**：Arch 鏡像不保留舊版檔案，stale db 會 404（`failed retrieving file`），修法是先 `pacman -Syu`（只 `-Sy` 不 `-u` 造成 partial upgrade）；Debian stable 無此時序問題、但版本舊，config 語法可能對不上新版文件。
+- **工具在不在**：`arp` 常沒裝（用 `ip neigh`）、最小系統連 `sudo` 都沒有；ARM 上 AUR 部分套件不支援、Homebrew on Linux 無 aarch64 bottle。
+
 ## 四步診斷流程（每次都跑）
 
 1. **描述症狀**：現象是什麼，別在這步下結論（「畫面出現密碼框」，不是「鎖了」）。
@@ -61,6 +78,7 @@
 
 ---
 
+**Version**: 1.4.0 — 新增「第零步：先定平台」：診斷前先以 os-release / uname -m / command -v 建立平台座標；套件名與執行檔名分歧（fd-find/fdfind、batcat、github-cli vs gh）、非互動旗標不對稱（-y vs --noconfirm）、rolling stale-db 404 需 -Syu、ARM 生態縮水——從新 VM 復現驗證的三個非互動 bootstrap finding 萃取
 **Version**: 1.3.0 — Round-3 審查修正：補兩類 AI 最高頻情境——權限被拒(EACCES、namei -l 逐層 / MAC / capability)、套件管理器失敗(pacman db lock / keyring 簽章 / partial upgrade)；被 kill/OOM/exit137 判讀；速查表加 kernel(dmesg)/權限/strace 三列；read-logs 加 strace 回退；DNS resolv.conf symlink caveat、sudoers chmod 0440
 **Version**: 1.2.1 — Round-2 審查修正：systemd-failed 情境接上入口（速查表 + 症狀路由補「服務 failed / restart loop」，原本加了 section 卻路由不到）
 **Version**: 1.2.0 — Round-1 審查修正：`arp -a` 全面改主推 `ip neigh`（現代最小系統無 net-tools）；新增 DNS 解析、systemd failed 判讀、檔案系統唯讀 remount 三個情境；路由標明 remote→machine 分流；反模式加 scrollback 殘影
