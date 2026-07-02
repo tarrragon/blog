@@ -60,7 +60,7 @@ ps -o comm= -p "$pid"
 被問「服務掛了要不要肉眼看 / 能不能自動告警」時：不用肉眼。systemd 已在追蹤每個 unit 狀態（`systemctl --failed` 是權威清單），監控就是訂閱狀態變化、變壞就推播。分層：
 
 - **原生 `OnFailure` 鉤子（零額外 daemon）**：unit 進 failed 時觸發另一個 unit。做法：`alert@.service`（template、`ExecStart=... %i`）+ 送出腳本（curl ntfy / email）+ 在目標 unit 加 `OnFailure=alert@%n.service`（或放 `service.d/` top-level drop-in 套所有 service）。實測要點：(1) 全域 drop-in 會套到 `alert@` 自己 → 給它清空 `OnFailure=` 擋遞迴；(2) systemd service 環境下 `hostname` 可能回空、用 `uname -n`。
-- **先重啟才告警**：`Restart=on-failure` + `StartLimitBurst`/`StartLimitIntervalSec`，撐過重試上限才進 failed 才觸發 `OnFailure`——收到的是「救不回來」不是每次瞬斷。
+- **先重啟才告警**：`Restart=on-failure` + `StartLimitBurst`/`StartLimitIntervalSec` 先自動重試。實測坑：`OnFailure` **每次失敗都觸發**（含 auto-restart 中途、不是只在放棄時；一個重試 3 次的 crash 觸發 4 次告警）。要「只在終局告警」，送出腳本開頭 gate 掉中途：`state=$(systemctl show <unit> -p ActiveState --value); [ "$state" = failed ] || exit 0`（auto-restart 中途是 `activating`、撞上限才 `failed`）。config 管重試次數、handler gate 管只在終局吵。
 - **整台機器死掉的盲點**：`OnFailure` 靠 systemd 觸發，機器當掉 systemd 自己沒了、發不出告警。要體外心跳（dead-man switch：定時 curl healthchecks.io / Uptime Kuma，訊號停由體外告警）。體內方案報不了自己這台的死。
 - **要指標/門檻**（CPU/磁碟/趨勢，非只 up/down）：Netdata（單機開箱）、Prometheus+Alertmanager（多機）、Monit（每服務檢查+自動動作）。
 

@@ -43,6 +43,10 @@ ExecStart=/usr/local/bin/notify-failure %i
 #!/bin/bash
 # /usr/local/bin/notify-failure   （記得 chmod +x）
 unit="$1"
+# 只在「真正放棄」時告警：OnFailure 每次失敗都觸發（含 auto-restart 中途，見下節實測），
+# auto-restart 中途 ActiveState 是 activating、撞重試上限才進 failed。gate 掉中途避免洗告警。
+state="$(systemctl show "$unit" -p ActiveState --value)"
+[ "$state" = failed ] || exit 0
 host="$(uname -n)"                     # 不要用 hostname，systemd 環境下可能回空
 ts="$(date -Is)"
 topic="你的私密topic"
@@ -73,7 +77,7 @@ OnFailure=alert@%n.service
 
 ### 先自動重啟、放棄了才吵你
 
-多數暫時性失敗（一次連線抖動、一個 race）自己重試就好，不值得半夜叫醒你。把「自動復原」跟「告警」分兩段：讓 systemd 先重啟幾次，撐過重試上限才進 failed、才觸發 `OnFailure`。
+多數暫時性失敗（一次連線抖動、一個 race）自己重試就好，不值得半夜叫醒你。把「自動復原」跟「告警」分兩段：讓 systemd 先重啟幾次，撐過重試上限才真的算放棄。
 
 ```ini
 [Service]
@@ -81,10 +85,12 @@ Restart=on-failure
 RestartSec=5
 [Unit]
 StartLimitBurst=3          # 重試 3 次
-StartLimitIntervalSec=60   # 60 秒內都失敗才放棄 → 進 failed → 才告警
+StartLimitIntervalSec=60   # 60 秒內都失敗才進 failed（start-limit-hit）
 ```
 
-這也實測過：一個 `Restart=on-failure` + `StartLimitBurst=2` 的服務，systemd 重啟到 `NRestarts=2`、撞上限後報 `start-limit-hit` 進 failed、`OnFailure` 才觸發告警。所以你收到的是「它試了都救不回來」，不是每一次瞬斷。
+**這裡有個實測踩到、跟直覺相反的坑**：`OnFailure` 不是「放棄才觸發」，而是**每一次失敗都觸發**——包含 `Restart=on-failure` 的每次 auto-restart 中途。實測一個反覆 crash 的服務（重試 3 次後放棄）觸發了 **4 次** `OnFailure`（3 次 auto-restart + 1 次最終 `start-limit-hit`）。所以只靠 `Restart=` + `StartLimit=` 這段 config，你會被每次瞬斷洗告警。
+
+真正做到「只在放棄才吵」，靠的是上面送出腳本開頭那道 gate：`systemctl show <unit> -p ActiveState` 在 auto-restart 中途是 `activating`、撞上限進 failed 才是 `failed`，腳本只在 `failed` 才送。加上 gate 後同一個 crash 測試從 4 次告警降到 1 次（只剩最終放棄那次）。config 負責「重試幾次」，handler 的 gate 負責「只在終局告警」——兩段合起來才是完整的「先重啟、放棄才吵」。
 
 ## 第二層：推去哪裡（關鍵是能離開這台機器）
 
