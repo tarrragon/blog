@@ -48,7 +48,7 @@ SSH 連線本身、以及「你的終端機 ↔ 遠端 session」之間那條連
 1. **切之前先查目標 VT 有沒有 getty**：`systemctl is-active getty@tty<N>`。inactive 就先拉起來：`sudo systemctl start getty@tty<N>`。
 2. **查 enable 狀態決定要不要治本**：`systemctl is-enabled getty@tty<N>`。有些安裝器（實測：archboot）裝出來的系統 `getty@tty1` 是 `disabled`——不是「autovt 沒觸發」的暫時態，而是每次開機都黑畫面；`sudo systemctl enable getty@tty<N>` 治本。
 3. `sudo chvt <N>` 切目前顯示的 VT，`sudo fgconsole` 確認前景 VT。
-4. 注意：VM 可能同時有序列主控台 + 圖形顯示兩個獨立輸出，`chvt` 只動圖形側；在 VM 軟體裡要切到 Display view 才看得到圖形桌面。使用者停在序列 console 時，畫面上的提示可能寫 `tty0`（現行 VT 的別名）——判斷實際前景 VT 讀 `cat /sys/class/tty/tty0/active`，不讀提示字樣。
+4. 注意：VM 可能同時有序列主控台 + 圖形顯示兩個獨立輸出，`chvt` 只動圖形側；在 VM 軟體裡要切到 Display view 才看得到圖形桌面。判讀自己在哪一側：`who` 顯示登入在 `pts/N` 或 `ttyS*`/`ttyAMA*` = 序列側、`tty<N>` = 圖形側的 VT；圖形裝置本身有沒有掛上讀 `ls /dev/dri/`（有 `card0` = 裝置在、只是視窗停在序列視圖）。使用者停在序列 console 時，畫面上的提示可能寫 `tty0`（現行 VT 的別名）——判斷實際前景 VT 讀 `cat /sys/class/tty/tty0/active`，不讀提示字樣。
 
 ## 快速路由
 

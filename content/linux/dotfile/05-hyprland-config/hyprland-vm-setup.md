@@ -22,6 +22,7 @@ Apple Silicon Mac 用 UTM（基於 QEMU）跑 ARM64 Linux VM：
 - **第一頁選 Virtualize，不是 Emulate**——同架構（Apple Silicon 跑 ARM64 guest）兩條都是 QEMU，差在 Virtualize 走 hvf 硬體虛擬化（CPU 接近原生）、Emulate 走 TCG 純軟體模擬（CPU 慢一個數量級；實測 C++ 大型編譯一小時只跑 1/3）。Emulate 只在跨架構（ARM Mac 跑 x86_64 guest）才需要。判別現有 VM：guest 裡 `lscpu` 的 Model name 是 `-` 為直通、顯示具體型號（如 Cortex-A72）為模擬
 - 選 「Linux」 虛擬機類型，不是 「Other」
 - Display Card 選 `virtio-gpu-gl-pci`（有 3D 加速），不是 `virtio-gpu-pci`（無加速）；Emulate 精靈預設給無加速的 `virtio-gpu-pci`、Virtualize 精靈通常直接給對
+- **VM 視窗可能停在序列視圖、圖形顯示是另一個視圖**——Virtualize 精靈預設多附一個序列裝置，UTM 視窗開機後可能顯示的是序列 console（文字登入、guest 裡 `who` 顯示登入在 `pts/0`），跟 virtio-gpu 的圖形輸出是兩個獨立視圖。切換：VM 視窗工具列的顯示器下拉選單 → 選 `Display 1 (virtio-gpu)`。判讀圖形裝置本身有沒有掛上看 guest 的 `ls /dev/dri/`（有 `card0` = 裝置在、只是視窗看錯視圖）。不想每次切就到 VM 設定移除序列裝置。compositor 要在圖形視圖那側的 VT 上啟動、序列 console 起不了 Hyprland
 - 如果用 App Store 版的 UTM（不含 Venus），只有基本的 virtio-gpu-gl 加速
 - GitHub release 版的 UTM 支援 Venus/MoltenVK，效能更好但仍不及裸金屬
 
