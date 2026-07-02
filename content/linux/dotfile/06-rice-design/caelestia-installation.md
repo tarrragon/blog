@@ -67,7 +67,7 @@ hl.config({
 | `caelestia-shell-git` | 開發版 shell（最新功能，可能不穩定）     |
 | `caelestia-cli`       | CLI 工具（安裝、主題切換、截圖、錄影等） |
 
-`caelestia-cli` 依賴 `caelestia-shell`，安裝 CLI 會自動拉 shell。
+`caelestia-shell` 是 `caelestia-cli` 的 **optional dependency**（提供 shell 控制與截圖功能）——只裝 CLI 不會自動拉 shell，兩個都要就各自明講：`yay -S caelestia-cli caelestia-shell`（實測 caelestia-cli 1.1.1 的 PKGBUILD，shell 列在 optdepends）。
 
 ## 手動 Build
 
