@@ -2,7 +2,7 @@
 title: "在 Hyprland 加圖形檔案管理員：依賴足跡與桌面環境耦合"
 date: 2026-07-01
 description: "在最小化 Hyprland 環境要裝圖形檔案管理員（或任何桌面 app）、需要判斷它會拖進多少相依、以及輕量與功能完整之間怎麼取捨時回來讀"
-weight: 1
+weight: 2
 tags: ["linux", "tools", "gui", "hyprland", "package-management", "file-manager"]
 ---
 

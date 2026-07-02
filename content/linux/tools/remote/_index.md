@@ -16,6 +16,12 @@ tags: ["linux", "tools", "remote", "ssh"]
 - [zellij 分頁與 pane](../cli/zellij-pane/)——較新、開箱即用、內建佈局的多工器。
 - [zellij 遠端 web 客戶端](../cli/zellij-remote-web-client/)——從瀏覽器連遠端 session 的路徑。
 
+## 連線與同步工具
+
+多工器保住 session 之後，還有兩塊獨立的能力：連線層（怎麼接上遠端、斷了怎麼辦）與同步層（本地與遠端的檔案怎麼一致）。這兩塊各有多個工具、解不同弱點，挑錯會很痛——連線存活、可達性、檔案一致是三層不同的問題。
+
+- [遠端連線與同步工具選型](connection-and-sync-tools/)——`ssh` / `mosh`（漫遊不斷線）/ `autossh`（自動重連）、`tailscale` / `wireguard`（NAT 後可達性）、`rsync` / `sshfs` / `mutagen`（三種同步語義）、IDE remote 模式的定位與取捨。
+
 ## 低頻寬 / 手機連線下的介面
 
 頻寬低或從手機 / 平板連線時，只傳純文字的 TUI 介面（ASCII / Unicode 製圖，不傳影像）最穩。監控、圖表、檔案瀏覽、資料庫操作都有這類工具，整理在 [CLI 環境工具](../cli/)。

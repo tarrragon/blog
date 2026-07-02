@@ -12,12 +12,13 @@ tags: ["linux", "tools", "gui", "desktop"]
 
 ## 文章
 
-| 文章                                                                       | 主題                                                                         |
-| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [加圖形檔案管理員：依賴足跡與桌面環境耦合](gui-file-manager-dependencies/) | Thunar / PCManFM-Qt / Nemo 的相依樹實測對照、gvfs 與縮圖的功能相依、選型判準 |
+| 文章                                                                       | 主題                                                                          |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [桌面環境選型：整合度與組裝自由度的取捨](desktop-environment-selection/)   | GNOME / KDE / Hyprland / XFCE / Cinnamon 的定位、資源與客製代價、Wayland 判斷 |
+| [加圖形檔案管理員：依賴足跡與桌面環境耦合](gui-file-manager-dependencies/) | Thunar / PCManFM-Qt / Nemo 的相依樹實測對照、gvfs 與縮圖的功能相依、選型判準  |
 
 ## 相關
 
 - 純終端機下的檔案管理器（`yazi` / `broot` / `ranger`）是另一條路，見 [CLI 環境工具](../cli/) 的檔案管理器段。
-- 桌面環境本身（GNOME / KDE / Hyprland）與它們的擴充，見 [Dotfile 管理：桌面 Rice 設計](/linux/dotfile/06-rice-design/)。
+- 桌面環境本身（GNOME / KDE / Hyprland）怎麼選、各自的擴充生態，見 [桌面環境選型](desktop-environment-selection/)；選了 Hyprland 之後怎麼組裝，見 [Dotfile 管理：桌面 Rice 設計](/linux/dotfile/06-rice-design/)。
 - 在圖形桌面上安裝這些工具前的環境與相依判讀，跟 [除錯與診斷](../../debug/) 的權威狀態紀律同源。
