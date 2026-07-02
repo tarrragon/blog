@@ -208,6 +208,7 @@
   - **位置引用與數量命名（警告層）**：`mdtools lint` 掃位置式引用候選（REF1：「見第 N 章」「§N」）與標題內嵌成員數的集合命名（REF2：「六大原則」）；命中是候選不是判決 — 凍結外部編號（RFC / 法條）、緊鄰清單的行內計數、「」內的反例引用合規。判讀依 [#155](/report/reference-by-semantic-title-not-number/) / [#156](/report/name-collections-by-role-not-count/)、細節見 spec §5.10。
   - **否定起手（警告層）**：`mdtools lint` 掃「不是 X、而是 Y」「與其 X、不如 Y」重點後置候選（POS-negation-lead）；核心概念被擠到「而是 / 不如」之後是資訊結構效率問題、跨語言（非中文特有句型）。命中是候選不是判決 — 判定用「核心概念在不在句首」、明示反例對照與「」內引用合規、講此句型的 meta 卡會自我觸發。判讀依 [#166](/report/lead-with-the-point-cross-language/) / [#165](/report/register-violation-needs-cross-style-eyes/)、細節見 spec §5.11。
   - **裝飾符號禁用**：正文（含表格、列表、行內）不可用 emoji（✅ ❌ ⚠️ 🚨 等）跟裝飾性 unicode（✓ ✗）；表格 status 改用純文字、列表優缺點改用 `**優點**：` / `**缺點**：` 標題段；理由與替換策略見 spec §5.9。**目前未進 `mdtools lint` 自動掃描、靠人工 grep**：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗" content/`。
+  - **泛用詞濫用（人工 grep）**：同一個泛用詞（坑 / 東西 / 搞 / 弄 / 處理）反覆出現、把本來不同的情境壓成同一個模糊標籤、讀起來扁平 — 依情境換精確詞（意外 / 陷阱 / 出問題 / 發生狀況）、詞彙變化本身是資訊；「坑」繁中少用（簡中高頻）。命中是候選不是判決 — 命中密集且各指不同事才違規、真泛指 / 「」內引用 / 輕度 hook 合規。掃：`rg "坑|東西|搞|弄|處理一下|情況" content/`。判讀依 [#203](/report/avoid-overused-generic-words/)。
 - 完整規則、識別碼白名單、TLD 清單、執行時機、擴充流程：**讀 `content/posts/markdown-writing-spec.md`**。
 - 規則與 `scripts/mdtools/internal/rules/` 實作必須保持同步。任一方修改時同步更新另一方與規範文章。
 - 寫作時遇到 pre-commit / pre-push 報錯：讀訊息修正，**不可用 `--no-verify` 繞過**。
