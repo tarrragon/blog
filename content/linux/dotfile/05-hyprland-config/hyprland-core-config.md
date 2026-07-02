@@ -125,6 +125,17 @@ hl.config({
 
 ## Keybind 設計
 
+### 修飾鍵（Modifier）：`SUPER` 是哪顆鍵
+
+keybind 由「修飾鍵 + 按鍵」組成，Hyprland 配置裡最常當主修飾鍵的是 `SUPER`。`SUPER` 是 X11/Wayland 對 **Meta 鍵**的稱呼，在不同鍵盤上是不同的實體鍵：
+
+- **PC 鍵盤**：**Windows 鍵**（⊞，通常在 Ctrl 與 Alt 之間）。
+- **Mac 鍵盤**：**Command 鍵（⌘）**。
+
+其他常見修飾鍵：`SHIFT`、`CTRL`（Control）、`ALT`（Mac 上是 Option ⌥）。組合寫法用空格串，例如 `"SUPER SHIFT"`。選 `SUPER` 當主修飾鍵是慣例——它幾乎不跟應用程式本身的快捷鍵衝突（應用多用 Ctrl / Alt）。
+
+在 Mac 上跑虛擬機時，實體 ⌘ 會對應到 guest 的 `SUPER`，但 macOS 會先攔截部分 ⌘ 組合——這層 VM 專屬的坑見 [VM 環境設定](../hyprland-vm-setup/)。
+
 ### Bind 類型
 
 Hyprland 提供多種 bind 函式，處理不同互動模式：

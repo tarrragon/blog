@@ -25,6 +25,7 @@ Apple Silicon Mac 用 UTM（基於 QEMU）跑 ARM64 Linux VM：
 - **VM 視窗可能停在序列視圖、圖形顯示是另一個視圖**——Virtualize 精靈預設多附一個序列裝置，UTM 視窗開機後可能顯示的是序列 console（文字登入、guest 裡 `who` 顯示登入在 `pts/0`），跟 virtio-gpu 的圖形輸出是兩個獨立視圖。切換：VM 視窗工具列的顯示器下拉選單 → 選 `Display 1 (virtio-gpu)`。判讀圖形裝置本身有沒有掛上看 guest 的 `ls /dev/dri/`（有 `card0` = 裝置在、只是視窗看錯視圖）。不想每次切就到 VM 設定移除序列裝置。compositor 要在圖形視圖那側的 VT 上啟動、序列 console 起不了 Hyprland
 - 如果用 App Store 版的 UTM（不含 Venus），只有基本的 virtio-gpu-gl 加速
 - GitHub release 版的 UTM 支援 Venus/MoltenVK，效能更好但仍不及裸金屬
+- **修飾鍵：Mac 的 ⌘ 對應 guest 的 `SUPER`，但 macOS 會先攔截部分 ⌘ 組合**——Hyprland 的 keybind 幾乎都以 `SUPER`（Meta）當主修飾鍵（見 [核心配置的修飾鍵段](../hyprland-core-config/)），而 UTM 裡 Mac 的 Command ⌘ 通常就是那顆 `SUPER`。問題是 macOS 自己會先吃掉某些 ⌘ 組合（⌘+Q 結束 app、⌘+Space Spotlight…），VM 收不到。判讀：`SUPER` 綁定沒反應、但焦點視窗打字正常，多半是宿主層攔截、不是 Hyprland 配置錯。解法：先確認 VM 視窗有 focus；在 UTM 的鍵盤/輸入設定開「把系統快捷鍵送進 VM（capture input）」讓 ⌘ 組合進 guest。臨時繞過：需要重載配置這類動作，直接在已開的終端機下指令（如 `source` / `hyprctl reload`），不必卡在 ⌘ 鍵上
 
 ## VM 必要環境變數
 
