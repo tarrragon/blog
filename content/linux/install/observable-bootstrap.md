@@ -2,7 +2,7 @@
 title: "可除錯的 bootstrap：把可觀測性內建進安裝腳本"
 date: 2026-07-01
 description: "安裝腳本中途失敗卻只能對著終端機捲動瞎找原因、想在 bootstrap 設計階段就讓失敗可定位時回來讀"
-weight: 5
+weight: 6
 tags: ["dotfile", "linux", "bootstrap", "observability"]
 ---
 

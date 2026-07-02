@@ -30,6 +30,7 @@ tags: ["linux", "install", "bootstrap"]
 | [安裝過程用到的基礎操作](basic-operations/)                            | 系列用到的基礎操作：`su -`、nano 編輯、檔名/指令大小寫、shell 符號（已熟可跳過）             | 照做時撞到沒見過的基礎指令怎麼辦                    |
 | [Linux 安裝選項判讀](install-option-decisions/)                        | 安裝程式各選項的決策方針：locale、網路、鏡像、磁碟分割、檔案系統、bootloader                 | 安裝程式問我這個選項，我該根據什麼選                |
 | [最小安裝後的工具驗證與補足](minimal-install-verify/)                  | 最小系統缺哪些必要工具、怎麼驗證、怎麼補                                                     | 為什麼裝完連 sudo 都沒有、bootstrap 跑不起來        |
+| [安裝期套件與網路故障排除](package-and-network-troubleshooting/)       | 第一次抓套件就失敗：分「連不到（DNS/mirror）」vs「連得到但被拒（db lock/簽章/partial/404）」 | 剛裝好跑 pacman 就報錯，是網路還是套件管理器的問題  |
 | [外部連入、SSH key 與無 key 的 bootstrap 路徑](ssh-keyless-bootstrap/) | 啟用 sshd、從本機連入、設 SSH key，以及還沒有 key 時怎麼把 dotfile 弄進去                    | 怎麼從舒適的本機終端機操作新機器、沒有 key 時怎麼辦 |
 | [可除錯的 bootstrap：把可觀測性內建進安裝腳本](observable-bootstrap/)  | bootstrap 失敗時怎麼留下可診斷的痕跡：log 落地、錯誤定位、狀態 dump                          | 安裝腳本失敗時，為什麼我只能瞎找                    |
 | [讓機器跑無人值守的長任務](unattended-remote-work/)                    | 無人值守執行的三個障礙與解：NOPASSWD sudo、終端機多工器、推送認證，以及 agent 權限放行的取捨 | 怎麼讓機器在我離開後自己跑完任務、把成果送回來      |

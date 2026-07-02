@@ -2,7 +2,7 @@
 title: "外部連入、SSH key 與無 key 的 bootstrap 路徑"
 date: 2026-07-01
 description: "要從本機終端機操作新裝好的 Linux 機器、設 SSH key 免密碼、或還沒有 key 就想把 dotfile 弄進機器跑 install.sh 時回來讀"
-weight: 4
+weight: 5
 tags: ["dotfile", "linux", "ssh", "bootstrap"]
 ---
 

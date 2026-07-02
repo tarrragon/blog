@@ -2,7 +2,7 @@
 title: "讓機器跑無人值守的長任務"
 date: 2026-07-01
 description: "要讓一台遠端機器在你不盯著時自己跑完一個長任務或 agent、卻被 sudo 密碼 / 斷線就死 / 推不出結果擋住時讀"
-weight: 6
+weight: 7
 tags: ["dotfile", "linux", "ssh", "automation"]
 ---
 
