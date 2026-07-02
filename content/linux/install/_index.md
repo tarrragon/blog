@@ -56,3 +56,4 @@ tags: ["linux", "install", "bootstrap"]
 - [模組七：日誌判讀與診斷工具](/linux/dotfile/07-desktop-maintenance/log-reading-diagnostic-tools/)——「可除錯的 bootstrap」與它呼應：前者談怎麼產生可診斷的 log，後者談怎麼讀。
 - [Linux 除錯與診斷](../debug/)——本系列裝好、連入之後的下游；出問題時的判讀紀律與情境分流。
 - [Linux 工具選單](../tools/)——安裝與除錯要用的工具（CLI / 圖形桌面 / 遠端）有哪些選擇、推薦用哪些。
+- [Infra 心智模型：拿到雲端帳號的第一天](/infra/00-infra-mindset/first-day-with-cloud-account/)——雲端主機的機器初始化是本系列的上游情境；被指派 infra 工作、拿到一台雲端主機後，先過本系列的 OS 連入與 bootstrap 前置，再進 infra 的資源管理。
