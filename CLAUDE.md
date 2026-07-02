@@ -200,6 +200,7 @@ scripts/remote-sync.sh arch-vm 'sudo ./monitoring/deploy.sh'   # 只部署某個
 - **家目錄檔**（`~/.config/...`、`~/.local/bin/...`）→ 做成 stow 套件、`install.sh` 部署。
 - **系統檔**（`/etc/systemd/system/...`、`/usr/local/bin/...`，root-owned、stow 管不到）→ 套件內附 `deploy.sh`，在目標機 `sudo` 跑，冪等安裝。
 - **私密值**（ntfy topic、healthcheck UUID、token）→ **不進 git**，repo 只放 `.example` 佔位，deploy 只在目標不存在時建佔位、真值手填或走 gitignore 的本地檔。
+- **app 自己管理（atomic-write）的 config**（如 caelestia `shell.json`：程式會把 stow symlink 換成實檔、`stow --adopt` 還會把它改寫過的內容 clobber 回 repo）→ **不 stow，改 copy 部署**：套件內附 `deploy.sh` 以一般使用者 `cp` repo 版蓋過 live 檔、從 stow_pkgs 移除該套件。**repo 為唯一真實來源**——持久設定改 repo + 部署，**不要用該 app 的 GUI 改**（會寫進 live 檔、下次部署被覆蓋）。判斷訊號：部署後該檔從 symlink 變實檔、或內容被程式重排。
 
 ## 跟 Codex / 其他 agent 的差異
 
