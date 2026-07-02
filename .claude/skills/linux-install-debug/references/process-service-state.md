@@ -55,6 +55,17 @@ ps -o comm= -p "$pid"
 
 判讀：服務問題的權威是 `journalctl -u` 的日誌 + `status` 的 exit code / Result，不是「重啟看看好不好」。
 
+### 不想肉眼盯：把失敗變成推播（OnFailure）
+
+被問「服務掛了要不要肉眼看 / 能不能自動告警」時：不用肉眼。systemd 已在追蹤每個 unit 狀態（`systemctl --failed` 是權威清單），監控就是訂閱狀態變化、變壞就推播。分層：
+
+- **原生 `OnFailure` 鉤子（零額外 daemon）**：unit 進 failed 時觸發另一個 unit。做法：`alert@.service`（template、`ExecStart=... %i`）+ 送出腳本（curl ntfy / email）+ 在目標 unit 加 `OnFailure=alert@%n.service`（或放 `service.d/` top-level drop-in 套所有 service）。實測要點：(1) 全域 drop-in 會套到 `alert@` 自己 → 給它清空 `OnFailure=` 擋遞迴；(2) systemd service 環境下 `hostname` 可能回空、用 `uname -n`。
+- **先重啟才告警**：`Restart=on-failure` + `StartLimitBurst`/`StartLimitIntervalSec`，撐過重試上限才進 failed 才觸發 `OnFailure`——收到的是「救不回來」不是每次瞬斷。
+- **整台機器死掉的盲點**：`OnFailure` 靠 systemd 觸發，機器當掉 systemd 自己沒了、發不出告警。要體外心跳（dead-man switch：定時 curl healthchecks.io / Uptime Kuma，訊號停由體外告警）。體內方案報不了自己這台的死。
+- **要指標/門檻**（CPU/磁碟/趨勢，非只 up/down）：Netdata（單機開箱）、Prometheus+Alertmanager（多機）、Monit（每服務檢查+自動動作）。
+
+判準：先分「單一 service 死活 / 整台機器死活 / 資源趨勢」——別拿體內 `OnFailure` 去蓋機器當機（那是它盲點）。
+
 ## session 鎖沒鎖：認清是哪一層的鎖
 
 畫面有密碼框 ≠ 鎖了（可能是內嵌鎖屏樣式 widget 的儀表板）。鎖分層、查錯層得誤導答案：

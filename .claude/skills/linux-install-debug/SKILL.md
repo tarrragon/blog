@@ -66,6 +66,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 - **（從 remote-access 分流後）機器沒回應、域名解析不了、虛擬機開不起來、疑似磁碟滿 / 檔案系統唯讀連鎖** → [machine-unreachable](references/machine-unreachable.md)
 - **判程式活著沒 / 服務歸誰 / 服務 failed 或一直重啟(restart loop) / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
 - **進程活著卻不運作（GUI shell / bar 畫得出來但點不動、keybind 叫不出東西、焦點視窗打字正常）** → [process-service-state](references/process-service-state.md) 的「進程活著 ≠ 子系統活著」段（讀 shell 自己的 log + IPC，別信 pgrep）
+- **不想肉眼盯服務死活 / 要自動告警 / 怕整台機器當掉沒人知道** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（systemd OnFailure 鉤子、先重啟才告警、體外心跳補機器當機盲點）
 - **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
 - **套件管理器失敗（pacman db lock / keyring 簽章過期 / partial upgrade / mirror）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
 - **要讀某程式的 log 定位根因** → [read-logs](references/read-logs.md)
@@ -81,6 +82,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.11.0 — process-service-state 補「不想肉眼盯：把失敗變成推播（OnFailure）」（實測驗證告警鏈）：systemd OnFailure 鉤子（alert@ template + 送出腳本 + drop-in）、遞迴陷阱與 `uname -n`（hostname 回空）、`Restart=` 先重啟才告警、體外心跳補「機器當掉 systemd 自己沒了發不出告警」盲點、指標堆疊選型；速查表 + 症狀路由加「服務自動告警」
 **Version**: 1.10.0 — process-service-state 補「進程活著 ≠ 內部子系統活著」（實測 Quickshell/caelestia）：GUI shell 進程活著、STAT S 在 poll、CPU 不高，但 QML scene 物件變 null → bar 畫得出來卻點不動、keybind 死、焦點視窗打字正常；`pgrep` 會騙人，權威是程式專屬 log 指令（`<shell> -l`、非 journalctl）+ IPC 回真實狀態（回空=子系統死），修法重啟 shell 重建 scene、驗證看 IPC 不看 pgrep；上游常是 shader/GL pipeline 建失敗
 **Version**: 1.9.0 — 音訊無聲判讀（實測 pipewire 缺 wireplumber）：無聲多半不報錯、權威是 `wpctl status` 的 graph——Sinks 空 = session manager 缺件、stream `[active]` = 真在播；「管線通不通」（pw-play 本機音檔）與「應用會不會播」拆開驗證
 **Version**: 1.8.0 — process-service-state 補「重啟有沒有真的發生」判讀：kill 指令沒報錯 + 程式在跑 ≠ 重啟成功（app 自帶 kill 子指令可能靜默失敗、新實例偵測舊實例後自行退出）；權威驗證 = 重啟前後比對 `ps -o pid,lstart` 的 pid 與起始時間
