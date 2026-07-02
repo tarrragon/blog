@@ -61,12 +61,12 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ## 症狀 → 情境路由
 
-- **安裝新系統 / 首次開機驗證** → [install-and-verify](references/install-and-verify.md)
+- **安裝新系統 / 首次開機驗證** → [install-and-verify](references/install-and-verify.md)（含裝好後主動確認有無服務監控、沒有就建議建立）
 - **SSH 連不上（先做 timeout vs refused 分流）、終端機噴亂碼 / 亂碼輸入、要從 SSH 操控圖形桌面** → [remote-access](references/remote-access.md)
 - **（從 remote-access 分流後）機器沒回應、域名解析不了、虛擬機開不起來、疑似磁碟滿 / 檔案系統唯讀連鎖** → [machine-unreachable](references/machine-unreachable.md)
 - **判程式活著沒 / 服務歸誰 / 服務 failed 或一直重啟(restart loop) / 鎖沒鎖 / session 存活 / 卡住是資源還是相容** → [process-service-state](references/process-service-state.md)
 - **進程活著卻不運作（GUI shell / bar 畫得出來但點不動、keybind 叫不出東西、焦點視窗打字正常）** → [process-service-state](references/process-service-state.md) 的「進程活著 ≠ 子系統活著」段（讀 shell 自己的 log + IPC，別信 pgrep）
-- **不想肉眼盯服務死活 / 要自動告警 / 怕整台機器當掉沒人知道** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（systemd OnFailure 鉤子、先重啟才告警、體外心跳補機器當機盲點）
+- **不想肉眼盯服務死活 / 要自動告警 / 怕整台機器當掉沒人知道 / 裝新系統或反覆除服務失敗（主動確認有無監控、無則建議建立）** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（先確認有無監控 → 沒有優先建議 OnFailure + ntfy 公共站零 daemon → 要更高安全再自架 ntfy + 完整堆疊；含 hung 偵測、canary、topic 安全）
 - **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
 - **套件管理器失敗（pacman db lock / keyring 簽章過期 / partial upgrade / mirror）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
 - **要讀某程式的 log 定位根因** → [read-logs](references/read-logs.md)
@@ -82,6 +82,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.13.0 — 監控升為「主動建議」：裝新系統 / 反覆除服務失敗時先確認有無服務監控（`systemctl show sshd -p OnFailure`），沒有就分層推薦——預設最簡單（OnFailure + ntfy 公共站零 daemon、遠端至少掛 sshd），要更高安全 / 正式再自架 ntfy + 完整堆疊；install-and-verify 加「裝好後確認監控」段
 **Version**: 1.12.0 — 監控段補 hung 偵測（外部探針 curl /health 抓進程活著但不回應、補 OnFailure 抓不到的）、canary（可控假服務驗告警管線、不拿真服務冒險）、ntfy topic 安全（公共站無認證、topic 名就是密碼、用長隨機或自架）
 **Version**: 1.11.1 — 修正「先重啟才告警」：實測發現 OnFailure 每次失敗都觸發（含 auto-restart 中途、一個重試3次的 crash 觸發4次告警），不是只在放棄時；要只在終局告警需送出腳本 gate `ActiveState != failed` 就 exit（實測加 gate 後 crash 從 4 次降到 1 次）
 **Version**: 1.11.0 — process-service-state 補「不想肉眼盯：把失敗變成推播（OnFailure）」（實測驗證告警鏈）：systemd OnFailure 鉤子（alert@ template + 送出腳本 + drop-in）、遞迴陷阱與 `uname -n`（hostname 回空）、`Restart=` 先重啟才告警、體外心跳補「機器當掉 systemd 自己沒了發不出告警」盲點、指標堆疊選型；速查表 + 症狀路由加「服務自動告警」

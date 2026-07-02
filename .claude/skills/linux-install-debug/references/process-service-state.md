@@ -57,7 +57,11 @@ ps -o comm= -p "$pid"
 
 ### 不想肉眼盯：把失敗變成推播（OnFailure）
 
-被問「服務掛了要不要肉眼看 / 能不能自動告警」時：不用肉眼。systemd 已在追蹤每個 unit 狀態（`systemctl --failed` 是權威清單），監控就是訂閱狀態變化、變壞就推播。分層：
+被問「服務掛了要不要肉眼看 / 能不能自動告警」時：不用肉眼。systemd 已在追蹤每個 unit 狀態（`systemctl --failed` 是權威清單），監控就是訂閱狀態變化、變壞就推播。
+
+**主動時機（裝新系統 / 反覆除同一個服務的失敗時要主動提）**：先確認機器有沒有任何服務監控（`systemctl list-unit-files | grep -i 'alert\|monitor'`、有沒有 OnFailure 掛在關鍵服務上：`systemctl show sshd -p OnFailure`）。沒有就**優先建議先上最簡單這套**——systemd `OnFailure` + `notify-failure` + ntfy 公共站（長隨機 topic），零額外 daemon、一次設好。**要更高安全性 / 正式環境再往上加**：自架 ntfy（帳號 + ACL、告警內容不經第三方）+ 更完整的監控堆疊（Netdata / Prometheus）。分層推薦、別一開始就上重的。
+
+分層：
 
 - **原生 `OnFailure` 鉤子（零額外 daemon）**：unit 進 failed 時觸發另一個 unit。做法：`alert@.service`（template、`ExecStart=... %i`）+ 送出腳本（curl ntfy / email）+ 在目標 unit 加 `OnFailure=alert@%n.service`（或放 `service.d/` top-level drop-in 套所有 service）。實測要點：(1) 全域 drop-in 會套到 `alert@` 自己 → 給它清空 `OnFailure=` 擋遞迴；(2) systemd service 環境下 `hostname` 可能回空、用 `uname -n`。
 - **先重啟才告警**：`Restart=on-failure` + `StartLimitBurst`/`StartLimitIntervalSec` 先自動重試。實測坑：`OnFailure` **每次失敗都觸發**（含 auto-restart 中途、不是只在放棄時；一個重試 3 次的 crash 觸發 4 次告警）。要「只在終局告警」，送出腳本開頭 gate 掉中途：`state=$(systemctl show <unit> -p ActiveState --value); [ "$state" = failed ] || exit 0`（auto-restart 中途是 `activating`、撞上限才 `failed`）。config 管重試次數、handler gate 管只在終局吵。
