@@ -49,15 +49,13 @@ caelestia shell -d    # daemonized，背景執行
 qs -c caelestia       # 透過 quickshell 直接啟動
 ```
 
-把啟動指令加進 Hyprland 的 `exec-once`（Lua 格式）：
+Shell 不會因為裝了就自動啟動——Hyprland 開機只執行 config 裡 `exec-once` 列出的程式，漏列的結果是登入後桌面沒有 bar 也沒有通知（實測：手動啟動用了幾天、直到主機重開才暴露從沒進 autostart）。把啟動指令加進 `hyprland.conf`：
 
-```lua
-hl.config({
-    exec_once = {
-        "caelestia shell -d",
-    },
-})
+```ini
+exec-once = caelestia shell -d
 ```
+
+Caelestia 自帶 bar、通知、鎖屏與 launcher，跟獨立的 waybar / mako 互斥：通知的 D-Bus name（`org.freedesktop.Notifications`）同一時間只有一個擁有者、bar 會疊兩條。設 Caelestia 為主 shell 時，把 waybar / mako 從 `exec-once` 移除（註解掉可留作停用 Caelestia 時的 fallback）。
 
 ## AUR 套件一覽
 
