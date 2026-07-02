@@ -193,7 +193,7 @@ scripts/remote-sync.sh arch-vm                          # 跑完整 install.sh
 scripts/remote-sync.sh arch-vm 'sudo ./monitoring/deploy.sh'   # 只部署某個系統層套件
 ```
 
-遠端在 feature 分支、無法 ff 時，退而求其次仍走 git：`git fetch origin && git checkout origin/main -- <paths>` 把檔從 repo 取進工作區再跑 deploy，**不是 scp**。
+遠端在 feature 分支、無法 ff 時，正解是**在 repo 端把分支收斂**：本地 checkout 該分支、`git merge main`、解衝突、push，VM 再 `git pull --ff-only`。衝突在 repo 裡用正常編輯解、不在 VM 上 SSH 解。**不要用 `git checkout <ref> -- <paths>` 把檔塞進工作區**——它會把那些路徑 staged 進 index，下次 ff-pull 就被「index 有未提交變更」擋住（本次實測踩過、清理花了額外功夫）。stow 過的設定檔改內容不需重新 stow，symlink 會自動反映。
 
 ### 家目錄 vs 系統層
 
