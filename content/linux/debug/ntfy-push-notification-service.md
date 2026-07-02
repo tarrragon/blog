@@ -20,6 +20,29 @@ curl -d "sshd 在 web-01 掛了" ntfy.sh/你的topic
 
 進階一點的用法都是加 HTTP header：`Title`（標題）、`Priority`（優先級，高優先級手機會強提醒）、`Tags`（標籤/emoji）、`Click`（點通知打開的網址）。但核心就是「POST 到一個 topic」。
 
+## 本地訂閱：不只手機 app
+
+訂閱端不一定要手機 app——因為訂閱也只是一個 HTTP GET，本地有好幾種方式：
+
+- **純 curl（零安裝）**：`curl -sN https://ntfy.sh/<topic>/json` 即時串流、一行一則 JSON（`-N` 不緩衝）；`/raw` 只給純文字、`/sse` 給網頁、`/ws` 給 WebSocket。要補看最近的：`curl -s "https://ntfy.sh/<topic>/json?poll=1&since=10m"` 拉最近 10 分鐘就關。
+- **瀏覽器**：直接開 `https://ntfy.sh/<topic>`，就是一個即時 web UI。
+- **ntfy CLI**：`ntfy subscribe <topic>` 串到終端機；`ntfy subscribe <topic> <指令>` 每來一則跑一次指令（訊息塞進 `$NTFY_TITLE` / `$NTFY_MESSAGE`）。
+
+### 常駐成桌面通知
+
+Linux 桌面上最順的用法，是把訂閱做成一個常駐服務、每則告警用 `notify-send` 彈成桌面通知（走你的通知 daemon，mako 或桌面 shell 內建的都行）。核心就是一個串流迴圈：
+
+```bash
+curl -sN https://ntfy.sh/<topic>/json | while read -r l; do
+  [ "$(jq -r '.event' <<<"$l")" = message ] || continue
+  notify-send -u critical "$(jq -r '.title' <<<"$l")" "$(jq -r '.message' <<<"$l")"
+done
+```
+
+把它包成一個 **user systemd 服務**（`WantedBy=default.target` + `Restart=always`）就能開機常駐、斷線自動重連。這是「盯著機器狀態」很實用的一塊：人在電腦前不必掏手機就看得到告警。
+
+**放哪台有講究**：在被監控的機器上訂閱它自己的告警有點循環——那台掛了，桌面通知也彈不出來。桌面訂閱更適合放在**你盯著的工作機**上、訂遠端機器的 topic。放被監控機本身只適合當測試 / 示範。
+
 ## 誰維護它：開源專案，不是正式標準
 
 ntfy 是**開源專案**（server 以 Apache-2.0 授權），主要由一個人維護——Philipp Heckel（GitHub `binwiederhier`）——加上社群貢獻。理解這個定位很重要：

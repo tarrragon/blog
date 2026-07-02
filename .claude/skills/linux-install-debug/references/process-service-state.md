@@ -69,6 +69,7 @@ ps -o comm= -p "$pid"
 - **canary 驗管線**：養一個可控假服務（極簡 HTTP：`/health` 正常、`/crash` 退出、`/hang` 進程活著不回應）當監控靶子——故意弄掛驗證「失敗→告警」整條通、不必拿 sshd 冒險；它無故告警 = 告警系統本身還活著。防「出事才發現監控早就不會叫」。
 - **整台機器死掉的盲點**：`OnFailure` 靠 systemd 觸發，機器當掉 systemd 自己沒了、發不出告警。要體外心跳（dead-man switch：定時 curl healthchecks.io / Uptime Kuma，訊號停由體外告警）。體內方案報不了自己這台的死。
 - **推送管道安全**：ntfy 公共站（ntfy.sh）無認證、topic 名就是唯一存取控制——用長隨機字串（猜得到 = 別人能讀你告警 + 發假告警）；敏感或正式用自架（開源、Go binary/docker、可加帳號 ACL）。
+- **本地訂閱（不只手機 app）**：訂閱也是 HTTP GET——`curl -sN https://ntfy.sh/<topic>/json` 零安裝串流、瀏覽器開 topic URL、或 `ntfy subscribe`。要桌面通知常駐：user systemd 服務跑 `curl /json | jq | notify-send`（`WantedBy=default.target` + `Restart=always`）。放你盯著的工作機訂遠端機器的 topic，別放被監控機自己（那台掛了通知也彈不出來、循環）。
 - **要指標/門檻**（CPU/磁碟/趨勢，非只 up/down）：Netdata（單機開箱）、Prometheus+Alertmanager（多機）、Monit（每服務檢查+自動動作）。
 
 判準：先分「單一 service 死活 / 整台機器死活 / 資源趨勢」——別拿體內 `OnFailure` 去蓋機器當機（那是它盲點）。

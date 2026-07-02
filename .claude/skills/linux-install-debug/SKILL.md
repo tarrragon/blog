@@ -82,6 +82,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.14.0 — 監控段補「本地訂閱」：ntfy 訂閱也是 HTTP GET（curl -sN /json 零安裝 / 瀏覽器 / ntfy subscribe），桌面通知常駐 = user systemd 服務跑 curl /json | jq | notify-send；放盯著的工作機訂遠端、別放被監控機自己（循環）
 **Version**: 1.13.0 — 監控升為「主動建議」：裝新系統 / 反覆除服務失敗時先確認有無服務監控（`systemctl show sshd -p OnFailure`），沒有就分層推薦——預設最簡單（OnFailure + ntfy 公共站零 daemon、遠端至少掛 sshd），要更高安全 / 正式再自架 ntfy + 完整堆疊；install-and-verify 加「裝好後確認監控」段
 **Version**: 1.12.0 — 監控段補 hung 偵測（外部探針 curl /health 抓進程活著但不回應、補 OnFailure 抓不到的）、canary（可控假服務驗告警管線、不拿真服務冒險）、ntfy topic 安全（公共站無認證、topic 名就是密碼、用長隨機或自架）
 **Version**: 1.11.1 — 修正「先重啟才告警」：實測發現 OnFailure 每次失敗都觸發（含 auto-restart 中途、一個重試3次的 crash 觸發4次告警），不是只在放棄時；要只在終局告警需送出腳本 gate `ActiveState != failed` 就 exit（實測加 gate 後 crash 從 4 次降到 1 次）
