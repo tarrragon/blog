@@ -30,7 +30,7 @@ tags: ["linux", "tools", "gui", "desktop", "desktop-environment", "wayland"]
 
 GNOME 的定位是「一套有明確設計主張的完整桌面」——它預設一個不同於 Windows/macOS 的工作流（頂欄 + Activities 總覽 + 動態工作區），並且刻意收斂可調選項，讓多數人不用設定就有一致體驗。從 Windows/macOS 轉來、想要「裝好就能用、不想折騰」的人，GNOME 是穩妥選擇：它的整合度最高，通知、設定、線上帳號、檔案管理彼此協調。
 
-代價在客製。GNOME 把很多設定收進 extension 或需要 `dnf`/`gnome-tweaks` 才改得動的角落，想把它調成傳統工作列風格是在對抗它的設計方向，而 extension 又會隨 GNOME 大版本更新而失效。所以 GNOME 適合「接受它的工作流」的人，不適合「想按自己習慣重排一切」的人。資源上它是這幾個裡偏吃的，老硬體上會感覺得到。
+代價在客製。GNOME 把很多設定收進 extension 或需要另裝 `gnome-tweaks`（Arch：`pacman -S gnome-tweaks`）才改得動的角落，想把它調成傳統工作列風格是在對抗它的設計方向，而 extension 又會隨 GNOME 大版本更新而失效。所以 GNOME 適合「接受它的工作流」的人，不適合「想按自己習慣重排一切」的人。資源上它是這幾個裡偏吃的，老硬體上會感覺得到。
 
 ### KDE Plasma：整合度高、但幾乎每個角落都能調
 

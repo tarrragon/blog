@@ -28,7 +28,7 @@ getent hosts archlinux.org   # 3. 域名解得出來嗎？
 timedatectl              # 4. 時間對嗎？（影響下一層的簽章驗證）
 ```
 
-**第 2 步通、第 3 步不通 = DNS 問題**，這是最小安裝最典型的落點：IP 層明明通（`ping 8.8.8.8` 有回應），但域名解不出來，因為 `/etc/resolv.conf` 還沒設 nameserver。這時 pacman 會卡在解析 mirror 主機名。修法是給系統一個 resolver——臨時可直接寫 `/etc/resolv.conf`（`nameserver 1.1.1.1`），但要注意這個檔在很多系統上是 `systemd-resolved` 或 NetworkManager 管理的 symlink，手寫會被覆蓋；治本是透過該系統的網路管理服務設定 DNS。
+**第 2 步通、第 3 步不通 = DNS 問題**，這是最小安裝最典型的落點：IP 層明明通（`ping 8.8.8.8` 有回應），但域名解不出來，因為 `/etc/resolv.conf` 還沒設 nameserver。這時 pacman 會卡在解析 mirror 主機名。修法是給系統一個 resolver——臨時可直接寫 `/etc/resolv.conf`（`nameserver 1.1.1.1`）。先看它是什麼（`ls -l /etc/resolv.conf`）：啟用了 `systemd-resolved` 或 NetworkManager 的系統上它是那些服務管理的 symlink，手寫會被覆蓋，治本要透過該網路管理服務設定 DNS；裸 Arch 最小安裝若沒啟用這些服務，它通常就是一個普通檔案，手寫即持久生效。
 
 **mirror 逾時 / 抓不到**：DNS 通了、但某個 mirror 慢或掛了。換 `/etc/pacman.d/mirrorlist` 到地理近且快的鏡像（實測不同 mirror 速度可差數倍）。這也接回[安裝選項判讀](../install-option-decisions/)裡選 mirror 的決策——裝機當下選錯 mirror，這裡就會慢。
 
@@ -51,7 +51,7 @@ pgrep -x pacman && echo "有 pacman 在跑、別刪" || sudo rm /var/lib/pacman/
 `invalid or corrupted package (PGP signature)` 或 `signature is unknown trust`。pacman 驗證每個套件的 GPG 簽章，驗證失敗最常見的根因是**系統時間不對**——這正是第一步要 `timedatectl` 的原因。時間差太多（新裝的 VM、主機板電池沒電的老機器）會讓「簽章的有效期」判斷錯誤，明明有效的簽章被判過期。先校時：
 
 ```bash
-timedatectl set-ntp true     # 開 NTP 自動校時
+sudo timedatectl set-ntp true     # 開 NTP 自動校時（SSH 進最小系統無 polkit 互動代理、裸跑會被拒，要 sudo）
 ```
 
 時間對了還失敗，才是 keyring 本身的問題（archlinux-keyring 太舊）：`sudo pacman -Sy archlinux-keyring` 更新 keyring，必要時 `sudo pacman-key --refresh-keys`。順序是先校時再動 keyring，因為時間不對時連 keyring 都更新不了。
