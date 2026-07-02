@@ -167,6 +167,40 @@ git push --no-verify
 - Skill 內連結必須是相對路徑（portable 原則），遠端若改成絕對路徑要修正推回。
 - 同步完本地 `.claude/skills/` 後，有 `content/skills/` 鏡像的 skill 要同步更新鏡像（pre-commit hook 會提醒）。
 
+## 遠端機器操作標準（dotfiles-driven，不 ad-hoc SSH）
+
+在 VM 或任何「我們管理的」遠端機器上做實機驗證 / 部署時，狀態改動一律走 dotfiles repo + git 同步，**不透過 SSH 手動放置持久性檔案或設定**。這條規則跟本 blog 教的 dotfile / bootstrap / infra-as-code 哲學一致：機器的狀態必須永遠能從 repo 重現，手放的東西下次重裝就消失、也沒人記得。
+
+### 硬規則
+
+- **SSH 只用來做唯讀診斷與觸發**：`hyprctl` / `systemctl status` / 讀 log / `pgrep` / 跑 repo 內的部署腳本這類，可以。
+- **任何該持久存在的東西**（腳本、systemd unit、設定檔、cron、drop-in）→ 先寫進 [dotfiles repo](https://github.com/tarrragon/dotfiles)、commit/push，再由遠端 `git pull` + 冪等 deploy 部署。**不 scp、不 heredoc 寫進 /tmp、不手動 `tee` 到 /etc。**
+- **一次性驗證用的暫時檔**（測試 service、探測腳本）可以臨時放，但測完必須清掉、且正式版要回收進 repo。
+
+### 可複用工具（在 dotfiles repo）
+
+| 工具 | 作用 |
+| --- | --- |
+| `scripts/remote-sync.sh <host> [deploy-cmd]` | 管遠端機器的標準入口：本地 commit/push → 遠端 `git pull --ff-only` → 遠端跑冪等 deploy。本地有未提交變更就擋下（逼你走 repo，不繞過） |
+| `scripts/install.sh` | bootstrap：套件 → stow 部署 → zsh → Claude Code（家目錄層，冪等） |
+| `<pkg>/deploy.sh` | 系統層（`/etc`、`/usr/local`）的部署橋，stow 管不到的用這個（如 `monitoring/deploy.sh`） |
+
+標準流程：
+
+```bash
+# 本地改 → commit/push → 一鍵同步部署到遠端
+scripts/remote-sync.sh arch-vm                          # 跑完整 install.sh
+scripts/remote-sync.sh arch-vm 'sudo ./monitoring/deploy.sh'   # 只部署某個系統層套件
+```
+
+遠端在 feature 分支、無法 ff 時，退而求其次仍走 git：`git fetch origin && git checkout origin/main -- <paths>` 把檔從 repo 取進工作區再跑 deploy，**不是 scp**。
+
+### 家目錄 vs 系統層
+
+- **家目錄檔**（`~/.config/...`、`~/.local/bin/...`）→ 做成 stow 套件、`install.sh` 部署。
+- **系統檔**（`/etc/systemd/system/...`、`/usr/local/bin/...`，root-owned、stow 管不到）→ 套件內附 `deploy.sh`，在目標機 `sudo` 跑，冪等安裝。
+- **私密值**（ntfy topic、healthcheck UUID、token）→ **不進 git**，repo 只放 `.example` 佔位，deploy 只在目標不存在時建佔位、真值手填或走 gitignore 的本地檔。
+
 ## 跟 Codex / 其他 agent 的差異
 
 本 repo 同時支援 Claude Code 跟 Codex。差異點：
