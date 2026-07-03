@@ -136,4 +136,4 @@ managed 採用後 day-1 治理項目有兩件事：明確界定 grey zone owners
 
 ## 下一步路由
 
-要把流量邊界接到實際 LB 合約，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要把 control plane 決策寫入事故流程，接著讀 [8.23 Control Plane Decision Log and Write-back](/backend/08-incident-response/control-plane-decision-log-write-back/)。
+要把流量邊界接到實際 LB 合約，接著讀 [5.3 load balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)。要把 control plane 決策寫入事故流程，接著讀 [8.23 Control Plane Decision Log and Write-back](/backend/08-incident-response/control-plane-decision-log-write-back/)。反向代理在運行期怎麼把這條流量邊界落到路由與負載分散，見 [devops 模組一：負載平衡](/devops/01-load-balancing/)。

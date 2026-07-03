@@ -151,3 +151,4 @@ A/B firmware partition 是 IoT 的 DR 基礎設計。裝置保留兩個 firmware
 - [8.3 止血回復](/backend/08-incident-response/containment-recovery-strategy/)：演練結果作為事中決策素材
 - [8.6 演練與值班](/backend/08-incident-response/drills-and-oncall-readiness/)：DR 結果回饋到團隊技能建設
 - [8.15 vendor 事故](/backend/08-incident-response/vendor-dependency-incident/)：多 vendor / 多區 failover 路徑
+- [devops 模組六：Disaster recovery 策略](/devops/06-high-availability/disaster-recovery/)：RTO/RPO、restore drill、演練節奏的運維落地
