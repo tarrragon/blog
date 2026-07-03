@@ -79,3 +79,4 @@ tags: ["linux", "backlog", "meta"]
 ### 10. systemd drop-in / OnFailure 候選卡（中低，暫記）
 
 - **缺口**：`drop-in` 2 檔、`OnFailure` 4 檔，集中在 debug 服務失效篇。devops/04 接上後 `OnFailure` 會變跨模組共用術語，屆時值得建卡；現階段 inline 解釋足夠、暫記。
+- **依賴追蹤**：devops/04（服務探活）本身尚未產出，已列入 [devops 分類的內容缺口待辦](/devops/content-backlog/) 順位 1，該模組完成時一併回收本項。
