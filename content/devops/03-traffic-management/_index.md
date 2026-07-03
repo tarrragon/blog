@@ -8,12 +8,14 @@ tags: ["devops", "traffic-management", "backpressure", "rate-limit", "circuit-br
 
 回答「收到的流量超過處理能力時怎麼辦」。四種防護機制各自處理不同層面的過載問題。
 
-## 待寫章節
+## 章節
 
-- [x] 背壓機制（下游慢時上游怎麼減速）
-- [x] Rate Limiting（主動限制每個來源的請求速率）
-- [x] 熔斷器（依賴服務失敗時怎麼快速失敗而非拖慢自己）
-- [x] Bulkhead 隔離（不同工作負載的資源池隔離）
+| 章節                                                          | 回答什麼問題                           |
+| ------------------------------------------------------------- | -------------------------------------- |
+| [背壓機制](/devops/03-traffic-management/backpressure/)       | 下游慢時上游怎麼減速                   |
+| [Rate Limiting](/devops/03-traffic-management/rate-limiting/) | 主動限制每個來源的請求速率             |
+| [熔斷器](/devops/03-traffic-management/circuit-breaker/)      | 依賴服務失敗時怎麼快速失敗而非拖慢自己 |
+| [Bulkhead 隔離](/devops/03-traffic-management/bulkhead/)      | 不同工作負載的資源池隔離               |
 
 ## 跨分類引用
 
