@@ -2,6 +2,7 @@
 title: "GUI 應用的安裝驗證：拆包、首跑對話框與播放判讀"
 date: 2026-07-02
 description: "裝檔案管理器、瀏覽器、媒體播放器後打不開、無聲、不能播，或首跑冒出同意對話框不知道該不該勾時回來讀"
+weight: 9
 tags: ["linux", "desktop", "gui", "install", "multimedia"]
 ---
 
