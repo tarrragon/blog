@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "rest"]
 
 ## 對應大綱
 
-styles/rest/「REST 語意學之爭」（pragmatic 派立場段）。反例。
+[REST 語意學之爭](/backend/11-api-design/styles/rest/rest-semantics-dispute/) 與 [Hypermedia 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)（pragmatic 派立場、皆已引用）。反例。
 
 ## 下一步路由
 

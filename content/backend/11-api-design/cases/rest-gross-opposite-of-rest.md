@@ -18,7 +18,7 @@ Gross 重建語意漂移路徑：XML-RPC / SOAP 時代、JSON 取代 XML（但 J
 
 ## 對應大綱
 
-styles/rest/「hypermedia 與 HATEOAS 復興」（主案例）。
+[Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)（主案例、已引用）。
 
 ## 下一步路由
 

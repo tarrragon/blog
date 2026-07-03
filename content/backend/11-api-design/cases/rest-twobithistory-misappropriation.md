@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "rest"]
 
 ## 對應大綱
 
-styles/rest/「REST 語意學之爭」（收尾史觀段）。二手來源、標明性質後使用。
+[REST 語意學之爭](/backend/11-api-design/styles/rest/rest-semantics-dispute/)（收尾史觀段、已引用）。二手來源、標明性質後使用。
 
 ## 下一步路由
 

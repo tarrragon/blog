@@ -18,7 +18,7 @@ Siren 用 entities / actions / links 三元件表達資源、特點是 first-cla
 
 ## 對應大綱
 
-styles/rest/「hypermedia 與 HATEOAS 復興」（格式現實段、與 HAL 並列）。
+[Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)（格式現實段、與 HAL 並列、已引用）。
 
 ## 下一步路由
 

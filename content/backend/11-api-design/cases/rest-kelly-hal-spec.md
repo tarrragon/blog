@@ -18,7 +18,7 @@ HAL 用 `_links` 與 `_embedded` 兩個保留屬性在 JSON 上表達 hypermedia
 
 ## 對應大綱
 
-styles/rest/「hypermedia 與 HATEOAS 復興」（格式現實段、與 Siren 並列）。
+[Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)（格式現實段、與 Siren 並列、已引用）。
 
 ## 下一步路由
 

@@ -18,7 +18,7 @@ essay 用銀行帳戶透支做對照：HTML 回應在透支時只回 deposit 連
 
 ## 對應大綱
 
-styles/rest/「hypermedia 與 HATEOAS 復興」（範例段）、11.3 操作語意。
+[Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)（範例段、已引用）、11.3 操作語意。
 
 ## 下一步路由
 
