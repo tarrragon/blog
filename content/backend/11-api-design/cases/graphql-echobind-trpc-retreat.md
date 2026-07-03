@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "graphql", "rpc"]
 
 ## 對應大綱
 
-styles/graphql/「公開 API 的 GraphQL 進退」（適用邊界段、反例）、styles/rpc-revival/「tRPC 與型別共享」（anchor）。
+[公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/)（適用邊界段、反例、已引用）、styles/rpc-revival/「tRPC 與型別共享」（anchor、backlog）。
 
 ## 下一步路由
 

@@ -18,7 +18,7 @@ GitHub GraphQL API 依 connection 展開的請求數對每個 query 計 point（
 
 ## 對應大綱
 
-styles/graphql/「執行成本與安全」（anchor）、11.9 對外流量語意交叉。GitHub cluster 之一。
+[執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)（機制主寫、已引用）、[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)（現象層、已引用）。GitHub cluster 之一。
 
 ## 下一步路由
 

@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "graphql"]
 
 ## 對應大綱
 
-styles/graphql/「執行成本與安全」（persisted queries 段）+「公開 API 的 GraphQL 進退」。邊緣偏反例。
+[執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)（persisted queries 段、已引用）與 [公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/)（中間路線段、已引用）。邊緣偏反例。
 
 ## 下一步路由
 

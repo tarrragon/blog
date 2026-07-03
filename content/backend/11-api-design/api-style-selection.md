@@ -45,7 +45,7 @@ tags: ["backend", "api-design", "selection"]
 
 ## 爭論地圖
 
-本章只給判準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（styles/graphql、backlog）、proto 演進紀律與部署邊界（styles/grpc、backlog）、tRPC 與 JSON-RPC 的復興條件（styles/rpc-revival、backlog）、格式標準化的反覆嘗試（styles/standards、backlog）、server 推 client 的承諾差異（styles/realtime、案例待採集）。完整 backlog 見 [模組頁](/backend/11-api-design/) 章節規劃。
+本章只給判準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（[已完成](/backend/11-api-design/styles/graphql/)）、proto 演進紀律與部署邊界（styles/grpc、backlog）、tRPC 與 JSON-RPC 的復興條件（styles/rpc-revival、backlog）、格式標準化的反覆嘗試（styles/standards、backlog）、server 推 client 的承諾差異（styles/realtime、案例待採集）。完整 backlog 見 [模組頁](/backend/11-api-design/) 章節規劃。
 
 ## 下一步路由
 

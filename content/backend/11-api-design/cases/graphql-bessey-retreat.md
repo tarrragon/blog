@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "graphql"]
 
 ## 對應大綱
 
-styles/graphql/「執行成本與安全」+「公開 API 的 GraphQL 進退」、11.2 風格選型（消費者形狀軸、已引用）。反例。
+[執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/) 與 [公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/)（皆已引用）、11.2 風格選型（消費者形狀軸、已引用）。反例。
 
 ## 下一步路由
 
