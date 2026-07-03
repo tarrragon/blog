@@ -30,7 +30,7 @@ upstream api {
 
 開源 nginx 的健康檢查是被動的，靠 `server` 行上的 `max_fails` 跟 `fail_timeout` 兩個參數。語意是：在 `fail_timeout` 這段時間內，轉發給某個後端的請求失敗達到 `max_fails` 次，nginx 就把這個後端標記為不可用、停送 `fail_timeout` 秒，之後再試探性地放流量回去。上例的 `max_fails=3 fail_timeout=15s` 表示 15 秒內失敗 3 次就暫停這個後端 15 秒。
 
-被動的特性是它不額外發探測請求，而是從真實流量的失敗學到後端壞了。代價是要先犧牲幾個真實請求（達到 `max_fails`）才會摘除——後端壞掉的當下，是幾個真實使用者撞到錯誤，nginx 才反應過來。這跟主動探測的差別、以及兩者盲點，在 [健康檢查路由設計](/devops/01-load-balancing/health-check-routing/) 有完整對照。
+被動探測的機制是從轉發的真實流量觀察失敗、不額外發探測請求，`max_fails` 就是「觀察到幾次失敗才摘除」的門檻。這種機制的盲點、以及跟主動探測的完整對照，在 [健康檢查路由設計](/devops/01-load-balancing/health-check-routing/) 展開，這裡只確立 nginx 開源版用的是被動機制。
 
 ## gotcha：主動 health_check 是商業版功能
 
