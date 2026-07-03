@@ -2,7 +2,7 @@
 title: "TUI 監控工具：btop、htop、k9s 的遠端使用與刷新率調校"
 date: 2026-06-15
 draft: false
-description: "全螢幕 TUI 監控工具在遠端 SSH 情境的使用：htop 進程操作、btop 多資源儀表板、k9s 管 Kubernetes，以及慢速連線下刷新率與頻寬的取捨。"
+description: "要在遠端 SSH 用全螢幕 TUI 看進程與資源（htop／btop／k9s）、或慢速連線下要調刷新率省頻寬時回來讀"
 tags: ["cli", "tui", "monitoring", "btop", "htop", "k9s", "remote"]
 ---
 

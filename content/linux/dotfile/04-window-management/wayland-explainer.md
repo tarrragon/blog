@@ -1,7 +1,7 @@
 ---
 title: "Wayland 顯示協議：為什麼 Hyprland 不跑在 X11 上"
 date: 2026-06-29
-description: "想理解 Hyprland 底層的圖形架構、Wayland 跟 X11 的差異、XWayland 相容層、以及 2026 年 Wayland 已經是主流這件事時回來讀"
+description: "想理解 Hyprland 底層的圖形架構、Wayland 跟 X11 的差異、XWayland 相容層、以及選 Wayland 還是 X11 工具的取捨時回來讀"
 weight: 4
 tags: ["dotfile", "wayland", "x11", "linux"]
 ---

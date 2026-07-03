@@ -2,7 +2,7 @@
 title: "終端機文字圖表：gnuplot、termgraph、plotext 與 sparkline"
 date: 2026-06-15
 draft: false
-description: "把數值畫成終端機文字圖的工具：gnuplot dumb terminal、termgraph 長條圖、plotext 腳本繪圖、sparkline 與 pipeline 即時更新，以及遠端情境下一次性輸出省頻寬的判讀。"
+description: "要在終端機把數值畫成文字圖表、在 gnuplot／termgraph／plotext／sparkline 之間挑工具、或遠端頻寬受限想用一次性輸出省流量時回來讀"
 tags: ["cli", "ascii", "chart", "gnuplot", "termgraph", "plotext", "remote"]
 ---
 

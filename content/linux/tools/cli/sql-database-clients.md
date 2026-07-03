@@ -2,7 +2,7 @@
 title: "終端機 SQL 客戶端：harlequin、lazysql 與 pgcli/litecli 的選型"
 date: 2026-06-15
 draft: false
-description: "在純文字終端機連資料庫、跑查詢、看結果的客戶端：全螢幕 TUI（harlequin IDE 風、lazysql 瀏覽器風）與增強型 REPL（pgcli/litecli）兩種範式，以及遠端連線的 SSL driver gotcha。"
+description: "要在純文字終端機連資料庫跑查詢、在全螢幕 TUI（harlequin／lazysql）與增強型 REPL（pgcli／litecli）之間選、或遇到遠端連線的 SSL driver 問題時回來讀"
 tags: ["cli", "tui", "sql", "database", "harlequin", "lazysql", "dblab", "rainfrog", "pgcli", "usql", "remote"]
 ---
 

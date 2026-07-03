@@ -198,7 +198,7 @@ sudo pacman -S \
 | Qt 相容  | `qt5-wayland` + `qt6-wayland`                 | Qt 應用在 Wayland 下正常運行              |
 | 字型     | `ttf-meslo-nerd` + `noto-fonts-cjk`           | Nerd Font（waybar icon 需要）+ CJK 字型   |
 
-AUR 補充套件（用 `yay` 或 `paru`）：
+[AUR](/linux/dotfile/knowledge-cards/aur/) 補充套件（用 `yay` 或 `paru`）：
 
 ```bash
 yay -S grimblast-git   # Hyprland 截圖 wrapper

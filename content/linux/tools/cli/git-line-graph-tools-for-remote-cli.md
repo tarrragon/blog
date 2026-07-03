@@ -2,7 +2,7 @@
 title: "遠端 CLI 開發的 git 線圖工具選型：tig、lazygit、gitui 與管線增強"
 date: 2026-06-15
 draft: false
-description: "純 CLI、遠端開發情境下查看 git 分支線圖的工具地景，從 tig 唯讀瀏覽到 lazygit/gitui 操作中樞的定位差異，含選型判準與 lazygit 上手、delta side-by-side diff 設定。"
+description: "在遠端純 CLI 環境要看 git 分支線圖、在 tig（唯讀）與 lazygit／gitui（操作中樞）之間選、或想把 diff 換成 delta side-by-side 時回來讀"
 tags: ["cli", "git", "tui", "lazygit", "gitui", "tig", "delta"]
 ---
 

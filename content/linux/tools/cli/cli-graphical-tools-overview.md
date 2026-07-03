@@ -2,7 +2,7 @@
 title: "終端機圖形化工具總覽：遠端操作下的 TUI、文字圖表與多工器"
 date: 2026-06-15
 draft: false
-description: "在純文字終端機裡用 ASCII 與製圖字元做出監控儀表板、資料圖表與多視窗操作的工具總覽，並針對 SSH 伺服器、手機平板、低頻寬三種遠端情境給出選型判讀。"
+description: "要在純文字終端機湊出監控儀表板、資料圖表與多視窗操作、或在 SSH 伺服器／手機平板／低頻寬等遠端條件下挑對應工具時回來讀"
 tags: ["cli", "tui", "tmux", "zellij", "remote", "monitoring"]
 ---
 

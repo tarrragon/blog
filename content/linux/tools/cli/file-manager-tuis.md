@@ -2,7 +2,7 @@
 title: "終端機檔案管理器：broot、yazi、ranger 的遠端瀏覽與選型"
 date: 2026-06-15
 draft: false
-description: "在純文字終端機用 TUI 檔案管理器像 IDE 側邊欄那樣瀏覽目錄、預覽檔案內容：樹狀（broot）與 Miller 欄狀（yazi/ranger）兩種介面範式的差異，以及遠端 SSH 情境下的選型與依賴注意事項。"
+description: "想在終端機像 IDE 側邊欄那樣瀏覽目錄與預覽檔案、在樹狀（broot）與欄狀（yazi/ranger）介面之間選、或處理遠端 SSH 下檔案管理器的依賴問題時回來讀"
 tags: ["cli", "tui", "file-manager", "broot", "yazi", "ranger", "remote"]
 ---
 

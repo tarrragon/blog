@@ -2,7 +2,7 @@
 title: "終端機看 nginx 請求：GoAccess、ngxtop 與何時該用 pipeline 而非 TUI"
 date: 2026-06-15
 draft: false
-description: "在終端機即時看 nginx／web 伺服器請求的工具：GoAccess 即時儀表板、ngxtop top 風格，含 log 格式對齊的 gotcha；以及「當下排查用 TUI、持續監控用 metrics pipeline」的使用時機分界。"
+description: "要在終端機即時看 nginx／web 伺服器請求、在 GoAccess 與 ngxtop 之間選、或判斷該用當下排查的 TUI 還是持續監控的 metrics pipeline 時回來讀"
 tags: ["cli", "tui", "nginx", "goaccess", "ngxtop", "observability", "remote"]
 ---
 

@@ -2,7 +2,7 @@
 title: "Zellij Web Client 外網連線教學"
 date: 2026-03-09
 draft: false
-description: "讓他人透過瀏覽器連線到指定的 Zellij session，包含 SSL 憑證申請、防火牆設定、Token 管理等完整步驟。"
+description: "要讓別人透過瀏覽器連進你的 Zellij session、需要設定 SSL 憑證／防火牆／token 時回來讀"
 tags: ["zellij", "terminal", "remote", "web"]
 ---
 

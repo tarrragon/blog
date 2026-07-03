@@ -2,7 +2,7 @@
 title: "Zellij 多終端機操作指南"
 date: 2026-03-09
 draft: false
-description: "Zellij pane 的佈局查看、內容讀取、大小調整等 CLI 操作方式，適合搭配 AI 工具使用。"
+description: "要用 CLI 操作 Zellij 的 pane（查佈局、讀內容、調大小）、特別是搭配 AI 工具驅動終端機時回來讀"
 tags: ["zellij", "terminal", "pane", "cli"]
 ---
 

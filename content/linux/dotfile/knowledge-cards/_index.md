@@ -1,12 +1,12 @@
 ---
-title: "Dotfile 術語卡"
+title: "Linux 術語卡"
 date: 2026-06-29
-description: "dotfile 管理、平鋪式視窗管理、桌面客製化相關的術語索引"
+description: "dotfile 管理、平鋪式視窗管理、桌面客製化、安裝與除錯相關的術語索引"
 weight: 99
-tags: ["dotfile", "knowledge-cards"]
+tags: ["dotfile", "linux", "knowledge-cards"]
 ---
 
-本系列使用的關鍵術語。各卡片會在對應章節深入說明、這裡提供快速查閱入口。
+Linux 系列（dotfile / 安裝 / 除錯 / 工具）共用的關鍵術語。各卡片會在對應章節深入說明、這裡提供快速查閱入口，install / debug / tools 各篇的術語首現處也會連回這裡。
 
 術語卡會隨教材擴展逐步補充。
 
@@ -16,6 +16,7 @@ tags: ["dotfile", "knowledge-cards"]
 | ---------------------------------------------------------------------- | ------------------------------------------------------------ |
 | [Lua 腳本語言](/linux/dotfile/knowledge-cards/lua-scripting-language/) | Hyprland / Neovim 配置檔使用的腳本語言，配置檔需要的最小知識 |
 | [GNU Stow](/linux/dotfile/knowledge-cards/gnu-stow/)                   | symlink farm manager，dotfile 管理的核心工具之一             |
+| [AUR（Arch User Repository）](/linux/dotfile/knowledge-cards/aur/)     | Arch 社群自建套件庫，paru/yay 為何用來裝官方 repo 沒有的套件 |
 
 ## 系統概念
 

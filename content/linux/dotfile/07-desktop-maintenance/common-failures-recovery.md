@@ -16,7 +16,7 @@ tags: ["dotfile", "linux", "hyprland", "troubleshooting"]
 
 **恢復步驟**：
 
-注意：以下步驟中 `killall Hyprland` 或重啟 Hyprland 會終止所有由 compositor 管理的視窗，未存檔的工作會遺失。如果可能，先透過 TTY 或 SSH 嘗試存檔（如 `kill -USR1 <pid>` 對支援的應用程式觸發存檔）。
+注意：以下步驟中 `killall Hyprland` 或重啟 Hyprland 會終止所有由 compositor 管理的視窗，未存檔的工作會遺失。如果可能，先透過 [TTY](/linux/dotfile/knowledge-cards/tty/) 或 SSH 嘗試存檔（如 `kill -USR1 <pid>` 對支援的應用程式觸發存檔）。
 
 1. `Ctrl+Alt+F2` 切到 TTY2
 2. 用你的帳號登入

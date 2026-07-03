@@ -2,7 +2,7 @@
 title: "終端機訊息佇列客戶端：Kafka 的 kaskade/yozefu/ktea 與 Redis 的 iredis"
 date: 2026-06-16
 draft: false
-description: "在純文字終端機連 broker、瀏覽 topic、消費訊息、檢視 consumer 狀態的客戶端：Kafka 的全螢幕 TUI（kaskade/yozefu/ktea）、Redis 的增強型 REPL（iredis），以及訊息佇列 TUI 多半綁單一 broker 協議這個跟 SQL 客戶端最大的不同。"
+description: "要在終端機連 Kafka／Redis broker 瀏覽 topic 與消費訊息、挑對應的 TUI 客戶端、或搞懂訊息佇列客戶端為何多半綁單一 broker 協議時回來讀"
 tags: ["cli", "tui", "message-queue", "kafka", "redis", "kaskade", "yozefu", "iredis", "remote"]
 ---
 
