@@ -1,7 +1,7 @@
 ---
 title: "在 Hyprland 加圖形檔案管理員：依賴足跡與桌面環境耦合"
 date: 2026-07-01
-description: "在最小化 Hyprland 環境要裝圖形檔案管理員（或任何桌面 app）、需要判斷它會拖進多少相依、以及輕量與功能完整之間怎麼取捨時回來讀"
+description: "在最小化 Hyprland 環境要裝圖形檔案管理員（或任何桌面 app）、裝了卻缺縮圖 / 掛不了裝置、需要判斷它會拖進多少相依、以及輕量與功能完整之間怎麼取捨時回來讀"
 weight: 2
 tags: ["linux", "tools", "gui", "hyprland", "package-management", "file-manager"]
 ---
@@ -48,7 +48,7 @@ Nemo 那 36 個套件裡，還有一大塊來自它把 `gvfs` 列成硬相依（
 
 這些檔案管理員多數是 X11 時代的 GTK/Qt 程式，在 Wayland 下會透過 XWayland 或原生 Wayland 後端執行。PCManFM-Qt 帶的 `layer-shell-qt` 是 Wayland 的 layer-shell 整合；GTK 的 Thunar/Nemo 在 Wayland 下一般走 GTK 自己的 Wayland 後端。開啟/儲存檔案對話框、拖放、縮圖預覽在裸 Hyprland（沒有完整 portal 服務）下的實際行為，取決於有沒有裝 `xdg-desktop-portal` 與對應的後端。
 
-> **[待實機驗證]** 以下行為尚未在本系列的 Hyprland 實機環境確認，先標記待驗證：(1) Thunar 補上 gvfs 後，側欄的 Devices/Network/Trash 是否如預期出現並可用；(2) tumbler + ffmpegthumbnailer 的縮圖在 Wayland 下是否正常產生；(3) 三者在裸 Hyprland（無完整桌面 portal）下的檔案對話框與拖放行為；(4) Nemo 在沒有 Cinnamon session 的情況下，桌面圖示、設定整合等功能是否失效或報錯。這些是「相依裝了之後實際好不好用」的問題，相依數量本身（上表）已是實測確定值。
+> **[待實機驗證]** 以下行為尚未在一台最小化 Hyprland 實機環境確認，先標記待驗證：(1) Thunar 補上 gvfs 後，側欄的 Devices/Network/Trash 是否如預期出現並可用；(2) tumbler + ffmpegthumbnailer 的縮圖在 Wayland 下是否正常產生；(3) 三者在裸 Hyprland（無完整桌面 portal）下的檔案對話框與拖放行為；(4) Nemo 在沒有 Cinnamon session 的情況下，桌面圖示、設定整合等功能是否失效或報錯。這些是「相依裝了之後實際好不好用」的問題，相依數量本身（上表）已是實測確定值。
 
 ## 風險與注意事項
 
@@ -69,7 +69,7 @@ Nemo 那 36 個套件裡，還有一大塊來自它把 `gvfs` 列成硬相依（
 
 ## 為什麼拿 Nemo 當「重」的代表
 
-上表用 Nemo 當桌面環境耦合的代表，是因為它把耦合展示得最乾淨——`cinnamon-desktop` + `xapp` 那層桌面元件加上 gvfs 硬相依，剛好對照出 Thunar / PCManFM-Qt 省掉的是什麼。但它不是最重的：GNOME 的 Nautilus（`nautilus`）與 KDE 的 Dolphin（`dolphin`）是更 canonical 的「裝檔案管理員就拖進半個桌面」例子。Nautilus 深度綁 GNOME 的 GTK4 / libadwaita / tracker 索引棧，在非 GNOME 環境裝它會拉進一串 GNOME 平台庫；Dolphin 綁 KDE 的 Frameworks（KIO、Baloo 等），在非 KDE 環境同理。判讀方式跟 Nemo 一節相同：檔案管理員的相依樹反映它預期跑在哪個桌面裡。真要在裸 Hyprland 上驗，`pacman -S --needed --print nautilus` / `dolphin` 會列出各自那串平台庫——數量通常比 Nemo 更可觀（實測 Nautilus 72、Dolphin 91，約 Nemo 的 2 到 2.5 倍）。
+上表用 Nemo 當桌面環境耦合的代表，是因為它把耦合展示得最乾淨——`cinnamon-desktop` + `xapp` 那層桌面元件加上 gvfs 硬相依，剛好對照出 Thunar / PCManFM-Qt 省掉的是什麼。但它不是最重的：GNOME 的 Nautilus（`nautilus`）與 KDE 的 Dolphin（`dolphin`）是更 canonical 的「裝檔案管理員就拖進半個桌面」例子。Nautilus 深度綁 GNOME 的 GTK4 / libadwaita / tracker 索引棧，在非 GNOME 環境裝它會拉進一串 GNOME 平台庫；Dolphin 綁 KDE 的 Frameworks（KIO、Baloo 等），在非 KDE 環境同理。判讀方式跟 Nemo 一節相同：檔案管理員的相依樹反映它預期跑在哪個桌面裡。真要在裸 Hyprland 上驗，`pacman -S --needed --print nautilus` / `dolphin` 會列出各自那串平台庫——數量通常比 Nemo 更可觀（同一台已有 GTK3 的 baseline 機器上 `--needed --print` 實測：Nautilus 72、Dolphin 91，約 Nemo 的 2 到 2.5 倍）。這些數字是相對於該 baseline 的新裝量、不是絕對屬性——機器上已裝了多少 GNOME/KDE 平台庫會直接改變它。
 
 ## 零相依對照：純終端機檔案管理員
 

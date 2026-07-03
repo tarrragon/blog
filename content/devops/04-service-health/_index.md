@@ -20,3 +20,5 @@ tags: ["devops", "health-check", "liveness", "readiness", "systemd", "auto-recov
 
 - → [monitoring 模組四 Dashboard DevOps](/monitoring/04-collector/dashboard-devops/)：DevOps dashboard 的服務狀態卡依賴 health check
 - → [backend 部署平台](/backend/05-deployment-platform/)：部署平台的 health check 整合
+- → [Linux 除錯：服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)：本模組的概念（探活、WatchdogSec、Restart=on-failure）在單機 systemd 層的具體實作——`OnFailure=` 鉤子 + 推播、canary 驗證管線
+- → [Linux 除錯：ntfy 推送通知](/linux/debug/ntfy-push-notification-service/)：把服務失效告警推到手機的最小可用通道

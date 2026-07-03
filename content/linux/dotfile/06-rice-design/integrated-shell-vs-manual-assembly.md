@@ -1,5 +1,5 @@
 ---
-title: "整合式 Shell vs 手動拼裝：實測足跡、失敗半徑與選型判準"
+title: "整合式 Shell vs 手動拼裝：實測足跡、失敗半徑、配色一致性與選型判準"
 date: 2026-07-01
 description: "在整合式桌面 shell（如 Caelestia）與手動拼裝 waybar+wofi+mako 之間選型、需要實測的資源足跡、失敗半徑與配色一致性數據來判斷時回來讀"
 weight: 6
@@ -8,7 +8,7 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 整合式桌面 shell 與手動拼裝，是「一個大程式包辦整個桌面」與「多個小程式各司其職、由 compositor 黏起來」兩種架構。[Caelestia 總覽](/linux/dotfile/06-rice-design/caelestia-overview/) 從概念層談過它的取捨（設計鎖定、穩定性風險）；這篇補上在同一台機器上實際跑過兩種之後量到的數據——資源足跡、失敗半徑、配色一致性——把「感覺整合比較方便」變成可以拿數字判斷的選型。
 
-這裡的數據來自一次 VM 實測：先手動拼裝一套 waybar + wofi + mako + hyprlock，再換成 Caelestia，量兩者的安裝大小、記憶體、config 結構與失敗行為。
+這裡的數據來自一次 VM 實測：先手動拼裝一套 waybar（狀態列）+ wofi（啟動器）+ mako（通知）+ hyprlock（鎖屏），再換成 Caelestia，量兩者的安裝大小、記憶體、config 結構與失敗行為。
 
 ## 資源足跡：差約一個數量級
 
@@ -21,7 +21,9 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 差距的來源是 Quickshell 這個 UI 框架——那 213 MB 是 `quickshell` 套件本身的安裝大小（一個建在 Qt6 上的 QML shell runtime），不是 Caelestia 的功能程式碼；而且 Qt6 的函式庫（`qt6-declarative`、`qt6-base` 等）還是它之上的額外相依，沒算進這 213 MB。手動拼裝的 waybar、wofi、mako 都是輕量的 wlroots/GTK 程式，加起來還不到 5 MB。
 
-這一軸在資源受限的機器上才會咬人：舊筆電、記憶體小的 VPS、或你本來就想把桌面壓到最輕。在一台記憶體充裕的桌機上，400 MB 對 60 MB 的差別多半感覺不到；在一台 2 GB RAM 的機器上，這就是「桌面吃掉五分之一記憶體」跟「幾乎不佔」的差別。
+這一軸在資源受限的機器上才會咬人：舊筆電、記憶體小的 VPS、或本來就想把桌面壓到最輕。在一台記憶體充裕的桌機上，400 MB 對 60 MB 的差別多半感覺不到；在一台 2 GB RAM 的機器上，這就是「桌面吃掉五分之一記憶體」跟「幾乎不佔」的差別。
+
+一個量測上的提醒：RSS 會把 Qt6 那票共享函式庫的頁面重複計進 `qs`，所以「400 MB 對 60 MB」是差距的**上界**、不是實際能釋放的量——要精確比較該看 PSS（把共享頁按比例分攤），數字會小一些。這一軸的結論方向不變（整合式明顯較吃記憶體），但別把 RSS 差額當成「換掉就一定省下這麼多」。
 
 ## 失敗半徑：單點 vs 各自獨立
 
@@ -33,11 +35,11 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 ## 配色一致性：最容易被低估的一軸
 
-讓整個桌面配色一致，是整合式與手動拼裝差別最大、卻最常被忽略的地方。整合式 shell 因為所有元件在同一個程式裡，天生共用一套配色——Caelestia 的 dynamic scheme 從桌布抽一組 Material-3 palette，狀態列、通知、鎖屏、dashboard 全部同時套用，換張桌布整套 UI 跟著變。
+讓整個桌面配色一致，是整合式與手動拼裝差別最大、卻最常被忽略的地方。整合式 shell 因為所有元件在同一個程式裡，共用同一套配色狀態——Caelestia 的 dynamic scheme 從桌布抽一組 Material-3 palette，狀態列、通知、鎖屏、dashboard 全部同時套用，換張桌布整套 UI 跟著變。
 
 手動拼裝要達到同樣的一致，得自己解決一個跨程式的問題：每個元件用不同的設定格式與主題引擎，它們之間不會自動共享顏色。這次手動拼裝那套時就撞到這點——waybar 的 GTK CSS 引擎讀不到 Hyprland 的 `$` 顏色變數，結果 waybar 的 `style.css` 裡得**手抄一份跟 Hyprland `colors.conf` 相同的 hex 色碼**。換一次配色，就要在 waybar CSS、wofi CSS、mako config、hyprland colors 好幾個地方各改一遍。
 
-解這個手工問題的標準做法，是加一層**模板工具**（matugen、pywal、wallust 之類）：從一張桌布或一套色票，自動生成每個元件的設定檔（例如 `matugen/templates/rofi-colors.rasi` 就是給 rofi 用的顏色模板）。這等於是手動重建 Caelestia 內建的那套 dynamic theming pipeline。所以配色一致這件事的真正取捨是：Caelestia 開箱就有「換桌布全套跟著變」，手動拼裝要嘛手抄 hex、要嘛自己搭一條 templating pipeline。
+解這個手工問題的標準做法，是加一層**模板工具**（matugen、pywal、wallust 之類）：從一張桌布或一套色票，自動生成每個元件的設定檔（例如 `matugen/templates/wofi-colors.css` 就是給 wofi 用的顏色模板）。這等於是手動重建 Caelestia 內建的那套 dynamic theming pipeline。所以配色一致這件事的真正取捨是：Caelestia 開箱就有「換桌布全套跟著變」，手動拼裝要嘛手抄 hex、要嘛自己搭一條 templating pipeline。
 
 ## config 結構
 
@@ -49,7 +51,7 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 | 你的情境                                  | 偏向                                                 |
 | ----------------------------------------- | ---------------------------------------------------- |
-| 資源受限（舊機、小 RAM VPS）              | 手動拼裝（省下那 ~340 MB 記憶體）                    |
+| 資源受限（舊機、小 RAM VPS）              | 手動拼裝（RSS 差額 ~340 MB 是上界、實際 PSS 更小）   |
 | 想要開箱即用、換桌布全套變色              | 整合式（Caelestia 的 dynamic 原生就有）              |
 | 穩定性敏感、無人值守                      | 手動拼裝（元件獨立、失敗半徑小）                     |
 | 想要結構性客製（狀態列位置、換 launcher） | 手動拼裝（整合式的結構是 shell 決定的）              |

@@ -14,7 +14,7 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 對虛擬機或同網段的機器，一個很有用的權威來源是**鄰居表**（IP 對 MAC 的對應）。要填起來需要對方在鏈路層有回應，所以它直接反映「對方在不在」。用 `ip neigh` 看目標 IP 的條目——優先用 `ip neigh` 而不是 `arp -a`，因為 `ip`（iproute2）在現代最小系統一定有，`arp`（net-tools）常常沒裝、跑了會 command not found 反而誤導。如果狀態是 `INCOMPLETE`（`arp -a` 顯示的是 `incomplete`），代表這個 IP 在鏈路層上根本沒有機器回應——不是 SSH 的問題，是那台機器的網路沒起來、或根本沒在跑。一個實際案例：一台虛擬機 SSH timeout，鄰居表顯示整個網段的 guest 位址全是 incomplete、只有閘道（宿主那側的橋接介面）是好的——這就定位到「宿主的橋沒問題，但橋的另一頭沒有 VM 在講話」，方向立刻從「調 SSH」轉到「去看 VM 的網路或開機狀態」。
 
-定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的東西）確認：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、鄰居表的條目從 incomplete 變成有 MAC，就通了。
+定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的那條路）確認——實體機是接鍵盤螢幕，VM 則是打開 hypervisor 的 guest console（UTM / virt-manager 的視窗，或序列 console），必要時用 `chvt` 切到別的 VT，這部分見[遠端連線與終端機問題](../ssh-and-terminal-troubleshooting/)：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、鄰居表的條目從 incomplete 變成有 MAC，就通了。
 
 還有一個常見誤區是 IP 變了。SSH 的別名、金鑰、`known_hosts` 都綁在特定機器身分上；換機器 / 重裝 / DHCP 重配後 IP 或 host key 變了，用舊別名會連錯或被 host key 檢查擋。這條的判讀與修法（`ssh user@新IP` 直連、`ssh-keygen -R`）見 [外部連入與無 key 的 bootstrap 路徑](../../install/ssh-keyless-bootstrap/)。
 

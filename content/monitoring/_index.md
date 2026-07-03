@@ -30,6 +30,10 @@ tags: ["monitoring"]
 
 [Dotfile 工作環境配置指南](/linux/dotfile/) 聚焦個人開發環境的配置管理。Monitoring 系列有獨立的 hands-on 專案做實測，Dotfile 系列也會搭配 VM 實測專案做 Hyprland 桌面配置的驗證——兩者的教材 + 實測專案模式平行。
 
+## 跟 Linux 單機告警的關係
+
+本系列講事件分類、告警收斂與可觀測性堆疊；個人 / 單機規模最小可用的告警實作是 [Linux 除錯：服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（systemd `OnFailure=` + 推播 + canary）與 [ntfy 推送通知](/linux/debug/ntfy-push-notification-service/)。從那條最小鏈往上長，才進到本系列的多來源事件與儀表板。
+
 斷網環境（air-gapped）裡這三層都要 self-hosted——infra 層用 Prometheus + Grafana、backend 層用自架的 trace/log collector、本系列的 SDK 和 Collector 也要部署在內網。斷網環境的 infra 層監控設定見[斷網環境的監控與可觀測性](/infra/air-gapped/air-gapped-monitoring/)。
 
 ## 教學範圍

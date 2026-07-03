@@ -54,4 +54,26 @@ tags: ["linux", "backlog", "meta"]
 
 - 補完 1、2 後 `tools/_index` 與 `tools/gui/_index` 的承諾已兌現、「入口幻覺」消除。
 - 每補一篇都跑過 `mdtools cards`（0 broken）、`fmt --fix`、emoji 掃描。
-- 未來新增文章：`content/` 下 leaf 頁的 sibling 連結要加 `../` 前綴、跨 section 再多一層（bundle 式解析），這是本輪反覆踩到的坑。
+- 未來新增文章：`content/` 下 leaf 頁的 sibling 連結要加 `../` 前綴、跨 section 再多一層（bundle 式解析），這是本輪反覆踩到的陷阱。
+
+## 第二輪多輪審查（2026-07-03）盤出的新缺口 — 待補
+
+這批是 linux 樹大量新增/重組後、第二次三輪審查（Round 3 steelman / outbound / persona）盤出的缺口，尚未補：
+
+### 7. 「接手一台陌生的、已在跑的機器」缺專屬入口（persona 缺口，SEVERE）
+
+- **缺口**：install/debug 都假設「剛裝好的乾淨機器」視角，沒有一篇對應「盤點一台別人裝好、已在跑一堆服務的機器」——跑哪些 service、誰開機自啟、裝了什麼、設定與 secret 落點、有沒有監控、cron/timer 有什麼。對照 infra 樹有 `first-day-with-cloud-account` 當對等入口，linux 樹缺。
+- **補法候選**：建 `install/inventory-unknown-machine.md` 或 `debug/` 下的盤點 checklist 入口，每項導流到既有聚焦篇；install/_index 與 debug/_index 讀法段各加一條路由。
+
+### 8. Quickshell 知識卡（跨 9 檔、達建卡門檻）
+
+- **缺口**：`Quickshell` 橫跨 06-rice-design 全模組 + platform-divergence + 07 + vm-handson，是 caelestia / 整合式 shell 的核心執行元件，讀者缺它難懂 rice 模組（達 AGENTS 知識卡建卡門檻）。
+- **補法**：建 `knowledge-cards/quickshell.md`（Qt6/QML 的 shell runtime、與 caelestia 的關係、資源足跡來源）。
+
+### 9. logind / seat 候選卡（中強度）
+
+- **缺口**：`logind` 跨 7 檔、`seat` 跨 4 檔，貫穿 debug 與 dotfile。session-lock 卡只講鎖屏，「logind session/seat 是誰持有 VT/輸入權」這個更底層概念多篇 inline 提到卻無獨立卡。先評估併入既有卡或新建 `logind-session-seat.md`。
+
+### 10. systemd drop-in / OnFailure 候選卡（中低，暫記）
+
+- **缺口**：`drop-in` 2 檔、`OnFailure` 4 檔，集中在 debug 服務失效篇。devops/04 接上後 `OnFailure` 會變跨模組共用術語，屆時值得建卡；現階段 inline 解釋足夠、暫記。

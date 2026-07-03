@@ -20,6 +20,16 @@ curl -d "sshd 在 web-01 掛了" ntfy.sh/你的topic
 
 進階一點的用法都是加 HTTP header：`Title`（標題）、`Priority`（優先級，高優先級手機會強提醒）、`Tags`（標籤/emoji）、`Click`（點通知打開的網址）。但核心就是「POST 到一個 topic」。
 
+## 手機訂閱：官方 app 三步
+
+告警最終要落到手機上，訂閱端在手機這頭是三步：
+
+1. 裝官方 app：App Store（iOS）或 Google Play（Android）搜 **ntfy**，作者 `binwiederhier`（也可從 F-Droid 裝）。
+2. 開 app、點 **Add subscription（新增訂閱）**，填入你的 **topic 名稱**（就是 `curl -d ... ntfy.sh/<topic>` 裡那個 `<topic>`）。用公共站的話到這步就收得到了。
+3. 自架 server 的話，在同一個 Add subscription 對話框把「Use another server」打開、填自架的 base URL（例 `https://ntfy.example.com`），再填 topic。
+
+填完發一則 `curl -d "test" ntfy.sh/<topic>` 驗證手機有跳通知，這條鏈就通了。app 收到後長按通知可設定每 topic 的優先級與勿擾。
+
 ## 本地訂閱：不只手機 app
 
 訂閱端不一定要手機 app——因為訂閱也只是一個 HTTP GET，本地有好幾種方式：
@@ -65,6 +75,16 @@ ntfy 同時是「一個免費公共服務」跟「一套你能自己跑的軟體
 
 **公共站**適合測試、個人用、告警內容不敏感的場景——立刻能用。**自架**因為 ntfy 是開源的，一個單一 Go 執行檔（或 docker）就能跑起你自己的 ntfy server，支援帳號、token、以及「哪個 topic 誰能讀寫」的 ACL；適合「不想讓告警內容經過第三方伺服器」或要正式部署的場景。
 
+最小起手（docker，先跑起來再談 ACL）：
+
+```bash
+docker run -d --name ntfy -p 80:80 -v /var/cache/ntfy:/var/cache/ntfy \
+  binwiederhier/ntfy serve --base-url http://你的主機
+# 之後把發送端 curl 的 ntfy.sh 換成你這台的 base-url，行為完全一樣
+```
+
+要開認證再加 `--auth-file` 與 `--auth-default-access deny-all`，然後用 `ntfy access` 逐條授權 topic。想先驗證能跑通就先不開認證。
+
 ## 安全模型：公共站上，topic 名稱就是密碼
 
 這是用 ntfy.sh 一定要懂的一件事：**公共站預設沒有認證，topic 名稱本身就是唯一的存取控制。** 這導致兩個後果：
@@ -97,3 +117,4 @@ Apprise 跟其他三個不同一層：它是抽象層，底下可以接 ntfy 或
 
 - 把 ntfy 接進 systemd 服務失敗告警的完整做法（`OnFailure` 鉤子、只在放棄才告警、canary 驗證管線）：[服務掛了怎麼自動知道](../service-failure-monitoring/)。
 - 整台機器死掉時 ntfy 這種體內推送發不出來、要改用體外心跳（healthchecks.io / Uptime Kuma），見同篇的「機器死掉的盲點」段。
+- ntfy 是個人 / 單機規模的最小告警通道；規模長大後事件怎麼分類、告警怎麼收斂 → [Monitoring 系列](/monitoring/)；服務探活與自動恢復的概念層 → [DevOps：服務探活與自動恢復](/devops/04-service-health/)。
