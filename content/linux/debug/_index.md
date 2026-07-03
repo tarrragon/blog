@@ -24,12 +24,14 @@ tags: ["linux", "debugging", "diagnosis"]
 | [程序、服務與狀態怎麼判](process-service-state-diagnosis/)                  | 程式活著沒（pgrep 陷阱）、服務由誰提供（busctl）、session 鎖沒鎖、多工器 session 存活       | 判某個東西的狀態時，該讀哪個權威來源       |
 | [服務掛了怎麼自動知道](service-failure-monitoring/)                         | 從手動 systemctl 到 OnFailure 主動告警、先重啟才告警、hung 偵測、canary、機器死掉的體外心跳 | 不想肉眼盯服務死活，怎麼自動監控並推播     |
 | [ntfy：推送通知服務](ntfy-push-notification-service/)                       | ntfy 的 pub-sub 模型、開源 vs 標準、公共站 vs 自架、topic 就是密碼的安全模型、同類對照      | 用 ntfy 推告警、想搞懂它是什麼、該不該自架 |
+| [AUR 建置失敗的分層判讀](aur-build-failure-triage/)                         | 建置失敗的分層：資源、`-bin` 二進位漂移、烤入路徑、架構宣告缺失、`-git` 依賴衝突            | AUR 套件裝不起來，是哪一層壞了             |
 
 ## 依症狀的讀法
 
 - **連不上、開不了機**：機器 SSH 連不到、或虛擬機開不起來 → [機器連不到或起不來](machine-unreachable/)。
 - **終端機行為怪**：SSH 斷線後終端機噴亂碼、遠端打字亂碼、要從 SSH 操控圖形桌面 → [遠端連線與終端機問題](ssh-and-terminal-troubleshooting/)。
 - **某個狀態判不準**：程式活著沒、服務歸誰、鎖沒鎖、session 還在不在 → [程序、服務與狀態怎麼判](process-service-state-diagnosis/)。
+- **AUR 套件裝不起來**：helper 自己壞掉、編譯叫錯工具、makepkg 拒建 → [AUR 建置失敗的分層判讀](aur-build-failure-triage/)。
 - **不想手動盯服務死活**：想讓 service 掛掉時主動推播、或擔心整台機器當掉沒人知道 → [服務掛了怎麼自動知道](service-failure-monitoring/)。
 - **想建立通用紀律**：想要一套適用各種症狀的「不猜錯」判讀方法 → [診斷心法](diagnosis-read-authoritative-state/)。
 

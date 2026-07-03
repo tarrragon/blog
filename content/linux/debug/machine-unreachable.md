@@ -16,6 +16,8 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的那條路）確認——實體機是接鍵盤螢幕，VM 則是打開 hypervisor 的 guest console（UTM / virt-manager 的視窗，或序列 console），必要時用 `chvt` 切到別的 VT，這部分見[遠端連線與終端機問題](../ssh-and-terminal-troubleshooting/)：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、鄰居表的條目從 incomplete 變成有 MAC，就通了。
 
+連不上的還有一類根因在**你這端的發起程式**，判讀關鍵是交叉驗證「同一個目標、不同的發起 process」：某個終端機 app 裡 SSH 回 `No route to host`，但同一時刻換一個 app（或系統內建終端機）對同一個 IP 的 ping / ssh 都通——網路層跟目標機器都沒事，是作業系統對那個 app 的網路權限。實測案例在 macOS：終端機 app 缺「本機網路」（Local Network）隱私權限時，對區網位址（包括本機上的 VM）的連線一律被擋、錯誤訊息卻長得跟路由故障一模一樣；系統設定裡把權限打開即解。錯誤訊息把你指向網路層、而交叉驗證能在一分鐘內把方向修正回發起端。
+
 還有一個常見誤區是 IP 變了。SSH 的別名、金鑰、`known_hosts` 都綁在特定機器身分上；換機器 / 重裝 / DHCP 重配後 IP 或 host key 變了，用舊別名會連錯或被 host key 檢查擋。這條的判讀與修法（`ssh user@新IP` 直連、`ssh-keygen -R`）見 [外部連入與無 key 的 bootstrap 路徑](../../install/ssh-keyless-bootstrap/)。
 
 ## 網路通、但域名解析不了
@@ -30,6 +32,8 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 另外兩個常見的「VM 起不來」故障也順手一起排除，它們不會特定產生「找不到 ROM」但常伴隨出現：上一次崩潰殘留的 helper 行程卡著（`pgrep -af 'qemu|<虛擬機軟體名>'` 找，沒清乾淨會佔住資源），以及宿主磁碟滿（`df -h`，啟動要寫暫存 / 狀態檔）。多數情況下，完全退出虛擬機軟體（連殘留 helper 一起清）+ 清出宿主磁碟空間 + 重新啟動，就恢復了。
 
+宿主側的虛擬化軟體本身也可能被 guest 的行為弄崩。實測案例：guest 在 console 上大量捲動輸出（`pacman` 全量安裝的滾屏）時，UTM 的渲染層 segfault、整個 app 帶著跑到一半的 VM 一起消失。這類崩潰的訊號是宿主的 crash report 指向虛擬化軟體的顯示 / 渲染元件（而非 QEMU 核心），對應的預防是讓 console 安靜：長輸出導檔（`> /tmp/x.log 2>&1`）、日常操作走 SSH，guest console 留給開機救援這類非它不可的場合。
+
 判讀通則：**虛擬機開不起來，先讀錯誤訊息判斷是 guest 還是宿主側；宿主側報「找不到某資源」而資源其實存在時，往「QEMU 是用哪個路徑找、那條路徑對不對」查（macOS 是 translocation、Linux 是缺套件 / 路徑 / 權限），再順手排除殘留行程與磁碟滿，而不是急著重裝。**
 
 ## 磁碟滿是連鎖故障的共同根因
@@ -41,7 +45,8 @@ tags: ["linux", "vm", "networking", "debugging"]
 ## 判讀路由
 
 - SSH timeout（TCP 卡住）→ 網路層或機器沒跑，查 `ip neigh`（`INCOMPLETE` = 對方沒回應）→ 去主控台看 `ip -brief a` / 網路服務。
-- `Connection refused` → 網路通、但沒有服務在聽 → 去機器上確認 sshd 起了沒。
+- `Connection refused` → 網路通、但沒有服務在聽 → 去機器上確認 sshd 起了沒；若是自己剛改過 `sshd_config` 後 sshd 起不來，`sshd -t` 一條指令印出壞在哪行（改 sshd_config 的紀律：先 `sshd -t` 驗證、通過再 restart，避免把自己鎖在外面）。
+- 只有某個 app 連不到、其他 process 對同一目標都通 → 發起端 app 的網路權限（macOS 查「本機網路」隱私設定），跟網路層無關。
 - 能 ping IP、不能用域名（`pacman` / `curl` 失敗）→ DNS 解析問題，查 `/etc/resolv.conf` 有沒有 nameserver、`systemd-resolved` 起了沒，不是網路層斷。
 - 連錯 / host key 被擋 → IP 或身分變了，見 [外部連入與無 key 的 bootstrap 路徑](../../install/ssh-keyless-bootstrap/)。
 - 虛擬機開不起來、宿主側報「找不到資源」但資源在 → 主因查路徑隔離，再排除殘留行程（`pgrep -af 'qemu\|...'`）/ 磁碟。
