@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "grpc"]
 
 ## 對應大綱
 
-styles/grpc/「內部 RPC 的選型位置」（gRPC 邊界與代價段）。反例 / 邊緣。
+styles/grpc/「內部 RPC 的選型位置」（gRPC 邊界與代價段）、11.2 風格選型（操作可及性軸、已引用）。反例 / 邊緣。
 
 ## 下一步路由
 

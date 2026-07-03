@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "versioning"]
 
 ## 對應大綱
 
-11.5 版本策略與 deprecation、11.6 向後相容的變更紀律。與 C10 同 cluster。
+11.6 向後相容的變更紀律（清單主展開）、11.5 版本策略、11.1 契約劃界段交叉。與 C10 同 cluster。
 
 ## 下一步路由
 

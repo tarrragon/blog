@@ -6,7 +6,7 @@ weight: 9
 tags: ["backend", "api-design", "rate-limit"]
 ---
 
-限流的執行機制在 gateway、限流的對外語意在契約 — 本章收後者。消費者面對限流時要回答的問題全部來自你的介面設計：怎麼知道額度多少、怎麼知道快用完了、被擋之後等多久重試。執行面的 token bucket、分散式計數器屬 [05 部署平台](/backend/05-deployment-platform/) 的範圍；本章的問題是這些機制對外承諾成什麼形狀。
+限流的執行機制在 gateway、限流的對外語意在契約 — 本章收後者。消費者面對限流時要回答的問題全部來自介面設計：怎麼知道額度多少、怎麼知道快用完了、被擋之後等多久重試。執行面的 token bucket、分散式計數器屬 [05 部署平台](/backend/05-deployment-platform/) 的入口層範圍（該模組現有章節尚未主寫限流實作、屬其 backlog）；本章的問題是這些機制對外承諾成什麼語意。
 
 ## 承諾邊界：配額資訊是預警、不是保證
 
@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "rate-limit"]
 
 ## 429 與 Retry-After：被擋之後的契約
 
-拒絕本身也是介面。可承諾的最小集合：status 用 429（讓消費者與中介層知道「可重試、但要等」、跟終態 4xx 區分、錯誤分類見 [11.4](/backend/11-api-design/error-model-design/)）；`Retry-After` 給等待時間、且服務端說到做到 — 消費者等滿再來就該被服務、否則 Retry-After 淪為裝飾、消費者退回盲目退避。GitHub 的文件在這條上有可指出的語意瑕疵：超限回 403 或 429、文件未明確劃分兩者的使用時機（見 [11.C43](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)）— 消費者要同時處理兩種 status、分支邏輯多一倍。設計新 API 時這是免費的教訓：拒絕的 status 只用一個。
+拒絕本身也是介面。可承諾的最小集合：status 用 429（讓消費者與中介層知道「可重試、但要等」、跟終態 4xx 區分、錯誤分類見 [11.4](/backend/11-api-design/error-model-design/)）；`Retry-After` 給等待時間、且服務端說到做到 — 消費者等滿再來就該被服務、否則 Retry-After 淪為裝飾、消費者退回盲目退避。GitHub 的文件在這條上有可指出的語意瑕疵：超限回 403 或 429、文件未明確劃分兩者的使用時機（見 [11.C43](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)）— 消費者要同時處理兩種 status、分支邏輯多一倍。設計新 API 時可直接採納的判準：拒絕的 status 只用一個。
 
 消費端的配套是 backoff 加 jitter（同 [11.8](/backend/11-api-design/api-idempotency-design/) 的 retry 責任）— 限流語意跟冪等語意在消費端匯合：429 之後的重送、要嘛操作本身冪等、要嘛帶 idempotency key。
 
@@ -32,12 +32,12 @@ GitHub 的雙層限流揭露配額設計的一個實證：primary limit（每小
 
 - **限流回 500**：消費者把它當服務故障告警、但成因是自身超額 — 語意錯位、429 才能觸發正確的消費端行為。
 - **Retry-After 不準**：等滿再來還是被擋、消費者棄用該 header、生態退化成盲目重試。
-- **配額只在文件、不在 header**：消費者無法程式化管理額度、只能撞牆後學習。
+- **配額只在文件、不在 header**：消費者無法程式化管理額度、只能在被擋下後才發現額度邊界。
 - **無 burst 設計**：嚴格平滑限流把正常的批次行為（頁面載入拉 10 個資源）也擋掉 — 政策要區分持續超額與瞬時尖峰。
 
 ## 下一步路由
 
-- 執行機制與 gateway 層：[05 部署平台與網路入口](/backend/05-deployment-platform/)、[Load Balancer Contract](/backend/05-deployment-platform/load-balancer-contract/)
+- 執行機制與 gateway 層：[05 部署平台與網路入口](/backend/05-deployment-platform/)、[5.3 Load Balancer 合約](/backend/05-deployment-platform/load-balancer-contract/)（限流實作章屬 05 backlog）
 - 高峰期的容量面：[9.11 高峰事件準備](/backend/09-performance-capacity/peak-event-readiness/)
 - 429 後的重送安全：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

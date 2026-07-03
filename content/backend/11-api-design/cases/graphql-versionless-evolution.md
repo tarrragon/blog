@@ -18,7 +18,7 @@ no-versioning 的實質是把演進成本轉嫁到三個紀律：只加不改、
 
 ## 對應大綱
 
-styles/graphql/「schema 演進」（anchor）、版本策略爭論文章交叉。
+styles/graphql/「schema 演進」（anchor）、11.6 格式層紀律（主引用）、11.2 / 11.5 交叉、版本策略爭論文章。
 
 ## 下一步路由
 

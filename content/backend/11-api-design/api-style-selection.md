@@ -10,9 +10,9 @@ tags: ["backend", "api-design", "selection"]
 
 ## 判準軸一：消費者形狀
 
-消費者形狀指誰在呼叫、你對他有多少控制力、他跟你的部署與語言關係。這條軸是三條裡權重最高的、因為它決定其他軸的成本怎麼放大。
+消費者形狀指誰在呼叫、服務端對呼叫方有多少控制力、呼叫方跟服務端的部署與語言關係。這條軸是三條裡權重最高的、因為它決定其他軸的成本怎麼放大。
 
-流派自己劃出的邊界最有說服力。tRPC 官方 FAQ 明言前提：脫離 monorepo 就失去 client 與 server 一起運作的保證、替代方案是把 backend 型別發成 private npm package — 語言鎖定 TypeScript、部署形態鎖定同倉或私包（見 [11.C33](/backend/11-api-design/cases/rpc-trpc-design-philosophy/)）。從 GraphQL 撤到 OpenAPI REST 的實踐者也給出同構的判準句：控制得了 client 的團隊、用不上 GraphQL 的查詢彈性（見 [11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、作者判讀層）。兩個相反方向的來源指向同一條判讀：**先數清楚消費者是誰、再看風格能力表**。
+流派自己劃出的邊界最有說服力。tRPC 官方 FAQ 明言前提：脫離 monorepo 就失去 client 與 server 一起運作的保證、替代方案是把 backend 型別發成 private npm package — 語言鎖定 TypeScript、部署形態鎖定同倉或私包（見 [11.C33](/backend/11-api-design/cases/rpc-trpc-design-philosophy/)）。公開撤退立場的六年 GraphQL 實踐者也給出同構的判準句、並建議控制得了 client 的團隊改用 OpenAPI REST（見 [11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、作者判讀層）。兩個相反方向的來源指向同一條判讀：**選型的第一步是確認消費者是誰、再比對風格能力**。
 
 消費者形狀的常見分型與傾向：
 
@@ -25,13 +25,13 @@ tags: ["backend", "api-design", "selection"]
 | 本地 process 間、雙向、低頻  | JSON-RPC             | 最小夠用訊息層；LSP 與 MCP 的採用是實證（見下）                |
 | 下游要事件不是查詢           | event / queue        | 交接語意不同、路由到 [03 訊息佇列](/backend/03-message-queue/) |
 
-表格是索引、每列的成立條件在真實情境裡要重新判讀。以 JSON-RPC 列為例：它在 web API 世代被 REST 式做法取代、卻在 LSP 與 MCP 兩份現代 spec 裡被選為訊息層 — 兩份 spec 都在 JSON-RPC 2.0 上加約束、而非發明新協議（見 [11.C34](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)；spec 只陳述採用、選型理由是本模組的判讀）。共同形狀是本地、雙向、需要 notification 語意、生態工具要求零 codegen 可自省 — 這組條件下 gRPC 的 HTTP/2 與 codegen 成本全是負資產。判讀重點是條件組合、而非「JSON-RPC 回來了」這種風格敘事。
+表格是索引、每列的成立條件在真實情境裡要重新判讀。以 JSON-RPC 列為例：它在 web API 世代被 REST 式做法取代、卻在 LSP 與 MCP 兩份現代 spec 裡被選為訊息層 — 兩份 spec 都在 JSON-RPC 2.0 上加約束、而非發明新協議（見 [11.C34](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)；spec 只陳述採用、選型理由是本模組的判讀）。共同的條件組合是本地、雙向、需要 notification 語意、生態工具要求零 codegen 可自省 — 這組條件下 gRPC 的 HTTP/2 與 codegen 成本全是負資產。判讀重點是條件組合、而非「JSON-RPC 回來了」這種風格敘事。其餘各列的成立條件同樣散在後文 — gRPC 與 tRPC 的前提在判準軸二、三展開、GraphQL 的代價在爭論地圖路由的流派層、表格只負責索引。
 
 ## 判準軸二：演進成本
 
-每種風格都要回答「介面上線後怎麼改」、答案的形狀差異很大。GraphQL 官方的 versionless 路線把演進成本轉嫁到三個紀律：只加不改、deprecation 標注、nullable 預設（見 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)）。protobuf 把相容性做成編碼格式的性質：field number 一旦投入使用即不可變更、刪除必須 reserve、重用會造成解碼歧義與資料損毀（見 [11.C28](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/)）。HTTP+JSON 的演進紀律則多半靠約定與流程、缺格式層的強制 — 這是它自由度最高也最容易踩線的原因。
+每種風格都要回答「介面上線後怎麼改」、機制差異很大。兩個代表性答案：GraphQL 的 versionless 路線把演進成本轉嫁到 schema 層的紀律、protobuf 把相容性直接做成編碼格式的性質 — 兩者的具體紀律與條款、主寫在 [11.6 變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 的格式層段（案例 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)、[11.C28](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/)）。HTTP+JSON 的演進紀律則多半靠約定與流程、缺格式層的強制 — 這是它自由度最高也最容易踩線的原因。
 
-選型時的判讀問題：你的團隊撐得起哪種紀律？格式層強制（protobuf）適合跨團隊多語言、因為紀律不依賴人的自覺；約定層紀律（JSON、GraphQL SDL）需要配套的變更審查與工具、詳見 [11.6 變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 與 [11.10 規範治理](/backend/11-api-design/api-governance/)。
+選型時的判讀問題是團隊承擔得起哪種紀律：格式層強制（protobuf）適合跨團隊多語言、因為紀律不依賴人的自覺；約定層紀律（JSON、GraphQL SDL）需要配套的變更審查與工具、組織面見 [11.10 規範治理](/backend/11-api-design/api-governance/)。
 
 ## 判準軸三：操作與 debug 可及性
 
@@ -41,7 +41,7 @@ tags: ["backend", "api-design", "selection"]
 
 ## 共存是常態、取代是例外
 
-大平台的長期實證支持「多風格共存」而非「新風格取代舊風格」。GitHub 2016 年採用 GraphQL、多年後的官方立場是 REST 與 GraphQL 並行、依情境選用、且承認功能覆蓋不對等（見 [11.C20](/backend/11-api-design/cases/graphql-github-rest-parallel/)）。反方向的 Shopify 宣告 GraphQL 為唯一 API — 但它動用了「新功能只上 GraphQL、新 app 強制」的平台強制力、還配套 rate limit 加倍與查詢成本降 75%（見 [11.C21](/backend/11-api-design/cases/graphql-shopify-all-in/)）。判讀：沒有平台強制力的組織、務實的預期是多風格長期共存、選型的真正產出是「每個介面用對風格」、而非全公司統一答案。
+大平台的長期實證支持「多風格共存」而非「新風格取代舊風格」。GitHub 2016 年採用 GraphQL、多年後的官方立場是 REST 與 GraphQL 並行、依情境選用、且明文說明功能覆蓋不對等（見 [11.C20](/backend/11-api-design/cases/graphql-github-rest-parallel/)）。反方向的 Shopify 宣告 GraphQL 為唯一 API — 但它動用了「新功能只上 GraphQL、新 app 強制」的平台強制力、還配套 rate limit 加倍與查詢成本降 75%（見 [11.C21](/backend/11-api-design/cases/graphql-shopify-all-in/)）。判讀：沒有平台強制力的組織、務實的預期是多風格長期共存、選型的真正產出是「每個介面用對風格」、而非全公司統一答案。
 
 ## 爭論地圖
 

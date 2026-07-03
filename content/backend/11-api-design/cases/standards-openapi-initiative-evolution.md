@@ -18,7 +18,7 @@ OAI 官網記載 OpenAPI Specification 源自 SmartBear 捐贈的 Swagger Specif
 
 ## 對應大綱
 
-styles/standards/「OpenAPI 與 AsyncAPI 生態」（anchor）。
+styles/standards/「OpenAPI 與 AsyncAPI 生態」（anchor）、11.10 採標準與自建規範段（已引用）。
 
 ## 下一步路由
 

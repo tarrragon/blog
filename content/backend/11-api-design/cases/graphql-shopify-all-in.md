@@ -18,7 +18,7 @@ Shopify 2024-10 宣告 REST Admin API 標為 legacy、不再開發新功能；20
 
 ## 對應大綱
 
-styles/graphql/「公開 API 的 GraphQL 進退」（anchor）。Shopify cluster（與 C24 graphql-batch 相關）。
+styles/graphql/「公開 API 的 GraphQL 進退」（anchor）、11.2 風格選型（共存段、已引用）。Shopify cluster（與 C24 graphql-batch 相關）。
 
 ## 下一步路由
 

@@ -18,7 +18,7 @@ gRPC 在 Dropbox 的價值是「框架層集中加 infra-wide 可靠性」的載
 
 ## 對應大綱
 
-styles/grpc/「內部 RPC 的選型位置」（anchor）。
+styles/grpc/「內部 RPC 的選型位置」（anchor）、11.2 風格選型（操作可及性軸、已引用）。
 
 ## 下一步路由
 

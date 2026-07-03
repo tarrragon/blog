@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "grpc"]
 
 ## 對應大綱
 
-styles/grpc/「proto 演進紀律」（anchor）、11.10 API 規範治理（linting 進 CI）交叉。
+11.6 向後相容的變更紀律（工具層 anchor、已引用）、styles/grpc/「proto 演進紀律」、11.10 API 規範治理（linting 進 CI）交叉。
 
 ## 下一步路由
 

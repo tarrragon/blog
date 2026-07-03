@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "case-study", "rest"]
 
 ## 對應大綱
 
-styles/rest/「Richardson 成熟度的實用讀法」（骨幹）。
+styles/rest/「Richardson 成熟度的實用讀法」（骨幹）、11.3 資源建模（定位工具段、已引用）。
 
 ## 下一步路由
 
