@@ -69,9 +69,13 @@ CREATE TABLE events (
     error_message TEXT,
     error_stack TEXT,
     error_type TEXT,
+    batch_id TEXT,
+    raw TEXT,
     receive_ts TEXT
 );
 ```
+
+`batch_id` 記錄事件隨哪一批送達——SDK 批次送出時整批共用一個 ID，調查「某次 flush 掉了哪些事件」或依批次去重時用它關聯，不需要靠 `receive_ts` 猜。`raw` 保留事件的原始 JSON：欄位攤平是查詢最佳化的投影，schema 演進（新增欄位、改型別）後舊事件仍可從 `raw` 回放重建，debug 時也能看到 SDK 真正送出的原文。這兩欄和其他欄位一樣從 [event.schema.json](/monitoring/02-log-schema/event-schema-fields/) 推導——欄位清單以 schema 為準，schema 演進時本表需同步（monitor repo challenge 006 記錄過一次教學落後於契約演進的實例）。
 
 `source_sdk` 獨立成 column 讓「按 SDK 來源篩選」（`WHERE source_sdk = 'python'`）不需要從 JSON extract。`data` 用 TEXT 存 JSON。SQLite 沒有原生 JSON 型別，但 3.38+ 支援 `json_extract()` 函式做查詢（`WHERE json_extract(data, '$.duration_ms') > 1000`）。`session_id` 獨立成 column 讓 session 回放的 JOIN 不需要 JSON extract。`error_stack` 獨立成 column 讓 error 調查時全文搜尋 stack trace 不需要 JSON extract。`receive_ts` 是 collector 收到事件的時間，和 SDK 端的 `ts` 對照可估算 clock drift。
 
