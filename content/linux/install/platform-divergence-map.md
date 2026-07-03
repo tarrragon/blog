@@ -31,7 +31,7 @@ Debian 的重命名還會連執行檔一起改（`fdfind`、`batcat`），所以
 
 ### 套件存在性：有些概念只存在於特定平台
 
-Hyprland 在 Arch 官方 repo、Fedora 要 COPR、Debian stable 沒有；Quickshell 只有 Arch 打包。反過來，macOS 的 cask app（GUI 應用程式）概念在 Linux 對應的是各桌面環境自己的生態。這層差異沒有翻譯的空間——桌面層的清單是平台專屬的維護對象。
+Hyprland 在 Arch 官方 repo、Fedora 要 COPR、Debian stable 沒有；[Quickshell](/linux/dotfile/knowledge-cards/quickshell/) 只有 Arch 打包。反過來，macOS 的 cask app（GUI 應用程式）概念在 Linux 對應的是各桌面環境自己的生態。這層差異沒有翻譯的空間——桌面層的清單是平台專屬的維護對象。
 
 存在性差異還有一個容易漏看的軸：**CPU 架構**。發行版 repo 有這個工具、不代表它在你的架構上存在——尤其是專有軟體的二進位發行。實測案例：Arch aarch64（ALARM）的 repo 有 `spotify-launcher`（工具本身有 aarch64 建置），但它要下載的 Spotify 官方 client 只發 x86_64/i386 deb，實跑直接回報 `There are no packages for your cpu's architecture (cpu="aarch64", supported=["amd64", "i386"])`。這類失敗的判讀重點是分清「工具沒打包」跟「工具打包了、它依賴的專有 blob 沒有這個架構」——前者可能有 [AUR](/linux/dotfile/knowledge-cards/aur/)（Arch 社群自建套件庫）/ 第三方 repo 補、後者只能找替代路徑（Spotify 的替代是 Web Player + 從 ChromeOS 鏡像抽出的 arm64 Widevine CDM）。DRM、GPU driver、印表機 driver 這類含專有二進位的軟體，在非 x86_64 架構上都要先查架構支援再排進安裝清單。
 

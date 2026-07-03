@@ -18,7 +18,7 @@ tags: ["dotfile", "rice", "waybar", "wofi", "mako", "hyprland", "linux"]
 | 剪貼簿   | wl-clipboard + Cliphist      | CLI                  |
 | 螢幕截圖 | Grimblast, Grim + Slurp      | CLI                  |
 
-Caelestia 這類「desktop shell 專案」做的就是把上述元件統一設計、統一配色、統一出貨，省去自己一個個挑的功夫。它用的是 Quickshell（QML 框架）把所有元件包成一套風格一致的桌面。本模組教的是自己組裝的方式——理解各元件的配置，之後要用 Caelestia 或自己拼都能做。
+Caelestia 這類「desktop shell 專案」做的就是把上述元件統一設計、統一配色、統一出貨，省去自己一個個挑的功夫。它用的是 [Quickshell](/linux/dotfile/knowledge-cards/quickshell/)（QML 框架）把所有元件包成一套風格一致的桌面。本模組教的是自己組裝的方式——理解各元件的配置，之後要用 Caelestia 或自己拼都能做。
 
 ## Waybar：狀態列
 

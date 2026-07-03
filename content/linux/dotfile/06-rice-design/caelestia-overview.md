@@ -6,7 +6,7 @@ weight: 3
 tags: ["dotfile", "rice", "caelestia", "quickshell", "hyprland"]
 ---
 
-Caelestia 是基於 Quickshell 框架的 Hyprland 桌面 shell。它把狀態列、啟動器、通知、鎖屏、桌布管理這些在平鋪式桌面上需要各自挑選和配置的元件，整合成一套設計一致的成品。本質上是一套高品質的 dotfiles/rice，不是一個穩定的桌面環境產品。
+Caelestia 是基於 [Quickshell](/linux/dotfile/knowledge-cards/quickshell/) 框架的 Hyprland 桌面 shell。它把狀態列、啟動器、通知、鎖屏、桌布管理這些在平鋪式桌面上需要各自挑選和配置的元件，整合成一套設計一致的成品。本質上是一套高品質的 dotfiles/rice，不是一個穩定的桌面環境產品。
 
 ## Caelestia 提供的元件
 

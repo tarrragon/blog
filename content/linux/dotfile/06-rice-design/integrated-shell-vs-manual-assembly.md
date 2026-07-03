@@ -12,7 +12,7 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 ## 資源足跡：差約一個數量級
 
-整合式 shell 把整個桌面畫在一個程式裡，這個程式通常是重量級的 UI runtime。Caelestia 建在 Quickshell（Qt6/QML）上，實測安裝足跡如下：
+整合式 shell 把整個桌面畫在一個程式裡，這個程式通常是重量級的 UI runtime。Caelestia 建在 [Quickshell](/linux/dotfile/knowledge-cards/quickshell/)（Qt6/QML）上，實測安裝足跡如下：
 
 | 項目           | 整合式（Caelestia）               | 手動拼裝（waybar+wofi+mako+hyprlock） |
 | -------------- | --------------------------------- | ------------------------------------- |

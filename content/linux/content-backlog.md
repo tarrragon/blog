@@ -56,23 +56,25 @@ tags: ["linux", "backlog", "meta"]
 - 每補一篇都跑過 `mdtools cards`（0 broken）、`fmt --fix`、emoji 掃描。
 - 未來新增文章：`content/` 下 leaf 頁的 sibling 連結要加 `../` 前綴、跨 section 再多一層（bundle 式解析），這是本輪反覆踩到的陷阱。
 
-## 第二輪多輪審查（2026-07-03）盤出的新缺口 — 待補
+## 第二輪多輪審查（2026-07-03）盤出的新缺口 — 已補完（第 10 項暫記除外）
 
-這批是 linux 樹大量新增/重組後、第二次三輪審查（Round 3 steelman / outbound / persona）盤出的缺口，尚未補：
+這批是 linux 樹大量新增/重組後、第二次三輪審查（Round 3 steelman / outbound / persona）盤出的缺口，第 7-9 項已於 2026-07-03 補完：
 
-### 7. 「接手一台陌生的、已在跑的機器」缺專屬入口（persona 缺口，SEVERE）
+### 7. 「接手一台陌生的、已在跑的機器」缺專屬入口（persona 缺口，SEVERE）— 已補完
 
-- **缺口**：install/debug 都假設「剛裝好的乾淨機器」視角，沒有一篇對應「盤點一台別人裝好、已在跑一堆服務的機器」——跑哪些 service、誰開機自啟、裝了什麼、設定與 secret 落點、有沒有監控、cron/timer 有什麼。對照 infra 樹有 `first-day-with-cloud-account` 當對等入口，linux 樹缺。
-- **補法候選**：建 `install/inventory-unknown-machine.md` 或 `debug/` 下的盤點 checklist 入口，每項導流到既有聚焦篇；install/_index 與 debug/_index 讀法段各加一條路由。
+- **已建**：`install/inventory-unknown-machine.md`（weight 10）
+- **回答**：只讀不改的八層盤點——機器身分、存取面（帳號/sudo/key）、服務與自啟差集、排程落點、開放 port、套件與手放檔案、設定與 secret 落點、監控現況；每層導流既有聚焦篇（process-service-state-diagnosis / service-failure-monitoring / sync-strategy-secret / platform-divergence-map）、收尾以「能否重建」檢驗盤點品質並接 dotfile 收斂與 infra takeover。install/_index 文章表 + 讀法段、debug/_index 讀法段各加路由。
 
-### 8. Quickshell 知識卡（跨 9 檔、達建卡門檻）
+### 8. Quickshell 知識卡（跨 9 檔、達建卡門檻）— 已補完
 
-- **缺口**：`Quickshell` 橫跨 06-rice-design 全模組 + platform-divergence + 07 + vm-handson，是 caelestia / 整合式 shell 的核心執行元件，讀者缺它難懂 rice 模組（達 AGENTS 知識卡建卡門檻）。
-- **補法**：建 `knowledge-cards/quickshell.md`（Qt6/QML 的 shell runtime、與 caelestia 的關係、資源足跡來源）。
+- **已建**：`knowledge-cards/quickshell.md`（weight 17、_index「語言與工具」表加入）
+- **回答**：runtime 與成品的分工（Quickshell 是引擎、Caelestia 是 QML 成品）、quickshell-git 硬需求與只有 Arch 打包、213 MB 足跡來源、兩個除錯陷阱（comm 是 `qs`、畫得出來不等於還活著）、同源架構的連帶故障。K4 雙向：compositor / session-lock 卡加反向連結；六篇術語首現處（caelestia-overview、integrated-shell、desktop-shell-components、process-service-state-diagnosis、platform-divergence-map、common-failures-recovery）連回卡。
 
-### 9. logind / seat 候選卡（中強度）
+### 9. logind / seat 候選卡（中強度）— 已補完（評估結論：新建）
 
-- **缺口**：`logind` 跨 7 檔、`seat` 跨 4 檔，貫穿 debug 與 dotfile。session-lock 卡只講鎖屏，「logind session/seat 是誰持有 VT/輸入權」這個更底層概念多篇 inline 提到卻無獨立卡。先評估併入既有卡或新建 `logind-session-seat.md`。
+- **評估**：logind 的提及分兩個語意責任——LockedHint 鎖屏層已由 session-lock 卡涵蓋；「session/seat 是誰持有 VT/輸入權」無卡承載。併入 session-lock 會混兩個責任、違反一卡一語意責任，故新建。
+- **已建**：`knowledge-cards/logind-session-seat.md`（weight 18、_index 系統概念表加入）
+- **回答**：session vs seat 的語意、裝置權發放規則（掛 seat + active VT 才有 DRM/input）、SSH pts 起不了桌面的根因、判讀指令組（tty / seat-status / tty0/active / getty）、loginctl 假象（seat0 掛 pts 看似持有 master）、跟 session-lock 卡的分層銜接。K4 雙向：compositor / session-lock 卡與 debug 三篇首現處接上。
 
 ### 10. systemd drop-in / OnFailure 候選卡（中低，暫記）
 

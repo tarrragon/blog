@@ -34,6 +34,7 @@ tags: ["linux", "debugging", "diagnosis"]
 - **AUR 套件裝不起來**：helper 自己壞掉、編譯叫錯工具、makepkg 拒建 → [AUR 建置失敗的分層判讀](aur-build-failure-triage/)。
 - **不想手動盯服務死活**：想讓 service 掛掉時主動推播、或擔心整台機器當掉沒人知道 → [服務掛了怎麼自動知道](service-failure-monitoring/)。
 - **想建立通用紀律**：想要一套適用各種症狀的「不猜錯」判讀方法 → [診斷心法](diagnosis-read-authoritative-state/)。
+- **接手一台陌生機器、還沒出問題**：機器在跑但不是你裝的，想先盤清楚上面有什麼再動手 → [接手陌生機器的盤點](../install/inventory-unknown-machine/)——同一套「讀權威狀態」紀律用在盤點而非除錯。
 
 ## 跟其他模組的交叉引用
 

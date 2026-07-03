@@ -36,6 +36,7 @@ tags: ["linux", "install", "bootstrap"]
 | [讓機器跑無人值守的長任務](unattended-remote-work/)                    | 無人值守執行的三個障礙與解：NOPASSWD sudo、終端機多工器、推送認證，以及 agent 權限放行的取捨 | 怎麼讓機器在我離開後自己跑完任務、把成果送回來      |
 | [平台與發行版差異的判讀地圖](platform-divergence-map/)                 | 差異的四層（套件管理器 / 套件名 / 存在性 / 版本節奏）、除錯前先定平台、bootstrap 分歧判準    | 跨平台的清單與腳本該怎麼切、除錯時先確認什麼        |
 | [GUI 應用的安裝驗證](gui-apps-install-verify/)                         | 拆包生態（本體與功能模組分離）、首跑同意對話框、播放驗證鏈、VM 硬體解碼回退                  | GUI 應用裝了打不開 / 無聲 / 不能播該查哪一層        |
+| [接手陌生機器的盤點](inventory-unknown-machine/)                       | 只讀不改的八層盤點：服務與自啟、排程、開放 port、套件、設定與 secret 落點、監控現況          | 接手一台別人裝好、已在跑的機器，怎麼盤清楚再動手    |
 
 機器裝好、能連入之後若出問題（連不上、終端機亂、程式行為怪），除錯與診斷自成一組，見同層的 [Linux 除錯與診斷](../debug/)。
 
@@ -43,7 +44,7 @@ tags: ["linux", "install", "bootstrap"]
 
 主線那幾篇照「安裝 → 驗證 → 連入 → 可除錯 → 無人值守」的順序，是「從零開一台新機器、到讓它自己跑活」的完整路線，但不是每個讀者都從零開始：
 
-- **接手一台別人已裝好的機器**：OS 已經在，從 [最小安裝後的工具驗證與補足](minimal-install-verify/) 切入，確認它缺不缺你流程要的工具。
+- **接手一台別人已裝好的機器**：OS 已經在、上面還跑著前人留下的服務，先讀 [接手陌生機器的盤點](inventory-unknown-machine/) 用只讀不改的方式盤清楚它在跑什麼；機器乾淨、只是別人裝的，直接從 [最小安裝後的工具驗證與補足](minimal-install-verify/) 切入，確認它缺不缺你流程要的工具。
 - **雲端主機初始化**：雲端主機多半已附 OS image、已有 sudo 與注入的 key，適用的是 [外部連入、SSH key 與無 key 的 bootstrap 路徑](ssh-keyless-bootstrap/) 跟 [可除錯的 bootstrap](observable-bootstrap/)，前兩篇的 ISO 安裝可略過。
 - **bootstrap 失敗來 debug**：直接讀 [可除錯的 bootstrap](observable-bootstrap/)，它也涵蓋「腳本不是你寫的、只想 debug 一次失敗」的情況。
 - **讓機器無人值守跑活**：機器已能連入操作，只想設好讓它在你離開後自己跑長任務或 agent，直接讀 [讓機器跑無人值守的長任務](unattended-remote-work/)。

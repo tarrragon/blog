@@ -12,7 +12,7 @@ tags: ["linux", "process", "systemd", "debugging"]
 
 ## 程式活著沒：比對正確的行程名
 
-判斷一個程式在不在，行程表是權威來源，`pgrep` / `ps` 是對的工具，但成敗在於**比對正確的行程名**（comm，行程表裡記的執行檔短名，可從 `/proc/<pid>/comm` 看）。一個實際的坑：某個桌面 shell（畫桌面 UI 的圖形程式，不是 bash/zsh 那種命令列 shell）的可執行檔叫 `quickshell`，但透過名為 `qs` 的 symlink 啟動時，它在行程表裡的 comm 是 `qs`。這時 `pgrep quickshell` 找不到，很容易誤判成程式掛了、甚至誤觸「重啟」而引發更大的問題，實際上它以 `qs` 這個名字好好跑著。
+判斷一個程式在不在，行程表是權威來源，`pgrep` / `ps` 是對的工具，但成敗在於**比對正確的行程名**（comm，行程表裡記的執行檔短名，可從 `/proc/<pid>/comm` 看）。一個實際的坑：桌面 shell runtime [Quickshell](/linux/dotfile/knowledge-cards/quickshell/)（畫桌面 UI 的圖形程式，不是 bash/zsh 那種命令列 shell）的可執行檔叫 `quickshell`，但透過名為 `qs` 的 symlink 啟動時，它在行程表裡的 comm 是 `qs`。這時 `pgrep quickshell` 找不到，很容易誤判成程式掛了、甚至誤觸「重啟」而引發更大的問題，實際上它以 `qs` 這個名字好好跑著。
 
 可靠的做法：
 
@@ -51,7 +51,7 @@ ps -o comm= -p "$pid"
 
 關鍵是分清兩種鎖：
 
-- **logind 層的鎖**：systemd 登入管理的 session 鎖，權威狀態是 `loginctl show-session <id> -p LockedHint`。
+- **[logind](/linux/dotfile/knowledge-cards/logind-session-seat/) 層的鎖**：systemd 登入管理的 session 鎖，權威狀態是 `loginctl show-session <id> -p LockedHint`。
 - **Wayland 合成器層的鎖**：走 `ext-session-lock` 協議、由**[合成器](/linux/dotfile/knowledge-cards/compositor/)**（compositor，Wayland 下負責把各視窗合成到螢幕、管輸入輸出的核心程式，約當 X11 時代的視窗管理器加顯示伺服器；Hyprland、Sway 等都是）管的鎖，跟 logind 是獨立機制。這種鎖 `loginctl` 的 `LockedHint` **查不到**——不是沒鎖，是查錯層。（用 GNOME / KDE 的鎖屏走的機制不同，以下的 `ext-session-lock` 判法與復原針對 wlroots 系的 Wayland 合成器。）
 
 所以「`loginctl` 沒有 `LockedHint`、`pgrep` 找不到獨立鎖屏程式」不足以斷定「沒鎖」：合成器層的鎖不歸 logind、而鎖屏畫面可能由 shell 主程式在自己行程內畫（沒有獨立可執行檔可抓）。這種情況真正的權威來源是那個 shell 自己的 log（有沒有載入鎖屏模組、idle 計時器有沒有觸發鎖定），或直接看 compositor 的 session-lock 狀態。判鎖看合成器 / shell 的 log，不是 `loginctl`、更不是畫面有沒有密碼框。

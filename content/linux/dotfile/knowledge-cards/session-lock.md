@@ -16,10 +16,10 @@ Wayland 下的 compositor（如 Hyprland、Sway）同時管理視窗排列與畫
 
 鎖屏狀態牽涉兩個獨立的層，觸發方向和持有者不同：
 
-| 層            | 持有者             | 查看方式                                   | 語意                                        |
-| ------------- | ------------------ | ------------------------------------------ | ------------------------------------------- |
-| logind 會話鎖 | systemd-logind     | `loginctl show-session <id> -p LockedHint` | 會話的鎖定提示，給登入管理器 / 螢幕保護程式 |
-| compositor 鎖 | Wayland compositor | 畫面是否進得去、鎖屏 surface 是否在最上層  | 實際擋住畫面的那層                          |
+| 層            | 持有者                                                                | 查看方式                                   | 語意                                        |
+| ------------- | --------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------- |
+| logind 會話鎖 | [systemd-logind](/linux/dotfile/knowledge-cards/logind-session-seat/) | `loginctl show-session <id> -p LockedHint` | 會話的鎖定提示，給登入管理器 / 螢幕保護程式 |
+| compositor 鎖 | Wayland compositor                                                    | 畫面是否進得去、鎖屏 surface 是否在最上層  | 實際擋住畫面的那層                          |
 
 `loginctl lock-session` 走 logind 層觸發鎖屏，鎖屏 client 收到信號後啟動、再向 compositor 取得 session lock。觸發方向是 logind → client → compositor；持有與強制執行方向是 compositor → 畫面。兩者方向相反，正好印證兩層是獨立的。
 
@@ -45,7 +45,7 @@ hyprctl --instance 0 'dispatch exec hyprlock'
 - **失效保護恢復**：從另一個 TTY 或 SSH 執行 `hyprctl --instance 0 'keyword misc:allow_session_lock_restore 1'` + `hyprctl --instance 0 'dispatch exec hyprlock'`，重新拉起鎖屏 prompt 後認證解鎖。
 - **自動化流程的代價**：啟動鎖屏後，畫面會留在鎖定狀態直到有人通過認證。自動化測試若會觸發鎖屏，要把「需人工解鎖」算進代價。
 - **診斷路由**：「畫面卡住 / 螢幕鎖了沒」當成一般 Linux 狀態判讀問題（跟判程式活著、判服務歸屬同類）時，見[程序、服務與狀態怎麼判](/linux/debug/process-service-state-diagnosis/)——它把「判 session 有沒有被鎖」放進「讀權威狀態、別看畫面猜」的通用診斷紀律裡。
-- **延伸閱讀**：鎖屏的視覺配置（背景、輸入框、時鐘 label）見[配色系統、鎖屏與 GTK 主題](/linux/dotfile/06-rice-design/color-system-theming/)的 Hyprlock 段；桌面故障恢復流程見[常見故障場景與恢復操作](/linux/dotfile/07-desktop-maintenance/common-failures-recovery/)。持鎖的那個 compositor 到底是什麼、還握著哪些系統狀態，見 [Compositor 術語卡](/linux/dotfile/knowledge-cards/compositor/)。
+- **延伸閱讀**：鎖屏的視覺配置（背景、輸入框、時鐘 label）見[配色系統、鎖屏與 GTK 主題](/linux/dotfile/06-rice-design/color-system-theming/)的 Hyprlock 段；桌面故障恢復流程見[常見故障場景與恢復操作](/linux/dotfile/07-desktop-maintenance/common-failures-recovery/)。持鎖的那個 compositor 到底是什麼、還握著哪些系統狀態，見 [Compositor 術語卡](/linux/dotfile/knowledge-cards/compositor/)；整合式 shell（如 Caelestia）的鎖屏由 [Quickshell](/linux/dotfile/knowledge-cards/quickshell/) 主程式畫、主程式死掉會連帶觸發失效保護。
 
 ## 邊界條件
 

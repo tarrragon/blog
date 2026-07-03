@@ -116,7 +116,7 @@ hyprctl --instance 0 'dispatch exec hyprlock'
 
 **症狀**：bar / 狀態列還在螢幕上、看起來一切正常，但點它的按鈕（工作區切換、系統匣圖示）沒反應，keybind 叫不出啟動器（wofi / 內建 launcher）。同時焦點視窗（例如終端機）打字完全正常——鍵盤到得了應用程式，只是桌面 shell 的互動死了。
 
-**原因**：這是跟場景二（工具掛了）不同的一類故障，關鍵差別在**進程還活著**。場景二是 process 崩潰退出（`pgrep` 沒輸出），殺了重啟就好；這裡的桌面 shell（如 caelestia / Quickshell）進程還在跑（`pgrep` 找得到、STAT 是正常的 `S`、在 `poll` 等事件、CPU 不高），但它內部的某個子系統初始化失敗了——常見是 QML scene 的某個物件因為上游錯誤沒建起來、變成 null，於是負責「keybind → 開抽屜」「bar 按鈕互動」的模組對 null 讀屬性、整條互動接線死掉。bar 之所以還畫得出來，是它還停在初始化失敗前那一幀的畫面：**畫得出來不等於還活著**，跟鎖屏那課（畫面有密碼框不等於真的在鎖）是同一個陷阱。
+**原因**：這是跟場景二（工具掛了）不同的一類故障，關鍵差別在**進程還活著**。場景二是 process 崩潰退出（`pgrep` 沒輸出），殺了重啟就好；這裡的桌面 shell（如 caelestia / [Quickshell](/linux/dotfile/knowledge-cards/quickshell/)）進程還在跑（`pgrep` 找得到、STAT 是正常的 `S`、在 `poll` 等事件、CPU 不高），但它內部的某個子系統初始化失敗了——常見是 QML scene 的某個物件因為上游錯誤沒建起來、變成 null，於是負責「keybind → 開抽屜」「bar 按鈕互動」的模組對 null 讀屬性、整條互動接線死掉。bar 之所以還畫得出來，是它還停在初始化失敗前那一幀的畫面：**畫得出來不等於還活著**，跟鎖屏那課（畫面有密碼框不等於真的在鎖）是同一個陷阱。
 
 上游觸發常是渲染層。實測案例：VM 的 GPU 只提供到 GLSL 1.20，而 shell 的 shader 需要 GLES 100/300/330，pipeline 建不起來（log 狂噴 `Failed to build graphics pipeline state`），這次渲染失敗把 scene 初始化打斷，drawers 狀態物件變 null。
 
