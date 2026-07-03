@@ -23,3 +23,4 @@ tags: ["devops", "horizontal-scaling", "stateless", "shared-storage", "session"]
 - ← [devops 模組一 負載平衡](/devops/01-load-balancing/)：LB 是水平擴展的前提
 - → [monitoring 模組四 Collector](/monitoring/04-collector/)：Collector 的 stateless 設計讓多實例可行
 - → [backend 資料庫](/backend/01-database/)：Shared storage 的 DB 選型
+- → [backend 擴展軸](/backend/09-performance-capacity/scaling-axes/)：垂直 / 水平取捨與 AKF Scale Cube 的完整拆解
