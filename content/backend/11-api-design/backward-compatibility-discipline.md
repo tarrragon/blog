@@ -16,7 +16,7 @@ tags: ["backend", "api-design", "compatibility"]
 
 相容紀律可以放在三個層、強度遞減、適用情境不同。
 
-**格式層**：相容性做成編碼格式的性質、違規在技術上不可行或立即失效。protobuf 是代表 — field number 一旦投入使用即不可變更、刪除必須 reserve、重用會造成解碼歧義與資料損毀（見 [11.C28](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/)）；官方文件直接把 schema 變更分成 wire-safe、wire-unsafe 與 conditionally wire-compatible 三類 — 判定規則明文化之後、不依賴資深工程師在場。GraphQL 的 versionless 紀律同型、案例判讀把它歸納為三個支柱：只加不改、deprecation 標注、nullable 預設、由 schema 語言承載（C26 的判讀整理、觀察層見 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)）。
+**格式層**：相容性做成編碼格式的性質、違規在技術上不可行或立即失效。protobuf 是代表 — field number 一旦投入使用即不可變更、刪除必須 reserve、重用會造成解碼歧義與資料損毀（見 [11.C28](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/)）；官方文件直接把 schema 變更分成 wire-safe、wire-unsafe 與 conditionally wire-compatible 三類 — 判定規則明文化之後、不依賴資深工程師在場。GraphQL 的 versionless 紀律同型、案例判讀把它歸納為三個支柱：只加不改、deprecation 標注、nullable 預設、由 schema 語言承載（C26 的判讀整理、觀察層見 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)；GraphQL 內部機制的深化見 [Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)）。
 
 **工具層**：相容檢查做成 CI gate、在 merge 前擋下。Buf 的 breaking detection 對比歷史 schema、在 merge 前擋下破壞性變更、規則分四級（FILE、PACKAGE、WIRE_JSON、WIRE）、文件明言「Catching this before merge is the point」（見 [11.C29](/backend/11-api-design/cases/grpc-buf-breaking-detection/)）。從四級的分級設計可以抽出選級判準（C29 判讀）：選符合消費者實際依賴的等級 — 只走 wire 的消費者用 WIRE、有 generated code 依賴的要更嚴的級。這條主張可以推廣成本章的通用判準：**相容性檢查的粒度是產品決策、不是工具預設** — 檢查太嚴、內部重構寸步難行；太鬆、消費者實際依賴的層沒被保護。HTTP+JSON 的對應工具是 OpenAPI diff 類檢查、把 spec 當 schema 跑同樣的 gate（工具治理見 [11.10 規範治理](/backend/11-api-design/api-governance/)）。
 

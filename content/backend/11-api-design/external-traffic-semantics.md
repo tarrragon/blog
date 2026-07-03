@@ -26,7 +26,7 @@ GitHub 的雙層限流揭露配額設計的一個實證：primary limit（每小
 
 ## 成本模型：per-request 假設的破裂
 
-「一個請求算一次」的配額假設、在請求成本不是常數的風格下失效。GitHub 的 GraphQL API 為此建立 point system：依 query 的 connection 展開計算成本、每小時 5,000 點、另設 500,000 node 上限與分頁參數上限當靜態防線、消費者可事前預估也可事後查 `rateLimit.cost`（見 [11.C19](/backend/11-api-design/cases/graphql-github-cost-rate-limiting/)）。判準層的收穫有兩條：請求成本變動大的介面（GraphQL、批次、重查詢）、配額要計成本而非計次；成本模型本身要對消費者透明可預估 — 消費者無法預估成本、就無法設計合規的 client。執行成本的機制細節（resolver 展開、N+1、persisted queries）主寫在 [GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)。
+「一個請求算一次」的配額假設、在請求成本不是常數的風格下失效。GitHub 的 GraphQL API 為此建立 point system：依 query 的展開規模計算成本、配額按點數計、另設結構上限當靜態防線、且成本對消費者可預估可查詢（參數細節與機制展開主寫在 [GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)、案例 [11.C19](/backend/11-api-design/cases/graphql-github-cost-rate-limiting/)）。判準層的收穫有兩條：請求成本變動大的介面（GraphQL、批次、重查詢）、配額要計成本而非計次；成本模型本身要對消費者透明可預估 — 消費者無法預估成本、就無法設計合規的 client。執行成本的機制細節（resolver 展開、N+1、persisted queries）主寫在 [GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)。
 
 ## 常見設計錯誤
 

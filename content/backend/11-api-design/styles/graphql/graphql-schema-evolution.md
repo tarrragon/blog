@@ -1,7 +1,7 @@
 ---
 title: "GraphQL Schema 演進：versionless 的紀律代價"
 date: 2026-07-03
-description: "只加不改、deprecation 標注、nullable 預設三個紀律怎麼共同取代版本號 — 以及每個紀律各自的隱藏帳單"
+description: "只加不改、deprecation 標注、nullable 預設怎麼共同取代版本號 — 以及每個紀律各自的隱藏帳單"
 weight: 1
 tags: ["backend", "api-design", "graphql"]
 ---
