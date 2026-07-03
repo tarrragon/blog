@@ -14,7 +14,7 @@ Sticky session 把同一個用戶的 session 綁定到某台實例，session 資
 
 ## 外部 session store：實例對等，但 session 是 hot row
 
-外部 session store 把 session 從實例本地移到一個共享的儲存，每個實例都無狀態、任何實例都能讀到任何用戶的 session。這讓實例真正對等，是水平擴展下 session 的主流做法。但這裡有一個選型陷阱：session 是典型的高頻更新資料（每個請求可能都在刷新它的過期時間），放進 SQL 資料庫當一般資料表，會在那幾行 session 上撞出嚴重的鎖競爭——它是典型的 hot row 場景。
+外部 session store 把 session 從實例本地移到一個共享的儲存，每個實例都無狀態、任何實例都能讀到任何用戶的 session。這讓實例真正對等，是水平擴展下 session 的主流做法。（歷史上還有第四種做法：把 session 在所有實例之間互相複製，讓每台都持有全部 session。它早被外部 store 取代，因為複製流量隨實例數平方成長、擴到一定規模就撐不住——外部 store 用「一份共享」取代「每台一份」，正是為了避開這個。）但這裡有一個選型陷阱：session 是典型的高頻更新資料（每個請求可能都在刷新它的過期時間），放進 SQL 資料庫當一般資料表，會在那幾行 session 上撞出嚴重的鎖競爭——它是典型的 hot row 場景。
 
 所以 session store 通常選鍵值儲存或快取（如 Redis、DynamoDB 這類支援原子操作的）、而不是 SQL。它們的資料模型正好適合「用一個 key 快速讀寫一個 session、高頻更新、不需要跨行交易」，避開了 SQL 在 hot row 上的鎖競爭。這條選型判斷延伸到 [Shared storage 選型](/devops/02-horizontal-scaling/shared-storage-selection/)——高頻的鍵值狀態跟結構化的查詢狀態，適合的儲存不一樣。
 
