@@ -10,13 +10,13 @@ tags: ["devops", "health-check", "liveness", "readiness", "systemd", "auto-recov
 
 ## 章節
 
-| 章節                                                                               | 回答什麼問題                                             |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [Health check endpoint 設計](/devops/04-service-health/health-check-endpoint/)     | 端點回什麼算健康、check 要探到多深、依賴要不要一起檢查   |
-| [Liveness 與 Readiness](/devops/04-service-health/liveness-vs-readiness/)          | 活著、準備好接流量、啟動中——三種健康對應三種探針         |
-| [systemd watchdog 與自動重啟](/devops/04-service-health/systemd-watchdog-restart/) | 單機上主動報活與被動拉起兩套機制、為何先重啟才告警       |
-| [Process supervisor 選型](/devops/04-service-health/process-supervisor-selection/) | systemd、Docker、Kubernetes 之間按生命週期粒度選         |
-| [Graceful shutdown](/devops/04-service-health/graceful-shutdown/)                  | SIGTERM 到 SIGKILL 的 grace period、退場順序、drain 窗口 |
+| 章節                                                                               | 回答什麼問題                                                  |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [Health check endpoint 設計](/devops/04-service-health/health-check-endpoint/)     | 端點回什麼算健康、check 要探到多深、依賴要不要一起檢查        |
+| [Liveness 與 Readiness](/devops/04-service-health/liveness-vs-readiness/)          | 活著、準備好接流量、啟動中——三種健康對應三種探針              |
+| [systemd watchdog 與自動重啟](/devops/04-service-health/systemd-watchdog-restart/) | 單機上主動報活與被動拉起兩套機制、為何先重啟才告警            |
+| [Process supervisor 選型](/devops/04-service-health/process-supervisor-selection/) | systemd、supervisord、Docker、Kubernetes 之間按生命週期粒度選 |
+| [Graceful shutdown](/devops/04-service-health/graceful-shutdown/)                  | SIGTERM 到 SIGKILL 的 grace period、退場順序、drain 窗口      |
 
 ## 跨分類引用
 
