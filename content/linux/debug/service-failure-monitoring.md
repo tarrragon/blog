@@ -24,7 +24,7 @@ journalctl -u <unit> -f     # 即時跟一個 unit 的 log
 
 ## 第一層：systemd 原生 `OnFailure` 鉤子（不裝額外服務）
 
-systemd 每個 unit 進入 failed 狀態時，可以自動觸發另一個 unit。這是最正統、零額外依賴的做法——告警邏輯就寫成一個普通的 systemd service。它由三塊組成：一個負責送通知的處理器 unit、一個實際送出的腳本、以及在要監控的 unit 上掛一行 `OnFailure=`。
+systemd 每個 unit 進入 failed 狀態時，可以自動觸發另一個 unit——這個鉤子就是 [`OnFailure=`](/linux/dotfile/knowledge-cards/systemd-onfailure/)。這是最正統、零額外依賴的做法——告警邏輯就寫成一個普通的 systemd service。它由三塊組成：一個負責送通知的處理器 unit、一個實際送出的腳本、以及在要監控的 unit 上掛一行 `OnFailure=`。
 
 （這一層前提是 systemd 環境。跑在**沒有 systemd 的容器**裡、或應用被 orchestrator 管的情境，`OnFailure` 這套用不上——那種環境改走第四層的外部探針，或讓 orchestrator / Prometheus 接管健康檢查與告警。）
 
@@ -65,7 +65,7 @@ curl -fsS \
 OnFailure=alert@%n.service    # %n 是本 unit 的全名，會展開成 alert@<本unit>.service
 ```
 
-要**一次套用到所有 service**，用 top-level drop-in（放在 `service.d/` 這個型別目錄下的設定會套用到每個 `.service`）：
+要**一次套用到所有 service**，用 top-level [drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)（放在 `service.d/` 這個型別目錄下的設定會套用到每個 `.service`）：
 
 ```ini
 # /etc/systemd/system/service.d/onfailure.conf
