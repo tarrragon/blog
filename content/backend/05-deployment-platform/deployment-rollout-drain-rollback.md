@@ -134,3 +134,5 @@ incident_decision:
 這篇回寫對齊 [5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)、[5.C1 Tradeshift](/backend/05-deployment-platform/cases/tradeshift-self-managed-k8s-to-eks/) 與 [5.C3 Orbitera](/backend/05-deployment-platform/cases/orbitera-managed-kubernetes-migration/)：前者看切換失序，後兩者看遷移路徑與回退策略。preflight / canary / drain 各階段的生命週期定義回到 [5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/)。
 
 這篇不處理 schema migration 本身、cache stampede 或 queue replay。若核心風險在資料正式狀態、快取回源或事件恢復，路由到 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)、[2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/) 或 [3.8 Queue Consumer Retry 與 Replay Handoff](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)。
+
+drain 與退場順序的概念層（縮容也是一次有計畫的實例退場）在 [devops 模組四：Graceful shutdown](/devops/04-service-health/graceful-shutdown/) 與 [devops 模組二：擴展的觸發與縮回](/devops/02-horizontal-scaling/scaling-triggers/)。

@@ -20,6 +20,7 @@ tags: ["devops", "health-check", "liveness", "readiness", "systemd", "auto-recov
 
 ## 跨分類引用
 
+- → [devops 模組三 流量管控](/devops/03-traffic-management/)：「單服務營運」路線下一站——服務活著之後，流量超過處理能力怎麼防過載
 - → [devops 模組六 高可用](/devops/06-high-availability/)：failover 的觸發條件是探活，本模組是它的前提
 - → [devops 模組一 負載平衡](/devops/01-load-balancing/)：LB 怎麼用 health check 決定路由，是本模組 endpoint 的消費側
 - → [monitoring 模組四 Dashboard DevOps](/monitoring/04-collector/dashboard-devops/)：DevOps dashboard 的服務狀態卡依賴 health check

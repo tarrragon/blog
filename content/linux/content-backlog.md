@@ -12,10 +12,10 @@ tags: ["linux", "backlog", "meta"]
 
 ## 待辦
 
-### 10. systemd drop-in / OnFailure 候選卡（中低，暫記）
+### 10. systemd drop-in / OnFailure 卡 — 已完成（2026-07-03）
 
-- **缺口**：`drop-in` 2 檔、`OnFailure` 4 檔，集中在 debug 服務失效篇。devops/04 接上後 `OnFailure` 會變跨模組共用術語，屆時值得建卡；現階段 inline 解釋足夠、暫記。
-- **依賴追蹤**：devops/04（服務探活）本身尚未產出，已列入 [devops 分類的內容缺口待辦](/devops/content-backlog/) 順位 1，該模組完成時一併回收本項。
+- **產出**：建 [systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/) 與 [systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/) 兩張卡（依原子卡判準拆兩張：OnFailure 是失敗觸發鉤子、drop-in 是設定疊加機制）。已加進 knowledge-cards `_index` 系統概念表、並在 debug 服務失效篇與 devops/04 systemd-watchdog-restart 的術語首現處雙向連結。
+- **觸發回收**：devops/04（服務探活）已完成，`OnFailure` 成跨模組共用術語，本項一併回收。
 
 ### 11. gui 檔案管理員的實機驗證債（待驗證、需 VM session）
 

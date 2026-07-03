@@ -6,15 +6,17 @@ weight: 8
 tags: ["devops", "cost-management", "cloud-cost", "reserved-instance", "spot-instance"]
 ---
 
-回答「帳單怎麼不失控」。雲端的靈活性讓資源容易加、但也容易忘記關。
+回答「帳單怎麼不失控」。雲端的靈活性讓資源容易加、但也容易忘記關。這個模組是「成本控制」路線的起點，往下接模組五的容量成本模型——成本管理決定資源花得值不值得，容量規劃決定要開多少。
 
-## 待寫章節
+## 章節
 
-- [ ] 計費模式理解（on-demand / reserved / spot / savings plan — 各自的承諾和折扣）
-- [ ] Right-sizing（實際用量 vs 配置規格的差距 — 過度配置是最大的浪費來源）
-- [ ] 成本監控和告警（每日帳單趨勢、異常支出告警、部門歸屬標記）
-- [ ] 開發環境的成本控制（自動關機、共用環境、spot instance 用於 CI）
-- [ ] 自架 vs 雲端的成本交叉點
+| 章節                                                                         | 回答什麼問題                                        |
+| ---------------------------------------------------------------------------- | --------------------------------------------------- |
+| [計費模式理解](/devops/08-cost-management/billing-models/)                   | 帳單維度、承諾模式、egress 這類隱藏成本             |
+| [Right-sizing](/devops/08-cost-management/right-sizing/)                     | 找過度配置、downsizing 不能砍過膝點、機型世代       |
+| [成本監控與告警](/devops/08-cost-management/cost-monitoring/)                | 歸因、異常告警、showback vs chargeback              |
+| [開發環境成本控制](/devops/08-cost-management/dev-environment-cost/)         | 排程關機、ephemeral 環境、CI 跑 spot、per-team 上限 |
+| [自架 vs 雲端的成本交叉點](/devops/08-cost-management/self-hosted-vs-cloud/) | 兩條成本曲線、部署光譜、人力與 lock-in              |
 
 ## 跨分類引用
 

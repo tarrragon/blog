@@ -28,7 +28,7 @@ Restart policy 覆蓋的是進程真的退出的情況——崩潰、被 kill、
 
 自動恢復跟告警是兩段，要分開。理由是多數失敗自己重試就會過，每次瞬斷都吵人會把告警洗到沒人看。正確的分段是：restart policy 負責「重試幾次」，告警只在「重試上限撞到、真的放棄」時才發。
 
-這裡有個實測踩到、跟直覺相反的意外：systemd 的 `OnFailure` 鉤子不是「放棄才觸發」，而是每一次失敗都觸發——包含 `Restart=on-failure` 的每次 auto-restart 中途。[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/) 實測一個反覆崩潰、重試 3 次後放棄的服務，`OnFailure` 觸發了 4 次（3 次 auto-restart 加 1 次最終放棄）。這個觸發次數是特定 systemd 版本的實測，`OnFailure` 與 `Restart=` 的互動跨版本調整過，換一個版本可能量到不同次數，但「每次失敗都觸發、不是只在放棄時」這個機制本身跨版本成立。所以只靠 restart 加 start-limit 的 config，每次瞬斷都會發告警。真正做到「只在放棄才吵」，要在告警處理器裡加一道狀態閘門——auto-restart 中途服務的 `ActiveState` 是 `activating`、撞上限進 failed 才是 `failed`，處理器只在 `failed` 才送，加上這道閘門後同一個崩潰測試從 4 則告警降到 1 則。config 管重試次數、handler 的閘門管只在終局告警，兩段合起來才是完整的「先重啟、放棄才吵」。這道告警鏈的完整設定（`OnFailure` 鉤子、送出腳本、遞迴陷阱）在那篇有實測驗證過的完整版，本模組不重述。
+這裡有個實測踩到、跟直覺相反的意外：systemd 的 [`OnFailure`](/linux/dotfile/knowledge-cards/systemd-onfailure/) 鉤子不是「放棄才觸發」，而是每一次失敗都觸發——包含 `Restart=on-failure` 的每次 auto-restart 中途。[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/) 實測一個反覆崩潰、重試 3 次後放棄的服務，`OnFailure` 觸發了 4 次（3 次 auto-restart 加 1 次最終放棄）。這個觸發次數是特定 systemd 版本的實測，`OnFailure` 與 `Restart=` 的互動跨版本調整過，換一個版本可能量到不同次數，但「每次失敗都觸發、不是只在放棄時」這個機制本身跨版本成立。所以只靠 restart 加 start-limit 的 config，每次瞬斷都會發告警。真正做到「只在放棄才吵」，要在告警處理器裡加一道狀態閘門——auto-restart 中途服務的 `ActiveState` 是 `activating`、撞上限進 failed 才是 `failed`，處理器只在 `failed` 才送，加上這道閘門後同一個崩潰測試從 4 則告警降到 1 則。config 管重試次數、handler 的閘門管只在終局告警，兩段合起來才是完整的「先重啟、放棄才吵」。這道告警鏈的完整設定（`OnFailure` 鉤子、送出腳本、遞迴陷阱）在那篇有實測驗證過的完整版，本模組不重述。
 
 ## 恢復閉環要回饋到狀態呈現
 

@@ -1,20 +1,22 @@
 ---
 title: "模組一：負載平衡與反向代理"
 date: 2026-06-20
-description: "流量進來怎麼分給多個服務實例 — nginx / HAProxy / DNS round-robin 的選型和健康檢查路由設計"
+description: "流量進來怎麼分給多個服務實例 — 反向代理職責、負載分散演算法、nginx 實務配置與健康檢查路由設計"
 weight: 1
 tags: ["devops", "load-balancing", "reverse-proxy", "nginx", "health-check"]
 ---
 
-回答「一個入口、多個後端實例，流量怎麼分」。反向代理是 DevOps 最基礎的元件。
+反向代理是擋在使用者與後端之間的單一入口，流量進來由它決定分給哪個實例——這是 DevOps 最基礎的元件。這個模組是「單服務營運」路線的第三站：服務探活（模組四）解決了單一實例的死活，接下來是把流量分給多個實例。
 
-## 待寫章節
+## 章節
 
-- [ ] 反向代理的職責（TLS 終止、路由、負載分散、健康檢查）
-- [ ] 負載分散演算法（round-robin / least-connections / IP hash / consistent hash）
-- [ ] nginx 實務配置（upstream + health_check + 常見 gotcha）
-- [ ] 健康檢查路由設計（被動 vs 主動、check interval、unhealthy threshold）
-- [ ] 和模組二（水平擴展）的銜接：LB 是水平擴展的前提
+| 章節                                                                        | 回答什麼問題                                        |
+| --------------------------------------------------------------------------- | --------------------------------------------------- |
+| [反向代理的職責](/devops/01-load-balancing/reverse-proxy-responsibilities/) | TLS 終止、路由、負載分散、健康檢查、timeout 層級    |
+| [負載分散演算法](/devops/01-load-balancing/load-balancing-algorithms/)      | round-robin、least-connections、雜湊、sticky 怎麼選 |
+| [nginx 實務配置](/devops/01-load-balancing/nginx-configuration/)            | upstream、被動健康檢查、主動探測的商業版限制        |
+| [健康檢查路由設計](/devops/01-load-balancing/health-check-routing/)         | 被動 vs 主動、interval 與 threshold、flapping       |
+| [LB 是水平擴展的前提](/devops/01-load-balancing/scaling-prerequisite/)      | 流量分得進、任何實例接任何請求兩個前提              |
 
 ## 跨分類引用
 

@@ -8,12 +8,14 @@ tags: ["devops", "burst-traffic", "degradation", "queue", "scaling"]
 
 回答「流量突然暴增時怎麼不掛」。突發流量和穩定高流量的處理策略不同 — 突發有時間限制，撐過去就恢復正常。
 
-## 待寫章節
+## 章節
 
-- [x] 突發流量的分類（可預期 vs 不可預期、持續時間和倍率）
-- [x] 降級策略（動態取樣、事件優先級、功能降級、聚合前移）
-- [x] Queue 緩衝（Kafka / NATS / Redis Streams 做 burst buffer）
-- [x] 規模分級應對表（自用 → 中型 → 大型 → 商業網站）
+| 章節                                                             | 回答什麼問題                                 |
+| ---------------------------------------------------------------- | -------------------------------------------- |
+| [突發流量的分類](/devops/07-burst-traffic/burst-classification/) | 可預期 vs 不可預期、持續時間和倍率           |
+| [降級策略](/devops/07-burst-traffic/degradation-strategy/)       | 動態取樣、事件優先級、功能降級、聚合前移     |
+| [Queue 緩衝](/devops/07-burst-traffic/queue-buffering/)          | Kafka / NATS / Redis Streams 做 burst buffer |
+| [規模分級應對表](/devops/07-burst-traffic/scale-tier-response/)  | 自用 → 中型 → 大型 → 商業網站                |
 
 ## 跨分類引用
 

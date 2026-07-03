@@ -37,9 +37,14 @@ Backend 教「服務怎麼設計」，DevOps 教「設計好的服務怎麼在 p
 
 ## 學習路線
 
-| 路線       | 適合讀者                       | 建議順序                 |
-| ---------- | ------------------------------ | ------------------------ |
-| 單服務營運 | 第一次部署 production 的開發者 | 模組四 → 模組三 → 模組一 |
-| 規模成長   | 服務開始遇到效能瓶頸           | 模組五 → 模組二 → 模組六 |
-| 突發應對   | 準備行銷活動或預期高峰         | 模組七 → 模組三 → 模組五 |
-| 成本控制   | 雲端帳單開始顯著成長           | 模組八 → 模組五          |
+| 路線       | 適合讀者                       | 建議順序                                                                                                                     |
+| ---------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 單服務營運 | 第一次部署 production 的開發者 | [模組四](/devops/04-service-health/) → [模組三](/devops/03-traffic-management/) → [模組一](/devops/01-load-balancing/)       |
+| 規模成長   | 服務開始遇到效能瓶頸           | [模組五](/devops/05-capacity-planning/) → [模組二](/devops/02-horizontal-scaling/) → [模組六](/devops/06-high-availability/) |
+| 突發應對   | 準備行銷活動或預期高峰         | [模組七](/devops/07-burst-traffic/) → [模組三](/devops/03-traffic-management/) → [模組五](/devops/05-capacity-planning/)     |
+| 成本控制   | 雲端帳單開始顯著成長           | [模組八](/devops/08-cost-management/) → [模組五](/devops/05-capacity-planning/)                                              |
+
+上面四條路線是「從零建構」的視角。實務上還有兩個高頻情境不是從零開始，入口不同：
+
+- **接手別人的環境、要先搞懂現況**：先盤點單點與依賴（[模組六：單點故障盤點](/devops/06-high-availability/spof-inventory/) 的 pre-mortem 反推現有部署哪裡會壞）、再從真實流量抽出模型看它現在承受什麼（[模組五：流量模型建立](/devops/05-capacity-planning/traffic-model/)）、以及盤點花在哪（[模組八：成本監控與告警](/devops/08-cost-management/cost-monitoring/) 的歸因）。這三篇合起來是「盤點既有」的入口。
+- **半夜被叫起來救火、事後要正規化**：事故當下依類型分流——過載進 [模組三 流量管控](/devops/03-traffic-management/)、服務死活進 [模組四 服務探活](/devops/04-service-health/)、節點掛了進 [模組六 高可用](/devops/06-high-availability/)；事後正規化把臨時救火變成常態防線，回 [模組四](/devops/04-service-health/)（把探活與自動告警建起來）與 [模組六：Disaster recovery 策略](/devops/06-high-availability/disaster-recovery/)（把「有計畫沒演練」的 DR 補上演練）。

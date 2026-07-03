@@ -146,3 +146,4 @@ data source 查詢的可靠性取決於查詢條件的穩定度。用 `tags` 查
 - → [模組三：網路地基](/infra/03-network-foundation/)：核心服務落在哪些 subnet、security group 怎麼引用
 - → [模組四：環境分離與模組化](/infra/04-environment-separation/)：跨 state 的拆分策略
 - → [模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)：stateful 變更的自動化護欄
+- → [devops 模組六：高可用](/devops/06-high-availability/)：multi-AZ 這個 infra 能力層之上的冗餘設計、failover 與 DR 策略

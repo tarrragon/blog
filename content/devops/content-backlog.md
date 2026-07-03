@@ -21,14 +21,14 @@ tags: ["devops", "backlog", "meta"]
 
 優先序由三個訊號決定：學習路線的位置（根層 `_index.md` 的四條路線都從某個缺口模組起步或經過）、跨模組依賴（誰是誰的前提）、站內素材完備度（有沒有現成實測內容可引）。
 
-| 順位 | 模組                | 理由                                                                              | 依賴                           |
-| ---- | ------------------- | --------------------------------------------------------------------------------- | ------------------------------ |
-| 完成 | 04 服務探活         | 已於 2026-07-03 完成 5 章（case-first 從 index 轉出）；linux backlog #10 待回收   | 無                             |
-| 1    | 01 負載平衡         | 「單服務營運」路線第三站；模組二明寫「LB 是水平擴展的前提」                       | 無                             |
-| 2    | 05 容量規劃（補完） | 「規模成長」「突發應對」「成本控制」三條路線都經過；模組八的成本模型輸入          | 無（已有一章可對齊語彙）       |
-| 3    | 02 水平擴展         | 「規模成長」路線第二站                                                            | 模組一（LB 前提）              |
-| 4    | 06 高可用           | 「規模成長」路線第三站                                                            | 模組四（探活是 failover 前提） |
-| 5    | 08 成本管理         | 「成本控制」路線起點，但該路線明寫「模組八 → 模組五」，先有五的成本模型八才有得引 | 模組五（成本模型）             |
+| 順位 | 模組        | 理由                                                                            | 依賴 |
+| ---- | ----------- | ------------------------------------------------------------------------------- | ---- |
+| 完成 | 04 服務探活 | 已於 2026-07-03 完成 5 章（case-first 從 index 轉出）；linux backlog #10 待回收 | 無   |
+| 完成 | 01 負載平衡 | 已於 2026-07-03 完成 5 章；nginx 配置實測過（1.30.3）                           | 無   |
+| 完成 | 05 容量規劃 | 已於 2026-07-03 補完 5 章（backend/09 case-first）；k6 實測；成本術語已就位     | 無   |
+| 完成 | 02 水平擴展 | 已於 2026-07-03 完成 5 章（collector + backend/01 case-first）                  | 無   |
+| 完成 | 06 高可用   | 已於 2026-07-03 完成 5 章（backend/06 + infra case-first）                      | 無   |
+| 完成 | 08 成本管理 | 已於 2026-07-03 完成 5 章（infra + backend + monitoring case-first）            | 無   |
 
 ## 各模組缺口明細
 
@@ -38,33 +38,33 @@ tags: ["devops", "backlog", "meta"]
 - **站內素材**：[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（OnFailure、hung 偵測、canary、heartbeat 的單機實測）、[程序、服務與狀態怎麼判](/linux/debug/process-service-state-diagnosis/)（「進程活著 ≠ 子系統活著」正是 liveness 深度判準的實例）、[monitoring dashboard-devops](/monitoring/04-collector/dashboard-devops/)（下游消費者）。
 - **寫完後的連鎖動作**：回 linux backlog 第 10 項——`OnFailure` / drop-in 成為跨模組共用術語，屆時建 `linux/dotfile/knowledge-cards/` 的 systemd drop-in / OnFailure 卡並雙向連結。
 
-### 2. 模組一：負載平衡與反向代理 — 5 章待寫
+### 2. 模組一：負載平衡與反向代理 — 已完成（2026-07-03）
 
-- **章節**：反向代理職責、負載分散演算法、nginx 實務配置、健康檢查路由設計、與模組二的銜接。
+- **章節**（全數完成）：反向代理職責、負載分散演算法、nginx 實務配置（1.30.3 實測）、健康檢查路由設計、LB 是水平擴展前提。`_index.md` 待寫章節已轉文章表格。
 - **站內素材**：[infra ALB 上 IaC](/infra/05-core-services/loadbalancer-alb/)（listener / target group / 健康檢查的 IaC 描述）、[infra 網路地基](/infra/03-network-foundation/)（public/private subnet 分層）。
 - **注意**：健康檢查路由章跟模組四的 health check endpoint 章是同一概念的兩側（LB 怎麼用 vs 服務怎麼提供），先寫模組四可讓本模組直接引用而非重講。
 
-### 3. 模組五：容量規劃 — 5 章待寫（已完成 1/6）
+### 3. 模組五：容量規劃 — 已完成（2026-07-03，6/6）
 
-- **章節**：流量模型建立、壓力測試工具與方法（k6 / wrk / locust）、峰值估算、成本模型、規模拐點判斷。已完成：容器化資源設計。
+- **章節**（全數完成）：流量模型建立、峰值估算、壓力測試工具與方法（k6 實測）、規模拐點判斷、成本模型、容器化資源設計。`_index.md` 待寫章節已轉文章表格。
 - **站內素材**：[backend 效能容量](/backend/09-performance-capacity/)（case 庫、AGENTS 點名可引）、模組七已完成的四章（規模分級應對表是拐點判斷的鄰居）。
 - **注意**：壓測工具章屬 CLI 工具教學，適用驗證導向流程（實機跑過才寫、Docker fixture）；成本模型章是模組八的直接輸入、術語要先對齊（reserved / on-demand / spot）。
 
-### 4. 模組二：水平擴展 — 5 章待寫
+### 4. 模組二：水平擴展 — 已完成（2026-07-03）
 
-- **章節**：stateless 設計原則、session 處理、shared storage 選型、擴展觸發與縮回、垂直 vs 水平判斷。
+- **章節**（全數完成）：stateless 設計原則、session 處理、shared storage 選型、擴展觸發與縮回、垂直 vs 水平判斷。`_index.md` 待寫章節已轉文章表格。
 - **站內素材**：[monitoring Collector](/monitoring/04-collector/)（stateless 多實例的應用場景）、[backend 資料庫](/backend/01-database/)（shared storage 的 DB 側）。
 - **依賴**：模組一先行——「LB 是水平擴展的前提」的引用要有落點。
 
-### 5. 模組六：高可用 — 5 章待寫
+### 5. 模組六：高可用 — 已完成（2026-07-03）
 
-- **章節**：單點故障盤點、冗餘設計模式、failover 機制、disaster recovery 策略、高可用的成本。
+- **章節**（全數完成）：單點故障盤點、冗餘設計模式、failover 機制、disaster recovery 策略、高可用的成本。`_index.md` 待寫章節已轉文章表格。
 - **站內素材**：[infra stateful 資源保護](/infra/05-core-services/stateful-protection-dependency/)（multi-AZ 能力層）、[backend 可靠性](/backend/06-reliability/)。
 - **依賴**：模組四先行——failover 的觸發條件是探活，`_index.md` 已明寫這條引用。
 
-### 6. 模組八：成本管理 — 5 章待寫
+### 6. 模組八：成本管理 — 已完成（2026-07-03）
 
-- **章節**：計費模式理解、right-sizing、成本監控與告警、開發環境成本控制、自架 vs 雲端交叉點。
+- **章節**（全數完成）：計費模式理解、right-sizing、成本監控與告警、開發環境成本控制、自架 vs 雲端交叉點。`_index.md` 待寫章節已轉文章表格。
 - **站內素材**：[infra 治理好習慣](/infra/08-governance-habits/)（tagging 地基）、[monitoring 商業方案](/monitoring/06-commercial-comparison/)。
 - **依賴**：模組五的成本模型章先行——學習路線「成本控制」是「模組八 → 模組五」，讀者從八進來時五要接得住。
 
