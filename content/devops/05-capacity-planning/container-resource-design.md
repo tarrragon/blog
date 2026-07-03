@@ -2,8 +2,8 @@
 title: "容器化資源設計"
 date: 2026-06-20
 description: "Container 的 memory / CPU / 磁碟限制設計 — 資源限制設太緊 OOMKill、設太鬆擠壓其他服務、overlay filesystem 的 I/O 影響"
-weight: 1
 tags: ["devops", "capacity-planning", "container", "docker", "resource-limit", "oomkill"]
+weight: 6
 ---
 
 Container 的資源限制是容量規劃在容器化環境的落地。每個 container 設定 memory limit、CPU limit 和磁碟 I/O 控制，確保單一 container 不會吃光 host 資源影響其他服務。限制設太緊觸發 OOMKill 或 CPU throttle，設太鬆等於沒有限制。
