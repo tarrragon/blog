@@ -2,7 +2,7 @@
 title: "Widget 子類重新宣告 key — 遮蔽父類屬性與 duplicate key 風險"
 date: 2026-06-30
 draft: false
-description: "在 StatelessWidget 子類中重新宣告 final Key? key，會遮蔽 Widget 繼承的 key 屬性，產生兩份儲存槽。若再把同一個 key 往下傳給 child widget，同一棵子樹出現重複 key，rebuild 時 Flutter 可能拋錯。"
+description: "在 StatelessWidget 子類中重新宣告 final Key? key，會遮蔽 Widget 繼承的 key 屬性，產生兩份儲存槽。若再把同一個 key 散播給同層的多個 sibling，rebuild 時 Flutter 會拋 duplicate key 錯。"
 tags: ["flutter", "widget", "key", "dart", "inheritance"]
 ---
 
@@ -19,7 +19,7 @@ tags: ["flutter", "widget", "key", "dart", "inheritance"]
 - 子類的程式碼（包括 `build`）讀到的是子類自己的那份 `key`
 - 父類 `Widget` 的框架程式碼讀到的是父類的那份 `key`
 
-兩份值相同（因為 constructor 都有寫入），但語意上是兩個獨立的 slot。更危險的是，如果在 `build` 裡把 `key` 往下傳給 child，同一棵 widget 子樹會出現兩個相同的 `Key` 值，Flutter 在 diff 時可能拋出 duplicate key 錯誤。
+兩份值相同（因為 constructor 都有寫入），但語意上是兩個獨立的 slot。更危險的是，如果在 `build` 裡把這個 `key` 往下傳、讓**同一層的多個 sibling** 拿到相同的 `Key` 值，Flutter 在 diff 時會拋 duplicate key 錯誤。要精確一點：duplicate key 的觸發條件是**同層 siblings 帶相同 key**，或**同一個 `GlobalKey` 同時掛在多處**；parent 跟它的 child 帶相同 `LocalKey` 一般不會觸發（key 的唯一性是在 siblings 之間比對的）。重新宣告 key 的真正風險，是這個被遮蔽的欄位讓你以為傳下去的是繼承來的那份、實際散播出去造成 sibling 撞 key。
 
 ## 修法
 
