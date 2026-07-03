@@ -133,7 +133,7 @@ curl -L -O "https://release.archboot.eu/aarch64/latest/iso/archboot-2026.07.01-0
 
 **沿用既有磁碟重建 VM 殼**：Virtualize 精靈的「開機映像檔類型」選 **Import existing drive**（先切 radio 再瀏覽——radio 停在 ISO / 核心映像那格就瀏覽，qcow2 會被塞進 `-kernel` 參數、開機報 `could not load kernel '<路徑>.qcow2'`），選舊 VM bundle 裡的 `.qcow2`（右鍵 Show in Finder → 顯示套件內容 → `Data/`）。UTM 會複製一份進新 bundle，舊 VM 不受影響。磁碟內容（系統、config、build cache）全部原封沿用，開機後 DHCP 依 hostname 常拿到同一個 IP。
 
-**待驗證（回寫教材重點）**：UTM 硬體頁對「啟用 OpenGL 硬體加速」標了警告——「部分新版 Linux 驅動有已知問題：黑畫面、合成畫面破碎、應用程式無法渲染」。這正對應教材 `hyprland-vm-setup.md` 的 `[待實測驗證]`：VirGL/Venus 加速在這組 kernel + UTM 版本上會不會讓 Hyprland 中黑畫面。先勾起來往「能跑」方向走，中了就記錄並回這頁取消重試。結果待開機後填。
+**待驗證（回寫教材重點）**：UTM 硬體頁對「啟用 OpenGL 硬體加速」標了警告——「部分新版 Linux 驅動有已知問題：黑畫面、合成畫面破碎、應用程式無法渲染」。這正對應教材 `hyprland-vm-setup.md` 的 `[待實測驗證]`：VirGL/Venus 加速在這組 kernel + UTM 版本上會不會讓 Hyprland 中黑畫面。先勾起來往「能跑」方向走，中了就記錄並回這頁取消重試。（後記：已於階段一開機驗證、未中黑畫面，見「回寫教材的實測發現」節的待驗證標記收斂段。）
 
 ## 階段一：基礎設施（OS / SSH key / Git / clone）
 
@@ -168,7 +168,7 @@ curl -L -O "https://release.archboot.eu/aarch64/latest/iso/archboot-2026.07.01-0
 
 最終分割佈局：512 MiB ESP（/boot）+ 2048 MiB swap + ~17.9 GB ext4 root（/，含 /home）。
 
-**待驗證 / 教材回寫候選**：以上每關（Quick Setup vs 手動、SINGLEBOOT vs MULTIBOOT、ext4 vs btrfs、獨立 /home vs 單池、swap 大小）都是教材該補的決策卡——教材原本沒展開這些 trade-off。手動分割、LVM、LUKS、btrfs 快照、獨立 /home 各自是真實機器的儲存主題，值得另開、別混進 dotfile 演練。
+**待驗證 / 教材回寫候選**：以上每關（Quick Setup vs 手動、SINGLEBOOT vs MULTIBOOT、ext4 vs btrfs、獨立 /home vs 單池、swap 大小）都是教材該補的決策卡——教材原本沒展開這些 trade-off。手動分割、LVM、LUKS、btrfs 快照、獨立 /home 各自是真實機器的儲存主題，值得另開、別混進 dotfile 演練。（後記：決策卡部分已由 [Linux 安裝選項判讀](/linux/install/install-option-decisions/) 兌現——該篇逐項展開這些 trade-off；「真實機器儲存規劃」的深入主題轉入 linux content-backlog 追蹤。）
 
 ### Configure System 與首次開機
 
