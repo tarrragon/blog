@@ -6,15 +6,17 @@ weight: 6
 tags: ["devops", "high-availability", "failover", "disaster-recovery", "redundancy"]
 ---
 
-回答「一個節點掛了服務怎麼不中斷」。高可用的核心是冗餘 — 每個單點故障都有替代路徑。
+回答「一個節點掛了服務怎麼不中斷」。高可用的核心是冗餘 — 每個單點故障都有替代路徑。這個模組是「規模成長」路線的第三站，也建立在模組四服務探活之上——failover 的觸發條件正是探活。
 
-## 待寫章節
+## 章節
 
-- [ ] 單點故障盤點（服務實例 / DB / LB / DNS — 哪些掛了整個系統就掛）
-- [ ] 冗餘設計模式（active-passive / active-active / multi-region）
-- [ ] Failover 機制（自動 vs 手動、failover 時間、資料一致性）
-- [ ] Disaster recovery 策略（RPO / RTO 目標、備份恢復演練）
-- [ ] 高可用的成本（冗餘 = 至少 2x 資源成本 — 值不值得）
+| 章節                                                                      | 回答什麼問題                                             |
+| ------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [單點故障盤點](/devops/06-high-availability/spof-inventory/)              | pre-mortem 反推、依賴 budget、按 blast radius 排序       |
+| [冗餘設計模式](/devops/06-high-availability/redundancy-patterns/)         | active-passive / active-active / multi-region、冗餘≠備份 |
+| [Failover 機制](/devops/06-high-availability/failover-mechanism/)         | 探活觸發、故障域、恢復順序的循環等待、rollback           |
+| [Disaster recovery 策略](/devops/06-high-availability/disaster-recovery/) | RTO/RPO、restore drill、恢復不是切回流量就結束           |
+| [高可用的成本](/devops/06-high-availability/ha-cost/)                     | 冗餘 2x、用停機代價衡量、可用性等級階梯                  |
 
 ## 跨分類引用
 
