@@ -24,7 +24,7 @@ tags: ["backend", "api-design", "modeling"]
 
 ## HTTP method 與 status 是承諾、不只是慣例
 
-method 與 status 的選用向中介層與消費者承諾了行為性質、選錯的代價由基礎設施收取。GET 承諾安全（無副作用）— proxy 與瀏覽器會據此重試、預取、快取；PUT 承諾冪等 — client 可以無腦重送；POST 兩者都沒承諾、所以需要冪等鍵機制補強（模組頁章節規劃的 API 層冪等章主寫）。status 同理：2xx 對監控承諾成功、4xx 承諾「錯在請求、重試無用」、5xx 承諾「錯在服務、可以重試」— 把業務失敗包在 200 裡回傳、等於對整條觀測與重試鏈說謊、錯誤率圖表從此失真。錯誤語意的完整設計是錯誤模型章的主題（見模組頁章節規劃）、本章只立「status 是給機器的承諾」這條判準。
+method 與 status 的選用向中介層與消費者承諾了行為性質、選錯的代價由基礎設施收取。GET 承諾安全（無副作用）— proxy 與瀏覽器會據此重試、預取、快取；PUT 承諾冪等 — client 可以無腦重送；POST 兩者都沒承諾、所以需要冪等鍵機制補強（[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/) 主寫）。status 同理：2xx 對監控承諾成功、4xx 承諾「錯在請求、重試無用」、5xx 承諾「錯在服務、可以重試」— 把業務失敗包在 200 裡回傳、等於對整條觀測與重試鏈說謊、錯誤率圖表從此失真。錯誤語意的完整設計是 [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/) 的主題、本章只立「status 是給機器的承諾」這條判準。
 
 ## Available actions 由誰計算
 

@@ -31,7 +31,7 @@ tags: ["backend", "api-design", "selection"]
 
 每種風格都要回答「介面上線後怎麼改」、答案的形狀差異很大。GraphQL 官方的 versionless 路線把演進成本轉嫁到三個紀律：只加不改、deprecation 標注、nullable 預設（見 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)）。protobuf 把相容性做成編碼格式的性質：field number 一旦投入使用即不可變更、刪除必須 reserve、重用會造成解碼歧義與資料損毀（見 [11.C28](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/)）。HTTP+JSON 的演進紀律則多半靠約定與流程、缺格式層的強制 — 這是它自由度最高也最容易踩線的原因。
 
-選型時的判讀問題：你的團隊撐得起哪種紀律？格式層強制（protobuf）適合跨團隊多語言、因為紀律不依賴人的自覺；約定層紀律（JSON、GraphQL SDL）需要配套的變更審查與工具、詳見模組頁章節規劃裡的變更紀律章與治理章。
+選型時的判讀問題：你的團隊撐得起哪種紀律？格式層強制（protobuf）適合跨團隊多語言、因為紀律不依賴人的自覺；約定層紀律（JSON、GraphQL SDL）需要配套的變更審查與工具、詳見 [11.6 變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 與 [11.10 規範治理](/backend/11-api-design/api-governance/)。
 
 ## 判準軸三：操作與 debug 可及性
 
