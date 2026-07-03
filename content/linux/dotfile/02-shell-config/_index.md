@@ -1,7 +1,7 @@
 ---
 title: "模組二：Shell 配置"
 date: 2026-06-29
-description: "shell 配置檔長成一坨不敢動時回來讀 — .zshrc/.bashrc 的結構化拆分、alias/function/PATH 的模組化設計"
+description: "shell 配置檔長到雜亂不敢動時回來讀 — .zshrc/.bashrc 的結構化拆分、alias/function/PATH 的模組化設計"
 weight: 2
 tags: ["dotfile", "shell", "zsh", "bash"]
 ---
