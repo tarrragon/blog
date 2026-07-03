@@ -18,7 +18,7 @@ REST 在論文中由六個約束從 null style 逐步推導：client-server、st
 
 ## 對應大綱
 
-[REST 語意學之爭](/backend/11-api-design/styles/rest/rest-semantics-dispute/)（定義基準、已引用）、11.3 資源建模（representation 概念來源）。
+[REST 語意學之爭](/backend/11-api-design/styles/rest/rest-semantics-dispute/)（定義基準、已引用）、[11.3 資源建模](/backend/11-api-design/resource-modeling-operation-semantics/)（representation 概念來源、已引用）。
 
 ## 下一步路由
 

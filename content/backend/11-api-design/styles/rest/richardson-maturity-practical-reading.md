@@ -1,12 +1,12 @@
 ---
 title: "Richardson 成熟度的實用讀法"
 date: 2026-07-03
-description: "RMM 四級當定位與溝通工具的用法、每一級的工程意義、以及把它當合規認證或升級路線圖的兩種誤用"
+description: "RMM 四級當定位與溝通工具的用法、每一級的工程意義、以及把它當合規認證或升級路線圖的誤用邊界"
 weight: 3
 tags: ["backend", "api-design", "rest"]
 ---
 
-Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷 — 這個定位出自一手來源自己的聲明：Fowler 在記述這個模型時明文標注、RMM 是理解 REST 元素的思考工具、不是 REST 的分級定義（見 [11.C3](/backend/11-api-design/cases/rest-fowler-richardson-maturity-model/)）。本文給四級的工程意義、跟兩種常見誤用的邊界。
+Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷 — 這個定位出自一手來源自己的聲明：Fowler 在記述這個模型時明文標注、RMM 是理解 REST 元素的思考工具、不是 REST 的分級定義（見 [11.C3](/backend/11-api-design/cases/rest-fowler-richardson-maturity-model/)）。下面依序看四級各自解決什麼、以及常見誤用的邊界在哪。
 
 ## 四級的工程意義
 
@@ -21,7 +21,7 @@ Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷
 
 ## 兩個立場事實
 
-用 RMM 之前要知道它在爭論光譜上的位置。其一、Fielding 的立場被 Fowler 記錄在案：只有 Level 3 才算 REST — 依原義、RMM 的前三級都是「還不是 REST」的程度差異、把 Level 2 說成「基本 REST」與定義擁有者的立場直接牴觸（定義權爭奪的全景見 [REST 語意學之爭](/backend/11-api-design/styles/rest/rest-semantics-dispute/)）。其二、業界實務多停在 Level 2 — 這是廣泛的觀察、C3 案例的判讀層也如此標注、Fowler 原文沒有這個統計主張、引用時分清楚。
+用 RMM 之前要知道它在爭論光譜上的位置。其一、Fielding 的立場被 Fowler 記錄在案：只有 Level 3 才算 REST — 依原義、RMM 的前三級都是「還不是 REST」的程度差異、把 Level 2 說成「基本 REST」與原始定義者的立場直接牴觸（定義權爭奪的全景見 [REST 語意學之爭](/backend/11-api-design/styles/rest/rest-semantics-dispute/)）。其二、業界實務多停在 Level 2 — 這是廣泛的觀察、C3 案例的判讀層也如此標注、Fowler 原文沒有這個統計主張、引用時分清楚。
 
 ## 誤用一：當合規檢查表
 
