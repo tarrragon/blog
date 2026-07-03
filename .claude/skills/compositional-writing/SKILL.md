@@ -217,10 +217,15 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-03
-**Version**: 0.23.0 — 地區用語 keyword bank 加慣用語層：新增 `regional-idioms-evade-keyword-bank` portable principle（地區慣用語直譯是開放集合、grep 列舉不完、同源讀得懂會放行、跟 register 同源盲區同構、需目標地區讀者異源冷讀）；地區用語 grep 拆單詞層（封閉、掃得到）+ 慣用語層（拍腦袋/靠譜/給力… 已知個案、非窮舉）；從 devops 容量規劃多輪審查漏抓「拍腦袋」的 self-case 抽出（三輪 agent reviewer 都沒抓到、使用者在地冷讀點出）
-**Version**: 0.18.0 — 輪 9 reader-sim 加第四 lens「AI 歸因過度」（AI 生成內容系統性把通用 pattern 框為 AI 特有、縮窄適用範圍且背上無法證實的舉證負擔；判準：「AI」換成「作者」論點仍成立 → 改通用觀察）；提交自檢清單加第 4 個生成端自問句（AI 歸因測試）。
+**Version**: 0.24.0 — 地區用語 keyword bank 加慣用語層：新增 `regional-idioms-evade-keyword-bank` portable principle（地區慣用語直譯是開放集合、grep 列舉不完、同源讀得懂會放行、跟 register 同源盲區同構、需目標地區讀者異源冷讀）；地區用語 grep 拆單詞層（封閉、掃得到）+ 慣用語層（拍腦袋/靠譜/給力… 已知個案、非窮舉）；從 devops 容量規劃多輪審查漏抓「拍腦袋」的 self-case 抽出（三輪 agent reviewer 都沒抓到、使用者在地冷讀點出）
+**Version**: 0.23.0 — 新增「泛用詞濫用」字句層 frame（讀者回饋觸發：反覆用「坑」把不同情境壓成同一模糊標籤、繁中少用）：keyword bank 加 `rg "坑|東西|搞|弄|處理一下|情況"`、新增 principle 卡 [avoid-overused-generic-words](references/principles/avoid-overused-generic-words.md)（依情境換精確詞、跟 colloquial/regional/cadence 三卡的軸區分）、writing-articles 輪 8 清單同步；命中密集且各指不同事才違規、真泛指 / 引號 / 輕度 hook 合規
 
-**Version**: 0.18.0 — 新增「泛用詞濫用」字句層 frame（讀者回饋觸發：反覆用「坑」把不同情境壓成同一模糊標籤、繁中少用）：keyword bank 加 `rg "坑|東西|搞|弄|處理一下|情況"`、新增 principle 卡 [avoid-overused-generic-words](references/principles/avoid-overused-generic-words.md)（依情境換精確詞、跟 colloquial/regional/cadence 三卡的軸區分）、writing-articles 輪 8 清單同步；命中密集且各指不同事才違規、真泛指 / 引號 / 輕度 hook 合規
+**Version**: 0.22.0 — 原則 3 加「知識卡建卡判準用最不熟悉的讀者」；常識是相對於讀者背景的、跨背景讀者群幾乎所有領域特定術語都需要建卡
+**Version**: 0.21.0 — 原則 3 加「操作步驟帶環境專屬工具路徑」（同動作在 container/VM/共享主機的工具不同）
+**Version**: 0.20.0 — 原則 3 加「讀者定位聲明」生成端前置步驟；從 infra 模組 retrospective 抽出（讀者定位未預設導致宣導語氣通過三輪審查）
+**Version**: 0.19.0 — 新增三張 principle 卡（audience-is-professional-not-layperson / cross-expertise-scenario-not-analogy / management-reportable-info-in-technical-content）、原則 3 加讀者定位與跨專業溝通子原則、keyword bank 加宣導語氣 grep；從 infra 教學模組的寫作 retrospective 抽出
+
+**Version**: 0.18.0 — 輪 9 reader-sim 加第四 lens「AI 歸因過度」（AI 生成內容系統性把通用 pattern 框為 AI 特有、縮窄適用範圍且背上無法證實的舉證負擔；判準：「AI」換成「作者」論點仍成立 → 改通用觀察）；提交自檢清單加第 4 個生成端自問句（AI 歸因測試）。
 **Version**: 0.17.0 — keyword bank 新增歸因語氣 grep + 否定起手定義句 pattern；輪 8-10 描述補恐嚇式語氣 / 歸因語氣；移除 comment-qa-hook / worklog-format-check hook（職責已由其他機制覆蓋）；references 更新（atomic-note / teaching-prose / writing-articles / writing-documents）。
 
 **Version**: 0.16.0 — 從工具 opinion 文章的三輪審查 + 使用者回饋回流 6 張 report 卡（WRAP 分析後選混合方案）：(1) keyword bank 加歸因語氣 grep（`承認|暴露了|證明了失敗|被迫`）— 唯一有穩定關鍵詞的新 design gap；(2) `teaching-prose-neutral-register` 加第四類「恐嚇式語氣」（把讀者放在被警告位置、判別線是「你→我們」替換測試）；(3) writing-articles 輪 9 reader-sim 加第三 lens「meta 資訊 vs 內容」（涵蓋 meta-commentary 殘留 + 主題偏移兩個 gap）；(4) writing-articles 提交自檢清單加 3 個生成端自問句（恐嚇式 hook / meta 刪除測試 / 歸因語氣）。不新增 principle 卡（27 張已夠、新議題融入現有卡）、不增 SKILL.md 主體段落（密度飽和、改動集中在 keyword bank 一行 + 下游 reference）。
@@ -249,10 +254,6 @@ compositional-writing/
 **Version**: 0.7.4 — 新增 `translation-review.md` 路由：翻譯 / 轉譯文章時，用句內邏輯檢查譯名是否跟主詞、動詞、修飾語、因果與讀者追問方向對位。
 **Version**: 0.7.3 — managing-article-collections 補「素材庫比例」路由：多篇文章需要案例 / source / scenario / pattern 支撐時，主文章情境維持少量、素材庫保留 2-3 倍來源做反向驗證
 **Version**: 0.7.2 — 補 multi-pass 的 surface 軸：review 先列 body / metadata / navigation surface（title、description、tags、heading、link label、MOC hook、slug / filename），每輪 frame 都掃同一份 surface 清單；新增內部 principle `metadata-surface-in-writing-review.md`
-**Version**: 0.22.0 — 原則 3 加「知識卡建卡判準用最不熟悉的讀者」；常識是相對於讀者背景的、跨背景讀者群幾乎所有領域特定術語都需要建卡
-**Version**: 0.21.0 — 原則 3 加「操作步驟帶環境專屬工具路徑」（同動作在 container/VM/共享主機的工具不同）
-**Version**: 0.20.0 — 原則 3 加「讀者定位聲明」生成端前置步驟；從 infra 模組 retrospective 抽出（讀者定位未預設導致宣導語氣通過三輪審查）
-**Version**: 0.19.0 — 新增三張 principle 卡（audience-is-professional-not-layperson / cross-expertise-scenario-not-analogy / management-reportable-info-in-technical-content）、原則 3 加讀者定位與跨專業溝通子原則、keyword bank 加宣導語氣 grep；從 infra 教學模組的寫作 retrospective 抽出
 **Version**: 0.7.0 — Phase B1 結構升級：加第 6 原則「多輪 Re-read Pass」（明示 5 輪 frame）、引用 #83 / #84 / #85 multi-pass 系列。後續 Phase B2 會把各 reference 結尾加「第 2 輪 review checklist」段
 **Version**: 0.6.0 — 從 references 過載的反思：writing-articles.md 從 780 行瘦身到 ~530 行（拆分判準 / 三類 structure 模板搬到 managing-article-collections.md、focus 集中在「單篇文章內部」）；新增規則八「自我應用 (dogfooding)」（教某條規則的段落本身遵守該規則）；managing-article-collections.md 整合「拆分判準」+「三層 structure 詳細對照 + 模板」；meta-metrics.md M2 加 dogfooding 失敗訊號
 **Version**: 0.5.0 — 從批量改寫 35 篇的經驗回流：原則 3 補「選項數由議題決定、不強湊」（避免 A/B/C/D 強迫症與「實務上幾乎不存在」的假反模式）；writing-articles.md 新增規則九（三類文章 structure 模板）；managing-article-collections.md 新增「跨篇引用 idiom 庫」與「三層 structure 對照」
