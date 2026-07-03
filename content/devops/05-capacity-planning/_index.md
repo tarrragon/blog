@@ -6,7 +6,7 @@ weight: 5
 tags: ["devops", "capacity-planning", "load-testing", "peak-estimation", "cost-model"]
 ---
 
-回答「要準備多少資源才夠、多的時候怎麼加、少的時候怎麼省」。容量規劃的輸入是流量模型，輸出是資源規格和成本。這個模組是「規模成長」「突發應對」「成本控制」三條學習路線的交會點。
+容量規劃的輸入是流量模型，輸出是資源規格與成本——回答「要準備多少資源才夠、多的時候怎麼加、少的時候怎麼省」。這個模組是「規模成長」「突發應對」「成本控制」三條學習路線的交會點。
 
 ## 章節
 
@@ -21,5 +21,6 @@ tags: ["devops", "capacity-planning", "load-testing", "peak-estimation", "cost-m
 
 ## 跨分類引用
 
+- → [devops 模組二 水平擴展](/devops/02-horizontal-scaling/)：「規模成長」路線下一站——算出要多少容量後，怎麼靠加實例把容量長出來
 - → [backend 效能容量](/backend/09-performance-capacity/)：Backend 的效能基準和容量估算
 - → [devops 模組七 突發流量](/devops/07-burst-traffic/)：突發流量的容量預備

@@ -30,7 +30,7 @@ tags: ["devops", "capacity-planning", "workload-model", "peak-average-ratio", "l
 
 ## 從 production log 抽出可信的模型
 
-流量模型的來源是真實流量，不是拍腦袋。從 production 抽模型分四步：先蒐集資料（從 access log、APM trace、metric 系統採樣，涵蓋至少一個完整的週期——含平日、週末、峰谷），再分組統計（按端點、按租戶分組，各算 percentile、標到達型態、算 payload 分布），接著做序列重播（保留請求之間的到達間隔，讓 burst 在壓測時能重現，而不只是灌一個平均 RPS），最後脫敏（雜湊加鹽、但保持資料的 cardinality 跟 production 一致，否則快取命中率會失真）。
+流量模型的來源是真實流量，不是拍腦袋。從 production 抽模型分四步：先蒐集資料（從 access log、APM trace、metric 系統採樣，涵蓋至少一個完整的週期——含平日、週末、峰谷），再分組統計（按端點、按租戶分組，各算 percentile、標到達型態、算 payload 分布），接著做序列重播（保留請求之間的到達間隔，讓 burst 在壓測時能重現，而不只是灌一個平均 RPS），最後脫敏（雜湊加鹽、但保持資料的 cardinality——不同值的數量、例如有幾個不同的用戶 ID——跟 production 一致，否則快取命中率會失真）。
 
 抽出來的模型要驗證。拿模型去壓測，比對四類指標跟 production 是否吻合：吞吐型態（總 RPS 加端點組合）、延遲分布（p50/p95/p99）、資源使用率、錯誤與重試型態。若模型在測試環境撐得住、production 卻撐不住，代表漏了維度，要回到蒐集階段補——這個「模型過關但實境失守」的偏差，是流量模型最該防的失準。
 

@@ -19,6 +19,8 @@ tags: ["devops", "traffic-management", "backpressure", "rate-limit", "circuit-br
 
 ## 跨分類引用
 
+- → [devops 模組一 負載平衡](/devops/01-load-balancing/)：「單服務營運」路線下一站——防過載之後，流量怎麼分給多個實例
+- → [devops 模組五 容量規劃](/devops/05-capacity-planning/)：「突發應對」路線下一站——防過載機制之外，怎麼預備容量
 - → [monitoring 模組四 Collector](/monitoring/04-collector/)：Collector 的 ingestion 防護是本模組的應用場景
 - → [devops 模組七 突發流量](/devops/07-burst-traffic/)：突發流量時這四種機制怎麼組合使用
 - → [backend 可靠性](/backend/06-reliability/)：熔斷和 bulkhead 也是 backend 的可靠性設計元件

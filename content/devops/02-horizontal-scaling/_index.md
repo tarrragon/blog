@@ -6,7 +6,7 @@ weight: 2
 tags: ["devops", "horizontal-scaling", "stateless", "shared-storage", "session"]
 ---
 
-回答「怎麼從一個實例變成多個實例」。水平擴展的前提是服務 stateless — 每個實例可以獨立處理任何請求。這個模組是「規模成長」路線的第二站，接在負載平衡（模組一）之後——有了 LB 把流量分進來，還要讓每個實例都能接任何請求。
+從一個實例變成多個實例，前提是服務 stateless——每個實例可以獨立處理任何請求。這個模組是「規模成長」路線的第二站，接在負載平衡（模組一）之後：有了 LB 把流量分進來，還要讓每個實例都能接任何請求。
 
 ## 章節
 
@@ -21,6 +21,7 @@ tags: ["devops", "horizontal-scaling", "stateless", "shared-storage", "session"]
 ## 跨分類引用
 
 - ← [devops 模組一 負載平衡](/devops/01-load-balancing/)：LB 是水平擴展的前提
+- → [devops 模組六 高可用](/devops/06-high-availability/)：「規模成長」路線下一站——多實例之上再加冗餘與 failover
 - → [monitoring 模組四 Collector](/monitoring/04-collector/)：Collector 的 stateless 設計讓多實例可行
 - → [backend 資料庫](/backend/01-database/)：Shared storage 的 DB 選型
 - → [backend 擴展軸](/backend/09-performance-capacity/scaling-axes/)：垂直 / 水平取捨與 AKF Scale Cube 的完整拆解
