@@ -134,7 +134,7 @@ healthcheck:
 | —           | readinessProbe | container 是否準備好接流量（失敗 → 從 service 移除）    |
 | —           | startupProbe   | container 是否完成啟動（失敗 → 重啟、比 liveness 寬容） |
 
-Docker 的 HEALTHCHECK 只有一種、等同 Kubernetes 的 livenessProbe。Kubernetes 的 readinessProbe 和 startupProbe 在 Docker 單機環境沒有對應物 — 它們是多 pod 場景下的流量控制機制。
+Docker 的 HEALTHCHECK 只有一種、等同 Kubernetes 的 livenessProbe。Kubernetes 的 readinessProbe 和 startupProbe 在 Docker 單機環境沒有對應物 — 它們是多 pod 場景下的流量控制機制。三種 probe 各自宣告什麼、失敗後平台做什麼，見 [模組四 Liveness 與 Readiness](/devops/04-service-health/liveness-vs-readiness/)。
 
 ## 下一步路由
 
