@@ -26,3 +26,20 @@ tags: ["backend", "observability", "case-study"]
 | [4.C12](/backend/04-observability/cases/cloudflare-internal-observability-architecture/) | Cloudflare 觀測三層能力  | monitoring / analytics / forensics 拆分    |
 | [4.C13](/backend/04-observability/cases/discord-storage-growth-observability-gap/)       | Discord 儲存→觀測缺口    | 每次遷移暴露觀測盲區的共同結構             |
 | [4.C14](/backend/04-observability/cases/observability-cost-governance-at-scale/)         | 觀測成本治理             | attribution + cardinality budget + tiering |
+
+## 觀測共命運失效（4.C15-4.C24）
+
+一手 spec / postmortem / 官方 docs、每個 source URL 經 WebFetch 驗證。SRE Book 的「共命運 / 不共享失效域」為推導框架（原文只有 simple/robust/fragile/loosely-coupled）；人層線的來源原始 framing 是「事故通用準備」、「觀測退化時為何特別關鍵」的串接是本章合成、正文標明。
+
+| 章節                                                                              | 主題                              | 核心責任                             |
+| --------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------ |
+| [4.C15](/backend/04-observability/cases/monitoring-simple-robust-sre-book/)       | SRE Book monitoring simple/robust | 觀測不共命運的權威錨（推導框架）     |
+| [4.C16](/backend/04-observability/cases/cardinality-explosion-incident/)          | Cardinality 事故爆炸              | 被觀測系統的異常反噬觀測後端         |
+| [4.C17](/backend/04-observability/cases/gitlab-2017-silent-monitoring-failure/)   | GitLab 2017 靜默失效              | 告警管道無驗證 + 儀表板容量共命運    |
+| [4.C18](/backend/04-observability/cases/datadog-2023-monitoring-as-dependency/)   | Datadog 2023 廠商自掛             | monitoring-as-a-dependency 單點      |
+| [4.C19](/backend/04-observability/cases/watchdog-dead-mans-switch/)               | Watchdog / dead man's switch      | 訊號消失即告警的 out-of-band 心跳    |
+| [4.C20](/backend/04-observability/cases/independent-status-page-fault-domain/)    | 獨立 status page                  | 對外狀態源的失效域隔離 + cadence     |
+| [4.C21](/backend/04-observability/cases/tail-sampling-preserve-errors/)           | Tail sampling 保 error            | 採樣壓力下優雅降級                   |
+| [4.C22](/backend/04-observability/cases/sre-workbook-prewired-incident-response/) | SRE Workbook 預固化               | 預寫模板 / mitigation-first / 活文件 |
+| [4.C23](/backend/04-observability/cases/google-home-customer-report-signal/)      | Google Home 客訴訊號源            | 監控失效時 consumer 回報唯一生效     |
+| [4.C24](/backend/04-observability/cases/pagerduty-customer-liaison/)              | PagerDuty Customer Liaison        | 客訴聚合成 scope 訊號的雙向管道      |

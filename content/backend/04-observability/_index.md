@@ -134,8 +134,9 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 | [4.22](/backend/04-observability/checkout-api-evidence-package/)    | Checkout API Evidence Package 實作示範 | 以 checkout 路徑示範 evidence package 如何交接到 gate 與 incident                              |
 | [4.23](/backend/04-observability/observability-query-design/)       | 觀測查詢設計                           | 把讀取路徑當系統設計問題：三種查詢模式、storage tiering、pre-aggregation 與資源治理            |
 | [4.24](/backend/04-observability/client-server-trace-integration/)  | Client-to-Server 端到端觀測串接        | 用一個結帳場景走完 browser click → trace context → server span → 統一 waterfall 的完整實作鏈路 |
+| [4.25](/backend/04-observability/observability-shared-fate/)        | 觀測共命運失效                         | 觀測跟系統一起退化時的 out-of-band 訊號、優雅降級、與 telemetry 不可信下的人層應對設計         |
 
-> 註：4.1-4.24 已完成概念層、實作示範與端到端串接正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。
+> 註：4.1-4.25 已完成概念層、實作示範與端到端串接正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。4.25（觀測共命運失效）是深化補的一章，處理「觀測系統自己在事故中失能」這個 4.1-4.24 假設可用、未正面展開的邊界。
 
 ## 個案前拓展空間
 

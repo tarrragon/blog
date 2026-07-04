@@ -5,12 +5,11 @@ description: "說明局部故障如何透過等待、重試與資源耗盡擴散
 weight: 51
 ---
 
-
 Cascading failure 的核心概念是「局部故障沿著依賴關係擴散成更大範圍故障」。常見擴散路徑包括 timeout 太長、重試太多、connection pool 耗盡、queue 堆積、thread pool 被占滿與 fallback 過載。 可先對照 [Certificate Chain and Trust Root](/backend/knowledge-cards/certificate-chain-trust/)。
 
 ## 概念位置
 
-Cascading failure 是可靠性設計的主要防護目標。Timeout、backpressure、rate limit、circuit breaker、bulkhead 與 load shedding 都是在切斷擴散路徑。 可先對照 [Certificate Chain and Trust Root](/backend/knowledge-cards/certificate-chain-trust/)。
+Cascading failure 是可靠性設計的主要防護目標。Timeout、backpressure、rate limit、circuit breaker、bulkhead 與 load shedding 都是在切斷擴散路徑。跟 [Correlated Failure](/backend/knowledge-cards/correlated-failure/) 的差別：cascading 是「一個壞了逐級傳導放大」（有先後），correlated 是「共享觸發器讓多個同時壞」（無先後）。
 
 ## 可觀察訊號與例子
 
