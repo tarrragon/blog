@@ -165,6 +165,7 @@ Dashboard 的時間範圍選擇直接觸發跨層查詢。使用者從「最近 
 - [4.6 SLI/SLO](/backend/04-observability/sli-slo-signal/)：SLI metric 的 cardinality 上限
 - [4.8 signal-governance-loop](/backend/04-observability/signal-governance-loop/)：高峰 retrospective 回寫治理
 - [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/)：pipeline 層 quota 執行
+- [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)：事故時 cardinality spike 反噬觀測後端
 - [4.12 audit log governance](/backend/04-observability/audit-log-governance/)：audit 保留期銜接
 - [4.15 cost attribution](/backend/04-observability/cost-attribution/)：成本治理的責任分配層
 - [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)：storage tiering 對查詢能力的完整設計

@@ -48,7 +48,7 @@ Stakeholder 通訊與外部狀態頁是把 [impact scope](/backend/knowledge-car
 
 ## 判讀訊號
 
-- [status page](/backend/knowledge-cards/status-page/) 比客戶在 Twitter / 社群上的回報慢
+- [status page](/backend/knowledge-cards/status-page/) 比客戶在 Twitter / 社群上的回報慢（客訴作為監控失效時的補位訊號、見 [4.25](/backend/04-observability/observability-shared-fate/)）
 - 對外 [RCA](/backend/knowledge-cards/rca/) 跟內部 [RCA](/backend/knowledge-cards/rca/) 落差大、外部過度修飾
 - 補償政策 case-by-case、無預設規則、依個別協商
 - 法規通報窗口靠 IR commander 個人記憶、無 checklist

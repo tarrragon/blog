@@ -79,6 +79,7 @@ weight: -1
 | [Transient Failure](/backend/knowledge-cards/transient-failure/)       | 暫時性故障如何影響重試與告警          | network、failover、timeout     |
 | [Partial Failure](/backend/knowledge-cards/partial-failure/)           | 局部失效時如何保留整體可用性          | distributed system、fallback   |
 | [Cascading Failure](/backend/knowledge-cards/cascading-failure/)       | 局部故障如何擴散成整體故障            | dependency、retry、pool        |
+| [Correlated Failure](/backend/knowledge-cards/correlated-failure/)     | 以為獨立的元件共享隱藏觸發器一起壞    | 冗餘、失效域、shared trigger   |
 | [Load Shedding](/backend/knowledge-cards/load-shedding/)               | 過載時如何主動拒絕低優先工作          | overload、priority             |
 | [Token Bucket](/backend/knowledge-cards/token-bucket/)                 | 如何用配額與補充速率控制流量          | rate limit、retry budget       |
 | [Dependency Isolation](/backend/knowledge-cards/dependency-isolation/) | 如何避免單一下游耗盡共享資源          | pool、queue、dependency        |
@@ -155,6 +156,7 @@ weight: -1
 | -------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
 | [Boundary Contract](/backend/knowledge-cards/contract/)                                | 邊界兩端如何維持一致約定                       | API contract、deployment contract、queue contract、load balancer contract |
 | [API Contract](/backend/knowledge-cards/api-contract/)                                 | request / response 如何維持相容                | client、SDK、public API                                                   |
+| [Hyrum's Law](/backend/knowledge-cards/hyrums-law/)                                    | 一切可觀察行為終將被依賴、實際契約大於承諾     | message 被 parse、欄位順序、timing                                        |
 | [Deployment Contract](/backend/knowledge-cards/deployment-contract/)                   | application 與 platform 如何對齊生命週期       | readiness、shutdown、rollout                                              |
 | [Queue Contract](/backend/knowledge-cards/queue-contract/)                             | producer / broker / consumer 如何對齊交付語意  | ack、retry、DLQ、redelivery                                               |
 | [Load Balancer Contract](/backend/knowledge-cards/load-balancer-contract/)             | 服務與流量入口如何對齊健康與切流               | health check、draining、idle timeout                                      |

@@ -18,4 +18,4 @@ Status page 位在 [incident communication channel](/backend/knowledge-cards/inc
 
 ## 設計責任
 
-Status page 要定義更新頻率、發佈責任、嚴重度標示、影響範圍與下一次更新承諾。它是外部信任的最小承諾面，用公關模板的心態維護會失去可信度。
+Status page 要定義更新頻率、發佈責任、嚴重度標示、影響範圍與下一次更新承諾。它是外部信任的最小承諾面，用公關模板的心態維護會失去可信度。它必須放在跟主服務不同的失效域（獨立 domain / infra / DNS），否則主站掛時它一起掛 —— 見 [4.25 觀測共命運失效](/backend/04-observability/observability-shared-fate/)。
