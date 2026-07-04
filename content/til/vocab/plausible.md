@@ -3,7 +3,7 @@ title: "plausible：說得通但未經證明"
 slug: "plausible"
 date: 2026-07-04
 description: "plausible 與 possible 的語感差異：在現有證據下合理可信、值得認真對待但尚待驗證；字源 plaudere 值得鼓掌，搭配 plausible explanation"
-tags: ["til", "英文單字", "語感", "學術英文"]
+tags: ["til", "英文單字", "字源", "語感", "學術英文"]
 ---
 
 plausible 表示在目前證據下說得通、合理可信，但不代表已經被證明正確。

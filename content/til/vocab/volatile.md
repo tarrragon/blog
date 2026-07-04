@@ -3,7 +3,7 @@ title: "volatile：劇烈震盪的變動"
 slug: "volatile"
 date: 2026-07-04
 description: "volatile 與 unstable 的語感差異：變化劇烈、波動幅度大又難預測；字源 volare 飛、易揮發，財經常用 volatile markets/prices"
-tags: ["til", "英文單字", "語感", "學術英文"]
+tags: ["til", "英文單字", "字源", "語感", "學術英文"]
 ---
 
 volatile 除了不穩定之外、更強調變化劇烈、波動幅度大，因此財經新聞常用來描述市場、能源價格或匯率。

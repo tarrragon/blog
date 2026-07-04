@@ -2,7 +2,7 @@
 title: "單字"
 slug: "vocab"
 description: "學到的英文單字：字源拆解、由來故事、同字根家族、語感差異與搭配，一個單字一篇"
-tags: ["til", "單字", "字源", "語感"]
+tags: ["til", "英文單字", "字源", "語感"]
 ---
 
 這個子分類收錄**學到的單字** — 一個單字一篇。切入角度看那個字最值得記的地方：有的寫字源拆解、由來故事與同字根家族（同字根的單字互連成一張字根地圖），有的寫語感差異與搭配（同義字之間的細微分別、母語作者慣用的固定表達）。
@@ -22,7 +22,7 @@ tags: ["til", "單字", "字源", "語感"]
 - [entrenched](entrenched/)：掘壕固守般根深蒂固（vs established）
 - [volatile](volatile/)：劇烈震盪的變動（vs unstable）
 - [nuanced](nuanced/)：分得清細微差別的層次感（vs complex）
-- [feasible](feasible/)：現實條件下真的做得成（vs possible）
+- [feasible](feasible/)：現實條件下辦得成（vs possible）
 
 ---
 
