@@ -6,7 +6,7 @@ weight: 99
 tags: ["backend", "api-design", "case-study"]
 ---
 
-本案例庫收模組十一（API 設計與對外契約）的寫作素材：54 個經來源驗證的公開案例、按主題分組。每個案例是薄殼形態（觀察 / 判讀 / 對應大綱 / 引用源）、stage 1 audit 後依需要升級為 rich case。所有 source URL 於採集時（2026-07）經實際取回驗證可訪且內容對應；二手來源與 IETF draft 狀態在各檔內標明。
+本案例庫收模組十一（API 設計與對外契約）的寫作素材：63 個經來源驗證的公開案例、按主題分組。每個案例是薄殼形態（觀察 / 判讀 / 對應大綱 / 引用源）、stage 1 audit 後依需要升級為 rich case。所有 source URL 於採集時（2026-07）經實際取回驗證可訪且內容對應；二手來源與 IETF draft 狀態在各檔內標明。
 
 ## REST 與 hypermedia 流派（C1-C9）
 
@@ -92,11 +92,24 @@ tags: ["backend", "api-design", "case-study"]
 | C53  | [AsyncAPI 補位](/backend/11-api-design/cases/standards-asyncapi-complement/)                            | 相容換採用             | anchor |
 | C54  | [White House API Standards](/backend/11-api-design/cases/governance-whitehouse-api-standards-archived/) | 規範制定後棄置         | 反例   |
 
+## Realtime：server 推 client 的對外承諾（C55-C63）
+
+| 編號 | 案例                                                                                    | 主議題                           | 類型           |
+| ---- | --------------------------------------------------------------------------------------- | -------------------------------- | -------------- |
+| C55  | [WHATWG SSE spec](/backend/11-api-design/cases/sse-whatwg-spec-reconnection/)           | 內建重連、Last-Event-ID 補送     | anchor（spec） |
+| C56  | [RFC 6455 WebSocket](/backend/11-api-design/cases/websocket-rfc6455-transport/)         | 雙向 transport、不內建保證       | anchor（spec） |
+| C57  | [Slack Socket Mode](/backend/11-api-design/cases/websocket-slack-socket-mode/)          | WebSocket 上自建 ack / retry     | anchor         |
+| C58  | [RFC 6202 long-polling](/backend/11-api-design/cases/longpolling-rfc6202-mechanics/)    | 機制代價、fallback 定位          | anchor（spec） |
+| C59  | [Socket.IO negotiation](/backend/11-api-design/cases/longpolling-socketio-negotiation/) | transport fallback、相容性下限   | anchor         |
+| C60  | [Stripe webhooks](/backend/11-api-design/cases/webhook-stripe-delivery-contract/)       | at-least-once、冪等、no-ordering | anchor         |
+| C61  | [GitHub webhooks](/backend/11-api-design/cases/webhook-github-no-retry/)                | 不自動重試的反向承諾             | 反例（對照）   |
+| C62  | [Slack Events API](/backend/11-api-design/cases/webhook-slack-events-retry/)            | 3 秒 ack、固定三次重試           | anchor         |
+| C63  | [Shopify webhooks](/backend/11-api-design/cases/webhook-shopify-ordering-dedup/)        | ordering 不保證、去重 header     | anchor（佐證） |
+
 ## 案例覆蓋缺口（待補）
 
 下列大綱範圍在本案例庫中公開案例偏弱或缺、撰寫正文時要明示「以下分析依官方文件 / standard / 通用模式推導、非 case-driven」、或先補採集：
 
-- **styles/realtime/（WebSocket / SSE / long-polling / webhook）**：本輪採集未涵蓋此主題、整個目錄的 case 庫從零 — 寫該批文章前需先跑一輪補採集。
 - **11.1 API 作為服務邊界的責任、11.2 風格選型總覽**：沒有專屬 case、內容從全庫案例合成推導 — 寫作時依 fact vs derive 紀律標明「本章合成、非 case 原文」。
 - **11.3 資源建模**：來源偏論證型（C1、C5）、缺企業資源建模實作的一手案例。
 - **gRPC 退回 REST 的實名一手案例**：搜尋僅得 content-farm 來源、已拒收；styles/grpc/ 的「退場」敘事以 C32 的批評視角承擔、更硬的退回敘事標為缺口。
@@ -110,3 +123,4 @@ tags: ["backend", "api-design", "case-study"]
 - C40（Idempotency-Key draft）狀態 expired、C42（RateLimit headers draft）狀態 active v11 — 兩者引用都必須帶狀態、不可稱 RFC。
 - C14（Fielding 訪談）刊載於 InfoQ、內容為本人一手陳述、引用標「InfoQ 訪談」。
 - C27（WunderGraph）、C30（Buf）為利益相關 vendor 立場、批評點需與獨立來源（C22 / C25 / C32）互證後引用。
+- Realtime 批（C55-C63）於 2026-07 採集、每個 source URL 經 WebFetch 實際取回驗證。C55 / C56 的 MDN 頁為開發者視角佐證、規範錨點以 WHATWG SSE spec（C55）與 RFC 6455（C56）為準；C57 / C59 / C60-C63 為 vendor 官方 docs、承諾為各 vendor 特定值、跨版本可能變、引用要帶 vendor 名。C58（RFC 6202）為 2011 Informational RFC、對照對象是 HTTP streaming 而非 WebSocket。

@@ -94,7 +94,7 @@ listener 成本估算的公式是 `初次訂閱 read + Σ(訂閱數 × 每次變
 
 snapshot listener 適合「中等扇出、client 要即時看到自己相關資料變動」的場景——協作編輯、聊天、個人通知、儀表板。它撐不住的訊號是扇出或變動頻率推高 re-read 成本到不划算，或連線規模撞到天花板：
 
-- **超高扇出的廣播**：百萬人看同一場直播的即時數據，per-listener 的 re-read 模型成本遠高於自建一次讀取、WebSocket broadcast 推 N 份的模型。這類純廣播（一份資料推給海量訂閱者）用專門的推送層（自建 WebSocket / SSE、或 pub/sub + 邊緣推送）更划算，見 [03 訊息佇列](/backend/03-message-queue/) 的 fan-out 設計
+- **超高扇出的廣播**：百萬人看同一場直播的即時數據，per-listener 的 re-read 模型成本遠高於自建一次讀取、WebSocket broadcast 推 N 份的模型。這類純廣播（一份資料推給海量訂閱者）用專門的推送層（自建 WebSocket / SSE、或 pub/sub + 邊緣推送）更划算，見 [03 訊息佇列](/backend/03-message-queue/) 的 fan-out 設計；自建 WebSocket / SSE 各自的重連與投遞承諾差異、選型見 [持久連線推送](/backend/11-api-design/styles/realtime/realtime-push-mechanisms/)
 - **複雜事件處理的即時**：即時推送需要先做跨資料聚合、過濾、轉換，listener 只能訂 query 結果、表達不了。這類要後端處理後再推，listener 不是合適的傳輸層
 - **即時是核心且規模化**：當即時同步是產品核心且扇出規模化，整個即時層自建是 [Firestore → 自建 relational](/backend/01-database/vendors/firestore/migrate-to-relational/) 裡「realtime / offline 要重建」這項工作量——遷移時這層最容易被低估
 

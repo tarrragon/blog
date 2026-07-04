@@ -16,16 +16,17 @@ tags: ["backend", "api-design", "selection"]
 
 消費者形狀的常見分型與傾向：
 
-| 消費者形狀                   | 傾向風格             | 原因                                                           |
-| ---------------------------- | -------------------- | -------------------------------------------------------------- |
-| 匿名第三方開發者（公開平台） | HTTP+JSON（REST 式） | 工具鏈普及、curl 可及、文件生態成熟                            |
-| 內部服務、跨語言、多團隊     | gRPC / protobuf      | schema-first 跨語言、契約可 CI 檢查                            |
-| 前後端同倉、全 TypeScript    | tRPC                 | 型別即契約、零 codegen；前提與代價見上                         |
-| 多形狀 client 拼裝巢狀資料   | GraphQL              | client 聲明取數；執行成本與安全代價見爭論地圖                  |
-| 本地 process 間、雙向、低頻  | JSON-RPC             | 最小夠用訊息層；LSP 與 MCP 的採用是實證（見下）                |
-| 下游要事件不是查詢           | event / queue        | 交接語意不同、路由到 [03 訊息佇列](/backend/03-message-queue/) |
+| 消費者形狀                   | 傾向風格               | 原因                                                                                                                 |
+| ---------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 匿名第三方開發者（公開平台） | HTTP+JSON（REST 式）   | 工具鏈普及、curl 可及、文件生態成熟                                                                                  |
+| 內部服務、跨語言、多團隊     | gRPC / protobuf        | schema-first 跨語言、契約可 CI 檢查                                                                                  |
+| 前後端同倉、全 TypeScript    | tRPC                   | 型別即契約、零 codegen；前提與代價見上                                                                               |
+| 多形狀 client 拼裝巢狀資料   | GraphQL                | client 聲明取數；執行成本與安全代價見爭論地圖                                                                        |
+| 本地 process 間、雙向、低頻  | JSON-RPC               | 最小夠用訊息層；LSP 與 MCP 的採用是實證（見下）                                                                      |
+| 下游要事件不是查詢           | event / queue          | 交接語意不同、路由到 [03 訊息佇列](/backend/03-message-queue/)                                                       |
+| server 主動推 client         | 持久連線推送 / webhook | server 有事要主動送、非 client 來拉；重連與投遞承諾差異見 [realtime 流派層](/backend/11-api-design/styles/realtime/) |
 
-表格是索引、每列的成立條件在真實情境裡要重新判讀。以 JSON-RPC 列為例：它在 web API 世代被 REST 式做法取代、卻在 LSP 與 MCP 兩份現代 spec 裡被選為訊息層 — 兩份 spec 都在 JSON-RPC 2.0 上加約束、而非發明新協議（見 [11.C34](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)；spec 只陳述採用、選型理由是本模組的判讀）。共同的條件組合是本地、雙向、需要 notification 語意、生態工具要求零 codegen 可自省 — 這組條件下 gRPC 的 HTTP/2 與 codegen 成本全是負資產。判讀重點是條件組合、而非「JSON-RPC 回來了」這種風格敘事。其餘各列的成立條件同樣散在後文 — gRPC 與 tRPC 的前提在判準軸二、三展開、GraphQL 的代價在爭論地圖路由的流派層、表格只負責索引。
+表格是索引、每列的成立條件在真實情境裡要重新判讀。最後兩列容易混淆、差別在推給誰：「下游要事件」是把事件交給內部佇列做可靠交接（路由 03）、「server 主動推 client」是把事件推給外部 client（瀏覽器或訂閱方）、用持久連線或 webhook、其重連與投遞承諾的差異在 realtime 流派層展開。以 JSON-RPC 列為例：它在 web API 世代被 REST 式做法取代、卻在 LSP 與 MCP 兩份現代 spec 裡被選為訊息層 — 兩份 spec 都在 JSON-RPC 2.0 上加約束、而非發明新協議（見 [11.C34](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)；spec 只陳述採用、選型理由是本模組的判讀）。共同的條件組合是本地、雙向、需要 notification 語意、生態工具要求零 codegen 可自省 — 這組條件下 gRPC 的 HTTP/2 與 codegen 成本全是負資產。判讀重點是條件組合、而非「JSON-RPC 回來了」這種風格敘事。其餘各列的成立條件同樣散在後文 — gRPC 與 tRPC 的前提在判準軸二、三展開、GraphQL 的代價在爭論地圖路由的流派層、表格只負責索引。
 
 ## 判準軸二：演進成本
 
@@ -45,7 +46,7 @@ tags: ["backend", "api-design", "selection"]
 
 ## 爭論地圖
 
-本章只給判準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（[已完成](/backend/11-api-design/styles/graphql/)）、proto 演進紀律與部署邊界（styles/grpc、backlog）、tRPC 與 JSON-RPC 的復興條件（styles/rpc-revival、backlog）、格式標準化的反覆嘗試（styles/standards、backlog）、server 推 client 的承諾差異（styles/realtime、案例待採集）。完整 backlog 見 [模組頁](/backend/11-api-design/) 章節規劃。
+本章只給判準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（[已完成](/backend/11-api-design/styles/graphql/)）、proto 演進紀律與部署邊界（[已完成](/backend/11-api-design/styles/grpc/)）、tRPC 與 JSON-RPC 的適用條件（[已完成](/backend/11-api-design/styles/rpc-revival/)）、格式標準化的採用判準（[已完成](/backend/11-api-design/styles/standards/)）、server 推 client 的承諾差異（[已完成](/backend/11-api-design/styles/realtime/)）。完整 backlog 見 [模組頁](/backend/11-api-design/) 章節規劃。
 
 ## 下一步路由
 
