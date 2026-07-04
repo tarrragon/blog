@@ -14,7 +14,7 @@ salient 帶著「跳出來、搶眼」的動感。important 說「重要」、ma
 
 ## 字源
 
-源自拉丁文 saliens / salire「跳躍」（saliens 是現在分詞）。原用於紋章學描述「躍起的動物」，引申為「突出、顯眼」——the salient point 就是「跳出來的那個點」。（resilient「回彈」、assail「襲擊」同源，都藏著 salire 的「跳」。）
+源自拉丁文 saliens / salire「跳躍」（saliens 是現在分詞）。原用於紋章學描述「躍起的動物」，引申為「突出、顯眼」——the salient point 就是「跳出來的那個點」。軍事上 a salient 還指戰線凸入敵方的「突出部」，同樣出自這個「凸出」的意象。（resilient「回彈」、assail「襲擊」同源，都藏著 salire 的「跳」。）
 
 ## 搭配與語境
 
