@@ -200,3 +200,4 @@ Budget remaining 作為 dashboard panel 跟 [release gate](/backend/knowledge-ca
 - [6.8 release gate](/backend/06-reliability/)：burn rate 觸發 freeze
 - [8.1 incident severity](/backend/08-incident-response/)：burn rate 對應 severity 門檻
 - [4.14 anomaly detection](/backend/04-observability/anomaly-detection/)：跟 SLO threshold 的訊號分工
+- [11.11 錯誤回報的回饋迴路](/backend/11-api-design/error-feedback-loop/)：consumer 側用 error rate 與 SLO 判「偶發 vs 持續 vs 異常放大」、決定要不要升級或熔斷

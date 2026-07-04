@@ -24,7 +24,7 @@ Slack 的解法是遷移到 opaque cursor：介面收斂為 `cursor` 加 `limit`
 - **獨立處理、逐筆回報**：回應是跟請求等長的結果陣列、每筆自己的成功或錯誤。務實預設、但消費者的重試邏輯變複雜 — 要能只重送失敗子集、這又要求逐筆操作冪等（[11.8](/backend/11-api-design/api-idempotency-design/) 的主題）。
 - **fail-fast**：處理到第一個錯誤即停、回報已處理數。適合順序有意義的批次（匯入）、消費者從斷點續傳。
 
-判準是消費者的重試能力與資料的順序性；唯一的反模式是不宣告 — 文件沒寫部分失敗語意的批次介面、消費者只能拿 production 事故來逆向工程。
+判準是消費者的重試能力與資料的順序性；唯一的反模式是不宣告 — 文件沒寫部分失敗語意的批次介面、消費者只能拿 production 事故來逆向工程。選定語意之後、部分成功在 status 層怎麼表達（207、200 加 per-item errors、或原子化保持單一 status）另有取捨、見 [Status 裝不下的東西](/backend/11-api-design/status-expressiveness-boundary/)。
 
 ## 長時操作：把「進行中」實體化
 

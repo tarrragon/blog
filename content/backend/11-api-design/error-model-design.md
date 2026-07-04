@@ -6,7 +6,7 @@ weight: 4
 tags: ["backend", "api-design", "error-model"]
 ---
 
-錯誤模型是契約的一級公民：消費者的重試邏輯、監控的告警規則、前端的使用者訊息、全部建立在錯誤回應的結構上。錯誤格式一旦被依賴、變更成本跟正常回應完全相同（承諾成本結構見 [11.1](/backend/11-api-design/api-boundary-responsibility/)）、常見的失衡是設計精力集中在成功路徑、錯誤格式在第一個 handler 裡即興決定 — 之後每個新錯誤都在複製那次即興。
+錯誤模型是契約的一級公民：消費者的重試邏輯、監控的告警規則、前端的使用者訊息、全部建立在錯誤回應的結構上。錯誤格式一旦被依賴、變更成本跟正常回應完全相同（承諾成本結構見 [11.1](/backend/11-api-design/api-boundary-responsibility/)）、常見的失衡是設計精力集中在成功路徑、錯誤格式在第一個 handler 裡即興決定 — 之後每個新錯誤都在複製那次即興。本章收 producer 側的分類與格式設計；consumer 收到錯誤之後怎麼判讀、重試、回報、收在 [11.11 Status 與錯誤的雙向契約](/backend/11-api-design/error-bidirectional-contract/)。
 
 ## 第一刀：可重試與終態
 
