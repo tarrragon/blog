@@ -10,7 +10,7 @@ salient 形容在眾多細節裡最突出、最引人注意的那一個——一
 
 ## 語感差異
 
-salient 帶著「跳出來、搶眼」的動感。important 說「重要」、main 說「主要」，兩者偏靜態的排序；salient 則指某一點自己浮上檯面、搶先攫住注意。它跟 [underscore](../underscore/)（讓重要性自己凸顯）、[nuanced](../nuanced/) 屬同一組談「重點怎麼呈現」的評論字。
+salient 帶著「跳出來、搶眼」的動感。important 說「重要」、main 說「主要」，兩者偏靜態的排序；salient 則指某一點自己浮上檯面、搶先攫住注意。它跟 [underscore](../underscore/)（讓重要性自己凸顯）、[nuanced](../nuanced/)（分得出細微差別）屬同一組談「重點怎麼呈現」的評論字。
 
 ## 字源
 
@@ -21,3 +21,4 @@ salient 帶著「跳出來、搶眼」的動感。important 說「重要」、ma
 - salient point（最突出的重點）
 - salient feature（顯著的特徵）
 - the salient facts（關鍵事實）
+- the salience of an issue（議題的顯著程度，名詞 salience）

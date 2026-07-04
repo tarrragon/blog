@@ -22,3 +22,4 @@ viable 的核心是「活得下去」。[feasible](../feasible/) 只斷定「辦
 - viable business / model（能存活的事業、商業模式）
 - commercially viable（商業上行得通）
 - economically viable（經濟上可持續）
+- viability（可行性、存活力，名詞）

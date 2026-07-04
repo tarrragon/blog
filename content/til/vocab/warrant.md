@@ -10,7 +10,7 @@ warrant 當動詞、指某件事的分量足以構成採取某個行動的正當
 
 ## 語感差異
 
-warrant 的重點在「事情本身夠不夠格觸發這個回應」。justify 帶著「提出理由、使某事正當」的辯護色彩；warrant 不涉及辯護動作，只斷定「這件事重要或嚴重到需要某個回應」。學術英文常見 the results warrant further investigation（結果值得進一步研究）、the situation warrants attention（情況需要關注），主詞是引發理由的事實、不是人。它另有名詞義「令狀、授權」（a search warrant），跟動詞的「正當理由」同源。
+warrant 的重點在「事情本身夠不夠格觸發這個回應」。justify 帶著「提出理由、使某事正當」的辯護色彩；warrant 不涉及辯護動作，只斷定「這件事重要或嚴重到需要某個回應」。學術英文常見 the results warrant further investigation（結果值得進一步研究）、the situation warrants attention（情況需要關注），主詞多半是引發理由的事實、而非人。它另有名詞義「令狀、授權」（a search warrant），跟動詞的「正當理由」同源。（注意 warranty「產品保固」是分家後的另一個字，別跟 warrant 混。）
 
 ## 字源
 

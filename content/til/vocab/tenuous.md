@@ -10,7 +10,7 @@ tenuous 形容一個連結、依據或掌握薄弱得像一根細絲——細到
 
 ## 語感差異
 
-tenuous 畫的是「細絲」的意象。weak 泛指「弱」，tenuous 專指「細、薄、勉強連著」，常用在證據不足的關聯（a tenuous link）、站不住的論點、快抓不住的掌控（a tenuous grasp）。跟 [precarious](../precarious/) 的差別在著眼點：precarious 是「整個位置快垮」，tenuous 是「維繫的那條線太細」。
+tenuous 畫的是「細絲」的意象。weak 泛指「弱」，tenuous 專指「細、薄、勉強連著」，常用在證據不足的關聯（a tenuous link）、站不住的論點、快抓不住的掌控（a tenuous grasp）。跟 [precarious](../precarious/) 著眼點不同：precarious 是「整個位置快垮」，tenuous 是「維繫的那條線太細」。在證據薄弱的語境，flimsy（a flimsy argument）跟 tenuous 競位、更口語些。
 
 ## 字源
 
