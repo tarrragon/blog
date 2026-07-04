@@ -7,22 +7,33 @@ tags: ["til", "英文單字", "字源", "語感"]
 
 這個子分類收錄**學到的單字** — 一個單字一篇。切入角度看那個字最值得記的地方：有的寫字源拆解、由來故事與同字根家族（同字根的單字互連成一張字根地圖），有的寫語感差異與搭配（同義字之間的細微分別、母語作者慣用的固定表達）。
 
-典型內容：
+字源拆解切入：
 
 - [candidate 的字源](candidate/)：穿白袍的人
 
-學術與新聞英文的高頻評論字（語感差異切入）：
+語感差異切入 — 學術與新聞英文的高頻評論字，依語意族群排列。
 
+評估可信度與可行性：
+
+- [plausible](plausible/)：說得通但未經證明（vs possible）
+- [feasible](feasible/)：現實條件下辦得成（vs possible）
 - [scrutinize](scrutinize/)：帶著懷疑仔細審視（vs examine）
+
+變動與脆弱：
+
+- [volatile](volatile/)：劇烈震盪的變動（vs unstable）
 - [precarious](precarious/)：懸在邊緣的脆弱（vs unstable）
+- [entrenched](entrenched/)：掘壕固守般根深蒂固（vs established）
+
+政策與論述動作：
+
+- [curb](curb/)：把失控趨勢勒回可控
 - [bolster](bolster/)：加碼補強既有基礎（vs support）
 - [underscore](underscore/)：事實自然凸顯重要性（vs emphasize）
-- [curb](curb/)：把失控趨勢勒回可控
-- [plausible](plausible/)：說得通但未經證明（vs possible）
-- [entrenched](entrenched/)：掘壕固守般根深蒂固（vs established）
-- [volatile](volatile/)：劇烈震盪的變動（vs unstable）
+
+論述品質：
+
 - [nuanced](nuanced/)：分得清細微差別的層次感（vs complex）
-- [feasible](feasible/)：現實條件下辦得成（vs possible）
 
 ---
 

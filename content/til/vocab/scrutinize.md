@@ -21,5 +21,7 @@ examine 或 check 只是中性的「看過、檢查」；scrutinize 多了質疑
 - scrutinize the evidence（審視證據）
 - scrutinize the data / methods（審視資料、方法）
 - scrutinize the accounts（查核帳目）
+- under (close / intense) scrutiny（受到嚴密審視，名詞 scrutiny）
+- come under scrutiny（開始被審視）
 
-主詞常是審查者、監理機關、評閱人；受詞是可能藏著問題的材料。
+主詞常是審查者、監理機關、評閱人；受詞是可能藏著問題的材料。名詞 scrutiny 在論文與新聞裡出現得跟動詞一樣頻繁。

@@ -21,3 +21,5 @@ nuanced 是褒義，稱讚一份論述細膩、分得清別人忽略的條件與
 - nuanced discussion（有層次的討論）
 - nuanced view / understanding（細膩的觀點、理解）
 - nuanced argument（分得清細節的論述）
+- a more nuanced view / understanding（更細膩的觀點，比較級是主導形式）
+- miss the nuance（沒抓到細微差別，名詞 nuance）
