@@ -5,12 +5,11 @@ description: "說明 request / response 邊界如何維持相容與可驗證"
 weight: 0
 ---
 
-
 API Contract 的核心概念是「client 與 service 對 request / response 行為達成一致」。它定義欄位、錯誤、版本相容與破壞性變更。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。
 
 ## 概念位置
 
-API Contract 位在 client、[API Gateway](/backend/knowledge-cards/api-gateway/) 與 application 之間。當外部呼叫者依賴穩定格式時，就需要這種 contract。
+API Contract 位在 client、[API Gateway](/backend/knowledge-cards/api-gateway/) 與 application 之間。當外部呼叫者依賴穩定格式時，就需要這種 contract。實際被依賴的範圍常大於文件承諾的範圍、見 [Hyrum's Law](/backend/knowledge-cards/hyrums-law/)。
 
 ## 可觀察訊號
 
