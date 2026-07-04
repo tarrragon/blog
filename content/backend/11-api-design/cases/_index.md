@@ -6,7 +6,7 @@ weight: 99
 tags: ["backend", "api-design", "case-study"]
 ---
 
-本案例庫收模組十一（API 設計與對外契約）的寫作素材：63 個經來源驗證的公開案例、按主題分組。每個案例是薄殼形態（觀察 / 判讀 / 對應大綱 / 引用源）、stage 1 audit 後依需要升級為 rich case。所有 source URL 於採集時（2026-07）經實際取回驗證可訪且內容對應；二手來源與 IETF draft 狀態在各檔內標明。
+本案例庫收模組十一（API 設計與對外契約）的寫作素材：77 個經來源驗證的公開案例、按主題分組。每個案例是薄殼形態（觀察 / 判讀 / 對應大綱 / 引用源）、stage 1 audit 後依需要升級為 rich case。所有 source URL 於採集時（2026-07）經實際取回驗證可訪且內容對應；二手來源與 IETF draft 狀態在各檔內標明。
 
 ## REST 與 hypermedia 流派（C1-C9）
 
@@ -106,6 +106,25 @@ tags: ["backend", "api-design", "case-study"]
 | C62  | [Slack Events API](/backend/11-api-design/cases/webhook-slack-events-retry/)            | 3 秒 ack、固定三次重試           | anchor         |
 | C63  | [Shopify webhooks](/backend/11-api-design/cases/webhook-shopify-ordering-dedup/)        | ordering 不保證、去重 header     | anchor（佐證） |
 
+## Status/Error 雙向契約（C64-C77）
+
+| 編號 | 案例                                                                                           | 主議題                              | 類型           |
+| ---- | ---------------------------------------------------------------------------------------------- | ----------------------------------- | -------------- |
+| C64  | [RFC 4918 207 Multi-Status](/backend/11-api-design/cases/status-207-multistatus-rfc4918/)      | status line 降格為「請讀 body」     | anchor（spec） |
+| C65  | [Google AIP 部分成功立場](/backend/11-api-design/cases/status-google-aip-partial-success/)     | 同步必原子、非同步 opt-in 部分成功  | anchor         |
+| C66  | [RFC 9110 202 Accepted](/backend/11-api-design/cases/status-202-noncommittal-rfc9110/)         | intentionally noncommittal          | anchor（spec） |
+| C67  | [RFC 9110 502/504](/backend/11-api-design/cases/status-502-504-gateway-ambiguity/)             | gateway 觀察 vs 上游執行狀態        | anchor（spec） |
+| C68  | [Brooker backoff + jitter](/backend/11-api-design/cases/retry-brooker-backoff-jitter/)         | N²、三種 jitter 公式實測            | anchor         |
+| C69  | [SRE Book cascading failures](/backend/11-api-design/cases/retry-sre-book-cascading-failures/) | retry 放大、budget、跨層疊乘        | anchor         |
+| C70  | [AWS DynamoDB 2015 事故](/backend/11-api-design/cases/retry-dynamodb-2015-storm/)              | 內部 retry 風暴、55% 錯誤率         | 反例           |
+| C71  | [Slack 2021-01-04 事故](/backend/11-api-design/cases/retry-slack-2021-recovery/)               | 復原期 retry + circuit breaking     | anchor（對照） |
+| C72  | [AWS retry 指南](/backend/11-api-design/cases/retry-aws-guidance-budget/)                      | retry storm 官方定義、分層限制      | anchor         |
+| C73  | [gRPC 兩層錯誤模型](/backend/11-api-design/cases/errorchain-grpc-two-layer-model/)             | 保證層 vs 選配層、中間節點盲區      | anchor         |
+| C74  | [gRPC code 產生者歧義](/backend/11-api-design/cases/errorchain-grpc-code-producer-ambiguity/)  | 收到的 code 不一定來自 server       | anchor         |
+| C75  | [AIP-193 錯誤內容規範](/backend/11-api-design/cases/errorchain-aip193-error-content/)          | 三層受眾、不假設內部實作            | anchor         |
+| C76  | [W3C Trace Context](/backend/11-api-design/cases/trace-w3c-trace-context/)                     | 傳播義務、security boundary restart | anchor（spec） |
+| C77  | [OWASP error handling](/backend/11-api-design/cases/errorchain-owasp-error-handling/)          | 錯誤訊息是偵察面、少暴露            | anchor（對照） |
+
 ## 案例覆蓋缺口（待補）
 
 下列大綱範圍在本案例庫中公開案例偏弱或缺、撰寫正文時要明示「以下分析依官方文件 / standard / 通用模式推導、非 case-driven」、或先補採集：
@@ -123,4 +142,5 @@ tags: ["backend", "api-design", "case-study"]
 - C40（Idempotency-Key draft）狀態 expired、C42（RateLimit headers draft）狀態 active v11 — 兩者引用都必須帶狀態、不可稱 RFC。
 - C14（Fielding 訪談）刊載於 InfoQ、內容為本人一手陳述、引用標「InfoQ 訪談」。
 - C27（WunderGraph）、C30（Buf）為利益相關 vendor 立場、批評點需與獨立來源（C22 / C25 / C32）互證後引用。
+- Status/Error 雙向契約批（C64-C77）於 2026-07 採集。RFC 9110 引文因 WebFetch 視窗截斷、以 rfc-editor 官方 .txt 取回逐字核對（同源同權威）；C72 的 Builders' Library 為 JS 渲染無法逐字驗證、引文以 REL05-BP03 為錨、Builders' Library 內容標意譯；C67 的 retry 歧義判讀、C75 的跨服務轉譯責任為推導、正文引用須標明。C70 postmortem 未逐字出現「retry storm」、官方定義在 C72。
 - Realtime 批（C55-C63）於 2026-07 採集、每個 source URL 經 WebFetch 實際取回驗證。C55 / C56 的 MDN 頁為開發者視角佐證、規範錨點以 WHATWG SSE spec（C55）與 RFC 6455（C56）為準；C57 / C59 / C60-C63 為 vendor 官方 docs、承諾為各 vendor 特定值、跨版本可能變、引用要帶 vendor 名。C58（RFC 6202）為 2011 Informational RFC、對照對象是 HTTP streaming 而非 WebSocket。
