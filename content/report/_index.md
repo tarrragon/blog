@@ -250,6 +250,7 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 - [先建 report 卡再進 skill](report-before-skill-not-after/) — report 是原則的 SSoT、skill 是操作化引用；先改 skill 再補 report 會讓規則缺根據、report 被擠到「有空再做」；標準流程從 report 卡開始
 - [常識是相對於讀者背景的](common-knowledge-is-relative-to-reader-background/) — 知識卡的建卡判準看「目標讀者群裡最不熟悉的那端能不能理解」、不看「作者覺得夠不夠常見」；.htaccess 對 PHP 工程師是常識、對 Node.js 工程師完全陌生；跨背景讀者群的教材幾乎所有領域特定術語都需要建卡
 - [#170 Description 是未來自己的 recall trigger、不是文章摘要](description-as-recall-trigger/)
+- [#209 教鑑別能力、不教操作流程](teach-judgment-not-procedure/) — 文章的知識目標是讓讀者帶走判斷力（面對新情境能自己評估），機制理解當主線、操作當自然推導的結果；避免威脅式（「一定不能」）、命令式（「記住」）、教訓式（「你就是因為」）的壓縮結論傳遞，展開推導過程讓讀者自己抵達結論；從 Preboot 卷文章重寫抽出（初版 checklist 結構 → 重寫為機制理解結構）
 
 文章功能定位（從 posts/ 方法論文章分類檢討抽出）：
 
