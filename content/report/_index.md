@@ -250,7 +250,9 @@ Case 引用對齊延伸（#146、從 backend/01.13 reviewer audit 抽出、補 #
 - [先建 report 卡再進 skill](report-before-skill-not-after/) — report 是原則的 SSoT、skill 是操作化引用；先改 skill 再補 report 會讓規則缺根據、report 被擠到「有空再做」；標準流程從 report 卡開始
 - [常識是相對於讀者背景的](common-knowledge-is-relative-to-reader-background/) — 知識卡的建卡判準看「目標讀者群裡最不熟悉的那端能不能理解」、不看「作者覺得夠不夠常見」；.htaccess 對 PHP 工程師是常識、對 Node.js 工程師完全陌生；跨背景讀者群的教材幾乎所有領域特定術語都需要建卡
 - [#170 Description 是未來自己的 recall trigger、不是文章摘要](description-as-recall-trigger/)
-- [#209 教鑑別能力、不教操作流程](teach-judgment-not-procedure/) — 文章的知識目標是讓讀者帶走判斷力（面對新情境能自己評估），機制理解當主線、操作當自然推導的結果；避免威脅式（「一定不能」）、命令式（「記住」）、教訓式（「你就是因為」）的壓縮結論傳遞，展開推導過程讓讀者自己抵達結論；從 Preboot 卷文章重寫抽出（初版 checklist 結構 → 重寫為機制理解結構）
+- [#209 教鑑別能力、不教操作流程](teach-judgment-not-procedure/) — 文章的知識目標決定結構：判斷力導向把機制理解當主線、操作當自然推導的結果；流程導向把步驟當主線。多數教學文章應走判斷力導向——讀者只需要步驟時查官方文件更快、文章的價值在於提供判斷力；從 Preboot 卷文章重寫抽出（checklist → 機制理解結構）
+- [#210 壓縮結論剝奪推導路徑](compressed-conclusion-strips-derivation/) — 結論是知識的壓縮形態、壓縮時丟掉推導路徑；威脅式（「一定不能」）、命令式（「記住」）、教訓式（「你就是因為」）是三種壓縮形式；命名 #150（喊話）/ #151（品質評價）/ #152（必然框架）三張卡共享但未被命名的根因——作者已走完推導但只輸出最後一步
+- [#211 複合問題先拆機制再談交互](compound-problem-decompose-then-interact/) — 問題由多個概念交互導致時、先各自教 A/B/C 的機制再談 A×B×C 交互；讀者理解各元件後交互作用是自然推導的；磁碟空間系列（APFS 空間池 + Cryptex + Simulator + App Container）四篇各教一個機制、用同一台機器當貫穿案例
 
 文章功能定位（從 posts/ 方法論文章分類檢討抽出）：
 
