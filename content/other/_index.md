@@ -1,25 +1,19 @@
 ---
 title: "雜項資訊"
 slug: "other"
-description: "不適合放進其他資料夾的雜項技術筆記，多半是 OS / 工具的小技巧"
+description: "不適合放進其他資料夾的雜項技術筆記，多半是工具的小技巧"
 tags: ["雜項", "工具技巧"]
 ---
 
-這個資料夾收錄**不適合放進其他資料夾的雜項技術筆記** — 多半是 OS / 工具的小技巧、跟特定開發專案無關。
+這個資料夾收錄**不適合放進其他資料夾的雜項技術筆記** — 多半是工具的小技巧、跟特定開發專案無關。
 
 典型內容：
 
 - [Android 無線除錯設定](android_wireless_debug/)
-- [macOS 多桌面快捷鍵](macos_muti_spaces/)
-- [macOS 新機基礎建設](macos_new_machine_setup/)
-- [macOS 磁碟空間診斷流程](macos_disk_space_diagnosis/)
-- [macOS App 聚合佔用報告](macos_app_footprint_report/)
-- [macOS APFS 卷結構與空間池](macos_apfs_volume_structure/)
-- [macOS Preboot 卷空間檢查](macos_preboot_volume_check/)
-- [macOS iOS Simulator Runtime 架構](macos_ios_simulator_runtime_architecture/)
-- [macOS 移除多餘 iOS Simulator](macos_remove_redundant_ios_simulators/)
-- [macOS 辨識 App 容器](macos_identify_app_containers/)
+- [Chrome 擴充套件開發記錄](chrome_extension_dev_record/)
 - [工具應用筆記](application/)（子資料夾）
+
+macOS 相關的系統架構與磁碟管理文章已搬到 [macOS](/macos/) 分類。
 
 ---
 
@@ -32,8 +26,9 @@ tags: ["雜項", "工具技巧"]
 3. **是中性 frame 的方法論？** → `record/`
 4. **是從 case 抽出的工程原則？** → `report/`
 5. **是後端 / Go / Python 教材？** → 對應的教材區（`backend/` / `go/` / `python/` 等）
-6. **跟工程無關、純粹是學到的知識點（字源、冷知識）？** → `til/`
-7. **以上都不是、純 OS / 工具小技巧** → **本資料夾**
+6. **是 macOS 系統架構、磁碟管理、開發環境？** → `macos/`
+7. **跟工程無關、純粹是學到的知識點（字源、冷知識）？** → `til/`
+8. **以上都不是、純工具小技巧** → **本資料夾**
 
 `other/` 是兜底資料夾、不是預設選擇。寫之前先確認其他選項都不適用。
 
