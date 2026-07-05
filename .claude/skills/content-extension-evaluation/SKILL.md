@@ -3,7 +3,7 @@ name: content-extension-evaluation
 description: "寫完核心章節 / 教學模組後評估「該補哪些延伸內容」的標準流程。產出 6 軸候選 + ROI 矩陣 + 立即補 / backlog 排序、避免完美主義 collapse 跟覆蓋率不足兩種反向誤判。觸發詞：延伸評估、補章節、章節後續、評估缺口、規模成長後續、extension 候選、內容後續、模組完成評估、長期維護、知識卡缺口、跨章整合、vendor 深入。Trigger when evaluating what extensions to add after completing a batch of teaching chapters."
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   category: writing-methodology
 ---
 
@@ -115,6 +115,10 @@ metadata:
   - [候選 18-20] 3 個半衰期 < 12 個月的內容
 ```
 
+### 附帶檢查：兜底資料夾主題浮現
+
+6 軸盤點同時掃兜底資料夾（如 `other/`）：有沒有 3+ 篇同主題文章、且文章之間有相互引用？有的話、建立新分類列入延伸候選。分類是內容累積到臨界量後的自然產物、不是事先規劃的空架子。詳見 [category-emerges-from-depth](references/principles/category-emerges-from-depth.md)。
+
 ### Step 2：每個候選評估「成本 × 價值」
 
 | 候選   | 成本 | 價值 | 急迫度 |
@@ -189,4 +193,5 @@ D. 全部留 backlog
 
 ---
 
+**Version**: 1.1.0 — Step 1 加「兜底資料夾主題浮現」附帶檢查：3+ 篇同主題 + 互相引用 = 分類浮現訊號、建分類列入延伸候選；新增 `category-emerges-from-depth` principle 卡
 **Version**: 1.0.0

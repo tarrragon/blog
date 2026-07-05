@@ -67,6 +67,10 @@ metadata:
 
 **Case 引用段落的三段式結構**：三段式是案例引用段落的順序紀律 — 把「概念 → 案例 → 操作」三層分開承擔（段首給概念定義、case 引用居中、通用工程知識展開）、讓段落結構跟讀者學習新概念的認知順序對齊。LLM 從 case 反推內容容易把 case 揭露當概念出發點、實證觀察 11/12 段都犯這個錯。詳見 [case-citation-three-part-structure](references/principles/case-citation-three-part-structure.md)。
 
+**知識目標決定文章結構**：文章寫完後讀者帶走的是判斷能力（面對新情境能自己評估）還是操作步驟（照做能解決特定問題）——兩者需要不同的結構。判斷力導向把機制理解當主線、操作當自然推導的結果；流程導向把步驟當主線。多數教學文章應走判斷力導向——文章的價值在於提供判斷力、這是官方文件不做的事。詳見 [teach-judgment-not-procedure](references/principles/teach-judgment-not-procedure.md)。
+
+**複合問題先拆機制再談交互**：問題由多個概念交互導致時、先各自教 A / B / C 的機制、再談 A×B×C 交互。讀者理解各元件後交互作用是自然推導的。各概念獨立成篇、文章之間用連結而非重複來串接。判讀訊號是文章裡出現「另外還有一個原因是...」的堆疊式展開。詳見 [compound-problem-decompose-then-interact](references/principles/compound-problem-decompose-then-interact.md)。
+
 **原子筆記要有向上的議題入口**：承載知識的原子筆記（Zettelkasten 卡 / glossary / 術語條目）不是字典條目 — 字典答「這個詞是什麼」、承載知識答「你在討論什麼、撞到什麼問題、才需要這知識」。撰寫者有預設情境讀者沒有、所以每張卡（或其上層）要從情境進入而非劈頭給定義：建議題 hub（以讀者遇到的問題為題）討論再分流到原子卡、卡頂回指議題、讓搜尋直接落地者也有回路。沒這層卡淪字典、讀者沒有觸發點、不知何時用。詳見 [atomic-note-needs-situational-entry](references/principles/atomic-note-needs-situational-entry.md)。
 
 ### 4. 可查詢性（Searchability）
@@ -217,6 +221,7 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-03
+**Version**: 0.25.0 — 原則 3 加文章結構上游決策：(1) 新增 principle 卡 [teach-judgment-not-procedure](references/principles/teach-judgment-not-procedure.md)（知識目標決定文章結構、判斷力導向 vs 流程導向、多數教學文章走判斷力導向）；(2) 新增 principle 卡 [compound-problem-decompose-then-interact](references/principles/compound-problem-decompose-then-interact.md)（複合問題先拆機制再談交互、各概念獨立成篇用連結串接）；(3) teaching-prose-neutral-register 補「壓縮結論」共同根因段（喊話/誇飾/必然/恐嚇/威脅/命令/教訓共享「作者走完推導但只輸出最後一步」機制、命名四類違反的統一解釋）
 **Version**: 0.24.0 — 地區用語 keyword bank 加慣用語層：新增 `regional-idioms-evade-keyword-bank` portable principle（地區慣用語直譯是開放集合、grep 列舉不完、同源讀得懂會放行、跟 register 同源盲區同構、需目標地區讀者異源冷讀）；地區用語 grep 拆單詞層（封閉、掃得到）+ 慣用語層（拍腦袋/靠譜/給力… 已知個案、非窮舉）；從 devops 容量規劃多輪審查漏抓「拍腦袋」的 self-case 抽出（三輪 agent reviewer 都沒抓到、使用者在地冷讀點出）
 **Version**: 0.23.0 — 新增「泛用詞濫用」字句層 frame（讀者回饋觸發：反覆用「坑」把不同情境壓成同一模糊標籤、繁中少用）：keyword bank 加 `rg "坑|東西|搞|弄|處理一下|情況"`、新增 principle 卡 [avoid-overused-generic-words](references/principles/avoid-overused-generic-words.md)（依情境換精確詞、跟 colloquial/regional/cadence 三卡的軸區分）、writing-articles 輪 8 清單同步；命中密集且各指不同事才違規、真泛指 / 引號 / 輕度 hook 合規
 
