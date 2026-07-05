@@ -6,7 +6,7 @@ weight: 50
 tags: ["backend", "knowledge-card", "reliability"]
 ---
 
-Correlated failure（相關失效 / 共命運失效）指多個以為彼此獨立的元件、其實共享一個隱藏的失效觸發器、於是在同一時刻一起壞。它戳破的假設是「多放幾份就更可靠」—— 冗餘只在失效彼此獨立時才乘上可靠性；共享觸發器讓 N 份副本的有效冗餘塌回 1。
+Correlated failure（相關失效 / 共命運失效）指多個以為彼此獨立的元件、其實共享一個隱藏的失效觸發器、於是在同一時刻一起壞。它戳破的假設是「多放幾份就更可靠」—— 冗餘只在失效彼此獨立時才乘上可靠性；共享觸發器讓 N 份副本的有效冗餘塌回 1。跟 [cascading failure](/backend/knowledge-cards/cascading-failure/) 常接力出現，但觸發機制不同。
 
 ## 常見的共享觸發器
 
