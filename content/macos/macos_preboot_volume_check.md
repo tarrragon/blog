@@ -30,11 +30,11 @@ Cryptex 解決的問題是安全更新的部署速度。在 Cryptex 之前，修
 
 Preboot 裡還有一個 `restore-staged` 目錄，是系統更新機制的暫存區。macOS 會在背景下載更新資料（韌體映像、加密的 DMG、核心快取），先 staging 到這裡，等使用者同意安裝或自動維護窗口到來時才套用。
 
-這個目錄的大小在 0-2G 之間浮動，取決於是否有待套用的更新。它的內容不一定對應「當前版本的下一版」——這次實測中，`restore-staged` 裡的 `RestoreVersion.plist` 顯示的版本號是 26.3.1（這是 plist 內部的 restore 版本號，跟 macOS 行銷版本號不同），而當前系統是 macOS 15.3.1。這表示 staging 的資料可能是 Apple 為未來升級預先準備的，跟「有待套用的安全更新」是不同的 staging 類型。
+這個目錄的大小在 0-2G 之間浮動，取決於是否有待套用的更新。它的內容不一定對應「當前版本的下一版」——一台 macOS 15.3.1 機器上的實測中，`restore-staged` 裡的 `RestoreVersion.plist` 顯示的版本號是 26.3.1（這是 plist 內部的 restore 版本號，跟 macOS 行銷版本號不同），而當前系統是 macOS 15.3.1。這表示 staging 的資料可能是 Apple 為未來升級預先準備的，跟「有待套用的安全更新」是不同的 staging 類型。
 
 ## du 跟 diskutil 數字不一致的原因
 
-用 `du` 量 Preboot 會得到比 `diskutil info` 更大的數字（這次實測：`du` 報 13G，`diskutil` 報 8.5G）。原因是 Preboot 裡的 `os.dmg` 和 `os.clone.dmg` 是 APFS clone，`du` 各算一次、`diskutil` 共用區塊只算一次。du 和 diskutil 的差異機制見 [APFS 卷結構](../macos_apfs_volume_structure/)。
+用 `du` 量 Preboot 會得到比 `diskutil info` 更大的數字（實測數據：`du` 報 13G，`diskutil` 報 8.5G）。原因是 Preboot 裡的 `os.dmg` 和 `os.clone.dmg` 是 APFS clone，`du` 各算一次、`diskutil` 共用區塊只算一次。du 和 diskutil 的差異機制見 [APFS 卷結構](../macos_apfs_volume_structure/)。
 
 判斷 Preboot 佔用時用 `diskutil info` 的 Volume Used Space：
 

@@ -24,7 +24,7 @@ UUID 命名的原因是 iOS App 的容器管理走的是 iOS 的路徑——iOS 
 
 ## 遊戲是主要的空間消耗者
 
-iOS App on Mac 裡佔用最大的幾乎都是遊戲。手遊的語音包、素材、更新包動輒數 GB，這些資源下載到 Container 的 `Data/Documents/` 裡。這次排查的兩個案例：
+iOS App on Mac 裡佔用最大的幾乎都是遊戲。手遊的語音包、素材、更新包動輒數 GB，這些資源下載到 Container 的 `Data/Documents/` 裡。一台 256G Apple Silicon Mac 上的實際案例：
 
 - Epic Seven（第七史詩，`com.stove.epic7.ios`）：9.7G
 - Arknights（明日方舟台服，`tw.txwy.ios.arknights`）：8.7G
@@ -39,7 +39,7 @@ iOS App on Mac 的容器跟所有 App 資料一樣，儲存在 [APFS container](
 
 iOS App on Mac 不一定出現在 `/Applications` 資料夾或 Finder 的應用程式列表裡。它們的 `.app` 本體放在系統管理的位置（通常在 `/Applications` 的子目錄或 App Store 的快取路徑），Launchpad 能看到但 Finder 的應用程式資料夾不一定列出。
 
-這代表用 `du -shx /Applications/*.app` 排查空間大戶時會完全漏掉 iOS App。它們的空間佔用只出現在 `~/Library/Containers/` 裡，而且因為 UUID 命名，不展開辨識就不知道是哪個 App。
+用 `du -shx /Applications/*.app` 排查空間大戶時會完全漏掉 iOS App。它們的空間佔用只出現在 `~/Library/Containers/` 裡，而且因為 UUID 命名，不展開辨識就不知道是哪個 App。
 
 ## 移除後容器可能殘留
 

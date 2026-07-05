@@ -70,7 +70,7 @@ du -shx ~/Library/Application\ Support/Steam/steamapps/common/* 2>/dev/null | so
 
 ## Content probing 為什麼不可靠
 
-這次排查的教訓：兩個 UUID 容器被 content probing（探測目錄內容特徵）誤判為 HoYoverse 遊戲。實際讀 plist 後發現是 Epic Seven（第七史詩）和 Arknights（明日方舟），完全不同的廠商。
+實際發生過的誤判案例：兩個 UUID 容器被 content probing（探測目錄內容特徵）誤判為 HoYoverse 遊戲。實際讀 plist 後發現是 Epic Seven（第七史詩）和 Arknights（明日方舟），完全不同的廠商。
 
 Content probing 的根本問題是同樣的目錄名（`data.pack`）在不同遊戲裡代表不同東西，遊戲引擎共用（Unity、Unreal）會產生相似的目錄結構。一個 heuristic 命中只代表結構相似，輸出一個看起來確定的名字會導致使用者基於錯誤資訊做決策。
 

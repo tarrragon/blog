@@ -19,7 +19,7 @@ slug: "teach-judgment-not-procedure"
 
 ## 這次的情境
 
-Preboot 卷文章初版的結構：
+一篇介紹 macOS Preboot 卷空間佔用的文章，初版的結構：
 
 1. 第一層：確認實際大小（指令 + 門檻值）
 2. 第二層：檢查內部結構（指令 + 正常特徵列表）
@@ -52,8 +52,8 @@ Preboot 卷文章初版的結構：
 
 ## 跟其他原則的關係
 
-- [#210 壓縮結論剝奪推導路徑](../compressed-conclusion-strips-derivation/)：知識目標是判斷力時，傳遞方式自然會展開推導過程。知識目標是流程時，容易落入威脅/命令/教訓式的壓縮傳遞。#209 決定目標，#210 約束傳遞方式。
-- [#211 複合問題先拆機制再談交互](../compound-problem-decompose-then-interact/)：判斷力導向的文章在面對多概念交互時的展開結構。#209 決定主線是機制，#211 處理多個機制如何組織。
+- [#210 壓縮結論剝奪推導路徑](../compressed-conclusion-strips-derivation/)：知識目標是判斷力時，傳遞方式自然會展開推導過程。知識目標是流程時，容易落入威脅/命令/教訓式的壓縮傳遞——因為 #209 選了判斷力作為目標，#210 的展開推導才有了錨點。
+- [#211 複合問題先拆機制再談交互](../compound-problem-decompose-then-interact/)：判斷力導向的文章在面對多概念交互時的展開結構。先由 #209 確認主線是機制理解，再用 #211 的拆分原則決定多個機制如何各自成篇。
 - [#170 Description 是 recall trigger](../description-as-recall-trigger/)：description 的功能建立在文章有明確的知識目標上。判斷力導向的文章，description 寫「什麼情境下需要這份判斷力」；流程導向的文章，description 寫「什麼情境下需要這份操作步驟」。
 - [#166 重點優先陳述是跨語言的資訊結構原則](../lead-with-the-point-cross-language/)：判斷力導向的文章天然符合核心先行——機制理解本身就是核心，操作步驟是衍生。
 - AGENTS.md 原則三「商業邏輯先於 CASE」：機制先於操作是同一個原則在不同粒度的體現。

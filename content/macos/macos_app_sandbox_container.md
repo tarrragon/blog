@@ -39,15 +39,15 @@ Mac App Store 上架的 App 必須啟用沙箱。非 App Store 分發的 App 可
 
 ## 命名慣例：bundle ID vs UUID
 
-Container 目錄的命名有兩種：
+Container 目錄的命名方式取決於 App 的來源。
 
-**Bundle ID**（例如 `com.amazon.Lassen`）：Mac 原生 App 使用 bundle ID 當目錄名。從名字就能辨識——`com.amazon` 是 Amazon、`com.docker.docker` 是 Docker。
+**Bundle ID**（App 的唯一識別碼，格式為反向域名，例如 `com.amazon.Lassen`）：Mac 原生 App 使用 bundle ID 當目錄名。從名字就能辨識——`com.amazon` 是 Amazon、`com.docker.docker` 是 Docker。
 
 **UUID**（例如 `D678BD0C-AEB0-4E05-B0D2-58F5C45F0207`）：[iOS App on Mac](../macos_ios_app_on_mac/) 使用 UUID 當目錄名，從名字完全無法辨識是哪個 App。辨識方法是讀 Container 根部的 `.com.apple.containermanagerd.metadata.plist`（見 [辨識 App 容器](../macos_identify_app_containers/)）。
 
 ## 佔用的兩類：快取 vs 資料
 
-清理 Container 時的核心判斷是佔用屬於哪一類：
+清理 Container 時要判斷佔用的性質——快取刪了會自動重建，資料刪了就消失。
 
 **快取類**（`Data/Library/Caches/`、`Data/tmp/`）：App 產生的衍生物，刪除後 App 自動重建。清除零風險，最多讓 App 下次啟動慢一點或需要重新登入。
 
