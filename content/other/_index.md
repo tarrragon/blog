@@ -15,6 +15,8 @@ tags: ["雜項", "工具技巧"]
 - [macOS 磁碟空間診斷流程](macos_disk_space_diagnosis/)
 - [macOS App 聚合佔用報告](macos_app_footprint_report/)
 - [macOS Preboot 卷空間檢查](macos_preboot_volume_check/)
+- [macOS 移除多餘 iOS Simulator](macos_remove_redundant_ios_simulators/)
+- [macOS 辨識 App 容器](macos_identify_app_containers/)
 - [工具應用筆記](application/)（子資料夾）
 
 ---
