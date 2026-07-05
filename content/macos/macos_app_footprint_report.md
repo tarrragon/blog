@@ -17,16 +17,16 @@ tags: ["macos", "disk-space", "homebrew", "troubleshooting", "tooling"]
 
 聚合的第一步是知道一個 App 會把資料寫到哪些固定位置。下表只列與空間相關的主要位置（非 `~/Library` 全量），macOS 對它們有約定，每個位置承擔不同責任，也決定了它能不能安全清掉。
 
-| 位置                                 | 放什麼                    | 清掉的後果               |
-| ------------------------------------ | ------------------------- | ------------------------ |
-| `/Applications/*.app`                | 程式本體                  | 等於移除 App             |
-| `~/Library/Caches/`                  | 快取                      | 下次自動重建，安全       |
-| `~/Library/HTTPStorages/`            | 網路快取（cookie / 暫存） | 多半要重新登入，大致安全 |
-| `~/Library/Application Support/`     | 設定與使用者資料          | 掉資料                   |
-| `~/Library/Containers/`              | 沙箱 App 的完整家目錄     | 掉資料                   |
-| `~/Library/Group Containers/`        | 同廠商 App 共享的資料     | 掉資料、可能影響多個 App |
-| `~/Library/Saved Application State/` | 視窗位置與復原狀態        | 下次開窗位置重置，無傷   |
-| `~/Library/Logs/`                    | 日誌                      | 安全                     |
+| 位置                                                       | 放什麼                    | 清掉的後果               |
+| ---------------------------------------------------------- | ------------------------- | ------------------------ |
+| `/Applications/*.app`                                      | 程式本體                  | 等於移除 App             |
+| `~/Library/Caches/`                                        | 快取                      | 下次自動重建，安全       |
+| `~/Library/HTTPStorages/`                                  | 網路快取（cookie / 暫存） | 多半要重新登入，大致安全 |
+| `~/Library/Application Support/`                           | 設定與使用者資料          | 掉資料                   |
+| [`~/Library/Containers/`](../macos_app_sandbox_container/) | 沙箱 App 的完整家目錄     | 掉資料                   |
+| `~/Library/Group Containers/`                              | 同廠商 App 共享的資料     | 掉資料、可能影響多個 App |
+| `~/Library/Saved Application State/`                       | 視窗位置與復原狀態        | 下次開窗位置重置，無傷   |
+| `~/Library/Logs/`                                          | 日誌                      | 安全                     |
 
 這張表的關鍵分界是「快取」與「資料」。`Caches` 和 `HTTPStorages` 是純衍生物，清掉只是讓 App 下次重新下載或重建，最多重新登入一次，所以是回收空間時的首選。`Application Support`、`Containers`、`Group Containers` 則是使用者資料，Steam 的遊戲、Kindle 的書庫、聊天記錄都在這裡，刪了就真的沒了。`Group Containers` 還要多一層留意：它是同一個開發商旗下多個 App 共享的目錄，動它可能同時影響好幾個 App。
 
@@ -34,7 +34,7 @@ tags: ["macos", "disk-space", "homebrew", "troubleshooting", "tooling"]
 
 ## 命名不一致是聚合的主要難點
 
-把資料夾正確歸給某個 App 的難點在於：macOS 對這些目錄沒有統一的命名規則。有些 App 用它的 bundle id（例如 `com.valvesoftware.steam`）當目錄名，有些直接用 App 的顯示名稱（例如 `Steam`），同一個 App 的不同位置甚至各用一種。
+把資料夾正確歸給某個 App 的難點在於：macOS 對這些目錄沒有統一的命名規則。有些 App 用它的 bundle id（例如 `com.valvesoftware.steam`）當目錄名，有些直接用 App 的顯示名稱（例如 `Steam`），同一個 App 的不同位置甚至各用一種。[iOS App on Mac](../macos_ios_app_on_mac/) 的容器更用 UUID 命名，完全看不出是哪個 App（[辨識方法](../macos_identify_app_containers/)）。
 
 腳本的做法是對每個 App 先讀出它的 bundle id，然後 `Caches`、`Application Support`、`Logs` 這幾個位置兩種命名都比對一次，bundle id 專屬的位置（`Containers`、`HTTPStorages`、`Saved Application State`）則用 bundle id 找。`Group Containers` 又是另一種格式，名稱前面多一段開發商的 team id（10 碼英數，像 `ABCDE12345.group.com.foo`），因此改用 bundle id 做子字串比對。這套規則涵蓋了絕大多數 App，但用罕見自訂命名的資料仍可能漏抓，這是聚合式估算的固有邊界，腳本在輸出裡據實標明「可能漏抓」而不假裝是精確值。
 

@@ -58,6 +58,8 @@ diskutil info /System/Volumes/Preboot | grep "Volume Used Space"
 └── var/, usr/, ...         # 開機輔助資料（~25M）
 ```
 
+`cryptex1/current/` 裡的 `os.dmg` 和 `app.dmg` 分別承擔不同層級的安全更新：OS Cryptex（`os.dmg`，約 5.4G）包含核心安全元件與底層系統框架；App Cryptex（`app.dmg`，約 20M）包含 Safari、WebKit 等使用者空間元件。兩者獨立更新——修 Safari 漏洞只需替換 `app.dmg`，修核心安全問題才動 `os.dmg`。
+
 Volume Group UUID 正常情況只有一個，對應當前系統的 Data 卷。確認方式：
 
 ```bash

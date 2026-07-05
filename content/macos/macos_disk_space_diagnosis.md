@@ -13,7 +13,7 @@ tags: ["macos", "disk-space", "apfs", "time-machine", "troubleshooting", "toolin
 
 排查磁碟的第一步是分辨空間到底去哪：是被真實檔案佔走，還是被系統的快照與 purgeable（系統可隨時回收的緩衝空間）暫時佔住。這兩者的處理方式完全不同，先分清楚才不會白清。
 
-在 APFS（Apple File System，macOS 的預設檔案系統）上，根目錄 `/` 是唯讀的系統封印卷，真正存放使用者資料的是 `/System/Volumes/Data`，而它們和其他卷（Preboot、Recovery、VM、模擬器 runtime）共用同一個 container（容器，APFS 管理空間的最上層單位）的空間池。判斷「還剩多少」要看整個 container 的可用空間，而不是單一卷的數字。
+在 [APFS](../macos_apfs_volume_structure/)（Apple File System，macOS 的預設檔案系統）上，根目錄 `/` 是唯讀的系統封印卷，真正存放使用者資料的是 `/System/Volumes/Data`，而它們和其他卷（[Preboot](../macos_preboot_volume_check/)、Recovery、VM、模擬器 runtime）共用同一個 container（容器，APFS 管理空間的最上層單位）的空間池。判斷「還剩多少」要看整個 container 的可用空間，而不是單一卷的數字。
 
 ```bash
 df -h /System/Volumes/Data
@@ -50,7 +50,7 @@ du -sh ~/some/large.img
 ls -lh ~/some/large.img
 ```
 
-定位順序是由外往內逐層收斂：先看家目錄前 20 大，鎖定最大的子樹（這次是 `~/Library` 70G 左右），再往下展開 `~/Library/Application Support`、`~/Library/Containers`，直到找到具體的檔案或目錄。
+定位順序是由外往內逐層收斂：先看家目錄前 20 大，鎖定最大的子樹（這次是 `~/Library` 70G 左右），再往下展開 `~/Library/Application Support`、[`~/Library/Containers`](../macos_app_sandbox_container/)，直到找到具體的檔案或目錄。Containers 裡的 UUID 目錄是 [iOS App on Mac](../macos_ios_app_on_mac/) 的容器，辨識方式見 [Container 辨識](../macos_identify_app_containers/)。
 
 ```bash
 du -shx ~/* ~/.[!.]* 2>/dev/null | sort -rh | head -20

@@ -90,6 +90,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作"]
 - **[#149 keyword bank 命中是候選、不是判決](../keyword-bank-hit-is-candidate-not-verdict/)**：本卡是 #149 的 content 對偶。#149 是 **review-process**（偵測≠判定、怎麼審）、本卡是 **content 原則**（prose 該怎麼寫）。#149 把「安撫贅語」當 coverage-gap 的**舉例**、本卡把它**確立成 content 原則**。產生情境不同：#149 源於 reviewer 誤判 grep 命中、本卡源於寫作當下 prose 對讀者喊話。
 - **[#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/)**：本卡的三形式裡、第二人稱跟祈使**沒有固定關鍵詞**、是 #114 keyword bank 機制的已知盲區 —— 補強的是 #114 的 reader-simulation 機制（換視角）、不是 keyword bank（換工具）。
 - **AGENTS 原則六（讀者定位用內容體現）**：兩者相鄰但機制不同。原則六禁「**貼標籤**」（叫讀者『新手 / 新人』）、本卡禁「**稱呼 / 指揮**」（你 / 先讀懂）。可以不貼標籤卻仍在喊話（「你天天寫的」沒叫讀者新手、仍是第二人稱代入）—— 本卡補原則六沒覆蓋的 stance 維度。
+- **[#210 壓縮結論剝奪推導路徑](../compressed-conclusion-strips-derivation/)**：對讀者喊話是壓縮結論的一種表徵（stance 維度）——把「讀者需要 X 知識」壓縮成「你一定要學 X」。#210 命名了本卡、#151、#152 共享的底層機制。
 
 ---
 
