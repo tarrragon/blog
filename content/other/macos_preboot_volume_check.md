@@ -10,9 +10,7 @@ tags: ["macos", "disk-space", "apfs", "apple-silicon"]
 
 ## Preboot 在開機流程中的角色
 
-macOS 的 APFS container 把一顆實體磁碟切成多個卷，各自承擔不同責任。開機時，系統需要在解鎖使用者資料之前就載入開機載入器、核心快取、安全驗證票證——這些東西不能放在加密的 Data 卷裡，否則解密前無法讀取。Preboot 卷就是放這些開機前置資料的地方。
-
-APFS container 內所有卷共用同一個空間池，從同一塊空間動態分配。Preboot 佔多少，Data 卷就少多少，所以 Preboot 的大小直接影響使用者可用的空間。
+Preboot 是 [APFS container](../macos_apfs_volume_structure/) 裡的五個卷之一，專門存放開機前置資料——開機載入器、核心快取、安全驗證票證。這些東西必須在 Data 卷解鎖之前就能讀取，所以放在獨立的卷裡。所有卷共用同一個空間池，Preboot 佔多少 Data 就少多少。
 
 ## Intel Mac 的 Preboot：簡單的開機載入器
 
@@ -36,13 +34,9 @@ Preboot 裡還有一個 `restore-staged` 目錄，是系統更新機制的暫存
 
 ## du 跟 diskutil 數字不一致的原因
 
-用 `du -shx` 量 Preboot 會得到比 `diskutil info` 更大的數字。這次實測裡，`du` 報了約 13G，`diskutil` 報 8.5G。
+用 `du` 量 Preboot 會得到比 `diskutil info` 更大的數字（這次實測：`du` 報 13G，`diskutil` 報 8.5G）。原因是 Preboot 裡的 `os.dmg` 和 `os.clone.dmg` 是 APFS clone，`du` 各算一次、`diskutil` 共用區塊只算一次。du 和 diskutil 的差異機制見 [APFS 卷結構](../macos_apfs_volume_structure/)。
 
-差異來自 APFS clone。Preboot 裡的 `os.dmg` 和 `os.clone.dmg` 是 APFS clone——底層共用同一份資料區塊。`du` 是逐檔計算，把兩個檔案各算一次；`diskutil` 看的是卷級的實際區塊佔用，共用的區塊只算一次。
-
-同樣的情況也出現在 `Cryptexes/OS` 和 `Cryptexes/Incoming`（系統層的 Cryptex 掛載點），它們跟 Preboot 裡的 DMG 有 clone 關係。用 `du` 逐層加總會嚴重膨脹。
-
-判斷 Preboot 佔用時，永遠用 `diskutil info` 的 Volume Used Space，不用 `du`。
+判斷 Preboot 佔用時用 `diskutil info` 的 Volume Used Space：
 
 ```bash
 diskutil info /System/Volumes/Preboot | grep "Volume Used Space"
