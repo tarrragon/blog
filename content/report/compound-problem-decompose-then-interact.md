@@ -21,12 +21,12 @@ slug: "compound-problem-decompose-then-interact"
 
 磁碟空間不足這個問題涉及四個獨立概念：
 
-| 概念                      | 機制                                                 | 獨立文章                                                        |
-| ------------------------- | ---------------------------------------------------- | --------------------------------------------------------------- |
-| APFS container 空間池     | 所有卷共用空間、Preboot 佔多少 Data 就少多少         | [磁碟空間診斷](../macos_disk_space_diagnosis/)                  |
-| Cryptex 改變 Preboot 大小 | Apple Silicon 的安全更新機制讓 Preboot 從 1G 跳到 8G | [Preboot 卷](../macos_preboot_volume_check/)                    |
-| iOS Simulator 多版本累積  | 每組 runtime 約 16G，裝兩組就 32G                    | [移除多餘 Simulator](../macos_remove_redundant_ios_simulators/) |
-| App Container UUID 命名   | iOS on Mac App 用 UUID 命名、無法辨識佔用來源        | [辨識 App 容器](../macos_identify_app_containers/)              |
+| 概念                      | 機制                                                 | 獨立文章                                                            |
+| ------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------- |
+| APFS container 空間池     | 所有卷共用空間、Preboot 佔多少 Data 就少多少         | [磁碟空間診斷](/macos/macos_disk_space_diagnosis/)                  |
+| Cryptex 改變 Preboot 大小 | Apple Silicon 的安全更新機制讓 Preboot 從 1G 跳到 8G | [Preboot 卷](/macos/macos_preboot_volume_check/)                    |
+| iOS Simulator 多版本累積  | 每組 runtime 約 16G，裝兩組就 32G                    | [移除多餘 Simulator](/macos/macos_remove_redundant_ios_simulators/) |
+| App Container UUID 命名   | iOS on Mac App 用 UUID 命名、無法辨識佔用來源        | [辨識 App 容器](/macos/macos_identify_app_containers/)              |
 
 每個概念獨立成篇，各自教機制。讀者讀完任何一篇都能處理該概念的問題。四篇合起來覆蓋「磁碟空間不足」的複合問題，讀者理解四個機制後就能自己判斷哪些該清、清多少、風險是什麼。
 

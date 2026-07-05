@@ -22,7 +22,7 @@ weight: 0
 | 磁碟空間      | `df -h ~`                 | 至少 3 GB 剩餘給 runtime + 1B 模型 |
 | port 11434    | `lsof -i :11434`          | 無輸出（port 沒被佔）              |
 
-表中 `brew --version` 這關若還沒過、代表 Homebrew 沒裝。新機從零的安裝順序（Homebrew、PATH、bash）見 [macOS 新機基礎建設](/other/macos_new_machine_setup/)。
+表中 `brew --version` 這關若還沒過、代表 Homebrew 沒裝。新機從零的安裝順序（Homebrew、PATH、bash）見 [macOS 新機基礎建設](/macos/macos_new_machine_setup/)。
 
 選 1B 模型只是為了驗證流程、能力很弱、實際寫 code 場景請用 14B / 31B 級。模型大小跟記憶體 / 磁碟對應關係見 [0.5 Apple Silicon 記憶體預算](/llm/00-foundations/hardware-memory-budget/)。
 
