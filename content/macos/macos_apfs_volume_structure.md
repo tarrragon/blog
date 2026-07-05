@@ -14,7 +14,7 @@ APFS 把一顆實體磁碟組織成三層：
 
 **Physical Store** 是實體磁碟上的一個分割區。一台 Mac 的內建 SSD 通常有三個分割區：ISC（約 500MB，安全啟動用）、主分割區（幾乎佔滿整顆磁碟）、Recovery（約 5G）。主分割區裝載一個 APFS Container。
 
-**Container** 是空間管理的最上層單位。它從 Physical Store 拿到一塊空間，再分配給底下的 Volume。關鍵設計是：Container 裡的所有 Volume 共用同一個空間池，沒有預先劃分的配額。這代表任何一個 Volume 都能用到整個 Container 的剩餘空間，但也代表任何一個 Volume 膨脹都會壓縮其他 Volume 的可用空間。
+**Container**（APFS Container，磁碟空間管理單位，跟 [App Sandbox 的 Container](../macos_app_sandbox_container/) 是不同層級的概念）是空間管理的最上層單位。它從 Physical Store 拿到一塊空間，再分配給底下的 Volume。關鍵設計是：Container 裡的所有 Volume 共用同一個空間池，沒有預先劃分的配額。這代表任何一個 Volume 都能用到整個 Container 的剩餘空間，但也代表任何一個 Volume 膨脹都會壓縮其他 Volume 的可用空間。
 
 ```bash
 # 查看 Container 的空間分配
@@ -71,7 +71,7 @@ diskutil apfs list | grep -A5 "Container disk3" | grep "Capacity Not Allocated"
 
 差異在 APFS clone。Clone 讓多個檔案共用同一份底層資料區塊——修改其中一個時才複製被改的區塊（copy-on-write）。`du` 逐檔計算，每個 clone 各算一次；`diskutil` 看 Volume 層的實際區塊佔用，共用的只算一次。
 
-這就是為什麼用 `du` 量 Preboot 卷會得到比 `diskutil info` 更大的數字（見 [Preboot 卷](../macos_preboot_volume_check/)）——Preboot 裡的 `os.dmg` 和 `os.clone.dmg` 是 APFS clone，`du` 報 11G，`diskutil` 報 5.4G。
+這就是為什麼用 `du` 量 Preboot 卷會得到比 `diskutil info` 更大的數字（見 [Preboot 卷](../macos_preboot_volume_check/)）——Preboot 裡的 `os.dmg` 和 `os.clone.dmg` 是 APFS clone，`du` 把兩個檔案各算一次報約 11G，但 `diskutil` 看實際區塊佔用只有約 5.4G（單一 os.dmg 的大小），整個 Preboot 卷的 `diskutil` 佔用是 8.5G（含其他開機資料）。
 
 **Sparse 檔案**是另一個差異來源。Sparse 檔案宣告了一個邏輯大小，但只有寫入過的區塊才真正佔磁碟。`ls -l` 和 `find -size` 看的是邏輯大小，`du` 看的是實際佔用。容器映像（OrbStack、VM 磁碟映像）常是 sparse 檔，邏輯大小可能是實際佔用的數十倍。排查空間大戶時一律用 `du`，不信 `ls` 的數字。
 

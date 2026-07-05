@@ -3,7 +3,7 @@ title: "macOS App Sandbox 與 ~/Library/Containers 架構"
 date: 2026-07-05
 slug: "macos-app-sandbox-container"
 description: "排查磁碟空間時看到 ~/Library/Containers 佔了幾十 GB、想知道哪些能清時需要理解的沙箱機制。Container 是 App 的完整家目錄副本，結構固定但內容分快取與資料兩類。"
-tags: ["macos", "disk-space", "apple-silicon"]
+tags: ["macos", "disk-space", "app-sandbox"]
 ---
 
 `~/Library/Containers` 是 macOS 沙箱（App Sandbox）機制的產物。每個啟用沙箱的 App 在這裡有一個獨立的目錄，作為該 App 的隔離環境。排查磁碟空間時，Containers 常是 `~/Library` 裡最大的子目錄之一，理解它的結構才能判斷哪些佔用是可以清除的快取、哪些是動不得的使用者資料。

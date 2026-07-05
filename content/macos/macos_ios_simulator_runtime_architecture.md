@@ -2,7 +2,7 @@
 title: "iOS Simulator Runtime 架構：為什麼一組要 16G"
 date: 2026-07-05
 slug: "macos-ios-simulator-runtime-architecture"
-description: "iOS Simulator runtime 每組約 16G（Bundle 8G + Runtime 8G），以 disk image 形式儲存在 Data 卷上、掛載成獨立 APFS Container。理解這個架構後才能判斷裝幾組合理、刪除回收多少空間。"
+description: "iOS Simulator runtime 以 disk image 形式儲存在 Data 卷上、掛載成獨立 APFS Container，每組佔用遠超多數人預期。理解 Bundle + Runtime 的雙 DMG 架構後才能判斷裝幾組合理、刪除回收多少空間。"
 tags: ["macos", "xcode", "ios-simulator", "disk-space", "apple-silicon"]
 ---
 
