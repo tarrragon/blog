@@ -1,127 +1,91 @@
 ---
-title: "macOS Preboot 卷空間檢查：Apple Silicon 的 Cryptex 為什麼吃 8G"
+title: "macOS Preboot 卷：從 Intel 的 1G 到 Apple Silicon 的 8G"
 date: 2026-07-05
 slug: "macos-preboot-volume-check"
-description: "磁碟排查時看到 Preboot 佔 8G+ 想知道正不正常、能不能清時查。Intel Mac 才 1-2G 的經驗會在 Apple Silicon 上產生誤判。"
-tags: ["macos", "disk-space", "apfs", "apple-silicon", "troubleshooting"]
+description: "排查磁碟空間時需要判斷 Preboot 卷的大小是否合理。Intel 時代的 1-2G 經驗不適用於 Apple Silicon，理解 Cryptex 機制後才能做正確判斷。"
+tags: ["macos", "disk-space", "apfs", "apple-silicon"]
 ---
 
-用 `diskutil apfs list` 查磁碟空間時，Preboot 卷顯示 8.5G。如果你的參照基準是 Intel Mac 時代的 1-2G，這個數字看起來異常偏高，直覺是「有舊 macOS 殘留可以清」。這次排查的結論是：Apple Silicon + macOS 15 的 Preboot 佔 8G 左右是正常值，不是殘留，也不該手動清。異常偏高的判讀訊號是特定結構指標（多個 Volume Group UUID、restore-staged 堆積），絕對大小本身不是。
+磁碟空間排查到 APFS container 層級時，`diskutil apfs list` 會列出每個卷的佔用。Preboot 卷在 Apple Silicon Mac 上通常顯示 8-10G，如果用 Intel Mac 時代 1-2G 的經驗來判讀，會誤以為有問題。這個差異來自 Apple Silicon 引入的 Cryptex 機制，理解它的運作方式後，判斷 Preboot 的大小是否合理就不需要查表。
 
-## Preboot 卷的角色
+## Preboot 在開機流程中的角色
 
-Preboot 是 APFS container 裡的一個獨立卷，專門存放開機過程需要的資料 — 在 Data 卷解鎖之前，系統就要從這裡讀取開機載入器、核心快取、安全驗證票證。它跟 System 卷（唯讀的作業系統本體）和 Data 卷（使用者資料）共用同一個 container 的空間池，所以 Preboot 佔多少，直接影響 Data 卷可用的空間。
+macOS 的 APFS container 把一顆實體磁碟切成多個卷，各自承擔不同責任。開機時，系統需要在解鎖使用者資料之前就載入開機載入器、核心快取、安全驗證票證——這些東西不能放在加密的 Data 卷裡，否則解密前無法讀取。Preboot 卷就是放這些開機前置資料的地方。
 
-在 Intel Mac 上，Preboot 裡主要就是一組 boot.efi 和少量開機設定，大小穩定在 1-2G。Apple Silicon 改變了這個數字，原因是 Cryptex。
+APFS container 內所有卷共用同一個空間池，從同一塊空間動態分配。Preboot 佔多少，Data 卷就少多少，所以 Preboot 的大小直接影響使用者可用的空間。
 
-## Cryptex：Preboot 從 2G 跳到 8G 的原因
+## Intel Mac 的 Preboot：簡單的開機載入器
 
-Cryptex（Cryptographically Sealed Extension）是 Apple 從 macOS 13 開始引入的機制，讓 Safari 和系統安全元件可以獨立於整個 OS 更新來部署。在此之前，修一個 Safari 漏洞就要推一整版 macOS 更新；有了 Cryptex，這些元件封裝成獨立的簽章 DMG，掛載後疊加到系統卷上層。
+在 Intel Mac 上，Preboot 的內容很單純：一組 `boot.efi`（EFI 開機載入器）、少量開機設定、以及 FileVault 解鎖介面的資源。這些加起來通常只有 1-2G，而且幾乎不會變動——裝完系統後大小就固定了，不會隨使用時間膨脹。
 
-這些 Cryptex DMG 就住在 Preboot 卷裡，佔用了主要空間。在這台 macOS 15.3.1 的機器上，Preboot 的結構如下：
+這個時期建立的經驗是：Preboot 應該很小，超過幾 GB 就是有問題。
 
-```text
-/System/Volumes/Preboot/<Volume-Group-UUID>/
-├── cryptex1/current/       # 當前 Cryptex — 佔用主力
-│   ├── os.dmg              # 系統安全元件 DMG (5.4G)
-│   ├── os.clone.dmg        # APFS clone (共用底層區塊)
-│   └── app.dmg             # App 層元件 (22M)
-├── restore-staged/         # 已下載但未套用的更新資料 (1.6G)
-│   ├── Firmware/           # 韌體映像
-│   ├── *.dmg.aea           # 加密的更新 DMG
-│   └── kernelcache.*       # 各機型的核心快取
-├── restore/                # 復原模式用的開機資料 (861M)
-├── boot/                   # 開機載入器 (47M)
-└── var/, usr/, ...         # 其他開機輔助資料 (~25M)
-```
+## Apple Silicon 的 Preboot：Cryptex 改變了容量結構
 
-`os.dmg` 和 `os.clone.dmg` 是 APFS clone — 底層共用同一份資料區塊，`du` 會各算一次報 11G，但 `diskutil` 只計算實際佔用的區塊，所以報 5.4G。這是排查時第一個容易踩到的誤差來源：用 `du` 量 Preboot 會高估，用 `diskutil info` 看 Volume Used Space 才是實際數字。
+Apple Silicon Mac 從 macOS 13 開始引入 Cryptex（Cryptographically Sealed Extension），Preboot 的內容和大小因此完全改變。
 
-## 檢查方法
+Cryptex 解決的問題是安全更新的部署速度。在 Cryptex 之前，修一個 Safari 漏洞需要推一整版 macOS 更新——整個系統卷要重新驗證、重新封印。Cryptex 把 Safari 和系統安全元件從系統卷抽出來，封裝成獨立的簽章 DMG，放在 Preboot 卷裡。開機時系統把 Cryptex DMG 掛載、疊加到系統卷上層，效果等同於系統卷的一部分，但更新時只要替換這個 DMG，不動系統卷本體。
 
-排查 Preboot 是否正常的步驟分三層：先看大小是否在合理範圍、再看內部結構有沒有異常指標、最後確認沒有殘留的舊安裝。
+這個設計的代價是 Preboot 的體積。一組 Cryptex 的 `os.dmg` 約 5.4G，是 Preboot 佔用的主力。加上 `restore` 開機復原資料（約 800M-1G）、各機型的 `kernelcache`（每個約 30M，十幾個機型合計數百 MB）、以及 `boot` 載入器（約 50M），Apple Silicon 的 Preboot 基本盤就在 6-8G 左右。
 
-### 第一層：確認實際大小
+### restore-staged：更新機制的暫存區
+
+Preboot 裡還有一個 `restore-staged` 目錄，是系統更新機制的暫存區。macOS 會在背景下載更新資料（韌體映像、加密的 DMG、核心快取），先 staging 到這裡，等使用者同意安裝或自動維護窗口到來時才套用。
+
+這個目錄的大小在 0-2G 之間浮動，取決於是否有待套用的更新。它的內容不一定對應「當前版本的下一版」——這次實測中，`restore-staged` 裡的 `RestoreVersion.plist` 顯示的是 macOS 26.3.1，而當前系統是 15.3.1，版本號跨了多個大版本。這表示 staging 的資料可能是 Apple 為未來升級預先準備的，跟「有待套用的安全更新」是不同的 staging 類型。
+
+## du 跟 diskutil 數字不一致的原因
+
+用 `du -shx` 量 Preboot 會得到比 `diskutil info` 更大的數字。這次實測裡，`du` 報了約 13G，`diskutil` 報 8.5G。
+
+差異來自 APFS clone。Preboot 裡的 `os.dmg` 和 `os.clone.dmg` 是 APFS clone——底層共用同一份資料區塊。`du` 是逐檔計算，把兩個檔案各算一次；`diskutil` 看的是卷級的實際區塊佔用，共用的區塊只算一次。
+
+同樣的情況也出現在 `Cryptexes/OS` 和 `Cryptexes/Incoming`（系統層的 Cryptex 掛載點），它們跟 Preboot 裡的 DMG 有 clone 關係。用 `du` 逐層加總會嚴重膨脹。
+
+判斷 Preboot 佔用時，永遠用 `diskutil info` 的 Volume Used Space，不用 `du`。
 
 ```bash
-# 用 diskutil 看實際佔用（不受 APFS clone 膨脹影響）
 diskutil info /System/Volumes/Preboot | grep "Volume Used Space"
 ```
 
-Apple Silicon + macOS 14-16 的正常範圍大約在 6-10G。超過 12G 才值得往下查第二層。如果你的機器是 Intel Mac 或 macOS 12 以下，Cryptex 不存在，正常值是 1-3G。
+## 正常的 Preboot 結構
 
-### 第二層：檢查內部結構
+一台 Apple Silicon + macOS 14-16 的機器，Preboot 的典型內部結構：
 
-```bash
-# 找到 Volume Group UUID
-ls /System/Volumes/Preboot/ | grep -E '^[0-9A-F]{8}-'
-
-# 各子目錄大小
-VGUUID="$(ls /System/Volumes/Preboot/ | grep -E '^[0-9A-F]{8}-' | head -1)"
-du -shx /System/Volumes/Preboot/"$VGUUID"/* 2>/dev/null | sort -rh
-
-# Cryptex 細節
-du -shx /System/Volumes/Preboot/"$VGUUID"/cryptex1/current/* 2>/dev/null | sort -rh
-
-# Cryptexes 目錄（系統層）
-du -shx /System/Volumes/Preboot/Cryptexes/* 2>/dev/null | sort -rh
+```text
+/System/Volumes/Preboot/<Volume-Group-UUID>/
+├── cryptex1/current/       # Cryptex 本體（5-7G）
+│   ├── os.dmg              # 系統安全元件
+│   ├── os.clone.dmg        # APFS clone，不額外佔空間
+│   └── app.dmg             # App 層元件（~20M）
+├── restore-staged/         # 更新暫存（0-2G，浮動）
+├── restore/                # 復原用開機資料（~800M）
+├── boot/                   # 開機載入器（~50M）
+└── var/, usr/, ...         # 開機輔助資料（~25M）
 ```
 
-正常結構的特徵：
-
-- `cryptex1/current/` 佔最大宗（5-7G），裡面是 `os.dmg` + `os.clone.dmg` + `app.dmg`
-- `restore-staged/` 在 0-2G 之間浮動，取決於是否有待套用的更新
-- `restore/` 約 800M-1G
-- `boot/` 約 50M
-- Volume Group UUID 只有一個
-
-### 第三層：排除舊安裝殘留
+Volume Group UUID 正常情況只有一個，對應當前系統的 Data 卷。確認方式：
 
 ```bash
-# 列出所有 Volume Group UUID
+# Preboot 裡的 UUID
 ls /System/Volumes/Preboot/ | grep -E '^[0-9A-F]{8}-'
 
-# 確認當前系統的 Volume Group UUID
-diskutil info /System/Volumes/Data | grep "Volume Group" | head -1
+# 當前系統的 Volume Group UUID
+diskutil info /System/Volumes/Data | grep "APFS Volume Group"
 ```
 
-如果 Preboot 裡出現**多個** UUID 目錄，表示曾經有過多重 macOS 安裝。只有跟當前 Data 卷的 Volume Group UUID 對應的那個是必要的，其他可能是舊安裝殘留。這是 Preboot 異常偏大（超過 15G）最常見的原因。
+## 什麼情況才真的有問題
 
-## 異常指標與對應處理
+基於上面的機制，判讀 Preboot 大小是否合理的依據是結構性指標，不是絕對大小。
 
-| 指標                                                       | 意義                               | 處理                                               |
-| ---------------------------------------------------------- | ---------------------------------- | -------------------------------------------------- |
-| 多個 Volume Group UUID 目錄                                | 舊 macOS 安裝殘留                  | 確認哪個是當前系統後可刪除多餘的                   |
-| `restore-staged/` 超過 3G 且日期距今超過一個月             | 下載了更新但套用失敗或被中斷       | 嘗試完成系統更新；更新完成後系統會自動清理         |
-| `cryptex1/` 裡有 `current` 以外的子目錄                    | 可能有舊版 Cryptex 未清除          | 正常情況系統會自動替換，異常時重新安裝最新安全更新 |
-| `Cryptexes/Incoming` 跟 `Cryptexes/OS` 大小相近且都超過 5G | 正常（Incoming 是更新通道的暫存）  | 不處理                                             |
-| 整體超過 15G 但只有一個 UUID                               | Cryptex 或 restore-staged 異常堆積 | 確認系統更新狀態，必要時聯繫 Apple Support         |
+**多個 Volume Group UUID**：Preboot 裡出現多個 UUID 目錄，表示曾有過多重 macOS 安裝。每組 UUID 各帶一份完整的 Cryptex 和開機資料，所以 Preboot 會翻倍。只有對應當前 Data 卷 UUID 的那個是必要的，其他是舊安裝殘留。這是 Preboot 超過 15G 最常見的原因。
 
-`restore-staged` 的日期判讀有一個要注意的地方：這次實測中，`restore-staged` 裡的 `RestoreVersion.plist` 顯示的是 macOS 26.3.1（build 25D2128），而當前系統是 15.3.1（build 24D70）。版本號跨了一整個大版本，但檔案日期是 2025 年 2 月。這表示 `restore-staged` 裡放的不一定是「待套用到當前系統的更新」，也可能是系統為了未來升級預先 staging 的資料。不要因為版本號不匹配就判定它是殘留該清。
+**restore-staged 異常堆積**：超過 3G 且日期距今超過一個月，可能是下載了更新但套用失敗或被中斷。正常的處理方式是在系統設定裡完成或重新下載更新，更新完成後系統會自動清理這個目錄。
 
-## 不該做的事
+**Cryptex 沒有成功替換**：`cryptex1/` 目錄裡除了 `current` 還有其他子目錄，可能是舊版 Cryptex 沒被正常替換。安裝最新的安全更新通常能解決。
 
-Preboot 是系統安全啟動鏈的一部分，手動刪除任何檔案都可能導致無法開機或安全更新失效。即使你確認某個 UUID 目錄是舊安裝殘留，直接 `rm -rf` 也不是正確做法，因為 APFS 的 snapshot 和 clone 關係可能讓刪除動作影響到你沒預期的區塊。
+這些情況都不應該用手動刪檔的方式處理。Preboot 是安全啟動鏈的一部分，APFS 的 snapshot 和 clone 關係讓手動刪除可能影響到看不見的依賴。正確路徑是透過系統更新、Recovery 模式重裝、或 Apple Support 來處理。
 
-正確的清理路徑：
+## disk-report 的 Preboot 段落
 
-- **舊安裝殘留**：用 macOS Recovery 模式重新安裝 macOS（不會清使用者資料），讓系統自己整理 Preboot
-- **卡住的系統更新**：在「系統設定 > 一般 > 軟體更新」完成或重新下載更新
-- **Cryptex 異常**：安裝最新的安全更新，系統會替換 Cryptex 內容
-
-在磁碟空間的排查順序裡，Preboot 應該排在最後。它的大小基本固定、使用者控制不了、清理風險高。同樣的排查時間花在 [~/Library 大戶定位](../macos_disk_space_diagnosis/) 或 [App 聚合佔用](../macos_app_footprint_report/) 上，回收效率高得多。
-
-## 把檢查整合進 disk-report 腳本
-
-Preboot 檢查的指令固定、判讀邏輯簡單，適合整合成自動化腳本。但它不適合獨立成一支腳本 — 單獨跑 Preboot 檢查的場景太少，幾乎只在「磁碟滿了、逐層排查」的流程中才會看它。比起另開一支 `preboot-report`，更合理的做法是在既有的 [disk-report](https://github.com/tarrragon/scripts) 裡新增一個 Preboot 段落，讓完整診斷時自動涵蓋。
-
-腳本要做的事：
-
-1. 用 `diskutil info` 取 Preboot 實際佔用，跟 10G 門檻比較
-2. 計算 Volume Group UUID 數量，多於一個就標記
-3. 如果 `restore-staged/` 存在且超過 2G，標記並顯示日期
-4. 輸出一行摘要：正常 / 偏高但結構正常 / 有異常指標
-
-不需要做的事：不替使用者刪任何東西（跟 disk-report / app-report 一樣唯讀）、不需要 `du` 逐檔列舉（`diskutil` 的卷級數字就夠判讀）、不需要解析 Cryptex 版本（那是 Apple 的更新機制內部細節，不影響空間判斷）。
-
-新增段落的參考實作放在 [tarrragon/scripts](https://github.com/tarrragon/scripts) 的 `disk-report` 裡。
+這些判讀邏輯已整合進 [disk-report](https://github.com/tarrragon/scripts) 腳本的 `--preboot` 模式，用 `diskutil info`（不是 `du`）取實際佔用，計算 Volume Group UUID 數量，檢查 `restore-staged` 的大小和日期，輸出一行結論。完整磁碟診斷時（`disk-report` 不帶參數）會自動包含這個段落。
