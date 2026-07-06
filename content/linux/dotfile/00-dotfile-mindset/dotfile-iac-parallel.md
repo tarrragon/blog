@@ -26,6 +26,16 @@ tags: ["dotfile", "iac", "workflow"]
 
 這個平行不只是比喻。[從個人到團隊](/linux/dotfile/09-team-environment/)會教怎麼把 dotfile 的思想正式擴展到團隊環境——devcontainer 把「開發環境應該長什麼樣」寫成宣告式配置，讓新人 clone repo 就能拿到一致的開發環境，這正是 IaC 思想從組織 infra 往個人工作桌面延伸的具體產物。
 
+## 中間還有一格：應用環境（Dockerfile）
+
+Dotfile 跟 IaC 這個平行，中間其實還有一格。「環境 as code」是一道從個人延伸到組織的尺度光譜，中間那格是**應用**：
+
+- **個人環境（dotfile）**：你工作的環境——shell、editor、WM。跟**你**走：換筆電、換公司，同一份 dotfile 還原出同一個你。
+- **應用環境（Dockerfile）**：一個應用程式跑的環境——base image、runtime、服務依賴。跟那個 **app** 走：住在 app 的 repo、隨它部署。
+- **組織環境（IaC）**：一整個組織的基礎設施——VPC、IAM、資料庫。跟**組織**走。
+
+三者是同一套宣告式、可重現、版控的哲學，只是主體的尺度不同：個人 → 應用 → 組織。所以 dotfile 跟 Dockerfile 的分界，就看**配置誰的環境、跟誰走**（形式像不像無關）：你的 vim 設定跟你走（dotfile），client 的 PHP runtime 定義跟那個 app 走（Dockerfile，該住 app 的 repo）。完整的分界判準與「Dockerfile 到底該放哪個 repo」見 [環境 as code 的三個尺度](/linux/dotfile/knowledge-cards/environment-as-code-scope/)。
+
 ## Dotfile 是重建指令，不是備份
 
 這是最重要的心智模型區分。Dotfile repo 的目標不是「把舊電腦的所有檔案搬到新電腦」（那是備份工具的工作），而是「一份能在空白機器上重建工作環境的指令集」。

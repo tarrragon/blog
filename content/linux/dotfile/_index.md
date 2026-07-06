@@ -29,18 +29,19 @@ Infra 教「組織的地基怎麼用 code 管理」，Dotfile 教「個人的工
 
 模組編號反映學習路徑：先理解為什麼、再學怎麼管理、然後逐層處理 shell/終端機/視窗管理/視覺客製化，最後談維護排錯、同步可攜性和團隊化。模組四到七是 Linux 桌面環境的深度實作，之後會搭配 VM 專案做 hands-on 實測。
 
-| 模組                                                                     | 主題                                                 | 回答什麼問題                              |
-| ------------------------------------------------------------------------ | ---------------------------------------------------- | ----------------------------------------- |
-| [模組零：Dotfile 心智模型](/linux/dotfile/00-dotfile-mindset/)           | 什麼是 dotfile、為什麼要管理、環境可重現性           | 為什麼不能每次手動設定就好                |
-| [模組一：管理工具與目錄結構](/linux/dotfile/01-dotfile-management/)      | bare repo / stow / chezmoi、目錄設計、版控工作流     | dotfile 怎麼用 Git 管、目錄該怎麼組織     |
-| [模組二：Shell 配置](/linux/dotfile/02-shell-config/)                    | zsh/bash 結構化配置、模組化拆分、alias/function/PATH | .zshrc 該怎麼寫才不會長到不敢動           |
-| [模組三：終端機與編輯器](/linux/dotfile/03-terminal-ecosystem/)          | terminal emulator 選型、tmux/zellij、neovim 基礎     | 終端機生態的配置檔有哪些、怎麼管理        |
-| [模組四：視窗管理與平鋪式工作流](/linux/dotfile/04-window-management/)   | 手動 vs 自動平鋪、macOS 工具鏈、Linux tiling WM      | Rectangle 不夠用的時候該換什麼            |
-| [模組五：Hyprland 配置](/linux/dotfile/05-hyprland-config/)              | Hyprland 安裝、核心設定、keybind、monitor、workspace | Hyprland 的配置檔怎麼寫、核心概念是什麼   |
-| [模組六：桌面 Rice 設計](/linux/dotfile/06-rice-design/)                 | 狀態列、啟動器、通知、配色系統、desktop shell        | 桌面怎麼從「能用」變成「好看又好用」      |
-| [模組七：桌面環境維護與故障排除](/linux/dotfile/07-desktop-maintenance/) | 故障隔離模型、常見故障恢復、日誌判讀                 | compositor 掛了或桌面凍結時怎麼診斷和恢復 |
-| [模組八：同步、Bootstrap 與環境重建](/linux/dotfile/08-sync-bootstrap/)  | 跨機器同步、install script、secret 排除、VM 對比     | 換機器時怎麼一鍵還原、哪些東西不該進 repo |
-| [模組九：從個人到團隊](/linux/dotfile/09-team-environment/)              | devcontainer、nix、商業開發環境標準化                | 個人 dotfile 的思想怎麼延伸到團隊環境管理 |
+| 模組                                                                     | 主題                                                 | 回答什麼問題                               |
+| ------------------------------------------------------------------------ | ---------------------------------------------------- | ------------------------------------------ |
+| [模組零：Dotfile 心智模型](/linux/dotfile/00-dotfile-mindset/)           | 什麼是 dotfile、為什麼要管理、環境可重現性           | 為什麼不能每次手動設定就好                 |
+| [模組一：管理工具與目錄結構](/linux/dotfile/01-dotfile-management/)      | bare repo / stow / chezmoi、目錄設計、版控工作流     | dotfile 怎麼用 Git 管、目錄該怎麼組織      |
+| [模組二：Shell 配置](/linux/dotfile/02-shell-config/)                    | zsh/bash 結構化配置、模組化拆分、alias/function/PATH | .zshrc 該怎麼寫才不會長到不敢動            |
+| [模組三：終端機與編輯器](/linux/dotfile/03-terminal-ecosystem/)          | terminal emulator 選型、tmux/zellij、neovim 基礎     | 終端機生態的配置檔有哪些、怎麼管理         |
+| [模組四：視窗管理與平鋪式工作流](/linux/dotfile/04-window-management/)   | 手動 vs 自動平鋪、macOS 工具鏈、Linux tiling WM      | Rectangle 不夠用的時候該換什麼             |
+| [模組五：Hyprland 配置](/linux/dotfile/05-hyprland-config/)              | Hyprland 安裝、核心設定、keybind、monitor、workspace | Hyprland 的配置檔怎麼寫、核心概念是什麼    |
+| [模組六：桌面 Rice 設計](/linux/dotfile/06-rice-design/)                 | 狀態列、啟動器、通知、配色系統、desktop shell        | 桌面怎麼從「能用」變成「好看又好用」       |
+| [模組七：桌面環境維護與故障排除](/linux/dotfile/07-desktop-maintenance/) | 故障隔離模型、常見故障恢復、日誌判讀                 | compositor 掛了或桌面凍結時怎麼診斷和恢復  |
+| [模組八：同步、Bootstrap 與環境重建](/linux/dotfile/08-sync-bootstrap/)  | 跨機器同步、install script、secret 排除、VM 對比     | 換機器時怎麼一鍵還原、哪些東西不該進 repo  |
+| [模組九：從個人到團隊](/linux/dotfile/09-team-environment/)              | devcontainer、nix、商業開發環境標準化                | 個人 dotfile 的思想怎麼延伸到團隊環境管理  |
+| [模組十：Prod Parity 對齊](/linux/dotfile/10-prod-parity/)               | 跨發行版落地、對齊線上的 runtime container、分層     | 工作站是最新版、線上是凍結舊環境時怎麼開發 |
 
 ## VM 實測專案
 
