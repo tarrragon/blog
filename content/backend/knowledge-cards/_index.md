@@ -121,25 +121,28 @@ weight: -1
 
 ## 入口與部署
 
-| 卡片                                                                 | 核心問題                                 | 常見出現位置                          |
-| -------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------- |
-| [Service Endpoint](/backend/knowledge-cards/endpoint/)               | 服務入口如何被路由與存取                 | API、service discovery、internal      |
-| [Public API Endpoint](/backend/knowledge-cards/public-api-endpoint/) | 面向 client 的穩定對外入口               | product API、SDK、client              |
-| [API Gateway](/backend/knowledge-cards/api-gateway/)                 | 外部流量如何集中路由、驗證與轉發         | auth、rate limit、routing、request id |
-| [Request Routing](/backend/knowledge-cards/request-routing/)         | 入口流量如何分派到不同服務或版本         | host、path、tenant、version           |
-| [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)           | 高權限管理入口如何被隔離與稽核           | admin、backoffice、control plane      |
-| [Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/) | health、readiness 與 debug 入口          | liveness、probe、metrics snapshot     |
-| [Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)     | 服務內部通訊入口如何受控                 | service-to-service、control plane     |
-| [Container](/backend/knowledge-cards/container/)                     | 服務如何被包裝成可交付單位               | image、runtime、CI、Kubernetes        |
-| [Load Balancer](/backend/knowledge-cards/load-balancer/)             | 流量如何分散、排空與導向健康節點         | ingress、draining、rolling update     |
-| [Draining](/backend/knowledge-cards/draining/)                       | 服務如何先停新流量再完成既有工作         | rolling update、shutdown、cutover     |
-| [Sticky Session](/backend/knowledge-cards/sticky-session/)           | 同一 client 如何維持命中同一實例         | session affinity、load balancer       |
-| [Idle Timeout](/backend/knowledge-cards/idle-timeout/)               | 連線或會話多久沒活動後要回收             | socket、load balancer、proxy          |
-| [Health Check](/backend/knowledge-cards/health-check/)               | 平台如何快速判斷服務狀態                 | load balancer、probe、diagnostic      |
-| [Resource Limit](/backend/knowledge-cards/resource-limit/)           | 服務可用的 CPU / memory 上限如何影響行為 | container、scheduler、runtime         |
-| [Probe](/backend/knowledge-cards/probe/)                             | 平台如何判斷存活與接流量條件             | readiness、liveness、startup          |
-| [Config Rollout](/backend/knowledge-cards/config-rollout/)           | 設定如何安全下發到運作中的服務實例       | feature flag、secret、runtime config  |
-| [Runtime Config](/backend/knowledge-cards/runtime-config/)           | 執行時設定如何被讀取、組合與覆寫         | env var、secret、feature flag         |
+| 卡片                                                                      | 核心問題                                 | 常見出現位置                            |
+| ------------------------------------------------------------------------- | ---------------------------------------- | --------------------------------------- |
+| [Service Endpoint](/backend/knowledge-cards/endpoint/)                    | 服務入口如何被路由與存取                 | API、service discovery、internal        |
+| [Public API Endpoint](/backend/knowledge-cards/public-api-endpoint/)      | 面向 client 的穩定對外入口               | product API、SDK、client                |
+| [API Gateway](/backend/knowledge-cards/api-gateway/)                      | 外部流量如何集中路由、驗證與轉發         | auth、rate limit、routing、request id   |
+| [Request Routing](/backend/knowledge-cards/request-routing/)              | 入口流量如何分派到不同服務或版本         | host、path、tenant、version             |
+| [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)                | 高權限管理入口如何被隔離與稽核           | admin、backoffice、control plane        |
+| [Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/)      | health、readiness 與 debug 入口          | liveness、probe、metrics snapshot       |
+| [Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)          | 服務內部通訊入口如何受控                 | service-to-service、control plane       |
+| [Container](/backend/knowledge-cards/container/)                          | 服務如何被包裝成可交付單位               | image、runtime、CI、Kubernetes          |
+| [一容器一職責](/backend/knowledge-cards/container-per-service/)           | 一個系統為何拆成多個 container 而非全塞  | web / app / db、PID 1、編排前提         |
+| [QEMU binfmt 跨架構模擬](/backend/knowledge-cards/qemu-binfmt-emulation/) | 非原生架構的 image 怎麼被模擬跑起來      | arm64、amd64、buildx、exec format error |
+| [不可變 Image](/backend/knowledge-cards/immutable-image/)                 | image 改不了、升級是 build 新的          | digest、tag、rollback、可重現           |
+| [Load Balancer](/backend/knowledge-cards/load-balancer/)                  | 流量如何分散、排空與導向健康節點         | ingress、draining、rolling update       |
+| [Draining](/backend/knowledge-cards/draining/)                            | 服務如何先停新流量再完成既有工作         | rolling update、shutdown、cutover       |
+| [Sticky Session](/backend/knowledge-cards/sticky-session/)                | 同一 client 如何維持命中同一實例         | session affinity、load balancer         |
+| [Idle Timeout](/backend/knowledge-cards/idle-timeout/)                    | 連線或會話多久沒活動後要回收             | socket、load balancer、proxy            |
+| [Health Check](/backend/knowledge-cards/health-check/)                    | 平台如何快速判斷服務狀態                 | load balancer、probe、diagnostic        |
+| [Resource Limit](/backend/knowledge-cards/resource-limit/)                | 服務可用的 CPU / memory 上限如何影響行為 | container、scheduler、runtime           |
+| [Probe](/backend/knowledge-cards/probe/)                                  | 平台如何判斷存活與接流量條件             | readiness、liveness、startup            |
+| [Config Rollout](/backend/knowledge-cards/config-rollout/)                | 設定如何安全下發到運作中的服務實例       | feature flag、secret、runtime config    |
+| [Runtime Config](/backend/knowledge-cards/runtime-config/)                | 執行時設定如何被讀取、組合與覆寫         | env var、secret、feature flag           |
 
 ## 通訊協定
 

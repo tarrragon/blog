@@ -41,6 +41,8 @@ docker push ghcr.io/<org>/myapp:1
 
 ### Dockerfile 設計
 
+深入：[Dockerfile 設計：指令、layer 與 multi-stage](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)
+
 子議題：
 
 - FROM / RUN / COPY / WORKDIR / EXPOSE / CMD / ENTRYPOINT
@@ -49,6 +51,8 @@ docker push ghcr.io/<org>/myapp:1
 - 對應指令：`docker build --no-cache`、`docker history <image>`
 
 ### BuildKit / Buildx
+
+深入：[BuildKit 與跨平台 build](/backend/05-deployment-platform/vendors/docker/buildkit-cross-platform/)
 
 子議題：
 
@@ -59,12 +63,25 @@ docker push ghcr.io/<org>/myapp:1
 
 ### Docker Compose
 
+深入：[Docker Compose：多 service dev 環境編排](/backend/05-deployment-platform/vendors/docker/docker-compose/)
+
 子議題：
 
 - docker-compose.yml：service / network / volume 配置
-- 適合：local dev 多 container（DB + cache + app）
+- 適合：local dev 多 container（DB + cache + app）——為何拆成多 container 見 [一容器一職責](/backend/knowledge-cards/container-per-service/)
 - 不適合：production（用 K8s）
 - 對應 [5.2 K8s deployment](/backend/05-deployment-platform/kubernetes-deployment/)
+
+### Image 版本管理與升級
+
+深入：[image 版本管理與升級：不動舊的、建新的](/backend/05-deployment-platform/vendors/docker/image-versioning-upgrade/)
+
+子議題：
+
+- image 不可變：升級是 build 新的、不是改舊的
+- 多版本 stack 並存、並跑對照、切換與退役
+- 版本相依的升級順序（如 MySQL 8 認證外掛換版）
+- 對應 [不可變 Image](/backend/knowledge-cards/immutable-image/)、線上帶電升級 [Infra 環境升級](/infra/upgrade/)
 
 ## 進階主題（按需閱讀）
 
