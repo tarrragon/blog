@@ -32,6 +32,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 - **非互動旗標不對稱**：apt 用 `-y`、pacman 用 `--noconfirm`。非 TTY（SSH 一行式、CI、無人值守）下缺對應旗標會卡在 `[Y/n]` 直接失敗。
 - **rolling vs stable 的資料庫時序**：Arch 鏡像不保留舊版檔案，stale db 會 404（`failed retrieving file`），修法是先 `pacman -Syu`（只 `-Sy` 不 `-u` 造成 partial upgrade）；Debian stable 無此時序問題、但版本舊，config 語法可能對不上新版文件。
 - **工具在不在**：`arp` 常沒裝（用 `ip neigh`）、最小系統連 `sudo` 都沒有；ARM 上 AUR 部分套件不支援、Homebrew on Linux 無 aarch64 bottle。
+- **apt 的失敗集中在解析階段**：`Unable to locate package` 有三種可能（這發行版名字不同 / 根本沒打包，退回 GitHub releases / 真打錯）、批次一個爛名字讓整筆交易 abort（症狀是「列十個、一個都沒裝」）、裝 node/python 會拉進整個語言生態的系統套件（實測 `apt install npm` 帶 300+ 個 node-*，語言執行環境該走 version manager）。含 dpkg lock 復原、EOL 的 archive 404，見 [install-and-verify](references/install-and-verify.md) 的 apt/dpkg 段。
 
 ## 四步診斷流程（每次都跑）
 
@@ -42,22 +43,22 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ## 權威來源速查表
 
-| 症狀類別                              | 權威來源                       | 工具                                                                                        |
-| ------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| 某程式行為不對                        | 程式自己的 log 檔              | log 路徑、`journalctl -u <unit>`                                                            |
-| 服務由誰提供                          | D-Bus name / socket 註冊       | `busctl`、`ss -lntp`、`lsof`                                                                |
-| 登入 / 鎖定狀態                       | logind                         | `loginctl show-session <id>`                                                                |
-| 服務跑了沒 / failed                   | systemd unit                   | `systemctl status` / `is-active` / `is-failed`、`list-units --failed`、`journalctl -u`      |
-| 程式活著沒                            | 行程表（比對正確 comm）        | `pgrep -x`、`pgrep -af`、`ps`                                                               |
+| 症狀類別                              | 權威來源                        | 工具                                                                                               |
+| ------------------------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 某程式行為不對                        | 程式自己的 log 檔               | log 路徑、`journalctl -u <unit>`                                                                   |
+| 服務由誰提供                          | D-Bus name / socket 註冊        | `busctl`、`ss -lntp`、`lsof`                                                                       |
+| 登入 / 鎖定狀態                       | logind                          | `loginctl show-session <id>`                                                                       |
+| 服務跑了沒 / failed                   | systemd unit                    | `systemctl status` / `is-active` / `is-failed`、`list-units --failed`、`journalctl -u`             |
+| 程式活著沒                            | 行程表（比對正確 comm）         | `pgrep -x`、`pgrep -af`、`ps`                                                                      |
 | 進程活著但沒運作（畫得出來卻點不動）  | 程式自己的 log + IPC 回真實狀態 | 專屬 log 指令 `<shell> -l`（非 journalctl）、`<shell> ipc call ...`（回空=子系統死）；別信 `pgrep` |
-| 網路通不通                            | 介面 / 路由 / 鄰居表           | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                             |
-| 域名解析                              | resolver 設定                  | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                     |
-| 磁碟 / 記憶體                         | 檔案系統 / 記憶體用量          | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                            |
-| 核心 / 硬體 / 被殺行程(OOM、exit 137) | kernel ring buffer             | `dmesg`、`journalctl -k -b`                                                                 |
-| 權限被拒(EACCES)                      | 檔案 mode/owner、路徑逐層、MAC | `namei -l <path>`、`stat`、`id`、`sudo -l`、`getcap`、`ausearch`(SELinux)                   |
-| 程式 log 沉默、不知哪個 syscall 失敗  | syscall 層                     | `strace -f -e trace=file <cmd>`                                                             |
-| VT / 主控台（黑畫面 / 沒登入提示）    | getty 狀態（**chvt 前先查**）  | `systemctl is-active/is-enabled getty@tty<N>` → 再 `chvt`；`cat /sys/class/tty/tty0/active` |
-| 應用無聲（多半不報錯）                | 音訊伺服器 graph               | `wpctl status`：Sinks 空 = 棧缺件（wireplumber 沒裝）；stream `[active]` = 真在播           |
+| 網路通不通                            | 介面 / 路由 / 鄰居表            | `ip -brief a`、`ip neigh`、`ss`（`arp` 常沒裝）                                                    |
+| 域名解析                              | resolver 設定                   | `getent hosts <域名>`、`/etc/resolv.conf`、`resolvectl`                                            |
+| 磁碟 / 記憶體                         | 檔案系統 / 記憶體用量           | `df -h`、`du -sh`、`free`、`mount \| grep -w ro`                                                   |
+| 核心 / 硬體 / 被殺行程(OOM、exit 137) | kernel ring buffer              | `dmesg`、`journalctl -k -b`                                                                        |
+| 權限被拒(EACCES)                      | 檔案 mode/owner、路徑逐層、MAC  | `namei -l <path>`、`stat`、`id`、`sudo -l`、`getcap`、`ausearch`(SELinux)                          |
+| 程式 log 沉默、不知哪個 syscall 失敗  | syscall 層                      | `strace -f -e trace=file <cmd>`                                                                    |
+| VT / 主控台（黑畫面 / 沒登入提示）    | getty 狀態（**chvt 前先查**）   | `systemctl is-active/is-enabled getty@tty<N>` → 再 `chvt`；`cat /sys/class/tty/tty0/active`        |
+| 應用無聲（多半不報錯）                | 音訊伺服器 graph                | `wpctl status`：Sinks 空 = 棧缺件（wireplumber 沒裝）；stream `[active]` = 真在播                  |
 
 ## 症狀 → 情境路由
 
@@ -68,7 +69,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 - **進程活著卻不運作（GUI shell / bar 畫得出來但點不動、keybind 叫不出東西、焦點視窗打字正常）** → [process-service-state](references/process-service-state.md) 的「進程活著 ≠ 子系統活著」段（讀 shell 自己的 log + IPC，別信 pgrep）
 - **不想肉眼盯服務死活 / 要自動告警 / 怕整台機器當掉沒人知道 / 裝新系統或反覆除服務失敗（主動確認有無監控、無則建議建立）** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（先確認有無監控 → 沒有優先建議 OnFailure + ntfy 公共站零 daemon → 要更高安全再自架 ntfy + 完整堆疊；含 hung 偵測、canary、topic 安全）
 - **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
-- **套件管理器失敗（pacman db lock / keyring 簽章過期 / partial upgrade / mirror）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
+- **套件管理器失敗（pacman：db lock / keyring 簽章過期 / partial upgrade / mirror。apt：unable-to-locate / 批次 abort / dpkg lock / EOL archive 404 / node 爆量）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
 - **要讀某程式的 log 定位根因** → [read-logs](references/read-logs.md)
 - **要挑 / 推薦工具（同一件事有多個選擇：grep vs ripgrep、哪個檔案管理員、遠端用什麼）** → [tool-options](references/tool-options.md)
 
@@ -82,6 +83,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.15.0 — 第零步 + install-and-verify 補 apt/dpkg 失敗判讀（實測 Debian bookworm 容器裝 dotfile）：`Unable to locate` 三種可能（名字不同 / 沒打包退 GitHub releases / 打錯）、批次交易一個爛名字全滅（`-s` 模擬定位）、dpkg lock + 半裝復原（`dpkg --configure -a` + `--fix-broken`）、EOL 的 archive.debian.org 404、node/python 拉進整個語言生態該走 version manager；SKILL 第零步加 apt 解析階段判讀 + 路由
 **Version**: 1.14.0 — 監控段補「本地訂閱」：ntfy 訂閱也是 HTTP GET（curl -sN /json 零安裝 / 瀏覽器 / ntfy subscribe），桌面通知常駐 = user systemd 服務跑 curl /json | jq | notify-send；放盯著的工作機訂遠端、別放被監控機自己（循環）
 **Version**: 1.13.0 — 監控升為「主動建議」：裝新系統 / 反覆除服務失敗時先確認有無服務監控（`systemctl show sshd -p OnFailure`），沒有就分層推薦——預設最簡單（OnFailure + ntfy 公共站零 daemon、遠端至少掛 sshd），要更高安全 / 正式再自架 ntfy + 完整堆疊；install-and-verify 加「裝好後確認監控」段
 **Version**: 1.12.0 — 監控段補 hung 偵測（外部探針 curl /health 抓進程活著但不回應、補 OnFailure 抓不到的）、canary（可控假服務驗告警管線、不拿真服務冒險）、ntfy topic 安全（公共站無認證、topic 名就是密碼、用長隨機或自架）
