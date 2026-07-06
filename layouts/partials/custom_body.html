@@ -1,0 +1,32 @@
+{{- /*
+  免伺服器流量 beacon：頁面載入時送一則瀏覽事件到 Apps Script web app。
+  只有在 hugo.toml 的 [params] 設了 analyticsBeacon（Apps Script /exec 網址）時才渲染，
+  沒設就完全不輸出。實作說明見 content/posts 的「用 Apps Script 幫 blog 做流量統計」。
+*/ -}}
+{{- with .Site.Params.analyticsBeacon }}
+{{- $host := (urls.Parse $.Site.BaseURL).Host }}
+<script>
+  (function () {
+    // 只在正式站送，本機 hugo server 預覽（localhost）不計入統計。
+    // Go html/template 在 <script> context 會自動把插值轉成安全的 JS 字串字面量，不需再手動加引號。
+    if (location.hostname !== {{ $host }}) return;
+    // 粗粒度分類閱讀裝置，只送 mobile / tablet / desktop，不送完整 userAgent（避免指紋 / PII）
+    function deviceType() {
+      var ua = navigator.userAgent;
+      // iPadOS 的 Safari UA 會偽裝成 Mac，靠觸控點數補抓
+      var iPadAsMac = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+      if (/iPad|Tablet|PlayBook|Silk/.test(ua) || iPadAsMac || (/Android/.test(ua) && !/Mobile/.test(ua))) return "tablet";
+      if (/Mobi|iPhone|iPod|Android|BlackBerry|IEMobile|Opera Mini/.test(ua)) return "mobile";
+      return "desktop";
+    }
+    var payload = JSON.stringify({
+      path: location.pathname,
+      ref: document.referrer || "",
+      lang: navigator.language || "",
+      dev: deviceType()
+    });
+    var blob = new Blob([payload], { type: "text/plain;charset=UTF-8" });
+    navigator.sendBeacon({{ . }}, blob);
+  })();
+</script>
+{{- end }}
