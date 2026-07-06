@@ -96,7 +96,7 @@ Python 2→3 的修改量通常很大（print 語法、unicode 處理、dict 方
 
 ### 建立目標版本的本地環境
 
-用 Docker 建一個精確匹配目標版本的環境：
+用 Docker 建一個精確匹配目標版本的環境（自用小規模的多版本 stack 並跑對照與管理做法見 [image 版本管理與升級](/backend/05-deployment-platform/vendors/docker/image-versioning-upgrade/)——那篇是可停機切換版，這篇是線上帶電升級版，互為 sibling）：
 
 ```yaml
 services:
