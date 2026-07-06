@@ -74,6 +74,10 @@ summaryLength = 200  # 摘要字數限制
   # 自動產生社群媒體卡片
   generateSocialCard = true
 
+  # 免伺服器流量統計 beacon：部署 Apps Script web app 後，把 /exec 網址填進來即啟用。
+  # 留空字串代表停用（partial 不會輸出任何 script）。設定說明見 posts 的 apps-script 流量統計實作文。
+  analyticsBeacon = 'https://script.google.com/macros/s/AKfycbxBf3-Equ943Q-iKL09bzz8mn5AiU-C3Rkl1BA4A0ZcS7Q95oAnFl7Ds_Ig-SVvUxTF/exec'
+
   # 作者資訊
   [params.author]
     name = 'tarragon'
