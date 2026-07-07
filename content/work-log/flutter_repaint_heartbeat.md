@@ -14,7 +14,7 @@ tags: ["flutter", "rendering", "platform-view"]
 
 ## 原因
 
-Flutter 是**按需重繪**：有東西要求時才排下一個 frame 去 build → paint → 合成 → 呈現。會要求排 frame 的來源有好幾種——widget 被標記 dirty（`setState`、動畫、依賴變更）、animation ticker 的每個 vsync、以及**外部 `Texture` 產生新影格時引擎自動排 frame**（Android 端 `SurfaceTexture` 的 frame-available 會通知引擎 `scheduleFrame`）。所以正常情況下，影片 / texture 這類平台端內容更新，是會驅動重繪的。
+Flutter 是**按需重繪**：有內容要求時才排下一個 frame 去 build → paint → 合成 → 呈現（排 frame 的底層原語是 `scheduleFrame()`，設計意義見 [scheduleFrame()：按需 render 的最底層原語](../flutter_schedule_frame/)）。會要求排 frame 的來源有好幾種——widget 被標記 dirty（`setState`、動畫、依賴變更）、animation ticker 的每個 vsync、以及**外部 `Texture` 產生新影格時引擎自動排 frame**（Android 端 `SurfaceTexture` 的 frame-available 會通知引擎 `scheduleFrame`）。所以正常情況下，影片 / texture 這類平台端內容更新，是會驅動重繪的。
 
 畫面落後邏輯狀態，發生在「該更新」這個訊號**沒有傳到 Flutter 的 frame 排程**。實際根因通常是這兩類，而不是「平台內容一律不驅動重繪」：
 
@@ -118,6 +118,42 @@ Stack(
   ],
 )
 ```
+
+### 更精簡：scheduleFrame 版包成 widget
+
+不需要 `CustomPaint` 換色那套——用 timer 定時 `scheduleFrame`、widget 本身什麼都不畫，同時把 timer 的生命週期收在 `initState`／`dispose`：
+
+```dart
+class FramePump extends StatefulWidget {
+  const FramePump({super.key});
+
+  @override
+  State<FramePump> createState() => _FramePumpState();
+}
+
+class _FramePumpState extends State<FramePump> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 200), (_) {
+      WidgetsBinding.instance.scheduleFrame();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
+}
+```
+
+不 `setState`、不重繪任何 widget，只是每 200ms 請引擎排一個 frame；比 `setState + CustomPaint` 版少了 rebuild 與 paint 的開銷，是實務上比較推薦的隱形 widget 形式。
 
 ## 幾個關鍵細節
 
