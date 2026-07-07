@@ -6,7 +6,7 @@ description: "手動觸發重繪、或釐清 setState / 動畫 / markNeedsPaint 
 tags: ["flutter", "rendering"]
 ---
 
-排查副屏畫面落後、用 `scheduleFrame()` 當重繪兜底時（見 [畫面落後邏輯狀態的排查與心跳兜底](../flutter_repaint_heartbeat/)），回頭釐清這個 API 原本的設計意義。
+排查副屏畫面落後、用 `scheduleFrame()` 當重繪兜底時（見 [畫面落後邏輯狀態的排查與心跳做法](../flutter_repaint_heartbeat/)），回頭釐清這個 API 原本的設計意義。
 
 ## Flutter 是「按需 render」
 

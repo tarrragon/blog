@@ -1,5 +1,5 @@
 ---
-title: "Flutter 畫面落後邏輯狀態（log 正確、畫面不符）— 重繪訊號排查與心跳兜底"
+title: "Flutter 畫面落後邏輯狀態（log 正確、畫面不符）— 重繪訊號排查與心跳做法"
 date: 2026-07-06
 draft: false
 description: "Flutter 畫面落後邏輯狀態（log 正確、畫面不符），含 platform view / 外部 texture 的渲染訊號沒進 frame 排程時回來讀。"
@@ -23,19 +23,19 @@ Flutter 是**按需重繪**：有內容要求時才排下一個 frame 去 build 
 
 這時實體畫面會停在最後一次重繪那一格，落後於邏輯狀態，表現成閃、跳、凍住。
 
-> 一路在業務邏輯層修（計時、狀態切換時機）往往只是把同一個症狀換個樣子。**當 log 正確、畫面卻不符，就該懷疑重繪／合成這一層**——但第一步是查「更新訊號有沒有到 Flutter」（plugin 有沒有回報影格、你有沒有監聽 controller），而不是直接加心跳。
+> 一路在業務邏輯層修（計時、狀態切換時機）往往只是把同一個症狀換個樣子。**當 log 正確、畫面卻不符，就該懷疑重繪／合成這一層**——先查「更新訊號有沒有到 Flutter」（plugin 有沒有回報影格、你有沒有監聽 controller），再決定是接回訊號、還是定時強制刷新。
 
-## 解法：先試正規解，心跳是兜底
+## 解法：幾種做法，依訊號斷點與可改動範圍選
 
-多數情況下畫面落後是「訊號沒接上」，補一個監聽或請求排 frame 就好，不必疊心跳：
+畫面落後有幾種解法，選哪一種看「更新訊號斷在哪裡」以及「能不能改到出問題的那一層」。訊號接得回來就直接接回、改不動來源就定時強制刷新——以下每一種都可以試，心跳（定時強制排 frame）也是其中一種：
 
 - **controller-backed widget（video_player 等）**：這類 plugin 的 controller 是 `ValueNotifier`，用 `addListener` 或 `ValueListenableBuilder` 監聽，狀態變就 rebuild。這是內容落後最正規的解。（這裡落後的是 controller 暴露的狀態值——播放位置、播放旗標等，跟 texture 影格是兩條路。）
 - **真的要持續每幀刷新**：用 `Ticker` / `AnimationController(vsync:)`，每個 vsync 排一個 frame，是「每幀刷新」的慣用機制；偶爾推一個 frame 用 `WidgetsBinding.instance.scheduleFrame()`。
 - **`RepaintBoundary`** 隔離重繪範圍，避免無關區域一起重畫。
 
-### 兜底：定時強制排 frame
+### 定時強制排 frame（重繪心跳）
 
-當 platform 端不配合、又改不動那個 plugin 時，最後手段是**定時強制排 frame**，讓合成層每隔一段時間重新 present 一次——composite 會把 texture 圖層的最新內容一起呈現。真正驅動的是「定時 `setState`／`scheduleFrame`」，跟畫面上顯示什麼無關（實測中一個可見的文字計數器、跟一個隱形的換色元件，效果一樣）。最小形式連 widget 都不用：
+**定時強制排 frame** 是不改動更新來源、直接讓合成層週期性刷新的做法：每隔一段時間重新 present 一次——composite 會把 texture 圖層的最新內容一起呈現。適合 platform 端不配合、又改不動那個 plugin 的情況。真正驅動的是「定時 `setState`／`scheduleFrame`」，跟畫面上顯示什麼無關（實測中一個可見的文字計數器、跟一個隱形的換色元件，效果一樣）。最小形式連 widget 都不用：
 
 ```dart
 Timer.periodic(const Duration(milliseconds: 200), (_) {
@@ -168,4 +168,4 @@ class _FramePumpState extends State<FramePump> {
 - **log 顯示邏輯正確**（狀態、計時、順序都對），但實體畫面落後、閃、跳、凍住。
 - 內容以**靜態為主**，或含 **platform view / 外部 texture**（影片播放器等），而畫面更新的訊號沒反映到 Flutter 的 frame 排程。
 
-符合以上，先查「更新訊號有沒有到 Flutter」——plugin 有沒有正確回報 texture 影格、你有沒有監聽 controller。確認 platform 端不配合、又改不動時，才用定時強制排 frame 兜底，而不是繼續在業務邏輯層打轉。
+符合以上，先查「更新訊號有沒有到 Flutter」——plugin 有沒有正確回報 texture 影格、你有沒有監聽 controller。訊號接得回來就接回；platform 端不配合、又改不動時，就用定時強制排 frame 定時刷新，不必繼續在業務邏輯層打轉。
