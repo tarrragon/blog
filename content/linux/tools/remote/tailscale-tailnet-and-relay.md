@@ -52,7 +52,7 @@ sudo tailscale up --hostname=my-vm         # 印出授權 URL
 - **看得到、標 `relay`** → 上線且可達、只是走中繼（延遲議題、非連不通）。
 - **看得到、標 `direct`** → 直連、最佳狀態。
 
-一個常見的誤判方向：從手機連 tailnet 位址回「connection timed out」，直覺去查伺服器的 sshd，但逾時指向可達性層——多半是手機的 Tailscale 沒連上、那個私網位址對手機根本不存在。判別方法是分清「逾時 vs 被拒」，見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)。
+從手機連 tailnet 位址回「connection timed out」時，逾時指向可達性層而非服務層——問題多半在手機的 Tailscale 沒連上、那個私網位址對手機根本不存在，而不在伺服器的 sshd。判別方法是分清「逾時 vs 被拒」，見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)。
 
 ## 跟連線層疊加、收斂攻擊面
 

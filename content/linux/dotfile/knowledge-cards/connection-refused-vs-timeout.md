@@ -21,7 +21,7 @@ tags: ["linux", "remote", "network", "debug", "knowledge-cards"]
 拿到症狀先歸類再動手：
 
 - **逾時** → 先驗可達性：目的位址對這台裝置路由得到嗎（在正確的私網 / VPN 上嗎）、中途有沒有防火牆 DROP、機器起了嗎。
-- **被拒** → 服務層：`ss -tlnp` 看服務有沒有在聽那個 port、聽在哪個介面；認證另算（能連上 sshd、但金鑰沒被接受而退回問密碼，是認證問題、不是連不上）。
+- **被拒** → 服務層：`ss -tlnp` 看服務有沒有在聽那個 port、聽在哪個介面；認證另算（能連上 sshd、但金鑰沒被接受而退回問密碼，是認證問題、不是連不上，見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)）。
 
 一個實務例子：手機連遠端機器的私網位址回逾時，根因往往是手機的 VPN 沒連上、位址路由不到——這時去查伺服器的 sshd 是查錯層。
 

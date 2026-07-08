@@ -1,7 +1,7 @@
 ---
 title: "Linux 術語卡"
 date: 2026-06-29
-description: "dotfile 管理、平鋪式視窗管理、桌面客製化、安裝與除錯相關的術語索引"
+description: "dotfile 管理、平鋪式視窗管理、桌面客製化、遠端連線與網路、安裝與除錯相關的術語索引"
 weight: 99
 tags: ["dotfile", "linux", "knowledge-cards"]
 ---

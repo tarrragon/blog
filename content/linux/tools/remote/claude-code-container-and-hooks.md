@@ -6,7 +6,7 @@ weight: 6
 tags: ["linux", "remote", "claude-code", "docker", "agent", "hooks"]
 ---
 
-把 Claude Code 裝進 container 當遠端 agent 工作機時，真正要解的兩件事是：認證怎麼活過 container 重建、以及任務結束怎麼主動通知。這篇聚焦 Claude Code 本身在這個情境下的安裝、認證模型與 hooks 配置——[遠端 agent 工作機實作記錄](../agent-workstation-vm-handson/) 的 Step 6-8 是完整的端到端脈絡，這裡把其中 Claude Code 相關的機制單獨講清楚，因為它的認證模型跟直覺不同、踩過的人不少。
+把 Claude Code 裝進 container 當遠端 agent 工作機時，真正要解的兩件事是：認證怎麼活過 container 重建、以及任務結束怎麼主動通知。這篇聚焦 Claude Code 本身在這個情境下的安裝、認證模型與 hooks 配置——[遠端 agent 工作機實作記錄](../agent-workstation-vm-handson/) 的 Step 6-8 是完整的端到端脈絡，這裡把其中 Claude Code 相關的機制單獨講清楚，重點是它的認證模型——env-var token 注入、與登入態解耦。
 
 ## 安裝：一個 npm 全域套件
 
@@ -21,9 +21,9 @@ RUN npm install -g @anthropic-ai/claude-code
 
 ## 認證：setup-token 是 env-var 注入模型
 
-對無人值守的容器化 agent，`claude setup-token` 給的認證形態是「長效 token 的環境變數注入」、而不是「一次登入、狀態存在本地之後都在」。這是最容易誤解的一點。
+對無人值守的容器化 agent，`claude setup-token` 給的認證形態是「長效 token 的環境變數注入」、而不是「一次登入、狀態存在本地之後都在」。
 
-`setup-token` 走一次互動登入（需要真 TTY、`docker run -it`），完成後印出一個 `sk-ant-oat01-` 開頭的長效 token（實測有效約一年）。關鍵是：它**不會**把這顆 token 寫進 `~/.claude`、只把它印出來、明示你設成環境變數 `CLAUDE_CODE_OAUTH_TOKEN`。所以持久化的責任在你——把 token 存成 host 側的機密、在 `docker run` 時注入：
+`setup-token` 走一次互動登入（需要真 TTY、`docker run -it`），完成後印出一個 `sk-ant-oat01-` 開頭的長效 token（宣告有效約一年）。關鍵是：它**不會**把這顆 token 寫進 `~/.claude`、只把它印出來、明示你設成環境變數 `CLAUDE_CODE_OAUTH_TOKEN`。所以持久化的責任在你——把 token 存成 host 側的機密、在 `docker run` 時注入：
 
 ```bash
 # 存成 host 的 gitignored 機密（不進 image 也不進 git）
@@ -37,7 +37,7 @@ docker run --rm --env-file ~/.env <image> claude -p "任務" --dangerously-skip-
 
 ## 認證綁 token 注入、不綁 session
 
-env-var 模型的直接後果是：**能不能認證，取決於這次 run 有沒有注入 token、跟 session 或登入態無關**。這解釋幾個會困惑的現象：
+env-var 模型的直接後果是：**能不能認證，取決於這次 run 有沒有注入 token、跟 session 或登入態無關**。這個模型有兩個直接後果：
 
 - 直接打 `claude`（沒注入 token）即使在一個還活著的多工器 session 裡，也會要求重新認證——因為它沒拿到憑證。
 - 在一個 `--rm` 的臨時 container 裡真的走一次互動登入，憑證寫進容器的 `~/.claude`、容器一結束就蒸發（除非登入時掛了 volume 讓它落在持久儲存）。所以「在臨時容器裡登入」多半是白做、下次又被要求認證。

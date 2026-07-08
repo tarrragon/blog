@@ -96,7 +96,7 @@ tar
 
 ### 概念與工具
 
-這步把「可達性」從 VM 的網路模式與家用 IP 解耦：VM 與手機加入同一個 tailnet 之後，手機用私網位址找到 VM、跟宿主機網段與公網 IP 都無關。原理與取捨見 [遠端連線與同步工具選型](../connection-and-sync-tools/) 的網路層段、決策層判讀見 [選型文的浮動 IP 段](../agent-workstation-home-vs-vps/)。（Tailscale 目前只有段落級介紹、專文缺口已記在 content-backlog。）
+這步把「可達性」從 VM 的網路模式與家用 IP 解耦：VM 與手機加入同一個 tailnet 之後，手機用私網位址找到 VM、跟宿主機網段與公網 IP 都無關。原理與取捨見 [遠端連線與同步工具選型](../connection-and-sync-tools/) 的網路層段、決策層判讀見 [選型文的浮動 IP 段](../agent-workstation-home-vs-vps/)。tailnet、DERP 中繼 vs 直連、`tailscale status` 判讀的完整機制見 [Tailscale tailnet 與中繼](../tailscale-tailnet-and-relay/)。
 
 ### 實作
 
@@ -139,7 +139,7 @@ $ tailscale status | grep agent-vm
 
 實測命中「看得到但走 DERP 中繼」這個分流：`tailscale status` 的裝置那行標 `relay "hkg"`、而非直連的 peer 位址，代表直連沒建起來、走了中繼。判讀鏈：tailnet 裝置清單看不到對方 → 登入 / 帳號問題；看得到、`ping` 通但延遲偏高且標 `relay` → NAT 穿透失敗退回中繼（本次 UTM NAT 就是這情況、功能可用只是慢）；看得到但 `ping` 完全不通 → 才往防火牆 / ACL 方向查。中繼可用時不必急著修直連——除非延遲影響到逐鍵互動的體感，否則中繼是可接受的退路。
 
-還有一個從手機端連線時實測踩到、且最容易誤判方向的症狀：**手機端 client 連 VM 的 tailnet 位址回「connection timed out」。** 直覺會往「sshd 掛了 / 防火牆擋了 / client 設錯」查，但這些的症狀是「連線被拒」（送達但拒絕）、不是「逾時」（送不到）。逾時指向可達性層——`100.68.144.88` 是 tailnet 私網位址、只有在同一個 tailnet 上的裝置才路由得到，手機的 Tailscale 若沒連上（app 沒開、開關沒打開、登入到別的帳號），這個位址對手機根本不存在、封包送不出去。判讀方法是從 VM 側 `tailscale status` 看那台手機在不在清單、是不是 `offline`：手機沒出現或標 offline，問題就在手機端進 tailnet 這關、不在 VM。這條把「連線被拒 vs 連線逾時」當分岔點：前者往服務 / 認證層查、後者往網路可達性層查，兩者的除錯方向相反（通用判別見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)）。VM 側要先自證清白——`sudo ss -tlnp | grep :22` 確認 sshd 在聽、`tailscale status` 確認自己上線，把 VM 這層從變數表移除，再回頭要求手機端進 tailnet。
+還有一個從手機端連線時實測踩到的症狀：**手機端 client 連 VM 的 tailnet 位址回「connection timed out」。** 逾時是可達性層的訊號（封包送不到）、不是服務層的訊號（送達但被拒絕才是「連線被拒」）——所以症狀本身就把方向指向網路可達性，而不是 VM 的 sshd、防火牆或 client 設定。`100.68.144.88` 是 tailnet 私網位址、只有在同一個 tailnet 上的裝置才路由得到，手機的 Tailscale 若沒連上（app 沒開、開關沒打開、登入到別的帳號），這個位址對手機根本不存在、封包送不出去。判讀方法是從 VM 側 `tailscale status` 看那台手機在不在清單、是不是 `offline`：手機沒出現或標 offline，問題就在手機端進 tailnet 這關、不在 VM。這條把「連線被拒 vs 連線逾時」當分岔點：前者往服務 / 認證層查、後者往網路可達性層查，兩者的除錯方向相反（通用判別見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)）。VM 側要先自證清白——`sudo ss -tlnp | grep :22` 確認 sshd 在聽、`tailscale status` 確認自己上線，把 VM 這層從變數表移除，再回頭要求手機端進 tailnet。
 
 ## Step 4：mosh 補連線手感
 
@@ -303,13 +303,13 @@ build 失敗的分流（本次未遇）：看是哪一層指令、跟 base image
 
 ### 概念與工具
 
-agent 程式裝進 image、真正要解的是「認證怎麼活過 container 重建」。實測發現對 headless 工作機、Claude Code 的 `setup-token` 給出的是比持久化 OAuth session 更貼合的模型：它產生一個**長效 token**（實測有效一年）、用環境變數 `CLAUDE_CODE_OAUTH_TOKEN` 注入。這讓認證變成一顆 host 側的 secret——存在 image 外、git 外，`docker run` 時才注入（機密為何不進 image layer 也不進 repo、runtime 注入才對，見 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/)）。設定（`settings.json`、含 hooks）走 volume 持久化、認證走 env var 注入，兩者分離：憑證輪替只要換 env 檔、不用碰 volume。信任邊界的判讀見 [選型文的隔離段](../agent-workstation-home-vs-vps/)。（Claude Code 在本 blog 沒有安裝與 hooks 專文、缺口已記在 content-backlog。）
+agent 程式裝進 image、真正要解的是「認證怎麼活過 container 重建」。實測發現對 headless 工作機、Claude Code 的 `setup-token` 給出的是比持久化 OAuth session 更貼合的模型：它產生一個**長效 token**（宣告有效一年）、用環境變數 `CLAUDE_CODE_OAUTH_TOKEN` 注入。這讓認證變成一顆 host 側的 secret——存在 image 外、git 外，`docker run` 時才注入（機密為何不進 image layer 也不進 repo、runtime 注入才對，見 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/)）。設定（`settings.json`、含 hooks）走 volume 持久化、認證走 env var 注入，兩者分離：憑證輪替只要換 env 檔、不用碰 volume。信任邊界的判讀見 [選型文的隔離段](../agent-workstation-home-vs-vps/)。這套機制（安裝、認證模型、hooks 通知）的獨立說明見 [在 container 裡跑 Claude Code](../claude-code-container-and-hooks/)。
 
 ### 實作
 
 Claude Code 已在 Step 6 的 image 裡（實測版本 2.1.204）。認證分三步：產 token、存成 secret、注入。
 
-第一步用 `setup-token` 走一次互動登入。它需要真 TTY（`docker run -it`），而 SSH 要帶 `-t` 才配置 TTY——**從自己的終端機**跑（透過工具管線或非互動 shell 都拿不到 TTY、會報 `cannot attach stdin to a TTY-enabled container`）：
+第一步用 `setup-token` 走一次互動登入。它需要真 TTY（`docker run -it`），而 SSH 要帶 `-t` 才配置 TTY——**從自己的終端機**跑（透過工具管線或非互動 shell 都拿不到 TTY、docker 會回報輸入裝置不是 TTY 而拒絕啟動）：
 
 ```bash
 ssh -t tar@<vm> 'docker run -it -v claude-home:/home/node/.claude agent-workstation:v1 claude setup-token'
@@ -317,7 +317,7 @@ ssh -t tar@<vm> 'docker run -it -v claude-home:/home/node/.claude agent-workstat
 
 流程會印一個授權 URL、在瀏覽器用 Anthropic 帳號授權、把授權碼貼回終端。完成後它印出長效 token。
 
-這裡有個實測會混淆的點、要講清楚——過程出現**兩個不同的憑證**：
+這個流程會產生**兩個不同的憑證**、用途與生命週期不同，分清楚：
 
 - **授權碼**：授權那步你貼進**瀏覽器流程**的一次性碼，用完即棄，不是要保存的東西。
 - **長效 token**：`setup-token` 跑完印在終端、`sk-ant-oat01-` 開頭那串，這才是要保存、之後每次啟動 container 用的憑證。
@@ -355,7 +355,7 @@ docker run --rm -it \
   claude --dangerously-skip-permissions "$@"
 ```
 
-這裡要點破一個實測會誤解的心智模型：**認證綁在「每次 run 有沒有注入 token」、不綁在 session 或登入態上**。env-var 模型下沒有「一次登入、之後都在」這回事——直接打 `claude`（沒注入 token）即使在同一個還活著的 zellij session 裡、也會要你重新認證；而在 `--rm` 的臨時 container 裡真的走一次互動登入、憑證寫進容器的 `~/.claude`、容器一結束就蒸發（除非登入時掛了 volume 讓它落在 `claude-home`）。所以「臨時容器裡互動登入」多半是白做、下次又被要求認證。可靠的做法是不依賴任何登入態、每次用 helper 注入 token。這點用隔離測試釘死過：**不掛任何 volume（排除一切存檔登入）、只注入 token 即認證成功；不注入 token 則回 `Not logged in`**——證明認證來源純粹是注入的 token、與 session、與 volume 裡有沒有登入檔都無關。
+這個 env-var 模型有一個直接後果：**認證綁在「每次 run 有沒有注入 token」、不綁在 session 或登入態上**——沒有「一次登入、之後都在」這回事，直接打 `claude`（沒注入 token）即使在同一個還活著的 zellij session 裡、也會要你重新認證；而在 `--rm` 的臨時 container 裡真的走一次互動登入、憑證寫進容器的 `~/.claude`、容器一結束就蒸發（除非登入時掛了 volume 讓它落在 `claude-home`）。所以「臨時容器裡互動登入」多半是白做、下次又被要求認證。可靠的做法是不依賴任何登入態、每次用 helper 注入 token。這點用隔離測試釘死過：**不掛任何 volume（排除一切存檔登入）、只注入 token 即認證成功；不注入 token 則回 `Not logged in`**——證明認證來源純粹是注入的 token、與 session、與 volume 裡有沒有登入檔都無關。
 
 ### 驗證
 
