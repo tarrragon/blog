@@ -6,7 +6,7 @@ description: "要用 CLI 操作 Zellij 的 pane（查佈局、讀內容、調大
 tags: ["zellij", "terminal", "pane", "cli"]
 ---
 
-Zellij 是終端機多工器，能在單一畫面分割多個 pane。本文整理透過 zellij CLI 查看佈局、讀取其他 pane 內容、調整 pane 大小的操作方式 — CLI 介面既適合遠端腳本化操作，也適合搭配看不到螢幕的 AI 工具（例如 Claude）在終端機協作。本文承接 [終端機圖形化工具總覽](/linux/tools/cli/cli-graphical-tools-overview/) 的多工器分類；瀏覽器遠端連線見 [Zellij Web Client 外網連線教學](/linux/tools/cli/zellij-remote-web-client/)、tmux 的持久化基礎見 [tmux 基礎](/linux/tools/cli/tmux-persistence-and-basics/)。
+Zellij 是終端機多工器，能在單一畫面分割多個 pane。本文整理透過 zellij CLI 查看佈局、讀取其他 pane 內容、調整 pane 大小的操作方式 — CLI 介面既適合遠端腳本化操作，也適合搭配看不到螢幕的 AI 工具（例如 Claude）在終端機協作。本文承接 [終端機圖形化工具總覽](/linux/tools/cli/cli-graphical-tools-overview/) 的多工器分類；session 層的生命週期操作（建、背景常駐、attach / detach、清理）見 [Zellij session 生命週期](/linux/tools/cli/zellij-session-lifecycle/)、瀏覽器遠端連線見 [Zellij Web Client 外網連線教學](/linux/tools/cli/zellij-remote-web-client/)、tmux 的持久化基礎見 [tmux 基礎](/linux/tools/cli/tmux-persistence-and-basics/)。
 
 ## 查看整體佈局
 

@@ -6,7 +6,7 @@ description: "要讓別人透過瀏覽器連進你的 Zellij session、需要設
 tags: ["zellij", "terminal", "remote", "web"]
 ---
 
-Zellij Web Client 讓他人透過瀏覽器連線到指定的 Zellij session，承擔的責任是把終端機多工環境分享給沒有 SSH 連線的協作者。本文承接 [終端機圖形化工具總覽](/linux/tools/cli/cli-graphical-tools-overview/) 的多工器分類；zellij 的本機 pane 操作見 [Zellij 多終端機操作指南](/linux/tools/cli/zellij-pane/)、tmux 的持久化基礎見 [tmux 基礎](/linux/tools/cli/tmux-persistence-and-basics/)。
+Zellij Web Client 讓他人透過瀏覽器連線到指定的 Zellij session，承擔的責任是把終端機多工環境分享給沒有 SSH 連線的協作者。本文承接 [終端機圖形化工具總覽](/linux/tools/cli/cli-graphical-tools-overview/) 的多工器分類；zellij 的本機 pane 操作見 [Zellij 多終端機操作指南](/linux/tools/cli/zellij-pane/)、session 生命週期的 CLI 操作見 [Zellij session 生命週期](/linux/tools/cli/zellij-session-lifecycle/)、tmux 的持久化基礎見 [tmux 基礎](/linux/tools/cli/tmux-persistence-and-basics/)。
 
 ---
 

@@ -21,6 +21,7 @@ tags: ["linux", "tools", "remote", "ssh"]
 工具層之上還有一個上游問題：這台被連入的機器該放家裡還是租 VPS。延遲、浮動 IP、環境隔離三個常見顧慮各有軟體層的標準解、跟機器位置無關；拆完之後選型只剩「機器由誰保證活著」一個變數。
 
 - [遠端 agent 工作機選型：家用機還是 VPS](agent-workstation-home-vs-vps/)——延遲的兩層拆解、浮動 IP 的網路層解、container 讓決策可逆；附 VPS 規格與計費的判讀框架。
+- [遠端 agent 工作機實作記錄：從 Docker image 到手機端跑通](agent-workstation-vm-handson/)——選型文的實作篇：在 VM 上把連線 / session / 隔離三層實機架起來、十步驟 + 三情境、每步含實測踩到的除錯判讀（kernel 升級卡 docker、volume 權限、mosh 與 CJK 顯示衝突等）。
 
 ## 連線與同步工具
 
