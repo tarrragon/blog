@@ -39,7 +39,7 @@ docker run --rm --env-file ~/.env <image> claude -p "任務" --dangerously-skip-
 
 env-var 模型的直接後果是：**能不能認證，取決於這次 run 有沒有注入 token、跟 session 或登入態無關**。這個模型有兩個直接後果：
 
-- 直接打 `claude`（沒注入 token）即使在一個還活著的多工器 session 裡，也會要求重新認證——因為它沒拿到憑證。
+- 直接打 `claude`（沒注入 token）即使在一個還活著的多工器（tmux / zellij）session 裡，也會要求重新認證——因為它沒拿到憑證。
 - 在一個 `--rm` 的臨時 container 裡真的走一次互動登入，憑證寫進容器的 `~/.claude`、容器一結束就蒸發（除非登入時掛了 volume 讓它落在持久儲存）。所以「在臨時容器裡登入」多半是白做、下次又被要求認證。
 
 可靠的做法是不依賴任何登入態、每次用一個 helper 把 token 注入。要驗證認證確實純綁 token：不掛任何 volume（排除一切存檔登入）、只注入 token 即認證成功；不注入則回 `Not logged in`——這證明認證來源純粹是注入的 token。
@@ -55,7 +55,7 @@ Claude Code 的狀態分兩處放，持久化邊界不同：
 
 ## hooks：任務結束推通知
 
-Claude Code 的 hooks 讓你在特定事件觸發外部指令。把工作流從「掛在終端上等」翻成「離開、跑完被叫回來」的關鍵是 `Stop` hook——它在每次回應結束時觸發，對應「一輪任務跑完」這個要通知的時機。設定寫在 `~/.claude/settings.json`：
+Claude Code 的 hooks 讓你在特定事件觸發外部指令。把工作流從「掛在終端上等」翻成「離開、跑完被叫回來」的關鍵是 `Stop` hook——它在每次回應結束時觸發，對應「一輪任務跑完」這個要通知的時機。設定寫在 `~/.claude/settings.json`。這個檔在掛成 named volume 的 `~/.claude` 裡、host 上沒有對應路徑，要寫它有兩條路：`docker run` 進容器用 `cat > ~/.claude/settings.json` 或容器內編輯器寫（改動落在 volume、跨重建保留），或啟動時另外 bind-mount 一份 host 上的 `settings.json` 蓋過去。內容如下：
 
 ```json
 {

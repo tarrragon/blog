@@ -1,7 +1,7 @@
 ---
 title: "Tailscale 深入：tailnet、MagicDNS、直連與 DERP 中繼"
 date: 2026-07-08
-description: "要用 Tailscale 讓散在不同網路的機器互連、遇到連得到但延遲高、或想搞懂 tailscale status 的 relay / direct 標示時回來讀"
+description: "要用 Tailscale 讓散在不同網路的機器互連、遇到連得到但延遲高、或想讀懂 tailscale status 的 relay / direct 標示時回來讀"
 weight: 5
 tags: ["linux", "remote", "tailscale", "vpn", "network"]
 ---
@@ -39,9 +39,9 @@ sudo tailscale up --hostname=my-vm         # 印出授權 URL
 100.68.144.88  my-vm  ...  active; relay "hkg"                # 走香港 DERP 中繼
 ```
 
-直連建不起來的典型原因是 NAT 穿透失敗：兩端的 NAT 類型不配合（對稱型 NAT、或某些虛擬機的 NAT 網路模式）時，打洞（hole punching）建不起 peer-to-peer 路徑、只能退中繼。一個實測到的例子：一台跑在筆電上的虛擬機（NAT 網路模式），從同一台筆電連它、tailscale 卻走跨國 DERP 中繼、延遲幾十毫秒——因為虛擬機的 NAT 讓直連打洞失敗。功能完全可用（能連、能傳），只是延遲被中繼繞路放大。
+直連建不起來的典型原因是 NAT 穿透失敗：兩端的 NAT 類型不配合（對稱型 NAT——每次對外連線都換一個 port、讓對端無法預測該往哪打，或某些虛擬機的 NAT 網路模式）時，打洞（hole punching，兩端同時往對方猜測的位址送封包、在 NAT 上鑿出臨時通道）建不起 peer-to-peer 路徑、只能退中繼。一個實測到的例子：一台跑在筆電上的虛擬機（NAT 網路模式），從同一台筆電連它、tailscale 卻走跨國 DERP 中繼、延遲幾十毫秒——因為虛擬機的 NAT 讓直連打洞失敗。功能完全可用（能連、能傳），只是延遲被中繼繞路放大。
 
-判讀原則：**看得到、`ping` 通但延遲偏高且標 `relay`** → NAT 穿透失敗退中繼，功能可用只是慢、不必急著修，除非延遲影響到逐鍵互動的體感。要降延遲得從 NAT 類型下手（換網路模式、開 UPnP、或設 Tailscale 的 subnet router / exit node 改變路徑）。
+**看得到、`ping` 通但延遲偏高且標 `relay`**，就是 NAT 穿透失敗退中繼——功能可用只是慢、不必急著修，除非延遲影響到逐鍵互動的體感。要降延遲得從 NAT 類型下手：換 VM 的網路模式（bridged 讓 VM 直接掛在實體網段、比 NAT 模式容易建直連）、在路由器開 UPnP（讓裝置自動請求對外 port 映射、打洞更容易成功）、或用 Tailscale 的 exit node（指定一台裝置當所有對外流量的統一出口）與 subnet router（讓一台裝置把它所在的整個子網橋進 tailnet）換一條路徑。
 
 ## tailscale status 判讀
 
@@ -54,9 +54,9 @@ sudo tailscale up --hostname=my-vm         # 印出授權 URL
 
 從手機連 tailnet 位址回「connection timed out」時，逾時指向可達性層而非服務層——問題多半在手機的 Tailscale 沒連上、那個私網位址對手機根本不存在，而不在伺服器的 sshd。判別方法是分清「逾時 vs 被拒」，見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)。
 
-## 跟連線層疊加、收斂攻擊面
+## 跟連線層疊加、關掉公網入口
 
-Tailscale 是網路層、跟連線層（SSH / mosh）是疊加關係：先有可達性、上面才談連線手感。這個疊加還帶來一個安全性質——服務可以只綁 tailnet 介面、公網防火牆全關：SSH / ttyd 這類只在私網位址上聽，對外沒有任何開放 port，攻擊面收斂到零個公網入口。比「開公網 port 再堆 fail2ban」的維護成本低得多。連得到私網位址本身就代表通過了 tailnet 認證，定位與授權在這一層合一。
+Tailscale 是網路層、跟連線層（SSH / mosh）是疊加關係：先有可達性、上面才談連線手感。這個疊加還帶來一個安全性質——服務可以只綁 tailnet 介面、公網防火牆全關：SSH / ttyd 這類只在私網位址上聽，對外沒有任何開放 port，公網入口縮到零。比「開公網 port 再堆 fail2ban」的維護成本低得多。連得到私網位址本身就代表通過了 tailnet 認證，定位與授權在這一層合一。
 
 ## 下一步路由
 

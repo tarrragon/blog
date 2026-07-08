@@ -15,6 +15,7 @@ tags: ["linux", "tools", "remote", "ssh"]
 - [tmux 持久化與基礎](../cli/tmux-persistence-and-basics/)——最通用的多工器，session 持久化的核心概念。
 - [zellij 分頁與 pane](../cli/zellij-pane/)——較新、開箱即用、內建佈局的多工器。
 - [zellij 遠端 web 客戶端](../cli/zellij-remote-web-client/)——從瀏覽器連遠端 session 的路徑。
+- [zellij session 生命週期](../cli/zellij-session-lifecycle/)——session 從建立、detach、重連 attach 到清理的完整生命週期，遠端無人值守跑長任務的地基。
 
 ## 機器擺在哪：選型決策
 
@@ -33,7 +34,9 @@ tags: ["linux", "tools", "remote", "ssh"]
 
 ## 低頻寬 / 手機連線下的介面
 
-頻寬低或從手機 / 平板連線時，只傳純文字的 TUI 介面（ASCII / Unicode 製圖，不傳影像）最穩。監控、圖表、檔案瀏覽、資料庫操作都有這類工具，整理在 [CLI 環境工具](../cli/)。
+頻寬低或從手機 / 平板連線時，只傳純文字的 TUI 介面（ASCII / Unicode 製圖，不傳影像）最穩。監控、圖表、檔案瀏覽、資料庫操作都有這類工具，整理在 [CLI 環境工具](../cli/)。從手機連線還多一層：軟體鍵盤預設沒有 Esc / Ctrl / 方向鍵，得先挑對終端 client。
+
+- [手機終端 client 選型：連遠端 agent 工作機該用哪個](mobile-terminal-client-selection/)——Blink / Termius / 自製 ttyd 通道的比較，判準立在 mosh 漫遊、擴充鍵列、TUI 相容三個維度，附 Android 側實測。
 
 ## 遠端連線與 session 的除錯
 

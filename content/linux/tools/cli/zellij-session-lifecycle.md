@@ -73,7 +73,7 @@ Session: "work" successfully deleted.
 
 ## 除錯判讀 / tripwire
 
-attach 不到預期的 session、或「任務好像不見了」時，最常見的原因是 session 名稱不一致：`attach -c` 對一個拼錯的名稱會**靜默開一個新的空 session**（因為 `-c` 的語意就是「不存在就建」），看起來像原本的任務消失了、其實任務還活在原本正確名稱的 session 裡。判讀方法是先 `zellij ls` 看實際有哪些 session、確認自己 attach 到的是不是同一個。以 `zellij ls` 的輸出為權威狀態、不要靠記憶認定 attach 到了哪個 session。
+attach 不到預期的 session、或「任務好像不見了」時，最常見的原因是 session 名稱不一致：`attach -c` 對一個拼錯的名稱會**靜默開一個新的空 session**（因為 `-c` 的語意就是「不存在就建」），看起來像原本的任務消失了、其實任務還活在原本正確名稱的 session 裡。先 `zellij ls` 看實際有哪些 session、確認自己 attach 到的是不是同一個，就能區分。以 `zellij ls` 的輸出為權威狀態、不要靠記憶認定 attach 到了哪個 session。
 
 ## 下一步路由
 
