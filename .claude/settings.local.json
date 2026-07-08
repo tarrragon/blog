@@ -87,7 +87,8 @@
       "Bash(journalctl -u ollama)",
       "Bash(vm_stat)",
       "Bash(ollama rm *)",
-      "Bash(./bin/mdtools fmt *)"
+      "Bash(./bin/mdtools fmt *)",
+      "Bash(ssh *)"
     ],
     "deny": [],
     "ask": []
