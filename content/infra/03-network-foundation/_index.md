@@ -74,7 +74,7 @@ resource "aws_route_table" "private" {
 }
 ```
 
-每個可用區一個 NAT 是可用性優先的版本；若環境對成本敏感、且能接受出站在單一可用區故障時短暫中斷，也可以退回單一 NAT，但要把它當成明示的取捨、而非預設。判讀訊號：private subnet 的服務拉不到外部套件、或第三方 API 全部逾時，先查它關聯的 route table 有沒有指向健康的 NAT；若只有某一個可用區的節點受影響，多半是那一區的 NAT 或其所在 subnet 出狀況。風險與成本在這裡交會 — NAT Gateway 按處理流量計費，把大量出站流量（例如備份上傳、跨區同步）長期走 NAT 會讓帳單可觀，這類流量較划算的做法是改走 VPC Endpoint 直連雲服務、繞過 NAT。NAT 的數量取捨與出站成本在「devops 模組八：成本管理」有更完整的討論。邊界是：route table 與 NAT 只管「能不能出去、走哪條路」，至於某個埠允不允許連，是 security group 的職責。
+每個可用區一個 NAT 是可用性優先的版本；若環境對成本敏感、且能接受出站在單一可用區故障時短暫中斷，也可以退回單一 NAT，但要把它當成明示的取捨、而非預設。判讀訊號：private subnet 的服務拉不到外部套件、或第三方 API 全部逾時（逾時指向可達性層、跟「被拒=服務層」「解析失敗=resolver 層」是相反的除錯方向，通用判別見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)），先查它關聯的 route table 有沒有指向健康的 NAT；若只有某一個可用區的節點受影響，多半是那一區的 NAT 或其所在 subnet 出狀況。風險與成本在這裡交會 — NAT Gateway 按處理流量計費，把大量出站流量（例如備份上傳、跨區同步）長期走 NAT 會讓帳單可觀，這類流量較划算的做法是改走 VPC Endpoint 直連雲服務、繞過 NAT。NAT 的數量取捨與出站成本在「devops 模組八：成本管理」有更完整的討論。邊界是：route table 與 NAT 只管「能不能出去、走哪條路」，至於某個埠允不允許連，是 security group 的職責。
 
 ## security group 設計：最小開放
 

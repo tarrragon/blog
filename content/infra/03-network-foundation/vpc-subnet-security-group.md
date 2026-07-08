@@ -205,7 +205,7 @@ aws ec2 describe-security-groups \
   --output table
 ```
 
-資料庫埠、SSH、內部 API 出現在這份清單上就是該收斂的目標。管理埠的存取更安全的替代方案是 SSM Session Manager — 它讓你透過 IAM 權限建立 shell session，完全不需要開 22 埠，連線經由 Systems Manager 的控制通道走、不走公網，同時自動留下 session log。誰能透過 IAM 改動這些規則，銜接[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
+資料庫埠、SSH、內部 API 出現在這份清單上就是該收斂的目標。管理埠的存取更安全的替代方案是 SSM Session Manager — 它讓你透過 IAM 權限建立 shell session，完全不需要開 22 埠，連線經由 Systems Manager 的控制通道走、不走公網，同時自動留下 session log。另一種把管理埠移出公網的做法是私網 overlay（mesh VPN，如 Tailscale）：SSH 只綁 tailnet 私網介面、公網不開任何埠，連得到私網位址本身即代表通過 tailnet 認證（tailnet 位址模型、NAT 穿透與第三方 control plane 取捨見 [Tailscale 深入](/linux/tools/remote/tailscale-tailnet-and-relay/)）。誰能透過 IAM 改動這些規則，銜接[模組二：身分與憑證地基](/infra/02-identity-credentials/)。
 
 在 CI 層面，[模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)用 tfsec / checkov 做靜態掃描，自動攔截「敏感埠 + 全開 CIDR」的組合，把 security group 的盤點從人工定期做變成每次 PR 自動做。
 

@@ -112,6 +112,8 @@ aws cloudwatch get-metric-statistics \
 | Memory < 40% | 過度配置                            | 降一級 memory              |
 | Memory > 80% | OOM kill 風險                       | 升一級 memory              |
 
+Memory > 80% 觸發的 OOM kill 會讓 task 被 SIGKILL、退出碼 137——rightsizing 是預防，怎麼在事後從退出碼確認「就是 OOM 而非別的 SIGKILL」見 [OOM killer 與退出碼 137](/linux/dotfile/knowledge-cards/oom-exit-code-137/)。
+
 調整後觀察 3-5 天確認沒有效能退化再進入下一輪。每次只調一個維度（CPU 或 memory），避免同時改兩個變數無法歸因。
 
 ### Fargate 可選的規格組合

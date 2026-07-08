@@ -133,7 +133,7 @@ resource "aws_secretsmanager_secret" "db" {
 
 ### state 裡的機密邊界
 
-Terraform 即使從 Secrets Manager 讀值，那個值仍然會以明文落進 state 檔。這是一個常被忽略的邊界。「不進 code」只是第一道，state 後端的加密與存取控制（[模組一的 state 地基](/infra/01-minimal-iac/)）是同等重要的第二道 — 否則密鑰只是從 repo 搬到了一個沒鎖好的 state bucket。
+Terraform 即使從 Secrets Manager 讀值，那個值仍然會以明文落進 state 檔。這是一個常被忽略的邊界。「不進 code」只是第一道，state 後端的加密與存取控制（[模組一的 state 地基](/infra/01-minimal-iac/)）是同等重要的第二道 — 否則密鑰只是從 repo 搬到了一個沒鎖好的 state bucket。第三道在 runtime：secret 注入成環境變數後，同機程序仍可經 `/proc/<pid>/environ`、`docker inspect` 讀到（[機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/)），所以長效機密要短期輪替、不長放。
 
 State 的保護措施是一道複合防線：
 
