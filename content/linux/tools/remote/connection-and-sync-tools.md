@@ -10,7 +10,7 @@ tags: ["linux", "tools", "remote", "ssh", "mosh", "rsync", "sync"]
 
 ## 連線層：從 SSH 出發，按弱點往上補
 
-連線層的基準是 SSH——它是遠端登入的通用標準，加密、認證、port forwarding 都靠它，多數情況直接用 SSH 就夠。往上補工具的時機，是 SSH 在特定弱點上卡手的時候，而不是「有更潮的工具就換」。SSH 的兩個典型弱點是「網路一換就斷」（筆電休眠、Wi-Fi 換點、行動網路切換）和「連線中斷後要手動重連」，mosh 與 autossh 各補一個。
+連線層的基準是 SSH——它是遠端登入的通用標準，加密、認證、port forwarding 都靠它，多數情況直接用 SSH 就夠。往上補工具的時機，是 SSH 在特定弱點上卡手的時候，而不是「有更潮的工具就換」。SSH 的兩個典型弱點是「網路一換就斷」（筆電休眠、Wi-Fi 換點、行動網路切換）和「連線中斷後要手動重連」，mosh 與 autossh 各補一個。SSH 為什麼一換 IP 就斷（TCP 綁 4-tuple），見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/)。
 
 | 工具          | 解的問題                     | 代價                                         | 何時值得換                         |
 | ------------- | ---------------------------- | -------------------------------------------- | ---------------------------------- |
@@ -21,9 +21,11 @@ tags: ["linux", "tools", "remote", "ssh", "mosh", "rsync", "sync"]
 
 ### mosh：換網路不掉線、高延遲下還能打字
 
-mosh（mobile shell）解的是「連線的存活與手感」：它在 SSH 之上用 UDP 維持一個跟客戶端 IP 無關的 session，所以你的筆電從家裡 Wi-Fi 換到行動網路、或休眠喚醒換了 IP，連線不會斷。它還做本地回顯預測，高延遲鏈路上打字不會有一個字一個字等回應的黏滯感。從咖啡廳、通勤、跨國高延遲連遠端時，mosh 的體驗明顯優於裸 SSH。
+mosh（mobile shell）解的是「連線的存活與手感」：它在 SSH 之上用 UDP 維持一個跟客戶端 IP 無關的 session，所以你的筆電從家裡 Wi-Fi 換到行動網路、或休眠喚醒換了 IP，連線不會斷。它還做本地回顯預測，高延遲鏈路上打字不會有一個字一個字等回應的黏滯感。從咖啡廳、通勤、跨國高延遲連遠端時，mosh 的體驗明顯優於裸 SSH。本地回顯預測的機制、以及它跟中文（雙寬字）顯示的衝突，見 [mosh 本地回顯預測](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/)。
 
 它的代價是走 UDP，要在遠端開一段 UDP port 範圍（防火牆/雲端 security group 要放行），且不做 SSH 的 port forwarding、也沒有 scrollback——需要轉發本地端口時還是得另開一條 SSH。要漫遊又想保留 port forwarding 與 scrollback，eternal terminal（`et`）是補上這兩個缺口的同類競品，代價是遠端也要裝它的 daemon。所以 mosh 通常跟多工器搭配用：mosh 保住連線手感、多工器保住 session 內容，兩者互補——「mosh 還是 tmux」不是二選一，見 [tmux 基礎](../../cli/tmux-persistence-and-basics/)。
+
+一個實務上要會的驗證：client 顯示「已連線」不代表真的走了 mosh——有些 client 的 mosh 支援不穩、開關無效時會靜默退回 SSH。判斷要看伺服器側的權威狀態：mosh 生效時遠端有 `mosh-server` 行程、且原本的 SSH 連線在 spawn 完就關閉（`ss -tnp` 看不到該 client 的 TCP:22）；只看到 SSH 連線、沒有 `mosh-server`，就是退回了純 SSH。「能連但漫遊會斷」多半就是這個——實際沒走 mosh。
 
 ### autossh：維持一條會自己重連的隧道
 

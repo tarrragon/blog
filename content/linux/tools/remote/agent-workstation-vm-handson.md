@@ -139,13 +139,13 @@ $ tailscale status | grep agent-vm
 
 實測命中「看得到但走 DERP 中繼」這個分流：`tailscale status` 的裝置那行標 `relay "hkg"`、而非直連的 peer 位址，代表直連沒建起來、走了中繼。判讀鏈：tailnet 裝置清單看不到對方 → 登入 / 帳號問題；看得到、`ping` 通但延遲偏高且標 `relay` → NAT 穿透失敗退回中繼（本次 UTM NAT 就是這情況、功能可用只是慢）；看得到但 `ping` 完全不通 → 才往防火牆 / ACL 方向查。中繼可用時不必急著修直連——除非延遲影響到逐鍵互動的體感，否則中繼是可接受的退路。
 
-還有一個從手機端連線時實測踩到、且最容易誤判方向的症狀：**手機端 client 連 VM 的 tailnet 位址回「connection timed out」。** 直覺會往「sshd 掛了 / 防火牆擋了 / client 設錯」查，但這些的症狀是「連線被拒」（送達但拒絕）、不是「逾時」（送不到）。逾時指向可達性層——`100.68.144.88` 是 tailnet 私網位址、只有在同一個 tailnet 上的裝置才路由得到，手機的 Tailscale 若沒連上（app 沒開、開關沒打開、登入到別的帳號），這個位址對手機根本不存在、封包送不出去。判讀方法是從 VM 側 `tailscale status` 看那台手機在不在清單、是不是 `offline`：手機沒出現或標 offline，問題就在手機端進 tailnet 這關、不在 VM。這條把「連線被拒 vs 連線逾時」當分岔點：前者往服務 / 認證層查、後者往網路可達性層查，兩者的除錯方向相反。VM 側要先自證清白——`sudo ss -tlnp | grep :22` 確認 sshd 在聽、`tailscale status` 確認自己上線，把 VM 這層從變數表移除，再回頭要求手機端進 tailnet。
+還有一個從手機端連線時實測踩到、且最容易誤判方向的症狀：**手機端 client 連 VM 的 tailnet 位址回「connection timed out」。** 直覺會往「sshd 掛了 / 防火牆擋了 / client 設錯」查，但這些的症狀是「連線被拒」（送達但拒絕）、不是「逾時」（送不到）。逾時指向可達性層——`100.68.144.88` 是 tailnet 私網位址、只有在同一個 tailnet 上的裝置才路由得到，手機的 Tailscale 若沒連上（app 沒開、開關沒打開、登入到別的帳號），這個位址對手機根本不存在、封包送不出去。判讀方法是從 VM 側 `tailscale status` 看那台手機在不在清單、是不是 `offline`：手機沒出現或標 offline，問題就在手機端進 tailnet 這關、不在 VM。這條把「連線被拒 vs 連線逾時」當分岔點：前者往服務 / 認證層查、後者往網路可達性層查，兩者的除錯方向相反（通用判別見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)）。VM 側要先自證清白——`sudo ss -tlnp | grep :22` 確認 sshd 在聽、`tailscale status` 確認自己上線，把 VM 這層從變數表移除，再回頭要求手機端進 tailnet。
 
 ## Step 4：mosh 補連線手感
 
 ### 概念與工具
 
-mosh 在連線層補兩個 SSH 的弱點：手機切網路不斷線（UDP 漫遊）、高 RTT 下打字順（本地回顯預測）。機制與代價（UDP port、無 port forwarding）見 [遠端連線與同步工具選型](../connection-and-sync-tools/) 的 mosh 段。
+mosh 在連線層補兩個 SSH 的弱點：手機切網路不斷線（UDP 漫遊）、高 RTT 下打字順（本地回顯預測）。SSH 為何一換 IP 就斷、mosh 為何用 UDP 繞過見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/)；本地回顯預測的機制與 CJK 代價見 [mosh 本地回顯預測](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/)；機制與代價（UDP port、無 port forwarding）的選型面見 [遠端連線與同步工具選型](../connection-and-sync-tools/) 的 mosh 段。
 
 ### 實作
 
@@ -295,7 +295,7 @@ docker run --rm -it \
 
 **daemon 起不來、症狀在 iptables、根因在 kernel。** `sudo systemctl start docker` 失敗，journal 顯示 `iptables (nf_tables): Could not fetch rule set generation id: Invalid argument`、建 NAT chain `DOCKER` 失敗。照症狀往「docker 網路 / 防火牆規則」除錯會走錯方向——根因是前一步為修 pacman 404 跑的 `-Syu` 順帶升級了 kernel（`7.1.2-2` → `7.1.3-1`）、但機器沒重開，執行中 kernel 的 module 目錄已不存在（磁碟只剩新版），`nf_tables` 模組載不進來。判讀方法是讀權威狀態：`uname -r`（執行中）對比 `ls /usr/lib/modules/`（磁碟上），兩者不一致就是 kernel 升級後未重開機，重開即解（方法論見 [診斷讀權威狀態](../../../debug/diagnosis-read-authoritative-state/)）。這條 gotcha 鏈提醒：一個看似無關的修法（`-Syu`）可能埋下三步後才引爆的伏筆。
 
-**named volume 掛載點是 root、非 root 使用者寫不進。** 把 `~/.claude` 掛成 named volume 後、container 內的 `node` 對它 `touch` 回 `Permission denied`——掛載點 owner 是 `root`。根因是 Docker 對「image 內不存在的路徑」建 named volume 時預設 root-owned。修法是在 Dockerfile 裡（`USER node` 之前、還是 root 時）先 `mkdir -p /home/node/.claude && chown node:node`：Docker 掛空 volume 時會沿用 image 內該目錄的 owner。這是「掛載點要先在 image 裡以對的 owner 存在」的通用原則、對任何要讓非 root 使用者寫的 volume 都適用。
+**named volume 掛載點是 root、非 root 使用者寫不進。** 把 `~/.claude` 掛成 named volume 後、container 內的 `node` 對它 `touch` 回 `Permission denied`——掛載點 owner 是 `root`。根因是 Docker 對「image 內不存在的路徑」建 named volume 時預設 root-owned。修法是在 Dockerfile 裡（`USER node` 之前、還是 root 時）先 `mkdir -p /home/node/.claude && chown node:node`：Docker 掛空 volume 時會沿用 image 內該目錄的 owner。這是「掛載點要先在 image 裡以對的 owner 存在」的通用原則、對任何要讓非 root 使用者寫的 volume 都適用（見 [Docker named volume 掛載點 owner](/linux/dotfile/knowledge-cards/docker-named-volume-ownership/)）。
 
 build 失敗的分流（本次未遇）：看是哪一層指令、跟 base image 版本漂移有關先查 tag / digest 是否固定；run 起來但檔案權限錯亂多半是 host / container 的 UID 對映問題（本次用 node(1000) 對齊 tar(1000) 避開）。
 
@@ -303,7 +303,7 @@ build 失敗的分流（本次未遇）：看是哪一層指令、跟 base image
 
 ### 概念與工具
 
-agent 程式裝進 image、真正要解的是「認證怎麼活過 container 重建」。實測發現對 headless 工作機、Claude Code 的 `setup-token` 給出的是比持久化 OAuth session 更貼合的模型：它產生一個**長效 token**（實測有效一年）、用環境變數 `CLAUDE_CODE_OAUTH_TOKEN` 注入。這讓認證變成一顆 host 側的 secret——存在 image 外、git 外，`docker run` 時才注入。設定（`settings.json`、含 hooks）走 volume 持久化、認證走 env var 注入，兩者分離：憑證輪替只要換 env 檔、不用碰 volume。信任邊界的判讀見 [選型文的隔離段](../agent-workstation-home-vs-vps/)。（Claude Code 在本 blog 沒有安裝與 hooks 專文、缺口已記在 content-backlog。）
+agent 程式裝進 image、真正要解的是「認證怎麼活過 container 重建」。實測發現對 headless 工作機、Claude Code 的 `setup-token` 給出的是比持久化 OAuth session 更貼合的模型：它產生一個**長效 token**（實測有效一年）、用環境變數 `CLAUDE_CODE_OAUTH_TOKEN` 注入。這讓認證變成一顆 host 側的 secret——存在 image 外、git 外，`docker run` 時才注入（機密為何不進 image layer 也不進 repo、runtime 注入才對，見 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/)）。設定（`settings.json`、含 hooks）走 volume 持久化、認證走 env var 注入，兩者分離：憑證輪替只要換 env 檔、不用碰 volume。信任邊界的判讀見 [選型文的隔離段](../agent-workstation-home-vs-vps/)。（Claude Code 在本 blog 沒有安裝與 hooks 專文、缺口已記在 content-backlog。）
 
 ### 實作
 
@@ -451,7 +451,7 @@ $ curl -s 'https://ntfy.sh/<test-topic>/json?poll=1&since=5m'
 - 候選 B：自製通道（ttyd 轉 WebSocket、走 tailnet、原生 app 收），適合要客製認證與稽核的情境
 - 順序已定：本輪用候選 A 跑通全部步驟（控制變數——工作流本身未驗證時、client 端用成熟工具歸零變數）；候選 B 的功能對齊（擴充鍵列、斷線重連、多 endpoint、TUI 相容）記在該工具自己專案的提案系統、驗收規格採用本文跑通後凍結的判準
 
-本輪的手機是 Android（Galaxy A70），這件事先卡掉一半候選：Blink Shell 是 iOS 專屬、Android 裝不了，所以現成 client 落在 Termius。連線分兩步建立：先純 SSH 把「連得上 + 金鑰認證」驗通、再開 mosh 測漫遊（Step 4），控制變數。金鑰用 Termius 產一把 ED25519、把公鑰加進 VM 的 `authorized_keys`——手機端一律走金鑰、不用密碼（沿用 Step 2 的基線；實測 Termius 預設會退回問密碼、`tar` 沒設密碼所以失敗，加完公鑰重連即免密碼登入，VM 側 `journalctl -u sshd` 看到 `Accepted publickey from 100.71.173.84`）。
+本輪的手機是 Android（Galaxy A70），這件事先卡掉一半候選：Blink Shell 是 iOS 專屬、Android 裝不了，所以現成 client 落在 Termius。連線分兩步建立：先純 SSH 把「連得上 + 金鑰認證」驗通、再開 mosh 測漫遊（Step 4），控制變數。金鑰用 Termius 產一把 ED25519、把公鑰加進 VM 的 `authorized_keys`——手機端一律走金鑰、不用密碼（沿用 Step 2 的基線；私鑰在客戶端 / 公鑰授權在伺服器、per-device 各配一把的模型見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)）。實測 Termius 預設會退回問密碼、`tar` 沒設密碼所以失敗，加完公鑰重連即免密碼登入，VM 側 `journalctl -u sshd` 看到 `Accepted publickey from 100.71.173.84`。
 
 ### 驗證
 
@@ -502,7 +502,7 @@ Esc 這格的實測過程本身就是一個判讀教訓：第一眼掃過 Termiu
 - Termius 有個 `Experimental Keyboard Support（Voice input and CJK layout support）`開關、開了之後終端就能切中文即時打字。
 - 但開 CJK 後、**mosh 連線下中文輸入行的畫面會錯位**（輸出正常、只有正在編輯的輸入行亂）；同樣設定改用**純 SSH 就完全正常**。
 
-根因是 mosh 的本地回顯預測撞上 CJK 雙寬字元：mosh 先猜按鍵顯示、但雙寬字的寬度在預測層算錯、游標位置與重繪就錯位；純 SSH 沒有預測、只呈現 server 端（bash / zellij 正確處理雙寬字）的真實渲染、所以乾淨。這帶出一個實用的權衡——**要坐著打中文跟 agent 對話、用純 SSH（顯示對、無漫遊但 zellij 補上斷線接回）；要移動中漫遊、用 mosh（但別打 CJK、會亂）**。兩個使用形態不太重疊：移動中多半丟英文任務看結果、坐著深談才打大量中文而此時網路固定不需漫遊，所以存 SSH 與 mosh 兩個 host profile 分別服務，比勉強用一個好。理論上 `mosh --predict=never` 關掉預測能兩全、但 client 未必讓你傳 mosh 參數。這條把「行動端能不能派複雜任務」精確到：CJK 即時輸入要靠終端的 CJK 支援開關、且與 mosh 預測有顯示衝突——選型與使用形態要納入這一格。
+根因是 mosh 的本地回顯預測撞上 CJK 雙寬字元：mosh 先猜按鍵顯示、但雙寬字的寬度在預測層算錯、游標位置與重繪就錯位；純 SSH 沒有預測、只呈現 server 端（bash / zellij 正確處理雙寬字）的真實渲染、所以乾淨（雙寬字顯示與 raw 模式擋 IME 組字的完整機制見 [終端 CJK 雙寬字與即時輸入](/linux/dotfile/knowledge-cards/terminal-cjk-input/)）。這帶出一個實用的權衡——**要坐著打中文跟 agent 對話、用純 SSH（顯示對、無漫遊但 zellij 補上斷線接回）；要移動中漫遊、用 mosh（但別打 CJK、會亂）**。兩個使用形態不太重疊：移動中多半丟英文任務看結果、坐著深談才打大量中文而此時網路固定不需漫遊，所以存 SSH 與 mosh 兩個 host profile 分別服務，比勉強用一個好。理論上 `mosh --predict=never` 關掉預測能兩全、但 client 未必讓你傳 mosh 參數。這條把「行動端能不能派複雜任務」精確到：CJK 即時輸入要靠終端的 CJK 支援開關、且與 mosh 預測有顯示衝突——選型與使用形態要納入這一格。
 
 2. **斷線復原**：任務進行中把手機從 Wi-Fi 切到行動網路。驗證 mosh 漫遊 + zellij session 兩層的組合行為。
 

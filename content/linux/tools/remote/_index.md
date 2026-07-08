@@ -22,12 +22,14 @@ tags: ["linux", "tools", "remote", "ssh"]
 
 - [遠端 agent 工作機選型：家用機還是 VPS](agent-workstation-home-vs-vps/)——延遲的兩層拆解、浮動 IP 的網路層解、container 讓決策可逆；附 VPS 規格與計費的判讀框架。
 - [遠端 agent 工作機實作記錄：從 Docker image 到手機端跑通](agent-workstation-vm-handson/)——選型文的實作篇：在 VM 上把連線 / session / 隔離三層實機架起來、十步驟 + 三情境、每步含實測踩到的除錯判讀（kernel 升級卡 docker、volume 權限、mosh 與 CJK 顯示衝突等）。
+- [在 container 裡跑 Claude Code：安裝、認證與 hooks 通知](claude-code-container-and-hooks/)——隔離層裡 Claude Code 本身的機制：npm 安裝、`setup-token` 的 env-var 注入模型（認證綁 token 注入非 session）、`~/.claude` vs `.claude.json` 持久化邊界、Stop hook 推 ntfy、`--dangerously-skip-permissions` 的定位。
 
 ## 連線與同步工具
 
 多工器保住 session 之後，還有兩塊獨立的能力：連線層（怎麼接上遠端、斷了怎麼辦）與同步層（本地與遠端的檔案怎麼一致）。這兩塊各有多個工具、解不同弱點，挑錯會很痛——連線存活、可達性、檔案一致是三層不同的問題。
 
 - [遠端連線與同步工具選型](connection-and-sync-tools/)——`ssh` / `mosh`（漫遊不斷線）/ `autossh`（自動重連）、`tailscale` / `wireguard`（NAT 後可達性）、`rsync` / `sshfs` / `mutagen`（三種同步語義）、IDE remote 模式的定位與取捨。
+- [Tailscale 深入：tailnet、MagicDNS、直連與 DERP 中繼](tailscale-tailnet-and-relay/)——選型文網路層段的深入：tailnet 私網固定位址、用主機名連線、headless 機器加入的 auth URL 流程、以及「連得到但走中繼、延遲偏高」的 NAT 穿透判讀。
 
 ## 低頻寬 / 手機連線下的介面
 
