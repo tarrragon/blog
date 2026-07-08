@@ -27,6 +27,12 @@ tags: ["linux", "backlog", "meta"]
 - **缺口**：[Linux 安裝選項判讀](/linux/install/install-option-decisions/) 兩處明寫手動分割（LVM / LUKS）與 btrfs 快照「是真實機器的儲存規劃主題、值得另外深入」；vm-handson record 的分割關卡段同一判斷。目前 install 系列只覆蓋「演練 VM 該怎麼選」、真實主力機與伺服器的儲存規劃（加密、快照回滾、分區佈局演進）沒有落點。
 - **補法候選**：install 系列加一篇「真實機器的儲存規劃」或獨立小模組；需要實機或 VM 演練支撐（LUKS / btrfs 快照都要實測），成本高、等有對應實作需求時再開。
 
+### 13. 遠端 agent 工作機：手機工作流的實機驗證債（待驗證、需 VM session）
+
+- **缺口**：[遠端 agent 工作機選型](/linux/tools/remote/agent-workstation-home-vs-vps/) 的決策文已寫，實作骨架也已建在 `content/linux/tools/remote/agent-workstation-vm-handson.md`（`draft: true`、十步驟、每步四段：概念連結 / 實作 / 驗證 / 除錯判讀），但指令與實測輸出全數標「待實測補」、等 VM session 邊做邊回填。重點待驗證：手機端擴充鍵列可用度、mosh 漫遊 + zellij attach 的斷線復原、Claude Code hooks 觸發 ntfy、container 內 `~/.claude/` volume 持久化、headless OAuth 流程。
+- **補法**：VM session 逐步跑通後回填骨架的「待實測補」段（`rg "待實測補" content/linux/tools/remote/agent-workstation-vm-handson.md` 掃殘留）；全部回填 + 三個端到端情境通過後移除 draft、加進 tools/remote/_index 與決策文路由。決策文的判讀被實測推翻時（例如行動端輸入的可用度評估）同步修正並記 retrospective。
+- **連帶的工具專文缺口**（骨架文只找到段落級覆蓋、跑通後評估是否各自成文）：Tailscale 專文（目前只有 connection-and-sync-tools 的網路層段）、Claude Code 安裝與 hooks 配置、手機終端 client 選型比較（Termius / Blink / 自製 ttyd 通道）。
+
 ## 維護提醒
 
 - 每補一篇都跑 `./bin/mdtools cards content/`（0 broken）、`fmt --fix`、emoji 掃描。
