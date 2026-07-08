@@ -27,11 +27,16 @@ tags: ["linux", "backlog", "meta"]
 - **缺口**：[Linux 安裝選項判讀](/linux/install/install-option-decisions/) 兩處明寫手動分割（LVM / LUKS）與 btrfs 快照「是真實機器的儲存規劃主題、值得另外深入」；vm-handson record 的分割關卡段同一判斷。目前 install 系列只覆蓋「演練 VM 該怎麼選」、真實主力機與伺服器的儲存規劃（加密、快照回滾、分區佈局演進）沒有落點。
 - **補法候選**：install 系列加一篇「真實機器的儲存規劃」或獨立小模組；需要實機或 VM 演練支撐（LUKS / btrfs 快照都要實測），成本高、等有對應實作需求時再開。
 
-### 13. 遠端 agent 工作機：手機工作流的實機驗證債（待驗證、需 VM session）
+### 13. 遠端 agent 工作機：手機工作流的實機驗證債（進行中、VM 側已驗完、剩手機端）
 
-- **缺口**：[遠端 agent 工作機選型](/linux/tools/remote/agent-workstation-home-vs-vps/) 的決策文已寫，實作骨架也已建在 `content/linux/tools/remote/agent-workstation-vm-handson.md`（`draft: true`、十步驟、每步四段：概念連結 / 實作 / 驗證 / 除錯判讀），但指令與實測輸出全數標「待實測補」、等 VM session 邊做邊回填。重點待驗證：手機端擴充鍵列可用度、mosh 漫遊 + zellij attach 的斷線復原、Claude Code hooks 觸發 ntfy、container 內 `~/.claude/` volume 持久化、headless OAuth 流程。
-- **補法**：VM session 逐步跑通後回填骨架的「待實測補」段（`rg "待實測補" content/linux/tools/remote/agent-workstation-vm-handson.md` 掃殘留）；全部回填 + 三個端到端情境通過後移除 draft、加進 tools/remote/_index 與決策文路由。決策文的判讀被實測推翻時（例如行動端輸入的可用度評估）同步修正並記 retrospective。
-- **連帶的工具專文缺口**（骨架文只找到段落級覆蓋、跑通後評估是否各自成文）：Tailscale 專文（目前只有 connection-and-sync-tools 的網路層段）、Claude Code 安裝與 hooks 配置、手機終端 client 選型比較（Termius / Blink / 自製 ttyd 通道）。
+- **缺口**：[遠端 agent 工作機選型](/linux/tools/remote/agent-workstation-home-vs-vps/) 的決策文已寫，實作記錄 `content/linux/tools/remote/agent-workstation-vm-handson.md`（`draft: true`）在 2026-07-08 VM session 已把 **Step 1-8（VM / 伺服器側全部）實機跑通並回填**：盤點、SSH、mosh 安裝、zellij 斷線重連（18 ticks 連續）、docker image（990MB、掛載隔離、OOM exit 137）、Claude Code 憑證（setup-token）、ntfy hook 觸發手機收訊。**剩 Step 4 漫遊 / Step 9 手機 client / Step 10 三情境**未驗、都需手機端 + 手機上 tailnet。
+- **補法**：手機端 session 跑通後回填 Step 9/10 的「待實測補」（`rg "待實測補" content/linux/tools/remote/agent-workstation-vm-handson.md` 掃殘留）；全部回填 + 三情境通過後移除 draft、加進 tools/remote/_index 與決策文路由。
+- **實測推翻選型文的 retrospective 候選**：`claude setup-token` 產生的是**長效 token（env-var 注入模型）**、不是「持久化 OAuth session 到 `~/.claude` volume」——原骨架與選型文隱含的持久化模型被推翻、已改寫 Step 7。這個「認證走 env-var secret 注入、設定走 volume 持久化」的分離，值得評估是否回寫選型文的隔離段（目前隔離段講「狀態要顯式持久化」時把憑證跟設定混在一起講）。
+- **連帶工具專文缺口進度**：
+  - 手機終端 client 選型：**已起草** `content/linux/tools/remote/mobile-terminal-client-selection.md`（`draft: true`、Blink vs Termius vs ttyd、工具能力宣稱標「需實測」）。待手機實測 Termius/Blink 的 mosh 支援後回填結論、移除 draft、加進 _index。
+  - Claude Code 安裝與 hooks 配置：仍缺專文，但實作記錄 Step 6-8 已累積具體素材（npm 全域安裝、`setup-token` env-var 模型、Stop hook + ntfy、`--dangerously-skip-permissions` 在 container 邊界即權限邊界下的定位、`.claude.json` 不在 volume 的持久化邊界）。
+  - Tailscale 專文：仍只有 connection-and-sync-tools 段落級；實作記錄 Step 3 新增「UTM NAT 下退 DERP 中繼」實例。
+- **新發現的 work-log 候選**（跨工具 gotcha 鏈、非 agent 工作機專屬）：`pacman -S` 對相依套件回 404（本地 DB 過時 / partial upgrade 陷阱）→ 修法 `-Syu` 順帶升 kernel → 未重開機導致 docker daemon 因 `nf_tables` 模組載入失敗而起不來（症狀在 iptables、根因在執行中 kernel 與磁碟 module 版本錯配）。這條「一個修法埋下三步後才引爆的伏筆」是 work-log 的好素材、判讀用「讀權威狀態 `uname -r` vs `ls /usr/lib/modules`」。目前只寫進實作記錄的除錯判讀段、可評估抽成獨立 work-log。
 
 ## 維護提醒
 
