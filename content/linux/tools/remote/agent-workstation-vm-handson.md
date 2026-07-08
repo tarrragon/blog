@@ -343,6 +343,21 @@ docker run --rm --env-file ~/agent-workstation/.env \
   claude -p "在目前目錄建立 hello.txt、寫一行問候語" --dangerously-skip-permissions
 ```
 
+上面是 `-p` 一次性任務（fire-and-forget）。互動對話（坐著跟 agent 來回聊）用同一套注入、只是把 `-p` 換成 `-it`：把這串包成 helper、手機端一個指令就進已認證的互動 session。
+
+```bash
+#!/usr/bin/env bash
+# claude-shell.sh：注入 token、掛專案目錄、起互動 Claude Code
+docker run --rm -it \
+  --env-file "$HOME/agent-workstation/.env" \
+  -v claude-home:/home/node/.claude \
+  -v "$HOME/agent-workstation/testproj:/work" \
+  agent-workstation:v1 \
+  claude --dangerously-skip-permissions "$@"
+```
+
+這裡要點破一個實測會誤解的心智模型：**認證綁在「每次 run 有沒有注入 token」、不綁在 session 或登入態上**。env-var 模型下沒有「一次登入、之後都在」這回事——直接打 `claude`（沒注入 token）即使在同一個還活著的 zellij session 裡、也會要你重新認證；而在 `--rm` 的臨時 container 裡真的走一次互動登入、憑證寫進容器的 `~/.claude`、容器一結束就蒸發（除非登入時掛了 volume 讓它落在 `claude-home`）。所以「臨時容器裡互動登入」多半是白做、下次又被要求認證。可靠的做法是不依賴任何登入態、每次用 helper 注入 token。這點用隔離測試釘死過：**不掛任何 volume（排除一切存檔登入）、只注入 token 即認證成功；不注入 token 則回 `Not logged in`**——證明認證來源純粹是注入的 token、與 session、與 volume 裡有沒有登入檔都無關。
+
 ### 驗證
 
 - 在掛載的專案目錄內給 agent 一個小任務、能完成並寫入檔案、host 側看得到變更
