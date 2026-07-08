@@ -26,7 +26,7 @@ db = connect(env("DATABASE_URL"))
 
 你的 app process 本身**不存資料**——使用者 session、上傳的檔案、快取，都放到外部的後端服務（DB、Redis、物件儲存），不放在 app 的記憶體或本機磁碟。
 
-為什麼：這樣你才能隨時砍掉一個 app、重開一個、或同時開三個副本擋流量——因為資料不在 app 裡，砍了不會掉東西。這條是水平擴展的前提，深入見 [DevOps 無狀態設計](/devops/02-horizontal-scaling/stateless-design/)。
+為什麼：這樣你才能隨時砍掉一個 app、重開一個、或同時開三個副本擋流量——因為資料不在 app 裡，砍了不會掉東西。這條是水平擴展的前提，深入見 [運行期維運 無狀態設計](/operations/02-horizontal-scaling/stateless-design/)。
 
 ## log 輸出到 stdout，當成串流
 

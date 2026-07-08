@@ -145,4 +145,4 @@ Collector 暴露到公網或跨網路存取時，dashboard 的認證從可選變
 - 中台 dashboard 設計 → [中台 Dashboard 設計](/monitoring/04-collector/dashboard-business/)
 - Rule engine 的告警設計 → [Rule engine 設計](/monitoring/04-collector/rule-engine/)
 - Collector 自我監控的 bootstrapping 問題 → [規模演進](/monitoring/04-collector/scaling-evolution/)
-- 服務探活與自動恢復 → [DevOps 服務探活](/devops/04-service-health/)
+- 服務探活與自動恢復 → [運行期維運 服務探活](/operations/04-service-health/)

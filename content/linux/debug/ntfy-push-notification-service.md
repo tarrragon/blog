@@ -117,4 +117,4 @@ Apprise 跟其他三個不同一層：它是抽象層，底下可以接 ntfy 或
 
 - 把 ntfy 接進 systemd 服務失敗告警的完整做法（`OnFailure` 鉤子、只在放棄才告警、canary 驗證管線）：[服務掛了怎麼自動知道](../service-failure-monitoring/)。
 - 整台機器死掉時 ntfy 這種體內推送發不出來、要改用體外心跳（healthchecks.io / Uptime Kuma），見 [服務掛了怎麼自動知道](../service-failure-monitoring/) 的「整台機器死掉怎麼辦」段。
-- ntfy 是個人 / 單機規模的最小告警通道；規模長大後事件怎麼分類、告警怎麼收斂 → [Monitoring 系列](/monitoring/)；服務探活與自動恢復的概念層 → [DevOps：服務探活與自動恢復](/devops/04-service-health/)。
+- ntfy 是個人 / 單機規模的最小告警通道；規模長大後事件怎麼分類、告警怎麼收斂 → [Monitoring 系列](/monitoring/)；服務探活與自動恢復的概念層 → [DevOps：服務探活與自動恢復](/operations/04-service-health/)。

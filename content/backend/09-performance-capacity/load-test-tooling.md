@@ -111,7 +111,7 @@ tags: ["backend", "performance", "capacity", "tooling"]
 - 下游：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)（用工具找 knee）
 - 下游：[9.9 Improvement Loop](/backend/09-performance-capacity/improvement-loop/)（CI 整合）
 - 跨模組：[06.1 CI Pipeline](/backend/06-reliability/ci-pipeline/)（壓測在 CI 的位置）
-- 跨模組：[devops 模組五：壓力測試工具與方法](/devops/05-capacity-planning/load-testing-tools/)（k6 實跑、怎麼讀延遲分布的動手層）
+- 跨模組：[運維 模組五：壓力測試工具與方法](/operations/05-capacity-planning/load-testing-tools/)（k6 實跑、怎麼讀延遲分布的動手層）
 
 ## 既建知識卡片
 

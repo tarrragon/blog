@@ -219,4 +219,4 @@ systemctl show sshd -p OnFailure        # 關鍵服務有沒有掛告警鉤子
 - 告警把你叫來之後，怎麼判那個服務到底是什麼狀態（failed、restart loop、還是活著但子系統 wedged）→ [程序、服務與狀態怎麼判](../process-service-state-diagnosis/)。
 - 機器完全不回應、心跳斷掉之後從外面怎麼查 → [機器連不到或起不來](../machine-unreachable/)。
 - 底層那套「讀權威狀態、不靠肉眼猜」的判讀紀律 → [診斷心法](../diagnosis-read-authoritative-state/)。
-- 從單機往上到多機、要 liveness/readiness probe 與 process supervisor 選型的概念層 → [DevOps：服務探活與自動恢復](/devops/04-service-health/)。事件怎麼分類、告警怎麼收斂成儀表板 → [Monitoring 系列](/monitoring/)。
+- 從單機往上到多機、要 liveness/readiness probe 與 process supervisor 選型的概念層 → [DevOps：服務探活與自動恢復](/operations/04-service-health/)。事件怎麼分類、告警怎麼收斂成儀表板 → [Monitoring 系列](/monitoring/)。

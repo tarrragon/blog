@@ -8,7 +8,7 @@ tags: ["going-live", "deployment", "foundations"]
 
 這一層補的是「我會寫 code、也在 localhost 跑起來過，但從沒把服務真的放上網際網路」跟「服務在雲上穩定服務真實使用者」之間那段落差。這段落差裡有一批東西，每個從業者都當常識——服務跑在哪、域名怎麼指過去、HTTPS 哪來的、DB 要不要自己顧、備份能不能還原——但正因為是常識，很少被寫成教學，反而成了第一次上線最容易卡住的地方。
 
-其他系列（[Infra](/infra/)、[DevOps](/devops/)、[Backend 服務選型](/backend/00-service-selection/)）把這些主題都講得很深，但都預設你已經懂這層地基、直接從進階講起。這一層刻意站在更低的高度、vendor 中立，把地基串成一條線，每一站在講清楚概念後往上路由到對應的深度內容——它是各獨立系列共同的 on-ramp，不取代它們，只把「第一次上線」該懂的順序理出來。
+其他系列（[Infra](/infra/)、[運行期維運](/operations/)、[Backend 服務選型](/backend/00-service-selection/)）把這些主題都講得很深，但都預設你已經懂這層地基、直接從進階講起。這一層刻意站在更低的高度、vendor 中立，把地基串成一條線，每一站在講清楚概念後往上路由到對應的深度內容——它是各獨立系列共同的 on-ramp，不取代它們，只把「第一次上線」該懂的順序理出來。
 
 ## 這一層的路徑
 
@@ -28,10 +28,10 @@ tags: ["going-live", "deployment", "foundations"]
 有些地基概念已經有紮實的專篇，只是站在進階高度。走完上面的路徑後，這些是往上的下一步：
 
 - **dev / staging / prod 多環境**：[Infra 環境分離](/infra/04-environment-separation/)、[一台機器到多環境](/infra/00-infra-mindset/one-machine-to-environments/)
-- **stateless 設計**：[DevOps 無狀態設計](/devops/02-horizontal-scaling/stateless-design/)
-- **負載平衡 / 反向代理**：[DevOps 反向代理職責](/devops/01-load-balancing/reverse-proxy-responsibilities/)
+- **stateless 設計**：[運行期維運 無狀態設計](/operations/02-horizontal-scaling/stateless-design/)
+- **負載平衡 / 反向代理**：[運行期維運 反向代理職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)
 - **secret 管理**：[Backend secret 治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)
-- **自架 vs 託管的成本曲線（進階）**：[DevOps 自架 vs 雲端成本交叉點](/devops/08-cost-management/self-hosted-vs-cloud/)
+- **自架 vs 託管的成本曲線（進階）**：[運行期維運 自架 vs 雲端成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/)
 
 ## 跨分類引用
 
@@ -39,5 +39,5 @@ tags: ["going-live", "deployment", "foundations"]
 
 - → [Backend 模組零：服務選型](/backend/00-service-selection/)：這一層講「上線要懂什麼」，模組零講「自建還是託管、什麼狀態放哪」的選型理論
 - → [Infra 基礎設施建置指南](/infra/)：從「一台 VPS 手動上線」往上長成「用 IaC 管一整套雲端地基」
-- → [DevOps 實務指南](/devops/)：服務上線後怎麼扛負載、擴展、控成本
+- → [運行期維運](/operations/)：服務上線後怎麼扛負載、擴展、控成本
 - → [Dotfile 模組十：Prod Parity](/linux/dotfile/10-prod-parity/)：本機開發環境怎麼對齊線上的 runtime

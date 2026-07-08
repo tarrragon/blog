@@ -41,7 +41,7 @@ DNS 各紀錄類型的細節見 [Infra DNS 卡](/infra/knowledge-cards/dns/)。
 
 ## TLS 在哪裡「終結」
 
-加解密這件事通常由 app 前面的一層代勞——nginx、負載平衡器、或 CDN 負責「TLS termination」：對外收 HTTPS、解密後用普通 HTTP 轉給後面的 app。所以你 app 本身常常只講 HTTP，HTTPS 是前面那層加上去的。反向代理 / LB 承擔這類職責的細節見 [DevOps 反向代理職責](/devops/01-load-balancing/reverse-proxy-responsibilities/)。
+加解密這件事通常由 app 前面的一層代勞——nginx、負載平衡器、或 CDN 負責「TLS termination」：對外收 HTTPS、解密後用普通 HTTP 轉給後面的 app。所以你 app 本身常常只講 HTTP，HTTPS 是前面那層加上去的。反向代理 / LB 承擔這類職責的細節見 [運行期維運 反向代理職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)。
 
 ## 下一步
 

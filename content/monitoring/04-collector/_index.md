@@ -32,7 +32,7 @@ tags: ["monitoring", "collector", "go", "storage", "rule-engine"]
 - → [backend 01 資料庫](/backend/01-database/)：PostgreSQL backend 的資料庫設計、[State Ownership 與 Query Boundary](/backend/01-database/state-ownership-query-boundary/)
 - → [backend 04 觀測查詢設計](/backend/04-observability/observability-query-design/)：觀測領域的讀取路徑設計、CQRS 特化應用
 - → [backend 09 效能容量](/backend/09-performance-capacity/)：高併發寫入 / 大資料查詢的效能挑戰
-- → [DevOps 流量管控](/devops/03-traffic-management/)：背壓、rate limit、熔斷的基礎概念
-- → [DevOps 突發流量](/devops/07-burst-traffic/)：突發流量分類、降級策略、queue 緩衝
+- → [運行期維運 流量管控](/operations/03-traffic-management/)：背壓、rate limit、熔斷的基礎概念
+- → [運行期維運 突發流量](/operations/07-burst-traffic/)：突發流量分類、降級策略、queue 緩衝
 - → [斷網環境的監控](/infra/air-gapped/air-gapped-monitoring/)：Collector 在斷網環境的部署方式——endpoint 改指 self-hosted backend、SDK 的 offline buffer 更重要
 - 實作 repo：tarrragon/monitor 的 collector/ + docs/challenges/（撞牆記錄）

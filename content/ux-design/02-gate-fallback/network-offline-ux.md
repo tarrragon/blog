@@ -66,4 +66,4 @@ Retry 策略的 UX 設計重點：
 - Gate 設計的通用方法論 → [Gate 分類與三問設計法](/ux-design/02-gate-fallback/gate-three-questions/)
 - 權限請求的 UX 設計 → [Permission 請求時機與措辭](/ux-design/02-gate-fallback/permission-request-timing/)
 - 畫面狀態矩陣中的網路狀態 → [ux-design 模組一 畫面狀態機](/ux-design/01-screen-state-machine/)
-- Server 端背壓如何影響 client UX → [DevOps 背壓機制](/devops/03-traffic-management/backpressure/)
+- Server 端背壓如何影響 client UX → [運行期維運 背壓機制](/operations/03-traffic-management/backpressure/)

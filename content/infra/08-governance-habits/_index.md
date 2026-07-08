@@ -10,7 +10,7 @@ tags: ["infra", "governance", "tagging", "secrets", "cost"]
 
 治理習慣的責任是讓基礎設施在規模長大後仍然可被盤點、可被追責、可被回收。資源數量從幾十個長到幾百個時，「這是誰的、為什麼存在、花了多少」這三個問題若沒有預先在資源上留下答案，就只能靠人腦記憶與口頭考古，而記憶會隨著人員流動蒸發。
 
-先界定這一章的邊界。身分與憑證本身怎麼設計 — IAM role、OIDC、最小權限 — 是模組二「身分與憑證地基」的範圍，這一章只談 secret 的儲存與引用：機密值放在哪、IaC 怎麼安全地指到它。成本這一塊也分兩層：把資源歸屬到擁有者與用途的地基（tagging、chargeback 的依據）在這一章，運行期怎麼用 reserved instance、spot、rightsizing 去壓低帳單，是 [devops 模組八：成本管理](/devops/08-cost-management/) 的範圍。
+先界定這一章的邊界。身分與憑證本身怎麼設計 — IAM role、OIDC、最小權限 — 是模組二「身分與憑證地基」的範圍，這一章只談 secret 的儲存與引用：機密值放在哪、IaC 怎麼安全地指到它。成本這一塊也分兩層：把資源歸屬到擁有者與用途的地基（tagging、chargeback 的依據）在這一章，運行期怎麼用 reserved instance、spot、rightsizing 去壓低帳單，是 [運維 模組八：成本管理](/operations/08-cost-management/) 的範圍。
 
 ## Tagging 規範：查帳與清資源的依據
 
@@ -85,7 +85,7 @@ resource "aws_db_instance" "payments" {
 
 可見性先於優化，這個順序不能反。看不見的成本無法被歸屬，無法歸屬就無法問責，沒有問責就沒有人去做優化。所以這一章把地基鋪好 — 資源有 tag、tag 進了 billing 維度、報表能拆到團隊 — 之後運行期那些真正省錢的手段才有施力點。判讀訊號：設一條成本異常告警（如日均花費超過基線某個百分比就通知），當告警觸發時，因為有 tag，你能立刻定位是哪個團隊的哪類資源在漲，而不是面對一個總數乾瞪眼。
 
-到了「知道誰花多少、接下來怎麼省」這一步 — reserved instance 的承諾折扣、spot 的可中斷算力、閒置資源的 rightsizing 與排程關機 — 就進入 [devops 模組八：成本管理](/devops/08-cost-management/) 的運行期優化範圍。這一章負責的是讓那些優化「有帳可查、有人可問」。
+到了「知道誰花多少、接下來怎麼省」這一步 — reserved instance 的承諾折扣、spot 的可中斷算力、閒置資源的 rightsizing 與排程關機 — 就進入 [運維 模組八：成本管理](/operations/08-cost-management/) 的運行期優化範圍。這一章負責的是讓那些優化「有帳可查、有人可問」。
 
 ## 最小可行節奏：先把地基跑起來，再逐步加
 
@@ -113,4 +113,4 @@ resource "aws_db_instance" "payments" {
 ## 跨分類引用
 
 - → [backend 模組七：資安與資料保護](/backend/07-security-data-protection/)：secret 管理的更完整討論
-- → [devops 模組八：成本管理](/devops/08-cost-management/)：運行期的成本控制
+- → [運維 模組八：成本管理](/operations/08-cost-management/)：運行期的成本控制

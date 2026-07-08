@@ -65,4 +65,4 @@ tags: ["ux-design", "error-recovery", "retry", "exponential-backoff"]
 - 部分功能不可用的降級設計 → [Degraded mode 設計](/ux-design/04-error-recovery/degraded-mode-design/)
 - 重試循環的逃生口 → [error → retry → error 循環的逃生口](/ux-design/04-error-recovery/error-loop-escape/)
 - Gate 失敗的 fallback → [ux-design 模組二 Gate 與 Fallback](/ux-design/02-gate-fallback/)
-- Server 端的限速機制（影響 retry 策略設計）→ [DevOps 流量管控](/devops/03-traffic-management/)
+- Server 端的限速機制（影響 retry 策略設計）→ [運行期維運 流量管控](/operations/03-traffic-management/)

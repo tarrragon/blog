@@ -160,6 +160,6 @@ Go 的 `net/http` 標準庫提供 production-ready 的 HTTP server，JSON 處理
 - JSONL 匯出與備份格式 → [JSONL 儲存設計](/monitoring/04-collector/jsonl-storage/)
 - 查詢 API 的設計 → [查詢 API 設計](/monitoring/04-collector/query-api/)
 - Rule engine → [Rule engine 設計](/monitoring/04-collector/rule-engine/)
-- 背壓與流量管控的基礎概念 → [DevOps 流量管控](/devops/03-traffic-management/)
+- 背壓與流量管控的基礎概念 → [運行期維運 流量管控](/operations/03-traffic-management/)
 - 端到端資料完整性 → [端到端資料完整性](/monitoring/04-collector/data-integrity/)
 - Error fingerprint 與去重分群 → [Error Fingerprint 與去重分群](/monitoring/04-collector/error-fingerprint/)

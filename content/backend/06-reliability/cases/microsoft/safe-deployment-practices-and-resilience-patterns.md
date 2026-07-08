@@ -46,5 +46,5 @@ Ring progression 的觀察窗長度需要跟服務的 feedback loop 對齊。通
 
 ## 引用源
 
-- [Safe deployment practices](https://learn.microsoft.com/en-us/devops/operate/safe-deployment-practices)
+- [Safe deployment practices](https://learn.microsoft.com/en-us/operations/operate/safe-deployment-practices)
 - [Architecture design patterns that support reliability](https://learn.microsoft.com/en-gb/azure/well-architected/reliability/design-patterns)

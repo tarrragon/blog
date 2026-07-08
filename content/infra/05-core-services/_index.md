@@ -109,4 +109,4 @@ data "aws_vpc" "main" {
 ## 跨分類引用
 
 - → [backend 模組五：部署平台](/backend/05-deployment-platform/)：PaaS / container 平台跑在這層之上
-- → [devops 實務指南](/devops/)：這些服務上線後的運行期維運
+- → [devops 實務指南](/operations/)：這些服務上線後的運行期維運

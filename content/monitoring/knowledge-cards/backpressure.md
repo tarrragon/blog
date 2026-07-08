@@ -18,7 +18,7 @@ tags: ["monitoring", "backpressure", "flow-control", "knowledge-card"]
 
 ## 和 DevOps 背壓的關係
 
-[DevOps 流量管控](/devops/03-traffic-management/)討論通用的背壓概念（TCP flow control、message queue consumer lag、circuit breaker）。本系列聚焦 SDK ↔ collector 之間的具體實作 — HTTP 429 是訊號、動態取樣是回應、Go channel 容量是觸發條件。通用概念在 DevOps 模組，監控場景的具體機制在本系列。
+[運行期維運 流量管控](/operations/03-traffic-management/)討論通用的背壓概念（TCP flow control、message queue consumer lag、circuit breaker）。本系列聚焦 SDK ↔ collector 之間的具體實作 — HTTP 429 是訊號、動態取樣是回應、Go channel 容量是觸發條件。通用概念在 運維模組，監控場景的具體機制在本系列。
 
 ## 完整章節
 

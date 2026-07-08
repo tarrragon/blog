@@ -41,7 +41,7 @@ tags: ["going-live", "deployment", "cost", "database", "foundations"]
 - **含你的時間 + 資料遺失風險 + 停機損失（總持有成本 TCO）**：一旦資料有價值（有營收、賠不起），託管常常反而划算——省下的是你不用當 DBA、不用扛半夜事故、不用賭「我的備份真的能還原嗎」。
 - **分水嶺**：自用 / 早期 / 極度省錢 / 你享受搞維運 → 偏自架；有營收資料 / 小團隊時間值錢 / 賠不起資料遺失 / 沒人顧 DB → 偏託管。
 
-這條「自架帳單便宜、但主要成本在帳單外的人力」跟 [DevOps 成本模型](/devops/05-capacity-planning/cost-model/) 講的「自建與託管人力差 3 到 10 倍」是同一件事；兩條成本曲線的交叉點怎麼算，見 [DevOps 自架 vs 雲端成本交叉點](/devops/08-cost-management/self-hosted-vs-cloud/)。
+這條「自架帳單便宜、但主要成本在帳單外的人力」跟 [運行期維運 成本模型](/operations/05-capacity-planning/cost-model/) 講的「自建與託管人力差 3 到 10 倍」是同一件事；兩條成本曲線的交叉點怎麼算，見 [運行期維運 自架 vs 雲端成本交叉點](/operations/08-cost-management/self-hosted-vs-cloud/)。
 
 ## 別掉進二選一
 

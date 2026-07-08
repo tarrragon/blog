@@ -151,5 +151,5 @@ SDK 的 offline buffer（見[SDK 設計：offline-buffer](/monitoring/03-sdk-des
 - 可插拔 Storage Backend 架構 → [規模演進](/monitoring/04-collector/scaling-evolution/)
 - Container runtime 通用原則（base image 選擇、build 可重現性、PID 1 信號處理）→ [Backend 5.1 Container 與 Runtime](/backend/05-deployment-platform/container-runtime/)
 - 生命週期合約（startup / readiness / drain / shutdown 的責任分類）→ [Backend 5.6 Platform Lifecycle Contract](/backend/05-deployment-platform/platform-lifecycle-contract/)
-- 容器化資源設計的通用原則 → [DevOps 容器化資源設計](/devops/05-capacity-planning/container-resource-design/)
-- 服務探活和自動恢復 → [DevOps 服務探活](/devops/04-service-health/)
+- 容器化資源設計的通用原則 → [運行期維運 容器化資源設計](/operations/05-capacity-planning/container-resource-design/)
+- 服務探活和自動恢復 → [運行期維運 服務探活](/operations/04-service-health/)

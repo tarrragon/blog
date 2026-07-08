@@ -135,4 +135,4 @@ incident_decision:
 
 這篇不處理 schema migration 本身、cache stampede 或 queue replay。若核心風險在資料正式狀態、快取回源或事件恢復，路由到 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)、[2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/) 或 [3.8 Queue Consumer Retry 與 Replay Handoff](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)。
 
-drain 與退場順序的概念層（縮容也是一次有計畫的實例退場）在 [devops 模組四：Graceful shutdown](/devops/04-service-health/graceful-shutdown/) 與 [devops 模組二：擴展的觸發與縮回](/devops/02-horizontal-scaling/scaling-triggers/)。
+drain 與退場順序的概念層（縮容也是一次有計畫的實例退場）在 [運維 模組四：Graceful shutdown](/operations/04-service-health/graceful-shutdown/) 與 [運維 模組二：擴展的觸發與縮回](/operations/02-horizontal-scaling/scaling-triggers/)。

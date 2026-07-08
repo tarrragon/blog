@@ -37,4 +37,4 @@ tags: ["going-live", "deployment", "backup", "foundations"]
 
 備份是你自己顧任何有狀態元件時的底線。往上，接手一個別人留下的環境時，第一件事往往就是盤點「它到底有沒有能還原的備份」——見 [Infra 接手：舊資料庫備份與遷移](/infra/takeover/legacy-database-backup-migration/)。
 
-備份是自己顧任何有狀態元件的底線。往上的深度內容見各系列：服務選型理論 [Backend 模組零](/backend/00-service-selection/)、雲端地基 [Infra](/infra/)、運維與成本 [DevOps](/devops/)。
+備份是自己顧任何有狀態元件的底線。往上的深度內容見各系列：服務選型理論 [Backend 模組零](/backend/00-service-selection/)、雲端地基 [Infra](/infra/)、運維與成本 [DevOps](/operations/)。

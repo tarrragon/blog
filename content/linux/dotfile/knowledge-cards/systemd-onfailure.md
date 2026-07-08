@@ -14,4 +14,4 @@ tags: ["dotfile", "linux", "systemd", "onfailure", "knowledge-cards"]
 
 要一次把 `OnFailure=` 套到所有 service，用 [drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)：放一個 `service.d/` 的 top-level drop-in，設定就套用到每個 `.service`。這會帶出一個遞迴陷阱——全域 drop-in 也套到告警處理器自己，它失敗會觸發自己；用 `systemctl edit` 開 override、在 `[Unit]` 段寫一行空的 `OnFailure=` 清掉繼承值擋掉。完整的鉤子鏈（處理器 unit、送出腳本、遞迴陷阱、canary 驗證）在 [服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)。
 
-相關概念：[systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)（全域套用 `OnFailure=` 的機制、以及清空繼承值的空賦值）、[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（`OnFailure` 告警鏈的完整單機實作）。從單機告警往上到概念層的探活、liveness 與自動重啟見 [DevOps：systemd watchdog 與自動重啟](/devops/04-service-health/systemd-watchdog-restart/)。
+相關概念：[systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/)（全域套用 `OnFailure=` 的機制、以及清空繼承值的空賦值）、[服務掛了怎麼自動知道](/linux/debug/service-failure-monitoring/)（`OnFailure` 告警鏈的完整單機實作）。從單機告警往上到概念層的探活、liveness 與自動重啟見 [DevOps：systemd watchdog 與自動重啟](/operations/04-service-health/systemd-watchdog-restart/)。
