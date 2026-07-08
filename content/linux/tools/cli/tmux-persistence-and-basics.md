@@ -8,7 +8,7 @@ tags: ["cli", "tmux", "zellij", "terminal", "remote", "multiplexer"]
 
 tmux 是終端機多工器，核心責任是把終端機 session 的生命週期與連線本身脫鉤，並在單一連線裡分割出多個工作區。在遠端 SSH 開發下，它解決最痛的一個問題：連線斷了，伺服器上跑的東西不會跟著消失。把工作放進 tmux，連線中斷後 session 仍在伺服器上運作，重連 attach 回去就接續原狀。
 
-遠端伺服器優先選 tmux 的理由是可用性。它幾乎是事實標準，多數 Linux 發行版的套件庫都有、很多伺服器甚至預裝。`zellij` 功能新、畫面提示友善，但通常要自行安裝；在不能隨意裝套件的機器上，tmux 處處可用就是決定性優勢。兩者的取捨在最後一節展開。
+遠端伺服器優先選 tmux 的理由是可用性。它幾乎是事實標準，多數 Linux 發行版的套件庫都有、很多伺服器甚至預裝。`zellij` 功能新、畫面提示友善，但通常要自行安裝；在不能隨意裝套件的機器上，tmux 處處可用就是決定性優勢。兩者的取捨在最後一節展開。session 從建立、detach、重連到清理的完整生命週期（tmux / zellij 通用）見 [zellij session 生命週期](/linux/tools/cli/zellij-session-lifecycle/)。
 
 本文承接 [終端機圖形化工具總覽](/linux/tools/cli/cli-graphical-tools-overview/) 的多工器分類，聚焦 tmux 在遠端情境的實際操作。
 

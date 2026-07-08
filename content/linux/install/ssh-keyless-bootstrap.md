@@ -86,7 +86,7 @@ tar czf - --exclude '.git' . | ssh user@host 'mkdir -p ~/dotfiles && tar xzf - -
 
 ## 換一台新機器（或重裝）時，SSH 為什麼突然連不上
 
-SSH 的別名、金鑰、`known_hosts` 都是綁在「某一台特定機器」上的，所以當你重裝、或換一台新 VM，先前設好的 `ssh <別名>` 往往會以看似無關的錯誤失敗——那套設定是為舊機器建的，而重裝後是另一台機器：不同的 IP、不同的 SSH host key、還沒裝 sshd、`authorized_keys` 也是空的。判讀的起點是把重裝後的機器當成全新的一台，重做第一次連線的設定，而不是沿用舊別名。
+SSH 的別名、金鑰、`known_hosts` 都是綁在「某一台特定機器」上的，所以當你重裝、或換一台新 VM，先前設好的 `ssh <別名>` 往往會以看似無關的錯誤失敗——那套設定是為舊機器建的，而重裝後是另一台機器：不同的 IP、不同的 SSH host key、還沒裝 sshd、`authorized_keys` 也是空的。判讀的起點是把重裝後的機器當成全新的一台，重做第一次連線的設定，而不是沿用舊別名。私鑰放哪、`authorized_keys` 授權模型、per-device 金鑰與 deploy key vs full key 的信任邊界，見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)。
 
 失敗會以三種形式出現，各對應不同層、各有各的修法：
 

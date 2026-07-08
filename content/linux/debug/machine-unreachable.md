@@ -10,7 +10,7 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 ## 遠端機器突然連不上：先分清是哪一段斷
 
-一台昨天還能 SSH 的機器今天連不上，第一步是確認「網路層通不通」，跟「SSH 服務在不在」分開。連線在 TCP 就 timeout（連 port 22 卡住沒回應），多半是網路層或機器沒在跑；連線有回應但被拒（`Connection refused`），是網路通、但那台機器上沒有服務在聽 port 22。
+一台昨天還能 SSH 的機器今天連不上，第一步是確認「網路層通不通」，跟「SSH 服務在不在」分開。連線在 TCP 就 timeout（連 port 22 卡住沒回應），多半是網路層或機器沒在跑；連線有回應但被拒（`Connection refused`），是網路通、但那台機器上沒有服務在聽 port 22。這條逾時 vs 被拒的通用判別（含解析失敗第三症狀）見 [連線逾時 vs 連線被拒](/linux/dotfile/knowledge-cards/connection-refused-vs-timeout/)。
 
 對虛擬機或同網段的機器，一個很有用的權威來源是**鄰居表**（IP 對 MAC 的對應）。要填起來需要對方在鏈路層有回應，所以它直接反映「對方在不在」。用 `ip neigh` 看目標 IP 的條目——優先用 `ip neigh` 而不是 `arp -a`，因為 `ip`（iproute2）在現代最小系統一定有，`arp`（net-tools）常常沒裝、跑了會 command not found 反而誤導。如果狀態是 `INCOMPLETE`（`arp -a` 顯示的是 `incomplete`），代表這個 IP 在鏈路層上根本沒有機器回應——不是 SSH 的問題，是那台機器的網路沒起來、或根本沒在跑。一個實際案例：一台虛擬機 SSH timeout，鄰居表顯示整個網段的 guest 位址全是 incomplete、只有閘道（宿主那側的橋接介面）是好的——這就定位到「宿主的橋沒問題，但橋的另一頭沒有 VM 在講話」，方向立刻從「調 SSH」轉到「去看 VM 的網路或開機狀態」。
 

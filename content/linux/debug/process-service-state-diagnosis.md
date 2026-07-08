@@ -64,7 +64,7 @@ ps -o comm= -p "$pid"
 
 ## 終端機多工器的 session 還在不在
 
-用 zellij / tmux 這類多工器跑遠端長任務時，判斷「重連後那個 session 還在不在」的權威來源是多工器自己的 session 列表，不是「我 SSH 斷了所以應該還在吧」的假設。`zellij ls`（或 `tmux ls`）會列出 session 與狀態：多工器是常駐在遠端的程序，SSH 斷不影響它，所以只要那台機器沒重開，`attach` 就能接回去；但如果機器重開過、或那個 session 因為資源不足（例如磁碟滿觸發的連鎖）被殺，列表會顯示它已 `EXITED` / 不存在，這種接不回去。
+用 zellij / tmux 這類多工器跑遠端長任務時，判斷「重連後那個 session 還在不在」的權威來源是多工器自己的 session 列表，不是「我 SSH 斷了所以應該還在吧」的假設（session 建立 / detach / 重連 / 清理的完整生命週期見 [zellij session 生命週期](/linux/tools/cli/zellij-session-lifecycle/)）。`zellij ls`（或 `tmux ls`）會列出 session 與狀態：多工器是常駐在遠端的程序，SSH 斷不影響它，所以只要那台機器沒重開，`attach` 就能接回去；但如果機器重開過、或那個 session 因為資源不足（例如磁碟滿觸發的連鎖）被殺，列表會顯示它已 `EXITED` / 不存在，這種接不回去。
 
 這裡有個順序上的紀律：**當一個 session 可能已經死掉、而它裡面跑的任務有你在意的產出時，先確認產出有沒有被安全保存，再處理 session。** 例如任務是在改 git repo，先 `git -C <repo> status` 跟 `git log @{u}..`（本地有、遠端沒有的 commit）確認有沒有沒推送的東西、把該推的推掉，再去 `zellij delete` 清死 session。搞反順序、先清了 session，可能連帶失去唯一還記得那些改動的地方。權威狀態（git 的推送狀態、多工器的 session 列表）先讀清楚，再動手。
 

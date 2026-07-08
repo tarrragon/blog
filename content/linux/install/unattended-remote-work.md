@@ -25,7 +25,7 @@ sudo chmod 440 /etc/sudoers.d/20-nopasswd
 
 ## 障礙二：SSH 斷線就把任務一起殺掉
 
-直接在 SSH session 裡跑的程序，會隨著 SSH 連線中斷而一起死掉——你闔上筆電、網路斷一下、或單純關掉終端機，正在跑的任務就沒了。對一個要跑好幾小時的無人值守任務，這條等於「你不能離開」，跟無人值守的目的矛盾。
+直接在 SSH session 裡跑的程序，會隨著 SSH 連線中斷而一起死掉——你闔上筆電、網路斷一下、或單純關掉終端機，正在跑的任務就沒了（連線掛斷送 SIGHUP、預設終止前景程序，機制見 [SIGHUP 與斷線即死](/linux/dotfile/knowledge-cards/sighup-hangup-signal/)）。對一個要跑好幾小時的無人值守任務，這條等於「你不能離開」，跟無人值守的目的矛盾。
 
 把任務搬進終端機多工器（zellij、tmux 這類，配置見 [模組三](/linux/dotfile/03-terminal-ecosystem/multiplexer-tmux-zellij/)）就解決了。多工器的 session 活在那台機器上、獨立於你的 SSH 連線：你在多工器裡啟動任務、然後 detach（卸離），任務繼續在機器上跑，你這頭關掉 SSH 都不影響；之後再連回來 attach（接回）就能看它跑到哪。典型流程是連入機器、起多工器、在裡面啟動任務、detach、走人：
 
@@ -63,6 +63,8 @@ gh auth login    # 選 HTTPS、完成認證、同意設定 git 認證
 ## 如果無人值守的工作者是 AI agent
 
 當你放著跑的是一個 AI agent，除了上面三個障礙，還多一個它自己的互動提示要處理：agent 預設會在每個有風險的動作前停下來問你確認，而無人值守時沒人回答，它就卡住。對應的是 agent 的「跳過確認」模式（如 Claude Code 的權限放行旗標），讓它不停下來問。這跟 NOPASSWD 是同一類取捨、判讀軸也一樣：放給一個無人盯著的 agent 在一台範圍受限、用完即丟的機器上自主動作是可接受的；在一台有真實資料或共享的機器上不該這樣。降低風險的兩個做法是把 agent 的工作範圍用清楚的指引限定（只動哪些目錄、別碰系統其他地方），以及讓它在分支上做、產出交給你 review，而不是直接動到你會依賴的東西。
+
+這一整套（連線層漫遊、session 層存活、容器隔離、憑證注入、hooks 通知）在一台 VM 上端到端架起來的實作記錄見 [遠端 agent 工作機實作記錄](/linux/tools/remote/agent-workstation-vm-handson/)；機器擺家用還是 VPS、隔離層的信任邊界與 skip-permissions 定位見 [遠端 agent 工作機選型](/linux/tools/remote/agent-workstation-home-vs-vps/) 與 [在 container 裡跑 Claude Code](/linux/tools/remote/claude-code-container-and-hooks/)；憑證怎麼注入而不進 image 或 repo 見 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/)。
 
 ## 下一步
 

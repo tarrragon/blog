@@ -54,7 +54,7 @@ work [Created 18s ago]
 
 `zellij attach <name>` 接上一個已存在的 session。detach（離開但讓 session 繼續跑）有兩條路：互動上進 session 模式後按 detach（預設鍵位是 `Ctrl+o` 再按 `d`、但 zellij 的 keybind 常被自訂、以你的 `config.kdl` 為準）；而**直接關掉連線本身就是一種 detach**——因為 session 活在 server、連線消失不影響它。
 
-斷線 / detach 後任務仍在跑，判讀方法是看輸出的連續性：讓 session 裡的任務每秒寫一筆帶時間戳的紀錄、斷線一段時間再 attach 回去，若時間戳連續無斷檔，就證明任務在沒有連線的期間持續執行。這個「用輸出連續性驗證未中斷」是判斷 session 是否真的獨立於連線存活的可靠訊號。
+斷線 / detach 後任務仍在跑，驗證看輸出的連續性：讓 session 裡的任務每秒寫一筆帶時間戳的紀錄、斷線一段時間再 attach 回去，若時間戳連續無斷檔，就證明任務在沒有連線的期間持續執行。這個「用輸出連續性驗證未中斷」是判斷 session 是否真的獨立於連線存活的可靠訊號。
 
 ## 清理與已知邊界
 

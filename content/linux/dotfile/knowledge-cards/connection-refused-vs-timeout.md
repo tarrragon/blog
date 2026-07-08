@@ -6,7 +6,7 @@ weight: 50
 tags: ["linux", "remote", "network", "debug", "knowledge-cards"]
 ---
 
-連不上有兩種症狀，指向相反的除錯方向。**連線逾時**（connection timed out）是封包送不到——對方沒回應、客戶端等到超時放棄；問題在可達性層（路由、私網、防火牆把封包默默丟棄）。**連線被拒**（connection refused）是封包送到了、對方主動拒絕；問題在服務層（該 port 沒有服務在聽、或防火牆明確回拒）。把這兩個分開，是遠端連線除錯少走冤枉路的第一刀。
+連不上有兩種症狀，指向相反的除錯方向。**連線逾時**（connection timed out）是封包送不到——對方沒回應、客戶端等到超時放棄；問題在可達性層（路由、私網、防火牆把封包默默丟棄）。**連線被拒**（connection refused）是封包送到了、對方主動拒絕；問題在服務層（該 port 沒有服務在聽、或防火牆明確回拒）。把這兩個分開，是遠端連線除錯少走冤枉路的第一刀（在它們更前面還有一種症狀——名字根本沒解析成位址，見判讀訊號）。
 
 ## 逾時：封包送不到
 
@@ -20,6 +20,7 @@ tags: ["linux", "remote", "network", "debug", "knowledge-cards"]
 
 拿到症狀先歸類再動手：
 
+- **解析失敗**（`Could not resolve host` / `Name or service not known`）→ 名字還沒變成位址、卡在 resolver 這關：`/etc/hosts`、DNS、或用主機名連線時的 MagicDNS 出問題。這比逾時 / 被拒更前面——連封包都還沒送出去。用 IP 直連能通、用主機名不通，就是這一層。
 - **逾時** → 先驗可達性：目的位址對這台裝置路由得到嗎（在正確的私網 / VPN 上嗎）、中途有沒有防火牆 DROP、機器起了嗎。
 - **被拒** → 服務層：`ss -tlnp` 看服務有沒有在聽那個 port、聽在哪個介面；認證另算（能連上 sshd、但金鑰沒被接受而退回問密碼，是認證問題、不是連不上，見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)）。
 
