@@ -177,13 +177,24 @@ git push --no-verify
 - **任何該持久存在的東西**（腳本、systemd unit、設定檔、cron、drop-in）→ 先寫進 [dotfiles repo](https://github.com/tarrragon/dotfiles)、commit/push，再由遠端 `git pull` + 冪等 deploy 部署。**不 scp、不 heredoc 寫進 /tmp、不手動 `tee` 到 /etc。**
 - **一次性驗證用的暫時檔**（測試 service、探測腳本）可以臨時放，但測完必須清掉、且正式版要回收進 repo。
 
+### SSH 權限與本機逃逸攔截（ssh_guard hook）
+
+本專案是教學 / 實驗用途、`.claude/settings.local.json` 刻意放寬到 `Bash(ssh *)`、讓 agent 對受管遠端機器做唯讀診斷不必逐次核准。這個決定的前提是「遠端環境掛了重建就好」。
+
+但 `ssh *` 的語意涵蓋一個跟遠端無關的暴露面：ssh 的 `-o ProxyCommand=…` 與 `-o LocalCommand=…`（配 `PermitLocalCommand=yes`）會在**本機這台開發機**執行任意命令、等於繞過 sandbox。這條路徑不受「遠端可重建」保護、因此用一個 PreToolUse hook 攔下。
+
+- **機制**：`.claude/hooks/ssh_guard.py` 註冊為 `Bash` 的 PreToolUse hook。一條指令同時「呼叫 ssh」且「帶 ProxyCommand / LocalCommand / PermitLocalCommand」時回 `permissionDecision: deny`；純遠端唯讀診斷（`ssh <host> <readonly-cmd>`）照常放行。
+- **邊界**：只比對指令字串本身。ProxyCommand 若寫在 `~/.ssh/config` 而非命令列則看不到；防的是誤用 / 意外、不是防主動繞過的對手。以「agent 非敵人、只是別讓它不小心動到本機」的威脅模型足夠。
+- **已知副作用**：任何 Bash 指令的文字裡只要同時出現 ssh 呼叫 + 這些選項就會被擋（例如 `echo 'ssh -o ProxyCommand=…'` 這種示範字串）。要在指令裡引用這些字串時改用 Write / Edit 寫檔、不要塞進 Bash。
+- **維護**：改動危險選項清單改 `LOCAL_EXEC_OPTS` regex；改 ssh 呼叫辨識改 `SSH_INVOCATION`。改完用 payload 檔餵 stdin 驗證（deny 案例別直接寫進測試指令、否則 hook 會擋住測試指令本身）。
+
 ### 可複用工具（在 dotfiles repo）
 
-| 工具 | 作用 |
-| --- | --- |
+| 工具                                         | 作用                                                                                                                                  |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | `scripts/remote-sync.sh <host> [deploy-cmd]` | 管遠端機器的標準入口：本地 commit/push → 遠端 `git pull --ff-only` → 遠端跑冪等 deploy。本地有未提交變更就擋下（逼你走 repo，不繞過） |
-| `scripts/install.sh` | bootstrap：套件 → stow 部署 → zsh → Claude Code（家目錄層，冪等） |
-| `<pkg>/deploy.sh` | 系統層（`/etc`、`/usr/local`）的部署橋，stow 管不到的用這個（如 `monitoring/deploy.sh`） |
+| `scripts/install.sh`                         | bootstrap：套件 → stow 部署 → zsh → Claude Code（家目錄層，冪等）                                                                     |
+| `<pkg>/deploy.sh`                            | 系統層（`/etc`、`/usr/local`）的部署橋，stow 管不到的用這個（如 `monitoring/deploy.sh`）                                              |
 
 標準流程：
 
