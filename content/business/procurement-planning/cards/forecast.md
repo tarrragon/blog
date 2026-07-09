@@ -1,7 +1,7 @@
 ---
 title: "Forecast（需求預測，FCST）"
 date: 2026-07-09
-description: "說明需求預測作為參考基準與其失準特性"
+description: "拿到 forecast 不確定該信多少、旺季數字明顯膨脹、要搭歷史數據校正備料量時查閱"
 weight: 20
 tags: ["business", "procurement", "knowledge-cards"]
 ---
@@ -14,7 +14,7 @@ Forecast 是需求端送給採購的訊號，跟 [Lead Time](/business/procureme
 
 ## 可觀察訊號與例子
 
-判讀 forecast 可信度的訊號：這個客戶或產品線過去 forecast 與實際用量的落差有多大、目前是淡季還是旺季、市場是否正在搶單（全面性 LT 拉長、原廠發 allocation、broker 現貨價跳動都是徵兆）。搶單旺季時 forecast 幾乎測不準，因為大家都在超額下單卡產能。有經驗的採購會把 forecast 放進系統跑，再用歷史數據比對抓出系統性偏差—例如某產品線 forecast 長期高估兩成，備料時就自動打折。
+判讀 forecast 可信度的訊號：這個客戶或產品線過去 forecast 與實際用量的落差有多大、目前是淡季還是旺季、市場是否正在搶單（全面性 LT 拉長、原廠發 allocation、broker 現貨價跳動都是徵兆）。搶單旺季時 forecast 幾乎測不準，因為所有買家都在超額下單搶配額（這場賽局的機制與校正方法，展開在 [需求分層與備料策略](/business/procurement-planning/demand-tiered-stocking/)）。校正的做法是把 forecast 進系統跑，再用歷史數據比對抓出系統性偏差—例如某產品線 forecast 長期高估兩成，備料時就自動打折。
 
 ## 判讀方式
 

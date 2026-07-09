@@ -14,7 +14,7 @@ tags: ["business", "procurement", "knowledge-cards"]
 
 ## 可觀察訊號與例子
 
-判讀斷料風險升高的訊號：關鍵料的在途訂單覆蓋不到下一個 [Lead Time](/business/procurement-planning/cards/lead-time/)、單一供應商的品質或產能突然出狀況、地震颱風等事件衝擊供應商工廠。天災隔天，第一件事就是問廠商工廠產能供貨有沒有受影響—因為任何一顆關鍵料的供應中斷，都可能變成斷料。
+判讀斷料風險升高的訊號：關鍵料的在途訂單覆蓋不到下一個 [Lead Time](/business/procurement-planning/cards/lead-time/)、單一供應商的品質或產能突然出狀況、天災或事故衝擊供應商所在的產區—任何一顆關鍵料的供應中斷，都可能沿著 BOM 的「全有或全無」結構變成整線斷料。
 
 ## 判讀方式
 

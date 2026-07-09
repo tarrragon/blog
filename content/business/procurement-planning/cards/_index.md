@@ -2,7 +2,7 @@
 title: "採購 Planning 知識卡片"
 date: 2026-07-09
 description: "用原子化卡片整理電子業採購與供應鏈 planning 的術語：備料策略、供應商、料件生命週期與原廠代理商規則"
-weight: 70
+weight: 80
 tags: ["business", "procurement", "knowledge-cards"]
 ---
 
@@ -31,6 +31,8 @@ tags: ["business", "procurement", "knowledge-cards"]
 | -------------------------------------------------------------------- | -------------------------------- |
 | [Second Source](/business/procurement-planning/cards/second-source/) | 第二三供應商，分散斷料與漲價風險 |
 | [NPI](/business/procurement-planning/cards/npi/)                     | 新品導入，量產前的驗證爬坡       |
+| [PPAP 與首件](/business/procurement-planning/cards/ppap/)            | 量產出貨前的正式核准關卡         |
+| [替代料](/business/procurement-planning/cards/alternate-part/)       | 換料本身的備援，平時認證缺時使用 |
 | [追料](/business/procurement-planning/cards/expediting/)             | 追料件在每個節點的進度，不是催船 |
 
 ## 料件規則與生命週期
@@ -44,3 +46,4 @@ tags: ["business", "procurement", "knowledge-cards"]
 | [NCNR](/business/procurement-planning/cards/ncnr/)                      | 不可取消不可退，與改單截止日           |
 | [料件生命週期](/business/procurement-planning/cards/lifecycle-status/)  | NRND / EOL / LTB，料件走向停產的訊號   |
 | [不可能三角](/business/procurement-planning/cards/impossible-triangle/) | 交期、價格、品質無法三者兼得           |
+| [Allocation](/business/procurement-planning/cards/allocation/)          | 缺貨時按順位配貨，順位由信用與關係排   |

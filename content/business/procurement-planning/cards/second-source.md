@@ -1,7 +1,7 @@
 ---
 title: "Second Source（第二供應商）"
 date: 2026-07-09
-description: "說明培養第二三供應商如何分散斷料、品質與漲價風險"
+description: "評估一顆料要不要培養替代供應商、或被質疑為什麼要養第二家時，用來理解第二來源分散哪三種風險與導入的真實成本"
 weight: 70
 tags: ["business", "procurement", "knowledge-cards"]
 ---
@@ -14,7 +14,7 @@ Second Source 站在「供貨安全」與「導入成本」之間。多一家合
 
 ## 可觀察訊號與例子
 
-第二來源夠不夠健康，看幾件事：這顆關鍵料現在有幾家合格供應商、概念驗證（POC）與 NPI 過關的廠商在量產時是否穩得住、量產放量有沒有過度集中單一家。有些廠商前期驗證都沒問題，量產卻出狀況，這時要能馬上找其他家補產能。一顆關鍵料至少培養三家，量產（MP）初期放量也不會讓單一家超過約七成。
+第二來源夠不夠健康，看幾件事：這顆關鍵料現在有幾家合格供應商、概念驗證（POC）與 NPI 過關的廠商在量產時是否穩得住、量產放量有沒有過度集中單一家。有些廠商前期驗證都沒問題，量產卻出狀況，這時要能馬上找其他家補產能。要養幾家、單一家放量的上限在哪，由停線代價與替補產能反推——判準展開在 [第二來源的經濟學](/business/procurement-planning/multi-source-supplier-strategy/) 與 [量產放量分配](/business/procurement-planning/production-ramp-allocation/)。
 
 ## 判讀方式
 
