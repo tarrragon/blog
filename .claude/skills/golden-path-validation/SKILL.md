@@ -80,5 +80,6 @@ metadata:
 - 寫 CLI 工具教學文章、用 Docker fixture 逐工具驗證,是另一個 skill 的場域(那偏「作者自己驗單一工具」);本 skill 偏「派陌生人端到端驗一整份 follow-along 指引」。兩者共享「執行勝過審讀」與「模擬環境不可信」的紀律。
 - 多輪 frame 切換審查「文字寫得好不好」是另一個 skill;本 skill 驗「照著做跑不跑得起來」。前者不執行、後者一定執行。可以先 frame 審查文字、再冷讀實測執行。
 
+**Version**: 1.2.0 — disposable-environment reference 補第二個公開範例 `scripts/validate.sh`（執行核心 orchestrator：每目標 bare 容器 → git archive HEAD 放入 → install + verify → assert；那個 repo 把自己當本 skill 的 reference implementation）
 **Version**: 1.1.0 — 新增 `references/disposable-environment.md`:怎麼起可拋棄乾淨環境（bare 給 cold-read vs provisioned 給操作者、原生非模擬、命名清理、容器專屬坑）+ 公開 reference implementation（`tarrragon/dotfiles` 的 `scripts/scratch.sh`，一鍵起可拋棄容器、可選 provision）；階段 3 指向它
 **Version**: 1.0.0 — 初版:五階段(完整性稽核 → 自動化 verify → 冷讀代理人實機執行 → 乾淨環境 re-verify → 發現回收)+ 冷讀 agent 協定 + 三張原則卡(執行勝過審讀 / 原生非模擬 / verifier 也要被驗)。從一次個人尺度 paved road 的冷讀實測(Debian + 原生 arm64 Arch 容器、抓到硬編 sudo / 套件漂移 / verifier 假陰性 / 模擬架構假結果)萃取。
