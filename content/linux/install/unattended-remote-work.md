@@ -46,7 +46,7 @@ zellij attach                # tmux 是 tmux attach
 
 無人值守任務的產出留在那台機器上，你看不到——除非它能把結果送出去。最常見的形式是把改動 commit 後 push 回 git 遠端，你在別處 pull 來看。但 push 需要認證，而一台剛連入的機器通常還沒設好推送的憑證，於是任務做完了、commit 也建了，卻卡在 push 那步推不出去，你隔天連回來才發現結果根本沒送出去。
 
-先在這台機器上設好推送認證，這個障礙就消失。用 GitHub CLI 是直接的一條路，它認證後會一併把 git 的 credential helper（git 用來自動帶出認證、不必每次手打的機制）設好，後續 `git push` 就能用——但 `gh auth login` 本身是互動式的、要你在場完成一次，屬於離開前的人工前置：
+先在這台機器上設好推送認證，這個障礙就消失。用 GitHub CLI 是直接的一條路，它認證後會一併把 git 的 [credential helper](/linux/dotfile/knowledge-cards/git-credential-helper/)（git 用來自動帶出認證、不必每次手打的機制）設好，後續 `git push` 就能用——但 `gh auth login` 本身是互動式的、要你在場完成一次，屬於離開前的人工前置：
 
 ```bash
 gh auth login    # 選 HTTPS、完成認證、同意設定 git 認證
