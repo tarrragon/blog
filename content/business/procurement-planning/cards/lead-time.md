@@ -1,7 +1,7 @@
 ---
 title: "Lead Time（交期，LT）"
 date: 2026-07-09
-description: "說明交期如何決定備料量與下單頻率"
+description: "看到交期數字要換算成庫存覆蓋要求、或市場交期全面拉長要調整備料節奏時查閱"
 weight: 10
 tags: ["business", "procurement", "knowledge-cards"]
 ---

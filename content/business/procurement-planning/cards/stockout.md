@@ -1,7 +1,7 @@
 ---
 title: "斷料（Stockout）"
 date: 2026-07-09
-description: "說明產線缺料停線作為採購最高禁區的判讀意義"
+description: "權衡備料成本與停線風險、或要向人解釋為什麼絕不斷料是理性底線時查閱"
 weight: 60
 tags: ["business", "procurement", "knowledge-cards"]
 ---

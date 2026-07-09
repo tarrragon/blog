@@ -1,7 +1,7 @@
 ---
 title: "Second Source（第二供應商）"
 date: 2026-07-09
-description: "評估一顆料要不要培養替代供應商、或被質疑為什麼要養第二家時，用來理解第二來源分散哪三種風險與導入的真實成本"
+description: "評估一顆料要不要培養替代供應商、或被質疑為什麼要養第二家時，用來理解第二來源分散的風險形態與導入的真實成本"
 weight: 70
 tags: ["business", "procurement", "knowledge-cards"]
 ---

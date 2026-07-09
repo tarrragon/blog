@@ -1,7 +1,7 @@
 ---
 title: "Risk Buy（風險備料）"
 date: 2026-07-09
-description: "說明在需求確定前先備關鍵料或原材料的風險備料手法"
+description: "缺料訊號出現、考慮在需求確定前先卡料或產能，要權衡供貨保障與呆料風險時查閱"
 weight: 30
 tags: ["business", "procurement", "knowledge-cards"]
 ---

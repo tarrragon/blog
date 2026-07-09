@@ -1,7 +1,7 @@
 ---
 title: "料件生命週期（NRND / EOL / LTB）"
 date: 2026-07-09
-description: "說明料件走向停產的狀態標記與最後採購時機"
+description: "看到 NRND、EOL、LTB 標記，要判斷一顆料還能依賴多久、何時該一次買足時查閱"
 weight: 120
 tags: ["business", "procurement", "knowledge-cards"]
 ---

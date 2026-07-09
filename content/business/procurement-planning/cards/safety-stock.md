@@ -1,7 +1,7 @@
 ---
 title: "Safety Stock（安全庫存）"
 date: 2026-07-09
-description: "說明安全庫存如何吸收需求與交期波動"
+description: "決定一顆料的安全庫存該設多厚、或懷疑現有緩衝在積壓現金時查閱"
 weight: 40
 tags: ["business", "procurement", "knowledge-cards"]
 ---

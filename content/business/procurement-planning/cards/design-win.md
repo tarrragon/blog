@@ -1,7 +1,7 @@
 ---
 title: "Design Win"
 date: 2026-07-09
-description: "說明 design win 如何換取原廠端價格，以及它加深單一來源綁定的代價"
+description: "想把議價對象從代理商移回原廠、評估用設計導入換專案價的代價時查閱"
 weight: 105
 tags: ["business", "procurement", "knowledge-cards"]
 ---

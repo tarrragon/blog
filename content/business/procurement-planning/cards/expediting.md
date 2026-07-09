@@ -1,7 +1,7 @@
 ---
 title: "追料（Expediting）"
 date: 2026-07-09
-description: "說明追料是掌握料件在各節點的進度而非催促船期"
+description: "料在途中疑似延遲、要決定從哪個節點介入而不是空催時查閱"
 weight: 90
 tags: ["business", "procurement", "knowledge-cards"]
 ---

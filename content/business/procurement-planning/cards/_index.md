@@ -39,11 +39,12 @@ tags: ["business", "procurement", "knowledge-cards"]
 
 規則卡片回答「這顆料受什麼商業規則約束、處在生命週期哪一段」。
 
-| 卡片                                                                    | 核心問題                               |
-| ----------------------------------------------------------------------- | -------------------------------------- |
-| [Ship and Debit](/business/procurement-planning/cards/ship-and-debit/)  | 代理商價格保護機制，價格被原廠掌握     |
-| [Design Win](/business/procurement-planning/cards/design-win/)          | 用未來用量換原廠端價格，代價是加深綁定 |
-| [NCNR](/business/procurement-planning/cards/ncnr/)                      | 不可取消不可退，與改單截止日           |
-| [料件生命週期](/business/procurement-planning/cards/lifecycle-status/)  | NRND / EOL / LTB，料件走向停產的訊號   |
-| [不可能三角](/business/procurement-planning/cards/impossible-triangle/) | 交期、價格、品質無法三者兼得           |
-| [Allocation](/business/procurement-planning/cards/allocation/)          | 缺貨時按順位配貨，順位由信用與關係排   |
+| 卡片                                                                                   | 核心問題                               |
+| -------------------------------------------------------------------------------------- | -------------------------------------- |
+| [Ship and Debit](/business/procurement-planning/cards/ship-and-debit/)                 | 代理商價格保護機制，價格被原廠掌握     |
+| [Design Win](/business/procurement-planning/cards/design-win/)                         | 用未來用量換原廠端價格，代價是加深綁定 |
+| [NCNR](/business/procurement-planning/cards/ncnr/)                                     | 不可取消不可退，與改單截止日           |
+| [Blanket Order 與 Flex Fence](/business/procurement-planning/cards/order-flexibility/) | 承諾與買斷在時間軸拆開的中間形態       |
+| [料件生命週期](/business/procurement-planning/cards/lifecycle-status/)                 | NRND / EOL / LTB，料件走向停產的訊號   |
+| [不可能三角](/business/procurement-planning/cards/impossible-triangle/)                | 交期、價格、品質無法三者兼得           |
+| [Allocation](/business/procurement-planning/cards/allocation/)                         | 缺貨時按順位配貨，順位由信用與關係排   |

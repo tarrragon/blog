@@ -1,7 +1,7 @@
 ---
 title: "寄售（Consignment）"
 date: 2026-07-09
-description: "說明供應商在買方端備庫存、動用後才結算的備料機制"
+description: "想讓手上隨時有料又不先押現金、評估跟供應商談寄售的條件與可行性時查閱"
 weight: 50
 tags: ["business", "procurement", "knowledge-cards"]
 ---

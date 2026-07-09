@@ -1,7 +1,7 @@
 ---
 title: "Ship and Debit"
 date: 2026-07-09
-description: "說明代理商價格保護機制如何讓原廠掌握終端成交價"
+description: "發現同一顆料各代理商報價幾乎一致、想知道價格權在誰手上、議價該找誰時查閱"
 weight: 100
 tags: ["business", "procurement", "knowledge-cards"]
 ---

@@ -1,7 +1,7 @@
 ---
 title: "不可能三角（交期、價格、品質）"
 date: 2026-07-09
-description: "說明交期、價格、品質三者無法同時兼得的採購取捨結構"
+description: "需求方同時要求快、便宜、品質好，要攤開取捨結構決定讓哪一角時查閱"
 weight: 130
 tags: ["business", "procurement", "knowledge-cards"]
 ---
