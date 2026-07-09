@@ -1,3 +1,12 @@
+---
+name: golden-path-validation
+description: "驗證一份 setup 指引 / runbook / onboarding / bootstrap 是否「陌生人每次照做都能完整重現」的方法：派無前置知識的冷讀代理人、在可拋棄乾淨環境實際照指引執行，抓文件 fact-check 放過、只有實機跑才現形的硬編假設 / 環境漂移 / verifier 自己的 bug。五階段：完整性稽核 → 自動化 verify → 冷讀代理人實機執行 → 乾淨環境 re-verify → 發現回收。觸發詞：驗證 setup 指引、runbook 驗證、onboarding 測試、bootstrap 測試、golden path / paved road 驗證、每次照做都能重現、冷讀測試、cold-read、陌生人照做、實機執行驗證、setup guide validation、原生非模擬、verifier 也要被驗。Trigger when validating that a follow-along setup/onboarding/bootstrap guide actually works for a newcomer, via cold-read agents executing it in disposable clean environments."
+license: MIT
+metadata:
+  version: 1.0.0
+  category: engineering-methodology
+---
+
 # Golden Path Validation：冷讀代理人實機驗證一份 setup 指引
 
 一份 setup 指引 / runbook / onboarding 文件 / bootstrap 腳本,是否真的「陌生人每次照做都能完整重現」,靠作者自己讀不出來——作者知道太多沒寫進去的前提。這個 skill 的方法是:**派沒有前置知識的冷讀代理人,在可拋棄的乾淨環境裡實際照著指引執行,證明它成不成立**。文件層的 fact-check 會放過硬編假設、環境漂移、缺步驟;只有讓陌生人真的在乾淨機器上跑一次,這些才現形。
