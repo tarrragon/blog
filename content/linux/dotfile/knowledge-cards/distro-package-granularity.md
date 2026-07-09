@@ -23,6 +23,10 @@ Debian 的哲學是「所有東西都是系統套件」，所以它把 nodejs / 
 
 粒度策略也決定「哪些工具進得了官方 repo」。移動快速的新工具（多為 Rust 寫的 CLI）在保守、定版凍結的發行版常常還沒被打包：broot、zellij、git-delta、lazygit、yazi 在 Debian bookworm 的預設 repo 都不存在，但在 Arch 都有。發行版愈保守（stable 凍結愈久），這類缺口愈多。
 
+## repo 成員資格會隨時間漂移
+
+「沒打包」不只是「保守發行版從沒收」的靜態狀態，也可能是「曾經收、後來被移出」的時間變化。官方 repo 會把不再維護的套件汰除：autojump（目錄跳轉工具）一度在 Arch 官方 repo，後來被移到 AUR，現在 `pacman -S autojump` 回 `target not found`——同一個發行版、同一個套件名，只是時間軸上的成員資格變了（維護版替代是 zoxide，仍在官方 repo）。這讓一份釘死的套件清單即使不換發行版也會腐化：清單寫的當下該套件在官方 repo、幾年後被移出，清單就在新機器上裝不起來。判讀是：`target not found` 且你確定名字沒打錯、以前明明裝得起來，就往「它被移出官方 repo 了」查（多半移到 AUR，或改由上游自行發佈 binary）。若整批一次裝，一個被移出的名字還會拖垮整批（見 [apt 安裝的交易原子性](/linux/dotfile/knowledge-cards/apt-transaction-atomicity/)）。
+
 ## 判讀訊號
 
 安裝一個工具卻拉進幾百個套件時，先問「這些是不是某個語言生態的 library」。是的話，通常代表這東西不該走系統套件管理器——語言生態的執行環境（node、python、ruby）交給 version manager（fnm / pyenv / rbenv）在家目錄管更乾淨：可切版本、不污染系統、不被發行版凍在舊版。系統套件管理器留給「系統層工具」本身。

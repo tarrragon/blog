@@ -37,6 +37,6 @@ apt-get install -s a b c    # -s 模擬，只解析不安裝，先看有沒有 U
 
 ## 邊界
 
-pacman 的批次安裝有類似的原子性。想繞過「一個失敗全滅」可以逐包安裝（迴圈裡一個一個裝、失敗的跳過），但那會失去交易的一致性保證、也讓「哪些沒裝成功」變得難追。多數情況正解是把清單修對，而不是放棄原子性。
+pacman 的批次安裝有類似的原子性——實測 `pacman -S` 一份含 autojump 的清單，因 autojump 已從 Arch 官方 repo 移到 AUR、回 `target not found`，整批就 abort，同清單裡本來裝得起來的 zoxide、ripgrep、fd 一個都沒裝（這種「曾在官方 repo、後來被移出」的漂移見 [發行版打包粒度](/linux/dotfile/knowledge-cards/distro-package-granularity/)）。想繞過「一個失敗全滅」可以逐包安裝（迴圈裡一個一個裝、失敗的跳過），但那會失去交易的一致性保證、也讓「哪些沒裝成功」變得難追。多數情況正解是把清單修對，而不是放棄原子性。
 
 這解釋了為什麼跨發行版的套件清單要 curate、不能照抄，跟 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/) 的「套件名分歧要逐項吸收」是同一件事的兩面。哪些工具在保守發行版沒打包，見 [發行版打包粒度](/linux/dotfile/knowledge-cards/distro-package-granularity/)。清單 curate 的實作見 [工作站 dotfile 跨發行版落地](/linux/dotfile/10-prod-parity/workstation-cross-distro/)。

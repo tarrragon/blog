@@ -32,6 +32,7 @@ tags: ["linux", "debugging", "diagnosis"]
 - **終端機行為怪**：SSH 斷線後終端機噴亂碼、遠端打字亂碼、要從 SSH 操控圖形桌面 → [遠端連線與終端機問題](ssh-and-terminal-troubleshooting/)。
 - **某個狀態判不準**：程式活著沒、服務歸誰、鎖沒鎖、session 還在不在 → [程序、服務與狀態怎麼判](process-service-state-diagnosis/)。
 - **AUR 套件裝不起來**：helper 自己壞掉、編譯叫錯工具、makepkg 拒建 → [AUR 建置失敗的分層判讀](aur-build-failure-triage/)。
+- **git push / clone 卡認證**：私有 repo 操作回 `could not read Username` 或 `403 Write access not granted`（`gh api` 回 404）→ [在 container 裡跑 Claude Code](../tools/remote/claude-code-container-and-hooks/) 的 GitHub 認證段，區分「根本沒憑證」與「fine-grained token 認證通了、只是 scope 不含此 repo」。
 - **不想手動盯服務死活**：想讓 service 掛掉時主動推播、或擔心整台機器當掉沒人知道 → [服務掛了怎麼自動知道](service-failure-monitoring/)。
 - **想建立通用紀律**：想要一套適用各種症狀的「不猜錯」判讀方法 → [診斷心法](diagnosis-read-authoritative-state/)。
 - **接手一台陌生機器、還沒出問題**：機器在跑但不是你裝的，想先盤清楚上面有什麼再動手 → [接手陌生機器的盤點](../install/inventory-unknown-machine/)——同一套「讀權威狀態」紀律用在盤點而非除錯。

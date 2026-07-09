@@ -86,6 +86,16 @@ echo "Done. Log out and back in for shell changes to take effect."
 
 **最少依賴**原則：script 本身只依賴 bash 和 curl（幾乎所有系統預裝），其他工具由 script 自己安裝。這確保你可以在一台只有 base system 的機器上直接跑 script。不過「base system 直接跑」有個前提——最小安裝可能連 `sudo` 都沒有，而 script 裝套件正要靠它。跑這支 script 之前該驗證並補齊的前置工具，見 [最小安裝後的工具驗證與補足](/linux/install/minimal-install-verify/)。
 
+**權限前綴要偵測、不要寫死 `sudo`**：上面範例的 `sudo pacman` / `sudo apt` 在兩種相反的機器上會壞。一種是有非 root 使用者但沒裝 sudo（剛裝好的 VM）——解法是補齊：裝 sudo、把使用者加進 wheel。另一種相反：**以 root 起手、且沒有 sudo**（裸 container base image 的常態）——這時裝 sudo 是多餘的，root 本就有權限，但腳本裡的 `sudo` 會直接回 `sudo: command not found`（exit 127），在裝任何套件前就掛掉。要讓同一支腳本兩邊都跑得動，把權限前綴做成偵測 root 的變數：
+
+```bash
+# root 時把 sudo shim 掉（root 本就有權限、且容器常無 sudo）；非 root 才用 sudo
+SUDO=sudo; [ "$(id -u)" -eq 0 ] && SUDO=""
+$SUDO pacman -Syu --noconfirm
+```
+
+這樣 root 容器直接跑、非 root 走 sudo，腳本不必先知道自己在哪種機器上。這是可攜性的一環：跟 [可除錯的 bootstrap](/linux/install/observable-bootstrap/) 的 ERR trap 互補——一個讓權限前綴跨機器可攜、一個讓真的掛了時看得出掛在哪一行。
+
 **交付完整可用的環境**：script 的職責是讓部署完的配置「能直接用」，所以它必須裝齊配置實際引用的每一樣東西，而不是假設它們已經在。一個常見的破綻是把依賴寫進 README 的「dependencies」清單、卻沒在 script 裡實作安裝——例如 `.zshrc` 引用了 oh-my-zsh、主題、外掛，但 install script 只裝了 zsh 本身，結果 stow 部署完、第一次開 shell 就因為找不到那些東西而報錯。README 列依賴是給人看的、不會被執行；要讓配置真的能用，那些依賴得由 script 自己裝（例如把外掛 git clone 進對應位置）。檢查方式是反過來從配置出發：把每個 config 會 source 或引用的外部東西列出來，逐一確認 script 有沒有負責把它裝上。
 
 **可部分執行**的結構：拆成 function，允許只跑某一段。除錯時只想重新 deploy 配置、不想重裝套件，直接呼叫 `deploy_configs` 就好。進一步可以把每段拆成獨立 script（`scripts/install-packages.sh`、`scripts/deploy-configs.sh`），bootstrap 入口只是依序呼叫它們。
