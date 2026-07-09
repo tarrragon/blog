@@ -12,7 +12,7 @@ tags: ["business", "procurement", "planning"]
 
 料件的價格由什麼機制決定，是策略的第一個約束。走 [ship and debit](/business/procurement-planning/cards/ship-and-debit/) 的料，代理商先以較高帳面價進貨，實際成交價要原廠核准，再向原廠請領價差—效果是終端價格由原廠掌握，不是代理商自由定。這意味著同一顆料找不同代理商買，價格差異有限，比價空間被壓縮。
 
-這個規則改變議價的對象。當一堆料走 ship and debit、原廠又死綁單一代理商時，換別家買根本拿不到更好的價格，[第二來源](/business/procurement-planning/cards/second-source/) 在這類料上失去議價效果。想爭取更好價格，要往原廠端談—用 design win（原廠認可設計採用其料號）、專案報價、用量承諾去換原廠核准更低的成交價，而不是在代理商之間繞。判讀一顆料的議價策略前，先確認它的價格是不是被 ship and debit 鎖在原廠手上。
+這個規則改變議價的對象。當一堆料走 ship and debit、原廠又死綁單一代理商時，換別家買根本拿不到更好的價格，[第二來源](/business/procurement-planning/cards/second-source/) 在這類料上失去議價效果。想爭取更好價格，要往原廠端談—用 [design win](/business/procurement-planning/cards/design-win/)、專案報價、用量承諾去換原廠核准更低的成交價，而不是在代理商之間繞。判讀一顆料的議價策略前，先確認它的價格是不是被 ship and debit 鎖在原廠手上。
 
 ## 訂單規則：可取消性與截止日決定卡位深度
 
@@ -27,6 +27,8 @@ tags: ["business", "procurement", "planning"]
 | EOL-LTB              | 算清未來總需求一次買足             | 少買未來就沒原廠料           |
 
 每一列都是一組「規則決定膽量」的對應。可無條件取消的料，最大的損失反而是「沒卡位」—別人卡走產能你就排在後面。NCNR 的料，膽量要收，因為下錯就吃下。EOL-LTB 的料是特殊情況，規則逼你在截止日前把未來一次算清。策略性 forecast 的操作，就是為每顆料匹配它規則允許的最大安全膽量，而不是對所有料用同一種保守或激進。
+
+可取消與 NCNR 的二分之外，實務上還有幾種下單彈性機制值得納入策略：blanket order（框架單，承諾年度總量、依排程分批 release）、reschedule window（flex fence，截止點內買斷、之外可 push 或取消）、以及 VMI 或 consignment hub（付款遞延到動用）。這些機制的共同作用是把「承諾」與「買斷」在時間軸上拆開，讓採購在不同截止點有更細的收放空間。
 
 ## 生命週期規則：料還能依賴多久
 
