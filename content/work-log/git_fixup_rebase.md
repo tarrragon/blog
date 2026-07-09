@@ -65,7 +65,7 @@ GIT_SEQUENCE_EDITOR="sed -i '' '1s/^pick/edit/'" git rebase -i <目標commit>~1
 > **說明**：
 > - `<目標commit>~1` 表示從目標 commit 的**前一個** commit 開始 rebase
 > - `GIT_SEQUENCE_EDITOR="sed -i '' '1s/^pick/edit/'"` 自動將第一行（目標 commit）從 `pick` 改為 `edit`，避免手動編輯
-> - macOS 的 `sed -i` 需要 `''` 參數，Linux 則不需要
+> - macOS 的 `sed -i` 需要 `''` 參數，Linux 則不需要（為什麼：BSD vs GNU sed，見 [macOS 的 BSD userland](/macos/macos_bsd_userland_vs_gnu/)）
 
 以本例來說：
 

@@ -75,7 +75,7 @@ git rebase -i <A短hash>^
 ```
 
 > macOS 的 `sed -i` 需要加空字串引數（`-i ''`）或像上面用 `-i.bak` 留 backup 檔。
-> Linux 的 `sed -i` 不需要。
+> Linux 的 `sed -i` 不需要。（為什麼：BSD vs GNU sed，見 [macOS 的 BSD userland](/macos/macos_bsd_userland_vs_gnu/)）
 > 如果更放心用編輯器手動操作，可以拿掉 `GIT_EDITOR=true`，讓 rebase 開你慣用的編輯器手動把兩行的 `pick` 改成 `edit`。
 
 執行後 git 會在 A 暫停。

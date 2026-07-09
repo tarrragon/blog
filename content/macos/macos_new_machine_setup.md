@@ -34,7 +34,7 @@ brew --version   # 應印出 Homebrew 4.x.x
 
 ## 把 bash 更新到 5.x
 
-bash 是裝完 Homebrew 後最值得優先換掉的內建工具。macOS 的 `/bin/bash` 長年凍結在 3.2 系列（2006 年釋出，目前是 patchlevel 57），Apple 不再更新它，原因是 bash 4 改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本的人來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。
+bash 是裝完 Homebrew 後最值得優先換掉的內建工具。macOS 的 `/bin/bash` 長年凍結在 3.2 系列（2006 年釋出，目前是 patchlevel 57），Apple 不再更新它，原因是 bash 4 改用 GPLv3 授權、Apple 不願隨系統散布。對寫腳本的人來說，這代表 associative array、`${var,,}` 大小寫轉換、`mapfile` 等近二十年的語法都用不了。這個授權轉折的完整脈絡（反 Tivoization 條款），以及 BSD userland 帶來的另外兩種撞牆形態——GNU 工具缺席、同名工具行為不同——見 [macOS 的 BSD userland](../macos_bsd_userland_vs_gnu/)。
 
 正確做法是用 Homebrew 另外裝一份新版並排存在，而不是覆寫系統版。`/bin/bash` 在唯讀的系統卷上、受 SIP（System Integrity Protection）保護，覆寫會被擋下：
 
