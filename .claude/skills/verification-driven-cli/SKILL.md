@@ -3,7 +3,7 @@ name: verification-driven-cli
 description: "CLI 工具教學文章的驗證導向生產流程：分類決定驗證分工（非互動 vs 全螢幕 TUI）、Docker 可拋棄 fixture、三層標註（驗過 / caveat / 移除）、實跑 gotcha 回寫。官方 docs fact-check 會放過版本差異與實作落差、只有實機跑過才能抓到。觸發詞：CLI 工具文章、工具教學、驗證流程、Docker fixture、實機驗證、gotcha、tool article、CLI tutorial、verification workflow。Trigger when writing CLI tool tutorial / tool comparison articles."
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.2.0
   category: writing-methodology
 ---
 
@@ -106,8 +106,10 @@ docker exec sqltest-pg psql -U test -d testdb \
 
 - [compositional-writing](../compositional-writing/SKILL.md)：寫作 atomic 原則、適用所有寫作
 - [migration-playbook-methodology](../migration-playbook-methodology/SKILL.md)：sibling、處理 cross-vendor process content
+- [golden-path-validation](../golden-path-validation/SKILL.md)：本 skill 是「作者自己用 Docker fixture 逐工具驗」；golden-path-validation 是「派陌生人冷讀代理人端到端驗一整份 setup 指引」。兩者共享「執行勝過審讀」與「模擬環境不可信」的紀律（本 skill 反覆陷阱 #5/#6 是那組原則的濃縮版）。
 
 ---
 
+**Version**: 1.2.0 — 關係段補回指 golden-path-validation（雙向可見：本 skill「作者驗單一工具」vs 它「陌生人端到端驗指引」、共享執行勝過審讀/模擬不可信）；frontmatter `metadata.version` 補同步（原漏、卡在 1.0.0）
 **Version**: 1.1.0 — 反覆陷阱補兩條方法論：verifier 自己也是待驗的（naive 檢查對上 stow 摺疊等會假陰性、拿已知正確環境先驗 verifier）、模擬架構的 fixture 不可信（qemu 下 sandbox/seccomp/LSM/syscall 行為跟原生不同、架構敏感驗證要原生跑）
 **Version**: 1.0.0

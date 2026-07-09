@@ -99,7 +99,8 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 **Version**: 1.4.0 — 新增「第零步：先定平台」：診斷前先以 os-release / uname -m / command -v 建立平台座標；套件名與執行檔名分歧（fd-find/fdfind、batcat、github-cli vs gh）、非互動旗標不對稱（-y vs --noconfirm）、rolling stale-db 404 需 -Syu、ARM 生態縮水——從新 VM 復現驗證的三個非互動 bootstrap finding 萃取
 **Version**: 1.3.0 — Round-3 審查修正：補兩類 AI 最高頻情境——權限被拒(EACCES、namei -l 逐層 / MAC / capability)、套件管理器失敗(pacman db lock / keyring 簽章 / partial upgrade)；被 kill/OOM/exit137 判讀；速查表加 kernel(dmesg)/權限/strace 三列；read-logs 加 strace 回退；DNS resolv.conf symlink caveat、sudoers chmod 0440
 **Version**: 1.2.1 — Round-2 審查修正：systemd-failed 情境接上入口（速查表 + 症狀路由補「服務 failed / restart loop」，原本加了 section 卻路由不到）
-**Version**: 1.4.0 — install-and-verify 的 SUDO shim 段補兩個「別硬編你這台剛好有的東西」可攜陷阱：GNU coreutils 工具在 macOS 缺席（timeout → gtimeout / 偵測擇一）、`$var` 緊跟多位元組字在非 UTF-8 locale 被吞 byte 報 unbound（改 `${var}`）；都是實跑驗證器（validate.sh）自己爆出來的
+**Version**: 1.4.1 — fact-check 修正：`$var` 緊跟多位元組字的 unbound 歸因寫反了，實測是 UTF-8 locale 下舊 bash（macOS 3.2）的多位元組解析 bug、不是「非 UTF-8 locale」；`${var}` 免疫跟版本/locale 無關
+**Version**: 1.4.0 — install-and-verify 的 SUDO shim 段補兩個「別硬編你這台剛好有的東西」可攜陷阱：GNU coreutils 工具在 macOS 缺席（timeout → gtimeout / 偵測擇一）、`$var` 緊跟多位元組字被吞 byte 報 unbound（改 `${var}`；locale 歸因見 1.4.1 修正）；都是實跑驗證器（validate.sh）自己爆出來的
 **Version**: 1.3.0 — install-and-verify 補三條容器實測缺口：root 容器無 sudo 的偵測 shim（`SUDO=sudo; [ root ] && SUDO=""`）、partial upgrade 的 `exists in filesystem` 臉、pacman 7 Landlock sandbox 容器內失敗（DisableSandbox）；read-authoritative-state 原則卡補「你的 verify 腳本也是會讀錯層的眼睛」（stow 摺疊假陰性、`-ef` vs `-L`）
 **Version**: 1.2.0 — Round-1 審查修正：`arp -a` 全面改主推 `ip neigh`（現代最小系統無 net-tools）；新增 DNS 解析、systemd failed 判讀、檔案系統唯讀 remount 三個情境；路由標明 remote→machine 分流；反模式加 scrollback 殘影
 **Version**: 1.1.0 — 新增 tool-options reference（依環境 CLI/GUI/遠端挑對工具、現代替代品 vs POSIX 可攜的判準）
