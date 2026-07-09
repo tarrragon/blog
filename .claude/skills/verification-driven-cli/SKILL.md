@@ -99,6 +99,8 @@ docker exec sqltest-pg psql -U test -d testdb \
 2. **漏清理 fixture**：使用者下次 `docker ps` 看到一堆 `sqltest-*` 容器
 3. **驗過但沒標**：讀者分不出哪些經實測、哪些是文件依據
 4. **caveat 沒寫具體原因**：「未驗證」不夠、要寫「需真實 k8s cluster、本機無法模擬」
+5. **把 verifier 當成不會錯的**：你寫的驗證腳本 / 檢查本身也是一隻會讀錯層的眼睛 — 一個 naive 判斷（如「這 leaf 檔是不是 symlink」對上 GNU stow 的目錄摺疊）會給假陰性、讓你誤判部署壞了。verifier 也要被驗：拿一個「已知正確」的環境跑一次、確認它報 pass，再信它的 fail。
+6. **模擬架構的 fixture 不可信**：Docker fixture 跑在 CPU 模擬下（qemu，如 arm64 host 上跑 amd64 image）會給假通過 / 假失敗 — sandbox、seccomp、LSM、syscall 相關行為在模擬層跟原生不同。架構敏感的驗證要在目標架構的原生環境跑，別信模擬 fixture 的綠燈或紅燈。
 
 ## 跟其他 skill 的關係
 
@@ -107,4 +109,5 @@ docker exec sqltest-pg psql -U test -d testdb \
 
 ---
 
+**Version**: 1.1.0 — 反覆陷阱補兩條方法論：verifier 自己也是待驗的（naive 檢查對上 stow 摺疊等會假陰性、拿已知正確環境先驗 verifier）、模擬架構的 fixture 不可信（qemu 下 sandbox/seccomp/LSM/syscall 行為跟原生不同、架構敏感驗證要原生跑）
 **Version**: 1.0.0
