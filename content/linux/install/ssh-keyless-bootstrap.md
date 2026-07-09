@@ -72,7 +72,7 @@ cd ~/dotfiles && ./scripts/install.sh
 
 這是最直接的路——機器只要能上網就能拉到 dotfile，完全繞過 key 的問題。clone URL 裡的帳號要對；用錯帳號（例如把 email handle 當成 GitHub 帳號）會 clone 失敗或抓到別的 repo，這類筆誤在只看 README 範例時很容易漏掉。SSH key 在這個情境只有「之後要從機器 push 回去」才需要，純粹跑部署用不到。
 
-**repo 是私有的、但機器能上網**：機器可以直接 clone，用 GitHub Personal Access Token（PAT）走 HTTPS——這是私有 repo 免 SSH key 的標準解。clone 時把 PAT 當密碼填進認證，機器就拉得到，一樣不必在它上面設 SSH key。
+**repo 是私有的、但機器能上網**：機器可以直接 clone，用 GitHub Personal Access Token（PAT）走 HTTPS——這是私有 repo 免 SSH key 的標準解。clone 時把 PAT 當密碼填進認證，機器就拉得到，一樣不必在它上面設 SSH key。容器化情境下這顆 PAT 怎麼持久化注入、fine-grained token 的授權收斂與 push 診斷，見 [在 container 裡跑 Claude Code](../../tools/remote/claude-code-container-and-hooks/)。
 
 **repo 還沒推到任何遠端、或機器離線**：從本機把檔案傳進去。如果本機到機器的 SSH 已經能用（即使只是密碼登入），用 `tar` over SSH 一次傳進去（跟 `scp -r` 等價，差別只在 tar 能一次打包、又好控制要不要帶 `.git`）：
 

@@ -52,7 +52,7 @@ zellij attach                # tmux 是 tmux attach
 gh auth login    # 選 HTTPS、完成認證、同意設定 git 認證
 ```
 
-判讀軸是「這個任務的價值要怎麼回到你手上」。如果你打算從遠端（GitHub）看結果，那 push 認證就是必要前置——沒設好，整段工作就被困在機器裡。連帶的紀律是讓任務頻繁 commit 當檢查點、做完務必確認 push 成功：對一個你不在場的任務，「沒推出去」跟「沒做」對你是一樣的。機器若沒裝 `gh`，也可以用 PAT 走 HTTPS，見 [外部連入篇](../ssh-keyless-bootstrap/) 的私有 repo 段。
+判讀軸是「這個任務的價值要怎麼回到你手上」。如果你打算從遠端（GitHub）看結果，那 push 認證就是必要前置——沒設好，整段工作就被困在機器裡。連帶的紀律是讓任務頻繁 commit 當檢查點、做完務必確認 push 成功：對一個你不在場的任務，「沒推出去」跟「沒做」對你是一樣的。機器若沒裝 `gh`，也可以用 PAT 走 HTTPS，見 [外部連入篇](../ssh-keyless-bootstrap/) 的私有 repo 段。若這台是容器化的 agent 工作機，還能更進一步繞掉這個人工前置：把 PAT 當 `GH_TOKEN` 在 `docker run` 時注入、git 用 `gh` 的 credential helper 現讀，`gh auth login` 的互動步驟整個省掉，見 [在 container 裡跑 Claude Code](../../tools/remote/claude-code-container-and-hooks/) 的 GitHub 認證段。
 
 把 push 憑證設進這台機器，等於提高了它的爆炸半徑——它現在能動你的 repo 了。這會回頭讓障礙一的 NOPASSWD、以及下面 agent 段的權限放行更該謹慎：最壞情況從「弄壞這台機器」升級成「污染你的 repo」，而後者不是重建一台 VM 就能還原的。所以設了 push 憑證之後，要連帶重估前面那些「因為機器可丟所以放心」的取捨。
 
