@@ -56,6 +56,11 @@ RUN git config --global credential."https://github.com".helper '!gh auth git-cre
 
 git 走 HTTPS 時把 `GH_TOKEN` 當密碼、`x-access-token` 當使用者名帶進請求；token 從不寫進 `.gitconfig` 或 gh 的登入檔，每次現讀環境變數。這跟 setup-token 的模型一致——認證綁「這次 run 有沒有注入機密」、不綁存檔登入。`gh` CLI 本身也讀同一顆 `GH_TOKEN`，所以 `gh pr create` 這類指令不需 `gh auth login` 的互動登入。
 
+GitHub 認證看起來失敗時，錯誤訊息本身就是最快的診斷——兩種訊號指向不同病灶、修法也不同，關鍵是把「認證管線通不通」跟「這個 repo 有沒有授權」分開判讀：
+
+- `could not read Username for 'https://github.com'`：git 手上根本沒有憑證——`GH_TOKEN` 沒注入或為空。修法是把 token 注入進 runtime（`--env-file` 帶上有值的 `.env`）。
+- `403 Write access to repository not granted`（或 `gh api repos/<owner>/<repo>` 回 `404 Not Found`）：token 已經被 git 帶到 GitHub、身分也驗過了，只是這顆 fine-grained token 的 Repository access 不含這個 repo。這個 403 其實是好訊號——它反過來證明 credential helper 這條路是通的，缺的只是授權。修法是編輯同一顆 token 的 Repository access 把該 repo 加進來（token 值不變、注入的 `.env` 不用改）。fine-grained token 對授權外的 repo 一律回 404 / 403、不會退回匿名讀，所以連公開 repo 都可能在注入 token 後反而被擋——判讀時要記得這是 scope 問題、不是 helper 壞了。
+
 安全邊界跟前一節那顆長效 token 相同：PAT 一樣在 container 的環境變數裡、程序讀得到自己的 `/proc/self/environ`，在 skip-permissions 疊開放 egress 下可被外洩（見下方 `--dangerously-skip-permissions` 段的三個邊界內風險）。所以用 fine-grained、最小 repo 範圍、短輪替，把 blast radius 壓到最小。
 
 ## 狀態的兩個位置：~/.claude 與 .claude.json
