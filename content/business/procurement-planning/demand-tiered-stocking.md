@@ -29,7 +29,7 @@ tags: ["business", "procurement", "planning"]
 
 備量的輸入是 [Forecast](/business/procurement-planning/cards/forecast/)，但 forecast 要搭歷史數據一起用，且分兩種情況處理。第一種，forecast 有放進系統：依系統做事，同時用歷史數據比對，找出 forecast 與實際用量的系統性差異來校正。第二種，forecast 沒進系統：依各料件的交期與市場狀況，主動推前端做策略性備料，不被動等系統指令。
 
-兩條路徑的共同點是都不把 forecast 當成準確的未來。搶單旺季 forecast 幾乎從沒準過，因為大家都在超額下單。所以備量要再疊上每月實際用量與淡旺季預估做調整—forecast 提供起點，歷史數據與市場判斷提供修正。光回頭照抄 forecast 完全不夠，真正的備量是 forecast、歷史落差、季節性三者疊出來的判斷。
+兩條路徑的共同點是都不把 forecast 當成準確的未來。搶單旺季 forecast 很少貼近實際，因為大家都在超額下單。所以備量要再疊上每月實際用量與淡旺季預估做調整—forecast 提供起點，歷史數據與市場判斷提供修正。光回頭照抄 forecast 完全不夠，真正的備量是 forecast、歷史落差、季節性三者疊出來的判斷。
 
 ## 安全庫存與寄售：常態緩衝的兩種形式
 

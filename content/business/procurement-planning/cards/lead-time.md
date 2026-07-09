@@ -6,7 +6,7 @@ weight: 10
 tags: ["business", "procurement", "knowledge-cards"]
 ---
 
-Lead Time（交期，簡稱 LT）的核心概念是「從下單到料真正進廠所需的時間」。它是備料決策的基準線：一顆料的 LT 有多長，手上的庫存與在途訂單就至少要覆蓋多長。LT 直接決定 [Safety Stock](/business/procurement-planning/cards/safety-stock/) 要設多高、[下單頻率](/business/procurement-planning/cards/forecast/) 要多密。
+Lead Time（交期，簡稱 LT）的核心概念是「從下單到料真正進廠所需的時間」。它是備料決策的基準線：一顆料的 LT 有多長，手上的庫存與在途訂單就至少要覆蓋多長。LT 直接決定 [Safety Stock](/business/procurement-planning/cards/safety-stock/) 要設多高、下單頻率要多密。
 
 ## 概念位置
 

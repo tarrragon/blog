@@ -6,7 +6,7 @@ weight: 20
 tags: ["business", "procurement", "knowledge-cards"]
 ---
 
-Forecast（需求預測，簡稱 FCST）的核心概念是「對未來用量的預估」，它是備料的起點參考，而不是保證。採購用 forecast 決定要提前備哪些料、備多少，但同時要清楚 forecast 會失準，尤其在搶單旺季。Forecast 要搭 [歷史數據](/business/procurement-planning/cards/lead-time/) 與淡旺季判斷一起讀，才不會被單一數字誤導。
+Forecast（需求預測，簡稱 FCST）的核心概念是「對未來用量的預估」，它是備料的起點參考，而不是保證。採購用 forecast 決定要提前備哪些料、備多少，但同時要清楚 forecast 會失準，尤其在搶單旺季。Forecast 要搭歷史數據與淡旺季判斷一起讀，才不會被單一數字誤導；它跟 [Lead Time](/business/procurement-planning/cards/lead-time/) 一起決定每顆料的下單時點與備量。
 
 ## 概念位置
 
@@ -14,7 +14,7 @@ Forecast 是需求端送給採購的訊號，跟 [Lead Time](/business/procureme
 
 ## 可觀察訊號與例子
 
-判讀 forecast 可信度的訊號：這個客戶或產品線過去 forecast 與實際用量的落差有多大、目前是淡季還是旺季、市場是否正在搶單。搶單旺季時 forecast 幾乎從不準，因為大家都在超額下單卡產能。有經驗的採購會把 forecast 放進系統跑，再用歷史數據比對抓出系統性偏差—例如某產品線 forecast 長期高估兩成，備料時就自動打折。
+判讀 forecast 可信度的訊號：這個客戶或產品線過去 forecast 與實際用量的落差有多大、目前是淡季還是旺季、市場是否正在搶單。搶單旺季時 forecast 幾乎測不準，因為大家都在超額下單卡產能。有經驗的採購會把 forecast 放進系統跑，再用歷史數據比對抓出系統性偏差—例如某產品線 forecast 長期高估兩成，備料時就自動打折。
 
 ## 判讀方式
 

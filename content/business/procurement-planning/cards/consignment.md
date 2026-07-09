@@ -1,12 +1,12 @@
 ---
-title: "寄售（Consignment / VMI）"
+title: "寄售（Consignment）"
 date: 2026-07-09
 description: "說明供應商在買方端備庫存、動用後才結算的備料機制"
 weight: 50
 tags: ["business", "procurement", "knowledge-cards"]
 ---
 
-寄售（Consignment，供應商管理庫存的形式常稱 VMI）的核心概念是「供應商先把料放在買方端或指定倉，買方實際動用後才結算付款」。它讓買方手上隨時有料，卻不用先押現金買斷，是把 [Safety Stock](/business/procurement-planning/cards/safety-stock/) 的持有成本部分轉給供應商的機制。
+寄售（Consignment）的核心概念是「供應商先把料放在買方端或指定倉，買方實際動用後才結算付款」。它常跟 VMI（供應商管理庫存）搭配出現，但兩者不等同—VMI 指供應商代管補貨水位，寄售指所有權與付款遞延到實際動用。它讓買方手上隨時有料，卻不用先押現金買斷，是把 [Safety Stock](/business/procurement-planning/cards/safety-stock/) 的持有成本部分轉給供應商的機制。
 
 ## 概念位置
 
