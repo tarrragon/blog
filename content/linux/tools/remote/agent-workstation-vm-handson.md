@@ -6,7 +6,7 @@ weight: 3
 tags: ["linux", "remote", "docker", "zellij", "mosh", "ntfy", "agent", "handson"]
 ---
 
-本文是 [遠端 agent 工作機選型](../agent-workstation-home-vs-vps/) 的實作篇：把該文推導出的三層架構（連線＝怎麼接上遠端、session＝工作怎麼在斷線後存活、隔離＝agent 在哪個受限環境裡跑）在一台 UTM Arch Linux ARM VM 上完整架起來、直到手機端能丟任務、斷線、收通知、回來看結果。十個步驟與三個端到端情境都經實機跑通、指令與輸出是實跑結果、每步的除錯判讀記的是實測踩到的狀況。
+本文是 [遠端 agent 工作機選型](../agent-workstation-home-vs-vps/) 的實作篇：把該文推導出的三層架構（連線＝怎麼接上遠端、session＝工作怎麼在斷線後存活、隔離＝agent 在哪個受限環境裡跑）在一台 UTM Arch Linux ARM VM 上完整架起來、直到手機端能丟任務、斷線、收通知、回來看結果。十個步驟與三個端到端情境都經實機跑通、指令與輸出是實跑結果、每步的除錯判讀記的是實測踩到的狀況。這份記錄也是 [把遠端 agent 工作機鋪成一條路](../remote-agent-paved-road/) 那條 on-ramp 的端到端驗證落地；還沒看過整條路順序總覽的，先看那篇再回來對照本篇的實機細節。
 
 這份記錄跑在一組特定環境上——**宿主機 macOS + UTM、VM 是 Arch Linux ARM、手機是 Android（Termius）**——指令因此帶環境相依，換環境要換做法：套件管理用 `pacman`（Debian / Ubuntu VM 對應 `apt`，Step 6 那條「partial upgrade 升 kernel → 未重開 → docker 起不來」的 gotcha 是 Arch 專屬、其他發行版不會遇到）；宿主機層的 UTM 操作只適用 macOS（Linux host 改用 QEMU / virt-manager、Windows 用 Hyper-V / WSL2，NAT 穿透的直連 / 中繼結果也可能不同）。VM 本身怎麼建（裝虛擬化軟體、灌發行版、分割磁碟）是這篇的上游、見 [Linux 安裝](../../../install/)；本篇從「VM 已存在且會開機」起步。
 

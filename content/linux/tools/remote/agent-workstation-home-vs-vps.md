@@ -6,7 +6,7 @@ weight: 2
 tags: ["linux", "remote", "vps", "tailscale", "docker", "agent"]
 ---
 
-遠端 agent 工作機是一台常駐待命的機器：從任何裝置連入、把長任務（編譯、測試、Claude Code 這類 coding agent）丟給它、關掉連線走人、跑完收通知。要架這樣一台機器，第一個選型問題是機器擺在哪——家用機還是租 VPS。這個決策取決於三個維度：連線延遲、家用 IP 的穩定性、環境隔離。這篇逐項拆解這三個維度，結論是它們各自都有軟體層的標準解、跟機器擺在哪無關；把工作環境拆成連線、session、隔離三層獨立能力之後，家用機與 VPS 的差異只剩唯一一個變數——機器由誰保證活著。
+遠端 agent 工作機是一台常駐待命的機器：從任何裝置連入、把長任務（編譯、測試、Claude Code 這類 coding agent）丟給它、關掉連線走人、跑完收通知。要架這樣一台機器，第一個選型問題是機器擺在哪——家用機還是租 VPS。這個決策取決於三個維度：連線延遲、家用 IP 的穩定性、環境隔離。這篇逐項拆解這三個維度，結論是它們各自都有軟體層的標準解、跟機器擺在哪無關；把工作環境拆成連線、session、隔離三層獨立能力之後，家用機與 VPS 的差異只剩唯一一個變數——機器由誰保證活著。這篇是 [把遠端 agent 工作機鋪成一條路](../remote-agent-paved-road/) 的起點（形態選型）；整條從零到可用的順序總覽見那篇。
 
 工具本身的選型與配置這篇只給路由：連線工具的比較見 [遠端連線與同步工具選型](../connection-and-sync-tools/)、tailnet 網路層機制見 [Tailscale tailnet 與中繼](../tailscale-tailnet-and-relay/)、多工器見 [tmux 基礎](../../cli/tmux-persistence-and-basics/) 與 [zellij 操作](../../cli/zellij-pane/)、推播通知見 [ntfy 推播服務](../../../debug/ntfy-push-notification-service/)。這篇聚焦在這些工具之上的選型判斷。
 
