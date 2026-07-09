@@ -47,7 +47,7 @@ metadata:
 派多個 fresh 代理人(無你的對話脈絡),每個是一個剛發現這份指引的陌生人。關鍵紀律:
 
 - **只照指引、不預讀內部**:真實使用者照 runbook 做、不會先研究底層腳本。代理人也一樣——只有指引本身卡住它、才去翻腳本,並記下「指引沒講、得翻腳本才知道」。
-- **真的執行、不只讀**:在可拋棄的乾淨環境(每個目標一個 fresh 容器 / VM)實際跑,不是評論可讀性。
+- **真的執行、不只讀**:在可拋棄的乾淨環境(每個目標一個 fresh 容器 / VM)實際跑,不是評論可讀性。怎麼起這種環境、bare vs provisioned 之分、容器專屬的坑、以及一個公開的 reference implementation,見 `references/disposable-environment.md`。
 - **回報四層**:①理解——每步光看文字懂不懂要做什麼、哪裡要猜;②執行——實際跑發生什麼、哪裡失敗 / hang / 報錯、做了哪些指引沒寫的動作才過關;③verify 結果——PASS/FAIL 跟實際環境相不相符(抓 verifier 自己的誤報);④意想不到的狀況。
 - **測完清乾淨、不動宿主機**。
 
@@ -80,4 +80,5 @@ metadata:
 - 寫 CLI 工具教學文章、用 Docker fixture 逐工具驗證,是另一個 skill 的場域(那偏「作者自己驗單一工具」);本 skill 偏「派陌生人端到端驗一整份 follow-along 指引」。兩者共享「執行勝過審讀」與「模擬環境不可信」的紀律。
 - 多輪 frame 切換審查「文字寫得好不好」是另一個 skill;本 skill 驗「照著做跑不跑得起來」。前者不執行、後者一定執行。可以先 frame 審查文字、再冷讀實測執行。
 
+**Version**: 1.1.0 — 新增 `references/disposable-environment.md`:怎麼起可拋棄乾淨環境（bare 給 cold-read vs provisioned 給操作者、原生非模擬、命名清理、容器專屬坑）+ 公開 reference implementation（`tarrragon/dotfiles` 的 `scripts/scratch.sh`，一鍵起可拋棄容器、可選 provision）；階段 3 指向它
 **Version**: 1.0.0 — 初版:五階段(完整性稽核 → 自動化 verify → 冷讀代理人實機執行 → 乾淨環境 re-verify → 發現回收)+ 冷讀 agent 協定 + 三張原則卡(執行勝過審讀 / 原生非模擬 / verifier 也要被驗)。從一次個人尺度 paved road 的冷讀實測(Debian + 原生 arm64 Arch 容器、抓到硬編 sudo / 套件漂移 / verifier 假陰性 / 模擬架構假結果)萃取。
