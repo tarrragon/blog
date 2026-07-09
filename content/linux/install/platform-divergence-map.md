@@ -29,7 +29,7 @@ macOS 用 Homebrew、Arch 用 pacman、Debian/Ubuntu 用 apt、Fedora 用 dnf。
 
 Debian 的重命名還會連執行檔一起改（`fdfind`、`batcat`），所以連 shell alias 與腳本內的指令呼叫都要跟著分歧。維護跨發行版清單的可靠做法是逐台實測建立——憑印象抄一份對照表，漂移只是時間問題。
 
-跨到 macOS 還有一個 Linux 之間看不到的軸：**BSD userland vs GNU coreutils**。macOS 的基礎工具是 BSD 版，很多腳本習慣用的 GNU 工具在 macOS 預設根本沒有（不是改名、是缺席）：`timeout` 就是一例——實測一支腳本硬編 `timeout` 在 macOS 直接 `command not found`。裝了 Homebrew 的 `coreutils` 會補上 GNU 版、但一律加 `g` 前綴（`gtimeout`、`gsed`、`gdate`、`greadlink`），不覆蓋 BSD 原生。更陰險的是同名還在、行為卻不同：`sed -i` 要接一個備份後綴參數（BSD）vs 不用（GNU）、`readlink -f`（GNU）BSD 沒有、`date` 的旗標各異。跨 macOS 的腳本要嘛偵測 `gtimeout` / `timeout` 擇一（都沒有就略過那層保護），要嘛只用兩邊都有的 POSIX 子集。
+跨到 macOS 還有一個 Linux 之間看不到的軸：**BSD userland vs GNU coreutils**。macOS 的基礎工具是 BSD 版，很多腳本習慣用的 GNU 工具在 macOS 預設根本沒有（不是改名、是缺席）：`timeout` 就是一例——實測一支腳本硬編 `timeout` 在 macOS 直接 `command not found`。裝了 Homebrew 的 `coreutils` 會補上 GNU 版、但一律加 `g` 前綴（`gtimeout`、`gsed`、`gdate`、`greadlink`），不覆蓋 BSD 原生。更陰險的是同名還在、行為卻不同：`sed -i` 要接一個備份後綴參數（BSD）vs 不用（GNU）、`readlink -f`（GNU）BSD 沒有、`date` 的旗標各異。跨 macOS 的腳本要嘛偵測 `gtimeout` / `timeout` 擇一（都沒有就略過那層保護），要嘛只用兩邊都有的 POSIX 子集。這個軸逐工具的差異與對策（含 `sed -i`、`readlink -f`、bash 3.2）見 [macOS 的 BSD userland](/macos/macos_bsd_userland_vs_gnu/)。
 
 ### 套件存在性：有些概念只存在於特定平台
 
