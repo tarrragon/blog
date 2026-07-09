@@ -6,7 +6,7 @@ weight: 50
 tags: ["business", "procurement", "knowledge-cards"]
 ---
 
-寄售（Consignment）的核心概念是「供應商先把料放在買方端或指定倉，買方實際動用後才結算付款」。它常跟 VMI（供應商管理庫存）搭配出現，但兩者不等同—VMI 指供應商代管補貨水位，寄售指所有權與付款遞延到實際動用。它讓買方手上隨時有料，卻不用先押現金買斷，是把 [Safety Stock](/business/procurement-planning/cards/safety-stock/) 的持有成本部分轉給供應商的機制。
+寄售（Consignment）的核心概念是「供應商先把料放在買方端或指定倉，買方實際動用後才結算付款」。它常跟 VMI（供應商管理庫存）搭配出現，但兩者不等同—VMI 指供應商代管補貨水位，寄售指所有權與付款遞延到實際動用。它讓買方手上隨時有料，卻不用先押現金買斷，是把 [Safety Stock](/business/procurement-planning/cards/safety-stock/) 的持有成本部分轉給供應商的機制；它在付款軸上做的交換，跟 [Blanket Order 與 Flex Fence](/business/procurement-planning/cards/order-flexibility/) 在時間軸上做的是對應結構。
 
 ## 概念位置
 

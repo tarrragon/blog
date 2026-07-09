@@ -1,7 +1,7 @@
 ---
 title: "Forecast（需求預測，FCST）"
 date: 2026-07-09
-description: "拿到 forecast 不確定該信多少、旺季數字明顯膨脹、要搭歷史數據校正備料量時查閱"
+description: "判讀 forecast 可信度、校正旺季膨脹與備料量時查閱"
 weight: 20
 tags: ["business", "procurement", "knowledge-cards"]
 ---
