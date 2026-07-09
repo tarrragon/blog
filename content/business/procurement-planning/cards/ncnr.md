@@ -14,7 +14,7 @@ NCNR 站在「先卡產能」與「承擔呆料」之間。若一個料號在改
 
 ## 可觀察訊號與例子
 
-判讀下單彈性的訊號：這個料號是不是 NCNR、改單或取消的截止日（例如某些代理商的 CXD，cancel 截止日）在什麼時候、有沒有 small-reel、EOL-LTB、NRND 這類例外限制。以某代理商的某原廠料為例，除了 small-reel、EOL-LTB、NRND 以外，只要在截止日前都可以無條件修改或取消—這種規則下，可以直接把常用料號下遠期單卡位，反正不是 NCNR。
+判讀下單彈性的訊號：這個料號是不是 NCNR、改單或取消的截止日（例如某些代理商的 CXD，cancel 截止日）在什麼時候、有沒有 small-reel（小卷裝零星包裝）、[EOL-LTB、NRND](/business/procurement-planning/cards/lifecycle-status/) 這類例外限制。以某代理商的某原廠料為例，除了 small-reel、EOL-LTB、NRND 以外，只要在截止日前都可以無條件修改或取消—這種規則下，可以直接把常用料號下遠期單卡位，反正不是 NCNR。
 
 ## 判讀方式
 

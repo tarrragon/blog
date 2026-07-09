@@ -6,11 +6,11 @@ weight: 40
 tags: ["business", "procurement", "knowledge-cards"]
 ---
 
-Safety Stock（安全庫存，也常以 Buffer Stock 指稱）的核心概念是「為了吸收需求與交期波動而常態保留的緩衝庫存」。它讓產線在需求突增或交期延遲時仍有料可用，是防 [斷料](/business/procurement-planning/cards/stockout/) 的常態機制。Safety Stock 的高度由 [Lead Time](/business/procurement-planning/cards/lead-time/) 與需求波動共同決定。
+Safety Stock（安全庫存，也常以 Buffer Stock 指稱）的核心概念是「為了吸收需求與交期波動而常態保留的緩衝庫存」。它讓產線在需求突增或交期延遲時仍有料可用，是防 [斷料](/business/procurement-planning/cards/stockout/) 的常態機制。Safety Stock 的高度由 [Lead Time](/business/procurement-planning/cards/lead-time/)、需求波動與停線代價共同決定。
 
 ## 概念位置
 
-Safety Stock 跟 [Risk Buy](/business/procurement-planning/cards/risk-buy/) 都在備料，但性質不同：Safety Stock 是常態保留、對抗日常波動；Risk Buy 是事件驅動、針對特定缺料訊號一次性加碼。常用料會跟供應商談 [寄售](/business/procurement-planning/cards/consignment/) 或預備庫存，把 safety stock 的持有成本轉一部分給供應商，而不是所有料都等 PO 才開始備。
+Safety Stock 跟 [Risk Buy](/business/procurement-planning/cards/risk-buy/) 都在備料，但性質不同：Safety Stock 是常態保留、對抗日常波動；Risk Buy 是事件驅動、針對特定缺料訊號一次性加碼。常用料會跟供應商談 [寄售](/business/procurement-planning/cards/consignment/) 或預備庫存，把 safety stock 的持有成本轉一部分給供應商，而不是所有料都等 PO（採購訂單）才開始備。
 
 ## 可觀察訊號與例子
 
