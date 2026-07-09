@@ -3,7 +3,7 @@ name: compositional-writing
 description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 字句層 grep."
 license: MIT
 metadata:
-  version: 0.27.0
+  version: 0.28.0
   category: writing-methodology
 ---
 
@@ -68,6 +68,10 @@ metadata:
 **Case 引用段落的三段式結構**：三段式是案例引用段落的順序紀律 — 把「概念 → 案例 → 操作」三層分開承擔（段首給概念定義、case 引用居中、通用工程知識展開）、讓段落結構跟讀者學習新概念的認知順序對齊。LLM 從 case 反推內容容易把 case 揭露當概念出發點、實證觀察 11/12 段都犯這個錯。詳見 [case-citation-three-part-structure](references/principles/case-citation-three-part-structure.md)。
 
 **知識目標決定文章結構**：文章寫完後讀者帶走的是判斷能力（面對新情境能自己評估）還是操作步驟（照做能解決特定問題）——兩者需要不同的結構。判斷力導向把機制理解當主線、操作當自然推導的結果；流程導向把步驟當主線。多數教學文章應走判斷力導向——文章的價值在於提供判斷力、這是官方文件不做的事。詳見 [teach-judgment-not-procedure](references/principles/teach-judgment-not-procedure.md)。
+
+**判準寫到條件層**：判準有三個成熟度——口訣（無推導的結論）、維度清單（「判斷看 A / B / C」）、條件映射（「A 成立 → 做 X；A 破 → 切 Y」加失效情境）——教學要交付到第三層。維度清單是判準的空殼：有判準動詞、每個維度都有機制支撐、通過字句與機制審查，卻在讀者要做決定的那一刻斷線；且機制重建完成後它仍會殘留（機制正確與判準到位是兩個獨立檢查）。驗收用重算測試：讀者帶自己的參數進來能不能走出行動。條件不可窮舉的決策，用自查問句組（把變數轉成讀者可自答的問題）＋排序規則，同樣算第三層。詳見 [criteria-need-condition-action-mapping](references/principles/criteria-need-condition-action-mapping.md)。
+
+**教學模組要有推導源頭**：分析導向的教學模組（判準密集、讀者要帶走判斷力），模組級結構要是推導體系、不是主題集合——一個源頭機制（成本結構 / 約束 / 生命週期，各篇判準能折算回去的基準）、每篇承擔一條展開、模組入口能一句話說出推導起點。源頭買到：判準同尺、跨篇矛盾現形、擴篇有掛載點、推導式閱讀路線成立。目錄型模組與異質 case 記錄不適用；源頭是折算基準、不是開場模板。詳見 [teaching-module-needs-derivation-anchor](references/principles/teaching-module-needs-derivation-anchor.md) 與 `references/managing-article-collections.md` 的對應段。
 
 **複合問題先拆機制再談交互**：問題由多個概念交互導致時、先各自教 A / B / C 的機制、再談 A×B×C 交互。讀者理解各元件後交互作用是自然推導的。各概念獨立成篇、文章之間用連結而非重複來串接。判讀訊號是文章裡出現「另外還有一個原因是...」的堆疊式展開。詳見 [compound-problem-decompose-then-interact](references/principles/compound-problem-decompose-then-interact.md)。
 
@@ -221,7 +225,8 @@ compositional-writing/
 
 ---
 
-**Last Updated**: 2026-07-09
+**Last Updated**: 2026-07-10
+**Version**: 0.28.0 — 從一次教學模組重寫的 before / after retrospective 抽出建構端兩原則（重寫前為經驗談攤平結構、重寫後為推導體系，對比揭露主題集合與空殼判準兩個結構缺陷）：(1) 原則 3 加「判準寫到條件層」——口訣 / 維度清單 / 條件映射三成熟度、重算測試驗收、機制重建完成後空殼仍會殘留（同 batch 兩個版本各踩一次的實證）、自查問句組是條件不可窮舉時的合法變體，新增 principle 卡 [criteria-need-condition-action-mapping](references/principles/criteria-need-condition-action-mapping.md)；(2) 原則 3 加「教學模組要有推導源頭」＋ managing-article-collections 新增對應段——推導體系 vs 主題集合、源頭買到判準同尺 / 矛盾現形 / 擴篇掛載 / 推導式路線四件事、目錄型模組豁免、源頭是折算基準不是開場模板，新增 principle 卡 [teaching-module-needs-derivation-anchor](references/principles/teaching-module-needs-derivation-anchor.md)
 **Version**: 0.27.0 — source-to-teaching-analysis 加「Source Type Gate + 經驗談機制重建 pass」（使用者判定觸發：採購 planning 模組被判定「講故事不是商業分析教學」）：轉換第一步判別 source 類型——分析文自帶分析層、走拆層；經驗談（訪談 / 社群貼文 / 口述）只有事實 + 判讀、分析層要重建。機制重建對承擔判準的斷言問四個問題（成本結構 / 閾值反推 / 設計者誘因 / 既有分析語言）、三層分工表（事實保留 / 判讀當 hypothesis / 機制補建）、停止線（氛圍性敘述降 hook、心態內容路由成篇）；自檢清單 + 反模式表同步；新增 principle 卡 [anecdotal-source-needs-mechanism-reconstruction](references/principles/anecdotal-source-needs-mechanism-reconstruction.md)；觸發詞加「經驗談轉教學 / 訪談整理 / 機制重建」；metadata.version 同步修正長期漂移（0.18.0 → 與 changelog 對齊）
 **Version**: 0.26.0 — 新增「澄清式框架」字句層 frame（使用者回饋觸發：教材把「讀者會誤解」當敘事中心）：keyword bank 加 `rg "最容易誤|容易誤判|常見的?誤判|要點破|直覺會?帶偏|抵抗.*的直覺|你以為|會困惑|值得記"`、同步 description bank 清單、新增 principle 卡 [fill-knowledge-gap-not-center-misconception](references/principles/fill-knowledge-gap-not-center-misconception.md)（「容易誤會」是知識缺口訊號、補正向模型而非澄清警告、界線是具體實測敘事與真實診斷區分保留）；是 teaching-prose-neutral-register 的 stance 軸之外的知識供給軸 sibling；從遠端 agent 工作機教材三輪 review catch 6 處同構框架抽出（對應 report #215）
 **Version**: 0.25.0 — 原則 3 加文章結構上游決策：(1) 新增 principle 卡 [teach-judgment-not-procedure](references/principles/teach-judgment-not-procedure.md)（知識目標決定文章結構、判斷力導向 vs 流程導向、多數教學文章走判斷力導向）；(2) 新增 principle 卡 [compound-problem-decompose-then-interact](references/principles/compound-problem-decompose-then-interact.md)（複合問題先拆機制再談交互、各概念獨立成篇用連結串接）；(3) teaching-prose-neutral-register 補「壓縮結論」共同根因段（喊話/誇飾/必然/恐嚇/威脅/命令/教訓共享「作者走完推導但只輸出最後一步」機制、命名四類違反的統一解釋）
