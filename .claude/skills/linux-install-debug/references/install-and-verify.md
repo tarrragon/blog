@@ -52,6 +52,11 @@ SUDO=sudo; [ "$(id -u)" -eq 0 ] && SUDO=""   # root 時 shim 掉 sudo；非 root
 $SUDO pacman -Syu --noconfirm                 # 腳本一律用 $SUDO，不必先知道自己在哪種機器
 ```
 
+同類「別硬編你這台剛好有的東西」的可攜陷阱還有兩個，寫 / debug 安裝腳本時會撞：
+
+- **GNU coreutils 工具在 macOS 缺席**：`timeout` 是 GNU 的、macOS 預設沒有（`command not found`）；Homebrew `coreutils` 補的是 g-prefix 版（`gtimeout` / `gsed` / `gdate`）。跨 macOS 的腳本偵測 `timeout` / `gtimeout` 擇一、都沒有就略過那層，不要硬編 `timeout`。同名但行為不同的（`sed -i`、`readlink -f`）更陰險。
+- **`$var` 緊跟多位元組字元 → unbound**：非 UTF-8 locale 下，`$var` 後面直接接一個多位元組字（如中文全形 `）`），bash 可能把該字的首 byte 吞進變數名 → 報 unbound、且錯誤訊息裡的變數名帶一個雜訊字元。看到「unbound variable」而變數名尾端有怪字元，就往「某個 `$var` 後面貼著中文 / 多位元組字」查，改 `${var}` 界定邊界。
+
 ## 讓外部連得進來
 
 - 啟用 sshd：`systemctl enable --now sshd`。
