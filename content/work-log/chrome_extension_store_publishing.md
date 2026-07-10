@@ -1,18 +1,36 @@
 ---
-title: "Chrome 套件上架 Chrome Web Store 心得記錄"
+title: "Chrome Extension 從開發到上架的完整記錄"
 date: 2026-05-21
 draft: true
-description: "記錄把 Chrome extension 上架到 Chrome Web Store 的完整流程：開發者帳號、上架前準備、Store listing 填寫、權限與隱私聲明、審核與駁回處理、版本更新，以及過程中踩到的雷。"
-tags: ["chrome-extension", "chrome-web-store", "publishing", "tooling"]
+description: "記錄一個 Chrome extension 從開發環境、Manifest V3 設定到上架 Chrome Web Store 的完整流程：開發者帳號類型、Store listing、權限與隱私聲明、審核與駁回處理、版本更新，以及過程中踩到的雷。"
+tags: ["chrome-extension", "chrome-web-store", "manifest-v3", "publishing", "tooling"]
 ---
 
-<!-- 待填：這次上架的是什麼套件、做什麼用、為什麼要上架（自用 / 給團隊 / 公開）。一句話交代 context，後面章節才知道判讀的前提。 -->
+<!-- 待填：這次開發並上架的是什麼套件、解什麼問題、給誰用（自用 / 給團隊 / 公開）。一句話交代 context，後面章節才知道判讀的前提。 -->
+
+---
+
+## 開發環境與專案結構
+
+<!-- 待填：用什麼開發（純 JS / TypeScript / 有沒有 build 工具如 Vite）、目錄怎麼擺、有沒有用 framework。 -->
+
+---
+
+## 擴充元件架構
+
+<!-- 待填：用到哪些元件、各自的責任 — background service worker、content script、popup、options page、side panel 等。記下元件之間怎麼溝通（message passing / storage）。 -->
 
 ---
 
 ## 開發者帳號與費用
 
-<!-- 待填：註冊 Chrome Web Store 開發者帳號的流程、一次性費用、付款方式、帳號類型（個人 / 公司）的選擇與差異。 -->
+Chrome Web Store 開發者帳號的一次性註冊費是 USD $5。
+
+註冊後要選帳號類型：營利用途，或個人開發工具的非營利用途。營利帳戶需要上傳個人文件或公司證明，加上大約一個月的審核，所以這次先選非營利帳戶。（**待驗證**：兩種類型之後能不能互相切換，目前只有 AI 的說法、沒有實際切換過，也還沒查到官方文件的明確條文。）
+
+判定營利的範圍比直覺寬：訂閱、一次性付費、甚至贊助連結都算營利行為。比較特別的是最常見的 Google Ads 反而禁止放進 extension 裡（見 [Chrome Web Store 廣告政策](https://developer.chrome.com/docs/webstore/program-policies/ads)）。
+
+<!-- 待填：付款方式、註冊流程實際走完的步驟與等待時間。 -->
 
 ---
 
@@ -20,7 +38,7 @@ tags: ["chrome-extension", "chrome-web-store", "publishing", "tooling"]
 
 ### manifest.json 檢查
 
-<!-- 待填：manifest 版本（v3）、`name` / `version` / `description` 欄位、`permissions` 與 `host_permissions` 的範圍、上架前需要收斂掉的開發用設定。 -->
+<!-- 待填：manifest 版本（v3）、`manifest_version` / `name` / `version` / `description` 欄位、`permissions` 與 `host_permissions` 的範圍、上架前需要收斂掉的開發用設定。記下實際填的值與當下不確定的地方。 -->
 
 ### 視覺資產
 

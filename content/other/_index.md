@@ -10,10 +10,9 @@ tags: ["雜項", "工具技巧"]
 典型內容：
 
 - [Android 無線除錯設定](android_wireless_debug/)
-- [Chrome 擴充套件開發記錄](chrome_extension_dev_record/)
 - [工具應用筆記](application/)（子資料夾）
 
-macOS 相關的系統架構與磁碟管理文章已搬到 [macOS](/macos/) 分類。
+macOS 相關的系統架構與磁碟管理文章已搬到 [macOS](/macos/) 分類。Chrome extension 的開發與上架記錄依下方「工作中用某工具遇到的事件」這條邊界搬到 [work-log](/work-log/) 分類。
 
 ---
 
