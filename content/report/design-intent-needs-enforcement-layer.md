@@ -9,7 +9,7 @@ slug: "design-intent-needs-enforcement-layer"
 
 ## 論述基礎與限制
 
-本卡的論述基於一個 Dart 專案（書籍管理 App）的 entity 設計檢視：`Book` entity 帶一組會寫入稽核紀錄的領域方法，同時暴露一個 public 的、參數列包含 `status` 與 `modificationHistory` 的全欄位 `copyWith`。grep 實證找到兩處直接改 `status` 繞過領域方法的呼叫點，以及一個文件註解宣稱「只能從 enriching 狀態轉換」但函式體內 `if` / `assert` / `throw` 計數為零的方法。完整 case 見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)。具體限制：
+本卡的論述基於一個 Dart 專案（書籍管理 App）的 entity 設計檢視：`Book` entity 帶一組會寫入稽核紀錄的領域方法，同時暴露一個 public 的、參數列包含 `status` 與 `modificationHistory` 的全欄位 `copyWith`。grep 實證找到兩處直接改 `status` 繞過領域方法的呼叫點，以及一個文件註解宣稱「只能從 enriching 狀態轉換」但函式體內 `if` / `assert` / `throw` 計數為零的方法。完整 case 見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)、教學層展開見 [不變式的強制層次](/ddd/invariant-enforcement-layers/)、[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)（變更路徑收斂）、[建構路徑設計](/ddd/construction-path-design/)（工廠表達力缺陷轉移）。具體限制：
 
 - **單一專案觀察**。逃生口的具體形態（全欄位 copyWith）是 Dart / freezed 生態的產物；其他語言的逃生口長成 public setter、反射、`Object.assign` 等形態，機制相同、證據來自這一種。
 - **本卡談意圖的落點層次，不談意圖本身對不對**。一個錯的約束被完美強制，是另一類問題。

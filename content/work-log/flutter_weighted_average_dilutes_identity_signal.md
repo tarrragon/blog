@@ -49,4 +49,4 @@ tags: ["flutter", "dart", "algorithm", "similarity", "matching", "isbn"]
 
 - 正規形式的型別層做法：[Money 三段遷移](/work-log/dart_money_extension_type_migration/)——同一身分的表示多樣性在 value object 層吸收
 - identity 的建模：[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)——「什麼算同一個」是 domain 定義、比對演算法只是它的執行者
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——value object 的相等性語意
+- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)——「相等性定義承載業務規則」段

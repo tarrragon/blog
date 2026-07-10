@@ -133,7 +133,7 @@ func Default() Config {
 			IndexRequired:  []string{"title"},
 			Recommended:    []string{"description", "tags"},
 			CardRequired:   []string{"title", "date", "description", "weight"},
-			CardPaths:      []string{"content/backend/knowledge-cards", "content/report"},
+			CardPaths:      []string{"content/backend/knowledge-cards", "content/ddd/knowledge-cards", "content/flutter/knowledge-cards", "content/report"},
 			Disallowed:     []string{"author", "permalink"},
 		},
 		Cards: CardRules{

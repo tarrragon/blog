@@ -51,4 +51,4 @@ tags: ["flutter", "dart", "ddd", "exception", "error-handling", "invariant"]
 
 - 不變式強制層次的原則層：[#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)——本文是「約束做進執行層之後」的下一章：約束會工作、也會被合法需求撞
 - 決策表矛盾的同構：[#158 決策表兩列同時命中且結論相反：缺的是上游區分維度](/report/decision-table-conflict-reveals-missing-dimension/)——分類軸不正交跟決策表缺維度是同一個病：單一分類軸承載不了多維的現實
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——錯誤即領域概念、分類學也是建模
+- 概念地基：[不變式的強制層次](/ddd/invariant-enforcement-layers/)——本文是執行層建構不變式與「不變式被撞」兩段的主案例

@@ -175,4 +175,4 @@ State copyWith({Object? member = _sentinel}) {
 
 要讓意圖成立，就得讓違反意圖的路徑**走不通**，而不是寫文件請大家不要走。
 
-這次追出來的兩個可重用原則各自抽成 report 卡：意圖的強制層次在 [#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)、缺陷的轉移機制在 [#223 逃生口吸收建構路徑的缺陷](/report/escape-hatch-absorbs-construction-gap/)。
+這次追出來的兩個可重用原則各自抽成 report 卡：意圖的強制層次在 [#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)、缺陷的轉移機制在 [#223 逃生口吸收建構路徑的缺陷](/report/escape-hatch-absorbs-construction-gap/)。概念地基在 DDD 模組：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)（copyWith 該不該掛的判準入口）、[不變式的強制層次](/ddd/invariant-enforcement-layers/)（文件層失效機制的教學層展開）、[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)（變更路徑收斂與稽核出洞機制）、[建構路徑設計](/ddd/construction-path-design/)（工廠表達力不足的缺陷轉移）。

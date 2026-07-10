@@ -84,4 +84,4 @@ abstract class Product {                // 跨規格共用的資訊
 - 同專案的型別演化：[Money 三段遷移](/work-log/dart_money_extension_type_migration/)——`double price` 的下場
 - 「先蓋結構會蓋錯」的另一個現場：[異步查詢系統的過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/)——設計期想像的結構被砍、真結構從操作長出來
 - 原則層：[#206 預測性索引要有寫後回填輪](/report/predictive-index-needs-backfill-pass/)——寫作領域的同構：寫前的預測性宣告、完成後不回填就雙向失真
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——聚合根與其組成的邊界
+- 概念地基：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/) 的「資料袋起步、訊號出現才升級」段（本文是該段的主案例）；聚合邊界的專章等 case 累積
