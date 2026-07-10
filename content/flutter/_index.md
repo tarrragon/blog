@@ -29,6 +29,7 @@ tags: ["flutter", "dart", "mobile"]
 | 分層 enum 的粒度分工       | [16 種支付渠道、4 種行為分類](/work-log/dart_payment_dual_layer_enum/)                                  |
 | VO accessor 一致性         | [取個原始值有四種寫法](/work-log/flutter_vo_tostring_leak_accessor_inconsistency/)                      |
 | 函式分解的邊界             | [88 行拆 13 個函式、90 行決定不拆](/work-log/flutter_function_decomposition_split_vs_keep/)             |
+| 傘狀名與重命名原子性       | [兩個 ImportResult 各自都合理](/work-log/flutter_import_result_name_collision/)                         |
 
 ### 狀態與渲染
 
@@ -39,6 +40,8 @@ tags: ["flutter", "dart", "mobile"]
 | 系統資源邊界              | [App 音量 vs 系統音量](/work-log/flutter_audio_volume_control/)                                                      |
 | Riverpod 容器與狀態作用域 | [雙容器狀態脫節：App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)                      |
 | ephemeral 流程狀態        | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)                                |
+| async gap 與 ref 生命週期 | [await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)                                         |
+| 版面約束與溢出預防        | [溢出 714px、22 個測試同時紅](/work-log/flutter_renderflex_overflow_prevention_spec/)                                |
 
 ### 測試
 
@@ -55,6 +58,7 @@ tags: ["flutter", "dart", "mobile"]
 | mock 負擔與介面寬度      | [mock 55 個方法只用 5 個：Port 介面](/work-log/flutter_port_interface_mock_hell_isp/)                                                         |
 | 測試基礎設施的重量       | [1101 行自建測試基礎設施、刪掉 82.5%](/work-log/flutter_mock_infrastructure_overengineering_deleted/)                                         |
 | fixture 與真實資料通路   | [遷移計畫有寫入、有消費、缺讀出](/work-log/flutter_migration_read_path_gap_fake_green/)                                                       |
+| 遷移安全網               | [測「不變」、不測「正確」：characterization test](/work-log/flutter_characterization_test_migration_safety_net/)                              |
 
 ### 架構與分層
 
@@ -68,6 +72,9 @@ tags: ["flutter", "dart", "mobile"]
 | 砍掉重練與需求盤點    | [宣告回歸原生、階層重生](/work-log/flutter_exception_hierarchy_regrowth/)                               |
 | 資料存取的查詢次數    | [1000 本書、1001 次 SQL](/work-log/flutter_sqlite_n_plus_one_query/)                                    |
 | 聚合結構演化          | [文件裡的扁平 Product、程式碼裡的雙層聚合](/work-log/pos_product_model_doc_vs_code_evolution/)          |
+| 跨 domain 通訊的量級  | [用事件做同步查詢、等於手工重建 RPC](/work-log/cross_domain_event_request_response_cost/)               |
+| 比對訊號的分級        | [相同 ISBN 相似度只有 0.67](/work-log/flutter_weighted_average_dilutes_identity_signal/)                |
+| 驗證的兩層分工        | [「978ABC」被拒的理由寫著長度不對](/work-log/flutter_domain_input_validation_placement/)                |
 
 ### 工具鏈
 
