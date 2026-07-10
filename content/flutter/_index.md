@@ -27,6 +27,8 @@ tags: ["flutter", "dart", "mobile"]
 | import 路徑與 library 身份 | [同一個類別被判成兩個型別](/work-log/dart_import_path_type_conflict/)                                   |
 | exception 階層與錯誤分類   | [Exception 型別綁 ErrorCategory 的建構不變式](/work-log/flutter_exception_error_category_invariant/)    |
 | 分層 enum 的粒度分工       | [16 種支付渠道、4 種行為分類](/work-log/dart_payment_dual_layer_enum/)                                  |
+| VO accessor 一致性         | [取個原始值有四種寫法](/work-log/flutter_vo_tostring_leak_accessor_inconsistency/)                      |
+| 函式分解的邊界             | [88 行拆 13 個函式、90 行決定不拆](/work-log/flutter_function_decomposition_split_vs_keep/)             |
 
 ### 狀態與渲染
 
@@ -36,6 +38,7 @@ tags: ["flutter", "dart", "mobile"]
 | 命中測試                  | [HitTestBehavior 三種模式](/work-log/flutter_hit_test_behavior/)                                                     |
 | 系統資源邊界              | [App 音量 vs 系統音量](/work-log/flutter_audio_volume_control/)                                                      |
 | Riverpod 容器與狀態作用域 | [雙容器狀態脫節：App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)                      |
+| ephemeral 流程狀態        | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)                                |
 
 ### 測試
 
@@ -51,15 +54,20 @@ tags: ["flutter", "dart", "mobile"]
 | 大規模失敗分診           | [16 個失敗只有 2 個是缺口：先分診、再按 ROI 修](/work-log/flutter_test_failure_triage_root_cause_roi/)                                        |
 | mock 負擔與介面寬度      | [mock 55 個方法只用 5 個：Port 介面](/work-log/flutter_port_interface_mock_hell_isp/)                                                         |
 | 測試基礎設施的重量       | [1101 行自建測試基礎設施、刪掉 82.5%](/work-log/flutter_mock_infrastructure_overengineering_deleted/)                                         |
+| fixture 與真實資料通路   | [遷移計畫有寫入、有消費、缺讀出](/work-log/flutter_migration_read_path_gap_fake_green/)                                                       |
 
 ### 架構與分層
 
-| 主題                  | 既有 case                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------ |
-| 過度設計的兩種膨脹    | [異步查詢系統的過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/)  |
-| Domain 層的 i18n 邊界 | [Domain 層的 947 處硬編碼中文](/work-log/flutter_domain_layer_i18n_hardcoded_text/)  |
-| VO 的持久化序列化     | [SQLite 只吃三種型別](/work-log/flutter_sqlite_value_object_serialization_boundary/) |
-| 領域計算的歸屬        | [「該收多少錢」抽成 pure function](/work-log/dart_unsettled_cart_pure_function/)     |
+| 主題                  | 既有 case                                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------------------- |
+| 過度設計的兩種膨脹    | [異步查詢系統的過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/)                     |
+| Domain 層的 i18n 邊界 | [Domain 層的 947 處硬編碼中文](/work-log/flutter_domain_layer_i18n_hardcoded_text/)                     |
+| VO 的持久化序列化     | [SQLite 只吃三種型別](/work-log/flutter_sqlite_value_object_serialization_boundary/)                    |
+| 領域計算的歸屬        | [「該收多少錢」抽成 pure function](/work-log/dart_unsettled_cart_pure_function/)                        |
+| entity 遷移策略       | [Deprecated Getter Facade：140+ 檔零修改](/work-log/flutter_deprecated_getter_facade_entity_migration/) |
+| 砍掉重練與需求盤點    | [宣告回歸原生、階層重生](/work-log/flutter_exception_hierarchy_regrowth/)                               |
+| 資料存取的查詢次數    | [1000 本書、1001 次 SQL](/work-log/flutter_sqlite_n_plus_one_query/)                                    |
+| 聚合結構演化          | [文件裡的扁平 Product、程式碼裡的雙層聚合](/work-log/pos_product_model_doc_vs_code_evolution/)          |
 
 ### 工具鏈
 

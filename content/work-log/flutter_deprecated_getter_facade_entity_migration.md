@@ -72,4 +72,4 @@ entity 持有 repository 注入的 `List<BookTag>`，每個廢除欄位各有一
 
 - 對照組：[VO 封裝擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)——同樣的 getter 相容層、沒有退場計畫的版本
 - 原則層：[#76 分批 ship：低風險可見價值先行](/report/incremental-shipping-criteria/)——facade + wave 遷移就是分批 ship 在 entity 演化上的形態
-- 這次遷移的下游事故：read-path 不注入的假綠（同 batch 的另一篇）——facade 讓編譯過了、但新結構的資料通路要自己驗證
+- 這次遷移的下游驚險：[read-path 缺口與 fixture 假綠](/work-log/flutter_migration_read_path_gap_fake_green/)——facade 讓編譯過了、但新結構的資料通路要自己驗證
