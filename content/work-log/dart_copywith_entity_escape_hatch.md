@@ -113,6 +113,12 @@ Book completeEnrichment() {
 
 這比「沒有約束」更糟——註解讓讀者**以為**有防護。而且就算方法內部加了檢查，`copyWith(status: ...)` 還是繞得過去。約束要成立，逃生口就得先關上。
 
+## 實證三：測試作者自己也分不清兩條路徑
+
+同專案更早的測試修復記錄裡有一筆直接的證言。一個測試用 `book.copyWith(readingStatus: ReadingStatus.reading)` 改狀態、然後期待 `modificationHistory` 出現兩條變更紀錄——實際只有一條、測試失敗。修法是改呼叫業務方法 `setReadingStatus()`、期待一條紀錄。
+
+這個失敗的測試值得記，因為它證明混淆不是理論風險：**連寫測試的人都把 copyWith 當成了業務入口**、以為它會留稽核痕跡。兩條路徑（工具方法不記錄、業務方法記錄）並存在同一個 public 介面上，每個使用者都要自己記得哪條是哪條——而「要記得」的規則遲早有人忘。
+
 ## 逃生口機制：為什麼那種寫法會自然長出來
 
 回到最初的測試 bug。為什麼有人會寫 `Book.createForTest(id: 'tmp').bookTags`？
@@ -140,6 +146,24 @@ Book completeEnrichment() {
 | 測試建構                         | 讓 `createForTest` 接受 `bookTags`，消除用 copyWith 拼裝的動機——修工廠的表達力，不是修每一個拼裝點                              |
 
 判斷準則濃縮成一句：**這個型別有沒有「不允許任意組合的欄位」？** 有，copyWith 就不該讓那些欄位 public 可寫；沒有，copyWith 就是正當的便利工具。
+
+## 附註：即使在正當場景、copyWith 也有一個表達力缺口
+
+value object 跟 UI state 上的 copyWith 是正確工具，但手寫時有一個 Dart 型別系統的缺口：`String? isbn` 這種 nullable 參數只有兩態（有值 / null），而 copyWith 的語意需要三態——「不改這欄」「改成某值」「清空成 null」。前兩態沒問題，第三態表達不出來：`copyWith(isbn: null)` 跟「沒傳 isbn」在函式內看起來一模一樣。
+
+通用的補償手法是哨兵物件，兩個不同專案各自長出了同一份程式碼：
+
+```dart
+static const _sentinel = Object();
+
+State copyWith({Object? member = _sentinel}) {
+  return State(
+    member: member == _sentinel ? this.member : member as Member?,
+  );
+}
+```
+
+有了哨兵，「登出會員（明確設 null）」這類操作才能經由 copyWith 表達。freezed 生成的 copyWith 內部就是用同樣的哨兵技巧處理這件事——手寫 immutable state 時這是要自己補的部分，漏掉的症狀是「清空欄位的操作靜默變成保留原值」。
 
 ## 收束：三個坑的共同結構
 
