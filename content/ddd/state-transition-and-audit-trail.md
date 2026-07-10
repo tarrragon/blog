@@ -1,7 +1,7 @@
 ---
 title: "狀態轉換與稽核軌跡"
 date: 2026-07-10
-description: "領域方法作為唯一變更路徑：判準是「變更有沒有需要一起完成的伴隨動作」。含唯一路徑與建議路徑的分界、稽核軌跡出洞的靜默機制。"
+description: "領域方法作為唯一變更路徑：判準是「變更有沒有需要一起完成的伴隨動作」。含唯一路徑與建議路徑的分界、稽核軌跡出洞的靜默機制與凍結作為稽核端點。"
 weight: 4
 tags: ["ddd", "state-transition", "audit-trail", "domain-model"]
 ---
@@ -10,9 +10,9 @@ tags: ["ddd", "state-transition", "audit-trail", "domain-model"]
 
 ## 領域方法承擔什麼
 
-領域方法不是 setter 的別名。它在一次呼叫裡同時完成三件事：表達業務意圖（方法名本身是業務事件的動詞）、檢查轉換條件（當前狀態是否允許這次轉換）、寫入稽核紀錄（這次變更的內容、時間、來源）。三件事在同一個方法呼叫內完成——呼叫端只表達「做這件事」，方法自己保證條件成立且紀錄同步寫入。
+領域方法在一次呼叫裡承擔三件事：表達業務意圖（方法名本身是業務事件的動詞）、檢查轉換條件（當前狀態是否允許這次轉換）、寫入稽核紀錄（這次變更的內容、時間、來源）。三件事原子完成——呼叫端只表達「做這件事」，方法自己保證條件成立且紀錄同步寫入。
 
-一個書籍管理 App 的 `Book` entity 帶一組狀態轉換方法（開始豐富化、完成豐富化、標記可用），每個方法往 `modificationHistory` 追加一筆變更紀錄。方法的設計形狀是：呼叫端說出意圖（markAsAvailable），方法檢查前置條件、執行狀態轉換、寫入歷史——三者原子完成（[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)）。
+一個書籍管理 App 的 `Book` entity 帶一組狀態轉換方法（開始豐富化、完成豐富化、標記可用），每個方法往 `modificationHistory` 追加一筆變更紀錄。這個專案的方法完成了其中兩件（意圖表達與紀錄寫入），第三件（轉換條件檢查）只停在註解——方法體內 grep 不到任何對應檢查，是 [不變式的強制層次](/ddd/invariant-enforcement-layers/) 展開的文件層失效案例（[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)）。
 
 三件事如果拆開給不同入口做——一個方法改狀態、另一處補紀錄——一致性就回到文件層，靠每個呼叫端記得兩者都做、且順序正確。[不變式的強制層次](/ddd/invariant-enforcement-layers/) 展開過同一個模式：被同一條規則綁住的欄位群對外只暴露一個原子的切換方法、必要資訊做成必填參數。變更路徑的收斂是同一原則在時間軸上的延伸——不只是「欄位一起換」，而是「狀態轉換、條件檢查、稽核紀錄一起完成」。
 
@@ -20,13 +20,13 @@ tags: ["ddd", "state-transition", "audit-trail", "domain-model"]
 
 對一個受規則約束的欄位，變更只有兩種可能的強度。唯一路徑：領域方法之外沒有 public 介面可以改這個欄位、變更只能走方法。建議路徑：方法之外有其他途徑可以改（逐欄位覆寫工具、public setter）、規則靠慣例說「請走方法」。前者是型別層或執行層的強制（[不變式的強制層次](/ddd/invariant-enforcement-layers/) 的分層判準），後者停在文件層。
 
-判準是一個問題：這個欄位的變更有沒有需要一起完成的伴隨動作？伴隨動作的典型形態包含稽核紀錄寫入、衍生值重算、狀態流程條件檢查。有任何一種——變更路徑收進領域方法、欄位的 public 寫入介面關閉。沒有——逐欄位覆寫工具是正當的便利、加上領域方法的儀式只會製造沒有伴隨動作可做的 boilerplate。
+判準是一個問題：這個欄位的變更有沒有需要一起完成的伴隨動作？常見的伴隨動作包含稽核紀錄寫入、衍生值重算、狀態流程條件檢查——任何需要隨變更同步完成的動作都算。有任何一種——變更路徑收進領域方法、欄位的 public 寫入介面關閉。沒有——逐欄位覆寫工具是正當的便利、加上領域方法的儀式只會製造沒有伴隨動作可做的 boilerplate。
 
 判準用錯的兩個方向代價相反。把唯一路徑設計成建議路徑：規則退化成慣例、稽核軌跡開始出洞（下一節展開）。反過來、把沒有伴隨動作的欄位硬收進領域方法：每次改值都要穿過一層沒有意義的方法呼叫、而且方法名要替一個純粹的換值操作擠出業務動詞。[資料袋與領域模型](/ddd/data-bag-vs-domain-model/) 的容器層判準在這裡有回聲——容器判定為資料袋的型別、每個欄位都沒有伴隨動作、收斂是不必要的。
 
 ## 稽核軌跡怎麼出洞
 
-稽核軌跡出洞的機制是靜默的——沒有任何錯誤、警告或測試失敗會告訴你紀錄缺了一段。
+兩條變更路徑並存——領域方法有紀錄、工具方法沒紀錄——是稽核軌跡出洞的機制、而出洞是靜默的：沒有任何錯誤、警告或測試失敗會告訴你紀錄缺了一段。
 
 上述書籍管理 App 暴露了完整的失效路徑。`Book` 同時有領域方法與一個 public 的 copyWith、而 copyWith 的參數列包含 `status` 和 `modificationHistory`。工廠層直接用 `copyWith(status: BookStatus.available)` 改狀態、繞過了 `markAsAvailable()` 方法——這些狀態轉換沒有進入稽核紀錄。更具體的證據：同專案的一個測試用 copyWith 改 readingStatus、期待 modificationHistory 出現兩條紀錄——實際只有一條。連寫測試的人都把 copyWith 當成了業務入口、以為它會留稽核痕跡（[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)）。
 
@@ -50,6 +50,7 @@ tags: ["ddd", "state-transition", "audit-trail", "domain-model"]
 ## 下一步
 
 - 變更路徑收斂之後、建構路徑本身的設計：[建構路徑設計](/ddd/construction-path-design/)
+- 型別類別的入口判準：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)
 - 規則落點的三層選擇：[不變式的強制層次](/ddd/invariant-enforcement-layers/)
 - 跨物件一致性（aggregate 邊界）：模組 backlog
 - Dart 的語言細節（copyWith 參數列收窄、private copyWith、哨兵物件）：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)

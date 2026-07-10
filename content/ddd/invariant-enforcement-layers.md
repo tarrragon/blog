@@ -72,5 +72,7 @@ tags: ["ddd", "invariant", "type-design", "domain-model"]
 ## 下一步
 
 - 規則落點之前的兩個判定：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)、[entity 與 value object 的判準](/ddd/entity-vs-value-object/)
+- 變更路徑的收斂：[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
+- 建構路徑的設計：[建構路徑設計](/ddd/construction-path-design/)
 - 原則層：[#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)
 - Dart / Flutter 的實作細節（required 參數與 Rx 狀態流、exception 階層、validator 結構）：[會員身分、計價、支付方式必須一起換](/work-log/pos_member_pricing_payment_atomic_switch/)、[Exception 型別綁 ErrorCategory 的建構不變式](/work-log/flutter_exception_error_category_invariant/)、[驗證的兩層分工與順序陷阱](/work-log/flutter_domain_input_validation_placement/)
