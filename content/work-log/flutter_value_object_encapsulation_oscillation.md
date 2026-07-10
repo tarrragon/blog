@@ -50,6 +50,6 @@ tags: ["flutter", "dart", "ddd", "value-object", "encapsulation", "refactoring"]
 
 ## 相關閱讀
 
-- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)——語意封閉與拆封口的判準層
+- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)——語意封閉與拆封口的判準層；[建構路徑設計](/ddd/construction-path-design/)——原始值出口穩態的教學層展開
 - 出口設計的正面案例：[金額型別的三段遷移](/work-log/dart_money_extension_type_migration/)——`Money` 的 `toDecimal()` 就是「官方拆封口」的形態
 - 原則層：[#223 逃生口吸收建構路徑的缺陷](/report/escape-hatch-absorbs-construction-gap/)——「沒有官方出口、下游硬撬」跟「工廠表達力不足、測試用 copyWith 拼」是同一個機制的兩個面

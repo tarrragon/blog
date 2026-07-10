@@ -72,5 +72,5 @@ bool isSameItem(CartItem other) {
 
 ## 相關閱讀
 
-- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)（本文是該判準的實機案例）
+- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)（本文是該判準的實機案例）、[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)（凍結作為稽核端點的教學層展開）
 - 同專案的 snapshot 對照組：entity 稽核軌跡的洞（[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)）——那篇談變更路徑的完整性，本文談身份與參照的凍結時機，兩者合起來是「歷史事實怎麼被保護」的兩個面
