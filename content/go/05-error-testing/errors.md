@@ -106,7 +106,7 @@ func Load(path string) (Config, error) {
 }
 ```
 
-成功路徑保持在左側，失敗路徑就地處理。這是 Go 可讀性的重要風格。
+成功路徑保持在左側，失敗路徑就地處理。這是 Go 可讀性的重要風格。「左緣即 happy path」這個閱讀模型（line of sight）的機制、以及它跟例外模型集中處理的對照，見 [0.6 Happy path 理論：錯誤路徑放哪裡](/go/00-philosophy/happy-path/)。
 
 ## 【執行】HTTP handler 中的錯誤路徑
 
