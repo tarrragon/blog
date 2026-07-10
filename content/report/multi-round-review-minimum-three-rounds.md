@@ -8,7 +8,7 @@ tags: ["report", "review", "multi-round-review"]
 
 ## 結論
 
-多輪審查（multi-round-review）的最低輪數是三輪，不是「看 finding 數決定要不要繼續」。Round 3 不是可選的加深，而是覆蓋 Round 1-2 結構性盲區的必要輪。
+多輪審查（multi-round-review）的最低輪數是三輪，不是「看 finding 數決定要不要繼續」。Round 3 承擔覆蓋 Round 1-2 結構性盲區的責任，是必要輪；把它當可選的加深，那些盲區就留在稿子裡。
 
 ## 為什麼
 

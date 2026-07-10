@@ -6,7 +6,7 @@ tags: ["CI", "CD", "release", "binary", "installer"]
 weight: 1
 ---
 
-Binary release 是一條直接把預編譯執行檔掛在 GitHub Release 下供使用者下載的發版通道，跳過 package registry。它解決的問題是：當套件不是函式庫而是 CLI binary，下游不需要重新編譯、也不一定有對應語言的 toolchain 時，需要一條「平台無關、即拿即用」的安裝路線。本篇用 [`zhtw-mcp`](https://github.com/sysprog21/zhtw-mcp) 為陪跑案例，公開協作軌跡可直接對照 [issue #35](https://github.com/sysprog21/zhtw-mcp/issues/35) 與 [PR #40](https://github.com/sysprog21/zhtw-mcp/pull/40)。
+Binary release 是一條直接把預編譯執行檔掛在 GitHub Release 下供使用者下載的發版通道，跳過 package registry。它解決的問題是：當套件本身是 CLI binary 這類可執行檔，下游不需要重新編譯、也不一定有對應語言的 toolchain 時，需要一條「平台無關、即拿即用」的安裝路線。本篇用 [`zhtw-mcp`](https://github.com/sysprog21/zhtw-mcp) 為陪跑案例，公開協作軌跡可直接對照 [issue #35](https://github.com/sysprog21/zhtw-mcp/issues/35) 與 [PR #40](https://github.com/sysprog21/zhtw-mcp/pull/40)。
 
 ## 為什麼需要這條通道
 

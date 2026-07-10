@@ -18,7 +18,9 @@ import (
 //	position（「見第 3 點」「詳見第五章」「§4」）。Position numbers are
 //	derivations of the current layout: after a reorder the reference
 //	resolves to the wrong target without breaking, which is harder to
-//	detect than a dead link.
+//	detect than a dead link. A § whose line cites an RFC / ISO / IEEE
+//	document is exempt: that numbering is frozen by the spec's publisher
+//	and survives any reorder of ours.
 //
 //	REF2-count-in-name — headings and front-matter titles that bake a
 //	member count into a collection name（「六大原則」「核心七問」）。The
@@ -27,18 +29,53 @@ import (
 //	string acts as a canonical name; inline counts that sit right next
 //	to their list stay out of scope.
 //
-// Matches immediately preceded by 「 are skipped in both rules — the
-// repo convention for quoting an anti-example is to wrap it in 「」.
+// Matches inside a 「」 span are skipped in both rules — the repo
+// convention for quoting an anti-example is to wrap it in 「」.
 var (
 	positionalAnchorRe = regexp.MustCompile(`(?:見|詳見|參見|如)[^。\n「」]{0,6}?第\s*[一二三四五六七八九十0-9]+\s*(?:章|節|點|步|輪|段)|§\s*[0-9]`)
 	countInNameRe      = regexp.MustCompile(`[0-9一二三四五六七八九十]+\s*大\s*(?:支柱|原則|步驟|階段|面向|心法)|[0-9一二三四五六七八九十]+\s*(?:支柱|原則|步驟|階段)`)
+
+	// frozenSpecRe marks a line as citing externally frozen numbering
+	// (RFC / ISO / IEEE section numbers). Their §N is a stable
+	// identifier published by the spec author, not a derivation of our
+	// own layout, so REF1 does not apply to it.
+	frozenSpecRe = regexp.MustCompile(`(?i)(?:RFC|STD|BCP|ECMA|IEEE)[\s-]*[0-9]+|ISO(?:/IEC)?[\s-]*[0-9]+`)
 )
 
-// quotedAt reports whether the byte right before idx is the opening
-// corner bracket 「 (U+300C, bytes E3 80 8C) — i.e. the match is being
-// quoted as an example rather than used as a live reference.
+// quotedAt reports whether byte position idx falls inside a 「」 span
+// (U+300C … U+300D) on this line — i.e. the match is being quoted as an
+// example rather than used as a live reference. Only balanced spans
+// count: an unclosed 「 leaves the rest of the line unquoted, so a
+// stray bracket cannot silence the rest of the file's prose.
+//
+// Membership, not adjacency, is the test. Quoted anti-examples carry
+// their own emphasis and inner quotes (「核心責任**不是** X、**而是** Y」,
+// 「高階函式不是『用了比較高級』、而是…」), so the match rarely starts on
+// the byte right after 「.
 func quotedAt(line string, idx int) bool {
-	return idx >= 3 && line[idx-3:idx] == "「"
+	const open, close = "「", "」"
+	depth, start := 0, 0
+	for i := 0; i+3 <= len(line); {
+		switch line[i : i+3] {
+		case open:
+			if depth == 0 {
+				start = i
+			}
+			depth++
+			i += 3
+		case close:
+			if depth > 0 {
+				depth--
+				if depth == 0 && idx > start && idx < i {
+					return true
+				}
+			}
+			i += 3
+		default:
+			i++
+		}
+	}
+	return false
 }
 
 // inlineCodeAt reports whether byte position idx falls inside a
@@ -102,6 +139,12 @@ func checkDriftAnchors(path string, lines []string, ctx mdfmt.LineContext) []rep
 
 		for _, loc := range positionalAnchorRe.FindAllStringIndex(line, -1) {
 			if quotedAt(line, loc[0]) {
+				continue
+			}
+			// A § on a line that cites an RFC / ISO / IEEE document is
+			// that spec's own frozen numbering. The 見第 N 章 form never
+			// refers to an external spec, so it stays in scope here.
+			if strings.HasPrefix(line[loc[0]:], "§") && frozenSpecRe.MatchString(line) {
 				continue
 			}
 			out = append(out, report.Violation{

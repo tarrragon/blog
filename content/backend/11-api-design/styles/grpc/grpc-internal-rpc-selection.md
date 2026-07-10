@@ -10,7 +10,7 @@ gRPC 在內部服務間的定位是一個統一的呼叫層：身分驗證、觀
 
 ## 集中點的價值：一個規模上限案例
 
-Dropbox 的 Courier 把自製 RPC（HTTP/1.1 加 protobuf）遷移到 gRPC、動機不是換序列化 —— protobuf 本來就在用 —— 而是要 multiplexing（單連線多路併發）與雙向 streaming（見 [11.C31](/backend/11-api-design/cases/grpc-dropbox-courier/)、Dropbox 一手工程紀錄）。遷移之後、他們在這條統一呼叫層上集中疊了四件可靠性能力：[mTLS](/backend/knowledge-cards/tls-mtls/) 服務身分、per-method 統計、強制 [deadline](/backend/knowledge-cards/deadline/) 傳播、LIFO queue [熔斷](/backend/knowledge-cards/circuit-breaker/)。這四件都是「做一次、套全部服務」的 infra-wide 能力 —— 這正是框架層集中點的價值：可靠性策略不必每個服務各寫一遍。
+Dropbox 的 Courier 把自製 RPC（HTTP/1.1 加 protobuf）遷移到 gRPC、動機是 multiplexing（單連線多路併發）與雙向 streaming —— 序列化層沒有變動、protobuf 本來就在用（見 [11.C31](/backend/11-api-design/cases/grpc-dropbox-courier/)、Dropbox 一手工程紀錄）。遷移之後、他們在這條統一呼叫層上集中疊了四件可靠性能力：[mTLS](/backend/knowledge-cards/tls-mtls/) 服務身分、per-method 統計、強制 [deadline](/backend/knowledge-cards/deadline/) 傳播、LIFO queue [熔斷](/backend/knowledge-cards/circuit-breaker/)。這四件都是「做一次、套全部服務」的 infra-wide 能力 —— 這正是框架層集中點的價值：可靠性策略不必每個服務各寫一遍。
 
 這個案例是規模上限、要當上限讀而非通例。它成立的前提是百萬 RPS（每秒請求數）級的流量與一支能扛遷移的平台團隊。案例本身也留了兩個規模訊號：遷移比初始開發久得多、以及大規模重啟時 TLS 握手成本迫使把 RSA 2048 換成 ECDSA P-256、HTTP/1.1 與 gRPC 還得拆成不同 server 處理。這些踩雷是「有能力集中」的組織才會遇到、也才承擔得起的問題 —— 對沒有平台層集中能力的組織、它們是警訊不是路標。
 

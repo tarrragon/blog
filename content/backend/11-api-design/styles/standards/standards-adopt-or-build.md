@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "standards"]
 
 ## 採現成標準買到的是組織成本
 
-JSON:API 把價值主張直接寫在組織成本上。官網開宗明義：如果團隊曾為 JSON 回應怎麼格式化吵過架、JSON:API 能讓你停止這種 bikeshedding（為瑣碎細節沒完沒了地爭）（見 [11.C50](/backend/11-api-design/cases/standards-jsonapi-antibikeshedding/)）。它賣的不是更強的格式能力、而是一個大家都同意的現成慣例 —— 附帶好處是圍繞這個慣例的工具可以重用、client 端也能靠標準化的結構做快取、有時省掉一次網路請求。
+JSON:API 把價值主張直接寫在組織成本上。官網開宗明義：如果團隊曾為 JSON 回應怎麼格式化吵過架、JSON:API 能讓你停止這種 bikeshedding（為瑣碎細節沒完沒了地爭）（見 [11.C50](/backend/11-api-design/cases/standards-jsonapi-antibikeshedding/)）。它賣的是一個大家都同意的現成慣例、格式能力本身並未更強 —— 附帶好處是圍繞這個慣例的工具可以重用、client 端也能靠標準化的結構做快取、有時省掉一次網路請求。
 
 採現成標準的代價相對隱性：response 形狀從此綁在該標準的設計上、標準沒覆蓋的需求要嘛繞、要嘛回頭自建。JSON:API 的版本節奏很慢（1.1 距 1.0 約七年）—— 這既可讀成 spec 穩定、也可讀成演進動能有限。採用前要自己判：這個「慢」對你是保障、還是把你綁在一份不太會跟上新需求的格式上。response 的結構驗證是正交的另一層 —— JSON Schema 這類工具管「回應符不符合約定的形狀」、跟選哪個 response 格式標準是兩件事、選了 JSON:API 不代表驗證也一併有了。
 

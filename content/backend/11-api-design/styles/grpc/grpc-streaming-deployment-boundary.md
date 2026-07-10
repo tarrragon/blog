@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "api-design", "grpc"]
 ---
 
-選 gRPC 之前要先確認一組部署約束、這組約束在協議能力表上通常缺席：協議要求端到端 HTTP/2 加 trailers、瀏覽器不能直接連、on-call 的人不能用 `curl` 徒手戳。這些不是 gRPC 該不該存在的問題、而是選型時要先算進去的成本。本文把這條「操作可及性」判準軸拆開、對應 [11.2 的操作可及性軸](/backend/11-api-design/api-style-selection/)。
+選 gRPC 之前要先確認一組部署約束、這組約束在協議能力表上通常缺席：協議要求端到端 HTTP/2 加 trailers、瀏覽器不能直接連、on-call 的人不能用 `curl` 徒手戳。這些是選型時要先算進去的成本，跟 gRPC 該不該存在無關。本文把這條「操作可及性」判準軸拆開、對應 [11.2 的操作可及性軸](/backend/11-api-design/api-style-selection/)。
 
 ## trailers 與瀏覽器：協議事實層面的約束
 

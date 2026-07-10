@@ -14,7 +14,7 @@ Prometheus 官方 naming 實踐文件：「every unique combination of key-value
 
 ## 判讀
 
-事故當下 error / user / request-id 這類維度突然從低基數變高基數（spike）、每個 unique 值生一條新 series、觀測後端資源耗盡並 crash —— 正好在你最需要下 query 排障的時刻。這不是外部依賴掛掉、而是被觀測系統的異常行為本身透過 label 把觀測後端拖垮。設計含義：高基數維度（尤其事故時會爆的 error 細節）要進 label 白名單管理（治理在 [4.7](/backend/04-observability/cardinality-cost-governance/)）、或改走 exemplar / 高基數專用後端、而非無界塞進 metric label。
+事故當下 error / user / request-id 這類維度突然從低基數變高基數（spike）、每個 unique 值生一條新 series、觀測後端資源耗盡並 crash —— 正好在你最需要下 query 排障的時刻。拖垮觀測後端的是被觀測系統自身的異常行為——它透過 label 把爆炸的維度值灌進 metric，外部依賴全程健康。設計含義：高基數維度（尤其事故時會爆的 error 細節）要進 label 白名單管理（治理在 [4.7](/backend/04-observability/cardinality-cost-governance/)）、或改走 exemplar / 高基數專用後端、而非無界塞進 metric label。
 
 ## 對應大綱
 

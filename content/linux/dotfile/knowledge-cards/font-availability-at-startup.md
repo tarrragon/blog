@@ -49,4 +49,4 @@ fc-cache -fv
 
 **部分應用程式支援熱載入**：瀏覽器等有獨立字型服務的程式可能在開新分頁時重新掃描字型，不需要重啟整個 process。長駐 daemon（mako、waybar）與狀態列預設是啟動時載入一次。
 
-**Flatpak / Snap 的字型隔離是不同問題**：沙箱化應用程式看不到 host 的字型目錄，重啟 process 也無法解決——原因不是時序，而是沙箱的檔案系統隔離。需要透過 Flatpak 的 filesystem override 或把字型放進沙箱可存取的路徑。
+**Flatpak / Snap 的字型隔離是不同問題**：沙箱化應用程式看不到 host 的字型目錄，重啟 process 也無法解決——原因是沙箱的檔案系統隔離，跟啟動時序無關。需要透過 Flatpak 的 filesystem override 或把字型放進沙箱可存取的路徑。

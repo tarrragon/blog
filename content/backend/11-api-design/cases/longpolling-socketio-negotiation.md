@@ -14,7 +14,7 @@ Socket.IO 官方 docs 說明三種 transport（HTTP long-polling / WebSocket / W
 
 ## 判讀
 
-推送機制選型不是純技術優劣、而是「相容性 vs 效能」的權衡。當消費者形狀含不可控網路環境（企業 proxy / 防火牆）時、系統要能 negotiate、退回 long-polling 保證可用性 —— long-polling 的價值正是它的相容性下限、不是效能。
+推送機制選型是「相容性 vs 效能」的權衡，純技術優劣決定不了結果。當消費者形狀含不可控網路環境（企業 proxy / 防火牆）時、系統要能 negotiate、退回 long-polling 保證可用性 —— long-polling 的價值正是它的相容性下限、不是效能。
 
 ## 對應大綱
 
