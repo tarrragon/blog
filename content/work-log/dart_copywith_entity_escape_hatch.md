@@ -17,7 +17,7 @@ tags: ["dart", "flutter", "copywith", "ddd", "entity", "domain-model", "retrospe
 
 書籍管理 App 專案的效能基準測試炸了一個例外：
 
-```
+```text
 InvalidBookIdException: Book ID must be at least 5 characters long
 ```
 
@@ -150,3 +150,5 @@ Book completeEnrichment() {
 「請走領域方法」是慣例，copyWith 不擋你；「只能從 enriching 轉換」是註解，實作不查你；「測試該用工廠」是期望，工廠沒能力你就繞。每一個「請、應該、建議」都是一個沒關上的逃生口，而逃生口的使用者不是壞人——他們只是走了阻力最小的路。
 
 要讓意圖成立，就得讓違反意圖的路徑**走不通**，而不是寫文件請大家不要走。
+
+這次追出來的兩個可重用原則各自抽成 report 卡：意圖的強制層次在 [#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)、缺陷的轉移機制在 [#223 逃生口吸收建構路徑的缺陷](/report/escape-hatch-absorbs-construction-gap/)。
