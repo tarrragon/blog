@@ -18,4 +18,4 @@ tags: ["business", "procurement", "knowledge-cards"]
 
 ## 判讀方式
 
-看到生命週期標記時，把它換算成「還能依賴多久」與「最後備料時點」。NRND 的料，新設計避免採用、既有用量規劃退場；EOL-LTB 的料，在截止日前算清未來總需求一次買足，同時啟動替代料導入。忽略 NRND 訊號、繼續把料押在新案子，等到 EOL 才發現得緊急找替代，是反覆出現的失誤。生命週期狀態是原廠提前給的預警，越早反應越有調整空間。
+看到生命週期標記時，把它換算成「還能依賴多久」與「最後備料時點」。NRND 的料，新設計避免採用、既有用量規劃退場——訊號的接收機制與退場排序見 [生命週期監測與退場治理](/business/procurement-planning/lifecycle-phaseout-governance/)；EOL-LTB 的料，在截止日前算清未來總需求一次買足，同時啟動替代料導入——買量攤算與對沖選項見 [EOL-LTB 買斷決策](/business/procurement-planning/eol-ltb-buyout-decision/)。忽略 NRND 訊號、繼續把料押在新案子，等到 EOL 才發現得緊急找替代，是反覆出現的失誤。生命週期狀態是原廠提前給的預警，越早反應越有調整空間。

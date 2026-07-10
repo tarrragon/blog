@@ -42,9 +42,11 @@ tags: ["business", "procurement", "planning"]
 
 [料件生命週期](/business/procurement-planning/cards/lifecycle-status/) 的標記是原廠對供貨走向的預告：NRND（不建議新設計採用）是提前量最大的訊號——新案子避開、既有用量開始規劃退場；EOL（停產）配 LTB（最後採購）公告後，是一個結構特殊的決策：**在截止日前，一次買足這顆料未來的全部需求**。這條規則同樣有設計者的帳：舊製程佔著產線的機會成本高於它剩餘的營收、少量續產低於經濟批量，EOL 是原廠自己的資產配置決策——理解這一點，就知道求原廠延後停產的空間通常很小，時間要花在自己的對策上。
 
-這個決策的兩側是：買少了，之後市場上沒有原廠料，只剩現貨市場的溢價與仿冒風險；買多了，全部是無法退回的呆料（EOL 料通常同時是 NCNR，去化路徑見 [呆料處置](/business/procurement-planning/excess-inventory-disposal/)），加上多年持有的資金佔用與儲存壽命問題。所以 LTB 的量要用產品剩餘生命週期的需求逐項算出來：還要出貨幾年、每年多少、維修備品要留多少，再依需求的不確定性加緩衝——「抓個保險係數」式的粗估，兩側的代價都接不住。同時要啟動的是對沖動作——[替代料](/business/procurement-planning/cards/alternate-part/) 認證。替代料驗通過，LTB 的壓力就從「賭未來全部需求」降為「撐到替代料上線」，兩個動作是一組的。部分料還有第三條路：原廠授權的延續製造商（aftermarket）接手生產、或開放 die bank 買斷——把「一次賭足全部需求」換成「買未來的製造權」，是需求量算不準時的對沖選項。
+這個決策的兩側都貴：買少了，之後市場上沒有原廠料，只剩現貨市場的溢價與仿冒風險；買多了，全部是無法退回的呆料（EOL 料通常同時是 NCNR，去化路徑見 [呆料處置](/business/procurement-planning/excess-inventory-disposal/)），加上多年持有的資金佔用與儲存壽命問題。所以 LTB 的量要用產品剩餘生命週期的需求逐項攤算、依兩側代價決定緩衝方向——「抓個保險係數」式的粗估，兩側的代價都接不住；同時啟動 [替代料](/business/procurement-planning/cards/alternate-part/) 認證等對沖動作，把一次性的賭注拆小——買量與對沖是一組的決策。
 
 常見的失誤是忽略 NRND 訊號、新案子繼續押這顆料，等 EOL 公告才發現用量還在成長——這時 LTB 要買的量更大、替代認證的時間更短，兩頭被壓縮。生命週期訊號的價值跟追料的偵測提前量同構：越早反應，選項越多。
+
+這一段給的是決策骨架，兩個環節各有獨立的展開：訊號的接收機制、新設計端的選型把關與既有用量的退場排序，在 [生命週期監測與退場治理](/business/procurement-planning/lifecycle-phaseout-governance/)；LTB 買量的逐項攤算、兩側代價與對沖選項的划算條件，在 [EOL-LTB 買斷決策](/business/procurement-planning/eol-ltb-buyout-decision/)。
 
 ## 把三種規則組合成下單策略
 

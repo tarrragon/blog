@@ -18,7 +18,7 @@ tags: ["business", "procurement", "planning"]
 
 第三，**殘值曲線單向向下**。電子料的市場價格長期走低、規格世代往前滾，今天的殘值幾乎總是未來殘值的上界。「再放一陣子看看」等於持有一個只會貶值的部位——沉沒成本（帳面價值）不是決策輸入，決策輸入是「今天的殘值」對「持有成本加明天更低的殘值」。這個比較在絕大多數情境下指向同一個方向：早處置。
 
-值得等的例外要有明確的形狀。第一種是週期性的：市場趨緊的訊號出現時（訊號組見 [allocation 卡](/business/procurement-planning/cards/allocation/)——交期全面拉長、配給宣告、broker（現貨商）詢價轉積極），呆料會短暫變成資產、缺貨期現貨商的收購價可能高於帳面。這個例外要用 tripwire 管理（訊號出現才留、訊號消退即出），不能當成「先放著」的通用藉口。第二種是結構性的：料被原廠 EOL 之後，還在用它的買家只能搶剩餘存量，殘值可能長期走升——這一種不適用「訊號消退即出」的管理法，要按下游還會用多久另行定價持有期，跟 LTB 買斷量的攤算（見 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)）是同一套帳。
+值得等的例外要有明確的形狀。第一種是週期性的：市場趨緊的訊號出現時（訊號組見 [allocation 卡](/business/procurement-planning/cards/allocation/)——交期全面拉長、配給宣告、broker（現貨商）詢價轉積極），呆料會短暫變成資產、缺貨期現貨商的收購價可能高於帳面。這個例外要用 tripwire 管理（訊號出現才留、訊號消退即出），不能當成「先放著」的通用藉口。第二種是結構性的：料被原廠 EOL 之後，還在用它的買家只能搶剩餘存量，殘值可能長期走升——這一種不適用「訊號消退即出」的管理法，要按下游還會用多久另行定價持有期，跟 LTB 買斷量的攤算（見 [EOL-LTB 買斷決策](/business/procurement-planning/eol-ltb-buyout-decision/)）是同一套帳。
 
 ## 去化路徑：回收率由通用性決定
 
@@ -38,14 +38,14 @@ tags: ["business", "procurement", "planning"]
 
 ## 停損的組織機制
 
-判準清楚了，執行卡在組織：處置要簽核、簽核的人看到的是「認列損失」的申請單，於是單子在流程裡過季。解法是把處置例行化——固定週期（季度）跑庫齡報表、超齡料自動進處置候選清單、依回收率順序逐項走，讓「處置呆料」從一次性的壞消息變成例行的庫存衛生。例行化要配一道前置檢查：候選清單先扣除有名有姓的義務量——[LTB](/business/procurement-planning/cards/lifecycle-status/)（last time buy，停產前最後買斷）裡的維修備品保留、RMA（退修換貨）義務的備料、長尾訂單還沒歸零的需求——這些料在庫齡報表上長得跟呆料一模一樣，機械處置掉，之後只能回頭向 broker 溢價買回。「用不掉」要是逐項判定的結論，不是庫齡門檻的預設。決策權限也要對齊：小額呆料的處置授權給採購與物管層級，大額的才上簽——否則每顆料都走大簽，結果就是每顆料都不動。
+判準清楚了，執行卡在組織：處置要簽核、簽核的人看到的是「認列損失」的申請單，於是單子在流程裡過季。解法是把處置例行化——固定週期（季度）跑庫齡報表、超齡料自動進處置候選清單、依回收率順序逐項走，讓「處置呆料」從一次性的壞消息變成例行的庫存衛生。例行化要配一道前置檢查：候選清單先扣除有名有姓的義務量——[LTB](/business/procurement-planning/cards/lifecycle-status/)（last time buy，停產前最後採購）裡的維修備品保留、RMA（退修換貨）義務的備料、長尾訂單還沒歸零的需求——這些料在庫齡報表上長得跟呆料一模一樣，機械處置掉，之後只能回頭向 broker 溢價買回。「用不掉」要是逐項判定的結論，不是庫齡門檻的預設。決策權限也要對齊：小額呆料的處置授權給採購與物管層級，大額的才上簽——否則每顆料都走大簽，結果就是每顆料都不動。
 
 ## 預防迴路：呆料是備料紀律的回饋訊號
 
-每一批呆料都帶著它的成因，季度處置時順手歸因：forecast 偏差（回頭校正 [歷史落差濾波器](/business/procurement-planning/demand-tiered-stocking/) 的參數）、EOL 買太多（回頭檢討 [LTB 的需求攤算](/business/procurement-planning/vendor-lifecycle-rules/)）、NCNR 賭錯（回頭收斂 [下單的置信區間](/business/procurement-planning/vendor-lifecycle-rules/)）、需求反轉（對照 [成本結構篇](/business/procurement-planning/planning-as-risk-management/) 組合層失效條件的過備上限）。
+每一批呆料都帶著它的成因，季度處置時順手歸因：forecast 偏差（回頭校正 [歷史落差濾波器](/business/procurement-planning/demand-tiered-stocking/) 的參數）、EOL 買太多（回頭檢討 [LTB 的需求攤算](/business/procurement-planning/eol-ltb-buyout-decision/)）、NCNR 賭錯（回頭收斂 [下單的置信區間](/business/procurement-planning/vendor-lifecycle-rules/)）、需求反轉（對照 [成本結構篇](/business/procurement-planning/planning-as-risk-management/) 組合層失效條件的過備上限）。
 
 呆料率是備料紀律的落後指標，它要跟斷料率一起看、而且權重刻意不對等：成本不對稱決定了「零斷料、低呆料」是目標，「零呆料」不是——呆料率壓到零的採購，幾乎必然貼著斷料的邊緣在運作。兩個指標一起讀，才看得出備料判準該往哪邊修。
 
 ## 下一步
 
-呆料的上游預防散在各篇：備量與分層回 [需求分層與備料策略](/business/procurement-planning/demand-tiered-stocking/)、EOL 買斷的攤算回 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)、過備上限的組合層判斷回 [斷料與呆料的成本結構](/business/procurement-planning/planning-as-risk-management/)。缺貨期呆料翻價的市場機制，對照 [不可能三角與短缺市場的配給](/business/procurement-planning/impossible-triangle-rationing/)。
+呆料的上游預防散在各篇：備量與分層回 [需求分層與備料策略](/business/procurement-planning/demand-tiered-stocking/)、EOL 買斷的攤算回 [EOL-LTB 買斷決策](/business/procurement-planning/eol-ltb-buyout-decision/)、過備上限的組合層判斷回 [斷料與呆料的成本結構](/business/procurement-planning/planning-as-risk-management/)。缺貨期呆料翻價的市場機制，對照 [不可能三角與短缺市場的配給](/business/procurement-planning/impossible-triangle-rationing/)。

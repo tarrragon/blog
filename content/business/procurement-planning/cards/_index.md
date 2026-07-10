@@ -33,6 +33,7 @@ tags: ["business", "procurement", "knowledge-cards"]
 | [NPI](/business/procurement-planning/cards/npi/)                     | 新品導入，量產前的驗證爬坡       |
 | [PPAP 與首件](/business/procurement-planning/cards/ppap/)            | 量產出貨前的正式核准關卡         |
 | [替代料](/business/procurement-planning/cards/alternate-part/)       | 換料本身的備援，平時認證缺時使用 |
+| [AVL](/business/procurement-planning/cards/avl/)                     | 核准採用的預設邊界，維護即治理   |
 | [追料](/business/procurement-planning/cards/expediting/)             | 追料件在每個節點的進度，不是催船 |
 
 ## 料件規則與生命週期
@@ -46,5 +47,6 @@ tags: ["business", "procurement", "knowledge-cards"]
 | [NCNR](/business/procurement-planning/cards/ncnr/)                                     | 不可取消不可退，與改單截止日           |
 | [Blanket Order 與 Flex Fence](/business/procurement-planning/cards/order-flexibility/) | 承諾與買斷在時間軸拆開的中間形態       |
 | [料件生命週期](/business/procurement-planning/cards/lifecycle-status/)                 | NRND / EOL / LTB，料件走向停產的訊號   |
+| [PCN](/business/procurement-planning/cards/pcn/)                                       | 原廠變更的正式預告，送達有邊界         |
 | [不可能三角](/business/procurement-planning/cards/impossible-triangle/)                | 交期、價格、品質無法三者兼得           |
 | [Allocation](/business/procurement-planning/cards/allocation/)                         | 缺貨時按順位配貨，順位由信用與關係排   |
