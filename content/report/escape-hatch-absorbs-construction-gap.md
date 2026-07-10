@@ -9,7 +9,7 @@ slug: "escape-hatch-absorbs-construction-gap"
 
 ## 論述基礎與限制
 
-本卡的論述基於一個 Dart 專案的測試 bug 追因：效能基準測試炸出 `InvalidBookIdException`，追到 Arrange 段一行「建一個立刻丟棄的物件、只為拿它的一個欄位」的拼裝寫法，而同型寫法幾天前才在另一個檔案修過一次。完整 case 見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)。具體限制：
+本卡的論述基於一個 Dart 專案的測試 bug 追因：效能基準測試炸出 `InvalidBookIdException`，追到 Arrange 段一行「建一個立刻丟棄的物件、只為拿它的一個欄位」的拼裝寫法，而同型寫法幾天前才在另一個檔案修過一次。完整 case 見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)、教學層展開見 [建構路徑設計](/ddd/construction-path-design/)。具體限制：
 
 - **實證是同一專案內的兩次復發**。兩次足以確立「會復發」、不足以量化復發率跟拼裝點數量的關係。
 - **逃生口形態單一**。case 裡的逃生口是全欄位 copyWith；setter 氾濫、測試裡直接 new 繞 factory、config 物件手工拼裝是同機制的其他形態，本卡的機制推論涵蓋它們、實證沒有。
