@@ -24,6 +24,9 @@ tags: ["flutter", "dart", "mobile"]
 | Stream 的訂閱模型          | [StreamController single vs broadcast](/work-log/dart_stream_controller_single_vs_broadcast/)           |
 | 金額的 domain type         | [Money 三段遷移：double→Decimal→extension type](/work-log/dart_money_extension_type_migration/)         |
 | VO 封裝邊界與取值出口      | [VO 封裝擺盪：全移除、完全封裝、加回 getter](/work-log/flutter_value_object_encapsulation_oscillation/) |
+| import 路徑與 library 身份 | [同一個類別被判成兩個型別](/work-log/dart_import_path_type_conflict/)                                   |
+| exception 階層與錯誤分類   | [Exception 型別綁 ErrorCategory 的建構不變式](/work-log/flutter_exception_error_category_invariant/)    |
+| 分層 enum 的粒度分工       | [16 種支付渠道、4 種行為分類](/work-log/dart_payment_dual_layer_enum/)                                  |
 
 ### 狀態與渲染
 
@@ -45,13 +48,18 @@ tags: ["flutter", "dart", "mobile"]
 | 產品碼是 mock 的假綠     | [ViewModel 假實作通過了 15 個測試](/work-log/flutter_viewmodel_mock_implementation_passes_tests/)                                             |
 | 持久化迴圈驗收           | [功能完成卻從未持久化](/work-log/flutter_feature_complete_never_persisted/)                                                                   |
 | 覆蓋率的分母             | [重複 service 的 100% 覆蓋率假象](/work-log/flutter_duplicate_service_fake_coverage/)                                                         |
+| 大規模失敗分診           | [16 個失敗只有 2 個是缺口：先分診、再按 ROI 修](/work-log/flutter_test_failure_triage_root_cause_roi/)                                        |
+| mock 負擔與介面寬度      | [mock 55 個方法只用 5 個：Port 介面](/work-log/flutter_port_interface_mock_hell_isp/)                                                         |
+| 測試基礎設施的重量       | [1101 行自建測試基礎設施、刪掉 82.5%](/work-log/flutter_mock_infrastructure_overengineering_deleted/)                                         |
 
 ### 架構與分層
 
-| 主題                  | 既有 case                                                                           |
-| --------------------- | ----------------------------------------------------------------------------------- |
-| 過度設計的兩種膨脹    | [異步查詢系統的過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/) |
-| Domain 層的 i18n 邊界 | [Domain 層的 947 處硬編碼中文](/work-log/flutter_domain_layer_i18n_hardcoded_text/) |
+| 主題                  | 既有 case                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| 過度設計的兩種膨脹    | [異步查詢系統的過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/)  |
+| Domain 層的 i18n 邊界 | [Domain 層的 947 處硬編碼中文](/work-log/flutter_domain_layer_i18n_hardcoded_text/)  |
+| VO 的持久化序列化     | [SQLite 只吃三種型別](/work-log/flutter_sqlite_value_object_serialization_boundary/) |
+| 領域計算的歸屬        | [「該收多少錢」抽成 pure function](/work-log/dart_unsettled_cart_pure_function/)     |
 
 ### 工具鏈
 
