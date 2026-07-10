@@ -1,0 +1,44 @@
+---
+title: "DDD 領域驅動設計指南"
+date: 2026-07-10
+description: "領域模型的理論與判準層：什麼時候值得建 entity、不變式該落在哪一層強制、狀態轉換怎麼留下稽核軌跡。語言無關，實作限制路由到各語言模組。"
+weight: 34
+tags: ["ddd", "domain-model", "architecture", "design"]
+---
+
+DDD 是一種設計精神：把業務規則放進領域模型、讓違反規則的路徑走不通，而不是寫在文件裡請大家遵守。這個精神在每種語言會碰到不同的實作限制——Dart 的 copyWith 生態、Go 的零值與組合、TypeScript 的 structural typing——所以本模組只承擔理論與判準層，語言特定的實作細節放在各語言模組，章節末路由過去。
+
+## 與其他教材的分工
+
+| 教材                     | 承擔什麼                                       | 本模組的關係                   |
+| ------------------------ | ---------------------------------------------- | ------------------------------ |
+| [Backend](/backend/)     | 服務能力層：資料庫、快取、佇列等跨語言後端能力 | DDD 談模型設計、Backend 談選型 |
+| [Flutter](/flutter/)     | Dart / Flutter 的語言與框架實作限制            | 本模組理論的 Dart 實作對照     |
+| [Go](/go/)               | Go 語言精神與工程實踐                          | 本模組理論的 Go 實作對照       |
+| [UX Design](/ux-design/) | 畫面狀態設計                                   | 畫面狀態機與領域狀態機的邊界   |
+
+路由方向是單向的：本模組的理論不依賴任何語言實作作為理解前提；語言模組引用本模組建立概念地基。
+
+## 章節大綱（backlog）
+
+大綱是 backlog、不是承諾清單：章節邊界會隨 case 回補調整。候選章節從兩個專案的 case（書籍管理 App 的開發日誌、POS App 的領域模型）浮現：
+
+| 候選章節                      | 核心問題                                                   | 已有素材                                                                                                                                                                                                                                                                                                |
+| ----------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 資料袋與領域模型              | 什麼時候一袋欄位就夠、什麼時候需要有行為的模型             | [copyWith 是逃生口](/work-log/dart_copywith_entity_escape_hatch/)、[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)、[扁平 Product 到雙層聚合](/work-log/pos_product_model_doc_vs_code_evolution/)                                                                              |
+| entity 與 value object 的判準 | 「有沒有不允許任意組合的欄位」如何決定型別的類別           | [同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)、[Money 三段遷移](/work-log/dart_money_extension_type_migration/)、[分層 enum](/work-log/dart_payment_dual_layer_enum/)                                                                                                        |
+| 不變式的強制層次              | 約束落在文件層、型別層、執行層的差異與代價                 | [copyWith 是逃生口](/work-log/dart_copywith_entity_escape_hatch/)、[會員/計價/支付原子切換](/work-log/pos_member_pricing_payment_atomic_switch/)、[Exception 分類不變式](/work-log/flutter_exception_error_category_invariant/)、[驗證的兩層分工](/work-log/flutter_domain_input_validation_placement/) |
+| 狀態轉換與稽核軌跡            | 領域方法作為唯一變更路徑、snapshot 與 live 參照的凍結時機  | [copyWith 是逃生口](/work-log/dart_copywith_entity_escape_hatch/)、[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)                                                                                                                                                             |
+| 建構路徑設計                  | 工廠表達力不足時缺陷如何被逃生口吸收、原始值的官方出口     | [copyWith 是逃生口](/work-log/dart_copywith_entity_escape_hatch/)、[VO 封裝擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)                                                                                                                                                             |
+| 從操作推導領域                | 使用者操作 → domain / event → 邊界切分的推導流程           | [桌子跟購物車是兩個聚合](/work-log/pos_table_cart_lifecycle_decoupling/)、[過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/)、[pure function 領域計算](/work-log/dart_unsettled_cart_pure_function/)                                                                                 |
+| 分層責任與基礎設施歸位        | domain 對呈現與技術細節無知、共用能力歸哪層                | [Domain 層的 947 處硬編碼中文](/work-log/flutter_domain_layer_i18n_hardcoded_text/)、[重複 service 假覆蓋率](/work-log/flutter_duplicate_service_fake_coverage/)、[Port 介面與 mock 地獄](/work-log/flutter_port_interface_mock_hell_isp/)                                                              |
+| entity 的持久化邊界           | 完成定義要含持久化迴圈、entity 欄位與 schema 的差集        | [功能完成卻從未持久化](/work-log/flutter_feature_complete_never_persisted/)、[SQLite VO 序列化邊界](/work-log/flutter_sqlite_value_object_serialization_boundary/)                                                                                                                                      |
+| entity 的演化與遷移           | 大 ripple 的重寫策略、遷移通路三段齊（寫入 / 讀出 / 消費） | [Deprecated Getter Facade](/work-log/flutter_deprecated_getter_facade_entity_migration/)、[read-path 缺口與 fixture 假綠](/work-log/flutter_migration_read_path_gap_fake_green/)                                                                                                                        |
+| entity 的生命週期             | 生命週期由業務流程定義、ephemeral 物件的丟棄即重置         | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)、[桌子跟購物車是兩個聚合](/work-log/pos_table_cart_lifecycle_decoupling/)                                                                                                                                         |
+| 事件建模                      | 事件與命令的語意分界、跨 domain 通訊的工具量級             | [Domain Event 命名的過去式](/work-log/domain_event_naming_past_tense/)、[用事件做同步查詢等於手工重建 RPC](/work-log/cross_domain_event_request_response_cost/)                                                                                                                                         |
+
+Aggregate 生命週期已有第一個 case（桌位與購物車）；bounded context、repository 邊界等主題等 case 累積後再進大綱——本模組的章節由 case 驅動，理論陳述要有實際踩過的專案情境支撐。
+
+## Case 回補
+
+本模組的 case 來源是實際專案的開發記錄與 ticket：過去專案內處理掉的設計討論陸續回補成 [work-log](/work-log/) 文章，模組章節再引用這些 case。四批回補（兩個專案、三十六篇）已完成；rich 級候選已收割完畢、剩餘為 medium 級。
