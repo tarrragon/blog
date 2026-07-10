@@ -1,6 +1,7 @@
 ---
 title: "文章語氣校正：恐嚇式 hook 與技術分享的邊界"
 date: 2026-06-25
+weight: 185
 description: "「可能正在你的工具中靜默發生」是恐嚇語氣，「從一個版本錯置的經驗出發」是分享語氣。兩者的差別在於把讀者放在什麼位置——被警告的對象，還是同行的分享者。"
 tags: ["report", "事後檢討", "Writing", "tone", "audience-positioning"]
 ---

@@ -1,6 +1,7 @@
 ---
 title: "#205 合成章的引力：框架章會把主寫章的案例細節吸走"
 date: 2026-07-03
+weight: 205
 description: "SSoT map 寫作前定好、合成型章節仍系統性吸走下游主寫章的案例展開；對合成章要加「一句話案例 + link」的硬規則、不能只靠 map 分派"
 tags: ["report", "教學模組", "SSoT", "case-first"]
 ---

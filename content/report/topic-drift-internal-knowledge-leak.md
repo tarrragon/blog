@@ -1,6 +1,7 @@
 ---
 title: "主題偏移：內部系統知識洩漏到面向讀者的論述"
 date: 2026-06-25
+weight: 187
 description: "「規則檔和 memory 系統也能傳遞教訓」是正確的技術描述，但在討論「工具應該有 opinion」的文章中偏離了主題。讀者不需要知道作者的內部系統架構，他們需要的是可遷移的工具設計原則。"
 tags: ["report", "事後檢討", "Writing", "topic-drift", "audience-awareness"]
 ---

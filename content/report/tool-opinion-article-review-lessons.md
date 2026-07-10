@@ -1,6 +1,7 @@
 ---
 title: "三輪審查的檢討收穫 — 工具 opinion 文章的寫作品質演進"
 date: 2026-06-25
+weight: 184
 description: "一篇 work-log 經過三輪多視角審查（8 frame、33 findings），從 B+ 提升到 A+。記錄每輪抓到什麼、為什麼前一輪漏抓、以及哪些寫作 pattern 會在 AI 輔助寫作中反覆出現。"
 tags: ["report", "事後檢討", "Writing", "multi-round-review", "ai-writing"]
 ---

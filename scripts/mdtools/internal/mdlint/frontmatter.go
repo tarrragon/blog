@@ -18,7 +18,7 @@ import (
 //   - Recommended fields: warn if missing (non-card paths only).
 //   - Card required fields: error if missing (content/backend/knowledge-cards/**).
 //   - Disallowed fields: warn if present (anywhere).
-func checkFrontMatter(path string, lines []string, cfg rules.FrontMatterRules, cardsRoot string) []report.Violation {
+func checkFrontMatter(path string, lines []string, cfg rules.FrontMatterRules) []report.Violation {
 	// No lines: treat as missing front matter.
 	if len(lines) == 0 {
 		return []report.Violation{{
@@ -68,7 +68,7 @@ func checkFrontMatter(path string, lines []string, cfg rules.FrontMatterRules, c
 	}
 
 	var out []report.Violation
-	isCard := isStrictCardPath(path, cardsRoot)
+	isCard := isStrictCardPath(path, cfg.CardPaths)
 	isIndex := filepath.Base(path) == "_index.md"
 
 	// Required fields. Precedence: card > index > global.
@@ -153,20 +153,22 @@ func topLevelYAMLKey(line string) string {
 	return key
 }
 
-// isStrictCardPath reports whether path falls under cardsRoot and is
-// not an `_index.md` section page (section pages don't carry the same
+// isStrictCardPath reports whether path falls under any of cardPaths and
+// is not an `_index.md` section page (section pages don't carry the same
 // card-tier schema requirements).
-func isStrictCardPath(path, cardsRoot string) bool {
-	if cardsRoot == "" {
-		return false
-	}
-	slash := filepath.ToSlash(path)
-	root := strings.TrimSuffix(filepath.ToSlash(cardsRoot), "/") + "/"
-	if !strings.Contains(slash, root) {
-		return false
-	}
+func isStrictCardPath(path string, cardPaths []string) bool {
 	if filepath.Base(path) == "_index.md" {
 		return false
 	}
-	return true
+	slash := filepath.ToSlash(path)
+	for _, p := range cardPaths {
+		if p == "" {
+			continue
+		}
+		root := strings.TrimSuffix(filepath.ToSlash(p), "/") + "/"
+		if strings.Contains(slash, root) {
+			return true
+		}
+	}
+	return false
 }

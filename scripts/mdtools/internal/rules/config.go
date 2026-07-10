@@ -64,8 +64,15 @@ type FrontMatterRules struct {
 	IndexRequired []string // e.g. []string{"title"}
 	// Tier 2: recommended — warn on absence, do not block.
 	Recommended []string // e.g. []string{"description", "tags"}
-	// Tier 3: card-specific required (content/backend/knowledge-cards/**).
+	// Tier 3: card-specific required.
 	CardRequired []string // e.g. []string{"title", "date", "description", "weight"}
+	// Roots whose files carry the Tier 3 schema. Kept separate from
+	// Cards.CardsRoot: that one marks the knowledge-card *system* (orphan
+	// and K4 structure checks assume a 概念位置 section), while a folder can
+	// need the card front-matter schema without being part of that system.
+	// content/report/** is the case in point — `weight` orders the list, but
+	// the cards carry no 概念位置 section.
+	CardPaths []string // e.g. []string{"content/backend/knowledge-cards", "content/report"}
 	// Fields explicitly disallowed (warn if present).
 	Disallowed []string // e.g. []string{"author", "permalink"}
 }
@@ -120,6 +127,7 @@ func Default() Config {
 			IndexRequired:  []string{"title"},
 			Recommended:    []string{"description", "tags"},
 			CardRequired:   []string{"title", "date", "description", "weight"},
+			CardPaths:      []string{"content/backend/knowledge-cards", "content/report"},
 			Disallowed:     []string{"author", "permalink"},
 		},
 		Cards: CardRules{

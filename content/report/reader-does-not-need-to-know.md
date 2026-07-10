@@ -1,6 +1,7 @@
 ---
 title: "讀者不需要知道 — 刪除比解釋更尊重讀者"
 date: 2026-06-25
+weight: 189
 description: "「整理目的」blockquote 告訴讀者這篇文章的寫作動機和邊界。但讀者不需要知道作者為什麼寫這篇文章——他們需要知道讀完能帶走什麼。meta 資訊（寫作動機、邊界聲明、脈絡解釋）服務的是作者的組織需求，不是讀者的閱讀需求。"
 tags: ["report", "事後檢討", "Writing", "meta-commentary", "reader-first"]
 ---

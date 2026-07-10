@@ -50,7 +50,7 @@ func Check(path string, cfg rules.Config) ([]report.Violation, error) {
 	out = append(out, checkNegationLead(path, lines, ctx)...)
 	// Front matter schema check always runs; rules.Config.FrontMatter
 	// describes which fields are required / recommended / disallowed.
-	out = append(out, checkFrontMatter(path, lines, cfg.FrontMatter, cfg.Cards.CardsRoot)...)
+	out = append(out, checkFrontMatter(path, lines, cfg.FrontMatter)...)
 
 	// AST-guided checks share one parser invocation per file; keep
 	// them grouped together so we only pay the goldmark cost once.

@@ -1,6 +1,7 @@
 ---
 title: "文章範圍漂移：從 CLI 工具到工具設計的泛化過程"
 date: 2026-06-25
+weight: 186
 description: "一篇文章初稿聚焦在 CLI 工具的 opinion 設計，經三輪審查和作者回饋後逐步泛化到所有工具設計。記錄範圍擴展的決策點和需要同步調整的位置（title、hook、原則段、checklist、對照表）。"
 tags: ["report", "事後檢討", "Writing", "scope-management"]
 ---

@@ -4,6 +4,11 @@ theme = 'hugo-bearcub'
 copyright = 'Tarragon (CC BY 4.0)'
 defaultContentLanguage = 'zh-tw'
 
+# front matter 的 `date: YYYY-MM-DD` 補時間時所用的時區。未設定時 Hugo 以 UTC
+# 解讀，當天日期的文章在台北時間 08:00 前 build 會落在未來、被 buildFuture=false
+# 排除掉（CI 跑在 UTC）。
+timeZone = 'Asia/Taipei'
+
 # 產生 robots.txt 以利於 SEO
 enableRobotsTXT = true
 
