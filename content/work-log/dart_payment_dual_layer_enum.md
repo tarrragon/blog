@@ -78,4 +78,4 @@ enum PaymentType {
 
 - 分類軸不正交的姊妹篇：[Exception 型別綁 ErrorCategory 的建構不變式](/work-log/flutter_exception_error_category_invariant/)——軸錯了分層救不了、要先拆軸
 - 同專案的 model 分工：[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)——那篇是生命週期軸的分模型、本文是粒度軸的分層，同一個「一個結構不硬撐多種語意」的原則
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——value object 與枚舉也是建模的一部分
+- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/) 的枚舉分層段——分類值也是 value object 建模的一部分

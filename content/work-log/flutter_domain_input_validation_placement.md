@@ -55,4 +55,4 @@ final normalized = normalizeIsbn(isbn);
 
 - 不變式住哪一層的全景：[#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)——本文的建構期不變式是「執行層強制」的標準形態
 - 同族的分類學：[Exception 型別綁 ErrorCategory 的建構不變式](/work-log/flutter_exception_error_category_invariant/)——那篇是錯誤的分類不變式、本文是輸入的存在不變式
-- 概念地基：[DDD 領域驅動設計指南](/ddd/)——建構路徑設計章節；validator 與 VO 的分工是「驗證集中化」的一部分
+- 概念地基：[不變式的強制層次](/ddd/invariant-enforcement-layers/) 的「存在條件與輸入品質」段——本文是該邊界的主案例
