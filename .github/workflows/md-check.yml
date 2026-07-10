@@ -29,6 +29,12 @@ jobs:
           mkdir -p bin
           (cd scripts/mdtools && go build -o ../../bin/mdtools .)
 
+      # The lint and cards rules below are only as trustworthy as the code
+      # deciding which files they apply to. Run the unit tests that pin that
+      # scope before letting the tool pass judgment on content.
+      - name: Test mdtools
+        run: (cd scripts/mdtools && go vet ./... && go test ./...)
+
       - name: mdtools fmt --fix + auto-commit
         run: |
           ./bin/mdtools fmt --fix content/

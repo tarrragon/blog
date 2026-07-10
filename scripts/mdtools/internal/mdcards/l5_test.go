@@ -1,6 +1,7 @@
 package mdcards
 
 import (
+	"sort"
 	"strings"
 	"testing"
 
@@ -19,10 +20,19 @@ func page(weighted bool) []byte {
 	return []byte(b.String())
 }
 
+// graphOf builds a graph in a deterministic order. Ranging over a map
+// here would randomise g.Files and, with it, any behaviour that depends
+// on walk order — the production walker hands over sorted paths.
 func graphOf(files map[string]bool) *Graph {
+	paths := make([]string, 0, len(files))
+	for p := range files {
+		paths = append(paths, p)
+	}
+	sort.Strings(paths)
+
 	g := &Graph{}
-	for path, weighted := range files {
-		g.Files = append(g.Files, FileNode{Path: path, Src: page(weighted)})
+	for _, p := range paths {
+		g.Files = append(g.Files, FileNode{Path: p, Src: page(files[p])})
 	}
 	return g
 }
@@ -146,6 +156,37 @@ func TestCheckL5SectionWeightConsistency(t *testing.T) {
 				t.Errorf("message %q does not name the minority %q", v.Message, tc.wantSubstr)
 			}
 		})
+	}
+}
+
+// The fall-back anchor (used when a section has no _index.md) must not
+// depend on the order files arrive in. Feeding the same section forwards
+// and backwards has to produce the same violation.
+func TestFallbackAnchorIsOrderIndependent(t *testing.T) {
+	paths := []string{"content/x/a.md", "content/x/b.md", "content/x/c.md"}
+	weighted := map[string]bool{"content/x/a.md": true}
+
+	build := func(order []string) *Graph {
+		g := &Graph{}
+		for _, p := range order {
+			g.Files = append(g.Files, FileNode{Path: p, Src: page(weighted[p])})
+		}
+		return g
+	}
+
+	forward := checkL5SectionWeightConsistency(build(paths), nil)
+	reversed := append([]string(nil), paths...)
+	sort.Sort(sort.Reverse(sort.StringSlice(reversed)))
+	backward := checkL5SectionWeightConsistency(build(reversed), nil)
+
+	if len(forward) != 1 || len(backward) != 1 {
+		t.Fatalf("expected one violation each, got %d and %d", len(forward), len(backward))
+	}
+	if forward[0].Path != backward[0].Path {
+		t.Errorf("anchor depends on walk order: %q vs %q", forward[0].Path, backward[0].Path)
+	}
+	if forward[0].Message != backward[0].Message {
+		t.Errorf("message depends on walk order:\n  %q\n  %q", forward[0].Message, backward[0].Message)
 	}
 }
 

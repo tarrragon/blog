@@ -62,7 +62,12 @@ func checkL5SectionWeightConsistency(g *Graph, exempt []string) []report.Violati
 			sections[dir] = s
 		}
 		s.total++
-		s.anyPath = fn.Path
+		// Fall-back anchor for sections with no landing page. Keep the
+		// lexicographically first path so the report reads the same
+		// regardless of walk order.
+		if s.anyPath == "" || fn.Path < s.anyPath {
+			s.anyPath = fn.Path
+		}
 		if weightFieldRe.Match(frontMatterOf(fn.Src)) {
 			s.weighed++
 			s.present = append(s.present, filepath.Base(fn.Path))
