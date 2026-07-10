@@ -96,6 +96,22 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 掃到 blog route、`content/` path、`/report/`、`/posts/`、`/skills/`、Hugo-only `_index.md` 時，改成 skill 內部 principle、相對連結或中性名詞（collection index / MOC / article / reference）。
 
+## Content 排序與 mdtools 作用域
+
+Hugo 的列表排序是 weight 遞增、**未設 weight 的頁面排在全部有 weight 的頁面之後**、同 weight 才用日期遞減。這條語意衍生出幾個操作規則（背景見 [#221](/report/lint-scope-must-be-explicit-fact/)）：
+
+- **weight 全有或全無**：同一 section 混用會讓缺 weight 的頁面靜默沉到列表底部。`mdtools cards` 的 `L5-section-weight-consistency` 會對混合 section 警告。刻意用低 weight 置頂單篇的 section（如 `content/linux/tools/cli`）在 `scripts/mdtools/internal/rules/config.go` 的 `WeightExemptSections` 登記 — 豁免要有記錄、不能是沒人決定過的遺漏。
+- **後補文章的 weight 要放「屬於它的位置」**、不是隨手給一個不撞號的值。實例：`07-security` 的 7.27 曾被給 27（其餘章節 72-95）而排到整個模組第一篇、`postgresql` 的 pgbouncer-config 曾被給 100 而沉到最後。L5 只查全有全無、對「有 weight 但值錯」沉默 — 補號前先看該 section 的既有編號帶（postgresql 有預留空號、mysql 是連續序）。
+- **新增卡片型目錄**（必填 `title` / `date` / `description` / `weight` 的）時在 `FrontMatter.CardPaths` 登記、否則卡片層 frontmatter 檢查永遠不涵蓋它、缺欄位不會被攔。規則存在不等於規則涵蓋、未納管目錄的零 error 跟合規目錄的零 error 訊號相同。
+- **frontmatter 的 date 是台北時間**：`hugo.toml` 已設 `timeZone = 'Asia/Taipei'`。拿掉這行的話、UTC 的 CI 在台北 00:00-08:00 之間 build 會把當日日期的文章判成未來文章而排除。
+
+### 改 mdtools 的守則
+
+- `go test ./...` 必跑、CI 的 md-check 也會跑（Test step 在 lint / cards 之前）。新增檢查邏輯要附測試、並用突變驗證測試不是恆真（改壞實作、確認對應 case 失敗）。
+- **跨檔規則放 `mdcards`、不放 `mdlint`**：pre-commit 只餵 staged 檔給 lint、跨檔規則在那裡會把「其他檔沒被 staged」誤判成違規。`cards` 是 whole-content scan。
+- **fmt 規則必須冪等**（`fmt(fmt(x)) == fmt(x)`）：CI 的 `fmt --fix` 會 auto-commit、非冪等規則會讓 bot 每次 push 都產生新 diff。`internal/mdfmt/fixer_test.go` 的 `TestApplyAllIdempotent` 守著這條、新 fmt 規則要加 fixture 進去。
+- 測試 fixture 不要用 map 迭代建圖（Go map 順序隨機、會做出碰巧通過的測試）、依賴走訪順序的行為要有正序 / 逆序各餵一次的測試。
+
 ## Skill 庫同步
 
 本專案的 `.claude/skills/` 與遠端 skill 庫 `https://github.com/tarrragon/claude-skills.git` 共用同一組 skill。使用 `skill-sync` CLI 工具同步（透過 `uv tool` 安裝在 `~/.local/bin/skill-sync`）。
