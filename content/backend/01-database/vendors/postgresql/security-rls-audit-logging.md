@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL Security / RLS / Audit Logging"
 date: 2026-05-22
+weight: 36
 description: "PostgreSQL role、grant、Row Level Security、pgAudit、log policy、PII access evidence 與合規路由"
 tags: ["backend", "database", "postgresql", "security", "rls", "audit"]
 ---

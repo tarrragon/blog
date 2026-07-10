@@ -1,6 +1,7 @@
 ---
 title: "Aurora PostgreSQL I/O-Optimized Cost"
 date: 2026-05-22
+weight: 47
 description: "Aurora PostgreSQL Standard 與 I/O-Optimized 的成本模型、I/O 壓力、workload 判斷、遷移與回退條件"
 tags: ["backend", "database", "postgresql", "aurora", "cost"]
 ---

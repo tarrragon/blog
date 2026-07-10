@@ -2,7 +2,7 @@
 title: "PostgreSQL pgBouncer 配置 + 連線池治理"
 date: 2026-05-18
 description: "pgBouncer transaction pooling 配置、跟 application connection pool 的分層、production 故障演練（pool exhaustion / stale connection / DNS failover）跟容量規劃"
-weight: 100
+weight: 17
 tags: ["backend", "database", "postgresql", "connection-pool", "pgbouncer", "deep-article"]
 ---
 

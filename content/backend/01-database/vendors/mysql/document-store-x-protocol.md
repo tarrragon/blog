@@ -1,6 +1,7 @@
 ---
 title: "MySQL Document Store / X Protocol"
 date: 2026-05-22
+weight: 34
 description: "MySQL Document Store、X Protocol、JSON collection、SQL interoperability、MongoDB-like API 與使用邊界"
 tags: ["backend", "database", "mysql", "document-store", "json"]
 ---

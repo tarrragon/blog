@@ -1,6 +1,7 @@
 ---
 title: "MySQL Cross-buffer Memory Contention"
 date: 2026-05-22
+weight: 30
 description: "MySQL InnoDB buffer pool、sort / join buffer、tmp table、thread memory、OS page cache 與 memory pressure 判讀"
 tags: ["backend", "database", "mysql", "memory", "performance"]
 ---

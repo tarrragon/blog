@@ -1,6 +1,7 @@
 ---
 title: "MySQL Audit Log + SIEM"
 date: 2026-05-22
+weight: 33
 description: "MySQL audit log、general log、slow log、privilege event、SIEM pipeline、retention 與 alert route"
 tags: ["backend", "database", "mysql", "audit", "siem", "security"]
 ---

@@ -2,6 +2,7 @@
 title: "7.22 資安風險如何進入 Release Gate"
 tags: ["Security", "Release Gate", "Risk Governance", "Deployment"]
 date: 2026-04-30
+weight: 92
 description: "把資安風險、例外與驗證證據納入 release gate，建立可稽核的放行判準"
 ---
 

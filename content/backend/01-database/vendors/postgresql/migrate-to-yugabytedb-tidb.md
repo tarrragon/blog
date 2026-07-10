@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL to YugabyteDB / TiDB Migration"
 date: 2026-05-22
+weight: 46
 description: "PostgreSQL 轉向 YugabyteDB、TiDB 類 distributed SQL 的 compatibility audit、data topology、transaction、cutover 與 rollback"
 tags: ["backend", "database", "postgresql", "migration", "distributed-sql"]
 ---

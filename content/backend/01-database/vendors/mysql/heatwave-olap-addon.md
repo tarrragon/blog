@@ -1,6 +1,7 @@
 ---
 title: "MySQL HeatWave OLAP Add-on"
 date: 2026-05-22
+weight: 35
 description: "MySQL HeatWave、OLTP + OLAP hybrid、query offload、cost model、data freshness 與 warehouse 邊界"
 tags: ["backend", "database", "mysql", "heatwave", "olap"]
 ---

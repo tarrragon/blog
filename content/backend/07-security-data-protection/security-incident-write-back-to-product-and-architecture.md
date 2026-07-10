@@ -2,6 +2,7 @@
 title: "7.24 資安事故如何回寫產品與架構"
 tags: ["Security", "Incident", "Write-Back", "Architecture"]
 date: 2026-04-30
+weight: 94
 description: "把事故教訓回寫到產品決策、架構控制與知識網，建立持續改進閉環"
 ---
 

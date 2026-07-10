@@ -1,6 +1,7 @@
 ---
 title: "資料庫 Vendor 文章撰寫規格"
 date: 2026-05-20
+weight: 90
 description: "把 PostgreSQL 與 MySQL batch 的正文經驗整理成資料庫 vendor overview、deep article 與 migration playbook 的撰寫規格"
 tags: ["backend", "database", "vendor", "writing-spec"]
 ---

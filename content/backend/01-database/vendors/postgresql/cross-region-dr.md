@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL Cross-region DR"
 date: 2026-05-22
+weight: 22
 description: "PostgreSQL 跨區災難復原、physical replica、logical replication、backup restore、RPO / RTO 與 failover runbook"
 tags: ["backend", "database", "postgresql", "dr", "replication"]
 ---

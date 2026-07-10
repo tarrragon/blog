@@ -2,6 +2,7 @@
 title: "7.21 資安如何成為服務設計輸入"
 tags: ["Security", "Service Design", "Architecture", "Risk Input"]
 date: 2026-04-30
+weight: 91
 description: "把資安需求前移到服務設計階段，建立可交接的設計輸入欄位與判讀路由"
 ---
 

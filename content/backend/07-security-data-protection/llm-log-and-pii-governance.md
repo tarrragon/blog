@@ -3,7 +3,7 @@ title: "LLM Log 與 PII 治理"
 date: 2026-05-12
 description: "production LLM 服務的 prompt log 累積、PII 偵測與過濾、保留期限與合規對齊"
 tags: ["backend", "security", "llm", "log", "pii", "privacy", "compliance"]
-weight: 94
+weight: 101
 ---
 
 本章的責任是把 LLM 服務的 prompt log / response log / context cache 在累積、儲存、保留、刪除四個階段的 PII 治理拆成可操作的判讀。通用詞彙見 backend [pii](/backend/knowledge-cards/pii/)、[data-masking](/backend/knowledge-cards/data-masking/)、[data-classification](/backend/knowledge-cards/data-classification/)、[audit-log](/backend/knowledge-cards/audit-log/) 卡；模型輸出虛構 PII 的特殊議題見 [hallucination](/llm/knowledge-cards/hallucination/) 卡。一般資料保護跟 masking 流程沿用 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/) 跟 [7.8 資料居住地、刪除與證據鏈](/backend/07-security-data-protection/data-residency-deletion-and-evidence-chain/)、本章聚焦 LLM 場景下的特殊性：prompt 含豐富使用者意圖、response 可能 hallucinate 出 PII、KV cache 跟 context cache 是非典型 log 載體。

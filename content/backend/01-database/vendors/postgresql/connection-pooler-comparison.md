@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL Connection Pooler Comparison"
 date: 2026-05-22
+weight: 16
 description: "PostgreSQL PgBouncer、Odyssey、RDS Proxy、application pool 與 transaction pooling 的選型比較"
 tags: ["backend", "database", "postgresql", "connection-pooling"]
 ---

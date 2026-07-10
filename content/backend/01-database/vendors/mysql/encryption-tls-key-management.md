@@ -1,6 +1,7 @@
 ---
 title: "MySQL Encryption / TLS / Key Management"
 date: 2026-05-22
+weight: 32
 description: "MySQL at-rest encryption、TLS、keyring、certificate rotation、backup encryption 與 credential governance"
 tags: ["backend", "database", "mysql", "security", "encryption", "tls"]
 ---

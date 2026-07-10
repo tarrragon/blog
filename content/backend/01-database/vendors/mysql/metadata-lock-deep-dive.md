@@ -1,6 +1,7 @@
 ---
 title: "MySQL Metadata Lock Deep Dive"
 date: 2026-05-22
+weight: 29
 description: "MySQL metadata lock、DDL blocking、long transaction、online schema change、MDL observability 與 incident runbook"
 tags: ["backend", "database", "mysql", "metadata-lock", "ddl"]
 ---

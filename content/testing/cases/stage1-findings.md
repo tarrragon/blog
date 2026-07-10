@@ -1,6 +1,7 @@
 ---
 title: "Stage 1 Findings：測試策略案例 audit"
 date: 2026-06-19
+weight: 90
 draft: true
 description: "Case-first Stage 1 產物 — 從 T.C1~C4 四個 rich case 抽取 9 個 findings，標明 fact vs derive 分層和對應章節"
 tags: ["testing", "case-first", "stage-1"]

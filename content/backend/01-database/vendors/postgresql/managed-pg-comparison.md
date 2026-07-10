@@ -1,6 +1,7 @@
 ---
 title: "Managed PostgreSQL Comparison"
 date: 2026-05-22
+weight: 48
 description: "RDS PostgreSQL、Aurora PostgreSQL、Cloud SQL、Azure Database for PostgreSQL、Neon、Supabase、Crunchy Bridge 的責任邊界比較"
 tags: ["backend", "database", "postgresql", "managed-service"]
 ---

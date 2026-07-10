@@ -3,7 +3,6 @@ title: "Background Agent 平行研究：main context 節省的量化效應"
 date: 2026-05-18
 description: "用 background agent 平行做同類研究任務、主 context 只收 finding summary、節省 ~80% context 用量的工作方法"
 tags: ["agent", "context-management", "methodology"]
-weight: 50
 ---
 
 跨多個獨立子任務的研究（如多個 vendor 案例採集、多個主題 web research、多個檔案的 fact-check）、用 background agent 平行做、比串行單一 agent 或主 context 直接做都更省 token。

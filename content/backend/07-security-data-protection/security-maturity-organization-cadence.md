@@ -2,6 +2,7 @@
 title: "7.25 資安成熟度的組織節奏"
 tags: ["Security", "Maturity", "Governance", "Organization"]
 date: 2026-04-30
+weight: 95
 description: "把資安成熟度轉成組織節奏，建立從人工判讀到可稽核閉環的演進路徑"
 ---
 

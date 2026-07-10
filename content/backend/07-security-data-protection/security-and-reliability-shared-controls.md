@@ -2,6 +2,7 @@
 title: "7.23 資安與可靠性的共同控制面"
 tags: ["Security", "Reliability", "Shared Controls", "Operations"]
 date: 2026-04-30
+weight: 93
 description: "建立資安與可靠性共同控制面的交集，整合 rollback、containment、degradation 與 evidence"
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL Logical Decoding Plugins"
 date: 2026-05-22
+weight: 37
 description: "PostgreSQL logical decoding output plugin、pgoutput、wal2json、test_decoding、CDC connector 與 plugin 選型"
 tags: ["backend", "database", "postgresql", "cdc", "logical-decoding"]
 ---

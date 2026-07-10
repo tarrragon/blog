@@ -2,7 +2,7 @@
 title: "7.27 Credential Rotation with Scoped Evidence 實作示範"
 date: 2026-05-08
 description: "以 webhook/API credential 輪替示範 scope map、證據欄位與回退窗口如何一起設計。"
-weight: 27
+weight: 97
 tags: ["backend", "security", "credential-rotation", "implementation"]
 ---
 

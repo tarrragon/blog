@@ -2,6 +2,7 @@
 title: "7.26 資安素材庫如何支援工程推演"
 tags: ["Security", "Materials", "Simulation", "Knowledge Routing"]
 date: 2026-04-30
+weight: 96
 description: "說明專業來源、案例、情境與控制模式如何組合成工程推演與章節回寫流程"
 ---
 

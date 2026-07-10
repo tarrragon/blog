@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL Developer / DBA Responsibility Split"
 date: 2026-05-22
+weight: 39
 description: "PostgreSQL application developer、DBA、platform team 在 schema、query、migration、backup、incident 與 capacity 的責任分工"
 tags: ["backend", "database", "postgresql", "operations", "ownership"]
 ---

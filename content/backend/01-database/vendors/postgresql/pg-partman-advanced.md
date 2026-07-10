@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL pg_partman Advanced"
 date: 2026-05-22
+weight: 38
 description: "PostgreSQL pg_partman 自動分區、premake、retention、maintenance job、partition migration 與 runbook"
 tags: ["backend", "database", "postgresql", "partitioning", "pg-partman"]
 ---

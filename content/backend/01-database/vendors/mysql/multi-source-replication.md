@@ -1,6 +1,7 @@
 ---
 title: "MySQL Multi-source Replication"
 date: 2026-05-22
+weight: 31
 description: "MySQL multi-source replication、channel、consolidation、conflict boundary、lag monitoring 與 migration route"
 tags: ["backend", "database", "mysql", "replication", "multi-source"]
 ---

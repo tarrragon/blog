@@ -3,7 +3,7 @@ title: "LLM Service 偵測訊號覆蓋"
 date: 2026-05-12
 description: "production LLM 服務的 detection 訊號設計：tool call 異常模式、prompt injection 觸發徵兆、abuse 跟濫用模式、跟既有 detection-coverage 框架的接合"
 tags: ["backend", "security", "llm", "detection", "monitoring", "abuse"]
-weight: 95
+weight: 102
 ---
 
 本章的責任是把 LLM 服務的異常行為訊號、納入 [7.13 偵測覆蓋與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/) 的既有偵測框架。LLM 服務的偵測訊號跟一般 service 的差異在「需要看 prompt / response / tool call 三個語意層」、不只是 traffic 跟 error rate；LLM-specific 訊號的關鍵範例是 [refusal rate](/llm/knowledge-cards/refusal-rate/)、通用 alerting 詞彙見 [alert](/backend/knowledge-cards/alert/)、[alert-fatigue](/backend/knowledge-cards/alert-fatigue/)、[symptom-based-alert](/backend/knowledge-cards/symptom-based-alert/) 卡。本章聚焦這層特殊性、通用偵測流程沿用 7.13。

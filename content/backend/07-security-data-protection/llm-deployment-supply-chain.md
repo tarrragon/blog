@@ -3,7 +3,7 @@ title: "LLM Deployment 供應鏈完整性"
 date: 2026-05-12
 description: "把 LLM 模型權重、推論伺服器、第三方 plugin 三條 production 供應鏈納入既有 artifact trust 框架的判讀"
 tags: ["backend", "security", "llm", "supply-chain", "model-trust", "deployment"]
-weight: 91
+weight: 98
 ---
 
 本章的責任是把 LLM 服務的模型權重、推論伺服器、第三方 plugin / [MCP](/llm/knowledge-cards/mcp/) server 三條供應鏈、納入 [7.4 供應鏈與產物信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) 的既有框架。模型來源信任的判讀依據見 [model card](/llm/knowledge-cards/model-card/) 卡；通用 artifact 信任機制見 [artifact-provenance](/backend/knowledge-cards/artifact-provenance/) 卡。LLM 場景的特殊性在於模型權重既是「資料」又是「程式邏輯」、第三方 MCP 是可執行程式碼、跟一般 software artifact 的信任模型有部分差異、但 build provenance / signature / dependency isolation 等控制原則沿用同一套。

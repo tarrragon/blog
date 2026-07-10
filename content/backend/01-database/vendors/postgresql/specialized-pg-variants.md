@@ -1,6 +1,7 @@
 ---
 title: "Specialized PostgreSQL Variants"
 date: 2026-05-22
+weight: 23
 description: "pgvectorscale、Citus、TimescaleDB、PostGIS、AlloyDB、Cosmos DB for PostgreSQL、serverless PG 等 PostgreSQL 變體的選型邊界"
 tags: ["backend", "database", "postgresql", "variants"]
 ---
