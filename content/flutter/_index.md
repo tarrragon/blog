@@ -10,7 +10,7 @@ tags: ["flutter", "dart", "mobile"]
 
 ## 章節大綱（backlog）
 
-大綱是 backlog、章節邊界隨 case 回補調整。四個章節群從既有 work-log case 聚類而來：
+大綱是 backlog、章節邊界隨 case 回補調整。章節群從既有 work-log case 聚類而來：
 
 ### Dart 語言機制與型別設計
 
