@@ -83,6 +83,12 @@ type CardRules struct {
 	CheckLinkValidity      bool   // L1
 	CheckOrphans           bool   // L2
 	CheckK4StructureLinks  bool   // L4
+	// L5: every Hugo section must be weight all-or-nothing, because a mix
+	// silently sinks the unweighted pages below the weighted ones.
+	CheckSectionWeightConsistency bool
+	// Sections excused from L5 — use when a page is pinned on purpose.
+	// An exemption is a decision on record; an omission is not.
+	WeightExemptSections []string
 	K4ConceptPositionTitle string // heading text that marks the "concept position" section
 	ContentScope           string // "content/**"
 }
@@ -131,10 +137,16 @@ func Default() Config {
 			Disallowed:     []string{"author", "permalink"},
 		},
 		Cards: CardRules{
-			CardsRoot:              "content/backend/knowledge-cards",
-			CheckLinkValidity:      true,
-			CheckOrphans:           true,
-			CheckK4StructureLinks:  true,
+			CardsRoot:                     "content/backend/knowledge-cards",
+			CheckLinkValidity:             true,
+			CheckOrphans:                  true,
+			CheckK4StructureLinks:         true,
+			CheckSectionWeightConsistency: true,
+			WeightExemptSections: []string{
+				// modern-cli-replacements is the section's overview article
+				// and is pinned above the otherwise date-sorted tool posts.
+				"content/linux/tools/cli",
+			},
 			K4ConceptPositionTitle: "概念位置",
 			ContentScope:           "content",
 		},

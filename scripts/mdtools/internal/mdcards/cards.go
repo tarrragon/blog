@@ -27,5 +27,8 @@ func Check(roots []string, cfg rules.Config) ([]report.Violation, error) {
 	if cfg.Cards.CheckK4StructureLinks {
 		out = append(out, checkL4K4Structure(g, cfg.Cards.CardsRoot, cfg.Cards.K4ConceptPositionTitle)...)
 	}
+	if cfg.Cards.CheckSectionWeightConsistency {
+		out = append(out, checkL5SectionWeightConsistency(g, cfg.Cards.WeightExemptSections)...)
+	}
 	return out, nil
 }
