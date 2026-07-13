@@ -48,6 +48,7 @@ tags: ["flutter", "dart", "mobile"]
 | 主題                     | 既有 case                                                                                                                                     |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | 三層測試策略與 mock 遮蔽 | [192 個測試全過、實機全壞](/work-log/testing_three_layer_strategy/)                                                                           |
+| 接線測試與組裝層證言     | [測試全綠、功能失聯](/work-log/flutter_composition_root_wiring_gap/)                                                                          |
 | 跨測試狀態污染           | [GetX 跨檔案狀態污染](/work-log/dart_test_getx_cross_file_state_pollution/)、[新增欄位忘記同步 reset](/work-log/reset_state_leak_cross_test/) |
 | async 錯誤的接管         | [sync try-catch 接不到 async 錯誤](/work-log/flutter_test_async_unhandled_error/)                                                             |
 | 測試訊號可信度           | [紅燈在量什麼：斷言 / 量測 / 環境三層失真](/work-log/flutter_test_signal_credibility_three_layers/)                                           |

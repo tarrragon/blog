@@ -53,6 +53,7 @@ tags: ["ddd", "state-transition", "audit-trail", "domain-model"]
 - 變更路徑收斂之後、建構路徑本身的設計：[建構路徑設計](/ddd/construction-path-design/)
 - 型別類別的入口判準：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)
 - 規則落點的三層選擇：[不變式的強制層次](/ddd/invariant-enforcement-layers/)
+- 領域狀態機投影到畫面入口可見性：[組裝層的可達性](/ddd/composition-root-reachability/)
 - 跨物件一致性（aggregate 邊界）：模組 backlog
 - Dart 的語言細節（copyWith 參數列收窄、private copyWith、哨兵物件）：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)
 - 原則層：[#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)

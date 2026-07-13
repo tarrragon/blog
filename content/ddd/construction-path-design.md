@@ -44,6 +44,7 @@ tags: ["ddd", "factory", "construction", "value-object"]
 
 ## 下一步
 
+- 物件組好之後、整個系統怎麼被組起來：[組裝層的可達性](/ddd/composition-root-reachability/)
 - 出生合法的機制：[不變式的強制層次](/ddd/invariant-enforcement-layers/)
 - 變更路徑收斂：[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
 - 型別類別的入口判準：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)

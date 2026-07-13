@@ -20,7 +20,7 @@ tags: ["ddd", "invariant", "type-design", "domain-model"]
 
 三層的選擇是「這條規則的違反代價」對「這一層的建置成本」的折算、層次高低本身沒有優劣排序。折算的變數包含團隊規模、人員流動率與專案壽命：小而穩定的團隊靠 code review 攔截誤用是可承受的選擇；人一多、流動一快，同樣的慣例就守不住——違反代價沒變、失效機率變了。狀態轉換與稽核這類違反後靜默出洞的規則，值得推到型別層或執行層；一次性的輸入格式問題留在執行層的驗證流程就足夠；真正只能靠慣例的（命名風格、檔案組織）才留在文件層——文件層是最後的選擇、而不是預設的起點。
 
-這三層涵蓋的是應用程式碼內的落點，實務上還有兩個常見的層。資料庫約束（NOT NULL、外鍵、unique index）攔得住所有寫入者——含手工 SQL 與其他服務；「email 不得重複」這類跨物件的唯一性規則，任何建構子或簽名都表達不了、併發下的可靠落點只有它，資料庫層的能力屬 [Backend](/backend/) 模組的範圍。CI 檢查（architecture test、lint）把慣例類規則升級成「合併前擋下」、強度介於文件層與型別層之間。本章的三層判準作用在單物件規則上；規則跨出單一物件時，先想這兩層。
+這三層涵蓋的是應用程式碼內的落點，實務上還有兩個常見的層。資料庫約束（NOT NULL、外鍵、unique index）攔得住所有寫入者——含手工 SQL 與其他服務；「email 不得重複」這類跨物件的唯一性規則，任何建構子或簽名都表達不了、併發下的可靠落點只有它，資料庫層的能力屬 [Backend](/backend/) 模組的範圍。CI 檢查（architecture test、lint）把慣例類規則升級成「合併前擋下」、強度介於文件層與型別層之間。本章的三層判準作用在單物件規則上；規則跨出單一物件時，先想這兩層。跨到應用程式的組裝層時——「use case 的每個入口在 production 可達」這類不變式——強制層選擇見 [組裝層的可達性](/ddd/composition-root-reachability/)。
 
 ## 文件層約束的失效模式
 
@@ -74,5 +74,6 @@ tags: ["ddd", "invariant", "type-design", "domain-model"]
 - 規則落點之前的兩個判定：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)、[entity 與 value object 的判準](/ddd/entity-vs-value-object/)
 - 變更路徑的收斂：[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
 - 建構路徑的設計：[建構路徑設計](/ddd/construction-path-design/)
+- 規則跨出單一物件、抬到應用程式的組裝層：[組裝層的可達性](/ddd/composition-root-reachability/)
 - 原則層：[#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)
 - Dart / Flutter 的實作細節（required 參數與 Rx 狀態流、exception 階層、validator 結構）：[會員身分、計價、支付方式必須一起換](/work-log/pos_member_pricing_payment_atomic_switch/)、[Exception 型別綁 ErrorCategory 的建構不變式](/work-log/flutter_exception_error_category_invariant/)、[驗證的兩層分工與順序陷阱](/work-log/flutter_domain_input_validation_placement/)
