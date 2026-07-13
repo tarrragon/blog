@@ -27,7 +27,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 | 觸覺回饋     | 震動                   | 行動裝置   |
 | 聲音回饋     | 輕微點擊聲             | 無障礙輔助 |
 
-**設計原則**：第一層回饋必須在 100ms 內出現。這個門檻來自人類感知研究 — 100ms 以內的延遲被感知為即時反應，超過後點擊與回饋之間開始出現可察覺的落差，回饋就失去「確認」的效果。
+**設計原則**：第一層回饋必須在 100ms 內出現。這個門檻來自人類感知研究 — 100ms 以內的延遲被感知為即時反應，超過後點擊與回饋之間開始出現可察覺的落差，回饋就失去「確認」的效果。平台原生元件的 pressed / ripple 互動態已滿足這個門檻，用平台預設互動態即自動合格；自建元件（自繪按鈕、canvas UI）才需要自行驗證回饋延遲。
 
 ### 第二層：等待指示（100ms - 10s）
 
@@ -90,8 +90,10 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 設計要點：
 
 - 操作在 100ms 內完成，不需 loading
-- 加入 debounce（300ms）防止快速連點觸發多次導航
+- 加入防連點（常見慣例值 300ms）避免快速連點觸發多次導航
 - 視覺回饋（ripple / 狀態切換）即足夠
+
+**防連點的語意**：第一次點擊立即執行、之後 300ms 內的點擊忽略（leading-edge debounce），或用導航鎖（in-flight flag）在導航完成前拒絕新請求。反過來「等 300ms 沒有新點擊才執行」（trailing debounce）會給每次導航加上 300ms 延遲，直接違反第一層的 100ms 門檻 — 防連點防的是第二次點擊，第一次要立即生效。
 
 ## 畫面級回饋：多步驟流程的狀態轉換
 
@@ -135,7 +137,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 - [ ] 每個中間狀態有退出路徑（對應[畫面狀態矩陣](/ux-design/01-screen-state-machine/)）？
 - [ ] 等待狀態提供取消操作？
 - [ ] 錯誤 / 中斷狀態提供重試**和**返回兩條路徑？
-- [ ] 長時間等待有 timeout 機制（不會永久卡在 connecting）？
+- [ ] 長時間等待有 timeout 機制（取值略大於 client / 後端 timeout，逾時進入 error 狀態，不會永久卡在 connecting）？
 
 ## 反模式
 
