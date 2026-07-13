@@ -8,9 +8,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 
 ## 核心觀念
 
-**按鈕的每種視覺狀態都傳達一種系統訊息**，缺少任何一種，使用者就失去對應的判斷依據。「能按」和「不能按」只覆蓋其中兩種訊息 — 完整的設計還要回答游標懸停、鍵盤焦點、處理中這些狀態下系統要說什麼。
-
-按鈕狀態設計是互動回饋的載體 — [三層回饋模型](../feedback-three-layers/) 描述了「什麼時候給回饋」，本章節描述「用什麼視覺狀態給回饋」。
+**按鈕的每種視覺狀態都傳達一種系統訊息**，缺少任何一種，使用者就失去對應的判斷依據。[三層回饋模型](../feedback-three-layers/)回答「什麼時候給回饋」，本篇回答「用什麼視覺狀態給回饋」— 從無互動、游標懸停、鍵盤焦點到處理中，一顆按鈕的生命週期裡每個階段都有它要對使用者說的話。
 
 ## 基本狀態
 
@@ -23,7 +21,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 | Disabled         | 前置條件未滿足     | 「現在不能按」         | 必要           |
 | Loading          | 非同步操作處理中   | 「正在處理，請等待」   | 非同步按鈕必要 |
 
-前五種狀態出自 NN/g 與 Material Design 的互動狀態定義；Loading 是本模組針對非同步操作補充的狀態，通用互動狀態定義不含它 — 非同步按鈕的回饋需求（等待指示 + 防重複提交）讓它成為必要。
+前五種狀態出自 NN/g 與 Material Design 的互動狀態定義；Loading 則來自非同步按鈕的回饋需求（等待指示 + 防重複提交）— 本文把它跟五個通用狀態並列，因為缺了它、非同步按鈕的生命週期就不完整。
 
 ### Default
 
@@ -78,7 +76,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 [Default] ─點擊→ [Active] ─釋放→ [Default]（操作在釋放時同步完成）
 ```
 
-同步按鈕不需要 Loading 狀態。防連點用 debounce 處理，不用 disabled（語意見[三層回饋模型](../feedback-three-layers/)的防連點段）。
+同步按鈕不需要 Loading 狀態。防連點用 debounce 處理，不用 disabled — disabled 會讓按鈕在每次點擊後閃跳灰態，而第一次點擊本來就該立即生效；「立即執行、短時間內忽略後續點擊」的執行語意，[三層回饋模型](../feedback-three-layers/)的防連點段有完整說明。
 
 ## 落點：設計系統元件層
 
@@ -86,13 +84,13 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 
 ## 常見設計失誤
 
-| 失誤                               | 後果                       | 修正                                                         |
-| ---------------------------------- | -------------------------- | ------------------------------------------------------------ |
-| Loading 狀態未禁用按鈕             | 重複提交                   | Loading 自動帶入 disabled                                    |
-| Disabled 沒有說明原因              | 使用者困惑「為什麼不能按」 | 搭配 tooltip 或條件說明                                      |
-| Focus 狀態不可見                   | 鍵盤使用者無法導航         | 加明顯 focus ring                                            |
-| Active 狀態與 Default 視覺差異太小 | 觸控裝置上看不出「有按到」 | 加大視覺差異或加觸覺回饋                                     |
-| 按鈕長期 Loading 無超時機制        | 介面永久凍結               | 設定逾時（取值略大於 client timeout），逾時後恢復 + 錯誤訊息 |
+| 失誤                               | 後果                       | 修正                            |
+| ---------------------------------- | -------------------------- | ------------------------------- |
+| Loading 狀態未禁用按鈕             | 重複提交                   | Loading 自動帶入 disabled       |
+| Disabled 沒有說明原因              | 使用者困惑「為什麼不能按」 | 搭配 tooltip 或條件說明         |
+| Focus 狀態不可見                   | 鍵盤使用者無法導航         | 加明顯 focus ring               |
+| Active 狀態與 Default 視覺差異太小 | 觸控裝置上看不出「有按到」 | 加大視覺差異或加觸覺回饋        |
+| 按鈕長期 Loading 無超時機制        | 介面永久凍結               | 設定逾時，逾時後恢復 + 錯誤訊息 |
 
 ## 設計檢查清單
 

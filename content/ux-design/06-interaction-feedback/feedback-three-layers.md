@@ -42,7 +42,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 **設計原則**：等待期間必須禁用觸發按鈕（disabled 狀態），防止使用者因焦慮而重複點擊導致重複提交。
 
-**400ms 門檻（Doherty Threshold）** 的實務意義：非同步操作通常在 400ms 內完成時，可省略 loading 指示器、直接跳到第三層的結果回饋（點擊確認仍要在第一層提供）。「400ms 內不顯示 loading」是後人從 Doherty 生產力研究衍生的設計慣例；各門檻的推導、以及實際延遲有快有慢時怎麼對表，見[時間感知與回應策略](../response-time-strategy/)。
+**400ms 門檻（Doherty Threshold）** 的實務意義：非同步操作通常在 400ms 內完成時，可省略 loading 指示器、直接跳到第三層的結果回饋（點擊確認仍要在第一層提供）。這條門檻的出身與適用邊界、以及實際延遲有快有慢時怎麼對表，[時間感知與回應策略](../response-time-strategy/)有完整推導。
 
 ### 第三層：結果通知
 
@@ -57,7 +57,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 **設計原則**：結果通知必須恢復按鈕到可操作狀態。操作結束後按鈕仍顯示 loading = 介面凍結。
 
-**空結果的呈現**：空狀態畫面要讓使用者分得出「查詢成功但沒有資料」和「還沒載入完」— 給明確文字（「沒有符合的結果」）與下一步建議（放寬條件、建立第一筆資料），載入中則維持等待指示。空狀態與錯誤狀態的措辭原則見[模組四：錯誤訊息撰寫原則](/ux-design/04-error-recovery/error-message-principles/)。
+**空結果的呈現**：空狀態畫面要讓使用者分得出「查詢成功但沒有資料」和「還沒載入完」— 給明確文字（「沒有符合的結果」）與下一步建議（放寬條件、建立第一筆資料），載入中則維持等待指示。空狀態與錯誤狀態的措辭由[模組四：錯誤訊息撰寫原則](/ux-design/04-error-recovery/error-message-principles/)接手。
 
 **部分成功的呈現**：批次操作（匯入 100 筆、87 筆成功）用摘要加明細兩層：摘要先告知整體結果（「87 筆成功、13 筆失敗」），明細列出失敗項與各自的修正動作，讓使用者只需處理失敗的部分、而非重跑整批。
 
@@ -90,7 +90,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 設計要點：
 
 - 操作在 100ms 內完成，不需 loading
-- 加入防連點（常見慣例值 300ms）避免快速連點觸發多次導航
+- 加入防連點（300ms 上下）避免快速連點觸發多次導航
 - 視覺回饋（ripple / 狀態切換）即足夠
 
 **防連點的語意**：第一次點擊立即執行、之後 300ms 內的點擊忽略（leading-edge debounce），或用導航鎖（in-flight flag）在導航完成前拒絕新請求。反過來「等 300ms 沒有新點擊才執行」（trailing debounce）會給每次導航加上 300ms 延遲，直接違反第一層的 100ms 門檻 — 防連點防的是第二次點擊，第一次要立即生效。
@@ -131,13 +131,15 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 **關鍵設計原則**：error 和 disconnected 必須同時提供「重連」和「返回」兩條路徑。只有重連會把使用者鎖在錯誤迴圈（如果問題無法透過重連解決，使用者永遠出不去）。
 
+timeout 是 connecting 的隱形退出路徑：取消靠使用者主動，timeout 是系統兜底 — 取值略大於 client / 後端的逾時設定（讓真正的失敗先回來、而非 UI 提前放棄），逾時後轉入 error 狀態走「重連 / 返回」。
+
 ### 畫面級回饋的檢查清單
 
 - [ ] 每個中間狀態有獨立的 UI 呈現（不是同一個畫面換文字）？
 - [ ] 每個中間狀態有退出路徑（對應[畫面狀態矩陣](/ux-design/01-screen-state-machine/)）？
 - [ ] 等待狀態提供取消操作？
 - [ ] 錯誤 / 中斷狀態提供重試**和**返回兩條路徑？
-- [ ] 長時間等待有 timeout 機制（取值略大於 client / 後端 timeout，逾時進入 error 狀態，不會永久卡在 connecting）？
+- [ ] 長時間等待有 timeout 機制（不會永久卡在 connecting）？
 
 ## 反模式
 
@@ -170,5 +172,5 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 - **Doherty Threshold**（Doherty & Thadani, IBM 技術報告, 1982）— 400ms 回應時間門檻的原始研究
 - **Jakob Nielsen's Response Time Limits**（1993）— 100ms / 1s / 10s 三門檻模型
 - **Material Design 3: Interaction States**（Google, [m3.material.io](https://m3.material.io/foundations/interaction/states)）— 按鈕互動狀態定義（loading indicator 是 M3 的獨立元件、引用見[時間感知與回應策略](../response-time-strategy/)）
-- **Apple Human Interface Guidelines: Feedback**（Apple Developer Documentation）— 回饋要可察覺、資訊明確並準確反映進度；本模組「即時、誠實的回應」是據此精神歸納的措辭、非 HIG 原句
+- **Apple Human Interface Guidelines: Feedback**（Apple Developer Documentation）— 回饋要可察覺、資訊明確並準確反映進度（本系列據此精神歸納出「即時、誠實的回應」的說法）
 - **Laws of UX**（Jon Yablonski, [lawsofux.com](https://lawsofux.com/doherty-threshold/)）— Doherty Threshold 的現代整理與應用案例
