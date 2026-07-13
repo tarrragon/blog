@@ -21,7 +21,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 | Disabled         | 前置條件未滿足     | 「現在不能按」         | 必要           |
 | Loading          | 非同步操作處理中   | 「正在處理，請等待」   | 非同步按鈕必要 |
 
-前五種狀態出自 NN/g 與 Material Design 的互動狀態定義；Loading 則來自非同步按鈕的回饋需求（等待指示 + 防重複提交）— 本文把它跟五個通用狀態並列，因為缺了它、非同步按鈕的生命週期就不完整。
+前五種狀態出自 NN/g 與 Material Design 的互動狀態定義；Loading 則來自非同步按鈕的回饋需求（等待指示 + 防重複提交）— 本篇把它跟五個通用狀態並列，因為缺了它、非同步按鈕的生命週期就不完整。切換型控件（toggle、segmented control）另有 selected 態 —「現在是開還是關」也是一種系統訊息；本表聚焦動作按鈕，選取態屬選擇控件設計。
 
 ### Default
 
@@ -44,8 +44,8 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 按鈕不可操作時的狀態。設計要點：
 
 - 視覺上與可操作狀態有明確區別（通常降低透明度）
-- **告知使用者「為什麼不能按」** — 單純灰掉不夠，搭配 tooltip 或說明文字
-- disabled 不是靜默失敗的替代品 — 如果按鈕永遠 disabled，考慮直接移除
+- **告知使用者「為什麼不能按」** — 單純灰掉不夠。優先用常駐說明文字（按鈕旁的條件提示）；tooltip 只在桌面端可行 — 行動端沒有 hover、disabled 元素通常也不接收 focus，hover 觸發的提示對行動端與鍵盤使用者不可達
+- disabled 與隱藏的分工：條件可由使用者滿足時用 disabled（灰掉 + 說明怎麼解鎖，讓使用者知道功能存在）；條件與使用者無關（權限不足、功能未開通且無法自行開通）時考慮隱藏 — 展示一個永遠按不了的按鈕只製造困惑
 
 ### Loading
 
@@ -54,6 +54,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 - 按鈕內容替換為 spinner 或文字變更（「送出」→「送出中...」）
 - 按鈕自動進入 disabled（防重複提交）
 - 操作完成後必須恢復到 default 或顯示結果
+- 設定逾時：取值略大於 client / 後端 timeout，逾時後恢復並給錯誤訊息（兜底原則同[三層回饋模型](../feedback-three-layers/)畫面級的 timeout 段）
 
 ## 非同步按鈕的狀態流
 
