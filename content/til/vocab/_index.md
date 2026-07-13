@@ -25,7 +25,7 @@ tags: ["til", "英文單字", "字源", "語感"]
 - [rigorous](rigorous/)：不留捷徑的嚴謹（vs strict）
 - [warrant](warrant/)：足以構成…的理由（vs justify）
 
-變動與脆弱：
+變動、脆弱與強韌：
 
 - [volatile](volatile/)：劇烈震盪的變動（vs unstable）
 - [precarious](precarious/)：懸在邊緣的脆弱（vs unstable）
@@ -43,13 +43,13 @@ tags: ["til", "英文單字", "字源", "語感"]
 - [bolster](bolster/)：加碼補強既有基礎（vs support）
 - [undermine](undermine/)：從基礎暗中削弱（vs weaken）
 - [erode](erode/)：一點一點被磨掉（vs undermine）
-- [underscore](underscore/)：事實自然凸顯重要性（vs emphasize）
 
-論述品質：
+論述品質與重點呈現：
 
 - [nuanced](nuanced/)：分得清細微差別的層次感（vs complex）
 - [ambiguous](ambiguous/)：可作兩種解讀（vs vague）
 - [salient](salient/)：最突出顯眼的那點（vs important）
+- [underscore](underscore/)：事實自然凸顯重要性（vs emphasize）
 
 ---
 

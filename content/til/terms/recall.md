@@ -8,7 +8,7 @@ tags: ["til", "術語", "跨領域", "指標", "recall"]
 
 > 這個詞出現在「[怎麼量一個偵測器準不準](../measuring-detectors/)」這個問題裡——它是另一把尺。
 
-recall（召回率，又稱敏感度 sensitivity）回答另一個問題：**真實存在的那些，偵測器抓到了多少？**
+recall（召回率，又稱敏感度 sensitivity）回答另一個問題：**真實存在的那些，偵測器抓到了多少？** 醫學領域常把 recall/sensitivity 跟 specificity（特異度 = TN/(TN+FP)，真沒有的之中正確排除多少）成對使用。
 
 公式是 `recall = TP / (TP + FN)`（TP = 真陽性、FN = 假陰性）：分母是「所有真的陽性」，分子是其中被抓到的。所以 [false negative](../false-negative/) 越多，recall 越低——漏接直接拉低「抓全的能力」。
 
@@ -23,5 +23,5 @@ recall 只看「漏了沒」，不管「報出來的準不準」（那是 [preci
 ## 相關概念
 
 - 被它懲罰的錯誤：[false negative](../false-negative/)。
-- 統計裡的對應：[Type II error](../type-ii-error/)（recall 高對應檢定力高，兩者是同概念的不同 framing）。
+- 統計裡的對應：recall 高對應檢定力 power = 1 − β 高（[Type II error](../type-ii-error/) 的補數）。
 - 成對指標：[precision](../precision/)。

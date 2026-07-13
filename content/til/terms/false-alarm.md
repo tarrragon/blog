@@ -10,7 +10,7 @@ tags: ["til", "術語", "跨領域", "false-alarm"]
 
 false alarm（偽警報）指**監控、告警或入侵偵測（IDS）系統觸發了，但實際上沒事**——是 monitoring / 資安領域的 [false positive](../false-positive/)。
 
-「alarm」這個字面比 false positive 更口語、更早，消防與保全領域早就在用「假警報」。放到偵測語境，它就是 false positive 的一種。
+false alarm 正是訊號偵測理論（SDT）那一格的原名——SDT 的四格標籤是 hit / miss / false alarm / correct rejection。「alarm」這個字面比 false positive 更口語、更早，消防與保全領域早就在用「假警報」。放到偵測語境，它就是 false positive 的一種。
 
 ## 為何要在意
 

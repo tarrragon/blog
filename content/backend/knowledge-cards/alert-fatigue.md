@@ -21,3 +21,5 @@ Alert fatigue 是可觀測性設計的失敗模式，跟 [alert](/backend/knowle
 ## 設計責任
 
 Alert fatigue 的治理包括：追蹤 noise rate（on-call ack 時標記 actionable / noise）、定期審視高 noise 的 alert rule（調整閾值、改 [symptom-based](/backend/knowledge-cards/symptom-based-alert/)、加 inhibition、或刪除）、用 grouping 跟 inhibition 減少同一問題的重複通知。治理節奏跟 [4.8 訊號治理閉環](/backend/04-observability/signal-governance-loop/) 整合。
+
+跨領域詞源與因果鏈（false positive → noise → alert fatigue）見 [TIL 跨領域術語：alert fatigue](/til/terms/alert-fatigue/)。

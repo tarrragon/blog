@@ -2,13 +2,13 @@
 title: "over-match：規則比對過寬而誤命中"
 slug: "over-match"
 date: 2026-06-18
-description: "over-match（又稱 over-broad match、spurious match）指規則或樣式寫得太寬，命中了不該命中的東西。它是許多 false positive 的機制層成因，常見於 regex 與 glob"
+description: "over-match（又稱 over-broad match、spurious match）指規則或樣式寫得太寬，命中了不該命中的目標。它是許多 false positive 的機制層成因，常見於 regex 與 glob"
 tags: ["til", "術語", "跨領域", "over-match"]
 ---
 
 > 這個詞出現在「[守衛和規則為什麼會誤觸](../guard-misfires/)」這個問題裡——它是機制成因。
 
-over-match（過寬匹配，又稱 over-broad match、spurious match）指**規則或樣式寫得太寬，命中了不該命中的東西**。
+over-match（過寬匹配，又稱 over-broad match、spurious match）指**規則或樣式寫得太寬，命中了不該命中的目標**。
 
 如果說 [false positive](../false-positive/) 是「偵測器誤報」這個現象，over-match 就是它在規則比對層常見的**機制成因**：不是偵測器壞了，是規則的涵蓋範圍超出了意圖。
 

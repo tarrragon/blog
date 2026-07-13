@@ -23,3 +23,5 @@ curb 是「勒住、把失控的擴張拉回可控範圍」，程度上是減緩
 - curb spending（管控支出）
 - curb immigration（限制移民）
 - put a curb on... / curbs on...（對…設限，名詞式）
+
+curb 勒住還在擴大的趨勢，跟 [mitigate](../mitigate/)（減輕已成的壞結果）分工在時機。

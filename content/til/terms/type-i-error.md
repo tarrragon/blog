@@ -2,7 +2,7 @@
 title: "Type I error：統計學給假陽性的編號"
 slug: "type-i-error"
 date: 2026-06-18
-description: "統計假設檢定把 false positive 叫 Type I error、false negative 叫 Type II error。本篇講這兩個編號的意思、與顯著水準 α 的關係，以及一個好記的順序"
+description: "統計假設檢定把 false positive 叫 Type I error、false negative 叫 Type II error。對應到顯著水準 α 與檢定力、兩者此消彼長的取捨"
 tags: ["til", "術語", "跨領域", "統計", "type-i-error"]
 ---
 
@@ -23,7 +23,7 @@ tags: ["til", "術語", "跨領域", "統計", "type-i-error"]
 
 ## 一個好記的順序
 
-哪個是 Type I、哪個是 Type II 容易記混。一個記法：**Type I 是「太急著宣稱有」（過度反應、誤報），Type II 是「太保守而漏掉」**。可把編號順序記成「先有過度反應，才談漏接」——這純為助記，不是 Neyman-Pearson 當初編號的歷史定義。
+哪個是 Type I、哪個是 Type II 容易記混。一個記法：**Type I 是「太急著宣稱有」（過度反應、誤報），Type II 是「太保守而漏掉」**。可把編號順序記成「先有過度反應，才談漏接」——這純為助記，不是編號的歷史由來。
 
 ## 相關概念
 

@@ -1,16 +1,16 @@
 ---
-title: "noise：淹沒真訊號的誤報"
+title: "noise：淹沒真訊號的低價值輸出"
 slug: "noise"
 date: 2026-06-18
-description: "noise（噪音）指大量 false positive 累積、淹沒真正重要的訊號。借自訊號處理的訊噪比概念，常用於形容 linter、掃描、監控誤報過多的狀態"
+description: "noise（噪音）指大量低價值訊號累積、淹沒真正重要的訊號。來源包括 false positive 與正確但無關緊要的告警，借自訊號處理的訊噪比概念"
 tags: ["til", "術語", "跨領域", "noise"]
 ---
 
 > 這個詞出現在「[告警太多，反而沒人看](../alert-overload/)」這個問題裡。
 
-noise（噪音）指**大量 [false positive](../false-positive/) 累積，淹沒了真正重要的訊號**。
+noise（噪音）指**大量低價值訊號累積，淹沒了真正重要的訊號**。低價值訊號包括 [false positive](../false-positive/)（報錯的），也包括正確但無關緊要的告警（報對了、但沒人需要處理）。
 
-這個詞借自訊號處理的**訊噪比（signal-to-noise ratio）**：誤報越多，真訊號越難被看見。一個 linter 報出幾百條多半無關緊要的警告、一個監控系統整天閃 [false alarm](../false-alarm/)，都會被說成「noise 太多」。
+這個詞借自訊號處理的**訊噪比（signal-to-noise ratio）**：低價值訊號越多，真訊號越難被看見。一個 linter 報出幾百條多半無關緊要的警告、一個監控系統整天閃 [false alarm](../false-alarm/)，都會被說成「noise 太多」。
 
 ## 為何是問題
 

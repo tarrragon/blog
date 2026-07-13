@@ -3,7 +3,7 @@ title: "candidate 的字源：穿白袍的人"
 slug: "candidate"
 date: 2026-06-12
 description: "candidate 源自拉丁文 candidatus（穿白袍的人），古羅馬競選者穿漂白托加袍象徵清白，同字根家族還有 candid、candle、candor、incandescent"
-tags: ["til", "字源", "英文單字", "拉丁文"]
+tags: ["til", "英文單字", "字源", "拉丁文"]
 ---
 
 candidate（候選人）字面意思是「穿白袍的人」，源自拉丁文 candidātus。
@@ -29,3 +29,5 @@ candidate（候選人）字面意思是「穿白袍的人」，源自拉丁文 c
 - **candela**（燭光）：光度的 SI 單位、直接借自拉丁文「蠟燭」
 
 記住 candēre = 發白光，這五個字加上 candidate 就全部串起來了。
+
+> 更多同類單字 → [單字](../)。

@@ -2,7 +2,7 @@
 title: "alert fatigue：告警疲勞"
 slug: "alert-fatigue"
 date: 2026-06-18
-description: "alert fatigue 指誤報或告警太多、人對告警逐漸麻木，連真正重要的也忽略。它不是 false positive 的同義詞，而是 false positive 持續累積造成的人因後果"
+description: "alert fatigue 是 false positive 持續累積造成的人因後果——誤報太多、人對告警逐漸麻木，連真正重要的也忽略"
 tags: ["til", "術語", "跨領域", "alert-fatigue"]
 ---
 

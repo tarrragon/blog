@@ -14,7 +14,7 @@ tags: ["til", "術語", "跨領域"]
 - [你的自動判斷會犯兩種錯](detection-errors/)：誤報與漏接 —— false positive、false negative、Type I／II error
 - [怎麼量一個偵測器準不準](measuring-detectors/)：—— precision、recall
 - [測試紅燈不一定是真的壞](unreliable-tests/)：—— flaky、spurious failure
-- [告警太多，反而沒人看](alert-overload/)：—— noise、false alarm、alert fatigue
+- [告警太多，反而沒人看](alert-overload/)：—— false alarm、noise、alert fatigue
 - [守衛和規則為什麼會誤觸](guard-misfires/)：—— over-match、false trigger、spurious warning
 
 每張術語卡頂部都會標明它出自哪個問題，所以從搜尋直接落在單張卡也找得到回路。

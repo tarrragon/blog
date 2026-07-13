@@ -25,3 +25,5 @@ examine 或 check 只是中性的「看過、檢查」；scrutinize 多了質疑
 - come under scrutiny（開始被審視）
 
 主詞常是審查者、監理機關、評閱人；受詞是可能藏著問題的材料。名詞 scrutiny 在論文與新聞裡出現得跟動詞一樣頻繁。
+
+scrutinize 預設的態度——連角落都翻——呼應 [rigorous](../rigorous/)（不放過捷徑的嚴謹）與 [robust](../robust/)（禁得起這種審視還站得住）。
