@@ -67,7 +67,7 @@ copyWith(bookTags: [...Book.createForTest(id: bookId).bookTags, ...])
 
 這個直覺方向是對的，但不加限定會誤傷。精確的說法是：
 
-**問題不在 copyWith，在於「public copyWith 掛在 entity 上」。**
+### 問題不在 copyWith，在於 public copyWith 掛在 entity 上
 
 copyWith 對純資料載體是正確工具——DTO、API model、UI state、小的 value object。這些東西沒有領域不變式，它們就是一袋欄位，逐欄位覆寫語意清晰、沒有代價。Dart 生態也是這樣用它的：freezed 幫每個 model 自動生成 copyWith，這在 data class 的世界完全合理。
 
@@ -169,7 +169,7 @@ State copyWith({Object? member = _sentinel}) {
 
 這次追出來的三個坑——語意錯誤的測試拼裝、被繞過的領域方法、從未強制的註解約束——共同結構是同一個：
 
-**設計意圖只寫在文件層（註解、命名、慣例），沒有落在型別層或執行層。**
+### 設計意圖只寫在文件層，沒有落在型別層或執行層
 
 「請走領域方法」是慣例，copyWith 不擋你；「只能從 enriching 轉換」是註解，實作不查你；「測試該用工廠」是期望，工廠沒能力你就繞。每一個「請、應該、建議」都是一個沒關上的逃生口，而逃生口的使用者不是壞人——他們只是走了阻力最小的路。
 
