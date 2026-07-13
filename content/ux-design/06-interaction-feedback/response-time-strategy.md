@@ -1,0 +1,114 @@
+---
+title: "時間感知與回應策略：什麼時候該顯示 Loading？"
+date: 2026-07-13
+description: "100ms / 400ms / 1s / 10s 四個時間門檻對應不同的回饋策略 — 基於人類認知研究的介面回應時間設計。"
+weight: 3
+tags: ["ux-design", "interaction-feedback", "response-time", "perceived-performance"]
+---
+
+## 核心觀念
+
+**不是每個非同步操作都需要 loading spinner。** 回饋的形式取決於等待時間。太快的操作加 spinner 反而讓使用者覺得慢（「為什麼要 loading？」），太慢的操作只有 spinner 又不夠（「到底要等多久？」）。
+
+設計回饋策略的依據是人類對時間的主觀感知 — 不同的等待長度會觸發不同的心理反應。
+
+## 四個時間門檻
+
+### 100ms — 即時感知門檻
+
+來源：人類感知研究（Miller, 1968; Card, Moran & Newell, 1983）。
+
+100ms 以內的延遲被感知為「即時」。使用者不會注意到任何等待，操作感覺像是直接發生。
+
+**設計策略**：不需要任何等待指示。只需要第一層的點擊確認（視覺狀態變化）。
+
+**適用**：同步操作（導航、切換、本地計算）。
+
+### 400ms — Doherty Threshold
+
+來源：Doherty & Thadani, "The Economic Value of Rapid Response Time"（IBM Systems Journal, 1982）。
+
+原始研究發現：當電腦回應時間低於 400ms 時，使用者的操作效率大幅提升 — 人機互動進入一種「流暢循環」，雙方都不需要等對方。超過 400ms，這個循環被打斷。
+
+**設計策略**：400ms 以內完成的操作不需要顯示 loading indicator。可以用動畫過渡（fade in、slide）讓結果「出現」而非「替換」，利用動畫時間掩蓋等待感。
+
+**適用**：快速 API 回應、本地資料庫查詢、簡單計算。
+
+### 1 秒 — 心流維持門檻
+
+來源：Nielsen's response time limits（Usability Engineering, 1993）。
+
+1 秒以內，使用者的思考流程不會被打斷。雖然能感知到延遲，但不會覺得「系統卡住了」。
+
+**設計策略**：開始顯示輕量級等待指示。按鈕進入 loading 狀態（spinner 取代文字）。但不需要進度百分比或預估時間。
+
+**適用**：一般 API 請求、檔案讀寫、中等複雜度查詢。
+
+### 10 秒 — 注意力維持上限
+
+來源：Nielsen's response time limits（同上）。
+
+超過 10 秒，使用者開始考慮離開。注意力已經從當前操作轉移到「該不該放棄」。
+
+**設計策略**：必須提供進度指示（百分比 / 步驟計數 / 預估剩餘時間），讓使用者判斷「還值不值得等」。考慮提供取消操作的選項。
+
+**適用**：檔案上傳、批次處理、大型資料同步。
+
+## 策略對照表
+
+| 等待時間  | 使用者感受 | 回饋策略                         | 範例               |
+| --------- | ---------- | -------------------------------- | ------------------ |
+| 0-100ms   | 即時       | 點擊確認即可                     | 頁面導航、開關切換 |
+| 100-400ms | 幾乎即時   | 動畫過渡掩蓋等待                 | 快速搜尋、本地查詢 |
+| 400ms-1s  | 短暫等待   | Spinner / loading 狀態           | API 查詢、表單送出 |
+| 1-10s     | 明顯等待   | 進度指示 + spinner               | 檔案上傳、資料匯入 |
+| > 10s     | 長時間等待 | 進度百分比 + 預估時間 + 取消選項 | 批次處理、大型同步 |
+
+## 感知效能技巧
+
+真實效能無法改變時（伺服器就是要跑 3 秒），可以透過設計降低使用者的等待感受：
+
+### 骨架畫面（Skeleton Screen）
+
+在資料載入前先顯示內容區域的灰色佔位形狀。使用者看到「畫面結構」比看到空白等待更不焦慮。適合列表、卡片等有明確版面的內容。
+
+### 樂觀更新（Optimistic Update）
+
+在伺服器回應前先更新 UI，假設操作會成功。如果失敗再回滾。適合高成功率的操作（按讚、收藏、勾選）。風險：失敗回滾時使用者會困惑「為什麼剛才的操作消失了」。
+
+### 漸進式載入（Progressive Loading）
+
+先載入最重要的內容（文字），再載入次要內容（圖片、評論）。使用者可以在等待期間開始閱讀，降低「什麼都不能做」的焦慮。
+
+### 動畫過渡
+
+用動畫填充短暫的等待時間。300ms 的 fade-in 動畫可以掩蓋 200ms 的 API 延遲，使用者感知到的是「動畫」而非「等待」。
+
+## 不要做的事
+
+| 反模式                         | 為什麼不好                 |
+| ------------------------------ | -------------------------- |
+| 每個操作都顯示全螢幕 loading   | 阻斷所有互動，打斷心流     |
+| spinner 顯示後立即消失（閃爍） | 視覺雜訊，比不顯示更差     |
+| 進度條從 0% 跳到 100%          | 失去進度指示的意義         |
+| 假進度條（與實際進度無關）     | 被識破後失去信任           |
+| Loading 永不消失（無 timeout） | 介面凍結，使用者只能殺 app |
+
+## 設計檢查清單
+
+- [ ] 操作的預期延遲是多少？對應哪個門檻？
+- [ ] 低於 400ms 的操作：不顯示 spinner，用動畫過渡？
+- [ ] 400ms-1s 的操作：有按鈕 loading 狀態？
+- [ ] 超過 1s 的操作：有進度指示？
+- [ ] 超過 10s 的操作：有取消選項？
+- [ ] 有考慮感知效能技巧（骨架畫面 / 樂觀更新 / 漸進載入）？
+- [ ] spinner 有最短顯示時間（防閃爍，通常 300ms）？
+
+## 參考來源
+
+- **Doherty, W.J. & Thadani, A.J.** "The Economic Value of Rapid Response Time." IBM Systems Journal, Vol. 21, No. 3, 1982 — 400ms 門檻的原始研究
+- **Nielsen, J.** Usability Engineering. Academic Press, 1993 — 100ms / 1s / 10s 三門檻模型
+- **Card, S.K., Moran, T.P. & Newell, A.** The Psychology of Human-Computer Interaction. Lawrence Erlbaum Associates, 1983 — 人機互動的認知心理學基礎
+- **Miller, R.B.** "Response Time in Man-Computer Conversational Transactions." Proceedings of the AFIPS Fall Joint Computer Conference, 1968 — 回應時間對使用者行為影響的早期研究
+- **Material Design 3: Loading Indicator**（m3.material.io/components/loading-indicator）— Google 的 loading 設計規範
+- **Laws of UX: Doherty Threshold**（lawsofux.com/doherty-threshold）— Doherty Threshold 的現代詮釋
