@@ -28,7 +28,7 @@ tags: ["ux-design", "input", "search", "debounce", "mobile"]
 
 使用者停止輸入一段時間後（通常 300-500ms）觸發搜尋。平衡即時回饋和 API 呼叫次數 — 使用者連續打字時不觸發，停下來時觸發一次。
 
-Debounce 是遠端搜尋場景的常見選擇。延遲時間的設定是 UX trade-off：太短（100ms）接近即時觸發，API 呼叫次數多；太長（1000ms）使用者感覺到明顯延遲。300-500ms 是多數場景的合理區間。
+[Debounce](/ux-design/knowledge-cards/debounce/) 是遠端搜尋場景的常見選擇（搜尋框用 trailing-edge 語意 — 等使用者停止輸入才觸發）。延遲時間的設定是 UX trade-off：太短（100ms）接近即時觸發，API 呼叫次數多；太長（1000ms）使用者感覺到明顯延遲。300-500ms 是多數場景的合理區間。
 
 ## 搜尋結果的顯示
 

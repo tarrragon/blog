@@ -59,6 +59,7 @@ tags: ["ux-design", "input", "form", "validation", "mobile"]
 
 ## 下一步路由
 
+- 送出按鈕的 loading / disabled 與防重複提交 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
 - 搜尋場景的輸入設計 → [搜尋 UX 模式](/ux-design/03-input-mechanism/search-ux-pattern/)
 - 四維度決策表總覽 → [輸入機制決策表](/ux-design/03-input-mechanism/four-dimension-decision/)
 - 安全敏感欄位的 IME 控制 → [IME 安全 checklist](/ux-design/03-input-mechanism/ime-security-checklist/)

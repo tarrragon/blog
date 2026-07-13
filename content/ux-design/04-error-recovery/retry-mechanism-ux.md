@@ -62,6 +62,8 @@ tags: ["ux-design", "error-recovery", "retry", "exponential-backoff"]
 
 ## 下一步路由
 
+- 重試等待期間的指示形式（spinner / 進度 / 倒數怎麼選）→ [時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)
+- 重試按鈕本身的 loading 與防重複提交 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
 - 部分功能不可用的降級設計 → [Degraded mode 設計](/ux-design/04-error-recovery/degraded-mode-design/)
 - 重試循環的逃生口 → [error → retry → error 循環的逃生口](/ux-design/04-error-recovery/error-loop-escape/)
 - Gate 失敗的 fallback → [ux-design 模組二 Gate 與 Fallback](/ux-design/02-gate-fallback/)
