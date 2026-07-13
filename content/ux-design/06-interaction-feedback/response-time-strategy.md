@@ -14,7 +14,7 @@ tags: ["ux-design", "interaction-feedback", "response-time", "perceived-performa
 
 ## 時間門檻
 
-這些門檻來自兩個量測對象不同的研究框架：100ms / 1s / 10s 是感知與注意力門檻（Miller、Nielsen）、400ms 是生產力門檻（Doherty）。本篇把兩者合併在同一條時間軸上使用 — 設計決策關心的是「等多久該給什麼回饋」，兩個框架在這個問題上給出互補的分段點。
+這些門檻來自兩個量測對象不同的研究框架：100ms / 1s / 10s 是感知與注意力門檻（Miller、Nielsen）、400ms 是生產力門檻（[Doherty](/ux-design/knowledge-cards/doherty-threshold/)）。本篇把兩者合併在同一條時間軸上使用 — 設計決策關心的是「等多久該給什麼回饋」，兩個框架在這個問題上給出互補的分段點。
 
 ### 100ms — 即時感知門檻
 

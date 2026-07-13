@@ -42,7 +42,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 **設計原則**：等待期間必須禁用觸發按鈕（disabled 狀態），防止使用者因焦慮而重複點擊導致重複提交。UI 層的防重複提交降低發生率；最終防線是伺服器端的冪等設計 — 重複請求真的到達後端時要能被識別與去重。兩層都要做，本系列只涵蓋 UI 層。
 
-**400ms 門檻（Doherty Threshold）** 的實務意義：非同步操作通常在 400ms 內完成時，可省略 loading 指示器、直接跳到第三層的結果回饋（點擊確認仍要在第一層提供）。這條門檻的出身與適用邊界、以及實際延遲有快有慢時怎麼對表，[時間感知與回應策略](../response-time-strategy/)有完整推導。
+**400ms 門檻（[Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/)）** 的實務意義：非同步操作通常在 400ms 內完成時，可省略 loading 指示器、直接跳到第三層的結果回饋（點擊確認仍要在第一層提供）。這條門檻的出身與適用邊界、以及實際延遲有快有慢時怎麼對表，[時間感知與回應策略](../response-time-strategy/)有完整推導。
 
 ### 第三層：結果通知
 
@@ -93,7 +93,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 - 加入防連點（300ms 上下）避免快速連點觸發多次導航
 - 視覺回饋（ripple / 狀態切換）即足夠
 
-**防連點的語意**：第一次點擊立即執行、之後 300ms 內的點擊忽略（leading-edge debounce），或用導航鎖（in-flight flag）在導航完成前拒絕新請求。反過來「等 300ms 沒有新點擊才執行」（trailing debounce）會給每次導航加上 300ms 延遲，直接違反第一層的 100ms 門檻 — 防連點防的是第二次點擊，第一次要立即生效。
+**防連點的語意**：第一次點擊立即執行、之後 300ms 內的點擊忽略（leading-edge [debounce](/ux-design/knowledge-cards/debounce/)），或用導航鎖（in-flight flag）在導航完成前拒絕新請求。反過來「等 300ms 沒有新點擊才執行」（trailing debounce）會給每次導航加上 300ms 延遲，直接違反第一層的 100ms 門檻 — 防連點防的是第二次點擊，第一次要立即生效。
 
 ## 畫面級回饋：多步驟流程的狀態轉換
 

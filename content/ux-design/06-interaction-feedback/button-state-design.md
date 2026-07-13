@@ -78,7 +78,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 [Default] ─點擊→ [Active] ─釋放→ [Default]（操作在釋放時同步完成）
 ```
 
-同步按鈕不需要 Loading 狀態。防連點用 debounce 處理，不用 disabled — disabled 會讓按鈕在每次點擊後閃跳灰態，而第一次點擊本來就該立即生效；「立即執行、短時間內忽略後續點擊」的執行語意，[三層回饋模型](../feedback-three-layers/)的防連點段有完整說明。
+同步按鈕不需要 Loading 狀態。防連點用 [debounce](/ux-design/knowledge-cards/debounce/) 處理，不用 disabled — disabled 會讓按鈕在每次點擊後閃跳灰態，而第一次點擊本來就該立即生效；「立即執行、短時間內忽略後續點擊」的執行語意，[三層回饋模型](../feedback-three-layers/)的防連點段有完整說明。
 
 ## 落點：設計系統元件層
 
