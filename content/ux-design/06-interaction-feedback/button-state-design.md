@@ -57,6 +57,8 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 
 ## 非同步按鈕的狀態流
 
+非同步按鈕＝點擊後需要等待伺服器或 IO 回應的按鈕（送出表單、呼叫 API）；同步按鈕＝操作在本地立即完成的按鈕（導航、切換）。
+
 ```text
 [Default] ─點擊→ [Active] ─釋放→ [Loading] ─完成→ [Default + 結果通知]
                                       │

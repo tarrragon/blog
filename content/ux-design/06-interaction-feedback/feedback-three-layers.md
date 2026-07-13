@@ -1,7 +1,7 @@
 ---
 title: "互動回饋三層模型：點擊確認、等待指示、結果通知"
 date: 2026-07-13
-description: "使用者操作後的回饋依時間分層，缺層的症狀是重複提交與重複導航 — 診斷「按了沒反應」問題時的檢查框架。"
+description: "使用者操作後的回饋依時間分層，缺層的症狀是重複提交與重複導航 — 診斷「按了沒反應」與多步驟流程卡狀態問題的檢查框架，涵蓋按鈕級與畫面級兩個尺度。"
 weight: 1
 tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 ---
@@ -40,7 +40,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 | 1s - 10s   | 進度條或步驟指示            | 告知使用者「到哪了」                                  |
 | > 10s      | 進度百分比 + 預估剩餘時間   | 超過 10s 使用者開始考慮放棄                           |
 
-**設計原則**：等待期間必須禁用觸發按鈕（disabled 狀態），防止使用者因焦慮而重複點擊導致重複提交。
+**設計原則**：等待期間必須禁用觸發按鈕（disabled 狀態），防止使用者因焦慮而重複點擊導致重複提交。UI 層的防重複提交降低發生率；最終防線是伺服器端的冪等設計 — 重複請求真的到達後端時要能被識別與去重。兩層都要做，本系列只涵蓋 UI 層。
 
 **400ms 門檻（Doherty Threshold）** 的實務意義：非同步操作通常在 400ms 內完成時，可省略 loading 指示器、直接跳到第三層的結果回饋（點擊確認仍要在第一層提供）。這條門檻的出身與適用邊界、以及實際延遲有快有慢時怎麼對表，[時間感知與回應策略](../response-time-strategy/)有完整推導。
 
@@ -63,7 +63,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 ## 兩類按鈕的回饋設計
 
-依操作的時間特性，按鈕分兩類：
+依操作的時間特性，按鈕分兩類（各狀態的視覺設計在[按鈕狀態設計](../button-state-design/)展開）：
 
 ### 非同步按鈕（API / 資料庫 / 權限請求）
 
@@ -106,7 +106,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 | 範圍     | 單一按鈕內的狀態變化              | 整個畫面 UI 替換                                                |
 | 狀態數   | 2-3 個（idle / loading / result） | 4-6 個（idle / processing / success / error / disconnected...） |
 | 退出路徑 | 不需要（按鈕自己恢復）            | 每個中間狀態都必須有退出路徑                                    |
-| 設計工具 | 按鈕狀態檢查清單                  | 畫面狀態矩陣（[模組一](/ux-design/01-screen-state-machine/)）   |
+| 設計工具 | 按鈕狀態檢查清單                  | [畫面狀態矩陣（模組一）](/ux-design/01-screen-state-machine/)   |
 
 ### 設計模式
 
