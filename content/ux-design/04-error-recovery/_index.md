@@ -18,5 +18,6 @@ tags: ["ux-design", "error", "recovery", "retry"]
 ## 跨分類引用
 
 - ← [ux-design 模組一](/ux-design/01-screen-state-machine/)：error 狀態在狀態矩陣中的退出路徑
+- → [ux-design 模組六](/ux-design/06-interaction-feedback/)：錯誤是三層回饋的「結果通知」之一；重試按鈕的 loading 狀態與等待指示設計
 - → [testing 模組一](/testing/01-test-strategy-layers/)：error 回復路徑需要 widget test 覆蓋
 - → [monitoring 模組一](/monitoring/01-mental-model/)：error 事件是四類事件之一

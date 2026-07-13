@@ -28,9 +28,9 @@ tags: ["ux-design", "interaction-feedback", "button-states", "loading"]
 
 ## 模組邊界
 
-| 放在本模組                              | 放在其他模組               |
-| --------------------------------------- | -------------------------- |
-| 按鈕點擊回饋（視覺 + 觸覺）             | 畫面狀態機設計（模組一）   |
-| 非同步操作等待指示（loading / spinner） | 錯誤訊息撰寫原則（模組四） |
-| 操作結果通知（SnackBar / Toast）        | 導航模式（模組五）         |
-| 防重複提交（debounce / disable）        | 表單驗證 UX（模組三）      |
+| 放在本模組                              | 放在其他模組                                                    |
+| --------------------------------------- | --------------------------------------------------------------- |
+| 按鈕點擊回饋（視覺 + 觸覺）             | 畫面狀態機設計（[模組一](/ux-design/01-screen-state-machine/)） |
+| 非同步操作等待指示（loading / spinner） | 錯誤訊息撰寫原則（[模組四](/ux-design/04-error-recovery/)）     |
+| 操作結果通知（SnackBar / Toast）        | 導航模式（[模組五](/ux-design/05-navigation-patterns/)）        |
+| 防重複提交（debounce / disable）        | 表單驗證 UX（[模組三](/ux-design/03-input-mechanism/)）         |

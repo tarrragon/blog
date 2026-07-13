@@ -1,18 +1,18 @@
 ---
 title: "按鈕狀態設計：一個按鈕的完整生命週期"
 date: 2026-07-13
-description: "按鈕不只有「能按」和「不能按」兩種狀態 — 完整設計需要涵蓋 default / hover / active / focus / disabled / loading 六種狀態。"
+description: "按鈕每種視覺狀態各傳達一種系統訊息 — 設計按鈕互動、無障礙焦點與非同步回饋時的狀態清單依據。"
 weight: 2
 tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 ---
 
 ## 核心觀念
 
-**一個按鈕在設計完成之前，不是只有「能按」和「不能按」兩種狀態。** 按鈕的每種狀態都傳達不同的系統訊息，缺少任何一種都會讓使用者失去判斷依據。
+**按鈕的每種視覺狀態都傳達一種系統訊息**，缺少任何一種，使用者就失去對應的判斷依據。「能按」和「不能按」只覆蓋其中兩種訊息 — 完整的設計還要回答游標懸停、鍵盤焦點、處理中這些狀態下系統要說什麼。
 
 按鈕狀態設計是互動回饋的載體 — [三層回饋模型](../feedback-three-layers/) 描述了「什麼時候給回饋」，本章節描述「用什麼視覺狀態給回饋」。
 
-## 六種基本狀態
+## 基本狀態
 
 | 狀態             | 觸發條件           | 傳達訊息               | 必要性         |
 | ---------------- | ------------------ | ---------------------- | -------------- |
@@ -107,6 +107,6 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 ## 參考來源
 
 - **Nielsen Norman Group: "Button States: Communicate Interaction"** — 按鈕各狀態如何傳達互動性的使用性研究
-- **Material Design 3: States**（m3.material.io/foundations/interaction/states）— Google 設計系統的互動狀態定義
+- **Material Design 3: States**（[m3.material.io/foundations/interaction/states](https://m3.material.io/foundations/interaction/states)）— Google 設計系統的互動狀態定義
 - **WCAG 2.1 Success Criterion 2.4.7: Focus Visible** — 焦點狀態可見性的無障礙標準
 - **Apple Human Interface Guidelines: Buttons** — Apple 的按鈕設計原則

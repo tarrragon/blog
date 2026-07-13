@@ -1,7 +1,7 @@
 ---
 title: "互動回饋三層模型：點擊確認、等待指示、結果通知"
 date: 2026-07-13
-description: "每個使用者操作需要三層回饋 — 即時確認、等待期間指示、最終結果通知。缺少任何一層都會觸發重複操作。"
+description: "使用者操作後的回饋依時間分層，缺層的症狀是重複提交與重複導航 — 診斷「按了沒反應」問題時的檢查框架。"
 weight: 1
 tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 ---
@@ -56,6 +56,10 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 | 部分成功 | 摘要 + 明細                | 告知哪些成功哪些失敗                     |
 
 **設計原則**：結果通知必須恢復按鈕到可操作狀態。操作結束後按鈕仍顯示 loading = 介面凍結。
+
+**空結果的呈現**：空狀態畫面要讓使用者分得出「查詢成功但沒有資料」和「還沒載入完」— 給明確文字（「沒有符合的結果」）與下一步建議（放寬條件、建立第一筆資料），載入中則維持等待指示。空狀態與錯誤狀態的措辭原則見[模組四：錯誤訊息撰寫原則](/ux-design/04-error-recovery/error-message-principles/)。
+
+**部分成功的呈現**：批次操作（匯入 100 筆、87 筆成功）用摘要加明細兩層：摘要先告知整體結果（「87 筆成功、13 筆失敗」），明細列出失敗項與各自的修正動作，讓使用者只需處理失敗的部分、而非重跑整批。
 
 ## 兩類按鈕的回饋設計
 
@@ -163,6 +167,6 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 - **Nielsen's 10 Usability Heuristics**（Nielsen Norman Group, 1994）— 啟發法 #1「系統狀態可見性」是回饋設計的理論基礎
 - **Doherty Threshold**（Doherty & Thadani, IBM 技術報告, 1982）— 400ms 回應時間門檻的原始研究
 - **Jakob Nielsen's Response Time Limits**（1993）— 100ms / 1s / 10s 三門檻模型
-- **Material Design 3: Interaction States**（Google, m3.material.io）— 按鈕互動狀態定義（loading indicator 是 M3 的獨立元件、引用見[時間感知與回應策略](../response-time-strategy/)）
+- **Material Design 3: Interaction States**（Google, [m3.material.io](https://m3.material.io/foundations/interaction/states)）— 按鈕互動狀態定義（loading indicator 是 M3 的獨立元件、引用見[時間感知與回應策略](../response-time-strategy/)）
 - **Apple Human Interface Guidelines: Feedback**（Apple Developer Documentation）— 回饋要可察覺、資訊明確並準確反映進度；本模組「即時、誠實的回應」是據此精神歸納的措辭、非 HIG 原句
-- **Laws of UX**（Jon Yablonski, lawsofux.com）— Doherty Threshold 的現代整理與應用案例
+- **Laws of UX**（Jon Yablonski, [lawsofux.com](https://lawsofux.com/doherty-threshold/)）— Doherty Threshold 的現代整理與應用案例
