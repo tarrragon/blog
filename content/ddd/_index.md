@@ -42,4 +42,4 @@ Aggregate 生命週期已有第一個 case（桌位與購物車）；bounded con
 
 ## Case 回補
 
-本模組的 case 來源是實際專案的開發記錄與 ticket：過去專案內處理掉的設計討論陸續回補成 [work-log](/work-log/) 文章（兩個專案、三十六篇），模組章節再引用這些 case。目前的 case 基底集中在兩個 Dart / Flutter 專案，章節的判準以敘事層抽象維持語言無關；跨生態的驗證隨其他語言模組的 case 累積補強。
+本模組的 case 來源是實際專案的開發記錄與 ticket：過去專案內處理掉的設計討論陸續回補成 [work-log](/work-log/) 文章（兩個專案），模組章節再引用這些 case。目前的 case 基底集中在兩個 Dart / Flutter 專案，章節的判準以敘事層抽象維持語言無關；跨生態的驗證隨其他語言模組的 case 累積補強。
