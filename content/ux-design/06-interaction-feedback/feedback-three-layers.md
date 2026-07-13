@@ -27,22 +27,22 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 | 觸覺回饋     | 震動                   | 行動裝置   |
 | 聲音回饋     | 輕微點擊聲             | 無障礙輔助 |
 
-**設計原則**：第一層回饋必須在 100ms 內出現。超過 100ms，使用者會感覺「沒反應」。這個門檻來自人類感知研究 — 100ms 以內的延遲被感知為即時反應。
+**設計原則**：第一層回饋必須在 100ms 內出現。這個門檻來自人類感知研究 — 100ms 以內的延遲被感知為即時反應，超過後點擊與回饋之間開始出現可察覺的落差，回饋就失去「確認」的效果。
 
 ### 第二層：等待指示（100ms - 10s）
 
 系統告知「正在處理你的請求」。
 
-| 等待時長   | 建議回饋                    | 說明                                            |
-| ---------- | --------------------------- | ----------------------------------------------- |
-| < 400ms    | 不需額外指示                | Doherty Threshold：400ms 內完成的操作感覺像即時 |
-| 400ms - 2s | Spinner / 按鈕 loading 狀態 | 簡單指示「還在跑」                              |
-| 2s - 10s   | 進度條或步驟指示            | 告知使用者「到哪了」                            |
-| > 10s      | 進度百分比 + 預估剩餘時間   | 超過 10s 使用者開始考慮放棄                     |
+| 等待時長   | 建議回饋                    | 說明                                                  |
+| ---------- | --------------------------- | ----------------------------------------------------- |
+| < 400ms    | 不需額外指示                | Doherty Threshold：400ms 內完成、人機互動不需互相等待 |
+| 400ms - 1s | Spinner / 按鈕 loading 狀態 | 簡單指示「還在跑」                                    |
+| 1s - 10s   | 進度條或步驟指示            | 告知使用者「到哪了」                                  |
+| > 10s      | 進度百分比 + 預估剩餘時間   | 超過 10s 使用者開始考慮放棄                           |
 
 **設計原則**：等待期間必須禁用觸發按鈕（disabled 狀態），防止使用者因焦慮而重複點擊導致重複提交。
 
-**400ms 門檻（Doherty Threshold）** 的實務意義：如果你的非同步操作通常在 400ms 內完成，可以不顯示 loading 指示器，直接跳到第三層的結果回饋。但仍需在第一層提供點擊確認。
+**400ms 門檻（Doherty Threshold）** 的實務意義：非同步操作通常在 400ms 內完成時，可省略 loading 指示器、直接跳到第三層的結果回饋（點擊確認仍要在第一層提供）。「400ms 內不顯示 loading」是後人從 Doherty 生產力研究衍生的設計慣例；各門檻的推導、以及實際延遲有快有慢時怎麼對表，見[時間感知與回應策略](../response-time-strategy/)。
 
 ### 第三層：結果通知
 
@@ -65,7 +65,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 完整三層回饋：
 
-```
+```text
 [idle] → 點擊 → [loading: disabled + spinner] → 完成 → [idle + 結果通知]
 ```
 
@@ -79,7 +79,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 僅需第一層 + 防連點：
 
-```
+```text
 [idle] → 點擊 → [視覺回饋 + 執行] → [完成]
 ```
 
@@ -161,8 +161,8 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 本章節整理的設計原則來自以下公開可用性研究與設計系統：
 
 - **Nielsen's 10 Usability Heuristics**（Nielsen Norman Group, 1994）— 啟發法 #1「系統狀態可見性」是回饋設計的理論基礎
-- **Doherty Threshold**（Doherty & Thadani, IBM Systems Journal, 1982）— 400ms 回應時間門檻的原始研究
+- **Doherty Threshold**（Doherty & Thadani, IBM 技術報告, 1982）— 400ms 回應時間門檻的原始研究
 - **Jakob Nielsen's Response Time Limits**（1993）— 100ms / 1s / 10s 三門檻模型
-- **Material Design 3: Interaction States**（Google, m3.material.io）— 按鈕狀態定義與 loading indicator 規範
-- **Apple Human Interface Guidelines: Feedback**（Apple Developer Documentation）— 「每個動作需要即時、誠實的回應」
+- **Material Design 3: Interaction States**（Google, m3.material.io）— 按鈕互動狀態定義（loading indicator 是 M3 的獨立元件、引用見[時間感知與回應策略](../response-time-strategy/)）
+- **Apple Human Interface Guidelines: Feedback**（Apple Developer Documentation）— 回饋要可察覺、資訊明確並準確反映進度；本模組「即時、誠實的回應」是據此精神歸納的措辭、非 HIG 原句
 - **Laws of UX**（Jon Yablonski, lawsofux.com）— Doherty Threshold 的現代整理與應用案例

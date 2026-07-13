@@ -23,9 +23,11 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 | Disabled         | 前置條件未滿足     | 「現在不能按」         | 必要           |
 | Loading          | 非同步操作處理中   | 「正在處理，請等待」   | 非同步按鈕必要 |
 
+前五種狀態出自 NN/g 與 Material Design 的互動狀態定義；Loading 是本模組針對非同步操作補充的狀態，通用互動狀態定義不含它 — 非同步按鈕的回饋需求（等待指示 + 防重複提交）讓它成為必要。
+
 ### Default
 
-按鈕的初始狀態。設計重點：讓使用者一眼辨識「這是個按鈕」。常見設計手法包括填色背景、邊框、圓角矩形、陰影。與普通文字或裝飾元素的區別必須明確。
+按鈕的初始狀態（[三層回饋模型](../feedback-three-layers/)的狀態流程圖以 `idle` 標記的就是這個狀態）。設計重點：讓使用者一眼辨識「這是個按鈕」。常見設計手法包括填色背景、邊框、圓角矩形、陰影。與普通文字或裝飾元素的區別必須明確。
 
 ### Hover（桌面端）
 
@@ -57,7 +59,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 
 ## 非同步按鈕的狀態流
 
-```
+```text
 [Default] ─點擊→ [Active] ─釋放→ [Loading] ─完成→ [Default + 結果通知]
                                       │
                                       └─失敗→ [Default + 錯誤訊息]
@@ -72,7 +74,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 
 ## 同步按鈕的狀態流
 
-```
+```text
 [Default] ─點擊→ [Active] ─釋放→ [Default]（操作在釋放時同步完成）
 ```
 
