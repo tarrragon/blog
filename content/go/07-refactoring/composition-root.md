@@ -6,7 +6,7 @@ weight: 7
 tags: ["go", "refactoring", "architecture"]
 ---
 
-composition root 的核心責任是集中建立具體依賴。domain 與 application 應依賴 port；`main` 或啟動層負責讀取 config、建立 adapter、組裝 usecase、註冊 handler 與啟動 server。
+[composition root](/ddd/knowledge-cards/composition-root/) 的核心責任是集中建立具體依賴。domain 與 application 應依賴 port；`main` 或啟動層負責讀取 config、建立 adapter、組裝 usecase、註冊 handler 與啟動 server。
 
 ## 本章目標
 
@@ -117,11 +117,13 @@ Go 章節只需要知道依賴怎麼接，真正的外部服務語意留給 Back
 
 - database client 建立、pool 與 [transaction](/backend/knowledge-cards/transaction/) 語意
 - Redis client、pipeline 與 cache 邊界
-- broker connection、[durable [queue](/backend/knowledge-cards/queue/)](/go/backend/knowledge-cards/durable-queue) 與重試
+- broker connection、[durable queue](/backend/knowledge-cards/durable-queue/) 與重試
 - platform secret、runtime limit 與部署環境
 
 Go 的 composition root 不需要重複教這些技術，只要把它們正確接上即可。
 
-## 與 Backend 教材的分工
+## 與 Backend、DDD 教材的分工
 
 本章處理 Go 程式如何組裝依賴。資料庫連線池、Redis client、broker connection、container secret 與平台設定會放在 Backend 對應模組；Go 章節只保留「誰依賴誰」與「在哪裡組裝」的設計。
+
+組裝責任的語言無關判準在 DDD 模組：組裝完成與否在 mock 測試裡沒有證言、驗法是 [接線測試](/ddd/knowledge-cards/wiring-test/)；把「每個入口在 production 可達」當成組裝層不變式的強制層選擇，見 [組裝層的可達性](/ddd/composition-root-reachability/)。
