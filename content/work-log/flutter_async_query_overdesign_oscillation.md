@@ -53,3 +53,4 @@ tags: ["flutter", "dart", "ddd", "yagni", "over-engineering", "refactoring", "as
 - 概念地基：[DDD 領域驅動設計指南](/ddd/) 的「從操作推導領域」——真需求清單的來源是使用者操作、不是系統完備性想像
 - 上游事件：[兩個 domain 各自實作同一個 API service](/work-log/flutter_duplicate_service_fake_coverage/)——本文的統一 API 架構正是那次架構債修正的產物，兩篇合起來是 v0.4 架構稽核的完整弧線
 - 同型原則：[#77「現在不決定」是合法選項](/report/decide-later-as-valid-option/)——設計期對想像需求的正確處置是「延後 + 條件」、不是先做起來放
+- 後續案例：[一行查詢放哪、一個測試留不留](/work-log/flutter_query_ownership_and_structurally_immune_test/)——同樣是查詢層的取捨，這次的膨脹方向是「為一個 `.where` 開一個空殼 service」，判準是「查詢誰擁有的資料就掛給誰」
