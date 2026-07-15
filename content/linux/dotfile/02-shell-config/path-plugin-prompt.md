@@ -27,6 +27,26 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 ```
 
+### PATH 可能被安裝器寫進非-repo 的檔案
+
+上面把 PATH 當成集中宣告的東西。但有一類 PATH 設定不是自己寫的：安裝器（Homebrew、rustup、nvm、conda）裝完後，常往 `~/.bashrc`、`~/.zprofile`、`~/.profile` 尾端 append 一行 init 或 PATH；官方 `.pkg` / 套件則丟 `/etc/paths.d/`（macOS）或 `/etc/profile.d/`（Linux）的系統檔。
+
+這些檔案多半不在 dotfile repo 的追蹤範圍。結果是：工具在原機上叫得動（那行被 append 過），換一台乾淨機器、dotfile 部署完之後，工具裝了、shell 卻 command not found——那行 init 沒被 repo 收錄。處理方式二選一：把安裝器寫的那行搬進自己管理的 `env.zsh`（重新宣告、由 repo 控制），或把對應 profile 收進 dotfile。安裝器輸出的「請把這行加進 `~/.bashrc`」就是一條未宣告依賴，見 [乾淨機器驗證](/linux/dotfile/00-dotfile-mindset/clean-machine-verification/)。
+
+### PATH 改動的三個作用域
+
+`export PATH=...` 只影響「執行這行的那個 shell 行程」。這帶出 bootstrap 常踩的陷阱：子行程改的 PATH 回不到父行程。
+
+bootstrap script 常分層——`install.sh` 呼叫 `install-<platform>.sh`，後者裝完套件管理器後 `eval "$(brew shellenv)"` 把 PATH 補上。但那個 eval 只改了子 script 自己的 PATH；控制權回到 `install.sh`（父行程）的共通層時 PATH 又沒了，下一步用到剛裝的工具就 command not found。同一個 PATH gap 要在三個作用域各補一次：
+
+| 作用域                | 誰需要                           | 怎麼補                                              |
+| --------------------- | -------------------------------- | --------------------------------------------------- |
+| 當前 bootstrap 子行程 | 子 script 裝完工具後立刻要用     | 子 script 內 `eval shellenv` / 補 PATH              |
+| 父 orchestrator 行程  | 父 script 後續共通層要用同一工具 | 父 script 自己也 eval 一次（子行程改動不上傳）      |
+| 未來的互動 shell      | 使用者開新 terminal 要用         | 寫進 dotfile 管理的 init（`env.zsh` / `.zprofile`） |
+
+漏掉任一個，症狀都是「這個 script 段落 command not found」，根因是那個作用域沒拿到 PATH。
+
 ## Plugin Manager 選型
 
 Zsh plugin manager 的選擇很多，差異主要在載入速度和功能豐富度：

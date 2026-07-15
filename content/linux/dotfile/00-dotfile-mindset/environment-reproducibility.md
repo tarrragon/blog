@@ -60,6 +60,8 @@ Unix 系統用檔名開頭的 `.` 標記隱藏檔。shell 配置（`.bashrc`、`
 
 跟著人走的（不管開哪個專案都要用的）→ 進 dotfile repo。跟著專案走的（專案 A 用 ESLint、專案 B 用 Biome）→ 留在專案 repo。
 
+這個判準管的是配置該放哪個 repo。有個相鄰但不同的失敗要另外注意：**一個全域使用的工具，它的來源 / binary 若寄居在某個別專案的 checkout 裡**（例如把 CLI 用 `--from ~/project/foo/tools/bar` 這種本地路徑安裝），它就有一條隱藏的 sibling-project 依賴——換機器時那個專案不在，工具就裝不回來，重建鏈斷在那個 checkout。全域工具的來源要能獨立取得（發佈的套件、獨立 repo、或收進 dotfile），不綁在另一個專案的目錄上。
+
 ### 不該進 Dotfile Repo 的
 
 - **私鑰、API key、token、密碼**。用 `.gitignore` 排除，敏感資訊放 secret manager 或加密管理（具體做法見[同步與 Secret 管理](/linux/dotfile/08-sync-bootstrap/sync-strategy-secret/)）。

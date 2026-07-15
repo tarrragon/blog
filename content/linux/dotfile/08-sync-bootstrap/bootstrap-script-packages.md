@@ -100,6 +100,8 @@ $SUDO pacman -Syu --noconfirm
 
 **交付完整可用的環境**：script 的職責是讓部署完的配置「能直接用」，所以它必須裝齊配置實際引用的每一樣東西，而不是假設它們已經在。一個常見的破綻是把依賴寫進 README 的「dependencies」清單、卻沒在 script 裡實作安裝——例如 `.zshrc` 引用了 oh-my-zsh、主題、外掛，但 install script 只裝了 zsh 本身，結果 stow 部署完、第一次開 shell 就因為找不到那些東西而報錯。README 列依賴是給人看的、不會被執行；要讓配置真的能用，那些依賴得由 script 自己裝（例如把外掛 git clone 進對應位置）。檢查方式是反過來從配置出發：把每個 config 會 source 或引用的外部東西列出來，逐一確認 script 有沒有負責把它裝上。
 
+**pin runtime 版本時要同時滿足兩個約束**：一是對外的（跟 prod 對齊 / 跟團隊對齊，見 [prod-parity](/linux/dotfile/10-prod-parity/)），二是對內的——script 自己要裝的工具鏈可能要求更新的 runtime。實例：pin 了某語言 runtime 的舊版，但 script 接著要裝的該語言工具（linter / language server）要求更新的最低版本，於是 pin 太舊反而讓自裝工具裝不起來。兩個約束可能衝突，pin 的版本要同時過這兩關。
+
 **可部分執行**的結構：拆成 function，允許只跑某一段。除錯時只想重新 deploy 配置、不想重裝套件，直接呼叫 `deploy_configs` 就好。進一步可以把每段拆成獨立 script（`scripts/install-packages.sh`、`scripts/deploy-configs.sh`），bootstrap 入口只是依序呼叫它們。
 
 ## 套件清單管理
