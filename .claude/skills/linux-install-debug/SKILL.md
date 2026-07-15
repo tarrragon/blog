@@ -83,6 +83,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.16.0 — install-and-verify 補「`command not found` 分診」段（macOS dotfiles bootstrap 冷測抽出）：三個不同根因（真沒裝 / 裝了但不在 PATH / 互動 shell 能用但 script 不能）分開修，不一律 install——`find` 決定沒裝 vs 裝了、`$PATH` 對照決定哪個目錄漏、互動 vs script 決定哪個作用域沒拿到；涵蓋安裝器把 PATH 寫進非-repo profile / 系統 drop-in、子行程改的 PATH 回不到父行程兩個機制
 **Version**: 1.15.0 — 第零步 + install-and-verify 補 apt/dpkg 失敗判讀（實測 Debian bookworm 容器裝 dotfile）：`Unable to locate` 三種可能（名字不同 / 沒打包退 GitHub releases / 打錯）、批次交易一個爛名字全滅（`-s` 模擬定位）、dpkg lock + 半裝復原（`dpkg --configure -a` + `--fix-broken`）、EOL 的 archive.debian.org 404、node/python 拉進整個語言生態該走 version manager；SKILL 第零步加 apt 解析階段判讀 + 路由
 **Version**: 1.14.0 — 監控段補「本地訂閱」：ntfy 訂閱也是 HTTP GET（curl -sN /json 零安裝 / 瀏覽器 / ntfy subscribe），桌面通知常駐 = user systemd 服務跑 curl /json | jq | notify-send；放盯著的工作機訂遠端、別放被監控機自己（循環）
 **Version**: 1.13.0 — 監控升為「主動建議」：裝新系統 / 反覆除服務失敗時先確認有無服務監控（`systemctl show sshd -p OnFailure`），沒有就分層推薦——預設最簡單（OnFailure + ntfy 公共站零 daemon、遠端至少掛 sshd），要更高安全 / 正式再自架 ntfy + 完整堆疊；install-and-verify 加「裝好後確認監控」段
