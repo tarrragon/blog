@@ -6,7 +6,7 @@ weight: 9
 tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 ---
 
-「資料變了、通知我」有兩種語意不同的載體。**domain event** 記錄離散事實：一件業務上發生過的事、以過去式命名、發布後不可變、消費者關心「發生了什麼」。**狀態流**發布連續觀測：某份資料的當前值、新值蓋過舊值、錯過中間值無妨、消費者關心「現在是什麼」。選錯載體的系統照樣能動——代價潛伏在演進裡：涵蓋面開始靠枚舉維持、事件語意被消費端綁架。本章的判準一句話：**看消費者問的問題**。問「發生了什麼」給事件、問「現在是什麼」給狀態流。
+「資料變了、通知我」有兩種語意不同的載體。**[domain event](/ddd/knowledge-cards/domain-event/)** 記錄離散事實：一件業務上發生過的事、以過去式命名、發布後不可變、消費者關心「發生了什麼」。**狀態流**發布連續觀測：某份資料的當前值、新值蓋過舊值、錯過中間值無妨、消費者關心「現在是什麼」。選錯載體的系統照樣能動——代價潛伏在演進裡：涵蓋面開始靠枚舉維持、事件語意被消費端綁架。本章的判準一句話：**看消費者問的問題**。問「發生了什麼」給事件、問「現在是什麼」給狀態流。
 
 ## 兩種載體的語意對照
 
@@ -69,7 +69,4 @@ tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 
 ## 下一步
 
-- 狀態流出口的三層歸屬（契約／機制／組裝）：[觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)
-- 讀側何時值得為事件同步的投影付成本：[讀模型的升級判準](/ddd/read-model-upgrade-signals/)
-- 案例演進全文（導航補償 → 事件橋接 → 狀態流）：[ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)
-- 事件命名與語意承諾：[Domain Event 命名的過去式](/work-log/domain_event_naming_past_tense/)
+決定用狀態流之後，先讀 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/) 搞清楚契約、機制、組裝分別放哪一層，再進 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/) 看案例從導航補償到狀態流的完整演進。事件命名的過去式約定（為什麼叫 `BookAdded` 而不是 `AddBook`）展開在 [Domain Event 命名的過去式](/work-log/domain_event_naming_past_tense/)。讀側若走到階梯高處、要用事件同步投影的代價評估，見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。

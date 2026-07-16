@@ -10,7 +10,7 @@ read model 是為讀需求的形狀而建的查詢側模型：畫面或報表要
 
 ## 概念位置
 
-read model 是 CQRS 讀寫分離的讀側，但它的存在不以 CQRS 全套為前提——讀側是一道階梯：消費端自行投影、讀 port 抽離、專用投影、事件同步的獨立儲存，每一階都是 read model 概念的某種深度。低階的 read model 可以只是 ViewModel 裡幾行 `map`；高階的 read model 有自己的儲存與更新節奏，接受與寫側的最終一致性。
+read model 是 CQRS 讀寫分離的讀側，與 [aggregate root](/ddd/knowledge-cards/aggregate-root/) 的寫側形成互補：aggregate 守一致性邊界、read model 服務讀的形狀。它的存在不以 CQRS 全套為前提——讀側是一道階梯：消費端自行投影、讀 port 抽離（獨立的 [port](/ddd/knowledge-cards/port/)）、專用投影、事件同步的獨立儲存，每一階都是 read model 概念的某種深度。低階的 read model 可以只是 ViewModel 裡幾行 `map`；高階的 read model 有自己的儲存與更新節奏，接受與寫側的最終一致性。階梯橫跨 ephemeral（ViewModel 內聯投影，沒有獨立生命週期）到 durable（獨立儲存、事件同步），但各階共享同一個設計責任——「讀的形狀由讀需求定義、不由 aggregate 形狀決定」——因此視為同一概念的深度變體。
 
 ## 可觀察訊號
 

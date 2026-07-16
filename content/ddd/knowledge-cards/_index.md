@@ -30,3 +30,4 @@ weight: -1
 | [Wiring Test](/ddd/knowledge-cards/wiring-test/)                   | 零 override 驗組裝——port 插上 adapter 的唯一證言      |
 | [Placeholder](/ddd/knowledge-cards/placeholder/)                   | 先立介面後補實作的中間態——失效比文件層約束更靜默      |
 | [Read Model](/ddd/knowledge-cards/read-model/)                     | 為讀需求的形狀而建的查詢側模型——與 aggregate 形狀分離 |
+| [Domain Event](/ddd/knowledge-cards/domain-event/)                 | 已發生的業務事實——過去式、不可變、錯過代表事實遺失    |

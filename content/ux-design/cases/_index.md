@@ -31,3 +31,4 @@ tags: ["ux-design", "case-study"]
 | [U.C5](/ux-design/cases/export-button-zero-feedback/)              | 匯出按鈕按下零回饋                 | book_overview_app | 模組六    | 三層回饋全缺（UI 未接線）                  |
 | [U.C6](/ux-design/cases/back-navigation-stale-statistics/)         | 加書後返回不刷新統計               | book_overview_app | 模組一    | 只設計進入時載入（happy-path-only 資料版） |
 | [U.C7](/ux-design/cases/misleading-no-result-for-product-barcode/) | 商品條碼的誤導性查無結果           | book_overview_app | 模組三/六 | 輸入驗證未前移、錯誤訊息誤導               |
+| [U.C8](/ux-design/cases/tag-row-touch-target-scope/)               | 標籤行只有箭頭可點                 | book_overview_app | 模組六    | 觸控目標小於視覺單元                       |

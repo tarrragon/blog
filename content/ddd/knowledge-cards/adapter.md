@@ -10,7 +10,7 @@ adapter 是 [port](/ddd/knowledge-cards/port/) 的具體實作：把領域宣告
 
 ## 概念位置
 
-adapter 有兩側。driven adapter 被領域呼叫（資料庫、外部服務的實作）；driving adapter 呼叫領域（UI 事件處理、API handler）。兩側的共同責任是翻譯：領域語言與技術語言在這裡互換、不讓任何一邊的詞彙滲到對面。
+adapter 有兩側。driven adapter 被領域呼叫（資料庫、外部服務的實作）；driving adapter 呼叫領域（UI 事件處理、API handler）。兩側的共同責任是翻譯：領域語言與技術語言在這裡互換、不讓任何一邊的詞彙滲到對面。adapter 對外接的介面是 [port](/ddd/knowledge-cards/port/)、兩者插上的位置是 [composition root](/ddd/knowledge-cards/composition-root/)。
 
 ## 可觀察訊號
 
@@ -18,4 +18,4 @@ adapter 有兩側。driven adapter 被領域呼叫（資料庫、外部服務的
 
 ## 設計責任
 
-adapter 寫完、測試通過，只證明它自己行為正確；它有沒有被插上 port、插的是不是它，是組裝層的問題。接線的證言與強制層選擇見 [組裝層的可達性](/ddd/composition-root-reachability/)。
+adapter 寫完、測試通過，只證明它自己行為正確；它有沒有被插上 port、插的是不是它，是組裝層的問題。接線的證言與強制層選擇見 [組裝層的可達性](/ddd/composition-root-reachability/)。adapter 作為變更偵測機制的具體歸屬案例（寫入點 emit vs 儲存層 hook 的選型）見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。

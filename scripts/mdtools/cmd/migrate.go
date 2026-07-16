@@ -64,7 +64,11 @@ func migrateFixLinks(args []string) int {
 		return 2
 	}
 
-	fixes, unresolvable := mdmigrate.FindFixes(g, cfg.Cards.CardsRoot)
+	cardsRoot := ""
+	if len(cfg.Cards.CardsRoots) > 0 {
+		cardsRoot = cfg.Cards.CardsRoots[0]
+	}
+	fixes, unresolvable := mdmigrate.FindFixes(g, cardsRoot)
 
 	fmt.Printf("L1 fixes proposed: %d\n", len(fixes))
 	fmt.Printf("unresolvable:      %d\n", len(unresolvable))

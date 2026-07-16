@@ -1,8 +1,8 @@
 ---
-title: "StreamProvider 包 repository watch stream — broadcast、初始值、dispose 三個實作點"
+title: "StreamProvider 包 repository watch stream — broadcast、初始值、dispose 實作點"
 date: 2026-07-16
 draft: false
-description: "repository 要補 Stream 觀測出口、接給 Riverpod 消費時使用。訂閱模型選 broadcast 還是單訂閱、新訂閱者拿不拿得到當下狀態、controller 誰負責關——三個問題各有一個會靜默失效的預設答案。"
+description: "repository 要補 Stream 觀測出口、接給 Riverpod 消費時使用。訂閱模型選 broadcast 還是單訂閱、新訂閱者拿不拿得到當下狀態、controller 誰負責關——每個問題各有一個會靜默失效的預設答案。"
 tags: ["flutter", "dart", "riverpod", "stream", "repository", "state-management", "testing"]
 ---
 
@@ -33,7 +33,7 @@ Stream<List<Book>> watchBooks() {
 
 ## 實作點一：訂閱模型選 broadcast
 
-repository 的觀測出口天生多訂閱者——書庫清單、統計頁、待補完列表同時在聽。`StreamController()` 預設建構子是單訂閱、第二個訂閱者出現時直接 throw `Bad state`；這個選型的完整分析（含單訂閱在只有一個訂閱者期間完全沉默的潛伏機制）在 [StreamController single vs broadcast](/work-log/dart_stream_controller_single_vs_broadcast/)。
+因為書庫清單、統計頁、待補完列表都要同時觀察同一份資料，這個觀測出口有多個訂閱者。`StreamController()` 預設建構子是單訂閱、第二個訂閱者出現時直接 throw `Bad state`；這個選型的完整分析（含單訂閱在只有一個訂閱者期間完全沉默的潛伏機制）在 [StreamController single vs broadcast](/work-log/dart_stream_controller_single_vs_broadcast/)。
 
 ```dart
 class SQLiteBookRepository implements BookRepository {
@@ -116,11 +116,10 @@ repository 有介面就有替身；替身漏掉 `watchBooks()` 會出現「produ
 | 訂閱當下要有值嗎？ | 要 → 組裝層先 `yield` 當前值                        | broadcast 不補歷史：畫面空到下次寫入 |
 | controller 誰關？  | repository 持有、`close()` 一起關 + `isClosed` 防護 | 洩漏、或 close 後寫入路徑拋例外      |
 
+本文範圍只涵蓋成功路徑。第四個問題——查詢失敗時 stream 該 `addError` 傳播還是吞掉——這裡沒有處理：`_emitCurrentBooks` 裡 `getAllBooks()` 拋例外時目前走 `isClosed` 防護的外圍、不會 `addError`，消費端收不到錯誤通知。失敗傳播的設計（要不要讓 `StreamProvider` 進 `AsyncError` 狀態、重試策略）是獨立主題。
+
 介面歸屬的提醒收在最後：`watchBooks()` 的需求來自 Riverpod 消費端，但介面簽名只用 `dart:async Stream` 加 domain entity，所以它屬於 domain repository 介面——歸屬由介面用什麼語言表達決定，需求來自誰只決定介面該不該存在。Riverpod 型別止步於 `watchBooksProvider`、SQLite 型別止步於實作類，這條線就是三層各自的邊界。
 
 ## 下一步
 
-- 為什麼要有這個 stream、補償刷新的三段演進：[ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)
-- 契約／機制／組裝的歸屬判準：[觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)
-- 訂閱模型的完整選型分析：[StreamController single vs broadcast](/work-log/dart_stream_controller_single_vs_broadcast/)
-- 這條 stream 跟 domain event 的分工：[domain event 與狀態流](/ddd/domain-event-vs-state-stream/)
+補了觀測出口但還沒搞懂為什麼之前的導航補償和 EventBus 橋接不夠，先讀 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)。三層各自該放哪一層、判準怎麼來的，見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。單訂閱 vs broadcast 的完整選型分析在 [StreamController single vs broadcast](/work-log/dart_stream_controller_single_vs_broadcast/)。觀測出口跟 domain event 各管什麼，見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。

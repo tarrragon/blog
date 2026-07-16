@@ -22,10 +22,14 @@ func Check(roots []string, cfg rules.Config) ([]report.Violation, error) {
 		out = append(out, checkL1LinkValidity(g)...)
 	}
 	if cfg.Cards.CheckOrphans {
-		out = append(out, checkL2Orphans(g, cfg.Cards.CardsRoot)...)
+		for _, root := range cfg.Cards.CardsRoots {
+			out = append(out, checkL2Orphans(g, root)...)
+		}
 	}
 	if cfg.Cards.CheckK4StructureLinks {
-		out = append(out, checkL4K4Structure(g, cfg.Cards.CardsRoot, cfg.Cards.K4ConceptPositionTitle)...)
+		for _, root := range cfg.Cards.CardsRoots {
+			out = append(out, checkL4K4Structure(g, root, cfg.Cards.K4ConceptPositionTitle)...)
+		}
 	}
 	if cfg.Cards.CheckSectionWeightConsistency {
 		out = append(out, checkL5SectionWeightConsistency(g, cfg.Cards.WeightExemptSections)...)

@@ -49,7 +49,9 @@ Stream<List<Book>> watchBooks();
 
 用需求來源判歸屬會兩頭錯：把說 domain 語言的介面推到外層，domain 的資料能力（「我管理的資料變了、我能告訴你」）散落到 infrastructure 或 presentation 的 service 裡；或者反過來，以「需求是 domain 相關」為由把帶框架型別的介面塞進 domain。
 
-契約層還有一個二擇：放既有 repository 介面、還是抽獨立的查詢 port？本案放既有介面——讀需求只有「完整書單流」一條、六個視圖都能從書單流投影，為一個方法抽 port 是介面碎片化。這個「何時該抽」的判準有自己的一章：[讀模型的升級判準](/ddd/read-model-upgrade-signals/)。
+契約層還有一個二擇：放既有 repository 介面、還是抽獨立的查詢 port？本案放既有介面——讀需求只有「完整書單流」一條、六個視圖都能從書單流投影，為一個方法抽 port 是介面碎片化。這個「何時該抽」的判準有自己的一章：[讀模型的升級判準](/ddd/read-model-upgrade-signals/)。讀 port 一旦抽出，仍屬契約層的延伸——簽名同樣只用 domain 語言，機制層與組裝層的三分模型對它同樣適用。
+
+語言歸屬判準處理的是「詞彙是否洩漏」這一種反對意見。DDD 文獻裡存在另一派更根本的立場：即使簽名純淨，Repository 模式在 Evans / Vernon 的原始定義裡是集合式存取，reactive 訂閱能力本質上服務查詢端、屬於讀側的關注點，不論詞彙是否純淨都不該掛在寫側 aggregate 的 repository 介面上。這個立場涉及讀寫分離的組織方式（讀 port 何時值得獨立、CQRS 階梯的升級判準），跟詞彙判準各自回答不同的問題：詞彙判準回答「語言有沒有洩漏」，讀寫分離判準回答「職責該不該分離」。本章只處理前者；後者見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。
 
 ## 機制層：變更偵測是 adapter 的實作細節
 
@@ -94,7 +96,7 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 
 ## 下一步
 
-- 契約層「放既有介面 vs 抽讀 port」的升級時機：[讀模型的升級判準](/ddd/read-model-upgrade-signals/)
-- 觀測出口與 domain event 的語意分界：[domain event 與狀態流](/ddd/domain-event-vs-state-stream/)
-- 補償演進與 Riverpod reactive 邊界的案例全文：[ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)
-- 機制層與組裝層的實作點（broadcast、初始值、dispose）：[StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)
+三分的判準確定之後，下一個問題通常是「要不要抽讀 port」——先讀 [讀模型的升級判準](/ddd/read-model-upgrade-signals/) 再做這個決策。還沒建觀測出口、仍在用事件或導航補償的話，回頭讀 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/) 先確認載體選擇，確認要用狀態流再進本章。
+
+- 補償演進與 Riverpod reactive 邊界的案例全文 → [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)
+- 機制層與組裝層的實作點（broadcast、初始值、dispose）→ [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)

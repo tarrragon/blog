@@ -79,7 +79,7 @@ type FrontMatterRules struct {
 
 // CardRules governs §7 of the spec.
 type CardRules struct {
-	CardsRoot              string // "content/backend/knowledge-cards"
+	CardsRoots             []string // e.g. []string{"content/backend/knowledge-cards", "content/ddd/knowledge-cards"}
 	CheckLinkValidity      bool   // L1
 	CheckOrphans           bool   // L2
 	CheckK4StructureLinks  bool   // L4
@@ -137,7 +137,11 @@ func Default() Config {
 			Disallowed:     []string{"author", "permalink"},
 		},
 		Cards: CardRules{
-			CardsRoot:                     "content/backend/knowledge-cards",
+			CardsRoots: []string{
+				"content/backend/knowledge-cards",
+				"content/ddd/knowledge-cards",
+				"content/ux-design/knowledge-cards",
+			},
 			CheckLinkValidity:             true,
 			CheckOrphans:                  true,
 			CheckK4StructureLinks:         true,
