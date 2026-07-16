@@ -6,7 +6,7 @@ weight: 9
 tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 ---
 
-「資料變了、通知我」有兩種語意不同的載體。**[domain event](/ddd/knowledge-cards/domain-event/)** 記錄離散事實：一件業務上發生過的事、以過去式命名、發布後不可變、消費者關心「發生了什麼」。**狀態流**發布連續觀測：某份資料的當前值、新值蓋過舊值、錯過中間值無妨、消費者關心「現在是什麼」。選錯載體的系統照樣能動——代價潛伏在演進裡：涵蓋面開始靠枚舉維持、事件語意被消費端綁架。本章的判準一句話：**看消費者問的問題**。問「發生了什麼」給事件、問「現在是什麼」給狀態流。
+「資料變了、通知我」有兩種語意不同的載體。**[domain event](/ddd/knowledge-cards/domain-event/)** 記錄離散事實：一件業務上發生過的事、以過去式命名、發布後不可變、消費者關心「發生了什麼」。**[狀態流](/ddd/knowledge-cards/state-stream/)**發布連續觀測：某份資料的當前值、新值蓋過舊值、錯過中間值無妨、消費者關心「現在是什麼」。選錯載體的系統照樣能動——代價潛伏在演進裡：涵蓋面開始靠枚舉維持、事件語意被消費端綁架。本章的判準一句話：**看消費者問的問題**。問「發生了什麼」給事件、問「現在是什麼」給狀態流。
 
 ## 兩種載體的語意對照
 
@@ -25,7 +25,7 @@ tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 
 ## 案例：一條斜坡的三步
 
-一個書庫管理 App 的統計頁需要在資料變更後刷新。repository 是純 pull 介面、沒有狀態流出口；但專案有現成的 EventBus 和數十個 domain event 發布點。「用既有的事件當刷新訊號」看起來是零成本的選擇——這是斜坡的入口。
+一個書庫管理 App 的統計頁需要在資料變更後刷新。repository 是純 pull 介面、沒有狀態流出口；但專案有現成的 EventBus——行程內的發布／訂閱事件匯流排——和數十個 domain event 發布點。「用既有的事件當刷新訊號」看起來是零成本的選擇——這是斜坡的入口。
 
 **第一步：橋接**。用 `StreamProvider` 包 EventBus、ViewModel 監聽事件流、任何事件進來就重新查詢統計。上線有效：匯入完成事件、同步事件都正確觸發刷新。
 
@@ -65,7 +65,7 @@ tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 
 ## 邊界
 
-本章的判準處理「資料變更通知」這一種需求的載體選擇。事件系統本身的設計（命名、粒度、跨 domain 契約）是獨立主題；狀態流的實作選型（broadcast、初始值、生命週期）在 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。另外，CQRS 階梯頂端「以事件同步讀模型」是事件的合法消費——那裡的消費者問的確實是「發生了什麼」（用事實重建投影），與把事件當刷新鈴聲不同層；階梯全貌見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。這也標出本章「兩者正交」論述的架構前提：狀態存在獨立儲存、事件只是旁支通知。event-sourced 架構把這個前提拿掉——狀態流成為事件的投影、由同一條事件流重建，兩條管線不再獨立，正交性讓位給「讀模型由事件同步」的第四階語意。
+本章的判準處理「資料變更通知」這一種需求的載體選擇。事件對另外兩種離散訊息（命令、查詢）的責任結構分界在 [domain event 與命令、查詢](/ddd/domain-event-vs-command-and-query/)；狀態流的實作選型（broadcast、初始值、生命週期）在 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。另外，CQRS 階梯頂端「以事件同步讀模型」是事件的合法消費——那裡的消費者問的確實是「發生了什麼」（用事實重建投影），與把事件當刷新鈴聲不同層；階梯全貌見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。這也標出本章「兩者正交」論述的架構前提：狀態存在獨立儲存、事件只是旁支通知。event-sourced 架構把這個前提拿掉——狀態流成為事件的投影、由同一條事件流重建，兩條管線不再獨立，正交性讓位給「讀模型由事件同步」的第四階語意。
 
 ## 下一步
 

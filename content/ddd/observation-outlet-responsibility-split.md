@@ -6,7 +6,7 @@ weight: 7
 tags: ["ddd", "repository", "hexagonal-architecture", "reactive", "port"]
 ---
 
-觀測出口是 repository 對外提供的「資料變了」持續通知能力——pull 介面（`getAllBooks()` 回 `Future`）的 push 對應（`watchBooks()` 回 `Stream`）。UI 框架要 reactive 觀察 domain 資料時，這個能力橫跨三層，職責三分：**契約**（介面宣告，歸 domain）、**機制**（變更偵測，歸 infrastructure）、**組裝**（框架訂閱，歸 DI／presentation 層）。三分的判準只有一條：**每一層的產出用什麼語言表達、就歸屬表達那種語言的層**。
+[觀測出口](/ddd/knowledge-cards/observation-outlet/)是 repository 對外提供的「資料變了」持續通知能力——pull 介面（`getAllBooks()` 回 `Future`）的 push 對應（`watchBooks()` 回 `Stream`）。UI 框架要 reactive 觀察 domain 資料時，這個能力橫跨三層，職責三分：**契約**（介面宣告，歸 domain）、**機制**（變更偵測，歸 infrastructure）、**組裝**（框架訂閱，歸 DI／presentation 層）。三分的判準只有一條：**每一層的產出用什麼語言表達、就歸屬表達那種語言的層**。
 
 這條判準值得成章，因為它跟一個直覺衝突：觀測出口的需求完全來自消費端——是 UI 框架想觀察、domain 自己沒有這個需要。「誰需要就放誰那層」的直覺會把 Stream 出口做進 presentation 的某個 service，讓 domain 保持「純淨」；本章論證這個直覺用錯了判準的位置。
 
@@ -21,7 +21,7 @@ tags: ["ddd", "repository", "hexagonal-architecture", "reactive", "port"]
 | 待補完列表   | 衍生自一次性 `FutureProvider`  | 高：上游無失效機制            |
 | 其餘三個視圖 | 各自命令式載入                 | 低到中：同頁操作後手動 reload |
 
-根因是同一個：repository 沒有變更通知出口，六個視圖各自在圖外解「怎麼知道資料變了」這一題，解出兩種補償策略（導航返回點重載、domain event 橋接）、職責交叉且涵蓋不完整。補償演進的完整記錄在 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)；本章從這個案例抽三層歸屬的判準。
+根因是同一個：repository 沒有變更通知出口，六個視圖各自在圖外解「怎麼知道資料變了」這一題，解出兩種補償策略（導航返回點重載、經 EventBus——行程內的發布／訂閱事件匯流排——的 domain event 橋接）、職責交叉且涵蓋不完整。補償演進的完整記錄在 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)；本章從這個案例抽三層歸屬的判準。
 
 ## 契約層：歸屬由介面語言決定、不由需求來源決定
 
