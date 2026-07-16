@@ -33,15 +33,17 @@ tags: ["flutter", "dart", "mobile"]
 
 ### 狀態與渲染
 
-| 主題                      | 既有 case                                                                                                            |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| 重繪訊號與按需 render     | [重繪訊號排查與心跳做法](/work-log/flutter_repaint_heartbeat/)、[scheduleFrame()](/work-log/flutter_schedule_frame/) |
-| 命中測試                  | [HitTestBehavior 三種模式](/work-log/flutter_hit_test_behavior/)                                                     |
-| 系統資源邊界              | [App 音量 vs 系統音量](/work-log/flutter_audio_volume_control/)                                                      |
-| Riverpod 容器與狀態作用域 | [雙容器狀態脫節：App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)                      |
-| ephemeral 流程狀態        | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)                                |
-| async gap 與 ref 生命週期 | [await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)                                         |
-| 版面約束與溢出預防        | [溢出 714px、22 個測試同時紅](/work-log/flutter_renderflex_overflow_prevention_spec/)                                |
+| 主題                                | 既有 case                                                                                                               |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 重繪訊號與按需 render               | [重繪訊號排查與心跳做法](/work-log/flutter_repaint_heartbeat/)、[scheduleFrame()](/work-log/flutter_schedule_frame/)    |
+| 命中測試                            | [HitTestBehavior 三種模式](/work-log/flutter_hit_test_behavior/)                                                        |
+| 系統資源邊界                        | [App 音量 vs 系統音量](/work-log/flutter_audio_volume_control/)                                                         |
+| Riverpod 容器與狀態作用域           | [雙容器狀態脫節：App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)                         |
+| Riverpod 的 reactive 邊界           | [加書後統計不刷新：ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/) |
+| StreamProvider 包 repository stream | [broadcast、初始值、dispose 三個實作點](/work-log/flutter_streamprovider_wraps_repository_watch/)                       |
+| ephemeral 流程狀態                  | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)                                   |
+| async gap 與 ref 生命週期           | [await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)                                            |
+| 版面約束與溢出預防                  | [溢出 714px、22 個測試同時紅](/work-log/flutter_renderflex_overflow_prevention_spec/)                                   |
 
 ### 測試
 
