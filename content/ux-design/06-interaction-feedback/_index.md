@@ -20,12 +20,12 @@ tags: ["ux-design", "interaction-feedback", "button-states", "loading"]
 
 ## 章節
 
-| 章節                                          | 主題                              | 回答問題                     |
-| --------------------------------------------- | --------------------------------- | ---------------------------- |
-| [互動回饋三層模型](feedback-three-layers/)    | 三層模型 + 畫面級狀態轉換         | 使用者按了按鈕為什麼沒反應？ |
-| [按鈕狀態設計](button-state-design/)          | 按鈕各狀態傳達的系統訊息          | 一個按鈕需要幾種狀態？       |
-| [時間感知與回應策略](response-time-strategy/) | 等待時間的回饋策略 + 感知效能技巧 | 什麼時候該顯示 Loading？     |
-| [通知模式選擇](notification-pattern-selection/)  | SnackBar / Dialog / Banner / Bottom Sheet 判準 | 結果通知該用什麼形式呈現？   |
+| 章節                                            | 主題                                           | 回答問題                     |
+| ----------------------------------------------- | ---------------------------------------------- | ---------------------------- |
+| [互動回饋三層模型](feedback-three-layers/)      | 三層模型 + 畫面級狀態轉換                      | 使用者按了按鈕為什麼沒反應？ |
+| [按鈕狀態設計](button-state-design/)            | 按鈕各狀態傳達的系統訊息                       | 一個按鈕需要幾種狀態？       |
+| [時間感知與回應策略](response-time-strategy/)   | 等待時間的回饋策略 + 感知效能技巧              | 什麼時候該顯示 Loading？     |
+| [通知模式選擇](notification-pattern-selection/) | SnackBar / Dialog / Banner / Bottom Sheet 判準 | 結果通知該用什麼形式呈現？   |
 
 每篇文末附設計檢查清單，可直接作為 code review 與規格驗收的依據。
 
