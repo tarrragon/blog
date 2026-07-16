@@ -61,7 +61,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 **部分成功的呈現**：批次操作（匯入 100 筆、87 筆成功）用摘要加明細兩層：摘要先告知整體結果（「87 筆成功、13 筆失敗」），明細列出失敗項與各自的修正動作，讓使用者只需處理失敗的部分、而非重跑整批。
 
-本篇聚焦「該通知什麼」；SnackBar / Toast / dialog 之間的形式選擇（干擾程度 × 是否需要使用者操作）與螢幕閱讀器的通知宣告（aria-live / aria-busy）屬通知模式與無障礙實作，在本篇範圍外。
+本篇聚焦「該通知什麼」；SnackBar / Dialog / Banner / Bottom Sheet 之間的形式選擇由[通知模式選擇](../notification-pattern-selection/)展開。螢幕閱讀器的通知宣告（aria-live / aria-busy）屬無障礙實作，不在本模組範圍。
 
 ## 兩類按鈕的回饋設計
 

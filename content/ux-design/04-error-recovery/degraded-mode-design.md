@@ -54,7 +54,7 @@ Degraded mode 是指系統的部分功能因為外部依賴不可用（網路斷
 
 ### 進入
 
-依賴不可用時自動進入降級狀態。進入時通知使用者（Snackbar、橫幅、狀態變更）。
+依賴不可用時自動進入降級狀態。降級是持續性狀態，進入時用 Banner（橫幅）通知使用者比 SnackBar 合適 — SnackBar 消失後使用者會忘記自己在降級中（[通知模式選擇](/ux-design/06-interaction-feedback/notification-pattern-selection/)）。
 
 避免頻繁切換 — 網路訊號不穩定時，每秒在正常和降級之間切換會讓 UI 閃爍。加入穩定性判斷（連續 N 秒不可用才進入降級，連續 N 秒可用才退出降級）。
 

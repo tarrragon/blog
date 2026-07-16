@@ -71,7 +71,7 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 1. **Active → Loading 的過渡** 在使用者釋放點擊後立即發生（不等伺服器回應）
 2. **Loading 期間按鈕 disabled** — 這是設計需求不是實作細節
 3. **Loading → Default 必須發生** — 不論成功失敗，按鈕必須恢復可操作狀態
-4. **結果通知獨立於按鈕** — 成功/失敗訊息用 SnackBar、Toast 或畫面更新呈現，不塞在按鈕裡
+4. **結果通知獨立於按鈕** — 成功/失敗訊息用 SnackBar 或畫面更新呈現（形式選擇見[通知模式選擇](../notification-pattern-selection/)），不塞在按鈕裡
 
 ## 同步按鈕的狀態流
 
