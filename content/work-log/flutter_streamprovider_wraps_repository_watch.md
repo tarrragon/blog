@@ -116,7 +116,7 @@ repository 有介面就有替身；替身漏掉 `watchBooks()` 會出現「produ
 | 訂閱當下要有值嗎？ | 要 → 組裝層先 `yield` 當前值                        | broadcast 不補歷史：畫面空到下次寫入 |
 | controller 誰關？  | repository 持有、`close()` 一起關 + `isClosed` 防護 | 洩漏、或 close 後寫入路徑拋例外      |
 
-本文範圍只涵蓋成功路徑。第四個問題——查詢失敗時 stream 該 `addError` 傳播還是吞掉——這裡沒有處理：`_emitCurrentBooks` 裡 `getAllBooks()` 拋例外時目前走 `isClosed` 防護的外圍、不會 `addError`，消費端收不到錯誤通知。失敗傳播的設計（要不要讓 `StreamProvider` 進 `AsyncError` 狀態、重試策略）是獨立主題。
+本文範圍只涵蓋成功路徑。第四個問題——查詢失敗時 stream 該 `addError` 傳播還是吞掉——這裡沒有處理：`_emitCurrentBooks` 裡 `getAllBooks()` 拋例外時目前走 `isClosed` 防護的外圍、不會 `addError`，消費端收不到錯誤通知。失敗傳播的設計（要不要讓 `StreamProvider` 進 `AsyncError` 狀態、重試策略）是獨立主題；設計時要把 Riverpod 3 的預設行為算進去——失敗的 provider 會被自動重試（`ProviderScope` 的 `retry` 參數可關閉或調整間隔），`addError` 進到 provider 層的後果跟 2.x 不同。
 
 介面歸屬的提醒收在最後：`watchBooks()` 的需求來自 Riverpod 消費端，但介面簽名只用 `dart:async Stream` 加 domain entity，所以它屬於 domain repository 介面——歸屬由介面用什麼語言表達決定，需求來自誰只決定介面該不該存在。Riverpod 型別止步於 `watchBooksProvider`、SQLite 型別止步於實作類，這條線就是三層各自的邊界。
 

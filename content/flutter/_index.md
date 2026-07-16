@@ -8,6 +8,14 @@ tags: ["flutter", "dart", "mobile"]
 
 本模組收 Flutter 與 Dart 的實作層知識：語言機制、框架行為、測試策略與工具鏈。內容從實際專案的 case 抽出——每個判準都有踩過的情境支撐，不是官方文件的轉述。設計理論的地基在 [DDD 領域驅動設計指南](/ddd/)（[entity 與 value object 的判準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)），本模組承擔的是「這些理論在 Dart 生態碰到什麼實作限制」：例如 copyWith 與 freezed 的預設路徑如何影響領域模型的完整性。
 
+## 章節
+
+章節從 case 聚類長出——同主題 case 累積到臨界量、互相引用密集時，才值得一篇判準層的聚合章：
+
+| 章節                                                              | 核心問題                                                                | 聚合的 case                        |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------- |
+| [Riverpod 的 reactive 邊界](/flutter/riverpod-reactive-boundary/) | reactive 保證只覆蓋 provider 圖內部——變化在圖上嗎、哪個容器、節點活著嗎 | 空間／涵蓋／接入／時間四邊界共五篇 |
+
 ## 章節大綱（backlog）
 
 大綱是 backlog、章節邊界隨 case 回補調整。章節群從既有 work-log case 聚類而來：
@@ -43,6 +51,7 @@ tags: ["flutter", "dart", "mobile"]
 | StreamProvider 包 repository stream | [broadcast、初始值、dispose 實作點](/work-log/flutter_streamprovider_wraps_repository_watch/)                           |
 | ephemeral 流程狀態                  | [只活在結帳流程裡的領域物件](/work-log/flutter_ephemeral_domain_object_rx_immutable/)                                   |
 | async gap 與 ref 生命週期           | [await 回來的時候、頁面已經關了](/work-log/flutter_unmounted_ref_async_gap/)                                            |
+| Notifier 的依賴注入與清理掛法       | [手寫 dispose() 沒有呼叫者](/work-log/flutter_notifier_lifecycle_ref_ondispose/)                                        |
 | 版面約束與溢出預防                  | [溢出 714px、22 個測試同時紅](/work-log/flutter_renderflex_overflow_prevention_spec/)                                   |
 
 ### 測試
