@@ -95,6 +95,8 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 
 **選中態是（底色, 文字色）的成對設計**。只設定選中底色、文字色走主題預設，組合對比沒有人驗證過 — 淺藍選中底疊淺色預設文字就是「選中後看不到字」的成因。對比方向成對反轉：底色淺配深字、底色深配淺字，逐狀態驗 WCAG AA（4.5:1）（[U.C17](/ux-design/cases/selected-chip-contrast-not-paired/)）。
 
+**水平排列的元件列溢出時要有捲動 affordance**。chip 列、按鈕列超出畫面寬度時，截斷的預設讀法是「壞了」或「被旁邊的元件遮住」、不是「可以捲」— 提示手段：邊緣漸層遮罩、下一個項目部分露出、方向箭頭；選項少時優先消除溢出（wrap 換行、改選單）。截斷邊緣緊貼固定按鈕會讓視覺歸因錯到那顆按鈕上 — 一條實作正確的可捲動篩選列因此在驗收被回報成「被重新整理按鈕遮蔽」（[U.C16](/ux-design/cases/filter-chips-overflow-no-affordance/)）。
+
 ## 常見設計失誤
 
 | 失誤                               | 後果                       | 修正                            |

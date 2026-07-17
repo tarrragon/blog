@@ -10,15 +10,15 @@ tags: ["ux-design", "case-study", "state-machine", "chrome-extension", "web", "s
 
 ## 觀察
 
-電子書庫總覽 Chrome 擴充功能（book_overview_v1）的 popup 開啟時向 background service worker 查詢狀態。Manifest V3 的 service worker 是事件驅動、閒置即卸載 — popup 開啟的瞬間 SW 經常正在冷啟動、初始化未完成、不回應 `GET_STATUS`。popup 等到 2 秒 timeout 才更新畫面，這段期間顯示「離線」— 系統實際上正常、只是還沒醒（`src/background/background.js:272-284`，ticket 1.1.0-W1-019）。
+電子書庫總覽 Chrome 擴充功能（book_overview_v1）的 popup 開啟時向 background service worker 查詢狀態。Manifest V3 的 service worker 是事件驅動、閒置即卸載 — popup 開啟的瞬間 SW 可能正在冷啟動、初始化未完成、不回應 `GET_STATUS`。popup 等待期間顯示「正在檢查狀態...」，2 秒 timeout 後轉為「離線」且不再自動恢復 — 冷啟動偶爾超過 2 秒（極端 I/O、低階裝置，低頻但真實發生過）時，系統實際正常、使用者看到的卻是永久離線（`src/background/background.js:272-284`，ticket 1.1.0-W1-019）。
 
-修復採「baseline 狀態」方案：SW 在初始化期間就先回應一個 `initializing` 狀態，popup 據此顯示「初始化中」而非離線。
+修復採雙管：查詢端加握手重試，加上被查詢端在初始化期間就回應 baseline 的 `initializing` 狀態 — popup 據此顯示「初始化中」而非落入 timeout 判離線。
 
 同專案的 sibling 事故（commit `86216c37f`）：popup 的書籍偵測數硬編「檢測中...」、從未讀取健康查詢回應中的實際數字 — 過渡狀態的顯示寫死了、永遠停在過渡態。兩個事故一體兩面：一個把「還不知道」誤顯示成終態（離線）、一個把終態永遠顯示成「還不知道」。
 
 ## 判讀
 
-1. **「還不知道」與「不可用」是不同狀態**。離線 / 錯誤是查詢得到的答案，initializing 是還沒得到答案。合併兩者的畫面在每次冷啟動都會閃一段假離線 — 使用者據此做錯誤決策：放棄操作、重裝、回報故障。
+1. **「還不知道」與「不可用」是不同狀態**。離線 / 錯誤是查詢得到的答案，initializing 是還沒得到答案。合併兩者的畫面會把「這次醒得慢」定格成永久離線 — 頻率低不減輕代價，使用者據此做錯誤決策：放棄操作、重裝、回報故障。
 
 2. **查詢對象的生命週期決定 initializing 是否必要**。查詢對象與畫面同生命週期（同 process 的本地狀態）時不需要；查詢對象獨立生死（service worker、遠端服務、另一個 process、外部裝置）時，畫面開啟瞬間對方「還沒醒」是常態而非邊角 — initializing 必須是狀態矩陣裡的一行，有自己的顯示、操作與退出路徑。
 

@@ -6,7 +6,7 @@ weight: 14
 tags: ["ux-design", "case-study", "navigation", "chrome-extension", "web", "spa", "routing"]
 ---
 
-這個案例的核心責任是說明 web 路由辨識的一個系統性盲點：hash-based SPA 的頁面資訊在 URL fragment 裡，只讀 pathname 的辨識邏輯會把所有頁面都判成根路徑 — 讀取的是別人的 app 時，對方用哪套路由慣例不由你決定。
+這個案例的核心責任是說明 web 路由辨識的一個系統性盲點：hash-based SPA 的頁面資訊在 URL fragment 裡，只讀 pathname 的辨識邏輯會把所有頁面都判成根路徑 — 讀取的是別人的 app 時，對方用哪套路由慣例不由讀取方決定。
 
 ## 觀察
 

@@ -34,5 +34,6 @@ tags: ["ux-design", "case-study", "layout", "overflow", "affordance", "flutter",
 
 ## 下一步路由
 
+- 溢出 affordance 與元件語意的章節整理 → [按鈕狀態設計](/ux-design/06-interaction-feedback/button-state-design/)
 - 同一條篩選列的選中態對比問題 → [U.C17 選中態換底色不換文字色](/ux-design/cases/selected-chip-contrast-not-paired/)
 - 視覺暗示與實際行為錯位的 sibling → [U.C8 標籤行只有箭頭可點](/ux-design/cases/tag-row-touch-target-scope/)

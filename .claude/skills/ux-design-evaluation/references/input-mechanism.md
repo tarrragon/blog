@@ -17,7 +17,7 @@
 
 每個輸入框過一次四維決策，結果記錄成表、code review 時逐項對照：
 
-**Keyboard type — 顯示哪種鍵盤**。判斷依據是「使用者要輸入什麼內容」：email 用 email 鍵盤（有 `@` 鍵）、電話用數字鍵盤、密碼或 CLI 指令用 `visiblePassword` 型別（避免自動校正和建議）。CLI 指令包含路徑分隔符、flag 縮寫等非自然語言內容，一般文字鍵盤會嘗試把 `ls -la` 或 `/usr/bin/` 校正成其他東西。
+**Keyboard type — 顯示哪種鍵盤**。判斷依據是「使用者要輸入什麼內容」：email 用 email 鍵盤（有 `@` 鍵）、電話用數字鍵盤、密碼或 CLI 指令用 `visiblePassword` 型別（避免自動校正和建議）。CLI 指令包含路徑分隔符、flag 縮寫等非自然語言內容，一般文字鍵盤會嘗試把 `ls -la` 或 `/usr/bin/` 校正成別的詞。
 
 **Submit model — 怎麼送出**。整行送出（按 Enter / Send 一次傳整行）vs 逐字元送出（每個按鍵即時傳送）。這個決策直接影響通訊協議：整行送出的 server 按行處理、protocol 簡單，代價是 Tab 補全等即時互動無法觸發；逐字元送出支援補全和即時控制鍵、但 protocol 複雜度和網路延遲敏感度顯著提高。決策應在 protocol spec 階段做、不是 UI 實作時臨時決定。
 

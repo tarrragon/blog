@@ -1,7 +1,7 @@
 ---
 title: "UX 設計案例庫"
 date: 2026-06-19
-description: "畫面狀態機缺口、導航死胡同、Gate fallback 缺失、輸入機制遺漏的實戰案例"
+description: "畫面狀態機缺口、導航死胡同、Gate fallback 缺失、輸入機制遺漏、回饋鏈斷裂與元件語意錯位的實戰案例"
 weight: 90
 tags: ["ux-design", "case-study"]
 ---

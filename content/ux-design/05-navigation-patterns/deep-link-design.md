@@ -40,7 +40,7 @@ https://example.com/terminal?host=x → TerminalScreen(host: x)
 
 URL 參數（query parameters）傳遞畫面需要的資料。參數值避免包含敏感資訊 — URL 可能被系統日誌、分析工具、中間人記錄。
 
-URL 的頁面資訊不一定在 path。hash-based SPA 的路由在 fragment（`example.com/#/library`），`pathname` 永遠是 `/` — 只讀 pathname 的辨識邏輯會把所有頁面靜默塌縮成根路徑。自家 app 的 deep link 用哪套慣例由 router 決定；讀取**別人的** URL 時（browser extension 讀宿主頁面、分析工具讀目標站），對方的路由形態是輸入規格 — 一個 Chrome extension 用 pathname 顯示宿主頁面標籤，對 hash SPA 的所有頁面都顯示成根路徑（[U.C14](/ux-design/cases/hash-spa-route-label-loss/)）。依 URL 辨識頁面的功能要涵蓋 path-based 與 hash-based 兩套慣例。
+web 路由有兩套並存的慣例：path-based（頁面資訊在 `/library`）與 hash-based（頁面資訊在 fragment，`example.com/#/library`）。hash-based SPA 的 `pathname` 永遠是 `/` — 只讀 pathname 的辨識邏輯會把所有頁面靜默塌縮成根路徑。自家 app 的 deep link 用哪套慣例由 router 決定；讀取**別人的** URL 時（browser extension 讀宿主頁面、分析工具讀目標站），對方的路由形態是輸入規格 — 一個 Chrome extension 用 pathname 顯示宿主頁面標籤，對 hash SPA 的所有頁面都顯示成根路徑（[U.C14](/ux-design/cases/hash-spa-route-label-loss/)）。依 URL 辨識頁面的功能要涵蓋 path-based 與 hash-based 兩套慣例。
 
 ## 導航堆疊重建
 

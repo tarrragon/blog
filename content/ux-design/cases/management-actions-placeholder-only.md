@@ -12,11 +12,11 @@ tags: ["ux-design", "case-study", "interaction-feedback", "placeholder", "techni
 
 書庫管理 app 管理模式的批次操作 UI 全數是佔位（驗收回報「右下按鈕按了沒反應」）：
 
-| UI 元件                           | onPressed 實際行為                  | 位置                                    |
-| --------------------------------- | ----------------------------------- | --------------------------------------- |
-| 右下 FAB（more_vert「批次操作」） | 只彈開發用 toast「點擊了 批次操作」 | `library_display_extensions.dart:62-66` |
-| 底部欄「編輯」「分享」「刪除」    | 只寫 log「...尚未實作」             | `library_display_page.dart:129,144,159` |
-| AppBar「更多選項」                | 只寫 log「尚未實作」                | `library_display_page.dart:63-67`       |
+| UI 元件                           | onPressed 實際行為             | 位置                                    |
+| --------------------------------- | ------------------------------ | --------------------------------------- |
+| 右下 FAB（more_vert「批次操作」） | 只彈開發用的點擊事件測試 toast | `library_display_extensions.dart:62-66` |
+| 底部欄「編輯」「分享」「刪除」    | 只寫 log「...尚未實作」        | `library_display_page.dart:129,144,159` |
+| AppBar「更多選項」                | 只寫 log「尚未實作」           | `library_display_page.dart:63-67`       |
 
 對照規格（SPEC-006 FR-9 / FR-10）：批次操作的 domain 層已完整實作 — `LibraryManagementService.performBatchOperation`（刪除 / 改來源 / 改重要度 / 增刪標籤）與 Command 模式的編輯服務（undo / redo）都在 — **是 UI 到 service 的最後一段接線沒做**。團隊已有「佔位實作」的追蹤票（佔位掃描盲區改善），本案是同類技術債在管理模式的集中呈現。
 
