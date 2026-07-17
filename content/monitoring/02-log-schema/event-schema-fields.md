@@ -36,7 +36,7 @@ Timestamp 由 SDK 在事件發生時記錄，不是 collector 收到時記錄。
 {
   "source": {
     "sdk": "flutter",
-    "app": "app_tunnel",
+    "app": "terminal_app",
     "version": "1.2.0",
     "platform": "ios",
     "os": "17.4"
@@ -155,7 +155,7 @@ Collector 端對應暴露 `collector.events.received`、`collector.events.reject
   "timestamp": "2026-06-19T14:30:00.123+08:00",
   "source": {
     "sdk": "flutter",
-    "app": "app_tunnel",
+    "app": "terminal_app",
     "version": "1.2.0",
     "platform": "ios",
     "os": "17.4"

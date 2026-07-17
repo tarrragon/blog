@@ -12,7 +12,7 @@ tags: ["testing", "observability", "logging", "client-side"]
 
 | Finding | 來源                                                 | 內容                                          |
 | ------- | ---------------------------------------------------- | --------------------------------------------- |
-| TF-6    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | 6 元件中 4 個零 log，2 個全是 W2 hotfix       |
+| TF-6    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | 6 元件中 4 個零 log，2 個全是實機修復 hotfix  |
 | TF-7    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | 事後補的 developer.log 格式不統一             |
 | TF-9    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | log 設計應在功能規格階段完成 — **本模組主寫** |
 

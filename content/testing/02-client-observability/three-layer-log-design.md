@@ -12,7 +12,7 @@ tags: ["testing", "observability", "logging", "client-side", "design"]
 
 連線生命週期 log 記錄的是「流程走到第幾步、每步成功或失敗」。這一層的 log 粒度是步驟級 — 不記錄每一個封包或每一次函式呼叫，只記錄流程中的關鍵節點。
 
-以 app_tunnel 的連線流程為例，連線生命週期包含五步：biometric 認證 → credential 讀取 → WebSocket 連線 → auth token 發送 → stream 訂閱。每步完成時記一條 log，失敗時記一條包含原因的 log。
+以一個遠端終端機 app 的連線流程為例，連線生命週期包含五步：biometric 認證 → credential 讀取 → WebSocket 連線 → auth token 發送 → stream 訂閱。每步完成時記一條 log，失敗時記一條包含原因的 log。
 
 ```text
 [conn] Step 1/5: biometric auth completed (duration: 320ms)
@@ -22,7 +22,7 @@ tags: ["testing", "observability", "logging", "client-side", "design"]
 [conn] Step 5/5: stream subscribed, ready
 ```
 
-app_tunnel 在實機測試前六個核心元件中只有兩個有 log，且全是 W2 修復時事後補上的（[T.C4](/testing/cases/client-log-absent-debug-cost/)）。W2-002 auth token 問題的 debug 過程中，開發者無法從任何 log 判斷失敗發生在五步中的哪一步。如果有連線生命週期 log，第一次連線就能看到「Step 3 完成，Step 4 未執行」— 直接定位到 auth token 缺失。
+該 app 在實機測試前六個核心元件中只有兩個有 log，且全是實機修復時事後補上的（[T.C4](/testing/cases/client-log-absent-debug-cost/)）。auth token 缺失問題的 debug 過程中，開發者無法從任何 log 判斷失敗發生在五步中的哪一步。如果有連線生命週期 log，第一次連線就能看到「Step 3 完成，Step 4 未執行」— 直接定位到 auth token 缺失。
 
 連線生命週期 log 在所有模式（debug 和 release）都應該啟用。這層 log 量小（每次連線 5-10 條），不影響效能，但在 production 問題回報時是第一手資訊來源。
 
@@ -36,7 +36,7 @@ Protocol 訊息 log 記錄的是通訊協議層面的細節：發送和接收的
 [proto] TX: binary frame, payload: [72, 101, 108, 108, 111] (5 bytes)
 ```
 
-Protocol log 在 debug 時幫助確認「程式碼發送了什麼、收到了什麼」。app_tunnel 的 text/binary frame 問題（[T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)）如果有 protocol log，開發者會在 log 中看到 `TX: binary frame` 而非預期的 `TX: text frame` — 直接指向 frame type 問題。
+Protocol log 在 debug 時幫助確認「程式碼發送了什麼、收到了什麼」。該 app 的 text/binary frame 問題（[T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)）如果有 protocol log，開發者會在 log 中看到 `TX: binary frame` 而非預期的 `TX: text frame` — 直接指向 frame type 問題。
 
 Protocol log 在 release mode 應該能關閉。這層 log 量大（每次鍵盤輸入一條），且 payload 可能包含敏感資訊。Debug mode 預設啟用，release mode 提供開關（例如隱藏設定頁的 toggle）讓進階使用者在回報問題時開啟。
 

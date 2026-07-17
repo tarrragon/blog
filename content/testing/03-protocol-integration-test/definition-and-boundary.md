@@ -34,7 +34,7 @@ Protocol integration test 填補 unit test 和 E2E test 之間的空隙。Unit t
 
 這一層的 test 用程式碼直接呼叫 client 端的連線函式（跳過 UI），對真實的服務實例執行操作（跳過 mock），然後斷言服務的回應是否符合協議規格。
 
-以 app_tunnel 為例，一個 protocol integration test 的結構：
+以一個遠端終端機 app 連 ttyd 為例，一個 protocol integration test 的結構：
 
 ```text
 1. 啟動本機 ttyd 服務

@@ -73,7 +73,7 @@ test('auth token required before output'):
 
 ## 執行成本
 
-app_tunnel 的 server（ttyd）和 client 在同一台機器上。啟動 ttyd 是一行指令（`ttyd bash`），不需要 Docker、不需要雲端服務、不需要網路。整個 test suite 的執行時間主要是連線建立和逾時等待，每個 test case 約 2-5 秒。
+一個遠端終端機 app 的 server（ttyd）和 client 在同一台機器上。啟動 ttyd 是一行指令（`ttyd bash`），不需要 Docker、不需要雲端服務、不需要網路。整個 test suite 的執行時間主要是連線建立和逾時等待，每個 test case 約 2-5 秒。
 
 這個低成本是自用工具的結構優勢 — server 可以在 test 的 setUp 中啟動、tearDown 中停止，不需要共享的 test 環境（本章合成，TF-8 Derive）。
 

@@ -10,7 +10,7 @@ tags: ["testing", "test-data", "parser", "representativeness", "ansi"]
 
 ## 代表性問題的案例
 
-app_tunnel 的 ANSI parser 有 18 個 test，全部通過。測試資料是手寫的 SGR 色彩碼（`\x1B[31mhello\x1B[0m`），parser 正確解析這類序列。
+一個遠端終端機 app 的 ANSI parser 有 18 個 test，全部通過。測試資料是手寫的 SGR 色彩碼（`\x1B[31mhello\x1B[0m`），parser 正確解析這類序列。
 
 真實 zsh 啟動後送出的控制序列包含 OSC 標題設定、CSI private mode、字元集指定等至少 5 種類型。Parser 只認識 SGR，其他全部透傳為亂碼（[T.C3](/testing/cases/ansi-parser-test-data-blindspot/)）。
 

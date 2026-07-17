@@ -1,7 +1,7 @@
 ---
 title: "「事後補 log」vs「設計產物 log」的品質差異"
 date: 2026-06-19
-description: "事後補的 log 是救火工具、設計產物的 log 是可觀測性基礎設施 — 從 app_tunnel 的 W2 hotfix log 拆解兩者在格式、覆蓋率、維護成本上的差異"
+description: "事後補的 log 是救火工具、設計產物的 log 是可觀測性基礎設施 — 從一次實機修復補 log 的教訓拆解兩者在格式、覆蓋率、維護成本上的差異"
 weight: 4
 tags: ["testing", "observability", "logging", "design", "quality"]
 ---
@@ -10,7 +10,7 @@ tags: ["testing", "observability", "logging", "design", "quality"]
 
 ## 格式統一性
 
-app_tunnel 在 W2 修復時補的 `developer.log` 格式不統一（[T.C4](/testing/cases/client-log-absent-debug-cost/)）。不同元件由不同時間點、不同 debug 需求補上的 log，各自有各自的風格：
+一個遠端終端機 app 在實機修復時補的 `developer.log` 格式不統一（[T.C4](/testing/cases/client-log-absent-debug-cost/)）。不同元件由不同時間點、不同 debug 需求補上的 log，各自有各自的風格：
 
 有的帶 `name:` 參數讓 log 可以按元件過濾：
 
@@ -32,7 +32,7 @@ developer.log('auth token sent');
 
 ## 覆蓋完整性
 
-事後補 log 的覆蓋範圍由「哪些問題已經發生過」決定。W2-002 auth token 問題觸發了 `ConnectionManager` 和 `TerminalScreen` 的 log 補充，但 `TtydProtocol`、`BiometricService`、`CredentialRepository`、`EnrollmentScreen` 四個元件仍然零 log — 因為這四個元件在 W2 的 debug 過程中不是瓶頸。
+事後補 log 的覆蓋範圍由「哪些問題已經發生過」決定。auth token 缺失問題觸發了 `ConnectionManager` 和 `TerminalScreen` 的 log 補充，但 `TtydProtocol`、`BiometricService`、`CredentialRepository`、`EnrollmentScreen` 四個元件仍然零 log — 因為這四個元件在那次 debug 過程中不是瓶頸。
 
 六個核心元件中四個零 log 的狀態意味著：下次如果問題出在 `BiometricService`（例如特定 iOS 版本的 biometric API 行為改變），debug 又會回到「手動加 log → 重新編譯 → 插拔裝置」的循環。事後補 log 只覆蓋已知問題的路徑，對未知問題沒有防護。
 

@@ -16,7 +16,7 @@ tags: ["testing", "integration-test", "protocol", "cost", "decision"]
 
 Server 是一個本機程序，`Process.start` 一行啟動，不需要 Docker、不需要網路、不需要設定檔。啟動到 ready 不到 2 秒。
 
-app_tunnel 的 ttyd 就是這個場景。`ttyd bash` 在本機啟動，WebSocket 服務立即可用。整個 protocol integration test suite 的額外成本約 10-15 秒（包含啟動、健康檢查、5 個 test 各 2 秒）（本章合成，TF-8 Derive）。
+一個遠端終端機 app 的 ttyd 就是這個場景。`ttyd bash` 在本機啟動，WebSocket 服務立即可用。整個 protocol integration test suite 的額外成本約 10-15 秒（包含啟動、健康檢查、5 個 test 各 2 秒）（本章合成，TF-8 Derive）。
 
 在這個成本等級下，protocol integration test 幾乎沒有理由不寫。
 

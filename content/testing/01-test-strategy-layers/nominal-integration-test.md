@@ -10,7 +10,7 @@ tags: ["testing", "integration-test", "mock", "naming", "test-design"]
 
 ## 辨識特徵
 
-app_tunnel 的 `connection_flow_test.dart` 是具體案例。檔名標題是端對端整合測試，但內部使用了三個核心替身：`FakeWebSocketChannel`、`FakeBiometricService`、`InMemoryCredentialRepository`（[T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
+一個遠端終端機 app 的 `connection_flow_test.dart` 是具體案例。檔名標題是端對端整合測試，但內部使用了三個核心替身：`FakeWebSocketChannel`、`FakeBiometricService`、`InMemoryCredentialRepository`（[T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/)）。
 
 名義 integration test 有三個共同特徵可用來辨識。
 
@@ -38,7 +38,7 @@ Integration test 的價值在於驗證程式碼與外部系統的互動邊界。
 
 當團隊看到 test suite 包含「integration test」資料夾且全部通過，決策者的推論是「integration 已經驗證過了」。這個推論在名義 integration test 下是錯的 — 協議層和環境層完全沒被驗證 — 但決策者沒有動機去檢查 test 的內部實作。
 
-app_tunnel 的 11 個 `connection_flow_test` 全過，開發者合理認為「連線流程的整合測試已通過」。實際上這 11 個 test 驗證的是 `ConnectionManager` 的內部狀態機在各種情境下的轉換正確性（斷線重連、錯誤處理、狀態回報），不是「和 ttyd 的連線流程是否正確」。Auth handshake 缺失直到實機測試才被發現。
+該 app 的 11 個 `connection_flow_test` 全過，開發者合理認為「連線流程的整合測試已通過」。實際上這 11 個 test 驗證的是 `ConnectionManager` 的內部狀態機在各種情境下的轉換正確性（斷線重連、錯誤處理、狀態回報），不是「和 ttyd 的連線流程是否正確」。Auth handshake 缺失直到實機測試才被發現。
 
 ## 修正策略
 
