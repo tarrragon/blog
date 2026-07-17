@@ -20,3 +20,4 @@ tags: ["testing", "widget-test", "playwright", "ui-test"]
 - ← [ux-design 模組一 畫面狀態機](/ux-design/01-screen-state-machine/)：狀態矩陣是 test case 的 SOT
 - ← [ux-design 模組五 導航模式](/ux-design/05-navigation-patterns/)：go vs push 語意影響 test 斷言
 - ← [ux-design 模組六 互動回饋設計](/ux-design/06-interaction-feedback/)：按鈕級與畫面級檢查清單可直接轉 widget test 斷言（loading 進入 disabled、完成後恢復）
+- ← 案例入口：[T.C9 外接螢幕漏通知](/testing/cases/outbox-sequence-external-display/)：外接裝置／第二螢幕的驗證邊界——斷言送出的訊息流，裝置端的渲染交由裝置自己的系統驗證

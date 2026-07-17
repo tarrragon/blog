@@ -32,6 +32,8 @@ Integration test 的價值在於驗證程式碼與外部系統的互動邊界。
 
 環境前置條件的缺席是一個實用的快速判斷訊號。如果 `setUp()` 裡沒有 `docker compose up`、`Process.start`、`HttpClient.connect` 之類的操作，這個 test 很可能不接觸真實外部服務。
 
+三個特徵有一條劃界：[流程測試搭配語意級假後端](/testing/01-test-strategy-layers/semantic-fake-backend/)同樣全 fake、無真實 I/O、無環境前置，但它的 fake 行為經實測取證、配對真實後端驗證測試，且不佔用 integration test 之名——與「回放作者假設的 fake」是兩回事。反之，未經取證的假後端不因「有狀態」而豁免本章的批評。
+
 ## 名義 integration test 造成的認知偏差
 
 名義 integration test 的技術問題可以修正（改名或補寫真實 integration test），但它造成的認知偏差更難修正。

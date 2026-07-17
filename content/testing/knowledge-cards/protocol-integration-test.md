@@ -10,7 +10,7 @@ Protocol integration test 的核心概念是「對真實服務實例驗證協議
 
 ## 概念位置
 
-Protocol integration test 位在 unit test 和 E2E test 之間。Unit test 用 mock 驗證程式碼邏輯，E2E test 經過 UI 驗證完整流程，protocol integration test 用程式碼直接呼叫 client 端連線函式、對真實服務執行操作。它填補「程式碼邏輯正確但協議互動錯誤」這個 mock 結構性無法覆蓋的空隙。
+Protocol integration test 位在 unit test 和 E2E test 之間。Unit test 用 mock 驗證程式碼邏輯，E2E test 經過 UI 驗證完整流程，protocol integration test 用程式碼直接呼叫 client 端連線函式、對真實服務執行操作。它填補「程式碼邏輯正確但協議互動錯誤」這個 mock 結構性無法覆蓋的空隙。業務行為層的漂移偵測由[真實後端驗證測試](/testing/knowledge-cards/real-backend-verification-test/)承擔——兩卡以協議契約 vs 業務行為劃界。
 
 ## 可觀察訊號與例子
 

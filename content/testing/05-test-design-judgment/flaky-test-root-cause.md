@@ -31,7 +31,7 @@ Test 在不同環境下行為不同 — 作業系統、檔案系統、時區、l
 - 時間格式化結果依時區而定（UTC vs local）
 - 浮點數比較因 CPU 架構不同有微小差異
 
-處理策略：用 `path.join` 代替硬編碼路徑；時間操作用 UTC；浮點比較用 `closeTo` 代替精確比較。在 CI 中固定環境變數（`TZ=UTC`、`LANG=en_US.UTF-8`）。
+處理策略：用 `path.join` 代替硬編碼路徑；時間操作用 UTC；浮點比較用 `closeTo` 代替精確比較。在 CI 中固定環境變數（`TZ=UTC`、`LANG=en_US.UTF-8`）。環境依賴無法消除時（測試需要真實後端、憑證），紅／綠／skip 的語意設計與 skip 計數治理見[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)——skip 不治理會累積成另一種靜默失效。
 
 ### 資源競爭
 
