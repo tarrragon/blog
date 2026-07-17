@@ -76,7 +76,7 @@ for await (const item of eventSource) { ... }
 // 跑完了還是斷線了？
 ```
 
-Streaming 通常沒明確的 End 訊號 — 需要 server 主動送一個 `event: end`、或 client 用 timeout / heartbeat 判斷。否則使用者看到一段時間沒新資料、不知道是「沒了」還是「還在等」。
+Streaming 通常沒明確的 End 訊號 — 需要 server 主動送一個 `event: end`、或 client 用 timeout / heartbeat 判斷。否則使用者看到一段時間沒新資料、不知道是「沒了」還是「還在等」。把「一段時間沒新資料」直接當成 End 的實戰事故見 [U.C11 抓到 96/928 本就顯示完成](/ux-design/cases/lazy-load-premature-completion/) — 計數穩定三輪被判成窮盡、實際是載入通道根本沒打開。
 
 ### 面向 3：錯誤狀態應該獨立、不混進三狀態
 
@@ -87,6 +87,8 @@ Streaming 通常沒明確的 End 訊號 — 需要 server 主動送一個 `event
 | Offline | 獨立、需要 retry UX         |
 
 把 Error 顯示成 Empty = 使用者誤以為「沒結果」、不會 retry。
+
+「還不知道」（initializing）同樣獨立於三狀態之外 — 查詢對象有自己的生命週期（service worker、遠端服務）時、「還沒得到答案」被顯示成 Offline 會產生假離線、使用者誤判放棄（[U.C10 Service Worker 冷啟動假離線](/ux-design/cases/service-worker-cold-start-false-offline/)）。
 
 ---
 

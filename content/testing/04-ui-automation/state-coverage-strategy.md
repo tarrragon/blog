@@ -18,6 +18,8 @@ Widget test 的狀態覆蓋策略是用[畫面狀態矩陣](/ux-design/knowledge
 2. 該狀態下的可用操作是否可觸發
 3. 該狀態下的退出路徑是否可到達
 
+矩陣補列的 initializing 狀態（查詢對象有獨立生命週期時、「還不知道」不等於離線 — [U.C10](/ux-design/cases/service-worker-cold-start-false-offline/)）同樣是一行、同樣產生 test case：斷言初始化窗口顯示過渡指示而非離線、timeout 後才轉入離線狀態。
+
 以 app_tunnel Terminal 畫面為例，五個狀態產生五個 test case：
 
 ```dart

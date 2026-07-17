@@ -26,6 +26,8 @@ Dart 的 `IOWebSocketChannel`（真實實作）根據 `sink.add` 的參數型別
 
 ttyd 只接受 text frame，收到 binary frame 靜默忽略。從 API 層看，`sink.add(Uint8List(...))` 合法；從協議層看，這產生了 ttyd 不處理的 binary frame。斷裂點在 API 層和協議層之間 — mock 模擬了前者，但後者的語意差異只有真實 `IOWebSocketChannel` + 真實 ttyd 才會浮現。
 
+同構的斷裂點也出現在瀏覽器擴充功能的訊息通道：Manifest V3 把「listener 回傳 Promise」解讀為認領回應權 — 這是通道層語意，mock 掉 `chrome.runtime` 的單元測試看不到，「提取成功被誤報失敗」的事故只有跨 context 的端對端測試才會現形（[U.C9](/ux-design/cases/async-listener-false-failure/)）。
+
 ### 環境層：執行環境的行為差異
 
 環境層描述的是「同一段程式碼在不同執行環境下行為不同」。DNS 解析、TLS 憑證驗證、防火牆規則、作業系統的 socket 實作 — 這些在 test 環境可能和 production 不同。
