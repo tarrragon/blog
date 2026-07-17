@@ -157,7 +157,7 @@ timeout 是 connecting 的隱形退出路徑：取消靠使用者主動，timeou
 | 畫面中間狀態無退出路徑   | 使用者被卡在 connecting   | 只能殺 app（UX 死胡同）        |
 | 錯誤狀態只有重連沒有返回 | 問題無法重連解決時被鎖住  | 在錯誤迴圈中反覆重連           |
 
-表格第一行（按鈕無任何視覺回饋）的完整實證案例見 [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)——狀態機完備但 UI 沒接線，三層回饋全缺。
+表格第一行（按鈕無任何視覺回饋）的完整實證案例見 [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)——狀態機完備但 UI 沒接線，三層回饋全缺。同族的兩個變體：佔位 handler 上線 — 按鈕存在但 onPressed 只接開發提示或 log，dev toast 讓開發自測「有反應」、掩蓋未接線（[U.C20](/ux-design/cases/management-actions-placeholder-only/)）；回饋文字被版面擠壓 — state 有值、綁定正確，flex 寬度競爭把「已選擇: 3/45」壓成「...」（[U.C19](/ux-design/cases/selection-count-layout-starvation/)）。回饋鏈要驗到使用者的眼睛，state 有值、widget 有綁都不是終點。
 
 ## 設計檢查清單
 

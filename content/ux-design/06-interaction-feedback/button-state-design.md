@@ -85,6 +85,16 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 
 這些狀態的實作落點在共用 Button 元件層，不是逐顆按鈕。Material、Cupertino 等平台元件庫已內建 hover / pressed / focus 的視覺處理，真正要補的通常只有 Loading 與 Disabled 的語意 — 何時進入、何時恢復、disabled 原因怎麼給。估工時以「元件層一次工 + 各按鈕接上狀態來源」計算，而非「按鈕數 × 狀態數」— 後者會把成本高估數倍，讓完整的狀態設計看起來做不起。
 
+## 標籤、圖示與選中態的語意
+
+狀態清單之外，按鈕的文字、圖示與選中視覺各自承載語意，三個常見缺口：
+
+**切換元件的標籤要能區分「現態」與「動作」**。「顯示目標模式」（播放鍵顯示「播放」）和「顯示當前模式」（開關顯示現態）是兩種並存慣例，單顆文字按鈕無法自證是哪種 — 名詞標籤（「管理模式」）特別容易被讀成狀態指示。消歧做法：狀態顯示與動作按鈕分離（非互動的現態文字 +「切換模式」動作鈕）、或改用自帶 on/off 語意的控件（switch / segmented control）。不幫助消歧的圖示是雜訊、應移除（[U.C15](/ux-design/cases/toggle-button-label-state-ambiguity/)）。
+
+**非互動指示不可與動作按鈕同形**。狀態圖示混排在動作按鈕同列、又用近似圖形（描邊 vs 實心）時，使用者的預設是整列可點 — 點到指示的「沒反應」被讀成按鈕壞掉。描邊 / 實心差異不是可靠的互動性訊號；指示要用明顯非按鈕的形態（文字 chip、圓點）或移出動作列，同一個圖形全畫面只承載一個語意（[U.C18](/ux-design/cases/status-icon-mistaken-for-button/)）。
+
+**選中態是（底色, 文字色）的成對設計**。只設定選中底色、文字色走主題預設，組合對比沒有人驗證過 — 淺藍選中底疊淺色預設文字就是「選中後看不到字」的成因。對比方向成對反轉：底色淺配深字、底色深配淺字，逐狀態驗 WCAG AA（4.5:1）（[U.C17](/ux-design/cases/selected-chip-contrast-not-paired/)）。
+
 ## 常見設計失誤
 
 | 失誤                               | 後果                       | 修正                            |
@@ -108,6 +118,9 @@ tags: ["ux-design", "interaction-feedback", "button-states", "accessibility"]
 - [ ] Loading 期間按鈕 disabled？
 - [ ] Loading 有超時機制（不會永久卡住）？
 - [ ] Loading 結束後恢復可操作狀態？
+- [ ] 切換型按鈕的文字讀起來是動作而非現態（或已拆成狀態顯示 + 動作按鈕）？
+- [ ] 同列的非互動指示與動作按鈕形態可區分、圖示無撞名？
+- [ ] Selected 態的底色與文字色成對設計、對比達 WCAG AA？
 
 ## 參考來源
 
