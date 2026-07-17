@@ -61,6 +61,8 @@ tags: ["ux-design", "interaction-feedback", "button-states", "usability"]
 
 **部分成功的呈現**：批次操作（匯入 100 筆、87 筆成功）用摘要加明細兩層：摘要先告知整體結果（「87 筆成功、13 筆失敗」），明細列出失敗項與各自的修正動作，讓使用者只需處理失敗的部分、而非重跑整批。
 
+**結果通知的鏈路前提**：第三層的設計都假設「結果會正確到達 UI」。UI 與執行端分屬不同 context 時（browser extension 的 popup / content script / service worker、跨 process 架構），結果要跨訊息通道才到 UI — 通道語意錯誤或事件訂閱缺失會讓通知消失、甚至反轉。一個 Chrome extension 提取成功 96 本且已寫入 storage，popup 卻顯示「提取失敗」— async listener 把 undefined 搶先當回應送回（[U.C9](/ux-design/cases/async-listener-false-failure/)）。跨 context 的結果通知要有端對端驗證（操作成功 → UI 顯示成功），不只測 UI 收到資料後的呈現。
+
 本篇聚焦「該通知什麼」；SnackBar / Dialog / Banner / Bottom Sheet 之間的形式選擇由[通知模式選擇](../notification-pattern-selection/)展開。螢幕閱讀器的通知宣告（aria-live / aria-busy）屬無障礙實作，不在本模組範圍。
 
 ## 兩類按鈕的回饋設計
