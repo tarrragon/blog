@@ -14,7 +14,7 @@ tags: ["testing", "fake-backend", "test-double"]
 
 ## 可觀察訊號與例子
 
-值得建假後端的訊號：多個前端服務對同一份後端狀態接力，且出現過「對後端行為假設錯誤」型的漏網 bug。典型例：後端合併資料時重建全部子項並更換 id，前端依賴舊參照的錯誤在 stub 上永遠測不紅（[T.C5](/testing/cases/stale-reference-stub-blindspot/)）。
+值得建假後端的訊號：多個前端服務對同一份後端狀態接力，且出現過「對後端行為假設錯誤」型的漏網 bug。典型例：後端合併資料時重建全部子項並更換 id，前端依賴[凍結參照](/testing/knowledge-cards/frozen-vs-live-reference/)的錯誤在 stub 上永遠測不紅（[T.C5](/testing/cases/stale-reference-stub-blindspot/)）。
 
 ## 設計責任
 
