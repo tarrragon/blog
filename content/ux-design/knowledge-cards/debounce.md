@@ -8,6 +8,10 @@ tags: ["ux-design", "knowledge-card", "interaction-feedback", "button-states"]
 
 Debounce 的核心概念是「短時間內的重複觸發只算一次」。同一顆按鈕在 300ms 內被點三次，系統只執行一次操作 — 剩下兩次點擊被視為誤觸或焦慮性連點而忽略。它跟 [Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/) 同屬互動回饋的時間參數：前者管「重複輸入怎麼收斂」、後者管「輸出多快要回來」。
 
+## 概念位置
+
+Debounce 站在互動回饋的輸入端：[Touch Target](/ux-design/knowledge-cards/touch-target/) 管點擊有沒有落在可反應的區域、debounce 管落進來的重複點擊怎麼收斂、[Doherty Threshold](/ux-design/knowledge-cards/doherty-threshold/) 管收斂後的輸出多快要回來——三張卡沿著「一次點擊的生命週期」排開。它的守備範圍是同步按鈕（導航、切換）；非同步按鈕的重複提交由 loading + disabled 狀態防守，兩者分工見可觀察訊號段。
+
 ## 兩種執行語意
 
 同一個 debounce 週期有兩個可執行的時間點，選錯會直接改變使用者體感：

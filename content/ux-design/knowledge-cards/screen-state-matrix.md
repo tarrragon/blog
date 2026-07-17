@@ -10,7 +10,7 @@ tags: ["ux-design", "knowledge-card", "state-machine", "navigation"]
 
 ## 概念位置
 
-畫面狀態矩陣位在 BDD 操作盤點和 UI 實作之間。操作盤點描述「使用者做什麼、看到什麼」，畫面狀態矩陣把這些描述展開成每個狀態的四個面向，補上操作盤點容易遺漏的「可用操作」和「退出路徑」。矩陣產出後可以直接轉成 widget test case，也可以加上「可觀測性」欄位連接 log 設計。
+畫面狀態矩陣位在 BDD 操作盤點和 UI 實作之間。操作盤點描述「使用者做什麼、看到什麼」，畫面狀態矩陣把這些描述展開成每個狀態的四個面向，補上操作盤點容易遺漏的「可用操作」和「退出路徑」。退出路徑欄空白時、補路徑的設計工具是 [UX Fallback](/ux-design/knowledge-cards/ux-fallback/)——矩陣負責暴露缺口、fallback 負責填。矩陣產出後可以直接轉成 widget test case，也可以加上「可觀測性」欄位連接 log 設計。
 
 ## 可觀察訊號與例子
 
