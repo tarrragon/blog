@@ -67,7 +67,7 @@
 | 各平台各自慣例       | 重視兩平台原生體驗        | 開發測試成本翻倍       |
 | 共用核心、差異點適配 | 多數跨平台 app 的實際選擇 | 需判斷哪些差異值得適配 |
 
-「共用核心、差異點適配」的常見切法：底部 tab bar、push/pop 導航兩平台一致；back 手勢（iOS edge swipe + Android 系統鍵都要支援）、modal 呈現按平台適配。
+「共用核心、差異點適配」的常見切法：底部 tab bar、push/pop 導航兩平台一致；back 手勢（iOS edge swipe + Android 系統鍵都要支援）、modal 呈現按平台適配。適配與否的判準：系統行為類差異（back 手勢、系統鍵、modal dismiss 手勢）必適配 — 違反會直接打破使用者的肌肉記憶；視覺風格類差異（轉場動畫、圖示風格）可不適配 — 適配成本高於體驗增益時保持統一。
 
 ## Deep link
 
@@ -81,7 +81,7 @@ Deep link 讓外部來源（網頁連結、推播、其他 app）直接導航到
 
 **URL 結構**：和 router 的路由定義一致（URL path 即 route path）、query parameters 傳畫面資料。參數避免敏感資訊 — URL 會被系統日誌、分析工具、中間節點記錄。
 
-頁面資訊不一定在 path — hash-based SPA 的路由在 fragment（`/#/library`）、pathname 永遠是 `/`，只讀 pathname 的辨識邏輯會把所有頁面靜默塌縮成根路徑。自家 app 用哪套慣例由 router 決定；讀取別人的 URL 時（browser extension 讀宿主頁面、工具讀目標站），對方的路由形態是輸入規格 — 辨識邏輯要涵蓋 path-based 與 hash-based 兩套，取完整路由用 pathname + hash 組合。
+頁面資訊不一定在 path — hash-based SPA 的路由在 fragment（`/#/library`）、pathname 永遠是 `/`，只讀 pathname 的辨識邏輯會把所有頁面靜默塌縮成根路徑。自家 app 用哪套慣例由 router 決定；讀取別人的 URL 時（browser extension 讀宿主頁面、工具讀目標站），對方的路由形態是輸入規格 — 辨識邏輯要涵蓋 path-based 與 hash-based 兩套，取完整路由用 pathname + hash 組合（組合前確認 fragment 承載的是路由還是頁內錨點 — path-based 站的 `#section` 是錨點、不是頁面）。
 
 **堆疊重建**：從 deep link 直接進入內頁時堆疊裡沒有首頁，按 back 回首頁還是離開 app？目標畫面是日常使用的一部分 → 重建完整堆疊（back 回到 app 正常入口）；一次性操作（掃碼 → 顯示結果 → 離開）→ 只放目標畫面。
 
@@ -98,3 +98,8 @@ Deep link 讓外部來源（網頁連結、推播、其他 app）直接導航到
 - [ ] Deep link 的堆疊重建策略明確、無效 URL 有 fallback？
 - [ ] Deep link 在 app 前景 / 背景 / 未啟動三態都測過？
 - [ ] 依 URL 辨識頁面的邏輯涵蓋 hash-based SPA（不只讀 pathname）？
+
+## 參考來源
+
+- Apple HIG — Tab Bars / Navigation（tab 上限、back 手勢慣例）
+- Material Design — Navigation bar / Navigation drawer（3-5 個目的地建議、系統 back 行為）

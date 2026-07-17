@@ -40,3 +40,4 @@ tags: ["ux-design", "case-study", "touch-target", "interaction-feedback", "flutt
 - 觸控目標的尺寸底線與範圍對齊概念 → [Touch Target](/ux-design/knowledge-cards/touch-target/)
 - 點擊後的三層回饋（本案修的是回饋之前的問題）→ [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
 - 類似案例（回饋缺失）→ [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)
+- 鏡像案例（不可點元素帶著可點暗示）→ [U.C18 狀態圖示被當成按鈕](/ux-design/cases/status-icon-mistaken-for-button/)

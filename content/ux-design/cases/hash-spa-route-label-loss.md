@@ -26,7 +26,7 @@ tags: ["ux-design", "case-study", "navigation", "chrome-extension", "web", "spa"
 
 1. **依 URL 辨識頁面的功能，列出目標的路由形態**：path-based / hash-based / 混合，測試各涵蓋一組 URL。
 
-2. **取「完整路由」用 pathname + hash 組合**，只在確認目標是純 path-based 時才省略 fragment。
+2. **取「完整路由」用 pathname + hash 組合**，只在確認目標是純 path-based 時才省略 fragment；組合前先確認 fragment 承載的是路由還是頁內錨點 — path-based 站的 `#section` 是錨點、不是頁面。
 
 3. **發現一處路由辨識錯誤時，掃描同 pattern 的所有用途** — 顯示用途與 functional 用途的嚴重度不同，修復範圍要以掃描結果為準、不是以回報的症狀為準。
 

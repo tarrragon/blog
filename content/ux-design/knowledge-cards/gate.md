@@ -6,7 +6,7 @@ weight: 2
 tags: ["ux-design", "knowledge-card", "gate", "authentication"]
 ---
 
-Gate 的核心概念是「使用者操作流程中必須通過才能繼續的關卡」。認證、網路連線、權限請求、環境檢查、付費牆都是 gate。每個 gate 需要設計三條路徑：成功時做什麼、失敗時做什麼、使用者不知道發生什麼時做什麼。可先對照 [Fallback（UX）](/ux-design/knowledge-cards/ux-fallback/) 和 [Fallback（Backend）](/backend/knowledge-cards/fallback/)。
+Gate 的核心概念是「使用者操作流程中必須通過才能繼續的關卡」。認證、網路連線、權限請求、環境檢查、付費牆、破壞性操作確認都是 gate。每個 gate 需要設計三條路徑：成功時做什麼、失敗時做什麼、使用者不知道發生什麼時做什麼。可先對照 [Fallback（UX）](/ux-design/knowledge-cards/ux-fallback/) 和 [Fallback（Backend）](/backend/knowledge-cards/fallback/)。
 
 ## 概念位置
 

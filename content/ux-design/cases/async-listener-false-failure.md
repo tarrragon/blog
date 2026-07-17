@@ -24,7 +24,7 @@ tags: ["ux-design", "case-study", "interaction-feedback", "chrome-extension", "w
 
 2. **成功誤報失敗比沒有回饋更糟**。零回饋讓使用者困惑；誠實度反轉讓使用者採取錯誤行動 — 重做一次提取（資料重複）、回報 bug、放棄使用。UI 的宣告與系統實際狀態相反時，使用者對介面的每一個訊息都會失去信任。
 
-3. **通道語意是平台契約、不是實作細節**。「listener 回傳 Promise = 認領回應權」是 Manifest V3 的行為規格，混用 async 語法糖與訊息協定就會觸發。這類契約在單元測試中不可見（mock 掉通道）、只有整合層才會現形。
+3. **通道語意是平台契約、不是實作細節**。「listener 回傳 Promise = 認領回應權」是 Manifest V3 在較新版 Chrome 的行為（更早版本會忽略回傳的 Promise、通道靜默關閉 — 兩種行為下，共享通道上的 async listener 都是錯的），混用 async 語法糖與訊息協定就會觸發。這類契約在單元測試中不可見（mock 掉通道）、只有整合層才會現形。
 
 ## 策略
 

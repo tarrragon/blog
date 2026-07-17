@@ -32,7 +32,7 @@ tags: ["ux-design", "case-study", "interaction-feedback", "placeholder", "techni
 
 ## 策略
 
-1. **佔位 handler 用統一可掃描的標記**（固定的 dev-placeholder helper 或註解格式），release 前用 grep 掃描清零或轉成 disabled + 說明。
+1. **佔位 handler 用統一可掃描的標記**（固定的 dev-placeholder helper、或 `// PLACEHOLDER:` 類統一註解），release 前用 grep 掃描（本案的現成過渡掃法：`rg "尚未實作|DevToast"`）清零或轉成 disabled + 說明。
 
 2. **未接線功能的 UI 三選一**：隱藏（功能不該被發現）、disabled + 原因（讓使用者知道存在但未開放）、接線（完成它）— 可點無反應不在選項裡。
 

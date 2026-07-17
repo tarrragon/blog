@@ -39,6 +39,8 @@ Retry 策略的 UX 設計重點：
 
 ## 網路狀態的 UI 呈現
 
+呈現離線之前，先區分「查詢對象還沒回應」與「確認離線」— 查詢對象有獨立生命週期（service worker、遠端服務）時，把初始化中的無回應呈現成離線會產生假離線、誤導使用者放棄（[U.C10](/ux-design/cases/service-worker-cold-start-false-offline/)；initializing 狀態的建模見[畫面狀態矩陣的定義與填寫方法](/ux-design/01-screen-state-machine/state-matrix-definition/)）。
+
 ### 全域指示器
 
 在 app 頂部或狀態列顯示「離線」標示。適合網路狀態影響全域功能的 app。

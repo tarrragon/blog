@@ -151,15 +151,16 @@ ceiling 訊號：
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                          | 關係                                                                                               |
-| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/) | **本卡的 sibling** — #82 是「驗證工具 vs 錯誤層次」、本卡是「呈現工具 vs 內容層次」、同骨不同領域  |
-| [#83 Writing 的 multi-pass review](../writing-multi-pass-review/)             | **本卡是 #83 缺的垂直軸** — #83 的 5 輪是 horizontal frame、本卡的 3 層是 vertical layer、兩軸正交 |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)     | 用 emoji 區分概念是「便利寫法」、改結構是「對齊意圖」 — 本卡是 #67 在呈現選擇上的具體實例          |
-| [#44 Single Source of Truth](../single-source-of-truth/)                      | 用 emoji 替代結構區分 = 把語意分散在「文字 + emoji」兩處、違反 SSoT、emoji 不渲染時語意就遺失      |
-| [#39 Native HTML 優先於 ARIA role](../native-html-over-aria-role/)            | 同骨：semantic HTML 把語意寫進結構、ARIA 是補丁；emoji 是視覺補丁、文本標記 / 列表是 semantic 結構 |
-| [#56 視覺完成 ≠ 功能完成](../visual-completion-vs-functional-completion/)     | 本卡是 #56 在「呈現層」的擴展 — 視覺驗收訊號早於語意驗收成立、容易誤判修好                         |
-| [#80 Yes/No 二選是隱式 collapse](../yes-no-binary-collapse/)                  | 「emoji 區分」是把多概念 collapse 進視覺維度、跟 yes/no collapse 同骨（多維度被壓成 1 維）         |
+| 原則                                                                          | 關係                                                                                                              |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/) | **本卡的 sibling** — #82 是「驗證工具 vs 錯誤層次」、本卡是「呈現工具 vs 內容層次」、同骨不同領域                 |
+| [#83 Writing 的 multi-pass review](../writing-multi-pass-review/)             | **本卡是 #83 缺的垂直軸** — #83 的 5 輪是 horizontal frame、本卡的 3 層是 vertical layer、兩軸正交                |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)     | 用 emoji 區分概念是「便利寫法」、改結構是「對齊意圖」 — 本卡是 #67 在呈現選擇上的具體實例                         |
+| [#44 Single Source of Truth](../single-source-of-truth/)                      | 用 emoji 替代結構區分 = 把語意分散在「文字 + emoji」兩處、違反 SSoT、emoji 不渲染時語意就遺失                     |
+| [#39 Native HTML 優先於 ARIA role](../native-html-over-aria-role/)            | 同骨：semantic HTML 把語意寫進結構、ARIA 是補丁；emoji 是視覺補丁、文本標記 / 列表是 semantic 結構                |
+| [#56 視覺完成 ≠ 功能完成](../visual-completion-vs-functional-completion/)     | 本卡是 #56 在「呈現層」的擴展 — 視覺驗收訊號早於語意驗收成立、容易誤判修好                                        |
+| [#80 Yes/No 二選是隱式 collapse](../yes-no-binary-collapse/)                  | 「emoji 區分」是把多概念 collapse 進視覺維度、跟 yes/no collapse 同骨（多維度被壓成 1 維）                        |
+| [#228 等比縮放不管空間分配](../proportional-scaling-is-not-space-allocation/) | **家族第三個 sibling** — #82 驗證工具、本卡呈現工具、#228 換算工具 vs 佈局層次，同骨：工具有能擋的層 / 擋不到的層 |
 
 本卡是 [#82](../literal-interception-vs-behavioral-refinement/) 的 sibling — 兩者都在說「**工具有能擋的層 / 擋不到的層、超出 ceiling 是 false confidence**」。組合理解：
 

@@ -18,14 +18,16 @@ tags: ["ux-design", "interaction-feedback", "button-states", "loading"]
 
 缺少任何一層，使用者的反應都是「再按一次」— 導致重複提交、重複導航、重複請求。
 
+「按了沒反應」在案例庫有四種被驗證過的成因，診斷時逐一排除：回饋未接線（[U.C5](/ux-design/cases/export-button-zero-feedback/)）、佔位 handler（[U.C20](/ux-design/cases/management-actions-placeholder-only/)）、點到的不是按鈕（[U.C18](/ux-design/cases/status-icon-mistaken-for-button/)）、回饋被版面壓縮（[U.C19](/ux-design/cases/selection-count-layout-starvation/)）。
+
 ## 章節
 
-| 章節                                            | 主題                                           | 回答問題                     |
-| ----------------------------------------------- | ---------------------------------------------- | ---------------------------- |
-| [互動回饋三層模型](feedback-three-layers/)      | 三層模型 + 畫面級狀態轉換                      | 使用者按了按鈕為什麼沒反應？ |
-| [按鈕狀態設計](button-state-design/)            | 按鈕各狀態傳達的系統訊息                       | 一個按鈕需要幾種狀態？       |
-| [時間感知與回應策略](response-time-strategy/)   | 等待時間的回饋策略 + 感知效能技巧              | 什麼時候該顯示 Loading？     |
-| [通知模式選擇](notification-pattern-selection/) | SnackBar / Dialog / Banner / Bottom Sheet 判準 | 結果通知該用什麼形式呈現？   |
+| 章節                                            | 主題                                            | 回答問題                     |
+| ----------------------------------------------- | ----------------------------------------------- | ---------------------------- |
+| [互動回饋三層模型](feedback-three-layers/)      | 三層模型 + 畫面級狀態轉換                       | 使用者按了按鈕為什麼沒反應？ |
+| [按鈕狀態設計](button-state-design/)            | 按鈕狀態 + 元件語意與版面（標籤 / 對比 / 溢出） | 一個按鈕需要幾種狀態？       |
+| [時間感知與回應策略](response-time-strategy/)   | 等待時間的回饋策略 + 感知效能技巧               | 什麼時候該顯示 Loading？     |
+| [通知模式選擇](notification-pattern-selection/) | SnackBar / Dialog / Banner / Bottom Sheet 判準  | 結果通知該用什麼形式呈現？   |
 
 每篇文末附設計檢查清單，可直接作為 code review 與規格驗收的依據。
 
