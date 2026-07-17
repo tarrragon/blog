@@ -13,7 +13,7 @@ tags: ["ux-design", "case-study"]
 - **自有案例**：app_tunnel、book_overview_app（Flutter mobile）與 book_overview_v1（Chrome extension）專案的實機測試教訓（first-party，有完整程式碼和 commit 歷史）
 - **外部案例**：iOS/Android 設計指南中的反模式和社群討論（third-party，引用公開來源）
 
-U.C1-C8 來自 mobile app、U.C9-C14 來自 Chrome extension — 兩類 surface 的失敗模式互補：mobile 案例集中在狀態機退出路徑、觸控與輸入機制；extension 案例集中在多 context 的回饋鏈路可靠性、查詢對象生命週期、完成判定誠實度與跨 app 邊界的路由辨識。
+U.C1-C8 與 U.C15-C20 來自 mobile app、U.C9-C14 來自 Chrome extension — 兩類 surface 的失敗模式互補：mobile 案例集中在狀態機退出路徑、觸控與輸入機制、元件語意與版面（標籤歧義、可點性、對比、layout 擠壓）；extension 案例集中在多 context 的回饋鏈路可靠性、查詢對象生命週期、完成判定誠實度與跨 app 邊界的路由辨識。
 
 ## 案例覆蓋缺口
 
@@ -41,3 +41,9 @@ U.C1-C8 來自 mobile app、U.C9-C14 來自 Chrome extension — 兩類 surface 
 | [U.C12](/ux-design/cases/destructive-import-fail-safe-confirm/)    | 匯入清空書庫的確認與安全預設       | book_overview_v1  | 模組二    | 破壞性操作 gate（正面案例）                |
 | [U.C13](/ux-design/cases/import-error-reload-extension-mismatch/)  | 匯入錯誤配重載擴充功能按鈕         | book_overview_v1  | 模組四    | 錯誤行動與層級不對位                       |
 | [U.C14](/ux-design/cases/hash-spa-route-label-loss/)               | hash SPA 的 pathname 永遠是根路徑  | book_overview_v1  | 模組五    | 路由辨識遺漏 fragment                      |
+| [U.C15](/ux-design/cases/toggle-button-label-state-ambiguity/)     | 切換按鈕標籤被讀成當前狀態         | book_overview_app | 模組六    | 標籤語意歧義（狀態 vs 動作）               |
+| [U.C16](/ux-design/cases/filter-chips-overflow-no-affordance/)     | 篩選列截斷被讀成遮蔽               | book_overview_app | 模組六    | 水平溢出無捲動 affordance                  |
+| [U.C17](/ux-design/cases/selected-chip-contrast-not-paired/)       | 選中態換底色不換文字色             | book_overview_app | 模組六    | 對比未成對設計                             |
+| [U.C18](/ux-design/cases/status-icon-mistaken-for-button/)         | 狀態圖示被當成按鈕點               | book_overview_app | 模組六    | 非互動指示與動作按鈕同形                   |
+| [U.C19](/ux-design/cases/selection-count-layout-starvation/)       | 「已選擇」計數被壓成省略號         | book_overview_app | 模組六    | 回饋死在 layout（寬度競爭）                |
+| [U.C20](/ux-design/cases/management-actions-placeholder-only/)     | 管理模式操作全是佔位               | book_overview_app | 模組六    | 佔位 handler 掩蓋未接線                    |
