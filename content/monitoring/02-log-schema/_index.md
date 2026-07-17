@@ -8,12 +8,12 @@ tags: ["monitoring", "schema", "json", "event-format"]
 
 回答「事件長什麼樣」。schema 是所有 SDK 和 collector 的契約 SOT。
 
-## 待寫章節
+## 章節
 
-- [x] event.schema.json 完整欄位解說
-- [x] 欄位設計原則（source 標明來源 / data 自由欄位 / v 版本演進）
-- [x] Schema 版本演進策略（backward compatible 的增量變更）
-- [x] 跟 OpenTelemetry 的 schema 差異對照
+- [event.schema.json 完整欄位解說](/monitoring/02-log-schema/event-schema-fields/) — 每個欄位的語意、必填與選填、格式規範
+- [欄位設計原則](/monitoring/02-log-schema/field-design-principles/) — source 標明來源、data 自由欄位、v 版本演進的設計原則
+- [Schema 版本演進策略](/monitoring/02-log-schema/schema-versioning/) — backward compatible 的增量變更策略
+- [跟 OpenTelemetry 的 schema 差異對照](/monitoring/02-log-schema/otel-comparison/) — OTLP schema 與自定義 schema 的功能差異與取捨
 
 ## 跨分類引用
 

@@ -8,20 +8,20 @@ tags: ["testing", "observability", "logging", "client-side"]
 
 回答「使用者的裝置上發生了什麼事」。log 設計應在功能規格階段完成，跟 API schema 同級。
 
-## 對應 findings
+## 本模組回應的測試盲區
 
-| Finding | 來源                                                 | 內容                                          |
-| ------- | ---------------------------------------------------- | --------------------------------------------- |
-| TF-6    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | 6 元件中 4 個零 log，2 個全是實機修復 hotfix  |
-| TF-7    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | 事後補的 developer.log 格式不統一             |
-| TF-9    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | log 設計應在功能規格階段完成 — **本模組主寫** |
+| Finding | 來源                                                 | 內容                                            |
+| ------- | ---------------------------------------------------- | ----------------------------------------------- |
+| TF-6    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | 6 元件中 4 個零 log，2 個全是實機修復 hotfix    |
+| TF-7    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | 事後補的 developer.log 格式不統一               |
+| TF-9    | [T.C4](/testing/cases/client-log-absent-debug-cost/) | log 設計應在功能規格階段完成 — 本模組的核心案例 |
 
-## 待寫章節
+## 章節
 
-- [x] 三層 log 設計（連線生命週期 / protocol 訊息 / 使用者行為）
-- [x] 功能規格中的 log 點定義方法
-- [x] 自架 log endpoint vs 商業方案的取捨判斷
-- [x] 「事後補 log」vs「設計產物 log」的品質差異
+- [三層 log 設計](/testing/02-client-observability/three-layer-log-design/) — 連線生命週期 log、protocol 訊息 log、使用者行為 log 三層各自的職責與控制
+- [功能規格中的 log 點定義方法](/testing/02-client-observability/log-point-in-spec/) — log 點設計從 debug 階段前移到功能規格階段
+- [自架 log endpoint vs 商業方案的取捨判斷](/testing/02-client-observability/log-endpoint-tradeoff/) — 判斷依據是使用者規模和 debug 需求
+- [「事後補 log」vs「設計產物 log」的品質差異](/testing/02-client-observability/hotfix-log-vs-designed-log/) — 格式、覆蓋率、維護成本的差異
 
 ## 跨分類引用
 

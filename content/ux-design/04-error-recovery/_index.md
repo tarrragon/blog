@@ -8,12 +8,12 @@ tags: ["ux-design", "error", "recovery", "retry"]
 
 回答「出錯時使用者能做什麼」。
 
-## 待寫章節
+## 章節
 
-- [x] 錯誤訊息撰寫原則（使用者能讀懂 + 能行動）
-- [x] Retry 機制 UX（自動 vs 手動 / 指數退避 vs 立即重試）
-- [x] Degraded mode 設計（部分功能不可用時怎麼告知）
-- [x] error → retry → error 循環的逃生口設計
+- [錯誤訊息撰寫原則](/ux-design/04-error-recovery/error-message-principles/) — 使用者能讀懂發生什麼、能決定下一步做什麼
+- [Retry 機制 UX](/ux-design/04-error-recovery/retry-mechanism-ux/) — 自動 vs 手動重試、指數退避 vs 立即重試的策略選擇
+- [Degraded mode 設計](/ux-design/04-error-recovery/degraded-mode-design/) — 部分功能不可用時的告知策略，靜默隱藏 vs 明確標示 vs 替代方案
+- [error → retry → error 循環的逃生口設計](/ux-design/04-error-recovery/error-loop-escape/) — 重試持續失敗時，使用者需要第二條路離開失敗循環
 
 ## 跨分類引用
 

@@ -8,19 +8,19 @@ tags: ["ux-design", "navigation", "router", "flutter", "mobile"]
 
 回答「畫面之間怎麼跳」。
 
-## 對應 findings
+## 本模組回應的 UX 盲區
 
-| Finding | 來源                                                     | 內容                                        |
-| ------- | -------------------------------------------------------- | ------------------------------------------- |
-| UF-10   | [U.C4](/ux-design/cases/missing-enrollment-entry-point/) | go vs push 語意差異影響 UX — **本模組主寫** |
+| Finding | 來源                                                     | 內容                                          |
+| ------- | -------------------------------------------------------- | --------------------------------------------- |
+| UF-10   | [U.C4](/ux-design/cases/missing-enrollment-entry-point/) | go vs push 語意差異影響 UX — 本模組的核心案例 |
 
-## 待寫章節
+## 章節
 
-- [x] Mobile 導航模式分類（push/pop / declarative router / tab / drawer）
-- [x] Flutter GoRouter 導航設計
-- [x] iOS HIG vs Material Design 導航差異
-- [x] Deep link 設計
-- [x] go vs push vs pushReplacement 的 UX 語意表
+- [Mobile 導航模式分類](/ux-design/05-navigation-patterns/mobile-navigation-taxonomy/) — Push/pop stack / declarative router / tab bar / drawer 四種模式的適用場景
+- [Flutter GoRouter 導航設計](/ux-design/05-navigation-patterns/flutter-gorouter/) — 路由定義、導航 API、redirect 機制和 ShellRoute 的使用場景
+- [iOS HIG vs Material Design 導航差異](/ux-design/05-navigation-patterns/ios-vs-material-navigation/) — back 行為、手勢、tab bar 位置、modal 呈現的平台差異
+- [Deep link 設計](/ux-design/05-navigation-patterns/deep-link-design/) — URL scheme / Universal Link / App Link，外部來源直接導航到 app 特定畫面
+- [go vs push vs pushReplacement 的 UX 語意表](/ux-design/05-navigation-patterns/go-push-semantics/) — 三種導航方法對堆疊、back 行為、使用者心理模型的影響
 
 ## 跨分類引用
 

@@ -8,16 +8,16 @@ tags: ["monitoring", "analytics", "funnel", "ab-test", "recommendation", "market
 
 回答「蒐集到的行為資料除了 debug，還能做什麼」。前提：[模組七](/monitoring/07-security-privacy/) 的去識別化是本模組的入場條件。
 
-## 待寫章節
+## 章節
 
-- [x] 行為事件設計（事件命名規範 / 屬性設計 / funnel 定義）
-- [x] Funnel analysis（使用者在哪一步流失）
-- [x] Cohort analysis（不同族群的留存率差異）
-- [x] Attribution（使用者從哪來、哪個廣告帶來轉換）
-- [x] A/B test 的統計基礎（假設檢定 / 樣本量 / 多重比較）
-- [x] 推薦系統概論（collaborative filtering / content-based / 混合）
-- [x] RFM 分群（Recency / Frequency / Monetary 的工程實作）
-- [x] 從 collector 資料做基礎 funnel 分析（自架方案能做到哪裡）
+- [行為事件設計](/monitoring/08-business-analytics/behavior-event-design/) — 事件命名規範、屬性設計、funnel 定義
+- [Funnel Analysis](/monitoring/08-business-analytics/funnel-analysis/) — 使用者在哪一步流失的分析方法
+- [Cohort Analysis](/monitoring/08-business-analytics/cohort-analysis/) — 不同族群的留存率差異分析
+- [Attribution](/monitoring/08-business-analytics/attribution/) — 使用者從哪來、哪個廣告帶來轉換
+- [A/B Test 的統計基礎](/monitoring/08-business-analytics/ab-test-statistics/) — 假設檢定、樣本量、多重比較的統計基礎
+- [推薦系統概論](/monitoring/08-business-analytics/recommendation-overview/) — collaborative filtering / content-based / 混合方法概論
+- [RFM 分群](/monitoring/08-business-analytics/rfm-segmentation/) — Recency / Frequency / Monetary 的工程實作
+- [從 collector 資料做基礎 funnel 分析](/monitoring/08-business-analytics/self-hosted-funnel/) — 自架方案能做到哪裡的 funnel 分析
 
 ## 跨分類引用
 

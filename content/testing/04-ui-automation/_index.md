@@ -8,12 +8,12 @@ tags: ["testing", "widget-test", "playwright", "ui-test"]
 
 回答「畫面上的東西是否如設計工作」。狀態矩陣直接轉成 test case。
 
-## 待寫章節
+## 章節
 
-- [x] Widget test 的狀態覆蓋策略（從狀態矩陣推導 test case）
-- [x] 導航路徑 test（back 按鈕、route 可達性）
-- [x] Playwright 瀏覽器驗證流程
-- [x] 螢幕截圖比對（visual regression）
+- [Widget test 的狀態覆蓋策略](/testing/04-ui-automation/state-coverage-strategy/) — 從畫面狀態矩陣推導 test case
+- [導航路徑 test](/testing/04-ui-automation/navigation-path-test/) — Back 按鈕、route 可達性、go vs push 語意驗證
+- [Playwright 瀏覽器驗證流程](/testing/04-ui-automation/playwright-verification/) — web 版 UI 行為驗證與 widget test 的互補
+- [螢幕截圖比對](/testing/04-ui-automation/visual-regression/) — Visual regression testing 與 baseline 管理
 
 ## 跨分類引用
 
