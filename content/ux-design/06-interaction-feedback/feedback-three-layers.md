@@ -159,6 +159,8 @@ timeout 是 connecting 的隱形退出路徑：取消靠使用者主動，timeou
 
 表格第一行（按鈕無任何視覺回饋）的完整實證案例見 [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)——狀態機完備但 UI 沒接線，三層回饋全缺。同族的兩個變體：佔位 handler 上線 — 按鈕存在但 onPressed 只接開發提示或 log，dev toast 讓開發自測「有反應」、掩蓋未接線（[U.C20](/ux-design/cases/management-actions-placeholder-only/)）；回饋文字被版面擠壓 — state 有值、綁定正確，flex 寬度競爭把「已選擇: 3/45」壓成「...」（[U.C19](/ux-design/cases/selection-count-layout-starvation/)）。回饋鏈要驗到使用者的眼睛，state 有值、widget 有綁都不是終點。
 
+版面擠壓類問題有一個常見的誤歸因：專案用了等比縮放套件（如 flutter_screenutil），版面出事時第一反應是查套件設定。換算工具工作在常數層（設計稿座標 → 裝置座標的數值換算）、空間分配發生在 layout 協商層（有限寬度分給動態內容）— 兩層獨立，「有用響應式套件」不構成版面不會擠壓的保證。判斷式（換算錯 vs 分配錯）與三層修法（設計層空間競爭規格 / 實作層 flex 顯式決策 / 驗證層窄幕檢查）見 [#228 等比縮放不管空間分配](/report/proportional-scaling-is-not-space-allocation/)。
+
 ## 設計檢查清單
 
 為每個按鈕逐一確認：
