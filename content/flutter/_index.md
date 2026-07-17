@@ -71,6 +71,10 @@ tags: ["flutter", "dart", "mobile"]
 | 測試基礎設施的重量       | [1101 行自建測試基礎設施、刪掉 82.5%](/work-log/flutter_mock_infrastructure_overengineering_deleted/)                                         |
 | fixture 與真實資料通路   | [遷移計畫有寫入、有消費、缺讀出](/work-log/flutter_migration_read_path_gap_fake_green/)                                                       |
 | 遷移安全網               | [測「不變」、不測「正確」：characterization test](/work-log/flutter_characterization_test_migration_safety_net/)                              |
+| binding 與真實網路的互斥 | [TestWidgetsFlutterBinding 會擋掉真實網路](/work-log/flutter_test_binding_blocks_real_network/)                                               |
+| headless 立起 UI 控制器  | [platform channel mock、no-op 子類與 postFrameCallback 手工補位](/work-log/flutter_headless_controller_test_bootstrap/)                       |
+| 測試輸出雜訊治理         | [預期的環境狀態不該走例外路徑](/work-log/flutter_test_noise_expected_paths/)                                                                  |
+| 假後端的回應資料來源     | [有狀態假後端用真實模型序列化回應](/work-log/flutter_fake_backend_real_model_serialization/)                                                  |
 
 ### 架構與分層
 
