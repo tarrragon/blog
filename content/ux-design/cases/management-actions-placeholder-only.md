@@ -1,22 +1,22 @@
 ---
 title: "U.C20 管理模式操作全是佔位 — dev toast 讓未接線看起來有反應"
 date: 2026-07-17
-description: "UI 有按鈕、domain 層功能也寫完了、按下去卻只有開發提示或 log 時使用。佔位 handler 比沒有按鈕更糟 — 按鈕的存在承諾功能存在，且 dev toast 讓開發自測時「有反應」、掩蓋未接線"
+description: "UI 有按鈕、domain 層功能也寫完、按下去只有開發提示或 log：佔位 handler 比沒有按鈕更糟 — 按鈕的存在承諾功能存在，dev toast 讓開發自測「有反應」、掩蓋未接線"
 weight: 20
 tags: ["ux-design", "case-study", "interaction-feedback", "placeholder", "technical-debt", "flutter", "mobile"]
 ---
 
-這個案例的核心責任是說明佔位 handler 的雙重風險：對使用者，可點的假按鈕比沒有按鈕更糟（按鈕的存在承諾功能存在）；對開發者，接了 dev toast / log 的佔位在自測時「有反應」，讓未接線在驗收前不可見。
+書庫管理 app 的管理模式有完整的批次操作 domain 服務、畫面上也有一整排批次操作按鈕 — 兩者之間的接線全數是佔位。佔位 handler 的風險是雙重的：對使用者，可點的假按鈕比沒有按鈕更糟（按鈕的存在承諾功能存在）；對開發者，接了 dev toast / log 的佔位在自測時「有反應」，讓未接線在驗收前不可見。
 
 ## 觀察
 
-書庫管理 app 管理模式的批次操作 UI 全數是佔位（驗收回報「右下按鈕按了沒反應」）：
+驗收回報「右下按鈕按了沒反應」；管理模式批次操作 UI 的盤點結果：
 
-| UI 元件                           | onPressed 實際行為             | 位置                                    |
-| --------------------------------- | ------------------------------ | --------------------------------------- |
-| 右下 FAB（more_vert「批次操作」） | 只彈開發用的點擊事件測試 toast | `library_display_extensions.dart:62-66` |
-| 底部欄「編輯」「分享」「刪除」    | 只寫 log「...尚未實作」        | `library_display_page.dart:129,144,159` |
-| AppBar「更多選項」                | 只寫 log「尚未實作」           | `library_display_page.dart:63-67`       |
+| UI 元件                          | onPressed 實際行為             | 位置                                    |
+| -------------------------------- | ------------------------------ | --------------------------------------- |
+| 右下浮動按鈕 FAB（「批次操作」） | 只彈開發用的點擊事件測試 toast | `library_display_extensions.dart:62-66` |
+| 底部欄「編輯」「分享」「刪除」   | 只寫 log「...尚未實作」        | `library_display_page.dart:129,144,159` |
+| AppBar「更多選項」               | 只寫 log「尚未實作」           | `library_display_page.dart:63-67`       |
 
 對照規格（SPEC-006 FR-9 / FR-10）：批次操作的 domain 層已完整實作 — `LibraryManagementService.performBatchOperation`（刪除 / 改來源 / 改重要度 / 增刪標籤）與 Command 模式的編輯服務（undo / redo）都在 — **是 UI 到 service 的最後一段接線沒做**。團隊已有「佔位實作」的追蹤票（佔位掃描盲區改善），本案是同類技術債在管理模式的集中呈現。
 

@@ -6,7 +6,7 @@ weight: 16
 tags: ["ux-design", "case-study", "layout", "overflow", "affordance", "flutter", "mobile"]
 ---
 
-這個案例的核心責任是說明水平溢出的可見性要主動設計：實作上「可以捲動」不等於使用者知道可以捲動 — 截斷發生在另一顆固定按鈕旁邊時，使用者的視覺歸因是「被那顆按鈕遮住了」。
+四顆篩選 chip、一顆固定在列尾的重新整理鈕、一條在螢幕邊緣被截斷的可捲動清單 — 驗收回報的是「篩選按鈕被重新整理按鈕遮蔽」。實作上沒有任何重疊：水平溢出的可見性沒被設計，截斷被讀成了遮蔽 — 這張卡談溢出 affordance 為什麼要主動設計。
 
 ## 觀察
 
@@ -36,4 +36,4 @@ tags: ["ux-design", "case-study", "layout", "overflow", "affordance", "flutter",
 
 - 溢出 affordance 與元件語意的章節整理 → [按鈕狀態設計](/ux-design/06-interaction-feedback/button-state-design/)
 - 同一條篩選列的選中態對比問題 → [U.C17 選中態換底色不換文字色](/ux-design/cases/selected-chip-contrast-not-paired/)
-- 視覺暗示與實際行為錯位的 sibling → [U.C8 標籤行只有箭頭可點](/ux-design/cases/tag-row-touch-target-scope/)
+- 同構案例（視覺暗示與實際行為錯位）→ [U.C8 標籤行只有箭頭可點](/ux-design/cases/tag-row-touch-target-scope/)

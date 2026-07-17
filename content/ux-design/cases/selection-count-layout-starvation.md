@@ -1,12 +1,12 @@
 ---
 title: "U.C19 「已選擇」計數被版面擠壓成省略號 — 回饋死在 layout"
 date: 2026-07-17
-description: "狀態文字顯示成「...」、資料層查起來卻一切正常時使用。回饋鏈的最後一哩是版面 — Flexible + Spacer 的寬度競爭把關鍵計數整串壓成省略號，state 正確、使用者拿到零資訊"
+description: "狀態文字顯示成「...」、資料層查起來卻一切正常 — 回饋鏈的最後一哩是版面，flex 寬度競爭把關鍵計數整串壓成省略號，state 正確、使用者拿到零資訊"
 weight: 19
 tags: ["ux-design", "case-study", "interaction-feedback", "layout", "ellipsis", "flutter", "mobile"]
 ---
 
-這個案例的核心責任是說明回饋鏈的最後一哩：狀態存在、綁定正確、文字建構無誤，回饋仍可能死在版面 — 寬度競爭之下被 ellipsis 壓縮成「...」，對使用者等於零回饋。
+狀態存在、綁定正確、文字建構無誤，回饋仍然可能死在版面 — 寬度競爭把它壓縮成「...」，對使用者等於零回饋。回饋鏈的最後一哩是版面。
 
 ## 觀察
 
@@ -35,5 +35,5 @@ tags: ["ux-design", "case-study", "interaction-feedback", "layout", "ellipsis", 
 ## 下一步路由
 
 - 結果通知的完整設計 → [互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)
-- 資料正確但 UI 未反映的 sibling → [U.C9 提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)
-- 同畫面的其他管理模式問題 → [U.C20 管理模式操作全是佔位](/ux-design/cases/management-actions-placeholder-only/)
+- 資料正確但 UI 未反映的另一種形態 → [U.C9 提取成功卻誤報失敗](/ux-design/cases/async-listener-false-failure/)
+- 管理模式的佔位操作 → [U.C20 管理模式操作全是佔位](/ux-design/cases/management-actions-placeholder-only/)

@@ -6,11 +6,11 @@ weight: 18
 tags: ["ux-design", "case-study", "affordance", "icon-semantics", "interaction-feedback", "flutter", "mobile"]
 ---
 
-這個案例的核心責任是說明可點性的形態訊號：非互動的狀態指示與動作按鈕排在同一列、又用近似圖示時，使用者的預設是「整列都可以點」— 點到狀態圖示的「沒反應」會被讀成功能壞掉。這是 U.C8 的鏡像：U.C8 是可點範圍小於視覺暗示、本案是不可點元素帶著可點暗示。
+這是 [U.C8 標籤行只有箭頭可點](/ux-design/cases/tag-row-touch-target-scope/)的鏡像案例：U.C8 是可點範圍小於視覺暗示、本案是不可點元素帶著可點暗示。非互動的狀態指示與動作按鈕排在同一列、又用近似圖示時，使用者的預設是「整列都可以點」— 點到狀態圖示的「沒反應」會被讀成功能壞掉。
 
 ## 觀察
 
-書庫管理 app 書卡的 trailing 區是一個 Row 三格（`library_display_extensions.dart:432-448`）：
+書庫管理 app 書卡的 trailing 區（列表項尾端的元件區）是一個 Row 三格（`library_display_extensions.dart:432-448`）：
 
 | 格位 | 元件                                       | 可點性                                       |
 | ---- | ------------------------------------------ | -------------------------------------------- |
@@ -24,7 +24,7 @@ tags: ["ux-design", "case-study", "affordance", "icon-semantics", "interaction-f
 
 ## 判讀
 
-1. **同列混排讓可點性預設擴散**。一列裡有兩顆按鈕時，使用者掃視的預設是「這一列是動作區、全部可點」— 混進去的狀態指示自動繼承這個預設。指示「沒反應」不會被讀成「這是標記」，會被讀成「按鈕壞了」（體感等同 U.C5 的零回饋）。
+1. **同列混排讓可點性預設擴散**。一列裡有兩顆按鈕時，使用者掃視的預設是「這一列是動作區、全部可點」— 混進去的狀態指示自動繼承這個預設。指示「沒反應」不會被讀成「這是標記」，會被讀成「按鈕壞了」（體感等同 [U.C5 匯出按鈕零回饋](/ux-design/cases/export-button-zero-feedback/)）。
 
 2. **描邊 vs 實心不是可靠的互動性訊號**。同一個圖形的 outline / filled 變體在小尺寸下幾乎不可分，而且業界對「哪個代表可點」沒有慣例。可點性要用更強的形態訊號：按鈕容器（邊框 / 底色 / ripple）、或把指示改成明顯非按鈕的形態（文字 chip、彩色圓點）。
 
@@ -44,4 +44,4 @@ tags: ["ux-design", "case-study", "affordance", "icon-semantics", "interaction-f
 
 - 鏡像案例（可點範圍小於視覺暗示）→ [U.C8 標籤行只有箭頭可點](/ux-design/cases/tag-row-touch-target-scope/)
 - 按鈕的可辨識性要求 → [按鈕狀態設計](/ux-design/06-interaction-feedback/button-state-design/)
-- 同畫面的標籤語意歧義 → [U.C15 切換按鈕標籤被讀成當前狀態](/ux-design/cases/toggle-button-label-state-ambiguity/)
+- 工具列上的標籤語意歧義 → [U.C15 切換按鈕標籤被讀成當前狀態](/ux-design/cases/toggle-button-label-state-ambiguity/)

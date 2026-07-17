@@ -90,7 +90,7 @@ Risk accepted: someone with device PIN can access the app
 
 ## 開發環境 vs 真機的行為差異
 
-開發環境的 gate 行為比真機寬鬆，讓缺口在開發階段不可見 — 和 mock 遮蔽 protocol 問題同構。三個機制：模擬器不支援硬體功能（生物辨識、藍牙、push）導致 app 跳過認證走預設路徑；debug build 的權限行為可能不同；test 環境 mock 掉所有 gate（fake service 永遠成功）。
+開發環境的 gate 行為比真機寬鬆，讓缺口在開發階段不可見 — 和測試中 mock 掉外部依賴、遮蔽真實協定行為是同一類問題。三個機制：模擬器不支援硬體功能（生物辨識、藍牙、push）導致 app 跳過認證走預設路徑；debug build 的權限行為可能不同；test 環境 mock 掉所有 gate（fake service 永遠成功）。
 
 對策是在規格中建一張差異表，「模擬器行為」和「真機 release」不同的行 = 必須上真機驗證的項目：
 

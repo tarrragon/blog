@@ -1,12 +1,12 @@
 ---
 title: "U.C10 Service Worker 冷啟動期間的假離線 — initializing 狀態未建模"
 date: 2026-07-17
-description: "畫面把「查詢對象還沒醒」顯示成「離線 / 不可用」時使用。查詢對象有獨立生命週期（service worker、遠端服務）時，「還不知道」是真實狀態，與離線合併會產生假離線窗口"
+description: "查詢對象有獨立生命週期（service worker、遠端服務）的畫面，把「還不知道」與「離線」合併就會把慢啟動呈現成假離線 — initializing 是真實狀態、要進狀態矩陣、timeout 是它的退出路徑"
 weight: 10
 tags: ["ux-design", "case-study", "state-machine", "chrome-extension", "web", "service-worker"]
 ---
 
-這個案例的核心責任是說明狀態矩陣列狀態時的一個系統性遺漏：查詢對象有自己的生命週期時，「還不知道對方狀態」（initializing / unknown）是一個真實狀態 — 把它與「離線」「錯誤」合併，會在每次冷啟動時產生一段假離線窗口。
+查詢對象有自己的生命週期時，「還不知道對方狀態」（initializing / unknown）是一個真實狀態 — 把它與「離線」「錯誤」合併，查詢對象醒得慢的那一次就會被呈現成假離線。這張卡記錄[畫面狀態矩陣](/ux-design/knowledge-cards/screen-state-matrix/)列狀態時的這個系統性遺漏。
 
 ## 觀察
 
@@ -14,7 +14,7 @@ tags: ["ux-design", "case-study", "state-machine", "chrome-extension", "web", "s
 
 修復採雙管：查詢端加握手重試，加上被查詢端在初始化期間就回應 baseline 的 `initializing` 狀態 — popup 據此顯示「初始化中」而非落入 timeout 判離線。
 
-同專案的 sibling 事故（commit `86216c37f`）：popup 的書籍偵測數硬編「檢測中...」、從未讀取健康查詢回應中的實際數字 — 過渡狀態的顯示寫死了、永遠停在過渡態。兩個事故一體兩面：一個把「還不知道」誤顯示成終態（離線）、一個把終態永遠顯示成「還不知道」。
+同專案的另一起同型事故（commit `86216c37f`）：popup 的書籍偵測數硬編「檢測中...」、從未讀取健康查詢回應中的實際數字 — 過渡狀態的顯示寫死了、永遠停在過渡態。兩個事故一體兩面：一個把「還不知道」誤顯示成終態（離線）、一個把終態永遠顯示成「還不知道」。
 
 ## 判讀
 

@@ -1,12 +1,12 @@
 ---
 title: "U.C15 切換按鈕顯示目標模式被讀成當前狀態 — 標籤語意歧義"
 date: 2026-07-17
-description: "模式切換按鈕的文字被使用者讀成「現在的狀態」而非「按了會去哪」時使用。單顆文字按鈕無法自證標籤是現態還是目標，歧義是結構性的 — 解法是狀態顯示與切換動作分離"
+description: "模式切換按鈕的文字被使用者讀成「現在的狀態」而非「按了會去哪」— 單顆文字按鈕無法自證標籤是現態還是目標，歧義是結構性的，解法是把狀態顯示與切換動作的責任拆開"
 weight: 15
 tags: ["ux-design", "case-study", "interaction-feedback", "toggle", "label-semantics", "flutter", "mobile"]
 ---
 
-這個案例的核心責任是說明模式切換元件的標籤語意歧義：「顯示目標模式」和「顯示當前模式」是兩種並存的業界慣例，單獨一顆文字按鈕無法讓使用者判斷是哪一種 — 驗收時被讀反是結構性風險、不是使用者的誤解。
+「顯示目標模式」和「顯示當前模式」是模式切換元件兩種並存的業界慣例，單獨一顆文字按鈕無法讓使用者判斷設計者用的是哪一種 — 驗收時被讀反是結構性風險、不是使用者的誤解。
 
 ## 觀察
 
@@ -35,4 +35,4 @@ tags: ["ux-design", "case-study", "interaction-feedback", "toggle", "label-seman
 ## 下一步路由
 
 - 按鈕各狀態傳達的系統訊息 → [按鈕狀態設計](/ux-design/06-interaction-feedback/button-state-design/)
-- 同畫面的另一個可點性歧義 → [U.C18 狀態圖示被當成按鈕](/ux-design/cases/status-icon-mistaken-for-button/)
+- 書卡動作列的可點性歧義 → [U.C18 狀態圖示被當成按鈕](/ux-design/cases/status-icon-mistaken-for-button/)

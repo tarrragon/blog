@@ -10,13 +10,13 @@ tags: ["ux-design", "case-study", "interaction-feedback", "chrome-extension", "w
 
 ## 觀察
 
-電子書庫總覽 Chrome 擴充功能（book_overview_v1，Manifest V3）的提取流程：popup 觸發 content script 擷取書目、寫入 storage、回報結果。實機測試中 content script 成功提取 96 本且 storage 已寫入，popup UI 卻顯示「提取失敗 / 未知錯誤」。
+電子書庫總覽 Chrome 擴充功能（book_overview_v1，Manifest V3 — Chrome 擴充平台的現行規格版本）的提取流程：popup 觸發 content script 擷取書目、寫入 storage、回報結果。實機測試中 content script 成功提取 96 本且 storage 已寫入，popup UI 卻顯示「提取失敗 / 未知錯誤」。
 
 根因在訊息通道語意（commit `97c24b2b6`）：橋接模組的 message listener 宣告成 async。收到非它負責的訊息型別時函式體直接結束，async 函式回傳 `Promise.resolve(undefined)` — Manifest V3 把「listener 回傳 Promise」解讀為「此 listener 負責回應」，把 undefined 搶先送回 popup，與真正處理該訊息的 listener 競爭。popup 拿到 undefined、走 else 分支拋「未知錯誤」。
 
 修復：listener 改為同步函式，非處理訊息回傳 undefined（不搶通道）、async 邏輯抽成 fire-and-forget handler。
 
-同專案的 sibling 事故（commit `a62ce00d8`）：訊息路由的 handler 沒被注入、事件協調器沒被啟動，`EXTRACTION.COMPLETED` 事件沒有任何訂閱者 — 提取完成但資料未儲存、popup 連線失敗。鏈路斷的位置不同（組裝遺漏 vs 通道語意），使用者看到的都是「操作沒有結果」。
+同一條鏈路的另一個斷點（commit `a62ce00d8`）：訊息路由的 handler 沒被注入、事件協調器沒被啟動，`EXTRACTION.COMPLETED` 事件沒有任何訂閱者 — 提取完成但資料未儲存、popup 連線失敗。鏈路斷的位置不同（組裝遺漏 vs 通道語意），使用者看到的都是「操作沒有結果」。
 
 ## 判讀
 
