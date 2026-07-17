@@ -50,7 +50,11 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 判斷原則：被測元件直接對接外部協議（WS、gRPC、SMTP）→ 需要 protocol integration test。外部服務可在本機啟動 → 成本低，強烈建議。Mock 和真實服務之間有協議語意差異 → 必須。
 
+分層之外的補充形態：當 bug 的成因是「我們對後端行為的假設錯誤」時，由測試餵資料的 stub 從結構上驗證不出來（假設與斷言出自同一人之手）。對策是[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)——持有狀態、模擬已證實的後端行為，讓多個前端服務走完整互動鏈；並與模組三的[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)配對，讓後端行為漂移有地方現形。
+
 > 案例入口：[192 個測試全過、實機全壞](/work-log/testing_three_layer_strategy/) — 三個被 mock 遮蔽的真實問題
+>
+> 案例入口：[T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/) → [T.C6 流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/) — stub 盲區與流程測試補位的成對案例
 
 ### 模組二：客戶端可觀測性
 
@@ -90,7 +94,11 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 **自用工具的特殊優勢**：server 和 client 都在同一台機器上時，protocol integration test 的成本極低 — 啟動真實服務然後跑 test，不需要模擬器或真實裝置。
 
+服務無法本機啟動、只有共用測試環境時，這一層以[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)的形態存在：正規測試而非腳本、與整合套件同分類、預設可執行、離線降級為跳過、憑證失效必須紅燈——每一條設計都對應一個實際踩過的歧路。
+
 > 後續章節預定：WebSocket 協議測試實作、HTTP contract test 設計、CI 中的服務 fixture 管理
+>
+> 案例入口：[T.C7 症狀相同、成因兩種](/testing/cases/dual-semantics-attribution/) — 用雙行為測試＋真實後端驗證切開前後端責任
 
 ### 模組四：自動化 UI 驗證
 
@@ -100,9 +108,11 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 ### 模組五：測試設計判斷
 
-回答「這個斷言該怎麼寫」。Mock 邊界判斷、assertion 設計（計時依賴、浮點精度、快取驗證）、flaky test 診斷。
+回答「這個斷言該怎麼寫」。Mock 邊界判斷、assertion 設計（計時依賴、浮點精度、快取驗證）、flaky test 診斷，以及[測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)——測試內容由斷言與 reason 自述、檔頭陳述目的不論證需求、分析詞彙與開發過程不入程式碼。
 
 > 後續章節預定：mock 邊界判斷決策表、斷言品質三問、flaky test 根因分類
+>
+> 案例入口：[T.C8 fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/)、[T.C9 外接螢幕訊息序列斷言](/testing/cases/outbox-sequence-external-display/)
 
 ## 學習路線
 
@@ -124,6 +134,6 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 ---
 
-_文件版本：v0.1.0_
-_最後更新：2026-06-19_
-_系列狀態：分類索引建立中_
+_文件版本：v0.2.0_
+_最後更新：2026-07-17_
+_系列狀態：模組一/三/五補入流程測試與真實後端驗證章節，案例庫擴充 T.C5–T.C9_

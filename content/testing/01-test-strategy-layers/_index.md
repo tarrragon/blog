@@ -10,11 +10,15 @@ tags: ["testing", "mock", "integration-test", "strategy"]
 
 ## 對應 findings
 
-| Finding | 來源                                                          | 內容                                                     |
-| ------- | ------------------------------------------------------------- | -------------------------------------------------------- |
-| TF-1    | [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)   | mock 模擬 API 層不模擬協議層 — **本模組主寫**            |
-| TF-2    | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | mock happy path 比真實服務寬鬆 → 功能缺失不可見          |
-| TF-3    | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | 「名義 integration」全用 fake → 驗證內部狀態機非真實互動 |
+| Finding | 來源                                                          | 內容                                                      |
+| ------- | ------------------------------------------------------------- | --------------------------------------------------------- |
+| TF-1    | [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)   | mock 模擬 API 層不模擬協議層 — **本模組主寫**             |
+| TF-2    | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | mock happy path 比真實服務寬鬆 → 功能缺失不可見           |
+| TF-3    | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | 「名義 integration」全用 fake → 驗證內部狀態機非真實互動  |
+| —       | [T.C5](/testing/cases/stale-reference-stub-blindspot/)        | 由測試餵資料的 stub 回放作者假設 → 假設錯誤型 bug 不可見  |
+| —       | [T.C6](/testing/cases/flow-test-first-run-ordering-catch/)    | 流程測試讓資料走真實鏈路 → 首跑抓到單元測試繞過的順序 bug |
+
+T.C5–T.C9 是後補案例批次、尚未編入 TF 系列，模組頁直接以案例編號引用。
 
 ## 待寫章節
 
@@ -23,6 +27,7 @@ tags: ["testing", "mock", "integration-test", "strategy"]
 - [x] 「名義 integration test」的識別與修正
 - [x] 判斷原則：什麼時候需要 protocol integration test（決策表）
 - [x] 反模式：用 mock 數量彌補 mock 盲區
+- [x] 語意級假後端與流程測試（stub 假設回放的補位形態，與模組三的真實後端驗證測試配對）
 
 ## 跨分類引用
 

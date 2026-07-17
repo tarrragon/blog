@@ -32,6 +32,8 @@ Assertion 應該在程式碼正確時通過、錯誤時失敗。如果 assertion
 
 T.C3 的 parser test 斷言 `expect(tokens.first, isA<TextToken>())` — 驗證 token 型別是 TextToken。但正確解析和透傳亂碼都可能產生 TextToken，assertion 無法區分（本章合成，TF-5 Derive — 透傳的靜默副作用和 assertion 的區分力有 tension）。
 
+有時序約束的訊息流是區分力的另一個維度：[T.C9 外接螢幕訊息序列斷言](/testing/cases/outbox-sequence-external-display/) 是序列斷言取代存在斷言的實例——只斷言「訊息有送出」無法區分順序顛倒的錯誤。
+
 ### 會 flaky 嗎
 
 Assertion 是否依賴非確定性因素 — 時間、隨機數、外部服務狀態、執行順序。如果是，test 可能在程式碼正確時失敗（false negative），降低團隊對 test 的信任。
