@@ -8,23 +8,21 @@ tags: ["testing", "integration-test", "websocket", "protocol", "contract-test"]
 
 回答「我的 client 跟真實服務的互動是否正確」。這一層的關鍵是不用 mock，直接連真實服務。
 
-## 對應 findings
+## 本模組回應的測試盲區
 
-| Finding | 來源                                                                                                                        | 內容                                                             |
-| ------- | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| TF-8    | [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/) + [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | 自用工具 server+client 同機 → protocol integration test 成本極低 |
-| T.C7    | [T.C7 症狀相同、成因兩種](/testing/cases/dual-semantics-attribution/)                                                       | 雙語意歸因：畫面殘留與後端未釋放症狀相同，真實後端驗證一跑定案   |
+| 案例                                                                                                                        | 盲區與補位                                                       |
+| --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/) + [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | 自用工具 server+client 同機 → protocol integration test 成本極低 |
+| [T.C7](/testing/cases/dual-semantics-attribution/)                                                                          | 雙語意歸因：畫面殘留與後端未釋放症狀相同，真實後端驗證一跑定案   |
 
-T.C5–T.C9 是後補案例批次、尚未編入 TF 系列，模組頁直接以案例編號引用。
+## 章節
 
-## 待寫章節
-
-- [x] Protocol integration test 定義（跟 unit test / E2E 的邊界）
-- [x] WebSocket 協議測試實作（對真實 ttyd 驗證 frame type + auth handshake）
-- [x] HTTP contract test 設計
-- [x] CI 中的服務 fixture 管理（啟動/停止真實服務的 test harness）
-- [x] 成本判斷表：什麼時候值得、什麼時候用 contract test 替代
-- [x] [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)（服務無法本機啟動、只有共用測試環境時的常駐防線；對應 T.C7 雙語意歸因）
+- [Protocol integration test 定義](/testing/03-protocol-integration-test/definition-and-boundary/) — 跟 unit test / E2E 的邊界
+- [WebSocket 協議測試實作](/testing/03-protocol-integration-test/websocket-protocol-test/) — 對真實 ttyd 驗證 frame type 與 auth handshake
+- [HTTP contract test 設計](/testing/03-protocol-integration-test/http-contract-test/) — status code 語意、header 契約、error body 結構的驗證
+- [CI 中的服務 fixture 管理](/testing/03-protocol-integration-test/service-fixture-management/) — 啟動與停止真實服務的 test harness 設計
+- [成本判斷表](/testing/03-protocol-integration-test/cost-judgment/) — 什麼時候值得、什麼時候用 contract test 替代
+- [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/) — 服務無法本機啟動、只有共用測試環境時的常駐防線；對應 T.C7 雙語意歸因
 
 ## 跨分類引用
 

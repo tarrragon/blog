@@ -6,7 +6,7 @@ weight: 1
 tags: ["testing", "case-study", "websocket", "mock", "protocol-integration", "flutter"]
 ---
 
-這個案例的核心責任是說明 mock 的「API 層級模擬」和真實服務的「協議層級行為」之間的結構性斷裂。WebSocket 的 text frame（opcode 0x1）和 binary frame（opcode 0x2）在 Dart API 層面都是 `sink.add(dynamic)`，但在協議層是不同的 opcode，ttyd 只接受 text frame。
+192 個 unit test 全數通過，實機的終端機卻對每一次鍵盤輸入毫無反應——斷裂發生在 mock 模擬範圍之外的協議層。這個案例說明 mock 的「API 層級模擬」和真實服務的「協議層級行為」之間的結構性斷裂：WebSocket 的 text frame（opcode 0x1）和 binary frame（opcode 0x2）在 Dart API 層面都是 `sink.add(dynamic)`，但在協議層是不同的 opcode，ttyd 只接受 text frame。
 
 ## 觀察
 

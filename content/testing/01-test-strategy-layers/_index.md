@@ -8,26 +8,24 @@ tags: ["testing", "mock", "integration-test", "strategy"]
 
 回答「什麼測試抓什麼問題」。三層測試各自有明確的職責和盲區。192 個 mock test 全過但實機全壞的根因在層級缺失，不在數量不足。
 
-## 對應 findings
+## 本模組回應的測試盲區
 
-| Finding | 來源                                                          | 內容                                                      |
-| ------- | ------------------------------------------------------------- | --------------------------------------------------------- |
-| TF-1    | [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)   | mock 模擬 API 層不模擬協議層 — **本模組主寫**             |
-| TF-2    | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | mock happy path 比真實服務寬鬆 → 功能缺失不可見           |
-| TF-3    | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | 「名義 integration」全用 fake → 驗證內部狀態機非真實互動  |
-| —       | [T.C5](/testing/cases/stale-reference-stub-blindspot/)        | 由測試餵資料的 stub 回放作者假設 → 假設錯誤型 bug 不可見  |
-| —       | [T.C6](/testing/cases/flow-test-first-run-ordering-catch/)    | 流程測試讓資料走真實鏈路 → 首跑抓到單元測試繞過的順序 bug |
+| 案例                                                          | 盲區與補位                                                |
+| ------------------------------------------------------------- | --------------------------------------------------------- |
+| [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)   | mock 模擬 API 層不模擬協議層 — 本模組的核心案例           |
+| [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | mock happy path 比真實服務寬鬆 → 功能缺失不可見           |
+| [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | 「名義 integration」全用 fake → 驗證內部狀態機非真實互動  |
+| [T.C5](/testing/cases/stale-reference-stub-blindspot/)        | 由測試餵資料的 stub 回放作者假設 → 假設錯誤型 bug 不可見  |
+| [T.C6](/testing/cases/flow-test-first-run-ordering-catch/)    | 流程測試讓資料走真實鏈路 → 首跑抓到單元測試繞過的順序 bug |
 
-T.C5–T.C9 是後補案例批次、尚未編入 TF 系列，模組頁直接以案例編號引用。
+## 章節
 
-## 待寫章節
-
-- [x] 三層定義與職責表（從 _index.md 的表格擴展為完整論述）
-- [x] Mock 遮蔽機制分析（API 層 vs 協議層 vs 環境層的斷裂點）
-- [x] 「名義 integration test」的識別與修正
-- [x] 判斷原則：什麼時候需要 protocol integration test（決策表）
-- [x] 反模式：用 mock 數量彌補 mock 盲區
-- [x] 語意級假後端與流程測試（stub 假設回放的補位形態，與模組三的真實後端驗證測試配對）
+- [三層定義與職責表](/testing/01-test-strategy-layers/three-layer-definition/) — Unit / Protocol Integration / Screen State 各層職責、驗證目標與盲區
+- [Mock 遮蔽機制分析](/testing/01-test-strategy-layers/mock-masking-mechanism/) — API 層、協議層、環境層之間的斷裂點
+- [「名義 integration test」的識別與修正](/testing/01-test-strategy-layers/nominal-integration-test/) — 名稱含 integration 但核心依賴全用 fake 的辨認與修正
+- [判斷原則：什麼時候需要 protocol integration test](/testing/01-test-strategy-layers/when-protocol-integration-test/) — 協議複雜度、mock 寬鬆度、失敗靜默度三個維度的決策流程
+- [反模式：用 mock 數量彌補 mock 盲區](/testing/01-test-strategy-layers/anti-pattern-mock-quantity/) — 數量與覆蓋率的真正關係
+- [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/) — stub 假設回放的補位形態、與模組三的真實後端驗證測試配對
 
 ## 跨分類引用
 

@@ -6,7 +6,7 @@ weight: 2
 tags: ["testing", "case-study", "websocket", "mock", "protocol-integration", "authentication"]
 ---
 
-這個案例的核心責任是說明 mock 如何讓「功能缺失」變得不可見。不同於 T.C1（功能存在但行為錯誤），這個案例是功能根本沒實作 — 因為 mock 不需要這個功能就能通過所有 test。
+一整段 auth handshake 邏輯從未被實作，兩層測試共 21 個案例卻沒有一個亮紅燈——mock 讓「功能缺失」變得不可見，是比「功能錯誤」更深一層的遮蔽形態。T.C1 是功能存在但行為錯誤；這個案例是功能根本沒實作，因為 mock 不需要這個功能就能通過所有 test。
 
 ## 觀察
 

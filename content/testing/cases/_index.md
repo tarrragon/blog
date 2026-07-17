@@ -6,7 +6,7 @@ weight: 90
 tags: ["testing", "case-study"]
 ---
 
-這個資料夾收錄測試策略的實戰案例 — 重點不在「測試怎麼寫」，而在「測試為什麼沒抓到問題」。每個案例記錄一個真實的測試盲區、分析遮蔽機制、提出可重用的防護策略。
+這個資料夾收錄測試策略的實戰案例，聚焦兩個問題：「測試為什麼沒抓到問題」、以及「換了測試形態之後怎麼抓到」。每個案例記錄一個真實的測試盲區、分析成因機制、提出可重用的防護策略。
 
 案例來源分三類：
 
@@ -26,7 +26,7 @@ tags: ["testing", "case-study"]
 
 ## 案例列表
 
-| 案例                                                          | 主題                                        | 來源          | 測試層               | 遮蔽機制                   |
+| 案例                                                          | 主題                                        | 來源          | 測試層               | 機制                       |
 | ------------------------------------------------------------- | ------------------------------------------- | ------------- | -------------------- | -------------------------- |
 | [T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)   | WebSocket text/binary frame 被 mock 遮蔽    | app_tunnel    | protocol-integration | mock 不區分 frame type     |
 | [T.C2](/testing/cases/auth-handshake-missing-mock-blindspot/) | Auth handshake 邏輯缺失被 mock 遮蔽         | app_tunnel    | protocol-integration | mock 不需認證              |

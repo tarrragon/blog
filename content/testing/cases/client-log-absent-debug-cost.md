@@ -6,7 +6,7 @@ weight: 4
 tags: ["testing", "case-study", "observability", "logging", "debug", "flutter"]
 ---
 
-這個案例的核心責任是說明「客戶端 log 設計」為什麼應該在功能企劃階段完成，而不是 debug 時才補。Log 不是 debug 工具，是可觀測性基礎設施。
+連線失敗時，沒有任何一行 log 能指出失敗發生在哪一步——debug 只剩最昂貴的一條路：改碼、重新編譯、插拔裝置、反覆實測，每輪 3-5 分鐘。這個案例說明「客戶端 log 設計」為什麼應該在功能企劃階段完成：log 是可觀測性基礎設施，debug 時才補的 log 只是救火工具。
 
 ## 觀察
 

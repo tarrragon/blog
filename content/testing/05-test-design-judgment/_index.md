@@ -8,25 +8,22 @@ tags: ["testing", "assertion", "flaky", "test-data", "mock"]
 
 回答「這個斷言該怎麼寫」「這個 mock 邊界對嗎」。
 
-## 對應 findings
+## 本模組回應的測試盲區
 
-| Finding | 來源                                                    | 內容                             |
-| ------- | ------------------------------------------------------- | -------------------------------- |
-| TF-4    | [T.C3](/testing/cases/ansi-parser-test-data-blindspot/) | 手寫測試資料是真實環境的乾淨子集 |
-| TF-5    | [T.C3](/testing/cases/ansi-parser-test-data-blindspot/) | Parser 透傳未知序列的靜默副作用  |
+| 案例                                                     | 盲區與補位                                                              |
+| -------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [T.C3](/testing/cases/ansi-parser-test-data-blindspot/)  | 手寫測試資料是真實環境的乾淨子集                                        |
+| [T.C3](/testing/cases/ansi-parser-test-data-blindspot/)  | Parser 透傳未知序列的靜默副作用                                         |
+| [T.C8](/testing/cases/fire-and-forget-test-race/)        | fire-and-forget 編排讓測試單跑綠、合跑紅——對應 Flaky test 根因分類章    |
+| [T.C9](/testing/cases/outbox-sequence-external-display/) | 序列斷言取代存在斷言、時序約束用索引比較鎖住——對應 Assertion 品質三問章 |
 
-Stage 1 findings 之後補入的案例，對應本模組既有章節：
+## 章節
 
-- [T.C8](/testing/cases/fire-and-forget-test-race/) → Flaky test 根因分類：fire-and-forget 編排讓測試單跑綠、合跑紅——斷言與未等待的背景收尾賽跑
-- [T.C9](/testing/cases/outbox-sequence-external-display/) → Assertion 品質三問：序列斷言取代存在斷言，時序約束用索引比較鎖住
-
-## 待寫章節
-
-- [x] Mock 邊界判斷決策表（什麼時候 mock 夠、什麼時候需要 real）
-- [x] Test data 代表性（手寫 vs 錄製 vs 生成）
-- [x] Assertion 品質三問（斷言的是行為嗎？能區分正確和錯誤嗎？會 flaky 嗎？）
-- [x] Flaky test 根因分類（計時依賴 / 環境差異 / 資源競爭 / 非確定性）
-- [x] 測試註解與命名紀律（測試名稱與斷言說內容、註解只說操作約束、分析詞彙不入程式碼）
+- [Mock 邊界判斷決策表](/testing/05-test-design-judgment/mock-boundary-decision/) — 什麼時候 mock 夠用、什麼時候需要真實服務
+- [Test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/) — 手寫 vs 錄製 vs 生成三種測試資料來源
+- [Assertion 品質三問](/testing/05-test-design-judgment/assertion-quality/) — 斷言的是行為嗎、能區分正確和錯誤嗎、會 flaky 嗎
+- [Flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/) — 計時依賴 / 環境差異 / 資源競爭 / 非確定性
+- [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/) — 測試名稱與斷言說內容、註解只說操作約束、分析詞彙不入程式碼
 
 ## 跨分類引用
 

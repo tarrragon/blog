@@ -34,7 +34,7 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 - Backend 告訴你「伺服器怎麼確保自己沒壞」
 - 本系列告訴你「客戶端怎麼確保跟伺服器的互動沒壞」
 
-交叉點是 contract test 和 integration test — Backend 從伺服器端看、本系列從客戶端看，同一個介面的兩面。
+交叉點是 [contract test](/testing/03-protocol-integration-test/http-contract-test/) 和 integration test — Backend 從伺服器端看、本系列從客戶端看，同一個介面的兩面。
 
 ## 教學模組
 
@@ -96,7 +96,7 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 服務無法本機啟動、只有共用測試環境時，這一層以[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)的形態存在：正規測試而非腳本、與整合套件同分類、預設可執行、離線降級為跳過、憑證失效必須紅燈——每一條設計都對應一個實際踩過的歧路。
 
-> 後續章節預定：WebSocket 協議測試實作、HTTP contract test 設計、CI 中的服務 fixture 管理
+> 章節入口：[WebSocket 協議測試](/testing/03-protocol-integration-test/websocket-protocol-test/)、[HTTP contract test](/testing/03-protocol-integration-test/http-contract-test/)、[服務 fixture 管理](/testing/03-protocol-integration-test/service-fixture-management/)
 >
 > 案例入口：[T.C7 症狀相同、成因兩種](/testing/cases/dual-semantics-attribution/) — 用雙行為測試＋真實後端驗證切開前後端責任
 
@@ -108,9 +108,9 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 ### 模組五：測試設計判斷
 
-回答「這個斷言該怎麼寫」。Mock 邊界判斷、assertion 設計（計時依賴、浮點精度、快取驗證）、flaky test 診斷，以及[測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)——測試內容由斷言與 reason 自述、檔頭陳述目的不論證需求、分析詞彙與開發過程不入程式碼。
+回答「這個斷言該怎麼寫」。Mock 邊界判斷、assertion 設計（計時依賴、浮點精度、快取驗證）、flaky test 診斷，以及[測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)——測試內容由名稱與斷言自述、reason 寫失敗後果與處置、檔頭陳述目的不論證需求、分析詞彙與開發過程不入程式碼。
 
-> 後續章節預定：mock 邊界判斷決策表、斷言品質三問、flaky test 根因分類
+> 章節入口：[mock 邊界判斷](/testing/05-test-design-judgment/mock-boundary-decision/)、[斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)、[flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)
 >
 > 案例入口：[T.C8 fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/)、[T.C9 外接螢幕訊息序列斷言](/testing/cases/outbox-sequence-external-display/)
 
@@ -136,4 +136,4 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 _文件版本：v0.2.0_
 _最後更新：2026-07-17_
-_系列狀態：模組一/三/五補入流程測試與真實後端驗證章節，案例庫擴充 T.C5–T.C9_
+_系列狀態：模組一/三補入假後端與真實後端驗證配對章節、模組五補入測試註解與命名紀律章、案例庫擴充 T.C5–T.C9_
