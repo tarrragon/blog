@@ -26,7 +26,7 @@ tags: ["ux-design", "navigation", "flutter", "gorouter", "push", "go", "semantic
 - 登出後到登入畫面（使用者不應該按 back 回到需要認證的畫面）
 - 從 onboarding 到主畫面（onboarding 完成後不需要回去）
 
-誤用 `go` 的後果：使用者期望按 back 回到前一個畫面但堆疊已空，按 back 直接離開 app。app_tunnel 修復時選擇 `push('/enrollment')` 而非 `go('/enrollment')`，讓使用者配對完成後能按 back 回首頁（[U.C4](/ux-design/cases/missing-enrollment-entry-point/)）。
+誤用 `go` 的後果：使用者期望按 back 回到前一個畫面但堆疊已空，按 back 直接離開 app。一個遠端終端機 app 補配對畫面入口時選擇 `push('/enrollment')` 而非 `go('/enrollment')`，讓使用者配對完成後能按 back 回首頁（[U.C4](/ux-design/cases/missing-enrollment-entry-point/)）。
 
 ## push：暫時離開，做完回來
 

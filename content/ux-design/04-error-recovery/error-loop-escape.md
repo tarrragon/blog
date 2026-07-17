@@ -18,7 +18,7 @@ error → retry → error 循環是指使用者遇到錯誤、點擊重試、再
 
 **沒有重試次數上限**。使用者可以無限重試，每次都失敗，每次都回到同一個 error 畫面。
 
-app_tunnel 修復前的 error 和 disconnected 狀態就是這個模式 — 有重連按鈕但沒有 back 按鈕。重連失敗時使用者只能再次重連，無法返回首頁（[U.C1](/ux-design/cases/five-states-zero-exits/)）。
+一個遠端終端機 app 修復前的 error 和 disconnected 狀態就是這個模式 — 有重連按鈕但沒有 back 按鈕。重連失敗時使用者只能再次重連，無法返回首頁（[U.C1](/ux-design/cases/five-states-zero-exits/)）。
 
 ## 逃生口設計
 

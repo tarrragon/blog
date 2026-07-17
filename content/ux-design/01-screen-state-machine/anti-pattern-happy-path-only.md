@@ -19,7 +19,7 @@ tags: ["ux-design", "anti-pattern", "happy-path", "state-machine", "navigation"]
 - 遇到回應異常想從頭重新連線
 - 覺得功能不符需求想回到首頁看其他選項
 
-app_tunnel 的 Terminal 畫面五個狀態都沒有退出路徑。connected 狀態有打字和特殊鍵操作，但沒有「離開」操作；error 和 disconnected 有重連按鈕，但沒有「放棄重連、回首頁」的選項。開發者設計 error 狀態時的隱性假設是「使用者遇到錯誤會想重試」— 沒考慮「使用者可能想放棄」（[U.C1](/ux-design/cases/five-states-zero-exits/)）。
+一個遠端終端機 app 的連線畫面五個狀態都沒有退出路徑。connected 狀態有打字和特殊鍵操作，但沒有「離開」操作；error 和 disconnected 有重連按鈕，但沒有「放棄重連、回首頁」的選項。開發者設計 error 狀態時的隱性假設是「使用者遇到錯誤會想重試」— 沒考慮「使用者可能想放棄」（[U.C1](/ux-design/cases/five-states-zero-exits/)）。
 
 ## Happy path 偏差的擴散
 

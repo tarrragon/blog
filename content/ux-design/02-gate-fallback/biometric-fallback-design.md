@@ -67,7 +67,7 @@ Rationale: self-hosted tool, user = owner, availability > auth strength
 Risk accepted: someone with device PIN can access the app
 ```
 
-app_tunnel 選擇 `biometricOnly: true` 的原始意圖是「安全性更高」，但沒有顯式記錄取捨，也沒有評估「Face ID 不可用時使用者完全無法使用 app」的代價。自用工具的使用者就是 owner，密碼 fallback 的安全風險遠低於完全無法使用的可用性風險（[U.C2](/ux-design/cases/biometric-only-no-fallback/)）。
+一個自用遠端終端機 app 選擇 `biometricOnly: true` 的原始意圖是「安全性更高」，但沒有顯式記錄取捨，也沒有評估「Face ID 不可用時使用者完全無法使用 app」的代價。自用工具的使用者就是 owner，密碼 fallback 的安全風險遠低於完全無法使用的可用性風險（[U.C2](/ux-design/cases/biometric-only-no-fallback/)）。
 
 ## 下一步路由
 
