@@ -23,6 +23,7 @@ tags: ["testing", "integration-test", "websocket", "protocol", "contract-test"]
 - [CI 中的服務 fixture 管理](/testing/03-protocol-integration-test/service-fixture-management/) — 啟動與停止真實服務的 test harness 設計
 - [成本判斷表](/testing/03-protocol-integration-test/cost-judgment/) — 什麼時候值得、什麼時候用 contract test 替代
 - [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/) — 服務無法本機啟動、只有共用測試環境時的常駐防線；對應 T.C7 雙語意歸因
+- [測試憑證管理](/testing/03-protocol-integration-test/credential-management/) — 三種憑證存放策略的適用前提、失效偵測與誤擊防護
 
 ## 跨分類引用
 

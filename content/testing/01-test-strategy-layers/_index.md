@@ -26,6 +26,7 @@ tags: ["testing", "mock", "integration-test", "strategy"]
 - [判斷原則：什麼時候需要 protocol integration test](/testing/01-test-strategy-layers/when-protocol-integration-test/) — 協議複雜度、mock 寬鬆度、失敗靜默度三個維度的決策流程
 - [反模式：用 mock 數量彌補 mock 盲區](/testing/01-test-strategy-layers/anti-pattern-mock-quantity/) — 數量與覆蓋率的真正關係
 - [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/) — stub 假設回放的補位形態、與模組三的真實後端驗證測試配對
+- [無測試 legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/) — 零測試專案的第一批測試該從哪一層開始建
 
 ## 跨分類引用
 

@@ -2,7 +2,7 @@
 title: "測試註解與命名紀律"
 date: 2026-07-17
 description: "測試註解寫什麼、名稱與 reason 怎麼收斂、分析詞彙與開發過程該不該進程式碼 — 判斷測試文字去留的紀律"
-weight: 5
+weight: 6
 tags: ["testing", "naming", "comment", "review", "assertion"]
 ---
 
