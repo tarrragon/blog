@@ -92,6 +92,12 @@ module "database" {
 
 邊界在於少數差異無法只靠刻度表達 — 例如 prod 需要合規要求的稽核 log、dev 不需要。這類用 `count` 或 `for_each` 配一個布林參數開關，仍然走參數化、不分叉 code。跨可用區與冗餘的網路面怎麼鋪，見[模組三：網路地基](/infra/03-network-foundation/)。
 
+## 環境的消費介面：可判定性與行為開關
+
+環境切乾淨之後還有一層常被漏掉的交付物：環境的**對外可判定性**。消費這些環境的人與程式（客戶端開發者、自動化測試、CI）需要可靠地回答「我現在打的是哪個環境」— 會寫入資料的自動化測試尤其需要「絕不打到 prod」的硬防護，而防護的實作是消費端拿環境識別做 allowlist 判定。這個判定要有東西可判：穩定的子網域命名慣例（環境名進 hostname）或回應帶環境識別標頭，擇一即可，但它是 infra 的交付物 — 命名不穩定或不可判定，下游所有誤擊防護都建立在流沙上。判讀訊號：如果分辨環境要靠「知道的人才知道」的內部知識（IP、非慣例的域名），這層介面還沒交付。
+
+行為開關這時多出一類方向相反的用途：稽核 log 是「prod 多開」，診斷輔助是「**非 prod 多開**」— 測試環境的回應附帶執行的查詢紀錄、更詳細的錯誤內文、較寬鬆的 rate limit，這些在 prod 是安全漏洞、在測試環境是核心功能（消費端靠它把行為歸因從會議變成讀輸出）。實作仍是同一套參數化紀律：環境旗標控制、不分叉 code，且這是「刻意的環境差異」，要登錄進差異清單而不是被當成漂移意外。測試帳號與 seed 憑證同理是環境資產的一部分 — 環境建好不等於可消費，帳號、識別、診斷開關齊了才算交付。這個環境對消費者的完整契約（帳號策略、資料衛生、可用性期望）屬於服務層的設計，見 [Backend 6.26 共用測試環境的設計契約](/backend/06-reliability/qa-environment-design/)；消費端（自動化測試）怎麼使用這些介面，見 [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)。
+
 ## retrofit 路徑：把單環境拆成 per-env module
 
 很多專案是先在單一環境把 IAM、VPC、核心資源都建起來、跑通了，才意識到需要環境分離 — 這是常見且合理的演進順序，尤其是先救火上線、之後才回頭納管的情況。Retrofit 的目標是在不破壞正在服務的資源前提下，把這份「隱含為 prod」的單環境，重構成「modules + per-env 呼叫」的結構，並讓現有資源平移成 prod 環境。承接[模組二：身分與憑證地基](/infra/02-identity-credentials/)與[模組三：網路地基](/infra/03-network-foundation/)先建好的單環境地基，這一段就是把它們納入 per-env 管理的路線。
@@ -116,3 +122,5 @@ module "database" {
 
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：每個環境的 state 怎麼隔開
 - → [模組五：核心服務上 IaC](/infra/05-core-services/)：核心服務怎麼用 module 跨環境重用
+- → [Backend 6.26 共用測試環境的設計契約](/backend/06-reliability/qa-environment-design/)：環境對消費者的契約設計（帳號策略、資料衛生、可用性）
+- → [Testing 真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)：消費端怎麼使用環境識別與測試帳號
