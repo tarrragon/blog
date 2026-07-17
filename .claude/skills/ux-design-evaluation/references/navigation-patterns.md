@@ -81,6 +81,8 @@ Deep link 讓外部來源（網頁連結、推播、其他 app）直接導航到
 
 **URL 結構**：和 router 的路由定義一致（URL path 即 route path）、query parameters 傳畫面資料。參數避免敏感資訊 — URL 會被系統日誌、分析工具、中間節點記錄。
 
+頁面資訊不一定在 path — hash-based SPA 的路由在 fragment（`/#/library`）、pathname 永遠是 `/`，只讀 pathname 的辨識邏輯會把所有頁面靜默塌縮成根路徑。自家 app 用哪套慣例由 router 決定；讀取別人的 URL 時（browser extension 讀宿主頁面、工具讀目標站），對方的路由形態是輸入規格 — 辨識邏輯要涵蓋 path-based 與 hash-based 兩套，取完整路由用 pathname + hash 組合。
+
 **堆疊重建**：從 deep link 直接進入內頁時堆疊裡沒有首頁，按 back 回首頁還是離開 app？目標畫面是日常使用的一部分 → 重建完整堆疊（back 回到 app 正常入口）；一次性操作（掃碼 → 顯示結果 → 離開）→ 只放目標畫面。
 
 **測試項目**：每個路由的 deep link 能打開、參數正確傳遞、app 在前景 / 背景 / 未啟動三種狀態都能處理、無效 URL 有 fallback（導首頁或錯誤頁）、domain verification 正確。
@@ -95,3 +97,4 @@ Deep link 讓外部來源（網頁連結、推播、其他 app）直接導航到
 - [ ] 對外分享的 deep link 用有 ownership 驗證的機制？
 - [ ] Deep link 的堆疊重建策略明確、無效 URL 有 fallback？
 - [ ] Deep link 在 app 前景 / 背景 / 未啟動三態都測過？
+- [ ] 依 URL 辨識頁面的邏輯涵蓋 hash-based SPA（不只讀 pathname）？
