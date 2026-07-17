@@ -22,6 +22,8 @@ tags: ["ux-design", "case-study", "interaction-feedback", "layout", "ellipsis", 
 
 3. **Spacer 與 Flexible 同列是寬度競爭的常見形態**。Spacer（等同 Expanded）會拿走所有剩餘空間，排在後面的 Flexible 只能分到擠壓後的殘餘 — 在寬幕開發機上可能剛好夠、窄幕上歸零。這類問題只在特定寬度現形，驗收要在窄幕跑。
 
+4. **等比縮放套件不會攔到這類問題**。專案全程使用 flutter_screenutil，它做的是設計稿座標到裝置座標的數值換算、工作在 layout 之前的常數層；空間分配發生在 layout 協商層（Row 把有限寬度分給 flex 子元件、輸入是動態內容），換算工具不參與。比例正確不等於空間夠用 —「有用響應式套件」不構成版面不會擠壓的保證，完整判讀見 [#228 等比縮放不管空間分配](/report/proportional-scaling-is-not-space-allocation/)。
+
 ## 策略
 
 1. **關鍵狀態文字給最小寬度保障或更高的 flex 優先權**，可壓縮的是裝飾性元素、不是回饋。
