@@ -63,14 +63,20 @@ weight: 編號
 
 每個客戶或每筆交易的成本與利潤結構。判讀一家公司是否真的賺錢的核心語言。
 
-| 卡片                                                      | 核心問題                 | 常見出現位置            |
-| --------------------------------------------------------- | ------------------------ | ----------------------- |
-| [COGS](/business/knowledge-cards/cogs/)                   | 賣出產品的直接成本       | gross margin、毛利壓縮  |
-| [Gross Margin](/business/knowledge-cards/gross-margin/)   | 毛利率                   | SaaS、AI 公司毛利、估值 |
-| [Marginal Cost](/business/knowledge-cards/marginal-cost/) | 多服務一個客戶的邊際成本 | PLG、零邊際複製         |
-| [P&L](/business/knowledge-cards/pnl/)                     | 損益表                   | burn rate、估值         |
-| [Burn Rate](/business/knowledge-cards/burn-rate/)         | 燒錢速度                 | runway、新創存活        |
-| [Runway](/business/knowledge-cards/runway/)               | 現金能撐多久             | burn rate、融資時點     |
+| 卡片                                                                      | 核心問題                         | 常見出現位置                  |
+| ------------------------------------------------------------------------- | -------------------------------- | ----------------------------- |
+| [COGS](/business/knowledge-cards/cogs/)                                   | 賣出產品的直接成本               | gross margin、毛利壓縮        |
+| [Gross Margin](/business/knowledge-cards/gross-margin/)                   | 毛利率                           | SaaS、AI 公司毛利、估值       |
+| [Marginal Cost](/business/knowledge-cards/marginal-cost/)                 | 多服務一個客戶的邊際成本         | PLG、零邊際複製               |
+| [P&L](/business/knowledge-cards/pnl/)                                     | 損益表                           | burn rate、估值               |
+| [Burn Rate](/business/knowledge-cards/burn-rate/)                         | 燒錢速度                         | runway、新創存活              |
+| [Runway](/business/knowledge-cards/runway/)                               | 現金能撐多久                     | burn rate、融資時點           |
+| [Contribution Margin](/business/knowledge-cards/contribution-margin/)     | 營收扣變動成本後的固定成本分攤額 | 通路決策、產品組合            |
+| [Opportunity Cost](/business/knowledge-cards/opportunity-cost/)           | 放棄的最佳替代方案報酬           | 投資評估、續行退場            |
+| [Free Cash Flow](/business/knowledge-cards/free-cash-flow/)               | 營業現金流扣資本支出             | 利潤品質、股利可持續性        |
+| [Cash Conversion Cycle](/business/knowledge-cards/cash-conversion-cycle/) | 現金在營運循環中被卡住的天數     | 供需效率、週轉天數            |
+| [Sunk Cost](/business/knowledge-cards/sunk-cost/)                         | 已發生且不可回收的支出           | 續行退場決策、認知偏誤        |
+| [GMV](/business/knowledge-cards/gmv/)                                     | 平台交易總額                     | 平台營收、Take Rate、認列方式 |
 
 ## 進入市場
 

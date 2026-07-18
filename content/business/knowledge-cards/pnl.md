@@ -14,7 +14,7 @@ P&L 是判讀一家公司是否賺錢的核心報表。投資人看 P&L 判斷 [
 
 ## 可觀察訊號與例子
 
-判讀 P&L 的關鍵欄位：毛利率（看商業模式效率）、營業費用比（看銷售行銷研發是否過大）、淨利率（看最終盈利能力）。SaaS 新創早期通常毛利高但因為 [獲客成本](/business/knowledge-cards/cac/) 大導致淨利為負，這是正常的；如果毛利就低、淨利又負，那是商業模式有問題。
+判讀 P&L 的關鍵欄位：毛利率（看商業模式效率）、營業費用比（看銷售行銷研發是否過大）、淨利率（看最終盈利能力）。SaaS 新創早期通常毛利高但因為 [獲客成本](/business/knowledge-cards/cac/) 大導致淨利為負，這是正常的；如果毛利就低、淨利又負，那是商業模式有問題。小型事業的 P&L 還有額外的口徑陷阱（分母選擇、帳面 vs 實際利潤），中小企業和上市櫃的 P&L 要跟資產負債表和現金流量表連動判讀，見[損益表四層分析](/business/financial-analysis/franchise-breakfast-pnl/)和[企業財報判讀](/business/financial-analysis/sme-listed-company-financial-analysis/)。
 
 ## 判讀方式
 

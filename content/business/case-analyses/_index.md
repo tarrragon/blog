@@ -64,6 +64,8 @@ WRAP 框架（Widen Options / Reality Test / Attain Distance / Prepare to be Wro
 | [FDE 軍備競賽](/business/case-analyses/fde-arms-race/)                     | SaaS 三支柱鬆動、FDE 從可選變結構性被迫               |
 | [CoreWeave 收購 Bufstream](/business/case-analyses/bufstream-acquisition/) | 串流市場整併、算力廠商垂直整合資料基礎設施            |
 
+企業財務分析與投資評估的系統性教材（16 篇）已獨立為 [企業財務分析與投資評估](/business/financial-analysis/) 領域專題模組。
+
 ## 怎麼擴充
 
 遇到新市場事件想拆時：

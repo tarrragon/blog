@@ -1,0 +1,62 @@
+---
+title: "企業財務分析與投資評估"
+date: 2026-07-18
+description: "從損益表識讀到產業供應鏈分析的系統性商業評估方法——涵蓋報表判讀、公司定位、產業基準、估值方法、外部衝擊判讀，以及真實上市公司的批判性案例分析"
+weight: 38
+tags: ["business", "financial-analysis"]
+---
+
+這個模組從一張社群上的連鎖早餐店月份損益表出發，逐步建立了一套從報表識讀到產業供應鏈分析的完整商業評估體系。起點是「一間店的數字怎麼讀」，終點是「一條價值鏈上的公司各自選了什麼策略、為什麼財報結構截然不同」。教的不是商業知識百科，而是一套可重複執行的分析流程——用真實上市公司的財報數據（八方雲集、揚秦/麥味登、卜蜂、大成、超秦）做判讀示範，分析時做的預測在後續財報週期中被驗證。
+
+模組分三層：方法論篇建立分析工具、深入延伸篇展開特定維度、實作案例篇把工具套用在真實公司和產業上。三層的使用順序跟寫作順序不同——先用定位工具判斷公司類型、再建產業基準、最後選對報表工具深入。
+
+## 讀者路線
+
+| 路線       | 適合讀者                     | 建議順序                                                                                                                                                                                                                                                                                                                                                                                                                 | 讀完能做什麼                         |
+| ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
+| 報表識讀   | 第一次看財報的人             | [損益表四層分析](/business/financial-analysis/franchise-breakfast-pnl/) → [企業財報判讀](/business/financial-analysis/sme-listed-company-financial-analysis/) → [產業基準分析](/business/financial-analysis/industry-benchmarking/)                                                                                                                                                                                      | 能讀懂損益表和三張報表、建立產業基準 |
+| 投資評估   | 要判斷一間公司值不值得投的人 | [企業評估定位](/business/financial-analysis/company-stage-model-evaluation/) → [產業基準分析](/business/financial-analysis/industry-benchmarking/) → [企業估值方法](/business/financial-analysis/valuation-methods/) → [外部衝擊與產業轉型](/business/financial-analysis/external-shock-industry-transformation/)                                                                                                        | 能定位公司類型、選對分析工具、做估值 |
+| 價值鏈追溯 | 想理解一個產業怎麼運作的人   | [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/) → [加盟母公司分析](/business/financial-analysis/franchisor-business-model/) → [揚秦案例分析](/business/financial-analysis/yangqin-mwd-case-study/) → [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/) → [外部衝擊與產業轉型](/business/financial-analysis/external-shock-industry-transformation/) | 能追溯價值鏈上下游、判讀供應鏈策略   |
+
+## 方法論篇
+
+建立分析工具——每篇教一個獨立的分析維度，讀者可以按需選用。
+
+| 文章                                                                                       | 承擔的分析責任                                             |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| [損益表四層分析](/business/financial-analysis/franchise-breakfast-pnl/)                    | 報表識讀、通路決策、投資評估、加盟結構的四層判讀方法       |
+| [企業財報判讀](/business/financial-analysis/sme-listed-company-financial-analysis/)        | 三張報表關係、週轉效率、負債結構、財報紅旗判讀方法         |
+| [企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)               | 生命週期階段 x 商業模式的評估重心與指標適用性判讀          |
+| [產業基準分析](/business/financial-analysis/industry-benchmarking/)                        | 資料來源、比較組構建、偏離判讀、一次性 vs 結構性、供給衝擊 |
+| [企業估值方法](/business/financial-analysis/valuation-methods/)                            | DCF、倍數法、階段別估值選擇與常見陷阱                      |
+| [外部衝擊與產業轉型](/business/financial-analysis/external-shock-industry-transformation/) | 成本衝擊的類型判斷、轉型 vs 被擊垮的財報判讀、逃逸路徑     |
+
+## 深入延伸篇
+
+方法論篇的特定維度展開——每篇聚焦一個主題，獨立可讀。
+
+| 文章                                                                           | 延伸的方法論篇                             |
+| ------------------------------------------------------------------------------ | ------------------------------------------ |
+| [上市櫃實戰判讀](/business/financial-analysis/listed-company-walkthrough/)     | 企業財報判讀 + 產業基準分析的端到端實作    |
+| [加盟體系深入](/business/financial-analysis/franchise-system-deep-dive/)       | 損益表四層分析的合約、品牌、商圈非財務維度 |
+| [代理商財務判讀](/business/financial-analysis/distributor-financial-analysis/) | 企業評估定位的代理商模式展開               |
+| [平台模式判讀](/business/financial-analysis/platform-financial-analysis/)      | 企業評估定位的平台模式展開                 |
+| [現金流量表深入](/business/financial-analysis/cash-flow-statement-deep-dive/)  | 企業財報判讀的現金流量表完整拆解           |
+| [中小企業交叉驗證](/business/financial-analysis/sme-cross-verification/)       | 企業財報判讀的中小企業資料驗證操作化       |
+
+## 實作案例篇
+
+方法論套用在真實公司和產業上——每篇用公開財報數據做批判性分析。
+
+| 文章                                                                                | 分析對象與焦點                                              |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)  | 系列全部方法論套用在早餐店案例的端到端 walkthrough          |
+| [加盟母公司分析](/business/financial-analysis/franchisor-business-model/)           | 八方雲集 + 揚秦的母公司收入線拆解、母公司 vs 加盟主利潤對照 |
+| [揚秦國際案例分析](/business/financial-analysis/yangqin-mwd-case-study/)            | 超秦→麥味登垂直整合、關係人交易、數位轉型宣稱的批判檢驗     |
+| [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/) | 大成/卜蜂/超秦的策略差異、飼料成本衝擊、國際大廠對照        |
+
+## 跟其他模組的關係
+
+本模組跟 [knowledge-cards](/business/knowledge-cards/) 垂直整合——模組文章引用知識卡解釋術語（COGS、Gross Margin、P&L、FCF、CCC、GMV 等），知識卡反向引用模組文章提供實務判讀場景。模組新增的六張知識卡（Contribution Margin、Opportunity Cost、Free Cash Flow、Cash Conversion Cycle、Sunk Cost、GMV）服務本模組的分析需求，同時可被其他模組引用。
+
+跟 [案例拆解](/business/case-analyses/) 的分工：案例拆解處理「市場事件的 WRAP 結構分析」（Claude for Legal、FDE 軍備競賽等），本模組處理「企業財務和產業結構的系統性評估方法」。兩者的分析工具互補——案例拆解用 WRAP 做 hypothesis 探索，本模組用財報工具做量化判讀。
