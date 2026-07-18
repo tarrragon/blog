@@ -62,6 +62,7 @@ tags: ["business", "financial-analysis"]
 | [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                 | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學、寄賣 vs 買斷 |
 | [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)             | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀      |
 | [超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)                     | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀          |
+| [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)           | 統一/三商/聯邦三買方的財務能力判讀、隱性成本、併購後追蹤            |
 
 ## 跟其他模組的關係
 
