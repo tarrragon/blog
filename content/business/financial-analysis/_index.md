@@ -60,6 +60,7 @@ tags: ["business", "financial-analysis"]
 | [乳品加工技術與通路策略](/business/financial-analysis/dairy-processing-retail-strategy/)    | 殺菌方式的成本 trade-off、保存期→通路半徑、貨架坪效、消費者偏好倒推 |
 | [畜產加工廠策略比較](/business/financial-analysis/livestock-processor-strategy-comparison/) | 大成/卜蜂/嘉一香/超秦四廠策略矩陣、成本控管路徑與財報驗證           |
 | [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                 | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學、寄賣 vs 買斷 |
+| [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)             | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀      |
 
 ## 跟其他模組的關係
 
