@@ -56,6 +56,7 @@ tags: ["business", "financial-analysis"]
 | [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/) | 大成/卜蜂/超秦的策略差異、飼料成本衝擊、國際大廠對照        |
 | [台灣豬肉產業鏈分析](/business/financial-analysis/taiwan-pork-industry/)            | 口蹄疫重塑→拔針重建→非洲豬瘟衝擊、豬肉 vs 雞肉結構差異      |
 | [跨國乳業比較](/business/financial-analysis/dairy-industry-cross-country/)          | 台灣/紐澳/日本/泰國/美國五國乳業結構差異與定價機制          |
+| [台灣乳業轉型](/business/financial-analysis/taiwan-dairy-transformation/)           | 味全事件→小農崛起→通路成本結構→進口替代的產業重塑           |
 
 ## 跟其他模組的關係
 
