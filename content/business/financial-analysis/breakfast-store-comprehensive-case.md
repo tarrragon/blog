@@ -173,8 +173,8 @@ tags: ["business", "case-analysis", "pnl", "franchise", "financial-analysis"]
 
 ## 系列文章引用地圖
 
-| 評估步驟 | 使用的分析工具                       | 對應文章                                                                       |
-| -------- | ------------------------------------ | ------------------------------------------------------------------------------ |
+| 評估步驟 | 使用的分析工具                       | 對應文章                                                                            |
+| -------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
 | 定位     | 生命週期 x 商業模式兩軸交叉          | [企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)        |
 | 報表識讀 | 分母校正、帳面 vs 實際利潤、漏算成本 | [損益表四層分析](/business/financial-analysis/franchise-breakfast-pnl/)             |
 | 產業基準 | 比較組構建、偏離判讀、倖存者偏誤     | [產業基準分析](/business/financial-analysis/industry-benchmarking/)                 |
