@@ -6,7 +6,7 @@ weight: 37
 tags: ["business", "case-analysis", "financial-analysis", "retail", "value-investing"]
 ---
 
-[台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)拆解了四筆交易的估值與動機，[併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)檢驗了買方在交易當下的財務能力。本篇把時間軸拉長：用 FinMind 財報原始數據建出四大超商周邊所有上市實體的十年 EPS/ROE 序列，對「母公司、前經營者、接手者」這一層股權結構逐一評分——通路本身的品質是一回事，**持有它的資本是什麼體質**是另一回事。資料方法沿用[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)建立的「先校準再填缺」流程。
+四大超商的股權結構有一個先於任何分析的事實：兩條通路連同它們的前東家全部未上市、財報無從查起，可驗證的資訊集中在特定幾個上市實體上。本篇用 FinMind 財報原始數據，把查得到的上市實體全數建出十年 EPS/ROE 序列，對「母公司、前經營者、接手者」這一層股權結構逐一評分——通路本身的品質是一回事，持有它的資本是什麼體質是另一回事。[台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)拆解過四筆交易的估值與動機、[併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)檢驗過買方在交易當下的財務能力，本篇把兩者的時間軸拉長到十年；資料方法沿用[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)建立的「先校準再填缺」流程。
 
 ## 可觀察面地圖：誰有財報、誰是暗區
 
@@ -21,7 +21,7 @@ tags: ["business", "case-analysis", "financial-analysis", "retail", "value-inves
 
 ## 統一體系：跨實體的同一種資本紀律
 
-統一（1216）的十年序列跟旗下兩家已分析公司放在一起，顯示的是一個體系級的現象（ROE 由 FinMind 歸母淨利 ÷ 平均歸母權益推算、2019 起。口徑警示：控股公司若誤用含非控制權益的總淨利當分子、會把統一的 ROE 高估近一倍——統一 2024Q4 總淨利 53.7 億、歸母只有 31 億）：
+統一（1216）的十年序列跟旗下兩家已分析公司放在一起，顯示的是一個體系級的現象（ROE 由 FinMind [歸母淨利](/business/knowledge-cards/parent-attributable-income/) ÷ 平均歸母權益推算、2019 起。口徑警示：控股公司若誤用含非控制權益的總淨利當分子、會把統一的 ROE 高估近一倍——統一 2024Q4 總淨利 53.7 億、歸母只有 31 億）：
 
 | 實體        | ROE 帶    | 股利紀錄                     |
 | ----------- | --------- | ---------------------------- |
@@ -69,7 +69,7 @@ tags: ["business", "case-analysis", "financial-analysis", "retail", "value-inves
 
 三個退場者中只有泰山有完整財報紀錄——它的序列（常態年 EPS 0.36-1.75、2022 靠後被判無效的處分暴衝 12.17、2023 隨即轉虧）已在[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)作為治理失效的標本。光泉和豐群沒有財報可查，但退場決策本身透露資訊：兩個家族都在通路連年虧損、且家族內部無人接棒的狀態下賣出——**未上市家族企業的退場，是它唯一一次把內部資訊定價成公開數字的時刻**（萊爾富 <40 億、OK 1.25 億）。成交價相對資產與會員規模的折價幅度，就是家族對自己通路前景的誠實出價。
 
-## 可遷移框架：股權層分析的檢查單
+## 股權層分析的檢查單
 
 | 步驟               | 問法                                                 | 在本案例的應用                                              |
 | ------------------ | ---------------------------------------------------- | ----------------------------------------------------------- |
