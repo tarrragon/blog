@@ -113,6 +113,69 @@ When data is incomplete or sources disagree, use explicit hedging:
 | **Single-source dependency** | Entire analysis built on one article | Cross-reference key claims from at least two independent sources |
 | **Confusing revenue with profit** | "This company makes X billion" without specifying metric | Always specify: revenue, gross profit, operating profit, or net income |
 
+## Private Company Research: When Financial Data Doesn't Exist
+
+Taiwan's traditional industries are relationship-driven. Many critical supply chain participants are unlisted family businesses or farmer cooperatives without public financials. The skill's verification workflow must adapt — the goal shifts from "find the number" to "verify the business logic through structural evidence."
+
+### Step 1: Corporate Registry Lookup
+
+Before assuming a company has no verifiable data, check:
+
+| Source | What it reveals | URL pattern |
+| --- | --- | --- |
+| 台灣公司網 (twincn.com) | Capital, representative, directors, establishment date, address | twincn.com/item.aspx?no={統編} |
+| 104 人力銀行 | Employee count, capital, industry classification | 104.com.tw/company/{id} |
+| TEJ 台灣經濟新報 | Corporate group analysis, even for private companies (case studies, group structure) | tejwin.com |
+| 經濟部商工登記 | Official registration, paid-in capital, board changes | findbiz.nat.gov.tw |
+
+Capital amount and employee count from registry data give a rough revenue estimate (food industry typically generates 3-6x capital in annual revenue; service industry 1-3x).
+
+### Step 2: Holding Structure and Affiliations
+
+Taiwan family businesses commonly use a layered structure: 控股公司（holding）→ 營運公司（operating）. The holding company owns 100% of the operating entity; the family's actual ownership is in the holding company's shareholder register.
+
+Check sequence:
+1. Find the operating company's shareholder — is it a 法人 (corporate entity)?
+2. If yes, look up that entity — that's the holding company
+3. Check the holding company's directors and shareholders — that's the actual ownership family
+4. Search whether any of these individuals or the holding company appear in other public company filings (as directors, major shareholders, or related parties)
+
+If the holding company or family members appear in a listed company's annual report as related parties, the private company's activities may be partially visible through the listed company's related-party transaction disclosures.
+
+### Step 3: Upstream/Downstream Verification
+
+When financial statements don't exist, verify the company's business logic through its supply chain relationships:
+
+| Direction | What to look for | Verification method |
+| --- | --- | --- |
+| Upstream (suppliers) | Who supplies raw materials to this company? | Search company name + supplier brands; check if global suppliers (Fonterra, Bega) list them as distributor |
+| Downstream (customers) | Who buys from them? What channels do they serve? | Industry reports mentioning their products; their own marketing materials listing client types |
+| Infrastructure | Physical assets (factories, warehouses, vehicle fleets, branch offices) | Company website, 104 job listings (office locations), Google Maps satellite imagery of registered address |
+| Scale proxies | Employee count, number of offices, fleet size | 104/LinkedIn employee count; industry case studies (TEJ); company "About" page |
+
+The presence of infrastructure (30 offices nationwide, 100+ delivery trucks) is harder to fabricate than revenue claims. Physical assets serve as a floor estimate for business scale.
+
+### Step 4: Dual-Role Detection
+
+In Taiwan's concentrated industries, the same company often occupies competing positions in the value chain simultaneously — domestic producer AND importer, brand owner AND private-label manufacturer, retailer AND wholesaler. Detect this by:
+
+1. Check if the company appears in BOTH domestic production registries AND import/export records
+2. Search for the company name in agricultural ministry reports (domestic role) AND in customs/trade statistics (import role)
+3. Look for industry reporting that explicitly names them in both capacities
+
+Dual-role companies have structural conflicts of interest that explain their behavior better than financials alone. When a domestic dairy farmer also imports competing frozen concentrate, the conflict tells you more about market dynamics than any balance sheet would.
+
+### Step 5: Explicit Limitation Marking
+
+When a company is important to the industry story but financially unverifiable, the article must:
+
+1. **State the company's role** — what it does in the supply chain
+2. **State what IS verifiable** — registry data, infrastructure, upstream/downstream relationships, industry reports citing them
+3. **State what is NOT verifiable** — revenue, profit margins, import volumes, cost structure
+4. **Never estimate financials** — "revenue approximately X" without a source is a hallucinated statistic even if it's directionally correct
+
+Template: "[Company] is an unlisted company (capital X, ~Y employees per 104). No public financial data exists to verify revenue or profitability. Its role in the supply chain is confirmed by [upstream supplier evidence] and [downstream customer evidence]."
+
 ## Integration with business-analysis Skill
 
 This skill provides the data foundation for [`business-analysis`](../business-analysis/SKILL.md). The workflow:
@@ -138,4 +201,4 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
-**Version**: 1.0.0 — Initial version extracted from business analysis session data collection patterns: source hierarchy, verification checklist, hedging language, failure mode prevention. Covers Taiwan-specific sources (MOPS, 農業部, 主計總處) and cross-country research (Fonterra annual reports, USDA data, Japan MAFF statistics).
+**Version**: 1.1.0 — Added private company research methodology: corporate registry lookup (台灣公司網, 104, TEJ, 商工登記), holding structure detection, upstream/downstream verification when financials don't exist, dual-role conflict detection, explicit limitation marking protocol. Derived from dairy import economics research session where key supply chain participants (開元食品, 台灣牧場) had no public financials.
