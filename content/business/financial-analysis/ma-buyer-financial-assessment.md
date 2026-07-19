@@ -38,6 +38,8 @@ tags: ["business", "financial-analysis", "merger-acquisition", "retail"]
 
 追蹤指標：OK 門市的月均營收變化、美廉社 + OK 的合併毛利率趨勢、三商合併報表的費用率是否因 OK 而膨脹。
 
+本文發表後的重大更新：三商家購的母公司三商（2905）已於 2026 年將三商美邦人壽以換股方式併入玉山金（2026/9/1 基準日）——集團損益最大的波動源頭出清、資本後盾從「薄且不穩」轉為「薄但穩定」。母體十年財務序列見[四大超商股權層分析](/business/financial-analysis/cvs-ownership-capital-records/)、壽險出清對 OK 整合工程的意義見[四大超商母公司策略比較](/business/financial-analysis/cvs-parent-strategy-comparison/)。
+
 ### 聯邦買萊爾富：跨業進入型
 
 不到 40 億的交易金額對聯邦集團規模（銀行資產破 1 兆）微乎其微。資金透過「聯邦投資」公司進行，名義上與聯邦銀行的帳面無關，但集團資源（品牌、客戶、系統）可以共享。
@@ -46,7 +48,7 @@ tags: ["business", "financial-analysis", "merger-acquisition", "retail"]
 
 最明確的協效是金融場景整合——聯邦銀行 ATM 進駐萊爾富門市、支付工具對接、1,500 家門市作為金融服務的實體接觸點。這些是金融業者併購零售通路的核心動機，但從「ATM 進駐」到「帶動金融產品銷售」的轉化需要時間和消費者習慣培養。
 
-追蹤指標：萊爾富的營業利益率趨勢（何時轉正）、聯邦 ATM 在萊爾富的佈建數和使用率、萊爾富會員與聯邦金融產品的交叉銷售轉化率。
+追蹤指標：萊爾富的營業利益率趨勢（何時轉正）、聯邦 ATM 在萊爾富的佈建數和使用率、萊爾富會員與聯邦金融產品的交叉銷售轉化率。要注意這些指標的可觀察性：萊爾富放在未上市實體、通路自身的財報外部看不到，追蹤只能從聯邦銀（2838）年報的信用卡與存款數字間接進行——這個觀察黑箱的結構性判讀見[四大超商股權層分析](/business/financial-analysis/cvs-ownership-capital-records/)、「場景資產」的功能定位見[四大超商母公司策略比較](/business/financial-analysis/cvs-parent-strategy-comparison/)。
 
 ## 買方類型的通用判讀框架
 
