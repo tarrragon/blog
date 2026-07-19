@@ -274,7 +274,7 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
-**Version**: 1.7.1 — FinMind ROE 分子口徑陷阱入檔：`IncomeAfterTaxes` 含非控制權益、控股集團誤用會把 ROE 高估近一倍（實測：某控股公司 Q4 總淨利為歸母 1.7 倍、推算帶 14-19% 被高估成 22-28%）；正確做法是損益表 `EquityAttributableToOwnersOfParent`（歸母淨利）當分子、同名資產負債表欄位當分母、並用「分子 ÷ 股數 對 已公布 EPS」做 sanity check
+**Version**: 1.8.0 — FinMind ROE 分子口徑陷阱入檔：`IncomeAfterTaxes` 含非控制權益、控股集團誤用會把 ROE 高估近一倍（實測：某控股公司 Q4 總淨利為歸母 1.7 倍、推算帶 14-19% 被高估成 22-28%）；正確做法是損益表 `EquityAttributableToOwnersOfParent`（歸母淨利）當分子、同名資產負債表欄位當分母、並用「分子 ÷ 股數 對 已公布 EPS」做 sanity check
 **Version**: 1.7.0 — FinMind 實測入檔：三個驗證過的 dataset（Dividend 與主表 11/11 校準一致、FinancialStatements 為季值需加總且要用已知 FY 值驗證加總假設、BalanceSheet 供 ROE 自算）、解析陷阱（民國年標示、同所屬年現金與股票股利分筆）、以及「先校準再填缺」紀律——API 先對已驗證公司跑一輪確認一致、再用於無基線的公司。實測成果：味全與泰山的逐年序列（先前兩輪都未取得）由此補齊
 **Version**: 1.6.0 — Data Access Layering 段補台灣的分層地圖與「缺聚合層」的結構解釋：台灣同樣強制 XBRL 但監管端不做聚合 API（MOPS 是人用表單站、TWSE OpenAPI 多為當日快照）、根因是交易所兼任揭露平台營運者與資料販售者——聚合層留給民間。新增 FinMind 作為瀏覽器抓取前優先嘗試的免費 API 層（50+ 資料集、三表/股利/月營收/歷史 PER-PBR、免費 300-600 req/hr），並標明其邊界（原始報表需自算衍生指標、質押仍 MOPS 限定）
 **Version**: 1.5.0 — Extended verification beyond Taiwan with two new references: `us-equities-verification.md`（US 的分層倒置——EDGAR/XBRL API 讓 layer 3 比爬頁便宜、filing 類型對應分析目的、non-GAAP/buyback/FY 偏移三大 US 專屬失誤模式、日歐簡表、台灣→美國對應表）與 `commodities-futures-verification.md`（交易所結算價 > WASDE > aggregator 的來源階層、五條驗證規則：合約明確性/單位換算/期限結構/到岸成本/價差重算、連續合約拼接與行銷年度等商品專屬失誤模式）。SKILL.md 加路由段與未載入 reference 時的最低內建規則。從原物料產業鏈系列（黃豆壓榨、可可危機、飼料成本）與跨國比較（AAK/不二/Tyson/Fonterra）的實際驗證需求提煉
