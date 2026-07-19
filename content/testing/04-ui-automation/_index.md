@@ -6,7 +6,7 @@ weight: 4
 tags: ["testing", "widget-test", "playwright", "ui-test"]
 ---
 
-回答「畫面上的東西是否如設計工作」。狀態矩陣直接轉成 test case。
+回答「畫面元素是否如設計運作」。狀態矩陣直接轉成 test case。
 
 ## 章節
 

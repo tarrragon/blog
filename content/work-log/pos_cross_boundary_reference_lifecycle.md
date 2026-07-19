@@ -66,5 +66,6 @@ tags: ["ddd", "identity", "reference", "aggregate", "snapshot", "pos"]
 ## 下一步
 
 - 測試層怎麼防 → [T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)、[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
+- 參照有效性與狀態所有權的理論層 → [跨邊界參照與狀態所有權](/ddd/cross-boundary-reference-ownership/)
 - 身份判準的理論層 → [entity 與 value object 的判準](/ddd/entity-vs-value-object/)
 - 快照的概念卡 → [snapshot](/ddd/knowledge-cards/snapshot/)

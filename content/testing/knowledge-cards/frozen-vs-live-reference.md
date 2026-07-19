@@ -14,7 +14,7 @@ tags: ["testing", "reference-strategy", "stub", "state-ownership"]
 
 ## 可觀察訊號與例子
 
-凍結參照失效的訊號：操作在特定條件後全部靜默失敗（回寫目標不存在），且單元測試全綠。典型案例：後端合併兩張單據時重建全部明細並更換 id，前端凍結的舊 id 全部指向已刪除資料（[T.C5](/testing/cases/stale-reference-stub-blindspot/)）。修復同樣受盲區支配——第一版只處理單據層 id、遺漏明細層，因為明細 id 在測試裡從未死過。
+操作在特定條件後全部靜默失敗（回寫目標不存在），且單元測試全綠。典型案例：後端合併兩張單據時重建全部明細並更換 id，前端凍結的舊 id 全部指向已刪除資料（[T.C5](/testing/cases/stale-reference-stub-blindspot/)）。修復同樣受盲區支配——第一版只處理單據層 id、遺漏明細層，因為明細 id 在測試裡從未死過。
 
 ## 設計責任
 

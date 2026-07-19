@@ -6,7 +6,7 @@ weight: 6
 tags: ["testing", "case-study", "flow-test", "fake-backend", "ordering"]
 ---
 
-前一張案例卡（T.C5）的修復合入後，新搭好的流程測試第一次執行就亮了紅燈——抓到的正是修復自己引入的順序錯誤。同一個功能，單元測試綠燈、流程測試首跑紅燈，紅燈才是對的：單元測試為了聚焦而繞過的路徑，正是跨服務互動 bug 藏身的地方，這是流程測試與單元測試互補關係的直接展示。
+修復跨服務互動 bug 後，新建的[流程測試](/testing/knowledge-cards/flow-test/)首跑就抓到修復自己引入的順序錯誤——單元測試綠燈、流程測試紅燈，紅燈才是對的。單元測試為了聚焦而繞過的路徑，正是跨服務互動 bug 藏身的地方。前情：[T.C5](/testing/cases/stale-reference-stub-blindspot/) 的修復合入後觸發了此問題。
 
 ## 觀察
 

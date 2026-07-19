@@ -55,6 +55,8 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 > 案例入口：[192 個測試全過、實機全壞](/work-log/testing_three_layer_strategy/) — 三個被 mock 遮蔽的真實問題
 >
 > 案例入口：[T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/) → [T.C6 流程測試首跑抓到順序 bug](/testing/cases/flow-test-first-run-ordering-catch/) — stub 盲區與流程測試補位的成對案例
+>
+> 章節入口：[無測試 legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/) — 接手零測試專案、從風險集中處判斷第一批測試該從哪層開始建
 
 ### 模組二：客戶端可觀測性
 
@@ -77,7 +79,7 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 **設計原則**：log 收集是開發需求的一部分，不是上線後才想的事後工程。連線生命週期的每一步該記什麼 log，應該在功能設計階段就確定 — 跟 API 規格和資料庫 schema 一樣是設計產物。
 
-> 後續章節預定：自架 log endpoint 實作、結構化 log schema 設計、log 分級策略、開發期 vs 上線期 log 切換
+> 章節入口：[三層 log 設計](/testing/02-client-observability/three-layer-log-design/)、[功能規格中的 log 點定義方法](/testing/02-client-observability/log-point-in-spec/)、[自架 log endpoint vs 商業方案的取捨判斷](/testing/02-client-observability/log-endpoint-tradeoff/)、[「事後補 log」vs「設計產物 log」的品質差異](/testing/02-client-observability/hotfix-log-vs-designed-log/)
 
 ### 模組三：協議整合測試
 
@@ -96,21 +98,21 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 服務無法本機啟動、只有共用測試環境時，這一層以[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)的形態存在：正規測試而非腳本、與整合套件同分類、預設可執行、離線降級為跳過、憑證失效必須紅燈——每一條設計都對應一個實際踩過的歧路。
 
-> 章節入口：[WebSocket 協議測試](/testing/03-protocol-integration-test/websocket-protocol-test/)、[HTTP contract test](/testing/03-protocol-integration-test/http-contract-test/)、[服務 fixture 管理](/testing/03-protocol-integration-test/service-fixture-management/)
+> 章節入口：[WebSocket 協議測試](/testing/03-protocol-integration-test/websocket-protocol-test/)、[HTTP contract test](/testing/03-protocol-integration-test/http-contract-test/)、[服務 fixture 管理](/testing/03-protocol-integration-test/service-fixture-management/)、[測試憑證管理](/testing/03-protocol-integration-test/credential-management/)
 >
 > 案例入口：[T.C7 症狀相同、成因兩種](/testing/cases/dual-semantics-attribution/) — 用雙行為測試＋真實後端驗證切開前後端責任
 
 ### 模組四：自動化 UI 驗證
 
-回答「畫面上的東西是否如設計工作」。Widget test、Playwright、screen state coverage。
+回答「畫面元素是否如設計運作」。Widget test、Playwright、screen state coverage。
 
-> 後續章節預定：widget test 的狀態覆蓋策略、Playwright 驗證流程、螢幕截圖比對
+> 章節入口：[Widget test 的狀態覆蓋策略](/testing/04-ui-automation/state-coverage-strategy/)、[Playwright 瀏覽器驗證流程](/testing/04-ui-automation/playwright-verification/)、[螢幕截圖比對](/testing/04-ui-automation/visual-regression/)、[導航路徑 test](/testing/04-ui-automation/navigation-path-test/)
 
 ### 模組五：測試設計判斷
 
 回答「這個斷言該怎麼寫」。Mock 邊界判斷、assertion 設計（計時依賴、浮點精度、快取驗證）、flaky test 診斷，以及[測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)——測試內容由名稱與斷言自述、reason 寫失敗後果與處置、檔頭陳述目的不論證需求、分析詞彙與開發過程不入程式碼。
 
-> 章節入口：[mock 邊界判斷](/testing/05-test-design-judgment/mock-boundary-decision/)、[斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)、[flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)
+> 章節入口：[mock 邊界判斷](/testing/05-test-design-judgment/mock-boundary-decision/)、[斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)、[flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)、[Flaky test 團隊治理](/testing/05-test-design-judgment/flaky-team-governance/)、[Test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/)
 >
 > 案例入口：[T.C8 fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/)、[T.C9 外接螢幕訊息序列斷言](/testing/cases/outbox-sequence-external-display/)
 
@@ -137,4 +139,4 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 _文件版本：v0.2.0_
 _最後更新：2026-07-17_
-_系列狀態：模組一/三補入假後端與真實後端驗證配對章節、模組五補入測試註解與命名紀律章、案例庫擴充 T.C5–T.C9_
+_系列狀態：模組一補入假後端、流程測試與 legacy 起步順序章、模組三補入真實後端驗證與憑證管理章、模組五補入 flaky 團隊治理與測試註解命名紀律章、案例庫擴充 T.C5–T.C9_

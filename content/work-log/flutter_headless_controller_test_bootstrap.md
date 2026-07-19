@@ -2,11 +2,11 @@
 title: "讓 UI 控制器在 headless 測試立起來：platform channel mock、no-op 子類與 postFrameCallback 的手工補位"
 date: 2026-07-17
 draft: false
-description: "流程測試要驅動真實編排，而編排住在 UI 控制器裡——能不能在無畫面的測試環境把控制器立起來，決定整個測試套件的形態。POS App 的答案是三個廉價條件：EventChannel/MethodChannel 掛 mock、平台相依服務用 no-op 子類替換、postFrameCallback 裡的訂閱手動補跑。"
+description: "流程測試要驅動真實編排，而編排住在 UI 控制器裡——能不能在無畫面的測試環境把控制器立起來，決定整個測試套件的形態。先用 spike 驗證閘門、再逐項中和平台耦合，讓控制器在 headless 環境可建構。"
 tags: ["flutter", "dart", "test", "platform-channel", "controller", "flow-test", "getx"]
 ---
 
-> **核心議題**：跨服務的流程測試若只在 service 層打轉，控制器裡的編排（順序、防護動作、收尾同步）就是測不到的盲區——而實戰裡的 bug 恰好密集出現在編排層。能否直接 `Get.put(控制器)` 立起真實控制器，是套件形態的閘門問題，值得用一條最小測試先做 spike。
+> **核心議題**：跨服務的[流程測試](/testing/knowledge-cards/flow-test/)若只在 service 層打轉，控制器裡的編排（順序、防護動作、收尾同步）就是測不到的盲區——而實戰裡的 bug 恰好密集出現在編排層。能否直接 `Get.put(控制器)` 立起真實控制器，是套件形態的閘門問題，值得用一條最小測試先做 spike。
 > **案例骨幹**：POS App 的主控制器在 `onInit` 做四件與平台耦合的事（掃碼廣播、相機偵測、外接顯示器、frame callback）。逐一拆解後發現全部可以在 headless 環境用低成本手段中和——spike 首跑即過，此後所有流程測試都能驅動真實編排、零複製漂移。
 
 ---

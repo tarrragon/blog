@@ -19,7 +19,7 @@ tags: ["flutter", "dart", "test", "binding", "http", "integration-test", "isolat
 
 ## 2. 約束的傳染性：不可 import 會初始化 binding 的東西
 
-這個副作用是**程序級全域**的，且沒有乾淨的關閉開關（`HttpOverrides.global = null` 可以事後拆除，但依賴「記得拆」的紀律，且 binding 的其他副作用仍在）。實務上更穩的做法是把它當成檔案級的硬約束：
+這個副作用是**程序級全域**的，且沒有乾淨的關閉開關（`HttpOverrides.global = null` 可以事後拆除，但依賴「記得拆」的紀律，且 binding 的其他副作用仍在）。更穩的做法是把它當成檔案級的硬約束：
 
 - 真實後端驗證測試的檔案**從頭到尾不初始化 binding**
 - 因此也**不可 import 流程測試的 harness**——harness 為了 mock platform channel、立起 UI 控制器，第一步就是 `ensureInitialized`；import 進來即使不呼叫，任何一個共用 helper 順手初始化都會中招
@@ -52,7 +52,7 @@ final api = ApiClient(dio);              // retrofit client 只需要一個 Dio
 dio.options.headers['Authorization'] = 'Bearer $token';
 ```
 
-「走產品的 client 與模型」是刻意選擇：手刻 raw JSON 曾在同一批測試裡重踩產品早已解決的坑（列表回應的分頁包裝），而型別化解析讓後端回應形狀的變化在這層先於產品爆出來。
+「走產品的 client 與模型」是刻意選擇：手刻 raw JSON 曾在同一批測試裡重踩產品早已解決的問題（列表回應的分頁包裝），而型別化解析讓後端回應形狀的變化在這層先於產品爆出來。
 
 ## 5. 可複用的判準
 

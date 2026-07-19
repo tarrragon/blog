@@ -12,9 +12,10 @@ tags: ["flutter", "dart", "mobile"]
 
 章節從 case 聚類長出——同主題 case 累積到臨界量、互相引用密集時，才值得一篇判準層的聚合章：
 
-| 章節                                                              | 核心問題                                                                | 聚合的 case                        |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------- |
-| [Riverpod 的 reactive 邊界](/flutter/riverpod-reactive-boundary/) | reactive 保證只覆蓋 provider 圖內部——變化在圖上嗎、哪個容器、節點活著嗎 | 空間／涵蓋／接入／時間四邊界共五篇 |
+| 章節                                                              | 核心問題                                                                       | 聚合的 case                                    |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------- |
+| [Riverpod 的 reactive 邊界](/flutter/riverpod-reactive-boundary/) | reactive 保證只覆蓋 provider 圖內部——變化在圖上嗎、哪個容器、節點活著嗎        | 空間／涵蓋／接入／時間四邊界共五篇             |
+| [流程測試基礎設施](/flutter/flow-test-infrastructure/)            | Dart 生態的四個實作限制：headless 控制器、binding 互斥、輸出雜訊、假後端序列化 | binding + headless + noise + fake-backend 四篇 |
 
 ## 章節大綱（backlog）
 
@@ -75,6 +76,8 @@ tags: ["flutter", "dart", "mobile"]
 | headless 立起 UI 控制器  | [platform channel mock、no-op 子類與 postFrameCallback 手工補位](/work-log/flutter_headless_controller_test_bootstrap/)                       |
 | 測試輸出雜訊治理         | [預期的環境狀態不該走例外路徑](/work-log/flutter_test_noise_expected_paths/)                                                                  |
 | 假後端的回應資料來源     | [有狀態假後端用真實模型序列化回應](/work-log/flutter_fake_backend_real_model_serialization/)                                                  |
+
+上表末四項的判準與建置順序已聚合為 [流程測試基礎設施](/flutter/flow-test-infrastructure/)，各 case 保留完整程式碼與現場細節。
 
 ### 架構與分層
 

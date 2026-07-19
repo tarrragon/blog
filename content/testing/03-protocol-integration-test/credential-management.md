@@ -1,26 +1,26 @@
 ---
 title: "測試憑證管理"
 date: 2026-07-17
-description: "測試環境的帳號密碼放在哪裡、CI 怎麼拿到、怎麼防止對生產環境執行 — 三種存放策略的適用前提與失效偵測"
+description: "測試環境的帳號密碼放在哪裡、CI 怎麼拿到、怎麼防止對生產環境執行 — 存放策略的適用前提與失效偵測"
 weight: 7
 tags: ["testing", "credential", "ci", "security", "integration-test"]
 ---
 
-自動化測試碰到真實後端的第一步是認證。測試帳號存放在哪裡、CI 怎麼拿到它、環境判定怎麼防止對生產執行——三個問題的答案在測試套件建立初期就決定，晚做的代價是每次有人加入團隊、每次環境更新、每次 CI 重建都重新踩同一個坑。
+自動化測試碰到真實後端的第一步是認證。測試帳號存放在哪裡、CI 怎麼拿到它、環境判定怎麼防止對生產執行——三個問題的答案在測試套件建立初期就決定，晚做的代價是每次有人加入團隊、每次環境更新、每次 CI 重建都重複遇到同樣的問題。
 
-本章整理三種存放策略的適用前提與安全取捨。[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)已觸及「內建帳號」與「本機 gitignore 檔」的設計選擇，本章從那兩段展開，加上 CI secret 注入的完整映射。
+本章整理靜態憑證的三種存放策略、以及繞開存放問題的動態憑證體系，各自的適用前提與安全取捨。[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)已觸及「內建帳號」與「本機 gitignore 檔」的設計選擇，本章從那兩段展開，加上 CI secret 注入與動態憑證的完整映射。
 
 ## 三種存放策略
+
+以下三種策略處理的都是**靜態憑證**（一組長期有效的帳密或 token）該放在哪裡。另有一類做法繞開「存放」這個問題本身——見後文的動態憑證段，雲端環境的專案應先評估那條路再回來看這三種。
 
 ### 策略一：版本庫內建
 
 憑證直接寫在測試程式碼或設定檔裡，隨 repo 一起散佈。
 
-**適用前提**：測試環境本身沒有存取管制的需求——帳號是開發用的預填帳號、測試環境對內網或 VPN 後開放、團隊已知情地接受這個暴露面。典型情境：專案的登入頁有預設帳號、開發環境跟測試環境共用同一組帳密、整個 repo 是私有的。
+開發者 clone repo 後直接跑測試、CI 不需要額外設定——這是策略一最大的吸引力，也是[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)「預設可執行」設計的前提。成立的條件是帳號本身不敏感：測試環境對內網或 VPN 後開放、帳號是開發用的預填帳號、團隊已知情地接受暴露面、整個 repo 是私有的。
 
-**換到的好處**：零組態。開發者 clone repo 後直接跑測試，沒有「找不到憑證檔」的入門門檻；CI 不需要額外設定 secret，任何 runner 都能執行。[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)的「預設可執行」設計在這個前提下直接成立。
-
-**暴露面**：repo 的所有讀取者（包括 fork、CI log、意外公開）都拿到憑證。repo 公開的那一天、或憑證跟生產共用的那一天，暴露面從「可接受」瞬間升級為事故。衡量的問題不是「現在安不安全」，而是「repo 公開或帳號共用時，有沒有人記得回來改」。
+承擔的代價在時間軸上：repo 的所有讀取者（包括 fork、CI log、意外公開）都拿到憑證。repo 公開的那一天、或憑證跟生產共用的那一天，暴露面從「可接受」瞬間升級為事故。衡量的問題不是「現在安不安全」，而是「repo 公開或帳號共用時，有沒有人記得回來改」。
 
 **失效形態**：帳號被測試環境管理員重設、密碼過期、或測試環境輪替——測試靜默失敗或降級跳過。內建帳號的更新路徑是改 repo，每次更新都進 git log，這一點是優勢也是限制：更新有紀錄、但更新要走 commit 流程。
 
@@ -28,11 +28,9 @@ tags: ["testing", "credential", "ci", "security", "integration-test"]
 
 憑證寫在 repo 內的檔案裡，但該檔案加入 `.gitignore`，每台開發機手動填入一次。
 
-**適用前提**：憑證不適合進版本庫——帳號有存取管制、測試環境面對公網、repo 可能公開——但仍想在本機跑測試。典型情境：共用的 staging 環境需要真實帳號登入、每個開發者有自己的測試帳號。
+策略一被排除（帳號有存取管制、測試環境面對公網、repo 可能公開）但仍想在本機跑測試時，每台機器各自持有一份 gitignore 的憑證檔。每台機器獨立管理，適合帳號分離（開發者 A 和 B 用不同帳號、CI 用專屬服務帳號），repo 公開後 history 裡不會被挖出來。
 
-**換到的好處**：憑證不進 git history（repo 公開後不會被挖出來），每台機器獨立管理，適合帳號分離（開發者 A 和 B 用不同帳號、CI 用專屬服務帳號）。
-
-**暴露面**：`.gitignore` 只防 git add、不防其他路徑的洩漏（備份、同步工具、IDE 外掛的上傳功能）。另一個暴露面是「忘記加 `.gitignore`」——repo 初期沒有憑證檔、某天有人建了檔案，`.gitignore` 的那一行會不會跟著出現？樣板（`.credentials.example`）放在 repo 裡、`.gitignore` 裡寫好對應行，把這個依賴從記憶移到結構。
+代價是入門門檻與洩漏面。`.gitignore` 只防 git add、不防其他路徑的洩漏（備份、同步工具、IDE 外掛的上傳功能）。另一個暴露面是「忘記加 `.gitignore`」——repo 初期沒有憑證檔、某天有人建了檔案，`.gitignore` 的那一行會不會跟著出現？樣板（`.credentials.example`）放在 repo 裡、`.gitignore` 裡寫好對應行，把這個依賴從記憶移到結構。
 
 **入門門檻的處理**：新開發者 clone 後第一次跑測試，「找不到憑證檔」的行為應是明確失敗（紅燈加訊息），而非靜默跳過。跳過會讓新成員以為測試本來就只跑一部分，紅燈逼人補完——這是一次性的環境設定債，補完就消。[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)在「預設可執行」段描述了這條區分的設計理由。
 
@@ -40,15 +38,28 @@ tags: ["testing", "credential", "ci", "security", "integration-test"]
 
 憑證存在 CI 平台的 secret store（GitHub Actions secret、GitLab CI variable、Jenkins credential binding），執行時以環境變數或臨時檔注入。
 
-**適用前提**：CI 環境需要執行真實後端驗證，但憑證不適合進 repo（策略一被排除）、CI runner 也沒有預置檔案（策略二在 CI 不適用）。幾乎所有需要在 CI 跑真實後端驗證的團隊最終都會走到這一步。
+幾乎所有需要在 CI 跑真實後端驗證的團隊最終都會走到這一步：憑證不適合進 repo（策略一被排除）、CI runner 也沒有預置檔案（策略二在 CI 不適用）。憑證的生命週期移交給 CI 平台——存取稽核、輪替機制、最小權限範圍都是平台功能；repo 完全乾淨，fork 和公開都不受影響。
 
-**換到的好處**：憑證的生命週期由 CI 平台管理——存取稽核、輪替機制、最小權限範圍都是平台功能。repo 完全乾淨，fork 和公開都不受影響。
+**最小可用的 CI 設定**（以 GitHub Actions 為例）：
+
+```yaml
+# .github/workflows/integration.yml
+env:
+  TEST_BASE_URL: ${{ secrets.QA_BASE_URL }}
+  TEST_USERNAME: ${{ secrets.QA_USERNAME }}
+  TEST_PASSWORD: ${{ secrets.QA_PASSWORD }}
+
+steps:
+  - run: flutter test test/integration/ --tags real-backend
+```
+
+命名慣例：secret 以 `QA_` 或 `TEST_` 前綴區分用途，測試 harness 端以同名環境變數讀取。GitLab CI 用 Settings > CI/CD > Variables 設定、Jenkins 用 Credential Binding 外掛——機制不同但慣例相通：CI 平台存憑證、注入為環境變數、測試 harness 讀環境變數。找不到環境變數時的行為依策略二的設計：紅燈加訊息（「缺少 QA_USERNAME 環境變數，請在 CI secret 或本機 .credentials 設定」），而非靜默跳過。
 
 **暴露面**：CI secret 對 PR 的可見性是一條常被忽略的分界。GitHub Actions 預設不把 secret 注入 fork PR 的 workflow——這意味著外部貢獻者的 PR 跑不了真實後端驗證。處理方式有兩條路：把驗證測試放在 merge 後的 nightly stage（延遲訊號），或在 workflow 裡對 fork PR 顯式跳過並記錄（立即跳過但留 skip 紀錄）。兩條路各有取捨：延遲到 nightly 的 merge 後驗證，漂移在合併當天不會被看到；立即跳過的 fork PR，開發者可能誤以為測試通過代表全面驗證。
 
 **失效形態**：secret 過期、被刪除、或 CI 平台遷移後忘記搬——測試在 CI 恆紅或恆 skip。恆紅在 CI 裡是有噪音的訊號、會被看到；恆 skip 是靜默訊號、容易被忽略。把 skip 計數的行動閾值設計寫進 CI 設定，是這個策略的持有成本之一。
 
-## 三種策略的選擇映射
+## 靜態憑證的選擇映射
 
 選策略的判準是兩個問題的交叉：
 
@@ -61,9 +72,19 @@ tags: ["testing", "credential", "ci", "security", "integration-test"]
 
 多數專案的演進路徑：初期 repo 私有、測試環境無管制 → 策略一；repo 準備公開或測試環境加上管制 → 遷移到策略二＋三。遷移時需要把內建憑證從 git history 清除（`git filter-repo` 或 BFG），單純刪除檔案不夠——history 裡的憑證仍然可被取出。
 
+## 動態憑證：不存放長期憑證
+
+上述三種策略共用一個前提：存在一組需要被保管的長期憑證。動態憑證體系取消這個前提——執行當下才簽發、用完即失效，因此沒有「放在哪裡」的問題，也沒有輪替流程。
+
+- **OIDC 聯合身分**：CI 平台以工作流程的身分向雲端換取短期 token（GitHub Actions 對 AWS/GCP/Azure 的 keyless 認證是這一類）。雲端側信任的是「哪個 repo 的哪個 workflow」，不是一串密鑰。
+- **工作負載身分**：測試跑在雲端運算資源上時，直接掛載 IAM role 或 workload identity，憑證由平台注入且自動輪替。
+- **secret 管理服務**：Vault 這類服務在請求當下簽發短期憑證（例如一組 15 分鐘有效的資料庫帳密），存取有稽核紀錄。
+
+適用前提是被存取的目標支援這些機制——雲端服務多半支援，自架的測試後端通常只認帳密，那就回到前三種策略。取捨的軸線因此不是「哪個比較安全」，而是「目標認不認」：認得動態憑證就用它（省掉輪替與洩漏面），不認就在前三種裡按版本庫與 CI 的兩個問題選。
+
 ## 環境判定：誤擊防護的前提
 
-三種策略都有一個共同的上游依賴：**程式能判定自己連的是哪個環境**。驗證測試會對測試環境建立與刪除真實資料——對生產環境執行等於事故。環境判定是這條防線的前提。
+三種策略都有一個共同的上游依賴：**程式能判定自己連的是哪個環境**（[測試環境判定](/testing/knowledge-cards/environment-identification/)）。驗證測試會對測試環境建立與刪除真實資料——對生產環境執行等於事故。環境判定是這條防線的前提。
 
 判定的實作選項：
 

@@ -33,4 +33,5 @@ tags: ["testing", "mock", "integration-test", "strategy"]
 - → [monitoring 模組三 SDK 設計](/monitoring/03-sdk-design/)：SDK 的自動攔截機制影響哪些錯誤能被 test 覆蓋
 - → [ux-design 模組一 畫面狀態機](/ux-design/01-screen-state-machine/)：狀態矩陣直接轉成 screen state test case
 - ← [ux-design 模組二 Gate Fallback](/ux-design/02-gate-fallback/)：開發環境遮蔽 gate 問題的機制和 mock 遮蔽結構相同
+- ← [flutter 流程測試基礎設施](/flutter/flow-test-infrastructure/)：本模組的假後端與流程測試策略在 Dart 生態的實作限制
 - ← work-log 案例入口：[192 個測試全過、實機全壞](/work-log/testing_three_layer_strategy/)

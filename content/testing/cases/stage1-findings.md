@@ -7,6 +7,8 @@ description: "Case-first Stage 1 產物 — 從 T.C1~C4 四個 rich case 抽取 
 tags: ["testing", "case-first", "stage-1"]
 ---
 
+本檔是 case-first workflow 的 Stage 1 稽核產物，9 個 findings 已全數吸收進正式章節與各模組索引的盲區表，保留於此僅供追溯推導過程、不是待辦清單。
+
 ## Findings 表
 
 | #    | Finding                                                                                            | Case    | 對應模組 | Fact / Derive                |

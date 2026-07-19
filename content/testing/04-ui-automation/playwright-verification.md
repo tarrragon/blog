@@ -45,7 +45,7 @@ test('terminal screen shows connection status', async ({ page }) => {
 
 ### 三個位置的斷言
 
-Playwright test 中的斷言放在三個位置，各自驗證不同的東西：
+Playwright test 中的斷言放在三個位置，各自驗證不同的對象：
 
 **假設斷言（test 開頭）**：驗證 test 的前置條件。頁面載入成功、初始狀態正確。如果假設斷言失敗，test 的後續結果不可信。
 

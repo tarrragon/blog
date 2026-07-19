@@ -1,13 +1,13 @@
 ---
-title: "有狀態假後端用真實模型序列化回應：手寫 JSON fixture 會重踩產品已解決的坑"
+title: "有狀態假後端用真實模型序列化回應：手寫 JSON fixture 會重踩產品已解決的問題"
 date: 2026-07-17
 draft: false
-description: "流程測試的假後端持有 freezed 模型物件、以 toJson 序列化回應，讓服務層走完整的反序列化鏈。對照組是手寫 JSON fixture——同一批測試裡的 raw 寫法真的重踩了一次產品早已內建處理的分頁包裝，證明「回應形狀的知識」應該只存在一份。"
+description: "流程測試的假後端持有 freezed 模型物件、以 toJson 序列化回應，讓服務層走完整的反序列化鏈。對照組是手寫 JSON fixture——同一批測試裡的 raw 寫法重踩了一次產品早已內建處理的分頁包裝，證明「回應形狀的知識」應該只存在一份。"
 tags: ["flutter", "dart", "test", "freezed", "fixture", "fake-backend", "serialization"]
 ---
 
-> **核心議題**：假後端的回應資料從哪來？手寫 JSON 字串、還是建構真實模型物件再 `toJson()`？POS App 的流程測試選了後者，理由不是美觀——是「後端回應形狀的知識」在專案裡應該只有一份（產品的模型解析層），fixture 自己再寫一份就會分岔。
-> **案例骨幹**：有狀態假後端以 freezed 模型（單據、明細、記錄）持有狀態、handler 用 `copyWith` 演變狀態、出口一律 `toJson()`。同一時期另一批用 raw JSON 手刻請求的測試，重踩了「列表回應帶分頁包裝」的坑——產品的回應信封解析早就內建了這層 unwrap，手刻等於把已解決的問題再解一次。
+> **核心議題**：假後端的回應資料從哪來？手寫 JSON 字串、還是建構真實模型物件再 `toJson()`？POS App 的[流程測試](/testing/knowledge-cards/flow-test/)選了後者，理由不是美觀——是「後端回應形狀的知識」在專案裡應該只有一份（產品的模型解析層），fixture 自己再寫一份就會分岔。
+> **案例骨幹**：有狀態假後端以 freezed 模型（單據、明細、記錄）持有狀態、handler 用 `copyWith` 演變狀態、出口一律 `toJson()`。同一時期另一批用 raw JSON 手刻請求的測試，重踩了「列表回應帶分頁包裝」的問題——產品的回應信封解析早就內建了這層 unwrap，手刻等於把已解決的問題再解一次。
 
 ---
 
