@@ -166,10 +166,12 @@ Detailed checklists and frameworks for each step:
 - **`references/report-reading.md`** — P&L reading, three-statement analysis, hidden cost identification, accounting adjustment table
 - **`references/positioning-and-benchmarking.md`** — Two-axis positioning matrix, peer group construction, deviation analysis, benchmark sources
 - **`references/valuation-and-investment.md`** — DCF mechanics, multiples selection by stage/model, capital vs labor return, continue/exit formula
+- **`references/value-investing-assessment.md`** — Buffett-style three-gate screen (moat durability / management capital allocation / margin of safety), 10-year ROE and DuPont screen, Taiwan governance signals (董監質押), value window identification, value trap taxonomy. Use when the goal is a buy/avoid judgment on a listed company — and note the boundary: business analysis without price/valuation-band data cannot support an investment conclusion
 - **`references/external-shock.md`** — Shock type classification, structural vs one-time decomposition, escape path tracking, cross-industry validation
 - **`references/value-chain-analysis.md`** — Upstream/downstream tracing, related party transaction estimation, three-sided squeeze identification, vertical integration comparison
 
 ---
 
+**Version**: 1.2.0 — 新增 `references/value-investing-assessment.md`：把「企業分析」與「投資分析」的邊界明確化（無估值帶與市值序列不可下投資結論）、三閘門篩選（護城河耐久性看衰退期定價權而非好年毛利率 / 管理層看資本配置紀錄而非敘事 / 安全邊際基於正常化盈餘與歷史估值帶百分位）、10 年 ROE + 杜邦拆解的資本效率篩選、台灣治理訊號（董監質押 / 關係人交易量級 / 經營權爭奪）、價值窗口四分類（受壓轉型 / 被擊垮 / 週期高點 / 結構遮蔽）、價值陷阱三型（護城河受損 / 治理失效 / 結構衰退）。從肉品油品零售 20+ 家公司分析的回顧性缺口盤點提煉
 **Version**: 1.1.0 — Step 6 加入國際原物料供應鏈維度（進口依賴比、來源集中度、傳導路徑、採購策略矩陣）；value-chain-analysis reference 加入 Import Dependency Assessment 表、Transmission Path Mapping 五步驟、Procurement Strategy Matrix（含電子業對應欄）；分析模式速查表加第 8 個模式 Import dependency。從 procurement-planning 的 commodity-import-dependency 和 commodity-price-shock-response 兩篇新文章提煉
 **Version**: 1.0.0 — Initial version extracted from 18-article business analysis teaching series built around a franchise breakfast store case study, expanded through real company analysis (八方雲集, 揚秦/麥味登, 卜蜂, 大成, 超秦) with prediction-validation cycles
