@@ -113,68 +113,75 @@ When data is incomplete or sources disagree, use explicit hedging:
 | **Single-source dependency** | Entire analysis built on one article | Cross-reference key claims from at least two independent sources |
 | **Confusing revenue with profit** | "This company makes X billion" without specifying metric | Always specify: revenue, gross profit, operating profit, or net income |
 
-## Private Company Research: When Financial Data Doesn't Exist
+## Supply Chain and Competitor Cross-Verification
 
-Taiwan's traditional industries are relationship-driven. Many critical supply chain participants are unlisted family businesses or farmer cooperatives without public financials. The skill's verification workflow must adapt — the goal shifts from "find the number" to "verify the business logic through structural evidence."
+A company's own financial report is a self-portrait — it shows what the company wants investors to see, within accounting rules. Supply chain verification and competitor lateral checks reveal what the self-portrait omits or distorts. This applies to ALL companies, listed or not.
 
-### Step 1: Corporate Registry Lookup
+### Principle: No Single-Company Analysis
 
-Before assuming a company has no verifiable data, check:
+Every factual claim about a company should be checkable from at least one external vantage point:
 
-| Source | What it reveals | URL pattern |
+| Vantage point | What it reveals | Example |
 | --- | --- | --- |
-| 台灣公司網 (twincn.com) | Capital, representative, directors, establishment date, address | twincn.com/item.aspx?no={統編} |
-| 104 人力銀行 | Employee count, capital, industry classification | 104.com.tw/company/{id} |
-| TEJ 台灣經濟新報 | Corporate group analysis, even for private companies (case studies, group structure) | tejwin.com |
-| 經濟部商工登記 | Official registration, paid-in capital, board changes | findbiz.nat.gov.tw |
+| Upstream supplier | Whether the company's cost claims are plausible | Fonterra's farmgate milk price confirms the floor cost for any Taiwan importer |
+| Downstream customer | Whether the company's revenue claims match observable market presence | A chain with 7,000 stores each using 5L/day implies minimum monthly volume |
+| Competitor with public data | Whether margins, growth rates, or cost ratios are structurally consistent across the industry | If competitor's margin is 8% and target claims 25% in the same commodity business, investigate |
+| Industry regulator/association | Whether volume claims match aggregate statistics | Total import volume from customs data caps how much any single importer can be handling |
 
-Capital amount and employee count from registry data give a rough revenue estimate (food industry typically generates 3-6x capital in annual revenue; service industry 1-3x).
+A company reporting 40% gross margin in a commodity industry where peers report 15-21% is either doing something structurally different (verify what) or misrepresenting (flag it). The competitor's report IS the verification tool.
 
-### Step 2: Holding Structure and Affiliations
+### Competitor Lateral Checks
 
-Taiwan family businesses commonly use a layered structure: 控股公司（holding）→ 營運公司（operating）. The holding company owns 100% of the operating entity; the family's actual ownership is in the holding company's shareholder register.
+When analyzing Company A, search for Company B (competitor in the same segment) and compare:
 
-Check sequence:
-1. Find the operating company's shareholder — is it a 法人 (corporate entity)?
-2. If yes, look up that entity — that's the holding company
-3. Check the holding company's directors and shareholders — that's the actual ownership family
-4. Search whether any of these individuals or the holding company appear in other public company filings (as directors, major shareholders, or related parties)
+1. **Margin plausibility**: If 大成's feed business has 5-10% gross margin, any competitor claiming 30% in the same feed segment needs explanation
+2. **Growth rate consistency**: If the whole industry grew 5% but one company claims 30%, either they took share (verify from whom) or the claim is suspect
+3. **Cost structure ratios**: Rent/revenue, labor/revenue, materials/revenue should be in similar bands for same-format businesses (e.g., all convenience stores have ~30% operating expense ratios)
+4. **Annual report language cross-check**: When 統一's annual report changes language from "supply shortage" to "demand weakness," check if 光泉 and 味全's reports echo the same shift — consensus among competitors confirms it's structural, not company-specific
 
-If the holding company or family members appear in a listed company's annual report as related parties, the private company's activities may be partially visible through the listed company's related-party transaction disclosures.
+### Upstream/Downstream Verification
 
-### Step 3: Upstream/Downstream Verification
-
-When financial statements don't exist, verify the company's business logic through its supply chain relationships:
+Verify a company's business logic through its position in the supply chain:
 
 | Direction | What to look for | Verification method |
 | --- | --- | --- |
-| Upstream (suppliers) | Who supplies raw materials to this company? | Search company name + supplier brands; check if global suppliers (Fonterra, Bega) list them as distributor |
-| Downstream (customers) | Who buys from them? What channels do they serve? | Industry reports mentioning their products; their own marketing materials listing client types |
-| Infrastructure | Physical assets (factories, warehouses, vehicle fleets, branch offices) | Company website, 104 job listings (office locations), Google Maps satellite imagery of registered address |
-| Scale proxies | Employee count, number of offices, fleet size | 104/LinkedIn employee count; industry case studies (TEJ); company "About" page |
+| Upstream (suppliers) | Does the supplier's public data confirm the claimed relationship? | Global suppliers (Fonterra, Bega) sometimes list distributors; customs data shows import volumes by destination |
+| Downstream (customers) | Do customers' reports or product labels confirm sourcing? | 7-11's "咖啡專用乳" ingredient label confirms who supplies them; franchisee cost breakdowns confirm mother-company markup |
+| Competitor (lateral) | Do peers' financials bracket the plausible range? | Same-industry peers' margins set the ceiling and floor for claims |
+| Aggregate (industry) | Do individual claims add up to industry totals? | If 4 importers each claim 40% market share, someone's lying |
 
-The presence of infrastructure (30 offices nationwide, 100+ delivery trucks) is harder to fabricate than revenue claims. Physical assets serve as a floor estimate for business scale.
+Physical infrastructure is particularly hard to fabricate: 30 offices nationwide, 100+ delivery trucks, factory automation lines. These serve as floor estimates for business scale even without revenue data.
 
-### Step 4: Dual-Role Detection
+### Dual-Role Detection
 
-In Taiwan's concentrated industries, the same company often occupies competing positions in the value chain simultaneously — domestic producer AND importer, brand owner AND private-label manufacturer, retailer AND wholesaler. Detect this by:
+In Taiwan's concentrated industries, the same company often occupies competing positions simultaneously — domestic producer AND importer, brand owner AND private-label manufacturer, retailer AND wholesaler. When a company has dual roles:
 
-1. Check if the company appears in BOTH domestic production registries AND import/export records
-2. Search for the company name in agricultural ministry reports (domestic role) AND in customs/trade statistics (import role)
-3. Look for industry reporting that explicitly names them in both capacities
+1. Its self-reported financials blend two businesses with conflicting incentives
+2. Profitability claims for either role are suspect (internal transfer pricing can shift profit between roles)
+3. The company's BEHAVIOR (which role is it investing in? which is it shrinking?) reveals its true strategic bet better than reported margins
 
-Dual-role companies have structural conflicts of interest that explain their behavior better than financials alone. When a domestic dairy farmer also imports competing frozen concentrate, the conflict tells you more about market dynamics than any balance sheet would.
+Detection: check if the company appears in BOTH domestic production registries AND import/export records; search agricultural ministry reports (domestic role) AND customs statistics (import role); look for industry reporting that names them in both capacities.
 
-### Step 5: Explicit Limitation Marking
+### When the Target Company Has No Public Financials
 
-When a company is important to the industry story but financially unverifiable, the article must:
+Many critical supply chain participants in Taiwan are unlisted family businesses or farmer cooperatives. The verification goal shifts from "find the number" to "verify the business logic through structural evidence."
 
-1. **State the company's role** — what it does in the supply chain
-2. **State what IS verifiable** — registry data, infrastructure, upstream/downstream relationships, industry reports citing them
-3. **State what is NOT verifiable** — revenue, profit margins, import volumes, cost structure
-4. **Never estimate financials** — "revenue approximately X" without a source is a hallucinated statistic even if it's directionally correct
+**Corporate registry lookup:**
 
-Template: "[Company] is an unlisted company (capital X, ~Y employees per 104). No public financial data exists to verify revenue or profitability. Its role in the supply chain is confirmed by [upstream supplier evidence] and [downstream customer evidence]."
+| Source | What it reveals |
+| --- | --- |
+| 台灣公司網 (twincn.com) | Capital, representative, directors, establishment date |
+| 104 人力銀行 | Employee count, capital, industry classification |
+| TEJ 台灣經濟新報 | Corporate group analysis, case studies (covers private companies) |
+| 經濟部商工登記 (findbiz.nat.gov.tw) | Official registration, paid-in capital, board changes |
+
+**Holding structure detection:** Taiwan family businesses commonly layer 控股公司 → 營運公司. Find the operating company's corporate shareholder → look up that holding company → check its directors and shareholders for the actual ownership family. If family members appear in a listed company's annual report as related parties, the private company's activities may be partially visible through related-party transaction disclosures.
+
+**Explicit limitation marking in articles:** When a company is important to the story but financially unverifiable:
+1. State its supply chain role
+2. State what IS verifiable (registry data, infrastructure, upstream/downstream evidence)
+3. State what is NOT verifiable (revenue, margins, import volumes)
+4. Never estimate financials without a source — "revenue approximately X" is a hallucinated statistic even if directionally correct
 
 ## Integration with business-analysis Skill
 
@@ -201,4 +208,4 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
-**Version**: 1.1.0 — Added private company research methodology: corporate registry lookup (台灣公司網, 104, TEJ, 商工登記), holding structure detection, upstream/downstream verification when financials don't exist, dual-role conflict detection, explicit limitation marking protocol. Derived from dairy import economics research session where key supply chain participants (開元食品, 台灣牧場) had no public financials.
+**Version**: 1.2.0 — Restructured private company section into broader "Supply Chain and Competitor Cross-Verification" principle: single-company financial reports are self-portraits that require external validation. Added competitor lateral checks (margin plausibility, growth consistency, cost ratio bands, annual report language cross-check), upstream/downstream verification as universal method (not just for private companies), dual-role detection for companies with conflicting positions. Private company registry lookup retained as sub-section. Derived from dairy import economics research where competitor cross-check (統一 vs 光泉 annual report language shift) and upstream verification (Fonterra farmgate price as cost floor) proved more informative than any single company's self-reported data.
