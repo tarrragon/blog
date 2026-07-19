@@ -62,6 +62,10 @@ tags: ["business", "financial-analysis"]
 | [畜產加工廠策略比較](/business/financial-analysis/livestock-processor-strategy-comparison/) | 大成/卜蜂/嘉一香/超秦四廠策略矩陣、成本控管路徑與財報驗證                      |
 | [大成的規模分散策略](/business/financial-analysis/dachan-scale-diversification-strategy/)   | 飼料→食品轉型路徑、100 億 capex 去向、Amy Food 併購、供應鏈雙重地位、驗證條件  |
 | [黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)             | crush margin 公式、台灣雙寡頭結構（大統益/中聯）、食安事件的供應鏈集中風險     |
+| [大統益壓榨龍頭](/business/financial-analysis/ttet-crushing-leader/)                        | 統一+大成系合資平台、commodity 現金牛、食安後轉單受益                          |
+| [中聯三股東](/business/financial-analysis/chunlian-trio-shared-risk/)                       | 泰山/福壽/福懋共用代工的效率與系統風險、品牌差異化的真實程度                   |
+| [南僑特殊油脂](/business/financial-analysis/namchow-specialty-fats/)                        | 中游配方壁壘型、投控結構、B2B 黏性、全球特殊油脂第 11                          |
+| [台灣油品加工產業比較](/business/financial-analysis/taiwan-oil-industry-comparison/)        | 五廠策略矩陣、三種路徑比較、食安後版圖重整                                     |
 | [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                 | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學、寄賣 vs 買斷            |
 | [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)             | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀                 |
 | [超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)                     | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀                     |
