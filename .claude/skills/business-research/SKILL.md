@@ -164,9 +164,19 @@ Detection: check if the company appears in BOTH domestic production registries A
 
 ### When the Target Company Has No Public Financials
 
-Many critical supply chain participants in Taiwan are unlisted family businesses or farmer cooperatives. The verification goal shifts from "find the number" to "verify the business logic through structural evidence."
+Many critical supply chain participants are unlisted family businesses or cooperatives. The verification goal shifts from "find the number" to "verify the business logic through structural evidence." The upstream/downstream and competitor checks above remain the primary tools regardless of jurisdiction.
 
-**Corporate registry lookup:**
+**Explicit limitation marking in articles:** When a company is important to the story but financially unverifiable:
+1. State its supply chain role
+2. State what IS verifiable (registry data, infrastructure, upstream/downstream evidence)
+3. State what is NOT verifiable (revenue, margins, import volumes)
+4. Never estimate financials without a source — "revenue approximately X" is a hallucinated statistic even if directionally correct
+
+### Taiwan-Specific: Corporate Registry and Family Conglomerate Tracing
+
+The following methods are specific to researching Taiwanese companies. Taiwan's traditional industries are relationship-driven — family conglomerates (財團) dominate, private companies frequently interlock with listed groups through board seats and shareholdings, and corporate registry data is unusually accessible compared to other jurisdictions.
+
+**Corporate registry sources:**
 
 | Source | What it reveals |
 | --- | --- |
@@ -175,13 +185,17 @@ Many critical supply chain participants in Taiwan are unlisted family businesses
 | TEJ 台灣經濟新報 | Corporate group analysis, case studies (covers private companies) |
 | 經濟部商工登記 (findbiz.nat.gov.tw) | Official registration, paid-in capital, board changes |
 
-**Holding structure detection:** Taiwan family businesses commonly layer 控股公司 → 營運公司. Find the operating company's corporate shareholder → look up that holding company → check its directors and shareholders for the actual ownership family. If family members appear in a listed company's annual report as related parties, the private company's activities may be partially visible through related-party transaction disclosures.
+**Holding structure detection:** Taiwan family businesses commonly layer 控股公司 → 營運公司. The operating company's sole shareholder is a holding company; the family's actual ownership is in the holding company's register.
 
-**Explicit limitation marking in articles:** When a company is important to the story but financially unverifiable:
-1. State its supply chain role
-2. State what IS verifiable (registry data, infrastructure, upstream/downstream evidence)
-3. State what is NOT verifiable (revenue, margins, import volumes)
-4. Never estimate financials without a source — "revenue approximately X" is a hallucinated statistic even if directionally correct
+Check sequence:
+1. Find the operating company's shareholder — is it a 法人 (corporate entity)?
+2. If yes, look up that entity — that's the holding company
+3. Check the holding company's directors and shareholders — that's the ownership family
+4. Search whether these individuals appear in any listed company's filings (as directors, major shareholders, or related parties)
+
+If family members or the holding company appear in a listed company's annual report, the private company's activities may be partially visible through related-party transaction disclosures (關係人交易附註).
+
+**Why this matters for verification:** A private company that appears isolated may actually be embedded in a larger group with public reporting obligations. Finding that connection unlocks an indirect verification path — the listed affiliate's related-party disclosures reveal transaction volumes, pricing, and sometimes the private company's revenue contribution to the group. Even when the private company's standalone financials are unavailable, its footprint in the listed affiliate's report provides partial observability.
 
 ## Integration with business-analysis Skill
 
@@ -208,4 +222,4 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
-**Version**: 1.2.0 — Restructured private company section into broader "Supply Chain and Competitor Cross-Verification" principle: single-company financial reports are self-portraits that require external validation. Added competitor lateral checks (margin plausibility, growth consistency, cost ratio bands, annual report language cross-check), upstream/downstream verification as universal method (not just for private companies), dual-role detection for companies with conflicting positions. Private company registry lookup retained as sub-section. Derived from dairy import economics research where competitor cross-check (統一 vs 光泉 annual report language shift) and upstream verification (Fonterra farmgate price as cost floor) proved more informative than any single company's self-reported data.
+**Version**: 1.3.0 — Separated universal verification principles (supply chain cross-check, competitor lateral validation, dual-role detection) from jurisdiction-specific methods (Taiwan corporate registry, family conglomerate tracing). Taiwan-specific section now explicitly scoped as regional reference — registry accessibility, 關係人交易 disclosure path, and 控股→營運 layering pattern are Taiwan's corporate culture artifacts, not portable to other markets without equivalent data access.
