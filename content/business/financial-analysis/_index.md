@@ -48,21 +48,22 @@ tags: ["business", "financial-analysis"]
 
 方法論套用在真實公司和產業上——每篇用公開財報數據做批判性分析。
 
-| 文章                                                                                        | 分析對象與焦點                                                      |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)          | 系列全部方法論套用在早餐店案例的端到端 walkthrough                  |
-| [加盟母公司分析](/business/financial-analysis/franchisor-business-model/)                   | 八方雲集 + 揚秦的母公司收入線拆解、母公司 vs 加盟主利潤對照         |
-| [揚秦國際案例分析](/business/financial-analysis/yangqin-mwd-case-study/)                    | 超秦→麥味登垂直整合、關係人交易、數位轉型宣稱的批判檢驗             |
-| [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)         | 大成/卜蜂/超秦的策略差異、飼料成本衝擊、國際大廠對照                |
-| [台灣豬肉產業鏈分析](/business/financial-analysis/taiwan-pork-industry/)                    | 口蹄疫重塑→拔針重建→非洲豬瘟衝擊、豬肉 vs 雞肉結構差異              |
-| [跨國乳業比較](/business/financial-analysis/dairy-industry-cross-country/)                  | 台灣/紐澳/日本/泰國/美國五國乳業結構差異與定價機制                  |
-| [台灣乳業轉型](/business/financial-analysis/taiwan-dairy-transformation/)                   | 味全事件→小農崛起→通路成本結構→進口替代的產業重塑                   |
-| [乳品加工技術與通路策略](/business/financial-analysis/dairy-processing-retail-strategy/)    | 殺菌方式的成本 trade-off、保存期→通路半徑、貨架坪效、消費者偏好倒推 |
-| [畜產加工廠策略比較](/business/financial-analysis/livestock-processor-strategy-comparison/) | 大成/卜蜂/嘉一香/超秦四廠策略矩陣、成本控管路徑與財報驗證           |
-| [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                 | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學、寄賣 vs 買斷 |
-| [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)             | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀      |
-| [超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)                     | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀          |
-| [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)           | 統一/三商/聯邦三買方的財務能力判讀、隱性成本、併購後追蹤            |
+| 文章                                                                                        | 分析對象與焦點                                                                 |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)          | 系列全部方法論套用在早餐店案例的端到端 walkthrough                             |
+| [加盟母公司分析](/business/financial-analysis/franchisor-business-model/)                   | 八方雲集 + 揚秦的母公司收入線拆解、母公司 vs 加盟主利潤對照                    |
+| [揚秦國際案例分析](/business/financial-analysis/yangqin-mwd-case-study/)                    | 超秦→麥味登垂直整合、關係人交易、數位轉型宣稱的批判檢驗                        |
+| [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)         | 大成/卜蜂/超秦的策略差異、飼料成本衝擊、國際大廠對照                           |
+| [台灣豬肉產業鏈分析](/business/financial-analysis/taiwan-pork-industry/)                    | 口蹄疫重塑→拔針重建→非洲豬瘟衝擊、豬肉 vs 雞肉結構差異                         |
+| [跨國乳業比較](/business/financial-analysis/dairy-industry-cross-country/)                  | 台灣/紐澳/日本/泰國/美國五國乳業結構差異與定價機制                             |
+| [台灣乳業轉型](/business/financial-analysis/taiwan-dairy-transformation/)                   | 味全事件→小農崛起→通路成本結構→進口替代的產業重塑                              |
+| [乳品加工技術與通路策略](/business/financial-analysis/dairy-processing-retail-strategy/)    | 殺菌方式的成本 trade-off、保存期→通路半徑、貨架坪效、消費者偏好倒推            |
+| [進口冰磚奶的產業鏈經濟學](/business/financial-analysis/dairy-import-economics/)            | 冰磚到岸成本拆解、業務通路滲透路徑、恆天然供應端經濟、乳品廠雙重角色的財報訊號 |
+| [畜產加工廠策略比較](/business/financial-analysis/livestock-processor-strategy-comparison/) | 大成/卜蜂/嘉一香/超秦四廠策略矩陣、成本控管路徑與財報驗證                      |
+| [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                 | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學、寄賣 vs 買斷            |
+| [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)             | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀                 |
+| [超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)                     | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀                     |
+| [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)           | 統一/三商/聯邦三買方的財務能力判讀、隱性成本、併購後追蹤                       |
 
 ## 跟其他模組的關係
 
