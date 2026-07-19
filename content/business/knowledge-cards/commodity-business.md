@@ -21,3 +21,9 @@ Commodity business 是[毛利率](/business/knowledge-cards/gross-margin/)長期
 ## 邊界
 
 高附加價值的加工品（即食食品、保健品、品牌消費品）脫離了 commodity 結構——即使原料是 commodity，加工後的產品有品牌溢價和客戶黏性。判斷一間公司是「commodity 公司」還是「用 commodity 做原料的品牌公司」，看營收中 commodity 段佔比和定價權歸屬。
+
+兩個延伸概念：
+
+**聯產品交叉補貼**。Commodity 加工有時同時產出兩個產品（如黃豆壓榨 → 油 18.5% + 粕 78%），其中一個產品的售價可以低於等比例原料成本——因為另一個產品的收入已覆蓋了大部分成本。這解釋了為什麼某些 commodity 商品看起來「比原料便宜」。詳見[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。
+
+**隱性共用的品牌假象**。多個零售品牌共用同一座 commodity 加工廠時，消費者看到的「品牌多樣性」在上游是假象——換品牌不等於分散風險。辨識訊號：多品牌同時出事（如中聯食安事件三家品牌同時下架）、各品牌的原料成本結構幾乎相同。詳見[中聯三股東](/business/financial-analysis/chunlian-trio-shared-risk/)。
