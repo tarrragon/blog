@@ -131,6 +131,14 @@ Rule: before writing "data not available" into an analysis, state which layer wa
 
 **Taiwan's layer map and the missing aggregation layer**: Taiwan mandates XBRL filing like the US, but the regulator-side aggregation API does not exist — MOPS is a human-oriented form site with per-file XBRL downloads, and the exchange's official [TWSE OpenAPI](https://openapi.twse.com.tw/) mostly serves current-day snapshots (daily quotes, P/E-P/B-yield, institutional flows) without deep history. Structural reason: the exchange operates the disclosure site AND sells market data feeds — aggregation is left to the private sector. Free API-layer option to try before browser scraping: **FinMind**（open-source, 50+ datasets — three financial statements, dividend history, monthly revenue, historical PER/PBR, shareholding dispersion; free tier ~300-600 requests/hr with token）. FinMind serves raw statements, so derived metrics (ROE series, valuation bands) need computing; Goodinfo's precomputed tables remain the fast path for those. Pledge ratios stay MOPS-only.
 
+Field-tested FinMind usage（`api.finmindtrade.com/api/v4/data?dataset={D}&data_id={code}&start_date={date}`, works without token at reduced rate）:
+
+- `TaiwanStockDividend` — calibrated 11/11 year-values against the primary aggregator's dividend table before use
+- `TaiwanStockFinancialStatements` — rows are per-quarter values; annual figure = sum of four quarters. **Validate the summing assumption against one independently-known FY value before trusting a series**（a cumulative-row format would silently overcount）
+- `TaiwanStockBalanceSheet` — equity series enables ROE derivation（net income ÷ average equity）for companies the precomputed aggregators lack
+
+Parsing gotchas: years labeled in ROC calendar（`103年` = FY2014）; cash and stock dividends for the same earnings year can arrive as separate records — group by earnings year and sum before comparing to other sources. Calibrate-then-fill discipline: run the API against a company whose values are already verified, confirm agreement, then use it to fill gaps for companies without baselines.
+
 ### Goodinfo Direct-Scrape Playbook (Taiwan listed companies)
 
 Goodinfo's interactive pages block plain fetching but render fully in a real browser. Three pages cover most longitudinal data needs, each mapped to what the data is FOR:
@@ -266,6 +274,7 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
+**Version**: 1.7.0 — FinMind 實測入檔：三個驗證過的 dataset（Dividend 與主表 11/11 校準一致、FinancialStatements 為季值需加總且要用已知 FY 值驗證加總假設、BalanceSheet 供 ROE 自算）、解析陷阱（民國年標示、同所屬年現金與股票股利分筆）、以及「先校準再填缺」紀律——API 先對已驗證公司跑一輪確認一致、再用於無基線的公司。實測成果：味全與泰山的逐年序列（先前兩輪都未取得）由此補齊
 **Version**: 1.6.0 — Data Access Layering 段補台灣的分層地圖與「缺聚合層」的結構解釋：台灣同樣強制 XBRL 但監管端不做聚合 API（MOPS 是人用表單站、TWSE OpenAPI 多為當日快照）、根因是交易所兼任揭露平台營運者與資料販售者——聚合層留給民間。新增 FinMind 作為瀏覽器抓取前優先嘗試的免費 API 層（50+ 資料集、三表/股利/月營收/歷史 PER-PBR、免費 300-600 req/hr），並標明其邊界（原始報表需自算衍生指標、質押仍 MOPS 限定）
 **Version**: 1.5.0 — Extended verification beyond Taiwan with two new references: `us-equities-verification.md`（US 的分層倒置——EDGAR/XBRL API 讓 layer 3 比爬頁便宜、filing 類型對應分析目的、non-GAAP/buyback/FY 偏移三大 US 專屬失誤模式、日歐簡表、台灣→美國對應表）與 `commodities-futures-verification.md`（交易所結算價 > WASDE > aggregator 的來源階層、五條驗證規則：合約明確性/單位換算/期限結構/到岸成本/價差重算、連續合約拼接與行銷年度等商品專屬失誤模式）。SKILL.md 加路由段與未載入 reference 時的最低內建規則。從原物料產業鏈系列（黃豆壓榨、可可危機、飼料成本）與跨國比較（AAK/不二/Tyson/Fonterra）的實際驗證需求提煉
 **Version**: 1.4.0 — Added "Data Access Layering" section: three-layer model (search snippets → page scraping → filings/database) with the rule that a gap claim must state which layer was tried; Goodinfo direct-scrape playbook (經營績效/股利政策/現金流量 three-page combo, URL patterns, extraction technique, rate-limit handling) mapped to analytical purposes (ROE gate, valuation band, retained-earnings test, FCF signature). Extended verification-failure table with four aggregator-specific modes: derived-value errors (impossible trailing-EPS artifact), EPS basis mixing (as-reported vs stock-dividend-adjusted), dividend year mislabeling (payment vs earnings year), un-annualized quarterly ratios. All derived from the value-investing data collection round where layer-2 scraping closed gaps that layer-1 search had misreported as unavailable, and primary-table values corrected multiple third-party errors.
