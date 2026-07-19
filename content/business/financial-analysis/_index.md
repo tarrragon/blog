@@ -67,6 +67,7 @@ tags: ["business", "financial-analysis"]
 | [南僑特殊油脂](/business/financial-analysis/namchow-specialty-fats/)                        | 中游配方壁壘型、投控結構、B2B 黏性、全球特殊油脂第 11                          |
 | [台灣油品加工產業比較](/business/financial-analysis/taiwan-oil-industry-comparison/)        | 五廠策略矩陣、三種路徑比較、食安後版圖重整                                     |
 | [全球特殊油脂三廠比較](/business/financial-analysis/global-specialty-fats-comparison/)      | AAK/不二製油/南僑的策略分群、可可危機因應、配方壁壘型企業的生存條件            |
+| [價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)             | ROE 序列分層、卜蜂受壓轉型窗口、味全/泰山/南僑三型陷阱、質押紅旗的前瞻性驗證   |
 | [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                 | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學、寄賣 vs 買斷            |
 | [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)             | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀                 |
 | [超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)                     | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀                     |
