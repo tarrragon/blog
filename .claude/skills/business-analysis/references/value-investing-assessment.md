@@ -10,7 +10,7 @@ Business analysis answers "is this a good company" (margins, positioning, strate
 
 ## Three-Gate Screen
 
-All three gates must pass. A failure at any gate vetoes the investment regardless of the other two.
+All three gates must pass. A failure at any gate vetoes the investment regardless of the other two — where "the investment" means the compounder thesis specifically: a gate failure vetoes compounder classification, not investability under every discipline (see School Routing below for names that fail here but qualify under a different ruler).
 
 ### Gate 1: Moat Durability
 
@@ -100,6 +100,8 @@ A name that fails the three gates is not automatically uninvestable — it may b
 
 - **Compounder (Buffett)**: passes all three gates; the return engine is retained-earnings compounding; holding period is indefinite; the key risk is moat erosion.
 - **Asset discount / special situation (Graham)**: fails the quality gate but trades below a conservatively-computed asset value (e.g. a listed stake alone ≈ the company's own market cap, with operating businesses priced near zero). The return engine is discount convergence; the key risks are that the discount is permanent (family-holdco discounts often are) and that no catalyst exists. A special-situation thesis without a named catalyst is a hope, not a thesis.
+
+Names that fit neither ruler get an explicit residual label instead of a silent "neither": **turnaround speculation** (return engine is expectation revision — a self-consistent strategy, but not value investing under either school) or **governance-trap exclusion** (no price qualifies while capital allocation is controlled against minority holders — see Value Trap Taxonomy). An undefined residual bucket hides the difference between watch-list, speculation, and permanent exclusion.
 
 State which ruler you are using. Mixing them — e.g. justifying a failed quality gate with an asset-discount argument while expecting compounder-style holding comfort — produces positions nobody knows how to manage.
 

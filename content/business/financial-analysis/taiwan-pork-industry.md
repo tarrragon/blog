@@ -89,7 +89,7 @@ tags: ["business", "financial-analysis", "supply-chain", "livestock"]
 
 關鍵差異在**養殖週期**和**價格透明度**。豬的 6 個月養殖週期讓供需調整比雞的 35 天慢得多——當價格訊號出現時，養豬戶要半年後才能增減產量，這個時間差是豬週期的根因。雞的短週期讓供需調整更快，週期性波動較小。
 
-對投資人的含義：豬肉相關公司的獲利波動會比雞肉公司大（因為豬週期），用[正常化 EPS](/business/financial-analysis/valuation-methods/) 做估值時要拉更長的週期（至少一個完整豬週期 3-4 年）。
+對投資人的含義：豬肉相關公司的獲利波動會比雞肉公司大（因為豬週期），用[正常化 EPS](/business/knowledge-cards/normalized-earnings/) 做估值時要拉更長的週期（至少一個完整豬週期 3-4 年）。
 
 ## 可遷移框架：疫情重塑型產業的判讀清單
 
