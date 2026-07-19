@@ -146,6 +146,15 @@ Technique notes:
 - These three pages combined are sufficient to compute: 10-year ROE consistency, historical valuation percentile, retained-earnings test, and rough total return vs a market index — the full quantitative half of a value-investing screen
 - Remaining layer-3-only items: maintenance-vs-growth capex split (annual report footnotes), pledge ratios at the original regulator disclosure
 
+### Beyond Taiwan: US, International, and Commodities
+
+The layering model is universal but each market's cheap layer differs. Two dedicated references:
+
+- **[`references/us-equities-verification.md`](references/us-equities-verification.md)** — US inverts Taiwan's pattern: layer 3 (SEC EDGAR + free XBRL company-facts JSON API) is cheaper than scraping, so go to filings early. Covers filing types mapped to purposes (10-K capex footnotes, 8-K non-GAAP reconciliation as the normalized-EPS equivalent, DEF 14A + Form 4 as the 質押/insider analog), US-specific failure modes (non-GAAP as GAAP, buybacks ignored in payout, fiscal-year offsets), Japan/Europe briefs, and a Taiwan→US equivalents map.
+- **[`references/commodities-futures-verification.md`](references/commodities-futures-verification.md)** — raw-material price claims feeding cost-structure analysis. Source hierarchy (exchange settlement > USDA WASDE/EIA > aggregators), five rules (contract specificity, unit conversion with the bushel/tonne table, term structure, landed cost ≠ futures, recompute spreads before accepting margin narratives), and commodity failure modes (continuous-contract splices, marketing-year vs calendar-year, dual-exchange contracts, peak-as-normal assumptions).
+
+Minimum inline rules when the references are not loaded: name the exchange/contract/unit/date for any commodity price; recompute crush-type spreads from components; for US companies, check whether an EPS figure is GAAP or adjusted before comparing.
+
 ## Supply Chain and Competitor Cross-Verification
 
 A company's own financial report is a self-portrait — it shows what the company wants investors to see, within accounting rules. Supply chain verification and competitor lateral checks reveal what the self-portrait omits or distorts. This applies to ALL companies, listed or not.
@@ -255,5 +264,6 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
+**Version**: 1.5.0 — Extended verification beyond Taiwan with two new references: `us-equities-verification.md`（US 的分層倒置——EDGAR/XBRL API 讓 layer 3 比爬頁便宜、filing 類型對應分析目的、non-GAAP/buyback/FY 偏移三大 US 專屬失誤模式、日歐簡表、台灣→美國對應表）與 `commodities-futures-verification.md`（交易所結算價 > WASDE > aggregator 的來源階層、五條驗證規則：合約明確性/單位換算/期限結構/到岸成本/價差重算、連續合約拼接與行銷年度等商品專屬失誤模式）。SKILL.md 加路由段與未載入 reference 時的最低內建規則。從原物料產業鏈系列（黃豆壓榨、可可危機、飼料成本）與跨國比較（AAK/不二/Tyson/Fonterra）的實際驗證需求提煉
 **Version**: 1.4.0 — Added "Data Access Layering" section: three-layer model (search snippets → page scraping → filings/database) with the rule that a gap claim must state which layer was tried; Goodinfo direct-scrape playbook (經營績效/股利政策/現金流量 three-page combo, URL patterns, extraction technique, rate-limit handling) mapped to analytical purposes (ROE gate, valuation band, retained-earnings test, FCF signature). Extended verification-failure table with four aggregator-specific modes: derived-value errors (impossible trailing-EPS artifact), EPS basis mixing (as-reported vs stock-dividend-adjusted), dividend year mislabeling (payment vs earnings year), un-annualized quarterly ratios. All derived from the value-investing data collection round where layer-2 scraping closed gaps that layer-1 search had misreported as unavailable, and primary-table values corrected multiple third-party errors.
 **Version**: 1.3.0 — Separated universal verification principles (supply chain cross-check, competitor lateral validation, dual-role detection) from jurisdiction-specific methods (Taiwan corporate registry, family conglomerate tracing). Taiwan-specific section now explicitly scoped as regional reference — registry accessibility, 關係人交易 disclosure path, and 控股→營運 layering pattern are Taiwan's corporate culture artifacts, not portable to other markets without equivalent data access.
