@@ -112,6 +112,39 @@ When data is incomplete or sources disagree, use explicit hedging:
 | **PR claims as facts** | Company press release numbers taken at face value | Cross-check PR claims against financial statements |
 | **Single-source dependency** | Entire analysis built on one article | Cross-reference key claims from at least two independent sources |
 | **Confusing revenue with profit** | "This company makes X billion" without specifying metric | Always specify: revenue, gross profit, operating profit, or net income |
+| **Aggregator derived-value errors** | A site's derived field (e.g. trailing-4Q EPS) scraped or computed wrong — real instance: an impossible EPS value that matched an adjacent YoY-percentage column; secondary re-publishers' ROE year-values off by 3+ points from the primary table | Recompute derived values from quarterly/raw rows before citing; prefer the primary aggregator's official table over re-publishers |
+| **EPS basis mixing** | As-reported EPS vs retroactively-adjusted EPS (stock dividends shrink prior-year figures by ~the dividend ratio) differ ~10% for the same year | Label which basis a series uses; never mix bases within one comparison |
+| **Dividend year mislabeling** | 發放年度 (payment year) vs 盈餘所屬年度 (earnings year) offset by one year across sources | Normalize to earnings year before summing or matching against EPS |
+| **Un-annualized quarterly ratios** | Single-quarter ROE (~1/4 of annual) read as an annual value | Check the period basis; annualize or use annual rows |
+
+## Data Access Layering: "Unavailable" Often Means "Wrong Tool Layer"
+
+Public financial data lives in three access layers. A datum unreachable at one layer is frequently trivial at the next — upgrade the layer before accepting a gap or downgrading the analysis.
+
+| Layer | Tool | Yields | Misses |
+| --- | --- | --- | --- |
+| 1. Search snippets | Web search | Headlines, single-point figures, news claims | Historical series, interactive tables |
+| 2. Page scraping | Browser automation on aggregator pages | Full multi-year tables from sites that block plain HTTP fetch | Login/paywall data, footnote detail |
+| 3. Filings/database | Regulator XBRL filings, paid databases, annual report PDFs | Footnote-level detail (capex split, related-party amounts), authoritative originals | Heavy parsing effort |
+
+Rule: before writing "data not available" into an analysis, state which layer was tried. A layer-1 failure alone never justifies the claim. Practical impact observed: an entire class of value-investing inputs (10-year ROE series, historical P/E bands, full dividend history) is invisible at layer 1 and completely available at layer 2.
+
+### Goodinfo Direct-Scrape Playbook (Taiwan listed companies)
+
+Goodinfo's interactive pages block plain fetching but render fully in a real browser. Three pages cover most longitudinal data needs, each mapped to what the data is FOR:
+
+| Page | URL pattern | Data obtained | Analytical purpose |
+| --- | --- | --- | --- |
+| 歷年經營績效 | `StockBzPerformance.asp?STOCK_ID={code}` | 10-20 yr ROE/ROA/EPS/BPS, yearly close price, margins; summary block holds the historical P/E band（一般平均/最低/最高）and current PER/PBR | Capital-efficiency gate (ROE consistency through downturns); valuation-band positioning (current multiple vs own history); market-cap series (close × share capital) |
+| 股利政策 | `StockDividendPolicy.asp?STOCK_ID={code}` | Full dividend history with both payment year and earnings year | Capital-allocation record; dividend resilience in shock years; retained-earnings test (EPS sum - dividend sum vs market-value gain) |
+| 歷年現金流量 | `StockCashFlow.asp?STOCK_ID={code}` | Yearly operating/investing/financing CF and free cash flow | FCF signature — transforming-under-pressure = OCF positive + FCF negative from expansion capex; distinguish from OCF itself deteriorating |
+
+Technique notes:
+
+- Extraction: query `#tblDetail`, or find the table whose text contains "ROE" plus year patterns; serialize rows cell-by-cell
+- HTTP 500 responses are rate limiting — wait 5-10 seconds and retry, do not abandon
+- These three pages combined are sufficient to compute: 10-year ROE consistency, historical valuation percentile, retained-earnings test, and rough total return vs a market index — the full quantitative half of a value-investing screen
+- Remaining layer-3-only items: maintenance-vs-growth capex split (annual report footnotes), pledge ratios at the original regulator disclosure
 
 ## Supply Chain and Competitor Cross-Verification
 
@@ -222,4 +255,5 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
+**Version**: 1.4.0 — Added "Data Access Layering" section: three-layer model (search snippets → page scraping → filings/database) with the rule that a gap claim must state which layer was tried; Goodinfo direct-scrape playbook (經營績效/股利政策/現金流量 three-page combo, URL patterns, extraction technique, rate-limit handling) mapped to analytical purposes (ROE gate, valuation band, retained-earnings test, FCF signature). Extended verification-failure table with four aggregator-specific modes: derived-value errors (impossible trailing-EPS artifact), EPS basis mixing (as-reported vs stock-dividend-adjusted), dividend year mislabeling (payment vs earnings year), un-annualized quarterly ratios. All derived from the value-investing data collection round where layer-2 scraping closed gaps that layer-1 search had misreported as unavailable, and primary-table values corrected multiple third-party errors.
 **Version**: 1.3.0 — Separated universal verification principles (supply chain cross-check, competitor lateral validation, dual-role detection) from jurisdiction-specific methods (Taiwan corporate registry, family conglomerate tracing). Taiwan-specific section now explicitly scoped as regional reference — registry accessibility, 關係人交易 disclosure path, and 控股→營運 layering pattern are Taiwan's corporate culture artifacts, not portable to other markets without equivalent data access.
