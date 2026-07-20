@@ -1,5 +1,5 @@
 ---
-title: "Docker named volume 掛載點 owner"
+title: "Docker Named Volume Ownership（掛載點擁有者）"
 date: 2026-07-08
 description: "container 內非 root 使用者寫不進掛載的 named volume、出現 permission denied 時回來讀"
 weight: 51

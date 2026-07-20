@@ -1,5 +1,5 @@
 ---
-title: "並行期（Parallel Run）"
+title: "Parallel Run（並行期）"
 date: 2026-06-11
 description: "說明舊系統維持 source of truth、新系統以單向同步加唯讀驗證運轉的遷移共存階段、與雙寫的寫入路徑控制權差異"
 weight: 374

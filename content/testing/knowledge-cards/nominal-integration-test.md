@@ -1,5 +1,5 @@
 ---
-title: "名義 Integration Test"
+title: "Nominal Integration Test（名義整合測試）"
 date: 2026-06-19
 description: "名稱含 integration 但核心依賴全用 fake 的 test，驗證內部狀態機而非真實服務互動"
 weight: 3

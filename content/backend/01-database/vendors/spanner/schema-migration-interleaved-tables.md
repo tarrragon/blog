@@ -174,7 +174,7 @@ DDL 完成前可 `gcloud spanner operations cancel` 取消；完成後加 index 
 
 ### 把 interleaved 跟 FK 混為一談
 
-interleaved 的 `ON DELETE CASCADE` 是 storage-level、刪 parent 自動刪 child；非 interleaved FK 要 application 或 trigger 處理。事故場景：團隊以為「我加了 FK 就會 CASCADE」、實際非 interleaved table 只是 constraint check、刪 parent 時 child orphan、對帳爆炸。
+interleaved 的 `ON DELETE CASCADE` 是 storage-level、刪 parent 自動刪 child；非 interleaved FK 要 application 或 trigger 處理。事故場景：團隊以為「我加了 FK 就會 CASCADE」、實際非 interleaved table 只是 constraint check、刪 parent 時 child orphan、[對帳](/backend/knowledge-cards/data-reconciliation/)爆炸。
 
 修法：
 

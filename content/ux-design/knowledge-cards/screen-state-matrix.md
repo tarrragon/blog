@@ -1,5 +1,5 @@
 ---
-title: "畫面狀態矩陣"
+title: "Screen State Matrix（畫面狀態矩陣）"
 date: 2026-06-19
 description: "說明用四欄表格（顯示/可用操作/進入條件/退出路徑）系統性地暴露畫面導航缺口的設計工具"
 weight: 1

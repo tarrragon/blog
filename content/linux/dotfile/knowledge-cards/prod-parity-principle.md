@@ -1,5 +1,5 @@
 ---
-title: "Prod Parity 原則"
+title: "Prod Parity Principle（生產環境對等原則）"
 date: 2026-07-06
 description: "要建一個對齊 client 線上環境的本機 runtime、不知道該對齊到多細時回來讀 — parity 對齊的是凍結舊環境而非最新版"
 weight: 42

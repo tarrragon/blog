@@ -1,5 +1,5 @@
 ---
-title: "OIDC 聯合"
+title: "OIDC Federation（OIDC 聯合）"
 date: 2026-06-26
 description: "讓 CI/CD 平台用短期 token 取代長期 access key 存取雲端資源的身分聯合機制"
 weight: 8

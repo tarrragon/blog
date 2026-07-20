@@ -148,9 +148,9 @@ weight: 編號
 | [Same-Store Sales](/business/knowledge-cards/same-store-sales/)                                   | 扣掉展店效應的品牌健康度         | 連鎖業、展店品質、漲價拆分 |
 | [ROE](/business/knowledge-cards/roe/)                                                             | 股東資本的報酬速度               | 杜邦拆解、價值投資篩選     |
 | [Capex](/business/knowledge-cards/capex/)                                                         | 資本支出的去向與回收             | FCF、擴產、折舊            |
-| [歸母淨利](/business/knowledge-cards/parent-attributable-income/)                                 | 淨利中真正屬於母公司股東的部分   | 控股集團、非控制權益、EPS  |
-| [估值帶](/business/knowledge-cards/valuation-band/)                                               | 對照自身歷史的估值區間           | P/E、P/B、derating         |
-| [正常化盈餘](/business/knowledge-cards/normalized-earnings/)                                      | 剔除一次性損益後的獲利基礎       | 估值分母、獲利品質         |
+| [Parent-Attributable Income（歸母淨利）](/business/knowledge-cards/parent-attributable-income/)   | 淨利中真正屬於母公司股東的部分   | 控股集團、非控制權益、EPS  |
+| [Valuation Band（估值帶）](/business/knowledge-cards/valuation-band/)                             | 對照自身歷史的估值區間           | P/E、P/B、derating         |
+| [Normalized Earnings（正常化盈餘）](/business/knowledge-cards/normalized-earnings/)               | 剔除一次性損益後的獲利基礎       | 估值分母、獲利品質         |
 | [Dividend Yield](/business/knowledge-cards/dividend-yield/)                                       | 配息相對股價的年化收益率         | 收益率溢價、配息可持續性   |
 | [Payout Ratio](/business/knowledge-cards/payout-ratio/)                                           | 獲利分給股東的比例               | 留存盈餘、ROE 機械性推升   |
 | [Operating Leverage](/business/knowledge-cards/operating-leverage/)                               | 固定成本攤提放大或壓縮利潤       | 營業槓桿、擴產初期利潤率   |

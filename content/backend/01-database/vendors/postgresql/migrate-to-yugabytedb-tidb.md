@@ -73,7 +73,7 @@ Migration phases 的核心責任是降低跨拓撲遷移風險。
 | Cutover         | freeze、final sync、traffic switch      |
 | Rollback        | source PG snapshot、write replay plan   |
 
-CDC catch-up 要有 clear cutover LSN。Distributed SQL migration 最怕 source / target 同時有寫入後，缺少 reconciliation plan。
+CDC catch-up 要有 clear cutover LSN。Distributed SQL migration 最怕 source / target 同時有寫入後，缺少 [reconciliation](/backend/knowledge-cards/data-reconciliation/) plan。
 
 ## Application Changes
 

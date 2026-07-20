@@ -1,5 +1,5 @@
 ---
-title: "SIGHUP 與斷線即死"
+title: "SIGHUP（斷線即死訊號）"
 date: 2026-07-08
 description: "遠端跑的程序在 SSH 一斷就消失、想知道為什麼直接掛在連線上的任務活不過斷線、該把工作放哪一層時回來讀"
 weight: 53

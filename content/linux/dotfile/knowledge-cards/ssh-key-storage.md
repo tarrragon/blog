@@ -1,5 +1,5 @@
 ---
-title: "SSH 金鑰儲放與 authorized_keys"
+title: "SSH Key Storage（SSH 金鑰儲放與 authorized_keys）"
 date: 2026-07-08
 description: "配置 SSH 免密碼登入、要知道私鑰放哪、公鑰怎麼授權、多裝置各自的鑰匙怎麼管、或高權限操作該不該給完整金鑰時回來讀"
 weight: 50

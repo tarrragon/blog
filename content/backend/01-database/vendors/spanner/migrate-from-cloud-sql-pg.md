@@ -19,7 +19,7 @@ single-region Cloud SQL PostgreSQL primary 觸到容量上限（connection、wri
 ### 主要 driver 候選
 
 - **Global write residency**：用戶分散全球、各地寫入本地 region、跨 region 一致性是產品要求
-- **External consistency 對帳契約**：跨 region 交易順序錯誤會導致對帳爆炸（金融、計費、ticketing）
+- **External consistency [對帳](/backend/knowledge-cards/data-reconciliation/)契約**：跨 region 交易順序錯誤會導致對帳爆炸（金融、計費、ticketing）
 - **單 primary 容量天花板**：Cloud SQL 最大 instance 仍撐不住、應用層 sharding 是大工程
 - **跨 region read latency**：read 從各地直接打本地 replica、Cloud SQL read replica 受 single-primary 寫入 throughput 限制
 
@@ -233,7 +233,7 @@ read-only window（< 5 min）→ 最後 catch-up → switch source-of-truth → 
 
 ### Stage 0 variant 規劃
 
-若 read-only window 不可接受（24/7 不能停機的金融 / 醫療系統）、Phase 6 dual write 期間做 conflict resolution（last-writer-wins + manual reconcile）、進入 fail-forward 模式、不走 read-only cutover。
+若 read-only window 不可接受（24/7 不能停機的金融 / 醫療系統）、Phase 6 dual write 期間做 conflict resolution（last-writer-wins + manual reconcile）、進入 [fail-forward](/backend/knowledge-cards/fail-forward/) 模式、不走 read-only cutover。
 
 ## Evidence：每階段驗證材料
 

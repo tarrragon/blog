@@ -1,5 +1,5 @@
 ---
-title: "TCP 連線與漫遊"
+title: "TCP Connection Roaming（連線與漫遊）"
 date: 2026-07-08
 description: "遠端連線一換網路（Wi-Fi 切行動網路、休眠喚醒、換 IP）就斷、想知道為什麼 SSH 扛不住而 mosh 撐得住時回來讀"
 weight: 50

@@ -83,7 +83,7 @@ SELECT max(created_at) FROM restore_markers;
 SELECT status, count(*) FROM accounts GROUP BY status;
 ```
 
-若 workload 有 idempotency key，還要檢查 duplicate。若外部 side effect 參與交易，例如 payment 或 queue，必須有 reconciliation query。
+若 workload 有 idempotency key，還要檢查 duplicate。若外部 side effect 參與交易，例如 payment 或 queue，必須有 [reconciliation](/backend/knowledge-cards/data-reconciliation/) query。
 
 ## Pooler and Client Behavior
 

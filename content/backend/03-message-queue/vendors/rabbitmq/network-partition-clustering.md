@@ -180,7 +180,7 @@ Zalando 的 communication platform 把 RabbitMQ cluster 跑在 EC2 上、自建 
 
 這個案例對映到本文的判讀是：早期 RabbitMQ cluster 的 partition 一致性需要大量外部工程（sidekick + AWS API + 自訂 master selection）來補足。Quorum queue 用 Raft 把這套外部協調內化進 broker——Raft 的 leader election 與 majority commit 取代了 Zalando 手寫的「最老 instance 當 master」邏輯。現代部署若用 quorum queue + pause_minority、不再需要外部 sidekick 來決定誰是 master。
 
-語義誤配的風險在 partition 場景同樣存在。[3.C9 Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 指出 broker 行為改變時、「表面上訊息仍被送達、但業務資料開始出現重複或遺漏」。Partition 恢復正是這種高風險時刻：autoheal 丟棄輸家狀態、或人工從 ignore 的腦裂中合併、都可能讓同一批事件被處理零次或兩次。Partition 恢復後的 reconciliation、要對照 [3.6 recovery semantics](/backend/03-message-queue/processing-recovery-semantics/) 確認哪一段資料已被哪一側處理過、而不是假設「broker 恢復了 = 狀態正確了」。
+語義誤配的風險在 partition 場景同樣存在。[3.C9 Queue 語義切換誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 指出 broker 行為改變時、「表面上訊息仍被送達、但業務資料開始出現重複或遺漏」。Partition 恢復正是這種高風險時刻：autoheal 丟棄輸家狀態、或人工從 ignore 的腦裂中合併、都可能讓同一批事件被處理零次或兩次。Partition 恢復後的 [reconciliation](/backend/knowledge-cards/data-reconciliation/)、要對照 [3.6 recovery semantics](/backend/03-message-queue/processing-recovery-semantics/) 確認哪一段資料已被哪一側處理過、而不是假設「broker 恢復了 = 狀態正確了」。
 
 ## 容量與規模判讀
 

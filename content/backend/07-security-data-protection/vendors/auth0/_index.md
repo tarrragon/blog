@@ -74,7 +74,7 @@ Microsoft 生態（Entra External ID / 前 Azure AD B2C）是另一個 B2C / B2B
 
 **B2B Organizations**：Auth0 Organizations 把同 tenant 內的多客戶（B2B 場景）邏輯隔離 — 每個 organization 有自己的 connection、branding、member。設計點是 *user 是 organization member 還是 tenant-wide user*、跨 organization 操作的 admin 是否有 organization scope。Organization 之間的隔離是 tenant 內邏輯層、共享底層 control plane、不能等同實體 tenant 隔離。
 
-**Adaptive MFA / Step-up Authentication**：Auth0 Adaptive MFA 用 device / location / behavioral signal 動態升級 MFA 要求（impossible travel、新裝置、低信任 IP）。屬付費 add-on、本質是把 risk-based 認證內建。對 B2C 場景比強制全 user MFA 友善、但要把 *risk threshold* 跟 *false positive 容忍度* 設清楚、避免合法 user 被連續挑戰流失。
+**Adaptive MFA / [Step-up Authentication](/backend/knowledge-cards/step-up-authentication/)**：Auth0 Adaptive MFA 用 device / location / behavioral signal 動態升級 MFA 要求（impossible travel、新裝置、低信任 IP）。屬付費 add-on、本質是把 risk-based 認證內建。對 B2C 場景比強制全 user MFA 友善、但要把 *risk threshold* 跟 *false positive 容忍度* 設清楚、避免合法 user 被連續挑戰流失。
 
 **Custom Domain**：預設登入網域是 `<tenant>.auth0.com`、揭露使用 Auth0 與 tenant 名稱、且 issuer 是 Auth0 子網域。Custom Domain 把 issuer 改成自己網域（如 `login.example.com`）、user 看到的 URL 一致、降低 phishing 對照成本。屬付費功能、production app 預設應該開。
 

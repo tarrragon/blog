@@ -172,12 +172,12 @@ Valkey 從 Redis 7.2.4 fork、API 與行為 100% 相容、Redis-on-Valkey 同源
 
 ### 跨 vendor 對照
 
-| 案例                                                                                            | 對 Valkey 的對應                                                                         |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)               | Valkey 跟 Redis 規模化路徑一致（fork 同源）、小型 single / 中型 Sentinel / 大型 Cluster  |
-| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) | TTL jitter / singleflight 通用、Valkey 行為跟 Redis 一致                                 |
-| [2.C2 Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)         | Memcached routing 案例、Valkey 對應為 Cluster + client-side routing 或 Envoy Redis proxy |
-| [2.C6 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/)       | EVCache 為 Memcached based、Valkey 對應為 Global Datastore（ElastiCache for Valkey）     |
+| 案例                                                                                            | 對 Valkey 的對應                                                                                   |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)               | Valkey 跟 Redis 規模化路徑一致（fork 同源）、小型 single / 中型 Sentinel / 大型 Cluster            |
+| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) | TTL jitter / [singleflight](/backend/knowledge-cards/singleflight/) 通用、Valkey 行為跟 Redis 一致 |
+| [2.C2 Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)         | Memcached routing 案例、Valkey 對應為 Cluster + client-side routing 或 Envoy Redis proxy           |
+| [2.C6 Netflix EVCache](/backend/02-cache-redis/cases/netflix-evcache-global-cache-layer/)       | EVCache 為 Memcached based、Valkey 對應為 Global Datastore（ElastiCache for Valkey）               |
 
 ## 下一步路由
 

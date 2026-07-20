@@ -1,5 +1,5 @@
 ---
-title: "Mock 遮蔽"
+title: "Mock Masking（Mock 遮蔽）"
 date: 2026-06-19
 description: "mock 模擬 API 層但不模擬協議層，造成的結構性驗證盲區"
 weight: 2

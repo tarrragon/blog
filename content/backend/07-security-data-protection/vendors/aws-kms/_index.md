@@ -10,7 +10,7 @@ AWS KMS 是 AWS 原生的 key management service、解決 *對稱 / 非對稱金
 
 ## 服務定位
 
-AWS KMS 的核心定位是 *AWS-only 的 multi-tenant managed key management*，FIPS 140-2 Level 3 認證、跨服務 envelope encryption 的共同地基。跟 [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/) 比、KMS 是 *managed + shared HSM 池*、CloudHSM 是 *single-tenant dedicated HSM*；需要更高隔離 / 自管 cluster / FIPS Level 3 single-tenant 時走 CloudHSM、或用 KMS Custom Key Store 把 KMS 後端指向自己的 CloudHSM。跟 [Google Cloud KMS](/backend/07-security-data-protection/vendors/google-cloud-kms/) / [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/) 比、設計概念相近、但 KMS 把 secret store 切出去（[Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/)）、Key Vault 則把兩者合一。
+AWS KMS 的核心定位是 *AWS-only 的 multi-tenant managed key management*，FIPS 140-2 Level 3 認證、跨服務 envelope encryption 的共同地基。跟 [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/) 比、KMS 是 *managed + shared [HSM](/backend/knowledge-cards/hsm/) 池*、CloudHSM 是 *single-tenant dedicated HSM*；需要更高隔離 / 自管 cluster / FIPS Level 3 single-tenant 時走 CloudHSM、或用 KMS Custom Key Store 把 KMS 後端指向自己的 CloudHSM。跟 [Google Cloud KMS](/backend/07-security-data-protection/vendors/google-cloud-kms/) / [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/) 比、設計概念相近、但 KMS 把 secret store 切出去（[Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/)）、Key Vault 則把兩者合一。
 
 跟 [Vault transit engine](/backend/07-security-data-protection/vendors/hashicorp-vault/) 比、行為相似（key 不離 service、app 拿 ciphertext）、但治理面完全不同：KMS 綁 AWS 控制面、IAM + Key Policy 雙層授權、CloudTrail 是稽核入口；Vault transit 是跨雲統一介面、token + policy 為主、需要自管 cluster。AWS-heavy 組織首選 KMS、跨雲組織才會把 KMS 當下游、上游用 Vault transit 抽象。
 

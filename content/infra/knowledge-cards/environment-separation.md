@@ -1,5 +1,5 @@
 ---
-title: "環境分離"
+title: "Environment Separation（環境分離）"
 date: 2026-06-26
 description: "把同一套基礎設施定義複製成多份隔離的執行實例，各有獨立 state 與故障半徑"
 weight: 9

@@ -68,7 +68,7 @@ GSM 的定位是 *GCP-native 的 secret 集中點*、解決三件事：把 secre
 
 ## 進階主題
 
-**CMEK + Cloud KMS 雙軌權限分離**：production 應該 *至少* 把 prod secret 的 CMEK key 跟 secret IAM 分到不同 admin group — secret admin 可以建 / 改 secret 但不能 decrypt（沒 KMS `cloudkms.cryptoKeyDecrypter`），KMS admin 可以管 key 但不能讀 secret 內容。對應 [Microsoft Storm-0558 signing key chain](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) 的對照啟示：key 不離 KMS 邊界、跟 HSM-bound 同 mindset；CMEK 是把這個原則內建到 secret 路徑。
+**CMEK + Cloud KMS 雙軌權限分離**：production 應該 *至少* 把 prod secret 的 CMEK key 跟 secret IAM 分到不同 admin group — secret admin 可以建 / 改 secret 但不能 decrypt（沒 KMS `cloudkms.cryptoKeyDecrypter`），KMS admin 可以管 key 但不能讀 secret 內容。對應 [Microsoft Storm-0558 signing key chain](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/) 的對照啟示：key 不離 KMS 邊界、跟 [HSM](/backend/knowledge-cards/hsm/)-bound 同 mindset；CMEK 是把這個原則內建到 secret 路徑。
 
 **Berglas（OSS pattern）**：[Berglas](https://github.com/GoogleCloudPlatform/berglas) 是 Google 開源的 GSM client library + CLI、在 Cloud Run / Cloud Function / GKE 啟動時把 `sm://...` 參考自動 resolve 成實際 secret value、注進環境變數或檔案。比起應用端寫 SDK 取 secret 的好處：*secret 不進 container image / build manifest*、只有 runtime 取得；缺點是多一層 dependency、且 Berglas 自己有 IAM 需求要管。
 

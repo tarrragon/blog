@@ -1,5 +1,5 @@
 ---
-title: "歸母淨利（Parent-Attributable Income）"
+title: "Parent-Attributable Income（歸母淨利）"
 date: 2026-07-20
 description: "計算控股集團的每股盈餘或 ROE 時，分辨合併淨利中屬於母公司股東的部分與非控制權益，避免用總淨利高估資本報酬"
 weight: 71

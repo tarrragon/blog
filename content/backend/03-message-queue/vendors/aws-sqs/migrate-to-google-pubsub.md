@@ -173,7 +173,7 @@ application 邏輯的商業處理部分（process 函式）多數可保留、改
 
 ### Case 4：跨雲遷移期雙雲都在跑、egress 成本與延遲被低估
 
-**徵兆**：漸進 cutover 期間 AWS 跟 GCP 兩邊都在處理訊息、為了對帳把訊息在兩雲之間搬、月底帳單跨雲 egress 費用遠超預估、且跨雲呼叫的尾延遲拖慢端到端處理。
+**徵兆**：漸進 cutover 期間 AWS 跟 GCP 兩邊都在處理訊息、為了[對帳](/backend/knowledge-cards/data-reconciliation/)把訊息在兩雲之間搬、月底帳單跨雲 egress 費用遠超預估、且跨雲呼叫的尾延遲拖慢端到端處理。
 
 **根因**：SQS 在 AWS region 內、Pub/Sub 在 GCP、遷移期的 dual publish 或對帳如果讓資料反覆跨雲、每一筆出 AWS 的訊息都計 egress 費。跨雲不只是錢、跨雲網路的延遲跟抖動比同雲高、放在同步處理路徑上會放大尾延遲。同雲 vendor 切換沒有這個維度、跨雲遷移必須把它列進成本模型。
 

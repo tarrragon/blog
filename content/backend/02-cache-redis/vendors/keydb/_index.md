@@ -144,11 +144,11 @@ KeyDB 跟 Redis I/O threads 的差異是核心賣點。子議題：
 
 ### 跨 vendor 對照
 
-| 案例                                                                                                | 對 KeyDB 的對應                                                          |
-| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [2.C4 Meta CacheLib + Kangaroo](/backend/02-cache-redis/cases/meta-cachelib-kangaroo-tiered-cache/) | KeyDB on FLASH 對應 DRAM + flash 分層的成本決策                          |
-| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)     | TTL jitter / singleflight 通用、KeyDB 多執行緒不消除 stampede 風險       |
-| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)                   | KeyDB 是「單實例多核撐大」的選項、介於 Redis Cluster 與 DragonflyDB 之間 |
+| 案例                                                                                                | 對 KeyDB 的對應                                                                                              |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [2.C4 Meta CacheLib + Kangaroo](/backend/02-cache-redis/cases/meta-cachelib-kangaroo-tiered-cache/) | KeyDB on FLASH 對應 DRAM + flash 分層的成本決策                                                              |
+| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)     | TTL jitter / [singleflight](/backend/knowledge-cards/singleflight/) 通用、KeyDB 多執行緒不消除 stampede 風險 |
+| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)                   | KeyDB 是「單實例多核撐大」的選項、介於 Redis Cluster 與 DragonflyDB 之間                                     |
 
 ## 下一步路由
 

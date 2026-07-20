@@ -99,7 +99,7 @@ Sentry 是 error tracking 的事實標準、承擔三個責任：跨 frontend / 
 子議題：
 
 - 各語言 profiler（Python / Node / Go）
-- CPU / memory flame graph
+- CPU / memory [flame graph](/backend/knowledge-cards/flame-graph/)
 - 跟 Pyroscope / Datadog Profiler 對照
 
 ### Self-hosted vs SaaS

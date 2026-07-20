@@ -1,5 +1,5 @@
 ---
-title: "估值帶（Valuation Band）"
+title: "Valuation Band（估值帶）"
 date: 2026-07-20
 description: "判斷當前股價貴或便宜時，用該公司自身指標的多年歷史區間當座標系，並分辨帶內位置與帶本身位移這兩種不同的訊號"
 weight: 72

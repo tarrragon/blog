@@ -6,7 +6,7 @@ weight: 7
 tags: ["backend", "security", "vendor", "cloudhsm", "hsm", "encryption", "aws", "compliance"]
 ---
 
-AWS CloudHSM 是 *single-tenant dedicated HSM* 服務（FIPS 140-2 Level 3）、客戶獨享一個 HSM cluster、AWS 提供 *硬體 + network + provisioning*、客戶自己管 *crypto user / partition / key custody / backup*。它跟 [AWS KMS](/backend/07-security-data-protection/vendors/aws-kms/) 是 *不同信任模型* — KMS 是 multi-tenant managed、AWS 持有 key custody 與 API plane；CloudHSM 上 *AWS 看不到 key、也不能 reset Crypto User password*、客戶丟了 credential 等於 key 永久遺失。
+AWS CloudHSM 是 *single-tenant dedicated [HSM](/backend/knowledge-cards/hsm/)* 服務（FIPS 140-2 Level 3）、客戶獨享一個 HSM cluster、AWS 提供 *硬體 + network + provisioning*、客戶自己管 *crypto user / partition / key custody / backup*。它跟 [AWS KMS](/backend/07-security-data-protection/vendors/aws-kms/) 是 *不同信任模型* — KMS 是 multi-tenant managed、AWS 持有 key custody 與 API plane；CloudHSM 上 *AWS 看不到 key、也不能 reset Crypto User password*、客戶丟了 credential 等於 key 永久遺失。
 
 ## 服務定位
 

@@ -1,5 +1,5 @@
 ---
-title: "流程測試"
+title: "Flow Test（流程測試）"
 date: 2026-07-17
 description: "在假後端上驅動真實前端服務鏈、斷言散佈於業務旅程各階段的測試形態；與 unit / integration / E2E 的邊界劃分"
 weight: 6

@@ -1,5 +1,5 @@
 ---
-title: "正常化盈餘（Normalized Earnings）"
+title: "Normalized Earnings（正常化盈餘）"
 date: 2026-07-20
 description: "估值前處理盈餘品質時，分辨近四季實際數（trailing）與剔除一次性項目後的可持續盈利能力，避開週期高峰的低本益比陷阱"
 weight: 73

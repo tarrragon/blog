@@ -1,5 +1,5 @@
 ---
-title: "機密 runtime 注入"
+title: "Runtime Secret Injection（機密注入）"
 date: 2026-07-08
 description: "要決定 token / 金鑰放哪、能不能烤進 image 或提交進（即使私有的）repo 時回來讀"
 weight: 51

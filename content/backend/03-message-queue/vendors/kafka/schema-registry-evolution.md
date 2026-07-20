@@ -12,7 +12,7 @@ tags: ["backend", "message-queue", "kafka", "schema-registry", "avro", "schema-e
 
 Schema Registry 是把「event 的結構契約」從 producer 與 consumer 的程式碼裡抽出來、集中存放並強制版本相容性的元件。它承擔的責任是讓不同 service、不同部署節奏的 producer 與 consumer 在 schema 改版時仍能互通，而不需要全體同時上線。Kafka broker 本身只存 bytes、不理解 payload 結構；一旦多個團隊往同一個 topic 寫事件、又各自獨立發版，schema 漂移就會在 consumer 端炸開。
 
-這個責任在單一 service 內部不存在。一個 service 自己 produce、自己 consume，schema 改版同一個 deploy 就同步了，序列化用什麼格式都行。Schema Registry 解的是 *跨 service、跨團隊、跨部署時間* 的契約問題：A 團隊升級了訂單事件加一個欄位，B 團隊的對帳服務還跑舊版 consumer，C 團隊的風控服務跑更舊版——三方不同步演進，靠的就是 registry 在 producer 註冊新 schema 時先擋下破壞相容性的改動。
+這個責任在單一 service 內部不存在。一個 service 自己 produce、自己 consume，schema 改版同一個 deploy 就同步了，序列化用什麼格式都行。Schema Registry 解的是 *跨 service、跨團隊、跨部署時間* 的契約問題：A 團隊升級了訂單事件加一個欄位，B 團隊的[對帳](/backend/knowledge-cards/data-reconciliation/)服務還跑舊版 consumer，C 團隊的風控服務跑更舊版——三方不同步演進，靠的就是 registry 在 producer 註冊新 schema 時先擋下破壞相容性的改動。
 
 Yelp 的 [Schematizer 案例](/backend/03-message-queue/cases/kafka-yelp-schematizer/) 把這個責任拉到極端：一天數十億訊息、數百個 service、數千個 schema，自建 registry 強制所有 message 走 Avro、訊息只帶 schema ID。它揭露 schema 治理是 data pipeline 的核心責任、不是 add-on——當規模到了數千 schema，沒有集中強制的相容性檢查，跨服務事件契約會在某次發版後悄悄斷掉，而 broker 不會報任何錯。
 

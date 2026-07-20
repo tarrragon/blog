@@ -119,7 +119,7 @@ WHERE id=100                  WHERE id=100
 - 對 *特殊 business logic*（如：金額相加、不是覆蓋）有用
 - 維護成本高
 
-**4. Manual reconciliation**：
+**4. Manual [reconciliation](/backend/knowledge-cards/data-reconciliation/)**：
 
 - Conflict 寫進 log table、application / DBA 手動處理
 - 對 *無法自動 resolve* 場景（如金融）

@@ -8,7 +8,7 @@ tags: ["backend", "database", "dynamodb", "global-tables", "multi-region", "conf
 
 > 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
 
-B2B SaaS 跟客戶 SLA 寫 99.99%、單 region 跑了一年遇過兩次 region-level outage、合計 downtime 已逼近 SLA 上限。team 要把核心 table 改 Global Tables active-active、首問是「multi-region write 之後資料還會一致嗎」。這個問題的答案是：*不會、但有工程解法*；DynamoDB Global Tables 用 LWW（Last Writer Wins）跨 region async 同步、conflict 偵測跟 reconciliation 要 application 自己加。
+B2B SaaS 跟客戶 SLA 寫 99.99%、單 region 跑了一年遇過兩次 region-level outage、合計 downtime 已逼近 SLA 上限。team 要把核心 table 改 Global Tables active-active、首問是「multi-region write 之後資料還會一致嗎」。這個問題的答案是：*不會、但有工程解法*；DynamoDB Global Tables 用 LWW（Last Writer Wins）跨 region async 同步、conflict 偵測跟 [reconciliation](/backend/knowledge-cards/data-reconciliation/) 要 application 自己加。
 
 但 Global Tables 不只是 conflict 痛點。Disney+ 用同一個機制處理 cross-device sync（手機看一半回家用電視繼續）、Genesys 用同一個機制做 15 region B2B 客服平台的 99.999% 可用性。本文先講正向 access pattern（避免讓讀者誤以為 Global Tables 只是「跨 region 寫入會 conflict、所以痛苦」）、再展開 conflict resolution 跟 reconciliation 設計。
 

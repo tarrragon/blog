@@ -1,5 +1,5 @@
 ---
-title: "終端 CJK 雙寬字與即時輸入"
+title: "Terminal CJK Input（終端 CJK 雙寬字與即時輸入）"
 date: 2026-07-08
 description: "手機 / 遠端終端能貼中文卻打不出來、或打中文時畫面錯位時回來讀"
 weight: 52

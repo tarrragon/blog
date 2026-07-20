@@ -70,7 +70,7 @@ Restore drill 的交付物應接回 [Observability Evidence Package](/backend/04
 
 ## Corruption recovery：先保全證據，再決定修復或還原
 
-SQLite [corruption recovery](/backend/knowledge-cards/corruption-recovery/) 的核心責任是區分「資料庫檔案本身受損」與「application 寫入了錯誤資料」。前者要走 file-level evidence、`.recover`、backup restore 與 filesystem / hardware investigation；後者要走資料修復、migration rollback 或 business reconciliation。
+SQLite [corruption recovery](/backend/knowledge-cards/corruption-recovery/) 的核心責任是區分「資料庫檔案本身受損」與「application 寫入了錯誤資料」。前者要走 file-level evidence、`.recover`、backup restore 與 filesystem / hardware investigation；後者要走資料修復、migration rollback 或 business [reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
 | 觀察訊號                      | 優先判讀                    | 下一步路由                                                                                                          |
 | ----------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -106,7 +106,7 @@ SQLite production runbook 至少要能回答下列問題：
 3. Backup 用 `.backup` / backup API / `VACUUM INTO` / Litestream 的哪一條路徑。
 4. Restore drill 最近一次何時執行，RPO / RTO 是否符合產品承諾。
 5. `SQLITE_BUSY`、WAL growth、disk full、backup failure 與 restore failure 如何告警。
-6. Corruption recovery 時誰保存原檔、誰啟動 restore、誰決定修復或 fail-forward。
+6. Corruption recovery 時誰保存原檔、誰啟動 restore、誰決定修復或 [fail-forward](/backend/knowledge-cards/fail-forward/)。
 
 這份清單要接到服務 ownership，而非留在工程師個人習慣。SQLite 的優勢是 deployment surface 小；production 化的代價是把檔案、備份與恢復流程寫進同一份可交接 runbook。
 

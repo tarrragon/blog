@@ -1,5 +1,5 @@
 ---
-title: "Web App 部署"
+title: "Web App Deployment（Web App 部署）"
 date: 2026-07-06
 description: "把 Apps Script 專案掛成一個有公開網址、可被任何 HTTP 請求呼叫的端點時的部署模型與存取設定"
 weight: 2

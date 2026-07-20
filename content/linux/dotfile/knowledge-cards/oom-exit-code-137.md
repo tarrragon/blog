@@ -1,5 +1,5 @@
 ---
-title: "OOM killer 與退出碼 137"
+title: "OOM Killer and Exit Code 137（OOM killer 與退出碼 137）"
 date: 2026-07-08
 description: "程序或 container 被無預警砍掉、退出碼是 137、或編譯 / 測試在記憶體吃緊時突然死掉、要判斷是不是記憶體不足時回來讀"
 weight: 54

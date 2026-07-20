@@ -1,5 +1,5 @@
 ---
-title: "Lua 腳本語言"
+title: "Lua Scripting Language（腳本語言）"
 date: 2026-06-29
 description: "在 Hyprland 或 Neovim 配置檔遇到 Lua 語法看不懂時回來讀 — 配置檔需要的最小 Lua 知識"
 weight: 1

@@ -1,5 +1,5 @@
 ---
-title: "測試環境判定"
+title: "Test Environment Identification（測試環境判定）"
 date: 2026-07-17
 description: "會寫入的自動化測試在執行前確認目標環境的機制；它是憑證管理與真實後端驗證的共同上游依賴，判定不了時的預設行為決定這條防線的強度"
 weight: 12

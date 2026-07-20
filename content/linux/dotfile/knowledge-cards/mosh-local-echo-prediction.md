@@ -1,5 +1,5 @@
 ---
-title: "mosh 本地回顯預測"
+title: "Mosh Local Echo Prediction（本地回顯預測）"
 date: 2026-07-08
 description: "高延遲下 mosh 打字為何即時、它跟中文（雙寬字）顯示為何衝突、以及怎麼確認 client 真的走 mosh 而非退回 SSH 時回來讀"
 weight: 50

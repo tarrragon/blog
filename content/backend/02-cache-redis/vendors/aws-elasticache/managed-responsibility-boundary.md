@@ -20,16 +20,16 @@ tags: ["backend", "cache", "aws-elasticache", "managed", "failover", "deep-artic
 
 ElastiCache 的責任劃分可以列成一張清楚的表，這張表是判讀所有 ElastiCache 事故的起點：
 
-| 面向                 | AWS 的責任（managed）      | 你的責任（仍要自己做）                   |
-| -------------------- | -------------------------- | ---------------------------------------- |
-| 硬體 / OS / patching | 全包                       | —                                        |
-| failover             | 自動偵測 + replica 晉升    | client 要有 reconnect 邏輯               |
-| 跨 AZ 複製           | Multi-AZ 自動複製          | 接受非同步複製的 stale window            |
-| snapshot / backup    | 自動 + 手動 snapshot       | 決定保留策略、驗證能還原                 |
-| eviction             | 提供 maxmemory-policy 參數 | 選對 policy、設對 TTL                    |
-| cache stampede       | 不管                       | client-side jitter / singleflight 自己做 |
-| key 設計 / hot key   | 不管                       | key 分布、hot key 兩層 cache 自己處理    |
-| 連線管理             | 提供 endpoint              | 連線池、socket timeout 自己設            |
+| 面向                 | AWS 的責任（managed）      | 你的責任（仍要自己做）                                                             |
+| -------------------- | -------------------------- | ---------------------------------------------------------------------------------- |
+| 硬體 / OS / patching | 全包                       | —                                                                                  |
+| failover             | 自動偵測 + replica 晉升    | client 要有 reconnect 邏輯                                                         |
+| 跨 AZ 複製           | Multi-AZ 自動複製          | 接受非同步複製的 stale window                                                      |
+| snapshot / backup    | 自動 + 手動 snapshot       | 決定保留策略、驗證能還原                                                           |
+| eviction             | 提供 maxmemory-policy 參數 | 選對 policy、設對 TTL                                                              |
+| cache stampede       | 不管                       | client-side jitter / [singleflight](/backend/knowledge-cards/singleflight/) 自己做 |
+| key 設計 / hot key   | 不管                       | key 分布、hot key 兩層 cache 自己處理                                              |
+| 連線管理             | 提供 endpoint              | 連線池、socket timeout 自己設                                                      |
 
 左欄是用 managed 換到的，右欄是用 managed 換不掉的。[2.C9 cache stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/) 的雪崩、[連線風暴](/backend/02-cache-redis/vendors/redis/connection-pipeline-latency/)、[eviction 選錯](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/) 在 ElastiCache 上跟自管 Redis 一模一樣會發生——因為這些是 cache 使用方式的問題，不是運維的問題。
 

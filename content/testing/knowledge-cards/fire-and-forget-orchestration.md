@@ -1,5 +1,5 @@
 ---
-title: "Fire-and-forget 編排"
+title: "Fire-and-Forget Orchestration（射後不理編排）"
 date: 2026-07-17
 description: "呼叫後不等待完成的編排形態；產生「方法返回不等於流程完成」的時序落差，是 flaky test 的常見根因之一"
 weight: 8

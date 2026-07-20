@@ -148,7 +148,7 @@ Tiered storage 的核心責任是把 broker 的「儲存容量」跟「保留期
 
 ### Retention 太短、replay window 不夠補事故
 
-**徵兆**：下游 consumer 出 bug、產出錯誤的衍生資料、幾天後才被對帳發現；要從原始事件重播修復時、發現最舊的事件已經被刪、replay 從某個時間點之後才有資料、之前的修不回來。
+**徵兆**：下游 consumer 出 bug、產出錯誤的衍生資料、幾天後才被[對帳](/backend/knowledge-cards/data-reconciliation/)發現；要從原始事件重播修復時、發現最舊的事件已經被刪、replay 從某個時間點之後才有資料、之前的修不回來。
 
 **根因**：retention.ms 設得比「事故從發生到偵測到開始修復的最長時間」短。Replay window 由 broker retention 與 consumer checkpoint 共同界定、retention 是其物理上限；偵測延遲一旦超過 retention、要補算時原始事件已過期。常見的隱性誘因是把 retention 按「正常 consumer 跟得上的進度」來設（例如 consumer 通常落後幾分鐘、就設 1 天保險）、卻沒按「最壞情況下多久才會發現問題」來設。
 

@@ -1,5 +1,5 @@
 ---
-title: "凍結參照與活解析"
+title: "Frozen vs Live Reference（凍結參照與活解析）"
 date: 2026-07-17
 description: "下游持有上游 id 的兩種策略——寫死 id vs 查詢時動態解引用；上游重建後凍結參照失效，stub 對此結構性盲目"
 weight: 9

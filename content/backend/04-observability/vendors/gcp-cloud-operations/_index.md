@@ -82,7 +82,7 @@ GCP Cloud Operations（前 Stackdriver）是 GCP 原生 observability 套件、�
 
 - 持續 profiling（CPU / Heap / Wall time / Mutex）
 - 支援 Go / Java / Python / Node
-- Flame graph 視覺化
+- [Flame graph](/backend/knowledge-cards/flame-graph/) 視覺化
 - 跟 Pyroscope / Datadog Profiler 對照
 
 ### BigQuery 匯出長期儲存

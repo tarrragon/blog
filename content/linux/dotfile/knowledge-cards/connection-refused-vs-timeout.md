@@ -1,5 +1,5 @@
 ---
-title: "連線逾時 vs 連線被拒"
+title: "Connection Refused vs. Timeout（連線被拒與逾時）"
 date: 2026-07-08
 description: "遠端連不上、要判斷是封包到不了還是服務拒絕、決定往網路層還是服務層除錯時回來讀"
 weight: 50

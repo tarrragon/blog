@@ -1,5 +1,5 @@
 ---
-title: "OpenAI 相容 API"
+title: "OpenAI-Compatible API（OpenAI 相容 API）"
 date: 2026-05-11
 description: "本地推論伺服器跟雲端 OpenAI 共用的 API 形狀標準"
 weight: 1

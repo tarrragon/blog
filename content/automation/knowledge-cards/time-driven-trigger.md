@@ -1,5 +1,5 @@
 ---
-title: "時間觸發器"
+title: "Time-Driven Trigger（時間觸發器）"
 date: 2026-07-06
 description: "讓 Apps Script 在固定時間自動執行的排程機制，把被動等呼叫的膠水層變成主動定時跑的任務"
 weight: 5

@@ -48,7 +48,7 @@ Keycloak 是 *自管控制面* 的 human identity 與 federation engine、不是
 
 **Identity Brokering**：把外部 IdP（Google、Microsoft、其他 SAML / OIDC provider）federate 進來、Keycloak 當中介。B2B 合作常見模式 — partner 用自己的 IdP、不在我的 user store 開帳號。決策點是 *trust mapping*：外部 claim 怎麼對應到內部 role、外部 IdP 的 MFA 狀態怎麼信任。
 
-**Authentication Flow**：Keycloak 把 login / registration / reset password 做成可編輯的 flow DAG、可以插入自訂 step。這是 Keycloak 跟 SaaS IdP 最大差異點之一 — 想要 step-up MFA、device fingerprint、risk-based 判斷都可以自己接。雙面刃是 *自訂 flow 容易留漏洞*：跳過必要步驟、condition 寫錯讓 MFA 變可選、custom Authenticator SPI 沒處理 race condition。
+**Authentication Flow**：Keycloak 把 login / registration / reset password 做成可編輯的 flow DAG、可以插入自訂 step。這是 Keycloak 跟 SaaS IdP 最大差異點之一 — 想要 [step-up](/backend/knowledge-cards/step-up-authentication/) MFA、device fingerprint、risk-based 判斷都可以自己接。雙面刃是 *自訂 flow 容易留漏洞*：跳過必要步驟、condition 寫錯讓 MFA 變可選、custom Authenticator SPI 沒處理 race condition。
 
 **Theme / 客製 UI**：Keycloak 支援 theme override、可以改 login page HTML / CSS / JS。custom JS 在 login page = 自己注入 XSS 風險 — theme 寫進去之後就是 IdP 本體的攻擊面、不是普通網頁。CSP 跟 input sanitization 要當成 IdP 安全規範看待。
 

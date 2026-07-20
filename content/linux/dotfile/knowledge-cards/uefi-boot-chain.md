@@ -1,5 +1,5 @@
 ---
-title: "UEFI 開機鏈"
+title: "UEFI Boot Chain（開機鏈）"
 date: 2026-07-01
 description: "在 bootloader 選型（GRUB / EFISTUB / systemd-boot）卡住、或機器重開後找不到 kernel、需要理解韌體怎麼找到並載入系統時讀 — 韌體到 kernel 的交棒過程"
 weight: 12

@@ -1,5 +1,5 @@
 ---
-title: "執行配額"
+title: "Execution Quota（執行配額）"
 date: 2026-07-06
 description: "Apps Script 個人帳號的執行時間、同時併發與觸發器每日總時間上限，決定免費膠水層能承受多大的量"
 weight: 4

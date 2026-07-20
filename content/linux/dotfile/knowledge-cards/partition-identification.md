@@ -1,5 +1,5 @@
 ---
-title: "分區識別（PARTUUID / FSUUID）"
+title: "Partition Identification（分區識別，PARTUUID / FSUUID）"
 date: 2026-07-01
 description: "在 fstab 或 bootloader 設定要指定一個分區、不確定該用 PARTUUID、UUID 還是 /dev/sda1、或重格式化後系統開不了機時讀 — 分區的穩定識別方式"
 weight: 13

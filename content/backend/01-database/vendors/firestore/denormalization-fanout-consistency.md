@@ -97,7 +97,7 @@ exports.fanoutUserName = functions.firestore
 
 #### Case 3：fan-out 中途失敗留下部分更新
 
-非同步 fan-out 跑到一半 function 掛了，前 500 筆改了、後面沒改，副本處於半新半舊。修法：fan-out function 要可重入（重跑能補完未完成的），或記錄 fan-out 進度；殘留的不一致由對帳流程掃出修復（對應 [1.9 Reconciliation 與 Data Repair](/backend/01-database/reconciliation-data-repair/)）。
+非同步 fan-out 跑到一半 function 掛了，前 500 筆改了、後面沒改，副本處於半新半舊。修法：fan-out function 要可重入（重跑能補完未完成的），或記錄 fan-out 進度；殘留的不一致由[對帳](/backend/knowledge-cards/data-reconciliation/)流程掃出修復（對應 [1.9 Reconciliation 與 Data Repair](/backend/01-database/reconciliation-data-repair/)）。
 
 #### Case 4：雙向反正規化造成更新環
 
