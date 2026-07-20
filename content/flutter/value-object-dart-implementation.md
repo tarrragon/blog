@@ -36,7 +36,7 @@ tags: ["flutter", "dart", "value-object", "extension-type", "freezed", "copywith
 
 ### extension type 零成本包裝
 
-[extension type](/flutter/knowledge-cards/extension-type/) 是 Dart 3 的載體，把單一底層值包成一個新名字、限縮可用的 API、而 runtime 不存在額外物件——編譯後就是底層型別本身，所有約束活在編譯期。單一底層值的語意封閉、又在高頻路徑上流通（金額在每筆訂單明細累加、識別碼在每次查詢傳遞）時，這條路徑用零 runtime 開銷換到型別安全。它跟 class 路徑是互斥的實作選擇：class 走 runtime、有型別身份也有 overhead；extension type 走編譯期、零 overhead 但 runtime 透明，`is` 與 `as` 看到的是底層型別。
+[extension type](/flutter/knowledge-cards/extension-type/) 是 Dart 3.3 起提供的載體，把單一底層值包成一個新名字、限縮可用的 API、而 runtime 不存在額外物件——編譯後就是底層型別本身，所有約束活在編譯期。單一底層值的語意封閉、又在高頻路徑上流通（金額在每筆訂單明細累加、識別碼在每次查詢傳遞）時，這條路徑用零 runtime 開銷換到型別安全。它跟 class 路徑是互斥的實作選擇：class 走 runtime、有型別身份也有 overhead；extension type 走編譯期、零 overhead 但 runtime 透明，`is` 與 `as` 看到的是底層型別。
 
 用 extension type 時要在設計期定 subtype 決策——它是底層型別的 subtype（寬鬆：可隱式 upcast 回底層、封裝邊界弱）還是獨立型別（嚴格：只能顯式拆封、每個銜接點都要拆）。金額的做法是 `implements Object` 而只有 Object：既有的格式化入口 `formatAmount(Object)` 能直接吃它、不必改簽名；同時它不是數字型別的 subtype，於是不能被傳進任何收數字型別的參數，裸運算沒有回來的路。這條路徑不搭 copyWith——extension type 沒有 runtime 物件可以逐欄位覆寫，逐欄位覆寫語意只在 class 路徑上成立。
 
