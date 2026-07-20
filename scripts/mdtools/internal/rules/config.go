@@ -136,6 +136,7 @@ func Default() Config {
 			CardPaths: []string{
 				"content/automation/knowledge-cards",
 				"content/backend/knowledge-cards",
+				"content/linux/dotfile/knowledge-cards",
 				"content/business/knowledge-cards",
 				"content/ci/knowledge-cards",
 				"content/monitoring/knowledge-cards",
@@ -153,6 +154,7 @@ func Default() Config {
 			CardsRoots: []string{
 				"content/automation/knowledge-cards",
 				"content/backend/knowledge-cards",
+				"content/linux/dotfile/knowledge-cards",
 				"content/business/knowledge-cards",
 				"content/ci/knowledge-cards",
 				"content/monitoring/knowledge-cards",
