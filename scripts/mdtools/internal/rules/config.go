@@ -134,9 +134,11 @@ func Default() Config {
 			Recommended:    []string{"description", "tags"},
 			CardRequired:   []string{"title", "date", "description", "weight"},
 			CardPaths: []string{
+				"content/automation/knowledge-cards",
 				"content/backend/knowledge-cards",
 				"content/business/knowledge-cards",
 				"content/ci/knowledge-cards",
+				"content/monitoring/knowledge-cards",
 				"content/ddd/knowledge-cards",
 				"content/flutter/knowledge-cards",
 				"content/infra/knowledge-cards",
@@ -149,9 +151,11 @@ func Default() Config {
 		},
 		Cards: CardRules{
 			CardsRoots: []string{
+				"content/automation/knowledge-cards",
 				"content/backend/knowledge-cards",
 				"content/business/knowledge-cards",
 				"content/ci/knowledge-cards",
+				"content/monitoring/knowledge-cards",
 				"content/ddd/knowledge-cards",
 				"content/flutter/knowledge-cards",
 				"content/infra/knowledge-cards",
