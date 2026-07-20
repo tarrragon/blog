@@ -14,7 +14,7 @@ tags: ["business", "case-analysis", "franchise", "financial-analysis", "vertical
 
 超秦集團的結構是一條從農場到餐桌的雞肉供應鏈。超秦企業（8345）負責上游——雞隻育種、合作農舍養殖、電宰、分切、加工，年屠宰量約 1,800 萬隻，是北台灣最大的家禽電宰場。揚秦國際（2755）負責下游——品牌經營、加盟管理、門市營運。
 
-揚秦的招牌產品「原塊嫩雞」直接使用超秦電宰分切的雞肉，跳過中間的肉品經銷商。這個整合帶來兩個結構性優勢：食材可追溯性（從農舍到餐桌的品質控制鏈）和成本優勢（省去中間商加價）。但它也帶來一個判讀陷阱：揚秦從超秦採購雞肉是[關係人交易](/business/knowledge-cards/related-party-transaction/)，轉移定價的透明度直接影響揚秦的[毛利率](/business/knowledge-cards/gross-margin/)判讀。
+揚秦的招牌產品「原塊嫩雞」直接使用超秦電宰分切的雞肉，跳過中間的肉品經銷商。這個整合帶來兩個結構性優勢：食材可追溯性（從農舍到餐桌的品質控制鏈）和成本優勢（省去中間商加價）。但它也帶來一個判讀陷阱：揚秦從超秦採購雞肉是[關係人交易](/business/knowledge-cards/related-party-transaction/)，[轉移定價](/business/knowledge-cards/transfer-pricing/)的透明度直接影響揚秦的[毛利率](/business/knowledge-cards/gross-margin/)判讀。
 
 ## 財務定位與報表判讀
 
