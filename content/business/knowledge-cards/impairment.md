@@ -1,7 +1,7 @@
 ---
 title: "Impairment（減損）"
 date: 2026-07-20
-description: "判讀損益表出現一次性大額損失時，理解減損如何在資產帳面價值高於可回收金額時強制認列、並辨識背後的商譽或產能風險"
+description: "損益表突然出現一次性大額損失是怎麼回事？減損在資產帳面價值高於可回收金額時強制認列——背後常是商譽或產能的風險現形"
 weight: 89
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---

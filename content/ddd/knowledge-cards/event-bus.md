@@ -2,7 +2,7 @@
 title: "EventBus"
 tags: ["event-bus", "domain-event", "pub-sub"]
 date: 2026-07-20
-description: "在同一個行程內把「發生了一件事」廣播給多個訂閱者、且要判斷該不該拿它兼職變更通知管道時使用。EventBus 是行程內的發布／訂閱事件匯流排——把事件的發布點與訂閱點解耦。"
+description: "行程內要把「發生了一件事」廣播給多個訂閱者、或懷疑它被拿去兼職變更通知管道時回來讀。EventBus 是行程內的發布／訂閱事件匯流排——把事件的發布點與訂閱點解耦。"
 weight: 20
 ---
 

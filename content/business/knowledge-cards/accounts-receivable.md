@@ -1,7 +1,7 @@
 ---
 title: "Accounts Receivable（應收帳款）"
 date: 2026-07-20
-description: "判讀營收成長是否轉換成真實現金時，用應收帳款天數與帳齡結構分辨信用政策放寬與客戶付款能力惡化"
+description: "營收在成長、現金卻沒進來——應收帳款天數與帳齡結構分辨的是信用政策放寬還是客戶付款能力惡化"
 weight: 86
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---
