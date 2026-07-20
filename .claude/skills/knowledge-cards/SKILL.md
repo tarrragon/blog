@@ -3,7 +3,7 @@ name: knowledge-cards
 description: "Standardizes the full lifecycle of atomic knowledge cards (Zettelkasten term cards) in a content collection: creation criteria, gap detection via the term-role × baseline matrix, card authoring format, registration points (index + tool scope), link backfill, and module-scale audits. Use when creating cards, auditing a module for missing cards, restructuring card directories, or wiring card links into articles. Triggers: 建卡, 知識卡, 缺卡, 術語卡, 卡片 audit, 卡片格式, 概念位置, 鄰卡連結, 回填連結, 卡片目錄, 卡片重構, 詞頻掃描, 基線, 行內解釋, knowledge card, term card, card gap."
 license: MIT
 metadata:
-  version: 1.2.0
+  version: 1.3.0
   category: content-methodology
 ---
 
@@ -60,6 +60,7 @@ metadata:
 
 ---
 
+**Version**: 1.3.0 — 從第一輪全站 audit（4 掃描 fork + 3 建卡代理 + 3 債務艦隊、19 張新卡、338→6 warning）回收判定補充規則：(1) 「無卡」比對範圍是全站所有卡片目錄含同義詞——實測擋下 4 張would-be重複卡；(2) 跨篇逐字重複定義是缺卡加強訊號、建卡後收斂重複句；(3) 「連長文」含同章段落式教學；(4) 模組索引 backlog 筆記是候選來源、以正文實際出現做最終判定；(5) L4 首段判定精確化（AST 第一段、遇空行即止）；(6) L2 孤兒的 `_index.md` 本文算有效來源、無真實出現走存廢清單且刪卡由維護者裁決
 **Version**: 1.2.0 — gap-audit-and-backfill 補「規模化執行：代理人派工協議」段（從第一次全模組回填的多代理實測抽出）：prompt 給清單與底線、判準指向 skill；事實紀律顯式重申；回報必含完成度自證（實測主要失誤是代理靜默停止不回報）；驗收以 repo 狀態為準不以報告為準；多代理飛行中主線不提前 format / commit；每次派工同時回收 skill 完整性回饋
 **Version**: 1.1.0 — 從第一次代理人執行（10 張卡批次、由較小模型代理依本 skill 自主完成）回收兩條：(1) card-authoring 補「批次完成後的機械自驗」script（首段 / 概念位置段鄰卡連結計數——實測一批 10 張有 1 張首稿漏連結、自讀沒抓到、機械統計立刻現形）；(2) 補「字句層命中是候選不是判決」段與兩類實測 false positive（字面意義的泛用詞 / 數學結構的真必然）、判別線是「必然有沒有上游設計選擇當前提」
 **Version**: 1.0.0 — 初版：生命週期六站（判準 / 落點 / 撰寫 / 登記 / 回填 / audit）、缺卡判定矩陣（術語角色 × 基線）、註冊點清單（index / 工具作用域雙清單 / 上層入口 / weight 帶——含「作用域幻覺」教訓：檢查通過可能只是不在作用域）、兩份 reference（card-authoring / gap-audit-and-backfill）。從一次金融分析模組的缺卡 audit 與第一批 8 張卡的實跑經驗抽出
