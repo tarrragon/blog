@@ -1,5 +1,5 @@
 ---
-title: "折舊與攤提"
+title: "Depreciation & Amortization（折舊與攤提）"
 date: 2026-07-20
 description: "看懂重資產公司的獲利結構時，理解折舊攤提怎麼把資本支出分年進入損益表、以及它作為固定成本如何製造營業槓桿"
 weight: 79

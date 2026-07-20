@@ -1,5 +1,5 @@
 ---
-title: "本益比（P/E）"
+title: "P/E Ratio（本益比）"
 date: 2026-07-20
 description: "用獲利倍數做相對估值時，理解 P/E 承載的是成長預期、並檢查分母獲利的品質再比較高低"
 weight: 78

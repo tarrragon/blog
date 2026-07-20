@@ -17,6 +17,7 @@ Claude Code 會根據對話內容自動觸發 `.claude/skills/` 內的 skill —
 | `frontend-with-playwright` | 前端 CSS / DOM / framework 共處 / Playwright 驗證 / a11y   |
 | `wrap-decision`            | 分析 / 決策 / 比較 / 提案、被困住、根因分析、個人化建議    |
 | `blogsearch-lifecycle`     | blogsearch rebuild、語意搜尋、content 變動後 index 過時    |
+| `knowledge-cards`          | 建卡 / 缺卡判定 / 卡片 audit / 回填連結 / 卡片目錄重構     |
 
 手動調用：對話中打 `/<skill-name>` 強制啟動。
 

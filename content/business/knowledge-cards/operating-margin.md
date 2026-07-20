@@ -1,5 +1,5 @@
 ---
-title: "營業利益率"
+title: "Operating Margin（營業利益率）"
 date: 2026-07-20
 description: "衡量本業獲利能力時，用營業利益率看毛利被營業費用吃掉多少、跟毛利率的落差讀出費用結構的重量"
 weight: 74

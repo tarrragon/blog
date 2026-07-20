@@ -1,5 +1,5 @@
 ---
-title: "同店銷售"
+title: "Same-Store Sales（同店銷售）"
 date: 2026-07-20
 description: "評估連鎖品牌的真實健康度時，用同店銷售把展店效應從營收成長中扣掉、再拆漲價與來客數的貢獻"
 weight: 81

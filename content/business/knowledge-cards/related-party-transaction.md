@@ -1,5 +1,5 @@
 ---
-title: "關係人交易"
+title: "Related-Party Transaction（關係人交易）"
 date: 2026-07-20
 description: "判讀集團企業的財報可信度時，用關係人交易附註檢查內部定價對毛利率的影響、把連動的兩家公司放在一起看"
 weight: 80

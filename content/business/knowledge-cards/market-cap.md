@@ -1,5 +1,5 @@
 ---
-title: "市值"
+title: "Market Cap（市值）"
 date: 2026-07-20
 description: "衡量公司規模與市場定價時，用市值（股價 × 股數）取代股價高低的直覺、並理解它是價格而非價值"
 weight: 77
