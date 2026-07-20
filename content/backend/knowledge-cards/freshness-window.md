@@ -18,4 +18,4 @@ Freshness window 是 [source of truth](/backend/knowledge-cards/source-of-truth/
 
 ## 設計責任
 
-Freshness window 要跟 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 策略對齊：可接受 stale 的資料用 TTL 保底即可，高代價 stale 的資料需要事件驅動失效或版本化 key 加短 TTL 雙重保險。設計時要同時定義超標處置——freshness window 一旦沒有對應的告警與降級策略，就只是團隊口頭承諾，事故發生時無法佐證是否踩線。常見誤判是把「快取設了 TTL」直接當成「freshness 已定義」，卻沒有回答不同欄位該有不同 TTL、以及超過 window 後要不要阻擋讀取或觸發保護動作。分欄位分級表的完整設計與跨區一致性延伸見 [2.7 Cache Copy Boundary 與 Freshness](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
+Freshness window 要跟 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 策略對齊：可接受 stale 的資料用 TTL 保底即可，高代價 stale 的資料需要事件驅動失效或版本化 key 加短 TTL 雙重保險。設計時要同時定義超標處置——freshness window 一旦沒有對應的告警與降級策略，就只是團隊口頭承諾，事故發生時無法佐證是否踩線。TTL 只回答了「預設多久過期」——freshness 的完整定義還要回答不同欄位的分級 TTL、以及超過 window 後要不要阻擋讀取或觸發保護動作。分欄位分級表的完整設計與跨區一致性延伸見 [2.7 Cache Copy Boundary 與 Freshness](/backend/02-cache-redis/cache-copy-freshness-boundary/)。

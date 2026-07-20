@@ -10,7 +10,7 @@ weight: 21
 
 ## 概念位置
 
-CQRS 不是二選一的開關、是一道階梯的頂端。讀側的設計從「消費端自行投影 aggregate 形狀」開始，中間經過「抽獨立讀 port」「查詢形狀專用投影」，到頂端才是 CQRS 全套——讀寫獨立儲存、由 [domain event](/ddd/knowledge-cards/domain-event/) 同步讀模型。多數專案的正確位置在階梯低處、不是頂端，升級由訊號驅動而非架構偏好。
+CQRS 是一道讀側設計階梯的頂端、而非二選一的開關。讀側的設計從「消費端自行投影 aggregate 形狀」開始，中間經過「抽獨立讀 port」「查詢形狀專用投影」，到頂端才是 CQRS 全套——讀寫獨立儲存、由 [domain event](/ddd/knowledge-cards/domain-event/) 同步讀模型。多數專案的正確位置在階梯低處、不是頂端，升級由訊號驅動而非架構偏好。
 
 ## 可觀察訊號
 

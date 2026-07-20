@@ -14,7 +14,7 @@ Consumer-driven contract test 是 [protocol integration test](/testing/knowledge
 
 ## 可觀察訊號與例子
 
-適用的訊號是「API 有多個 consumer、且各自需要獨立部署」——每個 consumer 定義自己期望的契約，server 端彙整所有契約做相容性驗證，不需要等每個 consumer 團隊排期做整合測試。反訊號同樣明確：自用工具、或 client/server 由同一人開發，契約帶來的團隊協調成本沒有對應的收益，直接對真實 server 跑 protocol integration test 更簡單。工具生態（Pact、Spring Cloud Contract）自動化了契約的定義、驗證與版本管理，這類工具本身不是判準、是判準成立後的落地手段。
+適用的訊號是「API 有多個 consumer、且各自需要獨立部署」——每個 consumer 定義自己期望的契約，server 端彙整所有契約做相容性驗證，不需要等每個 consumer 團隊排期做整合測試。反訊號同樣明確：自用工具、或 client/server 由同一人開發，契約帶來的團隊協調成本沒有對應的收益，直接對真實 server 跑 protocol integration test 更簡單。工具生態（Pact、Spring Cloud Contract）自動化了契約的定義、驗證與版本管理，這類工具是判準成立後的落地手段、工具存在與否本身不參與判準。
 
 ## 設計責任
 

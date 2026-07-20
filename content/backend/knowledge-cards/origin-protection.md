@@ -18,4 +18,4 @@ Origin protection 位在快取層與 [source of truth](/backend/knowledge-cards/
 
 ## 設計責任
 
-Origin protection 的設計要把「保護正式狀態來源」放在「提升命中率」之前——命中率漂亮但回源尖峰能打垮資料庫，等於快取本身變成事故來源。實作上四種手段通常要疊加而非二選一：warmup 降低初始 miss 量、singleflight 收斂並發重複請求、rate limit 兜住殘餘流量、negative cache 擋掉不存在 key 的重複查詢。常見誤判是只監控 cache hit rate、卻沒有同時監控 origin QPS 與 latency——hit rate 異常時，回源壓力往往已經在中後段才被看見。實際 migration 與 rollout 場景下的回源保護節奏見 [2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)。
+Origin protection 的設計要把「保護正式狀態來源」放在「提升命中率」之前——命中率漂亮但回源尖峰能打垮資料庫，等於快取本身變成事故來源。實作上四種手段通常要疊加而非二選一：warmup 降低初始 miss 量、singleflight 收斂並發重複請求、rate limit 兜住殘餘流量、negative cache 擋掉不存在 key 的重複查詢。監控面要同時掛 origin QPS 與 latency、只看 cache hit rate 的部署會晚一步——hit rate 異常時，回源壓力往往已經在中後段才被看見。實際 migration 與 rollout 場景下的回源保護節奏見 [2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)。

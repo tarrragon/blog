@@ -18,4 +18,4 @@ Cache key versioning 位在 [schema migration](/backend/knowledge-cards/schema-m
 
 ## 設計責任
 
-版本化 key 的收斂要按固定順序推進、每步都有停損點：新 key 寫入啟用（停損點是雙寫失敗率）、新 key 命中觀察（停損點是 v2 命中率爬升曲線是否停滯）、舊 key 命中率穩定下降（確認新 key 已自然 warmup、不能只看 v2 命中率）、舊 key 停止寫入、最後移除舊 key 讀 fallback。常見誤判是同時改 key 結構跟 TTL 兩個維度，讓 stampede 或行為異常時無法定位是哪個變因造成的——每次切換應該只動一個維度，先在低流量 region 試跑再擴大。key 演進與相容窗口的完整分階段案例見 [2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)。
+版本化 key 的收斂要按固定順序推進、每步都有停損點：新 key 寫入啟用（停損點是雙寫失敗率）、新 key 命中觀察（停損點是 v2 命中率爬升曲線是否停滯）、舊 key 命中率穩定下降（確認新 key 已自然 warmup、不能只看 v2 命中率）、舊 key 停止寫入、最後移除舊 key 讀 fallback。每次切換只動一個維度、先在低流量 region 試跑再擴大——同時改 key 結構跟 TTL 兩個維度，stampede 或行為異常時會無法定位變因。key 演進與相容窗口的完整分階段案例見 [2.9 Cache Migration 與 Stampede Rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)。

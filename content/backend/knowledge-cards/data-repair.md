@@ -18,4 +18,4 @@ Data repair 位在 [rollback window](/backend/knowledge-cards/rollback-window/) 
 
 ## 設計責任
 
-Data repair 要在執行前完成 dry-run（用同樣的 WHERE 條件跑 SELECT、估算影響筆數與連帶效果），並遵守三個原則：[idempotency](/backend/knowledge-cards/idempotency/)（同樣的修復跑兩次結果要一樣）、可稽核（每次修復留下 actor、reviewer、修復前後 snapshot 到 [audit log](/backend/knowledge-cards/audit-log/)）、可逆（不可逆操作要先備份、留 rollback path）。高風險修復（金錢、權限、個資）要求兩位以上人員各自看過 dry-run 結果才能執行。常見誤判是把 dry-run 跳過、在事故壓力下直接 UPDATE，這反而容易讓單點差異擴大成批次污染。完整的分級執行策略、四眼審核流程與跨服務對帳責任分派見 [1.9 Reconciliation 與 Data Repair](/backend/01-database/reconciliation-data-repair/)。
+Data repair 要在執行前完成 dry-run（用同樣的 WHERE 條件跑 SELECT、估算影響筆數與連帶效果），並遵守三個原則：[idempotency](/backend/knowledge-cards/idempotency/)（同樣的修復跑兩次結果要一樣）、可稽核（每次修復留下 actor、reviewer、修復前後 snapshot 到 [audit log](/backend/knowledge-cards/audit-log/)）、可逆（不可逆操作要先備份、留 rollback path）。高風險修復（金錢、權限、個資）要求兩位以上人員各自看過 dry-run 結果才能執行。事故壓力下跳過 dry-run 直接 UPDATE、反而容易讓單點差異擴大成批次污染——時間壓力正是 dry-run 最有價值的時候。完整的分級執行策略、四眼審核流程與跨服務對帳責任分派見 [1.9 Reconciliation 與 Data Repair](/backend/01-database/reconciliation-data-repair/)。
