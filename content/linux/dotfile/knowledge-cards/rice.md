@@ -6,7 +6,11 @@ weight: 3
 tags: ["dotfile", "rice", "linux", "knowledge-cards"]
 ---
 
-Rice 在 Linux 桌面社群指的是**桌面視覺客製化**——把系統外觀調教成個人化的美學呈現。動詞 ricing 是「正在美化桌面」，名詞 a rice 是「一套美化成果/配置」，做這件事的人叫 ricer。
+Rice 在 Linux 桌面社群指的是**桌面視覺客製化**——把系統外觀調教成個人化的美學呈現。動詞 ricing 是「正在美化桌面」，名詞 a rice 是「一套美化成果/配置」，做這件事的人叫 ricer，成果多半架在某個 [Compositor](/linux/dotfile/knowledge-cards/compositor/) 之上。
+
+## 概念位置
+
+Rice 涵蓋的元件多半跑在某個 [Compositor](/linux/dotfile/knowledge-cards/compositor/) 之上；[Quickshell](/linux/dotfile/knowledge-cards/quickshell/) 這類桌面 shell runtime 是打包式 rice 常見的實作引擎。
 
 ## 詞源
 

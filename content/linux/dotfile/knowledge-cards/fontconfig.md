@@ -8,6 +8,10 @@ tags: ["dotfile", "font", "fontconfig", "knowledge-cards"]
 
 fontconfig 是 Linux 上統一管理字型搜尋、匹配與 fallback 的底層服務。應用程式透過 fontconfig 的 API 查詢可用字型，而非自行掃描字型目錄——無論是終端機、狀態列、通知 daemon 還是瀏覽器，底層都走同一套查詢介面。
 
+## 概念位置
+
+- 裝了字型但應用程式還是看不到：[font-availability-at-startup](/linux/dotfile/knowledge-cards/font-availability-at-startup/)（process 啟動時快照的時序問題）
+
 ## fc-* 工具分工
 
 fontconfig 附帶一組命令列工具，各自負責一件事：
@@ -56,4 +60,3 @@ fontconfig 把字型目錄的掃描結果存成快取檔，避免每次查詢都
 ## 下一步路由
 
 - 字型安裝方式：[終端機與編輯器](/linux/dotfile/03-terminal-ecosystem/)的字型管理段
-- 裝了字型但應用程式還是看不到：[font-availability-at-startup](/linux/dotfile/knowledge-cards/font-availability-at-startup/)（process 啟動時快照的時序問題）

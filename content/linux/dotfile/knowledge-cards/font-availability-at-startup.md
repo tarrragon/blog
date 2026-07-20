@@ -10,6 +10,10 @@ tags: ["dotfile", "font", "fontconfig", "knowledge-cards"]
 
 這個機制發生在 fontconfig + process 記憶體層，跟顯示協議無關——Wayland 和 X11 下的行為相同。
 
+## 概念位置
+
+這張卡是 [fontconfig](/linux/dotfile/knowledge-cards/fontconfig/) 的時序延伸：fontconfig 負責字型怎麼被搜尋與 fallback，這裡處理的是「process 何時看得到新裝的字」這個獨立的時間軸問題。受影響的長駐元件常由 [Compositor](/linux/dotfile/knowledge-cards/compositor/) 的 `exec-once` 拉起，這也是為什麼重新登入能一次讓整批元件吃到新字型。
+
 ## 同一時刻、兩種查詢結果
 
 裝完新字型後，在終端機用 fontconfig 的查詢工具 `fc-match`（每次執行都是新 process）去查：

@@ -8,6 +8,10 @@ tags: ["dotfile", "prod-parity", "knowledge-cards"]
 
 Package manager 抽象層是 dotfile 跨發行版可攜的關鍵切分：一份 dotfile repo 裡，真正綁特定發行版的只有「用哪個 package manager 裝套件」這一層，其餘（config 檔內容、symlink 部署、shell 框架安裝）都是跨 distro 共通的。把這一層隔離出來，同一份 repo 就能同時服務 Arch 工作站、Debian 容器與 macOS。
 
+## 概念位置
+
+這個抽象讓 [GNU Stow](/linux/dotfile/knowledge-cards/gnu-stow/) 管的 config 層完全可攜。實作見 [工作站 dotfile 跨發行版落地](/linux/dotfile/10-prod-parity/workstation-cross-distro/) 與 [dotfile 跨進 runtime container](/linux/dotfile/10-prod-parity/container-ergonomics/)。
+
 ## 綁 distro 的只有裝套件那一步
 
 各發行版的差異集中在 package manager 的指令與套件名：
@@ -46,5 +50,3 @@ Alpine        apk add --no-cache <pkg>
 ## 邊界
 
 當某工具在目標 distro 根本沒打包時，抽象層也擋不住——退回手動安裝或換等價工具。哪些工具在保守發行版容易缺席，見 [發行版打包粒度](/linux/dotfile/knowledge-cards/distro-package-granularity/)；為什麼清單裡一個爛名字會拖垮整批安裝，見 [apt 安裝的交易原子性](/linux/dotfile/knowledge-cards/apt-transaction-atomicity/)。
-
-這個抽象讓 [GNU Stow](/linux/dotfile/knowledge-cards/gnu-stow/) 管的 config 層完全可攜。實作見 [工作站 dotfile 跨發行版落地](/linux/dotfile/10-prod-parity/workstation-cross-distro/) 與 [dotfile 跨進 runtime container](/linux/dotfile/10-prod-parity/container-ergonomics/)。

@@ -8,6 +8,10 @@ tags: ["dotfile", "prod-parity", "debian", "knowledge-cards"]
 
 發行版打包粒度是「一個發行版把軟體切成多細的系統套件」的策略。它決定同一個安裝指令的後果量級：有的發行版把每個 library 都包成獨立系統套件，有的把 library 留給語言自己的套件管理器管。同一個工具在前者可能拉進幾百個系統套件、在後者只拉幾個。
 
+## 概念位置
+
+這條跟 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/) 互補：抽象層講「同一件事換 backend 怎麼寫」，這張講「同一個指令換 backend 後果量級差多少」。一個爛名字為何拖垮整批安裝，見 [apt 安裝的交易原子性](/linux/dotfile/knowledge-cards/apt-transaction-atomicity/)。實作上怎麼判斷該不該進 apt 清單，見 [工作站 dotfile 跨發行版落地](/linux/dotfile/10-prod-parity/workstation-cross-distro/)。
+
 ## 兩種粒度
 
 以 nodejs + npm 為例，同樣一個安裝動作在兩種發行版的展開差一個量級（Debian bookworm 實測）：
@@ -36,5 +40,3 @@ Debian 的哲學是「所有東西都是系統套件」，所以它把 nodejs / 
 ## 邊界
 
 粒度細不是缺點：Debian 把 library 拆成系統套件，換來的是每個 library 都能收到發行版的安全更新與依賴一致性保證，這對伺服器場景有價值。問題只出在「拿它裝語言生態的開發依賴」——那是 version manager 的場域。判斷依用途，不是依發行版好壞。
-
-這條跟 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/) 互補：抽象層講「同一件事換 backend 怎麼寫」，這張講「同一個指令換 backend 後果量級差多少」。一個爛名字為何拖垮整批安裝，見 [apt 安裝的交易原子性](/linux/dotfile/knowledge-cards/apt-transaction-atomicity/)。實作上怎麼判斷該不該進 apt 清單，見 [工作站 dotfile 跨發行版落地](/linux/dotfile/10-prod-parity/workstation-cross-distro/)。
