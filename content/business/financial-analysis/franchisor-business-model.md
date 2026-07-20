@@ -6,7 +6,7 @@ weight: 16
 tags: ["business", "case-analysis", "franchise", "financial-analysis"]
 ---
 
-[篇一](/business/financial-analysis/franchise-breakfast-pnl/)分析的那間早餐店月營收 71.5 萬、帳面淨利不到 3 萬、調整後月虧約 14,000 元。同一個加盟體系的母公司呢？台灣上市櫃的加盟餐飲母公司年營收在 20-88 億之間、淨利率 7-10%。加盟主在單店利潤下緣掙扎，母公司在規模效應中獲利——同一條價值鏈的兩端，財務結構完全不同。本篇從母公司端拆解加盟體系的利潤邏輯，並提供加盟主反向判讀母公司的方法。
+[篇一](/business/financial-analysis/franchise-breakfast-pnl/)分析的那間早餐店月營收 71.5 萬、帳面淨利不到 3 萬、調整後月虧約 14,000 元。同一個加盟體系的母公司呢？台灣上市櫃的加盟餐飲母公司年營收在 20-88 億之間、[淨利率](/business/knowledge-cards/net-margin/) 7-10%。加盟主在單店利潤下緣掙扎，母公司在規模效應中獲利——同一條價值鏈的兩端，財務結構完全不同。本篇從母公司端拆解加盟體系的利潤邏輯，並提供加盟主反向判讀母公司的方法。
 
 ## 加盟母公司靠什麼賺錢
 
@@ -68,7 +68,7 @@ tags: ["business", "case-analysis", "franchise", "financial-analysis"]
 
 關店率上升但母公司營收仍在成長——代表成長靠的是開更多新店來補關掉的店，每間新店的存活風險在增加。加盟金佔營收比例持續上升（從 5% 升到 10%+）是同一個訊號的另一面——一次性收入佔比膨脹代表持續性收入（食材供應、權利金）的成長動能在減弱。
 
-每店年均貢獻持續下降代表市場飽和或品牌吸引力減弱。八方雲集的應對策略是「汰弱留強」——主動淘汰業績差的門市，讓每店平均數字維持健康。這跟[產業基準分析](/business/financial-analysis/industry-benchmarking/)的同店銷售成長率（same-store sales growth）是同一個概念——扣除新開店和關店的擴張效應，看既有店本身的表現。
+每店年均貢獻持續下降代表市場飽和或品牌吸引力減弱。八方雲集的應對策略是「汰弱留強」——主動淘汰業績差的門市，讓每店平均數字維持健康。這跟[產業基準分析](/business/financial-analysis/industry-benchmarking/)的[同店銷售成長率](/business/knowledge-cards/same-store-sales/)（same-store sales growth）是同一個概念——扣除新開店和關店的擴張效應，看既有店本身的表現。
 
 ## 加盟主評估母公司的反向判讀
 

@@ -6,7 +6,7 @@ weight: 26
 tags: ["business", "financial-analysis", "retail", "merger-acquisition"]
 ---
 
-同一個便利商店產業，統一超市值 2,200 億、全家 425 億、萊爾富成交不到 40 億、OK 只值 1.25 億——每店估值從 3,235 萬到 33 萬，差距 100 倍。疫情後三年內四筆通路併購案接連發生，台灣零售業從多元競爭走向寡占。每一筆交易的估值邏輯、買方動機和整合策略都不同，但背後反映的是同一個產業結構問題：**固定成本佔比高的零售業，規模不夠大就無法存活**。本篇用[企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)和[估值方法](/business/financial-analysis/valuation-methods/)的框架，拆解四筆交易的商業邏輯。
+同一個便利商店產業，統一超[市值](/business/knowledge-cards/market-cap/) 2,200 億、全家 425 億、萊爾富成交不到 40 億、OK 只值 1.25 億——每店估值從 3,235 萬到 33 萬，差距 100 倍。疫情後三年內四筆通路併購案接連發生，台灣零售業從多元競爭走向寡占。每一筆交易的估值邏輯、買方動機和整合策略都不同，但背後反映的是同一個產業結構問題：**固定成本佔比高的零售業，規模不夠大就無法存活**。本篇用[企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)和[估值方法](/business/financial-analysis/valuation-methods/)的框架，拆解四筆交易的商業邏輯。
 
 ## 四筆交易的估值與動機比較
 
@@ -53,7 +53,7 @@ tags: ["business", "financial-analysis", "retail", "merger-acquisition"]
 
 四筆交易的共同背景是一個結構性事實：**高固定成本、薄利多銷的零售業，規模不足就無法分攤成本**。
 
-[通路商成本結構](/business/financial-analysis/retailer-cost-structure/)的分析顯示，統一超毛利率 34% 扣完營業費用後只剩 3-4.5% 營業利益。全家的營業利益率更低，只有 1.69%——每做 100 元生意只剩 1.69 元利潤。規模更小的萊爾富和 OK 連這個微薄利潤都擠不出來——營業費用率（租金+人事+水電+冷藏）跟大廠差不多，但營收不夠分攤。
+[通路商成本結構](/business/financial-analysis/retailer-cost-structure/)的分析顯示，統一超毛利率 34% 扣完營業費用後只剩 3-4.5% 營業利益。全家的[營業利益率](/business/knowledge-cards/operating-margin/)更低，只有 1.69%——每做 100 元生意只剩 1.69 元利潤。規模更小的萊爾富和 OK 連這個微薄利潤都擠不出來——營業費用率（租金+人事+水電+冷藏）跟大廠差不多，但營收不夠分攤。
 
 這跟[篇一早餐店](/business/financial-analysis/franchise-breakfast-pnl/)的邊際貢獻分析是同一個邏輯：每多一間店如果能分攤固定成本、邊際貢獻為正，展店合理；如果每間新店的邊際貢獻不足以覆蓋它自己的固定成本（租金+人事+設備），展店反而加速虧損。統一超 7,200+ 店的規模讓它的採購議價力、物流效率、會員數據都有結構性優勢；OK 380 店的規模讓它在每個維度都處於劣勢。
 

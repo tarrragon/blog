@@ -3,7 +3,7 @@ name: knowledge-cards
 description: "Standardizes the full lifecycle of atomic knowledge cards (Zettelkasten term cards) in a content collection: creation criteria, gap detection via the term-role × baseline matrix, card authoring format, registration points (index + tool scope), link backfill, and module-scale audits. Use when creating cards, auditing a module for missing cards, restructuring card directories, or wiring card links into articles. Triggers: 建卡, 知識卡, 缺卡, 術語卡, 卡片 audit, 卡片格式, 概念位置, 鄰卡連結, 回填連結, 卡片目錄, 卡片重構, 詞頻掃描, 基線, 行內解釋, knowledge card, term card, card gap."
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   category: content-methodology
 ---
 
@@ -60,4 +60,5 @@ metadata:
 
 ---
 
+**Version**: 1.1.0 — 從第一次代理人執行（10 張卡批次、由較小模型代理依本 skill 自主完成）回收兩條：(1) card-authoring 補「批次完成後的機械自驗」script（首段 / 概念位置段鄰卡連結計數——實測一批 10 張有 1 張首稿漏連結、自讀沒抓到、機械統計立刻現形）；(2) 補「字句層命中是候選不是判決」段與兩類實測 false positive（字面意義的泛用詞 / 數學結構的真必然）、判別線是「必然有沒有上游設計選擇當前提」
 **Version**: 1.0.0 — 初版：生命週期六站（判準 / 落點 / 撰寫 / 登記 / 回填 / audit）、缺卡判定矩陣（術語角色 × 基線）、註冊點清單（index / 工具作用域雙清單 / 上層入口 / weight 帶——含「作用域幻覺」教訓：檢查通過可能只是不在作用域）、兩份 reference（card-authoring / gap-audit-and-backfill）。從一次金融分析模組的缺卡 audit 與第一批 8 張卡的實跑經驗抽出

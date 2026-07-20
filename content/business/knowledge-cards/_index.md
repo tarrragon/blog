@@ -136,21 +136,31 @@ weight: 編號
 
 讀懂上市櫃公司財報的術語層。服務 [財務分析模組](/business/financial-analysis/) 的案例判讀。
 
-| 卡片                                                                                | 核心問題                       | 常見出現位置               |
-| ----------------------------------------------------------------------------------- | ------------------------------ | -------------------------- |
-| [Operating Margin](/business/knowledge-cards/operating-margin/)                     | 本業扣完營運費用賺多少         | 三率結構、費用率、營業槓桿 |
-| [Net Margin](/business/knowledge-cards/net-margin/)                                 | 每元營收最終留給股東多少       | 三率結構、業外損益、ROE    |
-| [EPS](/business/knowledge-cards/eps/)                                               | 獲利換算到每股尺度             | P/E、配息率、追溯調整      |
-| [Market Cap](/business/knowledge-cards/market-cap/)                                 | 市場對整家公司的定價           | P/E、EV、規模比較          |
-| [P/E Ratio](/business/knowledge-cards/pe-ratio/)                                    | 用幾倍獲利買下這家公司         | 估值帶、成長溢價、價值陷阱 |
-| [Depreciation & Amortization](/business/knowledge-cards/depreciation-amortization/) | 資本支出分年進損益表           | capex、EBITDA、營業槓桿    |
-| [Related-Party Transaction](/business/knowledge-cards/related-party-transaction/)   | 集團內部定價對財報的扭曲       | 垂直整合、轉移定價、毛利率 |
-| [Same-Store Sales](/business/knowledge-cards/same-store-sales/)                     | 扣掉展店效應的品牌健康度       | 連鎖業、展店品質、漲價拆分 |
-| [ROE](/business/knowledge-cards/roe/)                                               | 股東資本的報酬速度             | 杜邦拆解、價值投資篩選     |
-| [Capex](/business/knowledge-cards/capex/)                                           | 資本支出的去向與回收           | FCF、擴產、折舊            |
-| [歸母淨利](/business/knowledge-cards/parent-attributable-income/)                   | 淨利中真正屬於母公司股東的部分 | 控股集團、非控制權益、EPS  |
-| [估值帶](/business/knowledge-cards/valuation-band/)                                 | 對照自身歷史的估值區間         | P/E、P/B、derating         |
-| [正常化盈餘](/business/knowledge-cards/normalized-earnings/)                        | 剔除一次性損益後的獲利基礎     | 估值分母、獲利品質         |
+| 卡片                                                                                              | 核心問題                         | 常見出現位置               |
+| ------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------------- |
+| [Operating Margin](/business/knowledge-cards/operating-margin/)                                   | 本業扣完營運費用賺多少           | 三率結構、費用率、營業槓桿 |
+| [Net Margin](/business/knowledge-cards/net-margin/)                                               | 每元營收最終留給股東多少         | 三率結構、業外損益、ROE    |
+| [EPS](/business/knowledge-cards/eps/)                                                             | 獲利換算到每股尺度               | P/E、配息率、追溯調整      |
+| [Market Cap](/business/knowledge-cards/market-cap/)                                               | 市場對整家公司的定價             | P/E、EV、規模比較          |
+| [P/E Ratio](/business/knowledge-cards/pe-ratio/)                                                  | 用幾倍獲利買下這家公司           | 估值帶、成長溢價、價值陷阱 |
+| [Depreciation & Amortization](/business/knowledge-cards/depreciation-amortization/)               | 資本支出分年進損益表             | capex、EBITDA、營業槓桿    |
+| [Related-Party Transaction](/business/knowledge-cards/related-party-transaction/)                 | 集團內部定價對財報的扭曲         | 垂直整合、轉移定價、毛利率 |
+| [Same-Store Sales](/business/knowledge-cards/same-store-sales/)                                   | 扣掉展店效應的品牌健康度         | 連鎖業、展店品質、漲價拆分 |
+| [ROE](/business/knowledge-cards/roe/)                                                             | 股東資本的報酬速度               | 杜邦拆解、價值投資篩選     |
+| [Capex](/business/knowledge-cards/capex/)                                                         | 資本支出的去向與回收             | FCF、擴產、折舊            |
+| [歸母淨利](/business/knowledge-cards/parent-attributable-income/)                                 | 淨利中真正屬於母公司股東的部分   | 控股集團、非控制權益、EPS  |
+| [估值帶](/business/knowledge-cards/valuation-band/)                                               | 對照自身歷史的估值區間           | P/E、P/B、derating         |
+| [正常化盈餘](/business/knowledge-cards/normalized-earnings/)                                      | 剔除一次性損益後的獲利基礎       | 估值分母、獲利品質         |
+| [Dividend Yield](/business/knowledge-cards/dividend-yield/)                                       | 配息相對股價的年化收益率         | 收益率溢價、配息可持續性   |
+| [Payout Ratio](/business/knowledge-cards/payout-ratio/)                                           | 獲利分給股東的比例               | 留存盈餘、ROE 機械性推升   |
+| [Operating Leverage](/business/knowledge-cards/operating-leverage/)                               | 固定成本攤提放大或壓縮利潤       | 營業槓桿、擴產初期利潤率   |
+| [Cash Flow Statement](/business/knowledge-cards/cash-flow-statement/)                             | 利潤跟現金落差的三段拆解         | 間接法、營運資本變動       |
+| [Accounts Receivable](/business/knowledge-cards/accounts-receivable/)                             | 已認列收入未收到現金的資產       | 應收天數、帳齡結構         |
+| [Consolidated Financial Statements](/business/knowledge-cards/consolidated-financial-statements/) | 子公司營收獲利全額併入母公司報表 | 合併範圍、非控制權益       |
+| [Non-Controlling Interest](/business/knowledge-cards/non-controlling-interest/)                   | 子公司獲利中屬於外部股東的部分   | 合併報表、歸母淨利         |
+| [Impairment](/business/knowledge-cards/impairment/)                                               | 資產帳面高於可回收金額的強制認列 | 商譽減損、正常化盈餘       |
+| [Transfer Pricing](/business/knowledge-cards/transfer-pricing/)                                   | 集團內部交易的定價決策           | 關係人交易、毛利率扭曲     |
+| [Share Pledge](/business/knowledge-cards/share-pledge/)                                           | 控制權建立在槓桿上的治理風險     | 質押比率、平倉壓力         |
 
 ## 執行知識
 
