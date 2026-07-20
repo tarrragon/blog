@@ -6,7 +6,7 @@ weight: 40
 tags: ["dotfile", "container", "prod-parity", "knowledge-cards"]
 ---
 
-Image tag pinning 是「用夠精確的 tag 把 base image 凍結成一個固定形狀」的紀律。它決定的是可重現性：同一個 Dockerfile 今天 build 跟三個月後 build，跑出來的 runtime 是不是同一個——這也是讓本機跟線上逐項相同（即 parity）的前提。「本機能 build、CI 卻掛掉」而 code 沒動時，第一個要查的就是 tag 夠不夠精確。
+Image tag pinning 是「用夠精確的 tag 把 base image 凍結成一個固定形狀」的紀律。它決定的是可重現性：同一個 Dockerfile 今天 build 跟三個月後 build，跑出來的 runtime 是不是同一個——這也是讓本機跟線上逐項相同（即 parity）的前提。「本機能 build、CI 卻掛掉」而 code 沒動時，第一個要查的就是 tag 夠不夠精確。這條紀律是 [Prod Parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/) 底下的一個具體維度。
 
 ## 概念位置
 

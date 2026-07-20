@@ -6,7 +6,7 @@ weight: 1
 tags: ["dotfile", "lua", "knowledge-cards"]
 ---
 
-Lua 是一個輕量級腳本語言，1993 年在巴西開發，名字是葡萄牙語的「月亮」。整個直譯器約 300KB，設計目標是**嵌入到其他程式當配置和擴展語言**，不是當獨立的通用語言。
+Lua 是一個輕量級腳本語言，1993 年在巴西開發，名字是葡萄牙語的「月亮」。整個直譯器約 300KB，設計目標是**嵌入到其他程式當配置和擴展語言**，不是當獨立的通用語言——[Compositor](/linux/dotfile/knowledge-cards/compositor/) 這類需要外部客製的核心程式正是它常見的宿主。
 
 Hyprland（v0.55+ 的配置格式，屬於 [Compositor](/linux/dotfile/knowledge-cards/compositor/) 一類）、Neovim（整個 plugin 和配置生態）、WezTerm（terminal emulator 配置）都用 Lua 作為配置語言。在 dotfile 管理的脈絡裡，Lua 是讀懂和寫好這些工具配置的前提知識。
 

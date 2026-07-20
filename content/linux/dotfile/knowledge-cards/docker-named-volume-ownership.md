@@ -6,7 +6,7 @@ weight: 51
 tags: ["linux", "container", "docker", "knowledge-cards"]
 ---
 
-一個空的 Docker named volume 首次掛載時，它的 owner 由 image 內對應路徑的狀態決定：image 裡該路徑**已存在**時，Docker 用那個路徑的 owner 與內容初始化 volume；image 裡該路徑**不存在**時，Docker 直接建一個 root 擁有的空 volume 掛上去。這條規則決定了一個常踩的陷阱——要讓 container 內的非 root 使用者寫入掛載的 volume，該路徑必須先在 image 裡以對的 owner 存在。
+一個空的 Docker named volume 首次掛載時，它的 owner 由 image 內對應路徑的狀態決定：image 裡該路徑**已存在**時，Docker 用那個路徑的 owner 與內容初始化 volume；image 裡該路徑**不存在**時，Docker 直接建一個 root 擁有的空 volume 掛上去。這條規則決定了一個常踩的陷阱——要讓 container 內的非 root 使用者寫入掛載的 volume，該路徑必須先在 image 裡以對的 owner 存在。這條規則屬於 image build 期該決定什麼的範疇，跟 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 凍結 base image 形狀是同一層次的考量。
 
 ## 概念位置
 

@@ -6,7 +6,7 @@ weight: 43
 tags: ["dotfile", "prod-parity", "knowledge-cards"]
 ---
 
-Package manager 抽象層是 dotfile 跨發行版可攜的關鍵切分：一份 dotfile repo 裡，真正綁特定發行版的只有「用哪個 package manager 裝套件」這一層，其餘（config 檔內容、symlink 部署、shell 框架安裝）都是跨 distro 共通的。把這一層隔離出來，同一份 repo 就能同時服務 Arch 工作站、Debian 容器與 macOS。
+Package manager 抽象層是 dotfile 跨發行版可攜的關鍵切分：一份 dotfile repo 裡，真正綁特定發行版的只有「用哪個 package manager 裝套件」這一層，其餘（config 檔內容、symlink 部署、shell 框架安裝）都是跨 distro 共通的。把這一層隔離出來，同一份 repo 就能同時服務 Arch 工作站、Debian 容器與 macOS。這層抽象是 [發行版打包粒度](/linux/dotfile/knowledge-cards/distro-package-granularity/) 差異的因應之道。
 
 ## 概念位置
 

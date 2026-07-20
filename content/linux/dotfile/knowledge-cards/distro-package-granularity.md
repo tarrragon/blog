@@ -6,7 +6,7 @@ weight: 44
 tags: ["dotfile", "prod-parity", "debian", "knowledge-cards"]
 ---
 
-發行版打包粒度是「一個發行版把軟體切成多細的系統套件」的策略。它決定同一個安裝指令的後果量級：有的發行版把每個 library 都包成獨立系統套件，有的把 library 留給語言自己的套件管理器管。同一個工具在前者可能拉進幾百個系統套件、在後者只拉幾個。
+發行版打包粒度是「一個發行版把軟體切成多細的系統套件」的策略。它決定同一個安裝指令的後果量級：有的發行版把每個 library 都包成獨立系統套件，有的把 library 留給語言自己的套件管理器管。同一個工具在前者可能拉進幾百個系統套件、在後者只拉幾個。這條粒度差異坐落在 [Package Manager 抽象層](/linux/dotfile/knowledge-cards/package-manager-abstraction/) 底下、是各發行版打包策略的具體展開。
 
 ## 概念位置
 

@@ -6,7 +6,7 @@ weight: 51
 tags: ["linux", "container", "security", "knowledge-cards"]
 ---
 
-機密（token、金鑰、密碼）的正確放法是 runtime 注入：不烤進 image layer、也不提交進 git（連私有 repo 都不），而是存成 host 側的 gitignored 檔或 secrets manager、在 container 啟動時用環境變數 / `--env-file` 注入。理由是 image layer 與 git repo 都不是機密容器——它們會被複製、快取、分享、永久留存，機密一旦進去就跟著到處跑、且很難真正抹除。把機密跟可分享的 artifact（image、Dockerfile、設定）分離，是這條原則的核心。
+機密（token、金鑰、密碼）的正確放法是 runtime 注入：不烤進 image layer、也不提交進 git（連私有 repo 都不），而是存成 host 側的 gitignored 檔或 secrets manager、在 container 啟動時用環境變數 / `--env-file` 注入。理由是 image layer 與 git repo 都不是機密容器——它們會被複製、快取、分享、永久留存，機密一旦進去就跟著到處跑、且很難真正抹除。把機密跟可分享的 artifact（image、Dockerfile、設定）分離，是這條原則的核心。這條分離原則跟 [Docker named volume 掛載點 owner](/linux/dotfile/knowledge-cards/docker-named-volume-ownership/) 同屬 image build 期該決定什麼的範疇。
 
 ## 概念位置
 
