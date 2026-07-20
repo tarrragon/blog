@@ -31,6 +31,7 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 - [驗收條件方法論](acceptance-criteria-methodology/)
 - [經驗分享文章的寫作準則](writing-guidelines/)
 - [SOLID 寫作方法論](solid-writing-methodology/)：程式結構原則映射到文章體系的組合層（卡片盒管原子層、SOLID 管文章責任邊界 / 依賴方向 / 擴充點 / 讀者分流）
+- [術語解釋分層方法論](term-explanation-layering-methodology/)：專業術語的行內 / 連卡 / 裸用三級、用「術語角色 × 前置知識基線」矩陣判定、含缺卡 audit 流程
 
 **文件與 API 設計** — function 文件分層、測試命名作為 spec、commit message vs source code doc 的職責邊界、型別取代 doc 等表達設計議題。例：
 
