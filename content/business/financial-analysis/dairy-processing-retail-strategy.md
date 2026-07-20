@@ -2,7 +2,7 @@
 title: "乳品加工技術與通路策略：殺菌決策、保存期半徑與貨架機會成本"
 date: 2026-07-18
 description: "乳品加工廠的殺菌方式選擇如何決定通路半徑和定價策略、通路貨架的坪效計算邏輯、消費者偏好如何倒推產品設計——跨國結構比較"
-weight: 23
+weight: 25
 tags: ["business", "financial-analysis", "dairy", "supply-chain", "retail"]
 ---
 

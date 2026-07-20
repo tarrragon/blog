@@ -46,6 +46,7 @@ TLS 終止指反向代理在入口解開 HTTPS 加密，後端拿到的是解密
 
 ## 下一步路由
 
+- 入口層的整體地圖（DNS → 負載平衡 → reverse proxy → 應用的責任鏈、TLS 終結位置、單機與雲端入口的選擇條件）→ [infra：流量入口層](/infra/03-network-foundation/traffic-entry-layer/)
 - 流量分給哪個實例、依什麼演算法 → [負載分散演算法](/operations/01-load-balancing/load-balancing-algorithms/)
 - 在 nginx 上把 upstream、健康檢查、timeout 配起來 → [nginx 實務配置](/operations/01-load-balancing/nginx-configuration/)
 - 健康怎麼判、多久判一次、判錯的後果 → [健康檢查路由設計](/operations/01-load-balancing/health-check-routing/)

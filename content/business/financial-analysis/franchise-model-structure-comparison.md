@@ -2,7 +2,7 @@
 title: "加盟餐飲母公司結構比較：食材供應模式如何決定獲利結構"
 date: 2026-07-20
 description: "比較同產業加盟母公司時，用食材供應模式（自建工廠 vs 關係企業採購 vs 外部代工）作為結構分類的起點，拆解毛利率、品牌集中度、展店策略和估值差距的成因"
-weight: 18
+weight: 19
 tags: ["business", "case-analysis", "franchise", "financial-analysis", "industry-comparison"]
 ---
 

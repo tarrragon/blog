@@ -2,7 +2,7 @@
 title: "外部衝擊如何觸發產業策略轉型：從成本暴漲到競爭格局重塑"
 date: 2026-07-18
 description: "當整個產業遇到原料暴漲、供給中斷或需求崩跌時，判斷哪些公司能撐過去、哪些會被淘汰、衝擊後的競爭格局如何重塑的分析框架"
-weight: 19
+weight: 21
 tags: ["business", "case-analysis", "financial-analysis", "industry-analysis", "supply-chain"]
 ---
 

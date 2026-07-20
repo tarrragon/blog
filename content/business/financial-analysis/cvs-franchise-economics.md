@@ -2,7 +2,7 @@
 title: "超商加盟經濟學：母公司與加盟主的成本分攤、利潤結構和退場機制"
 date: 2026-07-18
 description: "評估超商加盟是否值得、或判讀超商母公司的加盟體系健康度時，拆解母公司與加盟主之間的毛利分潤、成本歸屬、結構性壓力和退場條件的方法"
-weight: 27
+weight: 30
 tags: ["business", "financial-analysis", "retail", "franchise"]
 ---
 

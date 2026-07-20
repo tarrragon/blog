@@ -10,7 +10,7 @@ Stub 是測試作者手動寫死回應資料的 test double：呼叫者拿到的
 
 ## 概念位置
 
-Stub 驗證的標的是「假設成立時、前端邏輯是否正確」，不是「假設本身是否成立」。假設與斷言出自同一人之手，永遠自洽——這一點讓 stub 沒有能力檢出「對後端行為的理解本身就錯了」這一類 bug。[Mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的是協議層的結構性盲區，stub 的盲區發生在更上游：連需要驗證的行為假設都由同一人設計。兩種盲區疊加時，測試綠燈能證明的範圍比表面上小得多。
+Stub 驗證的標的是「假設成立時、前端邏輯是否正確」，不是「假設本身是否成立」。假設與斷言出自同一人之手，永遠自洽——這一點讓 stub 沒有能力檢出「對後端行為的理解本身就錯了」這一類 bug。[Mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的是協議層的結構性盲區，stub 的盲區發生在更上游：連需要驗證的行為假設都由同一人設計。兩種盲區疊加時，測試綠燈能證明的範圍比表面上小得多。Stub 在 test double 家族裡的位置（跟 dummy / spy / mock / fake 的分工全景）見 [Test Double Taxonomy](/testing/knowledge-cards/test-double-taxonomy/)。
 
 ## 可觀察訊號與例子
 

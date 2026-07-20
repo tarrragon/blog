@@ -63,6 +63,7 @@ location / {
 
 ## 下一步路由
 
+- 入口層的整體地圖（DNS → 負載平衡 → reverse proxy → 應用的責任鏈、TLS 終結位置、單機與雲端入口的選擇條件）→ [infra：流量入口層](/infra/03-network-foundation/traffic-entry-layer/)
 - 這些方法各適合什麼流量型態 → [負載分散演算法](/operations/01-load-balancing/load-balancing-algorithms/)
 - 被動與主動健康檢查的完整對照、閾值怎麼定 → [健康檢查路由設計](/operations/01-load-balancing/health-check-routing/)
 - timeout 為什麼要由外到內遞減 → [反向代理的職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)

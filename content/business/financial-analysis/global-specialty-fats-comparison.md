@@ -2,7 +2,7 @@
 title: "全球特殊油脂三廠比較：AAK、不二製油、南僑的策略分群與產業衝擊因應"
 date: 2026-07-19
 description: "分析全球特殊油脂產業中同陣營企業的策略差異時，用 AAK（瑞典）、不二製油（日本）、南僑（台灣）三家上市公司的財報結構比較配方壁壘型企業如何因應原料波動、可可危機和市場轉型"
-weight: 35
+weight: 38
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "industry-comparison"]
 ---
 

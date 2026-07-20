@@ -2,7 +2,7 @@
 title: "南僑：從 commodity 油脂到配方壁壘的中游加工策略"
 date: 2026-07-19
 description: "分析中游特殊加工型企業如何在 commodity 上游和品牌下游之間建立配方壁壘時，用南僑的投控結構、B2B 黏性、全球特殊油脂排名和跨國佈局做判讀"
-weight: 33
+weight: 36
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain"]
 ---
 

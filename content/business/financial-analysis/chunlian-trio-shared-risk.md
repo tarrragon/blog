@@ -2,7 +2,7 @@
 title: "中聯油脂三股東：共用上游的品牌競爭與食安系統風險"
 date: 2026-07-19
 description: "分析多家零售品牌共用同一座上游代工平台時，用股權結構辨識隱性供應集中、用各品牌的財報差異驗證差異化真實程度、用食安事件量化共用風險的傳導範圍"
-weight: 32
+weight: 35
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commodity"]
 ---
 
