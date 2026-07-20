@@ -36,3 +36,4 @@ TLS 終結是 ALB 的標準職責：HTTPS listener 引用 ACM（AWS Certificate 
 - [Subnet](/infra/knowledge-cards/subnet/) — ALB 跑在 public subnet，後端跑在 private subnet
 - [Security Group](/infra/knowledge-cards/security-group/) — ALB 的 security group 是系統對外唯一合理開放 0.0.0.0/0 的位置（僅限 80/443）
 - [ECS](/infra/knowledge-cards/ecs/) — ALB 透過 target group 把流量導向 ECS task
+- [流量入口層](/infra/03-network-foundation/traffic-entry-layer/) — ALB 作為 L7 入口在責任鏈的位置、跟單機 nginx 的選擇條件

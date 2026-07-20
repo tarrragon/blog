@@ -33,3 +33,4 @@ nginx 設定要決定：server block（類似 Apache 的 VirtualHost）怎麼組
 
 - [.htaccess](/infra/knowledge-cards/htaccess/) — Apache 的分散設定，遷移到 nginx 時需要轉換
 - [ALB](/infra/knowledge-cards/alb/) — 雲端環境裡承擔部分 nginx 職責
+- [流量入口層](/infra/03-network-foundation/traffic-entry-layer/) — nginx 作為單機 reverse proxy 在請求責任鏈的位置、以及跟雲端 ALB 的選擇條件

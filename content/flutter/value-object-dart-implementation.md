@@ -22,6 +22,8 @@ tags: ["flutter", "dart", "value-object", "extension-type", "freezed", "copywith
 
 三種載體對應兩條軸：這個值是單一底層值還是多欄位複合值、以及需不需要 runtime 的型別身份。單一底層值（金額包一個數字、識別碼包一個字串）走 extension type 最省；多欄位複合值（地址、日期範圍、含幣別的金額）需要一個真正的物件裝多個欄位，走 class 路徑，class 又分手寫與 freezed 產生兩種。runtime 身份的需求橫切這兩軸——需要 `is Money` 在執行期為真、或需要反射看得到型別時，只有 class 路徑滿足。
 
+Dart 3 的 record 是多欄位載體、還自帶結構相等，看起來像多欄位複合值的第四條路徑，但它不入選值物件的載體、原因在型別語意。record 是結構型別而非名目型別：兩個欄位形狀相同的概念（`(String, String)` 的地址與姓名）在型別系統裡是同一個 record 型別、拿不到 `DateRange` 這種領域名字，也就換不到「傳錯型別編譯期就擋」的保護。record 沒有建構子、無處掛不變式檢查，也無法限縮 API——任何拿到它的程式碼都能讀所有欄位、組任意新值。值物件要的名目身份、建構期不變式、封閉介面，record 結構上三個都不給。它適合的是函式的匿名多回傳與臨時分組，不是需要領域約束的值物件。
+
 ### 手寫 immutable class 與 copyWith
 
 手寫 immutable class 是最直接的載體：所有欄位 `final`、建構子帶不變式檢查、要「改」就造一個新實例。多欄位複合值在這條路徑上用 [copyWith](/flutter/knowledge-cards/copywith/) 做逐欄位覆寫——傳要改的欄位、其餘保留原值、回傳新實例，這對欄位組合全部合法的值語意清晰。成本在 boilerplate：`==` 與 `hashCode` 要手寫且要涵蓋所有參與相等性的欄位、`copyWith` 每加一個欄位就要同步一行，漏一個欄位的相等性比對是安靜的 bug。

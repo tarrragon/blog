@@ -18,4 +18,4 @@ Switching Cost 跟 [Lock-in](/business/knowledge-cards/lock-in/) 互為表裡，
 
 ## 判讀方式
 
-當分析師說「AI 模型之間的 switching cost 下降」時，意味著模型 API 規格越來越標準化、prompt 也可以稍微改一改就跨模型用，客戶換成本變低。這對 AI Labs 是壞消息—它們必須靠 [Lock-in](/business/knowledge-cards/lock-in/) 的其他維度（資料整合、企業合約、權限管理）來補回 switching cost，這就是為什麼要做 [Enterprise License](/business/knowledge-cards/enterprise-license/)。
+當分析師說「AI 模型之間的 switching cost 下降」時，意味著模型 API 規格越來越標準化、prompt 也可以稍微改一改就跨模型用，客戶換成本變低。這對 AI Labs 是壞消息—它們必須靠 [Lock-in](/business/knowledge-cards/lock-in/) 的其他維度（資料整合、企業合約、權限管理）來補回 switching cost，這就是為什麼要做 [Enterprise License](/business/knowledge-cards/enterprise-license/)。把名目切換成本拆成可逆與不可逆兩部分，是[賽道與商業模式判讀框架](/business/reading-frameworks/track-business-model-reading/)拆切換成本真實結構的做法。

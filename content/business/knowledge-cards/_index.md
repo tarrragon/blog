@@ -114,6 +114,7 @@ weight: 編號
 | [Consolidation Cycle](/business/knowledge-cards/consolidation-cycle/)     | 整併週期                   | M&A、紅海後段           |
 | [Niche Market](/business/knowledge-cards/niche-market/)                   | 利基市場                   | Vertical SaaS、護城河   |
 | [High Stickiness](/business/knowledge-cards/high-stickiness/)             | 高黏著度                   | lock-in、SaaS retention |
+| [Data Gravity（資料重力）](/business/knowledge-cards/data-gravity/)       | 資料累積推高遷移成本       | 黏著度來源、賽道判讀    |
 | [Rigid Demand](/business/knowledge-cards/rigid-demand/)                   | 剛性需求                   | 客戶非要不可的訊號      |
 | [Frontier Capability](/business/knowledge-cards/frontier-capability/)     | 前沿能力                   | AI Labs、領先差距       |
 | [Distribution](/business/knowledge-cards/distribution/)                   | 分發優勢                   | Big Tech、現有客戶基礎  |

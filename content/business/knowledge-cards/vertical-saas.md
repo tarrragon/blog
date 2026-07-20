@@ -18,4 +18,4 @@ Vertical SaaS 的設計前提是該行業的工作流程足夠特殊，通用工
 
 ## 判讀方式
 
-Vertical SaaS 的優勢是高 [黏著度](/business/knowledge-cards/high-stickiness/)、高 [切換成本](/business/knowledge-cards/switching-cost/)、客戶懂行業；劣勢是市場天花板低，難以擴張到其他行業。AI 時代它面臨「上游 [毛利壓縮](/business/knowledge-cards/valuation-compression/)」的壓力—因為要付 AI 模型費用給基礎模型供應商，原本接近零的 [邊際成本](/business/knowledge-cards/marginal-cost/) 變高，[估值](/business/knowledge-cards/valuation/) 跟著被擠壓。
+Vertical SaaS 的優勢是高 [黏著度](/business/knowledge-cards/high-stickiness/)、高 [切換成本](/business/knowledge-cards/switching-cost/)、客戶懂行業；劣勢是市場天花板低，難以擴張到其他行業。AI 時代它面臨「上游 [毛利壓縮](/business/knowledge-cards/valuation-compression/)」的壓力—因為要付 AI 模型費用給基礎模型供應商，原本接近零的 [邊際成本](/business/knowledge-cards/marginal-cost/) 變高，[估值](/business/knowledge-cards/valuation/) 跟著被擠壓。Vertical 與 horizontal 的對立位置是[賽道與商業模式判讀框架](/business/reading-frameworks/track-business-model-reading/)判定賽道寬度時的行業廣度軸。

@@ -20,6 +20,8 @@ tags: ["infra", "network", "reverse-proxy", "load-balancer", "dns"]
 
 這四段不是每個服務都要各配一台獨立設備。它們是四種責任，可以分散在四層設備上，也可以壓縮到同一台機器。共享主機就是把後三段壓縮到一台 Apache 上——同一個 process 收 HTTPS、跑 PHP、回靜態圖片，DNS 則由面板或域名商代管。壓縮成一層在單機、低流量時完全合理；責任鏈之所以要展開成多層，是因為可用性與流量規模長大之後，把它們分開才能各自獨立擴縮、獨立故障、獨立收斂。判斷「需要幾層」的核心，就是判斷這條鏈該在哪幾個交棒點切開。
 
+這條鏈的最前面還可以再疊一層本文不展開的入口——CDN（內容遞送網路）。需要就近服務地理分散的使用者、或要在邊緣吸收 DDoS 並回應靜態內容時，DNS 會指向 CDN 而不是直接指向源站入口，由 CDN 在邊緣終結 TLS、回應快取命中的靜態資源，只把 cache-miss 與動態請求回源到下面這條鏈。CDN 承擔的是邊緣遞送與快取，跟本文聚焦的源站入口鏈是不同層的責任；這裡先把源站這條鏈畫清楚，邊緣層另屬 CDN 的主題。四次交棒是源站側的完整責任集合，不是「使用者到應用」的唯一路徑。
+
 ## DNS：責任鏈的門牌，不承載流量
 
 DNS 承擔的是把域名解析成入口位址這一件事，它是責任鏈的第一段，但它不承載後續的請求流量。瀏覽器向 DNS resolver 問一次 `example.com` 的位址，拿到結果後就直接對那個位址建立連線，後面的 HTTP 請求與回應都不再經過 DNS。這個「只在連線前查一次」的性質，把 DNS 的判讀重點落在指向與切換這兩件事上，效能不是它的判讀軸。
@@ -52,19 +54,19 @@ reverse proxy 承擔的是代替後端應用接收外部請求、再依規則轉
 
 [nginx](/infra/knowledge-cards/nginx/) 是單機環境最常見的 reverse proxy 實作。它以集中的設定檔取代 Apache 分散的 `.htaccess`，用 `proxy_pass` 把請求轉給後端的應用伺服器（PHP-FPM、Node.js、Python WSGI）。在雲端，L7 負載平衡器（ALB）本身就內建了大部分 reverse proxy 的職責——TLS 終結、path 路由、健康檢查——所以雲端環境不一定需要另一層獨立的 nginx。這兩者的關係是本文後段「單機 nginx vs 雲端 ALB」要展開的核心選擇。
 
-動靜分離是 reverse proxy 這一層最具體的判斷。靜態資源（圖片、CSS、JS、字型）不需要應用邏輯就能回應，讓 reverse proxy 直接從檔案系統回掉，動態請求才轉發給應用伺服器。這樣做把應用伺服器的工作量集中在真正需要它的請求上——一個載入 50 個靜態資源、只有 1 個動態 API 呼叫的頁面，應用伺服器只需要處理那 1 個。共享主機時代 Apache 加 mod_php 把動靜都吃在同一個 process 裡，動靜分離是隱形的預設；自管的 nginx 要在設定裡明確劃出「哪些路徑走檔案、哪些路徑走 `proxy_pass`」。reverse proxy 四類職責（TLS 終結、路由、負載分散、健康檢查）的設計邊界與 timeout 由外到內遞減的紀律，在[反向代理的職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)展開。
+[動靜分離](/infra/knowledge-cards/static-dynamic-separation/)是 reverse proxy 這一層最具體的判斷。靜態資源（圖片、CSS、JS、字型）不需要應用邏輯就能回應，讓 reverse proxy 直接從檔案系統回掉，動態請求才轉發給應用伺服器。這樣做把應用伺服器的工作量集中在真正需要它的請求上——一個載入 50 個靜態資源、只有 1 個動態 API 呼叫的頁面，應用伺服器只需要處理那 1 個。共享主機時代 Apache 加 mod_php 把動靜都吃在同一個 process 裡，動靜分離是隱形的預設；自管的 nginx 要在設定裡明確劃出「哪些路徑走檔案、哪些路徑走 `proxy_pass`」。reverse proxy 四類職責（TLS 終結、路由、負載分散、健康檢查）的設計邊界與 timeout 由外到內遞減的紀律，在[反向代理的職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)展開。
 
 ## TLS 終結放在哪一層
 
-TLS 終結指的是責任鏈上由哪一層解開 HTTPS 加密，這個位置決定了鏈上哪幾段是密文、哪幾段是明文。共享主機時代這個決定由面板的 AutoSSL 代掉，使用者不會意識到「憑證裝在哪、加密在哪解」。自管之後，終結點變成一個明確的架構選擇，通常落在三種位置之一。
+TLS 終結指的是責任鏈上由哪一層解開 HTTPS 加密，這個位置決定了鏈上哪幾段是密文、哪幾段是明文。共享主機時代這個決定由面板的 AutoSSL 代掉，使用者不會意識到「憑證裝在哪、加密在哪解」。自管之後，終結點變成一個明確的架構選擇，落在下面幾種安排。
 
 終結在負載平衡器是雲端環境的預設做法。ALB 的 HTTPS listener 掛一張 ACM（AWS Certificate Manager）簽發的憑證，ALB 解密後把明文 HTTP 交給後端，後端不必各自持有憑證、不必各自做加解密。憑證由 ACM 搭配 [DNS](/infra/knowledge-cards/dns/) 驗證自動續期，整條「簽發、續期、掛載」進 IaC 版本控制。這套 ALB 加 ACM 的完整 IaC 描述在[模組五：入口上 IaC](/infra/05-core-services/loadbalancer-alb/)。
 
 終結在 reverse proxy 是單機環境的對應做法。nginx 掛一張 [SSL/TLS](/infra/knowledge-cards/ssl-tls/) 憑證（VPS 上常用 Let's Encrypt 搭配 certbot 自動續期），解密後把請求轉給同機或內網的應用。共享主機遷到 VPS 後的憑證續期驗證在[平台遷移](/infra/upgrade/platform-migration/)的 SSL 段有具體指令。
 
-透傳到後端（TLS passthrough）是少數情境的做法：入口層不解密，把加密流量原封轉給後端，由後端自己終結。這在合規要求「傳輸全程加密、中間任何一跳都不得是明文」時才需要——代價是入口層看不到 HTTP 內容，就無法做 path 路由與應用層健康檢查，等於退回 L4。
+後端這段也要加密時有兩種不同的安排，差別在入口層有沒有看到明文。透傳到後端（TLS passthrough）是入口層完全不解密，把加密流量原封轉給後端由後端自己終結——它保證中間沒有任何一跳是明文，代價是入口層看不到 HTTP 內容，無法做 path 路由與應用層健康檢查，等於退回 L4。重新加密（TLS re-encryption，又稱 TLS bridging）則是入口層先解密（因此讀得到 HTTP、能做 path 路由與健康檢查），處理完再對後端開一條新的 TLS 連線把流量重新加密送過去。兩者都讓後端這段是密文，但透傳全程不解密、放棄 L7 能力，重新加密在入口解一次、對後端再加一次、L7 路由與端到端加密都保住，代價是入口多付一次加解密成本。合規要求內網也不得明文、但入口又需要依 path 或 host 分流時，選的是重新加密而不是透傳。
 
-判讀的核心是入口到後端這段網路可不可信。多數設計讓入口終結、後端收明文，因為後端住在 [private subnet](/infra/knowledge-cards/subnet/)、只接受來自入口 [security group](/infra/knowledge-cards/security-group/) 的流量，這段內網被視為可信；只有當合規把「這段也必須加密」寫成硬要求時，才付出重新加密或透傳的成本。這個位置決策本身、以及它和後端信任模型的關係，在[反向代理的職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)的 TLS 終止段有更完整的討論。
+判讀的核心是入口到後端這段網路可不可信。多數設計讓入口終結、後端收明文，因為後端住在 [private subnet](/infra/knowledge-cards/subnet/)、只接受來自入口 [security group](/infra/knowledge-cards/security-group/) 的流量，這段內網被視為可信；只有當合規把「這段也必須加密」寫成硬要求時，才付出重新加密或透傳的成本，並在兩者之間按「還需不需要 L7 分流」選擇。這個位置決策本身、以及它和後端信任模型的關係，在[反向代理的職責](/operations/01-load-balancing/reverse-proxy-responsibilities/)的 TLS 終止段有更完整的討論。
 
 ## 健康檢查與摘除：入口層怎麼知道後端還活著
 
