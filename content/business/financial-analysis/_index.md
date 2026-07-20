@@ -51,6 +51,7 @@ tags: ["business", "financial-analysis"]
 | 文章                                                                                        | 分析對象與焦點                                                                       |
 | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)          | 系列全部方法論套用在早餐店案例的端到端 walkthrough                                   |
+| [經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)                | 財務結論指向退場後、把經營者人力資本前景納入續行 vs 退場決策的四路徑判讀             |
 | [加盟母公司分析](/business/financial-analysis/franchisor-business-model/)                   | 八方雲集 + 揚秦的母公司收入線拆解、母公司 vs 加盟主利潤對照                          |
 | [揚秦國際案例分析](/business/financial-analysis/yangqin-mwd-case-study/)                    | 超秦→麥味登垂直整合、關係人交易、數位轉型宣稱的批判檢驗                              |
 | [八方雲集案例分析](/business/financial-analysis/bafang-franchise-platform-case/)            | 自建中央工廠全製程、營業槓桿、多品牌策略、美國擴張的成本與風險                       |

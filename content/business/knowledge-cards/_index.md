@@ -77,6 +77,7 @@ weight: 編號
 | [Free Cash Flow](/business/knowledge-cards/free-cash-flow/)               | 營業現金流扣資本支出             | 利潤品質、股利可持續性        |
 | [Cash Conversion Cycle](/business/knowledge-cards/cash-conversion-cycle/) | 現金在營運循環中被卡住的天數     | 供需效率、週轉天數            |
 | [Sunk Cost](/business/knowledge-cards/sunk-cost/)                         | 已發生且不可回收的支出           | 續行退場決策、認知偏誤        |
+| [Human Capital（人力資本）](/business/knowledge-cards/human-capital/)     | 隨人移動、會增值或折舊的能力資產 | 續行退場決策、退場後路徑      |
 | [GMV](/business/knowledge-cards/gmv/)                                     | 平台交易總額                     | 平台營收、Take Rate、認列方式 |
 
 ## 進入市場

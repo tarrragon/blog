@@ -171,6 +171,10 @@ tags: ["business", "case-analysis", "pnl", "franchise", "financial-analysis"]
 
 盡早止血。設備轉讓（原價打 2-4 折）、租約轉讓或解約、員工資遣。殘餘資金轉投[機會成本](/business/knowledge-cards/opportunity-cost/)更低的用途（被動指數投資年化 7-10%、零勞動、零營運風險）。
 
+### 經營者的下一步
+
+以上七步把經營者當成資本提供者，算完資本報酬和退場成本就結束。但經營者退場後還要繼續謀生——改為受雇、回原職場或換一個行業。把經營者的人力資本前景納入續行 vs 退場決策、逐條判讀這幾條路徑的方法，見[經營者的下一步：把人力資本納入續行與退場決策](/business/financial-analysis/operator-human-capital-paths/)。
+
 ## 系列文章引用地圖
 
 | 評估步驟 | 使用的分析工具                       | 對應文章                                                                            |
