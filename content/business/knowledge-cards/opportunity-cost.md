@@ -10,7 +10,7 @@ Opportunity Cost 的核心概念是「機會成本」——選擇 A 方案時，
 
 ## 概念位置
 
-機會成本是投資決策和續行 / 退場判斷的比較基準。跟 [Burn Rate](/business/knowledge-cards/burn-rate/)（每月燒多少現金）和 [Runway](/business/knowledge-cards/runway/)（還能撐多久）一起看時，機會成本幫助判斷「繼續燒錢的代價是否超過退場止血後資金轉投其他用途的報酬」。跟[沉沒成本](/business/knowledge-cards/sunk-cost/)的關係是互補：沉沒成本是已經發生且不可回收的、不影響未來決策；機會成本是未來導向的、只看從現在開始的報酬比較。
+機會成本是投資決策和續行 / 退場判斷的比較基準。跟 [Burn Rate](/business/knowledge-cards/burn-rate/)（每月燒多少現金）和 [Runway](/business/knowledge-cards/runway/)（還能撐多久）一起看時，機會成本幫助判斷「繼續燒錢的代價是否超過退場止血後資金轉投其他用途的報酬」。跟[沉沒成本](/business/knowledge-cards/sunk-cost/)的關係是互補：沉沒成本是已經發生且不可回收的、不影響未來決策；機會成本是未來導向的、只看從現在開始的報酬比較。經營者的[人力資本](/business/knowledge-cards/human-capital/)停滯也是一種機會成本——被鎖在低成長事業裡、放棄的是能力本可累積的增值。
 
 ## 可觀察訊號與例子
 

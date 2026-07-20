@@ -69,7 +69,7 @@ tags: ["business", "financial-analysis", "retail", "franchise"]
 
 ## 加盟主的退場判讀
 
-超商加盟的退場比早餐店更複雜——合約期更長（10 年）、品牌綁定更深、中途退出的成本更高。
+超商加盟的退場比早餐店更複雜——合約期更長（10 年）、品牌綁定更深、中途退出的成本更高。退場後經營者本人怎麼走（改受雇 / 回職場 / 換行業）跟早餐店案例一樣適用，見[經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)。
 
 三種退場路徑各有不同的成本結構：
 

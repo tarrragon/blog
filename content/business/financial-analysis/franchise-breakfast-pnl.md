@@ -142,7 +142,7 @@ tags: ["business", "case-analysis", "pnl", "unit-economics", "franchise"]
 
 簡化的決策公式：月損失 x 合約剩餘月數 > 退場總成本 → 退場止血較划算；反之撐完合約。讀者可以帶自己的數字代入——關鍵是估準「月損失」（含機會成本）和「退場總成本」（含違約金、折價、資遣）。
 
-沉沒成本——已經發生且無法回收的支出（已付的加盟金、裝潢）——不影響續行判斷，因為它不管繼續或退場都拿不回來。判斷的基準是「從今天開始」往後看的損益。
+沉沒成本——已經發生且無法回收的支出（已付的加盟金、裝潢）——不影響續行判斷，因為它不管繼續或退場都拿不回來。判斷的基準是「從今天開始」往後看的損益。這個財務公式只算資本；退場決策還有兩個它看不到的維度——經營者退場後的[人力資本路徑](/business/financial-analysis/operator-human-capital-paths/)、以及退場對[員工的責任](/business/financial-analysis/employee-responsibility-exit-decision/)（資遣的法定成本展開見[公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/)）。
 
 ## 第四層：加盟體系的結構評估
 
