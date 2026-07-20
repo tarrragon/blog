@@ -6,11 +6,11 @@ weight: 38
 tags: ["infra", "knowledge-cards"]
 ---
 
-EBS（Elastic Block Store）是 AWS 提供的區塊儲存服務——可以把它理解為掛在 EC2 instance 上的虛擬硬碟。EBS volume 跟 EC2 instance 的生命週期獨立：instance 停止或終止時，EBS volume 上的資料不會消失（除非明確設定 `DeleteOnTermination`）。
+EBS（Elastic Block Store）是 AWS 提供的區塊儲存服務——可以把它理解為掛在 [EC2](/infra/knowledge-cards/ec2/) instance 上的虛擬硬碟。EBS volume 跟 EC2 instance 的生命週期獨立：instance 停止或終止時，EBS volume 上的資料不會消失（除非明確設定 `DeleteOnTermination`）。
 
 ## 概念位置
 
-EBS 是 infra 系列中儲存面向的底層組件。RDS 的資料實際存在 EBS 上（由 AWS 代管）、EC2 的根磁碟和附加磁碟都是 EBS volume。接手維運時對 VM 做快照（AMI），背後就是在對 EBS volume 做 snapshot。
+EBS 是 infra 系列中儲存面向的底層組件。RDS 的資料實際存在 EBS 上（由 AWS 代管）、EC2 的根磁碟和附加磁碟都是 EBS volume。接手維運時對 VM 做快照（[AMI](/infra/knowledge-cards/ami/)），背後就是在對 EBS volume 做 snapshot。
 
 ## 可觀察訊號
 

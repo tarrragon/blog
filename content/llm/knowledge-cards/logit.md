@@ -26,12 +26,12 @@ next token
 
 操作 logit 的常見技巧：
 
-| 技巧               | 做法                                 | 用途                                    |
-| ------------------ | ------------------------------------ | --------------------------------------- |
-| Temperature        | logit / T                            | 控制輸出隨機度、T 越大越平              |
-| Logit bias         | 對特定 token 的 logit 加 / 減 offset | 強制 / 抑制特定 token（如禁用特定詞）   |
-| Grammar masking    | 把不合法 token 的 logit 設成 -∞      | Structured output、確保輸出符合 grammar |
-| Repetition penalty | 對最近出現過的 token logit 扣分      | 避免重複、改善生成多樣性                |
+| 技巧               | 做法                                 | 用途                                                                               |
+| ------------------ | ------------------------------------ | ---------------------------------------------------------------------------------- |
+| Temperature        | logit / T                            | 控制輸出隨機度、T 越大越平                                                         |
+| Logit bias         | 對特定 token 的 logit 加 / 減 offset | 強制 / 抑制特定 token（如禁用特定詞）                                              |
+| Grammar masking    | 把不合法 token 的 logit 設成 -∞      | [Structured output](/llm/knowledge-cards/structured-output/)、確保輸出符合 grammar |
+| Repetition penalty | 對最近出現過的 token logit 扣分      | 避免重複、改善生成多樣性                                                           |
 
 ## 設計責任
 

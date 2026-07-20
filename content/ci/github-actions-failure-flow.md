@@ -42,7 +42,7 @@ Build 命令驗證 production artifact 是否能產生。這一步應該接近 C
 
 Test 命令驗證產物或程式行為。前端可能是 browser test，後端可能是 integration / contract test，App 可能是 device test，Docker 可能是 image scan 或 smoke test。
 
-Deploy dry-run 命令驗證發布前條件。高風險部署至少要能檢查 artifact、權限、環境與版本資訊；沒有 dry-run 的專案，也應保留對等的 preflight check。
+Deploy [dry-run](/ci/knowledge-cards/deployment-dry-run/) 命令驗證發布前條件。高風險部署至少要能檢查 artifact、權限、環境與版本資訊；沒有 dry-run 的專案，也應保留對等的 preflight check。
 
 ## 修復與重新觸發
 

@@ -6,7 +6,7 @@ weight: 12
 tags: ["infra", "takeover", "security", "php", "audit"]
 ---
 
-接手的 legacy PHP 專案在做完[程式碼與資料庫的現況快照](/infra/takeover/legacy-ftp-no-ssh/)之後，下一步是安全盤點。安全狀態在盤點之前是未知的——前一位維護者可能所有表單都用 prepared statement，也可能每個查詢都直接拼接使用者輸入。盤點的範圍涵蓋 credential 散落、PHP 版本風險、程式碼層的漏洞模式、伺服器端的 .htaccess 與權限設定、以及外部依賴的已知漏洞。
+接手的 legacy PHP 專案在做完[程式碼與資料庫的現況快照](/infra/takeover/legacy-ftp-no-ssh/)之後，下一步是安全盤點。安全狀態在盤點之前是未知的——前一位維護者可能所有表單都用 prepared statement，也可能每個查詢都直接拼接使用者輸入。盤點的範圍涵蓋 credential 散落、PHP 版本風險、程式碼層的漏洞模式、伺服器端的 [`.htaccess`](/infra/knowledge-cards/htaccess/) 與權限設定、以及外部依賴的已知漏洞。
 
 ## Credential 掃描與處理
 

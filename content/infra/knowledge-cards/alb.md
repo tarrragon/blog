@@ -6,11 +6,11 @@ weight: 12
 tags: ["infra", "knowledge-cards", "alb", "load-balancer"]
 ---
 
-ALB（Application Load Balancer）的核心職責是接收外部流量、根據規則（path、host header）把請求路由到後端的 target group，並用健康檢查持續驗證後端是否能服務。它是系統對外的第一個接觸點，跑在 public subnet 裡。
+ALB（Application Load Balancer）的核心職責是接收外部流量、根據規則（path、host header）把請求路由到後端的 target group，並用健康檢查持續驗證後端是否能服務。它是系統對外的第一個接觸點，跑在 [public subnet](/infra/knowledge-cards/subnet/) 裡。
 
 ## 概念位置
 
-ALB 在核心服務層裡的角色是「入口設施」。它掛在 public subnet 的 security group 上（入站允許 80/443），把流量導向 private subnet 裡的 ECS task 或 EC2 instance。ALB 本身是 stateless 的 — 重建一個 ALB 不會遺失資料，但會換掉它的 DNS 名稱，所以對外服務通常在 ALB 前面掛一個穩定的 Route 53 alias record。
+ALB 在核心服務層裡的角色是「入口設施」。它掛在 public subnet 的 [security group](/infra/knowledge-cards/security-group/) 上（入站允許 80/443），把流量導向 private subnet 裡的 ECS task 或 EC2 instance。ALB 本身是 stateless 的 — 重建一個 ALB 不會遺失資料，但會換掉它的 DNS 名稱，所以對外服務通常在 ALB 前面掛一個穩定的 Route 53 alias record。
 
 TLS 終結是 ALB 的標準職責：HTTPS listener 引用 ACM（AWS Certificate Manager）簽發的憑證，ALB 處理加解密，後端收到的是 HTTP 明文。憑證由 ACM 自動續期，IaC 用 DNS 驗證方式描述憑證 — 讓「憑證存在、續期、掛載」整條鏈都進版本控制。
 

@@ -10,7 +10,7 @@ Event Source 的核心概念是「觸發執行的事件入口」。它決定 ser
 
 ## 概念位置
 
-Event Source 位在 queue、topic、HTTP gateway、object storage、scheduler 與 function / worker 之間，負責把外部事件轉成執行請求。
+Event Source 位在 queue、topic、HTTP gateway、object storage、scheduler 與 [function](/ci/knowledge-cards/function-alias/) / worker 之間，負責把外部事件轉成執行請求。
 
 ## 可觀察訊號
 

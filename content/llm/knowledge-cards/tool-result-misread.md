@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "agent", "tool-use"]
 ---
 
-Tool result misread（工具結果誤判）的核心概念是「**agent 把工具輸出的錯誤或不完整狀態解讀成成功**」。LLM 只看文字與結構化回傳，若工具結果設計不清楚，模型容易忽略 error、warning、空集合或 partial failure。
+Tool result misread（工具結果誤判）的核心概念是「**agent 把 [tool use](/llm/knowledge-cards/tool-use/) 輸出的錯誤或不完整狀態解讀成成功**」。LLM 只看文字與結構化回傳，若工具結果設計不清楚，模型容易忽略 error、warning、空集合或 partial failure。
 
 ## 概念位置
 

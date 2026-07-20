@@ -6,7 +6,7 @@ weight: 68
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---
 
-Capex（Capital Expenditure，資本支出）是企業為了未來營收而投入的長期資產支出——建廠、買設備、併購、系統建置。跟日常營業費用（OpEx）的差別：OpEx 當期消耗完畢，capex 的效益延伸多年但需要折舊攤銷。
+Capex（Capital Expenditure，資本支出）是企業為了未來營收而投入的長期資產支出——建廠、買設備、併購、系統建置。跟日常營業費用（OpEx）的差別：OpEx 當期消耗完畢，capex 的效益延伸多年但需要[折舊攤銷](/business/knowledge-cards/depreciation-amortization/)。
 
 ## 概念位置
 

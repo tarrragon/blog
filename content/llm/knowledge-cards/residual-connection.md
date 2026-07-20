@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "architecture", "training"]
 ---
 
-Residual connection（殘差連接、skip connection）的核心概念是「把 layer 的輸入直接加到輸出上」、形式是 `output = layer(x) + x`。這個簡單加法解決了深層網路的訓練退化問題：沒有 residual、模型加深會反而變差（不是過擬合、是 gradient 在反向傳播中衰減太多）；有 residual、訓練幾十甚至上百層都穩。
+Residual connection（殘差連接、skip connection）的核心概念是「把 layer 的輸入直接加到輸出上」、形式是 `output = layer(x) + x`。這個簡單加法解決了深層網路的訓練退化問題：沒有 residual、模型加深會反而變差（不是過擬合、是 [gradient](/llm/knowledge-cards/gradient/) 在反向傳播中衰減太多）；有 residual、訓練幾十甚至上百層都穩。
 
 ## 概念位置
 

@@ -6,7 +6,7 @@ weight: 16
 tags: ["monitoring", "collector", "error", "fingerprint", "grouping", "dedup"]
 ---
 
-Error fingerprint 把相同根因的 error 事件歸為同一組（error group），讓 dashboard 從「每筆 error 獨立一行」變成「同因 error 歸組、顯示 count / first_seen / last_seen / affected_sessions」。這是 error tracking 從「有記錄」演進到「可管理」的關鍵能力。
+[Error fingerprint](/monitoring/knowledge-cards/error-fingerprint/) 把相同根因的 error 事件歸為同一組（error group），讓 dashboard 從「每筆 error 獨立一行」變成「同因 error 歸組、顯示 count / first_seen / last_seen / affected_sessions」。這是 error tracking 從「有記錄」演進到「可管理」的關鍵能力。
 
 Collector 搭配的 [Developer Dashboard](/monitoring/04-collector/dashboard-developer/) 在 Error 列表中用 `GROUP BY name` 做分群 — 同名的 error 歸為一行。這在 error name 設計良好時（`terminal.connect.failed` / `auth.biometric.timeout`）可以運作，但在以下情境會失效：
 

@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "grammar", "parser"]
 ---
 
-Lark grammar 的核心概念是「**Lark parser 使用的一種 EBNF-like 語法描述格式**」。在 LLM structured output 文件中看到 lark grammar，通常是在說某個工具用 Lark 風格規則描述合法輸出，再把規則交給 parser 或 constrained decoding engine。
+Lark grammar 的核心概念是「**Lark parser 使用的一種 EBNF-like 語法描述格式**」。在 LLM structured output 文件中看到 lark grammar，通常是在說某個工具用 Lark 風格規則描述合法輸出，再把規則交給 parser 或 [constrained decoding](/llm/knowledge-cards/constrained-decoding/) engine。
 
 ## 概念位置
 

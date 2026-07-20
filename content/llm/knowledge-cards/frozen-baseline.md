@@ -6,18 +6,18 @@ weight: 1
 tags: ["llm", "knowledge-cards", "evaluation", "production"]
 ---
 
-Frozen baseline 的核心概念是「**把某個特定 prompt + 特定 model 跑 production 一段時間後 freeze、每次新版本都跟它比、定期 refresh 並標明時點**」。Eval 系統的標準作法、讓行為漂移可見、避免「永遠跟上一版比、長期累積漂移看不見」的常見失敗。
+Frozen baseline 的核心概念是「**把某個特定 prompt + 特定 model 跑 production 一段時間後 freeze、每次新版本都跟它比、定期 refresh 並標明時點**」。Eval 系統的標準作法（常搭配 [LLM-as-judge](/llm/knowledge-cards/llm-as-judge/) 評分）、讓行為漂移可見、避免「永遠跟上一版比、長期累積漂移看不見」的常見失敗。
 
 ## 概念位置
 
 跟其他 eval 概念對照：
 
-| 概念             | 角色                                          |
-| ---------------- | --------------------------------------------- |
-| Eval set         | 測試 input 的集合                             |
-| Frozen baseline  | 固定的「對照組」prompt + model 版本           |
-| Regression set   | Failed case 進來、防止改 prompt 又壞同樣 case |
-| Production trace | 實際 traffic、抽樣補進 eval set / baseline    |
+| 概念                                                  | 角色                                          |
+| ----------------------------------------------------- | --------------------------------------------- |
+| Eval set                                              | 測試 input 的集合                             |
+| Frozen baseline                                       | 固定的「對照組」prompt + model 版本           |
+| Regression set                                        | Failed case 進來、防止改 prompt 又壞同樣 case |
+| [Production trace](/llm/knowledge-cards/llm-tracing/) | 實際 traffic、抽樣補進 eval set / baseline    |
 
 工作流：
 

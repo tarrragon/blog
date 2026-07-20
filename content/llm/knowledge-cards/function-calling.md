@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-Function Calling 的核心概念是「模型在訓練階段學到的呼叫工具能力」。SFT 階段大量「使用者 query + 該呼叫什麼工具 + 傳什麼參數」的範例、讓模型學會看到 query 知道何時呼叫、怎麼呼叫、傳什麼參數。
+Function Calling 的核心概念是「模型在訓練階段學到的呼叫工具能力」。[SFT](/llm/knowledge-cards/sft/) 階段大量「使用者 query + 該呼叫什麼工具 + 傳什麼參數」的範例、讓模型學會看到 query 知道何時呼叫、怎麼呼叫、傳什麼參數。
 
 ## 概念位置
 

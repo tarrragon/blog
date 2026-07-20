@@ -6,7 +6,7 @@ weight: 53
 tags: ["linux", "remote", "process", "signal", "knowledge-cards"]
 ---
 
-SIGHUP 是控制終端消失時，核心送給該終端前景程序群的掛斷訊號（hangup），預設動作是終止程序。SSH 連線斷掉時，遠端那個 shell 的控制終端跟著消失，掛在它前景的程序就收到 SIGHUP 被殺——這是「直接跑在 SSH shell 裡的長任務，連線一斷就死」的根因，也是為什麼長任務要放進獨立於連線的 session 層。
+SIGHUP 是控制終端消失時，核心送給該終端前景程序群的掛斷訊號（hangup），預設動作是終止程序。SSH 連線斷掉時，遠端那個 shell 的控制終端跟著消失，掛在它前景的程序就收到 SIGHUP 被殺——這是「直接跑在 SSH shell 裡的長任務，連線一斷就死」的根因，也是為什麼長任務要放進獨立於連線的 session 層。這條連線本身為什麼會斷，見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/)。
 
 ## 概念位置
 

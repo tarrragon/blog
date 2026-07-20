@@ -7,7 +7,7 @@ weight: 1
 tags: ["automation", "apps-script", "trigger", "aggregation", "cron"]
 ---
 
-時間觸發器（time-driven trigger）讓 Apps Script 從「被動等 beacon 打進來」變成「主動定時執行」。它的用途是把 raw log 這種逐筆、直接看沒意義的原始資料，每天固定時間彙總成「昨天每篇看幾次」的日報，讓人打開試算表看到的是整理過的數字。先講怎麼設定定時、再講彙總邏輯、最後講怎麼在配額內寫得有效率。
+[時間觸發器](/automation/knowledge-cards/time-driven-trigger/)（time-driven trigger）讓 Apps Script 從「被動等 beacon 打進來」變成「主動定時執行」。它的用途是把 raw log 這種逐筆、直接看沒意義的原始資料，每天固定時間彙總成「昨天每篇看幾次」的日報，讓人打開試算表看到的是整理過的數字。先講怎麼設定定時、再講彙總邏輯、最後講怎麼在配額內寫得有效率。
 
 ## 設定每日定時執行
 

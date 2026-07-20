@@ -6,7 +6,7 @@ weight: 1
 tags: ["automation", "beacon", "sendbeacon", "cors", "hugo", "javascript"]
 ---
 
-前端 beacon 的責任是：在頁面載入時偵測「這一頁被看了」，把一則最小事件送到 Apps Script 的接收端，而且不能拖慢頁面、不能因為送失敗而影響閱讀。做對這件事的關鍵，是選一種**不會觸發 CORS preflight** 的送出方式——這是靜態站打 Apps Script 最容易卡住的地方，先講清楚為什麼。
+前端 [beacon](/automation/knowledge-cards/beacon/) 的責任是：在頁面載入時偵測「這一頁被看了」，把一則最小事件送到 Apps Script 的接收端，而且不能拖慢頁面、不能因為送失敗而影響閱讀。做對這件事的關鍵，是選一種**不會觸發 CORS preflight** 的送出方式——這是靜態站打 Apps Script 最容易卡住的地方，先講清楚為什麼。
 
 ## CORS preflight 為什麼會擋住 beacon
 

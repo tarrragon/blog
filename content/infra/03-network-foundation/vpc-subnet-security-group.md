@@ -6,9 +6,9 @@ weight: 1
 tags: ["infra", "network", "vpc", "security-group"]
 ---
 
-網路地基要先於核心服務存在。VPC、subnet、route table 與 security group 構成一張「服務能落在哪、誰能跟誰講話」的地圖，資料庫、運算節點與對外入口都得落在這張地圖規劃好的格子裡。先把邊界畫清楚，後面每個核心服務上線時只需要選一塊已經定義好安全等級的位置，而不是邊開服務邊補洞。
+網路地基要先於核心服務存在。[VPC](/infra/knowledge-cards/vpc/)、[subnet](/infra/knowledge-cards/subnet/)、[route table](/infra/knowledge-cards/route-table/) 與 security group 構成一張「服務能落在哪、誰能跟誰講話」的地圖，資料庫、運算節點與對外入口都得落在這張地圖規劃好的格子裡。先把邊界畫清楚，後面每個核心服務上線時只需要選一塊已經定義好安全等級的位置，而不是邊開服務邊補洞。
 
-這篇文章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 NAT、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。
+這篇文章建立四層邊界：最外層的 VPC 隔離、中層的 public / private subnet 切分、流量進出的 route table 與 [NAT](/infra/knowledge-cards/nat/)、以及最貼近服務的 security group。每一層解決的問題不同，疊起來才是一個可審計、可收斂的網路。
 
 ## VPC：網路隔離的最外層邊界
 
@@ -16,7 +16,7 @@ VPC（Virtual Private Cloud）先圈定整個系統的網路地址空間 — 一
 
 ### CIDR 規劃：一次決定、事後難改
 
-建立 VPC 時最關鍵的決策是 CIDR 區塊的大小。這個範圍要一次規劃足夠大，因為事後擴張地址空間在多數雲上是麻煩且容易出錯的操作。AWS 雖然允許在 VPC 上追加 secondary CIDR，但追加的網段不能與原有的重疊，也不是所有服務都能自然使用跨 CIDR 的 subnet，routing 的複雜度會因此上升。
+建立 VPC 時最關鍵的決策是 [CIDR](/infra/knowledge-cards/cidr/) 區塊的大小。這個範圍要一次規劃足夠大，因為事後擴張地址空間在多數雲上是麻煩且容易出錯的操作。AWS 雖然允許在 VPC 上追加 secondary CIDR，但追加的網段不能與原有的重疊，也不是所有服務都能自然使用跨 CIDR 的 subnet，routing 的複雜度會因此上升。
 
 CIDR 規劃要同時考慮三件事。第一是容量：`/16` 提供約六萬五千個位址，對多數單一環境的 VPC 足夠寬裕，切成 `/24` 的 subnet 也有 256 個可用子網。第二是不重疊：未來若要透過 VPC peering、Transit Gateway 或 VPN 把這個 VPC 接回地端機房或其他環境，重疊的 CIDR 會讓路由無法解析。三個環境各自是 `10.0.0.0/16`，在彼此不需要互連時不是問題，但一旦要開 peering 就會撞車 — 這時候改 CIDR 的代價是重建整個 VPC。第三是預留：如果公司同時有多個 VPC（不同環境或不同產品線），用連續但不重疊的大段分配（如 dev `10.0.0.0/16`、staging `10.1.0.0/16`、prod `10.2.0.0/16`）讓路由表更乾淨。
 

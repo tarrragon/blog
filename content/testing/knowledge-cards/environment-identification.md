@@ -10,7 +10,7 @@ tags: ["testing", "environment", "safety", "allowlist"]
 
 ## 概念位置
 
-判定責任跨越供需兩側，這是它值得獨立成一個概念的原因：消費端要有判定邏輯，供給側要提供可判定的識別（URL 慣例、回應標頭帶環境名）。供給側的那一半屬於環境設計契約、見 [QA 環境設計](/backend/06-reliability/qa-environment-design/)；消費端的實作選項與偏好順序在[憑證管理](/testing/03-protocol-integration-test/credential-management/)的「環境判定」段。任何一側缺席，另一側都補不起來——站方不給識別，消費端只能猜；消費端不判定，站方給了也沒用。
+判定責任跨越供需兩側，這是它值得獨立成一個概念的原因：消費端要有判定邏輯，供給側要提供可判定的識別（URL 慣例、回應標頭帶環境名）。供給側的那一半屬於環境設計契約、見 [QA 環境設計](/backend/06-reliability/qa-environment-design/)；消費端的實作選項與偏好順序在[憑證管理](/testing/03-protocol-integration-test/credential-management/)的「環境判定」段。任何一側缺席，另一側都補不起來——站方不給識別，消費端只能猜；消費端不判定，站方給了也沒用。[真實後端驗證測試](/testing/knowledge-cards/real-backend-verification-test/)的紅、綠、跳過三態判讀，都建立在這層判定正確之上——判定錯了，綠燈可能來自連錯環境而非行為正確。
 
 ## 可觀察訊號與例子
 

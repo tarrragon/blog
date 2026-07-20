@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-Inference Server（推論伺服器）的核心概念是「常駐在機器上、載入模型權重、接收 API 請求、跑推論、回傳生成內容的 process」。本地 LLM 三層架構中、推論伺服器位於介面層（CLI / IDE / Web UI）與模型層（權重檔）之間。
+Inference Server（推論伺服器）的核心概念是「常駐在機器上、載入模型權重、接收 API 請求、跑推論、回傳生成內容的 process」。本地 LLM [三層架構](/llm/knowledge-cards/three-layer-architecture/) 中、推論伺服器位於介面層（CLI / IDE / Web UI）與模型層（權重檔）之間。
 
 ## 概念位置
 

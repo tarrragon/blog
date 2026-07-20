@@ -6,11 +6,11 @@ weight: 41
 tags: ["infra", "knowledge-cards"]
 ---
 
-AMI（Amazon Machine Image）是 EC2 instance 的完整映像快照。它包含作業系統、已安裝的軟體、設定檔、磁碟內容——從一個 AMI 啟動新的 instance，得到的是跟拍照時完全一樣的環境。
+AMI（Amazon Machine Image）是 [EC2](/infra/knowledge-cards/ec2/) instance 的完整映像快照。它包含作業系統、已安裝的軟體、設定檔、磁碟內容——從一個 AMI 啟動新的 instance，得到的是跟拍照時完全一樣的環境。
 
 ## 概念位置
 
-AMI 在 infra 系列裡有兩個角色。第一個是接手維運時的保險——對 VM 建一個 AMI 等於把整台機器拍下來，做任何改動前都有一個可回退的基線。第二個是環境標準化——把裝好軟體的 instance 做成 AMI（golden image），之後開新機器都從這個 AMI 啟動，確保每台機器的基線一致。
+AMI 在 infra 系列裡有兩個角色。第一個是接手維運時的保險——對 VM（即 [EC2](/infra/knowledge-cards/ec2/) instance）建一個 AMI 等於把整台機器拍下來，做任何改動前都有一個可回退的基線。第二個是環境標準化——把裝好軟體的 instance 做成 AMI（golden image），之後開新機器都從這個 AMI 啟動，確保每台機器的基線一致。
 
 ## 可觀察訊號
 

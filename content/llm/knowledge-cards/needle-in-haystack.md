@@ -28,13 +28,13 @@ Variables：
 
 跟 lost-in-the-middle 的對比：
 
-| 維度       | Lost in the middle             | Needle in haystack                    |
-| ---------- | ------------------------------ | ------------------------------------- |
-| 衡量的能力 | 對中段內容的整體 attention     | 抓單一事實的 recall                   |
-| 任務       | 抓整段邏輯、做推論             | 純 retrieve、不需推論                 |
-| 難度       | 高（需理解整段語意）           | 較低（明確 keyword 匹配）             |
-| 模型表現   | 中段顯著差                     | 通常各位置都接近 100%（強模型）       |
-| 判讀意義   | 反映「實用 effective context」 | 反映「lower bound effective context」 |
+| 維度       | [Lost in the middle](/llm/knowledge-cards/lost-in-the-middle/) | Needle in haystack                    |
+| ---------- | -------------------------------------------------------------- | ------------------------------------- |
+| 衡量的能力 | 對中段內容的整體 attention                                     | 抓單一事實的 recall                   |
+| 任務       | 抓整段邏輯、做推論                                             | 純 retrieve、不需推論                 |
+| 難度       | 高（需理解整段語意）                                           | 較低（明確 keyword 匹配）             |
+| 模型表現   | 中段顯著差                                                     | 通常各位置都接近 100%（強模型）       |
+| 判讀意義   | 反映「實用 effective context」                                 | 反映「lower bound effective context」 |
 
 ```text
 典型 NIH heatmap（GPT-4 128K 之類）：

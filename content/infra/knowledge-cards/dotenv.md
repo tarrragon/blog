@@ -6,11 +6,11 @@ weight: 26
 tags: ["infra", "knowledge-cards"]
 ---
 
-`.env` 是一個純文字檔案，每行一組 `KEY=VALUE` 的環境變數定義。它的用途是把機密值（資料庫密碼、API key、SMTP 憑證）和環境專屬設定（資料庫 host、debug 模式開關）從程式碼分離出來，讓同一份程式碼在不同環境（開發、staging、production）用不同的設定值，而且機密值不進版本控制。
+`.env` 是一個純文字檔案，每行一組 `KEY=VALUE` 的環境變數定義。它的用途是把機密值（資料庫密碼、API key、SMTP 憑證）和環境專屬設定（資料庫 host、debug 模式開關）從程式碼分離出來，讓同一份程式碼在不同環境（開發、staging、production）用不同的設定值，而且機密值不進版本控制。PHP 專案裡執行期設定的另一層在 [php.ini / .user.ini](/infra/knowledge-cards/php-ini/)。
 
 ## 概念位置
 
-`.env` 是跨語言的設定分離慣例。PHP 用 `vlucas/phpdotenv` 套件讀取、Node.js 用 `dotenv` 套件、Python 用 `python-dotenv`、Go 用 `godotenv`。這些套件的行為相同：程式啟動時讀 `.env` 檔案，把裡面的變數載入到執行環境的環境變數裡，讓程式碼用 `$_ENV['KEY']`（PHP）或 `process.env.KEY`（Node）存取。
+`.env` 是跨語言的設定分離慣例。PHP 用 [Composer](/infra/knowledge-cards/composer/) 安裝的 `vlucas/phpdotenv` 套件讀取、Node.js 用 `dotenv` 套件、Python 用 `python-dotenv`、Go 用 `godotenv`。這些套件的行為相同：程式啟動時讀 `.env` 檔案，把裡面的變數載入到執行環境的環境變數裡，讓程式碼用 `$_ENV['KEY']`（PHP）或 `process.env.KEY`（Node）存取。
 
 ## 可觀察訊號
 

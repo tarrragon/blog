@@ -30,7 +30,7 @@ Vocabulary size 的取捨：
 | 推論計算每步輸出 softmax 較快       | 每步 softmax 較慢（vocab × hidden 矩陣大） |
 | API 計費 token 數量較多             | API 計費 token 數量較少                    |
 
-範例：同段中文「你好、世界」、Llama 1 (vocab 32K) 約 6 token、Gemma 4 (vocab 256K) 約 2-3 token、差距不小。
+範例：同段中文「你好、世界」、Llama 1 (vocab 32K) 約 6 token、Gemma 4 (vocab 256K) 約 2-3 token、差距不小。多數模型的 vocab 透過 [BPE](/llm/knowledge-cards/bpe/) 或其變體訓練決定。
 
 ## 設計責任
 

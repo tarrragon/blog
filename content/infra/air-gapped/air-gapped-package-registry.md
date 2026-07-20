@@ -168,7 +168,7 @@ skopeo copy --all dir:./images/nginx-1.25-alpine-multiarch \
 
 ## Helm chart 離線管理
 
-Kubernetes 環境用 Helm 部署應用。斷網時 Helm chart 需要離線管理：
+Kubernetes 環境用 [Helm](/infra/knowledge-cards/helm/) 部署應用。斷網時 Helm chart 需要離線管理：
 
 ```bash
 # 外部機器：下載 chart

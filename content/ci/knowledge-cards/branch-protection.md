@@ -6,11 +6,11 @@ tags: ["CI", "branch-protection", "knowledge-card"]
 weight: 11
 ---
 
-Branch Protection 的核心概念是「把主線寫入條件制度化」。它把 required checks、review policy 與合併限制集中成 repository gate。
+Branch Protection 的核心概念是「把主線寫入條件制度化」。它把 [required checks](/ci/knowledge-cards/required-checks/)、review policy 與合併限制集中成 repository gate。
 
 ## 概念位置
 
-Branch Protection 位在 pull request 與主線分支之間，屬於 CI workflow 之外的治理層。
+Branch Protection 位在 pull request 與主線分支之間，屬於 [CI](/ci/knowledge-cards/ci-pipeline/) workflow 之外的治理層。
 
 ## 可觀察訊號
 

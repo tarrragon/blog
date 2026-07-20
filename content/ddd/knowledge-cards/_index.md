@@ -14,22 +14,27 @@ weight: -1
 
 ## 核心概念
 
-| 卡片                                                               | 核心問題                                                 |
-| ------------------------------------------------------------------ | -------------------------------------------------------- |
-| [Invariant](/ddd/knowledge-cards/invariant/)                       | 業務規則落在文件層、型別層還是執行層                     |
-| [Entity](/ddd/knowledge-cards/entity/)                             | 同一性由身份定義——操作需不需要 identity-based 回寫       |
-| [Value Object](/ddd/knowledge-cards/value-object/)                 | 同一性由內容定義——語意封閉與合法運算集合                 |
-| [Aggregate Root](/ddd/knowledge-cards/aggregate-root/)             | 對外代表一組資料一致性的邊界物件                         |
-| [Data Bag](/ddd/knowledge-cards/data-bag/)                         | 欄位組合全部合法、沒有不變式要守的型別                   |
-| [Snapshot](/ddd/knowledge-cards/snapshot/)                         | 某一時刻的狀態複本——歷史不隨現在漂移                     |
-| [Port](/ddd/knowledge-cards/port/)                                 | domain 對外宣告的介面——依賴方向為何朝內                  |
-| [Adapter](/ddd/knowledge-cards/adapter/)                           | port 的具體實作——技術細節被擋在六角形之外的位置          |
-| [Composition Root](/ddd/knowledge-cards/composition-root/)         | 應用程式唯一的組裝起點——DI、路由、事件接線集中處         |
-| [Dependency Injection](/ddd/knowledge-cards/dependency-injection/) | 依賴由誰提供——建構與使用分成兩個責任                     |
-| [Test Seam](/ddd/knowledge-cards/test-seam/)                       | 不修改本體就能替換行為的位置——mock 從哪裡換進去          |
-| [Wiring Test](/ddd/knowledge-cards/wiring-test/)                   | 零 override 驗組裝——port 插上 adapter 的唯一證言         |
-| [Placeholder](/ddd/knowledge-cards/placeholder/)                   | 先立介面後補實作的中間態——失效比文件層約束更靜默         |
-| [Read Model](/ddd/knowledge-cards/read-model/)                     | 為讀需求的形狀而建的查詢側模型——與 aggregate 形狀分離    |
-| [Domain Event](/ddd/knowledge-cards/domain-event/)                 | 已發生的業務事實——過去式、不可變、錯過代表事實遺失       |
-| [State Stream](/ddd/knowledge-cards/state-stream/)                 | 資料當前值的連續觀測——新值蓋舊值、錯過無代價             |
-| [Observation Outlet](/ddd/knowledge-cards/observation-outlet/)     | repository 的「資料變了」推送能力——pull 介面的 push 對應 |
+| 卡片                                                                               | 核心問題                                                    |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [Invariant](/ddd/knowledge-cards/invariant/)                                       | 業務規則落在文件層、型別層還是執行層                        |
+| [Entity](/ddd/knowledge-cards/entity/)                                             | 同一性由身份定義——操作需不需要 identity-based 回寫          |
+| [Value Object](/ddd/knowledge-cards/value-object/)                                 | 同一性由內容定義——語意封閉與合法運算集合                    |
+| [Aggregate Root](/ddd/knowledge-cards/aggregate-root/)                             | 對外代表一組資料一致性的邊界物件                            |
+| [Data Bag](/ddd/knowledge-cards/data-bag/)                                         | 欄位組合全部合法、沒有不變式要守的型別                      |
+| [Snapshot](/ddd/knowledge-cards/snapshot/)                                         | 某一時刻的狀態複本——歷史不隨現在漂移                        |
+| [Port](/ddd/knowledge-cards/port/)                                                 | domain 對外宣告的介面——依賴方向為何朝內                     |
+| [Adapter](/ddd/knowledge-cards/adapter/)                                           | port 的具體實作——技術細節被擋在六角形之外的位置             |
+| [Composition Root](/ddd/knowledge-cards/composition-root/)                         | 應用程式唯一的組裝起點——DI、路由、事件接線集中處            |
+| [Dependency Injection](/ddd/knowledge-cards/dependency-injection/)                 | 依賴由誰提供——建構與使用分成兩個責任                        |
+| [Test Seam](/ddd/knowledge-cards/test-seam/)                                       | 不修改本體就能替換行為的位置——mock 從哪裡換進去             |
+| [Wiring Test](/ddd/knowledge-cards/wiring-test/)                                   | 零 override 驗組裝——port 插上 adapter 的唯一證言            |
+| [Placeholder](/ddd/knowledge-cards/placeholder/)                                   | 先立介面後補實作的中間態——失效比文件層約束更靜默            |
+| [Read Model](/ddd/knowledge-cards/read-model/)                                     | 為讀需求的形狀而建的查詢側模型——與 aggregate 形狀分離       |
+| [Domain Event](/ddd/knowledge-cards/domain-event/)                                 | 已發生的業務事實——過去式、不可變、錯過代表事實遺失          |
+| [State Stream](/ddd/knowledge-cards/state-stream/)                                 | 資料當前值的連續觀測——新值蓋舊值、錯過無代價                |
+| [Observation Outlet](/ddd/knowledge-cards/observation-outlet/)                     | repository 的「資料變了」推送能力——pull 介面的 push 對應    |
+| [Repository](/ddd/knowledge-cards/repository/)                                     | aggregate 的存取抽象——回傳的是 aggregate 形狀、不是讀的形狀 |
+| [Bounded Context](/ddd/knowledge-cards/bounded-context/)                           | 模型與詞彙保持一致的邊界——邊界內的推導在邊界外不必然成立    |
+| [EventBus](/ddd/knowledge-cards/event-bus/)                                        | 行程內的發布／訂閱事件匯流排——只解決送達、不承擔涵蓋保證    |
+| [CQRS](/ddd/knowledge-cards/cqrs/)                                                 | 讀寫模型拆開的架構決定——是階梯的頂端、不是二選一的開關      |
+| [Event-Carried State Transfer](/ddd/knowledge-cards/event-carried-state-transfer/) | 事件攜帶足量當前狀態、讓下游免回頭查詢來源的跨服務設計      |

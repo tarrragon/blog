@@ -10,7 +10,7 @@ Checkpoint 的核心概念是「保存可接續的處理進度」。它讓 [Back
 
 ## 概念位置
 
-Checkpoint 位在長時間 job、stream processor、batch pipeline 與 migration 任務之間，常以 partition、offset、run id、cursor 或 processed marker 呈現。
+Checkpoint 位在長時間 job、stream processor、batch pipeline 與 [migration](/ci/knowledge-cards/migration/) 任務之間，常以 partition、offset、run id、cursor 或 processed marker 呈現。
 
 ## 可觀察訊號
 

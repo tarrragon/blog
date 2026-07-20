@@ -25,7 +25,7 @@ User query
 真實 top-k chunks → 主 LLM 回答
 ```
 
-為什麼比直接 embed query 好：假文件的 phrasing、長度、結構都更接近真文件的分佈、embedding 距離更可靠。重點是**假文件當 embedding 的代理**、不是當答案——hallucinate 出錯誤事實 OK、但語意 / 領域要落對。
+為什麼比直接 embed query 好：假文件的 phrasing、長度、結構都更接近真文件的分佈、embedding 距離更可靠。重點是**假文件當 embedding 的代理**、不是當答案——[hallucinate](/llm/knowledge-cards/hallucination/) 出錯誤事實 OK、但語意 / 領域要落對。
 
 ## 設計責任
 

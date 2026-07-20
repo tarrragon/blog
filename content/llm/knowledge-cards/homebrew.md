@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "macos"]
 ---
 
-Homebrew 的核心概念是「macOS 的社群套件管理器、用 `brew install` 一行裝完 CLI 工具或 GUI 程式」。對本地 LLM 場景的角色是「Ollama、llama.cpp 等命令列工具的標準安裝入口」、把編譯、依賴管理、PATH 設定、二進位放置位置都自動化。
+Homebrew 的核心概念是「macOS 的社群套件管理器、用 `brew install` 一行裝完 CLI 工具或 GUI 程式」。對本地 LLM 場景的角色是「[Ollama](/llm/knowledge-cards/inference-server/)、llama.cpp 等命令列工具的標準安裝入口」、把編譯、依賴管理、PATH 設定、二進位放置位置都自動化。
 
 ## 概念位置
 

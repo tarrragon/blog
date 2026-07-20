@@ -6,11 +6,11 @@ tags: ["CI", "artifact", "knowledge-card"]
 weight: 4
 ---
 
-Artifact Handoff 的核心概念是「測試與發布共用同一份產物」。它把可重現性從口頭約定變成流程保證。
+Artifact Handoff 的核心概念是「測試與發布共用同一份[產物](/ci/knowledge-cards/artifact/)」。它把可重現性從口頭約定變成流程保證。
 
 ## 概念位置
 
-Artifact Handoff 位在 build、test、deploy 之間，透過 upload / download artifact 串接驗證與發布。
+Artifact Handoff 位在 build、test、deploy 之間，透過 upload / download [artifact](/ci/knowledge-cards/artifact/) 串接驗證與發布。
 
 ## 可觀察訊號
 

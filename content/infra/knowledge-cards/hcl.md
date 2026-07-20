@@ -6,11 +6,11 @@ weight: 39
 tags: ["infra", "knowledge-cards"]
 ---
 
-HCL（HashiCorp Configuration Language）是 Terraform 和 OpenTofu 使用的設定語言。它用宣告式的 resource block 描述「環境應該長什麼樣」，由工具負責比對現況與描述、算出差異再套用。寫 HCL 的人描述目標狀態，不描述達到目標的步驟。
+HCL（HashiCorp Configuration Language）是 [Terraform](/infra/knowledge-cards/terraform-plan-apply/) 和 OpenTofu 使用的設定語言。它用宣告式的 resource block 描述「環境應該長什麼樣」，由工具負責比對現況與描述、算出差異再套用。寫 HCL 的人描述目標狀態，不描述達到目標的步驟。
 
 ## 概念位置
 
-HCL 是 infra 系列中 IaC 程式碼的語言層。IaC 卡講的是「用程式碼管理基礎設施」的概念，HCL 是這個概念落地時最常用的語言。模組一到八的所有 HCL 範例都用這個語言寫成。
+HCL 是 infra 系列中 [IaC](/infra/knowledge-cards/iac/) 程式碼的語言層。IaC 卡講的是「用程式碼管理基礎設施」的概念，HCL 是這個概念落地時最常用的語言。模組一到八的所有 HCL 範例都用這個語言寫成。
 
 ## 可觀察訊號
 

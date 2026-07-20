@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "structured-output", "sampling"]
 ---
 
-Structured output 的核心概念是「**讓 LLM 輸出符合可機器解析的固定形狀**」。它解的是應用層 parser 能不能穩定消費模型輸出的問題：輸出要能被 JSON parser、schema validator、dispatcher、workflow engine 確定性處理，而不是靠人類讀自然語言再猜意圖。
+Structured output 的核心概念是「**讓 LLM 輸出符合可機器解析的固定形狀**」。它解的是應用層 parser 能不能穩定消費模型輸出的問題：輸出要能被 JSON parser、schema validator、dispatcher、workflow engine 確定性處理，而不是靠人類讀自然語言再猜意圖，常見於 [tool use](/llm/knowledge-cards/tool-use/) 的參數輸出等下游系統。
 
 ## 概念位置
 

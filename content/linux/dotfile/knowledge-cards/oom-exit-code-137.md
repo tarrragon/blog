@@ -6,7 +6,7 @@ weight: 54
 tags: ["linux", "container", "memory", "debug", "knowledge-cards"]
 ---
 
-退出碼 137 代表程序被 SIGKILL（訊號 9）終止：Unix 慣例是被訊號殺掉的退出碼等於 128 加訊號編號，128 + 9 = 137。最常見的來源是 OOM killer——記憶體用盡時，核心（或 container 的 cgroup 記憶體控制器）挑一個程序送 SIGKILL 回收記憶體。看到 137，第一個假設就是「記憶體到頂被砍」，而不是程式自己出錯退出。
+退出碼 137 代表程序被 SIGKILL（訊號 9）終止：Unix 慣例是被訊號殺掉的退出碼等於 128 加訊號編號，128 + 9 = 137。最常見的來源是 OOM killer——記憶體用盡時，核心（或 container 的 cgroup 記憶體控制器）挑一個程序送 SIGKILL 回收記憶體。看到 137，第一個假設就是「記憶體到頂被砍」，而不是程式自己出錯退出。container 環境裡的資源隔離陷阱不只發生在記憶體，掛載卷的 owner 也有類似的層級落差，見 [Docker named volume 掛載點 owner](/linux/dotfile/knowledge-cards/docker-named-volume-ownership/)。
 
 ## 概念位置
 

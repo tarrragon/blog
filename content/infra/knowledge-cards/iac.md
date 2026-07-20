@@ -6,13 +6,13 @@ weight: 1
 tags: ["infra", "knowledge-cards", "iac"]
 ---
 
-Infrastructure as Code（IaC）的核心概念是用版本控制的程式碼描述基礎設施應該長什麼樣，再由工具負責比對「程式碼描述的目標狀態」與「雲端上的實際狀態」，算出差異並收斂。這個機制把基礎設施從「某個人在 Console 手動點出來的東西」變成「可版本控制、可 review、可重建的描述」。
+Infrastructure as Code（IaC）的核心概念是用版本控制的程式碼描述基礎設施應該長什麼樣，再由工具負責比對「程式碼描述的目標狀態」與「雲端上的實際狀態」，算出差異並收斂。這個機制把基礎設施從「某個人在 Console 手動點出來的東西」變成「可版本控制、可 review、可重建的描述」——最常見的落地語言是 [HCL](/infra/knowledge-cards/hcl/)。
 
-IaC 工具分兩條路線：宣告式 DSL（Terraform / OpenTofu，用 HCL 描述資源）與程式語言（AWS CDK / Pulumi，用 TypeScript / Python / Go 生成資源）。兩者都能達成「用程式碼描述、由工具收斂」的目標，差別在閱讀門檻與抽象能力。
+IaC 工具分兩條路線：宣告式 DSL（Terraform / OpenTofu，用 [HCL](/infra/knowledge-cards/hcl/) 描述資源）與程式語言（AWS CDK / Pulumi，用 TypeScript / Python / Go 生成資源）。兩者都能達成「用程式碼描述、由工具收斂」的目標，差別在閱讀門檻與抽象能力。
 
 ## 概念位置
 
-IaC 是 infra 系列的根概念，貫穿所有模組。[成熟度階梯](/infra/00-infra-mindset/infra-responsibility-maturity/)的第二階（宣告式 IaC）是 IaC 正式生效的起點，第三階（環境分離）和第四階（PR 流程治理）都建立在 IaC 之上。沒有 IaC，後續所有模組的能力都無法落地。
+IaC 是 infra 系列的根概念，貫穿所有模組。[成熟度階梯](/infra/00-infra-mindset/infra-responsibility-maturity/)的第二階（宣告式 IaC）是 IaC 正式生效的起點，第三階（[環境分離](/infra/knowledge-cards/environment-separation/)）和第四階（PR 流程治理）都建立在 IaC 之上。沒有 IaC，後續所有模組的能力都無法落地。
 
 ## 可觀察訊號
 

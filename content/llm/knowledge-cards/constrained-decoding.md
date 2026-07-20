@@ -23,7 +23,7 @@ Constrained decoding（受限解碼）的核心概念是「**推論時用 gramma
    ↓ next token
 ```
 
-主要 grammar 類型：
+主要 [grammar](/llm/knowledge-cards/grammar/) 類型：
 
 | Grammar 類型                | 描述                                | 用例                                   |
 | --------------------------- | ----------------------------------- | -------------------------------------- |

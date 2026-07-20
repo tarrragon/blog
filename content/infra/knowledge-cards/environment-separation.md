@@ -6,11 +6,11 @@ weight: 9
 tags: ["infra", "knowledge-cards", "environment"]
 ---
 
-環境分離的核心職責是讓 dev 的實驗、staging 的驗證、production 的真實流量彼此不可見也不可達 — 在 dev 跑壞一個資料庫、套錯一條 security group 規則時，production 完全無感。
+環境分離的核心職責是讓 dev 的實驗、staging 的驗證、production 的真實流量彼此不可見也不可達 — 在 dev 跑壞一個資料庫、套錯一條 [security group](/infra/knowledge-cards/security-group/) 規則時，production 完全無感。
 
 ## 概念位置
 
-環境分離在 infra 成熟度階梯上對應第三階。它建立在宣告式 IaC（第二階）的基礎上 — 有了 state 追蹤和模組化描述之後，才能用「同一份 code、不同參數」的方式複製出多個隔離環境。
+環境分離在 infra 成熟度階梯上對應第三階。它建立在宣告式 [IaC](/infra/knowledge-cards/iac/)（第二階）的基礎上 — 有了 state 追蹤和模組化描述之後，才能用「同一份 code、不同參數」的方式複製出多個隔離環境。
 
 分離的實作方式有一條隔離強度光譜：從帳號級（不同雲端帳號，最強隔離）到目錄級（同一 repo 內各環境一個目錄，各自持有 state）到 workspace 級（同一份 code 用執行期切換 state，隔離最弱）。多數早期團隊在目錄級落腳，因為它在顯式邊界與維運成本之間取得平衡。
 

@@ -6,7 +6,7 @@ weight: 2
 tags: ["business", "reading", "framework", "writing"]
 ---
 
-降一級寫法的核心目的是讓目標讀者比文章原本預設讀者低一級的人也能讀懂。寫商業 case-analyses 時、寫作者常不自覺把目標讀者預設成「跟自己同行的 VC / 創辦人 / 策略人」（[矩陣](/business/reading-frameworks/reader-purpose-matrix/) 的「深度部落格」層）、但實際讀者是「工程背景、想理解商業分析」（接近「MBA 教材」層）。一級的落差不大、但累積起來會讓讀者在每段都需要回去查術語跟拆因果鏈、閱讀成本爆增。
+降一級寫法的核心目的是讓目標讀者比文章原本預設讀者低一級的人也能讀懂。寫商業 case-analyses 時、寫作者常不自覺把目標讀者預設成「跟自己同行的 [VC](/business/knowledge-cards/venture-capital/) / 創辦人 / 策略人」（[矩陣](/business/reading-frameworks/reader-purpose-matrix/) 的「深度部落格」層）、但實際讀者是「工程背景、想理解商業分析」（接近「MBA 教材」層）。一級的落差不大、但累積起來會讓讀者在每段都需要回去查術語跟拆因果鏈、閱讀成本爆增。
 
 ## 為什麼會寫超過目標讀者一級
 

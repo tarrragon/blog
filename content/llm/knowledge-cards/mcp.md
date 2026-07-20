@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-MCP（Model Context Protocol、2024 年由 Anthropic 提出）的核心概念是「LLM application 跟外部 tool server 之間的標準化協議」。它解的是 LLM application 生態的 N×M 整合問題：N 個 application 接 M 個 tool、不標準化要寫 N×M 個 adapter；MCP 把這個成本拆成 N+M（application 端跟 server 端各實作協議一次）。
+MCP（Model Context Protocol、2024 年由 Anthropic 提出）的核心概念是「LLM application 跟外部 tool server 之間的標準化協議」。它解的是 LLM application 生態的 N×M 整合問題：N 個 application 接 M 個 [tool](/llm/knowledge-cards/tool-use/)、不標準化要寫 N×M 個 adapter；MCP 把這個成本拆成 N+M（application 端跟 server 端各實作協議一次）。
 
 ## 概念位置
 

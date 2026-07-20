@@ -6,11 +6,11 @@ weight: 23
 tags: ["infra", "knowledge-cards"]
 ---
 
-FileZilla 是一套開源的 FTP / SFTP / FTPS client，支援 Windows、macOS 和 Linux。它的介面分成本地和遠端兩側的檔案瀏覽器，讓使用者透過拖放或右鍵選單在本機與伺服器之間傳輸檔案。在無 SSH 的主機環境裡，FileZilla 是上傳程式碼和下載備份的主要工具。
+FileZilla 是一套開源的 [FTP](/infra/knowledge-cards/ftp/) / SFTP / FTPS client，支援 Windows、macOS 和 Linux。它的介面分成本地和遠端兩側的檔案瀏覽器，讓使用者透過拖放或右鍵選單在本機與伺服器之間傳輸檔案。在無 SSH 的主機環境裡，FileZilla 是上傳程式碼和下載備份的主要工具。
 
 ## 概念位置
 
-FTP 是無 SSH 環境裡傳輸檔案的主要協定。FileZilla 把 FTP 操作從 CLI（如 `ftp` 或 `lftp` 指令）包裝成圖形介面，降低操作門檻。接手維運時，FileZilla 的角色是「把整個站台拉回本地」和「把改好的檔案推上 prod」。
+[FTP](/infra/knowledge-cards/ftp/) 是無 SSH 環境裡傳輸檔案的主要協定。FileZilla 把 FTP 操作從 CLI（如 `ftp` 或 `lftp` 指令）包裝成圖形介面，降低操作門檻。接手維運時，FileZilla 的角色是「把整個站台拉回本地」和「把改好的檔案推上 prod」。
 
 ## 可觀察訊號
 

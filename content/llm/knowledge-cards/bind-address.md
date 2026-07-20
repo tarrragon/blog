@@ -6,11 +6,11 @@ weight: 1
 tags: ["llm", "knowledge-cards", "security", "networking"]
 ---
 
-Bind address 的核心概念是「伺服器啟動時決定『監聽哪個網路介面上的請求』」。同一個 port 在不同 bind address 下、能接受的請求來源完全不同；對本地 LLM 推論伺服器（Ollama / llama-server / LM Studio）來說、bind address 是決定誰能連到模型的最直接設定。
+Bind address 的核心概念是「伺服器啟動時決定『監聽哪個網路介面上的請求』」。同一個 port 在不同 bind address 下、能接受的請求來源完全不同；對本地 LLM [推論伺服器](/llm/knowledge-cards/inference-server/)（Ollama / llama-server / LM Studio）來說、bind address 是決定誰能連到模型的最直接設定。
 
 ## 概念位置
 
-三層典型 bind address 的暴露範圍：
+三層典型 bind address 的暴露範圍（延伸見 [port and localhost](/llm/knowledge-cards/port-and-localhost/)）：
 
 | bind address                    | 接受來源       | 個人 dev 場景的常見用途             |
 | ------------------------------- | -------------- | ----------------------------------- |

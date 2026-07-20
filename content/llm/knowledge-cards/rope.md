@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "transformer", "architecture"]
 ---
 
-RoPE（Rotary Position Embedding、旋轉位置編碼、Su et al., 2021）的核心概念是「**把 token 在序列中的位置資訊用旋轉矩陣直接旋轉進 Q 跟 K 向量裡**、不是用加法疊加另一個 embedding」。RoPE 是 Llama、Gemma、Qwen、Mistral 等現代 LLM 的標配、相對早期的 absolute / learned positional embedding 有更好的長 context 推廣性。
+RoPE（Rotary Position Embedding、旋轉位置編碼、Su et al., 2021）的核心概念是「**把 token 在序列中的位置資訊用旋轉矩陣直接旋轉進 [attention](/llm/knowledge-cards/attention/) 的 Q 跟 K 向量裡**、不是用加法疊加另一個 embedding」。RoPE 是 Llama、Gemma、Qwen、Mistral 等現代 LLM 的標配、相對早期的 absolute / learned positional embedding 有更好的長 context 推廣性。
 
 ## 概念位置
 

@@ -22,6 +22,8 @@ VLM：
   image → vision encoder → image tokens ─┘
 ```
 
+text token 與 image token 混合進 Transformer 的機制細節、見 [multimodal fusion](/llm/knowledge-cards/multimodal-fusion/)。
+
 主流 VLM family（2026/5）：
 
 | Family                       | 商業 / 開源 | 本地可跑              | Coding 場景強項              |

@@ -6,7 +6,7 @@ weight: 20
 tags: ["infra", "knowledge-cards"]
 ---
 
-checkov 是一個開源的靜態分析工具，掃描 Terraform / CloudFormation / Kubernetes 等 IaC 程式碼，比對內建的規則庫找出安全漏洞與合規違規。它在 `plan` 之前或之後執行、不建立任何雲端資源，所以是 CI pipeline 裡最便宜的安全檢查之一。
+checkov 是一個開源的靜態分析工具，掃描 Terraform / CloudFormation / Kubernetes 等 [IaC](/infra/knowledge-cards/iac/) 程式碼，比對內建的規則庫找出安全漏洞與合規違規。它在 `plan` 之前或之後執行、不建立任何雲端資源，所以是 CI pipeline 裡最便宜的安全檢查之一。
 
 ## 概念位置
 

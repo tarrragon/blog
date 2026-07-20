@@ -6,7 +6,7 @@ weight: 8
 tags: ["ddd", "read-model", "cqrs", "repository", "architecture"]
 ---
 
-[讀模型](/ddd/knowledge-cards/read-model/)（read model）是為讀需求的形狀而建的查詢側模型：它回答「畫面或報表需要什麼形狀的資料」、而 repository 回答「[aggregate](/ddd/knowledge-cards/aggregate-root/) 長什麼形狀」。讀側的設計是一道階梯、不是「要不要 CQRS」的開關——多數專案的正確位置在階梯低處，升級由訊號驅動。本章給出階梯的四階、升級的五個訊號、以及一句可機械執行的自檢問句：
+[讀模型](/ddd/knowledge-cards/read-model/)（read model）是為讀需求的形狀而建的查詢側模型：它回答「畫面或報表需要什麼形狀的資料」、而 [repository](/ddd/knowledge-cards/repository/) 回答「[aggregate](/ddd/knowledge-cards/aggregate-root/) 長什麼形狀」。讀側的設計是一道階梯、不是「要不要 [CQRS](/ddd/knowledge-cards/cqrs/)」的開關——多數專案的正確位置在階梯低處，升級由訊號驅動。本章給出階梯的四階、升級的五個訊號、以及一句可機械執行的自檢問句：
 
 > 這個查詢回傳的是**讀的形狀**、還是 **aggregate 的形狀**？
 
@@ -55,7 +55,7 @@ tags: ["ddd", "read-model", "cqrs", "repository", "architecture"]
 
 ## 階梯的適用範圍
 
-四階假設在單一 bounded context 內操作。跨服務聯合讀模型（報表服務訂閱多個 domain 的事件建置共享視圖）引入的關注點——跨服務事件契約穩定性、schema 演進、跨信任邊界的最終一致性——不是「多買一種能力」可概括，超出本階梯的覆蓋範圍。
+四階假設在單一 [bounded context](/ddd/knowledge-cards/bounded-context/) 內操作。跨服務聯合讀模型（報表服務訂閱多個 domain 的事件建置共享視圖）引入的關注點——跨服務事件契約穩定性、schema 演進、跨信任邊界的最終一致性——不是「多買一種能力」可概括，超出本階梯的覆蓋範圍。
 
 ## 案例：停在第一階的決策
 

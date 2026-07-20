@@ -32,7 +32,7 @@ Subagent 架構：
 
 主要好處：
 
-1. **Context budget 隔離**：每個 subagent 只看自己 specialty 相關 context、不被別的 specialty 污染
+1. **[Context budget](/llm/knowledge-cards/context-budget/) 隔離**：每個 subagent 只看自己 specialty 相關 context、不被別的 specialty 污染
 2. **System prompt 專門化**：寫 docs 的 system prompt 跟跑測試的 system prompt 不同、各自最佳化
 3. **Specialty 路由**：main agent 只決定「這個任務該交給哪個 subagent」、不直接做 specialty 工作
 

@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "training", "evaluation"]
 ---
 
-Training example coverage（訓練範例覆蓋度）的核心概念是「**模型在訓練時看過的任務情境是否足以支撐部署時遇到的變化**」。LLM 的能力宣稱常寫成支援某功能，但實際穩定性取決於範例是否覆蓋工具數量、參數形狀、語言變體、錯誤情境與 edge cases。
+Training example coverage（訓練範例覆蓋度）的核心概念是「**模型在訓練時看過的任務情境是否足以支撐部署時遇到的變化**」。LLM 的能力宣稱常寫成支援某功能（例如 [function calling](/llm/knowledge-cards/function-calling/)），但實際穩定性取決於範例是否覆蓋工具數量、參數形狀、語言變體、錯誤情境與 edge cases。
 
 ## 概念位置
 

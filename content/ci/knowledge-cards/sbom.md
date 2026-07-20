@@ -10,7 +10,7 @@ SBOM 的核心概念是「列出 artifact 內含軟體元件」。它把 [Artifa
 
 ## 概念位置
 
-SBOM 位在 build、scan、release 與 compliance review 之間，常見格式包含 SPDX、CycloneDX 或工具自訂輸出。
+SBOM 位在 build、scan、release 與 compliance review 之間，常見格式包含 SPDX、CycloneDX 或工具自訂輸出，並與 [Image Digest](/ci/knowledge-cards/image-digest/) 綁定同一份 artifact。
 
 ## 可觀察訊號
 

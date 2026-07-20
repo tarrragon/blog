@@ -6,7 +6,7 @@ weight: 44
 tags: ["infra", "knowledge-cards", "network", "proxy"]
 ---
 
-Reverse proxy 是一個坐在後端服務前面、代替它接收外部請求的中介層。外部 client 連的是 reverse proxy 的位址，reverse proxy 根據規則把請求轉發到實際處理的內部服務，再把回應傳回給 client。Client 不知道（也不需要知道）後面有幾台服務、跑在哪裡。
+Reverse proxy 是一個坐在後端服務前面、代替它接收外部請求的中介層。外部 client 連的是 reverse proxy 的位址，reverse proxy 根據規則把請求轉發到實際處理的內部服務，再把回應傳回給 client。Client 不知道（也不需要知道）後面有幾台服務、跑在哪裡。實務上最常見的實作是 [nginx](/infra/knowledge-cards/nginx/) 或 ALB。
 
 ## 概念位置
 

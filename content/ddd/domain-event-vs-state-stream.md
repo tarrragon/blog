@@ -25,7 +25,7 @@ tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 
 ## 案例：一條斜坡的三步
 
-一個書庫管理 App 的統計頁需要在資料變更後刷新。repository 是純 pull 介面、沒有狀態流出口；但專案有現成的 EventBus——行程內的發布／訂閱事件匯流排——和數十個 domain event 發布點。「用既有的事件當刷新訊號」看起來是零成本的選擇——這是斜坡的入口。
+一個書庫管理 App 的統計頁需要在資料變更後刷新。[repository](/ddd/knowledge-cards/repository/) 是純 pull 介面、沒有狀態流出口；但專案有現成的 [EventBus](/ddd/knowledge-cards/event-bus/)、也有數十個 domain event 發布點。「用既有的事件當刷新訊號」看起來是零成本的選擇——這是斜坡的入口。
 
 **第一步：橋接**。用 `StreamProvider` 包 EventBus、ViewModel 監聽事件流、任何事件進來就重新查詢統計。上線有效：匯入完成事件、同步事件都正確觸發刷新。
 
@@ -57,7 +57,7 @@ tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 | 移除事件前要先查「有沒有畫面靠它刷新」           | 事件語意已被消費端綁架、事實系統失去獨立演進能力         |
 | 事件 payload 開始塞「當前完整狀態」              | 事件被迫模擬快照——狀態流語意穿著事件的衣服               |
 
-第四個訊號值得單獨說明：事實的 payload 是「這件事的內容」（哪本書、什麼時間），快照的 payload 是「現在的全貌」。事件開始攜帶全量狀態、通常是因為消費者拿到事件後只想要最新值——那正是狀態流一次 emit 就給完的東西。這個訊號有適用邊界：它假設消費者與事件來源在同一進程、同一信任邊界內。跨服務情境下，刻意讓事件攜帶足量當前狀態是 event-carried state transfer 這個正當設計——目的是讓下游服務不必回頭查詢來源、避免同步耦合，那時「payload 帶全量狀態」是設計選擇、不是載體錯位。本案是單一 App、同進程，沒有跨服務查詢成本，才適用「該補的是狀態流」的判讀。
+第四個訊號值得單獨說明：事實的 payload 是「這件事的內容」（哪本書、什麼時間），快照的 payload 是「現在的全貌」。事件開始攜帶全量狀態、通常是因為消費者拿到事件後只想要最新值——那正是狀態流一次 emit 就給完的東西。這個訊號有適用邊界：它假設消費者與事件來源在同一進程、同一信任邊界內。跨服務情境下，刻意讓事件攜帶足量當前狀態是 [event-carried state transfer](/ddd/knowledge-cards/event-carried-state-transfer/) 這個正當設計——目的是讓下游服務不必回頭查詢來源、避免同步耦合，那時「payload 帶全量狀態」是設計選擇、不是載體錯位。本案是單一 App、同進程，沒有跨服務查詢成本，才適用「該補的是狀態流」的判讀。
 
 四個訊號量的不是同一種東西。訊號一、二、四直接檢驗「消費者現在問的是哪種問題」；訊號三（移除事件前要先查有沒有畫面靠它刷新）量的是選錯載體之後累積的耦合成本——它是後果訊號（lagging indicator），等綁架已經長出來才觀察得到。把它跟前三個並列，是因為它同樣觸發「回到載體判準」，但它遲到、指向的是已經發生的綁架而非正在發生的誤用。
 
@@ -65,7 +65,7 @@ tags: ["ddd", "domain-event", "event-driven", "reactive", "architecture"]
 
 ## 邊界
 
-本章的判準處理「資料變更通知」這一種需求的載體選擇。事件對另外兩種離散訊息（命令、查詢）的責任結構分界在 [domain event 與命令、查詢](/ddd/domain-event-vs-command-and-query/)；狀態流的實作選型（broadcast、初始值、生命週期）在 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。另外，CQRS 階梯頂端「以事件同步讀模型」是事件的合法消費——那裡的消費者問的確實是「發生了什麼」（用事實重建投影），與把事件當刷新鈴聲不同層；階梯全貌見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。這也標出本章「兩者正交」論述的架構前提：狀態存在獨立儲存、事件只是旁支通知。event-sourced 架構把這個前提拿掉——狀態流成為事件的投影、由同一條事件流重建，兩條管線不再獨立，正交性讓位給「讀模型由事件同步」的第四階語意。
+本章的判準處理「資料變更通知」這一種需求的載體選擇。事件對另外兩種離散訊息（命令、查詢）的責任結構分界在 [domain event 與命令、查詢](/ddd/domain-event-vs-command-and-query/)；狀態流的實作選型（broadcast、初始值、生命週期）在 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。另外，[CQRS](/ddd/knowledge-cards/cqrs/) 階梯頂端「以事件同步讀模型」是事件的合法消費——那裡的消費者問的確實是「發生了什麼」（用事實重建投影），與把事件當刷新鈴聲不同層；階梯全貌見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。這也標出本章「兩者正交」論述的架構前提：狀態存在獨立儲存、事件只是旁支通知。event-sourced 架構把這個前提拿掉——狀態流成為事件的投影、由同一條事件流重建，兩條管線不再獨立，正交性讓位給「讀模型由事件同步」的第四階語意。
 
 ## 下一步
 

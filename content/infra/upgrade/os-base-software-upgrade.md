@@ -97,7 +97,7 @@ diff old-php-modules.txt new-php-modules.txt
 
 ### Cron jobs
 
-從舊伺服器匯出 crontab（`crontab -l`），在新伺服器重建。如果舊 OS 使用 `/etc/cron.d/` 的檔案式 cron，確認新 OS 的 cron daemon 支援同樣的格式。Cron 的環境變數（PATH、MAILTO）在不同 OS 可能有不同預設。
+從舊伺服器匯出 crontab（`crontab -l`），在新伺服器重建。如果舊 OS 使用 `/etc/cron.d/` 的檔案式 [cron](/infra/knowledge-cards/cron/)，確認新 OS 的 cron daemon 支援同樣的格式。Cron 的環境變數（PATH、MAILTO）在不同 OS 可能有不同預設。
 
 ### 日誌路徑
 

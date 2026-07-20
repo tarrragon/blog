@@ -6,7 +6,7 @@ weight: 10
 tags: ["infra", "takeover", "database", "backup", "mysql", "php"]
 ---
 
-程式碼可以從 Git repo 重新上傳，資料庫裡的資料一旦遺失或損壞就回不來。在無 SSH 的環境裡，資料庫的備份與變更管理比程式碼更需要紀律，因為可用的工具受限（通常只有 phpMyAdmin）、沒有 point-in-time recovery（PITR）、也沒有自動化快照。本篇從工具限制出發，建立一套在這些約束條件下仍能可靠運作的備份與變更流程。
+程式碼可以從 Git repo 重新上傳，資料庫裡的資料一旦遺失或損壞就回不來。在無 SSH 的環境裡，資料庫的備份與變更管理比程式碼更需要紀律，因為可用的工具受限（通常只有 [phpMyAdmin](/infra/knowledge-cards/phpmyadmin/)）、沒有 point-in-time recovery（PITR）、也沒有自動化快照。本篇從工具限制出發，建立一套在這些約束條件下仍能可靠運作的備份與變更流程。
 
 本篇是[無 SSH 的 FTP / 面板管理環境接管](/infra/takeover/legacy-ftp-no-ssh/)的延伸，聚焦在資料庫層面。程式碼與部署紀律見主文。
 
@@ -35,7 +35,7 @@ cPanel 主機通常在「軟體」區塊的 phpMyAdmin 設定裡有對應的 UI 
 | HeidiSQL  | Windows           | 免費 | 工具 → 匯出資料庫為 SQL |
 | mysqldump | CLI（需本機安裝） | 免費 | 見下方指令              |
 
-桌面工具直連 MySQL 比 phpMyAdmin 穩定，因為匯出跑在本機、不受主機的 PHP timeout 限制。mysqldump 是最可靠的選項：
+桌面工具直連 MySQL 比 phpMyAdmin 穩定，因為匯出跑在本機、不受主機的 PHP timeout 限制。[mysqldump](/infra/knowledge-cards/mysqldump/) 是最可靠的選項：
 
 ```bash
 mysqldump -h db-host.example.com -u dbuser -p \

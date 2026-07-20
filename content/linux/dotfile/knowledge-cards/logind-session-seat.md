@@ -6,7 +6,7 @@ weight: 18
 tags: ["dotfile", "linux", "systemd", "logind", "knowledge-cards"]
 ---
 
-systemd-logind 是 systemd 的登入管理服務：追蹤每一次登入（session）、把實體輸入輸出裝置組成 seat、並依「哪個 session 在 active VT 上」決定誰拿得到顯示與輸入裝置的存取權。教材裡「為什麼不能從 SSH 跑桌面」「為什麼 loginctl 說沒鎖但畫面進不去」這兩類問題，根因都在這一層的概念。
+systemd-logind 是 systemd 的登入管理服務：追蹤每一次登入（session）、把實體輸入輸出裝置組成 seat、並依「哪個 session 在 active VT 上」決定誰拿得到顯示與輸入裝置的存取權——[Compositor](/linux/dotfile/knowledge-cards/compositor/) 就是這個存取權的典型使用者，得透過 logind 才拿得到 seat 與 DRM master。教材裡「為什麼不能從 SSH 跑桌面」「為什麼 loginctl 說沒鎖但畫面進不去」這兩類問題，根因都在這一層的概念。
 
 ## 概念位置
 

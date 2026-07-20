@@ -6,7 +6,7 @@ weight: 7
 tags: ["infra", "ecs", "fargate", "cost", "optimization"]
 ---
 
-Fargate 把運算的維運面外包給 AWS — 不需要管 EC2 instance、不需要管 AMI 更新、不需要管 capacity provider 的擴縮邏輯。這份簡化的代價是單位成本較高。當服務規模小或流量不穩定時，Fargate 的簡化值回票價；當服務規模穩定且持續運行時，EC2 launch type 的單位成本優勢會累積到值得切換的量級。本篇的目標是讓讀者能判斷自己的服務在成本曲線的哪個位置、以及有哪些槓桿可以調。
+[Fargate](/infra/knowledge-cards/fargate/) 把運算的維運面外包給 AWS — 不需要管 EC2 instance、不需要管 AMI 更新、不需要管 capacity provider 的擴縮邏輯。這份簡化的代價是單位成本較高。當服務規模小或流量不穩定時，Fargate 的簡化值回票價；當服務規模穩定且持續運行時，EC2 launch type 的單位成本優勢會累積到值得切換的量級。本篇的目標是讓讀者能判斷自己的服務在成本曲線的哪個位置、以及有哪些槓桿可以調。
 
 ## Fargate 計價模型
 

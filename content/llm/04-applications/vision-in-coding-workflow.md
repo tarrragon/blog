@@ -78,12 +78,12 @@ VLM 不是萬能、寫 code 場景的常見失敗：
 
 ### 跟純文字 LLM 對照的記憶體成本
 
-| 任務                 | 純文字 LLM      | VLM                                                                             | 額外成本                  |
-| -------------------- | --------------- | ------------------------------------------------------------------------------- | ------------------------- |
-| 模型本體             | 18 GB（31B Q4） | ~25 GB（32B VLM Q4）                                                            | +30-40% 給 vision encoder |
-| Context budget 影響  | 純 text         | 一張 1024×1024 圖 ≈ 1500-2500 [image tokens](/llm/knowledge-cards/image-token/) | 多張圖直接擠 context      |
-| Prefill 時間（TTFT） | 視 prompt 長度  | 圖處理階段顯著拉長 TTFT                                                         | 第一個字等較久            |
-| Tokens/s 生成速度    | 同模型大小      | 比同規模純文字 LLM 慢 ~10-30%                                                   | Vision encoder overhead   |
+| 任務                 | 純文字 LLM      | VLM                                                                             | 額外成本                                                          |
+| -------------------- | --------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 模型本體             | 18 GB（31B Q4） | ~25 GB（32B VLM Q4）                                                            | +30-40% 給 [vision encoder](/llm/knowledge-cards/vision-encoder/) |
+| Context budget 影響  | 純 text         | 一張 1024×1024 圖 ≈ 1500-2500 [image tokens](/llm/knowledge-cards/image-token/) | 多張圖直接擠 context                                              |
+| Prefill 時間（TTFT） | 視 prompt 長度  | 圖處理階段顯著拉長 TTFT                                                         | 第一個字等較久                                                    |
+| Tokens/s 生成速度    | 同模型大小      | 比同規模純文字 LLM 慢 ~10-30%                                                   | Vision encoder overhead                                           |
 
 ## 本地 VLM vs 雲端 VLM 的分工
 
@@ -113,7 +113,7 @@ Local text model：Qwen3-Coder-30B-Instruct
 
 ## Image token 跟 context budget
 
-VLM 推論時、[image token](/llm/knowledge-cards/image-token/) 跟 text token 共用同一個 context window。預算估算：
+VLM 推論時、[image token](/llm/knowledge-cards/image-token/) 跟 text token 共用同一個 context window——這是 [multimodal fusion](/llm/knowledge-cards/multimodal-fusion/) 三條路線中最主流的 early fusion 設計、也是本章選型的 Qwen2.5-VL / Llama 3.2 Vision / Gemma 3 Vision 共同採用的架構。預算估算：
 
 ```text
 一張 1024×1024 截圖：

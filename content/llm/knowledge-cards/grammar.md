@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "structured-output", "grammar"]
 ---
 
-Grammar（語法規則）的核心概念是「**用形式化規則描述哪些字串是合法輸出**」。在 LLM structured output 裡，grammar 是 parser / decoder 可以執行的規則集合，用來判斷 JSON、SQL、DSL、表達式或自訂格式是否符合預期形狀——此處的 grammar 指形式語法，而非英文文法。
+Grammar（語法規則）的核心概念是「**用形式化規則描述哪些字串是合法輸出**」。在 LLM [structured output](/llm/knowledge-cards/structured-output/) 裡，grammar 是 parser / decoder 可以執行的規則集合，用來判斷 JSON、SQL、[DSL](/llm/knowledge-cards/dsl/)、表達式或自訂格式是否符合預期形狀——此處的 grammar 指形式語法，而非英文文法。
 
 ## 概念位置
 

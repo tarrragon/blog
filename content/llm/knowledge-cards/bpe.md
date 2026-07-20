@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "tokenization"]
 ---
 
-BPE（Byte-Pair Encoding、Sennrich et al., 2015 引入 NLP）的核心概念是「**從字元開始、反覆找『出現頻率最高的字元對』把它合併成新 token、直到達到目標詞彙表大小**」。是 GPT、Llama、Mistral 等主流 LLM 的 tokenization 演算法、能在「字元」跟「整詞」之間找平衡。
+BPE（Byte-Pair Encoding、Sennrich et al., 2015 引入 NLP）的核心概念是「**從字元開始、反覆找『出現頻率最高的字元對』把它合併成新 [token](/llm/knowledge-cards/token/)、直到達到目標詞彙表大小**」。是 GPT、Llama、Mistral 等主流 LLM 的 tokenization 演算法、能在「字元」跟「整詞」之間找平衡。
 
 ## 概念位置
 

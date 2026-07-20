@@ -25,10 +25,10 @@ CLIP 的訓練架構（簡化）：
   正向對（matching image-caption）：embedding 應該相似
   負向對（同 batch 內其他不匹配）：embedding 應該遠
 
-  [Contrastive learning](/llm/knowledge-cards/contrastive-learning/) loss
+  Contrastive learning loss
 ```
 
-訓完後得到：
+這個訓練目標就是 [contrastive learning](/llm/knowledge-cards/contrastive-learning/)。訓完後得到：
 
 1. **共享 embedding 空間**：圖跟文字 embedding 都在 768/1024 維空間、相似度比較有意義
 2. **Zero-shot classification 能力**：給一張圖、給 100 個文字標籤、看哪個 embedding 最接近 → 不用 fine-tune 就能分類

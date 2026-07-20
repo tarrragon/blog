@@ -6,24 +6,24 @@ weight: 1
 tags: ["llm", "knowledge-cards", "security", "owasp"]
 ---
 
-OWASP LLM Top 10 的核心概念是「**Open Worldwide Application Security Project 發布的 LLM 應用最常見 10 大資安風險清單**」。2023 首發、2025 更新版是業界跟企業安全溝通的共同詞彙、是 production LLM 應用做 threat modeling 跟合規溝通的標準入口。
+OWASP LLM Top 10 的核心概念是「**Open Worldwide Application Security Project 發布的 LLM 應用最常見 10 大資安風險清單**」。2023 首發、2025 更新版是業界跟企業安全溝通的共同詞彙、是 production LLM 應用做 threat modeling 跟合規溝通的標準入口、涵蓋如 [prompt injection](/llm/knowledge-cards/prompt-injection/) 等風險類別。
 
 ## 概念位置
 
 2025 版的 10 項（簡述）：
 
-| 編號  | 名稱                             | 簡述                                              |
-| ----- | -------------------------------- | ------------------------------------------------- |
-| LLM01 | Prompt Injection                 | 把惡意指令藏進 LLM 會讀到的內容、間接影響模型行為 |
-| LLM02 | Sensitive Information Disclosure | LLM 輸出洩漏訓練資料 / system prompt / PII        |
-| LLM03 | Supply Chain                     | 模型 / 訓練資料 / 工具 / dependency 供應鏈攻擊    |
-| LLM04 | Data and Model Poisoning         | 訓練資料污染、模型行為被植入後門                  |
-| LLM05 | Improper Output Handling         | LLM 輸出未驗證直接執行（XSS / SQLi / RCE）        |
-| LLM06 | Excessive Agency                 | Agent 工具權限過大、副作用不可控                  |
-| LLM07 | System Prompt Leakage            | System prompt 被使用者誘導露出                    |
-| LLM08 | Vector and Embedding Weaknesses  | Vector DB / embedding pipeline 的攻擊面           |
-| LLM09 | Misinformation                   | Hallucination / 過度信任 LLM 輸出                 |
-| LLM10 | Unbounded Consumption            | Resource exhaustion / cost runaway（DoS / 燒錢）  |
+| 編號  | 名稱                             | 簡述                                                                     |
+| ----- | -------------------------------- | ------------------------------------------------------------------------ |
+| LLM01 | Prompt Injection                 | 把惡意指令藏進 LLM 會讀到的內容、間接影響模型行為                        |
+| LLM02 | Sensitive Information Disclosure | LLM 輸出洩漏訓練資料 / system prompt / PII                               |
+| LLM03 | Supply Chain                     | 模型 / 訓練資料 / 工具 / dependency 供應鏈攻擊                           |
+| LLM04 | Data and Model Poisoning         | 訓練資料污染、模型行為被植入後門                                         |
+| LLM05 | Improper Output Handling         | LLM 輸出未驗證直接執行（XSS / SQLi / RCE）                               |
+| LLM06 | Excessive Agency                 | Agent 工具權限過大、副作用不可控                                         |
+| LLM07 | System Prompt Leakage            | System prompt 被使用者誘導露出                                           |
+| LLM08 | Vector and Embedding Weaknesses  | Vector DB / embedding pipeline 的攻擊面                                  |
+| LLM09 | Misinformation                   | [Hallucination](/llm/knowledge-cards/hallucination/) / 過度信任 LLM 輸出 |
+| LLM10 | Unbounded Consumption            | Resource exhaustion / cost runaway（DoS / 燒錢）                         |
 
 ## 跟模組六的 mapping
 

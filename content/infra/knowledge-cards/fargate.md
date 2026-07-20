@@ -17,7 +17,7 @@ ECS 有兩種 launch type，差別在運算層的管理責任：
 | Fargate     | AWS 代管      | web API、微服務、批次任務          |
 | EC2         | 自管 instance | GPU workload、高密度排程、成本敏感 |
 
-Fargate 降低的是運維面（不用管 OS patch、不用管 instance 容量），代價是單位成本較高（同規格約比 EC2 高 20-40%）和啟動延遲（cold start 通常在 30-60 秒，EC2 上的 task 因為 instance 已在所以秒級啟動）。多數 web API 的初始選擇是 Fargate，流量穩定且成本壓力大時再切回 EC2 launch type。
+Fargate 降低的是運維面（不用管 OS patch、不用管 instance 容量），代價是單位成本較高（同規格約比 EC2 高 20-40%）和啟動延遲（cold start 通常在 30-60 秒，EC2 上的 task 因為 instance 已在所以秒級啟動）。多數 web API 的初始選擇是 Fargate，流量穩定且成本壓力大時再切回 [EC2](/infra/knowledge-cards/ec2/) launch type。
 
 ## 可觀察訊號
 

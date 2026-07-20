@@ -76,7 +76,7 @@ rsync -avz /local/backup/uploads/ user@vps:/var/www/site/uploads/
 
 ### .htaccess → nginx 設定轉換
 
-共享主機用 Apache 的 `.htaccess`，VPS 如果改用 nginx 需要手動轉換。常見的規則對照：
+共享主機用 Apache 的 `.htaccess`，VPS 如果改用 [nginx](/infra/knowledge-cards/nginx/) 需要手動轉換。常見的規則對照：
 
 ```nginx
 # .htaccess: RewriteEngine On / RewriteRule ^(.*)$ index.php/$1

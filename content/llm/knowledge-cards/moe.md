@@ -28,6 +28,8 @@ transformer block：
 - **shared expert**：部分模型保留少數所有 token 共用的 expert
 - **total / active parameter 比**：常見 5x ~ 10x（如 Qwen3-30B-A3B：30B total / 3B active）
 
+expert 數量與啟用數的設計、直接影響 [MoE CPU offload](/llm/knowledge-cards/moe-cpu-offload/) 策略是否划算。
+
 > **事實查核註**：MoE 架構的具體實作（router 演算法、load balancing loss、expert 並行策略等）依模型快速演進、引用前以該模型的技術報告或 paper 為準。
 
 代表性 MoE 模型（依公開資訊）：Mixtral 8x7B、DeepSeek V3、Qwen3-30B-A3B、Llama 4 Scout 等。

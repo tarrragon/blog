@@ -6,7 +6,7 @@ weight: 16
 tags: ["dotfile", "font", "fontconfig", "knowledge-cards"]
 ---
 
-fontconfig 是 Linux 上統一管理字型搜尋、匹配與 fallback 的底層服務。應用程式透過 fontconfig 的 API 查詢可用字型，而非自行掃描字型目錄——無論是終端機、狀態列、通知 daemon 還是瀏覽器，底層都走同一套查詢介面。
+fontconfig 是 Linux 上統一管理字型搜尋、匹配與 fallback 的底層服務。應用程式透過 fontconfig 的 API 查詢可用字型，而非自行掃描字型目錄——無論是終端機、狀態列、通知 daemon 還是瀏覽器，底層都走同一套查詢介面。查詢結果在 process 啟動當下就固定，之後系統新裝的字型不會自動進到已在跑的 process 手上那份清單，見 [字型的可用集合在 process 啟動時決定](/linux/dotfile/knowledge-cards/font-availability-at-startup/)。
 
 ## 概念位置
 

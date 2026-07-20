@@ -6,13 +6,13 @@ weight: 50
 tags: ["infra", "knowledge-cards"]
 ---
 
-Helm 是 Kubernetes 的套件管理工具。它用 chart（一組模板檔案 + 預設值）把多個 K8s 資源（Deployment、Service、ConfigMap、Ingress 等）打包成一個可安裝、可升級、可回退的單位。
+Helm 是 Kubernetes 的套件管理工具。它用 chart（一組模板檔案 + 預設值）把多個 K8s 資源（Deployment、Service、ConfigMap、Ingress 等）打包成一個可安裝、可升級、可回退的單位。跟非 K8s 路線的 [ECS](/infra/knowledge-cards/ecs/) 屬於不同容器編排選型。
 
 ## 概念位置
 
 Helm 在 K8s 生態裡的角色類似 apt 在 Linux、npm 在 Node.js——把「安裝一個應用」從「逐一 apply 多個 YAML」變成「一條 `helm install` 指令」。chart 可以參數化（values.yaml），同一份 chart 在不同環境用不同參數部署。
 
-公開 chart 從 Artifact Hub 下載。斷網環境裡用 `helm pull` 在外部下載 chart tarball、搬進內網、從本地檔案安裝，或用 Harbor 的 OCI chart 支援當內部 chart registry。
+公開 chart 從 Artifact Hub 下載。斷網環境裡用 `helm pull` 在外部下載 chart tarball、搬進內網、從本地檔案安裝，或用 [Harbor](/infra/knowledge-cards/harbor/) 的 OCI chart 支援當內部 chart registry。
 
 ## 可觀察訊號
 

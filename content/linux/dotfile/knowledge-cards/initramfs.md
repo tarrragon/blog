@@ -6,7 +6,7 @@ weight: 11
 tags: ["dotfile", "linux", "boot"]
 ---
 
-initramfs（initial RAM filesystem）是 kernel 開機初期、在真正的 root 檔案系統被掛起來之前，載入記憶體的一個小型臨時根檔系統。
+initramfs（initial RAM filesystem）是 kernel 開機初期、在真正的 root 檔案系統被掛起來之前，跟 kernel 一起由 [UEFI 開機鏈](/linux/dotfile/knowledge-cards/uefi-boot-chain/) 的 bootloader 載入記憶體的一個小型臨時根檔系統。
 
 它的責任是「把掛載真 root 所需的東西先備齊」。kernel 本身不內建所有硬體與檔案系統的驅動，當 root 位在一個需要額外驅動才讀得到的裝置上——LVM 邏輯卷、LUKS 加密卷、特殊磁碟控制器——kernel 沒辦法直接掛它。initramfs 提供一個臨時環境，把這些驅動與工具載進來、把真 root 掛起來，然後把控制權交給真 root 上的 init。
 

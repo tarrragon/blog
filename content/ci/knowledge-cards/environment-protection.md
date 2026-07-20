@@ -6,11 +6,11 @@ tags: ["CD", "environment", "knowledge-card"]
 weight: 5
 ---
 
-Environment Protection 的核心概念是「用環境層 gate 控制正式發布」。它把環境風險從 workflow 腳本外顯成可檢查規則。
+Environment Protection 的核心概念是「用環境層 gate 控制正式發布」。它把環境風險從 workflow 腳本外顯成可檢查規則，與 [Readiness / Health Check](/ci/knowledge-cards/readiness-health-check/) 共同構成部署放行條件。
 
 ## 概念位置
 
-Environment Protection 位在部署 job 與目標環境之間，包含 reviewer、wait timer、branch policy 與 secret scope。
+Environment Protection 位在部署 job 與目標環境之間，包含 reviewer、wait timer、[branch policy](/ci/knowledge-cards/branch-protection/) 與 secret scope。
 
 ## 可觀察訊號
 

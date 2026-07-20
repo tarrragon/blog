@@ -6,7 +6,7 @@ weight: 14
 tags: ["infra", "knowledge-cards", "iam", "security"]
 ---
 
-IAM（Identity and Access Management）是雲端平台用來回答「某個身分能不能對某個資源做某件事」的授權系統。它把授權拆成三個獨立的元件：identity（身分，發起動作的主體）、policy（政策，描述「允許或拒絕對哪些資源做哪些動作」的規則）、role（角色，一組可以被臨時取得的權限集合）。這三者的分工是後面所有憑證決策的前提。
+IAM（Identity and Access Management）是雲端平台用來回答「某個身分能不能對某個資源做某件事」的授權系統。它把授權拆成三個獨立的元件：identity（身分，發起動作的主體）、policy（政策，描述「允許或拒絕對哪些資源做哪些動作」的規則）、role（角色，一組可以被臨時取得的權限集合，常見透過 [OIDC](/infra/knowledge-cards/oidc/) 換發短期憑證）。這三者的分工是後面所有憑證決策的前提。
 
 ## 概念位置
 

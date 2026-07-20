@@ -6,11 +6,11 @@ weight: 29
 tags: ["infra", "knowledge-cards"]
 ---
 
-TLS（Transport Layer Security）加密 client 與 server 之間的通訊，防止中間人竊聽或竄改。HTTPS 就是 HTTP 加上 TLS 加密層。SSL 是 TLS 的前身、所有版本都已被棄用，但「SSL 憑證」這個稱呼仍然廣泛使用——實際上指的是 TLS 憑證。
+TLS（Transport Layer Security）加密 client 與 server 之間的通訊，防止中間人竊聽或竄改。HTTPS 就是 HTTP 加上 TLS 加密層。SSL 是 TLS 的前身、所有版本都已被棄用，但「SSL 憑證」這個稱呼仍然廣泛使用——實際上指的是 TLS 憑證。TLS 憑證的核發常搭配 [DNS](/infra/knowledge-cards/dns/) 驗證持有權。
 
 ## 概念位置
 
-TLS 在 infra 裡負責「傳輸安全」。ALB 的 HTTPS listener 需要掛一張 TLS 憑證；ACM（AWS Certificate Manager）提供免費的憑證申請與自動續期；Let's Encrypt 是跨平台的免費 CA（Certificate Authority，憑證簽發機構）。
+TLS 在 infra 裡負責「傳輸安全」。[ALB](/infra/knowledge-cards/alb/) 的 HTTPS listener 需要掛一張 TLS 憑證；ACM（AWS Certificate Manager）提供免費的憑證申請與自動續期；Let's Encrypt 是跨平台的免費 CA（Certificate Authority，憑證簽發機構）。
 
 ## 可觀察訊號
 

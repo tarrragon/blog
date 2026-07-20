@@ -12,7 +12,7 @@ tags: ["infra", "environment", "iac"]
 
 ## 資料庫變更需要驗證環境
 
-應用新增功能時經常需要改資料庫的表結構 — 加欄位、改索引、拆表。這類操作（database migration）如果語法有誤或邏輯有缺，可能導致服務中斷或資料不一致。正常做法是先在非正式環境驗證通過，再推到 production 執行。
+應用新增功能時經常需要改資料庫的表結構 — 加欄位、改索引、拆表。這類操作（[database migration](/infra/knowledge-cards/database-migration/)）如果語法有誤或邏輯有缺，可能導致服務中斷或資料不一致。正常做法是先在非正式環境驗證通過，再推到 production 執行。
 
 單一環境的情況下沒有驗證的場所。三種應對方式各有不同的風險邊界：
 

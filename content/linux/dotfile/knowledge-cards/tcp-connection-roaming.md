@@ -6,7 +6,7 @@ weight: 50
 tags: ["linux", "remote", "network", "ssh", "mosh", "knowledge-cards"]
 ---
 
-一條 TCP 連線由 4-tuple 唯一識別：來源 IP、來源 port、目的 IP、目的 port。這四個值任一改變，這條連線對作業系統核心而言就是另一條——原連線收到的封包對應不回去、直接被丟棄。這決定了一個硬限制：建在 TCP 之上的協定無法漫遊，客戶端換了網路（換 IP）就等於換了 4-tuple，連線斷掉。SSH 繼承這個限制、mosh 用另一種傳輸繞過它，是遠端連線工具選型的底層分野。
+一條 TCP 連線由 4-tuple 唯一識別：來源 IP、來源 port、目的 IP、目的 port。這四個值任一改變，這條連線對作業系統核心而言就是另一條——原連線收到的封包對應不回去、直接被丟棄。這決定了一個硬限制：建在 TCP 之上的協定無法漫遊，客戶端換了網路（換 IP）就等於換了 4-tuple，連線斷掉。SSH 繼承這個限制、[mosh](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/) 用另一種傳輸繞過它，是遠端連線工具選型的底層分野。
 
 ## 概念位置
 

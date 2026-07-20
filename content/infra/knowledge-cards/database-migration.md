@@ -6,7 +6,7 @@ weight: 45
 tags: ["infra", "knowledge-cards", "database", "migration"]
 ---
 
-Database migration 是用版本化的腳本管理資料庫 schema 變更的做法。每次 schema 變更（加欄位、改索引、拆表、改資料型別）寫成一份獨立的 migration 檔案，按順序套用。這讓 schema 的演進跟程式碼一樣有版本歷史、可追蹤、可在新環境重現。
+Database migration 是用版本化的腳本管理資料庫 schema 變更的做法。每次 schema 變更（加欄位、改索引、拆表、改資料型別）寫成一份獨立的 migration 檔案，按順序套用。這讓 schema 的演進跟程式碼一樣有版本歷史、可追蹤、可在新環境重現。在 [RDS](/infra/knowledge-cards/rds/) 等受管資料庫上執行時，schema 變更仍需注意鎖表與停機風險。
 
 ## 概念位置
 

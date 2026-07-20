@@ -6,7 +6,7 @@ weight: 12
 tags: ["dotfile", "linux", "boot", "uefi"]
 ---
 
-UEFI 開機鏈是現代機器從通電到 kernel 跑起來的一段交棒過程：韌體 → 開機項 → bootloader → kernel。理解這條鏈，bootloader 選型與「重開機找不到系統」的故障才有判讀依據。
+UEFI 開機鏈是現代機器從通電到 kernel 跑起來的一段交棒過程：韌體 → 開機項 → bootloader → kernel。理解這條鏈，bootloader 選型與「重開機找不到系統」的故障才有判讀依據；kernel 旁通常還帶著 [initramfs](/linux/dotfile/knowledge-cards/initramfs/) 一起被載入。
 
 ## 概念位置
 

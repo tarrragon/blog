@@ -6,7 +6,7 @@ weight: 29
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "strategy"]
 ---
 
-[雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)用 2025 年靜態數據做了大成、卜蜂、超秦的橫切面對照——大成規模最大但毛利率最低。本篇換一個視角：追蹤大成的動態策略演進。大成選的路線是「規模分散」——把飼料、肉品、食品、海外各做大、各自賺錢，跟卜蜂把整條鏈壓在同一家公司內部降成本的「效率整合」截然不同。兩種策略各有結構性的長處和風險，判斷孰優劣需要觀察 capex 投入的回報曲線和外部環境的配合。
+[雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)用 2025 年靜態數據做了大成、卜蜂、超秦的橫切面對照——大成規模最大但毛利率最低。本篇換一個視角：追蹤大成的動態策略演進。大成選的路線是「規模分散」——把飼料、肉品、食品、海外各做大、各自賺錢，跟卜蜂把整條鏈壓在同一家公司內部降成本的「效率整合」截然不同。兩種策略各有結構性的長處和風險，判斷孰優劣需要觀察 [capex](/business/knowledge-cards/capex/) 投入的回報曲線和外部環境的配合。
 
 ## 為什麼大成的毛利率只有 15%：結構拆解而非經營問題
 

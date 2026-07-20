@@ -6,7 +6,7 @@ weight: 33
 tags: ["flutter", "dart", "mobile"]
 ---
 
-本模組收 Flutter 與 Dart 的實作層知識：語言機制、框架行為、測試策略與工具鏈。內容從實際專案的 case 抽出——每個判準都有踩過的情境支撐，不是官方文件的轉述。設計理論的地基在 [DDD 領域驅動設計指南](/ddd/)（[entity 與 value object 的判準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)），本模組承擔的是「這些理論在 Dart 生態碰到什麼實作限制」：例如 copyWith 與 freezed 的預設路徑如何影響領域模型的完整性。
+本模組收 Flutter 與 Dart 的實作層知識：語言機制、框架行為、測試策略與工具鏈。內容從實際專案的 case 抽出——每個判準都有踩過的情境支撐，不是官方文件的轉述。設計理論的地基在 [DDD 領域驅動設計指南](/ddd/)（[entity 與 value object 的判準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)），本模組承擔的是「這些理論在 Dart 生態碰到什麼實作限制」：例如 [copyWith](/flutter/knowledge-cards/copywith/) 與 [freezed](/flutter/knowledge-cards/freezed/) 的預設路徑如何影響領域模型的完整性。
 
 ## 章節
 

@@ -10,7 +10,7 @@ Acceptance rate（接受率）的核心概念是「**在 [speculative decoding](
 
 ## 概念位置
 
-Speculative decoding 一個 step 的流程：
+[Speculative decoding](/llm/knowledge-cards/speculative-decoding/) 一個 step 的流程：
 
 ```text
 1. Drafter 一次生 K 個候選 token（如 K=5）

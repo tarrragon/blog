@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "reasoning", "prompting"]
 ---
 
-Chain-of-Thought（CoT、思維鏈、Wei et al., 2022）的核心概念是「**讓 LLM 先輸出一連串中間推理步驟、再給最終答案**」、不是直接從問題跳到結論。CoT 是 reasoning model 的基礎機制；prompting 形式（few-shot 提示）跟訓練形式（reasoning RLHF / RL）兩條路都圍繞它演化。
+Chain-of-Thought（CoT、思維鏈、Wei et al., 2022）的核心概念是「**讓 LLM 先輸出一連串中間推理步驟、再給最終答案**」、不是直接從問題跳到結論。CoT 是 [reasoning model](/llm/knowledge-cards/reasoning-model/) 的基礎機制；prompting 形式（few-shot 提示）跟訓練形式（reasoning RLHF / RL）兩條路都圍繞它演化。
 
 ## 概念位置
 

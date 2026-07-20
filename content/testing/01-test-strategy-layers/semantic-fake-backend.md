@@ -8,7 +8,7 @@ tags: ["testing", "fake-backend", "flow-test", "strategy", "integration-test"]
 
 單元測試的 stub 有一個結構性限制：它的回應由測試作者寫死，**回放的是作者對後端的假設**。當 bug 的成因正是「假設錯了」（後端合併資料時會重建子項並換掉全部 id、刪除會連帶釋放關聯的佔用資源），stub 驗證不出任何東西——假設與斷言出自同一人之手，永遠自洽（案例：[T.C5 凍結參照失效](/testing/cases/stale-reference-stub-blindspot/)）。
 
-語意級假後端是針對這個限制的測試形態：一個**持有狀態、模擬已證實後端行為**的假件，讓多個前端服務對它走完整的互動鏈。業界 test double 分類裡，這對應 Fowler 定義的 fake——有狀態、可運作的簡化實作；「語意級」強調的是行為出處紀律。
+[語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)是針對這個限制的測試形態：一個**持有狀態、模擬已證實後端行為**的假件，讓多個前端服務對它走完整的互動鏈。業界 test double 分類裡，這對應 Fowler 定義的 fake——有狀態、可運作的簡化實作；「語意級」強調的是行為出處紀律。
 
 ## 與 stub 的差異
 

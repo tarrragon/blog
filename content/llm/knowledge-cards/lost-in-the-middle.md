@@ -6,17 +6,17 @@ weight: 1
 tags: ["llm", "knowledge-cards", "long-context", "evaluation"]
 ---
 
-Lost in the middle（中段遺失、Liu et al., 2023）的核心概念是「**LLM 對 long context 中段內容的 attention / recall 顯著低於開頭與結尾**」。實測：把答案放在 10K context 的開頭或結尾、模型 recall 準確率 80%+；放在中段 4000-6000 token 位置、recall 掉到 50% 甚至更低。是 long context 使用上最常見的失敗模式。
+Lost in the middle（中段遺失、Liu et al., 2023）的核心概念是「**LLM 對 long context 中段內容的 attention / recall 顯著低於開頭與結尾**」。實測：把答案放在 10K context 的開頭或結尾、模型 recall 準確率 80%+；放在中段 4000-6000 token 位置、recall 掉到 50% 甚至更低。是 [long context](/llm/knowledge-cards/context-window/) 使用上最常見的失敗模式。
 
 ## 概念位置
 
 Long context 的 effective context 跟 claimed context 落差來自三個現象：
 
-| 現象                | 描述                                                 | 嚴重度             |
-| ------------------- | ---------------------------------------------------- | ------------------ |
-| Lost in the middle  | 中段內容 attention 顯著低、recall 掉                 | 普遍、最頻繁       |
-| Context degradation | 接近 context 上限時、整體品質緩降                    | 接近上限才明顯     |
-| Needle in haystack  | 抓單一事實的能力（vs lost-in-the-middle 抓整段邏輯） | 兩條軸、不完全重疊 |
+| 現象                                                           | 描述                                                 | 嚴重度             |
+| -------------------------------------------------------------- | ---------------------------------------------------- | ------------------ |
+| Lost in the middle                                             | 中段內容 attention 顯著低、recall 掉                 | 普遍、最頻繁       |
+| Context degradation                                            | 接近 context 上限時、整體品質緩降                    | 接近上限才明顯     |
+| [Needle in haystack](/llm/knowledge-cards/needle-in-haystack/) | 抓單一事實的能力（vs lost-in-the-middle 抓整段邏輯） | 兩條軸、不完全重疊 |
 
 ```text
 Recall accuracy vs 答案位置（典型 10K context）：

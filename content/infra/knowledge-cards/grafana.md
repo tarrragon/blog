@@ -10,7 +10,7 @@ Grafana 是開源的監控視覺化平台。它本身不收集或儲存資料—
 
 ## 概念位置
 
-Grafana 在監控體系裡負責「讓指標和 log 變成人可以讀的畫面」。Prometheus 收集指標、Loki 收集 log、Grafana 把兩者的資料用圖表、表格、熱力圖呈現。不同角色看不同 dashboard——DevOps 看資源健康、開發者看應用指標、管理層看 SLA 達成率。
+Grafana 在監控體系裡負責「讓指標和 log 變成人可以讀的畫面」。[Prometheus](/infra/knowledge-cards/prometheus/) 收集指標、Loki 收集 log、Grafana 把兩者的資料用圖表、表格、熱力圖呈現。不同角色看不同 dashboard——DevOps 看資源健康、開發者看應用指標、管理層看 SLA 達成率。
 
 ## 可觀察訊號
 

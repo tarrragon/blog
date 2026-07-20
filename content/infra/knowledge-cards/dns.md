@@ -6,11 +6,11 @@ weight: 28
 tags: ["infra", "knowledge-cards"]
 ---
 
-DNS（Domain Name System）是把人類可讀的域名（`example.com`）轉成機器可達的 IP 位址（`93.184.216.34`）的分散式查詢系統。瀏覽器輸入網址後，作業系統先查本地快取、再逐層查詢 DNS server，最終拿到 IP 才能建立連線。
+DNS（Domain Name System）是把人類可讀的域名（`example.com`）轉成機器可達的 IP 位址（`93.184.216.34`）的分散式查詢系統。瀏覽器輸入網址後，作業系統先查本地快取、再逐層查詢 DNS server，最終拿到 IP 才能建立連線。DNS 也是 [SSL/TLS](/infra/knowledge-cards/ssl-tls/) 憑證網域驗證依賴的機制之一。
 
 ## 概念位置
 
-DNS 在 infra 裡扮演「服務的門牌」角色。平台遷移、環境切換、TLS 憑證驗證都經過 DNS。ALB 或 CDN 前面通常掛一層 DNS record 作為穩定入口——IP 會隨資源重建而變，DNS 名稱不變。
+DNS 在 infra 裡扮演「服務的門牌」角色。平台遷移、環境切換、TLS 憑證驗證都經過 DNS。[ALB](/infra/knowledge-cards/alb/) 或 CDN 前面通常掛一層 DNS record 作為穩定入口——IP 會隨資源重建而變，DNS 名稱不變。
 
 ## 常見的記錄類型
 

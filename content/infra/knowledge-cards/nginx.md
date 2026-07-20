@@ -6,11 +6,11 @@ weight: 33
 tags: ["infra", "knowledge-cards"]
 ---
 
-nginx 是高效能的 Web Server 和 Reverse Proxy，以非同步事件驅動架構處理大量並發連線。它在全球 web server 市場佔有率與 Apache 並列前二，新部署的伺服器多數選 nginx。
+nginx 是高效能的 Web Server 和 [Reverse Proxy](/infra/knowledge-cards/reverse-proxy/)，以非同步事件驅動架構處理大量並發連線。它在全球 web server 市場佔有率與 Apache 並列前二，新部署的伺服器多數選 nginx。
 
 ## 概念位置
 
-nginx 在 infra 裡常見的角色有三種：作為 reverse proxy 把請求轉給後端應用（Node.js、PHP-FPM、Python WSGI）、作為靜態檔案伺服器、作為 TLS 終結點處理 HTTPS。ALB 在雲端環境承擔了部分 nginx 的職責（負載平衡、TLS 終結），但 VPS 環境裡 nginx 仍然是標準選擇。
+nginx 在 infra 裡常見的角色有三種：作為 reverse proxy 把請求轉給後端應用（Node.js、PHP-FPM、Python WSGI）、作為靜態檔案伺服器、作為 TLS 終結點處理 HTTPS。[ALB](/infra/knowledge-cards/alb/) 在雲端環境承擔了部分 nginx 的職責（負載平衡、TLS 終結），但 VPS 環境裡 nginx 仍然是標準選擇。
 
 ## 跟 Apache 的關鍵差別
 

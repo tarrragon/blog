@@ -6,11 +6,11 @@ weight: 32
 tags: ["infra", "knowledge-cards"]
 ---
 
-cron 是 Unix/Linux 系統內建的排程工作管理器，按預定的時間表自動執行指令。一個 cron job 定義「什麼時間跑什麼指令」，系統背景的 cron daemon 負責到時間就執行。
+cron 是 Unix/Linux 系統內建的排程工作管理器，按預定的時間表自動執行指令。一個 cron job 定義「什麼時間跑什麼指令」，系統背景的 cron daemon 負責到時間就執行，管理 cron 通常透過 [SSH](/infra/knowledge-cards/ssh/) 存取伺服器。
 
 ## 概念位置
 
-cron 在接手維運時是容易被忽略的隱藏工作——它不像 web 服務有明顯的入口，但可能負責資料庫備份、快取清除、報表產出、日誌清理等關鍵任務。漏掉一個 cron job 可能讓備份停止、快取永不過期、報表不再更新，而且不會立刻有人發現。
+cron 在接手維運時是容易被忽略的隱藏工作——它不像 web 服務有明顯的入口，但可能負責資料庫備份、快取清除、報表產出、日誌清理等關鍵任務。漏掉一個 cron job 可能讓備份停止、快取永不過期、報表不再更新，而且不會立刻有人發現；常見的資料庫備份工具見 [mysqldump](/infra/knowledge-cards/mysqldump/)。
 
 ## crontab 格式
 

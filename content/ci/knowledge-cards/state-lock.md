@@ -10,7 +10,7 @@ State Lock 的核心概念是「讓同一份基礎設施狀態一次只被一個
 
 ## 概念位置
 
-State Lock 位在 IaC state backend、plan / apply workflow 與平台資源之間，常由 Terraform backend、Pulumi state 或平台鎖定機制提供。
+State Lock 位在 [IaC state](/ci/knowledge-cards/infrastructure-drift/) backend、plan / apply workflow 與平台資源之間，常由 Terraform backend、Pulumi state 或平台鎖定機制提供。
 
 ## 可觀察訊號
 

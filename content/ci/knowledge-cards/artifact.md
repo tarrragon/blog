@@ -6,11 +6,11 @@ tags: ["CI", "artifact", "knowledge-card"]
 weight: 4
 ---
 
-Artifact 的核心概念是「可被追溯的交付產物」。它是 build 的輸出單位，也是 test 與 deploy 的共同依據。
+Artifact 的核心概念是「可被追溯的交付產物」。它是 build 的輸出單位，也是 test 與 deploy 透過 [Artifact Handoff](/ci/knowledge-cards/artifact-handoff/) 共用的依據。
 
 ## 概念位置
 
-Artifact 位在 build、test、package、deploy 之間，常見形式包含靜態網站檔案、container image、app bundle、安裝包與報告檔案。
+Artifact 位在 build、test、package、deploy 之間，常見形式包含靜態網站檔案、[container image](/ci/knowledge-cards/image-digest/)、app bundle、安裝包與報告檔案。
 
 ## 可觀察訊號
 

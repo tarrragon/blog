@@ -6,7 +6,7 @@ weight: 50
 tags: ["linux", "git", "auth", "knowledge-cards"]
 ---
 
-git credential helper 是一個 git 用來取得 HTTPS 認證的**可替換外部程式**：git 自己不儲存也不硬編任何帳密，每次要對遠端認證時把要求交給設定好的 helper、由它回傳使用者名與密碼。這讓「認證從哪來、存在哪」跟 git 本身解耦——換一個 helper 就換一套憑證來源，git 的其餘行為不動。理解這一點，就看得出「`gh auth login` 幫你設好」跟「手動把 helper 指到某個程式」是同一個機制的兩種配置，而不是兩件不相關的事。
+git credential helper 是一個 git 用來取得 HTTPS 認證的**可替換外部程式**：git 自己不儲存也不硬編任何帳密，每次要對遠端認證時把要求交給設定好的 helper、由它回傳使用者名與密碼。這讓「認證從哪來、存在哪」跟 git 本身解耦——換一個 helper 就換一套憑證來源，git 的其餘行為不動。理解這一點，就看得出「`gh auth login` 幫你設好」跟「手動把 helper 指到某個程式」是同一個機制的兩種配置，而不是兩件不相關的事。這條路徑只管 HTTPS；SSH 走的是另一條認證路，見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)。
 
 ## 概念位置
 

@@ -6,11 +6,11 @@ tags: ["CI", "preview", "knowledge-card"]
 weight: 6
 ---
 
-Preview Environment 的核心概念是「在合併前提供接近正式環境的可驗證入口」。它把 code review 從靜態 diff 延伸到真實互動行為。
+Preview Environment 的核心概念是「在合併前提供接近正式環境的可驗證入口」，補強 [CI Pipeline](/ci/knowledge-cards/ci-pipeline/) 的靜態檢查。它把 code review 從靜態 diff 延伸到真實互動行為。
 
 ## 概念位置
 
-Preview Environment 位在 pull request workflow 與正式部署流程之間，常由臨時 URL、隔離資源與到期清理組成。
+Preview Environment 位在 pull request workflow 與[正式部署流程](/ci/knowledge-cards/cd-pipeline/)之間，常由臨時 URL、隔離資源與到期清理組成。
 
 ## 可觀察訊號
 

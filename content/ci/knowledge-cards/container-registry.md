@@ -6,11 +6,11 @@ tags: ["CD", "container", "registry", "knowledge-card"]
 weight: 13
 ---
 
-Container Registry 的核心概念是「管理可部署 image 的供應鏈節點」。它負責保存、授權、保留與推進已驗證影像。
+Container Registry 的核心概念是「管理可部署 [image](/ci/knowledge-cards/image-digest/) 的供應鏈節點」。它負責保存、授權、保留與推進已驗證影像。
 
 ## 概念位置
 
-Container Registry 位在 image build、scan、promotion 與 runtime deploy 之間，連接 CI 產物與環境發布。
+Container Registry 位在 image build、scan、promotion 與 runtime deploy 之間，連接 [CI](/ci/knowledge-cards/ci-pipeline/) 產物與環境發布。
 
 ## 可觀察訊號
 

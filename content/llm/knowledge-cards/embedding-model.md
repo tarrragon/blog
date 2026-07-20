@@ -6,11 +6,11 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-Embedding Model 的核心概念是「把文字轉成固定維度向量、讓相似內容在向量空間中靠近」。Continue.dev 等工具用 embedding model 把 codebase 索引成向量資料庫、再用語意相似度搜尋相關片段。
+Embedding Model 的核心概念是「把文字轉成固定維度向量、讓相似內容在向量空間中靠近」。Continue.dev 等工具用 embedding model 把 codebase 索引成 [向量資料庫](/llm/knowledge-cards/vector-database/)、再用語意相似度搜尋相關片段。
 
 ## 概念位置
 
-Embedding model 跟 chat model 是兩種不同的模型、有各自的權重檔。Chat model 用於對話與生成、embedding model 用於 retrieval。同一個推論伺服器（如 Ollama）可以同時載入兩種模型、為不同用途服務。
+Embedding model 跟 chat model 是兩種不同的模型、有各自的權重檔。Chat model 用於對話與生成、embedding model 用於 retrieval。同一個 [推論伺服器](/llm/knowledge-cards/inference-server/)（如 Ollama）可以同時載入兩種模型、為不同用途服務。
 
 ## 可觀察訊號與例子
 

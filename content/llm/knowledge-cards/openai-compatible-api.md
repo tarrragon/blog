@@ -10,7 +10,7 @@ OpenAI 相容 API 的核心概念是「實作 OpenAI 在 2023 年定義的 `POST
 
 ## 概念位置
 
-OpenAI 相容 API 是介面層與伺服器層之間的標準介面。它承諾 API 形狀（request / response schema、streaming 格式、錯誤碼）一致；對「模型能力」「效能特性」「進階參數」等不承諾等價。本地 Gemma 4 跟雲端 GPT-5 都能用同一套 API 呼叫、但回答品質天差地遠。
+OpenAI 相容 API 是介面層與伺服器層之間的標準介面。它承諾 API 形狀（request / response schema、streaming 格式、錯誤碼）一致；對「[模型能力](/llm/knowledge-cards/capability-spectrum/)」「效能特性」「進階參數」等不承諾等價。本地 Gemma 4 跟雲端 GPT-5 都能用同一套 API 呼叫、但回答品質天差地遠。
 
 ## 可觀察訊號與例子
 

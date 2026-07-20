@@ -6,7 +6,7 @@ tags: ["llm", "foundations", "comparison"]
 weight: 0
 ---
 
-本地 LLM 與雲端 LLM 的核心差異是「模型權重在哪台機器上跑、誰能看到對話內容」。把模型權重載到自己 Mac 的記憶體裡、用本機算力跑[推論](/llm/knowledge-cards/inference-server/)，就是本地；把 prompt 透過 HTTPS 送到 Anthropic、OpenAI、Google 的伺服器，再把結果回傳，就是雲端。
+[本地 LLM 與雲端 LLM](/llm/knowledge-cards/local-vs-cloud/) 的核心差異是「模型權重在哪台機器上跑、誰能看到對話內容」。把模型權重載到自己 Mac 的記憶體裡、用本機算力跑[推論](/llm/knowledge-cards/inference-server/)，就是本地；把 prompt 透過 HTTPS 送到 Anthropic、OpenAI、Google 的伺服器，再把結果回傳，就是雲端。
 
 這個差異一拆，後續所有取捨都會自然展開：隱私、成本、速度、能力四個維度在本地與雲端的權衡方向都不一樣。本章的責任是把這四個維度先攤開，後續章節再分別處理「速度為何慢」「記憶體為何決定能力」等具體問題。
 

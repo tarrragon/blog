@@ -6,7 +6,7 @@ weight: 2
 tags: ["business", "case-analysis", "wrap", "fde", "saas", "gtm"]
 ---
 
-OpenAI 開獨立 DeployCo、Anthropic 跟 Blackstone 與高盛合資、Google 把 FDE 納編進 Cloud—三家最大的基礎模型供應商在 2025-2026 年同時押 [FDE](/business/knowledge-cards/fde/) 模式。這個共識反映的是 [SaaS](/business/knowledge-cards/saas/) 商業模式三個核心前提同時鬆動：邊際成本不再接近零、產品壽命被 AI 迭代壓縮、切換成本因模型 API 標準化下降。本篇拆解三支柱怎麼鬆動、[Vibe Code](/business/knowledge-cards/vibe-code/) 怎麼改寫 FDE [單位經濟](/business/knowledge-cards/unit-economics/)、以及 FDE 是過渡狀態還是長期結構。
+OpenAI 開獨立 DeployCo、Anthropic 跟 Blackstone 與高盛合資、Google 把 FDE 納編進 Cloud—三家最大的基礎模型供應商在 2025-2026 年同時押 [FDE](/business/knowledge-cards/fde/) 模式。這個共識反映的是 [SaaS](/business/knowledge-cards/saas/) 商業模式三個核心前提同時鬆動：[邊際成本](/business/knowledge-cards/marginal-cost/)不再接近零、產品壽命被 AI 迭代壓縮、切換成本因模型 API 標準化下降。本篇拆解三支柱怎麼鬆動、[Vibe Code](/business/knowledge-cards/vibe-code/) 怎麼改寫 FDE [單位經濟](/business/knowledge-cards/unit-economics/)、以及 FDE 是過渡狀態還是長期結構。
 
 ## 事件本身
 

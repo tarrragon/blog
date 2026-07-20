@@ -6,7 +6,7 @@ weight: 7
 tags: ["ddd", "repository", "hexagonal-architecture", "reactive", "port"]
 ---
 
-[觀測出口](/ddd/knowledge-cards/observation-outlet/)是 repository 對外提供的「資料變了」持續通知能力——pull 介面（`getAllBooks()` 回 `Future`）的 push 對應（`watchBooks()` 回 `Stream`）。UI 框架要 reactive 觀察 domain 資料時，這個能力橫跨三層，職責三分：**契約**（介面宣告，歸 domain）、**機制**（變更偵測，歸 infrastructure）、**組裝**（框架訂閱，歸 DI／presentation 層）。三分的判準只有一條：**每一層的產出用什麼語言表達、就歸屬表達那種語言的層**。
+[觀測出口](/ddd/knowledge-cards/observation-outlet/)是 [repository](/ddd/knowledge-cards/repository/) 對外提供的「資料變了」持續通知能力——pull 介面（`getAllBooks()` 回 `Future`）的 push 對應（`watchBooks()` 回 `Stream`）。UI 框架要 reactive 觀察 domain 資料時，這個能力橫跨三層，職責三分：**契約**（介面宣告，歸 domain）、**機制**（變更偵測，歸 infrastructure）、**組裝**（框架訂閱，歸 DI／presentation 層）。三分的判準只有一條：**每一層的產出用什麼語言表達、就歸屬表達那種語言的層**。
 
 這條判準值得成章，因為它跟一個直覺衝突：觀測出口的需求完全來自消費端——是 UI 框架想觀察、domain 自己沒有這個需要。「誰需要就放誰那層」的直覺會把 Stream 出口做進 presentation 的某個 service，讓 domain 保持「純淨」；本章論證這個直覺用錯了判準的位置。
 
@@ -21,7 +21,7 @@ tags: ["ddd", "repository", "hexagonal-architecture", "reactive", "port"]
 | 待補完列表   | 衍生自一次性 `FutureProvider`  | 高：上游無失效機制            |
 | 其餘三個視圖 | 各自命令式載入                 | 低到中：同頁操作後手動 reload |
 
-根因是同一個：repository 沒有變更通知出口，六個視圖各自在圖外解「怎麼知道資料變了」這一題，解出兩種補償策略（導航返回點重載、經 EventBus——行程內的發布／訂閱事件匯流排——的 domain event 橋接）、職責交叉且涵蓋不完整。補償演進的完整記錄在 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)；本章從這個案例抽三層歸屬的判準。
+根因是同一個：repository 沒有變更通知出口，六個視圖各自在圖外解「怎麼知道資料變了」這一題，解出兩種補償策略（導航返回點重載、經 [EventBus](/ddd/knowledge-cards/event-bus/)——行程內的發布／訂閱事件匯流排——的 domain event 橋接）、職責交叉且涵蓋不完整。補償演進的完整記錄在 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)；本章從這個案例抽三層歸屬的判準。
 
 ## 契約層：歸屬由介面語言決定、不由需求來源決定
 
@@ -51,7 +51,7 @@ Stream<List<Book>> watchBooks();
 
 契約層還有一個二擇：放既有 repository 介面、還是抽獨立的查詢 port？本案放既有介面——讀需求只有「完整書單流」一條、六個視圖都能從書單流投影，為一個方法抽 port 是介面碎片化。這個「何時該抽」的判準有自己的一章：[讀模型的升級判準](/ddd/read-model-upgrade-signals/)。讀 port 一旦抽出，仍屬契約層的延伸——簽名同樣只用 domain 語言，機制層與組裝層的三分模型對它同樣適用。
 
-語言歸屬判準處理的是「詞彙是否洩漏」這一種反對意見。DDD 文獻裡存在另一派更根本的立場：即使簽名純淨，Repository 模式在 Evans / Vernon 的原始定義裡是集合式存取，reactive 訂閱能力本質上服務查詢端、屬於讀側的關注點，不論詞彙是否純淨都不該掛在寫側 aggregate 的 repository 介面上。這個立場涉及讀寫分離的組織方式（讀 port 何時值得獨立、CQRS 階梯的升級判準），跟詞彙判準各自回答不同的問題：詞彙判準回答「語言有沒有洩漏」，讀寫分離判準回答「職責該不該分離」。本章只處理前者；後者見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。
+語言歸屬判準處理的是「詞彙是否洩漏」這一種反對意見。DDD 文獻裡存在另一派更根本的立場：即使簽名純淨，Repository 模式在 Evans / Vernon 的原始定義裡是集合式存取，reactive 訂閱能力本質上服務查詢端、屬於讀側的關注點，不論詞彙是否純淨都不該掛在寫側 aggregate 的 repository 介面上。這個立場涉及讀寫分離的組織方式（讀 port 何時值得獨立、[CQRS](/ddd/knowledge-cards/cqrs/) 階梯的升級判準），跟詞彙判準各自回答不同的問題：詞彙判準回答「語言有沒有洩漏」，讀寫分離判準回答「職責該不該分離」。本章只處理前者；後者見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。
 
 ## 機制層：變更偵測是 adapter 的實作細節
 

@@ -6,7 +6,7 @@ weight: 15
 tags: ["infra", "knowledge-cards"]
 ---
 
-Route table 是一組轉送規則，掛在 subnet 上，定義「目的地是某個網段的封包該往哪送」。每個 subnet 關聯一張 route table，封包離開 subnet 時逐條比對規則、走最長前綴匹配的那一條。
+Route table 是一組轉送規則，掛在 [subnet](/infra/knowledge-cards/subnet/) 上，定義「目的地是某個網段的封包該往哪送」。每個 subnet 關聯一張 route table，封包離開 subnet 時逐條比對規則、走最長前綴匹配的那一條。
 
 ## 概念位置
 

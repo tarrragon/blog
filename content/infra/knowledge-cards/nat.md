@@ -6,13 +6,13 @@ weight: 7
 tags: ["infra", "knowledge-cards", "nat", "network"]
 ---
 
-NAT Gateway（Network Address Translation Gateway）的核心職責是讓 private subnet 的資源能主動發起對外連線（拉套件、呼叫第三方 API、下載 OS 更新），同時不開放任何外部主動發起的入站連線。它借用一個公網 IP 把出站封包送出去，再把回應導回原請求者。
+NAT Gateway（Network Address Translation Gateway）的核心職責是讓 [private subnet](/infra/knowledge-cards/subnet/) 的資源能主動發起對外連線（拉套件、呼叫第三方 API、下載 OS 更新），同時不開放任何外部主動發起的入站連線。它借用一個公網 IP 把出站封包送出去，再把回應導回原請求者。
 
 ## 概念位置
 
 NAT Gateway 在網路地基裡的角色是 private subnet 的出站閘道。它解決的問題是：private subnet 的設計意圖是「外部連不進來」，但服務仍需要主動對外。沒有 NAT，private subnet 的資源完全無法對外通訊 — 連 `apt update` 或 `pip install` 都做不到。
 
-NAT Gateway 是綁定單一可用區的資源，活在某個 public subnet 裡。這帶來一個架構取捨：共享一個 NAT（成本低、出站方向有單點）還是每個可用區各放一個（成本高、出站與 subnet 冗餘對齊）。
+NAT Gateway 是綁定單一可用區的資源，活在某個 public subnet 裡，實際生不生效由該 subnet 的 [route table](/infra/knowledge-cards/route-table/) 預設路由決定。這帶來一個架構取捨：共享一個 NAT（成本低、出站方向有單點）還是每個可用區各放一個（成本高、出站與 subnet 冗餘對齊）。
 
 ## 可觀察訊號
 

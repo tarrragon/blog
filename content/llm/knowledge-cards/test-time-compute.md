@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "reasoning", "inference"]
 ---
 
-Test-time compute（推論時計算）的核心概念是「**在推論階段花更多計算量、換取更高品質的答案**」、不是只在訓練時投入算力。是 2024-2026 LLM 的 paradigm shift：GPT-3 → GPT-4 主要靠「更大模型 + 更多訓練資料」；o1 / DeepSeek-R1 → 主要靠「同模型、推論時想更久」。
+Test-time compute（推論時計算）的核心概念是「**在推論階段花更多計算量、換取更高品質的答案**」、不是只在訓練時投入算力。是 2024-2026 LLM 的 paradigm shift：GPT-3 → GPT-4 主要靠「更大模型 + 更多訓練資料」；o1 / DeepSeek-R1 等 [reasoning model](/llm/knowledge-cards/reasoning-model/) → 主要靠「同模型、推論時想更久」。
 
 ## 概念位置
 
