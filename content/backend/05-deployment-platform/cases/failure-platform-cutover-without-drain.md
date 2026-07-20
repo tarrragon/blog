@@ -16,7 +16,7 @@ tags: ["backend", "deployment", "case-study"]
 
 - **T+0**：開始切流，新版本 pod readiness 通過，LB 開始導入流量。
 - **T+30s**：5xx spike 出現。舊 pod 的 endpoint 尚未從所有 kube-proxy / envoy 移除，部分客戶端仍打到舊 pod。舊 pod 同時收到 SIGTERM 開始 shutdown，在途請求被中斷。
-- **T+2m**：長連線客戶端偵測到斷線，觸發 reconnect。大量客戶端同時重連到新 pod，形成 reconnect storm。新 pod 的連線數瞬間飆高，部分 pod 因連線數超出預期開始 timeout。
+- **T+2m**：長連線客戶端偵測到斷線，觸發 reconnect。大量客戶端同時重連到新 pod，形成 [reconnect storm](/backend/knowledge-cards/thundering-herd/)。新 pod 的連線數瞬間飆高，部分 pod 因連線數超出預期開始 timeout。
 - **T+5m**：on-call 判斷切流失敗，決定回退。但回退操作需要時間——DNS 權重切回、LB 規則恢復、舊 pod 重新啟動。
 - **T+15m**：回退完成，舊版本重新接流量。但 reconnect storm 尚未收斂，連線數曲線仍高於 baseline，客戶端在新舊入口之間震盪。
 - **T+30m**：連線數逐漸回落，錯誤率回到 baseline。事故實際影響時間遠超切流本身。

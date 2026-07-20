@@ -55,7 +55,7 @@ test('POST /api/resource with invalid body returns 400'):
 
 ## Consumer-driven contract test
 
-當 client 和 server 由不同團隊開發時，consumer-driven contract test 是 protocol integration test 的延伸。Client 團隊定義「我期望的 request/response 格式」（contract），server 團隊驗證 server 實作是否符合 contract。
+當 client 和 server 由不同團隊開發時，[consumer-driven contract test](/testing/knowledge-cards/consumer-driven-contract-test/) 是 protocol integration test 的延伸。Client 團隊定義「我期望的 request/response 格式」（contract），server 團隊驗證 server 實作是否符合 contract。
 
 Consumer-driven contract test 的工具（Pact、Spring Cloud Contract）自動化了 contract 的定義、驗證和版本管理。適合 API 有多個 consumer 且需要獨立部署的場景。
 

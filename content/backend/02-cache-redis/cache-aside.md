@@ -12,7 +12,7 @@ tags: ["backend", "cache", "redis"]
 
 [cache aside](/backend/knowledge-cards/cache-aside/) 的讀路徑是「先讀 cache，miss 後回源，再回填 cache」；寫路徑是「先寫 source of truth，再做 cache invalidation 或版本更新」。這個流程讓正式狀態維持單一責任，同時讓熱門讀取獲得低延遲。
 
-實務上要先定義 freshness window。每個資料類型可容忍的不新鮮時間不同：商品介紹可接受秒級延遲，價格、庫存、權限與配額則需要更短窗口或即時失效。
+實務上要先定義 [freshness window](/backend/knowledge-cards/freshness-window/)。每個資料類型可容忍的不新鮮時間不同：商品介紹可接受秒級延遲，價格、庫存、權限與配額則需要更短窗口或即時失效。
 
 ## 失效策略
 
@@ -73,12 +73,12 @@ tags: ["backend", "cache", "redis"]
 
 cache 命中下降時，來源系統會承受瞬間回源壓力。回源保護需要和失效策略一起設計：
 
-| 風險訊號                             | 判讀重點                        | 對應動作                                                                        |
-| ------------------------------------ | ------------------------------- | ------------------------------------------------------------------------------- |
-| hit ratio 下降且 origin QPS 快速上升 | 大量 key 同時過期或失效策略失準 | 分散 TTL、分批失效、啟用 [cache warmup](/backend/knowledge-cards/cache-warmup/) |
-| 熱門 key miss 後延遲與錯誤率同步上升 | 單 key 造成 stampede            | 啟用 request coalescing、局部預熱、限流回源                                     |
-| cache 層延遲穩定但業務錯誤增加       | 值語意過期或序列化版本漂移      | 補 key version 與 schema migration                                              |
-| eviction rate 升高且 value size 變大 | 容量策略與資料形狀不匹配        | 重配記憶體策略、調整 value 拆分                                                 |
+| 風險訊號                             | 判讀重點                        | 對應動作                                                                              |
+| ------------------------------------ | ------------------------------- | ------------------------------------------------------------------------------------- |
+| hit ratio 下降且 origin QPS 快速上升 | 大量 key 同時過期或失效策略失準 | 分散 TTL、分批失效、啟用 [cache warmup](/backend/knowledge-cards/cache-warmup/)       |
+| 熱門 key miss 後延遲與錯誤率同步上升 | 單 key 造成 stampede            | 啟用 [request coalescing](/backend/knowledge-cards/singleflight/)、局部預熱、限流回源 |
+| cache 層延遲穩定但業務錯誤增加       | 值語意過期或序列化版本漂移      | 補 key version 與 schema migration                                                    |
+| eviction rate 升高且 value size 變大 | 容量策略與資料形狀不匹配        | 重配記憶體策略、調整 value 拆分                                                       |
 
 [cache stampede](/backend/knowledge-cards/cache-stampede/) 與 [thundering herd](/backend/knowledge-cards/thundering-herd/) 都是回源保護議題；重點是把來源系統視為有限資源，讓 miss 風險可控。
 

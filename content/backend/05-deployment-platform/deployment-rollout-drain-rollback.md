@@ -47,12 +47,12 @@ Preflight 自動化的產出是一份 go/no-go 報告，進入 [6.8 Release Gate
 
 小流量先驗證新版本行為，再決定是否擴批——Canary 回答的是「這個版本值不值得擴大」。
 
-| 批次階段 | 判讀重點                                     | 停損條件                       |
-| -------- | -------------------------------------------- | ------------------------------ |
-| 1-5%     | per-version error rate、p95/p99 latency      | 錯誤率高於基線、延遲持續惡化   |
-| 10-25%   | payment dependency timeout、fallback 比例    | 依賴 timeout 連續超門檻        |
-| 50%      | drain 成功率、reconnect 波形、下游事件完整性 | drain 未完成或 reconnect storm |
-| 100% 前  | 新舊版本差異是否收斂、rollback 可行性        | 仍需依賴舊版本特殊路徑         |
+| 批次階段 | 判讀重點                                     | 停損條件                                                                    |
+| -------- | -------------------------------------------- | --------------------------------------------------------------------------- |
+| 1-5%     | per-version error rate、p95/p99 latency      | 錯誤率高於基線、延遲持續惡化                                                |
+| 10-25%   | payment dependency timeout、fallback 比例    | 依賴 timeout 連續超門檻                                                     |
+| 50%      | drain 成功率、reconnect 波形、下游事件完整性 | drain 未完成或 [reconnect storm](/backend/knowledge-cards/thundering-herd/) |
+| 100% 前  | 新舊版本差異是否收斂、rollback 可行性        | 仍需依賴舊版本特殊路徑                                                      |
 
 canary 判讀要維持 per-version 視角。只看整體服務平均值會掩蓋新版本局部退化。
 

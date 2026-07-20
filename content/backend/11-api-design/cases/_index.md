@@ -24,16 +24,16 @@ tags: ["backend", "api-design", "case-study"]
 
 ## 版本策略與 deprecation（C10-C17）
 
-| 編號 | 案例                                                                                                  | 主議題                        | 類型   |
-| ---- | ----------------------------------------------------------------------------------------------------- | ----------------------------- | ------ |
-| C10  | [Stripe 日期滾動版本](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)          | version change module、轉換層 | anchor |
-| C11  | [Stripe 具名 major release](/backend/11-api-design/cases/versioning-stripe-named-major-releases/)     | 策略演進切片、相容變更清單    | anchor |
-| C12  | [GitHub calendar versioning](/backend/11-api-design/cases/versioning-github-calendar-versioning/)     | header 選版、24 個月支援承諾  | anchor |
-| C13  | [GitHub brownout](/backend/11-api-design/cases/versioning-github-password-auth-brownout/)             | deprecation 執行機制          | anchor |
-| C14  | [Fielding no-versioning](/backend/11-api-design/cases/versioning-fielding-no-versioning/)             | 流派理論錨點                  | anchor |
-| C15  | [RFC 8594 Sunset header](/backend/11-api-design/cases/versioning-sunset-header-rfc8594/)              | 退場宣告機器可讀層            | 邊緣   |
-| C16  | [Slack 四族 API 收斂](/backend/11-api-design/cases/versioning-slack-conversations-api-sunset/)        | 分階段執行、in-band warning   | anchor |
-| C17  | [Facebook Graph v1.0 退場](/backend/11-api-design/cases/versioning-facebook-graph-v1-forced-upgrade/) | 靜默語意切換                  | 反例   |
+| 編號 | 案例                                                                                                  | 主議題                                                                  | 類型   |
+| ---- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------ |
+| C10  | [Stripe 日期滾動版本](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)          | version change module、轉換層                                           | anchor |
+| C11  | [Stripe 具名 major release](/backend/11-api-design/cases/versioning-stripe-named-major-releases/)     | 策略演進切片、相容變更清單                                              | anchor |
+| C12  | [GitHub calendar versioning](/backend/11-api-design/cases/versioning-github-calendar-versioning/)     | header 選版、24 個月支援承諾                                            | anchor |
+| C13  | [GitHub brownout](/backend/11-api-design/cases/versioning-github-password-auth-brownout/)             | [deprecation](/backend/knowledge-cards/deprecation-lifecycle/) 執行機制 | anchor |
+| C14  | [Fielding no-versioning](/backend/11-api-design/cases/versioning-fielding-no-versioning/)             | 流派理論錨點                                                            | anchor |
+| C15  | [RFC 8594 Sunset header](/backend/11-api-design/cases/versioning-sunset-header-rfc8594/)              | 退場宣告機器可讀層                                                      | 邊緣   |
+| C16  | [Slack 四族 API 收斂](/backend/11-api-design/cases/versioning-slack-conversations-api-sunset/)        | 分階段執行、in-band warning                                             | anchor |
+| C17  | [Facebook Graph v1.0 退場](/backend/11-api-design/cases/versioning-facebook-graph-v1-forced-upgrade/) | 靜默語意切換                                                            | 反例   |
 
 ## GraphQL 進退（C18-C27）
 
@@ -64,19 +64,19 @@ tags: ["backend", "api-design", "case-study"]
 
 ## 介面語意：錯誤 / 分頁 / 冪等 / 限流 / 長時操作（C35-C45）
 
-| 編號 | 案例                                                                                          | 主議題                         | 類型   |
-| ---- | --------------------------------------------------------------------------------------------- | ------------------------------ | ------ |
-| C35  | [RFC 9457 problem+json](/backend/11-api-design/cases/error-rfc9457-problem-details/)          | 錯誤格式標準、演化條款         | anchor |
-| C36  | [Stripe 錯誤物件](/backend/11-api-design/cases/error-stripe-error-object/)                    | 三層正交欄位                   | anchor |
-| C37  | [Slack cursor 遷移](/backend/11-api-design/cases/pagination-slack-cursor-migration/)          | opaque cursor、表示權在 server | anchor |
-| C38  | [Stripe 冪等設計哲學](/backend/11-api-design/cases/idempotency-stripe-design-blog/)           | 三種失敗點、client 協作        | anchor |
-| C39  | [Stripe 冪等契約條款](/backend/11-api-design/cases/idempotency-stripe-api-contract/)          | 24h、500 也重放                | anchor |
-| C40  | [IETF Idempotency-Key draft](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/) | 標準化停滯（expired）          | 邊緣   |
-| C41  | [PayPal-Request-Id](/backend/11-api-design/cases/idempotency-paypal-request-id/)              | 同語意不同契約                 | 邊緣   |
-| C42  | [IETF RateLimit headers](/backend/11-api-design/cases/ratelimit-ietf-header-fields/)          | 政策 / 狀態分離、informational | anchor |
-| C43  | [GitHub 雙層限流](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)           | primary / secondary、x- 前綴   | anchor |
-| C44  | [Google AIP-151](/backend/11-api-design/cases/longrun-google-aip151/)                         | Operation resource             | anchor |
-| C45  | [Twilio 計費事故](/backend/11-api-design/cases/idempotency-twilio-billing-postmortem/)        | 內部 retry 缺冪等閘門          | 反例   |
+| 編號 | 案例                                                                                          | 主議題                                                                        | 類型   |
+| ---- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ |
+| C35  | [RFC 9457 problem+json](/backend/11-api-design/cases/error-rfc9457-problem-details/)          | 錯誤格式標準、演化條款                                                        | anchor |
+| C36  | [Stripe 錯誤物件](/backend/11-api-design/cases/error-stripe-error-object/)                    | 三層正交欄位                                                                  | anchor |
+| C37  | [Slack cursor 遷移](/backend/11-api-design/cases/pagination-slack-cursor-migration/)          | opaque [cursor](/backend/knowledge-cards/pagination-cursor/)、表示權在 server | anchor |
+| C38  | [Stripe 冪等設計哲學](/backend/11-api-design/cases/idempotency-stripe-design-blog/)           | 三種失敗點、client 協作                                                       | anchor |
+| C39  | [Stripe 冪等契約條款](/backend/11-api-design/cases/idempotency-stripe-api-contract/)          | 24h、500 也重放                                                               | anchor |
+| C40  | [IETF Idempotency-Key draft](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/) | 標準化停滯（expired）                                                         | 邊緣   |
+| C41  | [PayPal-Request-Id](/backend/11-api-design/cases/idempotency-paypal-request-id/)              | 同語意不同契約                                                                | 邊緣   |
+| C42  | [IETF RateLimit headers](/backend/11-api-design/cases/ratelimit-ietf-header-fields/)          | 政策 / 狀態分離、informational                                                | anchor |
+| C43  | [GitHub 雙層限流](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)           | primary / secondary、x- 前綴                                                  | anchor |
+| C44  | [Google AIP-151](/backend/11-api-design/cases/longrun-google-aip151/)                         | Operation resource                                                            | anchor |
+| C45  | [Twilio 計費事故](/backend/11-api-design/cases/idempotency-twilio-billing-postmortem/)        | 內部 retry 缺冪等閘門                                                         | 反例   |
 
 ## 規範治理與標準化（C46-C54）
 

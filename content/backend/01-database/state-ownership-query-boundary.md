@@ -73,9 +73,9 @@ Event sourcing 把 state ownership 的正式紀錄從 mutable row 改成 append-
 
 **對 query boundary 的影響**：event log 不適合直接服務交易查詢跟列表查詢（每次 replay 整條事件流太慢）。Event sourcing 幾乎必然搭配 [projection](/backend/knowledge-cards/projection/) 維護 read model — projection 持續消費事件流、更新反正規化的查詢 view。交易查詢讀 projection 的輸出而非直接讀 event log。
 
-**對修復流程的影響**：傳統架構的資料修復是「直接改 row」；event sourcing 的修復是「發一筆補償事件（compensating event）」。修復本身也是事件、會被記錄在 event log 裡、提供完整的修復 audit trail。
+**對修復流程的影響**：傳統架構的[資料修復](/backend/knowledge-cards/data-repair/)是「直接改 row」；event sourcing 的修復是「發一筆補償事件（compensating event）」。修復本身也是事件、會被記錄在 event log 裡、提供完整的修復 audit trail。
 
-Event sourcing 的設計門檻在於 projection 的維護跟 event schema evolution。Projection 數量增長後，每次 event schema 改版都需要同步更新所有 projection；projection 的 replay 跟 reconciliation 是長期運維的主要成本。這些代價決定了 event sourcing 適合「需要完整變更歷史」的業務場景（金融帳務、訂單流程、法規合規），而非所有資料存取場景。
+Event sourcing 的設計門檻在於 projection 的維護跟 event schema evolution。Projection 數量增長後，每次 event schema 改版都需要同步更新所有 projection；projection 的 replay 跟 [reconciliation](/backend/knowledge-cards/data-reconciliation/) 是長期運維的主要成本。這些代價決定了 event sourcing 適合「需要完整變更歷史」的業務場景（金融帳務、訂單流程、法規合規），而非所有資料存取場景。
 
 ## Materialized View 在資料庫的應用
 

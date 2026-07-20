@@ -28,7 +28,7 @@ Google AIP 是「收窄」路線、而且立場寫得很硬：AIP-193 明文「A
 
 RFC 9110 對 502 與 504 的定義只描述 gateway 自己的觀察：收到無效回應（502）、沒收到及時回應（504）—— 規範沒有任何欄位區分「上游根本沒收到請求」與「上游執行了、只是回應沒回來」（見 [11.C67](/backend/11-api-design/cases/status-502-504-gateway-ambiguity/)）。
 
-這個缺口的工程後果（此為從定義出發的推導、非 spec 明文）：connect timeout（請求沒送到、重送安全）跟 read timeout（請求已執行、重送非冪等操作會重複執行）在 consumer 端拿到同一個 504、而兩者的 retry 安全性相反。status 在這裡不是裝不下多個結果、是裝不下「連 gateway 自己都不知道」的不確定性 —— 補強手段全在 status 之外：操作設計成冪等、或帶 idempotency key 讓重送安全（[11.8](/backend/11-api-design/api-idempotency-design/) 主寫）、上游做去重。consumer 收到 502/504 的判讀規則因此很短：不確定上游做了沒、就當作做了 —— 除非操作冪等或帶了 key、否則重送前先查。
+這個缺口的工程後果（此為從定義出發的推導、非 spec 明文）：connect timeout（請求沒送到、重送安全）跟 read timeout（請求已執行、重送非冪等操作會重複執行）在 consumer 端拿到同一個 504、而兩者的 retry 安全性相反。status 在這裡不是裝不下多個結果、是裝不下「連 gateway 自己都不知道」的不確定性 —— 補強手段全在 status 之外：操作設計成冪等、或帶 [idempotency key](/backend/knowledge-cards/idempotency-key/) 讓重送安全（[11.8](/backend/11-api-design/api-idempotency-design/) 主寫）、上游做去重。consumer 收到 502/504 的判讀規則因此很短：不確定上游做了沒、就當作做了 —— 除非操作冪等或帶了 key、否則重送前先查。
 
 ## 三種邊界的共同判準
 

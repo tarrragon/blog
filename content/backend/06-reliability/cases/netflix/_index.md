@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "reliability", "case-study"]
 ---
 
-Netflix 是 Chaos Engineering 的起源、Chaos Monkey 跟 Simian Army 是領域標準工具的概念來源、FIT（Failure Injection Testing）是大規模 production chaos 的實作範本。教學重點在「故障注入如何作為 first-class 工程實踐」。
+Netflix 是 Chaos Engineering 的起源、Chaos Monkey 跟 Simian Army 是領域標準工具的概念來源、[FIT](/backend/knowledge-cards/fit-failure-injection-testing/)（Failure Injection Testing）是大規模 production chaos 的實作範本。教學重點在「故障注入如何作為 first-class 工程實踐」。
 
 ## 規劃重點
 

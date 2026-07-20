@@ -21,7 +21,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 ## 失效控制面
 
-- 高風險登入路徑缺少 step-up 驗證。
+- 高風險登入路徑缺少 [step-up](/backend/knowledge-cards/step-up-authentication/) 驗證。
 - 內部工具授權邊界不足，初始落點可快速擴散。
 - 身分異常事件與值班告警串接不足。
 

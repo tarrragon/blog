@@ -20,14 +20,14 @@ tags: ["backend", "performance", "capacity"]
 
 ## 教材邊界
 
-| 類型       | 放在語言教材                                                         | 放在本模組                                                                      |
-| ---------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| 程式層效能 | algorithm、data structure、hot path、memory profile、micro benchmark | workload model、production traffic replay、end-to-end load test                 |
-| 並發模型   | goroutine、event loop、thread pool、connection pool 的程式邊界       | 並發設計如何決定 saturation 與 connection pressure 邊界                         |
-| Profiling  | runtime profiler、flame graph、heap dump 解讀                        | continuous profiling 接入、profile diff 作為 regression 定位                    |
-| 容量量測   | resource metric API、process memory、GC pause 訊號                   | saturation metric、USE method、RED method、cost dashboard                       |
-| 容量規劃   | （不負責）                                                           | peak forecast、headroom model、growth curve、autoscaling sizing、cost ceiling   |
-| 壓測工具   | （不負責）                                                           | k6、JMeter、Gatling、Locust、Vegeta、production traffic replay 工具的選型與整合 |
+| 類型       | 放在語言教材                                                                           | 放在本模組                                                                      |
+| ---------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 程式層效能 | algorithm、data structure、hot path、memory profile、micro benchmark                   | workload model、production traffic replay、end-to-end load test                 |
+| 並發模型   | goroutine、event loop、thread pool、connection pool 的程式邊界                         | 並發設計如何決定 saturation 與 connection pressure 邊界                         |
+| Profiling  | runtime profiler、[flame graph](/backend/knowledge-cards/flame-graph/)、heap dump 解讀 | continuous profiling 接入、profile diff 作為 regression 定位                    |
+| 容量量測   | resource metric API、process memory、GC pause 訊號                                     | saturation metric、USE method、RED method、cost dashboard                       |
+| 容量規劃   | （不負責）                                                                             | peak forecast、headroom model、growth curve、autoscaling sizing、cost ceiling   |
+| 壓測工具   | （不負責）                                                                             | k6、JMeter、Gatling、Locust、Vegeta、production traffic replay 工具的選型與整合 |
 
 ## 問題節點
 

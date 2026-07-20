@@ -12,7 +12,7 @@ tags: ["backend", "api-design", "pagination"]
 
 offset 分頁（`?page=3&limit=50`）的介面直觀、失效有明確的機制。Slack 的工程紀錄給了一手描述：其一、`LIMIT / OFFSET` 深頁掃描 — 資料庫要掃過並丟棄前面所有列、頁數越深成本越高；其二、page window 漂移 — 高頻寫入下、兩次請求之間有新資料插入、消費者會看到跳項或重複（見 [11.C37](/backend/11-api-design/cases/pagination-slack-cursor-migration/)）。
 
-Slack 的解法是遷移到 opaque cursor：介面收斂為 `cursor` 加 `limit`、回傳 `next_cursor`、cursor 內容 Base64 編碼、消費者不可解析。opaque 這個性質是設計重點 — **分頁狀態的表示權留在 server 端**、消費者不能解析就不能依賴內部格式、server 可以自由更換底層策略（keyset、shard 位置、甚至混合）而不動介面。同一份紀錄明列了付出的代價：失去 total count 與跳頁能力 — 這是明示的產品決策、選 cursor 前要跟產品端確認「第 N 頁」跟「共幾筆」是不是真需求。
+Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-cursor/)：介面收斂為 `cursor` 加 `limit`、回傳 `next_cursor`、cursor 內容 Base64 編碼、消費者不可解析。opaque 這個性質是設計重點 — **分頁狀態的表示權留在 server 端**、消費者不能解析就不能依賴內部格式、server 可以自由更換底層策略（keyset、shard 位置、甚至混合）而不動介面。同一份紀錄明列了付出的代價：失去 total count 與跳頁能力 — 這是明示的產品決策、選 cursor 前要跟產品端確認「第 N 頁」跟「共幾筆」是不是真需求。
 
 判準：資料量小、寫入頻率低、產品要跳頁 — offset 合理且便宜；資料量大或寫入頻繁 — cursor、並從第一版就 opaque（先給透明 cursor 再收緊、又是一次 breaking change）。offset、cursor、keyset 的完整交鋒與「cursor 不透明性算承諾還是逃生門」的爭議、收在掛本章的分頁爭論文章 backlog（見 [模組頁](/backend/11-api-design/)）。
 

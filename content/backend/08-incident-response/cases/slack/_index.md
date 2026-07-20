@@ -12,7 +12,7 @@ Slack 是即時通訊服務、事故時通訊管道本身受影響、是「monit
 
 - 通訊管道自身故障：客戶用 Slack 通報 Slack 事故的 paradox
 - 外部狀態頁設計：細粒度 region / feature 揭露
-- WebSocket 連線風暴：reconnection storm 在大規模長連線服務的特殊風險
+- WebSocket 連線風暴：[reconnection storm](/backend/knowledge-cards/thundering-herd/) 在大規模長連線服務的特殊風險
 - 跨 workspace 隔離：multi-tenant 事故的部分擴散模式
 
 ## 預計收錄事故

@@ -6,7 +6,7 @@ weight: 5
 tags: ["testing", "case-study", "stub", "fake-backend", "integration-test"]
 ---
 
-**Stub 回放的是測試作者的假設，假設錯了，測試照樣綠燈**——這是 stub 的結構性限制。當 bug 的成因是「我們對後端行為的理解錯誤」時，用自己假設餵出來的 stub 永遠驗證不出來。
+**[Stub](/testing/knowledge-cards/stub/) 回放的是測試作者的假設，假設錯了，測試照樣綠燈**——這是 stub 的結構性限制。當 bug 的成因是「我們對後端行為的理解錯誤」時，用自己假設餵出來的 stub 永遠驗證不出來。
 
 ## 觀察
 

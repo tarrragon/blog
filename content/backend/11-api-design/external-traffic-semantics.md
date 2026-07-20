@@ -6,7 +6,7 @@ weight: 9
 tags: ["backend", "api-design", "rate-limit"]
 ---
 
-限流的執行機制在 gateway、限流的對外語意在契約 — 本章收後者。消費者面對限流時要回答的問題全部來自介面設計：怎麼知道額度多少、怎麼知道快用完了、被擋之後等多久重試。執行面的 token bucket、分散式計數器屬 [05 部署平台](/backend/05-deployment-platform/) 的入口層範圍（該模組現有章節尚未主寫限流實作、屬其 backlog）；本章的問題是這些機制對外承諾成什麼語意。
+限流的執行機制在 gateway、限流的對外語意在[契約](/backend/knowledge-cards/rate-limit-contract/) — 本章收後者。消費者面對限流時要回答的問題全部來自介面設計：怎麼知道額度多少、怎麼知道快用完了、被擋之後等多久重試。執行面的 token bucket、分散式計數器屬 [05 部署平台](/backend/05-deployment-platform/) 的入口層範圍（該模組現有章節尚未主寫限流實作、屬其 backlog）；本章的問題是這些機制對外承諾成什麼語意。
 
 ## 承諾邊界：配額資訊是預警、不是保證
 
@@ -16,7 +16,7 @@ tags: ["backend", "api-design", "rate-limit"]
 
 拒絕本身也是介面。可承諾的最小集合：status 用 429（讓消費者與中介層知道「可重試、但要等」、跟終態 4xx 區分、錯誤分類見 [11.4](/backend/11-api-design/error-model-design/)）；`Retry-After` 給等待時間、且服務端說到做到 — 消費者等滿再來就該被服務、否則 Retry-After 淪為裝飾、消費者退回盲目退避。GitHub 的文件在這條上有可指出的語意瑕疵：超限回 403 或 429、文件未明確劃分兩者的使用時機（見 [11.C43](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)）— 消費者要同時處理兩種 status、分支邏輯多一倍。設計新 API 時可直接採納的判準：拒絕的 status 只用一個。
 
-消費端的配套是 backoff 加 jitter（完整的重試合判、集體層去同步與 retry 預算、主寫在 [接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)）— 限流語意跟冪等語意在消費端匯合：429 之後的重送、要嘛操作本身冪等、要嘛帶 idempotency key（[11.8](/backend/11-api-design/api-idempotency-design/)）。
+消費端的配套是 backoff 加 jitter（完整的重試合判、集體層去同步與 retry 預算、主寫在 [接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)）— 限流語意跟冪等語意在消費端匯合：429 之後的重送、要嘛操作本身冪等、要嘛帶 [idempotency key](/backend/knowledge-cards/idempotency-key/)（[11.8](/backend/11-api-design/api-idempotency-design/)）。
 
 ## 單一維度擋不住真實濫用
 

@@ -102,7 +102,7 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 快取模組的 knowledge card 缺口集中在「新鮮度」與「回源保護」。已有 [cache hit rate](/backend/knowledge-cards/cache-hit-rate/)、[cache warmup](/backend/knowledge-cards/cache-warmup/)、[cache prefetching](/backend/knowledge-cards/cache-prefetching/) 與 [stale data](/backend/knowledge-cards/stale-data/) 可以先引用。
 
-下一批候選卡片包括 freshness window、origin protection、request coalescing（single-flight）、negative cache、cache key versioning 與 cache serialization migration。這些卡片要讓讀者能分辨「可短暫不新鮮」和「錯誤會直接影響交易或權限」的差異。2.4 帶入的 fencing token 是跨模組的分散式術語、且是「鎖不是正確性保證」這個核心論點的依據，值得獨立建卡（候選）。
+下一批候選卡片包括 [freshness window](/backend/knowledge-cards/freshness-window/)、[origin protection](/backend/knowledge-cards/origin-protection/)、request coalescing（[single-flight](/backend/knowledge-cards/singleflight/)）、[negative cache](/backend/knowledge-cards/negative-cache/)、[cache key versioning](/backend/knowledge-cards/cache-key-versioning/) 與 [cache serialization migration](/backend/knowledge-cards/cache-serialization-migration/)。這些卡片要讓讀者能分辨「可短暫不新鮮」和「錯誤會直接影響交易或權限」的差異。2.4 帶入的 fencing token 是跨模組的分散式術語、且是「鎖不是正確性保證」這個核心論點的依據，值得獨立建卡（候選）。
 
 ## 實作探討入口
 

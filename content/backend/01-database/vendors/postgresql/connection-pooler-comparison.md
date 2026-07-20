@@ -45,13 +45,13 @@ Managed proxy 的操作重點是平台限制、failover behavior、credential in
 
 Decision signals 的核心責任是判斷何時導入 pooler，以及導入哪一種。連線數壓力要用 evidence 說明。
 
-| 訊號                               | 代表問題                       | 建議路由                                  |
-| ---------------------------------- | ------------------------------ | ----------------------------------------- |
-| `max_connections` 接近上限         | application fan-out 過高       | PgBouncer transaction pooling             |
-| 大量 idle connection               | client 連線長期閒置            | transaction pooling 或 app pool 調整      |
-| failover 後 reconnect storm        | client 同時重連衝擊 primary    | pooler queue + jitter                     |
-| query latency 高但 connection 不高 | 查詢 / lock / index 問題       | query optimization                        |
-| session state 依賴多               | transaction pooling 相容性風險 | session pooling 或 refactor session state |
+| 訊號                                                                     | 代表問題                       | 建議路由                                  |
+| ------------------------------------------------------------------------ | ------------------------------ | ----------------------------------------- |
+| `max_connections` 接近上限                                               | application fan-out 過高       | PgBouncer transaction pooling             |
+| 大量 idle connection                                                     | client 連線長期閒置            | transaction pooling 或 app pool 調整      |
+| failover 後 [reconnect storm](/backend/knowledge-cards/thundering-herd/) | client 同時重連衝擊 primary    | pooler queue + jitter                     |
+| query latency 高但 connection 不高                                       | 查詢 / lock / index 問題       | query optimization                        |
+| session state 依賴多                                                     | transaction pooling 相容性風險 | session pooling 或 refactor session state |
 
 Connection pooler 的成功訊號是 database backend count 下降、queue 可觀測、error rate 穩定、tail latency 受控。若導入後只是把 timeout 從 DB 移到 pooler，代表 capacity model 仍需調整。
 

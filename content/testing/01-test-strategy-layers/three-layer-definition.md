@@ -14,7 +14,7 @@ tags: ["testing", "strategy", "mock", "integration-test", "screen-state-test"]
 
 Unit test 驗證的對象是「開發者寫的程式碼是否按預期運作」。它的輸入和輸出都在程式碼控制範圍內 — 函式的參數、回傳值、狀態變化、例外拋出。
 
-Unit test 的盲區落在程式碼邊界之外。外部服務的協議行為、網路傳輸的編碼方式、作業系統的檔案鎖定機制 — 這些不在 unit test 的驗證範圍內，因為 unit test 用 mock 取代了這些外部依賴。Mock 忠實模擬的是程式語言層面的 API 契約（方法簽名、參數型別、回傳值），不是外部服務的協議行為。第二種結構盲區在假設本身：mock / stub 回放的是測試作者對後端行為的假設，假設錯誤型 bug 落在三層之外，由[流程測試與語意級假後端](/testing/01-test-strategy-layers/semantic-fake-backend/)補位。
+Unit test 的盲區落在程式碼邊界之外。外部服務的協議行為、網路傳輸的編碼方式、作業系統的檔案鎖定機制 — 這些不在 unit test 的驗證範圍內，因為 unit test 用 mock 取代了這些外部依賴。Mock 忠實模擬的是程式語言層面的 API 契約（方法簽名、參數型別、回傳值），不是外部服務的協議行為。第二種結構盲區在假設本身：mock / [stub](/testing/knowledge-cards/stub/) 回放的是測試作者對後端行為的假設，假設錯誤型 bug 落在三層之外，由[流程測試與語意級假後端](/testing/01-test-strategy-layers/semantic-fake-backend/)補位。
 
 一個遠端終端機 app 的 192 個 unit test 全部通過，但實機連線後鍵盤輸入無回應。原因是 WebSocket 的 text frame 與 binary frame 差異屬於協議層語意 — `FakeWebSocketChannel` 的 `sink.add(dynamic)` 接受任何型別，不區分 frame type（[T.C1](/testing/cases/ws-text-binary-frame-mock-blindspot/)）。192 個 test 驗證的是「Dart 程式碼邏輯正確」，沒有任何一個 test 的職責是驗證「ttyd 收到的 frame type 是否正確」。
 

@@ -85,7 +85,7 @@ Experiment boundary 契約的責任是讓實驗在開始前就具備可停止、
 
 Hypothesis 是實驗的錨點。好的假設會說明「當 dependency timeout 發生時，checkout 應進入 degraded mode，SLO [burn rate](/backend/knowledge-cards/burn-rate/) 應維持在門檻內」，而不只是「關掉某個服務」。
 
-Blast radius 需要同時包含技術範圍與客戶範圍。技術範圍是 service、region、cluster、dependency；客戶範圍是 tenant、plan、traffic percentage 或 internal-only cohort。
+Blast radius 需要同時包含技術範圍與客戶範圍。技術範圍是 service、region、cluster、dependency；客戶範圍是 tenant、plan、traffic percentage 或 internal-only [cohort](/backend/knowledge-cards/cohort/)。
 
 Stop condition 需要對應使用者影響。CPU 上升可以作為輔助訊號，但停止條件更應包含 SLO burn、error rate、latency、queue lag、customer ticket、成本與安全事件。
 
@@ -148,7 +148,7 @@ Experiment evidence 的責任是讓實驗結果可被重播、比較與回寫。
 
 Business-hours chaos 的核心價值是在 guardrails 內接近真實情境：人員在線可即時應變、依賴流量真實、通訊鏈條被測到。Off-hours 雖然短期風險低、但測到的多是「工具可執行」、不等於「服務可承受」。
 
-對應 [N3 Netflix FIT 證據交接](/backend/06-reliability/cases/netflix/fit-failure-injection-evidence-handoff/)：揭露實驗輸出要結構化成四個決策欄位。四欄位分屬不同 release gate 階段 — rollout 決策類（steady-state impact、dependency drift）回答「能否繼續 rollout / blast radius 是否可接受」、事故處置類（abort trigger record、fallback result）回答「是否進入凍結與回退 / 事故時能否安全止血」。這四欄位讓 FIT 結果直接對應 release gate 的具體決策 — 不再倚賴主觀討論回到放行 / 凍結判斷。詳見 [6.23 verification-evidence-handoff](/backend/06-reliability/verification-evidence-handoff/) 跟 [6.24 rule-rollout-safety-gate](/backend/06-reliability/rule-rollout-safety-gate/)。
+對應 [N3 Netflix FIT 證據交接](/backend/06-reliability/cases/netflix/fit-failure-injection-evidence-handoff/)：揭露實驗輸出要結構化成四個決策欄位。四欄位分屬不同 release gate 階段 — rollout 決策類（steady-state impact、dependency drift）回答「能否繼續 rollout / blast radius 是否可接受」、事故處置類（abort trigger record、fallback result）回答「是否進入凍結與回退 / 事故時能否安全止血」。這四欄位讓 [FIT](/backend/knowledge-cards/fit-failure-injection-testing/) 結果直接對應 release gate 的具體決策 — 不再倚賴主觀討論回到放行 / 凍結判斷。詳見 [6.23 verification-evidence-handoff](/backend/06-reliability/verification-evidence-handoff/) 跟 [6.24 rule-rollout-safety-gate](/backend/06-reliability/rule-rollout-safety-gate/)。
 
 ## 常見反模式
 

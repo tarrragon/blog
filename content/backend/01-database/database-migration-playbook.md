@@ -232,7 +232,7 @@ backfill 是 migration 中最 *容易出錯* 的環節 — 大量寫、影響 pr
 4. 與 1.12 的交接：跨 DB 引擎遷移 — [大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)。
 5. 與 4.20 的交接：validation query 與一致性證據進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 6. 與 6.11 / 6.8 的交接：放行與停損條件進入 [Migration Safety](/backend/06-reliability/migration-safety/) 與 [Release Gate](/backend/06-reliability/release-gate/)。
-7. 與 8.19 的交接：pause、rollback、fail-forward 決策記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
+7. 與 8.19 的交接：pause、rollback、[fail-forward](/backend/knowledge-cards/fail-forward/) 決策記錄到 [Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。
 
 ## 下一步路由
 
