@@ -6,7 +6,7 @@ weight: 90
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---
 
-轉移定價是同一集團內上下游公司之間交易時採用的價格——由集團內部決定，不經過市場議價。它讓集團有能力決定利潤要留在哪一層、哪一家子公司帳上看起來獲利較高，是[關係人交易](/business/knowledge-cards/related-party-transaction/)影響財報最直接的機制。
+轉移定價（台灣財稅實務多作「移轉定價」，同一概念）是同一集團內上下游公司之間交易時採用的價格——由集團內部決定，不經過市場議價。它讓集團有能力決定利潤要留在哪一層、哪一家子公司帳上看起來獲利較高，是[關係人交易](/business/knowledge-cards/related-party-transaction/)影響財報最直接的機制。
 
 ## 概念位置
 
@@ -15,6 +15,8 @@ tags: ["business", "knowledge-cards", "financial-analysis"]
 ## 可觀察訊號與例子
 
 揚秦國際（麥味登母公司）的招牌產品直接使用關係企業超秦電宰分切的雞肉，跳過中間經銷商。揚秦的毛利率 27.4%（2025 年）比自建全製程中央工廠的同業八方雲集 36% 低約 9 個百分點，差額的一部分源自超秦在加工端先取走的利潤。2024 到 2025 年揚秦毛利率從 26.8% 提升到 27.4%（+0.6 個百分點），這個改善究竟來自揚秦自身的產品組合優化，還是超秦端的轉移定價讓步，需要比對超秦同期毛利率變化才能判斷方向與量級——單看揚秦一家財報無法回答。
+
+橫向共有的變體見[中聯油脂](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)：三家競爭油廠共有的代工平台，代工費是它們集體設定的關係人價格、可調整以在共有廠與各家下游之間搬移毛利——集團稅前中性、但重塑各實體報表與各自小股東的利益歸屬。公司層的完整解剖見[中聯油脂案例分析](/business/financial-analysis/chunlian-company-analysis/)。
 
 ## 判讀方式
 

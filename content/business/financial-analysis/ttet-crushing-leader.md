@@ -6,7 +6,7 @@ weight: 34
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commodity"]
 ---
 
-大統益（1232）是台灣最大的黃豆壓榨廠——大豆沙拉油市佔第一、豆粉市佔第一、18 公升桶裝食用油市佔第一。營收 215 億、毛利率 13.69%、[EPS](/business/knowledge-cards/eps/) 8.24，是一台靠處理量維持絕對利潤的 [commodity](/business/knowledge-cards/commodity-business/) 現金牛。它的股東結構揭露了台灣食品集團如何用合資平台確保上游原料——統一（38.5%）用它確保食品加工的油脂原料、大成（9.6%）用它確保飼料的豆粕供應。本篇從股東結構、財務結構、下游佈局三個維度拆解大統益的商業邏輯，並用 2026 年中聯食安事件後的轉單效應驗證壓榨產業的寡占結構。[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)已覆蓋 crush margin 公式和產業全貌，本篇聚焦大統益作為個別公司的深度判讀。
+大統益（1232）是台灣最大的黃豆壓榨廠——大豆沙拉油市佔第一、豆粉市佔第一、18 公升桶裝食用油市佔第一。營收 215 億、毛利率 13.69%、[EPS](/business/knowledge-cards/eps/) 8.24，是一台靠處理量維持絕對利潤的 [commodity](/business/knowledge-cards/commodity-business/) 現金牛。它的股東結構揭露了台灣食品集團如何用合資平台確保上游原料——統一（38.5%）用它確保食品加工的油脂原料、大成（9.6%）用它確保飼料的豆粕供應。本篇從股東結構、財務結構、下游佈局三個維度拆解大統益的商業邏輯，並用 2026 年中聯食安事件後的轉單效應驗證壓榨產業的寡占結構。[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)已覆蓋 [crush margin](/business/knowledge-cards/crush-margin/) 公式和產業全貌，本篇聚焦大統益作為個別公司的深度判讀。
 
 ## 股東結構：三大食品集團的原料保障平台
 
@@ -18,7 +18,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 大統益的股東組成本身就是一個供應鏈合約——三家各取所需。統一要油、大成要粕、泰華要原料油做再加工。持股比例反映各家的需求量級和議價力。統一作為最大股東（38.5%）對大統益的營運有主導權。
 
-跟中聯油脂的結構差異：中聯是三家「同類」公司（泰山/福壽/福懋都做品牌沙拉油）的共同代工平台，三家從中聯拿回同樣的東西（散裝油）再各自包裝競爭。大統益是三家「不同需求」公司的合資——各取不同產出（油、粕、原料油），互不競爭。
+跟中聯油脂的結構差異：中聯是三家「同類」公司（泰山/福壽/福懋都做品牌沙拉油）的共同代工平台，三家從中聯拿回同樣的東西（散裝油）再各自包裝競爭。大統益是三家「不同需求」公司的合資——各取不同產出（油、粕、原料油），互不競爭。中聯這一極的完整解剖見[中聯油脂案例分析](/business/financial-analysis/chunlian-company-analysis/)，其代工費作為關係人移轉定價槓桿見[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)。
 
 ## 財務結構：Commodity 現金牛（2025 FY）
 

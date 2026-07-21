@@ -2,7 +2,7 @@
 title: "中聯油脂案例分析：三方合資代工平台的財務結構、組織與策略"
 date: 2026-07-21
 description: "以中聯油脂為例，完整分析一家「公開發行未上市、三家競爭者共有」的上游代工平台——它的薄毛利高周轉財務結構、循環式關係人組織、共有平台策略，以及為什麼它的獲利數字有一部分是集團治理選擇而非純經營績效"
-weight: 34
+weight: 37
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commodity"]
 ---
 
@@ -16,7 +16,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 ### 薄毛利、高周轉、健康 ROE
 
-中聯是[commodity business](/business/knowledge-cards/commodity-business/)的教科書案例：毛利率極薄（2023-2025 營業毛利率 3.11%→3.77%→4.89%）、淨利率只有約 2%，但 [ROE](/business/knowledge-cards/roe/) 卻有約 19%（2025 稅後淨利 1.95 億／權益約 10.4 億）。用杜邦拆解，這個矛盾就解開了：
+中聯是[commodity business](/business/knowledge-cards/commodity-business/)的典型結構：毛利率極薄（2023-2025 營業毛利率 3.11%→3.77%→4.89%）、淨利率只有約 2%，但 [ROE](/business/knowledge-cards/roe/) 卻有約 19%（2025 歸母稅後淨利 1.95 億／歸母權益約 10.4 億，分子分母口徑一致）。用杜邦拆解，這個矛盾就解開了：
 
 - 淨利率 ~2.2%（薄）
 - 總資產周轉率 ~4 倍（極高——營收 87 億壓在約 22 億總資產上）
@@ -28,7 +28,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 中聯的現金流結構是穩定的現金牛：營業活動現金流入 2022-2025 約 2.8-4.1 億／年，資本支出溫和（購置不動產廠房設備約 1.0-1.3 億／年、維持性為主），自由現金流連年為正。它把多數盈餘配出去（2025 現金股利每股 2.20 元、配息率約 68%），同時用剩餘現金還債——負債總計佔資產比從 2022 的 64% 降到 2025 的 52%。
 
-值得一提：**股本三年維持 6 億（6,000 萬股）不變**——市場上流傳的「私募 3,000 萬股大幅擴股」在財報上找不到，股數沒有稀釋。這是驗證傳聞的好例子：低可信度來源的說法對照官方股本一翻就破。
+**股本三年維持 6 億（6,000 萬股）不變**——市場上流傳的「私募 3,000 萬股大幅擴股」在財報上找不到，股數沒有稀釋。這是驗證傳聞的好例子：低可信度來源的說法對照官方股本一翻就破。
 
 ### 營收↓毛利↑的結構
 
@@ -40,15 +40,15 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 - **進貨**：三家共同下單採購黃豆，中聯記為向三家進貨（2025 約 66 億、依市價計）。
 - **加工費**：三家支付代工費委託中聯壓榨（2025 約 9.2 億、三家各約 1/3）。
-- **銷貨**：中聯把散裝油與豆粉賣回三家（約佔中聯銷貨的 85%）。
+- **銷貨**：中聯把散裝油與豆粉賣回三家（賣回關係人的部分約佔中聯銷貨的 85%）。
 
-所以中聯的損益表幾乎是三家股東的內部帳——營收、成本、利潤大部分是關係人流量。這帶來一個判讀後果：中聯的毛利率、以及三家各自的油品毛利率，都同時是「經營績效」和「集團把毛利停在哪」的合成，不能純當經營能力讀。移轉定價的機制與證據見[專篇](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)。
+所以中聯的損益表幾乎是三家股東的內部帳——營收、成本、利潤大部分是關係人流量。這帶來一個判讀後果：中聯的毛利率、以及三家各自的油品毛利率，都同時是「經營績效」和「集團把毛利停在哪」的合成，不能純當經營能力讀。[移轉定價](/business/knowledge-cards/transfer-pricing/)的機制與證據見[專篇](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)。
 
 ## 營運策略：用共有平台換規模效率 + 品牌獨立
 
 中聯存在的商業理由是解一個 commodity 難題：壓榨要規模才壓得低成本，但三家中型油廠各自建壓榨線是重複投資、產能利用率低。合資一座廠讓三家同時拿到**大廠的規模效率**（合買黃豆、共攤期貨與運輸、共用大型設備）和**中型廠的品牌獨立性**（各自精煉、分裝、品牌、通路）。這個「前台競爭、後台共用」的設計是它 30 年存續的核心。
 
-競爭格局上，台灣壓榨是[雙寡頭](/business/financial-analysis/soybean-crush-economics/)：大統益（統一系、約 60%、上市、自有品牌）+ 中聯（三家系、約 40%、代工平台）。兩者結構不同——[大統益](/business/financial-analysis/ttet-crushing-leader/)整合到品牌與通路（毛利率 13.69%），中聯純代工（毛利率約 5%）。這個差異是價值鏈涵蓋段的不同，不是效率高下。
+競爭格局上，台灣壓榨是[雙寡頭](/business/financial-analysis/soybean-crush-economics/)：大統益（統一系、約 60%、上市、自有品牌）+ 中聯（三家系、約 40%、代工平台）。兩者結構不同——[大統益](/business/financial-analysis/ttet-crushing-leader/)整合到品牌與通路（毛利率 13.69%），中聯純代工（毛利率約 5%）。這個差異是[價值鏈涵蓋段](/business/knowledge-cards/value-chain-span/)的不同，不是效率高下。
 
 ## 風險剖面
 
@@ -65,10 +65,12 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 中聯是一家**財務健康的成熟現金牛**：薄毛利但高周轉的健康 ROE、穩定正自由現金流、高配息、去槓桿中。它的體質沒問題。
 
+一個必要的但書：**當前的毛利率與 ROE 有一部分是週期性墊高、不是可持續水準**。2025 的 4.89% 毛利率是從 2023 的 3.11% 一路升上來的，主因是黃豆價下行讓低毛利的散裝銷貨縮水、高毛利的加工費佔比被動放大（mix shift，見上節）——這塊隨黃豆價回升會回吐。真正可能黏著的是每噸代工費三年升 17% 那塊，但那是移轉定價槓桿、不是純經營效率。所以「19% ROE 現金牛」要讀成「含週期順風的當期水準」，sustainable ROE 低於此。企業分析 confidence：high（公開發行、2022-2025 完整四表加關係人附註）；投資判定：N/A（無市場股價與估值帶，見下）。
+
 但要下**投資判定**這裡有個硬邊界：中聯是公開發行未上市、沒有市場股價與估值帶——[business-analysis 的原則](/business/financial-analysis/value-investing-current-assessment/)是「無估值帶與市值序列不可下投資結論」。所以對它只能做企業分析、不能做買賣判定；真正能投資的是它的三家上市股東（泰山 1218、福壽 1219、福懋油 1225），而它們的價值有一部分綁在中聯這座共有平台上。
 
 最核心的判讀提醒：**中聯的毛利率不是純粹的經營績效訊號**——它有一部分是三家股東透過代工費把毛利停在共有平台的治理選擇。看中聯（或任何一家股東）的油品毛利時，要先把這層移轉定價的效果辨識出來，才不會把「集團把利潤停在哪」誤讀成「誰的經營比較強」。
 
-追蹤指標：三家加工費佔比是否維持均衡（錯配＝重分配訊號）、每噸代工費走勢（調費 vs 產品組合）、食安事件後三家是否維持共用中聯（或轉單大統益／自建）、泰山經營權歸屬。
+追蹤指標：黃豆價是否回升（回升＝銷貨放大、加工佔比回落、混合毛利率與 ROE 隨之下修，當期的墊高會回吐）、三家加工費佔比是否維持均衡（錯配＝重分配訊號）、每噸代工費走勢（調費 vs 產品組合、這塊較可能黏著）、食安事件後三家是否維持共用中聯（或轉單大統益／自建）、泰山經營權歸屬。
 
-資料來源：中聯油脂（1246）2022-2025 年度財報（MOPS 公開資訊觀測站，含損益表、資產負債表、現金流量表、營業收入明細表、關係人交易附註）、2012-2013 半年報與年報（MOPS）。子分析見[中聯三股東共用風險](/business/financial-analysis/chunlian-trio-shared-risk/)、[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)、[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。
+資料來源：中聯油脂（1246）2022-2025 年度財報（MOPS 公開資訊觀測站，含損益表、資產負債表、現金流量表、營業收入明細表、關係人交易附註）。子分析見[中聯三股東共用風險](/business/financial-analysis/chunlian-trio-shared-risk/)、[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)、[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。

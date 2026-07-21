@@ -51,14 +51,16 @@ weight: 編號
 
 公司賣什麼、賣給誰、怎麼收費。這是讀懂任何分析文章的第一層語言。
 
-| 卡片                                                                | 核心問題                 | 常見出現位置                 |
-| ------------------------------------------------------------------- | ------------------------ | ---------------------------- |
-| [SaaS](/business/knowledge-cards/saas/)                             | 雲端訂閱軟體的商業模式   | gross margin、PLG、retention |
-| [Vertical SaaS](/business/knowledge-cards/vertical-saas/)           | 專做單一行業的 SaaS      | niche、tacit knowledge       |
-| [Horizontal SaaS](/business/knowledge-cards/horizontal-saas/)       | 跨行業通用的 SaaS        | distribution、PLG            |
-| [CDP](/business/knowledge-cards/cdp/)                               | 客戶資料平台             | 數據整合、應用層 SaaS        |
-| [Enterprise License](/business/knowledge-cards/enterprise-license/) | 企業級授權模式           | lock-in、長期合約            |
-| [Commodity Business](/business/knowledge-cards/commodity-business/) | 無差異化商品的低毛利模式 | 壓榨、大宗物資、現金牛       |
+| 卡片                                                                            | 核心問題                        | 常見出現位置                 |
+| ------------------------------------------------------------------------------- | ------------------------------- | ---------------------------- |
+| [SaaS](/business/knowledge-cards/saas/)                                         | 雲端訂閱軟體的商業模式          | gross margin、PLG、retention |
+| [Vertical SaaS](/business/knowledge-cards/vertical-saas/)                       | 專做單一行業的 SaaS             | niche、tacit knowledge       |
+| [Horizontal SaaS](/business/knowledge-cards/horizontal-saas/)                   | 跨行業通用的 SaaS               | distribution、PLG            |
+| [CDP](/business/knowledge-cards/cdp/)                                           | 客戶資料平台                    | 數據整合、應用層 SaaS        |
+| [Enterprise License](/business/knowledge-cards/enterprise-license/)             | 企業級授權模式                  | lock-in、長期合約            |
+| [Commodity Business](/business/knowledge-cards/commodity-business/)             | 無差異化商品的低毛利模式        | 壓榨、大宗物資、現金牛       |
+| [Crush Margin（壓榨價差）](/business/knowledge-cards/crush-margin/)             | 壓榨廠單噸利潤＝聯產品收入−原料 | 聯產品、crush spread、雙寡頭 |
+| [Value-Chain Span（價值鏈涵蓋段）](/business/knowledge-cards/value-chain-span/) | 毛利率差距是效率還是涵蓋段不同  | 毛利率可比性、純代工 vs 品牌 |
 
 ## 單位經濟
 
@@ -147,6 +149,7 @@ weight: 編號
 | [P/E Ratio](/business/knowledge-cards/pe-ratio/)                                                  | 用幾倍獲利買下這家公司           | 估值帶、成長溢價、價值陷阱 |
 | [Depreciation & Amortization](/business/knowledge-cards/depreciation-amortization/)               | 資本支出分年進損益表             | capex、EBITDA、營業槓桿    |
 | [Related-Party Transaction](/business/knowledge-cards/related-party-transaction/)                 | 集團內部定價對財報的扭曲         | 垂直整合、轉移定價、毛利率 |
+| [公司公開程度](/business/knowledge-cards/company-public-disclosure-levels/)                       | 揭露義務與交易狀態是兩軸         | 公開發行未上市、MOPS、股價 |
 | [Same-Store Sales](/business/knowledge-cards/same-store-sales/)                                   | 扣掉展店效應的品牌健康度         | 連鎖業、展店品質、漲價拆分 |
 | [ROE](/business/knowledge-cards/roe/)                                                             | 股東資本的報酬速度               | 杜邦拆解、價值投資篩選     |
 | [Capex](/business/knowledge-cards/capex/)                                                         | 資本支出的去向與回收             | FCF、擴產、折舊            |
