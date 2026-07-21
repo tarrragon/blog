@@ -29,13 +29,13 @@ The failure mode is when analytical judgments masquerade as factual claims ("the
 
 Before searching, list the specific data points the analysis requires:
 
-| Data type | Example | Why needed |
-| --- | --- | --- |
-| Financial metrics | Revenue, gross margin, net margin, EPS | Quantify company performance |
-| Industry benchmarks | Average margin, typical cost ratio | Provide comparison baseline |
-| Historical data | Revenue trend over 8+ quarters | Distinguish structural from one-time |
-| Event timeline | When did the acquisition happen, when did the policy change | Establish causation sequence |
-| Competitive data | Peer companies' metrics | Enable cross-company comparison |
+| Data type           | Example                                                     | Why needed                           |
+| ------------------- | ----------------------------------------------------------- | ------------------------------------ |
+| Financial metrics   | Revenue, gross margin, net margin, EPS                      | Quantify company performance         |
+| Industry benchmarks | Average margin, typical cost ratio                          | Provide comparison baseline          |
+| Historical data     | Revenue trend over 8+ quarters                              | Distinguish structural from one-time |
+| Event timeline      | When did the acquisition happen, when did the policy change | Establish causation sequence         |
+| Competitive data    | Peer companies' metrics                                     | Enable cross-company comparison      |
 
 Prioritize: financial metrics and event timelines are highest value (most verifiable); industry benchmarks are medium (often experience-based); qualitative claims are lowest (hardest to verify).
 
@@ -43,18 +43,19 @@ Prioritize: financial metrics and event timelines are highest value (most verifi
 
 Use sources in order of reliability. Higher-tier sources override lower-tier when they conflict.
 
-| Tier | Source type | Reliability | Example |
-| --- | --- | --- | --- |
-| 1 | Audited financial statements | Highest | Annual reports on MOPS, SEC filings |
-| 2 | Company official disclosures | High | Earnings calls, investor presentations, press releases |
-| 3 | Government statistics | High | Agricultural ministry data, central bank reports, census |
-| 4 | Credible journalism | Medium-High | Investigative reporting with named sources (報導者, 天下, 商周) |
-| 5 | Industry association reports | Medium | Trade association surveys, industry white papers |
-| 6 | Analyst reports | Medium | Brokerage research, but note potential conflicts of interest |
-| 7 | Social media / forums | Low | Useful for qualitative signals but never for factual claims |
+| Tier | Source type                  | Reliability | Example                                                         |
+| ---- | ---------------------------- | ----------- | --------------------------------------------------------------- |
+| 1    | Audited financial statements | Highest     | Annual reports on MOPS, SEC filings                             |
+| 2    | Company official disclosures | High        | Earnings calls, investor presentations, press releases          |
+| 3    | Government statistics        | High        | Agricultural ministry data, central bank reports, census        |
+| 4    | Credible journalism          | Medium-High | Investigative reporting with named sources (報導者, 天下, 商周) |
+| 5    | Industry association reports | Medium      | Trade association surveys, industry white papers                |
+| 6    | Analyst reports              | Medium      | Brokerage research, but note potential conflicts of interest    |
+| 7    | Social media / forums        | Low         | Useful for qualitative signals but never for factual claims     |
 
 **Taiwan-specific sources:**
-- **MOPS (公開資訊觀測站)**: Listed/OTC company financial statements, material announcements, insider transactions
+
+- **MOPS (公開資訊觀測站)**: Public-reporting (公開發行) company financial statements, material announcements, monthly revenue, insider transactions — covers ALL 公開發行 companies, not only 上市/上櫃-traded ones (see the 公開發行未上市 note under "When the Target Company Has No Public Financials")
 - **財報分析工具**: Goodinfo, 財報狗, StockFeel — aggregated financial data with calculated ratios
 - **農業部統計**: Livestock counts, crop production, import/export data
 - **主計總處**: Industry-level economic statistics
@@ -63,16 +64,19 @@ Use sources in order of reliability. Higher-tier sources override lower-tier whe
 ### Step 3: Search Strategy
 
 **For company-specific data:**
+
 1. Search company name + stock code + "財報" + year
 2. Search company name + "法說會" (earnings call) for management commentary
 3. Cross-reference numbers from at least two independent sources
 
 **For industry data:**
+
 1. Search industry + "產業分析" + year for overview reports
 2. Search industry + specific metric (e.g., "毛利率" "市佔率") for benchmarks
 3. Check government ministry websites for official statistics
 
 **For event verification:**
+
 1. Search event + date for original reporting
 2. Look for follow-up reporting that confirms or corrects initial reports
 3. Check for official announcements (company filings, government notices)
@@ -81,51 +85,51 @@ Use sources in order of reliability. Higher-tier sources override lower-tier whe
 
 Before using any data point in analysis, verify:
 
-| Check | How | Red flag |
-| --- | --- | --- |
-| Source exists | Can the original document/report be located? | "Industry sources say" without attribution |
-| Number is current | Is there a more recent figure available? | Using 2020 data when 2025 exists |
-| Context is preserved | Is the number being used in its original context? | Gross margin cited as net margin |
+| Check                       | How                                                 | Red flag                                               |
+| --------------------------- | --------------------------------------------------- | ------------------------------------------------------ |
+| Source exists               | Can the original document/report be located?        | "Industry sources say" without attribution             |
+| Number is current           | Is there a more recent figure available?            | Using 2020 data when 2025 exists                       |
+| Context is preserved        | Is the number being used in its original context?   | Gross margin cited as net margin                       |
 | Calculation is reproducible | Can the derived number be recalculated from inputs? | "Growth rate of X%" without base and comparison period |
-| Conflicts are noted | Do different sources give different numbers? | Cherry-picking the most favorable source |
+| Conflicts are noted         | Do different sources give different numbers?        | Cherry-picking the most favorable source               |
 
 ### Step 5: Hedging Uncertain Claims
 
 When data is incomplete or sources disagree, use explicit hedging:
 
-| Certainty level | Hedging language | When to use |
-| --- | --- | --- |
-| Verified | State directly: "2025 年營收 30.4 億（揚秦年度財報）" | Tier 1-2 source, cross-verified |
-| Estimated | "估計" / "推估": "設備投資估計 100 萬（量級估算）" | Reasonable inference from partial data |
-| Experience-based | "經驗法則" / "業界常見": "食材成本 35% 是餐飲業常見的經驗基準" | No single authoritative source |
-| Speculative | Avoid in analysis; route to "further research needed" | No supporting data at all |
+| Certainty level  | Hedging language                                               | When to use                            |
+| ---------------- | -------------------------------------------------------------- | -------------------------------------- |
+| Verified         | State directly: "2025 年營收 30.4 億（揚秦年度財報）"          | Tier 1-2 source, cross-verified        |
+| Estimated        | "估計" / "推估": "設備投資估計 100 萬（量級估算）"             | Reasonable inference from partial data |
+| Experience-based | "經驗法則" / "業界常見": "食材成本 35% 是餐飲業常見的經驗基準" | No single authoritative source         |
+| Speculative      | Avoid in analysis; route to "further research needed"          | No supporting data at all              |
 
 **Critical rule**: Never present experience-based benchmarks as verified facts. "The industry standard is 35%" requires either a source or the label "experience-based benchmark."
 
 ## Common Verification Failures
 
-| Failure mode | How it happens | Prevention |
-| --- | --- | --- |
-| **Hallucinated statistics** | AI generates plausible-sounding numbers | Every number must trace to a search result or calculation |
-| **Outdated data presented as current** | Using old reports without checking for updates | Always search with current year; label data with its period |
-| **Survivorship bias in benchmarks** | "Average franchise profit is X" based on surviving stores only | Note the bias explicitly when using such data |
-| **PR claims as facts** | Company press release numbers taken at face value | Cross-check PR claims against financial statements |
-| **Single-source dependency** | Entire analysis built on one article | Cross-reference key claims from at least two independent sources |
-| **Confusing revenue with profit** | "This company makes X billion" without specifying metric | Always specify: revenue, gross profit, operating profit, or net income |
-| **Aggregator derived-value errors** | A site's derived field (e.g. trailing-4Q EPS) scraped or computed wrong — real instance: an impossible EPS value that matched an adjacent YoY-percentage column; secondary re-publishers' ROE year-values off by 3+ points from the primary table | Recompute derived values from quarterly/raw rows before citing; prefer the primary aggregator's official table over re-publishers |
-| **EPS basis mixing** | As-reported EPS vs retroactively-adjusted EPS (stock dividends shrink prior-year figures by ~the dividend ratio) differ ~10% for the same year | Label which basis a series uses; never mix bases within one comparison |
-| **Dividend year mislabeling** | 發放年度 (payment year) vs 盈餘所屬年度 (earnings year) offset by one year across sources | Normalize to earnings year before summing or matching against EPS |
-| **Un-annualized quarterly ratios** | Single-quarter ROE (~1/4 of annual) read as an annual value | Check the period basis; annualize or use annual rows |
+| Failure mode                           | How it happens                                                                                                                                                                                                                                    | Prevention                                                                                                                        |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Hallucinated statistics**            | AI generates plausible-sounding numbers                                                                                                                                                                                                           | Every number must trace to a search result or calculation                                                                         |
+| **Outdated data presented as current** | Using old reports without checking for updates                                                                                                                                                                                                    | Always search with current year; label data with its period                                                                       |
+| **Survivorship bias in benchmarks**    | "Average franchise profit is X" based on surviving stores only                                                                                                                                                                                    | Note the bias explicitly when using such data                                                                                     |
+| **PR claims as facts**                 | Company press release numbers taken at face value                                                                                                                                                                                                 | Cross-check PR claims against financial statements                                                                                |
+| **Single-source dependency**           | Entire analysis built on one article                                                                                                                                                                                                              | Cross-reference key claims from at least two independent sources                                                                  |
+| **Confusing revenue with profit**      | "This company makes X billion" without specifying metric                                                                                                                                                                                          | Always specify: revenue, gross profit, operating profit, or net income                                                            |
+| **Aggregator derived-value errors**    | A site's derived field (e.g. trailing-4Q EPS) scraped or computed wrong — real instance: an impossible EPS value that matched an adjacent YoY-percentage column; secondary re-publishers' ROE year-values off by 3+ points from the primary table | Recompute derived values from quarterly/raw rows before citing; prefer the primary aggregator's official table over re-publishers |
+| **EPS basis mixing**                   | As-reported EPS vs retroactively-adjusted EPS (stock dividends shrink prior-year figures by ~the dividend ratio) differ ~10% for the same year                                                                                                    | Label which basis a series uses; never mix bases within one comparison                                                            |
+| **Dividend year mislabeling**          | 發放年度 (payment year) vs 盈餘所屬年度 (earnings year) offset by one year across sources                                                                                                                                                         | Normalize to earnings year before summing or matching against EPS                                                                 |
+| **Un-annualized quarterly ratios**     | Single-quarter ROE (~1/4 of annual) read as an annual value                                                                                                                                                                                       | Check the period basis; annualize or use annual rows                                                                              |
 
 ## Data Access Layering: "Unavailable" Often Means "Wrong Tool Layer"
 
 Public financial data lives in three access layers. A datum unreachable at one layer is frequently trivial at the next — upgrade the layer before accepting a gap or downgrading the analysis.
 
-| Layer | Tool | Yields | Misses |
-| --- | --- | --- | --- |
-| 1. Search snippets | Web search | Headlines, single-point figures, news claims | Historical series, interactive tables |
-| 2. Page scraping | Browser automation on aggregator pages | Full multi-year tables from sites that block plain HTTP fetch | Login/paywall data, footnote detail |
-| 3. Filings/database | Regulator XBRL filings, paid databases, annual report PDFs | Footnote-level detail (capex split, related-party amounts), authoritative originals | Heavy parsing effort |
+| Layer               | Tool                                                       | Yields                                                                              | Misses                                |
+| ------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------- |
+| 1. Search snippets  | Web search                                                 | Headlines, single-point figures, news claims                                        | Historical series, interactive tables |
+| 2. Page scraping    | Browser automation on aggregator pages                     | Full multi-year tables from sites that block plain HTTP fetch                       | Login/paywall data, footnote detail   |
+| 3. Filings/database | Regulator XBRL filings, paid databases, annual report PDFs | Footnote-level detail (capex split, related-party amounts), authoritative originals | Heavy parsing effort                  |
 
 Rule: before writing "data not available" into an analysis, state which layer was tried. A layer-1 failure alone never justifies the claim. Practical impact observed: an entire class of value-investing inputs (10-year ROE series, historical P/E bands, full dividend history) is invisible at layer 1 and completely available at layer 2.
 
@@ -143,11 +147,11 @@ Parsing gotchas: years labeled in ROC calendar（`103年` = FY2014）; cash and 
 
 Goodinfo's interactive pages block plain fetching but render fully in a real browser. Three pages cover most longitudinal data needs, each mapped to what the data is FOR:
 
-| Page | URL pattern | Data obtained | Analytical purpose |
-| --- | --- | --- | --- |
-| 歷年經營績效 | `StockBzPerformance.asp?STOCK_ID={code}` | 10-20 yr ROE/ROA/EPS/BPS, yearly close price, margins; summary block holds the historical P/E band（一般平均/最低/最高）and current PER/PBR | Capital-efficiency gate (ROE consistency through downturns); valuation-band positioning (current multiple vs own history); market-cap series (close × share capital) |
-| 股利政策 | `StockDividendPolicy.asp?STOCK_ID={code}` | Full dividend history with both payment year and earnings year | Capital-allocation record; dividend resilience in shock years; retained-earnings test (EPS sum - dividend sum vs market-value gain) |
-| 歷年現金流量 | `StockCashFlow.asp?STOCK_ID={code}` | Yearly operating/investing/financing CF and free cash flow | FCF signature — transforming-under-pressure = OCF positive + FCF negative from expansion capex; distinguish from OCF itself deteriorating |
+| Page         | URL pattern                               | Data obtained                                                                                                                               | Analytical purpose                                                                                                                                                   |
+| ------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 歷年經營績效 | `StockBzPerformance.asp?STOCK_ID={code}`  | 10-20 yr ROE/ROA/EPS/BPS, yearly close price, margins; summary block holds the historical P/E band（一般平均/最低/最高）and current PER/PBR | Capital-efficiency gate (ROE consistency through downturns); valuation-band positioning (current multiple vs own history); market-cap series (close × share capital) |
+| 股利政策     | `StockDividendPolicy.asp?STOCK_ID={code}` | Full dividend history with both payment year and earnings year                                                                              | Capital-allocation record; dividend resilience in shock years; retained-earnings test (EPS sum - dividend sum vs market-value gain)                                  |
+| 歷年現金流量 | `StockCashFlow.asp?STOCK_ID={code}`       | Yearly operating/investing/financing CF and free cash flow                                                                                  | FCF signature — transforming-under-pressure = OCF positive + FCF negative from expansion capex; distinguish from OCF itself deteriorating                            |
 
 Technique notes:
 
@@ -173,12 +177,12 @@ A company's own financial report is a self-portrait — it shows what the compan
 
 Every factual claim about a company should be checkable from at least one external vantage point:
 
-| Vantage point | What it reveals | Example |
-| --- | --- | --- |
-| Upstream supplier | Whether the company's cost claims are plausible | Fonterra's farmgate milk price confirms the floor cost for any Taiwan importer |
-| Downstream customer | Whether the company's revenue claims match observable market presence | A chain with 7,000 stores each using 5L/day implies minimum monthly volume |
-| Competitor with public data | Whether margins, growth rates, or cost ratios are structurally consistent across the industry | If competitor's margin is 8% and target claims 25% in the same commodity business, investigate |
-| Industry regulator/association | Whether volume claims match aggregate statistics | Total import volume from customs data caps how much any single importer can be handling |
+| Vantage point                  | What it reveals                                                                               | Example                                                                                        |
+| ------------------------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Upstream supplier              | Whether the company's cost claims are plausible                                               | Fonterra's farmgate milk price confirms the floor cost for any Taiwan importer                 |
+| Downstream customer            | Whether the company's revenue claims match observable market presence                         | A chain with 7,000 stores each using 5L/day implies minimum monthly volume                     |
+| Competitor with public data    | Whether margins, growth rates, or cost ratios are structurally consistent across the industry | If competitor's margin is 8% and target claims 25% in the same commodity business, investigate |
+| Industry regulator/association | Whether volume claims match aggregate statistics                                              | Total import volume from customs data caps how much any single importer can be handling        |
 
 A company reporting 40% gross margin in a commodity industry where peers report 15-21% is either doing something structurally different (verify what) or misrepresenting (flag it). The competitor's report IS the verification tool.
 
@@ -195,12 +199,12 @@ When analyzing Company A, search for Company B (competitor in the same segment) 
 
 Verify a company's business logic through its position in the supply chain:
 
-| Direction | What to look for | Verification method |
-| --- | --- | --- |
-| Upstream (suppliers) | Does the supplier's public data confirm the claimed relationship? | Global suppliers (Fonterra, Bega) sometimes list distributors; customs data shows import volumes by destination |
-| Downstream (customers) | Do customers' reports or product labels confirm sourcing? | 7-11's "咖啡專用乳" ingredient label confirms who supplies them; franchisee cost breakdowns confirm mother-company markup |
-| Competitor (lateral) | Do peers' financials bracket the plausible range? | Same-industry peers' margins set the ceiling and floor for claims |
-| Aggregate (industry) | Do individual claims add up to industry totals? | If 4 importers each claim 40% market share, someone's lying |
+| Direction              | What to look for                                                  | Verification method                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Upstream (suppliers)   | Does the supplier's public data confirm the claimed relationship? | Global suppliers (Fonterra, Bega) sometimes list distributors; customs data shows import volumes by destination           |
+| Downstream (customers) | Do customers' reports or product labels confirm sourcing?         | 7-11's "咖啡專用乳" ingredient label confirms who supplies them; franchisee cost breakdowns confirm mother-company markup |
+| Competitor (lateral)   | Do peers' financials bracket the plausible range?                 | Same-industry peers' margins set the ceiling and floor for claims                                                         |
+| Aggregate (industry)   | Do individual claims add up to industry totals?                   | If 4 importers each claim 40% market share, someone's lying                                                               |
 
 Physical infrastructure is particularly hard to fabricate: 30 offices nationwide, 100+ delivery trucks, factory automation lines. These serve as floor estimates for business scale even without revenue data.
 
@@ -216,9 +220,12 @@ Detection: check if the company appears in BOTH domestic production registries A
 
 ### When the Target Company Has No Public Financials
 
-Many critical supply chain participants are unlisted family businesses or cooperatives. The verification goal shifts from "find the number" to "verify the business logic through structural evidence." The upstream/downstream and competitor checks above remain the primary tools regardless of jurisdiction.
+**First, confirm it actually has no public financials — do not infer this from the absence of a stock price.** Taiwan has a distinct middle category: 公開發行未上市 (public-reporting, not exchange-listed). These companies have a stock code, file full statements on MOPS, and announce monthly revenue — but do not trade on an exchange, so they show no stock price and no K-line chart, and an aggregator's 市場別 field reads 「公發」, not 上市/上櫃. "No stock price / not listed" is NOT "no public financials." Field case: 中聯油脂 (1246), a soybean-crush co-processing JV, was read as "unlisted, financials only inferable from its shareholders' related-party notes" — when in fact its full income statement (revenue, gross margin, EPS, monthly revenue) is public on MOPS/Goodinfo. Check 公開發行 status (MOPS company lookup, or the aggregator's 市場別 field) before treating a company as financially opaque. The structural-evidence methods below apply only after confirming the company is genuinely 未公開發行.
+
+Many critical supply chain participants are genuinely unlisted family businesses or cooperatives. The verification goal shifts from "find the number" to "verify the business logic through structural evidence." The upstream/downstream and competitor checks above remain the primary tools regardless of jurisdiction.
 
 **Explicit limitation marking in articles:** When a company is important to the story but financially unverifiable:
+
 1. State its supply chain role
 2. State what IS verifiable (registry data, infrastructure, upstream/downstream evidence)
 3. State what is NOT verifiable (revenue, margins, import volumes)
@@ -230,16 +237,17 @@ The following methods are specific to researching Taiwanese companies. Taiwan's 
 
 **Corporate registry sources:**
 
-| Source | What it reveals |
-| --- | --- |
-| 台灣公司網 (twincn.com) | Capital, representative, directors, establishment date |
-| 104 人力銀行 | Employee count, capital, industry classification |
-| TEJ 台灣經濟新報 | Corporate group analysis, case studies (covers private companies) |
-| 經濟部商工登記 (findbiz.nat.gov.tw) | Official registration, paid-in capital, board changes |
+| Source                              | What it reveals                                                   |
+| ----------------------------------- | ----------------------------------------------------------------- |
+| 台灣公司網 (twincn.com)             | Capital, representative, directors, establishment date            |
+| 104 人力銀行                        | Employee count, capital, industry classification                  |
+| TEJ 台灣經濟新報                    | Corporate group analysis, case studies (covers private companies) |
+| 經濟部商工登記 (findbiz.nat.gov.tw) | Official registration, paid-in capital, board changes             |
 
 **Holding structure detection:** Taiwan family businesses commonly layer 控股公司 → 營運公司. The operating company's sole shareholder is a holding company; the family's actual ownership is in the holding company's register.
 
 Check sequence:
+
 1. Find the operating company's shareholder — is it a 法人 (corporate entity)?
 2. If yes, look up that entity — that's the holding company
 3. Check the holding company's directors and shareholders — that's the ownership family
@@ -274,6 +282,7 @@ This log becomes the article's source attribution and enables future verificatio
 
 ---
 
+**Version**: 1.9.0 — 補「公開發行未上市」中間層（產生 blog 事實錯誤的根因）：MOPS 涵蓋所有公開發行公司、非僅上市/上櫃；「沒股價 / 未上市」≠「無公開財報」；在「No Public Financials」段加前置查核（先查公開發行狀態、市場別欄「公發」再判財務不透明）、修正 MOPS 定義。實測 field case：中聯油脂 1246 被 blog 誤讀成未上市無財報、實際財報完整公開（營收/毛利率/EPS/月營收皆在 MOPS）。
 **Version**: 1.8.0 — FinMind ROE 分子口徑陷阱入檔：`IncomeAfterTaxes` 含非控制權益、控股集團誤用會把 ROE 高估近一倍（實測：某控股公司 Q4 總淨利為歸母 1.7 倍、推算帶 14-19% 被高估成 22-28%）；正確做法是損益表 `EquityAttributableToOwnersOfParent`（歸母淨利）當分子、同名資產負債表欄位當分母、並用「分子 ÷ 股數 對 已公布 EPS」做 sanity check
 **Version**: 1.7.0 — FinMind 實測入檔：三個驗證過的 dataset（Dividend 與主表 11/11 校準一致、FinancialStatements 為季值需加總且要用已知 FY 值驗證加總假設、BalanceSheet 供 ROE 自算）、解析陷阱（民國年標示、同所屬年現金與股票股利分筆）、以及「先校準再填缺」紀律——API 先對已驗證公司跑一輪確認一致、再用於無基線的公司。實測成果：味全與泰山的逐年序列（先前兩輪都未取得）由此補齊
 **Version**: 1.6.0 — Data Access Layering 段補台灣的分層地圖與「缺聚合層」的結構解釋：台灣同樣強制 XBRL 但監管端不做聚合 API（MOPS 是人用表單站、TWSE OpenAPI 多為當日快照）、根因是交易所兼任揭露平台營運者與資料販售者——聚合層留給民間。新增 FinMind 作為瀏覽器抓取前優先嘗試的免費 API 層（50+ 資料集、三表/股利/月營收/歷史 PER-PBR、免費 300-600 req/hr），並標明其邊界（原始報表需自算衍生指標、質押仍 MOPS 限定）
