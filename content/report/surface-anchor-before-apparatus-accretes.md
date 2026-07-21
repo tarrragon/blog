@@ -9,13 +9,13 @@ slug: "surface-anchor-before-apparatus-accretes"
 
 ## 論述基礎與限制
 
-本卡從一次多輪對話的協作事故抽出：一個「幫有 ASD 的朋友做個 skill」的請求，經過連續幾次 escalation（ASD skill → 整合三 profile → 建對外 Hugo 模組 + 4 篇文章 → 三輪 9-agent 審查 → 兩張 report 卡）滾成一整套對外知識庫基礎設施。真正的 anchor——「這是自用的、不需要對外可發現性」——直到最後一步才被講出來。若它早點浮現，審查份量會精實得多。限制：本卡談的是「任務會逐層 escalation 成基礎設施」的協作情境；單一、範圍清楚、不 escalation 的任務不需要 anchor 儀式，硬加反而是摩擦。
+一個「幫有 ASD 的朋友做個 skill」的請求，經過連續幾次 escalation（ASD skill → 整合三 profile → 建對外 Hugo 模組 + 4 篇文章 → 三輪 9-agent 審查 → 兩張 report 卡）滾成一整套對外知識庫基礎設施——本卡從這次協作事故抽出。真正的 anchor——「這是自用的、不需要對外可發現性」——直到最後一步才被講出來。若它早點浮現，審查份量會精實得多。限制：本卡談的是「任務會逐層 escalation 成基礎設施」的協作情境；單一、範圍清楚、不 escalation 的任務不需要 anchor 儀式，硬加反而是摩擦。
 
 ---
 
 ## 核心原則
 
-**當一個任務開始經過連續幾次「再加一層」滾大時，先把 anchor 講出來一次——這東西最終為誰、為什麼而做——再按它決定要蓋多少基礎設施。** anchor 決定 apparatus 的合理份量（自用的一個 skill vs 對外的一整套教材，該投的審查與周邊差一個量級）。但 anchor 有個時間特性：它傾向在最後才浮現，等基礎設施都蓋好了才被講出來。訊號是——你正平順地執行每一次 escalation，卻從沒有人說過「這東西最終是要幹嘛、給誰用」。
+**當一個任務開始經過連續幾次「再加一層」滾大時，先把 anchor 講出來一次——這東西最終為誰、為什麼而做——再按它決定要蓋多少基礎設施。** anchor 決定 apparatus（蓋出來的基礎設施：模組、文章、審查輪、卡、交叉引用）的合理份量（自用的一個 skill vs 對外的一整套教材，該投的審查與周邊差一個量級）。但 anchor 有個時間特性：它傾向在最後才浮現，等基礎設施都蓋好了才被講出來。訊號是——每一次 escalation 都被平順地執行下去，卻從沒有人說過「這東西最終是要幹嘛、給誰用」。
 
 亮出 anchor 是一次性動作，不是每個請求都質疑。連續 escalation 出現時亮一次、據以定份量，然後照常執行。
 
@@ -51,7 +51,7 @@ slug: "surface-anchor-before-apparatus-accretes"
 | [#125 Collapse 是隱形預設](../collapse-is-implicit-default/)                       | 反過來的 collapse — #125 是把高維選擇塌成窄格，本卡是「份量」這一維被流程動能默默決定、從沒被當成一個選擇攤開     |
 | [#75 主策略 + 補強策略：選擇不必互斥](../main-strategy-plus-supplementary/)        | 疊加要有判準（沒副作用、增量成本可接受）— 本卡是那個「增量成本」判準沒對照 anchor、於是每層疊加都通過             |
 
-本卡是 WRAP 決策框架的 Anchor Check 在「多輪協作、任務逐層 escalation」場景的具體化——WRAP 開場就要求釘 anchor，本卡補的是「anchor 常在 escalation 中被跳過、要主動在 escalation 訊號出現時補釘」。
+本卡是 WRAP 決策框架（一套抗認知偏誤的決策方法）的 Anchor Check（決策前先釘住核心目標）在「多輪協作、任務逐層 escalation」場景的具體化——WRAP 開場就要求釘 anchor，本卡補的是「anchor 常在 escalation 中被跳過、要主動在 escalation 訊號出現時補釘」。
 
 ---
 
