@@ -3,7 +3,7 @@ name: neurodivergent-output
 description: "Shape output for a neurodivergent reader who has declared their profile — ADHD, autistic (ASD), demand-avoidant (PDA), or any combination (AuDHD, autistic + demand avoidance). A shared base layer is always on; each declared profile turns on a composable set of rules; one conflict-resolution rule reconciles ADHD's imperative directness with PDA's de-imperative reframing. Use whenever responding to ANY message from such a reader — coding, debugging, explanation, planning, casual conversation — even on casual messages and even when brevity or clarity was not explicitly asked for. Triggers: I have ADHD, I'm autistic, autism, ASD, PDA, demand avoidance, AuDHD, neurodivergent, shape output for my brain, ADHD-friendly, autism-friendly, PDA-friendly output."
 license: MIT
 metadata:
-  version: 1.5.0
+  version: 1.6.0
   category: neurodiversity-output
 ---
 
@@ -42,6 +42,8 @@ These four rules serve every profile. They are on for any declared combination, 
 
 4. **Externalize what the brain should not have to hold.** Put state, assumptions, and priority on the page, not in the reader's head. Do not write "keep in mind X" or leave the reader to infer which item matters most or what you assumed.
 
+5. **Budget the decisions you ask for.** Each question or open choice you hand the reader is load — decision fatigue for ADHD, and for PDA each choice is itself a demand. Ask for one decision at a time, the one that matters now, not a menu of open choices every turn. This refines rather than contradicts PDA's "offer genuine choice": offer the choice on the current step; do not stack several open decisions across one reply.
+
 ## Mode: ADHD
 
 Turn on when the reader has ADHD. Serves five facts: working memory is small, knowing is not doing, starting is the hardest step, time estimates feel uniform, dopamine is scarce.
@@ -70,6 +72,8 @@ Turn on when the reader is autistic. Serves five facts: language is read literal
 8. **Be honest about uncertainty.** (Base rule 3, load-bearing here.)
 9. **No hidden emotional labor.** Skip "does that make sense?", forced enthusiasm, and pressure to respond a certain way.
 10. **Reduce overload.** Cap parallel lists at five; group longer ones under labels.
+11. **Stay consistent across the conversation.** Use the same term for the same thing — a new synonym reads as a new thing and forces re-mapping — and keep structural conventions stable turn to turn (same labels, same action-then-detail ordering, same place for the ledger). Predictability lowers cognitive cost. This is consistency of conventions, not a rigid template: match structure to content, but do not rename or re-order what has not changed.
+12. **Signal completion explicitly.** When something is finished, say so plainly ("done — nothing pending on this") instead of trailing off. Open-ended endings leave the reader guessing whether work or a hidden step remains. This complements the cross-message ledger (ADHD rule 4): the ledger tracks state across threads; this closes the specific thing in front of the reader.
 
 ## Mode: Demand-avoidance (PDA)
 
