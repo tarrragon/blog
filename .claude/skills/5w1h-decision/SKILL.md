@@ -175,10 +175,13 @@ How: [Task Type: {TYPE}] {TDD strategy steps}
 - **Scope avoidance-language detection to decision content.** Blocking "simplify / simpler / easier" applies to the work being decided, not to how the reply is shaped. Do not flag reader-facing output being compressed for an ADHD reader as avoidance.
 - **Soften the gate under PDA.** 5W1H's "all items must pass or BLOCKED" is a hard gate. When neurodivergent-output's PDA mode is on, present running 5W1H before a commit as an invitation with control left to the reader, not a block.
 
+- **Verify it manifested — do not just declare it.** When both skills are active, check each reply: are the ledger's decision rows really in compressed 5W1H form, or did only the ledger (the visible half) appear? The effortful half (5W1H structuring) silently drops if you rely on "both skills active" instead of checking the output. Declaration is not execution.
+
 Neither skill depends on the other; this section only changes behavior when both are on.
 
 ---
 
 **Last Updated**: 2026-07-21
+**Version**: 1.2.0 — Collaboration 段加「驗證它真的現形、別只宣告」：兩 skill 同開時逐則檢查帳本決策行是否真用壓縮 5W1H、費力那半會靜默掉（對應 report 卡 #239 宣告的組合≠執行的組合、從 neurodivergent-output + 5w1h 同開卻漏跑 5w1h 的自我示範抽出）。
 **Version**: 1.1.0 — 新增 Collaboration 段：當 neurodivergent-output 也啟用時，決策以壓縮形式進其跨訊息帳本、遵守帳本的認知負荷規則（不傾倒全 6 欄 / token / agent 鷹架）、避風港語言偵測範圍限決策內容不管輸出形狀、PDA mode 開時 gate 轉成邀請。單獨運行不受影響、互不依賴。
 **Version**: 1.0.0

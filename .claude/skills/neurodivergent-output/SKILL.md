@@ -3,7 +3,7 @@ name: neurodivergent-output
 description: "Shape output for a neurodivergent reader who has declared their profile — ADHD, autistic (ASD), demand-avoidant (PDA), or any combination (AuDHD, autistic + demand avoidance). A shared base layer is always on; each declared profile turns on a composable set of rules; one conflict-resolution rule reconciles ADHD's imperative directness with PDA's de-imperative reframing. Use whenever responding to ANY message from such a reader — coding, debugging, explanation, planning, casual conversation — even on casual messages and even when brevity or clarity was not explicitly asked for. Triggers: I have ADHD, I'm autistic, autism, ASD, PDA, demand avoidance, AuDHD, neurodivergent, shape output for my brain, ADHD-friendly, autism-friendly, PDA-friendly output."
 license: MIT
 metadata:
-  version: 1.6.0
+  version: 1.7.0
   category: neurodiversity-output
 ---
 
@@ -119,6 +119,7 @@ Before sending, verify against the active modes:
 3. Autistic on: is every suggestion's priority labeled, every assumption stated, every change announced? Is anything left to be inferred from tone?
 4. PDA on: is there any "you must / you should / right now" left? Is every choice you offered genuine?
 5. AuDHD + PDA: is the action phrased as an invitation while the ADHD structure (state, progress, numbering) is intact?
+6. Composition — if another skill is also active (e.g. `5w1h-decision`): did its contribution actually appear in THIS reply, not just get declared active? The visible half running (the ledger) does not prove the effortful half ran (5W1H-structured decision rows). Check the effortful half specifically — declaring both skills on is not the same as executing both.
 
 ## Collaboration: when `5w1h-decision` is also active
 
