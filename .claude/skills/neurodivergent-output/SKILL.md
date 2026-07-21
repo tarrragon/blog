@@ -3,7 +3,7 @@ name: neurodivergent-output
 description: "Shape output for a neurodivergent reader who has declared their profile — ADHD, autistic (ASD), demand-avoidant (PDA), or any combination (AuDHD, autistic + demand avoidance). A shared base layer is always on; each declared profile turns on a composable set of rules; one conflict-resolution rule reconciles ADHD's imperative directness with PDA's de-imperative reframing. Use whenever responding to ANY message from such a reader — coding, debugging, explanation, planning, casual conversation — even on casual messages and even when brevity or clarity was not explicitly asked for. Triggers: I have ADHD, I'm autistic, autism, ASD, PDA, demand avoidance, AuDHD, neurodivergent, shape output for my brain, ADHD-friendly, autism-friendly, PDA-friendly output."
 license: MIT
 metadata:
-  version: 1.7.0
+  version: 1.8.0
   category: neurodiversity-output
 ---
 
@@ -51,7 +51,7 @@ Turn on when the reader has ADHD. Serves five facts: working memory is small, kn
 1. **Lead with the next action.** The first line is something the reader can do — a command, path, or snippet — not context or a plan. Prose comes after, if at all. (Overridden by the conflict rule when PDA mode is also on.)
 2. **Number multi-step tasks.** More than one step becomes a numbered list, each step one bounded action.
 3. **End with one concrete next action** the reader can do in under two minutes. Even "open the file" counts.
-4. **Restate state every turn, and keep a cross-message ledger when threads accumulate.** For a single task: "Step 3 of 5 done: schema updated. Next: backfill the new column." For a long or multi-thread conversation, maintain a persistent ledger — done / in-progress / pending / decisions-made — in a consistent place and format, updated every turn. ADHD working memory spans messages, not just one reply; a per-turn local restatement does not cover the open loops that pile up across many turns. Keep the ledger accurate every turn or drop it — a stale ledger misleads (see base rule 3).
+4. **Restate state every turn, and keep a cross-message ledger when threads accumulate.** For a single task: "Step 3 of 5 done: schema updated. Next: backfill the new column." For a long or multi-thread conversation, maintain a persistent ledger — done / in-progress / pending / decisions-made — in a consistent place and format, updated every turn. ADHD working memory spans messages, not just one reply; a per-turn local restatement does not cover the open loops that pile up across many turns. Keep the ledger accurate every turn or drop it — a stale ledger misleads (see base rule 3). When `5w1h-decision` is also active, write the ledger's pending/decision rows directly as compressed 5W1H (What / Why / next-step) — the row IS the 5W1H, not a separate step. Because the ledger fires every turn, wiring the 5W1H form into the ledger row here is what makes that composition actually trigger, instead of a bolted-on habit that silently drops.
 5. **Make completed work visible.** Show what now works, concretely: "Login now works with magic links. Try: `npm run dev`, open `/login`." Do not bury wins in a recap.
 6. **Give specific time estimates** in concrete units: "About 15 minutes if tests already cover this."
 7. **Matter-of-fact tone for errors.** State cause and fix, no alarm.
@@ -123,7 +123,7 @@ Before sending, verify against the active modes:
 
 ## Collaboration: when `5w1h-decision` is also active
 
-This skill runs fully standalone. When the `5w1h-decision` skill is also active, the cross-message ledger (ADHD rule 4) and 5W1H share the decision surface:
+This skill runs fully standalone. When the `5w1h-decision` skill is also active, the cross-message ledger (ADHD rule 4) and 5W1H share the decision surface. **The trigger lives in ADHD rule 4 — the ledger fires every turn, so the 5W1H rows happen with it; this section only tunes the form. Do not treat the collaboration as an optional appendix: a composed behavior parked in an appendix silently drops (that is exactly how the 5W1H half was missed once).** The details:
 
 - **The ledger stays the persistent surface; 5W1H structures its decision rows.** A pending or made decision in the ledger carries a compressed 5W1H — usually What, Why, and the next step (How) — not all six fields, and never 5W1H's session token, agent-mapping, or blocking scaffolding. The full 5W1H record lives wherever 5W1H normally keeps it; the ledger surfaces a compressed pointer.
 - **Base layer wins on the ledger surface.** Where 5W1H's full form would violate this skill's base layer (remove extraction cost, reduce overload, cap lists at five), compress it to fit. The ledger is a low-load anchor; do not let the six-field form bloat it.
