@@ -1,7 +1,7 @@
 ---
 title: "ROE"
 date: 2026-07-19
-description: "從股東視角衡量資本報酬時，用 ROE 區分「產品賺錢」與「股東賺錢」、用杜邦拆解辨識報酬率由哪支槓桿驅動"
+description: "從股東視角衡量資本報酬時，用 ROE 區分「產品賺錢」與「股東賺錢」、用[杜邦拆解](/business/knowledge-cards/dupont-analysis/)辨識報酬率由哪支槓桿驅動"
 weight: 70
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---
