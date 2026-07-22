@@ -35,15 +35,16 @@ tags: ["business", "financial-analysis"]
 
 方法論篇的特定維度展開——每篇聚焦一個主題，獨立可讀。
 
-| 文章                                                                           | 延伸的方法論篇                                         |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------ |
-| [上市櫃實戰判讀](/business/financial-analysis/listed-company-walkthrough/)     | 企業財報判讀 + 產業基準分析的端到端實作                |
-| [加盟體系深入](/business/financial-analysis/franchise-system-deep-dive/)       | 損益表四層分析的合約、品牌、商圈非財務維度             |
-| [代理商財務判讀](/business/financial-analysis/distributor-financial-analysis/) | 企業評估定位的代理商模式展開                           |
-| [平台模式判讀](/business/financial-analysis/platform-financial-analysis/)      | 企業評估定位的平台模式展開                             |
-| [現金流量表深入](/business/financial-analysis/cash-flow-statement-deep-dive/)  | 企業財報判讀的現金流量表完整拆解                       |
-| [中小企業交叉驗證](/business/financial-analysis/sme-cross-verification/)       | 企業財報判讀的中小企業資料驗證操作化                   |
-| [憑證層查核](/business/financial-analysis/forensic-invoice-layer-audit/)       | 企業財報判讀往原始憑證層的下鑽、制度前提與可執行者界線 |
+| 文章                                                                               | 延伸的方法論篇                                         |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [上市櫃實戰判讀](/business/financial-analysis/listed-company-walkthrough/)         | 企業財報判讀 + 產業基準分析的端到端實作                |
+| [加盟體系深入](/business/financial-analysis/franchise-system-deep-dive/)           | 損益表四層分析的合約、品牌、商圈非財務維度             |
+| [代理商財務判讀](/business/financial-analysis/distributor-financial-analysis/)     | 企業評估定位的代理商模式展開                           |
+| [平台模式判讀](/business/financial-analysis/platform-financial-analysis/)          | 企業評估定位的平台模式展開                             |
+| [現金流量表深入](/business/financial-analysis/cash-flow-statement-deep-dive/)      | 企業財報判讀的現金流量表完整拆解                       |
+| [中小企業交叉驗證](/business/financial-analysis/sme-cross-verification/)           | 企業財報判讀的中小企業資料驗證操作化                   |
+| [憑證層查核](/business/financial-analysis/forensic-invoice-layer-audit/)           | 企業財報判讀往原始憑證層的下鑽、制度前提與可執行者界線 |
+| [併購引擎型整合效果](/business/financial-analysis/acquisition-driven-integration/) | 併購案買方能力評估的後續——整合效果判讀與商譽累積風險   |
 
 ## 實作案例篇
 
