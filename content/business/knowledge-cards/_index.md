@@ -179,6 +179,10 @@ weight: 編號
 | [Operating Expense（營業費用）](/business/knowledge-cards/operating-expense/)                     | 本業期間費用、跟營業成本是兩回事         | 研發、銷管、費用率、營業槓桿   |
 | [Cash and Cash Equivalents（現金及約當現金）](/business/knowledge-cards/cash-and-equivalents/)    | 最流動的資產、看相對量非絕對量           | 流動性、受限制現金、危機承受力 |
 | [DuPont Analysis（杜邦拆解）](/business/knowledge-cards/dupont-analysis/)                         | 把 ROE 拆成三個乘數辨識驅動來源          | 淨利率、資產週轉率、權益乘數   |
+| [Revenue Recognition（收入認列）](/business/knowledge-cards/revenue-recognition/)                 | 營收認在哪一期的時點判準                 | 控制權移轉、截止測試、IFRS 15  |
+| [Going Concern（繼續經營假設）](/business/knowledge-cards/going-concern/)                         | 企業能否撐過未來 12 個月                 | 審計意見、供應商信用、流動性   |
+| [Channel Stuffing（通路填塞）](/business/knowledge-cards/channel-stuffing/)                       | 期末壓貨灌水營收的手法                   | 退貨率、side letter、截止測試  |
+| [Cut-off Testing（截止測試）](/business/knowledge-cards/cut-off-testing/)                         | 交易是否認在正確期間                     | 結帳日窗口、控制權移轉證據     |
 
 ## 執行知識
 
