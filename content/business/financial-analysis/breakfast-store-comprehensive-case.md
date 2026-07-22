@@ -2,7 +2,7 @@
 title: "綜合案例：用完整分析框架重新評估一間連鎖早餐店"
 date: 2026-07-18
 description: "拿到一份小型事業的報表時，從定位到估值的端到端評估流程實作——用系列全部分析工具串在一起處理同一個案例"
-weight: 15
+weight: 16
 tags: ["business", "case-analysis", "pnl", "franchise", "financial-analysis"]
 ---
 

@@ -18,4 +18,4 @@ tags: ["business", "knowledge-cards", "financial-analysis"]
 
 ## 判讀方式
 
-營業收入成長要拆來源、對品質存疑時跟現金流交叉驗證。營收與淨利持續成長、但營業現金流停滯，常見原因是激進的收入認列或塞貨（channel stuffing）——先認列還沒真正賣掉的收入。判讀時把營收成長率、應收帳款天數、營業現金流三者並看：健康的成長是三者同向，營收獨自衝高而現金與應收背離，是收入品質要追查的訊號。
+營業收入成長要拆來源、對品質存疑時跟現金流交叉驗證。營收與淨利持續成長、但營業現金流停滯，常見原因是激進的[收入認列](/business/knowledge-cards/revenue-recognition/)或[塞貨（channel stuffing）](/business/knowledge-cards/channel-stuffing/)——先認列還沒真正賣掉的收入。判讀時把營收成長率、應收帳款天數、營業現金流三者並看：健康的成長是三者同向，營收獨自衝高而現金與應收背離，是收入品質要追查的訊號。

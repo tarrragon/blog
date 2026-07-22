@@ -2,7 +2,7 @@
 title: "台灣零售通路併購潮：四筆交易的估值邏輯、買方動機與整合策略"
 date: 2026-07-18
 description: "疫情後台灣零售業四筆併購案（統一買家樂福、全聯買大潤發、聯邦買萊爾富、美廉社買 OK）的估值差異、賣方退場原因、買方整合策略，以及「只有老大老二能活」的產業結構判讀"
-weight: 29
+weight: 30
 tags: ["business", "financial-analysis", "retail", "merger-acquisition"]
 ---
 

@@ -2,7 +2,7 @@
 title: "大統益：台灣壓榨產業龍頭的 commodity 現金牛結構"
 date: 2026-07-19
 description: "分析 commodity 壓榨業的獲利結構時，用大統益的股東組成追蹤食品集團如何透過合資平台確保原料供應、用毛利率驗證聯產品利潤重心、用食安事件後的轉單效應驗證寡占結構"
-weight: 34
+weight: 35
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commodity"]
 ---
 

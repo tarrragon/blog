@@ -2,7 +2,7 @@
 title: "四大超商母公司策略比較：通路在集團裡承擔什麼功能"
 date: 2026-07-19
 description: "判讀集團為什麼持有零售通路時，從母公司的事業結構拆出通路承擔的功能——製造出海口、通路本體、組合拼圖、金融場景各自對應不同的投資意願與虧損容忍度"
-weight: 41
+weight: 42
 tags: ["business", "case-analysis", "financial-analysis", "retail", "strategy"]
 ---
 

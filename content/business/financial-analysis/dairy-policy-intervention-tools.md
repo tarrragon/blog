@@ -2,7 +2,7 @@
 title: "乳業政策介入工具比較：從最低定價、合作社到配額與去管制的國家路徑"
 date: 2026-07-22
 description: "比較各國乳業政策介入工具的目標、手段與副作用時的分類框架"
-weight: 48
+weight: 49
 tags: ["business", "case-analysis", "financial-analysis", "dairy", "policy"]
 ---
 

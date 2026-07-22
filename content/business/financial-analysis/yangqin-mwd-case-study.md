@@ -2,7 +2,7 @@
 title: "揚秦國際案例分析：供應商收購品牌的垂直整合、數位轉型敘事與財報批判"
 date: 2026-07-18
 description: "評估「上游供應商收購下游品牌」型垂直整合的加盟母公司時，用財報數字檢驗成長敘事、關係人交易和數位轉型宣稱的方法"
-weight: 17
+weight: 18
 tags: ["business", "case-analysis", "franchise", "financial-analysis", "vertical-integration"]
 ---
 

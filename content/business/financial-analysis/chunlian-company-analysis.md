@@ -2,7 +2,7 @@
 title: "中聯油脂案例分析：三方合資代工平台的財務結構、組織與策略"
 date: 2026-07-21
 description: "以中聯油脂為例，完整分析一家「公開發行未上市、三家競爭者共有」的上游代工平台——它的薄毛利高周轉財務結構、循環式關係人組織、共有平台策略，以及為什麼它的獲利數字有一部分是集團治理選擇而非純經營績效"
-weight: 37
+weight: 38
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commodity"]
 ---
 

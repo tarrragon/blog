@@ -2,7 +2,7 @@
 title: "退場決策的另一個主體：小自營商對員工的責任"
 date: 2026-07-20
 description: "小型自營商做續行或退場決策時，把對員工的責任當成決策約束而非事後執行的判讀"
-weight: 16
+weight: 17
 tags: ["business", "case-analysis", "labor", "financial-analysis"]
 ---
 

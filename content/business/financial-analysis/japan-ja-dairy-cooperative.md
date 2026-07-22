@@ -2,7 +2,7 @@
 title: "日本農協（JA）如何形塑乳業：合作社集乳、政府補給金與指定團體制度"
 date: 2026-07-22
 description: "分析合作社型制度性行動者用集乳議價、政府補給金與指定團體制度形塑一國乳業結構、消費與酪農決策的方法"
-weight: 46
+weight: 47
 tags: ["business", "case-analysis", "financial-analysis", "dairy", "policy"]
 ---
 

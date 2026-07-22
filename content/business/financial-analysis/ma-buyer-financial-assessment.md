@@ -2,7 +2,7 @@
 title: "併購案的買方財務能力評估：交易金額只是進場門票"
 date: 2026-07-18
 description: "評估一筆併購案的買方是否有能力消化交易時，從交易金額 vs 買方規模、隱性整合成本、資金來源結構三個維度做判讀的方法"
-weight: 31
+weight: 32
 tags: ["business", "financial-analysis", "merger-acquisition", "retail"]
 ---
 

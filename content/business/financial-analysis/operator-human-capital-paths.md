@@ -2,7 +2,7 @@
 title: "經營者的下一步：把人力資本納入續行與退場決策"
 date: 2026-07-20
 description: "事業的財務結論指向退場、但經營者本人還要繼續謀生時，把人力資本前景納入續行與退場決策的方法"
-weight: 16
+weight: 17
 tags: ["business", "case-analysis", "career", "sunk-cost", "financial-analysis"]
 ---
 

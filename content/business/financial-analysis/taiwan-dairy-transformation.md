@@ -2,7 +2,7 @@
 title: "台灣乳業產業轉型：從滅頂行動到小農鮮乳崛起與通路結構重塑"
 date: 2026-07-18
 description: "分析消費者抵制如何永久改變台灣乳業版圖——味全市佔崩跌、牧場解約連鎖、小農品牌結構機會、通路上架費的利潤分配、冷鏈保鮮的成本轉嫁機制"
-weight: 24
+weight: 25
 tags: ["business", "financial-analysis", "supply-chain", "dairy", "industry-transformation"]
 ---
 

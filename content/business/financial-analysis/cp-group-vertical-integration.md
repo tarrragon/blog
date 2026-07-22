@@ -2,7 +2,7 @@
 title: "正大集團（CP Group）解剖：feed-to-shelf 垂直整合如何重塑一國的農業與消費"
 date: 2026-07-22
 description: "分析垂直整合型跨國農食集團的控股結構、feed-to-shelf 運作與環境社會外部成本時，區分企業直接責任與產業層級曝險的判讀方法"
-weight: 45
+weight: 46
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "livestock"]
 ---
 

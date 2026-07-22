@@ -2,7 +2,7 @@
 title: "黃豆壓榨的聯產品經濟學：為什麼油比豆便宜、台灣雙寡頭結構與供應鏈集中風險"
 date: 2026-07-19
 description: "分析聯產品定價邏輯（crush margin）時，用壓榨利潤公式拆解豆油和豆粕的交叉補貼關係、追蹤台灣雙寡頭壓榨結構的股權關係與供應鏈集中風險"
-weight: 33
+weight: 34
 tags: ["business", "financial-analysis", "supply-chain", "commodity"]
 ---
 

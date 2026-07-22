@@ -2,7 +2,7 @@
 title: "價值投資視角的案例回訪：用資本效率數據重驗八家公司的買點與陷阱"
 date: 2026-07-19
 description: "把商業分析升級為投資判斷時，用 ROE 序列、股利紀錄、質押訊號補齊三閘門篩選（護城河/管理層/價格），並用回訪已分析案例的方式檢驗價值窗口與價值陷阱的辨識方法"
-weight: 39
+weight: 40
 tags: ["business", "case-analysis", "financial-analysis", "value-investing"]
 ---
 

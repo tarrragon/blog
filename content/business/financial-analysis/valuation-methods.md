@@ -2,7 +2,7 @@
 title: "企業估值方法：從經營體質到「這間公司值多少錢」"
 date: 2026-07-18
 description: "分析完一間公司的報表和經營體質後，用絕對估值和相對估值兩條路徑推算公司價值、並依階段和模式選擇適合的估值工具"
-weight: 14
+weight: 15
 tags: ["business", "case-analysis", "financial-analysis", "valuation"]
 ---
 

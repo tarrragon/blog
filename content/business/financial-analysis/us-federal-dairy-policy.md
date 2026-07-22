@@ -2,7 +2,7 @@
 title: "美國聯邦乳品制度：FMMO 定價與 DMC 補助如何影響乳價、消費與酪農決策"
 date: 2026-07-22
 description: "拆解美國聯邦乳品政策時，區分 FMMO 定價機制與 DMC 補助機制、辨識低零售價來自規模經濟而非聯邦補助的判讀方法"
-weight: 47
+weight: 48
 tags: ["business", "case-analysis", "financial-analysis", "dairy", "policy"]
 ---
 

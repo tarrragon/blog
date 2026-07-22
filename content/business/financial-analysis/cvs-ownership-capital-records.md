@@ -2,7 +2,7 @@
 title: "四大超商的股權層分析：母公司、前經營者與接手者的資本紀錄"
 date: 2026-07-19
 description: "評估通路資產的持有者與接手者時，用十年 ROE 序列、股利紀錄和一次性項目拆解對股權層逐一評分，並辨識未上市持有者造成的觀察盲區"
-weight: 40
+weight: 41
 tags: ["business", "case-analysis", "financial-analysis", "retail", "value-investing"]
 ---
 

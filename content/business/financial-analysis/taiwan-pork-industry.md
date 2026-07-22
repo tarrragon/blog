@@ -2,7 +2,7 @@
 title: "台灣豬肉產業鏈分析：口蹄疫重塑、供需結構與疫情型產業的判讀"
 date: 2026-07-18
 description: "分析台灣畜產品產業結構時，用口蹄疫→產業崩壞→拔針重建→非洲豬瘟二次衝擊的完整歷程，判讀疫情如何不可逆地改變一個產業的規模、通路和競爭格局"
-weight: 22
+weight: 23
 tags: ["business", "financial-analysis", "supply-chain", "livestock"]
 ---
 

@@ -2,7 +2,7 @@
 title: "跨國乳業結構比較：台灣、紐澳、日本、泰國、美國的定價與通路差異"
 date: 2026-07-18
 description: "分析同一個產品（牛乳）在不同國家因產業結構、定價機制、通路體系和政策介入的差異而出現完全不同的價格和供需形態時，用五個維度做跨國比較的方法"
-weight: 23
+weight: 24
 tags: ["business", "financial-analysis", "supply-chain", "livestock", "dairy"]
 ---
 

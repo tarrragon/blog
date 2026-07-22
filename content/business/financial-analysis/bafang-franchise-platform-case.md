@@ -2,7 +2,7 @@
 title: "八方雲集案例分析：自建中央工廠的加盟平台與跨國擴張"
 date: 2026-07-20
 description: "評估「自建中央工廠、全製程控制」型加盟母公司時，用營收事業別拆解、營業槓桿判讀和海外擴張投資風險來檢驗成長敘事的方法"
-weight: 18
+weight: 19
 tags: ["business", "case-analysis", "franchise", "financial-analysis"]
 ---
 

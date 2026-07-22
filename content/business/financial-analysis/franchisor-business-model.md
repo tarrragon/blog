@@ -2,7 +2,7 @@
 title: "加盟母公司的商業模式：從價值鏈另一端看利潤結構"
 date: 2026-07-18
 description: "評估加盟體系時，從母公司端理解營收來源、利潤結構、風險分攤，以及加盟主如何反向判讀母公司的財務體質"
-weight: 16
+weight: 17
 tags: ["business", "case-analysis", "franchise", "financial-analysis"]
 ---
 

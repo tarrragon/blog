@@ -2,7 +2,7 @@
 title: "進口冰磚奶的產業鏈經濟學：成本結構、滲透路徑與乳品廠的雙重角色"
 date: 2026-07-19
 description: "評估進口乳品對國產鮮乳的替代威脅時，用冰磚奶的到岸成本、業務通路滲透量、乳品廠雙重角色的財報訊號做判讀的方法"
-weight: 26
+weight: 27
 tags: ["business", "financial-analysis", "supply-chain", "dairy", "import"]
 ---
 

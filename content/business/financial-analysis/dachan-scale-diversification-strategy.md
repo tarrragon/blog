@@ -2,7 +2,7 @@
 title: "大成的規模分散策略：從飼料巨人到食品公司的轉型路徑與驗證條件"
 date: 2026-07-19
 description: "評估規模分散型企業的策略是否成功時，用 capex 去向追蹤轉型進度、競爭者側面檢查驗證毛利率結構差異、上下游交叉驗證供應鏈地位的方法"
-weight: 32
+weight: 33
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "strategy"]
 ---
 

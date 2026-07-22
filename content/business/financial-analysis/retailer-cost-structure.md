@@ -2,7 +2,7 @@
 title: "通路商的損益表判讀：上架費 40% 背後的成本結構"
 date: 2026-07-18
 description: "供應商抱怨上架費太高時，用同一套損益表判讀框架站在通路商角度拆解成本——租金、人事、冷藏、物流各佔多少，以及上架費率差異的經濟學解釋"
-weight: 28
+weight: 29
 tags: ["business", "financial-analysis", "retail", "supply-chain"]
 ---
 

@@ -2,7 +2,7 @@
 title: "價值投資當下判定：2026Q3 的四大超商股權鏈"
 date: 2026-07-19
 description: "對一組候選標的做特定時點的買進判定時，把結論寫成可重放的翻轉條件——涵蓋估值帶位移的判讀、兩種價值學派的分流、控股層 ROE 口徑陷阱"
-weight: 42
+weight: 43
 tags: ["business", "case-analysis", "financial-analysis", "value-investing"]
 ---
 

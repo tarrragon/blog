@@ -2,7 +2,7 @@
 title: "台灣雞肉供應鏈三大廠商比較：大成、卜蜂、超秦的策略差異與財報判讀"
 date: 2026-07-18
 description: "評估原物料加工業的投資價值或供應商穩定度時，用規模型、效率型、客製型三種策略路徑的財務結構差異做判讀的方法"
-weight: 20
+weight: 21
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "vertical-integration"]
 ---
 

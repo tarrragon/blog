@@ -2,7 +2,7 @@
 title: "三家競爭者共有一座代工廠：代工費作為關係人移轉定價的槓桿"
 date: 2026-07-21
 description: "判讀多家競爭者共同持有一座上游代工廠的財報時，辨識付給共有廠的代工費是一個可調的關係人移轉定價槓桿——集團層次可能損益中性，卻重塑各實體報表與各自小股東的利益歸屬"
-weight: 36
+weight: 37
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commodity"]
 ---
 

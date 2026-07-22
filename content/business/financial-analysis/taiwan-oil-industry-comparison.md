@@ -2,7 +2,7 @@
 title: "台灣油品加工產業比較：五廠策略矩陣、雙寡頭壓榨與食安後的版圖重整"
 date: 2026-07-19
 description: "評估台灣油品加工產業的競爭格局時，用價值鏈位置×產品差異化的策略矩陣比較五家上市公司和一個合資平台，追蹤食安事件後的結構性版圖變化"
-weight: 44
+weight: 45
 tags: ["business", "financial-analysis", "supply-chain", "commodity", "industry-comparison"]
 ---
 

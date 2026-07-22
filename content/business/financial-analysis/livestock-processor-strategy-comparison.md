@@ -2,7 +2,7 @@
 title: "畜產加工廠的成本控管與利潤策略比較"
 date: 2026-07-18
 description: "評估畜產加工業者時，從垂直整合深度、自動化投資、品牌化方向、通路控制四條路徑比較成本控管策略，並用財報數據驗證各路徑的實際效果"
-weight: 27
+weight: 28
 tags: ["business", "financial-analysis", "supply-chain", "livestock", "strategy"]
 ---
 
