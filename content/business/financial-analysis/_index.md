@@ -35,16 +35,19 @@ tags: ["business", "financial-analysis"]
 
 方法論篇的特定維度展開——每篇聚焦一個主題，獨立可讀。
 
-| 文章                                                                               | 延伸的方法論篇                                         |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| [上市櫃實戰判讀](/business/financial-analysis/listed-company-walkthrough/)         | 企業財報判讀 + 產業基準分析的端到端實作                |
-| [加盟體系深入](/business/financial-analysis/franchise-system-deep-dive/)           | 損益表四層分析的合約、品牌、商圈非財務維度             |
-| [代理商財務判讀](/business/financial-analysis/distributor-financial-analysis/)     | 企業評估定位的代理商模式展開                           |
-| [平台模式判讀](/business/financial-analysis/platform-financial-analysis/)          | 企業評估定位的平台模式展開                             |
-| [現金流量表深入](/business/financial-analysis/cash-flow-statement-deep-dive/)      | 企業財報判讀的現金流量表完整拆解                       |
-| [中小企業交叉驗證](/business/financial-analysis/sme-cross-verification/)           | 企業財報判讀的中小企業資料驗證操作化                   |
-| [憑證層查核](/business/financial-analysis/forensic-invoice-layer-audit/)           | 企業財報判讀往原始憑證層的下鑽、制度前提與可執行者界線 |
-| [併購引擎型整合效果](/business/financial-analysis/acquisition-driven-integration/) | 併購案買方能力評估的後續——整合效果判讀與商譽累積風險   |
+| 文章                                                                               | 延伸的方法論篇                                           |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [上市櫃實戰判讀](/business/financial-analysis/listed-company-walkthrough/)         | 企業財報判讀 + 產業基準分析的端到端實作                  |
+| [加盟體系深入](/business/financial-analysis/franchise-system-deep-dive/)           | 損益表四層分析的合約、品牌、商圈非財務維度               |
+| [代理商財務判讀](/business/financial-analysis/distributor-financial-analysis/)     | 企業評估定位的代理商模式展開                             |
+| [平台模式判讀](/business/financial-analysis/platform-financial-analysis/)          | 企業評估定位的平台模式展開                               |
+| [現金流量表深入](/business/financial-analysis/cash-flow-statement-deep-dive/)      | 企業財報判讀的現金流量表完整拆解                         |
+| [中小企業交叉驗證](/business/financial-analysis/sme-cross-verification/)           | 企業財報判讀的中小企業資料驗證操作化                     |
+| [憑證層查核](/business/financial-analysis/forensic-invoice-layer-audit/)           | 企業財報判讀往原始憑證層的下鑽、制度前提與可執行者界線   |
+| [併購引擎型整合效果](/business/financial-analysis/acquisition-driven-integration/) | 併購案買方能力評估的後續——整合效果判讀與商譽累積風險     |
+| [產能擴建週期](/business/financial-analysis/capacity-expansion-cycle/)             | 各類電子零件的擴建時間軸、設備瓶頸、良率爬坡與產能紀律   |
+| [產能排擠機制](/business/financial-analysis/capacity-crowding-out/)                | 高階產品搶共用產能時低階品的供給壓縮、傳導路徑與結束條件 |
+| [供應合約與價格傳導](/business/financial-analysis/supply-contract-transmission/)   | 元件級合約結構（LTA/現貨/配額）與成品級合約的價格傳導    |
 
 ## 實作案例篇
 
@@ -85,6 +88,7 @@ tags: ["business", "financial-analysis"]
 | [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)             | 統一/三商/聯邦三買方的財務能力判讀、隱性成本、併購後追蹤                               |
 | [被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)        | 品類集中度、景氣循環驅動因素、認證門檻、AI 需求位移——連結採購端配給機制                |
 | [國巨案例分析](/business/financial-analysis/yageo-acquisition-engine/)                        | 併購引擎型電子業公司的整合效果、商譽風險與管理層資本操作判讀                           |
+| [記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)               | HBM 排擠、產能紀律與轉折訊號——產能排擠/擴建/合約三篇方法論的實作應用                   |
 
 ## 跟其他模組的關係
 
