@@ -50,4 +50,4 @@ tags: ["business", "procurement", "supplier"]
 
 ## 下一步
 
-套牢型漲價的事前解，回到 [第二來源的經濟學](/business/procurement-planning/multi-source-supplier-strategy/)。價格被 [ship and debit](/business/procurement-planning/cards/ship-and-debit/) 鎖在原廠端的料，議價對象與籌碼另有一套，見 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)。缺貨市場裡價格與供貨的優先序反轉，見 [不可能三角與短缺市場的配給](/business/procurement-planning/impossible-triangle-rationing/)。
+2018 年被動元件缺貨潮中的市場趨緊型漲價（日系 EOL 產能缺口 + 需求倍增 + 連續調漲）是本篇三種漲價類型的產業實證，見[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)。套牢型漲價的事前解，回到 [第二來源的經濟學](/business/procurement-planning/multi-source-supplier-strategy/)。價格被 [ship and debit](/business/procurement-planning/cards/ship-and-debit/) 鎖在原廠端的料，議價對象與籌碼另有一套，見 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)。缺貨市場裡價格與供貨的優先序反轉，見 [不可能三角與短缺市場的配給](/business/procurement-planning/impossible-triangle-rationing/)。

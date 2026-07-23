@@ -83,6 +83,7 @@ tags: ["business", "financial-analysis"]
 | [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)               | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀                         |
 | [超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)                       | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀                             |
 | [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)             | 統一/三商/聯邦三買方的財務能力判讀、隱性成本、併購後追蹤                               |
+| [被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)        | 品類集中度、景氣循環驅動因素、認證門檻、AI 需求位移——連結採購端配給機制                |
 | [國巨案例分析](/business/financial-analysis/yageo-acquisition-engine/)                        | 併購引擎型電子業公司的整合效果、商譽風險與管理層資本操作判讀                           |
 
 ## 跟其他模組的關係

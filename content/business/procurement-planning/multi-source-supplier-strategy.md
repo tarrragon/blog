@@ -59,4 +59,4 @@ tags: ["business", "procurement", "supplier"]
 
 ## 下一步
 
-保單買了之後，量產階段怎麼在多家之間分配放量、上限怎麼定，看 [量產放量分配](/business/procurement-planning/production-ramp-allocation/)。每顆料實際備多少、用什麼機制備，看 [需求分層與備料策略](/business/procurement-planning/demand-tiered-stocking/)。保單買不到的獨家料，議價與下單策略看 [原廠與代理商規則](/business/procurement-planning/vendor-lifecycle-rules/)。
+被動元件的車用認證週期（AEC-Q200, 6-18 個月）是「等缺貨再找替代來不及」的產業級實證——認證門檻怎麼跟第二來源的保費、等待期交互作用，見[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)。保單買了之後，量產階段怎麼在多家之間分配放量、上限怎麼定，看 [量產放量分配](/business/procurement-planning/production-ramp-allocation/)。每顆料實際備多少、用什麼機制備，看 [需求分層與備料策略](/business/procurement-planning/demand-tiered-stocking/)。保單買不到的獨家料，議價與下單策略看 [原廠與代理商規則](/business/procurement-planning/vendor-lifecycle-rules/)。
