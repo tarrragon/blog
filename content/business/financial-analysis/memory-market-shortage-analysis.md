@@ -6,7 +6,7 @@ weight: 55
 tags: ["business", "financial-analysis", "electronics", "memory"]
 ---
 
-2026 年的記憶體市場正在經歷一場被媒體稱為「RAMmageddon」的缺貨潮。DRAM 合約價在 2026 年第一季單季漲了 90-95%,創歷史最大單季漲幅;DDR5 32GB 套件從 2024 年的 $50-65 漲到 2026 年的 $420-510;部分 OEM 開始銷售不附 RAM 的桌機;Gartner 預測 $500 以下的入門級 PC 到 2028 年可能消失。
+2026 年的記憶體市場正在經歷一場被媒體稱為「RAMmageddon」的缺貨潮。[DRAM](/business/knowledge-cards/dram/) 合約價在 2026 年第一季單季漲了 90-95%,創歷史最大單季漲幅;DDR5 32GB 套件從 2024 年的 $50-65 漲到 2026 年的 $420-510;部分 [OEM](/business/knowledge-cards/oem/) 開始銷售不附 RAM 的桌機;Gartner 預測 $500 以下的入門級 PC 到 2028 年可能消失。
 
 這篇用前三篇建立的框架——[產能擴建週期](/business/financial-analysis/capacity-expansion-cycle/)、[產能排擠](/business/financial-analysis/capacity-crowding-out/)、[供應合約與價格傳導](/business/financial-analysis/supply-contract-transmission/)——分析這次缺貨的結構原因,判讀持續時間,並識別四個可觀察的轉折訊號。
 
@@ -16,7 +16,7 @@ tags: ["business", "financial-analysis", "electronics", "memory"]
 
 ### HBM 排擠壓縮了一般 DRAM 的有效供給
 
-AI 伺服器使用的 HBM（High Bandwidth Memory,高頻寬記憶體）跟一般 DRAM 共用晶圓廠的前段製程。當三大記憶體廠把越來越多晶圓投入量分配給 HBM,一般 DRAM 的有效供給就被壓縮。
+AI 伺服器使用的 [HBM](/business/knowledge-cards/hbm/)（High Bandwidth Memory,高頻寬記憶體）跟一般 DRAM 共用晶圓廠的前段製程。當三大記憶體廠把越來越多晶圓投入量分配給 HBM,一般 DRAM 的有效供給就被壓縮。
 
 數字說明排擠的規模:HBM 在 2026 年佔三大廠 DRAM 晶圓投入量約 22%,但只貢獻 bit 供給的 9%。這 13 個百分點的落差就是排擠的精確量化——每 GB HBM 消耗約 3-4 倍 DDR5 的晶圓面積（HBM die 比 DDR5 die 大約兩倍,且 HBM3E 要堆疊 12 層各自獨立的 die）,加上 TSV 堆疊的額外良率損耗。等效看,22% 的晶圓投入被 HBM 佔用,擠壓了超過 30% 的一般 DRAM 有效產能。
 
@@ -90,7 +90,7 @@ SK Hynix 的反應已經可觀察:放慢 HBM4 的轉產速度,把原定轉換為
 - 部分 OEM 銷售不附 RAM 的預組桌機
 - 記憶體佔 PC 製造成本從約 15-18% 飆升到 35%（HP 報告）
 
-DDR4 出現了一個反常現象:因為 legacy 產線持續萎縮、供給量更少,DDR4 32GB 套件的價格一度比 DDR5 同規格還貴。這是「舊規格因停產而反向漲價」的典型案例——跟[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)裡日系廠商停產低階 MLCC 導致漲價的邏輯相同。
+DDR4 出現了一個反常現象:因為 legacy 產線持續萎縮、供給量更少,DDR4 32GB 套件的價格一度比 DDR5 同規格還貴。這是「舊規格因停產而反向漲價」的典型案例——跟[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)裡日系廠商停產低階 [MLCC](/business/knowledge-cards/mlcc/) 導致漲價的邏輯相同。
 
 ## 跟被動元件缺貨的結構比較
 

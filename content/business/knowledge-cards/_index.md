@@ -110,6 +110,23 @@ weight: 編號
 | [Fat Data / Fat Skill](/business/knowledge-cards/fat-data-fat-skill/) | 有獨家資料或行業隱性能力   | 護城河、生存空間           |
 | [Connector](/business/knowledge-cards/connector/)                     | 被收編進生態系變成整合工具 | 整併週期、AI Labs          |
 
+## 電子產業與供應鏈
+
+電子產業的產品結構、供應鏈分工與景氣循環。服務[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)、[記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)、[產能擠壓](/business/financial-analysis/capacity-crowding-out/)等產業分析文章。
+
+| 卡片                                                                      | 核心問題                           | 常見出現位置                |
+| ------------------------------------------------------------------------- | ---------------------------------- | --------------------------- |
+| [MLCC（積層陶瓷電容）](/business/knowledge-cards/mlcc/)                   | 穩定電壓的被動元件、高容值是瓶頸   | 被動元件產業、AI 伺服器供需 |
+| [HBM（高頻寬記憶體）](/business/knowledge-cards/hbm/)                     | 垂直堆疊 DRAM、消耗 3-4 倍晶圓面積 | 產能擠壓、AI 算力瓶頸       |
+| [DRAM（動態隨機存取記憶體）](/business/knowledge-cards/dram/)             | 揮發性記憶體、三家寡占             | 記憶體景氣循環、HBM 基礎    |
+| [Wafer Foundry（晶圓代工）](/business/knowledge-cards/wafer-foundry/)     | 替設計公司製造晶圓的半導體廠       | 先進製程產能、AI 硬約束     |
+| [EMS（電子專業製造服務）](/business/knowledge-cards/ems/)                 | 替品牌商代工製造的廠商             | 供應鏈分工、牛鞭效應節點    |
+| [ODM（原始設計製造商）](/business/knowledge-cards/odm/)                   | 自行設計再貼牌出貨                 | 伺服器代工、設計議價力      |
+| [OEM（品牌商）](/business/knowledge-cards/oem/)                           | 擁有品牌和定價權的終端需求發動者   | 供應鏈需求起點、搶貨行為    |
+| [ASP（平均單價）](/business/knowledge-cards/asp/)                         | 營收拆量價的基本工具               | 週期性產業毛利率、組合轉移  |
+| [CAGR（年均複合成長率）](/business/knowledge-cards/cagr/)                 | 多年成長壓縮成等效年增率           | 市場預測、起訖點偏誤        |
+| [Bullwhip Effect（牛鞭效應）](/business/knowledge-cards/bullwhip-effect/) | 需求訊號逐層放大                   | 缺貨潮、庫存循環、通路結構  |
+
 ## 市場動態
 
 賽道處在什麼階段、競爭強度、需求類型。判讀一個產業現在能不能進、何時進。
