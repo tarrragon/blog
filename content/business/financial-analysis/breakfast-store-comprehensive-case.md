@@ -197,4 +197,4 @@ tags: ["business", "case-analysis", "pnl", "franchise", "financial-analysis"]
 | 交叉驗證 | 銀行對帳單、現場觀察                 | [中小企業交叉驗證](/business/financial-analysis/sme-cross-verification/)            |
 | 平台依賴 | Take Rate、供需結構                  | [平台模式判讀](/business/financial-analysis/platform-financial-analysis/)           |
 
-讀者可以用同樣的步驟順序評估自己的案例——每一步對應一篇文章，從定位開始、到估值和建議結束。不是每個案例都需要走完所有步驟——如果第一步定位就發現商業模式類型跟本案完全不同（例如評估的是 SaaS 新創而非加盟零售），後續使用的工具和基準就會不同，但分析的邏輯順序是一致的。
+讀者可以用同樣的步驟順序評估自己的案例——每一步對應一篇文章，從定位開始、到估值和建議結束。案例不同時，需要走的步驟可能不同——如果定位階段就發現商業模式類型跟本案完全不同（例如評估的是 SaaS 新創而非加盟零售），後續使用的工具和基準就會不同，但分析的邏輯順序是一致的。

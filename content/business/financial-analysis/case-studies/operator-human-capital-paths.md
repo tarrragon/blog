@@ -89,7 +89,7 @@ tags: ["business", "case-analysis", "career", "sunk-cost", "financial-analysis"]
 
 ## 判讀訊號與重新評估點
 
-這四條路徑收斂到同一個判準：哪條路讓經營者的[機會成本](/business/knowledge-cards/opportunity-cost/)最低、人力資本增值最快。不是哪條路短期收入最高，而是哪條路在三到五年後，把經營者放在一個能力更值錢、選擇更多的位置。
+這四條路徑收斂到同一個判準：哪條路讓經營者的[機會成本](/business/knowledge-cards/opportunity-cost/)最低、人力資本增值最快。判準是哪條路在三到五年後，把經營者放在一個能力更值錢、選擇更多的位置——短期收入高低是次要的。
 
 無論選哪條，都要設一個重新評估的觸發點（tripwire），避免決策做完就進入自動駕駛：
 
