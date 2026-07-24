@@ -10,7 +10,7 @@ tags: ["business", "knowledge-cards", "financial-analysis", "commodity"]
 
 ## 概念位置
 
-壓榨價差解釋了兩個表面矛盾的現象：為什麼豆油零售價可以低於「等比例黃豆成本」（因為 78% 的豆粕已覆蓋大部分原料成本、豆油是被[聯產品](/business/financial-analysis/soybean-crush-economics/)交叉補貼的那一端），以及為什麼壓榨雙寡頭會在營收下降時獲利上升（黃豆價下行、若聯產品售價跌得較慢，壓榨價差反而走闊）。它是判讀[commodity business](/business/knowledge-cards/commodity-business/)裡壓榨這一段獲利的核心視角。
+壓榨價差解釋了兩個表面矛盾的現象：為什麼豆油零售價可以低於「等比例黃豆成本」（因為 78% 的豆粕已覆蓋大部分原料成本、豆油是被[聯產品](/business/knowledge-cards/co-product/)交叉補貼的那一端），以及為什麼壓榨雙寡頭會在營收下降時獲利上升（黃豆價下行、若聯產品售價跌得較慢，壓榨價差反而走闊）。它是判讀[commodity business](/business/knowledge-cards/commodity-business/)裡壓榨這一段獲利的核心視角。
 
 ## 毛價差 vs 淨利潤
 

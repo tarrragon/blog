@@ -6,7 +6,7 @@ weight: 21
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "vertical-integration"]
 ---
 
-從[前面分析的早餐店](/business/financial-analysis/franchise-breakfast-pnl/)往上游追溯——加盟主買食材的錢付給了母公司[揚秦](/business/financial-analysis/case-studies/yangqin-mwd-case-study/)，揚秦的雞肉來自集團內的超秦企業。超秦在台灣雞肉電宰市場的佔有率約 7-8%，對手是年營收分別大它 25 倍和 7 倍的大成和卜蜂。三間公司在同一條價值鏈上，選了完全不同的策略——規模化、效率化、客製化——財報結構因此截然不同。本篇用[企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)和[產業基準分析](/business/financial-analysis/industry-benchmarking/)的工具，比較三間公司的策略選擇和財務結果。
+從[前面分析的早餐店](/business/financial-analysis/franchise-breakfast-pnl/)往上游追溯——加盟主買食材的錢付給了母公司[揚秦](/business/financial-analysis/case-studies/yangqin-mwd-case-study/)，揚秦的雞肉來自集團內的超秦企業。超秦在台灣雞肉[電宰](/business/knowledge-cards/mechanized-slaughter/)市場的佔有率約 7-8%，對手是年營收分別大它 25 倍和 7 倍的大成和卜蜂。三間公司在同一條價值鏈上，選了完全不同的策略——規模化、效率化、客製化——財報結構因此截然不同。本篇用[企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)和[產業基準分析](/business/financial-analysis/industry-benchmarking/)的工具，比較三間公司的策略選擇和財務結果。
 
 ## 三間公司的策略定位
 

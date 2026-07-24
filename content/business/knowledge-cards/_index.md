@@ -110,6 +110,16 @@ weight: 編號
 | [Fat Data / Fat Skill](/business/knowledge-cards/fat-data-fat-skill/) | 有獨家資料或行業隱性能力   | 護城河、生存空間           |
 | [Connector](/business/knowledge-cards/connector/)                     | 被收編進生態系變成整合工具 | 整併週期、AI Labs          |
 
+## 農產品與食品供應鏈
+
+農產品加工、畜產、乳業的產業結構與定價邏輯。服務[雞肉供應鏈比較](/business/financial-analysis/chicken-supply-chain-comparison/)、[黃豆壓榨經濟學](/business/financial-analysis/soybean-crush-economics/)、[乳業政策介入工具](/business/financial-analysis/dairy-policy-intervention-tools/)等產業分析文章。
+
+| 卡片                                                                            | 核心問題                           | 常見出現位置                     |
+| ------------------------------------------------------------------------------- | ---------------------------------- | -------------------------------- |
+| [Co-product（聯產品）](/business/knowledge-cards/co-product/)                   | 一條製程同時產出多個商品、定價連動 | 壓榨業、屠宰業、乳品加工         |
+| [電宰（Mechanized Slaughter）](/business/knowledge-cards/mechanized-slaughter/) | 自動化屠宰流水線、產能集中度指標   | 肉品供應鏈、垂直整合、契約養殖   |
+| [FMMO（聯邦牛奶行銷法令）](/business/knowledge-cards/fmmo/)                     | 美國生乳分類定價、非補助           | 乳業跨國比較、酪農收入、政策工具 |
+
 ## 電子產業與供應鏈
 
 電子產業的產品結構、供應鏈分工與景氣循環。服務[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)、[記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)、[產能擠壓](/business/financial-analysis/capacity-crowding-out/)等產業分析文章。
