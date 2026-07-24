@@ -89,6 +89,7 @@ tags: ["business", "financial-analysis"]
 | [被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)        | 品類集中度、景氣循環驅動因素、認證門檻、AI 需求位移——連結採購端配給機制                |
 | [國巨案例分析](/business/financial-analysis/yageo-acquisition-engine/)                        | 併購引擎型電子業公司的整合效果、商譽風險與管理層資本操作判讀                           |
 | [記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)               | HBM 排擠、產能紀律與轉折訊號——產能排擠/擴建/合約三篇方法論的實作應用                   |
+| [AI 時代獲利品質判讀](/business/financial-analysis/ai-era-earnings-quality/)                  | Alphabet/Tesla Q2 2026 財報拆解——投資收益灌水、capex 強度、需求錨點判讀                |
 
 ## 跟其他模組的關係
 
