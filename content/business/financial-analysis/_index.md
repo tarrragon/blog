@@ -74,7 +74,7 @@ tags: ["business", "financial-analysis"]
 | [乳業政策介入工具比較](/business/financial-analysis/dairy-policy-intervention-tools/)       | 最低定價、合作社到配額與去管制的國家路徑                     |
 | [被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)      | 品類集中度、景氣循環、認證門檻、AI 需求位移                  |
 | [記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)             | HBM 排擠、產能紀律與轉折訊號                                 |
-| [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)           | 統一/三商/聯邦三買方的財務能力判讀（TODO: 拆方法論 vs 實例） |
+| [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)           | 交易規模、隱性成本、資金來源三維度的買方消化能力判讀方法     |
 
 ## 企業與產業案例分析
 
