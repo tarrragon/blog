@@ -1,9 +1,8 @@
 ---
-title: "Domain Map 的驗證邊界"
+title: "Domain Map 未實作 Bundle 衍生不可執行工作項目"
 date: 2026-07-24
-description: "domain-map 的 bundle 界定表列出的每一個 bundle，在產出階段就必須用 ls / grep 驗證程式碼中存在——不存在的標「規劃中」，不留給消費者猜。漂移發生在文件產出時而非之後；消費端的信任假設是衍生問題，不是根因。"
-weight: 12
-tags: ["ddd", "domain-map", "bundle", "verification", "documentation-drift"]
+description: "domain-map 的 bundle 界定表混入程式碼中不存在的概念、下游消費者全部當已實作處理，產出不可執行的測試 ticket 浪費 97k tokens。產出端用 ls/grep 驗證 + 加實作狀態欄 + 消費端前置過濾三層修復。"
+tags: ["domain-map", "false-positive", "documentation-drift", "verification"]
 ---
 
 domain-map 的 bundle 界定表是測試策略、任務派發、對齊度分析的權威依據——表上列了什麼 bundle，下游就對什麼 bundle 建測試、開工作項目。這張表如果混入了程式碼中不存在的概念，下游產出的工作項目在執行時才會發現目標不存在，整條工作鏈從分析到建票到派發全部白費。
