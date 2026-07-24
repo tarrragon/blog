@@ -6,7 +6,7 @@ weight: 41
 tags: ["business", "case-analysis", "financial-analysis", "retail", "value-investing"]
 ---
 
-四大超商的股權結構有一個先於任何分析的事實：兩條通路連同它們的前東家全部未上市、財報無從查起，可驗證的資訊集中在特定幾個上市實體上。本篇用 FinMind 財報原始數據，把查得到的上市實體全數建出十年 [EPS](/business/knowledge-cards/eps/)/ROE 序列，對「母公司、前經營者、接手者」這一層股權結構逐一評分——通路本身的品質是一回事，持有它的資本是什麼體質是另一回事。[台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)拆解過四筆交易的估值與動機、[併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)檢驗過買方在交易當下的財務能力，本篇把兩者的時間軸拉長到十年；資料方法沿用[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)建立的「先校準再填缺」流程。
+四大超商的股權結構有一個先於任何分析的事實：兩條通路連同它們的前東家全部未上市、財報無從查起，可驗證的資訊集中在特定幾個上市實體上。本篇用 FinMind 財報原始數據，把查得到的上市實體全數建出十年 [EPS](/business/knowledge-cards/eps/)/ROE 序列，對「母公司、前經營者、接手者」這一層股權結構逐一評分——通路本身的品質是一回事，持有它的資本是什麼體質是另一回事。[台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)拆解過四筆交易的估值與動機、[併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)檢驗過買方在交易當下的財務能力，本篇把兩者的時間軸拉長到十年；資料方法沿用[價值投資案例回訪](/business/financial-analysis/case-studies/value-investing-retrospective/)建立的「先校準再填缺」流程。
 
 ## 可觀察面地圖：誰有財報、誰是暗區
 
@@ -33,7 +33,7 @@ tags: ["business", "case-analysis", "financial-analysis", "retail", "value-inves
 
 ## 全家：最尖銳的「產品經濟學 vs 業主經濟學」案例
 
-全家的[營業利益率](/business/knowledge-cards/operating-margin/)只有 1.69%（2025）——[超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)已拆解過這個薄利結構。但業主視角完全是另一張臉：
+全家的[營業利益率](/business/knowledge-cards/operating-margin/)只有 1.69%（2025）——[超商加盟經濟學](/business/financial-analysis/case-studies/cvs-franchise-economics/)已拆解過這個薄利結構。但業主視角完全是另一張臉：
 
 | 年度 | EPS    | ROE（歸母推算） | 現金股利 |
 | ---- | ------ | --------------- | -------- |
@@ -67,7 +67,7 @@ tags: ["business", "case-analysis", "financial-analysis", "retail", "value-inves
 
 ## 前經營者的紀錄：退場行為本身是資料
 
-三個退場者中只有泰山有完整財報紀錄——它的序列（常態年 EPS 0.36-1.75、2022 靠後被判無效的處分暴衝 12.17、2023 隨即轉虧）已在[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)作為治理失效的標本。光泉和豐群沒有財報可查，但退場決策本身透露資訊：兩個家族都在通路連年虧損、且家族內部無人接棒的狀態下賣出——**未上市家族企業的退場，是它唯一一次把內部資訊定價成公開數字的時刻**（萊爾富 <40 億、OK 1.25 億）。成交價相對資產與會員規模的折價幅度，就是家族對自己通路前景的誠實出價。
+三個退場者中只有泰山有完整財報紀錄——它的序列（常態年 EPS 0.36-1.75、2022 靠後被判無效的處分暴衝 12.17、2023 隨即轉虧）已在[價值投資案例回訪](/business/financial-analysis/case-studies/value-investing-retrospective/)作為治理失效的標本。光泉和豐群沒有財報可查，但退場決策本身透露資訊：兩個家族都在通路連年虧損、且家族內部無人接棒的狀態下賣出——**未上市家族企業的退場，是它唯一一次把內部資訊定價成公開數字的時刻**（萊爾富 <40 億、OK 1.25 億）。成交價相對資產與會員規模的折價幅度，就是家族對自己通路前景的誠實出價。
 
 ## 股權層分析的檢查單
 
@@ -80,4 +80,4 @@ tags: ["business", "case-analysis", "financial-analysis", "retail", "value-inves
 | 給治理雲定性       | 股權歸屬有沒有未決事項？                             | 全家 22.46% 股權在法律程序——品質好但折價有結構原因          |
 | 讀退場價的訊號     | 未上市持有者的成交價相對資產折價多少？               | 家族退場價是內部資訊唯一一次的公開定價                      |
 
-資料來源：統一（1216）、全家（5903）、三商家購（2945）、三商（2905）、聯邦銀（2838）之 EPS/淨利/權益/股利序列取自 FinMind 開放 API 財報原始數據（季加總為年、ROE 為歸母淨利 ÷ 平均歸母權益之推算——控股公司不可用含非控制權益的總淨利當分子，API 層先以卜蜂股利史校準後使用）；全家 2024 一次性項目歸屬（處分中國大陸部分投資）經新聞來源交叉確認；統一超與泰山數據沿用[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)之已驗證序列；併購交易數據見[台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)。
+資料來源：統一（1216）、全家（5903）、三商家購（2945）、三商（2905）、聯邦銀（2838）之 EPS/淨利/權益/股利序列取自 FinMind 開放 API 財報原始數據（季加總為年、ROE 為歸母淨利 ÷ 平均歸母權益之推算——控股公司不可用含非控制權益的總淨利當分子，API 層先以卜蜂股利史校準後使用）；全家 2024 一次性項目歸屬（處分中國大陸部分投資）經新聞來源交叉確認；統一超與泰山數據沿用[價值投資案例回訪](/business/financial-analysis/case-studies/value-investing-retrospective/)之已驗證序列；併購交易數據見[台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)。

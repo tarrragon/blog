@@ -124,7 +124,7 @@ tags: ["business", "case-analysis", "franchise", "financial-analysis"]
 | 估值     | [市值](/business/knowledge-cards/market-cap/) ~125 億（2026/07、除權後）/ 2025 年度淨利 8.55 億 → [P/E](/business/knowledge-cards/pe-ratio/) ~14.5x；配息 12 元對現價[殖利率](/business/knowledge-cards/dividend-yield/) ~6.8%，估值合理但需要美國市場兌現才有上行空間 |
 | 多品牌   | 梁社漢排骨成長中（年增 20 店、同店 +6%），共用基礎設施的邊際成本優勢；丹堤/芳珍定位待觀察                                                                                                                                                                              |
 
-跟同業的結構比較見[加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)；揚秦的個別深入分析見[揚秦國際案例分析](/business/financial-analysis/yangqin-mwd-case-study/)。
+跟同業的結構比較見[加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)；揚秦的個別深入分析見[揚秦國際案例分析](/business/financial-analysis/case-studies/yangqin-mwd-case-study/)。
 
 ## 可遷移框架
 

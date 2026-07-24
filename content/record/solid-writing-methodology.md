@@ -42,7 +42,7 @@ tags: ["方法論", "寫作", "SOLID", "知識管理", "卡片盒筆記"]
 
 判別測試有兩個。**變動理由測試**：這篇文章會因為什麼事件需要更新？獨立事件超過一種、就是拆分候選。**刪除測試**：刪掉某段後文章的核心論證仍完整、該段承擔的就是另一個責任、該路由出去。
 
-實證：一篇企業案例分析初版同時承擔「該公司自身的財報判讀」跟「跨公司結構比較」，兩個責任互相擠壓——案例深度被比較表佔空間、比較內容被鎖在單一公司的敘事裡無法擴充。拆成[案例篇](/business/financial-analysis/bafang-franchise-platform-case/)跟[比較篇](/business/financial-analysis/franchise-model-structure-comparison/)後、兩邊各自深化（詳見 [#231 案例文章跟跨公司比較是兩個分析責任](/report/article-srp-split-comparison-from-case/)）。知識卡的「一卡一概念」是 S 在原子層的同一條原則。
+實證：一篇企業案例分析初版同時承擔「該公司自身的財報判讀」跟「跨公司結構比較」，兩個責任互相擠壓——案例深度被比較表佔空間、比較內容被鎖在單一公司的敘事裡無法擴充。拆成[案例篇](/business/financial-analysis/case-studies/bafang-franchise-platform-case/)跟[比較篇](/business/financial-analysis/franchise-model-structure-comparison/)後、兩邊各自深化（詳見 [#231 案例文章跟跨公司比較是兩個分析責任](/report/article-srp-split-comparison-from-case/)）。知識卡的「一卡一概念」是 S 在原子層的同一條原則。
 
 違反訊號：更新 A 議題時被迫重讀整篇 B 內容；兩篇文章互相解釋對方的主題；段落放錯位置時的處理是路由到該去的地方、把刪除當成唯一選項會丟失內容（見 [#212 SRP 違反是路由訊號](/report/misplaced-content-needs-route-not-deletion/)）。
 

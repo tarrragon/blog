@@ -77,7 +77,7 @@ tags: ["business", "financial-analysis", "supply-chain", "commodity"]
 
 ### 中聯油脂的結構問題（公開發行未上市、三方 JV）
 
-中聯油脂是**公開發行公司（股 1246、未上市）**，依法申報財報、每月公告營收，本身的營收與利潤率**可公開查得**（2023-2025 營收 113.4→97.66→87.49 億、毛利率 3.11%→3.77%→4.89%）——它不是財務黑箱。三家股東從中聯取回的散裝油和豆粉，在各自報表中另記為「原料採購」或「[關係人交易](/business/knowledge-cards/related-party-transaction/)」。2026 年食安事件的盲點在**食安查驗**、不在財務揭露（中聯財務是透明的）——中聯是 B2B 大宗加工廠、依法僅須半年一驗，密度低於品牌公司；「財務揭露」跟「食安監理密度」是兩件事（見[公司公開程度卡](/business/knowledge-cards/company-public-disclosure-levels/)）。中聯代工費作為關係人移轉定價槓桿的深入拆解見[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)，公司層完整解剖見[中聯油脂案例分析](/business/financial-analysis/chunlian-company-analysis/)。
+中聯油脂是**公開發行公司（股 1246、未上市）**，依法申報財報、每月公告營收，本身的營收與利潤率**可公開查得**（2023-2025 營收 113.4→97.66→87.49 億、毛利率 3.11%→3.77%→4.89%）——它不是財務黑箱。三家股東從中聯取回的散裝油和豆粉，在各自報表中另記為「原料採購」或「[關係人交易](/business/knowledge-cards/related-party-transaction/)」。2026 年食安事件的盲點在**食安查驗**、不在財務揭露（中聯財務是透明的）——中聯是 B2B 大宗加工廠、依法僅須半年一驗，密度低於品牌公司；「財務揭露」跟「食安監理密度」是兩件事（見[公司公開程度卡](/business/knowledge-cards/company-public-disclosure-levels/)）。中聯代工費作為關係人移轉定價槓桿的深入拆解見[共有代工廠的移轉定價](/business/financial-analysis/case-studies/co-owned-toll-platform-transfer-pricing/)，公司層完整解剖見[中聯油脂案例分析](/business/financial-analysis/case-studies/chunlian-company-analysis/)。
 
 ## 2026 食安事件：供應鏈集中的系統風險
 

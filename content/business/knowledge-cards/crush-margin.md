@@ -19,4 +19,4 @@ tags: ["business", "knowledge-cards", "financial-analysis", "commodity"]
 ## 判讀訊號
 
 - 壓榨廠「營收↓、獲利↑」時，先問是不是壓榨價差走闊（黃豆跌、聯產品售價跌得較慢），這是外部週期、會隨黃豆價回升而回吐，不是可持續的結構改善。
-- 比較兩家壓榨廠的毛利率時，要區分「壓榨價差」（段內 margin）與「加工費佔比的分母效應」——不同商業模式（自賣品牌 vs 純代工）吃同一個價差週期的傳導渠道不同，見[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)。
+- 比較兩家壓榨廠的毛利率時，要區分「壓榨價差」（段內 margin）與「加工費佔比的分母效應」——不同商業模式（自賣品牌 vs 純代工）吃同一個價差週期的傳導渠道不同，見[共有代工廠的移轉定價](/business/financial-analysis/case-studies/co-owned-toll-platform-transfer-pricing/)。

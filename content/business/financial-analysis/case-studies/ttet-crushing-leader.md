@@ -18,7 +18,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 大統益的股東組成本身就是一個供應鏈合約——三家各取所需。統一要油、大成要粕、泰華要原料油做再加工。持股比例反映各家的需求量級和議價力。統一作為最大股東（38.5%）對大統益的營運有主導權。
 
-跟中聯油脂的結構差異：中聯是三家「同類」公司（泰山/福壽/福懋都做品牌沙拉油）的共同代工平台，三家從中聯拿回同樣的東西（散裝油）再各自包裝競爭。大統益是三家「不同需求」公司的合資——各取不同產出（油、粕、原料油），互不競爭。中聯這一極的完整解剖見[中聯油脂案例分析](/business/financial-analysis/chunlian-company-analysis/)，其代工費作為關係人移轉定價槓桿見[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)。
+跟中聯油脂的結構差異：中聯是三家「同類」公司（泰山/福壽/福懋都做品牌沙拉油）的共同代工平台，三家從中聯拿回同樣的東西（散裝油）再各自包裝競爭。大統益是三家「不同需求」公司的合資——各取不同產出（油、粕、原料油），互不競爭。中聯這一極的完整解剖見[中聯油脂案例分析](/business/financial-analysis/case-studies/chunlian-company-analysis/)，其代工費作為關係人移轉定價槓桿見[共有代工廠的移轉定價](/business/financial-analysis/case-studies/co-owned-toll-platform-transfer-pricing/)。
 
 ## 財務結構：Commodity 現金牛（2025 FY）
 
@@ -40,7 +40,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 ## 下游佈局：從壓榨往通路延伸
 
-大統益轉投資「美食家食材通路」，綁定全台商用 18L 桶裝油和 B2B 餐飲市場。這個延伸的策略邏輯跟[大成往食品品牌走](/business/financial-analysis/dachan-scale-diversification-strategy/)是同一個模式——commodity 廠商往下游延伸以提高客戶黏性和利潤率。差別在大統益的延伸幅度小（只做通路、不做品牌），保持了 commodity 事業的營運簡潔性。
+大統益轉投資「美食家食材通路」，綁定全台商用 18L 桶裝油和 B2B 餐飲市場。這個延伸的策略邏輯跟[大成往食品品牌走](/business/financial-analysis/case-studies/dachan-scale-diversification-strategy/)是同一個模式——commodity 廠商往下游延伸以提高客戶黏性和利潤率。差別在大統益的延伸幅度小（只做通路、不做品牌），保持了 commodity 事業的營運簡潔性。
 
 | 通路佈局                    | 市場地位     |
 | --------------------------- | ------------ |

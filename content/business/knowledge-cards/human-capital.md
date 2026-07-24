@@ -18,4 +18,4 @@ Human Capital 的核心概念是「人力資本」——一個人靠技能、經
 
 ## 判讀方式
 
-做續行 / 退場決策時，在資本報酬之外，追問「這條路三到五年後讓經營者的可變現能力增值還是折舊」。常見陷阱是只看短期勞動報酬、忽略人力資本停滯的隱性機會成本——一個財務上打平、卻讓能力連續數年停滯的決策，真實成本遠高於帳面數字。把人力資本前景納入續行退場判斷、逐條評估轉受雇與轉行路徑的方法，見[經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)。人力資本不只經營者有——員工同樣是人力資本的主體，差別在經營者為自己盤算是選擇、雇主對員工的人力資本則負有義務（見[退場決策的另一個主體](/business/financial-analysis/employee-responsibility-exit-decision/)、[公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/)）。
+做續行 / 退場決策時，在資本報酬之外，追問「這條路三到五年後讓經營者的可變現能力增值還是折舊」。常見陷阱是只看短期勞動報酬、忽略人力資本停滯的隱性機會成本——一個財務上打平、卻讓能力連續數年停滯的決策，真實成本遠高於帳面數字。把人力資本前景納入續行退場判斷、逐條評估轉受雇與轉行路徑的方法，見[經營者的下一步](/business/financial-analysis/case-studies/operator-human-capital-paths/)。人力資本不只經營者有——員工同樣是人力資本的主體，差別在經營者為自己盤算是選擇、雇主對員工的人力資本則負有義務（見[退場決策的另一個主體](/business/financial-analysis/case-studies/employee-responsibility-exit-decision/)、[公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/)）。

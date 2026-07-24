@@ -192,4 +192,4 @@ CCC 從併購前的 87 天拉長到 128 天。DIO 的增加有三個可能來源
 
 ## 跟其他文章的關係
 
-本篇是[併購引擎型公司整合效果判讀](/business/financial-analysis/acquisition-driven-integration/)方法論的實作案例——用國巨的財報數據走一遍毛利率結構改善、現金流跟進、CCC 變化、商譽累積風險四個維度。產業結構的前置脈絡見[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)——國巨的併購策略、毛利率波動、2018 事件都鑲嵌在品類集中度、景氣循環與認證門檻的產業結構裡。商譽減損的會計機制見[Impairment 卡片](/business/knowledge-cards/impairment/)。管理層品質在價值投資判讀中的位置見[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)。
+本篇是[併購引擎型公司整合效果判讀](/business/financial-analysis/acquisition-driven-integration/)方法論的實作案例——用國巨的財報數據走一遍毛利率結構改善、現金流跟進、CCC 變化、商譽累積風險四個維度。產業結構的前置脈絡見[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)——國巨的併購策略、毛利率波動、2018 事件都鑲嵌在品類集中度、景氣循環與認證門檻的產業結構裡。商譽減損的會計機制見[Impairment 卡片](/business/knowledge-cards/impairment/)。管理層品質在價值投資判讀中的位置見[價值投資案例回訪](/business/financial-analysis/case-studies/value-investing-retrospective/)。

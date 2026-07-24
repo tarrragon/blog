@@ -10,7 +10,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 ## 三家共有一座廠的運作機制
 
-中聯油脂 1995 年由[泰山（1218）、福壽（1219）、福懋油（1225）](/business/financial-analysis/chunlian-trio-shared-risk/)三家上市油脂廠共同出資設立，各持股約三分之一（另有洽發興農等少數股東），是[公開發行、未上市](/business/knowledge-cards/company-public-disclosure-levels/)的公司（股 1246）。它的運作分三段：
+中聯油脂 1995 年由[泰山（1218）、福壽（1219）、福懋油（1225）](/business/financial-analysis/case-studies/chunlian-trio-shared-risk/)三家上市油脂廠共同出資設立，各持股約三分之一（另有洽發興農等少數股東），是[公開發行、未上市](/business/knowledge-cards/company-public-disclosure-levels/)的公司（股 1246）。它的運作分三段：
 
 - **共同採購（上游）**：三家固定下單、透過中聯把黃豆裝船運回台中港，共同分攤國際期貨風險與運輸成本。合買的量夠大，議價力與運費效率遠勝三家各自進口。
 - **代工初搾（中段）**：黃豆到港後，三家**支付代工費**委託中聯初步壓榨成散裝油與豆粉。這一段是中聯的本業——它不做品牌、不直接賣消費者，只收代工費與賣散裝聯產品給股東。
@@ -60,7 +60,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 ## 用大統益當對照組：分辨「週期」與「公司特有」
 
-要分辨中聯的毛利上升是**產業週期**（黃豆跌造成的 [crush spread](/business/knowledge-cards/crush-margin/) 位移、人人有份）還是**中聯特有**（效率 capex 或移轉定價），最好的工具是獨立的同業——[大統益（1232）](/business/financial-analysis/ttet-crushing-leader/)。
+要分辨中聯的毛利上升是**產業週期**（黃豆跌造成的 [crush spread](/business/knowledge-cards/crush-margin/) 位移、人人有份）還是**中聯特有**（效率 capex 或移轉定價），最好的工具是獨立的同業——[大統益（1232）](/business/financial-analysis/case-studies/ttet-crushing-leader/)。
 
 大統益是另一家壓榨平台（市佔約 60%、上市），2023-2025 也是**營收軟、獲利升**：2025 營收 215 億（-2.4%）、稅後淨利 13.2 億（+0.7%、歷史新高）、EPS 7.54→8.23→8.24 逐年升。它是**另一家公司、不同股東、還自己賣品牌油**，卻走同一個型態——這代表「營收↓毛利↑」是整個壓榨雙寡頭的共同現象、來自黃豆週期，這一條中聯特有的解釋撐不起。
 
@@ -105,4 +105,4 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 核心結論：共有代工平台的毛利率、以及每一個共有者自己的毛利率，都同時是「經營績效」和「集團把毛利停在哪」的合成。把後者辨識出來，才不會把移轉定價的結果誤讀成經營能力。
 
-資料來源：中聯油脂（1246）2022-2025 年度財報（MOPS 公開資訊觀測站，含損益表、營業收入明細表、關係人交易附註）、[自由財經（中聯油脂的前世今生）](https://ec.ltn.com.tw/article/breakingnews/5493794)、[新新聞（掌握台灣 1/3 食用油市場）](https://new7.storm.mg/article/5526917)、[信傳媒（中聯六年獲利大成長）](https://www.cmmedia.com.tw/home/articles/61757)、中聯油脂董事會選任董事長公告。中聯整體的財務結構、組織與策略解剖見[中聯油脂案例分析](/business/financial-analysis/chunlian-company-analysis/)、三家股東財務與食安事件見[中聯三股東共用風險](/business/financial-analysis/chunlian-trio-shared-risk/)、壓榨聯產品經濟學見[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。加工費的量與費率拆分取自年報營業收入明細表；每噸費率上升中「純調價 vs 產品組合升級」的進一步區分，年報未拆、標為推論。
+資料來源：中聯油脂（1246）2022-2025 年度財報（MOPS 公開資訊觀測站，含損益表、營業收入明細表、關係人交易附註）、[自由財經（中聯油脂的前世今生）](https://ec.ltn.com.tw/article/breakingnews/5493794)、[新新聞（掌握台灣 1/3 食用油市場）](https://new7.storm.mg/article/5526917)、[信傳媒（中聯六年獲利大成長）](https://www.cmmedia.com.tw/home/articles/61757)、中聯油脂董事會選任董事長公告。中聯整體的財務結構、組織與策略解剖見[中聯油脂案例分析](/business/financial-analysis/case-studies/chunlian-company-analysis/)、三家股東財務與食安事件見[中聯三股東共用風險](/business/financial-analysis/case-studies/chunlian-trio-shared-risk/)、壓榨聯產品經濟學見[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。加工費的量與費率拆分取自年報營業收入明細表；每噸費率上升中「純調價 vs 產品組合升級」的進一步區分，年報未拆、標為推論。

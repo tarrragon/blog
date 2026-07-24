@@ -6,7 +6,7 @@ weight: 17
 tags: ["business", "case-analysis", "labor", "financial-analysis"]
 ---
 
-小型自營商面對虧損要收店時，員工不只是損益表上一個可以裁撤的成本項——他們是雇主負有責任的對象，而這份責任會回頭改變「要不要收、什麼時候收」的決策本身。續行 vs 退場的討論通常只算資本這一邊（[經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)談的是資本的另一半：經營者自己退場後怎麼走），但同一個決策還有員工這個主體。這篇談的就是對員工的責任——它不是決定退場之後才處理的執行問題，在決策階段就是一個約束。
+小型自營商面對虧損要收店時，員工不只是損益表上一個可以裁撤的成本項——他們是雇主負有責任的對象，而這份責任會回頭改變「要不要收、什麼時候收」的決策本身。續行 vs 退場的討論通常只算資本這一邊（[經營者的下一步](/business/financial-analysis/case-studies/operator-human-capital-paths/)談的是資本的另一半：經營者自己退場後怎麼走），但同一個決策還有員工這個主體。這篇談的就是對員工的責任——它不是決定退場之後才處理的執行問題，在決策階段就是一個約束。
 
 執行層的完整方法（清算、倒閉、被收購三種情境怎麼處理員工）在[公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/)。這篇聚焦決策層：員工責任如何改變經營者「要不要收、什麼時候收」的判斷。
 
@@ -47,7 +47,7 @@ tags: ["business", "case-analysis", "labor", "financial-analysis"]
 - **續行好處的還原**：續行的損益平衡若依賴把人力成本壓到行情以下或員工超時，把這塊從「續行好處」扣除、用市場行情重算一次，看續行是否還成立。
 - **退場時機的員工約束**：把「全員法定遣散總額」當成跟營運週轉分開的保留線，現金流預估跌破前就啟動退場。
 - **告知時機**：退場方向確定、時機可預期時就給員工前置期，不拖到最後一天。
-- **執行方法路由**：決定退場後、三情境的處置見[公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/)；經營者自己的路徑見[經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)。
+- **執行方法路由**：決定退場後、三情境的處置見[公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/)；經營者自己的路徑見[經營者的下一步](/business/financial-analysis/case-studies/operator-human-capital-paths/)。
 
 把員工從「成本項」還原成「責任對象」，續行好處的帳要扣掉轉嫁的部分、退場的時機被遣散能力提前、告知的義務在決策階段就成立——三件事都跟著變。經營者為自己盤算下一步時，員工是同一個決策裡他負有義務的另一個主體；這份義務不是退場之後才處理的執行，是決策當下就要納入的判斷。
 
@@ -55,7 +55,7 @@ tags: ["business", "case-analysis", "labor", "financial-analysis"]
 
 | 主題                       | 對應文章                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------ |
-| 經營者自己的退場路徑       | [經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)               |
+| 經營者自己的退場路徑       | [經營者的下一步](/business/financial-analysis/case-studies/operator-human-capital-paths/)  |
 | 退場後三情境處理員工的方法 | [公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/) |
 | 這間店的端到端財務評估     | [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)         |
 | 員工與經營者共有的能力資產 | [人力資本](/business/knowledge-cards/human-capital/)                                       |

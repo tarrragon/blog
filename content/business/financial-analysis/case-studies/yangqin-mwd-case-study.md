@@ -37,7 +37,7 @@ tags: ["business", "case-analysis", "franchise", "financial-analysis", "vertical
 
 （資料來源：揚秦 2025 年度財報、法說會）
 
-加盟供貨佔 81% 揭示了母公司的利潤邏輯——每多一間加盟店，揚秦多的是持續性的食材供貨收入（每月），而非一次性的加盟金。這跟[前一篇加盟母公司分析](/business/financial-analysis/franchisor-business-model/)描述的「食材供應是最大收入線」一致。
+加盟供貨佔 81% 揭示了母公司的利潤邏輯——每多一間加盟店，揚秦多的是持續性的食材供貨收入（每月），而非一次性的加盟金。這跟[前一篇加盟母公司分析](/business/financial-analysis/case-studies/franchisor-business-model/)描述的「食材供應是最大收入線」一致。
 
 ### 獲利結構
 
@@ -47,7 +47,7 @@ tags: ["business", "case-analysis", "franchise", "financial-analysis", "vertical
 | 營業費用率                                      | 18.0% | 17.7% | -0.3pp |
 | [淨利率](/business/knowledge-cards/net-margin/) | 6.9%  | 7.7%  | +0.8pp |
 
-毛利率 27.4% 在加盟餐飲母公司中偏低——跟自建工廠同業（[八方雲集](/business/financial-analysis/bafang-franchise-platform-case/)）的差距與結構原因見[加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)。本段聚焦揚秦自身的毛利率判讀。
+毛利率 27.4% 在加盟餐飲母公司中偏低——跟自建工廠同業（[八方雲集](/business/financial-analysis/case-studies/bafang-franchise-platform-case/)）的差距與結構原因見[加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)。本段聚焦揚秦自身的毛利率判讀。
 
 揚秦的毛利率受集團內部利潤分配結構直接制約。超秦在雞肉加工層（電宰、分切、加工）已先取走利潤，揚秦拿到的是加工後的雞肉成品，可加價空間被上游壓縮。判讀揚秦的毛利率時，不能單獨看揚秦——要同時看超秦企業（8345）的毛利率。兩間公司的利潤率是連動的：超秦在雞肉加工端的利潤上升，揚秦的食材成本相應上升。這就是[關係人交易](/business/financial-analysis/sme-listed-company-financial-analysis/)在財報判讀上的具體影響。
 
@@ -122,4 +122,4 @@ tags: ["business", "case-analysis", "franchise", "financial-analysis", "vertical
 | 數位轉型數字的適用範圍 | 宣稱的改善數字是全店平均還是最佳情境？              | 「最新門市」的數字跟 955 間店的平均之間可能有很大差距                                             |
 | 供應鏈獨佔性           | 加盟店能否從外部採購替代食材？                      | 如果不能，母公司對食材定價有完全的議價力，加盟主是被動接受者                                      |
 
-跟同業（八方雲集等）的結構比較見[加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)。八方雲集的個別深入分析見[八方雲集案例分析](/business/financial-analysis/bafang-franchise-platform-case/)。
+跟同業（八方雲集等）的結構比較見[加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)。八方雲集的個別深入分析見[八方雲集案例分析](/business/financial-analysis/case-studies/bafang-franchise-platform-case/)。

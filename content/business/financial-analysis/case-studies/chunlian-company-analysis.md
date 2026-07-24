@@ -6,7 +6,7 @@ weight: 38
 tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commodity"]
 ---
 
-中聯油脂（1246）是台灣[公開發行、未上市](/business/knowledge-cards/company-public-disclosure-levels/)的黃豆壓榨平台，市佔約全國壓榨業四成、僅次於大統益。它的特別之處在於身分：泰山、福壽、福懋三家彼此在賣場競爭的油廠**共同持有、又同時當客戶**的代工平台——既不是一般的品牌油廠、也不是獨立的壓榨廠。前台品牌互打，後台同一座工廠。這篇把散在[食安系統風險](/business/financial-analysis/chunlian-trio-shared-risk/)、[移轉定價槓桿](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)、[壓榨聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)三篇的片段，收斂成一家公司的完整解剖：它的財務結構、組織形態、營運策略、風險剖面，以及該怎麼判讀它的數字。
+中聯油脂（1246）是台灣[公開發行、未上市](/business/knowledge-cards/company-public-disclosure-levels/)的黃豆壓榨平台，市佔約全國壓榨業四成、僅次於大統益。它的特別之處在於身分：泰山、福壽、福懋三家彼此在賣場競爭的油廠**共同持有、又同時當客戶**的代工平台——既不是一般的品牌油廠、也不是獨立的壓榨廠。前台品牌互打，後台同一座工廠。這篇把散在[食安系統風險](/business/financial-analysis/case-studies/chunlian-trio-shared-risk/)、[移轉定價槓桿](/business/financial-analysis/case-studies/co-owned-toll-platform-transfer-pricing/)、[壓榨聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)三篇的片段，收斂成一家公司的完整解剖：它的財務結構、組織形態、營運策略、風險剖面，以及該怎麼判讀它的數字。
 
 ## 公司定位：成熟期的 B2B 代工現金牛
 
@@ -32,7 +32,7 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 ### 營收↓毛利↑的結構
 
-2023-2025 中聯營收連年減（113→98→87 億，隨黃豆價下行）、毛利率連年增。主因是收入結構的 mix shift（高毛利的加工費佔比隨銷貨縮小而上升）加上每噸代工費三年升 17%。這一段的完整拆解（量 +13% × 費率 +17%、以及移轉定價的角色）見[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)。
+2023-2025 中聯營收連年減（113→98→87 億，隨黃豆價下行）、毛利率連年增。主因是收入結構的 mix shift（高毛利的加工費佔比隨銷貨縮小而上升）加上每噸代工費三年升 17%。這一段的完整拆解（量 +13% × 費率 +17%、以及移轉定價的角色）見[共有代工廠的移轉定價](/business/financial-analysis/case-studies/co-owned-toll-platform-transfer-pricing/)。
 
 ## 組織與股權結構：循環式的關係人平台
 
@@ -42,24 +42,24 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 - **加工費**：三家支付代工費委託中聯壓榨（2025 約 9.2 億、三家各約 1/3）。
 - **銷貨**：中聯把散裝油與豆粉賣回三家（賣回關係人的部分約佔中聯銷貨的 85%）。
 
-所以中聯的損益表幾乎是三家股東的內部帳——營收、成本、利潤大部分是關係人流量。這帶來一個判讀後果：中聯的毛利率、以及三家各自的油品毛利率，都同時是「經營績效」和「集團把毛利停在哪」的合成，不能純當經營能力讀。[移轉定價](/business/knowledge-cards/transfer-pricing/)的機制與證據見[專篇](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)。
+所以中聯的損益表幾乎是三家股東的內部帳——營收、成本、利潤大部分是關係人流量。這帶來一個判讀後果：中聯的毛利率、以及三家各自的油品毛利率，都同時是「經營績效」和「集團把毛利停在哪」的合成，不能純當經營能力讀。[移轉定價](/business/knowledge-cards/transfer-pricing/)的機制與證據見[專篇](/business/financial-analysis/case-studies/co-owned-toll-platform-transfer-pricing/)。
 
 ## 營運策略：用共有平台換規模效率 + 品牌獨立
 
 中聯存在的商業理由是解一個 commodity 難題：壓榨要規模才壓得低成本，但三家中型油廠各自建壓榨線是重複投資、產能利用率低。合資一座廠讓三家同時拿到**大廠的規模效率**（合買黃豆、共攤期貨與運輸、共用大型設備）和**中型廠的品牌獨立性**（各自精煉、分裝、品牌、通路）。這個「前台競爭、後台共用」的設計是它 30 年存續的核心。
 
-競爭格局上，台灣壓榨是[雙寡頭](/business/financial-analysis/soybean-crush-economics/)：大統益（統一系、約 60%、上市、自有品牌）+ 中聯（三家系、約 40%、代工平台）。兩者結構不同——[大統益](/business/financial-analysis/ttet-crushing-leader/)整合到品牌與通路（毛利率 13.69%），中聯純代工（毛利率約 5%）。這個差異是[價值鏈涵蓋段](/business/knowledge-cards/value-chain-span/)的不同，不是效率高下。
+競爭格局上，台灣壓榨是[雙寡頭](/business/financial-analysis/soybean-crush-economics/)：大統益（統一系、約 60%、上市、自有品牌）+ 中聯（三家系、約 40%、代工平台）。兩者結構不同——[大統益](/business/financial-analysis/case-studies/ttet-crushing-leader/)整合到品牌與通路（毛利率 13.69%），中聯純代工（毛利率約 5%）。這個差異是[價值鏈涵蓋段](/business/knowledge-cards/value-chain-span/)的不同，不是效率高下。
 
 ## 風險剖面
 
-| 風險         | 內容                                                              | 判讀                                                                                                                              |
-| ------------ | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 供應鏈集中   | 三家品牌共用一座廠、一批問題油同時波及三家（2026 苯駢芘食安事件） | 「換品牌＝分散風險」對消費者是假象；系統風險不可分散，詳見[食安系統風險](/business/financial-analysis/chunlian-trio-shared-risk/) |
-| 進口原料依賴 | 黃豆幾乎全進口、美/巴西產季輪換                                   | 曝險於國際黃豆價與地緣風險；價格週期直接驅動營收                                                                                  |
-| 食安監理密度 | B2B 大宗加工廠、依法僅半年一驗                                    | 查驗密度低於品牌公司（跟財務透明度是兩回事——中聯財務公開發行、有申報）                                                            |
-| 股東治理外溢 | 泰山經營權爭議（龍邦市場派持股逼近 47%）                          | 單一股東經營權變動可能重評中聯合資關係，詳見[零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)           |
-| 關係人不透明 | 損益大部分是三家內部流量、代工費可調                              | 對只投資單一一家股東的小股東，毛利歸屬受集團移轉定價決定、非該家經營純訊號                                                        |
-| 流動性       | 公開發行未上市、股票不交易                                        | 有完整財報但無市場價、無流動性；一般投資人買不到                                                                                  |
+| 風險         | 內容                                                              | 判讀                                                                                                                                           |
+| ------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 供應鏈集中   | 三家品牌共用一座廠、一批問題油同時波及三家（2026 苯駢芘食安事件） | 「換品牌＝分散風險」對消費者是假象；系統風險不可分散，詳見[食安系統風險](/business/financial-analysis/case-studies/chunlian-trio-shared-risk/) |
+| 進口原料依賴 | 黃豆幾乎全進口、美/巴西產季輪換                                   | 曝險於國際黃豆價與地緣風險；價格週期直接驅動營收                                                                                               |
+| 食安監理密度 | B2B 大宗加工廠、依法僅半年一驗                                    | 查驗密度低於品牌公司（跟財務透明度是兩回事——中聯財務公開發行、有申報）                                                                         |
+| 股東治理外溢 | 泰山經營權爭議（龍邦市場派持股逼近 47%）                          | 單一股東經營權變動可能重評中聯合資關係，詳見[零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)                        |
+| 關係人不透明 | 損益大部分是三家內部流量、代工費可調                              | 對只投資單一一家股東的小股東，毛利歸屬受集團移轉定價決定、非該家經營純訊號                                                                     |
+| 流動性       | 公開發行未上市、股票不交易                                        | 有完整財報但無市場價、無流動性；一般投資人買不到                                                                                               |
 
 ## 判讀與結論
 
@@ -67,10 +67,10 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain", "commo
 
 一個必要的但書：**當前的毛利率與 ROE 有一部分是週期性墊高、不是可持續水準**。2025 的 4.89% 毛利率是從 2023 的 3.11% 一路升上來的，主因是黃豆價下行讓低毛利的散裝銷貨縮水、高毛利的加工費佔比被動放大（mix shift，見上節）——這塊隨黃豆價回升會回吐。真正可能黏著的是每噸代工費三年升 17% 那塊，但那是移轉定價槓桿、不是純經營效率。所以「19% ROE 現金牛」要讀成「含週期順風的當期水準」，sustainable ROE 低於此。企業分析 confidence：high（公開發行、2022-2025 完整四表加關係人附註）；投資判定：N/A（無市場股價與估值帶，見下）。
 
-但要下**投資判定**這裡有個硬邊界：中聯是公開發行未上市、沒有市場股價與估值帶——[business-analysis 的原則](/business/financial-analysis/value-investing-current-assessment/)是「無估值帶與市值序列不可下投資結論」。所以對它只能做企業分析、不能做買賣判定；真正能投資的是它的三家上市股東（泰山 1218、福壽 1219、福懋油 1225），而它們的價值有一部分綁在中聯這座共有平台上。
+但要下**投資判定**這裡有個硬邊界：中聯是公開發行未上市、沒有市場股價與估值帶——[business-analysis 的原則](/business/financial-analysis/case-studies/value-investing-current-assessment/)是「無估值帶與市值序列不可下投資結論」。所以對它只能做企業分析、不能做買賣判定；真正能投資的是它的三家上市股東（泰山 1218、福壽 1219、福懋油 1225），而它們的價值有一部分綁在中聯這座共有平台上。
 
 最核心的判讀提醒：**中聯的毛利率不是純粹的經營績效訊號**——它有一部分是三家股東透過代工費把毛利停在共有平台的治理選擇。看中聯（或任何一家股東）的油品毛利時，要先把這層移轉定價的效果辨識出來，才不會把「集團把利潤停在哪」誤讀成「誰的經營比較強」。
 
 追蹤指標：黃豆價是否回升（回升＝銷貨放大、加工佔比回落、混合毛利率與 ROE 隨之下修，當期的墊高會回吐）、三家加工費佔比是否維持均衡（錯配＝重分配訊號）、每噸代工費走勢（調費 vs 產品組合、這塊較可能黏著）、食安事件後三家是否維持共用中聯（或轉單大統益／自建）、泰山經營權歸屬。
 
-資料來源：中聯油脂（1246）2022-2025 年度財報（MOPS 公開資訊觀測站，含損益表、資產負債表、現金流量表、營業收入明細表、關係人交易附註）。子分析見[中聯三股東共用風險](/business/financial-analysis/chunlian-trio-shared-risk/)、[共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/)、[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。
+資料來源：中聯油脂（1246）2022-2025 年度財報（MOPS 公開資訊觀測站，含損益表、資產負債表、現金流量表、營業收入明細表、關係人交易附註）。子分析見[中聯三股東共用風險](/business/financial-analysis/case-studies/chunlian-trio-shared-risk/)、[共有代工廠的移轉定價](/business/financial-analysis/case-studies/co-owned-toll-platform-transfer-pricing/)、[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。

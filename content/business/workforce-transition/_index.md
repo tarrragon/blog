@@ -18,4 +18,4 @@ tags: ["business", "workforce-transition", "labor"]
 
 ## 跟其他模組的關係
 
-本模組跟 [財務分析模組](/business/financial-analysis/)互補。財務分析的[早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)算退場成本時把「資遣」列為一個成本項，本模組把它展開成法定義務與時機責任。財務分析有兩篇談退場決策的主體——[經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)談經營者自己的人力資本路徑、[退場決策的另一個主體](/business/financial-analysis/employee-responsibility-exit-decision/)談員工責任如何作為決策約束進入判斷——那兩篇處理決策層（要不要收、何時收、退場後往哪走），本模組處理執行層（決定退場後，清算 / 倒閉 / 被收購各情境怎麼處理員工）。
+本模組跟 [財務分析模組](/business/financial-analysis/)互補。財務分析的[早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)算退場成本時把「資遣」列為一個成本項，本模組把它展開成法定義務與時機責任。財務分析有兩篇談退場決策的主體——[經營者的下一步](/business/financial-analysis/case-studies/operator-human-capital-paths/)談經營者自己的人力資本路徑、[退場決策的另一個主體](/business/financial-analysis/case-studies/employee-responsibility-exit-decision/)談員工責任如何作為決策約束進入判斷——那兩篇處理決策層（要不要收、何時收、退場後往哪走），本模組處理執行層（決定退場後，清算 / 倒閉 / 被收購各情境怎麼處理員工）。

@@ -72,7 +72,7 @@ Fonterra 是全球最大的乳品原料出口商，FY2025 年加工 15.09 億公
 
 泰國是全年高溫高濕的熱帶國家，溫濕度指數（THI）全年超過 72（乳牛熱緊迫的門檻），3-5 月可達 82.6。純種 Holstein 乳牛在這個環境下泌乳量大幅下降、繁殖效率惡化。但泰國有 818,537 頭乳牛、日產約 3,000 噸生乳、24,764 個牧場——在熱帶國家中是少見的規模。
 
-泰國乳業克服氣候限制靠兩個策略。第一是**品種工程**：60 年的雜交育種計劃，把 Holstein 跟耐熱的本地品種（Sahiwal、Thai Native）雜交，超過 95% 的泌乳牛是雜交牛。雜交牛的泌乳量低於純種 Holstein（約 60-70%），但在高 THI 環境下的產量衰退幅度小很多。第二是 **CP Group（正大集團）的垂直整合**——從飼料生產到養殖到加工到零售的一條龍模式，跟台灣卜蜂是同一集團、同一套邏輯（見[雞肉供應鏈分析](/business/financial-analysis/chicken-supply-chain-comparison/)與[正大集團解剖](/business/financial-analysis/cp-group-vertical-integration/)）。
+泰國乳業克服氣候限制靠兩個策略。第一是**品種工程**：60 年的雜交育種計劃，把 Holstein 跟耐熱的本地品種（Sahiwal、Thai Native）雜交，超過 95% 的泌乳牛是雜交牛。雜交牛的泌乳量低於純種 Holstein（約 60-70%），但在高 THI 環境下的產量衰退幅度小很多。第二是 **CP Group（正大集團）的垂直整合**——從飼料生產到養殖到加工到零售的一條龍模式，跟台灣卜蜂是同一集團、同一套邏輯（見[雞肉供應鏈分析](/business/financial-analysis/chicken-supply-chain-comparison/)與[正大集團解剖](/business/financial-analysis/case-studies/cp-group-vertical-integration/)）。
 
 泰國乳業超過 80% 是小農場（smallholder），但靠 CP 和其他大型整合商的供應鏈串聯提升效率。跟台灣的對照值得注意：台灣也是亞熱帶（比泰國涼）、也有 CP 集團（卜蜂）在台灣營運、也有政府的乳業政策——但台灣的乳業規模和發展程度遠不如泰國。差異的根源在政策選擇（台灣選擇保護現有酪農而非擴張產業規模）和品種投資（台灣的乳牛以純種 Holstein 為主，未大規模推動耐熱雜交品種）。
 

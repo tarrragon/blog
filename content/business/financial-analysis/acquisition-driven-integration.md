@@ -74,4 +74,4 @@ tags: ["business", "financial-analysis", "merger-acquisition"]
 
 ## 跟其他文章的關係
 
-本篇接在[併購案買方能力評估](/business/financial-analysis/ma-buyer-financial-assessment/)之後,前者處理「能不能消化」,本篇處理「消化得好不好」。商譽減損的會計機制見[Impairment 卡片](/business/knowledge-cards/impairment/)。毛利率、營業費用、現金流量表、CCC 的基礎判讀分別見各自的知識卡片。上層的投資評估框架見[價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)和[價值投資當下判定](/business/financial-analysis/value-investing-current-assessment/)。本篇方法論的實作案例見[國巨案例分析](/business/financial-analysis/yageo-acquisition-engine/)——用國巨的財報數據走一遍毛利率改善、現金流跟進、CCC 變化、商譽累積四個維度。
+本篇接在[併購案買方能力評估](/business/financial-analysis/ma-buyer-financial-assessment/)之後,前者處理「能不能消化」,本篇處理「消化得好不好」。商譽減損的會計機制見[Impairment 卡片](/business/knowledge-cards/impairment/)。毛利率、營業費用、現金流量表、CCC 的基礎判讀分別見各自的知識卡片。上層的投資評估框架見[價值投資案例回訪](/business/financial-analysis/case-studies/value-investing-retrospective/)和[價值投資當下判定](/business/financial-analysis/case-studies/value-investing-current-assessment/)。本篇方法論的實作案例見[國巨案例分析](/business/financial-analysis/case-studies/yageo-acquisition-engine/)——用國巨的財報數據走一遍毛利率改善、現金流跟進、CCC 變化、商譽累積四個維度。

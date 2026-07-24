@@ -6,17 +6,17 @@ weight: 38
 tags: ["business", "financial-analysis"]
 ---
 
-這個模組從一張社群上的連鎖早餐店月份損益表出發，逐步建立了一套從報表識讀到產業供應鏈分析的完整商業評估體系。起點是「一間店的數字怎麼讀」，終點是「一條價值鏈上的公司各自選了什麼策略、為什麼財報結構截然不同」。教的不是商業知識百科，而是一套可重複執行的分析流程——用真實上市公司的財報數據（八方雲集、揚秦/麥味登、卜蜂、大成、超秦）做判讀示範，分析時做的預測在後續財報週期中被驗證。
+這個模組從一張社群上的連鎖早餐店月份損益表出發，逐步建立了一套從報表識讀到產業供應鏈分析的完整商業評估體系。起點是「一間店的數字怎麼讀」，終點是「一條價值鏈上的公司各自選了什麼策略、為什麼財報結構截然不同」。教的是一套可重複執行的分析流程——用真實上市公司的財報數據做判讀示範，分析時做的預測在後續財報週期中被驗證。
 
-模組分三層：方法論篇建立分析工具、深入延伸篇展開特定維度、實作案例篇把工具套用在真實公司和產業上。三層的使用順序跟寫作順序不同——先用定位工具判斷公司類型、再建產業基準、最後選對報表工具深入。
+模組分四層：方法論篇建立分析工具、深入延伸篇展開特定維度、產業結構篇拆解特定產業的供需與競爭格局、[案例分析](/business/financial-analysis/case-studies/)把工具套用在真實公司上。前三層是概念性內容（更新頻率低），案例分析會隨財報季迭代（更新頻率高），因此獨立收錄在子分類。
 
 ## 讀者路線
 
-| 路線       | 適合讀者                     | 建議順序                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 讀完能做什麼                                                   |
-| ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
-| 報表識讀   | 第一次看財報的人             | [損益表四層分析](/business/financial-analysis/franchise-breakfast-pnl/) → [企業財報判讀](/business/financial-analysis/sme-listed-company-financial-analysis/) → [產業基準分析](/business/financial-analysis/industry-benchmarking/)                                                                                                                                                                                                                                                                                                                                                                                                  | 能讀懂損益表和三張報表、建立產業基準                           |
-| 投資評估   | 要判斷一間公司值不值得投的人 | [企業評估定位](/business/financial-analysis/company-stage-model-evaluation/) → [產業基準分析](/business/financial-analysis/industry-benchmarking/) → [企業估值方法](/business/financial-analysis/valuation-methods/) → [外部衝擊與產業轉型](/business/financial-analysis/external-shock-industry-transformation/) → [價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/) → [價值投資當下判定](/business/financial-analysis/value-investing-current-assessment/)                                                                                                                                           | 能定位公司類型、選對估值工具、用三閘門做買進判定並寫出翻轉條件 |
-| 價值鏈追溯 | 想理解一個產業怎麼運作的人   | [加盟母公司分析](/business/financial-analysis/franchisor-business-model/) → [揚秦案例分析](/business/financial-analysis/yangqin-mwd-case-study/) → [八方雲集案例分析](/business/financial-analysis/bafang-franchise-platform-case/) → [加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/) → [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/) → [外部衝擊與產業轉型](/business/financial-analysis/external-shock-industry-transformation/) → [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)（收尾：全系列工具的端到端套用） | 能追溯價值鏈上下游、判讀供應鏈策略                             |
+| 路線       | 適合讀者                     | 建議順序                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 讀完能做什麼                                                   |
+| ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 報表識讀   | 第一次看財報的人             | [損益表四層分析](/business/financial-analysis/franchise-breakfast-pnl/) → [企業財報判讀](/business/financial-analysis/sme-listed-company-financial-analysis/) → [產業基準分析](/business/financial-analysis/industry-benchmarking/)                                                                                                                                                                                                                                                                                                                                                                                                                                         | 能讀懂損益表和三張報表、建立產業基準                           |
+| 投資評估   | 要判斷一間公司值不值得投的人 | [企業評估定位](/business/financial-analysis/company-stage-model-evaluation/) → [產業基準分析](/business/financial-analysis/industry-benchmarking/) → [企業估值方法](/business/financial-analysis/valuation-methods/) → [外部衝擊與產業轉型](/business/financial-analysis/external-shock-industry-transformation/) → [價值投資案例回訪](/business/financial-analysis/case-studies/value-investing-retrospective/) → [價值投資當下判定](/business/financial-analysis/case-studies/value-investing-current-assessment/)                                                                                                                                                        | 能定位公司類型、選對估值工具、用三閘門做買進判定並寫出翻轉條件 |
+| 價值鏈追溯 | 想理解一個產業怎麼運作的人   | [加盟母公司分析](/business/financial-analysis/case-studies/franchisor-business-model/) → [揚秦案例分析](/business/financial-analysis/case-studies/yangqin-mwd-case-study/) → [八方雲集案例分析](/business/financial-analysis/case-studies/bafang-franchise-platform-case/) → [加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/) → [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/) → [外部衝擊與產業轉型](/business/financial-analysis/external-shock-industry-transformation/) → [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)（收尾：全系列工具的端到端套用） | 能追溯價值鏈上下游、判讀供應鏈策略                             |
 
 ## 方法論篇
 
@@ -49,47 +49,36 @@ tags: ["business", "financial-analysis"]
 | [產能排擠機制](/business/financial-analysis/capacity-crowding-out/)                | 高階產品搶共用產能時低階品的供給壓縮、傳導路徑與結束條件 |
 | [供應合約與價格傳導](/business/financial-analysis/supply-contract-transmission/)   | 元件級合約結構（LTA/現貨/配額）與成品級合約的價格傳導    |
 
-## 實作案例篇
+## 產業結構篇
 
-方法論套用在真實公司和產業上——每篇用公開財報數據做批判性分析。
+特定產業的供需結構、成本鏈與競爭格局——教的是「怎麼看一個產業」，性質接近方法論的產業級應用，更新頻率跟隨產業轉折而非個別公司的財報季。
 
-| 文章                                                                                          | 分析對象與焦點                                                                         |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)            | 系列全部方法論套用在早餐店案例的端到端 walkthrough                                     |
-| [經營者的下一步](/business/financial-analysis/operator-human-capital-paths/)                  | 財務結論指向退場後、把經營者人力資本前景納入續行 vs 退場決策的四路徑判讀               |
-| [退場決策的另一個主體](/business/financial-analysis/employee-responsibility-exit-decision/)   | 小自營商續行 vs 退場決策裡、把對員工的責任當成決策約束而非事後執行的判讀               |
-| [加盟母公司分析](/business/financial-analysis/franchisor-business-model/)                     | 八方雲集 + 揚秦的母公司收入線拆解、母公司 vs 加盟主利潤對照                            |
-| [揚秦國際案例分析](/business/financial-analysis/yangqin-mwd-case-study/)                      | 超秦→麥味登垂直整合、關係人交易、數位轉型宣稱的批判檢驗                                |
-| [八方雲集案例分析](/business/financial-analysis/bafang-franchise-platform-case/)              | 自建中央工廠全製程、營業槓桿、多品牌策略、美國擴張的成本與風險                         |
-| [加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)        | 食材供應模式（自建 vs 關係企業採購）決定毛利率、品牌集中度、展店策略和估值的結構差異   |
-| [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)           | 大成/卜蜂/超秦的策略差異、飼料成本衝擊、國際大廠對照                                   |
-| [台灣豬肉產業鏈分析](/business/financial-analysis/taiwan-pork-industry/)                      | 口蹄疫重塑→拔針重建→非洲豬瘟衝擊、豬肉 vs 雞肉結構差異                                 |
-| [跨國乳業比較](/business/financial-analysis/dairy-industry-cross-country/)                    | 台灣/紐澳/日本/泰國/美國五國乳業結構差異與定價機制                                     |
-| [台灣乳業轉型](/business/financial-analysis/taiwan-dairy-transformation/)                     | 味全事件→小農崛起→通路成本結構→進口替代的產業重塑                                      |
-| [乳品加工技術與通路策略](/business/financial-analysis/dairy-processing-retail-strategy/)      | 殺菌方式的成本 trade-off、保存期→通路半徑、貨架坪效、消費者偏好倒推                    |
-| [進口冰磚奶的產業鏈經濟學](/business/financial-analysis/dairy-import-economics/)              | 冰磚到岸成本拆解、業務通路滲透路徑、恆天然供應端經濟、乳品廠雙重角色的財報訊號         |
-| [畜產加工廠策略比較](/business/financial-analysis/livestock-processor-strategy-comparison/)   | 大成/卜蜂/嘉一香/超秦四廠策略矩陣、成本控管路徑與財報驗證                              |
-| [大成的規模分散策略](/business/financial-analysis/dachan-scale-diversification-strategy/)     | 飼料→食品轉型路徑、100 億 capex 去向、Amy Food 併購、供應鏈雙重地位、驗證條件          |
-| [黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)               | crush margin 公式、台灣雙寡頭結構（大統益/中聯）、食安事件的供應鏈集中風險             |
-| [大統益壓榨龍頭](/business/financial-analysis/ttet-crushing-leader/)                          | 統一+大成系合資平台、commodity 現金牛、食安後轉單受益                                  |
-| [中聯三股東](/business/financial-analysis/chunlian-trio-shared-risk/)                         | 泰山/福壽/福懋共用代工的效率與系統風險、品牌差異化的真實程度                           |
-| [共有代工廠的移轉定價](/business/financial-analysis/co-owned-toll-platform-transfer-pricing/) | 三家共有中聯、代工費作為關係人移轉定價槓桿、集團中性卻重塑各實體與小股東利益           |
-| [中聯油脂案例分析](/business/financial-analysis/chunlian-company-analysis/)                   | 三方合資代工平台的完整解剖：薄毛利高周轉 ROE、循環式關係人組織、共有平台策略、風險判讀 |
-| [南僑特殊油脂](/business/financial-analysis/namchow-specialty-fats/)                          | 中游配方壁壘型、投控結構、B2B 黏性、全球特殊油脂第 11                                  |
-| [台灣油品加工產業比較](/business/financial-analysis/taiwan-oil-industry-comparison/)          | 五廠策略矩陣、三種路徑比較、食安後版圖重整                                             |
-| [全球特殊油脂三廠比較](/business/financial-analysis/global-specialty-fats-comparison/)        | AAK/不二製油/南僑的策略分群、可可危機因應、配方壁壘型企業的生存條件                    |
-| [價值投資案例回訪](/business/financial-analysis/value-investing-retrospective/)               | ROE 序列分層、卜蜂受壓轉型窗口、味全/泰山/南僑三型陷阱、質押紅旗的前瞻性驗證           |
-| [四大超商股權層分析](/business/financial-analysis/cvs-ownership-capital-records/)             | 母公司/前經營者/接手者的十年資本紀錄、可觀察面地圖、統一體系 vs 三商聯邦的體質對照     |
-| [四大超商母公司策略比較](/business/financial-analysis/cvs-parent-strategy-comparison/)        | 通路在集團內的功能定位——出海口/通路本體/組合拼圖/場景資產、與投資意願的對應            |
-| [價值投資當下判定](/business/financial-analysis/value-investing-current-assessment/)          | 2026Q3 七標的三閘門判定、翻轉條件輸出格式、估值帶 derating 與學派分流                  |
-| [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                   | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學、寄賣 vs 買斷                    |
-| [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)               | 四筆併購估值比較、賣方退場原因、買方整合策略、產業寡占結構判讀                         |
-| [超商加盟經濟學](/business/financial-analysis/cvs-franchise-economics/)                       | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀                             |
-| [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)             | 統一/三商/聯邦三買方的財務能力判讀、隱性成本、併購後追蹤                               |
-| [被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)        | 品類集中度、景氣循環驅動因素、認證門檻、AI 需求位移——連結採購端配給機制                |
-| [國巨案例分析](/business/financial-analysis/yageo-acquisition-engine/)                        | 併購引擎型電子業公司的整合效果、商譽風險與管理層資本操作判讀                           |
-| [記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)               | HBM 排擠、產能紀律與轉折訊號——產能排擠/擴建/合約三篇方法論的實作應用                   |
-| [AI 時代獲利品質判讀](/business/financial-analysis/ai-era-earnings-quality/)                  | Alphabet/Tesla Q2 2026 財報拆解——投資收益灌水、capex 強度、需求錨點判讀                |
+| 文章                                                                                        | 承擔的產業分析責任                                           |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| [早餐店綜合評估](/business/financial-analysis/breakfast-store-comprehensive-case/)          | 系列全部方法論套用在早餐店案例的端到端 walkthrough           |
+| [加盟餐飲結構比較](/business/financial-analysis/franchise-model-structure-comparison/)      | 食材供應模式決定毛利率、品牌集中度、展店策略和估值的結構差異 |
+| [雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)         | 大成/卜蜂/超秦的策略差異、飼料成本衝擊、國際大廠對照         |
+| [台灣豬肉產業鏈](/business/financial-analysis/taiwan-pork-industry/)                        | 口蹄疫重塑→拔針重建→非洲豬瘟衝擊、豬肉 vs 雞肉結構差異       |
+| [跨國乳業比較](/business/financial-analysis/dairy-industry-cross-country/)                  | 台灣/紐澳/日本/泰國/美國五國乳業結構差異與定價機制           |
+| [台灣乳業轉型](/business/financial-analysis/taiwan-dairy-transformation/)                   | 味全事件→小農崛起→通路成本結構→進口替代的產業重塑            |
+| [乳品加工技術與通路策略](/business/financial-analysis/dairy-processing-retail-strategy/)    | 殺菌方式的成本 trade-off、保存期→通路半徑、貨架坪效          |
+| [進口冰磚奶經濟學](/business/financial-analysis/dairy-import-economics/)                    | 冰磚到岸成本拆解、業務通路滲透路徑、恆天然供應端經濟         |
+| [畜產加工廠策略比較](/business/financial-analysis/livestock-processor-strategy-comparison/) | 四廠策略矩陣、成本控管路徑與財報驗證                         |
+| [黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)             | crush margin 公式、雙寡頭結構、食安供應鏈集中風險            |
+| [台灣油品加工產業比較](/business/financial-analysis/taiwan-oil-industry-comparison/)        | 五廠策略矩陣、三種路徑比較、食安後版圖重整                   |
+| [全球特殊油脂三廠比較](/business/financial-analysis/global-specialty-fats-comparison/)      | AAK/不二製油/南僑的策略分群、配方壁壘型企業的生存條件        |
+| [通路商成本結構判讀](/business/financial-analysis/retailer-cost-structure/)                 | 統一超商毛利 34%→淨利 4% 的費用拆解、上架費坪效經濟學        |
+| [台灣零售通路併購潮](/business/financial-analysis/taiwan-retail-consolidation/)             | 四筆併購估值比較、賣方退場原因、買方整合策略                 |
+| [日本農協乳業制度](/business/financial-analysis/japan-ja-dairy-cooperative/)                | 合作社集乳、政府補給金與指定團體制度                         |
+| [美國聯邦乳品制度](/business/financial-analysis/us-federal-dairy-policy/)                   | FMMO 定價與 DMC 補助如何影響乳價與酪農決策                   |
+| [乳業政策介入工具比較](/business/financial-analysis/dairy-policy-intervention-tools/)       | 最低定價、合作社到配額與去管制的國家路徑                     |
+| [被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)      | 品類集中度、景氣循環、認證門檻、AI 需求位移                  |
+| [記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)             | HBM 排擠、產能紀律與轉折訊號                                 |
+| [併購案買方財務評估](/business/financial-analysis/ma-buyer-financial-assessment/)           | 統一/三商/聯邦三買方的財務能力判讀（TODO: 拆方法論 vs 實例） |
+
+## 企業與產業案例分析
+
+個別公司的經營結構、財報判讀與投資評估——會隨財報季迭代更新，跟上方概念性內容的更新頻率不同，獨立收錄在[案例分析](/business/financial-analysis/case-studies/)子分類。
 
 ## 跟其他模組的關係
 

@@ -8,7 +8,7 @@ tags: ["business", "case-analysis", "financial-analysis", "value-investing"]
 
 本系列此前的 20 多篇文章做的是商業分析——這家公司的利潤結構怎麼運作、策略選擇是什麼、供應鏈位置在哪。價值投資問的是另一個問題：**市場價格是否低於這門生意的內在價值**。兩個問題共用素材但需要不同的數據——商業分析看毛利率和策略，投資判斷還需要 [ROE](/business/knowledge-cards/roe/) 序列（資本效率）、股利紀錄（管理層配置）、[估值帶](/business/knowledge-cards/valuation-band/)（價格位置）、[質押](/business/knowledge-cards/share-pledge/)比率（治理風險）。本篇補上這批縱深數據，回訪已分析的八家公司，重驗兩件事：回頭看，價值窗口出現在哪個時期？當時用什麼可觀察的訊號能認出它？
 
-判讀框架是巴菲特式的三閘門，三關全過才成立、任一關失敗即否決：護城河耐久（衰退期的定價權，用毛利率地板而非高峰驗證）、管理層品質（資本配置紀錄而非敘事）、價格低於內在價值（以[正常化盈餘](/business/knowledge-cards/normalized-earnings/)和歷史估值帶衡量）。估值方法的基礎見[企業估值方法](/business/financial-analysis/valuation-methods/)。本篇方法的當下應用——以 2026Q3 的價格對七個標的做即時判定、把結論寫成可重放的翻轉條件——見[價值投資當下判定](/business/financial-analysis/value-investing-current-assessment/)。
+判讀框架是巴菲特式的三閘門，三關全過才成立、任一關失敗即否決：護城河耐久（衰退期的定價權，用毛利率地板而非高峰驗證）、管理層品質（資本配置紀錄而非敘事）、價格低於內在價值（以[正常化盈餘](/business/knowledge-cards/normalized-earnings/)和歷史估值帶衡量）。估值方法的基礎見[企業估值方法](/business/financial-analysis/valuation-methods/)。本篇方法的當下應用——以 2026Q3 的價格對七個標的做即時判定、把結論寫成可重放的翻轉條件——見[價值投資當下判定](/business/financial-analysis/case-studies/value-investing-current-assessment/)。
 
 本篇是方法演示、非投資建議——所有回推的「窗口」都有後見之明偏誤，文中對每個案例標註「當時可觀察的訊號」正是為了把後見之明還原成可操作的判讀。
 
@@ -148,4 +148,4 @@ FinMind 財報原始數據補上的完整合併序列給了陷阱一個第二幕
 | 三陷阱測試         | 便宜來自護城河受損、治理失效、還是結構衰退？         | 味全/泰山/南僑各佔一型                                                      |
 | 標記證據缺口       | 哪些閘門的數據沒拿到？拿不到是缺料還是工具層不夠？   | 估值帶用頁面直抓補齊；缺業主盈餘 = 閘門三停在相對帶定位、結論降級為觀察名單 |
 
-數據來源與時效：各公司 ROE/EPS/BPS/估值帶/年度收盤價取自 Goodinfo 歷年經營績效頁、股利史取自 Goodinfo 股利政策頁（按盈餘所屬年度）、現金流取自 Goodinfo 歷年現金流量頁（均為 2026/7 以瀏覽器自動化直接抓取、[合併報表](/business/knowledge-cards/consolidated-financial-statements/)口徑）；味全與泰山的逐年 EPS/淨利/權益序列取自 FinMind 開放 API 的財報原始數據（季加總為年、味全 ROE 為淨利 ÷ 平均權益之推算）——該 API 層先以卜蜂股利史做過校準（11 個年度與 Goodinfo 主表全數一致）再用於填缺口；大盤點位為概數（2015 年底 8,338 點、2025 年約兩萬五千點）；質押數據來自財報狗與 2019 年自由時報報導；味全與泰山的事件序列來自今周刊、自由時報等報導。EPS 採財報原始值——卜蜂 2021 年為 5.06 元，部分網站顯示的 4.60 元是除權調整值（該年配發 1 元股票股利），兩者口徑不同。單一 aggregator 的衍生數字均以第二來源或原始表格交叉驗證（本系列曾以此攔下一筆錯誤的近四季 EPS，也修正了初稿引用第三方網站的多個 ROE 年度值，見[南僑分析](/business/financial-analysis/namchow-specialty-fats/)的資料查核註記）。
+數據來源與時效：各公司 ROE/EPS/BPS/估值帶/年度收盤價取自 Goodinfo 歷年經營績效頁、股利史取自 Goodinfo 股利政策頁（按盈餘所屬年度）、現金流取自 Goodinfo 歷年現金流量頁（均為 2026/7 以瀏覽器自動化直接抓取、[合併報表](/business/knowledge-cards/consolidated-financial-statements/)口徑）；味全與泰山的逐年 EPS/淨利/權益序列取自 FinMind 開放 API 的財報原始數據（季加總為年、味全 ROE 為淨利 ÷ 平均權益之推算）——該 API 層先以卜蜂股利史做過校準（11 個年度與 Goodinfo 主表全數一致）再用於填缺口；大盤點位為概數（2015 年底 8,338 點、2025 年約兩萬五千點）；質押數據來自財報狗與 2019 年自由時報報導；味全與泰山的事件序列來自今周刊、自由時報等報導。EPS 採財報原始值——卜蜂 2021 年為 5.06 元，部分網站顯示的 4.60 元是除權調整值（該年配發 1 元股票股利），兩者口徑不同。單一 aggregator 的衍生數字均以第二來源或原始表格交叉驗證（本系列曾以此攔下一筆錯誤的近四季 EPS，也修正了初稿引用第三方網站的多個 ROE 年度值，見[南僑分析](/business/financial-analysis/case-studies/namchow-specialty-fats/)的資料查核註記）。
