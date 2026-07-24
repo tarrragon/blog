@@ -29,6 +29,7 @@ tags: ["business", "financial-analysis", "case-studies"]
 | [超商加盟經濟學](/business/financial-analysis/case-studies/cvs-franchise-economics/)                       | 母公司 vs 加盟主成本分攤、利潤結構、基本工資壓力、退場判讀                             |
 | [四大超商股權層分析](/business/financial-analysis/case-studies/cvs-ownership-capital-records/)             | 母公司/前經營者/接手者的十年資本紀錄、可觀察面地圖、統一體系 vs 三商聯邦的體質對照     |
 | [四大超商母公司策略比較](/business/financial-analysis/case-studies/cvs-parent-strategy-comparison/)        | 通路在集團內的功能定位——出海口/通路本體/組合拼圖/場景資產、與投資意願的對應            |
+| [零售併購案買方實例](/business/financial-analysis/case-studies/retail-ma-buyer-cases/)                     | 統一買家樂福/三商買 OK/聯邦買萊爾富——三種併購消化模式的實例判讀                        |
 
 ## 電子業
 
