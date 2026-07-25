@@ -6,7 +6,7 @@ weight: 15
 tags: ["backend", "database", "data-contract", "schema"]
 ---
 
-資料契約文件（data contract document）的核心責任是承載 schema 表達不了的語意承諾：欄位的單位與格式粒度、跨欄位的不變式、狀態責任分層、錯誤語意的翻譯規則。DDL 能表達型別與約束、表達不了「為什麼這樣設計」與「哪些邏輯在遷移後仍然成立」；這些語意若沒有專屬載體、就只存在原作者的記憶裡。
+資料契約文件（data contract document）的核心責任是承載 schema 表達不了的[語意承諾](/backend/knowledge-cards/contract/)：欄位的單位與格式粒度、跨欄位的不變式、狀態責任分層、錯誤語意的翻譯規則。DDL 能表達型別與約束、表達不了「為什麼這樣設計」與「哪些邏輯在遷移後仍然成立」；這些語意若沒有專屬載體、就只存在原作者的記憶裡。
 
 本章結合 [1.2 Schema Design](/backend/01-database/schema-design/)（結構設計）、[1.4 Repository Adapter](/backend/01-database/repository-adapter/)（port / adapter 邊界）與 [1.7 Schema Migration Rollout Evidence](/backend/01-database/schema-migration-rollout-evidence/)（狀態契約先行）一起讀。讀完後能回答：哪些語意需要專屬文件、文件怎麼分區、什麼情況下合法地省下這份文件。
 
@@ -23,6 +23,8 @@ schema 是唯一與程式碼同步執行的規格層：CHECK 違反時資料庫�
 混存的資料在排序與區間查詢時靜默錯亂：毫秒值比秒值大三個數量級、時間軸查詢把毫秒寫入的資料排到「未來數萬年」、把秒寫入的資料判在區間之外。讀取端出現 1970 年附近或遙遠未來的異常日期、通常是這個問題浮上檯面的第一個訊號。
 
 這裡的教訓是：**單位是語意、型別表達承載範圍**。INTEGER 只保證「這是整數」、單位承諾（秒還是毫秒、UTC 還是本地時間）需要一個權威載體。把單位寫進契約文件的欄位語意表、並讓 DDL 預設值與應用層寫入路徑都對照同一條契約、才能讓「兩條寫入路徑各自表述」在 review 時被看見。
+
+引擎有原生時間型別（TIMESTAMP、DATETIME）時、優先用型別本身消除單位歧義；契約文件承載的是型別表達不了的情境——選用 INTEGER epoch 的單位決策、時區慣例。
 
 ### 案例二：DDL 註解的枚舉值漂移
 
@@ -54,7 +56,7 @@ schema 是唯一與程式碼同步執行的規格層：CHECK 違反時資料庫�
 - **欄位語意**：單位、值域、格式粒度（案例一的時間戳單位就放這裡）
 - **狀態責任分層**：canonical（正式狀態、唯一寫入來源）／derived（衍生、只能 rebuild）／追蹤欄位（審計用）——與 [1.8 State Ownership](/backend/01-database/state-ownership-query-boundary/) 的分層對齊
 - **不變式清單**：跨欄位、跨表的業務規則陳述（例如「同一分類至多一筆活躍記錄」）、只陳述規則本身、把保證層歸屬留給 B 區
-- **交易邊界**：哪些寫入必須一起成立、只描述原子性要求、isolation level 屬 B 區
+- **交易邊界**：哪些寫入必須一起成立、只描述原子性要求、[isolation level](/backend/knowledge-cards/isolation-level/) 屬 B 區
 - **錯誤語意契約**：唯一鍵衝突、外鍵違反對應哪個 domain error——這是 [1.4](/backend/01-database/repository-adapter/) error translation 的規格來源
 - **恢復模型**：備份還原後如何驗證資料完整
 
@@ -65,6 +67,12 @@ schema 是唯一與程式碼同步執行的規格層：CHECK 違反時資料庫�
 - **schema 演進策略**：凍結或支援升級、與 [Expand / Contract](/backend/knowledge-cards/expand-contract/) 模式的銜接
 
 分區的價值在遷移評估時兌現：換 DB 時 A 區整份照搬、B 區按新引擎重寫、工作量邊界在動手前就清楚。分區也讓 review 更聚焦——A 區變更代表業務語意變了、需要 domain 層的人看；B 區變更是實作調整、資料庫層的人可以獨立判斷。
+
+「用 ORM model 取代契約文件」是常見的反駁：model 定義已經寫了型別與約束、何必再維護一份文件。這個反駁不成立、因為 ORM model 與 DDL 同屬型別 + 約束表達層——同樣表達不了單位、跨欄不變式的設計理由、錯誤語意的翻譯規則、恢復模型；且 ORM schema 綁定特定引擎與框架、屬 B 區綁定物而非 A 區邏輯契約。ORM 選型的取捨見 [Repository Adapter](/backend/01-database/repository-adapter/) 的「ORM vs Query Builder vs Raw SQL」段。
+
+### 契約↔測試的最低要求
+
+契約條目要成為可驗證的規格、而非只供閱讀的敘述、最低要求是：每條契約條目至少對應一個直接針對該約束行為的測試；mock 層測試不計入 DB 約束覆蓋——mock 不經過真實引擎、驗不到約束的實際行為。
 
 ## 適用判準：兩個正交旗標
 
@@ -77,7 +85,7 @@ schema 是唯一與程式碼同步執行的規格層：CHECK 違反時資料庫�
 
 兩個旗標各自獨立判定、四種組合各有對應投入：兩者皆要就是完整配置（契約文件 + [1.6 Migration Playbook](/backend/01-database/database-migration-playbook/) 的分段驗證流程）；只要其一就只補其一。
 
-用兩個正交旗標、放棄線性分級（L1 / L2 / L3 這類）、理由是正交的邊界案例在線性軸上沒有位置：「單人小專案、但已上線且有存量資料」——契約文件旗標為否、migration 治理旗標為要。線性分級會把這種組合硬塞進某一級、正交旗標讓它被正確分類。
+用兩個正交旗標、放棄線性分級（L1 / L2 / L3 這類）、理由是正交的邊界案例在線性軸上沒有位置：「單人小專案、但已上線且有存量資料」——契約文件旗標為否、migration 治理旗標為要。線性分級會把這種組合硬塞進某一級、正交旗標讓它被正確分類。兩個旗標的判準邊界仍在跨場景校準中、遇到上表覆蓋不到的組合時、記錄場景並回饋判準本身。
 
 ### 降級出口：僅 DDL 註解是合法終態
 
@@ -87,7 +95,7 @@ schema 是唯一與程式碼同步執行的規格層：CHECK 違反時資料庫�
 
 ## Dormant 表豁免：文件跟著行為走
 
-**dormant 表**：schema 已建立、寫入方法已實作、但沒有 production 觸達路徑的表——依賴注入沒接線、或呼叫鏈終止於死路。
+**dormant 表**：schema 已建立、寫入方法已實作、但沒有 production 觸達路徑的表——依賴注入（DI）沒接線、或呼叫鏈終止於死路。
 
 對 dormant 表撰寫契約文件是負債。契約文件描述的是寫入路徑的行為事實；沒有 production 寫入路徑、就沒有行為事實可承載、寫出來的文件只能複述 DDL、並在首次真實接線時全文重審。所以 dormant 表可以豁免契約撰寫——但豁免要有依據、依據要可驗證。
 
@@ -99,7 +107,7 @@ schema 是唯一與程式碼同步執行的規格層：CHECK 違反時資料庫�
 | -------- | ------------------------------------------------------------ | ---------------------------------------------------- |
 | 表名軸   | 表名關鍵字反查全部程式碼、逐一分類每個命中是寫入還是型別引用 | 全部命中檔案逐檔標註分類、只看命中數量算未完成       |
 | 呼叫者軸 | 該表寫入方法（insert / update / delete）反查全部呼叫者       | 每個寫入方法的呼叫者清單完整列出、測試替身標註排除   |
-| 消費鏈軸 | 對每個呼叫者逐層上溯實例化點與 DI 消費者、直到 UI 進入點或死路 | 每條鏈的終點明確判定「觸達」或「死路」、死路附成因   |
+| 消費鏈軸 | 對每個呼叫者逐層上溯實例化點與 DI 消費者、直到服務進入點（API handler、排程 job、consumer）或 UI 進入點、或死路 | 每條鏈的終點明確判定「觸達」或「死路」、死路附成因   |
 
 三軸缺一即判定失效：表名軸顯示低使用頻率、只是必要條件、仍需消費鏈軸證明死路。指令與原始命中結果要記錄在可回查的位置（工作追蹤系統或設計文件）、後續任何人懷疑豁免過期時直接重跑核對——口頭結論「已確認無使用」沒有這個性質。
 
@@ -145,7 +153,13 @@ grep -rln "<DI 接線點或 provider 名稱>" <程式碼根目錄> | wc -l
 | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | [1.7 訂單付款狀態欄位演進](/backend/01-database/schema-migration-rollout-evidence/)                       | mapping table 這類狀態契約先進 artifact、validation query 才有判讀基準 |
 | [3.C9 Queue 語意不匹配 cutover 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) | 語意契約缺席時、cutover 前後的行為差異無從驗證                       |
-| [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) | 事故修復需要多次人工比對資料時、反映欄位語意與對帳鍵缺少成文載體     |
+| [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) | 此類事故的修復依賴人工比對跨區資料；對帳鍵與欄位語意若有成文載體、比對成本可壓縮 |
+
+## 案例回寫
+
+語意載體議題可以用 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 做回寫練習。讀這個事件時、先看跨區資料分歧後的修復過程需要哪些人工比對、再回到本章檢查三件事：對帳鍵是否有成文載體、欄位語意是否收進 A 區欄位語意表、恢復模型是否寫明還原後如何驗證資料完整。
+
+這個案例主要支撐「語意載體缺失使人工比對成本升高」類判讀、不支撐拓樸切換或 failover 調校類問題；若問題是切換決策與事故指揮、應轉到 [08 事故應變](/backend/08-incident-response/) 章節處理。
 
 ## 跨模組路由
 
@@ -154,7 +168,7 @@ grep -rln "<DI 接線點或 provider 名稱>" <程式碼根目錄> | wc -l
 3. 與 1.6 的交接：migration 治理旗標為要時、分段驗證流程落在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
 4. 與 1.7 的交接：契約條目進入 production rollout 時、驗證證據落在 [Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)。
 5. 與 1.8 的交接：A 區狀態責任分層與 [State Ownership](/backend/01-database/state-ownership-query-boundary/) 的 canonical / derived 分層對齊。
-6. 與 6.10 的交接：契約條目對應測試的驗證方式、見 [Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)。
+6. 與 6.10 的交接：契約作為可驗證 artifact 的一般框架、與 schema 演進的相容性驗證、見 [Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)。
 
 ## 下一步路由
 
