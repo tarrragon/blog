@@ -115,6 +115,52 @@ tags: ["backend", "database", "migration"]
 - 漸進把舊資料 move 到對應 partition
 - 風險：高（schema 大變）
 
+### Type I：加約束（CHECK / FK / NOT NULL 收緊）
+
+對有存量資料的表加約束、風險形態跟加欄位不同：新約束要對「過去所有已寫入的資料」負責、不只對未來寫入負責。NOT NULL 是本類型的單欄特例（流程見 Type G）、CHECK 與 FK 走以下同一套順序。哪些規則該下沉成約束、哪些留在文件、分工判準見 [1.15 資料契約文件](/backend/01-database/data-contract-document/)；FK 強約束 vs 應用層保護的取捨回到 [1.2 schema design](/backend/01-database/schema-design/) 的外鍵段。
+
+**約束前移原則**（為什麼值得做這種 migration）：
+
+- 沒有約束時、非法值照樣寫入、問題被推給讀取端
+- 讀取端對非法值做 fallback（當 0、當預設值、跳過該 row）看似穩健、實際是靜默翻轉業務語意——負數金額被當 0 加總、懸空引用被跳過、報表少算了沒有訊號
+- CHECK / FK 把失敗前移到寫入當下：寫入方立刻收到顯性錯誤、當下有完整的呼叫脈絡可修
+- 對偶關係：寫入時顯性失敗（吵、但可修）vs 讀取時靜默 fallback（安靜、但語意漂移）。約束層要的是前者
+
+**宣告 vs 執法落差**：
+
+schema 宣告了約束、不等於引擎正在執法。三種常見落差：
+
+- 連線層開關：SQLite 的 FK 檢查是 per-connection 的 `PRAGMA foreign_keys`、預設 OFF——DDL 寫了 `REFERENCES` 但沒開 pragma、FK 形同註解
+- 約束狀態：PostgreSQL `NOT VALID` 狀態的約束只檢查新寫入、存量不保證合規
+- Storage engine：MySQL MyISAM 忽略 FK 定義、只有 InnoDB 執法
+
+判讀依據：懸空參照（子表引用不存在的父 row）一旦出現、即證明 FK 執法未開——執法中的 FK 不會讓懸空參照寫得進去。
+
+**存量處理順序 SOP**（先盤點、再修復、最後開執法）：
+
+1. **盤點違規存量**：用 validation query 找出所有違反新約束的 row（懸空參照、CHECK 不符、該收緊的 NULL）
+2. **修復或顯性歸零**：逐類決定處置——修正資料、刪除、或顯性標記為已知例外。禁止在 migration 內靜默改寫（`UPDATE ... SET amount = 0 WHERE amount < 0` 埋進 migration script、語意翻轉沒有人 review 過）
+3. **開啟執法**：存量乾淨後才啟用約束
+
+PostgreSQL 把這個 SOP 做成引擎原生的兩段式、可當 vendor-agnostic 的順序錨點：
+
+```sql
+ALTER TABLE orders ADD CONSTRAINT fk_orders_user
+  FOREIGN KEY (user_id) REFERENCES users(id) NOT VALID;
+-- 此刻起只檢查新寫入、存量不動、不取 heavy lock
+
+-- 依盤點結果修復存量（顯性處置、非靜默 UPDATE）
+
+ALTER TABLE orders VALIDATE CONSTRAINT fk_orders_user;
+-- 全表掃描驗證存量、通過後約束完全生效
+```
+
+沒有 `NOT VALID` 的引擎照同一順序操作：先跑 validation query 盤點、修完存量、再上約束（SQLite 走表重建、MySQL `ADD CONSTRAINT` 會直接全表驗證、要挑離峰）。
+
+- 風險：中-高（違規存量數量未知前、無法估 migration 時長與修復工作量）
+- 注意：違規存量修不完時、migration 應該失敗停下、不推進版本標記——「宣告了但沒 VALIDATE」的半套約束比沒約束更誤導
+- 注意：upsert 類寫入（`ON CONFLICT` / `REPLACE`）只解唯一鍵衝突、不消解 CHECK 違反——衝突解消路徑不會吸收非法值、CHECK 違反仍以錯誤失敗
+
 ## Online Schema Change 工具
 
 大表 ALTER TABLE 直接跑會 lock。生產級 migration 用 online schema change 工具：
@@ -206,6 +252,7 @@ backfill 是 migration 中最 *容易出錯* 的環節 — 大量寫、影響 pr
 | rollback 時間超出 RTO           | 回退流程過度人工                        | 把回退腳本化並演練                      |
 | 大表 ALTER TABLE 卡住           | online 工具沒用對 / lock                | 用 gh-ost / pgroll、或分批執行          |
 | Backfill 後 NULL count 不歸零   | 有漏跑的 batch、或新寫入沒走 dual-write | 補檢查 dual-write 邏輯、re-run backfill |
+| 加了 FK 之後仍出現懸空參照      | 約束宣告了但執法未開（pragma / NOT VALID / engine） | 檢查連線層開關與約束狀態、依 Type I SOP 修存量後 VALIDATE |
 
 ## 常見誤區
 
