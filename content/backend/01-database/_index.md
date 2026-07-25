@@ -56,6 +56,7 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 | [1.12](/backend/01-database/large-scale-db-migration/)           | 大規模 DB 遷移實戰                                       | dual-write / [shadow read](/backend/knowledge-cards/shadow-read/) / cutover / [rollback window](/backend/knowledge-cards/rollback-window/) |
 | [1.13](/backend/01-database/query-anti-patterns/)                | 應用層查詢反模式與 Query 預算                            | N+1、select *、缺索引、ORM lazy load、long transaction 與每請求 query 預算                                                                 |
 | [1.14](/backend/01-database/production-slow-log-loop/)           | Production Slow Log Closed Loop                          | 採集 / Normalize / PR review 整合 / Regression 偵測 — 把 slow log 從事故工具變成定期審視訊號                                               |
+| [1.15](/backend/01-database/data-contract-document/)             | 資料契約文件                                             | 把 schema 表達不了的語意承諾寫成可攜性兩區 artifact、含適用判準與 dormant 豁免                                                             |
 | [Vendor 文章撰寫規格](/backend/01-database/vendor-article-spec/) | Vendor overview / deep article / migration playbook 分工 | 把 PostgreSQL / MySQL batch 經驗整理成後續資料庫服務頁的撰寫規格                                                                           |
 
 ## 觀念網路補完方向
