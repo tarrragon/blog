@@ -10,7 +10,7 @@ Drafter Model 的核心概念是「[speculative decoding](/llm/knowledge-cards/s
 
 ## 概念位置
 
-Drafter 與 target 形成一對：drafter 快但較不準、target 慢但準確、兩者組合得到「跑得快的近似 target」。drafter 在記憶體中跟 target 一起載入、佔額外記憶體。Gemma 4 31B + 官方 drafter 的記憶體佔用約「target 18GB + drafter 1GB」、需要 32GB+ Mac 才順暢。
+Drafter 與 target 形成一對、是 [speculative decoding](/llm/knowledge-cards/speculative-decoding/) 的核心配置：drafter 快但較不準、target 慢但準確、兩者組合得到「跑得快的近似 target」。drafter 在記憶體中跟 target 一起載入、佔額外記憶體。Gemma 4 31B + 官方 drafter 的記憶體佔用約「target 18GB + drafter 1GB」、需要 32GB+ Mac 才順暢。
 
 ## 可觀察訊號與例子
 

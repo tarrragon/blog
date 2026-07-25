@@ -23,7 +23,7 @@ Indirect injection 的常見入口：
 2. **Web 內容**：tool 抓的網頁、社群留言、PR 描述
 3. **tool 回傳結果**：DB 查詢結果、API response、其他 service 回傳
 4. **使用者貼上內容**：從外部複製貼上、帶進惡意 prompt
-5. **agent 自我循環中累積**：sub-agent 回傳、長 agent loop 中前段 injection 影響後段
+5. **agent 自我循環中累積**：sub-agent 回傳、長 [agent loop](/llm/knowledge-cards/agent-loop/) 中前段 injection 影響後段
 
 > **事實查核註**：prompt injection 的攻擊形態跟研究進展快速演進、本卡描述參考 [OWASP LLM Top 10 LLM01](https://owasp.org/www-project-top-10-for-large-language-model-applications/) 跟 Greshake et al. 的「Indirect Prompt Injection」論文、引用前以對應的最新版本為準。
 

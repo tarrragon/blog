@@ -97,7 +97,7 @@ output "db_endpoint" {
 
 ### 加密的不可逆性
 
-`storage_encrypted = true` 確保磁碟層級的加密在資源建立時就生效。RDS 不支援事後對既有 instance 開加密 — 漏了只能重建。補救路徑是匯出快照、用加密 KMS key 複製快照成加密版本、再用加密快照還原成新 instance。這個過程需要停機或切換端點，對已經承載流量的 production 資料庫代價很高。prod 的 RDS 若 `storage_encrypted` 為 false，這筆技術債越早處理越便宜。
+`storage_encrypted = true` 確保磁碟層級的加密在資源建立時就生效。[RDS](/infra/knowledge-cards/rds/) 不支援事後對既有 instance 開加密 — 漏了只能重建。補救路徑是匯出快照、用加密 KMS key 複製快照成加密版本、再用加密快照還原成新 instance。這個過程需要停機或切換端點，對已經承載流量的 production 資料庫代價很高。prod 的 RDS 若 `storage_encrypted` 為 false，這筆技術債越早處理越便宜。
 
 ### parameter group 的角色
 

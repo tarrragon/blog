@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "application", "prompt-engineering"]
 ---
 
-System prompt 的核心概念是「LLM application 中、由開發者預設、放在每次 conversation 最前面、不直接顯示給使用者的指令層」。常見用途包括設定模型角色（如「你是 senior Python engineer」）、規範輸出格式（如「always return JSON」）、加入 safety guideline。Chat-based LLM API（OpenAI、Anthropic 等）通常有專門的 `role: "system"` message type。
+System prompt 的核心概念是「LLM application 中、由開發者預設、放在每次 conversation 最前面、不直接顯示給使用者的指令層」。常見用途包括設定模型角色（如「你是 senior Python engineer」）、規範輸出格式（如「always return JSON」）、加入 safety guideline。Chat-based LLM API（OpenAI、Anthropic 等）通常有專門的 `role: "system"` message type、由 [special tokens](/llm/knowledge-cards/special-tokens/) 標記這段訊息的邊界。
 
 ## 概念位置
 
@@ -24,14 +24,14 @@ messages = [
 
 System prompt 在 application 設計中的角色：
 
-| 用途         | 例子                                                  |
-| ------------ | ----------------------------------------------------- |
-| 角色定義     | "你是 senior Python engineer、專長 async / typing"    |
-| 輸出格式約束 | "always return JSON with keys: title, body, tags"     |
-| 行為規範     | "若不確定、明確說『我不知道』、不要編造"              |
-| 工具使用指引 | "When user asks about weather, call get_weather tool" |
-| 安全約束     | "Do not generate executable shell commands"           |
-| 上下文注入   | "Current date: 2026-05-12; User language: zh-TW"      |
+| 用途                                           | 例子                                                  |
+| ---------------------------------------------- | ----------------------------------------------------- |
+| 角色定義                                       | "你是 senior Python engineer、專長 async / typing"    |
+| 輸出格式約束                                   | "always return JSON with keys: title, body, tags"     |
+| 行為規範                                       | "若不確定、明確說『我不知道』、不要編造"              |
+| [工具使用](/llm/knowledge-cards/tool-use/)指引 | "When user asks about weather, call get_weather tool" |
+| 安全約束                                       | "Do not generate executable shell commands"           |
+| 上下文注入                                     | "Current date: 2026-05-12; User language: zh-TW"      |
 
 > **事實查核註**：不同 LLM vendor 對 system prompt 的處理機制不同（如部分模型把 system 跟 user 視為相同優先級、部分模型有特殊訓練讓 system 較高優先）、具體行為以該模型的[官方文件](https://platform.openai.com/docs/api-reference/chat)為準。
 

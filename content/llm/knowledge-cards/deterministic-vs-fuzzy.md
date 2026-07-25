@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "paradigm", "architecture"]
 ---
 
-Deterministic vs Fuzzy engineering 的核心概念是「**LLM 軟體跟傳統軟體在設計典範上的根本差異**」。Deterministic 軟體建立在「同 input → 同 output」假設、fuzzy 軟體建立在「同 input → 分佈」假設。兩者在資料、邏輯、行為一致性、實驗成本四維度都不同、設計直覺要分開。實務上一個 LLM 應用是兩者混合、guardrail 設計是把 fuzzy 邊界包進 deterministic 約束。
+Deterministic vs Fuzzy engineering 的核心概念是「**LLM 軟體跟傳統軟體在設計典範上的根本差異**」。Deterministic 軟體建立在「同 input → 同 output」假設、fuzzy 軟體建立在「同 input → 分佈」假設。兩者在資料、邏輯、行為一致性、實驗成本四維度都不同、設計直覺要分開。實務上一個 LLM 應用是兩者混合、[guardrail](/llm/knowledge-cards/guardrail/) 設計是把 fuzzy 邊界包進 deterministic 約束。
 
 ## 概念位置
 
@@ -21,7 +21,7 @@ Deterministic vs Fuzzy engineering 的核心概念是「**LLM 軟體跟傳統軟
 | 測試方式   | unit test、覆蓋率      | eval、judge、distribution metric   |
 | 實驗成本   | 高                     | 低（改 prompt 即可）               |
 
-典型 LLM 應用的混合：
+典型 [agent](/llm/knowledge-cards/agent/) 應用的混合：
 
 ```text
 User input

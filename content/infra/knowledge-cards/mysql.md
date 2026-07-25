@@ -6,11 +6,11 @@ weight: 34
 tags: ["infra", "knowledge-cards"]
 ---
 
-MySQL 是最廣泛使用的開源關聯式資料庫，多數 PHP 應用、WordPress、以及大量 web 服務的資料層都跑在 MySQL 上。MariaDB 是 MySQL 被 Oracle 收購後社群分支出來的相容實作，多數 Linux 發行版已經把預設的 mysql 套件指向 MariaDB。
+MySQL 是最廣泛使用的開源關聯式資料庫，多數 PHP 應用、WordPress、以及大量 web 服務的資料層都跑在 MySQL 上，維運上常搭配 [phpMyAdmin](/infra/knowledge-cards/phpmyadmin/) 或 CLI 工具管理。MariaDB 是 MySQL 被 Oracle 收購後社群分支出來的相容實作，多數 Linux 發行版已經把預設的 mysql 套件指向 MariaDB。
 
 ## 概念位置
 
-MySQL 在 infra 裡是典型的 stateful 資源——資料不可重建、備份和刪除保護是 day-1 需求。接手維運時，MySQL 的版本、備份設定、認證方式是第一批要確認的項目。雲端環境裡 MySQL 常以 RDS 形式運行（受管服務、代管備份與 failover）。
+MySQL 在 infra 裡是典型的 stateful 資源——資料不可重建、備份和刪除保護是 day-1 需求。接手維運時，MySQL 的版本、備份設定、認證方式是第一批要確認的項目。雲端環境裡 MySQL 常以 [RDS](/infra/knowledge-cards/rds/) 形式運行（受管服務、代管備份與 failover）。
 
 ## 大版本升級的關鍵差異
 

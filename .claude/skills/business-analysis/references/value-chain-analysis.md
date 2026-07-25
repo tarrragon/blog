@@ -50,6 +50,22 @@ Before signing a franchise agreement, use the franchisor's public financials to 
 - What is the franchisor's store closure rate? Compare annual closures to annual openings — a high closure rate signals operational challenges that affect franchisee success.
 - Is the brand in expansion, maturity, or decline phase? This determines the franchisee's growth opportunity and competitive pressure.
 
+## Value-Chain Span Explains Margin (and Limits Comparability)
+
+Gross-margin differences between companies in the same industry are often structural — a function of how much of the value chain each company captures internally — not a measure of operational efficiency. Before attributing a margin gap to one company being "better run," classify each by its value-chain span:
+
+| Span | What the company does | Gross margin captures |
+| --- | --- | --- |
+| Full-process (vertical) | Buys raw inputs, does every processing step in-house, distributes | Every value-add layer's markup (raw → processed → distributed) |
+| Resale of pre-processed goods | Buys already-processed inputs, often from a group affiliate, resells to stores | Only the layers after the input was processed — upstream markup already stripped out |
+| External OEM / open procurement | Buys finished goods from independent suppliers | Only the brand/distribution margin; processing markup stays with the supplier |
+
+Worked contrast: two same-industry franchise parents reported 36% and 27% gross margin. The 9-point gap is not "the first is more efficient." The 36% company runs a full-process central factory — every markup layer from raw input to finished product stays on its statement. The 27% company buys already-processed goods from a group affiliate — the processing markup was already taken upstream, on the affiliate's statement. The two margins measure different spans of the same value chain.
+
+**Comparability guardrail**: gross margins across different value-chain spans are not directly comparable as efficiency indicators. A full-process producer and a reseller in the "same industry" are not margin peers. To compare efficiency, either (a) compare companies with the same span, or (b) for a group with upstream affiliates, consolidate the upstream and downstream margins before comparing to an integrated competitor (otherwise the group's true margin is understated — see Related Party Transaction Analysis). Reading a reseller's lower margin as inefficiency, or a full-process producer's higher margin as pricing power, is a category error when the spans differ.
+
+This is the positive-framing complement to the transfer-pricing red flag: transfer pricing asks "is margin being shifted between affiliates?"; value-chain span asks "how much of the chain does this single entity's margin even cover?" The span answer reframes what the raw margin number means before any peer comparison begins.
+
 ## Related Party Transaction Analysis
 
 ### Identification

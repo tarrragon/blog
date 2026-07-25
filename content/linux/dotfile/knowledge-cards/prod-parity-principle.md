@@ -1,12 +1,16 @@
 ---
-title: "Prod Parity 原則"
+title: "Prod Parity Principle（生產環境對等原則）"
 date: 2026-07-06
 description: "要建一個對齊 client 線上環境的本機 runtime、不知道該對齊到多細時回來讀 — parity 對齊的是凍結舊環境而非最新版"
 weight: 42
 tags: ["dotfile", "container", "prod-parity", "knowledge-cards"]
 ---
 
-Prod parity 是「讓本機 runtime 跟線上環境逐項相同」的目標。它對齊的方向常跟開發者的直覺相反：要把環境**凍結成線上那個特定的、通常偏舊的形狀**，而非升到最新、最乾淨。
+Prod parity 是「讓本機 runtime 跟線上環境逐項相同」的目標。它對齊的方向常跟開發者的直覺相反：要把環境**凍結成線上那個特定的、通常偏舊的形狀**，而非升到最新、最乾淨。凍結的目標是行為對齊、不是版本追新，這跟 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 用 tag 精確度落地凍結是同一件事的兩層。
+
+## 概念位置
+
+這條原則是個人 dotfile「環境可重現性」思想往 runtime 層的延伸：[模組零：Dotfile 心智模型](/linux/dotfile/00-dotfile-mindset/) 教的是工作站可重現，parity 教的是 runtime 可重現。要凍結到多細見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/)。
 
 ## 對齊的是凍結環境，不是最新
 
@@ -35,5 +39,3 @@ Parity 是有成本的紀律，不是每個專案都要做到逐項。值得的�
 ## 邊界
 
 Parity 對齊的是「行為」，不是「連漏洞一起複製」。凍結舊環境意味著也繼承了它的已知漏洞與 EOL 稅（如 [image tag pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 提到的 base image mirror 退役）。Parity 讓你**在本機重現線上問題**，不代表線上該永遠停在舊版——它跟「該不該升級 prod」是兩個獨立決策。
-
-這條原則是個人 dotfile「環境可重現性」思想往 runtime 層的延伸：[模組零：Dotfile 心智模型](/linux/dotfile/00-dotfile-mindset/) 教的是工作站可重現，parity 教的是 runtime 可重現。實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/)。

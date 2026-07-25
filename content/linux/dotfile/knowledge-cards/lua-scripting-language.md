@@ -1,14 +1,18 @@
 ---
-title: "Lua 腳本語言"
+title: "Lua Scripting Language（腳本語言）"
 date: 2026-06-29
 description: "在 Hyprland 或 Neovim 配置檔遇到 Lua 語法看不懂時回來讀 — 配置檔需要的最小 Lua 知識"
 weight: 1
 tags: ["dotfile", "lua", "knowledge-cards"]
 ---
 
-Lua 是一個輕量級腳本語言，1993 年在巴西開發，名字是葡萄牙語的「月亮」。整個直譯器約 300KB，設計目標是**嵌入到其他程式當配置和擴展語言**，不是當獨立的通用語言。
+Lua 是一個輕量級腳本語言，1993 年在巴西開發，名字是葡萄牙語的「月亮」。整個直譯器約 300KB，設計目標是**嵌入到其他程式當配置和擴展語言**，不是當獨立的通用語言——[Compositor](/linux/dotfile/knowledge-cards/compositor/) 這類需要外部客製的核心程式正是它常見的宿主。
 
-Hyprland（v0.55+ 的配置格式）、Neovim（整個 plugin 和配置生態）、WezTerm（terminal emulator 配置）都用 Lua 作為配置語言。在 dotfile 管理的脈絡裡，Lua 是讀懂和寫好這些工具配置的前提知識。
+Hyprland（v0.55+ 的配置格式，屬於 [Compositor](/linux/dotfile/knowledge-cards/compositor/) 一類）、Neovim（整個 plugin 和配置生態）、WezTerm（terminal emulator 配置）都用 Lua 作為配置語言。在 dotfile 管理的脈絡裡，Lua 是讀懂和寫好這些工具配置的前提知識。
+
+## 概念位置
+
+Lua 是設定檔案的內容語言，跟把這些檔案部署到位的 [GNU Stow](/linux/dotfile/knowledge-cards/gnu-stow/) 是不同層次的責任——Stow 決定檔案怎麼連到家目錄，Lua 決定放到位後的檔案內容怎麼寫。它設定的對象之一是 [Compositor](/linux/dotfile/knowledge-cards/compositor/)（如 Hyprland）。
 
 ## 配置檔用到的核心語法
 

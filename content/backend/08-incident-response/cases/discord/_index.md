@@ -24,7 +24,7 @@ Discord 是大規模長連線 gateway 的代表、事故多源自 capacity surpr
 
 ## 案例定位
 
-Discord 這個案例在講的是長連線與 session state 一旦失衡，事故就會直接反映在使用者連線體感上。讀者先看懂 Gateway、authentication 與 voice 這些路由的責任，再把 reconnection storm 視為核心風險。
+Discord 這個案例在講的是長連線與 session state 一旦失衡，事故就會直接反映在使用者連線體感上。讀者先看懂 Gateway、authentication 與 voice 這些路由的責任，再把 [reconnection storm](/backend/knowledge-cards/thundering-herd/) 視為核心風險。
 
 ## 判讀重點
 

@@ -16,7 +16,7 @@ tags: ["infra", "upgrade", "migration", "framework"]
 
 第一個維度是目標本身的變化。版本升級要看 changelog、breaking changes list、deprecated features list。平台遷移要看兩個平台的功能差異（共享主機沒有的 cron 彈性、VPS 有的 SSH 存取）。資料庫升級要看 SQL 語法差異、預設行為變更（如 MySQL 8.0 的 `caching_sha2_password` 預設認證方式）。
 
-第二個維度是依賴關係。升級 PHP 版本時，所有 Composer 套件都可能受影響；升級 MySQL 時，ORM 的 SQL 生成可能不相容；遷移平台時，原本靠主機面板設定的 cron job 要改用系統 crontab 或雲端排程。依賴關係沒列完整，平行環境的測試就會漏掉受影響的元件。
+第二個維度是依賴關係。升級 PHP 版本時，所有 [Composer](/infra/knowledge-cards/composer/) 套件都可能受影響；升級 MySQL 時，ORM 的 SQL 生成可能不相容；遷移平台時，原本靠主機面板設定的 cron job 要改用系統 crontab 或雲端排程。依賴關係沒列完整，平行環境的測試就會漏掉受影響的元件。
 
 第三個維度是過渡期的雙版本相容性。升級不是瞬間完成的——在切換的過程中，系統的某些部分跑新版本、某些部分跑舊版本。這段期間兩個版本必須能共存：資料庫的 schema 要同時相容新舊版本的程式碼、API 的回應格式要讓新舊版本的客戶端都能處理、session 格式要能跨版本延續。
 

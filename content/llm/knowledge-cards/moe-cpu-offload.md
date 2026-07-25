@@ -1,5 +1,5 @@
 ---
-title: "MoE CPU 卸載"
+title: "MoE CPU Offload（CPU 卸載）"
 date: 2026-05-12
 description: "把 Mixture-of-Experts 模型不活躍的專家層權重放在系統 RAM、用到再走 PCIe 拉回 GPU、讓有限 VRAM 跑得了更大模型"
 weight: 1

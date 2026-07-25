@@ -6,11 +6,11 @@ tags: ["CI", "required-checks", "knowledge-card"]
 weight: 3
 ---
 
-Required Checks 的核心概念是「把合併條件綁定到檢查結果」。它讓主線保護不依賴人工記憶，而依賴可觀測狀態。
+Required Checks 的核心概念是「把合併條件綁定到檢查結果」。它讓[主線保護](/ci/knowledge-cards/branch-protection/)不依賴人工記憶，而依賴可觀測狀態。
 
 ## 概念位置
 
-Required Checks 位在 repository branch protection，連接 pull request 與 CI workflow 結果。
+Required Checks 位在 repository branch protection，連接 pull request 與 [CI](/ci/knowledge-cards/ci-pipeline/) workflow 結果。
 
 ## 可觀察訊號
 

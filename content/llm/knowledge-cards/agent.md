@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-LLM Agent 的核心概念是「把控制流的所有權從人類交給 LLM」。傳統對話 LLM 是「人類問、模型答」、每輪 turn 獨立；agent 是「LLM 自己決定下一步、自己呼叫工具、自己評估結果」、跨多步累積 context。
+LLM Agent 的核心概念是「把控制流的所有權從人類交給 LLM」。傳統對話 LLM 是「人類問、模型答」、每輪 turn 獨立；agent 是「LLM 自己決定下一步、自己呼叫[工具](/llm/knowledge-cards/tool-use/)、自己評估結果」、跨多步累積 context。
 
 ## 概念位置
 

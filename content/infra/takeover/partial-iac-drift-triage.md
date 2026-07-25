@@ -6,7 +6,7 @@ weight: 21
 tags: ["infra", "takeover", "terraform", "drift"]
 ---
 
-`terraform plan` 跑完後如果出現非零差異，每一行差異都需要判斷：這是該保留的手動改動，還是該回退的意外漂移。這些差異就是 drift — state 記錄的狀態跟雲端實際狀態之間的落差。判斷錯誤的代價從「設定被覆蓋」到「stateful 資源被重建導致資料遺失」不等，所以分類要在 apply 之前完成。半套 IaC 環境的 drift 通常比全 IaC 環境更多，因為有人在 Console 改了 state 不知道的資源。
+`terraform plan` 跑完後如果出現非零差異，每一行差異都需要判斷：這是該保留的手動改動，還是該回退的意外漂移。這些差異就是 [drift](/infra/knowledge-cards/drift/) — state 記錄的狀態跟雲端實際狀態之間的落差。判斷錯誤的代價從「設定被覆蓋」到「stateful 資源被重建導致資料遺失」不等，所以分類要在 apply 之前完成。半套 IaC 環境的 drift 通常比全 IaC 環境更多，因為有人在 Console 改了 state 不知道的資源。
 
 ## 讀 plan 輸出：三種變更類型
 

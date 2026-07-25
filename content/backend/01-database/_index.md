@@ -77,7 +77,7 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 
 資料庫模組的 knowledge card 缺口集中在「變更如何被驗證」與「資料如何被修復」。已有 [schema migration](/backend/knowledge-cards/schema-migration/)、[Expand / Contract](/backend/knowledge-cards/expand-contract/)、[backfill](/backend/knowledge-cards/backfill/) 與 [dual write](/backend/knowledge-cards/dual-write/) 可作為第一批錨點。
 
-下一批候選卡片包括 migration validation、read compatibility、[cutover window](/backend/knowledge-cards/cutover-window/)、reconciliation、data repair runbook 與 fail-forward migration。這些卡片要先定義服務責任與使用時機，再讓 1.6 migration playbook 與後續實作文章引用。
+下一批候選卡片包括 migration validation、read compatibility、[cutover window](/backend/knowledge-cards/cutover-window/)、[reconciliation](/backend/knowledge-cards/data-reconciliation/)、[data repair runbook](/backend/knowledge-cards/data-repair/) 與 [fail-forward migration](/backend/knowledge-cards/fail-forward/)。這些卡片要先定義服務責任與使用時機，再讓 1.6 migration playbook 與後續實作文章引用。
 
 ## Vendor 文章規格入口
 

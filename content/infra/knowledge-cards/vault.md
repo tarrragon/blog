@@ -6,13 +6,13 @@ weight: 48
 tags: ["infra", "knowledge-cards"]
 ---
 
-HashiCorp Vault 是機密管理系統，集中存放和控制對敏感資料（密碼、API key、TLS 私鑰、資料庫憑證）的存取。每一次讀取都有稽核紀錄、每一份機密都有存取政策、憑證可以設定自動輪替。
+HashiCorp Vault 是機密管理系統，集中存放和控制對敏感資料（密碼、API key、[TLS](/infra/knowledge-cards/ssl-tls/) 私鑰、資料庫憑證）的存取。每一次讀取都有稽核紀錄、每一份機密都有存取政策、憑證可以設定自動輪替。
 
 ## 概念位置
 
 Vault 在 infra 裡負責「機密值的集中管理」。跟直接把密碼寫在環境變數或設定檔的差別是：Vault 提供存取控制（只有被授權的身分能讀特定 secret）、稽核軌跡（誰在什麼時候讀了什麼）、以及動態 secret（每次請求產生一組臨時憑證、用完即銷毀）。
 
-連網環境通常用雲端的 secret manager（AWS Secrets Manager、GCP Secret Manager）。斷網環境沒有雲端服務可用、Vault 是 self-hosted 的替代方案。
+連網環境通常用雲端的 secret manager（AWS Secrets Manager、GCP Secret Manager）。斷網環境沒有雲端服務可用、Vault 是 self-hosted 的替代方案。Vault 的存取控制模型呼應 [IAM](/infra/knowledge-cards/iam/) 的 policy 精神——差別在 Vault 管的是機密值、IAM 管的是雲端 API 操作權限。
 
 ## 可觀察訊號
 

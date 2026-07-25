@@ -1,5 +1,5 @@
 ---
-title: "Fail-safe 預設（安全預設）"
+title: "Fail-Safe Default（安全預設）"
 date: 2026-07-17
 description: "說明保護機制本身故障時系統倒向哪個方向的設計決策 — 預設倒向不可逆性低的那邊，確認 UI 壞掉不該讓破壞性操作靜默通過"
 weight: 9

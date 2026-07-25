@@ -26,7 +26,7 @@ Entropy 在 LLM 中的具體意義：
 | Sampling temperature 高  | Entropy 高、輸出多樣                      | Entropy 低、輸出確定     |
 | 訓練未收斂               | 分佈接近 uniform、entropy 接近 log(vocab) | 分佈集中、entropy 降低   |
 
-範例：vocab = 128K、uniform 分佈的 entropy = log(128K) ≈ 11.76（接近 12）；成熟模型在文本上的平均 entropy 約 2-3。
+範例：vocab = 128K、uniform 分佈的 entropy = log(128K) ≈ 11.76（接近 12）；成熟模型在文本上的平均 entropy 約 2-3、與 [perplexity](/llm/knowledge-cards/perplexity/) 存在指數關係（見下）。
 
 ## 設計責任
 

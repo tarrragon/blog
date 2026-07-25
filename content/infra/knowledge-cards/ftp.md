@@ -6,11 +6,11 @@ weight: 31
 tags: ["infra", "knowledge-cards"]
 ---
 
-FTP（File Transfer Protocol）是把檔案在本地電腦與遠端伺服器之間上傳/下載的協定。操作者透過 FTP client（如 FileZilla）連線到伺服器，看到遠端的目錄結構，用拖放或指令傳輸檔案。
+FTP（File Transfer Protocol）是把檔案在本地電腦與遠端伺服器之間上傳/下載的協定。操作者透過 FTP client（如 [FileZilla](/infra/knowledge-cards/filezilla/)）連線到伺服器，看到遠端的目錄結構，用拖放或指令傳輸檔案。
 
 ## 概念位置
 
-FTP 在無 SSH 的環境裡是唯一的檔案管理途徑——程式碼部署靠 FTP 上傳、備份靠 FTP 下載、檔案比對靠 FTP client 的目錄比較功能。它是接手維運模組「無 SSH 環境」路線的核心工具。
+FTP 在無 [SSH](/infra/knowledge-cards/ssh/) 的環境裡是唯一的檔案管理途徑——程式碼部署靠 FTP 上傳、備份靠 FTP 下載、檔案比對靠 FTP client 的目錄比較功能。它是接手維運模組「無 SSH 環境」路線的核心工具。
 
 ## FTP 的變體
 

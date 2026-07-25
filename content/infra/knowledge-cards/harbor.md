@@ -6,11 +6,11 @@ weight: 49
 tags: ["infra", "knowledge-cards"]
 ---
 
-Harbor 是開源的 container image registry，由 CNCF 孵化。它在 Docker Registry 的基礎上加了企業級功能：Web UI、角色型存取控制（RBAC）、映像漏洞掃描（內建 Trivy）、映像簽章驗證、以及跨 registry 的映像複製。
+Harbor 是開源的 container image registry，由 CNCF 孵化。它在 Docker Registry 的基礎上加了企業級功能：Web UI、角色型存取控制（RBAC）、映像漏洞掃描（內建 Trivy）、映像簽章驗證、以及跨 registry 的映像複製。常見的映像消費端是 [Fargate](/infra/knowledge-cards/fargate/) 這類容器 task。
 
 ## 概念位置
 
-Harbor 在容器生態裡負責「映像的儲存、分發和安全把關」。連網環境裡這個角色通常由 Docker Hub、AWS ECR 或 GCR 擔任。斷網環境沒有公開 registry 可用、Harbor 是 self-hosted 的替代——所有 base image 和應用 image 都推進 Harbor、所有 docker pull 都從 Harbor 拉。
+Harbor 在容器生態裡負責「映像的儲存、分發和安全把關」。連網環境裡這個角色通常由 Docker Hub、AWS ECR 或 GCR 擔任。斷網環境沒有公開 registry 可用、Harbor 是 self-hosted 的替代——所有 base image 和應用 image 都推進 Harbor、所有 docker pull（例如 [ECS](/infra/knowledge-cards/ecs/) task）都從 Harbor 拉。
 
 ## 可觀察訊號
 

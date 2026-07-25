@@ -31,7 +31,7 @@ LLM 中 softmax 出現的兩個位置：
 | Attention   | 把 attention score 正規化成「該關注多少」    | 影響模型怎麼整合 context 資訊 |
 | Sampling 端 | 把 logit 變機率、配合 temperature 調分佈陡度 | 影響輸出的多樣性 / 確定性     |
 
-Temperature 在 sampling 端跟 softmax 結合：`softmax(logits / T)`、T 越小分佈越尖（接近 greedy）、T 越大分佈越平（接近隨機）。
+Temperature 在 sampling 端跟 softmax 結合：`softmax(logits / T)`、T 越小分佈越尖（接近 greedy）、T 越大分佈越平（接近隨機）；實務上常搭配 [top-p sampling](/llm/knowledge-cards/top-p-sampling/) 進一步限制取樣範圍。
 
 ## 設計責任
 

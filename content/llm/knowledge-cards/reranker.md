@@ -10,7 +10,7 @@ Reranker 的核心概念是「**對 [retrieval](/llm/knowledge-cards/rag/) 第�
 
 ## 概念位置
 
-Bi-encoder vs cross-encoder 的差別：
+Bi-encoder（[embedding model](/llm/knowledge-cards/embedding-model/)）vs cross-encoder 的差別：
 
 ```text
 Bi-encoder（embedding model、retrieval 第一階段）：

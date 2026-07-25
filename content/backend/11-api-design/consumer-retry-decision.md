@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "error-contract"]
 
 ## 單一請求層：status、method、冪等的合判
 
-「該不該重試」是三個輸入的合判、status 只是其中之一。status 給第一刀：4xx 終態停止重試、5xx 與 429 可重試（分類判準見 [11.4](/backend/11-api-design/error-model-design/)、429 的等待語意見 [11.9](/backend/11-api-design/external-traffic-semantics/)）。method 與冪等給第二刀：可重試的 status 不等於重送安全 —— GET 與 PUT 有冪等承諾、直接重送；POST 沒有、重送可能重複執行、要嘛操作帶 idempotency key（[11.8](/backend/11-api-design/api-idempotency-design/)）、要嘛先查再送。第三刀是不確定性：502/504 分不出上游「沒收到」還是「執行了」、兩種情況 retry 安全性相反（見 [11.C67](/backend/11-api-design/cases/status-502-504-gateway-ambiguity/)）—— 判讀規則是「不確定就當作做了」、非冪等又沒帶 key 的操作、重送前先查狀態。
+「該不該重試」是三個輸入的合判、status 只是其中之一。status 給第一刀：4xx 終態停止重試、5xx 與 429 可重試（分類判準見 [11.4](/backend/11-api-design/error-model-design/)、429 的等待語意見 [11.9](/backend/11-api-design/external-traffic-semantics/)）。method 與冪等給第二刀：可重試的 status 不等於重送安全 —— GET 與 PUT 有冪等承諾、直接重送；POST 沒有、重送可能重複執行、要嘛操作帶 [idempotency key](/backend/knowledge-cards/idempotency-key/)（[11.8](/backend/11-api-design/api-idempotency-design/)）、要嘛先查再送。第三刀是不確定性：502/504 分不出上游「沒收到」還是「執行了」、兩種情況 retry 安全性相反（見 [11.C67](/backend/11-api-design/cases/status-502-504-gateway-ambiguity/)）—— 判讀規則是「不確定就當作做了」、非冪等又沒帶 key 的操作、重送前先查狀態。
 
 這一層的 provider 義務對應存在：用不同的 code 把可重試與不可重試分開（Google SRE Book 的明文建議、見 [11.C69](/backend/11-api-design/cases/retry-sre-book-cascading-failures/)）、Retry-After 說到做到（見 11.9）。provider 標示含糊、consumer 的合判就從第一刀開始就錯。
 

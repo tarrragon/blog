@@ -106,7 +106,7 @@ Opsgenie 的核心定位是 *Atlassian 生態內的 on-call 元件*、跟 [Pager
 - **Escalation 跨時區壞掉**：schedule timezone 設錯（team timezone vs user timezone）、override 把全 24hr 都蓋掉、final step 沒 fallback team — 跑 game day 驗證實際 paging 路徑、不只看 config
 - **Stale schedule**：有人離職但 schedule 沒撤、半夜叫到前同事；走 Atlassian Access SCIM auto-deprovision、或定期 schedule audit
 - **Atlassian Cloud authentication trap**：API token 過期 / 換 region / Atlassian Access policy 變更導致 integration 全斷；token 走 secret manager、Atlassian Access policy 變更前先 dry-run integration
-- **JSM migration drift**：migration 期間 standalone Opsgenie 跟 JSM on-call 兩邊 schedule / escalation 不同步、alert 兩邊都觸發或都沒觸發；parallel run 期要有 *single source of truth* 跟 reconciliation script
+- **JSM migration drift**：migration 期間 standalone Opsgenie 跟 JSM on-call 兩邊 schedule / escalation 不同步、alert 兩邊都觸發或都沒觸發；parallel run 期要有 *single source of truth* 跟 [reconciliation](/backend/knowledge-cards/data-reconciliation/) script
 
 ## 何時改走其他服務
 

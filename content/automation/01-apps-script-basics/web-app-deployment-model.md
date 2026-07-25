@@ -7,7 +7,7 @@ weight: 2
 tags: ["automation", "apps-script", "deployment", "doget-dopost", "authorization"]
 ---
 
-web app 部署是把 Apps Script 從「只能在編輯器裡手動執行」變成「有公開網址、任何 HTTP 請求都能觸發」的動作。這是讓 blog 的 beacon 能打到接收端的前提。這一篇講三件事：程式怎麼接住請求（`doGet`/`doPost`）、部署產生的兩種網址差在哪、以及授權為什麼第一次會跳警告。
+[web app 部署](/automation/knowledge-cards/web-app-deployment/)是把 Apps Script 從「只能在編輯器裡手動執行」變成「有公開網址、任何 HTTP 請求都能觸發」的動作。這是讓 blog 的 beacon 能打到接收端的前提。這一篇講三件事：程式怎麼接住請求（`doGet`/`doPost`）、部署產生的兩種網址差在哪、以及授權為什麼第一次會跳警告。
 
 ## doGet 與 doPost：兩個進入點
 

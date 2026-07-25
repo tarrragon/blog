@@ -356,7 +356,7 @@ Dual-write 跟 shadow read 的 divergence 要分開看 — 兩者偵測不同層
 
 把 validation query 當成事後對帳，也會削弱 rollout 控制。Validation query 適合在 expand、backfill、cutover 每一階段都產生證據，讓 release gate 能在風險擴大前停下來。
 
-把 rollback 寫成單一動作容易誤導團隊。資料庫 migration 的 rollback 會隨階段改變：expand 可回退 schema 使用，backfill 可暫停與重跑，cutover 可回到 fallback read，contract 後多半只能做資料修復或 fail-forward。
+把 rollback 寫成單一動作容易誤導團隊。資料庫 migration 的 rollback 會隨階段改變：expand 可回退 schema 使用，backfill 可暫停與重跑，cutover 可回到 fallback read，contract 後多半只能做[資料修復](/backend/knowledge-cards/data-repair/)或 fail-forward。
 
 把 dual-write 跟 shadow read 當成同一個工具。兩者偵測不同層、結合使用可以互補、互相替代會留下盲點。Dual-write 不跑 shadow read、cutover 後可能踩到沒驗過的讀取 path；shadow read 不跑 dual-write、新欄位可能在某些寫路徑根本沒被寫進去。
 

@@ -26,12 +26,12 @@ Head h：Q_h、K_h、V_h → attention_h
 
 多頭變體：MHA → GQA → MLA 是 KV cache 體積壓縮的演化方向。
 
-| 變體                               | Q head 數 | K/V head 數                        | KV cache 體積 | 出現在                           |
-| ---------------------------------- | --------- | ---------------------------------- | ------------- | -------------------------------- |
-| MHA（Multi-Head Attention）        | h         | h                                  | 100%（基準）  | 原始 Transformer、GPT-3、Llama 1 |
-| MQA（Multi-Query Attention）       | h         | 1（所有 head 共用）                | 1/h           | PaLM、Falcon                     |
-| GQA（Grouped-Query Attention）     | h         | h/g（每 g 個 Q head 共用一組 K/V） | 1/g           | Llama 2 / 3、Mistral、Gemma      |
-| MLA（Multi-head Latent Attention） | h         | 用 latent 壓縮再展開               | 更激進壓縮    | DeepSeek-V2 / V3                 |
+| 變體                               | Q head 數 | K/V head 數                        | [KV cache](/llm/knowledge-cards/kv-cache/) 體積 | 出現在                           |
+| ---------------------------------- | --------- | ---------------------------------- | ----------------------------------------------- | -------------------------------- |
+| MHA（Multi-Head Attention）        | h         | h                                  | 100%（基準）                                    | 原始 Transformer、GPT-3、Llama 1 |
+| MQA（Multi-Query Attention）       | h         | 1（所有 head 共用）                | 1/h                                             | PaLM、Falcon                     |
+| GQA（Grouped-Query Attention）     | h         | h/g（每 g 個 Q head 共用一組 K/V） | 1/g                                             | Llama 2 / 3、Mistral、Gemma      |
+| MLA（Multi-head Latent Attention） | h         | 用 latent 壓縮再展開               | 更激進壓縮                                      | DeepSeek-V2 / V3                 |
 
 ## 設計責任
 

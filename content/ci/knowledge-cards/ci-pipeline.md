@@ -6,11 +6,11 @@ tags: ["CI", "pipeline", "knowledge-card"]
 weight: 1
 ---
 
-CI Pipeline 的核心概念是「在合併前自動驗證變更」。它把品質門檻前移，讓問題在進主線前被發現。
+CI Pipeline 的核心概念是「在合併前自動驗證變更」，驗證通過後交由 [CD Pipeline](/ci/knowledge-cards/cd-pipeline/) 接手部署。它把品質門檻前移，讓問題在進主線前被發現。
 
 ## 概念位置
 
-CI Pipeline 位在開發提交、pull request 與主線保護之間，常由 lint、test、build、security check 組成。
+CI Pipeline 位在開發提交、pull request 與[主線保護](/ci/knowledge-cards/branch-protection/)之間，常由 lint、test、build、security check 組成。
 
 ## 可觀察訊號
 

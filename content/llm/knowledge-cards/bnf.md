@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "grammar", "parser"]
 ---
 
-BNF（Backus-Naur Form）的核心概念是「**用產生式規則描述一個語言裡哪些字串合法**」。它常用在程式語言、資料格式、parser 與 structured output grammar，讓人跟工具都能用同一份規則理解合法語法。
+BNF（Backus-Naur Form）的核心概念是「**用產生式規則描述一個語言裡哪些字串合法**」。它常用在程式語言、資料格式、parser 與 structured output [grammar](/llm/knowledge-cards/grammar/)，讓人跟工具都能用同一份規則理解合法語法。
 
 ## 概念位置
 

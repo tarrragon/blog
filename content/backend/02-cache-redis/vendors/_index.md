@@ -64,18 +64,18 @@ Momento overview-only 的理由：Momento 是 serverless cache、實作面（無
 
 ## 服務頁標準章節
 
-| 章節                 | 快取服務頁要補的內容                                                             |
-| -------------------- | -------------------------------------------------------------------------------- |
-| 服務定位             | 它是 data structure cache、simple KV、managed cache、local cache 還是 HTTP cache |
-| 本章目標             | 讀者能判斷資料是否可重建、stale window、origin protection 與 memory cost         |
-| 最短判讀路徑         | 用「miss 打回 origin 是否可承受」快速判斷是否能引入或擴大快取                    |
-| 日常操作與決策形狀   | key design、TTL、eviction、warmup、failover、client timeout                      |
-| 核心取捨表           | Redis 相容服務、Memcached、managed cache、local cache 的機會成本                 |
-| 進階主題             | cluster、persistence、multi-region、serverless cache、module / data type         |
-| 排錯與失敗快速判讀   | hit rate、miss rate、origin QPS、hot key、eviction、replication lag              |
-| 何時改走其他服務     | durable workflow 轉 queue、正式狀態轉 database、全文查詢轉 search                |
-| 不在本頁內的主題     | Redis command 百科、語言 client API 細節、完整調參手冊                           |
-| 案例回寫與下一步路由 | 回到 2.C cases、9.C cache capacity cases、4.20 evidence package                  |
+| 章節                 | 快取服務頁要補的內容                                                                                                    |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 服務定位             | 它是 data structure cache、simple KV、managed cache、local cache 還是 HTTP cache                                        |
+| 本章目標             | 讀者能判斷資料是否可重建、stale window、[origin protection](/backend/knowledge-cards/origin-protection/) 與 memory cost |
+| 最短判讀路徑         | 用「miss 打回 origin 是否可承受」快速判斷是否能引入或擴大快取                                                           |
+| 日常操作與決策形狀   | key design、TTL、eviction、warmup、failover、client timeout                                                             |
+| 核心取捨表           | Redis 相容服務、Memcached、managed cache、local cache 的機會成本                                                        |
+| 進階主題             | cluster、persistence、multi-region、serverless cache、module / data type                                                |
+| 排錯與失敗快速判讀   | hit rate、miss rate、origin QPS、hot key、eviction、replication lag                                                     |
+| 何時改走其他服務     | durable workflow 轉 queue、正式狀態轉 database、全文查詢轉 search                                                       |
+| 不在本頁內的主題     | Redis command 百科、語言 client API 細節、完整調參手冊                                                                  |
+| 案例回寫與下一步路由 | 回到 2.C cases、9.C cache capacity cases、4.20 evidence package                                                         |
 
 ## 跨 vendor 議題對照
 

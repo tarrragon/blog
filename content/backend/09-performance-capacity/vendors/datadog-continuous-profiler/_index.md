@@ -12,7 +12,7 @@ Datadog Continuous Profiler 的核心責任是把 production profile 接到 SaaS
 
 Datadog Continuous Profiler 是 [Datadog](/backend/04-observability/vendors/datadog/) APM 的 *production profiling* add-on、跟 Datadog Logs / Metrics / Traces 同 plane、共用 service tag、env tag、version tag 與 query bar。它的核心責任是把 production profile 接到 SaaS APM、deployment marker、service tag 與 release regression workflow，讓 slow request、resource saturation、deploy version 與 profile diff 能在同一個操作介面中對齊。
 
-跟 [Pyroscope](/backend/09-performance-capacity/vendors/pyroscope/) / [Parca](/backend/09-performance-capacity/vendors/parca/) 這類 OSS profiler 比、Datadog Continuous Profiler 走 *ecosystem-bundled* 路線 — profiler 本身不獨立計費、跟 APM host 一起進 business unit 預算、profile data 直接跟 trace_id、deploy marker、log query 在同一介面 cross-link。OSS profiler 走 *standalone deployment*、profile store 自管（ClickHouse / object storage）、跟 observability 其他 plane 要自己 wire（grafana correlation、自寫 trace_id mapping）。差異在 *跨 signal 的 query continuity 跟組織計費歸屬*、flame graph 本身的視覺呈現相近。
+跟 [Pyroscope](/backend/09-performance-capacity/vendors/pyroscope/) / [Parca](/backend/09-performance-capacity/vendors/parca/) 這類 OSS profiler 比、Datadog Continuous Profiler 走 *ecosystem-bundled* 路線 — profiler 本身不獨立計費、跟 APM host 一起進 business unit 預算、profile data 直接跟 trace_id、deploy marker、log query 在同一介面 cross-link。OSS profiler 走 *standalone deployment*、profile store 自管（ClickHouse / object storage）、跟 observability 其他 plane 要自己 wire（grafana correlation、自寫 trace_id mapping）。差異在 *跨 signal 的 query continuity 跟組織計費歸屬*、[flame graph](/backend/knowledge-cards/flame-graph/) 本身的視覺呈現相近。
 
 這個定位讓 Datadog Continuous Profiler 接到 [9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/) 與 [4.9 Continuous Profiling](/backend/04-observability/continuous-profiling/)。它的價值在於降低 profile diff 的交接成本；它的代價在於 SaaS 成本、agent 設定、資料保留與 vendor 約束。
 
@@ -44,7 +44,7 @@ APM-to-profile drilldown 適合 Datadog Continuous Profiler。慢 request 可以
 
 APM 整合價值來自上下文連續。Metrics 告訴你 CPU 上升，trace 告訴你 endpoint 變慢，profile 告訴你哪段 code path 變貴；Datadog 的優勢是把這些訊號放進同一個查詢與 dashboard 流程。
 
-Deployment marker 價值來自 release gate。Profile diff 如果能對齊 commit、version、environment 與 canary cohort，就能成為 [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/) 的 evidence。
+Deployment marker 價值來自 release gate。Profile diff 如果能對齊 commit、version、environment 與 canary [cohort](/backend/knowledge-cards/cohort/)，就能成為 [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/) 的 evidence。
 
 ## 核心取捨表
 

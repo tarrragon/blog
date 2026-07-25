@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "rag", "retrieval"]
 ---
 
-Query decomposition 的核心概念是「**把一個複合問題拆成多個可獨立 retrieve 的子問題**」。它處理的是單一 query 同時要求比較、列舉、跨 entity 查證或多維度分析時，單次 retrieval 容易只命中其中一部分的問題。
+Query decomposition 的核心概念是「**把一個複合問題拆成多個可獨立 retrieve 的子問題**」。它處理的是 [RAG](/llm/knowledge-cards/rag/) 場景中、單一 query 同時要求比較、列舉、跨 entity 查證或多維度分析時，單次 retrieval 容易只命中其中一部分的問題。
 
 ## 概念位置
 

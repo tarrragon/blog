@@ -6,11 +6,11 @@ weight: 25
 tags: ["infra", "knowledge-cards"]
 ---
 
-`.htaccess`（Hypertext Access）是 Apache Web Server 的目錄層級設定檔。它讓使用者在沒有伺服器管理員權限的情況下，覆寫 Apache 的部分全域設定——包括 URL 重寫規則、目錄存取控制、PHP 設定覆寫、HTTPS 強制跳轉、以及 HTTP 安全標頭。每個目錄可以有自己的 `.htaccess`，Apache 處理請求時會從根目錄到目標目錄逐層讀取並套用。
+`.htaccess`（Hypertext Access）是 Apache Web Server 的目錄層級設定檔。它讓使用者在沒有伺服器管理員權限的情況下，覆寫 Apache 的部分全域設定——包括 URL 重寫規則、目錄存取控制、PHP 設定覆寫、HTTPS 強制跳轉、以及 HTTP 安全標頭。每個目錄可以有自己的 `.htaccess`，Apache 處理請求時會從根目錄到目標目錄逐層讀取並套用。常搭配 [php.ini / .user.ini](/infra/knowledge-cards/php-ini/) 一起管理 PHP 應用的行為。
 
 ## 概念位置
 
-在 Apache 為主的主機環境（多數共享主機和部分 VPS），`.htaccess` 是不需要重啟伺服器就能調整行為的設定機制。WordPress、Laravel、Drupal 等 PHP 框架都依賴 `.htaccess` 的 URL rewrite 規則來實現 pretty URL（把 `/blog/post-title` 轉成 `index.php?page=post-title`）。
+在 Apache 為主的主機環境（多數共享主機和部分 VPS），`.htaccess` 是不需要重啟伺服器就能調整行為的設定機制。WordPress、Laravel、Drupal 等 PHP 框架都依賴 `.htaccess` 的 URL rewrite 規則來實現 pretty URL（把 `/blog/post-title` 轉成 `index.php?page=post-title`）。相對地 [nginx](/infra/knowledge-cards/nginx/) 沒有對等機制、設定要集中寫在主設定檔。
 
 ## 可觀察訊號
 

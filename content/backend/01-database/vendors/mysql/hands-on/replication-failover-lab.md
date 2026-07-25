@@ -67,7 +67,7 @@ SHOW VARIABLES LIKE 'read_only';
 SHOW VARIABLES LIKE 'super_read_only';
 ```
 
-若使用 GTID，還要比較 source / replica 的 GTID set。若有 external side effect，要用 idempotency key 做 reconciliation。
+若使用 GTID，還要比較 source / replica 的 GTID set。若有 external side effect，要用 idempotency key 做 [reconciliation](/backend/knowledge-cards/data-reconciliation/)。
 
 ## Client Route
 

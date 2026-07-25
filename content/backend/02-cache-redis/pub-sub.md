@@ -34,7 +34,7 @@ cache invalidation 扇出是第二類應用。當一個節點更新了 [source o
 
 這個模型的工程含義是：訂閱要用獨立的連線，不能跟一般讀寫共用同一個 client。共用連線池的應用要為 Pub/Sub 保留專門的訂閱連線，避免訂閱模式污染了拿來做 cache 讀寫的連線。這條限制跟 [2.1 高併發讀寫邊界](/backend/02-cache-redis/high-concurrency-access/) 的連線管理直接相關：訂閱連線是長連線、數量應該受控，與短命的請求應答連線分開計量。
 
-訂閱連線斷線重連時，要重新 `SUBSCRIBE` 所有 channel，且要意識到斷線期間的訊息已經永久丟失。可靠性敏感的設計會在重連後主動拉一次全量狀態，用一次 reconciliation 補上廣播漏掉的窗口。
+訂閱連線斷線重連時，要重新 `SUBSCRIBE` 所有 channel，且要意識到斷線期間的訊息已經永久丟失。可靠性敏感的設計會在重連後主動拉一次全量狀態，用一次 [reconciliation](/backend/knowledge-cards/data-reconciliation/) 補上廣播漏掉的窗口。
 
 ## cluster 下的 fan-out 與 sharded Pub/Sub
 

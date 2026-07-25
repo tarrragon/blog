@@ -81,7 +81,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## MFA fatigue 與 step-up 驗證
 
-MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用者連續同意，攻擊者把「使用者誤點」當成唯一所需的人類動作。要解這個機制要拉開兩層判讀，登入層放強認證、操作層放 step-up 驗證，避免認證成功直接等於高權限存取。
+MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用者連續同意，攻擊者把「使用者誤點」當成唯一所需的人類動作。要解這個機制要拉開兩層判讀，登入層放強認證、操作層放 [step-up](/backend/knowledge-cards/step-up-authentication/) 驗證，避免認證成功直接等於高權限存取。
 
 對應 [Uber 2022](../red-team/cases/identity-access/uber-2022-mfa-fatigue/)：揭露三個失效控制面 — 高風險登入路徑缺 step-up、內部工具授權邊界不足（初始落點可快速擴散）、身分異常事件與值班告警串接不足。案例的「可落地檢查點」段把對應 mechanism 標明為 phishing-resistant 強認證（WebAuthn / passkey）+ 裝置信任綁定（managed device / posture check）、屬於案例直接可引用範圍。
 

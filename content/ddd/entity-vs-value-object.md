@@ -14,7 +14,7 @@ entity 的同一性由身份定義：欄位可以全部改變、只要身份參�
 
 相等性定義本身可以承載業務規則。一個 POS 專案的購物車品項用內容比對判定同一項、而折扣參與比對——手動改過價的品項被視為獨立的訂單行，合併購物車時只有規格、折扣、口味全部相同的品項才累加數量。「什麼算同一個」在這裡是業務決策寫進相等性定義的例子，而這正是 value object 的表達力所在：同一性規則集中在一個定義裡、所有比對點共用。
 
-## 判準：操作需不需要 identity-based 回寫
+## 判準：操作需不需要 identity-based 定位
 
 判準是對這個物件的操作、需不需要精確指到某一個實體——概念重不重要、有沒有 id 欄位可以填，都不參與判斷。上述 POS 專案把這條判準踩出完整的階段軌跡：點餐階段的品項操作是「加一份」「換口味」，內容相等就是同一個、value object 的內容比對足夠；品項被掛單系統接受後獲得後端身份，操作變成「取消那一筆」「改那一筆的量」——同商品同口味的三筆明細內容完全相同，取消其中一筆時內容比對無法指定是哪一筆，此刻模型必須升級成持有身份參照的形態（[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)）。
 
@@ -53,9 +53,11 @@ value object 的第二個價值獨立於同一性判定（也獨立於容器型�
 - 一個領域概念以裸的通用型別跨模組流通（金額是 double、識別碼是 string）、而它的合法運算遠少於底層型別——語意封閉的價值已成立，包 domain type。
 - 枚舉的行為謂詞大量重複、或某一類長出「有些成員例外」的註解：粒度或軸的選擇跟消費者需求不合，先列消費者清單再決定分層或拆軸。
 
+函數式生態（Haskell、Elixir、F#）的對應形態不同但判準相同：entity 的同一性用 opaque type handle + 函數操作替代 mutable state + method，value object 用 newtype / smart constructor 確保合法值只能從受控管道建出。載體從 class 換成 module visibility 和 type wrapper，「操作需不需要 identity-based 定位」這條判準不變。
+
 ## 下一步
 
 - 身份與規則就位之後，規則的落點：[不變式的強制層次](/ddd/invariant-enforcement-layers/)
 - 變更路徑收斂與稽核凍結：[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
 - 型別類別的入口判準：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)
-- Dart 的實作細節（extension type 的 subtype 決策、characterization test 鎖行為、exhaustive switch）：[金額型別的三段遷移](/work-log/dart_money_extension_type_migration/)、[16 種支付渠道、4 種行為分類](/work-log/dart_payment_dual_layer_enum/)
+- Dart 的實作層整合（三種載體的選型判準、遷移安全網、取值出口設計）：[值物件的 Dart 實作路徑](/flutter/value-object-dart-implementation/)；個別 case 細節：[金額型別的三段遷移](/work-log/dart_money_extension_type_migration/)、[16 種支付渠道、4 種行為分類](/work-log/dart_payment_dual_layer_enum/)

@@ -6,7 +6,11 @@ weight: 40
 tags: ["dotfile", "container", "prod-parity", "knowledge-cards"]
 ---
 
-Image tag pinning 是「用夠精確的 tag 把 base image 凍結成一個固定形狀」的紀律。它決定的是可重現性：同一個 Dockerfile 今天 build 跟三個月後 build，跑出來的 runtime 是不是同一個——這也是讓本機跟線上逐項相同（即 parity）的前提。「本機能 build、CI 卻掛掉」而 code 沒動時，第一個要查的就是 tag 夠不夠精確。
+Image tag pinning 是「用夠精確的 tag 把 base image 凍結成一個固定形狀」的紀律。它決定的是可重現性：同一個 Dockerfile 今天 build 跟三個月後 build，跑出來的 runtime 是不是同一個——這也是讓本機跟線上逐項相同（即 parity）的前提。「本機能 build、CI 卻掛掉」而 code 沒動時，第一個要查的就是 tag 夠不夠精確。這條紀律是 [Prod Parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/) 底下的一個具體維度。
+
+## 概念位置
+
+底層 OS 世代為什麼影響行為，見 [glibc 與 musl](/linux/dotfile/knowledge-cards/glibc-vs-musl/)。實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/)。
 
 ## 浮動 tag 與凍結 tag
 
@@ -31,5 +35,3 @@ Parity 要對齊的不只是 PHP 版本，是整個 runtime 的行為，而行�
 ## 邊界
 
 釘死 tag 的代價是安全更新不會自動進來——凍結的 image 也凍結了已知漏洞。所以 pinning 搭配的是「明確的升級動作」：要更新時改 tag、重測、記錄（怎麼建升級版、又留住舊版並跑對照，見 [image 版本管理與升級](/backend/05-deployment-platform/vendors/docker/image-versioning-upgrade/)），而不是靠浮動 tag 偷偷幫你更新（那正是不可重現的來源）。取捨依 [prod-parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/)——對齊凍結環境本來就要付這個稅。
-
-底層 OS 世代為什麼影響行為，見 [glibc 與 musl](/linux/dotfile/knowledge-cards/glibc-vs-musl/)。實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/)。

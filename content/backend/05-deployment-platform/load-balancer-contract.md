@@ -95,7 +95,7 @@ timeout 設計的常見失誤是只調 LB 層：團隊看到使用者回報 time
 | ----------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------ |
 | rollout 期間 5xx 上升且集中在舊版本                                                 | drain 順序或窗口不足               | 拉長 drain 時間、調整摘流順序        |
 | readiness 通過但首批請求延遲高                                                      | 應用啟動完成與可服務條件未對齊     | 細化 readiness 指標、補 startup gate |
-| reconnect storm 出現在切版後                                                        | timeout 與連線生命週期不匹配       | 調整 idle timeout、分批切流          |
+| [reconnect storm](/backend/knowledge-cards/thundering-herd/) 出現在切版後           | timeout 與連線生命週期不匹配       | 調整 idle timeout、分批切流          |
 | [canary](/backend/knowledge-cards/canary-release/) 比例低時正常，擴到高比例出現抖動 | LB 權重策略與服務容量曲線不一致    | 降低增量批次、補容量保護             |
 | 多租戶場景下單租戶延遲飆升                                                          | sticky/routing policy 造成熱點聚集 | 分離租戶路由、加入負載重平衡         |
 | 回退後 reconnect 風暴持續                                                           | 重啟動作放大震盪、未先恢復穩定路徑 | 凍結切換、等連線數穩定、再修錯位點   |

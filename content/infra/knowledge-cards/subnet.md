@@ -17,7 +17,7 @@ Public subnet 的真實樣貌是「薄薄一層」——它通常只住入口設
 
 ## 概念位置
 
-Subnet 是[模組三：網路地基](/infra/03-network-foundation/vpc-subnet-security-group/)的中層邊界。VPC 定好地址空間後，subnet 決定「哪些資源能被外網碰到、哪些只能在內網存取」。每個 subnet 綁定單一可用區，高可用設計通常是每種角色跨至少兩個可用區各開一個 subnet。
+Subnet 是[模組三：網路地基](/infra/03-network-foundation/vpc-subnet-security-group/)的中層邊界。[VPC](/infra/knowledge-cards/vpc/) 定好地址空間後，subnet 決定「哪些資源能被外網碰到、哪些只能在內網存取」。每個 subnet 綁定單一可用區，高可用設計通常是每種角色跨至少兩個可用區各開一個 subnet。
 
 ## 可觀察訊號
 

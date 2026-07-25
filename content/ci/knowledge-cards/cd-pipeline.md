@@ -6,11 +6,11 @@ tags: ["CD", "pipeline", "knowledge-card"]
 weight: 2
 ---
 
-CD Pipeline 的核心概念是「把已驗證產物安全交付到目標環境」。它把 build、artifact、deploy 與 release gate 串成可重播流程。
+CD Pipeline 的核心概念是「把已驗證產物安全交付到目標環境」。它把 build、[artifact](/ci/knowledge-cards/artifact/)、deploy 與 release gate 串成可重播流程。
 
 ## 概念位置
 
-CD Pipeline 位在 CI 驗證之後，負責 artifact promotion、部署執行、環境保護與回復路徑。
+CD Pipeline 位在 [CI](/ci/knowledge-cards/ci-pipeline/) 驗證之後，負責 artifact promotion、部署執行、環境保護與回復路徑。
 
 ## 可觀察訊號
 

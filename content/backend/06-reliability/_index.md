@@ -39,7 +39,7 @@ tags: ["backend", "reliability", "sre"]
 | 案例    | 主要用途                                                               | 常見回扣節點                                                                                                        |
 | ------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Google  | 把可靠性制度化                                                         | SLO、[post-incident review](/backend/knowledge-cards/post-incident-review/)、[toil](/backend/knowledge-cards/toil/) |
-| Netflix | 把故障注入制度化                                                       | chaos、steady state、FIT                                                                                            |
+| Netflix | 把故障注入制度化                                                       | chaos、steady state、[FIT](/backend/knowledge-cards/fit-failure-injection-testing/)                                 |
 | Amazon  | 把隔離與 [blast radius](/backend/knowledge-cards/blast-radius/) 制度化 | cell、shard、static stability                                                                                       |
 | Stripe  | 把交易正確性制度化                                                     | idempotency、canary、migration                                                                                      |
 | Shopify | 把峰值準備與演練制度化                                                 | capacity planning、resiliency matrix                                                                                |

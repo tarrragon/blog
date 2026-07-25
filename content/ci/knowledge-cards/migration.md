@@ -6,11 +6,11 @@ tags: ["CI", "CD", "migration", "knowledge-card"]
 weight: 10
 ---
 
-Migration 的核心概念是「把舊狀態受控推進到新狀態」。它不只涉及資料庫 schema，也包含資料回填、相容窗口與發布順序。
+Migration 的核心概念是「把舊狀態受控推進到新狀態」。它不只涉及資料庫 schema，也包含[資料回填](/ci/knowledge-cards/backfill/)、相容窗口與發布順序。
 
 ## 概念位置
 
-Migration 位在 build 之後、deploy 與 rollout 之前後的關鍵路徑，常與 release gate、rollback strategy 一起設計。
+Migration 位在 build 之後、deploy 與 rollout 之前後的關鍵路徑，常與 release gate、[rollback strategy](/ci/knowledge-cards/rollback-strategy/) 一起設計。
 
 ## 可觀察訊號
 

@@ -83,7 +83,7 @@ PostgreSQL、MySQL 與 SQLite 已建立 hands-on 入口：[PostgreSQL hands-on](
 
 ## Migration Playbook 規格
 
-Migration playbook 的責任是處理跨 vendor、跨 topology 或跨 operational model 的變更流程。這一層的主體是差異盤點、階段切換、雙軌驗證、cutover、rollback / fail-forward 與 cleanup；它應作為獨立流程教材，而非 deep article 的長版或 vendor overview 的補充段。
+Migration playbook 的責任是處理跨 vendor、跨 topology 或跨 operational model 的變更流程。這一層的主體是差異盤點、階段切換、雙軌驗證、cutover、rollback / [fail-forward](/backend/knowledge-cards/fail-forward/) 與 cleanup；它應作為獨立流程教材，而非 deep article 的長版或 vendor overview 的補充段。
 
 | 規格面     | 必答問題                                                                                  | 交付形態                                                |
 | ---------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------- |

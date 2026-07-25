@@ -1,12 +1,16 @@
 ---
-title: "SIGHUP 與斷線即死"
+title: "SIGHUP（斷線即死訊號）"
 date: 2026-07-08
 description: "遠端跑的程序在 SSH 一斷就消失、想知道為什麼直接掛在連線上的任務活不過斷線、該把工作放哪一層時回來讀"
 weight: 53
 tags: ["linux", "remote", "process", "signal", "knowledge-cards"]
 ---
 
-SIGHUP 是控制終端消失時，核心送給該終端前景程序群的掛斷訊號（hangup），預設動作是終止程序。SSH 連線斷掉時，遠端那個 shell 的控制終端跟著消失，掛在它前景的程序就收到 SIGHUP 被殺——這是「直接跑在 SSH shell 裡的長任務，連線一斷就死」的根因，也是為什麼長任務要放進獨立於連線的 session 層。
+SIGHUP 是控制終端消失時，核心送給該終端前景程序群的掛斷訊號（hangup），預設動作是終止程序。SSH 連線斷掉時，遠端那個 shell 的控制終端跟著消失，掛在它前景的程序就收到 SIGHUP 被殺——這是「直接跑在 SSH shell 裡的長任務，連線一斷就死」的根因，也是為什麼長任務要放進獨立於連線的 session 層。這條連線本身為什麼會斷，見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/)。
+
+## 概念位置
+
+相鄰概念見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/)（連線本身怎麼斷）。
 
 ## 為什麼斷線會送 SIGHUP
 
@@ -28,4 +32,4 @@ SIGHUP 是控制終端消失時，核心送給該終端前景程序群的掛斷�
 
 ## 邊界
 
-SIGHUP 的另一個慣例用途是「請 daemon 重讀設定」——`nginx`、`sshd` 這類長駐服務把 SIGHUP 接管成 reload（重讀設定不重啟）。同一個訊號在前景互動程序與 daemon 上語意不同：前者走預設的終止、後者由程式主動接管成「重載」。這張卡講的是前者（斷線殺前景任務）。系統層「服務怎麼被叫醒 / 重載」另見服務管理主題。相鄰概念見 [TCP 連線與漫遊](/linux/dotfile/knowledge-cards/tcp-connection-roaming/)（連線本身怎麼斷）。
+SIGHUP 的另一個慣例用途是「請 daemon 重讀設定」——`nginx`、`sshd` 這類長駐服務把 SIGHUP 接管成 reload（重讀設定不重啟）。同一個訊號在前景互動程序與 daemon 上語意不同：前者走預設的終止、後者由程式主動接管成「重載」。這張卡講的是前者（斷線殺前景任務）。系統層「服務怎麼被叫醒 / 重載」另見服務管理主題。

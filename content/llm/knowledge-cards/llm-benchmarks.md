@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "evaluation", "benchmark"]
 ---
 
-LLM benchmarks 的核心概念是「**用標準化任務集合衡量 LLM 各維度能力的評估工具**」。不同 benchmark 衡量不同維度（知識、reasoning、code、對話、math 等）、選錯 benchmark 看模型會誤判。本卡列主流 benchmark 跟它們的覆蓋面、失效情境。
+LLM benchmarks 的核心概念是「**用標準化任務集合衡量 LLM 各維度能力的評估工具**」。不同 benchmark 衡量不同維度（知識、reasoning、code、對話、math 等）、選錯 benchmark 看模型會誤判。本卡列主流 benchmark 跟它們的覆蓋面、失效情境，是判讀 [model card](/llm/knowledge-cards/model-card/) 上 benchmark 數字時的對照表。
 
 ## 概念位置
 

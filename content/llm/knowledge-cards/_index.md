@@ -45,26 +45,26 @@ weight: -1
 
 ### 推論基礎建設
 
-| 卡片                                                                       | 核心問題                             |
-| -------------------------------------------------------------------------- | ------------------------------------ |
-| [Three-Layer Architecture](/llm/knowledge-cards/three-layer-architecture/) | 介面 / 伺服器 / 模型三層分工心智模型 |
-| [Inference Server](/llm/knowledge-cards/inference-server/)                 | 載入模型、提供 API 的常駐 process    |
-| [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/)             | 介面層跟伺服器層之間的標準介面       |
-| [Model Tag](/llm/knowledge-cards/model-tag/)                               | 推論伺服器如何指名某個模型版本       |
-| [MLX](/llm/knowledge-cards/mlx/)                                           | Apple Silicon 的數值運算 framework   |
-| [oMLX](/llm/knowledge-cards/omlx/)                                         | MLX-backed 長 context 推論伺服器路線 |
-| [Local vs Cloud LLM](/llm/knowledge-cards/local-vs-cloud/)                 | 本地與雲端模型的任務分工取捨         |
+| 卡片                                                                                    | 核心問題                             |
+| --------------------------------------------------------------------------------------- | ------------------------------------ |
+| [Three-Layer Architecture](/llm/knowledge-cards/three-layer-architecture/)              | 介面 / 伺服器 / 模型三層分工心智模型 |
+| [Inference Server](/llm/knowledge-cards/inference-server/)                              | 載入模型、提供 API 的常駐 process    |
+| [OpenAI-Compatible API（OpenAI 相容 API）](/llm/knowledge-cards/openai-compatible-api/) | 介面層跟伺服器層之間的標準介面       |
+| [Model Tag](/llm/knowledge-cards/model-tag/)                                            | 推論伺服器如何指名某個模型版本       |
+| [MLX](/llm/knowledge-cards/mlx/)                                                        | Apple Silicon 的數值運算 framework   |
+| [oMLX](/llm/knowledge-cards/omlx/)                                                      | MLX-backed 長 context 推論伺服器路線 |
+| [Local vs Cloud LLM](/llm/knowledge-cards/local-vs-cloud/)                              | 本地與雲端模型的任務分工取捨         |
 
 ### macOS 與 shell 基礎
 
 讓對 Mac 操作不熟的讀者也能跟上本地 LLM 章節。這組卡片不算 LLM 領域知識、但本地 LLM 章節必然會碰到。
 
-| 卡片                                                                 | 核心問題                                       |
-| -------------------------------------------------------------------- | ---------------------------------------------- |
-| [Homebrew](/llm/knowledge-cards/homebrew/)                           | macOS 上 CLI 工具的標準安裝入口                |
-| [launchd Service](/llm/knowledge-cards/launchd-service/)             | 讓 Ollama 等服務開機自動啟動的 macOS 機制      |
-| [Shell 背景 Process](/llm/knowledge-cards/shell-background-process/) | 前景 vs 背景、`&`、`Ctrl+C`、找 process 的方法 |
-| [Port 與 Localhost](/llm/knowledge-cards/port-and-localhost/)        | server 暴露在哪個地址、誰能連進來              |
+| 卡片                                                                                         | 核心問題                                       |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| [Homebrew](/llm/knowledge-cards/homebrew/)                                                   | macOS 上 CLI 工具的標準安裝入口                |
+| [launchd Service](/llm/knowledge-cards/launchd-service/)                                     | 讓 Ollama 等服務開機自動啟動的 macOS 機制      |
+| [Shell Background Process（Shell 背景行程）](/llm/knowledge-cards/shell-background-process/) | 前景 vs 背景、`&`、`Ctrl+C`、找 process 的方法 |
+| [Port 與 Localhost](/llm/knowledge-cards/port-and-localhost/)                                | server 暴露在哪個地址、誰能連進來              |
 
 ### 硬體與架構
 
@@ -307,7 +307,7 @@ weight: -1
 | [Prefix Cache](/llm/knowledge-cards/prefix-cache/)                     | 多個請求共用前綴的 KV cache 重用優化                                      |
 | [MoE](/llm/knowledge-cards/moe/)                                       | Mixture of Experts 架構、總參數大但每 token 計算量小                      |
 | [Active Parameter](/llm/knowledge-cards/active-parameter/)             | MoE 每 token 實際參與計算的參數量                                         |
-| [MoE CPU 卸載](/llm/knowledge-cards/moe-cpu-offload/)                  | 把 MoE 不活躍專家放系統 RAM、讓有限 VRAM 跑大模型                         |
+| [MoE CPU Offload（CPU 卸載）](/llm/knowledge-cards/moe-cpu-offload/)   | 把 MoE 不活躍專家放系統 RAM、讓有限 VRAM 跑大模型                         |
 | [llama.cpp Tensor Split](/llm/knowledge-cards/llama-cpp-tensor-split/) | 多 GPU 場景把模型張量按比例切到多張卡上                                   |
 
 ## 卡片寫法

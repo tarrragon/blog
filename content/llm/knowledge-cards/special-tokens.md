@@ -12,16 +12,16 @@ Special tokens（特殊 token）的核心概念是「**在 [vocab](/llm/knowledg
 
 LLM 中 special tokens 的常見類型：
 
-| Token                                     | 用途                                             | 範例                              |
-| ----------------------------------------- | ------------------------------------------------ | --------------------------------- |
-| `<bos>` / `<s>`                           | 序列開頭                                         | Llama、Mistral                    |
-| `<eos>` / `</s>`                          | 序列結尾、模型輸出這個就停                       | 所有 LLM                          |
-| `<pad>`                                   | 把 batch 內不同長度 sequence 填齊                | 訓練 / batched 推論時用           |
-| `<unk>`                                   | 遇到 vocab 外的 token（byte-level BPE 已不需要） | 早期 tokenizer                    |
-| `<\|user\|>` / `<\|assistant\|>`          | Chat template 角色標記                           | Llama 3 chat、Qwen chat           |
-| `<\|im_start\|>` / `<\|im_end\|>`         | ChatML 格式的對話邊界                            | OpenAI、Qwen 系列                 |
-| `<\|tool_call\|>` / `<\|tool_response\|>` | Tool use / function calling 訊號                 | Llama 3.1+ 等支援 tool use 的模型 |
-| `<think>` / `</think>`                    | Chain-of-thought 標記                            | DeepSeek-R1、O1 風格模型          |
+| Token                                     | 用途                                                            | 範例                              |
+| ----------------------------------------- | --------------------------------------------------------------- | --------------------------------- |
+| `<bos>` / `<s>`                           | 序列開頭                                                        | Llama、Mistral                    |
+| `<eos>` / `</s>`                          | 序列結尾、模型輸出這個就停                                      | 所有 LLM                          |
+| `<pad>`                                   | 把 batch 內不同長度 sequence 填齊                               | 訓練 / batched 推論時用           |
+| `<unk>`                                   | 遇到 vocab 外的 token（byte-level BPE 已不需要）                | 早期 tokenizer                    |
+| `<\|user\|>` / `<\|assistant\|>`          | Chat template 角色標記                                          | Llama 3 chat、Qwen chat           |
+| `<\|im_start\|>` / `<\|im_end\|>`         | ChatML 格式的對話邊界                                           | OpenAI、Qwen 系列                 |
+| `<\|tool_call\|>` / `<\|tool_response\|>` | Tool use / function calling 訊號                                | Llama 3.1+ 等支援 tool use 的模型 |
+| `<think>` / `</think>`                    | [Chain-of-thought](/llm/knowledge-cards/chain-of-thought/) 標記 | DeepSeek-R1、O1 風格模型          |
 
 關鍵特性：
 

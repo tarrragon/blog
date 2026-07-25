@@ -6,11 +6,11 @@ tags: ["CD", "rollout", "knowledge-card"]
 weight: 7
 ---
 
-Rollout Strategy 的核心概念是「用分批推進控制發布風險」。它讓變更從小範圍驗證逐步擴大到全量。
+Rollout Strategy 的核心概念是「用分批推進控制發布風險」，並在異常時交由 [Rollback Strategy](/ci/knowledge-cards/rollback-strategy/) 收斂。它讓變更從小範圍驗證逐步擴大到全量。
 
 ## 概念位置
 
-Rollout Strategy 位在部署執行與正式流量切換之間，常見型態包含 rolling、canary、blue-green 與 phased rollout。
+Rollout Strategy 位在部署執行與正式[流量切換](/ci/knowledge-cards/readiness-health-check/)之間，常見型態包含 rolling、canary、blue-green 與 phased rollout。
 
 ## 可觀察訊號
 

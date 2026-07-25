@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "macos"]
 ---
 
-launchd Service 的核心概念是「macOS 用來管理常駐 process 生命週期的原生機制」。launchd 本身是 macOS 啟動後的第一個 process（PID 1）、由它負責拉起其他系統服務跟使用者註冊的背景任務。本地 LLM 場景中、Ollama 等推論伺服器透過 launchd 設定成「開機自動啟動、登入時自動拉起」、就不需要每次重開機都手動跑 `ollama serve`。
+launchd Service 的核心概念是「macOS 用來管理常駐 process 生命週期的原生機制」。launchd 本身是 macOS 啟動後的第一個 process（PID 1）、由它負責拉起其他系統服務跟使用者註冊的背景任務。本地 LLM 場景中、Ollama 等[推論伺服器](/llm/knowledge-cards/inference-server/)透過 launchd 設定成「開機自動啟動、登入時自動拉起」、就不需要每次重開機都手動跑 `ollama serve`。
 
 ## 概念位置
 

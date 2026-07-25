@@ -6,13 +6,13 @@ weight: 44
 tags: ["infra", "knowledge-cards", "network", "proxy"]
 ---
 
-Reverse proxy 是一個坐在後端服務前面、代替它接收外部請求的中介層。外部 client 連的是 reverse proxy 的位址，reverse proxy 根據規則把請求轉發到實際處理的內部服務，再把回應傳回給 client。Client 不知道（也不需要知道）後面有幾台服務、跑在哪裡。
+Reverse proxy 是一個坐在後端服務前面、代替它接收外部請求的中介層。外部 client 連的是 reverse proxy 的位址，reverse proxy 根據規則把請求轉發到實際處理的內部服務，再把回應傳回給 client。Client 不知道（也不需要知道）後面有幾台服務、跑在哪裡。實務上最常見的實作是 [nginx](/infra/knowledge-cards/nginx/) 或 ALB。
 
 ## 概念位置
 
 nginx 和 [ALB](/infra/knowledge-cards/alb/) 都扮演 reverse proxy 角色。差別在層級：nginx 通常部署在應用層（跟應用伺服器同一台或同一個 VPC 內），ALB 是雲端平台提供的受管服務。兩者的核心功能相同——接收外部流量、轉發到後端、回傳結果。
 
-跟 forward proxy 的方向相反：forward proxy 代替 client 發送請求（client 在內網、proxy 幫它出去）；reverse proxy 代替 server 接收請求（server 在內網、proxy 幫它面對外部）。
+跟 forward proxy 的方向相反：forward proxy 代替 client 發送請求（client 在內網、proxy 幫它出去）；reverse proxy 代替 server 接收請求（server 在內網、proxy 幫它面對外部）。reverse proxy 在流量入口責任鏈裡的位置、跟 DNS 與負載平衡層的交棒關係，見[流量入口層](/infra/03-network-foundation/traffic-entry-layer/)。
 
 ## 可觀察訊號
 

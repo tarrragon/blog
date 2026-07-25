@@ -6,11 +6,11 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-Token 的核心概念是「LLM 內部處理文字的最小單位」，介於字元（character）與單字（word）之間。模型接收 prompt 前會先用 tokenizer 把文字切成 token 序列，輸出時也以 token 為單位逐個生成。Token 是計費、速度、context 容量等所有 LLM 量化指標的共同單位。
+Token 的核心概念是「LLM 內部處理文字的最小單位」，介於字元（character）與單字（word）之間。模型接收 prompt 前會先用 tokenizer 把文字切成 token 序列，輸出時也以 token 為單位逐個生成，序列切法與長度由 tokenizer 的 [vocabulary size](/llm/knowledge-cards/vocabulary-size/) 決定。Token 是計費、速度、context 容量等所有 LLM 量化指標的共同單位。
 
 ## 概念位置
 
-Token 位於介面層送出文字與模型層實際運算之間的轉換點。介面層的「字串」進入模型前會被 tokenizer 切成整數序列；模型輸出的整數序列再被 tokenizer 還原成字串給介面層顯示。不同模型用不同 tokenizer，同一段文字在 GPT、Claude、Gemma 上切出的 token 數量會有差異。
+Token 位於介面層送出文字與模型層實際運算之間的轉換點。介面層的「字串」進入模型前會被 tokenizer 切成整數序列；模型輸出的整數序列再被 tokenizer 還原成字串給介面層顯示。不同模型用不同 tokenizer（多數採 [BPE](/llm/knowledge-cards/bpe/) 或其變體），同一段文字在 GPT、Claude、Gemma 上切出的 token 數量會有差異。
 
 ## 可觀察訊號與例子
 

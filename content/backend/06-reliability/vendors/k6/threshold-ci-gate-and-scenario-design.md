@@ -109,7 +109,7 @@ export const options = {
 
 ### Cohort 模擬
 
-Production 流量不是單一類型。用多 scenario 並行模擬不同 cohort：
+Production 流量不是單一類型。用多 scenario 並行模擬不同 [cohort](/backend/knowledge-cards/cohort/)：
 
 ```javascript
 export const options = {

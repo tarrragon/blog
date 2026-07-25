@@ -1,12 +1,16 @@
 ---
-title: "Docker named volume 掛載點 owner"
+title: "Docker Named Volume Ownership（掛載點擁有者）"
 date: 2026-07-08
 description: "container 內非 root 使用者寫不進掛載的 named volume、出現 permission denied 時回來讀"
 weight: 51
 tags: ["linux", "container", "docker", "knowledge-cards"]
 ---
 
-一個空的 Docker named volume 首次掛載時，它的 owner 由 image 內對應路徑的狀態決定：image 裡該路徑**已存在**時，Docker 用那個路徑的 owner 與內容初始化 volume；image 裡該路徑**不存在**時，Docker 直接建一個 root 擁有的空 volume 掛上去。這條規則決定了一個常踩的陷阱——要讓 container 內的非 root 使用者寫入掛載的 volume，該路徑必須先在 image 裡以對的 owner 存在。
+一個空的 Docker named volume 首次掛載時，它的 owner 由 image 內對應路徑的狀態決定：image 裡該路徑**已存在**時，Docker 用那個路徑的 owner 與內容初始化 volume；image 裡該路徑**不存在**時，Docker 直接建一個 root 擁有的空 volume 掛上去。這條規則決定了一個常踩的陷阱——要讓 container 內的非 root 使用者寫入掛載的 volume，該路徑必須先在 image 裡以對的 owner 存在。這條規則屬於 image build 期該決定什麼的範疇，跟 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 凍結 base image 形狀是同一層次的考量。
+
+## 概念位置
+
+這張卡跟 [機密 runtime 注入](/linux/dotfile/knowledge-cards/runtime-secret-injection/) 是同一類「image build 期決定什麼 vs container runtime 期決定什麼」問題的兩個面向：機密卡管什麼不該烤進 image，這張卡管 image 內路徑的既有狀態如何決定 runtime volume 的初始 owner。image 凍結到多細見 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。
 
 ## 空 volume 首次掛載的初始化規則
 

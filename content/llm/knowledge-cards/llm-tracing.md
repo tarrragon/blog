@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "observability", "production"]
 ---
 
-LLM tracing 的核心概念是「**把 LLM 應用的每次 LLM call / tool call / memory op / handoff 編成結構化 span、串成 trace、可在 observability 平台查詢**」。對應的標準是 OpenTelemetry GenAI semantic conventions（2025 stabilizing 中）。代表平台：LangSmith、Phoenix、Braintrust、Langfuse、Datadog APM、Logfire。是 production LLM 應用 debug / cost / latency 監控的事實標準、補 traditional logging 抓不到的「為什麼 agent 跑這條路」。
+LLM tracing 的核心概念是「**把 LLM 應用的每次 LLM call / [tool call](/llm/knowledge-cards/tool-use/) / memory op / handoff 編成結構化 span、串成 trace、可在 observability 平台查詢**」。對應的標準是 OpenTelemetry GenAI semantic conventions（2025 stabilizing 中）。代表平台：LangSmith、Phoenix、Braintrust、Langfuse、Datadog APM、Logfire。是 production LLM 應用 debug / cost / latency 監控的事實標準、補 traditional logging 抓不到的「為什麼 agent 跑這條路」。
 
 ## 概念位置
 
@@ -22,13 +22,13 @@ LLM tracing 的核心概念是「**把 LLM 應用的每次 LLM call / tool call 
 
 主流 OTel GenAI span 類型：
 
-| Span 類型                  | 內容                      |
-| -------------------------- | ------------------------- |
-| `gen_ai.client.operation`  | 一次完整 LLM API call     |
-| `gen_ai.tool.execution`    | 一次 tool 執行            |
-| `gen_ai.agent`             | Agent loop 一個 iteration |
-| `gen_ai.embeddings`        | Embedding call            |
-| `gen_ai.memory.read/write` | Memory 操作               |
+| Span 類型                  | 內容                                                     |
+| -------------------------- | -------------------------------------------------------- |
+| `gen_ai.client.operation`  | 一次完整 LLM API call                                    |
+| `gen_ai.tool.execution`    | 一次 tool 執行                                           |
+| `gen_ai.agent`             | [Agent](/llm/knowledge-cards/agent/) loop 一個 iteration |
+| `gen_ai.embeddings`        | Embedding call                                           |
+| `gen_ai.memory.read/write` | Memory 操作                                              |
 
 每個 span 標準屬性：`gen_ai.system`（vendor）、`gen_ai.request.model`、`gen_ai.usage.input_tokens` / `output_tokens`、`gen_ai.request.temperature` 等。
 

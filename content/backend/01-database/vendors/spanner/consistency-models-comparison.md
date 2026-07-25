@@ -12,7 +12,7 @@ tags: ["backend", "database", "spanner", "global-sql", "consistency", "external-
 
 ## 問題情境：五個詞混用的選型困境
 
-團隊在 Spanner / CockroachDB / Aurora DSQL 之間選型、看文件講 strict serializability、external consistency、linearizable、snapshot isolation、serializable — 五個詞混用、不確定買的是哪一種保證。讀者徵兆通常是「我們需要強一致」但說不出強到哪、把 serializable transaction 跟 linearizable read 當同一件事、debug 對帳時發現「兩個 transaction 都 commit 成功、順序卻違反 user 體感」。
+團隊在 Spanner / CockroachDB / Aurora DSQL 之間選型、看文件講 strict serializability、external consistency、linearizable、snapshot isolation、serializable — 五個詞混用、不確定買的是哪一種保證。讀者徵兆通常是「我們需要強一致」但說不出強到哪、把 serializable transaction 跟 linearizable read 當同一件事、debug [對帳](/backend/knowledge-cards/data-reconciliation/)時發現「兩個 transaction 都 commit 成功、順序卻違反 user 體感」。
 
 真實壓力場景：金融帳本 — A 在台北轉帳給 B、B 在東京立即收到通知然後查餘額、結果查到「轉帳前」的餘額。serializable 允許這種行為（兩 transaction 可以排成任意順序、不要求跟 wall clock 一致）、external consistency 不允許（必須等 commit 後的順序符合 real-time）。混用兩個詞會讓選型結論在系統實作後才被推翻、那時候改架構成本已經高了。
 

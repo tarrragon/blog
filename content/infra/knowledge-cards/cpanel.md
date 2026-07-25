@@ -6,11 +6,11 @@ weight: 24
 tags: ["infra", "knowledge-cards"]
 ---
 
-cPanel 是最常見的 Web 主機管理面板，讓租用主機的使用者透過瀏覽器管理伺服器的常用功能——PHP 版本切換、cron job 排程、email 帳號管理、SSL 憑證安裝、檔案管理、資料庫管理、以及完整備份。Plesk 是同類產品，功能範圍相似但介面和設定路徑不同。
+cPanel 是最常見的 Web 主機管理面板，讓租用主機的使用者透過瀏覽器管理伺服器的常用功能——PHP 版本切換、[cron](/infra/knowledge-cards/cron/) job 排程、email 帳號管理、SSL 憑證安裝、檔案管理、資料庫管理、以及完整備份。Plesk 是同類產品，功能範圍相似但介面和設定路徑不同。
 
 ## 概念位置
 
-cPanel 是無 SSH 環境裡的「控制中心」。它整合了多種工具的圖形入口：phpMyAdmin（資料庫）、檔案管理員（web 版 FTP）、PHP 設定、cron 編輯器、SSL/TLS 管理。接手維運時，第一步是確認有沒有 cPanel 存取權——有的話很多操作（備份、PHP 版本、cron）可以在面板裡完成，不需要 SSH。
+cPanel 是無 SSH 環境裡的「控制中心」。它整合了多種工具的圖形入口：[phpMyAdmin](/infra/knowledge-cards/phpmyadmin/)（資料庫）、檔案管理員（web 版 FTP）、PHP 設定、cron 編輯器、SSL/TLS 管理。接手維運時，第一步是確認有沒有 cPanel 存取權——有的話很多操作（備份、PHP 版本、cron）可以在面板裡完成，不需要 SSH。
 
 ## 可觀察訊號
 

@@ -10,7 +10,7 @@ Rate limit 的核心概念是「限制某個主體在一段時間內可以使用
 
 ## 概念位置
 
-Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、匯出、第三方 API、webhook endpoint 與下游服務，降低單一來源耗盡共享資源的風險。 可先對照 [Producer](/backend/knowledge-cards/producer/)。
+Rate limit 是容量保護與公平性工具。它可以保護登入、搜尋、匯出、第三方 API、webhook endpoint 與下游服務，降低單一來源耗盡共享資源的風險；被擋下之後對消費者承諾什麼邊界（429 / Retry-After 的契約語意）、由 [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/) 卡承擔。 可先對照 [Producer](/backend/knowledge-cards/producer/)。
 
 ## 可觀察訊號與例子
 

@@ -6,11 +6,11 @@ description: "Dart 3 的零成本包裝型別——runtime 不存在額外物件
 weight: 3
 ---
 
-Extension type 是 Dart 3 引入的語言特性：在編譯期把一個型別包裝成另一個名字、限縮可用的 API、而 runtime 不存在額外物件（零成本抽象）。它跟 class 的差異在「沒有 runtime 開銷、但也沒有 runtime 的型別檢查——`is` 跟 `as` 看到的是底層型別」。
+Extension type 是 Dart 3 引入的語言特性：在編譯期把一個型別包裝成另一個名字、限縮可用的 API、而 runtime 不存在額外物件（零成本抽象）。它跟 class 的差異在「沒有 runtime 開銷、但也沒有 runtime 的型別檢查——`is` 跟 `as` 看到的是底層型別」。同樣是「限縮型別可用介面」的目標，[freezed](/flutter/knowledge-cards/freezed/) 生成的 class 走 runtime 路徑、extension type 走編譯期路徑，兩者是互斥的實作選擇。
 
 ## 概念位置
 
-Extension type 是實作 [value object](/ddd/knowledge-cards/value-object/) 語意封閉的一種載體。金額用 extension type 包 Decimal：開放的運算限於領域有意義的集合（加減、乘數量、乘倍率），差集裡的誤用（金額乘金額）在編譯期就走不通。跟用 class 包裝的差異：class 有 runtime 身份（`is Money` 為 true）但有 overhead；extension type 零 overhead 但 runtime 是透明的。
+Extension type 是實作 [value object](/ddd/knowledge-cards/value-object/) 語意封閉的一種載體。金額用 extension type 包 Decimal：開放的運算限於領域有意義的集合（加減、乘數量、乘倍率），差集裡的誤用（金額乘金額）在編譯期就走不通。跟用 class 包裝的差異：class 有 runtime 身份（`is Money` 為 true）但有 overhead；extension type 零 overhead 但 runtime 是透明的。這條分野也決定了誰適合搭 [copyWith](/flutter/knowledge-cards/copywith/)——extension type 沒有 runtime 物件可覆寫欄位，逐欄位覆寫語意只在 class 路徑上成立。
 
 ## 設計責任
 

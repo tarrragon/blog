@@ -1,12 +1,16 @@
 ---
-title: "終端 CJK 雙寬字與即時輸入"
+title: "Terminal CJK Input（終端 CJK 雙寬字與即時輸入）"
 date: 2026-07-08
 description: "手機 / 遠端終端能貼中文卻打不出來、或打中文時畫面錯位時回來讀"
 weight: 52
 tags: ["linux", "terminal", "cjk", "mobile", "knowledge-cards"]
 ---
 
-終端把 CJK 字元當雙寬字元處理：一個中文字佔兩個字元格（column），而 ASCII 是一格。這個「一個字兩格」的前提牽出兩類獨立的問題——**顯示**（哪一層算錯寬度就錯位）與**輸入**（終端的 raw 模式常擋掉輸入法的即時組字，但貼上不受影響）。把這兩類分開，才能判斷「打不出中文」到底卡在哪一層。
+終端把 CJK 字元當雙寬字元處理：一個中文字佔兩個字元格（column），而 ASCII 是一格。這個「一個字兩格」的前提牽出兩類獨立的問題——**顯示**（哪一層算錯寬度就錯位）與**輸入**（終端的 raw 模式常擋掉輸入法的即時組字，但貼上不受影響）。把這兩類分開，才能判斷「打不出中文」到底卡在哪一層。顯示層最常見的錯位來源是 [mosh 本地回顯預測](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/) 撞上雙寬字算錯游標位置。
+
+## 概念位置
+
+機制與 `--predict=never` 的關法見 [mosh 本地回顯預測](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/)。
 
 ## 雙寬字：一個字兩格
 
@@ -14,7 +18,7 @@ tags: ["linux", "terminal", "cjk", "mobile", "knowledge-cards"]
 
 ## 顯示：哪一層算錯寬度就錯位
 
-伺服器端把中文印出來通常沒問題（shell 知道寬度）。會錯位的是加了預測的連線層——mosh 的本地回顯預測要在客戶端先猜你打的字怎麼佔位，撞上雙寬字容易算錯、游標與行重繪錯位。典型症狀是**輸出正常、只有正在編輯的輸入行亂**（輸出不經預測、輸入行才有）。機制與 `--predict=never` 的關法見 [mosh 本地回顯預測](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/)。
+伺服器端把中文印出來通常沒問題（shell 知道寬度）。會錯位的是加了預測的連線層——mosh 的本地回顯預測要在客戶端先猜你打的字怎麼佔位，撞上雙寬字容易算錯、游標與行重繪錯位。典型症狀是**輸出正常、只有正在編輯的輸入行亂**（輸出不經預測、輸入行才有）。
 
 ## 輸入：raw 模式擋 IME 組字、貼上繞過
 

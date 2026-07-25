@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "math", "linear-algebra"]
 ---
 
-Vector norm（向量範數）的核心概念是「**衡量向量「大小」的純量值**」。最常用的 L2 norm（歐式長度）= 把每個分量平方加總再開根號；但 L1、L∞ 等其他 norm 也在不同場景出現。Norm 在 LLM 中支撐 cosine similarity、layer normalization、gradient clipping 等核心機制。
+Vector norm（向量範數）的核心概念是「**衡量向量「大小」的純量值**」。最常用的 L2 norm（歐式長度）= 把每個分量平方加總再開根號；但 L1、L∞ 等其他 norm 也在不同場景出現。Norm 在 LLM 中支撐 cosine similarity、layer normalization、gradient clipping 等核心機制，是 [vector database](/llm/knowledge-cards/vector-database/) 相似度搜尋的數學基礎。
 
 ## 概念位置
 

@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "training", "fine-tuning"]
 ---
 
-LoRA（Low-Rank Adaptation、低秩適配）的核心概念是「**凍住原模型所有權重、在指定 layer 旁邊掛兩個小矩陣 A、B（rank 很低、如 r=8）、只訓 A、B**」。Hu et al. (2021) 提出、是現在 fine-tuning 的主流選擇、大幅降低訓練成本與記憶體需求。
+LoRA（Low-Rank Adaptation、低秩適配）的核心概念是「**凍住原模型所有權重、在指定 layer 旁邊掛兩個小矩陣 A、B（rank 很低、如 r=8）、只訓 A、B**」。凍住原權重的好處之一是避開整個模型被覆寫造成的 [catastrophic forgetting](/llm/knowledge-cards/catastrophic-forgetting/)。Hu et al. (2021) 提出、是現在 fine-tuning 的主流選擇、大幅降低訓練成本與記憶體需求。
 
 ## 概念位置
 
@@ -32,7 +32,7 @@ LoRA 的數學形式：
 | 部署             | 載入新模型              | 載入原模型 + adapter、推論時合併 |
 | 多任務切換       | 載入不同模型            | 切換 adapter 即可（同個底）      |
 
-QLoRA（Dettmers et al., 2023）進一步把原模型量化到 4-bit、LoRA 訓在量化模型上、消費級 GPU 也能 fine-tune 大模型。
+[QLoRA](/llm/knowledge-cards/qlora/)（Dettmers et al., 2023）進一步把原模型量化到 4-bit、LoRA 訓在量化模型上、消費級 GPU 也能 fine-tune 大模型。
 
 ## 設計責任
 

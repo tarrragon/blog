@@ -1,5 +1,5 @@
 ---
-title: "Mock 遮蔽"
+title: "Mock Masking（Mock 遮蔽）"
 date: 2026-06-19
 description: "mock 模擬 API 層但不模擬協議層，造成的結構性驗證盲區"
 weight: 2
@@ -10,7 +10,7 @@ Mock 遮蔽的核心概念是「mock 忠實模擬程式語言的 API 契約，�
 
 ## 概念位置
 
-Mock 遮蔽發生在 API 層和協議層之間的語意斷裂處。Mock 模擬的是最上層（方法簽名、參數型別、回傳值），真實行為發生在下面兩層（協議語意、執行環境）。遮蔽有兩種模式：功能存在但行為錯誤（mock 接受了真實服務不接受的輸入）、功能根本沒實作（mock 不需要該功能就能通過）。
+Mock 遮蔽發生在 API 層和協議層之間的語意斷裂處。Mock 模擬的是最上層（方法簽名、參數型別、回傳值），真實行為發生在下面兩層（協議語意、執行環境）。遮蔽有兩種模式：功能存在但行為錯誤（mock 接受了真實服務不接受的輸入）、功能根本沒實作（mock 不需要該功能就能通過）。這條斷裂正是[名義 integration test](/testing/knowledge-cards/nominal-integration-test/)命名誤導的來源——測試名稱寫著 integration，實際驗證仍停在 mock 遮蔽的範圍內。
 
 ## 可觀察訊號與例子
 

@@ -1,5 +1,5 @@
 ---
-title: "語意級假後端"
+title: "Semantic Fake Backend（語意級假後端）"
 date: 2026-07-17
 description: "持有狀態、只固化已證實後端行為的測試假件；與由測試餵資料的 stub 以狀態歸屬和行為出處劃界"
 weight: 5

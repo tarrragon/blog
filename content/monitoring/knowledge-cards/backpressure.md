@@ -10,7 +10,7 @@ tags: ["monitoring", "backpressure", "flow-control", "knowledge-card"]
 
 ## 概念位置
 
-背壓位在 SDK 和 collector 之間的 HTTP 通訊層。觸發順序：collector 的寫入 channel 容量耗盡 → HTTP handler 無法送入事件 → 回 429 → SDK 收到 429 → SDK 降低取樣率（從 1.0 → 0.5 → 0.1）。背壓是全域的容量訊號 — 所有 SDK 同時收到，所有 SDK 同時降速。
+背壓位在 SDK 和 collector 之間的 HTTP 通訊層。觸發順序：collector 的寫入 channel 容量耗盡 → HTTP handler 無法送入事件 → 回 429 → SDK 收到 429 → SDK 降低[取樣](/monitoring/knowledge-cards/sampling/)率（從 1.0 → 0.5 → 0.1）。背壓是全域的容量訊號 — 所有 SDK 同時收到，所有 SDK 同時降速。
 
 ## 可觀察訊號與例子
 

@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "training", "optimizer"]
 ---
 
-Adam（Adaptive Moment Estimation、Kingma & Ba, 2014）的核心概念是「**對每個參數維護兩個 EMA**（gradient 的一階矩 = 平均、二階矩 = 變異）、用這兩個值自適應地縮放每個參數的更新步長」。AdamW（Loshchilov & Hutter, 2017）是 Adam 加上「decoupled weight decay」的修正版、是現代 LLM 訓練的標準 optimizer。
+Adam（Adaptive Moment Estimation、Kingma & Ba, 2014）的核心概念是「**對每個參數維護兩個 EMA**（[gradient](/llm/knowledge-cards/gradient/) 的一階矩 = 平均、二階矩 = 變異）、用這兩個值自適應地縮放每個參數的更新步長」。AdamW（Loshchilov & Hutter, 2017）是 Adam 加上「decoupled weight decay」的修正版、是現代 LLM 訓練的標準 optimizer。
 
 ## 概念位置
 

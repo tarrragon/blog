@@ -18,4 +18,4 @@ Niche Market 的特徵是「高價值 + 高 [黏著度](/business/knowledge-card
 
 ## 判讀方式
 
-看到「在高價值、高黏著度的利基市場站穩腳步」這類描述時，意味著該公司不打算搶大眾市場，而是在小但深的領域建立優勢。對 [VC](/business/knowledge-cards/venture-capital/) 來說 niche market 不一定有興趣（看天花板）；對 [PE](/business/knowledge-cards/private-equity/) 來說 niche market 反而很有吸引力（現金流穩定）。
+看到「在高價值、高黏著度的利基市場站穩腳步」這類描述時，意味著該公司不打算搶大眾市場，而是在小但深的領域建立優勢。對 [VC](/business/knowledge-cards/venture-capital/) 來說 niche market 不一定有興趣（看天花板）；對 [PE](/business/knowledge-cards/private-equity/) 來說 niche market 反而很有吸引力（現金流穩定）。單一功能層的利基定位是[賽道與商業模式判讀框架](/business/reading-frameworks/track-business-model-reading/)判定賽道寬度時的功能廣度軸。

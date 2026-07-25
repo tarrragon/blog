@@ -24,7 +24,7 @@ tags: ["business", "knowledge-cards"]
 
 ```markdown
 ---
-title: 術語中英文名
+title: 英文術語（中文輔助），如 Operating Margin（營業利益率）
 date: YYYY-MM-DD
 description: 一行說明卡片責任
 weight: 編號
@@ -51,13 +51,19 @@ weight: 編號
 
 公司賣什麼、賣給誰、怎麼收費。這是讀懂任何分析文章的第一層語言。
 
-| 卡片                                                                | 核心問題               | 常見出現位置                 |
-| ------------------------------------------------------------------- | ---------------------- | ---------------------------- |
-| [SaaS](/business/knowledge-cards/saas/)                             | 雲端訂閱軟體的商業模式 | gross margin、PLG、retention |
-| [Vertical SaaS](/business/knowledge-cards/vertical-saas/)           | 專做單一行業的 SaaS    | niche、tacit knowledge       |
-| [Horizontal SaaS](/business/knowledge-cards/horizontal-saas/)       | 跨行業通用的 SaaS      | distribution、PLG            |
-| [CDP](/business/knowledge-cards/cdp/)                               | 客戶資料平台           | 數據整合、應用層 SaaS        |
-| [Enterprise License](/business/knowledge-cards/enterprise-license/) | 企業級授權模式         | lock-in、長期合約            |
+| 卡片                                                                                | 核心問題                        | 常見出現位置                     |
+| ----------------------------------------------------------------------------------- | ------------------------------- | -------------------------------- |
+| [SaaS](/business/knowledge-cards/saas/)                                             | 雲端訂閱軟體的商業模式          | gross margin、PLG、retention     |
+| [Vertical SaaS](/business/knowledge-cards/vertical-saas/)                           | 專做單一行業的 SaaS             | niche、tacit knowledge           |
+| [Horizontal SaaS](/business/knowledge-cards/horizontal-saas/)                       | 跨行業通用的 SaaS               | distribution、PLG                |
+| [CDP](/business/knowledge-cards/cdp/)                                               | 客戶資料平台                    | 數據整合、應用層 SaaS            |
+| [Enterprise License](/business/knowledge-cards/enterprise-license/)                 | 企業級授權模式                  | lock-in、長期合約                |
+| [Commodity Business](/business/knowledge-cards/commodity-business/)                 | 無差異化商品的低毛利模式        | 壓榨、大宗物資、現金牛           |
+| [Crush Margin（壓榨價差）](/business/knowledge-cards/crush-margin/)                 | 壓榨廠單噸利潤＝聯產品收入−原料 | 聯產品、crush spread、雙寡頭     |
+| [Value-Chain Span（價值鏈涵蓋段）](/business/knowledge-cards/value-chain-span/)     | 毛利率差距是效率還是涵蓋段不同  | 毛利率可比性、純代工 vs 品牌     |
+| [Vertical Integration（垂直整合）](/business/knowledge-cards/vertical-integration/) | 價值鏈相鄰環節自製還是外購      | 成本內部化、效率整合 vs 規模分散 |
+| [Farmgate Price（農場交貨價）](/business/knowledge-cards/farmgate-price/)           | 生產者從零售價裡分到多少        | 生乳收購價、價格點比對、通路剝削 |
+| [Contract Farming（契約養殖）](/business/knowledge-cards/contract-farming/)         | 整合商與小農的風險資本轉移      | 契作、保證收購、議價不對等       |
 
 ## 單位經濟
 
@@ -76,6 +82,7 @@ weight: 編號
 | [Free Cash Flow](/business/knowledge-cards/free-cash-flow/)               | 營業現金流扣資本支出             | 利潤品質、股利可持續性        |
 | [Cash Conversion Cycle](/business/knowledge-cards/cash-conversion-cycle/) | 現金在營運循環中被卡住的天數     | 供需效率、週轉天數            |
 | [Sunk Cost](/business/knowledge-cards/sunk-cost/)                         | 已發生且不可回收的支出           | 續行退場決策、認知偏誤        |
+| [Human Capital（人力資本）](/business/knowledge-cards/human-capital/)     | 隨人移動、會增值或折舊的能力資產 | 續行退場決策、退場後路徑      |
 | [GMV](/business/knowledge-cards/gmv/)                                     | 平台交易總額                     | 平台營收、Take Rate、認列方式 |
 
 ## 進入市場
@@ -103,19 +110,48 @@ weight: 編號
 | [Fat Data / Fat Skill](/business/knowledge-cards/fat-data-fat-skill/) | 有獨家資料或行業隱性能力   | 護城河、生存空間           |
 | [Connector](/business/knowledge-cards/connector/)                     | 被收編進生態系變成整合工具 | 整併週期、AI Labs          |
 
+## 農產品與食品供應鏈
+
+農產品加工、畜產、乳業的產業結構與定價邏輯。服務[雞肉供應鏈比較](/business/financial-analysis/chicken-supply-chain-comparison/)、[黃豆壓榨經濟學](/business/financial-analysis/soybean-crush-economics/)、[乳業政策介入工具](/business/financial-analysis/dairy-policy-intervention-tools/)等產業分析文章。
+
+| 卡片                                                                            | 核心問題                           | 常見出現位置                     |
+| ------------------------------------------------------------------------------- | ---------------------------------- | -------------------------------- |
+| [Co-product（聯產品）](/business/knowledge-cards/co-product/)                   | 一條製程同時產出多個商品、定價連動 | 壓榨業、屠宰業、乳品加工         |
+| [電宰（Mechanized Slaughter）](/business/knowledge-cards/mechanized-slaughter/) | 自動化屠宰流水線、產能集中度指標   | 肉品供應鏈、垂直整合、契約養殖   |
+| [FMMO（聯邦牛奶行銷法令）](/business/knowledge-cards/fmmo/)                     | 美國生乳分類定價、非補助           | 乳業跨國比較、酪農收入、政策工具 |
+
+## 電子產業與供應鏈
+
+電子產業的產品結構、供應鏈分工與景氣循環。服務[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)、[記憶體缺貨分析](/business/financial-analysis/memory-market-shortage-analysis/)、[產能擠壓](/business/financial-analysis/capacity-crowding-out/)等產業分析文章。
+
+| 卡片                                                                      | 核心問題                           | 常見出現位置                |
+| ------------------------------------------------------------------------- | ---------------------------------- | --------------------------- |
+| [MLCC（積層陶瓷電容）](/business/knowledge-cards/mlcc/)                   | 穩定電壓的被動元件、高容值是瓶頸   | 被動元件產業、AI 伺服器供需 |
+| [HBM（高頻寬記憶體）](/business/knowledge-cards/hbm/)                     | 垂直堆疊 DRAM、消耗 3-4 倍晶圓面積 | 產能擠壓、AI 算力瓶頸       |
+| [DRAM（動態隨機存取記憶體）](/business/knowledge-cards/dram/)             | 揮發性記憶體、三家寡占             | 記憶體景氣循環、HBM 基礎    |
+| [Wafer Foundry（晶圓代工）](/business/knowledge-cards/wafer-foundry/)     | 替設計公司製造晶圓的半導體廠       | 先進製程產能、AI 硬約束     |
+| [EMS（電子專業製造服務）](/business/knowledge-cards/ems/)                 | 替品牌商代工製造的廠商             | 供應鏈分工、牛鞭效應節點    |
+| [ODM（原始設計製造商）](/business/knowledge-cards/odm/)                   | 自行設計再貼牌出貨                 | 伺服器代工、設計議價力      |
+| [OEM（品牌商）](/business/knowledge-cards/oem/)                           | 擁有品牌和定價權的終端需求發動者   | 供應鏈需求起點、搶貨行為    |
+| [ASP（平均單價）](/business/knowledge-cards/asp/)                         | 營收拆量價的基本工具               | 週期性產業毛利率、組合轉移  |
+| [CAGR（年均複合成長率）](/business/knowledge-cards/cagr/)                 | 多年成長壓縮成等效年增率           | 市場預測、起訖點偏誤        |
+| [Bullwhip Effect（牛鞭效應）](/business/knowledge-cards/bullwhip-effect/) | 需求訊號逐層放大                   | 缺貨潮、庫存循環、通路結構  |
+
 ## 市場動態
 
 賽道處在什麼階段、競爭強度、需求類型。判讀一個產業現在能不能進、何時進。
 
-| 卡片                                                                      | 核心問題           | 常見出現位置            |
-| ------------------------------------------------------------------------- | ------------------ | ----------------------- |
-| [Red Ocean / Blue Ocean](/business/knowledge-cards/red-ocean-blue-ocean/) | 紅海競爭與藍海空白 | 整併週期、賽道判讀      |
-| [Consolidation Cycle](/business/knowledge-cards/consolidation-cycle/)     | 整併週期           | M&A、紅海後段           |
-| [Niche Market](/business/knowledge-cards/niche-market/)                   | 利基市場           | Vertical SaaS、護城河   |
-| [High Stickiness](/business/knowledge-cards/high-stickiness/)             | 高黏著度           | lock-in、SaaS retention |
-| [Rigid Demand](/business/knowledge-cards/rigid-demand/)                   | 剛性需求           | 客戶非要不可的訊號      |
-| [Frontier Capability](/business/knowledge-cards/frontier-capability/)     | 前沿能力           | AI Labs、領先差距       |
-| [Distribution](/business/knowledge-cards/distribution/)                   | 分發優勢           | Big Tech、現有客戶基礎  |
+| 卡片                                                                      | 核心問題                   | 常見出現位置            |
+| ------------------------------------------------------------------------- | -------------------------- | ----------------------- |
+| [Red Ocean / Blue Ocean](/business/knowledge-cards/red-ocean-blue-ocean/) | 紅海競爭與藍海空白         | 整併週期、賽道判讀      |
+| [Consolidation Cycle](/business/knowledge-cards/consolidation-cycle/)     | 整併週期                   | M&A、紅海後段           |
+| [Niche Market](/business/knowledge-cards/niche-market/)                   | 利基市場                   | Vertical SaaS、護城河   |
+| [High Stickiness](/business/knowledge-cards/high-stickiness/)             | 高黏著度                   | lock-in、SaaS retention |
+| [Data Gravity（資料重力）](/business/knowledge-cards/data-gravity/)       | 資料累積推高遷移成本       | 黏著度來源、賽道判讀    |
+| [Rigid Demand](/business/knowledge-cards/rigid-demand/)                   | 剛性需求                   | 客戶非要不可的訊號      |
+| [Frontier Capability](/business/knowledge-cards/frontier-capability/)     | 前沿能力                   | AI Labs、領先差距       |
+| [Distribution](/business/knowledge-cards/distribution/)                   | 分發優勢                   | Big Tech、現有客戶基礎  |
+| [冰磚奶](/business/knowledge-cards/frozen-concentrated-milk/)             | 進口濃縮乳的形態與成本結構 | 乳業供應鏈、進口替代    |
 
 ## 資本估值
 
@@ -129,6 +165,51 @@ weight: 編號
 | [Valuation Compression](/business/knowledge-cards/valuation-compression/) | 估值壓縮     | 毛利下降、新創生存   |
 | [Unit Economics](/business/knowledge-cards/unit-economics/)               | 單位經濟     | LTV/CAC、是否賺錢    |
 | [LTV](/business/knowledge-cards/ltv/)                                     | 客戶終身價值 | retention、CAC、毛利 |
+
+## 財報判讀
+
+讀懂上市櫃公司財報的術語層。服務 [財務分析模組](/business/financial-analysis/) 的案例判讀。
+
+| 卡片                                                                                              | 核心問題                                 | 常見出現位置                   |
+| ------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------ |
+| [Operating Margin](/business/knowledge-cards/operating-margin/)                                   | 本業扣完營運費用賺多少                   | 三率結構、費用率、營業槓桿     |
+| [Net Margin](/business/knowledge-cards/net-margin/)                                               | 每元營收最終留給股東多少                 | 三率結構、業外損益、ROE        |
+| [EPS](/business/knowledge-cards/eps/)                                                             | 獲利換算到每股尺度                       | P/E、配息率、追溯調整          |
+| [Market Cap](/business/knowledge-cards/market-cap/)                                               | 市場對整家公司的定價                     | P/E、EV、規模比較              |
+| [P/E Ratio](/business/knowledge-cards/pe-ratio/)                                                  | 用幾倍獲利買下這家公司                   | 估值帶、成長溢價、價值陷阱     |
+| [Depreciation & Amortization](/business/knowledge-cards/depreciation-amortization/)               | 資本支出分年進損益表                     | capex、EBITDA、營業槓桿        |
+| [Related-Party Transaction](/business/knowledge-cards/related-party-transaction/)                 | 集團內部定價對財報的扭曲                 | 垂直整合、轉移定價、毛利率     |
+| [公司公開程度](/business/knowledge-cards/company-public-disclosure-levels/)                       | 揭露義務與交易狀態是兩軸                 | 公開發行未上市、MOPS、股價     |
+| [Same-Store Sales](/business/knowledge-cards/same-store-sales/)                                   | 扣掉展店效應的品牌健康度                 | 連鎖業、展店品質、漲價拆分     |
+| [ROE](/business/knowledge-cards/roe/)                                                             | 股東資本的報酬速度                       | 杜邦拆解、價值投資篩選         |
+| [Capex](/business/knowledge-cards/capex/)                                                         | 資本支出的去向與回收                     | FCF、擴產、折舊                |
+| [Parent-Attributable Income（歸母淨利）](/business/knowledge-cards/parent-attributable-income/)   | 淨利中真正屬於母公司股東的部分           | 控股集團、非控制權益、EPS      |
+| [Valuation Band（估值帶）](/business/knowledge-cards/valuation-band/)                             | 對照自身歷史的估值區間                   | P/E、P/B、derating             |
+| [Normalized Earnings（正常化盈餘）](/business/knowledge-cards/normalized-earnings/)               | 剔除一次性損益後的獲利基礎               | 估值分母、獲利品質             |
+| [Dividend Yield](/business/knowledge-cards/dividend-yield/)                                       | 配息相對股價的年化收益率                 | 收益率溢價、配息可持續性       |
+| [Payout Ratio](/business/knowledge-cards/payout-ratio/)                                           | 獲利分給股東的比例                       | 留存盈餘、ROE 機械性推升       |
+| [Operating Leverage](/business/knowledge-cards/operating-leverage/)                               | 固定成本攤提放大或壓縮利潤               | 營業槓桿、擴產初期利潤率       |
+| [Cash Flow Statement](/business/knowledge-cards/cash-flow-statement/)                             | 利潤跟現金落差的三段拆解                 | 間接法、營運資本變動           |
+| [Accounts Receivable](/business/knowledge-cards/accounts-receivable/)                             | 已認列收入未收到現金的資產               | 應收天數、帳齡結構             |
+| [Consolidated Financial Statements](/business/knowledge-cards/consolidated-financial-statements/) | 子公司營收獲利全額併入母公司報表         | 合併範圍、非控制權益           |
+| [Non-Controlling Interest](/business/knowledge-cards/non-controlling-interest/)                   | 子公司獲利中屬於外部股東的部分           | 合併報表、歸母淨利             |
+| [Impairment](/business/knowledge-cards/impairment/)                                               | 資產帳面高於可回收金額的強制認列         | 商譽減損、正常化盈餘           |
+| [Transfer Pricing](/business/knowledge-cards/transfer-pricing/)                                   | 集團內部交易的定價決策                   | 關係人交易、毛利率扭曲         |
+| [Share Pledge](/business/knowledge-cards/share-pledge/)                                           | 控制權建立在槓桿上的治理風險             | 質押比率、平倉壓力             |
+| [Inventory（存貨）](/business/knowledge-cards/inventory/)                                         | 已投入生產但未賣出的資產、拆三形態判方向 | 存貨天數、CCC、跌價損失        |
+| [Accounts Payable（應付帳款）](/business/knowledge-cards/accounts-payable/)                       | 無息的供應商融資、CCC 的減項             | 應付天數、議價力、週轉壓力     |
+| [Shareholders' Equity（股東權益）](/business/knowledge-cards/shareholders-equity/)                | 淨值的組成與變化來源                     | ROE 分母、負債比率、保留盈餘   |
+| [Current Ratio（流動比率）](/business/knowledge-cards/current-ratio/)                             | 短期償債能力的第一道檢查                 | 速動比率、CCC、流動資產品質    |
+| [Debt Ratio（負債比率）](/business/knowledge-cards/debt-ratio/)                                   | 財務槓桿的總量指標                       | 有息負債、權益乘數、利息保障   |
+| [Interest Coverage（利息保障倍數）](/business/knowledge-cards/interest-coverage/)                 | 償付利息的安全邊際                       | 營業利益、谷底年份、違約邊緣   |
+| [Revenue（營業收入）](/business/knowledge-cards/revenue/)                                         | 本業銷貨的認列金額、所有獲利率的分母     | top line、業外收入、認列時點   |
+| [Operating Expense（營業費用）](/business/knowledge-cards/operating-expense/)                     | 本業期間費用、跟營業成本是兩回事         | 研發、銷管、費用率、營業槓桿   |
+| [Cash and Cash Equivalents（現金及約當現金）](/business/knowledge-cards/cash-and-equivalents/)    | 最流動的資產、看相對量非絕對量           | 流動性、受限制現金、危機承受力 |
+| [DuPont Analysis（杜邦拆解）](/business/knowledge-cards/dupont-analysis/)                         | 把 ROE 拆成三個乘數辨識驅動來源          | 淨利率、資產週轉率、權益乘數   |
+| [Revenue Recognition（收入認列）](/business/knowledge-cards/revenue-recognition/)                 | 營收認在哪一期的時點判準                 | 控制權移轉、截止測試、IFRS 15  |
+| [Going Concern（繼續經營假設）](/business/knowledge-cards/going-concern/)                         | 企業能否撐過未來 12 個月                 | 審計意見、供應商信用、流動性   |
+| [Channel Stuffing（通路填塞）](/business/knowledge-cards/channel-stuffing/)                       | 期末壓貨灌水營收的手法                   | 退貨率、side letter、截止測試  |
+| [Cut-off Testing（截止測試）](/business/knowledge-cards/cut-off-testing/)                         | 交易是否認在正確期間                     | 結帳日窗口、控制權移轉證據     |
 
 ## 執行知識
 

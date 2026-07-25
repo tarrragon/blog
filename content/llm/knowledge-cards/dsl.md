@@ -6,11 +6,11 @@ weight: 1
 tags: ["llm", "knowledge-cards", "structured-output", "dsl"]
 ---
 
-DSL（Domain-Specific Language）的核心概念是「**為特定領域設計的小語言**」。它不像通用程式語言要解所有問題，而是把某個領域的可用操作、資料形狀與限制收斂成小而可解析的語法，讓人類、LLM 與程式都能用同一種中介表示溝通。
+DSL（Domain-Specific Language）的核心概念是「**為特定領域設計的小語言**」。它不像通用程式語言要解所有問題，而是把某個領域的可用操作、資料形狀與限制收斂成小而可解析的 [grammar](/llm/knowledge-cards/grammar/)，讓人類、LLM 與程式都能用同一種中介表示溝通。
 
 ## 概念位置
 
-在 LLM 應用裡，DSL 常出現在自然語言與程式執行之間。模型把使用者意圖轉成 DSL，應用再 parse、validate、authorize、execute；這比直接讓模型輸出任意程式碼更容易控管，也比純自然語言更容易自動化。
+在 LLM 應用裡，DSL 常出現在自然語言與程式執行之間。模型把使用者意圖轉成 DSL，應用再 parse、validate、authorize、execute；這跟 [function calling](/llm/knowledge-cards/function-calling/) 同樣是把模型意圖收斂成可執行形式，但 DSL 比直接讓模型輸出任意程式碼更容易控管，也比純自然語言更容易自動化。
 
 ```text
 使用者：「找出高優先、尚未處理的 billing ticket」

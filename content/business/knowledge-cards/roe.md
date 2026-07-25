@@ -1,12 +1,12 @@
 ---
 title: "ROE"
 date: 2026-07-19
-description: "從股東視角衡量資本報酬時，用 ROE 區分「產品賺錢」與「股東賺錢」、用杜邦拆解辨識報酬率由哪支槓桿驅動"
+description: "從股東視角衡量資本報酬時，用 ROE 區分「產品賺錢」與「股東賺錢」、用[杜邦拆解](/business/knowledge-cards/dupont-analysis/)辨識報酬率由哪支槓桿驅動"
 weight: 70
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---
 
-ROE（Return on Equity，股東權益報酬率）＝ 稅後淨利 ÷ 股東權益——股東每投入一元權益資本，一年賺回多少。毛利率衡量的是產品經濟學（每一單的加價空間），ROE 衡量的是業主經濟學（資本的複利速度）。兩者可以脫鉤：毛利率 13.69% 的壓榨廠靠高週轉做出 20%+ 的 ROE，毛利率 24% 的加工廠可能因為需求萎縮讓 ROE 崩到 3%。
+ROE（Return on Equity，股東權益報酬率）＝ 稅後淨利 ÷ 股東權益——股東每投入一元權益資本，一年賺回多少。[毛利率](/business/knowledge-cards/gross-margin/)衡量的是產品經濟學（每一單的加價空間），ROE 衡量的是業主經濟學（資本的複利速度）。兩者可以脫鉤：毛利率 13.69% 的壓榨廠靠高週轉做出 20%+ 的 ROE，毛利率 24% 的加工廠可能因為需求萎縮讓 ROE 崩到 3%。
 
 ## 概念位置
 

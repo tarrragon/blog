@@ -2,7 +2,7 @@
 title: "外部衝擊如何觸發產業策略轉型：從成本暴漲到競爭格局重塑"
 date: 2026-07-18
 description: "當整個產業遇到原料暴漲、供給中斷或需求崩跌時，判斷哪些公司能撐過去、哪些會被淘汰、衝擊後的競爭格局如何重塑的分析框架"
-weight: 19
+weight: 22
 tags: ["business", "case-analysis", "financial-analysis", "industry-analysis", "supply-chain"]
 ---
 
@@ -78,7 +78,7 @@ commodity 業者遇到成本衝擊時的因應策略通常收斂到三條路徑�
 
 ### 即時驗證：卜蜂的雙波衝擊
 
-本文寫作期間（2026 年中），台灣雞肉加工業的卜蜂正在經歷一個雙波衝擊案例：2025 年第一波衝擊（烏俄戰爭推升飼料成本）的利好（豬瘟推升豬價）正在回吐，同時第二波衝擊（美以伊戰爭推升油價和運費）疊加上來。2025 年 EPS 10.39 元（歷史新高）→ 2026 Q1 EPS 1.26 元（年減 47%）→ 股價從高點回檔近三成。
+本文寫作期間（2026 年中），台灣雞肉加工業的卜蜂正在經歷一個雙波衝擊案例：2025 年第一波衝擊（烏俄戰爭推升飼料成本）的利好（豬瘟推升豬價）正在回吐，同時第二波衝擊（美以伊戰爭推升油價和運費）疊加上來。2025 年 [EPS](/business/knowledge-cards/eps/) 10.39 元（歷史新高）→ 2026 Q1 EPS 1.26 元（年減 47%）→ 股價從高點回檔近三成。
 
 市場正在驗證本文的核心判讀：外部利好帶來的獲利提升是一次性的，結構性改善（加工品、垂直整合）能降低波動幅度但無法消除波動。如果投資人在 2025 年 Q4（EPS 創高）時用本文的框架拆解獲利來源，辨識出豬價利好屬於「供給面衝擊（可逆）」而非「結構性改善」，就會用[正常化 EPS](/business/knowledge-cards/normalized-earnings/) 7-8 元而非報表 EPS 10.39 元做估值基準。正常化 EPS 的概念從回測分析變成了即時的投資判讀工具（詳見[雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)的卜蜂拆解段）。
 
@@ -96,4 +96,4 @@ commodity 業者遇到成本衝擊時的因應策略通常收斂到三條路徑�
 
 這份清單跟系列其他工具的使用順序：先用[企業評估定位](/business/financial-analysis/company-stage-model-evaluation/)判斷公司類型 → 用本篇判斷該產業是否正在經歷外部衝擊以及公司的因應方向 → 用[產業基準分析](/business/financial-analysis/industry-benchmarking/)追蹤轉型進度 → 用[企業財報判讀](/business/financial-analysis/sme-listed-company-financial-analysis/)的三表工具做深入分析。當一間公司的毛利率突然跳升或暴跌時，先問「是不是整個產業都在經歷同一場衝擊」——如果是，個別公司的表現要放在產業衝擊的脈絡下判讀，而非當作獨立的經營事件。
 
-本框架的延伸應用：[雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)展示了飼料成本衝擊如何觸發三家公司的不同逃逸路徑；[大成規模分散策略](/business/financial-analysis/dachan-scale-diversification-strategy/)追蹤規模型公司的 capex 轉型進度；[進口冰磚奶經濟學](/business/financial-analysis/dairy-import-economics/)分析了零關稅政策衝擊對國產乳業的結構性替代效應；[全球特殊油脂三廠比較](/business/financial-analysis/global-specialty-fats-comparison/)展示了可可危機對同產業不同位置的公司產生相反影響——賣替代品的 AAK 受益、用可可的不二製油受壓。
+本框架的延伸應用：[雞肉供應鏈三廠比較](/business/financial-analysis/chicken-supply-chain-comparison/)展示了飼料成本衝擊如何觸發三家公司的不同逃逸路徑；[大成規模分散策略](/business/financial-analysis/case-studies/dachan-scale-diversification-strategy/)追蹤規模型公司的 capex 轉型進度；[進口冰磚奶經濟學](/business/financial-analysis/dairy-import-economics/)分析了零關稅政策衝擊對國產乳業的結構性替代效應；[全球特殊油脂三廠比較](/business/financial-analysis/global-specialty-fats-comparison/)展示了可可危機對同產業不同位置的公司產生相反影響——賣替代品的 AAK 受益、用可可的不二製油受壓。

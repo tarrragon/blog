@@ -6,7 +6,7 @@ weight: 46
 tags: ["infra", "knowledge-cards"]
 ---
 
-Prometheus 是開源的 metrics 收集與告警系統。它用 pull 模式運作——定期從被監控的 target（應用程式、伺服器、資料庫）的 HTTP endpoint 拉取指標，存進本地的時序資料庫。
+Prometheus 是開源的 metrics 收集與告警系統。它用 pull 模式運作——定期從被監控的 target（應用程式、伺服器、資料庫）的 HTTP endpoint 拉取指標，存進本地的時序資料庫，之後交給 [Grafana](/infra/knowledge-cards/grafana/) 做視覺化查詢。
 
 ## 概念位置
 

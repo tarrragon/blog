@@ -2,7 +2,7 @@
 title: "台灣油品加工產業比較：五廠策略矩陣、雙寡頭壓榨與食安後的版圖重整"
 date: 2026-07-19
 description: "評估台灣油品加工產業的競爭格局時，用價值鏈位置×產品差異化的策略矩陣比較五家上市公司和一個合資平台，追蹤食安事件後的結構性版圖變化"
-weight: 34
+weight: 45
 tags: ["business", "financial-analysis", "supply-chain", "commodity", "industry-comparison"]
 ---
 
@@ -10,14 +10,14 @@ tags: ["business", "financial-analysis", "supply-chain", "commodity", "industry-
 
 ## 策略矩陣：價值鏈位置 × 產品差異化
 
-| 公司     | 代號   | 價值鏈位置   | 核心事業           | 毛利率 | EPS   | 差異化程度        |
-| -------- | ------ | ------------ | ------------------ | ------ | ----- | ----------------- |
-| 大統益   | 1232   | 上游壓榨     | 黃豆→粗油+豆粕     | 13.69% | 8.24  | 極低（commodity） |
-| 中聯油脂 | 未上市 | 上游壓榨     | 同上（代工平台）   | —      | —     | 極低              |
-| 泰山     | 1218   | 品牌+多角化  | 油+飲料+食品       | 17.14% | 1.59  | 中（飲料拉升）    |
-| 福壽     | 1219   | 品牌+飼料    | 油+飼料+肉品       | ~9.4%  | 0.45  | 低                |
-| 福懋油   | 1225   | 品牌+麵粉    | 油+麵粉+飼料+畜牧  | 9.30%  | 1.62  | 低                |
-| 南僑     | 1702   | 中游特殊加工 | 烘焙油脂（配方型） | ~24%   | 1.12* | 高（配方壁壘）    |
+| 公司     | 代號   | 價值鏈位置   | 核心事業           | 毛利率 | [EPS](/business/knowledge-cards/eps/) | 差異化程度        |
+| -------- | ------ | ------------ | ------------------ | ------ | ------------------------------------- | ----------------- |
+| 大統益   | 1232   | 上游壓榨     | 黃豆→粗油+豆粕     | 13.69% | 8.24                                  | 極低（commodity） |
+| 中聯油脂 | 未上市 | 上游壓榨     | 同上（代工平台）   | —      | —                                     | 極低              |
+| 泰山     | 1218   | 品牌+多角化  | 油+飲料+食品       | 17.14% | 1.59                                  | 中（飲料拉升）    |
+| 福壽     | 1219   | 品牌+飼料    | 油+飼料+肉品       | ~9.4%  | 0.45                                  | 低                |
+| 福懋油   | 1225   | 品牌+麵粉    | 油+麵粉+飼料+畜牧  | 9.30%  | 1.62                                  | 低                |
+| 南僑     | 1702   | 中游特殊加工 | 烘焙油脂（配方型） | ~24%   | 1.12*                                 | 高（配方壁壘）    |
 
 *南僑 EPS 含一次性項目，正常化 EPS 需另算。
 
@@ -75,6 +75,6 @@ tags: ["business", "financial-analysis", "supply-chain", "commodity", "industry-
 | 評估食安/品質集中風險 | 上游出事時，影響面覆蓋多少市場？                     | 中聯 = 40%；大統益 = 60%——任一出事都是系統衝擊           |
 | 追蹤事件後版圖        | 危機後誰受益、誰受損、結構是否永久改變？             | 大統益和南僑受益；中聯三股東受損；寡占結構不變但份額移轉 |
 
-本系列的個別公司深度分析：[大統益](/business/financial-analysis/ttet-crushing-leader/)、[中聯三股東](/business/financial-analysis/chunlian-trio-shared-risk/)、[南僑](/business/financial-analysis/namchow-specialty-fats/)。壓榨經濟學的基礎見[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。跟雞肉供應鏈的連結：大成持有大統益 9.6%，大統益的豆粕是大成飼料的核心原料——詳見[大成規模分散策略](/business/financial-analysis/dachan-scale-diversification-strategy/)。
+本系列的個別公司深度分析：[大統益](/business/financial-analysis/case-studies/ttet-crushing-leader/)、[中聯三股東](/business/financial-analysis/case-studies/chunlian-trio-shared-risk/)、[南僑](/business/financial-analysis/case-studies/namchow-specialty-fats/)。壓榨經濟學的基礎見[黃豆壓榨的聯產品經濟學](/business/financial-analysis/soybean-crush-economics/)。跟雞肉供應鏈的連結：大成持有大統益 9.6%，大統益的豆粕是大成飼料的核心原料——詳見[大成規模分散策略](/business/financial-analysis/case-studies/dachan-scale-diversification-strategy/)。
 
 資料來源：大統益（1232）、泰山（1218）、福壽（1219）、福懋油（1225）、南僑（1702）2025 年度財報及 Goodinfo 經營績效、食藥署 2026/7 公告、今周刊/自由時報中聯油脂報導。

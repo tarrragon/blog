@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "architecture", "math"]
 ---
 
-Activation function（激活函數）的核心概念是「在 linear layer（矩陣乘法）之間插入的非線性函數」。沒有 activation function、整個多層神經網路會塌縮成單一個線性變換、表達能力跟單層 linear 一樣弱。activation function 讓深度網路真的「深」起來。
+Activation function（激活函數）的核心概念是「在 linear layer（[矩陣乘法](/llm/knowledge-cards/matrix-multiplication/)）之間插入的非線性函數」。沒有 activation function、整個多層神經網路會塌縮成單一個線性變換、表達能力跟單層 linear 一樣弱。activation function 讓深度網路真的「深」起來。
 
 ## 概念位置
 

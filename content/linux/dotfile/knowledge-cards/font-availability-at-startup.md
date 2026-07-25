@@ -6,9 +6,13 @@ weight: 14
 tags: ["dotfile", "font", "fontconfig", "knowledge-cards"]
 ---
 
-一個 process 能用哪些字型，是在它**啟動的當下**由 fontconfig（Linux 上統一管理字型搜尋與匹配的底層服務）決定並載入記憶體的。之後往系統裝新字型，不會回頭改變已經在跑的 process——它手上那份字型清單是啟動時的快照。「裝了字型卻還是豆腐」多數時候指向的是這個時序問題，而非安裝本身失敗。
+一個 process 能用哪些字型，是在它**啟動的當下**由 [fontconfig](/linux/dotfile/knowledge-cards/fontconfig/)（Linux 上統一管理字型搜尋與匹配的底層服務）決定並載入記憶體的。之後往系統裝新字型，不會回頭改變已經在跑的 process——它手上那份字型清單是啟動時的快照。「裝了字型卻還是豆腐」多數時候指向的是這個時序問題，而非安裝本身失敗。
 
 這個機制發生在 fontconfig + process 記憶體層，跟顯示協議無關——Wayland 和 X11 下的行為相同。
+
+## 概念位置
+
+這張卡是 [fontconfig](/linux/dotfile/knowledge-cards/fontconfig/) 的時序延伸：fontconfig 負責字型怎麼被搜尋與 fallback，這裡處理的是「process 何時看得到新裝的字」這個獨立的時間軸問題。受影響的長駐元件常由 [Compositor](/linux/dotfile/knowledge-cards/compositor/) 的 `exec-once` 拉起，這也是為什麼重新登入能一次讓整批元件吃到新字型。
 
 ## 同一時刻、兩種查詢結果
 

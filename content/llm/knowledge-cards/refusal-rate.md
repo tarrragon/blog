@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "safety", "monitoring"]
 ---
 
-Refusal rate 的核心概念是「LLM 拒絕回答 prompt 的比例」。LLM 在訓練階段（特別是 RLHF）會學到「對特定類型的請求說『我不能幫忙這個』」、production 服務通常會監控這個比例作為對齊強度跟異常行為偵測的訊號之一。
+Refusal rate 的核心概念是「LLM 拒絕回答 prompt 的比例」。LLM 在訓練階段（特別是 [RLHF](/llm/knowledge-cards/rlhf/)）會學到「對特定類型的請求說『我不能幫忙這個』」、production 服務通常會監控這個比例作為對齊強度跟異常行為偵測的訊號之一。
 
 ## 概念位置
 

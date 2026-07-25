@@ -1,5 +1,5 @@
 ---
-title: "真實後端驗證測試"
+title: "Real-Backend Verification Test（真實後端驗證測試）"
 date: 2026-07-17
 description: "對共用測試環境常駐斷言後端業務行為的測試；紅、綠、跳過各有語意，承接假後端固化行為的漂移警報"
 weight: 7

@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "training", "alignment"]
 ---
 
-RLHF（Reinforcement Learning from Human Feedback、人類反饋強化學習）的核心概念是「**讓人類比較兩個模型回答的好壞、訓一個 reward model 學會這個偏好、再用 RL 把 LLM 推往 reward model 給高分的方向**」。RLHF 是 LLM 對話品質飛躍的關鍵（從 GPT-3 base 到 ChatGPT 的差別主要是 RLHF）。
+RLHF（Reinforcement Learning from Human Feedback、人類反饋強化學習）的核心概念是「**在 [SFT](/llm/knowledge-cards/sft/) 之後、讓人類比較兩個模型回答的好壞、訓一個 reward model 學會這個偏好、再用 RL 把 LLM 推往 reward model 給高分的方向**」。RLHF 是 LLM 對話品質飛躍的關鍵（從 GPT-3 base 到 ChatGPT 的差別主要是 RLHF）。
 
 ## 概念位置
 
@@ -33,7 +33,7 @@ Step 3：用 PPO 等 RL 演算法 fine-tune LLM
 
 1. **三個模型同時運作**：policy（LLM）、reward model、reference model（SFT 後 frozen 那份）、訓練時記憶體吃緊。
 2. **Reward hacking**：模型可能找到 reward model 的弱點、生成「reward 高但實質爛」的輸出（如冗長 boilerplate）。
-3. **訓練不穩**：PPO 對 hyperparameter 敏感、需要小心調 β（KL 約束強度）、learning rate 等。
+3. **訓練不穩**：PPO 對 hyperparameter 敏感、需要小心調 β（KL 約束強度）、[learning rate](/llm/knowledge-cards/learning-rate/) 等。
 
 ## 設計責任
 

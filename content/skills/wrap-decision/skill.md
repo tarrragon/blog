@@ -1,9 +1,16 @@
 ---
-title: "WRAP 決策框架 — SKILL 入口"
+title: "WRAP 決策框架 Skill"
 date: 2026-05-04
-description: "WRAP 決策框架的 SKILL 入口：錨點確認、資料充足度閘門、擴增選項、現實檢驗、機會成本、行前預想與絆腳索。"
-tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
+description: "WRAP 決策框架 — 認知偏誤防護、選項擴增與資料充足度閘門。用於防護自動駕駛、假選項、證據不足下的倉促決策。Use when: 被困住或連續失敗 2+、準備宣告限制性結論前、偏離核心目標、根因分析"
+tags: ["skill", "writing", "methodology"]
+name: wrap-decision
+license: MIT
+metadata:
+  version: 2.5.0
+  category: writing-methodology
 ---
+
+## WRAP 決策框架 Skill
 
 **框架結構**：錨點確認 → Step 0（資料充足度閘門）→ W（擴增選項）→ R（現實檢驗）→ A（拉開距離）→ P（準備好犯錯）→ 絆腳索（持續監控）
 
@@ -166,13 +173,13 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 | **方案關聯性檢查**                | 任兩方案是否可退化為同一方案或既有機制？                         | 可退化 → 實質選項數量要重算（假多樣性）                                                    |
 | 反向思考（Consider the Opposite） | 如果我相信的正好相反，會怎樣？真正該問的問題是什麼？             | 能提出有力相反論述 → 重新定義問題後從 W 重跑                                               |
 
-> 反向思考（Consider the Opposite）是最容易被跳過但最重要的檢查 — 也是防止「在錯誤問題框架下擴增選項」的最後防線。詳細操作與範例見 [detailed-techniques](/skills/wrap-decision/detailed-techniques/)。
+> 反向思考（Consider the Opposite）是最容易被跳過但最重要的檢查 — 也是防止「在錯誤問題框架下擴增選項」的最後防線。詳細操作與範例見 `references/detailed-techniques.md`。
 
 > **方案性質三類涵蓋**與**方案關聯性檢查**用來抵抗 LLM 的工具化偏誤（toolification bias）：LLM 在不少情境傾向把「新增工具」當答案，較少提「改造既有機制」與「零工具」選項。即使補上多個方案，若方案間強關聯也可能退化為 1 個實質選項。
 
 ### 假設層級多元性（真正的擴增選項，Widen）
 
-#### 選項必須在「假設根因」層級多元，而不只是「實作手段」層級多元
+選項必須在「假設根因」層級多元，而不只是「實作手段」層級多元。
 
 擴增選項（Widen）列出多個方案 ≠ 真正擴增了選項空間。若所有方案都接受同一個未驗證的根因假設，仍是偽擴增選項（pseudo-Widen） — 方案脫靶率會集中分佈（要嘛全中、要嘛全脫）。
 
@@ -191,7 +198,7 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 | 3    | 精準化 (Precise)   | 從前兩輪提煉精準關鍵字深挖 |
 | 4    | 反向驗證 (Inverse) | 對結論找反例 / 批評 / 反駁 |
 
-進入下一輪訊號（至少 3 條）、邊界條件、實證統計詳見 [iterative-research](/skills/wrap-decision/iterative-research/)。
+進入下一輪訊號（至少 3 條）、邊界條件、實證統計詳見 `references/iterative-research.md`。
 
 ---
 
@@ -262,7 +269,7 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 
 至少涵蓋 4-8 種反向方向類型（學術批評 / 反方論點 / 失效情境 / 統計限制 / 文化限制 / 家長主義（paternalism）警示 / 取捨揭露（trade-off） / 自我參照悖論）。
 
-詳見 [iterative-research](/skills/wrap-decision/iterative-research/) 「反向驗證實踐範本」章節。
+詳見 `references/iterative-research.md` 「反向驗證實踐範本」章節。
 
 ---
 
@@ -294,7 +301,7 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 
 **違反防護的代價**：A 階段方案比較表面周詳，實際全指向同類型解法；或單步最優化但總步驟盲，把多步繞路誤判為簡單方案。
 
-> 完整 4 問操作細節見 [detailed-techniques](/skills/wrap-decision/detailed-techniques/) 「工具選擇檢查（Tool selection check）詳細技巧」章節。
+> 完整 4 問操作細節見 `references/detailed-techniques.md` 「工具選擇檢查（Tool selection check）詳細技巧」章節。
 
 ### 機會成本顯性化
 
@@ -347,7 +354,7 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 - [ ] 此規則的設計者立場是否被透明化？
 - [ ] 此規則是否預留「用戶可覆蓋」機制？
 
-詳見 [anti-paternalism](/skills/wrap-decision/anti-paternalism/)（含規則設計中的家長主義（paternalism）悖論案例）。
+詳見 `references/anti-paternalism.md`（含規則設計中的家長主義（paternalism）悖論案例）。
 
 ---
 
@@ -379,7 +386,7 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 
 > Voss 自陳：「one person's influence is another person's manipulation」——影響力的本質取決於是否被透明化。推薦標記（Recommended）已被學術界（DarkBench）列為 LLM 暗黑模式（dark pattern）。
 
-詳見 [anti-paternalism](/skills/wrap-decision/anti-paternalism/) 「自我暴露偏好實踐」章節。
+詳見 `references/anti-paternalism.md` 「自我暴露偏好實踐」章節。
 
 ---
 
@@ -389,16 +396,17 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 
 ### 絆腳索類型
 
-| 類型           | 觸發條件                       | 動作                 |
-| -------------- | ------------------------------ | -------------------- |
-| **期限型**     | 非核心問題花 > 15 分鐘         | 建任務延後，回到核心 |
-| **失敗型**     | 同一修改連續 2 次失敗          | 搜尋社群或換方向     |
-| **偏離型**     | 連續 2+ 個任務不在當前迭代目標 | 回到核心任務         |
-| **回退型**     | 已回退過一次                   | 完全停止，換方向     |
-| **嘗試型**     | 同一問題修改嘗試 2 次          | 向外求解             |
-| **資料充足度** | 進入決策諮詢前                 | 強制 Step 0 閘門     |
+| 類型               | 觸發條件                                                             | 動作                                                                |
+| ------------------ | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **期限型**         | 非核心問題花 > 15 分鐘                                               | 建任務延後，回到核心                                                |
+| **失敗型**         | 同一修改連續 2 次失敗                                                | 搜尋社群或換方向                                                    |
+| **偏離型**         | 連續 2+ 個任務不在當前迭代目標                                       | 回到核心任務                                                        |
+| **回退型**         | 已回退過一次                                                         | 完全停止，換方向                                                    |
+| **嘗試型**         | 同一問題修改嘗試 2 次                                                | 向外求解                                                            |
+| **資料充足度**     | 進入決策諮詢前                                                       | 強制 Step 0 閘門                                                    |
+| **基礎設施累積型** | escalation 連續 2+ 次、每次加一層工具 / 檔案 / 流程、anchor 未曾明說 | 亮 anchor 一次（為誰 / 為什麼 / 對不對外）、按它重定 apparatus 份量 |
 
-> 完整類型（含正面絆腳索 — 捕捉意外成功）、命名效應、切割機制見 [tripwire-catalog](/skills/wrap-decision/tripwire-catalog/)。
+> 完整類型（含正面絆腳索 — 捕捉意外成功）、命名效應、切割機制見 `references/tripwire-catalog.md`。
 
 ### 階段間切割點
 
@@ -428,27 +436,28 @@ WRAP 每階段之間是切割點 — 強迫問「是否繼續」：
 
 ### 通用（可跨專案複用）
 
-| 文件                                                              | 內容                                                                                                                                                         |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [detailed-techniques](/skills/wrap-decision/detailed-techniques/) | 每階段的詳細技巧、範例、書中引用（DVD 實驗、努金調解、季辛吉陷阱、Gary Klein 方法）                                                                          |
-| [pm-checklist](/skills/wrap-decision/pm-checklist/)               | 快速模式 + 完整模式檢查清單 + 決策品質自測                                                                                                                   |
-| [tripwire-catalog](/skills/wrap-decision/tripwire-catalog/)       | 絆腳索類型完整目錄、自動駕駛失敗模式、切割機制、命名效應                                                                                                     |
-| [iterative-research](/skills/wrap-decision/iterative-research/)   | 多輪迭代查詢方法論（4 輪結構：發散 → 具體化 → 精準化 → 反向驗證 + 進入下一輪訊號 + 反向驗證 8 種類型範本）                                                   |
-| [anti-paternalism](/skills/wrap-decision/anti-paternalism/)       | 悖論識別檢查清單 + 自我暴露偏好實踐（善意家長主義（benevolent paternalism）4 條件測試、自我參照悖論識別、推薦標記（Recommended）是暗黑模式（dark pattern）） |
-| [claim-quick-wrap](/skills/wrap-decision/claim-quick-wrap/)       | 任務啟動的簡化三問（W/A/P 1-2 分鐘版）、快速模式進一步壓縮版                                                                                                 |
+| 文件                                | 內容                                                                                                                                                         |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `references/detailed-techniques.md` | 每階段的詳細技巧、範例、書中引用（DVD 實驗、努金調解、季辛吉陷阱、Gary Klein 方法）                                                                          |
+| `references/pm-checklist.md`        | 快速模式 + 完整模式檢查清單 + 決策品質自測                                                                                                                   |
+| `references/tripwire-catalog.md`    | 絆腳索類型完整目錄、自動駕駛失敗模式、切割機制、命名效應                                                                                                     |
+| `references/iterative-research.md`  | 多輪迭代查詢方法論（4 輪結構：發散 → 具體化 → 精準化 → 反向驗證 + 進入下一輪訊號 + 反向驗證 8 種類型範本）                                                   |
+| `references/anti-paternalism.md`    | 悖論識別檢查清單 + 自我暴露偏好實踐（善意家長主義（benevolent paternalism）4 條件測試、自我參照悖論識別、推薦標記（Recommended）是暗黑模式（dark pattern）） |
+| `references/claim-quick-wrap.md`    | 任務啟動的簡化三問（W/A/P 1-2 分鐘版）、快速模式進一步壓縮版                                                                                                 |
 
 ### 專案整合（落地層）
 
 需要把 WRAP 接到具體掛鉤（Hook）/ CLI / 任務系統時讀。各檔為「通用語意 → 專案實作」的對應範本，複用到新專案時各自改寫。
 
-| 文件                                                                | 內容                                                                    |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| [integration-patterns](/skills/wrap-decision/integration-patterns/) | 落地層入口與路由：依賴方向（core → pattern → 專案）、8 個整合範本的索引 |
+| 文件                                        | 內容                                                                    |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| `references/integration-patterns/README.md` | 落地層入口與路由：依賴方向（core → pattern → 專案）、8 個整合範本的索引 |
 
 ---
 
-**Last Updated**: 2026-04-28
-**Version**: 2.4.0 — 多輪 review 修正：參考文件表補 integration-patterns 路由 + claim-quick-wrap（原 orphan）；觸發條件補「不可逆 / 時間壓力」「利害關係人衝突」+ 定義「快速+」模式；階段標題去除錯亂編號（0. / 5.）；LLM 工具化偏誤改條件式語氣；安全係數標經驗值。
+**Last Updated**: 2026-06-01
+**Version**: 2.5.0 — 絆腳索新增「基礎設施累積型」：任務經連續 escalation 每層加工具 / 檔案 / 流程而 anchor 未明說時、亮 anchor 一次按它重定 apparatus 份量（Anchor Check 在多輪協作 escalation 的具體化、防 apparatus 份量被流程動能而非 anchor 決定）；對應 report 卡 #237、從一個 skill 需求滾成對外模組 + 三輪審查 + 兩卡的事故抽出。
+**Version**: 2.4.0 — 多輪 review 修正：參考文件表補 integration-patterns/README 路由 + claim-quick-wrap（原 orphan）；觸發條件補「不可逆 / 時間壓力」「利害關係人衝突」+ 定義「快速+」模式；階段標題去除錯亂編號（0. / 5.）；LLM 工具化偏誤改條件式語氣；安全係數標經驗值。
 **Version**: 2.3.0 — 觸發條件新增 4 項決策路徑層干擾（CLI 自動駕駛（autopilot） / 既有結論錨定（Anchor） / 草率改規則 / 多步驟成功率盲點）；既有觸發條件不變動（向後相容）。
 **Version**: 2.2.0 — 觸發條件新增反思深度質疑（reflection_depth_challenge）說明，含與被困住語意的差異。
 **Version**: 2.1.0 — 新增多輪迭代查詢方法論（W）+ 反向驗證範本（R）+ 悖論識別檢查清單（A）+ 自我暴露偏好實踐（P）+ 2 個新 references（iterative-research / anti-paternalism）。

@@ -10,7 +10,7 @@ Agent loop 的核心概念是「LLM 在 plan → act → observe → plan 的循
 
 ## 概念位置
 
-典型的 agent loop 流程：
+典型的 [agent](/llm/knowledge-cards/agent/) loop 流程：
 
 ```text
 循環開始：

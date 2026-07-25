@@ -1,12 +1,16 @@
 ---
-title: "TCP 連線與漫遊"
+title: "TCP Connection Roaming（連線與漫遊）"
 date: 2026-07-08
 description: "遠端連線一換網路（Wi-Fi 切行動網路、休眠喚醒、換 IP）就斷、想知道為什麼 SSH 扛不住而 mosh 撐得住時回來讀"
 weight: 50
 tags: ["linux", "remote", "network", "ssh", "mosh", "knowledge-cards"]
 ---
 
-一條 TCP 連線由 4-tuple 唯一識別：來源 IP、來源 port、目的 IP、目的 port。這四個值任一改變，這條連線對作業系統核心而言就是另一條——原連線收到的封包對應不回去、直接被丟棄。這決定了一個硬限制：建在 TCP 之上的協定無法漫遊，客戶端換了網路（換 IP）就等於換了 4-tuple，連線斷掉。SSH 繼承這個限制、mosh 用另一種傳輸繞過它，是遠端連線工具選型的底層分野。
+一條 TCP 連線由 4-tuple 唯一識別：來源 IP、來源 port、目的 IP、目的 port。這四個值任一改變，這條連線對作業系統核心而言就是另一條——原連線收到的封包對應不回去、直接被丟棄。這決定了一個硬限制：建在 TCP 之上的協定無法漫遊，客戶端換了網路（換 IP）就等於換了 4-tuple，連線斷掉。SSH 繼承這個限制、[mosh](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/) 用另一種傳輸繞過它，是遠端連線工具選型的底層分野。
+
+## 概念位置
+
+代價與手感另見 [mosh 本地回顯預測](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/)。
 
 ## 連線由 4-tuple 識別
 
@@ -18,7 +22,7 @@ SSH 是跑在 TCP 上的應用層協定，它的加密狀態與 session 都綁�
 
 ## mosh 怎麼繞過
 
-mosh 改用 UDP，並在應用層自己維護一個跟客戶端 IP 無關的 session：每個 session 有一個獨立的識別碼與金鑰，端點 IP 變了，客戶端用同一把 session 金鑰把封包送到伺服器、伺服器認得這個 session 就接續下去，不需要一條「不變的 TCP 連線」。這就是 mosh 能漫遊的根本原因——它把「連線識別」從核心的 4-tuple 搬到應用層自管的 session ID。代價與手感另見 [mosh 本地回顯預測](/linux/dotfile/knowledge-cards/mosh-local-echo-prediction/)。
+mosh 改用 UDP，並在應用層自己維護一個跟客戶端 IP 無關的 session：每個 session 有一個獨立的識別碼與金鑰，端點 IP 變了，客戶端用同一把 session 金鑰把封包送到伺服器、伺服器認得這個 session 就接續下去，不需要一條「不變的 TCP 連線」。這就是 mosh 能漫遊的根本原因——它把「連線識別」從核心的 4-tuple 搬到應用層自管的 session ID。
 
 ## 判讀訊號
 

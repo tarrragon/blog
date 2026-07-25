@@ -6,11 +6,11 @@ tags: ["CD", "app", "signing", "knowledge-card"]
 weight: 14
 ---
 
-App Signing 的核心概念是「簽章憑證即發布能力」。它決定 artifact 是否被平台接受與使用者裝置信任。
+App Signing 的核心概念是「簽章憑證即發布能力」。它決定 [artifact](/ci/knowledge-cards/artifact/) 是否被平台接受與使用者裝置信任。
 
 ## 概念位置
 
-App Signing 位在 app build 與 release channel 之間，涉及 certificate、provisioning profile、keystore 與 secret 管理。
+App Signing 位在 app build 與 [release channel](/ci/knowledge-cards/release-channel/) 之間，涉及 certificate、provisioning profile、keystore 與 secret 管理。
 
 ## 可觀察訊號
 

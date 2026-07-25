@@ -109,6 +109,7 @@ subnet 這一層還有另一道防火牆 — network ACL（NACL），它與 secu
 | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
 | [網路地基 — VPC、subnet 分層與 security group 設計](/infra/03-network-foundation/vpc-subnet-security-group/) | VPC CIDR 規劃、public / private subnet 切分、route table 與 NAT 的可用性成本取捨、security group 最小開放設計與 NACL 定位 |
 | [Security Group 稽核與清理](/infra/03-network-foundation/security-group-audit-cleanup/)                      | 0.0.0.0/0 偵測、未使用 SG 識別、依賴檢查、清理工作流、自動化治理                                                          |
+| [流量入口層 — 請求怎麼從使用者到達應用](/infra/03-network-foundation/traffic-entry-layer/)                   | DNS、負載平衡（L4/L7）、reverse proxy、應用的責任鏈，TLS 終結位置、動靜分離、單機 nginx 與雲端 ALB 的選擇條件             |
 
 ## 跨分類引用
 

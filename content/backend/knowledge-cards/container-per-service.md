@@ -1,5 +1,5 @@
 ---
-title: "一容器一職責"
+title: "Container-per-Service（一容器一職責）"
 date: 2026-07-06
 description: "第一次發現一個 web app 要開好幾個 container、不懂為什麼不塞一個大 container、或不確定什麼該獨立成一個 container 時回來讀 — 一容器一職責的理由與邊界"
 weight: 129

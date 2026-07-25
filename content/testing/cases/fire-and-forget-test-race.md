@@ -6,7 +6,7 @@ weight: 8
 tags: ["testing", "case-study", "flaky", "async", "race-condition"]
 ---
 
-flaky 名單上反覆出現的一類：單獨執行綠燈、排進整批就紅燈的測試。這類 flaky 的根因：**被測編排本身是 fire-and-forget（呼叫後不等待完成），[流程測試](/testing/knowledge-cards/flow-test/)的斷言在與它賽跑**。競態本身也是資訊——它揭露了產品程式的時序特性；下文示範怎麼把這份資訊留下來。
+flaky 名單上反覆出現的一類：單獨執行綠燈、排進整批就紅燈的測試。這類 flaky 的根因：**被測編排本身是 [fire-and-forget](/testing/knowledge-cards/fire-and-forget-orchestration/)（呼叫後不等待完成），[流程測試](/testing/knowledge-cards/flow-test/)的斷言在與它賽跑**。競態本身也是資訊——它揭露了產品程式的時序特性；下文示範怎麼把這份資訊留下來。
 
 ## 觀察
 

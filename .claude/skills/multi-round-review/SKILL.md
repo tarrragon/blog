@@ -48,6 +48,7 @@ metadata:
     - 自評誇飾：`rg "教科書級|堪稱|可謂|完美|經典|範本級|大師級|漂亮地|優雅地|最佳實踐|best practice" <files>` — 品質 verdict 頂替技術理由
     - 必然性框架：`rg "天生|與生俱來|本質就是|本來就是|必然|唯一|註定|理所當然" <files>` — 把設計選擇講成自然法則（物理 / 法律 / 數學事實除外）
     - 泛用詞濫用：`rg "坑|東西|搞|弄|處理一下|情況" <files>` — 同一個泛用詞蓋過不同具體情境時、依情境換精確詞（意外 / 陷阱 / 出問題 / 發生狀況）；命中密集且各指不同事才違規、真泛指 / 引號引用合規；「坑」繁中少用
+    - 用詞搭配錯位：`rg "說完的話|背後.{0,8}的話|想告訴|潛台詞|訊號很直接|訊號.{0,4}很直接" <files>` — 抽象概念（角度 / 框架 / 訊號 / 數字）配上不貼合屬性的謂語：擬人化錯配（角度不會「說」、數字不會「想告訴」）與形容詞錯配（訊號的可辨識度是「清晰 / 明確」不是「直接」）；無穩定關鍵詞、grep 只抓已知形態、真防線是異源冷讀，見 compositional-writing 的 `word-choice-fits-concept-attributes`
   - **命中是候選、不是判決**：grep 命中後仍要一個語意判定步驟——這個命中是「建立核心概念的違規」（段首 / 小節開場）、還是「合規的反例對照 / hook / 真必然」。reviewer 容易把違規合理化成「可接受對照」放行（偵測成功、判定失敗）；判定用「概念位置」、不用「有沒有對照意味」。回報「字句層 clean」前先確認 clean 不是判定放水。**register 違規（否定起手 / 概念前置 / 喊話 / 誇飾）有判定上限**：它的偵測可機械化（grep 抓得到句型）、但判定要讀懂「讀起來對不對」、無法 regex 化；而且 LLM reviewer 跟作者共享文體直覺 ——「不是 X、而是 Y」這種 LLM 高頻自產的定義句型全員讀起來「自然」、同源自審對這類有結構上限、加再多輪都跨不過。register 層的真防線是文體異源視角：external human cold-read、或 prompt 明確採「挑剔否定起手 / 概念後置」對抗姿態的 reviewer。同源 reviewer 回報的「register 層 clean」不可當真、要標「未經異源抽查」。但要分清子集：「重點優先 / 否定起手」（不是 X 而是 Y、與其 X 不如 Y）有可操作判準 —— 逐句問「核心概念第一次正面出現在句首、還是被擠到『而是』之後」、強制執行這個機械步驟就抓大部分、異源只補殘餘；真正主要靠異源的是喊話 / 誇飾這類無單一重點位置的 register。別把「有可操作判準卻沒執行」（execution gap）誤當「判定不可機械化」（design 上限）。
   - 詳細 grep keyword bank 跟 frame 路由見 [`compositional-writing` skill](../compositional-writing/SKILL.md)。
 - **B: 案例 / fact-check audit** — 案例引用準確性、編號 mis-cite、跨章節引用；**教學層 case 引用的敘事重量**（per [教學層引用剝離身分與規模](references/principles/teaching-cite-strips-identity-and-scale.md)）——教學文引用 case 的段落逐句掃事件帳目（票數 / 案例數 / 版本號）、規模鋪陳、產品身分與領域功能詞、這些的住址在 case 記錄原文；finding 的建議修法先給「刪」、刪不動才泛化成無身分載體（「一個專案」「一筆資料」）、通用化帳目（113 張 → 上百張）是半吊子修法——前情提要仍在、只是變模糊；判定用「拿掉後論證還成立嗎」的機械測試、不用「規模感幫論證」的直覺（作者與同源 reviewer 共享此直覺、準確性審查攔不到——數字是準確的、只是不該在教學層）
@@ -86,7 +87,7 @@ metadata:
 修完 Round 2 後、改用「meta / 知識淵博讀者 / 跨章影響」frame：
 
 - **A: Self-application sweep** — 用本 batch 寫的 report 卡 / 規範 self-grep 同 batch 稿件、catch 規範化後仍犯的同義變體（per [#147 規範化跟自審](references/principles/rule-codification-self-audit.md)）
-- **B: Steelman / Reality test** — 知識淵博讀者視角、檢查判讀訊號 / 取捨表 enumeration 是否窮盡、有無稻草人、數字 / 閾值有無源頭
+- **B: Steelman / Reality test** — 知識淵博讀者視角、檢查判讀訊號 / 取捨表 enumeration 是否窮盡、有無稻草人、數字 / 閾值有無源頭。**承重論點的 steelman 要用兩次**：claim-driven batch（承重論點錯了下游要大改的——方法論主張、核心假設、跨稿件共用 spec）的那個論點，該在動筆前先 steelman 當生產閘門，這輪 Round 3 steelman 是第二次（全面收尾）；只在 Round 3 才挑戰承重論點＝太晚，錯誤已寫進 N 個檔、跨檔回改。承重論點常是「只有一組 X」「所有 Y 都 Z」的全稱 / 唯一性宣稱，反證靠逐條枚舉候選反例、別把「還沒找到反例」當「不存在反例」。同源自審對自己的地基有盲區、承重論點的挑戰交對抗 / 異源 reviewer
 - **C: Outbound impact audit** — 既有章節應該但沒引用新章節的反向引用、knowledge card 缺口、跨章節整合段缺位
 - **D: Persona coverage（outside-in）** — 列出目標讀者可能進入這套教材的情境（新專案從零開始、接手別人的環境、救火後正規化、被要求稽核合規……），檢查每個情境是否有對應的入口文章。inside-out review 在既有結構內找問題，persona coverage 質疑結構本身的覆蓋範圍
 - **E: Search landing 粒度（outside-in）** — 列出讀者可能搜尋的 5-10 個具體問題（如「怎麼輪替 AWS access key」「FTP 站台怎麼做自動備份」），檢查每個問題能不能落在一篇聚焦的文章上、還是被埋在綜述的某個段落裡。跟 B′ cold-read 的差別：B′ 看「落地後讀不讀得懂」、search landing 看「能不能落地到足夠聚焦的內容」
@@ -188,6 +189,7 @@ register 違規（重點後置、喊話、誇飾）的同源自審有上限（�
 
 ---
 
+**Version**: 1.13.0 — Round 3-B steelman 補「承重論點的 steelman 要用兩次」：claim-driven batch 的承重論點（錯了下游要大改的核心宣稱）該在動筆前先 steelman 當生產閘門、Round 3 steelman 是第二次收尾；只在 Round 3 才挑戰承重論點＝太晚、錯誤已寫進 N 檔跨檔回改；承重論點常是全稱 / 唯一性宣稱、反證靠枚舉反例；挑戰交對抗 / 異源（同源對地基有盲區）。從神經多樣性方法論「衝突只有一組」錯論點寫進 6 檔、Round 3 才抓的事故抽出（對應 report 卡 #236）。
 **Version**: 1.12.0 — Round 1-F dogfood 回饋：加第六維度「數據時效標示」（文章老化後未標時效的財務數字會誤導）+ N/A 處理規則（N/A 要附理由、跟「未檢查」不同）；dogfood 實測 5 篇 x 6 維度 = 30 項檢查全通過，驗證框架的判讀覆蓋度到位。D4 關係人交易的範圍邊界（加盟食材加價是否算 D4 還是 D1/D3）標記為觀察、目前被其他維度覆蓋
 **Version**: 1.11.0 — Round 1 新增 F reviewer「商業分析嚴謹度 audit」（conditional opt-in、商業/財務分析內容專用）：五維度檢查（分母與口徑 / 結構性 vs 一次性拆解 / 基準適用性 / 關係人交易 / 正常化 EPS）、同步 invoke `business-analysis` skill 的 7 步驟作為 checklist；「跟既有 skill 的關係」段加 business-analysis 垂直協同（跟 compositional-writing 相同模式）；從商業分析 18 篇教學系列的多輪審查實證抽出（卜蜂獲利拆解的分析→預測→驗證循環確認了五維度的判讀價值）
 **Version**: 1.10.1 — Round 1-A 對讀者喊話 grep 補裸第二人稱（`你的|你在|你把`）：原 `你天天|你會|你可能` 只抓「你 + 明顯動詞」的祈使 / 預測句型、抓不到裸『你的』『你在』；同步 compositional-writing v0.29.0；register 類 grep 非窮舉、真防線是異源冷讀
@@ -198,6 +200,7 @@ register 違規（重點後置、喊話、誇飾）的同源自審有上限（�
 **Version**: 1.6.0 — Round 2-A cadence + 反模式段補「均勻修法複製新模具」：為破舊 cadence 模具立的單一生成端規則（如「段首一律目標詞先行」）均勻套整批會收斂出更密的新模具、同源自審在「已修」錯覺下看不到、修法要輪替 framing + 修法產物進整組跨卡異源重掃；新增 `uniform-remediation-recreates-homogenization` principle 卡
 **Version**: 1.5.1 — changelog cross-reference 修正：1.5.0 條同步對象版號筆誤 v0.11.0 改 v0.24.0、1.4.1 條的 v0.18.0 依 compositional-writing changelog 重編（0.18.0 重號整理）改 v0.23.0
 **Version**: 1.5.0 — Round 1-A 地區用語 grep 加慣用語層（`rg "拍腦袋|拍板|靠譜|給力|接地氣|一波|死磕|躺平|內卷"`）：慣用語直譯是開放集合、同源 reviewer 對這層有結構盲區、回報「clean」不可當真、需目標地區讀者冷讀；同步 compositional-writing v0.24.0 的 `regional-idioms-evade-keyword-bank` principle
+**Version**: 1.4.2 — Round 1-A 字句層 bank 加「用詞搭配錯位」grep（`rg "說完的話|背後.{0,8}的話|想告訴|潛台詞|訊號很直接"`）：抽象概念配不貼合屬性的謂語（擬人化 + 形容詞誤搭）、無穩定關鍵詞真防線是異源冷讀；同步 compositional-writing v0.32.0 的新 frame
 **Version**: 1.4.1 — Round 1-A 字句層 bank 加「泛用詞濫用」grep（`rg "坑|東西|搞|弄|處理一下|情況"`）：同一泛用詞蓋不同具體情境、依情境換精確詞、「坑」繁中少用；同步 compositional-writing v0.23.0 的新 frame
 **Version**: 1.4.0 — 三輪硬底線：「三大基本原則」升為「四大」、新增第四條「至少三輪」；Round N 判讀段改為 Round 3 結束後才開始；evidence 補 dotfile 31 篇 43 finding 實證
 **Version**: 1.3.0 — Round 2-B reader-persona 加「術語知識卡覆蓋」維度（常識是相對於讀者背景的）

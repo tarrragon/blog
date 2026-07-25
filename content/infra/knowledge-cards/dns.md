@@ -6,11 +6,11 @@ weight: 28
 tags: ["infra", "knowledge-cards"]
 ---
 
-DNS（Domain Name System）是把人類可讀的域名（`example.com`）轉成機器可達的 IP 位址（`93.184.216.34`）的分散式查詢系統。瀏覽器輸入網址後，作業系統先查本地快取、再逐層查詢 DNS server，最終拿到 IP 才能建立連線。
+DNS（Domain Name System）是把人類可讀的域名（`example.com`）轉成機器可達的 IP 位址（`93.184.216.34`）的分散式查詢系統。瀏覽器輸入網址後，作業系統先查本地快取、再逐層查詢 DNS server，最終拿到 IP 才能建立連線。DNS 也是 [SSL/TLS](/infra/knowledge-cards/ssl-tls/) 憑證網域驗證依賴的機制之一。
 
 ## 概念位置
 
-DNS 在 infra 裡扮演「服務的門牌」角色。平台遷移、環境切換、TLS 憑證驗證都經過 DNS。ALB 或 CDN 前面通常掛一層 DNS record 作為穩定入口——IP 會隨資源重建而變，DNS 名稱不變。
+DNS 在 infra 裡扮演「服務的門牌」角色。平台遷移、環境切換、TLS 憑證驗證都經過 DNS。[ALB](/infra/knowledge-cards/alb/) 或 CDN 前面通常掛一層 DNS record 作為穩定入口——IP 會隨資源重建而變，DNS 名稱不變。
 
 ## 常見的記錄類型
 
@@ -36,3 +36,4 @@ DNS 設定要決定：誰管這個域名的 zone（Route 53 / Cloudflare / 域�
 
 - [ALB](/infra/knowledge-cards/alb/) — DNS 記錄通常指向 ALB 作為流量入口
 - [SSL/TLS](/infra/knowledge-cards/ssl-tls/) — TLS 憑證的 DNS 驗證依賴 DNS record
+- [流量入口層](/infra/03-network-foundation/traffic-entry-layer/) — DNS 作為責任鏈第一段（門牌、只在連線前查一次、不承載流量）的定位

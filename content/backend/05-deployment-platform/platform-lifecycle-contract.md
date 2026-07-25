@@ -81,7 +81,7 @@ liveness 的工程價值在於捕捉服務自己無法修復的狀態。把 live
 3. **啟動期間的容量缺口**：重啟到 readiness 通過之間，整體服務容量降低。
 4. **thundering herd 風險**：多實例同時被 liveness 判定失敗並重啟時，同時重建連線、同時搶資源、下游壓力瞬間放大。
 
-對應 [5.C7 Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露「基礎平台元件升級若缺乏分批治理、會形成全域風險放大器」。以下基於通用工程知識展開：Istio 等 service mesh 升級期間的 sidecar 重啟可觸發大量服務的 liveness 暫時失敗，若 liveness 太敏感會放大成全域 restart storm。升級期的 liveness 閾值應比穩態更寬鬆，或在升級批次中暫時加大 liveness failure threshold。
+對應 [5.C7 Airbnb Istio 升級治理](/backend/05-deployment-platform/cases/airbnb-istio-upgrade-governance/)：揭露「基礎平台元件升級若缺乏分批治理、會形成全域風險放大器」。以下基於通用工程知識展開：Istio 等 service mesh 升級期間的 sidecar 重啟可觸發大量服務的 liveness 暫時失敗，若 liveness 太敏感會放大成全域 [restart storm](/backend/knowledge-cards/thundering-herd/)。升級期的 liveness 閾值應比穩態更寬鬆，或在升級批次中暫時加大 liveness failure threshold。
 
 ## Shutdown 與 Drain
 

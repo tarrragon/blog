@@ -6,13 +6,13 @@ weight: 10
 tags: ["infra", "knowledge-cards", "cloudtrail", "audit"]
 ---
 
-CloudTrail 的核心職責是把 AWS 帳號內每一個 API 呼叫記錄成可查詢的稽核日誌 — 哪個身分、在什麼時間、對哪個資源、呼叫了哪個 API、結果是成功還是拒絕。它是事故排查和合規稽核的事實來源。
+CloudTrail 的核心職責是把 AWS 帳號內每一個 API 呼叫記錄成可查詢的稽核日誌 — 哪個身分、在什麼時間、對哪個資源、呼叫了哪個 API、結果是成功還是拒絕。它是事故排查和合規稽核的事實來源，記錄的「身分」對應 [IAM](/infra/knowledge-cards/iam/) 裡的 identity。
 
 ## 概念位置
 
 CloudTrail 在 infra 治理裡的角色是「發生了什麼」的最後防線。人工變更日誌記錄「為什麼改」，CloudTrail 記錄「改了什麼」— 兩者一起才能從事故回推到可回退的操作。
 
-CloudTrail 預設記錄 management event（建立、修改、刪除資源的 API 呼叫）並保留 90 天可查閱。要長期保存或記錄 data event（S3 物件存取、Lambda 呼叫等更細粒度的操作），需要建立 trail 並指定 S3 bucket 儲存。
+CloudTrail 預設記錄 management event（建立、修改、刪除資源的 API 呼叫）並保留 90 天可查閱。要長期保存或記錄 data event（S3 物件存取、Lambda 呼叫等更細粒度的操作），需要建立 trail 並指定 [S3](/infra/knowledge-cards/s3/) bucket 儲存。
 
 ## 可觀察訊號
 

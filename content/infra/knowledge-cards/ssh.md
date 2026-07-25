@@ -6,11 +6,11 @@ weight: 30
 tags: ["infra", "knowledge-cards"]
 ---
 
-SSH（Secure Shell）是加密的遠端 shell 連線協定，讓操作者在本地終端機執行遠端伺服器上的指令。連線建立後，操作者看到的是遠端伺服器的命令列——可以跑任何該伺服器上安裝的 CLI 工具。
+SSH（Secure Shell）是加密的遠端 shell 連線協定，讓操作者在本地終端機執行遠端伺服器上的指令。連線建立後，操作者看到的是遠端伺服器的命令列——可以跑任何該伺服器上安裝的 CLI 工具。SSH 建立安全連線所依賴的公私鑰機制，跟 [SSL/TLS](/infra/knowledge-cards/ssl-tls/) 的憑證加密同屬非對稱加密的應用。
 
 ## 概念位置
 
-SSH 在接手維運的情境裡是一條關鍵分界線：有 SSH 存取就能用 `mysqldump`、`git`、`systemctl` 等 CLI 工具操作伺服器；沒有 SSH 就只能用 FTP 傳檔案、用 phpMyAdmin 管資料庫、用 cPanel 改設定。兩種情境的操作流程和可用工具完全不同。
+SSH 在接手維運的情境裡是一條關鍵分界線：有 SSH 存取就能用 `mysqldump`、`git`、`systemctl` 等 CLI 工具操作伺服器；沒有 SSH 就只能用 [FTP](/infra/knowledge-cards/ftp/) 傳檔案、用 phpMyAdmin 管資料庫、用 cPanel 改設定。兩種情境的操作流程和可用工具完全不同。
 
 ## 可觀察訊號
 

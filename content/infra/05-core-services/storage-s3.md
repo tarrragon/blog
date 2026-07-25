@@ -6,7 +6,7 @@ weight: 3
 tags: ["infra", "iac", "s3", "storage"]
 ---
 
-S3 bucket 描述的是物件儲存的存在、命名、加密設定、版本控制與存取政策。bucket 本身沒有重建代價意義上的狀態問題 — 困難在它「裝的東西」。空 bucket 可隨時重建，裝了正式資料的 bucket 與 RDS 一樣不可隨意 destroy。把安全設定與生命週期規則寫進 IaC，讓這些防線成為可版本控制、可審查的程式碼，而非散落在 Console 的隱性設定。
+[S3](/infra/knowledge-cards/s3/) bucket 描述的是物件儲存的存在、命名、加密設定、版本控制與存取政策。bucket 本身沒有重建代價意義上的狀態問題 — 困難在它「裝的東西」。空 bucket 可隨時重建，裝了正式資料的 bucket 與 RDS 一樣不可隨意 destroy。把安全設定與生命週期規則寫進 IaC，讓這些防線成為可版本控制、可審查的程式碼，而非散落在 Console 的隱性設定。
 
 ## bucket 的四道安全防線
 

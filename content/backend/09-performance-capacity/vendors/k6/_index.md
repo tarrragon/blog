@@ -32,7 +32,7 @@ Peak readiness rehearsal 適合用 k6 表達階段式負載。活動前可以用
 
 判斷 k6 deployment 是否健康、最少看四件事：
 
-- **Scenario design**：用 `executor: ramping-arrival-rate` 而非 `constant-vus`、把 RPS / arrival rate 設成 first-class、VU 由 engine 自動算；scenario 描述跟 [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/) 的 endpoint mix、think time、cohort 對得起來
+- **Scenario design**：用 `executor: ramping-arrival-rate` 而非 `constant-vus`、把 RPS / arrival rate 設成 first-class、VU 由 engine 自動算；scenario 描述跟 [9.2 Workload Modeling](/backend/09-performance-capacity/workload-modeling/) 的 endpoint mix、think time、[cohort](/backend/knowledge-cards/cohort/) 對得起來
 - **Threshold gate**：`thresholds` 區塊明確寫 p95 / p99 / error rate / throughput、CI fail 條件清楚、不靠人眼看 summary 判斷 pass / fail
 - **Output 進 observability stack**：`--out experimental-prometheus-rw` 把 metric remote-write 到 Prometheus、Grafana dashboard 接 k6 同 datasource、結果跟 target service 的 saturation metric 在同一張圖上看
 - **k6 Cloud vs CLI 邊界**：本地 CLI 跑 baseline + CI、Grafana Cloud k6 跑跨 region / 大規模 / 結果 retention；不要把 CI gate 放 Cloud（成本 + 時間不對）、也不要本地單機硬跑 100k VU（runner 自身瓶頸假象）

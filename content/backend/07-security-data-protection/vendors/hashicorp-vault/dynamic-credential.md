@@ -124,7 +124,7 @@ Application 結束時 revoke 是 *credential hygiene 的最後一道閘門* — 
 
 **修法**：
 
-1. Vault HA cluster + auto-unseal（KMS / HSM auto-unseal）避免人工 unseal 鏈
+1. Vault HA cluster + auto-unseal（KMS / [HSM](/backend/knowledge-cards/hsm/) auto-unseal）避免人工 unseal 鏈
 2. Application 加 retry-with-backoff、Vault 短暫 unavailable 時不要立刻 crash
 3. Lease 設長一點（default 4h、max 48h）給 unseal 流程留時間
 

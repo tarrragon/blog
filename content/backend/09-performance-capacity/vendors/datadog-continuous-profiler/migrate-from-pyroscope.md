@@ -5,7 +5,7 @@ description: "Pyroscope → Datadog Continuous Profiler 是 Type C operational h
 tags: ["backend", "performance", "capacity", "vendor", "migration", "type-c", "operational-hybrid"]
 ---
 
-Continuous profiling deployment 的 lifecycle 有五階段：**install**（agent / SDK 部署） → **instrument**（service / env / version tag 注入） → **ingest**（profile sample 進 backend store） → **query**（flame graph / diff / explore） → **cost**（storage retention / billing）。Pyroscope 跟 Datadog Continuous Profiler 在這五階段的 *ops ownership 分布完全不同*：
+Continuous profiling deployment 的 lifecycle 有五階段：**install**（agent / SDK 部署） → **instrument**（service / env / version tag 注入） → **ingest**（profile sample 進 backend store） → **query**（[flame graph](/backend/knowledge-cards/flame-graph/) / diff / explore） → **cost**（storage retention / billing）。Pyroscope 跟 Datadog Continuous Profiler 在這五階段的 *ops ownership 分布完全不同*：
 
 | 階段       | Pyroscope（self-host）                                       | Datadog Continuous Profiler                          |
 | ---------- | ------------------------------------------------------------ | ---------------------------------------------------- |

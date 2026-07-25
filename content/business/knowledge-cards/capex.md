@@ -6,7 +6,7 @@ weight: 68
 tags: ["business", "knowledge-cards", "financial-analysis"]
 ---
 
-Capex（Capital Expenditure，資本支出）是企業為了未來營收而投入的長期資產支出——建廠、買設備、併購、系統建置。跟日常營業費用（OpEx）的差別：OpEx 當期消耗完畢，capex 的效益延伸多年但需要折舊攤銷。
+Capex（Capital Expenditure，資本支出）是企業為了未來營收而投入的長期資產支出——建廠、買設備、併購、系統建置。跟日常營業費用（OpEx）的差別：OpEx 當期消耗完畢，capex 的效益延伸多年但需要[折舊攤銷](/business/knowledge-cards/depreciation-amortization/)。
 
 ## 概念位置
 
@@ -16,7 +16,7 @@ Capex 是追蹤企業策略意圖最直接的財報工具——管理層的法�
 
 追蹤 capex 的方法：法說會的「在建工程 / 新廠進度」段揭露投入方向；資產負債表的「不動產廠房設備」年增量反映已完成的投資；現金流量表的「投資活動」段顯示當年支出金額。
 
-大成近三年 capex 累計約 100 億（年均 20-30 億），方向從傳統飼料往水產飼料（高附加價值）、食品加工（即食備餐）、美國併購（海外市場）移動——capex 方向的轉移比毛利率數字更早反映策略轉型。詳見[大成規模分散策略](/business/financial-analysis/dachan-scale-diversification-strategy/)。
+大成近三年 capex 累計約 100 億（年均 20-30 億），方向從傳統飼料往水產飼料（高附加價值）、食品加工（即食備餐）、美國併購（海外市場）移動——capex 方向的轉移比毛利率數字更早反映策略轉型。詳見[大成規模分散策略](/business/financial-analysis/case-studies/dachan-scale-diversification-strategy/)。
 
 ## 邊界
 

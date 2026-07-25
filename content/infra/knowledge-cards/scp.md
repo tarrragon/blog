@@ -6,7 +6,7 @@ weight: 16
 tags: ["infra", "knowledge-cards"]
 ---
 
-Service Control Policy（SCP）是 AWS Organizations 裡套用在 OU 或帳號上的權限上限。SCP 不授予權限——它設定一個天花板，限制該範圍內的 IAM 能做什麼。即使帳號內有 `AdministratorAccess` 的 IAM role，SCP deny 的操作仍然被擋下。
+Service Control Policy（SCP）是 AWS Organizations 裡套用在 OU 或帳號上的權限上限。SCP 不授予權限——它設定一個天花板，限制該範圍內的 IAM 能做什麼。即使帳號內有 `AdministratorAccess` 的 [IAM](/infra/knowledge-cards/iam/) role，SCP deny 的操作仍然被擋下。
 
 ## 概念位置
 

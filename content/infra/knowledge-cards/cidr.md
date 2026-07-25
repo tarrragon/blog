@@ -10,7 +10,7 @@ CIDR（Classless Inter-Domain Routing）用前綴長度表示一段 IP 地址範
 
 ## 概念位置
 
-CIDR 是 VPC 規劃的起點決策。建立 VPC 時指定的 CIDR 區塊決定了這個 VPC 能容納多少 subnet 和多少資源。這個決策在建立後難以修改——事後擴張意味著追加 secondary CIDR，而追加的網段在 routing 與服務相容性上有限制。
+CIDR 是 [VPC](/infra/knowledge-cards/vpc/) 規劃的起點決策。建立 VPC 時指定的 CIDR 區塊決定了這個 VPC 能容納多少 subnet 和多少資源。這個決策在建立後難以修改——事後擴張意味著追加 secondary CIDR，而追加的網段在 routing 與服務相容性上有限制。
 
 在 infra 系列中，CIDR 規劃出現在[模組三：網路地基](/infra/03-network-foundation/vpc-subnet-security-group/)的 VPC 段落。Terraform 的 `cidrsubnet` 函式可以從 VPC 的 CIDR 自動切出 subnet 的子網段，避免手動計算。
 

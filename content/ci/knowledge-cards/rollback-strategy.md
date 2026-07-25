@@ -6,11 +6,11 @@ tags: ["CD", "rollback", "knowledge-card"]
 weight: 8
 ---
 
-Rollback Strategy 的核心概念是「在異常發布後縮小影響範圍並回到可用狀態」。它屬於部署設計的一部分，需要在事故前完成。
+Rollback Strategy 的核心概念是「在異常發布後縮小影響範圍並回到可用狀態」，是 [Rollout Strategy](/ci/knowledge-cards/rollout-strategy/) 失敗時的對應動作。它屬於部署設計的一部分，需要在事故前完成。
 
 ## 概念位置
 
-Rollback Strategy 位在 deploy、rollout 與 incident handling 之間，通常要和資料遷移、feature flag 與流量切換一起設計。
+Rollback Strategy 位在 deploy、rollout 與 incident handling 之間，通常要和[資料遷移](/ci/knowledge-cards/migration/)、feature flag 與流量切換一起設計。
 
 ## 可觀察訊號
 

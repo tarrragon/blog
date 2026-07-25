@@ -18,7 +18,7 @@ Parca 是 Polar Signals 主導的 OSS continuous profiling、特色是 *eBPF-bas
 
 - **eBPF agent deploy**：Parca Agent 走 DaemonSet 跑在每個 node、需要 kernel ≥ 4.18（CO-RE / BTF）、`SYS_ADMIN` 或 `PERF_EVENT` capability、host PID namespace。受管 Kubernetes（GKE / EKS / AKS）的 worker node 是否允許這個權限是第一個判讀點
 - **Parca server scrape**：server 跟 agent 走 pull-based、Prometheus-style ServiceMonitor / scrape config、label 跟 metrics 同模型（namespace / pod / container / node）。scrape interval、retention、storage backend（FrostDB 內建 / object storage）要明確
-- **pprof query**：profile 以 pprof format 存、Parca UI 提供 flame graph 與 compare view、也可 export pprof file 給 `go tool pprof` 或其他既有工具離線分析
+- **pprof query**：profile 以 pprof format 存、Parca UI 提供 [flame graph](/backend/knowledge-cards/flame-graph/) 與 compare view、也可 export pprof file 給 `go tool pprof` 或其他既有工具離線分析
 - **Grafana integration**：Parca 提供 datasource plugin、profile 可以跟 metrics / log / trace 在 Grafana 同一頁 correlate、配 [Pyroscope](/backend/09-performance-capacity/vendors/pyroscope/) 或 Tempo 形成 observability 對齊
 
 四件事任一缺失、就是 profiling control plane 還沒上線的待補項目。

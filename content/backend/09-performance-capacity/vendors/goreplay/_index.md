@@ -29,7 +29,7 @@ GoReplay 適合在 synthetic workload 可信度偏低時使用。當 [9.2 Worklo
 
 架構遷移驗證適合 GoReplay。DB、cache、search、API gateway 或 framework 重寫時，可以把真實 HTTP traffic replay 到新路徑，觀察 latency、error、resource saturation 與 response diff。
 
-Long-tail workload 校正適合 GoReplay。Synthetic scenario 通常覆蓋主路徑，GoReplay 可以揭露少見 endpoint、特殊 header、巨大 payload、冷門 tenant 與尖峰 cohort。
+Long-tail workload 校正適合 GoReplay。Synthetic scenario 通常覆蓋主路徑，GoReplay 可以揭露少見 endpoint、特殊 header、巨大 payload、冷門 tenant 與尖峰 [cohort](/backend/knowledge-cards/cohort/)。
 
 事故後修補驗證適合 GoReplay。若事故由特定請求形狀觸發，capture sample 可以在修補環境重播，確認 latency、error 或 resource usage 是否回到可接受範圍。
 

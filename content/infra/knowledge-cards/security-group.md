@@ -6,9 +6,9 @@ weight: 6
 tags: ["infra", "knowledge-cards", "security-group", "network"]
 ---
 
-Security group 是掛在資源網卡（ENI）層級的有狀態防火牆，規則描述的是「哪些來源能連到這個資源的哪個埠」。「有狀態」的意思是放行一條入站連線後，對應的回應出站自動允許——規則只需描述入站方向想開放什麼。
+Security group 是掛在資源網卡（ENI）層級的有狀態防火牆，規則描述的是「哪些來源能連到這個資源的哪個埠」。「有狀態」的意思是放行一條入站連線後，對應的回應出站自動允許——規則只需描述入站方向想開放什麼。這面防火牆依附在資源所在的 [VPC](/infra/knowledge-cards/vpc/) 網路邊界之內。
 
-設計原則是最小開放：每條規則只開「這個服務確實需要被誰連的那個埠」。資料庫的 security group 入站只允許來自應用層 security group 的資料庫埠（如 5432），而不是某個 IP 範圍。用 security group 互相引用（source 指向另一個 group 而非 CIDR）讓規則跟著成員身分走、不跟著位址走——應用節點會隨擴縮而換 IP，引用 group 不會因此失效。
+設計原則是最小開放：每條規則只開「這個服務確實需要被誰連的那個埠」。資料庫的 security group 入站只允許來自應用層 security group 的資料庫埠（如 5432），而不是某個 IP 範圍。用 security group 互相引用（source 指向另一個 group 而非 [CIDR](/infra/knowledge-cards/cidr/)）讓規則跟著成員身分走、不跟著位址走——應用節點會隨擴縮而換 IP，引用 group 不會因此失效。
 
 ## 概念位置
 

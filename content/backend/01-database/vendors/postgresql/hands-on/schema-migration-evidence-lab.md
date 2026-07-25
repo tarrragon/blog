@@ -7,7 +7,7 @@ tags: ["backend", "database", "postgresql", "hands-on", "migration"]
 
 PostgreSQL schema migration evidence lab 的核心責任是把 schema change 轉成 release gate 可使用的 evidence。這篇承接 [Online Schema Change](../../online-schema-change/) 與 [Database Migration Playbook](/backend/01-database/database-migration-playbook/)。
 
-本文的驗收標準是：你能設計 expand migration、量測 lock、跑 backfill validation、建立 contract migration 的 fail-forward / rollback 判準。
+本文的驗收標準是：你能設計 expand migration、量測 lock、跑 backfill validation、建立 contract migration 的 [fail-forward](/backend/knowledge-cards/fail-forward/) / rollback 判準。
 
 ## Expand Migration
 

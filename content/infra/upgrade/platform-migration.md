@@ -76,7 +76,7 @@ rsync -avz /local/backup/uploads/ user@vps:/var/www/site/uploads/
 
 ### .htaccess → nginx 設定轉換
 
-共享主機用 Apache 的 `.htaccess`，VPS 如果改用 nginx 需要手動轉換。常見的規則對照：
+共享主機用 Apache 的 `.htaccess`，VPS 如果改用 [nginx](/infra/knowledge-cards/nginx/) 需要手動轉換。常見的規則對照：
 
 ```nginx
 # .htaccess: RewriteEngine On / RewriteRule ^(.*)$ index.php/$1
@@ -236,6 +236,7 @@ aws route53 change-resource-record-sets --hosted-zone-id Z123 --change-batch '{
 ## 跨分類引用
 
 - → [升級的共通操作框架](/infra/upgrade/upgrade-framework/)：評估差異 → 平行環境 → 切換 → 退役的四階段模型
+- → [模組三：流量入口層](/infra/03-network-foundation/traffic-entry-layer/)：DNS 切換、TLS 續期、.htaccess 轉 nginx 在入口責任鏈的定位（本篇的具體指令是那條鏈的操作面）
 - → [接手維運：無 SSH 的 FTP 環境](/infra/takeover/legacy-ftp-no-ssh/)：遷移前的環境盤點方法
 - → [模組一：最小可行 IaC](/infra/01-minimal-iac/)：雲端遷移是導入 IaC 的最佳時機
 - → [模組三：網路地基](/infra/03-network-foundation/)：雲端環境的 VPC / subnet 設計

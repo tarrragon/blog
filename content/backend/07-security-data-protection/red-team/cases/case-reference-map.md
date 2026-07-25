@@ -12,7 +12,7 @@ tags: ["backend", "security", "case-study", "red-team"]
 
 這個主題處理身分入口、憑證信任鏈與高權限操作隔離。優先案例是 [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)、[Twilio 2022](/backend/07-security-data-protection/red-team/cases/identity-access/twilio-2022-social-engineering/)、[MGM 2023](/backend/07-security-data-protection/red-team/cases/identity-access/mgm-2023-identity-lateral-impact/)、[Storm-0558 2023](/backend/07-security-data-protection/red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)。
 
-workflow 檢查點：高風險操作 step-up、異常身分即時隔離、跨租戶權杖異常升級。對應流程章節：[incident-report-to-workflow](/backend/08-incident-response/incident-report-to-workflow/)。
+workflow 檢查點：高風險操作 [step-up](/backend/knowledge-cards/step-up-authentication/)、異常身分即時隔離、跨租戶權杖異常升級。對應流程章節：[incident-report-to-workflow](/backend/08-incident-response/incident-report-to-workflow/)。
 
 ## 第三方整合與 token
 

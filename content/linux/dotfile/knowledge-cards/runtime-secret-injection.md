@@ -1,12 +1,16 @@
 ---
-title: "機密 runtime 注入"
+title: "Runtime Secret Injection（機密注入）"
 date: 2026-07-08
 description: "要決定 token / 金鑰放哪、能不能烤進 image 或提交進（即使私有的）repo 時回來讀"
 weight: 51
 tags: ["linux", "container", "security", "knowledge-cards"]
 ---
 
-機密（token、金鑰、密碼）的正確放法是 runtime 注入：不烤進 image layer、也不提交進 git（連私有 repo 都不），而是存成 host 側的 gitignored 檔或 secrets manager、在 container 啟動時用環境變數 / `--env-file` 注入。理由是 image layer 與 git repo 都不是機密容器——它們會被複製、快取、分享、永久留存，機密一旦進去就跟著到處跑、且很難真正抹除。把機密跟可分享的 artifact（image、Dockerfile、設定）分離，是這條原則的核心。
+機密（token、金鑰、密碼）的正確放法是 runtime 注入：不烤進 image layer、也不提交進 git（連私有 repo 都不），而是存成 host 側的 gitignored 檔或 secrets manager、在 container 啟動時用環境變數 / `--env-file` 注入。理由是 image layer 與 git repo 都不是機密容器——它們會被複製、快取、分享、永久留存，機密一旦進去就跟著到處跑、且很難真正抹除。把機密跟可分享的 artifact（image、Dockerfile、設定）分離，是這條原則的核心。這條分離原則跟 [Docker named volume 掛載點 owner](/linux/dotfile/knowledge-cards/docker-named-volume-ownership/) 同屬 image build 期該決定什麼的範疇。
+
+## 概念位置
+
+私鑰不外流的同源原則見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)。
 
 ## image layer 不是機密
 
@@ -24,7 +28,7 @@ Dockerfile 裡 `ENV TOKEN=...` 或 `COPY` 一個機密檔進去，那顆機密�
 - **機密** → host 側的 gitignored 檔（如 `.env`、權限 `600`）或 secrets manager。
 - **注入** → `docker run --env-file .env`（或 `-e`、Docker secrets）在 runtime 把機密餵進去。
 
-這讓 image 是可重現、可分享的乾淨 artifact、機密則跟著環境走。認證因此也跟 image 生命週期解耦：rebuild image 不影響機密、換機密只改注入的檔。私鑰不外流的同源原則見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)。
+這讓 image 是可重現、可分享的乾淨 artifact、機密則跟著環境走。認證因此也跟 image 生命週期解耦：rebuild image 不影響機密、換機密只改注入的檔。
 
 ## 判讀訊號 / 邊界
 

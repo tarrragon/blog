@@ -132,7 +132,7 @@ ElastiCache 把運維接走，但也劃下新的邊界。cutover 前必盤：
 **修法**：
 
 1. 記憶體 / eviction 調校仍要做（透過 parameter group 設 maxmemory-policy），見 [記憶體調校](/backend/02-cache-redis/vendors/redis/memory-eviction-tuning/)
-2. stampede / 熱 key 的 application 端防護（jitter / singleflight / 兩層 cache）照舊
+2. stampede / 熱 key 的 application 端防護（jitter / [singleflight](/backend/knowledge-cards/singleflight/) / 兩層 cache）照舊
 3. 釐清 managed 的責任邊界——左欄 AWS 管、右欄 application 端管，見 [責任邊界 deep article](/backend/02-cache-redis/vendors/aws-elasticache/managed-responsibility-boundary/)
 4. 遷 managed 是減運維、不是免設計
 

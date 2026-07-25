@@ -6,7 +6,11 @@ weight: 2
 tags: ["dotfile", "stow", "knowledge-cards"]
 ---
 
-GNU Stow 是一個 symlink farm manager，原本設計給軟體安裝用（把 `/usr/local/stow/program/` 下的檔案 symlink 到 `/usr/local/`），在 dotfile 管理場景被借來做「把 repo 裡的配置檔 symlink 到家目錄」。
+GNU Stow 是一個 symlink farm manager，原本設計給軟體安裝用（把 `/usr/local/stow/program/` 下的檔案 symlink 到 `/usr/local/`），在 dotfile 管理場景被借來做「把 repo 裡的配置檔 symlink 到家目錄」——這是後續 [Rice](/linux/dotfile/knowledge-cards/rice/) 客製化能跨機器重現的部署基礎。
+
+## 概念位置
+
+GNU Stow 管的是檔案部署，跟 [AUR](/linux/dotfile/knowledge-cards/aur/) 負責的套件安裝是正交的兩件事——Stow 決定 repo 裡的配置檔怎麼連到家目錄，AUR/pacman 決定程式本身怎麼裝。它落地的內容通常是用 [Lua](/linux/dotfile/knowledge-cards/lua-scripting-language/) 或其他格式寫成的配置檔。
 
 ## 核心規則
 

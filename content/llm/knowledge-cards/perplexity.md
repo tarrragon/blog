@@ -30,7 +30,7 @@ Perplexity 跟 cross-entropy 的關係：
 Perplexity 主要用於：
 
 - **預訓練評估**：在 held-out 語料上算 perplexity、衡量基礎建模能力。
-- **量化品質衡量**：fp16 vs Q4 vs Q3 模型的 perplexity 差異、看量化造成多少品質損失。
+- **量化品質衡量**：fp16 vs Q4 vs Q3 模型的 perplexity 差異、看[量化](/llm/knowledge-cards/quantization/)造成多少品質損失。
 - **領域 benchmark**：在特定領域語料（code、math、医學文獻）上算 perplexity、評估模型對該領域的熟悉度。
 
 ## 設計責任

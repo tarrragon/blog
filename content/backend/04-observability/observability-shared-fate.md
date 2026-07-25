@@ -16,7 +16,7 @@ tags: ["backend", "observability"]
 
 ## 概念定位
 
-觀測共命運失效指觀測系統跟它監控的系統共享失效域、在事故壓力下一起退化 —— 而它退化的時刻，正好是你最需要它的時刻。本章的責任是把「觀測會在事故中失能」當成設計輸入：不是假設儀表板永遠可用、再談怎麼判讀訊號（那是 [4.3](/backend/04-observability/tracing-context/)、[4.6](/backend/04-observability/sli-slo-signal/) 的前提），而是假設它會失能、為那個時刻預先設計 out-of-band（獨立於生產棧的旁路）訊號、優雅降級、以及人在盲飛下的應對。
+觀測共命運失效指觀測系統跟它監控的系統共享失效域、在事故壓力下一起退化 —— 而它退化的時刻，正好是你最需要它的時刻。本章的責任是把「觀測會在事故中失能」當成設計輸入：不是假設儀表板永遠可用、再談怎麼判讀訊號（那是 [4.3](/backend/04-observability/tracing-context/)、[4.6](/backend/04-observability/sli-slo-signal/) 的前提），而是假設它會失能、為那個時刻預先設計 [out-of-band](/backend/knowledge-cards/out-of-band-signal/)（獨立於生產棧的旁路）訊號、優雅降級、以及人在盲飛下的應對。
 
 這章跟 [08 事故處理](/backend/08-incident-response/) 的分工是一條窄線：08 講事故的完整角色、指揮鏈、通訊節奏、客訴 intake；本章只截「觀測工具本身退化 / telemetry 不可信」這個特定約束下、哪些設計仍能運作。判準是「工具可靠時就不需要它、工具退化時它才變關鍵」。
 

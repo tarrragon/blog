@@ -124,11 +124,11 @@ client.get("my-cache", "foo")            # → "bar"
 
 Momento 是較新的 serverless cache、本 blog 的 cache case 庫（Meta / Shopify / Netflix / Cloudflare / Tinder / Tubi / Snap）暫無 Momento production case。以下用 serverless 的角度對照既有 case 提供判讀。
 
-| 案例                                                                                                  | 對 Momento 的對應                                                            |
-| ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)       | serverless 也會 stampede、client-side jitter / singleflight 仍要自己做       |
-| [9.C25 Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) | 「feature 可重算才選 cache」的判斷對 serverless 一樣適用、不可重建走 durable |
-| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)                     | serverless 適合早期 / 不可預測流量、規模穩定後評估 node-based 成本           |
+| 案例                                                                                                  | 對 Momento 的對應                                                                                                |
+| ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)       | serverless 也會 stampede、client-side jitter / [singleflight](/backend/knowledge-cards/singleflight/) 仍要自己做 |
+| [9.C25 Tubi feature store](/backend/09-performance-capacity/cases/tubi-elasticache-ml-feature-store/) | 「feature 可重算才選 cache」的判斷對 serverless 一樣適用、不可重建走 durable                                     |
+| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)                     | serverless 適合早期 / 不可預測流量、規模穩定後評估 node-based 成本                                               |
 
 **待補 Momento-specific 案例**：serverless cache 的成本與彈性 production 個案、從 ElastiCache 遷 Momento 的成本對照、不可預測流量場景的採用分享。
 

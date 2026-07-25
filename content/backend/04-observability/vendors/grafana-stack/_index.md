@@ -103,7 +103,7 @@ Grafana Stack 是 Grafana Labs 提供的 OSS observability 全棧、承擔三個
 子議題：
 
 - CPU / memory / mutex / goroutine profiling
-- Flame graph 視覺化
+- [Flame graph](/backend/knowledge-cards/flame-graph/) 視覺化
 - 跟 Tempo trace 關聯（trace-to-profile）
 - OSS（Grafana 收購）vs Pyroscope OG
 

@@ -56,13 +56,13 @@ CREATE TABLE pending_mutations (
 );
 ```
 
-| 設計點         | 判讀                                      |
-| -------------- | ----------------------------------------- |
-| idempotency    | 每個 mutation 需要穩定 id，避免重送副作用 |
-| ordering       | 同 entity 操作是否必須按順序              |
-| retry          | transient failure、backoff、dead-letter   |
-| compaction     | 已同步 local log 何時清除                 |
-| reconciliation | server / local 差異如何修復               |
+| 設計點                                                          | 判讀                                      |
+| --------------------------------------------------------------- | ----------------------------------------- |
+| idempotency                                                     | 每個 mutation 需要穩定 id，避免重送副作用 |
+| ordering                                                        | 同 entity 操作是否必須按順序              |
+| retry                                                           | transient failure、backoff、dead-letter   |
+| compaction                                                      | 已同步 local log 何時清除                 |
+| [reconciliation](/backend/knowledge-cards/data-reconciliation/) | server / local 差異如何修復               |
 
 這裡和 backend queue 概念相通：pending mutation table 是本機版 durable queue。它需要 [idempotency](/backend/knowledge-cards/idempotency/)、retry 與 replay 思維，而不只是「存一張表」。
 

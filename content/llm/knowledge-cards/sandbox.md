@@ -23,7 +23,7 @@ Sandbox 的核心概念是「把程式跑在權限受限的隔離環境、限制
 
 Sandbox 在 LLM 場景的常見配置：
 
-1. **個人 dev**：用獨立 OS user 跑 MCP server、限制檔案存取到 workspace；或用 Docker。
+1. **個人 dev**：用獨立 OS user 跑 [MCP server](/llm/knowledge-cards/mcp/)、限制檔案存取到 workspace；或用 Docker。
 2. **production agent**：每個 user / session 一個 ephemeral container、跑完就 destroy。
 3. **code execution tool**：把 LLM 生成的 code 丟進 sandbox 跑（如 OpenAI Code Interpreter、Anthropic Claude Code Tool）。
 

@@ -6,7 +6,7 @@ weight: 5
 tags: ["backend", "security", "vendor", "google-cloud-kms", "kms", "encryption", "gcp"]
 ---
 
-Google Cloud KMS 是 GCP 原生的 key management service、把 envelope encryption、asymmetric signing 與 MAC 等密碼運算集中在受控的 key custodian 內、key material 不離保護邊界。應用端只持 *KMS resource name + IAM 權限*、用 `Encrypt` / `Decrypt` / `AsymmetricSign` API 把 plaintext 或 hash 送進 Cloud KMS、key 永遠在 Google 管理的 software 模組或 HSM 內運算完才把結果送回。整個 GCP 的 CMEK（Customer Managed Encryption Key）生態都以 Cloud KMS 為錨點 — GCS bucket、BigQuery dataset、Persistent Disk、Cloud SQL、GKE etcd 都可指定一把 Cloud KMS key 做加密、跟 cloud-native 預設加密（GCP 自管 key、客戶看不到）拉出邊界。
+Google Cloud KMS 是 GCP 原生的 key management service、把 envelope encryption、asymmetric signing 與 MAC 等密碼運算集中在受控的 key custodian 內、key material 不離保護邊界。應用端只持 *KMS resource name + IAM 權限*、用 `Encrypt` / `Decrypt` / `AsymmetricSign` API 把 plaintext 或 hash 送進 Cloud KMS、key 永遠在 Google 管理的 software 模組或 [HSM](/backend/knowledge-cards/hsm/) 內運算完才把結果送回。整個 GCP 的 CMEK（Customer Managed Encryption Key）生態都以 Cloud KMS 為錨點 — GCS bucket、BigQuery dataset、Persistent Disk、Cloud SQL、GKE etcd 都可指定一把 Cloud KMS key 做加密、跟 cloud-native 預設加密（GCP 自管 key、客戶看不到）拉出邊界。
 
 ## 服務定位
 

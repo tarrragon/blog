@@ -6,7 +6,11 @@ weight: 3
 tags: ["dotfile", "docker", "iac", "knowledge-cards"]
 ---
 
-dotfile、Dockerfile、IaC（Terraform）常被當成三個各自獨立的技術，其實是同一個思想在不同尺度的套用——把「環境應該長什麼樣」寫成宣告式、可重現、版控的代碼。差別只在**主體的尺度**：配置的是誰的環境。分清楚這條光譜，就分得清它們的邊界，也答得出「這個 Dockerfile 該放哪個 repo」。
+dotfile、Dockerfile、IaC（Terraform）常被當成三個各自獨立的技術，其實是同一個思想在不同尺度的套用——把「環境應該長什麼樣」寫成宣告式、可重現、版控的代碼。差別只在**主體的尺度**：配置的是誰的環境。分清楚這條光譜，就分得清它們的邊界，也答得出「這個 Dockerfile 該放哪個 repo」。應用尺度往下走會碰到 [Prod Parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/) 這類凍結環境的細節決策。
+
+## 概念位置
+
+這三個尺度只回答「環境該長什麼樣」；「怎麼一步步把狀態做出來」是相鄰但不同的問題，見 [Golden Path / paved road](/linux/dotfile/knowledge-cards/paved-road-golden-path/)。應用尺度要把 image 凍結到多細，見 [Prod Parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/) 與 [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)。
 
 ## 三個尺度
 

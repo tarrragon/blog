@@ -38,7 +38,7 @@ Protocol integration test 的執行成本顯著上升。適合在 CI 的獨立 s
 
 Server 是外部 SaaS（Stripe API、AWS S3、第三方 OAuth provider），無法本地啟動。Test 需要打到 sandbox environment，有速率限制和網路延遲。
 
-在這個成本等級下，consumer-driven contract test 可能比 protocol integration test 更實用 — 用 contract 定義期望的 request/response，在本地驗證 client 端行為，不需要每次都打到外部服務。
+在這個成本等級下，[consumer-driven contract test](/testing/knowledge-cards/consumer-driven-contract-test/) 可能比 protocol integration test 更實用 — 用 contract 定義期望的 request/response，在本地驗證 client 端行為，不需要每次都打到外部服務。
 
 「無法本機啟動」有兩種形態、出路不同。對象是外部 SaaS——不可寫入、帳號與資料都不可控——contract test 是主要出路。對象是自家的共用測試環境——可寫入、有測試帳號——則可以把行為驗證寫成常駐測試、直接對真實後端斷言，見[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)。
 

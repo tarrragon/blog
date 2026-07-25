@@ -89,7 +89,7 @@ application 硬湊 → Redis 原生：
 
 1. 低流量時段切讀、讓命中率平緩爬升
 2. 預熱熱 key（migration 前先把已知熱 key 灌進 Redis）
-3. cache miss 回源加 singleflight / jitter，避免同 key 並發回源（見 [2.9 stampede rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)）
+3. cache miss 回源加 [singleflight](/backend/knowledge-cards/singleflight/) / jitter，避免同 key 並發回源（見 [2.9 stampede rollback](/backend/02-cache-redis/cache-migration-stampede-rollback/)）
 4. 雙寫期先讓 Redis 被寫入 warm 一段時間，再切讀
 
 ### Case 2：把 Memcached 的 multi-get 行為直接搬、效能不如預期

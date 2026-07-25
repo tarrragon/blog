@@ -6,13 +6,13 @@ weight: 11
 tags: ["infra", "knowledge-cards", "ecs", "compute"]
 ---
 
-ECS（Elastic Container Service）的核心職責是把容器映像排程到運算資源上執行，並管理它們的生命週期 — 健康檢查、失敗重啟、滾動更新。它是 AWS 上容器工作負載的預設起點，心智負擔低於 Kubernetes（EKS），但編排彈性也較受限。
+ECS（Elastic Container Service）的核心職責是把容器映像排程到運算資源上執行，並管理它們的生命週期 — 健康檢查、失敗重啟、滾動更新。它是 AWS 上容器工作負載的預設起點，心智負擔低於 Kubernetes（EKS），但編排彈性也較受限。執行單位可以是自管的 EC2 instance，也可以是免運維的 [Fargate](/infra/knowledge-cards/fargate/)。
 
 ## 概念位置
 
 ECS 在核心服務層裡的角色是「應用程式的執行載體」。它跑在 VPC 的 private subnet 裡，用 IAM task role 存取其他 AWS 資源，前面掛 ALB 接收流量。IaC 描述 ECS 時，重點在「接線」（subnet、security group、IAM role、target group）而非容器映像版本 — 映像版本由 CI/CD 在部署期注入。
 
-ECS 的執行模式分 EC2 launch type（自己管運算實例、要管 AMI 更新與 capacity provider）和 Fargate launch type（AWS 代管運算、不需管實例）。Fargate 進一步降低運維面，代價是單位成本較高（同規格約多 20-40%）且不支援 GPU workload。
+ECS 的執行模式分 [EC2](/infra/knowledge-cards/ec2/) launch type（自己管運算實例、要管 AMI 更新與 capacity provider）和 Fargate launch type（AWS 代管運算、不需管實例）。Fargate 進一步降低運維面，代價是單位成本較高（同規格約多 20-40%）且不支援 GPU workload。
 
 ## 可觀察訊號
 

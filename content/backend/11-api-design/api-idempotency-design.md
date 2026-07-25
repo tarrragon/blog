@@ -6,7 +6,7 @@ weight: 8
 tags: ["backend", "api-design", "idempotency"]
 ---
 
-API 層冪等處理一個無法迴避的物理事實：網路請求會在結果不明時中斷、消費者只能重送。POST 這類無冪等承諾的操作（見 [11.3 的 method 承諾段](/backend/11-api-design/resource-modeling-operation-semantics/)）、重送就可能重複執行 — 支付重複扣款、訂單重複建立。冪等鍵機制是對外的補強契約：消費者為每個操作生成唯一 key、服務端保證同 key 的重送拿到同樣結局。本章寫這份契約的條款設計；內部去重的處理實作在 [3.4 consumer 設計](/backend/03-message-queue/consumer-design/)、冪等性質的驗證在 [6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)、本章只收對外語意。
+API 層冪等處理一個無法迴避的物理事實：網路請求會在結果不明時中斷、消費者只能重送。POST 這類無冪等承諾的操作（見 [11.3 的 method 承諾段](/backend/11-api-design/resource-modeling-operation-semantics/)）、重送就可能重複執行 — 支付重複扣款、訂單重複建立。[冪等鍵](/backend/knowledge-cards/idempotency-key/)機制是對外的補強契約：消費者為每個操作生成唯一 key、服務端保證同 key 的重送拿到同樣結局。本章寫這份契約的條款設計；內部去重的處理實作在 [3.4 consumer 設計](/backend/03-message-queue/consumer-design/)、冪等性質的驗證在 [6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)、本章只收對外語意。
 
 ## 冪等是協作、三種失敗點是分析骨架
 

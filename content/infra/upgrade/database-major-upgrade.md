@@ -116,7 +116,7 @@ mysql -h test-instance -e "SELECT COUNT(*) FROM orders; SELECT COUNT(*) FROM use
 
 直接在原實例上升級版本。RDS 的操作是修改 engine version、等待升級完成。
 
-- **停機**：升級期間實例不可用（MySQL 5.7→8.0 在 RDS 上約 10-30 分鐘，視資料量而定）
+- **停機**：升級期間實例不可用（[MySQL](/infra/knowledge-cards/mysql/) 5.7→8.0 在 RDS 上約 10-30 分鐘，視資料量而定）
 - **回退**：從 pre-upgrade snapshot 還原，需要 snapshot restore 時間（分鐘到小時級）
 - **適用**：可接受計畫性停機的環境、資料量不大
 

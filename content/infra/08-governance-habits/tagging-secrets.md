@@ -82,7 +82,7 @@ aws resourcegroupstaggingapi get-resources \
 
 - **AWS Tag Policy**（Organizations 層級）：定義必填 tag 與允許值的枚舉，不符合就阻止建立。適合整個組織統一推行。
 - **OPA / Sentinel**（CI / PR 層級）：在 `terraform plan` 之後、`apply` 之前檢查 plan 輸出，缺 tag 就讓 CI fail。適合跟[模組七：infra 走 PR 流程](/infra/07-infra-as-pr/)整合。
-- **checkov / tfsec 自訂規則**：靜態掃描 HCL，在 code push 時就擋。成本最低但只擋得住 IaC 管理的資源。
+- **[checkov](/infra/knowledge-cards/checkov/) / tfsec 自訂規則**：靜態掃描 HCL，在 code push 時就擋。成本最低但只擋得住 IaC 管理的資源。
 
 三層護欄互補：靜態掃描擋寫 code 時的遺漏、plan 檢查擋執行前的偏差、tag policy 擋繞過 IaC 的手動操作。早期只做一層也有價值，三層都做時覆蓋最完整。定期跑 tag 覆蓋率報告（缺少必填 tag 的資源數 / 總資源數）可以作為治理進度的量化指標。覆蓋率從 40% 到 90% 的趨勢比單次數字更有意義，適合放進月報讓管理層追蹤。
 

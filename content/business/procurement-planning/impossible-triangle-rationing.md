@@ -42,4 +42,4 @@ tags: ["business", "procurement", "strategy"]
 
 ## 下一步
 
-三角裡「價格那一角被原廠鎖住」的機制，展開看 [原廠與代理商規則](/business/procurement-planning/vendor-lifecycle-rules/)。「用錢換交期」的具體選單與划算判準，看 [追料是追可控環節](/business/procurement-planning/expediting-controllable-nodes/)。整個取捨結構背後的成本推導，回到 [斷料與呆料的成本結構](/business/procurement-planning/planning-as-risk-management/)。
+2018 年被動元件缺貨潮是本篇配給機制的產業級實證——日系 EOL 產能缺口、恐慌性重複下單、非價格配給的完整循環，見[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)。三角裡「價格那一角被原廠鎖住」的機制，展開看 [原廠與代理商規則](/business/procurement-planning/vendor-lifecycle-rules/)。「用錢換交期」的具體選單與划算判準，看 [追料是追可控環節](/business/procurement-planning/expediting-controllable-nodes/)。整個取捨結構背後的成本推導，回到 [斷料與呆料的成本結構](/business/procurement-planning/planning-as-risk-management/)。

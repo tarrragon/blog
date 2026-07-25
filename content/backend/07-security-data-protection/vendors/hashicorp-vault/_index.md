@@ -90,16 +90,16 @@ Vault 的核心定位是 *跨雲 + 跨環境 + 跨 secret 形態的單一 secret
 
 ## 何時改走其他服務
 
-| 需求形狀                           | 改走                                                                                                                                          |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| AWS-only + 簡單 static secret      | [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/)                                                      |
-| GCP-only + 已用 Workload Identity  | [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/)                                                  |
-| Azure-only + 已用 Managed Identity | [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/)                                                              |
-| 大型 cryptographic / HSM 需求      | [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/)（FIPS 140-2 Level 3、Vault auto-unseal 後端）                              |
-| 公開憑證 PKI（serving cert）       | [AWS ACM](/backend/07-security-data-protection/vendors/aws-acm/) / [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/) |
-| K8s workload cert 自動化           | [cert-manager](/backend/07-security-data-protection/vendors/cert-manager/)（可用 Vault 當 issuer）                                            |
-| 跨服務 workload identity (SPIFFE)  | [SPIRE](/backend/07-security-data-protection/vendors/spire/)                                                                                  |
-| Secret 全公司 rotation 證據鏈      | [7.5 Credential Rotation Scoped Evidence](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)                          |
+| 需求形狀                                                       | 改走                                                                                                                                          |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| AWS-only + 簡單 static secret                                  | [AWS Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/)                                                      |
+| GCP-only + 已用 Workload Identity                              | [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/)                                                  |
+| Azure-only + 已用 Managed Identity                             | [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/)                                                              |
+| 大型 cryptographic / [HSM](/backend/knowledge-cards/hsm/) 需求 | [CloudHSM](/backend/07-security-data-protection/vendors/cloudhsm/)（FIPS 140-2 Level 3、Vault auto-unseal 後端）                              |
+| 公開憑證 PKI（serving cert）                                   | [AWS ACM](/backend/07-security-data-protection/vendors/aws-acm/) / [Let's Encrypt](/backend/07-security-data-protection/vendors/letsencrypt/) |
+| K8s workload cert 自動化                                       | [cert-manager](/backend/07-security-data-protection/vendors/cert-manager/)（可用 Vault 當 issuer）                                            |
+| 跨服務 workload identity (SPIFFE)                              | [SPIRE](/backend/07-security-data-protection/vendors/spire/)                                                                                  |
+| Secret 全公司 rotation 證據鏈                                  | [7.5 Credential Rotation Scoped Evidence](/backend/07-security-data-protection/credential-rotation-scoped-evidence/)                          |
 
 ## 不在本頁內的主題
 

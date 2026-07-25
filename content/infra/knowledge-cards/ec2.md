@@ -6,11 +6,11 @@ weight: 37
 tags: ["infra", "knowledge-cards"]
 ---
 
-EC2（Elastic Compute Cloud）是 AWS 提供的虛擬機器服務。每一台 EC2 instance 是一台完整的虛擬伺服器——有自己的 OS、CPU、記憶體、磁碟和網路介面。使用者可以 SSH 進去、安裝軟體、跑應用程式，跟操作一台實體伺服器的體驗相似。
+EC2（Elastic Compute Cloud）是 AWS 提供的虛擬機器服務。每一台 EC2 instance 是一台完整的虛擬伺服器——有自己的 OS、CPU、記憶體、磁碟和網路介面。使用者可以 [SSH](/infra/knowledge-cards/ssh/) 進去、安裝軟體、跑應用程式，跟操作一台實體伺服器的體驗相似。
 
 ## 概念位置
 
-EC2 是 infra 系列中「運算」面向的基礎單位。容器服務（ECS、EKS）底層也跑在 EC2 上（除非用 Fargate）。模組五（核心服務）的運算段落、接手維運（雲端篇）的 VM 快照、升級模組的 OS 遷移都以 EC2 為操作對象。
+EC2 是 infra 系列中「運算」面向的基礎單位。容器服務（[ECS](/infra/knowledge-cards/ecs/)、EKS）底層也跑在 EC2 上（除非用 Fargate）。模組五（核心服務）的運算段落、接手維運（雲端篇）的 VM 快照、升級模組的 OS 遷移都以 EC2 為操作對象。
 
 ## 可觀察訊號
 

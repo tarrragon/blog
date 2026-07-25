@@ -195,7 +195,7 @@ LoRA 何時不適用 / 必須走 full fine-tune：
 
 ## In-Context Learning：fine-tuning 的替代品
 
-In-context learning（ICL）的核心想法是「不更新模型權重、只在 prompt 中給範例、讓模型 generalize」。
+[In-context learning](/llm/knowledge-cards/in-context-learning/)（ICL）的核心想法是「不更新模型權重、只在 prompt 中給範例、讓模型 generalize」。
 
 - **Zero-shot**：直接給任務描述、不給範例。
 - **Few-shot**：給幾個 input-output 範例、再給新 input。

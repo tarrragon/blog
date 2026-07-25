@@ -22,7 +22,7 @@ tags: ["infra", "iam", "organizations", "scp", "multi-account"]
 
 ## OU 結構：帳號怎麼分群
 
-AWS Organizations 用 Organizational Unit（OU）把帳號分群，OU 是 SCP 的掛載點 — 一條 SCP 掛在 OU 上，底下所有帳號都受約束。OU 的設計決定了護欄的作用範圍。
+AWS Organizations 用 Organizational Unit（OU）把帳號分群，OU 是 [SCP](/infra/knowledge-cards/scp/) 的掛載點 — 一條 SCP 掛在 OU 上，底下所有帳號都受約束。OU 的設計決定了護欄的作用範圍。
 
 常見的 OU 拓撲有四層：
 

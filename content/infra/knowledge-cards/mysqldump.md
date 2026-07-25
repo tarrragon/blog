@@ -6,7 +6,7 @@ weight: 43
 tags: ["infra", "knowledge-cards", "database", "backup", "mysql"]
 ---
 
-mysqldump 是 MySQL 和 MariaDB 內建的命令列備份工具，把整個資料庫（或指定的表）匯出成一份包含 CREATE TABLE 和 INSERT 語句的 SQL 純文字檔。還原時把這份檔案餵給 `mysql` client 就能重建資料。
+mysqldump 是 [MySQL](/infra/knowledge-cards/mysql/) 和 MariaDB 內建的命令列備份工具，把整個資料庫（或指定的表）匯出成一份包含 CREATE TABLE 和 INSERT 語句的 SQL 純文字檔。還原時把這份檔案餵給 `mysql` client 就能重建資料。
 
 ## 概念位置
 

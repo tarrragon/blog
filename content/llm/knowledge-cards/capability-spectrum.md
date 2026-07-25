@@ -6,11 +6,11 @@ weight: 1
 tags: ["llm", "knowledge-cards", "evaluation"]
 ---
 
-Capability spectrum（能力光譜）的核心概念是「**LLM 能力通常是連續程度，不是支援 / 不支援的二元開關**」。同樣宣稱支援 function calling、reasoning、coding、structured output 的模型，可能在簡單案例都成功，但在長 context、多工具、巢狀 schema、模糊需求或反例情境下出現巨大差距。
+Capability spectrum（能力光譜）的核心概念是「**LLM 能力通常是連續程度，不是支援 / 不支援的二元開關**」。同樣宣稱支援 [function calling](/llm/knowledge-cards/function-calling/)、reasoning、coding、structured output 的模型，可能在簡單案例都成功，但在長 context、多工具、巢狀 schema、模糊需求或反例情境下出現巨大差距。
 
 ## 概念位置
 
-能力光譜是評估與選型用語，用來替代 binary checklist。它把能力拆成範圍、穩定性、成本與失敗模式：模型能做什麼、在多寬的分佈上穩定、錯的時候怎麼錯、需要多少 prompt / validator / retry 才可用。
+能力光譜是評估與選型用語，用來替代 binary checklist（相關概念見 [jagged frontier](/llm/knowledge-cards/jagged-frontier/)）。它把能力拆成範圍、穩定性、成本與失敗模式：模型能做什麼、在多寬的分佈上穩定、錯的時候怎麼錯、需要多少 prompt / validator / retry 才可用。
 
 ```text
 宣稱支援 → happy path 可用

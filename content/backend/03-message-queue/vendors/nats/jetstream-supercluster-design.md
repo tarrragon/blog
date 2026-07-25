@@ -57,7 +57,7 @@ nats --server nats://localhost:4232 stream add orders \
 
 Retention policy 決定「訊息什麼時候從 stream 移除」、是 stream 三種使用形態的分水嶺。
 
-`limits` retention 是時間 / 容量驅動：訊息留到撞上 MaxMsgs / MaxBytes / MaxAge 任一上限才移除、跟有沒有人消費無關。這是「事件 log」形態、適合需要 replay、多個獨立 consumer 各讀各的場景。訂單事件流用 limits、因為審計、對帳、即時處理可能是三個獨立 consumer、訊息不能因為某個 consumer ack 了就消失。
+`limits` retention 是時間 / 容量驅動：訊息留到撞上 MaxMsgs / MaxBytes / MaxAge 任一上限才移除、跟有沒有人消費無關。這是「事件 log」形態、適合需要 replay、多個獨立 consumer 各讀各的場景。訂單事件流用 limits、因為審計、[對帳](/backend/knowledge-cards/data-reconciliation/)、即時處理可能是三個獨立 consumer、訊息不能因為某個 consumer ack 了就消失。
 
 `interest` retention 是訂閱驅動：當 stream 上 *所有* 已註冊的 consumer 都 ack 了某筆訊息、該訊息立刻移除。它介於 limits 跟 workqueue 之間、適合「只要所有關心的 consumer 都收到就不必再留」的扇出場景。
 

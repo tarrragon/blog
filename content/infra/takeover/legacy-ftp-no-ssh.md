@@ -6,7 +6,7 @@ weight: 1
 tags: ["infra", "takeover", "legacy", "ftp", "php"]
 ---
 
-接手一個只有 FTP 和網頁面板（cPanel / Plesk / phpMyAdmin）存取的 PHP 專案時，面對的約束跟有 SSH 的環境不同：沒辦法登入下指令、沒有 CLI 工具可以批次操作、部署靠 FTP 上傳檔案、資料庫操作靠 phpMyAdmin 的網頁介面。這類環境常見於共享主機，但也可能出現在只安裝了面板的獨立主機或 VPS 上。前一位維護者的「文件」是他的記憶，而這份記憶已經隨著人一起離開。第一步是穩定維運，不是現代化改造。
+接手一個只有 [FTP](/infra/knowledge-cards/ftp/) 和網頁面板（[cPanel](/infra/knowledge-cards/cpanel/) / Plesk / phpMyAdmin）存取的 PHP 專案時，面對的約束跟有 [SSH](/infra/knowledge-cards/ssh/) 的環境不同：沒辦法登入下指令、沒有 CLI 工具可以批次操作、部署靠 FTP 上傳檔案、資料庫操作靠 phpMyAdmin 的網頁介面。這類環境常見於共享主機，但也可能出現在只安裝了面板的獨立主機或 VPS 上。前一位維護者的「文件」是他的記憶，而這份記憶已經隨著人一起離開。第一步是穩定維運，不是現代化改造。
 
 這篇文章的操作順序按風險排列：先做不碰 prod 的盤點（零風險），再建本地開發環境（只動本機），然後才是碰 prod 的部署與資料庫紀律。
 
@@ -32,7 +32,7 @@ tags: ["infra", "takeover", "legacy", "ftp", "php"]
 
 沒有主機面板（或面板不提供完整備份）時，要用 FTP 和 phpMyAdmin 分別拍程式碼和資料庫。
 
-**程式碼與靜態資源**：用 FTP client 把整個網站目錄鏡像到本地。FileZilla 的操作路徑：站台管理員連線後，在遠端面板對根目錄按右鍵 → 「下載」，或用「伺服器 → 同步瀏覽」模式讓本地與遠端目錄結構保持對齊。WinSCP 提供「保持更新（Keep Remote Directory up to Date）」功能，但接手階段只需要一次性的完整下載，不需要持續同步。下載前確認 FTP client 的設定有勾選「顯示隱藏檔案」——`.htaccess`、`.env`、`.user.ini` 這類隱藏檔經常包含關鍵設定。
+**程式碼與靜態資源**：用 FTP client 把整個網站目錄鏡像到本地。[FileZilla](/infra/knowledge-cards/filezilla/) 的操作路徑：站台管理員連線後，在遠端面板對根目錄按右鍵 → 「下載」，或用「伺服器 → 同步瀏覽」模式讓本地與遠端目錄結構保持對齊。WinSCP 提供「保持更新（Keep Remote Directory up to Date）」功能，但接手階段只需要一次性的完整下載，不需要持續同步。下載前確認 FTP client 的設定有勾選「顯示隱藏檔案」——`.htaccess`、`.env`、`.user.ini` 這類隱藏檔經常包含關鍵設定。
 
 **資料庫**：用 phpMyAdmin 的「匯出」功能匯出完整資料庫（詳見下方「資料庫」段）。FTP 只拍程式碼，資料庫要另外匯出。
 

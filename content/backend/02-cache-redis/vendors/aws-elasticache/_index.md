@@ -213,13 +213,13 @@ aws elasticache describe-events --source-identifier <id> --source-type replicati
 
 ### 跨 vendor 對照
 
-| 案例                                                                                                    | 對 ElastiCache 的對應                                                                                    |
-| ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)         | Managed 也會 stampede、AWS 不會幫你做 client-side jitter / singleflight、需自行設計                      |
-| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)                       | 小型 single primary / 中型 Multi-AZ replica / 大型 Cluster mode enabled + Global Datastore               |
-| [2.C2 Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)                 | ElastiCache 對應為 Cluster mode + Configuration Endpoint（client-side discovery）、無原生 protocol proxy |
-| [2.C1 Meta cache consistency](/backend/02-cache-redis/cases/meta-cache-consistency-upgrade/)            | Failover / replica promotion 期間 ElastiCache 也會出現一致性議題、CloudWatch ReplicationLag 是主要訊號   |
-| [2.C7 Cloudflare Cache Reserve](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) | 分層儲存對照、AWS 對應為 ElastiCache（hot）+ S3 / DynamoDB（cold）的應用層分層設計                       |
+| 案例                                                                                                    | 對 ElastiCache 的對應                                                                                                         |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [2.C9 Cache Stampede](/backend/02-cache-redis/cases/failure-cache-stampede-rollout-regression/)         | Managed 也會 stampede、AWS 不會幫你做 client-side jitter / [singleflight](/backend/knowledge-cards/singleflight/)、需自行設計 |
+| [2.C10 規模對照](/backend/02-cache-redis/cases/contrast-cache-strategy-by-scale/)                       | 小型 single primary / 中型 Multi-AZ replica / 大型 Cluster mode enabled + Global Datastore                                    |
+| [2.C2 Meta mcrouter](/backend/02-cache-redis/cases/meta-mcrouter-global-cache-routing/)                 | ElastiCache 對應為 Cluster mode + Configuration Endpoint（client-side discovery）、無原生 protocol proxy                      |
+| [2.C1 Meta cache consistency](/backend/02-cache-redis/cases/meta-cache-consistency-upgrade/)            | Failover / replica promotion 期間 ElastiCache 也會出現一致性議題、CloudWatch ReplicationLag 是主要訊號                        |
+| [2.C7 Cloudflare Cache Reserve](/backend/02-cache-redis/cases/cloudflare-cache-reserve-tiered-storage/) | 分層儲存對照、AWS 對應為 ElastiCache（hot）+ S3 / DynamoDB（cold）的應用層分層設計                                            |
 
 ## 下一步路由
 

@@ -6,7 +6,7 @@ weight: 7
 tags: ["backend", "deployment", "vendor"]
 ---
 
-Terraform 是 HashiCorp 出品的 IaC 工具、承擔三個責任：declarative infrastructure 配置（HCL）、state-based reconciliation（plan → apply）、跨 provider 抽象（AWS / GCP / Azure / K8s / SaaS）。設計取捨偏向「state-driven + declarative + multi-cloud」、provider 生態最廣。2023 改 BSL 授權、社群 fork OpenTofu（Linux Foundation 託管、MPL 2.0）。
+Terraform 是 HashiCorp 出品的 IaC 工具、承擔三個責任：declarative infrastructure 配置（HCL）、state-based [reconciliation](/backend/knowledge-cards/data-reconciliation/)（plan → apply）、跨 provider 抽象（AWS / GCP / Azure / K8s / SaaS）。設計取捨偏向「state-driven + declarative + multi-cloud」、provider 生態最廣。2023 改 BSL 授權、社群 fork OpenTofu（Linux Foundation 託管、MPL 2.0）。
 
 對「跨雲基礎設施管理、團隊協作 IaC、需要 state + plan workflow」這條路徑、Terraform / OpenTofu 是首選。
 

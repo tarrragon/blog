@@ -6,11 +6,11 @@ tags: ["CD", "readiness", "health-check", "knowledge-card"]
 weight: 12
 ---
 
-Readiness / Health Check 的核心概念是「服務活著」與「服務可接流量」是兩個不同訊號。部署放行通常依賴 readiness，而非僅看 process alive。
+Readiness / Health Check 的核心概念是「服務活著」與「服務可接流量」是兩個不同訊號。部署放行通常依賴 readiness 而非僅看 process alive，是 [Rollout Strategy](/ci/knowledge-cards/rollout-strategy/) 決定是否擴大流量的判斷依據。
 
 ## 概念位置
 
-Readiness / Health Check 位在 rollout、load balancer 與 runtime platform 之間，是流量切換前的核心 gate。
+Readiness / Health Check 位在 rollout、load balancer 與 runtime platform 之間，是流量切換前的核心 gate，與 [Deployment Dry Run](/ci/knowledge-cards/deployment-dry-run/) 同屬部署放行前的驗證機制。
 
 ## 可觀察訊號
 

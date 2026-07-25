@@ -90,13 +90,13 @@ Capacity / cost analysis 工具頁要保留 owner 與行動閉環。成本報表
 
 本模組 15 個 vendor 跨 5 個 sub-category（load test / production replay / continuous profiling / optimization / FinOps）、解不同效能與容量工程問題、不是同類選一。
 
-| Sub-category         | 典型 vendor                                 | 輸出證據                                   | Production 風險                | 操作成本                                 | Owner             |
-| -------------------- | ------------------------------------------- | ------------------------------------------ | ------------------------------ | ---------------------------------------- | ----------------- |
-| Load test            | k6 / JMeter / Gatling / Locust / Vegeta     | threshold pass/fail / p95 p99 / throughput | 低（測試環境）                 | scenario 維護 / runner 規模 / 測試資料   | Engineering / QA  |
-| Production replay    | GoReplay / Service Mesh Mirroring / AWS VPC | response diff / shadow load                | 高（PII / side effect / 配額） | masking / isolation / rate limit         | SRE + Security    |
-| Continuous profiling | Datadog Profiler / Pyroscope / Parca        | flame graph diff / regression detection    | 中（採樣 overhead）            | symbolization / storage / baseline 維護  | Engineering       |
-| Optimization         | Akamas                                      | recommendation / SLO-constrained config    | 中（autopilot rollout）        | objective model / approval workflow      | SRE + FinOps      |
-| FinOps               | Vantage / CloudHealth / AWS Cost Explorer   | cost report / forecast / rightsizing       | 無(reporting)                  | tag governance / owner mapping / cadence | FinOps + Eng lead |
+| Sub-category         | 典型 vendor                                 | 輸出證據                                                                         | Production 風險                | 操作成本                                 | Owner             |
+| -------------------- | ------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------- | ----------------- |
+| Load test            | k6 / JMeter / Gatling / Locust / Vegeta     | threshold pass/fail / p95 p99 / throughput                                       | 低（測試環境）                 | scenario 維護 / runner 規模 / 測試資料   | Engineering / QA  |
+| Production replay    | GoReplay / Service Mesh Mirroring / AWS VPC | response diff / shadow load                                                      | 高（PII / side effect / 配額） | masking / isolation / rate limit         | SRE + Security    |
+| Continuous profiling | Datadog Profiler / Pyroscope / Parca        | [flame graph](/backend/knowledge-cards/flame-graph/) diff / regression detection | 中（採樣 overhead）            | symbolization / storage / baseline 維護  | Engineering       |
+| Optimization         | Akamas                                      | recommendation / SLO-constrained config                                          | 中（autopilot rollout）        | objective model / approval workflow      | SRE + FinOps      |
+| FinOps               | Vantage / CloudHealth / AWS Cost Explorer   | cost report / forecast / rightsizing                                             | 無(reporting)                  | tag governance / owner mapping / cadence | FinOps + Eng lead |
 
 對照表的用途有三：
 

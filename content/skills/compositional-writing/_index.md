@@ -44,12 +44,13 @@ tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing
 
 ## 與 blog 專案其他資料的關係
 
-| 位置                                            | 角色                                                               |
-| ----------------------------------------------- | ------------------------------------------------------------------ |
-| `.claude/skills/compositional-writing/`         | 實際 skill — Claude runtime 呼叫的檔案來源                         |
-| `content/skills/compositional-writing/`（本處） | 文章版本 — 人類讀者在 blog 閱讀                                    |
-| `content/posts/markdown-writing-spec.md`        | Blog 自己的 markdown 寫作規範（mdtools 檢查項目、與本 skill 並行） |
-| `content/posts/tech_writing_structure.md`       | 長篇技術文章結構（writing-articles 的來源之一）                    |
+| 位置                                            | 角色                                                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/compositional-writing/`         | 實際 skill — Claude runtime 呼叫的檔案來源                                                                    |
+| `content/skills/compositional-writing/`（本處） | 文章版本 — 人類讀者在 blog 閱讀                                                                               |
+| `content/posts/markdown-writing-spec.md`        | Blog 自己的 markdown 寫作規範（mdtools 檢查項目、與本 skill 並行）                                            |
+| `content/posts/tech_writing_structure.md`       | 長篇技術文章結構（writing-articles 的來源之一）                                                               |
+| [`content/neurodiversity/`](/neurodiversity/)   | 把「為認知運作塑形輸出」延伸到特定神經類型（ADHD / 自閉 / 需求迴避）；其 base layer 與本 skill 的通用原則對照 |
 
 ## Last Updated
 

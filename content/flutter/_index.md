@@ -6,16 +6,17 @@ weight: 33
 tags: ["flutter", "dart", "mobile"]
 ---
 
-本模組收 Flutter 與 Dart 的實作層知識：語言機制、框架行為、測試策略與工具鏈。內容從實際專案的 case 抽出——每個判準都有踩過的情境支撐，不是官方文件的轉述。設計理論的地基在 [DDD 領域驅動設計指南](/ddd/)（[entity 與 value object 的判準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)），本模組承擔的是「這些理論在 Dart 生態碰到什麼實作限制」：例如 copyWith 與 freezed 的預設路徑如何影響領域模型的完整性。
+本模組收 Flutter 與 Dart 的實作層知識：語言機制、框架行為、測試策略與工具鏈。內容從實際專案的 case 抽出——每個判準都有踩過的情境支撐，不是官方文件的轉述。設計理論的地基在 [DDD 領域驅動設計指南](/ddd/)（[entity 與 value object 的判準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)），本模組承擔的是「這些理論在 Dart 生態碰到什麼實作限制」：例如 [copyWith](/flutter/knowledge-cards/copywith/) 與 [freezed](/flutter/knowledge-cards/freezed/) 的預設路徑如何影響領域模型的完整性。
 
 ## 章節
 
 章節從 case 聚類長出——同主題 case 累積到臨界量、互相引用密集時，才值得一篇判準層的聚合章：
 
-| 章節                                                              | 核心問題                                                                       | 聚合的 case                                    |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------- |
-| [Riverpod 的 reactive 邊界](/flutter/riverpod-reactive-boundary/) | reactive 保證只覆蓋 provider 圖內部——變化在圖上嗎、哪個容器、節點活著嗎        | 空間／涵蓋／接入／時間四邊界共五篇             |
-| [流程測試基礎設施](/flutter/flow-test-infrastructure/)            | Dart 生態的四個實作限制：headless 控制器、binding 互斥、輸出雜訊、假後端序列化 | binding + headless + noise + fake-backend 四篇 |
+| 章節                                                                 | 核心問題                                                                                   | 聚合的 case                                    |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| [Riverpod 的 reactive 邊界](/flutter/riverpod-reactive-boundary/)    | reactive 保證只覆蓋 provider 圖內部——變化在圖上嗎、哪個容器、節點活著嗎                    | 空間／涵蓋／接入／時間四邊界共五篇             |
+| [流程測試基礎設施](/flutter/flow-test-infrastructure/)               | Dart 生態的四個實作限制：headless 控制器、binding 互斥、輸出雜訊、假後端序列化             | binding + headless + noise + fake-backend 四篇 |
+| [值物件的 Dart 實作路徑](/flutter/value-object-dart-implementation/) | 領域值升級成值物件後選哪種載體——手寫 class、freezed、extension type 的成本結構與遷移安全網 | copyWith + freezed + Money 遷移 + VO 封裝擺盪  |
 
 ## 章節大綱（backlog）
 

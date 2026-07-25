@@ -91,6 +91,8 @@ Standard-driven 章節的寫作策略：
 
 **寫作前 30 分鐘做 SSoT 對應**（這步不做必踩 frame 重複坑）：列出 cross-chapter findings、每個 frame 指定唯一主寫章節、其他章節只 link。跨模組層級概念 → 模組索引（module index、本 blog Hugo 結構下為 `_index.md`、其他靜態網站可能是 `README.md` 或 `index.md`）。
 
+**承重論點先 steelman 再寫**（分析 / 合成型模組尤其）：模組若架在一個承重論點上——錯了會讓多章作廢或大改的核心宣稱（方法論主張、跨 case 合成 frame、核心分類假設）——在動筆寫依賴它的章節前，先對它跑一次對抗性挑戰（獨立 reviewer 或「預設它錯、逐條枚舉反例」的自我步驟）。承重論點常是「只有一組 X」「所有 Y 都 Z」的全稱 / 唯一性宣稱，別把「還沒找到反例」當「不存在反例」。這個 steelman 是生產閘門、跟 Stage 3 的收尾 steelman 不是同一件——只在 Stage 3 才挑戰承重論點＝太晚，錯誤已寫進 N 章、跨章回改成本 N 倍（同 cadence 抽樣「別等 reviewer」的邏輯）。同源自審對自己的地基有盲區、挑戰要交對抗 / 異源。
+
 寫作時主動防範以下反覆陷阱（完整清單見「反覆陷阱」段、本段給寫作當下必須意識的核心條目）：
 
 1. **負向陳述骨架**：避免「不是 X、是 Y」推進論證、避免「核心責任不是 X、而是 Y」變體段首
@@ -197,6 +199,7 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 
 ---
 
+**Version**: 1.5.0 — Stage 2 寫作前加「承重論點先 steelman 再寫」gate：分析 / 合成型模組若架在一個承重論點上（方法論主張、跨 case 合成 frame、核心分類假設），動筆前先對它跑對抗性挑戰當生產閘門、別等 Stage 3 才挑戰（同 cadence 抽樣「別等 reviewer」邏輯、只在 Stage 3 抓＝錯誤已寫進 N 章跨章回改）；承重論點常是全稱 / 唯一性宣稱、別把「還沒找到反例」當「不存在反例」；挑戰交對抗 / 異源。從神經多樣性方法論生產順序事故抽出（對應 report 卡 #236）。
 **Version**: 1.4.0 — 從 backend/11 API 設計模組（10 主章、54 case、3 reviewer 63 issue）retrospective 回流兩個新 pattern：(1) 合成章的引力 — 合成型框架章吸走主寫章案例細節、SSoT map 主寫方向被靜默反轉、加「一句話案例 + link」硬規則（Stage 2 核心條目 7、反覆陷阱 16、ssot-correspondence 新段）；(2) 預測性索引要有寫後回填輪 — 大綱案例支撐欄與 case 檔對應大綱欄是預測、正文完成後跑機械性回填、跟 lint 同級（Stage 2 尾段、反覆陷阱 17、ssot-correspondence 自掃描提示 5-6）。
 
 **Version**: 1.0.0

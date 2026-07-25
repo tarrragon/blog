@@ -28,11 +28,11 @@ default VPC 在每個 region 自動存在，它的特性是所有 subnet 都是 
 
 登入 Console 本身就用到了 IAM（Identity and Access Management）。IAM 管理「誰能對哪些資源做什麼操作」。首次註冊時使用的 root account 擁有帳號內所有權限，用 root 做日常操作等於每次都拿著能開所有門的萬能鑰匙。
 
-開發者與 IAM 的第一個交集通常是 access key — 一組靜態憑證，讓 CLI 工具或部署腳本能用程式化方式操作雲端資源。這把 key 被存進 `~/.aws/credentials` 或專案的 `.env` 檔後，它就是一個有權限的身分憑證，決定了持有者能動多少東西。key 沒有到期時間，權限範圍取決於它綁定的 IAM user 或 role 被授予了什麼 policy。
+開發者與 IAM 的第一個交集通常是 access key — 一組靜態憑證，讓 CLI 工具或部署腳本能用程式化方式操作雲端資源。這把 key 被存進 `~/.aws/credentials` 或專案的 [`.env`](/infra/knowledge-cards/dotenv/) 檔後，它就是一個有權限的身分憑證，決定了持有者能動多少東西。key 沒有到期時間，權限範圍取決於它綁定的 IAM user 或 role 被授予了什麼 policy。
 
 ### 儲存
 
-EC2 附帶的 EBS volume 是儲存層 infra。預設大小通常是 8 GB，預設沒有加密，預設沒有快照排程。磁碟裡只有 OS 跟應用程式時，壞了重建即可。一旦上面開始跑資料庫、存使用者檔案，磁碟裡就有了不可重建的狀態，「壞了重建」這個退路就消失了。
+EC2 附帶的 [EBS](/infra/knowledge-cards/ebs/) volume 是儲存層 infra。預設大小通常是 8 GB，預設沒有加密，預設沒有快照排程。磁碟裡只有 OS 跟應用程式時，壞了重建即可。一旦上面開始跑資料庫、存使用者檔案，磁碟裡就有了不可重建的狀態，「壞了重建」這個退路就消失了。
 
 ### 預設值的共同特性
 

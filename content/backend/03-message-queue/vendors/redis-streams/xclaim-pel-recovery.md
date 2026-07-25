@@ -263,7 +263,7 @@ $ redis-cli CLUSTER KEYSLOT '{shard1}:stream:payments'
 **修法**：
 
 1. **接受 at-least-once、靠 idempotency 收斂**：failover 造成的重複投遞跟正常的重複投遞同一性質、application 去重邏輯本來就要處理（見 [idempotency 卡](/backend/knowledge-cards/idempotency/)）。
-2. **failover 後主動全量 XAUTOCLAIM 對帳**：failover 偵測到後、consumer 跑一輪低門檻 `XAUTOCLAIM` 重新接管、用 application 端的處理紀錄判斷哪些真的沒處理。
+2. **failover 後主動全量 XAUTOCLAIM [對帳](/backend/knowledge-cards/data-reconciliation/)**：failover 偵測到後、consumer 跑一輪低門檻 `XAUTOCLAIM` 重新接管、用 application 端的處理紀錄判斷哪些真的沒處理。
 3. **降低 replication lag**：lag 越小、failover 視窗的 PEL 偏差越小；監控 `master_repl_offset` 與 replica offset 差。
 4. **語義誤配風險**：把 Redis Streams 當「不丟訊息的 broker」用、在 failover 邊界會破功——這是 [3.C9 語義誤配](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) 的思路、選型時就要認清 Redis Streams 的一致性等級。
 

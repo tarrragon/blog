@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "coding-agent", "architecture"]
 ---
 
-Scaffold 跟 harness 的核心概念是「**把 coding agent 拆成『建構時靜態結構』跟『runtime 動態邏輯』兩層**」。Scaffold 是建構時就決定的：system prompt 模板、tool schema 註冊、subagent 拓樸；harness 是 runtime 動態運作：tool dispatch、context budget 管理、safety / 中斷、handoff。Claude Code、Cursor、Aider、Codex 這類 coding agent 的內部設計都遵循這個分層。
+Scaffold 跟 harness 的核心概念是「**把 coding agent 拆成『建構時靜態結構』跟『runtime 動態邏輯』兩層**」。Scaffold 是建構時就決定的：[system prompt](/llm/knowledge-cards/system-prompt/) 模板、tool schema 註冊、subagent 拓樸；harness 是 runtime 動態運作：tool dispatch、context budget 管理、safety / 中斷、handoff。Claude Code、Cursor、Aider、Codex 這類 coding agent 的內部設計都遵循這個分層。
 
 ## 概念位置
 

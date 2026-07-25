@@ -6,11 +6,11 @@ tags: ["CI", "test", "flaky", "knowledge-card"]
 weight: 15
 ---
 
-Flaky Test 的核心概念是「同一版本在相同條件下測試結果不穩定」。它會把紅燈從有效訊號降級成噪音，直接影響 CI gate 信任度。
+Flaky Test 的核心概念是「同一版本在相同條件下測試結果不穩定」。它會把紅燈從有效訊號降級成噪音，直接影響 [CI](/ci/knowledge-cards/ci-pipeline/) gate 信任度。
 
 ## 概念位置
 
-Flaky Test 位在 test stage 與 release gate 之間，會放大重跑成本與判讀延遲。
+Flaky Test 位在 test stage 與 release gate 之間，會放大[重跑](/ci/knowledge-cards/rerun/)成本與判讀延遲。
 
 ## 可觀察訊號
 

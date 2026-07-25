@@ -1,5 +1,5 @@
 ---
-title: "Shell 背景 Process"
+title: "Shell Background Process（Shell 背景行程）"
 date: 2026-05-12
 description: "終端機 process 的前景 / 背景生命週期、訊號控制、找出佔用 port 的 process"
 weight: 1

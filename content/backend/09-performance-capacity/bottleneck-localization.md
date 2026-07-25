@@ -94,7 +94,7 @@ USE 找出哪一層 saturate 之後、profile 工具找出 *該層的哪段 code
 
 **Distributed tracing**：OpenTelemetry、Jaeger、Tempo、AWS X-Ray、GCP Cloud Trace、Azure Application Insights。記錄 request 在每個 service / 每個 stage 花了多少時間、找跨服務的 latency 累積。
 
-**Flame graph**：profile 結果視覺化的標準。從寬度可以看到「哪段 code 佔 CPU 最多」。學會看 flame graph 是 SRE 的基本功。
+**[Flame graph](/backend/knowledge-cards/flame-graph/)**：profile 結果視覺化的標準。從寬度可以看到「哪段 code 佔 CPU 最多」。學會看 flame graph 是 SRE 的基本功。
 
 **Profile diff**：壓測 baseline 跟 release candidate 比 stack 差異。看 *相對變化* 而非絕對值。詳見 [Profile Diff 卡片](/backend/knowledge-cards/profile-diff/)。
 

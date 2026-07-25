@@ -12,7 +12,7 @@ Azure Key Vault 是 Azure 平台把 *secret*、*cryptographic key*、*X.509 cert
 
 Azure Key Vault 的核心定位是 *三合一 secret + key + cert service 加 Azure-native secret-less 取用*。AWS 是 [Secrets Manager](/backend/07-security-data-protection/vendors/aws-secrets-manager/) + [KMS](/backend/07-security-data-protection/vendors/aws-kms/) + [ACM](/backend/07-security-data-protection/vendors/aws-acm/) 三個獨立 service、職責邊界清楚但要管三套權限；GCP 是 [Google Secret Manager](/backend/07-security-data-protection/vendors/google-secret-manager/) + [Cloud KMS](/backend/07-security-data-protection/vendors/google-cloud-kms/) + Certificate Authority Service 三個獨立；Azure 把這三件事合在 Key Vault — 同一 RBAC role 可同時管 secret / key / cert、減少 IAM 維護成本、但治理上需要在 Vault 內用 *naming convention + 多 Vault instance* 自己劃分敏感度邊界（例：production secret / cert 分開不同 Vault、admin access 分人）。
 
-跟 [HashiCorp Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/) 相比、Azure Key Vault 是 Azure-only 的 *static-focused* 服務 — 沒有 dynamic credential engine、沒有 transit encryption-as-a-service、沒有跨雲統一介面。優勢是 *零運維* + *Managed Identity 取用免 client secret* + *Premium tier 直接 HSM-backed*。Azure-heavy + 一站式 secret/key/cert + secret-less workload 取用是 Key Vault 的甜蜜點。
+跟 [HashiCorp Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/) 相比、Azure Key Vault 是 Azure-only 的 *static-focused* 服務 — 沒有 dynamic credential engine、沒有 transit encryption-as-a-service、沒有跨雲統一介面。優勢是 *零運維* + *Managed Identity 取用免 client secret* + *Premium tier 直接 [HSM](/backend/knowledge-cards/hsm/)-backed*。Azure-heavy + 一站式 secret/key/cert + secret-less workload 取用是 Key Vault 的甜蜜點。
 
 ## 本章目標
 

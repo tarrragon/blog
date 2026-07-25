@@ -42,7 +42,7 @@ Root 帳號是雲端環境的最高權限，能做任何事，包括關閉整個
 
 ### 確認 CloudTrail 是否開啟
 
-CloudTrail 記錄帳號內所有 API 操作（誰在什麼時間做了什麼）。AWS 預設會開啟 90 天的事件歷史，但長期保存需要建一個 Trail 把 log 寫到 S3。
+[CloudTrail](/infra/knowledge-cards/cloudtrail/) 記錄帳號內所有 API 操作（誰在什麼時間做了什麼）。AWS 預設會開啟 90 天的事件歷史，但長期保存需要建一個 Trail 把 log 寫到 S3。
 
 確認路徑：Console 搜尋 CloudTrail → Dashboard。如果有 Trail 已建立，表示操作紀錄有長期保存。如果只有預設的 Event history，90 天前的紀錄會消失——這是一個需要但不緊急的改善點，[模組六：可觀測性](/infra/06-observability-logging/)會展開。
 

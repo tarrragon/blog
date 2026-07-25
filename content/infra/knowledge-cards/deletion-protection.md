@@ -6,7 +6,7 @@ weight: 19
 tags: ["infra", "knowledge-cards"]
 ---
 
-Deletion protection 是雲端平台在資源層級提供的防護機制：開啟後，任何刪除該資源的操作（Console 點按、CLI 指令、IaC 的 destroy）都會被擋下，必須先顯式關閉保護才能執行刪除。這個額外步驟的目的是防止手滑、批次操作誤傷、以及 Terraform plan 裡意外出現的 destroy。
+Deletion protection 是雲端平台在資源層級提供的防護機制：開啟後，任何刪除該資源的操作（Console 點按、CLI 指令、[IaC](/infra/knowledge-cards/iac/) 的 destroy）都會被擋下，必須先顯式關閉保護才能執行刪除。這個額外步驟的目的是防止手滑、批次操作誤傷、以及 Terraform plan 裡意外出現的 destroy。
 
 ## 概念位置
 
@@ -14,12 +14,12 @@ Deletion protection 是 [stateful 資源保護](/infra/05-core-services/stateful
 
 不同 AWS 服務的保護機制名稱不同但行為一致：
 
-| 服務     | 屬性名稱                      | 保護對象        |
-| -------- | ----------------------------- | --------------- |
-| RDS      | `deletion_protection`         | 資料庫 instance |
-| EC2      | `disable_api_termination`     | 運算 instance   |
-| S3       | MFA delete                    | bucket 版本控制 |
-| DynamoDB | `deletion_protection_enabled` | 表格            |
+| 服務                               | 屬性名稱                      | 保護對象        |
+| ---------------------------------- | ----------------------------- | --------------- |
+| [RDS](/infra/knowledge-cards/rds/) | `deletion_protection`         | 資料庫 instance |
+| EC2                                | `disable_api_termination`     | 運算 instance   |
+| S3                                 | MFA delete                    | bucket 版本控制 |
+| DynamoDB                           | `deletion_protection_enabled` | 表格            |
 
 ## 可觀察訊號
 

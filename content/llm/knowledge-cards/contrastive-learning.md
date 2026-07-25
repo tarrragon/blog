@@ -38,7 +38,7 @@ Loss（簡化的 InfoNCE loss）：
 
 1. **資料量需求大**：contrastive learning 需要億級的正向對才能訓出好 embedding；資料來源是 query-doc click log、StackExchange QA pair、CC-paraphrase 等
 2. **Hard negative mining 是品質關鍵**：隨機選 negative 容易（從 batch 取就行）、找「看似相關但實際無關」的 hard negative 更挑戰、是 embedding quality 提升的關鍵
-3. **不能直接拿 pretrained LLM 用**：LLM 的 hidden state 不是「為 retrieval 優化」的、要再 fine-tune 一輪 contrastive learning 才能當 embedding model
+3. **不能直接拿 pretrained LLM 用**：LLM 的 hidden state 不是「為 retrieval 優化」的、要再 fine-tune 一輪 contrastive learning 才能當 [embedding model](/llm/knowledge-cards/embedding-model/)
 
 ## 設計責任
 

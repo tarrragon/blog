@@ -6,11 +6,11 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-SWE-bench 的核心概念是「用真實開源專案的 GitHub issue 與 PR 當測試集、評量 LLM 解程式碼問題的能力」。它把 LLM 放在「給一個 issue 描述、看能否生成解決它的 patch」的任務上、跑完用 patch 是否能讓既有測試通過作為通過率。
+SWE-bench 的核心概念是「用真實開源專案的 GitHub issue 與 PR 當測試集、評量 LLM 解程式碼問題的能力」，是 [LLM benchmarks](/llm/knowledge-cards/llm-benchmarks/) 中聚焦程式碼修復能力的一種。它把 LLM 放在「給一個 issue 描述、看能否生成解決它的 patch」的任務上、跑完用 patch 是否能讓既有測試通過作為通過率。
 
 ## 概念位置
 
-SWE-bench 比早期的 HumanEval（單一 function 生成）難得多、涵蓋多檔案理解、需求拆解、實際 patch 生成。它是 2026 年量化 coding LLM 能力最常被引用的指標。SWE-bench Verified 是 OpenAI 篩選過的子集、確保任務描述清楚、是現在報告主流。
+SWE-bench 比早期的 HumanEval（單一 function 生成）難得多、涵蓋多檔案理解、需求拆解、實際 patch 生成。它是 2026 年量化 coding LLM 能力最常被引用的指標、也是 [LLM benchmarks](/llm/knowledge-cards/llm-benchmarks/) 一覽表中的常見成員。SWE-bench Verified 是 OpenAI 篩選過的子集、確保任務描述清楚、是現在報告主流。
 
 ## 可觀察訊號與例子
 

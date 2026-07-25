@@ -10,7 +10,7 @@ Multimodal fusion（多模態融合）的核心概念是「**[VLM](/llm/knowledg
 
 ## 概念位置
 
-三種 fusion 方式的對比：
+三種 fusion 方式的對比（差異在 [vision encoder](/llm/knowledge-cards/vision-encoder/) 輸出如何進入 LLM）：
 
 ### 1. Early Fusion（最主流）
 

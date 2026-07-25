@@ -137,7 +137,7 @@ production 常見的 5 個踩雷：
 
 #### Case 3：dual-write 一邊失敗沒補償
 
-dual-write 時 DynamoDB 寫成功 RDS 失敗（或反之）、兩邊資料分歧、cutover 後發現新系統資料不完整。修法：dual-write 要有失敗補償（記錄失敗、重試、或標記該筆需人工對帳）；對應 [1.9 Reconciliation 與 Data Repair](/backend/01-database/reconciliation-data-repair/)。
+dual-write 時 DynamoDB 寫成功 RDS 失敗（或反之）、兩邊資料分歧、cutover 後發現新系統資料不完整。修法：dual-write 要有失敗補償（記錄失敗、重試、或標記該筆需人工[對帳](/backend/knowledge-cards/data-reconciliation/)）；對應 [1.9 Reconciliation 與 Data Repair](/backend/01-database/reconciliation-data-repair/)。
 
 #### Case 4：跳過 shadow read 直接 cutover
 

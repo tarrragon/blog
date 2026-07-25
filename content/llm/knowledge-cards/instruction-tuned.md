@@ -10,7 +10,7 @@ Instruction-Tuned Model 的核心概念是「在 [base model](/llm/knowledge-car
 
 ## 概念位置
 
-Instruction tuning 是 LLM 訓練 pipeline 的中間階段：base model（純文字接龍）→ instruction-tuned（會跟指令走）→ RLHF（進一步對齊人類偏好）。寫 code 用的 Gemma 4 31B、Qwen3-Coder 30B、Llama 3.3 70B 等都是 instruction-tuned 版本。
+Instruction tuning 是 LLM 訓練 pipeline 的中間階段：base model（純文字接龍）→ instruction-tuned（會跟指令走）→ [RLHF](/llm/knowledge-cards/rlhf/)（進一步對齊人類偏好）。寫 code 用的 Gemma 4 31B、Qwen3-Coder 30B、Llama 3.3 70B 等都是 instruction-tuned 版本。
 
 ## 可觀察訊號與例子
 

@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards"]
 ---
 
-Unified Memory Architecture（UMA、統一記憶體架構）的核心概念是「Apple Silicon 把 CPU、GPU、Neural Engine 接在同一塊記憶體上」、共用同一份位址空間。傳統 PC 把系統記憶體跟 VRAM 分開、模型權重要塞進 VRAM 才能用 GPU 跑、跨 PCIe 搬資料很慢。Mac 的統一記憶體避開這個限制。
+Unified Memory Architecture（UMA、統一記憶體架構）的核心概念是「Apple Silicon 把 CPU、GPU、Neural Engine 接在同一塊記憶體上」、共用同一份位址空間。傳統 PC 把系統記憶體跟 [VRAM](/llm/knowledge-cards/vram/) 分開、模型權重要塞進 VRAM 才能用 GPU 跑、跨 PCIe 搬資料很慢。Mac 的統一記憶體避開這個限制。
 
 ## 概念位置
 

@@ -1,5 +1,5 @@
 ---
-title: "Fire-and-forget 編排"
+title: "Fire-and-Forget Orchestration（射後不理編排）"
 date: 2026-07-17
 description: "呼叫後不等待完成的編排形態；產生「方法返回不等於流程完成」的時序落差，是 flaky test 的常見根因之一"
 weight: 8
@@ -10,7 +10,7 @@ Fire-and-forget 編排是呼叫後不等待完成的執行形態：主方法觸�
 
 ## 概念位置
 
-Fire-and-forget 是編排層的設計選擇，常見於刻意的 UX 決策（結帳成功後先解鎖畫面、收尾動作在背景執行）。它與非同步程式的其他時序問題（callback 順序依賴、事件到達順序）同屬 [flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)的計時依賴類，區別在於根因不是「等太短」而是「根本沒等」。
+Fire-and-forget 是編排層的設計選擇，常見於刻意的 UX 決策（結帳成功後先解鎖畫面、收尾動作在背景執行）。它與非同步程式的其他時序問題（callback 順序依賴、事件到達順序）同屬 [flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)的計時依賴類，區別在於根因不是「等太短」而是「根本沒等」。同一時序落差反覆出現的測試，常被送進 [quarantine](/testing/knowledge-cards/quarantine/)：先隔離觀察、依根因分類排修復優先序。
 
 ## 可觀察訊號與例子
 

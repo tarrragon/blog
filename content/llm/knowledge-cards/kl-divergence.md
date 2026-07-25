@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "training", "math"]
 ---
 
-KL divergence（Kullback-Leibler divergence、KL 散度）的核心概念是「衡量兩個機率分佈 P 跟 Q 的差距」：`KL(P ‖ Q) = sum(P(x) × log(P(x) / Q(x)))`。它**不對稱**（`KL(P ‖ Q) ≠ KL(Q ‖ P)`）、所以不算「距離」、是「散度」。在 LLM 訓練中是 alignment 階段防止模型「為了 reward 偏離太遠」的關鍵約束。
+KL divergence（Kullback-Leibler divergence、KL 散度）的核心概念是「衡量兩個機率分佈 P 跟 Q 的差距」：`KL(P ‖ Q) = sum(P(x) × log(P(x) / Q(x)))`。它**不對稱**（`KL(P ‖ Q) ≠ KL(Q ‖ P)`）、所以不算「距離」、是「散度」。在 LLM 訓練中是 [RLHF](/llm/knowledge-cards/rlhf/) / [DPO](/llm/knowledge-cards/dpo/) 等 alignment 階段防止模型「為了 reward 偏離太遠」的關鍵約束。
 
 ## 概念位置
 

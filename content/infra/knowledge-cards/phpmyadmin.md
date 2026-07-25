@@ -6,11 +6,11 @@ weight: 22
 tags: ["infra", "knowledge-cards"]
 ---
 
-phpMyAdmin 是一套透過瀏覽器操作 MySQL 和 MariaDB 的 Web 應用程式。它提供圖形介面執行 SQL 查詢、瀏覽資料表、匯出與匯入資料庫、修改 schema（新增欄位、改索引、刪表）、以及管理使用者權限。多數主機商在安裝 cPanel 或 Plesk 時會一併預裝，讓租用主機的使用者不需要 SSH 就能管理資料庫。
+phpMyAdmin 是一套透過瀏覽器操作 [MySQL](/infra/knowledge-cards/mysql/) 和 MariaDB 的 Web 應用程式。它提供圖形介面執行 SQL 查詢、瀏覽資料表、匯出與匯入資料庫、修改 schema（新增欄位、改索引、刪表）、以及管理使用者權限。多數主機商在安裝 cPanel 或 Plesk 時會一併預裝，讓租用主機的使用者不需要 SSH 就能管理資料庫。
 
 ## 概念位置
 
-在無 SSH 的主機環境裡，phpMyAdmin 通常是唯一可用的資料庫管理入口。它取代了 `mysql` CLI client 和 `mysqldump` 指令的角色——查詢用 SQL 編輯器、匯出用匯出頁面、匯入用上傳 SQL 檔。接手維運時，phpMyAdmin 是拍下資料庫現況（SQL dump）的主要工具。
+在無 SSH 的主機環境裡，phpMyAdmin 通常是唯一可用的資料庫管理入口。它取代了 `mysql` CLI client 和 [`mysqldump`](/infra/knowledge-cards/mysqldump/) 指令的角色——查詢用 SQL 編輯器、匯出用匯出頁面、匯入用上傳 SQL 檔。接手維運時，phpMyAdmin 是拍下資料庫現況（SQL dump）的主要工具。
 
 ## 可觀察訊號
 

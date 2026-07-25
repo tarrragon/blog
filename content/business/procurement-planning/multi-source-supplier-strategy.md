@@ -49,7 +49,7 @@ tags: ["business", "procurement", "supplier"]
 
 從找到候選供應商到能穩定供貨，中間隔著稽核、樣品、NPI、正式核准的完整流程，週期以季計、嚴管產業以年計（示意量級：一般電子料三到六個月、車規料一年以上）。這個週期就是保單的等待期——缺料訊號出現才開始找第二家，等認證走完，這一輪缺料早就結束或早就停線。
 
-等待期先回答了時點問題：第二來源是平時的佈局工作，PM 或管理層在缺料當下施壓「再找一家就好」，撞上的是流程的物理限制，不是採購的意願問題。再往組織層看，認證文化決定等待期長短——對供應商驗證極嚴的組織，等待期更長，投保決策要更提前，這是把組織參數放進同一個框架而不是例外。代工情境（EMS / ODM）還多一道：AVL（合格供應商清單）常由品牌客戶控制，加第二來源要走客戶承認流程，等待期在認證週期之外再疊上客戶端的審批。
+等待期先回答了時點問題：第二來源是平時的佈局工作，PM 或管理層在缺料當下施壓「再找一家就好」，撞上的是流程的物理限制，不是採購的意願問題。再往組織層看，認證文化決定等待期長短——對供應商驗證極嚴的組織，等待期更長，投保決策要更提前，這是把組織參數放進同一個框架而不是例外。代工情境（[EMS](/business/knowledge-cards/ems/) / [ODM](/business/knowledge-cards/odm/)）還多一道：AVL（合格供應商清單）常由品牌客戶控制，加第二來源要走客戶承認流程，等待期在認證週期之外再疊上客戶端的審批。
 
 ## 議價籌碼的可信性條件
 
@@ -59,4 +59,4 @@ tags: ["business", "procurement", "supplier"]
 
 ## 下一步
 
-保單買了之後，量產階段怎麼在多家之間分配放量、上限怎麼定，看 [量產放量分配](/business/procurement-planning/production-ramp-allocation/)。每顆料實際備多少、用什麼機制備，看 [需求分層與備料策略](/business/procurement-planning/demand-tiered-stocking/)。保單買不到的獨家料，議價與下單策略看 [原廠與代理商規則](/business/procurement-planning/vendor-lifecycle-rules/)。
+被動元件的車用認證週期（AEC-Q200, 6-18 個月）是「等缺貨再找替代來不及」的產業級實證——認證門檻怎麼跟第二來源的保費、等待期交互作用，見[被動元件產業結構](/business/financial-analysis/passive-component-industry-structure/)。保單買了之後，量產階段怎麼在多家之間分配放量、上限怎麼定，看 [量產放量分配](/business/procurement-planning/production-ramp-allocation/)。每顆料實際備多少、用什麼機制備，看 [需求分層與備料策略](/business/procurement-planning/demand-tiered-stocking/)。保單買不到的獨家料，議價與下單策略看 [原廠與代理商規則](/business/procurement-planning/vendor-lifecycle-rules/)。

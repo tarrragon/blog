@@ -41,7 +41,7 @@ Optimization workflow 適合用 CloudHealth 管理組織節奏。Rightsizing、r
 
 組織治理價值來自一致流程。單一工程團隊可以靠雲端原生工具追成本；大型組織需要 policy、role、approval、exception 與 audit trail 才能讓成本治理長期運作。
 
-成本分攤價值來自可對帳。Showback / chargeback 要能讓財務、平台與服務 owner 對同一筆費用得到相同解釋，shared platform cost、discount、support fee 與 commitment benefit 都要有分攤規則。
+成本分攤價值來自可[對帳](/backend/knowledge-cards/data-reconciliation/)。Showback / chargeback 要能讓財務、平台與服務 owner 對同一筆費用得到相同解釋，shared platform cost、discount、support fee 與 commitment benefit 都要有分攤規則。
 
 最佳化流程價值來自閉環管理。Rightsizing recommendation 只有在 owner 接手、服務驗證、變更落地與 saving confirmation 完成後，才會變成實際成本改善。
 

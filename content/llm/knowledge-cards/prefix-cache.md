@@ -33,7 +33,7 @@ Prefix Cache 在推論流程中的角色：
 | 長 RAG context 共用、不同問題       | prefill 算力大幅省 |
 | 完全獨立的請求（無共用前綴）        | 無效益             |
 
-主流推論引擎的支援度（依版本變化）：vLLM、SGLang、llama.cpp 等都有 prefix cache 機制、命名各異。
+主流[推論引擎](/llm/knowledge-cards/inference-server/)的支援度（依版本變化）：vLLM、SGLang、llama.cpp 等都有 prefix cache 機制、命名各異。
 
 > **事實查核註**：prefix cache 的命名、設定方式、tenant 隔離預設行為依推論引擎跟版本差異大、引用前以對應引擎的官方文件為準（如 [vLLM Automatic Prefix Caching](https://docs.vllm.ai/)、SGLang RadixAttention 等）。
 

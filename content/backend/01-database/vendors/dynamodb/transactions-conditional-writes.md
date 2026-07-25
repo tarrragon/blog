@@ -8,7 +8,7 @@ tags: ["backend", "database", "dynamodb", "transaction", "conditional-write", "i
 
 > 本文是 [DynamoDB](/backend/01-database/vendors/dynamodb/) overview 的 implementation-layer deep article。寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。
 
-對帳跑出一筆異常：用戶錢包餘額扣了 100 元、但對應訂單沒建立。追 log 發現 application 先 `PutItem` 扣餘額、再 `PutItem` 建訂單、兩步之間 process 被 OOM kill、第二步沒跑完。另一個系統反向情境：秒殺活動庫存剩 1、兩個請求同時讀到「剩 1」、各自 `PutItem` 扣成 0、實際賣出 2 件。兩個 production 痛點指向同一件事 — DynamoDB 預設的單筆寫入沒有跨 item 原子性、也沒有「讀到的值寫回時還沒被改」的保證。本文展開 DynamoDB 提供的三層寫保護：跨 item transaction、單 item conditional write、version-based optimistic locking。
+[對帳](/backend/knowledge-cards/data-reconciliation/)跑出一筆異常：用戶錢包餘額扣了 100 元、但對應訂單沒建立。追 log 發現 application 先 `PutItem` 扣餘額、再 `PutItem` 建訂單、兩步之間 process 被 OOM kill、第二步沒跑完。另一個系統反向情境：秒殺活動庫存剩 1、兩個請求同時讀到「剩 1」、各自 `PutItem` 扣成 0、實際賣出 2 件。兩個 production 痛點指向同一件事 — DynamoDB 預設的單筆寫入沒有跨 item 原子性、也沒有「讀到的值寫回時還沒被改」的保證。本文展開 DynamoDB 提供的三層寫保護：跨 item transaction、單 item conditional write、version-based optimistic locking。
 
 > **寫一致性前提：先確認 workload 適配 DynamoDB**：本篇假設 workload 已通過 DynamoDB 適配 4 軸（PK 天然均勻 / control plane vs data plane / consistency 可接受 eventual / access pattern 穩定）— 判讀軸詳見 [single-table-design-pattern 開頭 4 軸前置判讀](../single-table-design-pattern/#dynamodb-適用度前置判讀4-軸)。寫一致性是 *已選 DynamoDB* 後的操作層議題；若 workload 需要頻繁跨多表多列複雜交易、那是 relational 的主場、應先回頭問 DynamoDB 是否選錯。
 

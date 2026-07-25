@@ -9,7 +9,7 @@ Keyset pagination（也稱 cursor pagination）的核心責任是讓大表分頁
 
 ## 概念位置
 
-Keyset pagination 處於 SQL query 設計的「pagination 策略」維度、跟 [query cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) 是 sibling 反模式修法。對比：
+Keyset pagination 處於 SQL query 設計的「pagination 策略」維度、跟 [query cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) 是 sibling 反模式修法；它的查詢狀態要不要對外承諾成不透明 cursor、是另一張卡 [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/) 承擔的契約面。對比：
 
 | 策略         | 寫法                               | 複雜度          | 限制                               |
 | ------------ | ---------------------------------- | --------------- | ---------------------------------- |

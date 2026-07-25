@@ -6,7 +6,11 @@ weight: 50
 tags: ["linux", "git", "auth", "knowledge-cards"]
 ---
 
-git credential helper 是一個 git 用來取得 HTTPS 認證的**可替換外部程式**：git 自己不儲存也不硬編任何帳密，每次要對遠端認證時把要求交給設定好的 helper、由它回傳使用者名與密碼。這讓「認證從哪來、存在哪」跟 git 本身解耦——換一個 helper 就換一套憑證來源，git 的其餘行為不動。理解這一點，就看得出「`gh auth login` 幫你設好」跟「手動把 helper 指到某個程式」是同一個機制的兩種配置，而不是兩件不相關的事。
+git credential helper 是一個 git 用來取得 HTTPS 認證的**可替換外部程式**：git 自己不儲存也不硬編任何帳密，每次要對遠端認證時把要求交給設定好的 helper、由它回傳使用者名與密碼。這讓「認證從哪來、存在哪」跟 git 本身解耦——換一個 helper 就換一套憑證來源，git 的其餘行為不動。理解這一點，就看得出「`gh auth login` 幫你設好」跟「手動把 helper 指到某個程式」是同一個機制的兩種配置，而不是兩件不相關的事。這條路徑只管 HTTPS；SSH 走的是另一條認證路，見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)。
+
+## 概念位置
+
+HTTPS + token 走 credential helper，跟 SSH 走金鑰是兩條平行的 git 認證路（SSH 端的金鑰儲放見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)）。
 
 ## 機制：git 把認證外包給一個程式
 
@@ -24,7 +28,7 @@ git 對 HTTPS 遠端操作（clone / fetch / push）需要憑證時，不自己�
 
 ## 為什麼認證不落在 git 本身
 
-git 的設定檔（`.gitconfig`）只存「用哪個 helper」這個指標、不存憑證本身。這條分工讓憑證的儲存策略獨立於 git：要更安全就指到鑰匙圈或現讀環境變數的 helper、要方便就用 `store`，換策略只改一行 `credential.helper`、不動 git 的其他設定，也不會把 token 硬編進版控的檔案。HTTPS + token 走 credential helper，跟 SSH 走金鑰是兩條平行的 git 認證路（SSH 端的金鑰儲放見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)）。
+git 的設定檔（`.gitconfig`）只存「用哪個 helper」這個指標、不存憑證本身。這條分工讓憑證的儲存策略獨立於 git：要更安全就指到鑰匙圈或現讀環境變數的 helper、要方便就用 `store`，換策略只改一行 `credential.helper`、不動 git 的其他設定，也不會把 token 硬編進版控的檔案。
 
 ## 判讀訊號 / 邊界
 

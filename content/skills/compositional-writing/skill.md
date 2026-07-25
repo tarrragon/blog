@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.29.0
+  version: 0.32.0
   category: writing-methodology
 ---
 
@@ -130,6 +130,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 | 要把外部分析文章 / 產業評論 / 投資人備忘錄 / 高密度研究材料轉成教學型分析文章，把從業者經驗談（訪談 / 社群貼文 / 口述）轉成分析教學（機制重建），或把 AI 改寫稿從摘要升級成可遷移框架 | `references/source-to-teaching-analysis.md`                                                                        |
 | 要翻譯 / 轉譯文章、把英文材料改寫成中文、檢查術語誤譯或中文譯名放回句子後是否成立                                                                                                     | `references/translation-review.md`                                                                                 |
 | 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片）                                                                                | `references/managing-article-collections.md`                                                                       |
+| 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、或用結構原則 review 既有文集                                                          | `references/structuring-with-solid.md`                                                                             |
 | 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時           | `references/auditing-articles.md`                                                                                  |
 | 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                                                                                    | `references/designing-fields.md`                                                                                   |
 | 想驗證寫作品質（認知負擔、獨立理解率）                                                                                                                                                | `references/meta-metrics.md`                                                                                       |
@@ -182,6 +183,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
   - **歸因語氣 grep**：`rg "承認|暴露了|證明了失敗|被迫"` — 描述系統行為用「信號」「反映」「顯示」等中性觀測詞、避免「承認」「暴露」等責任歸因詞；「被迫」在描述外部強制約束時可保留
   - **宣導語氣 grep**：`rg "你可能沒注意|你可能不知道|想像一下|把.{1,5}想成|跑得好好的|聽起來很|其實很簡單|說穿了就是|等於拆未爆彈|乾瞪眼|延遲引爆"` — 預設讀者無知或用情緒管理取代事實陳述；讀者是專業人士、直接描述情境與後果
   - **泛用詞濫用 grep**：`rg "坑|東西|搞|弄|處理一下|情況"` — 同一個泛用詞蓋過不同具體情境時、依情境換精確詞（意外 / 陷阱 / 出問題 / 發生狀況）；命中密集且各指不同事才算違規、真泛指 / 引號引用 / 輕度 hook 合規；「坑」另有地區偏移面（某些地區高頻、某些少用）。見 [avoid-overused-generic-words](/report/avoid-overused-generic-words/)
+  - **用詞搭配錯位 grep**：`rg "說完的話|背後.{0,8}的話|想告訴|潛台詞|訊號很直接|訊號.{0,4}很直接"` — 把抽象概念（角度 / 框架 / 訊號 / 數字）配上不貼合屬性的謂語：擬人化錯配（角度不會「說」、數字不會「想告訴」）與形容詞錯配（訊號的可辨識度是「清晰 / 明確」不是「直接」）。無穩定關鍵詞、grep 只抓已知形態、真防線是異源冷讀（跟 register 類同屬同源盲區）。見 [word-choice-fits-concept-attributes](/report/word-choice-fits-concept-attributes/)
   - **這些 grep 曝光候選、不做自動判定**：命中後要不要算違規有品味核心；且 LLM reviewer 跟作者共享文體、同源自審對 register 類（否定起手 / 喊話 / 誇飾 / 概念前置）有結構上限 ——「不是 X、而是 Y」這種 LLM 高頻自產句型最容易全員放水。grep + 同源判定只負責曝光候選、register 層的真防線是文體異源視角（human cold-read 或 prompt 採「挑剔否定起手 / 概念後置」對抗姿態的 reviewer）、同源回報的「clean」不可當真
 
 詳細各維度的判讀規則跟修法、見對應 reference（writing-articles / writing-documents 等）跟 `references/principles/` 內的 cadence-homogenization / colloquial-rhetoric / regional-terminology / decorative-symbols / multi-pass-review-frame-granularity 等卡。
@@ -210,6 +212,7 @@ compositional-writing/
     ├── source-to-teaching-analysis.md     # 情境 5a：外部分析材料 → 教學型分析文章
     ├── translation-review.md             # 情境 5b：文章翻譯 / 轉譯的句內邏輯 review
     ├── managing-article-collections.md   # 情境 5c：跨多篇文章的結構（三層、素材庫比例、MOC、Pattern 卡片）
+    ├── structuring-with-solid.md         # 情境 5d：結構決策判準（SOLID 寫作映射：拆分 / 擴充點 / 依賴方向 / 讀者分流）
     ├── designing-fields.md               # 情境 6：欄位設計（含六欄位角度總表）
     ├── designing-fields-ticket-6w.md     # 六欄位詳細範例：正確 + 混淆共 12 項（按需讀取）
     ├── meta-metrics.md                   # 品質量化驗收（M1-M5）
@@ -228,6 +231,10 @@ compositional-writing/
 
 ---
 
+**Last Updated**: 2026-07-20
+**Version**: 0.32.0 — keyword bank 新增「用詞搭配錯位」grep（擬人化謂語 + 形容詞誤搭：分析角度不會「說」、訊號的可辨識度是「清晰」不是「直接」）、新增 principle 卡 [word-choice-fits-concept-attributes](/report/word-choice-fits-concept-attributes/)；從一次多輪審查中兩處搭配錯位由人類冷讀 catch（agent 同源多輪 register / cadence / 冷讀全漏）抽出，是 register 同源盲區需異源的實例
+**Version**: 0.31.0 — `writing-articles.md` 規則二後新增「分析型文章的開頭：定位問題先行、不放敘事或寫作動機」：分析文章開頭第一段直接進定位問題（對象在什麼結構位置、什麼特徵值得判讀），是規則二「商業邏輯先於 CASE」在開頭層的具體形式；抓兩種失焦——敘事性引言（創辦人故事 / 沿革當暖場、對認識有用對判讀沒用）與寫作動機框架（「我們為什麼分析」是編輯層資訊、不是內容層、洩漏編輯決策給讀者）；自檢是拿掉來歷句與動機句後開頭還能不能給出判讀錨點。從商業分析文章的多輪審查回流
+**Version**: 0.30.0 — 新增 `structuring-with-solid.md` reference（情境 5d：結構決策判準）：SOLID 五原則的寫作映射——S 一篇一變動理由（拆分測試：變動理由 / 刪除）、O 擴充點設計（管結構骨架、不管敘事內容——顯式劃界避免模板化滑坡）、L 介面承諾 vs 實作履行（title / description / index hook 對內文、同分類功能契約）、I 讀者分流三層（模組路線表 / 文章視角分段 / 術語卡外移）、D 具體依賴抽象（案例引方法論、方法論不反向依賴）；含結構同構表、每原則錯對範例、結構檢查清單（條件 → 行動）、類比邊界三聲明（review 是執行機制 / L 最弱 / 模板化滑坡）。定位在組合層、跟原子化原則分層分工（S 是兩層接縫）。從一次「個體案例 vs 跨個體比較」的實際 SRP 拆分經驗抽出。觸發詞加 SOLID / 文章拆分 / 結構決策 / 擴充點 / 依賴方向 / 讀者分流；metadata.version 同步修正漂移（0.28.0 → 0.30.0）
 **Last Updated**: 2026-07-15
 **Version**: 0.29.0 — 對讀者喊話 keyword bank 補裸第二人稱（使用者冷讀觸發：一張 report 卡整篇用「你的環境」「你在一台機器」通過作者自審）：grep 加 `你的|你在|你把`、SKILL.md + multi-round-review mirror 同步、principle 卡 teaching-prose-neutral-register 的「第二人稱代入」段補裸所有格 / 主詞例；根因是原 grep `你天天|你會|你可能` 只抓「你 + 明顯動詞」的祈使 / 預測句型、抓不到裸『你的』『你在』——這正是 multi-pass-review-frame-granularity 講的同源盲區（register 類 grep 非窮舉、真防線是異源冷讀），作者自審的同源 grep 漏掉、人類冷讀一眼抓到
 **Last Updated**: 2026-07-10

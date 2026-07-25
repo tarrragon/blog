@@ -12,12 +12,13 @@ tags: ["business", "reading"]
 
 ## 收錄框架
 
-| 框架                                                                             | 用途                                                                                      |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [媒介—讀者—目的矩陣](/business/reading-frameworks/reader-purpose-matrix/)        | 識別文章類型、預設讀者與寫作目的                                                          |
-| [降一級寫法](/business/reading-frameworks/writing-down-a-level/)                 | 用矩陣框架的應用實踐：把商業分析降一級給技術讀者讀懂、拆因果鏈 + unpack 術語 + 加具體算式 |
-| [財報初讀起手框架](/business/reading-frameworks/financial-report-first-read/)    | 拿到一份財報時按什麼順序看、先抓什麼數字、三個訊號判斷要不要深入                          |
-| [社群財務意見判讀](/business/reading-frameworks/social-media-financial-opinion/) | 社群上的損益表討論、投資推薦、「這個產業就是這樣」斷言的可信度評估                        |
+| 框架                                                                             | 用途                                                                                            |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [媒介—讀者—目的矩陣](/business/reading-frameworks/reader-purpose-matrix/)        | 識別文章類型、預設讀者與寫作目的                                                                |
+| [降一級寫法](/business/reading-frameworks/writing-down-a-level/)                 | 用矩陣框架的應用實踐：把商業分析降一級給技術讀者讀懂、拆因果鏈 + unpack 術語 + 加具體算式       |
+| [財報初讀起手框架](/business/reading-frameworks/financial-report-first-read/)    | 拿到一份財報時按什麼順序看、先抓什麼數字、三個訊號判斷要不要深入                                |
+| [社群財務意見判讀](/business/reading-frameworks/social-media-financial-opinion/) | 社群上的損益表討論、投資推薦、「這個產業就是這樣」斷言的可信度評估                              |
+| [賽道與商業模式判讀](/business/reading-frameworks/track-business-model-reading/) | 評估一個軟體 / 服務賽道時，判斷賽道寬度、黏著度來源、切換成本結構與競爭狀態，轉成投資或進入決策 |
 
 ## 後續可擴充方向
 

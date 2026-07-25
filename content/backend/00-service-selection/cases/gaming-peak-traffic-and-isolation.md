@@ -10,11 +10,11 @@ tags: ["backend", "service-selection", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                      | 判讀重點             | 對應章節                                                           |
-| ------------------------- | -------------------- | ------------------------------------------------------------------ |
-| peak burst ratio          | 尖峰是否超過模型緩衝 | [0.5](/backend/00-service-selection/traffic-data-scale/)           |
-| matchmaking queue lag     | 非同步鏈路是否壅塞   | [0.3](/backend/00-service-selection/async-delivery-selection/)     |
-| reconnect storm indicator | 回復是否放大負載     | [0.7](/backend/00-service-selection/failure-observability-design/) |
+| 訊號                                                                   | 判讀重點             | 對應章節                                                           |
+| ---------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------ |
+| peak burst ratio                                                       | 尖峰是否超過模型緩衝 | [0.5](/backend/00-service-selection/traffic-data-scale/)           |
+| matchmaking queue lag                                                  | 非同步鏈路是否壅塞   | [0.3](/backend/00-service-selection/async-delivery-selection/)     |
+| [reconnect storm](/backend/knowledge-cards/thundering-herd/) indicator | 回復是否放大負載     | [0.7](/backend/00-service-selection/failure-observability-design/) |
 
 ## 風險與邊界
 
