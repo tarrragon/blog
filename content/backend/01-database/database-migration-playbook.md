@@ -134,12 +134,12 @@ schema 宣告了約束、不等於引擎正在執法。三種常見落差：
 - 約束狀態：PostgreSQL `NOT VALID` 狀態的約束只檢查新寫入、存量不保證合規
 - Storage engine：MySQL MyISAM 忽略 FK 定義、只有 InnoDB 執法
 
-判讀依據：懸空參照（子表引用不存在的父 row）一旦出現、即證明 FK 執法未開——執法中的 FK 不會讓懸空參照寫得進去。
+判讀依據：懸空參照（子表引用不存在的父 row）一旦出現、即證明該 row 寫入當下 FK 執法未生效——可能是執法開啟前的遺留、NOT VALID 半執法期、或 session 級旁路（bulk load 關閉檢查）。執法中的 FK 不會讓懸空參照寫得進去。
 
 **存量處理順序 SOP**（先盤點、再修復、最後開執法）：
 
 1. **盤點違規存量**：用 validation query 找出所有違反新約束的 row（懸空參照、CHECK 不符、該收緊的 NULL）
-2. **修復或顯性歸零**：逐類決定處置——修正資料、刪除、或顯性標記為已知例外。禁止在 migration 內靜默改寫（`UPDATE ... SET amount = 0 WHERE amount < 0` 埋進 migration script、語意翻轉沒有人 review 過）
+2. **修復或顯性處置**：逐類決定處置——修正資料、刪除、或顯性標記為已知例外。禁止在 migration 內靜默改寫（`UPDATE ... SET amount = 0 WHERE amount < 0` 埋進 migration script、語意翻轉沒有人 review 過）
 3. **開啟執法**：存量乾淨後才啟用約束
 
 PostgreSQL 把這個 SOP 做成引擎原生的兩段式、可當 vendor-agnostic 的順序錨點：
@@ -147,7 +147,7 @@ PostgreSQL 把這個 SOP 做成引擎原生的兩段式、可當 vendor-agnostic
 ```sql
 ALTER TABLE orders ADD CONSTRAINT fk_orders_user
   FOREIGN KEY (user_id) REFERENCES users(id) NOT VALID;
--- 此刻起只檢查新寫入、存量不動、不取 heavy lock
+-- 此刻起只檢查新寫入、存量不動、不長時間持鎖（仍短暫取鎖）
 
 -- 依盤點結果修復存量（顯性處置、非靜默 UPDATE）
 
@@ -159,7 +159,7 @@ ALTER TABLE orders VALIDATE CONSTRAINT fk_orders_user;
 
 - 風險：中-高（違規存量數量未知前、無法估 migration 時長與修復工作量）
 - 注意：違規存量修不完時、migration 應該失敗停下、不推進版本標記——「宣告了但沒 VALIDATE」的半套約束比沒約束更誤導
-- 注意：upsert 類寫入（`ON CONFLICT` / `REPLACE`）只解唯一鍵衝突、不消解 CHECK 違反——衝突解消路徑不會吸收非法值、CHECK 違反仍以錯誤失敗
+- 注意：upsert 類寫入（`ON CONFLICT` / `REPLACE`）只解唯一鍵／主鍵類衝突、不消解 CHECK 違反——衝突解消路徑不會吸收非法值、CHECK 違反仍以錯誤失敗
 
 ## Online Schema Change 工具
 
