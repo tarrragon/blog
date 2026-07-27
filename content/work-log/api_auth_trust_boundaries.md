@@ -164,7 +164,7 @@ Shared Secret 部署簡單、但維運上有幾個固定痛點：
        (server-to-server, server-only credential)
 ```
 
-**Layer 2 secret 的安全邊界是 server-side runtime**。一旦進入瀏覽器或行動 app，攻擊者就能透過反編譯、JS source map、devtools network panel 等管道取得；取得後即可假冒系統 A 呼叫系統 B。Mobile app 的反編譯工具（jadx、Hopper、Ghidra 等）讓這個攻擊成本極低，obfuscation 只能增加時間成本。
+**Layer 2 secret 的安全邊界是 server-side runtime**。一旦進入瀏覽器或行動 app，攻擊者就能透過反編譯、JS source map、devtools network panel 等管道取得；取得後即可假冒系統 A 呼叫系統 B。Mobile app 的反編譯工具（jadx、Hopper、Ghidra 等）讓這個攻擊成本極低，[obfuscation](/backend/knowledge-cards/obfuscation/) 只能增加時間成本 —— 它在低後果、有服務端把關的場景另有適用條件，Layer 2 secret 不在那個範圍內。
 
 如果 client 端需要呼叫 B，安全路由是讓 client 先呼叫 A，由 A 在 server 端用 Layer 2 secret 呼叫 B（A 當 proxy / BFF）；另一條路是用 OAuth 把 short-lived token 發給 client，long-lived secret 留在 server。
 
@@ -293,7 +293,7 @@ Layer 3 不引入新的 secret、是「**建立兩邊身分關聯**」的 lifecy
 
 **常見誤用**：把 shared secret 寫進前端 JS、行動 app 編譯時、甚至 git public repo。
 
-**風險判讀**：client 環境（瀏覽器、mobile app）不在受控範圍。JS source 可在 devtools 直接看，mobile binary 可被反編譯出字串。Obfuscation 提高的是時間成本，沒有改變 secret 已散佈到不受信任環境的事實。
+**風險判讀**：client 環境（瀏覽器、mobile app）不在受控範圍。JS source 可在 devtools 直接看，mobile binary 可被反編譯出字串。[Obfuscation](/backend/knowledge-cards/obfuscation/) 提高的是時間成本，沒有改變 secret 已散佈到不受信任環境的事實。
 
 **操作路由**：client 需要 B 的功能時，走「client → A → B」，由 A 在 server 端用 Layer 2 secret 呼叫 B；或用 OAuth 把 short-lived token 發給 client，long-lived secret 留在 server。
 
@@ -339,6 +339,10 @@ Layer 3 不引入新的 secret、是「**建立兩邊身分關聯**」的 lifecy
 - **Layer 3（Provisioning workflow）**：解決「兩邊身分怎麼對上」 — 不是新的 secret、是 lifecycle 動作
 
 設計後端 API 時，先把這三個問題分開，secret 機制的選擇會變清楚。若排障訊號是「這個 token 在那邊不能用」，下一步是先判斷它卡在使用者層、系統層，還是 provisioning workflow。
+
+### 判讀與路由層
+
+把分層當成資安控制面來判讀（撤銷粒度、混層後失去的能力、跨模組交接路由）見 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。兩篇對同一組分層的切入點不同：本文的失效模式給的是具體誤用形態與操作路由（secret 出現在哪、error code 怎麼設計、SDK 怎麼包），該章給的是治理層的判讀訊號與交接欄位（這個訊號代表哪一層混用、事件發生時要移交給哪個模組）。設計階段讀本文，盤點與評審階段讀該章。
 
 ### 各層的深入文章
 

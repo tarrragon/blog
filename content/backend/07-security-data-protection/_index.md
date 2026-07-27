@@ -42,6 +42,8 @@ weight: 7
 
 反例與規模對照入口： [7.C9 反例](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) / [7.C10 對照](/backend/07-security-data-protection/cases/contrast-identity-governance-by-scale/)。
 
+從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。
+
 回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
 
 ## 從章節到實作的 chain
@@ -98,12 +100,14 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [LLM Agent Prompt Injection 後果治理](/backend/07-security-data-protection/llm-prompt-injection-in-agent/)                                  | LLM Agent Blast Radius                            | tool spec 設計、agent loop 限制、review checkpoint 與 incident workflow 的接合                        |
 | [LLM Log 與 PII 治理](/backend/07-security-data-protection/llm-log-and-pii-governance/)                                                     | LLM Log Governance                                | prompt log 累積、PII 偵測與過濾、保留期限與合規對齊                                                   |
 | [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)                                         | LLM Detection Coverage                            | tool call 異常、injection 觸發徵兆、abuse 模式與既有 detection-coverage 框架的接合                    |
+| [7.28 密碼學原語選型：金鑰位置決定威脅模型](/backend/07-security-data-protection/cryptographic-primitive-selection/)                        | Cryptographic Primitive Selection                 | 定義加密、訊息驗證與可逆編碼的責任分界與金鑰位置判讀                                                  |
+| [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)                                    | API Auth Trust Boundaries                         | 定義使用者、系統與跨系統對應三層的憑證與撤銷粒度                                                      |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
 
 ## 模組完成狀態
 
-主章目前已形成基礎問題節點、藍隊操作循環、跨模組延伸章節與推演素材庫，並新增 `7.27` 的 credential rotation 實作示範。章節列表末段的五篇 LLM 專題屬延伸章節帶：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。資安章節進入穩定維護狀態。
+主章目前已形成基礎問題節點、藍隊操作循環、跨模組延伸章節與推演素材庫，並新增 `7.27` 的 credential rotation 實作示範、`7.28` 的密碼學原語選型與 `7.29` 的 API 認證信任邊界分層。章節列表末段的五篇 LLM 專題屬延伸章節帶：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。資安章節進入穩定維護狀態。
 
 ## 下一輪推演大綱
 

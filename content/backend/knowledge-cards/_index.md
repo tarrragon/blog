@@ -408,6 +408,13 @@ weight: -1
 | [Artifact Provenance](/backend/knowledge-cards/artifact-provenance/)                             | 交付物來源與完整性如何建立可驗證信任 | CI、supply chain、release gate   |
 | [Audit Log](/backend/knowledge-cards/audit-log/)                                                 | 高風險操作如何留下責任證據           | admin、export、permission        |
 | [Row-Level Security](/backend/knowledge-cards/row-level-security/)                               | 資料庫如何用 policy 過濾可見的 row   | RLS、多租戶、policy              |
+| [Message Authentication](/backend/knowledge-cards/message-authentication/)                       | 共享密鑰如何同時證明來源與完整性     | HMAC、webhook、簽章素材          |
+| [Replay Attack](/backend/knowledge-cards/replay-attack/)                                         | 合法請求被原封不動重送時如何收斂     | 新鮮度、去重、webhook            |
+| [Clock Skew](/backend/knowledge-cards/clock-skew/)                                               | 跨機器的時間落差如何影響時效判斷     | 時效窗口、憑證有效期、NTP        |
+| [Non-repudiation](/backend/knowledge-cards/non-repudiation/)                                     | 產生者能否否認如何決定簽章選型       | 非對稱簽章、追責、稽核           |
+| [Obfuscation](/backend/knowledge-cards/obfuscation/)                                             | 內容不以明文出現能擋住誰             | 混淆、客戶端金鑰、載體           |
+| [Defense in Depth](/backend/knowledge-cards/defense-in-depth/)                                   | 多層控制何時真的獨立生效             | 分層、弱環節辯護、blast radius   |
+| [Timing Attack](/backend/knowledge-cards/timing-attack/)                                         | 執行時間差異如何洩漏秘密             | 等時比較、token 驗證、側通道     |
 | [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/)                               | 落地資料如何在儲存層加密             | tablespace、backup、金鑰         |
 | [Key Management](/backend/knowledge-cards/key-management/)                                       | 加密金鑰如何產生、保存與輪替         | KMS、keyring、rotation           |
 | [Break-Glass Access](/backend/knowledge-cards/break-glass-access/)                               | 緊急高權限存取如何用工單與時限治理   | emergency、ticket、audit         |

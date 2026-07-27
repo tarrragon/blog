@@ -1,0 +1,134 @@
+---
+title: "7.28 密碼學原語選型：金鑰位置決定威脅模型"
+date: 2026-07-27
+description: "決定用加密、簽章或編碼保護一段資料時，用來判斷各原語的保護範圍與失效條件"
+weight: 103
+tags: ["backend", "security"]
+---
+
+本章的責任是把「這段資料要怎麼保護」拆成可判讀的選型問題，讓加密、訊息驗證與可逆編碼各自對應到明確的威脅與失效條件。
+
+## 本章寫作邊界
+
+本章聚焦依賴金鑰的原語，判讀主軸是金鑰位置。金鑰交換與隨機數產生的判讀軸不是金鑰位置（前者看協商過程能否被中間人介入、後者看熵來源），不在本章範圍。金鑰的產生、保存與輪替節奏屬於治理層，案例在問題觸發時作為證據參考。
+
+## 本章 threat scope
+
+**In-scope**：原語選錯導致保護落空 / 金鑰隨程式發佈 / 驗證素材定義不一致 / 重放窗口未收斂。
+
+**Out-of-scope**（路由到他章）：
+
+- 秘密與機器憑證的生命週期治理 → [7.6](../secrets-and-machine-credential-governance/)
+- 傳輸憑證與信任鏈 → [7.5](../transport-trust-and-certificate-lifecycle/)
+- 靜態資料的遮罩與分級 → [7.4](../data-protection-and-masking-governance/)
+- 呼叫方身分的分層設計 → [7.29](../api-authentication-trust-boundaries/)
+- 金鑰託管平台選型 → `05-deployment-platform`
+
+Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節。
+
+## 從本章到實作
+
+本章是 routing layer，沿兩條 chain 進入 implementation：
+
+- **Mechanism**：問題節點表的 `[message-authentication]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
+- **Delivery**：「交接路由」欄位指向 `05-deployment-platform / 06-reliability / 08-incident-response`。
+
+兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
+
+## 原語選型模型
+
+選型的核心責任是先確認要防的是誰，再選對應的原語。以下四類解的問題彼此獨立，疊加使用時各自承擔一部分；前三類依賴金鑰，第四類不需要。
+
+1. **機密性**：讓內容對持有密文的人不可讀。對應 [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/) 與 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)。
+2. **來源與完整性**：證明內容出自持有密鑰的一方且未被竄改。這一類有兩種形態，選型判準是「驗證方需不需要具備產生的能力」。
+   - **共享密鑰**：雙方持同一把密鑰，對應 [Message Authentication](/backend/knowledge-cards/message-authentication/)。選型上要注意它的撤銷粒度與能力上限都由「雙方共同持有」這件事決定，機制細節在卡片。
+   - **非對稱簽章**：私鑰簽發、公鑰驗證，驗證方不具備產生能力。它能對不特定多方發佈可驗證的憑證，私鑰即 [信任根](/backend/knowledge-cards/certificate-chain-trust/)，失守的後果是所有下游驗證同時失去意義；判準見 [Non-repudiation](/backend/knowledge-cards/non-repudiation/)。
+3. **可讀性遮蔽**：讓內容在載體上不以明文出現，抵擋不特定旁觀者。對應可逆編碼。
+4. **不可逆的單向轉換**：讓原值無法從結果還原，防的是取得儲存內容的攻擊者。使用者密碼的儲存（bcrypt、argon2 這類刻意放慢的雜湊）與內容校驗（checksum）都屬於這一類。它不依賴金鑰，判讀軸因此落在計算成本上：密碼儲存要選能調整 work factor 的演算法，讓攻擊者逐一嘗試的成本隨參數上升；校驗只要求碰撞難以構造，速度反而是優點。
+
+需要對多方發佈憑證、或事後要追究是哪一方產生某個值時，選的是非對稱簽章；雙方點對點互相呼叫且互相信任時，共享密鑰的成本更低。
+
+前三類都依賴金鑰，差別在**金鑰放在哪裡**，而金鑰位置直接決定這個機制能對抗誰。以下的判讀主軸適用於這三類。
+
+## 金鑰位置決定對抗對象
+
+金鑰位置是選型判讀最有效的單一問題。它把抽象的「這樣安全嗎」轉成可回答的「誰拿得到金鑰」。
+
+**金鑰只在服務端**：機制能對抗持有客戶端與網路流量的攻擊者。伺服器解密、驗證、簽發，客戶端只收到結果。這是正式憑證的預設形態，非對稱簽章的私鑰也屬於這一格 —— 公鑰可以隨意發佈，能產生合法值的能力仍然只留在服務端。
+
+**金鑰在雙方服務端**：機制能對抗網路上的第三方，但雙方互相信任。共享密鑰的訊息驗證屬於這一類 —— 任一端的密鑰外洩，攻擊者就能偽造另一端看來合法的請求。
+
+**金鑰在客戶端的受保護儲存區**：機制能對抗取得產出物的人，對能提權操作該裝置的人失效。金鑰由裝置端產生後存進作業系統的受保護儲存區（iOS Keychain、Android Keystore、TPM），不進產出物也不上傳，因此反編譯這條路徑不成立。離線可用又不想讓服務端持有金鑰的功能落在這一格。
+
+**金鑰隨客戶端發佈**：機制能對抗看到載體或流量的旁觀者，對能取得程式的人失效。行動應用與桌面應用的產出物可被反編譯或字串掃描，硬編碼的金鑰在其中以明文存在。這一格與上一格的差別只在金鑰有沒有進產出物，而這個差別決定了反編譯是否構成完整的攻擊路徑。
+
+第三種情況值得明確命名為 [混淆](/backend/knowledge-cards/obfuscation/) 而非加密。命名精確之後，設計討論會自動導向正確的問題：這段內容洩漏給「能取得程式的人」的後果可以接受嗎。
+
+[USAHERDS 2021 硬編碼憑證](../red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/) 展示這條路徑的實際後果：攻擊者從系統中檢索出可重用憑證後，沿固定認證路徑取得入口存取並長期維持。
+
+以下條件的推導來自可逆編碼在客戶端的實作情境：混淆要成為合理選擇，需要憑證權限受限、服務端另有授權把關、產生入口限制在受控環境、正式憑證由服務端核發而非客戶端產生。這四條是必要條件而非充分條件 —— 全部成立仍可能被三種情形否決：合規對憑證儲存有明文規範、載體會流通到組織外、或同一把金鑰的載體大量產出（統計還原因此可行，產生入口受控這個假設隨之失效）。
+
+把客戶端的編碼稱為 [縱深防禦](/backend/knowledge-cards/defense-in-depth/) 的外層要多一道手續：外層的正當性建立在內層獨立有效上，而內層有效與否要實測而非宣稱。四條的推導、各自的檢查方式與否決條件見 [XOR 可逆編碼的適用邊界](/work-log/xor_reversible_encoding_boundary/)。
+
+## 判讀流程
+
+判讀流程的責任是把「要不要加密」轉成「這個機制擋得住誰」。
+
+1. 先確認要防的對象：旁觀者、網路第三方、還是能取得程式的攻擊者。
+2. 再確認金鑰位置，對照上一節的三種形態。
+3. 接著把後果範圍換算成金鑰位置：後果涵蓋正式環境憑證或跨租戶資料時，往金鑰更難取得的一格移 —— 服務端持有是一條路，客戶端功能必須離線可用時，把金鑰移進裝置的受保護儲存區是另一條，兩者都讓反編譯拿不到金鑰。後果限於單一受限帳號、且服務端另有授權把關時，混淆可以留在外層，前提是「金鑰位置決定對抗對象」節末的條件成立。
+4. 最後把金鑰的保存與輪替路由到治理層與部署面。
+
+## 問題節點（案例觸發式）
+
+| 問題節點           | 判讀訊號                             | 風險後果                         | 前置控制面                                                                                                                                     | 交接路由  |
+| ------------------ | ------------------------------------ | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| 金鑰隨程式發佈     | 密鑰以常數形式存在於產出物           | 取得程式即可還原內容或偽造請求   | [secret-management](/backend/knowledge-cards/secret-management/)、[credential](/backend/knowledge-cards/credential/)                           | `05 + 06` |
+| 原語與威脅不匹配   | 用訊息驗證處理機密性需求，或反之     | 保護落空但團隊認為已受保護       | [message-authentication](/backend/knowledge-cards/message-authentication/)、[at-rest-encryption](/backend/knowledge-cards/at-rest-encryption/) | `05`      |
+| 驗證素材定義不一致 | 兩端各自解讀欄位順序、單位與空值處理 | 對接失敗且錯誤訊息無法定位       | [message-authentication](/backend/knowledge-cards/message-authentication/)                                                                     | `05`      |
+| 重放窗口未收斂     | 驗證值涵蓋時間戳但接收端未檢查新鮮度 | 攔截到的請求可無限重放           | [message-authentication](/backend/knowledge-cards/message-authentication/)、[idempotency-key](/backend/knowledge-cards/idempotency-key/)       | `06 + 08` |
+| 簽章金鑰無隔離     | 簽發用金鑰與一般 secret 同層保存     | 失守後可偽造所有下游可驗證的憑證 | [key-management](/backend/knowledge-cards/key-management/)、[hsm](/backend/knowledge-cards/hsm/)                                               | `06 + 08` |
+
+## 跨章議題交叉引用
+
+本章「簽章金鑰無隔離」是 [7.6 簽章金鑰跟長期信任根](../secrets-and-machine-credential-governance/#簽章金鑰跟長期信任根) 在選型層的入口；canonical SSoT 在 7.6，本條補「選型階段就該把簽發金鑰與一般 secret 分層」的前置訊號。
+
+## 驗證素材的對齊成本
+
+驗證素材指的是進入計算的那串內容——哪些欄位、以什麼順序、用什麼編碼串接起來。它的定義不一致是跨團隊對接最常見的耗時來源，特徵是**失敗訊號不具指向性**。這個特徵決定了它在選型階段的成本地位：它的耗時不隨團隊能力下降，而是隨介面調整次數重複發生，因此把素材規格寫進雙方書面契約的投資，在整合的生命週期裡會被攤提多次。
+
+素材的逐項清單、可在本機單方完成的診斷手法與對接的檢查順序見 [HMAC 簽章對接](/work-log/hmac_signature_field_alignment/)。
+
+## 重放窗口的收斂條件
+
+重放防護的時間軸條件（驗證值涵蓋時間戳、接收端檢查新鮮度）擋住窗口外的重送，窗口內的重複由識別值去重承接，兩者的分工見 [Replay Attack](/backend/knowledge-cards/replay-attack/)。選型層要判斷的是另一件事：這一格在功能測試裡表現正常，所以它不會被測試發現，只會被稽核或事件發現。原語選對而這一格空著時，團隊拿到的保護與帳面上以為的保護有落差，而落差在正常運作期間沒有徵兆。
+
+窗口長度是選型階段就要定的參數，兩端都能換算成具體的量。下界是量測到的 [時鐘偏移](/backend/knowledge-cards/clock-skew/) 上界加上餘裕，低於這個值正常請求會在漂移時被拒。上界由去重的儲存量反推：窗口內的已處理識別值都要留著，請求速率乘上窗口長度就是要保留的筆數，這個數字撐不住時窗口就該縮短。涉及金流或不可逆動作的端點直接取下界，不必在區間裡挑。
+
+## 常見風險邊界
+
+風險邊界的責任是定義何時要把選型決策升級成治理議題。
+
+- 客戶端持有的金鑰能解出正式環境憑證時，代表混淆承擔了超出能力的責任。
+- 團隊用「已加密」描述只做了訊息驗證的路徑時，代表機密性需求沒有被實際滿足，修法是補上加密而非調整既有機制。同一句話用在金鑰位於客戶端的可逆編碼上則是另一種誤稱，那裡要移動的是金鑰位置。
+- 簽發金鑰與應用程式 secret 走同一套保存與輪替流程時，代表信任根的層級被壓平。
+- 驗證素材沒有雙方共同書面規格時，代表對接成本會在每次介面調整時重新發生。
+- 驗證值的比對用一般字串相等運算時，代表機制的強度被實作層抵銷，收斂點見 [Timing Attack](/backend/knowledge-cards/timing-attack/)。
+
+## 案例觸發參考
+
+案例觸發的責任是檢查選型判斷在真實壓力下是否成立。
+
+- 硬編碼憑證與固定認證路徑： [USAHERDS 2021](../red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/)
+- 簽章金鑰失守與下游偽造： [Microsoft Storm-0558 2023](../red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)
+- 憑證集中與輪替壓力： [CircleCI 2023](../red-team/cases/supply-chain/circleci-2023-secrets-rotation/)
+- 簽章方案在對外契約上的實際形態： [Stripe webhook 投遞契約](/backend/11-api-design/cases/webhook-stripe-delivery-contract/)
+
+## 下一步路由
+
+- 金鑰與秘密的生命週期治理：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
+- 呼叫方身分的分層：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
+- 可逆編碼在客戶端的適用邊界與配套：[XOR 可逆編碼的適用邊界](/work-log/xor_reversible_encoding_boundary/)
+- 金鑰託管與部署配置：`05-deployment-platform`
+- 輪替與回退演練：`06-reliability`
+- 金鑰失守後的收斂：`08-incident-response`
