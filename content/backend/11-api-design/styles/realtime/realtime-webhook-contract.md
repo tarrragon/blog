@@ -24,7 +24,7 @@ webhook 把可靠性的一部分交給 consumer 自己扛、有五件事跑不�
 
 快速 [ack](/backend/knowledge-cards/ack-nack/)（回覆確認收到）是第三件：慢等於失敗。Slack 寫死 3 秒、GitHub 10 秒、超過就算投遞失敗。這逼出「先回 2xx、再背景處理」的拆分、複雜邏輯不能擋在 ack 前面、否則一個慢查詢就讓整批事件被判失敗。
 
-簽章驗證是第四件。webhook 是打到你公開 URL 的請求、要驗它真的來自該 vendor。每個 vendor 一套 HMAC（雜湊訊息鑑別碼）方案（Stripe-Signature、GitHub 的 `X-Hub-Signature-256`、Shopify 的 `X-Shopify-Hmac-Sha256`）—— header 名不同、驗法類似：用雙方共享的 secret 對 body 算一段雜湊、比對請求帶的簽章、對不上就丟。
+簽章驗證是第四件。webhook 是打到你公開 URL 的請求、要驗它真的來自該 vendor。每個 vendor 一套 [HMAC](/backend/knowledge-cards/message-authentication/)（雜湊訊息鑑別碼）方案（Stripe-Signature、GitHub 的 `X-Hub-Signature-256`、Shopify 的 `X-Shopify-Hmac-Sha256`）—— header 名不同、驗法類似：用雙方共享的 secret 對 body 算一段雜湊、比對請求帶的簽章、對不上就丟。簽章之外還有一格常被略過：驗簽章通過只證明內容沒被改、不證明這是新的請求，要擋 [重放](/backend/knowledge-cards/replay-attack/) 得另外檢查 vendor 附的 timestamp 是否在容忍窗口內。
 
 對帳兜底是第五件。Shopify 文件最直接：投遞不保證、app 可能漏事件、要另備 [reconciliation](/backend/knowledge-cards/data-reconciliation/)（對帳）或 polling 補漏。webhook 是盡力而為的推送、要做到不漏、consumer 得在 webhook 之外自備對帳。
 
@@ -36,6 +36,7 @@ webhook 把可靠性的一部分交給 consumer 自己扛、有五件事跑不�
 
 ## 下一步路由
 
+- 簽章原語的選型與重放窗口：[7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)
 - 持久連線的推送機制：[持久連線推送](/backend/11-api-design/styles/realtime/realtime-push-mechanisms/)
 - 錯誤與投遞承諾的雙向框架：[11.11 Status 與錯誤的雙向契約](/backend/11-api-design/error-bidirectional-contract/)
 - consumer 側的冪等設計：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)

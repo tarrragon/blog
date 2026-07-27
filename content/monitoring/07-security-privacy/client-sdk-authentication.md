@@ -77,7 +77,7 @@ Mobile SDK（Flutter / native app）的 request 不帶 Origin header。Origin �
 
 ### 第三層：Request signing
 
-SDK 用 HMAC 對每個 request 簽章，collector 驗證簽章有效性。簽章的輸入包含 timestamp 和 payload hash，防止 replay attack 和 payload 竄改。
+SDK 用 HMAC 對每個 request 簽章，collector 驗證簽章有效性（機制見 [Message Authentication](/backend/knowledge-cards/message-authentication/)）。簽章的輸入包含 timestamp 和 payload hash，防止 [replay attack](/backend/knowledge-cards/replay-attack/) 和 payload 竄改；timestamp 窗口的寬度取決於兩端的 [時鐘偏移](/backend/knowledge-cards/clock-skew/)。
 
 ```text
 X-Signature: a3f8c2e1b7d94f06...  (HMAC-SHA256 結果的 hex 編碼)
@@ -117,6 +117,8 @@ func verifySignature(r *http.Request, secret string) bool {
 Request signing 增加偽造成本 — 攻擊者需要提取 HMAC secret 並實作簽章邏輯，而非直接複製一個 API key 貼到 curl 指令。
 
 HMAC secret 和 API key 一樣嵌在 client 端程式碼中，反編譯 APK 或閱讀 JS bundle 可以提取。Signing 增加的是攻擊者的工程投入（需要理解簽章算法並正確實作），而非理論上的安全性。對 casual attacker（看到 API key 就想試試的人）有效，對 motivated attacker（願意花時間逆向工程的人）無效。
+
+這個定位在密碼學上有對應的名字：金鑰隨產出物發佈時，機制提供的是 [混淆](/backend/knowledge-cards/obfuscation/) 而非機密性，它成立的前提是 collector 端另有把關，也就是它只作為 [縱深防禦](/backend/knowledge-cards/defense-in-depth/) 的外層。選型層的完整判準見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)。
 
 ### 第四層：行為分析異常偵測
 

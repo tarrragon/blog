@@ -76,6 +76,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - [7.5 第三方信任重評估延遲](../transport-trust-and-certificate-lifecycle/)：傳輸層的 specific 訊號（憑證收斂滯後）
 - [7.6 供應商事件傳導未收斂](../secrets-and-machine-credential-governance/)：機器憑證層的 specific 訊號（憑證仍活躍）
 - [7.10 第三方授權範圍跟事件傳導半徑](../workload-identity-and-federated-trust/#第三方授權範圍跟事件傳導半徑)：workload identity 層的 specific 訊號（[federation](/backend/knowledge-cards/federation/) token scope 過寬）
+- [7.29 第三方授權範圍過寬](../api-authentication-trust-boundaries/#跨章議題交叉引用)：API 整合層的 specific 訊號（授權當下的 scope 決定事件發生時的暴露面）
 
 本章視角聚焦客戶側人類身分鏈收斂責任；workload identity 層的 federation token scope 視角見 7.10。跨章 audit 時、本條為 canonical 定義（threat scope / mitigation chain），其他章補 layer 視角差異。
 

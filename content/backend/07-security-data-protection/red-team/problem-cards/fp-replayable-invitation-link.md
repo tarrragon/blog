@@ -6,7 +6,7 @@ weight: 7231
 tags: ["backend", "security", "red-team"]
 ---
 
-這個失效樣式的核心問題是邀請連結缺少一次性語意。當連結可重放且有效期長，邀請流程會形成持續可利用入口。
+這個失效樣式的核心問題是邀請連結缺少一次性語意。當連結可重放且有效期長，邀請流程會形成持續可利用入口。機制層的一次性識別值與新鮮度窗口見 [Replay Attack](/backend/knowledge-cards/replay-attack/)。
 
 ## 常見形成條件
 

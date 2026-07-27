@@ -80,7 +80,7 @@ CI secrets 集中化的核心風險是把 *單一節點承載的憑證數量* �
 
 簽章金鑰是憑證治理的最高層信任根、生命週期治理要跟一般 token 分開。簽章金鑰一旦失守、攻擊者能偽造 *可被驗證* 的 token、繞過所有依賴該 issuer 的下游驗證；這跟一般 token 洩漏（仍受 token 自身 scope 限制）是不同層級的失效。
 
-本節是簽章金鑰治理的 canonical（含 material 保護跟 lifecycle 視角）；驗證路徑層的 specific 訊號（fleet 層級 issuer 熱抽換）見 [7.5 簽章金鑰失效時的驗證路徑收斂](../transport-trust-and-certificate-lifecycle/#簽章金鑰失效時的驗證路徑收斂)。
+本節是簽章金鑰治理的 canonical（含 material 保護跟 lifecycle 視角）；驗證路徑層的 specific 訊號（fleet 層級 issuer 熱抽換）見 [7.5 簽章金鑰失效時的驗證路徑收斂](../transport-trust-and-certificate-lifecycle/#簽章金鑰失效時的驗證路徑收斂)。選型階段的入口訊號（何時該把簽發金鑰與一般 secret 分層）見 [7.28 密碼學原語選型](../cryptographic-primitive-selection/#跨章議題交叉引用)。
 
 對應 [Microsoft Storm-0558 2023](../red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)：揭露三層失效控制面 — 簽章金鑰生命週期治理與隔離策略不足、權杖驗證邊界缺少跨服務一致性檢查、高風險身分事件追查與升級節奏偏慢。本章聚焦第一層 material 保護、第二層 validation 路徑由 7.5 處理。案例「可落地檢查點」標明 mechanism 為「把簽章金鑰納入硬體保護與輪替節奏（HSM-bound、不可導出、強制輪替週期）」。
 
