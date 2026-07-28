@@ -22,7 +22,7 @@ tags: ["backend", "security"]
 - 傳輸憑證與信任鏈 → [7.5](../transport-trust-and-certificate-lifecycle/)
 - 靜態資料的遮罩與分級 → [7.4](../data-protection-and-masking-governance/)
 - 呼叫方身分的分層設計 → [7.29](../api-authentication-trust-boundaries/)
-- 金鑰託管平台選型 → `05-deployment-platform`
+- 金鑰託管平台選型（KMS、Secrets Manager、Vault）→ [vendors](../vendors/)
 
 Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節。
 
@@ -129,6 +129,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 金鑰與秘密的生命週期治理：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 呼叫方身分的分層：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 可逆編碼在客戶端的適用邊界與配套：[XOR 可逆編碼的適用邊界](/work-log/xor_reversible_encoding_boundary/)
-- 金鑰託管與部署配置：`05-deployment-platform`
+- 金鑰託管平台的選型與能力對照：[07 vendors](../vendors/)
+- 金鑰在部署流程中的配發與注入：`05-deployment-platform`
 - 輪替與回退演練：`06-reliability`
 - 金鑰失守後的收斂：`08-incident-response`
