@@ -3,7 +3,7 @@ name: compositional-writing
 description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流."
 license: MIT
 metadata:
-  version: 0.39.0
+  version: 0.40.0
   category: writing-methodology
 ---
 
@@ -169,12 +169,12 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 
 - **multi-round-review** 規劃 frame 切換結構（Round 1 compliance / Round 2 cadence / Round 3 self-application）跟跨輪 finding 整合工作流
 - **本 skill（compositional-writing）** 提供每輪 frame 的字句層 keyword bank — Round 1-A 寫作規範 reviewer 必須跑：
-  - **正向陳述優先 grep**：`rg "不[行可是要能該支對符夠必]|無法|沒[做有]|而非|而不是"`、加上**否定起手定義句**（原 pattern 漏「而是」、抓不到「不是 X、而是 Y」的後半）：`rg "不是.{0,30}而是|不是.{0,20}、是|與其.{0,20}不如|不只.{0,15}更"` — 主要敘述要正向、反例對照的少量負向可保留；判別在「核心概念第一次正面出現在句首、還是被擠到『而是』之後」
+  - **正向陳述優先 grep**：`rg "不[行可是要能該支對符夠必]|無法|沒[做有]|而非|而不是"`、加上**否定起手定義句**（原 pattern 漏「而是」、抓不到「不是 X、而是 Y」的後半）：`rg "不是.{0,30}而是|不是.{0,20}、是|不是.{0,25}，\s*是|與其.{0,20}不如|不只.{0,15}更"` — 主要敘述要正向、反例對照的少量負向可保留；判別在「核心概念第一次正面出現在句首、還是被擠到『而是』之後」
   - **口語修辭 grep**：`rg "其實|實務上|真的|碰巧|立刻撞牆|沒事"`
   - **地區用語 grep**：單詞層 `rg "集群|默認|質量|視頻|函數|文件夾|接口"`（封閉集合、掃得到）；慣用語層 `rg "拍腦袋|拍板|靠譜|給力|接地氣|一波|死磕|躺平|內卷"`（已知個案、**非窮舉**——慣用語是開放集合、grep 追不完、新個案要靠目標地區讀者冷讀，同源 reviewer 回報「地區用語 clean」對慣用語層不可當真，見 [`regional-idioms-evade-keyword-bank`](references/principles/regional-idioms-evade-keyword-bank.md)）
   - **廢話前綴 grep**：`rg "值得注意的是|需要說明的是|實際上|基本上|事實上"`
   - **裝飾符號 grep**：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗"`
-  - **對讀者喊話 grep**：`rg "很多人|大家|不少人|你的|你在|你把|你天天|你會|你可能|先讀懂|先釐清|別搞混|別被"` — 教材中性陳述、不安撫情緒 / 不第二人稱代入 / 不祈使控制閱讀（hook / narrative 段落輕度第二人稱可留）。**裸所有格 / 主詞（你的 X / 你在 X）也算、不限「你 + 動詞」的祈使 / 預測句型**；grep 對裸『你』非窮舉、真防線是 reader-simulation 冷讀（同源 grep 抓不到 register、見 [multi-pass-review-frame-granularity](references/principles/multi-pass-review-frame-granularity.md)）
+  - **對讀者喊話 grep**：`rg "很多人|大家|不少人|你的|你在|你把|你正在|你補|你天天|你會|你可能|先讀懂|先釐清|別搞混|別被"`（**裸「你」非窮舉**：實測過 `你正在`、`你補完` 這類「你 + 一般動詞」逃過原 pattern，回報 clean 前另跑一次裸 `rg "你"` 逐處判定） — 教材中性陳述、不安撫情緒 / 不第二人稱代入 / 不祈使控制閱讀（hook / narrative 段落輕度第二人稱可留）。**裸所有格 / 主詞（你的 X / 你在 X）也算、不限「你 + 動詞」的祈使 / 預測句型**；grep 對裸『你』非窮舉、真防線是 reader-simulation 冷讀（同源 grep 抓不到 register、見 [multi-pass-review-frame-granularity](references/principles/multi-pass-review-frame-granularity.md)）
   - **自評誇飾 grep**：`rg "教科書級|堪稱|可謂|完美|經典|範本級|大師級|漂亮地|優雅地|最佳實踐|best practice"` — 品質 verdict 頂替技術理由、換成機制 / 條件
   - **必然性框架 grep**：`rg "天生|與生俱來|本質就是|本來就是|必然|唯一|註定|理所當然"` — 把設計選擇講成自然法則、還原成條件性（物理 / 法律 / 數學事實除外）
   - **澄清式框架 grep**：`rg "最容易誤|容易誤判|常見的?誤判|要點破|直覺會?帶偏|抵抗.*的直覺|你以為|會困惑|值得記"` — 把「讀者會誤解」當敘事中心是知識缺口訊號、不是澄清時機；補正向模型與機制讓誤解無從發生、不提醒讀者一個他本不需要有的困惑。界線是具體第一人稱實測敘事跟真實診斷區分（逾時 vs 被拒、症狀層 vs 根因層）保留、只有把假想誤會當主題句起手的才改；同義變體多、grep 抓不全、靠 reader-simulation 語意判定（「這段在補正向知識、還是在提醒讀者會犯錯？」）。見 [fill-knowledge-gap-not-center-misconception](references/principles/fill-knowledge-gap-not-center-misconception.md)
@@ -211,7 +211,7 @@ compositional-writing/
     ├── translation-review.md             # 情境 5b：文章翻譯 / 轉譯的句內邏輯 review
     ├── managing-article-collections.md   # 情境 5c：跨多篇文章的結構（三層、素材庫比例、MOC、Pattern 卡片）
     ├── structuring-with-solid.md         # 情境 5d：結構決策判準（SOLID 寫作映射：拆分 / 擴充點 / 依賴方向 / 讀者分流）
-    ├── judgment-content-needs-scenarios.md # 情境 5e：判讀 / 選型類內容補系統形態與觸發事件（含正反例四組）
+    ├── judgment-content-needs-scenarios.md # 情境 5e：判讀 / 選型類內容補情境與後果（形態 / 觸發事件 / 微案例、含正反例四組）
     ├── designing-fields.md               # 情境 6：欄位設計（含六欄位角度總表）
     ├── designing-fields-ticket-6w.md     # 六欄位詳細範例：正確 + 混淆共 12 項（按需讀取）
     ├── meta-metrics.md                   # 品質量化驗收（M1-M5）
@@ -231,6 +231,7 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-20
+**Version**: 0.40.0 — 多輪審查 Round 1 回饋修正：H1 從「要給系統形態與觸發事件」改成「要給情境與後果」（涵蓋三種補法）；標題去計數（六步程序 → 程序、兩個修法副作用 → 修法的副作用，該檔正在擴充期、步數會變）；補母詞邊界（前兩種是情境／回答進入條件、第三種是後果的敘事化，**不合稱「三種情境」**——避免與上游卡的「情境有兩種」對撞）；第 2 步補可執行 handle（形態句的起手詞有 grep 特徵、本篇找不到樣本時取同分類另一篇）；卡連結落差補機制（絕對數量隨篇幅與術語密度變動、同分類內這兩個變因相近所以落差排除干擾項）；「必然副產物」改「常見副產物」（原句從 n=1 推必然）；四拍第三拍的「最有價值」改成可推導的「最不可省略」（其餘三拍讀者能從機制自行推得、第三拍取決於組織的監控與責任配置）；微案例長度上限兩三句改三四句（與實際試寫對齊）。keyword bank 補兩個實測 pattern 變體：否定起手的全形逗號形式（`不是 X，是 Y`）與裸「你」（`你正在`、`你補完` 這類逃過原 pattern、回報 clean 前要另跑一次裸 `rg "你"`）。
 **Version**: 0.39.0 — `judgment-content-needs-scenarios` 補第三種要補的東西：**微案例**（無身分短敘事、兩三句、不帶公司名年份帳目）。原本只有系統形態與觸發事件，兩者都是分類語言、讀者用它們定位自己；沒有經驗的讀者卡在定位之後——知道自己中了但不知道會怎樣，而有經驗的人能自己補這段，所以純分類的內容對資深讀者看起來已完整。四拍寫法（當初為什麼這樣做／什麼時候開始出問題／為什麼沒被及時發現／止血的代價），第三拍最有價值因為它解釋「為什麼不會有人提早警告你」，缺第一拍讀者會覺得是別人才會犯的蠢錯；只挑後果最不直觀的一兩個寫、長度超過兩三句就該進案例庫。與真實案例的分工：剝離身分的原則禁的是搬運帳目、不是禁具體敘事，微案例在章節內讓形態可想像、真實案例在案例庫承擔可查證。六步程序第 4 步從兩個問題改成三個。觸發路由補「沒有範例看不懂」這個讀者提問形態。對應 report 卡 #242。
 **Version**: 0.38.0 — `judgment-content-needs-scenarios` 新增「形態的軸取決於讀者當下的變數」：形態不等於架構長相，軸至少三條——**系統架構軸**（讀者已有系統、正決定要不要改）、**團隊狀態軸**（選型類，系統可能還不存在、變數是組織現況）、**關係人約束軸**（對外契約類，變數是對方的能力）；判定「缺形態」前先問這篇用的是哪條軸，只找架構軸會把用其他軸寫成的形態誤判成缺，而誤判成本高於漏抓（漏抓少補一篇、誤判會補出與既有形態並存的冗餘內容、讀者拿到兩套互不相干的分類法）；軸選錯也讓補出的內容不可用。從選型類分類的試作抽出——該篇形態早已存在、只是用團隊狀態當軸，而先前三個分類補的形態全是架構軸、框架因此隱含假設了形態等於架構。
 **Version**: 0.37.0 — `judgment-content-needs-scenarios` 新增「逐節讀會撞到錯置內容」：第 3 步逐節讀的必然副產物是發現某節不屬於這篇，辨識訊號由弱到強是「節標題主題不同 → 同分類已有更專門的落點 → **錯置內容篇幅與主體相當或更長**」（實測遇過主體三十餘行、錯置近四十行＝兩篇擠在一起）；處置三規則——標路由目的地不刪（只標「不屬於這裡」會讓修改者選最省力的刪除而非最正確的路由）、登記待辦不當場搬（搬遷要驗證兩端、尺度大於補情境，混做會破壞逐篇檢查可隨時中斷的價值）、前置條件寫明先驗證目的地涵蓋度（目的地已有同主題內容時搬過去是製造重複、比留在原地更糟）。從第三個分類試作抽出。
