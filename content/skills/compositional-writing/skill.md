@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.34.0
+  version: 0.35.0
   category: writing-methodology
 ---
 
@@ -234,6 +234,7 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-20
+**Version**: 0.35.0 — Portable 收尾：三張 principle 卡末尾的溯源標註從連結降為純文字 slug（`對應的 blog report 卡 slug 是 \`xxx\``）。這類標註記的是「這張卡從哪抽出來」、不是內容依賴（不點過去也能用卡），但寫成 blog 絕對路徑後複製到別的專案就是死鏈；降成 slug 文字後溯源資訊保留、portable scan 全 clean。
 **Version**: 0.34.0 — Portable 修正兩處：三個指向外部 report 路徑的連結（outside-in reader frames / 常識是相對於讀者背景的 / 操作指引要帶環境專屬工具路徑）抽成 `references/principles/` 內的原則卡改相對連結——絕對路徑複製到別的專案後是死鏈，違反 skill 的 portable 邊界，鏡像工具會把相對連結轉回 blog 的 report 路徑、所以公開鏡像不受影響；「跟 multi-round-review 的協同」段的 principles 指路改成不帶路徑的寫法：原本的 inline code 路徑會被鏡像工具的寬鬆比對命中、卻因為後面接的是卡名清單而非 `.md` 檔名而提取不到 slug，每次同步都產生一則 unresolved 警告；且該路徑在公開鏡像上不存在、對鏡像讀者是死指引。
 **Version**: 0.33.0 — 新增 `judgment-content-needs-scenarios.md`（情境 5e）：判讀 / 選型 / 決策類內容要給系統形態（服務設計階段）與觸發事件（服務維運階段），只給機制屬性時讀者必須自己補情境、而能補的人本來就會判斷了；關鍵區分是情境不等於實作（判讀層宣告不展開實作是對的、但情境屬判讀層自己）；含六步程序與四組正反例（機制屬性缺觸發事件 / 分類缺對號入座入口 / 判讀表缺系統形態 / 三種不需要補的情況），以及兩個實測到的修法副作用（補情境會引入第二人稱、原本的封閉計數會失準）；檢查單位是「內容」而非「段落」——分散在別節也算有。從兩篇判讀類章節的實作驗證抽出。同步修正 frontmatter version 欄位與末尾版本紀錄脫節（停在 0.30.0）。
 **Version**: 0.32.0 — keyword bank 新增「用詞搭配錯位」grep（擬人化謂語 + 形容詞誤搭：分析角度不會「說」、訊號的可辨識度是「清晰」不是「直接」）、新增 principle 卡 [word-choice-fits-concept-attributes](/report/word-choice-fits-concept-attributes/)；從一次多輪審查中兩處搭配錯位由人類冷讀 catch（agent 同源多輪 register / cadence / 冷讀全漏）抽出，是 register 同源盲區需異源的實例
