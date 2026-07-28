@@ -118,7 +118,7 @@ Request signing 增加偽造成本 — 攻擊者需要提取 HMAC secret 並實�
 
 HMAC secret 和 API key 一樣嵌在 client 端程式碼中，反編譯 APK 或閱讀 JS bundle 可以提取。Signing 增加的是攻擊者的工程投入（需要理解簽章算法並正確實作），而非理論上的安全性。對 casual attacker（看到 API key 就想試試的人）有效，對 motivated attacker（願意花時間逆向工程的人）無效。
 
-這個定位在密碼學上有對應的名字：金鑰隨產出物發佈時，機制提供的是 [混淆](/backend/knowledge-cards/obfuscation/) 而非機密性，它成立的前提是 collector 端另有把關，也就是它只作為 [縱深防禦](/backend/knowledge-cards/defense-in-depth/) 的外層。選型層的完整判準見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)。
+這個定位在密碼學上有對應的名字：金鑰隨產出物發佈時，機制提供的是 [混淆](/backend/knowledge-cards/obfuscation/) 而非機密性，它成立的前提是 collector 端另有把關，也就是它只作為 [縱深防禦](/backend/knowledge-cards/defense-in-depth/) 的外層。選型層的完整判準見 [7.28 金鑰位置決定對抗對象](/backend/07-security-data-protection/cryptographic-primitive-selection/#金鑰位置決定對抗對象)。
 
 ### 第四層：行為分析異常偵測
 
