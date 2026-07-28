@@ -84,7 +84,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 判讀流程的責任是把「要不要加密」轉成「這個機制擋得住誰」。
 
 1. 先確認要防的對象：旁觀者、網路第三方、還是能取得程式的攻擊者。
-2. 再確認金鑰位置，對照上一節的三種形態。
+2. 再確認金鑰位置，對照上一節的四種形態。
 3. 接著把後果範圍換算成金鑰位置：後果涵蓋正式環境憑證或跨租戶資料時，往金鑰更難取得的一格移 —— 服務端持有是一條路，客戶端功能必須離線可用時，把金鑰移進裝置的受保護儲存區是另一條，兩者都讓反編譯拿不到金鑰。後果限於單一受限帳號、且服務端另有授權把關時，混淆可以留在外層，前提是「金鑰位置決定對抗對象」節末的條件成立。
 4. 最後把金鑰的保存與輪替路由到治理層與部署面。
 
@@ -141,6 +141,6 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 呼叫方身分的分層：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 可逆編碼在客戶端的適用邊界與配套：[XOR 可逆編碼的適用邊界](/work-log/xor_reversible_encoding_boundary/)
 - 金鑰託管平台的選型與能力對照：[07 vendors](../vendors/)
-- 金鑰在部署流程中的配發與注入：`05-deployment-platform`
-- 輪替與回退演練：`06-reliability`
-- 金鑰失守後的收斂：`08-incident-response`
+- 金鑰在部署流程中的配發與注入：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Secret Boundary 段
+- 金鑰失守後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
+- 回退演練的通用形態：[6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)；金鑰輪替本身的演練設計 `06-reliability` 尚未有對應章節，已列入該模組 backlog

@@ -147,6 +147,6 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 人類身分與權限分級：[7.2 身分與授權邊界](../identity-access-boundary/)
 - 機器憑證生命週期：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 各層憑證的格式、儲存與開通策略實作：[API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/)。盤點與設計評審用本章的問題節點表，落到各層要用哪種憑證、怎麼儲存、開通流程怎麼設計時走那一篇
-- 配置與部署：`05-deployment-platform`
-- 撤銷演練：`06-reliability`
-- 事件收斂：`08-incident-response`
+- 各層憑證在部署流程中的配置邊界：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Secret Boundary 段
+- 事件發生後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
+- 撤銷路徑的演練設計：`06-reliability` 目前沒有憑證撤銷演練的章節，已列入該模組 backlog；在那之前，回退演練的通用形態見 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)
