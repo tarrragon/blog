@@ -3,7 +3,7 @@ name: multi-round-review
 description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
-  version: 1.15.0
+  version: 1.16.0
   category: writing-methodology
 ---
 
@@ -75,6 +75,7 @@ metadata:
 - **A: Cadence + 字句層** — 句型同骨化（per [#122 cadence 同質化](references/principles/cadence-homogenization.md)）、廢話前綴、口語修辭、地區用語。**修 cadence 時警惕反噬**：為破舊模具而立的生成端規則（如「段首一律目標詞先行」）若均勻套整批、會複製出比原模具更密的新模具、且同源自審在「已修」錯覺下看不到——修法要輪替多個 framing、修完把修法產物納入整組重掃（per [均勻修法複製新模具](references/principles/uniform-remediation-recreates-homogenization.md)）
 - **B: Reader simulation 旅程審查** — 假裝特定讀者類型（如「剛從入門影片進來的開發者」）、實際走學習路線、看入口判讀 / 內容門檻 / 跳出訊號。**Reader-persona register 適配**：指定具體讀者角色後，額外問「這個人讀到這段會覺得被低估嗎」。**術語知識卡覆蓋**：假裝讀者群裡最不熟悉的那端（如 Node.js 工程師讀 PHP 教材），逐一掃描文中術語——任何讓該讀者需要去 Google 的術語都是知識卡缺口。常識是相對於讀者背景的、作者和同源 reviewer 共享的「常識」盲區需要這個 frame 才能 catch。per [常識是相對於讀者背景的](references/principles/common-knowledge-is-relative-to-reader-background.md)——宣導語氣（故事帶入、比喻堆疊、「你可能不知道」）對專業讀者是 register 失配，keyword bank 抓不到（字面合規）、同源 reviewer 容易放行（共享「故事帶入是好教學」的直覺）。per [outside-in reader frames](references/principles/review-lacks-outside-in-reader-frames.md)
 - **B″: Executable walkthrough（操作型文章專用、outside-in）** — 假裝讀者從零照做、每一步問「下一個動作是打開什麼軟體、輸入什麼指令」。任何一步答不出來就是工具缺口。操作步驟在邏輯層正確（fact-check 通過）但缺工具指引（讀者無法執行）是 inside-out review 的結構性盲區。**環境分支**：同一個動作（「拍下現況」「匯出資料庫」「建立備份」）在不同執行環境（container / VM / 共享主機）對應完全不同的工具路徑，只寫一種環境的做法會讓另一種環境的讀者卡住。如果文章涵蓋多種環境、每一步要按環境分列工具或標明「本篇適用 X 環境、Y 環境見另一篇」。同根因容易被指出兩次——第一次補了工具名稱、第二次才補環境替代路徑。per [操作指引要帶環境專屬工具路徑](references/principles/operational-how-needs-environment-specific-tooling.md)。非操作型文章（概念型 / 溝通型）不需要跑此 frame
+- **B‴: 情境可想像性（判讀 / 選型型文章專用、outside-in）** — 假裝讀者沒有該領域的實務經驗，逐一掃「機制陳述」（描述某機制具備什麼屬性、承擔判準、但沒說什麼時候會用到的句子），問「他想不想像得出來什麼情況會需要這個」。判讀類內容只給屬性時，讀者得自己補情境才能使用它，而能補的人本來就已經會判斷了——實際受眾因此收斂成「已經懂的人」。跟鄰近 frame 的分工：**B** 問「他懂不懂這個術語」（術語層）、本 frame 問「他想不想像得出這些情況會發生」（情境層）；**B″** 是操作型專用（照做做得出來嗎）、本 frame 是判讀型專用（判斷得出來嗎）。要檢查兩個成分——**系統形態**（什麼樣的系統會遇到、服務設計階段的讀者）與**觸發事件**（什麼事件會逼出這個動作、服務維運階段的讀者）；判讀表的「判讀訊號」欄有時序陷阱，訊號要等設計落地才觀察得到、設計階段的讀者對照不到任何東西。三種形態不適用：分流型入口、純參考（規格表）、程序型（步驟一二三四）。判定與補寫程序、四組正反例見 [`compositional-writing` skill](../compositional-writing/SKILL.md) 的 `references/judgment-content-needs-scenarios.md`。兩個實測要點：同一篇通常有一兩節已經寫對（先掃出來當本篇的參照樣本、比另立標準可靠）；檢查單位是「內容」而非「段落」——同一列的內容分散在別節也算有，硬要每列都有獨立段落會製造重複
 - **B′: 冷讀 / 零脈絡單卡落地審查** — 假裝讀者**經搜尋或直連落在單一篇章**、毫無 section 與前後文脈絡，逐篇冷讀。專抓「洩漏撰寫者預設前提的行話」（如未定義就出現的「家族」「上述框架」「如前所述」）與「缺『為何讀這篇 / 何時會用到』的進入動機」。與 B 的關鍵差別：**B 是讀完全部、走路線的知情讀者，會自動腦補脈絡而看不見行話洩漏；B′ 是零脈絡冷讀者，才會立刻問「這裡突然冒出的 X 是什麼」**。原子化 / Zettelkasten / glossary / 任何可被直連或搜尋單獨抵達的內容，B′ 為必備 frame，不可只靠 B。
 - **C: Title commitment + cross-surface** — body 是否對齊 title 承諾、跨 surface（章節 ↔ report 卡 ↔ knowledge card）三角對齊
 
@@ -189,6 +190,7 @@ register 違規（重點後置、喊話、誇飾）的同源自審有上限（�
 
 ---
 
+**Version**: 1.16.0 — Round 2 新增 B‴「情境可想像性」frame（判讀 / 選型型文章專用）：掃機制陳述、問沒有實務經驗的讀者想不想像得出什麼時候會用到；跟 B（術語層）與 B″（操作型）分工明確、補位的是「判讀型內容的可用性」這一軸；含系統形態 / 觸發事件兩成分、判讀訊號欄的時序陷阱、三種不適用形態，程序與正反例路由到 compositional-writing 的 judgment-content-needs-scenarios。從兩篇判讀類章節「三輪十個 reviewer 全過、使用者一讀就問什麼情況會需要這個」的事故抽出（對應 report 卡 #241）。
 **Version**: 1.15.0 — Portable 修正：三處指向外部 report 路徑的連結（outside-in reader frames / 常識是相對於讀者背景的 / 操作指引要帶環境專屬工具路徑）抽成 `references/principles/` 內的三張原則卡，改用相對連結——原本的絕對路徑複製到別的專案後是死鏈，違反 skill 的 portable 邊界。三張卡去專案化（移除模組名與卡號、保留論證與判讀徵兆），卡名與來源 slug 同名，鏡像工具的精確匹配自動生效、不必加 mapping。同步修正 frontmatter 的 version 欄位與末尾版本紀錄脫節（停在 1.12.0）。
 **Version**: 1.14.0 — Round 1-C 加「路由目的地承接驗證」維度（必跑）：逐條掃 out-of-scope / 下一步路由 / 交接欄位、去目的地實際找出承接該主題的檔案，連結檢查只驗存在、這一維驗承接；code 格式的模組名（`` `05-deployment-platform` ``）不是連結、連存在都不驗、風險最高；落空分三種處置（指錯改指正確落點、該有但沒寫列 backlog 並判斷要不要先建簡版、不該路由則刪），指錯最易被誤判成「還沒寫」、所以先全站搜該主題。從密碼學選型章把金鑰託管送去部署平台、而六個 KMS / Vault 服務頁其實都在該章自己模組底下、三輪十個 reviewer 沒抓到、由使用者提問浮現的事故抽出（對應 report 卡 #240）。
 **Version**: 1.13.0 — Round 3-B steelman 補「承重論點的 steelman 要用兩次」：claim-driven batch 的承重論點（錯了下游要大改的核心宣稱）該在動筆前先 steelman 當生產閘門、Round 3 steelman 是第二次收尾；只在 Round 3 才挑戰承重論點＝太晚、錯誤已寫進 N 檔跨檔回改；承重論點常是全稱 / 唯一性宣稱、反證靠枚舉反例；挑戰交對抗 / 異源（同源對地基有盲區）。從神經多樣性方法論「衝突只有一組」錯論點寫進 6 檔、Round 3 才抓的事故抽出（對應 report 卡 #236）。
