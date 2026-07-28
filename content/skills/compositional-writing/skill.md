@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.32.0
+  version: 0.33.0
   category: writing-methodology
 ---
 
@@ -132,6 +132,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 | 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片）                                                                                | `references/managing-article-collections.md`                                                                       |
 | 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、或用結構原則 review 既有文集                                                          | `references/structuring-with-solid.md`                                                                             |
 | 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時           | `references/auditing-articles.md`                                                                                  |
+| 要寫或檢查判讀 / 選型 / 決策類內容（回答「該怎麼判斷」那一層），或讀者提問「什麼情況會需要這個」「什麼樣的系統會這樣做」                                                              | `references/judgment-content-needs-scenarios.md`                                                                   |
 | 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                                                                                    | `references/designing-fields.md`                                                                                   |
 | 想驗證寫作品質（認知負擔、獨立理解率）                                                                                                                                                | `references/meta-metrics.md`                                                                                       |
 | 要新增或修改一份 Skill reference（撰寫品質規範、結構標準）                                                                                                                            | `references/reference-authoring-standards.md`                                                                      |
@@ -213,6 +214,7 @@ compositional-writing/
     ├── translation-review.md             # 情境 5b：文章翻譯 / 轉譯的句內邏輯 review
     ├── managing-article-collections.md   # 情境 5c：跨多篇文章的結構（三層、素材庫比例、MOC、Pattern 卡片）
     ├── structuring-with-solid.md         # 情境 5d：結構決策判準（SOLID 寫作映射：拆分 / 擴充點 / 依賴方向 / 讀者分流）
+    ├── judgment-content-needs-scenarios.md # 情境 5e：判讀 / 選型類內容補系統形態與觸發事件（含正反例四組）
     ├── designing-fields.md               # 情境 6：欄位設計（含六欄位角度總表）
     ├── designing-fields-ticket-6w.md     # 六欄位詳細範例：正確 + 混淆共 12 項（按需讀取）
     ├── meta-metrics.md                   # 品質量化驗收（M1-M5）
@@ -232,6 +234,7 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-20
+**Version**: 0.33.0 — 新增 `judgment-content-needs-scenarios.md`（情境 5e）：判讀 / 選型 / 決策類內容要給系統形態（服務設計階段）與觸發事件（服務維運階段），只給機制屬性時讀者必須自己補情境、而能補的人本來就會判斷了；關鍵區分是情境不等於實作（判讀層宣告不展開實作是對的、但情境屬判讀層自己）；含六步程序與四組正反例（機制屬性缺觸發事件 / 分類缺對號入座入口 / 判讀表缺系統形態 / 三種不需要補的情況），以及兩個實測到的修法副作用（補情境會引入第二人稱、原本的封閉計數會失準）；檢查單位是「內容」而非「段落」——分散在別節也算有。從兩篇判讀類章節的實作驗證抽出。同步修正 frontmatter version 欄位與末尾版本紀錄脫節（停在 0.30.0）。
 **Version**: 0.32.0 — keyword bank 新增「用詞搭配錯位」grep（擬人化謂語 + 形容詞誤搭：分析角度不會「說」、訊號的可辨識度是「清晰」不是「直接」）、新增 principle 卡 [word-choice-fits-concept-attributes](/report/word-choice-fits-concept-attributes/)；從一次多輪審查中兩處搭配錯位由人類冷讀 catch（agent 同源多輪 register / cadence / 冷讀全漏）抽出，是 register 同源盲區需異源的實例
 **Version**: 0.31.0 — `writing-articles.md` 規則二後新增「分析型文章的開頭：定位問題先行、不放敘事或寫作動機」：分析文章開頭第一段直接進定位問題（對象在什麼結構位置、什麼特徵值得判讀），是規則二「商業邏輯先於 CASE」在開頭層的具體形式；抓兩種失焦——敘事性引言（創辦人故事 / 沿革當暖場、對認識有用對判讀沒用）與寫作動機框架（「我們為什麼分析」是編輯層資訊、不是內容層、洩漏編輯決策給讀者）；自檢是拿掉來歷句與動機句後開頭還能不能給出判讀錨點。從商業分析文章的多輪審查回流
 **Version**: 0.30.0 — 新增 `structuring-with-solid.md` reference（情境 5d：結構決策判準）：SOLID 五原則的寫作映射——S 一篇一變動理由（拆分測試：變動理由 / 刪除）、O 擴充點設計（管結構骨架、不管敘事內容——顯式劃界避免模板化滑坡）、L 介面承諾 vs 實作履行（title / description / index hook 對內文、同分類功能契約）、I 讀者分流三層（模組路線表 / 文章視角分段 / 術語卡外移）、D 具體依賴抽象（案例引方法論、方法論不反向依賴）；含結構同構表、每原則錯對範例、結構檢查清單（條件 → 行動）、類比邊界三聲明（review 是執行機制 / L 最弱 / 模板化滑坡）。定位在組合層、跟原子化原則分層分工（S 是兩層接縫）。從一次「個體案例 vs 跨個體比較」的實際 SRP 拆分經驗抽出。觸發詞加 SOLID / 文章拆分 / 結構決策 / 擴充點 / 依賴方向 / 讀者分流；metadata.version 同步修正漂移（0.28.0 → 0.30.0）
