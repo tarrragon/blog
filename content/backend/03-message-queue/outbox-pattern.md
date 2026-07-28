@@ -14,7 +14,7 @@ tags: ["backend", "message-queue", "outbox"]
 
 transaction outbox 的典型流程是：在同一資料庫交易內，同時寫入業務資料與 outbox 記錄；交易提交後，由 relay worker 讀取 outbox 並發布到 broker；發布成功後標記或刪除 outbox 記錄。
 
-這個流程把一致性問題從「跨系統兩段提交」改成「單系統交易 + 非同步重送」，讓失敗路徑更可控。
+這個流程把一致性問題從「跨系統兩段提交」改成「單系統交易 + 非同步重送」，讓失敗路徑更可控。它取代的是 [dual write](/backend/knowledge-cards/dual-write/)——先寫資料庫、再發訊息的做法在兩個動作之間沒有共同的交易邊界，程序在中間掛掉就留下「資料進了、事件沒發」或反過來的不一致，而這種不一致沒有任何一方會發現。
 
 ## relay worker
 
@@ -26,7 +26,7 @@ relay worker 的責任是穩定發布與可恢復進度。worker 需要具備批
 
 發布失敗通常分為暫時性與系統性。暫時性故障走有限重試，系統性故障走隔離與告警。關鍵是保留 outbox 記錄與發布狀態，讓恢復時可重播。
 
-duplicate publish 在 outbox 模式下屬於預期現象。消費端需要配合 idempotency 機制，確保重複事件不會產生重複業務結果。
+duplicate publish 在 outbox 模式下屬於預期現象。消費端需要配合 [idempotency](/backend/knowledge-cards/idempotency/) 機制，確保重複事件不會產生重複業務結果。
 
 ## 判讀訊號
 

@@ -75,10 +75,11 @@ RabbitMQ 適合明確 routing、[ack/nack](/backend/knowledge-cards/ack-nack/) �
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                     | 類型   | 前置條件 | 規模 |
-| -------------------------------------------------------------------------------------------------------- | ------ | -------- | ---- |
-| 各 vendor 進階主題 deep article（見各 vendor `_index.md` 與後續候選表）                                  | vendor | 無       | 中   |
-| 觀念網路五方向的章節回寫（delivery / processing / recovery semantics、outbox boundary、poison handling） | 主章   | 無       | 中   |
+| 項目                                                                                                                                      | 類型   | 前置條件                                          | 規模 |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------- | ---- |
+| 各 vendor 進階主題 deep article（見各 vendor `_index.md` 與後續候選表）                                                                   | vendor | 無                                                | 中   |
+| 觀念網路五方向的章節回寫（delivery / processing / recovery semantics、outbox boundary、poison handling）                                  | 主章   | 無                                                | 中   |
+| 3.3 outbox-pattern 的兩節錯置內容路由（Self-managed vs Managed TCO → broker 選型層；Broker 遷移階段流程 → vendors 的 migration playbook） | 主章   | 需先比對 vendors 既有 playbook 的涵蓋度、避免重複 | 中   |
 
 知識卡層已收斂：第二批七張（processing semantics、recovery semantics、replay window、consumer pause、event schema compatibility、DLQ drain、poison-message quarantine）都已建卡，本模組目前沒有知識卡缺口。
 
