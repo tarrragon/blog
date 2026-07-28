@@ -3,7 +3,7 @@ name: multi-round-review
 description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
-  version: 1.16.0
+  version: 1.17.0
   category: writing-methodology
 ---
 
@@ -190,6 +190,7 @@ register 違規（重點後置、喊話、誇飾）的同源自審有上限（�
 
 ---
 
+**Version**: 1.17.0 — `teaching-cite-strips-identity-and-scale` principle 卡補「本卡的邊界」：它管的是**引用既有 case 記錄**時該剝離什麼、不是禁止教學文出現敘事；作者自己寫的無身分短敘事不在範圍（不對應任何 case 記錄、無第二住址與漂移問題、本來就無身分而無映射成本）。讀成「教學文不該有敘事」是過度推論、實測發生過——一輪教材補寫因此只補分類語言（形態、觸發事件）、漏掉讀者要的「出事會長什麼樣」、直到提需求的人用原本的詞再問一次才發現。分類語言回答「我是不是這一類」、敘事回答「動作晚了會怎樣」。對應 report 卡 #224 的同步修訂。
 **Version**: 1.16.0 — Round 2 新增 B‴「情境可想像性」frame（判讀 / 選型型文章專用）：掃機制陳述、問沒有實務經驗的讀者想不想像得出什麼時候會用到；跟 B（術語層）與 B″（操作型）分工明確、補位的是「判讀型內容的可用性」這一軸；含系統形態 / 觸發事件兩成分、判讀訊號欄的時序陷阱、三種不適用形態，程序與正反例路由到 compositional-writing 的 judgment-content-needs-scenarios。從兩篇判讀類章節「三輪十個 reviewer 全過、使用者一讀就問什麼情況會需要這個」的事故抽出（對應 report 卡 #241）。
 **Version**: 1.15.0 — Portable 修正：三處指向外部 report 路徑的連結（outside-in reader frames / 常識是相對於讀者背景的 / 操作指引要帶環境專屬工具路徑）抽成 `references/principles/` 內的三張原則卡，改用相對連結——原本的絕對路徑複製到別的專案後是死鏈，違反 skill 的 portable 邊界。三張卡去專案化（移除模組名與卡號、保留論證與判讀徵兆），卡名與來源 slug 同名，鏡像工具的精確匹配自動生效、不必加 mapping。同步修正 frontmatter 的 version 欄位與末尾版本紀錄脫節（停在 1.12.0）。
 **Version**: 1.14.0 — Round 1-C 加「路由目的地承接驗證」維度（必跑）：逐條掃 out-of-scope / 下一步路由 / 交接欄位、去目的地實際找出承接該主題的檔案，連結檢查只驗存在、這一維驗承接；code 格式的模組名（`` `05-deployment-platform` ``）不是連結、連存在都不驗、風險最高；落空分三種處置（指錯改指正確落點、該有但沒寫列 backlog 並判斷要不要先建簡版、不該路由則刪），指錯最易被誤判成「還沒寫」、所以先全站搜該主題。從密碼學選型章把金鑰託管送去部署平台、而六個 KMS / Vault 服務頁其實都在該章自己模組底下、三輪十個 reviewer 沒抓到、由使用者提問浮現的事故抽出（對應 report 卡 #240）。
