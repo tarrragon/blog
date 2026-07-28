@@ -71,6 +71,8 @@ multi-pass review 框架定義了輪 9（reader simulation）、輪 10（self-cr
 
 ## 跟其他抽象層原則的關係
 
+- → [#243 判定型規則要規定判定的痕跡](/report/judgment-rules-must-specify-their-trace/)：本卡的兩分法之外還有第三種——規則存在、執行者也跑了，但跑的是規則允許的最省力形態（判成不適用、判成不需要補）。它會被誤診成 design gap（於是去加 frame）或 execution gap（於是去催執行），而正解是回頭讓那條規則的判定留下可複驗的痕跡
+
 - **[#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/)**：#114 處理的是 **design gap 的一個面向**（frame 不夠細、抽象規則沒展開成具體訊號）。本卡是上位 —— 在「改 frame 顆粒度」之前、先問「這次漏抓到底是缺 frame（design）還是沒跑 frame（execution）」。#114 預設問題在框架、本卡先驗證這個預設。
 - **[#147 規範化跟自審是兩種認知任務](../rule-codification-vs-self-audit/)**：#147 是 execution 側的 sibling —— 「立了規範 ≠ 自己稿件能辨識」講的就是「有 frame 不等於有跑」。本卡把它一般化成「有 frame 不等於有跑（execution gap）」、並跟「根本沒 frame（design gap）」對立起來。
 - **[#149 keyword bank 命中是候選、不是判決](../keyword-bank-hit-is-candidate-not-verdict/)**：#149 是另一個「兩層別混」的 pattern（偵測 vs 判定）。本卡（design vs execution）跟 #149（偵測 vs 判定）都在拆「review 失效的成因層」—— 修法都依賴先分層、再對症。
