@@ -268,14 +268,14 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                               | 類型   | 前置條件                   | 規模 |
-| ------------------------------------------------------------------------------------------------------------------ | ------ | -------------------------- | ---- |
-| 八個 T1 vendor 的 deep article（CircleCI / Gatling / JMeter / Locust / LitmusChaos / Gremlin / Toxiproxy / Nobl9） | vendor | 需與 09 界定角度分工       | 8 篇 |
-| 判讀訊號表格補行動建議欄                                                                                           | 主章   | 無                         | 小   |
-| 憑證撤銷與輪替的演練設計（7.28 / 7.29 路由過來、本模組尚無對應章節）                                               | 主章   | 無                         | 中   |
-| 08 事故模組的 06 反向引用補齊                                                                                      | 跨模組 | 無                         | 小   |
-| 案例深挖批次 A / B（T1 補第二篇、T2/T3 補跨規模對照）                                                              | 案例   | 無（案例庫已有第二批正文） | 大   |
-| 案例的 policy、gate、readiness、evidence 回寫主章（6.6 / 6.19 / 6.20 / 6.22 / 6.23）                               | 主章   | 依賴案例深挖批次的產出     | 中   |
+| 項目                                                                                                               | 類型   | 前置條件                   | 規模       |
+| ------------------------------------------------------------------------------------------------------------------ | ------ | -------------------------- | ---------- |
+| 八個 T1 vendor 的 deep article（CircleCI / Gatling / JMeter / Locust / LitmusChaos / Gremlin / Toxiproxy / Nobl9） | vendor | 需與 09 界定角度分工       | 8 篇（大） |
+| 判讀訊號表格補行動建議欄                                                                                           | 主章   | 無                         | 小         |
+| 憑證撤銷與輪替的演練設計（7.28 / 7.29 路由過來、本模組尚無對應章節）                                               | 主章   | 無                         | 中         |
+| 08 事故模組的 06 反向引用補齊                                                                                      | 跨模組 | 無                         | 小         |
+| 案例深挖批次 A / B（T1 補第二篇、T2/T3 補跨規模對照）                                                              | 案例   | 無（案例庫已有第二批正文） | 大         |
+| 案例的 policy、gate、readiness、evidence 回寫主章（6.6 / 6.19 / 6.20 / 6.22 / 6.23）                               | 主章   | 依賴案例深挖批次的產出     | 中         |
 
 ### 下一輪推演大綱
 
@@ -292,7 +292,7 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 主章 6.1-6.25 全部從骨架擴充到完整內容（最小 75 行、中位 113 行、最大 176 行），覆蓋概念定位、判讀訊號、案例回寫與交接路由。案例庫補齊 T1/T2/T3 第二批正文共 9 篇（Amazon A2 / Stripe S2 / Shopify H2 / LinkedIn L2 / Meta M2 / Honeycomb HC2 / Microsoft MS2 / Spotify SP2 / Pinterest P2），11 個 vendor 各有 2+ 篇案例。Vendor deep article 新增 4 篇（k6 / Chaos Mesh / Sloth / GitHub Actions）。產業情境回寫 3 組（FinTech → 6.6+6.8 / Gaming → 6.22+6.24 / Healthcare → 6.7+6.19）。經過三輪多輪審查（寫作規範 / cadence 同質化 / steelman reality test）修法。
 
-目前模組處於穩定維護狀態。剩餘 backlog：8 個 vendor 的 deep article（CircleCI / Gatling / JMeter / Locust / LitmusChaos / Gremlin / Toxiproxy / Nobl9）、08 模組的 06 反向引用補齊、判讀訊號表格補行動建議欄。
+目前模組處於穩定維護狀態，剩餘工作見上方 Backlog 表。
 
 ## Tripwire
 

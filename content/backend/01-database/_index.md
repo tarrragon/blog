@@ -63,11 +63,11 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                               | 類型   | 前置條件                     | 規模 |
-| ------------------------------------------------------------------------------------------------------------------ | ------ | ---------------------------- | ---- |
-| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）     | vendor | 各 vendor `_index.md` 已列項 | 大   |
-| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection） | 主章   | 無                           | 中   |
-| migration validation 知識卡                                                                                        | 知識卡 | 無                           | 1 張 |
+| 項目                                                                                                               | 類型   | 前置條件                     | 規模       |
+| ------------------------------------------------------------------------------------------------------------------ | ------ | ---------------------------- | ---------- |
+| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）     | vendor | 各 vendor `_index.md` 已列項 | 大         |
+| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection） | 主章   | 無                           | 中         |
+| migration validation 知識卡                                                                                        | 知識卡 | 無                           | 1 張（小） |
 
 ### 觀念網路補完方向
 

@@ -92,12 +92,12 @@ Container 解決服務包裝與 runtime 依賴；Kubernetes 解決多 instance �
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                         | 類型   | 前置條件                  | 規模 |
-| -------------------------------------------------------------------------------------------- | ------ | ------------------------- | ---- |
-| 六個 T1 vendor 的 deep article（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）       | vendor | 無                        | 6 篇 |
-| gateway 限流實作章（承接 11.9 對外流量語意的執行面）                                         | 主章   | 無（11.9 已定義路由需求） | 中   |
-| 知識卡：drain completion、rollout batch、config freeze、environment protection               | 知識卡 | 無                        | 4 張 |
-| 觀念網路五方向的章節回寫（runtime / lifecycle / traffic / rollout / control-plane contract） | 主章   | 無                        | 中   |
+| 項目                                                                                         | 類型   | 前置條件                                        | 規模       |
+| -------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------- | ---------- |
+| 六個 T1 vendor 的 deep article（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）       | vendor | 無                                              | 6 篇（大） |
+| gateway 限流實作章（承接 11.9 對外流量語意的執行面）                                         | 主章   | 無（11.9 已定義路由需求、該條目只在本模組計數） | 中         |
+| 知識卡：drain completion、rollout batch、config freeze、environment protection               | 知識卡 | 無                                              | 4 張（中） |
+| 觀念網路五方向的章節回寫（runtime / lifecycle / traffic / rollout / control-plane contract） | 主章   | 無                                              | 中         |
 
 ### 觀念網路補完方向
 

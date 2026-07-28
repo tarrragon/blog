@@ -31,7 +31,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
 - **Mechanism**：問題節點表的 `[token-revocation]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
-- **Delivery**：「交接路由」欄位指向 `05-deployment-platform / 06-reliability / 08-incident-response`。
+- **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
@@ -87,11 +87,11 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **系統憑證下放到客戶端**出現在想省掉後端中繼的架構：行動應用直接呼叫第三方 API、前端直接打雲端儲存或地圖服務、IoT 裝置與桌面應用。動機通常是離線也要能運作、或少一跳延遲。這一類的識別特徵最明確——產出物裡有一把對方系統認得的憑證。
 
-這一類的失敗長這樣：為了省掉一跳延遲，行動應用直接帶著第三方服務的 key 發請求，上架時沒有人反對，因為它確實比較快。上架之後那把 key 隨每一次下載擴散出去，某天配額用量開始不正常成長，而團隊最先收到的是第三方寄來的帳單通知——那些請求從來沒有經過自己的伺服器，監控上什麼都看不到，要止血只能換 key，而換 key 會讓所有還沒更新的使用者一起壞掉。
-
 **第三方授權範圍過寬**的處境與前兩種不同，它常常不是自己這邊的設計選擇。任何裝了 SaaS 整合的系統都會碰到：CI 服務連程式碼倉庫、監控平台連雲端帳號、行銷工具連客戶關係系統。授權當下對方只提供粗粒度的 scope，想只給讀取、選項卻只有全部。
 
 **跨系統對應順序未定義**要有兩邊各自的使用者體系才會發生。SSO 串接多條產品線、B2B 讓客戶的員工使用自家服務、收購之後的帳號整併都是這種形狀，識別特徵是同一個人在兩邊各有一個 ID，而某個地方存著這兩個 ID 的對應關係。
+
+這一類的失敗長這樣：串接初期兩邊的帳號都是同一批人手動開的，映射就順手在第一次呼叫時建起來，沒有人覺得需要另外設計開通動作。等到客戶把自己的人事系統接進來，新進員工第一次登入就失敗，而系統回的是認證失敗——值班的人照認證的排查手冊查憑證、查時鐘、查有效期，全部正常，隔了幾輪才有人想到去看映射表。真正缺的是一筆對應資料，而那條排查路徑上沒有任何訊號指向資料。補起來要加的是明確的開通動作，那牽涉兩邊的流程協調，不是自己這端改程式碼就能收尾。
 
 一個系統可以同時落在多類。跨組織的整合通常至少踩到第二類與第三類，而內部工具串接內部服務多半只有第一類。
 
@@ -153,4 +153,4 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 各層憑證的格式、儲存與開通策略實作：[API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/)。盤點與設計評審用本章的問題節點表，落到各層要用哪種憑證、怎麼儲存、開通流程怎麼設計時走那一篇
 - 各層憑證在部署流程中的配置邊界：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Secret Boundary 段
 - 事件發生後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
-- 撤銷路徑的演練設計：`06-reliability` 目前沒有憑證撤銷演練的章節，已列入該模組 backlog；在那之前，回退演練的通用形態見 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)
+- 撤銷路徑的演練設計：[06 可靠性](/backend/06-reliability/) 目前沒有憑證撤銷演練的章節，已列入該模組 backlog；在那之前，回退演練的通用形態見 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)

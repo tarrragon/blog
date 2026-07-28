@@ -120,6 +120,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 51 個 vendor 服務頁的 deep article 與 migration playbook | vendor | 無                             | 大   |
 | 藍隊現場案例卡與推演情境卡                               | 案例   | 需先從真實事故抽防守壓力       | 大   |
 | 控制模式卡與事故回寫路由                                 | 案例   | 依賴上一項的案例卡與情境卡產出 | 中   |
+| 7.28 補微案例（「重放窗口未收斂」是後果最不直觀的節點）  | 主章   | 需先有可引用的真實形態當來源   | 小   |
 
 ### 下一輪推演大綱
 
@@ -134,12 +135,9 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 ### 待補主題
 
-以下兩個主題在本模組與全站都沒有聚焦落點，判定依據是讀者會用來搜尋的問句落不到任何一篇文章上，目前只能在 vendor 頁或其他章節的段落裡零星碰到。兩者都屬 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 的範圍。
+本段說明上表前兩列的判定依據與寫作角度，項目本身以上表為準。判定用的是讀者會拿去搜尋的問句落不落得到一篇文章上：「JWT 還是 session」「token 要不要存 DB」「密碼要用 bcrypt 還是 argon2」「work factor 設多少」目前只能在 vendor 頁或其他章節的段落裡零星碰到。兩者都屬 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 的範圍。
 
-| 主題                    | 讀者的問句                                            | 現況                                                                                                                                       |
-| ----------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Session 與 token 的選型 | 「JWT 還是 session」「token 要不要存 DB」             | 全站僅 vendor 頁順帶提及，缺「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸                                                   |
-| 使用者密碼的儲存        | 「密碼要用 bcrypt 還是 argon2」「work factor 設多少」 | [7.28](/backend/07-security-data-protection/cryptographic-primitive-selection/) 已把「不可逆的單向轉換」列為第四類原語當入口，缺展開的文章 |
+Session 與 token 缺的是「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸。密碼儲存的入口已經存在——[7.28](/backend/07-security-data-protection/cryptographic-primitive-selection/) 把「不可逆的單向轉換」列為第四類原語——缺的是展開的文章。
 
 兩者的共同特徵是入門讀者密度高、而本模組既有章節都預設讀者已經跨過這一層。補的時候要注意它們的判讀軸各自獨立：前者是撤銷粒度與狀態成本的取捨，後者是計算成本與參數老化的取捨，不共用 7.28 的金鑰位置主軸。
 

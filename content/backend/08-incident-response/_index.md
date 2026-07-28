@@ -277,12 +277,12 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                    | 類型   | 前置條件               | 規模 |
-| ------------------------------------------------------------------------------------------------------- | ------ | ---------------------- | ---- |
-| 六個 T1 vendor 的 deep article（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli） | vendor | 無                     | 6 篇 |
-| 案例深挖批次 A / B（T1 補第二事件、T2/T3 補不同事故型態）                                               | 案例   | 無                     | 大   |
-| 案例的 intake、decision、impact、automation 教訓回寫主章（8.18-8.22）                                   | 主章   | 依賴案例深挖批次的產出 | 中   |
-| 補齊 04 / 05 / 06 / 07 的交接連結                                                                       | 跨模組 | 無                     | 中   |
+| 項目                                                                                                    | 類型   | 前置條件               | 規模       |
+| ------------------------------------------------------------------------------------------------------- | ------ | ---------------------- | ---------- |
+| 六個 T1 vendor 的 deep article（Grafana OnCall / incident.io / FireHydrant / Rootly / Instatus / Jeli） | vendor | 無                     | 6 篇（大） |
+| 案例深挖批次 A / B（T1 補第二事件、T2/T3 補不同事故型態）                                               | 案例   | 無                     | 大         |
+| 案例的 intake、decision、impact、automation 教訓回寫主章（8.18-8.22）                                   | 主章   | 依賴案例深挖批次的產出 | 中         |
+| 補齊 04 / 05 / 06 / 07 的交接連結                                                                       | 跨模組 | 無                     | 中         |
 
 ### 後續推演大綱
 

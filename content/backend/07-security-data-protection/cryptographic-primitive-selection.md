@@ -31,7 +31,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
 - **Mechanism**：問題節點表的 `[message-authentication]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
-- **Delivery**：「交接路由」欄位指向 `05-deployment-platform / 06-reliability / 08-incident-response`。
+- **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
