@@ -192,6 +192,7 @@
 - [ ] 有明確下一步路由（章節/模組連結）
 - [ ] `description` 是 recall trigger 而非摘要：回答「什麼情境下需要回來讀」而非「這篇在講什麼」（見 [#170](/report/description-as-recall-trigger/)）
 - [ ] 新增頂層 `content/<module>/` 資料夾時、已同步更新 `content/_index.md` 對應分類段（見 [#139](/report/top-level-content-folder-needs-homepage-entry/)）
+- [ ] 這次留下的未完成工作已記進模組 `_index.md` 的 `## Backlog` 段、完成的項目已從表中刪除（見 §12）
 
 ---
 
@@ -457,3 +458,28 @@ cd .agents && ln -s ../.claude/skills skills
 | Skill 在兩工具行為要不同                    | 拆成兩份、各自客製                                                |
 
 拆解步驟：刪 symlink、`cp -r .claude/skills .agents/skills`、各自維護。
+
+---
+
+## 12. 模組 Backlog 記錄
+
+教學模組的未完成工作記在該模組 `_index.md` 的 `## Backlog` 段，格式的單一真實來源是 [Backlog 段格式規範](/posts/backlog-format-spec/)。寫模組大綱、記錄待辦或做跨模組盤點前先讀該篇。
+
+### 12.1 適用範圍
+
+規範適用於 `content/` 下所有有模組結構的分類，不限 backend。`infra/`、`ddd/`、`flutter/`、`linux/`、`monitoring/`、`ux-design/` 等分類累積到有未完成工作要記錄時，用同一套段名與欄位，讓跨分類盤點能用同一條指令完成。
+
+單篇文章與卡片型目錄（`report/`、`til/`、`work-log/`）沒有模組級 backlog，不適用本節。
+
+### 12.2 最小要求
+
+- **段名固定為 `## Backlog`**：判準是 `rg -l "^## Backlog" content/*/*/_index.md` 要能列出全部有待辦的模組。段名自創的後果是盤點時無法確定有沒有漏掉某個模組。
+- **標準表四欄**：項目 / 類型 / 前置條件 / 規模。類型限五個枚舉值（`vendor` / `主章` / `知識卡` / `案例` / `跨模組`），規模可數的寫數量、不可數的寫小 / 中 / 大。
+- **模組自己的規劃敘事保留為表下方的 H3**：推演階段的順序依賴、觀念網路的補完理由這類內容繼續用各模組自己的語言寫，不受四欄約束。
+- **候選、tripwire、已完成項目不進表**：候選還沒做取捨、tripwire 觸發前不算待辦、已完成的直接刪。表要維持「每一列都是待辦」這個不變條件。
+
+### 12.3 分類總覽
+
+分類的 `_index.md` 可以加 Backlog 總覽段，只放索引（模組 / 項數 / 缺口一句 / 連結），細節點回各模組。複製內容會產生兩份 SSoT，而更新時只改一份的機率遠高於兩份都改。實例見 [content/backend/\_index.md](/backend/) 的「Backlog 總覽」段。
+
+新增模組時要同步在總覽補一列，這與新增頂層 `content/<module>/` 要更新 `content/_index.md` 是同一類的登記責任。
