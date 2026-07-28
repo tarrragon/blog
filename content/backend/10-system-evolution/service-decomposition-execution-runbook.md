@@ -37,11 +37,11 @@ Strangler Fig 跟 big bang 拆分的本質差異是「失敗代價可控」— �
 
 ### 階段 2：新服務 + 雙寫期
 
-新服務 spin up、實作 adapter 同樣的介面。寫入路徑進入「雙寫期」：所有寫入同時寫 monolith 跟新服務、讀取仍從 monolith 取。
+新服務 spin up、實作 adapter 同樣的介面。寫入路徑進入「[雙寫期](/backend/knowledge-cards/dual-write/)」：所有寫入同時寫 monolith 跟新服務、讀取仍從 monolith 取。
 
 雙寫期的設計關鍵：
 
-- **寫入順序**：先寫 monolith 還是先寫新服務？通常先寫 monolith（保持 source of truth 一致性）、新服務寫失敗時記 error 但不影響業務
+- **寫入順序**：先寫 monolith 還是先寫新服務？通常先寫 monolith（保持 [source of truth](/backend/knowledge-cards/source-of-truth/) 一致性）、新服務寫失敗時記 error 但不影響業務
 - **跨服務一致性**：兩邊寫入用 [outbox pattern](/backend/knowledge-cards/outbox-pattern/) 或 [saga](/backend/knowledge-cards/saga/) 保證最終一致、不能容忍長期不一致
 - **資料對賬機制**：每天 / 每小時跑對賬 job、找出兩邊不一致的 row、修正 + 統計差異率
 - **雙寫期長度**：通常 1-4 週、視差異率收斂速度決定。差異率穩定在 0.01% 以下、可進階段 3

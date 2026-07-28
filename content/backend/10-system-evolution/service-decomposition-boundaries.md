@@ -106,7 +106,7 @@ Monolith 用「同一個程式碼庫、同一個部署單位、同一個資料�
 | 契約治理     | 服務 A 的 API 改動會影響服務 B、C、D              | [contract test](/backend/knowledge-cards/contract/)、版本化 API                                                |
 | 資料一致性   | 各服務 DB 獨立，跨服務查詢需要 join 或 read model | CQRS、event-driven projection、reconciliation                                                                  |
 
-拆分失敗的回退路徑要在拆分前設計好。常見回退策略：保留原 monolith 程式碼一段時間（雙寫期），新服務出問題可以切回；先拆**讀路徑**驗證流量，再拆寫路徑；用 feature flag 控制是否走新服務。沒有回退路徑的拆分一旦撞牆，會比不拆更難收拾。
+拆分失敗的回退路徑要在拆分前設計好。常見回退策略：保留原 monolith 程式碼一段時間（[雙寫期](/backend/knowledge-cards/dual-write/)），新服務出問題可以切回；先拆**讀路徑**驗證流量，再拆寫路徑；用 feature flag 控制是否走新服務。沒有回退路徑的拆分一旦撞牆，會比不拆更難收拾。
 
 ### 拆分後的通訊優先級：事件 > 同步 RPC
 

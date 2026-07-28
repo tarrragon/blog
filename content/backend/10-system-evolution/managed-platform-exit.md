@@ -52,7 +52,7 @@ Session 綁定在平台端、cutover 當天全體使用者重新登入是預設�
 [並行期](/backend/knowledge-cards/parallel-run/)是舊平台與新系統共存、用真實資料驗證新系統的階段 — 前提是目標系統已依 [模組零的選型順序](/backend/00-service-selection/) 建置完成、本章不重複選型推導。它跟 [10.2 服務拆分執行 Runbook](/backend/10-system-evolution/service-decomposition-execution-runbook/) 的雙寫期同源但形狀不同：服務拆分時、寫入路徑在自己的程式碼裡、可以實作 [dual write](/backend/knowledge-cards/dual-write/)；託管平台的寫入發生在平台內部 — 顧客在 Shopify 結帳、會員在平台註冊 — 自建程式碼插不進那條寫入路徑。所以並行期的形態是「平台維持 [source of truth](/backend/knowledge-cards/source-of-truth/)、單向同步、新系統唯讀驗證」：
 
 1. 增量同步管道（webhook / API 輪詢 / 排程匯出）持續把平台變更餵進新系統
-2. 新系統以唯讀 replica 的角色運轉、對帳 job 定期比對兩邊的訂單數、會員數、金額總和
+2. 新系統以唯讀 replica 的角色運轉、[對帳](/backend/knowledge-cards/data-reconciliation/) job 定期比對兩邊的訂單數、會員數、金額總和
 3. 內部使用者先在新系統上工作（報表、後台查詢）、用真實業務流量驗證資料轉換的正確性
 4. 差異率收斂並穩定後、才排 cutover 日
 
