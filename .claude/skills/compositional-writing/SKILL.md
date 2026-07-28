@@ -3,7 +3,7 @@ name: compositional-writing
 description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流."
 license: MIT
 metadata:
-  version: 0.35.0
+  version: 0.36.0
   category: writing-methodology
 ---
 
@@ -231,6 +231,7 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-20
+**Version**: 0.36.0 — `judgment-content-needs-scenarios` 依分類級試作回饋補兩點：第 1 步「判定適用」加**讀者時刻**維度（讀者若已有系統在跑、手上有現象可觀察，給訊號就夠、補形態是冗餘；設計階段的讀者才需要形態；同分類內不同篇可落在不同時刻、逐篇判定），以及新增「判定不需補時，檢查換一個維度」一節（缺形態與缺術語入口是同一問題的兩種形式——讀者都得自己補一塊才能用；判定不需補形態時改查卡連結覆蓋，**同分類內的卡連結數落差是比絕對數量更可靠的偵測訊號**）。從一個三篇分類的完整試作抽出：三篇判定為不需補／不需補／不適用，真缺口卻出現在卡連結上（核心章節的主線術語出現 19 次、連卡 0 次、全篇卡連結數只有同分類其他篇的兩成）。
 **Version**: 0.35.0 — Portable 收尾：三張 principle 卡末尾的溯源標註從連結降為純文字 slug（`對應的 blog report 卡 slug 是 \`xxx\``）。這類標註記的是「這張卡從哪抽出來」、不是內容依賴（不點過去也能用卡），但寫成 blog 絕對路徑後複製到別的專案就是死鏈；降成 slug 文字後溯源資訊保留、portable scan 全 clean。
 **Version**: 0.34.0 — Portable 修正兩處：三個指向外部 report 路徑的連結（outside-in reader frames / 常識是相對於讀者背景的 / 操作指引要帶環境專屬工具路徑）抽成 `references/principles/` 內的原則卡改相對連結——絕對路徑複製到別的專案後是死鏈，違反 skill 的 portable 邊界，鏡像工具會把相對連結轉回 blog 的 report 路徑、所以公開鏡像不受影響；「跟 multi-round-review 的協同」段的 principles 指路改成不帶路徑的寫法：原本的 inline code 路徑會被鏡像工具的寬鬆比對命中、卻因為後面接的是卡名清單而非 `.md` 檔名而提取不到 slug，每次同步都產生一則 unresolved 警告；且該路徑在公開鏡像上不存在、對鏡像讀者是死指引。
 **Version**: 0.33.0 — 新增 `judgment-content-needs-scenarios.md`（情境 5e）：判讀 / 選型 / 決策類內容要給系統形態（服務設計階段）與觸發事件（服務維運階段），只給機制屬性時讀者必須自己補情境、而能補的人本來就會判斷了；關鍵區分是情境不等於實作（判讀層宣告不展開實作是對的、但情境屬判讀層自己）；含六步程序與四組正反例（機制屬性缺觸發事件 / 分類缺對號入座入口 / 判讀表缺系統形態 / 三種不需要補的情況），以及兩個實測到的修法副作用（補情境會引入第二人稱、原本的封閉計數會失準）；檢查單位是「內容」而非「段落」——分散在別節也算有。從兩篇判讀類章節的實作驗證抽出。同步修正 frontmatter version 欄位與末尾版本紀錄脫節（停在 0.30.0）。
