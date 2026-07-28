@@ -25,20 +25,24 @@ tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing
 
 直接依觸發情境跳對應 reference：
 
-| 觸發情境                                       | reference                                                                                     |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 要寫或改一段程式碼註解 / doc comment           | [writing-code-comments](/skills/compositional-writing/writing-code-comments/)                 |
-| 要起草 / 改寫一份文件（worklog、spec、README） | [writing-documents](/skills/compositional-writing/writing-documents/)                         |
-| 要設計 log / 錯誤訊息 / 結構化輸出             | [writing-logs](/skills/compositional-writing/writing-logs/)                                   |
-| 要撰寫給 AI 的 prompt / instruction            | [writing-prompts](/skills/compositional-writing/writing-prompts/)                             |
-| 要撰寫完整長篇技術文章                         | [writing-articles](/skills/compositional-writing/writing-articles/)                           |
-| 要把外部分析材料轉成教學型分析文章             | [source-to-teaching-analysis](/skills/compositional-writing/source-to-teaching-analysis/)     |
-| 要管理多篇相關文章的結構（系列、文集、知識庫） | [managing-article-collections](/skills/compositional-writing/managing-article-collections/)   |
-| 要設計 ticket 欄位 / schema frontmatter        | [designing-fields](/skills/compositional-writing/designing-fields/)                           |
-| 六欄位範例詳查（正確 + 混淆對照）              | [designing-fields-ticket-6w](/skills/compositional-writing/designing-fields-ticket-6w/)       |
-| 驗證寫作品質（認知負擔、獨立理解率）           | [meta-metrics](/skills/compositional-writing/meta-metrics/)                                   |
-| 新增或修改一份 Skill reference                 | [reference-authoring-standards](/skills/compositional-writing/reference-authoring-standards/) |
-| 驗收 Skill 發布品質（dry-run）                 | [dry-run-guide](/skills/compositional-writing/dry-run-guide/)                                 |
+| 觸發情境                                            | reference                                                                                           |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 要寫或改一段程式碼註解 / doc comment                | [writing-code-comments](/skills/compositional-writing/writing-code-comments/)                       |
+| 要起草 / 改寫一份文件（worklog、spec、README）      | [writing-documents](/skills/compositional-writing/writing-documents/)                               |
+| 要設計 log / 錯誤訊息 / 結構化輸出                  | [writing-logs](/skills/compositional-writing/writing-logs/)                                         |
+| 要撰寫給 AI 的 prompt / instruction                 | [writing-prompts](/skills/compositional-writing/writing-prompts/)                                   |
+| 要撰寫完整長篇技術文章                              | [writing-articles](/skills/compositional-writing/writing-articles/)                                 |
+| 要把外部分析材料轉成教學型分析文章                  | [source-to-teaching-analysis](/skills/compositional-writing/source-to-teaching-analysis/)           |
+| 要管理多篇相關文章的結構（系列、文集、知識庫）      | [managing-article-collections](/skills/compositional-writing/managing-article-collections/)         |
+| 要設計 ticket 欄位 / schema frontmatter             | [designing-fields](/skills/compositional-writing/designing-fields/)                                 |
+| 六欄位範例詳查（正確 + 混淆對照）                   | [designing-fields-ticket-6w](/skills/compositional-writing/designing-fields-ticket-6w/)             |
+| 驗證寫作品質（認知負擔、獨立理解率）                | [meta-metrics](/skills/compositional-writing/meta-metrics/)                                         |
+| 新增或修改一份 Skill reference                      | [reference-authoring-standards](/skills/compositional-writing/reference-authoring-standards/)       |
+| 驗收 Skill 發布品質（dry-run）                      | [dry-run-guide](/skills/compositional-writing/dry-run-guide/)                                       |
+| 判讀 / 選型類內容讀者反映「想像不出什麼時候用得到」 | [judgment-content-needs-scenarios](/skills/compositional-writing/judgment-content-needs-scenarios/) |
+| 對既有文章跑寫作 audit                              | [auditing-articles](/skills/compositional-writing/auditing-articles/)                               |
+| 用 SOLID 決定文章拆分與結構                         | [structuring-with-solid](/skills/compositional-writing/structuring-with-solid/)                     |
+| 檢查翻譯 / 轉譯文章的術語錯位                       | [translation-review](/skills/compositional-writing/translation-review/)                             |
 
 每份 reference 自包含：讀任一份不需要回頭讀其他 reference。
 
@@ -53,6 +57,13 @@ tags: ["寫作方法論", "Zettelkasten", "技術寫作", "compositional-writing
 | [`content/neurodiversity/`](/neurodiversity/)   | 把「為認知運作塑形輸出」延伸到特定神經類型（ADHD / 自閉 / 需求迴避）；其 base layer 與本 skill 的通用原則對照 |
 
 ## Last Updated
+
+2026-07-28 — 同步到 `.claude/skills/compositional-writing/` @ v0.41.0：
+
+- v0.41.0 — judgment-content-needs-scenarios 新增「四拍要有來源」硬條款（第三拍推不出來、無經驗的作者只能發明它，寫不出來時留白比杜撰好）；可用程度改單峰模型；情境與實作的分界改用解析度
+- v0.40.0 — judgment-content-needs-scenarios 涵蓋三種補法（系統形態 / 觸發事件 / 微案例）
+- v0.33.0 — 新增 judgment-content-needs-scenarios
+- 觸發路由表補齊四份先前未登記的 reference（judgment-content-needs-scenarios / auditing-articles / structuring-with-solid / translation-review）
 
 2026-05-20 — 同步到 `.claude/skills/compositional-writing/` @ v0.9.2：
 

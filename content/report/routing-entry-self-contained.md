@@ -36,6 +36,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作規範", "�
 - [#155 引用章節用語意標題、不用位置編號](../reference-by-semantic-title-not-number/)——#155 守「錨點字串」層（引用語意標題、不引用會漂移的編號）；本卡守「錨點容器」層（錨點所在的文章也要顯式）。本次事故兩層各踩一次：段名轉述錯誤是 #155 的違規、「同篇」指代是本卡的違規、兩輪修正各修一層——證明是兩個獨立檢查維度。
 - [#157 語意錨用單一字串](../semantic-anchor-single-string/)——#157 守命名唯一性（同一結構單位只有一個 canonical 字串）；本卡的「憑印象轉述錨點」是它在引用當下的即時形態：轉述產生的字串等於臨時造出第二個名字。引用-命名鏈（#156 命名端 → #157 唯一性 → #155 引用端）之後、本卡補「容器顯式」第四塊。
 - [#113 商業邏輯論述要 self-contained](../prose-self-contained-without-code-reference/)——#113 守正文段落對 code 的依賴（「那個 payload 第二段」轉嫁讀者翻 code）；本卡守 navigation surface 對鄰條的依賴。同一個 self-contained 原則在兩個 surface 的形態：正文的保底是線性閱讀、路由連這層保底都沒有、要求更嚴。
+- [#240 路由要驗證目的地承接該主題](../routing-destination-must-own-the-topic/)——一條路由的兩端各由一張卡守：本卡驗跳轉單位讀不讀得懂（條目自包含、不依賴鄰條上下文），#240 驗它指向的那一端接不接得住（目的地實際承接該主題、到站第一屏可達）。照本卡寫出來的條目可以格式完美而目的地落空，兩張合起來才構成完整驗收。
 - [#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/)——路由段落屬 navigation surface；本卡是該 surface 上的一條具體檢查項：review 掃 body 的引用時、下一步 / 依情境 / MOC 的每條 bullet 要用「單條獨立可用」的標準另掃一次。
 
 ## Case

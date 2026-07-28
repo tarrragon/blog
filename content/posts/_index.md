@@ -17,6 +17,7 @@ tags: ["posts", "hugo", "markdown", "blog"]
 - [Blog 文章模板設計：作者品質閘門與正文分工](/posts/blog-article-template-design/) — 文章模板的 blog-specific SSoT，供人類作者、Claude Code 與 Codex 共用
 - [什麼是 AST — 從字串到語法樹的視角轉換](/posts/what-is-ast/) — 為什麼 blog 選 AST-based linter 而非 regex
 - [mdtools：Go + goldmark 的 markdown 工具鏈設計](/posts/mdtools-design/) — 子命令架構、語言選擇 tripwire、pre-commit 與 CI 整合
+- [教學模組的 Backlog 段格式規範](/posts/backlog-format-spec/) — 模組未完成工作的段名、四欄與不進表的三類內容
 
 **Hugo 與 Markdown 操作經驗** — 具體寫作與渲染問題的事故紀錄。
 

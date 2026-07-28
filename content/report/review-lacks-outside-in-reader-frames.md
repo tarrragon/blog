@@ -68,7 +68,7 @@ reviewer 評估「這篇文章本身好不好」，不是「搜尋特定問題�
 
 ## 理想做法
 
-在現有 inside-out review 框架之外，補五個 outside-in frame：
+在現有 inside-out review 框架之外，補這幾個 outside-in frame：
 
 | Frame                     | 問什麼                             | 在哪個 Round 跑           |
 | ------------------------- | ---------------------------------- | ------------------------- |
@@ -77,6 +77,9 @@ reviewer 評估「這篇文章本身好不好」，不是「搜尋特定問題�
 | Persona coverage          | 所有讀者情境都有入口嗎？           | Round 3（outbound）       |
 | Executable walkthrough    | 讀者能從零照做嗎？每步的工具在嗎？ | Round 2（操作型文章專用） |
 | Search landing            | 搜尋特定問題能落在聚焦文章嗎？     | Round 3（outbound）       |
+| 情境可想像性              | 讀者想不想像得出這些情況會發生？   | Round 2（判讀型文章專用） |
+
+情境可想像性是後補的一列，來自本卡揭露的框架之外又冒出的盲點：既有 frame 問「讀者讀完要做什麼」與「他懂不懂這個術語」，沒有一個問「他想不想像得出這些情況會發生」。它查三個成分——系統形態（我是不是這一類）、觸發事件（什麼時候要動）、微案例（動作晚了會怎樣），判定與補寫程序見 [#241](/report/judgment-content-needs-triggering-scenarios/) 與 [#242](/report/micro-case-makes-consequences-imaginable/)。這一列的存在本身也是本卡的證據：frame 清單是開放集合，「補完五個」不等於覆蓋完整。
 
 生成端的修正：每個教學模組在撰寫前顯式聲明「讀者定位文件」（一段話描述目標讀者的背景、已有能力、缺的經驗），讓生成和 review 都有可檢查的基準。
 
@@ -95,4 +98,5 @@ review 完成後如果使用者的第一個反饋是關於「內容缺口」而�
 - → [跨專業溝通用情境遞進、不用比喻堆疊](/report/cross-expertise-communication-scenario-not-analogy/)：盲點一的溝通層修法
 - → [#148 跨輪 review 停止訊號](/report/cross-round-review-stopping-signal/)：本卡揭露的是「停止訊號齊備但覆蓋不完整」的情境——frame 涵蓋度的判斷要包含 outside-in frame
 - → [#153 Review 漏抓先分 design gap 與 execution gap](/report/review-miss-diagnose-design-vs-execution-gap/)：六個盲點全部是 design gap（框架缺 frame），不是 execution gap（有 frame 沒跑）
-- → [#168 多輪審查要有冷讀者 frame](/report/cold-reader-frame-vs-informed-reviewer/)：cold-read 是 outside-in 的一個實例（從零脈絡讀者出發），本卡把這個方向擴展到五個 frame
+- → [#168 多輪審查要有冷讀者 frame](/report/cold-reader-frame-vs-informed-reviewer/)：cold-read 是 outside-in 的一個實例（從零脈絡讀者出發），本卡把這個方向擴展成一組 frame
+- → [#241 判讀層只給機制屬性時可用程度隨讀者既有經驗遞減](/report/judgment-content-needs-triggering-scenarios/)：本卡的 frame 清單在它之後又多一列（情境可想像性）。既有五個 frame 全數通過而使用者一讀就發現缺口，說明 frame 清單是開放集合、不是可宣告完整的枚舉
