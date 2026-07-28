@@ -84,7 +84,17 @@ Cache aside 適合商品詳情、權限摘要、[feature flag](/backend/knowledg
 
 跨模組端到端串聯（DB → cache → event → observability）見 [0.15 跨模組 Checkout Episode](/backend/00-service-selection/cross-module-checkout-episode/)。
 
-## 觀念網路補完方向
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                                          | 類型   | 前置條件                   | 規模 |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------ | -------------------------- | ---- |
+| T1 vendor 進階主題（Redis distributed lock / modules、Memcached CAS、ElastiCache Global Datastore DR）                        | vendor | 無                         | 中   |
+| 候選 vendor 服務頁（Garnet / Hazelcast / Aerospike / Varnish edge cache）                                                     | vendor | 需先確認採用度與 case 支撐 | 中   |
+| 觀念網路五方向的章節回寫（cache copy boundary / freshness window / invalidation model / origin protection / cache migration） | 主章   | 無                         | 中   |
+
+### 觀念網路補完方向
 
 快取章節下一輪的核心責任是把「暫存副本」和「正式狀態」的界線寫清楚。現有章節已經有 cache aside、TTL、distributed lock、presence store，並補上了 Pub/Sub 即時 fan-out（2.10）與 data types 型別實作（2.11）兩個向度；仍可深化的是資料新鮮度、失效語意、回源保護與快取遷移之間的引用關係，讓讀者知道快取策略何時只是加速，何時已經變成服務正確性風險。
 

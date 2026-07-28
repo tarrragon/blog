@@ -216,7 +216,20 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 3. 接著定義交接路由與前置控制面。
 4. 最後在問題觸發時引用對應服務案例。
 
-## 規劃方向
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                        | 類型   | 前置條件                                     | 規模 |
+| --------------------------------------------------------------------------- | ------ | -------------------------------------------- | ---- |
+| 負載工具 deep article（JMeter / Gatling / Locust / Vegeta）                 | vendor | 需與 06 界定角度分工（效能工程 vs 驗證流程） | 4 篇 |
+| 流量錄製與鏡像（GoReplay / Service Mesh Mirroring / VPC Traffic Mirroring） | vendor | 無                                           | 3 篇 |
+| 持續剖析（Pyroscope / Parca）                                               | vendor | 無                                           | 2 篇 |
+| 成本工具（Akamas / Vantage / CloudHealth / AWS Cost Explorer）              | vendor | 無                                           | 4 篇 |
+
+與 06 共用四個負載工具（k6 / JMeter / Gatling / Locust），寫作前要先確立本模組讀「效能工程的工具鏈」、06 讀「驗證流程的工具鏈」這條分工，否則兩邊會產出重複內容。
+
+### 規劃方向
 
 本模組的核心是把模組架構為「容量量化問題 + 服務級實踐案例」兩層結構。
 

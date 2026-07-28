@@ -59,7 +59,17 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 | [1.15](/backend/01-database/data-contract-document/)             | 資料契約文件                                             | 把 schema 表達不了的語意承諾寫成可攜性兩區 artifact、含適用判準與 dormant 豁免                                                             |
 | [Vendor 文章撰寫規格](/backend/01-database/vendor-article-spec/) | Vendor overview / deep article / migration playbook 分工 | 把 PostgreSQL / MySQL batch 經驗整理成後續資料庫服務頁的撰寫規格                                                                           |
 
-## 觀念網路補完方向
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                               | 類型   | 前置條件                     | 規模 |
+| ------------------------------------------------------------------------------------------------------------------ | ------ | ---------------------------- | ---- |
+| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）     | vendor | 各 vendor `_index.md` 已列項 | 大   |
+| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection） | 主章   | 無                           | 中   |
+| migration validation 知識卡                                                                                        | 知識卡 | 無                           | 1 張 |
+
+### 觀念網路補完方向
 
 資料庫章節下一輪的核心責任是把正式狀態的演進路徑講完整。現有章節已經涵蓋 schema、transaction、repository adapter 與 migration playbook，但還需要補上 state ownership、query boundary、migration safety 與 reconciliation 之間的引用關係，讓讀者知道資料庫變更如何從設計、發布、觀測一路接到事故決策。
 

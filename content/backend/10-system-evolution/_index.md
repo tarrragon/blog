@@ -48,7 +48,18 @@ tags: ["backend", "evolution", "migration"]
 | [10.2](/backend/10-system-evolution/service-decomposition-execution-runbook/) | 服務拆分執行 Runbook | 10.1 決定該拆之後、實際怎麼動手 — [Strangler Fig](/backend/knowledge-cards/strangler-fig/)、[雙寫期](/backend/knowledge-cards/dual-write/) 管理、切流策略、回退條件設計                                 |
 | [10.3](/backend/10-system-evolution/managed-platform-exit/)                   | 託管形態遷出         | [0.21](/backend/00-service-selection/delivery-mode-selection/) 升級自建 tripwire 觸發之後、從託管平台 / BaaS 遷往自建的執行 — 資料 / 身分 / 流量 / 整合的資產線盤點、並行期與回切窗口、部分遷出中繼形態 |
 
-## 後續擴充方向
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                 | 類型 | 前置條件                                             | 規模 |
+| ------------------------------------------------------------------------------------ | ---- | ---------------------------------------------------- | ---- |
+| 跨服務 schema 演進（API contract migration、event schema versioning、backfill 策略） | 主章 | 無                                                   | 中   |
+| 大型雲端遷移（on-prem 到 cloud、跨雲 cutover 劇本）                                  | 主章 | 需要公開遷移案例做素材                               | 大   |
+| 基礎設施替換（DB 引擎、cache vendor、queue broker 切換）                             | 主章 | 依賴 01 / 02 / 03 的 migration playbook 已完成的部分 | 中   |
+| 容量重平衡（服務間流量分佈、shard 重分佈、tenant 隔離）                              | 主章 | 需要與 09 容量模組界定分工                           | 中   |
+
+### 後續擴充方向
 
 本模組目前收服務拆分與託管形態遷出議題。未來會擴充的演進類議題：
 

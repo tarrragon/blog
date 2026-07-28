@@ -88,7 +88,18 @@ Container 解決服務包裝與 runtime 依賴；Kubernetes 解決多 instance �
 
 回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，部署案例要優先保留切流批次、draining、連線生命週期與回退時間。
 
-## 觀念網路補完方向
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                         | 類型   | 前置條件                  | 規模 |
+| -------------------------------------------------------------------------------------------- | ------ | ------------------------- | ---- |
+| 六個 T1 vendor 的 deep article（Docker / systemd / nginx / Envoy / AWS ELB / Traefik）       | vendor | 無                        | 6 篇 |
+| gateway 限流實作章（承接 11.9 對外流量語意的執行面）                                         | 主章   | 無（11.9 已定義路由需求） | 中   |
+| 知識卡：drain completion、rollout batch、config freeze、environment protection               | 知識卡 | 無                        | 4 張 |
+| 觀念網路五方向的章節回寫（runtime / lifecycle / traffic / rollout / control-plane contract） | 主章   | 無                        | 中   |
+
+### 觀念網路補完方向
 
 部署平台章節下一輪的核心責任是把平台能力寫成服務契約。現有章節已經有 container、Kubernetes、load balancer 與 service discovery，但還需要補上 runtime contract、lifecycle contract、traffic contract、rollout contract 與 control-plane contract 的關係，讓讀者知道部署是一組流量、連線、設定、資源與回退條件的連續切換。
 

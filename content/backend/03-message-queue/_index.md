@@ -71,7 +71,18 @@ RabbitMQ 適合明確 routing、[ack/nack](/backend/knowledge-cards/ack-nack/) �
 
 跨模組端到端串聯（DB → cache → event → observability）見 [0.15 跨模組 Checkout Episode](/backend/00-service-selection/cross-module-checkout-episode/)。
 
-## 觀念網路補完方向
+## Backlog
+
+格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
+
+| 項目                                                                                                     | 類型   | 前置條件 | 規模 |
+| -------------------------------------------------------------------------------------------------------- | ------ | -------- | ---- |
+| 各 vendor 進階主題 deep article（見各 vendor `_index.md` 與後續候選表）                                  | vendor | 無       | 中   |
+| 觀念網路五方向的章節回寫（delivery / processing / recovery semantics、outbox boundary、poison handling） | 主章   | 無       | 中   |
+
+知識卡層已收斂：第二批七張（processing semantics、recovery semantics、replay window、consumer pause、event schema compatibility、DLQ drain、poison-message quarantine）都已建卡，本模組目前沒有知識卡缺口。
+
+### 觀念網路補完方向
 
 訊息佇列章節下一輪的核心責任是把「投遞成功」和「業務結果正確」分開。現有章節已經有 broker、durable queue、outbox 與 consumer design，但還需要補上 delivery semantics、processing semantics 與 recovery semantics 的三層關係，讓讀者知道 queue 失敗同時包括訊息遺失、重複副作用、順序錯亂、重播風險與下游壓力放大。
 

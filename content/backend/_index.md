@@ -280,6 +280,29 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 | [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)                               | 補充入口 |
 | [Write-Through Cache](/backend/knowledge-cards/write-through-cache/)                             | 補充入口 |
 
+## Backlog 總覽
+
+各模組的待辦記在自己的 `_index.md` 的 `## Backlog` 段，格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。本段只做索引：項數與缺口摘要會隨各模組更新而過時，細節一律以各模組的 Backlog 段為準。
+
+| 模組                                                       | 項數 | 主要缺口                                      |
+| ---------------------------------------------------------- | ---- | --------------------------------------------- |
+| [00 服務選型](/backend/00-service-selection/)              | 0    | 拆卡與章節入口皆已完成                        |
+| [01 資料庫](/backend/01-database/)                         | 3    | 六個 vendor 的後續擴充（約 79 項）            |
+| [02 快取](/backend/02-cache-redis/)                        | 3    | T1 vendor 進階主題與候選 vendor 服務頁        |
+| [03 訊息佇列](/backend/03-message-queue/)                  | 2    | vendor 進階主題；知識卡層已收斂               |
+| [04 可觀測性](/backend/04-observability/)                  | 3    | OpenTelemetry 兩篇、案例反例補強              |
+| [05 部署平台](/backend/05-deployment-platform/)            | 4    | 六個 T1 vendor 未開始、gateway 限流章         |
+| [06 可靠性](/backend/06-reliability/)                      | 5    | 八個 T1 vendor 未開始、案例深挖批次           |
+| [07 資安與資料保護](/backend/07-security-data-protection/) | 5    | deep article 早期階段、兩個入門認證主題無落點 |
+| [08 事故處理](/backend/08-incident-response/)              | 4    | 六個 T1 vendor 未開始、案例深挖批次           |
+| [09 效能與容量](/backend/09-performance-capacity/)         | 4    | 十三個工具全部未開始                          |
+| [10 系統演進](/backend/10-system-evolution/)               | 4    | 四類演進議題待展開                            |
+| [11 API 設計](/backend/11-api-design/)                     | 5    | 爭論深度文章四篇（案例庫已就緒）              |
+
+跨模組看，缺口集中在 vendor 層：05、06、08、09 四個模組合計三十三個 vendor 一篇 deep article 都還沒寫，而這四個模組的主章都已完成，所以缺的是實作層而非判讀層。06 與 09 共用四個負載工具（k6 / JMeter / Gatling / Locust），寫作前要先確立兩邊的角度分工。
+
+新增教學模組時要在本表補一列，這與新增頂層 `content/<module>/` 要更新 [content/\_index.md](/) 是同一類的登記責任。
+
 ## 前置知識卡片規範
 
 Backend 文章中的術語只要會影響讀者理解或實作判斷，就應優先抽成前置知識卡片，不以「是否高頻出現」作為必要條件。Source of truth、[transaction boundary](/backend/knowledge-cards/transaction-boundary)、schema migration、timeout、[deadline](/backend/knowledge-cards/deadline)、[exponential backoff](/backend/knowledge-cards/exponential-backoff)、jitter、retry storm、[thundering herd](/backend/knowledge-cards/thundering-herd)、[transient failure](/backend/knowledge-cards/transient-failure)、[partial failure](/backend/knowledge-cards/partial-failure)、[cascading failure](/backend/knowledge-cards/cascading-failure)、load shedding、[token bucket](/backend/knowledge-cards/token-bucket)、[dependency isolation](/backend/knowledge-cards/dependency-isolation)、bulkhead、fallback、[fail fast](/backend/knowledge-cards/fail-fast)、[retry budget](/backend/knowledge-cards/retry-budget)、TTL、eviction、broker、consumer lag、dead-letter queue、[replay runbook](/backend/knowledge-cards/replay-runbook)、[重複投遞](/backend/knowledge-cards/duplicate-delivery)、idempotency、outbox、backpressure、[rate limit](/backend/knowledge-cards/rate-limit)、log schema、metrics、trace context、SLO、authorization、data masking、[secret management](/backend/knowledge-cards/secret-management)、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[website certificate lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)、[certificate rotation and renewal](/backend/knowledge-cards/certificate-rotation-renewal/)、[certificate revocation](/backend/knowledge-cards/certificate-revocation/)、[audit log](/backend/knowledge-cards/audit-log)、[降級](/backend/knowledge-cards/degradation)、[停機](/backend/knowledge-cards/downtime)、readiness 與 graceful shutdown 都是 domain knowhow；它們需要說明系統責任、產品後果、操作訊號與排障方式。
