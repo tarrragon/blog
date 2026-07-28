@@ -23,11 +23,11 @@ tags: ["backend", "service-selection", "observability", "reliability", "incident
 
 訊號層的責任是讓系統行為可被查詢與判讀。這一層的選型重點是資料模型、查詢能力、關聯能力、保留成本與告警品質；產品名稱排在後面，因為 log、metric、trace 與 error event 是否能互相串接，才是事故時真正影響判讀速度的條件。
 
-驗證層的責任是讓風險在事故前被安全暴露。這一層的選型重點是測試是否接近真實 workload、故障注入是否有停止條件、SLO 是否能被量測、release gate 是否能阻止高風險變更；工具越強，越需要 blast radius 與權限邊界。
+驗證層的責任是讓風險在事故前被安全暴露。這一層的選型重點是測試是否接近真實 workload、故障注入是否有停止條件、[SLO](/backend/knowledge-cards/sli-slo/) 是否能被量測、release gate 是否能阻止高風險變更；工具越強，越需要 [blast radius](/backend/knowledge-cards/blast-radius/) 與權限邊界。
 
 響應層的責任是讓事故進入可交接流程。這一層的選型重點是 paging、升級、角色分工、狀態更新、decision log、stakeholder mapping 與 post-incident action tracking；工具的價值來自流程一致性，通知訊息數量只是輔助訊號。
 
-閉環層的責任是把事故與演練教訓回寫到系統設計。這一層可能由 incident platform、ticket system、runbook repository 或內部 workflow 承擔；判準是 action item 是否能被排序、驗證、關閉，並回到訊號治理、可靠性演練或事故流程。
+閉環層的責任是把事故與演練教訓回寫到系統設計。這一層可能由 incident platform、ticket system、[runbook](/backend/knowledge-cards/runbook/) repository 或內部 workflow 承擔；判準是 action item 是否能被排序、驗證、關閉，並回到訊號治理、可靠性演練或事故流程。
 
 ## 判讀順序
 
