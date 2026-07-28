@@ -12,9 +12,21 @@ tags: ["backend", "api-design", "compatibility"]
 
 變更紀律的地基是一份「什麼算 breaking」的明文清單、而且清單的範圍比直覺預期的寬。直覺抓得到的：刪欄位、改型別、改必填。直覺常漏的：改欄位預設值（消費者依賴舊預設）、改錯誤碼（消費者的分支邏輯建在上面）、改回應時序（輪詢邏輯依賴）、收緊驗證規則（昨天合法的請求今天 400）。反向的參照是 Stripe 明文的相容變更清單 — 新增資源、新增 optional 參數、新增 response property、property 順序改變、opaque ID 的長度格式改變、新增 event type（見 [11.C11](/backend/11-api-design/cases/versioning-stripe-named-major-releases/)）：清單同時劃出「這些軸服務端保留自由」、消費者不可依賴。兩份清單（breaking 清單、相容清單）合起來才是完整的契約邊界、只有其中一份時灰色地帶照樣存在。
 
+## 紀律強度由消費者的更新能力決定
+
+相容紀律要多嚴，取決於舊版消費者會存在多久——而這件事由消費者能不能被強制更新決定，不由自己的工程偏好決定。三種形態的下限差距很大。
+
+**消費者可以跟著一起部署**：內部微服務之間、單一前端搭配自家後端。改介面時兩邊同時上線，breaking 的成本接近於零、紀律可以輕。這個形態的陷阱是它會悄悄失效——「一起上」在三個服務時成立、在三十個時不成立，而失效的那一天沒有任何訊號。
+
+**消費者自己決定何時更新**：對外的 HTTP API、平台團隊對產品團隊。舊版會存在數月到數年、長度由對方的排期決定，所以紀律要撐得住「宣告之後還要等很久」這件事，到期與豁免的邊界條款在這個形態才開始有份量。
+
+**消費者無法被強制更新**：行動應用（使用者不更新就是不更新）、發佈出去的 SDK、嵌進第三方系統的整合。舊版永遠在線，breaking 等於放棄那一部分使用者。這個形態讓「先上線再收斂」這條路不存在，紀律的下限因此由它決定。
+
+同一個服務可以同時面對多種消費者，這時紀律取最嚴的那一種——有一個行動應用在用，整條介面就進入第三形態。
+
 ## 紀律的三個放置層：格式、工具、流程
 
-相容紀律可以放在三個層、強度遞減、適用情境不同。
+相容紀律可以放在三個層、強度遞減、適用情境不同。前兩層能不能用，取決於介面有沒有機器可讀的 schema：protobuf 與 GraphQL 自帶，OpenAPI 是後補的一份，而手寫文件的 HTTP API 兩層都落空、只剩流程層。
 
 **格式層**：相容性做成編碼格式的性質、違規在技術上不可行或立即失效。protobuf 是代表 — field number 一旦投入使用即不可變更、刪除必須 reserve、重用會造成解碼歧義與資料損毀（見 [11.C28](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/)）；官方文件直接把 schema 變更分成 wire-safe、wire-unsafe 與 conditionally wire-compatible 三類 — 判定規則明文化之後、不依賴資深工程師在場（gRPC 內部機制的深化見 [proto 演進紀律](/backend/11-api-design/styles/grpc/grpc-proto-evolution-discipline/)）。GraphQL 的 versionless 紀律同型、案例判讀把它歸納為三個支柱：只加不改、deprecation 標注、nullable 預設、由 schema 語言承載（C26 的判讀整理、觀察層見 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)；GraphQL 內部機制的深化見 [Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)）。
 
