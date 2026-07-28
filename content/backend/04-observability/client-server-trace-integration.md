@@ -6,7 +6,7 @@ weight: 24
 tags: ["backend", "observability", "tracing", "rum", "client-server"]
 ---
 
-Client-to-server 端到端觀測串接的核心責任是讓一次使用者操作的完整路徑 — 從 browser click 到 server 處理到 response rendering — 可以用同一個 trace ID 串起來。[4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/) 講的是概念和 vendor 定位；本篇走完一個具體場景的實作鏈路。[Monitoring 模組 03 SDK 設計](/monitoring/03-sdk-design/) 講的是 client 端怎麼埋點；本篇講 server 端怎麼接收和整合。
+Client-to-server 端到端觀測串接的核心責任是讓一次使用者操作的完整路徑 — 從 browser click 到 server 處理到 response rendering — 可以用同一個 [trace](/backend/knowledge-cards/trace/) ID 串起來。[4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/) 講的是概念和 vendor 定位；本篇走完一個具體場景的實作鏈路。[Monitoring 模組 03 SDK 設計](/monitoring/03-sdk-design/) 講的是 client 端怎麼埋點；本篇講 server 端怎麼接收和整合。
 
 ## 完整鏈路
 
@@ -27,7 +27,7 @@ Browser: user clicks "checkout"
   → 統一 trace waterfall：client span 是 root、server spans 是 children
 ```
 
-鏈路的每一段都需要 trace context 正確傳遞。任何一段斷掉，trace waterfall 就會出現孤立的 span — server 端看到的 trace 跟 client 端看到的 trace 是兩條不相關的紀錄。
+鏈路的每一段都需要 trace context 正確傳遞。任何一段斷掉，trace waterfall 就會出現孤立的 [span](/backend/knowledge-cards/span/) — server 端看到的 trace 跟 client 端看到的 trace 是兩條不相關的紀錄。
 
 ## Trace context propagation
 

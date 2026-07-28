@@ -23,7 +23,7 @@ Broker 是訊息分發的具體實作產品（RabbitMQ、Kafka、NATS、EMQX）�
 
 ## broker、queue、consumer 的分工
 
-[broker](/backend/knowledge-cards/broker/) 管理訊息儲存、分發與確認流程；queue 或 topic 承載傳遞單位；consumer 承擔業務處理。分工清楚後，故障判讀才能定位在正確層級：投遞故障、消費故障或下游依賴故障。
+[broker](/backend/knowledge-cards/broker/) 管理訊息儲存、分發與確認流程；queue 或 [topic](/backend/knowledge-cards/topic/) 承載傳遞單位；consumer 承擔業務處理。分工清楚後，故障判讀才能定位在正確層級：投遞故障、消費故障或下游依賴故障。
 
 producer 發送成功只代表 broker 已接收（[publisher confirm](/backend/knowledge-cards/publisher-confirm/)），不代表業務結果完成。業務完成需要 consumer 提交副作用並確認進度。
 
@@ -38,8 +38,12 @@ push 模型由 broker 主動推送訊息，適合低延遲場景；pull 模型�
 三種常見 delivery semantics：
 
 1. at-most-once：可能丟失，不重送，低延遲低成本。
-2. at-least-once：可能重複，需冪等保護，最常見實務語意。
+2. at-least-once：可能重複，需 [冪等](/backend/knowledge-cards/idempotency/) 保護，最常見實務語意。
 3. exactly-once：語意成本高，通常在特定邊界內成立，需要嚴格協議與系統支持。
+
+選哪一種的軸是**丟一筆的後果**。遙測與行為埋點這類高頻、單筆無關緊要的資料流走 at-most-once——丟一筆不影響任何判斷，而重複反而讓統計失真。訂單、通知、狀態變更這類業務事件走 at-least-once，因為丟失的代價高於重複，重複的處理成本轉嫁到消費端的冪等設計。
+
+exactly-once 的適用面比字面窄：它通常只在單一 broker 生態的封閉邊界內成立（同一叢集內的交易性寫入），跨系統的端到端 exactly-once 實際上是 at-least-once 加上消費端去重。需要它的場景（金流結算、庫存扣減）要先確認那個邊界涵蓋到哪裡，邊界外的那一段仍然要自己補去重。
 
 實務上多數後端系統採 at-least-once，再用 consumer 去重與補償達到業務可接受結果。
 
