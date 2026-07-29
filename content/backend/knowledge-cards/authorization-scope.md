@@ -30,4 +30,4 @@ Scope 與 [token revocation](/backend/knowledge-cards/token-revocation/) 解的�
 
 作為發行方設計 scope 時，一個 scope 要對應一組可列舉的資源與動作，並讓讀與寫分屬不同的 scope。顆粒切得太細的代價是使用方要勾一長串、容易漏；切得太粗的代價由每一個使用方承擔，而他們沒有辦法自行修正。
 
-代理場景要另外處理：一個系統代表某個使用者呼叫下游時，有效範圍應該是那個人本來有的與那個系統獲准代理的兩者交集，取聯集會讓代理路徑成為提權管道，判讀見 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。第三方整合的範圍與事件傳導半徑的關係見 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)，機器身分那一側的分域治理見 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)。
+代理場景的範圍是另一條判斷：一個系統代表某個使用者呼叫下游時，交集怎麼算、誰負責算、驗證方怎麼實測，都在 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)，本卡不重述。第三方整合的範圍與事件傳導半徑的關係見 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)，機器身分那一側的分域治理見 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)。
