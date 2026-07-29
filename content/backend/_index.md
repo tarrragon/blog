@@ -293,7 +293,7 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 | [04 可觀測性](/backend/04-observability/)                  | 3    | OpenTelemetry 兩篇、案例反例補強                                             |
 | [05 部署平台](/backend/05-deployment-platform/)            | 4    | 六個 T1 vendor 未開始、gateway 限流章                                        |
 | [06 可靠性](/backend/06-reliability/)                      | 6    | 八個 T1 vendor 未開始、憑證撤銷演練無章節                                    |
-| [07 資安與資料保護](/backend/07-security-data-protection/) | 16   | vendor deep article 早期階段、外部身分來源的帳號生命週期與密碼外洩處置無落點 |
+| [07 資安與資料保護](/backend/07-security-data-protection/) | 17   | vendor deep article 早期階段、外部身分來源的帳號生命週期與密碼外洩處置無落點 |
 | [08 事故處理](/backend/08-incident-response/)              | 4    | 六個 T1 vendor 未開始、案例深挖批次                                          |
 | [09 效能與容量](/backend/09-performance-capacity/)         | 5    | 十三個工具全部未開始                                                         |
 | [10 系統演進](/backend/10-system-evolution/)               | 4    | 四類演進議題待展開                                                           |

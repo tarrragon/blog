@@ -36,7 +36,7 @@ webhook 把可靠性的一部分交給 consumer 自己扛、有五件事跑不�
 
 ## 下一步路由
 
-- 簽章原語的選型與重放窗口：[7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)
+- 簽章原語的選型（這個機制擋得住誰、金鑰放哪一格）：[7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)
 - 持久連線的推送機制：[持久連線推送](/backend/11-api-design/styles/realtime/realtime-push-mechanisms/)
 - 錯誤與投遞承諾的雙向框架：[11.11 Status 與錯誤的雙向契約](/backend/11-api-design/error-bidirectional-contract/)
 - consumer 側的冪等設計：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)

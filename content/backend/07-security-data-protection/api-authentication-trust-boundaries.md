@@ -20,7 +20,8 @@ tags: ["backend", "security"]
 
 - 人類身分的權限分級與 [authorization](/backend/knowledge-cards/authorization/) → [7.2](../identity-access-boundary/)
 - 機器憑證的輪替與收斂節奏 → [7.6](../secrets-and-machine-credential-governance/)
-- 憑證機制本身的選型 → [7.28](../cryptographic-primitive-selection/)
+- 這個機制屬於哪一類密碼學原語、金鑰放哪裡 → [7.28](../cryptographic-primitive-selection/)
+- 系統層那把憑證要用哪一種機制 → [7.34](../machine-credential-mechanism-selection/)
 - 跨系統工作負載之間的信任建立（workload federation） → [7.10](../workload-identity-and-federated-trust/)
 - 傳輸層信任 → [7.5](../transport-trust-and-certificate-lifecycle/)
 

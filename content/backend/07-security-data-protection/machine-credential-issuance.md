@@ -143,6 +143,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 憑證上線後的輪替、回收與事件收斂：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 這把憑證屬於信任分層裡的哪一層：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 憑證機制本身的選型（共享密鑰、API key、mTLS、client credentials）：[7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)
+- 選定的是共享密鑰簽章、而且要接對方的推送：[7.35 簽章對接的驗證收斂](../signature-integration-verification/)——素材規格與重放窗口是交付完成之後、上線之前的最後兩個收斂條件
 - 共享密鑰的雙密過渡與輪替實作：[Shared Secret 安全輪替設計](/work-log/shared_secret_rotation/)
 - 憑證注入容器的方式與版本追蹤：[5.1 配置注入方式與取捨](/backend/05-deployment-platform/container-runtime/#配置注入方式與取捨)；新舊憑證的切換與舊值撤除：[5.x Secret Boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#secret-boundary)
 - 外洩之後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)；要不要對外通報與怎麼說：[8.x 利害關係人溝通](/backend/08-incident-response/stakeholder-communication/)
