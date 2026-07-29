@@ -46,7 +46,7 @@ weight: 7
 
 ## 從問題進入
 
-要做登入功能的讀者從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步——它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
+要做登入功能的讀者從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步——它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。7.29 判到系統層之後還有兩條分支：那把憑證怎麼交到對方手上走 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)，而請求是「某個系統代表某個特定的人」時走 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。
 
 ## 從章節到實作的 chain
 
@@ -106,12 +106,14 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)                                    | API Auth Trust Boundaries                         | 定義使用者、系統與跨系統對應三層的憑證與撤銷粒度                                                      |
 | [7.30 使用者密碼儲存：參數會過期的那一類原語](/backend/07-security-data-protection/password-storage-and-work-factor/)                       | Password Storage                                  | 定義密碼雜湊選型、work factor 定法與參數升級路徑                                                      |
 | [7.31 認證方式選型：可離線猜測的材料最後落在哪裡](/backend/07-security-data-protection/authentication-approach-selection/)                  | Authentication Approach                           | 定義自建、委派身分、passkey 與不做登入之間的取捨                                                      |
+| [7.32 機器憑證的配發：先問這個動作能不能不存在](/backend/07-security-data-protection/machine-credential-issuance/)                          | Machine Credential Issuance                       | 定義配發能不能免掉、核發與審批要看什麼、初次交付與登記的條件                                          |
+| [7.33 委任型憑證：關係寫進憑證，還是留給驗證方拼湊](/backend/07-security-data-protection/delegated-credential-selection/)                   | Delegated Credential Selection                    | 定義委任關係由誰確認、委任與冒用的差別、撤銷粒度與驗證方檢查項                                        |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
 
 ## 模組完成狀態
 
-主章目前已形成基礎問題節點、藍隊操作循環、跨模組延伸章節與推演素材庫，並新增 `7.27` 的 credential rotation 實作示範、`7.28` 的密碼學原語選型、`7.29` 的 API 認證信任邊界分層、`7.30` 的使用者密碼儲存（簡版）與 `7.31` 的認證方式選型。章節列表末段的五篇 LLM 專題屬延伸章節帶：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。資安章節進入穩定維護狀態。
+主章目前已形成基礎問題節點、藍隊操作循環、跨模組延伸章節與推演素材庫，並新增 `7.27` 的 credential rotation 實作示範、`7.28` 的密碼學原語選型、`7.29` 的 API 認證信任邊界分層、`7.30` 的使用者密碼儲存（簡版）、`7.31` 的認證方式選型、`7.32` 的機器憑證配發與 `7.33` 的委任型憑證選型。後兩篇補的是 7.29 分層判讀完成之後的兩條分支——系統層那把憑證怎麼交出去，以及「一個系統代表某個人」這層關係由誰確認。章節列表末段的五篇 LLM 專題屬延伸章節帶：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。資安章節進入穩定維護狀態。
 
 ## Backlog
 
@@ -129,9 +131,8 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | B2B 多租戶的身分提供者可設定能力                                                                                                     | 主章   | 無（7.31 使用者身分來源段指過來）          | 中          |
 | 資產盤點（對外入口 / 憑證 / 信任錨 / token 的分母怎麼建與怎麼維持）                                                                  | 主章   | 無（7.3 / 7.5 已給三份來源對帳的最小做法） | 中          |
 | 微案例第三拍的素材替換（11 則中 7.28 / 7.5 / 7.30 / 7.31 四則明確為機制推導，其餘七則的來源尚未逐則判定）                            | 案例   | 該形態的案例庫新增任一則                   | 11 則（小） |
-| 機器憑證的配發流程（誰核發 / 審批 / 初次交付路徑）                                                                                   | 主章   | 無（7.29 已定義路由需求）                  | 小          |
 | 管理平面與業務平面的隔離設定落點（入口路由 / 管理端點可達來源）                                                                      | 主章   | 無（7.3 已定義路由需求）                   | 小          |
-| 委任型憑證的機制選型（token exchange 交換流程、actor 與 subject 各自的撤銷路徑、驗證方檢查欄位）                                     | 主章   | 無（7.29 已定義路由需求與最小判準）        | 中          |
+| 端對端加密的金鑰備援設計（復原碼 / 服務端包裝副本 / 多方分持各自把金鑰位置移到哪一格）                                               | 主章   | 無（7.28 已給三種形態與最小判準）          | 中          |
 | 7.30 密碼儲存的完整版（演算法內部機制比較、大規模帳號庫遷移策略、合規演算法清單對照、pepper 的完整處理與輪替限制）                   | 主章   | 無（簡版已上線、缺的是深度）               | 4 項（中）  |
 | 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑）                                                                   | 主章   | 無（7.2 的代理操作段已定義路由需求）       | 中          |
 | 51 個 vendor 服務頁的 deep article 與 migration playbook                                                                             | vendor | 無                                         | 51 頁（大） |

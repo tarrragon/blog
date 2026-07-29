@@ -19,6 +19,7 @@ tags: ["backend", "security"]
 **Out-of-scope**（路由到他章）：
 
 - 人類身分 → [7.2](../identity-access-boundary/)
+- 平台身分用不上時的憑證核發與初次交付 → [7.32](../machine-credential-issuance/)
 - 機器憑證 lifecycle / 簽章金鑰 → [7.6](../secrets-and-machine-credential-governance/)
 - 傳輸層 validation 路徑 → [7.5](../transport-trust-and-certificate-lifecycle/)
 - 供應鏈 artifact 信任 → [7.12](../supply-chain-integrity-and-artifact-trust/)
@@ -102,6 +103,7 @@ Federation 信任漂移是 workload identity 獨有的失效模式：信任關�
 
 ## 下一步路由
 
+- 平台身分在這條整合上用不上時（呼叫方在控制範圍外、執行環境不簽發身分、被呼叫方只接受長期憑證）：[7.32 機器憑證的配發](../machine-credential-issuance/)
 - 身份與平台邊界實作：`05-deployment-platform`
 - 憑證輪替與驗證節奏：`06-reliability`
 - 事件分級與收斂：`08-incident-response`
