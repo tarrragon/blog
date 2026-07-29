@@ -114,6 +114,8 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 重放防護的時間軸條件（驗證值涵蓋時間戳、接收端檢查新鮮度）擋住窗口外的重送，窗口內的重複由識別值去重承接，兩者的分工見 [Replay Attack](/backend/knowledge-cards/replay-attack/)。選型層要判斷的是另一件事：這一格在功能測試裡表現正常，所以它不會被測試發現，只會被稽核或事件發現。原語選對而這一格空著時，團隊拿到的保護與帳面上以為的保護有落差，而落差在正常運作期間沒有徵兆。
 
+這一格的失敗長這樣：webhook 接收端照對方文件實作了簽章驗證，時間戳在 payload 裡，但沒有人多寫一行去比對它——驗簽通過就代表這個請求出自對方，當下沒有人覺得還缺什麼。某次對方那端重試堆積之後，同一筆扣款被處理了好幾次。查起來每一筆都通過驗簽、每一筆的內容都合法，監控上是一串正常請求；而 webhook 本來就會重試，重放與正常重試在日誌裡沒有任何欄位分得開。補起來要先量一段時間的時鐘偏移才定得出窗口、再建去重儲存，而已經發生的重複副作用要逐筆對帳回滾，那部分的工作量由這個缺口存在了多久決定。
+
 窗口長度是選型階段就要定的參數，兩端都能換算成具體的量。下界是量測到的 [時鐘偏移](/backend/knowledge-cards/clock-skew/) 上界加上餘裕，低於這個值正常請求會在漂移時被拒。上界由去重的儲存量反推：窗口內的已處理識別值都要留著，請求速率乘上窗口長度就是要保留的筆數，這個數字撐不住時窗口就該縮短。涉及金流或不可逆動作的端點直接取下界，不必在區間裡挑。
 
 ## 常見風險邊界
@@ -143,4 +145,4 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 金鑰託管平台的選型與能力對照：[07 vendors](../vendors/)
 - 金鑰在部署流程中的配發與注入：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Secret Boundary 段
 - 金鑰失守後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
-- 回退演練的通用形態：[6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)；金鑰輪替本身的演練設計 `06-reliability` 尚未有對應章節，已列入該模組 backlog
+- 回退演練的通用形態：[6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)；金鑰輪替本身的演練設計 [06 可靠性](/backend/06-reliability/) 尚未有對應章節，已列入該模組 backlog
