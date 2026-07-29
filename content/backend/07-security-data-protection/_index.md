@@ -42,9 +42,11 @@ weight: 7
 
 反例與規模對照入口： [7.C9 反例](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) / [7.C10 對照](/backend/07-security-data-protection/cases/contrast-identity-governance-by-scale/)。
 
-已經發生外洩、要判斷手上的密碼儲存撐不撐得住的讀者直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。要做登入功能的讀者從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步——它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
+已經發生外洩、要判斷手上的密碼儲存撐不撐得住的讀者直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
 
-回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
+## 從問題進入
+
+要做登入功能的讀者從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步——它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
 
 ## 從章節到實作的 chain
 
@@ -117,6 +119,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 | 項目                                                                                                               | 類型   | 前置條件                                   | 規模        |
 | ------------------------------------------------------------------------------------------------------------------ | ------ | ------------------------------------------ | ----------- |
+| 委派身分的反向同步（對方停用帳號時這邊怎麼知道、資料歸屬怎麼設計）                                                 | 主章   | 無（7.31 已定義路由需求與最小做法）        | 小          |
 | Session 與 token 選型（JWT vs session、token 存不存 DB；接在 7.31 的身分來源決定之後）                             | 主章   | 無                                         | 中          |
 | 資產盤點（對外入口 / 憑證 / 信任錨 / token 的分母怎麼建與怎麼維持）                                                | 主章   | 無（7.3 / 7.5 已給三份來源對帳的最小做法） | 中          |
 | 微案例第三拍的素材替換（9 則中 7.28 / 7.5 / 7.30 三則明確為機制推導，其餘六則的來源尚未逐則判定）                  | 案例   | 該形態的案例庫新增任一則                   | 9 則（小）  |

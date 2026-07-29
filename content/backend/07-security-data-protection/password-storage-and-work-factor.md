@@ -24,7 +24,7 @@ tags: ["backend", "security"]
 
 密碼儲存的判讀前提是資料已經被拿走——其他原語防的是攻擊者拿不到資料，這一類從一開始就假設拿到了。資料庫外洩之後，攻擊者手上有全部的雜湊值與 [salt](/backend/knowledge-cards/salt/)，唯一還在運作的保護是「逐一嘗試要花多久」。
 
-攻擊者的總代價是「猜一次要付的代價」乘上「要猜幾次」，而本章的參數只買得到第一項。第二項由密碼本身的強度決定，而它是支配項——參數調高十倍換到的難度增量，遠小於擋掉外洩密碼清單、要求第二因子或改用 passkey 換到的。所以這一章的定位要先講清楚：**它讓每一次猜測變貴，擋不住弱密碼**。密碼本身已經在別處外洩過時連「猜」都不必——那一類攻擊見 [credential stuffing](/backend/knowledge-cards/credential-stuffing/)，本章的參數對它完全無效。第二項的處置（登入節奏、外洩密碼比對、第二因子）走 [7.2 身分與授權邊界](../identity-access-boundary/)。
+攻擊者的總代價是「猜一次要付的代價」乘上「要猜幾次」，而本章的參數只買得到第一項。第二項由密碼本身的強度決定，而它是支配項——參數調高十倍換到的難度增量，遠小於擋掉外洩密碼清單、要求第二因子或改用 passkey 換到的。所以這一章的定位要先講清楚：**它讓每一次猜測變貴，擋不住弱密碼**。密碼本身已經在別處外洩過時連「猜」都不必——那一類攻擊見 [credential stuffing](/backend/knowledge-cards/credential-stuffing/)，本章的參數對它完全無效。第二項的處置（登入節奏、外洩密碼比對、第二因子）走 [7.2 終端使用者的登入節奏](../identity-access-boundary/#終端使用者的登入節奏)。
 
 參數本身要在三項成本之間定：攻擊者猜一次要付的代價、正常使用者登入時要等的時間、以及伺服器承擔的運算與記憶體。三項用的是同一組參數，調高第一項就同時調高後兩項，所以這個選型的產出是一個區間而不是一個值。
 
@@ -101,5 +101,5 @@ tags: ["backend", "security"]
 - 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「密鑰與秘密」議題
 - 原語分類與金鑰位置判讀：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
 - 登入節奏、多因子與會話收斂：[7.2 身分與授權邊界](../identity-access-boundary/)
-- 外洩之後的止血與通報：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
+- 外洩之後的止血與通報：事故節奏的通用形態見 [8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)；密碼外洩特有的處置（強制重設的範圍怎麼定、通知門檻在哪）本站尚未寫，在那之前用上方「升級路徑」的第二條打底
 - 密碼雜湊的運算容量：本站尚未寫把認證運算納入容量規劃的章節；在那之前用上方「work factor 怎麼定」第 3 步的算法（尖峰登入量乘上單次耗時）自行推估。

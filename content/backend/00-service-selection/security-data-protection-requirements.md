@@ -29,6 +29,7 @@ tags: ["backend", "service-selection"]
 | 伺服器防護 | 哪些入口要限制來源、速率與攻擊面                                                         | [Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)、upload、[webhook](/backend/knowledge-cards/webhook/)、[WAF](/backend/knowledge-cards/waf/)                   |
 | 資料遮罩   | 匯出、[log](/backend/knowledge-cards/log/)、客服畫面要顯示多少敏感資訊                   | email、電話、身分證、付款資訊                                                                                                                                            |
 | 傳輸保護   | 資料在 client、service、[queue](/backend/knowledge-cards/queue/)、storage 之間如何被保護 | [TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、signed request、[certificate chain and trust root](/backend/knowledge-cards/certificate-chain-trust/)                  |
+| 身分來源   | 使用者的身分自建、委派給外部提供者、還是走 passkey                                       | [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)、[credential stuffing](/backend/knowledge-cards/credential-stuffing/)       |
 | 密鑰與秘密 | token、API key、憑證如何保存、輪替與撤銷                                                 | [Secret Management](/backend/knowledge-cards/secret-management/)、[Website Certificate Lifecycle](/backend/knowledge-cards/website-certificate-lifecycle/)、key rotation |
 | 稽核追蹤   | 高風險操作是否能被追蹤與事後審查                                                         | [audit log](/backend/knowledge-cards/audit-log/)、approval、admin action                                                                                                 |
 

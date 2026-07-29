@@ -22,4 +22,4 @@ Credential stuffing 的核心概念是「拿在別處外洩的帳號密碼組合
 
 防護的著力點在密碼之外。可用的機制包括比對外洩密碼清單（註冊與變更密碼時擋下已知外洩的組合）、要求第二因子讓密碼正確也不足以登入、按來源與行為特徵而非按帳號做速率限制、以及對成功登入做異常判讀（新裝置、新地區、與平常不同的時段）。
 
-判斷自己的暴露程度，看的是使用者群體與大型外洩事件的重疊——面向一般消費者的服務重疊度最高，因為同一批人在數十個服務用同一組密碼。相鄰概念見 [authentication](/backend/knowledge-cards/authentication/) 與 [step-up authentication](/backend/knowledge-cards/step-up-authentication/)，登入節奏的判讀與處置見 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)。
+判斷自己的暴露程度，看的是使用者群體與大型外洩事件的重疊——面向一般消費者的服務重疊度最高，因為同一批人在數十個服務用同一組密碼。相鄰概念見 [authentication](/backend/knowledge-cards/authentication/) 與 [step-up authentication](/backend/knowledge-cards/step-up-authentication/)，登入節奏的判讀與處置見 [7.2 終端使用者的登入節奏](/backend/07-security-data-protection/identity-access-boundary/#終端使用者的登入節奏)，登入方式本身的選型見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。

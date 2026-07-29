@@ -10,7 +10,7 @@ tags: ["backend", "security"]
 
 ## 本章寫作邊界
 
-本章聚焦身分從哪裡來這個決定。憑證在請求中怎麼帶、狀態放伺服器還是放 token（session 與 JWT 的取捨）是接在這個決定之後的另一條軸，本站尚未寫。人類身分的權限分級與登入節奏屬 [7.2 身分與授權邊界](../identity-access-boundary/)，機器對機器的身分不在本章範圍——那條路徑的入口是 7.29。
+本章聚焦身分從哪裡來這個決定。憑證在請求中怎麼帶、狀態放伺服器還是放 token（session 與 JWT 的取捨）是接在這個決定之後的另一條軸，本站尚未寫。登入節奏、第二因子與權限分級屬 [7.2 身分與授權邊界](../identity-access-boundary/)——終端使用者那一側在該章的「終端使用者的登入節奏」一節，員工與高權限工具在其餘各節。機器對機器的身分不在本章範圍，那條路徑的入口是 [7.29](../api-authentication-trust-boundaries/)。
 
 ## 判讀軸：材料落在哪裡，而不是有沒有密碼
 
@@ -24,7 +24,15 @@ tags: ["backend", "security"]
 
 **自建帳號**適用於使用者群體沒有共同身分來源的服務。它的代價最清楚也最完整：參數選型與老化（7.30）、登入節奏與異常判讀（7.2）、以及外洩密碼被拿來試登入這一格（見 [credential stuffing](/backend/knowledge-cards/credential-stuffing/)）。選它的理由通常是別無選擇，而不是它比較好。
 
-**委派身分**適用於使用者本來就集中在某個身分來源：企業內部系統、只服務單一組織的 B2B、或以特定平台帳號為主的消費端產品。它換來的是不必碰密碼儲存，付出的是三樣新依賴——身分提供者的可用性直接等於自己的登入可用性、帳號的生命週期由對方決定、以及使用者離開那個來源時（換公司、平台停用帳號）這邊的資料歸屬要另外設計。跨組織的信任建立與 token 範圍走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)，供應商那一端出事時的內部收斂責任走 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)。
+**委派身分**適用於使用者本來就集中在某個身分來源：企業內部系統、只服務單一組織的 B2B、或以特定平台帳號為主的消費端產品。它換來的是不必碰密碼儲存，付出的是三樣新依賴，各自的落點不同。
+
+**身分提供者的可用性直接等於自己的登入可用性**——對方的控制面故障時，這邊沒有任何一條路能讓使用者進來。這一格的形態與恢復優先序見模組案例 [7.C3 Azure AD 身分控制面事件](/backend/07-security-data-protection/cases/azure-ad-identity-control-plane-2021/)。
+
+**帳號的生命週期由對方決定**——對方停用帳號時這邊不會收到任何事件，除非另外接一條反向的同步通道。這條通道的設計本站尚未寫；最小做法是把它當成對接契約的一部分在導入當下談，事後補要重新開對接。
+
+**使用者離開那個來源時（換公司、平台停用帳號）這邊的資料歸屬要另外設計**——這是產品決定而非技術決定，本站尚未寫。
+
+供應商那一端出事時的內部收斂責任走 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)。跨組織的信任建立與 token 範圍走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)，注意那一章的主體是機器對機器那一側；人類使用者透過身分提供者登入不在它的範圍內。
 
 **Passkey** 把驗證材料換成裝置持有的金鑰對，服務端存的是公鑰，公鑰外洩不構成可還原的風險。它同時擋掉 credential stuffing 與釣魚——前者沒有可重用的密碼，後者的簽章綁定網域。代價集中在裝置這一端：遺失之後的回復路徑、跨裝置同步依賴平台的金鑰同步機制、以及企業環境要另外處理裝置管理。本站尚未寫 passkey 的實作與導入節奏；選它之前的最小判準是先設計回復路徑再設計主路徑，因為回復路徑決定了實際的安全上限。
 
@@ -45,7 +53,7 @@ tags: ["backend", "security"]
 1. 先確認使用者在來到這個服務之前已經有哪個帳號，答案決定委派可不可行。
 2. 再列出所有進得來的路徑，包含 fallback 與帳號回復——這一步最常漏掉回復路徑。
 3. 對每一條路徑問「這一段有沒有可離線猜測的材料」，有的就按 7.30 的標準處理。
-4. 最後把選定的方式路由到對應的下游：自建走 7.30 與 7.2，委派走 7.10 與 7.2 的供應商鏈，passkey 的實作本站尚未寫。
+4. 最後把選定的方式路由到對應的下游：自建走 [7.30](../password-storage-and-work-factor/) 與 [7.2 終端使用者的登入節奏](../identity-access-boundary/#終端使用者的登入節奏)，委派走 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)（機器那一側另見 7.10），passkey 的實作本站尚未寫。
 
 ## 這個決定失敗時長什麼樣
 
@@ -63,8 +71,9 @@ tags: ["backend", "security"]
 ## 下一步路由
 
 - 決定自己存密碼之後的參數與升級：[7.30 使用者密碼儲存](../password-storage-and-work-factor/)
-- 登入節奏、第二因子與會話收斂：[7.2 身分與授權邊界](../identity-access-boundary/)
-- 跨組織的信任建立與 token 範圍：[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)
+- 終端使用者的登入節奏、外洩密碼比對與第二因子：[7.2 終端使用者的登入節奏](../identity-access-boundary/#終端使用者的登入節奏)
+- 內部身分的權限分級與會話收斂：[7.2 身分與授權邊界](../identity-access-boundary/)
+- 機器對機器的跨組織信任與 token 範圍：[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)
 - 憑證機制本身的選型：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
 - 呼叫方系統與跨系統身分對應：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「權限分級」與「密鑰與秘密」議題
