@@ -20,6 +20,8 @@ Salt 與 [at-rest encryption](/backend/knowledge-cards/at-rest-encryption/) 服�
 
 ## 設計責任
 
-現行的密碼雜湊函式庫（Argon2、bcrypt、scrypt 的標準實作）自己產生與管理 salt，並把它連同演算法識別與參數一起編碼進輸出字串，驗證時再讀回來。設計責任因此落在選對函式庫而非自己處理 salt；自己拼接 salt 與密碼再送進一般用途的雜湊，是這一格最常見的實作錯誤。
+salt 由誰負責取決於用的是哪一層 API，而不是取決於演算法。**高階的密碼雜湊 API**（輸入密碼、輸出一串自描述字串）自己產生與管理 salt，並把它連同演算法識別與參數一起編碼進輸出，驗證時再讀回來——設計責任因此只剩下選對 API。**低階的金鑰衍生 API**（輸入密碼加 salt、輸出裸位元組）不管這件事：salt 要自己產生、儲存格式要自己設計，而參數也不會被寫進輸出，那些系統因此容易把參數寫死在程式碼裡。同一個演算法在同一個語言裡兩種形態都存在，Argon2 與 scrypt 尤其常見。
+
+判別方法看回傳值：以 `$` 開頭的字串代表 salt 與參數已經被管理，回傳位元組陣列代表兩者都是呼叫端的責任。而自己拼接 salt 與密碼再送進一般用途的雜湊，是這一格最常見的實作錯誤——它兩層都不屬於。
 
 Salt 保護不了弱密碼本身——它讓攻擊者無法一次攻擊全部帳號，單一帳號的破解成本仍然由 [work factor 與演算法選型](/backend/07-security-data-protection/password-storage-and-work-factor/) 決定。不可逆單向轉換在原語分類中的位置見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)。
