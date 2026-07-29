@@ -31,6 +31,6 @@ HMAC（Hash-based Message Authentication Code）是這個機制的主流建構�
 
 重算出的值要用等時比較來比對，一般的字串相等運算會由回應時間洩漏吻合前綴的長度，見 [Timing Attack](/backend/knowledge-cards/timing-attack/)。
 
-密鑰要與應用程式分離配發，並納入輪替排程。密鑰隨程式一起發佈時，任何取得程式的人都能偽造合法請求，驗證機制的保護就消失了。憑證隨產出物發佈後被檢索、重用的實際後果見 [USAHERDS 2021 硬編碼憑證](/backend/07-security-data-protection/red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/)。
+密鑰要與應用程式分離配發，並納入輪替排程。配發本身要定什麼（這個交付動作能不能免掉、核發與審批看什麼、初次交付與登記）見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)。密鑰隨程式一起發佈時，任何取得程式的人都能偽造合法請求，驗證機制的保護就消失了。憑證隨產出物發佈後被檢索、重用的實際後果見 [USAHERDS 2021 硬編碼憑證](/backend/07-security-data-protection/red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/)。
 
 監控要能按原因分辨拒絕，因為每種原因指向不同的處置：驗證值不符指向規格或密鑰不一致，時間戳過期指向時鐘偏移。做了識別值去重的系統還有第三種——識別值重複，它是唯一直接指向實際重放嘗試的訊號，處置見 [Replay Attack](/backend/knowledge-cards/replay-attack/)。把這幾種併成一個「驗證失敗」計數時，事件當下無法從監控判斷該往哪個方向查。

@@ -284,21 +284,21 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 
 各模組的待辦記在自己的 `_index.md` 的 `## Backlog` 段，格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。本段只做索引：項數與缺口摘要會隨各模組更新而過時，細節一律以各模組的 Backlog 段為準。
 
-| 模組                                                       | 項數 | 主要缺口                                           |
-| ---------------------------------------------------------- | ---- | -------------------------------------------------- |
-| [00 服務選型](/backend/00-service-selection/)              | 1    | 五篇的卡連結覆蓋偏低                               |
-| [01 資料庫](/backend/01-database/)                         | 3    | 六個 vendor 的後續擴充（約 79 項）                 |
-| [02 快取](/backend/02-cache-redis/)                        | 3    | T1 vendor 進階主題與候選 vendor 服務頁             |
-| [03 訊息佇列](/backend/03-message-queue/)                  | 3    | vendor 進階主題、3.3 兩節錯置內容待路由            |
-| [04 可觀測性](/backend/04-observability/)                  | 3    | OpenTelemetry 兩篇、案例反例補強                   |
-| [05 部署平台](/backend/05-deployment-platform/)            | 4    | 六個 T1 vendor 未開始、gateway 限流章              |
-| [06 可靠性](/backend/06-reliability/)                      | 6    | 八個 T1 vendor 未開始、憑證撤銷演練無章節          |
-| [07 資安與資料保護](/backend/07-security-data-protection/) | 18   | deep article 早期階段、session 與 token 選型無落點 |
-| [08 事故處理](/backend/08-incident-response/)              | 4    | 六個 T1 vendor 未開始、案例深挖批次                |
-| [09 效能與容量](/backend/09-performance-capacity/)         | 5    | 十三個工具全部未開始                               |
-| [10 系統演進](/backend/10-system-evolution/)               | 4    | 四類演進議題待展開                                 |
-| [11 API 設計](/backend/11-api-design/)                     | 4    | 爭論深度文章四篇（案例庫已就緒）                   |
-| 橫向：判讀類章節補情境（見下段）                           | 1    | 跨十二模組、逐篇獨立、可隨時中斷                   |
+| 模組                                                       | 項數 | 主要缺口                                                   |
+| ---------------------------------------------------------- | ---- | ---------------------------------------------------------- |
+| [00 服務選型](/backend/00-service-selection/)              | 1    | 五篇的卡連結覆蓋偏低                                       |
+| [01 資料庫](/backend/01-database/)                         | 3    | 六個 vendor 的後續擴充（約 79 項）                         |
+| [02 快取](/backend/02-cache-redis/)                        | 3    | T1 vendor 進階主題與候選 vendor 服務頁                     |
+| [03 訊息佇列](/backend/03-message-queue/)                  | 3    | vendor 進階主題、3.3 兩節錯置內容待路由                    |
+| [04 可觀測性](/backend/04-observability/)                  | 3    | OpenTelemetry 兩篇、案例反例補強                           |
+| [05 部署平台](/backend/05-deployment-platform/)            | 4    | 六個 T1 vendor 未開始、gateway 限流章                      |
+| [06 可靠性](/backend/06-reliability/)                      | 6    | 八個 T1 vendor 未開始、憑證撤銷演練無章節                  |
+| [07 資安與資料保護](/backend/07-security-data-protection/) | 17   | vendor deep article 早期階段、委派身分與密碼外洩處置無落點 |
+| [08 事故處理](/backend/08-incident-response/)              | 4    | 六個 T1 vendor 未開始、案例深挖批次                        |
+| [09 效能與容量](/backend/09-performance-capacity/)         | 5    | 十三個工具全部未開始                                       |
+| [10 系統演進](/backend/10-system-evolution/)               | 4    | 四類演進議題待展開                                         |
+| [11 API 設計](/backend/11-api-design/)                     | 4    | 爭論深度文章四篇（案例庫已就緒）                           |
+| 橫向：判讀類章節補情境（見下段）                           | 1    | 跨十二模組、逐篇獨立、可隨時中斷                           |
 
 ### 橫向工作：判讀類章節補系統形態與觸發事件
 

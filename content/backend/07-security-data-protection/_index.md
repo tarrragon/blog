@@ -106,7 +106,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)                                    | API Auth Trust Boundaries                         | 定義使用者、系統與跨系統對應三層的憑證與撤銷粒度                                                      |
 | [7.30 使用者密碼儲存：參數會過期的那一類原語](/backend/07-security-data-protection/password-storage-and-work-factor/)                       | Password Storage                                  | 定義密碼雜湊選型、work factor 定法與參數升級路徑                                                      |
 | [7.31 認證方式選型：可離線猜測的材料最後落在哪裡](/backend/07-security-data-protection/authentication-approach-selection/)                  | Authentication Approach                           | 定義自建、委派身分、passkey 與不做登入之間的取捨                                                      |
-| [7.32 機器憑證的配發：先問這個動作能不能不存在](/backend/07-security-data-protection/machine-credential-issuance/)                          | Machine Credential Issuance                       | 定義配發能不能免掉、核發與審批要看什麼、初次交付與登記的條件                                          |
+| [7.32 機器憑證的配發：這個交付動作能不能免掉](/backend/07-security-data-protection/machine-credential-issuance/)                            | Machine Credential Issuance                       | 定義配發能不能免掉、核發與審批要看什麼、初次交付與登記的條件                                          |
 | [7.33 委任型憑證：關係寫進憑證，還是留給驗證方拼湊](/backend/07-security-data-protection/delegated-credential-selection/)                   | Delegated Credential Selection                    | 定義委任關係由誰確認、委任與冒用的差別、撤銷粒度與驗證方檢查項                                        |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
@@ -130,9 +130,10 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 多身分來源的帳號合併設計                                                                                                             | 主章   | 無（7.31 使用者身分來源段指過來）          | 小          |
 | B2B 多租戶的身分提供者可設定能力                                                                                                     | 主章   | 無（7.31 使用者身分來源段指過來）          | 中          |
 | 資產盤點（對外入口 / 憑證 / 信任錨 / token 的分母怎麼建與怎麼維持）                                                                  | 主章   | 無（7.3 / 7.5 已給三份來源對帳的最小做法） | 中          |
-| 微案例第三拍的素材替換（11 則中 7.28 / 7.5 / 7.30 / 7.31 四則明確為機制推導，其餘七則的來源尚未逐則判定）                            | 案例   | 該形態的案例庫新增任一則                   | 11 則（小） |
+| 微案例第三拍的素材替換（7.5 / 7.28 / 7.30 / 7.31 / 7.32 / 7.33 各則已判定為機制推導，其餘各則的來源尚未逐則判定）                    | 案例   | 該形態的案例庫新增任一則                   | 小          |
 | 管理平面與業務平面的隔離設定落點（入口路由 / 管理端點可達來源）                                                                      | 主章   | 無（7.3 已定義路由需求）                   | 小          |
 | 端對端加密的金鑰備援設計（復原碼 / 服務端包裝副本 / 多方分持各自把金鑰位置移到哪一格）                                               | 主章   | 無（7.28 已給三種形態與最小判準）          | 中          |
+| threat scope 段末樣板句的 register 整理（中英混雜 + 對讀者祈使，13 章共用同一句、要一次改齊）                                        | 主章   | 無（本模組 R1 寫作規範審查指出）           | 小          |
 | 7.30 密碼儲存的完整版（演算法內部機制比較、大規模帳號庫遷移策略、合規演算法清單對照、pepper 的完整處理與輪替限制）                   | 主章   | 無（簡版已上線、缺的是深度）               | 4 項（中）  |
 | 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑）                                                                   | 主章   | 無（7.2 的代理操作段已定義路由需求）       | 中          |
 | 51 個 vendor 服務頁的 deep article 與 migration playbook                                                                             | vendor | 無                                         | 51 頁（大） |
