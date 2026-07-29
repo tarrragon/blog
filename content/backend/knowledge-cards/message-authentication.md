@@ -27,7 +27,7 @@ HMAC（Hash-based Message Authentication Code）是這個機制的主流建構�
 
 ## 設計責任
 
-設計時要把驗證素材的組成寫成雙方共同的規格：涵蓋哪些欄位、串接順序、編碼方式、時間戳單位與有效窗口、輸出格式。規格明確之後，對接失敗才能逐項核對而非反覆重試。素材的逐項拆解與兩端對齊的實作見 [HMAC 簽章對接](/work-log/hmac_signature_field_alignment/)。
+設計時要把驗證素材的組成寫成雙方共同的規格：涵蓋哪些欄位、串接順序、編碼方式、時間戳單位與有效窗口、輸出格式。規格明確之後，對接失敗才能逐項核對而非反覆重試。素材的逐項拆解與兩端對齊的實作見 [HMAC 簽章對接](/work-log/hmac_signature_field_alignment/)，規格與重放窗口在對接階段的收斂判讀見 [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)。
 
 重算出的值要用等時比較來比對，一般的字串相等運算會由回應時間洩漏吻合前綴的長度，見 [Timing Attack](/backend/knowledge-cards/timing-attack/)。
 

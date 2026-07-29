@@ -12,7 +12,7 @@ tags: ["backend", "security", "Credential", "Workload Identity"]
 
 ## 本章寫作邊界
 
-本章聚焦憑證從核發、送到使用方手上到被登記下來的這一段。憑證上線之後的輪替、回收與事件收斂節奏屬治理層，見 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)。用哪一種憑證機制（共享密鑰、API key、mTLS、OAuth client credentials）是另一條判讀軸，分兩層：原語層（這個機制解的是機密性、來源與完整性還是別的）在 [7.28 密碼學原語選型](../cryptographic-primitive-selection/)；落到系統層的機制選型本模組尚無對應章節、已列入待辦，目前唯一落點是 [API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/) 的「Layer 2：系統層」一節，那是設計筆記、沒有本模組這套威脅範圍與問題節點結構。在那之前的最小判準是先問對方改不改得動程式碼——改不動就只剩對方提供的那一種，改得動再依「要不要每個請求各自驗證」與「憑證管理成本落在哪一邊」往下分。人類帳號的開通不在本章形態裡，那一側走 [7.2 身分與授權邊界](../identity-access-boundary/)。
+本章聚焦憑證從核發、送到使用方手上到被登記下來的這一段。憑證上線之後的輪替、回收與事件收斂節奏屬治理層，見 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)。用哪一種憑證機制（共享密鑰、API key、mTLS、OAuth client credentials）是另一條判讀軸，分兩層：原語層（這個機制解的是機密性、來源與完整性還是別的）在 [7.28 密碼學原語選型](../cryptographic-primitive-selection/)，系統層的機制選型在 [7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)，兩者都在本章的上游。人類帳號的開通不在本章形態裡，那一側走 [7.2 身分與授權邊界](../identity-access-boundary/)。
 
 ## 本章 threat scope
 
@@ -142,7 +142,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 免配發那條路徑的判讀與治理：[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)
 - 憑證上線後的輪替、回收與事件收斂：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 這把憑證屬於信任分層裡的哪一層：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
-- 憑證機制本身的選型（共享密鑰、API key、mTLS、client credentials）：[API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/) 的「Layer 2：系統層」一節
+- 憑證機制本身的選型（共享密鑰、API key、mTLS、client credentials）：[7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)
 - 共享密鑰的雙密過渡與輪替實作：[Shared Secret 安全輪替設計](/work-log/shared_secret_rotation/)
 - 憑證注入容器的方式與版本追蹤：[5.1 配置注入方式與取捨](/backend/05-deployment-platform/container-runtime/#配置注入方式與取捨)；新舊憑證的切換與舊值撤除：[5.x Secret Boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/#secret-boundary)
 - 外洩之後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)；要不要對外通報與怎麼說：[8.x 利害關係人溝通](/backend/08-incident-response/stakeholder-communication/)

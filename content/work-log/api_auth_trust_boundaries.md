@@ -351,6 +351,8 @@ Layer 3 不引入新的 secret、是「**建立兩邊身分關聯**」的 lifecy
 - **Layer 1（使用者）** → [Laravel Sanctum 的 Bearer Token 設計剖析](/work-log/laravel_sanctum_pat_design/)：`{PK}|{secret}` format 為什麼這樣設計、DB 儲存三原則、各語言 constant-time 函式對照、跟 GitHub / Stripe 的設計比較
 - **Layer 2（系統）→ Shared Secret 維運** → [Shared Secret 安全輪替設計](/work-log/shared_secret_rotation/)：雙密過渡期、自動化 rotation 工具（AWS Secrets Manager / Vault / GCP）、緊急 vs 定期流程、多 client 同步難題
 - **Layer 2（系統）→ mTLS 部署** → [mTLS 實際怎麼設定與運維](/work-log/mtls_setup_and_operations/)：CA 階層、憑證生命週期、撤銷機制（CRL / OCSP / short-lived）、nginx / Envoy / service mesh 整合
+- **Layer 2（系統）→ 選哪一種機制** → [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)：秘密要不要在每次呼叫裡送出去、撤銷粒度要多細、選定的機制要什麼基礎建設才跑得起來。本文的「常見方案的取捨」表是同一組選項的實作面對照，該章是選型面的判讀
+- **Layer 2（系統）→ 選了 HMAC 之後** → [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)：進入計算的素材怎麼定義、驗簽通過為什麼還擋不住重送
 - **Layer 2（系統）→ 憑證怎麼交到對方手上** → [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)：這個交付動作能不能免掉、核發與請求要不要分人、初次交付與登記。與上面兩篇的分工是那兩篇講機制怎麼運維，這一篇講交付這個動作本身
 - **跨 Layer 1 + 2 → 一個系統代表某個特定的人** → [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)：把「A 代表 B」寫進憑證本身（OAuth token exchange）還是留給每個驗證方自己拼湊，以及換過去之後撤銷粒度要另外做什麼才成立
 

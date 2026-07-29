@@ -202,7 +202,7 @@ dart run verify_signature.dart 1784878245 d436a5cb070ecd04162da2186f7db52b2e365f
 
 **這篇適用的情境**：串接使用 HMAC 簽章驗證的外部 API、簽章比對失敗且錯誤訊息不具體。
 
-**不在範圍內**：密鑰的配發、儲存與輪替機制；簽章之外的授權判斷（呼叫方有沒有權限存取該資源）；HTTPS 傳輸層安全。這些是獨立的設計問題。為什麼這個場景選訊息驗證而不是加密、金鑰該放在哪一端，屬於它上一層的選型判斷，見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)；機制本身的責任邊界見 [Message Authentication](/backend/knowledge-cards/message-authentication/)。
+**不在範圍內**：密鑰的配發、儲存與輪替機制；簽章之外的授權判斷（呼叫方有沒有權限存取該資源）；HTTPS 傳輸層安全。這些是獨立的設計問題。為什麼這個場景選訊息驗證而不是加密、金鑰該放在哪一端，屬於它上一層的選型判斷，見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)；在同一批機器憑證機制裡為什麼選它，見 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)。素材對齊之外的另一個收斂條件（時間戳與識別值要被檢查）與這一篇是同一階段的工作，判讀見 [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)；機制本身的責任邊界見 [Message Authentication](/backend/knowledge-cards/message-authentication/)。
 
 自己也是接收方時（雙向對接的情況），比對簽章要用等時比較函式而不是一般的字串相等運算，理由與逐位元組短路造成的洩漏見 [Timing Attack](/backend/knowledge-cards/timing-attack/)。
 
