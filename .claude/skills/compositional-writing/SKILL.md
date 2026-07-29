@@ -3,7 +3,7 @@ name: compositional-writing
 description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流."
 license: MIT
 metadata:
-  version: 0.43.0
+  version: 0.44.0
   category: writing-methodology
 ---
 
@@ -231,6 +231,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-20
+**Version**: 0.44.0 — 多輪審查 Round 1 修正 `judgment-content-needs-scenarios` 的出口盤點段：原本主張「盤點要排在補範例之後、先盤會盤不出東西」，reviewer 用該段自己的定義推翻——三種盤點單位裡有兩種（判讀表每一列 / 風險邊界每一條）在任何範例存在之前就存在，只有第三種（微案例末端的止血句）依附於範例。改成**跨兩個階段各跑一次**：讓缺口現形的是換視角這個動作本身（既有維度都在驗已寫內容對不對），範例的貢獻是多出一類單位而非解鎖整個盤點。同批實測另證：七處缺口裡只有兩處依附微案例。
+
 **Version**: 0.43.0 — `judgment-content-needs-scenarios` 新增「出口盤點：補完範例之後才做得了」段，把補寫程序從三步（形態 / 觸發事件 / 微案例）延長成四步、補上閉環：補完範例後改用「讀者知道這是問題了他去哪解決」掃全文。順序不可顛倒——分析型句子不會產生「所以呢」這個追問，段落寫得越好讀者越認同問題、而認同的下一步是想知道怎麼解；沒有範例時讀者與作者都停在理解層，範例把讀者推到行動、而只有行動這一端會撞到出口不存在。檢查單位是每個被提出的問題（判讀表每一列 / 風險邊界每一條 / 微案例末端那句「補起來要……」）而非每篇文章——文末路由段回答不了段落層級的問題。四種狀態各有處置，其中「不存在且需完整推導」要明說它不存在（讀者找不到時的預設歸因是自己沒找到）。另補反模式：替換微案例前先掃第四拍，止血代價常是全篇唯一寫出止血路徑的地方、而替換理由只評估前三拍。從 7.28 / 7.29 補完範例後盤出七處缺出口的實測抽出。
 
 **Version**: 0.42.0 — `judgment-content-needs-scenarios` 新增「補形態會暴露出這一列沒有解法落點」段（逐篇檢查的第五種產出）：補形態要回答「讀者對號入座之後去哪」、而判讀表不問這個問題，缺落點的列因此在補形態時才現形；辨識訊號是同一張表的列與深化段不對稱（實測五列的表只有四列有深化段），而欄位齊全正是遮住它的原因；與「撞到錯置內容」方向相反（那是多了不該有的、這是少了該有的），處置用最小可行答案判準——能一段話加連結讓讀者繼續走就當場補判讀層那一節、需要完整推導的只登記待辦並明說目前沒有對應章節（讀者找不到時的預設歸因是自己沒找到）。從 7.2 補形態時發現「授權範圍擴張過快」五列中唯一沒有深化段的實測抽出。
