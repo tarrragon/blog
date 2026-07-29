@@ -77,7 +77,7 @@ Mobile SDK（Flutter / native app）的 request 不帶 Origin header。Origin �
 
 ### 第三層：Request signing
 
-SDK 用 HMAC 對每個 request 簽章，collector 驗證簽章有效性（機制見 [Message Authentication](/backend/knowledge-cards/message-authentication/)）。簽章的輸入包含 timestamp 和 payload hash，防止 [replay attack](/backend/knowledge-cards/replay-attack/) 和 payload 竄改；timestamp 窗口的寬度取決於兩端的 [時鐘偏移](/backend/knowledge-cards/clock-skew/)。
+SDK 用 HMAC 對每個 request 簽章，collector 驗證簽章有效性（機制見 [Message Authentication](/backend/knowledge-cards/message-authentication/)）。簽章的輸入包含 timestamp 和 payload hash，防止 [replay attack](/backend/knowledge-cards/replay-attack/) 和 payload 竄改；timestamp 窗口的寬度取決於兩端的 [時鐘偏移](/backend/knowledge-cards/clock-skew/)；上下界的換算與比對那一行的等時要求見 [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)。
 
 ```text
 X-Signature: a3f8c2e1b7d94f06...  (HMAC-SHA256 結果的 hex 編碼)

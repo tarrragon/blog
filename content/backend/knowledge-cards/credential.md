@@ -18,7 +18,7 @@ Credential 位在 authentication、authorization、secret management 與 service
 
 ## 接近真實網路服務的例子
 
-登入用 credential 要有過期與撤銷；database credential 要依服務分離；webhook secret 要能驗證來源；內部服務 credential 要配合 mTLS 或 signed request。
+登入用 credential 要有過期與撤銷；database credential 要依服務分離；webhook secret 要能驗證來源；內部服務 credential 要配合 mTLS 或 signed request——這幾種之間怎麼選（秘密送不送得出去、撤銷一次影響誰、要什麼配套）見 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)。
 
 ## 設計責任
 

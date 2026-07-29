@@ -10,7 +10,7 @@ TLS / mTLS 的核心概念是「保護資料在網路傳輸中的機密性、完
 
 ## 概念位置
 
-TLS 是公開網路服務的基本傳輸保護。mTLS 常用在 service-to-service、內部 API、金融或高敏感資料傳輸場景，讓服務身份以憑證、[authentication](/backend/knowledge-cards/authentication/) 與網路邊界共同判斷。
+TLS 是公開網路服務的基本傳輸保護。mTLS 常用在 service-to-service、內部 API、金融或高敏感資料傳輸場景，讓服務身份以憑證、[authentication](/backend/knowledge-cards/authentication/) 與網路邊界共同判斷。什麼時候該選 mTLS 而不是共享密鑰簽章或 API key，以及選它要先具備哪些配套（CA、簽發與續期、撤銷清單或線上查詢），見 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/)。
 
 ## 可觀察訊號與例子
 

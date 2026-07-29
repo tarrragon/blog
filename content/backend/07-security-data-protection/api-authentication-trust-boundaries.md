@@ -50,7 +50,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 使用者層的撤銷由個別的人的事件觸發：帳號被回報盜用、員工離職當天、使用者改完密碼要踢掉其他裝置、風控偵測到異地登入。這一層可以撤銷單一 session 而不影響他人，所以處置能立刻執行，不必知會任何人。
 
-系統層的撤銷由憑證本身的事件觸發：密鑰被 commit 進公開 repo、知道那把密鑰的人離職、廠商通報他們那端外洩、輪替週期到期。這一層的憑證由所有呼叫共用，撤銷等於中斷整條整合——落到實際操作是先找到對方的窗口、約一個雙方都能配合的維護時間、兩邊同時換。同一個「立刻撤銷」的需求，在這一層要用天或週計算。
+系統層的撤銷由憑證本身的事件觸發：密鑰被 commit 進公開 repo、知道那把密鑰的人離職、廠商通報他們那端外洩、輪替週期到期。這一層的憑證由所有呼叫共用，撤銷等於中斷整條整合——落到實際操作是先找到對方的窗口、約一個雙方都能配合的維護時間、兩邊同時換。同一個「立刻撤銷」的需求，在這一層要用天或週計算——前提是換發要對方改設定。對方能自助取得新憑證時這條約束不成立，而那由機制決定，選型見 [7.34](../machine-credential-mechanism-selection/)。
 
 對應層沒有可撤銷的憑證，它的對應動作是清掉或修正映射，觸發事件是某個人在其中一邊被停用、或兩邊的身分對應錯位。處理的是資料一致性，不是信任撤回。
 
@@ -154,4 +154,4 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 系統層確定要有獨立機器身分之後選哪一種機制（API key、共享密鑰簽章、mTLS、OAuth client credentials）：[7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)。各機制的實作細節（雙密過渡、mTLS 部署、簽章實作）在 [API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/) 的「Layer 2：系統層」一節與它列出的各篇。盤點與設計評審仍用本章的問題節點表
 - 各層憑證在部署流程中的配置邊界：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Secret Boundary 段
 - 事件發生後的止血與回復：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
-- 撤銷路徑的演練設計：[06 可靠性](/backend/06-reliability/) 目前沒有憑證撤銷演練的章節，已列入該模組 backlog；在那之前，回退演練的通用形態見 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)
+- 撤銷路徑的演練設計：[06 可靠性](/backend/06-reliability/) 目前沒有憑證撤銷演練的章節；在那之前，回退演練的通用形態見 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)

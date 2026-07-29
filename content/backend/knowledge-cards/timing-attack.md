@@ -23,7 +23,7 @@ Timing Attack 是實作層的問題。[Message Authentication](/backend/knowledg
 
 ## 設計責任
 
-比對秘密值要用等時比較函式，多數語言的標準函式庫都提供：Node 的 `crypto.timingSafeEqual`、PHP 的 `hash_equals`、Go 的 `crypto/subtle.ConstantTimeCompare`、Python 的 `hmac.compare_digest`。這些函式比對完全部位元組才返回，耗時與內容無關。
+比對秘密值要用等時比較函式，多數語言的標準函式庫都提供：Node 的 `crypto.timingSafeEqual`、PHP 的 `hash_equals`、Go 的 `crypto/subtle.ConstantTimeCompare`、Python 的 `hmac.compare_digest`。這些函式比對完全部位元組才返回，耗時與內容無關。取用不到時的替代做法（兩側各再 HMAC 一次後比對）與「自己照文件寫才會踩、用對方 SDK 多半不會」的識別動作見 [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)。
 
 認證流程的各條路徑要讓耗時一致。做法是無論帳號是否存在都執行同樣的驗證步驟，包含對不存在的帳號也跑一次雜湊運算，讓成功與失敗的成本相同。
 
