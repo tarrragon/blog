@@ -168,6 +168,7 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 
 **多人 SaaS 場景**：
 
+- 登入方式本身的選型（自建 / 委派 / passkey）：[7.31 認證方式選型](../authentication-approach-selection/)
 - 入口與平台實體：[05 部署平台](/backend/05-deployment-platform/)
 - 驗證與回復節奏：[06 可靠性](/backend/06-reliability/)
 - 事件分級與收斂：[08 事故回應](/backend/08-incident-response/)

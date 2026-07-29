@@ -42,7 +42,7 @@ weight: 7
 
 反例與規模對照入口： [7.C9 反例](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) / [7.C10 對照](/backend/07-security-data-protection/cases/contrast-identity-governance-by-scale/)。
 
-已經發生外洩、要判斷手上的密碼儲存撐不撐得住的讀者直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
+已經發生外洩、要判斷手上的密碼儲存撐不撐得住的讀者直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。要做登入功能的讀者從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步——它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
 
 回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
 
@@ -102,13 +102,14 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)                                         | LLM Detection Coverage                            | tool call 異常、injection 觸發徵兆、abuse 模式與既有 detection-coverage 框架的接合                    |
 | [7.28 密碼學原語選型：金鑰位置決定威脅模型](/backend/07-security-data-protection/cryptographic-primitive-selection/)                        | Cryptographic Primitive Selection                 | 定義加密、訊息驗證與可逆編碼的責任分界與金鑰位置判讀                                                  |
 | [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)                                    | API Auth Trust Boundaries                         | 定義使用者、系統與跨系統對應三層的憑證與撤銷粒度                                                      |
+| [7.31 認證方式選型：可離線猜測的材料最後落在哪裡](/backend/07-security-data-protection/authentication-approach-selection/)                  | Authentication Approach                           | 定義自建、委派身分、passkey 與不做登入之間的取捨                                                      |
 | [7.30 使用者密碼儲存：參數會過期的那一類原語](/backend/07-security-data-protection/password-storage-and-work-factor/)                       | Password Storage                                  | 定義密碼雜湊選型、work factor 定法與參數升級路徑                                                      |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
 
 ## 模組完成狀態
 
-主章目前已形成基礎問題節點、藍隊操作循環、跨模組延伸章節與推演素材庫，並新增 `7.27` 的 credential rotation 實作示範、`7.28` 的密碼學原語選型、`7.29` 的 API 認證信任邊界分層與 `7.30` 的使用者密碼儲存（簡版）。章節列表末段的五篇 LLM 專題屬延伸章節帶：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。資安章節進入穩定維護狀態。
+主章目前已形成基礎問題節點、藍隊操作循環、跨模組延伸章節與推演素材庫，並新增 `7.27` 的 credential rotation 實作示範、`7.28` 的密碼學原語選型、`7.29` 的 API 認證信任邊界分層、`7.30` 的使用者密碼儲存（簡版）與 `7.31` 的認證方式選型。章節列表末段的五篇 LLM 專題屬延伸章節帶：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。資安章節進入穩定維護狀態。
 
 ## Backlog
 
@@ -116,7 +117,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 | 項目                                                                                                               | 類型   | 前置條件                                   | 規模        |
 | ------------------------------------------------------------------------------------------------------------------ | ------ | ------------------------------------------ | ----------- |
-| Session 與 token 選型（JWT vs session、token 存不存 DB）                                                           | 主章   | 無                                         | 中          |
+| Session 與 token 選型（JWT vs session、token 存不存 DB；接在 7.31 的身分來源決定之後）                             | 主章   | 無                                         | 中          |
 | 資產盤點（對外入口 / 憑證 / 信任錨 / token 的分母怎麼建與怎麼維持）                                                | 主章   | 無（7.3 / 7.5 已給三份來源對帳的最小做法） | 中          |
 | 微案例第三拍的素材替換（9 則中 7.28 / 7.5 / 7.30 三則明確為機制推導，其餘六則的來源尚未逐則判定）                  | 案例   | 該形態的案例庫新增任一則                   | 9 則（小）  |
 | 機器憑證的配發流程（誰核發 / 審批 / 初次交付路徑）                                                                 | 主章   | 無（7.29 已定義路由需求）                  | 小          |
@@ -143,7 +144,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 本段說明「Session 與 token 選型」與「7.30 密碼儲存的完整版」這兩項的判定依據與寫作角度，項目本身以上表為準。判定用的是讀者會拿去搜尋的問句落不落得到一篇文章上：「JWT 還是 session」「token 要不要存 DB」在全站仍然只能在 vendor 頁或其他章節的段落裡零星碰到。兩者都屬 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 的範圍。
 
-Session 與 token 缺的是「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸。密碼儲存的簡版已在 [7.30](/backend/07-security-data-protection/password-storage-and-work-factor/)，剩下的是深度：演算法內部機制比較、大規模帳號庫的遷移策略、合規演算法清單對照、pepper 的完整處理。
+Session 與 token 缺的是「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸。它接在 [7.31](/backend/07-security-data-protection/authentication-approach-selection/) 的身分來源決定之後——那一章決定身分從哪裡來，這一項決定憑證在請求中怎麼帶、狀態放哪裡。密碼儲存的簡版已在 [7.30](/backend/07-security-data-protection/password-storage-and-work-factor/)，剩下的是深度：演算法內部機制比較、大規模帳號庫的遷移策略、合規演算法清單對照、pepper 的完整處理。
 
 兩者的共同特徵是入門讀者密度高、而本模組既有章節都預設讀者已經跨過這一層。補的時候要注意它們的判讀軸各自獨立：前者是撤銷粒度與狀態成本的取捨，後者是計算成本與參數老化的取捨，不共用 7.28 的金鑰位置主軸。
 
