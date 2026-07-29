@@ -150,6 +150,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 下一步路由
 
+- 登入方式本身的選型（自建 / 委派 / passkey，在本章的上游）：[7.31 認證方式選型](../authentication-approach-selection/)
 - 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「密鑰與秘密」議題
 - 金鑰與秘密的生命週期治理：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 呼叫方身分的分層：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)

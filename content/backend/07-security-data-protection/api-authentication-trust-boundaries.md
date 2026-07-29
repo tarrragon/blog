@@ -149,6 +149,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 下一步路由
 
+- 使用者身分從哪裡來（在本章的上游）：[7.31 認證方式選型](../authentication-approach-selection/)
 - 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「權限分級」與「密鑰與秘密」議題
 - 憑證機制選型：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
 - 人類身分與權限分級：[7.2 身分與授權邊界](../identity-access-boundary/)
