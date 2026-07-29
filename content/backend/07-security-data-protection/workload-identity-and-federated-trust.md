@@ -1,7 +1,7 @@
 ---
 title: "7.10 Workload Identity 與聯邦信任邊界"
 date: 2026-04-24
-description: "定義非人類身份、跨平台信任與短時憑證治理問題"
+description: "定義非人類身份、跨平台信任與短效憑證治理問題"
 weight: 80
 tags: ["backend", "security"]
 ---
@@ -10,11 +10,11 @@ tags: ["backend", "security"]
 
 ## 本章寫作邊界
 
-本章聚焦 workload identity、federation、短時憑證與信任收斂，不討論雲廠商特定設定語法。走這條路徑的實際效果是取消憑證配發這個動作，展開見下方治理模型段；平台身分在某條整合上用不上時的核發與交付見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
+本章聚焦 workload identity、federation、短效憑證與信任收斂，不討論雲廠商特定設定語法。走這條路徑的實際效果是取消憑證配發這個動作，展開見下方治理模型段；平台身分在某條整合上用不上時的核發與交付見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
 
 ## 本章 threat scope
 
-**In-scope**：workload 身份來源不清 / 跨平台信任擴張過快 / federation token scope 漂移 / 短時憑證策略不完整 / federation 回查不足 / 第三方授權範圍跟事件傳導半徑。
+**In-scope**：workload 身份來源不清 / 跨平台信任擴張過快 / federation token scope 漂移 / 短效憑證策略不完整 / federation 回查不足 / 第三方授權範圍跟事件傳導半徑。
 
 **Out-of-scope**（路由到他章）：
 
@@ -47,7 +47,7 @@ workload identity 的核心責任是把機器身份與人類身份分開治理�
 1. 身分分離：把人類操作身份與機器執行身份拆分責任。
 2. 邊界定義：把 workload 可觸及資源限制在最小業務範圍。
 3. 聯邦信任：把跨平台 token 交換限制在可驗證來源與用途。
-4. 短時憑證：把憑證有效時窗縮短，降低竊取後可利用時間。
+4. 短效憑證：把憑證有效時窗縮短，降低竊取後可利用時間。
 5. 收斂節奏：把外部事件後的信任重評估納入固定流程。
 
 這條路徑取消的是配發這個動作本身。workload 向自己的平台取得一份身分聲明、被呼叫方驗證那份聲明後當場換發短效憑證，過程中沒有任何憑證離開核發方——交付通道留下副本、擁有者失聯、初次交付被冒領這幾種失效因此不成立，而不是被控制住。平台身分在某條整合上用不上時（雙方沒有共同信任錨、執行環境不簽發身分、被呼叫方只接受長期憑證、或自己需要故障降級與合規指定的憑證形態），那條整合的核發、初次交付與登記見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
@@ -67,7 +67,7 @@ workload identity 的核心責任是把機器身份與人類身份分開治理�
 | ------------------- | ---------------------------- | ------------------ | -------------------------------------------------------------- |
 | 機器身份來源不清    | credential 缺乏發放責任鏈    | 憑證可用窗口失控   | [credential](/backend/knowledge-cards/credential/)             |
 | 跨平台信任擴張過快  | token 使用面超出預期服務邊界 | 外部事件可快速傳導 | [trust-boundary](/backend/knowledge-cards/trust-boundary/)     |
-| 短時憑證策略不完整  | 失效節奏與授權節奏分離       | 撤銷成本上升       | [token-revocation](/backend/knowledge-cards/token-revocation/) |
+| 短效憑證策略不完整  | 失效節奏與授權節奏分離       | 撤銷成本上升       | [token-revocation](/backend/knowledge-cards/token-revocation/) |
 | federation 回查不足 | 信任來源與授權決策無法回串   | 事故判讀時間延長   | [audit-log](/backend/knowledge-cards/audit-log/)               |
 
 ## Federation 信任漂移跟跨平台 token 重評估
@@ -92,7 +92,7 @@ Federation 信任漂移是 workload identity 獨有的失效模式：信任關�
 
 - 機器憑證來源無法對應到責任主體時，代表信任鏈不可驗證。
 - 跨平台 token 在非預期服務長期可用時，代表 federation 邊界鬆動。
-- 短時憑證實作退化成長時存活時，代表撤銷窗口擴大。
+- 短效憑證實作退化成長時存活時，代表撤銷窗口擴大。
 - 供應商事件後內部 workload 權限未收斂時，代表外部風險仍在傳導。
 
 ## 案例觸發參考
