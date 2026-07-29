@@ -101,6 +101,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [LLM Log 與 PII 治理](/backend/07-security-data-protection/llm-log-and-pii-governance/)                                                     | LLM Log Governance                                | prompt log 累積、PII 偵測與過濾、保留期限與合規對齊                                                   |
 | [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)                                         | LLM Detection Coverage                            | tool call 異常、injection 觸發徵兆、abuse 模式與既有 detection-coverage 框架的接合                    |
 | [7.28 密碼學原語選型：金鑰位置決定威脅模型](/backend/07-security-data-protection/cryptographic-primitive-selection/)                        | Cryptographic Primitive Selection                 | 定義加密、訊息驗證與可逆編碼的責任分界與金鑰位置判讀                                                  |
+| [7.30 使用者密碼儲存：參數會過期的那一類原語](/backend/07-security-data-protection/password-storage-and-work-factor/)                       | Password Storage                                  | 定義密碼雜湊選型、work factor 定法與參數升級路徑                                                      |
 | [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)                                    | API Auth Trust Boundaries                         | 定義使用者、系統與跨系統對應三層的憑證與撤銷粒度                                                      |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
@@ -113,14 +114,15 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                               | 類型   | 前置條件                             | 規模 |
-| ------------------------------------------------------------------ | ------ | ------------------------------------ | ---- |
-| Session 與 token 選型（JWT vs session、token 存不存 DB）           | 主章   | 無                                   | 中   |
-| 使用者密碼儲存（bcrypt / argon2、work factor 判讀）                | 主章   | 無                                   | 中   |
-| 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑） | 主章   | 無（7.2 的代理操作段已定義路由需求） | 中   |
-| 51 個 vendor 服務頁的 deep article 與 migration playbook           | vendor | 無                                   | 大   |
-| 藍隊現場案例卡與推演情境卡                                         | 案例   | 需先從真實事故抽防守壓力             | 大   |
-| 控制模式卡與事故回寫路由                                           | 案例   | 依賴上一項的案例卡與情境卡產出       | 中   |
+| 項目                                                                                             | 類型   | 前置條件                             | 規模 |
+| ------------------------------------------------------------------------------------------------ | ------ | ------------------------------------ | ---- |
+| Session 與 token 選型（JWT vs session、token 存不存 DB）                                         | 主章   | 無                                   | 中   |
+| 委任型憑證的機制選型（token exchange 交換流程、actor 與 subject 各自的撤銷路徑、驗證方檢查欄位） | 主章   | 無（7.29 已定義路由需求與最小判準）  | 中   |
+| 7.30 密碼儲存的完整版（演算法內部機制比較、大規模帳號庫遷移策略、合規演算法清單對照）            | 主章   | 無（簡版已上線、缺的是深度）         | 中   |
+| 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑）                               | 主章   | 無（7.2 的代理操作段已定義路由需求） | 中   |
+| 51 個 vendor 服務頁的 deep article 與 migration playbook                                         | vendor | 無                                   | 大   |
+| 藍隊現場案例卡與推演情境卡                                                                       | 案例   | 需先從真實事故抽防守壓力             | 大   |
+| 控制模式卡與事故回寫路由                                                                         | 案例   | 依賴上一項的案例卡與情境卡產出       | 中   |
 
 ### 下一輪推演大綱
 
@@ -137,7 +139,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 本段說明上表前兩列的判定依據與寫作角度，項目本身以上表為準。判定用的是讀者會拿去搜尋的問句落不落得到一篇文章上：「JWT 還是 session」「token 要不要存 DB」「密碼要用 bcrypt 還是 argon2」「work factor 設多少」目前只能在 vendor 頁或其他章節的段落裡零星碰到。兩者都屬 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 的範圍。
 
-Session 與 token 缺的是「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸。密碼儲存的入口已經存在——[7.28](/backend/07-security-data-protection/cryptographic-primitive-selection/) 把「不可逆的單向轉換」列為第四類原語——缺的是展開的文章。
+Session 與 token 缺的是「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸。密碼儲存已由 [7.30](/backend/07-security-data-protection/password-storage-and-work-factor/) 的簡版承接（選型判準、work factor 定法、參數升級路徑），剩下的是深度：演算法內部機制比較、大規模帳號庫的遷移策略、合規演算法清單對照。
 
 兩者的共同特徵是入門讀者密度高、而本模組既有章節都預設讀者已經跨過這一層。補的時候要注意它們的判讀軸各自獨立：前者是撤銷粒度與狀態成本的取捨，後者是計算成本與參數老化的取捨，不共用 7.28 的金鑰位置主軸。
 
