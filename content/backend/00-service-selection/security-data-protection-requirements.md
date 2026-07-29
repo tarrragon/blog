@@ -1,7 +1,7 @@
 ---
 title: "0.8 資安與資料保護需求"
 date: 2026-04-23
-description: "從權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界"
+description: "從身分來源、權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界"
 weight: 8
 tags: ["backend", "service-selection"]
 ---
@@ -34,6 +34,14 @@ tags: ["backend", "service-selection"]
 | 稽核追蹤   | 高風險操作是否能被追蹤與事後審查                                                         | [audit log](/backend/knowledge-cards/audit-log/)、approval、admin action                                                                                                 |
 
 這張表是需求索引。資安討論要先定義資料與操作的保護等級，再決定具體平台、服務或產品。
+
+## 【判讀】身分來源決定登入要自己做多少
+
+身分來源的核心責任是決定「使用者是誰」這個問題由誰回答：自己管帳號、交給外部的身分提供者、還是不建立持久身分。這個決定在其他所有資安需求的上游——選了自建就要承接密碼儲存與登入節奏那一整套，選了委派就把可用性與帳號生命週期綁在對方身上。
+
+判讀的起手是問使用者在來到這個服務之前已經有哪個帳號。企業內部系統與只服務單一組織的 B2B 多半有同一個來源，委派最乾淨；面向一般消費者時來源分散，需要一條不依賴任何單一來源的路徑。
+
+這類需求的陷阱是把它當成純技術偏好（「用不用密碼」），而實際的判準是可離線猜測的材料最後落在哪裡——換了機制材料多半只是換住址，回復路徑與 fallback 常常就是它的新住址。完整的取捨與四種常見組合見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。
 
 ## 【判讀】權限分級要從角色與資料責任開始
 
@@ -126,13 +134,15 @@ tags: ["backend", "service-selection"]
 
 當以下問題都能回答時，代表本章的概念層已完成，可以進入資安與資料保護實作章節：
 
-1. 資料分級與角色責任是否明確（誰可讀、可改、可匯出）
-2. 資料流路徑是否明確（client、service、queue、storage）
-3. 秘密與憑證生命週期是否明確（保存、輪替、撤銷、續期）
-4. 稽核與事故追蹤要求是否明確（audit 欄位、保存、查核流程）
+1. 身分來源是否明確（自建、委派、或不建立持久身分；所有進得來的路徑含回復與 fallback 是否列全）
+2. 資料分級與角色責任是否明確（誰可讀、可改、可匯出）
+3. 資料流路徑是否明確（client、service、queue、storage）
+4. 秘密與憑證生命週期是否明確（保存、輪替、撤銷、續期）
+5. 稽核與事故追蹤要求是否明確（audit 欄位、保存、查核流程）
 
-下一步建議路由（按本章六議題對應）：
+下一步建議路由（按本章各議題對應）：
 
+- 身分來源 → [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)
 - 權限分級 → [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/)
 - 伺服器防護 → [7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)
 - 資料遮罩 → [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)
