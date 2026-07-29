@@ -35,7 +35,7 @@ tags: ["backend", "incident-response", "vendor", "migration", "type-a", "phased-
 
 ## 為什麼是 Type A（schema 為主）
 
-跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/#6-維-diff-dimension-audit)：
+跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
 | 維度        | 評          | 說明                                                                                   |
 | ----------- | ----------- | -------------------------------------------------------------------------------------- |

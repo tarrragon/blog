@@ -80,7 +80,7 @@ tags: ["backend", "security", "data-protection", "vendor"]
 
 主流覆蓋檢查的重點是分開 preventive control、detective control 與 response handoff。IAM / KMS / WAF / policy-as-code 是 preventive control；SIEM / runtime detection / secret scanning 是 detective control；PAM、incident channel 與 evidence write-back 連到 08 的 response handoff。
 
-## Reading paths（51 個 vendor 的進入順序建議）
+## Reading paths：vendor 的進入順序建議
 
 讀完 51 個 vendor 不是線性目的、是 *依組織當前的安全成熟度跳讀*。以下是四條常見路徑：
 
@@ -105,7 +105,7 @@ tags: ["backend", "security", "data-protection", "vendor"]
 | Multi-cloud + on-prem       | [Okta](/backend/07-security-data-protection/vendors/okta/)（人類）+ [SPIRE](/backend/07-security-data-protection/vendors/spire/)（workload）                        | 三家 cloud IAM | [Vault](/backend/07-security-data-protection/vendors/hashicorp-vault/)（跨雲統一）                                                                          | [Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/) + [Snyk](/backend/07-security-data-protection/vendors/snyk/)                  | [Elastic Security](/backend/07-security-data-protection/vendors/elastic-security/)（OSS-friendly）                                                  |
 | Microsoft 365 + Azure heavy | [Entra ID](/backend/07-security-data-protection/vendors/azure-rbac/)                                                                                                | Azure RBAC     | [Azure Key Vault](/backend/07-security-data-protection/vendors/azure-key-vault/)                                                                            | [Fastly NG-WAF](/backend/07-security-data-protection/vendors/fastly-ngwaf/) + [GHAS](/backend/07-security-data-protection/vendors/github-advanced-security/) | [Microsoft Purview](/backend/07-security-data-protection/vendors/microsoft-purview/) + Sentinel                                                     |
 
-Stack 不是一次到位、按 [Path A → B → C](#reading-paths33-個-vendor-的進入順序建議) 的成熟度演進加 vendor。每加一個 vendor 都要對應一個 *已被 case 庫驗證* 的失效模式 — 不是「業界都用」就上。
+Stack 不是一次到位、按 [Path A → B → C](#reading-pathsvendor-的進入順序建議) 的成熟度演進加 vendor。每加一個 vendor 都要對應一個 *已被 case 庫驗證* 的失效模式 — 不是「業界都用」就上。
 
 ## 下一步路由
 

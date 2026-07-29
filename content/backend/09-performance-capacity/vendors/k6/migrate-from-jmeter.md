@@ -20,7 +20,7 @@ k6 不是 JMeter 的 *「script 版本」*。
 
 ## 為什麼是 Type E（schema + paradigm 同 High）
 
-跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/#6-維-diff-dimension-audit)：
+跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
 | 維度        | 評     | 說明                                                                           |
 | ----------- | ------ | ------------------------------------------------------------------------------ |

@@ -19,7 +19,7 @@ Continuous profiling deployment 的 lifecycle 有五階段：**install**（agent
 
 ## 為什麼是 Type C（operational 為主）
 
-跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/#6-維-diff-dimension-audit)：
+跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
 | 維度        | 評         | 說明                                                              |
 | ----------- | ---------- | ----------------------------------------------------------------- |

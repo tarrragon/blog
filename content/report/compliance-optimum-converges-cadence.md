@@ -61,7 +61,7 @@ backend/07 案例：「11 章節 + 表格延伸段 + 130-160 行 + 零 emoji + �
 
 實務 default：**Pilot phase 強制 + 加 anti-template constraint**。先在 pilot 階段準備變體、再用規範要求跨檔抽樣、雙層防護。
 
-Dogfood 驗證見 [#122 cadence 同質化](../cadence-homogenization-in-batch-writing/#dogfood-evidence-2026-05-18-n4-sub-threshold-驗證) — 4 篇 deep article batch 用 *pilot phase 4 種 variant* 取代「事後 polish」、cadence collapse 從前批 100% 降到 0%、修正成本省 ~10 倍。本卡的「拉開 constraint」對策獲實證。
+Dogfood 驗證見 [#122 cadence 同質化](../cadence-homogenization-in-batch-writing/#dogfood-evidence-2026-05-18n4-sub-threshold-驗證) — 4 篇 deep article batch 用 *pilot phase 4 種 variant* 取代「事後 polish」、cadence collapse 從前批 100% 降到 0%、修正成本省 ~10 倍。本卡的「拉開 constraint」對策獲實證。
 
 ---
 

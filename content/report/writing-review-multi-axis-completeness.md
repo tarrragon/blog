@@ -81,7 +81,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Revi
 
 N=5 full-threshold 補強驗證（同日第二批）：再跑 5 篇 PostgreSQL sub-tool deep article、用 5 種 variant 覆蓋 *同 vendor 同 audience* 的 cadence collapse 最高風險場景；結果 5/5 framing 全錯開、過渡詞密度 0、cadence collapse 0/5。確認 Cadence 軸 + Timing 軸 *不靠 sample size、靠 stage 0 variant 規劃*。
 
-詳細數據見 [#122 cadence dogfood evidence](../cadence-homogenization-in-batch-writing/#dogfood-evidence-2026-05-18-n4-sub-threshold-驗證) 跟 [#124 dogfood](../emergence-violations-need-in-stream-sampling/#dogfood-evidence-2026-05-18-n4-sub-threshold-驗證) — 兩軸都不必加 reviewer instance、是 Stage 2 寫作流程設計即可解。
+詳細數據見 [#122 cadence dogfood evidence](../cadence-homogenization-in-batch-writing/#dogfood-evidence-2026-05-18n4-sub-threshold-驗證) 跟 [#124 dogfood](../emergence-violations-need-in-stream-sampling/#dogfood-evidence-2026-05-18n4-sub-threshold-驗證) — 兩軸都不必加 reviewer instance、是 Stage 2 寫作流程設計即可解。
 
 ---
 

@@ -211,6 +211,6 @@ Cache subset 算出的統計跟 fresh dataset 算出的不同、但寫的時候�
 
 對應本卡：「沒寫 Checkpoint 1 list 是當下便利、補完整意圖才是對齊」。我修了便利版（直接修 bug）、漏掉的 3 個案例之後才被 retrospective 抓到、又花一輪迭代回頭做。**便利驅動的代價、就是事後要做兩次**。
 
-「[#67 Refactor 是個謊言](#我等下會-refactor-是個謊言)」延伸版：「之後做 Checkpoint 1」也是個謊言 — 動手之後 context 已經跑完、回頭重列意圖完整集成本反而高。要嘛當下做、要嘛接受漏案例。
+「[#67 Refactor 是個謊言](#我等下會-refactor是個謊言)」延伸版：「之後做 Checkpoint 1」也是個謊言 — 動手之後 context 已經跑完、回頭重列意圖完整集成本反而高。要嘛當下做、要嘛接受漏案例。
 
 更上位的解釋見 [#72 高 ROI 無外部觸發的工作會被結構性跳過](../external-trigger-for-high-roi-work/) — 本卡是 #72 在「寫程式當下選哪條路」面向的展現。

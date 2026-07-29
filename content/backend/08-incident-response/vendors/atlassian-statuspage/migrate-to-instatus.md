@@ -24,7 +24,7 @@ tags: ["backend", "incident-response", "vendor", "migration", "type-b", "drop-in
 
 ## 為什麼是 Type B（全 Low）
 
-跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/#6-維-diff-dimension-audit)：
+跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
 | 維度        | 評  | 說明                                                           |
 | ----------- | --- | -------------------------------------------------------------- |

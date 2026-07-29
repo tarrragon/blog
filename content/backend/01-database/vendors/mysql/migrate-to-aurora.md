@@ -26,7 +26,7 @@ tags: ["backend", "database", "mysql", "vendor", "migration", "type-c", "operati
 
 ## 為什麼是 Type C（operational 為主）
 
-跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/#寫前的-diff-dimension-audit)：
+跑 [6 維 diff dimension audit](/posts/migration-playbook-methodology/)：
 
 | 維度        | 評         | 說明                                                         |
 | ----------- | ---------- | ------------------------------------------------------------ |

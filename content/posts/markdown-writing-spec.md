@@ -402,6 +402,16 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 
 L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字典（`.codex/briefs/knowledge-web-expansion.md`）啟動後再開。
 
+### 已知未涵蓋：連結的 fragment
+
+L1 只驗目標檔案存在，**不驗 `#anchor` 部分**——`resolveTarget` 在解析時把 `#` 之後截掉，純 `#anchor` 的同頁連結則被當成外部連結跳過。後果是標題一改，指向它的跨檔 anchor 全部靜默失效：連結仍然點得開、頁面仍然存在，讀者落在頁首而不知道自己該看哪一段。這是 [#155](/report/reference-by-semantic-title-not-number/) 說的「misdirected 比 dangling 難偵測」在 fragment 層的形態，而它是目前唯一沒有安全網的引用形態（檔案層有 L1、卡片層有 L2）。
+
+實測（hugo 建最小站驗證）確認的 anchorize 規則：保留 unicode 字母、數字與 `_`，空白與 `-` 轉連字號，其餘一律丟棄且**不留連字號**——全形括號、冒號、頓號、引號都適用，這也是手算 anchor 最常算錯的地方。ID 從渲染後的文字產生，標題內的 markdown 連結只取顯示文字。同頁重複標題加 `-1` / `-2` 後綴。
+
+補這條規則的成本不高，基礎設施已經在位：`mdcards` 已經 walk 全站 AST 也已經 resolve 每條連結的目標檔，要加的是 Edge 的 fragment 欄位、每個檔案的 heading ID 索引（goldmark 的 `heading.Text(src)` 給的正是渲染後文字）、以及一條比對規則。走 AST 而非 regex 還能自動排除程式碼圍籬裡的示範連結。這條屬跨檔規則，放 `mdcards` 不放 `mdlint`。
+
+在它落地之前，減少暴露的做法是**標題不內嵌數量**（[#156](/report/name-collections-by-role-not-count/)）：實際斷掉的案例裡，有一條的肇因就是標題從「33 個 vendor」改成「51 個 vendor」。注意 `mdtools lint` 的 REF2 只認「數字 + 支柱 / 原則 / 步驟 / 階段 / 面向 / 心法」這組量詞，「三份來源」「三同步」「51 個 vendor」都在它的視野之外。
+
 ### 為什麼要做跨文件檢查
 
 知識卡片是 blog 的核心知識資產。隨著卡片數量增加：
