@@ -28,7 +28,7 @@ tags: ["backend", "security"]
 - 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
 - [workload identity](/backend/knowledge-cards/workload-identity/) → [7.10](../workload-identity-and-federated-trust/)
 - 偵測訊號 → [7.13](../detection-coverage-and-signal-governance/)
-- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+- 偵測平台 → [04 可觀測性](/backend/04-observability/)、實作交付 → [05 部署平台](/backend/05-deployment-platform/) / [06 可靠性](/backend/06-reliability/) / [08 事故處理](/backend/08-incident-response/)
 
 Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
 
@@ -37,7 +37,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
 - **Mechanism**：問題節點表的 `[authentication]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
-- **Delivery**：「交接路由」欄位指向 `05-deployment-platform / 06-reliability / 08-incident-response`、接配置 / 驗證 / 處置交付。
+- **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)、接配置 / 驗證 / 處置交付。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
@@ -68,6 +68,20 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 | 會話失效節奏落後     | 修補後異常 session 持續、token 存續過久                           | 事件關閉時間延長                         | [session-invalidation](/backend/knowledge-cards/session-invalidation/)、[token-revocation](/backend/knowledge-cards/token-revocation/) | `08 + 05`              |
 | 供應商身分鏈傳導     | 外部事件後內部憑證存續比例偏高                                    | 內部信任邊界承受外部衝擊                 | [credential](/backend/knowledge-cards/credential/)、[containment](/backend/knowledge-cards/containment/)                               | `08 + 06`              |
 | 單人裝置認證邊界轉移 | device 失竊後生物辨識可繞過、共享密鑰存本機、無中央會話可遠端失效 | 認證邊界落在 device 層、單點失效即全失效 | [authentication](/backend/knowledge-cards/authentication/)、裝置綁定 + 共享密鑰                                                        | `05 + 08`              |
+
+## 問題節點出現在什麼樣的系統
+
+上表的「判讀訊號」欄要等系統已經在跑才觀察得到，設計階段還沒有密度、沒有地理切換、沒有存續比例可看。這一節補前四個節點的系統形態；第五個節點（單人裝置認證邊界轉移）的形態、失效模型與 tripwire 見下方[單人裝置認證模型](#單人裝置認證模型)段。
+
+**登入驗證節奏失衡**出現在把第二因子做成推送核准的組織：手機跳出「是不是你在登入」、按一下同意就完成。導入時的評估重點通常是採用率，而推送核准在這一項上贏過需要輸入的方案。識別特徵是核准動作不需要任何來自登入端的資訊——沒有數字配對、沒有裝置綁定，同意與否只取決於當事人當下怎麼想。組織規模到了有專職 IT 支援、員工習慣「系統偶爾會跳出東西要按」的階段，這個節點的風險才真正成形。
+
+**授權範圍擴張過快**出現在長出代理操作能力的內部工具：客服要能替使用者查訂單、營運要能替商家改設定、管理後台要能切換身分重現問題。這些能力各自都有正當理由，而權限模型多半用角色承接，於是角色隨功能一路累積。識別特徵是系統裡有一個叫「管理員」的角色，而沒有人說得出它現在能做什麼——那份清單只存在於程式碼的判斷式裡。
+
+**會話失效節奏落後**出現在身分材料有多個發行方的系統：SSO 發一種、API 金鑰是另一種、個人存取權杖第三種、裝了的 OAuth 應用各自持有第四種。每一種在導入當下都有清楚的用途，累積起來卻沒有任何地方記錄「現在有幾種東西可以代表這個人」。識別特徵就是這個問題答不出來，或答案要靠翻程式碼與後台設定拼湊。
+
+**供應商身分鏈傳導**出現在把身分或工作流外包出去的系統：登入交給 SSO 供應商、支援工單走第三方平台、CI 服務持有原始碼倉庫的存取權。識別特徵是存在一個外部系統，它那邊的帳號被盜之後自己這邊會發生事情——而那條因果鏈通常沒有寫在任何一份自己的文件裡。組織越小這個節點的比重越高，因為外包的比例越高。
+
+會話失效這一節點的失敗長這樣：某位員工的帳號被回報異常，處置照著手冊跑完——密碼重設、SSO 的 session 全部踢掉、當事人確認登不進去了，事件就此關閉。幾週後同一個帳號的個人存取權杖仍在拉取倉庫內容，因為那把權杖是幾年前為了跑一次資料匯出而開的，它不經過 SSO、不受密碼重設影響，發行紀錄只留在當時的一則對話裡。查不出來的原因是撤銷動作分散在各個發行方，每一方都正確地完成了自己那一份並回報完成，而沒有任何一方負責回答「這個人還剩下什麼」。補起來要先建出身分材料的清單，而清單本身要靠翻遍各系統的後台才生得出來——那份工作量由這些發行方累積了多久決定。
 
 ## 跨章 SSoT：供應商身分鏈傳導
 

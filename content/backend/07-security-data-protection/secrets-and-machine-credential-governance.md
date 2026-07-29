@@ -23,7 +23,7 @@ tags: ["backend", "security"]
 - 傳輸 / 憑證輪替 → [7.5](../transport-trust-and-certificate-lifecycle/)
 - workload [federation](/backend/knowledge-cards/federation/) → [7.10](../workload-identity-and-federated-trust/)
 - build provenance → [7.12](../supply-chain-integrity-and-artifact-trust/)
-- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+- 偵測平台 → [04 可觀測性](/backend/04-observability/)、實作交付 → [05 部署平台](/backend/05-deployment-platform/) / [06 可靠性](/backend/06-reliability/) / [08 事故處理](/backend/08-incident-response/)
 
 Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
 
@@ -32,7 +32,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
 - **Mechanism**：問題節點表的 `[token-revocation]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
-- **Delivery**：「交接路由」欄位指向 `05-deployment-platform / 06-reliability / 08-incident-response`、接配置 / 驗證 / 處置交付。
+- **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)、接配置 / 驗證 / 處置交付。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
@@ -63,6 +63,20 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 | CI secrets 集中      | 單一節點承載大量憑證     | 輪替成本與中斷風險上升   | [secret-management](/backend/knowledge-cards/secret-management/)、[ci-pipeline](/backend/knowledge-cards/ci-pipeline/)   | `05 + 06` |
 | 憑證生命周期失衡     | 發放、更新、撤銷節奏分離 | 可用憑證存量高於收斂速度 | [credential](/backend/knowledge-cards/credential/)、[containment](/backend/knowledge-cards/containment/)                 | `06 + 08` |
 | 供應商事件傳導未收斂 | 外部事件後內部憑證仍活躍 | 內部風險延長停留         | [incident-timeline](/backend/knowledge-cards/incident-timeline/)、[impact-scope](/backend/knowledge-cards/impact-scope/) | `08`      |
+
+## 問題節點出現在什麼樣的系統
+
+上表的「判讀訊號」欄要等憑證已經在流通才觀察得到，設計階段沒有使用面、沒有存量、沒有節奏可量。這一節補四個節點各自的系統形態。
+
+**token 分域不足**出現在憑證跟著整合一個一個長出來的系統。第一個對外整合上線時開了一把 token，權限給滿是因為當下還不確定它需要什麼；第二個整合來的時候那把 token 已經能用了，於是沿用。識別特徵是有一把憑證的名字是泛稱——「服務」「整合」「自動化」「內部用」——而不是某個具體用途；名字取不具體，通常代表開它的時候就沒有界定範圍。
+
+**CI secrets 集中**出現在部署自動化做得完整的系統。部署這個動作本身要跨資料庫、雲端帳號、第三方 API 與監控平台，所以能自動部署的 CI 必然握有這些憑證，而集中在一處看起來也比散在各人筆電上安全。識別特徵是 CI 的環境變數清單比任何一個服務自己的都長。這一類的形態成因與其他三個不同——它不是疏忽的產物，是自動化程度的副產品，所以自動化做得越好的團隊落在這一格的程度越深。
+
+**憑證生命週期失衡**出現在發放有流程、回收沒有流程的組織。申請憑證要填單、要核准、有人追；憑證不用了之後沒有任何一方會主動提起，因為停用它對誰都沒有立即好處。識別特徵是憑證的總數只增不減，或者問「上一次刪掉一把憑證是什麼時候」答不出來。
+
+**供應商事件傳導未收斂**在機器憑證層的形態是憑證跨過了組織邊界：第三方服務的憑證存在自己這邊，或自己的憑證存在第三方那邊（CI 服務持有雲端帳號、監控平台持有資料庫唯讀權限、支援工具持有 API key）。識別特徵是列得出「對方出事的話，我這邊有哪些東西要換」這份清單的人，通常只有當初做整合的那一位。人類身分層的同議題見 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)。
+
+CI secrets 集中這一節點的失敗長這樣：CI 平台公告自家環境遭入侵，建議所有客戶輪替全部憑證。輪替本身不難，難的是排序——團隊想先換影響最大的那幾把，於是要回答「哪些 secret 還在被用、被哪些流程用」，而這個問題沒有現成答案：CI 平台記錄的是有哪些 secret，不是誰在用它們。清單裡有一部分是幾年前某個已經刪掉的流程留下的，看不出來能不能安全刪；另一部分的擁有者已經離職。最後只能全部輪替，而每換一把都要協調對應服務重新部署並確認沒壞。集中化當初省下的是日常管理成本，付出的是事件當天的協調成本，而這兩筆帳從來不會被放在一起比較。
 
 ## 跨章議題交叉引用
 
@@ -105,6 +119,6 @@ CI secrets 集中化的核心風險是把 *單一節點承載的憑證數量* �
 
 ## 下一步路由
 
-- 交付與執行環境：`05-deployment-platform`（tunnel 憑證的保管與輪替見 [5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)）
-- 輪替與回退演練：`06-reliability`
-- 事件收斂與通報：`08-incident-response`
+- 交付與執行環境：[05 部署平台](/backend/05-deployment-platform/)（tunnel 憑證的保管與輪替見 [5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)）
+- 輪替與回退演練：[06 可靠性](/backend/06-reliability/)
+- 事件收斂與通報：[08 事故處理](/backend/08-incident-response/)
