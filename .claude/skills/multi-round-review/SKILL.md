@@ -3,7 +3,7 @@ name: multi-round-review
 description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
-  version: 1.20.0
+  version: 1.21.0
   category: writing-methodology
 ---
 
@@ -90,6 +90,7 @@ metadata:
 - **A: Self-application sweep** — 用本 batch 寫的 report 卡 / 規範 self-grep 同 batch 稿件、catch 規範化後仍犯的同義變體（per [#147 規範化跟自審](references/principles/rule-codification-self-audit.md)）
 - **B: Steelman / Reality test** — 知識淵博讀者視角、檢查判讀訊號 / 取捨表 enumeration 是否窮盡、有無稻草人、數字 / 閾值有無源頭。**承重論點的 steelman 要用兩次**：claim-driven batch（承重論點錯了下游要大改的——方法論主張、核心假設、跨稿件共用 spec）的那個論點，該在動筆前先 steelman 當生產閘門，這輪 Round 3 steelman 是第二次（全面收尾）；只在 Round 3 才挑戰承重論點＝太晚，錯誤已寫進 N 個檔、跨檔回改。承重論點常是「只有一組 X」「所有 Y 都 Z」的全稱 / 唯一性宣稱，反證靠逐條枚舉候選反例、別把「還沒找到反例」當「不存在反例」。同源自審對自己的地基有盲區、承重論點的挑戰交對抗 / 異源 reviewer
 - **C: Outbound impact audit** — 既有章節應該但沒引用新章節的反向引用、knowledge card 缺口、跨章節整合段缺位
+- **G: 共同前提盤點（跨篇、批次寫完之後跑）** — 前面所有 frame 的檢查單位都是單篇，包括 outbound 也是「既有內容該不該指向新內容」這種單篇對單篇的方向。這個 frame 的單位是**整批**：把這批各篇的前置段、寫作邊界宣告、以及「這要靠 X 才做得到」這類前提句抽出來並排，找同一個判斷被三篇以上當前提而沒有任何一篇承接的情形。它在單篇視角下不落空——每篇都給了自己那一角、讀者當下走得下去——所以逐篇審查不論多細都看不到（per [共同前提沒有住址](references/principles/shared-premise-has-no-home.md)）。**前置段是最常見的藏身處**，因為它確實是本篇的適用性閘門、主題也對得上，「不屬於這篇」那條檢查因此不觸發；辨識訊號是那一段回答的問題比本篇主題更早發生、且對別篇同樣成立。判別缺卡還是缺章：同一個定義重複＝術語（建卡），同一條判斷軸的不同角重複＝缺章（取捨需要並置）。**這個 frame 的 finding 形態特殊**——它產出的是「該有而不存在的篇章」，所以修法多半是登記待辦而非當場補；產出要標明各篇的哪一角屬於它，否則下一輪又會被逐篇修回各篇裡。
 - **D: Persona coverage（outside-in）** — 列出目標讀者可能進入這套教材的情境（新專案從零開始、接手別人的環境、救火後正規化、被要求稽核合規……），檢查每個情境是否有對應的入口文章。inside-out review 在既有結構內找問題，persona coverage 質疑結構本身的覆蓋範圍
 - **F: 誤用 / 激勵梯度（審查對象是規則 / 協議 / 規範 / 流程時啟動）** — 前面所有 frame 問的是「規則對不對、清不清楚、有沒有漏維度」，這個 frame 問**一個趕時間、想通過檢查的執行者會怎麼「合規地」執行它**。對每條可操作的規則問三題：最省力的遵循方式是什麼 / 那條路徑與意圖差多少 / 規則本身有沒有擋住它。第三題答否時補的是**痕跡**不是語氣（per [判定型規則要規定判定的痕跡](references/principles/judgment-rules-must-specify-their-trace.md)）——沒有痕跡的判定不可證偽，判準是「認真做過與完全沒做，產物有沒有差別」。塌陷方向可預測：**沿著零後續動作的那個結論走**（判成不適用 / 不需要補 / 份量不夠），那個結論最省力也最難質疑，因為它不產出任何東西可供檢查。四個高頻形態：不適用清單只列類型不要求舉證（變成規則的關機鍵）、數量上限被當配額（「一兩個」的下限是一）、三級量表的中間值兩邊都不必舉證、「暫緩」類條款沒有觸發回補的觀察者（退化成永久豁免）。實測一輪十一項 finding、全部收斂成同一形狀——**這個收斂本身是訊號**：逐條再補限定句會讓規則膨脹到需要導讀，補到三條就該停下來抽共用原則。
 - **E: Search landing 粒度（outside-in）** — 列出讀者可能搜尋的 5-10 個具體問題（如「怎麼輪替 AWS access key」「FTP 站台怎麼做自動備份」），檢查每個問題能不能落在一篇聚焦的文章上、還是被埋在綜述的某個段落裡。跟 B′ cold-read 的差別：B′ 看「落地後讀不讀得懂」、search landing 看「能不能落地到足夠聚焦的內容」
@@ -191,6 +192,8 @@ register 違規（重點後置、喊話、誇飾）的同源自審有上限（�
 - **把「多輪全過」當成「知識類型對」**：歷輪 finding 全部落在字句與結構層時、「三輪全過」的語意只是「已覆蓋層全過」——斷言支撐與知識類型層若沒有 frame 負責、錯的知識類型（披著教學結構的經驗談）會全數通過。finding 類型分佈本身是訊號：全部集中表面層 = 深層無人在看、下一輪排斷言支撐 frame（per [claim-support frame](references/principles/review-needs-claim-support-frame.md)）
 
 ---
+
+**Version**: 1.21.0 — Round 3 新增 G frame「共同前提盤點」（跨篇、批次寫完之後跑）：前面所有 frame 的檢查單位都是單篇（outbound 也是單篇對單篇），這個 frame 的單位是整批——把各篇的前置段、寫作邊界宣告與「這要靠 X 才做得到」的前提句抽出來並排，找同一個判斷被三篇以上當前提而沒有任何一篇承接的情形。它在單篇視角下不落空，所以逐篇審查不論多細都看不到；前置段是最常見的藏身處（它確實是本篇的適用性閘門、主題也對得上，「不屬於這篇」那條因此不觸發）。判別缺卡還是缺章：定義重複＝術語，判斷的各角重複＝缺章。這個 frame 的 finding 形態特殊——產出是「該有而不存在的篇章」，修法多半是登記待辦而非當場補。新增 `shared-premise-has-no-home` principle 卡。從一個資安模組四輪審查後盤點出十一項待辦裡有五項同形態、且全部由審查登記而非寫作當下浮現的實測抽出。
 
 **Version**: 1.20.0 — Round 3 新增 F frame「誤用 / 激勵梯度」（審查對象是規則 / 協議 / 規範 / 流程時啟動）：前面所有 frame 問規則對不對，這個 frame 問「想少做事的執行者會怎麼合規地執行它」；三題推演（最省力路徑 / 與意圖的差距 / 規則擋不擋得住）、補痕跡不補語氣、塌陷方向沿零後續結論走；四個高頻形態（不適用清單無舉證要求＝關機鍵、數量上限被當配額、三級量表中值、暫緩條款無觸發觀察者）。Reviewer prompt 關鍵設計加「判定型規則要指定痕跡」。新增 `judgment-rules-must-specify-their-trace` principle 卡。從本 skill 自身內容跑該 frame、一輪十一項 finding 全部收斂成同一形狀的實測抽出——收斂本身是停止訊號（逐條補限定句會讓規則膨脹到需要導讀、補到三條就抽共用原則）。同輪對 Round 1-C 與 B‴ 各補一項痕跡要求：路由維度的產出是逐條表（抽查與逐條在不列條目的報告裡無法區分）、B‴ 的三種不適用要指出哪一段構成該形態。
 
