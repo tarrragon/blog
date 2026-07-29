@@ -3,7 +3,7 @@ title: "Salt"
 tags: ["密碼儲存", "Salt", "Security"]
 date: 2026-07-29
 description: "說明 salt 如何讓相同的密碼產生不同的雜湊值，以及它擋掉哪一類攻擊"
-weight: 39
+weight: 333
 ---
 
 Salt 的核心概念是「在雜湊之前混入一段每筆紀錄各不相同的隨機值」。它讓兩個使用者即使設了相同的密碼，存下來的雜湊值也不一樣，因此它保護的是儲存於資料庫的 [credential](/backend/knowledge-cards/credential/) 在整份外洩之後的階段。

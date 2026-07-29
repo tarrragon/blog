@@ -42,7 +42,7 @@ weight: 7
 
 反例與規模對照入口： [7.C9 反例](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) / [7.C10 對照](/backend/07-security-data-protection/cases/contrast-identity-governance-by-scale/)。
 
-從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
+已經發生外洩、要判斷手上的密碼儲存撐不撐得住的讀者直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
 
 回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
 
@@ -114,19 +114,19 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                             | 類型   | 前置條件                                   | 規模 |
-| ------------------------------------------------------------------------------------------------ | ------ | ------------------------------------------ | ---- |
-| Session 與 token 選型（JWT vs session、token 存不存 DB）                                         | 主章   | 無                                         | 中   |
-| 資產盤點（對外入口 / 憑證 / 信任錨 / token 的分母怎麼建與怎麼維持）                              | 主章   | 無（7.3 / 7.5 已給三份來源對帳的最小做法） | 中   |
-| 微案例第三拍的素材替換（7.28 / 7.5 / 7.30 三則目前是機制推導、非親歷或案例庫）                   | 案例   | 該形態的案例庫新增任一則                   | 小   |
-| 機器憑證的配發流程（誰核發 / 審批 / 初次交付路徑）                                               | 主章   | 無（7.29 已定義路由需求）                  | 小   |
-| 管理平面與業務平面的隔離設定落點（入口路由 / 管理端點可達來源）                                  | 主章   | 無（7.3 已定義路由需求）                   | 小   |
-| 委任型憑證的機制選型（token exchange 交換流程、actor 與 subject 各自的撤銷路徑、驗證方檢查欄位） | 主章   | 無（7.29 已定義路由需求與最小判準）        | 中   |
-| 7.30 密碼儲存的完整版（演算法內部機制比較、大規模帳號庫遷移策略、合規演算法清單對照）            | 主章   | 無（簡版已上線、缺的是深度）               | 中   |
-| 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑）                               | 主章   | 無（7.2 的代理操作段已定義路由需求）       | 中   |
-| 51 個 vendor 服務頁的 deep article 與 migration playbook                                         | vendor | 無                                         | 大   |
-| 藍隊現場案例卡與推演情境卡                                                                       | 案例   | 需先從真實事故抽防守壓力                   | 大   |
-| 控制模式卡與事故回寫路由                                                                         | 案例   | 依賴上一項的案例卡與情境卡產出             | 中   |
+| 項目                                                                                                               | 類型   | 前置條件                                   | 規模        |
+| ------------------------------------------------------------------------------------------------------------------ | ------ | ------------------------------------------ | ----------- |
+| Session 與 token 選型（JWT vs session、token 存不存 DB）                                                           | 主章   | 無                                         | 中          |
+| 資產盤點（對外入口 / 憑證 / 信任錨 / token 的分母怎麼建與怎麼維持）                                                | 主章   | 無（7.3 / 7.5 已給三份來源對帳的最小做法） | 中          |
+| 微案例第三拍的素材替換（9 則中 7.28 / 7.5 / 7.30 三則明確為機制推導，其餘六則的來源尚未逐則判定）                  | 案例   | 該形態的案例庫新增任一則                   | 9 則（小）  |
+| 機器憑證的配發流程（誰核發 / 審批 / 初次交付路徑）                                                                 | 主章   | 無（7.29 已定義路由需求）                  | 小          |
+| 管理平面與業務平面的隔離設定落點（入口路由 / 管理端點可達來源）                                                    | 主章   | 無（7.3 已定義路由需求）                   | 小          |
+| 委任型憑證的機制選型（token exchange 交換流程、actor 與 subject 各自的撤銷路徑、驗證方檢查欄位）                   | 主章   | 無（7.29 已定義路由需求與最小判準）        | 中          |
+| 7.30 密碼儲存的完整版（演算法內部機制比較、大規模帳號庫遷移策略、合規演算法清單對照、pepper 的完整處理與輪替限制） | 主章   | 無（簡版已上線、缺的是深度）               | 4 項（中）  |
+| 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑）                                                 | 主章   | 無（7.2 的代理操作段已定義路由需求）       | 中          |
+| 51 個 vendor 服務頁的 deep article 與 migration playbook                                                           | vendor | 無                                         | 51 頁（大） |
+| 藍隊現場案例卡與推演情境卡                                                                                         | 案例   | 需先從真實事故抽防守壓力                   | 大          |
+| 控制模式卡與事故回寫路由                                                                                           | 案例   | 依賴上一項的案例卡與情境卡產出             | 中          |
 
 ### 下一輪推演大綱
 
@@ -141,9 +141,9 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 ### 待補主題
 
-本段說明「Session 與 token 選型」與「密碼儲存」這兩項的判定依據與寫作角度，項目本身以上表為準。判定用的是讀者會拿去搜尋的問句落不落得到一篇文章上：「JWT 還是 session」「token 要不要存 DB」在全站仍然只能在 vendor 頁或其他章節的段落裡零星碰到。兩者都屬 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 的範圍。
+本段說明「Session 與 token 選型」與「7.30 密碼儲存的完整版」這兩項的判定依據與寫作角度，項目本身以上表為準。判定用的是讀者會拿去搜尋的問句落不落得到一篇文章上：「JWT 還是 session」「token 要不要存 DB」在全站仍然只能在 vendor 頁或其他章節的段落裡零星碰到。兩者都屬 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 的範圍。
 
-Session 與 token 缺的是「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸。密碼儲存已由 [7.30](/backend/07-security-data-protection/password-storage-and-work-factor/) 的簡版承接（選型判準、work factor 定法、參數升級路徑），剩下的是深度：演算法內部機制比較、大規模帳號庫的遷移策略、合規演算法清單對照。
+Session 與 token 缺的是「無狀態驗證換到的是什麼、付出的撤銷成本是什麼」這條判讀主軸。密碼儲存的簡版已在 [7.30](/backend/07-security-data-protection/password-storage-and-work-factor/)，剩下的是深度：演算法內部機制比較、大規模帳號庫的遷移策略、合規演算法清單對照、pepper 的完整處理。
 
 兩者的共同特徵是入門讀者密度高、而本模組既有章節都預設讀者已經跨過這一層。補的時候要注意它們的判讀軸各自獨立：前者是撤銷粒度與狀態成本的取捨，後者是計算成本與參數老化的取捨，不共用 7.28 的金鑰位置主軸。
 

@@ -116,7 +116,7 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 
 收斂條件因此掛在紀錄能力上，而不是一律禁止：紀錄承載得了整條鏈時多跳可以開放，承載不了時代理不可遞移。既有標準有對應的表達方式：OAuth 2.0 Token Exchange 用 `act` claim 記錄「誰代表誰」，而這個欄位支援巢狀，正是為了保留完整的委任鏈。這種憑證的形態與最小判準見 [7.29 身分維度分層模型](../api-authentication-trust-boundaries/#身分維度分層模型) 的委任型段落；機制選型（交換流程、兩端各自的撤銷路徑、驗證方要檢查哪些欄位）本站尚未寫。
 
-完整的授權模型選型（角色邊界與資源邊界的取捨、角色累積之後的收斂路徑）本模組尚無對應章節，已列入 backlog；在那之前，最小權限的判準見 [least-privilege](/backend/knowledge-cards/least-privilege/)，緊急高權限存取的形態見 [break-glass-access](/backend/knowledge-cards/break-glass-access/)。
+對應失效樣式 [代理操作濫用](../red-team/problem-cards/delegated-operation-abuse/) 與 [代理會話上下文混層](../red-team/problem-cards/fp-delegated-session-context-bleed/)。完整的授權模型選型（角色邊界與資源邊界的取捨、角色累積之後的收斂路徑）本模組尚無對應章節，已列入 backlog；在那之前，最小權限的判準見 [least-privilege](/backend/knowledge-cards/least-privilege/)，緊急高權限存取的形態見 [break-glass-access](/backend/knowledge-cards/break-glass-access/)。
 
 ## 高權限工具的會話收斂節奏
 

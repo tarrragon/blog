@@ -150,7 +150,7 @@ Token 是**高熵隨機字串**（40 char base62 ≈ 238 bit entropy、比一般
 
 bcrypt 用 salt 是為了防 **rainbow table 攻擊**（預算好常見密碼的 hash、查表）。Rainbow table 對「人類選的密碼」有效、對「40 char 高熵 token」無效（搜尋空間太大、預算表的成本超過直接 brute-force）。
 
-所以 Sanctum 對 token 用 unsalted SHA-256，是符合「高熵隨機 token」威脅模型的選擇。若 credential 來源改成人類可記憶密碼，威脅模型就會改變，儲存策略也要回到 password hashing。
+所以 Sanctum 對 token 用 unsalted SHA-256，是符合「高熵隨機 token」威脅模型的選擇。密碼那一側的演算法選型、work factor 定法與參數升級路徑見 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)，salt 本身的責任邊界見 [salt](/backend/knowledge-cards/salt/)。若 credential 來源改成人類可記憶密碼，威脅模型就會改變，儲存策略也要回到 password hashing。
 
 ---
 

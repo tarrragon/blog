@@ -66,7 +66,7 @@ Sanctum 的 `{PK}|{secret}` 設計常被誤解為「業界標準」 — 其實�
 
 無論用哪種 format、有三條跨設計通用的儲存原則：
 
-1. **DB 只存 hash、不存原文** — token 是高熵隨機字串、SHA-256 即可、不需 bcrypt
+1. **DB 只存 hash、不存原文** — token 是高熵隨機字串、SHA-256 即可、不需 bcrypt。反向的那一側（低熵的使用者密碼為什麼要刻意慢）見 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)
 2. **比對必須是 constant-time** — 用各語言提供的 `hash_equals` / `compare_digest` / `ConstantTimeCompare`、不用 `==`
 3. **Lookup 用穩定字段、機密比對放應用層** — DB 引擎不保證 constant-time 比對、把機密比對搬離 DB
 

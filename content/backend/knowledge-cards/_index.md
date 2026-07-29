@@ -416,6 +416,7 @@ weight: -1
 | [Defense in Depth](/backend/knowledge-cards/defense-in-depth/)                                   | 多層控制何時真的獨立生效             | 分層、弱環節辯護、blast radius   |
 | [Timing Attack](/backend/knowledge-cards/timing-attack/)                                         | 執行時間差異如何洩漏秘密             | 等時比較、token 驗證、側通道     |
 | [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/)                               | 落地資料如何在儲存層加密             | tablespace、backup、金鑰         |
+| [Salt](/backend/knowledge-cards/salt/)                                                           | 相同密碼如何產生不同的雜湊值         | 密碼儲存、預算表反查、唯一性     |
 | [Key Management](/backend/knowledge-cards/key-management/)                                       | 加密金鑰如何產生、保存與輪替         | KMS、keyring、rotation           |
 | [Break-Glass Access](/backend/knowledge-cards/break-glass-access/)                               | 緊急高權限存取如何用工單與時限治理   | emergency、ticket、audit         |
 

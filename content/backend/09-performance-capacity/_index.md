@@ -226,6 +226,7 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 | 流量錄製與鏡像（GoReplay / Service Mesh Mirroring / VPC Traffic Mirroring） | vendor | 無                                           | 3 篇（中） |
 | 持續剖析（Pyroscope / Parca）                                               | vendor | 無                                           | 2 篇（中） |
 | 成本工具（Akamas / Vantage / CloudHealth / AWS Cost Explorer）              | vendor | 無                                           | 4 篇（大） |
+| 認證運算的容量規劃（密碼雜湊的 CPU 與記憶體尖峰、與其他負載的共存）         | 主章   | 無（7.30 路由過來、已給最小推估法）          | 小         |
 
 與 06 共用四個負載工具（k6 / JMeter / Gatling / Locust），寫作前要先確立本模組讀「效能工程的工具鏈」、06 讀「驗證流程的工具鏈」這條分工，否則兩邊會產出重複內容。
 

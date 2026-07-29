@@ -90,6 +90,7 @@ slug: "judgment-content-needs-triggering-scenarios"
 - [常識是相對於讀者背景的](../common-knowledge-is-relative-to-reader-background/)：同構問題的不同層。那張卡處理術語（作者的常識不是讀者的常識），本卡處理情境（作者的經驗不是讀者的經驗）。兩者的共同機制是作者把自己的背景投射成讀者的背景，而同源審查者有完全相同的投射。
 - [多輪審查缺 outside-in 讀者 frame](../review-lacks-outside-in-reader-frames/)：本卡是它的一個新盲點實例。既有的 outside-in frame 問「讀者讀完要做什麼」與「他懂不懂這個術語」，還沒有人問「他想不想像得出來這些情況會發生」。
 - [#126 寫作 review 是多軸完整性、不是單軸深度](../writing-review-multi-axis-completeness/)：三輪審查通過而使用者一讀就發現，是缺一軸而非某軸不夠深。
+- [#244 範例讓最後一類出口缺口現形](../examples-expose-missing-exits/)：同一個投射的兩種形態。本卡是作者假設讀者知道什麼時候會遇到，#244 是作者假設讀者知道遇到之後怎麼辦；兩者都因為作者自己兩件事都知道而不可見，補寫順序上也接在一起。
 - [#240 跨模組路由要驗證目的地承接該主題](../routing-destination-must-own-the-topic/)：同批事故的姊妹卡。#240 是路由指向錯地方，本卡是內容本身缺情境；兩者都由使用者閱讀時提問而浮現，都不在任何審查維度的視野內。
 
 ---
