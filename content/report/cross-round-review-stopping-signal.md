@@ -8,6 +8,8 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Multi-round-revi
 
 ## 結論
 
+（補充條件：frame 涵蓋齊備之後還差一次以整體為對象的通讀——各 frame 的修法產物沒有被合起來看過，見 [#247](../sequential-fixes-compose-into-defects/)。）
+
 判斷「該不該再來一輪 review」的訊號是「frame 軸是否還有未動」、不是「上一輪 finding 變少」。
 
 兩種訊號的對比：
