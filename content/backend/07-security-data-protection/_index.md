@@ -46,7 +46,7 @@ weight: 7
 
 ## 從問題進入
 
-要做登入功能的讀者從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步——它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。從對接失敗或原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。7.29 判到系統層之後還有兩條分支：那把憑證怎麼交到對方手上走 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)，而請求是「某個系統代表某個特定的人」時走 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。
+要做登入功能的讀者從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步——它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。正在設計一條新整合、或從對接失敗與原語誤用進入的讀者走另一條路線：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層，最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。落在 7.28 第四類原語（不可逆的單向轉換）的讀者接著走 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。7.29 判到系統層之後還有兩條分支：那把憑證怎麼交到對方手上走 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)，而請求是「某個系統代表某個特定的人」時走 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。
 
 ## 從章節到實作的 chain
 

@@ -370,6 +370,7 @@ weight: -1
 | 卡片                                                                                             | 核心問題                             | 常見出現位置                     |
 | ------------------------------------------------------------------------------------------------ | ------------------------------------ | -------------------------------- |
 | [Authorization](/backend/knowledge-cards/authorization/)                                         | 誰能對哪些資源執行哪些操作           | RBAC、ABAC、tenant               |
+| [Authorization Scope](/backend/knowledge-cards/authorization-scope/)                             | 一次授權的顆粒由誰決定               | OAuth scope、API key 權限        |
 | [HSM (Hardware Security Module)](/backend/knowledge-cards/hsm/)                                  | 簽章金鑰如何在硬體邊界內受保護       | KMS、key ceremony、quorum        |
 | [Step-Up Authentication](/backend/knowledge-cards/step-up-authentication/)                       | 高風險操作如何動態升級認證強度       | MFA fatigue、session、passkey    |
 | [Authentication](/backend/knowledge-cards/authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS             |

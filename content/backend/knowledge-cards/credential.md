@@ -22,4 +22,4 @@ Credential 位在 authentication、authorization、secret management 與 service
 
 ## 設計責任
 
-Credential 設計要包含保存方式、權限範圍、輪替、撤銷、稽核與事故回復。原則上應遵守 least privilege，避免單一 credential 擁有過大權限。
+Credential 設計要包含核發、初次交付、保存方式、權限範圍、輪替、撤銷、稽核與事故回復。原則上應遵守 least privilege，避免單一 credential 擁有過大權限。前兩項各只發生一次、也因此不在日常監控的觀測範圍內：這個交付動作能不能免掉、免不掉時核發與交付各要滿足什麼，見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)。

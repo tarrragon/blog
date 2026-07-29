@@ -17,4 +17,4 @@ Workload identity 常見於 Kubernetes、跨雲服務整合與 CI/CD 自動化�
 
 ## 設計責任
 
-設計 workload identity 時要定義三件事：簽發責任主體、token 生命周期、事件後收斂流程。缺少任一項，都會把身份治理退化成不可驗證的長期信任假設。
+設計 workload identity 時要定義三件事：簽發責任主體、token 生命周期、事件後收斂流程。缺少任一項，都會把身份治理退化成不可驗證的長期信任假設。這條路徑取消的是憑證交付這個動作，判讀與治理見 [7.10 Workload Identity 與聯邦信任邊界](/backend/07-security-data-protection/workload-identity-and-federated-trust/)；它在某條整合上用不上時的核發與交付見 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)。要留意的是登記責任沒有跟著消失——信任關係本身一樣要有用途、範圍、期限與擁有者。

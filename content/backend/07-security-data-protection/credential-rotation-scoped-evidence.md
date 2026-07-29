@@ -12,7 +12,7 @@ Credential rotation with scoped evidence 的核心責任是把憑證輪替從一
 
 示範路徑是 webhook secret 與 service-to-service API token 輪替。這類變更常見錯誤是全域同批切換，導致無法快速定位失效範圍。
 
-第一步先建 `scope map`：哪些服務、哪些環境、哪些第三方端點共用同一組 credential。再定義證據欄位：輪替前健康度、輪替中錯誤率、輪替後驗證結果與撤銷狀態。
+第一步先建 `scope map`：哪些服務、哪些環境、哪些第三方端點共用同一組 credential。這張圖的材料在配發當下就產生——每把憑證登記的用途、範圍、期限與擁有者四欄合起來就是它，事後補建的成本是逐把去問還有誰在用，見 [7.32 機器憑證的配發](../machine-credential-issuance/)。再定義證據欄位：輪替前健康度、輪替中錯誤率、輪替後驗證結果與撤銷狀態。
 
 ## 實作步驟
 
