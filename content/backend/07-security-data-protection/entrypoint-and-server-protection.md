@@ -23,7 +23,7 @@ tags: ["backend", "security"]
 - 傳輸 / 憑證 → [7.5](../transport-trust-and-certificate-lifecycle/)
 - 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
 - 偵測訊號 → [7.13](../detection-coverage-and-signal-governance/)
-- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+- 偵測平台 → [04 可觀測性](/backend/04-observability/)、實作交付 → [05 部署平台](/backend/05-deployment-platform/) / [06 可靠性](/backend/06-reliability/) / [08 事故處理](/backend/08-incident-response/)
 
 Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
 
@@ -32,7 +32,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
 - **Mechanism**：問題節點表的 `[attack-surface]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
-- **Delivery**：「交接路由」欄位指向 `05-deployment-platform / 06-reliability / 08-incident-response`、接配置 / 驗證 / 處置交付。
+- **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)、接配置 / 驗證 / 處置交付。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
@@ -41,7 +41,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 入口治理的核心責任是定義哪些流量可以進來、能觸及什麼能力、異常時如何收斂。
 
 1. 入口分級：區分 public、admin、diagnostic、internal 端點責任。
-2. 平面分層：把管理平面與業務平面隔離，避免單點突破橫向擴散。
+2. 平面分層：把管理平面與業務平面隔離，避免單點突破橫向擴散。隔離要落到哪些設定（入口路由、控制面與資料面的分界、管理端點的可達來源）見 [5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Control Plane Boundary 段。
 3. 修補節奏：把隔離、修補、驗證綁成同一個交付鏈，不讓修補停在部署完成。
 4. 會話收斂：把入口事件後的會話失效與權限回收納入標準流程。
 
@@ -65,13 +65,29 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 | VPN 與遠端路徑失控 | 異常 session 延續、跨區存取時序偏移          | 內網橋接風險增加     | [sticky-session](/backend/knowledge-cards/sticky-session/)、[session-invalidation](/backend/knowledge-cards/session-invalidation/) | `08 + 06` |
 | 修補與驗證節奏分離 | 修補完成後異常指標持續                       | 事件處置成本上升     | [containment](/backend/knowledge-cards/containment/)、[rollback-strategy](/backend/knowledge-cards/rollback-strategy/)             | `06 + 08` |
 
+## 問題節點出現在什麼樣的系統
+
+上表的「判讀訊號」欄要等系統已經在跑、而且已經被掃描或已經出事才觀察得到。設計階段能對照的是系統形態，而這四個節點各自由不同的力量長出來。
+
+**對外入口可達面擴張**出現在入口是長出來而非設計出來的系統。第一版只有一個 web 服務，接著加了 API、加了接收第三方 webhook 的端點、加了給合作夥伴的檔案上傳、加了後台。每一個新增當下都有防護，而「總共有哪些東西對外開著」這份清單從來沒有被誰維護，因為它不屬於任何一次新增的工作範圍。識別特徵是這個問題要靠掃描才答得出來，而不是查文件。
+
+**管理平面暴露失衡**出現在管理介面與業務服務共用入口的架構：同一個網域加一條 `/admin` 路徑、同一張憑證、同一個負載平衡器。成因是部署當下這樣最簡單，而早期只有自己人會用到那個介面。識別特徵是管理介面的位址由業務位址推導得出——推導得出，意味著任何掃描的人也推導得出。
+
+**VPN 與遠端路徑失控**出現在信任模型與系統現況錯位的組織。VPN、跳板機、廠商維護通道這些路徑建立時的模型是「邊界內外」，接進來就算在內網；而系統後來長成雲端服務加 SaaS 加遠端工作的形狀，內外這條線已經不對應任何實體。識別特徵是接進來之後能觸及的範圍，與這個人實際要做的事之間差距很大。
+
+**修補與驗證節奏分離**出現在修補與驗證由不同角色承擔的組織。修補是部署動作、驗證是觀測動作，兩者在多數組織裡屬於不同的人與不同的工具。識別特徵是「修補完成」的定義——說得出「部署到全部節點了」而說不出「異常訊號降下來了」時，這一格已經成形。
+
+修補與驗證節奏分離這一節點的失敗長這樣：CVE 公告當天團隊完成了修補，部署紀錄顯示全部節點都上了新版本，事件在工單系統裡被關閉。兩週後同一批機器上出現異常外連，回頭查才發現攻擊者在修補之前就已經進來，而修補只堵住了入口、沒有移除已經建立的存取。沒有及時發現的原因是「修補完成」這件事有明確的訊號（部署成功、版本號對上），而「異常是否消失」沒有——那需要有人回頭看指標，而那個人不在修補的工作流裡，工單關閉的條件也只寫了修補。補救要重跑一次完整的事件處置，成本比當初把驗證綁進去高出的部分，由攻擊者在這兩週裡走了多遠決定。
+
 ## 邊界設備事件的三同步 mechanism
 
 邊界設備事件的核心治理是「漏洞修補」「會話 / 憑證失效」「異常痕跡清查」三件事 *同步發生*、不分先後留下時間窗口。任一件先做完、其他兩件還在準備、攻擊者就能在窗口內把已取得的會話或內網落點轉成持續存取。會話失效層的 canonical 在 [7.5 § 會話重放跟全域失效](../transport-trust-and-certificate-lifecycle/#會話重放跟全域失效canonical)、本節聚焦邊界設備視角下三同步的並行需求。
 
 [Citrix Bleed 2023](../red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) 跟 [PAN-OS 2024](../red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/) 兩個案例的「mechanism 總綱」段共同標明這個三同步原則、並標明前提是「事先有 inventory + 自動化失效 / 清查能力」。兩 case 分別補不同層失效訊號 — Citrix Bleed 補會話被竊取後重放的視角、PAN-OS 補邊界設備暴露面集中且修補窗口內缺暫時緩解的視角。
 
-以下基於通用工程知識補充：三同步是 mechanism 並行需求 — 三條 chain 共享同一個事件期間的時間窗口、不視為流程時序。inventory 缺位時、團隊在事件期間答不出「哪些 session 受影響」「哪些憑證該收斂」、只能先修補再事後追查 — 留下的時間窗口正是攻擊者持續存取的高機率窗口。日常修補演練的驗收標準要同時包含「修補完成」跟「修補同時完成會話失效」兩條軌、把 inventory 完整度當共同前提。
+以下基於通用工程知識補充：三同步是 mechanism 並行需求 — 三條 chain 共享同一個事件期間的時間窗口、不視為流程時序。inventory 缺位時、團隊在事件期間答不出「哪些 session 受影響」「哪些憑證該收斂」、只能先修補再事後追查 — 留下的時間窗口正是攻擊者持續存取的高機率窗口。日常修補演練的驗收標準要同時包含「修補完成」跟「修補同時完成會話失效」兩條軌、把 inventory 完整度當共同前提。演練本身的設計（頻率、範圍、驗收證據）走 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)，修補要不要進放行條件走 [6.x release gate](/backend/06-reliability/release-gate/)。
+
+inventory 在本章出現三次都是當作前提——可達面要靠它才盤得出來、三同步要靠它才知道哪些會話受影響、暫時緩解要靠它才選得出降級路徑。本站尚無資產盤點的專章，已列入本模組 backlog。在那之前的最小做法是兩邊對帳：從外部掃一次（對自己的網段與網域做連接埠與子網域列舉，拿到的是攻擊者看得到的那一份），再從設定反推一次（負載平衡器規則、反向代理設定、雲端安全群組、DNS 紀錄，拿到的是自己以為的那一份）。兩份的差集就是缺口——只在外部那份裡的是不知道自己開著的入口，只在設定那份裡的是設定殘留。這個對帳要定期重跑，因為第一種形態（入口是長出來的）保證它會再次發散。
 
 ## 修補窗口期內的暫時緩解
 
@@ -79,7 +95,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 對應 [PAN-OS 2024](../red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)：揭露三層失效控制面 — 邊界設備暴露面高且集中、修補窗口內缺少暫時緩解與替代路徑、攻擊偵測依賴單一訊號來源。案例「可落地檢查點」標明 mechanism 為「先套用緩解、再分區修補與驗證」，前提是「關鍵邊界設備有降級與備援計畫」。
 
-以下基於通用工程知識補充：暫時緩解的選項要在 CVE 公告前就準備好。可選項包含關閉脆弱模組、收斂可達來源、加 WAF / IPS 規則、或臨時降級到備援路徑；每個選項都有可用性代價、要在日常演練中量化過、事件發生時才能快速取捨。「依賴單一訊號來源」是另一個常見盲點 — 邊界事件的早期信號常分散在 IDS、CDN log、應用層 audit、廠商情資、單一來源容易漏掉。
+以下基於通用工程知識補充：暫時緩解的選項要在 CVE 公告前就準備好。可選項包含關閉脆弱模組、收斂可達來源、加 WAF / IPS 規則、或臨時降級到備援路徑；每個選項都有可用性代價、要在日常演練中量化過、事件發生時才能快速取捨。「依賴單一訊號來源」是另一個常見盲點 — 邊界事件的早期信號常分散在 IDS、CDN log、應用層 audit、廠商情資、單一來源容易漏掉。訊號來源該覆蓋哪些層、覆蓋度怎麼驗，走 [7.13 偵測覆蓋與訊號治理](../detection-coverage-and-signal-governance/)。
 
 ## 常見風險邊界
 
@@ -101,6 +117,8 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 下一步路由
 
-- 平台入口與配置：`05-deployment-platform`
-- 壓力與回復驗證：`06-reliability`
-- 分級與收斂流程：`08-incident-response`
+- 平台入口與配置：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)
+- 壓力與回復驗證：[6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)、[6.x release gate](/backend/06-reliability/release-gate/)
+- 分級與收斂流程：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
+- 遠端接入路徑的入口形態與部署合約：[5.10 Outbound Tunnel 入口](/backend/05-deployment-platform/outbound-tunnel-entry/)
+- 接入之後的會話收斂與權限回收：[7.2 身分與授權邊界](../identity-access-boundary/)

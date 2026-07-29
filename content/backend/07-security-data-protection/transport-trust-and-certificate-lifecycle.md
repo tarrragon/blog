@@ -23,7 +23,7 @@ tags: ["backend", "security"]
 - 機器憑證 → [7.6](../secrets-and-machine-credential-governance/)
 - workload [federation](/backend/knowledge-cards/federation/) → [7.10](../workload-identity-and-federated-trust/)
 - artifact 信任 → [7.12](../supply-chain-integrity-and-artifact-trust/)
-- 偵測平台 → `04-observability`、實作交付 → `05` / `06` / `08`
+- 偵測平台 → [04 可觀測性](/backend/04-observability/)、實作交付 → [05 部署平台](/backend/05-deployment-platform/) / [06 可靠性](/backend/06-reliability/) / [08 事故處理](/backend/08-incident-response/)
 
 Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問題節點；out-of-scope 議題請直接跳到對應章節、不在本章 audit 範圍。
 
@@ -32,7 +32,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
 - **Mechanism**：問題節點表的 `[session-invalidation]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
-- **Delivery**：「交接路由」欄位指向 `05-deployment-platform / 06-reliability / 08-incident-response`、接配置 / 驗證 / 處置交付。
+- **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)、接配置 / 驗證 / 處置交付。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
@@ -64,6 +64,30 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 | 管理平面傳輸混層     | 管理流量與業務流量共用邊界   | 高權限邊界可被橫向利用 | [management-plane](/backend/knowledge-cards/management-plane/)、[trust-boundary](/backend/knowledge-cards/trust-boundary/)                                           | `05 + 08` |
 | 第三方信任重評估延遲 | 外部事件後內部憑證收斂滯後   | 傳導風險停留在生產路徑 | [token-revocation](/backend/knowledge-cards/token-revocation/)、[incident-severity](/backend/knowledge-cards/incident-severity/)                                     | `08`      |
 
+## 問題節點出現在什麼樣的系統
+
+上表的「判讀訊號」欄要等系統已經在跑才觀察得到——完成率要有分母才算得出來、混層要有流量才看得見。設計階段能對照的是系統形態。
+
+**會話收斂節奏落後**出現在會話狀態散在多層的系統：應用自己的 session、反向代理或 CDN 的快取、行動應用的長效 token、第三方登入 SDK 各自持有的會話。成因是每一層都為了效能或體驗引入了自己的會話，而每一次引入在當下都只解決自己那一層的問題。識別特徵是問「按一個按鈕能不能讓某個人的所有連線立刻失效」——答不出來，代表沒有任何一層握有全域的開關。
+
+**憑證輪替覆蓋不足**出現在憑證由多種機制簽發與部署的系統：有的走自動續期、有的手動放進設定檔、有的燒進映像檔、有的在合作夥伴那一端。成因是自動化通常是後來才導入的，導入時涵蓋的是當時看得到的那批。識別特徵藏在指標本身——輪替完成率算得出來代表分母是知道的，算不出來代表連有幾張憑證都不知道，而後者才是這一格的實際形態。
+
+**管理平面傳輸混層**出現在管理流量與業務流量共用傳輸信任域的系統：同一個 TLS 終結點、同一組伺服器憑證、同一個 mTLS 的信任錨。這與 [7.3 的管理平面暴露](../entrypoint-and-server-protection/#問題節點出現在什麼樣的系統) 是同一件事的兩個面——那裡看的是入口位址與路由，這裡看的是信任域。兩者可以各自成立：管理介面搬到獨立網域之後，它仍然可能與業務服務共用同一組憑證與同一個信任錨。識別特徵是簽發給管理平面的憑證，業務服務也認得。
+
+**第三方信任重評估延遲**在傳輸層的形態是信任錨散落。對外的信任建立在憑證與公鑰上，而這些材料存在各個服務自己的信任存放區裡——固定憑證的清單、允許的 CA、mTLS 的對端憑證。重評估要動的是這些存放區，而沒有人說得出它們總共有幾份。人類身分鏈層的同議題見 [7.2](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)。
+
+憑證輪替覆蓋不足這一節點的失敗長這樣：團隊導入自動續期之後，憑證過期這件事從日常議題裡消失了，因為絕大多數憑證確實不再需要人管。某天一條對外整合開始失敗，對方回報握手被拒——那張憑證是三年前手動放進設定檔的，當初不在自動化的涵蓋範圍內，而後來也沒有任何一次盤點把它加進去。沒有被提前發現的原因是監控盯的是自動化管的那一批：它們有到期日的指標、有續期成功率的告警，而手動那一批沒有進到任何一個儀表板，也就沒有任何一條線會在它到期前下降。補救的第一步是先算出分母——這件事與入口盤點是同一個動作的不同對象，做法見 [7.3 的兩邊對帳](../entrypoint-and-server-protection/#邊界設備事件的三同步-mechanism)：從外部連線側掃出實際在用的憑證，再從設定與映像檔反推自己以為的那份，差集就是自動化沒有涵蓋的部分。
+
+## 各節點的收斂動作
+
+**會話收斂**的兩條 lever 見下方「會話重放跟全域失效」一節，那是本章的 canonical。
+
+**憑證輪替覆蓋**的收斂順序是先建分母、再談完成率。分母不存在時完成率是自動化那批的完成率，它會長期接近滿分而與實際風險無關。分母建立之後，把手動那批逐一移進自動化，移不進去的（合作夥伴持有、燒進映像檔、硬體設備）單獨列一張清單並綁到期提醒——這張清單的長度本身就是治理指標，它越短風險越低。憑證本身的簽發與部署走 [5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Secret Boundary 段。
+
+**管理平面傳輸混層**的收斂是把信任域拆開：管理平面用獨立的憑證鏈與獨立的信任錨，業務服務的信任存放區不放管理平面的 CA。拆開之後兩邊的憑證互不認得，橫向移動因此在傳輸層就被擋下。入口層的隔離走 [7.3 入口治理與伺服器防護](../entrypoint-and-server-protection/)，設定落點走 [5.x 控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Control Plane Boundary 段。
+
+**第三方信任重評估**的收斂前提是信任錨有清單。清單建立之後，供應商公告要能直接觸發一次比對：對方受影響的憑證或 CA 在自己的哪幾份存放區裡。這條 runbook 的內部收斂責任見 [7.2 第三方身分鏈的內部收斂責任](../identity-access-boundary/#第三方身分鏈的內部收斂責任)，事件當下的處置節奏走 [8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)。
+
 ## 跨章議題交叉引用
 
 本章「第三方信任重評估延遲」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在傳輸層的展現；canonical SSoT 在 7.2、本條補憑證收斂滯後的 specific 訊號。
@@ -84,7 +108,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 對應 [Microsoft Storm-0558 2023](../red-team/cases/identity-access/microsoft-storm-0558-2023-signing-key-chain/)：揭露的「權杖驗證邊界缺少跨服務一致性檢查」屬本章傳輸層責任。案例「可落地檢查點」標明 mechanism 是「監控跨租戶 token 出現相同 issuer 但不應跨域的軌跡」、並標明前提是 token validation 路徑可在 fleet 層級熱抽換 issuer。
 
-以下基於通用工程知識補充：fleet 層級熱抽換屬日常基礎設施的能力前提、要在日常設計階段內建、事件期間才補通常會把重建時間拉長到小時 / 天級。常見落差是 token validation 邏輯被嵌進個別 service 的 library、抽換 issuer 等於重 deploy 每個 service。傳輸層治理要把這個能力當前提條件、缺位時要在 [5.x deployment platform](/backend/05-deployment-platform/) 跟基礎設施團隊協作補上。
+以下基於通用工程知識補充：fleet 層級熱抽換屬日常基礎設施的能力前提、要在日常設計階段內建、事件期間才補通常會把重建時間拉長到小時 / 天級。常見落差是 token validation 邏輯被嵌進個別 service 的 library、抽換 issuer 等於重 deploy 每個 service。傳輸層治理要把這個能力當前提條件、缺位時要跟基礎設施團隊協作補上，落點是 [5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 的 Config Boundary 段——把 issuer 設定從各服務的程式碼移到集中的設定來源，是熱抽換能力的前置條件。
 
 ## 常見風險邊界
 
@@ -105,6 +129,8 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 下一步路由
 
-- 連線與憑證配置：`05-deployment-platform`
-- 輪替與驗證節奏：`06-reliability`
-- 事件收斂流程：`08-incident-response`
+- 連線與憑證配置：[5.x 流量、配置與控制面邊界](/backend/05-deployment-platform/traffic-config-control-plane-boundary/)
+- 輪替與驗證節奏：[6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)
+- 事件收斂流程：[8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
+- 憑證機制本身的選型（簽章與加密的分工、金鑰位置）：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
+- 機器憑證的分域與生命週期：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
