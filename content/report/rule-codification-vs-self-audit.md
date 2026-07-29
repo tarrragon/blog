@@ -79,6 +79,8 @@ rg "展示 .{1,30}效應|展示 .{1,30}邏輯|本案展示|案例展示" content
 
 ## 跟其他卡的關係
 
+- → [#245 原則層與操作層是兩份會漂移的副本](/report/principle-operationalization-drifts/)：本卡最常見的誤診來源。套用率低時「規則正確而自審沒抓到」（本卡）與「執行者讀到的規則是舊的」（#245）表徵一模一樣，而修法相反——前者要加強檢查，後者加再多輪審查也無效，因為 reviewer 拿的是同一份舊文件。歸因之前先打開執行者實際讀的那一份。
+
 - [#122 Cadence 同質化是模板的隱形維度](/report/cadence-homogenization-in-batch-writing/) — 解釋「為什麼同 batch 會有 systemic 違規」的成因機制（主題語意 attractor）。本卡補完：規範化動作本身無法解這個 attractor、需要主動 sweep 才能切斷。
 - [#124 Emergence-class 違規規則化不了、要 stage 內抽樣](/report/emergence-violations-need-in-stream-sampling/) — 解釋「什麼時候 enforcement 最有效」（batch 進度 10-20%）。本卡補一個更早的時機點：立規範當下立刻 sweep 同 batch、不必等 batch 進度推進。
 - [#114 Multi-pass review 的 frame 顆粒度盲點](/report/multi-pass-review-frame-granularity-blindspot/) — 解釋「為什麼同 reviewer 多輪抓不到不同東西」、提出 keyword bank / reader simulation / self-criticism 三機制。本卡是 #114 在「規範作者本人」這個 reviewer 角色的具體實例：作者剛寫完規範、仍需主動換 frame 才能自審。

@@ -65,6 +65,7 @@ slug: "judgment-rules-must-specify-their-trace"
 - [#232 自審 sweep 的偵測方法要對齊規則類型](../self-audit-detection-method-must-match-rule-type/)：#232 處理偵測方法看不見違規形態的情形，本卡處理的是更前面一層——違規形態根本沒有留下可被偵測的東西。#232 的修法是換偵測方法，本卡的修法是讓規則產出可偵測的痕跡。
 - [#217 審查要有斷言支撐 frame](../review-needs-claim-support-frame/)：#217 的判準空殼是停在維度清單、沒有條件到行動的映射；本卡的規則有完整映射，缺的是映射被執行過的證據。前者是規則沒寫完，後者是規則寫完了但不可證偽。
 - [#221 檢查規則的作用域要顯式列舉](../lint-scope-must-be-explicit-fact/)：兩者都讓「零 error」失去意義。#221 是規則沒涵蓋到那些檔案，本卡是規則涵蓋了但判定沒有留下東西可看——未納管目錄的零 error 與判定過後的零 finding，訊號相同。
+- [#245 原則層與操作層是兩份會漂移的副本](../principle-operationalization-drifts/)：本卡的上游。本卡管規則本身留不留得下痕跡，#245 管規則有沒有傳到執行者手上——痕跡條款設計得再好，執行者讀的是沒有那條的舊版就不生效，而本批實測到的正是這個組合。
 - [#153 Review 漏抓先分 design gap 與 execution gap](../review-miss-diagnose-design-vs-execution-gap/)：本卡揭露第三種——規則存在、也執行了，但執行的是規則允許的最省力形態。那條路徑是規則自己留的，因此加 frame（design 的修法）與催執行（execution 的修法）都不會收斂。
 
 ---
