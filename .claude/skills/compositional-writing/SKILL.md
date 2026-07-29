@@ -3,7 +3,7 @@ name: compositional-writing
 description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流."
 license: MIT
 metadata:
-  version: 0.44.0
+  version: 0.45.0
   category: writing-methodology
 ---
 
@@ -231,6 +231,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-20
+**Version**: 0.45.0 — 依 #245（原則層與操作層會漂移）規定的反向核對，從本 skill 出發逐條回查對應原則卡的現況，抓到兩處漂移並修正：微案例的挑選規則補「一兩個是上限而非配額、有兩個以上只寫一個要就地寫出漏選理由」（卡片 Round 1 就加了、skill 停在原版，導致實測九則微案例零套用）；出口盤點的單位從「三種」改成規則（卡片 Round 3 已改——判讀表的列、風險邊界的條、out-of-scope 每一項宣告都算，只有微案例末端要等第二階段）。兩處都是四輪十四個 reviewer 沒抓到的，因為沒有任何一輪被要求並排比對兩個 surface。
+
 **Version**: 0.44.0 — 多輪審查 Round 1 修正 `judgment-content-needs-scenarios` 的出口盤點段：原本主張「盤點要排在補範例之後、先盤會盤不出東西」，reviewer 用該段自己的定義推翻——三種盤點單位裡有兩種（判讀表每一列 / 風險邊界每一條）在任何範例存在之前就存在，只有第三種（微案例末端的止血句）依附於範例。改成**跨兩個階段各跑一次**：讓缺口現形的是換視角這個動作本身（既有維度都在驗已寫內容對不對），範例的貢獻是多出一類單位而非解鎖整個盤點。同批實測另證：七處缺口裡只有兩處依附微案例。
 
 **Version**: 0.43.0 — `judgment-content-needs-scenarios` 新增「出口盤點：補完範例之後才做得了」段，把補寫程序從三步（形態 / 觸發事件 / 微案例）延長成四步、補上閉環：補完範例後改用「讀者知道這是問題了他去哪解決」掃全文。順序不可顛倒——分析型句子不會產生「所以呢」這個追問，段落寫得越好讀者越認同問題、而認同的下一步是想知道怎麼解；沒有範例時讀者與作者都停在理解層，範例把讀者推到行動、而只有行動這一端會撞到出口不存在。檢查單位是每個被提出的問題（判讀表每一列 / 風險邊界每一條 / 微案例末端那句「補起來要……」）而非每篇文章——文末路由段回答不了段落層級的問題。四種狀態各有處置，其中「不存在且需完整推導」要明說它不存在（讀者找不到時的預設歸因是自己沒找到）。另補反模式：替換微案例前先掃第四拍，止血代價常是全篇唯一寫出止血路徑的地方、而替換理由只評估前三拍。從 7.28 / 7.29 補完範例後盤出七處缺出口的實測抽出。
