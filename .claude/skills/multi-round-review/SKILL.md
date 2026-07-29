@@ -3,7 +3,7 @@ name: multi-round-review
 description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
-  version: 1.22.0
+  version: 1.23.0
   category: writing-methodology
 ---
 
@@ -177,6 +177,20 @@ register 違規（重點後置、喊話、誇飾）的同源自審有上限（�
 
 關鍵紀律：agent 回報的 register 層「clean」不可當真。這套操作降低同源慣性、提高候選曝光率、但不取代人異源 —— 它的產出是「給人複核的清單」、不是「已複核乾淨」。
 
+## 判斷兩個維度該不該合併：隔離實驗
+
+frame 清單長到一定程度之後會反覆出現同一個問題——某兩個維度是不是同一件事、能不能合併省一輪。憑推理判會錯，因為判的人同時懂兩個維度，看不出哪些東西是靠另一個維度才看得見的。**用隔離實驗量它。**
+
+做法是同一批稿件派兩個 reviewer，各自被硬性限制在一個維度內：
+
+1. **限制要寫進 prompt 且是硬的**。實測用過的兩條——「你只能讀這一個檔案，不要開啟任何其他檔案、不要跟隨任何連結」與「不要對單篇提『這一段可以寫更好』的建議，重複回報視為無效」。限制不夠硬時 reviewer 會自己補足另一邊，實驗就失去分辨力。
+2. **兩邊都要對每個 finding 標記交叉可見性**：這個 finding 用另一個維度抓不抓得到（僅本維度可見 / 兩者皆可見 / 僅另一維度可見）。這一欄是實驗的主要產物，要在 prompt 裡明說它是必填。
+3. **讓其中一邊回答方法論問題**：你這一輪的 finding 各由哪一種動作產生、那些動作該不該算同一個 frame。執行過那個維度的 reviewer 比事後看報告的人更清楚它實際在做什麼。
+
+判讀結果看兩件事。**互斥率**——各自有多少項是對方結構上看不見的；兩邊都有相當比例時誰都不涵蓋誰，合併會漏掉一整類。**動作性質**——同一輪裡若混了時序動作（模擬帶著問題的讀者，只看得見他當下看得見的）與全域動作（離開讀者視角、對全站窮盡查證），那是兩個 frame 而非一個，而且要分開派：有檢查表的那個會擠掉沒有檢查表的（per [宣告的組合不等於執行的組合](references/principles/declared-composition-is-not-performed-composition.md)）。
+
+一次實測的數據當參考：冷讀 14 項有 7 項是路線讀者看不見的、走路線 8 項有 6 項是冷讀者看不見的，而路線那一輪自報 finding 約各半來自「走路線」與「比對宣告與內容」。結論是不新增一輪，而是把混在一起的兩個動作拆到既有的兩處——這個結論與實驗前的預期不同，那正是跑實驗的理由。
+
 ## 跟既有 skill 的關係
 
 - `case-first-module-workflow`（若專案已採用此 skill）的 Stage 4 含「agent team review」但偏 case-driven 單輪。Multi-round-review 補完跨輪 frame 切換維度、可以接在 case-first 的 Stage 5 之後或同時使用。
@@ -195,6 +209,8 @@ register 違規（重點後置、喊話、誇飾）的同源自審有上限（�
 - **把「多輪全過」當成「知識類型對」**：歷輪 finding 全部落在字句與結構層時、「三輪全過」的語意只是「已覆蓋層全過」——斷言支撐與知識類型層若沒有 frame 負責、錯的知識類型（披著教學結構的經驗談）會全數通過。finding 類型分佈本身是訊號：全部集中表面層 = 深層無人在看、下一輪排斷言支撐 frame（per [claim-support frame](references/principles/review-needs-claim-support-frame.md)）
 
 ---
+
+**Version**: 1.23.0 — 新增「判斷兩個維度該不該合併：隔離實驗」段。frame 清單變長之後會反覆出現「這兩個維度是不是同一件事、能不能合併省一輪」，而憑推理判會錯——判的人同時懂兩個維度，看不出哪些東西是靠另一個維度才看得見的。做法是同一批稿件派兩個 reviewer 各自被硬性限制在一個維度內（限制要寫進 prompt 且夠硬，否則 reviewer 會自己補足另一邊），兩邊都對每個 finding 標記交叉可見性，並讓其中一邊回答方法論問題（執行過的人比事後看報告的人更清楚那個維度實際在做什麼）。判讀看互斥率與動作性質（時序 vs 全域）。附一次實測的數據與「結論與實驗前的預期不同」這個結果本身。
 
 **Version**: 1.22.0 — 拆開「理解完整性」這個實測發現有效但混了兩件事的維度。Round 1-C 加**宣告核對**（掃「本站尚未寫 / 尚無對應章節 / 已列入 backlog / 不在本章範圍」逐條反證）——它與目的地承接是同一種動作（離開讀者視角、對全站窮盡查證），可機械化；錯誤的缺口宣告比沒有宣告更糟，因為它讓後續審查不再查那一項，實測抓過一篇新章三處寫「本站尚未寫」而該主題另有一整篇專章。Round 2-B 的走路線改成**必須指定讀者身分、起點與帶著的問題**（缺任一件就沒有判準、退化成逐篇讀），產出是逐跳表、沒有逐跳表的「已走過」不成立，並建議同批走三到四條不同起點的路線（斷點常只在某一條上出現）。兩者明令不可混在同一個 reviewer：走路線沒有檢查表、宣告核對有，並行時後者會靜默擠掉前者。隔離實驗數據：冷讀 14 項有 7 項是路線讀者看不見的，走路線 8 項有 6 項是冷讀者看不見的，兩個 frame 誰都不涵蓋誰。新增 `declared-composition-is-not-performed-composition` principle 卡。
 
