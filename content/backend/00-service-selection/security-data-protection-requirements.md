@@ -103,6 +103,8 @@ tags: ["backend", "service-selection"]
 
 這類需求的陷阱是把秘密寫進設定檔、log、測試資料或部署指令。秘密管理要同時包含保存位置、存取權限、輪替流程、撤銷流程、憑證續期流程與稽核紀錄。
 
+這一組需求還有兩個更前面的決定，它們在選型階段就要定、定錯之後上面這些流程都建立在錯的基礎上：這段資料該用加密、簽章還是不可逆轉換來保護（判讀主軸是金鑰放在哪裡，見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/)），以及一個 API 請求裡的「人」「呼叫方系統」「跨系統身分對應」該各自用哪一層憑證（見 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)）。使用者密碼的儲存屬於不可逆轉換那一類，參數定法與升級路徑見 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
+
 下一步可讀：[7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)。
 
 ## 【判讀】稽核追蹤要服務事後責任判斷

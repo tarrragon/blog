@@ -12,7 +12,7 @@ tags: ["backend", "security"]
 
 本章聚焦依賴金鑰的原語，判讀主軸是金鑰位置。金鑰交換與隨機數產生的判讀軸不是金鑰位置——前者看協商過程能否被中間人介入、後者看熵來源——因此不在本章範圍，它們各自的落點如下。
 
-金鑰交換在絕大多數服務裡不是獨立的選型決定，它包在傳輸層協定裡：用 TLS 就等於用了該版本協商出來的交換方式。判讀點因此落在協定版本本身——TLS 1.3 只留下具備前向保密的交換方式，1.2 仍可能協商到不具前向保密的組合，而那由伺服器的套件設定決定。版本與憑證信任鏈的判讀見 [7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/)。需要自己設計交換協議的情境（點對點加密、離線裝置配對）本站尚無專章。
+金鑰交換在絕大多數服務裡不是獨立的選型決定，它包在傳輸層協定裡：用 TLS 就等於用了該版本協商出來的交換方式。判讀點因此落在協定版本本身——TLS 1.3 只留下具備前向保密的交換方式（每次連線各自產生一次性的金鑰，日後就算長期私鑰外洩，先前錄下的流量仍然解不開），1.2 仍可能協商到不具這個性質的組合，而那由伺服器的套件設定決定。版本與憑證信任鏈的判讀見 [7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/)。需要自己設計交換協議的情境（點對點加密、離線裝置配對）本站尚無專章。
 
 隨機數產生的判讀只有一條：用作業系統或語言標準庫提供的密碼學安全來源，不用一般用途的亂數產生器，也不自己組合。這一條沒有取捨空間，因此不需要獨立章節。判別方式是查該語言的文件有沒有明寫這個函式是密碼學安全的——名稱線索只能當輔助訊號，它在約半數的主流語言上失效：PHP 的安全版是 `random_bytes()` 而不安全的是 `mt_rand()`（名稱反而更像專用）、Rust 的 `thread_rng()` 本身就是密碼學安全的、C# 的 `RandomNumberGenerator` 與 `System.Random` 從名稱也分不出來。
 
@@ -36,7 +36,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
-- **Mechanism**：問題節點表的 `[message-authentication]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
+- **Mechanism**：問題節點表「前置控制面」欄的連結進知識卡，看該控制的機制、邊界與適用條件。
 - **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
@@ -81,7 +81,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 [USAHERDS 2021 硬編碼憑證](../red-team/cases/edge-exposure/usaherds-cve-2021-44207-hardcoded-credential/) 展示這條路徑的實際後果：攻擊者從系統中檢索出可重用憑證後，沿固定認證路徑取得入口存取並長期維持。
 
-以下條件的推導來自可逆編碼在客戶端的實作情境：混淆要成為合理選擇，需要憑證權限受限、服務端另有授權把關、產生入口限制在受控環境、正式憑證由服務端核發而非客戶端產生。這四條是必要條件而非充分條件 —— 全部成立仍可能被三種情形否決：合規對憑證儲存有明文規範、載體會流通到組織外、或同一把金鑰的載體大量產出（統計還原因此可行，產生入口受控這個假設隨之失效）。
+以下條件的推導來自可逆編碼在客戶端的實作情境：混淆要成為合理選擇，需要憑證權限受限、服務端另有授權把關、產生入口限制在受控環境、正式憑證由服務端核發而非客戶端產生。這四條是必要條件而非充分條件 —— 全部成立仍可能被三種情形否決：合規對憑證儲存有明文規範、載體會流通到組織外、或同一把金鑰的載體大量產出——手上有夠多份用同一把金鑰編過的內容時，比對它們之間的規律就能反推金鑰，不必先取得產生入口，於是「產生入口受控」這個假設失效。
 
 把客戶端的編碼稱為 [縱深防禦](/backend/knowledge-cards/defense-in-depth/) 的外層要多一道手續：外層的正當性建立在內層獨立有效上，而內層有效與否要實測而非宣稱。四條的推導、各自的檢查方式與否決條件見 [XOR 可逆編碼的適用邊界](/work-log/xor_reversible_encoding_boundary/)。
 
@@ -106,7 +106,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 跨章議題交叉引用
 
-本章「簽章金鑰無隔離」是 [7.6 簽章金鑰跟長期信任根](../secrets-and-machine-credential-governance/#簽章金鑰跟長期信任根) 在選型層的入口；canonical SSoT 在 7.6，本條補「選型階段就該把簽發金鑰與一般 secret 分層」的前置訊號。
+本章「簽章金鑰無隔離」是 [7.6 簽章金鑰跟長期信任根](../secrets-and-machine-credential-governance/#簽章金鑰跟長期信任根) 在選型層的入口。該議題的完整處理在 7.6，本條只補「選型階段就該把簽發金鑰與一般 secret 分層」這個前置訊號。
 
 ## 驗證素材的對齊成本
 
@@ -147,6 +147,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 下一步路由
 
+- 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「密鑰與秘密」議題
 - 金鑰與秘密的生命週期治理：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 呼叫方身分的分層：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 可逆編碼在客戶端的適用邊界與配套：[XOR 可逆編碼的適用邊界](/work-log/xor_reversible_encoding_boundary/)

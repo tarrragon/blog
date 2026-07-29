@@ -30,7 +30,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 本章是 routing layer，沿兩條 chain 進入 implementation：
 
-- **Mechanism**：問題節點表的 `[token-revocation]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
+- **Mechanism**：問題節點表「前置控制面」欄的連結進知識卡，看該控制的機制、邊界與適用條件。
 - **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)。
 
 兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
@@ -99,7 +99,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 跨章議題交叉引用
 
-本章「第三方授權範圍過寬」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在 API 整合層的展現；canonical SSoT 在 7.2，本條補「授權當下的 scope 決定事件發生時的暴露面」這個前置訊號。
+本章「第三方授權範圍過寬」是 [7.2 供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導) 在 API 整合層的展現。該議題的完整處理在 7.2，本條只補「授權當下的 scope 決定事件發生時的暴露面」這個前置訊號。
 
 ## 混層之後失去什麼
 
@@ -149,6 +149,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 ## 下一步路由
 
+- 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「權限分級」與「密鑰與秘密」議題
 - 憑證機制選型：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
 - 人類身分與權限分級：[7.2 身分與授權邊界](../identity-access-boundary/)
 - 機器憑證生命週期：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
