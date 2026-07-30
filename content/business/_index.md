@@ -75,6 +75,12 @@ tags: ["business", "strategy"]
 
 如果事件無法產出可遷移框架（只是孤立特例）、放筆記裡即可、不要硬寫成案例。
 
+### 新財務分析：擴充 financial-analysis
+
+寫個別公司或產業的財務判讀時，先讀 [寫這個模組的文章時](/business/financial-analysis/#寫這個模組的文章時) 的六條。它們綁在寫下數字的動作上（百分比的分子分母、財務數字的年度、產業區間的樣本來源、指標之間的推論環節、估值的週期位置、合併數與個體數），因為這些標註對當下段落的完整度沒有貢獻、只有事後才需要，因此不主動提醒就不會發生。
+
+擴充的另一條路是 [方法論篇](/business/financial-analysis/#方法論篇)：某個分析維度反覆在案例裡出現、而現有方法論篇沒有一篇承擔它時，才抽新的一篇；單一案例的判讀留在案例本身。
+
 ## 跟其他模組的關係
 
 商業教材跟 backend 教材是兩個獨立 surface，互不直接依賴。Backend 教材關心的是「服務能力、操作責任、失敗代價」；商業教材關心的是「公司怎麼賺錢、客戶怎麼留下、估值怎麼成立」。技術選型決策（例如「要不要遷移到 Diskless Kafka」）會同時被兩邊影響—backend 看遷移成本與風險，business 看[整併週期](/business/knowledge-cards/consolidation-cycle/) 與[毛利結構](/business/knowledge-cards/gross-margin/)—但兩個敘事各自獨立，不互相替代。
