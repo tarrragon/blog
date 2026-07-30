@@ -42,21 +42,23 @@ weight: 7
 
 反例與規模對照入口： [7.C9 反例](/backend/07-security-data-protection/cases/failure-credential-rotation-without-scope/) / [7.C10 對照](/backend/07-security-data-protection/cases/contrast-identity-governance-by-scale/)。
 
-已經發生外洩、要判斷手上的密碼儲存撐不撐得住的讀者直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
+回退判讀寫法見 [0.C4 回退判讀寫法](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/#回退判讀寫法)，資安案例要優先保留身份作用域、憑證輪替、例外權限與控制面擴散條件。
 
 ## 從問題進入
 
-四條路線，各自的起點不同。
+進入點由手上的問題決定，各條路線的第一站與收尾的交接目標都不同。
 
 **要做登入功能**：從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步，它在 7.28 / 7.29 / 7.30 的上游，決定的是要不要走進那三章。自建加密碼那一條接 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)。
 
 **要自己定一個對外介面**：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層。判到系統層之後接 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/) 決定用哪一種，再分兩條分支：那把憑證怎麼交到對方手上走 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)，而請求是「某個系統代表某個特定的人」時走 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。
 
-純系統對系統的整合可以跳過 7.28 的前半：它的五格金鑰位置有四格是客戶端應用與端對端加密的形態，這一類只落在「在雙方服務端」那一格，直接從 7.29 或 7.34 起步即可，要判斷原語類別時再回頭。
+這條路線在純系統對系統的整合上可以跳過 7.28 的前半：它的五格金鑰位置有四格是客戶端應用與端對端加密的形態，這一類只落在「在雙方服務端」那一格，直接從 7.29 或 7.34 起步即可，要判斷原語類別時再回頭。
 
 **要接第三方的 API**：順序與上一條相反，因為機制多半由對方的文件決定。先讀 [7.34 的「先確認自己有沒有選擇權」](/backend/07-security-data-protection/machine-credential-mechanism-selection/#先確認自己有沒有選擇權) 確認沒得選、以及沒得選時自己這一側還缺哪一塊，再讀 [7.32](/backend/07-security-data-protection/machine-credential-issuance/) 處理 key 怎麼拿到手——key 由對方後台自助取得時 7.32 只取登記那一段，交付通道那幾條不適用。要接對方的 webhook 推送時接著讀 [7.35 簽章對接的驗證收斂](/backend/07-security-data-protection/signature-integration-verification/)。7.29 只在請求同時牽涉多個身分維度時才進入。
 
 **從對接失敗或原語誤用進入**：先在 [7.28](/backend/07-security-data-protection/cryptographic-primitive-selection/) 確認手上這個機制解的是哪一類問題（誤把訊息驗證當加密是最常見的一種），簽章對接本身對不起來的走 [7.35](/backend/07-security-data-protection/signature-integration-verification/)，撤銷或身分層次不對的走 [7.29](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。
+
+**外洩已經發生**：要判斷手上的密碼儲存撐不撐得住，直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。憑證與 token 的止血範圍走 [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的生命週期段——它回答的是能不能在時限內完成撤銷與替換。這件事要不要當事故啟動、算哪一級，判準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；對外要不要通知、什麼時候通知在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)。
 
 ## 從章節到實作的 chain
 
@@ -125,7 +127,11 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 ## 模組完成狀態
 
-主章目前已形成基礎問題節點、藍隊操作循環、跨模組延伸章節與推演素材庫，並新增 `7.27` 的 credential rotation 實作示範、`7.28` 的密碼學原語選型、`7.29` 的 API 認證信任邊界分層、`7.30` 的使用者密碼儲存（簡版）、`7.31` 的認證方式選型、`7.32` 的機器憑證配發、`7.33` 的委任型憑證選型、`7.34` 的機制選型與 `7.35` 的簽章對接收斂。7.32 到 7.35 這一組補的是 7.29 分層判讀完成之後的路徑：先選機制（7.34）、再處理交付（7.32）與代理關係（7.33），選定共享密鑰簽章的接著走對接收斂（7.35）。7.35 由 7.28 抽出——那兩節的前提是機制已選定且在接 webhook，與「金鑰放哪一格」不同軸。章節列表末段的五篇 LLM 專題屬延伸章節帶：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。資安章節進入穩定維護狀態。
+主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.35）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做，以及機器憑證的機制、交付與代理關係。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
+
+素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。
+
+主章的覆蓋仍有缺口，清單見下方 Backlog。進入穩定維護狀態的條件是那些缺口收斂到只剩 vendor 層與案例層——其中讀者路線已經會撞到的是既有整合的盤點形態、發行方自助發放憑證的流程與外部身分來源的生命週期，這三項的前置條件都已備齊。
 
 ## Backlog
 
@@ -146,7 +152,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 7.35「驗證素材定義不一致」的微案例（後果不直觀而該節寫的是成本結構、是分析不是場面；隨 7.28 拆章一併移過來、7.28 那一半已於補寫時完成）                                                                                                                                                 | 案例   | 該形態的案例庫新增任一則（與微案例第三拍那一列同缺口） | 小          |
 | 多方分持的金鑰形態（持有者不是單一方，7.28 的金鑰位置主軸涵蓋不到；與端對端加密備援的多方分持選項是同一個機制的兩個用途）                                                                                                                                                               | 主章   | 無（7.28 已給最小判準）                                | 中          |
 | 端對端加密的金鑰備援設計（復原碼 / 服務端包裝副本 / 多方分持各自把金鑰位置移到哪一格）                                                                                                                                                                                                  | 主章   | 無（7.28 已給三種形態與最小判準）                      | 中          |
-| 四段 meta 開場的 register 整理（threat scope 樣板句中英混雜且對讀者祈使、「從本章到實作」向後引用尚未出現的表欄、交接路由欄的裸模組編號無對照），以及形態段「N 個節點裡 / 其餘四個」這種分母在表、被減數在另一段的計數（7.2 / 7.3 / 7.4 / 7.5 仍有；7.28 / 7.34 / 7.35 已改成不帶數字） | 主章   | 無（本模組多輪審查指出，18 章共用同一組）              | 中          |
+| 四段 meta 開場的 register 整理（threat scope 樣板句中英混雜且對讀者祈使、「從本章到實作」向後引用尚未出現的表欄、交接路由欄的裸模組編號無對照），以及形態段「N 個節點裡 / 其餘四個」這種分母在表、被減數在另一段的計數（7.2 / 7.3 / 7.4 / 7.5 仍有；7.28 / 7.34 / 7.35 已改成不帶數字） | 主章   | 無（本模組多輪審查指出、為主章共用樣板）               | 中          |
 | 7.30 密碼儲存的完整版（演算法內部機制比較、大規模帳號庫遷移策略、合規演算法清單對照、pepper 的完整處理與輪替限制）                                                                                                                                                                      | 主章   | 無（簡版已上線、缺的是深度）                           | 4 項（中）  |
 | 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑）                                                                                                                                                                                                                      | 主章   | 無（7.2 的代理操作段已定義路由需求）                   | 中          |
 | 51 個 vendor 服務頁的 deep article 與 migration playbook                                                                                                                                                                                                                                | vendor | 無                                                     | 51 頁（大） |
@@ -162,19 +168,15 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 3    | 控制模式卡     | 把重複防守做法抽成可搬運欄位與驗證模式            | `7.B1` + `7.BM4`  |
 | 4    | 事故回寫路由   | 把演練結果接回產品、架構、runbook 與 release gate | `7.24` + `7.18`   |
 
-推演資產化的完成條件是讓讀者能從一個事故壓力出發，依序找到案例卡、情境卡、控制模式與回寫章節。這條路徑完成後，資安章節即可進入穩定維護狀態。
+推演資產化的完成條件是讓讀者能從一個事故壓力出發，依序找到案例卡、情境卡、控制模式與回寫章節。
 
-### 待補主題
+### 本模組的立項判定
 
-本段說明「憑證在請求中怎麼帶」與「7.30 密碼儲存的完整版」這兩項的判定依據與寫作角度，項目本身以上表為準。判定用的是讀者會拿去搜尋的問句落不落得到一篇文章上：「cookie 要設哪些屬性」「CSRF 怎麼防」在全站仍然只能在其他章節的段落裡零星碰到。兩者的落點不同：憑證怎麼帶接在 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 之後、該是獨立一篇；密碼儲存的深度接在 7.30 之後。
+主章項目的判定用的是讀者會拿去搜尋的問句落不落得到一篇聚焦的文章上，而不是主題有沒有被提到過。「cookie 要設哪些屬性」「CSRF 怎麼防」「這把 key 上次換是什麼時候」這幾類問句目前在全站只能在其他章節的段落裡零星碰到，落不到一篇上，因此各自成為表中一列。
 
-憑證在請求中怎麼帶缺的是資安視角的判讀（cookie 屬性怎麼設、CSRF 怎麼防）。狀態放伺服器還是放 token 那一半已經有落點——[Session 處理](/operations/02-horizontal-scaling/session-handling/) 從水平擴展的角度寫完了三種途徑與撤銷成本。這一項接在 [7.31](/backend/07-security-data-protection/authentication-approach-selection/) 的身分來源決定之後。密碼儲存的簡版已在 [7.30](/backend/07-security-data-protection/password-storage-and-work-factor/)，剩下的是深度：演算法內部機制比較、大規模帳號庫的遷移策略、合規演算法清單對照、pepper 的完整處理。
+判定時要分開「有落點」與「有這個角度的落點」。狀態放伺服器還是放 token 已經有落點——[Session 處理](/operations/02-horizontal-scaling/session-handling/) 從水平擴展的角度寫完了三種途徑與撤銷成本；缺的是同一個機制的資安判讀（cookie 屬性、跨站請求偽造防護），這一層在既有落點裡不承擔。表中多列的括號註記記的就是這個分界，補的時候要沿著各自的判讀軸走，不共用 7.28 的金鑰位置主軸。
 
-兩者的共同特徵是入門讀者密度高、而本模組既有章節都預設讀者已經跨過這一層。補的時候要注意它們的判讀軸各自獨立：前者是撤銷粒度與狀態成本的取捨，後者是計算成本與參數老化的取捨，不共用 7.28 的金鑰位置主軸。
-
-## 本輪輸出
-
-本輪已完成主章的問題節點、藍隊循環與延伸章節骨架，並把設計輸入、放行判準、可靠性共同控制面、事故回寫與成熟度節奏接回後端實作路由。
+憑證在請求中怎麼帶與密碼儲存的完整版這兩列的入門讀者密度高於其餘項目，因為既有章節都預設讀者已經跨過那一層。這是它們排在 vendor 層與案例層之前的理由。
 
 ## 跨分類引用
 
