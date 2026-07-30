@@ -31,6 +31,11 @@ func Check(roots []string, cfg rules.Config) ([]report.Violation, error) {
 			out = append(out, checkL4K4Structure(g, root, cfg.Cards.K4ConceptPositionTitle)...)
 		}
 	}
+	if cfg.Cards.CheckIndexRegistration {
+		for _, root := range cfg.Cards.CardsRoots {
+			out = append(out, checkL6IndexRegistration(g, root)...)
+		}
+	}
 	if cfg.Cards.CheckSectionWeightConsistency {
 		out = append(out, checkL5SectionWeightConsistency(g, cfg.Cards.WeightExemptSections)...)
 	}

@@ -375,6 +375,8 @@ weight: -1
 | [Step-Up Authentication](/backend/knowledge-cards/step-up-authentication/)                       | 高風險操作如何動態升級認證強度       | MFA fatigue、session、passkey    |
 | [Authentication](/backend/knowledge-cards/authentication/)                                       | 系統如何確認呼叫者身份               | login、API key、mTLS             |
 | [Credential](/backend/knowledge-cards/credential/)                                               | 身分與系統存取用秘密如何保存與輪替   | API key、password、private key   |
+| [Workload Identity](/backend/knowledge-cards/workload-identity/)                                 | 機器身分如何與人類身分分開治理       | Kubernetes、CI/CD、跨雲整合      |
+| [Token Revocation](/backend/knowledge-cards/token-revocation/)                                   | 既有 token 如何在事件節奏內失效      | 事件收斂、短期 token、introspect |
 | [IAM](/backend/knowledge-cards/iam/)                                                             | 身分與權限如何集中治理               | SSO、roles、policy               |
 | [BOLA / IDOR](/backend/knowledge-cards/bola-idor/)                                               | 使用者如何被限制只能存取授權物件     | API、resource ID                 |
 | [BOPLA](/backend/knowledge-cards/bopla/)                                                         | 欄位層級如何授權讀寫                 | DTO、field policy                |

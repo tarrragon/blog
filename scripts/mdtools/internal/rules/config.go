@@ -83,6 +83,11 @@ type CardRules struct {
 	CheckLinkValidity      bool   // L1
 	CheckOrphans           bool   // L2
 	CheckK4StructureLinks  bool   // L4
+	// L6: every card must be listed in its own directory index. L2 only
+	// asks whether a teaching article links the card, and it discounts
+	// card-sourced links — so a card can pass L2 while staying invisible
+	// to anyone browsing the card list.
+	CheckIndexRegistration bool
 	// L5: every Hugo section must be weight all-or-nothing, because a mix
 	// silently sinks the unweighted pages below the weighted ones.
 	CheckSectionWeightConsistency bool
@@ -168,6 +173,7 @@ func Default() Config {
 			CheckLinkValidity:             true,
 			CheckOrphans:                  true,
 			CheckK4StructureLinks:         true,
+			CheckIndexRegistration:        true,
 			CheckSectionWeightConsistency: true,
 			WeightExemptSections: []string{
 				// modern-cli-replacements is the section's overview article

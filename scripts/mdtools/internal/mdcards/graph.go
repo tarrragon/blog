@@ -8,6 +8,9 @@
 //   - L2 orphan detection: every card has ≥ 1 inbound edge from non-card content.
 //   - L4 K4 structure: a card's first paragraph and "概念位置" section
 //                      each contain ≥ 1 adjacent-card link.
+//   - L6 index registration: every card is listed in its own directory
+//                      index, so it is reachable by browsing and not
+//                      only by following a link from an article.
 package mdcards
 
 import (

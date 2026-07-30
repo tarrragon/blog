@@ -15,7 +15,7 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 - **表格管線風格混用**（MD060），同一張表格有的有空白、有的沒有。
 - **平行模板章節重複標題**（MD024），例如多案例文章的 `### 弱點環節` 出現 13 次。
 - **顯示文字與實際 href 不一致**（反釣魚）— 不在標準 markdownlint 規則內，但紅隊教材脈絡下必要。
-- **卡片雙向完整性**（orphan 卡片、斷連結、K4 合規）— 跨文件檢查，現成工具做不到。
+- **卡片雙向完整性**（orphan 卡片、斷連結、K4 合規、目錄登記）— 跨文件檢查，現成工具做不到。
 - **Front matter schema** — Hugo 依賴 YAML front matter 提供 title / date / weight 等欄位，缺失會破壞列表渲染、排序、SEO。
 
 **基礎格式層級**（容易被忽略但影響 parser 穩定性或語義結構）：
@@ -40,7 +40,7 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 | ------------------------------ | -------------------------------------------------------------- | ------------ | ------------------------------------------------- |
 | `mdtools fmt [--fix\|--check]` | 格式正規化（URL、表格、空行、列表間距、trailing newline）      | `--fix` 會改 | pre-commit（`--fix`）、pre-push / CI（`--check`） |
 | `mdtools lint`                 | 結構檢查（標題、反釣魚、code block 語言、front matter schema） | 否           | pre-commit、pre-push、CI                          |
-| `mdtools cards`                | 跨文件完整性（連結、orphan、K4）                               | 否           | pre-commit、pre-push、CI                          |
+| `mdtools cards`                | 跨文件完整性（連結、orphan、K4、目錄登記）                     | 否           | pre-commit、pre-push、CI                          |
 
 工具原始碼在 `scripts/mdtools/`，binary build 到 `bin/mdtools`（已 gitignore）。
 
@@ -394,13 +394,22 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 
 作用範圍：`content/**/*.md`，重點關注 `content/backend/knowledge-cards/`。
 
-| 層級                    | 規則                                                                                              | 實作                                        |
-| ----------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| **L1 連結有效性**       | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案 |
-| **L2 卡片 orphan 偵測** | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片      |
-| **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數         |
+| 層級                    | 規則                                                                                              | 實作                                         |
+| ----------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| **L1 連結有效性**       | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案  |
+| **L2 卡片 orphan 偵測** | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片       |
+| **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數          |
+| **L6 卡片目錄登記**     | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge |
 
 L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字典（`.codex/briefs/knowledge-web-expansion.md`）啟動後再開。
+
+### L2 與 L6 問的是兩個不同問題
+
+L2 問「有沒有教學正文連這張卡」，而它刻意不計來源本身是卡片的連結——目錄頁 `_index.md` 就在 cards root 之下，所以它的連結不算 inbound edge。於是一張卡可以完全滿足 L2（好幾章都引用它），同時從來沒出現在讀者瀏覽的清單上。**連得到與列得到是兩個性質**，L6 之前只有前者有規則。
+
+缺口會累積是因為登記動作沒有觸發器：寫章節時建卡的動機明確（那篇要連它），而回目錄補一列不改變那篇的完成度。L6 上線時全站有 101 張未登記卡片（backend 78、infra 14、monitoring 8、llm 1），建立時間橫跨數個月、分布在每個主題段，證實它是逐批累積而非某一次遺漏。
+
+判定是機械的（檔案存在、索引沒連），因此警告層即可，不需要語意豁免。卡片經過取代而該刪除時，正確動作是刪檔而非留著不登記——訊息把這條寫在修法建議裡。
 
 ### 已知未涵蓋：連結的 fragment
 
@@ -454,7 +463,7 @@ git config core.hooksPath .githooks
 - 寫作時優先遵循本規範。pre-commit / pre-push 報錯時讀訊息修正；**不可用 `git commit --no-verify` 或跳過 hook 的方式繞過檢查**。
 - 新增案例平行章節（例如多個「工具評測」「事件時序」）時不需登記到任何白名單 — siblings_only 自動判讀。
 - 新增 URL 時優先採用裸 URL 轉換段的分級形式；若顯示文字含 TLD 字樣，確認 domain 與 href 完全一致。
-- 新增卡片時確認首段與「概念位置」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（卡片嚴格層）。
+- 新增卡片時確認首段與「概念位置」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（卡片嚴格層）；在該 cards root 的 `_index.md` 補一列（L6 要求）——這一步的動機不來自正在寫的那篇，最容易漏。
 - 程式碼區塊養成習慣先寫語言標示再填內容；純文字輸出用 `text`。
 
 ---
