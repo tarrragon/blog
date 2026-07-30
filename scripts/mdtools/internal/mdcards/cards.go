@@ -31,6 +31,9 @@ func Check(roots []string, cfg rules.Config) ([]report.Violation, error) {
 			out = append(out, checkL4K4Structure(g, root, cfg.Cards.K4ConceptPositionTitle)...)
 		}
 	}
+	if cfg.Cards.CheckFragments {
+		out = append(out, checkL7Fragments(g)...)
+	}
 	if cfg.Cards.CheckIndexRegistration {
 		for _, root := range cfg.Cards.CardsRoots {
 			out = append(out, checkL6IndexRegistration(g, root)...)

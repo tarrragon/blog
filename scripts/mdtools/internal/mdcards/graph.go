@@ -31,6 +31,7 @@ type Edge struct {
 	SourceLine  int    // 1-based line number of the link (0 if unknown)
 	Destination string // raw link destination as written in markdown
 	Target      string // resolved target path (no .md suffix; may or may not exist)
+	Fragment    string // `#`-suffix without the hash ("" when the link has none)
 	DisplayText string // link display text (for anti-phishing and debug)
 }
 
@@ -100,18 +101,26 @@ func (g *Graph) extractEdges(fn FileNode) {
 			return ast.WalkContinue, nil
 		}
 		dest := string(link.Destination)
-		if isExternalOrAnchor(dest) {
+		if isExternal(dest) {
 			return ast.WalkContinue, nil
 		}
+		fragment := fragmentOf(dest)
 		target := resolveTarget(fn.Path, dest)
 		if target == "" {
-			return ast.WalkContinue, nil
+			// A pure `#anchor` names a heading on this very page. Point the
+			// edge at the source's own canonical path so the fragment check
+			// can find the headings and L1 still sees a target that exists.
+			if fragment == "" {
+				return ast.WalkContinue, nil
+			}
+			target = ownTarget(fn.Path)
 		}
 		edge := Edge{
 			SourcePath:  fn.Path,
 			SourceLine:  nodeLine(n, fn.Src),
 			Destination: dest,
 			Target:      target,
+			Fragment:    fragment,
 			DisplayText: string(link.Text(fn.Src)),
 		}
 		g.Edges = append(g.Edges, edge)
@@ -122,16 +131,14 @@ func (g *Graph) extractEdges(fn FileNode) {
 	})
 }
 
-// isExternalOrAnchor returns true when the link destination points
-// outside the filesystem (http, https, mailto) or is a pure anchor.
-// Protocol-relative `//example.com` is also external; single-leading-slash
-// paths like `/backend/foo/` are content-root absolute and handled by
-// resolveTarget.
-func isExternalOrAnchor(dest string) bool {
+// isExternal returns true when the link destination points outside the
+// filesystem (http, https, mailto). Protocol-relative `//example.com` is
+// also external; single-leading-slash paths like `/backend/foo/` are
+// content-root absolute and handled by resolveTarget. A pure `#anchor` is
+// deliberately not external — it names a heading on the same page, which
+// the fragment check has to see.
+func isExternal(dest string) bool {
 	if dest == "" {
-		return true
-	}
-	if strings.HasPrefix(dest, "#") {
 		return true
 	}
 	if strings.HasPrefix(dest, "//") {
@@ -165,6 +172,26 @@ func isExternalOrAnchor(dest string) bool {
 //     are resolved from that URL directory.
 //   - Section page `_index.md` sits at URL `<dir>/`; relatives are
 //     resolved from `<dir>` directly.
+// fragmentOf returns the part after the first `#`, without the hash.
+func fragmentOf(dest string) string {
+	if idx := strings.Index(dest, "#"); idx >= 0 {
+		return dest[idx+1:]
+	}
+	return ""
+}
+
+// ownTarget returns the canonical target path of the file itself, which is
+// what a same-page `#anchor` resolves to. Content page `dir/foo.md` sits at
+// `dir/foo`; section page `dir/_index.md` sits at `dir`.
+func ownTarget(sourcePath string) string {
+	dir := filepath.Dir(sourcePath)
+	base := filepath.Base(sourcePath)
+	if base == "_index.md" {
+		return filepath.Clean(dir)
+	}
+	return filepath.Clean(filepath.Join(dir, strings.TrimSuffix(base, ".md")))
+}
+
 func resolveTarget(sourcePath, dest string) string {
 	if idx := strings.Index(dest, "#"); idx >= 0 {
 		dest = dest[:idx]

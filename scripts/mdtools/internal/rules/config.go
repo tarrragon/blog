@@ -83,6 +83,10 @@ type CardRules struct {
 	CheckLinkValidity      bool   // L1
 	CheckOrphans           bool   // L2
 	CheckK4StructureLinks  bool   // L4
+	// L7: a link's `#fragment` must name a heading that exists on the
+	// target page. L1 stops at the file, so a renamed heading breaks every
+	// link pointing at it without anything looking wrong.
+	CheckFragments bool
 	// L6: every card must be listed in its own directory index. L2 only
 	// asks whether a teaching article links the card, and it discounts
 	// card-sourced links — so a card can pass L2 while staying invisible
@@ -173,6 +177,7 @@ func Default() Config {
 			CheckLinkValidity:             true,
 			CheckOrphans:                  true,
 			CheckK4StructureLinks:         true,
+			CheckFragments:                true,
 			CheckIndexRegistration:        true,
 			CheckSectionWeightConsistency: true,
 			WeightExemptSections: []string{

@@ -130,9 +130,11 @@ func subtreeHasCardLink(node ast.Node, sourcePath, cardsRoot string) bool {
 			return ast.WalkContinue, nil
 		}
 		dest := string(link.Destination)
-		if isExternalOrAnchor(dest) {
+		if isExternal(dest) {
 			return ast.WalkContinue, nil
 		}
+		// A pure `#anchor` resolves to "" here and is skipped: pointing at a
+		// heading on this same card is not an adjacent-card link.
 		target := resolveTarget(sourcePath, dest)
 		if target == "" {
 			return ast.WalkContinue, nil

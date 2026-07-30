@@ -15,7 +15,7 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 - **表格管線風格混用**（MD060），同一張表格有的有空白、有的沒有。
 - **平行模板章節重複標題**（MD024），例如多案例文章的 `### 弱點環節` 出現 13 次。
 - **顯示文字與實際 href 不一致**（反釣魚）— 不在標準 markdownlint 規則內，但紅隊教材脈絡下必要。
-- **卡片雙向完整性**（orphan 卡片、斷連結、K4 合規、目錄登記）— 跨文件檢查，現成工具做不到。
+- **卡片雙向完整性**（orphan 卡片、斷連結、斷 anchor、K4 合規、目錄登記）— 跨文件檢查，現成工具做不到。
 - **Front matter schema** — Hugo 依賴 YAML front matter 提供 title / date / weight 等欄位，缺失會破壞列表渲染、排序、SEO。
 
 **基礎格式層級**（容易被忽略但影響 parser 穩定性或語義結構）：
@@ -40,7 +40,7 @@ tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
 | ------------------------------ | -------------------------------------------------------------- | ------------ | ------------------------------------------------- |
 | `mdtools fmt [--fix\|--check]` | 格式正規化（URL、表格、空行、列表間距、trailing newline）      | `--fix` 會改 | pre-commit（`--fix`）、pre-push / CI（`--check`） |
 | `mdtools lint`                 | 結構檢查（標題、反釣魚、code block 語言、front matter schema） | 否           | pre-commit、pre-push、CI                          |
-| `mdtools cards`                | 跨文件完整性（連結、orphan、K4、目錄登記）                     | 否           | pre-commit、pre-push、CI                          |
+| `mdtools cards`                | 跨文件完整性（連結、fragment、orphan、K4、目錄登記）           | 否           | pre-commit、pre-push、CI                          |
 
 工具原始碼在 `scripts/mdtools/`，binary build 到 `bin/mdtools`（已 gitignore）。
 
@@ -394,12 +394,13 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 
 作用範圍：`content/**/*.md`，重點關注 `content/backend/knowledge-cards/`。
 
-| 層級                    | 規則                                                                                              | 實作                                         |
-| ----------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| **L1 連結有效性**       | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案  |
-| **L2 卡片 orphan 偵測** | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片       |
-| **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數          |
-| **L6 卡片目錄登記**     | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge |
+| 層級                    | 規則                                                                                              | 實作                                           |
+| ----------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **L1 連結有效性**       | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案    |
+| **L2 卡片 orphan 偵測** | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片         |
+| **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數            |
+| **L6 卡片目錄登記**     | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge   |
+| **L7 Fragment 有效性**  | 連結的 `#fragment` 必須命名目標頁上存在的標題                                                     | 建每頁 heading ID 索引 → 比對 edge 的 fragment |
 
 L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字典（`.codex/briefs/knowledge-web-expansion.md`）啟動後再開。
 
@@ -411,15 +412,17 @@ L2 問「有沒有教學正文連這張卡」，而它刻意不計來源本身�
 
 判定是機械的（檔案存在、索引沒連），因此警告層即可，不需要語意豁免。卡片經過取代而該刪除時，正確動作是刪檔而非留著不登記——訊息把這條寫在修法建議裡。
 
-### 已知未涵蓋：連結的 fragment
+### L7 驗 fragment、L1 只驗檔案
 
-L1 只驗目標檔案存在，**不驗 `#anchor` 部分**——`resolveTarget` 在解析時把 `#` 之後截掉，純 `#anchor` 的同頁連結則被當成外部連結跳過。後果是標題一改，指向它的跨檔 anchor 全部靜默失效：連結仍然點得開、頁面仍然存在，讀者落在頁首而不知道自己該看哪一段。這是 [#155](/report/reference-by-semantic-title-not-number/) 說的「misdirected 比 dangling 難偵測」在 fragment 層的形態，而它是目前唯一沒有安全網的引用形態（檔案層有 L1、卡片層有 L2）。
+L1 的責任停在目標檔案存在，`resolveTarget` 解析時把 `#` 之後截掉。這個分工留下的缺口是：標題一改，指向它的跨檔 anchor 全部靜默失效——連結仍然點得開、頁面仍然存在，讀者落在頁首而不知道自己該看哪一段。這是 [#155](/report/reference-by-semantic-title-not-number/) 說的「misdirected 比 dangling 難偵測」在 fragment 層的形態：dangling 有 404 當訊號，misdirected 兩端看起來都正常。
 
-實測（hugo 建最小站驗證）確認的 anchorize 規則：保留 unicode 字母、數字與 `_`，空白與 `-` 轉連字號，其餘一律丟棄且**不留連字號**——全形括號、冒號、頓號、引號都適用，這也是手算 anchor 最常算錯的地方。ID 從渲染後的文字產生，標題內的 markdown 連結只取顯示文字。同頁重複標題加 `-1` / `-2` 後綴。
+L7 補上這一層，判定是「fragment 命名的 ID 在目標頁的 heading ID 集合裡」。上線時全站 302 條帶 fragment 的連結全部命中，因此**採 error 層而非警告層**——存量為零時，之後報出來的每一條都是新斷的，放它進 main 正是這條規則要擋的事。
 
-補這條規則的成本不高，基礎設施已經在位：`mdcards` 已經 walk 全站 AST 也已經 resolve 每條連結的目標檔，要加的是 Edge 的 fragment 欄位、每個檔案的 heading ID 索引（goldmark 的 `heading.Text(src)` 給的正是渲染後文字）、以及一條比對規則。走 AST 而非 regex 還能自動排除程式碼圍籬裡的示範連結。這條屬跨檔規則，放 `mdcards` 不放 `mdlint`。
+heading ID 用 Hugo 的 github 型 auto-ID 演算法計算，規則（hugo 建最小站實測確認）是保留 unicode 字母、數字與 `_` 並轉小寫，空白與既有連字號轉 `-`，其餘一律丟棄且**不留連字號**——全形括號、冒號、頓號、引號都適用，這也是手算 anchor 最常算錯的地方。ID 從渲染後的文字產生，所以標題內的 markdown 連結只取顯示文字、行內 code 只取內容。同頁重複標題依文件順序加 `-1` / `-2` 後綴。標題寫 `{#custom-id}` 時該 ID 一併登記。
 
-在它落地之前，減少暴露的做法是**標題不內嵌數量**（[#156](/report/name-collections-by-role-not-count/)）：實際斷掉的案例裡，有一條的肇因就是標題從「33 個 vendor」改成「51 個 vendor」。注意 `mdtools lint` 的 REF2 只認「數字 + 支柱 / 原則 / 步驟 / 階段 / 面向 / 心法」這組量詞，「三份來源」「三同步」「51 個 vendor」都在它的視野之外。
+程式碼圍籬裡的示範連結自動豁免，因為它們不是 Link node——走 AST 而非 regex 換到的性質。已知邊界是**不屬於任何標題的 anchor**（腳註反向連結、theme 注入的 ID）：repo 目前沒有這類用法，出現時的修法是讓這條規則認識那個產生器，不是放寬規則。
+
+減少暴露的寫作面做法仍然有效：**標題不內嵌數量**（[#156](/report/name-collections-by-role-not-count/)）。實際斷掉的案例裡有一條的肇因就是標題從「33 個 vendor」改成「51 個 vendor」；現在 L7 會攔下它，而標題本來就不該把數量寫死。注意 `mdtools lint` 的 REF2 只認「數字 + 支柱 / 原則 / 步驟 / 階段 / 面向 / 心法」這組量詞，「三份來源」「三同步」「51 個 vendor」都在它的視野之外。
 
 ### 為什麼要做跨文件檢查
 
@@ -465,6 +468,7 @@ git config core.hooksPath .githooks
 - 新增 URL 時優先採用裸 URL 轉換段的分級形式；若顯示文字含 TLD 字樣，確認 domain 與 href 完全一致。
 - 新增卡片時確認首段與「概念位置」段各有至少一個相鄰卡片連結（L4 要求）；確認 front matter 含 `title` / `date` / `description` / `weight`（卡片嚴格層）；在該 cards root 的 `_index.md` 補一列（L6 要求）——這一步的動機不來自正在寫的那篇，最容易漏。
 - 程式碼區塊養成習慣先寫語言標示再填內容；純文字輸出用 `text`。
+- 改標題文字時，先查有沒有連結指向它的舊 anchor（`rg '#<舊 anchor>' content/`）。L7 會在 commit 前擋下漏改的那些，而先查一次比被擋下來再回頭找便宜。
 
 ---
 
