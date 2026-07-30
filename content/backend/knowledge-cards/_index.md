@@ -20,109 +20,148 @@ weight: -1
 
 ## 資料與一致性
 
-| 卡片                                                                       | 核心問題                               | 常見出現位置                         |
-| -------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------ |
-| [Database](/backend/knowledge-cards/database/)                             | 正式狀態如何保存、查詢與保護           | source of truth、transaction、backup |
-| [Data Repair](/backend/knowledge-cards/data-repair/)                       | 已確認的資料差異如何安全修復           | reconciliation、dry-run、audit       |
-| [Source of Truth](/backend/knowledge-cards/source-of-truth/)               | 哪個位置承擔正式資料判斷               | database、cache、search index        |
-| [Search Index](/backend/knowledge-cards/search-index/)                     | 搜尋體驗如何有獨立讀取模型             | full-text、filter、ranking           |
-| [Full-Text Search](/backend/knowledge-cards/full-text-search/)             | 文本檢索如何支援關鍵字與相關性排序     | search、documents、catalog           |
-| [Facet Query](/backend/knowledge-cards/facet-query/)                       | 搜尋結果如何提供可篩選聚合維度         | filter、aggregation、UX              |
-| [Object Storage](/backend/knowledge-cards/object-storage/)                 | 大型檔案如何保存與控管生命週期         | upload、export、backup               |
-| [Event Log](/backend/knowledge-cards/event-log/)                           | 歷史事件如何保存與重播                 | replay、audit、projection            |
-| [Read Model](/backend/knowledge-cards/read-model/)                         | 查詢需求如何有獨立讀取資料形狀         | projection、query model              |
-| [Projection](/backend/knowledge-cards/projection/)                         | 來源資料如何轉換成查詢視圖             | events、materialized view            |
-| [資料生命週期](/backend/knowledge-cards/data-lifecycle/)                   | 資料如何建立、保留、封存與刪除         | retention、audit、export             |
-| [資料不一致](/backend/knowledge-cards/data-inconsistency/)                 | 多份資料暫時不同步時如何辨識與修復     | cache、replica、eventual consistency |
-| [Transaction](/backend/knowledge-cards/transaction/)                       | 一組資料變更如何一起成功或一起回復     | database、commit、rollback           |
-| [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)     | 哪些變更要一起成功或回復               | database、unit of work               |
-| [Migration](/backend/knowledge-cards/migration/)                           | 系統如何從舊狀態受控移到新狀態         | release、cutover、backfill           |
-| [Schema Migration](/backend/knowledge-cards/schema-migration/)             | 資料庫結構如何隨版本安全演進           | release、rollback、migration         |
-| [Expand / Contract](/backend/knowledge-cards/expand-contract/)             | 先擴充相容面再收斂舊路徑的遷移做法     | schema migration、online migration   |
-| [Migration Gate](/backend/knowledge-cards/migration-gate/)                 | 遷移流程如何決定能否進入下一階段       | backfill、correctness check          |
-| [Mapping Table](/backend/knowledge-cards/mapping-table/)                   | 舊資料語意如何明確對應到新語意         | migration、backfill、validation      |
-| [Validation Query](/backend/knowledge-cards/validation-query/)             | 查詢如何證明資料語意是否一致           | migration、evidence package          |
-| [Read Compatibility](/backend/knowledge-cards/read-compatibility/)         | 讀取路徑如何同時支援新舊語意           | expand、cutover、fallback read       |
-| [Fallback Read](/backend/knowledge-cards/fallback-read/)                   | 切換失敗時如何暫時回到舊讀取語意       | cutover、rollback window             |
-| [Cutover Window](/backend/knowledge-cards/cutover-window/)                 | 正式切換如何被時間窗與訊號框住         | cutover、release gate                |
-| [Release Gate](/backend/knowledge-cards/release-gate/)                     | 變更如何在正式釋出前通過或阻擋         | error budget、migration、review      |
-| [Gate Decision](/backend/knowledge-cards/gate-decision/)                   | gate 如何把證據轉成下一步決策          | release gate、rollout                |
-| [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)         | 回滾流程如何在正式事故前演練           | rollback strategy、migration         |
-| [Rollback Window](/backend/knowledge-cards/rollback-window/)               | 變更後還能用哪種方式回退或改路線       | cutover、rollback strategy           |
-| [Rollback Condition](/backend/knowledge-cards/rollback-condition/)         | 決策後何時要撤回、回退或改路線         | incident decision、rollback          |
-| [Fail-forward](/backend/knowledge-cards/fail-forward/)                     | 舊狀態已失效時如何受控前進修復         | rollback window、incident decision   |
-| [Stop Condition](/backend/knowledge-cards/stop-condition/)                 | 何時必須暫停、回退或改路線             | release gate、incident decision      |
-| [Isolation Level](/backend/knowledge-cards/isolation-level/)               | 並發交易彼此看見哪些資料               | transaction、lock、retry             |
-| [Connection Pool](/backend/knowledge-cards/connection-pool/)               | application 如何限制下游連線壓力       | database、Redis、broker              |
-| [Database Sharding](/backend/knowledge-cards/database-sharding/)           | 資料庫如何依 shard key 分散與路由      | Vitess、Citus、tenant key            |
-| [Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/)               | 寫入如何先記 log 再合併以支援復原      | WAL、checkpoint、recovery            |
-| [Single Writer Model](/backend/knowledge-cards/single-writer-model/)       | 寫入如何被序列化成單一路徑             | SQLite、primary lease、容量上限      |
-| [Embedded Database](/backend/knowledge-cards/embedded-database/)           | 資料庫如何隨 application process 運作  | SQLite、檔案生命週期、本地儲存       |
-| [Metadata Lock](/backend/knowledge-cards/metadata-lock/)                   | DDL 與既有交易如何在 schema 層互相阻塞 | ALTER、長交易、DDL window            |
-| [Table Partitioning](/backend/knowledge-cards/table-partitioning/)         | 大表如何在單庫內拆成多個分區           | range/list/hash、pruning、retention  |
-| [Read-Write Split](/backend/knowledge-cards/read-write-split/)             | 讀寫流量如何分流到 primary 與 replica  | proxy、replica lag、read-after-write |
-| [Transaction Pooling](/backend/knowledge-cards/transaction-pooling/)       | 連線如何只綁定單一 transaction         | pooler、session state、SET LOCAL     |
-| [Document Store](/backend/knowledge-cards/document-store/)                 | 資料如何以 JSON 文件與彈性 schema 存取 | JSON、巢狀結構、index                |
-| [Local-First](/backend/knowledge-cards/local-first/)                       | 資料如何本機優先並離線可用             | 離線、多端同步、行動 app             |
-| [Read-After-Write Consistency](/backend/knowledge-cards/read-after-write/) | 寫入後能否立即讀到該筆寫入             | primary、lag guard、session          |
-| [Type Affinity](/backend/knowledge-cards/type-affinity/)                   | SQLite 欄位型別如何是傾向而非硬約束    | SQLite、storage class、STRICT        |
+| 卡片                                                                         | 核心問題                                 | 常見出現位置                         |
+| ---------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------ |
+| [Database](/backend/knowledge-cards/database/)                               | 正式狀態如何保存、查詢與保護             | source of truth、transaction、backup |
+| [Data Repair](/backend/knowledge-cards/data-repair/)                         | 已確認的資料差異如何安全修復             | reconciliation、dry-run、audit       |
+| [Source of Truth](/backend/knowledge-cards/source-of-truth/)                 | 哪個位置承擔正式資料判斷                 | database、cache、search index        |
+| [Search Index](/backend/knowledge-cards/search-index/)                       | 搜尋體驗如何有獨立讀取模型               | full-text、filter、ranking           |
+| [Full-Text Search](/backend/knowledge-cards/full-text-search/)               | 文本檢索如何支援關鍵字與相關性排序       | search、documents、catalog           |
+| [Facet Query](/backend/knowledge-cards/facet-query/)                         | 搜尋結果如何提供可篩選聚合維度           | filter、aggregation、UX              |
+| [Object Storage](/backend/knowledge-cards/object-storage/)                   | 大型檔案如何保存與控管生命週期           | upload、export、backup               |
+| [Event Log](/backend/knowledge-cards/event-log/)                             | 歷史事件如何保存與重播                   | replay、audit、projection            |
+| [Read Model](/backend/knowledge-cards/read-model/)                           | 查詢需求如何有獨立讀取資料形狀           | projection、query model              |
+| [Projection](/backend/knowledge-cards/projection/)                           | 來源資料如何轉換成查詢視圖               | events、materialized view            |
+| [資料生命週期](/backend/knowledge-cards/data-lifecycle/)                     | 資料如何建立、保留、封存與刪除           | retention、audit、export             |
+| [資料不一致](/backend/knowledge-cards/data-inconsistency/)                   | 多份資料暫時不同步時如何辨識與修復       | cache、replica、eventual consistency |
+| [Transaction](/backend/knowledge-cards/transaction/)                         | 一組資料變更如何一起成功或一起回復       | database、commit、rollback           |
+| [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)       | 哪些變更要一起成功或回復                 | database、unit of work               |
+| [Migration](/backend/knowledge-cards/migration/)                             | 系統如何從舊狀態受控移到新狀態           | release、cutover、backfill           |
+| [Schema Migration](/backend/knowledge-cards/schema-migration/)               | 資料庫結構如何隨版本安全演進             | release、rollback、migration         |
+| [Expand / Contract](/backend/knowledge-cards/expand-contract/)               | 先擴充相容面再收斂舊路徑的遷移做法       | schema migration、online migration   |
+| [Migration Gate](/backend/knowledge-cards/migration-gate/)                   | 遷移流程如何決定能否進入下一階段         | backfill、correctness check          |
+| [Mapping Table](/backend/knowledge-cards/mapping-table/)                     | 舊資料語意如何明確對應到新語意           | migration、backfill、validation      |
+| [Validation Query](/backend/knowledge-cards/validation-query/)               | 查詢如何證明資料語意是否一致             | migration、evidence package          |
+| [Read Compatibility](/backend/knowledge-cards/read-compatibility/)           | 讀取路徑如何同時支援新舊語意             | expand、cutover、fallback read       |
+| [Fallback Read](/backend/knowledge-cards/fallback-read/)                     | 切換失敗時如何暫時回到舊讀取語意         | cutover、rollback window             |
+| [Cutover Window](/backend/knowledge-cards/cutover-window/)                   | 正式切換如何被時間窗與訊號框住           | cutover、release gate                |
+| [Release Gate](/backend/knowledge-cards/release-gate/)                       | 變更如何在正式釋出前通過或阻擋           | error budget、migration、review      |
+| [Gate Decision](/backend/knowledge-cards/gate-decision/)                     | gate 如何把證據轉成下一步決策            | release gate、rollout                |
+| [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)           | 回滾流程如何在正式事故前演練             | rollback strategy、migration         |
+| [Rollback Window](/backend/knowledge-cards/rollback-window/)                 | 變更後還能用哪種方式回退或改路線         | cutover、rollback strategy           |
+| [Rollback Condition](/backend/knowledge-cards/rollback-condition/)           | 決策後何時要撤回、回退或改路線           | incident decision、rollback          |
+| [Fail-forward](/backend/knowledge-cards/fail-forward/)                       | 舊狀態已失效時如何受控前進修復           | rollback window、incident decision   |
+| [Stop Condition](/backend/knowledge-cards/stop-condition/)                   | 何時必須暫停、回退或改路線               | release gate、incident decision      |
+| [Isolation Level](/backend/knowledge-cards/isolation-level/)                 | 並發交易彼此看見哪些資料                 | transaction、lock、retry             |
+| [Connection Pool](/backend/knowledge-cards/connection-pool/)                 | application 如何限制下游連線壓力         | database、Redis、broker              |
+| [Database Sharding](/backend/knowledge-cards/database-sharding/)             | 資料庫如何依 shard key 分散與路由        | Vitess、Citus、tenant key            |
+| [Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/)                 | 寫入如何先記 log 再合併以支援復原        | WAL、checkpoint、recovery            |
+| [Single Writer Model](/backend/knowledge-cards/single-writer-model/)         | 寫入如何被序列化成單一路徑               | SQLite、primary lease、容量上限      |
+| [Embedded Database](/backend/knowledge-cards/embedded-database/)             | 資料庫如何隨 application process 運作    | SQLite、檔案生命週期、本地儲存       |
+| [Metadata Lock](/backend/knowledge-cards/metadata-lock/)                     | DDL 與既有交易如何在 schema 層互相阻塞   | ALTER、長交易、DDL window            |
+| [Table Partitioning](/backend/knowledge-cards/table-partitioning/)           | 大表如何在單庫內拆成多個分區             | range/list/hash、pruning、retention  |
+| [Read-Write Split](/backend/knowledge-cards/read-write-split/)               | 讀寫流量如何分流到 primary 與 replica    | proxy、replica lag、read-after-write |
+| [Transaction Pooling](/backend/knowledge-cards/transaction-pooling/)         | 連線如何只綁定單一 transaction           | pooler、session state、SET LOCAL     |
+| [Document Store](/backend/knowledge-cards/document-store/)                   | 資料如何以 JSON 文件與彈性 schema 存取   | JSON、巢狀結構、index                |
+| [Local-First](/backend/knowledge-cards/local-first/)                         | 資料如何本機優先並離線可用               | 離線、多端同步、行動 app             |
+| [Read-After-Write Consistency](/backend/knowledge-cards/read-after-write/)   | 寫入後能否立即讀到該筆寫入               | primary、lag guard、session          |
+| [Type Affinity](/backend/knowledge-cards/type-affinity/)                     | SQLite 欄位型別如何是傾向而非硬約束      | SQLite、storage class、STRICT        |
+| [Consistency Level](/backend/knowledge-cards/consistency-level/)             | 讀寫一致性語意有哪些可選層級             | strong、bounded、eventual            |
+| [Linearizability](/backend/knowledge-cards/linearizability/)                 | 操作如何看起來在單一全域順序即時生效     | 強一致、共識、read-after-write       |
+| [External Consistency](/backend/knowledge-cards/external-consistency/)       | 交易可見順序如何對齊外部真實時間         | Spanner、commit timestamp            |
+| [Eventual Consistency](/backend/knowledge-cards/eventual-consistency/)       | 短暫不一致如何最終收斂到同一狀態         | replica、cache、跨區複製             |
+| [Bounded Staleness](/backend/knowledge-cards/bounded-staleness/)             | 資料落後的上限如何被量化                 | replica lag、一致性 SLA              |
+| [Session Consistency](/backend/knowledge-cards/session-consistency/)         | 同一工作階段內如何維持讀寫一致           | session、sticky read                 |
+| [Stale Read](/backend/knowledge-cards/stale-read/)                           | 讀到舊版本資料的條件是什麼               | replica lag、cache                   |
+| [Freshness Token](/backend/knowledge-cards/freshness-token/)                 | 寫入之後如何保證下一次讀看得到           | DB + cache、版本 token               |
+| [Follower Read](/backend/knowledge-cards/follower-read/)                     | 從不參與提交的副本讀取的代價是什麼       | closed timestamp、低延遲讀           |
+| [CAP Theorem](/backend/knowledge-cards/cap/)                                 | 網路分區時一致性與可用性如何取捨         | 分散式、分區容忍                     |
+| [PACELC](/backend/knowledge-cards/pacelc/)                                   | 正常時段的延遲與一致性如何取捨           | CAP 之外、latency                    |
+| [Quorum](/backend/knowledge-cards/quorum/)                                   | 多數同意如何成為提交與讀取的門檻         | Raft、replica set                    |
+| [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/)         | 跨區投票副本如何決定提交延遲的下限       | multi-region、RTT                    |
+| [Consensus Protocol](/backend/knowledge-cards/consensus-protocol/)           | 節點如何在不可靠網路下對單一決策達成一致 | Raft、Paxos                          |
+| [Leader Election](/backend/knowledge-cards/leader-election/)                 | 獨佔工作如何選出單一主節點               | Raft、lease、failover                |
+| [Leaseholder](/backend/knowledge-cards/leaseholder/)                         | 每個 range 的讀寫入口由誰承擔            | 分散式 SQL、Raft leader              |
+| [Commit Wait](/backend/knowledge-cards/commit-wait/)                         | 提交順序如何用等待換取真實時間對齊       | Spanner、TrueTime                    |
+| [TrueTime](/backend/knowledge-cards/truetime/)                               | 時間的不確定性如何被界定                 | Spanner、時鐘上界                    |
+| [Hybrid Logical Clock](/backend/knowledge-cards/hybrid-logical-clock/)       | 事件時間戳如何兼顧物理與邏輯順序         | HLC、max offset                      |
+| [Serialization Failure](/backend/knowledge-cards/serialization-failure/)     | 序列化衝突如何被回報與重試               | SERIALIZABLE、40001                  |
+| [Distributed Lock](/backend/knowledge-cards/distributed-lock/)               | 跨機器互斥如何在持有者失效時收回         | lease、Redis、etcd                   |
+| [Fencing Token](/backend/knowledge-cards/fencing-token/)                     | 過期持鎖者的寫入如何被下游拒絕           | 單調遞增 token、資料層               |
+| [Distributed SQL](/backend/knowledge-cards/distributed-sql/)                 | SQL 與交易語意如何延伸到多節點           | CockroachDB、Spanner                 |
+| [Global OLTP](/backend/knowledge-cards/global-oltp/)                         | 跨地理區域維持交易一致性的代價是什麼     | multi-region、延遲預算               |
+| [Range Sharding](/backend/knowledge-cards/range-sharding/)                   | key space 如何自動切分與合併             | range、split、merge                  |
+| [Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) | 單一熱點 key 如何拆到多個物理分片        | 熱點、fan-out 讀取                   |
+| [Interleaved Table](/backend/knowledge-cards/interleaved-table/)             | 父子資料如何物理交錯以避免跨分片 JOIN    | Spanner、locality                    |
+| [Request Unit](/backend/knowledge-cards/request-unit/)                       | 容量如何被抽象成單一計價單位             | Cosmos DB、RU                        |
+| [Data Residency](/backend/knowledge-cards/data-residency/)                   | 資料留在哪個地理邊界由誰決定             | 合規、跨境複製                       |
+| [Materialized View](/backend/knowledge-cards/materialized-view/)             | 查詢結果如何預先計算並儲存               | projection、read model               |
+| [CQRS](/backend/knowledge-cards/cqrs/)                                       | 讀寫責任在什麼條件下該分離               | read model、projection               |
+| [Event Sourcing](/backend/knowledge-cards/event-sourcing/)                   | 事件流如何取代可變狀態成為正式紀錄       | append-only、replay                  |
+| [Saga](/backend/knowledge-cards/saga/)                                       | 跨服務事務如何用補償序列取代 atomic      | 補償交易、最終一致                   |
+| [Connection Pooler](/backend/knowledge-cards/connection-pooler/)             | 連線數放大如何在應用與資料庫之間收斂     | pgbouncer、水平擴展                  |
 
 ## 快取與流量
 
-| 卡片                                                                                     | 核心問題                              | 常見出現位置                   |
-| ---------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------ |
-| [Timeout](/backend/knowledge-cards/timeout/)                                             | 單一步驟最久可以等待多久              | API、database、broker          |
-| [Freshness Window](/backend/knowledge-cards/freshness-window/)                           | 各資料類型可容忍多久的不新鮮          | cache-aside、TTL、rollback     |
-| [Origin Protection](/backend/knowledge-cards/origin-protection/)                         | 快取失效時後端如何不被打垮            | stampede、singleflight、TTL    |
-| [Cache Key Versioning](/backend/knowledge-cards/cache-key-versioning/)                   | key schema 演進如何不互踩             | migration、相容窗口            |
-| [Cache Serialization Migration](/backend/knowledge-cards/cache-serialization-migration/) | 快取序列化格式如何安全換版            | dual-format、rollback          |
-| [Deadline](/backend/knowledge-cards/deadline/)                                           | 整體操作何時必須完成                  | request、job、workflow         |
-| [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)                     | 重試間隔如何逐步拉長                  | retry、API、worker             |
-| [Jitter](/backend/knowledge-cards/jitter/)                                               | 如何分散同步重試與排程尖峰            | retry、TTL、reconnect          |
-| [Retry Storm](/backend/knowledge-cards/retry-storm/)                                     | 大量重試如何放大下游壓力              | timeout、dependency failure    |
-| [Thundering Herd](/backend/knowledge-cards/thundering-herd/)                             | 大量工作同時醒來如何形成尖峰          | reconnect、cache、lock         |
-| [Transient Failure](/backend/knowledge-cards/transient-failure/)                         | 暫時性故障如何影響重試與告警          | network、failover、timeout     |
-| [Partial Failure](/backend/knowledge-cards/partial-failure/)                             | 局部失效時如何保留整體可用性          | distributed system、fallback   |
-| [Cascading Failure](/backend/knowledge-cards/cascading-failure/)                         | 局部故障如何擴散成整體故障            | dependency、retry、pool        |
-| [Correlated Failure](/backend/knowledge-cards/correlated-failure/)                       | 以為獨立的元件共享隱藏觸發器一起壞    | 冗餘、失效域、shared trigger   |
-| [Load Shedding](/backend/knowledge-cards/load-shedding/)                                 | 過載時如何主動拒絕低優先工作          | overload、priority             |
-| [Token Bucket](/backend/knowledge-cards/token-bucket/)                                   | 如何用配額與補充速率控制流量          | rate limit、retry budget       |
-| [Dependency Isolation](/backend/knowledge-cards/dependency-isolation/)                   | 如何避免單一下游耗盡共享資源          | pool、queue、dependency        |
-| [Bulkhead](/backend/knowledge-cards/bulkhead/)                                           | 如何用資源分艙限制故障擴散            | worker、tenant、pool           |
-| [In-Process Channel](/backend/knowledge-cards/in-process-channel/)                       | 單一 process 內如何傳遞工作或訊號     | channel、local queue           |
-| [Local Worker](/backend/knowledge-cards/local-worker/)                                   | 同 process 背景工作的責任與邊界       | background task、shutdown      |
-| [Worker Pool](/backend/knowledge-cards/worker-pool/)                                     | 如何限制同時處理量                    | worker、background job         |
-| [HTTP Client](/backend/knowledge-cards/http-client/)                                     | 呼叫外部 HTTP 依賴時如何管理資源      | API、dependency                |
-| [Webhook](/backend/knowledge-cards/webhook/)                                             | 外部系統回呼事件如何驗證與處理        | callback、signature、retry     |
-| [WebSocket](/backend/knowledge-cards/websocket/)                                         | 長連線雙向即時通訊如何運作            | chat、presence、push           |
-| [Server-Sent Events (SSE)](/backend/knowledge-cards/sse/)                                | HTTP 單向事件串流如何推送更新         | notification、progress         |
-| [Stream Pipeline](/backend/knowledge-cards/stream-pipeline/)                             | 連續資料流如何管理吞吐與 backpressure | stream、CDC、ETL               |
-| [Throughput](/backend/knowledge-cards/throughput/)                                       | 單位時間內可處理多少工作              | load test、queue、broker       |
-| [Buffer](/backend/knowledge-cards/buffer/)                                               | 暫存空間如何吸收短暫速度差            | queue、socket、cache           |
-| [Queue](/backend/knowledge-cards/queue/)                                                 | 等待處理的工作如何形成容量邊界        | producer、consumer、backlog    |
-| [Socket](/backend/knowledge-cards/socket/)                                               | 網路連線如何成為資料讀寫與資源邊界    | network、connection、timeout   |
-| [Fallback](/backend/knowledge-cards/fallback/)                                           | 主要路徑失敗時使用什麼替代結果        | degradation、circuit breaker   |
-| [Fail Fast](/backend/knowledge-cards/fail-fast/)                                         | 已知會失敗時如何快速回應              | circuit breaker、validation    |
-| [Retry Budget](/backend/knowledge-cards/retry-budget/)                                   | 重試量如何受整體容量限制              | retry、SLO、token bucket       |
-| [Cache Aside](/backend/knowledge-cards/cache-aside/)                                     | application 如何讀快取與正式來源      | Redis、read path               |
-| [Cache Hit / Miss](/backend/knowledge-cards/cache-hit-miss/)                             | 讀取是否命中快取                      | cache、database pressure       |
-| [Cache Hit Rate](/backend/knowledge-cards/cache-hit-rate/)                               | 命中比例如何衡量快取效益              | dashboard、capacity            |
-| [Cache Warmup](/backend/knowledge-cards/cache-warmup/)                                   | 正式流量前如何預先載入快取            | deployment、event              |
-| [Cache Prefetching](/backend/knowledge-cards/cache-prefetching/)                         | 如何在資料被需要前預先載入            | user flow、hot data            |
-| [Cold Start](/backend/knowledge-cards/cold-start/)                                       | 新 instance 或空快取如何造成延遲      | autoscaling、readiness         |
-| [Write-Through Cache](/backend/knowledge-cards/write-through-cache/)                     | 寫入時如何同步更新快取                | write path、freshness          |
-| [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)                       | 先寫緩衝層再非同步持久化的風險        | analytics、buffer              |
-| [Stale Data](/backend/knowledge-cards/stale-data/)                                       | 過期資料如何影響產品結果              | cache、replica                 |
-| [Soft TTL](/backend/knowledge-cards/soft-ttl/)                                           | 進入刷新期後如何短暫使用舊資料        | stampede、refresh              |
-| [Singleflight](/backend/knowledge-cards/singleflight/)                                   | 相同工作如何合併成一次下游請求        | cache miss、hot key            |
-| [TTL](/backend/knowledge-cards/ttl/)                                                     | 資料何時自動過期                      | cache、session、presence       |
-| [Eviction](/backend/knowledge-cards/eviction/)                                           | 容量不足時哪些資料會被淘汰            | Redis、local cache、CDN        |
-| [快取失效策略](/backend/knowledge-cards/cache-invalidation/)                             | 快取資料何時更新、刪除或重建          | Redis、CDN、多層快取           |
-| [Hot Key](/backend/knowledge-cards/hot-key/)                                             | 少數 key 如何形成容量瓶頸             | Redis、partition、counter      |
-| [Cache Stampede](/backend/knowledge-cards/cache-stampede/)                               | 快取同時 miss 如何壓垮正式來源        | hot key、TTL、database         |
-| [Rate Limit](/backend/knowledge-cards/rate-limit/)                                       | 如何限制主體在一段時間內的資源使用量  | API、tenant、worker            |
-| [Backpressure](/backend/knowledge-cards/backpressure/)                                   | 下游變慢時如何讓上游放慢              | queue、worker、stream          |
-| [Buffer Pool](/backend/knowledge-cards/buffer-pool/)                                     | 資料庫如何用記憶體快取磁碟頁          | InnoDB、shared buffers、命中率 |
+| 卡片                                                                                     | 核心問題                                | 常見出現位置                   |
+| ---------------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------ |
+| [Timeout](/backend/knowledge-cards/timeout/)                                             | 單一步驟最久可以等待多久                | API、database、broker          |
+| [Freshness Window](/backend/knowledge-cards/freshness-window/)                           | 各資料類型可容忍多久的不新鮮            | cache-aside、TTL、rollback     |
+| [Origin Protection](/backend/knowledge-cards/origin-protection/)                         | 快取失效時後端如何不被打垮              | stampede、singleflight、TTL    |
+| [Cache Key Versioning](/backend/knowledge-cards/cache-key-versioning/)                   | key schema 演進如何不互踩               | migration、相容窗口            |
+| [Cache Serialization Migration](/backend/knowledge-cards/cache-serialization-migration/) | 快取序列化格式如何安全換版              | dual-format、rollback          |
+| [Deadline](/backend/knowledge-cards/deadline/)                                           | 整體操作何時必須完成                    | request、job、workflow         |
+| [Exponential Backoff](/backend/knowledge-cards/exponential-backoff/)                     | 重試間隔如何逐步拉長                    | retry、API、worker             |
+| [Jitter](/backend/knowledge-cards/jitter/)                                               | 如何分散同步重試與排程尖峰              | retry、TTL、reconnect          |
+| [Retry Storm](/backend/knowledge-cards/retry-storm/)                                     | 大量重試如何放大下游壓力                | timeout、dependency failure    |
+| [Thundering Herd](/backend/knowledge-cards/thundering-herd/)                             | 大量工作同時醒來如何形成尖峰            | reconnect、cache、lock         |
+| [Transient Failure](/backend/knowledge-cards/transient-failure/)                         | 暫時性故障如何影響重試與告警            | network、failover、timeout     |
+| [Partial Failure](/backend/knowledge-cards/partial-failure/)                             | 局部失效時如何保留整體可用性            | distributed system、fallback   |
+| [Cascading Failure](/backend/knowledge-cards/cascading-failure/)                         | 局部故障如何擴散成整體故障              | dependency、retry、pool        |
+| [Correlated Failure](/backend/knowledge-cards/correlated-failure/)                       | 以為獨立的元件共享隱藏觸發器一起壞      | 冗餘、失效域、shared trigger   |
+| [Load Shedding](/backend/knowledge-cards/load-shedding/)                                 | 過載時如何主動拒絕低優先工作            | overload、priority             |
+| [Token Bucket](/backend/knowledge-cards/token-bucket/)                                   | 如何用配額與補充速率控制流量            | rate limit、retry budget       |
+| [Dependency Isolation](/backend/knowledge-cards/dependency-isolation/)                   | 如何避免單一下游耗盡共享資源            | pool、queue、dependency        |
+| [Bulkhead](/backend/knowledge-cards/bulkhead/)                                           | 如何用資源分艙限制故障擴散              | worker、tenant、pool           |
+| [In-Process Channel](/backend/knowledge-cards/in-process-channel/)                       | 單一 process 內如何傳遞工作或訊號       | channel、local queue           |
+| [Local Worker](/backend/knowledge-cards/local-worker/)                                   | 同 process 背景工作的責任與邊界         | background task、shutdown      |
+| [Worker Pool](/backend/knowledge-cards/worker-pool/)                                     | 如何限制同時處理量                      | worker、background job         |
+| [HTTP Client](/backend/knowledge-cards/http-client/)                                     | 呼叫外部 HTTP 依賴時如何管理資源        | API、dependency                |
+| [Webhook](/backend/knowledge-cards/webhook/)                                             | 外部系統回呼事件如何驗證與處理          | callback、signature、retry     |
+| [WebSocket](/backend/knowledge-cards/websocket/)                                         | 長連線雙向即時通訊如何運作              | chat、presence、push           |
+| [Server-Sent Events (SSE)](/backend/knowledge-cards/sse/)                                | HTTP 單向事件串流如何推送更新           | notification、progress         |
+| [Stream Pipeline](/backend/knowledge-cards/stream-pipeline/)                             | 連續資料流如何管理吞吐與 backpressure   | stream、CDC、ETL               |
+| [Throughput](/backend/knowledge-cards/throughput/)                                       | 單位時間內可處理多少工作                | load test、queue、broker       |
+| [Buffer](/backend/knowledge-cards/buffer/)                                               | 暫存空間如何吸收短暫速度差              | queue、socket、cache           |
+| [Queue](/backend/knowledge-cards/queue/)                                                 | 等待處理的工作如何形成容量邊界          | producer、consumer、backlog    |
+| [Socket](/backend/knowledge-cards/socket/)                                               | 網路連線如何成為資料讀寫與資源邊界      | network、connection、timeout   |
+| [Fallback](/backend/knowledge-cards/fallback/)                                           | 主要路徑失敗時使用什麼替代結果          | degradation、circuit breaker   |
+| [Fail Fast](/backend/knowledge-cards/fail-fast/)                                         | 已知會失敗時如何快速回應                | circuit breaker、validation    |
+| [Retry Budget](/backend/knowledge-cards/retry-budget/)                                   | 重試量如何受整體容量限制                | retry、SLO、token bucket       |
+| [Cache Aside](/backend/knowledge-cards/cache-aside/)                                     | application 如何讀快取與正式來源        | Redis、read path               |
+| [Cache Hit / Miss](/backend/knowledge-cards/cache-hit-miss/)                             | 讀取是否命中快取                        | cache、database pressure       |
+| [Cache Hit Rate](/backend/knowledge-cards/cache-hit-rate/)                               | 命中比例如何衡量快取效益                | dashboard、capacity            |
+| [Cache Warmup](/backend/knowledge-cards/cache-warmup/)                                   | 正式流量前如何預先載入快取              | deployment、event              |
+| [Cache Prefetching](/backend/knowledge-cards/cache-prefetching/)                         | 如何在資料被需要前預先載入              | user flow、hot data            |
+| [Cold Start](/backend/knowledge-cards/cold-start/)                                       | 新 instance 或空快取如何造成延遲        | autoscaling、readiness         |
+| [Write-Through Cache](/backend/knowledge-cards/write-through-cache/)                     | 寫入時如何同步更新快取                  | write path、freshness          |
+| [Write-Behind Cache](/backend/knowledge-cards/write-behind-cache/)                       | 先寫緩衝層再非同步持久化的風險          | analytics、buffer              |
+| [Stale Data](/backend/knowledge-cards/stale-data/)                                       | 過期資料如何影響產品結果                | cache、replica                 |
+| [Soft TTL](/backend/knowledge-cards/soft-ttl/)                                           | 進入刷新期後如何短暫使用舊資料          | stampede、refresh              |
+| [Singleflight](/backend/knowledge-cards/singleflight/)                                   | 相同工作如何合併成一次下游請求          | cache miss、hot key            |
+| [TTL](/backend/knowledge-cards/ttl/)                                                     | 資料何時自動過期                        | cache、session、presence       |
+| [Eviction](/backend/knowledge-cards/eviction/)                                           | 容量不足時哪些資料會被淘汰              | Redis、local cache、CDN        |
+| [快取失效策略](/backend/knowledge-cards/cache-invalidation/)                             | 快取資料何時更新、刪除或重建            | Redis、CDN、多層快取           |
+| [Hot Key](/backend/knowledge-cards/hot-key/)                                             | 少數 key 如何形成容量瓶頸               | Redis、partition、counter      |
+| [Cache Stampede](/backend/knowledge-cards/cache-stampede/)                               | 快取同時 miss 如何壓垮正式來源          | hot key、TTL、database         |
+| [Rate Limit](/backend/knowledge-cards/rate-limit/)                                       | 如何限制主體在一段時間內的資源使用量    | API、tenant、worker            |
+| [Backpressure](/backend/knowledge-cards/backpressure/)                                   | 下游變慢時如何讓上游放慢                | queue、worker、stream          |
+| [Buffer Pool](/backend/knowledge-cards/buffer-pool/)                                     | 資料庫如何用記憶體快取磁碟頁            | InnoDB、shared buffers、命中率 |
+| [Cache Penetration](/backend/knowledge-cards/cache-penetration/)                         | 必定不存在的 key 如何繞過快取打到源站   | 穿透、origin 負載              |
+| [Negative Cache](/backend/knowledge-cards/negative-cache/)                               | 查無此 key 的結果如何也被快取一小段時間 | 穿透防護、短 TTL               |
+| [Cache Tag Purge](/backend/knowledge-cards/cache-tag-purge/)                             | 多個關聯資源如何被一次批量失效          | CDN、surrogate key             |
+| [Stale-While-Revalidate](/backend/knowledge-cards/stale-while-revalidate/)               | 過期後如何先回舊版再背景更新            | HTTP cache-control             |
+| [Stale-If-Error](/backend/knowledge-cards/stale-if-error/)                               | 源站出錯時如何用舊版頂著                | HTTP cache-control、降級       |
 
 ## 入口與部署
 
@@ -148,6 +187,15 @@ weight: -1
 | [Probe](/backend/knowledge-cards/probe/)                                                 | 平台如何判斷存活與接流量條件             | readiness、liveness、startup            |
 | [Config Rollout](/backend/knowledge-cards/config-rollout/)                               | 設定如何安全下發到運作中的服務實例       | feature flag、secret、runtime config    |
 | [Runtime Config](/backend/knowledge-cards/runtime-config/)                               | 執行時設定如何被讀取、組合與覆寫         | env var、secret、feature flag           |
+| [Canary Release](/backend/knowledge-cards/canary-release/)                               | 新版本流量如何分批放行                   | 部署策略、stop condition                |
+| [Serverless](/backend/knowledge-cards/serverless/)                                       | 執行環境與擴縮交給平台的邊界在哪         | 按用量計費、冷啟動                      |
+| [BaaS（Backend as a Service）](/backend/knowledge-cards/baas/)                           | 認證與資料存取如何由前端 SDK 直連        | 現成模組、前端直連                      |
+| [Startup Probe](/backend/knowledge-cards/startup-probe/)                                 | 慢啟動服務如何避免被過早重啟             | Kubernetes、liveness                    |
+| [Static Stability](/backend/knowledge-cards/static-stability/)                           | 控制面失效時資料面如何繼續服務           | 已知好配置、降級                        |
+| [Cell-Based Architecture](/backend/knowledge-cards/cell-based-architecture/)             | 系統如何切成互相隔離的 cell              | blast radius、隔離                      |
+| [Outbound Tunnel](/backend/knowledge-cards/outbound-tunnel/)                             | 出站連線如何轉成可達入口                 | 反向隧道、NAT 後方                      |
+| [Modular Monolith](/backend/knowledge-cards/modular-monolith/)                           | 單一部署單位如何維持模組邊界             | 架構折衷、拆分前                        |
+| [Strangler Fig Pattern](/backend/knowledge-cards/strangler-fig/)                         | 舊系統如何在共存中逐步下架               | 漸進替換、系統遷移                      |
 
 ## 通訊協定
 
@@ -168,6 +216,7 @@ weight: -1
 | [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/)         | cursor 的不透明性算承諾還是逃生門 | keyset、collection API  |
 | [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/) | API 退場如何分階段承諾            | sunset header、brownout |
 | [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/)     | 被限流後消費者能依賴什麼邊界      | 429、Retry-After        |
+| [BFF](/backend/knowledge-cards/bff/)                                     | 特定客戶端的聚合責任放在哪一層    | 聚合、客戶端專屬後端    |
 
 ## 邊界與治理
 
@@ -191,48 +240,62 @@ weight: -1
 | [Validation Middleware](/backend/knowledge-cards/validation-middleware/)               | 請求如何先做共通驗證                           | schema、header、payload shape                                             |
 | [Vendor Lock-In](/backend/knowledge-cards/vendor-lock-in/)                             | 供應商 API 滲入程式碼如何造成退出成本          | adapter、exit route、選型                                                 |
 | [Capability Outsourcing Depth](/backend/knowledge-cards/capability-outsourcing-depth/) | 外包一塊能力的三種深度如何決定控制權與遷出代價 | managed 基礎設施、feature SaaS、BaaS bundle                               |
+| [Control Plane](/backend/knowledge-cards/control-plane/)                               | 策略、配置與路由決策由哪一層下發               | 控制面、資料面分離                                                        |
+| [Management Plane](/backend/knowledge-cards/management-plane/)                         | 管理入口如何與業務流量分離                     | 高權限、管理端點                                                          |
+| [Federation](/backend/knowledge-cards/federation/)                                     | 跨系統的信任與授權如何交換                     | OIDC、跨組織身分                                                          |
+| [Ownership](/backend/knowledge-cards/ownership/)                                       | 問題與決策責任如何固定到角色                   | owner、交接                                                               |
 
 ## 訊息與事件
 
-| 卡片                                                                   | 核心問題                                    | 常見出現位置                       |
-| ---------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------- |
-| [Broker](/backend/knowledge-cards/broker/)                             | 訊息離開單一 process 後由誰保存、路由與交付 | queue、event、worker、stream       |
-| [Topic](/backend/knowledge-cards/topic/)                               | 事件如何依主題分流給不同訂閱者              | broker、event、stream              |
-| [Pub/Sub](/backend/knowledge-cards/pub-sub/)                           | 訊息如何即時分發給多個訂閱者                | realtime、notification、broadcast  |
-| [Fan-out](/backend/knowledge-cards/fan-out/)                           | 單一事件如何同時送到多個下游                | topic、subscription、event flow    |
-| [Durable Queue](/backend/knowledge-cards/durable-queue/)               | 工作如何在故障後仍可被處理                  | persistence、ack/nack、retry       |
-| [Reliability Boundary](/backend/knowledge-cards/reliability-boundary/) | 系統在哪些邊界內承諾可恢復傳遞              | request、process、service boundary |
-| [Offline Catch-up](/backend/knowledge-cards/offline-catchup/)          | 離線期間漏失事件如何補齊                    | websocket、sync、reconnect         |
-| [Strong Reliability](/backend/knowledge-cards/strong-reliability/)     | 關鍵事件如何達到高可靠路徑                  | payment、inventory、audit          |
-| [Routing Rule](/backend/knowledge-cards/routing-rule/)                 | 訊息如何依規則進入不同處理路徑              | broker、queue、priority            |
-| [Producer](/backend/knowledge-cards/producer/)                         | 誰把工作、事件或資料送入處理路徑            | queue、broker、stream              |
-| [Consumer](/backend/knowledge-cards/consumer/)                         | 誰取得等待處理的工作並產生結果              | queue、worker、side effect         |
-| [Prefetch](/backend/knowledge-cards/prefetch/)                         | consumer 一次可持有多少未確認訊息           | broker、consumer tuning            |
-| [In-Flight Message](/backend/knowledge-cards/in-flight-message/)       | 訊息已交給 consumer 但尚未完成              | consumer、shutdown                 |
-| [Unacked Message](/backend/knowledge-cards/unacked-message/)           | broker 尚未收到 consumer 確認的訊息         | queue health、prefetch             |
-| [Ack / Nack](/backend/knowledge-cards/ack-nack/)                       | consumer 如何回報處理結果                   | broker、retry、DLQ                 |
-| [Redelivery](/backend/knowledge-cards/redelivery/)                     | broker 重新投遞訊息時如何保持安全           | at-least-once、idempotency         |
-| [Requeue](/backend/knowledge-cards/requeue/)                           | 處理失敗訊息如何重新排回 queue              | retry、nack                        |
-| [Redelivery Loop](/backend/knowledge-cards/redelivery-loop/)           | 同一訊息反覆投遞失敗如何消耗容量            | poison message、DLQ                |
-| [Poison Message](/backend/knowledge-cards/poison-message/)             | 特定訊息內容如何穩定造成失敗                | DLQ、schema                        |
-| [Queue Depth](/backend/knowledge-cards/queue-depth/)                   | queue 中等待處理的訊息數                    | backlog、capacity                  |
-| [Publisher Confirm](/backend/knowledge-cards/publisher-confirm/)       | producer 如何確認 broker 已接收訊息         | publish、outbox                    |
-| [Message Persistence](/backend/knowledge-cards/message-persistence/)   | 訊息是否落盤保存                            | durability、cost                   |
-| [Delivery Mode](/backend/knowledge-cards/delivery-mode/)               | 投遞模式如何影響可靠性與延遲                | broker、event semantics            |
-| [Delivery Semantics](/backend/knowledge-cards/delivery-semantics/)     | 事件投遞承諾如何決定補償策略                | retry、idempotency、replay         |
-| [Consumer Capacity](/backend/knowledge-cards/consumer-capacity/)       | consumer 群組每秒能處理多少工作             | lag、scaling                       |
-| [Competing Consumers](/backend/knowledge-cards/competing-consumers/)   | 多個 consumer 如何共同處理同一 queue        | worker、throughput                 |
-| [Consumer Group](/backend/knowledge-cards/consumer-group/)             | 多個 consumer 如何共同分攤 stream           | Kafka、Redis Streams               |
-| [Partition](/backend/knowledge-cards/partition/)                       | 事件流如何切成可並行處理片段                | ordering、hot key                  |
-| [Offset](/backend/knowledge-cards/offset/)                             | consumer 在事件流中的讀取位置               | replay、checkpoint                 |
-| [Retention](/backend/knowledge-cards/retention/)                       | 資料或事件保留多久                          | stream、log、audit                 |
-| [Retry Policy](/backend/knowledge-cards/retry-policy/)                 | 失敗後何時再試、何時停止                    | timeout、broker、API               |
-| [Consumer Lag](/backend/knowledge-cards/consumer-lag/)                 | consumer 處理速度落後多少                   | queue health、capacity、alert      |
-| [Dead-Letter Queue](/backend/knowledge-cards/dead-letter-queue/)       | 多次處理失敗的訊息如何隔離與診斷            | retry、poison message、incident    |
-| [Replay Runbook](/backend/knowledge-cards/replay-runbook/)             | 事件重放時如何控制範圍、順序與副作用        | migration、事故復原、補資料        |
-| [重複投遞](/backend/knowledge-cards/duplicate-delivery/)               | 同一個工作被處理多次時如何保持結果穩定      | at-least-once、idempotency         |
-| [Idempotency](/backend/knowledge-cards/idempotency/)                   | 同一操作多次執行時如何保持結果穩定          | retry、payment、worker             |
-| [Outbox Pattern](/backend/knowledge-cards/outbox-pattern/)             | 資料變更與事件發布如何維持一致              | transaction、broker                |
+| 卡片                                                                               | 核心問題                                    | 常見出現位置                       |
+| ---------------------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------- |
+| [Broker](/backend/knowledge-cards/broker/)                                         | 訊息離開單一 process 後由誰保存、路由與交付 | queue、event、worker、stream       |
+| [Topic](/backend/knowledge-cards/topic/)                                           | 事件如何依主題分流給不同訂閱者              | broker、event、stream              |
+| [Pub/Sub](/backend/knowledge-cards/pub-sub/)                                       | 訊息如何即時分發給多個訂閱者                | realtime、notification、broadcast  |
+| [Fan-out](/backend/knowledge-cards/fan-out/)                                       | 單一事件如何同時送到多個下游                | topic、subscription、event flow    |
+| [Durable Queue](/backend/knowledge-cards/durable-queue/)                           | 工作如何在故障後仍可被處理                  | persistence、ack/nack、retry       |
+| [Reliability Boundary](/backend/knowledge-cards/reliability-boundary/)             | 系統在哪些邊界內承諾可恢復傳遞              | request、process、service boundary |
+| [Offline Catch-up](/backend/knowledge-cards/offline-catchup/)                      | 離線期間漏失事件如何補齊                    | websocket、sync、reconnect         |
+| [Strong Reliability](/backend/knowledge-cards/strong-reliability/)                 | 關鍵事件如何達到高可靠路徑                  | payment、inventory、audit          |
+| [Routing Rule](/backend/knowledge-cards/routing-rule/)                             | 訊息如何依規則進入不同處理路徑              | broker、queue、priority            |
+| [Producer](/backend/knowledge-cards/producer/)                                     | 誰把工作、事件或資料送入處理路徑            | queue、broker、stream              |
+| [Consumer](/backend/knowledge-cards/consumer/)                                     | 誰取得等待處理的工作並產生結果              | queue、worker、side effect         |
+| [Prefetch](/backend/knowledge-cards/prefetch/)                                     | consumer 一次可持有多少未確認訊息           | broker、consumer tuning            |
+| [In-Flight Message](/backend/knowledge-cards/in-flight-message/)                   | 訊息已交給 consumer 但尚未完成              | consumer、shutdown                 |
+| [Unacked Message](/backend/knowledge-cards/unacked-message/)                       | broker 尚未收到 consumer 確認的訊息         | queue health、prefetch             |
+| [Ack / Nack](/backend/knowledge-cards/ack-nack/)                                   | consumer 如何回報處理結果                   | broker、retry、DLQ                 |
+| [Redelivery](/backend/knowledge-cards/redelivery/)                                 | broker 重新投遞訊息時如何保持安全           | at-least-once、idempotency         |
+| [Requeue](/backend/knowledge-cards/requeue/)                                       | 處理失敗訊息如何重新排回 queue              | retry、nack                        |
+| [Redelivery Loop](/backend/knowledge-cards/redelivery-loop/)                       | 同一訊息反覆投遞失敗如何消耗容量            | poison message、DLQ                |
+| [Poison Message](/backend/knowledge-cards/poison-message/)                         | 特定訊息內容如何穩定造成失敗                | DLQ、schema                        |
+| [Queue Depth](/backend/knowledge-cards/queue-depth/)                               | queue 中等待處理的訊息數                    | backlog、capacity                  |
+| [Publisher Confirm](/backend/knowledge-cards/publisher-confirm/)                   | producer 如何確認 broker 已接收訊息         | publish、outbox                    |
+| [Message Persistence](/backend/knowledge-cards/message-persistence/)               | 訊息是否落盤保存                            | durability、cost                   |
+| [Delivery Mode](/backend/knowledge-cards/delivery-mode/)                           | 投遞模式如何影響可靠性與延遲                | broker、event semantics            |
+| [Delivery Semantics](/backend/knowledge-cards/delivery-semantics/)                 | 事件投遞承諾如何決定補償策略                | retry、idempotency、replay         |
+| [Consumer Capacity](/backend/knowledge-cards/consumer-capacity/)                   | consumer 群組每秒能處理多少工作             | lag、scaling                       |
+| [Competing Consumers](/backend/knowledge-cards/competing-consumers/)               | 多個 consumer 如何共同處理同一 queue        | worker、throughput                 |
+| [Consumer Group](/backend/knowledge-cards/consumer-group/)                         | 多個 consumer 如何共同分攤 stream           | Kafka、Redis Streams               |
+| [Partition](/backend/knowledge-cards/partition/)                                   | 事件流如何切成可並行處理片段                | ordering、hot key                  |
+| [Offset](/backend/knowledge-cards/offset/)                                         | consumer 在事件流中的讀取位置               | replay、checkpoint                 |
+| [Retention](/backend/knowledge-cards/retention/)                                   | 資料或事件保留多久                          | stream、log、audit                 |
+| [Retry Policy](/backend/knowledge-cards/retry-policy/)                             | 失敗後何時再試、何時停止                    | timeout、broker、API               |
+| [Consumer Lag](/backend/knowledge-cards/consumer-lag/)                             | consumer 處理速度落後多少                   | queue health、capacity、alert      |
+| [Dead-Letter Queue](/backend/knowledge-cards/dead-letter-queue/)                   | 多次處理失敗的訊息如何隔離與診斷            | retry、poison message、incident    |
+| [Replay Runbook](/backend/knowledge-cards/replay-runbook/)                         | 事件重放時如何控制範圍、順序與副作用        | migration、事故復原、補資料        |
+| [重複投遞](/backend/knowledge-cards/duplicate-delivery/)                           | 同一個工作被處理多次時如何保持結果穩定      | at-least-once、idempotency         |
+| [Idempotency](/backend/knowledge-cards/idempotency/)                               | 同一操作多次執行時如何保持結果穩定          | retry、payment、worker             |
+| [Outbox Pattern](/backend/knowledge-cards/outbox-pattern/)                         | 資料變更與事件發布如何維持一致              | transaction、broker                |
+| [Exactly-Once](/backend/knowledge-cards/exactly-once/)                             | 剛好處理一次的承諾代價是什麼                | 去重、冪等處理                     |
+| [Processing Semantics](/backend/knowledge-cards/processing-semantics/)             | 投遞成功與業務結果正確如何分開              | consumer、副作用                   |
+| [Recovery Semantics](/backend/knowledge-cards/recovery-semantics/)                 | 處理失敗後如何 replay 與補償重建狀態        | checkpoint、replay                 |
+| [Replay Window](/backend/knowledge-cards/replay-window/)                           | 事件可重播的範圍由什麼決定                  | retention、offset                  |
+| [Visibility Timeout](/backend/knowledge-cards/visibility-timeout/)                 | 訊息被取走後多久對其他 consumer 不可見      | SQS、重新投遞                      |
+| [Consumer Pause](/backend/knowledge-cards/consumer-pause/)                         | 暫停消費如何當成止血手段                    | 事故控制、副作用                   |
+| [DLQ Drain](/backend/knowledge-cards/dlq-drain/)                                   | 累積的死信如何受控排空                      | dead-letter、重處理                |
+| [Poison-Message Quarantine](/backend/knowledge-cards/poison-message-quarantine/)   | 毒訊息如何從主處理路徑隔離                  | 隔離、正常訊息前進                 |
+| [Event Schema Compatibility](/backend/knowledge-cards/event-schema-compatibility/) | schema 演進時新舊兩端如何互通               | 相容性等級、registry               |
+| [In-Flight Work](/backend/knowledge-cards/in-flight/)                              | 已接收未完成的工作量如何被量化              | 背壓、佇列深度                     |
 
 ## 遷移與資料同步
 
@@ -257,47 +320,54 @@ weight: -1
 | [GTID](/backend/knowledge-cards/gtid/)                               | 複製進度如何用全域交易識別碼表示            | replication、failover、binlog  |
 | [Replication Channel](/backend/knowledge-cards/replication-channel/) | 多來源複製如何用獨立通道隔離                | multi-source、per-channel lag  |
 | [Tombstone](/backend/knowledge-cards/tombstone/)                     | 刪除如何用標記跨副本與裝置傳播              | delete propagation、sync、CRDT |
+| [Parallel Run（並行期）](/backend/knowledge-cards/parallel-run/)     | 舊系統仍是正式紀錄時新系統如何運轉          | 單向同步、唯讀驗證             |
 
 ## 可觀測性與可靠性
 
-| 卡片                                                                 | 核心問題                              | 常見出現位置                        |
-| -------------------------------------------------------------------- | ------------------------------------- | ----------------------------------- |
-| [Log](/backend/knowledge-cards/log/)                                 | 單一事件如何留下可搜尋的上下文        | incident、debug、audit              |
-| [Out-of-Band Signal](/backend/knowledge-cards/out-of-band-signal/)   | 生產棧全掛時還有什麼訊號活著          | watchdog、status page、shared fate  |
-| [Log Schema](/backend/knowledge-cards/log-schema/)                   | log 欄位如何支援搜尋與關聯            | structured log、incident            |
-| [Metrics](/backend/knowledge-cards/metrics/)                         | 指標如何描述趨勢、容量與健康          | Prometheus、dashboard               |
-| [Histogram](/backend/knowledge-cards/histogram/)                     | 如何用分桶統計延遲與分布              | latency、SLO                        |
-| [Bucket](/backend/knowledge-cards/bucket/)                           | histogram 分桶如何影響解析度          | metrics、cost                       |
-| [Percentile](/backend/knowledge-cards/percentile/)                   | p95 / p99 如何描述長尾延遲            | latency、UX                         |
-| [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)   | label 組合數如何影響成本              | metrics、storage、query             |
-| [Trace](/backend/knowledge-cards/trace/)                             | 跨服務流程如何重建路徑與耗時          | tracing、dependency                 |
-| [Trace Context](/backend/knowledge-cards/trace-context/)             | 跨服務 request 如何串起路徑           | tracing、OpenTelemetry              |
-| [Trace ID](/backend/knowledge-cards/trace-id/)                       | 同一條 trace 的識別碼                 | tracing、log correlation            |
-| [Span](/backend/knowledge-cards/span/)                               | trace 中一段工作如何記錄耗時          | tracing、dependency                 |
-| [Correlation ID](/backend/knowledge-cards/correlation-id/)           | 跨事件與跨服務如何關聯業務流程        | order、payment、queue               |
-| [Request ID](/backend/knowledge-cards/request-id/)                   | 單次 request 如何被追蹤               | API、support                        |
-| [Dashboard](/backend/knowledge-cards/dashboard/)                     | 多個觀測訊號如何組成服務狀態畫面      | incident、capacity、SLO             |
-| [SLI / SLO](/backend/knowledge-cards/sli-slo/)                       | 服務品質如何連到產品承諾              | alert、incident、error budget       |
-| [Error Budget](/backend/knowledge-cards/error-budget/)               | SLO 允許的失敗額度如何決策            | release、reliability                |
-| [Burn Rate](/backend/knowledge-cards/burn-rate/)                     | error budget 消耗速度如何告警         | SLO alert                           |
-| [Sampling](/backend/knowledge-cards/sampling/)                       | 如何抽樣觀測資料以控制成本            | trace、log                          |
-| [Alert](/backend/knowledge-cards/alert/)                             | 服務症狀如何轉成可行動通知            | on-call、SLO、incident              |
-| [Runbook](/backend/knowledge-cards/runbook/)                         | 事故判斷與操作步驟如何標準化          | on-call、incident、replay           |
-| [Alert Runbook](/backend/knowledge-cards/alert-runbook/)             | 告警如何連到可執行排障流程            | on-call、dashboard                  |
-| [Symptom-Based Alert](/backend/knowledge-cards/symptom-based-alert/) | 告警如何優先偵測產品症狀              | SLO、on-call                        |
-| [Runbook Link](/backend/knowledge-cards/runbook-link/)               | 告警如何直接連到處理流程              | alert、dashboard                    |
-| [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)             | 低品質告警如何降低反應品質            | on-call、alert policy               |
-| [降級](/backend/knowledge-cards/degradation/)                        | 服務部分能力失效時如何保留核心功能    | failover、fallback、capacity        |
-| [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)         | 下游持續失敗時如何暫停呼叫            | timeout、fallback、degradation      |
-| [Failover](/backend/knowledge-cards/failover/)                       | 主要路徑失效時如何切到備援            | HA、region、provider                |
-| [Autoscaling](/backend/knowledge-cards/autoscaling/)                 | 容量如何依指標自動擴縮                | HPA、capacity、traffic burst        |
-| [Rolling Update](/backend/knowledge-cards/rolling-update/)           | 版本如何逐批替換並維持可用            | deployment、release                 |
-| [Service Registry](/backend/knowledge-cards/service-registry/)       | 服務實例如何被註冊、維護與摘除        | heartbeat、TTL、metadata            |
-| [Service Discovery](/backend/knowledge-cards/service-discovery/)     | 服務實例如何被查找與路由              | registry、DNS、load balancing       |
-| [停機](/backend/knowledge-cards/downtime/)                           | 服務中斷時要先保護哪些產品結果        | incident、SLO、deployment           |
-| [Readiness](/backend/knowledge-cards/readiness/)                     | instance 何時可以安全接收流量         | Kubernetes、load balancer、rollout  |
-| [Liveness](/backend/knowledge-cards/health-check-liveness/)          | 平台如何判斷 process 是否仍然存活     | Kubernetes、systemd                 |
-| [Graceful Shutdown](/backend/knowledge-cards/graceful-shutdown/)     | instance 停止前如何排空流量與保存狀態 | deployment、worker、long connection |
+| 卡片                                                                 | 核心問題                               | 常見出現位置                        |
+| -------------------------------------------------------------------- | -------------------------------------- | ----------------------------------- |
+| [Log](/backend/knowledge-cards/log/)                                 | 單一事件如何留下可搜尋的上下文         | incident、debug、audit              |
+| [Out-of-Band Signal](/backend/knowledge-cards/out-of-band-signal/)   | 生產棧全掛時還有什麼訊號活著           | watchdog、status page、shared fate  |
+| [Log Schema](/backend/knowledge-cards/log-schema/)                   | log 欄位如何支援搜尋與關聯             | structured log、incident            |
+| [Metrics](/backend/knowledge-cards/metrics/)                         | 指標如何描述趨勢、容量與健康           | Prometheus、dashboard               |
+| [Histogram](/backend/knowledge-cards/histogram/)                     | 如何用分桶統計延遲與分布               | latency、SLO                        |
+| [Bucket](/backend/knowledge-cards/bucket/)                           | histogram 分桶如何影響解析度           | metrics、cost                       |
+| [Percentile](/backend/knowledge-cards/percentile/)                   | p95 / p99 如何描述長尾延遲             | latency、UX                         |
+| [Metric Cardinality](/backend/knowledge-cards/metric-cardinality/)   | label 組合數如何影響成本               | metrics、storage、query             |
+| [Trace](/backend/knowledge-cards/trace/)                             | 跨服務流程如何重建路徑與耗時           | tracing、dependency                 |
+| [Trace Context](/backend/knowledge-cards/trace-context/)             | 跨服務 request 如何串起路徑            | tracing、OpenTelemetry              |
+| [Trace ID](/backend/knowledge-cards/trace-id/)                       | 同一條 trace 的識別碼                  | tracing、log correlation            |
+| [Span](/backend/knowledge-cards/span/)                               | trace 中一段工作如何記錄耗時           | tracing、dependency                 |
+| [Correlation ID](/backend/knowledge-cards/correlation-id/)           | 跨事件與跨服務如何關聯業務流程         | order、payment、queue               |
+| [Request ID](/backend/knowledge-cards/request-id/)                   | 單次 request 如何被追蹤                | API、support                        |
+| [Dashboard](/backend/knowledge-cards/dashboard/)                     | 多個觀測訊號如何組成服務狀態畫面       | incident、capacity、SLO             |
+| [SLI / SLO](/backend/knowledge-cards/sli-slo/)                       | 服務品質如何連到產品承諾               | alert、incident、error budget       |
+| [Error Budget](/backend/knowledge-cards/error-budget/)               | SLO 允許的失敗額度如何決策             | release、reliability                |
+| [Burn Rate](/backend/knowledge-cards/burn-rate/)                     | error budget 消耗速度如何告警          | SLO alert                           |
+| [Sampling](/backend/knowledge-cards/sampling/)                       | 如何抽樣觀測資料以控制成本             | trace、log                          |
+| [Alert](/backend/knowledge-cards/alert/)                             | 服務症狀如何轉成可行動通知             | on-call、SLO、incident              |
+| [Runbook](/backend/knowledge-cards/runbook/)                         | 事故判斷與操作步驟如何標準化           | on-call、incident、replay           |
+| [Alert Runbook](/backend/knowledge-cards/alert-runbook/)             | 告警如何連到可執行排障流程             | on-call、dashboard                  |
+| [Symptom-Based Alert](/backend/knowledge-cards/symptom-based-alert/) | 告警如何優先偵測產品症狀               | SLO、on-call                        |
+| [Runbook Link](/backend/knowledge-cards/runbook-link/)               | 告警如何直接連到處理流程               | alert、dashboard                    |
+| [Alert Fatigue](/backend/knowledge-cards/alert-fatigue/)             | 低品質告警如何降低反應品質             | on-call、alert policy               |
+| [降級](/backend/knowledge-cards/degradation/)                        | 服務部分能力失效時如何保留核心功能     | failover、fallback、capacity        |
+| [Circuit Breaker](/backend/knowledge-cards/circuit-breaker/)         | 下游持續失敗時如何暫停呼叫             | timeout、fallback、degradation      |
+| [Failover](/backend/knowledge-cards/failover/)                       | 主要路徑失效時如何切到備援             | HA、region、provider                |
+| [Autoscaling](/backend/knowledge-cards/autoscaling/)                 | 容量如何依指標自動擴縮                 | HPA、capacity、traffic burst        |
+| [Rolling Update](/backend/knowledge-cards/rolling-update/)           | 版本如何逐批替換並維持可用             | deployment、release                 |
+| [Service Registry](/backend/knowledge-cards/service-registry/)       | 服務實例如何被註冊、維護與摘除         | heartbeat、TTL、metadata            |
+| [Service Discovery](/backend/knowledge-cards/service-discovery/)     | 服務實例如何被查找與路由               | registry、DNS、load balancing       |
+| [停機](/backend/knowledge-cards/downtime/)                           | 服務中斷時要先保護哪些產品結果         | incident、SLO、deployment           |
+| [Readiness](/backend/knowledge-cards/readiness/)                     | instance 何時可以安全接收流量          | Kubernetes、load balancer、rollout  |
+| [Liveness](/backend/knowledge-cards/health-check-liveness/)          | 平台如何判斷 process 是否仍然存活      | Kubernetes、systemd                 |
+| [Graceful Shutdown](/backend/knowledge-cards/graceful-shutdown/)     | instance 停止前如何排空流量與保存狀態  | deployment、worker、long connection |
+| [Recording Rule](/backend/knowledge-cards/recording-rule/)           | 聚合計算如何從查詢時推到寫入時         | Prometheus、預聚合                  |
+| [Rollup / Downsampling](/backend/knowledge-cards/rollup/)            | 時序資料如何隨時間降低精度             | 保留期、儲存成本                    |
+| [Storage Tiering](/backend/knowledge-cards/storage-tiering/)         | 資料如何按熱度分層儲存                 | 查詢速度、成本                      |
+| [Resiliency Matrix](/backend/knowledge-cards/resiliency-matrix/)     | 每個失敗模式的防護狀態如何被盤點       | 交叉矩陣、驗證覆蓋                  |
+| [Fuzz Test](/backend/knowledge-cards/fuzz-test/)                     | 解析器與邊界處理如何用隨機輸入驗證     | 變異輸入、健壯性                    |
+| [Toil](/backend/knowledge-cards/toil/)                               | 重複且無永久價值的工作如何成為治理對象 | 自動化、值班負荷                    |
 
 ## 效能工程與容量規劃
 
@@ -328,6 +398,8 @@ weight: -1
 | [SLO Baseline Drift](/backend/knowledge-cards/slo-baseline-drift/)               | SLO baseline 因業務變化要重新校準        | review、surge、product change            |
 | [OLAP Offload](/backend/knowledge-cards/olap-offload/)                           | 分析查詢如何從 OLTP 主庫卸載             | replica、資料倉儲、CDC                   |
 | [Per-Connection Memory](/backend/knowledge-cards/per-connection-memory/)         | 每連線記憶體如何隨並發數放大             | sort/join buffer、OOM、連線數            |
+| [Query Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)   | 查詢行數如何因 join 缺條件而爆炸放大     | join、cross product                      |
+| [Keyset Pagination](/backend/knowledge-cards/keyset-pagination/)                 | 深分頁如何避開 OFFSET 的線性退化         | 大表、游標分頁                           |
 
 ## 事故處理與復盤
 
@@ -364,6 +436,12 @@ weight: -1
 | [MTTR](/backend/knowledge-cards/mttr/)                                                     | 平均修復時間如何反映處置能力       | incident metrics、review             |
 | [Point-in-Time Recovery](/backend/knowledge-cards/point-in-time-recovery/)                 | 資料如何還原到過去任意時間點       | base backup、WAL、RPO                |
 | [Corruption Recovery](/backend/knowledge-cards/corruption-recovery/)                       | 資料損毀事故如何辨識來源並處置     | checksum、evidence、restore          |
+| [Containment](/backend/knowledge-cards/containment/)                                       | 擴散面如何被限制以爭取回復時間     | 止血、隔離                           |
+| [Impact Scope](/backend/knowledge-cards/impact-scope/)                                     | 受影響範圍如何被盤點               | 通報、責任判讀                       |
+| [Stakeholder Mapping](/backend/knowledge-cards/stakeholder-mapping/)                       | 通報對象如何分層並對應 owner       | 分層通報、對外溝通                   |
+| [Status Page](/backend/knowledge-cards/status-page/)                                       | 對外狀態頁如何承接可用性承諾       | 通報、可用性承諾                     |
+| [Action Item Closure](/backend/knowledge-cards/action-item-closure/)                       | 復盤的行動項如何被驗證完成         | 復盤、驗收證據                       |
+| [Session Invalidation](/backend/knowledge-cards/session-invalidation/)                     | 事件之後既有會話如何失效           | 重放、撤銷                           |
 
 ## 資安與資料保護
 

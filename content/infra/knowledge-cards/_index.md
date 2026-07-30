@@ -51,3 +51,17 @@ Infra 知識卡收錄基礎設施領域的核心術語。每張卡自包含、�
 | [HashiCorp Vault](/infra/knowledge-cards/vault/)                                     | 機密管理系統，集中存放密碼與 API key，提供存取控制與稽核                                  |
 | [Harbor](/infra/knowledge-cards/harbor/)                                             | 開源的 container image registry，支援映像掃描、RBAC、複製                                 |
 | [Helm](/infra/knowledge-cards/helm/)                                                 | Kubernetes 的套件管理工具，用 chart 打包一組 K8s 資源部署定義                             |
+| [EC2](/infra/knowledge-cards/ec2/)                                                   | AWS 的虛擬機器服務，由 AMI、instance type、EBS、security group 與 IAM role 組成           |
+| [AMI](/infra/knowledge-cards/ami/)                                                   | EC2 instance 的作業系統映像快照，從同一份 AMI 開出的 instance 起始狀態相同                |
+| [EBS](/infra/knowledge-cards/ebs/)                                                   | 掛在 instance 上的持久化區塊儲存，生命週期與 instance 獨立、支援 snapshot                 |
+| [S3](/infra/knowledge-cards/s3/)                                                     | 物件儲存服務，用 bucket + key 組織檔案，提供 versioning、加密與 lifecycle                 |
+| [RDS](/infra/knowledge-cards/rds/)                                                   | 受管關聯式資料庫服務，代管備份、更新與 failover                                           |
+| [MySQL](/infra/knowledge-cards/mysql/)                                               | 最廣泛使用的開源關聯式資料庫，大版本升級帶認證方式與查詢行為的破壞性變更                  |
+| [nginx](/infra/knowledge-cards/nginx/)                                               | 高效能 Web Server 與 Reverse Proxy，用集中設定檔取代分散在目錄裡的設定                    |
+| [DNS](/infra/knowledge-cards/dns/)                                                   | 把域名轉成 IP 的系統，以及 A record、CNAME、NS 與 TTL 各自的角色                          |
+| [SSL / TLS](/infra/knowledge-cards/ssl-tls/)                                         | 加密 client 與 server 通訊的協定，決定 HTTPS 能否成立                                     |
+| [SSH](/infra/knowledge-cards/ssh/)                                                   | 加密的遠端 shell 連線，它的有無決定整條 CLI 工具鏈能不能用                                |
+| [FTP](/infra/knowledge-cards/ftp/)                                                   | 檔案傳輸協定，無 SSH 環境的主要檔案管理方式，SFTP 與 FTPS 是加密變體                      |
+| [cron](/infra/knowledge-cards/cron/)                                                 | 按時間表自動執行指令的排程系統，接手維運時要先盤點既有 job                                |
+| [HCL](/infra/knowledge-cards/hcl/)                                                   | Terraform 的宣告式設定語言，用 resource block 描述目標狀態                                |
+| [terraform plan / apply](/infra/knowledge-cards/terraform-plan-apply/)               | IaC 的兩個核心操作：plan 只產出差異報告、apply 才執行差異                                 |

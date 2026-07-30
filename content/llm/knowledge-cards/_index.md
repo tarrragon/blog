@@ -134,6 +134,7 @@ weight: -1
 | [QLoRA](/llm/knowledge-cards/qlora/)                                                 | LoRA + 4-bit 量化、消費級 GPU 也能 fine-tune 大模型     |
 | [Catastrophic Forgetting](/llm/knowledge-cards/catastrophic-forgetting/)             | Fine-tune 覆蓋掉原有能力的現象、LoRA + 資料 mixing 緩解 |
 | [Contrastive Learning](/llm/knowledge-cards/contrastive-learning/)                   | Embedding model 的訓練 paradigm、相關靠近 / 無關遠離    |
+| [Word2Vec](/llm/knowledge-cards/word2vec/)                                           | 早期靜態詞向量、skip-gram / CBOW 從上下文學 embedding   |
 | [In-Context Learning](/llm/knowledge-cards/in-context-learning/)                     | 不更新權重、從 prompt 內範例與規則臨時對齊任務          |
 
 ### Reasoning Models
