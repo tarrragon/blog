@@ -57,6 +57,8 @@ slug: "declared-composition-is-not-performed-composition"
 
 ---
 
+- [#248 推翻一個假說之後，替補者是在驗屍的空檔裡上位的](../hypothesis-replacement-inherits-no-scrutiny/)：本卡在假說層的形態。那裡多一層——沒有被套用的標準，是套用者自己剛剛才訂出來並用過一次的，所以「不知道有這條規則」這個藉口不成立，成因純粹是注意力已經花在前一個對象上。
+
 ## 判讀徵兆
 
 | 訊號                                                    | 該做的事                                                                           |

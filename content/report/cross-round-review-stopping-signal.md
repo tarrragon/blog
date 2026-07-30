@@ -77,6 +77,7 @@ Total 38 個 finding、9 個 reviewer instance、零重疊。Round 3 finding 數
 - [#126 寫作 review 是多軸完整性、不是單軸深度](/report/writing-review-multi-axis-completeness/) — 列七軸。本卡用七軸作為停止判讀的具體 checklist、補強 #126 在「執行收尾」這層的判讀工具。
 - [#147 規範化跟自審是兩種認知任務](/report/rule-codification-vs-self-audit/) — 說明「規範化第一次落地不可能完整、需要疊代」。本卡補完：疊代到什麼時候停？停止訊號跟疊代啟動訊號是不同維度。
 - [#125 Collapse 是隱形預設](/report/collapse-is-implicit-default/) — 「無止境疊代」是 collapse 的另一個極端（從「規範化單軸 collapse」反向到「review 過度 collapse 完美主義」）。本卡用「修法成本反轉」訊號避免這個反向 collapse。
+- [#248 推翻一個假說之後，替補者是在驗屍的空檔裡上位的](../hypothesis-replacement-inherits-no-scrutiny/)：同屬完成判準家族。本卡的答案是 frame 涵蓋齊備，而推翻與替換本身也是一次 frame 切換——切換之後的新對象沒有被任何一輪涵蓋過，那是本卡的清單看不到的位置。
 
 ## 判讀徵兆
 
