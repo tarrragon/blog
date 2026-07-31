@@ -8,7 +8,7 @@ tags: ["backend", "security"]
 
 本章的責任是把機器到機器信任風險拆成可驗證邊界，讓 [workload identity](/backend/knowledge-cards/workload-identity/) 與 [federation](/backend/knowledge-cards/federation/) 不會把外部風險直接帶入內部高權限路徑。
 
-## 本章寫作邊界
+## 本章涵蓋與不涵蓋
 
 本章聚焦 workload identity、federation、短效憑證與信任收斂，不討論雲廠商特定設定語法。走這條路徑的實際效果是取消憑證配發這個動作，展開見下方治理模型段；平台身分在某條整合上用不上時的核發與交付見 [7.32 機器憑證的配發](../machine-credential-issuance/)。
 

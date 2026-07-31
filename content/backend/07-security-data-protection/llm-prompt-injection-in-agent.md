@@ -8,7 +8,7 @@ weight: 100
 
 本章的責任是把 [prompt injection](/llm/knowledge-cards/prompt-injection/) 在 production agent 場景下能造成的具體後果、跟 [7.10 事件案例到控制工作流](/backend/07-security-data-protection/incident-case-to-control-workflow/) 的 incident 流程接起來。核心概念見 [tool use](/llm/knowledge-cards/tool-use/) 跟 [agent loop](/llm/knowledge-cards/agent-loop/) 卡；影響範圍評估見 backend [blast-radius](/backend/knowledge-cards/blast-radius/) 卡。個人 dev IDE 場景的 prompt injection 入口判讀見 [llm/6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)；本章聚焦 production agent 場景下、injection 觸發 tool / API call 後造成的服務級後果。
 
-## 本章寫作邊界
+## 本章涵蓋與不涵蓋
 
 本章聚焦 production agent 場景下 prompt injection 的後果治理：tool spec 設計約束、agent loop 限制、review checkpoint、可逆性保證。注入發生機制（IDE 場景、codebase / 依賴 / Web）已在 llm/6.3 涵蓋、本章不重複。
 

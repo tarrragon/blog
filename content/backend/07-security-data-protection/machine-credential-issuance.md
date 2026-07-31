@@ -10,7 +10,7 @@ tags: ["backend", "security", "Credential", "Workload Identity"]
 
 本章的責任是把「這把憑證怎麼交出去」拆成兩個有先後的問題：這條整合需不需要有一把要交出去的憑證，以及交付免不掉時那一次交付要滿足什麼條件。本章說的配發是核發、交付與登記三個動作的合稱，其中核發專指產生憑證那一步。
 
-## 本章寫作邊界
+## 本章涵蓋與不涵蓋
 
 本章聚焦憑證從核發、送到使用方手上到被登記下來的這一段。憑證上線之後的輪替、回收與事件收斂節奏屬治理層，見 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)。用哪一種憑證機制（共享密鑰、API key、mTLS、OAuth client credentials）是另一條判讀軸，分兩層：原語層（這個機制解的是機密性、來源與完整性還是別的）在 [7.28 密碼學原語選型](../cryptographic-primitive-selection/)，系統層的機制選型在 [7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)，兩者都在本章的上游。人類帳號的開通不在本章形態裡，那一側走 [7.2 身分與授權邊界](../identity-access-boundary/)。
 

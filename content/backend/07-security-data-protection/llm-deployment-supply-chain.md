@@ -8,7 +8,7 @@ weight: 98
 
 本章的責任是把 LLM 服務的模型權重、推論伺服器、第三方 plugin / [MCP](/llm/knowledge-cards/mcp/) server 三條供應鏈、納入 [7.4 供應鏈與產物信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) 的既有框架。模型來源信任的判讀依據見 [model card](/llm/knowledge-cards/model-card/) 卡；通用 artifact 信任機制見 [artifact-provenance](/backend/knowledge-cards/artifact-provenance/) 卡。LLM 場景的特殊性在於模型權重既是「資料」又是「程式邏輯」、第三方 MCP 是可執行程式碼、跟一般 software artifact 的信任模型有部分差異、但 build provenance / signature / dependency isolation 等控制原則沿用同一套。
 
-## 本章寫作邊界
+## 本章涵蓋與不涵蓋
 
 本章聚焦 production LLM 服務的供應鏈完整性問題節點。個人 dev 視角的模型來源信任見 [llm/6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/)；本章不重複個人 dev 場景的判讀、聚焦 production 場景下的特殊議題（規模化下載、跨 region 鏡像、retry 策略、模型 release 流程）。
 

@@ -10,7 +10,7 @@ tags: ["backend", "security", "HMAC", "Webhook", "Replay", "Timestamp"]
 
 這一章要交出去的是三樣東西：一份雙方確認過的驗證素材規格、一個換算得出上下界的窗口長度、以及一組分得開的拒絕原因。第一樣決定對接要花多久，第二樣決定驗簽通過之後還擋不擋得住重送，第三樣決定事件當天查得出方向。另有一項不必等對方就能修完：比對驗證值那一行用對函式。
 
-## 本章寫作邊界
+## 本章涵蓋與不涵蓋
 
 本章的三個收斂條件涵蓋範圍不同：驗證素材的對齊是共享密鑰簽章專屬，而重放窗口對任何接收外部推送的端點都成立（與用哪一種機制無關），比對方式對任何做等值比對的秘密都成立（API key 的比對有一模一樣的時間洩漏）。機制本身還沒選的讀者從 [7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/) 進來；這個機制屬於哪一類原語、密鑰放在哪一格見 [7.28 密碼學原語選型](../cryptographic-primitive-selection/)；密鑰的保存與輪替屬治理層，見 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)。本章聚焦選定之後的收斂條件，機制本身的原理在 [Message Authentication](/backend/knowledge-cards/message-authentication/)。下方反覆出現的**驗證素材**指的是進入計算的那串內容——哪些欄位、以什麼順序、用什麼編碼串接起來。
 

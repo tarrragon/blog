@@ -8,7 +8,7 @@ weight: 99
 
 本章的責任是把 LLM 推論服務的多租戶隔離問題拆成可操作的判讀節點。LLM 服務的隔離議題在一般 multi-tenant 隔離（compute / network / data、見 [tenant-boundary](/backend/knowledge-cards/tenant-boundary/)）之上、多了 [KV cache](/llm/knowledge-cards/kv-cache/)（特別是 [prefix cache](/llm/knowledge-cards/prefix-cache/) 重用）、prompt log、model artifact 訪問權三個 LLM-specific 層、本章聚焦這些差異。一般 multi-tenant 隔離原則沿用 [7.2 身分授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 跟 [7.4 供應鏈](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)。
 
-## 本章寫作邊界
+## 本章涵蓋與不涵蓋
 
 本章聚焦 production LLM 推論的多租戶 isolation 特殊性。team / 個人 dev 場景的「多人共用本地 server」見 [llm/6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/)；通用 IAM / 服務間信任邊界見 7.2。
 
