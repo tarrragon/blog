@@ -58,7 +58,7 @@ weight: 7
 
 **從對接失敗或原語誤用進入**：先在 [7.28](/backend/07-security-data-protection/cryptographic-primitive-selection/) 確認手上這個機制解的是哪一類問題（誤把訊息驗證當加密是最常見的一種），簽章對接本身對不起來的走 [7.35](/backend/07-security-data-protection/signature-integration-verification/)，撤銷或身分層次不對的走 [7.29](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。
 
-**外洩已經發生**：要判斷手上的密碼儲存撐不撐得住，直接進 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。憑證與 token 的止血範圍走 [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的生命週期段——它回答的是能不能在時限內完成撤銷與替換。這件事要不要當事故啟動、算哪一級，判準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；對外要不要通知、什麼時候通知在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)。
+**外洩已經發生**：使用者帳號這一側從 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/) 起步——它處理的是範圍查不出來時怎麼分層定重設對象、撤銷與重設的先後，以及通知門檻要交付哪些事實。要判斷手上的密碼儲存撐不撐得住，接 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。憑證與 token 的止血範圍走 [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的生命週期段——它回答的是能不能在時限內完成撤銷與替換。這件事要不要當事故啟動、算哪一級，判準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；對外要不要通知、什麼時候通知在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)。
 
 ## 從章節到實作的 chain
 
@@ -123,12 +123,13 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [7.34 機器憑證的機制選型：秘密要不要在每次呼叫裡送出去](/backend/07-security-data-protection/machine-credential-mechanism-selection/)       | Credential Mechanism Selection                    | 定義選擇權在誰、秘密送不送得起、撤銷粒度與基礎建設成本                                                |
 | [7.35 簽章對接的驗證收斂：驗簽通過之後還缺哪一塊](/backend/07-security-data-protection/signature-integration-verification/)                 | Signature Integration                             | 定義驗證素材的對齊成本、重放窗口的收斂條件與比對方式                                                  |
 | [7.36 憑證在請求中怎麼帶：附上的決定由誰做](/backend/07-security-data-protection/credential-transport-in-request/)                          | Credential Transport                              | 定義自動附上與明確附上各自要求攻擊者先做到什麼、三層防護的缺口                                        |
+| [7.37 密碼外洩之後：範圍判不出來的時候怎麼定處置](/backend/07-security-data-protection/credential-breach-response/)                         | Credential Breach Response                        | 定義三層重設範圍、撤銷與重設的先後、通知門檻要交付的事實                                              |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
 
 ## 模組完成狀態
 
-主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.36）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做、登入之後每個請求靠什麼帶身分，以及機器憑證的機制、交付與代理關係。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
+主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.37）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做、登入之後每個請求靠什麼帶身分，以及機器憑證的機制、交付與代理關係。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
 
 素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。
 
@@ -142,7 +143,6 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------ | ----------- |
 | 外部身分來源與本地帳號的對應與生命週期（對方停用時這邊怎麼知道、使用者離開之後資料歸誰、同一個人用不同來源登入怎麼合併——三者是同一條軸的三個角、7.31 各段分別當前提引用）                                                                                                               | 主章   | 無（7.31 三處各指過來、各已給最小做法）                | 中          |
 | 使用者持有型憑證的載體與導入（passkey 的註冊流程 / 回復路徑 / 企業裝置管理，與硬體金鑰、生物辨識、人類持客戶端憑證登入的判讀——同一條軸的兩角，7.31 兩處各指過來）                                                                                                                       | 主章   | 無（7.31 判讀流程指過來、已給最小判準）                | 中          |
-| 密碼外洩之後的處置（強制重設範圍、通知門檻）                                                                                                                                                                                                                                            | 主章   | 無（7.30 下一步路由指過來）                            | 小          |
 | B2B 多租戶的身分提供者可設定能力                                                                                                                                                                                                                                                        | 主章   | 無（7.31 使用者身分來源段指過來）                      | 中          |
 | 既有對外整合的盤點形態（每條整合的規格作者、秘密送不送得出去、撤銷粒度、上次換是什麼時候、素材有沒有書面規格——五欄分散在 7.34 / 7.35 / 7.6 三章，而稽核問與接手既有整合都要的是併成一張表的形態）                                                                                       | 主章   | 無（三章各有一欄、7.32 已定義登記載體）                | 中          |
 | 發行方自助發放憑證的流程（誰能開、範圍怎麼選、只顯示一次、自助輪替——7.32 整章是「交給合作廠商」的先有雞先有蛋框架，對平台自助發放不適用）                                                                                                                                               | 主章   | 無（7.32 / 7.34 兩處讀者路線都會撞到）                 | 中          |

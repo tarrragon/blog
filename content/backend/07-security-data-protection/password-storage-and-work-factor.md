@@ -166,5 +166,5 @@ bcrypt 的固定內部狀態在這個框架裡有明確的位置：它有記憶�
 - 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「密鑰與秘密」議題
 - 原語分類與金鑰位置判讀：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
 - 登入節奏、多因子與會話收斂：[7.2 身分與授權邊界](../identity-access-boundary/)
-- 外洩之後的止血與通報：事故節奏的通用形態見 [8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)；密碼外洩特有的處置（強制重設的範圍怎麼定、通知門檻在哪）本站尚未寫、已列入本模組待辦，在那之前用上方「升級路徑」的第二條打底
+- 外洩之後的止血與通報：密碼外洩特有的處置（強制重設的範圍怎麼定、通知門檻在哪）見 [7.37 密碼外洩之後](../credential-breach-response/)；事故節奏的通用形態見 [8.x 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)
 - 密碼雜湊的運算容量：本站尚未寫把認證運算納入容量規劃的章節；在那之前用上方「work factor 怎麼定」第 3 步的算法（尖峰登入量乘上單次耗時）自行推估。
