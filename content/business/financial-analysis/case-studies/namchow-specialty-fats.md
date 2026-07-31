@@ -80,6 +80,8 @@ tags: ["business", "case-analysis", "financial-analysis", "supply-chain"]
 
 ## 跟壓榨廠的結構差異
 
+兩欄的毛利率均為 2025 年度：南僑取自本篇上方的財務概況，大統益取自 [大統益案例](/business/financial-analysis/case-studies/ttet-crushing-leader/)。
+
 | 維度       | 南僑（中游加工）                 | 大統益（上游壓榨）     |
 | ---------- | -------------------------------- | ---------------------- |
 | 原料       | 多種油脂（棕櫚油、豆油、奶油等） | 單一（黃豆 → 油 + 粕） |
