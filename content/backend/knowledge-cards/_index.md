@@ -505,6 +505,11 @@ weight: -1
 | [Cross-Site Request Forgery](/backend/knowledge-cards/cross-site-request-forgery/)               | 攻擊者不必讀到憑證就能發動什麼       | cookie、SameSite、狀態變更端點   |
 | [Cross-Site Scripting](/backend/knowledge-cards/cross-site-scripting/)                           | 程式碼跑進來源之後取得哪些能力       | 輸出編碼、CSP、第三方腳本        |
 | [Passkey](/backend/knowledge-cards/passkey/)                                                     | 金鑰對取代共享秘密之後上限在哪       | 註冊起點、回復路徑、平台同步     |
+| [Registrable Domain](/backend/knowledge-cards/registrable-domain/)                               | 「站」的切點落在哪一層               | SameSite、子網域、信任邊界       |
+| [Identity Provider](/backend/knowledge-cards/identity-provider/)                                 | 登入交出去之後這邊還剩什麼責任       | SSO、SAML、OIDC、委派登入        |
+| [Pepper](/backend/knowledge-cards/pepper/)                                                       | 資料庫之外那把金鑰擋得住哪一種外洩   | 密碼儲存、金鑰住址、輪替         |
+| [Memory-Hard Function](/backend/knowledge-cards/memory-hard-function/)                           | 密碼雜湊向攻擊者收的是哪一種費       | Argon2、scrypt、平行度           |
+| [Content Security Policy](/backend/knowledge-cards/content-security-policy/)                     | 注入成立之後那段程式碼還能做什麼     | CSP、第三方腳本、違規回報        |
 
 ## 使用方式
 

@@ -26,7 +26,7 @@ Security Incident vs Operational Incident 分流是把事故的法規、證據�
 
 ## 核心判讀
 
-判讀分流時，先看是否存在外部 actor 或資料外洩風險，再看是否需要切換到 security 流程。
+判讀分流時，先看是否存在外部 actor 或資料外洩風險，再看是否需要切換到 security 流程。外洩的是使用者帳號憑證時，範圍怎麼分層、撤銷與重設的先後、通報要交付哪些事實見 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/)。
 
 重點訊號包括：
 

@@ -20,3 +20,5 @@ Authentication 是 [authorization](/backend/knowledge-cards/authorization/) 的�
 ## 設計責任
 
 Authentication 要處理 credential 保存、過期、撤銷、輪替、錯誤回應、登入風險與 [audit log](/backend/knowledge-cards/audit-log/)。安全事件後要能追查是哪個身份與 credential 被使用。
+
+人類身分這一側的方式選型（自建、委派、或裝置持有的金鑰對）走 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)，其中金鑰對那一種見 [passkey](/backend/knowledge-cards/passkey/)；登入交給外部系統之後的責任分界見 [identity provider](/backend/knowledge-cards/identity-provider/)。

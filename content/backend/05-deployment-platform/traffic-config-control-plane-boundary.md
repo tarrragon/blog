@@ -43,7 +43,9 @@ Traffic boundary 的判讀重點是 customer impact 如何被分批限制。小�
 | -------- | --------------------------------------------------- | ------------------------------------------------- |
 | 高       | payment endpoint、auth provider URL、encryption key | 等同 code review + staged rollout + rollback 驗證 |
 | 中       | rate limit、timeout、feature flag、CORS 設定        | 變更 review + 觀測窗口                            |
-| 低       | log level、debug flag、非關鍵 UI 文案               | 變更紀錄即可                                      |
+
+CORS 之所以列在這一層而不是低風險，是因為它常被當成存取控制使用，而它在第一個非瀏覽器呼叫方出現時就失效——判讀見 [same-origin policy](/backend/knowledge-cards/same-origin-policy/)。
+| 低  | log level、debug flag、非關鍵 UI 文案 | 變更紀錄即可 |
 
 風險分級的判讀依據是「這個設定改錯時、使用者會看到什麼」。改錯 payment endpoint 會讓付款打到錯誤目標；改錯 rate limit 可能讓合法流量被擋；改錯 log level 最多是 log 太吵或太安靜。設定的注入方式與版本追蹤見 [5.1 配置注入方式與取捨](/backend/05-deployment-platform/container-runtime/)。
 

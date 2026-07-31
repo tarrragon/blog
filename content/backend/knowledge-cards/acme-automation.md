@@ -19,3 +19,5 @@ ACME 自動化是 [website certificate lifecycle](/backend/knowledge-cards/websi
 ## 設計責任
 
 設計要定義 challenge 類型、失敗重試、續期窗口、憑證分發、失敗 [alert](/backend/knowledge-cards/alert/) 與回復 [runbook](/backend/knowledge-cards/runbook/)。網域與 DNS 權限要和 [least privilege](/backend/knowledge-cards/least-privilege/) 對齊。
+
+這裡的網域驗證挑戰與多租戶身分接入要求租戶證明網域控制權是同型機制，判讀見 [7.40 B2B 多租戶的身分接入](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。

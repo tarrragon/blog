@@ -125,7 +125,7 @@ resource "aws_iam_role" "break_glass" {
 
 ## 定期 access review
 
-權限分配不是一次性的設定。人會換組、離職、從 contractor 轉正職、從開發角色轉管理角色，每一次角色變動都可能讓既有的權限配置過期。定期 review 的責任是找出「權限比當前角色需要的更寬」的身分，把它們收斂回來。
+權限分配不是一次性的設定。人會換組、離職、從 contractor 轉正職、從開發角色轉管理角色，每一次角色變動都可能讓既有的權限配置過期。這裡看的是自己作為身分來源那一側；自己是被接入的服務、而使用者的帳號由客戶的目錄管理時，鏡像的問題是「對方停用了這邊怎麼知道」，見 [7.38 外部身分與本地紀錄](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)。定期 review 的責任是找出「權限比當前角色需要的更寬」的身分，把它們收斂回來。
 
 ### 節奏與方法
 

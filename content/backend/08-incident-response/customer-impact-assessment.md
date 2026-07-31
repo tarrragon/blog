@@ -159,3 +159,4 @@ Customer impact assessment 需要在資料外洩、授權錯誤與合規影響�
 - 08.4 incident communication：提供對外更新內容
 - 08.10 stakeholder communication：接 status page 與補償政策
 - 07.4 data protection：資料外洩或資料正確性影響分流
+- [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/)：帳號憑證外洩時的分層重設範圍，以及通知門檻的兩條線（通報監理機關與通知當事人各有自己的門檻與時鐘）

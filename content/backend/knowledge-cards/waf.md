@@ -19,3 +19,5 @@ WAF 位在流量入口與 application 之間。它適合處理 SQL injection、X
 ## 設計責任
 
 WAF 設計要定義規則更新、誤殺處理、觀測指標、例外放行與回應流程。它不應取代 application 層的輸入驗證、授權或速率限制，而是作為第一層防護與風險降噪。
+
+它擋的 XSS 是入口層的形態過濾，而根本的處置在輸出處理與內容安全政策，見 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 與 [content security policy](/backend/knowledge-cards/content-security-policy/)。

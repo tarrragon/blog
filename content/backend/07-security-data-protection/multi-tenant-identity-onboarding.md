@@ -6,7 +6,7 @@ weight: 115
 tags: ["backend", "security"]
 ---
 
-本章處理的形態是每個客戶帶自己的身分提供者（identity provider，企業用來集中管帳號與登入的系統，客戶那一端常稱為「我們的 SSO」）進來，於是「用哪一個身分來源」從一次選型變成一項要做成設定的能力。對接的協定通常是 SAML 或 OIDC。
+本章處理的形態是每個客戶帶自己的[身分提供者](/backend/knowledge-cards/identity-provider/)（客戶那一端常稱為「我們的 SSO」）進來，於是「用哪一個身分來源」從一次選型變成一項要做成設定的能力。對接的協定通常是 SAML 或 OIDC。
 
 它在 [7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/) 的上一層——那一章假設對應關係已經接上，處理接上之後兩條生命週期怎麼走；這一章問的是這個接法要做成幾組設定、誰來填、以及填的內容憑什麼可信。
 

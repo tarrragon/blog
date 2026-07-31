@@ -20,3 +20,5 @@ Data classification 的核心概念是「依敏感度與風險把資料分級」
 ## 設計責任
 
 資料分級要落到欄位、表、事件、log、匯出與測試資料。每個等級應定義存取條件、遮罩、加密、保留期限、audit 與事故處理要求。
+
+外洩當下這份分級決定通報門檻判不判得出來——欄位、筆數與資料類型要在事發那一刻答得出來，見 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/)。

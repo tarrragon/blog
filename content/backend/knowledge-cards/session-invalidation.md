@@ -20,3 +20,5 @@ Session invalidation 位在 [authentication](/backend/knowledge-cards/authentica
 ## 設計責任
 
 會話失效要定義觸發條件、覆蓋範圍、失效時序與驗證方式。設計上需要兼顧安全收斂速度與業務可用性。
+
+委派身分的系統另有一條線：對方停用帳號時這邊預設收不到事件，既有會話與備用登入路徑都還開著，處置見 [7.38 外部身分與本地紀錄](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)。外洩當下撤銷與重設的先後見 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/)。

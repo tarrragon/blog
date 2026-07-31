@@ -36,7 +36,7 @@ Gate 處理中（loading）或結果不確定（timeout）時使用者看到什�
 
 ### 認證 Gate
 
-使用者必須驗證身份才能使用功能。生物辨識、密碼、PIN 碼、OAuth 登入。
+使用者必須驗證身份才能使用功能。生物辨識、密碼、PIN 碼、OAuth 登入。這四項在使用者眼中是並列的選項，而在後端的分類裡生物辨識與其餘三者不同層——它解鎖的是裝置上那把金鑰，本身不是憑證，見 [7.39 使用者持有型憑證](/backend/07-security-data-protection/user-held-credential-carrier/)。
 
 認證 gate 的 fallback 設計取決於安全需求和使用場景。銀行 app 可能要求生物辨識 + PIN 碼雙重驗證，沒有更低層級的 fallback。自用工具可以接受密碼 fallback，因為使用者本身就是 owner — 可用性優先於認證強度（[U.C2](/ux-design/cases/biometric-only-no-fallback/)）。
 

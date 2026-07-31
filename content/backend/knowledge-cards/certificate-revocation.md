@@ -19,3 +19,5 @@ Certificate revocation 的核心概念是「在憑證不再可信時快速宣布
 ## 設計責任
 
 設計要定義撤銷觸發條件、責任人、替換時序、客戶端影響評估、溝通流程與回復 [runbook](/backend/knowledge-cards/runbook/)。事故後要以 [post-incident](/backend/knowledge-cards/runbook/) 更新偵測與輪替策略。
+
+持有者是人而非機器時（企業與政府的智慧卡），撤銷還要接上實體回收與帳號側的停用，見 [7.39 使用者持有型憑證](/backend/07-security-data-protection/user-held-credential-carrier/)。

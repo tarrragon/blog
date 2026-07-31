@@ -19,3 +19,5 @@ Security misconfiguration 是部署與操作層面的安全風險。程式邏輯
 ## 設計責任
 
 防護要包含 baseline config、環境差異審查、secret scan、IaC review、security test 與 drift detection。高風險設定應進入 [Release Gate](/backend/knowledge-cards/release-gate/)。
+
+CORS 是這一類設定裡最常被當成存取控制的一項，它實際管的範圍見 [same-origin policy](/backend/knowledge-cards/same-origin-policy/)。

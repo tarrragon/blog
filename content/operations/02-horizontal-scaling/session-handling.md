@@ -36,3 +36,4 @@ Sticky session 把同一個用戶的 session 綁定到某台實例，session 資
 - 把 session 從實例本地移出去，是無狀態設計的一部分 → [Stateless 設計原則](/operations/02-horizontal-scaling/stateless-design/)
 - sticky session 的黏著代價與演算法 → [負載分散演算法](/operations/01-load-balancing/load-balancing-algorithms/)
 - 狀態放哪決定了之後，憑證靠什麼帶進每個請求（cookie 自動附上 vs 請求標頭明確附上）→ [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)
+- 外洩當下撤不撤得掉，由這個決定決定，而它在事件發生時補建不起來 → [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/)

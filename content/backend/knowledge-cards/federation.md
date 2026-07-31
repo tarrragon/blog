@@ -18,3 +18,5 @@ Federation 常出現在 SSO、跨雲工作負載授權與第三方服務整合�
 ## 設計責任
 
 聯邦信任要有定期重評估、分域撤銷與最小授權範圍。若只建立信任不做持續治理，federation 會把整合便利轉成長期風險擴散通道。
+
+主體是人的那一側，判讀走 [7.38 外部身分與本地紀錄](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)（接上之後兩條生命週期怎麼走）與 [7.40 B2B 多租戶的身分接入](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)（每個客戶各帶一組時要做成幾組設定）。

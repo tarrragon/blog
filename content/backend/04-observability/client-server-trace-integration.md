@@ -75,6 +75,8 @@ with tracer.start_as_current_span("checkout-handler", context=ctx):
 
 ### CORS 限制
 
+這一節處理的是同源政策鬆綁之後 trace 標頭讀不讀得到的問題；那條規則本身擋的是讀取而非送出，判讀見 [same-origin policy](/backend/knowledge-cards/same-origin-policy/)。
+
 跨域請求時，browser 的 CORS preflight 會阻止非標準 header。Server 需要明確允許 trace header：
 
 ```text

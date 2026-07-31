@@ -6,7 +6,7 @@ weight: 1
 tags: ["monitoring", "platform", "javascript", "cors", "service-worker", "spa"]
 ---
 
-瀏覽器環境中的監控 SDK 面臨三個平台特有的限制：跨域請求被 CORS 攔截、Service Worker 可以攔截和修改請求、SPA 的路由變換不觸發頁面載入事件。每個限制需要 SDK 在設計層面做適配。
+瀏覽器環境中的監控 SDK 面臨三個平台特有的限制：跨域請求被 CORS 攔截、Service Worker 可以攔截和修改請求、SPA 的路由變換不觸發頁面載入事件。第一項的成因是瀏覽器預設不讓一個來源讀到另一個來源的回應，機制與它擋的到底是什麼見 [same-origin policy](/backend/knowledge-cards/same-origin-policy/)。每個限制需要 SDK 在設計層面做適配。
 
 ## CORS 限制
 
