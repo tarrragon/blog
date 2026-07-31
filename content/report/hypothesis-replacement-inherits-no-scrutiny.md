@@ -54,8 +54,10 @@ slug: "hypothesis-replacement-inherits-no-scrutiny"
 - [#153 漏抓先分 design gap 與 execution gap](../review-miss-diagnose-design-vs-execution-gap/)：替補假說最常見的形狀，就是把執行落差誤診成設計落差（「我們缺一條規則」比「我們沒執行既有那條」更容易被接受，因為前者不必承認疏失）。診斷替補者時先跑 #153 的分流，能擋掉相當一部分。
 - [#148 跨輪 review 停止訊號是 frame 涵蓋](../cross-round-review-stopping-signal/)：同屬「什麼時候可以宣告完成」的家族。#148 的答案是 frame 涵蓋齊備，本卡補的是——推翻與替換也是一種 frame 切換，而切換之後的新對象沒有被任何一輪涵蓋過。
 - [#247 多次局部正確的修法會合成缺陷](../sequential-fixes-compose-into-defects/)：兩者都描述「連續動作在交界處產生缺陷」。#247 的兩次動作各自正確、缺陷在合成上；本卡的第一次動作正確（推翻）、第二次動作根本沒被檢查。共同的處置方向都是在序列的收尾加一個以整體為對象的步驟。
+- [#249 對當下段落沒有收益的標註不會自發發生](../annotation-with-no-local-payoff-needs-a-trigger/)：那張卡的「尚未驗證的更窄版本」段是照本卡的紀律寫的實例——量測過程浮出的替補解釋（暴露成本）沒有自己的對照，因此標為待測、不繼承主張層的證據地位。可當本卡在實際寫作上的示範。
 
 ---
+
 
 ## 判讀徵兆
 

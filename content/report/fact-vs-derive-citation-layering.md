@@ -136,16 +136,18 @@ Stage 2 寫作時依照 finding 列表的層別標記決定引用句型。
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                 | 關係                                                                                                                                                  |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [#115 案例引用深度跟著 case 類型走](../case-type-graded-citation-depth/)             | 互補 — #115 看 case 整體類型、本卡看 case 內部結構                                                                                                    |
-| [#117 跨 case 合成 frame 必須標明](../cross-case-synthesized-frame-must-be-labeled/) | 第三類失分 — 章節 derive 升級成 case 揭露（07 新發現）                                                                                                |
-| [#104 security citation 時效精確](../security-citation-currency-and-precision/)      | Citation 三大 surface 中的 standard surface — 本卡是 case citation surface、兩者並列為 citation 紀律的不同 surface（standard / internal-link / case） |
-| [#111 口語化修辭稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)    | 強化詞屬「結局描述代替契約描述」、跟本卡的判讀層升級為 fact 同類                                                                                      |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                       | 高 stakes 內容輪 E.5 citation 精確度檢查包含本卡紀律                                                                                                  |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)            | 同骨 pattern — 便利的引用句型（壓縮兩層成「揭露 X」、補強化詞）跟 case fidelity 紀律反向                                                              |
+| 原則                                                                                             | 關係                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#115 案例引用深度跟著 case 類型走](../case-type-graded-citation-depth/)                         | 互補 — #115 看 case 整體類型、本卡看 case 內部結構                                                                                                                |
+| [#117 跨 case 合成 frame 必須標明](../cross-case-synthesized-frame-must-be-labeled/)             | 第三類失分 — 章節 derive 升級成 case 揭露（07 新發現）                                                                                                            |
+| [#104 security citation 時效精確](../security-citation-currency-and-precision/)                  | Citation 三大 surface 中的 standard surface — 本卡是 case citation surface、兩者並列為 citation 紀律的不同 surface（standard / internal-link / case）             |
+| [#111 口語化修辭稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)                | 強化詞屬「結局描述代替契約描述」、跟本卡的判讀層升級為 fact 同類                                                                                                  |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                   | 高 stakes 內容輪 E.5 citation 精確度檢查包含本卡紀律                                                                                                              |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                        | 同骨 pattern — 便利的引用句型（壓縮兩層成「揭露 X」、補強化詞）跟 case fidelity 紀律反向                                                                          |
+| [#249 對當下段落沒有收益的標註不會自發發生](../annotation-with-no-local-payoff-needs-a-trigger/) | 同一批標註、切入點不同 — 本卡給事實與推導的分層判準，那張卡說這個區分為什麼寫的時候不會自己發生（標「這是推導」對當下段落沒有收益），需要的是觸發時機而不只是判準 |
 
 ---
+
 
 ## 判讀徵兆
 
