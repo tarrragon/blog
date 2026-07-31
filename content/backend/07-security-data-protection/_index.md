@@ -122,12 +122,13 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [7.33 委任型憑證：關係寫進憑證，還是留給驗證方拼湊](/backend/07-security-data-protection/delegated-credential-selection/)                   | Delegated Credential Selection                    | 定義委任關係由誰確認、委任與冒用的差別、撤銷粒度與驗證方檢查項                                        |
 | [7.34 機器憑證的機制選型：秘密要不要在每次呼叫裡送出去](/backend/07-security-data-protection/machine-credential-mechanism-selection/)       | Credential Mechanism Selection                    | 定義選擇權在誰、秘密送不送得起、撤銷粒度與基礎建設成本                                                |
 | [7.35 簽章對接的驗證收斂：驗簽通過之後還缺哪一塊](/backend/07-security-data-protection/signature-integration-verification/)                 | Signature Integration                             | 定義驗證素材的對齊成本、重放窗口的收斂條件與比對方式                                                  |
+| [7.36 憑證在請求中怎麼帶：附上的決定由誰做](/backend/07-security-data-protection/credential-transport-in-request/)                          | Credential Transport                              | 定義自動附上與明確附上各自要求攻擊者先做到什麼、三層防護的缺口                                        |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
 
 ## 模組完成狀態
 
-主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.35）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做，以及機器憑證的機制、交付與代理關係。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
+主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.36）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做、登入之後每個請求靠什麼帶身分，以及機器憑證的機制、交付與代理關係。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
 
 素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。
 
@@ -140,7 +141,6 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 項目                                                                                                                                                                                                                                                                                    | 類型   | 前置條件                                               | 規模        |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------ | ----------- |
 | 外部身分來源與本地帳號的對應與生命週期（對方停用時這邊怎麼知道、使用者離開之後資料歸誰、同一個人用不同來源登入怎麼合併——三者是同一條軸的三個角、7.31 各段分別當前提引用）                                                                                                               | 主章   | 無（7.31 三處各指過來、各已給最小做法）                | 中          |
-| 憑證在請求中怎麼帶的資安視角（cookie 屬性、Authorization header、跨站請求偽造防護；狀態放哪裡的取捨已在 operations 的 Session 處理）                                                                                                                                                    | 主章   | 無                                                     | 中          |
 | 使用者持有型憑證的載體與導入（passkey 的註冊流程 / 回復路徑 / 企業裝置管理，與硬體金鑰、生物辨識、人類持客戶端憑證登入的判讀——同一條軸的兩角，7.31 兩處各指過來）                                                                                                                       | 主章   | 無（7.31 判讀流程指過來、已給最小判準）                | 中          |
 | 密碼外洩之後的處置（強制重設範圍、通知門檻）                                                                                                                                                                                                                                            | 主章   | 無（7.30 下一步路由指過來）                            | 小          |
 | B2B 多租戶的身分提供者可設定能力                                                                                                                                                                                                                                                        | 主章   | 無（7.31 使用者身分來源段指過來）                      | 中          |
@@ -176,7 +176,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 判定時要分開「有落點」與「有這個角度的落點」。狀態放伺服器還是放 token 已經有落點——[Session 處理](/operations/02-horizontal-scaling/session-handling/) 從水平擴展的角度寫完了三種途徑與撤銷成本；缺的是同一個機制的資安判讀（cookie 屬性、跨站請求偽造防護），這一層在既有落點裡不承擔。表中多列的括號註記記的就是這個分界，補的時候要沿著各自的判讀軸走，不共用 7.28 的金鑰位置主軸。
 
-憑證在請求中怎麼帶與密碼儲存的完整版這兩列的入門讀者密度高於其餘項目，因為既有章節都預設讀者已經跨過那一層。這是它們排在 vendor 層與案例層之前的理由。
+入門讀者密度高於其餘項目的那幾列排在 vendor 層與案例層之前，理由是既有章節都預設讀者已經跨過那一層。憑證在請求中怎麼帶已依這個理由完成（[7.36](/backend/07-security-data-protection/credential-transport-in-request/)），密碼儲存的完整版仍在表中。
 
 ## 跨分類引用
 

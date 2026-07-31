@@ -12,7 +12,7 @@ tags: ["backend", "security"]
 
 ## 本章寫作邊界
 
-本章聚焦身分從哪裡來、以及驗證用什麼材料這兩個決定。登入節奏、第二因子與權限分級屬 [7.2 身分與授權邊界](../identity-access-boundary/)——終端使用者那一側在該章的「終端使用者的登入節奏」一節，員工與高權限工具在其餘各節。憑證在請求中怎麼帶、狀態放伺服器還是放 token 是接在這兩個決定之後的另一條軸。狀態放哪裡的取捨（sticky session、外部 session store、無狀態 token，含撤銷成本）見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)；憑證怎麼帶（cookie 屬性、Authorization header、跨站請求偽造的防護）本站尚未寫。機器對機器的身分不在本章範圍，那條路徑的入口是 [7.29](../api-authentication-trust-boundaries/)；人類使用者持客戶端憑證登入（企業與政府的智慧卡）也不在本章的形態裡，本站尚未寫、已列入本模組待辦；它的判讀軸與硬體金鑰同一類，看實體持有而非猜測成本。
+本章聚焦身分從哪裡來、以及驗證用什麼材料這兩個決定。登入節奏、第二因子與權限分級屬 [7.2 身分與授權邊界](../identity-access-boundary/)——終端使用者那一側在該章的「終端使用者的登入節奏」一節，員工與高權限工具在其餘各節。憑證在請求中怎麼帶、狀態放伺服器還是放 token 是接在這兩個決定之後的另一條軸。狀態放哪裡的取捨（sticky session、外部 session store、無狀態 token，含撤銷成本）見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)；憑證怎麼帶（cookie 自動附上與請求標頭明確附上各自的攻擊面）見 [7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)。機器對機器的身分不在本章範圍，那條路徑的入口是 [7.29](../api-authentication-trust-boundaries/)；人類使用者持客戶端憑證登入（企業與政府的智慧卡）也不在本章的形態裡，本站尚未寫、已列入本模組待辦；它的判讀軸與硬體金鑰同一類，看實體持有而非猜測成本。
 
 ## 判讀軸：材料落在哪裡
 
@@ -109,4 +109,4 @@ B2B 多租戶是另一種形態：每個客戶帶自己的身分提供者，於�
 - 呼叫方系統與跨系統身分對應：[7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/)
 - 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「身分來源」議題
 - 登入狀態放伺服器還是放 token（含撤銷成本）：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
-- 憑證在請求中怎麼帶（cookie 屬性、Authorization header、跨站請求偽造防護）：本站尚未寫，已列入本模組待辦；在那之前的最小判準是撤銷需求——需要能立即讓單一使用者失效時，狀態要放在自己查得到的地方
+- 憑證在請求中怎麼帶（cookie 屬性、Authorization header、跨站請求偽造防護）：[7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)
