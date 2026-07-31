@@ -116,7 +116,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [LLM Service 偵測訊號覆蓋](/backend/07-security-data-protection/llm-as-service-detection-coverage/)                                         | LLM Detection Coverage                            | tool call 異常、injection 觸發徵兆、abuse 模式與既有 detection-coverage 框架的接合                    |
 | [7.28 密碼學原語選型：金鑰位置決定威脅模型](/backend/07-security-data-protection/cryptographic-primitive-selection/)                        | Cryptographic Primitive Selection                 | 定義加密、訊息驗證與可逆編碼的責任分界與金鑰位置判讀                                                  |
 | [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)                                    | API Auth Trust Boundaries                         | 定義使用者、系統與跨系統對應三層的憑證與撤銷粒度                                                      |
-| [7.30 使用者密碼儲存：參數會過期的那一類原語](/backend/07-security-data-protection/password-storage-and-work-factor/)                       | Password Storage                                  | 定義密碼雜湊選型、work factor 定法與參數升級路徑                                                      |
+| [7.30 使用者密碼儲存：參數會過期的那一類原語](/backend/07-security-data-protection/password-storage-and-work-factor/)                       | Password Storage                                  | 定義密碼雜湊選型、work factor 定法、合規約束的判別與大帳號庫的升級路徑                                |
 | [7.31 認證方式選型：可離線猜測的材料最後落在哪裡](/backend/07-security-data-protection/authentication-approach-selection/)                  | Authentication Approach                           | 定義自建、委派身分、passkey 與不做登入之間的取捨                                                      |
 | [7.32 機器憑證的配發：這個交付動作能不能免掉](/backend/07-security-data-protection/machine-credential-issuance/)                            | Machine Credential Issuance                       | 定義配發能不能免掉、核發與審批要看什麼、初次交付與登記的條件                                          |
 | [7.33 委任型憑證：關係寫進憑證，還是留給驗證方拼湊](/backend/07-security-data-protection/delegated-credential-selection/)                   | Delegated Credential Selection                    | 定義委任關係由誰確認、委任與冒用的差別、撤銷粒度與驗證方檢查項                                        |
@@ -153,7 +153,6 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | 多方分持的金鑰形態（持有者不是單一方，7.28 的金鑰位置主軸涵蓋不到；與端對端加密備援的多方分持選項是同一個機制的兩個用途）                                                                                                                                                               | 主章   | 無（7.28 已給最小判準）                                | 中          |
 | 端對端加密的金鑰備援設計（復原碼 / 服務端包裝副本 / 多方分持各自把金鑰位置移到哪一格）                                                                                                                                                                                                  | 主章   | 無（7.28 已給三種形態與最小判準）                      | 中          |
 | 四段 meta 開場的 register 整理（threat scope 樣板句中英混雜且對讀者祈使、「從本章到實作」向後引用尚未出現的表欄、交接路由欄的裸模組編號無對照），以及形態段「N 個節點裡 / 其餘四個」這種分母在表、被減數在另一段的計數（7.2 / 7.3 / 7.4 / 7.5 仍有；7.28 / 7.34 / 7.35 已改成不帶數字） | 主章   | 無（本模組多輪審查指出、為主章共用樣板）               | 中          |
-| 7.30 密碼儲存的完整版（演算法內部機制比較、大規模帳號庫遷移策略、合規演算法清單對照、pepper 的完整處理與輪替限制）                                                                                                                                                                      | 主章   | 無（簡版已上線、缺的是深度）                           | 4 項（中）  |
 | 授權模型選型（角色邊界 vs 資源邊界的取捨、角色累積之後的收斂路徑）                                                                                                                                                                                                                      | 主章   | 無（7.2 的代理操作段已定義路由需求）                   | 中          |
 | 51 個 vendor 服務頁的 deep article 與 migration playbook                                                                                                                                                                                                                                | vendor | 無                                                     | 51 頁（大） |
 | 藍隊現場案例卡與推演情境卡                                                                                                                                                                                                                                                              | 案例   | 需先從真實事故抽防守壓力                               | 大          |
@@ -176,7 +175,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 判定時要分開「有落點」與「有這個角度的落點」。狀態放伺服器還是放 token 已經有落點——[Session 處理](/operations/02-horizontal-scaling/session-handling/) 從水平擴展的角度寫完了三種途徑與撤銷成本；缺的是同一個機制的資安判讀（cookie 屬性、跨站請求偽造防護），這一層在既有落點裡不承擔。表中多列的括號註記記的就是這個分界，補的時候要沿著各自的判讀軸走，不共用 7.28 的金鑰位置主軸。
 
-入門讀者密度高於其餘項目的那幾列排在 vendor 層與案例層之前，理由是既有章節都預設讀者已經跨過那一層。憑證在請求中怎麼帶已依這個理由完成（[7.36](/backend/07-security-data-protection/credential-transport-in-request/)），密碼儲存的完整版仍在表中。
+入門讀者密度高於其餘項目的那幾列排在 vendor 層與案例層之前，理由是既有章節都預設讀者已經跨過那一層。憑證在請求中怎麼帶（[7.36](/backend/07-security-data-protection/credential-transport-in-request/)）與密碼儲存的完整版（[7.30](/backend/07-security-data-protection/password-storage-and-work-factor/)）都已依這個理由完成，表中剩下的各列改由前置條件與讀者路線的撞擊點決定順序。
 
 ## 跨分類引用
 
