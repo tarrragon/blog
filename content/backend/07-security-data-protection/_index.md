@@ -48,7 +48,7 @@ weight: 7
 
 進入點由手上的問題決定，各條路線的第一站與收尾的交接目標都不同。
 
-**要做登入功能**：從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步，它決定身分自己管還是交給外部、以及自己管的話拿什麼驗證使用者。之後依答案分三條——自建加密碼接 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)；用 passkey、安全金鑰或智慧卡接 [7.39 使用者持有型憑證](/backend/07-security-data-protection/user-held-credential-carrier/)；委派給外部身分提供者接 [7.38 外部身分與本地紀錄](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)，而每個客戶各帶一組的 B2B 形態再接 [7.40 B2B 多租戶的身分接入](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。三條路徑共同的下一站是 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)——登入之後每個請求靠什麼帶身分，這一題不論上面選了什麼都要答。
+**要做登入功能**：從 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/) 起步，它決定身分自己管還是交給外部、以及自己管的話拿什麼驗證使用者。之後依答案分三條——自建加密碼接 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/)；用 passkey、安全金鑰或智慧卡接 [7.39 使用者持有型憑證](/backend/07-security-data-protection/user-held-credential-carrier/)；委派給外部身分提供者接 [7.38 外部身分與本地紀錄](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)，而每個客戶各帶一組的 B2B 形態再接 [7.40 B2B 多租戶的身分接入](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。三條路徑共同的下一站有兩個：[7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)（登入之後每個請求靠什麼帶身分）與 [7.42 密碼重設流程](/backend/07-security-data-protection/password-reset-flow/)（進不來的人怎麼回來）。兩題不論上面選了什麼都要答，而後者決定整個帳號的安全上限。
 
 **要自己定一個對外介面**：先讀 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/) 判斷手上的機制擋得住誰，再讀 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/) 確認呼叫方身分落在哪一層。判到系統層之後接 [7.34 機器憑證的機制選型](/backend/07-security-data-protection/machine-credential-mechanism-selection/) 決定用哪一種，再分兩條分支：那把憑證怎麼交到對方手上走 [7.32 機器憑證的配發](/backend/07-security-data-protection/machine-credential-issuance/)，而請求是「某個系統代表某個特定的人」時走 [7.33 委任型憑證](/backend/07-security-data-protection/delegated-credential-selection/)。最後依判斷結果路由到 7.6 的憑證治理或 7.2 的權限分級。
 
@@ -58,7 +58,7 @@ weight: 7
 
 **從對接失敗或原語誤用進入**：先在 [7.28](/backend/07-security-data-protection/cryptographic-primitive-selection/) 確認手上這個機制解的是哪一類問題（誤把訊息驗證當加密是最常見的一種），簽章對接本身對不起來的走 [7.35](/backend/07-security-data-protection/signature-integration-verification/)，撤銷或身分層次不對的走 [7.29](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。
 
-**外洩已經發生**：使用者帳號這一側從 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/) 起步——它處理的是範圍查不出來時怎麼分層定重設對象、撤銷與重設的先後，以及通知門檻要交付哪些事實。要判斷手上的密碼儲存撐不撐得住，接 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。憑證與 token 的止血範圍走 [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的生命週期段——它回答的是能不能在時限內完成撤銷與替換。這件事要不要當事故啟動、算哪一級，判準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；對外要不要通知、什麼時候通知在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)。
+**外洩已經發生**：先分這是一個帳號還是一批。單一帳號被接管（有人來說登不進去、或系統偵測到異常）走 [7.41 單一帳號被接管](/backend/07-security-data-protection/single-account-takeover-response/)，它的困難在於求助者的身分本身待證。一批帳號這一側從 [7.37 密碼外洩之後](/backend/07-security-data-protection/credential-breach-response/) 起步——它處理的是範圍查不出來時怎麼分層定重設對象、撤銷與重設的先後，以及通知門檻要交付哪些事實。要判斷手上的密碼儲存撐不撐得住，接 [7.30 的升級路徑段](/backend/07-security-data-protection/password-storage-and-work-factor/#升級路徑)——它的第二條路徑是止血速度不由使用者回訪決定的那一條。憑證與 token 的止血範圍走 [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 的生命週期段——它回答的是能不能在時限內完成撤銷與替換。這件事要不要當事故啟動、算哪一級，判準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；對外要不要通知、什麼時候通知在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)。
 
 ## 從章節到實作的 chain
 
@@ -127,12 +127,14 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 | [7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)           | External Identity Lifecycle                       | 定義停用同步的反向通道、離開後的資料歸屬與多來源帳號對應                                              |
 | [7.39 使用者持有型憑證：那把憑證能不能離開它的載體](/backend/07-security-data-protection/user-held-credential-carrier/)                     | User-Held Credential Carrier                      | 定義憑證離不離得開載體、註冊起點的強度上限與補發路徑的取捨                                            |
 | [7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)           | Multi-Tenant Identity Onboarding                  | 定義租戶歸屬的主張與驗證、自助設定的範圍、每租戶設定的生命週期                                        |
+| [7.41 單一帳號被接管：求助的人是誰本身待證](/backend/07-security-data-protection/single-account-takeover-response/)                         | Account Takeover Response                         | 定義控制權動作的分類、核身的判準與攻擊者留置的還原                                                    |
+| [7.42 密碼重設流程：與登入平行的另一道入口](/backend/07-security-data-protection/password-reset-flow/)                                      | Password Reset Flow                               | 定義重設路徑的證據判準、權杖的五項性質與完成後的收尾                                                  |
 | [7.C 資安案例正文](/backend/07-security-data-protection/cases/)                                                                             | Security Cases                                    | 把控制面事件轉成可回寫治理控制與路由                                                                  |
 | [7.C11 選型：單人遠端 Shell](/backend/07-security-data-protection/cases/remote-shell-access-tailscale-vs-cloudflare-tunnel/)                | Tailscale vs Cloudflare Tunnel                    | 單人遠端 Shell 情境下的 tunnel 選型判讀與裝置綁定認證                                                 |
 
 ## 模組完成狀態
 
-主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.40）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做、登入之後每個請求靠什麼帶身分、外洩之後要讓誰重設、身分交給外部之後本地那筆紀錄怎麼走、使用者手上的實體選哪一種載體、每個客戶各帶身分提供者時要做成幾組設定，以及機器憑證的機制、交付與代理關係。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
+主章分三層：問題節點與責任邊界（7.2-7.7）、判讀與治理節奏（7.8-7.9、7.15-7.26），以及選型層（7.28-7.42）。選型層承接的是問題節點判讀完成之後要下的具體決定——手上的機制解哪一類問題、呼叫方身分落在哪一層、密碼怎麼存、登入怎麼做、登入之後每個請求靠什麼帶身分、外洩之後要讓誰重設、身分交給外部之後本地那筆紀錄怎麼走、使用者手上的實體選哪一種載體、每個客戶各帶身分提供者時要做成幾組設定，以及機器憑證的機制、交付與代理關係。章節列表末段的五篇 LLM 專題屬延伸章節帶、不佔主章編號：把供應鏈完整性、多租戶隔離、log 治理與偵測覆蓋這些主章已建立的控制面，接到 LLM 服務的 production 形態上。
 
 素材庫已完成 11 張 field cases、4 張 scenarios 與 7 張 control patterns，並回寫到 `7.B1`、`7.B9`、`7.B12` 與 `7.24`。比例設計依 [素材庫比例支撐主情境的反向驗證](/report/source-library-ratio-supports-scenario-validation/)，文章主情境保持 4-5 個、素材庫保留 2-3 倍來源做反向驗證。
 

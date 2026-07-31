@@ -111,5 +111,6 @@ B2B 多租戶是另一種形態：每個客戶帶自己的身分提供者，於�
 - 登入狀態放伺服器還是放 token（含撤銷成本）：[Session 處理](/operations/02-horizontal-scaling/session-handling/)
 - passkey、安全金鑰與智慧卡的載體形態、註冊起點與補發路徑：[7.39 使用者持有型憑證](../user-held-credential-carrier/)
 - 每個客戶各帶身分提供者時的設定、網域驗證與自助範圍：[7.40 B2B 多租戶的身分接入](../multi-tenant-identity-onboarding/)
+- 回復路徑本身怎麼設計（它決定實際上限）：[7.42 密碼重設流程](../password-reset-flow/)
 - 委派之後本地紀錄的狀態同步、資料歸屬與多來源對應：[7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)
 - 憑證在請求中怎麼帶（cookie 屬性、Authorization header、跨站請求偽造防護）：[7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)

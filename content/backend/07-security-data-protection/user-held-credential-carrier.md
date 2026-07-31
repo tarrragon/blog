@@ -99,6 +99,7 @@ tags: ["backend", "security"]
 - 要不要走這條路、與密碼和委派身分的取捨：[7.31 認證方式選型](../authentication-approach-selection/)
 - 註冊這類高風險操作要怎麼升級驗證強度：[step-up authentication](/backend/knowledge-cards/step-up-authentication/)
 - 憑證的簽發、續期與撤銷（智慧卡形態合讀）：[7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/)
+- 密碼那一側的回復路徑（同一個問題的另一種形態）：[7.42 密碼重設流程](../password-reset-flow/)
 - 帳號側的停用同步與離開後的處置：[7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)
 - 機器持有的憑證機制：[7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)
 - 單人自用工具的兩段式認證：[7.2 單人裝置認證模型](../identity-access-boundary/#單人裝置認證模型)
