@@ -12,11 +12,11 @@ Cross-site request forgery 的核心概念是攻擊者從自己控制的頁面�
 
 它與 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 的關係是能力包含而非並列。能在目標頁面上執行程式碼的攻擊者，做得到這裡的全部動作，還額外讀得到回應與同源儲存；反過來，只能誘發請求的攻擊者拿不到任何資料。兩者的門檻因此也不同——誘發請求只需要受害者載入一個頁面或點開一封信，而執行程式碼要先有一個注入點。
 
-它的存在條件由憑證怎麼被帶上決定，判讀軸與各種組態見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。憑證改由程式碼明確寫進請求標頭時這個機制不成立，因為攻擊者的頁面誘發不出一個帶著正確標頭的請求；代價是憑證移到 JavaScript 讀得到的位置，暴露面換成上一段那一類。伺服器對伺服器的呼叫沒有自動附上憑證的機制，這個概念在那一側不適用，判讀走 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。
+它的存在條件由憑證怎麼被帶上決定，判讀軸與各種組態見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。憑證改由程式碼明確寫進請求標頭時這個機制不成立，因為攻擊者的頁面誘發不出一個帶著正確標頭的請求；代價是憑證移到 JavaScript 讀得到的位置，暴露面換成跨站指令碼那一類。伺服器對伺服器的呼叫沒有自動附上憑證的機制，這個概念在那一側不適用，判讀走 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)。
 
 ## 可觀察訊號與例子
 
-需要正視這個攻擊面的訊號是系統用 cookie 承載登入狀態，而防護的來源說不出是誰決定的。現代瀏覽器把沒有標示 SameSite 的 cookie 當成 Lax，於是「已經有保護」與「有人評估過保護到哪裡」在外觀上完全相同——掃描不回報問題，滲透測試也不一定觸發。
+需要正視這個攻擊面的訊號是系統用 cookie 承載登入狀態，而防護的來源說不出是誰決定的。Chromium 系的瀏覽器把沒有標示 SameSite 的 cookie 當成 Lax，而 Firefox 與 Safari 沒有跟進；於是這一層的涵蓋範圍由使用者手上是哪個瀏覽器決定，而「已經有保護」與「有人評估過保護到哪裡」在外觀上完全相同——掃描不回報問題，滲透測試也不一定觸發。
 
 三層防護的缺口互不重疊，這是它們要並用而非三選一的理由。SameSite 由瀏覽器執行，缺口在頂層導覽的 GET 請求仍然附上憑證（用 GET 執行寫入的端點因此落在保護之外），以及同一個可註冊網域下的子網域之間不算跨站。Origin 或 Referer 檢查由伺服器執行，不受前兩個缺口影響，代價是要維護允許清單。頁面帶出、請求送回的額外隨機值不依賴瀏覽器的預設值，但它以「攻擊者讀不到這個值」為前提，前提由同源政策提供、由跨站指令碼拿掉。
 

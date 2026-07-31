@@ -148,6 +148,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - 從需求面回頭確認範圍：[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的「權限分級」與「密鑰與秘密」議題
 - 憑證機制選型：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
 - 人類身分與權限分級：[7.2 身分與授權邊界](../identity-access-boundary/)
+- 呼叫方是瀏覽器裡的頁面時，憑證怎麼帶與隨之而來的跨站攻擊面：[7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)
 - 系統層那把憑證怎麼核發、初次交付與登記：[7.32 機器憑證的配發](../machine-credential-issuance/)
 - 委任型憑證的交換流程、撤銷路徑與驗證欄位：[7.33 委任型憑證](../delegated-credential-selection/)
 - 機器憑證生命週期：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)

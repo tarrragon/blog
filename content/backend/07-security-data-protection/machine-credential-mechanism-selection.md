@@ -162,6 +162,8 @@ out-of-scope 的議題直接跳到對應章節。
 - 選了共享密鑰簽章之後的素材對齊與重放收斂：[7.35 簽章對接的驗證收斂](../signature-integration-verification/)
 - 這個機制屬於哪一類原語、金鑰放在哪一格：[7.28 密碼學原語選型](../cryptographic-primitive-selection/)
 - mTLS 的憑證生命週期判讀：[7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/)
+- 持有者是人而非系統時判讀軸換成載體（passkey、安全金鑰、智慧卡）：[7.39 使用者持有型憑證](../user-held-credential-carrier/)
+- 人類那一側的憑證怎麼帶進每個請求：[7.36 憑證在請求中怎麼帶](../credential-transport-in-request/)
 - 上線後的輪替、回收與事件收斂：[7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)
 - 各機制的實作細節（雙密過渡、mTLS 部署、簽章實作）：[API 認證的三層信任邊界](/work-log/api_auth_trust_boundaries/) 的「Layer 2：系統層」一節與它列出的各篇
 - 例外的期限與重評估：[7.14 資安治理例外與 Tripwire](../security-governance-exception-and-tripwire/)

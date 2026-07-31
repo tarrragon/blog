@@ -107,7 +107,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - [7.10 第三方授權範圍跟事件傳導半徑](../workload-identity-and-federated-trust/#第三方授權範圍跟事件傳導半徑)：workload identity 層的 specific 訊號（[federation](/backend/knowledge-cards/federation/) token scope 過寬）
 - [7.29 第三方授權範圍過寬](../api-authentication-trust-boundaries/#跨章議題交叉引用)：API 整合層的 specific 訊號（授權當下的 scope 決定事件發生時的暴露面）
 
-本章視角聚焦客戶側人類身分鏈收斂責任；workload identity 層的 federation token scope 視角見 7.10。跨章 audit 時、本條為 canonical 定義（threat scope / mitigation chain），其他章補 layer 視角差異。
+本章視角聚焦客戶側人類身分鏈收斂責任；workload identity 層的 federation token scope 視角見 7.10。本條處理的是對方出事之後這邊怎麼收斂，而對方沒出事、只是把帳號停用而這邊收不到事件，是同一條線的另一半，見 [7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)。跨章 audit 時、本條為 canonical 定義（threat scope / mitigation chain），其他章補 layer 視角差異。
 
 ## MFA fatigue 與 step-up 驗證
 
@@ -158,7 +158,7 @@ MFA fatigue 是身分層擴散風險的代表機制：登入挑戰可被使用�
 
 失效模型跟多人 SaaS 的「會話失效」不同。裝置失竊等於認證邊界整個失效（生物辨識可被繞過、共享密鑰就在本機）、且沒有中央會話可以遠端 kill;唯一的收斂手段是服務端輪替密鑰版本、讓舊裝置的密鑰失效（強迫重新配對）。所以前置控制面是「密鑰版本可遠端輪替」加「裝置清單」、而不是 session TTL。交接到 `05`（部署要支援密鑰版本變更的同步）與 `08`（事故時的裝置清查）。
 
-這個模型的 tripwire 是使用者數從一變多。共享密鑰無法分辨是哪個使用者、生物辨識綁在單一裝置、沒有帳號就無法個別撤銷;第一個要分享存取的對象出現時、認證模型要升級回帳號系統。應用場景的判斷見 [0.21 個人自架工具](/backend/00-service-selection/delivery-mode-selection/#個人自架工具常駐本機無對外服務)。
+這個模型的 tripwire 是使用者數從一變多。共享密鑰無法分辨是哪個使用者、生物辨識綁在單一裝置、沒有帳號就無法個別撤銷;第一個要分享存取的對象出現時、認證模型要升級回帳號系統。應用場景的判斷見 [0.21 個人自架工具](/backend/00-service-selection/delivery-mode-selection/#個人自架工具常駐本機無對外服務)。升級回帳號系統之後，使用者手上那個實體要選哪一種載體、以及它掉了怎麼補發，走 [7.39 使用者持有型憑證](../user-held-credential-carrier/)。
 
 ## 常見風險邊界
 
