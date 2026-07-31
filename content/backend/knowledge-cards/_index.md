@@ -502,7 +502,7 @@ weight: -1
 | [Key Management](/backend/knowledge-cards/key-management/)                                       | 加密金鑰如何產生、保存與輪替         | KMS、keyring、rotation           |
 | [Break-Glass Access](/backend/knowledge-cards/break-glass-access/)                               | 緊急高權限存取如何用工單與時限治理   | emergency、ticket、audit         |
 | [Same-Origin Policy](/backend/knowledge-cards/same-origin-policy/)                               | 瀏覽器隔離的是讀取而非送出           | CORS、跨來源、前端整合           |
-| [Cross-Site Request Forgery](/backend/knowledge-cards/cross-site-request-forgery/)               | 憑證自動附上時攻擊者能發動什麼       | cookie、SameSite、狀態變更端點   |
+| [Cross-Site Request Forgery](/backend/knowledge-cards/cross-site-request-forgery/)               | 攻擊者不必讀到憑證就能發動什麼       | cookie、SameSite、狀態變更端點   |
 | [Cross-Site Scripting](/backend/knowledge-cards/cross-site-scripting/)                           | 程式碼跑進來源之後取得哪些能力       | 輸出編碼、CSP、第三方腳本        |
 | [Passkey](/backend/knowledge-cards/passkey/)                                                     | 金鑰對取代共享秘密之後上限在哪       | 註冊起點、回復路徑、平台同步     |
 

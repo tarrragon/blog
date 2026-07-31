@@ -6,13 +6,13 @@ weight: 428
 tags: ["backend", "knowledge-card", "security", "authentication"]
 ---
 
-Passkey 的核心概念是用一組金鑰對取代共享秘密：服務端存公鑰，使用者的裝置保管私鑰，登入時由裝置對服務端給的挑戰值產生簽章。服務端持有的那一份是公鑰，外洩不構成可還原的風險，於是 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/) 那一整套判讀（刻意放慢的雜湊、work factor、參數老化）在這一格不適用。它是 [authentication](/backend/knowledge-cards/authentication/) 人類身分分支底下與密碼並列的一個選項，取捨見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。
+Passkey 的核心概念是用一組金鑰對取代共享秘密：服務端存公鑰，使用者的裝置保管私鑰，登入時由裝置對服務端送來的一段隨機值產生簽章。它的底層規格是 WebAuthn（FIDO2 的網頁認證標準），passkey 是這套規格搭配可跨裝置使用的憑證之後的產品名。服務端持有的那一份是公鑰，外洩不構成可還原的風險，於是 [7.30 使用者密碼儲存](/backend/07-security-data-protection/password-storage-and-work-factor/) 那一整套判讀（刻意放慢的雜湊、work factor、參數老化）對它不適用。它是 [authentication](/backend/knowledge-cards/authentication/) 人類身分分支底下與密碼並列的一個選項，取捨見 [7.31 認證方式選型](/backend/07-security-data-protection/authentication-approach-selection/)。
 
 ## 概念位置
 
 它擋掉的是兩類與共享秘密綁在一起的攻擊。[Credential stuffing](/backend/knowledge-cards/credential-stuffing/) 失效的原因是沒有可重用的秘密——別處外洩的那些值在這裡沒有可以對上的秘密。釣魚失效的原因是簽章由瀏覽器綁在當下的網域上，釣魚站的網域不同就產不出可用的簽章，而這一項與使用者有沒有警覺無關。
 
-它不處理的是私鑰所在那個實體的安全。裝置被取得、平台帳號被接管、註冊流程被繞過，這幾條路徑都不受簽章機制保護，判讀走 [7.39 使用者持有型憑證](/backend/07-security-data-protection/user-held-credential-carrier/) 的載體軸——那把憑證離不離得開它原本的實體，決定了副本數量可不可知。
+它不處理的是私鑰所在那個實體的安全。裝置被取得、平台帳號被接管、註冊流程被繞過，這幾條路徑都不受簽章機制保護，判斷這幾條路徑要問的是那把憑證離不離得開它原本的實體，因為那決定了副本數量可不可知，判讀見 [7.39 使用者持有型憑證](/backend/07-security-data-protection/user-held-credential-carrier/)。
 
 生物辨識與它的關係常被顛倒。指紋與臉部特徵不離開裝置、也不送到伺服器，它們解鎖的是裝置上那把私鑰。所以憑證是私鑰，生物辨識是那把私鑰的鎖。
 

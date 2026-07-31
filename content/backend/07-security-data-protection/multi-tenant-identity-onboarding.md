@@ -1,18 +1,18 @@
 ---
 title: "7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算"
 date: 2026-07-31
-description: "每個客戶要帶自己的身分提供者時，用來判斷租戶歸屬怎麼決定、網域宣稱要驗到什麼程度、自助設定的範圍切在哪"
+description: "每個客戶要帶自己的身分提供者進來時，用來判斷租戶歸屬的主張憑什麼可信、以及每租戶一組設定之後多出哪些責任"
 weight: 115
 tags: ["backend", "security"]
 ---
 
-本章處理的形態是每個客戶帶自己的身分提供者進來，於是「用哪一個身分來源」從一次選型變成一項要做成設定的能力。
+本章處理的形態是每個客戶帶自己的身分提供者（identity provider，企業用來集中管帳號與登入的系統，客戶那一端常稱為「我們的 SSO」）進來，於是「用哪一個身分來源」從一次選型變成一項要做成設定的能力。對接的協定通常是 SAML 或 OIDC。
 
 它在 [7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/) 的上一層——那一章假設對應關係已經接上，處理接上之後兩條生命週期怎麼走；這一章問的是這個接法要做成幾組設定、誰來填、以及填的內容憑什麼可信。
 
 ## 本章寫作邊界
 
-本章聚焦身分接入這一層的多租戶設計。要不要委派、與自建的取捨在 [7.31 認證方式選型](../authentication-approach-selection/)。接上之後的停用同步、資料歸屬與多來源對應在 [7.38](../external-identity-local-record-lifecycle/)。租戶之間的資料與資源隔離是另一條軸，走 [tenant boundary](/backend/knowledge-cards/tenant-boundary/) 與 [7.2 身分與授權邊界](../identity-access-boundary/)——本章的每一個決定都建立在那條邊界已經成立的前提上，而它自己不負責建立它。機器對機器的跨組織信任走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)。
+本章聚焦身分接入這一層的多租戶設計。要不要委派、與自建的取捨在 [7.31 認證方式選型](../authentication-approach-selection/)。接上之後的停用同步、資料歸屬與多來源對應在 [7.38](../external-identity-local-record-lifecycle/)。租戶之間的資料與資源隔離是另一個問題，走 [tenant boundary](/backend/knowledge-cards/tenant-boundary/) 與 [7.2 身分與授權邊界](../identity-access-boundary/)——本章的每一個決定都建立在那條邊界已經成立的前提上，而它自己不負責建立它。機器對機器的跨組織信任走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)。
 
 ## 判讀軸：租戶歸屬由誰主張、由誰驗證
 
@@ -42,7 +42,7 @@ tags: ["backend", "security"]
 
 **影響邊界的**要有額外的關卡：允許的網域清單、身分提供者的簽章憑證與端點位址、要不要保留密碼 fallback、哪些使用者算管理者。這一類的處置有三個層次可選，按客戶規模與平台的人力決定——要求控制權證明（網域這一項的最低門檻）、要求變更由該租戶既有的管理者確認、或由平台的人審核。
 
-密碼 fallback 這一項值得單獨看。單一組織的內部系統刻意不留 fallback，理由是留了就等於在對方的紀律之外開一道門（見 [7.31](../authentication-approach-selection/#使用者的身分從哪裡來)）。多租戶的形態把這個決定變成每個租戶各自的選項，於是它要做成設定，而預設值要選在關閉那一邊——預設開啟時，多數客戶不會去看那個開關，而平台這一側等於替他們決定了留著一道門。
+密碼 fallback 這一項值得單獨看。單一組織的內部系統刻意不留 fallback，理由是留了就等於在對方的紀律之外開一道門（見 [7.31 使用者的身分從哪裡來](../authentication-approach-selection/#使用者的身分從哪裡來)）。多租戶的形態把這個決定變成每個租戶各自的選項，於是它要做成設定，而預設值要選在關閉那一邊——預設開啟時，多數客戶不會去看那個開關，而平台這一側等於替他們決定了留著一道門。
 
 **設定的變更要進稽核紀錄，而且要通知該租戶的管理者。** 這一層的變更改變的是「誰進得來」，重要性與登入事件不同量級，判讀見 [7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)。
 
@@ -85,12 +85,12 @@ tags: ["backend", "security"]
 - 密碼 fallback 的預設值是開啟時，平台等於替沒去看那個開關的客戶決定了留著一道門。
 - 身分提供者憑證的到期日清單由自動更新機制列舉時，抓不到中繼資料的那些租戶不在分母裡，而它們正是會出事的那些。
 
-## 下一步路由
+## 接下來讀什麼
 
 - 要不要委派、與自建的取捨：[7.31 認證方式選型](../authentication-approach-selection/)
 - 接上之後的停用同步、資料歸屬與多來源對應：[7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)
 - 租戶之間的資料與資源隔離：[tenant boundary](/backend/knowledge-cards/tenant-boundary/)
 - 網域控制權證明的同型機制：[ACME 自動化](/backend/knowledge-cards/acme-automation/)
-- 每租戶憑證到期清單的分母怎麼建：[7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/)
+- 每租戶憑證到期清單的分母怎麼建：[7.5 憑證輪替覆蓋不足](../transport-trust-and-certificate-lifecycle/#問題節點出現在什麼樣的系統)——該章的對象是傳輸憑證，這裡取的是它判別分母來源的方法而不是它的憑證形態
 - 設定變更要記什麼、保存多久：[7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)
 - 機器對機器的跨組織信任與 token 範圍：[7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)

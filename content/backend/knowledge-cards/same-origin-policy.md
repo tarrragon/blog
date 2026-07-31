@@ -12,7 +12,7 @@ Same-origin policy 的核心概念是瀏覽器預設讓一個來源的程式碼�
 
 Same-origin policy 是瀏覽器端各種跨來源判讀的地基，其餘機制都以它為參照點定義自己。CORS 是它的鬆綁協定——伺服器用回應標頭明說願意讓哪些來源讀取，於是放行的範圍由被讀的一方決定，而不是由想讀的一方主張。[Cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 走的是另一個方向：攻擊者的程式碼跑在目標來源之內，因此完全不受這條規則約束，所有以「別的來源讀不到」為前提的防護會一起失效。
 
-有一項不一致要單獨記住，因為多數跨站防護的缺口都出在它上面：**cookie 的作用域規則與來源的定義不同**。Cookie 看的是網域與路徑，跨協定與跨埠共用，而 SameSite 屬性判定「站」時用的是可註冊網域而非完整主機名。於是兩個不同來源（不同子網域）在同源政策下互相讀不到彼此的回應，在 cookie 的規則下卻屬於同一個站。這條落差是子網域被拿下之後 SameSite 不再構成防護的原因，判讀見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。
+有一項不一致要單獨記住，因為多數跨站防護的缺口都出在它上面：**cookie 的作用域規則與來源的定義不同**。Cookie 看的是網域與路徑，跨協定與跨埠共用，而 SameSite（限制 cookie 在跨站請求中送出的 cookie 屬性）判定「站」時用的是可註冊網域而非完整主機名——`example.com` 這一層，底下的 `a.example.com` 與 `b.example.com` 都算在裡面。於是兩個不同來源（不同子網域）在同源政策下互相讀不到彼此的回應，在 cookie 的規則下卻屬於同一個站。這條落差是子網域被拿下之後 SameSite 不再構成防護的原因，判讀見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)。
 
 ## 可觀察訊號與例子
 
