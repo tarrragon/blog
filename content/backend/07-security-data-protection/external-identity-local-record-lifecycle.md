@@ -12,7 +12,7 @@ tags: ["backend", "security"]
 
 ## 本章寫作邊界
 
-本章聚焦委派身分成立之後，本地那筆紀錄要怎麼跟著外部身分走。要不要委派、委派與自建的取捨在 [7.31](../authentication-approach-selection/)。內部身分的權限分級與會話收斂在 [7.2 身分與授權邊界](../identity-access-boundary/)；供應商那一端出事之後自己這邊的收斂責任在該章的[供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)一節。機器對機器的跨組織信任與 token 範圍走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)，主體是機器而非人。B2B 每租戶各帶自己的身分提供者這項可設定能力本站尚未寫、已列入本模組待辦，它是本章的上一層——本章假設對應關係已經接上，那一題問的是這個接法要做成幾組設定。
+本章聚焦委派身分成立之後，本地那筆紀錄要怎麼跟著外部身分走。要不要委派、委派與自建的取捨在 [7.31](../authentication-approach-selection/)。內部身分的權限分級與會話收斂在 [7.2 身分與授權邊界](../identity-access-boundary/)；供應商那一端出事之後自己這邊的收斂責任在該章的[供應商身分鏈傳導](../identity-access-boundary/#跨章-ssot供應商身分鏈傳導)一節。機器對機器的跨組織信任與 token 範圍走 [7.10 Workload Identity 與聯邦信任邊界](../workload-identity-and-federated-trust/)，主體是機器而非人。B2B 每租戶各帶自己的身分提供者這項可設定能力在 [7.40 B2B 多租戶的身分接入](../multi-tenant-identity-onboarding/)，它是本章的上一層——本章假設對應關係已經接上，那一章問的是這個接法要做成幾組設定、誰來填、填的內容憑什麼可信。
 
 ## 判讀軸：委派之後這邊還剩下一筆紀錄
 
@@ -99,6 +99,7 @@ tags: ["backend", "security"]
 ## 下一步路由
 
 - 要不要委派、委派與自建的取捨：[7.31 認證方式選型](../authentication-approach-selection/)
+- 每個客戶各帶身分提供者時的設定與網域驗證：[7.40 B2B 多租戶的身分接入](../multi-tenant-identity-onboarding/)
 - 撤銷會話與停用紀錄的差別、以及範圍怎麼分層：[7.37 密碼外洩之後](../credential-breach-response/)
 - 刪除與匯出的能力基礎：[7.11 資料駐留、刪除與證據鏈](../data-residency-deletion-and-evidence-chain/)
 - 合併帳號這條高風險路徑的授權設計：[7.2 代理操作的授權邊界](../identity-access-boundary/#代理操作的授權邊界)
