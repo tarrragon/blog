@@ -167,6 +167,26 @@ GitHub Actions 在 push 到 `main` 時：
 | Pagefind 而非 Algolia / Lunr                  | 純客戶端、無需後端、零維運成本（見 [`content/posts/pagefind-static-site-search.md`](./content/posts/pagefind-static-site-search.md)）                            |
 | mdtools 用 Go + goldmark AST 而非 regex       | 規則複雜度與正確性兩者都需要、AST 比 regex 穩定（見 [`content/posts/what-is-ast.md`](./content/posts/what-is-ast.md)）                                           |
 
+## 隱私與流量統計
+
+這個站用一段自寫的輕量統計取代第三方分析服務，資料寫進我自己的 Google 試算表、不經過廣告或分析平台。實作在 [`layouts/partials/custom_body.html`](./layouts/partials/custom_body.html)，以下說明可以直接對照原始碼確認。
+
+**收集的項目**：頁面路徑、來源網址（`document.referrer`）、瀏覽器語言、裝置類別（僅 mobile / tablet / desktop 三選一）、兩組隨機識別碼、頁面停留秒數、以及是否曾捲動或點擊。
+
+**不收集的項目**：IP 位址、完整 User-Agent、螢幕解析度或其他指紋特徵、任何頁面輸入內容。IP 在技術上也讀不到 — 接收端是 Google Apps Script，它的請求物件不提供 HTTP header。
+
+兩組識別碼由 `crypto.randomUUID()` 產生、不含任何個人資訊，用途是區分「同一次瀏覽讀了幾篇」與「是不是回訪」。其中一組存在 `sessionStorage`，關閉分頁即消失。
+
+### 不想被統計
+
+開啟一次這個網址，之後這個瀏覽器就不再送出任何統計：
+
+<https://tarrragon.github.io/blog/?noanalytics=1>
+
+設定存在瀏覽器的 `localStorage`（不是 cookie、不會隨請求送出），綁定「這個瀏覽器 + 這個網域」。所以換瀏覽器或換裝置要各設定一次，清除網站資料後也需要重新設定。要恢復統計改用 `?noanalytics=0`。
+
+也可以直接在瀏覽器 Console 執行 `localStorage.setItem('blog_analytics_optout', '1')`，效果相同。
+
 ## 授權
 
 內容採 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — 可自由轉載 / 改作、需標明 Tarragon 為原作者。
