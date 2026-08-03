@@ -197,7 +197,7 @@ CQRS 在 application 層透過 event handler、projector、read store 實作。�
 
 **同步可靠性**：Recording rule evaluation 本身可能失敗（expression 太重跑不完、TSDB 暫時不可用）。Log-to-metric 轉換可能因 schema 漂移而靜默歸零。這些同步失敗跟 application CQRS 的 projector 失敗是同一類問題 — read model 看起來有資料但其實是過期的。
 
-**多模型維護**：Metric schema 變更後，raw series、recording rule、rollup、dashboard query 都需要同步更新。Recording rule 引用的 label name 改了沒跟著改，aggregation 結果會靜默錯誤。這跟 application 的「schema migration 要同時更新 write model 跟所有 read model」是同一個維護負擔。
+**多模型維護**：Metric schema 變更後，raw series、recording rule、rollup、dashboard query 都需要同步更新。Recording rule 引用的 label name 改了沒跟著改，aggregation 結果會靜默錯誤。這跟 application 的「schema migration 要同時更新 write model 跟所有 read model」是同一個維護負擔。這類「聚合邏輯合法執行但已經不對應原本的問題」的一般形態、以及讓它現形的兩個低成本手段（catch-all 分類、總量守恆檢查），見 [#250 資料多出一種形狀時，既有分析邏輯靜默換語意](/report/new-data-shape-silently-changes-analysis/)。
 
 ### 術語邊界
 

@@ -100,6 +100,7 @@ multi-pass review 框架定義了輪 9（reader simulation）、輪 10（self-cr
 - **適用**：review 流程的 retrospective（漏抓後檢討）、framework 演進決策（要不要加 frame / keyword）、self-review 品質檢討。
 - **不適用**：一次性短文 review（沒有「框架」可言、談不上 design vs execution）。
 - **邊界**：兩者不互斥、常同時存在 —— 本卡要的不是「二選一」、是「分別診斷、分別修」。誤把它當 either-or 會只修一半。
+- [#250 資料多出一種形狀時，既有分析邏輯靜默換語意](../new-data-shape-silently-changes-analysis/)：本卡的分流在資料分析失效上同樣成立，而且誤診方向固定。統計算錯時最順口的解釋是「這次忘了更新公式」（execution gap），實際上多半是分析邏輯的涵蓋範圍沒有跟上資料模型（design gap）——照 execution gap 修的代價是修好這一次、下一次新增資料形狀時原樣重演。
 
 ---
 

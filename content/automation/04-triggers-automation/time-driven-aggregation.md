@@ -54,11 +54,13 @@ function aggregateYesterday() {
 }
 ```
 
-這段 group by 有一個前提要明寫出來：**它假設 raw log 裡一列等於一次瀏覽**。這在模組二的資料模型下成立，因為 beacon 只在頁面載入時送一次。日後若在 payload 加入其他事件型別（例如離開事件，見[模組六](/automation/06-reading-the-data/event-model/)），每次瀏覽會產生多列，而這個迴圈仍然合法執行、只是把每次瀏覽數了不只一次——數字翻倍而沒有任何錯誤訊息。屆時的修法是在迴圈裡先篩事件型別：
+這段 group by 有一個前提要明寫出來：**它假設 raw log 裡一列等於一次瀏覽**。這在模組二的資料模型下成立，因為 beacon 只在頁面載入時送一次。日後若在 payload 加入其他事件型別（例如離開事件，見[模組六](/automation/06-reading-the-data/event-model/)），每次瀏覽會產生多列，而這個迴圈仍然合法執行、只是把多數瀏覽數了不只一次——數字膨脹而沒有任何錯誤訊息。膨脹的倍率不固定（離開事件會丟失一部分），所以它比整數倍的錯誤更難從數字本身看出來。屆時的修法是在迴圈裡先篩事件型別：
 
 ```javascript
-if (raw[i][5] !== "view") continue;   // 只數進入事件
+if (raw[i][5] !== "view") continue;   // 只數進入事件（第 6 欄）
 ```
+
+**這個修法有一個連帶條件容易漏掉**：下一節的增量讀取寫的是 `getRange(..., newCount, 5)`，只讀五欄。五欄讀進來時 `raw[i][5]` 是 `undefined`，`undefined !== "view"` 恆真，於是每一列都被跳過、日報變成空白。兩個常數（讀幾欄、事件欄在第幾欄）必須一起改，而它們相隔兩節、都不會報錯。
 
 把這個前提寫在程式碼旁邊，是為了讓資料模型變更的人搜尋得到所有依賴它的地方。這類「條件式合法執行但已換語意」的失效方式，見[假故障與靜默失效的診斷](/automation/06-reading-the-data/diagnosing-silent-failures/)。
 
@@ -76,11 +78,13 @@ var lastRow = Number(props.getProperty("lastAggregatedRow") || 1);
 var sheet = ss.getSheetByName("工作表1");
 var newCount = sheet.getLastRow() - lastRow;
 if (newCount > 0) {
-  var fresh = sheet.getRange(lastRow + 1, 1, newCount, 5).getValues();
+  var fresh = sheet.getRange(lastRow + 1, 1, newCount, 5).getValues();   // 5 = 目前的欄數
   // ... 只彙總 fresh ...
   props.setProperty("lastAggregatedRow", String(sheet.getLastRow()));
 }
 ```
+
+那個 `5` 是目前的欄數，它與前面那個「一列等於一次瀏覽」是同一種前提：欄位增加時要跟著改，而讀少了不會報錯、只會讓後面的欄位變成 `undefined`。
 
 只讀增量讓每次彙總的成本跟「昨天新增多少」成正比、而不是跟「歷史總量」成正比，執行時間就穩定、不隨資料累積膨脹。這跟[資料模型與容量邊界](/automation/03-sheet-as-database/data-model-and-capacity/)講的分表是互補的兩招——分表縮小單張表、只讀增量縮小單次讀取，都是為了讓彙總不被歷史總量拖垮。
 

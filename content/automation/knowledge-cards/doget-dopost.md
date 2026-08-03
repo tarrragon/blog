@@ -10,6 +10,8 @@ tags: ["automation", "apps-script", "doget", "dopost", "knowledge-card"]
 
 ## 概念位置
 
+事件物件只帶請求的內容，**不帶任何 HTTP 標頭**——`User-Agent` 與來源 IP 在這裡都讀不到。伺服器端常見的 UA 比對與 IP 判斷因此不可用，需要那些資訊時只能由前端蒐集後放進請求主體送來（見[辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)）。
+
 兩個函式都必須回傳一個 `ContentService` 或 `HtmlService` 的輸出，這是平台的硬性要求；不回傳會被當成執行沒有正常結束。接收 [beacon](/automation/knowledge-cards/beacon/) 這類「送資料進來」的場景用 `doPost`，因為 `sendBeacon` 送的是 POST，主體放在 `e.postData.contents`（是個字串，需要自己 `JSON.parse`）。
 
 ## 可觀察訊號與例子

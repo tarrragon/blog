@@ -70,4 +70,8 @@ function doPost(e) {
 
 ## 下一步
 
-第一筆進來了，但這只是單筆寫入。當多個瀏覽在同一瞬間打進來，`appendRow` 會不會互相覆蓋？資料列累積到幾萬列時 Sheets 還撐得住嗎？這些是[模組三：Sheets 當資料庫](/automation/03-sheet-as-database/)要處理的並發與容量問題。
+第一筆進來了，往下有兩條路。
+
+想知道**這些資料怎麼讀出意義**——來源網址為什麼大量空白、怎麼判斷兩列是不是同一個人、哪些是機器抓取——走[模組六：收到資料之後](/automation/06-reading-the-data/)。那一章會在 payload 上增加欄位，屆時這裡的 `appendRow` 與試算表的表頭要跟著改，改法在該章的[欄位變更清單](/automation/06-reading-the-data/#欄位變更要同步到接收端)。
+
+想先把**儲存層打穩**——多個瀏覽在同一瞬間打進來時 `appendRow` 會不會互相覆蓋、資料列累積到幾萬列時 Sheets 還撐不撐得住——走[模組三：Sheets 當資料庫](/automation/03-sheet-as-database/)。

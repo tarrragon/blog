@@ -21,7 +21,7 @@ tags: ["automation", "apps-script", "quota", "privacy", "abuse", "migration"]
 
 公開端點的騷擾型風險（髒資料、配額消耗，見[部署與存取權限](/automation/05-deploy-quota-security/deployment-and-access/)），對應兩個層級的防護。
 
-**過濾自己的瀏覽**是最先該做、報酬最高的一項——不是防外人，是防站主把開發與自我瀏覽混進統計。前端的 hostname guard 已經擋掉本機預覽（見[前端 beacon](/automation/02-analytics-beacon/frontend-beacon/)）；要進一步排除「在正式站上自己一直重整」，可以在瀏覽器存一個退出標記、beacon 讀到就不送，或彙總時依訪客識別碼過濾。兩種作法的取捨與實作見[訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)——存標記的版本同時也是給讀者的退出入口，適合公開在網站說明裡。
+**過濾自己的瀏覽**是最先該做、報酬最高的一項——不是防外人，是防站主把開發與自我瀏覽混進統計。前端的 hostname guard 已經擋掉本機預覽（見[前端 beacon](/automation/02-analytics-beacon/frontend-beacon/)）；要進一步排除「在正式站上自己一直重整」，可以在瀏覽器存一個退出標記、beacon 讀到就不送，或彙總時依訪客識別碼過濾。兩者的取捨在於前者省下配額與列數、後者保留資料可回頭校正，而它們可以並用。退出標記的實作、邊界與各瀏覽器的差異見[訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)——存標記的版本同時也是給讀者的退出入口，適合公開在網站說明裡。
 
 **擋隨手亂打**用一個約定 token：前端 payload 放一個固定字串、`doPost` 檢查對不上就丟掉不寫。這能擋掉不知情的爬蟲與隨手 POST，成本很低。但要誠實看待它的邊界：token 也在 client JS 裡看得到，鐵了心要灌的人抓一下原始碼就有——所以 token 是「擋雜訊」不是「擋攻擊」。對個人 blog，擋雜訊通常就夠了；真的被針對性灌爆，那是遷移到有更多防護手段（rate limiting、驗證）的平台的訊號。
 
@@ -30,10 +30,12 @@ tags: ["automation", "apps-script", "quota", "privacy", "abuse", "migration"]
 這套統計在隱私上的立足點是**根本不收集個人身分資訊**，這讓它天然乾淨。具體有三條線值得明確守住：
 
 - **不記 IP**：Apps Script 的 web app 收不到訪客 IP，所以就算想記也記不到——這反而是好事，少一個 PII 來源。
-- **裝置只送粗標籤**：`mobile` / `tablet` / `desktop` 三選一足以回答「用什麼裝置看」，不送完整 `userAgent`（那帶版本等可組成指紋的細節）。
+- **裝置只送粗標籤**：`mobile` / `tablet` / `desktop` 三選一足以回答「用什麼裝置看」，不送完整 `userAgent`（那帶版本等可組成[瀏覽器指紋](/automation/knowledge-cards/browser-fingerprint/)的細節）。
 - **不放可識別個人的欄位**：payload 只有路徑、來源、語言、裝置，沒有任何綁到個人的東西。
 
-因為不收 PII，這套統計不會踩到「需要 cookie 同意彈窗」「需要處理個資刪除請求」那類合規負擔。想更保守，可以尊重瀏覽器的 Do Not Track 訊號（`navigator.doNotTrack === "1"` 時不送 beacon），把「使用者表達不想被追蹤」也納入——雖然這套本來就不追蹤個人，尊重這個訊號是一致的姿態。
+不收 PII 讓「處理個資刪除請求」這類負擔不會發生，但**同意機制的判斷不是由 PII 決定的**。歐盟 ePrivacy 指令第 5(3) 條管的是「在使用者終端設備儲存或讀取資訊」這個動作本身，與存的內容是否為個資無關——市面上宣稱免同意橫幅的分析服務（Plausible、Fathom）之所以能這樣宣稱，正是因為它們完全不在瀏覽器儲存任何識別碼。[模組六的訪客識別](/automation/06-reading-the-data/visitor-identity/)在 `localStorage` 存了兩個，因此那一步跨過了這條線。
+
+實務上個人網站的合規風險與商業追蹤網路不在同一個量級，但這是取捨不是豁免。想更保守，可以尊重瀏覽器的 Do Not Track 訊號（`navigator.doNotTrack === "1"` 時不送 beacon），或者不存識別碼、只做頁面計數。
 
 ## 遷移訊號：什麼時候該離開 Sheets
 
@@ -46,6 +48,10 @@ Apps Script + Sheets 是為「量小、要人直接看試算表」設計的（�
 
 遷移的方向是把接收端換成 Cloudflare Workers、儲存換成 D1（免費 SQLite）：吞吐與查詢能力遠高於 Sheets，代價是失去「打開試算表就能看」的便利、要自己做查詢介面。判準用一句話收斂：**當「Sheets 即儀表板」的便利已經被它的容量與吞吐限制抵銷，就是遷移的時機**——在那之前，簡單版一直是對的選擇。
 
-## 回到起點
+## 管線完成之後
 
-這是免伺服器自動化指南的最後一章。整套流量統計從[模組零的架構](/automation/00-mental-model/)推導、到這裡的長期維護，你已經有一個資料完全在自己手上、不租主機的統計系統。想把同一套膠水模式套到別的靜態站或別的工具，從[模組零的選型](/automation/00-mental-model/free-tier-and-tool-choice/)重新開始判斷即可。
+到這裡，一套不租主機、資料存在自己試算表裡的流量統計已經建好，而且知道它的配額邊界、防濫用手段與遷移訊號在哪。
+
+**管線能跑，不代表資料讀得出意義。** 收到的來源網址大量空白、任兩列之間看不出是不是同一個人、真人與機器抓取混在一起——這些問題只在真實流量打進來之後才浮現，處理方式見[模組六：收到資料之後](/automation/06-reading-the-data/)。那一章會在 payload 上增加欄位，本章的配額判斷也會因為列數翻倍而需要重算。
+
+想把同一套膠水模式套到別的靜態站或別的工具，回[模組零的選型](/automation/00-mental-model/free-tier-and-tool-choice/)重新判斷即可。

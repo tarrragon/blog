@@ -21,4 +21,5 @@ tags: ["automation", "deployment", "quota", "security", "privacy", "migration"]
 
 - → [模組零：工具選型](/automation/00-mental-model/free-tier-and-tool-choice/)：Apps Script 與 Workers 的適用邊界
 - → [模組二：接收端 handler](/automation/02-analytics-beacon/receiver-handler/)：被保護的端點怎麼實作的
+- → [模組六：收到資料之後](/automation/06-reading-the-data/)：管線穩定之後的資料判讀，那一章的欄位變更會讓本章的配額估算需要重算
 - → [模組三：Sheets 當資料庫](/automation/03-sheet-as-database/)：容量邊界的技術細節

@@ -1,7 +1,7 @@
 ---
 title: "Browser Fingerprint（瀏覽器指紋）"
 date: 2026-08-03
-description: "由多個單獨無害的瀏覽器環境屬性組合而成、足以在不使用 cookie 的情況下辨識出特定裝置的特徵集合"
+description: "由多個單獨無害的瀏覽器環境屬性組合而成的裝置特徵集合，決定自建統計蒐集判別訊號時的能力上限"
 weight: 6
 tags: ["automation", "privacy", "fingerprint", "analytics", "knowledge-card"]
 ---
@@ -10,7 +10,7 @@ tags: ["automation", "privacy", "fingerprint", "analytics", "knowledge-card"]
 
 ## 概念位置
 
-指紋與識別碼是兩種不同的識別途徑。識別碼（存在 `localStorage` 的隨機值）由網站產生、使用者可以清除、內容不從個人推導；指紋由使用者的環境被動產生、清除不掉、也不需要對方同意就能取得。這個差別決定了設計取向：**自建統計要辨識「是不是同一個瀏覽器」時用識別碼，用指紋做同一件事會在使用者無法拒絕的前提下達成，兩者的技術效果相近而性質不同**。指紋的另一個用途是分辨自動化環境，而這在 Apps Script 這類接收端上是唯一可行的途徑——[doPost](/automation/knowledge-cards/doget-dopost/) 拿不到任何 HTTP 標頭，判別素材只能由前端蒐集後隨 beacon 送出。做法與邊界見[辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)。
+指紋與識別碼是兩種不同的識別途徑。識別碼（存在 `localStorage` 的隨機值）由網站產生、使用者可以清除、內容不從個人推導；指紋由使用者的環境被動產生、清除不掉、也不需要對方同意就能取得。這個差別決定了設計取向：**自建統計要辨識「是不是同一個瀏覽器」時用識別碼，用指紋做同一件事會在使用者無法拒絕的前提下達成，兩者的技術效果相近而性質不同**。指紋的另一個用途是分辨自動化環境。在 Apps Script 這類接收端上，判別素材只能由前端蒐集後隨 beacon 送出——[doPost](/automation/knowledge-cards/doget-dopost/) 拿不到任何 HTTP 標頭，伺服器端的 UA 與 IP 比對都不可用。做法與邊界見[辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)。
 
 ## 可觀察訊號與例子
 
