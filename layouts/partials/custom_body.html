@@ -62,15 +62,28 @@
     // 所以「這是不是爬蟲」只能由前端偵測後放進 payload。
     // 回傳一個短字串標記，doPost 原樣寫入 Sheet 的 bot 欄，彙總時再決定要不要排除。
     // 判定規則不丟資料、只加標記，所以規則寫錯了可以回頭校正。
+    // 已知爬蟲在 UA 裡的自我申報名稱。命中時送出具體名稱，彙總時能直接看出來源是誰。
+    // 清單過時的代價只是退回下面的通用比對、標記成 ua:bot 之類，不會漏掉標記。
+    var KNOWN_BOTS = /claudebot|gptbot|oai-searchbot|chatgpt-user|perplexitybot|googlebot|google-extended|bingbot|applebot|duckduckbot|yandexbot|bytespider|amazonbot|ccbot|meta-externalagent|facebookexternalhit|semrushbot|ahrefsbot|dotbot|petalbot/i;
+    // 通用字樣：接住誠實申報但不在具名清單裡的自動化訪客
+    var GENERIC_BOT = /bot\b|crawler|spider|headless|slurp|bingpreview|python-requests|curl\//i;
+
     // 送出命中的訊號名稱而非單一布林，是為了讓判定閾值留在彙總端：
     // 之後發現某條訊號誤殺太多，在試算表改公式就好，不必改前端重新部署。
+    // 只送出命中的關鍵字、不送完整 userAgent — 那個關鍵字本來就是爬蟲主動公開的身分，
+    // 不構成指紋特徵。
     function botSignal() {
       var hits = [];
       try {
         // 高信心：自動化框架（Playwright / Puppeteer / Selenium）的預設標記，一般瀏覽器不會有
         if (navigator.webdriver === true) hits.push("webdriver");
         // 高信心：誠實申報身分的爬蟲。抓不到刻意偽裝者，但也幾乎不會誤判真人
-        if (/bot\b|crawler|spider|headless|slurp|bingpreview|facebookexternalhit|python-requests|curl\//i.test(navigator.userAgent)) hits.push("ua");
+        var ua = navigator.userAgent || "";
+        var named = ua.match(KNOWN_BOTS);
+        var generic = named ? null : ua.match(GENERIC_BOT);
+        if (named) hits.push("ua:" + named[0].toLowerCase());
+        // 通用比對會連著標點一起吃進來（例如 curl/），去尾只留可讀的名稱
+        else if (generic) hits.push("ua:" + generic[0].toLowerCase().replace(/[^a-z]+$/, ""));
         // 中信心：headless 環境常見的空語言清單，裝了隱私擴充的真人也可能命中
         if (!navigator.languages || navigator.languages.length === 0) hits.push("lang");
         // 中信心：無頭視窗沒有實際外框尺寸，但部分嵌入式 webview 的真人也會是 0
