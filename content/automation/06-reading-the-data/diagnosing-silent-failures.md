@@ -2,7 +2,7 @@
 title: "假故障與靜默失效的診斷"
 date: 2026-08-03
 description: "自建的 Apps Script 流量統計看起來壞了、或看起來正常但數字不對時，分辨症狀出現的位置與問題所在的位置"
-weight: 4
+weight: 5
 tags: ["automation", "apps-script", "debugging", "data-quality", "deployment"]
 ---
 
@@ -105,4 +105,4 @@ Apps Script 把「編輯器裡的程式碼」與「端點服務的版本」設�
 
 ## 下一步
 
-收集鏈確認健康之後，資料判讀的三個環節分別是：識別欄位見[訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)、行為欄位見[事件模型與停留時間](/automation/06-reading-the-data/event-model/)、判定規則見[辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)。配額耗盡導致的漏記是另一類成因，見[模組五的配額碰撞與防濫用](/automation/05-deploy-quota-security/quota-abuse-privacy/)。
+收集鏈確認健康之後，資料判讀的環節分別是：識別欄位見[訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)、行為欄位見[事件模型與停留時間](/automation/06-reading-the-data/event-model/)、判定規則見[辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)、而這些欄位加總起來涵蓋了誰見[這份統計的分母是什麼](/automation/06-reading-the-data/data-coverage/)。配額耗盡導致的漏記是另一類成因，見[模組五的配額碰撞與防濫用](/automation/05-deploy-quota-security/quota-abuse-privacy/)。

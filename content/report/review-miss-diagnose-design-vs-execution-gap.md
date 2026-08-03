@@ -82,6 +82,7 @@ multi-pass review 框架定義了輪 9（reader simulation）、輪 10（self-cr
 
 - [#248 推翻一個假說之後，替補者是在驗屍的空檔裡上位的](../hypothesis-replacement-inherits-no-scrutiny/)：替補假說最常見的形狀就是把執行落差誤診成設計落差（「我們缺一條規則」比「我們沒執行既有那條」容易被接受，因為前者不必承認疏失）。診斷一個替補解釋時先跑本卡的分流，能擋掉相當一部分。
 - [#249 對當下段落沒有收益的標註不會自發發生](../annotation-with-no-local-payoff-needs-a-trigger/)：一個典型的執行落差案例，而且是診斷正確之後才找對修法的那種——審查清單早就寫好且有效（七篇跑下來每篇都找到真問題），缺的是它在寫作當下沒有觸發點。診斷成設計落差會去補清單，而清單不缺。
+- [#250 資料多出一種形狀時，既有分析邏輯靜默換語意](../new-data-shape-silently-changes-analysis/)：本卡的分流在資料分析失效上同樣成立，而且誤診方向固定。統計算錯時最順口的解釋是「這次忘了更新公式」（execution gap），實際上多半是分析邏輯的涵蓋範圍沒有跟上資料模型（design gap）——照 execution gap 修的代價是修好這一次、下一次新增資料形狀時原樣重演。
 
 ## 判讀徵兆
 
@@ -100,7 +101,6 @@ multi-pass review 框架定義了輪 9（reader simulation）、輪 10（self-cr
 - **適用**：review 流程的 retrospective（漏抓後檢討）、framework 演進決策（要不要加 frame / keyword）、self-review 品質檢討。
 - **不適用**：一次性短文 review（沒有「框架」可言、談不上 design vs execution）。
 - **邊界**：兩者不互斥、常同時存在 —— 本卡要的不是「二選一」、是「分別診斷、分別修」。誤把它當 either-or 會只修一半。
-- [#250 資料多出一種形狀時，既有分析邏輯靜默換語意](../new-data-shape-silently-changes-analysis/)：本卡的分流在資料分析失效上同樣成立，而且誤診方向固定。統計算錯時最順口的解釋是「這次忘了更新公式」（execution gap），實際上多半是分析邏輯的涵蓋範圍沒有跟上資料模型（design gap）——照 execution gap 修的代價是修好這一次、下一次新增資料形狀時原樣重演。
 
 ---
 
