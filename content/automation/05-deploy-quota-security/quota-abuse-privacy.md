@@ -31,7 +31,7 @@ tags: ["automation", "apps-script", "quota", "privacy", "abuse", "migration"]
 
 - **不記 IP**：Apps Script 的 web app 收不到訪客 IP，所以就算想記也記不到——這反而是好事，少一個 PII 來源。
 - **裝置只送粗標籤**：`mobile` / `tablet` / `desktop` 三選一足以回答「用什麼裝置看」，不送完整 `userAgent`（那帶版本等可組成[瀏覽器指紋](/automation/knowledge-cards/browser-fingerprint/)的細節）。
-- **不放可識別個人的欄位**：payload 只有路徑、來源、語言、裝置，沒有任何綁到個人的東西。
+- **不放可識別個人的欄位**：這一章講到的 payload 只有路徑、來源、語言、裝置，沒有任何綁到個人的東西。[模組六](/automation/06-reading-the-data/visitor-identity/)會加上兩個隨機識別碼——它們同樣不含個人資訊，但確實會被寫進瀏覽器的儲存空間，下一段的同意機制討論就是為此。
 
 不收 PII 讓「處理個資刪除請求」這類負擔不會發生，但**同意機制的判斷不是由 PII 決定的**。歐盟 ePrivacy 指令第 5(3) 條管的是「在使用者終端設備儲存或讀取資訊」這個動作本身，與存的內容是否為個資無關——市面上宣稱免同意橫幅的分析服務（Plausible、Fathom）之所以能這樣宣稱，正是因為它們完全不在瀏覽器儲存任何識別碼。[模組六的訪客識別](/automation/06-reading-the-data/visitor-identity/)在 `localStorage` 存了兩個，因此那一步跨過了這條線。
 

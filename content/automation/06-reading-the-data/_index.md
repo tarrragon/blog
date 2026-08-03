@@ -14,12 +14,12 @@ tags: ["automation", "beacon", "analytics", "bot-detection", "privacy", "data-qu
 
 ## 章節文章
 
-| 文章                                                                                  | 主題                                                                                                                       |
-| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| [訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)               | 來源網址為何大量空白、用兩層隨機識別碼分辨回訪與單次瀏覽、退出統計為何用 localStorage 而非 cookie 或 IP                    |
-| [事件模型與停留時間](/automation/06-reading-the-data/event-model/)                    | 進入與離開拆成兩則事件、`visibilitychange` 的觸發時機、停留秒數對應的是可見時長、資料模型變更讓既有報表公式換語意          |
-| [辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)                  | 哪些機器會進入這份統計、接收端讀不到 HTTP 標頭的結構限制、訊號分層與信心度、具名比對與通用退回、先量本站基線、標記而非丟棄 |
-| [假故障與靜默失效的診斷](/automation/06-reading-the-data/diagnosing-silent-failures/) | 錯誤訊息指向的位置不是問題的位置、程式改了但端點沒生效、公式不報錯卻算錯                                                   |
+| 文章                                                                                  | 主題                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)               | 來源網址為何大量空白、用兩層隨機識別碼分辨回訪與單次瀏覽、退出統計為何用 localStorage 而非 cookie 或 IP                                                                  |
+| [事件模型與停留時間](/automation/06-reading-the-data/event-model/)                    | 進入與離開拆成兩則事件、`visibilitychange` 的觸發時機、停留秒數對應的是可見時長、資料模型變更讓既有報表公式換語意                                                        |
+| [辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)                  | 哪些機器會進入這份統計、接收端讀不到 HTTP 標頭的結構限制、訊號分層與信心度、具名比對與通用退回、先量本站基線、這份統計的分母是什麼、標記而非丟棄、彙總端的分類與條件順序 |
+| [假故障與靜默失效的診斷](/automation/06-reading-the-data/diagnosing-silent-failures/) | 錯誤訊息指向的位置不是問題的位置、程式改了但端點沒生效、公式不報錯卻算錯                                                                                                 |
 
 ## 欄位變更要同步到接收端
 
@@ -69,7 +69,7 @@ getLogSheet().appendRow([
 
 已經跟著模組二把資料收進來、正要開始看報表的人，從[訪客識別](/automation/06-reading-the-data/visitor-identity/)順讀，並在動手改 payload 前先看上一節的欄位變更清單。
 
-已經在懷疑手上的數字的人，入口看症狀分兩條：**某個分類永遠是零**多半是資料模型變更後公式沒跟著改，推導在[事件模型的最後一節](/automation/06-reading-the-data/event-model/)；**流量突然變乾淨、或懷疑統計整個壞掉**走[假故障與靜默失效的診斷](/automation/06-reading-the-data/diagnosing-silent-failures/)。
+已經在懷疑手上的數字的人，入口看症狀分三條：**某個分類永遠是零**多半是資料模型變更後公式沒跟著改，推導在[事件模型談報表公式換語意的那一節](/automation/06-reading-the-data/event-model/)；**懷疑數字裡混了機器**走[辨識自動化流量](/automation/06-reading-the-data/automated-traffic/)，那一篇也交代了這份統計的母體到底是什麼；**流量突然變乾淨、或懷疑統計整個壞掉**走[假故障與靜默失效的診斷](/automation/06-reading-the-data/diagnosing-silent-failures/)。
 
 ## 跨分類引用
 

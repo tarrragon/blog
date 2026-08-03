@@ -15,7 +15,7 @@ tags: ["automation", "deployment", "quota", "security", "privacy", "migration"]
 | 文章                                                                                        | 主題                                                                             |
 | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [部署與存取權限的安全含義](/automation/05-deploy-quota-security/deployment-and-access/)     | `execute as` / `who has access` 的安全角色、公開端點的威脅模型、更新部署不換網址 |
-| [配額、濫用防護、隱私與遷移訊號](/automation/05-deploy-quota-security/quota-abuse-privacy/) | 配額碰撞症狀、過濾自己瀏覽與 token、不記 PII 的立場、離開 Sheets 的訊號          |
+| [配額、濫用防護、隱私與遷移訊號](/automation/05-deploy-quota-security/quota-abuse-privacy/) | 配額碰撞症狀、過濾自己瀏覽與 token、隱私邊界與同意機制、離開 Sheets 的訊號       |
 
 ## 跨分類引用
 
