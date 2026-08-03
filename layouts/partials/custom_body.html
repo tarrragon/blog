@@ -1,7 +1,10 @@
 {{- /*
-  免伺服器流量 beacon：頁面載入時送一則瀏覽事件到 Apps Script web app。
+  免伺服器流量 beacon：頁面載入時送一則瀏覽事件到 Apps Script web app，
+  離開時再送一則帶停留時間與互動訊號的事件。
   只有在 hugo.toml 的 [params] 設了 analyticsBeacon（Apps Script /exec 網址）時才渲染，
   沒設就完全不輸出。實作說明見 content/posts 的「用 Apps Script 幫 blog 做流量統計」。
+
+  排除自己：在正式站開一次 ?noanalytics=1，該瀏覽器之後永久不送；?noanalytics=0 解除。
 */ -}}
 {{- with .Site.Params.analyticsBeacon }}
 {{- $host := (urls.Parse $.Site.BaseURL).Host }}
@@ -10,6 +13,41 @@
     // 只在正式站送，本機 hugo server 預覽（localhost）不計入統計。
     // Go html/template 在 <script> context 會自動把插值轉成安全的 JS 字串字面量，不需再手動加引號。
     if (location.hostname !== {{ $host }}) return;
+
+    var ENDPOINT = {{ . }};
+    var OPTOUT_KEY = "blog_analytics_optout";
+    var VISITOR_KEY = "blog_visitor_id";
+    var SESSION_KEY = "blog_session_id";
+
+    // storage 在隱私模式或停用 cookie 時會丟例外，統計不該因此讓頁面出錯。
+    function safeGet(store, key) {
+      try { return store.getItem(key); } catch (e) { return null; }
+    }
+    function safeSet(store, key, value) {
+      try { store.setItem(key, value); } catch (e) { /* 存不了就當作無法識別 */ }
+    }
+
+    // opt-out 開關：用網址參數設定一次，之後靠 localStorage 記住。
+    // 換瀏覽器或清 cache 後要重設一次，這是不在原始碼放特殊 token 的代價。
+    var query = new URLSearchParams(location.search);
+    if (query.get("noanalytics") === "1") safeSet(localStorage, OPTOUT_KEY, "1");
+    if (query.get("noanalytics") === "0") { try { localStorage.removeItem(OPTOUT_KEY); } catch (e) {} }
+    if (safeGet(localStorage, OPTOUT_KEY) === "1") return;
+
+    // 雙層識別：visitor 跨 session 存活（算回訪），session 只在這個分頁的生命週期內有效（算單次閱讀深度）。
+    // 兩者都是隨機值、不含任何個人資訊；storage 不可用時送空字串，彙總時視為不可識別。
+    function stableId(store, key) {
+      var existing = safeGet(store, key);
+      if (existing) return existing;
+      var fresh = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      safeSet(store, key, fresh);
+      return safeGet(store, key) ? fresh : "";
+    }
+    var visitorId = stableId(localStorage, VISITOR_KEY);
+    var sessionId = stableId(sessionStorage, SESSION_KEY);
+
     // 粗粒度分類閱讀裝置，只送 mobile / tablet / desktop，不送完整 userAgent（避免指紋 / PII）
     function deviceType() {
       var ua = navigator.userAgent;
@@ -19,14 +57,72 @@
       if (/Mobi|iPhone|iPod|Android|BlackBerry|IEMobile|Opera Mini/.test(ua)) return "mobile";
       return "desktop";
     }
-    var payload = JSON.stringify({
+
+    // 自動化訊號：Apps Script 的 doPost 讀不到任何 HTTP header（拿不到 User-Agent / IP），
+    // 所以「這是不是爬蟲」只能由前端偵測後放進 payload。
+    // 回傳一個短字串標記，doPost 原樣寫入 Sheet 的 bot 欄，彙總時再決定要不要排除。
+    // 判定規則不丟資料、只加標記，所以規則寫錯了可以回頭校正。
+    // 送出命中的訊號名稱而非單一布林，是為了讓判定閾值留在彙總端：
+    // 之後發現某條訊號誤殺太多，在試算表改公式就好，不必改前端重新部署。
+    function botSignal() {
+      var hits = [];
+      try {
+        // 高信心：自動化框架（Playwright / Puppeteer / Selenium）的預設標記，一般瀏覽器不會有
+        if (navigator.webdriver === true) hits.push("webdriver");
+        // 高信心：誠實申報身分的爬蟲。抓不到刻意偽裝者，但也幾乎不會誤判真人
+        if (/bot\b|crawler|spider|headless|slurp|bingpreview|facebookexternalhit|python-requests|curl\//i.test(navigator.userAgent)) hits.push("ua");
+        // 中信心：headless 環境常見的空語言清單，裝了隱私擴充的真人也可能命中
+        if (!navigator.languages || navigator.languages.length === 0) hits.push("lang");
+        // 中信心：無頭視窗沒有實際外框尺寸，但部分嵌入式 webview 的真人也會是 0
+        if (!window.outerWidth || !window.outerHeight) hits.push("size");
+      } catch (err) {
+        // 偵測本身出錯不該影響統計，當作沒有訊號
+      }
+      return hits.join(",");
+    }
+
+    function send(payload) {
+      var blob = new Blob([JSON.stringify(payload)], { type: "text/plain;charset=UTF-8" });
+      navigator.sendBeacon(ENDPOINT, blob);
+    }
+
+    var base = {
       path: location.pathname,
-      ref: document.referrer || "",
       lang: navigator.language || "",
-      dev: deviceType()
+      dev: deviceType(),
+      vid: visitorId,
+      sid: sessionId,
+      bot: botSignal()
+    };
+
+    send(Object.assign({ t: "view", ref: document.referrer || "" }, base));
+
+    // 離開事件：帶停留秒數與「有沒有真的互動過」。
+    // 爬蟲抓完就走、不捲動不點擊，這兩個欄位是比 UA 比對更難偽裝的訊號。
+    var arrivedAt = Date.now();
+    var interacted = false;
+    var leaveSent = false;
+
+    ["scroll", "pointerdown", "keydown"].forEach(function (evt) {
+      addEventListener(evt, function () { interacted = true; }, { once: true, passive: true });
     });
-    var blob = new Blob([payload], { type: "text/plain;charset=UTF-8" });
-    navigator.sendBeacon({{ . }}, blob);
+
+    function sendLeave() {
+      if (leaveSent) return;
+      leaveSent = true;
+      send(Object.assign({
+        t: "leave",
+        dur: Math.round((Date.now() - arrivedAt) / 1000),
+        act: interacted ? 1 : 0
+      }, base));
+    }
+
+    // visibilitychange 在切換分頁、切換 app、關閉頁面時都會走到 hidden；
+    // beforeunload 在行動 Safari 幾乎不觸發，而且會讓頁面失去 bfcache 資格。
+    addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") sendLeave();
+    });
+    addEventListener("pagehide", sendLeave);
   })();
 </script>
 {{- end }}
