@@ -54,6 +54,14 @@ function aggregateYesterday() {
 }
 ```
 
+這段 group by 有一個前提要明寫出來：**它假設 raw log 裡一列等於一次瀏覽**。這在模組二的資料模型下成立，因為 beacon 只在頁面載入時送一次。日後若在 payload 加入其他事件型別（例如離開事件，見[模組六](/automation/06-reading-the-data/event-model/)），每次瀏覽會產生多列，而這個迴圈仍然合法執行、只是把每次瀏覽數了不只一次——數字翻倍而沒有任何錯誤訊息。屆時的修法是在迴圈裡先篩事件型別：
+
+```javascript
+if (raw[i][5] !== "view") continue;   // 只數進入事件
+```
+
+把這個前提寫在程式碼旁邊，是為了讓資料模型變更的人搜尋得到所有依賴它的地方。這類「條件式合法執行但已換語意」的失效方式，見[假故障與靜默失效的診斷](/automation/06-reading-the-data/diagnosing-silent-failures/)。
+
 兩個實作決定值得說明。**日期用 `Utilities.formatDate` 明確指定時區**（這裡 `Asia/Taipei`），否則跨午夜的資料可能因為時區偏移被算到錯的日子。**寫日報用 `setValues` 一次寫一整塊、不用 `appendRow` 逐列寫**——彙總結果可能有幾十上百列，逐列 append 會慢且容易逼近執行時間，一次 `setValues` 快得多（呼應[寫入與並發](/automation/03-sheet-as-database/append-and-concurrency/)講的批次寫入）。
 
 ## 在 90 分鐘配額內寫得有效率

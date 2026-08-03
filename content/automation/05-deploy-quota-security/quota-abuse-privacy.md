@@ -21,7 +21,7 @@ tags: ["automation", "apps-script", "quota", "privacy", "abuse", "migration"]
 
 公開端點的騷擾型風險（髒資料、配額消耗，見[部署與存取權限](/automation/05-deploy-quota-security/deployment-and-access/)），對應兩個層級的防護。
 
-**過濾自己的瀏覽**是最先該做、報酬最高的一項——不是防外人，是防你自己把開發與自我瀏覽混進統計。前端的 hostname guard 已經擋掉本機預覽（見[前端 beacon](/automation/02-analytics-beacon/frontend-beacon/)）；要進一步排除「你在正式站上自己一直重整」，可以在 payload 帶一個只有你知道的標記、`doPost` 看到就不記，或彙總時過濾掉你自己的裝置。
+**過濾自己的瀏覽**是最先該做、報酬最高的一項——不是防外人，是防站主把開發與自我瀏覽混進統計。前端的 hostname guard 已經擋掉本機預覽（見[前端 beacon](/automation/02-analytics-beacon/frontend-beacon/)）；要進一步排除「在正式站上自己一直重整」，可以在瀏覽器存一個退出標記、beacon 讀到就不送，或彙總時依訪客識別碼過濾。兩種作法的取捨與實作見[訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)——存標記的版本同時也是給讀者的退出入口，適合公開在網站說明裡。
 
 **擋隨手亂打**用一個約定 token：前端 payload 放一個固定字串、`doPost` 檢查對不上就丟掉不寫。這能擋掉不知情的爬蟲與隨手 POST，成本很低。但要誠實看待它的邊界：token 也在 client JS 裡看得到，鐵了心要灌的人抓一下原始碼就有——所以 token 是「擋雜訊」不是「擋攻擊」。對個人 blog，擋雜訊通常就夠了；真的被針對性灌爆，那是遷移到有更多防護手段（rate limiting、驗證）的平台的訊號。
 

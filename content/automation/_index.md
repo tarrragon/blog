@@ -21,9 +21,20 @@ weight: 40
 | 心智模型 | 靜態站能力邊界、膠水層架構、client beacon、免費額度的思考方式          | 大型後端架構、微服務拆分                                     |
 | 工具地基 | Apps Script web app 部署模型（`doGet`/`doPost`）、授權模型、V8 runtime | Apps Script 在 Workspace 企業版的進階整合                    |
 | 實作     | beacon 前端、接收端 handler、Sheets 讀寫、觸發器排程、配額與安全       | 商業級 analytics 平台的自建（見 [Monitoring](/monitoring/)） |
+| 資料品質 | 訪客識別、事件模型、自動化流量辨識、靜默失效診斷                       | 跨裝置身分解析、廣告歸因、第三方資料串接                     |
 | 選型     | Apps Script vs Workers 的適用邊界、何時該換工具                        | 雲端主機比價、Kubernetes                                     |
 
 流量分析的**概念層**（事件分類、漏斗、cohort、歸因）不在本指南，在 [Monitoring 監控體系](/monitoring/)。本指南是**動手做**的那一半：怎麼用免費工具把資料真的收進來、存起來、彙總出報表。兩者互補——先看 Monitoring 想清楚要收什麼，再回本指南把管線搭起來。
+
+## Backlog
+
+| 項目                                       | 類型   | 前置條件                     | 規模 |
+| ------------------------------------------ | ------ | ---------------------------- | ---- |
+| 雙事件配對的彙總實作（平均停留、閱讀深度） | 主章   | 模組四彙總改寫成事件感知版本 | 1 篇 |
+| Cloudflare Workers 對照與遷移路徑          | 主章   | 實機驗證免費額度與部署流程   | 2 篇 |
+| Referrer-Policy 知識卡                     | 知識卡 | 判定它在模組六是否已足夠展開 | 1 張 |
+
+模組六補上了資料判讀，但彙總層仍停在模組四的單事件版本——那裡目前只標明了前提與修法方向，尚未有一篇把「配對進入與離開事件、算出平均停留與閱讀深度」實作出來。順序上它依賴模組六的事件模型定案，因此排在其後。
 
 ## 章節
 
@@ -35,9 +46,12 @@ weight: 40
 | [模組三：Sheets 當資料庫](/automation/03-sheet-as-database/)      | `appendRow`、資料模型、並發與 `LockService`、Sheets 的容量邊界                 |
 | [模組四：觸發器與排程](/automation/04-triggers-automation/)       | time-driven trigger 每日彙總、`onFormSubmit`、把原始 log 變成日報              |
 | [模組五：部署、配額與安全](/automation/05-deploy-quota-security/) | 部署權限、免費配額上限、CORS 設定、防濫用、隱私與 PII 邊界                     |
+| [模組六：收到資料之後](/automation/06-reading-the-data/)          | 訪客識別與 opt-out、事件模型與停留時間、辨識自動化流量、假故障與靜默失效診斷   |
+
+模組零到五走的是「怎麼把管線接起來」，那條路徑上的每個障礙都能從文件讀出來。模組六的位置不同——它處理管線接好、資料真的開始累積之後才浮現的問題：來源網址大量空白、任兩列之間看不出是不是同一個人、真人與機器抓取混在一起。這些無法在設計階段推導，只有真實流量打進來才會現形。
 
 ## 讀者旅程
 
-想直接把流量統計做出來：模組零建立架構直覺後，跳模組二照著實作，缺概念再回模組一補。想完整理解這套膠水模式、之後套用到其他專案：模組零到五順讀。只想查某個 Apps Script 術語：看 [knowledge-cards](/automation/knowledge-cards/)。
+想直接把流量統計做出來：模組零建立架構直覺後，跳模組二照著實作，缺概念再回模組一補。想完整理解這套膠水模式、之後套用到其他專案：模組零到六順讀。已經收到資料、正要開始看報表：直接進[模組六](/automation/06-reading-the-data/)。只想查某個 Apps Script 術語：看 [knowledge-cards](/automation/knowledge-cards/)。
 
 ---

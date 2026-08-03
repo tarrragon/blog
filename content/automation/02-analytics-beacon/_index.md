@@ -21,3 +21,4 @@ tags: ["automation", "beacon", "apps-script", "sendbeacon", "cors"]
 
 - → [模組一：Apps Script 地基](/automation/01-apps-script-basics/)：`doGet`/`doPost` 與部署模型的完整說明
 - → [模組三：Sheets 當資料庫](/automation/03-sheet-as-database/)：資料進來後的並發、資料模型與容量
+- → [模組六：收到資料之後](/automation/06-reading-the-data/)：這裡的 payload 只描述單次瀏覽，補上訪客識別、停留時間與自動化訊號之後才讀得出「幾個人來過、有沒有真的在讀」

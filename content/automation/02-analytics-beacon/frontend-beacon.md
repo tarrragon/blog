@@ -40,7 +40,9 @@ Apps Script 在這裡有一個結構性的問題：它的 web app **無法回應
 
 送出的是一個 JSON **字串**，但外層 `Content-Type` 是 `text/plain`——接收端再自己 `JSON.parse` 把字串還原成物件（模組二的接收端那半會做）。這是「內容是 JSON、但傳輸標成純文字」的常見手法，專門用來繞過 preflight。
 
-payload 刻意只放不涉及個人身分的欄位：看了哪一頁、從哪連來、瀏覽器語言。不送任何能識別個人的資訊。附帶一提，Apps Script 的 web app 收不到訪客的 IP 位址，所以就算你想記 IP 也記不到——這反而讓這套統計在隱私上乾淨很多，時間戳記交給接收端用伺服器時間補（模組二接收端那半處理）。
+payload 刻意只放不涉及個人身分的欄位：看了哪一頁、從哪連來、瀏覽器語言。不送任何能識別個人的資訊。附帶一提，Apps Script 的 web app 收不到訪客的 IP 位址，記不到也就無從外洩——這反而讓這套統計在隱私上乾淨很多，時間戳記交給接收端用伺服器時間補（模組二接收端那半處理）。
+
+這幾個欄位描述的都是**單次瀏覽的屬性**，任兩列之間沒有關聯，因此算得出「某頁被打開幾次」、算不出「幾個人來過」。要補上那個能力需要額外的識別欄位，而「收不到 IP」這個事實在辨識自動化流量時會再次成為關鍵限制——兩者都在[模組六](/automation/06-reading-the-data/)處理。
 
 ## 加上閱讀裝置
 
@@ -111,8 +113,8 @@ var payload = JSON.stringify({
 
 放在 `</body>` 前、而不是 `<head>` 裡，是為了讓 beacon 在頁面主要內容都載入後才送，不跟關鍵資源搶頻寬。`sendBeacon` 本身就不阻塞，這個位置只是讓它更晚一點、更不影響體驗。
 
-一個上線前要注意的邊界：本機 `hugo server` 預覽時 beacon 也會照送，會把你自己開發時的瀏覽混進統計。實務上會加一個判斷，只在正式網域才送——例如檢查 `location.hostname` 是不是你的正式網域，是才執行。這個過濾放哪、怎麼寫，模組五談防濫用與資料乾淨度時一起處理。
+一個上線前要注意的邊界：本機 `hugo server` 預覽時 beacon 也會照送，會把開發時的瀏覽混進統計。實務上會加一個判斷，只在正式網域才送——例如檢查 `location.hostname` 是不是正式網域，是才執行。這個 hostname guard 擋掉本機預覽；「在正式站上自己重整」則需要另一套機制，見[訪客識別與 opt-out](/automation/06-reading-the-data/visitor-identity/)。防濫用與資料乾淨度的整體討論在模組五。
 
 ## 下一步
 
-前端會送了，但現在 beacon 送出去還沒有人接。接收端要怎麼解析這個 `text/plain` 的 JSON、怎麼安全寫進 Sheet、部署後怎麼確認收到第一筆——見[接收端 handler：寫進第一筆](/automation/02-analytics-beacon/receiver-handler/)。想先補齊 `doPost` 跟部署模型的背景，回[模組一：Apps Script 地基](/automation/01-apps-script-basics/)。
+前端會送了，但現在 beacon 送出去還沒有人接。接收端要怎麼解析這個 `text/plain` 的 JSON、怎麼安全寫進 Sheet、部署後怎麼確認收到第一筆——見[接收端 handler：寫進第一筆](/automation/02-analytics-beacon/receiver-handler/)。想先補齊 `doPost` 跟部署模型的背景，回[模組一：Apps Script 地基](/automation/01-apps-script-basics/)。資料開始累積之後怎麼讀出意義，見[模組六：收到資料之後](/automation/06-reading-the-data/)。
