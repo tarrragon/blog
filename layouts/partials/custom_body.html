@@ -19,7 +19,9 @@
     var VISITOR_KEY = "blog_visitor_id";
     var SESSION_KEY = "blog_session_id";
 
-    // storage 在隱私模式或停用 cookie 時會丟例外，統計不該因此讓頁面出錯。
+    // storage 在部分環境會丟例外（Safari 私密瀏覽的配額為 0、丟 QuotaExceededError；
+    // 封鎖網站資料時丟 SecurityError），統計不該因此讓頁面出錯。
+    // Chrome 無痕與 Firefox 隱私視窗可正常讀寫，只是關閉最後一個私密分頁時清除。
     function safeGet(store, key) {
       try { return store.getItem(key); } catch (e) { return null; }
     }
@@ -39,10 +41,13 @@
     function stableId(store, key) {
       var existing = safeGet(store, key);
       if (existing) return existing;
+      // randomUUID 需要安全連線環境，少數環境下不存在，因此留一條 fallback
       var fresh = (window.crypto && crypto.randomUUID)
         ? crypto.randomUUID()
         : Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
       safeSet(store, key, fresh);
+      // safeSet 把例外吞掉了，寫入成功與否只能靠讀回確認。
+      // 讀不回來時送空字串、彙總歸為不可識別 —— 比送一個下次就不見的值誠實。
       return safeGet(store, key) ? fresh : "";
     }
     var visitorId = stableId(localStorage, VISITOR_KEY);
@@ -64,13 +69,18 @@
     // 判定規則不丟資料、只加標記，所以規則寫錯了可以回頭校正。
     // 已知爬蟲在 UA 裡的自我申報名稱。命中時送出具體名稱，彙總時能直接看出來源是誰。
     // 清單過時的代價只是退回下面的通用比對、標記成 ua:bot 之類，不會漏掉標記。
-    var KNOWN_BOTS = /claudebot|gptbot|oai-searchbot|chatgpt-user|perplexitybot|googlebot|google-extended|bingbot|applebot|duckduckbot|yandexbot|bytespider|amazonbot|ccbot|meta-externalagent|facebookexternalhit|semrushbot|ahrefsbot|dotbot|petalbot/i;
+    //
+    // 這裡只列會執行 JS 的抓取工具才有意義：多數 AI 訓練爬蟲（GPTBot / ClaudeBot /
+    // PerplexityBot）只讀原始 HTML、不執行 JS，因此根本不會觸發這段程式碼。保留它們是
+    // 為了接住少數會渲染的變體，命中率預期極低。
+    // robots.txt 的控制 token（例如 Google-Extended）不是 UA 字串、前端偵測不到，不列。
+    var KNOWN_BOTS = /claudebot|claude-user|claude-searchbot|gptbot|oai-searchbot|chatgpt-user|perplexitybot|googlebot|bingbot|applebot|duckduckbot|yandexbot|bytespider|amazonbot|ccbot|meta-externalagent|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|semrushbot|ahrefsbot|dotbot|petalbot/i;
     // 通用字樣：接住誠實申報但不在具名清單裡的自動化訪客
     var GENERIC_BOT = /bot\b|crawler|spider|headless|slurp|bingpreview|python-requests|curl\//i;
 
     // 送出命中的訊號名稱而非單一布林，是為了讓判定閾值留在彙總端：
     // 之後發現某條訊號誤殺太多，在試算表改公式就好，不必改前端重新部署。
-    // 只送出命中的關鍵字、不送完整 userAgent — 那個關鍵字本來就是爬蟲主動公開的身分，
+    // 只送出命中的關鍵字、不送完整 userAgent — 那個關鍵字是爬蟲主動公開申報的身分，
     // 不構成指紋特徵。
     function botSignal() {
       var hits = [];
@@ -84,9 +94,11 @@
         if (named) hits.push("ua:" + named[0].toLowerCase());
         // 通用比對會連著標點一起吃進來（例如 curl/），去尾只留可讀的名稱
         else if (generic) hits.push("ua:" + generic[0].toLowerCase().replace(/[^a-z]+$/, ""));
-        // 中信心：headless 環境常見的空語言清單，裝了隱私擴充的真人也可能命中
+        // 中信心：空語言清單。裝了隱私擴充的真人可能誤中，而 Chrome 112 起的新 headless
+        // 模式已不再有這個特徵 —— 這條現在偏向漏判而非誤判
         if (!navigator.languages || navigator.languages.length === 0) hits.push("lang");
-        // 中信心：無頭視窗沒有實際外框尺寸，但部分嵌入式 webview 的真人也會是 0
+        // 中信心：無頭視窗沒有外框尺寸。嵌入式 webview 的真人也可能是 0，且新 headless
+        // 會建立不顯示的平台視窗、同樣不再命中
         if (!window.outerWidth || !window.outerHeight) hits.push("size");
       } catch (err) {
         // 偵測本身出錯不該影響統計，當作沒有訊號
@@ -110,8 +122,10 @@
 
     send(Object.assign({ t: "view", ref: document.referrer || "" }, base));
 
-    // 離開事件：帶停留秒數與「有沒有真的互動過」。
-    // 爬蟲抓完就走、不捲動不點擊，這兩個欄位是比 UA 比對更難偽裝的訊號。
+    // 離開事件：帶停留秒數與「有沒有互動過」。
+    // 這兩個欄位比 UA 比對難偽裝，但它們的缺席不等於是爬蟲 —— 行動裝置被系統回收、
+    // 瀏覽器被強制關閉、網路在切換基地台時中斷，真人的事件同樣會掉。
+    // 判讀要以自己站上的基線偏離為準，不是絕對條件。
     var arrivedAt = Date.now();
     var interacted = false;
     var leaveSent = false;
@@ -130,12 +144,23 @@
       }, base));
     }
 
-    // visibilitychange 在切換分頁、切換 app、關閉頁面時都會走到 hidden；
-    // beforeunload 在行動 Safari 幾乎不觸發，而且會讓頁面失去 bfcache 資格。
+    // visibilitychange 在切換分頁、切換 app、行動裝置鎖定螢幕、關閉頁面時都會走到 hidden。
+    // 不用 beforeunload：行動 Safari 不支援它，且 Firefox 不把註冊了它的頁面放進 bfcache
+    //（各家一致排除的是 unload，現代瀏覽器的 beforeunload 本身已不影響 bfcache）。
     addEventListener("visibilitychange", function () {
       if (document.visibilityState === "hidden") sendLeave();
     });
     addEventListener("pagehide", sendLeave);
+
+    // 從 bfcache 還原時 JS 狀態整個保留，leaveSent 仍是 true、arrivedAt 仍是上一次的。
+    // 不重置的話，讀者按返回再離開不會產生第二筆，而那段閱讀時間會被算進上一筆。
+    addEventListener("pageshow", function (evt) {
+      if (!evt.persisted) return;
+      leaveSent = false;
+      interacted = false;
+      arrivedAt = Date.now();
+      send(Object.assign({ t: "view", ref: document.referrer || "" }, base));
+    });
   })();
 </script>
 {{- end }}

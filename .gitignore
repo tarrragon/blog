@@ -1,5 +1,8 @@
 # Hugo build output
 public/
+# 驗證用的暫時 build 目錄。注意 hugo 的 --destination 相對路徑是相對於
+# --source 而非當前工作目錄，在 repo 外下指令仍可能把輸出寫進這裡。
+hugotest/
 
 # Hugo cache
 .hugo_build.lock
