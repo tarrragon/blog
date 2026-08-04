@@ -1,5 +1,6 @@
 ---
 title: "App 永遠卡在載入畫面 — Riverpod 的 provider 是配方、容器才持有狀態"
+slug: "flutter_riverpod_dual_container_state_desync"
 date: 2026-07-10
 draft: false
 description: "main() 自建 ProviderContainer 對它觸發初始化、UI 跑在 runApp 的 ProviderScope 裡——兩個容器各持一份 provider 狀態、互不相通，UI 監聽的那份永遠停在初始值。Riverpod 的全域 provider 宣告只是配方、狀態屬於容器實例；跨容器操作是靜默的無效操作。"

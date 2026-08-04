@@ -1,5 +1,6 @@
 ---
 title: "Vendor 深度技術文章方法論的演化紀錄：同 vendor 系列的開場輪替驗證"
+slug: "vendor-deep-article-methodology"
 date: 2026-05-18
 description: "vendor overview 飽和後要寫單一功能深度文章、需要選題與結構依據時回來。這套方法論的驗證來源與 cadence variant 在高風險場景（同 vendor sub-tool 系列）的實證。"
 tags: ["writing-methodology", "vendor-article", "technical-writing", "case-first", "retrospective"]

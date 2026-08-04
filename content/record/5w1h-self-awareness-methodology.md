@@ -1,5 +1,6 @@
 ---
 title: "5W1H 自覺決策方法論：系統化決策框架"
+slug: "5w1h-self-awareness-methodology"
 date: 2026-03-04
 draft: false
 description: "基於 5W1H 原則的系統化決策框架，確保每個開發決策都經過完整思考，消除重複實作和逃避行為，並強制區分執行者與分派者的職責邊界"

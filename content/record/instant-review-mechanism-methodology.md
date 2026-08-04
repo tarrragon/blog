@@ -1,5 +1,6 @@
 ---
 title: "即時 Review 機制：Ticket 完成就 Review，不累積"
+slug: "instant-review-mechanism-methodology"
 date: 2026-03-04
 draft: false
 description: "每完成一個 Ticket 立即觸發 Review，30 分鐘內用 16 項標準清單完成，把偏差消滅在最小範圍。"

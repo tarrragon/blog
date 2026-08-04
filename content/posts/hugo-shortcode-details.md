@@ -1,5 +1,6 @@
 ---
 title: "Hugo Shortcode 實現可折疊區塊"
+slug: "hugo-shortcode-details"
 date: 2025-10-09
 tags: ["hugo", "shortcode", "markdown"]
 description: "Hugo details shortcode 實作可折疊區塊，取代被 MD033 擋的 raw <details> 標籤。含模板、樣式與遷移腳本。"

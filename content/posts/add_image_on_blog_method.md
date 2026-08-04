@@ -1,5 +1,6 @@
 ---
 title: "在文章中加入圖片的語法"
+slug: "add_image_on_blog_method"
 date: 2025-09-17
 draft: false
 description: "Hugo 文章插圖的寫法、width / caption 參數、以及圖片路徑規則。"

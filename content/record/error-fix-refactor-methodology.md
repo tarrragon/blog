@@ -1,5 +1,6 @@
 ---
 title: "錯誤修復和重構方法論"
+slug: "error-fix-refactor-methodology"
 date: 2026-03-04
 draft: false
 description: "基於測試驅動開發原則的程式錯誤修復標準，從分類判斷到執行驗收的完整流程"

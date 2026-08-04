@@ -1,5 +1,6 @@
 ---
 title: "紅燈在量什麼 — 測試訊號的三層失真：斷言、量測、環境"
+slug: "flutter_test_signal_credibility_three_layers"
 date: 2026-07-10
 draft: false
 description: "「全套件降至 0」有意義的前置條件是紅燈只反映程式缺陷。三層各自會失真：絕對計時斷言量的是機器負載、compact reporter 高並行下行覆寫產生假陰性、fresh checkout 缺 gitignored 生成產物讓整包結果不可信。含 flaky 判定的取樣門檻與對照實驗定歸因的做法。"

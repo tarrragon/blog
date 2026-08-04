@@ -1,5 +1,6 @@
 ---
 title: "Chrome Extension 從開發到上架的完整記錄"
+slug: "chrome_extension_store_publishing"
 date: 2026-05-21
 draft: true
 description: "記錄一個 Chrome extension 從開發環境、Manifest V3 設定到上架 Chrome Web Store 的完整流程：開發者帳號類型、Store listing、權限與隱私聲明、審核與駁回處理、版本更新，以及過程中踩到的雷。"

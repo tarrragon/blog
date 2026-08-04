@@ -1,5 +1,6 @@
 ---
 title: "copyWith 是逃生口，不是設計 — 從一個測試 bug 追到 entity 稽核軌跡的洞"
+slug: "dart_copywith_entity_escape_hatch"
 date: 2026-07-10
 draft: false
 description: "copyWith 對純資料載體是正確工具，對有領域方法的 entity 是繞過不變式的逃生口。從一個 3 字元 ID 觸發的例外，追出同族語意錯誤、被繞過的領域方法、以及從未被強制的註解約束。"

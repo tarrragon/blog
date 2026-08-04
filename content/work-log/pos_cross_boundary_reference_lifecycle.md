@@ -1,5 +1,6 @@
 ---
 title: "跨邊界參照的生命週期：前端凍結的 id，死活由後端決定"
+slug: "pos_cross_boundary_reference_lifecycle"
 date: 2026-07-17
 draft: false
 description: "POS App 的前端把後端資料的 id 凍結在本地追蹤記錄裡，後端的「合併」操作會重建資料——舊 id 全部失效，取消與追加功能無聲死亡。判準：跨邊界持有的每一個參照，都要回答「對方的哪些操作會讓它死」；穩定身份是實測出來的事實，不是推理出來的假設。"

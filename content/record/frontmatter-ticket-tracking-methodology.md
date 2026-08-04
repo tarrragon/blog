@@ -1,5 +1,6 @@
 ---
 title: "Frontmatter 式 Ticket 追蹤方法論 - 結構化任務狀態管理"
+slug: "frontmatter-ticket-tracking-methodology"
 date: 2026-03-04
 draft: false
 description: "使用 YAML Frontmatter 作為 Ticket 狀態的唯一 Source of Truth，實現可解析、可自動化的任務追蹤"

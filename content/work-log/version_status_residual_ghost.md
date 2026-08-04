@@ -1,5 +1,6 @@
 ---
 title: "版本狀態殘留：為什麼已完成的版本在看板上顯示未完成"
+slug: "version_status_residual_ghost"
 date: 2026-06-25
 draft: false
 description: "看板顯示早已完成的版本仍為 active、誤導查看者。根因是發布工具只檢查當前版本完成度、不掃前版本的狀態殘留；工具的檢查範圍決定了系統的一致性邊界。"

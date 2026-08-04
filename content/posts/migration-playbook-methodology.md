@@ -1,5 +1,6 @@
 ---
 title: "Migration Playbook 方法論的演化紀錄：Stage 0 variant 規劃把 collapse 率從 60% 降到 0%"
+slug: "migration-playbook-methodology"
 date: 2026-05-19
 description: "跨 vendor migration playbook 需要獨立寫作方法論的依據，以及這套方法論從三輪 batch dogfood 中演化出來的驗證證據。"
 tags: ["writing-methodology", "migration-playbook", "cross-vendor", "technical-writing", "retrospective"]

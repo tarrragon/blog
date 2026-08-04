@@ -1,5 +1,6 @@
 ---
 title: "10 個 Ticket、57 個綠燈、0 條追溯：從需求文件到測試的銜接檢討"
+slug: "doc_to_test_traceability_review"
 date: 2026-06-23
 draft: false
 description: "單元測試全綠、卻答不出「這些測試覆蓋了哪些 UseCase 場景」。需求到測試缺反向追溯時的流程缺口盤點與對應修法（追溯矩陣、存根策略、拆分規則）。"

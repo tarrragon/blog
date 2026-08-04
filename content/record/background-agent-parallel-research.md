@@ -1,5 +1,6 @@
 ---
 title: "Background Agent 平行研究：main context 節省的量化效應"
+slug: "background-agent-parallel-research"
 date: 2026-05-18
 description: "用 background agent 平行做同類研究任務、主 context 只收 finding summary、節省 ~80% context 用量的工作方法"
 tags: ["agent", "context-management", "methodology"]

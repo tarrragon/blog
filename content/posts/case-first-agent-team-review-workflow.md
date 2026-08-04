@@ -1,5 +1,6 @@
 ---
 title: "Case-First + Agent Team Review：教學內容的生產流程"
+slug: "case-first-agent-team-review-workflow"
 date: 2026-05-13
 description: "Case-first + agent team review 的教學內容生產流程：讀案例庫抽 findings、專責 reviewer 平行審查、polish pass 收系統性殘留。防止通用 best practice 被誤包裝成案例揭露。"
 tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-code"]

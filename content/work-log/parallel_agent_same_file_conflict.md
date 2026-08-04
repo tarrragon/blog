@@ -1,5 +1,6 @@
 ---
 title: "並行 AI Agent 修改同一檔案的衝突模式與協調策略"
+slug: "parallel_agent_same_file_conflict"
 date: 2026-06-25
 draft: false
 description: "並行派多個開發者或 AI agent 同一批 ticket，反覆修改同一個檔案、卡在 branch protection 與 file-modified-since-read。問題在派發策略沒考慮檔案層級的衝突。"

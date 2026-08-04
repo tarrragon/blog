@@ -1,5 +1,6 @@
 ---
 title: "層級隔離：讓每張 Ticket 只做一件層級的事"
+slug: "layered-ticket-methodology"
 date: 2026-03-04
 draft: false
 description: "我們在實際開發中整理出一套方法論，讓 Clean Architecture 五層架構與 Ticket 拆分真正結合——每張 Ticket 只修改一個架構層，不多也不少。"

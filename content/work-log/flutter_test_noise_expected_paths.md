@@ -1,5 +1,6 @@
 ---
 title: "測試輸出的雜訊治理：預期的環境狀態不該走例外路徑"
+slug: "flutter_test_noise_expected_paths"
 date: 2026-07-17
 draft: false
 description: "測試輸出長期印著兩行「已知無害」的錯誤——相機偵測 MissingPluginException、toast 套件的 assert fallback。已知雜訊會訓練人忽略輸出，新警報混在裡面就被過濾掉。修法是把「預期的環境狀態」變成前置判斷（channel mock 回空、無畫面早退），讓例外路徑只剩真正的例外。"

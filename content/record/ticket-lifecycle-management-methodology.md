@@ -1,5 +1,6 @@
 ---
 title: "Ticket 生命週期管理方法論"
+slug: "ticket-lifecycle-management-methodology"
 date: 2026-03-04
 draft: false
 description: "從一個 Ticket 失控的故事，談如何建立有紀律的任務生命週期管理"

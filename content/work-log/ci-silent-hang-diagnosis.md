@@ -1,5 +1,6 @@
 ---
 title: "CI step silent hang：時間真空才是訊號、happy log 反而是 anti-signal"
+slug: "ci-silent-hang-diagnosis"
 date: 2026-05-28
 description: "CI step 跑很久才 timeout、最後一行卻是「下載 100% / build succeeded」這種 happy log 時回來。判讀：別急著加 timeout，先算最後一行到 cancel 的時間真空、確認是 silent hang，再用症狀詞查 upstream issue。同方向修法連 fail 2 次就是停手回資料層的訊號。"
 tags: ["ci", "github-actions", "debugging", "root-cause-analysis", "wrap"]

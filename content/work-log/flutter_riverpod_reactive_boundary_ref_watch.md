@@ -1,5 +1,6 @@
 ---
 title: "加書後統計不刷新 — ref.watch 觀察的是 provider 圖、不是資料庫"
+slug: "flutter_riverpod_reactive_boundary_ref_watch"
 date: 2026-07-16
 draft: false
 description: "頁面用了 Riverpod 卻在資料寫入後不更新、或發現自己在導航返回點補 loadData()、用 EventBus 事件觸發 reload 時使用。ref.watch 的 reactive 範圍是 provider 圖上的狀態變化；資料庫寫入不在圖上，補償刷新的出現就是這個缺口的訊號。"

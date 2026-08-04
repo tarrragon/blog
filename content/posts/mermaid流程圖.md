@@ -1,5 +1,6 @@
 ---
 title: "Hugo 部落格支援 Mermaid 流程圖完整實現指南"
+slug: "mermaid流程圖"
 date: 2025-10-08
 tags: ["hugo", "mermaid", "流程圖", "圖表", "markdown"]
 description: "Hugo 啟用 Mermaid 流程圖的整合方式，含 code block 渲染不出圖（被包進 pre>code）的處理、語法轉換、自訂樣式與響應式適配。"

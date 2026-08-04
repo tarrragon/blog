@@ -1,5 +1,6 @@
 ---
 title: "並行評估方法論 - 多視角並行分析決策框架"
+slug: "parallel-evaluation-methodology"
 date: 2026-03-04
 draft: false
 description: "啟動多個 Agent 從不同視角並行掃描，彙整後只執行值得改的項目，提升決策品質與效率"

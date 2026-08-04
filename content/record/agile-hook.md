@@ -1,5 +1,6 @@
 ---
 title: "用 Hook 系統把開發規範變成自動執行的基礎設施"
+slug: "agile-hook"
 date: 2026-03-04
 draft: false
 description: "從一個社群文章得到靈感，到建立完整的 Hook 系統方法論，我們如何用 Claude Code Hook 把開發規範從「應該遵守」變成「無法不遵守」"

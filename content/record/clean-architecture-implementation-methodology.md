@@ -1,5 +1,6 @@
 ---
 title: "Clean Architecture 實作指引"
+slug: "clean-architecture-implementation-methodology"
 date: 2026-03-04
 draft: false
 description: "我們在 AI 協作開發中引入 Clean Architecture 作為任務分派的核心判斷框架。這篇文章整理了四層架構的設計順序、實作順序，以及我們實際執行時的關鍵檢查點。"

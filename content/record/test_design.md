@@ -1,5 +1,6 @@
 ---
 title: "開始一個新專案的測試規劃"
+slug: "test_design"
 date: 2025-09-19
 draft: false
 archived: true

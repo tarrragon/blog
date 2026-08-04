@@ -1,5 +1,6 @@
 ---
 title: "功能「完成」、測試全過、資料從未落地 — 持久化迴圈是驗收的盲區"
+slug: "flutter_feature_complete_never_persisted"
 date: 2026-07-10
 draft: false
 description: "domain 功能的測試可以全綠、而它的資料從未被序列化、資料庫沒有對應的表——單元測試都在記憶體內驗證行為、沒有一條測試走「存進去、重建、讀出來」的迴圈。驗收定義要含 roundtrip；entity 欄位與 schema 欄位的差集是靜默資料失真的清單。"

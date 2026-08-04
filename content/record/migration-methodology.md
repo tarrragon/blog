@@ -1,5 +1,6 @@
 ---
 title: "大規模系統遷移方法論 - 風險評估與錯誤預防技術指南"
+slug: "migration-methodology"
 date: 2026-03-04
 draft: false
 description: "安全執行大規模系統遷移的完整方法論，涵蓋風險評估、漸進式遷移策略和錯誤預防機制"

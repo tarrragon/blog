@@ -1,5 +1,6 @@
 ---
 title: "LSP 優先開發策略方法論 - 語意化程式碼操作的最佳實踐"
+slug: "lsp-first-development-methodology"
 date: 2026-03-04
 draft: false
 description: "優先使用 Language Server Protocol 進行程式碼操作，取代傳統文字搜尋和手動編輯，提升開發精確度"

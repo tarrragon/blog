@@ -1,5 +1,6 @@
 ---
 title: "1000 本書、1001 次 SQL — N+1 查詢藏在 async mapper 裡"
+slug: "flutter_sqlite_n_plus_one_query"
 date: 2026-07-10
 draft: false
 description: "N+1 查詢由兩個各自合理的函式組合而成：單筆轉換函式順便查關聯（mapper 做 IO）、列表方法用 Future.wait 把它乘以 N。修法是 IO 上移——一次批次 IN 查詢、記憶體組裝、轉換函式變純。mapper 簽名是 async 就是訊號；開發期資料量小、惡化是上線後隨資料成長的乘法。"

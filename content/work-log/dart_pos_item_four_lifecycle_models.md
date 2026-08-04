@@ -1,5 +1,6 @@
 ---
 title: "同一個品項、四個 model — value object 什麼時候該升級成 entity"
+slug: "dart_pos_item_four_lifecycle_models"
 date: 2026-07-10
 draft: false
 description: "同一個業務概念要不要拆成多個 model、value object 什麼時候該升級成 entity——判準是操作需不需要 identity-based 回寫。以 POS 品項從點選、掛單、結算到歷史訂單的四階段模型為例，含 snapshot 與 live reference 的凍結時機。"

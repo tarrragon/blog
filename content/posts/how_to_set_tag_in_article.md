@@ -1,5 +1,6 @@
 ---
 title: "在部落格中設置文章資訊與tag"
+slug: "how_to_set_tag_in_article"
 date: 2025-09-09
 draft: false
 description: "Hugo front matter 欄位（title / date / draft / tags）範例與 title 取代 H1 的提醒。"

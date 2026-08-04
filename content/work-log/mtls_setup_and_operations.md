@@ -1,5 +1,6 @@
 ---
 title: "mTLS 實際怎麼設定與運維：CA 階層、憑證生命週期、撤銷機制"
+slug: "mtls_setup_and_operations"
 date: 2026-05-18
 draft: false
 description: "mTLS 落地的運維決策（CA 階層、憑證儲存、撤銷機制）與基礎設施整合（nginx / envoy / service mesh），以及跟 API Key / OAuth 的成本與安全取捨。"

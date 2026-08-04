@@ -1,5 +1,6 @@
 ---
 title: "192 個測試全過、實機全壞：Mock 遮蔽真實行為的三層測試策略"
+slug: "testing_three_layer_strategy"
 date: 2026-06-19
 draft: false
 description: "unit test 全綠、實機部署後功能整片壞掉。mock-only 策略的結構盲區（text vs binary frame、缺 auth handshake、ANSI 多樣性被 FakeWebSocketChannel 遮蔽），以及分層測試各抓什麼、各遮蔽什麼。"

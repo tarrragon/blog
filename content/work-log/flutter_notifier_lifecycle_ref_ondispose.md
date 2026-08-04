@@ -1,5 +1,6 @@
 ---
 title: "手寫 dispose() 沒有呼叫者 — Notifier 的依賴與清理都歸 build() 管"
+slug: "flutter_notifier_lifecycle_ref_ondispose"
 date: 2026-07-16
 draft: false
 description: "Notifier 用建構子注入依賴、或手寫 dispose() 釋放 Timer 與訂閱時使用。Notifier 的建構與銷毀都由容器管理——UI 不會呼叫 dispose()、掛在方法上的清理等於沒掛；依賴在 build() 內 ref.watch、清理在 ref.onDispose 註冊。"

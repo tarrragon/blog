@@ -1,5 +1,6 @@
 ---
 title: "驗證導向的 CLI 工具文章：官方 docs 查核放過的落差類型"
+slug: "verification-driven-cli-tool-articles"
 date: 2026-06-15
 description: "CLI 工具教學的指令正確性不能只靠官方文件查核、要實機驗證時回來。官方文件驗的是「文件說的是否正確」、驗不了「文件沒說的是否存在」。"
 tags: ["writing-methodology", "cli", "verification", "docker", "retrospective"]

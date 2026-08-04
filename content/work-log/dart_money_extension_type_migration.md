@@ -1,5 +1,6 @@
 ---
 title: "金額型別的三段遷移：double、Decimal、再到 Money extension type"
+slug: "dart_money_extension_type_migration"
 date: 2026-07-10
 draft: false
 description: "金額欄位從 double 換 Decimal 只解決精度、沒解決「任何人都能對它做無意義運算」；用 Dart extension type 包成 Money 之後，型別系統只開放領域有意義的運算。含 implements Object 的 subtype 設計、以及大規模型別遷移前先寫 characterization test 鎖行為的做法。"

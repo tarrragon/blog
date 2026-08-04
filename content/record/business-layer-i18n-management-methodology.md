@@ -1,5 +1,6 @@
 ---
 title: "分層 i18n 管理方法論 - 業務層國際化的正確實踐"
+slug: "business-layer-i18n-management-methodology"
 date: 2026-03-04
 draft: false
 description: "定義 Domain、ViewModel、UI 各層的 i18n 責任分工，禁止硬編碼使用者訊息，確保多語言支援的正確架構"

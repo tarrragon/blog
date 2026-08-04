@@ -1,5 +1,6 @@
 ---
 title: "兩個 domain 各自實作同一個 API service — 100% 覆蓋率的假象"
+slug: "flutter_duplicate_service_fake_coverage"
 date: 2026-07-10
 draft: false
 description: "同名 service 在多個 domain 各自實作時，覆蓋率數字會失去意義：每份實作各測各的、mock 各有介面，統一的行為從未被測過。重複實作是上游訊號——規劃文件沒抽出跨 domain 的共同技術需求；單檔品質審查看不到跨檔重複。"

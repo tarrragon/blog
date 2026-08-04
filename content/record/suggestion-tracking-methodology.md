@@ -1,5 +1,6 @@
 ---
 title: "建議追蹤方法論 - 確保每個改善建議都被處理"
+slug: "suggestion-tracking-methodology"
 date: 2026-03-04
 draft: false
 description: "系統化追蹤代理人和審查過程中產生的建議，確保每個建議都被採納、拒絕或延後，不會遺漏"

@@ -1,5 +1,6 @@
 ---
 title: "Code Smell 品質閘門檢測方法論"
+slug: "code-smell-quality-gate-methodology"
 date: 2026-03-04
 draft: false
 description: "在 Ticket 進入 Phase 2 前強制執行 C1/C2/C3 品質檢測，將修正成本降低 80%"

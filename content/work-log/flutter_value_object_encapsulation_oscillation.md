@@ -1,5 +1,6 @@
 ---
 title: "Value Object 的封裝擺盪：從全移除、完全封裝、到加回 .value getter"
+slug: "flutter_value_object_encapsulation_oscillation"
 date: 2026-07-10
 draft: false
 description: "VO 的封裝邊界在兩個極端之間來回——純字串（零封裝）跟完全封裝（禁止取原始值）各有成立的理由、也各自撞牆。穩態是給原始值一個有語意的官方出口，而不是把「取原始值」本身當違規。含 176 個編譯錯誤的工作量低估、以及「相容性介面」作為理想撤退訊號的判讀。"

@@ -1,5 +1,6 @@
 ---
 title: "測試命名作為文件：可執行的規格說明"
+slug: "test-naming-as-documentation"
 date: 2026-05-05
 draft: false
 description: "測試是少數會自我驗證的文件——名稱跟實際行為不符、CI 會炸。把測試命名寫成 state-based / scenario-based / failure-mode 三種模式的 spec 條目、配合 group 結構作為命名空間、讀者跳到測試檔掃名字就能取代讀 doc。"

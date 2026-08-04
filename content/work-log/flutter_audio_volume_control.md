@@ -1,5 +1,6 @@
 ---
 title: "Flutter 音量控制：App 自己的音量 vs 系統音量"
+slug: "flutter_audio_volume_control"
 date: 2026-07-06
 draft: false
 description: "釐清 Flutter/Android 兩種層次的音量——播放器各自的音量（App 免 plugin 就能控制自己的聲音）與裝置系統媒體音量（全域、需 plugin），以及為什麼多數情況不該從 App 去改系統音量。"

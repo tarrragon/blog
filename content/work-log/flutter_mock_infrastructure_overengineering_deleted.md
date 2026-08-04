@@ -1,5 +1,6 @@
 ---
 title: "1101 行自建測試基礎設施、重構刪掉 82.5% — 過度工程的三種形態"
+slug: "flutter_mock_infrastructure_overengineering_deleted"
 date: 2026-07-10
 draft: false
 description: "自建測試基礎設施前先問框架的標準做法是什麼：mock 純資料物件、helper 帶並發鎖與記憶體洩漏防護、mock 放進 lib/ 進生產依賴圖，三種形態都在重新發明 Riverpod overrideWith 一行就有的東西。精緻的設計文件不是價值證明——它可以精心規劃一個不需要存在的系統。"

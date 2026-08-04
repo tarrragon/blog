@@ -1,5 +1,6 @@
 ---
 title: "SQLite 只吃三種型別 — value object 在持久化邊界的序列化契約"
+slug: "flutter_sqlite_value_object_serialization_boundary"
 date: 2026-07-10
 draft: false
 description: "把 value object 直接塞給 sqflite 會炸 Invalid argument——SQLite 只接受 num / String / Uint8List，VO 必須在 repository 邊界拆成基本型別、讀回時重建。用 toString/fromString 當轉換通道是權宜：它依賴兩者對稱這條沒人強制的隱性契約，正解是語意明確的序列化方法。"

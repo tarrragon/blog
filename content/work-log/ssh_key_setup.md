@@ -1,5 +1,6 @@
 ---
 title: "SSH Key 設定筆記（macOS / Linux / Windows）"
+slug: "ssh_key_setup"
 date: 2026-03-05
 draft: false
 description: "macOS / Linux / Windows 的 SSH key 設定操作筆記（Ed25519 金鑰產生、ssh-agent、佈到遠端主機）。"

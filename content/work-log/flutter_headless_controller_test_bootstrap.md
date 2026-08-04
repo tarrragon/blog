@@ -1,5 +1,6 @@
 ---
 title: "讓 UI 控制器在 headless 測試立起來：platform channel mock、no-op 子類與 postFrameCallback 的手工補位"
+slug: "flutter_headless_controller_test_bootstrap"
 date: 2026-07-17
 draft: false
 description: "流程測試要驅動真實編排，而編排住在 UI 控制器裡——能不能在無畫面的測試環境把控制器立起來，決定整個測試套件的形態。先用 spike 驗證閘門、再逐項中和平台耦合，讓控制器在 headless 環境可建構。"

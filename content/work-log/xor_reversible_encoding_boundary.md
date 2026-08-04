@@ -1,5 +1,6 @@
 ---
 title: "XOR 可逆編碼的適用邊界：把憑證印上實體載體時它擋得住什麼"
+slug: "xor_reversible_encoding_boundary"
 date: 2026-07-27
 draft: false
 description: "決定要不要把憑證編碼後印上 QR Code 或標籤時，用來判斷金鑰隨程式發佈的方案保護到哪裡、以及需要哪些配套才站得住。"

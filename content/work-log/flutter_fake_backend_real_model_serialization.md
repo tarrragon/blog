@@ -1,5 +1,6 @@
 ---
 title: "有狀態假後端用真實模型序列化回應：手寫 JSON fixture 會重踩產品已解決的問題"
+slug: "flutter_fake_backend_real_model_serialization"
 date: 2026-07-17
 draft: false
 description: "流程測試的假後端持有 freezed 模型物件、以 toJson 序列化回應，讓服務層走完整的反序列化鏈。對照組是手寫 JSON fixture——同一批測試裡的 raw 寫法重踩了一次產品早已內建處理的分頁包裝，證明「回應形狀的知識」應該只存在一份。"

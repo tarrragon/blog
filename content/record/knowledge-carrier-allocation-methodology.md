@@ -1,5 +1,6 @@
 ---
 title: "知識載體責任分配方法論 - rules/agents/skills 各該裝什麼"
+slug: "knowledge-carrier-allocation-methodology"
 date: 2026-06-15
 draft: false
 description: "AI 開發框架的知識依「受眾 x 形態」二軸決定載體：rules / pm-rules / agents / skills / methodologies / references / error-patterns 各有載入時機與責任。載體錯置的代價是 token 污染或跨專案失傳。核心判準：代理人定義承載人格與授權，skill 承載可重複流程，以「換一個執行者內容是否改變」區分。"

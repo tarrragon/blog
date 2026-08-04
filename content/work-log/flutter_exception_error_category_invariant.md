@@ -1,5 +1,6 @@
 ---
 title: "Exception 型別綁 ErrorCategory 的建構不變式 — 以及合法需求撞上不變式的時刻"
+slug: "flutter_exception_error_category_invariant"
 date: 2026-07-10
 draft: false
 description: "把「錯誤代碼必須屬於對應分類」做成建構期不變式，錯誤分類錯亂會變成測試失敗而不是靜默混亂；同一批修復出現三種形態——換對值、換精確值、以及改繼承逃離約束。第三種是分類學本身的訊號：一個 domain 的錯誤天生橫跨技術分類時，分類軸跟階層軸不正交。"

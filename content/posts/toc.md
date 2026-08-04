@@ -1,5 +1,6 @@
 ---
 title: "Hugo 部落格側邊章節導航 (TOC) 完整實現指南"
+slug: "toc"
 date: 2025-10-08
 tags: ["hugo", "toc", "導航", "響應式設計", "javascript"]
 description: "Hugo 側邊章節導航的實作：滾動高亮當前位置、手機版回頁首按鈕、響應式適配。"

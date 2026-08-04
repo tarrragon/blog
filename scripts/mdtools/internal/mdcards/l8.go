@@ -43,24 +43,25 @@ var slugFieldRe = regexp.MustCompile(`(?m)^slug:[ \t]*["']?([^"'\r\n]*?)["']?[ \
 //
 // Known boundary — what this rule does NOT cover, measured 2026-08-04:
 //
-//   - Pages with no `slug` at all: 2931 of 3079 non-index pages (95%).
-//     They exit at the `m == nil` guard below. markdown-writing-spec §6.5
-//     requires slug on every page, and no rule in lint or cards enforces
-//     that requirement, so a green run here says nothing about it.
-//   - The absent-slug fallback is section-dependent. Sections with no
-//     `[permalinks]` template fall back to the filename (harmless).
-//     Sections that DO have one built from `:slug` — posts, work-log,
-//     record, other in this repo's hugo.toml — fall back to a urlized
-//     *title*, which for CJK titles is a percent-encoded string no link
-//     ever spells. 663 inbound links across 257 files 404 for exactly
-//     this reason.
+//   - Pages with no `slug` at all: 2758 of 3079 non-index pages. They exit
+//     at the `m == nil` guard below. markdown-writing-spec requires slug on
+//     every page, and no rule in lint or cards enforces that requirement,
+//     so a green run here says nothing about it.
+//   - The absent-slug fallback is section-dependent, and only one side is
+//     harmless. Sections with no `[permalinks]` template fall back to the
+//     filename, which is what every link already spells; all 2758 pages
+//     above are in these. Sections that DO have a template built from
+//     `:slug` — posts, work-log, record, other in this repo's hugo.toml —
+//     fall back to a urlized *title* instead, which for CJK titles is a
+//     percent-encoded string no link ever spells. Those four sections are
+//     at full slug coverage as of 2026-08-04 (183 of 183 routes match
+//     their filename), so this failure mode currently has zero stock; it
+//     had 173 pages and 663 dead inbound links when the rule landed.
 //
-// The second item is scheduled, not deferred indefinitely: the agreed fix
-// is to give those 173 pages a slug equal to their filename stem, after
-// which all 663 links resolve. Until that lands, the numbers above are the
-// acceptance baseline — re-measure and expect 0. The measuring command and
-// the backlog entry live in markdown-writing-spec ("L8 的沉默區"); this
-// comment is a copy and will drift, so treat that section as the source.
+// Nothing prevents the next new page in those four sections from omitting
+// slug and reintroducing it. The regression check and the numbers live in
+// markdown-writing-spec ("L8 的沉默區"); this comment is a copy and will
+// drift, so treat that section as the source.
 //
 // Reported at error level: all 148 pages that carry a slug satisfied it
 // when the rule landed, so anything it reports is new breakage rather than

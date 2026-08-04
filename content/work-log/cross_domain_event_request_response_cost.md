@@ -1,5 +1,6 @@
 ---
 title: "用事件做同步查詢、等於手工重建 RPC — 跨 domain 解耦的完整帳單"
+slug: "cross_domain_event_request_response_cost"
 date: 2026-07-10
 draft: false
 description: "domain 直接查另一個 domain 的 repository 違反依賴方向；改事件驅動的 request/response 解了耦、但帳單具體：correlation id 配對並發、timeout 機制、三條錯誤路徑——都是同步呼叫免費附贈的東西。判準是需要解耦「依賴方向」還是「時間與部署」：前者用消費端 Port 就夠、後者才值得付事件的價。"

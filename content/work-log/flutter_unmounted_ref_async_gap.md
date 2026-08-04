@@ -1,5 +1,6 @@
 ---
 title: "await 回來的時候、頁面已經關了 — UnmountedRefException 與 16 個不抽象的檢查點"
+slug: "flutter_unmounted_ref_async_gap"
 date: 2026-07-10
 draft: false
 description: "長 async 流程的每個 await 都是一個 gap：等待期間使用者可能離開、Notifier 被 dispose、回來再寫 state 就炸 UnmountedRefException。修法是每個 gap 後檢查 ref.mounted——而且刻意不抽成 helper：明確的檢查點讓 review 看得見哪個 gap 有守。含「評估必跑、可決定不重構」的技術債處置。"

@@ -1,5 +1,6 @@
 ---
 title: "一行查詢放哪、一個測試留不留：結構改動後的兩次「還需要存在嗎」"
+slug: "flutter_query_ownership_and_structurally_immune_test"
 date: 2026-07-15
 draft: false
 description: "修完一個應收金額 bug 收尾時，兩個『還需不需要』的問題浮出來。一段『過濾出已結帳品項』的查詢該掛哪一層——inline 在 widget 是洩漏、開一個 service 是儀式，判準是『查詢誰擁有的資料就掛給誰』，答案是既有的 repository。一個為了鎖住修復而寫的測試該不該留——當修復是靠刪掉舊函式、移除參數達成時，那個 bug 被結構免疫了，測試變贅述；判準是『這測試守的失敗模式，結構是否已經替它擋掉』。"

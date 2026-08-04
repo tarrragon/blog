@@ -1,5 +1,6 @@
 ---
 title: "Freezed 選型評估"
+slug: "freezed"
 date: 2026-03-26
 draft: false
 description: "Dart 專案是否引入 freezed 的選型評估：原型階段選 json_serializable + Equatable 取代 freezed 的理由與優缺點對照。"

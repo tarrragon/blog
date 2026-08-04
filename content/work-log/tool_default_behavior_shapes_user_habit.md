@@ -1,5 +1,6 @@
 ---
 title: "工具的預設行為決定使用者習慣 — 從版本錯置看工具設計的 opinion 責任"
+slug: "tool_default_behavior_shapes_user_habit"
 date: 2026-06-25
 draft: false
 description: "規範與工具預設不一致時工具會贏。預設路徑就是團隊的實際流程，接受自由輸入的介面設計時要負起 opinion 責任。"

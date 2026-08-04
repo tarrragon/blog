@@ -1,5 +1,6 @@
 ---
 title: "混合測試策略：根據架構層級選擇測試方法"
+slug: "hybrid-testing-strategy-methodology"
 date: 2026-03-04
 draft: false
 description: "我們如何根據 Clean Architecture 的層級，為每一層選擇最合適的測試方法，讓測試覆蓋率有意義、維護成本可控"

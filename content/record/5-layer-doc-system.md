@@ -1,5 +1,6 @@
 ---
 title: "五層文件系統 - 專案文檔管理架構"
+slug: "5-layer-doc-system"
 date: 2026-01-20
 draft: false
 description: "整合 changelog、todo、worklog、ticket 和錯誤模式文件的完整專案文檔管理系統，透過 SKILL、command 和 hook 確保文件進度同步"

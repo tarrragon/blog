@@ -1,5 +1,6 @@
 ---
 title: "層級架構品質檢查機制 - Clean Architecture 合規性驗證"
+slug: "layered-architecture-quality-checking"
 date: 2026-03-04
 draft: false
 description: "自動化檢查分層架構的依賴方向、命名規範和職責分離，確保 Clean Architecture 原則的持續遵守"

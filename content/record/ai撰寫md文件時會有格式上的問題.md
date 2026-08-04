@@ -1,5 +1,6 @@
 ---
 title: "如何要求ai使用正確的格式撰寫md文件"
+slug: "ai撰寫md文件時會有格式上的問題"
 date: 2025-09-19
 draft: false
 archived: true

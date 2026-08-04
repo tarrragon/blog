@@ -1,5 +1,6 @@
 ---
 title: "88 行拆成 13 個函式、90 行決定不拆 — 函式長度是症狀、職責才是診斷"
+slug: "flutter_function_decomposition_split_vs_keep"
 date: 2026-07-10
 draft: false
 description: "同一個團隊、同一條 5-10 行規範、兩個 90 行上下的函式，一個拆一個保留、兩個決定都對。判準在行數之外：職責混雜（初始化/迴圈/儲存/統計擠一起、巢狀五層）拆之，完整業務流程（步驟多但答案只有一個）留之。含 _ImportProgress 收斂參數列與測試耦合行為的守護。"

@@ -1,5 +1,6 @@
 ---
 title: "教學模組的 Backlog 段格式規範"
+slug: "backlog-format-spec"
 date: 2026-07-28
 description: "要在模組大綱記錄未完成工作、或要跨模組盤點還有什麼沒寫時，用來決定段名、欄位與哪些內容不進 backlog"
 tags: ["blog心得", "寫作規範", "backlog", "教材維運"]

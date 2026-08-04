@@ -1,5 +1,6 @@
 ---
 title: "Domain 層的 947 處硬編碼中文 — 訊息代碼跟顯示文字的分層責任"
+slug: "flutter_domain_layer_i18n_hardcoded_text"
 date: 2026-07-10
 draft: false
 description: "domain 層的 enum 或 getter 直接回傳 UI 顯示字串時，多語言支援與分層原則同時失守。修法是 domain 只回訊息代碼與結構化資料、UI 層用 translator extension 翻譯；遷移排序從最小模組先行驗證模式。適用於盤點「這個字串屬於領域事實還是呈現」的情境。"

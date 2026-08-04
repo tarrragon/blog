@@ -1,5 +1,6 @@
 ---
 title: "late final 欄位不能用欄位覆蓋 — Dart 欄位的隱藏 getter/setter 機制"
+slug: "late_final_field_override_getter_setter"
 date: 2026-06-30
 draft: false
 description: "Dart 的 late final 欄位在底層會生成 getter 和 setter。子類用另一個欄位覆蓋時，會產生兩個獨立的儲存槽，父類程式碼讀到的是未初始化的那份，導致 LateInitializationError。Dart analyzer 要求改用 getter 覆寫。"

@@ -1,5 +1,6 @@
 ---
 title: "開始一個新專案的做法"
+slug: "project_start_up"
 date: 2025-09-19
 draft: false
 archived: true

@@ -1,5 +1,6 @@
 ---
 title: "Widget 子類重新宣告 key — 遮蔽父類屬性與 duplicate key 風險"
+slug: "widget_key_shadowing_duplicate"
 date: 2026-06-30
 draft: false
 description: "在 StatelessWidget 子類中重新宣告 final Key? key，會遮蔽 Widget 繼承的 key 屬性，產生兩份儲存槽。若再把同一個 key 散播給同層的多個 sibling，rebuild 時 Flutter 會拋 duplicate key 錯。"

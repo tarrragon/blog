@@ -1,5 +1,6 @@
 ---
 title: "新增欄位忘記同步 reset — 跨測試狀態洩漏的系統性根因"
+slug: "reset_state_leak_cross_test"
 date: 2026-06-25
 draft: false
 description: "測試結果取決於執行順序、看似功能 bug 實為上一個 test case 狀態沒清乾淨。根因是新增 private 欄位時沒同步更新 reset，隱含契約沒被顯性化。"

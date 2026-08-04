@@ -1,5 +1,6 @@
 ---
 title: "codebase-memory-mcp：155 語言 tree-sitter 知識圖譜 MCP 的能力與邊界"
+slug: "mcp-codebase-memory-deep-dive"
 date: 2026-05-25
 draft: false
 description: "codebase-memory-mcp (cbm) 的設計拆解：155 vendored tree-sitter grammar、11-signal 語意搜尋、Go / TS / C / C++ 上的 hybrid type resolution、跨 service HTTP/RPC 鏈接，以及在沒有 hybrid resolution 的語言上會降級成什麼樣。"

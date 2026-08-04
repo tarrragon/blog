@@ -1,5 +1,6 @@
 ---
 title: "測「不變」、不測「正確」 — characterization test 當遷移安全網"
+slug: "flutter_characterization_test_migration_safety_net"
 date: 2026-07-10
 draft: false
 description: "大規模型別遷移前，對著舊實作寫一批鎖住現有行為的測試——包括看起來像 bug 的邊界怪癖也照鎖，遷移後全綠證明「換底沒改行為」。正確性是另一批測試的職責、混在一起紅燈就無法歸因。附測試環境的原生依賴三個斷點（FFI、plugin、late init）與替身解法。"

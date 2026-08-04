@@ -1,5 +1,6 @@
 ---
 title: "BookImported 不能寫成 ImportBook — 事件命名的過去式是語意類別、不是風格"
+slug: "domain_event_naming_past_tense"
 date: 2026-07-10
 draft: false
 description: "domain event 用過去式命名（BookImported）因為事件是已發生的事實；動詞開頭（ImportBook）是命令的形狀、訂閱者會誤讀成指令。字尾清單的自動檢查抓不住不規則動詞——偵測可機械化、判定要看語意。附一次版本終止：工作日誌宣稱的命名問題實際早已不存在、執行前驗前提省下整輪流程。"

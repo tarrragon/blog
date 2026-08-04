@@ -1,5 +1,6 @@
 ---
 title: "同一個類別被判成兩個型別 — Dart import 的相對路徑與 package 路徑衝突"
+slug: "dart_import_path_type_conflict"
 date: 2026-07-10
 draft: false
 description: "錯誤訊息出現 LibraryId/*1*/ 與 LibraryId/*2*/、兩行 from 一個指 lib/ 一個指 package:，就是同一個檔案被兩種 URI 匯入——Dart 的 library 身份由匯入 URI 決定、不由檔案決定，相對路徑跨進 lib/ 會製造出平行的型別宇宙。修法是全案統一 package 路徑並用 lint 規則封死。"

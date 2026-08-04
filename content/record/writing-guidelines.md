@@ -1,5 +1,6 @@
 ---
 title: "經驗分享文章的寫作準則"
+slug: "writing-guidelines"
 date: 2026-03-12
 draft: false
 description: "整理自測試經驗記錄的多次修改過程，歸納六條寫作準則與檢查清單，避免常見的語氣、敘事與技術描述問題"

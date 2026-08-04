@@ -1,5 +1,6 @@
 ---
 title: "Ticket 生命週期流程 - AI 協作開發的任務管理系統"
+slug: "ticket-lifecycle"
 date: 2026-02-02
 draft: false
 archived: true

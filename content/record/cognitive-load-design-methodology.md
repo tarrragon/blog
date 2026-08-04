@@ -1,5 +1,6 @@
 ---
 title: "認知負擔設計方法論 - 降低程式碼閱讀成本的設計原則"
+slug: "cognitive-load-design-methodology"
 date: 2026-03-04
 draft: false
 description: "基於 Miller's Law 的程式碼設計原則，透過量化認知負擔指數控制函式複雜度、命名品質和任務拆分"

@@ -1,5 +1,6 @@
 ---
 title: "文件裡的扁平 Product、程式碼裡的雙層聚合 — 宣稱型文件的半衰期"
+slug: "pos_product_model_doc_vs_code_evolution"
 date: 2026-07-10
 draft: false
 description: "refactor 總結文件記的是決策時刻的快照：扁平 Product（一商品一價一庫存）在真實 POS 業務下演化成 Product + ProductSpecification 雙層、價格三種下沉到規格。欄位放聚合根還是子層的判準是「兩個規格會不會不同」；文件預言的需求全中、預言的結構全錯——這正是先蓋結構會蓋錯的實證。"

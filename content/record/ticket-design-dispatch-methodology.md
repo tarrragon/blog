@@ -1,5 +1,6 @@
 ---
 title: "Ticket 設計派工方法論"
+slug: "ticket-design-dispatch-methodology"
 date: 2026-03-04
 draft: false
 description: "我們如何用 Ticket 機制解決大型開發任務的協作困境：從工作日誌臃腫到積極派發的實踐歷程。"

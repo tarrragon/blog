@@ -1,5 +1,6 @@
 ---
 title: "技術文章撰寫規範"
+slug: "tech_writing_structure"
 date: 2026-04-17
 description: "技術文章的結構準則：階段分層、商業邏輯先於 CASE、用內在屬性評估、事後檢視看判讀品質。附正反例對照。"
 tags: ["寫作規範", "技術文件"]

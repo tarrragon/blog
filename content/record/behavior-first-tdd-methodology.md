@@ -1,5 +1,6 @@
 ---
 title: "行為優先的TDD方法論 - Sociable Unit Tests實踐指南"
+slug: "behavior-first-tdd-methodology"
 date: 2026-03-04
 draft: false
 description: "基於行為驅動測試策略，解決TDD痛點根源，透過Sociable Unit Tests實現低維護成本和高重構安全性"

@@ -1,5 +1,6 @@
 ---
 title: "Git Filter-Repo 使用說明"
+slug: "remove_git_content"
 date: 2026-01-20
 draft: false
 description: "從 Git 歷史徹底移除檔案或資料夾（誤提交機密、清大檔）的 git filter-repo 操作筆記。"

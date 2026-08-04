@@ -1,5 +1,6 @@
 ---
 title: "多視角並行分析方法論 - 全方位問題評估框架"
+slug: "multi-perspective-analysis-methodology"
 date: 2026-03-04
 draft: false
 description: "從多個專業視角同時分析問題，避免單一觀點的盲區，提升決策的全面性和準確性"

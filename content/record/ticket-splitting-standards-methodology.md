@@ -1,5 +1,6 @@
 ---
 title: "Ticket 拆分標準方法論"
+slug: "ticket-splitting-standards-methodology"
 date: 2025-10-13
 draft: false
 archived: true

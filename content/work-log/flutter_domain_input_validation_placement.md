@@ -1,5 +1,6 @@
 ---
 title: "「978ABC」被拒的理由寫著長度不對 — 驗證的兩層分工與順序陷阱"
+slug: "flutter_domain_input_validation_placement"
 date: 2026-07-10
 draft: false
 description: "輸入驗證有兩層職責：建構期不變式守「這個物件能不能存在」、無狀態 validator 守「使用者輸入對不對」，混在一起會讓測試建不出 fixture、錯誤訊息歸錯類。順序陷阱：先標準化再檢查等於先銷毀證據再診斷——含字母的 ISBN 被削成三位數、錯誤訊息說長度不對。"

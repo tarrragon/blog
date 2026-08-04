@@ -1,5 +1,6 @@
 ---
 title: "Laravel Sanctum 的 Bearer Token 設計剖析：{PK}|{secret} 為什麼這樣設計"
+slug: "laravel_sanctum_pat_design"
 date: 2026-05-18
 draft: false
 description: "Laravel Sanctum `{PK}|{secret}` 格式的設計理由、hash 儲存取捨、constant-time 比對位置，以及跟 GitHub PAT、Stripe API Key 的差異。"

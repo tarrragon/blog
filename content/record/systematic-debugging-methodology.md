@@ -1,5 +1,6 @@
 ---
 title: "系統化除錯方法論"
+slug: "systematic-debugging-methodology"
 date: 2025-09-26
 draft: false
 description: "警告修復標準化流程"

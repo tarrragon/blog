@@ -1,5 +1,6 @@
 ---
 title: "Atomic Ticket 方法論 - 最小可追蹤任務單位設計"
+slug: "atomic-ticket-methodology"
 date: 2026-03-04
 draft: false
 description: "確保每個 Ticket 只有一個修改原因、一個驗收標準集合，實現任務的原子性管理"

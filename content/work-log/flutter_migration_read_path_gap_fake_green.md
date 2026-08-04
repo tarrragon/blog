@@ -1,5 +1,6 @@
 ---
 title: "遷移計畫有寫入、有消費、缺讀出 — read-path 缺口與 fixture 假綠"
+slug: "flutter_migration_read_path_gap_fake_green"
 date: 2026-07-10
 draft: false
 description: "資料模型遷移的通路要三段齊：寫入 backfill、讀取路徑、消費端 API。缺讀出那段時，新 API 拿到的永遠是空集合——而消費端測試的 fixture 自己建物件、不走真實讀取路徑，測試全綠掩蓋 runtime 靜默失效。依賴圖只列「誰先做」不列語意前提時，dashboard 的 ready 是假訊號。"

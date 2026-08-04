@@ -1,5 +1,6 @@
 ---
 title: "如何建立AI輔助系統開發"
+slug: "hook_agent_how_to_define"
 date: 2025-10-11
 draft: false
 archived: true

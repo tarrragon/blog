@@ -1,5 +1,6 @@
 ---
 title: "StreamProvider 包 repository watch stream — broadcast、初始值、dispose 實作點"
+slug: "flutter_streamprovider_wraps_repository_watch"
 date: 2026-07-16
 draft: false
 description: "repository 要補 Stream 觀測出口、接給 Riverpod 消費時使用。訂閱模型選 broadcast 還是單訂閱、新訂閱者拿不拿得到當下狀態、controller 誰負責關——每個問題各有一個會靜默失效的預設答案。"

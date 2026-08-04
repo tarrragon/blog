@@ -1,5 +1,6 @@
 ---
 title: "Dart StreamController：single-subscription vs broadcast 的設計選型問題"
+slug: "dart_stream_controller_single_vs_broadcast"
 date: 2026-05-05
 draft: false
 description: "Dart `Bad state: Stream has already been listened to.` 的根因：預設單訂閱在第二個訂閱者出現時才爆。StreamController vs .broadcast() 修復決策、與 Rx / .obs 的比較。"

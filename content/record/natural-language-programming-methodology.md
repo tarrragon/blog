@@ -1,5 +1,6 @@
 ---
 title: "程式碼自然語言化撰寫方法論"
+slug: "natural-language-programming-methodology"
 date: 2026-03-04
 draft: false
 description: "將程式碼視為自然語言的撰寫哲學：從認知負擔的理論出發，透過五行函式、事件驅動、變數專一化，實現如同閱讀文章般流暢的程式碼"

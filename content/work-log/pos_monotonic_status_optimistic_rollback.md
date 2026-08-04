@@ -1,5 +1,6 @@
 ---
 title: "單調狀態機與樂觀更新的回滾契約：前台不得顯示後端沒記錄的狀態"
+slug: "pos_monotonic_status_optimistic_rollback"
 date: 2026-07-17
 draft: false
 description: "POS App 的品項處理狀態只能遞增——現實世界的動作不可逆，狀態機跟著不可逆。樂觀更新讓 UI 先行，但後端拒絕時必須回滾：因為這個狀態是其他防護規則的資料來源，前台多顯示一格進度，防護就會在錯誤的前提上放行。"

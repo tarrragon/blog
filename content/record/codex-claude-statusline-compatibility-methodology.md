@@ -1,5 +1,6 @@
 ---
 title: "Codex 與 Claude Code Statusline 相容設計方法"
+slug: "codex-claude-statusline-compatibility-methodology"
 date: 2026-05-13
 draft: false
 description: "用 case-first 查詢與 WRAP 判讀，整理 Claude Code statusLine 與 Codex tui.status_line 的差異，說明如何讓同一個 statusline 工具保留 Claude 原功能並預留 Codex 相容入口。"

@@ -1,5 +1,6 @@
 ---
 title: "核心 entity 重寫、140+ 檔消費端不動 — Deprecated Getter Facade 的過渡設計"
+slug: "flutter_deprecated_getter_facade_entity_migration"
 date: 2026-07-10
 draft: false
 description: "重寫被百餘檔引用的核心 entity 時，直接改會同時打爆全部消費端、長期分支的 merge 成本隨時間暴漲。第三條路是 facade：舊欄位保留為 deprecated getter、內部從新結構回讀，消費端零修改編譯通過、@Deprecated 讓編譯器自動列出遷移清單、再逐波清償。facade 要配退場計畫、否則就是永久相容層。"

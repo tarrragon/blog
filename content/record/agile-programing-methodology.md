@@ -1,5 +1,6 @@
 ---
 title: "敏捷開發方法論"
+slug: "agile-programing-methodology"
 date: 2025-10-08
 draft: false
 archived: true

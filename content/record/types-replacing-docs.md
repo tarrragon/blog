@@ -1,5 +1,6 @@
 ---
 title: "型別取代 doc 的收益曲線：強型別語言的 doc 該有多短"
+slug: "types-replacing-docs"
 date: 2026-05-05
 draft: false
 description: "型別系統強化等於 doc 表達力轉移——很多 doc 內容應該下移到型別。整理 null safety / enum / wrapper / Result / typestate 各能消除哪類 doc、型別表達不了的剩餘部分（業務動機、性能、副作用、時序）以及收益曲線的邊際遞減點。"

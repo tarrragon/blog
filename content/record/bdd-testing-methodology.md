@@ -1,5 +1,6 @@
 ---
 title: "BDD 測試方法論"
+slug: "bdd-testing-methodology"
 date: 2026-03-04
 draft: false
 description: "行為驅動開發測試策略，整合 Clean Architecture 和 TDD 流程，透過測試行為而非實作降低維護成本"

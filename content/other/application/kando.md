@@ -1,5 +1,6 @@
 ---
 title: "Kando 滑鼠手勢選單的應用場景"
+slug: "kando"
 date: 2026-06-28
 draft: false
 description: "Kando 圓盤選單的適用判準、macOS 工程師的應用場景排序、以及可套用的 menus.json 設定範例。"

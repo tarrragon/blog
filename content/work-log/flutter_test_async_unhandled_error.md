@@ -1,5 +1,6 @@
 ---
 title: "寫測試時 sync try-catch 接不到 BotToast 的 async 錯誤：fire-and-forget API 的接管設計"
+slug: "flutter_test_async_unhandled_error"
 date: 2026-05-26
 draft: false
 description: "測試裡 sync try-catch 接不到錯誤，或 fire-and-forget API 從 async gap 後拋 `LateInitializationError`。用 runZonedGuarded 同時罩 sync 與 async 失敗路徑，含 fallback 訊息 signature 設計。"

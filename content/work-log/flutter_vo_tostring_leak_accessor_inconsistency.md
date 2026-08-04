@@ -1,5 +1,6 @@
 ---
 title: "取個原始值有四種寫法 — VO 的 toString 洩漏與 accessor 不一致"
+slug: "flutter_vo_tostring_leak_accessor_inconsistency"
 date: 2026-07-10
 draft: false
 description: "value object 家族的取值 accessor 各自為政（displayValue、toString、裸欄位）時，殺傷力會在測試層爆開：自定義 toString 讓裸字串斷言全數過期、四種取法讓修復者自己都寫錯。止血是 helper 函數庫集中取值知識、根治是家族統一 accessor 命名。"

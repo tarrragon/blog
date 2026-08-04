@@ -1,5 +1,6 @@
 ---
 title: "Gradle 強制覆寫 plugin 的 JVM target：Kotlin 與 Java 的切入點不對稱"
+slug: "gradle_jvm_target_asymmetry"
 date: 2026-04-17
 draft: false
 description: "Kotlin / AGP 升級後 build 報 `Inconsistent JVM-target compatibility`。為何要強制覆寫 plugin 的 JVM target，以及 Kotlin 與 Java 設定切入點的不對稱。"

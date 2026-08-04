@@ -1,5 +1,6 @@
 ---
 title: "設計驅動重構方法論 - Domain Root 檢查與技術債務清理實戰"
+slug: "design-driven-refactoring-methodology"
 date: 2026-03-04
 draft: false
 description: "以設計意圖為導向的重構策略，從 Domain Root 出發系統性識別和清理技術債務"

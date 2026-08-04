@@ -1,5 +1,6 @@
 ---
 title: "Ticket 設計派工方法論"
+slug: "ticket_v2"
 date: 2025-10-11
 draft: false
 archived: true

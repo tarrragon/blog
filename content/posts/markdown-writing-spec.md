@@ -1,5 +1,6 @@
 ---
 title: "Blog Markdown 寫作規範與 mdtools 檢查"
+slug: "markdown-writing-spec"
 date: 2026-04-24
 description: "本 blog 的 Markdown 排版規範權威契約。涵蓋 H1 禁用、MD024 siblings_only、反釣魚 TLD 校驗、卡片雙向完整性、front matter schema；改規則時要與 scripts/mdtools 實作同步。"
 tags: ["Markdown", "AI協作心得", "blog心得", "lint", "goldmark"]
@@ -431,14 +432,16 @@ L1 與 L7 都在檔案系統這一側工作：目標檔存在、目標頁有那�
 
 #### L8 的沉默區（規則本身也適用 #221）
 
-L8 只在「有 slug」時判定，因此它的零 error 涵蓋兩種狀態，而全站 3079 個非 `_index` 頁面裡有 **2931 個（95%）根本沒有 slug**、落在第二種：
+L8 只在「有 slug」時判定，因此它的零 error 涵蓋兩種狀態。2026-08-04 量測，全站 3079 個非 `_index` 頁面裡有 2758 個沒有 slug、落在第二種，而這兩種的風險完全不同：
 
-- **無 `[permalinks]` 模板的 section**（`macos/`、`report/`、`backend/` 等）：slug 缺席時 Hugo 退回檔名，與連結寫法一致，無害。
-- **有 `[permalinks]` 模板的 section**：`hugo.toml` 為 `posts` / `work-log` / `record` / `other` 設了 `/<section>/:slug/`。`:slug` 缺席時 Hugo 退回的是 **title 的 urlize**，中文標題會變成 percent-encoded 字串，沒有任何連結會這樣寫。2026-08-04 量測：這四個 section 有 173 篇無 slug，而指向它們的 **663 條檔名式連結分布在 257 個檔案裡、目前全部 404**。
+- **無 `[permalinks]` 模板的 section**（`macos/`、`report/`、`backend/` 等）：slug 缺席時 Hugo 退回檔名，與連結寫法一致，無害。目前的 2758 個無 slug 頁面全部落在這裡。
+- **有 `[permalinks]` 模板的 section**：`hugo.toml` 為 `posts` / `work-log` / `record` / `other` 設了 `/<section>/:slug/`。`:slug` 缺席時 Hugo 退回的是 **title 的 urlize**，中文標題會變成 percent-encoded 字串，沒有任何連結會這樣寫。這四個 section 目前全部有 slug（183/183 route 與檔名對齊），因此這一類的存量是零。
 
-這批存量是「slug 必填、跟檔名對齊」這條規範沒有任何規則承載的後果，不是 L8 的判定範圍——L8 管拼字一致、那條規範管有沒有。**目前 lint 與 cards 都沒有規則在執行「必填」那一半**，所以它的合規率沒有任何自動訊號。這是一個記錄在案的邊界，不是遺漏。**處置已決定、排在 L8 之後的獨立一輪**：補齊那 173 篇的 slug（值取檔名 stem），補完後 663 條連結全部接回，再判斷「必填」要不要也做成規則。
+這條規則落地時，第二類有 173 篇無 slug、指向它們的 663 條檔名式連結分布在 257 個檔案裡、全部 404。那批已於同日補齊（slug 值取檔名 stem），過程中另外處理兩個邊界：`hook&agent_how_to_define.md` 因 Hugo 會把 slug 裡的 `&` 去掉而改名，`other/application/kando.md` 因模板攤平子目錄、手寫連結兩邊都對不上而改由自動列表承接。
 
-驗收基準要能被重跑，否則它在字面上存在、在操作上不存在。產生上面那三個數字的指令記在這裡：
+**「slug 必填」這一半仍然沒有任何規則承載**——L8 管拼字一致、規範管有沒有，而 lint 與 cards 都沒有在執行後者。有模板的四個 section 現在存量為零，但沒有東西會擋住下一篇忘記加 slug 的文章。要不要把必填做成規則，登記在 [文章列表](/posts/) 的 Backlog。
+
+驗收基準要能被重跑，否則它在字面上存在、在操作上不存在。產生上面那些數字的指令記在這裡：
 
 ```bash
 # 有 [permalinks] 模板的 section 裡、無 slug 的頁面數
@@ -450,7 +453,7 @@ for s in posts work-log record other; do
 done
 ```
 
-補完之後重跑，四個 section 都應該是 0；斷鏈數隨之歸零。這一輪的登記在 [文章列表](/posts/) 的 Backlog 段。
+四個 section 現在都是 0。這條指令的用途從驗收轉為回歸檢查——新文章忘記加 slug 時它會變回非零，而在「必填」做成規則之前，這是唯一會發出訊號的地方。
 
 heading ID 用 Hugo 的 github 型 auto-ID 演算法計算，規則（hugo 建最小站實測確認）是保留 unicode 字母、數字與 `_` 並轉小寫，空白與既有連字號轉 `-`，其餘一律丟棄且**不留連字號**——全形括號、冒號、頓號、引號都適用，這也是手算 anchor 最常算錯的地方。ID 從渲染後的文字產生，所以標題內的 markdown 連結只取顯示文字、行內 code 只取內容。同頁重複標題依文件順序加 `-1` / `-2` 後綴。標題寫 `{#custom-id}` 時該 ID 一併登記。
 

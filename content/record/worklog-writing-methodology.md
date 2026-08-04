@@ -1,5 +1,6 @@
 ---
 title: "工作日誌撰寫方法論 - 版本企劃與執行記錄的最佳實踐"
+slug: "worklog-writing-methodology"
 date: 2026-03-04
 draft: false
 description: "定義工作日誌的撰寫原則，讓格式一致、工具相容，確保任何工程師不需額外 context 就能理解版本目標"

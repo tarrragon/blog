@@ -1,5 +1,6 @@
 ---
 title: "「該收多少錢」抽成 pure function — IO 在邊界、領域計算在核心"
+slug: "dart_unsettled_cart_pure_function"
 date: 2026-07-10
 draft: false
 description: "多個畫面都要顯示「未結帳的份數與金額」時，把計算抽成無 IO 的 pure function：資料由 caller 從 repository 拿好傳入、函式只做合併 / 扣減 / 折扣運算。含合併鍵要跟同一性定義同維度的陷阱、兩層折扣各自 clamp 的邊界、以及用註解預留擴充點讓未來規則接入不動本體。"

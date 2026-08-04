@@ -1,5 +1,6 @@
 ---
 title: "Freezed 的三層結構解剖：with、_$、以及更好懂的替代路徑"
+slug: "dart_freezed_anatomy"
 date: 2026-05-11
 draft: false
 description: "freezed `class X with _$X implements Y` 的分層結構解剖：`with` 與 `_$` 各自的角色、沒有 freezed 怎麼手做、中間投影物件 vs DTO 直接 implements 的維護取捨。"

@@ -1,5 +1,6 @@
 ---
 title: "為什麼 Bug 在合併後才爆：Gradle Cache 掩蓋潛伏問題的邏輯"
+slug: "gradle_cache_latent_bug"
 date: 2026-04-17
 draft: false
 description: "feature branch build 正常、合併到 main 後才爆、但合併前 main 也沒錯。根因早已潛伏，Gradle cache 掩蓋、合併只是觸發條件。"

@@ -1,5 +1,6 @@
 ---
 title: "程式碼註解撰寫方法論"
+slug: "comment-writing-methodology"
 date: 2026-03-04
 draft: false
 description: "定義程式碼註解的本質：需求保護器而非程式解釋器，建立維護者導向的註解撰寫標準，涵蓋事件驅動架構與 Widget 獨立性註解規範"

@@ -1,5 +1,6 @@
 ---
 title: "決策對話協議的浮現：從 #74 到 #81 的多層迭代"
+slug: "decision-dialogue-protocol-emergence"
 date: 2026-04-26
 description: "決策模式從對話浮現為卡片的 spiral 過程與決策對話協議。提醒 yes/no 二選是最隱形的 collapse 反模式、spiral 深度由 user 外部觸發決定。"
 tags: ["case-study", "知識基礎建設", "Cards-Skills", "Decision Dialogue", "Knowledge Gardening"]

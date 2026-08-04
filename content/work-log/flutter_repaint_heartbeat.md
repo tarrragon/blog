@@ -1,5 +1,6 @@
 ---
 title: "Flutter 畫面落後邏輯狀態（log 正確、畫面不符）— 重繪訊號排查與心跳做法"
+slug: "flutter_repaint_heartbeat"
 date: 2026-07-06
 draft: false
 description: "Flutter 畫面落後邏輯狀態（log 正確、畫面不符），含 platform view / 外部 texture 的渲染訊號沒進 frame 排程時回來讀。"

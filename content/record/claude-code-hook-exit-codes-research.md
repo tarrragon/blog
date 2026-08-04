@@ -1,5 +1,6 @@
 ---
 title: "Claude Code Hook 系統 Exit Code 實驗"
+slug: "claude-code-hook-exit-codes-research"
 date: 2025-09-26
 draft: false
 archived: true

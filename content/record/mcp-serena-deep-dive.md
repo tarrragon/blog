@@ -1,5 +1,6 @@
 ---
 title: "serena：把 LSP 包成 agent-first MCP 的 symbol-level 編輯方案"
+slug: "mcp-serena-deep-dive"
 date: 2026-05-25
 draft: false
 description: "serena MCP 的設計拆解：直接整合各語言 LSP、symbol-level atomic edit（replace_symbol_body / insert_after_symbol / rename）、per-session project activation、跨 session memory。重點在 LSP 路線的型別精度可信度與 per-session 沒持久化的取捨。"

@@ -1,5 +1,6 @@
 ---
 title: "Android 無線調試連接指南"
+slug: "android_wireless_debug"
 date: 2025-02-01
 draft: false
 description: "ADB 無線偵錯的配對與連接流程，含 device offline、端口錯誤、AP 隔離等連線中斷的排查。"

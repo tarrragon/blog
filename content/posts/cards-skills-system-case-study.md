@@ -1,5 +1,6 @@
 ---
 title: "Cards-Skills 系統的活案例：從一個 search bug 到 14 張新卡的閉環"
+slug: "cards-skills-system-case-study"
 date: 2026-04-26
 description: "report 卡片 + skill 作為自我修正的活知識庫：從一個 search bug 走完閉環的 case study。教訓：test 過不等於對齊意圖、dogfooding 失敗靠外部提問現形、修 bug 是 case study 起點。"
 tags: ["case-study", "知識基礎建設", "compositional-writing", "Cards-Skills", "TDD", "Retrospective"]

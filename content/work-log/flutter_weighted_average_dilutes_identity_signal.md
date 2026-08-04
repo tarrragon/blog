@@ -1,5 +1,6 @@
 ---
 title: "相同 ISBN 的兩本書、相似度只有 0.67 — 加權平均稀釋 identity 訊號"
+slug: "flutter_weighted_average_dilutes_identity_signal"
 date: 2026-07-10
 draft: false
 description: "把 identity 級訊號（ISBN 相同幾乎等於同一本書）跟 fuzzy 級訊號（標題像、作者像）丟進同一個加權平均，確定性會被稀釋到閾值以下。修法是訊號分級：identity 訊號匹配就短路給高分、fuzzy 訊號才進加權池；且 identity 比對前要先正規化——ISBN-10 與 ISBN-13 是同一身分的兩種表示。"

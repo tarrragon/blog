@@ -1,5 +1,6 @@
 ---
 title: "16 種支付渠道、4 種行為分類 — 分層 enum：保真層與行為層的粒度分工"
+slug: "dart_payment_dual_layer_enum"
 date: 2026-07-10
 draft: false
 description: "同一個分類系統要同時服務序列化（要無損）跟 UI 行為分流（要粗粒度）時，單一 enum 選哪個粒度都錯。解法是分層：保真層無損對齊後端完整列舉、行為層收斂成行為真正分歧的少數大類、層間用 exhaustive switch 衍生——粒度轉換獲得編譯期保證。"

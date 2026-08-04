@@ -1,5 +1,6 @@
 ---
 title: "TDD-Ticket 整合方法論 - 測試驅動開發與任務追蹤的無縫銜接"
+slug: "tdd-ticket-integration-methodology"
 date: 2026-03-04
 draft: false
 description: "將 TDD 四階段流程與 Ticket 生命週期整合，確保每個開發階段都有可追蹤的任務記錄"

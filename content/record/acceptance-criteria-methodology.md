@@ -1,5 +1,6 @@
 ---
 title: "驗收條件方法論 - 確保任務完整性的系統化驗收標準"
+slug: "acceptance-criteria-methodology"
 date: 2026-03-04
 draft: false
 description: "定義清晰的驗收條件設計原則，確保每個任務都有明確的完成定義和品質標準"

@@ -1,5 +1,6 @@
 ---
 title: "Commit message vs source code doc：兩份不同職責的文件"
+slug: "commit-message-vs-source-doc"
 date: 2026-05-05
 draft: false
 description: "Source code doc 寫給未來讀者、commit message 寫給回顧歷史的考古者。時序敏感的資訊（為什麼這次改、考慮過什麼方案）放 commit、持續適用的契約放 source。配合 git blame 工作流讓考古路徑清楚、source 不必背所有歷史。"

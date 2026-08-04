@@ -1,5 +1,6 @@
 ---
 title: "Domain Map 未實作 Bundle 衍生不可執行工作項目"
+slug: "domain_map_unimplemented_bundle_false_positive"
 date: 2026-07-24
 description: "domain-map 的 bundle 界定表混入程式碼中不存在的概念、下游消費者全部當已實作處理，產出不可執行的測試 ticket 浪費 97k tokens。產出端用 ls/grep 驗證 + 加實作狀態欄 + 消費端前置過濾三層修復。"
 tags: ["domain-map", "false-positive", "documentation-drift", "verification"]

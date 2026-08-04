@@ -1,5 +1,6 @@
 ---
 title: "三 MCP 工作流與 Dart 實測：cbm / codegraph / serena 的職責分工與三刀流"
+slug: "mcp-three-way-workflow-and-dart-experiment"
 date: 2026-05-25
 draft: false
 description: "在同一個 Dart 商業專案上跑同一組 query，量化 codebase-memory-mcp / codegraph / serena 三個 code intelligence MCP 的能力差距，得到「不能互相取代、要互補使用」的三刀流結論。含 5 個實驗的 CLI baseline 跟 MCP 驗證對照。"

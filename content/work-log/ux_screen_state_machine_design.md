@@ -1,5 +1,6 @@
 ---
 title: "每個畫面都需要出口：畫面狀態機設計與 UX 導航的系統性方法"
+slug: "ux_screen_state_machine_design"
 date: 2026-06-19
 draft: false
 description: "實機測到某畫面沒有返回或退出按鈕、使用者被困住。根因是企劃沒系統列出每個畫面的狀態與可用操作；用畫面狀態矩陣確保每個狀態都有明確出口。"

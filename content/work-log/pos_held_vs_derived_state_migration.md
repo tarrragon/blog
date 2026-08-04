@@ -1,5 +1,6 @@
 ---
 title: "自持狀態與可導出狀態：上游身份轉移時，誰要搬家、誰自動對齊"
+slug: "pos_held_vs_derived_state_migration"
 date: 2026-07-17
 draft: false
 description: "後端合併操作讓資料換了身份，前端持有的多份「以舊 id 為 key」的狀態怎麼辦？POS App 的答案分兩類：能從上游重新導出的狀態不用管、下一輪同步自動對齊；必須自行持有的狀態（差異比對基準、追蹤記錄）才需要通知搬家。分類錯誤的代價是兩個方向的 bug。"

@@ -1,5 +1,6 @@
 ---
 title: "什麼是 AST — 從字串到語法樹的視角轉換"
+slug: "what-is-ast"
 date: 2026-04-24
 description: "AST 與 regex 的差異判準：規則需要知道文字處在什麼結構中時 regex 就不夠。附 regex 誤判的具體 case。"
 tags: ["AST", "Markdown", "goldmark", "lint", "工具設計"]

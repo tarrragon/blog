@@ -1,5 +1,6 @@
 ---
 title: "TestWidgetsFlutterBinding 會擋掉真實網路：真實後端測試與流程測試的檔案級隔離"
+slug: "flutter_test_binding_blocks_real_network"
 date: 2026-07-17
 draft: false
 description: "flutter_test 的 binding 初始化後會把 HttpClient 換成回 400 的假件——需要真實網路的後端驗證測試不可初始化 binding，也因此不可 import 任何會初始化 binding 的 harness。靠測試檔案各自跑在獨立 isolate 的特性，兩種測試在同一個目錄共存。"

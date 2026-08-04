@@ -1,5 +1,6 @@
 ---
 title: "mdtools：Go + goldmark 的 markdown 工具鏈設計"
+slug: "mdtools-design"
 date: 2026-04-24
 description: "mdtools 的架構決策：選 Go + goldmark 的理由（與 Hugo 同源保證 lint↔render 等價）、單 binary 多子命令設計、pre-commit 整合、規則開啟紀律。"
 tags: ["Go", "goldmark", "Markdown", "工具設計", "pre-commit"]

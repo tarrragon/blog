@@ -1,5 +1,6 @@
 ---
 title: "敏捷重構方法論 - Agent 分工協作模式"
+slug: "agile-refactor-methodology"
 date: 2026-03-04
 draft: false
 description: "描述如何讓AI使用敏捷開發的流程方法論，以主線程統籌、子代理人專責執行的協作模式，確保重構品質和進度控制"

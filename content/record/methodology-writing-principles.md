@@ -1,5 +1,6 @@
 ---
 title: "方法論文件撰寫方法論"
+slug: "methodology-writing-principles"
 date: 2026-03-04
 draft: false
 description: "從「教導文件」到「記憶觸發器」的方法論撰寫觀念轉變"

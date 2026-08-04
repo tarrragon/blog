@@ -1,5 +1,6 @@
 ---
 title: "二元決策樹系統 "
+slug: "decision-tree"
 date: 2026-01-28
 draft: false
 archived: true

@@ -1,5 +1,6 @@
 ---
 title: "函式文件分層設計：型別、介面、實作各自該寫什麼"
+slug: "function-doc-layered-design"
 date: 2026-05-05
 draft: false
 description: "函式文件分層設計：把資訊放在能表達它的最低層次（名稱 / 型別簽章 / 介面 doc / 實作 doc / 範例與測試）、上層留給「下層表達不了的剩餘」。整理各層該寫什麼、容易誤入的內容、配合反模式列表跟寫 doc 前 checklist 收斂出短而精準的文件。"

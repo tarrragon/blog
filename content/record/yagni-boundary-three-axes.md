@@ -1,5 +1,6 @@
 ---
 title: "設計瑕疵還是避免過度設計？YAGNI 的真實適用條件"
+slug: "yagni-boundary-three-axes"
 date: 2026-05-05
 draft: false
 description: "YAGNI 不是「永遠選最受限選項」、是「不為未來投入額外成本」的原則。用成本對稱性、可逆性、領域先驗三軸框架釐清「該選通用 default」與「該避免過度設計」的邊界、並補上 review checklist、架構規範、領域先驗清單三層制度補強。"

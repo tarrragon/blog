@@ -1,5 +1,6 @@
 ---
 title: "MVVM ViewModel 開發方法論"
+slug: "mvvm-viewmodel-methodology"
 date: 2025-10-13
 draft: false
 archived: true

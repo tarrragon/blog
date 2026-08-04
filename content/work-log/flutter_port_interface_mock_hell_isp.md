@@ -1,5 +1,6 @@
 ---
 title: "mock 要配置 55 個方法、實際只用 5 個 — 測試痛是介面設計痛的探針"
+slug: "flutter_port_interface_mock_hell_isp"
 date: 2026-07-10
 draft: false
 description: "service 測試的 mock 負擔正比於它依賴的介面寬度：依賴四個大介面共 55 個方法、實際呼叫 5 個，91% 的 mock 配置是純浪費、還會炸 MissingStubError。修法是介面隔離——抽出只含實際使用方法的 Port，讓 mock 縮到跟真實依賴一樣窄；為未來預留的方法用 TODO 標記啟用時機。"

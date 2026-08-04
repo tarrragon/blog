@@ -1,5 +1,6 @@
 ---
 title: "產品碼自己是 mock — ViewModel 假實作通過了 15 個測試"
+slug: "flutter_viewmodel_mock_implementation_passes_tests"
 date: 2026-07-10
 draft: false
 description: "ViewModel 用 Future.delayed 加硬編碼資料交付、狀態轉換測試全綠，因為測試耦合的是狀態機、不是業務效果。假實作被當成完成的基礎，直到 63 個測試「寫不出來」才現形——測試的可寫性是實作真實性的探針。"

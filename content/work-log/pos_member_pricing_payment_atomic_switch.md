@@ -1,5 +1,6 @@
 ---
 title: "會員身分、計價、支付方式必須一起換 — 耦合欄位的原子切換"
+slug: "pos_member_pricing_payment_atomic_switch"
 date: 2026-07-10
 draft: false
 description: "多個狀態欄位被同一條業務規則綁住時，分開的 setter 會製造不一致的中間態；把切換收成單一方法、一次狀態更新內同步全部欄位，並注意衍生值重算的順序。以 POS 結帳的會員登出重算為例，含不變式收進 model 的 canCheckout 設計。"

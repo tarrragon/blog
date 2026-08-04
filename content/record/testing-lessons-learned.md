@@ -1,5 +1,6 @@
 ---
 title: "測試全過但有 Bug"
+slug: "testing-lessons-learned"
 date: 2026-03-12
 draft: false
 description: "從多廚房印表機功能開發經驗，歸納測試設計的三大陷阱與檢查清單，避免測試全過但線上有 Bug"

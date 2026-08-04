@@ -1,5 +1,6 @@
 ---
 title: "Git：git stash 的 -u 參數（連未追蹤檔案一起暫存）"
+slug: "git_stash_untracked"
 date: 2026-06-05
 draft: false
 description: "`git stash` 後新建的檔案沒被收走、還散在工作目錄。原因是 stash 預設不收 untracked 檔案，附 -u 用法與 commit-rebase 替代做法。"

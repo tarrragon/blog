@@ -1,5 +1,6 @@
 ---
 title: "元件庫雙向約束方法論 - 設計端與工程端的雙向契約"
+slug: "component-library-bidirectional-constraint-methodology"
 date: 2026-07-09
 draft: false
 description: "元件庫是設計端與工程端之間的雙向約束：設計端先元件後組合、避免樣式發散；工程端禁自製元件、依語意選件。含 L1/L2/L3 分層架構、命名與通用元件判準、形態因素先決、元件文字歸屬（i18n-first）、豁免三條件與跨端契約"

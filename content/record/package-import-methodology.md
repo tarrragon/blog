@@ -1,5 +1,6 @@
 ---
 title: "Package 導入路徑語意化方法論"
+slug: "package-import-methodology"
 date: 2025-09-21
 draft: false
 description: "跨語言的導入聲明語意化原則，讓程式碼架構一眼可見"

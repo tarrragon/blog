@@ -1,5 +1,6 @@
 ---
 title: "Code Smell 檢查清單"
+slug: "code_smell"
 date: 2025-10-11
 draft: false
 archived: true

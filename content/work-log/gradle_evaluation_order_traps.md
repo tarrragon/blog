@@ -1,5 +1,6 @@
 ---
 title: "Gradle Configuration 時序陷阱：afterEvaluate、evaluationDependsOn、finalized properties"
+slug: "gradle_evaluation_order_traps"
 date: 2026-04-17
 draft: false
 description: "Gradle 報 `Cannot run Project.afterEvaluate ... already evaluated` 或 `property is final`。時序錯誤同源於 callback 註冊太晚或屬性賦值太晚，附各 API 的正確時機。"

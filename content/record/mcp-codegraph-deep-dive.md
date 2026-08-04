@@ -1,5 +1,6 @@
 ---
 title: "codegraph：用 tree-sitter per-language query 撐起 19+ 語言 call graph 的 MCP"
+slug: "mcp-codegraph-deep-dive"
 date: 2026-05-25
 draft: false
 description: "codegraph MCP 的設計拆解：tree-sitter per-language query 抽 call graph、native OS file watcher 2 秒 debounce auto-sync、14 web framework routing、7 codebase benchmark 的 token 節省方法論。重點在 tree-sitter syntactic 路線能解到什麼程度、type-inferred dispatch 仍漏什麼。"

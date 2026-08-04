@@ -1,5 +1,6 @@
 ---
 title: "溢出 714px、22 個測試同時紅 — 單點修復與規範化的分界"
+slug: "flutter_renderflex_overflow_prevention_spec"
 date: 2026-07-10
 draft: false
 description: "Row 裡未受 Flexible 包裹的固定尺寸元件在窄約束下溢出；同型失敗一次爆 22 個時，正確的產出不是 22 個修復、是一份 overflow 預防規範（反模式清單 + 決策樹 + 測試檢查項）。含測試環境小尺寸是 feature、以及 stale ticket 先考古再執行的教訓。"

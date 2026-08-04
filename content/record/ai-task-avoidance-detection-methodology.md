@@ -1,5 +1,6 @@
 ---
 title: "AI 任務逃避偵測與預防三層防護方法論"
+slug: "ai-task-avoidance-detection-methodology"
 date: 2025-09-20
 draft: false
 archived: true

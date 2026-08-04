@@ -1,5 +1,6 @@
 ---
 title: "HMAC 簽章對接：演算法拆解與兩端輸入對齊"
+slug: "hmac_signature_field_alignment"
 date: 2026-07-27
 draft: false
 description: "兩端 HMAC 算不出同一個值時要逐項核對的輸入定義，以及用簽章反推輸入、判斷問題落在哪一端的除錯手法。"

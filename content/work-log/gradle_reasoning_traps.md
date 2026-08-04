@@ -1,5 +1,6 @@
 ---
 title: "Gradle JVM target 除錯復盤：七個節點的策略權衡"
+slug: "gradle_reasoning_traps"
 date: 2026-04-17
 draft: false
 description: "Gradle JVM target 不一致的除錯決策復盤，重點在每步的策略權衡與走過的彎路。"

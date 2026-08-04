@@ -1,5 +1,6 @@
 ---
 title: "Flutter scheduleFrame()：按需 render 的最底層原語"
+slug: "flutter_schedule_frame"
 date: 2026-07-07
 draft: false
 description: "手動觸發重繪、或釐清 setState / 動畫 / markNeedsPaint 為何最終都要向引擎要一個 frame 時，回頭理解這個按需 render 的底層原語。"

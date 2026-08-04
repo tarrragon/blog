@@ -1,5 +1,6 @@
 ---
 title: "兩個 ImportResult 各自都合理 — 傘狀名的碰撞與做一半的重命名"
+slug: "flutter_import_result_name_collision"
 date: 2026-07-10
 draft: false
 description: "同一個 domain 裡兩個類別都叫 ImportResult：一個是驗證結果、一個是操作結果，各自誕生時都合理。修法是依語意責任命名（ImportValidationResult）；而重命名是一組原子操作——類別名、檔名、import、文件宣稱，做一半留下的不一致比不做更迷惑，且宣稱完成與實際完成的漂移要靠稽核抓。"

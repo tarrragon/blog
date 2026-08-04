@@ -1,5 +1,6 @@
 ---
 title: "Git：修復後面的 commit 意外覆蓋前面 commit 的變更"
+slug: "git_fixup_rebase"
 date: 2026-02-24
 draft: false
 description: "用 `git commit --fixup` + `git rebase --autosquash` 改歷史 commit 後，改的內容被後面的 commit 覆蓋、變更沒生效的處理。"

@@ -1,5 +1,6 @@
 ---
 title: "API 認證的三層信任邊界：使用者、系統、跨系統 Provisioning"
+slug: "api_auth_trust_boundaries"
 date: 2026-05-18
 draft: false
 description: "API 認證的信任邊界分層（Bearer Token / Shared Secret / Provisioning）：各層的洩漏後果與撤銷方式，以及混用造成的設計失效模式。"

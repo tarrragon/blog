@@ -1,5 +1,6 @@
 ---
 title: "用 Claude Code GitHub Actions 自動除錯 CI 建置失敗"
+slug: "github-actions-claude-ci-debug"
 date: 2026-03-04
 description: "GitHub Actions 整合 Claude Code 做 CI 修復與 Code Review。含觸發設定、成本控制、OAuth vs API key 計費差異。"
 tags: ["GitHub Actions", "CI/CD", "Claude Code", "Hugo", "AI協作心得"]

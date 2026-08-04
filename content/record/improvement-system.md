@@ -1,5 +1,6 @@
 ---
 title: "錯誤模式收集系統 - 持續改善機制"
+slug: "improvement-system"
 date: 2026-01-20
 draft: false
 archived: true

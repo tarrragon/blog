@@ -1,5 +1,6 @@
 ---
 title: "16 個失敗只有 2 個是缺口 — 大規模測試失敗先分診、再按 ROI 修"
+slug: "flutter_test_failure_triage_root_cause_roi"
 date: 2026-07-10
 draft: false
 description: "測試失敗數超過十個時逐個修是錯的順序：先全數分類根因、再按「單位工時救回的測試數」排修復順序。兩批實戰分類顯示半數失敗是斷言過時而非 bug、九個失敗共用一個 helper 修法；每類的症狀特徵字串可以建成索引讓下批失敗直接對號。"

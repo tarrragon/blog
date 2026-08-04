@@ -1,5 +1,6 @@
 ---
 title: "問題覺察與評估方法論 - 全局分析優先的決策框架"
+slug: "problem-awareness-evaluation-methodology"
 date: 2026-03-04
 draft: false
 description: "在採取行動前先進行全局分析，避免局部修復導致的連鎖問題，建立系統性的問題評估流程"

@@ -1,5 +1,6 @@
 ---
 title: "只活在結帳流程裡的領域物件 — ephemeral model 與「Rx 外殼、immutable 內核」"
+slug: "flutter_ephemeral_domain_object_rx_immutable"
 date: 2026-07-10
 draft: false
 description: "流程型狀態（結帳中的輸入金額、支付方式、會員）建模成生命週期等於流程的 ephemeral 物件：結完即丟、下次全新，殘留狀態忘記重置的 bug 被結構性消滅。實作形態是 reactive 外殼包 immutable 內核——對外只開語意化變更方法、每次變更是原子的狀態替換。"

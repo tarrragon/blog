@@ -1,5 +1,6 @@
 ---
 title: "Shared Secret 安全輪替設計：雙密過渡期、自動化與緊急流程"
+slug: "shared_secret_rotation"
 date: 2026-05-18
 draft: false
 description: "系統間 Shared Secret 輪替的核心機制：dual-secret rollover、自動化工具比較（AWS Secrets Manager / Vault / GCP）、緊急 rotation 流程與多 client 環境的失敗模式。"

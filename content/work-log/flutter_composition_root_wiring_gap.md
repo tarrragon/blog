@@ -1,5 +1,6 @@
 ---
 title: "測試全綠、功能失聯：五個 runtime 問題與組裝層的接線缺口"
+slug: "flutter_composition_root_wiring_gap"
 date: 2026-07-13
 draft: false
 description: "113 張票收尾全綠的版本，實機測試找出五個問題：路由指向佔位頁、provider 佔位 throw、按鈕空 callback，加上兩個平台語意差異。單元測試的 mock override 是正當的測試 seam、同時是遮蔽接線斷裂的來源——記下三層共振的機制、反向追溯設計文件的結果、以及修補時規格層／測試層／發版層的分層落點。"
