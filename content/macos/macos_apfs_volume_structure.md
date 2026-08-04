@@ -1,7 +1,7 @@
 ---
 title: "macOS APFS 卷結構與空間池：為什麼 df 的數字跟你想的不一樣"
 date: 2026-07-05
-slug: "macos-apfs-volume-structure"
+slug: "macos_apfs_volume_structure"
 description: "排查磁碟空間時需要理解 APFS 的 container/volume/volume group 三層架構和共用空間池機制。du、df、diskutil 三個工具看到的數字各自不同，原因在 APFS clone 和卷間共用。"
 tags: ["macos", "apfs", "disk-space", "apple-silicon"]
 ---

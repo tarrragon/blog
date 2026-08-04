@@ -1,6 +1,7 @@
 ---
 title: "flutter devices 卡住的訊號：device 數從 N 變 N-1 與 emulator 半活"
 date: 2026-05-19
+slug: "flutter_devices_hangs_on_zombie_android_emulator"
 draft: false
 description: "`flutter devices` / `flutter run` 卡住又印 `Error -2 retrieving device properties` 時回來看。根因是 Android emulator 半活狀態，附恢復順序。"
 tags: ["flutter", "android", "adb", "emulator", "debugging", "tooling"]
@@ -149,5 +150,7 @@ pkill -f qemu-system-aarch64
 - iOS Simulator 卡住時 `xcrun simctl list` 印不出來——同樣的「指令卡 + 訊息看似 fatal 但 process 仍存在」結構
 - `flutter devices` 對任何 device（含 iOS、Web、desktop）的查詢都會走類似的「列出 → 逐個 query property」流程、任一層卡都會表現為類似症狀
 - 廣義地說，任何「server 維護一份 client 清單 + 對每個 client 做同步呼叫」的架構（k8s `kubectl get pods` 對 zombie node、docker `docker ps` 對掛掉的 container runtime 等）都有同款 failure mode
+
+同一個 emulator 長期不關還有另一組完全不同的症狀，跟 ADB 無關：qemu 在生命週期裡反覆 fork 子程序而漏收，殭屍累積到把整個 uid 的程序額度吃光，表現是所有需要開新程序的指令都開始失敗、而記憶體與 CPU 完全正常。兩者的來源同屬長跑程序，判讀與回收見 [殭屍程序與使用者程序上限](/macos/macos_process_limit_zombie_reaping/)。
 
 辨認規則一致：**list 指令連跑兩次結果不一致 → 維護清單的 server 對某個 entry 的看法不穩定 → 找出那個 entry 局部處理**。這條規則的邊界是：如果清單穩定但操作失敗，問題更可能在該 target 的權限、版本或 runtime 狀態，需要改走對應工具的細部診斷。

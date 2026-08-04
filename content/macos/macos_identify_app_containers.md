@@ -1,7 +1,7 @@
 ---
 title: "macOS 辨識 ~/Library/Containers 裡的 App 容器"
 date: 2026-07-05
-slug: "macos-identify-app-containers"
+slug: "macos_identify_app_containers"
 description: "Containers 目錄佔了幾十 GB 但只看到 UUID 不知道是什麼 App 時的辨識方法。讀 plist 取 bundle ID 是唯一可靠的做法，content probing 會猜錯。"
 tags: ["macos", "disk-space", "apple-silicon", "troubleshooting"]
 ---

@@ -98,6 +98,11 @@ type CardRules struct {
 	// Sections excused from L5 — use when a page is pinned on purpose.
 	// An exemption is a decision on record; an omission is not.
 	WeightExemptSections []string
+	// L8: a page's `slug` must spell its own filename. Hugo serves the URL
+	// from slug, every link in the repo is written from the filename, and
+	// L1 only ever checks that the file exists — so a disagreement 404s
+	// while every existing check stays green.
+	CheckSlugFilenameAlignment bool
 	K4ConceptPositionTitle string // heading text that marks the "concept position" section
 	ContentScope           string // "content/**"
 }
@@ -180,6 +185,7 @@ func Default() Config {
 			CheckFragments:                true,
 			CheckIndexRegistration:        true,
 			CheckSectionWeightConsistency: true,
+			CheckSlugFilenameAlignment:    true,
 			WeightExemptSections: []string{
 				// modern-cli-replacements is the section's overview article
 				// and is pinned above the otherwise date-sorted tool posts.

@@ -403,6 +403,7 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 | **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數            |
 | **L6 卡片目錄登記**     | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge   |
 | **L7 Fragment 有效性**  | 連結的 `#fragment` 必須命名目標頁上存在的標題                                                     | 建每頁 heading ID 索引 → 比對 edge 的 fragment |
+| **L8 slug 與檔名對齊**  | 頁面若有 `slug`，值必須等於檔名 stem（`_index.md` 豁免）                                          | 取 front matter 的 `slug` → 比對 filename stem |
 
 L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字典（`.codex/briefs/knowledge-web-expansion.md`）啟動後再開。
 
@@ -419,6 +420,37 @@ L2 問「有沒有教學正文連這張卡」，而它刻意不計來源本身�
 L1 的責任停在目標檔案存在，`resolveTarget` 解析時把 `#` 之後截掉。這個分工留下的缺口是：標題一改，指向它的跨檔 anchor 全部靜默失效——連結仍然點得開、頁面仍然存在，讀者落在頁首而不知道自己該看哪一段。這是 [#155](/report/reference-by-semantic-title-not-number/) 說的「misdirected 比 dangling 難偵測」在 fragment 層的形態：dangling 有 404 當訊號，misdirected 兩端看起來都正常。
 
 L7 補上這一層，判定是「fragment 命名的 ID 在目標頁的 heading ID 集合裡」。上線時全站 302 條帶 fragment 的連結全部命中，因此**採 error 層而非警告層**——存量為零時，之後報出來的每一條都是新斷的，放它進 main 正是這條規則要擋的事。
+
+### L8 驗的是 Hugo 實際服務的那個 URL
+
+L1 與 L7 都在檔案系統這一側工作：目標檔存在、目標頁有那個標題。它們共同的前提是「連結寫的路徑就是讀者最後拿到的路徑」，而 `slug` 正是打破這個前提的欄位——Hugo 有 slug 就用它當 URL 最後一段，而 repo 裡的每一條連結都是照著檔案樹寫出來的。兩者拼字不同時，檔案存在（L1 通過）、標題存在（L7 通過）、而讀者拿到 404。
+
+促成這條規則的事故（2026-08-04 量測）：`content/macos/` 有七篇用底線檔名配連字號 slug，Hugo 發布在 `/macos/macos-apfs-volume-structure/`，而指向它們的 45 條連結全部寫成底線形式。`mdtools cards` 一路回報零錯誤——它按檔名解析，而「按檔名解析得到的答案」與「Hugo 服務的答案」在有 slug 時本來就是兩個問題。這是 [#221](/report/lint-scope-must-be-explicit-fact/) 描述的形態：零 error 與「沒有任何檢查在問這一軸」給出相同訊號。
+
+判定是機械的（兩個字串相等），**採 error 層**：上線時全站 148 個帶 slug 的檔案全部對齊。`_index.md` 豁免，因為它的 slug 命名的是它所領的 section、不是 section 底下的頁面；代價是 `_index.md` 的 slug 寫錯會靜默改掉整個 section 的 route 而這條規則看不到。頁面若真的需要與檔名不同的 URL，正解是改檔名——同時維護兩種拼字並記住連結該用哪一種，正是這條規則要消除的狀態。
+
+#### L8 的沉默區（規則本身也適用 #221）
+
+L8 只在「有 slug」時判定，因此它的零 error 涵蓋兩種狀態，而全站 3079 個非 `_index` 頁面裡有 **2931 個（95%）根本沒有 slug**、落在第二種：
+
+- **無 `[permalinks]` 模板的 section**（`macos/`、`report/`、`backend/` 等）：slug 缺席時 Hugo 退回檔名，與連結寫法一致，無害。
+- **有 `[permalinks]` 模板的 section**：`hugo.toml` 為 `posts` / `work-log` / `record` / `other` 設了 `/<section>/:slug/`。`:slug` 缺席時 Hugo 退回的是 **title 的 urlize**，中文標題會變成 percent-encoded 字串，沒有任何連結會這樣寫。2026-08-04 量測：這四個 section 有 173 篇無 slug，而指向它們的 **663 條檔名式連結分布在 257 個檔案裡、目前全部 404**。
+
+這批存量是「slug 必填、跟檔名對齊」這條規範沒有任何規則承載的後果，不是 L8 的判定範圍——L8 管拼字一致、那條規範管有沒有。**目前 lint 與 cards 都沒有規則在執行「必填」那一半**，所以它的合規率沒有任何自動訊號。這是一個記錄在案的邊界，不是遺漏。**處置已決定、排在 L8 之後的獨立一輪**：補齊那 173 篇的 slug（值取檔名 stem），補完後 663 條連結全部接回，再判斷「必填」要不要也做成規則。
+
+驗收基準要能被重跑，否則它在字面上存在、在操作上不存在。產生上面那三個數字的指令記在這裡：
+
+```bash
+# 有 [permalinks] 模板的 section 裡、無 slug 的頁面數
+for s in posts work-log record other; do
+  n=$(rg -L --files "content/$s" -g '*.md' -g '!_index.md' 2>/dev/null | while read -r f; do
+        awk '/^---$/{c++; next} c==1 && /^slug:/{found=1} c==2{exit} END{exit found}' "$f" && echo "$f"
+      done | wc -l)
+  echo "$s: $n"
+done
+```
+
+補完之後重跑，四個 section 都應該是 0；斷鏈數隨之歸零。這一輪的登記在 [文章列表](/posts/) 的 Backlog 段。
 
 heading ID 用 Hugo 的 github 型 auto-ID 演算法計算，規則（hugo 建最小站實測確認）是保留 unicode 字母、數字與 `_` 並轉小寫，空白與既有連字號轉 `-`，其餘一律丟棄且**不留連字號**——全形括號、冒號、頓號、引號都適用，這也是手算 anchor 最常算錯的地方。ID 從渲染後的文字產生，所以標題內的 markdown 連結只取顯示文字、行內 code 只取內容。同頁重複標題依文件順序加 `-1` / `-2` 後綴。標題寫 `{#custom-id}` 時該 ID 一併登記。
 
@@ -480,8 +512,10 @@ git config core.hooksPath .githooks
 
 1. 先在 `scripts/mdtools/internal/rules/` 實作為可開關的 rule（預設關）。
 2. 在代表性檔案上測試誤判率。
-3. 誤判率 < 1% 且有明確教材品質收益時，預設開啟並更新本文。
-4. 預設開啟後同步修正既有違規；若違規數量大，可分批 PR。
+3. **在規則的實作檔頂端宣告作用域**：這條規則掃哪些檔案、以及它結構性看不到哪些檔案。作用域是獨立於規則內容的 fact（見 [#221](/report/lint-scope-must-be-explicit-fact/)），住址固定在實作檔的 doc comment，本文只寫規則說什麼。沒有宣告時，作用域是繼承來的預設值，而繼承的預設與被決定過的選擇在程式碼裡長得一樣。
+4. **上線前量一次存量並記下數字**：規則對全 content 樹報幾條、以及它的沉默區有多大。數字寫進本文對應的規則段，附上重跑那個量測的指令——沒有指令的驗收基準在字面上存在、在操作上不存在。存量非零時在對應模組的 `## Backlog` 登記清理工作，不留在規則說明裡。
+5. 誤判率 < 1% 且有明確教材品質收益時，預設開啟並更新本文。
+6. 預設開啟後同步修正既有違規；若違規數量大，可分批 PR。
 
 ---
 

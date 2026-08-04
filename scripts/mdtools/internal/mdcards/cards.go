@@ -42,5 +42,8 @@ func Check(roots []string, cfg rules.Config) ([]report.Violation, error) {
 	if cfg.Cards.CheckSectionWeightConsistency {
 		out = append(out, checkL5SectionWeightConsistency(g, cfg.Cards.WeightExemptSections)...)
 	}
+	if cfg.Cards.CheckSlugFilenameAlignment {
+		out = append(out, checkL8SlugFilenameAlignment(g)...)
+	}
 	return out, nil
 }

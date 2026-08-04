@@ -1,7 +1,7 @@
 ---
 title: "macOS 移除多餘的 iOS Simulator Runtime"
 date: 2026-07-05
-slug: "macos-remove-redundant-ios-simulators"
+slug: "macos_remove_redundant_ios_simulators"
 description: "磁碟空間不足、發現裝了多版 iOS Simulator runtime 時的移除流程。透過 simctl 指令移除的步驟、順序、以及 Xcode GUI 的打包限制。"
 tags: ["macos", "xcode", "ios-simulator", "disk-space", "troubleshooting"]
 ---

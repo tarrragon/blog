@@ -1,7 +1,7 @@
 ---
 title: "iOS App on Mac：Apple Silicon 跑 iOS App 的機制"
 date: 2026-07-05
-slug: "macos-ios-app-on-mac"
+slug: "macos_ios_app_on_mac"
 description: "Apple Silicon Mac 可以直接跑 iOS App，這些 App 的容器用 UUID 命名、不出現在 /Applications、移除後容器可能殘留。理解這個機制後才能判斷 ~/Library/Containers 裡佔了幾 GB 的 UUID 目錄是什麼。"
 tags: ["macos", "apple-silicon", "disk-space"]
 ---

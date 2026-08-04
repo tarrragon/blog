@@ -1,7 +1,7 @@
 ---
 title: "macOS Preboot 卷：從 Intel 的 1G 到 Apple Silicon 的 8G"
 date: 2026-07-05
-slug: "macos-preboot-volume-check"
+slug: "macos_preboot_volume_check"
 description: "排查磁碟空間時需要判斷 Preboot 卷的大小是否合理。Intel 時代的 1-2G 經驗不適用於 Apple Silicon，理解 Cryptex 機制後才能做正確判斷。"
 tags: ["macos", "disk-space", "apfs", "apple-silicon"]
 ---
