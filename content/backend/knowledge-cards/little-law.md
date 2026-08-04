@@ -18,3 +18,5 @@ Little's Law 連接「業務需求」跟「系統參數」。給定預期 RPS（
 ## 設計責任
 
 Little's Law 只在穩態（steady state）下成立、不適用 burst transient。應用前要確認系統已度過 warmup、流量穩定才有意義。所有 stage（網路、應用、DB）都可獨立套用、用於 latency budget 分解。
+
+同一條式子倒過來讀是故障診斷的工具：配額被誰佔走由 λW 決定，而 W 的跨度（毫秒到永不歸還）遠大於 λ 的跨度，因此佔用量的排序多半由逗留時間主導、而報錯的位置只跟到達率有關。這兩者分屬不同元件時的歸因順序見 [配額耗盡的症狀落在申請最頻繁的元件、成因在持有最久的那個](/report/resource-exhaustion-symptom-vs-holder/)。

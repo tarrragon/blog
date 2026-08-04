@@ -36,7 +36,7 @@ supervisord 是單機上的經典應用監管者，比 systemd 更輕、跨發�
 
 跑在容器裡時，還有一個容易漏掉的選型：誰當 PID 1。容器的 PID 1 是 init process，除了跑服務，還負責接收 `SIGTERM`／`SIGINT` 並轉發給子進程、以及回收結束的子進程（zombie reaping）。這個責任交給誰，直接影響服務收不收得到關閉信號、以及會不會累積殭屍進程。
 
-解法看容器裡跑幾個進程，兩種修法對應兩種情況、不是互斥的競爭方案。單一主進程的情況，用 exec form（或啟動腳本裡 `exec`）讓服務直接取代 shell 當 PID 1、自己接手信號就夠。多進程容器還多一個問題：若 PID 1 不做 `wait()`，結束的子進程會變殭屍累積，這時要用 tini 或 dumb-init 這類輕量 init 當 PID 1，由它負責信號轉發跟殭屍回收，或在 Kubernetes 設 `shareProcessNamespace` 讓 kubelet 接手。一句話分工：exec form 解單進程的信號傳遞，tini／dumb-init 解多進程的信號傳遞加殭屍回收。信號傳不到服務造成的關閉失敗，是 [graceful shutdown](/operations/04-service-health/graceful-shutdown/) 章最常見的失效模式，這裡是它的選型根因。
+解法看容器裡跑幾個進程，兩種修法對應兩種情況、不是互斥的競爭方案。單一主進程的情況，用 exec form（或啟動腳本裡 `exec`）讓服務直接取代 shell 當 PID 1、自己接手信號就夠。多進程容器還多一個問題：若 PID 1 不做 `wait()`，結束的子進程會變殭屍累積，這時要用 tini 或 dumb-init 這類輕量 init 當 PID 1，由它負責信號轉發跟殭屍回收，或在 Kubernetes 設 `shareProcessNamespace` 讓 kubelet 接手。一句話分工：exec form 解單進程的信號傳遞，tini／dumb-init 解多進程的信號傳遞加殭屍回收。殭屍為什麼會因為 PID 1 不做 `wait()` 而累積、以及累積到什麼程度會讓整個 uid 開不了新進程，機制見 [殭屍程序與使用者程序上限](/macos/macos_process_limit_zombie_reaping/)（該篇量的是 macOS 的參數，exit 與 wait 兩階段的機制本身是 POSIX 通用的）。信號傳不到服務造成的關閉失敗，是 [graceful shutdown](/operations/04-service-health/graceful-shutdown/) 章最常見的失效模式，這裡是它的選型根因。
 
 ## 選型收斂
 

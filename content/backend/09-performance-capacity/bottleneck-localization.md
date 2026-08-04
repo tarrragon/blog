@@ -26,6 +26,8 @@ Brendan Gregg 的 USE method 提供逐層定位的最小框架：對每個資源
 
 USE 跟 [RED method](/backend/knowledge-cards/red-method/)（rate / errors / duration）互補：USE 看「哪個資源頂不住」、RED 看「哪個 endpoint 表現變差」。容量規劃通常先用 USE 找瓶頸、再用 RED 看影響面。
 
+資源是配額型的（connection pool、fd、鎖、外部 API 額度）時，USE 指出它 saturate 之後還有一步：查誰佔住它。這一步不能靠 RED 的錯誤分布推——報錯最多的端點通常不是佔住配額的那個，判讀順序見 [配額耗盡的症狀落在申請最頻繁的元件、成因在持有最久的那個](/report/resource-exhaustion-symptom-vs-holder/)。
+
 詳見 [USE Method 卡片](/backend/knowledge-cards/use-method/)。
 
 ## 逐層定位流程

@@ -220,13 +220,16 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                        | 類型   | 前置條件                                     | 規模       |
-| --------------------------------------------------------------------------- | ------ | -------------------------------------------- | ---------- |
-| 負載工具 deep article（JMeter / Gatling / Locust / Vegeta）                 | vendor | 需與 06 界定角度分工（效能工程 vs 驗證流程） | 4 篇（大） |
-| 流量錄製與鏡像（GoReplay / Service Mesh Mirroring / VPC Traffic Mirroring） | vendor | 無                                           | 3 篇（中） |
-| 持續剖析（Pyroscope / Parca）                                               | vendor | 無                                           | 2 篇（中） |
-| 成本工具（Akamas / Vantage / CloudHealth / AWS Cost Explorer）              | vendor | 無                                           | 4 篇（大） |
-| 認證運算的容量規劃（密碼雜湊的 CPU 與記憶體尖峰、與其他負載的共存）         | 主章   | 無（7.30 路由過來、已給最小推估法）          | 小         |
+| 項目                                                                                                                   | 類型   | 前置條件                                                    | 規模       |
+| ---------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------- | ---------- |
+| 負載工具 deep article（JMeter / Gatling / Locust / Vegeta）                                                            | vendor | 需與 06 界定角度分工（效能工程 vs 驗證流程）                | 4 篇（大） |
+| 流量錄製與鏡像（GoReplay / Service Mesh Mirroring / VPC Traffic Mirroring）                                            | vendor | 無                                                          | 3 篇（中） |
+| 持續剖析（Pyroscope / Parca）                                                                                          | vendor | 無                                                          | 2 篇（中） |
+| 成本工具（Akamas / Vantage / CloudHealth / AWS Cost Explorer）                                                         | vendor | 無                                                          | 4 篇（大） |
+| 認證運算的容量規劃（密碼雜湊的 CPU 與記憶體尖峰、與其他負載的共存）                                                    | 主章   | 無（7.30 路由過來、已給最小推估法）                         | 小         |
+| 資源量測涵蓋面盤點：哪些配額該進量測清單、集合怎麼產生與驗齊、缺口往哪路由，含持有者紀錄的粒度設計                     | 主章   | 無（#252 已承接單一資源要不要量的舉證責任、本章只做集合層） | 中         |
+| 配額型資源的上限與餘裕怎麼定：把本模組的容量公式套到 pool / fd / pids / port / 外部 API 配額，含上限不在自己手上的情形 | 主章   | 上一列先落地                                                | 小         |
+| cgroup 資源上限知識卡（`pids.max` 等）：容器裡的配額主體與 per-uid 的差異                                              | 知識卡 | 無                                                          | 1 張       |
 
 與 06 共用四個負載工具（k6 / JMeter / Gatling / Locust），寫作前要先確立本模組讀「效能工程的工具鏈」、06 讀「驗證流程的工具鏈」這條分工，否則兩邊會產出重複內容。
 

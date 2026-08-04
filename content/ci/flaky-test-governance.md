@@ -24,6 +24,8 @@ Detect 階段負責證明 flakiness。單次失敗不應直接貼 flaky 標籤�
 
 Classify 階段負責找根因方向。常見來源包含時間競態、測試順序依賴、共享狀態、外部服務、隨機資料、資源不足、瀏覽器 layout timing、網路模擬與 CI runner 差異；不同來源需要不同修法。
 
+「資源不足」這一類在 runner 上特別難歸因，因為失敗會落在建置或測試的隨機一步、而非佔住資源的那個元件——runner 是長跑程序、平行度又高，配額（程序數、fd、連線）被誰佔住與誰先報錯通常不是同一件事。歸因順序見 [配額耗盡的症狀落在申請最頻繁的元件、成因在持有最久的那個](/report/resource-exhaustion-symptom-vs-holder/)。
+
 Contain 階段負責保護主線。高價值但暫時 flaky 的測試可以進 quarantine workflow，但必須有 owner、issue、到期日與 replacement gate；直接從 required checks 移除而不追蹤，等於降低品質基線。
 
 Fix 階段負責消除非決定性。常見修法是移除固定 sleep、改用可觀察條件等待、隔離資料、固定 random seed、避免測試共享全域狀態、mock 不穩定外部依賴或調整資源限制。

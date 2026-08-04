@@ -1,11 +1,11 @@
 ---
 title: "macOS"
 slug: "macos"
-description: "macOS 系統架構、磁碟管理、開發環境設定。從 APFS 卷結構到 App Container 辨識，理解機制後自己判斷。"
+description: "macOS 系統架構、磁碟與程序資源、開發環境設定。從 APFS 卷結構到程序表配額，理解機制後自己判斷。"
 tags: ["macos", "系統管理"]
 ---
 
-macOS 的系統架構、磁碟空間管理、開發環境設定。每篇文章教一個獨立的機制或概念，讀者理解機制後能自己判斷問題、不需要查表。
+macOS 的系統架構、磁碟空間管理、程序資源配額、開發環境設定。每篇文章教一個獨立的機制或概念，讀者理解機制後能自己判斷問題、不需要查表。
 
 ## 系統架構
 
@@ -16,6 +16,12 @@ macOS 的系統架構、磁碟空間管理、開發環境設定。每篇文章�
 - [iOS Simulator Runtime 架構](macos_ios_simulator_runtime_architecture/) — 為什麼一組 runtime 要 16G、DMG 掛載成獨立 APFS Container 的機制
 - [App Sandbox 與 Container 架構](macos_app_sandbox_container/) — ~/Library/Containers 的設計目的、內部結構、bundle ID 命名慣例
 - [iOS App on Mac](macos_ios_app_on_mac/) — Apple Silicon 跑 iOS App 的機制、UUID 容器、容器殘留
+
+## 程序與資源配額
+
+程序表格位是磁碟以外的另一類有限資源，機制與排查合在同一篇：
+
+- [殭屍程序與使用者程序上限](macos_process_limit_zombie_reaping/) — 兩道 fork 關卡與一道 setrlimit 天花板、exit 與 wait 兩階段、reparenting 一次回收，附指認堆積父程序的三步診斷
 
 ## 磁碟空間管理
 
