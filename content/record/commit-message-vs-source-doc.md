@@ -148,6 +148,8 @@ void processPayment(Payment p) {
 
 這條註解兼具「歷史原因」和「持續適用的限制」——未來維護者看到這段 code 會想「為什麼沒 retry？」，這條註解防止他「順手加上」。**這類兼具兩種性質的內容是少數該留在 source 的歷史相關 doc**。
 
+不過「防止他順手加上」這半要再拆一次：順手加上的人不會停下來讀那行註解，而「加了 retry 會重複扣款」寫得成一條測試。留在 source 的是「gateway 非冪等」這個 repo 裡查不到的外部事實，防護那半交給測試（[#253 寫註解的動機是怕被改壞時要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)）。
+
 判斷標準：「未來讀者**不知道這條歷史會做錯決定**嗎？」
 
 - 是 → 留 source

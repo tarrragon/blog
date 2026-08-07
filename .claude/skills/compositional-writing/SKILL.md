@@ -61,6 +61,8 @@ metadata:
 
 **技術教材內嵌管理層可彙報的資訊**：技術段落旁嵌入成本量級、時程估算、進度指標與決策簽核點（各 1-2 句），讓讀者學完技術做法的同時拿到向上彙報的素材。成本用量級不用精確數、時程用範圍不用單點、進度用可查詢指標。詳見 [management-reportable-info-in-technical-content](references/principles/management-reportable-info-in-technical-content.md)。
 
+**註解的動機先於註解的文字**：準備寫一則程式碼註解時，先問寫它的動機是「說明這裡在做什麼」還是「怕有人改壞它」。後者不是註解問題——散文型註解不參與執行、改壞的當下不產生任何訊號，而做批次整理與自動化重構的人不會經過那一行。處置是先問那個約束能不能被消除（它通常是某個結構選擇的產物），不能消除才交給會發聲的機制；判準是問這段資訊有沒有對應的斷言（存不存在一條會紅的斷言，不是造不造得出句子），驗證是當場把約束破壞掉、跑測試、把輸出貼出來。詳見 [protective-comment-signals-missing-enforcement](references/principles/protective-comment-signals-missing-enforcement.md)。
+
 **知識卡建卡判準用「最不熟悉的讀者」**：知識卡的建卡判準是「目標讀者群裡最不熟悉的那端能不能理解這個術語」，不是「作者覺得夠不夠常見」。常識是相對於背景的——.htaccess 對 PHP 工程師是常識、對 Node.js 工程師完全陌生。跨背景讀者群的教材裡，幾乎所有領域特定術語都需要建卡。建卡的邊際成本低（40-50 行）、讀者缺卡的代價高（離開教材去 Google、可能找到不一致的解釋）。per [常識是相對於讀者背景的](references/principles/common-knowledge-is-relative-to-reader-background.md)。
 
 **操作步驟帶環境專屬工具路徑**：操作型文章的每一步至少帶一條工具路徑（用什麼軟體、輸入什麼指令）。同一個動作在不同環境（container / VM / 共享主機）的工具路徑可能完全不同——「拍下現況」在 container 是 `docker commit`、在 VM 是 AMI 快照、在共享主機是 FTP mirror + phpinfo。文章涵蓋多種環境時、每一步要按環境分列工具、或標明適用環境。自測問題：「讀者坐在電腦前，下一個動作是打開什麼軟體？」答不出來就是缺口。per [操作指引要帶環境專屬工具路徑](references/principles/operational-how-needs-environment-specific-tooling.md)。
@@ -202,7 +204,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 compositional-writing/
 ├── SKILL.md                              # 本檔：核心原則速查 + 觸發路由
 └── references/
-    ├── writing-code-comments.md          # 情境 1：程式碼註解
+    ├── writing-code-comments.md          # 情境 1：程式碼註解（含「動機先於文字」前置分岔）
     ├── writing-documents.md              # 情境 2：文件撰寫
     ├── writing-logs.md                   # 情境 3：log 輸出
     ├── writing-prompts.md                # 情境 4：prompt 撰寫
@@ -231,6 +233,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-07-20
+**Version**: 0.47.0 — 新增 `protective-comment-signals-missing-enforcement` principle 卡，並在 `writing-code-comments.md` 的自檢清單之前插入「動機先於文字」節。補的是該 reference 的結構性缺口：五條原則、十列禁止模式、八題自檢清單的問法全是「這則註解寫了什麼」，沒有一處問「為什麼要寫」——於是一行動機是防護的註解可以通過全部檢查而仍然是錯的窗口，而 skill 會把那個循環複製到每個裝了它的專案。實測來源是同一行 doc 被 review 退兩次、第二版寫的是真實存在的跨函式讀寫順序約束仍被退，兩次的判斷對象都是文字。卡片含動機判準的三個弱點（回溯建構、混合動機、防衛性回答）、二元判準掛在斷言存在性而非造句能力、破壞實測作為收斂條件與各步驟的痕跡設計、以及四條邊界。禁止模式清單加一列（防護意圖寫成註解）、自檢清單加一題（動機是說明還是防護、且排在最前）。
+
 **Version**: 0.46.0 — `judgment-content-needs-scenarios` 新增「第六種產出：共同前提沒有住址」。前五種都對單篇操作，第六種只在把幾篇並置之後才出現——同一個判斷被三篇以上當前提引用而沒有任何一篇承接。它在單篇視角下不落空（每篇都給了自己那一角、讀者當下走得下去），所以逐篇檢查看不到；前置段是最常見的藏身處，因為它確實是本篇的適用性閘門，「撞到不屬於這篇的內容」那條不觸發，辨識訊號是那一段回答的問題比本篇主題更早發生且對別篇同樣成立。含缺卡與缺章的分界（定義重複＝術語、判斷的各角重複＝缺章，因為取捨需要並置）、三篇門檻的理由、以及處置（新開一篇、各篇那一角壓成一兩句加路由留著當閘門、新篇要標明自己是誰的上游）。
 
 **Version**: 0.45.0 — 依 #245（原則層與操作層會漂移）規定的反向核對，從本 skill 出發逐條回查對應原則卡的現況，抓到兩處漂移並修正：微案例的挑選規則補「一兩個是上限而非配額、有兩個以上只寫一個要就地寫出漏選理由」（卡片 Round 1 就加了、skill 停在原版，導致實測九則微案例零套用）；出口盤點的單位從「三種」改成規則（卡片 Round 3 已改——判讀表的列、風險邊界的條、out-of-scope 每一項宣告都算，只有微案例末端要等第二階段）。兩處都是四輪十四個 reviewer 沒抓到的，因為沒有任何一輪被要求並排比對兩個 surface。

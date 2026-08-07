@@ -81,8 +81,12 @@ tags: ["testing", "naming", "comment", "review", "assertion"]
 | 存在理由的論證、設計取捨    | 教材／PR 說明          |
 | 取證過程、日期、開發史      | commit 訊息／知識庫    |
 | 分析用的後設詞彙            | 對話裡，用完就留在對話 |
+| 怕有人改壞某個約束          | 一條會紅的測試         |
+
+最後一列跟其他列的性質不同。前面幾列都在分配「這段文字該放哪個 surface」，而它是在說這段內容根本不是文字問題——寫下它的動機是防護，而註解不參與執行、改壞的當下不會發聲。本篇第一節允許留在檔頭的那類註解（「本檔不可初始化 UI 測試綁定」）就是這個形態的邊界案例：它守的是環境約束，而環境約束沒有任何測試接得住，所以留在檔頭是對的。判定方式與當場可執行的驗證見 [#253 寫註解的動機是怕被改壞時要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)。
 
 ## 下一步路由
 
 - 斷言本身的品質 → [斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)
+- 想寫的其實是防護註解、該不該改成一條測試 → [#253 寫註解的動機是怕被改壞時要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)
 - 這套紀律誕生的測試形態 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)

@@ -30,7 +30,15 @@ DDD 是一種設計精神：把業務規則放進領域模型、讓違反規則�
 | 測試證言     | 測試全綠但功能失聯、驗收條款設計                          | [組裝層的可達性](/ddd/composition-root-reachability/) → [不變式的強制層次](/ddd/invariant-enforcement-layers/) → 各章「下一步」對應的 work-log case                                                                                                                                                                                                 | 能區分行為測試與接線測試的證言範圍、把可達性寫進 use case 完成定義             |
 | 術語地基     | 讀章節前先補共同語言                                      | [knowledge cards](/ddd/knowledge-cards/) → 回模型設計主梯                                                                                                                                                                                                                                                                                           | 能用卡片語言描述模型設計的責任分佈                                             |
 
-## 章節大綱（backlog）
+## Backlog
+
+| 項目                                   | 類型   | 前置條件 | 規模 |
+| -------------------------------------- | ------ | -------- | ---- |
+| Shared Mutable State（共享可變狀態）卡 | 知識卡 | 無       | 1 張 |
+
+「共享可變狀態」目前在站上只出現在並行語境的反模式列舉裡、沒有一處定義它，而 [不變式的強制層次](/ddd/invariant-enforcement-layers/) 與 [#253](/report/protective-comment-signals-missing-enforcement/) 的「這個約束能不能被消除」那一步整個承重在這個詞上——讀者不懂什麼是共享可變狀態，就看不懂「值放在共享可變狀態裡」為何長出「必須活過某次操作」這個約束。落在 ddd 卡庫而非並行語境，是因為這裡用的角度是狀態的所有權與生命週期（值該屬於誰、該不該多方讀寫），跟並行語境的 race condition 是兩個語意責任。
+
+### 章節大綱
 
 大綱是 backlog、不是承諾清單：章節邊界會隨 case 回補調整。候選章節從兩個專案的 case（書籍管理 App 的開發日誌、POS App 的領域模型）浮現：
 
