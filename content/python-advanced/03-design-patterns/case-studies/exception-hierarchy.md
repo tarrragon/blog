@@ -6,7 +6,6 @@ weight: 3
 tags: ["python", "python-advanced", "design-patterns", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/hook_io.py` 的實際程式碼，展示如何設計清晰的異常階層，並用 ExceptionGroup 處理多重錯誤。
 
 ## 先備知識
@@ -1179,7 +1178,7 @@ def debug_config_error():
 | Python 版本 | 所有版本 | 所有版本   | 3.11+          |
 | 程式碼量    | 最少     | 中等       | 較多           |
 
-### 何時使用哪種方案？
+### 方案選擇：腳本用標準異常、函式庫用自定義階層、批次收錯用 ExceptionGroup
 
 #### 使用標準異常（如 `hook_io.py` 的做法）
 
@@ -1199,7 +1198,7 @@ def debug_config_error():
 - 驗證邏輯有多個檢查點
 - 需要讓使用者一次看到所有問題
 
-## 什麼時候該用這個技術？
+## 適用時機：函式庫需區分錯誤類型並保留異常鏈
 
 **適合使用**：
 

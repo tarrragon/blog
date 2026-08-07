@@ -19,7 +19,7 @@ tags: ["python", "python-advanced", "packaging", "c-extension"]
 
 ---
 
-## 【概念】什麼是封裝預編譯二進位？
+## 【概念】封裝預編譯二進位：Python 薄封裝加上預編譯執行檔
 
 ### 架構模式
 
@@ -117,7 +117,7 @@ osl-packages/mermaid-ascii 架構：
 
 ---
 
-## 【優點】為什麼使用這種模式？
+## 【優點】這種模式兼得效能與既有實現的重用
 
 ### 1. 效能
 

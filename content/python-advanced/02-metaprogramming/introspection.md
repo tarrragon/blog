@@ -6,7 +6,6 @@ weight: 4
 tags: ["python", "python-advanced", "metaprogramming"]
 ---
 
-
 反射是程式檢視和修改自身結構的能力。Python 提供了強大的反射工具，讓你能夠動態地檢視物件、取得函式簽名、甚至修改執行中的程式。
 
 ## 先備知識
@@ -26,7 +25,7 @@ tags: ["python", "python-advanced", "metaprogramming"]
 
 ## 【原理層】反射的基本概念
 
-### 什麼是反射？
+### 反射是程式在執行時檢視自身結構的能力
 
 反射是程式在執行時檢視自身結構的能力：
 

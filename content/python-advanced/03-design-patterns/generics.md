@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "design-patterns", "generics", "type-system"]
 ---
 
-
 入門系列介紹了 `TypeVar` 的基本用法。本章深入探討泛型的進階特性，讓你能夠建立型別安全的抽象層。
 
 ## 先備知識
@@ -244,7 +243,7 @@ class StringBox(Container[str]):
 
 ## Protocol 與結構化子型別
 
-### 什麼是 Protocol？
+### Protocol 以結構定義介面、無需明確繼承
 
 Protocol 定義「介面」，任何實現該介面的類別都被視為符合該 Protocol，無需明確繼承。
 
@@ -308,7 +307,7 @@ class CircleProtocol:  # 不需要繼承
 print(isinstance(CircleProtocol(), DrawableProtocol))  # True
 ```
 
-### 何時選擇 Protocol？
+### Protocol 適合第三方類別、回調介面與鬆散耦合
 
 ```python
 # 使用 Protocol 的情況：

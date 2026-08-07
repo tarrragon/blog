@@ -6,10 +6,9 @@ weight: 4
 tags: ["python", "testing", "unittest"]
 ---
 
-
 當測試的程式碼依賴外部資源（檔案系統、網路、stdin/stdout）時，我們需要使用 Mock 來隔離這些依賴，確保測試的可靠性和速度。
 
-## 為什麼需要 Mock？
+## Mock 隔離外部依賴讓測試可靠
 
 ### 問題場景
 
@@ -75,7 +74,6 @@ from unittest.mock import patch
 
 from hook_io import read_hook_input, write_hook_output
 
-
 class TestReadHookInput(unittest.TestCase):
     """測試 read_hook_input 函式"""
 
@@ -96,7 +94,6 @@ class TestReadHookInput(unittest.TestCase):
             result = read_hook_input()
 
         self.assertEqual(result, {})
-
 
 class TestWriteHookOutput(unittest.TestCase):
     """測試 write_hook_output 函式"""
@@ -203,7 +200,6 @@ import unittest
 from unittest.mock import patch, Mock
 
 from git_utils import run_git_command, get_current_branch
-
 
 class TestRunGitCommand(unittest.TestCase):
 

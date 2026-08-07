@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "metaprogramming", "metaclass", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Descriptor Protocol 實現宣告式驗證。
 
 ## 先備知識
@@ -531,7 +530,7 @@ ValueError: timeout: 超時時間無效，必須 >= 0 且 <= 300
 | 調試     | 容易追蹤             | 需要了解 `__get__`/`__set__`     |
 | 彈性     | 高                   | 中等（需要遵循 Descriptor 協議） |
 
-## 什麼時候該用宣告式驗證？
+## 適用時機：驗證規則跨類別重用且需賦值時自動驗證
 
 **適合使用**：
 

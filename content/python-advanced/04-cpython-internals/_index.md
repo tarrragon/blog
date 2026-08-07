@@ -6,10 +6,9 @@ weight: 4
 tags: ["python", "python-advanced", "cpython"]
 ---
 
-
 本模組深入 CPython 直譯器的內部，幫助你理解 Python 的運作原理。
 
-## 為什麼學習 CPython 內部？
+## 理解 CPython 內部能避開效能陷阱、銜接擴展開發
 
 - **寫出更好的程式碼**：理解底層機制有助於避免效能陷阱
 - **除錯能力**：深入理解有助於解決複雜問題

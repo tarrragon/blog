@@ -6,7 +6,6 @@ weight: 4
 tags: ["python", "python-advanced", "packaging"]
 ---
 
-
 本章介紹維護 Python 套件的長期策略。
 
 ## 本章目標
@@ -46,7 +45,7 @@ my-package/
     └── test_module.py
 ```
 
-### 為什麼推薦 Src Layout？
+### Src Layout 強制測試安裝版、貼近使用者環境
 
 ```text
 Flat Layout 的問題：

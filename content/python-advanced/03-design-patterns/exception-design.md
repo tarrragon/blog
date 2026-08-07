@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "design-patterns"]
 ---
 
-
 入門系列介紹了異常處理的基本策略。本章深入探討如何為大型專案設計異常架構，包括異常層級、異常鏈、以及 Python 3.11 引入的 ExceptionGroup。
 
 ## 先備知識
@@ -15,7 +14,7 @@ tags: ["python", "python-advanced", "design-patterns"]
 
 ## 異常層級設計
 
-### 為什麼需要層級設計？
+### 層級設計讓呼叫者自選錯誤處理粒度
 
 當專案規模增長，你會需要：
 

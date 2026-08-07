@@ -27,7 +27,7 @@ Python 3.5+ 引入的型別系統讓程式碼更易讀、更易維護。本模�
 - `hook_validator.py` - Dataclass 定義
 - `parsers/base.py` - Enum 使用範例
 
-## 為什麼需要型別系統？
+## 型別系統讓資料形狀不再靠猜
 
 ```python
 # 沒有型別提示

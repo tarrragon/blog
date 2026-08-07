@@ -6,7 +6,6 @@ weight: 3
 tags: ["python", "python-advanced", "metaprogramming", "descriptor", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/hook_io.py` 的實際程式碼，展示如何結合 Descriptor 和 dataclass 設計類似 Django Model Field 的宣告式 API。
 
 ## 先備知識
@@ -868,7 +867,7 @@ From nested dict: HookOutput(hook_specific_output=HookSpecificOutput(...), syste
 - 欄位定義即文檔
 - 易於擴展和測試
 
-## 什麼時候該用這個技術？
+## 適用時機：ORM 式欄位定義與 Schema 自動生成
 
 **適合使用**：
 

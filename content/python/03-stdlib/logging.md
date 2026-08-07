@@ -6,10 +6,9 @@ weight: 5
 tags: ["python", "stdlib", "logging"]
 ---
 
-
 `logging` 模組提供了靈活的日誌記錄功能。相較於 `print()`，日誌系統提供了等級控制、格式化和輸出目標管理等功能。
 
-## 為什麼用 logging 而非 print？
+## logging 提供 print 沒有的等級控制
 
 ```python
 # 使用 print 的問題
@@ -46,7 +45,6 @@ import os
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-
 
 def setup_hook_logging(
     hook_name: str,

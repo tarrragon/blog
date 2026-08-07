@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "c-extension", "ctypes", "case-study"]
 ---
 
-
 本案例展示如何使用 ctypes 直接呼叫系統 API，處理 Python 標準庫未提供的底層功能。
 
 ## 先備知識
@@ -16,7 +15,7 @@ tags: ["python", "python-advanced", "c-extension", "ctypes", "case-study"]
 
 ## 問題背景
 
-### 為什麼需要直接呼叫系統 API？
+### 直接呼叫系統 API 補上標準庫未封裝的功能
 
 Python 標準庫涵蓋了大多數常見需求，但有時我們需要：
 

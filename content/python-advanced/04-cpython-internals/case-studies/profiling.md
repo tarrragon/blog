@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "cpython", "profiling", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/markdown_link_checker.py` 的實際程式碼，展示如何用 cProfile 和 line_profiler 進行效能分析。
 
 ## 先備知識
@@ -975,7 +974,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
 | 學習成本   | 無       | 低            | 中等               |
 | 結果準確度 | -        | 高            | 非常高             |
 
-## 什麼時候該做效能分析？
+## 適用時機：程式明顯變慢或發布前的效能驗證
 
 適合分析：
 

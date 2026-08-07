@@ -6,7 +6,6 @@ weight: 4
 tags: ["python", "python-advanced", "design-patterns", "generics", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Generic 和 TypeVar 建立型別安全的通用驗證器。
 
 ## 先備知識
@@ -877,7 +876,7 @@ print(result.errors)    # ["[1] Value cannot be empty"]
 | 執行效能 | 略佳：無泛型開銷         | 略差：有 Protocol 檢查開銷     |
 | 錯誤訊息 | 清晰：直接指出問題       | 可能較模糊：泛型相關錯誤不易讀 |
 
-### 何時選擇泛型設計？
+### 泛型適合多類型重用、單一類型用具體型別
 
 **選擇泛型設計**當：
 
@@ -893,7 +892,7 @@ print(result.errors)    # ["[1] Value cannot be empty"]
 - 團隊對泛型不熟悉
 - 效能是關鍵考量
 
-## 什麼時候該用這個技術？
+## 適用時機：建驗證函式庫且驗證器需組合重用
 
 **適合使用**：
 

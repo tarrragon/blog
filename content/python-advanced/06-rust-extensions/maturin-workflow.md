@@ -6,7 +6,6 @@ weight: 3
 tags: ["python", "python-advanced", "rust", "pyo3", "packaging"]
 ---
 
-
 本章介紹 Maturin，Rust Python 套件的建構工具。
 
 ## 本章目標
@@ -19,7 +18,7 @@ tags: ["python", "python-advanced", "rust", "pyo3", "packaging"]
 
 ---
 
-## 【原理層】Maturin 是什麼？
+## 【原理層】Maturin 是 Rust Python 套件的一鍵建構工具
 
 ### 建構工具的角色
 

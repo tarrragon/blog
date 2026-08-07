@@ -587,7 +587,7 @@ print(f"加速: {sync_time / async_time:.1f}x")
 | 測試     | 簡單            | 需要 pytest-asyncio  |
 | 記憶體   | 低              | 略高（維護多個進程） |
 
-## 什麼時候該用非同步 subprocess？
+## 適用時機：多個外部命令並行或在非同步框架內執行
 
 **適合使用**：
 

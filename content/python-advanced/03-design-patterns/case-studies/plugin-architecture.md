@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "design-patterns", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Protocol 和註冊機制實現可擴展的插件系統。
 
 ## 先備知識
@@ -135,7 +134,7 @@ class ValidationCheck(Protocol):
         ...
 ```
 
-##### 為什麼用 Protocol 而不是 ABC？
+##### 選 Protocol 的理由：不強制繼承、現有類別直接相容
 
 - Protocol 是「鴨子型別」的靜態版本
 - 不強制繼承，現有類別只要有對應方法就能用
@@ -1105,7 +1104,7 @@ print(validator.registry.list_checks())
 | **除錯難度**   | 簡單：程式碼集中     | 需要追蹤插件來源                 |
 | **效能開銷**   | 無                   | 輕微：註冊和迭代成本             |
 
-## 什麼時候該用這個技術？
+## 適用時機：需要第三方擴展且功能頻繁新增
 
 **適合使用**：
 

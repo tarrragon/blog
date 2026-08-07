@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "packaging", "pyproject"]
 ---
 
-
 本章介紹 pyproject.toml 的結構與設定方式。
 
 ## 本章目標
@@ -32,7 +31,7 @@ Python 打包的演進：
 └── 2025: pyproject.toml 成為主流標準
 ```
 
-### 為什麼需要 pyproject.toml？
+### pyproject.toml 用靜態設定取代 setup.py 的程式碼執行
 
 ```text
 setup.py 的問題：
@@ -422,7 +421,7 @@ my-package/
 where = ["src"]
 ```
 
-### 為什麼推薦 src layout？
+### src layout 避免誤匯入未安裝的本地套件
 
 ```text
 Src Layout 的優點：

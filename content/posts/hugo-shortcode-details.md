@@ -31,7 +31,7 @@ console.log('Hello World');
 MD033/no-inline-html: Inline HTML [Element: details]
 ```
 
-## 為什麼會有這個警告？
+## 警告的來源：MD033 守 Markdown 純淨性
 
 ### Markdown 設計哲學
 
@@ -51,7 +51,7 @@ MD033 規則旨在：
 
 ## Hugo Shortcode 解決方案
 
-### 什麼是 Shortcode？
+### Shortcode 是 Hugo 的自定義標記機制
 
 Hugo Shortcode 是 Hugo 靜態網站生成器提供的一個強大功能，允許你：
 

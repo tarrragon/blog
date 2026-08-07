@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "metaprogramming"]
 ---
 
-
 元編程（Metaprogramming）是指撰寫可以操作程式碼的程式碼。Python 提供了豐富的元編程機制，包括 Descriptor、Metaclass、類別裝飾器等。
 
 ## 你已經在使用元編程
@@ -36,7 +35,7 @@ class Parser(ABC):
 
 這些都是元編程的入門應用。本模組將深入探討它們背後的原理，以及如何創建自己的元編程工具。
 
-## 為什麼學習元編程？
+## 元編程是理解框架與建立抽象的基礎
 
 理解元編程機制有多重好處：
 
@@ -68,7 +67,7 @@ class Parser(ABC):
 - 入門系列 [4.4 單例與快取](/python/04-oop/singleton-cache/)
 - 熟悉 Python 的類別與物件
 
-## 何時使用元編程？
+## 元編程從簡單方案開始、深度定制才用 Metaclass
 
 元編程強大但複雜，使用前請考慮：
 

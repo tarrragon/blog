@@ -8,7 +8,7 @@ tags: ["python", "python-advanced", "asyncio"]
 
 Python 的 `asyncio` 模組提供了異步程式設計的基礎設施。本模組將帶你從基礎概念到實戰應用，全面掌握 Python 的異步程式設計。
 
-## 為什麼學習 asyncio？
+## asyncio 是 I/O 密集任務的標準方案
 
 在現代 Python 開發中，asyncio 已經成為處理 I/O 密集任務的標準方案：
 

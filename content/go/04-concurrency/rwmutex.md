@@ -116,7 +116,7 @@ func (r *UserRepository) Users() map[string]User {
 
 呼叫者拿到的是複本，不能繞過 `UserRepository` 修改內部狀態。
 
-## Mutex 還是 RWMutex？
+## 讀多寫少用 RWMutex、不確定先用 Mutex
 
 選擇鎖的核心規則是：讀多寫少且讀操作可並行時用 `RWMutex`；不確定時先用 `Mutex`，設計更簡單。
 

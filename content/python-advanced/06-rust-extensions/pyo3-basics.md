@@ -20,7 +20,7 @@ tags: ["python", "python-advanced", "rust", "pyo3"]
 
 ## 【原理層】PyO3 的設計
 
-### PyO3 是什麼？
+### PyO3 是 Rust 與 Python 之間的雙向橋樑
 
 PyO3 是 Rust 與 Python 之間的橋樑：
 

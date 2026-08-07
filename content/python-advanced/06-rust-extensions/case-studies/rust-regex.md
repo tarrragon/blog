@@ -223,7 +223,7 @@ static VALID_NAME_REGEX: Lazy<Regex> = Lazy::new(|| {
 });
 ```
 
-##### 為什麼用 `once_cell::sync::Lazy`？
+##### `once_cell::sync::Lazy` 保證執行緒安全的一次性初始化
 
 - **執行緒安全**：`Lazy` 確保初始化只執行一次，即使多執行緒同時存取
 - **延遲初始化**：只在第一次使用時編譯正則表達式
@@ -1224,7 +1224,7 @@ if __name__ == "__main__":
 // (with performance trade-offs)
 ```
 
-## 什麼時候該用 Rust regex？
+## 適用時機：大量文字驗證且要保證線性時間
 
 ### 適合使用
 

@@ -6,10 +6,9 @@ weight: 7
 tags: ["python", "stdlib", "performance"]
 ---
 
-
 Python 提供了多種並行處理的方式。本章介紹三個核心模組，幫助你根據任務特性選擇合適的方案。
 
-## 為什麼需要並行處理？
+## 並行處理加速批次下載與大量運算
 
 在實際開發中，我們常遇到需要同時處理多個任務的情況：
 
@@ -62,7 +61,7 @@ def compute_heavy(n):
 
 在深入各模組之前，需要先了解 Python 的一個重要機制。
 
-### 什麼是 GIL？
+### GIL 限制同時只有一個執行緒執行 bytecode
 
 GIL（Global Interpreter Lock）是 CPython 直譯器的一個機制，它確保同一時間只有一個執行緒能執行 Python bytecode。
 

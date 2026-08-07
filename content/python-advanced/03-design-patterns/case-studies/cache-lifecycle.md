@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "design-patterns", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/config_loader.py` 的實際程式碼，展示如何用 Context Manager 管理快取生命週期。
 
 ## 先備知識
@@ -536,7 +535,7 @@ with config_scope() as manager:
 | 記憶體管理 | 可能洩漏                     | 自動清理                 |
 | API 相容性 | N/A                          | 可以相容舊 API           |
 
-## 什麼時候該用 Context Manager 管理快取？
+## 適用時機：快取需要明確生命週期與測試隔離
 
 **適合使用**：
 

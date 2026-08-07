@@ -97,7 +97,7 @@ tags: ["ux-design", "interaction-feedback", "response-time", "perceived-performa
 
 在資料載入前先顯示內容區域的灰色佔位形狀。使用者看到「畫面結構」比看到空白等待更不焦慮。適合列表、卡片等有明確版面的內容。佔位尺寸要與最終內容一致 — 載入完成瞬間的版面跳動（layout shift）比空白等待更傷體驗，會抵銷 skeleton 的全部收益。
 
-### Spinner vs Skeleton：怎麼選？
+### Spinner vs Skeleton：形狀已知用 skeleton、未知用 spinner
 
 Spinner 和 Skeleton Screen 都是等待指示，但適用場景不同。選錯會降低使用者體驗。
 

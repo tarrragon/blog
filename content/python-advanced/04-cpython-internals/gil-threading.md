@@ -25,7 +25,7 @@ GIL（Global Interpreter Lock）是 CPython 中最具爭議的設計之一。本
 
 ---
 
-## 【原理層】為什麼需要 GIL？
+## 【原理層】GIL 存在的理由：保護參考計數的原子性
 
 ### 歷史背景
 

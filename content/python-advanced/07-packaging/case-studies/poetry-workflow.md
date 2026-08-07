@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "packaging", "poetry", "case-study"]
 ---
 
-
 本案例展示如何使用 Poetry 管理現代 Python 專案的完整生命週期，從專案建立到套件發布。
 
 ## 先備知識
@@ -41,7 +40,7 @@ tags: ["python", "python-advanced", "packaging", "poetry", "case-study"]
     └── 新成員上手困難
 ```
 
-### 為什麼選擇 Poetry？
+### 選 Poetry 的理由：自動鎖定相依性與整合環境管理
 
 | 特性           | pip + venv         | Poetry              |
 | -------------- | ------------------ | ------------------- |

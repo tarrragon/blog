@@ -46,7 +46,7 @@ tags: ["report", "事後檢討", "Writing", "multi-round-review", "ai-writing"]
 
 每一輪的遺漏都是因為 frame 的視角限制——同一個 reviewer 用同一個 frame 跑多輪只會重複相同的 catch。多輪的價值在 frame 切換。
 
-## 你的文章需要多輪審查嗎？
+## 多輪審查的觸發判準
 
 - 品質敏感（教學、規範、長期累積的內容）且篇幅 > 100 行 → 至少 2 輪不同 frame
 - 第一輪 finding > 10 → 再加一輪

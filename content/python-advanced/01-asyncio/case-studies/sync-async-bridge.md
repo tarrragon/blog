@@ -1123,7 +1123,7 @@ async def cpu_bound_task():
     return await loop.run_in_executor(cpu_executor, sync_cpu_function)
 ```
 
-## 什麼時候該用這個技術？
+## 適用時機：漸進式遷移與整合同步第三方庫
 
 ### 適合使用
 

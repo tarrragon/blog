@@ -6,10 +6,9 @@ weight: 5
 tags: ["python", "python-advanced", "c-extension"]
 ---
 
-
 本模組介紹如何使用 C/C++ 擴展 Python，提升效能或整合現有的 C 函式庫。
 
-## 為什麼學習 C 擴展？
+## C 擴展解決效能極限與 C/C++ 函式庫整合
 
 - **效能極致**：當 Python 太慢時的解決方案
 - **整合現有庫**：呼叫 C/C++ 函式庫

@@ -79,7 +79,7 @@ clear_config_cache()
 config3 = load_agents_config()  # 重新從檔案載入
 ```
 
-## 為什麼使用這個模式？
+## 模組快取省 I/O 並保證配置一致
 
 ### 效能考量
 

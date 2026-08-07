@@ -6,10 +6,9 @@ weight: 5
 tags: ["python", "python-advanced", "cpython", "free-threading", "gil"]
 ---
 
-
 Python 3.13 開始提供實驗性的 Free-threading 支援，Python 3.14 正式將其升級為官方支援功能。這是 Python 歷史上最重要的並行處理改進之一。
 
-## 什麼是 Free-Threading？
+## Free-Threading 移除 GIL、讓執行緒真正並行
 
 ### GIL 的歷史與限制
 
@@ -278,7 +277,7 @@ if __name__ == "__main__":
 
 Python 3.14 引入了全新的 `concurrent.interpreters` 模組，提供了另一種並行方式。
 
-### 什麼是多解釋器？
+### 多解釋器在同一進程內運行多個隔離的直譯器
 
 多解釋器（Multiple Interpreters）是在同一個進程中運行多個獨立的 Python 直譯器：
 

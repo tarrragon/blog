@@ -8,7 +8,7 @@ tags: ["python", "stdlib", "pathlib"]
 
 `pathlib` 是 Python 3.4+ 引入的現代路徑處理模組，提供物件導向的 API 來處理檔案系統路徑。在 Hook 系統中，幾乎每個檔案都使用 `pathlib`。
 
-## 為什麼使用 pathlib？
+## pathlib 用物件操作取代字串拼路徑
 
 ### 傳統 os.path 方式
 

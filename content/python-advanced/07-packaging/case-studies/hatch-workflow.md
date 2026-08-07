@@ -6,7 +6,6 @@ weight: 3
 tags: ["python", "python-advanced", "packaging", "hatch", "case-study"]
 ---
 
-
 本案例展示如何使用 Hatch 這個 PyPA 推薦的現代 Python 專案管理工具，完成從專案建立到發布的完整流程。
 
 ## 先備知識
@@ -17,7 +16,7 @@ tags: ["python", "python-advanced", "packaging", "hatch", "case-study"]
 
 ## 問題背景
 
-### Hatch 是什麼？
+### Hatch 是 PyPA 出品的一站式專案管理工具
 
 Hatch 是由 PyPA（Python Packaging Authority）成員開發維護的現代 Python 專案管理工具，整合了：
 
@@ -30,7 +29,7 @@ Hatch 功能整合：
 └── 發布工具（hatch publish）
 ```
 
-### 為什麼選擇 Hatch？
+### 選 Hatch 的理由：標準優先且免裝 tox 等週邊
 
 | 優勢           | 說明                                         |
 | -------------- | -------------------------------------------- |

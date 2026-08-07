@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "c-extension", "ctypes", "cffi"]
 ---
 
-
 本章介紹如何使用 ctypes 和 cffi 動態載入和呼叫 C 函式庫。
 
 ## 本章目標
@@ -19,7 +18,7 @@ tags: ["python", "python-advanced", "c-extension", "ctypes", "cffi"]
 
 ---
 
-## 【原理層】什麼是 FFI？
+## 【原理層】FFI 讓 Python 直接呼叫動態連結庫函式
 
 ### 動態連結庫
 

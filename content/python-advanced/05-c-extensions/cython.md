@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "c-extension"]
 ---
 
-
 本章介紹 Cython，一種 Python 的超集語言，可以編譯成 C 程式碼。
 
 ## 本章目標
@@ -19,7 +18,7 @@ tags: ["python", "python-advanced", "c-extension"]
 
 ---
 
-## 【原理層】Cython 是什麼？
+## 【原理層】Cython 是編譯成 C 的 Python 超集
 
 ### Python 的超集
 
@@ -51,7 +50,7 @@ Cython 特有語法：
 Python 程式
 ```
 
-### 為什麼 Cython 比 Python 快？
+### Cython 的速度來自原生 C 型別、跳過物件操作
 
 ```python
 # 純 Python：每次操作都是物件操作

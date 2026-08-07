@@ -207,7 +207,7 @@ dis.dis(sum_builtin)
 
 ## 【效能】從 Bytecode 理解效能
 
-### 為什麼區域變數比全域變數快？
+### 區域變數快：LOAD_FAST 用索引、LOAD_GLOBAL 查 dict
 
 ```python
 import dis
@@ -233,7 +233,7 @@ LOAD_GLOBAL: 需要在 globals() dict 中查找
 LOAD_FAST:   直接用索引存取陣列（O(1)）
 ```
 
-### 為什麼 list comprehension 比 for 迴圈快？
+### list comprehension 靠 LIST_APPEND 指令勝過 for 迴圈
 
 ```python
 import dis

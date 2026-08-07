@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "packaging", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib` 整體結構，展示如何將內部共用庫打包成可重用的 Python 套件。
 
 ## 先備知識
@@ -95,7 +94,7 @@ claude-hooks-lib/
     └── test_hook_logging.py
 ```
 
-##### 為什麼選擇 src layout？
+##### src layout 給套件發布明確邊界、防止漏檔
 
 ```text
 # Flat layout (不推薦用於套件發布)
@@ -713,7 +712,7 @@ hook-validator --all --strict
 | **Poetry**     | 依賴鎖定、虛擬環境管理 | 需要嚴格依賴控制 |
 | **Flit**       | 極簡、僅純 Python      | 簡單函式庫       |
 
-## 什麼時候該打包成套件？
+## 適用時機：程式碼跨專案共用且 API 穩定
 
 ### 適合打包
 

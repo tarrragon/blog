@@ -205,7 +205,7 @@ config: dict[str, Any] = {
 }
 ```
 
-### 何時使用 Any？
+### Any 保留給動態資料與外部 API
 
 - 處理動態資料（如 JSON）
 - 與外部 API 互動

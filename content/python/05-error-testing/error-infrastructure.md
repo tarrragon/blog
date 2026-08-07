@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
 ## 設計解析
 
-### 為什麼用 Callable 包裝？
+### Callable 包裝讓錯誤處理可重用可測試
 
 `run_hook_safely` 接收一個**函式**，而不是直接包裝程式碼區塊。這個設計有三個好處：
 
@@ -132,7 +132,7 @@ run_hook_safely(main, "hook-name")
 
 這就是[高階函式](/python/02-type-system/callable/)在實務中的應用。
 
-### 為什麼 `KeyboardInterrupt` 和 `SystemExit` 要特別處理？
+### `KeyboardInterrupt` 與 `SystemExit` 是控制信號、必須放行
 
 ```python
 except (KeyboardInterrupt, SystemExit):

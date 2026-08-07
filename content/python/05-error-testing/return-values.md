@@ -89,7 +89,7 @@ def get_project_root() -> str:
     return output if success else os.getcwd()
 ```
 
-## 為什麼選擇這個模式？
+## (bool, str) 強制呼叫端處理錯誤
 
 ### 優點
 

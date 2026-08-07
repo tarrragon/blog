@@ -15,7 +15,7 @@ tags: ["python", "python-advanced", "design-patterns"]
 
 ---
 
-## 為什麼取捨不可避免？
+## 品質屬性天然衝突、無法同時最佳化
 
 Stack Overflow 的技術部落格曾發表一篇文章 [Plan for Tradeoffs](https://stackoverflow.blog/2022/01/17/plan-for-tradeoffs-you-cant-optimize-all-software-quality-attributes/)，核心論點是：**你無法同時最佳化所有軟體品質屬性**。
 
@@ -232,7 +232,7 @@ def find_active_premium_users(users: list[User]) -> list[User]:
 
 在這個例子中，第一個版本建立了三個中間列表，但最清楚；第二個版本是合理的平衡；第三個版本的微優化在 99% 的場景中毫無意義，卻犧牲了所有可讀性。
 
-#### 決策框架：何時該優化？
+#### 決策框架：profiling 證實瓶頸才犧牲可讀性優化
 
 ```python
 # 決策流程（虛擬碼）
@@ -373,7 +373,7 @@ def transfer_money(from_account: str, to_account: str, amount: Decimal) -> None:
     # ... 執行轉帳
 ```
 
-#### 何時用哪種？
+#### 內部邏輯 Fail Fast、使用者輸入預先驗證
 
 | 場景         | 建議策略         | 理由                        |
 | ------------ | ---------------- | --------------------------- |

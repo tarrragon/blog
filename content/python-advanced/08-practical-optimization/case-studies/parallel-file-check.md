@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "optimization", "parallel", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/markdown_link_checker.py`，展示如何用 ThreadPoolExecutor 加速 I/O 密集的檔案檢查任務。
 
 ## 先備知識
@@ -138,7 +137,7 @@ total_time = 100 * 7ms = 700ms = 0.7 秒
 # 時間會快速增長
 ```
 
-#### 為什麼適合並行化？
+#### 並行化成立的條件：I/O 密集且任務獨立無共享狀態
 
 1. **I/O 密集**：大部分時間花在檔案讀取和存在性檢查
 2. **任務獨立**：每個檔案的檢查互不依賴
@@ -714,7 +713,7 @@ def check_file(self, file_path: str) -> LinkCheckResult:
     return LinkCheckResult(...)                # 新物件
 ```
 
-## 什麼時候該用這個技術？
+## 適用時機：大量獨立檔案的 I/O 密集批次處理
 
 ### 適合使用
 

@@ -58,7 +58,7 @@ pip install git-filter-repo
 
 ## 基本概念
 
-### 什麼時候使用 git filter-repo？
+### git filter-repo 的適用場景：清敏感資訊、拆併 repository
 
 - 從歷史記錄中移除敏感資訊（密碼、API 金鑰等）
 - 移除不小心 commit 的大型檔案
@@ -267,7 +267,7 @@ NOTICE: Removing 'origin' remote; see 'Why is my origin removed?'
         in the manual if you want to push back there.
 ```
 
-#### 為什麼要移除 Remote？
+#### 移除 Remote 是防止誤推重寫歷史的安全機制
 
 這是 `git filter-repo` 的**安全機制設計**，目的是保護你和你的團隊：
 

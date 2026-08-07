@@ -6,7 +6,6 @@ weight: 4
 tags: ["python", "python-advanced", "optimization", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/git_utils.py` 的 `is_protected_branch()` 和 `is_allowed_branch()` 函式，展示如何用 `functools.lru_cache` 快取重複的分支檢查結果。
 
 ## 先備知識
@@ -786,7 +785,7 @@ def is_feature_enabled(feature: str) -> bool:
 # 需要額外的快取失效機制
 ```
 
-## 什麼時候該用這個技術？
+## 適用時機：重複呼叫的純函數且輸入值有限
 
 **適合使用 lru_cache**：
 

@@ -8,7 +8,7 @@ tags: ["python", "oop", "class"]
 
 工廠模式用於封裝物件的建立邏輯，讓使用者不需要知道具體的類別名稱，只需要提供識別資訊即可取得適當的物件。
 
-## 為什麼需要工廠模式？
+## 工廠把建立邏輯從呼叫端收走
 
 ### 問題場景
 
@@ -58,7 +58,6 @@ class JsonParser(BaseParser):
 class YamlParser(BaseParser):
     def parse(self, content: str) -> dict:
         return yaml.safe_load(content)
-
 
 class ParserFactory:
     """解析器工廠"""
@@ -182,13 +181,11 @@ class ParserFactory:
             raise ValueError(f"Unknown parser type: {parser_type}")
         return parser_class()
 
-
 # 使用裝飾器註冊
 @ParserFactory.register("json")
 class JsonParser(BaseParser):
     def parse(self, content: str) -> dict:
         return json.loads(content)
-
 
 @ParserFactory.register("yaml", "yml")
 class YamlParser(BaseParser):
@@ -235,7 +232,6 @@ class ParserFactory:
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-
 class BaseParser(ABC):
     """解析器基類"""
 
@@ -248,7 +244,6 @@ class BaseParser(ABC):
         """解析檔案"""
         content = Path(path).read_text(encoding="utf-8")
         return self.parse(content)
-
 
 class ParserFactory:
     """解析器工廠"""
@@ -302,7 +297,6 @@ class ParserFactory:
 
         return cls.create(parser_type)
 
-
 # 註冊解析器
 @ParserFactory.register("json", extensions=[".json"])
 class JsonParser(BaseParser):
@@ -310,13 +304,11 @@ class JsonParser(BaseParser):
         import json
         return json.loads(content)
 
-
 @ParserFactory.register("yaml", extensions=[".yaml", ".yml"])
 class YamlParser(BaseParser):
     def parse(self, content: str) -> dict:
         import yaml
         return yaml.safe_load(content) or {}
-
 
 # 使用
 def load_config(path: str) -> dict:
@@ -350,7 +342,6 @@ class ServiceFactory:
         if name not in cls._services:
             raise ValueError(f"Service not registered: {name}")
         return cls._services[name]
-
 
 # 應用程式啟動時註冊服務
 ServiceFactory.register_singleton("database", Database())

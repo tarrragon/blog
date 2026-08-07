@@ -6,7 +6,6 @@ weight: 3
 tags: ["python", "python-advanced", "c-extension"]
 ---
 
-
 本章介紹 pybind11，一個輕量級的 header-only C++ 函式庫，用於建立 Python 綁定。
 
 ## 本章目標
@@ -21,7 +20,7 @@ tags: ["python", "python-advanced", "c-extension"]
 
 ## 【原理層】pybind11 的設計哲學
 
-### 為什麼需要 pybind11？
+### pybind11 用現代 C++ 簡化繁瑣的 Python C API
 
 傳統的 Python C API 非常繁瑣：
 

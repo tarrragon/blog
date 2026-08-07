@@ -8,7 +8,7 @@ tags: ["python", "oop", "class", "inheritance"]
 
 抽象基類（Abstract Base Class，ABC）用於定義介面契約，確保子類別實作必要的方法。這在建立可擴展的框架時特別有用。
 
-## 為什麼需要抽象基類？
+## 抽象基類強制子類實作介面契約
 
 ### 問題場景
 
@@ -289,7 +289,7 @@ def process(parser: Parseable) -> None:
 process(JsonParser())  # OK
 ```
 
-### 何時使用哪個？
+### ABC 適合框架設計、Protocol 適合型別提示
 
 | 特性           | ABC      | Protocol   |
 | -------------- | -------- | ---------- |

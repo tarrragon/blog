@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "metaprogramming", "metaclass"]
 ---
 
-
 Metaclass 是「類別的類別」，控制類別本身的建立過程。這是 Python 中最深層的元編程機制。
 
 ## 先備知識
@@ -189,7 +188,7 @@ print(Plugin._plugins)
 # {'email': <class 'EmailPlugin'>, 'sms': <class 'SMSPlugin'>}
 ```
 
-### 何時用 __init_subclass__，何時用 Metaclass？
+### 註冊與驗證用 __init_subclass__、控制建立過程才用 Metaclass
 
 | 需求                 | 推薦方案                   |
 | -------------------- | -------------------------- |

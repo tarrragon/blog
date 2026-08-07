@@ -6,10 +6,9 @@ weight: 7
 tags: ["python", "python-advanced", "packaging", "pyproject"]
 ---
 
-
 本模組介紹現代 Python 套件的打包標準與發布流程。
 
-## 為什麼學習打包與發布？
+## 打包與發布涵蓋套件從開發到上架的完整生命週期
 
 - **完整生命週期**：從開發到發布的完整流程
 - **現代標準**：pyproject.toml 與 PEP 標準

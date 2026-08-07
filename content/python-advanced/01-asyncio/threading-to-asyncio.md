@@ -6,10 +6,9 @@ weight: 0
 tags: ["python", "python-advanced", "asyncio", "parallel", "event-loop"]
 ---
 
-
 如果你已經熟悉入門系列的 `threading` 模組，本章將幫助你理解為什麼需要 asyncio，以及如何將現有的多執行緒程式碼轉換為異步版本。
 
-## 為什麼要從 threading 轉向 asyncio？
+## threading 的固有限制是轉向 asyncio 的動機
 
 ### threading 的限制
 
@@ -233,7 +232,7 @@ asyncio.run(main())
 
 這種模式讓你可以漸進式地將程式碼遷移到 asyncio。
 
-## 何時選擇哪種方案？
+## 方案選擇：大量 I/O 並發用 asyncio、CPU 密集用 multiprocessing
 
 ### 選擇 threading
 

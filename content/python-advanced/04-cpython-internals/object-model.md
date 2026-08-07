@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "cpython", "memory"]
 ---
 
-
 Python 中「一切皆物件」不只是一句口號，而是 CPython 實現的核心設計。理解 PyObject 是深入 Python 內部的第一步。
 
 ## 先備知識
@@ -27,7 +26,7 @@ Python 中「一切皆物件」不只是一句口號，而是 CPython 實現的�
 
 ## 【原理層】一切皆物件
 
-### 什麼是「一切皆物件」？
+### 「一切皆物件」：數字、函式、類別都是 PyObject
 
 在 Python 中，所有東西都是物件：
 
@@ -287,7 +286,7 @@ print(type(int))    # <class 'type'>
 print(type(type))   # <class 'type'>（type 是自己的實例）
 ```
 
-### 為什麼 is 比 == 快？
+### is 只比指標、== 要呼叫 __eq__
 
 ```python
 # is 只比較記憶體位址（一個指標比較）

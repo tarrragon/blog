@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "cpython", "memory", "optimization", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/config_loader.py` 的實際程式碼，展示如何用 `__slots__` 和 `weakref` 優化記憶體使用。
 
 ## 先備知識
@@ -883,7 +882,7 @@ print(cache.memory_usage())
 | **適用場景**   | 關鍵配置     | 暫時性資料     |
 | **實作複雜度** | 簡單         | 稍微複雜       |
 
-### 何時使用哪種技術？
+### 技術選擇：大量物件用 __slots__、可回收資料用 weakref
 
 ```text
 決策樹：
@@ -906,7 +905,7 @@ print(cache.memory_usage())
 
 ---
 
-## 什麼時候該用這個技術？
+## 適用時機：profiling 確認記憶體瓶頸且物件量大
 
 ### 適合使用
 

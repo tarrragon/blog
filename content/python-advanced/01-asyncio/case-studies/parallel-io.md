@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "asyncio", "parallel", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/git_utils.py` 的實際程式碼，展示如何用 `asyncio.gather` 和 `TaskGroup` 實現高效的並行 I/O 操作。
 
 ## 先備知識
@@ -873,7 +872,7 @@ async def check_all_with_retry(paths: list[str]) -> dict[str, str]:
 └── 否 → 直接使用 await
 ```
 
-## 什麼時候該用這個技術？
+## 適用時機：多個獨立 I/O 操作且彼此無依賴
 
 **適合使用**：
 

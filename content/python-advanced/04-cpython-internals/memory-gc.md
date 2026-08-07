@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "cpython", "memory", "gc"]
 ---
 
-
 Python 的記憶體管理結合了參考計數和分代垃圾回收。理解這些機制有助於寫出更高效的程式碼。
 
 ## 先備知識
@@ -191,7 +190,7 @@ print(sys.getsizeof(obj1.__dict__))  # 104
 # obj2 沒有 __dict__
 ```
 
-#### 為什麼 `__slots__` 省記憶體？
+#### `__slots__` 省記憶體的機制：以固定欄位取代 `__dict__`
 
 ```text
 沒有 __slots__：

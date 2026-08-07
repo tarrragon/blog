@@ -6,7 +6,6 @@ weight: 3
 tags: ["python", "python-advanced", "optimization", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何透過正則表達式預編譯來減少重複編譯的開銷。
 
 ## 先備知識
@@ -138,7 +137,7 @@ re.search(r'\d+', 'test123')
 print(f"目前快取數量: {len(re._cache)}")
 ```
 
-### 為什麼還需要手動預編譯？
+### 手動預編譯省下內建快取的查找開銷
 
 既然 `re` 有內建快取，為什麼還需要手動使用 `re.compile()`？原因有幾個：
 
@@ -789,7 +788,7 @@ print(f"Pattern 大小: {sys.getsizeof(pattern_obj)} bytes")
 
 但在大多數情況下，這點記憶體是值得的。
 
-## 什麼時候該用這個技術？
+## 適用時機：同一模式重複使用或模式數逼近快取上限
 
 ### 適合預編譯的情況
 

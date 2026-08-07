@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "metaprogramming", "descriptor"]
 ---
 
-
 Descriptor 是 Python 中最強大但也最容易被忽略的機制之一。理解 Descriptor 是深入 Python 物件模型的關鍵。
 
 ## 先備知識
@@ -171,7 +170,7 @@ print(m.data)     # data descriptor（Data Descriptor 優先）
 print(m.nondata)  # instance value（Instance 優先於 Non-data）
 ```
 
-### 為什麼 method 是 Non-data Descriptor？
+### method 設計成 Non-data Descriptor、讓實例能覆蓋方法
 
 ```python
 class MyClass:

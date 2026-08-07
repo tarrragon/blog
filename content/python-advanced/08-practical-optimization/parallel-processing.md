@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "optimization", "parallel", "multiprocessing"]
 ---
 
-
 本章將入門系列學到的 `concurrent.futures` 知識，應用於 `.claude/lib` 中的真實程式碼，展示如何識別並行化機會、實作並行版本，以及測量效能差異。
 
 ## 學習目標
@@ -187,7 +186,7 @@ def get_optimal_workers(file_count: int) -> int:
     return min(32, cpu_count * 2)
 ```
 
-#### 為什麼 I/O 密集可以超過 CPU 核心數？
+#### I/O 等待會釋放 GIL、worker 數可超過核心數
 
 因為執行緒在等待 I/O 時會釋放 GIL，其他執行緒可以繼續執行。如果有 8 個核心，但每個任務有 80% 時間在等待 I/O，那開 16-32 個 worker 可以更充分利用 CPU。
 
@@ -445,7 +444,7 @@ if __name__ == "__main__":
 
 ---
 
-## 什麼時候不該用並行？
+## 並行的反模式：任務量太少或任務間有依賴
 
 ### 反模式 1：檔案數量太少
 

@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "metaprogramming", "metaclass", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/hook_validator.py` 的實際程式碼，展示如何用 Metaclass 實現檢查器的自動註冊。
 
 ## 先備知識
@@ -782,7 +781,7 @@ class HookValidator(CheckerBase):
 | 動態控制   | 需額外實作               | 內建支援               |
 | 執行順序   | 明確可見                 | 由 priority 決定       |
 
-## 什麼時候該用這個技術？
+## 適用時機：插件系統與大量相似元件的自動發現
 
 適合使用：
 

@@ -71,7 +71,7 @@ from git_utils import get_current_branch
 from hook_io import read_hook_input
 ```
 
-### 為什麼用 `insert(0, ...)` 而不是 `append(...)`？
+### `insert(0, ...)` 讓自家模組優先於標準庫
 
 ```python
 # 優先搜尋我們的模組（推薦）

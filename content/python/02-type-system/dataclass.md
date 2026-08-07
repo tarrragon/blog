@@ -8,7 +8,7 @@ tags: ["python", "type-hints", "typing"]
 
 `dataclass` 是 Python 3.7+ 引入的裝飾器，用於快速建立主要用於存放資料的類別。它自動產生 `__init__`、`__repr__` 等方法，減少樣板程式碼。
 
-## 為什麼使用 Dataclass？
+## Dataclass 自動產生方法、省掉樣板
 
 ### 傳統類別
 
@@ -60,7 +60,6 @@ class ValidationIssue:
 from dataclasses import dataclass, field
 from typing import Optional, List
 
-
 @dataclass
 class ValidationIssue:
     """驗證問題描述"""
@@ -68,7 +67,6 @@ class ValidationIssue:
     message: str
     line: Optional[int] = None
     suggestion: Optional[str] = None
-
 
 @dataclass
 class ValidationResult:
@@ -234,7 +232,6 @@ class BrokenLink:
     link_target: str
     suggestion: str = ""
 
-
 @dataclass
 class LinkCheckResult:
     """單個檔案的連結檢查結果"""
@@ -246,7 +243,6 @@ class LinkCheckResult:
     def __post_init__(self):
         """計算 is_valid 狀態"""
         self.is_valid = len(self.broken_links) == 0
-
 
 # 使用範例
 result = LinkCheckResult(

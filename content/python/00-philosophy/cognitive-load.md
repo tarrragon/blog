@@ -6,7 +6,7 @@ weight: 1
 tags: ["python", "philosophy", "cognitive-load"]
 ---
 
-## 什麼是認知負擔？
+## 認知負擔是工作記憶承受的資訊量
 
 認知負擔（Cognitive Load）是心理學中的概念，指的是人腦在處理資訊時所承受的負擔量。
 

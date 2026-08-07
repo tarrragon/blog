@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "c-extension", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/markdown_link_checker.py` 的實際程式碼，展示如何用 Cython 加速文字解析。
 
 ## 先備知識
@@ -837,7 +836,7 @@ cdef extern from "pcre2.h":
 
 不過，對於大多數使用情境，Python 的 `re` 模組配合 Cython 優化的迴圈已經足夠。
 
-## 什麼時候該用 Cython？
+## 適用時機：profiler 確認熱點且程式碼已穩定
 
 ### 適合使用
 
