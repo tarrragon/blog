@@ -1,6 +1,18 @@
 import { test, expect, Page } from '@playwright/test';
 
 /**
+ * A post rendered by single.html, used to assert the article markup.
+ *
+ * This is coupled to one article's URL: the path comes from that file's
+ * `slug` front matter, so changing the slug breaks the test with a 404 that
+ * surfaces as "locator resolved to 0 elements" rather than a navigation
+ * error. It broke once that way when slugs were backfilled across the site.
+ * Any post with the single.html layout works — repoint this constant rather
+ * than reworking the assertions.
+ */
+const SINGLE_LAYOUT_POST = '/blog/posts/markdown-writing-spec/';
+
+/**
  * Regression tests for the search page's title/content scope filter.
  *
  * Bug we're guarding against (#55 layer mismatch):
@@ -165,10 +177,7 @@ test.describe('search scope filter (multi-index)', () => {
     // the fix uses <div class="article-body" data-pagefind-body>. This is a
     // structural prerequisite for content-only index extraction.
     //
-    // Pick a known post page (any post with single.html layout).
-    await page.goto(
-      '/blog/posts/blog-markdown-寫作規範與-mdtools-檢查/',
-    );
+    await page.goto(SINGLE_LAYOUT_POST);
     const articleBody = page.locator('.article-body[data-pagefind-body]');
     await expect(articleBody).toHaveCount(1);
 
