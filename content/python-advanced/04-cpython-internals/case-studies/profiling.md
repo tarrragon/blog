@@ -74,7 +74,7 @@ class MarkdownLinkChecker:
             if in_code_block:
                 continue
 
-            # Inline links: [text](/python-advanced/04-cpython-internals/case-studies/profiling/target)
+            # Inline links: [text](target)
             for match in self.INLINE_LINK_PATTERN.finditer(line):
                 links.append({
                     "text": match.group(1),
@@ -402,10 +402,10 @@ def benchmark_regex_patterns():
     # Test content with various edge cases
     test_lines = [
         "Check out [Link](https://example.com)",
-        "See [Text with [brackets]](/python-advanced/04-cpython-internals/case-studies/profiling/url)",
+        "See [Text with [brackets]](url)",
         "Multiple [link1](/python-advanced/04-cpython-internals/case-studies/profiling/url1) and [link2](/python-advanced/04-cpython-internals/case-studies/profiling/url2)",
         "No links here, just plain text",
-        "Tricky [text](/python-advanced/04-cpython-internals/case-studies/profiling/url) with more [text](/python-advanced/04-cpython-internals/case-studies/profiling/url) links",
+        "Tricky [text](url) with more [text](url) links",
         "![Image](/python-advanced/04-cpython-internals/case-studies/profiling/image.png) should be ignored",
         "[Link with spaces]( url with spaces )",
     ] * 1000

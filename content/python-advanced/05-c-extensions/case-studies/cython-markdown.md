@@ -27,7 +27,7 @@ class MarkdownLinkChecker:
     """Markdown 連結檢查器"""
 
     # Markdown 連結正則表達式
-    # 匹配 [text](/python-advanced/05-c-extensions/case-studies/cython-markdown/target) 格式，排除圖片 ![alt](/python-advanced/05-c-extensions/case-studies/cython-markdown/src)
+    # 匹配 [text](target) 格式，排除圖片 ![alt](src)
     INLINE_LINK_PATTERN = re.compile(
         r'(?<!!)\[([^\]]+)\]\(([^)]+)\)'
     )
@@ -77,7 +77,7 @@ class MarkdownLinkChecker:
             if in_code_block:
                 continue
 
-            # 行內連結 [text](/python-advanced/05-c-extensions/case-studies/cython-markdown/target)
+            # 行內連結 [text](target)
             for match in self.INLINE_LINK_PATTERN.finditer(line):
                 links.append({
                     "text": match.group(1),
@@ -235,7 +235,7 @@ cdef list _parse_inline_links(list lines, dict reference_defs):
         if in_code_block:
             continue
 
-        # Parse inline links [text](/python-advanced/05-c-extensions/case-studies/cython-markdown/target)
+        # Parse inline links [text](target)
         for match in INLINE_LINK_PATTERN.finditer(line):
             links.append(LinkInfo(
                 match.group(1),
@@ -514,7 +514,7 @@ cdef list _parse_inline_links(list lines, dict reference_defs):
         if in_code_block:
             continue
 
-        # Parse inline links [text](/python-advanced/05-c-extensions/case-studies/cython-markdown/target)
+        # Parse inline links [text](target)
         for match in INLINE_LINK_PATTERN.finditer(line):
             links.append(LinkInfo(
                 match.group(1),

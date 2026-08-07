@@ -105,7 +105,7 @@ import re
 
 class MarkdownLinkChecker:
     # Markdown 連結正則表達式
-    # 匹配 [text](/python/03-stdlib/regex/target) 格式，排除圖片 ![alt](/python/03-stdlib/regex/src)
+    # 匹配 [text](target) 格式，排除圖片 ![alt](src)
     INLINE_LINK_PATTERN = re.compile(
         r'(?<!!)\[([^\]]+)\]\(([^)]+)\)'
     )
@@ -145,7 +145,7 @@ def parse_markdown_links(self, content: str) -> list[dict]:
     lines = content.split('\n')
 
     for line_num, line in enumerate(lines, start=1):
-        # 行內連結 [text](/python/03-stdlib/regex/target)
+        # 行內連結 [text](target)
         for match in self.INLINE_LINK_PATTERN.finditer(line):
             links.append({
                 "text": match.group(1),
