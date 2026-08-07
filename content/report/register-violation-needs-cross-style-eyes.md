@@ -89,6 +89,7 @@ blog 累積了 #94 / #147 / #149 一整套 register 審查原則、看起來防�
 - **[#82 字面攔截 vs 行為精修](../literal-interception-vs-behavioral-refinement/)**：本卡把 #82 的「字面 vs 行為」推到極限 —— 對 register 違規、連「行為精修」（讀者能不能驗證）都還是品味判斷、需要異源的讀者才感受得到。形式違規停在字面層即可、register 違規連行為層都需要異源。
 - **[#95 Multi-pass review scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)**：#95 解 scope 軸（同類違規要 corpus-wide grep）、本卡解 source 軸（同類違規的判定要文體異源）。兩個一起才完整：grep 把候選掃出來（#95）、異源的眼睛判它違不違規（本卡）。這次三個 surface 鏡像內容共享同一違規句型、grep 掃得到、但同源判定全放行 —— scope 對了、source 沒換。
 - **[#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/)**：#114 解偵測層（展開成 keyword bank）、本卡指出對 register 違規、偵測層做好了、判定層仍需異源 —— frame 顆粒度再細、同源 reviewer 對品味違規仍有盲區。
+- **[#254 教學與檢討內容寫給帶問題來的讀者](../write-for-readers-not-audiences/)**：本卡的上游一層。本卡處理「規則存在、同源判定放水」，#254 的案例（問句標題、懸念弧、第一人稱檢討敘事通過多輪審查）連規則都不存在——審查失效不需要走到判定那一步。兩層分開修：先立規範、再談判定的異源防線；#254 的第三層根因（同源文風默認）才落回本卡的射程。
 
 ---
 

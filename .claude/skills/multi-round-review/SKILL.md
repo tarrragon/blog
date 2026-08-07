@@ -1,9 +1,9 @@
 ---
 name: multi-round-review
-description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
+description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill 的字句層 keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 敘事姿態）、且命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
-  version: 1.23.0
+  version: 1.25.0
   category: writing-methodology
 ---
 
@@ -48,6 +48,7 @@ metadata:
     - 自評誇飾：`rg "教科書級|堪稱|可謂|完美|經典|範本級|大師級|漂亮地|優雅地|最佳實踐|best practice" <files>` — 品質 verdict 頂替技術理由
     - 必然性框架：`rg "天生|與生俱來|本質就是|本來就是|必然|唯一|註定|理所當然" <files>` — 把設計選擇講成自然法則（物理 / 法律 / 數學事實除外）
     - 泛用詞濫用：`rg "坑|東西|搞|弄|處理一下|情況" <files>` — 同一個泛用詞蓋過不同具體情境時、依情境換精確詞（意外 / 陷阱 / 出問題 / 發生狀況）；命中密集且各指不同事才違規、真泛指 / 引號引用合規；「坑」繁中少用
+    - 敘事姿態：問句標題 `rg "^title:.*[？?]" <files>`、問句段標 `rg "^#{2,} .*[？?]" <files>`、敘事轉折詞 `rg "才想清楚|還是被退|我到底|我於是" <files>`、輔助訊號是檢討類文章的「我」密度顯著高於同類其他篇 — 教學與檢討內容寫給帶問題來的讀者：標題承載結論、判準放開頭、檢討用客觀條件視角（「reviewer 問了 X」寫成「若對這個做法問 X 而答不出來、就該重新檢討」）；操作型自問句（判準的執行步驟）與「」內引用合規、標題 / 段標 / 結論位扣住答案的問句違規。這類是生成端高頻默認、同源 reviewer 覺得「故事帶入是好教學」而放行、防線主力在生產側規範與模板、本 grep 是補位；見 compositional-writing 的 `write-for-readers-not-audiences` principle
     - 用詞搭配錯位：`rg "說完的話|背後.{0,8}的話|想告訴|潛台詞|訊號很直接|訊號.{0,4}很直接" <files>` — 抽象概念（角度 / 框架 / 訊號 / 數字）配上不貼合屬性的謂語：擬人化錯配（角度不會「說」、數字不會「想告訴」）與形容詞錯配（訊號的可辨識度是「清晰 / 明確」不是「直接」）；無穩定關鍵詞、grep 只抓已知形態、真防線是異源冷讀，見 compositional-writing 的 `word-choice-fits-concept-attributes`
   - **命中是候選、不是判決**：grep 命中後仍要一個語意判定步驟——這個命中是「建立核心概念的違規」（段首 / 小節開場）、還是「合規的反例對照 / hook / 真必然」。reviewer 容易把違規合理化成「可接受對照」放行（偵測成功、判定失敗）；判定用「概念位置」、不用「有沒有對照意味」。回報「字句層 clean」前先確認 clean 不是判定放水。**register 違規（否定起手 / 概念前置 / 喊話 / 誇飾）有判定上限**：它的偵測可機械化（grep 抓得到句型）、但判定要讀懂「讀起來對不對」、無法 regex 化；而且 LLM reviewer 跟作者共享文體直覺 ——「不是 X、而是 Y」這種 LLM 高頻自產的定義句型全員讀起來「自然」、同源自審對這類有結構上限、加再多輪都跨不過。register 層的真防線是文體異源視角：external human cold-read、或 prompt 明確採「挑剔否定起手 / 概念後置」對抗姿態的 reviewer。同源 reviewer 回報的「register 層 clean」不可當真、要標「未經異源抽查」。但要分清子集：「重點優先 / 否定起手」（不是 X 而是 Y、與其 X 不如 Y）有可操作判準 —— 逐句問「核心概念第一次正面出現在句首、還是被擠到『而是』之後」、強制執行這個機械步驟就抓大部分、異源只補殘餘；真正主要靠異源的是喊話 / 誇飾這類無單一重點位置的 register。別把「有可操作判準卻沒執行」（execution gap）誤當「判定不可機械化」（design 上限）。
   - 詳細 grep keyword bank 跟 frame 路由見 [`compositional-writing` skill](../compositional-writing/SKILL.md)。
@@ -224,6 +225,8 @@ frame 清單長到一定程度之後會反覆出現同一個問題——某兩�
 - **把「多輪全過」當成「知識類型對」**：歷輪 finding 全部落在字句與結構層時、「三輪全過」的語意只是「已覆蓋層全過」——斷言支撐與知識類型層若沒有 frame 負責、錯的知識類型（披著教學結構的經驗談）會全數通過。finding 類型分佈本身是訊號：全部集中表面層 = 深層無人在看、下一輪排斷言支撐 frame（per [claim-support frame](references/principles/review-needs-claim-support-frame.md)）
 
 ---
+
+**Version**: 1.25.0 — Round 1-A 字句層 bank 加「敘事姿態」grep（問句標題 `rg "^title:.*[？?]"`、問句段標、敘事轉折詞「才想清楚 / 還是被退」、檢討類「我」密度）：教學與檢討內容寫給帶問題來的讀者，標題承載結論、判準放開頭、檢討用客觀條件視角；操作型自問句合規、標題 / 段標 / 結論位扣住答案的問句違規。從一篇 work-log 檢討通過多輪審查、語氣問題由使用者指出的事故抽出，根因三層——規範缺位（規則當時不存在於任何規範、compliance reviewer 產生不了 finding）、frame 射程（枚舉不含懸念與第一人稱、persona 檢查掛在批次流程而單篇不進）、同源文風默認（問句標題與三幕劇是生成端高頻默認）。防線主力在生產側（寫作規範與模板）、本 grep 是補位。同步 compositional-writing v0.48.0 的 `write-for-readers-not-audiences` principle；metadata.version 同步修正漂移（1.23.0 → 1.25.0、changelog 實際已到 1.24.0）。
 
 **Version**: 1.24.0 — 三處：停止判讀在四個訊號之外補「整體通讀」前置條件（所有 frame 跑過、所有 finding 修完，不等於內容現在是好的——兩次各自正確的修法可以合成對兩個 frame 都不可見的缺陷，而逐條檢查修法產物看不見它，因為它在條目之間），同一輪要重讀共用產物（入口頁 / 待辦清單 / 索引被每輪修改卻不在任何一輪的審查範圍裡）；整合工作流補「修法落在別人的段落上時讀完那一段再改」與除籍紀律（刪待辦要說出它被哪一次改動完成）；新增「重組後遺症 frame」給拆章 / 併章 / 整節重寫用（原篇敘事斷裂、指向原處的外部連結、搬運掉東西、新篇的定位宣告對自己全部內容成不成立、待辦除籍）。新增 `sequential-fixes-compose-into-defects` principle 卡。從一組資安章節連續跑八輪審查後的回看抽出——四處缺陷同一成因，其中一處是拆章時刪掉的待辦列裡有一半還沒完成。
 **Version**: 1.23.0 — 新增「判斷兩個維度該不該合併：隔離實驗」段。frame 清單變長之後會反覆出現「這兩個維度是不是同一件事、能不能合併省一輪」，而憑推理判會錯——判的人同時懂兩個維度，看不出哪些東西是靠另一個維度才看得見的。做法是同一批稿件派兩個 reviewer 各自被硬性限制在一個維度內（限制要寫進 prompt 且夠硬，否則 reviewer 會自己補足另一邊），兩邊都對每個 finding 標記交叉可見性，並讓其中一邊回答方法論問題（執行過的人比事後看報告的人更清楚那個維度實際在做什麼）。判讀看互斥率與動作性質（時序 vs 全域）。附一次實測的數據與「結論與實驗前的預期不同」這個結果本身。

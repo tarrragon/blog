@@ -66,6 +66,13 @@
 - 給人也給機器判斷，每 token 要有資訊量，短能到位就短。
 - 詳見 [#170](/report/description-as-recall-trigger/)。
 
+### 原則十：寫給帶問題來的讀者、不用演講姿態
+
+- 教學與檢討內容的讀者由搜尋或路由帶來、自帶問題與動機；演講技巧（問句標題、懸念段標、三幕劇遞進）服務的是注意力會流失的聽眾，不進教學內容。
+- 標題與段標是承載結論的直述句；判準放開頭，案例是推導的材料、不是懸念的鋪陳。操作型自問句（判準的執行步驟，如「唸出型別名稱後還剩什麼」）可用問句。
+- 檢討內容（work-log / report）以客觀條件視角組織：「reviewer 問了 X、後來才想清楚」寫成「若對這個做法問 X 而答不出來、就該重新檢討」；「來自實際事件」的宣告放前置欄位一句話交代，正文用條件語言承載脈絡。
+- 詳見 [#254](/report/write-for-readers-not-audiences/) 與 work-log 目錄頁的寫作模板段。
+
 ---
 
 ## 2. 語言與主題邊界
@@ -190,6 +197,7 @@
 - [ ] 未依賴特定專案背景知識
 - [ ] 關鍵術語已連到對應卡片
 - [ ] 有明確下一步路由（章節/模組連結），且每條路由都去目的地確認過它承接該主題、到站第一屏看得到——目的地存在不等於它承接（見 [#240](/report/routing-destination-must-own-the-topic/)）
+- [ ] 標題與段標是承載結論的直述句、判準在開頭；檢討內容用客觀條件視角、不用第一人稱事件敘事（見 [#254](/report/write-for-readers-not-audiences/)）
 - [ ] `description` 是 recall trigger 而非摘要：回答「什麼情境下需要回來讀」而非「這篇在講什麼」（見 [#170](/report/description-as-recall-trigger/)）
 - [ ] 新增頂層 `content/<module>/` 資料夾時、已同步更新 `content/_index.md` 對應分類段（見 [#139](/report/top-level-content-folder-needs-homepage-entry/)）
 - [ ] 這次留下的未完成工作已記進模組 `_index.md` 的 `## Backlog` 段、完成的項目已從表中刪除（見 §12）
@@ -328,7 +336,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 | 資料夾      | 定位                                          | 典型內容                                         | 結構模板                                               |
 | ----------- | --------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------ |
 | `posts/`    | blog 本身的規範 / 設計 / Hugo & Markdown 經驗 | mdtools 設計、Markdown 規範、Hugo / Mermaid 配置 | 教學或事件紀錄、自由結構                               |
-| `work-log/` | 工作中遇到的工具 / 技術問題（不是 blog 本身） | git / Flutter / Gradle / Dart 等的具體 case      | 問題情境 → 範例 → 解法                                 |
+| `work-log/` | 工作中遇到的工具 / 技術問題（不是 blog 本身） | git / Flutter / Gradle / Dart 等的具體 case      | 情境條件 → 判準 → 推導與驗證（語域見 work-log 目錄頁） |
 | `record/`   | 方法論記錄（中性 frame、不一定有具體 case）   | 5W1H 自察、敏捷、acceptance criteria 等          | 不固定、視內容定                                       |
 | `report/`   | 工程方法論的事後檢討（從 case 抽象出原則）    | 編號連續的卡片系統（#1-93+）                     | 結論 / 為什麼 / 反模式 / 修法 / 關係 / case / 判讀徵兆 |
 
