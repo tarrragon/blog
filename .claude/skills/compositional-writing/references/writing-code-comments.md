@@ -395,7 +395,7 @@ class DbOrderSearcher implements OrderSearcher {
 
 驗證不必推論：**在違反約束的位置加一行改動，跑測試，把輸出貼出來**。紅了代表已經有人接手、那行註解是副本；沒紅代表缺的是那條測試不是那行文字。
 
-邊界要一起帶：測試涵蓋不到的 surface（設定檔、schema、build script、DSL）註解是唯一載體；給下游看的公開 API 下游讀不到專案內部測試、doc 是契約介面；沒有測試文化的專案要先讓測試存在再刪註解。另有一項不是邊界而是另一個問題——編輯器 hover 省一次跳轉是查詢成本的價值，跟防護無關、判準也不同。
+邊界要一起帶：測試涵蓋不到的 surface（設定檔、schema、build script、DSL）註解是唯一載體；給下游看的公開 API 下游讀不到專案內部測試、doc 是契約介面；沒有測試文化的專案要先讓測試存在再刪註解。另有一項屬於另一條軸而非邊界：編輯器 hover 省一次跳轉是查詢成本的價值，跟防護無關、判準也不同。
 
 完整推導、動機判準的三個弱點（回溯建構、混合動機、防衛性回答）與各步驟的痕跡設計見 [protective-comment-signals-missing-enforcement](principles/protective-comment-signals-missing-enforcement.md)。
 
