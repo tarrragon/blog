@@ -6,7 +6,6 @@ weight: 31
 tags: ["python", "python-advanced"]
 ---
 
-
 本系列為已完成入門教學的工程師設計，深入探討 Python 的內部機制、元編程技術、效能優化方案，以及如何用 C/Rust 擴展 Python。
 
 ## 目標讀者
@@ -79,7 +78,7 @@ Python 的異步程式設計模型，掌握現代 Web/網路開發的必備技�
 
 用 Rust 的記憶體安全特性擴展 Python，兼顧效能與安全。
 
-- [為什麼選擇 Rust？](/python-advanced/06-rust-extensions/why-rust/)
+- [選擇 Rust 的理由](/python-advanced/06-rust-extensions/why-rust/)
 - [PyO3 基礎](/python-advanced/06-rust-extensions/pyo3-basics/)
 - [Maturin 開發流程](/python-advanced/06-rust-extensions/maturin-workflow/)
 - [實戰案例分析](/python-advanced/06-rust-extensions/real-world-examples/)

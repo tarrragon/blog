@@ -1,5 +1,5 @@
 ---
-title: "時間感知與回應策略：什麼時候該顯示 Loading？"
+title: "時間感知與回應策略：Loading 的形式由等待時間門檻決定"
 date: 2026-07-13
 description: "100ms / 400ms / 1s / 10s 時間門檻對應不同回饋策略 — 決定操作該不該顯示 loading、用 spinner、skeleton 還是進度條的判準。"
 weight: 3

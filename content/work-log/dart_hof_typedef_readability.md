@@ -1,5 +1,5 @@
 ---
-title: "為什麼這個場景適合用高階函式？以 Flutter 設定更新為例，比較 typedef 改寫前後"
+title: "高階函式的適用判準：流程固定、變化點單一且開放——以 Flutter 設定更新比較 typedef 改寫前後"
 date: 2026-06-01
 slug: "dart_hof_typedef_readability"
 draft: false

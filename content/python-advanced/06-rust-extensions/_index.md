@@ -6,10 +6,9 @@ weight: 6
 tags: ["python", "python-advanced", "rust", "pyo3"]
 ---
 
-
 本模組介紹如何使用 Rust 擴展 Python，結合 Rust 的記憶體安全與高效能。
 
-## 為什麼選擇 Rust？
+## 選擇 Rust 的理由
 
 - **記憶體安全**：沒有空指標、沒有資料競爭
 - **零成本抽象**：高階語法，底層效能
@@ -17,12 +16,12 @@ tags: ["python", "python-advanced", "rust", "pyo3"]
 
 ## 章節列表
 
-| 章節                                                            | 主題              | 關鍵收穫             |
-| --------------------------------------------------------------- | ----------------- | -------------------- |
-| [6.1](/python-advanced/06-rust-extensions/why-rust/)            | 為什麼選擇 Rust？ | Rust vs C/C++ 的比較 |
-| [6.2](/python-advanced/06-rust-extensions/pyo3-basics/)         | PyO3 基礎         | Rust 的 Python 綁定  |
-| [6.3](/python-advanced/06-rust-extensions/maturin-workflow/)    | Maturin 開發流程  | 建構與發布工具       |
-| [6.4](/python-advanced/06-rust-extensions/real-world-examples/) | 實戰案例分析      | 知名專案的 Rust 應用 |
+| 章節                                                            | 主題             | 關鍵收穫             |
+| --------------------------------------------------------------- | ---------------- | -------------------- |
+| [6.1](/python-advanced/06-rust-extensions/why-rust/)            | 選擇 Rust 的理由 | Rust vs C/C++ 的比較 |
+| [6.2](/python-advanced/06-rust-extensions/pyo3-basics/)         | PyO3 基礎        | Rust 的 Python 綁定  |
+| [6.3](/python-advanced/06-rust-extensions/maturin-workflow/)    | Maturin 開發流程 | 建構與發布工具       |
+| [6.4](/python-advanced/06-rust-extensions/real-world-examples/) | 實戰案例分析     | 知名專案的 Rust 應用 |
 
 ## 使用 Rust 的知名 Python 套件
 

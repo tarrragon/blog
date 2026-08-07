@@ -6,7 +6,6 @@ weight: 1
 tags: ["python", "python-advanced", "rust", "pyo3", "case-study"]
 ---
 
-
 本案例基於 `.claude/lib/markdown_link_checker.py` 的實際程式碼，展示如何用 PyO3 和 Rust 實現高效能的文字解析器。
 
 ## 先備知識
@@ -106,7 +105,7 @@ class MarkdownLinkChecker:
 2. **字串分割與迭代**：大量的記憶體配置
 3. **字典操作**：每個連結都建立新字典
 
-### 為什麼選擇 Rust？
+### 選擇 Rust 的理由
 
 相比 Cython：
 

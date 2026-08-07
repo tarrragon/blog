@@ -1,5 +1,5 @@
 ---
-title: "設計瑕疵還是避免過度設計？YAGNI 的真實適用條件"
+title: "YAGNI 的真實適用條件：成本對稱性、可逆性、領域先驗劃出邊界"
 slug: "yagni-boundary-three-axes"
 date: 2026-05-05
 draft: false

@@ -6,7 +6,6 @@ weight: 2
 tags: ["python", "python-advanced", "rust", "pyo3"]
 ---
 
-
 本章介紹 PyO3，Rust 的 Python 綁定函式庫。
 
 ## 本章目標
@@ -744,5 +743,5 @@ fn normalize_inplace(mut arr: PyReadwriteArray1<'_, f64>) {
 
 ---
 
-*上一章：[為什麼選擇 Rust？](/python-advanced/06-rust-extensions/why-rust/)*
+*上一章：[選擇 Rust 的理由](/python-advanced/06-rust-extensions/why-rust/)*
 *下一章：[Maturin 開發流程](/python-advanced/06-rust-extensions/maturin-workflow/)*

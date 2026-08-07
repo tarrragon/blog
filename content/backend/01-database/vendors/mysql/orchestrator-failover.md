@@ -1,5 +1,5 @@
 ---
-title: "MySQL Orchestrator Failover：HA 工具自己怎麼 HA？raft cluster + GTID-based promotion 的兩段 paradox"
+title: "MySQL Orchestrator Failover：HA 工具自身的 HA 靠內建 raft cluster、promotion 靠 GTID"
 date: 2026-05-19
 description: "Orchestrator 是 MySQL HA 自動 failover 的 de facto standard、但讀者第一個問題往往是「HA 工具自己會壞嗎」。本文走 Orchestrator 的雙層架構（管 MySQL 的 raft cluster + 被 raft 管的 orchestrator instance）→ topology discovery → failure detection → failover decision tree → promote action → 5 production 踩雷（split-brain 跟 fencing / pre-failover hook 失敗 / anti-flapping window / GTID errant transaction / VIP 跟 ProxySQL 整合斷層）→ 跟 ProxySQL / Patroni / RDS 對比"
 weight: 15

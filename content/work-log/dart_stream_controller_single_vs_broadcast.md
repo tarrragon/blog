@@ -186,7 +186,7 @@ POS 的副螢幕場景如果搭配無界事件源（例如背景條碼掃描器�
 
 加上 POS 系統的領域先驗強烈指向「多視角同步」（主螢幕 / 副螢幕 / 廚顯 / 雲端 / 列印是教科書級的 pub-sub 場景）、選 single-subscription 等於假設「這個 service 不會有多訂閱需求」——這個假設跟領域常識矛盾、即使在當下也站不住。
 
-> 「成本對稱性 / 可逆性 / 領域先驗」三軸框架的完整推導見 [設計瑕疵還是避免過度設計？YAGNI 的真實適用條件](/record/yagni-boundary-three-axes/)——本 case 三軸都指向 broadcast、屬於 YAGNI 不適用的標準情境。
+> 「成本對稱性 / 可逆性 / 領域先驗」三軸框架的完整推導見 [YAGNI 的真實適用條件：成本對稱性、可逆性、領域先驗劃出邊界](/record/yagni-boundary-three-axes/)——本 case 三軸都指向 broadcast、屬於 YAGNI 不適用的標準情境。
 
 ### 為什麼 IDE 與測試抓不到
 
