@@ -204,4 +204,4 @@ await finishAction(result, purpose: purpose);   // 不再依賴共享狀態
 
 - **原則層**：本文的判準抽成 [#253 寫註解的動機是怕被改壞時，要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)。那張卡處理動機辨識、消除 gate 與落點選擇的一般形態，並把失效邊界跟查詢成本軸分開。
 - **doc 內容往型別下移**：[型別取代 doc 的收益曲線](/record/types-replacing-docs/) 給的是「這條 doc 能不能變成型別」的三個 review 問題，接在本文第一步之後。
-- **消除約束那一步的上游**：`Rx<>` 那個欄位為什麼得是共享狀態、什麼時候該收成參數，屬於狀態歸屬的設計判斷。這個術語站上還沒有對應的知識卡（已登記在 [DDD 模組](/ddd/) 的 Backlog），本文只用到它的結論。
+- **消除約束那一步的上游**：`Rx<>` 那個欄位為什麼得是共享狀態、什麼時候該收成參數，見 [Shared Mutable State](/ddd/knowledge-cards/shared-mutable-state/)——那張卡處理「可被觀察」與「可被寫入」為什麼是兩個獨立決定，本文只用到它的結論。
