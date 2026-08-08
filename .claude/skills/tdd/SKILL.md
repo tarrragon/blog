@@ -166,6 +166,7 @@ Layer 2 內容以 blockquote 標記，提供本框架的具體實現方式：
 ---
 
 **Last Updated**: 2026-08-08
+**Version**: 2.2.4 - 多輪審查鏈路實證修正：v2.2.3 宣稱的「Phase 0 讀取」在檔案層並不存在——覆寫是三處互相引用、零處有執行載體的宣稱、且新專案起手模式的 Phase 0 豁免讓它在 proposal 最完整的路徑上必然不發生（本 skill 自己的 document-coherence 所批評的「被期待卻沒有機制」形態）。修法：doc-handoff v1.1.2 補 Phase 0 映射列與豁免不豁免覆寫的規則、document-coherence v1.0.4 補執行點指涉與跨 skill 條件語。
 **Version**: 2.2.3 - 「程度決策歸提案階段」對齊：document-coherence v1.0.3 分級表明示為預設值、proposal 有「文件維護到什麼程度」決策時以 proposal 覆寫（決策由 saas-tech-selection v1.1.0 的 reliability 訪談問出、經決策記錄流入 proposal 驗收條件、Phase 0 讀取）；doc-handoff v1.1.1 對 saas-tech-selection 的引用加條件語（未安裝非死鏈）。
 **Version**: 2.2.2 - 多輪審查第二、三輪修正。phase2/rules v2.3.0：讀者分層指引與轉換條件的 DQ 範圍補上 Q12-Q14（原停在 Q7-Q11、執行者可合法跳過新組——雙處複製當天漂移的實證）、組 4 補恆觸發宣告與擴充指引註解、Q12 補防護型測試定義、防呆補 protocol integration 指涉、檔級版本記錄補上（原停在 2026-06-14）。document-coherence v1.0.2：測試權威兩個限定（現狀 vs 正確性、覆蓋範圍界線）、Phase 4 比對要落成腳本否則依分級降級、archive 前置確認（增量決策先回活載體）、scaffold 標記防護範圍宣告、表格 cell 收短與表下註、宣告本表自成權威以消滅跨 surface 無機制同步期待。test-naming-conventions：例句補批次合併情境（v2.2.1 漏報：該檔與 layered-test-strategy 在 2.2.1 批已各有 gloss 修正與死鏈移除、此處補記）。layered-test-strategy：「語意級 vs 回放級」對比前移、移除不存在的 `.claude/methodologies/` 死鏈。
 **Version**: 2.2.1 - 多輪審查修正三處：(1) Q13 的 flaky 分類改回教材四類原名（計時依賴 / 環境差異 / 資源競爭 / 非確定性輸出）——v2.2.0 曾未標示地重切成三類、環境差異被誤併進外部服務、資源競爭無落點；計時依賴主策略同步改為事件驅動取代固定等待、clock 注入降為補充。(2) document-coherence v1.0.1：Spec/UC 與 domain-map 的機制欄改條件式——原寫法指名 spec skill 的工具、單獨安裝 tdd 時這兩格機制不存在、Spec/UC 靜默落入本文件自己定義的錯配格；活文件機制枚舉補 lint 與來源對齊。(3) 檢查清單第 12 項同步四類措辭。
