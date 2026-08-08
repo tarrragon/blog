@@ -155,3 +155,9 @@ saas-tech-selection/
         ├── reliability.md                # CI gate、測試層次、備份演練、第三方依賴降級
         └── capacity-performance.md       # 容量假設、連線池、成本監控、高峰 readiness
 ```
+
+---
+
+**Last Updated**: 2026-08-08
+**Version**: 1.1.0 — 提案階段承接「程度決策」的補強。reliability 維度：訪談問句加「還打算把哪些文件維護到最新、誰守著」（答案決定文件分級——活文件配機制、其餘明示為一次性 scaffold 或時點記錄、流入 proposal 驗收條件）；「測試寫到什麼程度」補防護視角判準（每條測試答得出「未來哪種改壞要被擋」、程度下限是核心操作的改壞在合併前發聲）與語意級假後端選項（後端不可控時 stub 回放自己的假設、驗不出假設錯誤）；決策記錄要記什麼同步兩項。decision-record-template：明示決策記錄是 append-only 時點記錄、重評走新記錄不回改。references/principles/ 四張卡補「自成權威」宣告——它們是上游教材的語境化快照、消滅無機制的同步期待。
+**Version**: 1.0.0 — 版號基線補標（既有內容首次標版、依版號規則）。

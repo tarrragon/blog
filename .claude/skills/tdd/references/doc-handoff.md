@@ -311,11 +311,12 @@ doc-handoff 銜接時，同步初始化 `docs/traceability.yaml` 的骨架：
 - `references/phase1/rules.md` — Phase 1 行為單元識別（GWT 種子的下游消費者）
 - `references/phase2/rules.md` — Phase 2 測試設計（最終測試案例設計）
 - `references/task-granularity-rules.md` — 粒度規則（UC→行為單元→測試→實作）
-- `.claude/skills/saas-tech-selection/references/decision-record-template.md`「銜接 doc 系統」— 上游銜接範本
+- `.claude/skills/saas-tech-selection/references/decision-record-template.md`「銜接 doc 系統」— 上游銜接範本（若同專案安裝 saas-tech-selection skill；未安裝時本條不適用、非死鏈）
 
 ---
 
 **Last Updated**: 2026-08-08
+**Version**: 1.1.1 — 相關文件對 saas-tech-selection 的引用加條件語（未安裝該 skill 時非死鏈）、與 spec skill 的跨 skill 引用處置一致。
 **Version**: 1.1.0 — 種子包格式頂部加 scaffold 標記（消費時點 + 爭議以 UC 為準）、檢查清單同步加一項。動機：GWT 種子是 UC 場景的完整複本、UC 回補修訂後種子包沒有機制跟上、未標記身分時它讀起來像權威文件；依文件分級原則（`references/document-coherence.md`）把它明示為一次性 scaffold、消滅同步期待而不是新增同步義務。
 **Version**: 1.0.0 — 初始建立。補齊 doc→TDD 銜接缺口（WRAP 評估結論：銜接放 TDD 端）
 **Source**: 上游需求銜接模式驗證
