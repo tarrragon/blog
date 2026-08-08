@@ -10,12 +10,13 @@ tags: ["testing", "assertion", "flaky", "test-data", "mock"]
 
 ## 本模組回應的測試盲區
 
-| 案例                                                     | 盲區與補位                                                              |
-| -------------------------------------------------------- | ----------------------------------------------------------------------- |
-| [T.C3](/testing/cases/ansi-parser-test-data-blindspot/)  | 手寫測試資料是真實環境的乾淨子集                                        |
-| [T.C3](/testing/cases/ansi-parser-test-data-blindspot/)  | Parser 透傳未知序列的靜默副作用                                         |
-| [T.C8](/testing/cases/fire-and-forget-test-race/)        | fire-and-forget 編排讓測試單跑綠、合跑紅——對應 Flaky test 根因分類章    |
-| [T.C9](/testing/cases/outbox-sequence-external-display/) | 序列斷言取代存在斷言、時序約束用索引比較鎖住——對應 Assertion 品質三問章 |
+| 案例                                                        | 盲區與補位                                                                             |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [T.C3](/testing/cases/ansi-parser-test-data-blindspot/)     | 手寫測試資料是真實環境的乾淨子集                                                       |
+| [T.C3](/testing/cases/ansi-parser-test-data-blindspot/)     | Parser 透傳未知序列的靜默副作用                                                        |
+| [T.C8](/testing/cases/fire-and-forget-test-race/)           | fire-and-forget 編排讓測試單跑綠、合跑紅——對應 Flaky test 根因分類章                   |
+| [T.C9](/testing/cases/outbox-sequence-external-display/)    | 序列斷言取代存在斷言、時序約束用索引比較鎖住——對應 Assertion 品質三問章                |
+| [註解防不了改壞](/work-log/comment_cannot_guard_invariant/) | 宣稱約束的註解無機制發聲、reviewer 以為有人在守——對應 測試的價值發生在它變紅的那一刻章 |
 
 ## 章節
 

@@ -90,5 +90,6 @@ tags: ["testing", "naming", "comment", "review", "assertion"]
 ## 下一步路由
 
 - 斷言本身的品質 → [斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)
+- 那條會紅的測試該測什麼、與註解分工的全景 → [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/)
 - 想寫的其實是防護註解、該不該改成一條測試 → [#253 寫註解的動機是怕被改壞時要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)
 - 這套紀律誕生的測試形態 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)

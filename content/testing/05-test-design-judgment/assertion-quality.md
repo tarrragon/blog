@@ -59,3 +59,4 @@ Assertion 是否依賴非確定性因素 — 時間、隨機數、外部服務�
 - 測試資料的代表性 → [Test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/)
 - Mock 邊界判斷 → [Mock 邊界判斷決策表](/testing/05-test-design-judgment/mock-boundary-decision/)
 - Flaky 超出個案修復能力時的團隊治理 → [Flaky test 團隊治理](/testing/05-test-design-judgment/flaky-team-governance/)
+- 第一問為什麼是重構安全網的分界（測試防護價值的時間軸）→ [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/)

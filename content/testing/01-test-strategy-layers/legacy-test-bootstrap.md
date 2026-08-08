@@ -82,3 +82,4 @@ Characterization test 鎖住的是「現在的行為」，不關心行為是否�
 - 語意級假後端的適用判準 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - Characterization test 實作經驗 → [characterization test 當遷移安全網](/work-log/flutter_characterization_test_migration_safety_net/)
 - Protocol integration test 的定義與邊界 → [Protocol integration test 定義](/testing/03-protocol-integration-test/definition-and-boundary/)
+- 起步層選定後、單條測試該測什麼（未來哪種改壞要被擋）→ [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/)
