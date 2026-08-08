@@ -205,3 +205,4 @@ await finishAction(result, purpose: purpose);   // 不再依賴共享狀態
 - **原則層**：本文的判準抽成 [#253 寫註解的動機是怕被改壞時，要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)。那張卡處理動機辨識、消除 gate 與落點選擇的一般形態，並把失效邊界跟查詢成本軸分開。
 - **doc 內容往型別下移**：[型別取代 doc 的收益曲線](/record/types-replacing-docs/) 給的是「這條 doc 能不能變成型別」的三個 review 問題，接在本文第一步之後。
 - **消除約束那一步的上游**：`Rx<>` 那個欄位為什麼得是共享狀態、什麼時候該收成參數，見 [Shared Mutable State](/ddd/knowledge-cards/shared-mutable-state/)——那張卡處理「可被觀察」與「可被寫入」為什麼是兩個獨立決定，本文只用到它的結論。
+- **測試側的展開**：從防護視角看測試的建立意義、變更時的作用、跟註解的分工與測試自身的文字，見 [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/)——本文的案例在那裡是教學層的推導材料。

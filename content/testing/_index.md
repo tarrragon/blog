@@ -112,7 +112,7 @@ Backend 教材的 [模組六：可靠性驗證](/backend/06-reliability/) 聚焦
 
 回答「這個斷言該怎麼寫」。Mock 邊界判斷、assertion 設計（計時依賴、浮點精度、快取驗證）、flaky test 診斷，以及[測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)——測試內容由名稱與斷言自述、reason 寫失敗後果與處置、檔頭陳述目的不論證需求、分析詞彙與開發過程不入程式碼。
 
-> 章節入口：[mock 邊界判斷](/testing/05-test-design-judgment/mock-boundary-decision/)、[斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)、[flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)、[Flaky test 團隊治理](/testing/05-test-design-judgment/flaky-team-governance/)、[Test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/)
+> 章節入口：[mock 邊界判斷](/testing/05-test-design-judgment/mock-boundary-decision/)、[斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)、[flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)、[Flaky test 團隊治理](/testing/05-test-design-judgment/flaky-team-governance/)、[Test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/)、[測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/)
 >
 > 案例入口：[T.C8 fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/)、[T.C9 外接螢幕訊息序列斷言](/testing/cases/outbox-sequence-external-display/)
 

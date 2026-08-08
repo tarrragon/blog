@@ -25,6 +25,7 @@ tags: ["testing", "assertion", "flaky", "test-data", "mock"]
 - [Flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/) — 計時依賴 / 環境差異 / 資源競爭 / 非確定性
 - [Flaky test 團隊治理](/testing/05-test-design-judgment/flaky-team-governance/) — quarantine 政策、retry 預算、信任修復的可視化與行動閾值
 - [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/) — 測試名稱與斷言說內容、註解只說操作約束、分析詞彙不入程式碼
+- [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/) — 建立測試問「未來哪種改壞要被擋」、變更時測試是唯一發聲的防護、約束該寫測試還是註解的分工判準
 
 ## 跨分類引用
 
