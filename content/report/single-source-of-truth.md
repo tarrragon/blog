@@ -248,3 +248,5 @@ JS 寫入位置跟 CSS fallback 在同一 selector — 兩套機制保持一致�
 延伸到 stream 操作：[#64 Feature 操作要跟 Source 同層合成](../compose-feature-at-source-layer/) 是本原則在 stream 領域的應用 — 在下游做 filter / sort = 等於建了個第二定義（subset 上的「filter 結果」）跟 stream 全集競爭、是另一種形式的 SSoT 違反。多源便利（就地寫個值）、單源對齊（找 fact 位置）— 這個反相關的更高層原則見 [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)。
 
 延伸到 UI state：[#70 URL 是 stateful UI 的儲存層](../url-as-state-container/) 是本原則在「可分享 state」的應用 — URL 是該類 state 的 SSOT、不寫 URL = state 多源（in-memory + 使用者期望的 URL 但實際不存在）。
+
+延伸到文件鏈：副本無法只有一處時（需求種子包、對外發布文件、追溯表）、SSoT 換成分級處置——每份副本的同步期待要嘛有機制承接、要嘛明示降級為一次性 scaffold 或 append-only 記錄、見 [#256 多份文件必然漂移](../doc-sync-needs-mechanism-or-demotion/)。

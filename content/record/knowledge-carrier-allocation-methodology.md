@@ -78,6 +78,7 @@ tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 - `.claude/pm-rules/pm-quality-baseline.md` 規則 7 — memory 升級四問 + 升級目的地預算閘門 + 升級即搬家
 - `.claude/README.md`「同步機制」章 — 寫作類 skill（compositional-writing / multi-round-review）內容 SSOT 在 blog repo，框架端為回流副本；依地圖判定「寫作方法 → skills/」後，內容修改應到上游 repo 執行
 - `.claude/skills/skill-design-guide/SKILL.md` — skills 載體的細部規範（官方規格、frontmatter、漸進揭露結構）
+- [#256 多份文件必然漂移](/report/doc-sync-needs-mechanism-or-demotion/) — 載體定了之後、多載體副本的同步期待怎麼處置：有機制承接、或明示降級為 scaffold / append-only 記錄（本地圖處理錯置、該卡處理漂移）
 
 ---
 

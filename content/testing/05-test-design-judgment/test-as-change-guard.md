@@ -83,3 +83,4 @@ review 裡「這個約束該寫註解還是測試」的爭論，判準是**這�
 - 零測試專案的第一批防護從哪建 → [無測試 legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)
 - 防護判準的原則層（動機辨識、消除判斷閘、破壞實測）→ [#253 寫註解的動機是怕被改壞時，要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)
 - 本篇批次操作案例的完整推導 → [註解防不了改壞](/work-log/comment_cannot_guard_invariant/)
+- 「測試是行為的權威載體」推到整條文件鏈的分級 → [#256 多份文件必然漂移](/report/doc-sync-needs-mechanism-or-demotion/)
