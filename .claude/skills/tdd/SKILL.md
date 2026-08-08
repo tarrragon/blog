@@ -21,6 +21,8 @@ TDD 的價值不只是「測試先寫」，而是**強迫你在實作前想清�
 
 **粒度原則**：Use Case → 行為單元 → 測試 → 實作，每一層的拆分由上一層決定。單一 Ticket 目標 3-7 分鐘完成。詳見 `references/task-granularity-rules.md`。
 
+**文件連貫性原則**：流程文件鏈（Proposal → Spec/UC → 種子包 → feature-spec → 測試 → traceability）每份文件分三級——活文件（期待最新、必須有機制守著）、scaffold（消費後即過期、要標記）、append-only 記錄（史料不回改）；漂移只發生在「被期待最新卻沒有機制」的錯配格。每類資訊指定唯一權威載體、其他位置引用不複製——行為的權威載體是測試（唯一改壞當下會發聲的載體）。各 Phase 驗收附連貫性檢查點（含 Phase 3/4 的註解判準：先評有沒有解釋到商業邏輯、防護動機轉測試）。詳見 `references/document-coherence.md`。
+
 **設計原則**：Layer 1 內容為通用 TDD 知識，任何專案均可直接使用。Layer 2 為框架整合點，以 blockquote 標記。
 
 ---
@@ -155,6 +157,7 @@ Layer 2 內容以 blockquote 標記，提供本框架的具體實現方式：
 
 ## 相關資源
 
+- 文件連貫性紀律（分級 / 住址 / 各 Phase 檢查點）：`references/document-coherence.md`
 - TDD 流程規則：`.claude/pm-rules/tdd-flow.md`
 - 任務拆分指南：`.claude/pm-rules/task-splitting.md`
 - 並行派發指南：`.claude/pm-rules/parallel-dispatch.md`
@@ -162,6 +165,7 @@ Layer 2 內容以 blockquote 標記，提供本框架的具體實現方式：
 
 ---
 
-**Last Updated**: 2026-04-04
+**Last Updated**: 2026-08-08
+**Version**: 2.1.0 - 新增 `references/document-coherence.md` 文件連貫性紀律 + 核心理念補「文件連貫性原則」。依《人月神話》多文件必漂移的論點對本 skill 文件鏈盤點出四個錯配（UC 場景複製進種子包與 feature-spec 形成四份行為敘述副本、traceability 的 covered 狀態是人工宣稱、feature-spec 無生命週期定義、邊界回補不及於已複製副本），落成三條紀律：文件分級（活文件要機制、scaffold 標消費時點、append-only 不回改）、資訊住址（每類資訊唯一權威載體、行為的權威載體是測試）、各 Phase 連貫性檢查點（Phase 4 用實際測試檔驗 traceability、feature-spec 標 archived、註解逐則過商業邏輯判準）。doc-handoff v1.1.0 同步（種子包標記 scaffold 身分）。
 **Version**: 2.0.0 - 全面重整：消滅孤立文件、統一 scripts/、集中 cases、子命令加入 Read 指示
 **Specialization**: TDD 全流程指導（Phase 0-4）

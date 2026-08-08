@@ -103,7 +103,7 @@
 以下以一個查詢驗證場景步驟為例，展示 UC→GWT 的轉換方法：
 
 **場景步驟：查詢驗證**
-```
+```text
 原始 UC 描述：
   - 開發者 GET /v1/events?limit=10
   - 回傳包含剛送出的 3 筆事件
@@ -111,7 +111,7 @@
 ```
 
 **轉換為 GWT 種子**：
-```
+```text
 場景 5a：查詢全部事件
   Given: collector 已接收 3 筆事件（event + error + lifecycle）
   When: GET /v1/events?limit=10
@@ -127,7 +127,7 @@
 
 GWT 種子產出後，由 Phase 1 設計者（非本銜接流程）判斷行為單元粒度。以下為 Phase 1 可能的拆解方向（示意，非本流程產出）：
 
-```
+```text
 場景 5a + 5b
   ├─ 行為單元：query API 回傳正確數量
   ├─ 行為單元：type 篩選只回傳對應類型
@@ -166,7 +166,7 @@ doc 的 UC 已定義整合測試（資訊鏈），TDD 需決定哪些行為由�
 
 UC 的「資訊鏈整合測試」已定義 end-to-end 路徑。本框架補充的是：**每個路徑中的節點，需要哪些單元測試來保護節點內部邏輯**。
 
-```
+```text
 範例資訊鏈：SDK init → event/error 送出 → flush → collector 驗證 → 儲存 → query
 
 整合測試覆蓋：[────────────────── 整條鏈 ──────────────────]
@@ -187,6 +187,9 @@ UC 的「資訊鏈整合測試」已定義 end-to-end 路徑。本框架補充�
 
 ```markdown
 ## TDD 輸入種子包
+
+> scaffold 文件：本種子包只在 Phase 0/1 消費時正確、Phase 1 完成即過期。
+> GWT 種子是 UC 的複本、之後與 UC 的差異以 UC 為準；行為落成測試後、權威以測試為準。
 
 ### 來源文件
 - Proposal: {PROP-ID}
@@ -230,7 +233,7 @@ doc 產出物完整時（多份 Spec + 多個 UC），可用「批量 BDD 設計
 
 ### 流程
 
-```
+```text
 doc 完整產出（Proposal + Spec + UC）
     │
     v
@@ -282,6 +285,7 @@ doc 完整產出（Proposal + Spec + UC）
 - [ ] UC 替代/例外場景都歸屬為某個 GWT 種子的邊界條件？
 - [ ] 整合測試 vs 單元測試分工已標註？
 - [ ] 輸入種子包已寫入對應 Ticket？
+- [ ] 種子包頂部帶 scaffold 標記（消費時點 + 爭議以 UC 為準）？（文件分級原則見 `references/document-coherence.md`）
 
 ---
 
@@ -311,6 +315,7 @@ doc-handoff 銜接時，同步初始化 `docs/traceability.yaml` 的骨架：
 
 ---
 
-**Last Updated**: 2026-06-22
+**Last Updated**: 2026-08-08
+**Version**: 1.1.0 — 種子包格式頂部加 scaffold 標記（消費時點 + 爭議以 UC 為準）、檢查清單同步加一項。動機：GWT 種子是 UC 場景的完整複本、UC 回補修訂後種子包沒有機制跟上、未標記身分時它讀起來像權威文件；依文件分級原則（`references/document-coherence.md`）把它明示為一次性 scaffold、消滅同步期待而不是新增同步義務。
 **Version**: 1.0.0 — 初始建立。補齊 doc→TDD 銜接缺口（WRAP 評估結論：銜接放 TDD 端）
 **Source**: 上游需求銜接模式驗證
