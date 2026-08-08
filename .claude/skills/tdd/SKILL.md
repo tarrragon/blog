@@ -166,6 +166,7 @@ Layer 2 內容以 blockquote 標記，提供本框架的具體實現方式：
 ---
 
 **Last Updated**: 2026-08-08
+**Version**: 2.2.0 - 測試設計理念對齊上游 testing 教材的現行水位。對照盤點發現本 skill 的測試 references 是 2026-06 從教材提煉的快照、之後教材長出的內容沒有跟上（快照漂移、正是 document-coherence 講的錯配）。四處補強：(1) phase2/rules.md 新增組 4「防護視角與訊號品質」（Q12 每條測試答「未來哪種改壞要被擋」、TDD 紅燈是破壞實測的制度化、綠燈後補的防護型測試要手動故意破壞驗一次；Q13 flaky 三源自查——計時 / 執行順序 / 外部服務、非確定約束不掛提交閘門；Q14 手寫測試資料是真實環境的乾淨子集、parser / 驗證類補錄製或生成資料）+ 檢查清單三項、phase2-test-design.md 以 blockquote 指涉不複寫；(2) test-naming-conventions v1.1.0 加「名稱承載意圖」（失敗輸出只給症狀、名稱回答為什麼這是刻意的、名稱失職時防護會被紅燈的人親手解除）與「名稱之外的測試文字」（reason / skip / 註解 / 分析詞彙的落點表）；(3) layered-test-strategy v1.1.0 加「分層之外的兩個補位形態」（stub 盲區與語意級假後端、characterization test）；(4) 已知議題記錄：phase2-test-design.md 與 phase2/rules.md 存在金字塔 / GWT / 場景設計的重複段落、屬雙活文件錯配、本次以指涉止血、結構收斂留待下輪。
 **Version**: 2.1.0 - 新增 `references/document-coherence.md` 文件連貫性紀律 + 核心理念補「文件連貫性原則」。依《人月神話》多文件必漂移的論點對本 skill 文件鏈盤點出四個錯配（UC 場景複製進種子包與 feature-spec 形成四份行為敘述副本、traceability 的 covered 狀態是人工宣稱、feature-spec 無生命週期定義、邊界回補不及於已複製副本），落成三條紀律：文件分級（活文件要機制、scaffold 標消費時點、append-only 不回改）、資訊住址（每類資訊唯一權威載體、行為的權威載體是測試）、各 Phase 連貫性檢查點（Phase 4 用實際測試檔驗 traceability、feature-spec 標 archived、註解逐則過商業邏輯判準）。doc-handoff v1.1.0 同步（種子包標記 scaffold 身分）。
 **Version**: 2.0.0 - 全面重整：消滅孤立文件、統一 scripts/、集中 cases、子命令加入 Read 指示
 **Specialization**: TDD 全流程指導（Phase 0-4）

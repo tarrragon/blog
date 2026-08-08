@@ -18,7 +18,7 @@
 
 「在某狀態下，呼叫 X 會回傳 / 變成什麼」。適合 query / read-only 操作。
 
-```
+```text
 returns_null_when_user_not_found
 returns_empty_list_when_no_items_match
 ```
@@ -27,7 +27,7 @@ returns_empty_list_when_no_items_match
 
 「當某條件成立時，操作會做什麼」。適合 command / mutation 操作。negative assertion 也該寫進名字（`does_not_X`）——這是契約的一部分。
 
-```
+```text
 removes_item_when_quantity_reaches_zero
 does_not_update_last_changed_on_remove
 ```
@@ -36,7 +36,7 @@ does_not_update_last_changed_on_remove
 
 「在某輸入 / 狀態下，會 throw / error / 失敗」。適合 error path、edge case。失敗模式是 doc 最容易漏寫的部分，但對 caller 最關鍵。
 
-```
+```text
 throws_not_found_when_id_does_not_exist
 returns_error_when_network_unavailable
 ```
@@ -47,7 +47,7 @@ returns_error_when_network_unavailable
 
 巢狀 group 提供「主題→操作→情境」的階層命名空間。讀者掃過 group 結構，立刻知道模組對外提供哪些操作、每個操作有哪些行為承諾。
 
-```
+```text
 EventCollector
   validateEvent
     rejects_when_missing_required_field
@@ -60,6 +60,28 @@ EventCollector
 ```
 
 好的 IDE / test runner 會把 group 結構顯示為樹狀——把這個視覺結構利用好，測試 console 本身就是 doc 瀏覽器。
+
+---
+
+## 名稱承載意圖：紅燈時刻的讀者
+
+三種模式描述的是「驗什麼」；名稱還承擔一個失敗訊息給不了的東西——「**為什麼這個行為是刻意的**」。失敗輸出只有症狀（Expected X、Actual Y），拿到紅燈的人下一個問題是：這是一條刻意的規則、還是漏網的 bug？答案的位置就是名稱。`finishes_immediately_without_editing_teardown`（直接進入下一階段：不做編輯流程的收尾）讓紅燈的人知道自己撞到刻意規則；名稱只寫症狀時，他查不出這條規則為誰存在，deadline 前最合理的動作是把斷言改成新行為讓測試回綠——防護在發聲的那一刻被解除，而那次 diff 在 review 裡讀起來只是一次正常的測試更新。
+
+名稱說不出這件事為什麼成立，先改名稱；改完仍說不出來（理由在 repo 之外：法規、外部契約），才在測試旁留註解記出處。
+
+---
+
+## 名稱之外的測試文字
+
+名稱之外，測試還有三類文字，各有落點；同一資訊只放一處：
+
+| 文字 | 該寫什麼 | 反例 → 正例 |
+|------|---------|------------|
+| assertion 的 reason / message | 失敗的後果與處置（這代表什麼、接下來做什麼），把實際變數值內插進訊息、紅燈時不必重跑加 log | `'狀態應該是 1'` → `'後端未釋放資源（實際=X）——刪除編排依「同步釋放」設計、需與後端確認並同步修正'` |
+| skip 訊息 | 可行動：這代表什麼、怎麼讓它跑起來 | `'未提供憑證'` → `'未提供憑證、跳過真實後端驗證——帶 <參數> 執行（見檔頭）'` |
+| 測試內註解 | 只寫操作性約束（違反會壞、且原因看不出來）與非顯而易見的 setup 原因；「本測試驗證什麼」的敘述性註解不寫——該修的是名稱和斷言 | 檔頭彙整清單（「已模擬的行為：…」）不寫——沒有機制守著它與 handler 同步、終將過期 |
+
+分析用的後設詞彙（「語意」「契約」「漂移」）與開發過程（取證日期、「曾以相反順序抓到」）不入測試文字——前者屬於對話、後者屬於 commit 訊息與知識庫。判斷法：這個詞刪掉之後、句子有沒有變得更直接。
 
 ---
 
@@ -110,6 +132,7 @@ EventCollector
 
 ---
 
-**Last Updated**: 2026-06-22
+**Last Updated**: 2026-08-08
+**Version**: 1.1.0 — 兩節新增：「名稱承載意圖」（失敗輸出只給症狀、名稱回答「為什麼這是刻意的」；名稱失職時防護會被紅燈的人親手解除——改斷言遷就新行為、diff 讀起來像正常測試更新）與「名稱之外的測試文字」（reason 寫失敗後果與處置並內插變數值、skip 訊息可行動、註解只寫操作性約束、分析詞彙與開發史不入測試文字）。來源是測試文字紀律的實際 review 案例集、同步上游 testing 教材的測試註解與命名紀律。
 **Version**: 1.0.0 — 從 blog `record/test-naming-as-documentation.md` 提煉，語言無關化
 **Source**: ~/Projects/blog/content/record/test-naming-as-documentation.md
