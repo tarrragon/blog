@@ -6,7 +6,7 @@ weight: 159
 tags: ["backend", "knowledge-card", "reliability", "release-gate"]
 ---
 
-Gate decision 的核心概念是「release gate 根據證據做出的明確下一步」。它連接 [release gate](/backend/knowledge-cards/release-gate/)、[evidence package](/backend/knowledge-cards/evidence-package/) 與 [stop condition](/backend/knowledge-cards/stop-condition/)，讓 gate 不只寫檢查結果，也寫出能不能前進。
+Gate decision 的核心概念是「release gate 根據證據做出的明確下一步」。這類在明確時點做放行判斷的決策，業界慣稱 go/no-go decision——發射體制、變更管理與 cutover 演練裡的 go/no-go 會議指的都是同一件事。它連接 [release gate](/backend/knowledge-cards/release-gate/)、[evidence package](/backend/knowledge-cards/evidence-package/) 與 [stop condition](/backend/knowledge-cards/stop-condition/)，讓 gate 不只寫檢查結果，也寫出能不能前進。
 
 ## 概念位置
 

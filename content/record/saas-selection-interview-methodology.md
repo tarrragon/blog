@@ -100,3 +100,4 @@ dry-run 收尾時實際試填決策記錄模板，量測每個欄位填得出來
 - 交付形態光譜與各形態的遷出代價：[交付形態選型](/backend/00-service-selection/delivery-mode-selection/)
 - 判定自建後的服務選型順序：[後端需求分類地圖](/backend/00-service-selection/backend-demand-taxonomy/)
 - 不可丟 event 的執行層機制：[idempotency](/backend/knowledge-cards/idempotency/) 與 [outbox pattern](/backend/knowledge-cards/outbox-pattern/) 知識卡
+- 同型的評估式方法論（評估既有團隊結構、而非技術選型）：[發射管制隊視角：評估工作團隊設計的判讀方法](/record/launch-control-team-lens-methodology/)

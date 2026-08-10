@@ -121,12 +121,13 @@ Reviewer 維度不該固定 — backend/07 batch 1 案例驅動章節用「規�
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                            | 關係                                                                                                                            |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                  | 互補 — #83 是 frame 軸（一個 reviewer N 輪）、本卡是 instance 軸（N 個 reviewer 各自獨立）、兩軸正交可疊加                      |
-| [#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/) | 解同類問題的不同手法 — #114 用「keyword bank / reader simulation / self-criticism」三機制擴大覆蓋、本卡用 instance 隔離擴大覆蓋 |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                       | 同骨 pattern — 單一 reviewer 處理多維度最便利（不用 spawn / coordinate）、但意圖（深度 review）失準                             |
-| [#42 兩次門檻](../two-occurrence-threshold/)                                                    | 跨機制 — 同 reviewer 多輪 catch 同類錯（#114）跟跨 reviewer instance（本卡）都是「換工具」的具體實作                            |
+| 原則                                                                                            | 關係                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                  | 互補 — #83 是 frame 軸（一個 reviewer N 輪）、本卡是 instance 軸（N 個 reviewer 各自獨立）、兩軸正交可疊加                                            |
+| [#114 Multi-pass review 的 frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/) | 解同類問題的不同手法 — #114 用「keyword bank / reader simulation / self-criticism」三機制擴大覆蓋、本卡用 instance 隔離擴大覆蓋                       |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                       | 同骨 pattern — 單一 reviewer 處理多維度最便利（不用 spawn / coordinate）、但意圖（深度 review）失準                                                   |
+| [#42 兩次門檻](../two-occurrence-threshold/)                                                    | 跨機制 — 同 reviewer 多輪 catch 同類錯（#114）跟跨 reviewer instance（本卡）都是「換工具」的具體實作                                                  |
+| [發射管制隊視角：評估工作團隊設計的判讀方法](/record/launch-control-team-lens-methodology/)     | 正交軸 — 本卡隔離的是 context（防污染）、該文安全分線 lens 指出隔離不等於決策獨立：reviewer 輸出回主 context 彙整時否決可被裁量掉、決策獨立看否決落點 |
 
 ---
 
