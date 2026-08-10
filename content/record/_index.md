@@ -19,6 +19,7 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 
 - [YAGNI 的真實適用條件](yagni-boundary-three-axes/)
 - [SaaS 選型訪談方法論](saas-selection-interview-methodology/)
+- [發射管制隊視角：評估工作團隊設計的判讀方法](launch-control-team-lens-methodology/)：任務編組 / 安全分線 / 業務與編組之分等判讀 lens、人類團隊與 agent 團隊的失效方向相反
 
 **敏捷 / 工程流程** — 敏捷實作、重構流程、文件分層。例：
 
