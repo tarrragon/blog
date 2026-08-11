@@ -18,7 +18,7 @@ Stripe 用日期型滾動版本（如 `2017-05-24`）、帳號首次呼叫 API �
 
 ## 對應大綱
 
-11.5 版本策略與 deprecation（anchor、機制主展開）、11.1 成本分配段交叉、版本策略爭論文章。
+11.5 版本策略與 deprecation（anchor、機制主展開）、11.1 成本分配段交叉、[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)。
 
 ## 下一步路由
 

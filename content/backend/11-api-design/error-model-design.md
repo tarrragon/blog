@@ -37,7 +37,7 @@ Stripe 的錯誤物件早於這個標準自成一格、分層思路可以直接�
 
 ## 爭論地圖與下一步
 
-本章的分類與格式判準、以 HTTP transport 承載 status 語意為前提。錯誤格式的跨風格交鋒（RFC 9457、envelope 包裝、GraphQL 的 200-with-errors 慣例）是掛在本章的爭論深度文章 backlog（見 [模組頁](/backend/11-api-design/) 章節規劃）— GraphQL 把 transport 層 status 跟業務錯誤解耦的做法、在該文攤開、本章不展開。
+本章的分類與格式判準、以 HTTP transport 承載 status 語意為前提。錯誤格式的跨風格交鋒（RFC 9457、envelope 包裝、GraphQL 的 200-with-errors 慣例）收在掛本章的 [錯誤格式之爭](/backend/11-api-design/error-format-debate/) — GraphQL 把 transport 層 status 跟業務錯誤解耦的做法、以及解耦之後哪些角色失去讀取能力、在該文攤開、本章不展開。
 
 - 可重試錯誤的消費端行為設計：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)、[6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)
 - 限流錯誤（429）的完整語意：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)

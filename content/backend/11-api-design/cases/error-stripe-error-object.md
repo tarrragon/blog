@@ -18,7 +18,7 @@ Stripe 錯誤物件分四個 `type`（`api_error` / `card_error` / `idempotency_
 
 ## 對應大綱
 
-11.4 錯誤模型設計（anchor）、11.8 API 層冪等交叉、錯誤格式爭論文章。
+11.4 錯誤模型設計（anchor）、11.8 API 層冪等交叉、[錯誤格式之爭](/backend/11-api-design/error-format-debate/)。
 
 ## 下一步路由
 

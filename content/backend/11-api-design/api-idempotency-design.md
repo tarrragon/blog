@@ -24,7 +24,7 @@ API 層冪等處理一個無法迴避的物理事實：網路請求會在結果�
 
 ## 無標準的現況：條款逐家不同
 
-冪等鍵是「業界事實標準先行、正式標準停滯」的典型。IETF 的 Idempotency-Key header draft 推進到第 7 版後過期、狀態 expired（見 [11.C40](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/)）— 引用它只能引語意骨架、不能宣稱 RFC。後果是各家條款實際有差、對照 PayPal 可見三個維度（見 [11.C41](/backend/11-api-design/cases/idempotency-paypal-request-id/)）：header 命名不同（`PayPal-Request-Id`）；replay 語意不同 — Stripe 回「首次結局快照」、PayPal 回「前次請求的最新狀態」、後者對非同步操作友善、但失去 exactly-once 回應保證；契約精確度不同 — Stripe 承諾 24h、PayPal 的保存期寫「a period of time」。設計自己的 API 時、這三個維度就是條款檢查表；整合外部 API 時、逐家讀條款、拿 Stripe 的語意假設去打 PayPal 會踩錯。
+冪等鍵是「業界事實標準先行、正式標準停滯」的典型。IETF 的 Idempotency-Key header draft 推進到第 7 版後過期、狀態 expired（見 [11.C40](/backend/11-api-design/cases/idempotency-ietf-key-header-draft/)）— 引用它只能引語意骨架、不能宣稱 RFC。後果是各家條款實際有差、對照 PayPal 可見三個維度（見 [11.C41](/backend/11-api-design/cases/idempotency-paypal-request-id/)）：header 命名不同（`PayPal-Request-Id`）；replay 語意不同 — Stripe 回「首次結局快照」、PayPal 回「前次請求的最新狀態」、後者對非同步操作友善、但失去 exactly-once 回應保證；契約精確度不同 — Stripe 承諾 24h、PayPal 的保存期寫「a period of time」。設計自己的 API 時、這三個維度就是條款檢查表；整合外部 API 時、逐家讀條款、拿 Stripe 的語意假設去打 PayPal 會踩錯。兩派 replay 語意各自的成立情境、保存期精確度的推導後果、以及同 key 並發這第四個維度、收在掛本章的 [Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)。
 
 ## 反例：冪等閘門缺席的內部迴圈
 

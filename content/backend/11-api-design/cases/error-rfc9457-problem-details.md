@@ -18,7 +18,7 @@ RFC 9457（IETF Proposed Standard、Standards Track、2023-07）定義 `applicat
 
 ## 對應大綱
 
-11.4 錯誤模型設計（anchor）、錯誤格式爭論文章。
+11.4 錯誤模型設計（anchor）、[錯誤格式之爭](/backend/11-api-design/error-format-debate/)。
 
 ## 下一步路由
 

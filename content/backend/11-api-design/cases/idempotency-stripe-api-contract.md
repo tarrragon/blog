@@ -18,7 +18,7 @@ Stripe API reference 條款：key 最長 255 字元、建議 UUIDv4；保存至�
 
 ## 對應大綱
 
-11.8 API 層冪等設計（anchor）、idempotency key 標準化爭論文章。
+11.8 API 層冪等設計（anchor）、[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)。
 
 ## 下一步路由
 

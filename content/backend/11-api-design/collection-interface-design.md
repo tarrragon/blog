@@ -14,7 +14,7 @@ offset 分頁（`?page=3&limit=50`）的介面直觀、失效有明確的機制�
 
 Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-cursor/)：介面收斂為 `cursor` 加 `limit`、回傳 `next_cursor`、cursor 內容 Base64 編碼、消費者不可解析。opaque 這個性質是設計重點 — **分頁狀態的表示權留在 server 端**、消費者不能解析就不能依賴內部格式、server 可以自由更換底層策略（keyset、shard 位置、甚至混合）而不動介面。同一份紀錄明列了付出的代價：失去 total count 與跳頁能力 — 這是明示的產品決策、選 cursor 前要跟產品端確認「第 N 頁」跟「共幾筆」是不是真需求。
 
-判準：資料量小、寫入頻率低、產品要跳頁 — offset 合理且便宜；資料量大或寫入頻繁 — cursor、並從第一版就 opaque（先給透明 cursor 再收緊、又是一次 breaking change）。offset、cursor、keyset 的完整交鋒與「cursor 不透明性算承諾還是逃生門」的爭議、收在掛本章的分頁爭論文章 backlog（見 [模組頁](/backend/11-api-design/)）。
+判準：資料量小、寫入頻率低、產品要跳頁 — offset 合理且便宜；資料量大或寫入頻繁 — cursor、並從第一版就 opaque（先給透明 cursor 再收緊、又是一次 breaking change）。offset、cursor、keyset 的完整交鋒與「cursor 不透明性算承諾還是逃生門」的爭議、收在掛本章的 [分頁之爭](/backend/11-api-design/pagination-debate/) — 該文把定位機制與表示權拆成兩層決策、並給出 opaque cursor 該明文化的條款清單。
 
 ## 批次操作：部分失敗是預設、不是例外
 
@@ -37,7 +37,7 @@ Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-
 - **透明 cursor**：消費者 decode 後依賴內部欄位、底層換策略即斷 — 從第一版就 opaque。
 - **批次語意未宣告**：部分失敗行為靠消費者猜。
 - **長時操作同步等**：把 5 分鐘的工作掛在一條 HTTP 連線上、逾時、重試、重複執行三連發。
-- **list 端點無上限**：`limit` 沒有 max、一個請求拉全表 — 上限是集合介面的基本流量防線（完整語意見 [11.9](/backend/11-api-design/external-traffic-semantics/)）。
+- **list 端點無上限**：`limit` 沒有 max、一個請求拉全表 — 上限是集合介面的基本流量防線、且該由本層承諾（文件寫明 max 值、超過時是截斷還是報錯）。上限存在的理由在對外流量層有對應的一段：請求成本不是常數時、配額要計成本而非計次（見 [11.9 的成本模型段](/backend/11-api-design/external-traffic-semantics/)）。
 
 ## 下一步路由
 

@@ -18,7 +18,7 @@ IETF httpapi WG 的 Internet-Draft 定義 `Idempotency-Key` request header、使
 
 ## 對應大綱
 
-11.8 API 層冪等設計、idempotency key 標準化爭論文章。邊緣（狀態需明示）。
+11.8 API 層冪等設計、[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)。邊緣（狀態需明示）。
 
 ## 下一步路由
 

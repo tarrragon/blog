@@ -18,7 +18,7 @@ no-versioning 立場的前提是 client 動態習得控制項 — 這個前提�
 
 ## 對應大綱
 
-版本策略爭論文章（no-versioning 派錨點）、[11.5 版本策略](/backend/11-api-design/versioning-and-deprecation/)（已引用）、[Hypermedia 適用邊界](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)（no-versioning 立場的 hypermedia 語境、已引用）。
+[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)（no-versioning 派錨點）、[11.5 版本策略](/backend/11-api-design/versioning-and-deprecation/)（已引用）、[Hypermedia 適用邊界](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)（no-versioning 立場的 hypermedia 語境、已引用）。
 
 ## 下一步路由
 

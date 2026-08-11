@@ -18,7 +18,7 @@ opaque cursor 的核心價值是「把分頁狀態的表示權留在 server 端�
 
 ## 對應大綱
 
-11.7 集合介面設計（anchor）、分頁爭論文章。
+11.7 集合介面設計（anchor）、[分頁之爭](/backend/11-api-design/pagination-debate/)。
 
 ## 下一步路由
 

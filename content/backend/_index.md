@@ -297,7 +297,7 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 | [08 事故處理](/backend/08-incident-response/)              | 4    | 六個 T1 vendor 未開始、案例深挖批次                                    |
 | [09 效能與容量](/backend/09-performance-capacity/)         | 5    | 十三個工具全部未開始                                                   |
 | [10 系統演進](/backend/10-system-evolution/)               | 4    | 四類演進議題待展開                                                     |
-| [11 API 設計](/backend/11-api-design/)                     | 4    | 爭論深度文章四篇（案例庫已就緒）                                       |
+| [11 API 設計](/backend/11-api-design/)                     | 2    | 三張既有卡的反向連結、兩篇推導型爭論文章的素材替換                     |
 | 橫向：判讀類章節補情境（見下段）                           | 1    | 跨十二模組、逐篇獨立、可隨時中斷                                       |
 
 ### 橫向工作：判讀類章節補系統形態與觸發事件

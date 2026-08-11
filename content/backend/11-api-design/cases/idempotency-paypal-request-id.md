@@ -18,7 +18,7 @@ PayPal 的冪等 header 名為 `PayPal-Request-Id`；並非所有 API 支援、�
 
 ## 對應大綱
 
-11.8 API 層冪等設計、idempotency key 標準化爭論文章。邊緣（對照組）。
+11.8 API 層冪等設計、[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)。邊緣（對照組）。
 
 ## 下一步路由
 

@@ -14,11 +14,11 @@ GitHub 2022 年為 REST API 引入日期命名版本（如 `2022-11-28`）、cli
 
 ## 判讀
 
-「最低支援窗口」把 deprecation 成本從隱性承諾變成 SLA 式的明文契約。header 選版（而非 URL 路徑）代表版本被視為內容協商、不是資源身分 — 直接對接版本策略爭論文章的 URI vs header 流派分界。
+「最低支援窗口」把 deprecation 成本從隱性承諾變成 SLA 式的明文契約。header 選版（而非 URL 路徑）代表版本被視為內容協商、不是資源身分 — 直接對接[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)的 URI vs header 流派分界。
 
 ## 對應大綱
 
-11.5 版本策略與 deprecation（anchor）、版本策略爭論文章。
+11.5 版本策略與 deprecation（anchor）、[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)。
 
 ## 下一步路由
 
