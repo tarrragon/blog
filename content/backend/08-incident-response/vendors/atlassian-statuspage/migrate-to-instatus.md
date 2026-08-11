@@ -62,7 +62,7 @@ Audit log 是 governance surface。誰 publish 哪則 incident、誰改了哪個
 
 - 確認 status page 變更是否需要 internal audit trail
 - 確認 target plan 是否能查詢、匯出與保留 admin activity
-- 金融 / 醫療場景要把 audit retention 與 evidence export 放進 go/no-go gate
+- 金融 / 醫療場景要把 audit retention 與 evidence export 放進 [go/no-go](/backend/knowledge-cards/go-no-go/) gate
 
 ### 4. SLA / uptime report 自動產出
 

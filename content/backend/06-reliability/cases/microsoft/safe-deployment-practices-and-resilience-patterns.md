@@ -21,7 +21,7 @@ Azure 與 M365 等大型 SaaS 每天部署數千次變更，單靠人工審核�
 | Resilience patterns   | 依賴失效時服務如何標準化降級     | retry / breaker / bulkhead |
 | Blast radius control  | ring boundary 如何限制影響範圍   | 每層的最大影響面           |
 
-Ring-based deployment 的標準路徑是 Ring 0（internal dogfood）→ Ring 1（canary）→ Ring 2（early adopters）→ Ring 3（broad）。每一層的 go/no-go 條件包含 health signal delta（跟前一版 baseline 比較）、error rate、latency percentile 與 customer impact signal。只有當前層的所有指標都在可接受範圍內，才進入下一層。
+Ring-based deployment 的標準路徑是 Ring 0（internal dogfood）→ Ring 1（canary）→ Ring 2（early adopters）→ Ring 3（broad）。每一層的 [go/no-go](/backend/knowledge-cards/go-no-go/) 條件包含 health signal delta（跟前一版 baseline 比較）、error rate、latency percentile 與 customer impact signal。只有當前層的所有指標都在可接受範圍內，才進入下一層。
 
 Automatic rollback 是 ring progression 的安全網。當 health signal 超過預設門檻時，系統自動回退到前一版，不需要等人工判斷。自動回退的觸發條件要嚴格定義 — 過於敏感會造成頻繁 false positive rollback，過於寬鬆會讓問題擴散到下一個 ring。
 

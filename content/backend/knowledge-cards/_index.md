@@ -47,6 +47,7 @@ weight: -1
 | [Cutover Window](/backend/knowledge-cards/cutover-window/)                   | 正式切換如何被時間窗與訊號框住           | cutover、release gate                |
 | [Release Gate](/backend/knowledge-cards/release-gate/)                       | 變更如何在正式釋出前通過或阻擋           | error budget、migration、review      |
 | [Gate Decision](/backend/knowledge-cards/gate-decision/)                     | gate 如何把證據轉成下一步決策            | release gate、rollout                |
+| [Go/No-Go](/backend/knowledge-cards/go-no-go/)                               | 不可逆變更前的固定時點如何分票放行       | gate decision、cutover               |
 | [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)           | 回滾流程如何在正式事故前演練             | rollback strategy、migration         |
 | [Rollback Window](/backend/knowledge-cards/rollback-window/)                 | 變更後還能用哪種方式回退或改路線         | cutover、rollback strategy           |
 | [Rollback Condition](/backend/knowledge-cards/rollback-condition/)           | 決策後何時要撤回、回退或改路線           | incident decision、rollback          |

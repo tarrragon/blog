@@ -205,7 +205,7 @@ Output：
 Output：
 
 - Validation report：query 結果差異、latency 對照
-- Go/no-go decision for cutover
+- [Go/no-go](/backend/knowledge-cards/go-no-go/) decision for cutover
 
 ### Phase 4：Cutover（< 1 小時 window）
 

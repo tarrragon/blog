@@ -75,7 +75,7 @@ Strangler Fig 跟 big bang 拆分的本質差異是「失敗代價可控」— �
 3. **停止 backfill**：monolith 不再被寫入、變成 read-only
 4. **Monolith 該功能下架**：等確認所有 dependency 都已遷移後（通常還要再 1-4 週觀察）、刪掉 monolith 對應 code 跟 table
 
-階段 4 是 point of no return — 過了寫路徑切換、回 monolith 的成本變得很高（要把新服務累積的寫入 backfill 回去）。這個 checkpoint 必須有明確的 go/no-go 決策、不是「順勢推進」。
+階段 4 是 point of no return — 過了寫路徑切換、回 monolith 的成本變得很高（要把新服務累積的寫入 backfill 回去）。這個 checkpoint 必須有明確的 [go/no-go](/backend/knowledge-cards/go-no-go/) 決策、不是「順勢推進」。
 
 ## 回退路徑設計
 

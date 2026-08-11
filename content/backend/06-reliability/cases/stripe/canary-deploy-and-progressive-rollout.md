@@ -23,7 +23,7 @@ tags: ["backend", "reliability", "case-study"]
 | Automatic rollback trigger  | 交易異常時是否能即時回退              | 指標超門檻自動回退，不等人工判斷                               |
 | Staged config vs code       | config 變更與 code 變更的風險是否相同 | timeout / retry 等 config 變更走獨立且更短的 rollout 節奏      |
 
-Canary traffic 的觀察窗設計是這個機制的關鍵。1% 階段至少觀察到一個完整的交易確認週期（通常 30 分鐘到數小時），5% 階段需要覆蓋一個對帳週期，25% 階段需要確認退款率無異常。每批之間的 go/no-go 判斷依據是全部交易指標都在 baseline 範圍內，任一指標偏離即暫停擴批。
+Canary traffic 的觀察窗設計是這個機制的關鍵。1% 階段至少觀察到一個完整的交易確認週期（通常 30 分鐘到數小時），5% 階段需要覆蓋一個對帳週期，25% 階段需要確認退款率無異常。每批之間的 [go/no-go](/backend/knowledge-cards/go-no-go/) 判斷依據是全部交易指標都在 baseline 範圍內，任一指標偏離即暫停擴批。
 
 Config 變更（如 provider timeout 或 retry 次數）與 code 變更走不同 rollout 路線。config 變更影響面通常更可預測、回退更快（秒級生效），但風險在於小幅調整也可能放大 retry storm 或觸發 cascade timeout。
 

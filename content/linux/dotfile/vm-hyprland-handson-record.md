@@ -496,7 +496,7 @@ keybind 已改成帶 `--type image/png`（全螢幕與 slurp 框選兩條都改�
 
 #### 核心風險：Qt6 QML 在 VirGL 上能不能跑
 
-Step 2 證明 Hyprland 的 wlroots/Aquamarine 渲染在 virtio-gpu-gl-pci 上正常。Quickshell 是額外的 Qt6 QML 渲染層——它用 Qt 的 scene graph 畫 UI 元件，走的是另一條 OpenGL/Vulkan pipeline。這條 pipeline 跟 VirGL 的相容性未知，是 step 3 的 go/no-go gate：
+Step 2 證明 Hyprland 的 wlroots/Aquamarine 渲染在 virtio-gpu-gl-pci 上正常。Quickshell 是額外的 Qt6 QML 渲染層——它用 Qt 的 scene graph 畫 UI 元件，走的是另一條 OpenGL/Vulkan pipeline。這條 pipeline 跟 VirGL 的相容性未知，是 step 3 的 [go/no-go](/backend/knowledge-cards/go-no-go/) gate：
 
 - **能跑**：完整走 Caelestia 安裝 → 配置 → 客製化流程，驗證教材
 - **不能跑**（QML crash / 全黑 / 嚴重破碎）：只能測安裝流程和 config 結構，視覺效果留實機。記錄失敗模式本身也有教材價值

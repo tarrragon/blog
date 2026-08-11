@@ -22,7 +22,7 @@ gate 應固定五欄：`Gate decision`、`Checks`、`Stop condition`、`Rollback
 | Checks          | checkout success rate > 99.5%、provider timeout ratio < 2%、duplicate charge = 0、error budget remaining > 30% |
 | Stop condition  | error rate 超門檻、latency p99 超過基線 2 倍、provider timeout ratio > 5%，任一觸發即停止擴批                  |
 | Rollback window | 15 min — config-only 變更無 schema 衝突，超過 15 min 後交易資料可能依賴新設定                                  |
-| Owner           | checkout team lead，負責每批 go/no-go 與 rollback 決策                                                         |
+| Owner           | checkout team lead，負責每批 [go/no-go](/backend/knowledge-cards/go-no-go/) 與 rollback 決策                   |
 
 Checks 欄位的數值來自歷史 baseline，每次變更前從 production 最近 7 天取值。baseline 偏移超過 10% 時，先校準再啟動 canary。
 

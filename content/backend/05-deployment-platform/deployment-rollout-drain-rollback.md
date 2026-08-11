@@ -41,7 +41,7 @@ Preflight 失敗時不進 canary。先把失敗收斂在控制面，避免切流
 3. **probe 語意驗證**：在 staging 環境對新版本觸發 startup → readiness → liveness 全流程，確認 probe 回應與依賴就緒條件吻合。這步抓的是 probe 設定退化（如 readiness endpoint 被改成永遠回 200）。
 4. **rollback 可行性驗證**：確認舊版本 image 仍在 registry 且可拉取、舊版本 config 仍相容。rollback 能力在 preflight 階段驗證，比事故時才發現「舊版拉不到」代價低得多。
 
-Preflight 自動化的產出是一份 go/no-go 報告，進入 [6.8 Release Gate](/backend/06-reliability/release-gate/) 作為放行依據。pipeline 中的 preflight stage 失敗應阻擋部署而非產生警告——可忽略的 preflight 等於沒有 preflight。
+Preflight 自動化的產出是一份 [go/no-go](/backend/knowledge-cards/go-no-go/) 報告，進入 [6.8 Release Gate](/backend/06-reliability/release-gate/) 作為放行依據。pipeline 中的 preflight stage 失敗應阻擋部署而非產生警告——可忽略的 preflight 等於沒有 preflight。
 
 ## Canary Batch 與 Stop Condition
 
