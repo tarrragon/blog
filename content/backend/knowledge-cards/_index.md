@@ -217,6 +217,8 @@ weight: -1
 | [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/)         | cursor 的不透明性算承諾還是逃生門 | keyset、collection API  |
 | [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/) | API 退場如何分階段承諾            | sunset header、brownout |
 | [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/)     | 被限流後消費者能依賴什麼邊界      | 429、Retry-After        |
+| [No-Versioning](/backend/knowledge-cards/no-versioning/)                 | 拿掉版本識別碼要換來什麼前提      | hypermedia、versionless |
+| [Problem Details](/backend/knowledge-cards/problem-details/)             | 採現成錯誤格式附帶哪兩項設計條款  | RFC 9457、problem+json  |
 | [BFF](/backend/knowledge-cards/bff/)                                     | 特定客戶端的聚合責任放在哪一層    | 聚合、客戶端專屬後端    |
 
 ## 邊界與治理
