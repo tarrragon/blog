@@ -6,7 +6,7 @@ weight: 33
 tags: ["backend", "api-design", "pagination"]
 ---
 
-分頁的爭論常以「offset、cursor、keyset 三選一」的形式出現，而這三個名詞回答的是兩個獨立問題。[offset 與 keyset](/backend/knowledge-cards/keyset-pagination/) 是定位機制：下一頁從哪裡開始、資料庫要付多少成本找到它。[cursor](/backend/knowledge-cards/pagination-cursor/) 是表示法：這個定位狀態用什麼形式交給消費者、消費者能不能看懂它。一個 opaque cursor 底下可以是 keyset，也可以是包了一層 Base64 的 offset。把兩個問題分開之後，爭論的實質剩下一個 —— 不透明性到底給服務端什麼自由、又對消費者承諾了什麼。分頁方案的選型判準主寫在 [11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)，本文掛在該章之下。
+分頁的爭論常以「offset、cursor、keyset 三選一」的形式出現，而這三個名詞回答的是兩個獨立問題。[offset 與 keyset](/backend/knowledge-cards/keyset-pagination/) 是定位機制：下一頁從哪裡開始、資料庫要付多少成本找到它。[cursor](/backend/knowledge-cards/pagination-cursor/) 是表示法：這個定位狀態用什麼形式交給消費者、消費者能不能看懂它。一個 opaque cursor 底下可以是 keyset，也可以是包了一層 Base64 的 offset。把兩個問題分開之後，爭論的實質剩下一個 —— 不透明性到底給服務端什麼自由、又對消費者承諾了什麼。分頁放在批次與長時操作旁邊一起看的完整判準，見 [集合介面設計](/backend/11-api-design/collection-interface-design/)。
 
 ## 定位機制的成本曲線與能力差
 
@@ -32,7 +32,7 @@ Slack 選 Base64 編碼的 opaque cursor，介面收斂為 `cursor` 加 `limit`�
 
 「cursor 的不透明性算承諾還是逃生門」這個問法預設了二選一，而兩者同時成立：對底層策略是逃生門，對 cursor 這個物件本身是承諾。消費者拿到一個看不懂的字串之後，仍然會對它做出各種假設，而每一項假設都是服務端沒說話的地方。沒有宣告的性質會被依賴，之後任何改動都變成 breaking change —— 這跟錯誤訊息文字沒給機器可讀替代品時被消費者拿去 parse 是同一個機制（該形態見 [11.C75](/backend/11-api-design/cases/errorchain-aip193-error-content/) 的 message 穩定性規則）。
 
-以下條款清單從機制與消費者的實際使用形態推導，並非來自某一份公開 spec；同型的做法在本站另有一份 case 支撐的版本，[11.8 的冪等鍵條款清單](/backend/11-api-design/api-idempotency-design/) 逐條對應 Stripe 的明文承諾。這是最小集合而非窮盡清單 —— 反向翻頁的語意、cursor 的長度上限與 URL 限制都是同一層的問題，只是後果較輕。
+以下條款清單從機制與消費者的實際使用形態推導，未見公開 spec 明文處理；冪等鍵有一份對應的條款清單、且各家有明文承諾可對照（見 [API 層冪等設計](/backend/11-api-design/api-idempotency-design/)），cursor 這邊還沒有。這是最小集合而非窮盡清單 —— 反向翻頁的語意、cursor 的長度上限與 URL 限制都是同一層的問題，只是後果較輕。
 
 - **有效期**。cursor 過期嗎、過期多久。消費者若把翻頁流程拆成多個排程批次，中間隔的是小時而非秒。未宣告時的觀察形態是「跑到一半的匯出工作偶爾失敗」。
 - **跨部署的有效性**。服務端換版本、換 shard 佈局、改排序鍵之後，舊 cursor 還能用嗎。這一條跟前一條合起來決定消費者能不能把 cursor 持久化到自己的資料庫裡。
@@ -48,13 +48,13 @@ Slack 選 Base64 編碼的 opaque cursor，介面收斂為 `cursor` 加 `limit`�
 
 offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力：隨機存取。產品要「跳到第 47 頁」、要顯示「共 1,284 筆」時，這兩件事在 keyset 上做不出來。管理後台、報表列表、資料稽核介面經常需要它們，而使用者的操作模式是點頁碼、不是無限捲動。
 
-規模是另一個變數。集合小到掃描成本可忽略、或使用者根本翻不到深處時，offset 的兩個失效模式都不會浮現，而它的介面更簡單、除錯更容易、產品能力更完整。本站的知識卡把門檻放在萬列量級，作為量級參考而非精確閾值。
+規模是另一個變數。集合小到掃描成本可忽略、或使用者根本翻不到深處時，offset 的兩個失效模式都不會浮現，而它的介面更簡單、除錯更容易、產品能力更完整。一般把門檻放在萬列量級，作為量級參考而非精確閾值。
 
 中間路線值得單獨提一句：主分頁走 cursor、總數另開一個端點回近似值。近似值的來源可以是統計資訊或快取的計數，成本跟精確 count 差好幾個量級，而多數列表介面顯示的「約 1,300 筆」已經滿足產品需求。這條路線讓「要總數」不再自動等於「要 offset」。
 
 ## 借用結論而不帶前提
 
-**採 cursor 而沒問過產品端跳頁需求**。遷移完才發現後台的頁碼列跟總數回不來，此時的選項只剩下再開一套 offset 端點並行 —— 兩套分頁語意並存，是比一開始選 offset 更差的位置。檢查問法在遷移之前：現有介面的頁碼與總數，有哪個角色正在用它做事。
+**採 cursor 而沒問過產品端跳頁需求**。遷移完才發現後台的頁碼列跟總數回不來，此時的選項只剩下再開一套 offset 端點並行。檢查問法在遷移之前：現有介面的頁碼與總數，有哪個角色正在用它做事。
 
 **採 opaque 而 cursor 肉眼可辨識**。Base64 編碼的 JSON 是可 decode 的，消費者 decode 之後看到 `{"id": 12345}` 就會開始依賴它。不透明性的實質保護來自消費者無法辨識結構，而非編碼動作本身。檢查問法分兩步：把自家 cursor 貼進 Base64 解碼器，出來的是不是有意義的欄位名；是的話再問這個 cursor 會不會流到有動機去 decode 的人手上 —— 只在自家 SDK 內部流轉時這一級夠用，會交到第三方整合方手上時要升到隨機 token 加服務端狀態。
 
@@ -69,7 +69,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 ## 下一步路由
 
 - 分頁、批次與長時操作的完整判準：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
-- 深頁掃描背後的資料庫機制：[Keyset Pagination 知識卡](/backend/knowledge-cards/keyset-pagination/) 給複雜度對照與 tiebreaker 設計；[1.13 Query 反模式](/backend/01-database/query-anti-patterns/) 把它放在查詢反模式的全景裡（在「其他常見反模式」段、與 N+1、缺索引並列）
+- 深頁掃描背後的資料庫機制：[Keyset Pagination 知識卡](/backend/knowledge-cards/keyset-pagination/) 給複雜度對照與 tiebreaker 設計；[Query 反模式](/backend/01-database/query-anti-patterns/) 把它放在查詢反模式的全景裡，與 N+1、缺索引並列
 - cursor 作為對外契約的概念位置：[Pagination Cursor 知識卡](/backend/knowledge-cards/pagination-cursor/)
 - 條款清單這個做法的 case 支撐版本：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 一次拉多少算過量、配額該計次還是計成本：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/) 的成本模型段（`limit` 該不該設 max 這一條的落點在 [11.7 的常見設計錯誤段](/backend/11-api-design/collection-interface-design/)）
