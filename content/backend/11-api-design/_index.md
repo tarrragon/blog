@@ -66,16 +66,16 @@ API 設計的核心目標是管理對外承諾的成本結構。服務內部的�
 
 ### 爭論深度文章（已完成）
 
-各篇的共同結構是把流派攤開到「各自的成立前提」這一層、再收在「借用結論而不帶前提」的失效形態上；主章維持中性判準、爭議的完整交鋒收在這裡。
+各篇的結構是三拍：把流派攤開到「各自的成立前提」這一層、列出借用結論而不帶前提的失效形態、最後交出一道有方向的選型判定序。主章維持中性判準，爭議的完整交鋒收在這裡。
 
 | 掛在 | 文章                                                                                         | 交鋒各方                                                                                               | 案例支撐                     |
 | ---- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------- |
-| 11.4 | [錯誤格式之爭](/backend/11-api-design/error-format-debate/)                                  | RFC 9457 problem+json、envelope 包裝、GraphQL 的 200-with-errors 慣例、gRPC 的保證層選配層分層         | C35、C26、C73（含推導）      |
-| 11.5 | [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)                       | URI 版本、header、Stripe date-based、Fielding 的 no-versioning 派                                      | C10、C12、C14、C17、C26、C27 |
+| 11.4 | [錯誤格式之爭](/backend/11-api-design/error-format-debate/)                                  | RFC 9457、外殼配真實 status、JSON-RPC 的協定層外殼、GraphQL 的 200-with-errors、gRPC 的分層            | C35、C26、C73（含推導）      |
+| 11.5 | [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)                       | URI 版本、header、date-based、no-versioning 派（另及 media type 與 query 變體）                        | C10、C12、C14、C17、C26、C27 |
 | 11.7 | [分頁之爭](/backend/11-api-design/pagination-debate/)                                        | offset、[cursor](/backend/knowledge-cards/pagination-cursor/)、keyset；cursor 不透明性算承諾還是逃生門 | C37（含推導）                |
 | 11.8 | [Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/) | IETF draft 與 Stripe / PayPal 各自實作的語意差異                                                       | C39-C41                      |
 
-案例支撐欄標「含推導」的兩篇要特別說明取材方式。錯誤格式之爭的 envelope 派沒有權威 spec 可引、屬各團隊各自演化的慣例、該派的分析從結構性質推導；分頁之爭的 offset 失效模式在案例庫是明示缺口（獨立公開事故未找到可驗證一手文、由 C37 文內的一手描述承接）、而 cursor 條款清單同樣是從機制與消費者使用形態推導。兩篇都在正文標明推導邊界、不把推導寫成引用。
+案例支撐欄標「含推導」的兩篇要特別說明取材方式。錯誤格式之爭把外殼派拆成兩種：協定層外殼有 JSON-RPC 2.0 這份規範可引，而各團隊自訂的 `{success, data, error}` 外殼沒有單一規範、該部分的分析從結構性質推導。分頁之爭的 offset 失效模式在案例庫是明示缺口（獨立公開事故未找到可驗證一手文、由 C37 文內的一手描述承接）、而 cursor 條款清單同樣是從機制與消費者使用形態推導。兩篇都在正文標明推導邊界、不把推導寫成引用。
 
 ### 11.11 深度文章（已完成）
 
