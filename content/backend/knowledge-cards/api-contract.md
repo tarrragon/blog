@@ -22,3 +22,5 @@ API Contract 位在 client、[API Gateway](/backend/knowledge-cards/api-gateway/
 ## 設計責任
 
 API Contract 要定義欄位名稱、必要欄位、預設值、錯誤格式與相容版本。破壞性變更需要受控發布與回復路徑。
+
+這四件事各自的推導層在 [模組十一](/backend/11-api-design/)：什麼算破壞性變更看 [向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)、錯誤格式的容器選擇看 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)、相容版本怎麼分期看 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)。契約已經上線之後才要收緊某個性質時，路徑跟綠地不同，見 [既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)。

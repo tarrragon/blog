@@ -36,7 +36,7 @@ header 與 date-based 把版本移出資源身分、版本粒度可以細到單�
 
 **Sunset header**。RFC 8594 定義用 HTTP header 宣告退場時點的機器可讀層（見 [11.C15](/backend/11-api-design/cases/versioning-sunset-header-rfc8594/)）— Informational 地位、實務採用有限、Slack 與 GitHub 都沒等它。引用價值是概念完整性：通訊鏈該有一層給程式讀、具體形式各家自選。
 
-工具的組合邏輯：公告觸及會讀公告的人、in-band warning 觸及在開發的人、brownout 觸及所有人。退場計畫的完整度檢查是「三類人各被哪個工具覆蓋」。
+工具的組合邏輯：公告觸及會讀公告的人、in-band warning 觸及在開發的人、brownout 觸及所有人。退場計畫的完整度檢查是「三類人各被哪個工具覆蓋」——而三類人加起來仍不等於全部，涵蓋不到的那部分由消費者的可協調度決定（見 [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)）。
 
 ## 退場的量測與到期行為
 

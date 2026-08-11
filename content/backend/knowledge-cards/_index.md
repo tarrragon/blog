@@ -211,15 +211,17 @@ weight: -1
 
 對外 API 的承諾邊界——版本、重試、翻頁、限流的契約語意。
 
-| 卡片                                                                     | 核心問題                          | 常見出現位置            |
-| ------------------------------------------------------------------------ | --------------------------------- | ----------------------- |
-| [Idempotency Key](/backend/knowledge-cards/idempotency-key/)             | 重試安全用什麼機制對外承諾        | Stripe、retry、409      |
-| [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/)         | cursor 的不透明性算承諾還是逃生門 | keyset、collection API  |
-| [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/) | API 退場如何分階段承諾            | sunset header、brownout |
-| [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/)     | 被限流後消費者能依賴什麼邊界      | 429、Retry-After        |
-| [No-Versioning](/backend/knowledge-cards/no-versioning/)                 | 拿掉版本識別碼要換來什麼前提      | hypermedia、versionless |
-| [Problem Details](/backend/knowledge-cards/problem-details/)             | 採現成錯誤格式附帶哪兩項設計條款  | RFC 9457、problem+json  |
-| [BFF](/backend/knowledge-cards/bff/)                                     | 特定客戶端的聚合責任放在哪一層    | 聚合、客戶端專屬後端    |
+| 卡片                                                                         | 核心問題                          | 常見出現位置            |
+| ---------------------------------------------------------------------------- | --------------------------------- | ----------------------- |
+| [Idempotency Key](/backend/knowledge-cards/idempotency-key/)                 | 重試安全用什麼機制對外承諾        | Stripe、retry、409      |
+| [Pagination Cursor](/backend/knowledge-cards/pagination-cursor/)             | cursor 的不透明性算承諾還是逃生門 | keyset、collection API  |
+| [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/)     | API 退場如何分階段承諾            | sunset header、brownout |
+| [Rate Limit Contract](/backend/knowledge-cards/rate-limit-contract/)         | 被限流後消費者能依賴什麼邊界      | 429、Retry-After        |
+| [No-Versioning](/backend/knowledge-cards/no-versioning/)                     | 拿掉版本識別碼要換來什麼前提      | hypermedia、versionless |
+| [Problem Details](/backend/knowledge-cards/problem-details/)                 | 採現成錯誤格式附帶哪兩項設計條款  | RFC 9457、problem+json  |
+| [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/)           | 「消費者」指的是哪一種對象        | 版本退場、中介層失明    |
+| [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/) | 「可協調」的四項成立條件          | 遷移計畫、支援窗口      |
+| [BFF](/backend/knowledge-cards/bff/)                                         | 特定客戶端的聚合責任放在哪一層    | 聚合、客戶端專屬後端    |
 
 ## 邊界與治理
 

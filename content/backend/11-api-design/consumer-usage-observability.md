@@ -27,7 +27,7 @@ tags: ["backend", "api-design", "observability"]
 
 ## 消費者身分是這層觀測的第一個設計決定
 
-「消費者」在觀測上要對應到一個穩定的識別符，而候選欄位各有各的破口。
+「消費者」在觀測上要對應到一個穩定的識別符，而候選欄位各有各的破口。這裡的消費者指的是會被通知、會回報的那一類（[API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/) 的第一種形態）——非人格中介不需要身分維度，因為你不會通知它們。
 
 API key 或 OAuth client_id 是最穩的一組：它由你發放、可歸屬到一個組織、且輪替時你知道換的是同一個對象。代價是要在發放時就把它跟組織綁好，事後從一堆裸 key 反推誰是誰，通常補不回來。token 的 subject 適合終端使用者維度，但一個整合方的 token 可能有成千上萬個 subject，拿它當消費者維度會直接把 cardinality 撐爆。User-Agent 是免費的、也是最不可靠的——它由呼叫端自己填，SDK 升級會改、自己寫 client 的人多半留空。IP 只在單一部署的整合方成立，一過雲端 NAT 就失去意義。
 

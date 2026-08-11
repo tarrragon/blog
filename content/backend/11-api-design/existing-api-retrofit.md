@@ -22,7 +22,7 @@ tags: ["backend", "api-design", "migration"]
 
 第二類的關鍵是**不要為它另開載具**。已經有版本機制時，這些變更掛在新的版本切片上；沒有版本機制時，新端點是最常見的載具，而那實際上是在做一次迷你版本化——既然要做，不如順便把版本機制本身建起來，因為第二類的變更不會只有一次。
 
-第三類要先接受一件事：完成率不會到百分之百。可做的是把「會斷的那些」從未知變成已知——退場前的觀測窗口告訴你還剩誰、而通知鏈的三種工具（公告、in-band warning、brownout）各自觸達不同的人（[11.5 的 deprecation 工具箱](/backend/11-api-design/versioning-and-deprecation/) 有完整展開）。把它排到最後做，是因為前兩類做完之後，第三類的清單通常會短很多。
+第三類要先接受一件事：完成率不會到百分之百，而上限由消費者的可協調度決定（列不列得出名單、發不發得出通知、握不握有 SDK、有沒有強制力四項，見 [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)）。可做的是把「會斷的那些」從未知變成已知——退場前的觀測窗口告訴你還剩誰、而通知鏈的三種工具（公告、in-band warning、brownout）各自觸達不同的人（[11.5 的 deprecation 工具箱](/backend/11-api-design/versioning-and-deprecation/) 有完整展開）。把它排到最後做，是因為前兩類做完之後，第三類的清單通常會短很多。
 
 ## 收緊不透明性這類「應該從第一版就做」的性質
 

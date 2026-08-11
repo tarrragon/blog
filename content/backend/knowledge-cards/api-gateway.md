@@ -27,3 +27,5 @@ API Gateway 位在 client 與多個 backend service 之間，通常介於 load b
 ## 設計責任
 
 設計時要明確定義 gateway 能做與不能做的事。它應承擔流量入口治理，而不應塞入核心業務邏輯，否則會變成難以維護的分散型控制層。
+
+這條邊界有一個常被忽略的後果：gateway 讀得到的只有 transport 層看得見的東西。錯誤住進酬載、status 恆定為 200 之後，gateway 的 retry、快取與健康判定全部依據錯誤的回應做出，而它沒有機制發現這件事（見 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)）。限流的對外語意與 429 承諾見 [11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)。
