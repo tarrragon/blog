@@ -54,4 +54,6 @@ tags: ["backend", "api-design", "compatibility"]
 - Breaking 決定要做之後的分期與退場：[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)
 - 消費端驗證（consumer-driven contract test 把「誰依賴什麼」顯性化）：[6.10 契約測試](/backend/06-reliability/contract-testing/)
 - 相容檢查工具進 CI 的組織面：[11.10 API 規範治理](/backend/11-api-design/api-governance/)
+- opaque 識別碼保留服務端自由，這條原則在分頁上的完整形態（以及它同時是一份多半沒寫下來的承諾）：[分頁之爭](/backend/11-api-design/pagination-debate/)
+- 錯誤碼算 breaking，反過來說明錯誤格式需要自己的演化條款：[錯誤格式之爭](/backend/11-api-design/error-format-debate/)、[Problem Details 知識卡](/backend/knowledge-cards/problem-details/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

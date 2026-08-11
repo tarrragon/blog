@@ -58,6 +58,7 @@ tags: ["backend", "reliability"]
 ## 下一步路由
 
 - 03 message-queue：consumer 端冪等設計
+- 對接外部 API 時，本章的兩個訊號（key TTL 過短、replay 是否落在同一狀態）是別人寫好的條款而非自己的實作選擇：[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)
 - 06.4 chaos：注入重複訊息驗證
 - 06.7 DR：replay 作為回復手段的前提
 

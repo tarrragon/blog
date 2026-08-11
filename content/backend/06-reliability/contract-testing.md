@@ -58,7 +58,7 @@ API schema 的演進判讀：新增可選欄位通常安全；移除欄位、重
 
 ### Event schema（Avro / Protobuf / JSON Schema）
 
-Event schema 的相容性要求比 API 更嚴格。API 的 breaking change 可以靠 versioning（`/v2/`）隔離，event 一旦寫入 broker 就跟所有版本的 consumer 共存。backward compatibility（新 schema 能讀舊資料）是最低要求；forward compatibility（舊 schema 能讀新資料）讓 consumer 可以延遲升級。
+Event schema 的相容性要求比 API 更嚴格。API 的 breaking change 可以靠 versioning 隔離（`/v2/` 只是四派之一，其餘三派的成本落點不同、見 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)），event 一旦寫入 broker 就跟所有版本的 consumer 共存。backward compatibility（新 schema 能讀舊資料）是最低要求；forward compatibility（舊 schema 能讀新資料）讓 consumer 可以延遲升級。
 
 Schema registry（Confluent Schema Registry / AWS Glue Schema Registry）提供集中式的相容性 gate：producer 註冊新版 schema 前，registry 自動比對相容性規則，拒絕 breaking change。這個 gate 比 CI 更早攔截，因為它在 schema 發布時就生效。
 

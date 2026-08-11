@@ -30,4 +30,5 @@ OData 退場還有更深一層、而且直接是使用層判準：它的設計�
 
 - 採標準 vs 自建的治理層判準：[11.10 API 規範治理](/backend/11-api-design/api-governance/)
 - 描述 API 形狀的格式標準怎麼選：[描述格式的選型：OpenAPI 與 AsyncAPI](/backend/11-api-design/styles/standards/standards-description-formats/)
+- 這道選擇題最具體的一次落地：[錯誤格式之爭](/backend/11-api-design/error-format-debate/)（採 RFC 9457 連 URI 命名空間與未知欄位忽略條款一起拿到，自建則要自己補這兩件）
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

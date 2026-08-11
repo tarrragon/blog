@@ -44,4 +44,5 @@ tags: ["backend", "api-design", "error-contract"]
 - 重送安全的機制設計：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 429 與退讓訊號：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)
 - 服務端的過載防護：[06 可靠性](/backend/06-reliability/)、[circuit breaker 知識卡](/backend/knowledge-cards/circuit-breaker/)、[retry budget 知識卡](/backend/knowledge-cards/retry-budget/)
+- 帶了 key 之後重送拿到什麼，各家條款不同：[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)（replay 回首次快照還是最新狀態、認不認得出是重放、保存期多長，直接決定重試窗口能設多寬）
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

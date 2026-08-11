@@ -38,6 +38,7 @@ RFC 9110 對 502 與 504 的定義只描述 gateway 自己的觀察：收到無�
 
 - 雙向契約的框架：[11.11 Status 與錯誤的雙向契約](/backend/11-api-design/error-bidirectional-contract/)
 - 拿到模糊 status 之後的重試合判：[接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)
+- 錯誤細節住在哪個容器、以及那個選擇讓誰讀不到錯誤：[錯誤格式之爭](/backend/11-api-design/error-format-debate/)（本文問的是 status 這一格裝不裝得下事實，該文問的是細節住哪裡）
 - 重送安全的機制：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 長時操作的查詢入口：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

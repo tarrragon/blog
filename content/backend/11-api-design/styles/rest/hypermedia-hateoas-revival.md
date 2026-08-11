@@ -37,4 +37,5 @@ Pragmatic 派的拆解針對的是收益假設而非名詞；本文把 C8 記錄
 - REST 這個詞的選型溝通用法：[REST 流派總覽](/backend/11-api-design/styles/rest/)
 - 判別法與建模層判準：[11.3 資源建模與操作語意](/backend/11-api-design/resource-modeling-operation-semantics/)
 - no-versioning 立場的版本策略語境：[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)
+- hypermedia 作為 no-versioning 的前提、以及借用該結論卻沒有執行期習得控制項時會壞在哪：[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)、[No-Versioning 知識卡](/backend/knowledge-cards/no-versioning/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

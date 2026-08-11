@@ -46,7 +46,7 @@ tags: ["backend", "api-design", "selection"]
 
 ## 爭論地圖
 
-本章只給判準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（[已完成](/backend/11-api-design/styles/graphql/)）、proto 演進紀律與部署邊界（[已完成](/backend/11-api-design/styles/grpc/)）、tRPC 與 JSON-RPC 的適用條件（[已完成](/backend/11-api-design/styles/rpc-revival/)）、格式標準化的採用判準（[已完成](/backend/11-api-design/styles/standards/)）、server 推 client 的承諾差異（[已完成](/backend/11-api-design/styles/realtime/)）。完整 backlog 見 [模組頁](/backend/11-api-design/) 章節規劃。
+本章只給判準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（[已完成](/backend/11-api-design/styles/graphql/)）、proto 演進紀律與部署邊界（[已完成](/backend/11-api-design/styles/grpc/)）、tRPC 與 JSON-RPC 的適用條件（[已完成](/backend/11-api-design/styles/rpc-revival/)）、格式標準化的採用判準（[已完成](/backend/11-api-design/styles/standards/)）、server 推 client 的承諾差異（[已完成](/backend/11-api-design/styles/realtime/)）。主章層另有四場跨風格的交鋒，各掛在對應的判準章之下：版本識別碼指向什麼、決定誰付遷移成本（[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)）、錯誤細節住在哪個容器、決定誰讀得到它（[錯誤格式之爭](/backend/11-api-design/error-format-debate/)）、分頁的定位機制與對外表示權是兩層決策（[分頁之爭](/backend/11-api-design/pagination-debate/)）、冪等條款統一得了形狀、統一不了值（[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)）。這四場的共同結構是把各派攤開到「成立前提」這一層，因此讀完之後判準會比本章的表格細一階。
 
 ## 下一步路由
 

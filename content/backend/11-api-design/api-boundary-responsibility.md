@@ -16,7 +16,7 @@ API 設計的核心責任是管理一組對外承諾的成本結構。服務內�
 
 ## 變更成本的兩種分配設計
 
-承諾確立之後、變更成本的分配有兩種本質設計：由服務端吸收、或攤給所有消費者。這是 [11.5 版本策略](/backend/11-api-design/versioning-and-deprecation/) 背後的經濟結構、在本章先建立判讀框架。
+承諾確立之後、變更成本的分配有兩種本質設計：由服務端吸收、或攤給所有消費者。這是 [11.5 版本策略](/backend/11-api-design/versioning-and-deprecation/) 背後的經濟結構、在本章先建立判讀框架。本章的二分在 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/) 細化成四派、且多出一派（不做版本）根本不在成本軸上——它要先過一道前提閘門，閘門不通時不進選項集。
 
 服務端吸收的極端案例是 Stripe：服務端的轉換層一次吸收了約 100 個 backwards-incompatible 升級、同時維持與 2011 年以來每一版相容（轉換層機制的展開見 [11.5](/backend/11-api-design/versioning-and-deprecation/)；案例見 [11.C10](/backend/11-api-design/cases/versioning-stripe-rolling-date-versions/)）。這個設計把變更成本收在服務端的基礎設施投資裡、換來的是消費者幾乎永遠不被迫遷移。
 

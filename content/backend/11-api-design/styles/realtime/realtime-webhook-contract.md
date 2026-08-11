@@ -41,4 +41,5 @@ webhook 把可靠性的一部分交給 consumer 自己扛、有五件事跑不�
 - 錯誤與投遞承諾的雙向框架：[11.11 Status 與錯誤的雙向契約](/backend/11-api-design/error-bidirectional-contract/)
 - consumer 側的冪等設計：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 要可靠送達與重放的事件語意：[03 訊息佇列](/backend/03-message-queue/)
+- 各家去重 header 名稱不同只是命名之爭，重送回什麼才是語意之爭：[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

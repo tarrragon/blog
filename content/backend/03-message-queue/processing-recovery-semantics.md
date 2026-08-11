@@ -75,7 +75,7 @@ Replay safety 跟 idempotency 屬於同一個設計階段、需共設計並落�
 
 對應 [9.C9 Spotify Kafka → Pub/Sub](/backend/09-performance-capacity/cases/spotify-kafka-to-pubsub-migration-gcp/) — broker 遷移要驗證業務語意跟新 broker 兼容、replay 模型在 Kafka（offset）跟 Pub/Sub（snapshot + seek）不同、idempotency 策略要重新校準。
 
-判讀重點：replay window 由 idempotency 儲存策略反推、不是 broker 設定值。先看 idempotency key 跟去重儲存、再決定 replay window 安全範圍。順序顛倒會踩到「replay 跨越去重紀錄到期」的事故、表現是 replay 後出現本來該被去重的重複副作用。
+判讀重點：replay window 由 idempotency 儲存策略反推、不是 broker 設定值。同一條反推在對外 API 是消費者做的——服務端的保存期承諾精確到什麼程度，決定消費者的重試窗口能設多長（見 [Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)）。先看 idempotency key 跟去重儲存、再決定 replay window 安全範圍。順序顛倒會踩到「replay 跨越去重紀錄到期」的事故、表現是 replay 後出現本來該被去重的重複副作用。
 
 ## 選型前判準
 
