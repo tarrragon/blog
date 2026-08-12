@@ -55,8 +55,8 @@ API 設計的核心目標是管理對外承諾的成本結構。服務內部的�
 | [11.10](/backend/11-api-design/api-governance/)                       | API 規範治理            | style guide 與 design review 作為組織能力：提案制 / Guild 制 / 分軌制三型比較、linting 進 CI、治理缺席的失敗模式 | C46-C54                      |
 | [11.11](/backend/11-api-design/error-bidirectional-contract/)         | Status 與錯誤的雙向契約 | provider 與 consumer 對彼此的期望、成本外部化的判讀；四篇深度文章攤開表達力邊界、重試決策、傳播信任、回饋迴路    | C64-C77                      |
 | [11.12](/backend/11-api-design/consumer-usage-observability/)         | API 消費者用量觀測      | 契約決策要能執行、前提是答得出誰在用什麼；身分維度、欄位級可答性與 cardinality 分層                              | 合成（四篇爭論文推導）       |
-| [11.13](/backend/11-api-design/existing-api-retrofit/)                | 既有 API 的改造路徑     | 契約已上線、消費者改不動、觀測未建時怎麼落地；已暴露性質的三類收法與動工順序                                     | 合成（四篇爭論文的個案實跑） |
-| [11.14](/backend/11-api-design/contract-clause-delivery/)             | 契約條款的送達          | 寫進文件只是宣告；機制 / 型別 / 執行期回饋 / 文件四層與各自的邊界                                                | 合成（四篇爭論文的條款層）   |
+| [11.13](/backend/11-api-design/existing-api-retrofit/)                | 既有 API 的改造路徑     | 契約已上線、消費者改不動、觀測未建時怎麼落地；已暴露性質的四類收法、程序閘門與三層排序                           | 合成（四篇爭論文的個案實跑） |
+| [11.14](/backend/11-api-design/contract-clause-delivery/)             | 契約條款的送達          | 寫進文件只是宣告；送達手段的強制力與射程兩個維度、以及哪些條款只能靠人讀                                         | 合成（四篇爭論文的條款層）   |
 
 ### 流派層（`styles/`）
 
@@ -113,7 +113,7 @@ API 設計的核心目標是管理對外承諾的成本結構。服務內部的�
 
 **條款的送達**已寫成 [11.14](/backend/11-api-design/contract-clause-delivery/)：四篇都把「寫進文件」當終點動作，而「條款寫了但沒人讀」與「條款根本沒寫」的觀察結果相同——消費者踩到、雙方都說不出誰違約。該章處理送達分層與哪些條款只能靠人讀。
 
-**既有 API 的改造路徑**已寫成 [11.13](/backend/11-api-design/existing-api-retrofit/)：四篇的判定序都是綠地版，而個案實跑顯示三個真實 API 裡有兩個半的讀者站在棕地位置。該章同時承接四篇合起來缺的動工順序（觀測 → 止血 → 錯誤格式 → 分頁 → 版本）。
+**既有 API 的改造路徑**已寫成 [11.13](/backend/11-api-design/existing-api-retrofit/)：四篇的判定序都是綠地版，而個案實跑顯示三個真實 API 裡有兩個半的讀者站在棕地位置。該章同時承接四篇合起來缺的動工順序（觀測 → 止血 → 錯誤格式 → 分頁 → 版本），以及三章共用的「消費者側變更節奏」這個外部變數——對方多久發一次版、更新覆蓋率爬到多少、簽核走幾天，它決定所有時程的絕對長度而三章原本都沒問過它。
 
 **消費者形態與可協調度**已建成兩張卡（[API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/) 與 [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)）：「消費者」在四篇裡指四種行為完全不同的對象，而「可協調」原本全站無一處定義。
 
