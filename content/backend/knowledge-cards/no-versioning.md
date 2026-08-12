@@ -2,7 +2,7 @@
 title: "No-Versioning（不做版本）"
 date: 2026-08-11
 description: "拿掉版本識別碼要換來什麼前提——執行期習得控制項或欄位級宣告，缺了它就只是不承諾相容"
-weight: 417
+weight: 435
 ---
 
 No-versioning 的核心責任是把介面演進的協調成本從「版本切換」轉成「服務端的持續自我約束」。它換的是付款地點而非付款金額：沒有版本識別碼時，服務端每次變更都要保證既有消費者不會斷，而這份保證由紀律提供、不由機制提供。跟 [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/) 的關係是互補的——no-versioning 讓「版本退場」這個動作消失，卻讓「單一欄位或控制項退場」變成日常，而後者仍然需要完整的退場生命週期。
@@ -21,7 +21,7 @@ No-versioning 的核心責任是把介面演進的協調成本從「版本切換
 
 判斷自家 client 屬於哪一種，有個直接的問法：換掉某個端點的 URL、只在既有回應裡留下指向新位置的控制項，現有 client 跟得上嗎。跟得上是強前提，跟不上但只要求特定欄位是弱前提，兩者皆非就不適用這條路線。
 
-採用弱前提路線之後最常見的失效形態，是 deprecation 標注無限期累積：標注本身不帶時限，而「舊欄位還有誰在用」需要 per-consumer × per-field 的用量量測才回答得了。缺了量測時 schema 會變成一份沒有人敢動的欄位墓園——表面上沒有版本，實際上每個舊欄位都是一個永久支援的版本。可自檢的訊號是：任選一個標了 deprecated 的欄位，說不說得出上週有幾個消費者呼叫它。
+採用弱前提路線之後最常見的失效形態，是 deprecation 標注無限期累積——「舊欄位還有誰在用」需要欄位級的用量量測才回答得了，缺了它標注就只能堆積（失效形態的完整展開見 [版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)，量測的建法見 [11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)）。
 
 ## 設計責任
 

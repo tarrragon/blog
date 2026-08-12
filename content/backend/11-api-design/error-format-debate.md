@@ -20,7 +20,7 @@ tags: ["backend", "api-design", "error-model"]
 | 解耦派         | 協定回應結構內建的 errors 集合    | 不說、恆定為傳輸結果  | GraphQL 規範與官方教學 |
 | 分層派         | 保證層加選配層、選配層走 metadata | 說（保證層即 status） | gRPC 官方 error guide  |
 
-補充派的立場在 RFC 9457 裡是明文的：這份標準定義 `application/problem+json`，核心成員是 `type`（錯誤種類的 URI）、`title`、`status`、`detail`、`instance` 五個，而 problem details 的定位是補充 HTTP status code、而非取代（見 [11.C35](/backend/11-api-design/cases/error-rfc9457-problem-details/)）。這句話決定了整份格式的定位 —— 讀 status 的角色拿到粗分類、讀 body 的角色拿到細節，兩層對同一個錯誤說一致的話。
+補充派的立場在 [RFC 9457](/backend/knowledge-cards/problem-details/) 裡是明文的：這份標準定義 `application/problem+json`，核心成員是 `type`（錯誤種類的 URI）、`title`、`status`、`detail`、`instance` 五個，而 problem details 的定位是補充 HTTP status code、而非取代（見 [11.C35](/backend/11-api-design/cases/error-rfc9457-problem-details/)）。這句話決定了整份格式的定位 —— 讀 status 的角色拿到粗分類、讀 body 的角色拿到細節，兩層對同一個錯誤說一致的話。
 
 外殼派把成功與失敗塞進同一個形狀，常見形態是 `{ "success": ..., "data": ..., "error": ... }`。這一派要分兩種來看，而把它們混為一談是這場爭論裡最常見的誤讀。
 

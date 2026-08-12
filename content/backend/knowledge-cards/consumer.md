@@ -6,7 +6,7 @@ weight: 133
 tags: ["backend", "message-queue"]
 ---
 
-Consumer 的核心概念是「從等待區取得工作、事件或資料並執行處理的角色」。它可以從 [queue](/backend/knowledge-cards/queue/)、[broker](/backend/knowledge-cards/broker/)、[stream pipeline](/backend/knowledge-cards/stream-pipeline/)、[database](/backend/knowledge-cards/database/) table 或 [in-process channel](/backend/knowledge-cards/in-process-channel/) 取得資料，再更新狀態、呼叫外部服務或產生衍生資料。
+Consumer 的核心概念是「從等待區取得工作、事件或資料並執行處理的角色」。這張卡講的是訊息佇列側的角色；對外 API 契約另一端的那種「消費者」是同名異義，見 [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/)。它可以從 [queue](/backend/knowledge-cards/queue/)、[broker](/backend/knowledge-cards/broker/)、[stream pipeline](/backend/knowledge-cards/stream-pipeline/)、[database](/backend/knowledge-cards/database/) table 或 [in-process channel](/backend/knowledge-cards/in-process-channel/) 取得資料，再更新狀態、呼叫外部服務或產生衍生資料。
 
 ## 概念位置
 

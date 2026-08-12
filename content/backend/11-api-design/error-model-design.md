@@ -18,7 +18,7 @@ HTTP status 承擔這一刀的粗分類（4xx 終態、5xx 與 429 可重試、�
 
 錯誤格式有現行標準、也有大廠自成一格的成熟先例、兩者的設計目標一致：機器可判讀、人類可理解、格式可演化。
 
-RFC 9457 定義 `application/problem+json`：`type`（URI）、`title`、`status`、`detail`、`instance` 五個核心成員、允許 extension members 且要求 client 忽略不認識的欄位（見 [11.C35](/backend/11-api-design/cases/error-rfc9457-problem-details/)）。兩個設計值得單獨理解：`type` 用 URI 而非字串 enum、把錯誤種類的命名空間外部化、跨團隊不撞名；「client MUST ignore unknown extensions」是格式的演化條款 — 服務端可以加欄位而不破壞既有消費者、等同錯誤模型的開放封閉原則。
+[RFC 9457](/backend/knowledge-cards/problem-details/) 定義 `application/problem+json`：`type`（URI）、`title`、`status`、`detail`、`instance` 五個核心成員、允許 extension members 且要求 client 忽略不認識的欄位（見 [11.C35](/backend/11-api-design/cases/error-rfc9457-problem-details/)）。兩個設計值得單獨理解：`type` 用 URI 而非字串 enum、把錯誤種類的命名空間外部化、跨團隊不撞名；「client MUST ignore unknown extensions」是格式的演化條款 — 服務端可以加欄位而不破壞既有消費者、等同錯誤模型的開放封閉原則。
 
 Stripe 的錯誤物件早於這個標準自成一格、分層思路可以直接借用：`type` 承擔路由層（哪類錯誤、走哪條處理分支）、`code` 承擔分支層（細粒度機器碼）、`param` 加 `message` 承擔 UI 層（哪個欄位錯、給人看什麼）、三個正交欄位讓消費者各層各取所需（見 [11.C36](/backend/11-api-design/cases/error-stripe-error-object/)）。這個模型還藏著一個結構訊號：`idempotency_error` 是四個 type 之一 — 冪等衝突在支付 API 是預期常態、錯誤模型要為它保留一級位置（冪等語意主寫在 [11.8](/backend/11-api-design/api-idempotency-design/)）。
 

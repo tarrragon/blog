@@ -2,7 +2,7 @@
 title: "Problem Details（RFC 9457）"
 date: 2026-08-11
 description: "錯誤格式的現成標準給了什麼——URI 命名空間與未知欄位忽略條款，這兩件事自建格式要自己補"
-weight: 418
+weight: 436
 ---
 
 Problem Details 的核心責任是給 HTTP API 的錯誤回應一個現成的、可演化的形狀。RFC 9457 定義 media type `application/problem+json`，核心成員是 `type`（錯誤種類的 URI）、`title`、`status`、`detail`、`instance` 五個。它跟 [API Contract](/backend/knowledge-cards/api-contract/) 的關係是後者的一個具體切面：錯誤格式一旦被消費者依賴，變更成本跟正常回應完全相同，因此它需要跟成功路徑同等的演化設計。
@@ -21,6 +21,6 @@ Problem Details 的核心責任是給 HTTP API 的錯誤回應一個現成的、
 
 ## 設計責任
 
-採用時要決定的是 `type` URI 的命名空間怎麼分配（按服務、按領域、還是按錯誤族），以及哪些資訊放 extension member。不採用時要承擔的是同樣兩件事的自建版本，並且從第一版就把「未知欄位請忽略」寫進文件——這條條款晚寫沒有意義，因為它保護的是寫下它之後才新增的欄位。
+採用時要決定的是 `type` URI 的命名空間怎麼分配（按服務、按領域、還是按錯誤族），以及哪些資訊放 extension member。不採用時要承擔的是同樣兩件事的自建版本，並且盡早把「未知欄位請忽略」寫進文件。它保護的是寫下它之後才新增的欄位，因此晚寫不追溯保護已經發出去的那些——而正因為價值在往後，晚寫仍然值得補。
 
 錯誤該分幾類、格式欄位怎麼設計的完整判準見 [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)；跨風格的格式交鋒見 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)。

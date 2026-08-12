@@ -6,7 +6,7 @@ weight: 33
 tags: ["backend", "api-design", "pagination"]
 ---
 
-分頁的爭論常以「offset、cursor、keyset 三選一」的形式出現，而這三個名詞混了三根獨立的軸。[offset 與 keyset](/backend/knowledge-cards/keyset-pagination/) 是**定位機制**：下一頁從哪裡開始、資料庫要付多少成本找到它。**一致性模型**是第二根：翻頁期間資料在變，你承諾讀者看到的是哪一個時點的集合。[cursor](/backend/knowledge-cards/pagination-cursor/) 是**表示法**：這個定位狀態用什麼形式交給消費者、消費者能不能看懂它。一個 opaque cursor 底下可以是 keyset，也可以是包了一層 Base64 的 offset；而 `?after_id=12345` 是透明表示法配 keyset 機制 —— 兩軸各自可變，在單一時點上正交。
+分頁的爭論常以「offset、cursor、keyset 三選一」的形式出現，而這三個名詞混了三根獨立的軸。[offset 與 keyset](/backend/knowledge-cards/keyset-pagination/) 是**定位機制**：下一頁從哪裡開始、資料庫要付多少成本找到它。**一致性模型**是第二根：翻頁期間資料在變，而承諾給讀者的是哪一個時點的集合。[cursor](/backend/knowledge-cards/pagination-cursor/) 是**表示法**：這個定位狀態用什麼形式交給消費者、消費者能不能看懂它。一個 opaque cursor 底下可以是 keyset，也可以是包了一層 Base64 的 offset；而 `?after_id=12345` 是透明表示法配 keyset 機制 —— 兩軸各自可變，在單一時點上正交。
 
 正交只在單一時點成立。第一版選的表示法會限制第二版還能換哪些機制：透明 cursor 把內部欄位變成介面的一部分，機制就凍在那個形狀上。表示法因此透過**選項價值**向未來耦合，而這正是爭論的實質 —— 不透明性到底給服務端什麼自由、又對消費者承諾了什麼。分頁放在批次與長時操作旁邊一起看的完整判準，見 [集合介面設計](/backend/11-api-design/collection-interface-design/)。
 
