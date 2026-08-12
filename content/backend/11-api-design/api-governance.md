@@ -30,6 +30,8 @@ API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十�
 
 治理缺席時規範的結局有公開的乾淨反例：White House API Standards — 內容完整的 RESTful guidelines、34 個 commit 後停止維護、2022 年正式 archived（見 [11.C54](/backend/11-api-design/cases/governance-whitehouse-api-standards-archived/)、反例）。文件品質過關、缺的是 Zalando 四件套裡的另外三件：沒有 owner、沒有 review 流程、沒有工具。跟 C47 並排的結論：**規範的存活取決於配套組織機制、不取決於文件寫得多好** — 評估自己組織的規範健康度、先問 owner 是誰、上次更新是何時、違反規範的 API 會在哪一關被擋。
 
+這一章問的是規範在組織內部活不活得下來，而規範活著之後還有另一半：它產出的那些條款有沒有真的到達消費者。文件裡有寫與消費者知道是兩件事，而兩者失效時的觀察結果相同（送達的四層手段見 [11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)）。
+
 ## 採現成標準、還是自建規範
 
 治理的另一個選項是直接採跨組織標準、讓別人維護規範。JSON:API 的價值主張就放在這 —「stop the bikeshedding」、用現成慣例消除團隊內的格式爭論（見 [11.C50](/backend/11-api-design/cases/standards-jsonapi-antibikeshedding/)）。反面的量尺是 OData：OASIS 標準加 ISO 認證、生態仍萎縮、Netflix 與 eBay 離場（見 [11.C51](/backend/11-api-design/cases/standards-odata-decline/)、反例、退場分析屬二手來源）— 標準機構背書不能替代生態動能、採標準前看的是 marquee adopter 與工具鏈、而非認證章。務實的中間路線是「採描述格式標準、自建設計規範」：OpenAPI 描述介面、AsyncAPI 補事件面（兩者的生態關係見 [11.C52](/backend/11-api-design/cases/standards-openapi-initiative-evolution/) 與 [11.C53](/backend/11-api-design/cases/standards-asyncapi-complement/)）、設計判準寫成自家 guidelines 配 Spectral ruleset。採現成標準 vs 自建規範的完整選型判準、以及描述格式的選型、收在 [standards 流派層](/backend/11-api-design/styles/standards/)。
