@@ -98,4 +98,6 @@ GitHub 的 24 個月是把它寫成契約的形態（C12，限 REST API、GraphQ
 - 承諾成本結構的上游框架：[11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)
 - versionless 的紀律代價與 schema 演進實作：[Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)
 - hypermedia 前提的完整展開：[Hypermedia 適用邊界](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)
+- 支援窗口承諾怎麼送到消費者手上：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
+- 已在某一派、要換到另一派的路徑：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

@@ -40,7 +40,7 @@ header 與 date-based 把版本移出資源身分、版本粒度可以細到單�
 
 ## 退場的量測與到期行為
 
-退場決策要有數據：舊版的呼叫量、呼叫方分布、衰減曲線。量測的基礎設施跟 [04 觀測](/backend/04-observability/) 共用、版本維度要進 metrics label。到期行為的設計原則承接 [11.1 的違約模式分析](/backend/11-api-design/api-boundary-responsibility/)：到期回明確錯誤、而非靜默改變語意 — Facebook Graph v1.0 的靜默語意切換反例在該段完整展開。
+退場決策要有數據：舊版的呼叫量、呼叫方分布、衰減曲線。量測的基礎設施跟 [04 觀測](/backend/04-observability/) 共用、版本維度要進 metrics label；這層維度該建到多細、消費者身分怎麼認，見 [11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)。到期行為的設計原則承接 [11.1 的違約模式分析](/backend/11-api-design/api-boundary-responsibility/)：到期回明確錯誤、而非靜默改變語意 — Facebook Graph v1.0 的靜默語意切換反例在該段完整展開。
 
 版本策略運作不良的訊號可以從三個地方讀：舊版呼叫量長期不衰減（deprecation 工具箱沒有形成遷移壓力）、多數帳號 pin 死在首版（新能力的價值不足以驅動升級、或遷移成本被低估）、每次退場都演變成客訴事故（通訊鏈有一類消費者始終沒被覆蓋）。三個訊號指向的修法分別是執行工具、版本內容、通訊覆蓋 — 對症下藥、而非一律延長支援期。
 

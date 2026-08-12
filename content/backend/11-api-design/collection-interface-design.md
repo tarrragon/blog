@@ -34,7 +34,7 @@ Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-
 
 ## 常見設計錯誤
 
-- **透明 cursor**：消費者 decode 後依賴內部欄位、底層換策略即斷 — 從第一版就 opaque。
+- **透明 cursor**：消費者 decode 後依賴內部欄位、底層換策略即斷 — 從第一版就 opaque。既有 API 已經給了透明 cursor 時仍補得回來，做法見 [11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)。
 - **批次語意未宣告**：部分失敗行為靠消費者猜。
 - **長時操作同步等**：把 5 分鐘的工作掛在一條 HTTP 連線上、逾時、重試、重複執行三連發。
 - **list 端點無上限**：`limit` 沒有 max、一個請求拉全表 — 上限是集合介面的基本流量防線、且該由本層承諾（文件寫明 max 值、超過時是截斷還是報錯）。上限存在的理由在對外流量層有對應的一段：請求成本不是常數時、配額要計成本而非計次（見 [11.9 的成本模型段](/backend/11-api-design/external-traffic-semantics/)）。

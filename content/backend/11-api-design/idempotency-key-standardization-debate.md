@@ -89,4 +89,7 @@ PayPal 明示同 ID 並發請求時第二個可能失敗（C41）。這個條款
 - status、method 與 key 三者合判的重送決策：[接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)
 - 非同步操作的查詢入口設計：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
 - 內部交付語意的去重處理與驗證：[3.4 consumer 設計](/backend/03-message-queue/consumer-design/)、[6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)
+- 衝突率與 replay 率集中在誰身上：[11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)
+- 六項條款怎麼送到消費者手上（保存期是最該推進執行期的一項）：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
+- 已上線但條款未明文時的補寫路徑：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

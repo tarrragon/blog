@@ -87,4 +87,7 @@ gRPC 的分層設計正是為了在拿到表達力的同時保住一部分讀者
 - 錯誤在多層服務間傳播時的保證層與選配層、以及 provider 該暴露多少細節的安全邊界：[錯誤傳播與信任邊界](/backend/11-api-design/error-propagation-trust-boundary/) 的「暴露多少」段
 - 消費者拿到錯誤後的回報與升級判讀：[錯誤回報的回饋迴路](/backend/11-api-design/error-feedback-loop/)
 - GraphQL 解耦設計的 schema 側代價：[Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)
+- 第二問的那層錯誤觀測怎麼建：[11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)
+- 演化條款怎麼送到消費者手上（它是編不了碼、只能靠人讀的那一類）：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
+- 既有 API 要把恆定 200 改回真實 status 的路徑：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

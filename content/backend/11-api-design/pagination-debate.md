@@ -83,4 +83,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 - cursor 作為對外契約的概念位置：[Pagination Cursor 知識卡](/backend/knowledge-cards/pagination-cursor/)
 - 條款清單這個做法的 case 支撐版本：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)
 - 一次拉多少算過量、配額該計次還是計成本：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/) 的成本模型段（`limit` 該不該設 max 這一條的落點在 [11.7 的常見設計錯誤段](/backend/11-api-design/collection-interface-design/)）
+- 「三年後幾筆」「誰在用頁碼與總數」這幾個檢查問法要的觀測：[11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)
+- 既有 API 換分頁機制的路徑（多數是加法可解，不必規劃版本升級）：[11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)
+- cursor 條款清單怎麼送到消費者手上而不只是寫進文件：[11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)
