@@ -24,7 +24,7 @@ WRAP core skill  ->  integration patterns  ->  project-specific implementation
 | [pseudo-widen-guard.md](./pseudo-widen-guard.md)                 | 偽擴增選項（pseudo-Widen）防護與假設層級多元性檢查   |
 | [source-verification.md](./source-verification.md)               | 清單類答案的逐項來源核對流程                         |
 | [personalized-advice.md](./personalized-advice.md)               | 個人化建議場景的 Step 0 落地方式                     |
-| [rules-map.md](./rules-map.md)                                   | 規則庫與 WRAP 的分工模板                             |
+| [pm-rules-map.md](./pm-rules-map.md)                             | 規則庫與 WRAP 的分工模板                             |
 | [case-studies.md](./case-studies.md)                             | 案例庫的收錄欄位與抽象化方式                         |
 
 ---

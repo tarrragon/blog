@@ -442,13 +442,14 @@ WRAP 每階段之間是切割點 — 強迫問「是否繼續」：
 
 需要把 WRAP 接到具體掛鉤（Hook）/ CLI / 任務系統時讀。各檔為「通用語意 → 專案實作」的對應範本，複用到新專案時各自改寫。
 
-| 文件                                        | 內容                                                                    |
-| ------------------------------------------- | ----------------------------------------------------------------------- |
-| `references/integration-patterns/README.md` | 落地層入口與路由：依賴方向（core → pattern → 專案）、8 個整合範本的索引 |
+| 文件                                       | 內容                                                                    |
+| ------------------------------------------ | ----------------------------------------------------------------------- |
+| `references/project-integration/README.md` | 落地層入口與路由：依賴方向（core → pattern → 專案）、8 個整合範本的索引 |
 
 ---
 
-**Last Updated**: 2026-06-01
+**Last Updated**: 2026-08-12
+**Version**: 2.5.1 — 修復目錄改名遺留的兩處斷鏈：參考文件表路徑 `references/integration-patterns/README.md` 改為 `references/project-integration/README.md`，`project-integration/README.md` 內部連結 `rules-map.md` 改為 `pm-rules-map.md`。改名本身早已完成，斷鏈是引用未同步；2.4.0 以下的版本註腳保留當時字面不改寫（歷史記錄）。
 **Version**: 2.5.0 — 絆腳索新增「基礎設施累積型」：任務經連續 escalation 每層加工具 / 檔案 / 流程而 anchor 未明說時、亮 anchor 一次按它重定 apparatus 份量（Anchor Check 在多輪協作 escalation 的具體化、防 apparatus 份量被流程動能而非 anchor 決定）；對應 report 卡 #237、從一個 skill 需求滾成對外模組 + 三輪審查 + 兩卡的事故抽出。
 **Version**: 2.4.0 — 多輪 review 修正：參考文件表補 integration-patterns/README 路由 + claim-quick-wrap（原 orphan）；觸發條件補「不可逆 / 時間壓力」「利害關係人衝突」+ 定義「快速+」模式；階段標題去除錯亂編號（0. / 5.）；LLM 工具化偏誤改條件式語氣；安全係數標經驗值。
 **Version**: 2.3.0 — 觸發條件新增 4 項決策路徑層干擾（CLI 自動駕駛（autopilot） / 既有結論錨定（Anchor） / 草率改規則 / 多步驟成功率盲點）；既有觸發條件不變動（向後相容）。
