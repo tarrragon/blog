@@ -24,7 +24,7 @@ tags: ["linux", "remote", "network", "debug", "knowledge-cards"]
 
 拿到症狀先歸類再動手：
 
-- **解析失敗**（`Could not resolve host` / `Name or service not known`）→ 名字還沒變成位址、卡在 resolver 這關：`/etc/hosts`、DNS、或用主機名連線時的 MagicDNS 出問題。這比逾時 / 被拒更前面——連封包都還沒送出去。用 IP 直連能通、用主機名不通，就是這一層。
+- **解析失敗**（`Could not resolve host` / `Name or service not known`）→ 名字還沒變成位址、卡在 resolver 這關：`/etc/hosts`、DNS、或用主機名連線時的 MagicDNS 出問題。這比逾時 / 被拒更前面——連封包都還沒送出去。用 IP 直連能通、用主機名不通，就是這一層。落在這一層之後往下分流（哪一個 resolver 壞了、間歇性怎麼判定），見 [本機 DNS proxy 插在第一順位時的放大效應](/work-log/vpn_local_dns_proxy_amplifies_outage/)。
 - **逾時** → 先驗可達性：目的位址對這台裝置路由得到嗎（在正確的私網 / VPN 上嗎）、中途有沒有防火牆 DROP、機器起了嗎。
 - **被拒** → 服務層：`ss -tlnp` 看服務有沒有在聽那個 port、聽在哪個介面；認證另算，見概念位置。
 
