@@ -3,7 +3,7 @@ name: blogsearch-lifecycle
 description: "blogsearch 向量 index 的生命週期管理：偵測 index 過時或不存在、觸發 rebuild、驗證結果。適用於有 blogsearch 語意搜尋工具的專案。觸發詞：blogsearch、rebuild index、ingest、向量搜尋、語意搜尋、index 過時、content 變動、pull 後 rebuild、新增文章後搜尋。Trigger when content changes may have made the search index stale, or when semantic search is needed."
 license: MIT
 metadata:
-  version: 1.2.0
+  version: 1.4.0
   category: tooling-lifecycle
 ---
 
@@ -50,10 +50,27 @@ cd scripts/blogsearch && make install    # build binary + pull embedding model
 ### 2. Full rebuild
 
 ```bash
-cd scripts/blogsearch && make ingest     # build index（全量 ~4 分鐘）
+cd scripts/blogsearch && make ingest     # 全量重建，耗時隨 content 規模線性成長
 ```
 
 預期輸出：逐檔列出 chunk 數、最後顯示總 chunk 數與耗時。
+
+**耗時要按當前規模估、不要記固定值。** 2026-08 實測 3510 個 md 檔產出 29863 chunks、耗時 3296 秒（約 55 分鐘）；早期版本的 skill 寫「約 4 分鐘」，那是 content 遠小於現在時的數字。開跑前先 `find content -name '*.md' | wc -l` 對照上次的檔數與秒數推估，免得用過時的預期把正常進度誤判成卡住。
+
+**沒有增量模式。** `ingest` 只有全量一種，改一個檔跟改三千個檔付一樣的代價。這決定了 rebuild 的時機策略：累積一批 content 變動再跑一次，而不是每次寫完就跑。中途中斷是安全的——它在全部 embedding 完成後才寫檔，舊 index 在整個過程中保持完整可用。
+
+**跑之前先把行程脫離 agent 的行程樹。** 這種等級的長工作放在 agent 管理的背景工作裡會連同 `ollama serve` 一起被回收，而且經管線的輸出會被緩衝到看不見進度：
+
+```bash
+SP=/tmp/blogsearch-run                      # 任一可寫的暫存路徑
+mkdir -p "$SP"
+( nohup ollama serve > "$SP/ollama.log" 2>&1 < /dev/null & )
+sleep 4 && curl -s -m 3 http://localhost:11434/api/tags >/dev/null && echo ok
+cd scripts/blogsearch
+( nohup make ingest > "$SP/ingest.log" 2>&1 < /dev/null & )
+```
+
+雙重 fork 讓行程 reparent 到 init、不受 agent session 回收影響；輸出直接寫檔而非經管線，進度隨時可讀（`grep -c 'chunks$' "$SP/ingest.log"` 得已處理檔數）。
 
 ### 3. 驗證
 
@@ -69,12 +86,14 @@ cd scripts/blogsearch && make verify     # status + test query
 
 ### 4. 失敗處理
 
-| 錯誤                 | 原因                                     | 修法                                              |
-| -------------------- | ---------------------------------------- | ------------------------------------------------- |
-| `connection refused` | Ollama 沒跑                              | `ollama serve &`                                  |
-| `model not found`    | 沒 pull 模型                             | `ollama pull nomic-embed-text`                    |
-| `no records to save` | content 目錄空或路徑錯                   | 檢查 `-content` 參數                              |
-| 結果品質差           | CJK chunking 問題或 embedding 模型不適合 | 先跑幾個已知 query 確認，必要時換 embedding model |
+| 錯誤                       | 原因                                     | 修法                                              |
+| -------------------------- | ---------------------------------------- | ------------------------------------------------- |
+| `connection refused`       | Ollama 沒跑                              | `ollama serve &`                                  |
+| `model not found`          | 沒 pull 模型                             | `ollama pull nomic-embed-text`                    |
+| `no records to save`       | content 目錄空或路徑錯                   | 檢查 `-content` 參數                              |
+| 結果品質差                 | CJK chunking 問題或 embedding 模型不適合 | 先跑幾個已知 query 確認，必要時換 embedding model |
+| 跑到一半整個消失、log 空白 | 行程掛在 agent 的背景工作下、被一起回收  | 用上面的雙重 fork 重跑；舊 index 未被破壞、可照用 |
+| 長時間零輸出               | `make ingest \| tail` 把輸出緩衝住了     | 輸出直接導檔、不經管線，再 `grep -c` 讀進度       |
 
 ## 何時提醒 vs 何時自動執行
 
@@ -87,10 +106,14 @@ cd scripts/blogsearch && make verify     # status + test query
 
 原則：rebuild 需要 Ollama 在跑（外部 dependency），不適合無條件自動執行。提示優先於自動。
 
+全量重建無增量選項這件事會改變提示的內容。單篇文章觸發的 rebuild 要一併說出當前規模的耗時量級，讓對方拿得到「現在跑 vs 累積幾篇再跑」這個取捨；只說「要 rebuild 嗎」而不說成本，答應的人不知道自己答應了什麼。
+
 ## 跟其他流程的關係
 
 - **內容查重流程**：due-diligence 查重可用 `blogsearch query` 替代手動翻 collection index
 - **RAG storage 選型**：本工具的向量 index 設計（flat file + brute-force）可作為 RAG storage 選型的參考實作
 - **Demo 與 production 共存**：若專案有 pickle-based RAG demo，blogsearch 是 production 升級版、兩者可共存
+
+**Version**: 1.4.0 — 全量 rebuild 的真實成本進 SOP：耗時改為按當前規模推估（2026-08 實測 3510 檔 / 29863 chunks / 3296 秒，取代過時的「約 4 分鐘」）、明寫無增量模式與它對 rebuild 時機的影響、補雙重 fork 的脫離跑法（掛在 agent 背景工作下會連同 ollama 一起被回收、經管線的輸出會被緩衝到看不見進度）；失敗處理表加這兩種形態；提示規則補「說出耗時量級再問要不要跑」
 
 **Version**: 1.3.0 — SOP 改用 Makefile target（install / ingest / verify）、description 補 ingest 觸發詞
