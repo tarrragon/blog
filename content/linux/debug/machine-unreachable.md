@@ -24,6 +24,8 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 有一種故障看起來像「網路壞了」，其實是 DNS 解析斷了：能連 IP、卻連不上任何用域名的東西——`ping 8.8.8.8` 通、但 `ping google.com`、`pacman -Sy`、`curl https://...` 全失敗。判讀要跟前面「網路沒起來」分開，因為網路層是通的，斷的是「域名 → IP」這一步。權威檢查：`ping <IP>` 通而 `ping <域名>` 不通、或 `getent hosts <域名>`（`resolvectl query <域名>` 若有 systemd-resolved）解不出位址，就定位到 DNS。常見成因是 `/etc/resolv.conf` 沒有可用的 nameserver（新裝或網路重設後沒填），或負責 DNS 的服務沒起來。修：確認 `/etc/resolv.conf` 有一行 `nameserver`（如 `nameserver 1.1.1.1`）、`systemctl status systemd-resolved`（若用它）。這一層在剛裝好的最小系統特別常撞到——`ip -brief a` 明明有 IP，`pacman` 或 bootstrap 卻抓不到套件，看起來像「網路好好的卻裝不了東西」，根因是 DNS 沒設。
 
+另一個成因是解析路徑上多了一段：mesh VPN 或公司 VPN 的客戶端、本機跑的 `dnsmasq` 或廣告過濾、`systemd-resolved` 這類元件會在本機開一個 resolver 並把自己設成第一順位，於是它自己的健康狀態成為全機解析的上限，故障常呈現為間歇而非全滅。這個變體的定位方式（`dig @<server>` 分流、macOS 上 `/etc/resolv.conf` 不作數、`dig` 與程式走不同路徑）見 [本機 DNS proxy 插在第一順位時的放大效應](/work-log/vpn_local_dns_proxy_amplifies_outage/)。
+
 ## 虛擬機開不起來：分清 guest 內部還是宿主側
 
 虛擬機開機失敗時，關鍵判斷是「錯誤來自 guest 內部（作業系統層）還是宿主側（虛擬化軟體 / QEMU 層）」。宿主側的錯誤訊息通常來自虛擬機軟體本身、在 guest 還沒開始開機前就跳出來，跟 guest 裡裝了什麼無關。
@@ -47,7 +49,7 @@ tags: ["linux", "vm", "networking", "debugging"]
 - SSH timeout（TCP 卡住）→ 網路層或機器沒跑，查 `ip neigh`（`INCOMPLETE` = 對方沒回應）→ 去主控台看 `ip -brief a` / 網路服務。
 - `Connection refused` → 網路通、但沒有服務在聽 → 去機器上確認 sshd 起了沒；若是自己剛改過 `sshd_config` 後 sshd 起不來，`sshd -t` 一條指令印出壞在哪行（改 sshd_config 的紀律：先 `sshd -t` 驗證、通過再 restart，避免把自己鎖在外面）。
 - 只有某個 app 連不到、其他 process 對同一目標都通 → 發起端 app 的網路權限（macOS 查「本機網路」隱私設定），跟網路層無關。
-- 能 ping IP、不能用域名（`pacman` / `curl` 失敗）→ DNS 解析問題，查 `/etc/resolv.conf` 有沒有 nameserver、`systemd-resolved` 起了沒，不是網路層斷。
+- 能 ping IP、不能用域名（`pacman` / `curl` 失敗）→ DNS 解析問題，查 `/etc/resolv.conf` 有沒有 nameserver、`systemd-resolved` 起了沒，不是網路層斷。若第一順位是本機位址（`127.0.0.53` / `100.100.100.100`），路徑上多了一段會單獨失效的 resolver，往 [本機 DNS proxy 的放大效應](/work-log/vpn_local_dns_proxy_amplifies_outage/) 走。
 - 連錯 / host key 被擋 → IP 或身分變了，見 [外部連入與無 key 的 bootstrap 路徑](../../install/ssh-keyless-bootstrap/)。
 - 虛擬機開不起來、宿主側報「找不到資源」但資源在 → 主因查路徑隔離，再排除殘留行程（`pgrep -af 'qemu\|...'`）/ 磁碟。
 - 一串症狀同時發生 → 早點 `df -h`，宿主與 guest 兩側都查，磁碟滿常是共同根因。
