@@ -62,7 +62,7 @@ description: "成熟度提升排不進日程、或指標有在收而能力沒有
 
 指標分兩類，混用會讓儀表板長期健康而能力不動。活動指標數的是做了多少（這一輪處理了幾件、開了幾次會），能力指標數的是同類問題的復發間隔與處置成本（同一類事件第二次出現隔了多久、[MTTR](/backend/knowledge-cards/mttr/) 的趨勢、[改進項目的關閉率](/backend/knowledge-cards/action-item-closure/)）。成熟度提升要看的是後者。
 
-每個指標要標分母的來源，而分母的來源決定它承載什麼。例外關閉率的分母是登記過的例外，它衡量的是登記過的那批有沒有關——沒登記的例外不在分母裡，所以這個數字可以長期接近滿分而與治理品質無關。這與 [7.5 憑證輪替完成率](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) 的形態相同：分母由被管理的那批自己列舉時，完成率衡量的是管理範圍內的完成度，不是覆蓋率。判讀的問法是「這個數字是從哪裡數出來的」，答案是某個工具或某張登記表時，要另外找一份獨立來源估分母。
+每個指標要標分母的來源，而分母的來源決定它承載什麼。例外關閉率的分母是登記過的例外，它衡量的是登記過的那批有沒有關——沒登記的例外不在分母裡，所以這個數字可以長期接近滿分而與治理品質無關。這與 [7.5 憑證輪替完成率](/backend/07-security-data-protection/transport-trust-and-certificate-lifecycle/) 的形態相同，機制見 [覆蓋率與完成率](/backend/knowledge-cards/coverage-vs-completion-rate/)。判讀的問法是「這個數字是從哪裡數出來的」，答案是某個工具或某張登記表時，要另外找一份獨立來源估分母。
 
 誤報率（一段時間內判定為非事件的告警數除以告警總數）有另一種失真：它可以靠關掉噪音大的規則來改善，而被關掉的規則涵蓋的攻擊路徑不會出現在任何指標上。所以這一項要跟偵測覆蓋率一起讀，覆蓋率的定義見 [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)；誤報累積到讓值班者停止相信告警的那個失敗模式另有專卡（[alert fatigue](/backend/knowledge-cards/alert-fatigue/)），它處理的是後果而不是這裡的指標定義。
 

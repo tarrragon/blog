@@ -304,28 +304,29 @@ weight: -1
 
 ## 遷移與資料同步
 
-| 卡片                                                                 | 核心問題                                    | 常見出現位置                   |
-| -------------------------------------------------------------------- | ------------------------------------------- | ------------------------------ |
-| [Online Migration](/backend/knowledge-cards/online-migration/)       | 服務持續接流量時如何遷移資料                | database、release              |
-| [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/) | 正式流量如何切到新路徑                      | migration、feature flag        |
-| [Fallback Plan](/backend/knowledge-cards/fallback-plan/)             | 變更失敗時如何回到可接受狀態                | release、migration             |
-| [Change Data Capture](/backend/knowledge-cards/change-data-capture/) | 資料變更如何被捕捉並傳送                    | CDC、event stream              |
-| [Replication Lag](/backend/knowledge-cards/replication-lag/)         | 副本落後正式來源多久                        | replica、read model            |
-| [Checkpoint](/backend/knowledge-cards/checkpoint/)                   | 長流程如何記錄可恢復進度                    | backfill、consumer             |
-| [Backfill](/backend/knowledge-cards/backfill/)                       | 既有資料如何補上新欄位或新狀態              | migration、repair              |
-| [Dual Write](/backend/knowledge-cards/dual-write/)                   | 同一變更同時寫兩個系統的風險                | migration、split service       |
-| [Shadow Read](/backend/knowledge-cards/shadow-read/)                 | 正式讀舊路徑時如何暗中比對新路徑            | cutover、validation            |
-| [Correctness Check](/backend/knowledge-cards/correctness-check/)     | 新舊結果如何依規則比對                      | migration、refactor            |
-| [Data Completeness](/backend/knowledge-cards/data-completeness/)     | 資料是否完整到足以支持目標用途              | migration、audit               |
-| [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/) | 多來源差異如何比對與修復                    | payment、eventual consistency  |
-| [Replication Slot](/backend/knowledge-cards/replication-slot/)       | 邏輯複製如何追蹤進度並保留 WAL              | CDC、slot lag、磁碟壓力        |
-| [Conflict Resolution](/backend/knowledge-cards/conflict-resolution/) | 並發或離線寫入衝突如何合併                  | LWW、欄位合併、CRDT            |
-| [Logical Replication](/backend/knowledge-cards/logical-replication/) | row-level 變更如何以表為粒度複製            | physical、CDC、跨版本          |
-| [Replica Identity](/backend/knowledge-cards/replica-identity/)       | 變更事件如何帶穩定 key 以套用 update/delete | CDC、primary key、row image    |
-| [GTID](/backend/knowledge-cards/gtid/)                               | 複製進度如何用全域交易識別碼表示            | replication、failover、binlog  |
-| [Replication Channel](/backend/knowledge-cards/replication-channel/) | 多來源複製如何用獨立通道隔離                | multi-source、per-channel lag  |
-| [Tombstone](/backend/knowledge-cards/tombstone/)                     | 刪除如何用標記跨副本與裝置傳播              | delete propagation、sync、CRDT |
-| [Parallel Run（並行期）](/backend/knowledge-cards/parallel-run/)     | 舊系統仍是正式紀錄時新系統如何運轉          | 單向同步、唯讀驗證             |
+| 卡片                                                                                 | 核心問題                                    | 常見出現位置                   |
+| ------------------------------------------------------------------------------------ | ------------------------------------------- | ------------------------------ |
+| [Online Migration](/backend/knowledge-cards/online-migration/)                       | 服務持續接流量時如何遷移資料                | database、release              |
+| [Cutover / Switchover](/backend/knowledge-cards/cutover-switchover/)                 | 正式流量如何切到新路徑                      | migration、feature flag        |
+| [Fallback Plan](/backend/knowledge-cards/fallback-plan/)                             | 變更失敗時如何回到可接受狀態                | release、migration             |
+| [Change Data Capture](/backend/knowledge-cards/change-data-capture/)                 | 資料變更如何被捕捉並傳送                    | CDC、event stream              |
+| [Replication Lag](/backend/knowledge-cards/replication-lag/)                         | 副本落後正式來源多久                        | replica、read model            |
+| [Checkpoint](/backend/knowledge-cards/checkpoint/)                                   | 長流程如何記錄可恢復進度                    | backfill、consumer             |
+| [Backfill](/backend/knowledge-cards/backfill/)                                       | 既有資料如何補上新欄位或新狀態              | migration、repair              |
+| [Dual Write](/backend/knowledge-cards/dual-write/)                                   | 同一變更同時寫兩個系統的風險                | migration、split service       |
+| [Shadow Read](/backend/knowledge-cards/shadow-read/)                                 | 正式讀舊路徑時如何暗中比對新路徑            | cutover、validation            |
+| [Correctness Check](/backend/knowledge-cards/correctness-check/)                     | 新舊結果如何依規則比對                      | migration、refactor            |
+| [Coverage vs Completion Rate](/backend/knowledge-cards/coverage-vs-completion-rate/) | 同一個百分比的分母由誰列舉                  | 完成率、覆蓋率、獨立來源       |
+| [Data Completeness](/backend/knowledge-cards/data-completeness/)                     | 資料是否完整到足以支持目標用途              | migration、audit               |
+| [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/)                 | 多來源差異如何比對與修復                    | payment、eventual consistency  |
+| [Replication Slot](/backend/knowledge-cards/replication-slot/)                       | 邏輯複製如何追蹤進度並保留 WAL              | CDC、slot lag、磁碟壓力        |
+| [Conflict Resolution](/backend/knowledge-cards/conflict-resolution/)                 | 並發或離線寫入衝突如何合併                  | LWW、欄位合併、CRDT            |
+| [Logical Replication](/backend/knowledge-cards/logical-replication/)                 | row-level 變更如何以表為粒度複製            | physical、CDC、跨版本          |
+| [Replica Identity](/backend/knowledge-cards/replica-identity/)                       | 變更事件如何帶穩定 key 以套用 update/delete | CDC、primary key、row image    |
+| [GTID](/backend/knowledge-cards/gtid/)                                               | 複製進度如何用全域交易識別碼表示            | replication、failover、binlog  |
+| [Replication Channel](/backend/knowledge-cards/replication-channel/)                 | 多來源複製如何用獨立通道隔離                | multi-source、per-channel lag  |
+| [Tombstone](/backend/knowledge-cards/tombstone/)                                     | 刪除如何用標記跨副本與裝置傳播              | delete propagation、sync、CRDT |
+| [Parallel Run（並行期）](/backend/knowledge-cards/parallel-run/)                     | 舊系統仍是正式紀錄時新系統如何運轉          | 單向同步、唯讀驗證             |
 
 ## 可觀測性與可靠性
 
