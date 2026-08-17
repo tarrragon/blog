@@ -123,7 +123,7 @@ OTA 推送一旦開始，中途停止意味著部分裝置已更新、部分未�
 - 06.11 migration safety：可逆性檢查
 - 01.7 Schema Migration Rollout 證據：把 migration evidence 轉成 [gate decision](/backend/knowledge-cards/gate-decision/)、checks、[stop condition](/backend/knowledge-cards/stop-condition/) 與 [rollback window](/backend/knowledge-cards/rollback-window/)
 - 06.13 perf regression gate：退化作為 freeze 條件
-- 07 資安：高風險變更的權限約束
+- 07 資安：[7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/) 給資安側的分級判準（變更動到哪一類資產、回退收不收得回風險）與必備控制的導出方式
 - 08 事故閉環：事故進行中 freeze 觸發
 - 06.17 feature flag：rollout 的細粒度控制層
 - 06.18 reliability metrics：CFR 是 gate 健康度

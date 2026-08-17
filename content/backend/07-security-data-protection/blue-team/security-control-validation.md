@@ -14,7 +14,7 @@ weight: 723
 
 ## 讀者入口
 
-本篇適合銜接 [7.B1 防守控制面地圖](/backend/07-security-data-protection/blue-team/defense-control-map/)、[7.18 資安控制面如何交接到部署與事故流程](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/) 與 [Release Gate](/backend/knowledge-cards/release-gate/)。
+本篇適合銜接 [7.B1 防守控制面地圖](/backend/07-security-data-protection/blue-team/defense-control-map/)、[7.18 資安控制面如何交接到部署與事故流程](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/) 與 [Release Gate](/backend/knowledge-cards/release-gate/)。本篇的驗證分類被 [7.22 的審查段](/backend/07-security-data-protection/security-risk-in-release-gate/) 當成放行前要跑哪一類驗證的依據，而 [7.21](/backend/07-security-data-protection/security-as-service-design-input/) 的證據計畫欄決定驗證要拿得到什麼資料。
 
 ## 驗證分類
 
