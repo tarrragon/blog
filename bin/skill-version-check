@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# 檢查 .claude/skills/*/SKILL.md 的 frontmatter metadata.version 與文末版本記錄一致。
+#
+# 為什麼獨立成一支：同樣的檢查原本只掛在 bin/skill-mirror 裡，而那支只跑有 content/
+# 鏡像的 skill。實測有一次三個 skill 同時漏更 frontmatter，只有帶鏡像的那個被攔下、
+# 另外兩個以不一致的版號推上了遠端庫。防線的覆蓋範圍跟它掛在哪個流程上綁死，所以
+# 把它移到一個以「全部 skill」為對象的位置。
+#
+# 用法：bin/skill-version-check [skill-name ...]   不給參數就掃全部。
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if [[ $# -gt 0 ]]; then
+  targets=("$@")
+else
+  targets=()
+  for d in .claude/skills/*/; do
+    targets+=("$(basename "$d")")
+  done
+fi
+
+fail=0
+for name in "${targets[@]}"; do
+  f=".claude/skills/${name}/SKILL.md"
+  if [[ ! -f "$f" ]]; then
+    echo "skip: ${name}（無 SKILL.md）"
+    continue
+  fi
+
+  if [[ "$(head -1 "$f")" != "---" ]]; then
+    echo "Error: ${name} 整份沒有 frontmatter——沒有 name / description 就不會被自動觸發，補版號之前要先補那兩欄" >&2
+    fail=1
+    continue
+  fi
+
+  declared=$(sed -n '/^  version:/{s/^  version: *//;s/"//g;p;q;}' "$f")
+  logged=$(grep -oE '^\*\*Version\*\*: [0-9]+\.[0-9]+\.[0-9]+' "$f" | head -1 | sed 's/.*: //')
+
+  if [[ -z "$declared" && -z "$logged" ]]; then
+    echo "skip: ${name}（未標版號）"
+    continue
+  fi
+
+  if [[ -z "$declared" ]]; then
+    echo "Error: $name frontmatter 缺 metadata.version（版本記錄是 ${logged}）" >&2
+    fail=1
+  elif [[ -z "$logged" ]]; then
+    echo "Error: $name 缺文末版本記錄（frontmatter 是 ${declared}）" >&2
+    fail=1
+  elif [[ "$declared" != "$logged" ]]; then
+    echo "Error: $name frontmatter (${declared}) 與版本記錄 (${logged}) 不一致" >&2
+    fail=1
+  else
+    echo "ok: $name $declared"
+  fi
+done
+
+exit $fail

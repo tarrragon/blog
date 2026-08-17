@@ -8,6 +8,8 @@ description: >
   earnings drop", "external shock", "industry transformation", "related party transaction",
   "normalized EPS", "one-time vs structural". Provides a systematic 7-step business analysis workflow
   from report reading through value chain tracing.
+metadata:
+  version: 1.4.0
 ---
 
 # Business Analysis
