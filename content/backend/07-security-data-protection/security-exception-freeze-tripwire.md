@@ -90,20 +90,28 @@ freeze 與 exception 的關係是：exception 定義風險接受，freeze 定義
 ## 可直接套用的決策模板
 
 ```text
-Decision ID:
-Risk scope:
-Exception expiry:
-Compensating controls:
+Decision ID:            # 這份紀錄的識別碼，沿用團隊既有的工單或文件編號即可
+Risk scope:             # 接受風險的資產與邊界
+Approved by:            # 批准這筆風險接受的人
+Exception expiry:       # 失效日
+Next review date:       # 到期前的審查日（依賴外部事件時，這一行才是有效的那個日期）
+Compensating controls:  # 過渡期間的額外監測、限制或人工檢查
 Exception owner（業務側）:
 Exception owner（技術側）:
-Exit criteria:
-Write-back target:
-Freeze scope / allowlist:
-Tripwire signal + threshold:
-Tripwire escalation owner:
+Exit criteria:          # 可驗證且可達成的關閉條件
+Write-back target:      # 關閉後知識要寫回哪份文件、哪張卡、哪個案例索引
+
+# 以下兩組視情況填，沒有就整行刪掉
+
+Freeze scope / allowlist:   # 這筆例外同時觸發發佈凍結時才填
+Unfreeze condition:         # 同上，解除凍結的條件
+Tripwire signal + threshold:  # 關閉依賴外部事件或時間不可預測時必填
+Tripwire escalation owner:    # 同上
 ```
 
-模板責任是讓治理決策可重用，不讓每次事件都重頭設計欄位。模板裡的欄位屬於三個不同的物件，填的時候要分清楚：`Risk scope` 到 `Write-back target` 是例外的六欄（其中 owner 拆成業務側與技術側兩行），`Freeze scope / allowlist` 屬於 freeze，兩個 `Tripwire` 開頭的屬於 tripwire，而 `Decision ID` 是這份紀錄自己的識別碼、不屬於任何一組。三者的 owner 不是同一個角色——例外的 owner 承擔關閉，tripwire 的升級對象承擔重評估的啟動，一筆例外只填了後者時沒有人負責關閉它。
+模板責任是讓治理決策可重用，不讓每次事件都重頭設計欄位。空行以上是每筆例外都要填的，以下兩組視情況——沒有同時凍結發佈就刪掉 freeze 那兩行，關閉純粹依賴內部工期就刪掉 tripwire 那兩行。
+
+三個物件各有自己的 owner，而它們不是同一個角色：例外的 owner 承擔關閉，tripwire 的升級對象承擔重評估的啟動，批准者承擔的是「同意接受這個風險」。一筆例外只填了 tripwire 的升級對象時，沒有人負責關閉它。
 
 ## 邊界與常見誤判
 
@@ -111,7 +119,7 @@ Tripwire escalation owner:
 
 1. 把 freeze 當永久策略：正確做法是 freeze 有解除條件與評估節奏。
 2. 把 tripwire 當提醒文字：正確做法是有量化門檻與 owner。
-3. 把 exception 當管理同意：正確做法是例外協議包含補償控制與關閉條件。
+3. 把 exception 當成「管理層點頭就好」：正確做法是例外協議包含補償控制與關閉條件，批准本身只是其中一欄。
 
 ## 必連章節
 

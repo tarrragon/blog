@@ -10,7 +10,7 @@ weight: 86
 
 ## 核心論點
 
-事故案例的核心價值是提供反向驗證。團隊可以從攻擊路徑回推控制面失效，再把缺口寫回 problem cards、主章判讀訊號與 incident workflow。
+事故案例的核心價值是提供反向驗證。團隊可以從攻擊路徑回推是哪一個[控制面](/backend/knowledge-cards/security-control-domain/)（防守責任的歸屬類別：身分、入口、資料、供應鏈、偵測、治理）失效，再把缺口寫回 problem cards、主章判讀訊號與 incident workflow。
 
 ## 讀者入口
 

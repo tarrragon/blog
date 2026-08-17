@@ -246,6 +246,7 @@ weight: -1
 | [Vendor Lock-In](/backend/knowledge-cards/vendor-lock-in/)                             | 供應商 API 滲入程式碼如何造成退出成本          | adapter、exit route、選型                                                 |
 | [Capability Outsourcing Depth](/backend/knowledge-cards/capability-outsourcing-depth/) | 外包一塊能力的三種深度如何決定控制權與遷出代價 | managed 基礎設施、feature SaaS、BaaS bundle                               |
 | [Control Plane](/backend/knowledge-cards/control-plane/)                               | 策略、配置與路由決策由哪一層下發               | 控制面、資料面分離                                                        |
+| [Security Control Domain](/backend/knowledge-cards/security-control-domain/)           | 一條資安風險的防守責任歸給哪一類控制           | 控制面、主責歸屬、與 control plane 同名不同義                             |
 | [Management Plane](/backend/knowledge-cards/management-plane/)                         | 管理入口如何與業務流量分離                     | 高權限、管理端點                                                          |
 | [Federation](/backend/knowledge-cards/federation/)                                     | 跨系統的信任與授權如何交換                     | OIDC、跨組織身分                                                          |
 | [Ownership](/backend/knowledge-cards/ownership/)                                       | 問題與決策責任如何固定到角色                   | owner、交接                                                               |

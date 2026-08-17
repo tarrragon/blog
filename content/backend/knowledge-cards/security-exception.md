@@ -8,6 +8,8 @@ weight: 255
 
 Security exception 的核心概念是「在明確邊界內接受短期風險，並用協議管理收斂路徑」。它讓風險接受決策可追蹤、可關閉、可回寫。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。
 
+要登記一筆例外的話，六個欄位與各欄的判準在下方的[設計責任](#設計責任)段，而在填第一欄之前有兩道入口要過（這個風險可不可以用例外承接、關閉它需要的動作在不在可控範圍內），也寫在那一段。
+
 ## 概念位置
 
 Security exception 位在 [Release Gate](/backend/knowledge-cards/release-gate/)、[Release Freeze](/backend/knowledge-cards/release-freeze/) 與 [Tripwire](/backend/knowledge-cards/tripwire/) 之間。它承接治理層決策，並把決策資訊交給部署與 incident workflow。
