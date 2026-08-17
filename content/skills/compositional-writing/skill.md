@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.53.1
+  version: 0.53.2
   category: writing-methodology
 ---
 
@@ -188,7 +188,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
   - **廢話前綴 grep**：`rg "值得注意的是|需要說明的是|實際上|基本上|事實上"`
   - **裝飾符號 grep**：`rg "✅|❌|⚠️|🚨|🟡|🟢|⭐|📌|✓|✗"`
   - **對讀者喊話 grep**：`rg "很多人|大家|不少人|你的|你在|你把|你正在|你補|你天天|你會|你可能|先讀懂|先釐清|別搞混|別被"`（**裸「你」非窮舉**：實測過 `你正在`、`你補完` 這類「你 + 一般動詞」逃過原 pattern，回報 clean 前另跑一次裸 `rg "你"` 逐處判定） — 教材中性陳述、不安撫情緒 / 不第二人稱代入 / 不祈使控制閱讀（hook / narrative 段落輕度第二人稱可留）。**裸所有格 / 主詞（你的 X / 你在 X）也算、不限「你 + 動詞」的祈使 / 預測句型**；grep 對裸『你』非窮舉、真防線是 reader-simulation 冷讀（同源 grep 抓不到 register、見 [multi-pass-review-frame-granularity](/report/multi-pass-review-frame-granularity-blindspot/)）
-  - **自評誇飾 grep**：`rg "教科書級|堪稱|可謂|完美|經典|範本級|大師級|漂亮地|優雅地|最佳實踐|best practice"` — 品質 verdict 頂替技術理由、換成機制 / 條件
+  - **自評誇飾 grep**：`rg "教科書級|堪稱|可謂|完美|經典|範本級|大師級|漂亮地|優雅地|最佳實踐|best practice"` — 品質 verdict 頂替技術理由、換成機制 / 條件；命中後的合法性判定用位置功能兩軸（文體契約 × 行動耦合）——hook 段的強度合法、判準段零容忍、判定前先定位、見 [hyperbole-legitimacy-by-position-function](/report/hyperbole-legitimacy-by-position-function/)
   - **必然性框架 grep**：`rg "天生|與生俱來|本質就是|本來就是|必然|唯一|註定|理所當然"` — 把設計選擇講成自然法則、還原成條件性（物理 / 法律 / 數學事實除外）
   - **澄清式框架 grep**：`rg "最容易誤|容易誤判|常見的?誤判|要點破|直覺會?帶偏|抵抗.*的直覺|你以為|會困惑|值得記"` — 把「讀者會誤解」當敘事中心是知識缺口訊號、不是澄清時機；補正向模型與機制讓誤解無從發生、不提醒讀者一個他本不需要有的困惑。界線是具體第一人稱實測敘事跟真實診斷區分（逾時 vs 被拒、症狀層 vs 根因層）保留、只有把假想誤會當主題句起手的才改；同義變體多、grep 抓不全、靠 reader-simulation 語意判定（「這段在補正向知識、還是在提醒讀者會犯錯？」）。見 [fill-knowledge-gap-not-center-misconception](/report/fill-knowledge-gap-not-center-misconception/)
   - **歸因語氣 grep**：`rg "承認|暴露了|證明了失敗|被迫"` — 描述系統行為用「信號」「反映」「顯示」等中性觀測詞、避免「承認」「暴露」等責任歸因詞；「被迫」在描述外部強制約束時可保留
@@ -245,6 +245,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-17
+**Version**: 0.53.2 — 三 reviewer Round 2 audit（cadence / 冷讀 / 跨 surface）+ 使用者抽離測試回饋修正：(1) 連結拓樸——principle 卡角色段收斂到實際存在的引用者並改相對連結、rewrite principle 卡分工段補 hyperbole 卡反向指標（skill 側原本單向）、translation-review 補 hyperbole 卡連結、SKILL.md 自評誇飾 grep 補兩軸判定框架落點（原本 grep 命中後無路由到判定框架）；(2) SSoT 分工——translation-review 量級段瘦身成操作層（原則層敘述刪除、留判準 + 表 + 詳見、與 auditing-articles Dimension 6 的操作層比例對齊）；(3) 冷讀補洞——hyperbole principle 卡補量級 / 升格 / 降格用語定義與「位置的功能」接合句、管制邊界區補外部規範說明、RCE 展開為遠端程式碼執行、「great 被譯成奇蹟」自足化；(4) 壓縮句重寫——反比操縱訊號的判準句依「單句抽離測試」展開（「反比結構解釋不成無意」這類殘片指涉改為句內閉合、checklist 項是單句消費位、必須自帶指涉）；(5) auditing-articles 補自評位 checklist、關係表「四個 dimension」計數漂移改「各 dimension」、Dimension 1-5 括號與框架表維度名對位；(6) 段名殘留清理（「操縱訊號」統一為「接收端判準」）、principle 卡尾行改自我說明形式、段序統一（分工 → 自查 → 核心）。
+
 **Version**: 0.53.1 — 三 reviewer Round 1 audit 回饋修正：強度系列自我應用——「中段是唯一會被當成事實吸收的失實」限定回升格側（原句被同卡降格段推翻）、「警惕等級最高」補排序機制（反比結構解釋不成無意滑動）、「比誇飾更貴」換成代價機制（應變者依錯的緊急度行動）、puffery 句拿掉「顯然 / 現成」補法域限定並修術語順序（誇大性宣傳詞（puffery））；鄰詞存在測試的語言歸屬修正（「原文與日文版都沒選用」→「日文版沒選用它」、奇跡是日文詞、英文原文在語言上選不了）；translation-review 量級段補「命中是候選、判定在語意層」句 + 檢查表補語意判定；principle 卡段標「操縱訊號」改「接收端判準」（首條是支撐檢查、原段標與內容錯位）；#111 關係列改用被引卡自己的分類（「立刻撞牆」是結局描述代替契約描述、非時間性誇張）；frontmatter metadata.version 補追（0.50.0 → 0.53.1、長期漂移）。
 
 **Version**: 0.53.0 — auditing-articles 新增 Dimension 6「強度對齊」：強度詞是 claim 的一部分、audit 檢查升格（誇飾、overclaim）與降格（嚴重性寫得雲淡風輕）兩個方向；判定框架是兩軸四區（文體契約 × 行動耦合、判斷單位是段落位置、同一文件內合法性分區——README tagline 可誇、feature 清單零容忍）；接收端兩個可操作判準——支撐存在測試（強度詞旁有無機制 / 數字）與反比操縱訊號（強度與可驗證性反向是推銷話術結構特徵）；跟 Dimension 4 分工（citation drift 三類是強度漂移在 citation 位的形態、Dimension 6 涵蓋其他位置 + 降格側）。新增 `hyperbole-legitimacy-by-position-function` principle 卡（含中段強度最危險——強到失實、又沒強到讓人識破、hook 段合法性、puffery 界線、六個警惕位置表）、修復「資安 Lens：四個維度」的計數漂移標題、觸發路由同步。從 #259 立卡後「什麼情境誇飾合理、什麼情境該警惕」的框架討論抽出。

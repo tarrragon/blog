@@ -57,7 +57,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 
 資安是高 stakes 內容最典型的 case。以下展開每個維度的 audit checklist——其他高 stakes 領域（concurrency / distributed / financial / medical）可類比、把 threat 換成 race / consistency violation / financial loss / patient harm。
 
-### Dimension 1：Threat model 明確性（claim + threats to validity）
+### Dimension 1：Threat model 明確性（claim clarity + threats to validity）
 
 每段 mitigation 論述要對稱寫「防什麼」+「不防什麼」。Audit checklist：
 
@@ -66,7 +66,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 - [ ] 「使用 X 防 Y」單句、Y 是抽象詞（傳輸風險 / 身分風險）—— 補 specific in-scope subset + out-of-scope threat
 - [ ] reader 讀完最容易誤以為 X 也防的 B 是什麼？B 在文中標 out-of-scope 了嗎？
 
-### Dimension 2：Mitigation 對位（evidence + method）
+### Dimension 2：Mitigation 對位（evidence chain + method rigor）
 
 Mitigation 名稱對位 threat 名稱是字面層（defense theater）、必須補 mechanism 層 + 前提層。Audit checklist：
 
@@ -81,7 +81,7 @@ Mitigation 名稱對位 threat 名稱是字面層（defense theater）、必須�
 - 用名稱層對位作為步驟示範（reader 照做不擋實際 mechanism）
 - 過時 mitigation 被當示範（MD5 / SHA-1 / 弱 PBKDF2 / 過時 cipher suite）沒標 deprecated
 
-### Dimension 3：Mitigation 的 context-dependence（method + reproducibility）
+### Dimension 3：Mitigation 的 context-dependence（method rigor + reproducibility）
 
 同 mitigation 在不同 deployment / config / scale / runtime / actor 條件下強度不同。Audit checklist：
 
@@ -130,7 +130,7 @@ Citation 涵蓋兩類：**外部** 標準（OWASP / RFC / NIST / CIS）跟 **內
 
 外部 citation 至少有版本號當 anchor、internal citation 連版本概念都沒有——audit 跟 review trigger 對 internal 反而更嚴格。
 
-### Dimension 5：跨章 / 跨檔的 Internal consistency（cross-chapter consistency）
+### Dimension 5：跨章 / 跨檔一致性（internal consistency、跨章 corpus 形態）
 
 當 audit 跨章節 / 跨檔的 corpus（多章節知識網、系列文章、多模組 spec）、單章 audit 不夠——必須 check 同議題在多檔的 ownership / SSoT。常見 pattern：
 
@@ -172,7 +172,8 @@ Audit checklist：
 - [ ] 轉述位（引用、翻譯、摘要）比原文更強嗎？（「證明了」常是原文「suggests」的升格、二手內容加倍警惕、回一手來源比對）
 - [ ] 「這一步非常關鍵」這類強調、後面有機制支撐嗎？（無支撐的空誇擠掉了本該放機制的位置）
 - [ ] 安全陳述位有「絕對安全」「不可能被繞過」句型嗎？（假防護感的入口形態、直接進 tier 決策樹）
-- [ ] **反比操縱訊號**：越難驗證的段落話講得越滿嗎？（強度與可驗證性反向是推銷話術的結構特徵；反比結構無法用文體先驗的無意滑動解釋、所以警惕等級最高）
+- [ ] **自評位**：作者對自己產出的品質 verdict（「教科書級」「完美」）有技術理由支撐嗎？（對應 keyword bank 的自評誇飾 grep、命中後用兩軸判定）
+- [ ] **反比操縱訊號**：越難驗證的段落話講得越滿嗎？（「話最滿的段落恰好最難查證」這種分布無法歸因於作者無意的文風滑動、只有刻意誇大會產生它、所以警惕等級最高）
 - [ ] **降格側**：風險段落的強度與嚴重性對位嗎？（RCE 寫成「可能造成一些影響」會讓應變者依錯的緊急度行動、incident report 尤其要掃）
 
 跟 Dimension 4 的分工：citation drift 三類（conditional → unconditional / specific → general / recommendation → mandate）是強度漂移在 citation 位的具體形態、Dimension 4 逐條對原文抓；本 dimension 涵蓋 citation 之外的所有位置（宣稱位、判準段、風險陳述、自評位）、並補反方向的降格檢查。詳見 [hyperbole-legitimacy-by-position-function](/report/hyperbole-legitimacy-by-position-function/)。
@@ -307,7 +308,7 @@ Audit 完成後產出結構化報告——格式比照學術 peer review、但 w
 
 | Principle                                                                                               | 關係                                                                                             |
 | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [false-sense-of-security-as-primary-failure](/report/false-sense-of-security-as-primary-failure/)       | 本 reference 的主要 audit 目標 —— 四個 dimension 都在 catch false sense of security              |
+| [false-sense-of-security-as-primary-failure](/report/false-sense-of-security-as-primary-failure/)       | 本 reference 的主要 audit 目標 —— 各 dimension 都在 catch false sense of security                |
 | [risk-asymmetric-audit-standard](/report/security-teaching-rigor-asymmetry/)                            | 本 reference 的啟動判準 —— 高 stakes 識別四訊號決定要不要跑 audit                                |
 | [literal-interception-vs-behavioral-refinement](/report/literal-interception-vs-behavioral-refinement/) | 本 reference 的 ceiling 警示 —— 名稱層 mitigation 對位 = 字面層、stop at 字面 = false confidence |
 | [writing-multi-pass-review](/report/writing-multi-pass-review/)                                         | 本 reference 是該卡「stakes-conditional 追加輪 E」的 reviewer-side 對應                          |
