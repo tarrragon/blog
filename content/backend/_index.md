@@ -307,9 +307,9 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 
 首輪已完成：對象是 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 與 [7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/)（相鄰、互為必連、同屬一組 24 篇共用樣板，其中一章自帶已展開的參照段可當深度標準）。四張表 20 列的判定與出口分布記在 [#262 的試點結果段](/report/content-pressure-resolves-by-expansion-not-compression/#試點結果逐列判定與處置分診)，句層那一半回寫進 [#261 的 case 段](/report/sentence-self-sufficiency-by-consumption-unit/)。產出的規格修正是 #262 增列第三個出口（換成連結）；產出的新卡是 [Threat Model](/backend/knowledge-cards/threat-model/)。
 
-第二輪刻意挑會反駁首輪的對象：同批樣板裡的組織與流程題材（[7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/)），主線概念在卡層零覆蓋。九列的分布因此完全不同，而且找出第四種處置——該章自訂的五階成熟度階段與同模組四階的那一章不相容，先收斂載體才輪到容器出口。結論修正為「出口分布不可推廣、分診程序可以」，細節同在 #262 的試點結果段。
+第二輪刻意挑會反駁首輪的對象：同批樣板裡的組織與流程題材（[7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/)），主線概念在卡層零覆蓋。九列的分布因此完全不同，而且找出一個容器出口之外的前置檢查——該章自訂的五階成熟度階段與同模組四階的那一章不相容，先收斂載體才輪到容器出口，這條後來獨立成 [#263](/report/incompatible-decompositions-look-complementary/)。結論修正為「出口分布不可推廣、分診程序只驗到對輸入敏感」，細節同在 #262 的試點結果段。
 
-剩下兩件事各自獨立。這組樣板原有 24 篇（主章 12、藍隊 12），改寫掉三篇後剩 21 篇（主章 9、藍隊 12）記在 [07 模組的 Backlog](/backend/07-security-data-protection/)、改寫標準已由前兩輪確立。全分類的簡報式段落盤點仍未排——首輪只證明判定與分診可操作，跳轉成本的方向沒有被驗證（冷讀對照由改寫者本人執行、與作者同源），把盤點推到全分類之前要先有一次異源冷讀。
+剩下兩件事各自獨立。這組樣板原有 24 篇（主章 12、藍隊 12），改寫掉三篇後剩 21 篇（主章 9、藍隊 12）記在 [07 模組的 Backlog](/backend/07-security-data-protection/)、改寫標準已由前兩輪確立。全分類的簡報式段落盤點仍未排，而三輪 agent 審查把未驗證的部分收斂成兩項具體工作：跳轉成本的方向要一次異源冷讀（兩輪的冷讀對照都由改寫者本人執行），分診的執行者一致性要由第二個人對同一批列跑同一協議、比對分診差異（兩輪都由同一個人分診）。兩項各自獨立、都不需要等全分類盤點。
 
 ### 橫向工作：判讀類章節補系統形態與觸發事件
 
