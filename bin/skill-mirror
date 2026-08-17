@@ -25,9 +25,19 @@ TARGET="${TARGET_DIR}/skill.md"
 [[ ! -d "$TARGET_DIR" ]] && echo "Error: $TARGET_DIR not found (create it first)" && exit 1
 
 # --- Step 1: 從 SKILL.md 提取 metadata ---
-# 版號優先從 **Version** 歷史提取最大版號，fallback 到 frontmatter
+# 版號從 **Version** 歷史提取最大版號，fallback 到 0.0.0
 skill_version=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+' "$SOURCE" | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
 [[ -z "$skill_version" ]] && skill_version="0.0.0"
+
+# 推導是全檔取最大三段數字、會被「引用別 skill 的裸版號」污染（已發生兩次）。
+# frontmatter 的 metadata.version 是該 skill 自己宣告的版本，兩者不一致就是污染或漏更新，直接失敗。
+declared_version=$(sed -n '/^  version:/{s/^  version: *//;s/"//g;p;q;}' "$SOURCE")
+if [[ -n "$declared_version" && "$declared_version" != "$skill_version" ]]; then
+  echo "Error: 版號推導 ($skill_version) 與 frontmatter metadata.version ($declared_version) 不一致" >&2
+  echo "  可能原因：changelog 引用了別的 skill 的裸版號（改成「版號由該 skill 自己的版本記錄承載」），" >&2
+  echo "  或 frontmatter 忘了跟著文末版本記錄更新。" >&2
+  exit 1
+fi
 skill_title=$(grep -m1 '^# ' "$SOURCE" | sed 's/^# //')
 skill_date=$(date +%Y-%m-%d)
 
