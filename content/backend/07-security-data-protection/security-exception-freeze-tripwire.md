@@ -48,7 +48,7 @@ weight: 87
 3. Validation gate：放行前要通過哪些驗證。
 4. Unfreeze condition：什麼條件可以解除凍結。
 
-freeze 與 exception 的關係是：exception 定義風險接受，freeze 定義變更節奏。兩者都要掛在 tripwire 上。
+freeze 與 exception 的關係是：exception 定義風險接受，freeze 定義變更節奏。兩者都是 tripwire 的觀察對象（方向是 tripwire 指向它們），而該不該掛看關閉條件的性質——依賴外部事件或時間不可預測的必須掛，判準見 [security exception](/backend/knowledge-cards/security-exception/) 卡。
 
 ## Tripwire 設計協議
 

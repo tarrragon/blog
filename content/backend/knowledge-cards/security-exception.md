@@ -6,7 +6,6 @@ description: "說明資安風險例外如何以期限、補償控制與關閉條
 weight: 255
 ---
 
-
 Security exception 的核心概念是「在明確邊界內接受短期風險，並用協議管理收斂路徑」。它讓風險接受決策可追蹤、可關閉、可回寫。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。
 
 ## 概念位置
@@ -28,13 +27,17 @@ Security exception 位在 [Release Gate](/backend/knowledge-cards/release-gate/)
 
 ## 設計責任
 
-每筆 security exception 要定義六個欄位，這張卡是它們的定義處：
+開始填欄位之前要先過一道入口：**這個風險可不可以用例外承接**。例外承接的是「已知而暫時不修的風險」，兩類東西不在它的範圍內——已經發生的違約或違規（資料已經複製到合約禁止的地區、系統已在無支援的版本上處理受管資料）是待止血的事實、不在「待接受的風險」這個範圍裡，處置是停止、留存證據、履行通報義務；以及需要對外通報的事件，通報時限由外部規定、不由內部期限決定。把這兩類填成例外的後果是在違規狀態上蓋一層治理紀錄，而那份紀錄本身會成為「知情而未處理」的書面證據。
+
+第二道入口是**關閉這筆例外需要的動作在誰手上、那個人在不在可控範圍內**。動作在上游供應商、外部廠商或稽核方手上時，寫下的到期日只是猜測、沒有承諾的效力，此時 expiry 的語意要改成「重評估日」並在補償控制那一欄承擔實質風險降低。這一道沒有對應欄位、但它決定其餘六欄填出來的東西有沒有意義。
+
+兩道入口都過了之後，每筆 security exception 要定義六個欄位，這張卡是它們的定義處：
 
 1. **risk scope（風險範圍）**：接受風險的資產與邊界，以及誰批准。
 2. **expiry（到期日）**：失效日與下次審查時間。
 3. **compensating controls（補償控制）**：過渡期間額外的監測、限制或人工檢查。
-4. **owner（負責人）**：業務側與技術側各一名，兩者由同一人擔任時延期沒有阻力。
-5. **exit criteria（關閉條件）**：什麼條件成立才算收斂完成，要可驗證而不是「風險降低」這種敘述。
+4. **owner（負責人）**：業務側與技術側各一名，兩者由同一人擔任時延期沒有阻力。兩個位子都要落到組織內部具名的人——外部維護方不能任 owner（它沒有義務推動關閉），這種情形由內部的廠商管理角色承接。點不出名字時例外不成立，而指派 owner 本身是第一個要做的補償控制。團隊規模湊不出獨立的業務側時，記下這一點並縮短到期日，讓缺席的阻力由較短的週期補償。
+5. **exit criteria（關閉條件）**：什麼條件成立才算收斂完成，要可驗證而不是「風險降低」這種敘述。可驗證之外還要**可達成**——觸發它的動作要落在 owner 的行動範圍內，「等上游釋出修補」形式上合規而實質是無限期等待，這種情形要同時寫一條自主可達的替代路徑（換掉那個依賴、關掉那條功能、或把資產移出暴露面）。
 6. **write-back target（回寫目標）**：關閉後把知識與控制面改進寫回哪裡。
 
-例外成立的同時要同步設計關閉節奏與回寫路徑。[Tripwire](/backend/knowledge-cards/tripwire/) 不是這六欄之一——它是掛在例外上的並列物件、自帶訊號與門檻，一筆例外可以掛零個或多個 tripwire。填寫協議與可套用的模板見 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)、治理責任的分工見 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。
+例外成立的同時要同步設計關閉節奏與回寫路徑。[Tripwire](/backend/knowledge-cards/tripwire/) 不是這六欄之一——它是獨立物件、自帶訊號與門檻，並以某一筆例外為它的觀察對象（方向是 tripwire 指向例外，不是例外持有 tripwire）。基數的判準在關閉條件的性質：**關閉依賴的事件在組織外或時間不可預測時，這筆例外必須掛至少一個 tripwire**（沒有它，到期日只會在到期那天才知道收不了）；關閉純粹依賴內部可排程的工期時，到期日本身就是觸發，掛不掛是選擇。填寫協議與可套用的模板見 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)、治理責任的分工見 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。
