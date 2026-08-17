@@ -48,7 +48,7 @@
 
 ---
 
-## 資安 Lens：四個維度具體展開
+## 資安 Lens：維度具體展開
 
 資安是高 stakes 內容最典型的 case。以下展開每個維度的 audit checklist——其他高 stakes 領域（concurrency / distributed / financial / medical）可類比、把 threat 換成 race / consistency violation / financial loss / patient harm。
 
@@ -152,6 +152,26 @@ Audit checklist：
 - 其他章引用 canonical、只補自己 layer 的視角差異（不重新定義）
 - 跨章 cross-link 雙向、reader 在任一章都能 trace 到 SSoT
 
+### Dimension 6：強度對齊（claim clarity + evidence chain）
+
+強度詞（形容詞量級、模態、頻率）是 claim 的一部分、audit 要檢查強度與事實、證據是否對齊——兩個方向：升格（誇飾、overclaim）與降格（嚴重性寫得雲淡風輕）。誇飾的合法性由**段落位置的功能**決定、判斷單位是段落、以文件或文體整體一刀切兩個方向都會錯：
+
+| 文體契約 | 行動耦合低                      | 行動耦合高                                  |
+| -------- | ------------------------------- | ------------------------------------------- |
+| 預期修辭 | 誇飾自由區：slogan、詩、賀詞    | 管制邊界區：廣告誘導購買、募資頁面          |
+| 預期字面 | 有限使用區：教學 hook、開場敘事 | 零容忍區：規格、SLA、判準段、翻譯、安全陳述 |
+
+高 stakes 內容的正文幾乎全落在零容忍區；hook / 引言段是有限使用區、誇飾合法、進判準段要收——audit 時對入口段的強度不加分扣分、對判準段與宣稱段逐條檢查。Audit checklist：
+
+- [ ] 技術宣稱位的強度詞通過**支撐存在測試**嗎？（「快 10 倍」旁邊有 benchmark 是宣稱、裸的是誇飾佔位）
+- [ ] 轉述位（引用、翻譯、摘要）比原文更強嗎？（「證明了」常是原文「suggests」的升格、二手內容加倍警惕、回一手來源比對）
+- [ ] 「這一步非常關鍵」這類強調、後面有機制支撐嗎？（無支撐的空誇擠掉了本該放機制的位置）
+- [ ] 安全陳述位有「絕對安全」「不可能被繞過」句型嗎？（假防護感的入口形態、直接進 tier 決策樹）
+- [ ] **反比操縱訊號**：越難驗證的段落話講得越滿嗎？（強度與可驗證性反向是推銷話術的結構特徵、警惕等級最高）
+- [ ] **降格側**：風險段落的強度與嚴重性對位嗎？（RCE 寫成「可能造成一些影響」比誇飾更貴、incident report 尤其要掃）
+
+跟 Dimension 4 的分工：citation drift 三類（conditional → unconditional / specific → general / recommendation → mandate）是強度漂移在 citation 位的具體形態、Dimension 4 逐條對原文抓；本 dimension 涵蓋 citation 之外的所有位置（宣稱位、判準段、風險陳述、自評位）、並補反方向的降格檢查。詳見 [hyperbole-legitimacy-by-position-function](./principles/hyperbole-legitimacy-by-position-function.md)。
+
 ---
 
 ## Audit Recommendation Tier 化
@@ -228,6 +248,9 @@ Audit 完成後產出結構化報告——格式比照學術 peer review、但 w
 ### Dimension 5：Cross-chapter consistency（僅跨章 corpus 適用）
 - ...
 
+### Dimension 6：強度對齊
+- ...
+
 ## Blocking conditions
 <必須 fix 才能 ship 的 weakness 清單、按 tier 排序>
 
@@ -285,6 +308,7 @@ Audit 完成後產出結構化報告——格式比照學術 peer review、但 w
 | [writing-multi-pass-review](./principles/writing-multi-pass-review.md)                                         | 本 reference 是該卡「stakes-conditional 追加輪 E」的 reviewer-side 對應                          |
 | [ease-of-writing-vs-intent-alignment](./principles/ease-of-writing-vs-intent-alignment.md)                     | 本 reference 的 audit weakness 模式 —— 含糊敘述是寫作便利、跟 verifiability 反向                 |
 | [metadata-surface-in-writing-review](./principles/metadata-surface-in-writing-review.md)                       | Citation 是 metadata surface 的延伸 —— audit 範圍要涵蓋 citation 跟 title / heading 等讀者入口   |
+| [hyperbole-legitimacy-by-position-function](./principles/hyperbole-legitimacy-by-position-function.md)         | Dimension 6 的判定框架 —— 兩軸四區定位強度合法性、支撐存在測試與反比操縱訊號、降格對齊           |
 
 ---
 
@@ -294,7 +318,7 @@ Audit 完成後產出結構化報告——格式比照學術 peer review、但 w
 
 1. 確認啟動條件：高 stakes 識別四訊號至少一個觸發
 2. 列章節所有 mitigation / claim / citation 清單
-3. 對每條跑四 dimension checklist（threat model / 對位 / context / citation）
+3. 對每條跑 dimension checklist（threat model / 對位 / context / citation / 強度對齊；跨章 corpus 加 consistency）
 4. 每個 weakness 跑 tier 決策樹
 5. 產出 audit report（含 strengths / weaknesses-by-dimension / blocking / recommendation）
 6. 如有 withdraw / major：回寫作流程修、修完跑 audit pass 二次驗證
