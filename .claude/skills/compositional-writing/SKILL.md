@@ -3,7 +3,7 @@ name: compositional-writing
 description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 敘事姿態) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 檢討報告, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 問句標題, 敘事視角, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流."
 license: MIT
 metadata:
-  version: 0.55.0
+  version: 0.55.1
   category: writing-methodology
 ---
 
@@ -246,6 +246,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-17
+**Version**: 0.55.1 — 批次 2 Round 1 三 reviewer audit 修正：(1) dogfooding——sentence-self-sufficiency principle 卡的「壓縮歧義的X」parse 二解句展開、判定表兩格補主詞與完整形、表格鍵欄補消費單位邊界（一列是一個消費單位、鍵欄承載檢索鍵、命題義務落在內容欄）；(2) 事實修正——case 的修前引文原為節錄、先行詞實際在同項前分句、改為「壓縮重述要付解壓成本」的準確診斷、字數方向修正（括號總長 47 對 46、自足的成本落在成分安排不必然落在字數）、輪次歸因修正（壓縮句由 Round 1 audit 修正自己引入、Round 2 篇章層冷讀未見）；(3) content-pressure 卡——出口表第三列（違規項佔用出口欄位）抽出表外、簡報式豁免從文體標籤改為消費單位機制（查表型段落逐列查詢合法、違規精確形態是承載推導的內容被塞進表格）、talking points 補中文對位；(4) attention 稀釋改觀察層敘述、風格繼承的素材消歧為「被讀進 context 的規範文字」。
+
 **Version**: 0.55.0 — 原則 1 新增「內容壓力的出口是擴充結構、不是壓縮內容」：內容超出容器（判準裝不進表格格、概念裝不進標題、範例讓段落過長）時合法出口是就地展開（延伸段）或外部化成卡（範例寫進卡片、文章引用）、裁內容遷就容器違規；機制是容器形狀先驗（標題 / 表格格 / 段落有學來的長度帶、內容被裁去符合容器的預期形狀）；反模式命名「簡報式文章」（表格當主體、格內殘語、條列連綴——簡報的正當性來自講者在場補完、文章沒有講者）。經 WRAP 完整評估帶三條邊界：主線概念必須行內展開（外部化斷論證線、術語分級既有規則優先）、擴充的對象是結構不是句長（句層歸消費單位分配）、checklist / 規格表型內容的表格形態合法（消費單位是逐項執行）。新增 `content-pressure-resolves-by-expansion-not-compression` principle 卡、writing-articles 自檢清單補兩條生成端自問（表格格裝得下完整判準嗎 / 文章像簡報嗎）。同批 knowledge-cards skill 補「內容壓力是第二個建卡入口」（該 skill 自己的版本記錄承載版號）。
 
 **Version**: 0.54.0 — 原則 4 新增「行自足是可查詢性的配套義務」：grep-friendly 設計預期句子被單獨命中、單句消費位（checklist 項 / 表格格 / 判準句 / grep 目標行 / 章節首句）必須句內資訊自足；資訊充足是正向規格四條件（命題完整 / 指涉閉合 / 實詞可反推 / 一句一命題）、驗收用抽離重讀測試——負向禁令（「避免為美感犧牲資訊」）以模糊審美為軸、LLM 只能用造成問題的同一個文體先驗定義違規、正向規格才有梯度；敘事位可壓縮、三角取捨（精準 / 總長 / 句自足）按消費單位分配。新增 `sentence-self-sufficiency-by-consumption-unit` principle 卡、reference-authoring-standards 補「單句消費位的資訊自足」段 + 驗收清單兩條。從 #259 / #260 審查過程的壓縮句缺陷（三輪 agent reviewer 放行、使用者異源抓到「反比結構解釋不成無意」的殘片指涉）與教學文章「簡潔到辨識不出議題」兩個實證抽出；「句式美感」框架被使用者修正為正向定義（美感詞降級為候選訊號）。

@@ -76,6 +76,7 @@ bank 補得越完整、命中越多、reviewer 越依賴「快速掃過命中清
 - **[#94 正向改寫要保留對照論據、不能空降結論](../positive-rewrite-preserves-contrast/)**：#94 跟本卡是同一判定軸的兩極。#94 防「過度刪 —— 刪掉承擔 reasoning 的對照 Y、結論變空降」；本卡防「過度留 —— 保留建立概念的否定、用『這是對照』當藉口」。兩卡合起來才是完整判定準則：以「概念位置」區分該刪（概念開場）還是該留（反例段落 / reasoning 對照）。
 - **[#147 規範化跟自審是兩種認知任務](../rule-codification-vs-self-audit/)**：#147 講「立了規範 ≠ 能在自己稿件辨識實例」。本卡是更細一層 —— **連 grep 命中（自審的最強形式、已經指到具體句子）都可能因判定放水而失效**。#147 的三層機制（grep / checklist / reviewer in-stream）裡、本卡聚焦 grep 那層的「命中之後」缺口。
 - **[#82 字面攔截 vs 行為精修](../literal-interception-vs-behavioral-refinement/)**：grep 命中是字面層攔截、看不到那個否定承擔的是「建立概念」還是「反例對照」 —— 需要 behavioral pass（讀者讀到這句、是拿到正向概念還是被否定句卡住）才能判。本卡是 #82 在「字句層 review 判定」的具體實例。
+- **同批沿用本卡分工的兩個新落點**：[#261 語句要在它的消費單位內資訊自足](../sentence-self-sufficiency-by-consumption-unit/)（「四字節奏 / 對仗」是候選訊號、判定看消費單位再跑抽離重讀）與 [#262 內容超出容器時擴充結構、不壓縮內容](../content-pressure-resolves-by-expansion-not-compression/)（「表格為主體」是候選、判定看消費單位——查表型段落合法）。
 - **[#232 自審 sweep 的偵測方法要對齊規則類型](../self-audit-detection-method-must-match-rule-type/)**：同一條管線的另一半。#232 管偵測層 —— clean 可信的前提是偵測方法看得見該規則的違反形態；本卡管命中之後的判定層 —— 方法看見了、reviewer 仍可能把命中合理化放行。假 clean 有兩個來源（方法失明、判定放水）、兩卡各堵一個、批次自審要兩層分開回報。
 
 ---
