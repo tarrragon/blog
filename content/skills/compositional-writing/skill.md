@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.53.2
+  version: 0.53.3
   category: writing-methodology
 ---
 
@@ -245,6 +245,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-17
+**Version**: 0.53.3 — 三 reviewer Round 3 audit（self-application / steelman / outbound）修正：(1) 鄰詞存在測試的判準表述把來源與目標語言對調（「目標語言存在更強專詞而原文沒選用」邏輯不通——原文選不了目標語言的詞、正確表述是原文語言的鄰詞；case 敘述本來是對的、錯的是會被抄走的抽象句）、全 surface 統一為「原文語言」；(2) 排他性因果三處收斂（反比訊號「無法解釋 / 只有刻意」改「比單點升格更難歸因於無意」、中段「唯一…失實」限定回升格側失實量級、「無人誤信」改「多半自我拆穿」）——結論不變、去掉撐不住的排他性；(3) 未言明前提顯形——量級階梯同構前提（significant 對「顯著 / 相當程度」時測試無輸出、給替代做法）、原文不可得的降級出口（未驗證轉述、不得再被引用）、讀者解碼器界線（荒謬與中段由領域知識畫）、入口段落繼承下游行動耦合（abstract / 新聞標題落零容忍區）；(4) scope 宣告——文學翻譯、非文字強度操縱（軸截斷）在邊界外；(5) 補時程與承諾位警惕列、慣例性通膨語域段（推薦信 / 悼詞的集體校準、降格讀成反向評價）、放大條件補轉換者誘因列；(6) translation-review pass 表操作欄自足化、auditing-articles tier 決策樹指涉閉合。
+
 **Version**: 0.53.2 — 三 reviewer Round 2 audit（cadence / 冷讀 / 跨 surface）+ 使用者抽離測試回饋修正：(1) 連結拓樸——principle 卡角色段收斂到實際存在的引用者並改相對連結、rewrite principle 卡分工段補 hyperbole 卡反向指標（skill 側原本單向）、translation-review 補 hyperbole 卡連結、SKILL.md 自評誇飾 grep 補兩軸判定框架落點（原本 grep 命中後無路由到判定框架）；(2) SSoT 分工——translation-review 量級段瘦身成操作層（原則層敘述刪除、留判準 + 表 + 詳見、與 auditing-articles Dimension 6 的操作層比例對齊）；(3) 冷讀補洞——hyperbole principle 卡補量級 / 升格 / 降格用語定義與「位置的功能」接合句、管制邊界區補外部規範說明、RCE 展開為遠端程式碼執行、「great 被譯成奇蹟」自足化；(4) 壓縮句重寫——反比操縱訊號的判準句依「單句抽離測試」展開（「反比結構解釋不成無意」這類殘片指涉改為句內閉合、checklist 項是單句消費位、必須自帶指涉）；(5) auditing-articles 補自評位 checklist、關係表「四個 dimension」計數漂移改「各 dimension」、Dimension 1-5 括號與框架表維度名對位；(6) 段名殘留清理（「操縱訊號」統一為「接收端判準」）、principle 卡尾行改自我說明形式、段序統一（分工 → 自查 → 核心）。
 
 **Version**: 0.53.1 — 三 reviewer Round 1 audit 回饋修正：強度系列自我應用——「中段是唯一會被當成事實吸收的失實」限定回升格側（原句被同卡降格段推翻）、「警惕等級最高」補排序機制（反比結構解釋不成無意滑動）、「比誇飾更貴」換成代價機制（應變者依錯的緊急度行動）、puffery 句拿掉「顯然 / 現成」補法域限定並修術語順序（誇大性宣傳詞（puffery））；鄰詞存在測試的語言歸屬修正（「原文與日文版都沒選用」→「日文版沒選用它」、奇跡是日文詞、英文原文在語言上選不了）；translation-review 量級段補「命中是候選、判定在語意層」句 + 檢查表補語意判定；principle 卡段標「操縱訊號」改「接收端判準」（首條是支撐檢查、原段標與內容錯位）；#111 關係列改用被引卡自己的分類（「立刻撞牆」是結局描述代替契約描述、非時間性誇張）；frontmatter metadata.version 補追（0.50.0 → 0.53.1、長期漂移）。
