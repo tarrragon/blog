@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.53.0
+  version: 0.53.1
   category: writing-methodology
 ---
 
@@ -245,7 +245,9 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-17
-**Version**: 0.53.0 — auditing-articles 新增 Dimension 6「強度對齊」：強度詞是 claim 的一部分、audit 檢查升格（誇飾、overclaim）與降格（嚴重性寫得雲淡風輕）兩個方向；判定框架是兩軸四區（文體契約 × 行動耦合、判斷單位是段落位置、同一文件內合法性分區——README tagline 可誇、feature 清單零容忍）；接收端兩個可操作判準——支撐存在測試（強度詞旁有無機制 / 數字）與反比操縱訊號（強度與可驗證性反向是推銷話術結構特徵）；誇飾最危險的是中段強度（強到失實、又沒強到讓人識破）；跟 Dimension 4 分工（citation drift 三類是強度漂移在 citation 位的形態、Dimension 6 涵蓋其他位置 + 降格側）。新增 `hyperbole-legitimacy-by-position-function` principle 卡（含 hook 段合法性、puffery 界線、六個警惕位置表）、修復「資安 Lens：四個維度」的計數漂移標題、觸發路由同步。從 #259 立卡後「什麼情境誇飾合理、什麼情境該警惕」的框架討論抽出。
+**Version**: 0.53.1 — 三 reviewer Round 1 audit 回饋修正：強度系列自我應用——「中段是唯一會被當成事實吸收的失實」限定回升格側（原句被同卡降格段推翻）、「警惕等級最高」補排序機制（反比結構解釋不成無意滑動）、「比誇飾更貴」換成代價機制（應變者依錯的緊急度行動）、puffery 句拿掉「顯然 / 現成」補法域限定並修術語順序（誇大性宣傳詞（puffery））；鄰詞存在測試的語言歸屬修正（「原文與日文版都沒選用」→「日文版沒選用它」、奇跡是日文詞、英文原文在語言上選不了）；translation-review 量級段補「命中是候選、判定在語意層」句 + 檢查表補語意判定；principle 卡段標「操縱訊號」改「接收端判準」（首條是支撐檢查、原段標與內容錯位）；#111 關係列改用被引卡自己的分類（「立刻撞牆」是結局描述代替契約描述、非時間性誇張）；frontmatter metadata.version 補追（0.50.0 → 0.53.1、長期漂移）。
+
+**Version**: 0.53.0 — auditing-articles 新增 Dimension 6「強度對齊」：強度詞是 claim 的一部分、audit 檢查升格（誇飾、overclaim）與降格（嚴重性寫得雲淡風輕）兩個方向；判定框架是兩軸四區（文體契約 × 行動耦合、判斷單位是段落位置、同一文件內合法性分區——README tagline 可誇、feature 清單零容忍）；接收端兩個可操作判準——支撐存在測試（強度詞旁有無機制 / 數字）與反比操縱訊號（強度與可驗證性反向是推銷話術結構特徵）；跟 Dimension 4 分工（citation drift 三類是強度漂移在 citation 位的形態、Dimension 6 涵蓋其他位置 + 降格側）。新增 `hyperbole-legitimacy-by-position-function` principle 卡（含中段強度最危險——強到失實、又沒強到讓人識破、hook 段合法性、puffery 界線、六個警惕位置表）、修復「資安 Lens：四個維度」的計數漂移標題、觸發路由同步。從 #259 立卡後「什麼情境誇飾合理、什麼情境該警惕」的框架討論抽出。
 
 **Version**: 0.52.0 — 新增「轉述與翻譯要保留語意強度量級」：翻譯 / 轉述 / 摘要他人材料時、成品的強度詞停在原文量級（great 被譯成奇蹟是升格）、可操作判準是鄰詞存在測試（目標語言有更強的專詞而原文沒選用、代表原文刻意停在較低量級）；量級升格是中性工具、對錯由責任對象決定——保真轉換對原文負責鎖定量級、原創文案與宣告過的再創作對訴求效果負責可自由運用誇飾、分辨能力比禁令有用。新增 `rewrite-preserves-claim-intensity` principle 卡、translation-review 加量級檢查 pass（鄰詞存在測試 + 責任對象三分流）+ 兩列反模式（量級升格放行 / 拿譯文當原文比對）+ 自查清單兩條、原則 6 術語句與觸發路由同步。從一句登入頁標語的英→日→中三段轉換鏈抽出（日文在地化量級對位、AI 中譯升格成「奇蹟」）。
 
