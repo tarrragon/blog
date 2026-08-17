@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.52.0
+  version: 0.53.0
   category: writing-methodology
 ---
 
@@ -130,23 +130,23 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 
 ## When to Consult This Skill（觸發路由）
 
-| 觸發情境                                                                                                                                                                              | 讀哪份 reference                                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 要寫或改一段程式碼註解 / doc comment                                                                                                                                                  | `references/writing-code-comments.md`                                                                              |
-| 要起草 / 改寫一份文件（worklog、spec、README）                                                                                                                                        | `references/writing-documents.md`                                                                                  |
-| 要設計 log / 錯誤訊息 / 結構化輸出                                                                                                                                                    | `references/writing-logs.md`                                                                                       |
-| 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle                                                                                                              | `references/writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
-| 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估）                                                                                                    | `references/writing-articles.md`                                                                                   |
-| 要把外部分析文章 / 產業評論 / 投資人備忘錄 / 高密度研究材料轉成教學型分析文章，把從業者經驗談（訪談 / 社群貼文 / 口述）轉成分析教學（機制重建），或把 AI 改寫稿從摘要升級成可遷移框架 | `references/source-to-teaching-analysis.md`                                                                        |
-| 要翻譯 / 轉譯文章、把英文材料改寫成中文、檢查術語誤譯、中文譯名放回句子後是否成立、或譯文有沒有超譯（強度被拉高成口號）                                                               | `references/translation-review.md`                                                                                 |
-| 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片）                                                                                | `references/managing-article-collections.md`                                                                       |
-| 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、或用結構原則 review 既有文集                                                          | `references/structuring-with-solid.md`                                                                             |
-| 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時           | `references/auditing-articles.md`                                                                                  |
-| 要寫或檢查判讀 / 選型 / 決策類內容（回答「該怎麼判斷」那一層），或讀者提問「什麼情況會需要這個」「什麼樣的系統會這樣做」「沒有範例看不懂」                                            | `references/judgment-content-needs-scenarios.md`                                                                   |
-| 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                                                                                    | `references/designing-fields.md`                                                                                   |
-| 想驗證寫作品質（認知負擔、獨立理解率）                                                                                                                                                | `references/meta-metrics.md`                                                                                       |
-| 要新增或修改一份 Skill reference（撰寫品質規範、結構標準）                                                                                                                            | `references/reference-authoring-standards.md`                                                                      |
-| 要驗收 Skill 發布品質（語意層驗收、Phase 2 dry-run）                                                                                                                                  | `references/dry-run-guide.md`                                                                                      |
+| 觸發情境                                                                                                                                                                                             | 讀哪份 reference                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 要寫或改一段程式碼註解 / doc comment                                                                                                                                                                 | `references/writing-code-comments.md`                                                                              |
+| 要起草 / 改寫一份文件（worklog、spec、README）                                                                                                                                                       | `references/writing-documents.md`                                                                                  |
+| 要設計 log / 錯誤訊息 / 結構化輸出                                                                                                                                                                   | `references/writing-logs.md`                                                                                       |
+| 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle                                                                                                                             | `references/writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
+| 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估）                                                                                                                   | `references/writing-articles.md`                                                                                   |
+| 要把外部分析文章 / 產業評論 / 投資人備忘錄 / 高密度研究材料轉成教學型分析文章，把從業者經驗談（訪談 / 社群貼文 / 口述）轉成分析教學（機制重建），或把 AI 改寫稿從摘要升級成可遷移框架                | `references/source-to-teaching-analysis.md`                                                                        |
+| 要翻譯 / 轉譯文章、把英文材料改寫成中文、檢查術語誤譯、中文譯名放回句子後是否成立、或譯文有沒有超譯（強度被拉高成口號）                                                                              | `references/translation-review.md`                                                                                 |
+| 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片）                                                                                               | `references/managing-article-collections.md`                                                                       |
+| 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、或用結構原則 review 既有文集                                                                         | `references/structuring-with-solid.md`                                                                             |
+| 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時 / 強度失準（誇飾或降格） | `references/auditing-articles.md`                                                                                  |
+| 要寫或檢查判讀 / 選型 / 決策類內容（回答「該怎麼判斷」那一層），或讀者提問「什麼情況會需要這個」「什麼樣的系統會這樣做」「沒有範例看不懂」                                                           | `references/judgment-content-needs-scenarios.md`                                                                   |
+| 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                                                                                                   | `references/designing-fields.md`                                                                                   |
+| 想驗證寫作品質（認知負擔、獨立理解率）                                                                                                                                                               | `references/meta-metrics.md`                                                                                       |
+| 要新增或修改一份 Skill reference（撰寫品質規範、結構標準）                                                                                                                                           | `references/reference-authoring-standards.md`                                                                      |
+| 要驗收 Skill 發布品質（語意層驗收、Phase 2 dry-run）                                                                                                                                                 | `references/dry-run-guide.md`                                                                                      |
 
 每份 reference 自包含：以該情境為核心，把核心原則翻譯成可直接套用的檢查項與範例。閱讀任一 reference 不需要回來看其他 reference。
 
@@ -245,6 +245,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-17
+**Version**: 0.53.0 — auditing-articles 新增 Dimension 6「強度對齊」：強度詞是 claim 的一部分、audit 檢查升格（誇飾、overclaim）與降格（嚴重性寫得雲淡風輕）兩個方向；判定框架是兩軸四區（文體契約 × 行動耦合、判斷單位是段落位置、同一文件內合法性分區——README tagline 可誇、feature 清單零容忍）；接收端兩個可操作判準——支撐存在測試（強度詞旁有無機制 / 數字）與反比操縱訊號（強度與可驗證性反向是推銷話術結構特徵）；誇飾最危險的是中段強度（強到失實、又沒強到讓人識破）；跟 Dimension 4 分工（citation drift 三類是強度漂移在 citation 位的形態、Dimension 6 涵蓋其他位置 + 降格側）。新增 `hyperbole-legitimacy-by-position-function` principle 卡（含 hook 段合法性、puffery 界線、六個警惕位置表）、修復「資安 Lens：四個維度」的計數漂移標題、觸發路由同步。從 #259 立卡後「什麼情境誇飾合理、什麼情境該警惕」的框架討論抽出。
+
 **Version**: 0.52.0 — 新增「轉述與翻譯要保留語意強度量級」：翻譯 / 轉述 / 摘要他人材料時、成品的強度詞停在原文量級（great 被譯成奇蹟是升格）、可操作判準是鄰詞存在測試（目標語言有更強的專詞而原文沒選用、代表原文刻意停在較低量級）；量級升格是中性工具、對錯由責任對象決定——保真轉換對原文負責鎖定量級、原創文案與宣告過的再創作對訴求效果負責可自由運用誇飾、分辨能力比禁令有用。新增 `rewrite-preserves-claim-intensity` principle 卡、translation-review 加量級檢查 pass（鄰詞存在測試 + 責任對象三分流）+ 兩列反模式（量級升格放行 / 拿譯文當原文比對）+ 自查清單兩條、原則 6 術語句與觸發路由同步。從一句登入頁標語的英→日→中三段轉換鏈抽出（日文在地化量級對位、AI 中譯升格成「奇蹟」）。
 
 **Last Updated**: 2026-08-08
