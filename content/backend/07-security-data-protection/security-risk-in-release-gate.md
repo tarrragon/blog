@@ -66,7 +66,7 @@ description: "發版流程已有功能測試與 SLO 關卡、要決定哪些變�
 
 事故當天要回答「當時憑什麼放行」時，只有通過標記的紀錄提供不了範圍。[Gate decision](/backend/knowledge-cards/gate-decision/) 的規格是同時寫出允許前進的範圍與被擋住的風險面，資安側的形態是「允許在只對內部網段開放的條件下上線，公開開放留待傳輸驗證完成」——這句話比「security review 通過」可操作，因為它讓下一個接手的人知道現在的狀態是什麼、以及什麼條件解除限制。
 
-帶範圍限制的放行本身就是一筆風險例外。例外要填什麼欄位、期限與關閉條件怎麼訂，看 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)（它給可直接套用的欄位模板）；例外累積之後怎麼治理、誰負責重評估，看 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。機制本身見 [security exception](/backend/knowledge-cards/security-exception/) 與 [tripwire](/backend/knowledge-cards/tripwire/)；本章的責任只到一條時點要求：例外要在放行決策的同一刻建立，不是放行之後補登記。補登記的形態下，補償控制的生效時點晚於風險的生效時點，而那段落差不會出現在任何一份紀錄上。
+帶範圍限制的放行本身就是一筆風險例外。例外要填哪六個欄位、每一欄的判準是什麼，定義處是 [security exception](/backend/knowledge-cards/security-exception/) 卡；填寫時的判準與可直接複製的模板在 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)；例外累積之後怎麼治理、誰負責重評估，看 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。事件驅動的回收機制見 [tripwire](/backend/knowledge-cards/tripwire/)；本章的責任只到一條時點要求：例外要在放行決策的同一刻建立，不是放行之後補登記。補登記的形態下，補償控制的生效時點晚於風險的生效時點，而那段落差不會出現在任何一份紀錄上。
 
 ## 高風險變更的階段節奏
 
