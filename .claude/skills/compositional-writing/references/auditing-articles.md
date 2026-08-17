@@ -167,8 +167,8 @@ Audit checklist：
 - [ ] 轉述位（引用、翻譯、摘要）比原文更強嗎？（「證明了」常是原文「suggests」的升格、二手內容加倍警惕、回一手來源比對）
 - [ ] 「這一步非常關鍵」這類強調、後面有機制支撐嗎？（無支撐的空誇擠掉了本該放機制的位置）
 - [ ] 安全陳述位有「絕對安全」「不可能被繞過」句型嗎？（假防護感的入口形態、直接進 tier 決策樹）
-- [ ] **反比操縱訊號**：越難驗證的段落話講得越滿嗎？（強度與可驗證性反向是推銷話術的結構特徵、警惕等級最高）
-- [ ] **降格側**：風險段落的強度與嚴重性對位嗎？（RCE 寫成「可能造成一些影響」比誇飾更貴、incident report 尤其要掃）
+- [ ] **反比操縱訊號**：越難驗證的段落話講得越滿嗎？（強度與可驗證性反向是推銷話術的結構特徵；反比結構無法用文體先驗的無意滑動解釋、所以警惕等級最高）
+- [ ] **降格側**：風險段落的強度與嚴重性對位嗎？（RCE 寫成「可能造成一些影響」會讓應變者依錯的緊急度行動、incident report 尤其要掃）
 
 跟 Dimension 4 的分工：citation drift 三類（conditional → unconditional / specific → general / recommendation → mandate）是強度漂移在 citation 位的具體形態、Dimension 4 逐條對原文抓；本 dimension 涵蓋 citation 之外的所有位置（宣稱位、判準段、風險陳述、自評位）、並補反方向的降格檢查。詳見 [hyperbole-legitimacy-by-position-function](./principles/hyperbole-legitimacy-by-position-function.md)。
 
