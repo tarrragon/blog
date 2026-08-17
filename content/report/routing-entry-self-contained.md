@@ -38,6 +38,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作規範", "�
 - [#113 商業邏輯論述要 self-contained](../prose-self-contained-without-code-reference/)——#113 守正文段落對 code 的依賴（「那個 payload 第二段」轉嫁讀者翻 code）；本卡守 navigation surface 對鄰條的依賴。同一個 self-contained 原則在兩個 surface 的形態：正文的保底是線性閱讀、路由連這層保底都沒有、要求更嚴。
 - [#240 路由要驗證目的地承接該主題](../routing-destination-must-own-the-topic/)——一條路由的兩端各由一張卡守：本卡驗跳轉單位讀不讀得懂（條目自包含、不依賴鄰條上下文），#240 驗它指向的那一端接不接得住（目的地實際承接該主題、到站第一屏可達）。照本卡寫出來的條目可以格式完美而目的地落空，兩張合起來才構成完整驗收。
 - [#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/)——路由段落屬 navigation surface；本卡是該 surface 上的一條具體檢查項：review 掃 body 的引用時、下一步 / 依情境 / MOC 的每條 bullet 要用「單條獨立可用」的標準另掃一次。
+- [#261 語句要在它的消費單位內資訊自足](../sentence-self-sufficiency-by-consumption-unit/)：本卡的「獨立跳轉單位」是 #261 消費單位軸在 navigation surface 的實例——#261 把這條軸命名並下沉到句內成分（資訊充足四條件 + 抽離重讀）、路由條目的自足驗收從此有句層的操作版。
 
 ## Case
 

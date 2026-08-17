@@ -53,6 +53,7 @@ slug: "compressed-conclusion-strips-derivation"
 - [#151 教材給技術理由、不替方案下品質評價](../teaching-gives-reasons-not-quality-verdicts/)：品質評價是壓縮結論的一種表徵（verdict 維度）。
 - [#152 設計選擇講成選擇、不講成必然](../design-choices-framed-as-choices-not-necessity/)：必然性框架是壓縮結論的一種表徵（modality 維度）。
 - [#111 口語化修辭會稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)：口語修辭是另一種壓縮——用模糊的日常語言替代精確的技術條件。
+- [#262 內容超出容器時擴充結構、不壓縮內容](../content-pressure-resolves-by-expansion-not-compression/)：本卡抓壓縮結論的三種語句型、#262 抓容器層的同一失效（承載推導的內容被塞進表格、推導句從正文消失）——判定問句共用「推導還在不在」、修法在 #262 是換出口（延伸段或拆卡）而非改語句。
 
 ## 判讀徵兆
 

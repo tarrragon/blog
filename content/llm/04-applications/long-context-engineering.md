@@ -89,7 +89,7 @@ Recall accuracy vs 答案位置（10K context）：
 
 ## Context 設計策略
 
-具體 prompt 結構建議（適用 long context 場景）：
+具體 prompt 結構建議（適用 long context 場景）。位置策略之外還有句子層的對策：會被模型單獨取用的規則句與 checklist 項、要在句內資訊自足（主詞在場、指涉不依賴幾段之前的定義）——寫作側的完整規則見[語句要在它的消費單位內資訊自足](/report/sentence-self-sufficiency-by-consumption-unit/)、它是 lost-in-the-middle 的寫作端對策。
 
 ```text
 [1. System prompt 開頭]         ← attention 強、放核心指令
