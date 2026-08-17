@@ -9,7 +9,7 @@ Trust boundary 的核心概念是「信任假設在哪裡開始不再成立」�
 
 ## 概念位置
 
-Trust boundary 會出現在 [authentication](/backend/knowledge-cards/authentication/)、[authorization](/backend/knowledge-cards/authorization/)、[tenant boundary](/backend/knowledge-cards/tenant-boundary/)、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[SSRF](/backend/knowledge-cards/ssrf/) 與 network policy 交界。它是描述「哪裡開始需要重新驗證」的分析框架，涵蓋範圍超過任何單一防護措施。
+Trust boundary 會出現在 [authentication](/backend/knowledge-cards/authentication/)、[authorization](/backend/knowledge-cards/authorization/)、[tenant boundary](/backend/knowledge-cards/tenant-boundary/)、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[SSRF](/backend/knowledge-cards/ssrf/) 與 network policy 交界。它是描述「哪裡開始需要重新驗證」的分析框架，涵蓋範圍超過任何單一防護措施；邊界清單與資產、攻擊者能力假設並排列舉時走 [threat model](/backend/knowledge-cards/threat-model/)。
 
 ## 可觀察訊號與例子
 

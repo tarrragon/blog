@@ -10,7 +10,7 @@ Attack surface 的核心概念是「攻擊者能先看見並嘗試互動的所�
 
 ## 概念位置
 
-Attack surface 是紅隊分析的起點。它回答「哪裡先被看到」，因此會和 [Public API](/backend/knowledge-cards/public-api-endpoint/)、[Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/)、[Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)、[webhook](/backend/knowledge-cards/webhook/) 與 [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/) 一起被檢查。
+Attack surface 是紅隊分析的起點。誰會來看、想拿什麼、能做到什麼程度由 [threat model](/backend/knowledge-cards/threat-model/) 承接，本卡只回答「哪裡先被看到」，因此會和 [Public API](/backend/knowledge-cards/public-api-endpoint/)、[Admin Endpoint](/backend/knowledge-cards/admin-endpoint/)、[Diagnostic Endpoint](/backend/knowledge-cards/diagnostic-endpoint/)、[Internal Endpoint](/backend/knowledge-cards/internal-endpoint/)、[webhook](/backend/knowledge-cards/webhook/) 與 [Security Misconfiguration](/backend/knowledge-cards/security-misconfiguration/) 一起被檢查。
 
 ## 可觀察訊號與例子
 

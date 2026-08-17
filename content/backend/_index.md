@@ -298,18 +298,18 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 | [09 效能與容量](/backend/09-performance-capacity/)         | 5    | 十三個工具全部未開始                                                   |
 | [10 系統演進](/backend/10-system-evolution/)               | 4    | 四類演進議題待展開                                                     |
 | [11 API 設計](/backend/11-api-design/)                     | 1    | 兩篇推導型文章的素材替換（等公開一手來源出現）                         |
-| 橫向：簡報式段落拆卡試點（見下段）                         | 1    | 首輪已完成（07 的兩章）、全分類盤點的範圍待決                          |
+| 橫向：簡報式段落拆卡試點（見下段）                         | 1    | 兩輪已完成（07 的三章）、全分類盤點的範圍待決                          |
 | 橫向：判讀類章節補情境（見下段）                           | 1    | 跨十二模組、逐篇獨立、可隨時中斷                                       |
 
 ### 橫向工作：簡報式段落拆卡試點
 
 依 [#262 內容超出容器時擴充結構、不壓縮內容](/report/content-pressure-resolves-by-expansion-not-compression/)：挑一個模組的 1-2 章做拆卡改寫——支撐與背景概念外部化成知識卡、範例寫進卡片、章節保留「什麼情境用哪張卡」的判讀敘事——用冷讀對照驗證讀者體驗（拆卡對搜尋落地讀者的收益 vs 順讀讀者的跳轉成本）。試點同時執行句層 sweep（對該章表格與判準句逐列跑抽離重讀、產出逐格判定表）、為 [#261](/report/sentence-self-sufficiency-by-consumption-unit/) 的「教學文章側觀察」提供第二個實證。
 
-首輪已完成：對象是 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 與 [7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/)（相鄰、互為必連、同屬一組 22 篇共用樣板，其中一章自帶已展開的參照段可當深度標準）。四張表 20 列的判定與出口分布記在 [#262 的試點結果段](/report/content-pressure-resolves-by-expansion-not-compression/#試點結果逐列判定與處置分診)，句層那一半回寫進 [#261 的 case 段](/report/sentence-self-sufficiency-by-consumption-unit/)。產出的規格修正是 #262 增列第三個出口（換成連結）；產出的新卡是 [Threat Model](/backend/knowledge-cards/threat-model/)。
+首輪已完成：對象是 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 與 [7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/)（相鄰、互為必連、同屬一組 24 篇共用樣板，其中一章自帶已展開的參照段可當深度標準）。四張表 20 列的判定與出口分布記在 [#262 的試點結果段](/report/content-pressure-resolves-by-expansion-not-compression/#試點結果逐列判定與處置分診)，句層那一半回寫進 [#261 的 case 段](/report/sentence-self-sufficiency-by-consumption-unit/)。產出的規格修正是 #262 增列第三個出口（換成連結）；產出的新卡是 [Threat Model](/backend/knowledge-cards/threat-model/)。
 
 第二輪刻意挑會反駁首輪的對象：同批樣板裡的組織與流程題材（[7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/)），主線概念在卡層零覆蓋。九列的分布因此完全不同，而且找出第四種處置——該章自訂的五階成熟度階段與同模組四階的那一章不相容，先收斂載體才輪到容器出口。結論修正為「出口分布不可推廣、分診程序可以」，細節同在 #262 的試點結果段。
 
-剩下兩件事各自獨立。同樣板的另外 19 篇（主章 10、藍隊 12 減去已改寫的三篇）記在 [07 模組的 Backlog](/backend/07-security-data-protection/)、改寫標準已由前兩輪確立。全分類的簡報式段落盤點仍未排——首輪只證明判定與分診可操作，跳轉成本的方向沒有被驗證（冷讀對照由改寫者本人執行、與作者同源），把盤點推到全分類之前要先有一次異源冷讀。
+剩下兩件事各自獨立。這組樣板原有 24 篇（主章 12、藍隊 12），改寫掉三篇後剩 21 篇（主章 9、藍隊 12）記在 [07 模組的 Backlog](/backend/07-security-data-protection/)、改寫標準已由前兩輪確立。全分類的簡報式段落盤點仍未排——首輪只證明判定與分診可操作，跳轉成本的方向沒有被驗證（冷讀對照由改寫者本人執行、與作者同源），把盤點推到全分類之前要先有一次異源冷讀。
 
 ### 橫向工作：判讀類章節補系統形態與觸發事件
 
