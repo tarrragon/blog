@@ -63,12 +63,13 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Terminology"]
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                  | 關係                                                                                     |
-| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| [#107 術語翻譯要保留原文錨點](../terminology-keeps-original-anchor/)                  | 原文錨點讓 reviewer 能回到來源；本卡補「中文名詞頭要保留來源裡的概念角色」。             |
-| [#108 中文壓縮術語要保留完整名詞頭](../compressed-chinese-terms-need-head-noun/)      | #108 處理名詞頭缺失；本卡處理名詞頭存在但類型錯誤，例如把「論證」改成「測試」。          |
-| [#84 Naming 是 iterated artifact](../naming-as-iterated-artifact/)                    | 術語中文名是命名成果；第一版常被局部語境拉偏，需要在第二輪用來源角色與本文角色重新校準。 |
-| [#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/) | 術語角色錯誤常殘留在 heading、checklist、index entry；surface review 要同步掃概念角色。  |
+| 原則                                                                                  | 關係                                                                                                              |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [#107 術語翻譯要保留原文錨點](../terminology-keeps-original-anchor/)                  | 原文錨點讓 reviewer 能回到來源；本卡補「中文名詞頭要保留來源裡的概念角色」。                                      |
+| [#108 中文壓縮術語要保留完整名詞頭](../compressed-chinese-terms-need-head-noun/)      | #108 處理名詞頭缺失；本卡處理名詞頭存在但類型錯誤，例如把「論證」改成「測試」。                                   |
+| [#84 Naming 是 iterated artifact](../naming-as-iterated-artifact/)                    | 術語中文名是命名成果；第一版常被局部語境拉偏，需要在第二輪用來源角色與本文角色重新校準。                          |
+| [#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/) | 術語角色錯誤常殘留在 heading、checklist、index entry；surface review 要同步掃概念角色。                           |
+| [#259 轉述與翻譯要保留語意強度量級](../rewrite-preserves-claim-intensity/)            | 本卡管概念角色（類型）、#259 補強度量級軸：「奇蹟」跟「很棒」類型相同、量級不同。兩軸正交、一個譯名可以只錯一軸。 |
 
 ---
 

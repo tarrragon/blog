@@ -111,7 +111,7 @@ Surface enumeration 是 multi-pass 的固定前置步驟。寫作產物包含 bo
 
 **核心**：「再仔細一次」≠ multi-pass — 同 frame 重看 catch 不到新問題。每輪換 frame、才能 catch 不同層。各 reference（writing-articles / writing-code-comments / writing-documents / writing-prompts）依 output 類型有特化的輪次組合。
 
-Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、見 [naming-as-iterated-artifact](references/principles/naming-as-iterated-artifact.md) 跟 writing-code-comments 的 naming review 段。術語是 naming 的高歧義子場景：翻譯術語第一次出現保留原文錨點，中文壓縮術語保留完整名詞頭，中文名詞頭要保留來源中的概念角色，見 [terminology-keeps-original-anchor](references/principles/terminology-keeps-original-anchor.md)、[compressed-chinese-terms-need-head-noun](references/principles/compressed-chinese-terms-need-head-noun.md) 與 [translation-must-preserve-concept-role](references/principles/translation-must-preserve-concept-role.md)。
+Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對、四輪 review（第一版 / grep / cross-call-site / impl 洩漏）才收斂、見 [naming-as-iterated-artifact](references/principles/naming-as-iterated-artifact.md) 跟 writing-code-comments 的 naming review 段。術語是 naming 的高歧義子場景：翻譯術語第一次出現保留原文錨點，中文壓縮術語保留完整名詞頭，中文名詞頭要保留來源中的概念角色，轉換他人材料時強度詞停在原文量級（保真轉換鎖定量級、原創文案與宣告過的再創作以訴求效果為準），見 [terminology-keeps-original-anchor](references/principles/terminology-keeps-original-anchor.md)、[compressed-chinese-terms-need-head-noun](references/principles/compressed-chinese-terms-need-head-noun.md)、[translation-must-preserve-concept-role](references/principles/translation-must-preserve-concept-role.md) 與 [rewrite-preserves-claim-intensity](references/principles/rewrite-preserves-claim-intensity.md)。
 
 **高 stakes 內容追加輪 E（epistemic rigor、conditional opt-in）**：reader 照做後錯誤不可逆的內容（資安 / concurrency 正確性 / distributed consistency / financial / medical）在 5 輪基本 frame 之外、追加 stakes 軸的 epistemic rigor pass——比照學術 peer review 跑 claim / evidence / method / threats / citation 五個 sub-check、加上 audit recommendation tier（accept / minor / major / withdraw）。一般內容 5 輪夠、不跑輪 E；高 stakes 內容兩軸都跑。詳見 `references/auditing-articles.md` 跟 `references/principles/writing-multi-pass-review.md` 的「stakes-conditional 追加輪」段。
 
@@ -135,7 +135,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 | 要撰寫給 AI 的 prompt / instruction / Agent 派發 / Ticket Context Bundle                                                                                                              | `references/writing-prompts.md`（為 `.claude/rules/core/ai-communication-rules.md` 的詳細版庫，portability-allow） |
 | 要撰寫完整長篇技術文章（blog post / post-mortem / 架構決策 / 除錯復盤 / 技術評估）                                                                                                    | `references/writing-articles.md`                                                                                   |
 | 要把外部分析文章 / 產業評論 / 投資人備忘錄 / 高密度研究材料轉成教學型分析文章，把從業者經驗談（訪談 / 社群貼文 / 口述）轉成分析教學（機制重建），或把 AI 改寫稿從摘要升級成可遷移框架 | `references/source-to-teaching-analysis.md`                                                                        |
-| 要翻譯 / 轉譯文章、把英文材料改寫成中文、檢查術語誤譯或中文譯名放回句子後是否成立                                                                                                     | `references/translation-review.md`                                                                                 |
+| 要翻譯 / 轉譯文章、把英文材料改寫成中文、檢查術語誤譯、中文譯名放回句子後是否成立、或譯文有沒有超譯（強度被拉高成口號）                                                               | `references/translation-review.md`                                                                                 |
 | 要管理多篇相關文章的結構（系列、文集、知識庫、素材庫比例、MOC、跨篇引用、何時抽抽象層 / Pattern 卡片）                                                                                | `references/managing-article-collections.md`                                                                       |
 | 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、或用結構原則 review 既有文集                                                          | `references/structuring-with-solid.md`                                                                             |
 | 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時           | `references/auditing-articles.md`                                                                                  |
@@ -240,6 +240,9 @@ compositional-writing/
 3. 想驗證成果 → 讀 `meta-metrics.md` 做自評
 
 ---
+
+**Last Updated**: 2026-08-17
+**Version**: 0.52.0 — 新增「轉述與翻譯要保留語意強度量級」：翻譯 / 轉述 / 摘要他人材料時、成品的強度詞停在原文量級（great 被譯成奇蹟是升格）、可操作判準是鄰詞存在測試（目標語言有更強的專詞而原文沒選用、代表原文刻意停在較低量級）；量級升格是中性工具、對錯由責任對象決定——保真轉換對原文負責鎖定量級、原創文案與宣告過的再創作對訴求效果負責可自由運用誇飾、分辨能力比禁令有用。新增 `rewrite-preserves-claim-intensity` principle 卡、translation-review 加量級檢查 pass（鄰詞存在測試 + 責任對象三分流）+ 兩列反模式（量級升格放行 / 拿譯文當原文比對）+ 自查清單兩條、原則 6 術語句與觸發路由同步。從一句登入頁標語的英→日→中三段轉換鏈抽出（日文在地化量級對位、AI 中譯升格成「奇蹟」）。
 
 **Last Updated**: 2026-08-08
 **Version**: 0.51.0 — 第三支柱新增「軸名要取機制、不要取它的代理」：替判準或分界軸命名時選中的常是與機制同向但較弱的代理，而真正在做功的那句話留在括號或下一句的理由裡；代理與機制分岔處正是判準要處理的難題，於是判準在最需要它的地方失效。字句與結構層審查都抓不到，只有對抗性審查與個案實跑抓得到。新增 `axis-named-by-proxy-not-mechanism` principle 卡。從一個模組連續八輪審查裡三次同型 finding（跨兩批內容、不同 frame 各自抓到）抽出。
