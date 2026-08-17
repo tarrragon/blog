@@ -14,13 +14,14 @@ description: "把事故教訓回寫到產品決策、架構控制與知識網，
 
 ## 回寫層級
 
-| 層級            | 回寫目標               | 產出                 |
-| --------------- | ---------------------- | -------------------- |
-| Rule layer      | 偵測規則與調校策略     | rule update          |
-| Control layer   | 控制面與驗證條件       | control update       |
-| Workflow layer  | triage、升級、通訊流程 | workflow update      |
-| Product layer   | 需求優先序與設計輸入   | product backlog      |
-| Knowledge layer | 章節、案例、卡片       | documentation update |
+| 層級            | 回寫目標                                                                                                                                                              | 產出                 |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| Rule layer      | 偵測規則與調校策略                                                                                                                                                    | rule update          |
+| Gate layer      | 放行判準的資產類別與必備控制清單（放行後的事故落在預檢判定為不命中的類別時，缺的是[判準的一列](/backend/07-security-data-protection/security-risk-in-release-gate/)） | gate criteria update |
+| Control layer   | 控制面與驗證條件                                                                                                                                                      | control update       |
+| Workflow layer  | triage、升級、通訊流程                                                                                                                                                | workflow update      |
+| Product layer   | 需求優先序與設計輸入                                                                                                                                                  | product backlog      |
+| Knowledge layer | 章節、案例、卡片                                                                                                                                                      | documentation update |
 
 ## 回寫欄位
 

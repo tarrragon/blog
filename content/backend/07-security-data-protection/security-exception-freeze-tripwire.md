@@ -116,6 +116,7 @@ Write-back target:
 - [7.9 服務生命週期的資安風險節奏](/backend/07-security-data-protection/security-lifecycle-risk-cadence/)
 - [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)
 - [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)
+- [7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/)（本篇的期限與 tripwire 要排進什麼節奏、兩個 owner 的權責不對稱為什麼是必要的阻力）
 - [發佈凍結缺少重評估觸發器](/backend/07-security-data-protection/red-team/problem-cards/fp-release-freeze-without-tripwire/)
 - [例外缺少期限與關閉條件](/backend/07-security-data-protection/red-team/problem-cards/fp-exception-without-expiry/)
 
