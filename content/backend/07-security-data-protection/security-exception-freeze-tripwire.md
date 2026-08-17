@@ -103,7 +103,7 @@ Tripwire signal + threshold:
 Tripwire escalation owner:
 ```
 
-模板責任是讓治理決策可重用，不讓每次事件都重頭設計欄位。模板裡有三組欄位、屬於三個不同的物件：前七行是例外的六欄（owner 佔兩行、業務側與技術側各一名），接著兩行屬於 freeze，最後兩行屬於 tripwire。三者的 owner 不是同一個角色——例外的 owner 承擔關閉，tripwire 的升級對象承擔重評估的啟動，一筆例外只填了後者時沒有人負責關閉它。
+模板責任是讓治理決策可重用，不讓每次事件都重頭設計欄位。模板裡的欄位屬於三個不同的物件，填的時候要分清楚：`Risk scope` 到 `Write-back target` 是例外的六欄（其中 owner 拆成業務側與技術側兩行），`Freeze scope / allowlist` 屬於 freeze，兩個 `Tripwire` 開頭的屬於 tripwire，而 `Decision ID` 是這份紀錄自己的識別碼、不屬於任何一組。三者的 owner 不是同一個角色——例外的 owner 承擔關閉，tripwire 的升級對象承擔重評估的啟動，一筆例外只填了後者時沒有人負責關閉它。
 
 ## 邊界與常見誤判
 
