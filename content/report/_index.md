@@ -439,11 +439,11 @@ Filter × Source 合成三選（從 #59 抽出）：
 
 ### 路徑 18：對既有資安內容跑學術級 audit
 
-`#99 資安教學審查標準對應風險不對稱` → `#100 false sense of security 主要失敗模式` → `#101 threat model 明確性` → `#102 mitigation 對位` → `#103 mitigation context-dependence` → `#104 security citation 時效精確` → `#105 audit recommendation 層級` — 先確立風險不對稱論證、再用 false sense of security 作為主要 audit 目標、跑四個 dimension（threat model 對稱 / mitigation mechanism 對位 / context 條件顯式 / citation 版本精確）、最後用 tier 化 recommendation 把每個 weakness 映射到 ship 決策（accept / minor / major / withdraw）。適用 backend/07-security-data-protection/ 章節 audit、跨高 stakes 領域（concurrency / distributed / financial / medical）也適用 dimension 1-3。強度詞與誇飾的 audit 判準（兩軸四區、支撐存在測試、降格對齊）另見 `#260 誇飾的合法性由段落位置的功能決定`。
+`#99 資安教學審查標準對應風險不對稱` → `#100 false sense of security 主要失敗模式` → `#101 threat model 明確性` → `#102 mitigation 對位` → `#103 mitigation context-dependence` → `#104 security citation 時效精確` → `#105 audit recommendation 層級` — 先確立風險不對稱論證、再用 false sense of security 作為主要 audit 目標、跑四個 dimension（threat model 對稱 / mitigation mechanism 對位 / context 條件顯式 / citation 版本精確）、最後用 tier 化 recommendation 把每個 weakness 映射到 ship 決策（accept / minor / major / withdraw）。適用 backend/07-security-data-protection/ 章節 audit、跨高 stakes 領域（concurrency / distributed / financial / medical）也適用 dimension 1-3。強度詞與誇飾的 audit 判準（兩軸四區、支撐存在測試、反比操縱訊號、降格對齊）另見 `#260 誇飾的合法性由段落位置的功能決定`。
 
 ### 路徑 19：翻譯 / 轉譯文章時檢查術語是否錯位
 
-`#107 術語翻譯要保留原文錨點` → `#108 中文壓縮術語要保留完整名詞頭` → `#109 術語翻譯要保留概念角色` → `#259 轉述與翻譯要保留語意強度量級` → `#84 Naming 是 iterated artifact` → `#97 Metadata surface 要納入寫作 review 範圍` — 先保留原文讓概念可回溯，再確認中文離開原句仍有完整名詞頭；接著檢查名詞頭是否保留來源中的概念角色、強度詞是否停在原文的量級（鄰詞存在測試）；最後同步掃 heading / checklist / index entry。
+`#107 術語翻譯要保留原文錨點` → `#108 中文壓縮術語要保留完整名詞頭` → `#109 術語翻譯要保留概念角色` → `#259 轉述與翻譯要保留語意強度量級` → `#84 Naming 是 iterated artifact` → `#97 Metadata surface 要納入寫作 review 範圍` — 先保留原文讓概念可回溯，再確認中文離開原句仍有完整名詞頭；接著檢查名詞頭是否保留來源中的概念角色、強度詞是否停在原文的量級（鄰詞存在測試）；最後同步掃 heading / checklist / index entry。翻譯落在 `#260 誇飾的合法性由段落位置的功能決定` 的零容忍區——判斷一次升格是超譯還是正當文案設計時走該卡的兩軸。
 
 ### 路徑 20：寫教學模組 / 案例驅動內容時的引用紀律
 

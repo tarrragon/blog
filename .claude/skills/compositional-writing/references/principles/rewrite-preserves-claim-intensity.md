@@ -1,6 +1,6 @@
 # Rewrite Preserves Claim Intensity
 
-> **角色**：本卡是 `compositional-writing` 的支撐型原則（principle）、被 translation review 與 source 轉換類 reference 引用。
+> **角色**：本卡是 `compositional-writing` 的支撐型原則（principle）、被 [translation-review](../translation-review.md) 引用。
 >
 > **何時讀**：翻譯、轉述、摘要或改寫他人材料後，成品讀起來比原文更有力、更像口號，或需要判斷一次量級升格是超譯還是正當的文案設計時。
 
@@ -8,7 +8,7 @@
 
 轉換他人材料（翻譯、轉述、摘要、改寫）時、成品的每個 claim 要停在原文的強度量級。強度是 claim 的一部分：形容詞的讚美量級（great 對 miraculous）、模態與頻率詞的確定性（可能對必然、有時對總是）都在傳遞作者對這個 claim 的信心與定位。量級被拉高（升格）或壓低（降格）時、即使概念類型沒換、句子通順、reader 拿到的也是另一個 claim。
 
-可操作判準是**鄰詞存在測試**：目標語言存在一個量級更強的專詞、而原文沒有選用它、代表原文刻意停在較低量級。實例：某產品登入成功頁的英文標語「Build something great」、日文在地化「素晴らしいものを作りましょう」量級對位；把日文句再交給 AI 中譯、得到「讓我們製造一點奇蹟吧」——日文有「奇跡」這個常用專詞、日文版沒選用它、中譯選「奇蹟」等於替上游做了一個它明確沒做的選擇。
+可操作判準是**鄰詞存在測試**：目標語言存在一個量級更強的專詞、而原文沒有選用它、代表原文刻意停在較低量級。實例：某產品登入成功頁的英文標語「Build something great」、日文在地化「素晴らしいものを作りましょう」量級對位；把日文句再交給 AI 中譯、得到「讓我們製造一點奇蹟吧」——日文有「奇跡」這個常用專詞、日文版沒選用它、中譯選「奇蹟」等於替上游做了一個它明確沒做的選擇。同語言的轉述用同一個測試：原文寫「暗示」（suggests）而轉述寫「證明」、轉述者替原文換上了它明確沒選的強詞。
 
 ## 為什麼轉換會把量級拉高
 
@@ -50,6 +50,7 @@
 - **概念角色**（[translation-must-preserve-concept-role](translation-must-preserve-concept-role.md)）：那卡管類型軸（方法被翻成測試）、本卡管量級軸（「奇蹟」跟「很棒」同為讚美、類型沒換、量級被拉高）。兩軸正交、一個譯名可以只錯一軸。
 - **原文錨點**（[terminology-keeps-original-anchor](terminology-keeps-original-anchor.md)）：雙錨點是量級漂移的偵測基礎、保留原文才有對照量級的材料；鄰詞存在測試以能回到原文為前提。
 - **摘要模態**：同語言的摘要壓縮可以丟細節、不可以改模態（條件允許壓成禁止）；本卡是同一族在跨語言、跨作者轉換場景的對應、兩者共享「成品比原文更有力就是失真訊號」這條判定。
+- **位置合法性**（[hyperbole-legitimacy-by-position-function](hyperbole-legitimacy-by-position-function.md)）：本卡管生產端——轉換他人材料時鎖定原文量級；那卡管接收端——審查任何內容時用段落位置的功能（文體契約 × 行動耦合）判定強度合法性、含支撐存在測試與反比操縱訊號兩個接收端判準。
 
 ## 自查清單
 
@@ -61,4 +62,4 @@
 
 **核心**：原文沒選用的量級、是作者做過的選擇。轉換者把量級拉高、等於替作者重做這個選擇、而且沒有告訴讀者。
 
-對應的 blog report 卡 slug 是 `rewrite-preserves-claim-intensity`。
+上游來源卡 slug：`rewrite-preserves-claim-intensity`（供鏡像同步工具對位、非內容依賴）。
