@@ -3,7 +3,7 @@ name: compositional-writing
 description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 敘事姿態) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 檢討報告, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 問句標題, 敘事視角, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流."
 license: MIT
 metadata:
-  version: 0.55.1
+  version: 0.55.2
   category: writing-methodology
 ---
 
@@ -31,7 +31,7 @@ metadata:
 
 一張卡一個概念：能獨立理解、可跨情境重用。拆分依據是**認知負擔與情境匹配度** — 讀者要同時記住的概念數、以及這張卡是否符合讀者當下的情境需求。常見的誤判依據是「行數」（卡太長就拆）、行數只反映表面字數、不反映概念數：一張 200 行的卡可能只講一個概念、一張 30 行的卡可能塞了三個概念。判別問題是「讀者要同時 hold 幾個概念才讀得懂這張卡」、超過 7 個就要拆。
 
-**內容壓力的出口是擴充結構、不是壓縮內容**：內容超出容器的自然大小時（判準裝不進表格格、概念裝不進標題、範例讓段落過長）、合法出口有兩個——就地展開（延伸段、本篇專屬內容）或外部化成卡（跨篇可用的支撐 / 背景概念、範例寫進卡片、文章引用卡片承接論證）；裁內容遷就容器違規、終點形態是簡報式文章（表格當主體、格內殘語、條列連綴——簡報的正當性來自講者在場補完、文章沒有講者）。三條邊界：主線概念必須行內展開（外部化斷論證線）、擴充的對象是結構不是句長（句層另由消費單位分配管）、checklist / 規格表型內容的表格形態合法（消費單位是逐項執行）。文章要短、讓細節搬進卡片、別讓細節消失。詳見 [content-pressure-resolves-by-expansion-not-compression](references/principles/content-pressure-resolves-by-expansion-not-compression.md)。
+**內容壓力的出口是擴充結構、不是壓縮內容**：內容超出容器的自然大小時（判準裝不進表格格、概念裝不進標題、範例讓段落過長）、合法出口有兩個——就地展開（延伸段、本篇專屬內容）或外部化成卡（跨篇可用的支撐 / 背景概念、範例寫進卡片、文章引用卡片承接論證）；裁內容遷就容器違規、終點形態是簡報式文章（表格當主體、格內殘語、條列連綴——簡報的正當性來自講者在場補完、文章沒有講者）。邊界：主線概念必須行內展開（外部化斷論證線）；擴充的對象是結構不是句長（句層另由消費單位分配管）；checklist、規格表與查表型段落（判讀徵兆表 / 對照表）的表格形態合法——消費單位是逐項執行或逐列查詢、同一機制豁免；拆卡淨收益待試點驗證、先小規模再全面。文章要短、讓細節搬進卡片、別讓細節消失。詳見 [content-pressure-resolves-by-expansion-not-compression](references/principles/content-pressure-resolves-by-expansion-not-compression.md)。
 
 **拆分判準的核心問題**：「這張卡聚焦在什麼問題、議題切完整了嗎？」— 判準是 **focus 完整度**。常見的次級訊號是「卡之間是否衝突」「邊界是否清晰」、兩者都不夠：兩張卡互不衝突、仍可能各切了一半同樣議題；一張卡邊界清晰、仍可能塞了兩個獨立議題。focus 完整度問的是「這張卡有沒有把它聲稱要解決的議題講完」、是 contrast 上面那兩個訊號抓不到的死角。
 
@@ -93,7 +93,7 @@ metadata:
 
 關鍵字前置、使用可 grep 的分隔符（`:` `|` `→` `==`）、欄位名稱使用 regex 友善格式。命名讓 AI 能以單次 grep 命中，不需要語意推理。
 
-**行自足是可查詢性的配套義務**：grep-friendly 設計預期句子被單獨命中、被命中的句子就要單獨讀得懂。單句消費位（checklist 項、表格格、判準句、grep 目標行、章節首句）必須在句內資訊自足——四條件：命題完整（主詞 / 謂語 / 對象 / 條件在場）、指涉閉合（殘片名詞有完整形先行）、實詞可反推（承載內容的詞能反推到機制 / 條件 / 契約）、一句一命題（對仗的每個半句能獨立判真）；驗收用抽離重讀測試（句子單獨給沒讀過上下文的消費者、命題能不能無歧義復原）。段落敘事位可依賴鄰句、壓縮合法——三角取捨（精準、總長、句自足）的解法是按消費單位分配、全域加長跟全域壓縮都是錯的答案。中文單字多義與 LLM 的三種消費模式（單行檢索 / attention 稀釋 / 風格繼承）是放大條件；四字節奏與對仗是「該跑抽離測試」的候選訊號、不是罪名。詳見 [sentence-self-sufficiency-by-consumption-unit](references/principles/sentence-self-sufficiency-by-consumption-unit.md) 與 `references/reference-authoring-standards.md` 的單句消費位段。
+**行自足是可查詢性的配套義務**：grep-friendly 設計預期句子被單獨命中、被命中的句子就要單獨讀得懂。單句消費位（checklist 項、表格格、判準句、grep 目標行、章節首句）必須在句內資訊自足——四條件：命題完整（主詞 / 謂語 / 對象 / 條件在場）、指涉閉合（殘片名詞有完整形先行）、實詞可反推（承載內容的詞能反推到機制 / 條件 / 契約）、一句一命題（對仗的每個半句能獨立判真）；驗收用抽離重讀測試（句子單獨給沒讀過上下文的消費者、命題能不能無歧義復原）。段落敘事位可依賴鄰句、壓縮合法——三角取捨（精準、總長、句自足）的解法是按消費單位分配、全域加長跟全域壓縮都是錯的答案。中文單字多義與 LLM 的三種消費模式（單行檢索 / attention 稀釋 / 風格繼承）是放大條件；四字節奏與對仗是「該跑抽離重讀」的候選訊號、不是判決（判定看消費單位）。詳見 [sentence-self-sufficiency-by-consumption-unit](references/principles/sentence-self-sufficiency-by-consumption-unit.md) 與 `references/reference-authoring-standards.md` 的單句消費位段。
 
 ### 5. 欄位設計（Field Design）
 
@@ -246,6 +246,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-17
+**Version**: 0.55.2 — 批次 2 Round 2 三 reviewer audit（cadence / 冷讀逐格 / 跨 surface）修正：(1) 豁免機制傳播補全——「簡報式判定看消費單位、不看表格密度」與查表型段落（逐列查詢）豁免補進原則一段、writing-articles 自檢句、_index 條目（Round 1 修法原本只傳到三個 surface）；原則一段去「三條」計數、補「拆卡淨收益待試點驗證」邊界；(2) 冷讀逐格修正——主線術語（單句消費位 / 敘事位）在首次描述處命名、文體先驗首用帶 gloss、#260 死指涉補連結、「解壓線」改可指認敘述、principle 卡的 47 對 46 改「總長相當」（頁面上不可驗證的數字）、#262 對 #261 的術語借用補定義與連結；(3) cadence 破模——互指關係列改寫作端 / 審查端分側（原為 27 字鏡射）、#261 判讀徵兆動作欄差異化（原 4/5 列同動作）、#262 反模式表收斂為形態辨識（讀者端訊號歸徵兆表）、放大條件表改三欄消費者制、#262 結語收單一命題；(4) 「抽離重讀」定為正典字串（原混用抽離測試）、principle 卡尾行注記改自我說明形式、reference-authoring-standards 單句消費位段瘦身成操作層。
+
 **Version**: 0.55.1 — 批次 2 Round 1 三 reviewer audit 修正：(1) dogfooding——sentence-self-sufficiency principle 卡的「壓縮歧義的X」parse 二解句展開、判定表兩格補主詞與完整形、表格鍵欄補消費單位邊界（一列是一個消費單位、鍵欄承載檢索鍵、命題義務落在內容欄）；(2) 事實修正——case 的修前引文原為節錄、先行詞實際在同項前分句、改為「壓縮重述要付解壓成本」的準確診斷、字數方向修正（括號總長 47 對 46、自足的成本落在成分安排不必然落在字數）、輪次歸因修正（壓縮句由 Round 1 audit 修正自己引入、Round 2 篇章層冷讀未見）；(3) content-pressure 卡——出口表第三列（違規項佔用出口欄位）抽出表外、簡報式豁免從文體標籤改為消費單位機制（查表型段落逐列查詢合法、違規精確形態是承載推導的內容被塞進表格）、talking points 補中文對位；(4) attention 稀釋改觀察層敘述、風格繼承的素材消歧為「被讀進 context 的規範文字」。
 
 **Version**: 0.55.0 — 原則 1 新增「內容壓力的出口是擴充結構、不是壓縮內容」：內容超出容器（判準裝不進表格格、概念裝不進標題、範例讓段落過長）時合法出口是就地展開（延伸段）或外部化成卡（範例寫進卡片、文章引用）、裁內容遷就容器違規；機制是容器形狀先驗（標題 / 表格格 / 段落有學來的長度帶、內容被裁去符合容器的預期形狀）；反模式命名「簡報式文章」（表格當主體、格內殘語、條列連綴——簡報的正當性來自講者在場補完、文章沒有講者）。經 WRAP 完整評估帶三條邊界：主線概念必須行內展開（外部化斷論證線、術語分級既有規則優先）、擴充的對象是結構不是句長（句層歸消費單位分配）、checklist / 規格表型內容的表格形態合法（消費單位是逐項執行）。新增 `content-pressure-resolves-by-expansion-not-compression` principle 卡、writing-articles 自檢清單補兩條生成端自問（表格格裝得下完整判準嗎 / 文章像簡報嗎）。同批 knowledge-cards skill 補「內容壓力是第二個建卡入口」（該 skill 自己的版本記錄承載版號）。

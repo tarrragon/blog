@@ -65,4 +65,4 @@
 
 **核心**：警惕的對象是「強度被當成資訊的位置上、強度與事實脫鉤」。位置功能定合法性、支撐存在定可信度、升格與降格兩個方向都要對齊。
 
-上游來源卡 slug：`hyperbole-legitimacy-by-position-function`（供鏡像同步工具對位、非內容依賴）。
+本卡自外部原則庫同步而來、slug `hyperbole-legitimacy-by-position-function` 供同步工具對位（非內容依賴）；無同步流程的專案可刪本行。

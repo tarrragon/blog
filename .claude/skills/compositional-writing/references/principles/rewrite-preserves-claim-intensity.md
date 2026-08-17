@@ -62,4 +62,4 @@
 
 **核心**：原文停在的量級、就是讀者該拿到的 claim。轉換者無從分辨原文的量級是刻意還是隨手、而改動的收益歸轉換者、風險歸原作者——所以預設保真、要改就宣告。
 
-上游來源卡 slug：`rewrite-preserves-claim-intensity`（供鏡像同步工具對位、非內容依賴）。
+本卡自外部原則庫同步而來、slug `rewrite-preserves-claim-intensity` 供同步工具對位（非內容依賴）；無同步流程的專案可刪本行。
