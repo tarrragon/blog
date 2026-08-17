@@ -293,17 +293,21 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 | [04 可觀測性](/backend/04-observability/)                  | 3    | OpenTelemetry 兩篇、案例反例補強                                       |
 | [05 部署平台](/backend/05-deployment-platform/)            | 4    | 六個 T1 vendor 未開始、gateway 限流章                                  |
 | [06 可靠性](/backend/06-reliability/)                      | 6    | 八個 T1 vendor 未開始、憑證撤銷演練無章節                              |
-| [07 資安與資料保護](/backend/07-security-data-protection/) | 14   | vendor deep article 早期階段、既有整合的盤點形態與發行方自助發放無落點 |
+| [07 資安與資料保護](/backend/07-security-data-protection/) | 15   | vendor deep article 早期階段、既有整合的盤點形態與發行方自助發放無落點 |
 | [08 事故處理](/backend/08-incident-response/)              | 4    | 六個 T1 vendor 未開始、案例深挖批次                                    |
 | [09 效能與容量](/backend/09-performance-capacity/)         | 5    | 十三個工具全部未開始                                                   |
 | [10 系統演進](/backend/10-system-evolution/)               | 4    | 四類演進議題待展開                                                     |
 | [11 API 設計](/backend/11-api-design/)                     | 1    | 兩篇推導型文章的素材替換（等公開一手來源出現）                         |
-| 橫向：簡報式段落拆卡試點（見下段）                         | 1    | 目標模組待指定、試點通過才排全分類盤點                                 |
+| 橫向：簡報式段落拆卡試點（見下段）                         | 1    | 首輪已完成（07 的兩章）、全分類盤點的範圍待決                          |
 | 橫向：判讀類章節補情境（見下段）                           | 1    | 跨十二模組、逐篇獨立、可隨時中斷                                       |
 
 ### 橫向工作：簡報式段落拆卡試點
 
-依 [#262 內容超出容器時擴充結構、不壓縮內容](/report/content-pressure-resolves-by-expansion-not-compression/)：挑一個模組的 1-2 章做拆卡改寫——支撐與背景概念外部化成知識卡、範例寫進卡片、章節保留「什麼情境用哪張卡」的判讀敘事——用冷讀對照驗證讀者體驗（拆卡對搜尋落地讀者的收益 vs 順讀讀者的跳轉成本）。試點同時執行句層 sweep（對該章表格與判準句逐格跑抽離重讀、產出逐格判定表）、為 [#261](/report/sentence-self-sufficiency-by-consumption-unit/) 的「教學文章側觀察」提供第二個實證。試點通過才排全分類的簡報式段落盤點；預設候選模組是 07-security-data-protection（判讀表密集、backlog 中的知識卡工作可承接拆卡）、啟動前由維護者確認。
+依 [#262 內容超出容器時擴充結構、不壓縮內容](/report/content-pressure-resolves-by-expansion-not-compression/)：挑一個模組的 1-2 章做拆卡改寫——支撐與背景概念外部化成知識卡、範例寫進卡片、章節保留「什麼情境用哪張卡」的判讀敘事——用冷讀對照驗證讀者體驗（拆卡對搜尋落地讀者的收益 vs 順讀讀者的跳轉成本）。試點同時執行句層 sweep（對該章表格與判準句逐列跑抽離重讀、產出逐格判定表）、為 [#261](/report/sentence-self-sufficiency-by-consumption-unit/) 的「教學文章側觀察」提供第二個實證。
+
+首輪已完成：對象是 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 與 [7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/)（相鄰、互為必連、同屬一組 22 篇共用樣板，其中一章自帶已展開的參照段可當深度標準）。四張表 20 列的判定與出口分布記在 [#262 的試點結果段](/report/content-pressure-resolves-by-expansion-not-compression/#試點結果兩章的逐格判定與出口分布)，句層那一半回寫進 [#261 的 case 段](/report/sentence-self-sufficiency-by-consumption-unit/)。產出的規格修正是 #262 增列第三個出口（換成連結）；產出的新卡是 [Threat Model](/backend/knowledge-cards/threat-model/)。
+
+剩下兩件事各自獨立。同樣板的另外 20 篇（主章 10、藍隊 12 減去已改寫的兩篇）記在 [07 模組的 Backlog](/backend/07-security-data-protection/)、改寫標準已由首輪確立。全分類的簡報式段落盤點仍未排——首輪只證明判定與分診可操作，跳轉成本的方向沒有被驗證（冷讀對照由改寫者本人執行、與作者同源），把盤點推到全分類之前要先有一次異源冷讀。
 
 ### 橫向工作：判讀類章節補系統形態與觸發事件
 
