@@ -133,14 +133,15 @@ Noisy failure（讀者讀不懂、實作報錯、被 reviewer 抓到）發生在
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                          | 關係                                                                                                                              |
-| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/) | **本卡是 #82 的領域具體化最危險版本** — false confidence 在資安寫作的展現、後果不可逆、是 #82 ceiling pattern 的高風險案例        |
-| [#90 L1+L2 訊號一致性](../layered-strategy-signal-consistency/)               | **同骨 sibling** — silent fallback 即 false confidence、本卡是同類議題在「教學跟實作之間訊號一致」的展現                          |
-| [#99 資安教學審查標準對應風險不對稱](../security-teaching-rigor-asymmetry/)   | **#99 的下游主軸** — #99 立論「為什麼資安要學術級 audit」、本卡定義「audit 主要要找什麼」、99 → 100 是動機 → 目標的因果鏈         |
-| [#94 正向改寫保留對照論據](../positive-rewrite-preserves-contrast/)           | 同骨：刪掉 contrast 讓結論空降、本卡的「只給防護不給邊界」是同病在資安領域的展現                                                  |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)     | 含糊敘述是寫作最便利選擇、跟「讓讀者實作正確」反向、本卡是 #67 在 silent failure 維度的展現                                       |
-| [#80 Yes/No 二選 collapse](../yes-no-binary-collapse/)                        | 「我學會 X 防護了」是把多維度（threat / context / boundary）collapse 成 1 bit、跟 #80 同骨——資安結論預設保留多維度、不能 collapse |
+| 原則                                                                                   | 關係                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)          | **本卡是 #82 的領域具體化最危險版本** — false confidence 在資安寫作的展現、後果不可逆、是 #82 ceiling pattern 的高風險案例                                                   |
+| [#90 L1+L2 訊號一致性](../layered-strategy-signal-consistency/)                        | **同骨 sibling** — silent fallback 即 false confidence、本卡是同類議題在「教學跟實作之間訊號一致」的展現                                                                     |
+| [#99 資安教學審查標準對應風險不對稱](../security-teaching-rigor-asymmetry/)            | **#99 的下游主軸** — #99 立論「為什麼資安要學術級 audit」、本卡定義「audit 主要要找什麼」、99 → 100 是動機 → 目標的因果鏈                                                    |
+| [#94 正向改寫保留對照論據](../positive-rewrite-preserves-contrast/)                    | 同骨：刪掉 contrast 讓結論空降、本卡的「只給防護不給邊界」是同病在資安領域的展現                                                                                             |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)              | 含糊敘述是寫作最便利選擇、跟「讓讀者實作正確」反向、本卡是 #67 在 silent failure 維度的展現                                                                                  |
+| [#80 Yes/No 二選 collapse](../yes-no-binary-collapse/)                                 | 「我學會 X 防護了」是把多維度（threat / context / boundary）collapse 成 1 bit、跟 #80 同骨——資安結論預設保留多維度、不能 collapse                                            |
+| [#260 誇飾的合法性由段落位置的功能決定](../hyperbole-legitimacy-by-position-function/) | 本卡要消滅的「做了 X 就安全」句型、#260 定位成安全陳述位的誇飾（零容忍區的一種）、並給出跨位置共用的接收端判準（支撐存在測試、反比操縱訊號）——audit 這類句型時多一組通用工具 |
 
 ---
 

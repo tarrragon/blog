@@ -166,9 +166,9 @@ Audit checklist：
 - [ ] 技術宣稱位的強度詞通過**支撐存在測試**嗎？（「快 10 倍」旁邊有 benchmark 是宣稱、裸的是誇飾佔位）
 - [ ] 轉述位（引用、翻譯、摘要）比原文更強嗎？（「證明了」常是原文「suggests」的升格、二手內容加倍警惕、回一手來源比對）
 - [ ] 「這一步非常關鍵」這類強調、後面有機制支撐嗎？（無支撐的空誇擠掉了本該放機制的位置）
-- [ ] 安全陳述位有「絕對安全」「不可能被繞過」句型嗎？（假防護感的入口形態、直接進 tier 決策樹）
+- [ ] 安全陳述位有「絕對安全」「不可能被繞過」句型嗎？（假防護感的入口形態、進本檔「Audit Recommendation Tier 化」的決策樹）
 - [ ] **自評位**：作者對自己產出的品質 verdict（「教科書級」「完美」）有技術理由支撐嗎？（對應 keyword bank 的自評誇飾 grep、命中後用兩軸判定）
-- [ ] **反比操縱訊號**：越難驗證的段落話講得越滿嗎？（「話最滿的段落恰好最難查證」這種分布無法歸因於作者無意的文風滑動、只有刻意誇大會產生它、所以警惕等級最高）
+- [ ] **反比操縱訊號**：越難驗證的段落話講得越滿嗎？（「話最滿的段落恰好最難查證」這種全篇分布比單點升格更難歸因於無意的文風滑動、所以警惕等級最高）
 - [ ] **降格側**：風險段落的強度與嚴重性對位嗎？（RCE 寫成「可能造成一些影響」會讓應變者依錯的緊急度行動、incident report 尤其要掃）
 
 跟 Dimension 4 的分工：citation drift 三類（conditional → unconditional / specific → general / recommendation → mandate）是強度漂移在 citation 位的具體形態、Dimension 4 逐條對原文抓；本 dimension 涵蓋 citation 之外的所有位置（宣稱位、判準段、風險陳述、自評位）、並補反方向的降格檢查。詳見 [hyperbole-legitimacy-by-position-function](./principles/hyperbole-legitimacy-by-position-function.md)。
