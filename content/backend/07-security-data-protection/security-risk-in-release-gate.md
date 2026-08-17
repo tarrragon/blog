@@ -47,7 +47,18 @@ description: "發版流程已有功能測試與 SLO 關卡、要決定哪些變�
 
 ## 必備控制與證據由命中的類別導出
 
-同一份檢查表套在所有高風險變更上，會同時檢查不相關的控制而漏掉該檢查的那些。命中的類別對應到承接的控制面，控制面的分類與主責見 [7.B1 防守控制面地圖](/backend/07-security-data-protection/blue-team/defense-control-map/)；動到認證與授權路徑的變更要驗的是授權邊界與高權限操作路徑，動到部署路徑的要驗的是 artifact 來源與部署身分，兩者的驗證方式與證據來源都不同。
+同一份檢查表套在所有高風險變更上，會同時檢查不相關的控制而漏掉該檢查的那些。命中的類別決定要驗哪幾項：
+
+| 命中的類別       | 放行前要驗的項目                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| 認證與授權路徑   | 授權邊界（新的角色或範圍拿得到哪些既有資源）、高權限操作路徑、會話失效是否跟著生效 |
+| 對外暴露面       | 新端點的可達來源、認證是否掛上、錯誤回應洩不洩露內部結構                           |
+| 秘密與憑證       | 秘密不在映像檔與版本控制裡、輪替的作用域切得開、撤銷路徑走得通                     |
+| 資料分級的流向   | 新落點的存取控制與保留期、遮罩規則是否跟著資料走                                   |
+| 供應鏈與部署路徑 | artifact 來源可驗、部署身分的權限範圍、build 步驟沒有引入未登記的外部輸入          |
+| 既有控制的削弱   | 被削弱的那條控制原本擋的是什麼、補償措施是什麼、什麼條件下恢復                     |
+
+每一列的項目是起點而不是完整清單：驗證方式與證據來源由該控制面自己的章節承接，分類與主責見 [7.B1 防守控制面地圖](/backend/07-security-data-protection/blue-team/defense-control-map/)、驗證分類見 [7.B3 資安控制驗證](/backend/07-security-data-protection/blue-team/security-control-validation/)。
 
 證據的形式由 [evidence package](/backend/knowledge-cards/evidence-package/) 規格化，欄位清單以那張卡為準。gate 上最容易通過而實際沒有驗到的形態是證據對應的是欄位而不是機制——這一點在下方的兩條 chain 展開。
 
@@ -55,7 +66,7 @@ description: "發版流程已有功能測試與 SLO 關卡、要決定哪些變�
 
 事故當天要回答「當時憑什麼放行」時，只有通過標記的紀錄提供不了範圍。[Gate decision](/backend/knowledge-cards/gate-decision/) 的規格是同時寫出允許前進的範圍與被擋住的風險面，資安側的形態是「允許在只對內部網段開放的條件下上線，公開開放留待傳輸驗證完成」——這句話比「security review 通過」可操作，因為它讓下一個接手的人知道現在的狀態是什麼、以及什麼條件解除限制。
 
-帶範圍限制的放行本身就是一筆風險例外。例外的協議欄位、期限與關閉條件在 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/) 有完整展開，機制見 [security exception](/backend/knowledge-cards/security-exception/) 與 [tripwire](/backend/knowledge-cards/tripwire/)；本章的責任只到一條時點要求：例外要在放行決策的同一刻建立，不是放行之後補登記。補登記的形態下，補償控制的生效時點晚於風險的生效時點，而那段落差不會出現在任何一份紀錄上。
+帶範圍限制的放行本身就是一筆風險例外。例外要填什麼欄位、期限與關閉條件怎麼訂，看 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)（它給可直接套用的欄位模板）；例外累積之後怎麼治理、誰負責重評估，看 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。機制本身見 [security exception](/backend/knowledge-cards/security-exception/) 與 [tripwire](/backend/knowledge-cards/tripwire/)；本章的責任只到一條時點要求：例外要在放行決策的同一刻建立，不是放行之後補登記。補登記的形態下，補償控制的生效時點晚於風險的生效時點，而那段落差不會出現在任何一份紀錄上。
 
 ## 高風險變更的階段節奏
 
@@ -80,12 +91,12 @@ Gate 通過代表流程跑完（風險等級、必備控制、證據與例外都
 
 ## 判讀訊號與下一步
 
-| 判讀訊號                                               | 代表的缺口                                               | 下一步                                                                                                                                                                                                |
-| ------------------------------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 發版條件只檢查功能測試與 SLO                           | gate 上沒有資安證據欄位，動到邊界的變更沿標準流程通過    | 依本章的資產類別表建立預檢；證據形式見 [evidence package](/backend/knowledge-cards/evidence-package/)、驗證分類見 [7.B3](/backend/07-security-data-protection/blue-team/security-control-validation/) |
-| 例外的期限過了、放行狀態仍在生效                       | 重評估觸發器缺席，例外退化成永久狀態                     | 補 [tripwire](/backend/knowledge-cards/tripwire/) 的訊號與門檻；治理協議見 [7.14](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)                                   |
-| 高風險變更的放行紀錄只有一個通過標記，查不到當時的依據 | 放行寫成布林值而不是 gate decision，事後無法回放判斷     | 依 [gate decision](/backend/knowledge-cards/gate-decision/) 的欄位補範圍、擋住的風險面與 owner；部署側的承接見 [05 部署平台](/backend/05-deployment-platform/)                                        |
-| 放行後發生的資安事故，屬於預檢判定為不命中的類別       | 判準的資產類別清單缺一列，而下一次同型變更仍會判成不命中 | 回寫判準，路徑見 [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)                                                    |
+| 判讀訊號                                               | 代表的缺口                                               | 下一步                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 發版條件只檢查功能測試與 SLO                           | gate 上沒有資安證據欄位，動到邊界的變更沿標準流程通過    | 依本章的資產類別表建立預檢；證據形式見 [evidence package](/backend/knowledge-cards/evidence-package/)、驗證分類見 [7.B3](/backend/07-security-data-protection/blue-team/security-control-validation/)                                                                        |
+| 例外的期限過了、放行狀態仍在生效                       | 重評估觸發器缺席，例外退化成永久狀態                     | 補 [tripwire](/backend/knowledge-cards/tripwire/) 的訊號與門檻；治理節奏與重評估責任見 [7.14](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)、欄位模板見 [7.17](/backend/07-security-data-protection/security-exception-freeze-tripwire/) |
+| 高風險變更的放行紀錄只有一個通過標記，查不到當時的依據 | 放行寫成布林值而不是 gate decision，事後無法回放判斷     | 依 [gate decision](/backend/knowledge-cards/gate-decision/) 的欄位補範圍、擋住的風險面與 owner；部署側的承接見 [05 部署平台](/backend/05-deployment-platform/)                                                                                                               |
+| 放行後發生的資安事故，屬於預檢判定為不命中的類別       | 判準的資產類別清單缺一列，而下一次同型變更仍會判成不命中 | 回寫判準，路徑見 [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)                                                                                                                           |
 
 ## 驗收條件
 
