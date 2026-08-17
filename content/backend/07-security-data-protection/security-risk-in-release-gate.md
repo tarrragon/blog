@@ -65,7 +65,7 @@ description: "發版流程已有功能測試與 SLO 關卡、要決定哪些變�
 2. **驗證**：依控制面執行對應的驗證，驗證分類（設計、技術、流程、放行、復盤）見 [7.B3 資安控制驗證](/backend/07-security-data-protection/blue-team/security-control-validation/)。產出是證據本身。
 3. **審查**：檢查證據對應的是機制而不是欄位。產出是通過、退回補證據、或縮小放行範圍三者之一。
 4. **放行**：寫成 gate decision，帶範圍、擋住的風險面、owner 與收手條件。範圍有限制時同步建立例外紀錄。
-5. **回寫**：把這次的判定回寫到判準本身。放行後出現的事故若屬於預檢判定為不命中的類別，缺的是判準的一列，回寫目標見 [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)。
+5. **回寫**：把這次的判定回寫到判準本身，並把放行結果交給執行層——部署流程、回退策略與事故準備度分別由 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/release-gate.md) 與 [08 事故處理](/backend/08-incident-response/) 承接。放行後出現的事故若屬於預檢判定為不命中的類別，缺的是判準的一列，回寫目標見 [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)。
 
 回寫這一段最容易被省略，因為前面各段都有明確的產出物而它沒有。省略的後果是判準停在建立當時的形態，而變更的形態會持續長出新的類別。
 
