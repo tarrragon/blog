@@ -30,13 +30,13 @@ weight: 87
 
 ## Exception 設計協議
 
-[Security exception](/backend/knowledge-cards/security-exception/) 協議的責任是把暫時接受風險變成可管理狀態。每筆 exception 需要六欄位：
+[Security exception](/backend/knowledge-cards/security-exception/) 協議的責任是把暫時接受風險變成可管理狀態。每筆 exception 要填六欄，欄位的定義以那張卡為準、本節給填寫時的判準：
 
 1. Risk scope：接受風險的資產與範圍。
 2. Expiry：到期日與下次審查時間。
 3. Compensating controls：過渡期間的防護補強。
 4. Owner：業務 owner 與技術 owner。
-5. Exit criteria：例外關閉條件。
+5. Exit criteria：例外關閉條件，要寫成可驗證的狀態而不是「風險已降低」。
 6. Write-back target：關閉後回寫的位置。
 
 ## Release Freeze 設計協議
@@ -82,7 +82,7 @@ freeze 與 exception 的關係是：exception 定義風險接受，freeze 定義
 
 | 判讀訊號                                                                                                                      | 代表風險                         | 下一步路由                                |
 | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ----------------------------------------- |
-| [Security exception](/backend/knowledge-cards/security-exception/) 項目沒有到期日                                             | 風險接受狀態失去關閉機制         | 回到 7.14 補 expiry 與 close criteria     |
+| [Security exception](/backend/knowledge-cards/security-exception/) 項目沒有到期日                                             | 風險接受狀態失去關閉機制         | 回到 7.14 補 expiry 與 exit criteria      |
 | [Release freeze](/backend/knowledge-cards/release-freeze/) 已啟動但沒有 [allowlist](/backend/knowledge-cards/allowlist/) 契約 | 關鍵修復與運維操作被一併阻斷     | 補 freeze scope 與 allowlist              |
 | 有 [Tripwire](/backend/knowledge-cards/tripwire/) 名稱但沒有量化門檻                                                          | 觸發條件不可驗證，決策回收不穩定 | 補 threshold 與 escalation owner          |
 | [Security exception](/backend/knowledge-cards/security-exception/) 關閉後沒有回寫                                             | 同類風險下次仍靠人工記憶         | 回寫到 problem cards 與 incident workflow |
@@ -97,7 +97,7 @@ Compensating controls:
 Freeze scope / allowlist:
 Tripwire signal + threshold:
 Escalation owner:
-Close criteria:
+Exit criteria:
 Write-back target:
 ```
 
