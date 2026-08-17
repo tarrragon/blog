@@ -41,6 +41,7 @@ slug: "self-audit-detection-method-must-match-rule-type"
 | [#165 register 違規：偵測可機械化、判定要靠異源](../register-violation-needs-cross-style-eyes/) | #165 說 register 違規的判定要異源，本卡點明其上游機制：無穩定關鍵詞就是「本方法偵測不到」的判定條件、所以才必須交異源                                     |
 | [#147 規範化跟自審是兩種認知任務](../rule-codification-vs-self-audit/)                          | #147 講自審會漏掉同義變體（規則內的漏抓），本卡是更上游的限度：某些規則從偵測方法角度整類看不見、不是變體層的遺漏                                         |
 | [#229 分析開頭定位問題不講創辦敘事](../analysis-opening-positions-question-not-narrative/)      | 本卡的直接 case 來源 — #229 正是那條「無關鍵詞、grep 掃不到」而在 self-sweep 漏網、靠異源補回的規則                                                       |
+| [#149 keyword bank 命中是候選、不是判決](../keyword-bank-hit-is-candidate-not-verdict/)         | 同一條管線的另一半 — 本卡管偵測層（clean 可信的前提是方法看得見違反形態）、#149 管命中之後的判定層（命中被合理化放行）；假 clean 有兩個來源、兩卡各堵一個 |
 
 ---
 
