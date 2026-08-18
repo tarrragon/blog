@@ -1,3 +1,24 @@
+---
+name: linux-install-debug
+description: >
+  安裝一台新 Linux（VM 或實機）或診斷 Linux / macOS 系統問題時的標準化診斷協議。核心紀律是
+  讀權威狀態、不靠肉眼猜表象：先定平台座標（發行版 / 架構 / 套件管理器），再依症狀查對應的
+  權威來源。涵蓋 SSH 連不上、終端機亂碼、服務 failed 或 restart loop、進程活著但子系統死、
+  權限被拒、套件管理器失敗、磁碟滿與檔案系統唯讀、音訊無聲、VT 黑畫面、被 OOM 殺掉，以及把
+  失敗變成推播告警。Triggers: 裝 Linux, 新 VM, 首次開機驗證, ssh 連不上, connection refused,
+  connection timeout, 終端機亂碼, systemctl status, journalctl, 服務 failed, restart loop,
+  進程活著但沒反應, pgrep 騙人, permission denied, EACCES, operation not permitted,
+  command not found, unable to locate package, dpkg lock, pacman db lock, partial upgrade,
+  unbound variable, shell script 可攜, bash 3.2, timeout 找不到, 容器沒有 sudo,
+  keyring 過期, PATH 沒吃到, 磁碟滿, 檔案系統唯讀, OOM, exit 137, dmesg, 黑畫面, getty,
+  chvt, 沒聲音, wpctl, DNS 解析不了, 機器沒回應, 服務告警, OnFailure, ntfy, 心跳監控,
+  linux install, linux debug, systemd, authoritative state.
+license: MIT
+metadata:
+  version: 1.17.0
+  category: ops-diagnostics
+---
+
 # Linux Install & Debug
 
 安裝一台新 Linux、或診斷 Linux 系統問題時的標準化診斷協議。核心是一條紀律：**讀權威狀態，不靠肉眼猜表象**。給 AI 快速判斷「出了什麼錯、該做哪些測試」，避免看畫面 / 看症狀就下結論而猜錯。
@@ -70,6 +91,7 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 - **不想肉眼盯服務死活 / 要自動告警 / 怕整台機器當掉沒人知道 / 裝新系統或反覆除服務失敗（主動確認有無監控、無則建議建立）** → [process-service-state](references/process-service-state.md) 的「把失敗變成推播（OnFailure）」段（先確認有無監控 → 沒有優先建議 OnFailure + ntfy 公共站零 daemon → 要更高安全再自架 ntfy + 完整堆疊；含 hung 偵測、canary、topic 安全）
 - **權限被拒（Permission denied / EACCES / Operation not permitted / sudo 後冒 root-owned 檔）** → [process-service-state](references/process-service-state.md) 的權限段
 - **套件管理器失敗（pacman：db lock / keyring 簽章過期 / partial upgrade / mirror。apt：unable-to-locate / 批次 abort / dpkg lock / EOL archive 404 / node 爆量）** → [install-and-verify](references/install-and-verify.md) 的套件管理器段
+- **自己寫的 shell script 壞了（unbound variable 而變數名尾端有怪字元、`timeout` 之類的 GNU 工具在 macOS 找不到、root 容器裡沒有 `sudo`、非互動環境卡在 `[Y/n]`）** → [install-and-verify](references/install-and-verify.md) 的可攜陷阱段。這些歸檔在安裝流程底下，是因為它們都是從寫 bootstrap 腳本時踩出來的，而症狀出現時多半不在裝機情境
 - **要讀某程式的 log 定位根因** → [read-logs](references/read-logs.md)
 - **要挑 / 推薦工具（同一件事有多個選擇：grep vs ripgrep、哪個檔案管理員、遠端用什麼）** → [tool-options](references/tool-options.md)
 
@@ -83,7 +105,14 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.17.0 — 補 frontmatter（並補一條症狀路由：自己寫的 shell script 壞了 → 可攜陷阱段。那幾條歸檔在安裝流程底下，因為它們是寫 bootstrap 腳本時踩出來的，而症狀出現時多半不在裝機情境——只憑主題歸屬分類，症狀查不到它）。補的是 frontmatter（`name` / `description` / `metadata.version`）。這份 skill 先前整份沒有 frontmatter，所以它從來不會被自動觸發——只有明確指名才叫得動。代價在補這一版的當天具體發生過一次：另一個工作流程踩到 `$var` 緊跟多位元組字被吞 byte 的 bug（實測環境正是 macOS bash 3.2），現場重新推導一次，並寫下了 v1.15.3 這條 fact-check 早就修正掉的錯誤歸因。**知識在庫裡而觸發器不存在，等於沒有這份 skill。**
+
+同批修版本記錄的重號：2026-07-09 的三個變更在本 skill 已到 1.15.0 時從 1.3.0 重新編號，且插在舊序列中間，造成 1.4.0 與 1.3.0 各出現兩次、1.4.1 排在 1.2.1 之後。依 commit 時序重編為 1.15.1 / 1.15.2 / 1.15.3。重號會讓「這條規則是哪一版加的」查不出答案，而版本記錄的用途正是回答這個問題。
+
 **Version**: 1.16.0 — install-and-verify 補「`command not found` 分診」段（macOS dotfiles bootstrap 冷測抽出）：三個不同根因（真沒裝 / 裝了但不在 PATH / 互動 shell 能用但 script 不能）分開修，不一律 install——`find` 決定沒裝 vs 裝了、`$PATH` 對照決定哪個目錄漏、互動 vs script 決定哪個作用域沒拿到；涵蓋安裝器把 PATH 寫進非-repo profile / 系統 drop-in、子行程改的 PATH 回不到父行程兩個機制
+**Version**: 1.15.3 — fact-check 修正：`$var` 緊跟多位元組字的 unbound 歸因寫反了，實測是 UTF-8 locale 下舊 bash（macOS 3.2）的多位元組解析 bug、不是「非 UTF-8 locale」；`${var}` 免疫跟版本/locale 無關
+**Version**: 1.15.2 — install-and-verify 的 SUDO shim 段補兩個「別硬編你這台剛好有的東西」可攜陷阱：GNU coreutils 工具在 macOS 缺席（timeout → gtimeout / 偵測擇一）、`$var` 緊跟多位元組字被吞 byte 報 unbound（改 `${var}`；locale 歸因見 1.4.1 修正）；都是實跑驗證器（validate.sh）自己爆出來的
+**Version**: 1.15.1 — install-and-verify 補三條容器實測缺口：root 容器無 sudo 的偵測 shim（`SUDO=sudo; [ root ] && SUDO=""`）、partial upgrade 的 `exists in filesystem` 臉、pacman 7 Landlock sandbox 容器內失敗（DisableSandbox）；read-authoritative-state 原則卡補「你的 verify 腳本也是會讀錯層的眼睛」（stow 摺疊假陰性、`-ef` vs `-L`）
 **Version**: 1.15.0 — 第零步 + install-and-verify 補 apt/dpkg 失敗判讀（實測 Debian bookworm 容器裝 dotfile）：`Unable to locate` 三種可能（名字不同 / 沒打包退 GitHub releases / 打錯）、批次交易一個爛名字全滅（`-s` 模擬定位）、dpkg lock + 半裝復原（`dpkg --configure -a` + `--fix-broken`）、EOL 的 archive.debian.org 404、node/python 拉進整個語言生態該走 version manager；SKILL 第零步加 apt 解析階段判讀 + 路由
 **Version**: 1.14.0 — 監控段補「本地訂閱」：ntfy 訂閱也是 HTTP GET（curl -sN /json 零安裝 / 瀏覽器 / ntfy subscribe），桌面通知常駐 = user systemd 服務跑 curl /json | jq | notify-send；放盯著的工作機訂遠端、別放被監控機自己（循環）
 **Version**: 1.13.0 — 監控升為「主動建議」：裝新系統 / 反覆除服務失敗時先確認有無服務監控（`systemctl show sshd -p OnFailure`），沒有就分層推薦——預設最簡單（OnFailure + ntfy 公共站零 daemon、遠端至少掛 sshd），要更高安全 / 正式再自架 ntfy + 完整堆疊；install-and-verify 加「裝好後確認監控」段
@@ -100,9 +129,6 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 **Version**: 1.4.0 — 新增「第零步：先定平台」：診斷前先以 os-release / uname -m / command -v 建立平台座標；套件名與執行檔名分歧（fd-find/fdfind、batcat、github-cli vs gh）、非互動旗標不對稱（-y vs --noconfirm）、rolling stale-db 404 需 -Syu、ARM 生態縮水——從新 VM 復現驗證的三個非互動 bootstrap finding 萃取
 **Version**: 1.3.0 — Round-3 審查修正：補兩類 AI 最高頻情境——權限被拒(EACCES、namei -l 逐層 / MAC / capability)、套件管理器失敗(pacman db lock / keyring 簽章 / partial upgrade)；被 kill/OOM/exit137 判讀；速查表加 kernel(dmesg)/權限/strace 三列；read-logs 加 strace 回退；DNS resolv.conf symlink caveat、sudoers chmod 0440
 **Version**: 1.2.1 — Round-2 審查修正：systemd-failed 情境接上入口（速查表 + 症狀路由補「服務 failed / restart loop」，原本加了 section 卻路由不到）
-**Version**: 1.4.1 — fact-check 修正：`$var` 緊跟多位元組字的 unbound 歸因寫反了，實測是 UTF-8 locale 下舊 bash（macOS 3.2）的多位元組解析 bug、不是「非 UTF-8 locale」；`${var}` 免疫跟版本/locale 無關
-**Version**: 1.4.0 — install-and-verify 的 SUDO shim 段補兩個「別硬編你這台剛好有的東西」可攜陷阱：GNU coreutils 工具在 macOS 缺席（timeout → gtimeout / 偵測擇一）、`$var` 緊跟多位元組字被吞 byte 報 unbound（改 `${var}`；locale 歸因見 1.4.1 修正）；都是實跑驗證器（validate.sh）自己爆出來的
-**Version**: 1.3.0 — install-and-verify 補三條容器實測缺口：root 容器無 sudo 的偵測 shim（`SUDO=sudo; [ root ] && SUDO=""`）、partial upgrade 的 `exists in filesystem` 臉、pacman 7 Landlock sandbox 容器內失敗（DisableSandbox）；read-authoritative-state 原則卡補「你的 verify 腳本也是會讀錯層的眼睛」（stow 摺疊假陰性、`-ef` vs `-L`）
 **Version**: 1.2.0 — Round-1 審查修正：`arp -a` 全面改主推 `ip neigh`（現代最小系統無 net-tools）；新增 DNS 解析、systemd failed 判讀、檔案系統唯讀 remount 三個情境；路由標明 remote→machine 分流；反模式加 scrollback 殘影
 **Version**: 1.1.0 — 新增 tool-options reference（依環境 CLI/GUI/遠端挑對工具、現代替代品 vs POSIX 可攜的判準）
 **Version**: 1.0.0 — 初版：四步診斷流程 + 權威來源速查 + 5 情境 reference + 2 原則卡，從一次 Arch/Hyprland VM 實機安裝與除錯（含肉眼猜錯兩次的鎖屏案例）萃取
