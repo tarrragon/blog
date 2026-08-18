@@ -83,10 +83,10 @@ How: [Task Type: {TYPE}] {TDD strategy}
 
 ```bash
 # Generate session token
-uv run .claude/skills/5w1h-decision/scripts/generate_token.py
+uv run .claude/skills/5w1h-decision/scripts/generate_token.py  # portability-allow: consumer 共通安裝位置
 
 # Validate content
-uv run .claude/skills/5w1h-decision/scripts/validate_5w1h.py "content"
+uv run .claude/skills/5w1h-decision/scripts/validate_5w1h.py "content"  # portability-allow: consumer 共通安裝位置
 ```
 
 ## Common Mistakes
@@ -119,8 +119,8 @@ See [SKILL.md](./SKILL.md) for complete reference.
 
 ### Related Files
 
-| File                                                                                  | Purpose                         |
-| ------------------------------------------------------------------------------------- | ------------------------------- |
-| [Output Style](../../../.claude/output-styles/5w1h-format.md)                         | System-level format enforcement |
-| [SKILL.md](./SKILL.md)                                                                | Complete 5W1H reference         |
-| [5W1H Methodology](../../../.claude/methodologies/5w1h-self-awareness-methodology.md) | Full methodology                |
+| File                                                          | Purpose                         |
+| ------------------------------------------------------------- | ------------------------------- |
+| [Output Style](../../../.claude/output-styles/5w1h-format.md) | System-level format enforcement |
+| [SKILL.md](./SKILL.md)                                        | Complete 5W1H reference         |
+| `5w1h-self-awareness-methodology`（各專案自有）               | Full methodology                |
