@@ -15,7 +15,7 @@ metadata:
 
 ---
 
-## Core Pillars（支柱）
+## Core Pillars（四大支柱）
 
 | 支柱                                         | 意義                                                                                                                                                                                                                                                            |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -26,7 +26,7 @@ metadata:
 
 ---
 
-## Principles（原則速查）
+## Seven Principles（七大原則速查）
 
 讀者在本區塊能完成大方向判斷；具體情境的展開（步驟 / 模板 / 反例）依下方「觸發路由」進對應 reference。
 
@@ -93,6 +93,8 @@ Selector / MutationObserver root / JS 操作邊界：**從最小開始、有證�
 
 每份 reference 自包含：以該情境為核心、把六大原則翻譯成可直接套用的協議步驟與模板。閱讀任一 reference 不需要回來看其他 reference。
 
+**與 `wrap-decision` 的邊界**：本 skill 處理「使用者**指令**是否明確可執行」（模糊指令澄清）。若卡點不是指令模糊，而是「決策諮詢的當事人條件不足」或「要 premortem 的計畫輪廓不清」，那屬 `wrap-decision` 的資料充足度閘門（Step 0）與 premortem context 閘門——先讀 `.claude/skills/wrap-decision/SKILL.md`。三者互為前置、不重複問同一組問題（分工對照表見該檔 Step 0「與 requirement-protocol 的分工邊界」）。
+
 ---
 
 ## Success Criteria（M1-M2 認知負擔類）
@@ -155,7 +157,8 @@ requirement-protocol/
 
 ---
 
-**Last Updated**: 2026-04-26
+**Last Updated**: 2026-07-05
+**Version**: 0.8.0 — 觸發路由段新增「與 wrap-decision 的邊界」註記：指令模糊屬本 skill，當事人條件不足 / premortem 計畫輪廓不清屬 wrap-decision Step 0 與 context 閘門，三者互為前置不重複問（1.5.0-W5-009.7）
 **Version**: 0.7.0 — Phase B1 結構升級：加第 4 pillar「Multi-pass Refinement」+ 第 7 原則、明示 multi-pass 在「需求協議」場景的展開、串連 #82 / #83 / #85
 **Version**: 0.6.0 — 補 #82 (字面攔截 vs 行為精煉)：點出 hook 對行為錯誤無能為力、本 skill 的 reference + self-check + dogfood examples 就是 multi-pass 設計、不是「再補一條 hook 規則」
 **Version**: 0.5.0 — 補 #80 (yes/no collapse) + #81 (卡片迭代浮現)、reference 加 dogfood examples 段（4 個 Bad/Good 對照）、#75 加 selector stacking 跨連 #46-#50
