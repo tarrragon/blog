@@ -161,4 +161,31 @@ if ! "$MDTOOLS_BIN" cards content/; then
     exit 1
 fi
 
+# --- 4. broken-link scan on staged skill markdown --------------------------
+# 報 staged 檔案自身的失效引用。全庫掃描會連同既有存量一起吐出來、把「你這次
+# 改壞了什麼」淹掉，所以結果先過濾到本次 staged 的集合。與 mirror check 同樣
+# 只警告不阻擋：存量清理另有排程，擋下來只會逼人養成繞過的習慣。
+SCANNER=".claude/skills/broken-link-check/scan_links.py"
+staged_skill_md="$(git diff --cached --name-only --diff-filter=ACMR | grep -E "^\.claude/skills/.+\.md$" || true)"
+if [[ -n "$staged_skill_md" && -f "$SCANNER" ]]; then
+    echo "[pre-commit] broken-link scan on staged skill markdown"
+    python3 "$SCANNER" . --format json 2>/dev/null \
+        | STAGED="$staged_skill_md" python3 -c '
+import json, os, sys
+
+staged = set(os.environ["STAGED"].split("\n"))
+hits = [b for b in json.load(sys.stdin)["broken"] if b["source_file"] in staged]
+if hits:
+    print("")
+    print("  [pre-commit] broken reference(s) in staged skill files:")
+    for b in hits:
+        print("    %s:%s  %s" % (b["source_file"], b["line"], b["raw_ref"]))
+    print("")
+    print("  A skill must not name files the consuming project does not have.")
+    print("  Keep the point in the sentence and drop the path, or mark an example")
+    print("  path with an inline broken-link-exempt comment.")
+    print("  (warning only - commit continues)")
+' || true
+fi
+
 exit 0
