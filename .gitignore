@@ -50,3 +50,9 @@ scripts/mcp-demo/__pycache__/
 # 編輯器 markdown 預覽暫存檔（Notepad++ 等）
 .npp-md-preview.html
 *-md-preview.html
+
+# skill-sync 本機同步記帳檔（.claude/skills/<name>/ 下），不入版控：
+# .skill-sync-base 記錄上次 pull/push 的內容雜湊（方向判定用），
+# .skill-sync-override 宣告本地內容為刻意客製，兩者皆為單機 bookkeeping。
+.claude/skills/*/.skill-sync-base
+.claude/skills/*/.skill-sync-override
