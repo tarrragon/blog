@@ -122,6 +122,29 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 
 ---
 
+## 與 askuserquestion-rules 的適用邊界（流程路由 vs 價值取捨）
+
+> **背景**：`.claude/pm-rules/askuserquestion-rules.md` 規則 6 要求特定情境（ANA 路由 / 重大決策 / Session 關鍵分歧）標記 `(Recommended)`，並依證據強度分級為 `(Recommended by WRAP)` 或 `(My current guess)`。本檔「推薦標記（Recommended）是暗黑模式（dark pattern）」的論述若不加邊界，會讀作對 Recommended 標記的全面禁止，與該規則字面衝突。
+
+**判別依據**：選項間的差異是否涉及使用者價值偏好（風格、風險承受度、個人化選擇，無客觀對錯的取捨）。
+
+| 選項類型   | 判別特徵                                                                                                         | Recommended 標記                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 價值取捨類 | 方案選擇的風險承擔、個人化建議（健康／金錢／法律等）、無客觀對錯的取捨                                           | 本檔禁令適用：禁止標記，改用「自我暴露範本」以文字揭露傾向   |
+| 流程路由類 | 下一步做什麼（Handoff vs 續做、派發方式、任務排序）等有客觀機制支撐（如 Context 資源保護）、不涉及個人偏好的選擇 | 本檔禁令不適用：可依 askuserquestion-rules 規則 6 標記並分級 |
+
+> **判別表權威**：本表為「流程路由 vs 價值取捨」判別依據的權威版本。`.claude/pm-rules/askuserquestion-rules.md` 規則 6 附則的對稱判別表若與本表出現差異，以本表為準，並回頭同步該表。
+
+**Why**：本檔「Recommended 標記是暗黑模式」的核心論證是「把作者主觀傾向偽裝成客觀最優」，適用對象是使用者需自行判斷、且答案沒有客觀對錯的價值取捨。流程路由類選項的「建議」來自可驗證的系統設計原則（例如 Handoff 優先是為了保護下一個任務的思考品質），不是對使用者價值觀的替代判斷，不構成本檔定義的家長主義（paternalism）。
+
+**Consequence**：缺邊界時，若對流程路由類選項套用本檔禁令（一律不標記、改純文字揭露），會與 askuserquestion-rules 規則 6 及既有 Hook 強制層（如驗收流程的格式要求）衝突，且喪失規則 6「省力路徑必須對齊決策品質」的既有設計；若對價值取捨類選項套用 askuserquestion-rules 規則 6（標記 Recommended），使用者的自主選擇會被系統性導向，正是本檔要防範的暗黑模式。
+
+**Action**：判斷 Recommended 標記是否適用前，先問「這些選項的差異是否涉及使用者的價值偏好？」是 → 套用本檔禁令（不標記，改用「自我暴露範本」揭露傾向）；否（純流程／執行路徑選擇）→ 套用 askuserquestion-rules 規則 6（依證據強度分級標記）。
+
+> 對稱條款見 `.claude/pm-rules/askuserquestion-rules.md` 規則 6 附則「與 anti-paternalism 的適用邊界」。
+
+---
+
 ## 與既有 WRAP 章節的關係
 
 | 既有章節                                    | 本檔補充                       |
@@ -147,21 +170,22 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 
 ## 相關規則
 
-- [iterative-research](/skills/wrap-decision/iterative-research/) — 多輪迭代如何揭露悖論
+- `references/iterative-research.md` — 多輪迭代如何揭露悖論
+- `.claude/pm-rules/askuserquestion-rules.md` 規則 6 — Recommended 標記格式與證據分級（與本檔「適用邊界」章節對稱）
 
 ---
 
 ## 學術依據
 
-以下為概念來源；本檔引用的是其觀點框架、非逐項實證複製。使用時若要當論據，建議回查原文確認語境與年份。
-
-- **善意家長主義（benevolent paternalism）4 條件框架** — 來源為 AI 倫理文獻（Frontiers 期刊系列）；本檔未綁定特定論文，引用時請回查。
-- **Anthropic Constitutional AI**：「balance user wellbeing against user autonomy and excessive paternalism」（Anthropic 公開 CAI / HHH 論述）。
-- **Lifton《Thought Reform and the Psychology of Totalism》(1961) 8 條件**：第 7「教義凌駕個人（Doctrine over Person）」作為反例。
-- **Chris Voss《Never Split the Difference》**：「intent decides」（influence vs manipulation 的區分）自陳。
-- **DarkBench 30-61%**（iterative-research 引）：為該基準的暗黑模式偵測率區間、依模型 / 指標而異，引用時需標明指標與樣本限制。
+- **Frontiers AI**：「善意家長主義（benevolent paternalism）」4 條件框架
+- **Anthropic CAI**：「balance user wellbeing against user autonomy and excessive paternalism」
+- **Lifton 8 條件**：第 7「教義凌駕個人（Doctrine over Person）」反例
+- **Chris Voss**：「intent decides」自陳（influence vs manipulation）
 
 ---
 
-**Last Updated**: 2026-04-17
+**Last Updated**: 2026-08-04
+**Version**: 1.2.0 — 「與 askuserquestion-rules 的適用邊界」判別表新增權威標註：本表為判別依據的權威版本，`.claude/pm-rules/askuserquestion-rules.md` 規則 6 附則的對稱判別表以本表為準，避免兩份刻意對稱條款單邊修改漂移
+
+**Version**: 1.1.0 — 新增「與 askuserquestion-rules 的適用邊界」章節：判別依據為選項差異是否涉及使用者價值偏好，價值取捨類（本檔禁令適用）與流程路由類（禁令不適用，依 askuserquestion-rules 規則 6 標記）分表對照；對稱條款同步加入 askuserquestion-rules.md
 **Source**: 規則設計過程的悖論揭露與自我暴露實踐
