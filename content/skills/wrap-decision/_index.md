@@ -30,6 +30,7 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 | 要設計絆腳索、失敗門檻或重新評估時機              | [tripwire-catalog](/skills/wrap-decision/tripwire-catalog/)                                          |
 | 要做深度查詢、反向驗證或多輪研究                  | [iterative-research](/skills/wrap-decision/iterative-research/)                                      |
 | 要檢查規則設計是否產生家長主義（paternalism）悖論 | [anti-paternalism](/skills/wrap-decision/anti-paternalism/)                                          |
+| 高成本決策要做完整事前驗屍（premortem）           | [premortem-workflow](/skills/wrap-decision/premortem-workflow/)                                      |
 | 任務啟動前只想保留最低品質閘門                    | [claim-quick-wrap](/skills/wrap-decision/claim-quick-wrap/)                                          |
 | 要把 WRAP 接進任務系統、規則庫或自動化提醒        | [integration-patterns](/skills/wrap-decision/integration-patterns/)                                  |
 | 要對齊觸發條件清單                                | [triggers-alignment](/skills/wrap-decision/integration-patterns-triggers-alignment/)                 |
