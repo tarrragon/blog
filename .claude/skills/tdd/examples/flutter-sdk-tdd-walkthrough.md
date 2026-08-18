@@ -15,14 +15,14 @@ saffron-system-analyst（系統分析專家）確認 SPEC-008 與既有系統（
 lavender-interface-designer（功能設計專家）產出 SPEC-008 功能規格：
 **產出**：SPEC-008 功能規格，含 6 個 FR：
 
-| FR    | 功能                                          | 複雜度 |
-| ----- | --------------------------------------------- | ------ |
-| FR-01 | MonitorConfig + init/close                    | 中     |
-| FR-02 | Buffer + Flush（三觸發）                      | 高     |
-| FR-03 | 離線容錯（FIFO 丟棄）                         | 中     |
-| FR-04 | 自動攔截（FlutterError + PlatformDispatcher） | 高     |
-| FR-05 | Lifecycle Observer + Isolate 安全             | 高     |
-| FR-06 | Source 欄位自動填充                           | 低     |
+| FR | 功能 | 複雜度 |
+|----|------|--------|
+| FR-01 | MonitorConfig + init/close | 中 |
+| FR-02 | Buffer + Flush（三觸發） | 高 |
+| FR-03 | 離線容錯（FIFO 丟棄） | 中 |
+| FR-04 | 自動攔截（FlutterError + PlatformDispatcher） | 高 |
+| FR-05 | Lifecycle Observer + Isolate 安全 | 高 |
+| FR-06 | Source 欄位自動填充 | 低 |
 
 **`/spec validate` 確認**：維度 1-4 通過。
 
@@ -39,14 +39,14 @@ test/
 
 **FR↔AC 覆蓋矩陣**（Phase 2 必要 checkpoint）：
 
-| FR    | 對應測試場景                    | 狀態       |
-| ----- | ------------------------------- | ---------- |
-| FR-01 | init/close/重複 init            | 已覆蓋     |
-| FR-02 | buffer size/interval/手動 flush | 已覆蓋     |
-| FR-03 | FIFO 丟棄                       | 已覆蓋     |
-| FR-04 | **（空）**                      | **未覆蓋** |
-| FR-05 | paused/resumed/detached         | 已覆蓋     |
-| FR-06 | source 欄位                     | 已覆蓋     |
+| FR | 對應測試場景 | 狀態 |
+|----|------------|------|
+| FR-01 | init/close/重複 init | 已覆蓋 |
+| FR-02 | buffer size/interval/手動 flush | 已覆蓋 |
+| FR-03 | FIFO 丟棄 | 已覆蓋 |
+| FR-04 | **（空）** | **未覆蓋** |
+| FR-05 | paused/resumed/detached | 已覆蓋 |
+| FR-06 | source 欄位 | 已覆蓋 |
 
 **教訓**：FR-04 空行在 v0.2 實際操作中被遺漏，事後才由 W2-012 補建 10 個測試。Q12 矩陣現已加入 Phase 2 退出條件。
 
@@ -56,7 +56,6 @@ test/
 **產出**：語言無關實作策略（虛擬碼 + 流程圖），指導 Phase 3b。
 
 關鍵策略決策：
-
 - `data` spread 順序：`{...userData, ...builtIn}` 內建欄位在後，確保不被用戶資料覆蓋（防止用戶意外或惡意覆蓋 `source.sdk` 等安全欄位）
 - 離線 buffer：`_enforceMaxBufferSize()` 套用所有 buffer 成長點，避免記憶體無限增長
 - 500ms dedup：自動攔截事件在時間窗內去重，避免同一 error 重複上報
@@ -65,16 +64,15 @@ test/
 
 **派發**：parsley-flutter-developer（5 張 ticket 各對應 1 個 FR）
 
-| Ticket | FR    | 測試結果                         |
-| ------ | ----- | -------------------------------- |
-| W2-001 | FR-01 | 13/13 passed                     |
-| W2-002 | FR-02 | 26/26 passed                     |
+| Ticket | FR | 測試結果 |
+|--------|-----|---------|
+| W2-001 | FR-01 | 13/13 passed |
+| W2-002 | FR-02 | 26/26 passed |
 | W2-003 | FR-03 | 45/46 passed（1 red 非本票範圍） |
-| W2-004 | FR-04 | 48/48 passed                     |
-| W2-005 | FR-05 | 48/48 passed                     |
+| W2-004 | FR-04 | 48/48 passed |
+| W2-005 | FR-05 | 48/48 passed |
 
 **前置重構**（W2-002 前）：
-
 - D1：引入 MonitorEvent 型別取代 raw Map
 - D2：雙 bool → enum MonitorState
 - D3：移除死碼 _instance
@@ -91,13 +89,13 @@ test/
 **派發**：parallel-evaluation（三視角審查，W4-003）
 **產出**：品質評級 A-，5 個發現：
 
-| 發現                            | 嚴重度 | 處理              |
-| ------------------------------- | ------ | ----------------- |
-| monitor.dart 累積 domain 過載   | 中     | 升級 ARCH-MON-001 |
-| _doFlush catch 缺 observability | 低     | W4-004 修復       |
-| Phase 2 行為測試缺口            | 中     | 升級 TEST-MON-002 |
-| Clock 時間炸彈                  | 高     | 升級 TEST-MON-001 |
-| Worktree base 問題              | 低     | 升級 IMP-MON-002  |
+| 發現 | 嚴重度 | 處理 |
+|------|--------|------|
+| monitor.dart 累積 domain 過載 | 中 | 升級 ARCH-MON-001 |
+| _doFlush catch 缺 observability | 低 | W4-004 修復 |
+| Phase 2 行為測試缺口 | 中 | 升級 TEST-MON-002 |
+| Clock 時間炸彈 | 高 | 升級 TEST-MON-001 |
+| Worktree base 問題 | 低 | 升級 IMP-MON-002 |
 
 ## 整體時間線
 

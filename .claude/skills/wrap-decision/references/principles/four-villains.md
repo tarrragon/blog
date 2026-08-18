@@ -9,12 +9,12 @@
 
 Heath 兄弟在《Decisive》中識別出四個系統性影響決策品質的認知偏誤，稱為「決策的四大反派」(four villains of decision making)：
 
-| Villain            | 中文     | 症狀                               | 對應 WRAP 階段                          |
-| ------------------ | -------- | ---------------------------------- | --------------------------------------- |
-| Narrow framing     | 框架太窄 | 把問題簡化為「做或不做」「A 或 B」 | **W** — Widen Your Options              |
-| Confirmation bias  | 確認偏誤 | 只搜集支持既有想法的證據           | **R** — Reality-Test Your Assumptions   |
-| Short-term emotion | 短期情緒 | 被當下情緒主導長期判斷             | **A** — Attain Distance Before Deciding |
-| Overconfidence     | 過度自信 | 高估預測準確度、低估失敗可能       | **P** — Prepare to Be Wrong             |
+| Villain | 中文 | 症狀 | 對應 WRAP 階段 |
+|---------|------|------|--------------|
+| Narrow framing | 框架太窄 | 把問題簡化為「做或不做」「A 或 B」 | **W** — Widen Your Options |
+| Confirmation bias | 確認偏誤 | 只搜集支持既有想法的證據 | **R** — Reality-Test Your Assumptions |
+| Short-term emotion | 短期情緒 | 被當下情緒主導長期判斷 | **A** — Attain Distance Before Deciding |
+| Overconfidence | 過度自信 | 高估預測準確度、低估失敗可能 | **P** — Prepare to Be Wrong |
 
 ---
 

@@ -134,13 +134,13 @@ Missing any item = BLOCKED
 
 ## Key References
 
-| Reference                                                  | Purpose                                   |
-| ---------------------------------------------------------- | ----------------------------------------- |
-| [Complete Template](./references/5w1h-template.md)         | Full template format and token generation |
-| [Common Violations](./references/common-violations.md)     | Violation patterns and fixes              |
-| [Integration Details](./references/integration-details.md) | Hook/Output Style/Token validation engine |
-| `5w1h-self-awareness-methodology`（各專案自有）            | Complete methodology                      |
-| `agile-refactor-methodology`（各專案自有）                 | Executor/Dispatcher separation rules      |
+| Reference                                                                         | Purpose                                   |
+| --------------------------------------------------------------------------------- | ----------------------------------------- |
+| [Complete Template](./references/5w1h-template.md)                                | Full template format and token generation |
+| [Common Violations](./references/common-violations.md)                            | Violation patterns and fixes              |
+| [Integration Details](./references/integration-details.md)                        | Hook/Output Style/Token validation engine |
+| `5w1h-self-awareness-methodology`（各專案自有）      | Complete methodology                      |
+| `agile-refactor-methodology`（各專案自有） | Executor/Dispatcher separation rules      |
 
 ---
 

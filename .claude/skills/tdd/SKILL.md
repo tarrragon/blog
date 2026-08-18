@@ -32,13 +32,13 @@ TDD 的價值不只是「測試先寫」，而是**強迫你在實作前想清�
 
 ## 子命令總覽
 
-| 子命令               | 用途                   | 適用時機                          |
-| -------------------- | ---------------------- | --------------------------------- |
-| `/tdd start`         | 開始新 TDD 流程        | 新功能需求進入開發                |
-| `/tdd next`          | 推進到下一個 Phase     | 當前 Phase 完成後                 |
-| `/tdd split`         | Phase 1 SOLID 拆分分析 | Phase 1 設計階段需要拆分功能      |
-| `/tdd status`        | 查看當前進度和階段     | 確認目前所在 Phase 和轉換條件     |
-| `/tdd phase4-exempt` | 評估 Phase 4 豁免條件  | Phase 3b 完成後決定是否豁免 4a/4c |
+| 子命令 | 用途 | 適用時機 |
+|--------|------|---------|
+| `/tdd start` | 開始新 TDD 流程 | 新功能需求進入開發 |
+| `/tdd next` | 推進到下一個 Phase | 當前 Phase 完成後 |
+| `/tdd split` | Phase 1 SOLID 拆分分析 | Phase 1 設計階段需要拆分功能 |
+| `/tdd status` | 查看當前進度和階段 | 確認目前所在 Phase 和轉換條件 |
+| `/tdd phase4-exempt` | 評估 Phase 4 豁免條件 | Phase 3b 完成後決定是否豁免 4a/4c |
 
 ---
 
@@ -106,35 +106,35 @@ Phase 3a 策略文件完成後，評估 Phase 3b 是否需要拆分為多個並�
 
 本 SKILL 的所有內容分為兩層，確保核心 TDD 知識可跨專案複用：
 
-| 層次    | 內容                                                                            | 可攜性                               |
-| ------- | ------------------------------------------------------------------------------- | ------------------------------------ |
-| Layer 1 | Phase 定義、階段轉換條件、SOLID 檢查、BDD/GWT、品質基準、豁免規則、任務類型豁免 | 通用，任何專案可直接使用             |
-| Layer 2 | Ticket 系統、Agent 派發、Hook 自動化、決策樹路由、Commit 管理角色               | 本框架特定，以 blockquote (`>`) 標記 |
+| 層次 | 內容 | 可攜性 |
+|------|------|--------|
+| Layer 1 | Phase 定義、階段轉換條件、SOLID 檢查、BDD/GWT、品質基準、豁免規則、任務類型豁免 | 通用，任何專案可直接使用 |
+| Layer 2 | Ticket 系統、Agent 派發、Hook 自動化、決策樹路由、Commit 管理角色 | 本框架特定，以 blockquote (`>`) 標記 |
 
 ### Layer 1 禁止引用
 
 在 `references/phase{N}/rules.md` 的非 blockquote 區域，禁止出現：
 
-| 禁止項                                     | 替代方式                       |
-| ------------------------------------------ | ------------------------------ |
-| `/ticket` CLI（如 `/ticket create`）       | 「任務系統」「狀態管理」       |
+| 禁止項 | 替代方式 |
+|--------|---------|
+| `/ticket` CLI（如 `/ticket create`） | 「任務系統」「狀態管理」 |
 | 具體代理人名稱（lavender/parsley/sage 等） | 「設計者」「實作者」「測試者」 |
-| 專案的 hook 系統                           | 「驗證機制」「檢查點」         |
-| `decision-tree` 路由                       | 「階段轉換」「路由決策」       |
-| `/parallel-evaluation` 工具                | 「多維度分析」「交叉審查」     |
-| 本專案路徑（`.claude/`、`docs/`）          | 「規則目錄」「工作目錄」       |
-| Wave、Patch 概念                           | 「執行批次」「版本」           |
+| 專案的 hook 系統 | 「驗證機制」「檢查點」 |
+| `decision-tree` 路由 | 「階段轉換」「路由決策」 |
+| `/parallel-evaluation` 工具 | 「多維度分析」「交叉審查」 |
+| 本專案路徑（`.claude/`、`docs/`） | 「規則目錄」「工作目錄」 |
+| Wave、Patch 概念 | 「執行批次」「版本」 |
 
 ### Layer 2 整合點
 
 Layer 2 內容以 blockquote 標記，提供本框架的具體實現方式：
 
-| 整合點     | Layer 1 描述             | Layer 2 實現                           |
-| ---------- | ------------------------ | -------------------------------------- |
-| 任務管理   | 「任務轉換條件」         | `/ticket track complete`               |
-| 角色派發   | 「Phase 1 由設計者執行」 | 「派發給 lavender-interface-designer」 |
-| 自治提交   | 「完成後自行提交」       | `feat({id}): Phase X - {摘要}`         |
-| 多視角分析 | 「多維度交叉審查」       | `/parallel-evaluation`                 |
+| 整合點 | Layer 1 描述 | Layer 2 實現 |
+|--------|-------------|-------------|
+| 任務管理 | 「任務轉換條件」 | `/ticket track complete` |
+| 角色派發 | 「Phase 1 由設計者執行」 | 「派發給 lavender-interface-designer」 |
+| 自治提交 | 「完成後自行提交」 | `feat({id}): Phase X - {摘要}` |
+| 多視角分析 | 「多維度交叉審查」 | `/parallel-evaluation` |
 
 ---
 
@@ -142,19 +142,19 @@ Layer 2 內容以 blockquote 標記，提供本框架的具體實現方式：
 
 真實案例記錄 TDD 各階段踩過的坑，供設計和審查時參考：
 
-| 案例                                                                                  | 對應 Phase | 主要教訓                                                      |
-| ------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------- |
-| [跨模組共用策略缺失](references/cases/cross-module-shared-strategy-gaps.md)           | Phase 1    | 規格未標注跨模組驗證重複、ID 碰撞、欄位映射缺失、零日誌       |
-| [測試資料與可觀測性盲點](references/cases/test-data-and-observability-blind-spots.md) | Phase 2    | 測試資料殘留 v1 欄位碰巧通過、catch 區塊零日誌未測            |
-| [印表機測試覆蓋深度不足](references/cases/printer-test-coverage-depth-failure.md)     | Phase 2    | 28 個測試全過但 4 個 Bug 上線，路徑深度不足、try-catch 吞錯誤 |
-| [並行實作重複與 Lint](references/cases/parallel-impl-duplication-and-lint.md)         | Phase 3    | 並行 worktree 各自實作驗證框架、dead import、版本號硬編碼     |
-| [多視角審查發現總結](references/cases/multi-perspective-review-findings-v0170.md)     | Phase 4    | 完整審查報告：規格盲點 36%、測試盲點 27%、實作品質 36%        |
-| [Chrome Storage API 效能延遲](references/cases/storage-api-performance-latency.md)    | Phase 1    | 規格應定義效能目標數值，批次參數屬規格範疇                    |
-| [批次寫入失敗處理策略](references/cases/storage-write-failure-handling.md)            | Phase 1    | 回滾/孤立/預防中止三策略選擇，規格須定義失敗策略              |
-| [私有方法測試覆蓋缺口](references/cases/private-method-test-coverage-gap.md)          | Phase 2    | 合併邏輯和快取鍵的私有方法無獨立斷言，邊界條件未覆蓋          |
-| [異常路徑測試覆蓋缺口](references/cases/error-path-test-coverage-gap.md)              | Phase 2    | 180 錯誤碼中 49% 生產路徑未測，引用 != 測試                   |
-| [Phase 4 豁免判斷邊界](references/cases/phase4-exemption-doc-task.md)                 | Phase 4    | DOC 標籤不等於低風險，豁免條件應改為 AND 邏輯                 |
-| [SA 審查 Tag-based Book Model](references/cases/sa-review-tag-based-book-model.md)    | Phase 0    | 跨 3 子域變更必須 Phase 0，重複實作只能在系統層級識別         |
+| 案例 | 對應 Phase | 主要教訓 |
+|------|-----------|---------|
+| [跨模組共用策略缺失](references/cases/cross-module-shared-strategy-gaps.md) | Phase 1 | 規格未標注跨模組驗證重複、ID 碰撞、欄位映射缺失、零日誌 |
+| [測試資料與可觀測性盲點](references/cases/test-data-and-observability-blind-spots.md) | Phase 2 | 測試資料殘留 v1 欄位碰巧通過、catch 區塊零日誌未測 |
+| [印表機測試覆蓋深度不足](references/cases/printer-test-coverage-depth-failure.md) | Phase 2 | 28 個測試全過但 4 個 Bug 上線，路徑深度不足、try-catch 吞錯誤 |
+| [並行實作重複與 Lint](references/cases/parallel-impl-duplication-and-lint.md) | Phase 3 | 並行 worktree 各自實作驗證框架、dead import、版本號硬編碼 |
+| [多視角審查發現總結](references/cases/multi-perspective-review-findings-v0170.md) | Phase 4 | 完整審查報告：規格盲點 36%、測試盲點 27%、實作品質 36% |
+| [Chrome Storage API 效能延遲](references/cases/storage-api-performance-latency.md) | Phase 1 | 規格應定義效能目標數值，批次參數屬規格範疇 |
+| [批次寫入失敗處理策略](references/cases/storage-write-failure-handling.md) | Phase 1 | 回滾/孤立/預防中止三策略選擇，規格須定義失敗策略 |
+| [私有方法測試覆蓋缺口](references/cases/private-method-test-coverage-gap.md) | Phase 2 | 合併邏輯和快取鍵的私有方法無獨立斷言，邊界條件未覆蓋 |
+| [異常路徑測試覆蓋缺口](references/cases/error-path-test-coverage-gap.md) | Phase 2 | 180 錯誤碼中 49% 生產路徑未測，引用 != 測試 |
+| [Phase 4 豁免判斷邊界](references/cases/phase4-exemption-doc-task.md) | Phase 4 | DOC 標籤不等於低風險，豁免條件應改為 AND 邏輯 |
+| [SA 審查 Tag-based Book Model](references/cases/sa-review-tag-based-book-model.md) | Phase 0 | 跨 3 子域變更必須 Phase 0，重複實作只能在系統層級識別 |
 
 ---
 

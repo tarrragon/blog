@@ -18,9 +18,9 @@
 
 Klein 與 Wharton 的 Deborah Mitchell 等人研究（1989, *Journal of Behavioral Decision Making*）顯示：
 
-| 提問形式                       | 識別風險的具體性          |
-| ------------------------------ | ------------------------- |
-| 「這個計畫可能會失敗嗎？」     | 普遍模糊回答「可能」      |
+| 提問形式 | 識別風險的具體性 |
+|---------|---------------|
+| 「這個計畫可能會失敗嗎？」 | 普遍模糊回答「可能」 |
 | 「假設失敗了，是什麼殺了它？」 | **多產出 25% 的具體洞察** |
 
 差異原因：
@@ -51,7 +51,6 @@ P 階段「行前預想」的提問形式：
 ---
 
 **Sources**:
-
 - Gary Klein, "Performing a Project Premortem", *Harvard Business Review*, September 2007.
 - Mitchell, Russo & Pennington, "Back to the Future: Temporal Perspective in the Explanation of Events", *Journal of Behavioral Decision Making* 2(1), 1989.
 - 引用於 Heath & Heath, *Decisive*, Chapter 11.

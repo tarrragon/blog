@@ -17,7 +17,7 @@
 | `analyze`        | 互動式 SOLID 分析 | `uv run scripts/tdd-phase1-split.py analyze -d "實作書籍搜尋功能"`                       |
 | `suggest`        | 產出拆分建議      | `uv run scripts/tdd-phase1-split.py suggest -d "實作書籍搜尋功能" -v 0.29.0`             |
 | `create-tickets` | 建立拆分 Tickets  | `uv run scripts/tdd-phase1-split.py create-tickets -d "實作書籍搜尋功能" -v 0.29.0 -w 3` |
-| `validate`       | 驗證拆分合規性    | `uv run scripts/tdd-phase1-split.py validate -t （`                                      |
+| `validate`       | 驗證拆分合規性    | `uv run scripts/tdd-phase1-split.py validate -t （`                           |
 | `report`         | 產出拆分報告      | `uv run scripts/tdd-phase1-split.py report -d "實作書籍搜尋功能" -v 0.29.0`              |
 
 > **執行方式**：在 `.claude/skills/tdd/` 目錄下執行 `uv run scripts/tdd-phase1-split.py <command>`。<!-- portability-allow: consumer 共通的 skill 安裝位置 -->

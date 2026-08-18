@@ -3,6 +3,7 @@ name: requirement-protocol
 description: "從需求確認到實作的對話協議：模糊指令澄清（含篩選類）、可決定 vs 該確認的邊界、失敗 2 次的轉折、覆寫成本告知、revert/checkpoint 處理、漸進驗證、工具切換時機。Triggers: 收到模糊指令, 自決還是確認, 反覆失敗, 換思路, 覆寫成本, 先還原, 先重來, placeholder, 最小範圍, 推理失敗, playwright 切換, 開發前澄清, 需求確認, 排除障礙, 逼近答案, 依 X 篩選, 只看 X, filter 範圍, 呈現決策, 開放問, ABCDE 你選哪個, 反省題, retrospective, 下一步往哪走, 五維度, 需要我繼續嗎, 要做嗎, OK 嗎, yes/no, 二選, 確認嗎."
 license: MIT
 metadata:
+  portable: true
   version: 0.8.0
   category: collaboration-protocol
 ---
@@ -17,11 +18,11 @@ metadata:
 
 ## Core Pillars（四大支柱）
 
-| 支柱                                         | 意義                                                                                                                                                                                                                                                            |
-| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Visibility-Based Confirmation** 可見性確認 | 使用者會看到的決定（數字 / 順序 / 文字）攤開確認、純技術細節自決                                                                                                                                                                                                |
-| **Two-Occurrence Threshold** 2 次門檻        | 第 1 次是運氣、第 2 次是訊號；同方向失敗 2 次就停、不沿同方向加碼到 3                                                                                                                                                                                           |
-| **Cost Transparency** 成本透明               | 覆寫深度、revert 影響、最小必要範圍 — 把成本攤開讓使用者參與決策                                                                                                                                                                                                |
+| 支柱                                       | 意義                                                                 |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| **Visibility-Based Confirmation** 可見性確認 | 使用者會看到的決定（數字 / 順序 / 文字）攤開確認、純技術細節自決     |
+| **Two-Occurrence Threshold** 2 次門檻        | 第 1 次是運氣、第 2 次是訊號；同方向失敗 2 次就停、不沿同方向加碼到 3 |
+| **Cost Transparency** 成本透明              | 覆寫深度、revert 影響、最小必要範圍 — 把成本攤開讓使用者參與決策     |
 | **Multi-pass Refinement** 多輪精煉           | 第 1 輪實作不追求完美、預期會有未發現問題；設計第 2 / 3 輪用不同 frame 收斂、不是「再仔細一次」、是換角度看（[#82](references/principles/literal-interception-vs-behavioral-refinement.md) / [#85](references/principles/methodology-multi-pass-embedding.md)） |
 
 ---
@@ -76,33 +77,33 @@ Selector / MutationObserver root / JS 操作邊界：**從最小開始、有證�
 
 ## When to Consult This Skill（觸發路由）
 
-| 觸發情境                                                       | 讀哪份 reference                                                      |
-| -------------------------------------------------------------- | --------------------------------------------------------------------- |
-| 收到模糊指令（含「對齊」「靠近」「隔離」「不要動」「分開」等） | `references/clarifying-ambiguous-instructions.md`                     |
-| 不確定某個決定該自決還是該先問使用者                           | `references/clarifying-ambiguous-instructions.md`                     |
-| 收到「依 X 篩選 / 只看 X / 過濾 Y」類指令、source 是分批的     | `references/clarifying-ambiguous-instructions.md`（類型 5：篩選三問） |
-| 同方向失敗 ≥ 2 次、想再試一次更小心                            | `references/failure-pivot-protocol.md`                                |
-| 推理 + 視覺截圖溝通迴圈卡住、不知道該不該換工具                | `references/tool-switching-timing.md`                                 |
-| 客製需求要對抗多層（vendor CSS、framework、browser default）   | `references/cost-and-checkpoint.md`                                   |
-| 收到「先還原 / 先重來 / 換個方向」類指令                       | `references/cost-and-checkpoint.md`                                   |
-| 開始 UI layout debug、不知道從哪一步起                         | `references/progressive-verification.md`                              |
-| 設計 selector / MutationObserver root / JS 操作範圍            | `references/progressive-verification.md`                              |
-| 準備呈現決策給使用者選擇（A 還是 B、要不要做 X）               | `references/decision-dialogue.md`                                     |
-| 寫到「你想怎麼做？」「ABCDE 你選哪個？」這類開放問             | `references/decision-dialogue.md`                                     |
-| 反省題 / retrospective / 「下一步往哪走」類問題                | `references/decision-dialogue.md`                                     |
+| 觸發情境                                                        | 讀哪份 reference                              |
+| --------------------------------------------------------------- | --------------------------------------------- |
+| 收到模糊指令（含「對齊」「靠近」「隔離」「不要動」「分開」等）  | `references/clarifying-ambiguous-instructions.md` |
+| 不確定某個決定該自決還是該先問使用者                            | `references/clarifying-ambiguous-instructions.md` |
+| 收到「依 X 篩選 / 只看 X / 過濾 Y」類指令、source 是分批的       | `references/clarifying-ambiguous-instructions.md`（類型 5：篩選三問） |
+| 同方向失敗 ≥ 2 次、想再試一次更小心                              | `references/failure-pivot-protocol.md`        |
+| 推理 + 視覺截圖溝通迴圈卡住、不知道該不該換工具                  | `references/tool-switching-timing.md`         |
+| 客製需求要對抗多層（vendor CSS、framework、browser default）     | `references/cost-and-checkpoint.md`           |
+| 收到「先還原 / 先重來 / 換個方向」類指令                         | `references/cost-and-checkpoint.md`           |
+| 開始 UI layout debug、不知道從哪一步起                           | `references/progressive-verification.md`      |
+| 設計 selector / MutationObserver root / JS 操作範圍              | `references/progressive-verification.md`      |
+| 準備呈現決策給使用者選擇（A 還是 B、要不要做 X）                  | `references/decision-dialogue.md`             |
+| 寫到「你想怎麼做？」「ABCDE 你選哪個？」這類開放問                | `references/decision-dialogue.md`             |
+| 反省題 / retrospective / 「下一步往哪走」類問題                   | `references/decision-dialogue.md`             |
 
 每份 reference 自包含：以該情境為核心、把六大原則翻譯成可直接套用的協議步驟與模板。閱讀任一 reference 不需要回來看其他 reference。
 
-**與 `wrap-decision` 的邊界**：本 skill 處理「使用者**指令**是否明確可執行」（模糊指令澄清）。若卡點不是指令模糊，而是「決策諮詢的當事人條件不足」或「要 premortem 的計畫輪廓不清」，那屬 `wrap-decision` 的資料充足度閘門（Step 0）與 premortem context 閘門——先讀 `.claude/skills/wrap-decision/SKILL.md`。三者互為前置、不重複問同一組問題（分工對照表見該檔 Step 0「與 requirement-protocol 的分工邊界」）。
+**與 `wrap-decision` 的邊界**：本 skill 處理「使用者**指令**是否明確可執行」（模糊指令澄清）。若卡點不是指令模糊，而是「決策諮詢的當事人條件不足」或「要 premortem 的計畫輪廓不清」，那屬 `wrap-decision` 的資料充足度閘門（Step 0）與 premortem context 閘門——先讀 `../wrap-decision/SKILL.md`。三者互為前置、不重複問同一組問題（分工對照表見該檔 Step 0「與 requirement-protocol 的分工邊界」）。
 
 ---
 
 ## Success Criteria（M1-M2 認知負擔類）
 
-| Metric | 定義                                                  | 目標 |
-| ------ | ----------------------------------------------------- | ---- |
-| **M1** | 從 SKILL.md 出發、解決一個觸發情境需要開幾個檔案      | ≤ 2  |
-| **M2** | 隨機抽一份 reference、不讀其他 reference 能否獨立套用 | 100% |
+| Metric | 定義                                                                  | 目標 |
+| ------ | --------------------------------------------------------------------- | ---- |
+| **M1** | 從 SKILL.md 出發、解決一個觸發情境需要開幾個檔案                     | ≤ 2  |
+| **M2** | 隨機抽一份 reference、不讀其他 reference 能否獨立套用                 | 100% |
 
 ---
 

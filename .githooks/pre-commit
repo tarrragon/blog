@@ -60,9 +60,15 @@ fi
 
 # --- 1. fmt --fix + re-stage -----------------------------------------------
 echo "[pre-commit] mdtools fmt --fix on staged markdown"
+# .claude/skills/ 跳過 fmt，理由與 §9 既有的 lint 豁免相同：fmt 的表格欄寬對齊
+# 服務 Hugo 呈現，而 skill 的消費者是 Claude runtime、不經 Hugo 渲染。豁免 lint
+# 卻不豁免 fmt 會有兩個代價——重排後的 skill 立即與 canonical 庫分歧，使
+# skill-sync 的 diverged 訊號分不清真實差異與格式噪音；行內 HTML 註解被當多餘
+# 欄位刪除，表格列的豁免 marker 因此失效。
 restaged=0
 while IFS= read -r f; do
     [[ -z "$f" ]] && continue
+    [[ "$f" == .claude/skills/* ]] && continue
     before=$(git hash-object "$f" 2>/dev/null || echo "")
     "$MDTOOLS_BIN" fmt --fix "$f" >/dev/null
     after=$(git hash-object "$f" 2>/dev/null || echo "")

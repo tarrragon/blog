@@ -14,11 +14,11 @@ metadata:
 
 ## 定位與分工
 
-| 工具  | 問的問題                         | 階段             | 關係           |
-| ----- | -------------------------------- | ---------------- | -------------- |
-| /tdd  | 「流程走到哪了？下一步做什麼？」 | Phase 0-4 全流程 | 流程編排器     |
-| /spec | 「需求描述得夠不夠清楚？」       | Phase 1 內部     | 產出物品質工具 |
-| SA    | 「該不該做？和現有系統一致嗎？」 | Phase 0          | 架構守門人     |
+| 工具 | 問的問題 | 階段 | 關係 |
+|------|---------|------|------|
+| /tdd | 「流程走到哪了？下一步做什麼？」 | Phase 0-4 全流程 | 流程編排器 |
+| /spec | 「需求描述得夠不夠清楚？」 | Phase 1 內部 | 產出物品質工具 |
+| SA | 「該不該做？和現有系統一致嗎？」 | Phase 0 | 架構守門人 |
 
 **/spec 不是流程入口**：lavender 在 Phase 1 內部使用 /spec 產出功能規格。/tdd 不呼叫 /spec，/spec 不呼叫 /tdd。兩者完全解耦。
 
@@ -26,8 +26,8 @@ metadata:
 
 `docs/spec/` 下 frontmatter 含 `subdomain: data-contract` 的文件（例：`docs/spec/balance-sheet/SPEC-002-accounts-snapshots-data-contract.md`）**不適用 `/spec validate`**。
 
-| 項目     | /spec validate 假設的 schema                              | data-contract 文件實際 schema                              |
-| -------- | --------------------------------------------------------- | ---------------------------------------------------------- |
+| 項目 | /spec validate 假設的 schema | data-contract 文件實際 schema |
+|------|------------------------------|-------------------------------|
 | 章節結構 | Purpose / Scenarios / Acceptance（Lite）或 6 區段（Full） | 概述 + 可攜性邊界原則 + A 區（邏輯契約）/ B 區（實作綁定） |
 
 **Why**：/spec validate 的 Layer 1 結構檢查針對 Purpose/Scenarios/Acceptance（或 Full 6 區段）比對區段標題，data-contract 文件遵循 `data-layer-contract-methodology.md` 的可攜性兩區（A/B）結構，兩套 schema 不相容。**Consequence**：對 data-contract 文件執行 `/spec validate` 會在 Layer 1 誤報「結構失敗」（找不到 Purpose/Scenarios/Acceptance 區段標題），該結果不反映文件真實品質，若被當真會誤導撰寫者修改成不必要的結構。**Action**：data-contract 文件的機械驗證改由 `doc validate` 子命令承接（`../doc/SKILL.md`， 落地前為人工依 `data-layer-contract-methodology.md` 檢查），禁止對其執行 `/spec validate`；已誤執行者，Layer 1「結構失敗」判定應忽略。<!-- portability-allow: 條件式引用，目標 skill 未必與本 skill 一同安裝 -->
@@ -36,10 +36,10 @@ metadata:
 
 ## 子命令總覽
 
-| 子命令           | 用途               | 適用時機                              |
-| ---------------- | ------------------ | ------------------------------------- |
-| `/spec init`     | 初始化功能規格骨架 | Phase 1 開始，lavender 收到 Ticket 後 |
-| `/spec validate` | 驗證需求完善度     | 規格撰寫完成後，進入 Phase 2 前       |
+| 子命令 | 用途 | 適用時機 |
+|--------|------|---------|
+| `/spec init` | 初始化功能規格骨架 | Phase 1 開始，lavender 收到 Ticket 後 |
+| `/spec validate` | 驗證需求完善度 | 規格撰寫完成後，進入 Phase 2 前 |
 
 ---
 
@@ -66,11 +66,11 @@ metadata:
 
 **Full 模式觸發條件**（任一符合）：
 
-| 條件       | 判斷依據                               |
-| ---------- | -------------------------------------- |
+| 條件 | 判斷依據 |
+|------|---------|
 | 新功能開發 | type == IMP 且 how.task_type == "新增" |
-| 修改檔案多 | where.files > 5                        |
-| 明確指定   | 用戶執行 `/spec init --mode full`      |
+| 修改檔案多 | where.files > 5 |
+| 明確指定 | 用戶執行 `/spec init --mode full` |
 
 **Lite 模式**：不符合任何 Full 條件，或用戶執行 `/spec init --mode lite`。
 
@@ -142,20 +142,20 @@ metadata:
 
 檢查模板區段的存在性和非空性。
 
-| 模式 | 必須存在的區段                 | 檢查內容               |
-| ---- | ------------------------------ | ---------------------- |
+| 模式 | 必須存在的區段 | 檢查內容 |
+|------|--------------|---------|
 | Lite | Purpose, Scenarios, Acceptance | 區段標題存在且內容非空 |
-| Full | 全部 6 區段                    | 區段標題存在且內容非空 |
+| Full | 全部 6 區段 | 區段標題存在且內容非空 |
 
 **額外結構檢查**：
 
-| 檢查項                                | 規則                                                                                                                                                                   |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GWT 格式                              | Scenarios 區段至少 1 個 Given-When-Then 完整三元組                                                                                                                     |
-| Acceptance 可驗證性                   | 每個條件以 `- [ ]` 開頭                                                                                                                                                |
-| Purpose 簡潔性                        | 不超過 200 字（Lite）/ 500 字（Full）                                                                                                                                  |
-| API surface 完整性（Full only）       | 每個 `### FR-XX:` 段落若提及 HTTP API 行為（`GET`/`POST`/`PUT`/`DELETE`/`endpoint`/`API 回`/`status code` 類訊號），須有對應 `/v1/...` endpoint 路徑定義；缺者列為提醒 |
-| domain-map 覆蓋（規劃波 domain spec） | spec 每個 `### FR-XX:` 須在對應 domain map 的 FR→bundle 覆蓋表歸屬；domain map 缺失、或有未覆蓋 FR，列為提醒                                                           |
+| 檢查項 | 規則 |
+|--------|------|
+| GWT 格式 | Scenarios 區段至少 1 個 Given-When-Then 完整三元組 |
+| Acceptance 可驗證性 | 每個條件以 `- [ ]` 開頭 |
+| Purpose 簡潔性 | 不超過 200 字（Lite）/ 500 字（Full） |
+| API surface 完整性（Full only） | 每個 `### FR-XX:` 段落若提及 HTTP API 行為（`GET`/`POST`/`PUT`/`DELETE`/`endpoint`/`API 回`/`status code` 類訊號），須有對應 `/v1/...` endpoint 路徑定義；缺者列為提醒 |
+| domain-map 覆蓋（規劃波 domain spec） | spec 每個 `### FR-XX:` 須在對應 domain map 的 FR→bundle 覆蓋表歸屬；domain map 缺失、或有未覆蓋 FR，列為提醒 |
 
 **結構檢查失敗**：輸出缺失清單，不進入 Layer 2。
 
@@ -181,13 +181,13 @@ domain map 定位：省略 `--domain-map` 時自動找 spec 同目錄 `domain-ma
 
 #### 掃描維度
 
-| #   | 維度             | 核心問題                                      | 適用模式    |
-| --- | ---------------- | --------------------------------------------- | ----------- |
-| 1   | 邊界完整性       | 極端值、空值、上限下限的行為定義了嗎？        | Lite + Full |
-| 2   | 錯誤路徑         | 每個操作失敗時，系統如何回應？                | Lite + Full |
-| 3a  | 狀態轉換完整性   | 所有狀態和轉換都定義了嗎？有不可達狀態嗎？    | Lite + Full |
-| 3b  | 約束條件違反行為 | 每條約束條件的前提被違反時，行為定義了嗎？    | Lite + Full |
-| 4   | 教學一致性       | spec 的設計決策是否與 blog 教學對應模組一致？ | Full only   |
+| # | 維度 | 核心問題 | 適用模式 |
+|---|------|---------|---------|
+| 1 | 邊界完整性 | 極端值、空值、上限下限的行為定義了嗎？ | Lite + Full |
+| 2 | 錯誤路徑 | 每個操作失敗時，系統如何回應？ | Lite + Full |
+| 3a | 狀態轉換完整性 | 所有狀態和轉換都定義了嗎？有不可達狀態嗎？ | Lite + Full |
+| 3b | 約束條件違反行為 | 每條約束條件的前提被違反時，行為定義了嗎？ | Lite + Full |
+| 4 | 教學一致性 | spec 的設計決策是否與 blog 教學對應模組一致？ | Full only |
 
 **Lite 模式只掃描維度 1-3**，降低小型任務的認知負擔。**Full 模式額外掃描維度 4**。
 
@@ -257,13 +257,11 @@ CLAUDE.md 無「教學模組對應表」時（降級條款，見上）：
 ```
 
 ### 建議
-
 - 必須回答：Q1, Q3（影響 GWT 設計）
 - 建議回答：Q2（影響效能設計）
 - 教學偏移（高）：必須對齊後再進入 Phase 2
 - 教學缺口：建議先補教學再落實 spec
 - 可延後：無
-
 ```
 
 ---

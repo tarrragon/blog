@@ -38,19 +38,19 @@ python3 .claude/skills/broken-link-check/scan_links.py . --scan-root docs
 
 ### 輸出格式
 
-| flag                    | 用途                                                                                                            |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `--format text`（預設） | 人類可讀：摘要 + 分組 broken 清單                                                                               |
-| `--format json`         | 穩定 schema，供下游清理工具消費（含 `source_file/line/raw_ref/resolved_path/category` + `categories` 分類計數） |
+| flag | 用途 |
+|------|------|
+| `--format text`（預設） | 人類可讀：摘要 + 分組 broken 清單 |
+| `--format json` | 穩定 schema，供下游清理工具消費（含 `source_file/line/raw_ref/resolved_path/category` + `categories` 分類計數） |
 
 ### 四排除旋鈕（預設皆排除，flag 顯式覆寫納入）
 
-| 旋鈕                                      | 預設                             | 覆寫 flag                     |
-| ----------------------------------------- | -------------------------------- | ----------------------------- |
-| 程式碼區塊內引用                          | 排除                             | `--include-code-block`        |
-| migration-backups / hook-logs 下路徑      | 排除（歸 `excluded_backup`）     | `--include-migration-backups` |
-| placeholder 範例路徑（如 `path/file.md`） | 排除（歸 `placeholder`）         | `--include-placeholder`       |
-| documented-error 豁免 marker 行           | 排除（歸 `excluded_documented`） | `--include-documented`        |
+| 旋鈕 | 預設 | 覆寫 flag |
+|------|------|-----------|
+| 程式碼區塊內引用 | 排除 | `--include-code-block` |
+| migration-backups / hook-logs 下路徑 | 排除（歸 `excluded_backup`） | `--include-migration-backups` |
+| placeholder 範例路徑（如 `path/file.md`） | 排除（歸 `placeholder`） | `--include-placeholder` |
+| documented-error 豁免 marker 行 | 排除（歸 `excluded_documented`） | `--include-documented` |
 
 覆寫旋鈕用於 triage/debug，gate 預設一律不加 flag。
 
@@ -81,12 +81,12 @@ CLI 已內建以下規則，本節僅供閱讀輸出時對照，非需手動執�
 
 偵測的路徑格式：
 
-| 格式                    | 範例                                       | 解析基準                                                                                  |
-| ----------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| `@.claude/path/file.md` | `@.claude/pm-rules/decision-tree.md`       | repo root <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） -->        |
-| `.claude/path/file.md`  | `.claude/agents/incident-responder.md`     | repo root <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） -->        |
-| `../path/file.md`       | `../agents/lavender-interface-designer.md` | 引用文件所在目錄 <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） --> |
-| `./path/file.md`        | `./references/detail.md`                   | 引用文件所在目錄 <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） --> |
+| 格式 | 範例 | 解析基準 |
+|------|------|------|
+| `@.claude/path/file.md` | `@.claude/pm-rules/decision-tree.md` | repo root <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） --> |
+| `.claude/path/file.md` | `.claude/agents/incident-responder.md` | repo root <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） --> |
+| `../path/file.md` | `../agents/lavender-interface-designer.md` | 引用文件所在目錄 <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） --> |
+| `./path/file.md` | `./references/detail.md` | 引用文件所在目錄 <!-- broken-link-exempt: 格式示範範例路徑，非真實引用（W2-011 A 類） --> |
 
 排除：`http(s)://`（外部 URL）、`#section`（錨點）、預設四旋鈕涵蓋的程式碼區塊 / 備份目錄 / placeholder 範例 / documented-error marker 行。
 
