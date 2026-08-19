@@ -24,7 +24,7 @@ Sidney Dekker 的《The Field Guide to Understanding 'Human Error'》涵蓋了�
 
 ## 想理解災難怎麼累積時讀 The Challenger Launch Decision
 
-Diane Vaughan 的《The Challenger Launch Decision》是一部社會學的深度個案重建，推翻了挑戰者號失事的通俗解釋。她的結論是偏差被逐步正常化，而非有人違規或隱瞞——每一次小幅放寬標準當下都有合理理由，而且每次都沒出事，於是新標準成為基準，下一次再從新基準往外放一點。
+Diane Vaughan 的《The Challenger Launch Decision》是一部社會學的深度個案重建，推翻了挑戰者號失事的通俗解釋。她的結論是 [偏差被逐步正常化](/til/organization/normalization-of-deviance/)，而非有人違規或隱瞞——每一次小幅放寬標準當下都有合理理由，而且每次都沒出事，於是新標準成為基準，下一次再從新基準往外放一點。
 
 這個機制解釋了為什麼災難前的每個決定看起來都不算離譜，累積起來卻走到災難。軟體團隊的對應現象很容易辨認：每次跳過測試都有當下的理由、每次手動改生產環境都是特例、每次警報被靜音都因為它最近很吵。偏差正常化這個詞的價值在於它讓這類累積變成可以命名、可以在檢討時指認的東西。
 

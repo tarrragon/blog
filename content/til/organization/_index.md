@@ -15,3 +15,4 @@ tags: ["til", "組織", "跨領域"]
 
 - [火箭發射團隊的組織概念](rocket-launch-team-grouping-origin/)：JAXA 打上げ管制隊按次編成、執行與安全監理分成兩條指揮線
 - [心理安全感](psychological-safety/)：一個群體裡的人願不願意講壞消息，決定了它的所有回報有多可信
+- [偏差正常化](normalization-of-deviance/)：反覆接受超出規格的狀況而沒出事，於是那個狀況被重新定義成正常

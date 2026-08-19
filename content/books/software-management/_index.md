@@ -45,17 +45,6 @@ Gerald Weinberg 的《溫伯格的軟體管理學》四卷分別對應四個主�
 Tom DeMarco 與 Timothy Lister 的兩本分屬不同主題：《Peopleware》在 [留任、動機與工作環境](topics/retention-motivation/)，《Waltzing with Bears》（繁中《與熊共舞》）在 [估算、承諾與決策偏誤](topics/estimation-decision/)。兩本沒有合購版本，分開買。
 
 
-## Backlog
-
-| 項目                                              | 類型   | 前置條件              | 規模 |
-| ------------------------------------------------- | ------ | --------------------- | ---- |
-| 偏差正常化概念整理（Vaughan，群體層、全站無承接） | 知識卡 | 放 til 組織概念子分類 | 1    |
-| Satir 四種不一致姿態（壓力下的反應姿態、個人層）  | 知識卡 | 放 til 人的行為子分類 | 1    |
-
-登記的判準是跨篇被當共用前提、而全站沒有任何一處承接。已處理：心理安全感與後見之明偏誤各建了一篇（[組織概念](/til/organization/)、[人的行為概念](/til/behavior/)），jelled team 與 egoless programming 在使用它們的段落就地行內化。已確認站上有承接、不列入：Conway's Law、Hyrum's Law、error budget 與 SLO/SLI、認知負荷。
-
-槓桿點與參考組預測法**不建卡**：它們在 Meadows 與 Flyvbjerg 那兩則裡是主線術語，跳出去讀卡會斷論證線，就地展開才是對的處理。這一列原本被登記成缺卡，是因為登記時沒有逐項數使用篇數就估了六個術語——實測後只有兩個跨篇、其餘都只出現在一篇。缺卡宣告採納前要先數。
-
 ## 相關的實作內容
 
 書單處理選讀判斷，技術實作在教學系列：交付管線與部署 gate 看 [CI/CD 教學](/ci/)，服務探活、容量規劃與高可用看 [運行期維運](/operations/)，事故分級、指揮角色與復盤制度看 [事故處理與復盤](/backend/08-incident-response/)，客戶端遙測的四類事件與收集鏈路看 [Monitoring 監控體系](/monitoring/)，交付生命週期全景看 [DevOps 全景](/devops/)。既有團隊的結構評估協議看 [發射管制隊視角：評估工作團隊設計](/record/launch-control-team-lens-methodology/)。
