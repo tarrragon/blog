@@ -1,7 +1,7 @@
 ---
 title: "對組織結構負責"
 date: 2026-08-19
-description: "團隊怎麼切、交接面誰扛、承諾為什麼系統性失準——管理管理者這一格的選讀"
+description: "團隊怎麼切、交接面誰扛、承諾為什麼系統性失準——管理管理者的選讀"
 weight: 50
 tags: ["books", "reading", "career", "engineering-leadership", "organization-design"]
 ---
@@ -24,7 +24,7 @@ tags: ["books", "reading", "career", "engineering-leadership", "organization-des
 
 **[How Big Things Get Done](../../topics/estimation-decision/)** 處理的是這一格躲不掉的承諾問題。它把估算失準拆成兩個來源——真心低估的樂觀偏誤，與明知會超支但講實話案子就過不了的策略性虛報——並且指出後者靠方法修不了。這個區分對這一格特別重要，因為你收到的所有估算都經過至少兩層轉述，而每一層都有調整它的誘因。
 
-**[The Fearless Organization](../../topics/culture-safety/)** 在這一格的用法與在下一格不同。這裡的問題是**壞消息在兩層轉述中會不會被磨平**——每一層都做了合理的摘要，而合理的摘要累積起來就是失真；自己的團隊敢不敢講反而是下一格的題目。
+**[The Fearless Organization](../../topics/culture-safety/)** 在這個位置讀出來的東西，跟直接帶人的人讀到的不同。這裡的問題是**壞消息在兩層轉述中會不會被磨平**——每一層都做了合理的摘要，而合理的摘要累積起來就是失真；自己的團隊敢不敢講是 [對人負責](../people/) 那一篇的題目。
 
 **[Quality Software Management, Vol. 4](../../topics/team-design/)**（擁抱變革）處理推動組織轉變時的人的阻力：誰會抗拒、抗拒的形式有哪些、哪些抗拒其實是有效資訊。這一卷的讀法是推動過一次失敗的改變之後再讀，事前讀跟事後讀是兩本不同的書。
 
