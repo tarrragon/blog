@@ -18,15 +18,15 @@ tags: ["books", "reading", "management", "engineering-leadership", "career"]
 
 ## 依你現在的位置選書
 
-角色篇還在建立中（進度見 Backlog 段），下表先給每個位置的起點與主要主題。位置的判準是你對什麼負責，不是職稱——同一個職稱在大企業與小公司對應的責任範圍經常不同。同時符合兩列時取責任範圍較大的那一列，因為較大那格的問題是你現在解不掉的，較小那格的問題你已經在解了。
+位置的判準是你對什麼負責，不是職稱——同一個職稱在大企業與小公司對應的責任範圍經常不同。判準的操作版本是：**你交不出來的時候，誰會被問**。下表給每個位置的起點書；那個位置一天實際在處理什麼、在有階梯與沒階梯的組織裡問題差在哪、往相鄰位置移動前該預習什麼，在 [依位置選書](roles/) 的五篇裡。
 
-| 你的位置                      | 當下的主要問題                                   | 起點                              | 主要主題                                                                                                    |
-| ----------------------------- | ------------------------------------------------ | --------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 只對自己的產出負責            | 怎麼讓產出被信任、怎麼知道自己下一步該補什麼     | The Software Engineer's Guidebook | [角色轉換與職涯路徑](topics/role-transitions/)、[問題定義與系統思考](topics/problem-definition/)            |
-| 對技術品質負責、不帶人        | 沒有指揮權時怎麼讓別人照著做、技術決策怎麼被採納 | The Staff Engineer's Path         | [困難對話與無權限影響力](topics/influence-conversation/)、[組織結構與團隊設計](topics/team-design/)         |
-| 對別人的產出負責（Tech Lead） | 怎麼讓團隊的產出達標而不變成自己重寫             | The Manager's Path                | [持續交付與交付效能](topics/continuous-delivery/)、[困難對話與無權限影響力](topics/influence-conversation/) |
-| 對人負責（EM）                | 人留不留得住、回饋怎麼給、壞消息為什麼傳不上來   | Peopleware                        | [留任、動機與工作環境](topics/retention-motivation/)、[組織文化與心理安全感](topics/culture-safety/)        |
-| 對組織結構負責（管理管理者）  | 團隊怎麼切、交接面誰負責、承諾為什麼總是跳票     | Team Topologies                   | [組織結構與團隊設計](topics/team-design/)、[估算、承諾與決策偏誤](topics/estimation-decision/)              |
+| 你的位置                                              | 當下的主要問題                                   | 起點                              | 主要主題                                                                                                    |
+| ----------------------------------------------------- | ------------------------------------------------ | --------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [只對自己的產出負責](roles/own-output/)               | 怎麼讓產出被信任、怎麼知道自己下一步該補什麼     | The Software Engineer's Guidebook | [角色轉換與職涯路徑](topics/role-transitions/)、[問題定義與系統思考](topics/problem-definition/)            |
+| [對技術品質負責、不帶人](roles/technical-quality/)    | 沒有指揮權時怎麼讓別人照著做、技術決策怎麼被採納 | The Staff Engineer's Path         | [困難對話與無權限影響力](topics/influence-conversation/)、[組織結構與團隊設計](topics/team-design/)         |
+| [對別人的產出負責（Tech Lead）](roles/others-output/) | 怎麼讓團隊的產出達標而不變成自己重寫             | The Manager's Path                | [持續交付與交付效能](topics/continuous-delivery/)、[困難對話與無權限影響力](topics/influence-conversation/) |
+| [對人負責（EM）](roles/people/)                       | 人留不留得住、回饋怎麼給、壞消息為什麼傳不上來   | Peopleware                        | [留任、動機與工作環境](topics/retention-motivation/)、[組織文化與心理安全感](topics/culture-safety/)        |
+| [對組織結構負責（管理管理者）](roles/org-structure/)  | 團隊怎麼切、交接面誰負責、承諾為什麼總是跳票     | Team Topologies                   | [組織結構與團隊設計](topics/team-design/)、[估算、承諾與決策偏誤](topics/estimation-decision/)              |
 
 起點書的完整描述與購書連結在對應的主題篇：前三本在 [角色轉換與職涯路徑](topics/role-transitions/)，Peopleware 在 [留任、動機與工作環境](topics/retention-motivation/)，Team Topologies 在 [組織結構與團隊設計](topics/team-design/)。
 
@@ -44,16 +44,6 @@ Gerald Weinberg 的《溫伯格的軟體管理學》四卷分別對應四個主�
 
 Tom DeMarco 與 Timothy Lister 的兩本分屬不同主題：《Peopleware》在 [留任、動機與工作環境](topics/retention-motivation/)，《Waltzing with Bears》（繁中《與熊共舞》）在 [估算、承諾與決策偏誤](topics/estimation-decision/)。兩本沒有合購版本，分開買。
 
-## Backlog
-
-| 項目                                                             | 類型 | 前置條件       | 規模 |
-| ---------------------------------------------------------------- | ---- | -------------- | ---- |
-| 角色篇五篇（自己的產出 / 技術品質 / 別人的產出 / 人 / 組織結構） | 主章 | 九篇主題篇完成 | 5    |
-| 各角色篇補「大企業有職級階梯 vs 小公司扁平」的問題差異段         | 主章 | 角色篇五篇完成 | 5    |
-
-### 角色篇要承接什麼
-
-角色篇寫出來之後，上面的位置表改成指向角色篇、不再直接指主題篇。每篇角色篇承接三件位置表放不下的事：這個位置一天實際在處理什麼、同一個責任範圍在有職級階梯與沒有階梯的組織裡問題差在哪、以及往相鄰位置移動前該預習什麼而現在的位置上練不到。書的完整描述仍留在主題篇。
 
 ## 相關的實作內容
 
