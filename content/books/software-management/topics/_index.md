@@ -22,17 +22,18 @@ tags: ["books", "reading", "management"]
 
 要挑給一群程度不一的人共讀時，取門檻最低的那本而非起點書：共讀的瓶頸是讀得最吃力的那個人，而涵蓋面可以靠討論補，讀不下去不行。
 
-| 主題                                              | 承擔的問題                                       | 起點書                                               |
-| ------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------- |
-| [問題定義與系統思考](problem-definition/)         | 同一種問題重複發生、每次解法看起來都合理         | Thinking in Systems                                  |
-| [持續交付與交付效能](continuous-delivery/)        | 怎麼知道一個工程做法真的有效、該追什麼指標       | Accelerate                                           |
-| [組織結構與團隊設計](team-design/)                | 團隊怎麼切、交接面怎麼定、認知負荷到哪算滿       | Team Topologies                                      |
-| [組織文化與心理安全感](culture-safety/)           | 沒人講壞消息、錯誤被藏起來、檢討變成表演         | The Fearless Organization                            |
-| [留任、動機與工作環境](retention-motivation/)     | 人為什麼走、環境怎麼影響產出、回饋怎麼給         | Peopleware                                           |
-| [估算、承諾與決策偏誤](estimation-decision/)      | 估算永遠樂觀、明知做不完還是承諾、風險沒人願意講 | How Big Things Get Done                              |
-| [事故、歸因與無指責檢討](incident-blame/)         | 事故檢討變成找戰犯、同類事故一再發生             | The Field Guide to Understanding 'Human Error'       |
-| [困難對話與無權限影響力](influence-conversation/) | 該講的話講不出口、沒有職權時怎麼推動改變         | Difficult Conversations                              |
-| [會議引導與群體決策](meeting-facilitation/)       | 討論收斂不了、提案一出口就變成攻防               | Facilitator's Guide to Participatory Decision-Making |
-| [角色轉換與職涯路徑](role-transitions/)           | 這個位置實際在做什麼、下一個位置需要什麼         | The Manager's Path                                   |
+| 主題                                              | 承擔的問題                                         | 起點書                                               |
+| ------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
+| [問題定義與系統思考](problem-definition/)         | 同一種問題重複發生、每次解法看起來都合理           | Thinking in Systems                                  |
+| [持續交付與交付效能](continuous-delivery/)        | 怎麼知道一個工程做法真的有效、該追什麼指標         | Accelerate                                           |
+| [組織結構與團隊設計](team-design/)                | 團隊怎麼切、交接面怎麼定、認知負荷到哪算滿         | Team Topologies                                      |
+| [組織文化與心理安全感](culture-safety/)           | 沒人講壞消息、錯誤被藏起來、檢討變成表演           | The Fearless Organization                            |
+| [留任、動機與工作環境](retention-motivation/)     | 人為什麼走、環境怎麼影響產出、回饋怎麼給           | Peopleware                                           |
+| [個人工作流與工作負荷](personal-workflow/)        | 事情永遠做不完、清單越來越長、換過幾套方法都撐不久 | Getting Things Done                                  |
+| [估算、承諾與決策偏誤](estimation-decision/)      | 估算永遠樂觀、明知做不完還是承諾、風險沒人願意講   | How Big Things Get Done                              |
+| [事故、歸因與無指責檢討](incident-blame/)         | 事故檢討變成找戰犯、同類事故一再發生               | The Field Guide to Understanding 'Human Error'       |
+| [困難對話與無權限影響力](influence-conversation/) | 該講的話講不出口、沒有職權時怎麼推動改變           | Difficult Conversations                              |
+| [會議引導與群體決策](meeting-facilitation/)       | 討論收斂不了、提案一出口就變成攻防                 | Facilitator's Guide to Participatory Decision-Making |
+| [角色轉換與職涯路徑](role-transitions/)           | 這個位置實際在做什麼、下一個位置需要什麼           | The Manager's Path                                   |
 
 依位置而非依主題選書時，回到 [軟體管理與組織書單](../) 的位置表。
