@@ -57,6 +57,23 @@ Gene Kim 與 Steven Spear 的《Wiring the Winning Organization》（2023）處�
 
 - [Amazon（Wiring the Winning Organization）](https://www.amazon.com/Wiring-Winning-Organization-Slowification-Simplification/dp/1950508420)
 
+## 這些問題的源頭在人月神話
+
+Frederick Brooks 的《The Mythical Man-Month》1975 年出版，取材自他在 IBM 帶 System/360 與 OS/360 的經驗。這個主題的多數討論可以追到它——加人為什麼不能壓縮時程、溝通成本為什麼隨人數超線性成長、設計為什麼要出自少數人。
+
+最廣為人知的是 Brooks's Law：**對一個已經落後的軟體專案加人，只會讓它更落後**。理由是新人要人帶，帶人的是最有產能的老手；而溝通路徑隨人數以平方成長，所以每加一個人的邊際貢獻遞減、邊際溝通成本遞增。這條定律是 [問題定義與系統思考](../problem-definition/) 那則效應圖的原始素材——效應圖是把它畫出來的工具，定律本身出自這裡。
+
+另一條沒有後繼的主線是概念完整性（conceptual integrity）：一個系統的設計要出自少數幾個人，否則會長成一堆各自合理而互不相容的決定。這條主張跟現在強調自主團隊的方向有張力，而張力本身值得讀——它逼你回答「哪些決定必須集中、哪些可以分散」，而那正是團隊切分的核心問題。
+
+20 週年版收錄了 1986 年的〈No Silver Bullet〉全文與作者事後的自我檢討，那篇提出的區分至今沒有更好的替代：軟體的困難分成**本質的**（把需求想清楚、把概念結構建立起來，這件事無法被工具消除）與**偶然的**（語言、環境、工具帶進來的負擔，這些可以被改善）。任何宣稱大幅提升生產力的工具，都可以拿這條線去問它改善的是哪一側——偶然側的改善有上限，因為本質側的比重會隨偶然側被清掉而上升。
+
+時效要分章看，這本書是分章判斷的好例子。外科手術團隊那套編制（一位主刀加一組支援）綁在當年的分工與工具上，已經不適用；溝通成本的部分被 Team Topologies 用認知負荷取代，而那個取代是升級——負荷上限比溝通路徑數更貼近「這個團隊還能不能再接一件事」。Brooks's Law、概念完整性與本質／偶然的區分不依賴任何時代條件，那三塊是現在讀它的理由。
+
+證據來源是單一大型專案的深度反省加上作者後續二十年的修正，屬於個人經驗而非統計——但它是被後續研究反覆檢驗的個人經驗，Brooks's Law 在多份實證裡都成立。讀得出價值的前提是：參與過一個加了人卻沒有變快的專案。
+
+- [Amazon（The Mythical Man-Month, Anniversary Edition）](https://www.amazon.com/Mythical-Man-Month-Software-Engineering-Anniversary/dp/0201835959)
+- [博客來（人月神話：軟體專案管理之道，20 週年紀念版）](https://www.books.com.tw/products/0010254508)
+
 ## 推動重組時的人的阻力在溫伯格第 4 卷
 
 Weinberg 的《Quality Software Management, Vol. 4: Anticipating Change》處理組織轉變的推動過程。前面幾本給出目標結構長什麼樣，這一卷處理從現狀走到目標的路上會遇到什麼——誰會抗拒、抗拒的形式有哪些、哪些抗拒其實是有效資訊。
@@ -68,7 +85,7 @@ Weinberg 的《Quality Software Management, Vol. 4: Anticipating Change》處理
 
 ## 為什麼只收這幾本
 
-這個主題的五本按抽象層級排：設計語彙（Team Topologies）、調度模型（An Elegant Puzzle）、規模與時間的約束（Software Engineering at Google）、底層理論（Wiring）、推動過程（溫伯格第 4 卷）。前四本回答結構該長什麼樣，最後一本回答怎麼走過去。
+這個主題的六本按抽象層級排：設計語彙（Team Topologies）、調度模型（An Elegant Puzzle）、規模與時間的約束（Software Engineering at Google）、底層理論（Wiring）、奠基經典（人月神話）、推動過程（溫伯格第 4 卷）。前四本回答結構該長什麼樣，人月神話回答這些問題從哪來，最後一本回答怎麼走過去。
 
 組織設計的書大量來自一般管理領域（矩陣式組織、事業部制），它們不處理軟體特有的約束——程式碼的耦合會把組織的溝通成本固定下來，這件事在非軟體組織裡沒有對應物。要分辨，翻目錄找「架構與組織互相映射」這件事有沒有被當成前提；沒有的話，那本處理的是另一個問題。
 
