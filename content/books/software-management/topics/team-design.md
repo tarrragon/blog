@@ -18,7 +18,7 @@ Matthew Skelton 與 Manuel Pais 的《Team Topologies》涵蓋了從團隊型態
 
 另一條主線是團隊認知負荷。書中主張團隊能承擔的領域範圍由認知負荷上限決定而非人數決定，這直接影響「這個團隊還能不能再接一個服務」的判斷。這條主線把團隊邊界從官僚產物改判成承重結構——上限是實的，超過之後會有東西塌下來，而塌的形式是交付變慢與交接出錯。
 
-證據來源是跨組織案例（作者的顧問現場）加上既有理論（Conway's Law、Dunbar number）的整合，不是統計。時效上，第二版於 2025 年出版並補上更多實作案例；Conway's Law 這個地基比書本身老得多，也還沒有被推翻的跡象。處境上，四種團隊型態與三種互動模式要有三個以上的團隊才對映得上。團隊數更少時它的價值落在詞彙而不在配置——只有一個交接面的組織不需要設計交接面，那件事兩個人講一次話就解決。讀得出價值的前提是：經歷過一次跨團隊交接摩擦。三種互動模式的差別是成本差別，而成本要付過才有感。繁體中文版目前未見，簡體中文版譯名《高效能團隊模式》。
+[證據來源](/books/knowledge-cards/evidence-provenance/)是跨組織案例（作者的顧問現場）加上既有理論（Conway's Law、Dunbar number）的整合，不是統計。時效上，第二版於 2025 年出版並補上更多實作案例；Conway's Law 這個地基比書本身老得多，也還沒有被推翻的跡象。[處境相容性](/books/knowledge-cards/context-compatibility/)上，四種團隊型態與三種互動模式要有三個以上的團隊才對映得上。團隊數更少時它的價值落在詞彙而不在配置——只有一個交接面的組織不需要設計交接面，那件事兩個人講一次話就解決。讀得出價值的前提是：經歷過一次跨團隊交接摩擦。三種互動模式的差別是成本差別，而成本要付過才有感。繁體中文版目前未見，簡體中文版譯名《高效能團隊模式》。
 
 - [Amazon（Team Topologies, 2nd Edition）](https://www.amazon.com/Team-Topologies-2nd-Organizing-Technology/dp/1966280009)
 - [Amazon（第一版）](https://www.amazon.com/Team-Topologies-Organizing-Business-Technology/dp/1942788819)
