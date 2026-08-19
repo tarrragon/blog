@@ -18,7 +18,7 @@ Matthew Skelton 與 Manuel Pais 的《Team Topologies》涵蓋了從團隊型態
 
 另一條主線是團隊認知負荷。書中主張團隊能承擔的領域範圍由認知負荷上限決定而非人數決定，這直接影響「這個團隊還能不能再接一個服務」的判斷。
 
-證據來源是跨組織的顧問案例加上既有理論（Conway's Law、Dunbar number）的整合，不是統計。時效上，第二版於 2025 年出版並補上更多實作案例；Conway's Law 這個地基比書本身老得多，也還沒有被推翻的跡象。讀得出價值的前提是：經歷過一次跨團隊交接摩擦。三種互動模式的差別是成本差別，而成本要付過才有感。繁體中文版目前未見，簡體中文版譯名《高效能團隊模式》。
+證據來源是跨組織案例（作者的顧問現場）加上既有理論（Conway's Law、Dunbar number）的整合，不是統計。時效上，第二版於 2025 年出版並補上更多實作案例；Conway's Law 這個地基比書本身老得多，也還沒有被推翻的跡象。處境上，四種團隊型態與三種互動模式要有三個以上的團隊才對映得上。團隊數更少時它的價值落在詞彙而不在配置——只有一個交接面的組織不需要設計交接面，那件事兩個人講一次話就解決。讀得出價值的前提是：經歷過一次跨團隊交接摩擦。三種互動模式的差別是成本差別，而成本要付過才有感。繁體中文版目前未見，簡體中文版譯名《高效能團隊模式》。
 
 - [Amazon（Team Topologies, 2nd Edition）](https://www.amazon.com/Team-Topologies-2nd-Organizing-Technology/dp/1966280009)
 - [Amazon（第一版）](https://www.amazon.com/Team-Topologies-Organizing-Business-Technology/dp/1942788819)
@@ -45,6 +45,7 @@ Will Larson 的《An Elegant Puzzle》預設讀者越過了「怎麼帶三個人
 證據來源是單一組織的制度紀錄，且大量做法依賴 Google 的內部基礎設施，直接套用的成本很高。時效上，書出版於 2020 年，工具鏈章節描述的內部系統外部無法取得也無從更新；時間與規模如何改變工程決策這個論證軸不依賴特定工具。讀得出價值的前提是：維護過一個自己沒有參與初版開發的系統。繁體中文版由歐萊禮出版，譯名《Google 的軟體工程之道》。
 
 - [Amazon（Software Engineering at Google）](https://www.amazon.com/Software-Engineering-Google-Lessons-Programming/dp/1492082791)
+- [官方免費線上版（HTML 全文，CC BY-NC-ND 授權）](https://abseil.io/resources/swe-book)
 - [博客來（Google 的軟體工程之道：從程式設計經驗中吸取教訓）](https://www.books.com.tw/products/0010938794)
 
 ## 想把零散做法串成一套解釋時讀 Wiring the Winning Organization
