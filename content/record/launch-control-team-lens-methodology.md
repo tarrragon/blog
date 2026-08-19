@@ -123,3 +123,4 @@ tags: ["方法論", "組織設計", "團隊設計", "agent", "評估框架"]
 
 - 體制事實與文件來源：[火箭發射團隊的組織概念](/til/rocket-launch-team-grouping-origin/)
 - 同型的評估式方法論（從操作推導結構、訪談協議形態）：[SaaS 選型訪談方法論](/record/saas-selection-interview-methodology/)
+- 團隊設計的既有框架與其適用規模：[組織結構與團隊設計書單](/books/software-management/topics/team-design/)，本方法論的判讀 lens 與那批框架處理的是同一組決定，差別在這裡從既有團隊往回評估、那裡從空白往前設計。

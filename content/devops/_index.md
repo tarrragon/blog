@@ -29,3 +29,4 @@ DevOps 是把軟體從「寫完」帶到「在 production 穩定活著」的整�
 - [服務上線地基](/going-live/)：第一次把服務上線的 vendor 中立入門，沒部署過先從這裡建立共同語彙，再往這三階段的深度內容走。
 - [Backend](/backend/)：服務內部設計（資料庫、快取、佇列、可觀測性）；它的部署與可靠性維度在這三階段展開。
 - [Monitoring](/monitoring/)：客戶端監控體系；跟運維的可觀測性、告警投遞相鄰。
+- [軟體管理與組織書單](/books/software-management/)：這三階段的做法背後有一批書。想知道哪些交付做法有大規模實證支撐、該追什麼指標，看 [持續交付與交付效能](/books/software-management/topics/continuous-delivery/)。
