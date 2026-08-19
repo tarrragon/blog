@@ -22,7 +22,7 @@ tags: ["books", "reading", "career", "engineering-manager", "retention"]
 
 **[The Making of a Manager](../../topics/role-transitions/)**（Julie Zhuo）聚焦第一年，處理的是具體場景：第一次一對一該說什麼、面試該問什麼、什麼時候該讓表現不佳的人離開。剛進這條路線的人讀它的可執行性高於讀鋪完整條階梯的書。
 
-**[First, Break All the Rules](../../topics/retention-motivation/)** 在這個位置的幾本裡證據規模最大，核心發現是留任與績效主要由與直屬主管的關係決定，而非公司政策。它的用處有兩層：一是知道自己這個位置的份量，二是要在制度裡替人爭取時，它的調查資料可以拿去當依據。
+**[First, Break All the Rules](../../topics/retention-motivation/)** 的核心發現是留任與績效主要由與直屬主管的關係決定，而非公司政策。它的用處有兩層：一是知道自己這個位置的份量，二是要在制度裡替人爭取時，它的調查資料可以拿去當依據。
 
 **[The Fearless Organization](../../topics/culture-safety/)**（Amy Edmondson）處理的是這裡最難自我診斷的問題（概念本身見 [心理安全感](/til/organization/psychological-safety/)）——團隊不講壞消息時，所有回報看起來都正常。書裡的三步框架（把工作定調成學習問題而非執行問題、承認自己會犯錯、主動示範提問）附有失敗案例，其中領導者宣稱歡迎壞消息、實際反應卻相反那一段，是這個位置最常見的自我誤判。
 
@@ -31,7 +31,6 @@ tags: ["books", "reading", "career", "engineering-manager", "retention"]
 ## 想往哪裡走
 
 進到這個位置幾乎都是被指派的，而多數人接下來之後才發現它跟原本想像的不同——原本以為是「範圍更大的技術工作」，實際上一天裡技術佔的比例會掉到很低。轉換前值得先確認的是自己對「幫別人做成事」有沒有實際的興趣，而不只是對「不想被別人管」有興趣；後者會在半年內把人推回技術路線，而那個來回對團隊的代價比一開始就不接更高。
-
 
 **往管理更大的範圍**（[對組織結構負責](../org-structure/)）：預習的是結構與承諾。這個位置的判斷單位是人，[對組織結構負責](../org-structure/) 的判斷單位是團隊之間的介面；那裡會遇到一個這裡完全碰不到的問題——組織的承諾為什麼系統性失準。[組織結構與團隊設計](../../topics/team-design/) 與 [估算、承諾與決策偏誤](../../topics/estimation-decision/) 是入口。
 
