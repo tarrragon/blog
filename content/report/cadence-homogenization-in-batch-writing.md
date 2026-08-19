@@ -157,6 +157,8 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "Batch-writing", 
 | [#127 Process content 結構由最大差異維度決定](../content-structure-by-max-diff-dimension/)       | 結構 layer 對偶 — 本卡處理「同 type 內 framing collapse」、#127 處理「跨 type 套錯結構」；兩者都跟「主題語意 attractor」相關 |
 | [Migration playbook methodology](/posts/migration-playbook-methodology/)                         | 具體 SOP — 本卡 update 段引用的 5 篇 migration playbook batch 是該 methodology 的 dogfood、partial collapse 案例都在那批     |
 
+這條規則會跟一種指標互斥：同一批內容若用關鍵詞出現次數當某項判定的覆蓋率，句型變化會讓那個數字下降。衝突發生時先換指標的量測方式，理由見 [#266 可核對的錨要選會下降的量](../checkable-anchor-must-be-able-to-fall/)。
+
 ---
 
 ## 判讀徵兆
