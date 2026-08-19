@@ -82,5 +82,6 @@ description 給人判斷也給機器（AI）判斷，每個 token 都要有資�
 - [#169 原子筆記要有向上的議題入口](../atomic-note-needs-situational-entry/)：同根因——讀者（含未來的自己）需要「情境入口」而非「定義入口」。#169 談卡片正文的進入動機，本卡談 frontmatter description 的進入動機，是同一原則在不同 surface 的體現。
 - [#131 教材完整性要用讀者旅程驗證](../teaching-completeness-by-learner-journey/)：讀者旅程的第一站是列表頁的 description——旅程驗證如果從「已進入文章」開始，就跳過了「要不要進入」的判斷點。
 - [#159 入口分流要放在詞彙牆之前](../audience-fork-before-jargon-wall/)：description 是文章的入口分流欄位，分流依據應是讀者的情境而非文章的內容結構。
+- [#268 要維持當期的內容只能放在更新到得了讀者的載體上](../current-content-needs-a-carrier-that-reaches-readers/)：本卡「不內嵌數字」那一條的上位形式。理由是 description 的更新頻率低於內文——內文增刪一項的當下沒有任何動作會去改 description，所以寫進去的「三項」「6 段」在讀者看到它的時候已經錯了。#268 把同一問推到任意載體：內容的正確性會不會隨時間失效，加上這個載體改完到不到得了讀者。description 只是「特別慢的那一層」的一個實例，判斷別的 metadata 欄位該不該放某個值時走那張卡。
 
 ---
