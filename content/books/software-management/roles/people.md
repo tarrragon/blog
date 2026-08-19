@@ -24,7 +24,7 @@ tags: ["books", "reading", "career", "engineering-manager", "retention"]
 
 **[First, Break All the Rules](../../topics/retention-motivation/)** 在這個位置的幾本裡證據規模最大，核心發現是留任與績效主要由與直屬主管的關係決定，而非公司政策。它的用處有兩層：一是知道自己這個位置的份量，二是要在制度裡替人爭取時，它的調查資料可以拿去當依據。
 
-**[The Fearless Organization](../../topics/culture-safety/)**（Amy Edmondson）處理的是這裡最難自我診斷的問題——團隊不講壞消息時，所有回報看起來都正常。書裡的三步框架（把工作定調成學習問題而非執行問題、承認自己會犯錯、主動示範提問）附有失敗案例，其中領導者宣稱歡迎壞消息、實際反應卻相反那一段，是這個位置最常見的自我誤判。
+**[The Fearless Organization](../../topics/culture-safety/)**（Amy Edmondson）處理的是這裡最難自我診斷的問題（概念本身見 [心理安全感](/til/organization/psychological-safety/)）——團隊不講壞消息時，所有回報看起來都正常。書裡的三步框架（把工作定調成學習問題而非執行問題、承認自己會犯錯、主動示範提問）附有失敗案例，其中領導者宣稱歡迎壞消息、實際反應卻相反那一段，是這個位置最常見的自我誤判。
 
 **[Radical Candor](../../topics/retention-motivation/)**（Kim Scott）處理回饋這一個動作。它用個人關心與直接挑戰兩個軸交叉出四個象限，多數新任管理者卡在只關心不挑戰的那一格（毀滅性同理）——因為不想破壞關係而讓問題累積，最後一次爆發時關係反而受更大傷害。
 
