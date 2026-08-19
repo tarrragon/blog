@@ -6,7 +6,7 @@ weight: 21
 tags: ["backend", "api-design", "error-contract"]
 ---
 
-status code 是整條 HTTP 鏈上被最多角色消費的一個欄位：consumer 的分支邏輯、中介層的 retry 與快取、監控的錯誤率圖表、全部只看這一格。它的表達力邊界因此是契約設計的硬約束 —— 有三種情況、一個 status 放不下事實：多個獨立結果（部分成功）、跨越時間的結果（先接受後失敗）、無法確定的結果（gateway 分不出上游做了沒）。本文攤開三種邊界、以及每種邊界下兩端各要扛什麼。本文掛在 [11.11 雙向契約](/backend/11-api-design/error-bidirectional-contract/)。
+status code 是整條 HTTP 鏈上被最多角色消費的一個欄位：consumer 的分支邏輯、中介層的 retry 與快取、監控的錯誤率圖表、全部只看這一格。它的表達力邊界因此是契約設計的硬約束 —— 有三種情況、一個 status 放不下事實：多個獨立結果（部分成功）、跨越時間的結果（先接受後失敗）、無法確定的結果（gateway 分不出上游做了沒）。本文攤開三種邊界、以及每種邊界下兩端各要負責什麼。本文承接 [11.11 雙向契約](/backend/11-api-design/error-bidirectional-contract/)。
 
 ## 裝不下多個結果：部分成功的兩條路線
 

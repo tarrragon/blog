@@ -141,7 +141,7 @@ ElastiCache 把運維接走，但也劃下新的邊界。cutover 前必盤：
 | 維度          | 自管 Redis / Valkey             | ElastiCache（managed）              |
 | ------------- | ------------------------------- | ----------------------------------- |
 | engine / API  | 同（Redis / Valkey）            | 同（Redis / Valkey engine）         |
-| 運維責任      | 全部自己扛                      | failover / patch / snapshot 交 AWS  |
+| 運維責任      | 全部自己負責                    | failover / patch / snapshot 交 AWS  |
 | config 自由度 | 任意 redis.conf                 | parameter group 開放項（部分鎖死）  |
 | failover      | 自設 Sentinel / Cluster         | Multi-AZ 自動（client 要會重連）    |
 | 成本          | 機器 + 人力運維                 | node 費 + managed premium（省人力） |

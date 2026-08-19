@@ -77,7 +77,7 @@ FDE 模式過去只有 Palantir 玩得起。為什麼？因為 [單位經濟](/b
 - 每個客戶的合約金額至少要幾百萬美元、才能讓「人力成本 ÷ 服務客戶數 = 單位人力成本」對得起合約收入
 - 用 [LTV](/business/knowledge-cards/ltv/)（Lifetime Value、客戶整個生命週期帶來的總收入）跟 [CAC](/business/knowledge-cards/cac/) 對比、要 LTV/CAC ≥ 3 才算健康
 
-只有政府、Fortune 500 這類客戶的合約規模能撐起這套經濟、所以 Palantir 才能玩。一般中型企業合約金額不夠、塞不進這個算式。
+只有政府、Fortune 500 這類客戶的合約規模才負擔得起這套經濟、所以 Palantir 才能玩。一般中型企業合約金額不夠、塞不進這個算式。
 
 [Vibe Code](/business/knowledge-cards/vibe-code/)（用 AI 編程工具邊聊邊寫代碼的開發模式）改變了這個。Cursor、Claude Code、Windsurf 這些工具把「從需求到可跑原型」的週期從幾週壓到幾小時。FDE 在客戶會議室就能當場跟 AI 一起寫出第一版、跟業務人員當場迭代。工程師產能因此變成過去的 3-5 倍—原本一年服務 1-2 個大客戶、現在能服務 5-10 個中型企業。
 

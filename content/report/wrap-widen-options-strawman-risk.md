@@ -61,7 +61,7 @@ WRAP 框架的 Widen Options 段落是「探索本質不同的因果解釋」、
 
 ### 第三步：補 Falsifier 段、列出每個解釋的反證訊號
 
-每個解釋配對應的 Falsifier：「若觀察到 X、解釋 (N) 主導論垮、要重評估」。這跟 Tripwire 段銜接、形成可監控的判讀結構。Falsifier 不是「整套論述崩」、是 partial revision—某個解釋的權重變化、不一定推翻整個分析框架。
+每個解釋配對應的 Falsifier：「若觀察到 X、解釋 (N) 的主導論不成立、要重評估」。這跟 Tripwire 段銜接、形成可監控的判讀結構。Falsifier 不是「整套論述崩」、是 partial revision—某個解釋的權重變化、不一定推翻整個分析框架。
 
 ### 第四步：完稿時跑「刪 Reality Test 測試」
 

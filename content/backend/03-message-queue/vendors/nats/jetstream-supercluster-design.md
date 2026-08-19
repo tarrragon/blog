@@ -12,7 +12,7 @@ tags: ["backend", "message-queue", "nats", "jetstream", "supercluster", "leaf-no
 
 JetStream 是 NATS 內建的持久化層、責任是把 Core NATS 的 fire-and-forget subject 轉成 append-only 的 durable stream、並讓 consumer 能 ack、重投、replay。Core NATS 的訊息一旦沒有 active subscriber 就消失；JetStream 把符合特定 subject 的訊息攔截下來寫進 stream、即使沒有任何 consumer 在線也會留存到 retention 上限。
 
-兩個概念要先分清楚、後面所有配置都掛在這個分界上。Stream 是 *儲存* 責任：定義「哪些 subject 的訊息要存、存多久、存多少、存哪裡」。Consumer 是 *投遞* 責任：定義「從 stream 的哪個位置開始讀、怎麼 ack、ack 不回來要不要重投、重投幾次」。同一個 stream 可以掛多個 consumer、各自有獨立的讀取游標跟重投狀態、互不影響。這個 stream / consumer 二分是 JetStream 跟 Kafka（topic / consumer group）對應、但跟 RabbitMQ（queue 本身就綁消費）不同的核心模型差異。
+兩個概念要先分清楚、後面所有配置都建立在這個分界上。Stream 是 *儲存* 責任：定義「哪些 subject 的訊息要存、存多久、存多少、存哪裡」。Consumer 是 *投遞* 責任：定義「從 stream 的哪個位置開始讀、怎麼 ack、ack 不回來要不要重投、重投幾次」。同一個 stream 可以掛多個 consumer、各自有獨立的讀取游標跟重投狀態、互不影響。這個 stream / consumer 二分是 JetStream 跟 Kafka（topic / consumer group）對應、但跟 RabbitMQ（queue 本身就綁消費）不同的核心模型差異。
 
 本文用一個訂單事件流當主線：subject 設計成 `orders.created.<region>`、stream 名 `orders`、subject filter `orders.>`。實機環境用單機 NATS server 加 `-js`、CLI 用 `natsio/nats-box` 容器；跨節點的 Cluster / quorum 段用 3 節點 docker compose 驗證、Supercluster / Leaf node 因拓樸複雜以 case 敘述加官方文件 caveat 標註。
 

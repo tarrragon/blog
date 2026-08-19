@@ -18,4 +18,4 @@ Lock-in 跟 [Switching Cost](/business/knowledge-cards/switching-cost/) 是一�
 
 ## 判讀方式
 
-讀到「lock-in 是 AI Labs 真正想要的」時，意味著它們不滿足於 API 計費，而要把 AI 接進企業的文件、系統、流程，讓企業無法輕易換掉。這也是為什麼從賣 token 轉向賣 [Enterprise License](/business/knowledge-cards/enterprise-license/)—後者的 lock-in 強度高得多，能撐起更穩定的營收與更高的估值。
+讀到「lock-in 是 AI Labs 真正想要的」時，意味著它們不滿足於 API 計費，而要把 AI 接進企業的文件、系統、流程，讓企業無法輕易換掉。這也是為什麼從賣 token 轉向賣 [Enterprise License](/business/knowledge-cards/enterprise-license/)—後者的 lock-in 強度高得多，能支持更穩定的營收與更高的估值。

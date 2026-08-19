@@ -30,7 +30,7 @@ multi-region table locality 是 *把「資料的地理歸屬」跟「讀寫路�
 
 問題情境最常見的 trigger：[9.C40 Netflix](/backend/09-performance-capacity/cases/netflix-cockroachdb-multi-region-fleet/) 的 60+ multi-region cluster、最大 Gaming cluster 48-node 跨 4 region。case 揭露一個反直覺判讀 — multi-region 的主要動機是 *region failure 0 downtime*、不是降 latency；跨 region quorum 物理上會 *增* 寫入 latency。這條判讀直接決定 table locality 怎麼設：當 multi-region 的目的是 survival 而非 latency，把高寫入 table 設成 `GLOBAL`（跨區同步寫）就是把成本花在錯的地方。
 
-[9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 則提供 row-level 歸屬的 concrete framing：跨 8 州 sportsbook、bet 資料按下注州歸屬、邏輯上仍是一個 cluster。case 觀察段揭露「跨所有 region 一個 logical database」這個拓樸 fact — 也就是 row-level locality 撐起了「合規分州 placement + 單一邏輯 DB」的組合。Hard Rock 的合規驅動與 schema 設計細節在 [locality-aware schema](../locality-aware-schema/) 展開，本文只取「row-level 歸屬」這個 locality 選擇本身。
+[9.C41 Hard Rock Digital](/backend/09-performance-capacity/cases/hard-rock-digital-cockroachdb-sports-betting/) 則提供 row-level 歸屬的 concrete framing：跨 8 州 sportsbook、bet 資料按下注州歸屬、邏輯上仍是一個 cluster。case 觀察段揭露「跨所有 region 一個 logical database」這個拓樸 fact — 也就是 row-level locality 才使得「合規分州 placement + 單一邏輯 DB」的組合。Hard Rock 的合規驅動與 schema 設計細節在 [locality-aware schema](../locality-aware-schema/) 展開，本文只取「row-level 歸屬」這個 locality 選擇本身。
 
 ## 核心機制：三種 locality 的判讀軸 + survival goal 互動
 

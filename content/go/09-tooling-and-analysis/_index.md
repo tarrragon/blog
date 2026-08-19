@@ -26,7 +26,7 @@ tags: ["go", "tooling"]
 
 ## 本模組的教學主軸
 
-- **stdlib 優先**：Go 的工具鏈文化偏好最小依賴。cobra / viper / 各種框架都有存在的理由，但 Go 的 `flag` + `os` + `filepath` 已經能撐起 80% 的 CLI 需求。
+- **stdlib 優先**：Go 的工具鏈文化偏好最小依賴。cobra / viper / 各種框架都有存在的理由，但 Go 的 `flag` + `os` + `filepath` 已經涵蓋 80% 的 CLI 需求。
 - **AST 是原始 regex 的升級路徑，不是預設起點**：line-based 處理便宜、直觀；AST 在需要「段落歸屬」「父子關係」「跨檔連結」時才付出整合成本才有回報。
 - **工具要 idempotent**：`fmt --fix` 跑兩次結果要相同；pre-commit 觸發的修改要保持 git state 完整；`--check` 跟 `--fix` 要共用同一套規則判讀。
 - **跨檔案檢查需要圖**：single-file linter 好寫；跨檔 orphan 偵測、連結完整性、reverse-dependency 這類問題需要先把整個 repo 建成結構化圖，再走訪。

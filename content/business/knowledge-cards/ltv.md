@@ -10,7 +10,7 @@ LTV 的核心概念是「Lifetime Value，客戶終身價值」—一個客戶�
 
 ## 概念位置
 
-LTV 跟 [CAC](/business/knowledge-cards/cac/) 一起構成單位經濟。LTV 受 [retention](/business/knowledge-cards/retention/)、[毛利](/business/knowledge-cards/gross-margin/) 與 expansion revenue（同一客戶加購）多重影響。LTV 越高，能負擔的 CAC 越高—這就是 [Enterprise License](/business/knowledge-cards/enterprise-license/) 為什麼能撐起 [FDE](/business/knowledge-cards/fde/) 的高 CAC。
+LTV 跟 [CAC](/business/knowledge-cards/cac/) 一起構成單位經濟。LTV 受 [retention](/business/knowledge-cards/retention/)、[毛利](/business/knowledge-cards/gross-margin/) 與 expansion revenue（同一客戶加購）多重影響。LTV 越高，能負擔的 CAC 越高—這就是 [Enterprise License](/business/knowledge-cards/enterprise-license/) 為什麼負擔得起 [FDE](/business/knowledge-cards/fde/) 的高 CAC。
 
 ## 可觀察訊號與例子
 

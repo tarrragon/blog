@@ -122,7 +122,7 @@ KV → SQL 或 SQL → distributed SQL 屬 paradigm shift、應進 [DB4 entry po
 
 ## Federated DB + system role 視角（跨 case 合成 frame）
 
-> 本段也是 *跨 case 合成 frame*（F2.18 + F1.6）— 三個 rich case（Coinbase / Toyota / Forbes）都揭露 production 系統是 *DB + 周邊工具* 組合、不是單一 DB monolithic 撐起來。
+> 本段也是 *跨 case 合成 frame*（F2.18 + F1.6）— 三個 rich case（Coinbase / Toyota / Forbes）都揭露 production 系統是 *DB + 周邊工具* 組合、不是靠單一 DB 獨力完成。
 
 讀者常誤以為「全用 X」是正解 — 全用 MongoDB、或全遷 DynamoDB、或全換 Cosmos DB。真實 production case 揭露兩個更前置的事實：(a) production 系統是 *federated*（多 DB 按 workload 分流）、不是 monolithic；(b) 每個 vendor 在系統中扮演 *特定角色*（control plane vs data plane vs cache）、不是 all-purpose store。
 

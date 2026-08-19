@@ -131,7 +131,7 @@ docker buildx build --builder multi --platform linux/amd64,linux/arm64 -t app .
 這些是進階能力、不是每個專案都要開：
 
 - **cache mount**：build 頻繁（CI 每次 commit build）、或依賴下載很重（大量 npm / apt 套件）時收益明顯。單機偶爾 build 一次的內部工具，layer cache 就夠。
-- **跨平台**：要發佈給不同架構使用者（open source image、公司同時有 M 系列 Mac 與 amd64 伺服器）才需要。只在單一架構部署就不必扛 QEMU 的複雜與慢。
+- **跨平台**：要發佈給不同架構使用者（open source image、公司同時有 M 系列 Mac 與 amd64 伺服器）才需要。只在單一架構部署就不必承受 QEMU 的複雜與慢。
 - **cache backend 選型**：本機開發用預設 local cache；CI 用 registry cache（`--cache-to/from type=registry`）或平台原生 cache（如 GitHub Actions 的 `type=gha`），讓每次 CI job 不必冷啟動重建。選哪個看 CI 環境提供什麼。
 
 ## 整合與下一步

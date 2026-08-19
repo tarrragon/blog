@@ -6,7 +6,7 @@ weight: 34
 tags: ["business", "knowledge-cards", "moat"]
 ---
 
-Fat Data / Fat Skill 的核心概念是「AI 時代仍能撐住的兩種 [護城河](/business/knowledge-cards/lock-in/)」。Fat Data 是別人沒有的獨家資料—例如十年的判決書資料庫、保險理賠歷史、醫院影像標註。Fat Skill 是深度嵌入行業的工作流知識—例如保險核保流程、銀行合規要求、醫院動線設計。相對概念是 [Thin Wrapper](/business/knowledge-cards/thin-wrapper/)。
+Fat Data / Fat Skill 的核心概念是「AI 時代仍然守得住的兩種 [護城河](/business/knowledge-cards/lock-in/)」。Fat Data 是別人沒有的獨家資料—例如十年的判決書資料庫、保險理賠歷史、醫院影像標註。Fat Skill 是深度嵌入行業的工作流知識—例如保險核保流程、銀行合規要求、醫院動線設計。相對概念是 [Thin Wrapper](/business/knowledge-cards/thin-wrapper/)。
 
 ## 概念位置
 

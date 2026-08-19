@@ -16,7 +16,7 @@ DevOps 是把軟體從「寫完」帶到「在 production 穩定活著」的整�
 | 管線 | [CI/CD 教學](/ci/)            | 變更**如何**被驗證、建置、交付：gate、artifact、rollout、rollback，跨不同部署場域        | 要讓每次變更能被穩定驗證與交付、workflow 失敗要判讀下一步 |
 | 維運 | [運行期維運](/operations/)    | 設計好的服務**在 production 怎麼活下來**：負載、擴展、流量管控、探活、容量、高可用、成本 | 服務上線後要扛負載、防過載、規劃容量、控成本              |
 
-三者是接續的：Infra 鋪好的地基，是 CI/CD 管線部署的目標環境；CI/CD 管線的產出（artifact），是運維要讓它在 production 活下來的對象。而 Infra 自己的變更走 PR 時，用的也是 CI/CD 管線——三階段彼此咬合，不是各走各的。
+三者是接續的：Infra 鋪好的地基，是 CI/CD 管線部署的目標環境；CI/CD 管線的產出（artifact），是運維要讓它在 production 活下來的對象。而 Infra 自己的變更走 PR 時，用的也是 CI/CD 管線——三階段互為對方的輸入，不是各走各的。
 
 ## 為什麼拆成三個獨立系列、而不是一個大目錄
 

@@ -25,7 +25,7 @@ Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷
 
 ## 誤用一：當合規檢查表
 
-「我們的 API 要通過 Level 2 審查」這類用法把定位尺變成認證考卷、產生兩種浪費。輕的浪費是形式主義：為了「正確使用 PATCH」而在沒有部分更新需求的資源上硬加 PATCH、級別達標、介面多了沒人用的表面積。重的浪費是誤導優先序：Level 2 的實質收益是中介層能讀懂介面 — 檢查的對象該是「快取有沒有實際命中、重試鏈行為是否正確」、而非 method 使用的字面合規。合規檢查表要從自家的 breaking 清單與錯誤模型長出來（[11.6](/backend/11-api-design/backward-compatibility-discipline/)、[11.4](/backend/11-api-design/error-model-design/)）、RMM 的粒度撐不起這個角色。
+「我們的 API 要通過 Level 2 審查」這類用法把定位尺變成認證考卷、產生兩種浪費。輕的浪費是形式主義：為了「正確使用 PATCH」而在沒有部分更新需求的資源上硬加 PATCH、級別達標、介面多了沒人用的表面積。重的浪費是誤導優先序：Level 2 的實質收益是中介層能讀懂介面 — 檢查的對象該是「快取有沒有實際命中、重試鏈行為是否正確」、而非 method 使用的字面合規。合規檢查表要從自家的 breaking 清單與錯誤模型長出來（[11.6](/backend/11-api-design/backward-compatibility-discipline/)、[11.4](/backend/11-api-design/error-model-design/)）、RMM 的粒度不夠細，做不了這個角色。
 
 ## 誤用二：當升級路線圖
 

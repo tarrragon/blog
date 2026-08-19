@@ -18,4 +18,4 @@ EventBus 是 [domain event](/ddd/knowledge-cards/domain-event/) 的傳輸機制�
 
 ## 設計責任
 
-EventBus 只承擔「發布／訂閱」這一層機制、不承擔涵蓋保證——涵蓋是靠每個寫入路徑記得呼叫 publish 撐起來的，EventBus 本身不驗證有沒有漏發。需要涵蓋面天然等於寫入操作集合的場景，正確載體是 [observation outlet](/ddd/knowledge-cards/observation-outlet/) 的狀態流、不是把 EventBus 的監聽範圍擴大，完整案例見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
+EventBus 只承擔「發布／訂閱」這一層機制、不承擔涵蓋保證——涵蓋是靠每個寫入路徑記得呼叫 publish 換來的，EventBus 本身不驗證有沒有漏發。需要涵蓋面天然等於寫入操作集合的場景，正確載體是 [observation outlet](/ddd/knowledge-cards/observation-outlet/) 的狀態流、不是把 EventBus 的監聽範圍擴大，完整案例見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。

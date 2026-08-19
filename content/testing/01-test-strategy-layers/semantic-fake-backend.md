@@ -81,7 +81,7 @@ spike 走完會分出兩條路。立得起來——平台通道（行動端的�
 - provider 團隊可配合 → [consumer-driven contract test](/testing/knowledge-cards/consumer-driven-contract-test/)（如 Pact）讓後端在自己的 CI 裡驗證前端的假設
 - 互動是線性單劇本 → 錄放式（record / replay）工具即可覆蓋
 
-三者皆否、且需要有狀態的多劇本接力時，才輪到自建語意級假後端——錄放式的 cassette 是線性回放，撐不起狀態接力。
+三者皆否、且需要有狀態的多劇本接力時，才輪到自建語意級假後端——錄放式的 cassette 是線性回放，做不到狀態接力。
 
 語意級假後端固化的是「已知」。後端若默默改變行為，假後端不會跟著變，流程測試照樣綠——這個洞由配對的真實後端驗證測試補上。兩者合起來才是完整的形態：
 

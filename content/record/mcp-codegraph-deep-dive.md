@@ -1,5 +1,5 @@
 ---
-title: "codegraph：用 tree-sitter per-language query 撐起 19+ 語言 call graph 的 MCP"
+title: "codegraph：用 tree-sitter per-language query 涵蓋 19+ 語言 call graph 的 MCP"
 slug: "mcp-codegraph-deep-dive"
 date: 2026-05-25
 draft: false

@@ -1,12 +1,12 @@
 ---
-title: "webhook 對外承諾：投遞保證不是預設、consumer 扛一半"
+title: "webhook 對外承諾：投遞保證不是預設、consumer 負責一半"
 date: 2026-07-04
 description: "webhook 是盡力而為的事件推送不是可靠佇列：投遞保證逐 vendor 讀、可靠性責任分一半給 consumer"
 weight: 2
 tags: ["backend", "api-design", "realtime"]
 ---
 
-webhook 是 server 主動 POST 到你提供的 URL、把「有事發生了」推給你。它跟[持久連線推送](/backend/11-api-design/styles/realtime/realtime-push-mechanisms/)是不同形狀 —— server 對 server、無持久連線、事件觸發。採用 webhook 的核心判讀不在「怎麼收」、而在「這個 vendor 對投遞承諾了什麼、你要自己扛什麼」；關鍵是每個 vendor 的承諾不一樣、不能假設一個通用行為。[webhook 知識卡](/backend/knowledge-cards/webhook/)是概念定義、本文講的是選型與使用層的承諾判讀。
+webhook 是 server 主動 POST 到你提供的 URL、把「有事發生了」推給你。它跟[持久連線推送](/backend/11-api-design/styles/realtime/realtime-push-mechanisms/)是不同形狀 —— server 對 server、無持久連線、事件觸發。採用 webhook 的核心判讀不在「怎麼收」、而在「這個 vendor 對投遞承諾了什麼、你要自己負責什麼」；關鍵是每個 vendor 的承諾不一樣、不能假設一個通用行為。[webhook 知識卡](/backend/knowledge-cards/webhook/)是概念定義、本文講的是選型與使用層的承諾判讀。
 
 ## 投遞保證不是預設
 

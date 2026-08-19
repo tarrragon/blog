@@ -27,7 +27,7 @@ check := fs.Bool("check", false, "report-only")
 _ = fs.Parse(args) // args = os.Args[2:]，已經跳過了子命令本身
 ```
 
-`fs.Parse(args)` 只看傳進去的片段，不碰 `os.Args` 全域。這是撐起 subcommand CLI 的核心 API。
+`fs.Parse(args)` 只看傳進去的片段，不碰 `os.Args` 全域。這是 subcommand CLI 的核心 API。
 
 ## 專案 Layout：main → cmd/ → internal/
 

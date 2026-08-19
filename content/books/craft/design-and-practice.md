@@ -22,7 +22,7 @@ Dave Thomas 與 Andy Hunt 的《The Pragmatic Programmer》涵蓋面在本篇最
 
 20 週年版是大幅改寫過的，不是加註解的重印本，並補進了並行、actor model、property-based testing 與資安基礎。要買買這一版。時效上，第一版綁的工具與環境（CVS、特定編輯器）在改版時清掉了；DRY、正交性、曳光彈、破窗理論這些主張不依賴任何工具世代。證據來源是跨客戶的顧問經驗，形式是格言加短例而非資料——這也決定了它的用法：拿來當檢查表對照自己的習慣，而不是拿去說服別人。
 
-讀得出價值的前提幾乎沒有，入行第一年就可以讀；但它有一個特別的性質是每隔幾年重讀會拿到不同的東西，因為同一條原則在不同經驗量下對得上的情境不一樣。
+讀得出價值的前提幾乎沒有，入行第一年就可以讀；但它有一個特別的性質是每隔幾年重讀會讀出不同的東西，因為同一條原則在不同經驗量下對得上的情境不一樣。
 
 - [Amazon（The Pragmatic Programmer, 20th Anniversary Edition）](https://www.amazon.com/Pragmatic-Programmer-journey-mastery-Anniversary/dp/0135957052)
 - [博客來（The Pragmatic Programmer 20 週年紀念版）](https://www.books.com.tw/products/0010856354)

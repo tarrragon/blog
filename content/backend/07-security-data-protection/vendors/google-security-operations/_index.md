@@ -10,7 +10,7 @@ Google Security Operations 是 Google 雲端的 SOC 整合平台、2023 年起�
 
 ## 服務定位
 
-Google Security Operations 的核心定位是 *為超大規模 SOC 設計的雲原生 SIEM + SOAR + threat intel 一體機*、底層走 Google 自家 search infrastructure、上層由四個 first-class concept 撐起來：*UDM*（Unified Data Model、Google 自定 schema、所有 source 強制 normalize）、*YARA-L*（Google 自家 detection rule 語言）、*Curated Detection*（Google 維護的 detection rule 訂閱、客戶不需自己拉）、*Mandiant Applied Threat Intel*（事件期間自動 enrich + IoC push）。
+Google Security Operations 的核心定位是 *為超大規模 SOC 設計的雲原生 SIEM + SOAR + threat intel 一體機*、底層走 Google 自家 search infrastructure、上層由四個 first-class concept 構成：*UDM*（Unified Data Model、Google 自定 schema、所有 source 強制 normalize）、*YARA-L*（Google 自家 detection rule 語言）、*Curated Detection*（Google 維護的 detection rule 訂閱、客戶不需自己拉）、*Mandiant Applied Threat Intel*（事件期間自動 enrich + IoC push）。
 
 跟 [Splunk](/backend/07-security-data-protection/vendors/splunk/) 比、Google 走 *fixed-price by data tier + 強制 schema normalization* — Splunk per-GB ingestion 計費在 PB-scale 會痛、Google 在 multi-PB 通常便宜 3-5 倍、但客戶要接受 UDM 強制 schema 跟 YARA-L 新語法。跟 [Elastic Security](/backend/07-security-data-protection/vendors/elastic-security/) 比、Google 是 SaaS-only + 大規模優化、Elastic 可自管 + OSS-friendly。跟 [Datadog Security](/backend/07-security-data-protection/vendors/datadog-security/) 比、Google 是 *純 SOC 專用工具*、Datadog 是 *observability 平面上的 security view*；Datadog 適合中等規模 + observability 已用 Datadog、Google 適合大規模 SOC + 不需要 observability 同 plane。
 

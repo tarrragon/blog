@@ -44,7 +44,7 @@ Claude for Legal 是 2025 末 Anthropic 推出的法律事務所專屬 AI 工作
 
 被收進 ecosystem 變 [Connector](/business/knowledge-cards/connector/) 是中段命運—保住用戶與營收、但失去獨立公司空間。
 
-對新創創辦人來說、第二層的應對手段是：往 fat data / fat skill 累積、不要相信「靠 prompt 工程或 UI 設計就能撐」。
+對新創創辦人來說、第二層的應對手段是：往 fat data / fat skill 累積、不要相信「靠 prompt 工程或 UI 設計就足以形成護城河」。
 
 ## 第三層擠壓:知識工作者的判斷賭注被放大
 
@@ -70,7 +70,7 @@ AI 接走的是 buffer 這層—associate 的 due diligence、文件 review、me
 
 對知識工作者：律師、會計、顧問業的人才金字塔長期會從金字塔變成沙漏—頭尾留存、中段萎縮。短期 Junior 工作消失痛苦、長期看是「養 Junior 的方式要重設」、不是該行業消失。Partner 工作會更值錢、associate 階梯會更窄、培養新一代 Partner 的管道要重新設計。
 
-對基礎模型供應商:押 enterprise lock-in 的代價是 [GTM](/business/knowledge-cards/gtm/) 成本高、[CAC](/business/knowledge-cards/cac/) 大、銷售週期長。它們押的是 [LTV](/business/knowledge-cards/ltv/) 夠大撐起這個 CAC—但如果模型 [切換成本](/business/knowledge-cards/switching-cost/) 真的繼續下降、LTV 撐不起就會反噬。
+對基礎模型供應商:押 enterprise lock-in 的代價是 [GTM](/business/knowledge-cards/gtm/) 成本高、[CAC](/business/knowledge-cards/cac/) 大、銷售週期長。它們押的是 [LTV](/business/knowledge-cards/ltv/) 夠大才回收得了這個 CAC—但如果模型 [切換成本](/business/knowledge-cards/switching-cost/) 真的繼續下降、LTV 回收不了就會反噬。
 
 ## 預警訊號:何時要重新評估這個分析
 

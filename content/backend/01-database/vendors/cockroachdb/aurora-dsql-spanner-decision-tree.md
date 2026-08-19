@@ -204,7 +204,7 @@ PG hard requirement 訊號：application 用 PostgreSQL-specific feature（parti
 
 自管 vs managed 不只是「省人月」、是「邊界 case 出現時誰修」— managed 的 vendor 負責、自管的自己負責。
 
-### 問題 6：team size 是否撐得起 self-managed（F4.14、9.C41 Hard Rock + 9.C40 Netflix 揭露）
+### 問題 6：team size 夠不夠自管（F4.14、9.C41 Hard Rock + 9.C40 Netflix 揭露）
 
 distributed SQL 的 ops 槓桿來自系統內建 Raft / placement 把「DBA 養單區、跨區 sync 養運維」工作量壓進系統內。
 
@@ -219,7 +219,7 @@ Self-managed 規模化的另一極：Netflix 養 380+ cluster 需要 *專屬 Dat
 - team size 大 + 有專屬 DB platform team → self-managed CockroachDB 可考慮
 - team size 中等但要 self-host 大規模 cluster → 評估專屬 platform team 投資後再決定
 
-### 問題 7：sizing 是否撐得起 vendor minimum（F3.16）
+### 問題 7：sizing 達不達得到 vendor minimum（F3.16）
 
 - Spanner 100 processing unit 起跳對中小 PG workload 是成本門檻、月寫入 < 某 baseline 時付 Spanner 起跳費不划算
 - 中小 workload 但需 multi-region 強一致 → CockroachDB 3 node 起 / Aurora DSQL consumption-based 較友善
