@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 0.64.0
+  version: 0.65.1
   category: writing-methodology
 ---
 
