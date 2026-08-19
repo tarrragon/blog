@@ -18,7 +18,7 @@ Sam Kaner 這本涵蓋面在本篇最完整，從發散到收斂的整段流程�
 
 書的形式是操作手冊：兩百多項工具、大量圖解與可直接印出來的講義，每一項標明用在哪個階段。這使它的用法偏向隨手查，而非從頭讀完。
 
-證據來源是跨客戶的顧問經驗，來自 Kaner 所屬的引導顧問機構 Community at Work 數十年的現場累積。時效上，通路上另列了一個預告補上虛擬環境工具與案例的新版，出版日期以通路頁為準，現在買得到的仍是第 3 版。處境上，第 3 版的兩百多項工具預設實體會議室、掛圖與便利貼——這是全篇協作形態咬得最深的一本，遠距與非同步的引導要自己折算，而書中的工具多數以「大家看得到同一張紙」為前提。讀得出價值的前提是主持過會議，而且遇過那種討論了兩小時、最後照最早提的方案做的收場。繁體中文版查不到；簡體中文版《結構化研討：參與式決策操作手冊》第 3 版由電子工業出版社出版。
+證據來源是跨客戶的顧問經驗，來自 Kaner 所屬的引導顧問機構 Community at Work 數十年的現場累積。時效上，通路上另列了一個預告補上虛擬環境工具與案例的新版，出版日期以通路頁為準，現在買得到的仍是第 3 版。處境上，第 3 版的兩百多項工具預設實體會議室、掛圖與便利貼——這是全篇與協作形態耦合最緊的一本，遠距與非同步的引導要自己折算，而書中的工具多數以「大家看得到同一張紙」為前提。讀得出價值的前提是主持過會議，而且遇過那種討論了兩小時、最後照最早提的方案做的收場。繁體中文版查不到；簡體中文版《結構化研討：參與式決策操作手冊》第 3 版由電子工業出版社出版。
 
 - [Amazon（Facilitator's Guide to Participatory Decision-Making, 3rd Edition）](https://www.amazon.com/Facilitators-Participatory-Decision-Making-Jossey-bass-Management/dp/1118404955)
 - [Amazon（Facilitator's Guide to Participatory Decision-Making，新版）](https://www.amazon.com/Facilitators-Guide-Participatory-Decision-Making-Kaner/dp/1119789060)
