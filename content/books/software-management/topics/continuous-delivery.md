@@ -18,7 +18,7 @@ Nicole Forsgren、Jez Humble、Gene Kim 的《Accelerate》涵蓋了這個主題
 
 書分三部分：研究發現與實踐、研究方法、組織轉型。研究方法那段常被跳過，但它才是這本書能撐住決定的原因——它交代了怎麼設計問卷、怎麼處理自陳資料的偏誤、為什麼可以宣稱相關而非巧合。要引用書中結論說服別人的人，那段是前提。
 
-證據來源是大規模跨組織調查與統計分析。時效上，資料採集期間持續交付與雲端部署已是主流，這是全書結論所依賴的前提，目前仍然成立。讀得出價值的前提是：經歷過至少一次從提交到上線的完整交付流程——沒有這個經驗時，四項指標讀起來會像名詞而不是可以量的東西。
+證據來源是大規模跨組織調查與統計分析。時效上，資料採集期間持續交付與雲端部署已是主流，這是全書結論所依賴的前提，目前仍然成立。讀得出價值的前提是：經歷過至少一次從提交到上線的完整交付流程。四項指標各自對應那段路上的一個位置，走過一次的人看得出它們量的是什麼。
 
 - [Amazon（Accelerate: The Science of Lean Software and DevOps）](https://www.amazon.com/Accelerate-Software-Performing-Technology-Organizations/dp/1942788339)
 - [博客來（ACCELERATE：精益軟體與 DevOps 背後的科學）](https://www.books.com.tw/products/0010913771)
@@ -72,7 +72,7 @@ Weinberg 的《Quality Software Management, Vol. 2: First-Order Measurement》�
 
 這個主題的書按證據強度分層，五本各承擔一層或一個獨立角色：統計實證（Accelerate）、跨組織案例（DevOps Handbook）、零門檻敘事（鳳凰專案）、單一組織的制度紀錄（Google SRE）、量測的副作用（溫伯格第 2 卷）。
 
-持續交付與 DevOps 的書在過去十年大量出版，多數重述四項指標或綁定特定工具鏈。前者與 Accelerate 承擔同一個角色，後者的內容會隨工具版本失效、且屬於教學系列而非書單的責任範圍。
+持續交付與 DevOps 的書在過去十年大量出版，多數重述四項指標或綁定特定工具鏈。前者與 Accelerate 承擔同一個角色，後者的內容會隨工具版本失效、且屬於教學系列而非書單的責任範圍。分辨方法是看它有沒有交代那四項指標的資料從哪來——只複述指標定義而不提資料來源的，承擔的是 Accelerate 已經承擔的角色。
 
 《Continuous Delivery》（Humble & Farley, 2010）是這個主題的奠基之作，本書單未評估它與《The DevOps Handbook》的內容重疊程度——判斷兩者是否可互相取代需要對讀，這裡沒有做。若已經讀過 Handbook 而想追溯部署管線設計原則的出處，那本仍然是原始來源。
 

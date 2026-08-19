@@ -55,7 +55,7 @@ Steve McConnell 的《Code Complete》第二版是這個主題涵蓋面最大的
 
 ## 為什麼只收這幾本
 
-這三本按密度與主張數分：廣而每條短（Pragmatic Programmer）、窄而挖到底（A Philosophy of Software Design）、大而全的對照（Code Complete）。手上的問題越具體越往中間那本走，想建立通盤基礎才輪到最後一本。
+同樣回答「怎麼寫得更好」，這三本的密度差一個量級：Pragmatic Programmer 廣而每條短，A Philosophy of Software Design 窄而挖到底，Code Complete 大而全。手上的問題越具體越往中間那本走，想建立通盤基礎才輪到最後一本。
 
 技藝類的書市極擁擠，而多數集中在兩個位置：特定語言的最佳實踐彙編，以及把某一套規則推銷成普適判準的書。前者屬於教學系列而非書單的責任範圍，後者的問題是規則脫離了推導它的取捨——分辨的方法是看它有沒有講清楚什麼情況下這條規則不適用，只給規則不給邊界的表示它把判斷收走了。
 
