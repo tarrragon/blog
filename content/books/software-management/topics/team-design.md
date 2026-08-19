@@ -95,6 +95,8 @@ Weinberg 的《Quality Software Management, Vol. 4: Anticipating Change》處理
 
 團隊切好之後，交接面上的溝通品質決定結構有沒有真的生效——結構對但沒人講真話時，X-as-a-Service 的介面會變成互相推責的邊界。那條路徑走 [組織文化與心理安全感](../culture-safety/)。
 
-要判斷重組後的交付效能有沒有改善，走 [持續交付與交付效能](../continuous-delivery/)。要理解為什麼每次重組的效果都被抵銷，走 [問題定義與系統思考](../problem-definition/)。
+要判斷重組後的交付效能有沒有改善，走 [持續交付與交付效能](../continuous-delivery/)。
+
+邊界該畫在哪是這個主題的問題，它的上游有兩個：為什麼每次重組的效果都被抵銷，以及為什麼組織看不見自己的邊界已經切錯——繼承來的分類系統決定了哪些問題連被陳述的機會都沒有，而《穀倉效應》的八個個案演示的正是這件事。兩者都走 [問題定義與系統思考](../problem-definition/)：那邊負責診斷，這裡的認知負荷上限負責回答邊界該畫在哪。
 
 既有團隊的結構評估協議看 [發射管制隊視角：評估工作團隊設計](/record/launch-control-team-lens-methodology/)。
