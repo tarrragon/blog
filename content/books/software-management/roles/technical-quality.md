@@ -18,9 +18,9 @@ tags: ["books", "reading", "career", "staff-engineer", "influence"]
 
 ## 這個位置該讀什麼
 
-**[The Staff Engineer's Path](../../topics/role-transitions/)** 是這個位置的主要書。它把角色拆成三根支柱：用寬廣的視角看自己在做什麼、把專案實際推成功的戰術、以及決定在自己的組織裡「好的工程」是什麼意思。第三根——正是上面說的「沒有職權的人如何設定標準」，這一塊在其他書裡少有處理。想看這個位置在不同公司長什麼樣的人，Will Larson 的《Staff Engineer》收了多位 staff 工程師的訪談，兩本都在 [角色轉換與職涯路徑](../../topics/role-transitions/)。
+**[The Staff Engineer's Path](../../topics/role-transitions/)** 是這個位置的主要書。它把這個角色拆成三根支柱，而其中一根正是上面說的「沒有職權的人如何設定標準」——那一塊在其他書裡少有處理，也是這個位置最難自己摸索出來的。三根支柱各是什麼在主題篇。想看這個位置在不同公司長什麼樣的人，Will Larson 的《Staff Engineer》收了多位 staff 工程師的訪談，兩本都在 [角色轉換與職涯路徑](../../topics/role-transitions/)。
 
-**[The Secrets of Consulting](../../topics/influence-conversation/)** 直接處理無職權推動改變。多數管理書預設讀者有直接權限，這本的處境設定是「被找來給建議、但決定權在別人手上」，跟這裡的處境幾乎一致。定價、拒絕、處理抗拒、判斷什麼時候該退出這幾個主題，正對應上面說的邊界問題。
+**[The Secrets of Consulting](../../topics/influence-conversation/)** 直接處理無職權推動改變。多數管理書預設讀者有直接權限，這本的處境設定是「被找來給建議、但決定權在別人手上」，跟這裡的處境幾乎一致——差別在它的作者退得掉而你退不掉，讀的時候要把那一段折算。書中處理的主題與證據判定在主題篇。
 
 **[Team Topologies](../../topics/team-design/)** 在這個位置的用法是拿它當語言而不是拿它當方案。四種團隊型態與三種互動模式提供的是把「這兩個團隊該怎麼合作」講清楚的詞彙——站這個位置的人經常看得出問題出在交接面，卻只能說「他們配合度不好」，而那句話推不動任何事。
 

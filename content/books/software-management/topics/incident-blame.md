@@ -40,7 +40,7 @@ Diane Vaughan 的《The Challenger Launch Decision》是一部社會學的深度
 
 Google 的《Site Reliability Engineering》裡的事後檢討章節，是上述兩本的理論在軟體組織裡的制度化版本：檢討報告該包含什麼、由誰主持、如何確保追蹤項目真的被完成、以及怎麼避免無指責變成無追究。
 
-它的性質是單一組織的制度紀錄，因此提供的是一份可以參照的範本而非通則。這本書的完整描述在 [持續交付與交付效能](../continuous-delivery/)，此處只標出它在事故這條線上的用途。全文免費線上閱讀。
+它的性質是單一組織的深度重建，形式是制度紀錄，因此提供的是一份可以參照的範本而非通則。這本書的完整描述在 [持續交付與交付效能](../continuous-delivery/)，此處只標出它在事故這條線上的用途。全文免費線上閱讀。
 
 - [Google SRE 官方免費線上版](https://sre.google/books/)
 

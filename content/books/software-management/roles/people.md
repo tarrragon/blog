@@ -18,15 +18,15 @@ tags: ["books", "reading", "career", "engineering-manager", "retention"]
 
 ## 這個位置該讀什麼
 
-**[Peopleware](../../topics/retention-motivation/)**（DeMarco & Lister）是這個位置的主要書。它一本涵蓋環境這一側的全部主題——中斷成本、辦公條件、團隊凝聚怎麼形成又怎麼被拆掉、離職的真實代價。這個位置能動的槓桿裡，環境是最少人動而效果最直接的一個。
+**[Peopleware](../../topics/retention-motivation/)**（DeMarco & Lister）是這個位置的主要書。在這個位置讀它的理由是槓桿：環境是這一格能動的東西裡最少人動、而效果最直接的一個，也是少數不必先取得別人同意的。它涵蓋哪些主題、證據有多硬，在主題篇。
 
-**[The Making of a Manager](../../topics/role-transitions/)**（Julie Zhuo）聚焦第一年，處理的是具體場景：第一次一對一該說什麼、面試該問什麼、什麼時候該讓表現不佳的人離開。剛進這條路線的人讀它的可執行性高於讀鋪完整條階梯的書。
+**[The Making of a Manager](../../topics/role-transitions/)**（Julie Zhuo）聚焦第一年，剛進這條路線的人讀它的可執行性高於讀鋪完整條階梯的書——它給的是這個位置頭幾個月會實際遇到的場合該說什麼。涵蓋哪些場合在主題篇。
 
-**[First, Break All the Rules](../../topics/retention-motivation/)** 的核心發現是留任與績效主要由與直屬主管的關係決定，而非公司政策。它的用處有兩層：一是知道自己這個位置的份量，二是要在制度裡替人爭取時，它的調查資料可以拿去當依據。
+**[First, Break All the Rules](../../topics/retention-motivation/)** 在這個位置的用處有兩層：一是知道自己這一格的份量有多重，二是要在制度裡替人爭取時，它的調查規模撐得起拿去當依據——那是這條路線上少數可以引用數字的場合。核心發現與證據規模在主題篇。
 
-**[The Fearless Organization](../../topics/culture-safety/)**（Amy Edmondson）處理的是這裡最難自我診斷的問題（概念本身見 [心理安全感](/til/organization/psychological-safety/)）——團隊不講壞消息時，所有回報看起來都正常。書裡的三步框架（把工作定調成學習問題而非執行問題、承認自己會犯錯、主動示範提問）附有失敗案例，其中領導者宣稱歡迎壞消息、實際反應卻相反那一段，是這個位置最常見的自我誤判。
+**[The Fearless Organization](../../topics/culture-safety/)**（Amy Edmondson）處理的是這裡最難自我診斷的問題（概念本身見 [心理安全感](/til/organization/psychological-safety/)）——團隊不講壞消息時，所有回報看起來都正常。它給的介入手段都落在這一格能做的範圍內，不需要制度配合。書中失敗案例裡「領導者宣稱歡迎壞消息、實際反應卻相反」那一段值得特別對照，那是這個位置最常見的自我誤判。框架本身與證據在主題篇。
 
-**[Radical Candor](../../topics/retention-motivation/)**（Kim Scott）處理回饋這一個動作。它用個人關心與直接挑戰兩個軸交叉出四個象限，多數新任管理者卡在只關心不挑戰的那一格（毀滅性同理）——因為不想破壞關係而讓問題累積，最後一次爆發時關係反而受更大傷害。
+**[Radical Candor](../../topics/retention-motivation/)**（Kim Scott）處理回饋這一個動作。新任管理者最常卡在「只關心不挑戰」那一格，而卡住的代價要幾個月後才結算。這本的用途是讓那個狀態在當下被自己認出來，而不是事後回想。四個象限的定義在主題篇。
 
 ## 想往哪裡走
 
