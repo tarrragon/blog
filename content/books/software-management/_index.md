@@ -40,7 +40,7 @@ tags: ["books", "reading", "management", "engineering-leadership", "career"]
 
 各主題篇按問題組織，因此同一套書會分散在不同篇。實際購買時面對的是套書決定，這一段只處理那個決定，每本書的性質判定回各主題篇看。
 
-Gerald Weinberg 的《軟體管理學》四卷分別對應四個主題：第 1 卷系統化思考在 [問題定義與系統思考](topics/problem-definition/)，第 2 卷第一級評量在 [持續交付與交付效能](topics/continuous-delivery/)，第 3 卷關照全局的管理作為在 [困難對話與無權限影響力](topics/influence-conversation/)，第 4 卷擁抱變革在 [組織結構與團隊設計](topics/team-design/)。第 1、2 卷處理的問題現在有大規模實證的書可以對照，第 3 卷處理的管理者即時反應在這條線的其他書裡沒有對應。只買一卷買第 3 卷；買套書適合想看完整論述的讀者。四卷合購頁在[博客來](https://www.books.com.tw/products/0010553999)。
+Gerald Weinberg 的《溫伯格的軟體管理學》四卷分別對應四個主題：第 1 卷系統化思考在 [問題定義與系統思考](topics/problem-definition/)，第 2 卷第一級評量在 [持續交付與交付效能](topics/continuous-delivery/)，第 3 卷關照全局的管理作為在 [困難對話與無權限影響力](topics/influence-conversation/)，第 4 卷擁抱變革在 [組織結構與團隊設計](topics/team-design/)。第 1、2 卷處理的問題現在有大規模實證的書可以對照，第 3 卷處理的管理者即時反應在這條線的其他書裡沒有對應。只買一卷買第 3 卷；買套書適合想看完整論述的讀者。四卷合購頁在[博客來](https://www.books.com.tw/products/0010553999)。
 
 Tom DeMarco 與 Timothy Lister 的兩本分屬不同主題：《Peopleware》在 [留任、動機與工作環境](topics/retention-motivation/)，《Waltzing with Bears》（繁中《與熊共舞》）在 [估算、承諾與決策偏誤](topics/estimation-decision/)。兩本沒有合購版本，分開買。
 
