@@ -46,7 +46,7 @@
 
 - [口語化修辭稀釋技術精度](colloquial-rhetoric-erodes-technical-precision.md)：同一取向、不同尺度——那條是整段語氣的口語化，本卡是單一詞對詞的搭配錯位；都是「順口壓過精確」，本卡更微觀。
 - [避免濫用泛用詞](avoid-overused-generic-words.md)：都是用詞精確性、不同面向——那條是「一個泛用詞蓋多個不同情境」，本卡是「一個謂語配錯一個概念的屬性」。
-- [關鍵詞清單只裝得下違規義項佔多數的詞](keyword-list-needs-dominant-violating-sense.md)：下游、限定本卡的偵測層——判準沒問題（「滑進去的失敗」「拿到的是理解」照本卡判準都成立），漏抓是因為那兩個詞的違規義項只佔它們用法的少數，擴充清單解決不了。
+- [入口由違規形態寫不寫得成 pattern 決定，佔比只決定能不能原樣進清單](keyword-list-needs-dominant-violating-sense.md)：下游、限定本卡的偵測層——判準沒問題（「滑進去的失敗」「拿到的是理解」照本卡判準都成立），漏抓是因為那兩個詞的違規義項只佔它們用法的少數，擴充清單解決不了。
 - [教學散文的中性 register](teaching-prose-neutral-register.md)：本卡的搭配錯位無穩定關鍵詞、grep 抓不到、多輪同源 agent 自審全漏、靠人類異源冷讀 catch——跟中性 register 類違規同屬「同源盲區、真防線是文體異源視角」。
 
 ---
