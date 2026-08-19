@@ -14,7 +14,7 @@ tags: ["books", "reading", "postmortem", "blameless", "safety-science", "inciden
 
 ## 起點是 Dekker 的 Field Guide
 
-Sidney Dekker 的《The Field Guide to Understanding 'Human Error'》涵蓋了從歸因理論到調查程序的完整範圍，而且設計上就是給調查者當工作手冊用。核心主張是「人為疏失」這個標籤會阻止真正原因被發現，因為它把調查的終點放在最容易指認的地方。
+Sidney Dekker 的《The Field Guide to Understanding 'Human Error'》從歸因理論一路寫到調查程序，而且設計上就是給調查者當工作手冊用——理論與程序同時到位的只有它。核心主張是「人為疏失」這個標籤會阻止真正原因被發現，因為它把調查的終點放在最容易指認的地方。
 
 最實用的是它對 [後見之明偏誤](/til/behavior/hindsight-bias/) 的處理。事後看得一清二楚的因果，在事發當下的當事人視角裡並不存在——當時他看到的是部分的、矛盾的、正在變化的資訊，而且同時有其他事情在進行。因此調查的工作是重建當事人當時看到什麼，而不是列出他應該注意到什麼。書中提供了具體的重建步驟：建立時間軸、標記各時點的可得資訊、找出資訊與判斷之間的合理連結。
 
