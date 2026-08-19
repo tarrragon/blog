@@ -195,7 +195,7 @@ weight: 編號
 | [Non-Controlling Interest](/business/knowledge-cards/non-controlling-interest/)                   | 子公司獲利中屬於外部股東的部分           | 合併報表、歸母淨利               |
 | [Impairment](/business/knowledge-cards/impairment/)                                               | 資產帳面高於可回收金額的強制認列         | 商譽減損、正常化盈餘             |
 | [Transfer Pricing](/business/knowledge-cards/transfer-pricing/)                                   | 集團內部交易的定價決策                   | 關係人交易、毛利率扭曲           |
-| [Survivorship Bias（倖存者偏誤）](/business/knowledge-cards/survivorship-bias/)                   | 樣本被結果篩過、基準系統性偏高           | 產業基準、比較組、回測、社群數據 |
+| [Survivorship Bias（倖存者偏誤）](/business/knowledge-cards/survivorship-bias/)                   | 樣本被結果篩過，失真方向要各自推         | 產業基準、比較組、回測、社群數據 |
 | [Share Pledge](/business/knowledge-cards/share-pledge/)                                           | 控制權建立在槓桿上的治理風險             | 質押比率、平倉壓力               |
 | [Inventory（存貨）](/business/knowledge-cards/inventory/)                                         | 已投入生產但未賣出的資產、拆三形態判方向 | 存貨天數、CCC、跌價損失          |
 | [Accounts Payable（應付帳款）](/business/knowledge-cards/accounts-payable/)                       | 無息的供應商融資、CCC 的減項             | 應付天數、議價力、週轉壓力       |

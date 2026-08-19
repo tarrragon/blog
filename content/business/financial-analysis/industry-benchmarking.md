@@ -52,7 +52,7 @@ tags: ["business", "case-analysis", "financial-analysis", "industry-analysis"]
 
 ### 倖存者偏誤
 
-這是 [Survivorship Bias](/business/knowledge-cards/survivorship-bias/) 在比較組建構上的形態，那張卡另外處理它在作者與市場兩個尺度上的樣子。公開資料只包含仍在營運的公司。已經倒閉、被併購、或下市的公司不在比較組裡——但它們恰好是「產業正常水準之下」的那群。用倖存者組成的比較組算出來的「產業平均」會偏高。
+這是 [Survivorship Bias](/business/knowledge-cards/survivorship-bias/) 在比較組建構上的形態。公開資料只包含仍在營運的公司，已經退出的不在比較組裡，而修正的方向要看缺席的那些在你這次要平均的那個量上落在哪一端：以利潤率當基準時他們多半落在低端、留存樣本因此偏高，換成負債比則同一批公司的方向相反。方向怎麼推、以及其餘幾種篩選來源見那張卡；方向定了之後幅度怎麼估、估不出來時這組基準降成什麼用，見 [倖存者偏誤的幅度估計](/business/financial-analysis/survivorship-adjustment/)。
 
 這個偏誤在加盟體系特別明顯：社群上分享經營數據的加盟主通常是還活著的——已經收掉的不會來分享。如果用社群數據建立「加盟早餐店的正常利潤率」，得到的數字會比真實的全體平均偏高。
 
