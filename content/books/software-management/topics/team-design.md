@@ -42,7 +42,7 @@ Will Larson 的《An Elegant Puzzle》預設讀者越過了「怎麼帶三個人
 
 書中的 Hyrum's Law 及其衍生的設計態度可遷移到任何規模：介面的所有可觀察行為終將被某人依賴，因此棄用是需要制度而非公告的過程。這個洞察與組織規模無關，小團隊維護長壽專案時同樣成立。
 
-證據來源是單一組織的深度重建，形式是制度紀錄，且大量做法依賴 Google 的內部基礎設施，直接套用的成本很高。時效上，書出版於 2020 年，工具鏈章節描述的內部系統外部無法取得也無從更新；時間與規模如何改變工程決策這個論證軸不依賴特定工具。讀得出價值的前提是：維護過一個自己沒有參與初版開發的系統。繁體中文版由歐萊禮出版，譯名《Google 的軟體工程之道》。
+證據來源是單一組織的深度重建，形式是制度紀錄，且大量做法依賴 Google 的內部基礎設施，直接套用的成本很高。時效上，書出版於 2020 年，工具鏈章節描述的內部系統外部無法取得也無從更新；時間與規模如何改變工程決策這個論證軸不依賴特定工具。這本要先當過一次接手的人才讀得出價值：維護一個自己沒有參與初版開發的系統。繁體中文版由歐萊禮出版，譯名《Google 的軟體工程之道》。
 
 - [Amazon（Software Engineering at Google）](https://www.amazon.com/Software-Engineering-Google-Lessons-Programming/dp/1492082791)
 - [官方免費線上版（HTML 全文，CC BY-NC-ND 授權）](https://abseil.io/resources/swe-book)
@@ -54,7 +54,7 @@ Gene Kim 與 Steven Spear 的《Wiring the Winning Organization》（2023）處�
 
 它與這個主題其他書的差別在抽象層級。Skelton 與 Pais 給結構模板，Larson 給調度模型，Kim 與 Spear 想給的是解釋那些做法為何有效的底層理論。Spear 的背景是豐田生產系統與醫療安全研究，案例因此跨產業。
 
-證據來源是理論建構加上跨組織案例，而三個機制的解釋力在不同案例上並不平均——這是它適合當第四本而非第一本的原因。時效上是本篇最新的一本，眼下沒有過期的部分。讀得出價值的前提是：已經讀過這個主題的另外兩三本、手上有一批彼此不相干的做法想找共同解釋。三個機制是收攏用的，要先有東西可收。目前沒有中譯本。
+證據來源是理論建構加上跨組織案例，而三個機制的解釋力在不同案例上並不平均——這是它適合當第四本而非第一本的原因。時效上是本篇最新的一本，眼下沒有過期的部分。它的前提不是經驗而是閱讀量：先讀過這個主題的另外兩三本，手上有一批彼此不相干的做法想找共同解釋。三個機制是收攏用的，要先有東西可收。目前沒有中譯本。
 
 - [Amazon（Wiring the Winning Organization）](https://www.amazon.com/Wiring-Winning-Organization-Slowification-Simplification/dp/1950508420)
 
@@ -70,7 +70,7 @@ Frederick Brooks 的《The Mythical Man-Month》1975 年出版，取材自他在
 
 時效要分章看，這本書是分章判斷的好例子。外科手術團隊那套編制（一位主刀加一組支援）綁在當年的分工與工具上，已經不適用；溝通成本的部分被 Team Topologies 用認知負荷取代，而那個取代是升級——負荷上限比溝通路徑數更貼近「這個團隊還能不能再接一件事」。Brooks's Law、概念完整性與本質／偶然的區分不依賴任何時代條件，那三塊是現在讀它的理由。
 
-證據來源是單一組織的深度重建（一個大型專案的完整反省）加上作者後續二十年的修正，不是統計——但它是被後續研究反覆檢驗的個人經驗，Brooks's Law 在多份實證裡都成立。讀得出價值的前提是：參與過一個加了人卻沒有變快的專案。
+證據來源是單一組織的深度重建（一個大型專案的完整反省）加上作者後續二十年的修正，不是統計——但它是被後續研究反覆檢驗的個人經驗，Brooks's Law 在多份實證裡都成立。加了人卻沒有變快的專案參與過一次，這本才有對象；沒有的話，那條定律讀起來像一句俏皮話。
 
 - [Amazon（The Mythical Man-Month, Anniversary Edition）](https://www.amazon.com/Mythical-Man-Month-Software-Engineering-Anniversary/dp/0201835959)
 - [博客來（人月神話：軟體專案管理之道，20 週年紀念版）](https://www.books.com.tw/products/0010254508)
@@ -79,7 +79,7 @@ Frederick Brooks 的《The Mythical Man-Month》1975 年出版，取材自他在
 
 Weinberg 的《Quality Software Management, Vol. 4: Anticipating Change》處理組織轉變的推動過程。前面幾本給出目標結構長什麼樣，這一卷處理從現狀走到目標的路上會遇到什麼——誰會抗拒、抗拒的形式有哪些、哪些抗拒其實是有效資訊。
 
-證據來源是跨客戶的顧問經驗。時效上，書中預設的組織轉型節奏是以年為單位的變革專案，與現在的做法不同；抗拒的形式與應對方式處理的是人對不確定的反應，不依賴那個節奏。讀得出價值的前提是：推動過一次失敗或半途而廢的組織改變——事前讀跟事後讀是兩本不同的書。
+證據來源是跨客戶的顧問經驗。時效上，書中預設的組織轉型節奏是以年為單位的變革專案，與現在的做法不同；抗拒的形式與應對方式處理的是人對不確定的反應，不依賴那個節奏。事前讀跟事後讀是兩本不同的書，分界線是有沒有推動過一次失敗或半途而廢的組織改變。
 
 - [Amazon（Quality Software Management: Anticipating Change）](https://www.amazon.com/Quality-Software-Management-Anticipating-Change/dp/0932633323)
 - [博客來（溫伯格的軟體管理學：擁抱變革，第 4 卷）](https://www.books.com.tw/products/0010545251)

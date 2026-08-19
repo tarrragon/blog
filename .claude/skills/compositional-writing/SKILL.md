@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 0.65.1
+  version: 0.65.2
   category: writing-methodology
 ---
 
@@ -248,6 +248,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.65.2 — 執行 0.65.1 剛寫進來的本義探針，抓到 skill 自己的一個命中：`structuring-with-solid` 的段標「模板化滑坡」是 slippery slope 的直譯（中文的滑坡是山崩、或簡中語境的「成績滑坡」式衰退，不是可數的路徑），改成「模板化風險」、內文的「滑向」改「收斂成」。規則寫進來的同一輪就有未執行的命中，是宣告與交付脫節的現成實例。
+
 **Version**: 0.65.1 — 補完 0.65.0 沒改乾淨的部分：被推翻的那句「唯一有穩定關鍵詞可掃」同時住在 principle 卡 word-choice-fits-concept-attributes 的判準段，0.65.0 只改了 SKILL.md，於是 skill 內部有一句話跟它自己的新 principle 卡互相矛盾。兩處都改成「唯一有一組高密度關鍵詞可掃」並補上「清單是抽樣」與反向連結。這是修法產物本身要納入重掃的實例——同一個宣稱有兩份副本時，改一份會做出比原缺陷更難發現的矛盾。
 
 **Version**: 0.65.0 — 物理化錯配段拿掉「唯一有穩定關鍵詞的一種」這句標註，並補上清單的入選判準與兩個探針。一次全站清理照清單掃完、修完 68 處、驗證乾淨之後，使用者在同一批內容裡指出兩類清單完全沒碰到的錯配（把失敗說成「滑進去 / 另一條滑坡」、用「拿到的是」承接讀書得到的理解），兩者照該卡的判準都成立——判準沒問題，被推翻的是「掃完清單就掃完這一類」。入選判準是**違規義項佔該詞用法的比例**，而那個比例跟違規嚴不嚴重無關：本義合法的直譯（滑坡 vs 下滑 / 滑落）與詞頻過高的泛用動詞（拿）加進 regex 只會用噪音蓋掉訊號。改用補語型態探針（「⋯⋯的是」後面接子句就是前面的動詞選錯）與本義探針（詞典查得到不等於用法成立）。同批順手去掉 regex 裡重複三次的 `咬得|咬合|啃`。新增 principle 卡 keyword-list-needs-dominant-violating-sense。
