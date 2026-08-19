@@ -1,7 +1,7 @@
 ---
 title: "改既有的程式"
 date: 2026-08-19
-description: "要動一段自己沒寫的、或沒有測試保護的程式碼時，依「手上有沒有測試」與「改動規模」分層的選讀"
+description: "要動一段自己沒寫的、或沒有測試保護的程式碼時的選讀"
 weight: 20
 tags: ["books", "reading", "craft", "refactoring", "legacy-code"]
 ---
@@ -65,6 +65,6 @@ Joshua Kerievsky 的《Refactoring to Patterns》把重構手法接到設計模�
 
 改動的技術要用在對的地方，靠的是設計判準——什麼樣的結構值得改成、什麼樣的複雜度是根本問題。那條路徑走 [設計判準與日常實踐](../design-and-practice/)。
 
-要動的程式碼沒有測試而你想補，測試該怎麼分層與設計看 [Testing 測試策略](/testing/)；大規模重構的排程、範圍控制與回退看 [Python 維護指南的重構章](/python/07-refactoring/)，那裡處理的是這三本書都沒有處理的專案層問題。
+要動的程式碼沒有測試而你想補，測試該怎麼分層與設計看 [Testing 測試策略](/testing/)；大規模重構怎麼分階段推進、途中的常見失誤與作用域回歸風險，看 [Python 維護指南的重構章](/python/07-refactoring/)，那裡有一個跨版本重構的完整實作案例。
 
 如果重構一直被排不進時程，那不是技藝問題——走 [估算、承諾與決策偏誤](../../software-management/topics/estimation-decision/) 與 [組織結構與團隊設計](../../software-management/topics/team-design/)。

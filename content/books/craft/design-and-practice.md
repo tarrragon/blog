@@ -1,7 +1,7 @@
 ---
 title: "設計判準與日常實踐"
 date: 2026-08-19
-description: "寫出來的東西改不動、或不確定日常該養成哪些習慣時，依密度與主張數分層的選讀"
+description: "寫出來的程式改不動、或不確定日常該養成哪些習慣時的選讀"
 weight: 10
 tags: ["books", "reading", "craft", "software-design", "practice"]
 ---

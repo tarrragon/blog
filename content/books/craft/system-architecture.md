@@ -1,7 +1,7 @@
 ---
 title: "系統架構"
 date: 2026-08-19
-description: "要決定整個系統該長什麼形狀、或已經在拆分而每個選項都有代價時，依「有沒有詞彙」分層的選讀"
+description: "要決定整個系統該長什麼形狀、或已經在拆分而每個選項都有代價時的選讀"
 weight: 30
 tags: ["books", "reading", "craft", "architecture", "trade-off"]
 ---
