@@ -1,7 +1,7 @@
 ---
 title: "對人負責"
 date: 2026-08-19
-description: "人留不留得住、成不成長由你扛時的選讀，以及大公司與小公司在這個位置上的問題差異"
+description: "人留不留得住、成不成長由你負責時的選讀，以及大公司與小公司在這個位置上的問題差異"
 weight: 40
 tags: ["books", "reading", "career", "engineering-manager", "retention"]
 ---

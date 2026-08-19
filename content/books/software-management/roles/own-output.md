@@ -1,7 +1,7 @@
 ---
 title: "只對自己的產出負責"
 date: 2026-08-19
-description: "交出去的東西只有自己扛時，怎麼讓產出被信任、怎麼知道下一步該補什麼，以及想往上走該預習什麼"
+description: "交出去的東西只有自己負責時，怎麼讓產出被信任、怎麼知道下一步該補什麼，以及想往上走該預習什麼"
 weight: 10
 tags: ["books", "reading", "career", "junior-engineer"]
 ---
