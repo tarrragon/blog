@@ -77,6 +77,8 @@ find_report_slug() {
       echo "/report/cadence-homogenization-in-batch-writing/" ;;
     decorative-symbols-keyword-bank)
       echo "/report/visual-tool-error-layer-alignment/" ;;
+    keyword-list-needs-dominant-violating-sense)
+      echo "/report/keyword-list-needs-dominant-violating-sense/" ;;
     risk-asymmetric-audit-standard)
       echo "/report/security-teaching-rigor-asymmetry/" ;;
     *)

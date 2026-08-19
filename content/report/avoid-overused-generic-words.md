@@ -55,6 +55,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "字句�
 - [#111 口語修辭稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)：泛用詞常伴隨口語感；#111 管「口語 vs 精確」、本卡管「泛用 vs 具體」，是同一個字句層的相鄰兩軸。
 - [#122 cadence 同質化](../cadence-homogenization-in-batch-writing/)：同句型反覆是 cadence、同一個詞反覆是它在字詞層的版本；本卡是 #122 從句型下沉到用詞的具體化。
 - [#149 命中是候選不是判決](../keyword-bank-hit-is-candidate-not-verdict/)：grep 到「坑」是候選、不是判決——引號內引用、真泛指合規，仍要一個語意判定步驟。
+- [#267 關鍵詞清單只裝得下違規義項佔多數的詞](../keyword-list-needs-dominant-violating-sense/)：軸不同的姊妹——本卡的訊號是密度（同一個泛用詞反覆出現把不同情境壓成同一個標籤），那張處理泛用**動詞單次出現就不精準**（「拿到的是理解」只寫一次也是錯的）。也解釋了為什麼「拿」這種高頻詞不該加進本卡的 grep 清單。
 
 ## 判讀徵兆
 
