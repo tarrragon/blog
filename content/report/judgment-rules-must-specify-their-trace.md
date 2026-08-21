@@ -97,6 +97,7 @@ slug: "judgment-rules-must-specify-their-trace"
 - [#221 檢查規則的作用域要顯式列舉](../lint-scope-must-be-explicit-fact/)：兩者都讓「零 error」失去意義。#221 是規則沒涵蓋到那些檔案，本卡是規則涵蓋了但判定沒有留下東西可看——未納管目錄的零 error 與判定過後的零 finding，訊號相同。
 - [#245 原則層與操作層是兩份會漂移的副本](../principle-operationalization-drifts/)：本卡的上游。本卡管規則本身留不留得下痕跡，#245 管規則有沒有傳到執行者手上——痕跡條款設計得再好，執行者讀的是沒有那條的舊版就不生效，而本批實測到的正是這個組合。
 - [#266 可核對的錨要選會下降的量](../checkable-anchor-must-be-able-to-fall/)：下游——痕跡規定完之後還有一步，痕跡要被計數才能從外部看出維護狀態，而計數方式選錯時痕跡存在而指標讀不到（實測：判定寫在不同句型裡，關鍵詞覆蓋率把最完整的兩筆判成缺口）
+- [#269 舉證要求會把誠實的那個輸出定價成最貴的](../evidence-requirement-can-price-out-precision/)：本卡的補集，兩張合起來才涵蓋判定型規則的兩種失效。本卡管沒有痕跡要求的規則、它沿零後續的結論塌陷；#269 管有痕跡要求而定價錯的規則、它沿含糊或省略塌陷。方向要注意——照本卡逐條補要求正是 #269 那個問題最常見的來源，補完之後要再跑一次它的排價。
 - [#153 Review 漏抓先分 design gap 與 execution gap](../review-miss-diagnose-design-vs-execution-gap/)：本卡揭露第三種——規則存在、也執行了，但執行的是規則允許的最省力形態。那條路徑是規則自己留的，因此加 frame（design 的修法）與催執行（execution 的修法）都不會收斂。
 
 ---
