@@ -137,16 +137,20 @@ h5 {
   font-weight: 500;
 }
 
+/* 標題截到兩行。這裡不能用 align-items 來做左右對齊——align-items 會把 span
+   縮成內容寬度，寬度不再受容器約束，於是 span 自己永遠不溢出、ellipsis 不觸發，
+   超出的部分改由 .article-nav-link 的 overflow: hidden 從對齊的反方向裁掉
+   （下一篇靠右對齊時裁的是開頭的字，且沒有省略號）。維持預設的 align-items:
+   stretch 讓 span 撐滿容器，對齊改由 .article-nav-next 的 text-align 繼承下來，
+   截斷才會發生在 span 自己身上。 */
 .article-nav-title {
   font-size: calc(var(--size) * 1.6);
   color: var(--color-light) !important;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.article-nav-next .article-nav-link {
-  align-items: flex-end;
+  line-height: 1.4;
 }
 
 .article-nav-toc {
@@ -184,9 +188,5 @@ h5 {
 
   .article-nav-next {
     text-align: left;
-  }
-
-  .article-nav-next .article-nav-link {
-    align-items: flex-start;
   }
 }
