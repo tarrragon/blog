@@ -53,7 +53,7 @@ Goroutine lifecycle 的核心檢查是每個 goroutine 都能回答三個問題�
 2. 它如果卡在 channel 或 I/O，如何被喚醒？
 3. 它停止後如何讓測試或上層知道？
 
-若三題任一題答不出來，就有 leak 風險。
+若三題任一題確認不了，就有 leak 風險。
 
 例如 worker 應該有 context：
 

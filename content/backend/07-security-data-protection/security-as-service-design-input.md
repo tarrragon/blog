@@ -64,7 +64,7 @@ description: "新服務或大改版要進設計評審時，判斷資安輸入齊
 | 設計文件列不出這個服務會碰到的資料類別與對外入口 | 資產分母與信任邊界兩欄缺席，後續控制沒有分母   | 依本章的資產分母段補清單；資料分級接 [7.4 資料保護與遮罩治理](/backend/07-security-data-protection/data-protection-and-masking-governance/)、權限邊界接 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) |
 | 資安條件在架構定案之後才被提出                   | 輸入時點在設計評審之後，控制只能加在既定結構上 | 把本章設計評審那一段的固定問題放進評審檢查項；模組層的問題到章節路由見 [7.8 模組路由](/backend/07-security-data-protection/security-routing-from-case-to-service/)                                                                           |
 | 介面契約沒寫身分層次、授權範圍與稽核欄位         | 控制意圖沒有進到契約，實作團隊各自在中介層補   | 依本章的介面契約段補四類欄位；身分層次的判準在 [7.29 API 認證的信任邊界分層](/backend/07-security-data-protection/api-authentication-trust-boundaries/)                                                                                      |
-| 說得出要做哪些控制，說不出將來拿什麼證明它們生效 | 證據計畫缺席，驗證階段只能靠側面推論           | 依 [evidence package](/backend/knowledge-cards/evidence-package/) 的欄位補來源與查詢入口；驗證分類見 [7.B3 資安控制驗證](/backend/07-security-data-protection/blue-team/security-control-validation/)                                        |
+| 列得出要做哪些控制，指不出將來拿什麼證明它們生效 | 證據計畫缺席，驗證階段只能靠側面推論           | 依 [evidence package](/backend/knowledge-cards/evidence-package/) 的欄位補來源與查詢入口；驗證分類見 [7.B3 資安控制驗證](/backend/07-security-data-protection/blue-team/security-control-validation/)                                        |
 
 ## 驗收條件
 

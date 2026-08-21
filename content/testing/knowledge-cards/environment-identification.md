@@ -6,7 +6,7 @@ weight: 12
 tags: ["testing", "environment", "safety", "allowlist"]
 ---
 
-測試環境判定回答一個所有會寫入的自動化測試都必須先回答的問題：**我現在連的是哪個環境**。答不出來就執行，等於把「建立與刪除真實資料」的能力交給一個不確定的目標。它是[憑證管理](/testing/03-protocol-integration-test/credential-management/)與[真實後端驗證測試](/testing/knowledge-cards/real-backend-verification-test/)共同踩在上面的地基——兩者都預設「程式能判定自己連的是哪個環境」——而不只是某一種測試的設計細節。
+測試環境判定回答一個所有會寫入的自動化測試都必須先回答的問題：**我現在連的是哪個環境**。確認不了就執行，等於把「建立與刪除真實資料」的能力交給一個不確定的目標。它是[憑證管理](/testing/03-protocol-integration-test/credential-management/)與[真實後端驗證測試](/testing/knowledge-cards/real-backend-verification-test/)共同踩在上面的地基——兩者都預設「程式能判定自己連的是哪個環境」——而不只是某一種測試的設計細節。
 
 ## 概念位置
 

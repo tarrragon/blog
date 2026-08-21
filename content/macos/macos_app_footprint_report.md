@@ -5,7 +5,7 @@ description: "想知道「哪個 App 該清、清掉的是安全快取還是動�
 tags: ["macos", "disk-space", "homebrew", "troubleshooting", "tooling"]
 ---
 
-`du ~/Library/*` 只能列出 Caches、Containers 這些目錄各佔多少，答不出「Steam 這個 App 一共吃了多少」。原因是一個 App 的資料散落在 `~/Library` 好幾個不同位置，按目錄統計就拆不回它名下。這篇記錄一個把這些散落佔用聚合回各 App 的 `app-report` 腳本——搭配磁碟層的 [disk-report](../macos_disk_space_diagnosis/)，後者找出哪棵子樹最大，這篇把子樹拆到 App。
+`du ~/Library/*` 只能列出 Caches、Containers 這些目錄各佔多少，算不出「Steam 這個 App 一共吃了多少」。原因是一個 App 的資料散落在 `~/Library` 好幾個不同位置，按目錄統計就拆不回它名下。這篇記錄一個把這些散落佔用聚合回各 App 的 `app-report` 腳本——搭配磁碟層的 [disk-report](../macos_disk_space_diagnosis/)，後者找出哪棵子樹最大，這篇把子樹拆到 App。
 
 ## 一個 App 的真實佔用不等於它的 .app 大小
 

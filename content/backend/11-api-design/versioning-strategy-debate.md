@@ -79,7 +79,7 @@ GitHub 的 24 個月是把它寫成契約的形態（C12，限 REST API、GraphQ
 
 **第二問：不做版本的前提成不成立**。三種前提任一成立即可，而它們要求的東西不同：client 能在執行期習得控制項（hypermedia）、client 顯式宣告要哪些欄位（GraphQL 式）、或變更純粹是加法且由服務端吸收（ingest 型 API 的 tolerant reader 加 add-only，寬容度由服務端單方面提供、消費者不必有任何能力）。
 
-前提成立之後還有一道進場條件，而它是既存事實而非自評：**現在說不說得出上週有幾個消費者呼叫某個 deprecated 欄位**。說不出來時 no-versioning 的三份紀律沒有執行依據，等同前提不成立，往下走（這層能力的建法見 [11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)）。
+前提成立之後還有一道進場條件，而它是既存事實而非自評：**現在查不查得出上週有幾個消費者呼叫某個 deprecated 欄位**。查不出來時 no-versioning 的三份紀律沒有執行依據，等同前提不成立，往下走（這層能力的建法見 [11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)）。
 
 **第三問：消費者的集中度**。數量之外要看分佈，而「協調得動」這件事本身有四項查得到的成立條件（見 [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)）。單一客戶佔九成流量時，協調得動的是那九成，永遠協調不動的是那條長尾，而退場當天的事故全發生在長尾上。判準因此不是「多少個」而是「協調不動的那部分佔多少」，產物是近三十天流量的 per-consumer 佔比排序與前十名之外的尾部合計。尾部佔比高時，大客戶走合約協調、長尾走版本機制，而兩邊的支援窗口可以不同——長尾那半實質上是第一問的第三格。
 

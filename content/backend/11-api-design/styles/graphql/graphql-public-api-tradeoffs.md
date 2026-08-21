@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "graphql"]
 
 ## 採用：動機要能量化
 
-[11.C18](/backend/11-api-design/cases/graphql-github-adoption/) 記錄了 GitHub 2016 年的採用動機、關鍵在它的可量化性：既有 REST API 佔資料庫層超過 60% 的請求、且 over-fetching 與 under-fetching 並存 — 送太多資料、又缺消費者要的資料。這是基礎設施成本層的痛、不只是開發體驗敘事。判讀：GraphQL 的採用決策值得用同樣的標準檢驗 — 說得出「哪個資源層指標會因 client 聲明取數而改善」、動機成立；只說得出「前端想要彈性」、先確認這個彈性有多少會被實際用到（消費者形狀判準、見 [11.2](/backend/11-api-design/api-style-selection/)）。
+[11.C18](/backend/11-api-design/cases/graphql-github-adoption/) 記錄了 GitHub 2016 年的採用動機、關鍵在它的可量化性：既有 REST API 佔資料庫層超過 60% 的請求、且 over-fetching 與 under-fetching 並存 — 送太多資料、又缺消費者要的資料。這是基礎設施成本層的痛、不只是開發體驗敘事。判讀：GraphQL 的採用決策值得用同樣的標準檢驗 — 指得出「哪個資源層指標會因 client 聲明取數而改善」、動機成立；只給得出「前端想要彈性」、先確認這個彈性有多少會被實際用到（消費者形狀判準、見 [11.2](/backend/11-api-design/api-style-selection/)）。
 
 ## 穩態一：雙軌共存
 
