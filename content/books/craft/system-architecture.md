@@ -10,6 +10,8 @@ tags: ["books", "reading", "craft", "architecture", "trade-off"]
 
 這個主題只有兩本，按有沒有詞彙分。先建立一整套可以用來討論的概念，再處理那些用了概念仍然沒有標準答案的決定。
 
+讀不動長篇文字時，本篇文末另標出承接這個主題機制層的公開課，收錄門檻與已知限制見 [書單推薦](/books/) 的「公開課怎麼收」段。
+
 ## 起點是 Fundamentals of Software Architecture
 
 Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙要鋪滿才有用——本篇涵蓋面最完整的一本落在它身上，原因就在這裡。沒有那套詞彙的架構討論會停在「我覺得微服務比較好」，有了之後才問得出「我們要優化的是哪幾個架構特性、代價付在哪裡」。
@@ -47,6 +49,21 @@ Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙�
 Robert Martin 的《Clean Architecture》常被列在這個位置，本書單未評估它，理由與 [設計判準與日常實踐](../design-and-practice/) 對《Clean Code》的處理相同。SEI 的《Software Architecture in Practice》是學術系統化的另一條路線（品質屬性、ATAM 評估法），繁中版也在，但它的讀者定位偏向需要正式架構評估流程的組織，本書單未評估那個情境。
 
 資料密集系統的設計（複製、分片、一致性模型）不在這個主題，那屬於 [Backend 服務實務指南](/backend/) 的責任範圍。
+
+## 機制那一半有兩門完整的課，取捨判斷那一半沒有
+
+這是技藝線唯一接得住公開課的主題，而它接住的只有一半。架構決定要用到機制知識與取捨判斷兩者：機制知識是複製怎麼做、一致性有幾種、共識協定在解什麼、分割之後交易怎麼辦；取捨判斷是在資訊不足時把每個選項的代價講清楚。機制教得了，判斷教不了——這跟本篇兩本書的分工同向，起點書先給詞彙、第二本才處理用了詞彙仍然沒有標準答案的決定。
+
+**MIT 6.824 Distributed Systems（Spring 2020）** 由 Robert Morris 主講、20 講、每講約 80 分鐘，走的是讀論文加講解的形式。講次依序走過 GFS、主備複製、Raft（連三講）、ZooKeeper、CRAQ 的鏈式複製、Aurora、Frangipani 與 Memcached 的快取一致性、分散式交易、Spanner、樂觀並行控制、Spark、COPS 的因果一致性，最後兩講是 Bitcoin 與 Blockstack。它給的是本篇兩本書在談元件切分與資料所有權時預設讀者知道、而兩本書都不從頭建立的那些機制。這門課要寫 Go 的實驗作業（MapReduce 與 Raft 各一份），只看講課不做實驗仍然走得完，代價是共識協定那幾講會停在聽得懂而不是做得出來。
+
+**Martin Kleppmann 的 Distributed Systems lecture series** 是劍橋的課，8 講切成 23 段影片、每段 10 到 20 分鐘，全長約七小時。同一位作者的《Designing Data-Intensive Applications》不在這一篇——資料密集系統的設計屬於 [Backend 服務實務指南](/backend/) 的範圍，這裡收的只有這門課。它跟前一門的差別在密度與門檻：Morris 那門一講一篇論文、每講約 80 分鐘、假設聽眾是研究生；Kleppmann 這門從電腦網路與時鐘開始建立，單段短、可以零碎聽完。兩門的「講」不是同一個單位——比長度要用總時數，6.824 二十講約二十六小時。想先建立整體地圖的從這一門開始，想追某個機制怎麼被證明的走前一門。
+
+兩門課的材料是已經發表的論文與已經定案的協定，時效因此不隨版本更新而動；會改變的是它們順帶提到的雲端服務與工具介面。兩門都是英語授課，而它們不像 Open Yale 的課附官方逐字稿——字幕狀態以 YouTube 當下提供的為準，本頁沒有確認過是人工還是自動。這個主題沒查到中文的對應課。
+
+取捨判斷那一半沒查到課，而缺口的成因就是這個主題的核心能力本身——在資訊不足的時候把取捨講清楚，包括講清楚自己選的那個爛在哪。這種能力的教材是別人做過的決定與它後來的代價，而那些代價要好幾年才顯現，一學期的課承載不了。整條線的供給狀況寫在 [工程技藝書單](../) 的公開課段。
+
+- [YouTube 播放清單（MIT 6.824 Distributed Systems，Robert Morris，Spring 2020，20 講）](https://www.youtube.com/playlist?list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB)
+- [YouTube 播放清單（Distributed Systems lecture series，Martin Kleppmann，8 講、23 段影片）](https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB)
 
 ## 這個主題接到哪裡
 
