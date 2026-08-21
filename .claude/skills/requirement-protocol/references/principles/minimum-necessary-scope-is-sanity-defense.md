@@ -1,6 +1,6 @@
 # 最小必要範圍是 sanity 防線、不是優化
 
-> **角色**：本卡是 `requirement-protocol` 的支撐型原則（principle）、被七大原則 6（漸進驗證、最小必要範圍）與 reference `progressive-verification.md` 引用。
+> **角色**：本卡是 `requirement-protocol` 的支撐型原則（principle）、被核心原則「漸進驗證、最小必要範圍」與 reference `progressive-verification.md` 引用。
 >
 > **何時讀**：設計 selector / observer / JS 操作範圍、或拿不定「先寫寬一點之後再縮 vs 一開始就具體」時。
 

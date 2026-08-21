@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: requirement-protocol
 license: MIT
 metadata:
-  version: 0.8.0
+  version: 0.8.1
   category: writing-methodology
 ---
 
@@ -18,7 +18,7 @@ metadata:
 
 ---
 
-## Core Pillars（四大支柱）
+## Core Pillars（核心支柱）
 
 | 支柱                                         | 意義                                                                                                                                                                                                                            |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -29,7 +29,7 @@ metadata:
 
 ---
 
-## Seven Principles（七大原則速查）
+## Core Principles（核心原則速查）
 
 讀者在本區塊能完成大方向判斷；具體情境的展開（步驟 / 模板 / 反例）依下方「觸發路由」進對應 reference。
 
@@ -73,7 +73,7 @@ Selector / MutationObserver root / JS 操作邊界：**從最小開始、有證�
 
 第 1 輪實作預期會有未發現問題、不要追求 perfect — 跑得到結尾、看實際結果比寫得漂亮重要。第 2 輪用「對需求 / 邊界 case」frame、第 3 輪用「dogfood / 反向自查」frame、第 N 輪換「上層原則」frame。每輪不同 frame 才能 catch 上一輪 miss 的東西。
 
-呈現決策時的「五維度展開」（[`references/decision-dialogue.md`](/skills/requirement-protocol/decision-dialogue/)）就是 multi-pass 在「決策呈現」場景的具體實現：每維度等於一輪 self-check。**「再仔細一次」≠ multi-pass — 同 frame 重看 catch 不到不同層的錯**。L4 review / pair / dogfood 才是行為錯誤的解、不是再寫一條 hook（[#82](/report/literal-interception-vs-behavioral-refinement/)）。
+呈現決策時的「五維度展開」（[`/skills/requirement-protocol/decision-dialogue/`](/skills/requirement-protocol/decision-dialogue/)）就是 multi-pass 在「決策呈現」場景的具體實現：每維度等於一輪 self-check。**「再仔細一次」≠ multi-pass — 同 frame 重看 catch 不到不同層的錯**。L4 review / pair / dogfood 才是行為錯誤的解、不是再寫一條 hook（[#82](/report/literal-interception-vs-behavioral-refinement/)）。
 
 ---
 
@@ -94,9 +94,9 @@ Selector / MutationObserver root / JS 操作邊界：**從最小開始、有證�
 | 寫到「你想怎麼做？」「ABCDE 你選哪個？」這類開放問             | `references/decision-dialogue.md`                                     |
 | 反省題 / retrospective / 「下一步往哪走」類問題                | `references/decision-dialogue.md`                                     |
 
-每份 reference 自包含：以該情境為核心、把六大原則翻譯成可直接套用的協議步驟與模板。閱讀任一 reference 不需要回來看其他 reference。
+每份 reference 自包含：以該情境為核心、把核心原則翻譯成可直接套用的協議步驟與模板。閱讀任一 reference 不需要回來看其他 reference。
 
-**與 `wrap-decision` 的邊界**：本 skill 處理「使用者**指令**是否明確可執行」（模糊指令澄清）。若卡點不是指令模糊，而是「決策諮詢的當事人條件不足」或「要 premortem 的計畫輪廓不清」，那屬 `wrap-decision` 的資料充足度閘門（Step 0）與 premortem context 閘門——先讀 `.claude/skills/wrap-decision/SKILL.md`。三者互為前置、不重複問同一組問題（分工對照表見該檔 Step 0「與 requirement-protocol 的分工邊界」）。
+**與 `wrap-decision` 的邊界**：本 skill 處理「使用者**指令**是否明確可執行」（模糊指令澄清）。若卡點是「決策諮詢的當事人條件不足」或「要 premortem 的計畫輪廓不清」而非指令模糊，那屬 `wrap-decision` 的資料充足度閘門（Step 0）與 premortem context 閘門——先讀 `../wrap-decision/SKILL.md`。三者互為前置、不重複問同一組問題（分工對照表見該檔 Step 0「與 requirement-protocol 的分工邊界」）。
 
 ---
 
@@ -113,7 +113,7 @@ Selector / MutationObserver root / JS 操作邊界：**從最小開始、有證�
 
 ```text
 requirement-protocol/
-├── SKILL.md                                       # 本檔：四支柱 + 七大原則速查 + 觸發路由
+├── SKILL.md                                       # 本檔：核心支柱 + 核心原則速查 + 觸發路由
 └── references/
     ├── clarifying-ambiguous-instructions.md       # 情境 1：模糊指令的澄清協議（spatial / relative / isolation / decision-authority）
     ├── failure-pivot-protocol.md                  # 情境 2：失敗 2 次的轉折協議（停下、驗證假設、換方向）
@@ -127,7 +127,7 @@ requirement-protocol/
 
 ## Reading Order（建議閱讀順序）
 
-1. 第一次接觸 → 從本 SKILL.md 的「三大支柱 + 六大原則」讀起
+1. 第一次接觸 → 從本 SKILL.md 的「核心支柱 + 核心原則」讀起
 2. 進入實際情境 → 依觸發路由讀對應 reference（只讀一份）
 3. 想驗證自己有沒有套用對 → 用該 reference 結尾的 self-check checklist 自評
 
@@ -137,7 +137,7 @@ requirement-protocol/
 
 本 skill 的協議建立在幾條抽象層原則上、實作協議時可背景引用（檔案位置：`references/principles/`）：
 
-- [#42 2 次門檻](/report/two-occurrence-threshold/) — 第 1 次失敗是運氣、第 2 次是訊號（六大原則 2/3 的根據）
+- [#42 2 次門檻](/report/two-occurrence-threshold/) — 第 1 次失敗是運氣、第 2 次是訊號（「同方向失敗 2 次」與「推理失敗 2 次切到量測工具」兩條原則的根據）
 - [#43 最小必要範圍](/report/minimum-necessary-scope-is-sanity-defense/) — 範圍從窄起、有證據再擴張（原則 6 的根據）
 - [#44 SSOT](/report/single-source-of-truth/) — 值的住址只能一處（成本告知與澄清的共骨）
 - [#45 外部組件合作四層](/report/external-component-collaboration-layers/) — 離公共介面越近越穩
@@ -161,6 +161,8 @@ requirement-protocol/
 ---
 
 **Last Updated**: 2026-07-05
+**Version**: 0.8.1 — 數量命名收斂與 lint 基線清理：標題「Core Pillars（四大支柱）」「Seven Principles（七大原則速查）」改成「核心支柱」「Core Principles（核心原則速查）」（REF2），與 compositional-writing 已採用的慣例一致。改名的觸發不只是規則命中——同一個檔裡已經漂移成「四大支柱」與「三大支柱」、「七大原則」與「六大原則」並存，正是 name-collections-by-role-not-count 描述的失效模式的實證。正文、目錄樹與 principles 卡的反向引用一併改成角色命名，原則的交叉引用改用語意標題取代編號；「與 wrap-decision 的邊界」段的條件句改成核心概念前置（POS-negation-lead）。
+
 **Version**: 0.8.0 — 觸發路由段新增「與 wrap-decision 的邊界」註記：指令模糊屬本 skill，當事人條件不足 / premortem 計畫輪廓不清屬 wrap-decision Step 0 與 context 閘門，三者互為前置不重複問
 **Version**: 0.7.0 — Phase B1 結構升級：加第 4 pillar「Multi-pass Refinement」+ 第 7 原則、明示 multi-pass 在「需求協議」場景的展開、串連 #82 / #83 / #85
 **Version**: 0.6.0 — 補 #82 (字面攔截 vs 行為精煉)：點出 hook 對行為錯誤無能為力、本 skill 的 reference + self-check + dogfood examples 就是 multi-pass 設計、不是「再補一條 hook 規則」

@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.68.1
+  version: 0.68.2
   category: writing-methodology
 ---
 
@@ -250,6 +250,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.68.2 — lint 基線清理：writing-articles 的「分析型文章的開頭」從粗體偽標題改成 #### 真標題（MD036——粗體段落不進 TOC、也產生不了錨點，底下帶多段內容時尤其該是標題）；translation-review 四處「不是 X、而是 Y」改成核心概念前置（POS-negation-lead），本 skill 自己教的規則在自己的 reference 裡違規是 self-application 漏網。
+
 **Version**: 0.68.1 — 三輪跑完之後的整體通讀抓到 0.68.0 自己的兩處不一致（第五次同型）：入口分級在核心原則已改成「形態寫不寫得成 pattern」，而修法 2 還寫著舊的「形態穩定 / 不穩定」二分；同批的 report 卡則是標題沒跟著核心原則改。這一輪的教訓與前四次相同——改一個宣稱時它的每一份副本（標題、核心原則、修法、判讀徵兆表、索引、反向指標）都要一起改，而逐條檢查修法產物看不見漏掉的那一份，因為它在條目之間。
 
 **Version**: 0.68.0 — Round 3（self-application / steelman / outbound）三個 frame 對這張 principle 卡的修正，最深的一項是**軸名取了次好的代理變數**：卡名與核心原則說「佔比決定入口」，而卡自己把「拿」歸成「連穩定形態都沒有」的同一份文件裡，修法 3 就描述出了那個形態。真正的判準是二維——佔比只決定「原樣進清單」可不可行，其餘入口由形態寫不寫得成 pattern 決定。卡名與核心原則同步改。入口從封閉的四種改成開放式，補上「排一輪限定 scope 的 review」（那正是探針缺的偵測入口）。另補三項：物理化錯配清單漏掉的第三個實例「承載 / 載體」寫進修法 2（它照判準成立、佔比低而形態穩定，屬收窄 pattern 那一格，而清單抓不到——這是本卡主張最直接的自我實例）；作用域補上「執行入口若是人工或 agent review，這整套分工就不是問題」；以及 self-application 掃到的新模具「形狀」（同一個修辭角色在五個段落各出現一次，是 0.67.0 修法產物的又一次同骨化）。這批同時修掉規範 SSoT 側的缺口：AGENTS.md 的物理化錯配段是那個「清單是抽樣」宣稱的第三份副本，也是唯一沒改的一份。
