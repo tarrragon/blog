@@ -55,7 +55,7 @@ Antti Ilmanen 的《Expected Returns》接下一步：歷史報酬要怎麼轉�
 
 處境相容性上，兩本的樣本都以已開發市場為主，台股不在《Triumph of the Optimists》的原始樣本裡，把結論套到單一新興市場之前要先確認那個市場的資料序列有多長。取得成本是這個條目的實際障礙，而 [書單推薦](/books/) 的約束段已標明本書單不以價格篩選：兩本都查不到中譯本，取得成本也高於本主題其餘各本（學術與專業出版，台灣通路多半要另外訂）。
 
-兩本需要的前置知識不同。《Triumph of the Optimists》的主體是圖表而非敘述，讀它需要報酬統計的基本概念。讀之前可以先想一下：我對實質報酬有沒有概念、能不能辨識算術平均與幾何平均為什麼差這麼多、以及為什麼推估長期報酬要用幾何平均。如果還不行，現在讀這本或討論這組數字都還太早，建議先從《漫步華爾街》建立報酬的基本概念，再回來讀這本。《Expected Returns》要先有資產類別與風險溢酬的基本語彙，《漫步華爾街》提供的程度就夠。
+兩本需要的前置知識不同。《Triumph of the Optimists》的主體是圖表而非敘述，讀它會用到幾個報酬統計的概念：實質報酬、算術平均與幾何平均的差異、以及推估長期報酬為什麼用幾何平均。對這幾個概念還不熟的話，可以先從《漫步華爾街》把報酬的基本概念建立起來，再回來讀這本。《Expected Returns》要先有資產類別與風險溢酬的基本語彙，《漫步華爾街》提供的程度就夠。
 
 - [三民（Triumph of the Optimists: 101 Years of Global Investment Returns, Princeton University Press, 2002）](https://www.sanmin.com.tw/product/index/003107626)
 - [三民（Expected Returns: An Investor's Guide to Harvesting Market Rewards, John Wiley & Sons, 2011）](https://www.sanmin.com.tw/product/index/002199978)
