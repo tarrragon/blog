@@ -135,6 +135,21 @@ while IFS= read -r line; do
     done
   fi
 
+  # 替換一般 references/xxx.md → /skills/<name>/xxx/
+  # principles/ 已在上一段消化完，這裡剩下的是平輩 reference。鏡像把它們攤平成
+  # content/skills/<name>/xxx.md（沒有 references/ 這層），相對路徑照抄過去會是
+  # broken link — mdtools cards 會判 error 擋下 CI。漏掉這段的症狀是重新鏡像時
+  # 靜默退化：舊鏡像手改過的 Hugo route 被原始相對路徑蓋回去。
+  if echo "$line" | grep -qE '\]\(references/[a-z0-9_-]+\.md\)'; then
+    for ref in $(echo "$line" | grep -oE 'references/[a-z0-9_-]+\.md' | sed 's|references/||;s|\.md||'); do
+      if [[ -f "${TARGET_DIR}/${ref}.md" ]]; then
+        line="${line//references\/${ref}.md//skills/${SKILL_NAME}/${ref}/}"
+      else
+        echo "  WARN: no mirror for reference ${ref} — leaving as-is" >&2
+      fi
+    done
+  fi
+
   echo "$line"
 done < "$SOURCE" >> "$tmpfile"
 
