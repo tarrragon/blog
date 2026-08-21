@@ -67,6 +67,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "SSoT", "寫作規
 - [#44 Single Source of Truth](/report/single-source-of-truth/)：本卡是 SSoT 在「結構引用」維度的實例。編號是位置的 derivation；把編號寫進多處引用點、等於把 derivation 當 fact 散寫多份複本 — fact（章節的語意身分）只在標題一處、引用就該錨在那裡。
 - [#93 URL slug 必須顯式定義為 fact](/report/url-slug-must-be-explicit-fact/)：同屬「引用要錨在 fact」家族。#93 把跨工具 identifier 從推導值升級成顯式 fact；本卡把跨段落引用的錨點從位置推導值（編號）換成語意 fact（標題）。兩卡的失效模式同型：推導鏈分歧、silent 失效、compile / lint 階段看不出來。
 - [#84 Naming 是 iterated artifact](/report/naming-as-iterated-artifact/)：標題是名字。本卡要求標題承載可被引用的語意、等於對標題套用 #84 的 cross-call-site 檢驗 — 從引用者的角度看、這個標題單獨出現時讀者知道它指什麼嗎？只有編號的標題在這個檢驗下直接不及格。
+- [#270 敘事的解碼材料要在讀者已讀的文本裡](/report/decodable-from-text-already-read/)：本卡的篇內形態。本卡管跨段跨檔引用結構單位時的編號；#270 管同一篇敘事裡對實體的位置與數量指涉（「前兩本」「另外兩本」「後者」）——derivation vs fact 的判準共用，而 #270 的實例顯示這種指涉不必等結構重排就錯位：位置與數量只在作者腦中的地圖上成立、作者自己就數錯了兩次。
 - [#97 Metadata surface 要納入寫作 review 範圍](/report/metadata-surface-in-writing-review/)：引用句屬於 #97 分類中的 navigation surface（跟 link label、索引條目同層）— 同樣是正文之外、卻直接決定讀者入口正確性的層。重排結構時、review 範圍要把散落各檔的引用句列入掃描面、而不是只改目標檔。
 
 ---
