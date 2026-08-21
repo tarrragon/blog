@@ -134,8 +134,12 @@ a:hover {
 */
 
 /* 選項 3: 漸變底線 */
+/* 連結色 #9dc4e8：對 --color-dark (#181a20) 的對比 9.52:1，落在正文白
+   (16.66:1) 之下、原本灰色 (4.91:1) 的兩倍。暗底介面靠色相而非亮度讓連結
+   被辨識——拉亮度會讓連結變成畫面最亮的元素而搶戲，低飽和的藍色相在無彩度
+   的白字段落裡自己會浮出來。 */
 a {
-  color: #888888 !important;
+  color: #9dc4e8 !important;
   text-decoration: none !important;
   background: linear-gradient(to right, var(--color-primary), var(--color-primary)) no-repeat;
   background-size: 0% 2px;
