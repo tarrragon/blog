@@ -54,7 +54,7 @@ testWidgets('error state back button navigates to home', (tester) async {
 
 ## 覆蓋率的衡量
 
-Widget test 的狀態覆蓋率 = 有 test case 的狀態數 / 矩陣中的總狀態數。100% 代表矩陣中每個狀態都有對應的 test case。
+Widget test 的狀態覆蓋率 = 有 test case 的狀態數 / 矩陣中的總狀態數。100% 代表矩陣中每個狀態都有對應的 test case。要注意這是單維度的飽和——狀態之間的組合、進入的先後順序這些交叉維度一格都沒被碰過，[等價類那一章](/testing/06-agent-authored-code/acceptance-equivalence-class/)給了盤點交叉的做法。
 
 狀態覆蓋率和 line coverage 衡量的對象不同。Line coverage 衡量「程式碼中有多少行被執行過」，狀態覆蓋率衡量「設計中有多少狀態被驗證過」。一個狀態的 test case 可能覆蓋很少的程式碼行（只驗證特定狀態下的 UI），但確認了該狀態的設計意圖被正確實作。
 

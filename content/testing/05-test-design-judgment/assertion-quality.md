@@ -54,6 +54,8 @@ Assertion 是否依賴非確定性因素 — 時間、隨機數、外部服務�
 
 ## 下一步路由
 
+- 斷言的預期值是從哪裡來的（取自實作執行結果時，下面三問會全部通過而測試什麼也沒驗）→ [判準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)
+
 - Flaky test 的系統性根因分類 → [Flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)
 - 斷言失敗訊息該寫什麼（reason 寫失敗後果與處置）→ [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)
 - 測試資料的代表性 → [Test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/)

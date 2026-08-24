@@ -28,6 +28,16 @@ tags: ["testing", "assertion", "flaky", "test-data", "mock"]
 - [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/) — 測試名稱與斷言說內容、註解只說操作約束、分析詞彙不入程式碼
 - [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/) — 建立測試問「未來哪種改壞要被擋」、變更時測試是唯一發聲的防護、約束該寫測試還是註解的分工判準
 
+## Agent 產出程式碼時這個模組怎麼變
+
+本模組的判準預設寫測試的人懂需求、而且看得懂自己在斷言什麼。程式碼由 agent 產出時這個前提鬆動：mock 邊界的判斷照舊成立，但「這條斷言的預期值從哪裡來」變成要先問的問題——預期值若取自實作的執行結果，斷言品質三問的每一問都會通過而測試什麼也沒驗。判準來源、驗收條件的射程與品質閘門的更替走 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)。
+
+那個模組的名字宣告了 agent 情境，而其中三件事與程式碼由誰寫**無關**，人手寫測試同樣適用——放在那裡是因為它們是同一次寫作的產物，不是因為它們只在 agent 情境成立：
+
+- **測試案例怎麼設計**：把條件攤成維度表、看維度兩兩相乘哪些格子空著，程序在[驗收條件的等價類](/testing/06-agent-authored-code/acceptance-equivalence-class/)。它自己指定的維度第二來源是既有的事故與客訴紀錄，那是人的流程。
+- **覆蓋率該不該當 KPI**：為什麼它是下限指標、當成通過條件會發生什麼，在[品質閘門的更替](/testing/06-agent-authored-code/coverage-to-mutation-gate/)。
+- **既有套件實際守著什麼**：存活的突變逐點指出「程式在這裡改掉行為，這套測試不會發現」，同章。
+
 ## 跨分類引用
 
 - → [monitoring 模組五 平台適配](/monitoring/05-platform-adaptation/)：各平台的 error 攔截機制差異影響 test 設計

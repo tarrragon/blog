@@ -53,6 +53,8 @@ tags: ["flutter", "dart", "ddd", "clean-architecture", "testing", "infrastructur
 
 ## 相關閱讀
 
+- [T.C10 同一組驗收通過八個不同的程式](/testing/cases/acceptance-passes-eight-different-programs/) — 另一種「綠燈但沒有保障」的機制：條件之間沒有交叉，那個維度沒有被任何一條條件碰過
+
 - 概念地基：[DDD 領域驅動設計指南](/ddd/) 的分工表——domain 與 Infrastructure 的邊界
 - 覆蓋率假象的姊妹篇：[192 個測試全過、實機全壞](/work-log/testing_three_layer_strategy/)——那篇是 mock 遮蔽真實行為、本文是重複實作讓覆蓋率分母失義，兩種機制都產出「綠燈但沒有保障」
 - 作用域原則：[#221 檢查規則的作用域要顯式列舉](/report/lint-scope-must-be-explicit-fact/)——「重複被各自的高品質掩蓋」是同一件事的 review 版本：單檔品質審查的作用域不含跨檔性質

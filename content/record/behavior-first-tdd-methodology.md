@@ -104,19 +104,35 @@ Dan North 在 2006 年提出 [BDD](https://dannorth.net/introducing-bdd/)，動�
 
 Sociable Unit Tests 跟 Clean Architecture 建立在同一條前提上——業務邏輯獨立於外部世界——所以兩者組合起來沒有額外的對接成本。
 
-Clean Architecture 的 Use Cases 層是業務邏輯的進入點：對外提供公開 API，對內只使用 Domain Entities、透過介面隔離外部依賴（Repository、Gateway）。這個結構直接給出 Sociable 需要的三件東西：Use Case 的公開 API 是測試邊界，Domain Entities 用真實物件，要 mock 的只有 Repository 這一層。
+Clean Architecture 的 Use Cases 層是業務邏輯的進入點：對外提供公開 API，對內只使用 Domain Entities、透過介面隔離外部依賴（Repository、Gateway）。這個結構直接給出 Sociable 需要的三個條件：Use Case 的公開 API 是測試邊界，Domain Entities 用真實物件，要 mock 的只有 Repository 這一層。
 
 這個組合多買到一件事：對 Use Case 的單元測試同時就是業務驗收測試。一個名為「使用者提交訂單成功」的測試案例，不需要啟動 UI、不需要真實資料庫，驗證的卻是完整的業務流程——Alistair Cockburn 的 Hexagonal Architecture 把測試當成系統的另一種使用者，講的是同一個結構性質。
 
 ## 邊界：Solitary 合理的場景
 
-數學演算法、加密系統這類需要細粒度驗證的場景，「壞掉時精確定位到具體類別」比「重構時測試不動」更有價值，用 Solitary 合理。另一類是用完就丟的行為快照——替沒有測試的程式碼先架一層保護再動手（Feathers 的入場技術），那種測試本來就不打算長期留著，耦合結構是它的工作方式。多數商業應用的長期測試不屬於這兩類。
+數學演算法、加密系統這類需要細粒度驗證的場景，「壞掉時精確定位到具體類別」比「重構時測試不動」更有價值，用 Solitary 合理。
+
+第二類是行為快照——替沒有測試的程式碼先架一層保護再動手，Feathers 的入場技術。這類測試斷言的是現狀而不是正確性，耦合結構是它的工作方式。它原本的定位是短期的入場資格：拆解依賴的期間先有回饋，正確性測試補上之後就移除。程式碼交給 agent 大幅改寫成為常態之後，這個定位的規模變了——每一次交出去的重構都需要先錄下現有行為的一層保護，而那層保護的存續期間跟著重構的節奏走，不再是一次性的。
+
+存續變長帶來一個要主動管理的責任：退場條件。同一段行為被正確性測試覆蓋之後，快照要移除，否則兩份對同一行為的斷言會各自演化並分岔，而分岔的那一刻沒有人會知道該相信哪一份。判準與操作方式在 [characterization test](/testing/knowledge-cards/characterization-test/) 那張卡。
+
+多數商業應用的長期測試不屬於這兩類。
+
+## 這個立場處理的是哪一半
+
+Sociable 與 Solitary 的分歧問的是「單元怎麼定義」，而這個問題預設行為由寫程式的人決定：測試該耦合行為不耦合結構，前提是那個行為就是想要的行為。程式碼由 agent 產出時多出一個問題——行為由誰決定、憑什麼相信它是需求要的那一個。
+
+這不是同一個問題的延伸，是它旁邊的另一個問題。本篇的立場在那個情境下照舊成立，而且理由更強：agent 重構的頻率與幅度都比人高，耦合在結構上的測試誤報成本隨之上升。「agent 可以順手把壞掉的測試修好」不構成反駁——測試在重構後被重新產生，意味著它重新對齊了新的實作，包含新引入的缺陷，修好的那一刻它作為回歸網的功能就歸零。
+
+改變的是這個立場不再足夠。判準的來源與可信度那一層由 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)承接。
+
+Test-First 在同一個情境下也多了一個理由。本篇給的理由是設計問題暴露的時間點，服務的是人的認知負荷；先寫測試在 agent 產出時另外製造出一件事——實作沒有可照抄的對象，於是判準的來源與實作分開。判斷一組測試還剩多少驗證力，第一個問題就是它的預期值從哪裡長出來——[判準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)那一章處理這件事。
 
 ## 這個立場接到哪裡
 
-兩派原著與對倫敦學派的系統性批評該讀哪本，走書單的 [驗證自己寫對了](/books/craft/verification/)——Kent Beck 的原始定義、Freeman 與 Pryce 的倫敦學派完整主張、Khorikov 的四支柱批評，三本的位置那篇有交代。
+兩派原著與對倫敦學派的系統性批評該讀哪本，走書單的 [驗證自己寫對了](/books/craft/verification/)——Kent Beck 的原始定義、Freeman 與 Pryce 的倫敦學派完整主張、Khorikov 的四支柱批評，各本的位置那篇有交代。
 
-測試分層怎麼設計、協議整合怎麼驗證，走 [Testing 測試策略](/testing/)；沒有測試的既有程式碼要先取得入場資格，走書單的 [改既有的程式](/books/craft/changing-existing-code/)。
+測試分層怎麼設計、協議整合怎麼驗證，走 [Testing 測試策略](/testing/)；診斷完之後斷言與 mock 邊界實際怎麼改，走 [測試設計判斷](/testing/05-test-design-judgment/)；程式碼由 agent 產出而不打算逐行讀時，判準該落在哪走 [模組六](/testing/06-agent-authored-code/)；沒有測試的既有程式碼要先取得入場資格，走書單的 [改既有的程式](/books/craft/changing-existing-code/)。
 
 ---
 
