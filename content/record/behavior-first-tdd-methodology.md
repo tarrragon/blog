@@ -1,49 +1,39 @@
 ---
-title: "行為優先的TDD方法論 - Sociable Unit Tests實踐指南"
+title: "行為優先的 TDD：測試耦合行為、不耦合結構"
 slug: "behavior-first-tdd-methodology"
 date: 2026-03-04
 draft: false
-description: "基於行為驅動測試策略，解決TDD痛點根源，透過Sociable Unit Tests實現低維護成本和高重構安全性"
+description: "重構時測試大量壞掉、或在「該不該 mock 這個協作者」上需要一個可執行的立場時，本站對兩派 TDD 分歧的選擇與推導"
 tags: ["TDD", "Sociable Unit Tests", "Behavior Testing", "Kent Beck", "Clean Architecture"]
 ---
 
-曾經有一段時間，我們團隊對TDD又愛又恨。「寫測試讓我們更有信心」，但「重構時要改一堆測試，還不如不寫」。這種矛盾讓我們反覆懷疑：TDD到底有沒有用？
-
-深入研究Kent Beck的原著和Valentina Jemuović的演講後，才發現問題出在我們誤解了「測試單元」是什麼。
+本站在 TDD 的兩派分歧上採行為優先：測試透過模組的公開 API 互動、只 mock 跨越應用邊界的外部依賴，也就是 Sociable Unit Tests 這一派。這篇記錄這個選擇的推導與操作方式；兩派各自最強的原著該讀哪本、每本代表什麼位置，由書單的 [驗證自己寫對了](/books/craft/verification/) 承接。
 
 <!--more-->
 
-## 痛苦的根本原因
+## 問題的形狀：測試耦合到了結構
 
-許多團隊學TDD時，都被教導「每個class寫一個test class，每個method寫一個test method」。這個看似合理的原則，埋下了長期的痛苦。
+「每個 class 寫一個 test class、每個 method 寫一個 test method」是常見的入門教法。照這個教法寫出來的測試，耦合的對象是程式的**結構**而不是**行為**：把一個 class 拆成兩個、把方法搬到新類別——外部行為完全沒變，測試卻大量壞掉。
 
-問題在於，這樣的測試耦合到了程式的**結構**，而非**行為**。只要重構——把一個class拆成兩個、把方法提取到新類別——測試就跟著破裂。維護測試的時間甚至超過寫功能本身。
+判讀訊號可以直接拿重構的 diff 來看：測試的改動量跟生產程式碼相當甚至更多、而這次改動沒有改變任何外部行為時，測試耦合的就是結構。這種處境下「維護測試的成本高於它提供的保護、還不如不寫」是一個理性的結論——要修的不是「採不採用 TDD」，是測試耦合的對象。
 
-Kent Beck在《Test Driven Development By Example》第一頁就寫道：
-
-> "Programmer tests should be sensitive to behavior changes and insensitive to structure changes."
-
-測試應該對行為的改變敏感，對結構的改變不敏感。如果重構時測試跟著爆炸，原因就在這裡。
+Kent Beck 與 Kelly Sutton 後來在 [Test Desiderata](https://testdesiderata.com/) 把這件事寫成兩條獨立的性質：**behavioral**（測試要對受測程式的行為改變敏感）與 **structure-insensitive**（程式結構改變時，測試的結果不應該跟著變）。重構時測試大量壞掉，違反的是第二條。
 
 ## 測試是可執行的需求規格
 
-需要先轉換一個根本認知：測試不是「驗證實作正確的工具」，而是**用程式碼表達的需求規格書**。
+這個立場建立在一個前置認知上：測試不是「驗證實作正確的工具」，而是**用程式碼表達的需求規格**。
 
-需求定義系統「應該做什麼」，實作是「怎麼做」的一種方式。需求應該保持穩定，實作可以隨時改變。Martin Fowler在《Refactoring》中說：
+需求定義系統應該做什麼，實作是怎麼做的其中一種方式。需求保持穩定、實作隨時可換——Martin Fowler 在《Refactoring》給重構的定義正是這個分界：在不改變外部行為的前提下，調整程式的內部結構。耦合在行為上的測試，在這個定義下的重構裡自然保持穩定。
 
-> "Refactoring is a way of restructuring an existing body of code, altering its internal structure without changing its external behavior."
+## 兩派的分歧在「單元」的定義
 
-重構改變內部結構，不改變外部行為。耦合到行為的測試，在重構時自然保持穩定。
+TDD 的兩派差在把什麼當成測試的單元。
 
-## Sociable Unit Tests：把Module當作測試單元
+**Classical TDD**（Kent Beck、Martin Fowler 的做法）把單元定義為模組——一個或多個協同工作的類別組合，對外提供公開 API。測試只透過這個 API 互動，看不到模組內部有哪些類別、它們怎麼協作；需要 mock 的只有真正的外部依賴——資料庫、檔案系統、外部服務。這種風格稱為 **Sociable Unit Tests**。
 
-TDD有兩種截然不同的流派。
+**Mockist TDD**（倫敦學派）把單元定義為單一 class，mock 掉所有協作者。這種風格稱為 **Solitary Unit Tests**。
 
-**Classical TDD**（Kent Beck、Martin Fowler的做法）把Unit定義為Module——一個或多個協同工作的類別組合，對外提供清晰的Public API。測試只透過這個Public API互動，不知道Module內部有哪些類別、它們如何協作。唯一需要Mock的是真正的外部依賴：資料庫、檔案系統、外部服務。這種風格稱為**Sociable Unit Tests**。
-
-**Mockist TDD**（London School）把Unit定義為單一Class，Mock所有協作者。這種風格稱為**Solitary Unit Tests**。
-
-核心差異在耦合對象：
+核心差異在耦合線的數量：
 
 ```text
 Sociable: Test → [Module API] → Module Implementation（黑盒）
@@ -51,39 +41,35 @@ Solitary: Test → Mock(B) → Class A → Class B
                  Mock(C)           → Class C
 ```
 
-Sociable只有一條耦合線，Solitary有多條。每一條耦合線都是日後的維護成本。
+Sociable 只有一條耦合線，Solitary 有多條，而每一條耦合線都是日後的維護成本——內部結構每動一次，掛在結構上的耦合線就要跟著修一次。
 
-## 重構安全性的驗證
+## 兩種測試長什麼樣
 
-判斷自己的測試是Sociable還是Solitary，有個簡單的驗證方法：
-
-改變Module的內部邏輯、調整類別結構、重新命名內部方法。如果所有測試依然通過，不需要修改，那你寫的是Sociable（正確）。如果任何測試需要跟著改，那你寫的是Solitary（需要重新設計）。
-
-以一個訂單提交的例子來說，Sociable測試看起來像這樣：
+以訂單提交為例，Sociable 測試只 mock 跨邊界的 Repository：
 
 ```dart
 test('使用者提交訂單成功', () async {
-  // Given: Mock外部依賴（只Mock Repository）
+  // Given: 只 mock 外部依賴（Repository）
   when(mockRepository.save(any))
       .thenAnswer((_) async => SaveResult.success('order-123'));
 
-  // When: 透過Use Case API提交訂單
+  // When: 透過 Use Case API 提交訂單
   final result = await submitOrderUseCase.execute(order);
 
   // Then: 驗證可觀察的行為結果
   expect(result.isSuccess, true);
   expect(result.orderId, 'order-123');
-  // 測試不知道Order內部如何計算、驗證
-  // 測試使用真實的Domain Entities
+  // 測試不知道 Order 內部如何計算、驗證
+  // 測試使用真實的 Domain Entities
 });
 ```
 
-而Solitary測試會是：
+Solitary 測試把協作者全部換成 mock、驗證的是呼叫本身：
 
 ```dart
 test('OrderService.submitOrder calls Repository.save', () async {
-  // Given: Mock所有協作者
-  final mockOrder = MockOrder();          // 連Order也Mock了
+  // Given: mock 所有協作者
+  final mockOrder = MockOrder();          // 連 Order 也 mock 了
   final mockValidator = MockOrderValidator();
   final mockCalculator = MockPriceCalculator();
 
@@ -94,50 +80,51 @@ test('OrderService.submitOrder calls Repository.save', () async {
 
   // Then: 驗證方法呼叫次數（實作細節）
   verify(mockRepository.save(mockOrder)).called(1);
-  // 這個測試一旦重構OrderService的內部邏輯就會破裂
+  // OrderService 的內部邏輯一重構，這個測試就會壞掉
 });
 ```
 
-## Test-First的速度優勢
+## 重構安全性的自我檢驗
 
-Test-First（先寫測試）比Test-Last（先寫程式再補測試）快，原因是問題被發現的時間點更早。
+手上的測試耦合到哪裡，可以用一個操作程序驗出來：改變模組的內部邏輯、調整類別結構、重新命名內部方法——外部行為保持不變。全部測試依然通過、一個都不用改，測試耦合的是行為；有任何測試要跟著改，那些測試耦合的就是結構，耦合線的位置也同時現形——要修的就是它們。
 
-Test-First的Red-Green-Refactor循環強迫你在寫實作之前先思考介面：「這個功能怎麼用？」、「測試容不容易寫？」介面設計問題在寫測試時（最早期）就暴露，修復成本最低。
+## Test-First 的優勢在問題被發現的時間點
 
-Test-Last則是程式寫完了才發現難以測試，這時通常意味著設計有問題，要改動的範圍更大。Kent Beck說TDD更快，指的正是這個。
+Test-First（先寫測試）比 Test-Last（先寫程式再補測試）快，差別在設計問題暴露的時間點。
 
-## BDD不是新方法，是修正命名
+Red-Green-Refactor 的循環把「這個功能怎麼用、介面好不好用」的思考排在寫實作之前——介面設計的問題在寫測試的當下就暴露，那是修復成本最低的時刻。Test-Last 的順序是程式寫完了才發現難以測試，而難以測試多半意味著設計問題，這時要改動的範圍已經大了。Kent Beck 說 TDD 更快，指的是這個時間點差，而不是打字比較少。
 
-Dan North在2006年創造「BDD」，目的是修正TDD命名造成的混淆。
+## BDD 是命名修正，不是新方法
 
-他發現「Test」這個詞讓開發人員誤以為要測試每個類別和方法，於是用「Behavior」取代，讓意圖更清楚：測試的是行為，不是程式結構。這和Kent Beck 2003年說的完全一致，只是換了個能讓人更直覺理解的詞。
+Dan North 在 2006 年提出 [BDD](https://dannorth.net/introducing-bdd/)，動機是修正「Test」這個詞造成的誤導：這個詞讓人以為要測試每個類別和方法，換成「Behavior」之後，意圖回到原位——測的是行為，不是程式結構。這跟 Kent Beck 2003 年在《Test Driven Development: By Example》示範的做法一致，換的是更難被誤解的詞。
 
-Google在《Software Engineering at Google》中也驗證同樣的結論：「Don't write a test for each method. Write a test for each behavior.」
+《Software Engineering at Google》的測試章給了同一條規則，直接寫成小節標題：Test Behaviors, Not Methods。
 
-## 與Clean Architecture的結合
+## 跟 Clean Architecture 的組合
 
-Sociable Unit Tests和Clean Architecture是天然的組合，因為建立在相同原則上：業務邏輯獨立於外部世界。
+Sociable Unit Tests 跟 Clean Architecture 建立在同一條前提上——業務邏輯獨立於外部世界——所以兩者組合起來沒有額外的對接成本。
 
-在Clean Architecture中，Use Cases層是業務邏輯的進入點，對外提供清晰的API，對內只使用Domain Entities和透過介面隔離的外部依賴（Repository、Gateway等）。這個結構天然對應Sociable的需求：Use Cases的Public API就是測試邊界，Domain Entities用真實物件，只有Repository需要Mock。
+Clean Architecture 的 Use Cases 層是業務邏輯的進入點：對外提供公開 API，對內只使用 Domain Entities、透過介面隔離外部依賴（Repository、Gateway）。這個結構直接給出 Sociable 需要的三件東西：Use Case 的公開 API 是測試邊界，Domain Entities 用真實物件，要 mock 的只有 Repository 這一層。
 
-更重要的是，對Use Cases的Unit Test同時就是業務驗收測試。一個寫著「使用者提交訂單成功」的案例，不需要啟動UI也不需要真實資料庫，但驗證了完整的業務流程。Alistair Cockburn在提出Hexagonal Architecture時說：「Tests are another user of the system.」
+這個組合多買到一件事：對 Use Case 的單元測試同時就是業務驗收測試。一個名為「使用者提交訂單成功」的測試案例，不需要啟動 UI、不需要真實資料庫，驗證的卻是完整的業務流程——Alistair Cockburn 的 Hexagonal Architecture 把測試當成系統的另一種使用者，講的是同一個結構性質。
 
-並非所有情況都適合Sociable。數學演算法、加密系統這類需要細粒度驗證的場景，精確定位到具體類別比重構穩定性更重要，用Solitary合理。但大多數商業應用不是這類。
+## 邊界：Solitary 合理的場景
 
-## 結論
+數學演算法、加密系統這類需要細粒度驗證的場景，「壞掉時精確定位到具體類別」比「重構時測試不動」更有價值，用 Solitary 合理。另一類是用完就丟的行為快照——替沒有測試的程式碼先架一層保護再動手（Feathers 的入場技術），那種測試本來就不打算長期留著，耦合結構是它的工作方式。多數商業應用的長期測試不屬於這兩類。
 
-我們曾以為TDD很痛苦，但那是因為我們測試的是程式**長什麼樣子**，而不是它**做什麼**。
+## 這個立場接到哪裡
 
-正確的做法只有一句話：測試透過Module的Public API互動，只Mock真正的外部依賴，使用真實的Domain Entities。
+兩派原著與對倫敦學派的系統性批評該讀哪本，走書單的 [驗證自己寫對了](/books/craft/verification/)——Kent Beck 的原始定義、Freeman 與 Pryce 的倫敦學派完整主張、Khorikov 的四支柱批評，三本的位置那篇有交代。
 
-這樣的測試在重構時保持穩定，在功能改變時精準報警。Kent Beck、Dan North、Martin Fowler在不同年代說的是同一件事：**測試行為，而非結構**。
+測試分層怎麼設計、協議整合怎麼驗證，走 [Testing 測試策略](/testing/)；沒有測試的既有程式碼要先取得入場資格，走書單的 [改既有的程式](/books/craft/changing-existing-code/)。
 
 ---
 
 參考資料：
 
-- Kent Beck，《Test Driven Development By Example》，2003
-- Martin Fowler，《Refactoring: Improving the Design of Existing Code》，1999
-- Dan North，《Introducing BDD》，2006
+- Kent Beck，《Test Driven Development: By Example》，2003
+- Kent Beck 與 Kelly Sutton，[Test Desiderata](https://testdesiderata.com/)
+- Martin Fowler，《Refactoring: Improving the Design of Existing Code》，第二版 2018
+- Dan North，[Introducing BDD](https://dannorth.net/introducing-bdd/)，2006
 - Google，《Software Engineering at Google》，2020
 - Valentina (Cupać) Jemuović，[TDD and Clean Architecture - Driven by Behaviour](https://www.youtube.com/watch?v=3wxiQB2-m2k)
