@@ -1,13 +1,13 @@
 ---
-title: "分層 i18n 管理方法論 - 業務層國際化的正確實踐"
+title: "i18n 的責任邊界：Domain 給錯誤碼，ViewModel 給訊息"
 slug: "business-layer-i18n-management-methodology"
 date: 2026-03-04
 draft: false
-description: "定義 Domain、ViewModel、UI 各層的 i18n 責任分工，禁止硬編碼使用者訊息，確保多語言支援的正確架構"
+description: "要加一種語言卻發現使用者訊息散在 Domain、ViewModel、UI 三層時，用來判定各層對 i18n 各自負責什麼、字串該住在哪一層"
 tags: ["i18n", "國際化", "分層架構", "ViewModel", "訊息管理"]
 ---
 
-在開發書庫管理 Flutter 應用的過程中，我們陷入了一個多語言專案幾乎必經的事故：i18n 訊息出現在不該出現的地方。Domain 層的 repository 開始直接拋出中文錯誤訊息，ViewModel 裡散落著硬編碼字串，UI 層還要自己判斷 errorCode 決定顯示什麼文字。每增加一種語言，就要在三個地方同時動手。
+多語言專案的訊息會往它不該去的層漂：Domain 層的 repository 直接拋出中文錯誤訊息、ViewModel 裡散落硬編碼字串、UI 層自己判斷 errorCode 決定顯示什麼文字。三個位置各自持有一部分訊息之後，增加一種語言的成本就是同時改三個地方，而且沒有一個清單能確定改完了。
 
 <!--more-->
 
