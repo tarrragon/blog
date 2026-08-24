@@ -48,6 +48,8 @@ slug: "compressed-conclusion-strips-derivation"
 
 ## 跟其他原則的關係
 
+- [#275 評價由讀者自己形成](../readers-form-their-own-judgments/)：本卡的極端形態——壓縮結論至少還宣告一條規則（推導被剝掉），評價語（優雅 / 經典 / 值得）連規則都沒有、只剩一個形容詞；讀者對前者能照做不能調整、對後者只能複誦。
+
 - [#209 知識目標決定文章結構](../teach-judgment-not-procedure/)：#209 決定文章的知識目標是判斷力，本卡約束傳遞方式——展開推導、不壓縮結論。
 - [#150 教材用中性陳述、不對讀者喊話](../teaching-register-states-not-addresses-reader/)：喊話是壓縮結論的一種表徵（stance 維度）。
 - [#151 教材給技術理由、不替方案下品質評價](../teaching-gives-reasons-not-quality-verdicts/)：品質評價是壓縮結論的一種表徵（verdict 維度）。

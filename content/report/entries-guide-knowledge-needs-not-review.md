@@ -46,6 +46,7 @@ slug: "entries-guide-knowledge-needs-not-review"
 | [#270 敘事的解碼材料要在讀者已讀的文本裡](../decodable-from-text-already-read/)                  | 同一個來源文體借了兩樣東西——#270 借書評體的密度審美（形式層）、本卡借書評的內容選擇（資訊層）；一篇條目可以只犯其中一種                                                                                         |
 | [#273 寫作除了表達意義，還要設計閱讀的節奏、壓力與引導](../writing-designs-the-reading-process/) | 引導面的準入判準——#273 說文章的定位是建立識別與應用能力，本卡把這個定位落成條目層的逐項測試（每個資訊對到哪個決定）                                                                                             |
 | [#170 description 是 recall trigger、不是摘要](../description-as-recall-trigger/)                | 同族的功能件視角——#170 管 metadata 欄位的每個 token 要有觸發功能，本卡管條目正文的每個資訊要有決定功能                                                                                                          |
+| [#275 評價由讀者自己形成](../readers-form-their-own-judgments/)                                  | 本卡的上位——#275 把「不用主觀意見餵速成印象」推廣到絕大多數文章與註解，本卡的決定測試是它在策展文體的操作化；升層由使用者在本卡立卡當天完成                                                                     |
 
 ---
 

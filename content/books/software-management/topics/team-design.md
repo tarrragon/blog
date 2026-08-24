@@ -86,7 +86,7 @@ Weinberg 的《Quality Software Management, Vol. 4: Anticipating Change》處理
 
 ## 為什麼只收這幾本
 
-這個主題的六本按抽象層級排：設計語彙（Team Topologies）、調度模型（An Elegant Puzzle）、規模與時間的約束（Software Engineering at Google）、底層理論（Wiring）、奠基經典（人月神話）、推動過程（溫伯格第 4 卷）。前四本回答結構該長什麼樣，人月神話回答這些問題從哪來，最後一本回答怎麼走過去。
+這個主題的六本按抽象層級排：設計語彙（Team Topologies）、調度模型（An Elegant Puzzle）、規模與時間的約束（Software Engineering at Google）、底層理論（Wiring）、問題的來歷（人月神話）、推動過程（溫伯格第 4 卷）。前四本回答結構該長什麼樣，人月神話回答這些問題從哪來，最後一本回答怎麼走過去。
 
 組織設計的書大量來自一般管理領域（矩陣式組織、事業部制），它們不處理軟體特有的約束——程式碼的耦合會把組織的溝通成本固定下來，這件事在非軟體組織裡沒有對應物。要分辨，翻目錄找「架構與組織互相映射」這件事有沒有被當成前提；沒有的話，那本處理的是另一個問題。
 
