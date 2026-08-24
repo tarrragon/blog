@@ -13,6 +13,7 @@ tags: ["work-log", "debug", "工具"]
 
 - [Git：把後面 commit 的部分檔案變更搬到前面的 commit](git_move_partial_change_to_earlier_commit/)
 - [Git：修復後面的 commit 意外覆蓋前面 commit 的變更](git_fixup_rebase/)
+- [commit message 引用外部 issue 會在對方 repo 留下永久事件](github-cross-reference-from-commit-message/)
 
 **Build 工具與框架** — Gradle / Flutter / Dart 的錯誤、行為、設計觀念。例：
 
