@@ -19,3 +19,5 @@ Characterization test 的斷言對象是現狀本身：預期值取自被測程�
 ## 設計責任
 
 這類測試自帶退場條件，維護者要負責執行它：正確性測試覆蓋同一段行為後，characterization test 的使命結束、應該移除。留著不移除的代價是雙份維護，且兩份測試對同一行為的斷言可能分岔。與 [mock 遮蔽](/testing/knowledge-cards/mock-masking/)的關係值得留意——characterization test 記錄的是含既有 bug 的行為，它保證的是「沒改壞」，不保證「是對的」。
+
+這也讓它成為[判準由實作推導](/testing/knowledge-cards/test-provenance/)這件事在站內唯一的合法形態：預期值刻意取自被測程式的實際輸出，是設計選擇而不是失誤。代價要算清楚——它因此抓不到需求被誤讀那一類，保留下來的驗證力限於崩潰、回歸與內部不一致。把它當成正確性測試用，就是把一個刻意的取捨誤當成保證。
