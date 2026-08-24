@@ -6,9 +6,9 @@ weight: 40
 tags: ["books", "reading", "craft", "testing", "tdd"]
 ---
 
-這個主題有一個技藝線其他三篇沒有的特徵：**收錄的書彼此不同意**。測試該寫到什麼粒度、協作對象該不該用 mock 替換、測試該綁在行為上還是結構上——這些問題有兩個互相對立的傳統，而多數讀者是在讀到第二本、發現它跟第一本說法相反的時候，才知道自己一直在照著其中一派做而不知道有另一派。
+這個主題有一個技藝線其他三篇——設計判準、系統架構、改既有的程式——都沒有的特徵：**收錄的書彼此不同意**。測試該寫到什麼粒度、協作對象該不該用 mock 替換、測試該綁在行為上還是結構上——這些問題有兩個互相對立的傳統，而多數讀者是在讀到第二本、發現它跟第一本說法相反的時候，才知道自己一直在照著其中一派做而不知道有另一派。
 
-所以這篇的選讀判斷跟技藝線另外三篇不同：不是「先讀哪本再讀哪本」，是**先知道分歧在哪，再決定要站哪邊**。三本書的位置：Kent Beck 的《Test-Driven Development: By Example》給出原始定義，Freeman 與 Pryce 的《Growing Object-Oriented Software, Guided by Tests》把其中一派的主張寫到最完整，Khorikov 的《Unit Testing Principles, Practices, and Patterns》是後來對那一派的系統性批評。
+所以這篇的選讀判斷跟那三篇不同：不是「先讀哪本再讀哪本」，是**先知道分歧在哪，再決定要站哪邊**。三本書的位置：Kent Beck 的《Test-Driven Development: By Example》給出原始定義，Freeman 與 Pryce 的《Growing Object-Oriented Software, Guided by Tests》把其中一派的主張寫到最完整，Khorikov 的《Unit Testing Principles, Practices, and Patterns》是後來對那一派的系統性批評。
 
 站內對這個分歧的立場與推導在 [行為優先的 TDD 方法論](/record/behavior-first-tdd-methodology/)，那篇處理的是「所以我們怎麼做」；這裡處理的是「該讀哪本、每本代表什麼位置」。
 
