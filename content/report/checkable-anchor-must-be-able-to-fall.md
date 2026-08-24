@@ -66,6 +66,8 @@ slug: "checkable-anchor-must-be-able-to-fall"
 
 ---
 
+- [#278 機械約束買到被量測的那個數字](../mechanical-constraints-buy-the-measured-number/)：相鄰。本卡管錨對變質沒有反應，#278 管錨被最便宜的路徑滿足——兩者都讓「數字全綠」與「判斷真的發生過」無法區分。
+
 ## 判讀徵兆
 
 | 訊號                                                       | 該做的事                                                                 |

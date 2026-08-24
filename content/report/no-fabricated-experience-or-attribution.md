@@ -47,6 +47,7 @@ slug: "no-fabricated-experience-or-attribution"
 | [#238 承重事實要對到 primary source](../verify-load-bearing-facts-against-primary-source/) | 本卡是它在引文與經驗兩種宣稱上的形態——引文的 primary source 是原文逐字、經驗的 primary source 是可指認的事件紀錄                  |
 | [#275 評價由讀者自己形成：寫作交付材料](../readers-form-their-own-judgments/)              | 相鄰的信任面——#275 要求交付材料而非評價、本卡要求材料必須真實；虛構的經驗是假材料、比評價語更深地借用讀者的信任                   |
 | [#260 誇飾的合法性由段落位置的功能決定](../hyperbole-legitimacy-by-position-function/)     | 強度軸的極端——#260 的反比操縱訊號（強度與可驗證性反向）在本卡是構造性的：虛構經驗天生不可驗證、而它被放在說服力最高的位置         |
+| [#277 通過關卡不等於通過的是同一個程式](../passing-a-gate-does-not-pin-the-program/)       | 相鄰的產出信任問題——本卡管生成內容裡的事實宣稱、#277 管生成程式碼的行為宣稱；共同結構是形態看起來完整而承重處未經查證             |
 
 ---
 
