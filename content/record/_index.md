@@ -11,7 +11,7 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 
 **自察與認知方法論** — 工作前 / 工作中的自我檢視框架。例：
 
-- [5W1H 自察方法論](5w1h-self-awareness-methodology/)
+- [5W1H 自覺決策方法論](5w1h-self-awareness-methodology/)
 - [AI 任務迴避偵測方法論](ai-task-avoidance-detection-methodology/)
 - [大規模重構方法論](大規模重構方法論/)
 
@@ -24,12 +24,12 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 **敏捷 / 工程流程** — 敏捷實作、重構流程、文件分層。例：
 
 - [敏捷編程方法論](agile-programing-methodology/)
-- [敏捷重構方法論](agile-refactor-methodology/)
+- [主線程分派、代理人執行](agile-refactor-methodology/)
 - [5 層文件系統](5-layer-doc-system/)
 
 **寫作 / 溝通標準** — 驗收條件、寫作規範。例：
 
-- [驗收條件方法論](acceptance-criteria-methodology/)
+- [驗收條件是一份契約](acceptance-criteria-methodology/)
 - [經驗分享文章的寫作準則](writing-guidelines/)
 - [SOLID 寫作方法論](solid-writing-methodology/)：程式結構原則映射到文章體系的組合層（卡片盒管原子層、SOLID 管文章責任邊界 / 依賴方向 / 擴充點 / 讀者分流）
 - [術語解釋分層方法論](term-explanation-layering-methodology/)：專業術語的行內 / 連卡 / 裸用三級、用「術語角色 × 前置知識基線」矩陣判定、含缺卡 audit 流程
@@ -44,7 +44,7 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 **AI 協作工具評估** — Claude Code / Codex / MCP server 等 AI 協作工具的設計拆解、能力邊界、選型對照。包含個別工具的 deep-dive 跟「同題不同工具」的實測。例：
 
 - [三 MCP 工作流與 Dart 實測](mcp-three-way-workflow-and-dart-experiment/)：cbm / codegraph / serena 的職責分工與三刀流（附三個工具各自的 deep-dive：[cbm](mcp-codebase-memory-deep-dive/) / [codegraph](mcp-codegraph-deep-dive/) / [serena](mcp-serena-deep-dive/)）
-- [LSP-first 開發方法論](lsp-first-development-methodology/)：LSP 路線跟其他 code intelligence 路線的取捨
+- [LSP 優先：語意操作不用文字搜尋](lsp-first-development-methodology/)：LSP 路線跟其他 code intelligence 路線的取捨
 - [Background agent 並行研究](background-agent-parallel-research/)：用 Claude Code background agent 平行做研究的工作流
 
 ---
