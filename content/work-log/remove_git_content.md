@@ -382,3 +382,4 @@ git filter-repo --invert-paths --path file.txt --dry-run
 - [官方文件](https://github.com/newren/git-filter-repo)
 - [官方手冊](https://htmlpreview.github.io/?https://github.com/newren/git-filter-repo/blob/docs/html/git-filter-repo.html)
 - [常見使用案例](https://github.com/newren/git-filter-repo/blob/main/Documentation/converting-from-filter-branch.md)
+- 同站：[commit message 引用外部 issue 會在對方 repo 留下事件](/work-log/github-cross-reference-from-commit-message/) — commit message 裡的 issue 引用會在對方 repo 的 timeline 留下記錄，改寫歷史之後那筆記錄會不會消失沒有保證

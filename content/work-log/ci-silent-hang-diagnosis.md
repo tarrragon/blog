@@ -174,3 +174,4 @@ Silent hang 預設屬於第二類、應該優先查 issue tracker。
 - [microsoft/playwright issue #41000](https://github.com/microsoft/playwright/issues/41000) — 本案例的 upstream issue（Playwright 1.57-1.59 在 Node 24.16.0 extract-zip hang）
 - [nodejs/node issue #63487](https://github.com/nodejs/node/issues/63487) — Node 24.16 extract-zip / yauzl regression 上游
 - 同 blog 文章：[WRAP 決策框架的 R 階段操作](/skills/wrap-decision/) — Reality Test 詳細用法
+- 同站：[commit message 引用外部 issue 會在對方 repo 留下事件](/work-log/github-cross-reference-from-commit-message/) — 本次修法把 upstream issue 寫進 commit message，在對方 repo 的 timeline 留下一筆引用事件；寫法決定觸不觸發

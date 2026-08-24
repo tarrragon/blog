@@ -206,3 +206,4 @@ flowchart LR
 - **codegen 檔案**：如果 `.freezed.dart` / `.g.dart` 等是被 gitignore 的，重組 source commit 後本地需要重跑 build_runner。如果 codegen 也在版控，建議連同 source 一起搬，否則 source 跟 codegen 對不齊
 - **Sequence editor 自動腳本**搞不定的話，拿掉 `GIT_EDITOR=true`，讓 rebase 開你慣用的編輯器手動改 `pick` → `edit`，更直觀
 - **驗證樹一致性**是這個工作流程的安全網。每次重組完一定要 `git diff backup HEAD` 跑一次
+- **重組會換掉 commit 的推送者**：代推或改寫他人 commit 後，GitHub 事件記給誰、以及 message 裡的 issue 引用會不會觸發，見[commit message 引用外部 issue 會在對方 repo 留下事件](/work-log/github-cross-reference-from-commit-message/)

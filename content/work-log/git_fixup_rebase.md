@@ -219,3 +219,4 @@ GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash <目標commit>~1
 - 操作前建議用 `git log --oneline -10` 確認目前的 commit 順序
 - 如果 rebase 過程中遇到衝突，用 `git status` 查看衝突檔案，手動解決後執行 `git add` + `git rebase --continue`
 - 如果想放棄 rebase，可以用 `git rebase --abort` 回到操作前的狀態
+- commit message 裡若寫了對其他 repo 的 issue 引用，push 之前是唯一能無痕修改它的窗口 — 推上去之後對方 timeline 就有記錄，判準見[commit message 引用外部 issue 會在對方 repo 留下事件](/work-log/github-cross-reference-from-commit-message/)
