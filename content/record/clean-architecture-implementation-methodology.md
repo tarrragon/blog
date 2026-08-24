@@ -3,13 +3,13 @@ title: "Clean Architecture 實作指引"
 slug: "clean-architecture-implementation-methodology"
 date: 2026-03-04
 draft: false
-description: "我們在 AI 協作開發中引入 Clean Architecture 作為任務分派的核心判斷框架。這篇文章整理了四層架構的設計順序、實作順序，以及我們實際執行時的關鍵檢查點。"
+description: "要判斷哪些任務屬於同一層、哪些必須依序完成時，用來對照四層的依賴方向、設計與實作的相反順序、以及各階段的檢查點"
 tags: ["AI協作心得","方法論"]
 ---
 
-定義敏捷開發方法論時，我們需要一個明確的判斷基準：哪些任務屬於同一層？哪些必須依序完成？哪些可以並行？
+任務分派需要一個明確的判斷基準：哪些任務屬於同一層、哪些必須依序完成、哪些可以並行。
 
-我們選擇了 Clean Architecture。它不只是架構模式，更是一套「責任分層」語言，讓我們和 AI 代理人都能用同一套詞彙討論誰該負責哪個部分、什麼時候可以動手。
+Clean Architecture 除了是架構模式，同時是一套責任分層的語彙——它讓人與 AI 代理人用同一組詞討論誰負責哪個部分、什麼時候可以動手。
 
 <!--more-->
 
@@ -35,7 +35,7 @@ Use Case 需要存取資料，但不能直接依賴 SQLite。正確做法是：�
 
 ## 設計從內到外，實作從外到內
 
-這是我們在 AI 協作中最重要的一個認知。
+兩個階段的順序相反，這是分層架構在執行面最容易被漏掉的一點。
 
 ### 設計階段由內到外
 
@@ -44,7 +44,7 @@ Use Case 需要存取資料，但不能直接依賴 SQLite。正確做法是：�
 3. 設計 Interface Adapters：Controller 如何轉換外部請求、Presenter 如何格式化輸出。
 4. 設計 Frameworks：選擇資料庫方案，實作 Repository。到這步才碰具體技術。
 
-#### 實作階段由外到內
+### 實作階段由外到內
 
 1. 先定義所有 Ports。在寫任何實作之前，確立 Use Case 介面和 Repository 介面，這是系統的骨架。
 2. 外層用 Mock 介面開發和測試。Controller 在 Use Case 還沒真正實作前就能測試，因為它依賴的是抽象介面。
@@ -55,7 +55,7 @@ Use Case 需要存取資料，但不能直接依賴 SQLite。正確做法是：�
 
 ## 驗證架構是否正確
 
-每個 Phase 完成後，我們對照以下幾個方向確認。
+每個 Phase 完成後對照四個方向確認。
 
 ### 依賴方向
 
@@ -63,19 +63,19 @@ Use Case 需要存取資料，但不能直接依賴 SQLite。正確做法是：�
 - Use Cases 只 import Entities 和自己定義的介面
 - Frameworks 層實作的是 Interface Adapters 定義的介面
 
-#### 介面契約
+### 介面契約
 
 - Repository Port 定義在 Use Cases 層（不是 Frameworks 層）
 - Repository 回傳的是 Entity 而不是資料庫 DTO
 - Input/Output Port 沒有洩漏框架的型別（例如 HTTP Request、SQLite Row）
 
-##### 業務邏輯位置
+### 業務邏輯位置
 
 - 業務不變量的驗證在 Entity 建構子
 - 應用層邏輯在 Use Case Interactor
 - Controller 只負責轉換和呼叫，不包含業務判斷
 
-###### Interface-Driven Development
+### Interface-Driven Development
 
 - 所有 Ports 在設計階段就定義完成
 - 外層真的用 Mock 介面在開發測試
@@ -83,10 +83,12 @@ Use Case 需要存取資料，但不能直接依賴 SQLite。正確做法是：�
 
 ## 為什麼這對 AI 協作特別有價值
 
-傳統開發中，架構邊界的維護依賴工程師的經驗，容易在壓力下妥協。AI 代理人則非常適合執行有明確規則的框架——規則夠清楚，它就能持續一致地遵守。
+架構邊界的維護若依賴經驗判斷，它在時間壓力下的執行率會下降。AI 代理人執行的是明確規則：規則寫得夠清楚，遵守的一致性就跟壓力無關。
 
 分層邊界就是這樣的規則。告訴代理人「這個 class 屬於 Use Cases 層，所以不能 import 任何 Framework 層的東西」，代理人就能機械性地驗證和維護這個邊界。
 
 這套語言也讓任務拆分有了清楚的依據。「這個功能需要修改 Entity 和 Use Case，但不涉及 Repository 實作」是一個清楚的任務描述，對應到具體的修改範圍，不會模糊。
 
-從實際經驗來看，引入 Clean Architecture 之後，AI 的實作結果更容易預測，測試覆蓋率更容易維持，架構審查也更有效率。代價是設計階段需要更多前置思考，但這個投資通常值得。
+引入分層之後，實作結果的可預測性來自邊界明確：每個任務的修改範圍事先就限定在一層。代價落在設計階段——Ports 要在寫任何實作之前定義完成。
+
+Ticket 怎麼按層拆、按什麼順序執行，走 [層級隔離](../layered-ticket-methodology/)；分層規則怎麼在 commit 階段自動驗證，走 [架構合規交給機制](../layered-architecture-quality-checking/)。

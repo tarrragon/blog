@@ -3,31 +3,31 @@ title: "層級隔離：讓每張 Ticket 只做一件層級的事"
 slug: "layered-ticket-methodology"
 date: 2026-03-04
 draft: false
-description: "我們在實際開發中整理出一套方法論，讓 Clean Architecture 五層架構與 Ticket 拆分真正結合——每張 Ticket 只修改一個架構層，不多也不少。"
+description: "PR 一次動了四層、review 無從下手時，用來把 Clean Architecture 的分層轉成 Ticket 的拆法與執行順序"
 tags: ["AI協作心得", "Ticket", "方法論", "Clean Architecture"]
 ---
 
-架構圖貼出來，層級畫得漂漂亮亮，但 PR 送進來還是一次動了 UI、Controller、UseCase 和 Entity 四層。
+架構圖上的層級分得清楚，而 PR 一次動了 UI、Controller、UseCase 和 Entity 四層——這代表分層規範了程式碼的組織方式，沒有規範任務的切法。
 
 <!--more-->
 
 ## 問題不在架構，在派工
 
-Clean Architecture 告訴你「怎麼組織程式碼」，但沒告訴你「怎麼拆 Ticket」。每次 Code Review 都像翻地層，從 Widget 翻到 Entity，不知道從哪開始看；Domain 沒穩定，UI 那層就沒辦法測，整個流程互相等待。
+Clean Architecture 規範的是程式碼怎麼組織，它不涉及 Ticket 怎麼拆。這個空缺會在兩個位置顯現：review 要從 Widget 一路讀到 Entity，沒有可以開始的位置；Domain 還沒穩定時 UI 層測不了，兩邊互相等待。
 
-這個銜接點，需要一套專門處理 Ticket 拆法的方法論。
+補上這個銜接點的是 Ticket 拆法本身的規則。
 
 ## 核心原則：一張 Ticket，一個層級
 
 > 一個 Ticket 只應該修改單一架構層級的程式碼，變更的原因單一且明確。
 
-SRP 說一個類別只有一個改變的原因，我們把它升一層：一張 Ticket 也只有一個改變的原因。
+SRP 說一個類別只有一個改變的原因，這條規則升一層之後就是：一張 Ticket 也只有一個改變的原因。
 
-聽起來嚴苛，但實際跑起來好處很直接：Code Review 只需要理解一層的邏輯、測試不需要拉起整個系統、PR 影響範圍可預測，壞掉的時候更容易定位。
+限制帶來的四個性質是直接的：review 只需要理解一層的邏輯、測試不需要拉起整個系統、PR 的影響範圍可預測、失敗時的定位範圍限定在一層。
 
-## 我們怎麼定義「五層」
+## 五層的定義
 
-傳統 Clean Architecture 四層中，Interface Adapters 同時處理「事件邏輯」和「資料轉換」，職責太雜，我們把它細分成五層：
+傳統 Clean Architecture 四層裡，Interface Adapters 同時處理事件邏輯與資料轉換兩種職責。把它拆開之後得到五層：
 
 **Layer 1 — UI/Presentation**：純視覺呈現，Widget 長什麼樣。變更原因只有一個：設計稿改了。
 
@@ -43,7 +43,7 @@ Infrastructure 層（資料庫、外部 API、EventBus）不納入層級隔離�
 
 ## 從外而內，而不是從內而外
 
-許多教材說「先設計 Domain 再往外做」，但實際開發時，我們發現從外而內更能控制風險。
+許多教材的建議是先設計 Domain 再往外做。從風險控制的角度，順序相反更合適。
 
 原因很簡單：Layer 1 UI 壞掉只影響視覺，Layer 5 Domain 邏輯壞掉影響整個系統的業務規則。從影響最小的地方開始，需求偏差時調整成本低；一開始就動 Domain，到了 UI 才發現需求理解有誤，代價就大得多。
 
@@ -84,8 +84,10 @@ Ticket：實作書籍收藏功能
 
 ## 這套方法論的定位
 
-這是 Clean Architecture 的「派工指南」。Clean Architecture 告訴你程式碼怎麼組織，層級隔離告訴你 Ticket 怎麼拆、按什麼順序做。
+它是 Clean Architecture 的派工指南：Clean Architecture 管程式碼怎麼組織，層級隔離管 Ticket 怎麼拆、按什麼順序做。
 
 它和 Atomic Ticket 方法論也不衝突：Atomic Ticket 強調職責維度（一個 Action 加一個 Target），層級隔離強調層級維度（一個 Ticket 只動一層），兩個維度同時符合才是最完整的 Ticket 設計。
 
-緊急 Hotfix、原型開發、一次性腳本不需要強行套用。但在正常功能開發和重構中，跑起來之後的感覺是：每次把一個大需求拆成按層排好的 Ticket 序列，就等於把架構邊界重新確認了一遍。
+緊急 Hotfix、原型開發、一次性腳本不套用這套規則。在常規的功能開發與重構裡，把一個大需求拆成按層排好的 Ticket 序列這個動作本身，就是對架構邊界的一次逐層確認。
+
+架構違規怎麼在 commit 階段被自動擋下，走 [架構合規交給機制](../layered-architecture-quality-checking/)。
