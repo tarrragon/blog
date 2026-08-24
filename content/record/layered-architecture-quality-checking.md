@@ -1,31 +1,29 @@
 ---
-title: "層級架構品質檢查機制 - Clean Architecture 合規性驗證"
+title: "架構合規交給機制，不交給自律"
 slug: "layered-architecture-quality-checking"
 date: 2026-03-04
 draft: false
-description: "自動化檢查分層架構的依賴方向、命名規範和職責分離，確保 Clean Architecture 原則的持續遵守"
+description: "分層架構在文件上完整、而 codebase 三個月後依賴方向已經走樣時，用來把架構規則轉成 commit 前就會擋下來的自動檢查"
 tags: ["Clean Architecture", "品質檢查", "分層架構", "依賴方向", "架構合規"]
 ---
 
-在 Flutter 專案裡導入 Clean Architecture 並不難，難的是讓整個團隊在每一次 commit 都確實遵守它。我們曾有過這樣的經驗：架構設計文件寫得很完整，但三個月後打開 codebase，Widget 裡藏著業務規則、Controller 開始自己做驗證、UseCase 直接依賴了具體的資料庫實作。
-
-問題在於沒有機制讓「做錯事」變得困難。
+在 Flutter 專案裡導入 Clean Architecture 並不難，難的是讓每一次 commit 都確實遵守它。架構設計文件寫得完整、而三個月後打開 codebase 出現 Widget 裡藏著業務規則、Controller 自己做驗證、UseCase 直接依賴具體資料庫實作時，缺的不是文件，是讓「做錯事」變困難的機制。
 
 <!--more-->
 
-## 為什麼架構會悄悄腐化
+## 架構腐化的來源是成本差
 
-Clean Architecture 的核心是依賴方向：外層可以依賴內層，但內層絕對不能依賴外層。這個原則說起來簡單，但「快速解決問題」的衝動很容易讓人走捷徑。一個業務驗證邏輯，放在 Widget 裡只要三行；把它搬到正確的 Domain 層，可能需要新增 Entity 方法、更新 UseCase、再補上測試。
+Clean Architecture 的核心是依賴方向：外層可以依賴內層，內層不依賴外層。這個原則陳述起來簡單，而每一次違規的當下都有成本上的理由。一個業務驗證邏輯，放在 Widget 裡只要三行；搬到 Domain 層要新增 Entity 方法、更新 UseCase、再補上測試。
 
-在時間壓力下，捷徑獲勝了。
+時間壓力下，成本低的那條路勝出。
 
-更麻煩的是，這種腐化是漸進的。第一次違規很小；第二次引用了第一次的前例；到了第六次，層級的邊界已經模糊得看不清楚了。
+腐化因此是漸進的：第一次違規很小，第二次引用第一次當前例，到了第六次，層級的邊界已經無法辨識。
 
-解法是：不依賴自律，改依賴機制。把架構規則轉化為可以自動執行的檢查。
+方向是把架構規則轉化成可以自動執行的檢查——判定不依賴當下的自制力，依賴一個會擋下 commit 的程式。
 
 ## 用檔案路徑判斷層級歸屬
 
-我們採用的策略是**用檔案路徑作為層級的明確宣告**。一個檔案放在什麼目錄，就代表它屬於哪一層：
+檔案路徑是層級的明確宣告：一個檔案放在什麼目錄，就代表它屬於哪一層。
 
 ```text
 lib/
@@ -41,9 +39,9 @@ lib/
 └── infrastructure/        // 基礎設施層
 ```
 
-這讓我們可以用簡單的字串比對判斷：這個 PR 動了哪些層的檔案？一個 Ticket 聲稱只修改展示層，但 diff 裡出現了 `lib/domain/` 的檔案，那就是需要解釋的信號。
+這讓層級歸屬可以用字串比對判斷：這個 PR 動了哪些層的檔案。一張 Ticket 聲稱只修改展示層，而 diff 裡出現 `lib/domain/` 的檔案，這個落差就是需要解釋的訊號。
 
-測試目錄也採用相同的對應結構：
+測試目錄採用相同的對應結構：
 
 ```text
 test/
@@ -53,11 +51,11 @@ test/
 └── domain/       // 對應 Domain 層修改
 ```
 
-修改了某個層，對應的測試目錄裡就必須有覆蓋。「測試覆蓋率」從一個抽象數字，變成了具體的結構性要求。
+修改了某個層，對應的測試目錄裡就要有覆蓋。「測試覆蓋率」從一個抽象數字變成具體的結構性要求。
 
-## 三種最常見的違規模式
+## 三種可以機械辨識的違規模式
 
-追蹤了幾十個架構違規案例之後，幾乎都落在以下三種模式。
+架構違規落在三種模式上，共同點是它們都能從檔案位置與型別依賴看出來。
 
 ### 展示層包含業務邏輯
 
@@ -81,7 +79,7 @@ class BookListWidget extends StatelessWidget {
 }
 ```
 
-「什麼樣的書算新書」是業務邏輯，應該在 Domain 層定義。Widget 只做一件事：把資料渲染成畫面。
+「什麼樣的書算新書」是業務邏輯，定義在 Domain 層。Widget 做的是把資料渲染成畫面。
 
 ### Controller 包含業務規則
 
@@ -105,7 +103,7 @@ class BookController {
 }
 ```
 
-「ISBN 必須為 13 碼」是業務規則，應該活在 `Book` Entity 或 Value Object 裡。Controller 的角色是協調，不是決策。
+「ISBN 必須為 13 碼」是業務規則，住在 `Book` Entity 或 Value Object 裡。Controller 的角色是協調。
 
 ### UseCase 依賴具體實作
 
@@ -121,11 +119,11 @@ class SearchBookUseCase {
 }
 ```
 
-依賴介面讓 UseCase 在測試時注入 Mock，生產環境注入真實實作，兩者互換自如。
+依賴介面讓 UseCase 在測試時注入 Mock、生產環境注入真實實作，兩者互換。
 
 ## 把檢查機制自動化
 
-辨識出違規模式之後，我們做的第一件事是把檢查寫進工具裡。
+辨識出這三種模式之後，它們可以寫進工具。
 
 ### Pre-commit Hook
 
@@ -135,11 +133,11 @@ class SearchBookUseCase {
 flutter test --coverage || exit 1
 ```
 
-`check_single_layer_modification.sh` 分析 commit 的 diff，確認被修改的檔案是否都屬於同一個架構層。一個本來只應動展示層的 commit，如果同時修改了 Domain 層的檔案，腳本就會退出並阻止 commit。
+`check_single_layer_modification.sh` 分析 commit 的 diff，確認被修改的檔案是否都屬於同一個架構層。一個本來只應動展示層的 commit，若同時修改了 Domain 層的檔案，腳本退出並阻止 commit。
 
 ### CI/CD 整合
 
-Pre-commit Hook 可以被繞過，但 CI/CD 不會：
+Pre-commit Hook 可以被 `--no-verify` 繞過，CI/CD 不會：
 
 ```yaml
 name: PR Architecture Check
@@ -156,21 +154,23 @@ jobs:
 
 架構合規性成為 PR 合併的硬性前置條件。
 
-## 每次 commit 前的自我檢查
+## 自動化擋不住的那一半
 
-自動化工具處理可以被程式判斷的規則，剩下的需要開發者自己過一遍：
+工具處理可以被程式判斷的規則，剩下的部分在 commit 前手動過一遍：
 
 - 這次修改的檔案，是否都屬於同一個架構層？
 - import 方向是否正確——只有外層依賴內層？
 - 測試檔案路徑和被測試程式碼是否在對應的層級目錄？
 - 有沒有 Widget 直接做業務計算、Controller 直接做驗證？
 
-三十秒可以過完，但幾乎每次都能在 commit 前抓住一兩個值得重新考慮的決定。
+四個問題三十秒可以過完，而它們攔下的是路徑與型別看不出來的那一類：命名對、位置對，職責錯放。
 
-## 機制比自律更可靠
+## 這套機制換到的是什麼
 
-導入這套機制之後，code review 上花的精力少了很多——大多數架構層面的問題在進入 review 之前就已經被攔截。reviewer 可以把注意力放在邏輯正確性和設計決策上，不用反覆提醒「這段邏輯不應該放在 Widget 裡」。
+架構層面的問題在進入 review 之前就被攔截時，review 的內容會集中到邏輯正確性與設計決策上——「這段邏輯不應該放在 Widget 裡」這類判斷不必每次重講一遍。
 
-對新加入的開發者也很友善：不需要先把架構文件背熟才能開始開發，工具會在走錯方向時給出明確的反饋。
+對後來加入這個 codebase 的人也一樣：不需要先把架構文件讀熟才能開始寫，走錯方向時工具會給出位置明確的反饋。
 
-架構的生命力在於它能不能在日常開發壓力下被維護下去。
+架構的生命力在於它能不能在日常開發壓力下被維護下去——而壓力不會消失，能改的是違規的成本。
+
+Ticket 層級怎麼切才不會一張跨四層，走 [層級隔離](../layered-ticket-methodology/)；Clean Architecture 五層在這個專案怎麼定義，走 [Clean Architecture 實作方法論](../clean-architecture-implementation-methodology/)。
