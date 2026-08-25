@@ -181,7 +181,17 @@ rg -l "<slug>" .claude/skills/ content/skills/       # 內容引用（SKILL.md �
 find .claude/skills content/skills -name "<slug>.md" # 同名檔案（principle 卡本身）
 ```
 
-兩條缺一不可。principle 卡的內容裡通常沒有自己的 slug 字串（slug 只在檔名上），所以只跑 `rg` 會漏掉分岔的那個檔——實測過一次，`rg` 找到 SKILL.md 而漏掉真正停在舊規則的 principle 卡。
+兩條缺一不可。principle 卡的 slug 只存在於檔名，內容的 H1 是給人讀的標題，所以 `rg` 掃內容掃不到卡自己——全站量測 157 張 principle 卡，內容含自己 slug 的只有 9 張，**148/157 掃不到**。漏掉是常態不是巧合。
+
+只跑 `rg` 比不跑更糟：它會命中引用該卡的 `SKILL.md`，給出「已檢查、已同步」的假訊號，而真正停在舊規則的那張卡再也不會被看。實測踩過一次。
+
+量測指令：
+
+```bash
+for f in $(find .claude/skills -path '*/principles/*.md'); do
+  slug=$(basename "$f" .md); grep -q "$slug" "$f" && echo "$slug"
+done | wc -l
+```
 
 同步時連段標一起對齊：同一個結構單位在兩份鏡像裡要用同一組 canonical 字串，否則之後靠 anchor 比對的自動化與人工檢查都會錯位。
 
