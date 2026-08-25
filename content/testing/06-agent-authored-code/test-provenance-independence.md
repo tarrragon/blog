@@ -93,4 +93,4 @@ tags: ["testing", "test-provenance", "ai-generated-code", "test-oracle", "tdd"]
 - 有了獨立判準之後怎麼量測試的偵測能力 → [品質閘門的更替](/testing/06-agent-authored-code/coverage-to-mutation-gate/)
 - 這條性質的術語卡 → [Test Provenance](/testing/knowledge-cards/test-provenance/)
 - 由測試自己餵資料造成的同型盲區 → [Stub](/testing/knowledge-cards/stub/) 與 [T.C5](/testing/cases/stale-reference-stub-blindspot/)
-- 站內在測試耦合對象上的立場 → [行為優先的 TDD](/record/behavior-first-tdd-methodology/)
+- 測試邊界該畫在模組還是類別 → [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)

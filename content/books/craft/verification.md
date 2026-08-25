@@ -14,7 +14,7 @@ tags: ["books", "reading", "craft", "testing", "tdd"]
 
 第二組一本，Aniche 的《Effective Software Testing》，處理的是立場確定之後仍然要回答的操作問題——這些測試案例是怎麼推出來的。前四本沒有一本給這個程序。
 
-站內對這個分歧的立場與推導在 [行為優先的 TDD 方法論](/record/behavior-first-tdd-methodology/)，那篇處理的是「所以我們怎麼做」；這裡處理的是「該讀哪本、每本代表什麼位置」。
+兩種定義的分野本身在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡，站內怎麼診斷手上這套測試的邊界畫錯了沒有，在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)，那篇處理的是「所以我們怎麼做」；這裡處理的是「該讀哪本、每本代表什麼位置」。
 
 ## 起點是 Kent Beck 的 Test-Driven Development: By Example
 
@@ -122,6 +122,6 @@ Gerard Meszaros 的《xUnit Test Patterns》是測試異味與模式的完整目
 
 測試寫不出來常常是設計的訊號而非測試技巧的問題——難測的程式碼通常是耦合太緊。那條路徑走 [設計判準與日常實踐](../design-and-practice/)。既有程式碼沒有測試而必須先補，那是 [改既有的程式](../changing-existing-code/) 裡 Feathers 那本處理的問題。
 
-站內自己的測試分層策略、協議整合驗證與實機教訓看 [Testing 測試策略](/testing/)；本站在 mock 學派分歧上採取的立場與推導在 [行為優先的 TDD 方法論](/record/behavior-first-tdd-methodology/)。
+站內自己的測試分層策略、協議整合驗證與實機教訓看 [Testing 測試策略](/testing/)；測試邊界畫錯時看得出來的症狀、以及本站多數內容為什麼落在古典派那一側（含那個選擇本身帶著什麼立場），在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)。
 
 程式碼由 agent 產出、而人不打算逐行讀時，判準該落在哪走 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)——那裡處理的是本篇四本立場書共同預設而在那個情境下失效的前提：測試由懂需求的人寫，而那個人會讀自己的程式碼。Bach 與 Bolton 那本的 checking 與 testing 分界是這條路線的上游概念。

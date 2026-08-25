@@ -129,4 +129,4 @@ final BookAuthor author;
 
 兩者的共同形狀是：技術判斷本身沒錯，而它作用在一個尚未被理解的業務結構上。讀設計文件的時間換到的是這個結構。
 
-重構的測試在什麼條件下該保持穩定，走 [行為優先的 TDD](../behavior-first-tdd-methodology/)；架構層的違規怎麼在 commit 階段就被擋下，走 [架構合規交給機制](../layered-architecture-quality-checking/)。
+重構的測試在什麼條件下該保持穩定，走 [TDD 的兩種做法](../behavior-first-tdd-methodology/)；架構層的違規怎麼在 commit 階段就被擋下，走 [架構合規交給機制](../layered-architecture-quality-checking/)。

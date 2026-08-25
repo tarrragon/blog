@@ -72,4 +72,4 @@ test('書籍驗證應該檢查所有欄位', () {
 
 100% 通過率是底線：某個測試過不了時要找出的是失敗的原因，跳過與修改期望值都只是讓它從紅燈清單上消失。
 
-測試該耦合行為而不是結構、兩派 TDD 對「單元」的定義差在哪，走 [行為優先的 TDD](../behavior-first-tdd-methodology/)。
+兩派 TDD 對「單元」的定義差在哪，走 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)；測試邊界該畫在模組還是類別、由什麼決定，走 [TDD 的兩種做法](../behavior-first-tdd-methodology/)。

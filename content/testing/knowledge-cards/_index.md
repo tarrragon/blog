@@ -20,6 +20,7 @@ tags: ["testing", "knowledge-cards"]
 | [Real-Backend Verification Test（真實後端驗證測試）](/testing/knowledge-cards/real-backend-verification-test/) | 假後端 + 流程測試 | 對共用測試環境常駐斷言後端行為、承接假後端漂移警報                         |
 | [Stub](/testing/knowledge-cards/stub/)                                                                         | Test Double 分類  | 測試作者寫死回應資料，驗證不出後端行為假設本身的錯誤                       |
 | [Test Double Taxonomy](/testing/knowledge-cards/test-double-taxonomy/)                                         | Test Double 分類  | dummy / stub / spy / mock / fake 五種角色的分野與選用                      |
+| [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)                        | Test Double 分類  | 單元的兩種定義，決定替身出現在模組邊界還是類別之間                         |
 | [Fire-and-Forget Orchestration（射後不理編排）](/testing/knowledge-cards/fire-and-forget-orchestration/)       | 測試設計          | 呼叫後不等待完成的編排形態，flaky test 常見根因之一                        |
 | [Frozen vs Live Reference（凍結參照與活解析）](/testing/knowledge-cards/frozen-vs-live-reference/)             | 測試設計          | 下游持有上游 id 的兩種策略，凍結版在上游重建後失效                         |
 | [Skip vs Fail Semantics](/testing/knowledge-cards/skip-vs-fail-semantics/)                                     | 測試設計          | 跳過與失敗兩種訊號各自對應的成因類別與處置路徑                             |

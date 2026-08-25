@@ -1,146 +1,152 @@
 ---
-title: "行為優先的 TDD：測試耦合行為、不耦合結構"
+title: "TDD 的兩種做法：邊界畫錯時看得出來的症狀"
 slug: "behavior-first-tdd-methodology"
 date: 2026-03-04
 draft: false
-description: "重構時測試大量壞掉、或在「該不該 mock 這個協作者」上需要一個可執行的立場時，本站對兩派 TDD 分歧的選擇與推導"
-tags: ["TDD", "Sociable Unit Tests", "Behavior Testing", "Kent Beck", "Clean Architecture"]
+description: "測試的維護成本開始超過它提供的保護、或重構時測試大量壞掉時，用來診斷測試邊界該畫在模組還是類別"
+tags: ["TDD", "Sociable Unit Tests", "Solitary Unit Tests", "Behavior Testing", "Clean Architecture"]
 ---
 
-本站在 TDD 的兩派分歧上採行為優先：測試透過模組的公開 API 互動、只 mock 跨越應用邊界的外部依賴，也就是 Sociable Unit Tests 這一派。這篇記錄這個選擇的推導與操作方式；兩派各自最強的原著該讀哪本、每本代表什麼位置，由書單的 [驗證自己寫對了](/books/craft/verification/) 承接。
+測試的維護成本高於它提供的保護時，「還不如不寫」是一個理性的結論。而該修的通常是測試邊界畫的位置：邊界畫得越細，測試綁在程式內部結構上的地方越多，內部結構每動一次就要跟著改一次。
+
+TDD 的兩種做法差在這條邊界畫在哪一層。**Sociable** 把它畫在模組的公開 API 上，**Solitary** 畫在單一類別上。兩種定義的差別、以及判斷手上這套測試現在屬於哪一派的操作程序，在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡。
+
+**這篇的射程是維護經濟性**：它給的三個症狀量的都是「這套測試往後要花多少工」。這個選擇本身帶著立場——倫敦學派的核心主張是由外而內的設計發現，那件事不在這三個症狀的量測範圍內，本篇把它放在後面單獨處理。用維護成本當唯一的尺去量，答案會偏向 Sociable，而那有一部分是尺選出來的。本站多數內容預設 Sociable，理由與代價都寫在下面。
 
 <!--more-->
 
-## 問題的形狀：測試耦合到了結構
-
-「每個 class 寫一個 test class、每個 method 寫一個 test method」是常見的入門教法。照這個教法寫出來的測試，耦合的對象是程式的**結構**而不是**行為**：把一個 class 拆成兩個、把方法搬到新類別——外部行為完全沒變，測試卻大量壞掉。
-
-判讀訊號可以直接拿重構的 diff 來看：測試的改動量跟生產程式碼相當甚至更多、而這次改動沒有改變任何外部行為時，測試耦合的就是結構。這種處境下「維護測試的成本高於它提供的保護、還不如不寫」是一個理性的結論——要修的不是「採不採用 TDD」，是測試耦合的對象。
-
-Kent Beck 與 Kelly Sutton 後來在 [Test Desiderata](https://testdesiderata.com/) 把這件事寫成兩條獨立的性質：**behavioral**（測試要對受測程式的行為改變敏感）與 **structure-insensitive**（程式結構改變時，測試的結果不應該跟著變）。重構時測試大量壞掉，違反的是第二條。
-
 ## 測試是可執行的需求規格
 
-這個立場建立在一個前置認知上：測試不是「驗證實作正確的工具」，而是**用程式碼表達的需求規格**。
+兩種做法建立在同一個前置認知上：測試是**用程式碼表達的需求規格**。它的責任是說出系統該做什麼，證明實作寫對了只是這件事的副產品。
 
-需求定義系統應該做什麼，實作是怎麼做的其中一種方式。需求保持穩定、實作隨時可換——Martin Fowler 在《Refactoring》給重構的定義正是這個分界：在不改變外部行為的前提下，調整程式的內部結構。耦合在行為上的測試，在這個定義下的重構裡自然保持穩定。
+需求定義系統應該做什麼，實作是怎麼做的其中一種方式。需求保持穩定、實作隨時可換。Martin Fowler 在《Refactoring》給重構的定義正是這個分界：在不改變外部行為的前提下，調整程式的內部結構。
 
-## 兩派的分歧在「單元」的定義
+這個認知決定了測試該對什麼敏感。Kent Beck 在 [Test Desiderata](https://testdesiderata.com/) 把它寫成兩條獨立的性質：**behavioral**（測試要對受測程式的行為改變敏感）與 **structure-insensitive**（程式結構改變時，測試的結果不應該跟著變）。兩種做法對第一條的答案相同，分歧全部落在第二條。Sociable 把它當成必須守住的性質，Solitary 把它當成可以交換的成本。
 
-TDD 的兩派差在把什麼當成測試的單元。
+先寫測試比先寫程式再補測試快，這一條對兩種做法同樣成立，差別在設計問題暴露的時間點。紅燈、綠燈、重構的循環把「這個功能怎麼用、介面好不好用」的思考排在寫實作之前，於是難測的介面在寫測試的當下就現形：要先起一個容器才能建構、要塞五個參數才能呼叫、結果只能從 log 讀出來。Test-Last 的順序裡沒有人在寫測試，所以「難測」不產生任何訊號，那個設計問題要等到功能上線之後才由別的症狀暴露。
 
-**Classical TDD**（Kent Beck、Martin Fowler 的做法）把單元定義為模組——一個或多個協同工作的類別組合，對外提供公開 API。測試只透過這個 API 互動，看不到模組內部有哪些類別、它們怎麼協作；需要 mock 的只有真正的外部依賴——資料庫、檔案系統、外部服務。這種風格稱為 **Sociable Unit Tests**。
+## 邊界畫錯的症狀
 
-**Mockist TDD**（倫敦學派）把單元定義為單一 class，mock 掉所有協作者。這種風格稱為 **Solitary Unit Tests**。
+下面三個是最常撞到的，都要有一套跑著的測試才觀察得到——它們是診斷工具，不是選型公式。
 
-核心差異在耦合線的數量：
+**跑這個診斷的是維護那套測試的人**，時機是做完一輪功能變更之後回頭看。要取三個數字：拿最近一次不改變外部行為的重構，數測試的改動量與生產程式碼的改動量（症狀一）；拿最近幾次紅燈，記從看到紅燈到指出哪裡出錯花了多久（症狀二）；跑一次完整測試，記時間（症狀三）。
 
-```text
-Sociable: Test → [Module API] → Module Implementation（黑盒）
-Solitary: Test → Mock(B) → Class A → Class B
-                 Mock(C)           → Class C
-```
+三個症狀各自獨立，**不必比大小、也不必決定先修哪一個**：哪一個成立就照它的處方走，兩個同時成立就兩條都走。每個症狀的處方分兩層，第一層不移動邊界，第二層才移動；先試完第一層，再判斷要不要進第二層。
 
-Sociable 只有一條耦合線，Solitary 有多條，而每一條耦合線都是日後的維護成本——內部結構每動一次，掛在結構上的耦合線就要跟著修一次。
+這份清單不封閉。同樣落在維護成本這把尺上、而下面沒有展開的至少還有兩項：替身本身的製造成本（需要 codegen 步驟的語言比不需要的貴，沒有現成替身機制的語言更貴），以及模組粒度要涵蓋內部分支組合時的相乘成長。撞到它們時判讀方式相同——先問成本的兩個因子哪一個可以單獨降下來，再問移動邊界划不划算。
 
-## 兩種測試長什麼樣
+### 症狀一：責任一搬動，測試就大批要改
 
-以訂單提交為例，Sociable 測試只 mock 跨邊界的 Repository：
+**觀察到什麼**：某個計算從服務搬進實體、一個類別拆成兩個、幾個小類別併回去——外部行為完全沒變，而測試的改動量跟生產程式碼相當甚至更多。
 
-```dart
-test('使用者提交訂單成功', () async {
-  // Given: 只 mock 外部依賴（Repository）
-  when(mockRepository.save(any))
-      .thenAnswer((_) async => SaveResult.success('order-123'));
+**成因**：這個成本是兩個數字的乘積，**責任搬動的頻率 × 每次要重寫的替身設定量**。業務規則持續演化的系統把第一個因子推高，而第二個因子由邊界位置決定：邊界畫在類別時，每個協作者各有一組替身設定，搬動一個方法，就要動到那個方法用到的每一個協作者的替身設定。
 
-  // When: 透過 Use Case API 提交訂單
-  final result = await submitOrderUseCase.execute(order);
+這個形態不會一次性壞掉，所以它常常沒有觀察者。每個變更只多花一點，而改測試的人往往就是改實作的人、在同一次提交內完成；成本要被看見，得有人固定去看測試改動與實作改動的比例——code review 會逐項看測試 diff 的團隊看得到，只看功能是否正確的團隊看不到。
 
-  // Then: 驗證可觀察的行為結果
-  expect(result.isSuccess, true);
-  expect(result.orderId, 'order-123');
-  // 測試不知道 Order 內部如何計算、驗證
-  // 測試使用真實的 Domain Entities
-});
-```
+**先試不移動邊界的解法**：把替身設定集中到一個 test support 模組，讓責任搬動只改一處。第二個因子降下來之後，第一個因子再高也不痛。
 
-Solitary 測試把協作者全部換成 mock、驗證的是呼叫本身：
+**移動邊界才划算的條件**：替身設定已經集中了、搬動仍然要改大量測試，代表測試斷言的就是協作結構本身。這時把邊界拉回模組。
 
-```dart
-test('OrderService.submitOrder calls Repository.save', () async {
-  // Given: mock 所有協作者
-  final mockOrder = MockOrder();          // 連 Order 也 mock 了
-  final mockValidator = MockOrderValidator();
-  final mockCalculator = MockPriceCalculator();
+### 症狀二：紅燈說不出哪裡壞
 
-  when(mockValidator.validate(mockOrder)).thenReturn(true);
-  when(mockCalculator.calculate(mockOrder)).thenReturn(100);
-  when(mockRepository.save(mockOrder))
-      .thenAnswer((_) async => SaveResult.success('order-123'));
+**觀察到什麼**：測試變紅之後，找到出錯位置要花的時間長到讓人不想跑測試。
 
-  // Then: 驗證方法呼叫次數（實作細節）
-  verify(mockRepository.save(mockOrder)).called(1);
-  // OrderService 的內部邏輯一重構，這個測試就會壞掉
-});
-```
+**成因**：模組粒度的紅燈只說「輸出不對」，中間經過的步驟都是嫌疑犯。演算法密集的模組最容易撞到——數值計算、編解碼、加密系統的錯誤常常只在某個類別的邊界條件出現。
 
-## 重構安全性的自我檢驗
+**先試不移動邊界的解法**：定位時間同時受工具影響。斷言訊息把預期與實際的差異印清楚、中間狀態變成可觀察、property-based 測試的 shrinking 把失敗案例縮到最小——這幾件事都能把定位時間壓下來而不必動邊界。
 
-手上的測試耦合到哪裡，可以用一個操作程序驗出來：改變模組的內部邏輯、調整類別結構、重新命名內部方法——外部行為保持不變。全部測試依然通過、一個都不用改，測試耦合的是行為；有任何測試要跟著改，那些測試耦合的就是結構，耦合線的位置也同時現形——要修的就是它們。
+**移動邊界才划算的條件**：可觀察性補完之後定位仍然慢，而且模組的內部步驟數本來就多。逐類別隔離讓紅燈直接指到出錯的那一層，省下的偵錯時間可以超過症狀一的代價——前提是症狀一那個乘積本來就低，也就是那個模組的結構已經不太動了。
 
-## Test-First 的優勢在問題被發現的時間點
+判斷結構穩不穩定，看規格是不是被外部凍結：已發布的協議版本、標準文件、對外契約算穩定。這一條有一個陷阱——設計還沒定案的人不會覺得自己沒定案，所以自評不算數，要拿得出外部憑據（凍結的版本號、簽過的契約、發布過的規格書）。拿不出來就當作還在動。
 
-Test-First（先寫測試）比 Test-Last（先寫程式再補測試）快，差別在設計問題暴露的時間點。
+在結構還會動的模組上逐類別隔離，代價的形態是這樣：三個類別之間的介面一改，替身的方法簽名對不上，一批測試在實作還沒寫完之前就先紅了，而那些紅燈跟正確性無關。它不容易被判定成邊界畫錯，因為「改實作本來就要改測試」聽起來合理；而誤報與真實失敗共用同一個紅燈通道，兩者無法區分，於是那一批誤報要先全部修綠，才看得見真正的邊界條件測試有沒有壞。
 
-Red-Green-Refactor 的循環把「這個功能怎麼用、介面好不好用」的思考排在寫實作之前——介面設計的問題在寫測試的當下就暴露，那是修復成本最低的時刻。Test-Last 的順序是程式寫完了才發現難以測試，而難以測試多半意味著設計問題，這時要改動的範圍已經大了。Kent Beck 說 TDD 更快，指的是這個時間點差，而不是打字比較少。
+### 症狀三：協作者拖慢或拖垮測試
 
-## BDD 是命名修正，不是新方法
+**觀察到什麼**：整套測試跑完的時間長到沒有人在存檔時跑它，或者某些協作者根本建構不出來。
 
-Dan North 在 2006 年提出 [BDD](https://dannorth.net/introducing-bdd/)，動機是修正「Test」這個詞造成的誤導：這個詞讓人以為要測試每個類別和方法，換成「Behavior」之後，意圖回到原位——測的是行為，不是程式結構。這跟 Kent Beck 2003 年在《Test Driven Development: By Example》示範的做法一致，換的是更難被誤解的詞。
+**成因分流**：三種成因的處方不同。協作者本來就在外部世界（硬體、外部服務、需要真機才有意義的驅動層），那是應用邊界的替換、跟這個症狀無關，走下面「Sociable 怎麼做」的第三件事。造得起來但要二十行前置狀態，多半代表那個物件承擔了過多責任，它是設計訊號、正解是修設計；短期改不動時把它替換掉是合理的權宜，只是要知道自己在繞過什麼。造得起來、只是慢，才是這個症狀。
 
-《Software Engineering at Google》的測試章給了同一條規則，直接寫成小節標題：Test Behaviors, Not Methods。
+慢的份量要換算成尺度才看得出來：單個協作者多花三秒，兩百個測試就是十分鐘；到那個量級就沒有人在存檔時跑它了，回饋從「改一行看一次」退到「提交前跑一次」，而 Test-First 買到的時間點優勢正是在那裡失效的。這裡的三秒與兩百都是示例，換成自己的數字重算。
+
+**先試不移動邊界的解法**：只替換那一個慢的協作者，邊界留在模組。一個慢的依賴不必讓整個模組改用逐類別隔離。
+
+**移動邊界才划算的條件**：慢的協作者不只一個、而且散在模組各處，逐個替換等於已經在做 Solitary 了。
+
+## 手上還沒有測試的時候
+
+三個症狀都要有一套跑著的測試才觀察得到，新模組一個數字都沒有。這時的判斷不靠計算，靠哪一邊的錯誤比較便宜修。
+
+預設 Sociable，理由是它的錯誤方向便宜：邊界畫得太粗、後來發現定位太慢，收縮是加測試，既有的測試留著仍然有效；邊界畫得太細、後來發現結構還在動，那些逐類別的測試要一批一批換成模組層的，而換的期間舊測試已經不可信、新測試還沒長齊，中間那段沒有回歸網。
+
+重新評估的觸發點就是上面三個症狀任一出現。在那之前不必為了選型多做任何事。
+
+## Solitary 的另一類理由
+
+有一種選 Solitary 的理由跟維護成本無關，所以上面那把尺量不到它：**用替身把還不存在的介面逼出來**。從最外層往內開發時，每遇到一個尚未實作的協作者就先用替身頂替，於是替身在這裡的用途是設計工具而不是測試邊界的經濟權衡。這是 Steve Freeman 與 Nat Pryce 在《Growing Object-Oriented Software, Guided by Tests》主張的做法，也是倫敦學派的核心，而它主張的東西正是本篇那把尺量不到的。跨團隊分工時同一個機制承擔契約佔位：雙方先固定介面，各自實作，替身是那份契約在測試裡的形體。
+
+用途不同，所以它跟三個症狀不衝突也不被它們裁決。介面定案、對方實作出來之後，那些逐類別的測試要不要留下來，才回到三個症狀去看。
+
+Solitary 的操作層本文不展開。由外而內的開發節奏、替身當設計手段怎麼落地，最完整的一次陳述在 Freeman 與 Pryce 那本。書單的 [驗證自己寫對了](/books/craft/verification/)在講那本的那一節寫明它的定位，以及它要求的前置經驗：先寫過一套自己後來覺得難維護的測試，否則這本的主張與批評它的主張聽起來都有道理。
+
+## Sociable 怎麼做
+
+Sociable 的定義是把測試邊界畫在模組的公開 API 上，模組內部有幾個類別、它們怎麼協作，測試看不見也不斷言。這個定義落到操作層是三件事。
+
+**找出模組的邊界**。判準是「這組類別對外承諾了什麼」，承諾的那個介面就是測試邊界，其餘都是實作細節。這個承諾要有機制撐著才存在——可見性修飾（package-private、internal）、套件結構、import 規則任一種都行；沒有任何機制擋住外部直接呼叫內部類別時，「邊界」只是一個口頭約定。邊界找錯的常見形態是把每個類別都當成一個模組，那會實際落成 Solitary 而寫的人不自知。
+
+**讓 Domain 物件用真實實例**。[值物件](/ddd/knowledge-cards/value-object/)、[實體](/ddd/knowledge-cards/entity/)、純計算的協作者一律不替換——這些是不碰外部世界、只做計算與持有狀態的物件。造不起來時回到症狀三的分流。
+
+**把替換限制在應用邊界**。跨出本應用進程、需要外部世界回應的依賴才替換：資料庫、檔案系統、外部服務、時鐘、亂數。優先用 [stub](/testing/knowledge-cards/stub/)（寫死回應）或 fake（有狀態的簡化實作）而不是 mock（斷言呼叫發生過），因為斷言的對象是最終狀態，不是呼叫過程。五種替身的分野在 [test double 分類](/testing/knowledge-cards/test-double-taxonomy/)那張卡。
 
 ## 跟 Clean Architecture 的組合
 
-Sociable Unit Tests 跟 Clean Architecture 建立在同一條前提上——業務邏輯獨立於外部世界——所以兩者組合起來沒有額外的對接成本。
+Clean Architecture 跟 Sociable 建立在同一條前提上：業務邏輯獨立於外部世界。所以兩者組合起來沒有額外的對接成本，而且它的分層本身就是那個「撐住邊界的機制」。站內的實作路線在 [Clean Architecture 實作指引](../clean-architecture-implementation-methodology/)。
 
-Clean Architecture 的 Use Cases 層是業務邏輯的進入點：對外提供公開 API，對內只使用 Domain Entities、透過介面隔離外部依賴（Repository、Gateway）。這個結構直接給出 Sociable 需要的三個條件：Use Case 的公開 API 是測試邊界，Domain Entities 用真實物件，要 mock 的只有 Repository 這一層。
+Use Cases 層對外提供公開 API、對內只使用 Domain Entities、透過介面隔離外部依賴。這個結構直接給出上面三件事各自的答案：Use Case 的公開 API 是測試邊界，Domain Entities 用真實物件，要替換的只有 [Repository](/ddd/knowledge-cards/repository/) 這一層。
 
-這個組合多買到一件事：對 Use Case 的單元測試同時就是業務驗收測試。一個名為「使用者提交訂單成功」的測試案例，不需要啟動 UI、不需要真實資料庫，驗證的卻是完整的業務流程——Alistair Cockburn 的 Hexagonal Architecture 把測試當成系統的另一種使用者，講的是同一個結構性質。
+這個組合多買到一件事：對 Use Case 的單元測試同時就是業務驗收測試。一個名為「使用者提交訂單成功」的測試案例，不需要啟動 UI、不需要真實資料庫，驗證的卻是完整的業務流程。Alistair Cockburn 的 Hexagonal Architecture（又稱 Ports and Adapters，主張應用核心對外只透過抽象的埠溝通、UI 與資料庫都只是可替換的轉接器，構件層見 [port](/ddd/knowledge-cards/port/) 與 [adapter](/ddd/knowledge-cards/adapter/)）把測試當成系統的另一種使用者，講的是同一個結構性質。
 
-## 邊界：Solitary 合理的場景
+## 行為快照落在兩種做法之外
 
-數學演算法、加密系統這類需要細粒度驗證的場景，「壞掉時精確定位到具體類別」比「重構時測試不動」更有價值，用 Solitary 合理。
+行為快照是替沒有測試的程式碼先架的一層保護：預期值直接取自程式當下的實際輸出，斷言的是現狀而非正確性。維護成本這把尺評不動它，因為它耦合結構，而耦合結構是它的工作方式。
 
-第二類是行為快照——替沒有測試的程式碼先架一層保護再動手，Feathers 的入場技術。這類測試斷言的是現狀而不是正確性，耦合結構是它的工作方式。它原本的定位是短期的入場資格：拆解依賴的期間先有回饋，正確性測試補上之後就移除。程式碼交給 agent 大幅改寫成為常態之後，這個定位的規模變了——每一次交出去的重構都需要先錄下現有行為的一層保護，而那層保護的存續期間跟著重構的節奏走，不再是一次性的。
+它原本的定位是短期的入場資格：拆解依賴的期間先有回饋，正確性測試補上之後就移除。程式碼交給 agent 大幅改寫成為常態之後，這個定位的規模變了。每一次交出去的重構都需要先錄下現有行為的一層保護，而那層保護的存續期間跟著重構的節奏走，不再是一次性的。
 
-存續變長帶來一個要主動管理的責任：退場條件。同一段行為被正確性測試覆蓋之後，快照要移除，否則兩份對同一行為的斷言會各自演化並分岔，而分岔的那一刻沒有人會知道該相信哪一份。判準與操作方式在 [characterization test](/testing/knowledge-cards/characterization-test/) 那張卡。
+存續變長帶來一個要主動管理的責任：退場條件。同一段行為被正確性測試覆蓋之後，快照要移除。留著不移除的失效方式很安靜——行為改了、快照紅了，於是有人順手把快照更新成新行為，而正確性測試也綠著，兩份都綠而行為已經變了，「該相信哪一份」這個問題連問都不會被問到。可執行的退場觸發因此就是快照變紅那一刻：那時的預設處置是查有沒有正確性測試覆蓋同一段行為，有就刪掉快照，而不是更新它。完整判準在 [characterization test](/testing/knowledge-cards/characterization-test/) 那張卡。
 
-多數商業應用的長期測試不屬於這兩類。
+## BDD 是命名修正，不是新方法
 
-## 這個立場處理的是哪一半
+Dan North 在 2006 年提出 [BDD](https://dannorth.net/introducing-bdd/)（那篇原文交代這個詞被換掉的動機與最早的 Given-When-Then 用法），動機是修正「Test」這個詞造成的誤導：這個詞讓人以為要測試每個類別和方法，換成「Behavior」之後，意圖回到原位，測的是行為而不是程式結構。這跟 Kent Beck 2003 年在《Test Driven Development: By Example》示範的做法一致，換的是更難被誤解的詞。
 
-Sociable 與 Solitary 的分歧問的是「單元怎麼定義」，而這個問題預設行為由寫程式的人決定：測試該耦合行為不耦合結構，前提是那個行為就是想要的行為。程式碼由 agent 產出時多出一個問題——行為由誰決定、憑什麼相信它是需求要的那一個。
+《Software Engineering at Google》的測試章給了同一條規則，直接寫成小節標題：Test Behaviors, Not Methods。
 
-這不是同一個問題的延伸，是它旁邊的另一個問題。本篇的立場在那個情境下照舊成立，而且理由更強：agent 重構的頻率與幅度都比人高，耦合在結構上的測試誤報成本隨之上升。「agent 可以順手把壞掉的測試修好」不構成反駁——測試在重構後被重新產生，意味著它重新對齊了新的實作，包含新引入的缺陷，修好的那一刻它作為回歸網的功能就歸零。
+## 這套診斷預設行為已經是對的
 
-改變的是這個立場不再足夠。判準的來源與可信度那一層由 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)承接。
+三個症狀問的都是「這套測試往後要花多少工」，而這個問題預設行為由寫程式的人決定：測試該耦合行為還是結構，前提是那個行為就是想要的行為。程式碼由 agent 產出時多出一個問題——行為由誰決定、憑什麼相信它是需求要的那一個。
 
-Test-First 在同一個情境下也多了一個理由。本篇給的理由是設計問題暴露的時間點，服務的是人的認知負荷；先寫測試在 agent 產出時另外製造出一件事——實作沒有可照抄的對象，於是判準的來源與實作分開。判斷一組測試還剩多少驗證力，第一個問題就是它的預期值從哪裡長出來——[判準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)那一章處理這件事。
+這是它旁邊的另一個問題，不是同一個問題的延伸。本文的診斷在那個情境下照舊成立，而症狀一會更早出現：agent 重構的頻率與幅度都比人高，責任搬動的頻率那個因子被推得更高。「agent 可以順手把壞掉的測試修好」不構成反駁。測試在重構後被重新產生，意味著它重新對齊了新的實作，包含新引入的缺陷，修好的那一刻它作為回歸網（擋住既有行為被改壞的那一層測試）的功能就歸零。
 
-## 這個立場接到哪裡
+改變的是這套診斷不再足夠。測試的預期值從哪裡來、憑什麼相信它，那一層由 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)承接。
 
-兩派原著與對倫敦學派的系統性批評該讀哪本，走書單的 [驗證自己寫對了](/books/craft/verification/)——Kent Beck 的原始定義、Freeman 與 Pryce 的倫敦學派完整主張、Khorikov 的四支柱批評，各本的位置那篇有交代。
+Test-First 在同一個情境下也多了一個理由。前面給的理由是設計問題暴露的時間點，服務的是人的認知負荷。先寫測試在 agent 產出時另外製造出一件事：實作沒有可照抄的對象，於是預期值的來源與實作分開。判斷一組測試還剩多少驗證力，第一個問題就是它的預期值從哪裡長出來，[判準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)那一章處理這件事。
 
-測試分層怎麼設計、協議整合怎麼驗證，走 [Testing 測試策略](/testing/)；診斷完之後斷言與 mock 邊界實際怎麼改，走 [測試設計判斷](/testing/05-test-design-judgment/)；程式碼由 agent 產出而不打算逐行讀時，判準該落在哪走 [模組六](/testing/06-agent-authored-code/)；沒有測試的既有程式碼要先取得入場資格，走書單的 [改既有的程式](/books/craft/changing-existing-code/)。
+## 這套診斷接到哪裡
+
+兩種定義的分野、耦合線怎麼數、以及判斷手上的測試屬於哪一派的操作程序，在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡。
+
+兩派原著與對倫敦學派的系統性批評該讀哪本，走書單的 [驗證自己寫對了](/books/craft/verification/)：Kent Beck 的原始定義、Freeman 與 Pryce 的完整主張、Khorikov 的四支柱批評，各本的位置那篇有交代。Khorikov 那本給的是一組可以拿來替測試打分數的判準，本篇的三個症狀只涵蓋其中「抵抗重構」與「快速回饋」兩項。
+
+測試分層怎麼設計、協議整合怎麼驗證，走 [Testing 測試策略](/testing/)。跨應用邊界的替換該不該改用真實服務、斷言怎麼寫，走 [測試設計判斷](/testing/05-test-design-judgment/)——那個模組判的是應用邊界外的層級差異，模組內協作者該不該替換是本文這三個症狀的事，兩者不同軸。沒有測試的既有程式碼要先取得入場資格（先讓改動有回饋、才動得了手），走書單的 [改既有的程式](/books/craft/changing-existing-code/)。
 
 ---
 
 參考資料：
 
 - Kent Beck，《Test Driven Development: By Example》，2003
-- Kent Beck 與 Kelly Sutton，[Test Desiderata](https://testdesiderata.com/)
+- Kent Beck，[Test Desiderata](https://testdesiderata.com/)（各條性質的影片說明由他與 Kelly Sutton 合作）
 - Martin Fowler，《Refactoring: Improving the Design of Existing Code》，第二版 2018
+- Steve Freeman 與 Nat Pryce，《Growing Object-Oriented Software, Guided by Tests》，2009
 - Dan North，[Introducing BDD](https://dannorth.net/introducing-bdd/)，2006
 - Google，《Software Engineering at Google》，2020
 - Valentina (Cupać) Jemuović，[TDD and Clean Architecture - Driven by Behaviour](https://www.youtube.com/watch?v=3wxiQB2-m2k)

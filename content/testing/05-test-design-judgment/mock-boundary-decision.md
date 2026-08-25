@@ -16,6 +16,8 @@ Test 驗證的行為完全在程式碼內部 — 函式邏輯、狀態機轉換�
 
 判斷問題：**如果把 mock 替換成真實服務，test 的斷言結果會不會改變？** 如果不會改變，mock 夠用。
 
+本篇判的是應用邊界之外的層級差異。模組內部的協作者該不該換成替身是另一條軸，見 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)。
+
 例：`ConnectionManager` 收到 error 後是否正確切換到 error 狀態 — 不管 error 來自 mock 還是真實 WebSocket，狀態機邏輯相同。Mock 夠用。
 
 ### Mock 不夠的場景

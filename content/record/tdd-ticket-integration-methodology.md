@@ -77,4 +77,4 @@ Phase 3b 拿到的每張任務都職責明確，實作途中不需要再判斷�
 
 兩套系統會相互強化：Ticket 設計讓 TDD 的階段執行不被拆分問題打斷，而 TDD 的階段順序讓 Ticket 的職責判斷有測試規格當依據。
 
-四大檢查的完整定義與拆分範例，走 [Atomic Ticket 方法論](../atomic-ticket-methodology/)；測試該耦合行為而不是結構，走 [行為優先的 TDD](../behavior-first-tdd-methodology/)。
+四大檢查的完整定義與拆分範例，走 [Atomic Ticket 方法論](../atomic-ticket-methodology/)；測試邊界該畫在模組還是類別、由什麼決定，走 [TDD 的兩種做法](../behavior-first-tdd-methodology/)。

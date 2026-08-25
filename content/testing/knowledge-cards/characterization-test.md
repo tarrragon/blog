@@ -10,7 +10,7 @@ Characterization test 的斷言對象是現狀本身：預期值取自被測程�
 
 ## 概念位置
 
-當依賴纏結到必須先拆解才能寫正確性測試、而拆解本身就可能改壞行為時，characterization test 補上這段真空期的回饋——這是它唯一的存在理由。依賴纏結的典型樣貌是[mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的那種處境：程式碼直接呼叫外部服務、沒有可注入的介面。這個處境在 [legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)的「遷移安全網」段有完整的操作判準——包含三種起步路徑各自何時需要它。
+當依賴纏結到必須先拆解才能寫正確性測試、而拆解本身就可能改壞行為時，characterization test 補上這段真空期的回饋——這原本是它唯一的存在理由。程式碼交給 agent 大幅改寫成為常態之後另有一種進入條件，那個推導在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)。依賴纏結的典型樣貌是[mock 遮蔽](/testing/knowledge-cards/mock-masking/)描述的那種處境：程式碼直接呼叫外部服務、沒有可注入的介面。這個處境在 [legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)的「遷移安全網」段有完整的操作判準——包含三種起步路徑各自何時需要它。
 
 ## 可觀察訊號與例子
 

@@ -47,7 +47,7 @@ Use Case 需要存取資料，但不能直接依賴 SQLite。正確做法是：�
 ### 實作階段由外到內
 
 1. 先定義所有 Ports。在寫任何實作之前，確立 Use Case 介面和 Repository 介面，這是系統的骨架。
-2. 外層用 Mock 介面開發和測試。Controller 在 Use Case 還沒真正實作前就能測試，因為它依賴的是抽象介面。
+2. 外層用 Mock 介面開發和測試（用替身頂替尚未實作的協作者是設計工具、不是長期邊界；介面定案之後該不該留下逐類別測試，見 [TDD 的兩種做法](../behavior-first-tdd-methodology/)）。Controller 在 Use Case 還沒真正實作前就能測試，因為它依賴的是抽象介面。
 3. 補完內層實作：Interactor 實作業務邏輯，Repository 存取真正的資料庫。
 4. Composition Root 組裝依賴注入，系統就能真正執行。
 

@@ -66,4 +66,4 @@ UseCase 層的 BDD 測試關注行為，重構內部邏輯只要業務行為沒�
 
 測試因為業務改變而失敗是它在做該做的事；因為重構而大量失敗，說明它耦合的是實作結構。
 
-Given-When-Then 的寫法與 Mock 邊界，走 [BDD 測試](../bdd-testing-methodology/)；兩派 TDD 對「單元」的定義，走 [行為優先的 TDD](../behavior-first-tdd-methodology/)。
+Given-When-Then 的寫法與 Mock 邊界，走 [BDD 測試](../bdd-testing-methodology/)；兩派 TDD 對「單元」的定義，走 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)；兩種做法各自適用什麼系統形態，走 [TDD 的兩種做法](../behavior-first-tdd-methodology/)。
