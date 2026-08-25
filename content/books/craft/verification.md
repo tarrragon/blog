@@ -8,11 +8,11 @@ tags: ["books", "reading", "craft", "testing", "tdd"]
 
 這個主題有 [工程技藝書單](../)其他三篇——設計判準、系統架構、改既有的程式——都沒有的特徵：**收錄的書彼此不同意**。測試該寫到什麼粒度、協作對象該不該用 mock 替換、測試該綁在行為上還是結構上——這些問題有兩個互相對立的傳統，而多數讀者是在讀到第二本、發現它跟第一本說法相反的時候，才知道自己一直在照著其中一派做而不知道有另一派。
 
-所以這篇的選讀判斷跟那三篇不同：不是「先讀哪本再讀哪本」，是**先知道分歧在哪，再決定要站哪邊**。
+所以這個主題的選讀順序由分歧決定：**先知道這幾本在哪裡不同意，再決定自己採哪一種做法**。
 
 TDD 的原始定義出自 Kent Beck 的[《Test-Driven Development: By Example》](#起點是-kent-beck-的-test-driven-development-by-example)：怎麼從一個失敗的測試開始建立單元測試、怎麼用紅燈—綠燈—重構的小循環讓設計從小長到大。Freeman 與 Pryce 的[《Growing Object-Oriented Software, Guided by Tests》](#想看-mock-那一派的完整主張時讀-growing-object-oriented-software-guided-by-tests)在測試該怎麼設計上走了跟 Beck 不同的邏輯：由外而內開發，於是每遇到一個還不存在的協作對象就先用 mock 頂替。兩邊分岔的地方是同一個定義——**測試的單元是什麼**：Beck 把單元當成一組協同工作的類別，Freeman 與 Pryce 那一派（書市慣稱倫敦學派）把單元縮到單一類別。
 
-無論選擇哪一種做法，測試寫完之後都要評估同一個問題，這套測試到底有沒有問題？Khorikov 的[《Unit Testing Principles, Practices, and Patterns》](#要一組可以拿來評分的判準時讀-unit-testing-principles-practices-and-patterns)就是提供這個評估的標準，這個標準無論對哪一派都適用。這本書中對於倫敦學派的批判也是基於這個系統。而判準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)提出了一個討論，怎麼評估「執行事先寫好的判準」與「設計判準、發現沒人想到要問的問題」這兩種活動？這其實是 Beck、Freeman 與 Pryce、Khorikov 三本理論書都在討論的共同問題。釐清測試的方向之後，實務上還會需要討論單元的大小——三本理論書在這一題沒有取得共識，[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)給出解法——以及怎麼從規格推導到測試案例（Aniche 的[《Effective Software Testing》](#要一套推出測試案例的程序時讀-effective-software-testing)）。
+無論選擇哪一種做法，測試寫完之後都要評估同一個問題，這套測試到底有沒有問題？Khorikov 的[《Unit Testing Principles, Practices, and Patterns》](#要一組可以拿來評分的判準時讀-unit-testing-principles-practices-and-patterns)就是提供這個評估的標準，這個標準無論對哪一派都適用。這本書中對於倫敦學派的批判也是基於這個系統。而判準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)提出了一個討論，怎麼評估「執行事先寫好的判準」與「設計判準、發現沒人想到要問的問題」這兩種活動？這是 Beck、Freeman 與 Pryce、Khorikov 三本理論書都在討論的共同問題。釐清測試的方向之後，實務上還會需要討論單元的大小——三本理論書在這一題沒有取得共識，[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)給出解法——以及怎麼從規格推導到測試案例（Aniche 的[《Effective Software Testing》](#要一套推出測試案例的程序時讀-effective-software-testing)）。
 
 兩種定義的分野本身，在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡。要診斷手上這套測試的邊界畫錯了沒有，讀 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)——那篇回答「所以我們怎麼做」，本篇回答「該讀哪本、每本代表什麼位置」。
 
@@ -81,14 +81,14 @@ Maurício Aniche 這本（Manning，2022）處理的是四本立場書都沒有�
 
 證據來源是學術訓練加業界實踐（作者當時同時任教於 Delft 理工大學並在業界帶技術培訓），形式是步驟加練習，每章有可自己動手的題目。範例是 Java 與 JUnit，推導程序本身與語言無關。時效上沒有明顯過時的部分。
 
-前置經驗要求比四本立場書低——它不預設讀者已經寫過一套難維護的測試，也不預設讀者對兩派分歧有立場。缺點的另一面是它不處理立場問題：讀完之後仍然要自己決定單元畫在哪，那要回到四本立場書。作者另有一套與本書同主題的免費線上課（見下方公開課段），內容重疊但形式互補。查不到繁體中文版，另有簡體中文譯本（2026 年 8 月查）。
+前置經驗要求比四本立場書低——它不預設讀者已經寫過一套難維護的測試，也不預設讀者對兩派分歧有立場。缺點的另一面是它不處理立場問題：讀完之後仍然要自己決定單元畫在哪，那要回到四本立場書。作者另有一套與本書同主題的免費線上課（見 [影音路徑在別的關鍵字底下](#影音路徑在別的關鍵字底下)），內容重疊但形式互補。查不到繁體中文版，另有簡體中文譯本（2026 年 8 月查）。
 
 - [Manning（Effective Software Testing: A Developer's Guide）](https://www.manning.com/books/effective-software-testing)
 - [天瓏（Effective Software Testing: A Developer's Guide，原文版）](https://www.tenlong.com.tw/products/9781633439931)
 
 ## 為什麼只收這幾本
 
-四本立場書彼此不同意，而它們的分歧點正是這個主題最難自己判斷的那一個。讀完會發現自己原本以為的「測試最佳實踐」是某一派的立場，而那個發現比任何單一技巧有用。Aniche 那本收在旁邊，因為立場選定之後「案例怎麼推出來」仍然沒有答案。
+四本立場書彼此不同意，而它們的分歧點正是這個主題最難自己判斷的那一個。讀完會發現自己原本以為的「測試最佳實踐」是某一派的立場，而那個發現比任何單一技巧有用。Aniche 那本收在旁邊，補的是四本立場書都沒給的那一段：案例怎麼從規格推出來。
 
 測試的書市有兩大類不在這裡。一類是特定框架的操作手冊，那類的時效跟框架版本綁死，且屬於教學系列的範圍。另一類是把測試金字塔或某個覆蓋率目標推銷成普適規則的書——它們的問題是規則脫離了推導它的取捨，而本篇收的書恰好證明那些取捨還在爭論中。
 

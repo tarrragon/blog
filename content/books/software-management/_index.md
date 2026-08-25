@@ -32,7 +32,7 @@ tags: ["books", "reading", "management", "engineering-leadership", "career"]
 
 起點書的完整描述與購書連結在對應的主題篇：前三本在 [角色轉換與職涯路徑](topics/role-transitions/)，Peopleware 在 [留任、動機與工作環境](topics/retention-motivation/)，Team Topologies 在 [組織結構與團隊設計](topics/team-design/)。
 
-有三種處境這張表判不出來：好幾格同時成立、還沒被指派而想先評估下一格、以及團隊人數不到一個團隊。三種各自的做法在 [依位置選書](roles/) 的「怎麼判斷自己在哪一格」段，該段開頭就標出三者分別在哪一小段。
+有三種處境這張表判不出來：好幾個位置同時成立、還沒被指派而想先評估要移動過去的那個位置、以及團隊人數不到一個團隊。三種各自的處方寫在 [怎麼判斷自己在哪個位置](roles/#怎麼判斷自己在哪個位置)。
 
 想往上或往旁邊移動時，預習的方向跟當下的問題不同。純個人貢獻者想走管理，第一站是 [角色轉換與職涯路徑](topics/role-transitions/)：那裡的書逐層寫出管理位置整天在處理什麼，而「值不值得走過去」得先看得到那個。決定要走之後才輪到 [留任、動機與工作環境](topics/retention-motivation/) 與 [組織文化與心理安全感](topics/culture-safety/)——這兩塊在只對自己負責的位置上完全用不到，因此也最沒有機會自然累積。想走 Staff+ 技術路線的人，預習的是 [困難對話與無權限影響力](topics/influence-conversation/) 與 [組織結構與團隊設計](topics/team-design/)，因為技術決策要能推得動，靠的是能不能把方案講進別人的約束裡，職權在這條路線上幫不上忙。
 

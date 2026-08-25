@@ -1,7 +1,7 @@
 ---
 title: "協作形態（collaboration mode）"
 date: 2026-08-19
-description: "團隊管理的建議逐條檢查都沒有明顯衝突、換算到跨時區團隊卻一條都落不了地時，用來定位失效的是哪一批論證"
+description: "團隊管理的建議逐條檢查都沒有明顯衝突、換算到跨時區團隊卻有一批落不了地時，用來定位失效的是哪一批論證"
 weight: 30
 tags: ["books", "knowledge-cards", "remote-work", "asynchronous", "team"]
 ---
