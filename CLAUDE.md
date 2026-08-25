@@ -67,7 +67,30 @@ Claude Code 寫 `content/` 文章時，不要為了整齊而把案例、反例�
 
 **何時用**：跨 5+ 章節模組 + 有 case 庫 + 品質高於速度。詳細適用 / 不適用條件見 AGENTS.md §5「教學模組級流程」段。
 
-**多輪審查硬底線**：寫完章節後跑 `multi-round-review` skill 時，至少跑三輪、不問「要不要繼續」。Round 3 的 steelman / outbound frame 每次實測都找出 10+ 項 Round 1-2 結構性盲區（漏選項、反向引用、搜尋落點、知識卡缺口）。停止判讀從 Round 3 結束後才開始。詳見 [#202](/report/multi-round-review-minimum-three-rounds/)。
+**多輪審查硬底線**：寫完章節後跑 `multi-round-review` skill 時，至少跑三輪、不問「要不要繼續」。Round 3 的 steelman / outbound frame 每次實測都找出 10+ 項 Round 1-2 結構性盲區（漏選項、反向引用、搜尋落點、知識卡缺口）。「還要不要再跑一輪」這個問題，等 Round 3 跑完才輪到主 session 判斷；在那之前它不是判讀題、是執行紀律。詳見 [#202](/report/multi-round-review-minimum-three-rounds/)。
+
+### 低階 model 讀者探針的派發方式
+
+規範層（何時跑、五個設計條件、歸因與處置、不可信的三個維度）在 AGENTS.md §5 的「理解取樣：低階 model 讀者探針」段，這裡只記 Claude Code 的操作面。
+
+探針與上一段的 agent team reviewer 是兩種不同的派發，別套用同一組參數：reviewer 是 `general-purpose`、各自審不同維度、要的是判斷力；探針是 Haiku、每一份的指令完全一樣、要的是理解的樣本。
+
+用 `Agent` tool 派發、`model: "haiku"`、`run_in_background: true`。
+
+**一批的定義是「報告會被放在一起比對的那幾份」**：同一批之內，`prompt` 與餵給它的內容範圍都要逐字相同——複製同一個字串貼進每次呼叫，不要逐個微調措辭，否則回報的差異無法歸因到模型的理解，第一個設計條件當場失效。換問法（理解正確性換成閱讀負擔）或換讀的範圍就是另一批，兩批之間不比對。
+
+**prompt 必須含送達方式**，兩句缺一不可：
+
+```text
+完成後必須呼叫 SendMessage 把報告送到 `main`。
+只把報告寫在自己的回覆裡不算交付，主 session 讀不到。
+```
+
+實測漏掉這兩句是 0/9 自行交件、寫了是 9/9，Haiku 也照做——這是指令有沒有寫的問題、不是模型能力問題。細節見 memory 的 `reviewer-agents-need-sendmessage-pull`。
+
+prompt 的其餘要求：回報格式逐項列出（節名或行號 / 這一節讀到什麼 / 這個動作誰做 / 指涉詞各指誰 / 讀完之後第一個動作是什麼），並明令「文章沒說就寫『文章沒說』，不要推測填補」。另外要它單獨開一段列出「有兩種以上讀法的位置」，逐條寫原文與各種讀法——那一段是這個 frame 產出價值最高的部分。
+
+主 context 只接收彙整。每份報告讀進來之後先做歸因——在原文 grep 那個讀法對應的字串——再進處置，順序顛倒會把作者自己寫的矛盾誤判成讀者誤讀。
 
 ## Content 路徑大小寫
 
@@ -102,8 +125,8 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 Hugo 的列表排序是 weight 遞增、**未設 weight 的頁面排在全部有 weight 的頁面之後**、同 weight 才用日期遞減。這條語意衍生出幾個操作規則（背景見 [#221](/report/lint-scope-must-be-explicit-fact/)）：
 
 - **weight 全有或全無**：同一 section 混用會讓缺 weight 的頁面靜默沉到列表底部。`mdtools cards` 的 `L5-section-weight-consistency` 會對混合 section 警告。刻意用低 weight 置頂單篇的 section（如 `content/linux/tools/cli`）在 `scripts/mdtools/internal/rules/config.go` 的 `WeightExemptSections` 登記 — 豁免要有記錄、不能是沒人決定過的遺漏。
-- **後補文章的 weight 要放「屬於它的位置」**、不是隨手給一個不撞號的值。實例：`07-security` 的 7.27 曾被給 27（其餘章節 72-95）而排到整個模組第一篇、`postgresql` 的 pgbouncer-config 曾被給 100 而沉到最後。L5 只查全有全無、對「有 weight 但值錯」沉默 — 補號前先看該 section 的既有編號帶（postgresql 有預留空號、mysql 是連續序）。
-- **新增卡片型目錄**（必填 `title` / `date` / `description` / `weight` 的）時在 `FrontMatter.CardPaths` 登記、否則卡片層 frontmatter 檢查永遠不涵蓋它、缺欄位不會被攔。規則存在不等於規則涵蓋、未納管目錄的零 error 跟合規目錄的零 error 訊號相同。
+- **後補文章的 weight 要放「屬於它的位置」**：值要落在該 section 既有編號帶之內、順序對得上這篇在模組裡的位置。只確認沒跟別人重號就填上去是不夠的，重號與否跟排序對不對是兩件事。實例：`07-security` 的 7.27 曾被給 27（其餘章節 72-95）而排到整個模組第一篇、`postgresql` 的 pgbouncer-config 曾被給 100 而沉到最後。L5 只查全有全無、對「有 weight 但值錯」沉默 — 補號前先看該 section 的既有編號帶（postgresql 有預留空號、mysql 是連續序）。
+- **新增卡片型目錄**（必填 `title` / `date` / `description` / `weight` 的）時在 `scripts/mdtools/internal/rules/config.go` 的 `FrontMatter.CardPaths` 登記（跟上面那條的 `WeightExemptSections` 同一個檔），否則卡片層 frontmatter 檢查永遠不涵蓋它、缺欄位不會被攔。規則存在不等於規則涵蓋、未納管目錄的零 error 跟合規目錄的零 error 訊號相同。
 - **frontmatter 的 date 是台北時間**：`hugo.toml` 已設 `timeZone = 'Asia/Taipei'`。拿掉這行的話、UTC 的 CI 在台北 00:00-08:00 之間 build 會把當日日期的文章判成未來文章而排除。
 
 ### 改 mdtools 的守則
