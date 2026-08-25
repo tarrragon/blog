@@ -10,9 +10,9 @@ tags: ["books", "reading", "craft", "testing", "tdd"]
 
 所以這篇的選讀判斷跟那三篇不同：不是「先讀哪本再讀哪本」，是**先知道分歧在哪，再決定要站哪邊**。
 
-TDD 的原始定義出自 Kent Beck 的《Test-Driven Development: By Example》：怎麼從一個失敗的測試開始建立單元測試、怎麼用紅燈—綠燈—重構的小循環讓設計從小長到大（[Beck 那本的定位](#起點是-kent-beck-的-test-driven-development-by-example)）。Freeman 與 Pryce 的《Growing Object-Oriented Software, Guided by Tests》在測試該怎麼設計上走了跟 Beck 不同的邏輯：由外而內開發，每遇到一個還不存在的協作對象就先用 mock 頂替（[mock 那一派的完整主張](#想看-mock-那一派的完整主張時讀-growing-object-oriented-software-guided-by-tests)）。兩邊分岔的地方是同一個定義——**測試的單元是什麼**：Beck 把單元當成一組協同工作的類別，Freeman 與 Pryce 那一派（書市慣稱倫敦學派）把單元縮到單一類別。
+TDD 的原始定義出自 Kent Beck 的《Test-Driven Development: By Example》：怎麼從一個失敗的測試開始建立單元測試、怎麼用紅燈—綠燈—重構的小循環讓設計從小長到大（[Beck 那本的定位](#起點是-kent-beck-的-test-driven-development-by-example)）。Freeman 與 Pryce 的《Growing Object-Oriented Software, Guided by Tests》在測試該怎麼設計上走了跟 Beck 不同的邏輯：由外而內開發，於是每遇到一個還不存在的協作對象就先用 mock 頂替（[mock 那一派的完整主張](#想看-mock-那一派的完整主張時讀-growing-object-oriented-software-guided-by-tests)）。兩邊分岔的地方是同一個定義——**測試的單元是什麼**：Beck 把單元當成一組協同工作的類別，Freeman 與 Pryce 那一派（書市慣稱倫敦學派）把單元縮到單一類別。
 
-無論選擇哪一種做法，測試寫完之後都要評估同一個問題，這套測試到底有沒有問題？Khorikov 的[《Unit Testing Principles, Practices, and Patterns》](#要一組可以拿來評分的判準時讀-unit-testing-principles-practices-and-patterns)就是提供這個評估的標準，這個標準無論對哪一派都適用。這本書中對於倫敦學派的批判也是基於這個系統。而判準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)提出了一個討論，怎麼評估「執行事先寫好的判準」與「設計判準、發現沒人想到要問的問題」這兩種活動？這其實是三本理論書都在討論的共同問題。釐清測試的方向之後，實務上還會需要討論單元的大小——三本理論書在這一題沒有取得共識，[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)給出解法——以及怎麼從規格推導到測試案例（Aniche 的[《Effective Software Testing》](#要一套推出測試案例的程序時讀-effective-software-testing)）。
+無論選擇哪一種做法，測試寫完之後都要評估同一個問題，這套測試到底有沒有問題？Khorikov 的[《Unit Testing Principles, Practices, and Patterns》](#要一組可以拿來評分的判準時讀-unit-testing-principles-practices-and-patterns)就是提供這個評估的標準，這個標準無論對哪一派都適用。這本書中對於倫敦學派的批判也是基於這個系統。而判準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)提出了一個討論，怎麼評估「執行事先寫好的判準」與「設計判準、發現沒人想到要問的問題」這兩種活動？這其實是 Beck、Freeman 與 Pryce、Khorikov 三本理論書都在討論的共同問題。釐清測試的方向之後，實務上還會需要討論單元的大小——三本理論書在這一題沒有取得共識，[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)給出解法——以及怎麼從規格推導到測試案例（Aniche 的[《Effective Software Testing》](#要一套推出測試案例的程序時讀-effective-software-testing)）。
 
 兩種定義的分野本身在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡，站內怎麼診斷手上這套測試的邊界畫錯了沒有，在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)，那篇處理的是「所以我們怎麼做」；這裡處理的是「該讀哪本、每本代表什麼位置」。
 
@@ -62,7 +62,7 @@ Vladimir Khorikov 這本（2020）是單元定義這條線上最後出版的一�
 
 ## 想知道機器接手判準之後人還做什麼時讀 Taking Testing Seriously
 
-James Bach 與 Michael Bolton 這本（Wiley，2025 年 11 月）是 Rapid Software Testing 這一派的完整陳述。它跟爭單元邊界的那三本——Beck、Freeman 與 Pryce、Khorikov——不在同一個座標系裡：那三本爭的是邊界該畫在哪，這本主張要先分開的是兩種活動——**checking**（對一個已經被決定的事實做二元評估，判準事先寫下、原則上可以交給機器）與 **testing**（設計判準本身、發現沒有人想到要問的問題、判斷觀察到的現象算不算問題）。作者的立場是自動化能接手的只有前者，而前者的品質完全取決於當初設計它的那次後者。
+James Bach 與 Michael Bolton 這本（Wiley，2025 年 11 月）是 Rapid Software Testing 這一派的完整陳述。它跟爭單元邊界的那三本理論書——Beck、Freeman 與 Pryce、Khorikov——不在同一個座標系裡：那三本爭的是邊界該畫在哪，這本主張要先分開的是兩種活動——**checking**（對一個已經被決定的事實做二元評估，判準事先寫下、原則上可以交給機器）與 **testing**（設計判準本身、發現沒有人想到要問的問題、判斷觀察到的現象算不算問題）。三本理論書給判準的時候，同時在做這兩件事，只是沒有把它們分開命名。作者的立場是自動化能接手的只有 checking，而 checking 的品質完全取決於當初設計它的那次 testing。對單元該多大——三本理論書沒有取得共識的那一題——它的解法是把問題排到後面：先分開兩種活動，單元的大小是分界確立之後才輪到的問題。
 
 這個分界是這一派的起點，理由是自動化的邊界由判準寫不寫得下來決定，與工具能力無關。作者同期公開談論過 AI 與這個分界的關係；書的目次未能取得，這裡不指涉它在書中的位置與篇幅。
 
@@ -88,7 +88,7 @@ Maurício Aniche 這本（Manning，2022）處理的是四本立場書都沒有�
 
 ## 為什麼只收這幾本
 
-立場那四本彼此不同意，而它們的分歧點正是這個主題最難自己判斷的那一個。讀完會發現自己原本以為的「測試最佳實踐」是某一派的立場，而那個發現比任何單一技巧有用。Aniche 那本收在旁邊，因為立場選定之後「案例怎麼推出來」仍然沒有答案。
+四本立場書彼此不同意，而它們的分歧點正是這個主題最難自己判斷的那一個。讀完會發現自己原本以為的「測試最佳實踐」是某一派的立場，而那個發現比任何單一技巧有用。Aniche 那本收在旁邊，因為立場選定之後「案例怎麼推出來」仍然沒有答案。
 
 測試的書市有兩大類不在這裡。一類是特定框架的操作手冊，那類的時效跟框架版本綁死，且屬於教學系列的範圍。另一類是把測試金字塔或某個覆蓋率目標推銷成普適規則的書——它們的問題是規則脫離了推導它的取捨，而本篇收的書恰好證明那些取捨還在爭論中。
 
