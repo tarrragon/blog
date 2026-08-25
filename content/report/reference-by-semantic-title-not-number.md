@@ -62,13 +62,14 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "SSoT", "寫作規
 
 ## 跟其他抽象層原則的關係
 
-- [#257 軸名取了次好的代理變數](/report/axis-named-by-proxy-not-mechanism/)：命名端的另一個尺度。本卡講引用時用編號代替語意，#248 講命名時用代理代替機制，共同點是承載資訊的位置被一個較弱的指涉佔據。
+- [#257 軸名取了次好的代理變數](/report/axis-named-by-proxy-not-mechanism/)：命名端的另一個尺度。本卡講引用時用編號代替語意，#257 講命名時用代理代替機制，共同點是承載資訊的位置被一個較弱的指涉佔據。
 - [#156 集合命名用角色、不內嵌數量](/report/name-collections-by-role-not-count/)：命名端 sibling。本卡假設語意標題是穩定 fact、#156 負責讓這個假設成立 — 「核心七問」這種 count-bearing 標題一半是語意、一半是成員數的 derivation、引用端怎麼修都錨在會漂移的字串上。本卡初版的正面範例就用了「見核心七問」而未察覺、由 #156 抓出 — 兩卡是不同認知層的檢查、單獨跑任一個抓不到另一個的違規。
 - [#44 Single Source of Truth](/report/single-source-of-truth/)：本卡是 SSoT 在「結構引用」維度的實例。編號是位置的 derivation；把編號寫進多處引用點、等於把 derivation 當 fact 散寫多份複本 — fact（章節的語意身分）只在標題一處、引用就該錨在那裡。
 - [#93 URL slug 必須顯式定義為 fact](/report/url-slug-must-be-explicit-fact/)：同屬「引用要錨在 fact」家族。#93 把跨工具 identifier 從推導值升級成顯式 fact；本卡把跨段落引用的錨點從位置推導值（編號）換成語意 fact（標題）。兩卡的失效模式同型：推導鏈分歧、silent 失效、compile / lint 階段看不出來。
 - [#84 Naming 是 iterated artifact](/report/naming-as-iterated-artifact/)：標題是名字。本卡要求標題承載可被引用的語意、等於對標題套用 #84 的 cross-call-site 檢驗 — 從引用者的角度看、這個標題單獨出現時讀者知道它指什麼嗎？只有編號的標題在這個檢驗下直接不及格。
 - [#270 敘事的解碼材料要在讀者已讀的文本裡](/report/decodable-from-text-already-read/)：本卡的篇內形態。本卡管跨段跨檔引用結構單位時的編號；#270 管同一篇敘事裡對實體的位置與數量指涉（「前兩本」「另外兩本」「後者」）——derivation vs fact 的判準共用，而 #270 的實例顯示這種指涉不必等結構重排就錯位：位置與數量只在作者腦中的地圖上成立、作者自己就數錯了兩次。
 - [#97 Metadata surface 要納入寫作 review 範圍](/report/metadata-surface-in-writing-review/)：引用句屬於 #97 分類中的 navigation surface（跟 link label、索引條目同層）— 同樣是正文之外、卻直接決定讀者入口正確性的層。重排結構時、review 範圍要把散落各檔的引用句列入掃描面、而不是只改目標檔。
+- [#282 規則要指到一個打得開的東西](/report/rule-must-point-at-something-openable/)：同一種無聲失效的另一種載體。本卡的編號在結構重排後字面完好而指向錯的內容；#282 的檔名在改名後字面完好而指向不存在的東西。兩者都成功「解析」到錯的地方、都不報錯，差別只在漂移的是位置還是名字。
 
 ---
 
