@@ -68,6 +68,7 @@ slug: "missing-constituents-read-as-missing-context"
 | [#168 多輪審查要有冷讀者 frame](../cold-reader-frame-vs-informed-reviewer/)          | 接在它後面——冷讀 frame 負責讓「讀不懂」現形，本卡處理現形之後的分類；冷讀 reviewer 只回報症狀而不分流時，修法會系統性地選錯                         |
 | [#273 寫作要設計閱讀的節奏、壓力與引導](../writing-designs-the-reading-process/)     | 補一個面向——#273 把「不指稱人事物」列為壓力來源（要求讀者的記憶力），本卡指出它同時是誤診來源；同一個缺陷讓讀者累、也讓審查把力氣花在補內容上       |
 | [#194 審查缺少由外而內的讀者 frame](../review-lacks-outside-in-reader-frames/)       | 相鄰——#194 說審查要從讀者的下游任務出發，本卡說即使跑了讀者 frame，回報進來的訊號仍需要再分一次類才能對應到正確的修法                               |
+| [#286 翻譯探針](/report/translation-forces-disambiguation/)                          | 給本卡的分流判準多一條偵測管道：翻譯時英文強制補上中文省略的主詞與成分，譯者補了哪些字，就是原文缺了哪些成分——不必等讀者回報「讀不懂」再分流        |
 
 ## 這條原則什麼時候不成立
 

@@ -243,13 +243,14 @@ framework 不會自我批判——跑 100 篇文章、catch 的都是 framework 
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                           | 跟本卡的關係                                                                                            |
-| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| [#83 Multi-pass review](../writing-multi-pass-review/)                                         | 本卡是 #83 的延伸——#83 講「每輪換 frame」、本卡講「frame 本身要夠細、且需要工具 / 視角 / 層次三軸補強」 |
-| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                      | 用「規則 frame 掃描」是 reviewer 的寫作便利、用「keyword bank + reader simulation」是費力但精準         |
-| [#95 Multi-pass review 的 scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)     | #95 處理「scope 軸」（review 多廣）、本卡處理「frame 顆粒度軸」（規則展開多細）、兩軸正交               |
-| [#110 設計檢討用當下三軸論證、不依賴 hindsight](../design-flaw-by-current-axes-not-hindsight/) | hindsight 視角會把 review framework 當「補丁」、self-criticism 用當下框架審視、跟 #110 同骨             |
-| [#111 口語化修辭會稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)            | #111 是字句層的「具體訊號」之一、本卡是「為什麼字句層訊號被 framework 漏 catch」的 meta 層              |
+| 原則                                                                                           | 跟本卡的關係                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#83 Multi-pass review](../writing-multi-pass-review/)                                         | 本卡是 #83 的延伸——#83 講「每輪換 frame」、本卡講「frame 本身要夠細、且需要工具 / 視角 / 層次三軸補強」                                               |
+| [#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)                      | 用「規則 frame 掃描」是 reviewer 的寫作便利、用「keyword bank + reader simulation」是費力但精準                                                       |
+| [#95 Multi-pass review 的 scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)     | #95 處理「scope 軸」（review 多廣）、本卡處理「frame 顆粒度軸」（規則展開多細）、兩軸正交                                                             |
+| [#110 設計檢討用當下三軸論證、不依賴 hindsight](../design-flaw-by-current-axes-not-hindsight/) | hindsight 視角會把 review framework 當「補丁」、self-criticism 用當下框架審視、跟 #110 同骨                                                           |
+| [#111 口語化修辭會稀釋技術精度](../colloquial-rhetoric-erodes-technical-precision/)            | #111 是字句層的「具體訊號」之一、本卡是「為什麼字句層訊號被 framework 漏 catch」的 meta 層                                                            |
+| [#286 翻譯探針](/report/translation-forces-disambiguation/)                                    | 補一條本卡清單沒有的換 frame 路徑：**換輸出的語言**。既有的幾條都在同一個語言裡操作，翻譯把語法差異本身當偵測器——中文可以不決定的語法項，英文強制決定 |
 
 ---
 
