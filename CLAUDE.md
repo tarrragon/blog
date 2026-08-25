@@ -174,6 +174,21 @@ skill-sync push <skill-name> -m "commit message"
 
 未標版號的 skill 首次補標用 `1.0.0`。變更摘要簡述改了什麼，參考 compositional-writing 的版本紀錄格式。
 
+**版號有兩個住址，兩個都要改**：文末的 `**Version**:` 版本紀錄，以及 SKILL.md frontmatter 的 `metadata.version`。只改文末是高頻漏失——`bin/skill-mirror` 會擋下不一致，但它只跑在有 `content/skills/` 鏡像的 skill 上，沒有鏡像的 skill 漂多久都不會有人發現。一次全庫掃描的結果：三個 skill 的 frontmatter 分別落後一到四個版本，三個都沒有鏡像。
+
+改完用這條掃全庫，兩個住址對不上的會列出來：
+
+```bash
+for f in .claude/skills/*/SKILL.md; do
+  n=$(basename $(dirname $f))
+  fm=$(sed -n '/^  version:/{s/^  version: *//;s/"//g;p;q;}' "$f")
+  cl=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+' "$f" | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
+  if [ -n "$fm" ] && [ "$fm" != "$cl" ]; then echo "DRIFT $n frontmatter=$fm changelog=$cl"; fi
+done
+```
+
+推導值取的是「檔案裡最大的版本號」，所以引用了別的 skill 裸版號的 changelog 會給假陽性。命中之後先看該檔的 `**Version**:` 清單確認那個號碼真的是版本紀錄，再改 frontmatter。
+
 ### 標準操作流程
 
 流程從 report 卡開始，不從 skill 修改開始。report 是原則的 SSoT（有情境、根因、理想做法），skill 是 report 的操作化引用。先有 report 才有 skill 引用的依據。
