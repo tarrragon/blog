@@ -23,6 +23,14 @@ Claude Code 會根據對話內容自動觸發 `.claude/skills/` 內的 skill —
 
 skill 內容看 `.claude/skills/<name>/SKILL.md`。
 
+### 寫作類 skill 主動 invoke，不等自動觸發
+
+自動觸發靠 `description` 去匹配當前對話的措辭，而寫作任務多數不是用「寫文章」這種話進來的——「幫我改這段」「補一句」「這裡讀起來怪怪的」「順一下」都是寫作任務，而它們一個字都匹配不到。任務越小越不會觸發，但小改動累積出來的字句層違規跟整篇一樣多。
+
+所以動到 `content/` 或 `.claude/skills/` 的任何一段文字之前，主動 invoke `compositional-writing`；改完之後照 AGENTS.md §5 步驟 4 跑一次它的字句層 bank，並把逐類表寫進回覆。
+
+逐類表的欄位、零命中要不要列、以及為什麼這張表是必要的，都在 AGENTS.md §5 的關鍵硬性規則段，這裡不重複。
+
 ## Skill ↔ Content 互斥
 
 寫作時要清楚目前在哪個 surface：

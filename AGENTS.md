@@ -157,7 +157,7 @@
 1. 更新模組大綱（該模組的 `_index.md`）；未完成工作一律記進該檔的 `## Backlog` 段，那是待辦的唯一住址，格式見 §12。
 2. 依大綱撰寫草稿。
 3. 術語掃描：補連結、補缺卡。
-4. 寫作規範掃描：核心先行、正向陳述、案例補足。
+4. 寫作規範掃描：invoke `compositional-writing` skill，照它的字句層 keyword bank 逐類掃過稿件。bank 的完整清單以 skill 為準（§8 只列已進 `mdtools` 的那幾類，不是全部）。每個命中都要走一次語意判定——命中是候選、不是判決。
 5. 結構掃描：避免重複、補交叉引用與路由；每條跨模組路由去目的地驗一次承接與可達。
 6. 最終 review：確認可直接交付。
 
@@ -165,6 +165,8 @@
 
 - 每次生成後，必做一次「規範檢討 pass」；不可直接交稿。
 - 若檢討發現違規，先修文，再進下一章。
+- **寫作規範掃描要留下痕跡**：步驟 4 的產出是一張逐類表（掃了哪幾類 / 各命中幾處 / 每處的語意判定結果），零命中的類別也要列。沒有這張表的「已檢查」不成立——**完全沒 invoke skill、與 invoke 了但零命中，在產物裡長得一模一樣**，而沒 invoke 是本專案實際反覆發生的那一種。
+- **憑印象不算掃描**：字句層有幾類是作者看不見的（對讀者喊話、自評誇飾、必然性框架、敘事姿態），因為作者與同源 reviewer 共享同一套文體直覺，讀起來全部「自然」。這幾類要靠實際跑 grep 或異源冷讀，回憶「我應該有遵守」對它們的偵測率是零。
 
 ### 教學模組級流程（case-first + agent team review）
 
@@ -231,6 +233,7 @@
 - [ ] `description` 是 recall trigger 而非摘要：回答「什麼情境下需要回來讀」而非「這篇在講什麼」（見 [#170](/report/description-as-recall-trigger/)）
 - [ ] 新增頂層 `content/<module>/` 資料夾時、已同步更新 `content/_index.md` 對應分類段（見 [#139](/report/top-level-content-folder-needs-homepage-entry/)）
 - [ ] 這次留下的未完成工作已記進模組 `_index.md` 的 `## Backlog` 段、完成的項目已從表中刪除（見 §12）
+- [ ] 步驟 4 的寫作規範掃描實際 invoke 過 `compositional-writing` skill 並留下逐類表，不是憑印象確認（見 §5 關鍵硬性規則）
 - [ ] 跑過多輪審查的稿件、以及規則類文件（本檔 / CLAUDE.md / skill / spec），文字精準度已用低階 model 讀者探針取樣過，回報的每一處讀錯都做完歸因與處置（見 §5 的「理解取樣：低階 model 讀者探針」段與 [#281](/report/comprehension-sampled-not-judged/)）
 
 ---
@@ -248,6 +251,8 @@
 ## 8. Markdown 排版規範（引用）
 
 `content/**` 所有 markdown 的排版與結構規範，以 `content/posts/markdown-writing-spec.md` 為單一真實來源。本章只保留給 agent 的最小提要：
+
+**字句層 keyword bank 的唯一住址是 `compositional-writing` skill，不是本節。** 下面的摘要只涵蓋兩類規則：`mdtools` 已經自動化的，加上幾類高頻的人工 grep。skill 另有對讀者喊話、自評誇飾、必然性框架、敘事姿態、虛構經驗與出處、位置與集合指涉、用詞搭配錯位等類別**不在這裡**。掃字句層時照 skill 跑，本節只用來查「哪些是工具會擋的、哪些要自己跑」。
 
 - 工具鏈：`scripts/mdtools`（Go + goldmark AST）在 pre-commit、pre-push 與 CI 強制執行。
 - 核心規則摘要：
