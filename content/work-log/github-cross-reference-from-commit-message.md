@@ -8,7 +8,7 @@ tags: ["github", "git", "collaboration", "workflow"]
 
 ## commit message 裡的 issue 引用會出現在對方的 issue 上
 
-commit message 尾端補上來源引用時，形式大致是這樣：
+作者在 commit message 尾端補上來源引用時，形式大致是這樣：
 
 ```text
 References:
@@ -23,7 +23,7 @@ commit push 上去之後，被引用的那個 issue 的 timeline 會多出一筆
 
 這件事是從一則升級測試框架版本的 commit 發現的：message 的 `References:` 區塊寫了兩行指向上游專案的引用，那兩個 issue 的 timeline 就各多了一筆記錄，指回這則 commit。
 
-兩件事促成它：引用寫成 GitHub 認得的形式，以及 commit 被 push 上去。事件記在**推送者**的帳號名下，所以出現在對方 issue 上的是推送者的名字。
+兩件事促成這筆事件：引用寫成 GitHub 認得的形式，以及作者把 commit push 上去。事件記在**推送者**的帳號名下，所以出現在對方 issue 上的是推送者的名字。
 
 寫了引用不保證一定送達。要確認對方 timeline 上有沒有這一筆，用 `gh api repos/{owner}/{repo}/issues/{n}/timeline --paginate` 查得到——想讓引用成立的時候，這是驗收的動作。
 
@@ -31,7 +31,7 @@ repo 的公開性不是觸發條件，它影響的是權限不足的人看得到
 
 ## 解析只發生在對話類的位置
 
-GitHub 把 issue 與 pull request 的縮寫引用展開成連結（官方稱為 autolink），範圍限於對話類的位置。文件的正面描述是「Within conversations on GitHub」，而做功的判準是那句排除條文：
+GitHub 把 issue 與 pull request 的縮寫引用展開成連結（官方稱為 autolink），範圍限於對話類的位置。文件的正面描述是「Within conversations on GitHub」，而真正決定結果的是那句排除條文：
 
 > Autolinked references are not created in wikis or files in a repository.
 
@@ -44,7 +44,7 @@ GitHub 把 issue 與 pull request 的縮寫引用展開成連結（官方稱為 
 | repo 內的檔案（README、原始碼、文件） | 維持純文字 | 該串字只是文字，不產生任何事件          |
 | wiki 頁面                             | 維持純文字 | 該串字只是文字，不產生任何事件          |
 
-檔案內容留在純文字這一格是最省事的迴避方式：把引用寫進 README 或專案文件，形式照原樣保留，對方那邊不會有任何動靜。要控制的只有會被解析的那三處——commit message、PR 描述與 issue 留言。
+要避免在對方的 issue 產生事件，最省事的做法是利用檔案內容留在純文字這一格：把引用寫進 README 或專案文件，形式照原樣保留，對方那邊不會有任何動靜。要控制的只有會被解析的那三處——commit message、PR 描述與 issue 留言。
 
 前兩列的事件型別在 GitHub API 裡是分開的：commit message 來源記成 `referenced`，issue 與 PR 來源記成 `cross-referenced`。兩者在 timeline 上的呈現相近，查 API 或寫自動化時要分清楚。
 
@@ -64,7 +64,7 @@ GitHub 把 issue 與 pull request 的縮寫引用展開成連結（官方稱為 
 
 **要避免觸發**，把井字號拿掉寫成 `owner/repo issue 1234`。語意完整保留、人讀得懂，而解析器不認。改貼完整網址不是迴避方式，網址形式一樣被解析。
 
-commit SHA 也會 autolink（`<40-hex>`、`user@SHA`、`owner/repo@SHA`），跨 repo 的形式同樣會在對方留下記錄。
+commit SHA 也會 autolink（`<40-hex>`、`user@SHA`、`owner/repo@SHA`），其中 `owner/repo@SHA` 這種跨 repo 的形式同樣會在對方留下記錄。
 
 ## 引用與關閉是兩種不同的動作
 
@@ -76,7 +76,7 @@ commit SHA 也會 autolink（`<40-hex>`、`user@SHA`、`owner/repo@SHA`），跨
 
 對一般的上游開源專案沒有這個權限，關閉關鍵字只會退化成一般引用。權限成立的組合要留意：同一個組織底下的兩個 repo 是常見形態，成員對兩邊通常都有 write access，關閉會真的發生。
 
-commit template 固定用 `fixes` 前綴的團隊有兩個方向會出事。寫成 `fixes other-repo#N` 且雙邊都有 write access 時，關掉的是對方的 issue，而引用方這端沒有任何提示。沿用 template 的裸號碼寫成 `fixes #N` 時，關掉的是自己這邊第 N 號那張無關的 issue。
+commit template 固定用 `fixes` 前綴的團隊有兩個方向會出事。寫成 `fixes other-repo#N` 且雙邊都有 write access 時，關掉的是對方的 issue，而寫這則 commit 的人這端不會收到任何通知。沿用 template 的裸號碼寫成 `fixes #N` 時，關掉的是自己這邊第 N 號那張無關的 issue。
 
 誤觸關閉的補救成本低：issue 直接 reopen 即可。真正收不回來的是下一節談的引用事件。
 
@@ -84,10 +84,10 @@ commit template 固定用 `fixes` 前綴的團隊有兩個方向會出事。寫�
 
 引用方與被引用方都有辦法讓這筆事件從畫面上消失，但沒有一個操作的作用對象是這筆事件本身：
 
-- **引用方**可以把 commit 從公開歷史裡拿掉，代價是 force-push 改寫已公開的分支——所有已經 clone 的人都要處理分歧，別處引用過的 SHA 全部失效。另一條路是把整個 repo 轉為私有或刪除，作用對象是整個 repo。
-- **被引用方**可以刪除或搬移那張 issue，整條 timeline 隨之消失；也可以封鎖引用方的帳號。鎖定 issue 管的是留言與 reaction，對已經寫入的引用事件沒有作用。
+- **引用方**可以把 commit 從公開歷史裡拿掉，代價是 force-push 改寫已公開的分支——所有已經 clone 的人都要處理分歧，其他 PR、issue 留言與 CI 設定裡引用過的 SHA 全部失效。另一條路是把整個 repo 轉為私有或刪除，作用對象是整個 repo。
+- **被引用方**可以刪除或搬移那張 issue，整條 timeline 隨之消失；被引用方也可以封鎖引用方的帳號。鎖定 issue 管的是留言與 reaction，對已經寫入的引用事件沒有作用。
 
-能動的都是整個 repo、整張 issue 或整個帳號，沒有一個是「刪掉這一列」。
+能動的都是整個 repo、整張 issue 或整個帳號，沒有一個是「刪掉這一列」。這一筆會隨著 issue 或 repo 一起消失，卻沒有辦法單獨被移除——「永久留存」不是準確的描述，準確的說法是它的去留綁在比它大得多的東西上。
 
 這筆事件對被引用方造成多少打擾，官方文件查不到答案：GitHub 的通知文件只說明什麼情況會被自動訂閱，沒有列舉哪些 timeline 事件會發出通知。可以確定的是它會留在 issue 頁面上，後來讀這個 issue 的人都看得到。
 
@@ -106,7 +106,7 @@ commit template 固定用 `fixes` 前綴的團隊有兩個方向會出事。寫�
 | 有因果，但同一件事本 repo 已經引用過           | 拿掉井字號，重複的引用只增加對方 timeline 的長度            |
 | 需要記錄的脈絡超過 commit message 容得下的長度 | 寫進 repo 內的紀錄檔，形式仍照上面三列決定                  |
 
-因果關係在動手前就知道，不需要等事件產生才判斷。目標 issue 是 open 還是已關閉不影響這張表：有因果的引用對正在追這件事的 maintainer 是訊號、對已關閉的 issue 是可回溯的實證。最後一列跟前三列正交，長脈絡與引用形式是兩個獨立決定。
+因果關係在動手前就知道，不需要等事件產生才判斷。目標 issue 是 open 還是已關閉不影響這張表：有因果的引用對正在追這件事的 maintainer 是訊號、對已關閉的 issue 是可回溯的實證。最後一列問的是脈絡放哪裡，前三列問的是引用寫成什麼形式。兩件事各自決定：脈絡長的時候仍然要照前三列選形式。
 
 commit message 與 repo 內紀錄檔的分工，另見[Commit message vs source code doc](/record/commit-message-vs-source-doc/)。
 
