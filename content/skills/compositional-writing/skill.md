@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.79.0
+  version: 0.80.0
   category: writing-methodology
 ---
 
@@ -15,6 +15,12 @@ metadata:
 以 Zettelkasten（卡片盒筆記法）為核心的寫作方法論。將每段文字視為可重複組合的原子卡片，讓人類讀者與 AI 代理人都能以最小認知負擔找到答案。
 
 ---
+
+## 這份檔案是綱領層
+
+SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地方**——本檔的「字句層 keyword bank」那一節（有可直接跑的 rg 指令），以及 `references/` 底下各情境的 reference（有步驟與範例）。
+
+所以讀本檔各原則時，「我的第一個動作是什麼」的答案幾乎都是同一個：**到觸發路由表找自己的情境，打開對應的 reference**。原則本身不指定動作，那是設計、不是缺漏——原則要跨情境成立，動作只在情境裡才有意義。要直接動手的人先跳到觸發路由表。
 
 ## Core Pillars（核心支柱）
 
@@ -190,7 +196,10 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 
 兩類流程互補疊加 — 教學模組的每章內部寫作仍套本 skill 6 原則、case 引用段落用 [case-citation-three-part-structure](/report/case-citation-three-part-structure/)、agent team review 用 [agent-team-context-isolation](/report/agent-team-context-isolation/)。當下游專案沒有跨章節教學模組需求、本 skill 即可獨立運作；當有需求、教學模組生產流程是本 skill 的擴展層、不取代本 skill。
 
-## 跟 multi-round-review 的協同
+## 字句層 keyword bank（完整清單）
+
+**這一節是本站字句層檢查的唯一權威清單。** 其他地方（本檔的 frontmatter description、multi-round-review 的 Round 1-A、專案規範）出現的枚舉都是摘要，數量與成員以這一節為準。做字句層審查時打開這一節逐類跑，不要憑記憶重編 pattern——重編版通常把不同類別的詞混進同一條 regex，命中之後無法判定是哪一類違規。
+
 
 寫多篇章節 / report 卡 / knowledge card 後做**多輪 agent reviewer audit** 時、本 skill 應該跟 multi-round-review skill 同時啟動。觸發詞「多輪審查 / Round 1/2/3 / batch review / 寫作 audit」會同時啟動兩個 skill：
 
@@ -261,6 +270,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.80.0 — 兩處結構修正，由對本檔自己跑的六份讀者探針抽出。(1) **字句層 keyword bank 的節名從「跟 multi-round-review 的協同」改成「字句層 keyword bank（完整清單）」並宣告自己是唯一權威**：原本這份十六類的權威清單住在一個以協同關係命名的節底下，一份派發模擬探針因此完全沒找到它、自行重編了一套較差的 grep（把不同類別的詞混進同一條 regex），而四個讀同一份清單的探針數出十二 / 十三 / 十六三種數字。節名取的是它跟誰協作、不是它裝什麼，正是軸名取代理的形態。(2) **新增「這份檔案是綱領層」段**：三份可執行性探針對多數原則的「第一個具體動作」都回報「答不出來」，其中一份自己推斷出這是索引層與操作層的分工、另兩份判不出來。明寫操作在兩個地方（本檔的 bank 節、references/ 各情境檔），並說明原則不指定動作是設計而非缺漏。同批：description 的 bank 枚舉補齊為十六類並指回權威節。
+
 **Version**: 0.79.0 — 新增 `rule-must-point-at-something-openable` principle 卡並接進「意圖顯性與層級貼合」段：規則的可執行性由「第一個動作指得出來嗎」決定，三種失效（名字指向不存在的東西 / 名字從來不是實體 / 根本沒指名）後果相同而第三種最難發現。由一次對兩份規則文件的讀者探針抽出——探針指令有一欄要求回報「照這一節工作我的第一個具體動作是什麼」，那一欄產出五處而其餘各欄都沒報出它們：句子讀得懂，只是落不到任何實體上。這類缺陷通得過任意多輪人工審查，因為規則文件的讀者全部自帶答案、補完無聲。
 
 **Version**: 0.78.0 — 虛構經驗軸從單一 grep 擴成三個掃描面加批次盤點紀律，並抽成獨立 principle 卡 [no-fabricated-experience-or-attribution](/report/no-fabricated-experience-or-attribution/)（原本寄住在敘事姿態卡）。由待驗清單的實際盤點抽出：關鍵字命中 6 篇、用版本歷史往回追卻是同一個 commit 生成的 31 篇，且多數篇的虛構以第三人稱角色出現（PM 無法判斷能不能關掉 / Reviewer 不知道該查什麼 / 派了一位開發者去查 / 士氣很難不崩），第一人稱 grep 一個都掃不到、而動機句正掛在這些角色身上。三個掃描面（第一人稱經驗、第三人稱角色、精確出處）加兩條紀律：角色存在性逐篇問、判定單位是生成批次不是關鍵字命中（清單清空不等於批次清空）；具名錨點與情節分開驗——檔名行數可能真實而前後情節是補完的。
