@@ -79,6 +79,10 @@ find_report_slug() {
       echo "/report/visual-tool-error-layer-alignment/" ;;
     keyword-list-needs-dominant-violating-sense)
       echo "/report/keyword-list-needs-dominant-violating-sense/" ;;
+    keyword-pattern-does-not-transfer-across-genres)
+      echo "/report/keyword-pattern-does-not-transfer-across-genres/" ;;
+    recompute-trigger-must-bind-to-the-changing-event)
+      echo "/report/recompute-trigger-must-bind-to-the-changing-event/" ;;
     risk-asymmetric-audit-standard)
       echo "/report/security-teaching-rigor-asymmetry/" ;;
     *)
