@@ -24,7 +24,7 @@ tags: ["books", "reading", "career", "junior-engineer"]
 
 **[Peopleware](../../topics/retention-motivation/)** 的用法在這個位置跟在管理位置不同。這裡讀它讀出來的是「原來我做不完事不全是我的問題」——中斷成本、環境條件、頻繁重組對產出的影響都有具體論證。這件事本身有實用價值（知道哪些是環境問題就不會全部歸咎自己），也是往管理方向預習時最難自然累積的一塊。
 
-**[Getting Things Done](../../topics/personal-workflow/)** 處理承諾多到記不住之後怎麼辦。它跟 Peopleware 接得起來——Peopleware 指出哪些負擔來自環境，這本處理剩下屬於自己的那些。這個位置特別要知道的邊界是：被指派進共用待辦、在群組頻道裡被喊住的那些工作不經過任何屬於個人的入口，而那正是這一格最常見的來源。那一層由同一篇的 A World Without Email 與 Four Thousand Weeks 處理，方法本身與它的處境限制在主題篇。
+**[Getting Things Done](../../topics/personal-workflow/)** 處理承諾多到記不住之後怎麼辦。它跟 Peopleware 接得起來——Peopleware 指出哪些負擔來自環境，這本處理剩下屬於自己的那些。這個位置特別要知道的邊界是：被指派進共用待辦、在群組頻道裡被喊住的那些工作不經過任何屬於個人的入口，而那正是這個位置最常見的來源。那一層由同一篇的 A World Without Email 與 Four Thousand Weeks 處理，方法本身與它的處境限制在主題篇。
 
 ## 想往哪裡走
 

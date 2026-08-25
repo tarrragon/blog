@@ -69,7 +69,7 @@ Daniel Kahneman 的《Thinking, Fast and Slow》提供的是規劃謬誤的心�
 
 它接不住的是把整批偏誤逐一走完那一面——[《Thinking, Fast and Slow》](#想理解偏誤的來源時讀-thinking-fast-and-slow) 的用途之一是當長期參考的偏誤目錄，而這門課沒有那個功能。這一輪沒有查到有那個功能的課。
 
-三門課教的都是推導而非當期材料，時效因此不隨年代改變；ECON 159 錄於 2007 年，它舉的產業例子（外包、教育訊號）屬於當時的情境，推導本身不依賴那些例子。台大那兩門的取得限制寫在本節的 Coursera 那一段。整條線的供給狀況寫在 [主題書單](../) 的公開課段。
+三門課教的都是推導而非當期材料，時效因此不隨年代改變；ECON 159 錄於 2007 年，它舉的產業例子（外包、教育訊號）屬於當時的情境，推導本身不依賴那些例子。台大那兩門的取得限制寫在本節的 Coursera 那一段。整條線的供給狀況寫在 [主題書單的公開課段](../#沒查到課的那十個主題理由分三種)。
 
 - [Open Yale Courses（ECON 159 Game Theory，Ben Polak，2007，24 講）](https://oyc.yale.edu/economics/econ-159)、[YouTube 播放清單（ECON 159）](https://www.youtube.com/playlist?list=PL6EF60E1027E1A10B)
 - [Open Yale Courses（PHIL 181 Philosophy and the Science of Human Nature，Tamar Gendler，2011，26 講）](https://oyc.yale.edu/philosophy/phil-181)、[YouTube 播放清單（PHIL 181）](https://www.youtube.com/playlist?list=PL3F6BC200B2930084)

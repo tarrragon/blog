@@ -66,7 +66,7 @@ Robert Martin 的《Clean Architecture》常被列在這個位置，本書單未
 
 兩門課的材料是已經發表的論文與已經定案的協定，時效因此不隨版本更新而動；會改變的是它們順帶提到的雲端服務與工具介面。兩門都是英語授課，而它們不像 Open Yale 的課附官方逐字稿——字幕狀態以 YouTube 當下提供的為準，本頁沒有確認過是人工還是自動。這個主題沒查到中文的對應課。
 
-取捨判斷那一半沒查到課，而缺口的成因就是這個主題的核心能力本身——在資訊不足的時候把取捨講清楚，包括講清楚自己選的那個爛在哪。這種能力的教材是別人做過的決定與它後來的代價，而那些代價要好幾年才顯現，一學期的課承載不了。整條線的供給狀況寫在 [工程技藝書單](../) 的公開課段。
+取捨判斷那一半沒查到課，而缺口的成因就是這個主題的核心能力本身——在資訊不足的時候把取捨講清楚，包括講清楚自己選的那個爛在哪。這種能力的教材是別人做過的決定與它後來的代價，而那些代價要好幾年才顯現，一學期的課承載不了。整條線的供給狀況寫在 [工程技藝書單的公開課段](../#四個主題裡只有系統架構接得住公開課)。
 
 - [YouTube 播放清單（MIT 6.824 Distributed Systems，Robert Morris，Spring 2020，20 講）](https://www.youtube.com/playlist?list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB)
 - [YouTube 播放清單（Distributed Systems lecture series，Martin Kleppmann，8 講、23 段影片）](https://www.youtube.com/playlist?list=PLeKd45zvjcDFUEv_ohr_HdUFe97RItdiB)
