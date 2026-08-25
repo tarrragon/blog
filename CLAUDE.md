@@ -170,6 +170,21 @@ git push --no-verify
 
 批量推送多個 skill 時逐一執行 `skill-sync push`，不要嘗試手動 clone 遠端 repo 操作。
 
+### 改既有 report 卡時要查鏡像
+
+上面的流程管的是新卡建立，改**既有**卡時另有一個缺口：卡的內容可能已經被抄成 skill 的 principle 卡，改了 report 側而沒改 skill 側，共用庫裡就留著一份已被推翻的規則，而下游專案 pull 到的是舊版。
+
+發現方式不能靠記憶。改完 report 卡跑這兩條，任一有命中就是有鏡像要同步：
+
+```bash
+rg -l "<slug>" .claude/skills/ content/skills/       # 內容引用（SKILL.md 的連結等）
+find .claude/skills content/skills -name "<slug>.md" # 同名檔案（principle 卡本身）
+```
+
+兩條缺一不可。principle 卡的內容裡通常沒有自己的 slug 字串（slug 只在檔名上），所以只跑 `rg` 會漏掉分岔的那個檔——實測過一次，`rg` 找到 SKILL.md 而漏掉真正停在舊規則的 principle 卡。
+
+同步時連段標一起對齊：同一個結構單位在兩份鏡像裡要用同一組 canonical 字串，否則之後靠 anchor 比對的自動化與人工檢查都會錯位。
+
 ### 同步判斷原則
 
 - 版本號相同但檔案有差異 → 本地是客製版，以本地為準推回遠端。
