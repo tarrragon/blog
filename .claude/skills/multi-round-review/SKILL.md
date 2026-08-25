@@ -1,10 +1,10 @@
 ---
 name: multi-round-review
-description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill、照它的「字句層 keyword bank（完整清單）」節逐類跑（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 歸因語氣 / 宣導語氣 / 泛用詞 / 位置與集合指涉 / 敘事姿態 / 用詞搭配 / 物理化錯配），命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
+description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作流程。每輪用不同 frame 切換、跨輪 finding 互不重疊、停止訊號是 frame 涵蓋而非 finding 數遞減。Round 1-A 寫作規範 reviewer 必須同步 invoke `compositional-writing` skill、照它的「字句層 keyword bank（完整清單）」節逐類跑（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 歸因語氣 / 宣導語氣 / 泛用詞 / 位置與集合指涉 / 脈絡懸置 / 敘事姿態 / 用詞搭配 / 物理化錯配），命中後要做語意判定（命中是候選不是判決）。觸發詞：多輪審查、Round 1/2/3、frame 切換、跨輪審查、reviewer 規劃、何時停止 review、寫作 audit、batch review、cadence 同骨化、enumeration 不窮盡、正向陳述、self-application sweep。Trigger when reviewing multiple writings via successive rounds of agent reviewers."
 license: MIT
 metadata:
   portable: true
-  version: 1.45.0
+  version: 1.46.0
   category: writing-methodology
 ---
 
@@ -90,7 +90,7 @@ Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 sessi
 最先用「規範遵循」frame、抓 surface 層問題。**Round 1-A 寫作規範 reviewer 啟動時、必須同步 invoke `compositional-writing` skill 的字句層 grep keyword bank**（正向陳述優先 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）— 寫作規範 audit 漏這層、會把字句層問題推到 Round 2 才被 catch。常見三個 reviewer 平行 background：
 
 - **A: 寫作規範 audit** — 專案寫作規範（如 AGENTS.md / markdown-writing-spec）/ compositional-writing 規範遵循
-  - **字句層 grep（必跑）**——**下面是摘要、不是完整清單**。完整的一份在 `compositional-writing` 的「字句層 keyword bank（完整清單）」節，目前十六類；這裡沒有列到的至少有澄清式框架、歸因語氣、宣導語氣三類。派 reviewer 時把它導去那一節逐類跑，不要只跑這裡列到的：
+  - **字句層 grep（必跑）**——**下面是摘要、不是完整清單**。完整的一份在 `compositional-writing` 的「字句層 keyword bank（完整清單）」節，目前十七類；這裡沒有列到的至少有澄清式框架、歸因語氣、宣導語氣、脈絡懸置（等下再討論 / 前面兩個小節 / 用一句話總結 / 列舉鳥瞰）四類。派 reviewer 時把它導去那一節逐類跑，不要只跑這裡列到的：
     - 正向陳述優先：`rg "不[行可是要能該支對符夠必]|無法|沒[做有]|而非|而不是" <files>` — 不主導段落的少量負向（反例對照）可保留、主要敘述要正向
     - 口語修辭（#111）：`rg "其實|實務上|真的|碰巧|立刻撞牆|沒事" <files>`
     - 地區用語（#112）：單詞層 `rg "集群|默認|質量|視頻|函數|文件夾|接口" <files>`；慣用語層 `rg "拍腦袋|拍板|靠譜|給力|接地氣|一波|死磕|躺平|內卷" <files>`（已知個案、**非窮舉**——慣用語是開放集合、同源 reviewer 對這層有結構盲區、回報「clean」不可當真、新個案要靠目標地區讀者冷讀；見 compositional-writing 的 `regional-idioms-evade-keyword-bank` principle）
@@ -309,6 +309,8 @@ frame 清單長到一定程度之後會反覆出現同一個問題——某兩�
 - **把「多輪全過」當成「知識類型對」**：歷輪 finding 全部落在字句與結構層時、「三輪全過」的語意只是「已覆蓋層全過」——斷言支撐與知識類型層若沒有 frame 負責、錯的知識類型（披著教學結構的經驗談）會全數通過。finding 類型分佈本身是訊號：全部集中表面層 = 深層無人在看、下一輪排斷言支撐 frame（per [claim-support frame](references/principles/review-needs-claim-support-frame.md)）
 
 ---
+
+**Version**: 1.46.0 — Round 1-A 的 bank 摘要同步 compositional-writing v0.81.0：完整清單成為十七類、未列出類別加「脈絡懸置」（前向懸置「等下再討論」/ 位置回指「前面兩個小節」/ 壓縮總結「用一句話總結」/ 列舉鳥瞰「分成兩組、第一組四本講……」——判定看指涉攜不攜帶內容名、修法是關係鏈加錨點路由，原則是文章的連貫靠鞏固形狀、不靠讀者的工作記憶）。description 枚舉同步。
 
 **Version**: 1.45.0 — 整合工作流新增第 4 步「reviewer 提出的是替代結構而非修一處時，採納之前先驗它」，Round 3-B 加「本批在前幾輪採納的替代結構是必查對象」。從一次三輪審查抽出：Round 2 兩個 reviewer 收斂提出的骨架，理由是它一次解掉六項已記錄的問題（逐項可核對、全部屬實），被直接採納並擴散到二十餘個檔；Round 3 的個案實走、對抗 steelman、跨篇前提並排三條路徑獨立推翻它——維度不正交、仲裁規則要求比較三個不同量綱的數字、兩個計量單位是回溯量而用途宣稱是前瞻、且對反例免疫。**關鍵是重問殺死前任的問題驗不到它**：那個問題正是替補結構被設計來回答的，會逐項答對而通過。新增 principle 卡 replacement-exemption-comes-from-its-fix-list。
 
