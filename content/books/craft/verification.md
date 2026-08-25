@@ -12,9 +12,7 @@ tags: ["books", "reading", "craft", "testing", "tdd"]
 
 TDD 的原始定義出自 Kent Beck 的《Test-Driven Development: By Example》：怎麼從一個失敗的測試開始建立單元測試、怎麼用紅燈—綠燈—重構的小循環讓設計從小長到大（[Beck 那本的定位](#起點是-kent-beck-的-test-driven-development-by-example)）。Freeman 與 Pryce 的《Growing Object-Oriented Software, Guided by Tests》在測試該怎麼設計上走了跟 Beck 不同的邏輯：由外而內開發，每遇到一個還不存在的協作對象就先用 mock 頂替（[mock 那一派的完整主張](#想看-mock-那一派的完整主張時讀-growing-object-oriented-software-guided-by-tests)）。兩邊分岔的地方是同一個定義——**測試的單元是什麼**：Beck 把單元當成一組協同工作的類別，Freeman 與 Pryce 那一派（書市慣稱倫敦學派）把單元縮到單一類別。
 
-無論站哪一邊，實作一段時間之後都要回答同一個問題：自己寫出來的這套測試好不好。Khorikov 的《Unit Testing Principles, Practices, and Patterns》給的四支柱判準就是做這件事的量尺，對兩派都適用——它對倫敦學派的系統性批評也建立在這把量尺上（[評分的判準](#要一組可以拿來評分的判準時讀-unit-testing-principles-practices-and-patterns)）。而判準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的《Taking Testing Seriously》質疑的是爭單元邊界的那三本共同的問題本身：要先分開的是「執行事先寫好的判準」與「設計判準、發現沒人想到要問的問題」這兩種活動，單元的大小是之後的事（[機器接手判準之後人還做什麼](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)）。
-
-立場站定、量尺在手，「這些測試案例是怎麼推出來的」仍然沒有答案——四本立場書都沒給這個程序，Aniche 的《Effective Software Testing》承接的就是這一段：從規格推導案例的步驟（[推出測試案例的程序](#要一套推出測試案例的程序時讀-effective-software-testing)）。
+無論選擇哪一種做法，測試寫完之後都要評估同一個問題，這套測試到底有沒有問題？Khorikov 的[《Unit Testing Principles, Practices, and Patterns》](#要一組可以拿來評分的判準時讀-unit-testing-principles-practices-and-patterns)就是提供這個評估的標準，這個標準無論對哪一派都適用。這本書中對於倫敦學派的批判也是基於這個系統。而判準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)提出了一個討論，怎麼評估「執行事先寫好的判準」與「設計判準、發現沒人想到要問的問題」這兩種活動？這其實是三本理論書都在討論的共同問題。釐清測試的方向之後，實務上還會需要討論單元的大小——三本理論書在這一題沒有取得共識，[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)給出解法——以及怎麼從規格推導到測試案例（Aniche 的[《Effective Software Testing》](#要一套推出測試案例的程序時讀-effective-software-testing)）。
 
 兩種定義的分野本身在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡，站內怎麼診斷手上這套測試的邊界畫錯了沒有，在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)，那篇處理的是「所以我們怎麼做」；這裡處理的是「該讀哪本、每本代表什麼位置」。
 
