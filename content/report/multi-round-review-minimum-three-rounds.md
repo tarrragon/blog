@@ -43,6 +43,7 @@ Round 3 的 14 項不是 Round 1-2 的殘餘——它們是全新類型的問題
 - [#114 multi-pass frame 顆粒度盲點](/report/writing-multi-pass-review/) — 同 frame 多輪無增益，多輪價值在 frame 切換
 - [#148 跨輪 review 停止訊號](/report/cross-round-review-stopping-signal/) — 停止訊號是 frame 涵蓋、不是 finding 遞減
 - [#126 review 七軸完整度](/report/writing-review-multi-axis-completeness/) — 七軸動完是停止條件之一，三輪是動完七軸的最低路徑
+- [#280 多輪審查要有一輪回到寫作動機](/report/review-rounds-need-a-return-to-purpose/) — 本卡規定的輪數與 frame 切換都在「往內容裡加」的方向上，需要一輪反向 frame 檢查主題有沒有離開寫作動機
 
 ## 判讀徵兆
 
