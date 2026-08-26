@@ -21,7 +21,7 @@ tags: ["going-live", "deployment", "backup", "foundations"]
 - **要備**：資料庫內容、使用者上傳的檔案、以及不在版控裡的 secret / 設定值來源（依十二要素 secret 不簽進 git、第三方 key 撤了就撤了，重建不回來）——這些是**唯一副本**，沒了就真沒了。
 - **不用備**：你的 app code（在 git 裡）、container image（在 [registry](/ci/knowledge-cards/container-registry/) 這個 image 倉庫裡）、能重跑一次就長回來的東西。這些有別的來源，備份它們是浪費。
 
-判準：問「這東西弄丟了，我能不能從別的地方重建？」能 → 不用備；不能 → 要備。這也呼應[十二要素](/going-live/twelve-factor-baseline/)的「process 無狀態、資料放外面」——正因為狀態集中在少數幾個地方（DB、物件儲存），要備份的範圍才清楚。
+判斷標準：問「這東西弄丟了，我能不能從別的地方重建？」能 → 不用備；不能 → 要備。這也呼應[十二要素](/going-live/twelve-factor-baseline/)的「process 無狀態、資料放外面」——正因為狀態集中在少數幾個地方（DB、物件儲存），要備份的範圍才清楚。
 
 ## 幾條地基原則
 

@@ -6,13 +6,13 @@ weight: 6
 tags: ["ddd", "composition-root", "hexagonal-architecture", "testing", "use-case"]
 ---
 
-組裝層是應用程式把 [port](/ddd/knowledge-cards/port/) 插上 [adapter](/ddd/knowledge-cards/adapter/) 的地方——port 是 domain 對外宣告的介面、adapter 是介面的具體實作、[依賴注入](/ddd/knowledge-cards/dependency-injection/) 是把兩者接起來的機制。組裝發生在三個位置：依賴注入的組裝集中在 [composition root](/ddd/knowledge-cards/composition-root/)（組裝根、依賴注入唯一的組裝起點），路由表以單點註冊靠攏它，UI 事件的接線散佈在各畫面。位置不同、同屬組裝層的責任：把功能單元接到使用者按得到的入口上。使用者入口之外、機器觸發的組裝位置（事件訂閱、排程任務）有同一種證言缺口、判準同樣適用；本章聚焦使用者入口。
+組裝層是應用程式把 [port](/ddd/knowledge-cards/port/) 插上 [adapter](/ddd/knowledge-cards/adapter/) 的地方——port 是 domain 對外宣告的介面、adapter 是介面的具體實作、[依賴注入](/ddd/knowledge-cards/dependency-injection/) 是把兩者接起來的機制。組裝發生在三個位置：依賴注入的組裝集中在 [composition root](/ddd/knowledge-cards/composition-root/)（組裝根、依賴注入唯一的組裝起點），路由表以單點註冊靠攏它，UI 事件的接線散佈在各畫面。位置不同、同屬組裝層的責任：把功能單元接到使用者按得到的入口上。使用者入口之外、機器觸發的組裝位置（事件訂閱、排程任務）有同一種證言缺口、判斷標準同樣適用；本章聚焦使用者入口。
 
 本模組（[DDD 領域驅動設計指南](/ddd/)）的源頭句「讓違反規則的路徑走不通」守的是領域內部的規則；本章守它的對偶面——讓正確的路徑確實走得通。domain 模型全對、系統不可用，是分層架構特有的失效形態：每一層各自正確、層與層之間沒接上。
 
 ## 一個專案的五個問題
 
-這個失效形態先用一個完整案例展開——本章後面的每個判準與工具都從它歸納而來。一個專案的單元測試全數通過、實機測試找出五個問題（完整記錄與 Flutter / Riverpod 的實作細節見 [測試全綠、功能失聯](/work-log/flutter_composition_root_wiring_gap/)）：
+這個失效形態先用一個完整案例展開——本章後面的每個判斷標準與工具都從它歸納而來。一個專案的單元測試全數通過、實機測試找出五個問題（完整記錄與 Flutter / Riverpod 的實作細節見 [測試全綠、功能失聯](/work-log/flutter_composition_root_wiring_gap/)）：
 
 | 問題           | 現象                                                                       | 斷裂點      |
 | -------------- | -------------------------------------------------------------------------- | ----------- |
@@ -61,7 +61,7 @@ tags: ["ddd", "composition-root", "hexagonal-architecture", "testing", "use-case
 
 ## 可達性作為組裝層的不變式
 
-「use case 描述的每個入口在 production 環境可達」是一條 [不變式](/ddd/knowledge-cards/invariant/)。不變式的落點判準（完整推導見 [不變式的強制層次](/ddd/invariant-enforcement-layers/)）把約束分成文件、型別、執行三層：寫在文件裡靠人記得並自律、做進型別讓錯誤的寫法在編譯期被擋下、放在執行層讓違反在 runtime 當場被拒絕。把判準套在可達性上、答案是多層都有位置、單獨任何一層都不夠：
+「use case 描述的每個入口在 production 環境可達」是一條 [不變式](/ddd/knowledge-cards/invariant/)。不變式的落點判斷標準（完整推導見 [不變式的強制層次](/ddd/invariant-enforcement-layers/)）把約束分成文件、型別、執行三層：寫在文件裡靠人記得並自律、做進型別讓錯誤的寫法在編譯期被擋下、放在執行層讓違反在 runtime 當場被拒絕。把判斷標準套在可達性上、答案是多層都有位置、單獨任何一層都不夠：
 
 **文件層**：use case 的成功保證補上可達性條款——路由指向真實頁面、callback 已接線、注入項在無 override 環境可解析。這層的作用是把組裝責任寫進驗收範圍：它定義「什麼叫完成」。文件層失效靜默、單獨存在時只是願望；怎麼把這層寫得可檢核、「use case 的完成定義」一節展開。
 
@@ -102,11 +102,11 @@ tags: ["ddd", "composition-root", "hexagonal-architecture", "testing", "use-case
 
 缺口分類先於對策。五個問題的兩種形狀對應兩組修法：組裝斷裂修規格與測試（可達性條款、接線測試）、平台差異修驗證流程（設計期標記、冒煙走查）。混用的代價是把「補測試」當成萬靈丹——平台語意差異是 host 測試補不到的那一類、案例裡那條資料庫設定指令的語意差異、開發機的測試環境重現不出來、要目標平台實際執行才暴露。
 
-本章的作用域同樣要誠實標明：可達性守的是「入口接上了」；接上之後的行為正確性屬行為測試、資料在層間流動的正確性屬整合測試的其他主題。組裝層的證言與六角形內部的證言互補、彼此替代不了：層內的設計判準（[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)）決定六角形內部的品質、[建構路徑設計](/ddd/construction-path-design/) 收物件怎麼被建出來、本章把同一個問題抬到應用程式層。層內的模型設計得再好、組裝層沒有證言、使用者拿到的仍然可能是一片接不通的綠燈。
+本章的作用域同樣要誠實標明：可達性守的是「入口接上了」；接上之後的行為正確性屬行為測試、資料在層間流動的正確性屬整合測試的其他主題。組裝層的證言與六角形內部的證言互補、彼此替代不了：層內的設計判斷標準（[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)）決定六角形內部的品質、[建構路徑設計](/ddd/construction-path-design/) 收物件怎麼被建出來、本章把同一個問題抬到應用程式層。層內的模型設計得再好、組裝層沒有證言、使用者拿到的仍然可能是一片接不通的綠燈。
 
 ## 下一步
 
-- 層內規則的落點選擇（文件／型別／執行三層判準的源頭）：[不變式的強制層次](/ddd/invariant-enforcement-layers/)
+- 層內規則的落點選擇（文件／型別／執行三層判斷標準的源頭）：[不變式的強制層次](/ddd/invariant-enforcement-layers/)
 - 前置條件投影回領域層的狀態機設計：[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
 - Flutter / Riverpod 的實作細節（override 判讀分界、接線測試與修復的執行記錄、佔位掃描與冒煙清單）：[測試全綠、功能失聯](/work-log/flutter_composition_root_wiring_gap/)
 - 同一失效形態的畫面層檢查法（路由存在但不可達）：[路由可達性檢查](/ux-design/01-screen-state-machine/route-reachability/)

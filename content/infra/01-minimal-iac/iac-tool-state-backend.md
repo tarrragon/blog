@@ -1,7 +1,7 @@
 ---
 title: "IaC 工具選型與 state 地基"
 date: 2026-06-26
-description: "Terraform / OpenTofu / CDK / Pulumi 的選型判準，state 作為 IaC 工具對現實的唯一記憶，以及 remote state backend 的自管與託管路線"
+description: "Terraform / OpenTofu / CDK / Pulumi 的選型標準，state 作為 IaC 工具對現實的唯一記憶，以及 remote state backend 的自管與託管路線"
 weight: 1
 tags: ["infra", "iac", "terraform", "state"]
 ---
@@ -91,11 +91,11 @@ CDK 把程式碼 synth 成 CloudFormation 模板，再交給 CloudFormation 服�
 
 Pulumi 走另一邊：它維護一份自己的 state，預設交給 Pulumi Cloud 託管，也能改用 S3 之類的後端自管。形態上更接近 Terraform 的 state 模型，state 的存放、保護與並行控制重回團隊手上。同一條程式語言路線，選 CDK 等於把 state 責任讓給雲端，選 Pulumi 則保留對 state 落點的掌控。
 
-### 選型判準
+### 選型標準
 
 選型看的是團隊組成與變更的審查需求，可以用一張決策表歸納：
 
-| 判準          | 宣告式 DSL（Terraform / OpenTofu） | 程式語言（CDK / Pulumi）      |
+| 判斷標準      | 宣告式 DSL（Terraform / OpenTofu） | 程式語言（CDK / Pulumi）      |
 | ------------- | ---------------------------------- | ----------------------------- |
 | diff 可讀性   | HCL diff 即是資源變更              | 程式碼 diff，要展開才知道結果 |
 | 跨職能 review | 適合                               | 需要讀者熟悉程式語言          |
@@ -106,7 +106,7 @@ Pulumi 走另一邊：它維護一份自己的 state，預設交給 Pulumi Cloud
 
 若多數變更要跨職能 review、希望 diff 一眼可讀，宣告式 DSL 較划算；若 infra 由專職平台團隊維護、抽象複用的收益大於審查透明度的損失，程式語言路線較划算。
 
-Terraform 與 OpenTofu 之間，OpenTofu 是授權變更後社群分叉出的相容實作，HCL 與 provider 生態幾乎共用；選擇主要看對授權條款與治理模式的偏好，技術判準在這一階沒有實質差異。本模組後續一律以 HCL 示意，換成任一宣告式工具判準仍成立。
+Terraform 與 OpenTofu 之間，OpenTofu 是授權變更後社群分叉出的相容實作，HCL 與 provider 生態幾乎共用；選擇主要看對授權條款與治理模式的偏好，技術判斷標準在這一階沒有實質差異。本模組後續一律以 HCL 示意，換成任一宣告式工具判斷標準仍成立。
 
 上述兩條路線之外，還有兩類工具走不同的運作模型。Kubernetes-native 路線（代表是 Crossplane）用 CRD 描述雲資源、由 controller 持續收斂，state 由 Kubernetes 的 etcd 持有，適合已經重度投入 Kubernetes 的團隊。Serverless-first 框架（代表是 SST）把部署與 IaC 合一，適合全 serverless 架構。這兩條路線的 state 模型與 CLI 驅動的 plan/apply 流程不同，本系列不展開。
 

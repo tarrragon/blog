@@ -48,9 +48,9 @@ Regression smoke test 適合用 Vegeta。CI 或 pre-release 可以用短時間�
 
 Incident 後修補驗證適合用 Vegeta。當事故根因是某個 endpoint 的 query、cache miss、lock contention 或 timeout，修補後可以用相同 request set 重跑，快速比較 latency distribution。
 
-## 選型判準
+## 選型標準
 
-| 判準       | Vegeta 的價值                   | 需要補的能力                        |
+| 判斷標準   | Vegeta 的價值                   | 需要補的能力                        |
 | ---------- | ------------------------------- | ----------------------------------- |
 | CLI 簡潔   | 本機、CI、shell workflow 容易接 | 長期報表與 artifact 標準化          |
 | 固定 rate  | 探測 rate / latency 關係清楚    | 複雜使用者行為與 arrival pattern    |

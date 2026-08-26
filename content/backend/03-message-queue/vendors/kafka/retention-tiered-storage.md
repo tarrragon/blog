@@ -76,7 +76,7 @@ Retention 的實際刪除動作由背景執行緒週期性執行、頻率是 bro
 
 `cleanup.policy` 決定 retention 用哪種語意回收空間、是保留策略最關鍵的分岔。預設值 `delete` 是時間或容量到期就整段刪除、適合事件流（event stream）：訊息代表「發生過的事實」、過了 replay window 就沒有保留價值。另一個值 `compact` 是 log compaction、語意完全不同：它保留每個 key 的最新值、刪除同 key 的歷史版本、適合「狀態快照」型資料。
 
-兩者的判準是這份 log 表達的是「事件序列」還是「最終狀態」。訂單建立、付款完成、商品瀏覽這類事件、每一筆都是獨立事實、用 `delete`；使用者個人設定、商品庫存當前值、CDC 同步出來的資料表鏡像這類「同一個 key 不斷被覆寫、只關心最新值」的資料、用 `compact`。Kafka 內部的 `__consumer_offsets` topic 就是 compact——它只需要每個 consumer group 的最新 offset、不需要歷史 commit 記錄。
+兩者的判斷標準是這份 log 表達的是「事件序列」還是「最終狀態」。訂單建立、付款完成、商品瀏覽這類事件、每一筆都是獨立事實、用 `delete`；使用者個人設定、商品庫存當前值、CDC 同步出來的資料表鏡像這類「同一個 key 不斷被覆寫、只關心最新值」的資料、用 `compact`。Kafka 內部的 `__consumer_offsets` topic 就是 compact——它只需要每個 consumer group 的最新 offset、不需要歷史 commit 記錄。
 
 兩者可以同時開（`cleanup.policy=compact,delete`）：先按 key 壓縮保留最新值、同時對壓縮後的結果再套時間 / 容量上限。用 `kafka-configs.sh` 切換時、逗號分隔的值要用中括號群組、否則會被解析成兩個獨立 config：
 

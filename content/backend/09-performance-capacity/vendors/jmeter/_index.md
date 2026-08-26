@@ -37,9 +37,9 @@ Legacy 測試資產適合保留 JMeter。既有 `.jmx` 檔案、listener、plugi
 
 四件事任一缺、就是 [9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/) 邊界的待補項目。
 
-## 選型判準
+## 選型標準
 
-| 判準        | JMeter 的價值                | 需要補的能力                        |
+| 判斷標準    | JMeter 的價值                | 需要補的能力                        |
 | ----------- | ---------------------------- | ----------------------------------- |
 | 多 protocol | sampler 與 plugin 覆蓋廣     | plugin 版本治理與測試環境一致性     |
 | GUI 協作    | 非工程角色可讀可改           | code review、diff 與版本控制紀律    |

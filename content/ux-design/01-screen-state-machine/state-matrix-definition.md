@@ -64,7 +64,7 @@ tags: ["ux-design", "state-machine", "state-matrix", "navigation"]
 
 ### 第四步：檢查操作欄
 
-操作欄為空的狀態可能合理（loading 時使用者等待），也可能代表缺少互動設計。loading 狀態通常應該有「取消」操作，error 狀態通常應該有「重試」和「返回」。「顯示」欄的等待指示要填 spinner 還是進度條，依等待時長判斷 — 判準在[時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)。
+操作欄為空的狀態可能合理（loading 時使用者等待），也可能代表缺少互動設計。loading 狀態通常應該有「取消」操作，error 狀態通常應該有「重試」和「返回」。「顯示」欄的等待指示要填 spinner 還是進度條，依等待時長判斷 — 判斷標準在[時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)。
 
 ## 容易漏列的狀態：initializing
 

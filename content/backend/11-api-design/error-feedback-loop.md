@@ -18,7 +18,7 @@ id 能定位「單跳」、trace 才能定位「全鏈」。一個請求跨五�
 
 錯誤內容要分受眾投影、而且兩種投影的組成幾乎相反。給終端使用者呈現的：友善、可行動、不含技術細節（AIP-193 的 `LocalizedMessage` 層、見 [11.C75](/backend/11-api-design/cases/errorchain-aip193-error-content/)）—— 使用者不需要知道是哪個服務的哪類錯誤、需要知道「現在能做什麼」。回報給 provider 的：機器碼（type/code 或 reason/domain）、request-id 或 trace-id、時間戳 —— 全是使用者不需要、定位卻缺一不可的欄位。
 
-實務上最常見的組合是「generic 訊息加識別符」：畫面上顯示友善訊息與一個錯誤編號、使用者回報時唸出編號即可。要標明的邊界：OWASP 的 error handling 指南只要求 generic response 加 server-side log、沒有規範「回傳識別符給使用者」這一段（見 [11.C77](/backend/11-api-design/cases/errorchain-owasp-error-handling/)）—— 這個組合是業界常見實務、識別符部分的規範根據是 Trace Context 與各 vendor 的 request-id 慣例、不是 OWASP。consumer 端的落地判準：錯誤呈現層跟錯誤上報層分開寫 —— 呈現層消費 LocalizedMessage 類欄位、上報層把完整 error 物件（含 id）送進自己的 log 與監控、兩層各取所需、不互相污染。
+實務上最常見的組合是「generic 訊息加識別符」：畫面上顯示友善訊息與一個錯誤編號、使用者回報時唸出編號即可。要標明的邊界：OWASP 的 error handling 指南只要求 generic response 加 server-side log、沒有規範「回傳識別符給使用者」這一段（見 [11.C77](/backend/11-api-design/cases/errorchain-owasp-error-handling/)）—— 這個組合是業界常見實務、識別符部分的規範根據是 Trace Context 與各 vendor 的 request-id 慣例、不是 OWASP。consumer 端的落地判斷標準：錯誤呈現層跟錯誤上報層分開寫 —— 呈現層消費 LocalizedMessage 類欄位、上報層把完整 error 物件（含 id）送進自己的 log 與監控、兩層各取所需、不互相污染。
 
 ## 什麼時候該升級：偶發與持續的判讀
 

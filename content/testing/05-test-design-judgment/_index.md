@@ -26,11 +26,11 @@ tags: ["testing", "assertion", "flaky", "test-data", "mock"]
 - [Flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/) — 計時依賴 / 環境差異 / 資源競爭 / 非確定性
 - [Flaky test 團隊治理](/testing/05-test-design-judgment/flaky-team-governance/) — quarantine 政策、retry 預算、信任修復的可視化與行動閾值
 - [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/) — 測試名稱與斷言說內容、註解只說操作約束、分析詞彙不入程式碼
-- [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/) — 建立測試問「未來哪種改壞要被擋」、變更時測試是唯一發聲的防護、約束該寫測試還是註解的分工判準
+- [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/) — 建立測試問「未來哪種改壞要被擋」、變更時測試是唯一發聲的防護、約束該寫測試還是註解的分工標準
 
 ## Agent 產出程式碼時這個模組怎麼變
 
-本模組的判準預設寫測試的人懂需求、而且看得懂自己在斷言什麼。程式碼由 agent 產出時這個前提鬆動：mock 邊界的判斷照舊成立，但「這條斷言的預期值從哪裡來」變成要先問的問題——預期值若取自實作的執行結果，斷言品質三問的每一問都會通過而測試什麼也沒驗。判準來源、驗收條件的射程與品質閘門的更替走 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)。
+本模組的判斷標準預設寫測試的人懂需求、而且看得懂自己在斷言什麼。程式碼由 agent 產出時這個前提鬆動：mock 邊界的判斷照舊成立，但「這條斷言的預期值從哪裡來」變成要先問的問題——預期值若取自實作的執行結果，斷言品質三問的每一問都會通過而測試什麼也沒驗。判斷標準來源、驗收條件的射程與品質閘門的更替走 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)。
 
 那個模組的名字宣告了 agent 情境，而其中三件事與程式碼由誰寫**無關**，人手寫測試同樣適用——放在那裡是因為它們是同一次寫作的產物，不是因為它們只在 agent 情境成立：
 

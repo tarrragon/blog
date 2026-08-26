@@ -3,13 +3,13 @@ title: "文件裡的扁平 Product、程式碼裡的雙層聚合 — 宣稱型�
 slug: "pos_product_model_doc_vs_code_evolution"
 date: 2026-07-10
 draft: false
-description: "refactor 總結文件記的是決策時刻的快照：扁平 Product（一商品一價一庫存）在真實 POS 業務下演化成 Product + ProductSpecification 雙層、價格三種下沉到規格。欄位放聚合根還是子層的判準是「兩個規格會不會不同」；文件預言的需求全中、預言的結構全錯——這正是先蓋結構會蓋錯的實證。"
+description: "refactor 總結文件記的是決策時刻的快照：扁平 Product（一商品一價一庫存）在真實 POS 業務下演化成 Product + ProductSpecification 雙層、價格三種下沉到規格。欄位放聚合根還是子層的判斷標準是「兩個規格會不會不同」；文件預言的需求全中、預言的結構全錯——這正是先蓋結構會蓋錯的實證。"
 tags: ["dart", "flutter", "ddd", "aggregate", "documentation", "pos", "model-evolution"]
 ---
 
 > **觸發場景**：整理 POS 專案時對照 `doc/PRODUCT_MODEL_REFACTOR.md` 跟 `lib/data/models/product/product.dart`——文件描述的 Product 是扁平結構（barcode、price、stockCount 直接掛在商品上），現行程式碼是 Product + ProductSpecification 雙層、幾乎沒有一個欄位還在文件說的位置
 > **疑問來源**：這份文件錯了嗎？還是它只是過期了？兩者的差異本身能教什麼？
-> **整理目的**：記下扁平商品模型被真實業務打破的具體壓力、欄位歸屬的判準、以及宣稱型文件的正確用法
+> **整理目的**：記下扁平商品模型被真實業務打破的具體壓力、欄位歸屬的判斷標準、以及宣稱型文件的正確用法
 > **本文邊界**：素材是該專案的 refactor 總結文件（早期）與現行 model；「落差」是十個月演化的累積、不是單次重構的 before/after
 
 ---
@@ -57,7 +57,7 @@ abstract class Product {                // 跨規格共用的資訊
 }
 ```
 
-欄位歸屬的判準收成一句：**問「兩個規格會不會不同」**。條碼會（中杯大杯各一個店內碼）、價格會（三種價都會）、庫存會——下沉到 spec；名稱、品牌、供應商、分類、客製化選項、廚房路由不會——留在聚合根。price 的取得也跟著變成規格層的方法（`spec.getPrice(isMember)`），「商品的價格」這個問法在新結構裡根本不成立——只有「某規格對某身分的價格」。
+欄位歸屬的判斷標準收成一句：**問「兩個規格會不會不同」**。條碼會（中杯大杯各一個店內碼）、價格會（三種價都會）、庫存會——下沉到 spec；名稱、品牌、供應商、分類、客製化選項、廚房路由不會——留在聚合根。price 的取得也跟著變成規格層的方法（`spec.getPrice(isMember)`），「商品的價格」這個問法在新結構裡根本不成立——只有「某規格對某身分的價格」。
 
 型別也在同一段演化裡逐級升級：`double` 價格換成 `Money`（[三段遷移](/work-log/dart_money_extension_type_migration/)）、`String category` 換成 `ProductCategory` model、裸 URL 換成 `Cover` model。扁平版留下的痕跡只剩一個向後兼容 getter（`productName => name`）。
 
@@ -76,7 +76,7 @@ abstract class Product {                // 跨規格共用的資訊
 ## 判讀徵兆
 
 - doc 目錄的文件描述的 API / 欄位在 codebase 裡 grep 不到——文件已進入考古態，讀它時切換心態、別照著寫程式碼
-- 商品 / 資源類 model 出現「同一概念、多個變體」的需求（規格、方案、版本）——扁平模型的死期，先做歸屬判準（哪些欄位會被變體分化）再拆層
+- 商品 / 資源類 model 出現「同一概念、多個變體」的需求（規格、方案、版本）——扁平模型的死期，先做歸屬標準（哪些欄位會被變體分化）再拆層
 - 「未來擴展」清單裡的項目被預先建成欄位——每一個都是將來的遷移債，清單留著、欄位等需求
 - 業務規則寫在文件而不是欄位旁——文件會漂移、貼身註解不會；規則跟著它約束的程式碼放
 

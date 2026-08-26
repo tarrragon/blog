@@ -34,7 +34,7 @@ Application log 記錄 debug 資訊（SQL timing、cache hit/miss、retry），a
 
 把 audit event 獨立到專屬 pipeline：交易狀態變更、使用者存取、權限變動、退款操作各自產生結構化 audit event，寫入 immutable storage（append-only、禁止刪除與修改）。Operational log 維持 14 天 retention，audit log 走 5 年 retention + cold archive。
 
-分離的判準是「這筆紀錄是否可能被稽核或法務要求提供」。是 → audit pipeline；否 → operational pipeline。灰色地帶（例如認證失敗 log）歸入 audit pipeline — 寧可多留不可少留。
+分離的判斷標準是「這筆紀錄是否可能被稽核或法務要求提供」。是 → audit pipeline；否 → operational pipeline。灰色地帶（例如認證失敗 log）歸入 audit pipeline — 寧可多留不可少留。
 
 ### PII redaction pipeline
 

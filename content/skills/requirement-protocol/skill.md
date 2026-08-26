@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: requirement-protocol
 license: MIT
 metadata:
-  version: 0.8.1
+  version: 0.8.2
   category: writing-methodology
 ---
 
@@ -37,7 +37,7 @@ metadata:
 
 純技術實作（grid / flex、ResizeObserver / setInterval、selector 寫法）可自決；使用者會看到的決定（breakpoint、預設尺寸、filter 順序、UI 文字、配色）先列選項給使用者點頭。
 
-判準三問：**UI 上會不會產生使用者感知的差異？選不同會不會影響體驗？寫進 commit 後改動成本高不高？** 任一個「是」 → 該確認。確認時給「選項 + 推薦 + 開放修改」、不要開放問。
+判斷標準三問：**UI 上會不會產生使用者感知的差異？選不同會不會影響體驗？寫進 commit 後改動成本高不高？** 任一個「是」 → 該確認。確認時給「選項 + 推薦 + 開放修改」、不要開放問。
 
 ### 2. 同方向失敗 2 次 = 停下驗證假設
 
@@ -161,6 +161,8 @@ requirement-protocol/
 ---
 
 **Last Updated**: 2026-07-05
+**Version**: 0.8.2 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
+
 **Version**: 0.8.1 — 數量命名收斂與 lint 基線清理：標題「Core Pillars（四大支柱）」「Seven Principles（七大原則速查）」改成「核心支柱」「Core Principles（核心原則速查）」（REF2），與 compositional-writing 已採用的慣例一致。改名的觸發不只是規則命中——同一個檔裡已經漂移成「四大支柱」與「三大支柱」、「七大原則」與「六大原則」並存，正是 name-collections-by-role-not-count 描述的失效模式的實證。正文、目錄樹與 principles 卡的反向引用一併改成角色命名，原則的交叉引用改用語意標題取代編號；「與 wrap-decision 的邊界」段的條件句改成核心概念前置（POS-negation-lead）。
 
 **Version**: 0.8.0 — 觸發路由段新增「與 wrap-decision 的邊界」註記：指令模糊屬本 skill，當事人條件不足 / premortem 計畫輪廓不清屬 wrap-decision Step 0 與 context 閘門，三者互為前置不重複問

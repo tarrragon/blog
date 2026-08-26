@@ -10,7 +10,7 @@ tags: ["dotfile", "prod-parity", "docker"]
 
 ## ergonomics 進可寫層，不進 image
 
-最容易犯的錯是把 zsh、vim、個人 config 寫進 runtime 的 Dockerfile。一旦 ergonomics 進了 image，這個 image 就不再等於 prod——線上不會有你的 oh-my-zsh，parity 當場破功。判準很硬：
+最容易犯的錯是把 zsh、vim、個人 config 寫進 runtime 的 Dockerfile。一旦 ergonomics 進了 image，這個 image 就不再等於 prod——線上不會有你的 oh-my-zsh，parity 當場破功。判斷標準很硬：
 
 - **runtime image 只裝 app 需要、prod 也有的套件**（見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/)）。
 - **ergonomics 裝進「已啟動的 container」**：`docker compose exec <service> bash` 進去後才裝，或 `docker compose cp` 把檔案送進去（已啟動的 container 無法事後 mount，掛載只能在 compose / `docker run` 當下宣告）。它活在容器的可寫層、不進 image。

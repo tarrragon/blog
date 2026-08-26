@@ -124,7 +124,7 @@ shutdown 信號傳遞的驗證方式是在 staging 環境觸發 pod delete，觀
 | shutdown 風險    | LB 延遲仍送流量         | reconnect storm              | 不可中斷 job 被強制結束          |
 | rollout 節奏建議 | 可激進（秒級觀察窗）    | 保守（分鐘級、等 reconnect） | 依 job 粒度（完成當前批次再切）  |
 
-這張表是選型前判準的操作化：先確認服務屬於哪類 workload，再套用對應的 lifecycle 參數基線。混合 workload（例如同時提供 HTTP API 和 WebSocket）要取各層的嚴格值——drain 窗口取最長的、readiness 取最嚴格的。
+這張表是選型前判斷標準的操作化：先確認服務屬於哪類 workload，再套用對應的 lifecycle 參數基線。混合 workload（例如同時提供 HTTP API 和 WebSocket）要取各層的嚴格值——drain 窗口取最長的、readiness 取最嚴格的。
 
 ## 平台如何表達 Lifecycle 差異
 
@@ -154,7 +154,7 @@ Kubernetes 在 lifecycle 表達力上最完整，但參數最多也最容易配�
 3. **drain 行為驗證**：在新平台觸發 pod delete、觀察 drain 完成時間與在途請求處理是否符合預期。
 4. **信號傳遞驗證**：在新平台觸發 shutdown、確認 SIGTERM 到達應用進程並觸發 graceful shutdown handler。
 
-## 選型前判準
+## 選型前判斷標準
 
 部署平台選型前要先回答：
 

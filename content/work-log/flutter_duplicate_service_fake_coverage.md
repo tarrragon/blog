@@ -40,7 +40,7 @@ tags: ["flutter", "dart", "ddd", "clean-architecture", "testing", "infrastructur
 - domain 依賴抽象介面 `BookInfoApiService`（`queryByIsbn` / `searchByTitle`），透過注入取得
 - mock 收斂成一份、實作同一個抽象介面——mock 的介面從此跟真實服務的介面由同一個 abstract class 保證一致
 
-分層的判準在這個 case 裡很乾淨：**會被多個 domain 用同一種方式消費的技術能力，屬於 Infrastructure**；domain 層持有的是「用查到的資料做什麼」的業務知識，不是「怎麼查」的技術知識。
+分層的判斷標準在這個 case 裡很乾淨：**會被多個 domain 用同一種方式消費的技術能力，屬於 Infrastructure**；domain 層持有的是「用查到的資料做什麼」的業務知識，不是「怎麼查」的技術知識。
 
 ## 判讀徵兆
 

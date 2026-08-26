@@ -143,14 +143,14 @@ bcrypt
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                        | 關係                                                                                                                                                                          |
-| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)               | **本卡是 #82 在 mitigation 設計層的具體化** — mitigation 名稱對位 = 字面層、mechanism 對位 = 行為層、前提對位 = contextual 行為層；stop at 名稱層 = false confidence          |
-| [#86 Capability gap 三層對策階梯](../capability-gap-three-layer-escalation/)                | **同骨對位邏輯** — #86 是 capability gap 的 L1/L2/L3 對應；本卡是 mitigation 在「名稱 / mechanism / 前提」三層對應；都在說「層次選對才有效」                                  |
-| [#75 主策略 + 補強策略](../main-strategy-plus-supplementary/)                               | **疊加 mitigation 的對位** — #75 是多策略疊加判準（解不同層 / 沒副作用衝突 / 增量成本可接受），本卡補「疊加時各 mitigation 的 mechanism 跟前提要明示」、不然 #75 的判準沒法跑 |
-| [#100 False sense of security 主要失敗模式](../false-sense-of-security-as-primary-failure/) | **#100 的 dimension 2** — 對位失效是 false sense 的第二大產地（dimension 1 是 threat model 不對稱、見 [#101](../threat-model-explicitness/)）                                 |
-| [#101 Threat model 明確性](../threat-model-explicitness/)                                   | **本卡的上游前提** — #101 確立 threat space 的 scope、本卡確立 mitigation 在 scope 內的 mechanism 對位；threat model 不清的話 mitigation 對位無從談起                         |
-| [#99 資安教學審查標準對應風險不對稱](../security-teaching-rigor-asymmetry/)                 | 上游動機 — verifiability-first 的具體實現之二（#101 是 dimension 1、本卡是 dimension 2）                                                                                      |
+| 原則                                                                                        | 關係                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)               | **本卡是 #82 在 mitigation 設計層的具體化** — mitigation 名稱對位 = 字面層、mechanism 對位 = 行為層、前提對位 = contextual 行為層；stop at 名稱層 = false confidence                  |
+| [#86 Capability gap 三層對策階梯](../capability-gap-three-layer-escalation/)                | **同骨對位邏輯** — #86 是 capability gap 的 L1/L2/L3 對應；本卡是 mitigation 在「名稱 / mechanism / 前提」三層對應；都在說「層次選對才有效」                                          |
+| [#75 主策略 + 補強策略](../main-strategy-plus-supplementary/)                               | **疊加 mitigation 的對位** — #75 是多策略疊加判斷標準（解不同層 / 沒副作用衝突 / 增量成本可接受），本卡補「疊加時各 mitigation 的 mechanism 跟前提要明示」、不然 #75 的判斷標準沒法跑 |
+| [#100 False sense of security 主要失敗模式](../false-sense-of-security-as-primary-failure/) | **#100 的 dimension 2** — 對位失效是 false sense 的第二大產地（dimension 1 是 threat model 不對稱、見 [#101](../threat-model-explicitness/)）                                         |
+| [#101 Threat model 明確性](../threat-model-explicitness/)                                   | **本卡的上游前提** — #101 確立 threat space 的 scope、本卡確立 mitigation 在 scope 內的 mechanism 對位；threat model 不清的話 mitigation 對位無從談起                                 |
+| [#99 資安教學審查標準對應風險不對稱](../security-teaching-rigor-asymmetry/)                 | 上游動機 — verifiability-first 的具體實現之二（#101 是 dimension 1、本卡是 dimension 2）                                                                                              |
 
 ---
 

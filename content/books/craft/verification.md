@@ -6,13 +6,13 @@ weight: 40
 tags: ["books", "reading", "craft", "testing", "tdd"]
 ---
 
-這個主題有 [工程技藝書單](../)其他三篇——設計判準、系統架構、改既有的程式——都沒有的特徵：**收錄的書彼此不同意**。測試該寫到什麼粒度、協作對象該不該用 mock 替換、測試該綁在行為上還是結構上——這些問題有兩個互相對立的傳統，而多數讀者是在讀到第二本、發現它跟第一本說法相反的時候，才知道自己一直在照著其中一派做而不知道有另一派。
+這個主題有 [工程技藝書單](../)其他三篇——設計判斷標準、系統架構、改既有的程式——都沒有的特徵：**收錄的書彼此不同意**。測試該寫到什麼粒度、協作對象該不該用 mock 替換、測試該綁在行為上還是結構上——這些問題有兩個互相對立的傳統，而多數讀者是在讀到第二本、發現它跟第一本說法相反的時候，才知道自己一直在照著其中一派做而不知道有另一派。
 
 所以這個主題的選讀順序由分歧決定：**先知道這幾本在哪裡不同意，再決定自己採哪一種做法**。
 
 TDD 的原始定義出自 Kent Beck 的[《Test-Driven Development: By Example》](#起點是-kent-beck-的-test-driven-development-by-example)：怎麼從一個失敗的測試開始建立單元測試、怎麼用紅燈—綠燈—重構的小循環讓設計從小長到大。Freeman 與 Pryce 的[《Growing Object-Oriented Software, Guided by Tests》](#想看-mock-那一派的完整主張時讀-growing-object-oriented-software-guided-by-tests)在測試該怎麼設計上走了跟 Beck 不同的邏輯：由外而內開發，於是每遇到一個還不存在的協作對象就先用 mock 頂替。兩邊分岔的地方是同一個定義——**測試的單元是什麼**：Beck 把單元當成一組協同工作的類別，Freeman 與 Pryce 那一派（書市慣稱倫敦學派）把單元縮到單一類別。
 
-無論選擇哪一種做法，測試寫完之後都要評估同一個問題，這套測試到底有沒有問題？Khorikov 的[《Unit Testing Principles, Practices, and Patterns》](#要一組可以拿來評分的判準時讀-unit-testing-principles-practices-and-patterns)就是提供這個評估的標準，這個標準無論對哪一派都適用。這本書中對於倫敦學派的批判也是基於這個系統。而判準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)提出了一個討論，怎麼評估「執行事先寫好的判準」與「設計判準、發現沒人想到要問的問題」這兩種活動？這是 Beck、Freeman 與 Pryce、Khorikov 三本理論書都在討論的共同問題。釐清測試的方向之後，實務上還會需要討論單元的大小——三本理論書在這一題沒有取得共識，[《Taking Testing Seriously》](#想知道機器接手判準之後人還做什麼時讀-taking-testing-seriously)給出解法——以及怎麼從規格推導到測試案例（Aniche 的[《Effective Software Testing》](#要一套推出測試案例的程序時讀-effective-software-testing)）。
+無論選擇哪一種做法，測試寫完之後都要評估同一個問題，這套測試到底有沒有問題？Khorikov 的[《Unit Testing Principles, Practices, and Patterns》](#要一組可以拿來評分的判斷標準時讀-unit-testing-principles-practices-and-patterns)就是提供這個評估的標準，這個標準無論對哪一派都適用。這本書中對於倫敦學派的批判也是基於這個系統。而判斷標準寫下來、交給機器或 agent 執行的時候，Bach 與 Bolton 的[《Taking Testing Seriously》](#想知道機器接手判斷標準之後人還做什麼時讀-taking-testing-seriously)提出了一個討論，怎麼評估「執行事先寫好的判斷標準」與「設計判斷標準、發現沒人想到要問的問題」這兩種活動？這是 Beck、Freeman 與 Pryce、Khorikov 三本理論書都在討論的共同問題。釐清測試的方向之後，實務上還會需要討論單元的大小——三本理論書在這一題沒有取得共識，[《Taking Testing Seriously》](#想知道機器接手判斷標準之後人還做什麼時讀-taking-testing-seriously)給出解法——以及怎麼從規格推導到測試案例（Aniche 的[《Effective Software Testing》](#要一套推出測試案例的程序時讀-effective-software-testing)）。
 
 兩種定義的分野本身，在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡。要診斷手上這套測試的邊界畫錯了沒有，讀 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)——那篇回答「所以我們怎麼做」，本篇回答「該讀哪本、每本代表什麼位置」。
 
@@ -45,30 +45,30 @@ Steve Freeman 與 Nat Pryce 這本是倫敦學派的代表作，也是它最完�
 
 - [Amazon（Growing Object-Oriented Software, Guided by Tests）](https://www.amazon.com/Growing-Object-Oriented-Software-Guided-Tests/dp/0321503627)
 
-## 要一組可以拿來評分的判準時讀 Unit Testing Principles, Practices, and Patterns
+## 要一組可以拿來評分的判斷標準時讀 Unit Testing Principles, Practices, and Patterns
 
-Vladimir Khorikov 這本（2020）是單元定義這條線上最後出版的一本，也是唯一給出**一套可以拿來評測試的通用判準**的一本。四支柱是防止回歸、抵抗重構、快速回饋、易於維護，而書中的核心論證是前三者互相衝突、不可能同時最大化，所以測試設計是取捨而非最佳實踐。這套判準有一類測試評不了：為了替沒有測試的程式碼建立行為快照而寫、用完就丟的那種（[改既有的程式](../changing-existing-code/) 收的 Feathers 那本教的手法），它在抵抗重構與易於維護上必然低分，而那正是它該有的樣子。四支柱預設被評的測試要長期留著。
+Vladimir Khorikov 這本（2020）是單元定義這條線上最後出版的一本，也是唯一給出**一套可以拿來評測試的通用判斷標準**的一本。四支柱是防止回歸、抵抗重構、快速回饋、易於維護，而書中的核心論證是前三者互相衝突、不可能同時最大化，所以測試設計是取捨而非最佳實踐。這套判斷標準有一類測試評不了：為了替沒有測試的程式碼建立行為快照而寫、用完就丟的那種（[改既有的程式](../changing-existing-code/) 收的 Feathers 那本教的手法），它在抵抗重構與易於維護上必然低分，而那正是它該有的樣子。四支柱預設被評的測試要長期留著。
 
-它對倫敦學派的批評就建立在這組判準上：把所有協作者 mock 掉會讓測試耦合到實作結構，因而在「抵抗重構」這一項上得分很低——而那一項是四支柱裡唯一不能用其他項補償的，因為一個會誤報的測試套件最終會被團隊忽略。作者主張的是古典學派：單元是行為而非類別，只有跨越應用邊界的協作對象（資料庫、外部服務）才該替換。
+它對倫敦學派的批評就建立在這組判斷標準上：把所有協作者 mock 掉會讓測試耦合到實作結構，因而在「抵抗重構」這一項上得分很低——而那一項是四支柱裡唯一不能用其他項補償的，因為一個會誤報的測試套件最終會被團隊忽略。作者主張的是古典學派：單元是行為而非類別，只有跨越應用邊界的協作對象（資料庫、外部服務）才該替換。
 
 這本的用法跟 Beck、Freeman 與 Pryce 那兩本不同：它不是拿來讀完的，是拿來當標準的。手上有一套自己覺得不對勁的測試時，逐項打分數比讀任何主張都快看出問題在哪。
 
-證據來源是單一路徑的個人經驗加上理論建構，形式是原則加判準——這是本篇收錄的書裡唯一嘗試把測試設計寫成可推導體系的。範例是 C#，但判準本身與語言無關。時效上沒有明顯過時的部分——四支柱的取捨與工具世代無關。
+證據來源是單一路徑的個人經驗加上理論建構，形式是原則加判斷標準——這是本篇收錄的書裡唯一嘗試把測試設計寫成可推導體系的。範例是 C#，但判斷標準本身與語言無關。時效上沒有明顯過時的部分——四支柱的取捨與工具世代無關。
 
 這本要有量測的對象：手上一套實際在跑、而且開始造成負擔的測試。沒有那套測試，四支柱之間的取捨不會浮現——它們互相衝突，而衝突要有一套實際的測試當標的才看得見。還沒有這樣一套測試的話，可以先知道這本存在，等負擔出現再拿出來用。查不到繁體中文版，簡體中文版《單元測試：原則、實踐與模式》（2026 年 8 月查）。
 
 - [Amazon（Unit Testing Principles, Practices, and Patterns）](https://www.amazon.com/Unit-Testing-Principles-Practices-Patterns/dp/1617296279)
 - [天瓏（Unit Testing Principles, Practices, and Patterns，原文版）](https://www.tenlong.com.tw/products/9781617296277)
 
-## 想知道機器接手判準之後人還做什麼時讀 Taking Testing Seriously
+## 想知道機器接手判斷標準之後人還做什麼時讀 Taking Testing Seriously
 
-James Bach 與 Michael Bolton 這本（Wiley，2025 年 11 月）是 Rapid Software Testing 這一派的完整陳述。它跟爭單元邊界的那三本理論書——Beck、Freeman 與 Pryce、Khorikov——不在同一個座標系裡：那三本爭的是邊界該畫在哪，這本主張要先分開的是兩種活動——**checking**（對一個已經被決定的事實做二元評估，判準事先寫下、原則上可以交給機器）與 **testing**（設計判準本身、發現沒有人想到要問的問題、判斷觀察到的現象算不算問題）。三本理論書給判準的時候，同時在做這兩件事，只是沒有把它們分開命名。作者的立場是自動化能接手的只有 checking，而 checking 的品質完全取決於當初設計它的那次 testing。對單元該多大——三本理論書沒有取得共識的那一題——它的解法是把問題排到後面：先分開兩種活動，單元的大小是分界確立之後才輪到的問題。
+James Bach 與 Michael Bolton 這本（Wiley，2025 年 11 月）是 Rapid Software Testing 這一派的完整陳述。它跟爭單元邊界的那三本理論書——Beck、Freeman 與 Pryce、Khorikov——不在同一個座標系裡：那三本爭的是邊界該畫在哪，這本主張要先分開的是兩種活動——**checking**（對一個已經被決定的事實做二元評估，判斷標準事先寫下、原則上可以交給機器）與 **testing**（設計判斷標準本身、發現沒有人想到要問的問題、判斷觀察到的現象算不算問題）。三本理論書給判斷標準的時候，同時在做這兩件事，只是沒有把它們分開命名。作者的立場是自動化能接手的只有 checking，而 checking 的品質完全取決於當初設計它的那次 testing。對單元該多大——三本理論書沒有取得共識的那一題——它的解法是把問題排到後面：先分開兩種活動，單元的大小是分界確立之後才輪到的問題。
 
-這個分界是這一派的起點，理由是自動化的邊界由判準寫不寫得下來決定，與工具能力無關。作者同期公開談論過 AI 與這個分界的關係；書的目次未能取得，這裡不指涉它在書中的位置與篇幅。
+這個分界是這一派的起點，理由是自動化的邊界由判斷標準寫不寫得下來決定，與工具能力無關。作者同期公開談論過 AI 與這個分界的關係；書的目次未能取得，這裡不指涉它在書中的位置與篇幅。
 
 證據來源是兩位作者長期的教學與顧問實踐加上一套自建的術語體系，形式是主張與啟發式的目錄而不是逐步演練——它不像 Freeman 與 Pryce 那本有一個貫穿全書的範例可以跟著做。時效上是本篇最新的一本，術語體系本身不依賴任何工具世代。
 
-處境相容性上要先知道一件事：這一派的語彙（checking、oracle、heuristic、探索式測試的活動記錄）與多數團隊日常使用的詞彙不重疊，讀的時候要一邊做術語對照。它也預設讀者有機會親自操作產品——判準要在觀察當下才成形是這套主張的核心，而完全只寫單元測試、不碰成品的人拿不到那個觀察位置。查不到中譯本（2026 年 8 月查）。
+處境相容性上要先知道一件事：這一派的語彙（checking、oracle、heuristic、探索式測試的活動記錄）與多數團隊日常使用的詞彙不重疊，讀的時候要一邊做術語對照。它也預設讀者有機會親自操作產品——判斷標準要在觀察當下才成形是這套主張的核心，而完全只寫單元測試、不碰成品的人拿不到那個觀察位置。查不到中譯本（2026 年 8 月查）。
 
 - [Wiley（Taking Testing Seriously: The Rapid Software Testing Approach）](https://www.wiley.com/en-us/Taking+Testing+Seriously:+The+Rapid+Software+Testing+Approach-p-00416398)
 - [天瓏（Taking Testing Seriously，原文版）](https://www.tenlong.com.tw/products/9781394253197)
@@ -120,8 +120,8 @@ Gerard Meszaros 的《xUnit Test Patterns》是測試異味與模式的完整目
 
 ## 這個主題接到哪裡
 
-測試寫不出來常常是設計的訊號而非測試技巧的問題——難測的程式碼通常是耦合太緊。那條路徑走 [設計判準與日常實踐](../design-and-practice/)。既有程式碼沒有測試而必須先補，那是 [改既有的程式](../changing-existing-code/) 裡 Feathers 那本處理的問題。
+測試寫不出來常常是設計的訊號而非測試技巧的問題——難測的程式碼通常是耦合太緊。那條路徑走 [設計判斷標準與日常實踐](../design-and-practice/)。既有程式碼沒有測試而必須先補，那是 [改既有的程式](../changing-existing-code/) 裡 Feathers 那本處理的問題。
 
 站內自己的測試分層策略、協議整合驗證與實機教訓看 [Testing 測試策略](/testing/)；測試邊界畫錯時看得出來的症狀、以及本站多數內容為什麼落在古典派那一側（含那個選擇本身帶著什麼立場），在 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)。
 
-程式碼由 agent 產出、而人不打算逐行讀時，判準該落在哪走 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)——那裡處理的是本篇四本立場書共同預設而在那個情境下失效的前提：測試由懂需求的人寫，而那個人會讀自己的程式碼。Bach 與 Bolton 那本的 checking 與 testing 分界是這條路線的上游概念。
+程式碼由 agent 產出、而人不打算逐行讀時，判斷標準該落在哪走 [模組六：Agent 產出程式碼的驗證](/testing/06-agent-authored-code/)——那裡處理的是本篇四本立場書共同預設而在那個情境下失效的前提：測試由懂需求的人寫，而那個人會讀自己的程式碼。Bach 與 Bolton 那本的 checking 與 testing 分界是這條路線的上游概念。

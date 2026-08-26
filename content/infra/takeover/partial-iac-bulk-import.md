@@ -125,7 +125,7 @@ security group 的 inline vs 獨立規則問題最常見：如果生成的 code 
 
 ## 驗證：plan 必須是零非預期變更
 
-import 完成的判準是 `terraform plan` 輸出只有兩種結果之一：
+import 完成的判斷標準是 `terraform plan` 輸出只有兩種結果之一：
 
 - **完全零變更**（"No changes"）— 最理想，代表 HCL 和雲端現實完全匹配
 - **只有已知且可接受的差異** — 某些屬性在 HCL 裡省略了（用平台預設）、或 provider 的 plan 行為跟雲端有已知的格式差異（如 JSON 排序不同）

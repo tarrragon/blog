@@ -18,4 +18,4 @@ tags: ["testing", "fake-backend", "test-double"]
 
 ## 設計責任
 
-假後端要決定掛載接縫（in-process 假實作或本地假 server）、行為取證方式、與配對慣例——每一條行為假設對應一條真實後端驗證斷言。掛載判準、取證選單與成本量級的推導在[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)章。
+假後端要決定掛載接縫（in-process 假實作或本地假 server）、行為取證方式、與配對慣例——每一條行為假設對應一條真實後端驗證斷言。掛載判斷標準、取證選單與成本量級的推導在[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)章。

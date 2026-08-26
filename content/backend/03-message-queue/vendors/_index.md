@@ -1,7 +1,7 @@
 ---
 title: "訊息佇列 Vendor 清單"
 date: 2026-05-01
-description: "規劃 broker、event streaming 與 managed queue 的服務頁撰寫順序與判準"
+description: "規劃 broker、event streaming 與 managed queue 的服務頁撰寫順序與判斷標準"
 weight: 90
 tags: ["backend", "message-queue", "vendor"]
 ---
@@ -53,7 +53,7 @@ main 與 feat/backend_03 兩批平行撰寫過 03 deep article、重疊主題已
 | 替代邊界 | broker、event streaming、managed queue、workflow engine 的機會成本                 |
 | 操作成本 | partition、consumer lag、DLQ drain、schema、ACL、upgrade、quota                    |
 | Evidence | publish rate、consume rate、lag、redelivery、DLQ depth、replay window              |
-| 案例回寫 | Meta FOQS、VMware MSK、LinkedIn TopicGC 如何提供治理判準                           |
+| 案例回寫 | Meta FOQS、VMware MSK、LinkedIn TopicGC 如何提供治理判斷標準                       |
 
 服務責任段要先分辨投遞成功與處理成功。Broker 可以保存訊息與重新投遞，但 consumer 的 idempotency、side effect、checkpoint 與補償流程才決定業務結果是否可恢復。
 
@@ -168,7 +168,7 @@ Schema 強制度跨 vendor 差異最大。**Kafka** Schema Registry（Confluent 
 | 批次 | 服務頁                      | 撰寫目的                                                          |
 | ---- | --------------------------- | ----------------------------------------------------------------- |
 | Q1   | RabbitMQ                    | 建立 work queue、routing、ack/nack 與 DLQ baseline                |
-| Q2   | Kafka                       | 建立 event log、partition、retention 與 replay 判準               |
+| Q2   | Kafka                       | 建立 event log、partition、retention 與 replay 判斷標準           |
 | Q3   | AWS SQS / Google Pub/Sub    | 建立 managed delivery、visibility timeout 與 cloud pub/sub 邊界   |
 | Q4   | NATS / Redis Streams        | 建立 lightweight messaging 與 embedded stream 的邊界              |
 | Q5   | Pulsar / Kinesis / Temporal | 補 multi-tenant streaming、managed stream 與 workflow engine 對照 |

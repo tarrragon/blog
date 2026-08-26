@@ -72,6 +72,6 @@ Detection engineering lifecycle 的核心概念是把規則當資產管理。規
 - [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
 - [7.BM1 藍隊專業來源卡](/backend/07-security-data-protection/blue-team/materials/professional-sources/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能為一條偵測規則設計完整生命週期。輸出至少包含來源、邏輯、驗證證據、調校策略、上線條件、退場條件與回寫位置。

@@ -52,7 +52,7 @@ Dashboard panel 或 alert rule 每次觸發時，TSDB 對 raw series 執行聚�
 
 [Recording rule](/backend/knowledge-cards/recording-rule/) 是 Prometheus 生態（包括 Thanos、Mimir、VictoriaMetrics）的標準應對方式：在 TSDB 內定期執行聚合表達式，把結果寫成新的 time series。Dashboard 跟 alert rule 讀 recording rule 的輸出而非重算 raw series。
 
-Recording rule 的設計判準是查詢頻率跟計算成本的乘積。高頻讀取（dashboard auto-refresh、每分鐘 evaluate 的 alert rule）加上高計算成本（多維度 rate + ratio + quantile）的組合最值得做 recording rule。低頻即席查詢（事故時的 ad-hoc 切片）直接查 raw series，保留完整維度。
+Recording rule 的設計判斷標準是查詢頻率跟計算成本的乘積。高頻讀取（dashboard auto-refresh、每分鐘 evaluate 的 alert rule）加上高計算成本（多維度 rate + ratio + quantile）的組合最值得做 recording rule。低頻即席查詢（事故時的 ad-hoc 切片）直接查 raw series，保留完整維度。
 
 Recording rule 的命名慣例用 `level:metric:operations` 格式（如 `job:http_requests_total:rate5m`），讓讀者從名稱直接判斷來源粒度跟計算方式。沒有命名慣例時，recording rule 增長到數百條後會難以維護跟除錯。
 

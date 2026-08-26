@@ -6,7 +6,7 @@ weight: 30
 tags: ["books", "reading", "craft", "architecture", "trade-off"]
 ---
 
-架構決定跟 [設計判準與日常實踐](../design-and-practice/) 與 [改既有的程式](../changing-existing-code/) 的差別在**改錯的代價**。程式碼寫得不好可以重構，模組切得不好可以搬；架構選錯之後，改動要跨越團隊、資料、部署與既有承諾，通常大到只能繞過而不能修正。這使得架構的核心能力是**在資訊不足的時候把取捨講清楚**——包括講清楚自己選的那個爛在哪——而不是知道有哪些做法。
+架構決定跟 [設計判斷標準與日常實踐](../design-and-practice/) 與 [改既有的程式](../changing-existing-code/) 的差別在**改錯的代價**。程式碼寫得不好可以重構，模組切得不好可以搬；架構選錯之後，改動要跨越團隊、資料、部署與既有承諾，通常大到只能繞過而不能修正。這使得架構的核心能力是**在資訊不足的時候把取捨講清楚**——包括講清楚自己選的那個爛在哪——而不是知道有哪些做法。
 
 這個主題只有兩本，按有沒有詞彙分：《Fundamentals of Software Architecture》先建立一整套可以用來討論的概念，《Software Architecture: The Hard Parts》再處理那些用了概念仍然沒有標準答案的決定。
 
@@ -52,7 +52,7 @@ Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙�
 
 架構的書市有一大類是特定架構風格的推廣書（微服務怎麼做、事件驅動怎麼做）。那類的問題是它們預設風格已經選定，而選擇本身才是架構工作最難的部分——分辨方式是看它有沒有寫「什麼情況下不要用這個風格」，而架構風格的邊界通常落在規模與團隊數上——同一個風格在三個團隊與三十個團隊下的代價差一個量級，不交代這一項的多半是在推銷而不是在分析。
 
-Robert Martin 的《Clean Architecture》常被列在這個位置，本書單未評估它，理由與 [設計判準與日常實踐](../design-and-practice/) 對《Clean Code》的處理相同。SEI 的《Software Architecture in Practice》是學術系統化的另一條路線（品質屬性、ATAM 評估法），繁中版也在，但它的讀者定位偏向需要正式架構評估流程的組織，本書單未評估那個情境。
+Robert Martin 的《Clean Architecture》常被列在這個位置，本書單未評估它，理由與 [設計判斷標準與日常實踐](../design-and-practice/) 對《Clean Code》的處理相同。SEI 的《Software Architecture in Practice》是學術系統化的另一條路線（品質屬性、ATAM 評估法），繁中版也在，但它的讀者定位偏向需要正式架構評估流程的組織，本書單未評估那個情境。
 
 資料密集系統的設計（複製、分片、一致性模型）不在這個主題，那屬於 [Backend 服務實務指南](/backend/) 的責任範圍。
 
@@ -75,6 +75,6 @@ Robert Martin 的《Clean Architecture》常被列在這個位置，本書單未
 
 架構決定的代價一半落在組織上——介面畫在哪裡，決定了哪兩個團隊要天天開會。那條路徑走 [組織結構與團隊設計](../../software-management/topics/team-design/)，Team Topologies 與這裡的架構風格處理的是同一件事的兩端。
 
-往下一個尺度走，模組與介面該怎麼切看 [設計判準與日常實踐](../design-and-practice/)；架構定了之後既有程式碼怎麼搬過去看 [改既有的程式](../changing-existing-code/)。
+往下一個尺度走，模組與介面該怎麼切看 [設計判斷標準與日常實踐](../design-and-practice/)；架構定了之後既有程式碼怎麼搬過去看 [改既有的程式](../changing-existing-code/)。
 
 具體的資料庫、快取、佇列與可觀測性選型看 [Backend 服務實務指南](/backend/)，部署與環境看 [Infra 基礎設施建置指南](/infra/)。

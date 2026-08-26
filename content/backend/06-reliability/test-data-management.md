@@ -14,7 +14,7 @@ tags: ["backend", "reliability"]
 
 Test data 的健康度先看資料是否足夠代表真實情境，再看資料是否能安全重建與清理。
 
-關鍵判準：
+關鍵判斷標準：
 
 - fixture 是否覆蓋關鍵情境，而不是只有 happy path
 - seed 是否可版本化與重播
@@ -34,7 +34,7 @@ Test data 的健康度先看資料是否足夠代表真實情境，再看資料�
 
 **Unit fixture** 是硬編碼或 factory-generated 的資料，不碰外部系統。fixture 的責任是提供可控的輸入與預期輸出，讓 unit test 驗證邏輯正確性。fixture 覆蓋 happy path 與 edge case，但不反映 production 資料分佈 — 這是設計取捨，因為分佈驗證的責任在更高層次。
 
-**Integration seed** 寫進真實 DB / [broker](/backend/knowledge-cards/broker/) / cache，生命週期跟 test suite 綁定（setup 建立、teardown 清理）。seed 需要版本化，跟 [schema migration](/backend/knowledge-cards/schema-migration/) 對齊 — 見下方「可重現性與版本化」段。seed 品質的判準是：它是否能讓 integration test 驗證跨服務邊界的行為，而不是只驗證資料是否存在。
+**Integration seed** 寫進真實 DB / [broker](/backend/knowledge-cards/broker/) / cache，生命週期跟 test suite 綁定（setup 建立、teardown 清理）。seed 需要版本化，跟 [schema migration](/backend/knowledge-cards/schema-migration/) 對齊 — 見下方「可重現性與版本化」段。seed 品質的判斷標準是：它是否能讓 integration test 驗證跨服務邊界的行為，而不是只驗證資料是否存在。
 
 **Staging dataset** 長期存在於 staging 環境，模擬 production 規模與分佈。這一層的挑戰是漂移：production 的資料結構、量體與分佈持續變化，staging dataset 需要定期更新才能維持代表性。更新頻率跟 schema 變更頻率對齊 — 每次重大 schema 變更後，staging dataset 應同步重建。
 

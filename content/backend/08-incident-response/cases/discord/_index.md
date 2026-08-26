@@ -30,7 +30,7 @@ Discord 這個案例在講的是長連線與 session state 一旦失衡，事故
 
 當 gateway 或 session 基礎設施出現問題時，復原順序必須同時照顧連線穩定與服務容量。當流量重新接回來時，先保住重連與驗證，再處理後續聊天與 voice 路徑，能減少二次抖動。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否看出問題在連線層還是 session state
 - 能否把 capacity surprise 轉成可預測的壓力模型

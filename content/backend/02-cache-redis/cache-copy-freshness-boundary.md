@@ -102,7 +102,7 @@ Origin protection 的責任是避免 cache miss 把壓力集中打回資料庫�
 
 判讀重點：multi-cloud 架構的 cache 設計要先確定 data 主要在哪個 cloud、其他 cloud 的 application 要靠 batch sync 拿資料。Snap 從 zero-day 就在 GCP、近年走 multi-cloud 時、把 KeyDB 留在 GCP（data 一直在的地方）、避免反向部署引發的隱性 latency。違反這原則會踩到用戶層難以 debug 的延遲瓶頸。
 
-## 選型前判準
+## 選型前判斷標準
 
 快取服務選型前要先回答四個問題：
 

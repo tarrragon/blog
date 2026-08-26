@@ -33,9 +33,9 @@ Profile diff workflow 適合 Pyroscope。Release candidate、canary、baseline r
 
 Grafana stack 整合適合 Pyroscope。若服務已經有 Grafana dashboard，profile link 可以放進 latency、CPU、memory、cost 或 release dashboard，讓 SRE 從聚合訊號跳到 callstack。
 
-## 選型判準
+## 選型標準
 
-| 判準            | Pyroscope 的價值                          | 需要補的能力                        |
+| 判斷標準        | Pyroscope 的價值                          | 需要補的能力                        |
 | --------------- | ----------------------------------------- | ----------------------------------- |
 | OSS / self-host | profile 資料可自管                        | backend storage、retention、upgrade |
 | Grafana 整合    | dashboard、explore、profile link 容易串接 | tag schema 與 dashboard discipline  |

@@ -60,7 +60,7 @@ if (initState.status == AppInitializationStatus.notStarted) {
 
 兩個細節。`addPostFrameCallback` 把觸發延到首幀之後——build 期間直接改 provider 狀態是另一類錯誤（widget tree 建置中修改 provider 會炸）。觸發條件掛在 `notStarted` 狀態上，讓「誰負責啟動初始化」有唯一答案：看到未初始化的第一個 wrapper。
 
-如果情境真的需要在 `runApp` 之前操作 provider（例如讀取啟動設定），正解是讓兩邊共用同一個容器——自建的 container 透過 `UncontrolledProviderScope` 傳進 widget tree，而不是各建一個。判準收成一句：**一個 App 裡活著的容器數量應該是一、每多一個都要能說出它為什麼必須隔離**（測試裡的 `ProviderContainer(overrides: ...)` 就是正當的隔離）。
+如果情境真的需要在 `runApp` 之前操作 provider（例如讀取啟動設定），正解是讓兩邊共用同一個容器——自建的 container 透過 `UncontrolledProviderScope` 傳進 widget tree，而不是各建一個。判斷標準收成一句：**一個 App 裡活著的容器數量應該是一、每多一個都要能說出它為什麼必須隔離**（測試裡的 `ProviderContainer(overrides: ...)` 就是正當的隔離）。
 
 ## 為什麼單元測試沒抓到
 

@@ -9,7 +9,7 @@ tags: ["flutter", "dart", "ddd", "value-object", "encapsulation", "refactoring"]
 
 > **觸發場景**：Flutter 書籍管理 App 的 work-log 裡，Value Object 的封裝政策在短時間內擺盪了兩輪：先把整套 VO 系統移除改直接字串、之後 VO 重新出現並推「完全封裝」（目標 0 個 `.value` 外部存取）、撞牆後又把 `.value` getter 加回來
 > **疑問來源**：每一次轉向的理由單獨看都成立，為什麼會來回擺？穩態在哪裡？
-> **整理目的**：記下擺盪的機制、兩個極端各自的撞牆點、以及 VO 封裝邊界的可操作判準
+> **整理目的**：記下擺盪的機制、兩個極端各自的撞牆點、以及 VO 封裝邊界的可操作的判斷標準
 > **本文邊界**：素材是該專案 v0.7.6 / v0.8.10 / v0.8.13 三份重構記錄——同一條決策線的三個時間點、不是三個獨立事件
 
 ---
@@ -51,6 +51,6 @@ tags: ["flutter", "dart", "ddd", "value-object", "encapsulation", "refactoring"]
 
 ## 相關閱讀
 
-- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)——語意封閉與拆封口的判準層；[建構路徑設計](/ddd/construction-path-design/)——原始值出口穩態的教學層展開
+- 概念地基：[entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)——語意封閉與拆封口的判斷標準層；[建構路徑設計](/ddd/construction-path-design/)——原始值出口穩態的教學層展開
 - 出口設計的正面案例：[金額型別的三段遷移](/work-log/dart_money_extension_type_migration/)——`Money` 的 `toDecimal()` 就是「官方拆封口」的形態
 - 原則層：[#223 逃生口吸收建構路徑的缺陷](/report/escape-hatch-absorbs-construction-gap/)——「沒有官方出口、下游硬撬」跟「工廠表達力不足、測試用 copyWith 拼」是同一個機制的兩個面

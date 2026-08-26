@@ -18,4 +18,4 @@ port 跟一般 interface 的差別在歸屬與語言：宣告在領域層、以�
 
 ## 設計責任
 
-port 定義「領域需要什麼」，不保證「有人供給它」——宣告了介面、沒有實作被插上，在 mock 測試裡不會有任何紅燈。供給的驗證屬組裝層，教學層展開見 [組裝層的可達性](/ddd/composition-root-reachability/)。port 的歸屬判準（逐型別問「這是誰的詞彙」）在 reactive 場景的完整推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
+port 定義「領域需要什麼」，不保證「有人供給它」——宣告了介面、沒有實作被插上，在 mock 測試裡不會有任何紅燈。供給的驗證屬組裝層，教學層展開見 [組裝層的可達性](/ddd/composition-root-reachability/)。port 的歸屬標準（逐型別問「這是誰的詞彙」）在 reactive 場景的完整推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。

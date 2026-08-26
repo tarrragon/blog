@@ -6,7 +6,7 @@ weight: 61
 tags: ["business", "knowledge-cards", "execution"]
 ---
 
-Evaluation Set 的核心概念是「評估集」—用來測試 AI 模型表現好不好的測試資料集。一組 input + 期望 output + 通過判準，AI 跑出來的結果跟期望比對判斷是否合格。Evaluation Set 是 [Tacit Knowledge](/business/knowledge-cards/tacit-knowledge/) 的編碼形式。
+Evaluation Set 的核心概念是「評估集」—用來測試 AI 模型表現好不好的測試資料集。一組 input + 期望 output + 通過判斷標準，AI 跑出來的結果跟期望比對判斷是否合格。Evaluation Set 是 [Tacit Knowledge](/business/knowledge-cards/tacit-knowledge/) 的編碼形式。
 
 ## 概念位置
 

@@ -3,7 +3,7 @@ name: content-extension-evaluation
 description: "寫完核心章節 / 教學模組後評估「該補哪些延伸內容」的標準流程。產出 6 軸候選 + ROI 矩陣 + 立即補 / backlog 排序、避免完美主義 collapse 跟覆蓋率不足兩種反向誤判。觸發詞：延伸評估、補章節、章節後續、評估缺口、規模成長後續、extension 候選、內容後續、模組完成評估、長期維護、知識卡缺口、跨章整合、vendor 深入。Trigger when evaluating what extensions to add after completing a batch of teaching chapters."
 license: MIT
 metadata:
-  version: 1.1.0
+  version: 1.1.1
   category: writing-methodology
 ---
 
@@ -192,6 +192,8 @@ D. 全部留 backlog
 - **跳過 ROI 矩陣**：列出 N 個候選但沒分立即 / backlog、結果用「先做最容易的」直覺執行
 
 ---
+
+**Version**: 1.1.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 1.1.0 — Step 1 加「兜底資料夾主題浮現」附帶檢查：3+ 篇同主題 + 互相引用 = 分類浮現訊號、建分類列入延伸候選；新增 `category-emerges-from-depth` principle 卡
 **Version**: 1.0.0

@@ -125,7 +125,7 @@ resource "aws_lb_listener" "https" {
 }
 ```
 
-`ssl_policy` 決定 TLS 版本與加密套件。`ELBSecurityPolicy-TLS13-1-2-2021-06` 支援 TLS 1.2 和 1.3、停用已知不安全的舊版協定。選型判準是相容性與安全性的平衡——TLS 1.3-only policy 最安全但可能排除舊版客戶端，多數場景用 1.2+1.3 的組合。
+`ssl_policy` 決定 TLS 版本與加密套件。`ELBSecurityPolicy-TLS13-1-2-2021-06` 支援 TLS 1.2 和 1.3、停用已知不安全的舊版協定。選型標準是相容性與安全性的平衡——TLS 1.3-only policy 最安全但可能排除舊版客戶端，多數場景用 1.2+1.3 的組合。
 
 `certificate_arn` 引用的是 `aws_acm_certificate_validation` 而非直接引用 `aws_acm_certificate`，確保 listener 只在憑證驗證通過後才建立。
 

@@ -10,7 +10,7 @@ weight: 20
 
 ## 概念位置
 
-EventBus 是 [domain event](/ddd/knowledge-cards/domain-event/) 的傳輸機制、不是事件本身：event 是「發生了什麼」的事實記錄，EventBus 是讓這個事實從發布端跑到訂閱端的管道。EventBus 只解決「怎麼送達」，送達之後訂閱端該把事件當事實通知還是當變更信號來用，是另一個判準，見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。
+EventBus 是 [domain event](/ddd/knowledge-cards/domain-event/) 的傳輸機制、不是事件本身：event 是「發生了什麼」的事實記錄，EventBus 是讓這個事實從發布端跑到訂閱端的管道。EventBus 只解決「怎麼送達」，送達之後訂閱端該把事件當事實通知還是當變更信號來用，是另一個判斷標準，見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。
 
 ## 可觀察訊號
 

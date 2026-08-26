@@ -10,7 +10,7 @@ copyWith 是 Dart 生態中逐欄位覆寫物件的慣用方法：呼叫時只�
 
 ## 概念位置
 
-copyWith 對[資料袋](/ddd/knowledge-cards/data-bag/)（DTO、API model、UI state）是正確工具——欄位組合全部合法、逐欄位覆寫語意清晰。但對有領域方法的 [entity](/ddd/knowledge-cards/entity/)、copyWith 是繞過[不變式](/ddd/knowledge-cards/invariant/)的逃生口：領域方法從「唯一路徑」降級成「建議路徑」、稽核軌跡開始出洞。判準是型別有沒有「不允許任意組合的欄位」——有，copyWith 就不該讓那些欄位 public 可寫。多數專案的 copyWith 由 [freezed](/flutter/knowledge-cards/freezed/) 生成、不是手寫——這也是它對所有型別一視同仁套用的原因。
+copyWith 對[資料袋](/ddd/knowledge-cards/data-bag/)（DTO、API model、UI state）是正確工具——欄位組合全部合法、逐欄位覆寫語意清晰。但對有領域方法的 [entity](/ddd/knowledge-cards/entity/)、copyWith 是繞過[不變式](/ddd/knowledge-cards/invariant/)的逃生口：領域方法從「唯一路徑」降級成「建議路徑」、稽核軌跡開始出洞。判斷標準是型別有沒有「不允許任意組合的欄位」——有，copyWith 就不該讓那些欄位 public 可寫。多數專案的 copyWith 由 [freezed](/flutter/knowledge-cards/freezed/) 生成、不是手寫——這也是它對所有型別一視同仁套用的原因。
 
 ## Nullable 欄位的三態缺口
 

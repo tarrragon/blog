@@ -11,7 +11,7 @@ Message Authentication 的核心概念是用雙方共享的密鑰為訊息產生
 
 Message Authentication 位在 [Authentication](/backend/knowledge-cards/authentication/) 的機器對機器分支。人類身分驗證回答「這個人是誰」並依賴 session 或 token；訊息驗證回答「這個請求出自哪個系統、內容是否原封不動」，每個請求各自獨立驗證，沒有 session 狀態。它與 [Token Revocation](/backend/knowledge-cards/token-revocation/) 的差異在撤銷粒度：token 可以個別撤銷，共享密鑰的撤銷是換掉密鑰、影響所有使用該密鑰的呼叫方，因此屬於 [Secret Management](/backend/knowledge-cards/secret-management/) 的輪替範疇。
 
-密鑰由雙方共同持有這件事界定了它的能力上限：兩端都能產生對方看來合法的值，因此驗證值本身證明不了是哪一端產生的。這個上限是原語的性質而非系統的性質——把驗證值交給獨立第三方記錄（時間戳權威、雙方都無法單方改寫的 append-only log）時，舉證能力回來了，但它來自那個見證機制而非驗證值。需要對第三方舉證或對不特定多方發佈可驗證憑證、又不想引入見證方時，要的是非對稱簽章，判準見 [Non-repudiation](/backend/knowledge-cards/non-repudiation/)。
+密鑰由雙方共同持有這件事界定了它的能力上限：兩端都能產生對方看來合法的值，因此驗證值本身證明不了是哪一端產生的。這個上限是原語的性質而非系統的性質——把驗證值交給獨立第三方記錄（時間戳權威、雙方都無法單方改寫的 append-only log）時，舉證能力回來了，但它來自那個見證機制而非驗證值。需要對第三方舉證或對不特定多方發佈可驗證憑證、又不想引入見證方時，要的是非對稱簽章，判斷標準見 [Non-repudiation](/backend/knowledge-cards/non-repudiation/)。
 
 HMAC（Hash-based Message Authentication Code）是這個機制的主流建構。它把密鑰經內外兩層衍生後做兩次雜湊，堵住的是單層雜湊的一個性質：知道 `雜湊(密鑰 + 訊息)` 的結果與密鑰長度時，攻擊者不必知道密鑰本身，就能算出「訊息尾端再追加內容」的合法雜湊值。這個性質讓自行拼接的 `雜湊(密鑰 + 訊息)` 不能當驗證值用，要用函式庫提供的 HMAC 實作。
 

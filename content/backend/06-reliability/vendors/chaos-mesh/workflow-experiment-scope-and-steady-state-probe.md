@@ -25,7 +25,7 @@ Chaos Workflow 是多個 ChaosExperiment 與 StatusCheck 組成的 DAG（有向�
 | Suspend     | 暫停等待人工確認後再繼續                | 高風險步驟前的 approval gate |
 | StatusCheck | 對 HTTP / gRPC / custom script 做 probe | 注入前後的 steady state 驗證 |
 
-StatusCheck 是 workflow 的核心控制面。它在故障注入前後對目標 endpoint 做 health check，pass/fail 決定 workflow 是否繼續。StatusCheck 的 success condition 對應 [6.22 steady state definition](/backend/06-reliability/steady-state-definition/) 的穩態門檻：success rate、latency、queue lag 都能作為 probe 判準。
+StatusCheck 是 workflow 的核心控制面。它在故障注入前後對目標 endpoint 做 health check，pass/fail 決定 workflow 是否繼續。StatusCheck 的 success condition 對應 [6.22 steady state definition](/backend/06-reliability/steady-state-definition/) 的穩態門檻：success rate、latency、queue lag 都能作為 probe 判斷標準。
 
 典型 workflow 編排：NetworkChaos(delay 200ms) → StatusCheck(api-latency-ok) → PodChaos(pod-kill) → StatusCheck(recovery-within-30s)。第一個 StatusCheck 驗證延遲注入後服務仍可用；第二個 StatusCheck 驗證節點失效後恢復時間可接受。
 

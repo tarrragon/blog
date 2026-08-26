@@ -23,7 +23,7 @@ AWS WAF 的核心定位是 *跟 AWS 服務深度耦合的 L7 防護層*。Web AC
 1. AWS WAF 在 AWS-internal 防護 stack 中承擔哪一段、哪些要靠 [AWS Shield](https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html) / VPC / CloudFront 補位
 2. Web ACL scope（Regional vs CloudFront）的選擇與跨 region 部署成本
 3. Managed Rule Group / Custom Rule / Rate-based Rule 的取捨、Bot Control add-on 是否值得開
-4. 何時用 AWS WAF、何時走 [Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/) / [Fastly NG-WAF](/backend/07-security-data-protection/vendors/fastly-ngwaf/) 的判準
+4. 何時用 AWS WAF、何時走 [Cloudflare WAF](/backend/07-security-data-protection/vendors/cloudflare-waf/) / [Fastly NG-WAF](/backend/07-security-data-protection/vendors/fastly-ngwaf/) 的判斷標準
 
 ## 最短判讀路徑
 

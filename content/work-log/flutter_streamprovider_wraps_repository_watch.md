@@ -14,7 +14,7 @@ tags: ["flutter", "dart", "riverpod", "stream", "repository", "state-management"
 
 ## 分層落點
 
-實作橫跨三層、每層只說自己那層的語言（歸屬判準的推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)）：
+實作橫跨三層、每層只說自己那層的語言（歸屬標準的推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)）：
 
 | 層               | 產出                                         | 允許出現的型別               |
 | ---------------- | -------------------------------------------- | ---------------------------- |
@@ -123,4 +123,4 @@ repository 有介面就有替身；替身漏掉 `watchBooks()` 會出現「produ
 
 ## 下一步
 
-補了觀測出口但還沒搞懂為什麼之前的導航補償和 EventBus 橋接不夠，先讀 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)。三層各自該放哪一層、判準怎麼來的，見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。單訂閱 vs broadcast 的完整選型分析在 [StreamController single vs broadcast](/work-log/dart_stream_controller_single_vs_broadcast/)。觀測出口跟 domain event 各管什麼，見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。
+補了觀測出口但還沒搞懂為什麼之前的導航補償和 EventBus 橋接不夠，先讀 [ref.watch 觀察的是 provider 圖、不是資料庫](/work-log/flutter_riverpod_reactive_boundary_ref_watch/)。三層各自該放哪一層、判斷標準怎麼來的，見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。單訂閱 vs broadcast 的完整選型分析在 [StreamController single vs broadcast](/work-log/dart_stream_controller_single_vs_broadcast/)。觀測出口跟 domain event 各管什麼，見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。

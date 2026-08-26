@@ -107,13 +107,13 @@ DB3 / DB4 entry article（[db3-vendor-selection](db3-vendor-selection/) + [cockr
 
 ## 撰寫批次
 
-| 批次 | 服務頁                                     | 撰寫目的                                                            |
-| ---- | ------------------------------------------ | ------------------------------------------------------------------- |
-| DB1  | PostgreSQL / MySQL                         | 建立 SQL baseline、transaction、schema evolution 與 connection 判準 |
-| DB2  | SQLite                                     | 建立 embedded / local formal state 與低操作成本邊界                 |
-| DB3  | MongoDB / DynamoDB                         | 建立 document / KV、access pattern、partition 與資料形狀判準        |
-| DB4  | Aurora / Spanner / Cosmos DB / CockroachDB | 建立 managed / global SQL、多 region、consistency 與 vendor 約束    |
-| DB5  | Firestore                                  | 建立 BaaS 資料層視角：client 直連 document store 與撞牆後遷往自建   |
+| 批次 | 服務頁                                     | 撰寫目的                                                                |
+| ---- | ------------------------------------------ | ----------------------------------------------------------------------- |
+| DB1  | PostgreSQL / MySQL                         | 建立 SQL baseline、transaction、schema evolution 與 connection 判斷標準 |
+| DB2  | SQLite                                     | 建立 embedded / local formal state 與低操作成本邊界                     |
+| DB3  | MongoDB / DynamoDB                         | 建立 document / KV、access pattern、partition 與資料形狀判斷標準        |
+| DB4  | Aurora / Spanner / Cosmos DB / CockroachDB | 建立 managed / global SQL、多 region、consistency 與 vendor 約束        |
+| DB5  | Firestore                                  | 建立 BaaS 資料層視角：client 直連 document store 與撞牆後遷往自建       |
 
 ## DB3 / DB4 batch 完成紀錄
 

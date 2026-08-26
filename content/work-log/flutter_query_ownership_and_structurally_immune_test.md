@@ -3,13 +3,13 @@ title: "一行查詢放哪、一個測試留不留：結構改動後的兩次「
 slug: "flutter_query_ownership_and_structurally_immune_test"
 date: 2026-07-15
 draft: false
-description: "修完一個應收金額 bug 收尾時，兩個『還需不需要』的問題浮出來。一段『過濾出已結帳品項』的查詢該掛哪一層——inline 在 widget 是洩漏、開一個 service 是儀式，判準是『查詢誰擁有的資料就掛給誰』，答案是既有的 repository。一個為了鎖住修復而寫的測試該不該留——當修復是靠刪掉舊函式、移除參數達成時，那個 bug 被結構免疫了，測試變贅述；判準是『這測試守的失敗模式，結構是否已經替它擋掉』。"
+description: "修完一個應收金額 bug 收尾時，兩個『還需不需要』的問題浮出來。一段『過濾出已結帳品項』的查詢該掛哪一層——inline 在 widget 是洩漏、開一個 service 是儀式，判斷標準是『查詢誰擁有的資料就掛給誰』，答案是既有的 repository。一個為了鎖住修復而寫的測試該不該留——當修復是靠刪掉舊函式、移除參數達成時，那個 bug 被結構免疫了，測試變贅述；判斷標準是『這測試守的失敗模式，結構是否已經替它擋掉』。"
 tags: ["flutter", "dart", "ddd", "clean-architecture", "testing", "refactoring", "yagni"]
 ---
 
 > **觸發場景**：POS 的一個應收金額 bug（未結帳份數被重複扣減）修完後收尾。修法是刪掉舊的 `unsettledCartView(cart, snapshotItems)` 純函式、把邏輯搬進沒有 snapshot 參數的 `ShoppingCart.unsettledView()`。收尾時剩兩塊要決定：一段「過濾出已提前結帳品項」的查詢還 inline 在 widget 裡，該搬哪；一個當初為了鎖住修復而寫的測試，還要不要留
 > **疑問來源**：這兩件事表面無關——一個是分層放置、一個是測試取捨；但被同一句話串起來：「這東西，還需要存在嗎？」
-> **整理目的**：記下「查詢的責任歸屬」與「被結構免疫掉的測試」兩個判準，以及它們共用的收尾動作
+> **整理目的**：記下「查詢的責任歸屬」與「被結構免疫掉的測試」兩個判斷標準，以及它們共用的收尾動作
 > **本文邊界**：素材是 unipos POS 這次修復收尾的決策記錄。被刪的 `unsettledCartView` 原貌見[「該收多少錢」抽成 pure function](/work-log/dart_unsettled_cart_pure_function/)；查詢層膨脹的前例見[異步查詢系統的過度設計震盪](/work-log/flutter_async_query_overdesign_oscillation/)
 
 ---
@@ -43,7 +43,7 @@ final checkedOutItems =
 
 擋掉這兩個之後，真正的問題只剩一個——`Get.find<IOnlineOrderRepository>()` 出現在 widget 裡。要拿掉它，widget 就得改成呼叫 `controller.xxx`；於是剩下的選擇是：過濾邏輯放 controller，還是放 repository。
 
-## 判準：查詢誰擁有的資料，就掛給誰
+## 判斷標準：查詢誰擁有的資料，就掛給誰
 
 controller 能做，但它的職責是替 UI 組合、轉接，不是回答「這份快照裡哪些是已結帳」。那份快照的擁有者是 repository——它 own 了 `itemsByCart`，「哪些 item 是 checked out」這個問題落在它的查詢職責內。以責任區分，這行 `.where` 屬於 repository：
 
@@ -61,9 +61,9 @@ List<RemoteOrderSnapshotItem> checkedOutItemsFor(String cartId) =>
 
 資料流變成 `widget → controller（薄轉接）→ repository.checkedOutItemsFor`。widget 不再知道快照長怎樣，也不知道 `isCheckedOut` 這個欄位存在；controller 只是入口，不含判斷。
 
-這跟「開一個 service」的差別是關鍵：獨立 service 是一個**只為這個查詢而生**的新型別，帶來新的 interface、新的實作、新的 DI 節點；掛回 repository 是把查詢加到一個**本來就存在、也本來就擁有這份資料**的層上——零新型別、零額外註冊。判準是「這份資料歸誰，查詢就歸誰」，而不是「該不該有個地方放查詢」。
+這跟「開一個 service」的差別是關鍵：獨立 service 是一個**只為這個查詢而生**的新型別，帶來新的 interface、新的實作、新的 DI 節點；掛回 repository 是把查詢加到一個**本來就存在、也本來就擁有這份資料**的層上——零新型別、零額外註冊。判斷標準是「這份資料歸誰，查詢就歸誰」，而不是「該不該有個地方放查詢」。
 
-這個判準有適用邊界：它針對**單一擁有者的資料內在查詢**。資料橫跨多個 repository、得聚合才答得出來時，「誰擁有」沒有單一答案，那是 use-case 的活；純粹是畫面衍生的概念（哪些要標紅、怎麼排序）不是資料的內在屬性，留在 controller / presentation 反而對。`isCheckedOut` 落在前者——它是快照上實際存在的欄位、跟畫面無關，所以歸 repository。
+這個判斷標準有適用邊界：它針對**單一擁有者的資料內在查詢**。資料橫跨多個 repository、得聚合才答得出來時，「誰擁有」沒有單一答案，那是 use-case 的活；純粹是畫面衍生的概念（哪些要標紅、怎麼排序）不是資料的內在屬性，留在 controller / presentation 反而對。`isCheckedOut` 落在前者——它是快照上實際存在的欄位、跟畫面無關，所以歸 repository。
 
 一個容易被誤判成阻礙的細節：反應式沒有因為多隔一層而斷。多數細粒度反應式系統（GetX、Vue、MobX、Solid 都是）靠「一次重繪過程中同步讀了哪些值」來決定訂閱關係——只要新增的層是同步呼叫、讀取仍發生在同一次重繪內，訂閱就不會斷。對應到 GetX：它追蹤的是 `.value` 讀取發生在哪個 `Obx`（反應式重繪範圍）的執行棧內，只要 `widget → controller → repository` 這條鏈是同步呼叫，`itemsByCart.value` 的讀取仍在 `Obx` 的反應式脈絡裡，快照更新時卡片照樣重繪。「把邏輯往下推一層會不會失去反應式」在同步呼叫下是假問題。
 
@@ -77,7 +77,7 @@ List<RemoteOrderSnapshotItem> checkedOutItemsFor(String cartId) =>
 
 這裡要先擋一個反方。有人會說：這條測試守的是一個更寬的正向不變量——「`unsettledView` 呈現的數量不被任何已結帳概念扣減」，而不只是「snapshot 減法」這個特定 bug；就算舊函式已刪，未來若有人拿**全新來源**重寫 `unsettledView`、又悄悄引入扣減，這條 pin 住「數量等於輸入」的測試仍抓得到。這個讀法成立。但那個不變量現在已經由「`unsettledView` 的來源就是淨額 `cart.details`」在資料來源層鎖死——測試只是重述型別與來源已經保證的事。冗餘斷言剩下的是維護成本與假安全感，所以仍然選刪；理由是它冗餘，不是它「不可能再有價值」。
 
-## 判準：測試守的失敗模式，結構是否已經替它擋掉
+## 判斷標準：測試守的失敗模式，結構是否已經替它擋掉
 
 同一個測試檔裡，另外幾條測的是合併邏輯，跟扣減無關：
 
@@ -105,4 +105,4 @@ List<RemoteOrderSnapshotItem> checkedOutItemsFor(String cartId) =>
 - 查詢的放置：把 `unsettledView` 從吃 snapshot 改成純從 cart 導出、又把查詢層的空殼 service 拆掉之後，那段 `checkedOutItems` 的舊寫法（inline `Get.find`）就該重新評估——它現在該掛哪一層。
 - 測試的取捨：把舊函式刪掉、參數移除之後，那條鎖住舊 bug 的測試也該重新評估——它守的失敗模式還在不在。
 
-判準是同一句：**這東西守的 / 做的事，結構是否已經替它做了？** 是，就拿掉（贅測、儀式）；否，就留下、並放到責任正確的位置。收尾是「把不再需要的東西一起清掉」——包括測試，而不只是「把新加的東西留著」。
+判斷標準是同一句：**這東西守的 / 做的事，結構是否已經替它做了？** 是，就拿掉（贅測、儀式）；否，就留下、並放到責任正確的位置。收尾是「把不再需要的東西一起清掉」——包括測試，而不只是「把新加的東西留著」。

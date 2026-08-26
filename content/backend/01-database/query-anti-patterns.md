@@ -104,7 +104,7 @@ NoSQL / KV DB 也有 sibling 反模式（hot partition、read amplification、sc
 
 ## 每請求的 Query 預算
 
-把上面這些反模式收斂成一個發布前可檢查的判準：每個 API request 允許發多少個 query。
+把上面這些反模式收斂成一個發布前可檢查的判斷標準：每個 API request 允許發多少個 query。
 
 | API 類型              | 建議 query 預算 | 判讀說明                                             |
 | --------------------- | --------------- | ---------------------------------------------------- |

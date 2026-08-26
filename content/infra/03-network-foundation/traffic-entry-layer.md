@@ -10,7 +10,7 @@ tags: ["infra", "network", "reverse-proxy", "load-balancer", "dns"]
 
 共享主機時代這條鏈是隱形的。cPanel 或 Plesk 把域名、憑證、web server、應用執行環境全部包在同一台機器、同一套面板後面，使用者只需要在面板點幾下綁定網域、開啟 AutoSSL，整條入口鏈就「自己接好了」。接手一個自管環境（VPS 或雲端）之後，這些原本被面板吸收掉的步驟，每一個都變回一個要自己下的決定：DNS 指向哪裡、要不要一層負載平衡、TLS 在哪一層解開、靜態檔案誰來回。
 
-這篇文章要建立的判斷力是「我的服務需要幾層入口、每層放什麼」，而不是某一種 web server 的配置語法。責任鏈的每一段先講清楚它承擔什麼、什麼訊號代表它出問題，再把兩個核心的架構選擇（TLS 終結放哪層、單機 [reverse proxy](/infra/knowledge-cards/reverse-proxy/) 還是雲端負載平衡器）展開成可操作的判準。runtime 的調校（負載分散演算法、健康檢查參數、timeout 串接）是[運維 模組一：負載平衡與反向代理](/operations/01-load-balancing/)的範圍，這裡先把入口層的地圖畫出來。
+這篇文章要建立的判斷力是「我的服務需要幾層入口、每層放什麼」，而不是某一種 web server 的配置語法。責任鏈的每一段先講清楚它承擔什麼、什麼訊號代表它出問題，再把兩個核心的架構選擇（TLS 終結放哪層、單機 [reverse proxy](/infra/knowledge-cards/reverse-proxy/) 還是雲端負載平衡器）展開成可操作的判斷標準。runtime 的調校（負載分散演算法、健康檢查參數、timeout 串接）是[運維 模組一：負載平衡與反向代理](/operations/01-load-balancing/)的範圍，這裡先把入口層的地圖畫出來。
 
 ## 從一個網址到一個回應：責任鏈的四次交棒
 

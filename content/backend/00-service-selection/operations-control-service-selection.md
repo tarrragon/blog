@@ -27,7 +27,7 @@ tags: ["backend", "service-selection", "observability", "reliability", "incident
 
 響應層的責任是讓事故進入可交接流程。這一層的選型重點是 paging、升級、角色分工、狀態更新、decision log、stakeholder mapping 與 post-incident action tracking；工具的價值來自流程一致性，通知訊息數量只是輔助訊號。
 
-閉環層的責任是把事故與演練教訓回寫到系統設計。這一層可能由 incident platform、ticket system、[runbook](/backend/knowledge-cards/runbook/) repository 或內部 workflow 承擔；判準是 action item 是否能被排序、驗證、關閉，並回到訊號治理、可靠性演練或事故流程。
+閉環層的責任是把事故與演練教訓回寫到系統設計。這一層可能由 incident platform、ticket system、[runbook](/backend/knowledge-cards/runbook/) repository 或內部 workflow 承擔；判斷標準是 action item 是否能被排序、驗證、關閉，並回到訊號治理、可靠性演練或事故流程。
 
 ## 判讀順序
 
@@ -75,7 +75,7 @@ All-in-one SaaS 適合需要快速建立可觀測、告警與事故協作的團�
 
 ## 導入順序
 
-導入順序的責任是降低一次導入多套工具的失敗風險。觀測、驗證與事故服務應依照事故風險與團隊成熟度逐層補齊，功能清單只適合放在能力判準之後。
+導入順序的責任是降低一次導入多套工具的失敗風險。觀測、驗證與事故服務應依照事故風險與團隊成熟度逐層補齊，功能清單只適合放在能力判斷標準之後。
 
 1. 先補最小訊號：定義 SLI、error rate、latency、dependency failure、queue lag 與 customer-facing symptom。
 2. 再補最小告警與 runbook：讓 alert 指向可執行動作，避免只把噪音送到 on-call。
@@ -94,9 +94,9 @@ All-in-one SaaS 適合需要快速建立可觀測、告警與事故協作的團�
 - 需要判斷事故是否能被接住與回寫時，進入 [事故處理與復盤](/backend/08-incident-response/)。
 - 需要比較具體 vendor 時，先讀各模組的 vendors index，再回到本章確認工具是否補到正確能力層。
 
-## 完成判準
+## 完成條件
 
-本章完成的判準是能把工具需求翻成能力需求。當團隊能說清楚「我們缺的是訊號、驗證、響應還是閉環」，選型討論才適合進入 vendor 比較。
+本章完成的判斷標準是能把工具需求翻成能力需求。當團隊能說清楚「我們缺的是訊號、驗證、響應還是閉環」，選型討論才適合進入 vendor 比較。
 
 檢查時可以問四個問題：
 

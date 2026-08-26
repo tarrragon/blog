@@ -84,6 +84,6 @@ test('OrderService.submitOrder calls Repository.save', () async {
 
 替身的角色分布是這個選擇的下游結果。邊界畫在模組時替身只出現在應用邊界，多半是 [stub](/testing/knowledge-cards/stub/)（寫死回應資料）或 fake（有狀態、可運作的簡化實作），任務是讓外部依賴可控；邊界畫在類別時替身深入模組內部，多半是 mock（預設期望、呼叫不符即失敗）與 spy（記錄呼叫供事後檢查），任務是斷言互動。選錯角色的後果在 [test double 分類](/testing/knowledge-cards/test-double-taxonomy/)那張卡。
 
-有一類測試落在兩種定義的分類之外，用它們的判準評會得到誤導的結論：[characterization test](/testing/knowledge-cards/characterization-test/) 斷言的是現狀而非正確性，判準與退場條件在那張卡。
+有一類測試落在兩種定義的分類之外，用它們的判斷標準評會得到誤導的結論：[characterization test](/testing/knowledge-cards/characterization-test/) 斷言的是現狀而非正確性，判斷標準與退場條件在那張卡。
 
-兩派都預設行為由寫程式的人決定，所以兩者都沒有回答「這條斷言的預期值從哪裡來」。那是分野之外的另一個問題，見 [判準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)。
+兩派都預設行為由寫程式的人決定，所以兩者都沒有回答「這條斷言的預期值從哪裡來」。那是分野之外的另一個問題，見 [判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)。

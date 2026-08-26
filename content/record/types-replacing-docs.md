@@ -354,7 +354,7 @@ review code 看到 doc 時，問三個問題：
 
 任一答案是「能」、先試型別。如果型別寫起來 ergonomic 不好（例如 wrapper class 太多、call site 變難讀）、再退回 doc——「先試型別」比「預設寫 doc」更能逼出可下移的部分。
 
-三個問題都答「不能」時，還有第四個問題：**這條 doc 寫下來的動機是說明，還是怕有人改壞它？** 動機是後者時，退回 doc 等於把防護需求送到一個沒有執行權的窗口。下一個要問的是有沒有一條會紅的斷言撐得住這件事——型別裝不下的時序契約與跨方法 invariant，常常裝得進測試名稱。判準與破壞實測的操作見 [#253 寫註解的動機是怕被改壞時要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)，案例見 [註解防不了改壞](/work-log/comment_cannot_guard_invariant/)。
+三個問題都答「不能」時，還有第四個問題：**這條 doc 寫下來的動機是說明，還是怕有人改壞它？** 動機是後者時，退回 doc 等於把防護需求送到一個沒有執行權的窗口。下一個要問的是有沒有一條會紅的斷言撐得住這件事——型別裝不下的時序契約與跨方法 invariant，常常裝得進測試名稱。判斷標準與破壞實測的操作見 [#253 寫註解的動機是怕被改壞時要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)，案例見 [註解防不了改壞](/work-log/comment_cannot_guard_invariant/)。
 
 ---
 

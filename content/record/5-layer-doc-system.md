@@ -24,4 +24,4 @@ ticket 是所有任務的細節，會記錄任務從何而來，目標是什麼�
 
 所以我們需要 SKILL 說明每個文件的職責，設計相關的 command 做更新或者查詢，用 hook 確保文件進度的同步，這是我們現在的工作模式的核心運作系統
 
-每份文件的同步期待與守護機制是否匹配，有一套判準可對照：worklog 與 changelog 是 append-only 記錄（永不回改、標時點）、todo 是要機制守著的活文件、hook 正是那個機制——分級的完整推導見 [#256 多份文件必然漂移](/report/doc-sync-needs-mechanism-or-demotion/)。
+每份文件的同步期待與守護機制是否匹配，有一套判斷標準可對照：worklog 與 changelog 是 append-only 記錄（永不回改、標時點）、todo 是要機制守著的活文件、hook 正是那個機制——分級的完整推導見 [#256 多份文件必然漂移](/report/doc-sync-needs-mechanism-or-demotion/)。

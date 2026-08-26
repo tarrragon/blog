@@ -1,7 +1,7 @@
 ---
 title: "時間感知與回應策略：Loading 的形式由等待時間門檻決定"
 date: 2026-07-13
-description: "100ms / 400ms / 1s / 10s 時間門檻對應不同回饋策略 — 決定操作該不該顯示 loading、用 spinner、skeleton 還是進度條的判準。"
+description: "100ms / 400ms / 1s / 10s 時間門檻對應不同回饋策略 — 決定操作該不該顯示 loading、用 spinner、skeleton 還是進度條的判斷標準。"
 weight: 3
 tags: ["ux-design", "interaction-feedback", "response-time", "perceived-performance", "optimistic-update"]
 ---
@@ -74,7 +74,7 @@ tags: ["ux-design", "interaction-feedback", "response-time", "perceived-performa
 
 ### 延遲顯示與最短顯示時間：防 spinner 閃爍
 
-**延遲顯示（delayed spinner）**：發出請求後先不顯示 spinner，等 300-400ms 才掛上；請求先回來就完全不顯示。快的請求（多數）沒有 spinner 閃爍，慢的請求（少數）在使用者開始懷疑之前得到指示。這是延遲分布橫跨門檻帶時的標準解 — 判準從「這支 API 多快」變成「超過 400ms 才需要告訴使用者」。
+**延遲顯示（delayed spinner）**：發出請求後先不顯示 spinner，等 300-400ms 才掛上；請求先回來就完全不顯示。快的請求（多數）沒有 spinner 閃爍，慢的請求（少數）在使用者開始懷疑之前得到指示。這是延遲分布橫跨門檻帶時的標準解 — 判斷標準從「這支 API 多快」變成「超過 400ms 才需要告訴使用者」。
 
 **最短顯示時間（minimum display time）**：spinner 一旦顯示就至少停留一段時間（常見慣例值 300ms），請求提早完成也不立即移除，消除「spinner 閃一下就消失」的視覺雜訊。
 

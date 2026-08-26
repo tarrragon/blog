@@ -44,7 +44,7 @@ Server 是外部 SaaS（Stripe API、AWS S3、第三方 OAuth provider），無�
 
 ## 協議複雜度
 
-協議複雜度決定了 mock 遮蔽的風險大小 — 風險越大，protocol integration test 的價值越高。分級依據的判準是一個問句：**API 簽名有沒有隱藏協議層的行為分支？** 這個問句為什麼有效、各協議的語意斷裂長什麼樣，見[判斷原則的維度一](/testing/01-test-strategy-layers/when-protocol-integration-test/)——那裡同時給了另外兩個判斷維度（mock 寬鬆度、失敗靜默度）。本節只把答案收斂成矩陣需要的三級標籤：
+協議複雜度決定了 mock 遮蔽的風險大小 — 風險越大，protocol integration test 的價值越高。分級依據的判斷標準是一個問句：**API 簽名有沒有隱藏協議層的行為分支？** 這個問句為什麼有效、各協議的語意斷裂長什麼樣，見[判斷原則的維度一](/testing/01-test-strategy-layers/when-protocol-integration-test/)——那裡同時給了另外兩個判斷維度（mock 寬鬆度、失敗靜默度）。本節只把答案收斂成矩陣需要的三級標籤：
 
 | 級別 | 代表協議                   | 落在這一級的理由                                         |
 | ---- | -------------------------- | -------------------------------------------------------- |

@@ -41,12 +41,12 @@ Stripe 這個案例在講的是交易系統如何把重試、遷移與部署都�
 
 當客戶端會重送請求時，idempotency key 讓 server 能把重試視為同一筆交易。當資料結構需要調整時，零停機遷移則把高風險變更拆成可驗證的小步驟，避免一次把整個 payment path 推到不可回復的狀態。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否讓同一筆請求重送後仍得到同一個結果
 - 能否把 migration 拆成可觀察、可回滾的小階段
 - 能否區分 client retry 與 server duplicate processing
-- 能否把 deploy strategy 和交易一致性放在同一個判準下
+- 能否把 deploy strategy 和交易一致性放在同一個判斷標準下
 
 ## 與其他案例的關係
 

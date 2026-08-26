@@ -23,11 +23,11 @@ Golden Path（也叫 paved road）是一條有主張、可重現、被支援的�
 - **組織尺度**：載體可輕可重——輕的用一份共用的 Terraform module 加一份 wiki 就有鋪路效果，重的由一個平台團隊把模板、工具、文件收進一個開發者入口（developer portal；Backstage 是常用來建這種入口的開源框架），讓幾十個團隊自助取用、從模板一鍵生出新服務。組織尺度的完整案例見 [Spotify：Backstage Service Catalog 與 Reliability Metadata](/backend/06-reliability/cases/spotify/backstage-service-catalog-and-reliability-metadata/) 與 [平台工程與可靠性契約](/backend/06-reliability/cases/spotify/platform-engineering-and-reliability-contracts/)。
 - **個人 / 小團隊尺度**：不需要入口網站。一個 repo 當唯一真實來源（狀態可重現）、一支冪等部署腳本（自助、藏掉細節）、一條排好序的文件路徑（照著走的順序）。這三者到齊，就足以在個人尺度用上鋪路的那套原則。跨過一個人、進到小隊（約 5-15 人）時載體不變，但多出「誰能改腳本、變更怎麼審」的協作問題——那是該把 repo 的變更流程正式化（PR review）、往組織尺度靠攏的訊號。
 
-判準是「重複性夠不夠高、值不值得先付鋪路成本」，不是「有沒有那套大工具」。把 developer portal 當成 paved road 的同義詞，會讓個人尺度誤判自己不適用鋪路原則。
+判斷標準是「重複性夠不夠高、值不值得先付鋪路成本」，不是「有沒有那套大工具」。把 developer portal 當成 paved road 的同義詞，會讓個人尺度誤判自己不適用鋪路原則。
 
 ## 逃生口與活文件
 
-paved road 是預設、不是強制。一條禁止任何偏離的路會變成牢籠、逼人繞過它；好的路把偏離也納入判準——偏離要有理由、且偏離後仍能回到可重現的狀態。路也會爛：工具版本漂移、某步前提變了、文件跟實作對不上，所以它是需要維護的活文件，不是寫一次就定。維護機制在組織是平台團隊迭代，在個人是 repo 為 SSoT 加寫作後的檢討回灌。
+paved road 是預設、不是強制。一條禁止任何偏離的路會變成牢籠、逼人繞過它；好的路把偏離也納入判斷標準——偏離要有理由、且偏離後仍能回到可重現的狀態。路也會爛：工具版本漂移、某步前提變了、文件跟實作對不上，所以它是需要維護的活文件，不是寫一次就定。維護機制在組織是平台團隊迭代，在個人是 repo 為 SSoT 加寫作後的檢討回灌。
 
 ## 判讀訊號 / 邊界
 

@@ -39,7 +39,7 @@ Incident intake & evidence triage 是事故流程的入口，責任是把異常�
 - owner 是否能接手下一步查證
 - confidence 是否標示為 confirmed、suspected 或 external-only
 
-| Intake 欄位         | 最小可用判準                         | 常見斷點                 |
+| Intake 欄位         | 最小可用標準                         | 常見斷點                 |
 | ------------------- | ------------------------------------ | ------------------------ |
 | Source / Time       | 可追溯來源與一致時間戳               | 多入口時間基準不一致     |
 | Impact / Scope      | 至少可估「受影響對象與範圍」         | 只知有問題，不知影響面   |

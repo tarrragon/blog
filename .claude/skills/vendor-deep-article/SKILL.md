@@ -1,9 +1,9 @@
 ---
 name: vendor-deep-article
-description: "Vendor 深度技術文章的寫作方法論：從 vendor overview 往下寫單一功能的深度實作文章。選題判準（3 條 + 反向判準）、6 段結構模板（問題情境 → 概念 → 配置 → 故障演練 → 容量 → 整合）、跟 overview 的職責劃分、寫作流程 7 step、批次 cadence variant 規劃。觸發詞：deep article、vendor 深度文章、實作文章、vendor feature、pgBouncer、Patroni、寫 vendor 文章、sub-tool article、feature deep dive。Trigger when writing vendor-specific deep implementation articles."
+description: "Vendor 深度技術文章的寫作方法論：從 vendor overview 往下寫單一功能的深度實作文章。選題標準（3 條 + 反向判斷標準）、6 段結構模板（問題情境 → 概念 → 配置 → 故障演練 → 容量 → 整合）、跟 overview 的職責劃分、寫作流程 7 step、批次 cadence variant 規劃。觸發詞：deep article、vendor 深度文章、實作文章、vendor feature、pgBouncer、Patroni、寫 vendor 文章、sub-tool article、feature deep dive。Trigger when writing vendor-specific deep implementation articles."
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   category: writing-methodology
 ---
 
@@ -27,19 +27,19 @@ Vendor 深度技術文章的寫作方法論 — vendor overview 飽和後、往�
 - **News-driven 短文**（CVE / 收購）：寫在 posts/
 - **Cross-cutting 概念**（observability vs SRE）：寫在 report/ 或 posts/
 
-## 選題判準
+## 選題標準
 
-三條判準、至少符合一條：
+三條判斷標準、至少符合一條：
 
-### 判準一：被讀者問或被自己在 production 踩過
+### 判斷標準一：被讀者問或被自己在 production 踩過
 
 Overview backlog 的 9 項都重要、但寫作 ROI 不一樣。優先寫讀者最常問或自己踩最痛的、不是清單前幾項。
 
-### 判準二：跨 vendor 議題
+### 判斷標準二：跨 vendor 議題
 
 跨兩個 vendor overview、寫在任一頁都偏。deep article 可以獨立、cross-link 兩個 vendor overview。
 
-### 判準三：overview 進階段落說不清楚
+### 判斷標準三：overview 進階段落說不清楚
 
 Overview 中 7-15 行的進階主題段、dynamic credential 怎麼 call / lease renewal 怎麼處理 — 不是 overview 該寫的。需要獨立深度文章。
 
@@ -118,5 +118,7 @@ cadence audit 抽樣位置在進度 60-80%（有 4 樣本對照訊號強、進�
 - [case-first-module-workflow](../case-first-module-workflow/SKILL.md)：跨多章節教學模組批次、本 skill 適用單篇或小批次 deep article
 
 ---
+
+**Version**: 1.0.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 1.0.0

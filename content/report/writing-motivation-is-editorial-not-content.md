@@ -36,13 +36,13 @@ slug: "writing-motivation-is-editorial-not-content"
 
 ## 跟其他原則的關係
 
-| 原則                                                                                           | 關係                                                                                                                                                                                                 |
-| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [#141 WRAP 是內部工具不是章節結構](../wrap-as-internal-tool-not-section-structure/)            | **同一個「process metadata 不暴露給讀者」原則** — #141 是分析過程不當章節標題、本卡是寫作動機不當引言內容                                                                                            |
-| [#229 分析開頭定位問題不講創辦敘事](../analysis-opening-positions-question-not-narrative/)     | **本卡的 sibling** — 同一篇引言修了兩輪、抽出兩個獨立原則：#229 管該放什麼、#230 管不該放什麼                                                                                                        |
-| [#170 Description 是 recall trigger](../description-as-recall-trigger/)                        | #170 的「不描述文章結構」跟本卡的「不描述寫作動機」共用同一個判準：**不把後設資訊寫進讀者面對的 surface**                                                                                            |
-| [#97 Metadata surface 要納入寫作 review](../metadata-surface-in-writing-review/)               | 寫作動機寫進引言是 metadata 滲透到 content surface 的反向 — #97 是 content 滲透不到 metadata、本卡是 metadata 滲透進 content                                                                         |
-| [#271 收錄取捨的結果進正文，判準運算不進](../inclusion-deliberation-is-editorial-not-content/) | **sibling、新 surface** — 本卡管引言裡的寫作動機、#271 管策展條目內文裡的收錄門檻運算（「按判準仍不到否決」）；#271 另給了判定工具（行動測試）與邊界（可信度標註留、決策結果句留、收錄邏輯集中專節） |
+| 原則                                                                                               | 關係                                                                                                                                                                                                     |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [#141 WRAP 是內部工具不是章節結構](../wrap-as-internal-tool-not-section-structure/)                | **同一個「process metadata 不暴露給讀者」原則** — #141 是分析過程不當章節標題、本卡是寫作動機不當引言內容                                                                                                |
+| [#229 分析開頭定位問題不講創辦敘事](../analysis-opening-positions-question-not-narrative/)         | **本卡的 sibling** — 同一篇引言修了兩輪、抽出兩個獨立原則：#229 管該放什麼、#230 管不該放什麼                                                                                                            |
+| [#170 Description 是 recall trigger](../description-as-recall-trigger/)                            | #170 的「不描述文章結構」跟本卡的「不描述寫作動機」共用同一個判斷標準：**不把後設資訊寫進讀者面對的 surface**                                                                                            |
+| [#97 Metadata surface 要納入寫作 review](../metadata-surface-in-writing-review/)                   | 寫作動機寫進引言是 metadata 滲透到 content surface 的反向 — #97 是 content 滲透不到 metadata、本卡是 metadata 滲透進 content                                                                             |
+| [#271 收錄取捨的結果進正文，判斷標準運算不進](../inclusion-deliberation-is-editorial-not-content/) | **sibling、新 surface** — 本卡管引言裡的寫作動機、#271 管策展條目內文裡的收錄門檻運算（「按判斷標準仍不到否決」）；#271 另給了判定工具（行動測試）與邊界（可信度標註留、決策結果句留、收錄邏輯集中專節） |
 
 ---
 

@@ -327,7 +327,7 @@ Layer 3 不引入新的 secret、是「**建立兩邊身分關聯**」的 lifecy
 | 後端 cron / batch job 之間互呼     | 只需 Layer 2（system-to-system credential）、沒有使用者觸發、Layer 1 不適用                           |
 | 兩個系統共用同一份 user DB         | 可省略 Layer 3（身分天然對應），但 Layer 1 / 2 仍各自獨立                                             |
 
-簡化的判準是「**該層回答的問題是否真實存在於這個架構**」。單體 application 沒有跨系統呼叫時，Layer 2 的 caller 驗證可以省略；兩個系統共用同一份 user DB 時，Layer 3 的身分對應 workflow 可以省略。
+簡化的判斷標準是「**該層回答的問題是否真實存在於這個架構**」。單體 application 沒有跨系統呼叫時，Layer 2 的 caller 驗證可以省略；兩個系統共用同一份 user DB 時，Layer 3 的身分對應 workflow 可以省略。
 
 簡化不等於降低基礎安全前提。HTTPS / TLS 與 token 儲存原則（hash + constant-time）是任何 Layer 1 的最低要求，跟「層」的數量無關。
 

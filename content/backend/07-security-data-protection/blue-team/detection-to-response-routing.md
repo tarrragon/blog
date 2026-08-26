@@ -88,6 +88,6 @@ Exit 的責任是定義這輪事件何時完成。關閉前應確認：
 - [7.16 從公開事故到工程 Workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)
 - [7.B1 防守控制面地圖](/backend/07-security-data-protection/blue-team/defense-control-map/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把一個偵測訊號寫成回應路由。路由至少包含 signal、triage question、severity、owner、escalation path、exit condition 與 write-back target。

@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "api-design", "grpc"]
 ---
 
-選 gRPC 之前要先確認一組部署約束、這組約束在協議能力表上通常缺席：協議要求端到端 HTTP/2 加 trailers、瀏覽器不能直接連、on-call 的人不能用 `curl` 徒手戳。這些是選型時要先算進去的成本，跟 gRPC 該不該存在無關。本文把這條「操作可及性」判準軸拆開、對應 [11.2 的操作可及性軸](/backend/11-api-design/api-style-selection/)。
+選 gRPC 之前要先確認一組部署約束、這組約束在協議能力表上通常缺席：協議要求端到端 HTTP/2 加 trailers、瀏覽器不能直接連、on-call 的人不能用 `curl` 徒手戳。這些是選型時要先算進去的成本，跟 gRPC 該不該存在無關。本文把這條「操作可及性」判斷標準軸拆開、對應 [11.2 的操作可及性軸](/backend/11-api-design/api-style-selection/)。
 
 ## trailers 與瀏覽器：協議事實層面的約束
 
@@ -18,9 +18,9 @@ gRPC 用 HTTP/2 的 trailers（在 response body 之後才送的 metadata）傳�
 
 ## debug 可及性：cURL 測試
 
-介面上線後會被 on-call 的人徒手戳、這個場景在效率比較裡沒有位置、卻是 gRPC 收利息的地方。這位獨立實踐者提出一個可操作的判準 ——「傳一個 cURL 範例給朋友」測試：一個 HTTP+JSON endpoint 可以貼一行 `curl` 讓對方立刻重現、gRPC 的 binary protobuf over HTTP/2 做不到、要對方裝 client、載 proto、才能發一個請求。這個差距在正常運作時看不到、在半夜排查一個異常請求時變成實質成本。
+介面上線後會被 on-call 的人徒手戳、這個場景在效率比較裡沒有位置、卻是 gRPC 收利息的地方。這位獨立實踐者提出一個可操作的判斷標準 ——「傳一個 cURL 範例給朋友」測試：一個 HTTP+JSON endpoint 可以貼一行 `curl` 讓對方立刻重現、gRPC 的 binary protobuf over HTTP/2 做不到、要對方裝 client、載 proto、才能發一個請求。這個差距在正常運作時看不到、在半夜排查一個異常請求時變成實質成本。
 
-判準要平衡地用。C32 同時承認生態已修補部分問題：Buf CLI、ConnectRPC、Postman 對 gRPC 的支援讓「徒手戳」不再完全不可行。所以這條軸的現況不是「gRPC 不能 debug」、而是「gRPC 的 debug 需要預先備好工具鏈、不像 HTTP+JSON 零準備可及」。選型判讀：團隊有沒有把這套工具鏈鋪到每個會碰介面的人手上、決定這條軸的實際權重。
+判斷標準要平衡地用。C32 同時承認生態已修補部分問題：Buf CLI、ConnectRPC、Postman 對 gRPC 的支援讓「徒手戳」不再完全不可行。所以這條軸的現況不是「gRPC 不能 debug」、而是「gRPC 的 debug 需要預先備好工具鏈、不像 HTTP+JSON 零準備可及」。選型判讀：團隊有沒有把這套工具鏈鋪到每個會碰介面的人手上、決定這條軸的實際權重。
 
 ## 這條軸的權重隨組織而變
 
@@ -29,6 +29,6 @@ gRPC 用 HTTP/2 的 trailers（在 response body 之後才送的 metadata）傳�
 ## 下一步路由
 
 - gRPC 值得選的組織前提：[內部 RPC 的選型位置](/backend/11-api-design/styles/grpc/grpc-internal-rpc-selection/)
-- 三軸選型判準：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
+- 三軸選型標準：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
 - proto 契約怎麼演進：[proto 演進紀律](/backend/11-api-design/styles/grpc/grpc-proto-evolution-discipline/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

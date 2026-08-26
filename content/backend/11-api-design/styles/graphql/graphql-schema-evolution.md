@@ -24,7 +24,7 @@ GraphQL 的 schema 演進機制建立在一條因果鏈上：client 只拿到明
 
 GraphQL type system 把每個欄位預設為 nullable、官方理由包含後端局部故障與細粒度授權（C26 觀察層）：某個 resolver 失敗或某個欄位被權限拒絕時、該欄位回 null、response 的其餘部分照常返回 — 局部失敗不炸掉整個回應。這個設計跟演進的關係在第三層：nullable 欄位的移除路徑比 non-null 平緩（消費者本來就要處理 null、欄位「永遠 null」是移除前的可用中繼態）。
 
-隱藏帳單是 null 語意的多義：欄位是 null、消費者無法區分「值就是空」「resolver 失敗」「權限拒絕」三種情況 — 錯誤資訊要靠 response 的 `errors` 陣列補充、而這正是 GraphQL 把 transport status 與業務錯誤解耦的設計（跨風格交鋒見 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)）。schema 設計的實務判準：業務上不可能缺席的欄位（id、type）明文標 non-null、其餘保留 nullable 預設 — 全部標 non-null 換到的型別安全、會在第一次局部故障時以整包 response 失敗的形式付還。
+隱藏帳單是 null 語意的多義：欄位是 null、消費者無法區分「值就是空」「resolver 失敗」「權限拒絕」三種情況 — 錯誤資訊要靠 response 的 `errors` 陣列補充、而這正是 GraphQL 把 transport status 與業務錯誤解耦的設計（跨風格交鋒見 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)）。schema 設計的實務判斷標準：業務上不可能缺席的欄位（id、type）明文標 non-null、其餘保留 nullable 預設 — 全部標 non-null 換到的型別安全、會在第一次局部故障時以整包 response 失敗的形式付還。
 
 ## versionless 是承諾結構、不是免維護
 

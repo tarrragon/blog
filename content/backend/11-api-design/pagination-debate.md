@@ -8,7 +8,7 @@ tags: ["backend", "api-design", "pagination"]
 
 分頁的爭論常以「offset、cursor、keyset 三選一」的形式出現，而這三個名詞混了三根獨立的軸。[offset 與 keyset](/backend/knowledge-cards/keyset-pagination/) 是**定位機制**：下一頁從哪裡開始、資料庫要付多少成本找到它。**一致性模型**是第二根：翻頁期間資料在變，而承諾給讀者的是哪一個時點的集合。[cursor](/backend/knowledge-cards/pagination-cursor/) 是**表示法**：這個定位狀態用什麼形式交給消費者、消費者能不能看懂它。一個 opaque cursor 底下可以是 keyset，也可以是包了一層 Base64 的 offset；而 `?after_id=12345` 是透明表示法配 keyset 機制 —— 兩軸各自可變，在單一時點上正交。
 
-正交只在單一時點成立。第一版選的表示法會限制第二版還能換哪些機制：透明 cursor 把內部欄位變成介面的一部分，機制就凍在那個形狀上。表示法因此透過**選項價值**向未來耦合，而這正是爭論的實質 —— 不透明性到底給服務端什麼自由、又對消費者承諾了什麼。分頁放在批次與長時操作旁邊一起看的完整判準，見 [集合介面設計](/backend/11-api-design/collection-interface-design/)。
+正交只在單一時點成立。第一版選的表示法會限制第二版還能換哪些機制：透明 cursor 把內部欄位變成介面的一部分，機制就凍在那個形狀上。表示法因此透過**選項價值**向未來耦合，而這正是爭論的實質 —— 不透明性到底給服務端什麼自由、又對消費者承諾了什麼。分頁放在批次與長時操作旁邊一起看的完整判斷標準，見 [集合介面設計](/backend/11-api-design/collection-interface-design/)。
 
 ## 定位機制的成本曲線與能力差
 
@@ -78,7 +78,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 
 ## 下一步路由
 
-- 分頁、批次與長時操作的完整判準：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
+- 分頁、批次與長時操作的完整判斷標準：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
 - 深頁掃描背後的資料庫機制：[Keyset Pagination 知識卡](/backend/knowledge-cards/keyset-pagination/) 給複雜度對照與 tiebreaker 設計；[Query 反模式](/backend/01-database/query-anti-patterns/) 把它放在查詢反模式的全景裡，與 N+1、缺索引並列
 - cursor 作為對外契約的概念位置：[Pagination Cursor 知識卡](/backend/knowledge-cards/pagination-cursor/)
 - 條款清單這個做法的 case 支撐版本：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)

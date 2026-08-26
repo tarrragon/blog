@@ -6,13 +6,13 @@ weight: 2
 tags: ["backend", "api-design", "selection"]
 ---
 
-風格選型的判準是介面的使用情境、而非風格本身的技術優劣。同一個團隊裡可能同時存在三個正確答案：對外公開 API 用 HTTP+JSON、內部服務間用 gRPC、前後端同倉的產品用 tRPC — 三個介面的消費者形狀不同、答案就不同。本章建立三條判準軸；各風格內部的深度論證（流派自己怎麼說、失敗案例、適用邊界）收在 `styles/` 流派層、本章結尾的爭論地圖列出路由。本章的判準軸是從 [案例庫](/backend/11-api-design/cases/) 跨案例合成的、標明為推導。
+風格選型的判斷標準是介面的使用情境、而非風格本身的技術優劣。同一個團隊裡可能同時存在三個正確答案：對外公開 API 用 HTTP+JSON、內部服務間用 gRPC、前後端同倉的產品用 tRPC — 三個介面的消費者形狀不同、答案就不同。本章建立三條判斷標準軸；各風格內部的深度論證（流派自己怎麼說、失敗案例、適用邊界）收在 `styles/` 流派層、本章結尾的爭論地圖列出路由。本章的判斷標準軸是從 [案例庫](/backend/11-api-design/cases/) 跨案例合成的、標明為推導。
 
-## 判準軸一：消費者形狀
+## 判斷標準軸一：消費者形狀
 
 消費者形狀指誰在呼叫、服務端對呼叫方有多少控制力、呼叫方跟服務端的部署與語言關係。這條軸是三條裡權重最高的、因為它決定其他軸的成本怎麼放大。
 
-流派自己劃出的邊界最有說服力。tRPC 官方 FAQ 明言前提：脫離 monorepo 就失去 client 與 server 一起運作的保證、替代方案是把 backend 型別發成 private npm package — 語言鎖定 TypeScript、部署形態鎖定同倉或私包（見 [11.C33](/backend/11-api-design/cases/rpc-trpc-design-philosophy/)）。公開撤退立場的六年 GraphQL 實踐者也給出同構的判準句、並建議控制得了 client 的團隊改用 OpenAPI REST（見 [11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、作者判讀層）。兩個相反方向的來源指向同一條判讀：**選型的第一步是確認消費者是誰、再比對風格能力**。
+流派自己劃出的邊界最有說服力。tRPC 官方 FAQ 明言前提：脫離 monorepo 就失去 client 與 server 一起運作的保證、替代方案是把 backend 型別發成 private npm package — 語言鎖定 TypeScript、部署形態鎖定同倉或私包（見 [11.C33](/backend/11-api-design/cases/rpc-trpc-design-philosophy/)）。公開撤退立場的六年 GraphQL 實踐者也給出同構的判斷標準句、並建議控制得了 client 的團隊改用 OpenAPI REST（見 [11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、作者判讀層）。兩個相反方向的來源指向同一條判讀：**選型的第一步是確認消費者是誰、再比對風格能力**。
 
 消費者形狀的常見分型與傾向：
 
@@ -26,17 +26,17 @@ tags: ["backend", "api-design", "selection"]
 | 下游要事件不是查詢           | event / queue          | 交接語意不同、路由到 [03 訊息佇列](/backend/03-message-queue/)                                                       |
 | server 主動推 client         | 持久連線推送 / webhook | server 有事要主動送、非 client 來拉；重連與投遞承諾差異見 [realtime 流派層](/backend/11-api-design/styles/realtime/) |
 
-表格是索引、每列的成立條件在真實情境裡要重新判讀。最後兩列容易混淆、差別在推給誰：「下游要事件」是把事件交給內部佇列做可靠交接（路由 03）、「server 主動推 client」是把事件推給外部 client（瀏覽器或訂閱方）、用持久連線或 webhook、其重連與投遞承諾的差異在 realtime 流派層展開。以 JSON-RPC 列為例：它在 web API 世代被 REST 式做法取代、卻在 LSP 與 MCP 兩份現代 spec 裡被選為訊息層 — 兩份 spec 都在 JSON-RPC 2.0 上加約束、而非發明新協議（見 [11.C34](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)；spec 只陳述採用、選型理由是本模組的判讀）。共同的條件組合是本地、雙向、需要 notification 語意、生態工具要求零 codegen 可自省 — 這組條件下 gRPC 的 HTTP/2 與 codegen 成本全是負資產。判讀重點是條件組合、而非「JSON-RPC 回來了」這種風格敘事。其餘各列的成立條件同樣散在後文 — gRPC 與 tRPC 的前提在判準軸二、三展開、GraphQL 的代價在爭論地圖路由的流派層、表格只負責索引。
+表格是索引、每列的成立條件在真實情境裡要重新判讀。最後兩列容易混淆、差別在推給誰：「下游要事件」是把事件交給內部佇列做可靠交接（路由 03）、「server 主動推 client」是把事件推給外部 client（瀏覽器或訂閱方）、用持久連線或 webhook、其重連與投遞承諾的差異在 realtime 流派層展開。以 JSON-RPC 列為例：它在 web API 世代被 REST 式做法取代、卻在 LSP 與 MCP 兩份現代 spec 裡被選為訊息層 — 兩份 spec 都在 JSON-RPC 2.0 上加約束、而非發明新協議（見 [11.C34](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)；spec 只陳述採用、選型理由是本模組的判讀）。共同的條件組合是本地、雙向、需要 notification 語意、生態工具要求零 codegen 可自省 — 這組條件下 gRPC 的 HTTP/2 與 codegen 成本全是負資產。判讀重點是條件組合、而非「JSON-RPC 回來了」這種風格敘事。其餘各列的成立條件同樣散在後文 — gRPC 與 tRPC 的前提在判斷標準軸二、三展開、GraphQL 的代價在爭論地圖路由的流派層、表格只負責索引。
 
-## 判準軸二：演進成本
+## 判斷標準軸二：演進成本
 
 每種風格都要回答「介面上線後怎麼改」、機制差異很大。兩個代表性答案：GraphQL 的 versionless 路線把演進成本轉嫁到 schema 層的紀律、protobuf 把相容性直接做成編碼格式的性質 — 兩者的具體紀律與條款、主寫在 [11.6 變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 的格式層段（案例 [11.C26](/backend/11-api-design/cases/graphql-versionless-evolution/)、[11.C28](/backend/11-api-design/cases/grpc-protobuf-field-number-discipline/)）。HTTP+JSON 的演進紀律則多半靠約定與流程、缺格式層的強制 — 這是它自由度最高也最容易踩線的原因。
 
 選型時的判讀問題是團隊承擔得起哪種紀律：格式層強制（protobuf）適合跨團隊多語言、因為紀律不依賴人的自覺；約定層紀律（JSON、GraphQL SDL）需要配套的變更審查與工具、組織面見 [11.10 規範治理](/backend/11-api-design/api-governance/)。
 
-## 判準軸三：操作與 debug 可及性
+## 判斷標準軸三：操作與 debug 可及性
 
-介面會被 on-call 的人徒手戳、會過 LB 與 proxy、會被防火牆規則篩 — 這些操作面的成本在能力比較表上通常缺席。gRPC 在這條軸上的代價有完整的一手批評：協議要求端到端 HTTP/2 加 trailers、瀏覽器支援需要翻譯 proxy、debug 時 `curl | jq` 不可行（見 [11.C30](/backend/11-api-design/cases/grpc-buf-connect-critique/)、發布方是競品 vendor、批評點與 [11.C32](/backend/11-api-design/cases/grpc-kmcd-bad-parts/) 的獨立實踐者批評互證後採用）。C32 提出的「傳一個 cURL 範例給朋友」測試是這條軸的可操作判準。
+介面會被 on-call 的人徒手戳、會過 LB 與 proxy、會被防火牆規則篩 — 這些操作面的成本在能力比較表上通常缺席。gRPC 在這條軸上的代價有完整的一手批評：協議要求端到端 HTTP/2 加 trailers、瀏覽器支援需要翻譯 proxy、debug 時 `curl | jq` 不可行（見 [11.C30](/backend/11-api-design/cases/grpc-buf-connect-critique/)、發布方是競品 vendor、批評點與 [11.C32](/backend/11-api-design/cases/grpc-kmcd-bad-parts/) 的獨立實踐者批評互證後採用）。C32 提出的「傳一個 cURL 範例給朋友」測試是這條軸的可操作的判斷標準。
 
 這條軸的權重跟組織的 infra 成熟度成反比：有能力在框架層集中處理 proxy、觀測、部署的組織（如 Dropbox 的 Courier、見 [11.C31](/backend/11-api-design/cases/grpc-dropbox-courier/)）、操作成本被平台吸收；小團隊每個介面都要自己扛操作面、可及性差的風格會在 on-call 時收利息。
 
@@ -46,7 +46,7 @@ tags: ["backend", "api-design", "selection"]
 
 ## 爭論地圖
 
-本章只給判準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（[已完成](/backend/11-api-design/styles/graphql/)）、proto 演進紀律與部署邊界（[已完成](/backend/11-api-design/styles/grpc/)）、tRPC 與 JSON-RPC 的適用條件（[已完成](/backend/11-api-design/styles/rpc-revival/)）、格式標準化的採用判準（[已完成](/backend/11-api-design/styles/standards/)）、server 推 client 的承諾差異（[已完成](/backend/11-api-design/styles/realtime/)）。主章層另有四場跨風格的交鋒，各掛在對應的判準章之下：版本識別碼指向什麼、決定誰付遷移成本（[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)）、錯誤細節住在哪個容器、決定誰讀得到它（[錯誤格式之爭](/backend/11-api-design/error-format-debate/)）、分頁的定位機制與對外表示權是兩層決策（[分頁之爭](/backend/11-api-design/pagination-debate/)）、冪等條款統一得了形狀、統一不了值（[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)）。這四場的共同結構是把各派攤開到「成立前提」這一層，因此讀完之後判準會比本章的表格細一階。
+本章只給判斷標準軸；各風格的深度交鋒在 `styles/` 流派層：REST 語意學之爭與 hypermedia 復興（[已完成](/backend/11-api-design/styles/rest/)）、GraphQL 的執行成本與進退（[已完成](/backend/11-api-design/styles/graphql/)）、proto 演進紀律與部署邊界（[已完成](/backend/11-api-design/styles/grpc/)）、tRPC 與 JSON-RPC 的適用條件（[已完成](/backend/11-api-design/styles/rpc-revival/)）、格式標準化的採用判斷標準（[已完成](/backend/11-api-design/styles/standards/)）、server 推 client 的承諾差異（[已完成](/backend/11-api-design/styles/realtime/)）。主章層另有四場跨風格的交鋒，各掛在對應的判斷標準章之下：版本識別碼指向什麼、決定誰付遷移成本（[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)）、錯誤細節住在哪個容器、決定誰讀得到它（[錯誤格式之爭](/backend/11-api-design/error-format-debate/)）、分頁的定位機制與對外表示權是兩層決策（[分頁之爭](/backend/11-api-design/pagination-debate/)）、冪等條款統一得了形狀、統一不了值（[Idempotency key 標準化之爭](/backend/11-api-design/idempotency-key-standardization-debate/)）。這四場的共同結構是把各派攤開到「成立前提」這一層，因此讀完之後判斷標準會比本章的表格細一階。
 
 ## 下一步路由
 

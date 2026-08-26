@@ -36,7 +36,7 @@ Roblox 在 2021-10-28 至 2021-10-31 經歷長時間服務中斷。官方更新�
 | ----------------------------------- | ------------------------------ | ---------------------------------- |
 | Core dependency observability       | 核心依賴壓力與瓶頸判讀太慢     | 強化核心路徑監測與跨層證據對位     |
 | Prolonged incident command          | 長事故下節奏與交班壓力高       | 強化 IC handoff 與長事故節奏治理   |
-| Recovery stage definition           | 恢復完成判準不足導致反覆調整   | 用 steady state 定義分階段恢復門檻 |
+| Recovery stage definition           | 恢復完成條件不足導致反覆調整   | 用 steady state 定義分階段恢復門檻 |
 | Post-incident structural write-back | 根因修補之外缺少結構性改進路徑 | 把改進落到容量、架構隔離與演練題目 |
 
 ## 下一步路由

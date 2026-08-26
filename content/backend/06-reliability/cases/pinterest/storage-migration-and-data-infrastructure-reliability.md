@@ -25,7 +25,7 @@ Pinterest 的資料基礎設施服務數十億 pin、推薦系統與搜尋索引
 
 Dual-write 確保遷移期間每筆寫入同時進入新舊系統。寫入失敗的處理策略決定資料完整性 — 若新系統寫入失敗是否 block 舊系統的寫入，取決於遷移階段（早期容許新系統 fail-open、接近 cutover 時需要 fail-close）。
 
-Shadow read 在真實流量下比對新舊系統的查詢結果。比對維度包含回傳資料的完整性、排序、分頁邊界與 null 值處理。mismatch rate 是 cutover 可行性的核心判準 — rate 趨近零才能進入下一批切換。
+Shadow read 在真實流量下比對新舊系統的查詢結果。比對維度包含回傳資料的完整性、排序、分頁邊界與 null 值處理。mismatch rate 是 cutover 可行性的核心判斷標準 — rate 趨近零才能進入下一批切換。
 
 Staged cutover 按 traffic percentage、data partition 或 use case 漸進切換。每一批觀察 mismatch rate、latency overhead 與 error rate，任一指標超門檻即回退到舊系統。
 

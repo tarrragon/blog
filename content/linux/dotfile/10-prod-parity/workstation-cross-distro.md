@@ -10,7 +10,7 @@ tags: ["dotfile", "prod-parity", "debian"]
 
 ## 哪些綁 distro、哪些共用
 
-拿到一份 dotfile 要跨 distro 時，先把內容分成兩堆，判準是「換 distro 會不會變」：
+拿到一份 dotfile 要跨 distro 時，先把內容分成兩堆，判斷標準是「換 distro 會不會變」：
 
 - **會變、要下沉到平台層**：套件安裝指令（`pacman` vs `apt-get`）、套件清單、以及套件名分歧的工具。
 - **不會變、留共通層**：`.zshrc` 內容、`stow` 建 symlink 的邏輯、oh-my-zsh 的 `git clone`、所有 config 檔本身。

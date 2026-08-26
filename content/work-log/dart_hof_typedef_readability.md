@@ -1,9 +1,9 @@
 ---
-title: "高階函式的適用判準：流程固定、變化點單一且開放——以 Flutter 設定更新比較 typedef 改寫前後"
+title: "高階函式的適用條件：流程固定、變化點單一且開放——以 Flutter 設定更新比較 typedef 改寫前後"
 date: 2026-06-01
 slug: "dart_hof_typedef_readability"
 draft: false
-description: "高階函式的適用判準（流程固定、變化點單一且開放）與裸函式型別 vs typedef 的可讀性取捨並排比較。"
+description: "高階函式的適用條件（流程固定、變化點單一且開放）與裸函式型別 vs typedef 的可讀性取捨並排比較。"
 tags: ["dart", "flutter", "higher-order-function", "typedef", "readability", "design-tradeoff", "DRY", "ValueNotifier"]
 ---
 
@@ -87,7 +87,7 @@ void update(SettingsModel Function(SettingsModel current) mutate) {
 
 反過來說，當「變化集合是封閉的、而且需要被序列化或跨層比對」時，enum + switch 反而較好 — 例如要把「使用者改了哪個欄位」存進 undo 堆疊、或透過網路傳給後端，列舉值是可序列化的資料，閉包不是。本案例的變化點純粹發生在呼叫端、不需要 persist，HOF 才站得住。所以「開放」算不算優點，要跟「變化是否需要被當資料搬運」一起看。
 
-> 判準：**流程固定 + 變化點單一 + 變化開放** 三者同時成立時，HOF 幾乎總是比「列舉 + 分支」或「複製多個方法」更省。
+> 判斷標準：**流程固定 + 變化點單一 + 變化開放** 三者同時成立時，HOF 幾乎總是比「列舉 + 分支」或「複製多個方法」更省。
 
 對照反例放進具體場景更清楚。假設一個只有「深色模式開關」單一布林設定的 controller，更新邏輯就是 `value = !value`，既沒有共用流程、也沒有開放的變化點 — 這時把它包成收函式的 `update`，只是逼讀者解析一串函式型別去做一件 `toggleDarkMode()` 就講完的事，抽象成本大於收益。另一種反向情境是：9 個欄位看似共用流程，實際每個的更新路徑各不相同（有的要打 API、有的要寫檔、有的純記憶體），那麼「固定流程」的前提根本不成立，硬抽進 `update` 反而把三條不同的路徑塞進同一個殼裡。三條件少一條，具名方法通常更省 — 場景不對時硬用，才是過度設計。
 

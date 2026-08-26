@@ -2,7 +2,7 @@
 title: "Fuse.js / MiniSearch：客戶端載入索引的搜尋方案"
 slug: "client-side-search-fuse-minisearch"
 date: 2026-04-24
-description: "Fuse.js 與 MiniSearch 的評估：build 時序列化 JSON + runtime in-memory 骨幹、Hugo 整合、fuzzy 容錯 vs field boost 判準、中文斷詞差異。"
+description: "Fuse.js 與 MiniSearch 的評估：build 時序列化 JSON + runtime in-memory 骨幹、Hugo 整合、fuzzy 容錯 vs field boost 判斷標準、中文斷詞差異。"
 tags: ["Hugo", "搜尋", "Fuse.js", "MiniSearch", "靜態網站"]
 ---
 

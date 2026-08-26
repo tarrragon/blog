@@ -43,9 +43,9 @@ Runtime 與 database tuning 適合需要穩定 SLO 的服務。JVM heap、Go run
 
 FinOps 與 SRE 協作適合用 Akamas 建立共同語言。FinOps 關心浪費與預算，SRE 關心 latency、error rate 與可靠性；Akamas 類工具把節省幅度、性能風險與回退條件放在同一份 recommendation 裡，降低跨團隊溝通成本。
 
-## 選型判準
+## 選型標準
 
-| 判準     | Akamas 的價值                                | 需要補的能力                            |
+| 判斷標準 | Akamas 的價值                                | 需要補的能力                            |
 | -------- | -------------------------------------------- | --------------------------------------- |
 | 優化目標 | 把 cost、latency、throughput 與 SLO 一起建模 | 明確 business objective 與風險上限      |
 | 參數空間 | 支援 runtime、container、database 與雲端配置 | 服務 owner 對參數語意的審核             |

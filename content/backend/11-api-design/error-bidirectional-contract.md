@@ -6,7 +6,7 @@ weight: 11
 tags: ["backend", "api-design", "error-contract"]
 ---
 
-status code 與錯誤回應是 provider 與 consumer 之間的合作契約、不是 provider 單方的輸出格式。兩端理論上是合作對象 —— provider 要 consumer 正確使用服務、consumer 要 provider 給出可判讀的行為指示 —— 但商業上常因地位不對等、由強勢一方片面從自己的需求設計、把成本外部化給對方：平台不給 debug 資訊、消費者只能猜；消費者盲目重試、provider 在過載時被自己的用戶打垮。本章立這份契約的雙向判準；每個設計決策的判別問題是「這是在解決問題、還是把成本推給對方」。
+status code 與錯誤回應是 provider 與 consumer 之間的合作契約、不是 provider 單方的輸出格式。兩端理論上是合作對象 —— provider 要 consumer 正確使用服務、consumer 要 provider 給出可判讀的行為指示 —— 但商業上常因地位不對等、由強勢一方片面從自己的需求設計、把成本外部化給對方：平台不給 debug 資訊、消費者只能猜；消費者盲目重試、provider 在過載時被自己的用戶打垮。本章立這份契約的雙向判斷標準；每個設計決策的判別問題是「這是在解決問題、還是把成本推給對方」。
 
 status 語意的粗承諾在 [11.3](/backend/11-api-design/resource-modeling-operation-semantics/)、錯誤格式設計在 [11.4](/backend/11-api-design/error-model-design/)、限流語意在 [11.9](/backend/11-api-design/external-traffic-semantics/) —— 本章不重述這三章的 producer 側設計、收的是它們共同缺的另一半：consumer 端拿到之後怎麼辦、以及兩端對彼此的期望怎麼寫進契約。
 
@@ -20,7 +20,7 @@ provider 對 consumer 的期望同樣具體：守 retry 紀律（退避間隔加
 
 ## 成本外部化的判讀訊號
 
-單邊設計的產物有固定形態、兩個方向都有。provider 側轉嫁：業務失敗包 200（把「讀 body 才知道成敗」的解析成本推給 consumer、順便讓自己的錯誤率圖表失真、見 [11.3 判讀訊號](/backend/11-api-design/resource-modeling-operation-semantics/)）；不給機器可讀 code（分支成本推給 consumer 去 parse message）；不給 request-id（debug 成本推給 consumer 與自己的 support 團隊）；用兩種 status 表達同一件事且不明文劃分時機（GitHub 超限回 403 或 429、consumer 分支邏輯雙倍、見 [11.C43](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)、語意判準主寫在 [11.9](/backend/11-api-design/external-traffic-semantics/)）；完全不重試的 webhook（重試責任整包轉給 consumer 自建排程、見 [11.C61](/backend/11-api-design/cases/webhook-github-no-retry/)）。最後一項要再切一刀：GitHub 把不重試寫進文件、附補投 API 與投遞狀態查詢 —— 明文轉移是可規劃的契約條款、跟默默轉嫁（不明說、consumer 事後才發現）是兩回事；判讀的重點在「對方知不知道自己接了這筆成本」、不在成本移動本身。
+單邊設計的產物有固定形態、兩個方向都有。provider 側轉嫁：業務失敗包 200（把「讀 body 才知道成敗」的解析成本推給 consumer、順便讓自己的錯誤率圖表失真、見 [11.3 判讀訊號](/backend/11-api-design/resource-modeling-operation-semantics/)）；不給機器可讀 code（分支成本推給 consumer 去 parse message）；不給 request-id（debug 成本推給 consumer 與自己的 support 團隊）；用兩種 status 表達同一件事且不明文劃分時機（GitHub 超限回 403 或 429、consumer 分支邏輯雙倍、見 [11.C43](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)、語意判斷標準主寫在 [11.9](/backend/11-api-design/external-traffic-semantics/)）；完全不重試的 webhook（重試責任整包轉給 consumer 自建排程、見 [11.C61](/backend/11-api-design/cases/webhook-github-no-retry/)）。最後一項要再切一刀：GitHub 把不重試寫進文件、附補投 API 與投遞狀態查詢 —— 明文轉移是可規劃的契約條款、跟默默轉嫁（不明說、consumer 事後才發現）是兩回事；判讀的重點在「對方知不知道自己接了這筆成本」、不在成本移動本身。
 
 consumer 側轉嫁：盲目 retry 把恢復成本推回 provider —— 失敗源於過載時、retry 是持續攻擊（AWS 內部元件把錯誤率推到 55% 的實例、見 [11.C70](/backend/11-api-design/cases/retry-dynamodb-2015-storm/)；retry 行為常繼承自 SDK 預設而非顯式選擇、審自己依賴堆疊的預設值也是 consumer 的義務）；多層各自 retry、三層各三次在底層疊成 64 次嘗試（見 [11.C69](/backend/11-api-design/cases/retry-sre-book-cascading-failures/)）；parse message 文字做分支、把自己的穩定性押在 provider 不改字上。
 
@@ -32,7 +32,7 @@ consumer 側轉嫁：盲目 retry 把恢復成本推回 provider —— 失敗�
 
 **status 裝不下的東西**。單一 status 有三種表達力邊界：裝不下多個結果（部分成功）、裝不下時間軸（202 之後才失敗）、裝不下不確定性（504 分不出「沒送到」還是「執行了」）。兩條處理路線 —— 把狀態表下放 body、或收窄語意保持單一 status 恆為真 —— 在 [status 表達力邊界](/backend/11-api-design/status-expressiveness-boundary/) 攤開。
 
-**收到錯誤之後重不重試**。這是 consumer 最頻繁的決策、也是雙向責任最典型的場景：單一請求層看 status 加冪等合判、集體層要 backoff 加 jitter 防同步波、架構層要決定 retry 放哪一層、配 retry budget 與 circuit breaker。完整判準在 [接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)。
+**收到錯誤之後重不重試**。這是 consumer 最頻繁的決策、也是雙向責任最典型的場景：單一請求層看 status 加冪等合判、集體層要 backoff 加 jitter 防同步波、架構層要決定 retry 放哪一層、配 retry budget 與 circuit breaker。完整判斷標準在 [接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)。
 
 **錯誤跨服務怎麼傳**。A 呼叫 B、B 呼叫 C、C 掛了 —— B 同時是 consumer 跟 provider、要決定透傳還是轉譯、以及錯誤細節暴露多少（機器可讀 vs 攻擊偵察面的張力）。在 [錯誤傳播與信任邊界](/backend/11-api-design/error-propagation-trust-boundary/)。
 

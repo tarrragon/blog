@@ -6,7 +6,7 @@ weight: 69
 tags: ["backend", "api-design", "case-study", "error-contract"]
 ---
 
-這個案例的核心責任是提供接收方重試決策的量化判準、以及「retry 該放哪一層」的架構責任分配。
+這個案例的核心責任是提供接收方重試決策的量化判斷標準、以及「retry 該放哪一層」的架構責任分配。
 
 ## 觀察
 
@@ -18,7 +18,7 @@ Google SRE Book「Addressing Cascading Failures」章：retry 放大例 —— 1
 
 ## 對應大綱
 
-11.11 接收方重試決策章「retry budget 量化判準」「retry 放哪一層」段、provider 的 retriable/nonretriable 標示義務（回扣 11.4）。
+11.11 接收方重試決策章「retry budget 量化判斷標準」「retry 放哪一層」段、provider 的 retriable/nonretriable 標示義務（回扣 11.4）。
 
 ## 下一步路由
 

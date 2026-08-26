@@ -1,7 +1,7 @@
 ---
 title: "11.C32 gRPC: The Bad Parts：cURL 測試不過的 API（反例）"
 date: 2026-07-03
-description: "反例：獨立實踐者的 gRPC 批評清單、debug 可及性判準、含生態已修補的平衡敘述"
+description: "反例：獨立實踐者的 gRPC 批評清單、debug 可及性判斷標準、含生態已修補的平衡敘述"
 weight: 32
 tags: ["backend", "api-design", "case-study", "grpc"]
 ---
@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "grpc"]
 
 ## 判讀
 
-「批評 + 承認生態已修補」的平衡結構適合直接當教材敘事骨架。cURL 測試是「debug 可及性」這個選型維度的好判準 — 協議效率表不會告訴你 on-call 時能不能徒手戳一個 endpoint。
+「批評 + 承認生態已修補」的平衡結構適合直接當教材敘事骨架。cURL 測試是「debug 可及性」這個選型維度的好判斷標準 — 協議效率表不會告訴你 on-call 時能不能徒手戳一個 endpoint。
 
 ## 對應大綱
 

@@ -44,7 +44,7 @@ Incident communication channel 是事故期間的通訊控制面，責任是固�
 - 對外敘事是否連到同一條 [incident timeline](/backend/knowledge-cards/incident-timeline/)
 - [stakeholder mapping](/backend/knowledge-cards/stakeholder-mapping/) 是否覆蓋支援、客服、法務與管理層
 
-| 控制面   | 最小可用判準                       | 失效訊號           |
+| 控制面   | 最小可用標準                       | 失效訊號           |
 | -------- | ---------------------------------- | ------------------ |
 | 主通道   | 內外部各一個主通道                 | 多組人各自對外更新 |
 | 備援通道 | 有切換門檻與啟動責任人             | 主通道卡住後仍等待 |

@@ -37,7 +37,7 @@ CREATE TABLE orders (
 
 Constraint behavior 的核心責任是確保資料完整性由 database 和 application 共同維護。SQLite 支援 primary key、unique、check、foreign key 與 deferred constraint，但 foreign key enforcement 需要明確啟用，migration / test runner 也要確認連線設定。
 
-| Constraint  | SQLite 審查點               | 操作判準                                       |
+| Constraint  | SQLite 審查點               | 操作判斷標準                                   |
 | ----------- | --------------------------- | ---------------------------------------------- |
 | Foreign key | `PRAGMA foreign_keys = ON`  | 每個 connection / test setup 都要驗證          |
 | Unique      | NULL、collation、expression | 對照 target DB 的 NULL uniqueness 與 collation |

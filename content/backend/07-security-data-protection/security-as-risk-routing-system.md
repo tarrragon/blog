@@ -126,6 +126,6 @@ Checklist 擅長提醒「有哪些基本項目」，路由語言擅長回答「�
 - [7.8 模組路由：問題到服務實作](/backend/07-security-data-protection/security-routing-from-case-to-service/)
 - [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能拿一個功能需求做路由判斷。文章需要至少示範三種問題：身份擴散、資料外送、供應鏈 [artifact provenance](/backend/knowledge-cards/artifact-provenance/) 信任，並把每種問題導向不同的下一步章節。

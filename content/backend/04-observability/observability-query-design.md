@@ -129,7 +129,7 @@ Pre-aggregation 不是免費的。每一條 recording rule、每一個 log-to-me
 - **配置維護**：規則需要跟 schema、label、service 保持同步，漂移會靜默產生錯誤資料。
 - **除錯成本**：dashboard 讀的是 recording rule 輸出，事故時可能需要同時查 raw data 驗證 recording rule 是否正確。
 
-設計時的判準是：預聚合的讀取節省是否大於維護成本。高頻讀取（dashboard auto-refresh、alert evaluation）的聚合計算值得 pre-aggregation；低頻讀取（月度報表、偶發 ad-hoc query）直接查 raw data 更簡單。
+設計時的判斷標準是：預聚合的讀取節省是否大於維護成本。高頻讀取（dashboard auto-refresh、alert evaluation）的聚合計算值得 pre-aggregation；低頻讀取（月度報表、偶發 ad-hoc query）直接查 raw data 更簡單。
 
 ## Query 資源治理
 

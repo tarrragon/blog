@@ -18,7 +18,7 @@ LinkedIn 以 TopicGC 清理未使用 topic，降低 Kafka metadata 壓力並改�
 
 ## 策略
 
-1. 定義 topic 活躍判準與回收條件。
+1. 定義 topic 活躍判斷標準與回收條件。
 2. 自動化清理流程並保留稽核紀錄。
 3. 監控清理前後的性能與穩定性指標。
 

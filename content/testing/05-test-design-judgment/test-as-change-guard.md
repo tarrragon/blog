@@ -57,7 +57,7 @@ tags: ["testing", "test-design", "refactoring", "comment", "regression"]
 
 ## review 爭論時：測試與註解的分工
 
-review 裡「這個約束該寫註解還是測試」的爭論，判準是**這段資訊有沒有對應的斷言**——存不存在一條會紅的斷言，不是造不造得出句子：
+review 裡「這個約束該寫註解還是測試」的爭論，判斷標準是**這段資訊有沒有對應的斷言**——存不存在一條會紅的斷言，不是造不造得出句子：
 
 - 寫得出會紅的斷言（讀寫順序、時序耦合、狀態必須活過某次操作）→ 資訊的家是**測試名稱**。
 - 斷言守不住的那一半——來源在 repo 之外的出處與當初的取捨（法規條號、稽核要求、後端契約為什麼長這樣）→ 家是 doc comment。
@@ -81,6 +81,6 @@ review 裡「這個約束該寫註解還是測試」的爭論，判準是**這�
 - 測試文字的逐項紀律（名稱 / reason / skip / 檔頭）→ [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)
 - 斷言該斷行為還是實作、能不能區分對錯 → [斷言品質三問](/testing/05-test-design-judgment/assertion-quality/)
 - 零測試專案的第一批防護從哪建 → [無測試 legacy 專案的起步順序](/testing/01-test-strategy-layers/legacy-test-bootstrap/)
-- 防護判準的原則層（動機辨識、消除判斷閘、破壞實測）→ [#253 寫註解的動機是怕被改壞時，要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)
+- 防護判斷標準的原則層（動機辨識、消除判斷閘、破壞實測）→ [#253 寫註解的動機是怕被改壞時，要處理的是那個約束](/report/protective-comment-signals-missing-enforcement/)
 - 本篇批次操作案例的完整推導 → [註解防不了改壞](/work-log/comment_cannot_guard_invariant/)
 - 「測試是行為的權威載體」推到整條文件鏈的分級 → [#256 多份文件必然漂移](/report/doc-sync-needs-mechanism-or-demotion/)

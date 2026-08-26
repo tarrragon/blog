@@ -1,7 +1,7 @@
 ---
 title: "11.C22 Matt Bessey：六年 GraphQL 老手的撤退清單（反例）"
 date: 2026-07-03
-description: "反例：授權下推到 field、成本不可預測、解析層攻擊面的執行期代價清單、附撤退判準"
+description: "反例：授權下推到 field、成本不可預測、解析層攻擊面的執行期代價清單、附撤退條件"
 weight: 22
 tags: ["backend", "api-design", "case-study", "graphql"]
 ---
@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "graphql"]
 
 ## 判讀
 
-代價清單全部落在執行期與安全面 — 跟採用文宣的 DX 敘事正交、逐條對應「執行成本與安全」章的大綱（授權下推到 field、成本不可預測、解析層攻擊面）。撤退判準的核心句：「控制得了 client、就不需要 GraphQL 的彈性」。
+代價清單全部落在執行期與安全面 — 跟採用文宣的 DX 敘事正交、逐條對應「執行成本與安全」章的大綱（授權下推到 field、成本不可預測、解析層攻擊面）。撤退條件的核心句：「控制得了 client、就不需要 GraphQL 的彈性」。
 
 ## 對應大綱
 

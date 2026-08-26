@@ -44,7 +44,7 @@ Operational log 在 incident timeline 還原時是主力證據。它的失分容
 
 Audit log 的失分容忍度極低。一次授權記錄遺失、一個欄位漂移、一段時區錯位，都可能讓事後責任追蹤失效。這個差異決定 audit log 必須走獨立 pipeline、獨立 storage、獨立保留策略。
 
-表格裡的「事件不可否認」這一格值得單獨判讀：它成不成立取決於記錄是誰簽的。系統自己寫入、自己保管的記錄，在爭議中無法排除「記錄被管理者竄改」這個可能，因此它提供的是內部追蹤而非對外舉證能力。真正支持得了對第三方舉證的是非對稱簽章 —— 判準見 [Non-repudiation](/backend/knowledge-cards/non-repudiation/)，原語的選型層見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/#原語選型模型)。
+表格裡的「事件不可否認」這一格值得單獨判讀：它成不成立取決於記錄是誰簽的。系統自己寫入、自己保管的記錄，在爭議中無法排除「記錄被管理者竄改」這個可能，因此它提供的是內部追蹤而非對外舉證能力。真正支持得了對第三方舉證的是非對稱簽章 —— 判斷標準見 [Non-repudiation](/backend/knowledge-cards/non-repudiation/)，原語的選型層見 [7.28 密碼學原語選型](/backend/07-security-data-protection/cryptographic-primitive-selection/#原語選型模型)。
 
 ## 核心欄位與不變性
 

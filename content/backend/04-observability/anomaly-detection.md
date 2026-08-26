@@ -86,7 +86,7 @@ Anomaly 觸發時，工程師需要回答「為什麼異常」 — 是哪個服�
 | Prophet（自建）  | 開源 time series forecast         | 需要自建 pipeline、training、serving    |
 | Anomalo          | 資料品質 anomaly                  | 偏 data pipeline、非 infra 觀測         |
 
-自建 vs 託管的判準：團隊是否有 ML pipeline 維運能力。託管方案的好處是零 ML 運維、跟觀測平台深度整合；自建的好處是可控性高、可以針對業務邏輯客製模型。
+自建 vs 託管的判斷標準：團隊是否有 ML pipeline 維運能力。託管方案的好處是零 ML 運維、跟觀測平台深度整合；自建的好處是可控性高、可以針對業務邏輯客製模型。
 
 ## 核心判讀
 

@@ -31,7 +31,7 @@ aws sqs get-queue-attributes \
 
 ## 對齊 visibility timeout 與 consumer 處理時間
 
-設定 visibility timeout 的判準是「略高於 consumer 處理單則訊息的最大時間」、不是平均時間。Capital One 的官方 tech blog 在講 SQS + Lambda 時明示這條原則：visibility timeout 應比最大處理時間略高 — 因為決定 redelivery 的是尾端那幾則最慢的訊息、不是中位數。處理時間 p50 是 2 秒、p99 是 25 秒時、visibility timeout 要對齊 p99 加緩衝、設到 30-40 秒、而不是看 p50 設 10 秒。
+設定 visibility timeout 的判斷標準是「略高於 consumer 處理單則訊息的最大時間」、不是平均時間。Capital One 的官方 tech blog 在講 SQS + Lambda 時明示這條原則：visibility timeout 應比最大處理時間略高 — 因為決定 redelivery 的是尾端那幾則最慢的訊息、不是中位數。處理時間 p50 是 2 秒、p99 是 25 秒時、visibility timeout 要對齊 p99 加緩衝、設到 30-40 秒、而不是看 p50 設 10 秒。
 
 建 queue 時直接帶 `VisibilityTimeout` attribute，或對既有 queue 用 `set-queue-attributes` 調整：
 

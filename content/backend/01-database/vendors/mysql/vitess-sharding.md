@@ -312,7 +312,7 @@ Aurora 跟 Vitess 是 *不同 scale 路徑*：
 
 Vitess 的 production 責任是把 MySQL shard 拓撲變成應用可查詢、可遷移、可操作的資料庫層。YouTube / Vitess 的公開歷史提供的工程訊號是 VTGate、VTTablet、VReplication 與 VSchema 這組元件分工：application query 進 VTGate、tablet 層包住 MySQL、VSchema 描述 routing / sharding 規則、VReplication 支援 resharding 與資料搬移。
 
-這個案例要回收到三個操作判準。第一，Vitess 是一套 database control plane，而非單一 proxy；導入時要把 topology service、tablet lifecycle、backup、failover 與 schema workflow 一起納入 ownership。第二，VSchema 是 application contract，shard key、lookup vindex 與 cross-shard query 都會影響產品功能設計。第三，VReplication 讓 resharding 可操作，但它仍需要 capacity window、backfill 監控與 cutover plan。
+這個案例要回收到三個操作判斷標準。第一，Vitess 是一套 database control plane，而非單一 proxy；導入時要把 topology service、tablet lifecycle、backup、failover 與 schema workflow 一起納入 ownership。第二，VSchema 是 application contract，shard key、lookup vindex 與 cross-shard query 都會影響產品功能設計。第三，VReplication 讓 resharding 可操作，但它仍需要 capacity window、backfill 監控與 cutover plan。
 
 Vitess 的 sibling 路由是 [PostgreSQL Citus Distributed](/backend/01-database/vendors/postgresql/citus-distributed/) 與 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)。Citus 保留 PostgreSQL 生態並用 coordinator / worker 拆分資料；CockroachDB / Spanner 則用 distributed SQL 重新定義交易與一致性邊界。選型時要先判斷自己是在延伸 MySQL 投資，還是在重新選 global OLTP model。
 

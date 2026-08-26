@@ -18,4 +18,4 @@ Snapshot 跟 [entity](/ddd/knowledge-cards/entity/) 的生命週期有關——�
 
 ## 設計責任
 
-凍結時機由業務對「過去」的要求決定——進行中的操作持 live 參照是正確的、成為事實之後凍結。業務流程有多個確認階段時、凍結時機取決於哪個階段之後的漂移對下游不可接受。凍結判準的完整展開見 [entity 與 value object 的判準](/ddd/entity-vs-value-object/)。
+凍結時機由業務對「過去」的要求決定——進行中的操作持 live 參照是正確的、成為事實之後凍結。業務流程有多個確認階段時、凍結時機取決於哪個階段之後的漂移對下游不可接受。凍結判斷標準的完整展開見 [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)。

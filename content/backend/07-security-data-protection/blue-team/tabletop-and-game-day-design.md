@@ -88,6 +88,6 @@ Game day 推薦輸出：
 - [7.19 資安演練：從 Abuse Case 到 Game Day](/backend/07-security-data-protection/security-exercise-from-abuse-case-to-game-day/)
 - [7.B3 資安控制驗證](/backend/07-security-data-protection/blue-team/security-control-validation/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能設計一次 tabletop 或 game day。演練設計至少包含 scenario、participants、injects、expected actions、evidence、exit condition 與 write-back target。

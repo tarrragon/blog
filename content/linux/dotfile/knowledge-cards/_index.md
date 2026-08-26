@@ -39,7 +39,7 @@ Linux 系列（dotfile / 安裝 / 除錯 / 工具）共用的關鍵術語。各�
 
 | 卡片                                                                                                           | 主題                                                                         |
 | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [環境 as code 的三個尺度](/linux/dotfile/knowledge-cards/environment-as-code-scope/)                           | dotfile / Dockerfile / IaC 的分界與 repo 歸屬判準                            |
+| [環境 as code 的三個尺度](/linux/dotfile/knowledge-cards/environment-as-code-scope/)                           | dotfile / Dockerfile / IaC 的分界與 repo 歸屬標準                            |
 | [Golden Path / paved road](/linux/dotfile/knowledge-cards/paved-road-golden-path/)                             | 鋪好的預設路徑消除重複決策、org 的 developer portal vs 個人的 repo+腳本+路標 |
 | [Prod Parity Principle（生產環境對等原則）](/linux/dotfile/knowledge-cards/prod-parity-principle/)             | 本機 runtime 對齊的是凍結舊環境而非最新版                                    |
 | [Image Tag Pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/)                                         | tag 要釘到 OS 世代才凍結得住，浮動 tag 是不可重現的來源                      |

@@ -95,7 +95,7 @@ RabbitMQ 適合明確 routing、[ack/nack](/backend/knowledge-cards/ack-nack/) �
 | Outbox boundary      | 資料庫交易與事件發布是否有一致性邊界               | [outbox pattern](/backend/knowledge-cards/outbox-pattern/)、[1.3](/backend/01-database/transaction-boundary/)                |
 | Poison handling      | 壞訊息是否會卡住 consumer 或被無限重試             | [poison message](/backend/knowledge-cards/poison-message/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) |
 
-這些方向要用非同步服務自己的語意展開。寄信、開 invoice、更新 CRM、同步 search index、發 webhook 的副作用不同，retry、DLQ 與 replay 的判準也不同。
+這些方向要用非同步服務自己的語意展開。寄信、開 invoice、更新 CRM、同步 search index、發 webhook 的副作用不同，retry、DLQ 與 replay 的判斷標準也不同。
 
 ## 知識卡補強方向
 

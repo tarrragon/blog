@@ -44,7 +44,7 @@ Cloudflare 在 2026-02-20 17:48 UTC 發生 BYOIP 相關 outage。部分使用 Br
 | 大範圍 withdrawal circuit breaker | cleanup 任務可一次影響大量 prefixes                         | 對 prefix withdrawal / deletion 設速率、數量與健康訊號閘門             |
 | Staging 與 mock data              | 測試資料未覆蓋 task-runner 自主操作情境                     | 補 production-like state mutation 測試，而不只測 customer journey      |
 | Incident intake                   | 1.1.1.1 異常成為早期觀察點                                  | 將共享基礎服務異常納入控制面事故快速升級條件                           |
-| Evidence write-back               | 恢復分成 dashboard 自助、資料修復、global rollout 多條路    | 回寫 decision log 與 evidence package，保留每種狀態的恢復判準          |
+| Evidence write-back               | 恢復分成 dashboard 自助、資料修復、global rollout 多條路    | 回寫 decision log 與 evidence package，保留每種狀態的恢復判斷標準      |
 
 ## 下一步路由
 

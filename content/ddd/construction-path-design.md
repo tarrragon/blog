@@ -14,7 +14,7 @@ tags: ["ddd", "factory", "construction", "value-object"]
 
 一個書籍管理 App 的 `createForTest` 工廠只接受 `id` / `title` / `author` / `isbn` 四個參數。測試想表達「預設 tags 再追加三個自訂 tag」——這是合法的需求、工廠的表達力沒覆蓋到。需求進不了工廠，就會從別的出口出去——在這個專案，出口是全欄位 copyWith（[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)）。
 
-工廠參數列的設計判準：收的是「有語意的需求」（預設 tags 加自訂、指定初始狀態、帶入驗證過的關聯物件），不是「所有欄位的任意值」。後者退化成另一個全欄位建構器，保證也跟著消失——分寸在「覆蓋高頻的合法組合、不開放任意拼裝」——「高頻」的門檻見下一節：同一組合出現第二次就收進工廠。
+工廠參數列的設計判斷標準：收的是「有語意的需求」（預設 tags 加自訂、指定初始狀態、帶入驗證過的關聯物件），不是「所有欄位的任意值」。後者退化成另一個全欄位建構器，保證也跟著消失——分寸在「覆蓋高頻的合法組合、不開放任意拼裝」——「高頻」的門檻見下一節：同一組合出現第二次就收進工廠。
 
 ## 逃生口吸收建構路徑的缺陷
 
@@ -39,7 +39,7 @@ tags: ["ddd", "factory", "construction", "value-object"]
 - 測試 Arrange 段出現「工廠 + copyWith 拼裝」——盤點拼裝在補什麼欄位、高頻欄位收進工廠參數列。工廠參數列長期不變、而它的產物被 copyWith 環繞——表達力已落後需求，原則見 [#223](/report/escape-hatch-absorbs-construction-gap/)。
 - 建一個立刻丟棄的物件、只為了拿它的一個欄位？這是語意錯誤的標記，先找它真正想表達的需求。
 - 同族語意錯誤第二次出現——停止修個案、找兩個案共同面對的建構路徑缺口。
-- `toString()` 被當成取值 API 用在快取 key / DB 值——語意寄生、格式一改靜默事故。出口要有語意明確的名字，語意封閉判準見 [entity 與 value object 的判準](/ddd/entity-vs-value-object/)。
+- `toString()` 被當成取值 API 用在快取 key / DB 值——語意寄生、格式一改靜默事故。出口要有語意明確的名字，語意封閉判斷標準見 [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)。
 - VO 封裝重構的編譯錯誤在基礎設施層爆量——基礎設施是正當消費者、該給出口。
 
 ## 下一步
@@ -47,7 +47,7 @@ tags: ["ddd", "factory", "construction", "value-object"]
 - 物件組好之後、整個系統怎麼被組起來：[組裝層的可達性](/ddd/composition-root-reachability/)
 - 出生合法的機制：[不變式的強制層次](/ddd/invariant-enforcement-layers/)
 - 變更路徑收斂：[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)
-- 型別類別的入口判準：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)
-- value object 的語意封閉判準：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)
+- 型別類別的入口判斷標準：[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)
+- value object 的語意封閉判斷標準：[entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)
 - Dart 的語言細節（copyWith 三態缺口、工廠表達力擴充、extension type 的拆封口）：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)、[VO 的封裝擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)
 - 原則層：[#223 逃生口吸收建構路徑的缺陷](/report/escape-hatch-absorbs-construction-gap/)

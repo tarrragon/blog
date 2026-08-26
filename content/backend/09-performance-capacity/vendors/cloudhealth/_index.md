@@ -30,9 +30,9 @@ Showback / chargeback 適合用 CloudHealth 建立財務語言。成本中心、
 
 Optimization workflow 適合用 CloudHealth 管理組織節奏。Rightsizing、reserved capacity、idle resource、tag compliance 與 policy violation 都需要 owner、例外、核准、驗證與追蹤，enterprise 平台的價值在於流程一致。
 
-## 選型判準
+## 選型標準
 
-| 判準            | CloudHealth 的價值                             | 需要補的能力                            |
+| 判斷標準        | CloudHealth 的價值                             | 需要補的能力                            |
 | --------------- | ---------------------------------------------- | --------------------------------------- |
 | 組織治理        | 支援多 account、多團隊、成本中心與 policy      | FinOps operating model、owner taxonomy  |
 | 成本分攤        | 支援 showback / chargeback 與 shared cost rule | tag hygiene、成本中心對照表             |

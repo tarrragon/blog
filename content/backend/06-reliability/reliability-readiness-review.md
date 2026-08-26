@@ -39,7 +39,7 @@ readiness 的目標是提高發布品質。當缺口被提前看見，團隊可�
 - migration / backfill 是否有停止條件與資料校驗
 - on-call 是否有 runbook、owner 與 escalation policy
 
-| 檢查面向 | 最小可用判準                     | 常見風險                   |
+| 檢查面向 | 最小可用標準                     | 常見風險                   |
 | -------- | -------------------------------- | -------------------------- |
 | 服務健康 | 核心旅程有 SLO 與 alert          | 只看系統資源，忽略用戶結果 |
 | 容量邊界 | 有 load baseline 與容量餘裕      | 流量上升時才發現瓶頸       |
@@ -91,7 +91,7 @@ Failure mode 清單需要具體。依賴 timeout、queue lag、cache stampede、
 
 ## 判讀訊號
 
-- 上線前只看 unit / integration test，沒有容量與回復判準
+- 上線前只看 unit / integration test，沒有容量與回復判斷標準
 - 依賴失效時只能現場討論 fallback
 - migration 執行前沒有 rollback rehearsal
 - 服務 owner 需要臨場補 RTO / RPO 或核心 SLO
@@ -122,13 +122,13 @@ Defer 適合處理價值與風險不對稱的變更。若本次變更只是次�
 
 Reliability readiness 的反模式通常來自把測試通過視為 production 準備度。測試通過證明某些功能路徑可執行，readiness 則要證明服務能在真實壓力、依賴波動與事故流程下被接住。
 
-| 反模式               | 表面現象                    | 修正方向                          |
-| -------------------- | --------------------------- | --------------------------------- |
-| CI 綠燈即上線        | 只看 test pass              | 加入 SLO、capacity、rollback 判準 |
-| 容量假設無驗證       | 靠估算決定尖峰承載          | 補 load baseline 與容量餘裕       |
-| Rollback 只寫文件    | 回復流程沒有演練紀錄        | 補 rollback rehearsal             |
-| Migration 缺停止條件 | 執行中才判斷是否暫停        | 事前定義校驗、pause、fallback     |
-| On-call 臨場接手     | 事故時才找 owner 與 runbook | 補 drill 與 escalation route      |
+| 反模式               | 表面現象                    | 修正方向                              |
+| -------------------- | --------------------------- | ------------------------------------- |
+| CI 綠燈即上線        | 只看 test pass              | 加入 SLO、capacity、rollback 判斷標準 |
+| 容量假設無驗證       | 靠估算決定尖峰承載          | 補 load baseline 與容量餘裕           |
+| Rollback 只寫文件    | 回復流程沒有演練紀錄        | 補 rollback rehearsal                 |
+| Migration 缺停止條件 | 執行中才判斷是否暫停        | 事前定義校驗、pause、fallback         |
+| On-call 臨場接手     | 事故時才找 owner 與 runbook | 補 drill 與 escalation route          |
 
 CI 綠燈即上線會讓可靠性停在程式正確性層。production 可靠性還包含容量、依賴、資料、回復與協作，這些條件需要各自的證據。
 

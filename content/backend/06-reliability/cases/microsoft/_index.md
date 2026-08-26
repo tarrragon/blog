@@ -32,7 +32,7 @@ Microsoft 這個案例在講的是企業雲端如何把可靠性寫進架構規�
 
 當服務要面對企業客戶的 SLA 要求時，先看設計模式能否對應 failure mode，再看治理流程是否能把 pattern 真的落到架構審查。當團隊需要做 retry 或 bulkhead 時，重點是能不能選到正確的位置與層級。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否從 failure mode 反推適合的 reliability pattern
 - 能否把 self-healing 寫成可驗證的設計要求

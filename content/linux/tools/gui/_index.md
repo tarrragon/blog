@@ -15,7 +15,7 @@ tags: ["linux", "tools", "gui", "desktop"]
 | 文章                                                                       | 主題                                                                          |
 | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | [桌面環境選型：整合度與組裝自由度的取捨](desktop-environment-selection/)   | GNOME / KDE / Hyprland / XFCE / Cinnamon 的定位、資源與客製代價、Wayland 判斷 |
-| [加圖形檔案管理員：依賴足跡與桌面環境耦合](gui-file-manager-dependencies/) | Thunar / PCManFM-Qt / Nemo 的相依樹實測對照、gvfs 與縮圖的功能相依、選型判準  |
+| [加圖形檔案管理員：依賴足跡與桌面環境耦合](gui-file-manager-dependencies/) | Thunar / PCManFM-Qt / Nemo 的相依樹實測對照、gvfs 與縮圖的功能相依、選型標準  |
 
 ## 相關
 

@@ -3,14 +3,14 @@ title: "同一個品項、四個 model — value object 什麼時候該升級成
 slug: "dart_pos_item_four_lifecycle_models"
 date: 2026-07-10
 draft: false
-description: "同一個業務概念要不要拆成多個 model、value object 什麼時候該升級成 entity——判準是操作需不需要 identity-based 回寫。以 POS 品項從點選、掛單、結算到歷史訂單的四階段模型為例，含 snapshot 與 live reference 的凍結時機。"
+description: "同一個業務概念要不要拆成多個 model、value object 什麼時候該升級成 entity——判斷標準是操作需不需要 identity-based 回寫。以 POS 品項從點選、掛單、結算到歷史訂單的四階段模型為例，含 snapshot 與 live reference 的凍結時機。"
 tags: ["dart", "flutter", "ddd", "entity", "value-object", "domain-model", "pos"]
 ---
 
 > **觸發場景**：整理 POS 專案的購物車模型時，發現「一個商品品項」這個概念在 codebase 裡有四個 model：`CartItem`、`ShoppingCartDetail`、`OrderedCartItem`、`OrderItem`。乍看是重複建模
-> **疑問來源**：四個 model 是過度設計、還是各有不可合併的職責？如果是後者，拆分的判準是什麼？
+> **疑問來源**：四個 model 是過度設計、還是各有不可合併的職責？如果是後者，拆分的判斷標準是什麼？
 > **整理目的**：把「同一個業務概念何時該拆 model、value object 何時升級成 entity」的判斷邊界記下來
-> **本文邊界**：素材是一個 Flutter POS App 的現行實作；「四個」是這個 domain 的結果、不是通用配方——判準才是可遷移的部分
+> **本文邊界**：素材是一個 Flutter POS App 的現行實作；「四個」是這個 domain 的結果、不是通用配方——判斷標準才是可遷移的部分
 
 ---
 
@@ -61,9 +61,9 @@ bool isSameItem(CartItem other) {
 
 `detailId` 在這個階段承擔新職責：退貨與取消 API 的鍵、以及同訂單中區分「同商品不同口味」的唯一鍵。
 
-## 判準：操作需不需要 identity-based 回寫
+## 判斷標準：操作需不需要 identity-based 回寫
 
-把三次交棒放在一起看，「value object 什麼時候該升級成 entity」的答案就浮出來了。判準是**對這個物件的操作，需不需要精確指到某一個實體**——概念重不重要、有沒有 id 欄位可以填，都不參與這個判斷。
+把三次交棒放在一起看，「value object 什麼時候該升級成 entity」的答案就浮出來了。判斷標準是**對這個物件的操作，需不需要精確指到某一個實體**——概念重不重要、有沒有 id 欄位可以填，都不參與這個判斷。
 
 - 需求描述階段：操作是「加一份」「換口味」，內容相等就是同一個，value object 的內容比對足夠
 - 進入外部系統之後：操作是「取消那一筆」「改那一筆的量」，必須 identity-based 回寫，此時需要 entity（或至少像 `OrderedCartItem` 這樣持有身份參照的包裝）
@@ -73,5 +73,5 @@ bool isSameItem(CartItem other) {
 
 ## 相關閱讀
 
-- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/)（本文是該判準的實機案例）、[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)（凍結作為稽核端點的教學層展開）
+- 概念地基：[entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)（本文是該判斷標準的實機案例）、[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)（凍結作為稽核端點的教學層展開）
 - 同專案的 snapshot 對照組：entity 稽核軌跡的洞（[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)）——那篇談變更路徑的完整性，本文談身份與參照的凍結時機，兩者合起來是「歷史事實怎麼被保護」的兩個面

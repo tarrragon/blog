@@ -66,7 +66,7 @@ ML inference 場景的 feature lookup 是多層 cache 的典型應用。[9.C25 T
 
 跨 cloud cache 部署的 *資料引力* 原則跟 *跨區一致性* 議題密切相關、主寫場域是 [2.7 cache copy boundary 的跨區一致性窗口](/backend/02-cache-redis/cache-copy-freshness-boundary/)。本章從 *data shape / access pattern* 角度補充：當 cache value 包含跨 region 共享的業務資料時、access pattern 自然偏向 *同 cloud read* + *跨 cloud batch sync*、不適合即時跨 cloud lookup。詳見 9.C35 Snap KeyDB 案例。
 
-## 選型前判準
+## 選型前判斷標準
 
 快取資料形狀選型前要先回答：
 

@@ -55,7 +55,7 @@ dio.options.headers['Authorization'] = 'Bearer $token';
 
 「走產品的 client 與模型」是刻意選擇：手刻 raw JSON 曾在同一批測試裡重踩產品早已解決的問題（列表回應的分頁包裝），而型別化解析讓後端回應形狀的變化在這層先於產品爆出來。
 
-## 5. 可複用的判準
+## 5. 可複用的判斷標準
 
 1. 測試出現「穩定 400、無網路痕跡」→ 先查是不是 binding 的 HttpClient 假件，再查後端。
 2. 需要真實網路的測試檔：不初始化 binding、不 import 任何會初始化的模組，約束寫進檔頭。

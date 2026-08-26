@@ -58,6 +58,6 @@ Alert fatigue 治理的核心概念是把告警品質當系統能力管理。判
 - [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)
 - [7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能為告警系統建立品質治理循環。輸出至少包含品質欄位、分層策略、調校節奏、對齊路由與回寫位置。

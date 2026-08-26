@@ -8,7 +8,7 @@ weight: 255
 
 Security exception 的核心概念是「在明確邊界內接受短期風險，並用協議管理收斂路徑」。它讓風險接受決策可追蹤、可關閉、可回寫。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。
 
-要登記一筆例外的話，六個欄位與各欄的判準在下方的[設計責任](#設計責任)段，而在填第一欄之前有兩道入口要過（這個風險可不可以用例外承接、關閉它需要的動作在不在可控範圍內），也寫在那一段。
+要登記一筆例外的話，六個欄位與各欄的判斷標準在下方的[設計責任](#設計責任)段，而在填第一欄之前有兩道入口要過（這個風險可不可以用例外承接、關閉它需要的動作在不在可控範圍內），也寫在那一段。
 
 ## 概念位置
 
@@ -42,4 +42,4 @@ Security exception 位在 [Release Gate](/backend/knowledge-cards/release-gate/)
 5. **exit criteria（關閉條件）**：什麼條件成立才算收斂完成，要可驗證而不是「風險降低」這種敘述。可驗證之外還要**可達成**——觸發它的動作要落在 owner 的行動範圍內，「等上游釋出修補」形式上合規而實質是無限期等待，這種情形要同時寫一條自主可達的替代路徑（換掉那個依賴、關掉那條功能、或把資產移出暴露面）。
 6. **write-back target（回寫目標）**：關閉後把知識與控制面改進寫回哪裡。
 
-例外成立的同時要同步設計關閉節奏與回寫路徑。[Tripwire](/backend/knowledge-cards/tripwire/) 不是這六欄之一——它是獨立物件、自帶訊號與門檻，並以某一筆例外為它的觀察對象（方向是 tripwire 指向例外，不是例外持有 tripwire）。基數的判準在關閉條件的性質：**關閉依賴的事件在組織外或時間不可預測時，這筆例外必須掛至少一個 tripwire**（沒有它，到期日只會在到期那天才知道收不了）；關閉純粹依賴內部可排程的工期時，到期日本身就是觸發，掛不掛是選擇。填寫協議與可套用的模板見 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)、治理責任的分工見 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。
+例外成立的同時要同步設計關閉節奏與回寫路徑。[Tripwire](/backend/knowledge-cards/tripwire/) 不是這六欄之一——它是獨立物件、自帶訊號與門檻，並以某一筆例外為它的觀察對象（方向是 tripwire 指向例外，不是例外持有 tripwire）。基數的判斷標準在關閉條件的性質：**關閉依賴的事件在組織外或時間不可預測時，這筆例外必須掛至少一個 tripwire**（沒有它，到期日只會在到期那天才知道收不了）；關閉純粹依賴內部可排程的工期時，到期日本身就是觸發，掛不掛是選擇。填寫協議與可套用的模板見 [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)、治理責任的分工見 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。

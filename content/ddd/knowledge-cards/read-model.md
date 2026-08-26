@@ -6,7 +6,7 @@ description: "查詢該由 repository 回 aggregate、還是該有自己的查�
 weight: 14
 ---
 
-read model 是為讀需求的形狀而建的查詢側模型：畫面或報表要什麼形狀（統計值、扁平列表、跨 aggregate 拼裝）、它就長什麼形狀。repository 回傳 [aggregate](/ddd/knowledge-cards/aggregate-root/) 的形狀、守一致性邊界；read model 回傳讀的形狀、不承擔寫入責任。兩者的分工判準是一句自檢問句：「這個查詢回傳的是讀的形狀、還是 aggregate 的形狀」。讀側的介面宣告是一種 [port](/ddd/knowledge-cards/port/)——同樣以領域語言表達、由查詢方的需要定義形狀。
+read model 是為讀需求的形狀而建的查詢側模型：畫面或報表要什麼形狀（統計值、扁平列表、跨 aggregate 拼裝）、它就長什麼形狀。repository 回傳 [aggregate](/ddd/knowledge-cards/aggregate-root/) 的形狀、守一致性邊界；read model 回傳讀的形狀、不承擔寫入責任。兩者的分工標準是一句自檢問句：「這個查詢回傳的是讀的形狀、還是 aggregate 的形狀」。讀側的介面宣告是一種 [port](/ddd/knowledge-cards/port/)——同樣以領域語言表達、由查詢方的需要定義形狀。
 
 ## 概念位置
 
@@ -18,4 +18,4 @@ repository 介面長出回傳統計值、分頁切片、反正規化投影的方
 
 ## 設計責任
 
-read model 定義「讀側要什麼形狀」，升級到哪一階由訊號決定、不由架構偏好決定——五個升級訊號（讀需求增生、形狀偏離、負載分歧、新鮮度分級、獨立演進）與階梯各階的代價，教學層展開見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。
+read model 定義「讀側要什麼形狀」，升級到哪一階由訊號決定、不由架構偏好決定——五個升級訊號（讀需求增生、形狀偏離、負載分歧、新鮮度分級、獨立演進）與階梯各階的代價，教學層展開見 [讀模型的升級條件](/ddd/read-model-upgrade-signals/)。

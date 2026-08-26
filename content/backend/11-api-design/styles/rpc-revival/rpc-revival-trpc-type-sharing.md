@@ -18,16 +18,16 @@ tRPC 的選型位置是「前後端同倉、且都是 TypeScript」這個消費�
 
 tRPC 的優勢反過來看、是「契約中介層」在單一團隊場景下的成本。一個真實團隊的量化帳可以把這個成本說清楚：Echobind 從 GraphQL 遷到 tRPC 前、同一份資料形狀要在 Prisma、Nexus、GraphQL operations、codegen types、client queries 五層各宣告一次；三層 codegen 產出 8,200 行型別檔、常需重啟編輯器的 language server；依賴體積 GraphQL 側 81.2kb、tRPC 側 23.7kb；遷移後淨減 1,608 行程式碼（見 [11.C23](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/)）。
 
-這些數字劃出一條判準：schema 這個中介層、在「跨團隊、跨 client 的契約」場景是價值、在「單一團隊同時擁有前後端」場景變純開銷。判準的對象是 schema 的適用場景，跟 tRPC 對 GraphQL 的優劣排名無關。同構 TypeScript 的單團隊、多維護一份 schema 換不到跨方協調的好處、只多出五層宣告要同步。判讀訊號因此是「這份 schema 在協調誰」：協調不同團隊或不同語言的 client、留著；只在協調你自己前後端、它是可以拿掉的中間層。但「單團隊」不直接等於「拿掉」—— 需要對外 API 文件、要跑 contract test、或預期未來出現非 TypeScript 消費者（mobile、第三方）時、schema 仍賺得回維護成本；拿掉的前提是這三者都不成立。同一份帳也出現在 [公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/) 的適用邊界段、兩章從 GraphQL 與 tRPC 兩側看同一條界線。
+這些數字劃出一條判斷標準：schema 這個中介層、在「跨團隊、跨 client 的契約」場景是價值、在「單一團隊同時擁有前後端」場景變純開銷。判斷標準的對象是 schema 的適用場景，跟 tRPC 對 GraphQL 的優劣排名無關。同構 TypeScript 的單團隊、多維護一份 schema 換不到跨方協調的好處、只多出五層宣告要同步。判讀訊號因此是「這份 schema 在協調誰」：協調不同團隊或不同語言的 client、留著；只在協調你自己前後端、它是可以拿掉的中間層。但「單團隊」不直接等於「拿掉」—— 需要對外 API 文件、要跑 contract test、或預期未來出現非 TypeScript 消費者（mobile、第三方）時、schema 仍賺得回維護成本；拿掉的前提是這三者都不成立。同一份帳也出現在 [公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/) 的適用邊界段、兩章從 GraphQL 與 tRPC 兩側看同一條界線。
 
 ## schema-first vs inference-first：契約放在相反的地方
 
-tRPC 與 [gRPC 的 proto](/backend/11-api-design/styles/grpc/grpc-proto-evolution-discipline/) 都在解同一個問題 —— 契約怎麼跨 client 與 server 同步 —— 但把契約放在相反的地方。protobuf 走 schema-first：契約是一份外置的 IDL 檔、跨語言、可用 CI 做 breaking 檢查、代價是要維護檔案與 codegen。tRPC 走 inference-first：契約是型別推導的結果、零 codegen、代價是鎖定單一語言與同倉。這組對照是演進成本這條選型軸的具體兩極：團隊承擔得起「外置 schema 的維護」還是需要「零 codegen 的即時同步」、判準見 [11.2](/backend/11-api-design/api-style-selection/)。
+tRPC 與 [gRPC 的 proto](/backend/11-api-design/styles/grpc/grpc-proto-evolution-discipline/) 都在解同一個問題 —— 契約怎麼跨 client 與 server 同步 —— 但把契約放在相反的地方。protobuf 走 schema-first：契約是一份外置的 IDL 檔、跨語言、可用 CI 做 breaking 檢查、代價是要維護檔案與 codegen。tRPC 走 inference-first：契約是型別推導的結果、零 codegen、代價是鎖定單一語言與同倉。這組對照是演進成本這條選型軸的具體兩極：團隊承擔得起「外置 schema 的維護」還是需要「零 codegen 的即時同步」、判斷標準見 [11.2](/backend/11-api-design/api-style-selection/)。
 
 ## 下一步路由
 
 - 契約外置的對照路線：[gRPC proto 演進紀律](/backend/11-api-design/styles/grpc/grpc-proto-evolution-discipline/)
 - 另一種輕量 RPC 的適用條件：[JSON-RPC 的適用條件](/backend/11-api-design/styles/rpc-revival/rpc-revival-jsonrpc-conditions/)
 - 同一條邊界的 GraphQL 側：[公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/)
-- 三軸選型判準：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
+- 三軸選型標準：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

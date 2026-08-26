@@ -1,7 +1,7 @@
 ---
 title: "負載分散演算法"
 date: 2026-07-03
-description: "在 round-robin、least-connections、IP hash、consistent hash 之間選負載分散演算法時，用請求成本是否均勻、實例是否同質、需不需要親和性當判準"
+description: "在 round-robin、least-connections、IP hash、consistent hash 之間選負載分散演算法時，用請求成本是否均勻、實例是否同質、需不需要親和性當判斷標準"
 weight: 2
 tags: ["devops", "load-balancing", "round-robin", "consistent-hash", "sticky-session"]
 ---
@@ -44,7 +44,7 @@ Sticky session 的代價要算清楚。綁定會讓負載不均——熱門會�
 
 ## 選型收斂
 
-演算法的選擇收斂到三個問題。請求成本均勻、實例同質 → round-robin，最簡單。實例不同質 → 加權。請求成本差異大 → least-connections，看當前負載。需要會話或快取親和性 → 雜湊：不在意擴縮容時的重新映射用 IP hash，在意（有快取要保溫、實例常增減）用 consistent hash。需要會話層的黏著且能承受它的失效成本 → sticky session，但先評估把狀態外置是不是更好的解。判準始終是流量的兩個性質：請求成本均不均、需不需要親和性。
+演算法的選擇收斂到三個問題。請求成本均勻、實例同質 → round-robin，最簡單。實例不同質 → 加權。請求成本差異大 → least-connections，看當前負載。需要會話或快取親和性 → 雜湊：不在意擴縮容時的重新映射用 IP hash，在意（有快取要保溫、實例常增減）用 consistent hash。需要會話層的黏著且能承受它的失效成本 → sticky session，但先評估把狀態外置是不是更好的解。判斷標準始終是流量的兩個性質：請求成本均不均、需不需要親和性。
 
 ## 下一步路由
 

@@ -27,7 +27,7 @@ tags: ["backend", "reliability"]
 
 Fuzz target 是 fuzz campaign 的最小驗證單位，責任是把外部輸入導入一個可觀測邊界的函式。
 
-好的 target 對準單一 parser、codec、serializer 或 validation function，函式簽章接受原始位元組（如 `func([]byte)` 或等效形式）。target 選擇的判準有三個：這個函式是否直接處理外部輸入、邊界行為是否不清楚、crash 是否有業務影響。
+好的 target 對準單一 parser、codec、serializer 或 validation function，函式簽章接受原始位元組（如 `func([]byte)` 或等效形式）。target 選擇的判斷標準有三個：這個函式是否直接處理外部輸入、邊界行為是否不清楚、crash 是否有業務影響。
 
 target 粒度影響 fuzz 的效率與判讀價值。target 太大（整個 HTTP handler 含 auth / routing / DB 存取）會讓 crash 難以定位到具體邊界，因為 fuzz engine 需要同時探索太多分支，coverage 增長慢且 crash 歸因模糊。target 太小（單一 if 分支）會讓 coverage 增長無意義，因為分支行為已經被 unit test 覆蓋。
 

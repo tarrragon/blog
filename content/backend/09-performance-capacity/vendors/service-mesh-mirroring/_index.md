@@ -35,9 +35,9 @@ Service-to-service migration 適合 service mesh mirroring。當下游服務準�
 
 多 region / 多 version 對照適合 service mesh mirroring。Mesh policy 能按 namespace、host、route、header 或 subset 控制 mirror target，讓平台在小 blast radius 下收集 production-shaped evidence。
 
-## 選型判準
+## 選型標準
 
-| 判準               | Service mesh mirroring 的價值               | 需要補的能力                        |
+| 判斷標準           | Service mesh mirroring 的價值               | 需要補的能力                        |
 | ------------------ | ------------------------------------------- | ----------------------------------- |
 | Proxy 層控制       | mirror policy 不侵入 application code       | mesh control plane 治理與變更審核   |
 | Service routing    | 可按 host、route、subset 控制 target        | route 命名、ownership、policy drift |

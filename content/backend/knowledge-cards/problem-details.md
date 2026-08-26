@@ -23,4 +23,4 @@ Problem Details 的核心責任是給 HTTP API 的錯誤回應一個現成的、
 
 採用時要決定的是 `type` URI 的命名空間怎麼分配（按服務、按領域、還是按錯誤族），以及哪些資訊放 extension member。不採用時要承擔的是同樣兩件事的自建版本，並且盡早把「未知欄位請忽略」寫進文件。它保護的是寫下它之後才新增的欄位，因此晚寫不追溯保護已經發出去的那些——而正因為價值在往後，晚寫仍然值得補。
 
-錯誤該分幾類、格式欄位怎麼設計的完整判準見 [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)；跨風格的格式交鋒見 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)。
+錯誤該分幾類、格式欄位怎麼設計的完整判斷標準見 [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)；跨風格的格式交鋒見 [錯誤格式之爭](/backend/11-api-design/error-format-debate/)。

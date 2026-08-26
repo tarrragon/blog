@@ -28,7 +28,7 @@ JSON-RPC 不限於本地 —— Ethereum 節點的 JSON-RPC API 就是網路遠�
 
 ## 對照：與 gRPC、tRPC 的分工
 
-JSON-RPC 跟 [gRPC](/backend/11-api-design/styles/grpc/grpc-internal-rpc-selection/) 服務的是不同 deployment shape：gRPC 落在跨服務、高吞吐、要框架層集中的位置；JSON-RPC 落在本地、雙向、低頻的位置。兩者不是競爭、是消費者形狀這條軸的不同列 —— 判準見 [11.2](/backend/11-api-design/api-style-selection/)。
+JSON-RPC 跟 [gRPC](/backend/11-api-design/styles/grpc/grpc-internal-rpc-selection/) 服務的是不同 deployment shape：gRPC 落在跨服務、高吞吐、要框架層集中的位置；JSON-RPC 落在本地、雙向、低頻的位置。兩者不是競爭、是消費者形狀這條軸的不同列 —— 判斷標準見 [11.2](/backend/11-api-design/api-style-selection/)。
 
 還有一個當代共性值得點出：MCP 的 schema 以 TypeScript 為 source of truth、跟 [tRPC](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/) 用型別系統當契約、都指向「用 TypeScript 型別當契約源頭」的模式。這是觀察到的趨勢共性、不是說兩者可互換 —— MCP 仍是跨語言協議、tRPC 綁單語言。
 
@@ -36,5 +36,5 @@ JSON-RPC 跟 [gRPC](/backend/11-api-design/styles/grpc/grpc-internal-rpc-selecti
 
 - 高吞吐跨服務的對照位置：[gRPC 內部 RPC 的選型位置](/backend/11-api-design/styles/grpc/grpc-internal-rpc-selection/)
 - 型別當契約的同倉路線：[tRPC 型別共享](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/)
-- 三軸選型判準：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
+- 三軸選型標準：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

@@ -1,7 +1,7 @@
 ---
 title: "部署平台 Vendor 清單"
 date: 2026-05-01
-description: "規劃 workload runtime、orchestration、traffic、IaC 與 discovery 的服務頁撰寫順序與判準"
+description: "規劃 workload runtime、orchestration、traffic、IaC 與 discovery 的服務頁撰寫順序與判斷標準"
 weight: 90
 tags: ["backend", "deployment", "vendor"]
 ---
@@ -51,7 +51,7 @@ tags: ["backend", "deployment", "vendor"]
 | 替代邊界 | VM、container、Kubernetes、managed platform、service mesh、simple proxy 的機會成本              |
 | 操作成本 | upgrade、config drift、certificate、health check、drain、state、rollback                        |
 | Evidence | deploy marker、per-version SLI、health check、drain completion、plan diff、registry freshness   |
-| 案例回寫 | Tradeshift、Condé Nast、Orbitera 與平台切換案例如何提供回退判準                                 |
+| 案例回寫 | Tradeshift、Condé Nast、Orbitera 與平台切換案例如何提供回退判斷標準                             |
 
 ## 服務頁標準章節
 

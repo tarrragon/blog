@@ -6,7 +6,7 @@ weight: 1
 tags: ["llm", "knowledge-cards", "prompting", "training"]
 ---
 
-In-context learning（ICL）的核心概念是「**模型在不更新權重的情況下，從 [context window](/llm/knowledge-cards/context-window/) 內資訊臨時學會任務格式與判準**」。它是 LLM 跟傳統模型最不同的能力之一：任務規則可以放在 context 裡，而不是一定要 fine-tune 進權重。
+In-context learning（ICL）的核心概念是「**模型在不更新權重的情況下，從 [context window](/llm/knowledge-cards/context-window/) 內資訊臨時學會任務格式與判斷標準**」。它是 LLM 跟傳統模型最不同的能力之一：任務規則可以放在 context 裡，而不是一定要 fine-tune 進權重。
 
 ## 概念位置
 

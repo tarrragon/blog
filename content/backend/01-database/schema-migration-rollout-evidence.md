@@ -368,7 +368,7 @@ Dual-write 跟 shadow read 的 divergence 要分開看 — 兩者偵測不同層
 
 [0.C4 營運後技術轉換](/backend/00-service-selection/cases/post-scale-migration-language-tool-architecture/) 可以回寫這篇的決策層。當服務營運後需要拆欄位、拆庫、分片或升級儲存引擎，先用 0.C4 判斷「為什麼要換」，再用本篇判斷「進入 production 後如何證明每一步成立」。
 
-[GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 可以回寫這篇的事故層。該事件顯示資料一致性優先時，團隊需要可回放的 fail-forward / fail-back 判準；本篇則把這個需求落到 migration rollout 的 evidence、gate 與 decision log。
+[GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/) 可以回寫這篇的事故層。該事件顯示資料一致性優先時，團隊需要可回放的 fail-forward / fail-back 判斷標準；本篇則把這個需求落到 migration rollout 的 evidence、gate 與 decision log。
 
 這兩個案例共同支撐的是「資料狀態演進需要證據閉環」。0.C4 提供轉換動機與選型壓力，GitHub 事故提供資料一致性與恢復決策的代價；兩者都不直接替代 validation query、release gate 與 decision log 的實作細節。
 

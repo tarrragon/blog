@@ -10,9 +10,9 @@ tags: ["backend", "observability"]
 
 - readiness review 的責任：在 production 前確認訊號能支援分級、定位、回復與復盤
 - 檢查面向：[log schema](/backend/knowledge-cards/log-schema/)、[metrics](/backend/knowledge-cards/metrics/)、[trace context](/backend/knowledge-cards/trace-context/)、[dashboard](/backend/knowledge-cards/dashboard/)、[alert](/backend/knowledge-cards/alert/)
-- 上線前判準：核心 user journey 是否有 SLI、錯誤是否有 correlation key、依賴是否可追蹤
-- 變更前判準：新依賴、新 queue、新 feature flag 是否帶出新訊號需求
-- 演練前判準：game day / chaos / DR drill 是否能被 04 訊號觀察
+- 上線前判斷標準：核心 user journey 是否有 SLI、錯誤是否有 correlation key、依賴是否可追蹤
+- 變更前判斷標準：新依賴、新 queue、新 feature flag 是否帶出新訊號需求
+- 演練前判斷標準：game day / chaos / DR drill 是否能被 04 訊號觀察
 - 跟 06 的交接：readiness 缺口進入 reliability readiness / release gate
 - 跟 08 的交接：readiness 缺口影響 severity trigger、runbook 與 decision log
 - 反模式：服務先上線、事故後才補 dashboard；alert 有通知但缺定位欄位；trace 需要人工對回 log
@@ -57,7 +57,7 @@ Observability readiness review 適合放在服務生命週期的高風險節點�
 - dashboard 是否能支援 on-call 的前 10 分鐘判讀
 - alert 是否能連到 [runbook](/backend/knowledge-cards/runbook/) 與 owner
 
-| 檢查面向 | 最小可用判準                                | 常見失真                           |
+| 檢查面向 | 最小可用標準                                | 常見失真                           |
 | -------- | ------------------------------------------- | ---------------------------------- |
 | 事件關聯 | request / trace / tenant 可串成同一條事件鏈 | 欄位命名不一致、跨服務拼接失敗     |
 | 服務健康 | SLI 與 error rate 能反映核心旅程            | 指標只反映系統資源、不反映用戶結果 |

@@ -1,7 +1,7 @@
 ---
 title: "Clarifying Ambiguous Instructions — 模糊指令澄清協議"
 date: 2026-04-26
-description: "requirement-protocol reference：空間 / 相對位置 / 隔離 / 決定權 / 篩選五類模糊指令的澄清模板 + visible 三問判準 + 篩選三問。"
+description: "requirement-protocol reference：空間 / 相對位置 / 隔離 / 決定權 / 篩選五類模糊指令的澄清模板 + visible 三問判斷標準 + 篩選三問。"
 tags: ["skills", "requirement-protocol", "對話協議", "需求澄清"]
 ---
 
@@ -10,7 +10,7 @@ tags: ["skills", "requirement-protocol", "對話協議", "需求澄清"]
 適用：空間 / 尺寸（「padding 加大」「對齊」）、相對位置（「在 X 旁邊」「靠近 Y」）、隔離（「不要動 X」「跟 Y 分開」）、決定權（「breakpoint 設多少」）、篩選（「依 X 篩選」「只看 Y」）。
 不適用：內部技術選擇（grid / flex、observer 種類）— 那些自決即可、見「可決定 vs 該確認」段落。
 
-> **自包含聲明**：閱讀本文件不需要先讀其他 reference。本文件涵蓋五類模糊指令的澄清模板與「自決 vs 確認」的判準。
+> **自包含聲明**：閱讀本文件不需要先讀其他 reference。本文件涵蓋五類模糊指令的澄清模板與「自決 vs 確認」的判斷標準。
 
 ---
 
@@ -253,7 +253,7 @@ C. Form 下方、結果之上           → grid row 排序、跟 results 共生
 - [spatial-instruction-clarification](/report/spatial-instruction-clarification/) — 空間 / 尺寸類
 - [relative-position-instruction-clarification](/report/relative-position-instruction-clarification/) — 相對位置類
 - [isolation-instruction-clarification](/report/isolation-instruction-clarification/) — 隔離類
-- [decide-vs-confirm-boundary](/report/decide-vs-confirm-boundary/) — 可決定 vs 該確認的完整判準
+- [decide-vs-confirm-boundary](/report/decide-vs-confirm-boundary/) — 可決定 vs 該確認的完整判斷標準
 
 ---
 

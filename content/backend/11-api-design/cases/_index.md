@@ -58,7 +58,7 @@ tags: ["backend", "api-design", "case-study"]
 | C29  | [Buf breaking detection](/backend/11-api-design/cases/grpc-buf-breaking-detection/)               | 四級規則、CI gate         | anchor      |
 | C30  | [Buf Connect 批評](/backend/11-api-design/cases/grpc-buf-connect-critique/)                       | 部署邊界、trailers        | anchor      |
 | C31  | [Dropbox Courier](/backend/11-api-design/cases/grpc-dropbox-courier/)                             | 百萬 RPS 遷移、框架層集中 | anchor      |
-| C32  | [gRPC: The Bad Parts](/backend/11-api-design/cases/grpc-kmcd-bad-parts/)                          | debug 可及性判準          | 反例 / 邊緣 |
+| C32  | [gRPC: The Bad Parts](/backend/11-api-design/cases/grpc-kmcd-bad-parts/)                          | debug 可及性判斷標準      | 反例 / 邊緣 |
 | C33  | [tRPC 設計哲學](/backend/11-api-design/cases/rpc-trpc-design-philosophy/)                         | 型別系統當契約、TS 鎖定   | anchor      |
 | C34  | [JSON-RPC 重生（LSP / MCP）](/backend/11-api-design/cases/rpc-jsonrpc-lsp-mcp-revival/)           | 最小夠用訊息層            | anchor      |
 

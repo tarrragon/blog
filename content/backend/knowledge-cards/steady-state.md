@@ -14,7 +14,7 @@ Steady state 位在 [error budget](/backend/knowledge-cards/error-budget/)、[bl
 
 ## 可觀察訊號與例子
 
-系統需要 steady state 的訊號是 chaos、failover 或 DR drill 只描述故障動作，缺少成功判準。常見例子是節點被關閉後 health check 仍為綠燈，但 checkout success、queue lag 或 client-side error rate 已經偏離使用者可接受範圍。
+系統需要 steady state 的訊號是 chaos、failover 或 DR drill 只描述故障動作，缺少成功判斷標準。常見例子是節點被關閉後 health check 仍為綠燈，但 checkout success、queue lag 或 client-side error rate 已經偏離使用者可接受範圍。
 
 ## 設計責任
 

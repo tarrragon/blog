@@ -32,7 +32,7 @@ Spotify 這個案例在講的是平台工程如何把可靠性散到每個 squad
 
 當組織採用分散責任模型時，可靠性不再只靠中央團隊，而是靠平台把常見能力做成共同元件。當 fleet 或 streaming 基礎設施需要治理時，重點是 catalog 與 control plane 是否讓團隊看得到、管得動。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否把 service catalog 跟 reliability metadata 接起來
 - 能否說清楚 squad 與平台各自負責什麼

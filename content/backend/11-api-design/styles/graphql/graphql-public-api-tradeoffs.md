@@ -10,7 +10,7 @@ tags: ["backend", "api-design", "graphql"]
 
 ## 採用：動機要能量化
 
-[11.C18](/backend/11-api-design/cases/graphql-github-adoption/) 記錄了 GitHub 2016 年的採用動機、關鍵在它的可量化性：既有 REST API 佔資料庫層超過 60% 的請求、且 over-fetching 與 under-fetching 並存 — 送太多資料、又缺消費者要的資料。這是基礎設施成本層的痛、不只是開發體驗敘事。判讀：GraphQL 的採用決策值得用同樣的標準檢驗 — 指得出「哪個資源層指標會因 client 聲明取數而改善」、動機成立；只給得出「前端想要彈性」、先確認這個彈性有多少會被實際用到（消費者形狀判準、見 [11.2](/backend/11-api-design/api-style-selection/)）。
+[11.C18](/backend/11-api-design/cases/graphql-github-adoption/) 記錄了 GitHub 2016 年的採用動機、關鍵在它的可量化性：既有 REST API 佔資料庫層超過 60% 的請求、且 over-fetching 與 under-fetching 並存 — 送太多資料、又缺消費者要的資料。這是基礎設施成本層的痛、不只是開發體驗敘事。判讀：GraphQL 的採用決策值得用同樣的標準檢驗 — 指得出「哪個資源層指標會因 client 聲明取數而改善」、動機成立；只給得出「前端想要彈性」、先確認這個彈性有多少會被實際用到（消費者形狀判斷標準、見 [11.2](/backend/11-api-design/api-style-selection/)）。
 
 ## 穩態一：雙軌共存
 
@@ -22,7 +22,7 @@ GitHub 的十年後狀態記錄在 [11.C20](/backend/11-api-design/cases/graphql
 
 ## 撤退：兩類動機、兩個教訓
 
-撤退案例分兩類、動機幾乎正交。執行成本類（[11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例）：六年使用者列出的代價全在執行期與安全面 — 欄位級授權、成本不可預測、解析層攻擊面、防禦性 dataloader；撤退判準句是「控制得了 client、就不需要 GraphQL 的彈性」（C22 判讀核心句）。開發體驗類（[11.C23](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/)、反例）：同一資料形狀在五層重複宣告、三層 codegen 產出 8,200 行型別檔拖垮 IDE、遷移到 tRPC 後淨減 1,608 行；作者自列的前提是全 TypeScript 同倉 — schema 作為跨團隊契約的價值、在單團隊同構技術棧下變成純開銷。
+撤退案例分兩類、動機幾乎正交。執行成本類（[11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例）：六年使用者列出的代價全在執行期與安全面 — 欄位級授權、成本不可預測、解析層攻擊面、防禦性 dataloader；撤退條件句是「控制得了 client、就不需要 GraphQL 的彈性」（C22 判讀核心句）。開發體驗類（[11.C23](/backend/11-api-design/cases/graphql-echobind-trpc-retreat/)、反例）：同一資料形狀在五層重複宣告、三層 codegen 產出 8,200 行型別檔拖垮 IDE、遷移到 tRPC 後淨減 1,608 行；作者自列的前提是全 TypeScript 同倉 — schema 作為跨團隊契約的價值、在單團隊同構技術棧下變成純開銷。
 
 兩類撤退指向同一條邊界的兩側：GraphQL 的 schema 中介層、價值在「跨團隊 / 跨 client 的契約協調」— 消費者異質且不受控、彈性有買家、中介層成本值得；消費者單一且同構、彈性沒有買家、中介層是稅。C23 的 tRPC 面向（型別共享的前提與代價）主寫在 [tRPC 型別共享](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/)。
 
@@ -32,7 +32,7 @@ GitHub 的十年後狀態記錄在 [11.C20](/backend/11-api-design/cases/graphql
 
 ## 下一步路由
 
-- 選型判準層：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
+- 選型標準層：[11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)
 - 執行層機制：[GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)
 - schema 層紀律：[Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)
 - 同一條邊界的 tRPC 側：[tRPC 型別共享](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/)

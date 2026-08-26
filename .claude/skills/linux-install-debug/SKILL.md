@@ -15,7 +15,7 @@ description: >
   linux install, linux debug, systemd, authoritative state.
 license: MIT
 metadata:
-  version: 1.17.0
+  version: 1.17.1
   category: ops-diagnostics
 ---
 
@@ -105,6 +105,8 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 
 ---
 
+**Version**: 1.17.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
+
 **Version**: 1.17.0 — 補 frontmatter（並補一條症狀路由：自己寫的 shell script 壞了 → 可攜陷阱段。那幾條歸檔在安裝流程底下，因為它們是寫 bootstrap 腳本時踩出來的，而症狀出現時多半不在裝機情境——只憑主題歸屬分類，症狀查不到它）。補的是 frontmatter（`name` / `description` / `metadata.version`）。這份 skill 先前整份沒有 frontmatter，所以它從來不會被自動觸發——只有明確指名才叫得動。代價在補這一版的當天具體發生過一次：另一個工作流程踩到 `$var` 緊跟多位元組字被吞 byte 的 bug（實測環境正是 macOS bash 3.2），現場重新推導一次，並寫下了 v1.15.3 這條 fact-check 早就修正掉的錯誤歸因。**知識在庫裡而觸發器不存在，等於沒有這份 skill。**
 
 同批修版本記錄的重號：2026-07-09 的三個變更在本 skill 已到 1.15.0 時從 1.3.0 重新編號，且插在舊序列中間，造成 1.4.0 與 1.3.0 各出現兩次、1.4.1 排在 1.2.1 之後。依 commit 時序重編為 1.15.1 / 1.15.2 / 1.15.3。重號會讓「這條規則是哪一版加的」查不出答案，而版本記錄的用途正是回答這個問題。
@@ -130,5 +132,5 @@ command -v pacman apt-get dnf brew   # 哪個套件管理器在場
 **Version**: 1.3.0 — Round-3 審查修正：補兩類 AI 最高頻情境——權限被拒(EACCES、namei -l 逐層 / MAC / capability)、套件管理器失敗(pacman db lock / keyring 簽章 / partial upgrade)；被 kill/OOM/exit137 判讀；速查表加 kernel(dmesg)/權限/strace 三列；read-logs 加 strace 回退；DNS resolv.conf symlink caveat、sudoers chmod 0440
 **Version**: 1.2.1 — Round-2 審查修正：systemd-failed 情境接上入口（速查表 + 症狀路由補「服務 failed / restart loop」，原本加了 section 卻路由不到）
 **Version**: 1.2.0 — Round-1 審查修正：`arp -a` 全面改主推 `ip neigh`（現代最小系統無 net-tools）；新增 DNS 解析、systemd failed 判讀、檔案系統唯讀 remount 三個情境；路由標明 remote→machine 分流；反模式加 scrollback 殘影
-**Version**: 1.1.0 — 新增 tool-options reference（依環境 CLI/GUI/遠端挑對工具、現代替代品 vs POSIX 可攜的判準）
+**Version**: 1.1.0 — 新增 tool-options reference（依環境 CLI/GUI/遠端挑對工具、現代替代品 vs POSIX 可攜的判斷標準）
 **Version**: 1.0.0 — 初版：四步診斷流程 + 權威來源速查 + 5 情境 reference + 2 原則卡，從一次 Arch/Hyprland VM 實機安裝與除錯（含肉眼猜錯兩次的鎖屏案例）萃取

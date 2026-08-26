@@ -260,4 +260,4 @@ Observability evidence：backfill 開始 timestamp、operation id、predicted du
 
 ### Anti-recommendation
 
-讀者讀完本文應該能判斷：interleaved 不是「強制使用」的 feature、是「access pattern 固定時的 latency benefit」。小規模 OLTP、access pattern 不確定的 workload、用 standard PostgreSQL FK 就好、為 interleaved 付 schema 後悔成本的判準很高。
+讀者讀完本文應該能判斷：interleaved 不是「強制使用」的 feature、是「access pattern 固定時的 latency benefit」。小規模 OLTP、access pattern 不確定的 workload、用 standard PostgreSQL FK 就好、為 interleaved 付 schema 後悔成本的判斷標準很高。

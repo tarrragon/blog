@@ -24,7 +24,7 @@ tags: ["infra", "takeover", "legacy", "migration"]
 | [State 修復與清理](/infra/takeover/partial-iac-state-repair/)                          | state 損壞診斷、orphaned entry 清理、state surgery、backend 搬遷          |
 | [Drift 分類處理指南](/infra/takeover/partial-iac-drift-triage/)                        | plan 輸出分類、adopt vs revert 決策、stateful replacement 風險            |
 | [Unmanaged Resource 批次 Import](/infra/takeover/partial-iac-bulk-import/)             | 優先序、import block、generated HCL review、批次策略                      |
-| [兩套真相並存的過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)          | 操作規則、ownership 台帳、團隊溝通、import sprint、transition 完成判準    |
+| [兩套真相並存的過渡期操作](/infra/takeover/partial-iac-dual-truth-operation/)          | 操作規則、ownership 台帳、團隊溝通、import sprint、transition 完成條件    |
 
 ## 跟其他模組的關係
 

@@ -14,7 +14,7 @@ Siren 用 entities / actions / links 三元件表達資源、特點是 first-cla
 
 ## 判讀
 
-教學判準：「表達力不是 hypermedia 格式勝出的變數、client 生態才是」— Siren 表達力上更完整（actions 近似 HTML form 的 JSON 化）、採用反而更少。同時支撐 htmx 派「JSON 不是 natural hypermedia」與 pragmatic 派「別等標準收斂」兩邊的決策。
+教學判斷標準：「表達力不是 hypermedia 格式勝出的變數、client 生態才是」— Siren 表達力上更完整（actions 近似 HTML form 的 JSON 化）、採用反而更少。同時支撐 htmx 派「JSON 不是 natural hypermedia」與 pragmatic 派「別等標準收斂」兩邊的決策。
 
 ## 對應大綱
 

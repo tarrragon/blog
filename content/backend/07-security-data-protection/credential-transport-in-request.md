@@ -12,7 +12,7 @@ tags: ["backend", "security"]
 
 ## 本章涵蓋與不涵蓋
 
-本章聚焦憑證在每次請求裡怎麼被附上，以及這個選擇把攻擊面換成了什麼形狀。憑證本身用什麼機制是上游的決定（[7.31](../authentication-approach-selection/) 決定拿什麼驗證使用者、[7.28 密碼學原語選型](../cryptographic-primitive-selection/) 決定原語）。登入狀態放伺服器還是放 token、以及隨之而來的撤銷成本，見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)——那條軸問狀態放哪、本章問憑證怎麼送，兩者可以任意組合，放外部 session store 的狀態一樣可以用 cookie 或 header 帶。機器對機器的呼叫沒有本章的核心機制（瀏覽器依網域自動附上），入口是 [7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/) 與 [7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)。頁面本身怎麼避免執行到別人的程式碼（輸出編碼、內容安全政策）屬前端的責任面，章節層尚未寫，最小判準見 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 的設計責任段；本章把它的結果當成前提來判讀，而不涵蓋它的做法。
+本章聚焦憑證在每次請求裡怎麼被附上，以及這個選擇把攻擊面換成了什麼形狀。憑證本身用什麼機制是上游的決定（[7.31](../authentication-approach-selection/) 決定拿什麼驗證使用者、[7.28 密碼學原語選型](../cryptographic-primitive-selection/) 決定原語）。登入狀態放伺服器還是放 token、以及隨之而來的撤銷成本，見 [Session 處理](/operations/02-horizontal-scaling/session-handling/)——那條軸問狀態放哪、本章問憑證怎麼送，兩者可以任意組合，放外部 session store 的狀態一樣可以用 cookie 或 header 帶。機器對機器的呼叫沒有本章的核心機制（瀏覽器依網域自動附上），入口是 [7.29 API 認證的信任邊界分層](../api-authentication-trust-boundaries/) 與 [7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)。頁面本身怎麼避免執行到別人的程式碼（輸出編碼、內容安全政策）屬前端的責任面，章節層尚未寫，最小判斷標準見 [cross-site scripting](/backend/knowledge-cards/cross-site-scripting/) 的設計責任段；本章把它的結果當成前提來判讀，而不涵蓋它的做法。
 
 ## 判讀軸：附上的決定由誰做
 

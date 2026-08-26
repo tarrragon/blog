@@ -8,7 +8,7 @@ tags: ["infra", "air-gapped", "git", "ci-cd"]
 
 版本控制和 CI/CD 是所有 infra 操作的前提——程式碼要有地方存、變更要能被 review、build 和 deploy 要自動化。正常環境裡這些由 GitHub + GitHub Actions 提供，斷網環境裡這兩個服務都不存在，需要在內網自建替代品。
 
-## GitLab CE vs Gitea：選型判準
+## GitLab CE vs Gitea：選型標準
 
 兩個主流的自建版本控制方案定位不同：
 
@@ -21,7 +21,7 @@ tags: ["infra", "air-gapped", "git", "ci-cd"]
 | 安裝複雜度         | 中（Omnibus 包裝簡化了安裝、但設定項多）           | 低（單一二進位檔、啟動即可用）          |
 | 維護負擔           | 高（PostgreSQL、Redis、Sidekiq 都在裡面）          | 低（SQLite 或 MySQL、無背景服務）       |
 
-選型判準是團隊規模和需要的功能範圍。5 人以下、只需要 VCS + 輕量 CI 的團隊，Gitea + Drone 的組合維護成本低。10 人以上、需要 MR review + CI pipeline + Container Registry 一站到位的團隊，GitLab CE 的整合度值得它的資源消耗。
+選型標準是團隊規模和需要的功能範圍。5 人以下、只需要 VCS + 輕量 CI 的團隊，Gitea + Drone 的組合維護成本低。10 人以上、需要 MR review + CI pipeline + Container Registry 一站到位的團隊，GitLab CE 的整合度值得它的資源消耗。
 
 接下來以 GitLab CE 為主線說明（功能最完整），Gitea 的差異在各段附註。
 

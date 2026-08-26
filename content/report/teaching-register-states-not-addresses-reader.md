@@ -116,7 +116,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作"]
 
 ## Self-case：本卡的觸發來源
 
-本卡觸發於 review [高階函式的適用判準](../../work-log/dart_hof_typedef_readability/) 時、由讀者連續指出三種對讀者喊話：
+本卡觸發於 review [高階函式的適用條件](../../work-log/dart_hof_typedef_readability/) 時、由讀者連續指出三種對讀者喊話：
 
 1. **安撫**：「很多人卡在『哪裡是型別、哪裡是名字』」—— 訴諸群體、讓讀者覺得不孤單。
 2. **第二人稱**：「順序跟你天天寫的 `int count` 一樣」「你天天在用 map」—— 把讀者拉進句子。

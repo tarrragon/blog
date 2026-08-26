@@ -6,7 +6,7 @@ weight: 20
 tags: ["backend", "message-queue", "case-study", "kafka"]
 ---
 
-Spotify 從 Kafka 遷出到 GCP Pub/Sub 的決策揭露了兩件事：broker 的可靠性保證是版本特性而非 Kafka 的不變量；以及「升級到新版」跟「換到另一個系統」之間的決策判準。
+Spotify 從 Kafka 遷出到 GCP Pub/Sub 的決策揭露了兩件事：broker 的可靠性保證是版本特性而非 Kafka 的不變量；以及「升級到新版」跟「換到另一個系統」之間的決策標準。
 
 ## 業務背景
 

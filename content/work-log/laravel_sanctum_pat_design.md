@@ -251,7 +251,7 @@ Sanctum 的設計把 secret 比對完全搬到應用層用 `hash_equals` — DB 
 | 多環境（dev / staging / prod）容易誤用 | 加環境 prefix（如 `_live_`） |
 | 多 token type（user / bot / OAuth）    | 加 type prefix               |
 
-表格的判準是 token 會不會離開受控環境。單一 Laravel app 內部使用時，Sanctum 的 PK 前綴足以支撐 lookup 與撤銷；對外 API、第三方整合或多環境部署時，prefix 可提供洩漏掃描與人工辨識訊號。也可以混用成 `{prefix}|{PK}|{secret}`，同時保留 lookup 收斂與語意辨識。
+表格的判斷標準是 token 會不會離開受控環境。單一 Laravel app 內部使用時，Sanctum 的 PK 前綴足以支撐 lookup 與撤銷；對外 API、第三方整合或多環境部署時，prefix 可提供洩漏掃描與人工辨識訊號。也可以混用成 `{prefix}|{PK}|{secret}`，同時保留 lookup 收斂與語意辨識。
 
 ---
 

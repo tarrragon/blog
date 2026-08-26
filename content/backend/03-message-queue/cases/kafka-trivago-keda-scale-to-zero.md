@@ -6,7 +6,7 @@ weight: 22
 tags: ["backend", "message-queue", "case-study", "kafka"]
 ---
 
-這個案例的核心責任是說明 event-driven workload 該按 backlog 而非 resource usage scale 的設計判準。
+這個案例的核心責任是說明 event-driven workload 該按 backlog 而非 resource usage scale 的設計判斷標準。
 
 ## 觀察
 

@@ -38,7 +38,7 @@ tags: ["linux", "tools", "remote", "ssh"]
 
 頻寬低或從手機 / 平板連線時，只傳純文字的 TUI 介面（ASCII / Unicode 製圖，不傳影像）最穩。監控、圖表、檔案瀏覽、資料庫操作都有這類工具，整理在 [CLI 環境工具](../cli/)。從手機連線還多一層：軟體鍵盤預設沒有 Esc / Ctrl / 方向鍵，得先挑對終端 client。
 
-- [手機終端 client 選型：連遠端 agent 工作機該用哪個](mobile-terminal-client-selection/)——Blink / Termius / 自製 ttyd 通道的比較，判準立在 mosh 漫遊、擴充鍵列、TUI 相容三個維度，附 Android 側實測。
+- [手機終端 client 選型：連遠端 agent 工作機該用哪個](mobile-terminal-client-selection/)——Blink / Termius / 自製 ttyd 通道的比較，判斷標準立在 mosh 漫遊、擴充鍵列、TUI 相容三個維度，附 Android 側實測。
 
 ## 遠端連線與 session 的除錯
 

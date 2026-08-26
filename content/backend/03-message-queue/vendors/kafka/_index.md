@@ -97,7 +97,7 @@ docker exec kafka /opt/kafka/bin/kafka-console-consumer.sh --topic demo \
 
 對應案例 [3.C3 LinkedIn TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/)。子議題：
 
-- Topic 活躍判準（last produce / consume timestamp）
+- Topic 活躍判斷標準（last produce / consume timestamp）
 - 自動回收條件與稽核
 - Metadata 壓力訊號（controller log、partition 數量上限）
 

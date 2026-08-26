@@ -20,7 +20,7 @@ tags: ["devops", "cost-management", "billing", "reserved", "egress"]
 
 reserved 之外還有一種容易混淆的承諾模式：savings plan。差別在承諾的對象——reserved 承諾的是「某個規格的機器」，換規格或換區域就綁不住；savings plan 承諾的是「每小時花多少錢」（例如每小時至少花 10 美元的運算），只要總消費達到承諾，用什麼規格、什麼區域都算數。savings plan 用彈性換一點折扣深度——它的折扣通常略低於同期的 reserved，但換到了「規格可以自由調整」的自由度。規格常變的服務用 savings plan、規格穩定的用 reserved，是這兩者的分界。
 
-reserved 到底值不值得，判準是承諾期內用不用得滿。一個確定會穩定跑滿 1 到 3 年的基準負載買 reserved 幾乎穩賺——那 30% 到 60% 的折扣是實打實省下的。一個可能半年後就下線、或架構還會大改的服務買 reserved，是拿折扣換被套牢的風險：承諾付了、需求卻沒了。所以買 reserved 前要先確認兩件事——這個規格的需求真的穩定、而且已經做過 [right-sizing](/operations/08-cost-management/right-sizing/)。別用三年的承諾鎖住一個過大或即將改變的規格，那會把浪費也一起鎖三年。
+reserved 到底值不值得，判斷標準是承諾期內用不用得滿。一個確定會穩定跑滿 1 到 3 年的基準負載買 reserved 幾乎穩賺——那 30% 到 60% 的折扣是實打實省下的。一個可能半年後就下線、或架構還會大改的服務買 reserved，是拿折扣換被套牢的風險：承諾付了、需求卻沒了。所以買 reserved 前要先確認兩件事——這個規格的需求真的穩定、而且已經做過 [right-sizing](/operations/08-cost-management/right-sizing/)。別用三年的承諾鎖住一個過大或即將改變的規格，那會把浪費也一起鎖三年。
 
 ## 隱藏成本：帳單上的意外
 

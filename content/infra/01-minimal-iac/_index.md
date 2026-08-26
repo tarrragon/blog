@@ -18,7 +18,7 @@ IaC 工具的核心職責是把「我要的基礎設施長什麼樣」描述成�
 
 CDK 與 Pulumi 同屬程式語言路線，但「狀態由誰持有」這個軸把它們再分開。CDK 把程式碼 synth 成 CloudFormation 模板，再交給 CloudFormation 服務端執行與追蹤，state 由 AWS 代管 — 沒有一份 tfstate 檔要自己存放、加密、回捲，也不需要額外的鎖表來防並行，這份「狀態維運外包給雲端」正是 CDK 在 AWS 生態內的賣點之一，代價是綁定 CloudFormation 與單一雲。Pulumi 走的是另一邊：它維護一份自己的 state，預設交給 Pulumi Cloud 託管，也能改用 S3 之類的後端自管 — 形態上更接近 Terraform 的 state 模型，state 的存放、保護與並行控制重回團隊手上。同一條程式語言路線，選 CDK 等於把 state 責任讓給雲端，選 Pulumi 則保留對 state 落點的掌控。
 
-選型看的是團隊組成與變更的審查需求。若多數變更要跨職能 review、希望 diff 一眼可讀，宣告式 DSL 較划算；若 infra 由專職平台團隊維護、抽象複用的收益大於審查透明度的損失，程式語言路線較划算。Terraform 與 OpenTofu 之間，OpenTofu 是授權變更後社群分叉出的相容實作，HCL 與 provider 生態幾乎共用；選擇主要看對授權條款與治理模式的偏好，技術判準在這一階沒有實質差異。本模組後續一律以 HCL 示意，換成任一宣告式工具判準仍成立。
+選型看的是團隊組成與變更的審查需求。若多數變更要跨職能 review、希望 diff 一眼可讀，宣告式 DSL 較划算；若 infra 由專職平台團隊維護、抽象複用的收益大於審查透明度的損失，程式語言路線較划算。Terraform 與 OpenTofu 之間，OpenTofu 是授權變更後社群分叉出的相容實作，HCL 與 provider 生態幾乎共用；選擇主要看對授權條款與治理模式的偏好，技術判斷標準在這一階沒有實質差異。本模組後續一律以 HCL 示意，換成任一宣告式工具判斷標準仍成立。
 
 ## state 是工具對現實的唯一記憶
 
@@ -72,7 +72,7 @@ import 只把資源 ID 寫進 state，不會幫忙生程式碼。那個資源在
 
 ## 最小可行：能 apply 出一個完整環境的最小資源集合
 
-最小可行 IaC 的目標是用最少的資源，跑出一條「改程式碼 → review → apply → 環境真的變了」的完整迴路。它承擔的責任是驗證地基本身能動，把所有服務都搬上來是後面的事。判準是這套程式碼能獨立 apply 出一個雖小但自洽、別人能重現的環境。
+最小可行 IaC 的目標是用最少的資源，跑出一條「改程式碼 → review → apply → 環境真的變了」的完整迴路。它承擔的責任是驗證地基本身能動，把所有服務都搬上來是後面的事。判斷標準是這套程式碼能獨立 apply 出一個雖小但自洽、別人能重現的環境。
 
 這一階的最小集合通常包含：一個設定好 versioning、加密與鎖表的 remote state backend；一個收斂後人類唯讀的身分權限基線；一個能放東西的網路骨架（一個 VPC 加最少的 subnet）；以及一個微不足道但真實存在的資源（例如一個 S3 bucket 或一台最小的測試機），用來證明 apply 確實作用到了雲端。把這個微小資源刻意留在最小集合裡，是因為它是最便宜的端到端驗證 — apply 跑完後它真的出現、`terraform destroy` 後它真的消失，就證明從程式碼到雲端的整條鏈路是通的。
 
@@ -84,7 +84,7 @@ import 只把資源 ID 寫進 state，不會幫忙生程式碼。那個資源在
 
 | 文章                                                                                         | 主題                                                                                                    |
 | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| [IaC 工具選型與 state 地基](/infra/01-minimal-iac/iac-tool-state-backend/)                   | Terraform / OpenTofu / CDK / Pulumi 選型判準，state 作為唯一記憶，remote state backend 的自管與託管路線 |
+| [IaC 工具選型與 state 地基](/infra/01-minimal-iac/iac-tool-state-backend/)                   | Terraform / OpenTofu / CDK / Pulumi 選型標準，state 作為唯一記憶，remote state backend 的自管與託管路線 |
 | [Console 唯讀鐵律與最小可行資源集合](/infra/01-minimal-iac/console-readonly-minimal-viable/) | Console 唯讀的操作紀律、drift 的延遲引爆與偵測，以及第一個完整 apply 迴路的最小資源集合                 |
 
 ## 跨分類引用

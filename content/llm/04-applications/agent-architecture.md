@@ -153,10 +153,10 @@ Agent 的失敗模式很多落在 termination：該停沒停（無限 loop）、
 - **Step 上限**：跑 N 步強制停。防止無限 loop、但 N 設不對會中途砍掉。
 - **Cost 上限**：累計 token / dollar 超過 cap 強制停。實務防錢被燒掉。
 - **目標達成評估**：另一個 LLM 或 deterministic check 判斷「任務完成了沒」。最 robust 但 cost 高。
-- **外部訊號**：test 跑通、檔案被寫入、人類介入。客觀、用在有明確完成判準的任務。
+- **外部訊號**：test 跑通、檔案被寫入、人類介入。客觀、用在有明確完成條件的任務。
 - **人類介入**：把 termination 決定交給人類。最保守、適合不可逆任務。
 
-實務上多重 termination 並用：step 上限當 safety net、cost 上限當預算守門、外部訊號當主要判準、人類介入當最終 fallback。
+實務上多重 termination 並用：step 上限當 safety net、cost 上限當預算守門、外部訊號當主要判斷標準、人類介入當最終 fallback。
 
 判讀 termination 設計的訊號：
 

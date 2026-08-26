@@ -32,7 +32,7 @@ LinkedIn 這個案例在講的是中大型平台如何把容量規劃、自動�
 
 當 replication latency 上升時，先看 headroom 是否足夠，再看壓測與自動化是否真的覆蓋了常見瓶頸。當 [on-call](/backend/knowledge-cards/on-call/) 需要多層升級時，重點是每一層是否知道何時接手、何時回退，階層形式本身是次要的。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否把容量預測連到實際 growth rate
 - 能否讓 load testing 自動化到可重用

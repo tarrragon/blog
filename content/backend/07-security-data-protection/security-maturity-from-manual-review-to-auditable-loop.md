@@ -101,6 +101,6 @@ weight: 90
 - [7.18 資安控制面如何交接到部署與事故流程](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/)
 - [7.19 資安演練：從 Abuse Case 到 Game Day](/backend/07-security-data-protection/security-exercise-from-abuse-case-to-game-day/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能評估自己團隊的資安治理成熟度。評估結果至少能導出一個下一步：補共享語言、補流程承接、補證據鏈、補自動化觸發或補回寫閉環。

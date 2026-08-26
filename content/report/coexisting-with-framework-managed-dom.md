@@ -179,7 +179,7 @@ A 是預設、但不是萬靈丹：
 | Framework 提供了官方擴展介面（slot、render prop）                 | 用官方介面更穩、不需要邊界外 hack            |
 | 客製需要訪問 framework 的內部 state                               | 邊界外的客製跟內部 state 隔離、訪問成本高    |
 
-**核心判準**：客製是「在 framework 旁邊加東西」還是「改 framework 本身」？前者用本策略、後者另想辦法。
+**核心判斷標準**：客製是「在 framework 旁邊加東西」還是「改 framework 本身」？前者用本策略、後者另想辦法。
 
 ---
 

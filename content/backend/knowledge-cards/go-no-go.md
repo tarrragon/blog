@@ -6,7 +6,7 @@ weight: 434
 tags: ["backend", "knowledge-card", "reliability", "release-gate"]
 ---
 
-Go/no-go 的核心概念是「在明確時點、由既定角色依事前判準各自表態，任何一票 no-go 即停止」。它是 [gate decision](/backend/knowledge-cards/gate-decision/) 的會議形式——gate decision 說明證據怎麼轉成下一步，go/no-go 說明這個決策在什麼時點、由誰、以什麼儀式做出。名稱來自航太發射：發射前逐站點名，每個崗位回報 go 或 no-go，全數 go 才進入倒數。
+Go/no-go 的核心概念是「在明確時點、由既定角色依事前判斷標準各自表態，任何一票 no-go 即停止」。它是 [gate decision](/backend/knowledge-cards/gate-decision/) 的會議形式——gate decision 說明證據怎麼轉成下一步，go/no-go 說明這個決策在什麼時點、由誰、以什麼儀式做出。名稱來自航太發射：發射前逐站點名，每個崗位回報 go 或 no-go，全數 go 才進入倒數。
 
 ## 概念位置
 
@@ -16,7 +16,7 @@ Go/no-go 位在 [release gate](/backend/knowledge-cards/release-gate/)、[cutove
 
 - **明確時點**：決策掛在日曆上（窗口前三十分鐘、發布日前一天），拖過時點就是改期，決策有 deadline 而非持續醞釀
 - **票的分持**：各職能各自表態（容量、資料、值班、產品），任何一票 no-go 即停——單一主管綜合各方意見後裁決的會議，票沒有分持、只是諮詢
-- **判準先於會議**：每張票對應事前定義的檢查與 stop condition，會議只是宣告結果；判準在會議中臨時發明，是這個制度失效的訊號
+- **判斷標準先於會議**：每張票對應事前定義的檢查與 stop condition，會議只是宣告結果；判斷標準在會議中臨時發明，是這個制度失效的訊號
 
 ## 可觀察訊號
 

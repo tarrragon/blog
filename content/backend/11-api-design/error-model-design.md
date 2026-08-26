@@ -1,7 +1,7 @@
 ---
 title: "11.4 錯誤模型設計"
 date: 2026-07-03
-description: "錯誤該分幾類、格式怎麼定才有演化空間、機器判讀跟人類訊息怎麼分工 — 錯誤作為契約一級公民的設計判準"
+description: "錯誤該分幾類、格式怎麼定才有演化空間、機器判讀跟人類訊息怎麼分工 — 錯誤作為契約一級公民的設計判斷標準"
 weight: 4
 tags: ["backend", "api-design", "error-model"]
 ---
@@ -22,11 +22,11 @@ HTTP status 承擔這一刀的粗分類（4xx 終態、5xx 與 429 可重試、�
 
 Stripe 的錯誤物件早於這個標準自成一格、分層思路可以直接借用：`type` 承擔路由層（哪類錯誤、走哪條處理分支）、`code` 承擔分支層（細粒度機器碼）、`param` 加 `message` 承擔 UI 層（哪個欄位錯、給人看什麼）、三個正交欄位讓消費者各層各取所需（見 [11.C36](/backend/11-api-design/cases/error-stripe-error-object/)）。這個模型還藏著一個結構訊號：`idempotency_error` 是四個 type 之一 — 冪等衝突在支付 API 是預期常態、錯誤模型要為它保留一級位置（冪等語意主寫在 [11.8](/backend/11-api-design/api-idempotency-design/)）。
 
-選標準還是自訂的判準：新 API 從 RFC 9457 起手、拿到現成的演化條款與工具生態；既有 API 有自訂格式且被大量依賴、遷移本身就是 breaking change、務實做法是把 9457 的兩個設計（type 命名空間化、未知欄位忽略條款）補進自訂格式、而非換格式。
+選標準還是自訂的判斷標準：新 API 從 RFC 9457 起手、拿到現成的演化條款與工具生態；既有 API 有自訂格式且被大量依賴、遷移本身就是 breaking change、務實做法是把 9457 的兩個設計（type 命名空間化、未知欄位忽略條款）補進自訂格式、而非換格式。
 
 ## 錯誤狀態下的系統行為
 
-錯誤模型的最後一段責任是「錯誤發生時、系統還敢做什麼」。Twilio 2013 年計費事故的教訓落在這：關鍵狀態讀不到、自動扣款卻繼續跑、演變成重複扣款（事故時序與冪等閘門的抽象、主寫在 [11.8 的反例段](/backend/11-api-design/api-idempotency-design/)）。落到錯誤模型的通用判準：關鍵狀態讀寫失敗的錯誤處理、預設要往「拒絕服務」收斂、而非「帶著壞狀態繼續」— 錯誤分類表裡要有一類「狀態不可信、停止副作用」、它的處理路徑跟一般 5xx 不同。
+錯誤模型的最後一段責任是「錯誤發生時、系統還敢做什麼」。Twilio 2013 年計費事故的教訓落在這：關鍵狀態讀不到、自動扣款卻繼續跑、演變成重複扣款（事故時序與冪等閘門的抽象、主寫在 [11.8 的反例段](/backend/11-api-design/api-idempotency-design/)）。落到錯誤模型的通用判斷標準：關鍵狀態讀寫失敗的錯誤處理、預設要往「拒絕服務」收斂、而非「帶著壞狀態繼續」— 錯誤分類表裡要有一類「狀態不可信、停止副作用」、它的處理路徑跟一般 5xx 不同。
 
 ## 常見設計錯誤
 
@@ -37,7 +37,7 @@ Stripe 的錯誤物件早於這個標準自成一格、分層思路可以直接�
 
 ## 爭論地圖與下一步
 
-本章的分類與格式判準、以 HTTP transport 承載 status 語意為前提。錯誤格式的跨風格交鋒（RFC 9457、envelope 包裝、GraphQL 的 200-with-errors 慣例）收在掛本章的 [錯誤格式之爭](/backend/11-api-design/error-format-debate/) — GraphQL 把 transport 層 status 跟業務錯誤解耦的做法、以及解耦之後哪些角色失去讀取能力、在該文攤開、本章不展開。
+本章的分類與格式判斷標準、以 HTTP transport 承載 status 語意為前提。錯誤格式的跨風格交鋒（RFC 9457、envelope 包裝、GraphQL 的 200-with-errors 慣例）收在掛本章的 [錯誤格式之爭](/backend/11-api-design/error-format-debate/) — GraphQL 把 transport 層 status 跟業務錯誤解耦的做法、以及解耦之後哪些角色失去讀取能力、在該文攤開、本章不展開。
 
 - 可重試錯誤的消費端行為設計：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)、[6.12 冪等與重放驗證](/backend/06-reliability/idempotency-replay/)
 - 限流錯誤（429）的完整語意：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)

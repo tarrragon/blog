@@ -56,7 +56,7 @@ tags: ["automation", "analytics", "data-quality", "coverage", "measurement"]
 
 ## 這張總帳怎麼影響最初的選擇
 
-[模組零的自建取捨](/automation/00-mental-model/free-tier-and-tool-choice/)當時給的判準是「想搞懂機制運作，或資料必須在自己手上」。走到這裡之後，那個取捨可以帶著具體內容重算一次。
+[模組零的自建取捨](/automation/00-mental-model/free-tier-and-tool-choice/)當時給的判斷標準是「想搞懂機制運作，或資料必須在自己手上」。走到這裡之後，那個取捨可以帶著具體內容重算一次。
 
 值得注意的是，**這些限制大部分不是自建造成的**。JavaScript 觸發、攔截器、瀏覽器的儲存清除政策同樣適用於 Plausible、Umami、GoatCounter 或任何靠前端腳本收資料的服務——它們的網域出現在攔截清單上的機率甚至更高。自建額外承擔的是實作與維護：退出機制、欄位變更同步、判讀規則的更新。
 

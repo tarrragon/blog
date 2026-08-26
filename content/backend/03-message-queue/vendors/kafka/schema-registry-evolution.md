@@ -59,7 +59,7 @@ Protobuf 用 field number 而非欄位名做 wire 識別：欄位改名不破壞
 
 JSON Schema 適合既有系統已經大量用 JSON、且看重人類可讀與 validation keyword（`required`、`minimum`、`pattern`）的場景。代價是 payload 較大（欄位名重複出現在每筆訊息）、型別保證弱於前兩者。當吞吐量大、payload size 敏感時，JSON Schema 的頻寬成本會顯著高於 Avro 的 binary 編碼。
 
-選型判準：data pipeline 為主、重演進安全 → Avro；已有 gRPC、RPC 與事件共用 → Protobuf；既有 JSON 生態、重可讀性而吞吐量不極端 → JSON Schema。三者可在同一個 registry 並存（每個 subject 各自標 schemaType），但同一個 subject 內不能混用格式。
+選型標準：data pipeline 為主、重演進安全 → Avro；已有 gRPC、RPC 與事件共用 → Protobuf；既有 JSON 生態、重可讀性而吞吐量不極端 → JSON Schema。三者可在同一個 registry 並存（每個 subject 各自標 schemaType），但同一個 subject 內不能混用格式。
 
 ## Subject naming strategy 決定相容性檢查的邊界
 
@@ -79,7 +79,7 @@ TopicNameStrategy 是預設，subject 名就是 `<topic>-value`。實機驗證�
 
 預設策略的隱含假設是「一個 topic 只承載一種事件型別」。這對多數 topic 成立，但當業務要把多種相關事件（例如 `OrderCreated` 與 `OrderCancelled`）放進同一個 topic 以保證跨事件 ordering 時，TopicNameStrategy 會把兩種 record 當成同一個 subject 的版本演進、互相做相容性檢查——這幾乎一定失敗，因為兩種事件結構本來就不同。
 
-這時要改 RecordNameStrategy（subject = record 全名，跨 topic 同名 record 共用一份演進歷史）或 TopicRecordNameStrategy（subject = topic + record 名，同 topic 多型別各自獨立演進）。判準：一個 topic 一種事件 → 預設即可；一個 topic 多種事件且要保 ordering → TopicRecordNameStrategy；同一種 record 散在多個 topic 要強制全域一致 → RecordNameStrategy。Producer 與 consumer 必須設成同一個 strategy，否則 consumer 會用錯 subject 去查 schema。
+這時要改 RecordNameStrategy（subject = record 全名，跨 topic 同名 record 共用一份演進歷史）或 TopicRecordNameStrategy（subject = topic + record 名，同 topic 多型別各自獨立演進）。判斷標準：一個 topic 一種事件 → 預設即可；一個 topic 多種事件且要保 ordering → TopicRecordNameStrategy；同一種 record 散在多個 topic 要強制全域一致 → RecordNameStrategy。Producer 與 consumer 必須設成同一個 strategy，否則 consumer 會用錯 subject 去查 schema。
 
 ## Compatibility level：四種基礎 × transitive
 

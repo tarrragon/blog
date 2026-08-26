@@ -21,7 +21,7 @@ Google DLP 的核心定位是 *infrastructure-level 敏感資料治理*、跨 GC
 讀完本頁、讀者能判斷：
 
 1. Google DLP 在 GCP 資料保護 stack 中承擔哪一段（discovery / classification / transformation）、哪些要外接（[Google Cloud IAM](/backend/07-security-data-protection/vendors/google-cloud-iam/) 管 DLP service account、BigQuery column-level security 補 access control）
-2. infoType / Inspection Job / transformation 種類的選用判準（什麼場景 mask、什麼場景 FPE、什麼場景 k-anonymity）
+2. infoType / Inspection Job / transformation 種類的選用標準（什麼場景 mask、什麼場景 FPE、什麼場景 k-anonymity）
 3. 計費 trap 的應對（sample scan + full scan 分層、Pub/Sub trigger 避免重複 scan）
 4. 何時用 Google DLP、何時走 Purview / Macie / Cloud-native policy 的取捨
 
@@ -71,7 +71,7 @@ Google DLP 的核心定位是 *infrastructure-level 敏感資料治理*、跨 GC
 
 **Custom infoType 三層組合**：production 自家業務的 PII（員工 ID / 客戶 ID / 內部 case ID）需要 custom infoType。三種組合：*regex* 抓 pattern（員工 ID 格式 `EMP-\d{6}`）、*dictionary* 抓明確 token list（內部 case ID 全集、月更新）、*hotword* 限縮 context（附近出現「員工」「ID」才認、避免一般 6 位數字誤判）。三者組合的 FP rate 比單獨 regex 低一個量級。
 
-**Format-Preserving Encryption (FPE) vs Tokenization**：兩者都產生「外觀像原值但不是原值」的替換。*FPE* 是可逆加密、key 在 [Cloud KMS](/backend/07-security-data-protection/vendors/google-cloud-kms/)、analyst 在 anonymized data 工作 + 必要時走授權流程 reverse（例：客服需要看完整信用卡號處理退款）。*Tokenization* 是 deterministic mapping、同樣 input 給同樣 output、可做 join 分析但 token table 不存（理論上不可逆、實務上看 implementation）。選擇判準：*需要分析 join 同一 user 跨 dataset* 用 tokenization、*需要授權 reverse* 用 FPE、*只要遮蔽不需要還原* 用 mask / redact。
+**Format-Preserving Encryption (FPE) vs Tokenization**：兩者都產生「外觀像原值但不是原值」的替換。*FPE* 是可逆加密、key 在 [Cloud KMS](/backend/07-security-data-protection/vendors/google-cloud-kms/)、analyst 在 anonymized data 工作 + 必要時走授權流程 reverse（例：客服需要看完整信用卡號處理退款）。*Tokenization* 是 deterministic mapping、同樣 input 給同樣 output、可做 join 分析但 token table 不存（理論上不可逆、實務上看 implementation）。選擇標準：*需要分析 join 同一 user 跨 dataset* 用 tokenization、*需要授權 reverse* 用 FPE、*只要遮蔽不需要還原* 用 mask / redact。
 
 **k-anonymity / l-diversity / differential privacy**：解決 *quasi-identifier re-identification* 問題 — 即使欄位不是直接 PII（如 ZIP + 性別 + 年齡）、組合起來能反推個人。*k-anonymity* 保證每個 record 在 quasi-identifier 上至少跟 k-1 個其他 record 一樣（典型 k=5）。*l-diversity* 進一步保證 sensitive attribute 在每組內至少 l 個不同值（防止 homogeneity attack）。*Differential privacy* 加 calibrated noise 到 aggregate query 結果、保證個別 record 加入或刪除對結果影響有 bound。Risk Analysis API 可估算 dataset 的 k-anonymity / l-diversity 風險、不需要先 transform 才知道風險。
 

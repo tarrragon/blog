@@ -49,6 +49,6 @@ description: "說明專業來源、案例、情境與控制模式如何組合成
 - [7.B12 Defender Pressure From Real Incidents](/backend/07-security-data-protection/blue-team/defender-pressure-from-real-incidents/)
 - [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把素材庫組裝成一次工程推演。輸出至少包含分層素材、組裝流程、來源規則與回寫路由。

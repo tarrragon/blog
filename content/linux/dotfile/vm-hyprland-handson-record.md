@@ -629,7 +629,7 @@ caelestia 的招牌功能是 `dynamic` 配色：**從當前桌布圖片即時抽
 
 關鍵洞察是配色一致性那軸：手動拼裝的痛點（step 2 的 waybar `style.css` 註解白紙黑字寫「GTK CSS 吃不到 Hyprland `$` 變數、色碼得手抄」）正是 matugen/pywal 這類 template 工具、或 caelestia 內建 dynamic 要解的問題——影片裡看到的 `matugen/templates/rofi-colors.rasi` 就是手動棧自己搭 templating pipeline 的樣子。
 
-這階段的產出蒸餾成一篇證據化決策文章（模組六 rice 設計「整合式 Shell vs 手動拼裝：實測取捨」），含足跡數字、失敗半徑、配色一致性機制、選型判準表與 tripwire。record 這裡保留原始量測，文章做 WARP 決策論述。
+這階段的產出蒸餾成一篇證據化決策文章（模組六 rice 設計「整合式 Shell vs 手動拼裝：實測取捨」），含足跡數字、失敗半徑、配色一致性機制、選型標準表與 tripwire。record 這裡保留原始量測，文章做 WARP 決策論述。
 
 #### 前置確認（VM 開機後先做）
 
@@ -818,7 +818,7 @@ Step 2 rice 實測中未 clone 這些 repo——手動拼裝的 waybar / wofi / 
 - `install-arch.sh` / `install-macos.sh`——平台套件層，各自維護
 - `packages/arch-{base,terminal,desktop}.txt`——分層清單
 
-分歧判準三條：安裝手段跨平台一致→共通層；只是套件名/管理器不同→平台清單；概念只存在某平台→該平台的 desktop 層。細節與跨發行版差異（套件名、rolling vs stable、brew on Linux 的邊界）抽成教材 [平台與發行版差異的判讀地圖](/linux/install/platform-divergence-map/)。
+分歧判斷標準三條：安裝手段跨平台一致→共通層；只是套件名/管理器不同→平台清單；概念只存在某平台→該平台的 desktop 層。細節與跨發行版差異（套件名、rolling vs stable、brew on Linux 的邊界）抽成教材 [平台與發行版差異的判讀地圖](/linux/install/platform-divergence-map/)。
 
 ### 復現結果
 
@@ -929,7 +929,7 @@ VLC 的驗證把「裝了本體不等於裝了功能」踩得更完整：`vlc` �
 | git reset / 切分支使 stow symlink 懸空                              | 機制 | `knowledge-cards/gnu-stow.md` 新段「Symlink 與 git working tree 綁定」                             | 已回寫   |
 | `ls -la` 帶斜線穿透目錄 symlink 的 folding 錯覺                     | 判讀 | `knowledge-cards/gnu-stow.md` 形態轉換段                                                           | 已回寫   |
 | 非互動 bootstrap 三 finding（`--noconfirm` / stale db 404 / chsh）  | 環境 | `install/package-and-network-troubleshooting.md`、`08-sync-bootstrap/bootstrap-script-packages.md` | 已回寫   |
-| install.sh 三層分層 + 平台分歧判準                                  | 決策 | `install/platform-divergence-map.md`                                                               | 已回寫   |
+| install.sh 三層分層 + 平台分歧判斷標準                              | 決策 | `install/platform-divergence-map.md`                                                               | 已回寫   |
 | AUR 建置失敗三型態（`-bin` 半衰期 / sysconfig 烤入路徑 / 架構宣告） | 機制 | 新篇 `debug/aur-build-failure-triage.md`（AUR 卡與 debug 索引已連結）                              | 已回寫   |
 | quickshell-git 硬依賴、cli 與 shell optdepends 各自明講             | 配置 | `06-rice-design/caelestia-installation.md`                                                         | 已回寫   |
 | shell.json 啟動驗證改寫 + repo 檔序列化順序遷就                     | 配置 | `06-rice-design/caelestia-configuration.md`                                                        | 已回寫   |

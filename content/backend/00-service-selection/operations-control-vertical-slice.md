@@ -34,7 +34,7 @@ Vertical slice 的目標是先做一條可回放的操作控制路徑。選一�
 | Document publish | 涵蓋寫入、背景工作與通知     | stale read、worker backlog     |
 | Invoice          | 牽涉正確性與客戶信任         | duplicate charge、missing file |
 
-Checkout 適合第一輪，因為它同時暴露 latency、dependency failure、customer impact 與 rollback decision。若團隊沒有交易路徑，可以選 message delivery 或 login；判準是這條路徑一旦失效，on-call 需要在 15 分鐘內做出明確決策。
+Checkout 適合第一輪，因為它同時暴露 latency、dependency failure、customer impact 與 rollback decision。若團隊沒有交易路徑，可以選 message delivery 或 login；判斷標準是這條路徑一旦失效，on-call 需要在 15 分鐘內做出明確決策。
 
 Message delivery 適合用來驗證 async observability。它能暴露 request id、correlation id、queue lag、DLQ、retry policy 與 replay runbook 的交接品質。
 

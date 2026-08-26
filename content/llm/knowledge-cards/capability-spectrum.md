@@ -26,4 +26,4 @@ Function calling 的能力光譜可以用幾個訊號量化：單工具成功率
 
 ## 設計責任
 
-做模型選型或應用設計時，把「有沒有」改成「到什麼程度可用」。判準要包含成功率、覆蓋範圍、錯誤成本、監控訊號與回退路徑。下一步路由是：能力來自訓練資料時讀 [Training Example Coverage](/llm/knowledge-cards/training-example-coverage/)；能力需要推論階段兜底時讀 [Sampling Constraint](/llm/knowledge-cards/sampling-constraint/)。
+做模型選型或應用設計時，把「有沒有」改成「到什麼程度可用」。判斷標準要包含成功率、覆蓋範圍、錯誤成本、監控訊號與回退路徑。下一步路由是：能力來自訓練資料時讀 [Training Example Coverage](/llm/knowledge-cards/training-example-coverage/)；能力需要推論階段兜底時讀 [Sampling Constraint](/llm/knowledge-cards/sampling-constraint/)。

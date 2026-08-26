@@ -1,7 +1,7 @@
 ---
 title: "CSS / JS Boundary — CSS / JS 邊界與 specificity 處理"
 date: 2026-04-26
-description: "frontend-with-playwright reference：CSS-only vs JS-assisted 判準、class toggle 取代 inline style、CSS layers 取代 specificity 戰、variable 單一定義位置、檔案拆分。"
+description: "frontend-with-playwright reference：CSS-only vs JS-assisted 判斷標準、class toggle 取代 inline style、CSS layers 取代 specificity 戰、variable 單一定義位置、檔案拆分。"
 tags: ["skills", "frontend-with-playwright", "CSS", "JavaScript"]
 ---
 
@@ -10,7 +10,7 @@ CSS 跟 JS 各自負責什麼、邊界由「值能不能 build-time 定下來」
 適用：寫 / 改 CSS 規則、決定 styling 該放 CSS 還是 JS、跟 vendor CSS 共存、檔案組織。
 不適用：純 logic JS（沒涉及 styling）。
 
-> **自包含聲明**：閱讀本文件不需要先讀其他 reference。本文件涵蓋 CSS-only vs JS-assisted 判準、class toggle 模式、CSS layers、variable 單一位置、檔案拆分。
+> **自包含聲明**：閱讀本文件不需要先讀其他 reference。本文件涵蓋 CSS-only vs JS-assisted 判斷標準、class toggle 模式、CSS layers、variable 單一位置、檔案拆分。
 
 ---
 
@@ -40,7 +40,7 @@ CSS 跟 JS 各自負責什麼、邊界由「值能不能 build-time 定下來」
 
 ---
 
-## 邊界判準：值能不能 build-time 定下來
+## 邊界判斷標準：值能不能 build-time 定下來
 
 ### CSS-only：值能 build-time 定下來
 

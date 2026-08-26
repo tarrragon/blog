@@ -321,4 +321,4 @@ PR description 該寫的內容（業務脈絡、設計連結、QA 範圍）抄�
 
 寫 doc / 寫 commit 是同一個技能的兩面。不要把任何一邊當成另一邊的替代品。
 
-commit message 的讀者除了考古者還有一個：GitHub 的引用解析器。寫進 message 的 issue 引用會依形式在對方 repo 的 timeline 留下事件，判準見 [commit message 引用外部 issue 會在對方 repo 留下事件](/work-log/github-cross-reference-from-commit-message/)。
+commit message 的讀者除了考古者還有一個：GitHub 的引用解析器。寫進 message 的 issue 引用會依形式在對方 repo 的 timeline 留下事件，判斷標準見 [commit message 引用外部 issue 會在對方 repo 留下事件](/work-log/github-cross-reference-from-commit-message/)。

@@ -18,4 +18,4 @@ weight: 16
 
 ## 設計責任
 
-狀態流承擔「畫面、快取、衍生視圖對資料當前值的觀測」，錯過的代價為零是它跟 event 不可互換的原因——需要逐筆事實（審計、下游流程）的消費者拿快照會斷檔。載體選用判準展開見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)、實作選型（broadcast、初始值、dispose）見 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。
+狀態流承擔「畫面、快取、衍生視圖對資料當前值的觀測」，錯過的代價為零是它跟 event 不可互換的原因——需要逐筆事實（審計、下游流程）的消費者拿快照會斷檔。載體選用標準展開見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)、實作選型（broadcast、初始值、dispose）見 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。

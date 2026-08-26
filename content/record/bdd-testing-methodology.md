@@ -355,4 +355,4 @@ BDD 的適用範圍由分層策略界定：UseCase 層用 BDD、Domain 層用單
 
 它也不會自己維持下去——「測試行為」與「測試實作」的分界要靠規範明說、靠 review 逐項確認，否則寫出來的會是包著 Given-When-Then 外殼的實作測試。
 
-兩派 TDD 對「單元」的定義差在哪，走 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)；Mock 的邊界為什麼畫在應用邊界上、什麼系統形態該改畫在類別上，走 [TDD 的兩種做法](../behavior-first-tdd-methodology/)；哪些層用 BDD、哪些層用單元測試的完整判準，走 [混合測試策略](../hybrid-testing-strategy-methodology/)。
+兩派 TDD 對「單元」的定義差在哪，走 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)；Mock 的邊界為什麼畫在應用邊界上、什麼系統形態該改畫在類別上，走 [TDD 的兩種做法](../behavior-first-tdd-methodology/)；哪些層用 BDD、哪些層用單元測試的完整判斷標準，走 [混合測試策略](../hybrid-testing-strategy-methodology/)。

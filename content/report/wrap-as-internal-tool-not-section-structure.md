@@ -160,7 +160,7 @@ WRAP 的真正價值是讓寫作者做 hypothesis 探索、防認知偏誤。當
 
 - **[#126 寫作 review 是多軸完整性](../writing-review-multi-axis-completeness/)**：本卡是 review 設計時要看的「surface 軸」的具體 instance。Review 不能只看「內容是否正確」、要看「章節結構傳達的 register 是否跟目標讀者對齊」。
 
-- **[#271 收錄取捨的結果進正文，判準運算不進](../inclusion-deliberation-is-editorial-not-content/)**：同族的第三個 surface——本卡是分析框架不當章節標題、#230 是寫作動機不當引言、#271 是收錄門檻運算不當策展條目的內文。三卡共同判準：讀者拿到的要是產出、不是產出的過程。
+- **[#271 收錄取捨的結果進正文，判斷標準運算不進](../inclusion-deliberation-is-editorial-not-content/)**：同族的第三個 surface——本卡是分析框架不當章節標題、#230 是寫作動機不當引言、#271 是收錄門檻運算不當策展條目的內文。三卡共同判斷標準：讀者拿到的要是產出、不是產出的過程。
 
 ---
 

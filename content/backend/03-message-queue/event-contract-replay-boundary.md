@@ -61,7 +61,7 @@ Compensation 的責任是處理副作用已經發生但結果不正確的情況�
 3. 與 06 的交接：event contract 跟 replay 驗證進 [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/) 跟 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)
 4. 與 07 的交接：event payload 的 PII / audit 邊界進 [7.4 data protection and masking](/backend/07-security-data-protection/data-protection-and-masking-governance/)
 
-## 選型前判準
+## 選型前判斷標準
 
 Broker 選型前要先回答：
 

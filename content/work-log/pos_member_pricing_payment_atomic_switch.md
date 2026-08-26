@@ -80,4 +80,4 @@ if (!context.canCheckout) {
 
 - 概念地基：[不變式的強制層次](/ddd/invariant-enforcement-layers/)——本文的 `required` 參數與單次狀態更新是「把約束做進介面」的實例
 - 原則層：[#222 約束要讓違反路徑走不通](/report/design-intent-needs-enforcement-layer/)——分開的 setter 就是一條沒關的逃生口
-- 同專案同 model 的另一個切面：[桌子跟購物車是兩個聚合](/work-log/pos_table_cart_lifecycle_decoupling/)——那篇談生命週期解耦、本文談耦合欄位的原子性，一個拆、一個綁，判準都來自業務規則本身
+- 同專案同 model 的另一個切面：[桌子跟購物車是兩個聚合](/work-log/pos_table_cart_lifecycle_decoupling/)——那篇談生命週期解耦、本文談耦合欄位的原子性，一個拆、一個綁，判斷標準都來自業務規則本身

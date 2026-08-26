@@ -6,7 +6,7 @@ weight: 74
 tags: ["backend", "security"]
 ---
 
-本章的責任是把資料暴露風險拆成可治理的節點，讓資料分級、遮罩、匯出與備份在設計期就能對齊判準。
+本章的責任是把資料暴露風險拆成可治理的節點，讓資料分級、遮罩、匯出與備份在設計期就能對齊判斷標準。
 
 ## 本章涵蓋與不涵蓋
 
@@ -34,7 +34,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - **Mechanism**：問題節點表的 `[data-classification]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
 - **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)、接配置 / 驗證 / 處置交付。
 
-兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
+兩條 chain 完成條件與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
 ## 資料保護治理模型
 
@@ -84,7 +84,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 **回應欄位**的收斂是把揭露改成明確選擇：回應用獨立的輸出結構定義，欄位逐一列出而非繼承資料模型。這個改動的成本落在既有端點的逐一改寫，而不是機制建置——判斷要花多久時，基準是端點數量乘上每個端點的欄位盤點時間。分級標準本身見 [data-classification](/backend/knowledge-cards/data-classification/)，欄位過度暴露的形態見 [excessive-data-exposure](/backend/knowledge-cards/excessive-data-exposure/)。
 
-**匯出節奏**的收斂是在身分控制之外補量的控制：單次筆數上限、超過上限走審批、匯出檔案設有效期與浮水印。這一格的判準是把「誰能匯出」與「一次能匯出多少」當成兩個獨立決定——多數系統只做了前者，而外送風險由後者決定。匯出紀錄要能回查誰在什麼時候取走了哪些範圍，稽核欄位的設計走 [7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)。對應失效樣式 [匯出流程濫用](../red-team/problem-cards/export-flow-abuse/)。
+**匯出節奏**的收斂是在身分控制之外補量的控制：單次筆數上限、超過上限走審批、匯出檔案設有效期與浮水印。這一格的判斷標準是把「誰能匯出」與「一次能匯出多少」當成兩個獨立決定——多數系統只做了前者，而外送風險由後者決定。匯出紀錄要能回查誰在什麼時候取走了哪些範圍，稽核欄位的設計走 [7.7 稽核追蹤與責任邊界](../audit-trail-and-accountability-boundary/)。對應失效樣式 [匯出流程濫用](../red-team/problem-cards/export-flow-abuse/)。
 
 **備份權限**的收斂是把還原能力與讀取能力拆成兩種授權。還原是寫入動作、可以要求走審批並留紀錄；讀取才是外送風險的來源。拆開之後備份憑證的日常權限只剩下寫入與驗證，讀取需要另一次授權。同一格的第二道控制是備份加密加上金鑰與備份憑證分持——拿到備份憑證的人讀到的是密文，還原要另外取得金鑰，兩者由不同的授權路徑管理；機制見 [at-rest encryption](/backend/knowledge-cards/at-rest-encryption/)。對應失效樣式 [長效可重複匯出產物](../red-team/problem-cards/fp-long-lived-repeatable-export-artifact/)。備份憑證本身的輪替與收斂節奏走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)，備份資料的保留期與刪除證據走 [7.11 資料落點、刪除與證據鏈](../data-residency-deletion-and-evidence-chain/)。
 

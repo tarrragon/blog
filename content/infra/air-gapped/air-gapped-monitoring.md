@@ -117,7 +117,7 @@ Elasticsearch + Logstash + Kibana 是功能最完整的 log 平台，但資源�
 
 離線安裝：Elastic 提供離線安裝包（`.deb` / `.rpm`），或用 Docker 映像。三個組件都要搬運。
 
-選型判準：5 台以下的小環境用 Loki（輕量、跟 Prometheus + Grafana 同一套 dashboard）。需要全文搜索、已有 ELK 經驗的團隊用 ELK。
+選型標準：5 台以下的小環境用 Loki（輕量、跟 Prometheus + Grafana 同一套 dashboard）。需要全文搜索、已有 ELK 經驗的團隊用 ELK。
 
 ## 告警：沒有外部 webhook 怎麼通知
 

@@ -118,16 +118,16 @@ A/B firmware partition 是 IoT 的 DR 基礎設計。裝置保留兩個 firmware
 
 ## 案例對照
 
-| 案例       | DR 視角的教訓                                                                                   | 回讀章節                                                                                                                           |
-| ---------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Meta M1    | 控制面與資料面共用路徑時，恢復順序決定整體恢復時間                                              | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[8.14](/backend/08-incident-response/multi-incident-coordination/) |
-| Amazon A1  | cell boundary 讓恢復可分批，不需要全域同步恢復                                                  | [6.20](/backend/06-reliability/experiment-safety-boundary/)                                                                        |
-| Stripe S1  | 交易系統 rollback 需要同時驗證 schema 相容與冪等重播                                            | [6.11](/backend/06-reliability/migration-safety/)、[6.12](/backend/06-reliability/idempotency-replay/)                             |
-| Shopify H1 | 年度高峰前的 game day 是 DR 演練的自然觸發點                                                    | [6.9](/backend/06-reliability/capacity-cost/)、[6.22](/backend/06-reliability/steady-state-definition/)                            |
-| Google G2  | postmortem action item 轉成下一輪 DR 演練題目                                                   | [6.21](/backend/06-reliability/reliability-debt-backlog/)、[8.5](/backend/08-incident-response/post-incident-review/)              |
-| Netflix N1 | [steady state](/backend/knowledge-cards/steady-state/) 定義同時作為 DR recovery complete 的判準 | [6.22](/backend/06-reliability/steady-state-definition/)                                                                           |
-| Amazon A2  | static stability 讓資料面在控制面失效時仍能服務，恢復路徑不依賴已故障的控制面                   | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[6.22](/backend/06-reliability/steady-state-definition/)           |
-| Meta M2    | 回復工具依賴已故障的系統（BGP / DNS / 遠端存取），恢復陷入循環等待                              | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[8.14](/backend/08-incident-response/multi-incident-coordination/) |
+| 案例       | DR 視角的教訓                                                                                       | 回讀章節                                                                                                                           |
+| ---------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Meta M1    | 控制面與資料面共用路徑時，恢復順序決定整體恢復時間                                                  | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[8.14](/backend/08-incident-response/multi-incident-coordination/) |
+| Amazon A1  | cell boundary 讓恢復可分批，不需要全域同步恢復                                                      | [6.20](/backend/06-reliability/experiment-safety-boundary/)                                                                        |
+| Stripe S1  | 交易系統 rollback 需要同時驗證 schema 相容與冪等重播                                                | [6.11](/backend/06-reliability/migration-safety/)、[6.12](/backend/06-reliability/idempotency-replay/)                             |
+| Shopify H1 | 年度高峰前的 game day 是 DR 演練的自然觸發點                                                        | [6.9](/backend/06-reliability/capacity-cost/)、[6.22](/backend/06-reliability/steady-state-definition/)                            |
+| Google G2  | postmortem action item 轉成下一輪 DR 演練題目                                                       | [6.21](/backend/06-reliability/reliability-debt-backlog/)、[8.5](/backend/08-incident-response/post-incident-review/)              |
+| Netflix N1 | [steady state](/backend/knowledge-cards/steady-state/) 定義同時作為 DR recovery complete 的判斷標準 | [6.22](/backend/06-reliability/steady-state-definition/)                                                                           |
+| Amazon A2  | static stability 讓資料面在控制面失效時仍能服務，恢復路徑不依賴已故障的控制面                       | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[6.22](/backend/06-reliability/steady-state-definition/)           |
+| Meta M2    | 回復工具依賴已故障的系統（BGP / DNS / 遠端存取），恢復陷入循環等待                                  | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[8.14](/backend/08-incident-response/multi-incident-coordination/) |
 
 ## 判讀訊號
 

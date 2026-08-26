@@ -205,4 +205,4 @@ Strong consistency + multi-region 互斥議題的 SSoT 在 [Cosmos DB multi-regi
 
 ### Anti-recommendation
 
-讀者讀完本文應該能判斷：「我們需要強一致」不等於「升級到 Spanner」 — 先問是 single-object 還是 multi-object、是 single region 還是 multi region、real-time 順序是否是產品契約。多數 OLTP workload 用 PostgreSQL serializable 已經夠、為 external consistency 付 GCP lock-in + 跨 region quorum cost 的判準很高。
+讀者讀完本文應該能判斷：「我們需要強一致」不等於「升級到 Spanner」 — 先問是 single-object 還是 multi-object、是 single region 還是 multi region、real-time 順序是否是產品契約。多數 OLTP workload 用 PostgreSQL serializable 已經夠、為 external consistency 付 GCP lock-in + 跨 region quorum cost 的判斷標準很高。

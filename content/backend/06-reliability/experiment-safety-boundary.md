@@ -39,7 +39,7 @@ Experiment safety boundary 是定義可靠性實驗安全範圍的控制面，�
 - rollback / failover 是否在實驗前準備好
 - observer、executor、approver 是否分工清楚
 
-| 控制面   | 最小可用判準                              | 失控信號             |
+| 控制面   | 最小可用標準                              | 失控信號             |
 | -------- | ----------------------------------------- | -------------------- |
 | 範圍控制 | blast radius 限在服務 / 區域 / 流量百分比 | 影響擴散到非目標服務 |
 | 停止條件 | stop condition 連到 SLO / impact / cost   | 超門檻仍持續實驗     |

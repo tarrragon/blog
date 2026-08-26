@@ -61,7 +61,7 @@ iOS Simulator 是完整的 iOS 使用者空間環境——App 在 Simulator 上�
 
 ## 裝幾組合理
 
-判準是開發工作實際需要測試的 iOS 版本數量：
+判斷標準是開發工作實際需要測試的 iOS 版本數量：
 
 **一組（最新版）**：適合多數開發者。Flutter 和 SwiftUI 開發通常只需要在最新 iOS 上測試，舊版相容性問題靠 API availability check 處理，不需要實際跑 Simulator。
 

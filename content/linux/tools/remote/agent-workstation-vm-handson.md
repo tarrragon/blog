@@ -1,7 +1,7 @@
 ---
 title: "遠端 agent 工作機實作記錄：從 Docker image 到手機端跑通"
 date: 2026-07-08
-description: "要把 mosh + zellij + Claude Code + ntfy + 手機連線的遠端 agent 工作流在 VM 上實際架起來、需要每一步的驗證判準與除錯分流時回來讀"
+description: "要把 mosh + zellij + Claude Code + ntfy + 手機連線的遠端 agent 工作流在 VM 上實際架起來、需要每一步的驗證標準與除錯分流時回來讀"
 weight: 3
 tags: ["linux", "remote", "docker", "zellij", "mosh", "ntfy", "agent", "handson"]
 ---
@@ -10,7 +10,7 @@ tags: ["linux", "remote", "docker", "zellij", "mosh", "ntfy", "agent", "handson"
 
 這份記錄跑在一組特定環境上——**宿主機 macOS + UTM、VM 是 Arch Linux ARM、手機是 Android（Termius）**——指令因此帶環境相依，換環境要換做法：套件管理用 `pacman`（Debian / Ubuntu VM 對應 `apt`，Step 6 那條「partial upgrade 升 kernel → 未重開 → docker 起不來」的 gotcha 是 Arch 專屬、其他發行版不會遇到）；宿主機層的 UTM 操作只適用 macOS（Linux host 改用 QEMU / virt-manager、Windows 用 Hyper-V / WSL2，NAT 穿透的直連 / 中繼結果也可能不同）。VM 本身怎麼建（裝虛擬化軟體、灌發行版、分割磁碟）是這篇的上游、見 [Linux 安裝](../../../install/)；本篇從「VM 已存在且會開機」起步。
 
-每一步固定四段：**概念與工具**（這步在架構裡承擔什麼、細節連到對應文章）、**實作**（具體動作）、**驗證**（這步成功的可觀測判準）、**除錯判讀**（失敗症狀怎麼分流）。寫法對齊 [讓機器跑無人值守的長任務](../../../install/unattended-remote-work/) 的障礙拆解、與 [vm-hyprland 實作記錄](../../../dotfile/vm-hyprland-handson-record/) 的邊做邊記形式。
+每一步固定四段：**概念與工具**（這步在架構裡承擔什麼、細節連到對應文章）、**實作**（具體動作）、**驗證**（這步成功的可觀測判斷標準）、**除錯判讀**（失敗症狀怎麼分流）。寫法對齊 [讓機器跑無人值守的長任務](../../../install/unattended-remote-work/) 的障礙拆解、與 [vm-hyprland 實作記錄](../../../dotfile/vm-hyprland-handson-record/) 的邊做邊記形式。
 
 ## 全局圖與步驟總表
 
@@ -166,7 +166,7 @@ VM 目前沒有啟用防火牆（NAT 後面、只對 tailnet 暴露的規劃在 
 ### 驗證
 
 - 手機用 mosh 連入後、Wi-Fi 切行動網路，session 存活、免重連
-- 高延遲下打字即時回顯（體感判準：按鍵顯示追得上輸入）
+- 高延遲下打字即時回顯（體感判斷標準：按鍵顯示追得上輸入）
 
 實測用 Termius（Android、本輪未見任何 Pro / 付費提示）開 mosh 連入，在 zellij session 裡跑一個每秒印時間戳的迴圈、然後把手機從 Wi-Fi 切到行動網路：時間戳**無斷檔**（沒有跳掉任何一秒、輸出連續），但切換當下畫面**凍結約 3 秒**才恢復更新、不需手動重連。這是 mosh 漫遊的真實體感、要據實描述——它的價值是「不丟狀態、自動接回」，不是「零延遲、感覺不到切換」：那 3 秒是 tailscale 重建路徑加 mosh 重新同步的時間，恢復後前面的輸出一格不少。跟純 SSH 的對照才是關鍵：mosh 是凍 3 秒後無損接回、純 SSH 是直接斷線讓前景任務死。
 
@@ -451,7 +451,7 @@ $ curl -s 'https://ntfy.sh/<test-topic>/json?poll=1&since=5m'
 
 - 候選 A：現成 client（Termius / Blink Shell 這類），配 mosh + 擴充鍵列
 - 候選 B：自製通道（ttyd 轉 WebSocket、走 tailnet、原生 app 收），適合要客製認證與稽核的情境
-- 順序已定：本輪用候選 A 跑通全部步驟（控制變數——工作流本身未驗證時、client 端用成熟工具歸零變數）；候選 B 的功能對齊（擴充鍵列、斷線重連、多 endpoint、TUI 相容）記在該工具自己專案的提案系統、驗收規格採用本文跑通後凍結的判準
+- 順序已定：本輪用候選 A 跑通全部步驟（控制變數——工作流本身未驗證時、client 端用成熟工具歸零變數）；候選 B 的功能對齊（擴充鍵列、斷線重連、多 endpoint、TUI 相容）記在該工具自己專案的提案系統、驗收規格採用本文跑通後凍結的判斷標準
 
 本輪的手機是 Android（Galaxy A70），這件事先卡掉一半候選：Blink Shell 是 iOS 專屬、Android 裝不了，所以現成 client 落在 Termius。連線分兩步建立：先純 SSH 把「連得上 + 金鑰認證」驗通、再開 mosh 測漫遊（Step 4），控制變數。金鑰用 Termius 產一把 ED25519、把公鑰加進 VM 的 `authorized_keys`——手機端一律走金鑰、不用密碼（沿用 Step 2 的基線；私鑰在客戶端 / 公鑰授權在伺服器、per-device 各配一把的模型見 [SSH 金鑰儲放與 authorized_keys](/linux/dotfile/knowledge-cards/ssh-key-storage/)）。實測 Termius 預設會退回問密碼、`tar` 沒設密碼所以失敗，加完公鑰重連即免密碼登入，VM 側 `journalctl -u sshd` 看到 `Accepted publickey from 100.71.173.84`。
 
@@ -470,7 +470,7 @@ $ curl -s 'https://ntfy.sh/<test-topic>/json?poll=1&since=5m'
 
 Esc 這格的實測過程本身就是一個判讀教訓：第一眼掃過 Termius 的擴充鍵列沒看到 Esc、以為缺這個鍵，實際是**鍵列可以水平捲動、Esc 被推到可見範圍外遮住了**，橫向拖動鍵列就露出來。行動端的擴充鍵列常是可橫向捲動的、可見的那幾顆不等於全部——「按鍵缺失」的結論要先把鍵列拖過一遍再下，這正是第一印象與實際互動不符時、以互動為準的例子。就算真的找不到某個鍵，終端層還有等價組合鍵可用：`Ctrl+[` 送出與 Esc 相同的 `0x1b` 控制碼、任何終端通用（實測在 zellij 進 PANE 模式後 `Ctrl+[` 能退回 NORMAL、等同 Esc），這條不依賴 client 把鍵擺在哪。這格對上選型文說的「擴充鍵列決定手機端是可操作還是只能看」——但可操作性的判讀要把「鍵列可捲動」算進去、別被預設可見範圍誤導。
 
-- 輸入體感可長用（判準：一段 prompt 打完的錯誤率與速度自評）
+- 輸入體感可長用（判斷標準：一段 prompt 打完的錯誤率與速度自評）
 
 實測純 SSH 與 mosh 下四個關鍵動作都能完成一次完整互動；mosh 漫遊下切網路有約 3 秒凍結（Step 4）、但輸出不丟、恢復後可續打，長用可接受。手機端派 agent 任務的免引號 helper 與踩到的引號 gotcha 記在 Step 10 情境一。
 

@@ -23,7 +23,7 @@ tags: ["flutter", "dart", "test", "flow-test", "fake-backend", "binding", "platf
 | 服務級平台依賴（掃碼、藍牙）        | 手寫 no-op 子類覆寫碰平台的成員     | 在 DI 容器註冊子類取代原服務   |
 | `addPostFrameCallback` 承載的初始化 | 測試裡手動呼叫同一個方法            | 控制器建構後、斷言前           |
 
-時序欄位承載的是這張表最容易踩的陷阱：EventChannel 的訂閱發生在 plugin 建構子裡，晚一步掛 mock，訂閱已經對著真實 channel 成立、之後補掛不會回溯生效——症狀是測試偶發卡在等事件。MethodChannel 的容錯高一些（呼叫當下才查 handler），但同樣要在第一次呼叫前就位。no-op 子類優於 mock 框架的場景：要中和的成員少（覆寫列表一目瞭然）、其餘行為要保留真實。流程測試的精神是假件越少，測試的證言越可信——這裡指的是平台耦合層的假件（與被驗編排無關的雜訊），被測邊界本身的假後端是另一回事，它的設計判準與忠實性把關見[語意級假後端](/testing/01-test-strategy-layers/semantic-fake-backend/)。
+時序欄位承載的是這張表最容易踩的陷阱：EventChannel 的訂閱發生在 plugin 建構子裡，晚一步掛 mock，訂閱已經對著真實 channel 成立、之後補掛不會回溯生效——症狀是測試偶發卡在等事件。MethodChannel 的容錯高一些（呼叫當下才查 handler），但同樣要在第一次呼叫前就位。no-op 子類優於 mock 框架的場景：要中和的成員少（覆寫列表一目瞭然）、其餘行為要保留真實。流程測試的精神是假件越少，測試的證言越可信——這裡指的是平台耦合層的假件（與被驗編排無關的雜訊），被測邊界本身的假後端是另一回事，它的設計判斷標準與忠實性把關見[語意級假後端](/testing/01-test-strategy-layers/semantic-fake-backend/)。
 
 這套 channel mock 加 no-op 子類的組合（後文稱 harness）一旦成立就收斂為共用 bootstrap 方法——之後每條流程測試的邊際成本只剩劇本本身。完整 case 與程式碼範例：[讓 UI 控制器在 headless 測試立起來](/work-log/flutter_headless_controller_test_bootstrap/)。
 
@@ -54,7 +54,7 @@ harness 立起後，測試輸出可能固定印出幾行「錯誤長相」的文
 | 平台 plugin 不存在導致的 `MissingPluginException`    | harness 的 channel mock 回空結果（上一節已掛的 mock 同時解決） |
 | headless 環境沒有 widget tree 導致的 assert fallback | 顯示前前置判斷 `rootElement != null`，無畫面時跳過顯示         |
 
-前置判斷放在 `runZonedGuarded` 的 zone 內而非外——極端環境（binding 未初始化）連 `WidgetsBinding.instance` 都會拋，放 zone 內讓它落入兜底。分工因此變乾淨：前置判斷處理已知的環境狀態，zone 兜底處理未知的失敗。完整案例與判準：[測試輸出的雜訊治理](/work-log/flutter_test_noise_expected_paths/)。
+前置判斷放在 `runZonedGuarded` 的 zone 內而非外——極端環境（binding 未初始化）連 `WidgetsBinding.instance` 都會拋，放 zone 內讓它落入兜底。分工因此變乾淨：前置判斷處理已知的環境狀態，zone 兜底處理未知的失敗。完整案例與判斷標準：[測試輸出的雜訊治理](/work-log/flutter_test_noise_expected_paths/)。
 
 ## 假後端的回應序列化：物件 → toJson，不是手寫 JSON
 
@@ -62,7 +62,7 @@ harness 立起後，測試輸出可能固定印出幾行「錯誤長相」的文
 
 手寫 JSON 樣板跳過這個閉環的前半段——樣板對不對靠人眼比對 API 文件。實際案例：同一批測試裡的 raw 寫法重踩了產品早已內建處理的分頁包裝（信封解析層的知識被重複實作在測試 helper 裡），改走產品的 API client 與模型後，helper 連同它代表的重複知識一起刪除。
 
-判準一句話：**回應形狀的知識只該存在一份**。測試裡出現 `data['data']` 之類手挖回應欄位的 helper，就是重複知識的訊號。
+判斷標準一句話：**回應形狀的知識只該存在一份**。測試裡出現 `data['data']` 之類手挖回應欄位的 helper，就是重複知識的訊號。
 
 假後端的狀態演變用 `copyWith` 在 handler 裡宣告式完成，一個 handler 對應一條已證實的後端行為。toJson 閉環的忠實性由配對的[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)把關——模型的 `fromJson`/`toJson` 若與真實後端不對稱，會在那裡先於產品爆出來。完整做法與對照組事故：[有狀態假後端用真實模型序列化回應](/work-log/flutter_fake_backend_real_model_serialization/)。
 
@@ -81,7 +81,7 @@ harness 立起後，測試輸出可能固定印出幾行「錯誤長相」的文
 
 ## 下一步路由
 
-- 策略層的完整判準（什麼時候值得建假後端）→ [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
+- 策略層的完整判斷標準（什麼時候值得建假後端）→ [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - 配對的真實後端驗證（假後端行為漂移的防線）→ [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
 - 憑證的存放與 CI 注入 → [測試憑證管理](/testing/03-protocol-integration-test/credential-management/)
 - 各限制的完整 case：[headless 控制器](/work-log/flutter_headless_controller_test_bootstrap/)、[binding 互斥](/work-log/flutter_test_binding_blocks_real_network/)、[雜訊治理](/work-log/flutter_test_noise_expected_paths/)、[假後端序列化](/work-log/flutter_fake_backend_real_model_serialization/)

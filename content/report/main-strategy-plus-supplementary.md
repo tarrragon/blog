@@ -2,7 +2,7 @@
 title: "主策略 + 補強策略：選擇不必互斥"
 date: 2026-04-26
 weight: 75
-description: "多策略並非「五選一」、可分層疊加：root-cause fix（解結構問題） + UX 補強（解使用者感知）通常雙打比單選更穩。判準三條：解不同層 / 沒副作用衝突 / 增量成本可接受。把「策略選擇」預設成單選、會放掉互補可能、產生「結構修了但使用者體驗仍差」或「UX 蓋過去但結構還壞」。"
+description: "多策略並非「五選一」、可分層疊加：root-cause fix（解結構問題） + UX 補強（解使用者感知）通常雙打比單選更穩。判斷標準三條：解不同層 / 沒副作用衝突 / 增量成本可接受。把「策略選擇」預設成單選、會放掉互補可能、產生「結構修了但使用者體驗仍差」或「UX 蓋過去但結構還壞」。"
 tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Strategy"]
 ---
 
@@ -25,7 +25,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Stra
 
 ---
 
-## 疊加可行的三條判準
+## 疊加可行的三條判斷標準
 
 某兩個策略 X + Y 可疊加 ⇔ 滿足以下全部：
 
@@ -71,7 +71,7 @@ Defensive 處理失敗、Optimistic 處理成功 — 兩個 happy path 共存、
 
 ### 模式三：Now + Later
 
-「先 ship X 解眼前、Y 下輪做」是一種隱式疊加 — 不是放棄 Y、是延後到風險更可承受的 release window。判準見 [#76 分批 ship](../incremental-shipping-criteria/)。
+「先 ship X 解眼前、Y 下輪做」是一種隱式疊加 — 不是放棄 Y、是延後到風險更可承受的 release window。判斷標準見 [#76 分批 ship](../incremental-shipping-criteria/)。
 
 ### 模式四：Selector strategy 疊加（#46-#50）
 
@@ -84,7 +84,7 @@ Defensive 處理失敗、Optimistic 處理成功 — 兩個 happy path 共存、
 | Event target → 找最近容器          | #49 closest      |
 | Test / 多實例                      | #48 函式參數     |
 
-同一份 component code 可同時用 #46 + #49（外部 portal 用 document、內部用 closest）— 解不同 selector context、不衝突、增量成本低 = 滿足三條判準。
+同一份 component code 可同時用 #46 + #49（外部 portal 用 document、內部用 closest）— 解不同 selector context、不衝突、增量成本低 = 滿足三條判斷標準。
 
 判讀：「這幾個 pattern 是同層次（互斥）還是不同 context（互補）？」不同 context = 疊加。
 
@@ -136,7 +136,7 @@ Defensive 處理失敗、Optimistic 處理成功 — 兩個 happy path 共存、
 | 推薦時只給一個策略、沒講「也可以加 X」   | 補上「再加 Y 風險不大」的選項             |
 | 使用者問「那 Y 還做嗎」                  | 你已經把 Y 隱式排除、講清楚 Y 的位置      |
 | 「真正的 fix 是 Z、其他是 hack」道德判斷 | 退一步檢查：在 Z 完成前、有沒有便宜的減痛 |
-| 兩個策略放一起就互相打架                 | 違反判準 1 或 2、退回單選                 |
-| 第二個策略 ROI 邊際                      | 違反判準 3、不疊加                        |
+| 兩個策略放一起就互相打架                 | 違反判斷標準 1 或 2、退回單選             |
+| 第二個策略 ROI 邊際                      | 違反判斷標準 3、不疊加                    |
 
 **核心**：策略選擇問「能不能疊加」優先於「選哪個」 — 多數工程問題的最佳解是「多層次組合」、不是「找出唯一答案」。

@@ -6,11 +6,11 @@ description: "DDD 教學章節引用的領域建模術語：用原子化卡片�
 weight: -1
 ---
 
-本模組的知識卡片把領域建模的高密度術語拆成可獨立閱讀的概念索引。教學章節（[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)、[entity 與 value object 的判準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)、[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)、[建構路徑設計](/ddd/construction-path-design/)、[組裝層的可達性](/ddd/composition-root-reachability/)、[觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)、[讀模型的升級判準](/ddd/read-model-upgrade-signals/)、[domain event 與狀態流](/ddd/domain-event-vs-state-stream/)、[domain event 與命令、查詢](/ddd/domain-event-vs-command-and-query/)）遇到術語時連到對應卡片；卡片先回答概念本質、再放設計責任——讓讀者先知道該概念在領域模型裡承擔什麼責任。
+本模組的知識卡片把領域建模的高密度術語拆成可獨立閱讀的概念索引。教學章節（[資料袋與領域模型](/ddd/data-bag-vs-domain-model/)、[entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)、[狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)、[建構路徑設計](/ddd/construction-path-design/)、[組裝層的可達性](/ddd/composition-root-reachability/)、[觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)、[讀模型的升級條件](/ddd/read-model-upgrade-signals/)、[domain event 與狀態流](/ddd/domain-event-vs-state-stream/)、[domain event 與命令、查詢](/ddd/domain-event-vs-command-and-query/)）遇到術語時連到對應卡片；卡片先回答概念本質、再放設計責任——讓讀者先知道該概念在領域模型裡承擔什麼責任。
 
-## 術語建卡判準
+## 術語建卡標準
 
-建卡判準是教學需求：讀者若缺少某個術語的知識就難以理解教材章節，這個術語就值得建卡。出現頻率與是否影響實作判斷都只是補充訊號、不參與「是否要建卡」的必要判準。
+建卡標準是教學需求：讀者若缺少某個術語的知識就難以理解教材章節，這個術語就值得建卡。出現頻率與是否影響實作判斷都只是補充訊號、不參與「是否要建卡」的必要判斷標準。
 
 ## 核心概念
 

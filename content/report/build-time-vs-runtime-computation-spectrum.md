@@ -2,7 +2,7 @@
 title: "Build-time 預處理 vs Runtime 計算的光譜：何時把成本前置"
 date: 2026-04-26
 weight: 87
-description: "計算可放 build-time（預處理一次、runtime 0）或 runtime（per query 算）— 兩極之間有 hybrid 段（hot path 預算、cold path runtime）。判準四軸：query 頻率 / dataset 大小 / freshness 需求 / build pipeline 複雜度。Build-time 不是「永遠較好」、freshness / 多樣性高時 runtime 反而對。本卡把 #59 五策略中「query-side pushdown vs client-side fallback」的取捨抽象化、跨領域適用。"
+description: "計算可放 build-time（預處理一次、runtime 0）或 runtime（per query 算）— 兩極之間有 hybrid 段（hot path 預算、cold path runtime）。判斷標準四軸：query 頻率 / dataset 大小 / freshness 需求 / build pipeline 複雜度。Build-time 不是「永遠較好」、freshness / 多樣性高時 runtime 反而對。本卡把 #59 五策略中「query-side pushdown vs client-side fallback」的取捨抽象化、跨領域適用。"
 tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Performance", "Architecture"]
 ---
 
@@ -47,7 +47,7 @@ Build-time 計算需要 build pipeline 配合 — 加一條規則 = 加一份 ar
 
 ---
 
-## 四軸判準
+## 四軸判斷標準
 
 評估某個計算該放哪一端：
 

@@ -12,7 +12,7 @@ Assertion 是 test 的結論 — 「我認為程式碼的行為應該是 X」。
 
 ### 斷言的是行為嗎
 
-Assertion 應該斷言程式碼的外部可觀察行為（回傳值、狀態變化、副作用），而非內部實作細節（私有變數的值、呼叫次數、執行順序）。這條的射程是測試邊界畫在模組的情況——邊界畫在單一類別時，斷言呼叫本身是那一派刻意的選擇，用重構期的誤報換失敗定位精度，判準見 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)。
+Assertion 應該斷言程式碼的外部可觀察行為（回傳值、狀態變化、副作用），而非內部實作細節（私有變數的值、呼叫次數、執行順序）。這條的射程是測試邊界畫在模組的情況——邊界畫在單一類別時，斷言呼叫本身是那一派刻意的選擇，用重構期的誤報換失敗定位精度，判斷標準見 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)。
 
 斷言行為的 test 在重構時不需要改 — 只要行為不變，test 就通過。斷言實作的 test 在任何內部調整時都會壞掉，即使行為完全正確。
 
@@ -54,7 +54,7 @@ Assertion 是否依賴非確定性因素 — 時間、隨機數、外部服務�
 
 ## 下一步路由
 
-- 斷言的預期值是從哪裡來的（取自實作執行結果時，下面三問會全部通過而測試什麼也沒驗）→ [判準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)
+- 斷言的預期值是從哪裡來的（取自實作執行結果時，下面三問會全部通過而測試什麼也沒驗）→ [判斷標準的推導來源](/testing/06-agent-authored-code/test-provenance-independence/)
 
 - Flaky test 的系統性根因分類 → [Flaky test 根因分類](/testing/05-test-design-judgment/flaky-test-root-cause/)
 - 斷言失敗訊息該寫什麼（reason 寫失敗後果與處置）→ [測試註解與命名紀律](/testing/05-test-design-judgment/test-comment-and-naming-discipline/)

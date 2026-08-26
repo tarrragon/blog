@@ -78,7 +78,7 @@ Scenario 的責任是讓壓測的流量結構接近 production。k6 提供五種
 | ramping-arrival-rate  | 變化 RPS     | 模擬 production peak/off-peak |
 | externally-controlled | 外部 API     | 結合 production 流量 replay   |
 
-### Executor 選擇判準
+### Executor 選擇標準
 
 constant-vus 最簡單，但 throughput 會隨 response time 波動 — 伺服器變慢時 RPS 自動下降，掩蓋了真正的壓力。constant-arrival-rate 控制 RPS 穩定，能讓 threshold 的判讀基準一致，但需要設定足夠的 preAllocatedVUs 避免 k6 因為 VU 不足而主動降速。
 
@@ -169,7 +169,7 @@ LinkedIn 的自動化壓測實踐把 load test 結果跟容量預測接在一起
 
 **Threshold variance**：CI runner 的硬體差異（shared runner 的鄰居效應、network jitter、GC pause）會讓同一份 code 在不同 run 產生不同結果。控制方式：dedicated runner 消除鄰居效應、warmup iteration 丟棄前幾輪結果、多次 run 取中位數。若 variance 超過 threshold 的退化幅度，gate 判讀就不可信。
 
-**門檻過寬或過緊**：threshold 永遠通過代表 gate 形同虛設；threshold 頻繁 false positive 會讓團隊忽略 CI 結果。兩者都會讓 gate 失去判讀價值。校準的判準是：過去 30 天的 threshold 結果中，真正需要關注的退化是否都被攔住，同時 false positive 率低於 5%。
+**門檻過寬或過緊**：threshold 永遠通過代表 gate 形同虛設；threshold 頻繁 false positive 會讓團隊忽略 CI 結果。兩者都會讓 gate 失去判讀價值。校準的判斷標準是：過去 30 天的 threshold 結果中，真正需要關注的退化是否都被攔住，同時 false positive 率低於 5%。
 
 **Scenario 跟 production drift**：production 的流量結構會隨產品演進改變。定期（每月或每次重大功能上線）用 access log 校準 scenario 的 RPS、cohort 比例與資料分佈，避免模型越跑越偏。
 

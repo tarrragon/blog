@@ -36,7 +36,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - **Mechanism**：問題節點表「前置控制面」欄的連結進知識卡，看該控制的機制、邊界與適用條件。
 - **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)。
 
-兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
+兩條 chain 完成條件與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
 ## 配發是可以被消除的動作
 

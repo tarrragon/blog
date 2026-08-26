@@ -85,6 +85,6 @@ Incident 驗證的責任是確認控制面在壓力情境依然生效。這一�
 - [7.18 資安控制面如何交接到部署與事故流程](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/)
 - [7.B4 Tabletop 與 Game Day 設計](/backend/07-security-data-protection/blue-team/tabletop-and-game-day-design/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能為一個控制面設計驗證方式。驗證設計至少包含風險假設、控制面、證據來源、驗證步驟、放行條件、關閉條件與回寫位置。

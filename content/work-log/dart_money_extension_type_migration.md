@@ -70,5 +70,5 @@ characterization test 跟一般測試的差別在斷言的性質：它不驗證�
 
 ## 相關閱讀
 
-- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/) 的語意封閉段（本文是 primitive obsession 到 domain type 的實機案例）
-- 同族判準：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)——那篇的判準「有沒有不允許任意組合的欄位」在型別層的對應是「有沒有不允許的運算」，兩篇都是把約束從慣例層上移到型別層
+- 概念地基：[entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/) 的語意封閉段（本文是 primitive obsession 到 domain type 的實機案例）
+- 同族判斷標準：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)——那篇的判斷標準「有沒有不允許任意組合的欄位」在型別層的對應是「有沒有不允許的運算」，兩篇都是把約束從慣例層上移到型別層

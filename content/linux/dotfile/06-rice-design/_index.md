@@ -19,7 +19,7 @@ Rice 在 Linux 桌面社群指的是桌面視覺客製化——把系統外觀�
 | [Caelestia 總覽](/linux/dotfile/06-rice-design/caelestia-overview/)                                      | Quickshell 框架、提供的元件、跟手動拼裝和 AGS/Eww 的 trade-off、定位認知     |
 | [Caelestia 安裝](/linux/dotfile/06-rice-design/caelestia-installation/)                                  | AUR 套件、CLI 安裝流程、依賴清單、登入管理器、CLI 指令、VM 測試範圍          |
 | [Caelestia 配置](/linux/dotfile/06-rice-design/caelestia-configuration/)                                 | shell.json 結構、token 系統、hypr-user.lua、動態取色、已知問題、dotfile 結構 |
-| [整合式 Shell vs 手動拼裝：實測取捨](/linux/dotfile/06-rice-design/integrated-shell-vs-manual-assembly/) | 兩種桌面棧的實測足跡（安裝/記憶體）、失敗半徑、配色一致性機制與選型判準      |
+| [整合式 Shell vs 手動拼裝：實測取捨](/linux/dotfile/06-rice-design/integrated-shell-vs-manual-assembly/) | 兩種桌面棧的實測足跡（安裝/記憶體）、失敗半徑、配色一致性機制與選型標準      |
 
 ## 跨分類引用
 

@@ -6,9 +6,9 @@ weight: 74
 tags: ["backend", "database", "cosmosdb", "postgresql", "citus", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Cosmos DB for PostgreSQL 是 Azure 在 2022 把 Citus（PostgreSQL 的分散式 extension）納入後推出的 *分散式 PostgreSQL* 託管服務 — 它跑真正的 PostgreSQL engine、支援標準 SQL / JOIN / ACID 交易、把單表水平分片到多個 worker node。它跟本 vendor 頁主講的核心 Cosmos DB（NoSQL、multi-model、RU/s 計費）是 *兩個不同產品*、只是共用品牌名稱。本文的主責任是釐清這個定位混淆、再講它的架構與選型判準：何時選它、何時該回核心 Cosmos DB、何時一般 PostgreSQL 就夠。
+本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Cosmos DB for PostgreSQL 是 Azure 在 2022 把 Citus（PostgreSQL 的分散式 extension）納入後推出的 *分散式 PostgreSQL* 託管服務 — 它跑真正的 PostgreSQL engine、支援標準 SQL / JOIN / ACID 交易、把單表水平分片到多個 worker node。它跟本 vendor 頁主講的核心 Cosmos DB（NoSQL、multi-model、RU/s 計費）是 *兩個不同產品*、只是共用品牌名稱。本文的主責任是釐清這個定位混淆、再講它的架構與選型標準：何時選它、何時該回核心 Cosmos DB、何時一般 PostgreSQL 就夠。
 
-本文沒有專屬 production case anchor：Cosmos DB for PostgreSQL 的公開 case 覆蓋稀薄、機制以 Azure / Citus vendor 規格與分散式 PostgreSQL 通用工程展開、選型判準用「scale-out PG vs NoSQL vs single-node PG」這個具體決策驅動。
+本文沒有專屬 production case anchor：Cosmos DB for PostgreSQL 的公開 case 覆蓋稀薄、機制以 Azure / Citus vendor 規格與分散式 PostgreSQL 通用工程展開、選型標準用「scale-out PG vs NoSQL vs single-node PG」這個具體決策驅動。
 
 > **Scope warning**：本文涉及的服務命名、node 規格上限、Citus 版本、PostgreSQL major version 支援屬時間敏感、Azure 服務命名歷史上有變動、實作前以 [Cosmos DB for PostgreSQL 官方文件](https://learn.microsoft.com/azure/cosmos-db/postgresql/) cross-verify。
 
@@ -37,7 +37,7 @@ distribution column 是核心設計決策、類比核心 Cosmos DB 的 partition
 
 表分三種：distributed table（按 distribution column 分片、大表用）、reference table（每個 worker 全複本、小的維度表用、讓 JOIN co-locate）、local table（只在 coordinator）。建模的關鍵是把常一起 JOIN 的大表用 *同一 distribution column* 分片、達成 co-location。
 
-## 選型判準：三方對照
+## 選型標準：三方對照
 
 這是本文主判讀段。Cosmos DB for PostgreSQL 的正確位置是「single-node PG 不夠、但 workload 仍是 SQL 範式」的中間地帶。
 
@@ -121,7 +121,7 @@ application query 大多不帶 distribution column filter、或常做跨 distrib
 
 ### 該用 NoSQL 卻選了分散式 PG（或反之）
 
-document / KV、固定 access pattern、不需要 JOIN 的 workload 選了 Cosmos DB for PostgreSQL、付了 SQL / distribution column 設計的複雜度卻沒用到關聯能力 — 這類 workload 核心 Cosmos DB（NoSQL）更自然。反過來、SQL / JOIN / 交易重的 workload 被推去核心 Cosmos DB（NoSQL）要重寫成 document model 也是錯。修法是回到「workload 是 SQL 範式還是 document / KV 範式」的根本判斷、見本文選型判準段與 [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) 的範式判讀。
+document / KV、固定 access pattern、不需要 JOIN 的 workload 選了 Cosmos DB for PostgreSQL、付了 SQL / distribution column 設計的複雜度卻沒用到關聯能力 — 這類 workload 核心 Cosmos DB（NoSQL）更自然。反過來、SQL / JOIN / 交易重的 workload 被推去核心 Cosmos DB（NoSQL）要重寫成 document model 也是錯。修法是回到「workload 是 SQL 範式還是 document / KV 範式」的根本判斷、見本文選型標準段與 [mongodb-api-vs-sql-api](../mongodb-api-vs-sql-api/) 的範式判讀。
 
 ### Anti-recommendation：single-node PG 沒到上限不要上
 

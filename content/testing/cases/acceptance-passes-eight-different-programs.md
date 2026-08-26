@@ -12,7 +12,7 @@ tags: ["testing", "case-study", "acceptance-test", "mutation-testing", "ai-gener
 
 ## 觀察
 
-實驗設計是一個 4 × 2 的網格。產品固定為 Greg Yob 的 Hunt the Wumpus，合規判準固定為一份 25 案例的主控台驗收腳本。變因一是測試紀律四選一：三法則 TDD、test-last（先寫完程式再補測試）、bundling（寫一個函式就測一個函式）、完全不寫測試；變因二是 CRAP 度量是否強制壓到低於 4。八行各自從空目錄寫起，禁止複製其他行的程式碼；每行寫完後封存該行的測試套件，再從空的用突變測試長出第二套。執行者是 AI agent，policy 檔通篇是防止抄近路的條款。
+實驗設計是一個 4 × 2 的網格。產品固定為 Greg Yob 的 Hunt the Wumpus，合規判斷標準固定為一份 25 案例的主控台驗收腳本。變因一是測試紀律四選一：三法則 TDD、test-last（先寫完程式再補測試）、bundling（寫一個函式就測一個函式）、完全不寫測試；變因二是 CRAP 度量是否強制壓到低於 4。八行各自從空目錄寫起，禁止複製其他行的程式碼；每行寫完後封存該行的測試套件，再從空的用突變測試長出第二套。執行者是 AI agent，policy 檔通篇是防止抄近路的條款。
 
 | 指標           | 值                                                                                              |
 | -------------- | ----------------------------------------------------------------------------------------------- |
@@ -54,5 +54,5 @@ tags: ["testing", "case-study", "acceptance-test", "mutation-testing", "ai-gener
 - 這則案例抽出的可重用原則 → [#277 通過關卡不等於通過的是同一個程式](/report/passing-a-gate-does-not-pin-the-program/)
 - 同一份實驗的另一軸（機械約束的代價）→ [#278 機械約束買到被量測的那個數字](/report/mechanical-constraints-buy-the-measured-number/)
 - 測試與實作同源時 oracle 為什麼退化 → [Test Provenance](/testing/knowledge-cards/test-provenance/)
-- 判準來源本身有哪幾種、各自抓得到什麼 → [Test Oracle](/testing/knowledge-cards/test-oracle/)
+- Test oracle 本身有哪幾種、各自抓得到什麼 → [Test Oracle](/testing/knowledge-cards/test-oracle/)
 - 由測試自己餵資料造成同型盲區的自有案例 → [T.C5 凍結參照失效被 stub 遮蔽](/testing/cases/stale-reference-stub-blindspot/)

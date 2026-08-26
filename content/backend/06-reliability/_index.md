@@ -152,7 +152,7 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 | [6.5 失敗模式預判（Pre-mortem 與 FMEA）](/backend/06-reliability/failure-mode-pre-mortem/)         | Failure Mode Pre-mortem                   | 用驗證盲區、演練缺口與門檻失真檢查 release 風險用 SRE first-class 詞彙定義失敗模式預判                                       |
 | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)                          | SLO & Error Budget                        | 把可靠性目標轉成可驗證量測與凍結條件                                                                                         |
 | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)                 | DR & Rollback Rehearsal                   | 把回復路徑變成定期可重播流程                                                                                                 |
-| [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                               | Release Gate                              | 把驗證、migration、相容性納入放行判準                                                                                        |
+| [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                               | Release Gate                              | 把驗證、migration、相容性納入放行條件                                                                                        |
 | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                       | Capacity & Cost                           | 把容量規劃跟成本約束變成驗證輸入                                                                                             |
 | [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)                  | Contract Testing                          | 把跨服務 / API / event schema 契約變成可驗證 artifact                                                                        |
 | [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                   | Migration Safety                          | 把 schema migration 變成可逆、可漸進的 rollout 流程                                                                          |
@@ -175,7 +175,7 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 ## 個案前拓展空間
 
-個案前拓展的責任是先建立驗證判準，再讓服務案例成為證據。可靠性驗證適合補「怎麼安全地驗證失敗」這類跨服務流程，不適合先把 Google / Netflix / Amazon 的故事直接展開。
+個案前拓展的責任是先建立驗證標準，再讓服務案例成為證據。可靠性驗證適合補「怎麼安全地驗證失敗」這類跨服務流程，不適合先把 Google / Netflix / Amazon 的故事直接展開。
 
 | 拓展方向                     | 補充理由                                       | 先放位置 |
 | ---------------------------- | ---------------------------------------------- | -------- |
@@ -239,7 +239,7 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 主章 6.1-6.25 已完成首輪正文，服務案例庫第一批正文已補齊（T1：Google / Netflix / Amazon / Stripe / Shopify；T2/T3：LinkedIn / Honeycomb / Microsoft / Spotify / Pinterest / Meta）。目前重點從「補章節骨架」轉為「補案例深度與跨章節回寫」。
 
-案例正文入口見 [可靠性案例庫](/backend/06-reliability/cases/)。每篇案例至少要能回寫一個章節判準（例如 6.6、6.19、6.20、6.22、6.23、6.24），避免案例只停留在事件敘事。
+案例正文入口見 [可靠性案例庫](/backend/06-reliability/cases/)。每篇案例至少要能回寫一個章節判斷標準（例如 6.6、6.19、6.20、6.22、6.23、6.24），避免案例只停留在事件敘事。
 
 第二批案例深挖已補 Google 與 Netflix 的第二篇正文： [Google Postmortem Closure 治理](/backend/06-reliability/cases/google/postmortem-action-item-closure-governance/) 與 [Netflix Business-Hours Chaos Guardrails](/backend/06-reliability/cases/netflix/chaos-monkey-business-hours-guardrails/)。兩者分別對應 `6.21 / 8.5 / 8.22` 與 `6.19 / 6.20 / 6.22 / 8.6` 的制度化回寫。
 

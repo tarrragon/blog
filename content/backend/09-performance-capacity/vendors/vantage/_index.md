@@ -32,9 +32,9 @@ Kubernetes 成本分析適合用 Vantage 補足平台可見性。Namespace、lab
 
 Forecast 與 anomaly review 適合日常成本治理。每月 forecast、cost trend、unexpected spike 與 budget drift 可以接到 engineering review，讓容量調整、release、marketing event 與成本變化在同一個時間軸上被討論。
 
-## 選型判準
+## 選型標準
 
-| 判準            | Vantage 的價值                                        | 需要補的能力                           |
+| 判斷標準        | Vantage 的價值                                        | 需要補的能力                           |
 | --------------- | ----------------------------------------------------- | -------------------------------------- |
 | Cost allocation | 依 provider、account、resource、Kubernetes label 分攤 | tag / label policy、owner taxonomy     |
 | Kubernetes 成本 | namespace、service、label 與 pod-level efficiency     | agent rollout、cluster mapping         |

@@ -10,7 +10,7 @@ Entity 的同一性由身份定義：欄位可以全部改變、只要身份參�
 
 ## 概念位置
 
-Entity 是領域模型的一種形態——型別先判定為領域模型（有[不變式](/ddd/knowledge-cards/invariant/)）、再判定身份語意（entity 或 value object）。判準是「操作需不需要 identity-based 回寫」：取消、改量、退貨這類要精確指到特定實體的操作，需要 entity；內容比對就足夠的操作用 value object。同一個業務概念的身份語意會隨生命週期階段改變——每個轉折點重問一次判準。
+Entity 是領域模型的一種形態——型別先判定為領域模型（有[不變式](/ddd/knowledge-cards/invariant/)）、再判定身份語意（entity 或 value object）。判斷標準是「操作需不需要 identity-based 回寫」：取消、改量、退貨這類要精確指到特定實體的操作，需要 entity；內容比對就足夠的操作用 value object。同一個業務概念的身份語意會隨生命週期階段改變——每個轉折點重問一次判斷標準。
 
 ## 可觀察訊號
 
@@ -18,4 +18,4 @@ Entity 是領域模型的一種形態——型別先判定為領域模型（有[
 
 ## 設計責任
 
-Entity 需要決定身份的來源（資料庫序號、外部系統 ID、業務規則產生的識別碼）、生命週期的階段（何時誕生、何時交棒、何時成為歷史事實需要 [snapshot](/ddd/knowledge-cards/snapshot/)）、以及變更的路徑（領域方法的設計，見 [狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)）。判準的完整展開見 [entity 與 value object 的判準](/ddd/entity-vs-value-object/)。
+Entity 需要決定身份的來源（資料庫序號、外部系統 ID、業務規則產生的識別碼）、生命週期的階段（何時誕生、何時交棒、何時成為歷史事實需要 [snapshot](/ddd/knowledge-cards/snapshot/)）、以及變更的路徑（領域方法的設計，見 [狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)）。判斷標準的完整展開見 [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)。

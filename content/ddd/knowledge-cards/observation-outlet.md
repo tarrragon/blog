@@ -10,7 +10,7 @@ weight: 17
 
 ## 概念位置
 
-觀測出口的契約層是一種 [port](/ddd/knowledge-cards/port/)：簽名只用語言標準庫與 domain entity、放 domain repository 介面，與 pull 方法形成對稱。機制層（broadcast controller、寫入點 emit）歸 [adapter](/ddd/knowledge-cards/adapter/)；組裝層（框架 provider 包裝）歸 DI／presentation。三層歸屬的完整判準與「需求來源不決定歸屬」的推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
+觀測出口的契約層是一種 [port](/ddd/knowledge-cards/port/)：簽名只用語言標準庫與 domain entity、放 domain repository 介面，與 pull 方法形成對稱。機制層（broadcast controller、寫入點 emit）歸 [adapter](/ddd/knowledge-cards/adapter/)；組裝層（框架 provider 包裝）歸 DI／presentation。三層歸屬的完整判斷標準與「需求來源不決定歸屬」的推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
 
 ## 可觀察訊號
 

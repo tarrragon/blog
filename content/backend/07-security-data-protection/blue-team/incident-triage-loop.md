@@ -69,6 +69,6 @@ Containment 與 evidence 的責任是讓事件處置可驗證。處置動作與�
 - [7.B5 Detection Engineering Lifecycle](/backend/07-security-data-protection/blue-team/detection-engineering-lifecycle/)
 - [7.24 資安事故如何回寫產品與架構](/backend/07-security-data-protection/security-incident-write-back-to-product-and-architecture/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把一個 incident 訊號走完 triage loop。輸出至少包含訊號、問題、分級、接手、處置、證據與回寫。

@@ -126,4 +126,4 @@ Go 的 composition root 不需要重複教這些技術，只要把它們正確�
 
 本章處理 Go 程式如何組裝依賴。資料庫連線池、Redis client、broker connection、container secret 與平台設定會放在 Backend 對應模組；Go 章節只保留「誰依賴誰」與「在哪裡組裝」的設計。
 
-組裝責任的語言無關判準在 DDD 模組：組裝完成與否在 mock 測試裡沒有證言、驗法是 [接線測試](/ddd/knowledge-cards/wiring-test/)；把「每個入口在 production 可達」當成組裝層不變式的強制層選擇，見 [組裝層的可達性](/ddd/composition-root-reachability/)。
+組裝責任的語言無關判斷標準在 DDD 模組：組裝完成與否在 mock 測試裡沒有證言、驗法是 [接線測試](/ddd/knowledge-cards/wiring-test/)；把「每個入口在 production 可達」當成組裝層不變式的強制層選擇，見 [組裝層的可達性](/ddd/composition-root-reachability/)。

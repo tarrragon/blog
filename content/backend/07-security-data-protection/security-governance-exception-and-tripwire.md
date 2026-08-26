@@ -19,7 +19,7 @@ tags: ["backend", "security"]
 1. 決策責任：確認例外的目的、邊界、批准者與受影響資產都被記下來（對應 risk scope 與 owner）。
 2. 期限責任：確認有明確到期日、下次審查時間，以及重評估條件（對應 expiry）。條件有兩種實作，兩者至少要有一種——時間驅動的定期審查日，或責任 4 的事件驅動 tripwire。外部要求自帶的期限（稽核 finding 的補正期限、合約的通報時限）優先於內部訂的到期日，兩者衝突時內部期限沒有效力。
 3. 補償責任：確認過渡期間加上額外監測、限制或人工檢查（對應 compensating controls）。
-4. 觸發責任：確認關閉依賴外部事件或時間不可預測的例外都掛了 [tripwire](/backend/knowledge-cards/tripwire/)（基數判準在 [security exception](/backend/knowledge-cards/security-exception/) 卡）。tripwire 不是六欄之一、是以例外為觀察對象的獨立物件，所以這一項沒有對應欄位、而它的四要素（訊號 / 門檻 / 升級對象 / 決策路徑）在 tripwire 卡。
+4. 觸發責任：確認關閉依賴外部事件或時間不可預測的例外都掛了 [tripwire](/backend/knowledge-cards/tripwire/)（基數判斷標準在 [security exception](/backend/knowledge-cards/security-exception/) 卡）。tripwire 不是六欄之一、是以例外為觀察對象的獨立物件，所以這一項沒有對應欄位、而它的四要素（訊號 / 門檻 / 升級對象 / 決策路徑）在 tripwire 卡。
 5. 關閉責任：確認關閉條件可驗證、且關閉後有回寫（對應 exit criteria 與 write-back target）。
 
 ## 判讀流程
@@ -54,7 +54,7 @@ tags: ["backend", "security"]
 案例觸發的責任是驗證例外治理是否能承受高壓情境。
 
 - 修補窗口中的暫時風險接受： [PAN-OS 2024](/backend/07-security-data-protection/red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/)
-- 供應鏈事件中的凍結與恢復判準： [XZ Backdoor 2024](/backend/07-security-data-protection/red-team/cases/supply-chain/xz-backdoor-2024-open-source-supply-chain/)
+- 供應鏈事件中的凍結與恢復判斷標準： [XZ Backdoor 2024](/backend/07-security-data-protection/red-team/cases/supply-chain/xz-backdoor-2024-open-source-supply-chain/)
 - 身分事件中的收斂與決策期限： [Uber 2022](/backend/07-security-data-protection/red-team/cases/identity-access/uber-2022-mfa-fatigue/)
 
 ## 下一步路由

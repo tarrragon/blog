@@ -3,7 +3,7 @@ name: blogsearch-lifecycle
 description: "blogsearch 向量 index 的生命週期管理：偵測 index 過時或不存在、觸發 rebuild、驗證結果。適用於有 blogsearch 語意搜尋工具的專案。觸發詞：blogsearch、rebuild index、ingest、向量搜尋、語意搜尋、index 過時、content 變動、pull 後 rebuild、新增文章後搜尋。Trigger when content changes may have made the search index stale, or when semantic search is needed."
 license: MIT
 metadata:
-  version: 1.4.0
+  version: 1.4.1
   category: tooling-lifecycle
 ---
 
@@ -78,7 +78,7 @@ cd scripts/blogsearch
 cd scripts/blogsearch && make verify     # status + test query
 ```
 
-驗證判準：
+驗證標準：
 
 - `status` 顯示 chunk 數 > 0、dimensions = 768
 - `query` 回傳的 top-1 結果包含相關文章（如 vector-storage-engineering）
@@ -113,6 +113,8 @@ cd scripts/blogsearch && make verify     # status + test query
 - **內容查重流程**：due-diligence 查重可用 `blogsearch query` 替代手動翻 collection index
 - **RAG storage 選型**：本工具的向量 index 設計（flat file + brute-force）可作為 RAG storage 選型的參考實作
 - **Demo 與 production 共存**：若專案有 pickle-based RAG demo，blogsearch 是 production 升級版、兩者可共存
+
+**Version**: 1.4.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 1.4.0 — 全量 rebuild 的真實成本進 SOP：耗時改為按當前規模推估（2026-08 實測 3510 檔 / 29863 chunks / 3296 秒，取代過時的「約 4 分鐘」）、明寫無增量模式與它對 rebuild 時機的影響、補雙重 fork 的脫離跑法（掛在 agent 背景工作下會連同 ollama 一起被回收、經管線的輸出會被緩衝到看不見進度）；失敗處理表加這兩種形態；提示規則補「說出耗時量級再問要不要跑」
 

@@ -61,7 +61,7 @@ Coverage 決定資料能否覆蓋高風險邊界。低流量服務、VIP tenant�
 - timestamp 是否能支援 [incident timeline](/backend/knowledge-cards/incident-timeline/) 還原
 - dashboard 是否標示資料延遲、缺口與查詢範圍
 
-| 品質面向 | 最小可用判準                 | 失真後果                    |
+| 品質面向 | 最小可用標準                 | 失真後果                    |
 | -------- | ---------------------------- | --------------------------- |
 | 完整性   | drop rate、coverage 可被量測 | 事故定位依賴不完整證據      |
 | 一致性   | 欄位語意與命名跨服務一致     | 事件鏈需要人工拼接          |

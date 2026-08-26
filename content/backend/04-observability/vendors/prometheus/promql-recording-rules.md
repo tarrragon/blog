@@ -44,7 +44,7 @@ Prometheus histogram 使用預定義 bucket 邊界收集觀測值分布。`histo
 
 Bucket 邊界的設計直接影響精確度。預設 bucket（0.005, 0.01, 0.025, ... 10）適合 HTTP request 延遲場景。如果服務的 p50 在 200ms 而 bucket 只有 0.1 跟 0.25 兩個相鄰邊界，p50 的計算會在 100ms-250ms 之間做線性內插，精確度受限。
 
-設計 bucket 的判準：p50 和 p99 附近各要有 2-3 個相鄰 bucket，讓內插結果接近真實值。SLO 的 latency threshold 也應該落在某個 bucket 邊界上 — 例如 SLO 是 p95 < 500ms，那 500ms 應該是一個 bucket 邊界。
+設計 bucket 的判斷標準：p50 和 p99 附近各要有 2-3 個相鄰 bucket，讓內插結果接近真實值。SLO 的 latency threshold 也應該落在某個 bucket 邊界上 — 例如 SLO 是 p95 < 500ms，那 500ms 應該是一個 bucket 邊界。
 
 每個 bucket 是一個 time series。10 個 bucket 的 histogram + 4 個 label 組合 = 40 個 series。Bucket 數量增加到 30 個時，同一個 metric 的 series 數量膨脹 3 倍。Bucket 設計要在精確度與 cardinality 之間取捨。
 

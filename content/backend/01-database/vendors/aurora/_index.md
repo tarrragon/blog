@@ -17,7 +17,7 @@ Aurora 服務頁的教學目標是把 PostgreSQL / MySQL 語意延伸到 AWS man
 | Managed SQL         | Aurora 如何保留 PostgreSQL / MySQL 語意並改變操作責任       | 定位、適用場景                                                                                    |
 | Storage / compute   | 分離 storage layer 如何影響 replica、failover、backup       | 容量規劃要點、案例對照                                                                            |
 | AWS operation model | parameter group、maintenance、region、cost 如何成為平台責任 | 跟其他 vendor 的取捨、[RTO](/backend/knowledge-cards/rto/) / [RPO](/backend/knowledge-cards/rpo/) |
-| Peak workload       | 金融、串流、Super Bowl、banking case 如何提供容量判準       | 適用場景、案例對照                                                                                |
+| Peak workload       | 金融、串流、Super Bowl、banking case 如何提供容量判斷標準   | 適用場景、案例對照                                                                                |
 | 替代路由            | 何時留 RDS、自管 PostgreSQL / MySQL、轉 Spanner 或 DynamoDB | 不適用場景、下一步路由                                                                            |
 
 ## 定位：storage / compute 分離的 SQL
@@ -252,7 +252,7 @@ Aurora case 的讀法是看 operation transfer 如何變成容量與成本結果
 
 Aurora 的反向 sibling 路由用來避免把 managed SQL 誤讀成唯一升級方向。若讀者從 PostgreSQL / MySQL 章節過來，先對照 [PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/) 與 [MySQL → Aurora](/backend/01-database/vendors/mysql/migrate-to-aurora/)；若核心需求是 connection surge，補讀 [DynamoDB vendor](/backend/01-database/vendors/dynamodb/) 與 [Lemino case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/)；若核心需求是 multi-region active-active write，轉到 [Spanner vendor](/backend/01-database/vendors/spanner/) 或 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)。
 
-這條路由的判準是先問「保留 SQL + 轉移 operation」是否足夠。答案成立時，Aurora 是 RDS / 自管 MySQL / 自管 PostgreSQL 的 managed endpoint；答案需要改成 global quorum、partition-key access pattern 或 document API 時，Aurora 應退到對照組，而非成為最後選項。
+這條路由的判斷標準是先問「保留 SQL + 轉移 operation」是否足夠。答案成立時，Aurora 是 RDS / 自管 MySQL / 自管 PostgreSQL 的 managed endpoint；答案需要改成 global quorum、partition-key access pattern 或 document API 時，Aurora 應退到對照組，而非成為最後選項。
 
 ## 常見陷阱
 

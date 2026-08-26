@@ -24,7 +24,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "內容�
 | 文章                                  | SOP 段內容                                 | Retrospective 段內容                                           | 混合比例            |
 | ------------------------------------- | ------------------------------------------ | -------------------------------------------------------------- | ------------------- |
 | migration-playbook-methodology        | 6 type 結構模板、diff dimension audit 步驟 | 三輪 batch 驗證、cadence dogfood、self-aware limitation update | SOP 40% / retro 60% |
-| vendor-deep-article-methodology       | 選題判準、6 段結構、寫作流程 7 step        | 兩輪 batch 驗證、跨兩輪 cadence 對照                           | SOP 35% / retro 65% |
+| vendor-deep-article-methodology       | 選題標準、6 段結構、寫作流程 7 step        | 兩輪 batch 驗證、跨兩輪 cadence 對照                           | SOP 35% / retro 65% |
 | verification-driven-cli-tool-articles | 分類 → fixture → 標註 → gotcha 回寫流程    | 「為什麼官方 docs 不夠」+ 實測落差清單                         | SOP 70% / retro 30% |
 | ci-silent-hang-diagnosis              | 無明確 SOP（不可重複流程）                 | 完整 case study + 原則提取                                     | 不適用此分類        |
 
@@ -69,5 +69,5 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "內容�
 
 - → [#142 文章主體要對齊標題承諾](/report/article-body-must-align-with-title-commitment/)：#142 處理「章節內容偏離標題」，本卡處理「整篇文章功能定位混合」— #142 是段落層、本卡是文章層，同屬「內容要對齊承諾」家族
 - → [#122 cadence 同質化](/report/cadence-homogenization-in-batch-writing/)：本卡四篇文章中的 retrospective 段大量引用 #122 的 cadence 概念；拆分後 retrospective 段落成為 #122 的 evidence 文件，SOP 進 skill 不再重複
-- → [#154 教材的重點/總結段是內容發散訊號](/report/summary-section-signals-scattered-prose/)：#154 說「刪掉總結段看正文站不站得住」，本卡的對應操作是「刪掉 SOP 段看 retrospective 站不站得住」— 同類「減法測試」判準
+- → [#154 教材的重點/總結段是內容發散訊號](/report/summary-section-signals-scattered-prose/)：#154 說「刪掉總結段看正文站不站得住」，本卡的對應操作是「刪掉 SOP 段看 retrospective 站不站得住」— 同類「減法測試」判斷標準
 - → AGENTS.md 跨 surface 內容處理原則：本卡的拆分動作跨 `.claude/skills/` 和 `content/` 兩個 surface，各自獨立、不交叉引用

@@ -251,7 +251,7 @@ CockroachDB direct case 的讀法是「寫入擴展（DoorDash）→ polyglot �
 
 CockroachDB 的反向 sibling 路由用來把 PostgreSQL 相容性和 distributed SQL 責任拆開。若讀者從 PostgreSQL 章節過來，先讀 [PostgreSQL → CockroachDB migration](/backend/01-database/vendors/postgresql/migrate-to-cockroachdb/)；若只是要 managed SQL 與 storage autoscale，先回 [Aurora vendor](/backend/01-database/vendors/aurora/)；若要 Google Cloud 原生 external consistency 與 fully managed control plane，再對照 [Spanner vendor](/backend/01-database/vendors/spanner/)。
 
-這條路由的判準是「應用是否能承擔 distributed transaction 的語意差異」。SQL dialect 相近只降低 migration entry cost，真正的交付風險在 transaction retry、hot range、survival goal、backup restore 與 locality design。
+這條路由的判斷標準是「應用是否能承擔 distributed transaction 的語意差異」。SQL dialect 相近只降低 migration entry cost，真正的交付風險在 transaction retry、hot range、survival goal、backup restore 與 locality design。
 
 ## 常見陷阱
 

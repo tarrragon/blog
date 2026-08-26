@@ -131,7 +131,7 @@ SHOW RANGES FROM TABLE accounts;
 
 修法：把 table 改成 `REGIONAL BY ROW`（按用戶歸屬）或 `REGIONAL BY TABLE`（按市場歸屬）。
 
-Anti-recommendation：reference data 之外的任何 table，預設都不要設 `GLOBAL`。`GLOBAL` 的判準是「寫入頻率低到跨區寫的慢可以忽略」，高寫入 workload 直接排除。
+Anti-recommendation：reference data 之外的任何 table，預設都不要設 `GLOBAL`。`GLOBAL` 的判斷標準是「寫入頻率低到跨區寫的慢可以忽略」，高寫入 workload 直接排除。
 
 ### `REGIONAL BY ROW` 但 row 沒帶正確 `crdb_region`
 

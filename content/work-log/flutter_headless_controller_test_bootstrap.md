@@ -43,7 +43,7 @@ TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         (call) async => call.method == 'query' ? <dynamic>[] : null);
 ```
 
-「建構子就訂閱 EventChannel」是其中最陰的一個——mock 掛晚了炸在 `new` 的當下，錯誤點在別人的 package 深處。判準：**引入外接硬體類 plugin 時，先看它的建構子做了什麼**。
+「建構子就訂閱 EventChannel」是其中最陰的一個——mock 掛晚了炸在 `new` 的當下，錯誤點在別人的 package 深處。判斷標準：**引入外接硬體類 plugin 時，先看它的建構子做了什麼**。
 
 ## 3. no-op 子類 vs mock 框架
 
@@ -73,7 +73,7 @@ for (var i = 0; i < 100; i++) {
 
 輪詢「可觀察的終態」而非固定 sleep——固定延遲只是把起跑線挪後，在更慢的環境照樣輸。通用層的分析見 [T.C8 fire-and-forget 編排的測試競態](/testing/cases/fire-and-forget-test-race/)。
 
-## 5. 可複用的判準
+## 5. 可複用的判斷標準
 
 1. 流程測試開工前，先 spike「編排的宿主立不立得起來」——答案改變整個套件的寫法。
 2. 控制器啟動期的每一項平台耦合 = 測試 harness 的一項責任；逐項列表處理，不要碰到一個修一個。

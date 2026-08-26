@@ -1,5 +1,5 @@
 ---
-title: "整合式 Shell vs 手動拼裝：實測足跡、失敗半徑、配色一致性與選型判準"
+title: "整合式 Shell vs 手動拼裝：實測足跡、失敗半徑、配色一致性與選型標準"
 date: 2026-07-01
 description: "在整合式桌面 shell（如 Caelestia）與手動拼裝 waybar+wofi+mako 之間選型、需要實測的資源足跡、失敗半徑與配色一致性數據來判斷時回來讀"
 weight: 6
@@ -45,7 +45,7 @@ tags: ["dotfile", "rice", "caelestia", "waybar", "hyprland", "decision"]
 
 配色一致的差別，也反映在 config 的形狀上。Caelestia 的使用者設定集中在一個 `shell.json`（實測約 24 行就涵蓋狀態列、通知、idle 行為）。手動拼裝的設定散在各元件目錄、各用各的格式：waybar 的 `config.jsonc` + `style.css`、wofi 的 `config` + `style.css`、mako 的 `config`、hypr 的數個 `.conf`。集中的好處是好懂好改；散開的好處是每個元件可以獨立替換（把 waybar 換成 ironbar 不影響其他），代價是你要管更多檔案、更多格式。
 
-## 選型判準
+## 選型標準
 
 沒有一種在所有軸上都贏。依你的情境對照：
 

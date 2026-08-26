@@ -31,7 +31,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - **Mechanism**：問題節點表的 `[audit-log]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
 - **Delivery**：「交接路由」欄位指向 `06-reliability / 08-incident-response`、接配置 / 驗證 / 處置交付。
 
-兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
+兩條 chain 完成條件與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
 ## 稽核與責任模型
 

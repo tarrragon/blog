@@ -34,7 +34,7 @@ Dotfile 跟 IaC 這個平行，中間其實還有一格。「環境 as code」�
 - **應用環境（Dockerfile）**：一個應用程式跑的環境——base image、runtime、服務依賴。跟那個 **app** 走：住在 app 的 repo、隨它部署。
 - **組織環境（IaC）**：一整個組織的基礎設施——VPC、IAM、資料庫。跟**組織**走。
 
-三者是同一套宣告式、可重現、版控的哲學，只是主體的尺度不同：個人 → 應用 → 組織。所以 dotfile 跟 Dockerfile 的分界，就看**配置誰的環境、跟誰走**（形式像不像無關）：你的 vim 設定跟你走（dotfile），client 的 PHP runtime 定義跟那個 app 走（Dockerfile，該住 app 的 repo）。完整的分界判準與「Dockerfile 到底該放哪個 repo」見 [環境 as code 的三個尺度](/linux/dotfile/knowledge-cards/environment-as-code-scope/)。
+三者是同一套宣告式、可重現、版控的哲學，只是主體的尺度不同：個人 → 應用 → 組織。所以 dotfile 跟 Dockerfile 的分界，就看**配置誰的環境、跟誰走**（形式像不像無關）：你的 vim 設定跟你走（dotfile），client 的 PHP runtime 定義跟那個 app 走（Dockerfile，該住 app 的 repo）。完整的分界判斷標準與「Dockerfile 到底該放哪個 repo」見 [環境 as code 的三個尺度](/linux/dotfile/knowledge-cards/environment-as-code-scope/)。
 
 ## Dotfile 是重建指令，不是備份
 

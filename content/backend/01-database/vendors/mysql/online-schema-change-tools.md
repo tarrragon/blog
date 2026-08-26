@@ -253,7 +253,7 @@ PlanetScale（managed Vitess）走 *branch-based schema migration* — 建 schem
 
 Online schema change 的 production 責任是把大表 DDL 拆成可暫停、可節流、可切換的資料搬移流程。gh-ost 作為 GitHub 開源工具，把 schema change 轉成 ghost table copy、binlog tailing 與 controlled cutover；這讓 operator 可以在 replica lag、application load 或部署窗口變化時調整速度。
 
-這個案例要回收到三個操作判準。第一，throttle 指標要接 production SLO，例如 replica lag、thread running、application latency 或錯誤率，而非只看 copy rows/sec。第二，pause / resume 是變更治理能力，代表 schema change 可以配合 incident response、deploy freeze 與商業尖峰窗口。第三，cutover 要設 rollback window 與 owner，因為 rename table 的瞬間仍是高風險控制點。
+這個案例要回收到三個操作判斷標準。第一，throttle 指標要接 production SLO，例如 replica lag、thread running、application latency 或錯誤率，而非只看 copy rows/sec。第二，pause / resume 是變更治理能力，代表 schema change 可以配合 incident response、deploy freeze 與商業尖峰窗口。第三，cutover 要設 rollback window 與 owner，因為 rename table 的瞬間仍是高風險控制點。
 
 gh-ost workflow 的 sibling 路由是 [PostgreSQL Online Schema Change](/backend/01-database/vendors/postgresql/online-schema-change/)。PostgreSQL 常靠 fast ALTER、MVCC 與 extension 工具解決同類需求；MySQL 的 ghost table tool 更常成為標準路徑，主因是大表 DDL、metadata lock 與 replication event 的組合壓力不同。
 

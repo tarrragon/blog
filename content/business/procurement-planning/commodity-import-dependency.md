@@ -49,12 +49,12 @@ tags: ["business", "procurement", "supply-chain", "commodity"]
 
 電子業採購的核心策略在原物料場景下有直接對應，但操作細節因產業特性而不同。
 
-| 電子業策略                                                                                     | 原物料對應                      | 差異                                                 |
-| ---------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------- |
-| [分層備料](/business/procurement-planning/demand-tiered-stocking/)（確定/可能/風險三層）       | 戰略庫存（低價時囤貨 3-6 個月） | 原物料有保存期限限制、倉儲成本結構不同               |
-| [第二來源](/business/procurement-planning/multi-source-supplier-strategy/)（養替補供應商）     | 供應地理分散（多國多源）        | 原物料的「認證等待期」短、但物流切換成本高           |
-| [原廠規則](/business/procurement-planning/vendor-lifecycle-rules/)（NCNR、ship and debit）     | 國際貿易規則（期貨合約、長約）  | 原物料有公開期貨市場、電子元件沒有                   |
-| [漲價應對](/business/procurement-planning/supplier-price-increase-response/)（籌碼與吸收判準） | 成本轉嫁能力（終端定價彈性）    | 原物料的漲價對整個產業同時生效、個別公司無法單獨抗漲 |
+| 電子業策略                                                                                         | 原物料對應                      | 差異                                                 |
+| -------------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------- |
+| [分層備料](/business/procurement-planning/demand-tiered-stocking/)（確定/可能/風險三層）           | 戰略庫存（低價時囤貨 3-6 個月） | 原物料有保存期限限制、倉儲成本結構不同               |
+| [第二來源](/business/procurement-planning/multi-source-supplier-strategy/)（養替補供應商）         | 供應地理分散（多國多源）        | 原物料的「認證等待期」短、但物流切換成本高           |
+| [原廠規則](/business/procurement-planning/vendor-lifecycle-rules/)（NCNR、ship and debit）         | 國際貿易規則（期貨合約、長約）  | 原物料有公開期貨市場、電子元件沒有                   |
+| [漲價應對](/business/procurement-planning/supplier-price-increase-response/)（籌碼與吸收判斷標準） | 成本轉嫁能力（終端定價彈性）    | 原物料的漲價對整個產業同時生效、個別公司無法單獨抗漲 |
 
 戰略庫存是原物料採購最常用的因應手段。卜蜂備有三個月的低價原料庫存——當國際穀物價格下跌時大量買進，儲存在自有倉庫，用庫存的時間差對沖未來可能的價格上漲。這跟電子業分層備料的「確定需求層」邏輯相同：用庫存的持有成本（資金佔用 + 倉儲）交換斷料或漲價的風險成本。
 

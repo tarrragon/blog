@@ -115,7 +115,7 @@ UX 設計教材的核心目標是教讀者用系統性方法捕捉 UX 設計缺�
 - 按鈕狀態設計（default / hover / active / focus / disabled / loading）
 - 元件語意與版面（切換標籤的現態 / 動作歧義、可點性辨識、選中態對比、溢出 affordance、回饋的版面保障）
 - 時間感知與回應策略（100ms / 400ms / 1s / 10s 門檻、spinner vs skeleton 選擇、完成宣告的窮盡證據）
-- 通知模式選擇（SnackBar / Dialog / Banner / Bottom Sheet 的干擾程度判準）
+- 通知模式選擇（SnackBar / Dialog / Banner / Bottom Sheet 的干擾程度判斷標準）
 
 > 章節入口：[模組六：互動回饋設計](/ux-design/06-interaction-feedback/)
 

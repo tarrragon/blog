@@ -14,7 +14,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "原則"]
 | Frame             | 段落主體                               | Reader 拿到           | 自然句法          |
 | ----------------- | -------------------------------------- | --------------------- | ----------------- |
 | Disclaimer frame  | 告訴 reader「不要 X / X is dangerous」 | Prohibition + warning | Negative phrasing |
-| Next-action frame | 告訴 reader「沿 chain 做 Y / Z」       | Chain 步驟 + 完成判準 | Positive phrasing |
+| Next-action frame | 告訴 reader「沿 chain 做 Y / Z」       | Chain 步驟 + 完成條件 | Positive phrasing |
 
 兩 frame 對應同一個 risk、但 reader 拿到的東西不同。Disclaimer frame 自然產出負面陳述；逐句翻成正向句法後 frame 仍是 disclaimer、後續 multi-pass review 會繼續 catch 到負面殘餘。**整段 reframe 成 next-action chain 才是根治、不是字面換句。**
 
@@ -45,7 +45,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "原則"]
 >
 > Implementation 強度取決於兩條 chain 的完成度。
 
-整段 positive、不需 contrast。Reader 拿到兩條 actionable chain + 完成判準。Risk 仍被處理（chain 不走完 = implementation 沒交付）、用「該做什麼」取代「不要做什麼」。
+整段 positive、不需 contrast。Reader 拿到兩條 actionable chain + 完成條件。Risk 仍被處理（chain 不走完 = implementation 沒交付）、用「該做什麼」取代「不要做什麼」。
 
 ---
 
@@ -53,7 +53,7 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "原則"]
 
 寫 audit response 段前先問 frame：
 
-### Frame 選擇判準
+### Frame 選擇標準
 
 #### 1. 本段給 reader 什麼
 
@@ -67,10 +67,10 @@ tags: ["report", "事後檢討", "工程方法論", "Writing", "原則"]
    - 例：「不要用 universal mitigation」= 「對稱寫 in-scope + out-of-scope + 補強路由」（[#101](../threat-model-explicitness/)）
    - 例：「不要用名稱層 mitigation 對位」= 「補 mechanism + 前提兩層」（[#102](../mitigation-threat-alignment/)）
 
-#### 3. 段落主體寫 Y / Z chain、completeness 判準明示
+#### 3. 段落主體寫 Y / Z chain、completeness 判斷標準明示
 
 - Chain 步驟具體可執行
-- 完成判準明示（reader 知道何時 chain 走完）
+- 完成條件明示（reader 知道何時 chain 走完）
 
 #### 4. 若必須提到 risk、放段落結尾、subordinate 結構
 

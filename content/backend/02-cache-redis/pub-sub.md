@@ -52,7 +52,7 @@ keyspace notifications 同樣採 at-most-once 語意，且過期事件的觸發�
 
 ## 何時從 Pub/Sub 升級
 
-Pub/Sub 的邊界訊號出現時，責任應該往 [Redis Streams](/backend/03-message-queue/) 或正式 [message queue](/backend/knowledge-cards/queue) 移動。判準是 durable 與 replayable 這兩個 Pub/Sub 不提供的能力。
+Pub/Sub 的邊界訊號出現時，責任應該往 [Redis Streams](/backend/03-message-queue/) 或正式 [message queue](/backend/knowledge-cards/queue) 移動。判斷標準是 durable 與 replayable 這兩個 Pub/Sub 不提供的能力。
 
 | 需求訊號                   | Pub/Sub 的限制             | 該轉向的能力                                                                                    |
 | -------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |

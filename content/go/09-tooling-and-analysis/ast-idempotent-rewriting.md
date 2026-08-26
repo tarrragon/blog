@@ -73,7 +73,7 @@ func applyAll(data []byte, cfg rules.Config) []byte {
 
 ### 順序決定結果
 
-Rule 順序有明確的依賴判準：**每條 rule 的輸出應該是下一條 rule 的合法輸入**。
+Rule 順序有明確的依賴判斷標準：**每條 rule 的輸出應該是下一條 rule 的合法輸入**。
 
 - MD026 先跑：它改標題內容、不改行數，後面 rule 的行號不會位移。
 - MD022 / MD031 / MD032 緊接著：這些都 insert blank lines，會改行數；但它們彼此之間不衝突（heading ≠ fence ≠ list）。

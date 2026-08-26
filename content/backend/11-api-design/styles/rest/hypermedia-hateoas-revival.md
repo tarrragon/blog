@@ -8,9 +8,9 @@ tags: ["backend", "api-design", "rest", "hypermedia"]
 
 Hypermedia 復興派的論證錨在一個可檢驗的工程性質上：**application state 的可用轉移由 server 編碼在回應裡、client 不持有業務知識 — 這個性質只在存在 uniform client 時兌現、而瀏覽器就是那個 uniform client**。本文攤開這條論證的完整結構、格式標準化的失敗現實、以及反方的逐條拆解。HATEOAS 有無的操作型判別法（available actions 由誰計算）與最小範例、主寫在 [11.3 的建模層](/backend/11-api-design/resource-modeling-operation-semantics/) — 本文的 lens 是流派論證本體、兩處分工不同。
 
-## 樞紐判準：consumer 是誰決定方向
+## 樞紐判斷標準：consumer 是誰決定方向
 
-hypermedia 這條路線成不成立、樞紐在一個判準：**REST 的 self-describing 特性是為 uniform client（瀏覽器）設計的、machine-to-machine 的 JSON 生態並不存在這種 client**（見 [11.C4](/backend/11-api-design/cases/rest-gross-opposite-of-rest/)）。這個判準往兩個方向都推得出合理結論：consumer 是瀏覽器、就回到 HTML 讓瀏覽器當 uniform client；consumer 是 machine-to-machine 的程式、就放棄 hypermedia。分歧不在誰對、在 consumer 是誰 —— 這條判準是後面適用邊界的地基。
+hypermedia 這條路線成不成立、樞紐在一個判斷標準：**REST 的 self-describing 特性是為 uniform client（瀏覽器）設計的、machine-to-machine 的 JSON 生態並不存在這種 client**（見 [11.C4](/backend/11-api-design/cases/rest-gross-opposite-of-rest/)）。這個判斷標準往兩個方向都推得出合理結論：consumer 是瀏覽器、就回到 HTML 讓瀏覽器當 uniform client；consumer 是 machine-to-machine 的程式、就放棄 hypermedia。分歧不在誰對、在 consumer 是誰 —— 這條判斷標準是後面適用邊界的地基。
 
 ## 復興論證的正面版本
 
@@ -30,12 +30,12 @@ Pragmatic 派的拆解針對的是收益假設而非名詞；本文把 C8 記錄
 
 ## 適用邊界
 
-把兩派論證疊起來、hypermedia 的適用邊界可以畫得相當清楚。收益前提成立的場景：consumer 是瀏覽器（或任何會 render hypermedia 的 uniform client）、UI 由 server 驅動、業務狀態機常變 — server-rendered web 應用、後台管理介面、htmx 式的漸進增強前端。收益前提不成立的場景：machine-to-machine 整合、第三方開發者寫程式消費、mobile app 內建業務邏輯 — 這些場景的務實選擇是「狀態欄位 + 明文狀態機」路線（判準見 [11.3](/backend/11-api-design/resource-modeling-operation-semantics/)）。誤區是把邊界問題當立場問題：同一個組織可以對外 API 走 pragmatic、後台 UI 走 hypermedia、兩者引用的是同一組論證的不同半邊。
+把兩派論證疊起來、hypermedia 的適用邊界可以畫得相當清楚。收益前提成立的場景：consumer 是瀏覽器（或任何會 render hypermedia 的 uniform client）、UI 由 server 驅動、業務狀態機常變 — server-rendered web 應用、後台管理介面、htmx 式的漸進增強前端。收益前提不成立的場景：machine-to-machine 整合、第三方開發者寫程式消費、mobile app 內建業務邏輯 — 這些場景的務實選擇是「狀態欄位 + 明文狀態機」路線（判斷標準見 [11.3](/backend/11-api-design/resource-modeling-operation-semantics/)）。誤區是把邊界問題當立場問題：同一個組織可以對外 API 走 pragmatic、後台 UI 走 hypermedia、兩者引用的是同一組論證的不同半邊。
 
 ## 下一步路由
 
 - REST 這個詞的選型溝通用法：[REST 流派總覽](/backend/11-api-design/styles/rest/)
-- 判別法與建模層判準：[11.3 資源建模與操作語意](/backend/11-api-design/resource-modeling-operation-semantics/)
+- 判別法與建模層判斷標準：[11.3 資源建模與操作語意](/backend/11-api-design/resource-modeling-operation-semantics/)
 - no-versioning 立場的版本策略語境：[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)
 - hypermedia 作為 no-versioning 的前提、以及借用該結論卻沒有執行期習得控制項時會壞在哪：[版本策略流派之爭](/backend/11-api-design/versioning-strategy-debate/)、[No-Versioning 知識卡](/backend/knowledge-cards/no-versioning/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

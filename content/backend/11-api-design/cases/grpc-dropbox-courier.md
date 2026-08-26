@@ -14,7 +14,7 @@ Dropbox 從 HTTP/1.1 加 protobuf 的自製 RPC 遷移到 gRPC、動機是保留
 
 ## 判讀
 
-gRPC 在 Dropbox 的價值是「框架層集中加 infra-wide 可靠性」的載體、不是序列化效能本身 — 選型判準應該看組織要不要這一層集中點。「migration 比初始開發久得多」與 TLS 握手踩雷適合當規模判讀訊號。
+gRPC 在 Dropbox 的價值是「框架層集中加 infra-wide 可靠性」的載體、不是序列化效能本身 — 選型標準應該看組織要不要這一層集中點。「migration 比初始開發久得多」與 TLS 握手踩雷適合當規模判讀訊號。
 
 ## 對應大綱
 

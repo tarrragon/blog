@@ -49,7 +49,7 @@ State ownership 的責任是判斷哪些資料是 [source of truth](/backend/kno
 
 ## CQRS 在資料庫情境的應用
 
-[CQRS](/backend/knowledge-cards/cqrs/) 的概念定義、設計判準與代價見知識卡。本段聚焦在資料庫層面：state ownership 的決策如何影響你要不要分離讀寫模型。
+[CQRS](/backend/knowledge-cards/cqrs/) 的概念定義、設計判斷標準與代價見知識卡。本段聚焦在資料庫層面：state ownership 的決策如何影響你要不要分離讀寫模型。
 
 State ownership 跟 CQRS 的交叉點是：當 canonical state 的 schema 為寫入正確性最佳化（normalize、強一致、transaction boundary 清楚），但讀取面的多種消費者各自需要不同的反正規化形狀（列表頁要扁平 summary、報表要聚合、搜尋要全文索引），canonical schema 無法同時服務這些讀取需求。這時候分離 write model 跟 [read model](/backend/knowledge-cards/read-model/) 是解決形狀不對稱的方式。
 
@@ -65,7 +65,7 @@ State ownership 跟 CQRS 的交叉點是：當 canonical state 的 schema 為寫
 
 ## Event Sourcing 與 State Ownership
 
-[Event sourcing](/backend/knowledge-cards/event-sourcing/) 的概念定義、設計判準與代價見知識卡。本段聚焦在資料庫層面：event sourcing 怎麼改變 state ownership 跟 query boundary。
+[Event sourcing](/backend/knowledge-cards/event-sourcing/) 的概念定義、設計判斷標準與代價見知識卡。本段聚焦在資料庫層面：event sourcing 怎麼改變 state ownership 跟 query boundary。
 
 Event sourcing 把 state ownership 的正式紀錄從 mutable row 改成 append-only [event log](/backend/knowledge-cards/event-log/)。這個改變影響本章的每一個面向：
 
@@ -159,7 +159,7 @@ Query boundary 的責任是讓不同查詢路徑承擔不同服務問題。交�
 
 對應 [1.1 高併發資料存取](/backend/01-database/high-concurrency-access/) 的「Read Replica Scaling」段。
 
-## 選型前判準
+## 選型前判斷標準
 
 資料庫選型前要先回答四個問題：
 

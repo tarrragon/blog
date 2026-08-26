@@ -33,9 +33,9 @@ Long-tail workload 校正適合 GoReplay。Synthetic scenario 通常覆蓋主路
 
 事故後修補驗證適合 GoReplay。若事故由特定請求形狀觸發，capture sample 可以在修補環境重播，確認 latency、error 或 resource usage 是否回到可接受範圍。
 
-## 選型判準
+## 選型標準
 
-| 判準             | GoReplay 的價值                                   | 需要補的能力                      |
+| 判斷標準         | GoReplay 的價值                                   | 需要補的能力                      |
 | ---------------- | ------------------------------------------------- | --------------------------------- |
 | 真實 traffic     | endpoint mix、payload、header 分布接近 production | PII / credential 遮罩與權限治理   |
 | HTTP replay      | 對 HTTP API 路徑直接有效                          | 非 HTTP protocol 與加密流量處理   |

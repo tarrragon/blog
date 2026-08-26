@@ -8,7 +8,7 @@ tags: ["flutter", "dart", "value-object", "extension-type", "freezed", "copywith
 
 值物件在實作層的責任是把一個領域值裝進專用型別、讓型別開放的運算限縮成領域有意義的封閉集合。金額只該加減、乘數量、乘倍率；識別碼只該比對與傳遞；日期範圍只該判包含與交疊。底層的通用型別（數字、字串）開放的運算遠多於這個集合，差集裡的每個運算都是一個等著被誤用的 API——把值物件建起來，就是把差集從型別上關掉。
 
-「這個領域值該不該升級成值物件」的判定屬於理論層，判準是同一性語意與語意封閉、與語言無關，見 [entity 與 value object 的判準](/ddd/entity-vs-value-object/) 與 [value object](/ddd/knowledge-cards/value-object/) 卡。本章接手判定之後的問題：在 Dart 裡，同一個「值物件」有三種實作載體，成本結構與適用情境各異——選哪條由這個值的欄位數、要不要 runtime 身份、以及專案對產生器的容忍度決定。
+「這個領域值該不該升級成值物件」的判定屬於理論層，判斷標準是同一性語意與語意封閉、與語言無關，見 [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/) 與 [value object](/ddd/knowledge-cards/value-object/) 卡。本章接手判定之後的問題：在 Dart 裡，同一個「值物件」有三種實作載體，成本結構與適用情境各異——選哪條由這個值的欄位數、要不要 runtime 身份、以及專案對產生器的容忍度決定。
 
 ## 判斷：什麼領域值值得升級
 
@@ -16,7 +16,7 @@ tags: ["flutter", "dart", "value-object", "extension-type", "freezed", "copywith
 
 這裡有兩個常被壓成一個的獨立問題。精度是底層表示的問題——浮點數累加金額會把誤差堆到分位，換一個高精度數字型別就解決。語意是運算邊界的問題——換完精度型別後，「任何人都能對這個值做任意運算」原封不動。解掉第一個問題的當下第二個問題完整存在，而它要等夠多「拿金額亂算」的路徑累積後才顯形。把兩者混為一談的後果是換完 `Decimal` 就宣告收工、語意缺口留在原地。
 
-反過來，不是每個領域值都值得升級。合法運算集合幾乎等於底層型別的集合時（一個真的就是任意整數的計數器），封閉沒有差集可關、專用型別只是多一層轉換。裸型別從不跨越模組邊界、只在單一函式內部短暫存在時，誤用的窗口太小、升級的維護成本收不回。判準操作化成一句話：盤點這個概念的合法運算清單、跟底層型別的運算集合做差集，差集非空且裸型別在模組間流動，才動手。
+反過來，不是每個領域值都值得升級。合法運算集合幾乎等於底層型別的集合時（一個真的就是任意整數的計數器），封閉沒有差集可關、專用型別只是多一層轉換。裸型別從不跨越模組邊界、只在單一函式內部短暫存在時，誤用的窗口太小、升級的維護成本收不回。判斷標準操作化成一句話：盤點這個概念的合法運算清單、跟底層型別的運算集合做差集，差集非空且裸型別在模組間流動，才動手。
 
 ## 實作路徑的成本結構
 
@@ -28,7 +28,7 @@ Dart 3 的 record 是多欄位載體、還自帶結構相等，看起來像多�
 
 手寫 immutable class 是最直接的載體：所有欄位 `final`、建構子帶不變式檢查、要「改」就造一個新實例。多欄位複合值在這條路徑上用 [copyWith](/flutter/knowledge-cards/copywith/) 做逐欄位覆寫——傳要改的欄位、其餘保留原值、回傳新實例，這對欄位組合全部合法的值語意清晰。成本在 boilerplate：`==` 與 `hashCode` 要手寫且要涵蓋所有參與相等性的欄位、`copyWith` 每加一個欄位就要同步一行，漏一個欄位的相等性比對是安靜的 bug。
 
-這條路徑的邊界在 copyWith 的適用範圍。對欄位組合全部合法的資料袋與純值物件，copyWith 是正確工具；對有領域方法、欄位之間有不變式約束的型別，全欄位 public 的 copyWith 是繞過領域方法的逃生口——領域方法從「唯一變更路徑」降級成「建議路徑」。判準是型別有沒有「不允許任意組合的欄位」，有的話那些欄位就不該讓 copyWith public 可寫。完整機制見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)。
+這條路徑的邊界在 copyWith 的適用範圍。對欄位組合全部合法的資料袋與純值物件，copyWith 是正確工具；對有領域方法、欄位之間有不變式約束的型別，全欄位 public 的 copyWith 是繞過領域方法的逃生口——領域方法從「唯一變更路徑」降級成「建議路徑」。判斷標準是型別有沒有「不允許任意組合的欄位」，有的話那些欄位就不該讓 copyWith public 可寫。完整機制見 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)。
 
 ### freezed 產生器
 
@@ -64,10 +64,10 @@ Dart 3 的 record 是多欄位載體、還自帶結構相等，看起來像多�
 
 ## 邊界
 
-本章處理值物件在 Dart 的實作載體選擇，是實作層知識。三個上游判定不在本章：一個型別該不該模型化成領域模型（入口判準見 [資料袋與領域模型](/ddd/data-bag-vs-domain-model/)）、模型化之後該用 entity 還是 value object（同一性判準見 [entity 與 value object 的判準](/ddd/entity-vs-value-object/)）、以及約束該落在文件層、型別層還是執行層（見 [不變式的強制層次](/ddd/invariant-enforcement-layers/)）。值物件把封閉做在型別層，防的是無心誤用——刻意用反射或 dynamic 拆封仍然繞得過，威脅模型是「防止意外」而不是「防止刻意」。
+本章處理值物件在 Dart 的實作載體選擇，是實作層知識。三個上游判定不在本章：一個型別該不該模型化成領域模型（入口判斷標準見 [資料袋與領域模型](/ddd/data-bag-vs-domain-model/)）、模型化之後該用 entity 還是 value object（同一性判斷標準見 [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)）、以及約束該落在文件層、型別層還是執行層（見 [不變式的強制層次](/ddd/invariant-enforcement-layers/)）。值物件把封閉做在型別層，防的是無心誤用——刻意用反射或 dynamic 拆封仍然繞得過，威脅模型是「防止意外」而不是「防止刻意」。
 
 型別層防護的另一半責任落在 entity 而非 value object：entity 的同一性由身份定義、有生命週期、變更要走領域方法，那條路徑的收窄（copyWith 逃生口、稽核軌跡凍結）跟本章的值物件封閉是相鄰但不同的問題，路由到 [狀態轉換與稽核軌跡](/ddd/state-transition-and-audit-trail/)。
 
 ## 下一步
 
-三條實作路徑各有 case 可深讀：copyWith 的適用邊界在 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)、freezed 的結構在 [Freezed 三層結構解剖](/work-log/dart_freezed_anatomy/)、extension type 的 subtype 決策與遷移在 [金額型別的三段遷移](/work-log/dart_money_extension_type_migration/)。取值出口的封裝邊界在 [Value Object 的封裝擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)、遷移安全網在 [characterization test](/work-log/flutter_characterization_test_migration_safety_net/)。理論地基從 [DDD 指南的模型設計主梯](/ddd/) 進，值物件在其中的位置是 [entity 與 value object 的判準](/ddd/entity-vs-value-object/) 的語意封閉段。
+三條實作路徑各有 case 可深讀：copyWith 的適用邊界在 [copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)、freezed 的結構在 [Freezed 三層結構解剖](/work-log/dart_freezed_anatomy/)、extension type 的 subtype 決策與遷移在 [金額型別的三段遷移](/work-log/dart_money_extension_type_migration/)。取值出口的封裝邊界在 [Value Object 的封裝擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)、遷移安全網在 [characterization test](/work-log/flutter_characterization_test_migration_safety_net/)。理論地基從 [DDD 指南的模型設計主梯](/ddd/) 進，值物件在其中的位置是 [entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/) 的語意封閉段。

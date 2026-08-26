@@ -1,7 +1,7 @@
 ---
 title: "SQLite PRAGMA Tuning and Performance"
 date: 2026-05-21
-description: "SQLite journal_mode、synchronous、busy_timeout、wal_autocheckpoint、cache_size、mmap_size、auto_vacuum 與 performance evidence 的操作判準"
+description: "SQLite journal_mode、synchronous、busy_timeout、wal_autocheckpoint、cache_size、mmap_size、auto_vacuum 與 performance evidence 的操作判斷標準"
 tags: ["backend", "database", "sqlite", "performance", "pragma", "deep-article"]
 ---
 

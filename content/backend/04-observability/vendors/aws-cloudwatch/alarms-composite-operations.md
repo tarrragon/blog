@@ -156,7 +156,7 @@ CloudWatch Alarm 的主要成本來自：
 | Anomaly Detection alarm      | 每 alarm / month（含 ML 模型）    | 比 standard 貴約 2-3 倍 |
 | Composite Alarm              | 免費                              | 只算 child alarm        |
 
-數量控制的判準：每個服務 10-30 個 metric alarm 加 2-5 個 composite alarm 是合理範圍。超過 100 個 alarm 時先檢查是否有冗餘（同一 metric 不同 period 的重複 alarm）。
+數量控制的判斷標準：每個服務 10-30 個 metric alarm 加 2-5 個 composite alarm 是合理範圍。超過 100 個 alarm 時先檢查是否有冗餘（同一 metric 不同 period 的重複 alarm）。
 
 ## 整合與下一步
 

@@ -42,9 +42,9 @@ JVM 團隊適合用 Gatling 承接壓測。Java、Scala 或 Kotlin 團隊能把 
 
 高品質 report 適合 release review。Gatling 的 report 能幫 reviewer 看到 response time distribution、request group、error 與 injection profile，適合在 release gate 中保留可讀證據。
 
-## 選型判準
+## 選型標準
 
-| 判準              | Gatling 的價值            | 需要補的能力                        |
+| 判斷標準          | Gatling 的價值            | 需要補的能力                        |
 | ----------------- | ------------------------- | ----------------------------------- |
 | JVM DSL           | simulation 可 code review | Scala / Java / Kotlin 維護能力      |
 | Injection profile | 負載階段可精準表達        | production traffic shape 校正       |

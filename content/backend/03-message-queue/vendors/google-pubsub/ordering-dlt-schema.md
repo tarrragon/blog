@@ -245,7 +245,7 @@ deep article 的差異化價值在故障演練。以下五個徵兆對應前述�
 | CLI surface | `gcloud pubsub topics`         | `gcloud pubsub lite-topics`（獨立）        |
 | 適用        | 全域分發、彈性流量、不想管容量 | 已知高且穩定的吞吐、成本敏感、region 確定  |
 
-Pub/Sub Lite 是獨立的 CLI surface（`gcloud pubsub lite-topics` / `gcloud pubsub lite-subscriptions`），不是標準版的一個 flag。選 Lite 的代價是要自己 provision partition 數與 throughput capacity（回到接近 Kafka 的容量規劃），換來的是高吞吐穩定流量下顯著更低的成本。判準是吞吐「夠高且夠穩定到值得自己管容量」— 流量彈性大、或不想管 partition 的場景仍該留在標準版。
+Pub/Sub Lite 是獨立的 CLI surface（`gcloud pubsub lite-topics` / `gcloud pubsub lite-subscriptions`），不是標準版的一個 flag。選 Lite 的代價是要自己 provision partition 數與 throughput capacity（回到接近 Kafka 的容量規劃），換來的是高吞吐穩定流量下顯著更低的成本。判斷標準是吞吐「夠高且夠穩定到值得自己管容量」— 流量彈性大、或不想管 partition 的場景仍該留在標準版。
 
 > Spotify 的 autoscaling 案例揭露 backlog 不等於 consumer healthy：下游 export 失敗時 consumer 不 ack 仍持續耗 CPU，autoscaling 把 CPU 越拉越高、反而擴出更多空轉 consumer；解法是 exponential backoff 抑制 CPU 消耗（[3.C61](/backend/03-message-queue/cases/pubsub-spotify-autoscaling-consumers/)）。容量規劃的 autoscale signal 要看「處理成功率」而非「CPU + backlog」，否則擴縮方向會反。
 

@@ -46,7 +46,7 @@ GNU-only 的工具在 macOS 預設沒有，呼叫直接 `command not found`。�
 - **只寫 POSIX 子集（要兩邊都跑的腳本）**：避開所有 GNU-ism——`sed -i` 改用 tmp 檔加 `mv`、不用 `readlink -f`（用 `realpath` 或 `cd && pwd`）、不用關聯陣列。最可攜、macOS / Linux / BSD 都動，代價是放棄 GNU 的便利語法。bootstrap 腳本、CI 腳本適用。
 - **偵測分支（有就用、沒有就退化）**：`command -v gtimeout >/dev/null && T=gtimeout || { command -v timeout >/dev/null && T=timeout || T=""; }`，用 `$T` 呼叫、空的就略過那層保護。給「這個工具是加分、缺了不致命」的用法。
 
-判準是：自己天天用的互動環境，裝 `gnubin` 圖方便沒問題；但**要交付給別人或 CI 跑的腳本，不能假設對方裝了 GNU 工具**——那種要嘛 POSIX 子集、要嘛偵測分支。這裡有個容易誤判的中間情境：**你自己寫的 dotfiles / bootstrap 腳本歸「交付」那格、不是「互動環境」那格**。它主觀是「自己用」，客觀上交付的對象包含換機器時的未來自己與團隊，而且執行時機常早於互動環境成形——bootstrap 腳本自己負責裝 `coreutils`，跑到它自己用 `sed` / `timeout` 那行時 PATH 裡根本還沒有 `gnubin`（先有雞）。把「我的機器剛好裝了 coreutils」當成腳本的前提，就是這篇一開始那些跨平台故障的來源。
+判斷標準是：自己天天用的互動環境，裝 `gnubin` 圖方便沒問題；但**要交付給別人或 CI 跑的腳本，不能假設對方裝了 GNU 工具**——那種要嘛 POSIX 子集、要嘛偵測分支。這裡有個容易誤判的中間情境：**你自己寫的 dotfiles / bootstrap 腳本歸「交付」那格、不是「互動環境」那格**。它主觀是「自己用」，客觀上交付的對象包含換機器時的未來自己與團隊，而且執行時機常早於互動環境成形——bootstrap 腳本自己負責裝 `coreutils`，跑到它自己用 `sed` / `timeout` 那行時 PATH 裡根本還沒有 `gnubin`（先有雞）。把「我的機器剛好裝了 coreutils」當成腳本的前提，就是這篇一開始那些跨平台故障的來源。
 
 （第四條路是跳出 shell：碰到 BSD/GNU 差異密集的邏輯，乾脆用 Python 之類的語言寫，讓問題不落在會撞差異的那一層。本文停在 shell 內談，是因為定位在「教 BSD vs GNU 這個機制」；真要選型換語言是另一個決策。）
 

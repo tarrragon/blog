@@ -36,5 +36,5 @@ tags: ["ux-design", "case-study", "gate", "destructive-action", "chrome-extensio
 
 - Gate 的必答問題與類型 → [Gate 分類與三問設計法](/ux-design/02-gate-fallback/gate-three-questions/)
 - 確認機制故障的預設方向 → [Fail-safe 預設](/ux-design/knowledge-cards/fail-safe-default/)
-- 通知形式的干擾程度判準（Dialog 的阻斷性是設計需求）→ [通知模式選擇](/ux-design/06-interaction-feedback/notification-pattern-selection/)
+- 通知形式的干擾程度判斷標準（Dialog 的阻斷性是設計需求）→ [通知模式選擇](/ux-design/06-interaction-feedback/notification-pattern-selection/)
 - 對照案例（gate 缺 fallback）→ [U.C2 biometricOnly 無 fallback](/ux-design/cases/biometric-only-no-fallback/)

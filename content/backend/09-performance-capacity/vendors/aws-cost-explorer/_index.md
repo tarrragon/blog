@@ -35,9 +35,9 @@ Forecast 與 trend review 適合用 Cost Explorer 連到容量規劃。月中 fo
 
 Programmatic cost query 適合接內部 dashboard。Cost Explorer API 可以把成本與用量資料拉到 release dashboard、capacity review、service scorecard 或 FinOps workflow，讓工程團隊在自己熟悉的介面看成本訊號。
 
-## 選型判準
+## 選型標準
 
-| 判準         | AWS Cost Explorer 的價值                            | 需要補的能力                    |
+| 判斷標準     | AWS Cost Explorer 的價值                            | 需要補的能力                    |
 | ------------ | --------------------------------------------------- | ------------------------------- |
 | AWS baseline | 直接使用 AWS billing data 與 Cost Management 入口   | Tag policy、Cost Category 設計  |
 | Report       | 支援 service、account、region、tag、usage type 分析 | owner mapping、business context |

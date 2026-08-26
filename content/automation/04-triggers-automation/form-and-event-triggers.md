@@ -35,7 +35,7 @@ function onFormSubmit(e) {
 
 **Installable 觸發器**是明確註冊的（用 `ScriptApp.newTrigger(...).forSpreadsheet(...).onEdit().create()`，或在觸發條件介面建立），它以你的授權身分執行，**能做需要權限的操作**（寄信、UrlFetch、跨檔案）。`onFormSubmit` 要做寄信這類事，必須是 installable 的。
 
-判準很直接：**這個事件處理要不要碰當前檔案以外的東西**——不要（只在表內算個值），simple 夠用；要（寄信、打 API、寫別的表），得用 installable。踩雷的典型情境是「我寫了一個 `onFormSubmit` 想寄通知信，怎麼都沒寄出」——因為它被當成 simple 觸發器、而 simple 不能寄信；改成明確註冊的 installable 就好。
+判斷標準很直接：**這個事件處理要不要碰當前檔案以外的東西**——不要（只在表內算個值），simple 夠用；要（寄信、打 API、寫別的表），得用 installable。踩雷的典型情境是「我寫了一個 `onFormSubmit` 想寄通知信，怎麼都沒寄出」——因為它被當成 simple 觸發器、而 simple 不能寄信；改成明確註冊的 installable 就好。
 
 ## 下一步
 

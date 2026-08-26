@@ -8,7 +8,7 @@ tags: ["backend"]
 
 Backend 教材的核心目標是教讀者理解後端服務如何共同支撐一個 production system。資料庫、快取、訊息佇列、觀測平台、部署平台、可靠性驗證、資安資料保護、事故處理與容量規劃，各自承擔一段服務責任；本教材把這些責任整理成可學習、可操作、可演進的跨語言知識路線。
 
-服務能力、風險、成本與決策是理解後端服務的必要概念框架。讀者學資料庫時需要知道 transaction、schema migration、replication lag 與資料修復；學快取時需要知道 freshness、origin protection、eviction 與 hot key；學 queue 時需要知道 delivery、processing、replay 與 idempotency。這些判準服務教學目標：讓讀者能看懂一個後端問題該交給哪類能力處理，並理解多個能力如何串接。
+服務能力、風險、成本與決策是理解後端服務的必要概念框架。讀者學資料庫時需要知道 transaction、schema migration、replication lag 與資料修復；學快取時需要知道 freshness、origin protection、eviction 與 hot key；學 queue 時需要知道 delivery、processing、replay 與 idempotency。這些判斷標準服務教學目標：讓讀者能看懂一個後端問題該交給哪類能力處理，並理解多個能力如何串接。
 
 語言教材負責各自的語法、標準庫、並發或非同步模型、測試方法與 interface / [protocol](/backend/knowledge-cards/protocol/) 邊界；Backend 教材負責「應該被 application interface 隔離」的外部服務能力。Go、Python 或其他後端語言可以各自說明如何定義抽象邊界、處理取消與逾時、回傳錯誤、寫 fake 或 [contract](/backend/knowledge-cards/contract/) test；Backend 章節則說明 SQLite、PostgreSQL、Redis、RabbitMQ、[broker](/backend/knowledge-cards/broker)、[migration](/backend/knowledge-cards/migration)、[metrics](/backend/knowledge-cards/metrics)、tracing、Kubernetes、identity、permission、[TLS / mTLS](/backend/knowledge-cards/tls-mtls/)、[WAF](/backend/knowledge-cards/waf/)、[Secret Management](/backend/knowledge-cards/secret-management/)、[Audit Log](/backend/knowledge-cards/audit-log/) 等具體技術如何運作。
 
@@ -28,7 +28,7 @@ Backend 教材用三層學習結構組織內容。第一層是心智模型，先
 
 ### 學習路線
 
-Backend 教材可以依讀者目的分成六條路線。每條路線都有起點、主要順序與完成判準，讓讀者不用從能力地圖自行推導閱讀順序。
+Backend 教材可以依讀者目的分成六條路線。每條路線都有起點、主要順序與完成條件，讓讀者不用從能力地圖自行推導閱讀順序。
 
 | 路線                       | 適合讀者                                            | 建議順序                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 讀完能做什麼                                                                                                                 |
 | -------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -96,13 +96,13 @@ Backend 教材可以依讀者目的分成六條路線。每條路線都有起點
 
 每個模組可以獨立閱讀；貫穿式案例提供跨模組記憶。讀者看到資料庫章節時，知道它處理 E1 的正式狀態演進；看到 queue 章節時，知道它處理 E3 的跨程序交接；看到事故章節時，知道它收斂 E1、E3、E4、E6 的決策與回寫。
 
-### 教材完成判準
+### 教材完成條件
 
-Backend 教材的完成判準是讀者能沿著一條路線走完並做出可操作判斷。內容覆蓋率、案例數與 vendor 數量只是素材面進度；教學面要看讀者能否取得起點、順序、案例與下一步路由。
+Backend 教材的完成條件是讀者能沿著一條路線走完並做出可操作判斷。內容覆蓋率、案例數與 vendor 數量只是素材面進度；教學面要看讀者能否取得起點、順序、案例與下一步路由。
 
-| 判準            | 具體訊號                                                                      |
+| 判斷標準        | 具體訊號                                                                      |
 | --------------- | ----------------------------------------------------------------------------- |
-| 學習路線成立    | 入口頁能依目的給出閱讀順序與完成判準                                          |
+| 學習路線成立    | 入口頁能依目的給出閱讀順序與完成條件                                          |
 | 概念梯度成立    | 讀者先建立分類語言，再進入服務路徑，最後看 vendor / migration                 |
 | 貫穿案例成立    | 多個模組能回到同一條 checkout 服務演進路徑                                    |
 | Artifact 可演練 | Evidence package、release gate、decision log、rollback condition 能被讀者填寫 |
@@ -176,7 +176,7 @@ Backend 教材的完成判準是讀者能沿著一條路線走完並做出可操
 
 ### [模組十一：API 設計與對外契約](/backend/11-api-design/)
 
-整理 API 風格選型、資源建模、錯誤模型、版本與相容策略、冪等與對外流量語意的設計判準。跟各服務模組是入口／能力分工：11 看「對外承諾什麼、怎麼演進」、01-09 看「承諾背後的服務能力」。主章之外設 `styles/` 流派層（對應其他模組的 `vendors/` 慣例）、收 REST 語意學、GraphQL、gRPC、型別共享 RPC 與標準化嘗試的深度交鋒。目前為規劃階段、章節 backlog 見模組頁。
+整理 API 風格選型、資源建模、錯誤模型、版本與相容策略、冪等與對外流量語意的設計判斷標準。跟各服務模組是入口／能力分工：11 看「對外承諾什麼、怎麼演進」、01-09 看「承諾背後的服務能力」。主章之外設 `styles/` 流派層（對應其他模組的 `vendors/` 慣例）、收 REST 語意學、GraphQL、gRPC、型別共享 RPC 與標準化嘗試的深度交鋒。目前為規劃階段、章節 backlog 見模組頁。
 
 ## 與語言教材的關係
 
@@ -303,7 +303,7 @@ Backend 教學文章以敘事說明為主。每篇先回答「這個能力在真
 
 ### 橫向工作：簡報式段落拆卡試點
 
-依 [#262 內容超出容器時擴充結構、不壓縮內容](/report/content-pressure-resolves-by-expansion-not-compression/)：挑一個模組的 1-2 章做拆卡改寫——支撐與背景概念外部化成知識卡、範例寫進卡片、章節保留「什麼情境用哪張卡」的判讀敘事——用冷讀對照驗證讀者體驗（拆卡對搜尋落地讀者的收益 vs 順讀讀者的跳轉成本）。試點同時執行句層 sweep（對該章表格與判準句逐列跑抽離重讀、產出逐格判定表）、為 [#261](/report/sentence-self-sufficiency-by-consumption-unit/) 的「教學文章側觀察」提供第二個實證。
+依 [#262 內容超出容器時擴充結構、不壓縮內容](/report/content-pressure-resolves-by-expansion-not-compression/)：挑一個模組的 1-2 章做拆卡改寫——支撐與背景概念外部化成知識卡、範例寫進卡片、章節保留「什麼情境用哪張卡」的判讀敘事——用冷讀對照驗證讀者體驗（拆卡對搜尋落地讀者的收益 vs 順讀讀者的跳轉成本）。試點同時執行句層 sweep（對該章表格與判斷標準句逐列跑抽離重讀、產出逐格判定表）、為 [#261](/report/sentence-self-sufficiency-by-consumption-unit/) 的「教學文章側觀察」提供第二個實證。
 
 首輪已完成：對象是 [7.21 資安如何成為服務設計輸入](/backend/07-security-data-protection/security-as-service-design-input/) 與 [7.22 資安風險如何進入 Release Gate](/backend/07-security-data-protection/security-risk-in-release-gate/)（相鄰、互為必連、同屬一組 24 篇共用樣板，其中一章自帶已展開的參照段可當深度標準）。四張表 20 列的判定與出口分布記在 [#262 的試點結果段](/report/content-pressure-resolves-by-expansion-not-compression/#試點結果逐列判定與處置分診)，句層那一半回寫進 [#261 的 case 段](/report/sentence-self-sufficiency-by-consumption-unit/)。產出的規格修正是 #262 增列第三個出口（換成連結）；產出的新卡是 [Threat Model](/backend/knowledge-cards/threat-model/)。
 

@@ -27,9 +27,9 @@ tags: ["dart", "flutter", "naming", "refactoring", "ddd", "value-object"]
 
 ## 修法：名字要能回答「什麼操作的結果」
 
-決策保留 models 版當主要的 `ImportResult`（它代表整個 use case 的產出、消費者最多），value object 版重命名為 `ImportValidationResult`——名字補上了它缺的那一節：**驗證**的結果。判準可以一般化：result / info / data / manager 這類傘狀名，掛上去之前先問「它是**哪個操作**的 result」——答案就是名字該有的樣子。兩個同名類別並存時的診斷同理：先問哪一個的名字說謊了（通常是語意較窄的那個佔了寬名字）、改窄的那個。
+決策保留 models 版當主要的 `ImportResult`（它代表整個 use case 的產出、消費者最多），value object 版重命名為 `ImportValidationResult`——名字補上了它缺的那一節：**驗證**的結果。判斷標準可以一般化：result / info / data / manager 這類傘狀名，掛上去之前先問「它是**哪個操作**的 result」——答案就是名字該有的樣子。兩個同名類別並存時的診斷同理：先問哪一個的名字說謊了（通常是語意較窄的那個佔了寬名字）、改窄的那個。
 
-這跟[分層 enum](/work-log/dart_payment_dual_layer_enum/) 的粒度判準是同一族：名字的顆粒度要配得上它指涉範圍的顆粒度，佔著寬名字的窄概念是碰撞的定時炸彈。
+這跟[分層 enum](/work-log/dart_payment_dual_layer_enum/) 的粒度判斷標準是同一族：名字的顆粒度要配得上它指涉範圍的顆粒度，佔著寬名字的窄概念是碰撞的定時炸彈。
 
 ## 稽核抓到的：做一半的重命名、以及宣稱的漂移
 

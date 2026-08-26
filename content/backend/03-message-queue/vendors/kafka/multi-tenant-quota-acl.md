@@ -20,7 +20,7 @@ Multi-tenant Kafka 的核心問題是把一個物理叢集切成多個彼此隔�
 | ----------------- | ----------------------------------------------- | ----------------------------------- | ------------------------------------ |
 | Quota（資源配額） | 單租戶吃滿頻寬 / request 容量、餓死其他租戶     | `kafka-configs.sh` 設 byte rate     | 鄰居 producer 寫入卡死、consumer lag |
 | ACL（存取授權）   | 租戶讀寫不屬於自己的 topic、或被未授權方寫入    | `kafka-acls.sh` + broker authorizer | 資料外洩、跨租戶污染、誤刪 topic     |
-| 生命週期（治理）  | 死 topic 累積、partition 數爆炸壓垮 metadata 面 | 命名規範 + 活躍判準 + 自動回收      | controller 變慢、rebalance 風暴      |
+| 生命週期（治理）  | 死 topic 累積、partition 數爆炸壓垮 metadata 面 | 命名規範 + 活躍判斷標準 + 自動回收  | controller 變慢、rebalance 風暴      |
 
 三軸正交：quota 設好不代表權限對、ACL 鎖好不代表 topic 不會爆炸。下面逐軸展開、每軸都對應 production 踩過的失控場景。本文 quota 與 ACL 操作以 Kafka 4.2.0（KRaft 模式、`apache/kafka:latest`）實機驗證。
 
@@ -213,17 +213,17 @@ either, but not both.
 
 成因是 metric 名把 topic 名裡的 `.` 跟 `_` 都正規化掉、`billing.invoices` 跟 `billing_invoices` 可能對映到同一條 metric。命名規範應在 `.` 跟 `_` 之間選一個當分隔符、全叢集一致、避免監控數據互相污染。
 
-### 活躍判準與自動回收
+### 活躍判斷標準與自動回收
 
-死 topic 的回收靠可量化的活躍判準。[LinkedIn 的 TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/)以自動治理取代手動清理未使用 topic、降低 metadata 壓力並改善 produce / consume 效能。它的判讀是：當 queue 規模擴大、僅靠容量擴充不夠、topic 生命週期與治理自動化會成為可靠性關鍵。
+死 topic 的回收靠可量化的活躍判斷標準。[LinkedIn 的 TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/)以自動治理取代手動清理未使用 topic、降低 metadata 壓力並改善 produce / consume 效能。它的判讀是：當 queue 規模擴大、僅靠容量擴充不夠、topic 生命週期與治理自動化會成為可靠性關鍵。
 
 TopicGC 是 LinkedIn 的內部系統、不是 Kafka 內建指令；它揭示的是一套可借鏡的回收流程結構：
 
-1. 定義活躍判準：以 last produce / last consume timestamp 判斷 topic 是否仍在使用、設一段觀察窗（例如 N 天無寫入且無讀取）。
+1. 定義活躍判斷標準：以 last produce / last consume timestamp 判斷 topic 是否仍在使用、設一段觀察窗（例如 N 天無寫入且無讀取）。
 2. 分級回收：先標記（soft）、進入待回收狀態並通知 owner、保留一段 grace period、無人認領才真正刪除（hard）。兩段式避免誤刪仍有低頻流量的 topic。
 3. 保留稽核：每次標記與刪除留紀錄、回收前後比對 controller log、partition 數量、produce / consume 效能指標、確認治理有效且無誤傷。
 
-回收條件的設定要對齊業務節奏。純看 produce timestamp 會誤判「低頻但關鍵」的 topic（如月結批次）；活躍判準要同時看 produce 跟 consume、且觀察窗要長於最長的合法閒置週期。
+回收條件的設定要對齊業務節奏。純看 produce timestamp 會誤判「低頻但關鍵」的 topic（如月結批次）；活躍判斷標準要同時看 produce 跟 consume、且觀察窗要長於最長的合法閒置週期。
 
 ## Production 故障演練
 
@@ -272,11 +272,11 @@ TopicGC 是 LinkedIn 的內部系統、不是 Kafka 內建指令；它揭示的�
 
 **徵兆**：叢集裡大量 topic 數月無 produce 也無 consume、卻持續佔 partition slot 跟 metadata；沒人記得某些 topic 屬於哪個團隊、不敢刪；新 topic 想建時撞到 partition 上限、被迫先擴叢集而非先回收。
 
-**根因**：沒有活躍判準與回收流程、topic 只建不刪。歸屬資訊沒編碼進命名、回收時找不到 owner、於是「不敢刪」成為預設、死 topic 無限累積。這是 Case 3（metadata 爆炸）的慢性來源。
+**根因**：沒有活躍判斷標準與回收流程、topic 只建不刪。歸屬資訊沒編碼進命名、回收時找不到 owner、於是「不敢刪」成為預設、死 topic 無限累積。這是 Case 3（metadata 爆炸）的慢性來源。
 
 **修法**：
 
-1. 建立活躍判準：以 last produce / last consume timestamp 加觀察窗判定死 topic、觀察窗長於最長合法閒置週期（避免誤刪月結類低頻 topic）。
+1. 建立活躍判斷標準：以 last produce / last consume timestamp 加觀察窗判定死 topic、觀察窗長於最長合法閒置週期（避免誤刪月結類低頻 topic）。
 2. 兩段式回收：先 soft 標記並通知 owner、grace period 內無人認領才 hard 刪除、避免誤刪。
 3. 命名規範補 ownership：前綴對齊團隊、回收時能直接找到 owner、消除「不敢刪」。
 4. 自動化加稽核：參考 [TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/)的流程結構、回收前後比對 metadata 與效能指標、留稽核紀錄。
@@ -288,7 +288,7 @@ TopicGC 是 LinkedIn 的內部系統、不是 Kafka 內建指令；它揭示的�
 | Quota 總和 vs 物理容量 | 各租戶 byte rate 加總對 broker network / disk 容量 | 加總逼近物理上限要重新切分、留 headroom          |
 | ACL 條目數             | 逐 topic 設會隨 topic 數線性成長                   | 改 prefixed ACL 對齊命名規範、降條目數與漏設風險 |
 | Partition 總數         | controller failover 時間、metadata fetch 延遲      | 逼近上限先回收死 topic、再評估分群               |
-| Topic 活躍率           | 有 produce / consume 的 topic 佔比                 | 死 topic 比例高代表缺回收流程、補活躍判準        |
+| Topic 活躍率           | 有 produce / consume 的 topic 佔比                 | 死 topic 比例高代表缺回收流程、補活躍判斷標準    |
 
 Quota 與 ACL 是 broker-side 即時生效、不需重啟、可隨租戶調整、運維成本低。生命週期治理是持續流程、不是一次性操作 —— 死 topic 會持續產生、回收要常態化。三軸的共同前提是命名規範：沒有可治理的命名、quota 找不到歸屬、ACL 邊界對不齊、回收找不到 owner。多租戶治理的第一步是先把命名規範立起來、再談 quota 與 ACL。
 

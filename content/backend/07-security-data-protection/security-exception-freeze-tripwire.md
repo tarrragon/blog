@@ -30,7 +30,7 @@ weight: 87
 
 ## Exception 設計協議
 
-[Security exception](/backend/knowledge-cards/security-exception/) 協議的責任是把暫時接受風險變成可管理狀態。每筆 exception 要填六欄，欄位的定義以那張卡為準、本節給填寫時的判準：
+[Security exception](/backend/knowledge-cards/security-exception/) 協議的責任是把暫時接受風險變成可管理狀態。每筆 exception 要填六欄，欄位的定義以那張卡為準、本節給填寫時的判斷標準：
 
 1. Risk scope：接受風險的資產與範圍。
 2. Expiry：到期日與下次審查時間。
@@ -48,7 +48,7 @@ weight: 87
 3. Validation gate：放行前要通過哪些驗證。
 4. Unfreeze condition：什麼條件可以解除凍結。
 
-freeze 與 exception 的關係是：exception 定義風險接受，freeze 定義變更節奏。兩者都是 tripwire 的觀察對象（方向是 tripwire 指向它們），而該不該掛看關閉條件的性質——依賴外部事件或時間不可預測的必須掛，判準見 [security exception](/backend/knowledge-cards/security-exception/) 卡。
+freeze 與 exception 的關係是：exception 定義風險接受，freeze 定義變更節奏。兩者都是 tripwire 的觀察對象（方向是 tripwire 指向它們），而該不該掛看關閉條件的性質——依賴外部事件或時間不可預測的必須掛，判斷標準見 [security exception](/backend/knowledge-cards/security-exception/) 卡。
 
 ## Tripwire 設計協議
 
@@ -130,6 +130,6 @@ Tripwire escalation owner:    # 同上
 - [發佈凍結缺少重評估觸發器](/backend/07-security-data-protection/red-team/problem-cards/fp-release-freeze-without-tripwire/)
 - [例外缺少期限與關閉條件](/backend/07-security-data-protection/red-team/problem-cards/fp-exception-without-expiry/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能設計一個例外決策模板。模板至少包含風險接受條件、到期日、補償控制、tripwire、關閉條件與回寫位置。

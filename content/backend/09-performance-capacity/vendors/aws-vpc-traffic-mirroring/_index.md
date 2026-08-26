@@ -35,9 +35,9 @@ AWS VPC Traffic Mirroring 適合需要網路層能見度的 AWS workload。當 a
 
 受管 AWS 網路環境適合 VPC Traffic Mirroring。當服務主要跑在 EC2 / ENI 可 mirror 的環境中，VPC 原生能力可以讓網路團隊用既有安全與觀測流程管理。
 
-## 選型判準
+## 選型標準
 
-| 判準       | AWS VPC Traffic Mirroring 的價值     | 需要補的能力                       |
+| 判斷標準   | AWS VPC Traffic Mirroring 的價值     | 需要補的能力                       |
 | ---------- | ------------------------------------ | ---------------------------------- |
 | 網路層鏡像 | application 無侵入、封包級可見       | L7 解碼、filter、rewrite 與 replay |
 | AWS 原生   | VPC / ENI / filter / target 整合     | AWS 約束、跨帳號與跨 VPC 設計      |

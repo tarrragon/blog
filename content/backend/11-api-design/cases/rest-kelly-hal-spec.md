@@ -14,7 +14,7 @@ HAL 用 `_links` 與 `_embedded` 兩個保留屬性在 JSON 上表達 hypermedia
 
 ## 判讀
 
-教學判準：「格式碎片化（HAL / Siren / JSON-LD / Collection+JSON 並立、無一勝出）是 hypermedia JSON 未形成 uniform client 的結構性原因」— 這正是 Fielding 說要把力氣花在 media type 上、而業界沒收斂的實證。
+教學判斷標準：「格式碎片化（HAL / Siren / JSON-LD / Collection+JSON 並立、無一勝出）是 hypermedia JSON 未形成 uniform client 的結構性原因」— 這正是 Fielding 說要把力氣花在 media type 上、而業界沒收斂的實證。
 
 ## 對應大綱
 

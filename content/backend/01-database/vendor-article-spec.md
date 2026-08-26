@@ -12,7 +12,7 @@ tags: ["backend", "database", "vendor", "writing-spec"]
 
 ## 判讀錨點
 
-資料庫 vendor 文章的錨點是正式狀態如何被保存、查詢、複製、演進與修復。產品功能、版本差異與雲端價格都只是材料；正文要把材料轉成讀者可操作的判準，讓讀者能判斷資料模型、交易需求、查詢邊界、容量壓力、操作責任與替代路由。
+資料庫 vendor 文章的錨點是正式狀態如何被保存、查詢、複製、演進與修復。產品功能、版本差異與雲端價格都只是材料；正文要把材料轉成讀者可操作的判斷標準，讓讀者能判斷資料模型、交易需求、查詢邊界、容量壓力、操作責任與替代路由。
 
 PostgreSQL 與 MySQL 的 batch 顯示三個穩定事實。第一，SQL baseline 已經足以支撐其他服務頁開寫；第二，深度文章需要「何時不用」與真實案例 anchor 防止過度工程化；第三，跨 vendor 或 topology 變更需要獨立 playbook，不適合塞回 overview。
 
@@ -58,7 +58,7 @@ Deep article 的責任是把 vendor overview 點到的單一機制展開成可�
 
 核心機制段要保留 vendor-specific 語意。PostgreSQL 的 WAL / LSN / replication slot、MVCC / vacuum、process-per-connection model 與 extension lifecycle 都有自己的操作語意；MySQL 的 binlog / GTID、InnoDB clustered index、gap / next-key lock、ProxySQL query rule 與 Vitess VSchema 也要用自己的語言展開。
 
-操作流程段要把設定與判準綁在一起。Config、SQL、CLI 或 dashboard query 只在能支撐判讀時出現；每個操作要回答「如何知道它生效」「失敗時看到什麼」「可以停在哪個 rollback boundary」。
+操作流程段要把設定與判斷標準綁在一起。Config、SQL、CLI 或 dashboard query 只在能支撐判讀時出現；每個操作要回答「如何知道它生效」「失敗時看到什麼」「可以停在哪個 rollback boundary」。
 
 失敗模式段是 deep article 的主要價值。PostgreSQL / MySQL 既有文章多數已具備「5 個 Production 踩雷」；後續服務要維持這個密度，並優先補真實案例 anchor，避免所有案例都停在合成數字或典型設定。
 
@@ -104,7 +104,7 @@ Evidence 段要把資料庫遷移接回 observability 與 reliability。Playbook
 
 Cutover 段要把決策權責寫清楚。資料庫切流失敗通常代價高，正文要標示切流窗口、暫停條件、回退條件、資料凍結策略與 decision owner，並連到 [rollback window](/backend/knowledge-cards/rollback-window/) 或 [rollback condition](/backend/knowledge-cards/rollback-condition/)。
 
-Cleanup 段要防止雙軌永久殘留。舊 schema、舊 writer、舊 CDC connector、舊 backup、舊 dashboard 與舊 runbook 都需要退役判準；資料保留、稽核與 incident write-back 要在 cleanup 前確認。
+Cleanup 段要防止雙軌永久殘留。舊 schema、舊 writer、舊 CDC connector、舊 backup、舊 dashboard 與舊 runbook 都需要退役判斷標準；資料保留、稽核與 incident write-back 要在 cleanup 前確認。
 
 ## 從 PostgreSQL / MySQL 回收的調整項
 

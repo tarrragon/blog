@@ -28,7 +28,7 @@ LTB 的持有成本結構跟日常庫存不同：日常安全庫存持續周轉�
 
 買多的代價是呆料，但 EOL 呆料的殘值曲線跟一般呆料不同（[呆料處置](/business/procurement-planning/excess-inventory-disposal/) 的結構性例外段）：停產後市場只剩存量，其他還在用這顆料的買家可能出高價收，殘值有機會走升。這個緩和有邊界：它成立的前提是「其他買家算得比自己少」——整個市場的需求同步退場時，接手的買家跟殘值一起消失。把它當成「多買無妨」的依據，等於把去化押在對手的失誤上。
 
-兩側代價比出來，緩衝方向就有判準。產品帶長期供貨合約與罰則（車用、工控、醫療的服務承諾）——買少的代價含違約，往多買偏、分位抓高。產品自己在退場、需求衰退斜率陡——買多的尾端幾乎必成呆料，往少買偏、同步評估提前 redesign。兩側都重（長服務承諾加上難估的需求）——單靠買量解不了，這是對沖選項的主場。
+兩側代價比出來，緩衝方向就有判斷標準。產品帶長期供貨合約與罰則（車用、工控、醫療的服務承諾）——買少的代價含違約，往多買偏、分位抓高。產品自己在退場、需求衰退斜率陡——買多的尾端幾乎必成呆料，往少買偏、同步評估提前 redesign。兩側都重（長服務承諾加上難估的需求）——單靠買量解不了，這是對沖選項的主場。
 
 ## 對沖選項：把一次性賭注拆小
 
@@ -50,4 +50,4 @@ LTB 常是採購少數單筆動用大額資金、且無法回滾的簽核，簽�
 
 ## 下一步
 
-買斷之後的庫存治理——維修備品的標記與保留、超齡料的處置判準——在 [呆料處置](/business/procurement-planning/excess-inventory-disposal/)。上游的訊號接收與退場排序，回 [生命週期監測與退場治理](/business/procurement-planning/lifecycle-phaseout-governance/)。LTB 規則在原廠端的帳——為什麼有截止日、為什麼延後停產談不動——見 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)。
+買斷之後的庫存治理——維修備品的標記與保留、超齡料的處置判斷標準——在 [呆料處置](/business/procurement-planning/excess-inventory-disposal/)。上游的訊號接收與退場排序，回 [生命週期監測與退場治理](/business/procurement-planning/lifecycle-phaseout-governance/)。LTB 規則在原廠端的帳——為什麼有截止日、為什麼延後停產談不動——見 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)。

@@ -10,9 +10,9 @@ tags: ["business", "knowledge-cards"]
 
 每張卡片只處理一個術語的核心概念、概念位置、可觀察訊號與判讀方式。卡片之間用相對連結互引，建立可導航的概念網路。
 
-## 建卡判準
+## 建卡標準
 
-商業術語建卡的判準是該術語是否承擔判斷成本，而不是只看是否常見。讀者如果不知道這個名詞，會誤判某段分析的結論或無法解碼一張財務表，就值得建卡。
+商業術語建卡的判斷標準是該術語是否承擔判斷成本，而不是只看是否常見。讀者如果不知道這個名詞，會誤判某段分析的結論或無法解碼一張財務表，就值得建卡。
 
 適合建卡的術語通常有三個特徵。第一，它包含結構性意涵，超出字面翻譯—例如 lock-in 背後是切換成本與生態系設計，遠不只「鎖定」二字。第二，它會影響讀者對商業策略的判讀—例如 FDE 不只是「派工程師」，而是揭露 SaaS 模式不可行的訊號。第三，它可以被獨立說明成「核心概念、位置、訊號、判讀」的四段結構。
 
@@ -207,7 +207,7 @@ weight: 編號
 | [Operating Expense（營業費用）](/business/knowledge-cards/operating-expense/)                     | 本業期間費用、跟營業成本是兩回事         | 研發、銷管、費用率、營業槓桿     |
 | [Cash and Cash Equivalents（現金及約當現金）](/business/knowledge-cards/cash-and-equivalents/)    | 最流動的資產、看相對量非絕對量           | 流動性、受限制現金、危機承受力   |
 | [DuPont Analysis（杜邦拆解）](/business/knowledge-cards/dupont-analysis/)                         | 把 ROE 拆成三個乘數辨識驅動來源          | 淨利率、資產週轉率、權益乘數     |
-| [Revenue Recognition（收入認列）](/business/knowledge-cards/revenue-recognition/)                 | 營收認在哪一期的時點判準                 | 控制權移轉、截止測試、IFRS 15    |
+| [Revenue Recognition（收入認列）](/business/knowledge-cards/revenue-recognition/)                 | 營收認在哪一期的時點判斷標準             | 控制權移轉、截止測試、IFRS 15    |
 | [Going Concern（繼續經營假設）](/business/knowledge-cards/going-concern/)                         | 企業能否撐過未來 12 個月                 | 審計意見、供應商信用、流動性     |
 | [Channel Stuffing（通路填塞）](/business/knowledge-cards/channel-stuffing/)                       | 期末壓貨灌水營收的手法                   | 退貨率、side letter、截止測試    |
 | [Cut-off Testing（截止測試）](/business/knowledge-cards/cut-off-testing/)                         | 交易是否認在正確期間                     | 結帳日窗口、控制權移轉證據       |

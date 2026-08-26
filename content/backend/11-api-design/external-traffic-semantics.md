@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "rate-limit"]
 
 ## 429 與 Retry-After：被擋之後的契約
 
-拒絕本身也是介面。可承諾的最小集合：status 用 429（讓消費者與中介層知道「可重試、但要等」、跟終態 4xx 區分、錯誤分類見 [11.4](/backend/11-api-design/error-model-design/)）；`Retry-After` 給等待時間、且服務端說到做到 — 消費者等滿再來就該被服務、否則 Retry-After 淪為裝飾、消費者退回盲目退避。GitHub 的文件在這條上有可指出的語意瑕疵：超限回 403 或 429、文件未明確劃分兩者的使用時機（見 [11.C43](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)）— 消費者要同時處理兩種 status、分支邏輯多一倍。設計新 API 時可直接採納的判準：拒絕的 status 只用一個。
+拒絕本身也是介面。可承諾的最小集合：status 用 429（讓消費者與中介層知道「可重試、但要等」、跟終態 4xx 區分、錯誤分類見 [11.4](/backend/11-api-design/error-model-design/)）；`Retry-After` 給等待時間、且服務端說到做到 — 消費者等滿再來就該被服務、否則 Retry-After 淪為裝飾、消費者退回盲目退避。GitHub 的文件在這條上有可指出的語意瑕疵：超限回 403 或 429、文件未明確劃分兩者的使用時機（見 [11.C43](/backend/11-api-design/cases/ratelimit-github-primary-secondary/)）— 消費者要同時處理兩種 status、分支邏輯多一倍。設計新 API 時可直接採納的判斷標準：拒絕的 status 只用一個。
 
 消費端的配套是 backoff 加 jitter（完整的重試合判、集體層去同步與 retry 預算、主寫在 [接收方的重試決策](/backend/11-api-design/consumer-retry-decision/)）— 限流語意跟冪等語意在消費端匯合：429 之後的重送、要嘛操作本身冪等、要嘛帶 [idempotency key](/backend/knowledge-cards/idempotency-key/)（[11.8](/backend/11-api-design/api-idempotency-design/)）。
 
@@ -26,7 +26,7 @@ GitHub 的雙層限流揭露配額設計的一個實證：primary limit（每小
 
 ## 成本模型：per-request 假設的破裂
 
-「一個請求算一次」的配額假設、在請求成本不是常數的風格下失效。GitHub 的 GraphQL API 為此建立 point system：依 query 的展開規模計算成本、配額按點數計、另設結構上限當靜態防線、且成本對消費者可預估可查詢（參數細節與機制展開主寫在 [GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)、案例 [11.C19](/backend/11-api-design/cases/graphql-github-cost-rate-limiting/)）。判準層的收穫有兩條：請求成本變動大的介面（GraphQL、批次、重查詢）、配額要計成本而非計次；成本模型本身要對消費者透明可預估 — 消費者無法預估成本、就無法設計合規的 client。執行成本的機制細節（resolver 展開、N+1、persisted queries）主寫在 [GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)。
+「一個請求算一次」的配額假設、在請求成本不是常數的風格下失效。GitHub 的 GraphQL API 為此建立 point system：依 query 的展開規模計算成本、配額按點數計、另設結構上限當靜態防線、且成本對消費者可預估可查詢（參數細節與機制展開主寫在 [GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)、案例 [11.C19](/backend/11-api-design/cases/graphql-github-cost-rate-limiting/)）。判斷標準層的收穫有兩條：請求成本變動大的介面（GraphQL、批次、重查詢）、配額要計成本而非計次；成本模型本身要對消費者透明可預估 — 消費者無法預估成本、就無法設計合規的 client。執行成本的機制細節（resolver 展開、N+1、persisted queries）主寫在 [GraphQL 執行成本與攻擊面](/backend/11-api-design/styles/graphql/graphql-execution-cost-security/)。
 
 ## 常見設計錯誤
 

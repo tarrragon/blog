@@ -1,5 +1,5 @@
 ---
-title: "讀模型的升級判準"
+title: "讀模型的升級條件"
 date: 2026-07-16
 description: "repository 開始長出畫面專用查詢方法、或有人提議「上 CQRS」時使用。讀側是一道階梯而不是開關：訊號決定該爬到哪一階，自檢問句是「這個查詢回傳的是讀的形狀、還是 aggregate 的形狀」。"
 weight: 8
@@ -75,7 +75,7 @@ tags: ["ddd", "read-model", "cqrs", "repository", "architecture"]
 
 決策同時綁了升級 trigger：推送型讀需求增生（專用統計投影、分頁查詢流之類累積到三條）時再抽讀 port，屆時 `watchBooks()` 遷入讀 port、簽名不變、呼叫端只改注入來源。「停在低階」與「記錄何時升級」是同一個決策的兩半——少了後半、低階會在訊號早已命中之後仍靠慣性維持。
 
-## 判準防的兩種錯
+## 判斷標準防的兩種錯
 
 五訊號同時防兩個方向的失誤，兩邊在真實專案都常見：
 
@@ -85,4 +85,4 @@ tags: ["ddd", "read-model", "cqrs", "repository", "architecture"]
 
 ## 下一步
 
-停在第一階之後要落地觀測出口，歸屬判準見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。第四階需要事件作為同步載體——載體選用判準見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。太晚抽的日常代價（介面臃腫、mock 爆炸）有實證：[mock 55 個方法只用 5 個](/work-log/flutter_port_interface_mock_hell_isp/)。術語定義見 [Read Model](/ddd/knowledge-cards/read-model/)。
+停在第一階之後要落地觀測出口，歸屬標準見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。第四階需要事件作為同步載體——載體選用標準見 [domain event 與狀態流](/ddd/domain-event-vs-state-stream/)。太晚抽的日常代價（介面臃腫、mock 爆炸）有實證：[mock 55 個方法只用 5 個](/work-log/flutter_port_interface_mock_hell_isp/)。術語定義見 [Read Model](/ddd/knowledge-cards/read-model/)。

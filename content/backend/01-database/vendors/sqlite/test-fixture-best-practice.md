@@ -1,7 +1,7 @@
 ---
 title: "SQLite Test Fixture Best Practice"
 date: 2026-05-21
-description: "SQLite 作為 test fixture、repository contract test、production dialect gap、seed data、fixture snapshot 與 CI evidence 的操作判準"
+description: "SQLite 作為 test fixture、repository contract test、production dialect gap、seed data、fixture snapshot 與 CI evidence 的操作判斷標準"
 tags: ["backend", "database", "sqlite", "testing", "fixture", "deep-article"]
 ---
 

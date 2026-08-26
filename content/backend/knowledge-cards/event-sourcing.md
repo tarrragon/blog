@@ -1,7 +1,7 @@
 ---
 title: "Event Sourcing"
 date: 2026-06-22
-description: "說明用 append-only 事件流取代 mutable state 作為正式紀錄的設計模式、需求判準與代價"
+description: "說明用 append-only 事件流取代 mutable state 作為正式紀錄的設計模式、需求判斷標準與代價"
 weight: 329
 tags: ["backend", "architecture", "database"]
 ---
@@ -14,9 +14,9 @@ Event sourcing 是一種資料持久化策略，改變的是「狀態怎麼被�
 
 Event sourcing 的儲存層是 [event log](/backend/knowledge-cards/event-log/)。讀取面透過 [projection](/backend/knowledge-cards/projection/) 把事件流轉換成查詢用的 [read model](/backend/knowledge-cards/read-model/)。
 
-## 設計判準
+## 設計判斷標準
 
-Event sourcing 的設計價值來自「需要完整變更歷史」的業務需求。判準是：業務是否需要回答「某個時間點的狀態是什麼」或「狀態怎麼從 A 變成 B」。
+Event sourcing 的設計價值來自「需要完整變更歷史」的業務需求。判斷標準是：業務是否需要回答「某個時間點的狀態是什麼」或「狀態怎麼從 A 變成 B」。
 
 **適合的場景**：
 

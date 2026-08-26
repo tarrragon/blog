@@ -1,16 +1,16 @@
 ---
 title: "Flutter 實戰指南"
 date: 2026-07-10
-description: "Flutter 與 Dart 的實作層教材：型別設計與語言機制、狀態與渲染、測試策略、工具鏈，從實際專案 case 抽出判準。"
+description: "Flutter 與 Dart 的實作層教材：型別設計與語言機制、狀態與渲染、測試策略、工具鏈，從實際專案 case 抽出判斷標準。"
 weight: 33
 tags: ["flutter", "dart", "mobile"]
 ---
 
-本模組收 Flutter 與 Dart 的實作層知識：語言機制、框架行為、測試策略與工具鏈。內容從實際專案的 case 抽出——每個判準都有踩過的情境支撐，不是官方文件的轉述。設計理論的地基在 [DDD 領域驅動設計指南](/ddd/)（[entity 與 value object 的判準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)），本模組承擔的是「這些理論在 Dart 生態碰到什麼實作限制」：例如 [copyWith](/flutter/knowledge-cards/copywith/) 與 [freezed](/flutter/knowledge-cards/freezed/) 的預設路徑如何影響領域模型的完整性。
+本模組收 Flutter 與 Dart 的實作層知識：語言機制、框架行為、測試策略與工具鏈。內容從實際專案的 case 抽出——每個判斷標準都有踩過的情境支撐，不是官方文件的轉述。設計理論的地基在 [DDD 領域驅動設計指南](/ddd/)（[entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/)、[不變式的強制層次](/ddd/invariant-enforcement-layers/)），本模組承擔的是「這些理論在 Dart 生態碰到什麼實作限制」：例如 [copyWith](/flutter/knowledge-cards/copywith/) 與 [freezed](/flutter/knowledge-cards/freezed/) 的預設路徑如何影響領域模型的完整性。
 
 ## 章節
 
-章節從 case 聚類長出——同主題 case 累積到臨界量、互相引用密集時，才值得一篇判準層的聚合章：
+章節從 case 聚類長出——同主題 case 累積到臨界量、互相引用密集時，才值得一篇判斷標準層的聚合章：
 
 | 章節                                                                 | 核心問題                                                                                   | 聚合的 case                                    |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
@@ -78,7 +78,7 @@ tags: ["flutter", "dart", "mobile"]
 | 測試輸出雜訊治理         | [預期的環境狀態不該走例外路徑](/work-log/flutter_test_noise_expected_paths/)                                                                  |
 | 假後端的回應資料來源     | [有狀態假後端用真實模型序列化回應](/work-log/flutter_fake_backend_real_model_serialization/)                                                  |
 
-上表末四項的判準與建置順序已聚合為 [流程測試基礎設施](/flutter/flow-test-infrastructure/)，各 case 保留完整程式碼與現場細節。
+上表末四項的判斷標準與建置順序已聚合為 [流程測試基礎設施](/flutter/flow-test-infrastructure/)，各 case 保留完整程式碼與現場細節。
 
 ### 架構與分層
 

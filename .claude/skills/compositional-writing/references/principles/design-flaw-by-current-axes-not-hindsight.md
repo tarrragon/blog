@@ -186,4 +186,4 @@ Hindsight 論述**偏向**個人歸因——「設計者沒預見」「沒多想
 
 **核心原則**：「設計缺陷」是當下成本對稱條件下選了限制更高的選項、不是事後發現需求變了。寫設計檢討時用三軸論證、避免讓判斷依賴於結局已發生——這樣讀者拿到的是 portable 判斷工具、不只是 case 故事。
 
-在 compositional-writing 內部、本卡是 multi-pass review 輪 5「反例 / 邊界」的擴充判準——寫設計檢討類文章時、輪 5 除了檢查「何時不適用」段、還要檢查「論述是否依賴 hindsight」、確保產出 portable 工具。
+在 compositional-writing 內部、本卡是 multi-pass review 輪 5「反例 / 邊界」的擴充判斷標準——寫設計檢討類文章時、輪 5 除了檢查「何時不適用」段、還要檢查「論述是否依賴 hindsight」、確保產出 portable 工具。

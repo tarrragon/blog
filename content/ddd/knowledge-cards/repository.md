@@ -14,8 +14,8 @@ repository 預設是 pull 介面：呼叫端主動問「現在的資料長怎樣
 
 ## 可觀察訊號
 
-repository 介面開始長出 `getMonthlyStatistics()`、`searchWithPagination()` 這類回傳統計值或反正規化形狀的方法，是讀的形狀混進 aggregate 介面的訊號——查詢集合已經大到值得思考該不該抽獨立的讀側介面，量測與升級路徑見 [讀模型的升級判準](/ddd/read-model-upgrade-signals/)。
+repository 介面開始長出 `getMonthlyStatistics()`、`searchWithPagination()` 這類回傳統計值或反正規化形狀的方法，是讀的形狀混進 aggregate 介面的訊號——查詢集合已經大到值得思考該不該抽獨立的讀側介面，量測與升級路徑見 [讀模型的升級條件](/ddd/read-model-upgrade-signals/)。
 
 ## 設計責任
 
-repository 的設計責任是守住 aggregate 一致性邊界的存取入口，不是最佳化每一種讀需求的效能與形狀——後者是 read model 的責任。repository 是否該同時扛下變更通知，判準不是「需求來自誰」而是介面用什麼語言表達，完整推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
+repository 的設計責任是守住 aggregate 一致性邊界的存取入口，不是最佳化每一種讀需求的效能與形狀——後者是 read model 的責任。repository 是否該同時扛下變更通知，判斷標準不是「需求來自誰」而是介面用什麼語言表達，完整推導見 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。

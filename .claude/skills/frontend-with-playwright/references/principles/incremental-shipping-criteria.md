@@ -1,6 +1,6 @@
 # 分批 ship：低風險可見價值先行、結構性下輪
 
-> **角色**：本卡是 `requirement-protocol` 的支撐型原則（principle）、被 SKILL.md「相關抽象層原則」段與 reference `decision-dialogue.md`（步驟 4「批次邊界」維度）引用、是「決定 ship 順序時不要把『重要程度』誤當『ship 順序』」的判準依據。
+> **角色**：本卡是 `requirement-protocol` 的支撐型原則（principle）、被 SKILL.md「相關抽象層原則」段與 reference `decision-dialogue.md`（步驟 4「批次邊界」維度）引用、是「決定 ship 順序時不要把『重要程度』誤當『ship 順序』」的判斷依據。
 >
 > **何時讀**：當你準備規劃 release / PR 順序、或寫到「等所有東西都做完一起 ship」「下次再優化」時。讀本卡用三軸（可見性 / 風險 / 驗證）切分什麼先 ship、什麼下輪。
 

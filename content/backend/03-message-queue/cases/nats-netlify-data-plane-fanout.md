@@ -53,7 +53,7 @@ Core NATS 的 fire-and-forget 語意在觀測資料場景是有意的選擇 — 
 ## 回寫教材的連結
 
 - [3.1 broker basics](/backend/03-message-queue/broker-basics/)：Core NATS 的 fire-and-forget 是 broker 可靠性光譜的一端（at-most-once），Kafka 跟 RabbitMQ 在另一端（at-least-once / durable）
-- [NATS vendor 頁](/backend/03-message-queue/vendors/nats/)：Core NATS vs JetStream 的選型判準 — 本案例是純 Core NATS 的代表場景
+- [NATS vendor 頁](/backend/03-message-queue/vendors/nats/)：Core NATS vs JetStream 的選型標準 — 本案例是純 Core NATS 的代表場景
 - [4.11 telemetry pipeline](/backend/04-observability/telemetry-pipeline/)：Netlify 的 NATS 資料平面在觀測 pipeline 架構中扮演 collector 跟 storage 之間的 transport 層
 
 ## 判讀徵兆

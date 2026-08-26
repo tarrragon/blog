@@ -39,7 +39,7 @@ Customer impact assessment 是把事故影響轉成用戶、產品與業務語�
 - data correctness / financial impact 是否需要獨立調查
 - status update 是否能反映不同客群的實際影響
 
-| 影響面向 | 最小可用判準                     | 對外決策用途       |
+| 影響面向 | 最小可用標準                     | 對外決策用途       |
 | -------- | -------------------------------- | ------------------ |
 | 對象     | users / tenants / regions 可估算 | 分級與客戶通知範圍 |
 | 功能     | 對應具體 customer journey        | 狀態頁與客服話術   |

@@ -59,6 +59,6 @@ Threat 選型的責任是聚焦高風險路徑。選型可優先對準 identity 
 - [7.B6 Incident Triage Loop](/backend/07-security-data-protection/blue-team/incident-triage-loop/)
 - [7.B9 Blue Team Scenario Library](/backend/07-security-data-protection/blue-team/blue-team-scenario-library/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把一個威脅路徑轉成驗證方案。輸出至少包含威脅選型、控制映射、測試設計、證據欄位、修正路由與回寫位置。

@@ -122,6 +122,6 @@ weight: 721
 - [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/)
 - [7.18 資安控制面如何交接到部署與事故流程](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把一個資安問題放進控制面地圖。輸出至少包含風險訊號、控制面、owner、驗證證據、承接模組與回寫位置。

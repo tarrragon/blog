@@ -30,7 +30,7 @@ Gate 處理中（loading）或結果不確定（timeout）時使用者看到什�
 
 使用者不知道發生什麼的情境包括：認證彈窗尚未出現（系統延遲）、網路請求已發但未回應（loading）、權限對話框被系統遮擋（多個 dialog 堆疊）。
 
-在這個狀態下使用者需要的是：知道系統在做什麼（loading 指示）、可以取消等待（取消按鈕）、超過合理時間後有提示（timeout 訊息 + 重試選項）。loading 指示該在等多久後出現、timeout 該設多久，判準在[時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)與[互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)的畫面級 timeout 段。
+在這個狀態下使用者需要的是：知道系統在做什麼（loading 指示）、可以取消等待（取消按鈕）、超過合理時間後有提示（timeout 訊息 + 重試選項）。loading 指示該在等多久後出現、timeout 該設多久，判斷標準在[時間感知與回應策略](/ux-design/06-interaction-feedback/response-time-strategy/)與[互動回饋三層模型](/ux-design/06-interaction-feedback/feedback-three-layers/)的畫面級 timeout 段。
 
 ## Gate 的常見類型
 

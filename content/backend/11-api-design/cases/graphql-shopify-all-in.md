@@ -14,7 +14,7 @@ Shopify 2024-10 宣告 REST Admin API 標為 legacy、不再開發新功能；20
 
 ## 判讀
 
-跟 GitHub 的共存路線（C20）相反 — 用「新功能只上 GraphQL」製造遷移壓力。判準案例：「平台對生態系有強制力時才可能 all-in」。成本降 75% 的配套也反向印證 cost-based limiting 是 GraphQL 採用的隱含稅。
+跟 GitHub 的共存路線（C20）相反 — 用「新功能只上 GraphQL」製造遷移壓力。判斷標準案例：「平台對生態系有強制力時才可能 all-in」。成本降 75% 的配套也反向印證 cost-based limiting 是 GraphQL 採用的隱含稅。
 
 ## 對應大綱
 

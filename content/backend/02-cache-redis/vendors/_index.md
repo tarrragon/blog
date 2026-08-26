@@ -1,7 +1,7 @@
 ---
 title: "快取 Vendor 清單"
 date: 2026-05-01
-description: "規劃快取、Redis 相容服務與 managed cache 的服務頁撰寫順序與判準"
+description: "規劃快取、Redis 相容服務與 managed cache 的服務頁撰寫順序與判斷標準"
 weight: 90
 tags: ["backend", "cache", "vendor"]
 ---
@@ -43,7 +43,7 @@ tags: ["backend", "cache", "vendor"]
 
 備註：[cluster-resharding](redis/cluster-resharding/) 是同 cluster 的 topology 重劃（5 type migration 漏類驗證、形式上歸在 deep article 欄、不是跨 vendor 遷移）。
 
-Momento overview-only 的理由：Momento 是 serverless cache、實作面（無 server 參數、無容量規劃、無 cluster topology）相對薄；本 blog case 庫無 Momento production case、且 SaaS 無法本機驗證。依 [deep article 方法論](/posts/vendor-deep-article-methodology/) 反向判準（無 production 經驗 / case 支撐的純 spec 復述不該寫 deep article），Momento 維持 overview-only、待有 case 或 serverless cost 實證再評估。
+Momento overview-only 的理由：Momento 是 serverless cache、實作面（無 server 參數、無容量規劃、無 cluster topology）相對薄；本 blog case 庫無 Momento production case、且 SaaS 無法本機驗證。依 [deep article 方法論](/posts/vendor-deep-article-methodology/) 反向判斷標準（無 production 經驗 / case 支撐的純 spec 復述不該寫 deep article），Momento 維持 overview-only、待有 case 或 serverless cost 實證再評估。
 
 進度（2026-06-22）：8 個 vendor 的 deep-article 層收尾完成。Migration playbook 覆蓋更新：ElastiCache → 自管 Redis/Valkey、DragonflyDB → Redis/Valkey、KeyDB → Redis/Valkey 三條回退路徑已補齊。目前只剩 Momento（overview-only、無 migration 需求）跟 Caffeine（local cache、無跨 vendor migration 概念）的 migration 欄為空白、屬設計決策。剩餘獨立 track：各 T1 vendor 進階主題的更多 deep article（Redis distributed lock / modules、Memcached CAS、ElastiCache Global Datastore DR）、後續候選的 Garnet / Hazelcast / Aerospike / Varnish edge cache。
 
@@ -56,7 +56,7 @@ Momento overview-only 的理由：Momento 是 serverless cache、實作面（無
 | 替代邊界 | 同類 Redis 相容服務、Memcached、managed cache、local cache 的機會成本             |
 | 操作成本 | memory sizing、eviction、backup、failover、cluster upgrade、client compatibility  |
 | Evidence | hit rate、miss rate、origin QPS、stale read、eviction、hot key、replication lag   |
-| 案例回寫 | Meta、Shopify、Netflix、Cloudflare、Tinder、Tubi、Snap 案例如何提供判準           |
+| 案例回寫 | Meta、Shopify、Netflix、Cloudflare、Tinder、Tubi、Snap 案例如何提供判斷標準       |
 
 服務責任段要先分辨副本與正式狀態。Redis、Valkey、DragonflyDB 與 ElastiCache 都可能承擔 cache serving layer，但資料是否可重建、stale window 多長、回源壓力是否受控，才是選型判斷的起點。
 
@@ -153,7 +153,7 @@ HA 拓樸三類。**Redis** Sentinel + replication（單 region 多 AZ）/ Clust
 
 | 批次 | 服務頁                        | 撰寫目的                                                                               |
 | ---- | ----------------------------- | -------------------------------------------------------------------------------------- |
-| C1   | Redis / Valkey                | 建立 Redis baseline、開源治理與相容性判準                                              |
+| C1   | Redis / Valkey                | 建立 Redis baseline、開源治理與相容性判斷標準                                          |
 | C2   | Memcached                     | 建立 simple KV cache、低語意副本與水平擴張邊界                                         |
 | C3   | DragonflyDB / AWS ElastiCache | 建立高吞吐 Redis-compatible 與 managed cache 的操作取捨                                |
 | C4   | KeyDB / Momento / Caffeine    | 補 multi-threaded fork、serverless cache、local cache 對照（overview 完成 2026-06-16） |

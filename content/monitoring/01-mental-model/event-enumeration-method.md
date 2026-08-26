@@ -1,7 +1,7 @@
 ---
 title: "事件枚舉與補齊檢查"
 date: 2026-06-20
-description: "從操作盤點系統性地推導出完整的事件清單 — 四類補齊檢查確保沒有遺漏、粒度判準確保每個事件只記一個事實"
+description: "從操作盤點系統性地推導出完整的事件清單 — 四類補齊檢查確保沒有遺漏、粒度判斷標準確保每個事件只記一個事實"
 weight: 5
 tags: ["monitoring", "mental-model", "event-enumeration", "event-design", "completeness"]
 ---
@@ -47,9 +47,9 @@ tags: ["monitoring", "mental-model", "event-enumeration", "event-design", "compl
 
 上表中「輸入」的 metric 和 lifecycle 空格是合理的 — 文字輸入送出不涉及效能量測和系統狀態轉換。「配對」的 lifecycle 空格也合理 — 配對完成後不改變系統的執行狀態。
 
-## 粒度判準
+## 粒度判斷標準
 
-事件粒度的判斷用一個 SRP 判準：**一個事件記一個事實**。
+事件粒度的判斷用一個 SRP 判斷標準：**一個事件記一個事實**。
 
 ### 拆分訊號
 

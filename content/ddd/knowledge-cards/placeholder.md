@@ -10,7 +10,7 @@ weight: 13
 
 ## 概念位置
 
-失效的靜默程度比文件層約束（層次判準見 [invariant](/ddd/knowledge-cards/invariant/)）再深一級：文件層失效至少留下「規則寫在那裡、沒人遵守」的對照證據；佔位讓測試綠燈——型別層看它是合法構件、行為測試的 override 讓它永遠沒被觸發（override 的機制見 [test seam](/ddd/knowledge-cards/test-seam/)）。
+失效的靜默程度比文件層約束（層次判斷標準見 [invariant](/ddd/knowledge-cards/invariant/)）再深一級：文件層失效至少留下「規則寫在那裡、沒人遵守」的對照證據；佔位讓測試綠燈——型別層看它是合法構件、行為測試的 override 讓它永遠沒被觸發（override 的機制見 [test seam](/ddd/knowledge-cards/test-seam/)）。
 
 ## 可觀察訊號
 

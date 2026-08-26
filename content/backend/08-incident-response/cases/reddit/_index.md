@@ -29,7 +29,7 @@ Reddit 這個案例在講的是 Kubernetes 升級如何在大規模 stateful 工
 
 當 control plane 進行升級時，最先要保住的是回滾空間與資料完整性。當 pod 重排碰到 stateful workload 時，恢復節奏就不能只看節點健康，而要看整個狀態層是否真的穩回來。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否判斷問題是在 k8s 升級還是 workload 本身
 - 能否把回滾限制與控制平面風險講清楚

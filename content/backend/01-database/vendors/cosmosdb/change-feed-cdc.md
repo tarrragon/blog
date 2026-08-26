@@ -41,7 +41,7 @@ Latest-version 模式（過去稱 incremental feed）只給每個 document 的 *
 
 All-versions-and-deletes 模式給 *每一次* 變更、包含中間版本與 delete / TTL 過期事件。同一 document 改三次、feed 給三筆；刪掉給一筆刪除事件。這個模式適合需要完整變更歷史的場景 — audit log、event sourcing、需要對 delete 做反應的跨 store 同步。代價是事件量更大、且這個模式對 retention 與 partition 行為有額外約束（時間敏感、查文件）。
 
-選擇判準：問「我需要中間版本與刪除事件嗎」。投影類工作（只要最終狀態）用 latest-version；audit 與需要對刪除反應的同步用 all-versions-and-deletes。預設選 latest-version、只有明確需要歷史與 delete 時才升級。
+選擇標準：問「我需要中間版本與刪除事件嗎」。投影類工作（只要最終狀態）用 latest-version；audit 與需要對刪除反應的同步用 all-versions-and-deletes。預設選 latest-version、只有明確需要歷史與 delete 時才升級。
 
 ### change feed processor 的角色
 

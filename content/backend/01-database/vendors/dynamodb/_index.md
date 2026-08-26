@@ -249,7 +249,7 @@ DynamoDB case 的讀法是先分類 access pattern，再看容量模式。Amazon
 
 DynamoDB 的反向 sibling 路由用來把 RDBMS 退場條件寫清楚。若讀者從 PostgreSQL / MySQL 的 connection bottleneck 過來，先讀 [Lemino case](/backend/09-performance-capacity/cases/ntt-docomo-lemino-japanese-streaming/) 與 [1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)；若需求仍需要 ad hoc SQL、join 與 transaction report，回 [Aurora vendor](/backend/01-database/vendors/aurora/) 或 [PostgreSQL vendor](/backend/01-database/vendors/postgresql/)；若需求是 global document model 與 Azure 生態，再對照 [Cosmos DB vendor](/backend/01-database/vendors/cosmosdb/)。
 
-這條路由的判準是 access pattern 是否穩定到可以先設計 key。DynamoDB 擅長固定 lookup、寫入尖峰、connection-free scaling 與 TTL 類生命週期；資料探索、報表 join 與多條件查詢仍應留在 SQL / search / analytics service。
+這條路由的判斷標準是 access pattern 是否穩定到可以先設計 key。DynamoDB 擅長固定 lookup、寫入尖峰、connection-free scaling 與 TTL 類生命週期；資料探索、報表 join 與多條件查詢仍應留在 SQL / search / analytics service。
 
 ## 常見陷阱
 

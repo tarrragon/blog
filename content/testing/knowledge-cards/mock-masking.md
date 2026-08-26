@@ -18,4 +18,4 @@ Mock 遮蔽的訊號是：test 全過但實機失敗的 bug 類型集中在外�
 
 ## 設計責任
 
-面對 mock 遮蔽的正確策略是分層驗證 — mock 負責 API 層，[protocol integration test](/testing/knowledge-cards/protocol-integration-test/) 負責協議層。增加 mock test 數量無法跨越層級盲區。Mock 也不應該模擬協議行為 — 讓 mock 更「逼真」會讓 mock 本身變成需要維護和驗證的複雜元件。需要模擬應用層行為時，改用行為有實測出處的[語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)。假設層的另一種盲區見[凍結參照與活解析](/testing/knowledge-cards/frozen-vs-live-reference/)——stub 寫死的參照值可能在後端操作後已失效，遮蔽的是資料生命週期、不是協議差異。同一個遮蔽機制也會發生在應用邊界之內，範圍由測試邊界畫在哪決定：把每個協作類別都替換掉的做法讓類別之間的真實協作行為一併不可見，判準見 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)。
+面對 mock 遮蔽的正確策略是分層驗證 — mock 負責 API 層，[protocol integration test](/testing/knowledge-cards/protocol-integration-test/) 負責協議層。增加 mock test 數量無法跨越層級盲區。Mock 也不應該模擬協議行為 — 讓 mock 更「逼真」會讓 mock 本身變成需要維護和驗證的複雜元件。需要模擬應用層行為時，改用行為有實測出處的[語意級假後端](/testing/knowledge-cards/semantic-fake-backend/)。假設層的另一種盲區見[凍結參照與活解析](/testing/knowledge-cards/frozen-vs-live-reference/)——stub 寫死的參照值可能在後端操作後已失效，遮蔽的是資料生命週期、不是協議差異。同一個遮蔽機制也會發生在應用邊界之內，範圍由測試邊界畫在哪決定：把每個協作類別都替換掉的做法讓類別之間的真實協作行為一併不可見，判斷標準見 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)。

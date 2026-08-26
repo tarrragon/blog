@@ -18,4 +18,4 @@ tags: ["business", "procurement", "knowledge-cards"]
 
 ## 判讀方式
 
-用自己需求的不確定性形狀去談 fence：需求裡確定的底量放進 blanket 承諾換價格，波動的部分留在彈性窗內，投機的部分留在圍籬外。常見的失誤是把 blanket 總量按樂觀情境簽——總量承諾是軟性的 NCNR，年底達不成一樣要付代價（補償金、來年議價力受損）。承諾量收斂到 [forecast](/business/procurement-planning/cards/forecast/) 真正有把握的需求範圍，跟 NCNR 下單量收斂到置信區間是同一個判準（見 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)）。
+用自己需求的不確定性形狀去談 fence：需求裡確定的底量放進 blanket 承諾換價格，波動的部分留在彈性窗內，投機的部分留在圍籬外。常見的失誤是把 blanket 總量按樂觀情境簽——總量承諾是軟性的 NCNR，年底達不成一樣要付代價（補償金、來年議價力受損）。承諾量收斂到 [forecast](/business/procurement-planning/cards/forecast/) 真正有把握的需求範圍，跟 NCNR 下單量收斂到置信區間是同一個判斷標準（見 [原廠與代理商規則的經濟學](/business/procurement-planning/vendor-lifecycle-rules/)）。

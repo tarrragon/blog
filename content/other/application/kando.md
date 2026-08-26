@@ -3,7 +3,7 @@ title: "Kando 滑鼠手勢選單的應用場景"
 slug: "kando"
 date: 2026-06-28
 draft: false
-description: "Kando 圓盤選單的適用判準、macOS 工程師的應用場景排序、以及可套用的 menus.json 設定範例。"
+description: "Kando 圓盤選單的適用條件、macOS 工程師的應用場景排序、以及可套用的 menus.json 設定範例。"
 tags: ["kando", "工作流", "macos", "效率工具"]
 ---
 
@@ -18,7 +18,7 @@ Kando 是一個跨平台的**圓盤選單（pie menu / marking menu）**工具�
 
 ---
 
-## 適用判準（先判斷再設計）
+## 適用條件（先判斷再設計）
 
 Kando 補的是一個特定空缺：**手已經在滑鼠/觸控板上、不想切回鍵盤、而且動作有空間對應**。它跟鍵盤快捷鍵或啟動器是並存關係，不是替代。判斷一個動作該不該交給 Kando，用以下三條：
 

@@ -30,7 +30,7 @@ enum 定義同步問題的類型，順手帶上顯示名稱——單獨看每一
 
 問題在多語言需求出現時一次引爆：文字寫死在 Domain 層，翻譯就得改 Domain——而 Domain 層理應對「呈現給誰、用什麼語言」一無所知。
 
-## 劃分判準：領域事實 vs 呈現
+## 劃分判斷標準：領域事實 vs 呈現
 
 修法的核心是把每個字串問一次：**這是領域事實、還是呈現？**
 
@@ -84,4 +84,4 @@ exhaustive switch 讓這個橋接有編譯期保證：Domain 新增一個代碼�
 
 - 方法論全貌：[業務層 i18n 管理方法論](/record/business-layer-i18n-management-methodology/)——本文是該方法論在 Domain 層的實機重構記錄
 - 概念地基：[DDD 領域驅動設計指南](/ddd/) 的分層責任章節
-- 同族判準：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)——兩篇的共同結構是「每一處都便利的局部選擇、累積成架構問題」，差別在洩漏方向（呈現滲入領域 vs 變更繞過領域）
+- 同族判斷標準：[copyWith 是逃生口，不是設計](/work-log/dart_copywith_entity_escape_hatch/)——兩篇的共同結構是「每一處都便利的局部選擇、累積成架構問題」，差別在洩漏方向（呈現滲入領域 vs 變更繞過領域）

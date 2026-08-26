@@ -17,11 +17,11 @@ Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷
 | Level 2 | HTTP method 與 status 正確使用  | 中介層基礎設施（快取、重試、監控）開始能讀懂介面 |
 | Level 3 | Hypermedia controls（HATEOAS）  | client 從回應習得可用操作、業務知識收回 server   |
 
-表格是索引、每級的躍遷各有實質收益。Level 0 到 1 的收益是結構：橫切能力（權限、審計、快取鍵）有了掛載單位。Level 1 到 2 的收益是讓基礎設施當盟友：GET 的安全承諾讓 proxy 敢快取、status 的語意讓監控與重試鏈正確運作 — method 與 status 作為承諾的完整判準在 [11.3](/backend/11-api-design/resource-modeling-operation-semantics/)。Level 2 到 3 的收益是解耦 client 的業務知識 — 但這一級的收益前提（存在會跟連結走的 uniform client）在 machine-to-machine 場景多半不成立、完整交鋒見 [Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)。
+表格是索引、每級的躍遷各有實質收益。Level 0 到 1 的收益是結構：橫切能力（權限、審計、快取鍵）有了掛載單位。Level 1 到 2 的收益是讓基礎設施當盟友：GET 的安全承諾讓 proxy 敢快取、status 的語意讓監控與重試鏈正確運作 — method 與 status 作為承諾的完整判斷標準在 [11.3](/backend/11-api-design/resource-modeling-operation-semantics/)。Level 2 到 3 的收益是解耦 client 的業務知識 — 但這一級的收益前提（存在會跟連結走的 uniform client）在 machine-to-machine 場景多半不成立、完整交鋒見 [Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)。
 
 ## 兩個立場事實
 
-用 RMM 之前要知道它在爭論光譜上的位置。其一、Fielding 的立場被 Fowler 記錄在案：只有 Level 3 才算 REST — 依原義、RMM 的前三級都是「還不是 REST」的程度差異、把 Level 2 說成「基本 REST」與原始定義者的立場直接牴觸（把 REST 這個詞用對的判準見 [REST 流派總覽](/backend/11-api-design/styles/rest/)）。其二、業界實務多停在 Level 2 — 這是廣泛的觀察、C3 案例的判讀層也如此標注、Fowler 原文沒有這個統計主張、引用時分清楚。
+用 RMM 之前要知道它在爭論光譜上的位置。其一、Fielding 的立場被 Fowler 記錄在案：只有 Level 3 才算 REST — 依原義、RMM 的前三級都是「還不是 REST」的程度差異、把 Level 2 說成「基本 REST」與原始定義者的立場直接牴觸（把 REST 這個詞用對的判斷標準見 [REST 流派總覽](/backend/11-api-design/styles/rest/)）。其二、業界實務多停在 Level 2 — 這是廣泛的觀察、C3 案例的判讀層也如此標注、Fowler 原文沒有這個統計主張、引用時分清楚。
 
 ## 誤用一：當合規檢查表
 

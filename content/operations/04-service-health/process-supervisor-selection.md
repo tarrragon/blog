@@ -1,12 +1,12 @@
 ---
 title: "Process supervisor 選型"
 date: 2026-07-03
-description: "在 systemd、supervisord、Docker restart policy、Kubernetes 之間選服務監管方式時，用平台能不能分開表達 startup、readiness、liveness、drain 當判準"
+description: "在 systemd、supervisord、Docker restart policy、Kubernetes 之間選服務監管方式時，用平台能不能分開表達 startup、readiness、liveness、drain 當判斷標準"
 weight: 4
 tags: ["devops", "supervisor", "systemd", "docker", "kubernetes"]
 ---
 
-選 process supervisor 的判準是這個平台能不能分別表達服務生命週期的四個階段：啟動（startup）、就緒（readiness）、存活（liveness）、收束（drain）。表達力越完整，越能讓平台在對的時機做對的動作；表達力有缺，缺的那部分邏輯就要在應用層自己補，複雜度從平台設定轉移到程式碼裡。選型不是比誰功能多，是比這個服務需要的生命週期粒度，跟平台能表達的粒度對不對得上。
+選 process supervisor 的判斷標準是這個平台能不能分別表達服務生命週期的四個階段：啟動（startup）、就緒（readiness）、存活（liveness）、收束（drain）。表達力越完整，越能讓平台在對的時機做對的動作；表達力有缺，缺的那部分邏輯就要在應用層自己補，複雜度從平台設定轉移到程式碼裡。選型不是比誰功能多，是比這個服務需要的生命週期粒度，跟平台能表達的粒度對不對得上。
 
 在動手比較之前，先問服務四個問題：啟動要多久、哪些依賴是就緒條件；失敗時該自己恢復還是交平台重建；停止時有哪些在途請求、連線、背景工作要收束；以及平台能不能把 startup、readiness、liveness、drain 分開表達。這四個問題的答案決定了要往哪個方向選。
 
@@ -40,13 +40,13 @@ supervisord 是單機上的經典應用監管者，比 systemd 更輕、跨發�
 
 ## 選型收斂
 
-單機、服務自己寫得動、要零額外依賴且需要區分就緒與存活 → systemd，用 `sd_notify` 宣告就緒與報活。單機但不想綁 systemd、只要基本的拉起與重啟 → supervisord。多機、需要 startup、readiness、liveness、drain 全部分開表達、能吃下配置複雜度 → Kubernetes。容器化但生命週期需求簡單、不需要分離就緒與存活 → Docker restart policy 加 `HEALTHCHECK`，不足的部分在應用層補。判準始終是同一條：服務需要的生命週期粒度，跟平台能表達的粒度對不對得上——需求簡單卻上最複雜的平台，付的是配置成本；需求複雜卻用表達力不足的平台，付的是應用層補洞的成本。
+單機、服務自己寫得動、要零額外依賴且需要區分就緒與存活 → systemd，用 `sd_notify` 宣告就緒與報活。單機但不想綁 systemd、只要基本的拉起與重啟 → supervisord。多機、需要 startup、readiness、liveness、drain 全部分開表達、能吃下配置複雜度 → Kubernetes。容器化但生命週期需求簡單、不需要分離就緒與存活 → Docker restart policy 加 `HEALTHCHECK`，不足的部分在應用層補。判斷標準始終是同一條：服務需要的生命週期粒度，跟平台能表達的粒度對不對得上——需求簡單卻上最複雜的平台，付的是配置成本；需求複雜卻用表達力不足的平台，付的是應用層補洞的成本。
 
 ## 要不要上 Kubernetes
 
 「要不要引入編排層」是這個選型裡最大的一個決策，值得單獨判。上 Kubernetes 的成本是配置複雜度與一整套維運（叢集升級、網路、儲存、權限），這筆成本是固定的、不隨服務數量攤薄到很小。值得付的訊號是三個同時成立：跑在多台機器上、需要 startup/readiness/liveness/drain 全部分開精確表達、而且有多個服務要統一調度與擴縮。這三個都成立時，Kubernetes 把「本來要自己拼的調度、健康、擴縮」收進一個平台，複雜度換到了值得的地方。
 
-反過來，單機或少數幾台、生命週期需求簡單、服務數量不多時，上 Kubernetes 是拿一大筆配置與維運複雜度、換一套用不到的能力——systemd 或 Docker 加 restart policy 就足夠，省下的複雜度是實打實的。常見的誤區是把 Kubernetes 當成「正規」的預設起點，結果一個兩台機器的服務背上了整個叢集的維運負擔。判準回到同一條：需求的粒度配不配得上平台的粒度，不是「業界都用所以我也要用」。
+反過來，單機或少數幾台、生命週期需求簡單、服務數量不多時，上 Kubernetes 是拿一大筆配置與維運複雜度、換一套用不到的能力——systemd 或 Docker 加 restart policy 就足夠，省下的複雜度是實打實的。常見的誤區是把 Kubernetes 當成「正規」的預設起點，結果一個兩台機器的服務背上了整個叢集的維運負擔。判斷標準回到同一條：需求的粒度配不配得上平台的粒度，不是「業界都用所以我也要用」。
 
 ## 下一步路由
 

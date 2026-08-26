@@ -14,7 +14,7 @@ PRD 是 SaaS 時代「先用文字描述產品再開發」的核心 artifact。�
 
 ## 可觀察訊號與例子
 
-PRD 的典型欄位：背景、目標、使用者、流程、UI、非功能性需求、上線判準。產品經理常用 PRD 對齊跨團隊—工程、設計、QA 都看同一份。Notion 上常見的「Product Spec」「Feature Brief」都是 PRD 的變體。
+PRD 的典型欄位：背景、目標、使用者、流程、UI、非功能性需求、上線判斷標準。產品經理常用 PRD 對齊跨團隊—工程、設計、QA 都看同一份。Notion 上常見的「Product Spec」「Feature Brief」都是 PRD 的變體。
 
 ## 判讀方式
 

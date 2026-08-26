@@ -14,7 +14,7 @@ tags: ["backend", "security"]
 
 ## 本章涵蓋與不涵蓋
 
-本章聚焦帳號憑證外洩這一類事件特有的判讀。這件事算不算事故、算哪一級，判準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；止血與回復的通用形態在 [8.3 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)——那一章給的是可用性訊號驅動的止血節奏（錯誤率、核心成功率、依賴穩定），而憑證外洩沒有那組訊號，止血動作與判停條件由本章給；對外承諾的節奏、狀態頁與補償政策在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)——那三章處理的是所有事故共通的部分，本章只寫憑證這一類與它們不同的地方。一次只影響一個帳號的接管事件走 [7.41 單一帳號被接管](../single-account-takeover-response/)——那裡的範圍明確而求助者的身分待證，困難的位置與這裡相反。機器憑證與 API key 的撤銷範圍走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)，判斷依據與這裡不同：那一類的持有者是系統、盤點得出來，重設的代價落在對接方而非使用者。
+本章聚焦帳號憑證外洩這一類事件特有的判讀。這件事算不算事故、算哪一級，判斷標準在 [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)；止血與回復的通用形態在 [8.3 止血與回復策略](/backend/08-incident-response/containment-recovery-strategy/)——那一章給的是可用性訊號驅動的止血節奏（錯誤率、核心成功率、依賴穩定），而憑證外洩沒有那組訊號，止血動作與判停條件由本章給；對外承諾的節奏、狀態頁與補償政策在 [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)——那三章處理的是所有事故共通的部分，本章只寫憑證這一類與它們不同的地方。一次只影響一個帳號的接管事件走 [7.41 單一帳號被接管](../single-account-takeover-response/)——那裡的範圍明確而求助者的身分待證，困難的位置與這裡相反。機器憑證與 API key 的撤銷範圍走 [7.6 秘密管理與機器憑證治理](../secrets-and-machine-credential-governance/)，判斷依據與這裡不同：那一類的持有者是系統、盤點得出來，重設的代價落在對接方而非使用者。
 
 ## 判讀軸：範圍判不出來的時候怎麼定範圍
 
@@ -50,7 +50,7 @@ tags: ["backend", "security"]
 
 ## 通知門檻
 
-通知的判準分兩層，而兩層的決定權不在同一個地方。
+通知的判斷標準分兩層，而兩層的決定權不在同一個地方。
 
 **法規層由外部規則決定，而它有兩條線、各自有自己的門檻與時鐘。** 這兩條在多數討論裡被併成「要不要通報」一個問題，而併起來之後被漏掉的通常是第二條。
 

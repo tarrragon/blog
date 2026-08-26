@@ -10,7 +10,7 @@ tags: ["testing", "metamorphic-testing", "test-oracle", "verification"]
 
 ## 概念位置
 
-三種判準的要求由強到弱排成一條線：逐例斷言要知道每個輸入的正確輸出，不變量只要知道輸出必須滿足什麼，變形關係連這個都不需要、只要知道輸入變了輸出該怎麼變。變形關係因此是三者裡門檻最低、也是最後一道還寫得下來的判準。完整的退階表與選用程序在[判準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)，來源分類見 [test oracle](/testing/knowledge-cards/test-oracle/)。
+三種判斷標準的要求由強到弱排成一條線：逐例斷言要知道每個輸入的正確輸出，不變量只要知道輸出必須滿足什麼，變形關係連這個都不需要、只要知道輸入變了輸出該怎麼變。變形關係因此是三者裡門檻最低、也是最後一道還寫得下來的判斷標準。完整的退階表與選用程序在[判斷標準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)，來源分類見 [test oracle](/testing/knowledge-cards/test-oracle/)。
 
 它跟參照實作 oracle 的差別在於不需要第二份實作：變形關係比較的是同一份實作的兩次執行，因此在只有一個實作可用的場景（多數自研系統）仍然適用。
 

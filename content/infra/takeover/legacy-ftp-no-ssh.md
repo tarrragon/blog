@@ -157,7 +157,7 @@ _environment/
 | Laravel Valet  | macOS                   | 免費              | 輕量 CLI 為主，適合已經熟悉 CLI 的開發者            |
 | ServBay        | macOS                   | 免費版可用        | 較新、支援多 PHP 版本共存、內建資料庫管理           |
 
-選型判準：如果 prod 的 PHP 版本是 5.6 或 7.0 這類已停止維護的舊版，Docker 是唯一能精確對齊的選項——MAMP/XAMPP 通常只提供仍在維護的版本。常見版本（7.4、8.0、8.1、8.2）用 MAMP/Laragon 會比 Docker 更快跑起來。
+選型標準：如果 prod 的 PHP 版本是 5.6 或 7.0 這類已停止維護的舊版，Docker 是唯一能精確對齊的選項——MAMP/XAMPP 通常只提供仍在維護的版本。常見版本（7.4、8.0、8.1、8.2）用 MAMP/Laragon 會比 Docker 更快跑起來。
 
 ### Docker 方式
 

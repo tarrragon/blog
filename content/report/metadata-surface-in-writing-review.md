@@ -94,7 +94,7 @@ rg -n "不行|不可以|不是|不要|無法|不能" \
   content/backend/07-security-data-protection/_index.md
 ```
 
-grep 命中代表「需要判讀」，不代表自動違規。合法的對照句型要回到 [#94 正向改寫要保留對照論據](../positive-rewrite-preserves-contrast/) 的判準：有正向錨點、有對照原因、有適用情境。
+grep 命中代表「需要判讀」，不代表自動違規。合法的對照句型要回到 [#94 正向改寫要保留對照論據](../positive-rewrite-preserves-contrast/) 的判斷標準：有正向錨點、有對照原因、有適用情境。
 
 ---
 

@@ -140,7 +140,7 @@ Type E 的 cleanup 通常不是「關掉整個 Firebase」— 多數情況認證
 - shadow read 比對 code 移除
 - 前端殘留的 Firestore SDK 依賴清掉（資料層已不走它）
 - 但 Firebase Auth / Storage 若仍在用，保留；明確標示哪條資料路徑的 source of truth 是自建庫、哪條仍在平台
-- Firestore 的資料匯出備份保留到確認新庫穩定，對應 [10.3](/backend/10-system-evolution/managed-platform-exit/) 的並行期退役判準
+- Firestore 的資料匯出備份保留到確認新庫穩定，對應 [10.3](/backend/10-system-evolution/managed-platform-exit/) 的並行期退役判斷標準
 
 混合架構不是遷移失敗、是逐能力選型的穩態 — 撞牆的資料層自建、沒撞牆的認證 / 儲存留在平台。
 

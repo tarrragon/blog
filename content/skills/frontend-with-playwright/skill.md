@@ -1,9 +1,16 @@
 ---
-title: "Frontend with Playwright — SKILL 入口"
+title: "Frontend with Playwright"
 date: 2026-04-26
-description: "框架無關的前端開發 + Playwright 驗證 SKILL 入口：三大支柱、六大原則速查、六份情境 reference 的觸發路由。"
-tags: ["skills", "frontend-with-playwright", "前端開發", "Playwright", "CSS", "JavaScript"]
+description: "框架無關的前端開發協議 + Playwright 驗證 + 跨領域 Stream 操作架構：DOM topology 先於 CSS、CSS / JS 邊界辨識、Playwright 三個位置（假設 /"
+tags: ["skill", "writing", "methodology"]
+name: frontend-with-playwright
+license: MIT
+metadata:
+  version: 0.3.1
+  category: writing-methodology
 ---
+
+## Frontend with Playwright
 
 框架無關的前端開發協議 + Playwright 驗證。原則適用於 vanilla HTML/CSS/JS、Vue、React、jQuery — 因為核心是「DOM / CSS / JS 三者的本質行為」加上「Playwright 用 live DOM 量測驗證」、不依賴特定框架的渲染機制。
 
@@ -139,9 +146,9 @@ frontend-with-playwright/
 
 ---
 
-## 相關抽象層原則（在 content/report/）
+## 相關抽象層原則
 
-本 skill 的協議建立在幾條抽象層原則上：
+本 skill 的協議建立在幾條抽象層原則上（檔案位置：`references/principles/`）：
 
 - [#42 2 次門檻](/report/two-occurrence-threshold/) — 第 1 次失敗是運氣、第 2 次是訊號（playwright 切換時機的根據）
 - [#43 最小必要範圍](/report/minimum-necessary-scope-is-sanity-defense/) — selector / observer / 操作邊界從窄起（DOM 設計、Reactive 效能的根據）
@@ -161,7 +168,8 @@ frontend-with-playwright/
 ---
 
 **Last Updated**: 2026-04-26
-**Version**: 0.4.0 — 接入 #79 決策對話五維度（對應 #74-#78 系列）；協助前端設計取捨段落的呈現格式對齊 user-facing 決策協議
-**Version**: 0.3.0 — 接入 #69-#73：相關抽象層原則段補 Test-First (#69)、URL state (#70)、tab order (#71)、外部觸發 meta (#72)、search 匹配模式 (#73)
+**Version**: 0.3.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
+
+**Version**: 0.3.0 — 接入 #79 決策對話五維度（對應 #74-#78 系列）；協助前端設計取捨段落的呈現格式對齊 user-facing 決策協議
 **Version**: 0.2.0 — 接入 #55-#68 系列：新增第 7 份 reference `data-flow-and-filter-composition`（涵蓋 Filter × Source 層錯位 + 五策略 + 跨前端 / 後端 / 演算法 / DB 領域範例）；description 補跨領域 stream 操作觸發詞；SKILL.md 加「相關抽象層原則」段（#42-45 + #64 + #67-68）；強調「不只前端、stream 操作通用」
-**Version**: 0.1.0 — 從 `content/report/` 50+ 篇事後檢討萃取「前端網頁開發 + Playwright 驗證」這條主軸；六份 references 對應「DOM topology / CSS-JS 邊界 / Playwright 三位置 / framework 共處 / Reactive 效能 / A11y」六個情境
+**Version**: 0.1.0 — 從 50+ 篇事後檢討萃取「前端網頁開發 + Playwright 驗證」這條主軸；六份 references 對應「DOM topology / CSS-JS 邊界 / Playwright 三位置 / framework 共處 / Reactive 效能 / A11y」六個情境

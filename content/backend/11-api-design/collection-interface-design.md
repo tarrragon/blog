@@ -1,7 +1,7 @@
 ---
 title: "11.7 集合介面設計"
 date: 2026-07-03
-description: "分頁方案的承諾差異、批次操作的部分失敗語意、超過請求逾時的長時操作怎麼回 — 集合與長時操作的介面判準"
+description: "分頁方案的承諾差異、批次操作的部分失敗語意、超過請求逾時的長時操作怎麼回 — 集合與長時操作的介面判斷標準"
 weight: 7
 tags: ["backend", "api-design", "pagination"]
 ---
@@ -14,7 +14,7 @@ offset 分頁（`?page=3&limit=50`）的介面直觀、失效有明確的機制�
 
 Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-cursor/)：介面收斂為 `cursor` 加 `limit`、回傳 `next_cursor`、cursor 內容 Base64 編碼、消費者不可解析。opaque 這個性質是設計重點 — **分頁狀態的表示權留在 server 端**、消費者不能解析就不能依賴內部格式、server 可以自由更換底層策略（keyset、shard 位置、甚至混合）而不動介面。同一份紀錄明列了付出的代價：失去 total count 與跳頁能力 — 這是明示的產品決策、選 cursor 前要跟產品端確認「第 N 頁」跟「共幾筆」是不是真需求。
 
-判準：資料量小、寫入頻率低、產品要跳頁 — offset 合理且便宜；資料量大或寫入頻繁 — cursor、並從第一版就 opaque（先給透明 cursor 再收緊、又是一次 breaking change）。offset、cursor、keyset 的完整交鋒與「cursor 不透明性算承諾還是逃生門」的爭議、收在掛本章的 [分頁之爭](/backend/11-api-design/pagination-debate/) — 該文把定位機制與表示權拆成兩層決策、並給出 opaque cursor 該明文化的條款清單。
+判斷標準：資料量小、寫入頻率低、產品要跳頁 — offset 合理且便宜；資料量大或寫入頻繁 — cursor、並從第一版就 opaque（先給透明 cursor 再收緊、又是一次 breaking change）。offset、cursor、keyset 的完整交鋒與「cursor 不透明性算承諾還是逃生門」的爭議、收在掛本章的 [分頁之爭](/backend/11-api-design/pagination-debate/) — 該文把定位機制與表示權拆成兩層決策、並給出 opaque cursor 該明文化的條款清單。
 
 ## 批次操作：部分失敗是預設、不是例外
 
@@ -24,7 +24,7 @@ Slack 的解法是遷移到 opaque [cursor](/backend/knowledge-cards/pagination-
 - **獨立處理、逐筆回報**：回應是跟請求等長的結果陣列、每筆自己的成功或錯誤。務實預設、但消費者的重試邏輯變複雜 — 要能只重送失敗子集、這又要求逐筆操作冪等（[11.8](/backend/11-api-design/api-idempotency-design/) 的主題）。
 - **fail-fast**：處理到第一個錯誤即停、回報已處理數。適合順序有意義的批次（匯入）、消費者從斷點續傳。
 
-判準是消費者的重試能力與資料的順序性；唯一的反模式是不宣告 — 文件沒寫部分失敗語意的批次介面、消費者只能拿 production 事故來逆向工程。選定語意之後、部分成功在 status 層怎麼表達（207、200 加 per-item errors、或原子化保持單一 status）另有取捨、見 [Status 裝不下的東西](/backend/11-api-design/status-expressiveness-boundary/)。
+判斷標準是消費者的重試能力與資料的順序性；唯一的反模式是不宣告 — 文件沒寫部分失敗語意的批次介面、消費者只能拿 production 事故來逆向工程。選定語意之後、部分成功在 status 層怎麼表達（207、200 加 per-item errors、或原子化保持單一 status）另有取捨、見 [Status 裝不下的東西](/backend/11-api-design/status-expressiveness-boundary/)。
 
 ## 長時操作：把「進行中」實體化
 

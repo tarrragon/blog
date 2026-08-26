@@ -10,7 +10,7 @@ glibc 與 musl 是兩套不同的 C 標準函式庫實作。C 標準庫是幾乎
 
 ## 概念位置
 
-這條規則跟 [image tag pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 同源：都是把 runtime 底層凍結到跟 prod 相同。判準見 [prod-parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/)。選 base image 的實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/) 與 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)。
+這條規則跟 [image tag pinning](/linux/dotfile/knowledge-cards/image-tag-pinning/) 同源：都是把 runtime 底層凍結到跟 prod 相同。判斷標準見 [prod-parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/)。選 base image 的實作見 [對齊 prod 的 runtime container](/linux/dotfile/10-prod-parity/prod-parity-runtime/) 與 [Dockerfile 設計](/backend/05-deployment-platform/vendors/docker/dockerfile-design/)。
 
 ## 誰用哪一套
 
@@ -35,7 +35,7 @@ Alpine 的賣點是 image 極小（base 約 5MB vs Debian 約 70MB），所以�
 
 ## 判讀訊號
 
-「本機容器跑得好好的、上線卻在 DNS 或某個原生擴充炸掉」是 libc 不一致的典型症狀。選 base image 時的判準很直接：**prod 是什麼 libc，本機就用什麼**。省那 60MB 換來的除錯成本遠高於節省。
+「本機容器跑得好好的、上線卻在 DNS 或某個原生擴充炸掉」是 libc 不一致的典型症狀。選 base image 時的判斷標準很直接：**prod 是什麼 libc，本機就用什麼**。省那 60MB 換來的除錯成本遠高於節省。
 
 ## 邊界
 

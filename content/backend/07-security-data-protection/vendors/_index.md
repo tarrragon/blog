@@ -60,12 +60,12 @@ tags: ["backend", "security", "data-protection", "vendor"]
 
 ## 撰寫批次
 
-| 批次 | 服務群                    | 撰寫目的                                                 | 狀態                                 |
-| ---- | ------------------------- | -------------------------------------------------------- | ------------------------------------ |
-| S1   | Identity / Cloud IAM      | 建立人類身份、機器身份、role / policy baseline           | **完成（2026-05-18、7 個 vendor）**  |
-| S2   | Secrets / KMS / PKI       | 建立 secret、key、certificate lifecycle 與 rotation 判準 | **完成（2026-05-18、11 個 vendor）** |
-| S3   | Edge / WAF / Supply chain | 建立入口防護、artifact trust 與 release gate 對照        | **完成（2026-05-18、8 個 vendor）**  |
-| S4   | SIEM / Detection / DLP    | 建立偵測覆蓋、資料保護、證據鏈與事故 handoff             | **完成（2026-05-18、7 個 vendor）**  |
+| 批次 | 服務群                    | 撰寫目的                                                     | 狀態                                 |
+| ---- | ------------------------- | ------------------------------------------------------------ | ------------------------------------ |
+| S1   | Identity / Cloud IAM      | 建立人類身份、機器身份、role / policy baseline               | **完成（2026-05-18、7 個 vendor）**  |
+| S2   | Secrets / KMS / PKI       | 建立 secret、key、certificate lifecycle 與 rotation 判斷標準 | **完成（2026-05-18、11 個 vendor）** |
+| S3   | Edge / WAF / Supply chain | 建立入口防護、artifact trust 與 release gate 對照            | **完成（2026-05-18、8 個 vendor）**  |
+| S4   | SIEM / Detection / DLP    | 建立偵測覆蓋、資料保護、證據鏈與事故 handoff                 | **完成（2026-05-18、7 個 vendor）**  |
 
 ## 後續候選（C 批次完成）
 

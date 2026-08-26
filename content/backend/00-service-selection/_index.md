@@ -38,7 +38,7 @@ tags: ["backend", "service-selection"]
 | [0.15](/backend/00-service-selection/cross-module-checkout-episode/)        | 跨模組 Checkout Episode                | 用一條 checkout 路徑走完 DB write → cache invalidation → event publish → observability evidence 四層串聯                                                                                                                                                 |
 | [0.19](/backend/00-service-selection/cloud-vendor-capability-mapping/)      | 雲端服務對照地圖（AWS / GCP / Azure）  | 後端能力分類對照三家雲廠商、failover / 一致性 / 計價差異、跨雲遷移判讀                                                                                                                                                                                   |
 | [0.21](/backend/00-service-selection/delivery-mode-selection/)              | 交付形態選型：託管平台、BaaS 與自建    | 在自建選型之前先判斷該用 Wix / Shopify、Apps Script、Firebase、WordPress 還是自建、並保留可遷出路徑與升級 tripwire                                                                                                                                       |
-| [0.22](/backend/00-service-selection/capability-buy-vs-build/)              | 能力級買 vs 建：feature-as-a-service   | 自建核心成立後、逐能力判斷外包還是自建：三種外包深度、no-code 到 dev-tool 光譜、買 vs 建判準與整合接縫成本                                                                                                                                               |
+| [0.22](/backend/00-service-selection/capability-buy-vs-build/)              | 能力級買 vs 建：feature-as-a-service   | 自建核心成立後、逐能力判斷外包還是自建：三種外包深度、no-code 到 dev-tool 光譜、買 vs 建判斷標準與整合接縫成本                                                                                                                                           |
 
 服務拆分判讀（原 0.18）與執行 Runbook（原 0.20）已移到 [模組十：系統演進與遷移](/backend/10-system-evolution/) — 設計階段的選型判讀留本模組、執行階段的高風險變更收斂到模組十。
 
@@ -129,7 +129,7 @@ tags: ["backend", "service-selection"]
 
 ## 拆卡紀錄與議題入口
 
-本段是新增概念時的判準參考，不是待辦：補卡、拆卡或新增卡之前先回到這裡確認既有的拆法與命名慣例。
+本段是新增概念時的判斷標準參考，不是待辦：補卡、拆卡或新增卡之前先回到這裡確認既有的拆法與命名慣例。
 
 ### 已完成拆分
 

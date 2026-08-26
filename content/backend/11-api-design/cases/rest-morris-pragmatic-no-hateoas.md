@@ -14,7 +14,7 @@ tags: ["backend", "api-design", "case-study", "rest"]
 
 ## 判讀
 
-論證方式是逐條拆 HATEOAS 的收益假設（decoupling、discoverability、evolvability）在 machine-to-machine 場景不成立、而非攻擊名詞。教學判準：「HATEOAS 的收益前提是存在會動態跟連結走的 client — 先問你的 client 是誰、再決定投不投 hypermedia」。與 C4 / C5 形成同觀察、反結論的完整對照。
+論證方式是逐條拆 HATEOAS 的收益假設（decoupling、discoverability、evolvability）在 machine-to-machine 場景不成立、而非攻擊名詞。教學判斷標準：「HATEOAS 的收益前提是存在會動態跟連結走的 client — 先問你的 client 是誰、再決定投不投 hypermedia」。與 C4 / C5 形成同觀察、反結論的完整對照。
 
 ## 對應大綱
 

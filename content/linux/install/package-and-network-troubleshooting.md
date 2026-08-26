@@ -15,7 +15,7 @@ tags: ["linux", "install", "pacman", "dns", "troubleshooting", "package-manageme
 - **訊息提到主機名解不出、連線逾時、retrieving file 失敗** → 連不到，往網路 / DNS / mirror 查。
 - **訊息提到 database lock、signature、trust、conflicting、partial** → 連得到、封包也拿到了，是套件管理器的狀態問題。
 
-判準是問一句：「它到底有沒有成功連上 mirror？」有連上才談得到簽章、相依、db 狀態；連都沒連上，那些都還輪不到。剛裝好的最小系統最常見的是前者——網路設定還沒到位。
+判斷標準是問一句：「它到底有沒有成功連上 mirror？」有連上才談得到簽章、相依、db 狀態；連都沒連上，那些都還輪不到。剛裝好的最小系統最常見的是前者——網路設定還沒到位。
 
 ## 連不到那層：從實體介面往上查到域名
 
@@ -70,7 +70,7 @@ partial upgrade 還有另一張臉：安裝單一套件時撞 `<lib> exists in f
 
 `error: restricting filesystem access failed because the Landlock ruleset could not be applied: Operation not permitted`，接著 `error: switching to sandbox user 'alpm' failed`、`failed to synchronize all databases`。pacman 7 起在下載階段預設用一個受限使用者 `alpm` 加 Landlock（Linux 的檔案系統存取控制 LSM）把自己能碰的路徑縮到最小，這是安全強化。問題是在受限的 container 裡——預設 seccomp profile 擋掉 `landlock_*` 系統呼叫、或核心沒開放該權限——這層 sandbox 套不起來，pacman 就直接放棄同步、而不是降級略過。
 
-這條的判準很明確：**pacman 7 起才有、且只在容器裡出現**。真實 Arch 主機的核心允許 Landlock，同一份設定不會撞；把 image 跑在會走模擬（qemu）的架構上時也可能因 sandbox 相關的 syscall 被擋而出現類似症狀。修法是在 `/etc/pacman.conf` 的 `[options]` 段加 `DisableSandbox`（或單次 `pacman --disable-sandbox ...`）關掉這層。但要劃清邊界：這是**容器的**逃生閥、不是通用修法——別把 `DisableSandbox` 寫進會部署到真機的 `pacman.conf`，只在容器 fixture 裡加，真機保留 sandbox。更保守的替代是給容器一個放行 `landlock_*` syscall 的自訂 seccomp profile（`--security-opt seccomp=…`），保留 pacman 的 sandbox 而非整個關掉；但容器本身通常已是拋棄式、多這層 sandbox 的邊際安全收益低，所以 `DisableSandbox` 多半是夠用的務實解。
+這條的判斷標準很明確：**pacman 7 起才有、且只在容器裡出現**。真實 Arch 主機的核心允許 Landlock，同一份設定不會撞；把 image 跑在會走模擬（qemu）的架構上時也可能因 sandbox 相關的 syscall 被擋而出現類似症狀。修法是在 `/etc/pacman.conf` 的 `[options]` 段加 `DisableSandbox`（或單次 `pacman --disable-sandbox ...`）關掉這層。但要劃清邊界：這是**容器的**逃生閥、不是通用修法——別把 `DisableSandbox` 寫進會部署到真機的 `pacman.conf`，只在容器 fixture 裡加，真機保留 sandbox。更保守的替代是給容器一個放行 `landlock_*` syscall 的自訂 seccomp profile（`--security-opt seccomp=…`），保留 pacman 的 sandbox 而非整個關掉；但容器本身通常已是拋棄式、多這層 sandbox 的邊際安全收益低，所以 `DisableSandbox` 多半是夠用的務實解。
 
 ## 判讀總表
 

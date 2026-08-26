@@ -114,11 +114,11 @@ BigQuery federated query bytes 處理量 → federation 拉取成本的計費基
 
 ### 何時把分析完全分到 BigQuery（change stream 落地）
 
-分析是高頻、重複、需要 BigQuery 原生欄式效能、或需要在 BigQuery 累積跨年歷史 — 把資料用 change stream 持續同步到 BigQuery 落地、分析直接查 BigQuery、不再回 Spanner。判準是:當分析 workload 穩定且高頻、落地的一次性同步成本會被「不再每次 federated 拉取」攤平。這是「分析 workload 完全分出去」的訊號 — OLTP 與 OLAP 不只查詢入口分開、連儲存都分開。
+分析是高頻、重複、需要 BigQuery 原生欄式效能、或需要在 BigQuery 累積跨年歷史 — 把資料用 change stream 持續同步到 BigQuery 落地、分析直接查 BigQuery、不再回 Spanner。判斷標準是:當分析 workload 穩定且高頻、落地的一次性同步成本會被「不再每次 federated 拉取」攤平。這是「分析 workload 完全分出去」的訊號 — OLTP 與 OLAP 不只查詢入口分開、連儲存都分開。
 
 ### 何時都不需要（分析量小）
 
-若分析需求很小、Spanner 本身的 read capacity 有餘、偶爾在低峰跑個聚合不影響交易 — 不需要引入 federation 的額外設定。Anti-recommendation 的判準是:federation / Data Boost 的價值隨「分析與交易互相干擾的程度」上升;若兩者本來就不打架、保持簡單。
+若分析需求很小、Spanner 本身的 read capacity 有餘、偶爾在低峰跑個聚合不影響交易 — 不需要引入 federation 的額外設定。Anti-recommendation 的判斷標準是:federation / Data Boost 的價值隨「分析與交易互相干擾的程度」上升;若兩者本來就不打架、保持簡單。
 
 ### Sibling deep articles 路由
 

@@ -69,7 +69,7 @@ enum PaymentType {
 
 這些知識若硬塞進 4 大類的行為層，wallet 那一類會長出「有些成員其實……」的例外註解——例外是粒度選錯的訊號。放在 channel 層，每條知識就是它所屬成員的屬性或註解，自然原子。
 
-## 判準與對照
+## 判斷標準與對照
 
 收束成可操作的一句：**分類系統的粒度不是自己的屬性、是消費者的屬性**。消費者只有一種，單一 enum 就夠；消費者多種且粒度需求不同，分層、層間用 exhaustive switch 衍生。判斷分幾層的方式是列消費者：這個 case 是「序列化、UI 行為、結帳流程」三個消費者、所以三層。
 
@@ -79,4 +79,4 @@ enum PaymentType {
 
 - 分類軸不正交的姊妹篇：[Exception 型別綁 ErrorCategory 的建構不變式](/work-log/flutter_exception_error_category_invariant/)——軸錯了分層救不了、要先拆軸
 - 同專案的 model 分工：[同一個品項、四個 model](/work-log/dart_pos_item_four_lifecycle_models/)——那篇是生命週期軸的分模型、本文是粒度軸的分層，同一個「一個結構不硬撐多種語意」的原則
-- 概念地基：[entity 與 value object 的判準](/ddd/entity-vs-value-object/) 的枚舉分層段——分類值也是 value object 建模的一部分
+- 概念地基：[entity 與 value object 的判斷標準](/ddd/entity-vs-value-object/) 的枚舉分層段——分類值也是 value object 建模的一部分

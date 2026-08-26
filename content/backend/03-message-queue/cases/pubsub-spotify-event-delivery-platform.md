@@ -58,7 +58,7 @@ Dedup store 的挑戰是大小跟 TTL — 要記住多久以前的 event ID 才�
 ## 回寫教材的連結
 
 - [Pub/Sub vendor 頁](/backend/03-message-queue/vendors/google-pubsub/)：push vs pull subscription、ack deadline、ordering 跟 DLT 的進階主題
-- [3.C20 Spotify 遷出 Kafka](/backend/03-message-queue/cases/kafka-spotify-event-delivery-exodus/)：遷出 Kafka 的動機跟決策判準
+- [3.C20 Spotify 遷出 Kafka](/backend/03-message-queue/cases/kafka-spotify-event-delivery-exodus/)：遷出 Kafka 的動機跟決策標準
 - [3.6 processing recovery semantics](/backend/03-message-queue/processing-recovery-semantics/)：at-least-once 語意下的 dedup 策略
 - [3.7 event contract replay boundary](/backend/03-message-queue/event-contract-replay-boundary/)：event schema 跟 topic lifecycle 的治理
 

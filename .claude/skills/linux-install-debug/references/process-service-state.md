@@ -72,7 +72,7 @@ ps -o comm= -p "$pid"
 - **本地訂閱（不只手機 app）**：訂閱也是 HTTP GET——`curl -sN https://ntfy.sh/<topic>/json` 零安裝串流、瀏覽器開 topic URL、或 `ntfy subscribe`。要桌面通知常駐：user systemd 服務跑 `curl /json | jq | notify-send`（`WantedBy=default.target` + `Restart=always`）。放你盯著的工作機訂遠端機器的 topic，別放被監控機自己（那台掛了通知也彈不出來、循環）。
 - **要指標/門檻**（CPU/磁碟/趨勢，非只 up/down）：Netdata（單機開箱）、Prometheus+Alertmanager（多機）、Monit（每服務檢查+自動動作）。
 
-判準：先分「單一 service 死活 / 整台機器死活 / 資源趨勢」——別拿體內 `OnFailure` 去蓋機器當機（那是它盲點）。
+判斷標準：先分「單一 service 死活 / 整台機器死活 / 資源趨勢」——別拿體內 `OnFailure` 去蓋機器當機（那是它盲點）。
 
 ## session 鎖沒鎖：認清是哪一層的鎖
 

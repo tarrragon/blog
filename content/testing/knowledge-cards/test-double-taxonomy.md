@@ -18,4 +18,4 @@ Test double 是所有「用來取代真實依賴」的測試替身的統稱，Ma
 
 ## 設計責任
 
-選角色的判準是「要驗證什麼」：只驗證程式碼內部邏輯、不涉及外部行為假設 → stub 或 dummy 就夠；要驗證「呼叫方式是否符合介面契約」→ mock；要驗證「假設成立時的多服務接力行為」，且假設本身有實測出處 → fake。五種角色在一套測試裡的分布是測試邊界的下游結果，不是逐處自由挑選的：邊界畫在模組時 double 只出現在應用邊界、多半是 stub 與 fake，畫在類別時 double 深入模組內部、多半是 mock 與 spy，判準見 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)。角色選錯的典型後果是[凍結參照與活解析](/testing/knowledge-cards/frozen-vs-live-reference/)描述的那類盲區——用 stub 的地方假設會變、卻用了固定回應，狀態變化不會在測試裡發生。跨層盲區（協議層、假設層）疊加時，測試綠燈能證明的範圍比表面上薄。
+選角色的判斷標準是「要驗證什麼」：只驗證程式碼內部邏輯、不涉及外部行為假設 → stub 或 dummy 就夠；要驗證「呼叫方式是否符合介面契約」→ mock；要驗證「假設成立時的多服務接力行為」，且假設本身有實測出處 → fake。五種角色在一套測試裡的分布是測試邊界的下游結果，不是逐處自由挑選的：邊界畫在模組時 double 只出現在應用邊界、多半是 stub 與 fake，畫在類別時 double 深入模組內部、多半是 mock 與 spy，判斷標準見 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/)。角色選錯的典型後果是[凍結參照與活解析](/testing/knowledge-cards/frozen-vs-live-reference/)描述的那類盲區——用 stub 的地方假設會變、卻用了固定回應，狀態變化不會在測試裡發生。跨層盲區（協議層、假設層）疊加時，測試綠燈能證明的範圍比表面上薄。

@@ -57,7 +57,7 @@ records = [for (final r in records) r.copyWith(parentId: mergedId)];
 
 這個做法有一個隱含前提：**產品模型的 `fromJson`/`toJson` 對真實後端是忠實的**。若模型本身漏了欄位、轉換器不對稱，假後端的閉環會把錯誤一起閉進去——測試綠、對真實後端壞。補這個洞的是配對的[真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)：它走同一套模型打真實環境，模型與後端的形狀分岔會在那裡現形（分頁包裝那次事故正是被它抓到的）。
 
-## 5. 可複用的判準
+## 5. 可複用的判斷標準
 
 1. 假後端／fixture 的回應一律「建構模型物件 → toJson」，不手寫 JSON 字串。
 2. 測試裡出現「手挖回應欄位」的 helper（`data['data']` 之類）＝重複知識的訊號，改走產品解析層。

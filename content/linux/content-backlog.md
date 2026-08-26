@@ -14,7 +14,7 @@ tags: ["linux", "backlog", "meta"]
 
 ### 10. systemd drop-in / OnFailure 卡 — 已完成（2026-07-03）
 
-- **產出**：建 [systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/) 與 [systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/) 兩張卡（依原子卡判準拆兩張：OnFailure 是失敗觸發鉤子、drop-in 是設定疊加機制）。已加進 knowledge-cards `_index` 系統概念表、並在 debug 服務失效篇與 devops/04 systemd-watchdog-restart 的術語首現處雙向連結。
+- **產出**：建 [systemd OnFailure](/linux/dotfile/knowledge-cards/systemd-onfailure/) 與 [systemd drop-in](/linux/dotfile/knowledge-cards/systemd-drop-in/) 兩張卡（依原子卡判斷標準拆兩張：OnFailure 是失敗觸發鉤子、drop-in 是設定疊加機制）。已加進 knowledge-cards `_index` 系統概念表、並在 debug 服務失效篇與 devops/04 systemd-watchdog-restart 的術語首現處雙向連結。
 - **觸發回收**：devops/04（服務探活）已完成，`OnFailure` 成跨模組共用術語，本項一併回收。
 
 ### 11. gui 檔案管理員的實機驗證債（待驗證、需 VM session）

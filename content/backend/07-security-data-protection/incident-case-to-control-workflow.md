@@ -56,7 +56,7 @@ Detection：哪些訊號原本可見、哪些訊號缺失
 1. [7.R8 控制面失效樣式](/backend/07-security-data-protection/red-team/control-failure-patterns/)
 2. [7.R11 流程濫用問題卡片](/backend/07-security-data-protection/red-team/problem-cards/)
 
-抽象判準是「同類失效是否會在不同產品或不同時段重複出現」。答案是會，就要抽成 problem card。
+抽象判斷標準是「同類失效是否會在不同產品或不同時段重複出現」。答案是會，就要抽成 problem card。
 
 ### 第四步：交接 incident workflow
 
@@ -123,6 +123,6 @@ Case-to-workflow 流程的邊界是「從案例抽控制面與流程」。它不
 - [7.R11 流程濫用問題卡片](/backend/07-security-data-protection/red-team/problem-cards/)
 - [8.8 事故報告轉 workflow](/backend/08-incident-response/incident-report-to-workflow/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要至少示範三種案例回寫路徑：身份事件、邊界入口事件、供應鏈事件。每條路徑都要回答案例如何轉成控制面、problem card 與 workflow 檢查點。

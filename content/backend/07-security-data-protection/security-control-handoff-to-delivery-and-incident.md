@@ -101,6 +101,6 @@ weight: 88
 - [7.16 從公開事故到工程 Workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)
 - [7.17 例外、凍結與 Tripwire](/backend/07-security-data-protection/security-exception-freeze-tripwire/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能拿一個 7.x 判讀結果，寫出可交接到 05/06/08 的工程任務。任務至少包含 owner、驗證條件、關閉條件、回寫位置與下一次重評估時機。

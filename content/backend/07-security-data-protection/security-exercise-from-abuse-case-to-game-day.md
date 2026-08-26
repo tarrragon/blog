@@ -90,6 +90,6 @@ Game day 推薦輸出：
 - [7.R11 流程濫用問題卡片](/backend/07-security-data-protection/red-team/problem-cards/)
 - [7.16 從公開事故到工程 Workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能用一張 problem card 建立一次資安演練。演練設計至少包含場景、角色、訊號、決策點、操作證據、關閉條件與回寫位置。

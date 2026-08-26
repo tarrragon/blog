@@ -27,10 +27,10 @@ tags: ["testing", "knowledge-cards"]
 | [Characterization Test](/testing/knowledge-cards/characterization-test/)                                       | 重構安全網        | 鎖住現有行為的測試，用於 legacy 重構前的安全網                             |
 | [Quarantine](/testing/knowledge-cards/quarantine/)                                                             | 團隊治理          | 把已知 flaky 測試隔離觀察、保留回收壓力的機制                              |
 | [Test Environment Identification（測試環境判定）](/testing/knowledge-cards/environment-identification/)        | 測試基礎設施      | 防止自動化測試對生產環境執行的誤擊防護前提                                 |
-| [Test Oracle（測試判準來源）](/testing/knowledge-cards/test-oracle/)                                           | 判準與出處        | 測試憑什麼判定通過的四種來源，以及寫不下來時的兩種替代形態                 |
-| [Test Provenance（測試出處）](/testing/knowledge-cards/test-provenance/)                                       | 判準與出處        | 測試與實作同源時 oracle 退化成實作自身的回音                               |
-| [Testing vs Checking（探究與檢查）](/testing/knowledge-cards/testing-vs-checking/)                             | 判準與出處        | 判準的執行交得出去、判準的設計交不出去                                     |
-| [Mutation Testing（突變測試）](/testing/knowledge-cards/mutation-testing/)                                     | 判準品質          | 量測試偵測能力的指標，空斷言灌不高                                         |
-| [Property-Based Testing（性質式測試）](/testing/knowledge-cards/property-based-testing/)                       | 判準品質          | 斷言對所有輸入成立的不變量，取代逐例預期值                                 |
-| [Metamorphic Testing（變形測試）](/testing/knowledge-cards/metamorphic-testing/)                               | 判準品質          | 沒有正確答案可查時，用兩次執行之間的關係當判準                             |
-| [Cyclomatic Complexity（圈複雜度）](/testing/knowledge-cards/cyclomatic-complexity/)                           | 判準品質          | 數單一函式的分支數、不數概念完整性；收在測試分類是因為它給的是案例數的下界 |
+| [Test Oracle](/testing/knowledge-cards/test-oracle/)                                                           | 判斷標準與出處    | 測試憑什麼判定通過的四種來源，以及寫不下來時的兩種替代形態                 |
+| [Test Provenance（測試出處）](/testing/knowledge-cards/test-provenance/)                                       | 判斷標準與出處    | 測試與實作同源時 oracle 退化成實作自身的回音                               |
+| [Testing vs Checking（探究與檢查）](/testing/knowledge-cards/testing-vs-checking/)                             | 判斷標準與出處    | 判斷標準的執行交得出去、判斷標準的設計交不出去                             |
+| [Mutation Testing（突變測試）](/testing/knowledge-cards/mutation-testing/)                                     | 判斷標準品質      | 量測試偵測能力的指標，空斷言灌不高                                         |
+| [Property-Based Testing（性質式測試）](/testing/knowledge-cards/property-based-testing/)                       | 判斷標準品質      | 斷言對所有輸入成立的不變量，取代逐例預期值                                 |
+| [Metamorphic Testing（變形測試）](/testing/knowledge-cards/metamorphic-testing/)                               | 判斷標準品質      | 沒有正確答案可查時，用兩次執行之間的關係當判斷標準                         |
+| [Cyclomatic Complexity（圈複雜度）](/testing/knowledge-cards/cyclomatic-complexity/)                           | 判斷標準品質      | 數單一函式的分支數、不數概念完整性；收在測試分類是因為它給的是案例數的下界 |

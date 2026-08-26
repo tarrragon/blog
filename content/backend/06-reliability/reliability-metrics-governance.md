@@ -57,7 +57,7 @@ SPACE 同樣需要 governance。Satisfaction 被 KPI 化後團隊會避免誠實
 | Scale（10-100 人） | 完整 DORA              | 加入 lead time + MTTR，開始治理跨團隊 baseline          |
 | Mature（100+ 人）  | DORA + SPACE + trend   | 完整框架加趨勢分析，composite metrics 需要專人維護      |
 
-baseline 對齊的判準是跟自己的歷史趨勢比，而非抄業界數字。DORA 報告的 elite / high / medium / low 分類提供方向參考，但直接套用會忽略產業、架構與團隊結構的差異。
+baseline 對齊的判斷標準是跟自己的歷史趨勢比，而非抄業界數字。DORA 報告的 elite / high / medium / low 分類提供方向參考，但直接套用會忽略產業、架構與團隊結構的差異。
 
 ## Anti-gaming 與 Goodhart's law
 
@@ -91,14 +91,14 @@ SLO 是面向使用者的服務承諾 — 量測的是「我的服務給使用�
 
 ## 判讀訊號
 
-| 訊號                               | 判讀條件                                                                                   | 行動建議                                    |
-| ---------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------- |
-| 指標數字持續改善、客戶投訴未減     | 量測覆蓋不足或 gaming — 先檢查 CFR vs complaint 相關性                                     | 把 complaint 率加入 dashboard 交叉比對      |
-| 跨團隊強制排名                     | gaming 風險高 — 改為團隊自身趨勢追蹤                                                       | 取消排名、改為各團隊獨立看自身 trend        |
-| DORA 採集靠人工、滯後超過一個月    | 指標失去即時性 — 自動化採集連到 CI / deploy pipeline                                       | 串接 CI/CD pipeline 自動產出 DORA 資料      |
-| 指標無 owner、半年無人 review      | 治理已停擺 — 指定 owner 與季度 review 節奏                                                 | 指定 metrics owner + 排入季度 review 議程   |
-| deploy frequency 上升同時 CFR 上升 | 速度與品質失衡 — 先補 [release gate](/backend/06-reliability/release-gate/) 再追 frequency | 暫停追 frequency、先讓 CFR 回到 baseline    |
-| MTTR 定義跨團隊不一致              | 量測不可比 — 先統一量測邊界（alert → recovery complete）                                   | 發布 MTTR 量測定義文件、統一 start/end 判準 |
+| 訊號                               | 判讀條件                                                                                   | 行動建議                                        |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| 指標數字持續改善、客戶投訴未減     | 量測覆蓋不足或 gaming — 先檢查 CFR vs complaint 相關性                                     | 把 complaint 率加入 dashboard 交叉比對          |
+| 跨團隊強制排名                     | gaming 風險高 — 改為團隊自身趨勢追蹤                                                       | 取消排名、改為各團隊獨立看自身 trend            |
+| DORA 採集靠人工、滯後超過一個月    | 指標失去即時性 — 自動化採集連到 CI / deploy pipeline                                       | 串接 CI/CD pipeline 自動產出 DORA 資料          |
+| 指標無 owner、半年無人 review      | 治理已停擺 — 指定 owner 與季度 review 節奏                                                 | 指定 metrics owner + 排入季度 review 議程       |
+| deploy frequency 上升同時 CFR 上升 | 速度與品質失衡 — 先補 [release gate](/backend/06-reliability/release-gate/) 再追 frequency | 暫停追 frequency、先讓 CFR 回到 baseline        |
+| MTTR 定義跨團隊不一致              | 量測不可比 — 先統一量測邊界（alert → recovery complete）                                   | 發布 MTTR 量測定義文件、統一 start/end 判斷標準 |
 
 ## 交接路由
 

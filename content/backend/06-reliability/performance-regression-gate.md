@@ -29,7 +29,7 @@ Baseline 的責任是提供可比較的效能基準。沒有穩定 baseline，ga
 
 Baseline 有三種來源，各自的可信度與維護成本不同。
 
-**Production percentile**：從 production 的 latency / [throughput](/backend/knowledge-cards/throughput/) 分佈取 p50 / p95 / p99 作為基準。優點是最接近真實使用者體驗；限制是 production 流量本身有時段波動，需要選定穩定時段的統計窗口。適合作為最終判準，但不適合作為 CI 內的即時 gate（CI 環境跟 production 差異太大）。
+**Production percentile**：從 production 的 latency / [throughput](/backend/knowledge-cards/throughput/) 分佈取 p50 / p95 / p99 作為基準。優點是最接近真實使用者體驗；限制是 production 流量本身有時段波動，需要選定穩定時段的統計窗口。適合作為最終判斷標準，但不適合作為 CI 內的即時 gate（CI 環境跟 production 差異太大）。
 
 **CI benchmark history**：在同一 CI 環境、同一 workload 下累積歷史趨勢。優點是環境一致，regression 可歸因到 code 變更；限制是 CI 環境本身可能有波動（runner 硬體、鄰居效應），需要 variance 控制。適合作為每次 merge 的即時 gate。
 
@@ -37,7 +37,7 @@ Baseline 有三種來源，各自的可信度與維護成本不同。
 
 Baseline 更新頻率跟系統變更頻率對齊。高頻變更服務（每日多次 deploy）需要 rolling baseline（取最近 N 次 CI 結果的中位數）；低頻變更服務可以用固定 baseline 搭配季度校準。
 
-Baseline 品質的判準是自身 variance。若 baseline 的 p99 波動超過 5-10%，任何小於這個幅度的 regression 都落在噪音區間內，gate 無法可靠判讀。此時應先控制 variance（見下段），再設定 regression 門檻。
+Baseline 品質的判斷標準是自身 variance。若 baseline 的 p99 波動超過 5-10%，任何小於這個幅度的 regression 都落在噪音區間內，gate 無法可靠判讀。此時應先控制 variance（見下段），再設定 regression 門檻。
 
 ## Regression 判讀方法
 

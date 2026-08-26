@@ -67,6 +67,6 @@ Source-first 讓情境保留真實防守壓力，同時避免把單一公司事�
 - [7.BM3 藍隊推演情境素材](/backend/07-security-data-protection/blue-team/materials/scenarios/)
 - [7.BM2 藍隊現場案例素材](/backend/07-security-data-protection/blue-team/materials/field-cases/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把一個風險轉成可演練情境。輸出至少包含 trigger、hypothesis、control surface、response route、evidence target 與 write-back target。

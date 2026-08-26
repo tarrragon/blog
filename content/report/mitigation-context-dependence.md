@@ -129,7 +129,7 @@ HTTPS
 | Stretch 條件      | scale / 異常 runtime / 高能力 actor 下的衰減                           |
 | Trigger condition | 何時 baseline 不夠、要升級到 stretch 的訊號                            |
 
-baseline 給 reader 入門條件、stretch 給 reader 升級判準、trigger 讓升級成 actionable signal。
+baseline 給 reader 入門條件、stretch 給 reader 升級條件、trigger 讓升級成 actionable signal。
 
 ### 跟「規模改變可行性」的同骨
 
@@ -167,7 +167,7 @@ baseline 給 reader 入門條件、stretch 給 reader 升級判準、trigger 讓
 | 原則                                                                                                                | 關係                                                                                                                                                                         |
 | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [#89 Dataset 規模改變什麼可行](../dataset-scale-changes-feasibility/)                                               | **同骨 sibling** — #89 是「資料規模 → 處理方法可行性」、本卡是「deployment 條件 → mitigation 有效性」、都是「條件變數驅動的方法光譜」                                        |
-| [#87 Build-time vs Runtime 計算光譜](../build-time-vs-runtime-computation-spectrum/)                                | **同骨 spectrum** — #87 是計算位置光譜（build / runtime / hybrid）+ 四軸判準、本卡是 mitigation 條件光譜（baseline / stretch / trigger）+ 四 context 維度                    |
+| [#87 Build-time vs Runtime 計算光譜](../build-time-vs-runtime-computation-spectrum/)                                | **同骨 spectrum** — #87 是計算位置光譜（build / runtime / hybrid）+ 四軸判斷標準、本卡是 mitigation 條件光譜（baseline / stretch / trigger）+ 四 context 維度                |
 | [#43 最小必要範圍是 sanity 防線](../minimum-necessary-scope-is-sanity-defense/)                                     | **scope condition 同骨** — #43 把「scope」變成顯式 fact、本卡把「deployment 條件」變成顯式 fact；都在說「不顯式 = 失控的 default 詮釋」                                      |
 | [#100 False sense of security 主要失敗模式](../false-sense-of-security-as-primary-failure/)                         | **#100 的 dimension 3** — context 不寫是 false sense 的第三大產地（dimension 1 = threat model 不對稱 / dimension 2 = mitigation 對位失效 / dimension 3 = context 沒寫）      |
 | [#101 Threat model 明確性](../threat-model-explicitness/) + [#102 Mitigation 對位](../mitigation-threat-alignment/) | **本卡是 #101/#102 的 condition 維度** — #101 確立 in-scope threat、#102 確立 mitigation→threat 對位、本卡確立對位在 deployment 條件下的有效性；三者完整定義 mitigation 強度 |

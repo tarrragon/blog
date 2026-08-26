@@ -14,7 +14,7 @@ essay 用銀行帳戶透支做對照：HTML 回應在透支時只回 deposit 連
 
 ## 判讀
 
-教學判準：「available actions 由誰計算 — server 算完放進 response、還是 client 讀狀態欄位自己算」是 HATEOAS 有無的操作型判別法、比背定義有效。
+教學判斷標準：「available actions 由誰計算 — server 算完放進 response、還是 client 讀狀態欄位自己算」是 HATEOAS 有無的操作型判別法、比背定義有效。
 
 ## 對應大綱
 

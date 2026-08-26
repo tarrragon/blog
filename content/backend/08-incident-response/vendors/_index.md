@@ -1,7 +1,7 @@
 ---
 title: "事故處理 Vendor 清單"
 date: 2026-05-01
-description: "規劃 on-call、incident response、status page 與 postmortem 工具的服務頁撰寫順序與判準"
+description: "規劃 on-call、incident response、status page 與 postmortem 工具的服務頁撰寫順序與判斷標準"
 weight: 91
 tags: ["backend", "incident-response", "vendor"]
 ---
@@ -53,7 +53,7 @@ tags: ["backend", "incident-response", "vendor"]
 | 替代邊界 | on-call SaaS、Slack workflow、自建流程、status page、learning platform 的機會成本              |
 | 操作成本 | rota hygiene、service catalog、integration、timeline quality、stakeholder update               |
 | Evidence | alert route、ack time、incident timeline、decision log、status update、action item             |
-| 案例回寫 | AWS、Cloudflare、GitHub、Atlassian 等事故案例如何提供流程判準                                  |
+| 案例回寫 | AWS、Cloudflare、GitHub、Atlassian 等事故案例如何提供流程判斷標準                              |
 
 ## 服務頁標準章節
 
@@ -120,12 +120,12 @@ Learning 是事故後的組織學習、不是 retro template、是 longitudinal 
 
 ## 撰寫批次
 
-| 批次 | 服務頁                                | 撰寫目的                                                  |
-| ---- | ------------------------------------- | --------------------------------------------------------- |
-| I1   | PagerDuty / Opsgenie / Grafana OnCall | 建立 alert routing、escalation 與輪值 baseline            |
-| I2   | incident.io / FireHydrant / Rootly    | 建立 incident command、timeline 與 automation 對照        |
-| I3   | Atlassian Statuspage / Instatus       | 建立外部溝通、component status 與 stakeholder update 判準 |
-| I4   | Jeli / Blameless / 自建流程           | 建立 postmortem、learning review 與 action tracking 對照  |
+| 批次 | 服務頁                                | 撰寫目的                                                      |
+| ---- | ------------------------------------- | ------------------------------------------------------------- |
+| I1   | PagerDuty / Opsgenie / Grafana OnCall | 建立 alert routing、escalation 與輪值 baseline                |
+| I2   | incident.io / FireHydrant / Rootly    | 建立 incident command、timeline 與 automation 對照            |
+| I3   | Atlassian Statuspage / Instatus       | 建立外部溝通、component status 與 stakeholder update 判斷標準 |
+| I4   | Jeli / Blameless / 自建流程           | 建立 postmortem、learning review 與 action tracking 對照      |
 
 ## 後續候選
 

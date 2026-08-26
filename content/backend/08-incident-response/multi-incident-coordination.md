@@ -10,7 +10,7 @@ tags: ["backend", "incident-response"]
 
 - 為何需要獨立節點：8.2 假設單事故、規模化組織同時 3+ 事故是常態
 - 衝突資源：[incident command system](/backend/knowledge-cards/incident-command-system/) pool、subject expert、stakeholder communication channel
-- 優先序判準：[impact scope](/backend/knowledge-cards/impact-scope/)、[blast radius](/backend/knowledge-cards/blast-radius/)、不可逆性、復原成本
+- 優先序判斷標準：[impact scope](/backend/knowledge-cards/impact-scope/)、[blast radius](/backend/knowledge-cards/blast-radius/)、不可逆性、復原成本
 - meta-[incident command system](/backend/knowledge-cards/incident-command-system/) 角色：協調多事故 [incident command system](/backend/knowledge-cards/incident-command-system/)、分配資源、防止 cascading
 - 共通根因檢測：兩個 incident 是否同源、避免重複 IR
 - 跟 [8.2 command roles](/backend/08-incident-response/incident-command-roles/) 的延伸：8.2 是單事故、8.14 是事故組合
@@ -42,7 +42,7 @@ Multi-incident coordination 是把同時多事故的優先序、資源分配與 
 
 ## 下一步路由
 
-- 08.1 severity：跨事故優先序判準
+- 08.1 severity：跨事故優先序判斷標準
 - 08.2 command roles：meta-[incident command system](/backend/knowledge-cards/incident-command-system/) 角色定義
 - 08.10 stakeholder：多事故對外節奏
 - 08.13 repeated：同源事故合併判讀
@@ -57,7 +57,7 @@ Multi-incident coordination 是把同時多事故的優先序、資源分配與 
 
 ## 交接路由
 
-- 08.1 severity：跨事故優先序判準
+- 08.1 severity：跨事故優先序判斷標準
 - 08.2 command roles：meta-[incident command system](/backend/knowledge-cards/incident-command-system/) 角色定義
 - 08.10 stakeholder：多事故對外節奏
 - 08.13 repeated：同源事故合併判讀

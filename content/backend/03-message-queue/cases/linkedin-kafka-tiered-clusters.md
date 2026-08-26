@@ -42,9 +42,9 @@ LinkedIn 按業務風險跟效能需求把 workload 分配到不同叢集：
 
 **Tier 3 — 高吞吐分析**：analytics pipeline、ETL、batch processing。配置偏向吞吐（大 batch size、長 linger.ms、HDD）、retention 最長、容忍偶發 consumer lag。
 
-### 分層的判準
+### 分層的判斷標準
 
-分層的判準是「這個 workload 故障時，業務影響有多大、多快」：
+分層的判斷標準是「這個 workload 故障時，業務影響有多大、多快」：
 
 - 即時影響使用者體驗 → Tier 1
 - 影響合規或財務但可容忍分鐘級延遲 → Tier 2

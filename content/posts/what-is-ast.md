@@ -2,7 +2,7 @@
 title: "什麼是 AST — 從字串到語法樹的視角轉換"
 slug: "what-is-ast"
 date: 2026-04-24
-description: "AST 與 regex 的差異判準：規則需要知道文字處在什麼結構中時 regex 就不夠。附 regex 誤判的具體 case。"
+description: "AST 與 regex 的差異判斷標準：規則需要知道文字處在什麼結構中時 regex 就不夠。附 regex 誤判的具體 case。"
 tags: ["AST", "Markdown", "goldmark", "lint", "工具設計"]
 ---
 
@@ -156,7 +156,7 @@ Hugo（blog 的 static site generator）內建的 markdown parser 就是 goldmar
 - 追蹤跨文件的連結關係（卡片 backlink 完整性）。
 - 檢查「這個 Strong 節點是不是整個段落的唯一子節點？」（MD036 粗體當標題濫用）
 
-一個實務判準：**如果 rule 需要「知道這段文字處在什麼結構中」，regex 會卡住；AST 天生就有這個資訊。**
+一個實務判斷標準：**如果 rule 需要「知道這段文字處在什麼結構中」，regex 會卡住；AST 天生就有這個資訊。**
 
 ## 我們的判斷：什麼時機該升級到 AST
 

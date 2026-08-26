@@ -219,7 +219,7 @@ tags: ["methodology", "writing-workflow", "agent-team", "case-driven", "claude-c
 
 #### Reviewer A：寫作規範審查（AGENTS.md 核心原則）
 
-- 對照核心原則先行、正向陳述優先、商業邏輯先於 case、表格不是終點、情境優先於模板、可操作判準等八原則
+- 對照核心原則先行、正向陳述優先、商業邏輯先於 case、表格不是終點、情境優先於模板、可操作的判斷標準等八原則
 - 找首句用否定句切入、表格 / bullet 平鋪沒延伸、表格項硬塞模板等
 - 實作中抓出 25 個 issue
 

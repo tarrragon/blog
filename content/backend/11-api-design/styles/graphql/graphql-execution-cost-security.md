@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "api-design", "graphql", "security"]
 ---
 
-一個只有 128 bytes 的惡意查詢、可以耗掉 10 秒 CPU。這組數字出自一位六年 GraphQL 使用者的撤退紀錄（[11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、含畸形 directives 造成 2,000 倍記憶體放大的並列觀察）、它濃縮了 GraphQL 執行層的結構性質：**請求的成本由 query 的結構決定、而 query 的結構由消費者決定** — 傳統「一個請求約等於一份成本」的容量假設、在 resolver 執行模型下不成立。下面沿這個性質追出四個工程後果；限流的判準層語意已由 [11.9](/backend/11-api-design/external-traffic-semantics/) 承擔、這裡往機制層走。
+一個只有 128 bytes 的惡意查詢、可以耗掉 10 秒 CPU。這組數字出自一位六年 GraphQL 使用者的撤退紀錄（[11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、含畸形 directives 造成 2,000 倍記憶體放大的並列觀察）、它濃縮了 GraphQL 執行層的結構性質：**請求的成本由 query 的結構決定、而 query 的結構由消費者決定** — 傳統「一個請求約等於一份成本」的容量假設、在 resolver 執行模型下不成立。下面沿這個性質追出四個工程後果；限流的判斷標準層語意已由 [11.9](/backend/11-api-design/external-traffic-semantics/) 承擔、這裡往機制層走。
 
 ## N+1：從偶發問題變成預設行為
 
@@ -30,7 +30,7 @@ introspection 讓 schema 自我描述、工具鏈（IDE、codegen、文件生成
 
 ## 下一步路由
 
-- 判準層的流量語意與承諾邊界：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)
+- 判斷標準層的流量語意與承諾邊界：[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)
 - schema 層的演進紀律：[Schema 演進](/backend/11-api-design/styles/graphql/graphql-schema-evolution/)
 - 這些成本在組織層的總帳：[公開 API 的 GraphQL 進退](/backend/11-api-design/styles/graphql/graphql-public-api-tradeoffs/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

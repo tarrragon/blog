@@ -39,9 +39,9 @@ Peak readiness rehearsal 適合用 k6 表達階段式負載。活動前可以用
 
 四件事任一缺失、就是 scenario 已經寫得不完整、threshold gate 失效、或 runner 觀測缺失。
 
-## 選型判準
+## 選型標準
 
-| 判準         | k6 的價值                                      | 需要補的能力                      |
+| 判斷標準     | k6 的價值                                      | 需要補的能力                      |
 | ------------ | ---------------------------------------------- | --------------------------------- |
 | 腳本化       | scenario、threshold、setup / teardown 可版本化 | production traffic 抽樣與模型校正 |
 | CI 友善      | CLI 與 artifact 容易接 pipeline                | 長期趨勢儲存與 release gate 語意  |

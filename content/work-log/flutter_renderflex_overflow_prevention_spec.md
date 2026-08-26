@@ -9,7 +9,7 @@ tags: ["flutter", "dart", "renderflex", "layout", "widget-test", "spec", "refact
 
 > **觸發場景**：Flutter 書籍管理 App 的 UC-04 區塊測試，widget 測試 9/31 通過——22 個失敗全是同一種錯：`RenderFlex overflowed by N pixels`。最大的一筆溢出 714px，來源是 `advanced_search_widget.dart:106` 一個 Row 裡未受 `Flexible` 包裹的 `SegmentedButton`
 > **疑問來源**：22 個同型失敗，是修 22 次、還是做一件別的事？
-> **整理目的**：記下 overflow 的約束機制、測試環境尺寸的角色、以及「單點修復 vs 抽規範」的判準；附 stale ticket 接手的考古教訓
+> **整理目的**：記下 overflow 的約束機制、測試環境尺寸的角色、以及「單點修復 vs 抽規範」的判斷標準；附 stale ticket 接手的考古教訓
 > **本文邊界**：素材是該專案 v0.31.1 的 W1-011 系列記錄（從發現、拆票、規範建立到修復完成、橫跨兩個多月）
 
 ---
@@ -24,11 +24,11 @@ tags: ["flutter", "dart", "renderflex", "layout", "widget-test", "spec", "refact
 
 22 個失敗集中在測試環境（800x600、以及另一批 375x812）現形，實機大螢幕上未必看得到——這容易被誤讀成「測試環境太苛刻」。方向要反過來：**測試環境的小尺寸是免費的窄螢幕模擬**。真實使用者裡有小手機、有分割畫面、有字體放大（同專案另一批 [Dialog 溢位隨狀態增長](/work-log/flutter_test_failure_triage_root_cause_roi/)的數據就是這樣量出來的），widget 測試的固定小尺寸把這些情境提前到 CI 裡。把測試尺寸調大讓紅燈消失，是把免費的檢查關掉。
 
-## 判準：同型失敗的數量決定產出的形態
+## 判斷標準：同型失敗的數量決定產出的形態
 
 這次事件最值得記的是處置的形態。22 個同型失敗沒有變成 22 張修復票，而是先拆出一張分析票、產出一份 396 行的規範文件（`ui-layout-overflow-prevention.md`）：六大 overflow 反模式、修法決策樹、Widget 測試檢查清單、既有元件與間距常數的對照表——然後修復票**依規範**執行。
 
-判準跟 [#42 兩次門檻](/report/two-occurrence-threshold/)同源、但這裡數量直接跳過了門檻爭論：同型失敗兩位數，說明這是**團隊寫版面的系統性慣性**、不是某一行的手滑。單點修復對慣性無效——修完這 22 個、下一批新 widget 還會照舊寫。規範化的產出讓三件事變可能：修復者有決策樹可依（不用每處重新發明修法）、新程式碼有檢查清單可對、review 有反模式清單可引。成本結構跟[測試分診](/work-log/flutter_test_failure_triage_root_cause_roi/)的 ROI 排序一致：一次規範的固定成本、攤提給之後每一個版面。
+判斷標準跟 [#42 兩次門檻](/report/two-occurrence-threshold/)同源、但這裡數量直接跳過了門檻爭論：同型失敗兩位數，說明這是**團隊寫版面的系統性慣性**、不是某一行的手滑。單點修復對慣性無效——修完這 22 個、下一批新 widget 還會照舊寫。規範化的產出讓三件事變可能：修復者有決策樹可依（不用每處重新發明修法）、新程式碼有檢查清單可對、review 有反模式清單可引。成本結構跟[測試分診](/work-log/flutter_test_failure_triage_root_cause_roi/)的 ROI 排序一致：一次規範的固定成本、攤提給之後每一個版面。
 
 ## 附帶教訓：stale ticket 先考古、再執行
 

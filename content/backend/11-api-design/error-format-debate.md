@@ -58,7 +58,7 @@ gRPC 的分層設計正是為了在拿到表達力的同時保住一部分讀者
 
 四派共同要回答的還有一題：格式本身怎麼演進。RFC 9457 的 spec 條款加上案例判讀對它的定位，給了一份現成答案 —— `type` 用 URI 而非字串 enum，把錯誤種類的命名空間外部化避免跨團隊撞名；「client MUST ignore unknown extensions」是向前相容的演化條款；IANA 建立了一份公用 problem type 的登記表，補上前一版標準（RFC 7807）留下的生態碎片化。
 
-選了另外三派時，這兩件事變成自建責任。命名空間缺席的形態是跨服務的錯誤碼撞號，演化條款缺席的形態是每次新增欄位都無法確認既有消費者安不安全。判準是既有 API 有自訂格式且被大量依賴時，把這兩個設計補進自訂格式，比換格式務實。
+選了另外三派時，這兩件事變成自建責任。命名空間缺席的形態是跨服務的錯誤碼撞號，演化條款缺席的形態是每次新增欄位都無法確認既有消費者安不安全。判斷標準是既有 API 有自訂格式且被大量依賴時，把這兩個設計補進自訂格式，比換格式務實。
 
 ## 借用結論而不帶前提
 
@@ -82,7 +82,7 @@ gRPC 的分層設計正是為了在拿到表達力的同時保住一部分讀者
 
 ## 下一步路由
 
-- 錯誤分類與格式欄位的設計判準：[11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)
+- 錯誤分類與格式欄位的設計判斷標準：[11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)
 - status 這一格裝不下事實時的兩條路線：[Status 裝不下的東西](/backend/11-api-design/status-expressiveness-boundary/)
 - 錯誤在多層服務間傳播時的保證層與選配層、以及 provider 該暴露多少細節的安全邊界：[錯誤傳播與信任邊界](/backend/11-api-design/error-propagation-trust-boundary/) 的「暴露多少」段
 - 消費者拿到錯誤後的回報與升級判讀：[錯誤回報的回饋迴路](/backend/11-api-design/error-feedback-loop/)

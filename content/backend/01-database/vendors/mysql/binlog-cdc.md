@@ -288,7 +288,7 @@ Aurora MySQL 5.7 / 8.0 都支援 binlog + GTID、CDC 可用。但 Aurora 推薦�
 
 Sharded MySQL CDC 的核心責任是把多個 shard 的 binlog 轉成可消費、可回放、可觀測的事件流。[Shopify Debezium CDC over sharded MySQL](/backend/03-message-queue/cases/kafka-shopify-debezium-cdc/) 提供的工程訊號是 100+ shard、約 150 個 Debezium connector、BFCM 期間 100K records/sec，以及 snapshot lock 與 oversized payload 對 CDC pipeline 的壓力。
 
-這個案例要回收到三個操作判準。第一，connector 數量應跟 shard 拓撲一起設計，避免單一 connector 變成跨 shard bottleneck。第二，snapshot window 要排進 schema migration 與 event consumer 的變更計畫，避免 initial snapshot 把 production read path 壓滿。第三，oversized payload 要在 schema / outbox / topic 分流階段處理，避免 Kafka partition 與 downstream consumer 同時承受大訊息。
+這個案例要回收到三個操作判斷標準。第一，connector 數量應跟 shard 拓撲一起設計，避免單一 connector 變成跨 shard bottleneck。第二，snapshot window 要排進 schema migration 與 event consumer 的變更計畫，避免 initial snapshot 把 production read path 壓滿。第三，oversized payload 要在 schema / outbox / topic 分流階段處理，避免 Kafka partition 與 downstream consumer 同時承受大訊息。
 
 Shopify 案例的下一步路由是把本篇和 [Database Sharding](/backend/knowledge-cards/database-sharding/) 一起讀。若讀者關心 broker 層的 partition、consumer lag 與 replay 策略，接到 [Kafka vendor](/backend/03-message-queue/vendors/kafka/)；若關心資料庫端壓力，回到 [Replication Topology](/backend/01-database/vendors/mysql/replication-topology/) 與 [Online Schema Change Tools](/backend/01-database/vendors/mysql/online-schema-change-tools/)。
 

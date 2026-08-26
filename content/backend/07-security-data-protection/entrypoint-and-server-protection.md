@@ -34,7 +34,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 - **Mechanism**：問題節點表的 `[attack-surface]` 等 control link 進 knowledge-card、看具體機制 / 邊界 / context-dependence。
 - **Delivery**：「交接路由」欄位指向 [05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)、接配置 / 驗證 / 處置交付。
 
-兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
+兩條 chain 完成條件與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
 ## 入口治理模型
 
@@ -85,7 +85,7 @@ Reader 對 in-scope 列表的 specific threat 應該能反向 trace 到本章問
 
 [Citrix Bleed 2023](../red-team/cases/edge-exposure/citrix-bleed-2023-session-hijack/) 跟 [PAN-OS 2024](../red-team/cases/edge-exposure/panos-cve-2024-3400-edge-rce/) 兩個案例的「mechanism 總綱」段共同標明這個三同步原則、並標明前提是「事先有 inventory + 自動化失效 / 清查能力」。兩 case 分別補不同層失效訊號 — Citrix Bleed 補會話被竊取後重放的視角、PAN-OS 補邊界設備暴露面集中且修補窗口內缺暫時緩解的視角。
 
-以下基於通用工程知識補充：三同步是 mechanism 並行需求 — 三條 chain 共享同一個事件期間的時間窗口、不視為流程時序。inventory 缺位時、團隊在事件期間查不出「哪些 session 受影響」「哪些憑證該收斂」、只能先修補再事後追查 — 留下的時間窗口正是攻擊者持續存取的高機率窗口。日常修補演練的驗收標準要同時包含「修補完成」跟「修補同時完成會話失效」兩條軌、把 inventory 完整度當共同前提。演練本身的設計（頻率、範圍、驗收證據）走 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)。把資安修補納入放行條件這件事在 [6.x release gate](/backend/06-reliability/release-gate/) 尚未展開，該篇目前只在交接路由列了「07 資安：高風險變更的權限約束」一行；最小判準是把「未修補的已知高風險 CVE」當成放行的阻斷條件之一，與其他阻斷條件同層。
+以下基於通用工程知識補充：三同步是 mechanism 並行需求 — 三條 chain 共享同一個事件期間的時間窗口、不視為流程時序。inventory 缺位時、團隊在事件期間查不出「哪些 session 受影響」「哪些憑證該收斂」、只能先修補再事後追查 — 留下的時間窗口正是攻擊者持續存取的高機率窗口。日常修補演練的驗收標準要同時包含「修補完成」跟「修補同時完成會話失效」兩條軌、把 inventory 完整度當共同前提。演練本身的設計（頻率、範圍、驗收證據）走 [6.x DR 與 rollback 演練](/backend/06-reliability/dr-rollback-rehearsal/)。把資安修補納入放行條件這件事在 [6.x release gate](/backend/06-reliability/release-gate/) 尚未展開，該篇目前只在交接路由列了「07 資安：高風險變更的權限約束」一行；最小判斷標準是把「未修補的已知高風險 CVE」當成放行的阻斷條件之一，與其他阻斷條件同層。
 
 ## 資產與憑證分母的來源對帳
 

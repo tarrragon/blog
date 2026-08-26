@@ -36,7 +36,7 @@ out-of-scope 的議題直接跳到對應章節。
 - **Mechanism**：問題節點表「前置控制面」欄的連結進知識卡，看該控制的機制、邊界與適用條件。
 - **Delivery**：「交接路由」欄位指向 [04 可觀測性](/backend/04-observability/)、[05 部署平台](/backend/05-deployment-platform/)、[06 可靠性](/backend/06-reliability/)、[08 事故處理](/backend/08-incident-response/)。本章有一列走 04，因為「秘密落進紀錄」的偵測與遮罩落在那一層。
 
-兩條 chain 完成判準與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
+兩條 chain 完成條件與模組級 chain 規格見 [從章節到實作的 chain](../#從章節到實作的-chain)。
 
 ## 先確認自己有沒有選擇權
 

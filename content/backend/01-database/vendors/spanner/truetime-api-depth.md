@@ -150,7 +150,7 @@ Alert 建議：
 
 ### 何時改用 stale read
 
-reporting / analytics / dashboard 場景改用 bounded staleness 換 cost、不付 commit wait 的 latency tax。判準：若這個 read path 用 5 秒前的資料不會影響業務決策、改 stale read；若會、保留 strong read。
+reporting / analytics / dashboard 場景改用 bounded staleness 換 cost、不付 commit wait 的 latency tax。判斷標準：若這個 read path 用 5 秒前的資料不會影響業務決策、改 stale read；若會、保留 strong read。
 
 ### 何時不該升 Spanner
 

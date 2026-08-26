@@ -173,7 +173,7 @@ retrospective 補驗證流程：checkout pre-fix commit → cherry-pick test →
 
 依 user 規範：**先建卡片再修**。抽：
 
-- **#70 URL 是 stateful UI 的儲存層** — 5 個儲存層特性對照 + 三問判準
+- **#70 URL 是 stateful UI 的儲存層** — 5 個儲存層特性對照 + 三問判斷標準
 - **#71 Tab Order = DOM Order = Mental Model 三者對齊** — DOM 順序 = tab 順序、不對齊時優先重排 DOM
 - 更新 #68 加「為什麼 Checkpoint 1 也常被跳過」段、用本次任務當 self-case
 

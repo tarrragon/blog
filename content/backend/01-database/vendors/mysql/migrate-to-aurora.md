@@ -243,7 +243,7 @@ Pure infra cost Aurora 貴 30-50%、但 *ops cost 降幅大過 infra increase* �
 
 MySQL → Aurora migration 的 production 責任是把自管 database operation 轉移成 managed SQL 的契約，而非只搬 schema 與資料。[9.C23 Netflix Aurora consolidation](/backend/09-performance-capacity/cases/netflix-aurora-consolidation/) 提供的工程訊號是多套 RDBMS 整併到 Aurora 後，效能、成本與操作責任一起改變。
 
-這個案例要回收到三個操作判準。第一，migration driver 應寫成 operation transfer，例如 backup、failover、storage growth、patching 與 observability 由誰承擔。第二，效能與成本要一起看，因為 Aurora 的 storage / compute / I/O 計費會把原本藏在 DBA 操作裡的成本攤開。第三，整併多套 RDBMS 時要先做 feature inventory，確認 plugin、storage engine、charset、replication topology 與 SQL mode 都能落到 Aurora MySQL 支援範圍。
+這個案例要回收到三個操作判斷標準。第一，migration driver 應寫成 operation transfer，例如 backup、failover、storage growth、patching 與 observability 由誰承擔。第二，效能與成本要一起看，因為 Aurora 的 storage / compute / I/O 計費會把原本藏在 DBA 操作裡的成本攤開。第三，整併多套 RDBMS 時要先做 feature inventory，確認 plugin、storage engine、charset、replication topology 與 SQL mode 都能落到 Aurora MySQL 支援範圍。
 
 Netflix case 的 sibling 路由是 [Aurora vendor page](/backend/01-database/vendors/aurora/) 與 [PostgreSQL → Aurora](/backend/01-database/vendors/postgresql/migrate-to-aurora/)。若 migration 目標從 managed SQL 變成 multi-region active-active write，應改接 [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)。
 

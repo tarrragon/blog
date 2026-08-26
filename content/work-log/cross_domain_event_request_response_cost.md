@@ -3,13 +3,13 @@ title: "用事件做同步查詢、等於手工重建 RPC — 跨 domain 解耦�
 slug: "cross_domain_event_request_response_cost"
 date: 2026-07-10
 draft: false
-description: "domain 直接查另一個 domain 的 repository 違反依賴方向；改事件驅動的 request/response 解了耦、但帳單具體：correlation id 配對並發、timeout 機制、三條錯誤路徑——都是同步呼叫免費附贈的東西。判準是需要解耦「依賴方向」還是「時間與部署」：前者用消費端 Port 就夠、後者才值得付事件的價。"
+description: "domain 直接查另一個 domain 的 repository 違反依賴方向；改事件驅動的 request/response 解了耦、但帳單具體：correlation id 配對並發、timeout 機制、三條錯誤路徑——都是同步呼叫免費附贈的東西。判斷標準是需要解耦「依賴方向」還是「時間與部署」：前者用消費端 Port 就夠、後者才值得付事件的價。"
 tags: ["ddd", "domain-event", "event-driven", "dip", "architecture", "dart", "flutter"]
 ---
 
 > **觸發場景**：Flutter 書籍管理 App 的借閱功能（Loan domain）建立借閱記錄前要查書籍資訊，流程圖直白地畫著 `LoanService --> BookRepository`——Loan domain 直接摸進 Library domain 的 repository
 > **疑問來源**：架構修正把它改成事件驅動的 request/response（`BookInfoRequested` / `BookInfoProvided`）。解耦成立了，但設計規格裡多出 requestId、waitFor、timeout、三條錯誤路徑——這些複雜度是必要代價、還是選錯工具的訊號？
-> **整理目的**：把「事件驅動解耦」的帳單攤開、跟替代選項（消費端 Port）比價、收斂出選擇判準
+> **整理目的**：把「事件驅動解耦」的帳單攤開、跟替代選項（消費端 Port）比價、收斂出選擇標準
 > **本文邊界**：素材是該專案 v0.12-C.2 的設計規格（流程圖與事件介面層級、未及實作）——本文是架構決策推導、不是實測事故
 
 ---
@@ -56,7 +56,7 @@ abstract class BookInfoPort {
 
 DIP 同樣成立（Loan 不認識 Library、只認識自己定義的 Port）、測試同樣乾淨（mock 一個單方法介面）、而呼叫還是一次普通的 await——requestId、timeout、事件錯誤路徑全部不需要。
 
-那事件版買到的是什麼？兩樣 Port 給不了的：**時間解耦**（發布者不等回應、雙方可以不同時在線——分散式或背景處理的前提）跟**基數解耦**（一個事件任意多訂閱者）。判準因此收得很乾淨：
+那事件版買到的是什麼？兩樣 Port 給不了的：**時間解耦**（發布者不等回應、雙方可以不同時在線——分散式或背景處理的前提）跟**基數解耦**（一個事件任意多訂閱者）。判斷標準因此收得很乾淨：
 
 - 要解的是**依賴方向**（單機、同進程、一問一答）→ Port，付介面一張的價
 - 要解的是**時間或部署**（跨進程、離線佇列、多方反應）→ 事件，correlation 與 timeout 是這個量級問題的合理成本

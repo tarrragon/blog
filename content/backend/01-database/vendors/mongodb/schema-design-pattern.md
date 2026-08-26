@@ -78,7 +78,7 @@ Time-series collection 是 MongoDB 為 IoT / sensor / event log / metrics 設計
 | 大型 production + 多 owner + 跨團隊       | 混合（兩者並用）                                  |
 | IoT / sensor / event log + timestamp 主導 | Time-series collection（取代 regular collection） |
 
-**Step 3：embed 判準** — 1:few、life-cycle 同步、< 1MB 預期上限；**reference 判準** — 1:many 寫頻不對稱、跨 aggregate 引用。
+**Step 3：embed 判斷標準** — 1:few、life-cycle 同步、< 1MB 預期上限；**reference 判斷標準** — 1:many 寫頻不對稱、跨 aggregate 引用。
 
 **Step 4：DB-layer 路徑 validator 配置**：
 

@@ -2,7 +2,7 @@
 title: "適用範圍要展開成 file enumeration、口語描述不夠"
 date: 2026-04-29
 weight: 96
-description: "原則的『適用範圍』寫成口語描述（『所有教學文件的論證段落』）時、執行 review 的人要當場推導『具體哪些檔屬於這個範圍』、推導步驟容易漏；改寫成 enumerated file list（具體列出 file paths）就能避免 enumeration 不完整。Enumerate 的合法形式是『可被 grep / find 重現的具體 file 集合』、不是『口語類型描述』。本卡是 #95 的下游具體化、跟 #82 互補：enumerate 是字面層、enumeration completeness 是行為層判準。"
+description: "原則的『適用範圍』寫成口語描述（『所有教學文件的論證段落』）時、執行 review 的人要當場推導『具體哪些檔屬於這個範圍』、推導步驟容易漏；改寫成 enumerated file list（具體列出 file paths）就能避免 enumeration 不完整。Enumerate 的合法形式是『可被 grep / find 重現的具體 file 集合』、不是『口語類型描述』。本卡是 #95 的下游具體化、跟 #82 互補：enumerate 是字面層、enumeration completeness 是行為層判斷標準。"
 tags: ["report", "事後檢討", "工程方法論", "寫作", "原則"]
 ---
 
@@ -108,7 +108,7 @@ content/skills/compositional-writing/writing-articles.md
 ## 跟其他抽象層原則的關係
 
 - **[#95 Multi-pass scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)**：本卡是 #95 的下游具體化。#95 答「scope 從哪來 = 適用範圍 ∩ corpus」、本卡答「適用範圍長什麼樣 = enumerated file list」。兩條串起來才是完整 review 流程。
-- **[#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)**：本卡跟 #82 互補。Enumerate file list 是字面層（具體 path）、enumeration completeness 是行為層的合法性判準（兩個人展開能否得到同一個 list）— 兩層都要對齊、scope 才合法。
+- **[#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)**：本卡跟 #82 互補。Enumerate file list 是字面層（具體 path）、enumeration completeness 是行為層的合法性判斷標準（兩個人展開能否得到同一個 list）— 兩層都要對齊、scope 才合法。
 - **[#44 Single Source of Truth](../single-source-of-truth/)**：本卡是 #44 在「原則作用域」維度的具體案例。適用範圍口語描述 = 每個讀者各自解釋一次、結果 drift。
 - **[#7 量測值缺一不可](../measurement-completeness/)**：本卡是 #7 在「review 範圍」的同形 pattern — enumerate 漏一個 = sanity 防線有缺口、整組 review 結果不可信。
 - **[#42 2 次門檻是訊號](../two-occurrence-threshold/)**：本卡的觸發來自「同方向漏判 2 次」訊號 — mirror 漏同步在 #94 / #95 review 連續發生、就是 #42 訊號要求抽象的 case。

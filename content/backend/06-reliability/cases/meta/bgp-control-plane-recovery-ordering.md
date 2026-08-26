@@ -50,7 +50,7 @@ Staged recovery order 把恢復拆成明確的階段：先恢復物理網路連�
 
 - [6.7 DR rollback rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)：out-of-band 路徑的定期驗證
 - [6.14 dependency reliability budget](/backend/06-reliability/dependency-reliability-budget/)：恢復路徑的隱性依賴治理
-- [6.22 steady state definition](/backend/06-reliability/steady-state-definition/)：DNS 與控制面恢復完成的判準
+- [6.22 steady state definition](/backend/06-reliability/steady-state-definition/)：DNS 與控制面恢復完成的判斷標準
 - [8.14 multi-incident coordination](/backend/08-incident-response/multi-incident-coordination/)：跨區域恢復的指揮協調
 
 ## 引用源

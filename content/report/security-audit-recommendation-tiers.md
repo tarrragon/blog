@@ -49,7 +49,7 @@ Tiered（分層）：
 
 ## 理想做法
 
-### 四 tier 判準
+### 四 tier 判斷標準
 
 每個 weakness 套這個決策樹：
 
@@ -139,9 +139,9 @@ flat list 的 audit 給「找到問題」、team 把問題列入 backlog、backl
 
 最危險的 case 是 audit 找到 withdraw-level weakness（過時 crypto、扭曲 citation）但用 minor / major 處置——讓內容繼續存在並擴散。教學擴散 = silent gap 集體放大（[#100 false sense of security](../false-sense-of-security-as-primary-failure/)），withdraw 是 cut-off 訊號、不是嚴格、是必要。
 
-### 各 tier 之間的決策邏輯模糊、reviewer 之間判準不一致
+### 各 tier 之間的決策邏輯模糊、reviewer 之間判斷標準不一致
 
-沒明確 tier 判準、不同 reviewer 對同一個 weakness 給不同建議——有人覺得「補一行就好」（minor）、有人覺得「整段重寫」（major）、有人覺得「移除」（withdraw）。決策不一致 = audit 失去結構性 value、退化成個人意見集合。tier 判準（決策樹四問題）讓判準可重現、跨 reviewer 收斂。
+沒明確 tier 判斷標準、不同 reviewer 對同一個 weakness 給不同建議——有人覺得「補一行就好」（minor）、有人覺得「整段重寫」（major）、有人覺得「移除」（withdraw）。決策不一致 = audit 失去結構性 value、退化成個人意見集合。tier 判斷標準（決策樹四問題）讓判斷標準可重現、跨 reviewer 收斂。
 
 ---
 
@@ -166,8 +166,8 @@ flat list 的 audit 給「找到問題」、team 把問題列入 backlog、backl
 | Audit 結論是「找到 N 個問題」flat list                     | 把每個 weakness 跑 tier 決策樹、輸出 tier-grouped report                               |
 | 找到過時 crypto / 扭曲 citation 但給 minor revise          | 升級到 withdraw、ship gate 必須阻擋                                                    |
 | 「之後改善」「下個版本補」當 weakness 處置                 | 是 [#72](../external-trigger-for-high-roi-work/) 結構性跳過、補 ship gate 強制 trigger |
-| 不同 reviewer 對同 weakness 給不同 tier                    | 補決策樹、跑判準收斂                                                                   |
-| Audit pass 但實作後事故、回溯到 audit 沒 catch 的 weakness | 補 weakness 到對應 dimension（#101-104）、檢查 tier 判準是否需調整                     |
+| 不同 reviewer 對同 weakness 給不同 tier                    | 補決策樹、跑判斷標準收斂                                                               |
+| Audit pass 但實作後事故、回溯到 audit 沒 catch 的 weakness | 補 weakness 到對應 dimension（#101-104）、檢查 tier 判斷標準是否需調整                 |
 | 沒「strengths」段                                          | 補 strengths、reviewer 視角不只 weakness、strengths 是 audit completeness 的訊號       |
 | Recommendation 沒明確 ship gate 對應                       | 補 blocking conditions 段、明示哪些 tier 阻擋 ship                                     |
 

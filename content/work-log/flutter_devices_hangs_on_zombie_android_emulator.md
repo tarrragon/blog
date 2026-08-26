@@ -134,7 +134,7 @@ pkill -f qemu-system-aarch64
 
 ---
 
-## 操作判準
+## 操作判斷標準
 
 1. **「device 數兩次掃描之間自己變」是 zombie emulator 的關鍵徵兆**：計數變化代表 ADB 內部狀態不穩定
 2. **`Error -2 retrieving device properties` 是 property 查詢失敗訊號**：Flutter 仍可能繼續處理其他 device，結果是「印出錯誤訊息但繼續卡」

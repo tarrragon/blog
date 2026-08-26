@@ -52,7 +52,7 @@ db timezone : +08:00
 
 ## 什麼時候值得做到逐項
 
-Parity 是有成本的紀律，不是每個專案都要做到逐項——值得與可放寬的完整判準見 [Prod Parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/) 的判讀訊號段。這篇的 PHP 7.2 場景屬「值得」那一類：有原生擴充、MySQL 嚴格模式、時區邏輯都在，本機不對齊就會在線上才發現行為不同。
+Parity 是有成本的紀律，不是每個專案都要做到逐項——值得與可放寬的完整判斷標準見 [Prod Parity 原則](/linux/dotfile/knowledge-cards/prod-parity-principle/) 的判讀訊號段。這篇的 PHP 7.2 場景屬「值得」那一類：有原生擴充、MySQL 嚴格模式、時區邏輯都在，本機不對齊就會在線上才發現行為不同。
 
 ## 下一步
 

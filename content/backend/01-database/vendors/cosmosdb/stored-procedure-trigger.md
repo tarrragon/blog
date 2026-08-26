@@ -6,7 +6,7 @@ weight: 72
 tags: ["backend", "database", "cosmosdb", "stored-procedure", "trigger", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Cosmos DB 的 stored procedure、trigger 與 user-defined function 是用 JavaScript 寫、執行在 Cosmos DB engine 內的 server-side 邏輯。它最有價值的能力是把同一 logical partition 內的多個操作包成一個原子交易 — 這是 application 層無法用 SDK 單獨做到的。本文先講這層 server-side 邏輯的精確語義與限制、再進操作流程、最後重點放在「何時用、何時不用」的判準 — 因為多數應用邏輯放在 application 層更好維護、stored procedure 應該是少數有明確理由的場景。
+本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Cosmos DB 的 stored procedure、trigger 與 user-defined function 是用 JavaScript 寫、執行在 Cosmos DB engine 內的 server-side 邏輯。它最有價值的能力是把同一 logical partition 內的多個操作包成一個原子交易 — 這是 application 層無法用 SDK 單獨做到的。本文先講這層 server-side 邏輯的精確語義與限制、再進操作流程、最後重點放在「何時用、何時不用」的判斷標準 — 因為多數應用邏輯放在 application 層更好維護、stored procedure 應該是少數有明確理由的場景。
 
 本文沒有專屬 production case anchor：stored procedure 的設計取捨在公開 case 庫覆蓋稀薄、機制以 Azure vendor 規格與通用工程展開、情境用 partition 內原子交易這個具體需求驅動。
 

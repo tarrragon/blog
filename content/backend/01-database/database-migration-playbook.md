@@ -117,7 +117,7 @@ tags: ["backend", "database", "migration"]
 
 ### Type I：加約束（CHECK / FK / NOT NULL 收緊）
 
-對有存量資料的表加約束、風險形態跟加欄位不同：新約束要對「過去所有已寫入的資料」負責、不只對未來寫入負責。NOT NULL 是本類型的單欄特例（流程見 Type G）、CHECK 與 FK 走以下同一套順序。哪些規則該下沉成約束、哪些留在文件、分工判準見 [1.15 資料契約文件](/backend/01-database/data-contract-document/)；FK 強約束 vs 應用層保護的取捨回到 [1.2 schema design](/backend/01-database/schema-design/) 的外鍵段。
+對有存量資料的表加約束、風險形態跟加欄位不同：新約束要對「過去所有已寫入的資料」負責、不只對未來寫入負責。NOT NULL 是本類型的單欄特例（流程見 Type G）、CHECK 與 FK 走以下同一套順序。哪些規則該下沉成約束、哪些留在文件、分工標準見 [1.15 資料契約文件](/backend/01-database/data-contract-document/)；FK 強約束 vs 應用層保護的取捨回到 [1.2 schema design](/backend/01-database/schema-design/) 的外鍵段。
 
 **約束前移原則**（為什麼值得做這種 migration）：
 

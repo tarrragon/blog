@@ -49,7 +49,7 @@ slug: "surface-anchor-before-apparatus-accretes"
 | [#235 整合互斥規則集](../integrate-conflicting-rulesets/)                          | 同一 session 的姊妹 — #235 是 escalation 蓋出來的產物之一（整合方法本身），本卡是「那些產物該不該全蓋」的份量判斷 |
 | [#236 承重論點先對抗驗證再建下游](../validate-load-bearing-claim-before-building/) | 同 session、互補的兩種前置閘門 — #236 前置驗「核心宣稱對不對」，本卡前置驗「該蓋多少」；一個管正確性、一個管份量  |
 | [#125 Collapse 是隱形預設](../collapse-is-implicit-default/)                       | 反過來的 collapse — #125 是把高維選擇塌成窄格，本卡是「份量」這一維被流程動能默默決定、從沒被當成一個選擇攤開     |
-| [#75 主策略 + 補強策略：選擇不必互斥](../main-strategy-plus-supplementary/)        | 疊加要有判準（沒副作用、增量成本可接受）— 本卡是那個「增量成本」判準沒對照 anchor、於是每層疊加都通過             |
+| [#75 主策略 + 補強策略：選擇不必互斥](../main-strategy-plus-supplementary/)        | 疊加要有判斷標準（沒副作用、增量成本可接受）— 本卡是那個「增量成本」判斷標準沒對照 anchor、於是每層疊加都通過     |
 
 本卡是 WRAP 決策框架（一套抗認知偏誤的決策方法）的 Anchor Check（決策前先釘住核心目標）在「多輪協作、任務逐層 escalation」場景的具體化——WRAP 開場就要求釘 anchor，本卡補的是「anchor 常在 escalation 中被跳過、要主動在 escalation 訊號出現時補釘」。
 

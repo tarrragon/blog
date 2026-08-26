@@ -33,9 +33,9 @@ APM-to-profile drilldown 適合 Datadog Continuous Profiler。慢 request 可以
 
 多語言 SaaS 團隊適合 Datadog Continuous Profiler。團隊如果同時維護 Go、Java、Python、Ruby、Node.js 或 .NET 服務，SaaS profiler 可以用統一 tag、dashboard 與權限模型管理。
 
-## 選型判準
+## 選型標準
 
-| 判準              | Datadog 的價值                           | 需要補的能力                     |
+| 判斷標準          | Datadog 的價值                           | 需要補的能力                     |
 | ----------------- | ---------------------------------------- | -------------------------------- |
 | APM 整合          | trace、service、endpoint、profile 可串接 | service tag 與 deploy label 紀律 |
 | Deployment marker | release 前後 profile diff 容易建立       | release pipeline 與版本標記整合  |

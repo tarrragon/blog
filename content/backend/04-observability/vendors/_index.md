@@ -1,7 +1,7 @@
 ---
 title: "可觀測性 Vendor 清單"
 date: 2026-05-01
-description: "規劃 telemetry standard、metrics、logs、traces、APM 與 error tracking 的服務頁撰寫順序與判準"
+description: "規劃 telemetry standard、metrics、logs、traces、APM 與 error tracking 的服務頁撰寫順序與判斷標準"
 weight: 90
 tags: ["backend", "observability", "vendor"]
 ---
@@ -155,7 +155,7 @@ OTel 相容度影響 vendor 切換成本。各 vendor 接受程度：
 | 批次 | 服務頁                                       | 撰寫目的                                                       |
 | ---- | -------------------------------------------- | -------------------------------------------------------------- |
 | O1   | OpenTelemetry                                | 建立 instrumentation standard、collector 與 vendor portability |
-| O2   | Prometheus / Grafana Stack                   | 建立 metrics baseline、cardinality 與 OSS platform 判準        |
+| O2   | Prometheus / Grafana Stack                   | 建立 metrics baseline、cardinality 與 OSS platform 判斷標準    |
 | O3   | Elastic Stack / Datadog / Honeycomb / Sentry | 建立 logs / APM / high-cardinality / error tracking 對照       |
 | O4   | AWS CloudWatch / GCP Cloud Operations        | 建立 cloud-native observability 與 account / project 邊界      |
 

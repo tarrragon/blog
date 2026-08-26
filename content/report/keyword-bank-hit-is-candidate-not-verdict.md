@@ -106,7 +106,7 @@ bank 補得越完整、命中越多、reviewer 越依賴「快速掃過命中清
 
 ## Self-case：本卡的觸發來源
 
-本卡觸發於 review [高階函式的適用判準](../../work-log/dart_hof_typedef_readability/) 時。流程是先跑 3 個 frame 的 multi-round review + 字句層 grep keyword bank：
+本卡觸發於 review [高階函式的適用條件](../../work-log/dart_hof_typedef_readability/) 時。流程是先跑 3 個 frame 的 multi-round review + 字句層 grep keyword bank：
 
 1. grep **命中**了核心議題句「高階函式**不是**『用了比較高級』、**而是**特定場景的自然解」跟小節開場「**不是**『能用就用』、**而是**…三個特徵」。
 2. 我把這些命中判成「正向對照修辭、OK」、回報「字句層大致乾淨」。

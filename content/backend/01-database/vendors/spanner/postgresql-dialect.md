@@ -1,7 +1,7 @@
 ---
 title: "Spanner PostgreSQL dialect：PG-compatible interface vs GoogleSQL、相容子集邊界、何時選 PG dialect"
 date: 2026-06-02
-description: "Spanner PostgreSQL dialect 是建在 Spanner 分散式引擎之上的 PG-compatible 介面、提供 PostgreSQL 語法、型別與 wire protocol、但不是完整 PostgreSQL。本文先定義 PG dialect 跟 GoogleSQL dialect 的責任差異、再劃相容子集邊界（哪些 PG 功能不在、哪些 Spanner-only 概念仍要懂）、最後給選 dialect 的決策判準與 dialect 不可變更的失敗代價"
+description: "Spanner PostgreSQL dialect 是建在 Spanner 分散式引擎之上的 PG-compatible 介面、提供 PostgreSQL 語法、型別與 wire protocol、但不是完整 PostgreSQL。本文先定義 PG dialect 跟 GoogleSQL dialect 的責任差異、再劃相容子集邊界（哪些 PG 功能不在、哪些 Spanner-only 概念仍要懂）、最後給選 dialect 的決策標準與 dialect 不可變更的失敗代價"
 weight: 35
 tags: ["backend", "database", "spanner", "global-sql", "postgresql-dialect", "googlesql", "deep-article"]
 ---
@@ -122,7 +122,7 @@ commit_latencies               → external consistency 的 commit wait、兩 di
 
 ### 何時兩者都不選（不該升 Spanner）
 
-若 workload 是單 region、不需要全球強一致、PostgreSQL dialect 的相容性吸引力不該成為升 Spanner 的理由 — Cloud SQL for PostgreSQL 是真正的 PostgreSQL、相容性 100%、成本更低。Anti-recommendation 的判準是：PG dialect 的價值在「已經要遷 Spanner、想降低遷移成本」、不在「因為它像 PostgreSQL 所以選 Spanner」。把 dialect 相容性當升級理由是把次要因素當主要決策。
+若 workload 是單 region、不需要全球強一致、PostgreSQL dialect 的相容性吸引力不該成為升 Spanner 的理由 — Cloud SQL for PostgreSQL 是真正的 PostgreSQL、相容性 100%、成本更低。Anti-recommendation 的判斷標準是：PG dialect 的價值在「已經要遷 Spanner、想降低遷移成本」、不在「因為它像 PostgreSQL 所以選 Spanner」。把 dialect 相容性當升級理由是把次要因素當主要決策。
 
 ### Sibling deep articles 路由
 

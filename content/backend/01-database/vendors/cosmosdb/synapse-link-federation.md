@@ -6,7 +6,7 @@ weight: 75
 tags: ["backend", "database", "cosmosdb", "synapse-link", "federation", "htap", "deep-article"]
 ---
 
-本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Azure Synapse Link 把 Cosmos DB 的交易型資料自動同步到一個 column-oriented 的 analytical store、讓 Synapse（或其他 analytics engine）直接查分析資料、而 *不消耗 OLTP 的 RU、不打 transactional store*。它是一種 [federation](/backend/knowledge-cards/federation/) — 同一份資料的 OLTP 與 OLAP 存取被分到兩個各自最佳化的 store、由平台保持同步。本文先講 analytical store 與 HTAP federation 的精確語義、再進啟用流程、最後拆「何時把分析 workload 分出去、何時 federate 到專用 OLAP」的判準。
+本文是 [Cosmos DB](/backend/01-database/vendors/cosmosdb/) overview 的 deep article、寫作參照 [vendor deep article methodology](/posts/vendor-deep-article-methodology/)。Azure Synapse Link 把 Cosmos DB 的交易型資料自動同步到一個 column-oriented 的 analytical store、讓 Synapse（或其他 analytics engine）直接查分析資料、而 *不消耗 OLTP 的 RU、不打 transactional store*。它是一種 [federation](/backend/knowledge-cards/federation/) — 同一份資料的 OLTP 與 OLAP 存取被分到兩個各自最佳化的 store、由平台保持同步。本文先講 analytical store 與 HTAP federation 的精確語義、再進啟用流程、最後拆「何時把分析 workload 分出去、何時 federate 到專用 OLAP」的判斷標準。
 
 Case anchor 是 [9.C30 Microsoft 365](/backend/09-performance-capacity/cases/microsoft-365-cosmos-db-analytics/) — Microsoft 自家把使用分析平台建在 Cosmos DB 上、planet-scale 全球分散式分析。case 自承沒揭露具體 throughput / latency / cost 數字、也沒明說用了 Synapse Link、本文只取「analytics workload 建在 Cosmos 上」這個情境 anchor、機制以 Azure vendor 規格與 HTAP / federation 通用工程展開。
 
@@ -37,7 +37,7 @@ analytical store 是 column-oriented 的自動複本。在 container 啟用 anal
 
 ### 跟自己搭 Change Feed pipeline 的差別
 
-[Change Feed](../change-feed-cdc/) 也能把資料同步到別處做分析、但那要自己寫 consumer、自己維護 target store、自己處理 schema 演進與 backfill。Synapse Link 是平台託管的 analytical store + auto-sync、省掉這整條 pipeline。判準：需求是「Cosmos 資料的近即時 column-oriented 分析」、Synapse Link 直接給；需求是「自訂 transform、餵特定下游、複雜 routing」、Change Feed 提供控制權但要自己搭。
+[Change Feed](../change-feed-cdc/) 也能把資料同步到別處做分析、但那要自己寫 consumer、自己維護 target store、自己處理 schema 演進與 backfill。Synapse Link 是平台託管的 analytical store + auto-sync、省掉這整條 pipeline。判斷標準：需求是「Cosmos 資料的近即時 column-oriented 分析」、Synapse Link 直接給；需求是「自訂 transform、餵特定下游、複雜 routing」、Change Feed 提供控制權但要自己搭。
 
 ## 操作流程
 

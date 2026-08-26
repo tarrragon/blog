@@ -134,7 +134,7 @@ Spanner CPU during graph query    → 高扇出遍歷會打滿 CPU
 
 ### 何時用純 relational
 
-關係查詢的跳數固定且淺（1-2 跳）、用標準 SQL JOIN 已足夠清晰、不值得引入 graph schema 的額外概念。graph 的價值隨跳數與遍歷複雜度上升、淺查詢用 relational 反而簡單。判準是：若查詢用 JOIN 寫起來不痛、就不需要 graph。
+關係查詢的跳數固定且淺（1-2 跳）、用標準 SQL JOIN 已足夠清晰、不值得引入 graph schema 的額外概念。graph 的價值隨跳數與遍歷複雜度上升、淺查詢用 relational 反而簡單。判斷標準是：若查詢用 JOIN 寫起來不痛、就不需要 graph。
 
 ### 何時用專用 graph DB
 

@@ -3,7 +3,7 @@ title: "知識載體責任分配方法論 - rules/agents/skills 各該裝什麼"
 slug: "knowledge-carrier-allocation-methodology"
 date: 2026-06-15
 draft: false
-description: "AI 開發框架的知識依「受眾 x 形態」二軸決定載體：rules / pm-rules / agents / skills / methodologies / references / error-patterns 各有載入時機與責任。載體錯置的代價是 token 污染或跨專案失傳。核心判準：代理人定義承載人格與授權，skill 承載可重複流程，以「換一個執行者內容是否改變」區分。"
+description: "AI 開發框架的知識依「受眾 x 形態」二軸決定載體：rules / pm-rules / agents / skills / methodologies / references / error-patterns 各有載入時機與責任。載體錯置的代價是 token 污染或跨專案失傳。核心判斷標準：代理人定義承載人格與授權，skill 承載可重複流程，以「換一個執行者內容是否改變」區分。"
 tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 ---
 
@@ -13,7 +13,7 @@ tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 
 **Scope**：本地圖涵蓋 LLM context 載體（人與 AI 閱讀的知識）；專案產物層（`docs/` / `src/`）不屬本地圖，劃分見 `framework-asset-separation.md`；機器讀取層（`config/*.yaml`、hook 引用的凍結錨點）另計。memory 行由受眾軸「僅本專案」唯一決定，不需形態軸。
 
-**代理人定義 vs skill 的歸屬判準**：一段知識可能落在代理人定義或 skill、不易區分時，以「該知識是否隨執行者改變」為判準，不憑直覺擇一。
+**代理人定義 vs skill 的歸屬標準**：一段知識可能落在代理人定義或 skill、不易區分時，以「該知識是否隨執行者改變」為判斷標準，不憑直覺擇一。
 
 - 屬**代理人定義**的知識回答「你是誰、你能做什麼、你偏好怎麼做」——身份定位、授權邊界、設計偏好。識別測試：換一個代理人來執行，這段內容就應該不同。本質是人格與授權。
 - 屬 **skill** 的知識回答「這件事怎麼做」——可重複執行的流程步驟。識別測試：任何角色觸發都應得到同一份流程，與執行者是誰無關。本質是可重複流程。
@@ -83,11 +83,11 @@ tags: ["方法論", "知識管理", "AI協作", "框架設計"]
 ---
 
 **Last Updated**: 2026-06-15
-**Version**: 1.8.0 — 「代理人定義 vs skill 歸屬判準」改寫：去除「一句話判定」總結框架，改為含明確識別測試（換一個執行者內容是否改變）的判準段落。方法論作為框架核心規則供 AI 開發時判斷，內容須明確而可套用，不採壓縮式總結（避免單句總結遮蔽判準細節導致 AI 判斷失準）
+**Version**: 1.8.0 — 「代理人定義 vs skill 歸屬標準」改寫：去除「一句話判定」總結框架，改為含明確識別測試（換一個執行者內容是否改變）的判斷標準段落。方法論作為框架核心規則供 AI 開發時判斷，內容須明確而可套用，不採壓縮式總結（避免單句總結遮蔽判斷標準細節導致 AI 判斷失準）
 **Version**: 1.7.0 — root 錯置檔重分配（1.0.0-W8-023.2，第 2/4 批）：4 檔（`agent-collaboration.md` 794 / `decision-workflows.md` 116 / `quick-ref-agent-dispatch-recovery.md` 202 / `thinking-process.md` 271）逐檔讀內容後**全數 flag superseded/obsolete**（campaign 規則 3，零搬移零連結手術）：`agent-collaboration` 與 `analyses/archived/` 同名 794 行副本 near-identical 且內容已被 `methodologies/tdd-collaboration-flow.md` + agent 定義覆蓋；`decision-workflows` 五情境已被 `pm-rules/skip-gate`+`incident-response`+`decision-tree` 覆蓋；`quick-ref-agent-dispatch-recovery` 所述 `agent_dispatch_recovery.py` hook 已不存在；`thinking-process` 為 2025-12-01 一次性 session 快照非知識載體。本批 0 檔搬移，故不加 map 行，留 PM follow-up 清理（inbound 連結多在 .3/.4 批檔群）
 **Version**: 1.6.0 — root 錯置檔重分配（1.0.0-W8-023.1，第 1/4 批）：`hook-system-reference.md`（Hook 事件索引 / 技術參考）、`code-smell-checklist.md`（Code Smell 檢測清單 / 技術參考）依二軸（受眾＝動作觸發者、形態＝技術參考）歸入既有 `references/` 載體列（line 22），故不另加 map 行；superseded 副本 `code-quality-examples.md`（已遷 `docs/`，DOC-010 W10-102）與 `document-responsibilities.md`（DEPRECATED，已被 `five-document-system-methodology.md` + `doc-flow/references/document-responsibilities.md` 取代）flag 不併入，留 PM follow-up
 **Version**: 1.5.0 — 載體地圖補列 4 個 legit root 資產各一行歸屬（README 框架導覽 / CHANGELOG 變更記錄 / README-subtree-sync 同步機制 / terminology-dictionary 用語規範表，後者經 language-constraints `@` 引用實質載入）（1.0.0-W8-022）
-**Version**: 1.4.0 — multi-round-review Round 4（實例分配演練）修正：步驟 1 補受眾詞彙映射橋（六選項 vs 地圖表受眾欄斷層）、步驟 3 事實類閘門判準明文化（體積與專案特定性約束，非必要性否決）。8 條盲跑 6 條乾淨落點，停止訊號達成收斂
+**Version**: 1.4.0 — multi-round-review Round 4（實例分配演練）修正：步驟 1 補受眾詞彙映射橋（六選項 vs 地圖表受眾欄斷層）、步驟 3 事實類閘門判斷標準明文化（體積與專案特定性約束，非必要性否決）。8 條盲跑 6 條乾淨落點，停止訊號達成收斂
 **Version**: 1.3.0 — multi-round-review Round 3 修正：Scope 句（LLM context 載體限定 + 機器讀取層另計 + memory 受眾軸唯一決定）、rules/core 列量測集合精確化（MEMORY.md 不在 guardian 集合）、規範表補「多方案技術知識庫」劃界列（與 framework-asset-separation「框架寫法」段對齊）、地圖補 templates / root 遺留行、Reference 補 skill-design-guide
 **Version**: 1.2.0 — multi-round-review Round 2 修正：檢查清單與步驟 3/5 的 R1 劃界同步（清單漂移）、步驟 5 拆動作解歧義、地圖欄名補形態軸、定位句「（如有）」、Reference 補寫作 skill SSOT 例外路由
 **Version**: 1.1.0 — multi-round-review Round 1 修正：步驟 3 形態約束劃界（規範類 vs 事實類）、步驟 5 補執法強度對齊、章名對齊 methodology 標準結構、rules/core 列預算範圍精確化、agents 列改路由至專節

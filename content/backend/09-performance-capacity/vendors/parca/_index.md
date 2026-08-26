@@ -37,9 +37,9 @@ Kubernetes 平台適合 Parca。當服務在多 namespace、多 workload、多 n
 
 低侵入 profiling 適合 Parca。eBPF-based profiling 可以降低 application instrumentation 成本，讓團隊先取得廣域視角，再對特定服務加更細的 runtime profiler 或 APM 整合。
 
-## 選型判準
+## 選型標準
 
-| 判準                | Parca 的價值                        | 需要補的能力                             |
+| 判斷標準            | Parca 的價值                        | 需要補的能力                             |
 | ------------------- | ----------------------------------- | ---------------------------------------- |
 | eBPF / low overhead | 低侵入取得廣域 profile              | kernel / runtime 支援與權限治理          |
 | Platform-wide       | node、namespace、service 維度可對照 | Kubernetes label 與 ownership discipline |

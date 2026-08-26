@@ -87,7 +87,7 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 
 從此「資料變更」是 provider 圖上的一級節點：任何衍生視圖 `ref.watch(watchBooksProvider)` 就取得 reactive 更新，統計頁、書庫清單、待補完列表全部走同一條觀察路徑。涵蓋面從「枚舉入口／枚舉事件」變成「寫入方法的集合」——新增加書路徑時，寫入必然經過 repository 的寫入方法，emit 自動涵蓋，沒有「記得補」這個動作。實作細節（broadcast、初始值、dispose）在 [StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)。
 
-## 判準：補償刷新是缺口訊號
+## 判斷標準：補償刷新是缺口訊號
 
 三段演進收斂成一條可操作的判讀：
 
@@ -98,13 +98,13 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 | 同一份資料有多個視圖、各自維護 load 時機       | 缺一個共同的觀測節點、每個視圖都在重複解同一題       |
 | `ref.watch` 對象是單例 `Provider<Repository>`  | 這個 watch 永不觸發 rebuild、reactive 是名義上的     |
 
-每個訊號的修法都指向同一個方向：讓資料變更成為 provider 圖上的節點（`StreamProvider` 包 repository 的 stream 出口、或 Notifier 持有狀態），視圖回到純 `ref.watch`。輪詢式定時重抓（每 N 秒或 App resume 時重新查詢）是另一個合法選項，適用於新鮮度容忍度高、寫入頻率低的場景（管理後台的統計卡、低優先級的快取）。本文判準只處理「需要即時反應」的情境——多個視圖要看同一份即時資料、補償刷新已經散在各處時，輪詢的涵蓋面跟導航補償一樣靠枚舉維持，觀測出口才是結構性解。
+每個訊號的修法都指向同一個方向：讓資料變更成為 provider 圖上的節點（`StreamProvider` 包 repository 的 stream 出口、或 Notifier 持有狀態），視圖回到純 `ref.watch`。輪詢式定時重抓（每 N 秒或 App resume 時重新查詢）是另一個合法選項，適用於新鮮度容忍度高、寫入頻率低的場景（管理後台的統計卡、低優先級的快取）。本文判斷標準只處理「需要即時反應」的情境——多個視圖要看同一份即時資料、補償刷新已經散在各處時，輪詢的涵蓋面跟導航補償一樣靠枚舉維持，觀測出口才是結構性解。
 
 ## 介面歸屬：需求來自誰、不決定介面放哪
 
 `watchBooks()` 的需求完全來自 presentation 層——是 Riverpod 想觀察資料變更、domain 自己沒有這個需要。直覺會說「誰需要就放誰那層」，把 Stream 出口做在 infrastructure 或 presentation 的某個 service 裡。
 
-實際的歸屬判準是**介面用什麼語言表達**、不是需求來自誰：
+實際的歸屬標準是**介面用什麼語言表達**、不是需求來自誰：
 
 | 介面簽名裡的型別                  | 歸屬判定                                      |
 | --------------------------------- | --------------------------------------------- |
@@ -113,11 +113,11 @@ final watchBooksProvider = StreamProvider<List<Book>>((ref) async* {
 | Riverpod 型別（`StreamProvider`） | 框架語言、進 domain 介面就是洩漏              |
 | SQLite 型別（`Database`）         | infrastructure 語言、同上                     |
 
-`Stream<List<Book>> watchBooks()` 全句只用語言標準庫加 domain entity——它是 `getAllBooks()` 的 push 版本、放 domain repository 介面語意自然。需求從消費者出發決定介面**該不該存在**；介面**放哪一層**由表達語言決定。這條判準的完整推導（含機制層與組裝層的歸屬）在 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
+`Stream<List<Book>> watchBooks()` 全句只用語言標準庫加 domain entity——它是 `getAllBooks()` 的 push 版本、放 domain repository 介面語意自然。需求從消費者出發決定介面**該不該存在**；介面**放哪一層**由表達語言決定。這條判斷標準的完整推導（含機制層與組裝層的歸屬）在 [觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)。
 
 ## 下一步
 
-- 契約／機制／組裝三層歸屬的完整判準：[觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)
+- 契約／機制／組裝三層歸屬的完整判斷標準：[觀測出口的職責三分](/ddd/observation-outlet-responsibility-split/)
 - 事件與狀態流的語意分界（為什麼 EventBus 橋接是越權）：[domain event 與狀態流](/ddd/domain-event-vs-state-stream/)
 - watchBooks 落地的三個實作點（broadcast、初始值、dispose）：[StreamProvider 包 repository watch stream](/work-log/flutter_streamprovider_wraps_repository_watch/)
 - provider 圖與容器的關係（狀態屬於容器、宣告只是配方）：[App 永遠卡在載入畫面](/work-log/flutter_riverpod_dual_container_state_desync/)

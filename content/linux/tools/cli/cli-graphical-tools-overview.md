@@ -96,11 +96,11 @@ TUI（Text User Interface）監控工具負責把系統即時狀態畫成全螢�
 
 判讀的分界是即時性與頻寬的取捨：連線品質好就用全螢幕 TUI 的即時性，品質差就退回低頻率的文字輸出。文字圖表在後者特別划算，因為它是一次性輸出而非持續重畫 — 跑一次 `termgraph` 印出結果就結束，不佔用持續頻寬；需要持續監控時，「低刷新率的單一數值 + 偶爾印一次 sparkline」往往比全螢幕儀表板更實用。
 
-## 選型判準與下一步
+## 選型標準與下一步
 
-把這些工具與三種情境收斂成一條判準鏈：先用多工器解決連線斷續（任何遠端情境都先做這步），再依任務選對應工具 — 即時狀態用 TUI 監控、看歷史數值用文字圖表、找檔案用檔案管理器、連資料庫用 SQL 客戶端、連 broker 看訊息用訊息佇列客戶端，最後依連線品質調整刷新率與版面密度。
+把這些工具與三種情境收斂成一條判斷標準鏈：先用多工器解決連線斷續（任何遠端情境都先做這步），再依任務選對應工具 — 即時狀態用 TUI 監控、看歷史數值用文字圖表、找檔案用檔案管理器、連資料庫用 SQL 客戶端、連 broker 看訊息用訊息佇列客戶端，最後依連線品質調整刷新率與版面密度。
 
-這條判準對應的具體工具，在本資料夾逐篇展開安裝、設定與遠端調校的細節：
+這條判斷標準對應的具體工具，在本資料夾逐篇展開安裝、設定與遠端調校的細節：
 
 - TUI 工具：系統監控（`btop` / `htop` / `k9s`）見 [TUI 監控工具](/linux/tools/cli/tui-monitoring-tools/)；web 請求日誌（`GoAccess` / `ngxtop`）見 [終端機看 nginx 請求](/linux/tools/cli/web-server-log-monitoring/)；git 線圖（`tig` / `lazygit` / `gitui`）屬版控子題、見 [遠端 CLI 開發的 git 線圖工具選型](/linux/tools/cli/git-line-graph-tools-for-remote-cli/)
 - 文字圖表：[終端機文字圖表](/linux/tools/cli/ascii-charts-in-terminal/)（`gnuplot` dumb terminal、`termgraph` 與 `plotext` 的資料接法、sparkline 接 pipeline）

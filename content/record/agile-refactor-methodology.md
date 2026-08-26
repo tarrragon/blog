@@ -65,7 +65,7 @@ Phase 4 的 cinnamon-refactor-owl 必須在重構評估中識別所有技術債�
 
 測試設計階段（Phase 2）會發現實作階段才會踩到的問題——某個資料類別放在錯誤的架構層、某一層的服務根本還不存在。這類發現改變的不只是 Phase 3 的工作量，它同時說明 Phase 1 的設計文件寫錯了。
 
-發現當下的選擇是兩個：維持原時程、降低測試覆蓋率，或是延長時程、把架構補正。判準取決於發現落在哪一層——Domain 層是其他層的依賴方向終點，它的錯誤會被上面每一層繼承，所以補正的優先序高於時程。
+發現當下的選擇是兩個：維持原時程、降低測試覆蓋率，或是延長時程、把架構補正。判斷標準取決於發現落在哪一層——Domain 層是其他層的依賴方向終點，它的錯誤會被上面每一層繼承，所以補正的優先序高於時程。
 
 由此確立的原則是 Phase 間資訊雙向流動：Phase 2 發現的問題要回饋給 Phase 1 更新設計文件。「Phase 1 完成就凍結」在這個結構下是錯的——每個 Phase 的產出都是基礎版本，隨後續發現持續更新。
 
@@ -87,4 +87,4 @@ Phase 4 的 cinnamon-refactor-owl 必須在重構評估中識別所有技術債�
 
 五重文件系統、Atomic Ticket、準備度檢查、強制驗證閘門，四者處理的是同一個問題：**資訊要怎麼在上下文有限的多代理人協作中可靠流動。** 每一項各自堵住一個流失點——找不到資訊、任務描述不足以執行、分派時規格未就緒、階段完成的判定標準浮動。
 
-任務的原子性判準，走 [Atomic Ticket 方法論](../atomic-ticket-methodology/)；Ticket 設計決策該在哪個階段做，走 [Ticket 設計決策集中在 Phase 3a](../tdd-ticket-integration-methodology/)。
+任務的原子性判斷標準，走 [Atomic Ticket 方法論](../atomic-ticket-methodology/)；Ticket 設計決策該在哪個階段做，走 [Ticket 設計決策集中在 Phase 3a](../tdd-ticket-integration-methodology/)。

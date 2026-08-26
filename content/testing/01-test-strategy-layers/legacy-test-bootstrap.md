@@ -8,7 +8,7 @@ tags: ["testing", "legacy", "strategy", "migration", "characterization-test"]
 
 接手一個沒有任何測試的專案，團隊能投入的測試時間有限。第一條測試寫什麼，決定的是接下來幾個月的投資回報走向——寫對了，每條新測試都在降低最高風險區的暴露面；寫錯了，測試數量在增長但攔截能力沒有對準系統的脆弱處。
 
-這裡回答的是「投資順序」。值不值得在既有程式碼上加測試（相對於重寫）是更上游的判斷，[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)的「結構界限與適用判準」段有討論不同規模的取捨。
+這裡回答的是「投資順序」。值不值得在既有程式碼上加測試（相對於重寫）是更上游的判斷，[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)的「結構界限與適用條件」段有討論不同規模的取捨。
 
 ## 判斷起步層的自查
 
@@ -45,7 +45,7 @@ bug 報告集中在「算錯」（金額、狀態、轉換），而且這些邏�
 
 **常見阻力與對策**：legacy 程式碼的依賴常常是纏結的（一個計價函式裡面直接呼叫資料庫、呼叫外部 API、讀取全域狀態）。逐步解耦是理想做法，但前幾條測試不需要完美的依賴注入——用 monkey patching、module-level mock、或 subclass override 先把依賴隔開，換到第一批測試能跑。架構層面的重構在有測試保護之後再做，順序反過來（先重構再測試）會讓重構本身失去安全網。
 
-**接續路由**：unit test 建立起對內部邏輯的攔截後，下一步判斷是否需要 [protocol integration test](/testing/03-protocol-integration-test/definition-and-boundary/) 補上外部互動的盲區。判準：[mock 遮蔽機制](/testing/01-test-strategy-layers/mock-masking-mechanism/)描述的哪些問題在這個專案可能成立。
+**接續路由**：unit test 建立起對內部邏輯的攔截後，下一步判斷是否需要 [protocol integration test](/testing/03-protocol-integration-test/definition-and-boundary/) 補上外部互動的盲區。判斷標準：[mock 遮蔽機制](/testing/01-test-strategy-layers/mock-masking-mechanism/)描述的哪些問題在這個專案可能成立。
 
 ### 路徑二：Protocol integration test 先行
 
@@ -65,7 +65,7 @@ bug 報告集中在「算錯」（金額、狀態、轉換），而且這些邏�
 
 **代價意識**：流程測試的建置和維護成本高於 unit test 和 protocol integration test。Legacy 專案的編排通常跟 UI 框架、全域狀態、平台依賴交織在一起，拆開接縫的前置工程量大。撤退訊號用結構性阻力判斷而非時間倍數：拆接縫時發現需要改動的生產模組超過三個、或第一條 spike 需要的假件數超過五個，代表耦合度超出流程測試先行的成本預期——回到路徑一或路徑二先建低成本的攔截，有部分覆蓋比沒有覆蓋好。這兩個數字是經驗閾值：改動三個以上模組代表波及面超出單一功能的接縫、spike 工期從天級跳到週級；假件數超過五個代表測試的假設比被測邏輯還多。團隊可依自身的模組粒度調整。
 
-**接續路由**：流程測試建立後，用 unit test 覆蓋流程中各段服務的內部邏輯——流程測試紅燈時，有 unit test 才能快速定位是哪一段出問題。這條接續不是可選的收尾：流程測試先行換到的是攔截率，代價是除錯半徑橫跨整條服務鏈、定位成本高於單元測試。細粒度回饋被延後、不是被放棄，延後期間的定位成本就是這條路徑的已知帳單。定位成本的討論見[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)的「結構界限與適用判準」段。
+**接續路由**：流程測試建立後，用 unit test 覆蓋流程中各段服務的內部邏輯——流程測試紅燈時，有 unit test 才能快速定位是哪一段出問題。這條接續不是可選的收尾：流程測試先行換到的是攔截率，代價是除錯半徑橫跨整條服務鏈、定位成本高於單元測試。細粒度回饋被延後、不是被放棄，延後期間的定位成本就是這條路徑的已知帳單。定位成本的討論見[語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)的「結構界限與適用條件」段。
 
 ## 遷移安全網：先有 characterization test 再改
 
@@ -79,7 +79,7 @@ Characterization test 鎖住的是「現在的行為」，不關心行為是否�
 
 - 測試三層各自的職責與盲區 → [測試策略三層定義](/testing/01-test-strategy-layers/three-layer-definition/)
 - Mock 遮蔽機制（為什麼 unit test 有結構性盲區）→ [Mock 遮蔽機制](/testing/01-test-strategy-layers/mock-masking-mechanism/)
-- 語意級假後端的適用判準 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
+- 語意級假後端的適用條件 → [語意級假後端與流程測試](/testing/01-test-strategy-layers/semantic-fake-backend/)
 - Characterization test 實作經驗 → [characterization test 當遷移安全網](/work-log/flutter_characterization_test_migration_safety_net/)
 - Protocol integration test 的定義與邊界 → [Protocol integration test 定義](/testing/03-protocol-integration-test/definition-and-boundary/)
 - 起步層選定後、單條測試該測什麼（未來哪種改壞要被擋）→ [測試的價值發生在它變紅的那一刻](/testing/05-test-design-judgment/test-as-change-guard/)

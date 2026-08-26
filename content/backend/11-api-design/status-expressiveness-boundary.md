@@ -16,7 +16,7 @@ WebDAV 的 207 Multi-Status 是「下放」路線：頂層回 207、每個資源
 
 Google AIP 是「收窄」路線、而且立場寫得很硬：AIP-193 明文「APIs should not support partial errors」—— 部分錯誤把錯誤碼搬進 response body、consumer 就得寫專用錯誤處理、通用機制全部失效（見 [11.C65](/backend/11-api-design/cases/status-google-aip-partial-success/)）。批次方法的配套規則是一條原子性階梯：同步批次必須原子（全成或全敗、讓單一 status 恆為真；唯讀批次更直接禁止部分成功）；寫入批次要部分成功、必須升級成非同步 operation、失敗明細結構化進 metadata 的 `failed_requests` map、且 request 要帶 `return_partial_success` 讓 consumer 顯式 opt-in。
 
-兩條路線的差異正是雙向契約的分野：207 把解析責任**默默**推給 consumer（收到的人自己發現要讀 body）；AIP 把同一份責任變成**顯式同意**（consumer 用 opt-in flag 聲明「我會處理部分失敗」、provider 才回部分成功）。設計判準由此而來 —— 部分成功的設計題是「consumer 有沒有明知道自己要處理它」、能不能做反而其次；讓中介層誤判的表達方式（200 或 207 包部分失敗、但消費端沒有 opt-in）是把成本外部化的形態。
+兩條路線的差異正是雙向契約的分野：207 把解析責任**默默**推給 consumer（收到的人自己發現要讀 body）；AIP 把同一份責任變成**顯式同意**（consumer 用 opt-in flag 聲明「我會處理部分失敗」、provider 才回部分成功）。設計判斷標準由此而來 —— 部分成功的設計題是「consumer 有沒有明知道自己要處理它」、能不能做反而其次；讓中介層誤判的表達方式（200 或 207 包部分失敗、但消費端沒有 opt-in）是把成本外部化的形態。
 
 ## 裝不下時間軸：202 之後才失敗
 
@@ -30,7 +30,7 @@ RFC 9110 對 502 與 504 的定義只描述 gateway 自己的觀察：收到無�
 
 這個缺口的工程後果（此為從定義出發的推導、非 spec 明文）：connect timeout（請求沒送到、重送安全）跟 read timeout（請求已執行、重送非冪等操作會重複執行）在 consumer 端拿到同一個 504、而兩者的 retry 安全性相反。status 在這裡不是裝不下多個結果、是裝不下「連 gateway 自己都不知道」的不確定性 —— 補強手段全在 status 之外：操作設計成冪等、或帶 [idempotency key](/backend/knowledge-cards/idempotency-key/) 讓重送安全（[11.8](/backend/11-api-design/api-idempotency-design/) 主寫）、上游做去重。consumer 收到 502/504 的判讀規則因此很短：不確定上游做了沒、就當作做了 —— 除非操作冪等或帶了 key、否則重送前先查。
 
-## 三種邊界的共同判準
+## 三種邊界的共同判斷標準
 
 三種邊界指向同一條設計原則：status 是給整條鏈看的最低契約、它裝不下的資訊要嘛收窄語意讓它恆為真（原子批次）、要嘛在 status 之外建立顯式的補充通道（operation resource、opt-in 的部分失敗結構、idempotency key）—— 而不是把資訊藏進只有一方讀得懂的地方、讓另一端與中介層在不知情下做錯決策。
 

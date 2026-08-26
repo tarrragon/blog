@@ -158,7 +158,7 @@ Change Streams 跟 DynamoDB Streams 都是 managed CDC、但 partition 模型、
 
 ### 何時不用 change streams
 
-單純需要「下游讀到最新狀態、不在意中間每筆變更」、且主庫變更率低、定期 batch export 反而更簡單、不必引入 change stream + Dataflow 的運維成本。對延遲不敏感的分析、走 BigQuery federation 直接查 Spanner（見 sibling）比建 CDC 管線更省。Anti-recommendation 的判準是：若下游不需要「每一筆變更的順序」、只需要「定期最新快照」、CDC 是過度工程。
+單純需要「下游讀到最新狀態、不在意中間每筆變更」、且主庫變更率低、定期 batch export 反而更簡單、不必引入 change stream + Dataflow 的運維成本。對延遲不敏感的分析、走 BigQuery federation 直接查 Spanner（見 sibling）比建 CDC 管線更省。Anti-recommendation 的判斷標準是：若下游不需要「每一筆變更的順序」、只需要「定期最新快照」、CDC 是過度工程。
 
 ### Sibling deep articles 路由
 

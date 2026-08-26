@@ -117,7 +117,7 @@ managed 平台採用後的職責邊界重訂可以分四層：
 
 managed 採用後 day-1 治理項目有兩件事：明確界定 grey zone ownership（避免「以為 managed 服務什麼都管了」的心智模型）、把 platform team 心力從 cluster ops 轉到組織轉型紅利（release flow、observability convention、cost governance）。把重新定義職責當 day-2 議題、會錯失組織轉型紅利。
 
-## 選型前判準
+## 選型前判斷標準
 
 平台選型前要先回答：
 

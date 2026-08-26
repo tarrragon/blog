@@ -274,7 +274,7 @@ Cosmos DB case 的讀法是分開看三種壓力：Minecraft Earth 提供 global
 
 Cosmos DB 的反向 sibling 路由用來把 Azure global NoSQL、DynamoDB 與 document migration 分開。若讀者從 DynamoDB 過來，先比較 RU/s、partition key、multi-region conflict 與 API model；若讀者從 MongoDB 過來，先把 API compatibility 當 migration hypothesis，再用 aggregation、index、change stream / Change Feed 行為驗證；若需求其實是 SQL strong consistency，轉到 [Spanner vendor](/backend/01-database/vendors/spanner/) 或 [CockroachDB vendor](/backend/01-database/vendors/cockroachdb/)。
 
-這條路由的判準是 API model 是否已固定。Cosmos DB 的 multi-model 是產品入口，不代表同一套資料可以在多個 API 之間自由切換；partition key、index policy、RU/s 與 consistency level 一旦進 production，就會成為 migration 與成本邊界。
+這條路由的判斷標準是 API model 是否已固定。Cosmos DB 的 multi-model 是產品入口，不代表同一套資料可以在多個 API 之間自由切換；partition key、index policy、RU/s 與 consistency level 一旦進 production，就會成為 migration 與成本邊界。
 
 ## 常見陷阱
 

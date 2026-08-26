@@ -1,7 +1,7 @@
 ---
 title: "可靠性 Vendor 清單"
 date: 2026-05-01
-description: "規劃 CI、壓測、chaos engineering 與 SLO 工具的服務頁撰寫順序與判準"
+description: "規劃 CI、壓測、chaos engineering 與 SLO 工具的服務頁撰寫順序與判斷標準"
 weight: 91
 tags: ["backend", "reliability", "vendor"]
 ---
@@ -57,7 +57,7 @@ tags: ["backend", "reliability", "vendor"]
 | 替代邊界 | CI 平台、09 壓測工具、chaos 平台、SLO tool 的機會成本                           |
 | 操作成本 | runner、secret、artifact、test data、blast radius、experiment approval          |
 | Evidence | workflow run、test report、experiment result、SLO burn、gate decision           |
-| 案例回寫 | Google SRE、Netflix chaos、release gate 與 replay 案例如何提供判準              |
+| 案例回寫 | Google SRE、Netflix chaos、release gate 與 replay 案例如何提供判斷標準          |
 
 ## 服務頁標準章節
 
@@ -122,12 +122,12 @@ SLO 工具按 source 跟運維模式分兩類：**Nobl9** 商業 SaaS / multi-so
 
 ## 撰寫批次
 
-| 批次 | 服務頁                                         | 撰寫目的                                                  |
-| ---- | ---------------------------------------------- | --------------------------------------------------------- |
-| R1   | GitHub Actions / CircleCI                      | 建立 CI gate、artifact 與 approval baseline               |
-| R2   | k6 / Gatling / JMeter / Locust                 | 建立 release gate 視角的 load test 與 regression evidence |
-| R3   | Chaos Mesh / LitmusChaos / Gremlin / Toxiproxy | 建立 fault injection 與 experiment safety 對照            |
-| R4   | Nobl9 / Sloth                                  | 建立 SLO governance、error budget 與 rule generation 判準 |
+| 批次 | 服務頁                                         | 撰寫目的                                                      |
+| ---- | ---------------------------------------------- | ------------------------------------------------------------- |
+| R1   | GitHub Actions / CircleCI                      | 建立 CI gate、artifact 與 approval baseline                   |
+| R2   | k6 / Gatling / JMeter / Locust                 | 建立 release gate 視角的 load test 與 regression evidence     |
+| R3   | Chaos Mesh / LitmusChaos / Gremlin / Toxiproxy | 建立 fault injection 與 experiment safety 對照                |
+| R4   | Nobl9 / Sloth                                  | 建立 SLO governance、error budget 與 rule generation 判斷標準 |
 
 ## 後續候選
 

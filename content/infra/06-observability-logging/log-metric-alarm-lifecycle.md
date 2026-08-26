@@ -133,7 +133,7 @@ resource "aws_iam_role_policy" "oncall_log_read" {
 
 ## metric 與 alarm 設計
 
-Metric 與 alarm 寫進 IaC，目的是讓「資源被建立的同時就帶著它的健康判準」。Alarm 是一份成文約定：哪條 metric、跨多長的評估窗口、超過什麼值要通知誰。把這份約定寫進 code，它就能被 review、被版本控制、被跨環境複用。
+Metric 與 alarm 寫進 IaC，目的是讓「資源被建立的同時就帶著它的健康判斷標準」。Alarm 是一份成文約定：哪條 metric、跨多長的評估窗口、超過什麼值要通知誰。把這份約定寫進 code，它就能被 review、被版本控制、被跨環境複用。
 
 ### 症狀型 vs 成因型告警
 

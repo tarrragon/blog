@@ -42,7 +42,7 @@ Netflix 這個案例在講的是故障注入如何從實驗變成工程制度。
 
 當團隊只在 staging 做演練時，先看測試是否真的碰到生產流量的分布與依賴關係。當問題需要更細的干預時，再往 FIT 這種 request-level fault injection 移動，讓故障落在真正會被客戶碰到的路徑上。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否先寫出 steady state，再設計實驗
 - 能否說清楚 blast radius 與 rollback 條件

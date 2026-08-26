@@ -165,7 +165,7 @@ image 設計的規模判讀，不是每個專案都要做到極致精簡：
 - **直譯型 runtime（PHP / Python / Node）**：需要語言 runtime 在 image 裡，多階段收益較小，重點放在 base image 選擇（slim 版）與 layer 順序。
 - **base image 選型**（沿 musl↔glibc、大小、可 debug 三軸權衡，常見幾類）：alpine（musl，最小但可能有相容性差異，見 [glibc 與 musl](/linux/dotfile/knowledge-cards/glibc-vs-musl/)）、debian-slim / ubuntu（glibc，相容性穩、稍大）、Wolfi / Chainguard（glibc 但極小，瓦解「要小就得選 musl」的取捨）、distroless（無 shell、無套件管理器，攻擊面最小但難 debug）。
 
-判準用 `docker history <image>` 看每層大小定位肥的來源，再決定值不值得為它加 multi-stage。過早為一個內部工具 image 追求極致精簡是浪費。
+判斷標準用 `docker history <image>` 看每層大小定位肥的來源，再決定值不值得為它加 multi-stage。過早為一個內部工具 image 追求極致精簡是浪費。
 
 寫好之後 build 成 image 並跑一次：
 

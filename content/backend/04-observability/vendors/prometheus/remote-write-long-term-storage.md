@@ -94,7 +94,7 @@ global:
 | 對象儲存     | S3 / GCS / Azure Blob                                        | S3 / GCS / Azure Blob / 本地                | S3 / GCS                                            |
 | 成本模型     | 自管 compute + storage；Grafana Cloud 按 active series 計費  | 自管 compute + storage                      | 自管（不推薦新部署）                                |
 
-選擇判準依三個維度排序：
+選擇標準依三個維度排序：
 
 **已經在用 Grafana 生態**（Grafana dashboard、Loki、Tempo）：Mimir 是最自然的選擇，跟 Grafana Stack 的整合最深，Grafana Cloud 可以免管 Mimir。
 
@@ -108,7 +108,7 @@ Cortex 是 Mimir 的前身，新部署不推薦。既有 Cortex 部署可參考 
 
 [Uber M3 案例](/backend/04-observability/cases/uber-m3-metrics-platform-scale/)選擇了自建 M3DB 而非 Mimir / Thanos / Cortex — 原因是 M3DB 在 2018 年啟動時、Mimir 尚未存在、Cortex 還在早期階段、Thanos 也剛開源。M3DB 的設計核心是 namespace-level retention（不同 namespace 不同 retention 跟 resolution）、跟 Uber 的 etcd service discovery 深度整合。
 
-M3 的經驗對後來的三家有直接影響：Mimir 的 per-tenant retention、Thanos 的 downsampling compactor、都能追溯到 M3 先踩過的問題。今天做新部署不需要重走 M3 的路 — Mimir 跟 Thanos 已經成熟。但 M3 案例揭露的設計判準仍然有效：
+M3 的經驗對後來的三家有直接影響：Mimir 的 per-tenant retention、Thanos 的 downsampling compactor、都能追溯到 M3 先踩過的問題。今天做新部署不需要重走 M3 的路 — Mimir 跟 Thanos 已經成熟。但 M3 案例揭露的設計判斷標準仍然有效：
 
 - **跨 cluster 查詢需要 fan-out + dedup**：三家都實作了這個能力，但部署配置跟 dedup 策略各有差異
 - **Downsampling 是長期成本控制的必要手段**：不做 downsampling、90 天 range query 的效能跟成本都不可接受

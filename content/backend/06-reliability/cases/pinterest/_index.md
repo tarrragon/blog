@@ -32,7 +32,7 @@ Pinterest 這個案例在講的是資料密集型服務如何透過 storage migr
 
 當儲存後端需要退役或升級時，重點是如何在搬移過程中維持服務穩定，把資料搬過去只是其中一環。當推薦或搜尋系統吃到熱點流量時，cache 與 capacity 的設計要先保住查詢路徑，再處理最佳化。
 
-## 可操作判準
+## 可操作的判斷標準
 
 - 能否把 storage migration 拆成不中斷的階段
 - 能否指出 hot key 與 thundering herd 的風險位置

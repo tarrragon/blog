@@ -59,6 +59,6 @@ Defensive vocabulary map 的核心概念是用共用詞彙降低跨團隊摩擦�
 - [7.B6 Incident Triage Loop](/backend/07-security-data-protection/blue-team/incident-triage-loop/)
 - [7.BM1 藍隊專業來源卡](/backend/07-security-data-protection/blue-team/materials/professional-sources/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把防守詞彙寫成可交接地圖。輸出至少包含 term、scope、signal、owner、evidence 與 handoff。

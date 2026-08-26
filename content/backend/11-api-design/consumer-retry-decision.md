@@ -6,11 +6,11 @@ weight: 22
 tags: ["backend", "api-design", "error-contract"]
 ---
 
-重試是 consumer 收到錯誤後最頻繁的決策、也是雙向契約裡責任交纏最深的一條：retry 對 consumer 是自保（提高單一請求的表觀成功率）、對 provider 是額外負載 —— 失敗稀少時這筆交換成立、失敗源於過載時、同一個行為變成持續攻擊。這個決策因此分三層、每層的判準不同：單一請求層問「這個錯誤重送安全嗎」、集體層問「大家一起重送會發生什麼」、架構層問「重試這件事該由誰做、配多少預算」。三層的上層框架 —— 兩端期望與成本外部化 —— 在 [11.11 雙向契約](/backend/11-api-design/error-bidirectional-contract/)。
+重試是 consumer 收到錯誤後最頻繁的決策、也是雙向契約裡責任交纏最深的一條：retry 對 consumer 是自保（提高單一請求的表觀成功率）、對 provider 是額外負載 —— 失敗稀少時這筆交換成立、失敗源於過載時、同一個行為變成持續攻擊。這個決策因此分三層、每層的判斷標準不同：單一請求層問「這個錯誤重送安全嗎」、集體層問「大家一起重送會發生什麼」、架構層問「重試這件事該由誰做、配多少預算」。三層的上層框架 —— 兩端期望與成本外部化 —— 在 [11.11 雙向契約](/backend/11-api-design/error-bidirectional-contract/)。
 
 ## 單一請求層：status、method、冪等的合判
 
-「該不該重試」是三個輸入的合判、status 只是其中之一。status 給第一刀：4xx 終態停止重試、5xx 與 429 可重試（分類判準見 [11.4](/backend/11-api-design/error-model-design/)、429 的等待語意見 [11.9](/backend/11-api-design/external-traffic-semantics/)）。method 與冪等給第二刀：可重試的 status 不等於重送安全 —— GET 與 PUT 有冪等承諾、直接重送；POST 沒有、重送可能重複執行、要嘛操作帶 [idempotency key](/backend/knowledge-cards/idempotency-key/)（[11.8](/backend/11-api-design/api-idempotency-design/)）、要嘛先查再送。第三刀是不確定性：502/504 分不出上游「沒收到」還是「執行了」、兩種情況 retry 安全性相反（見 [11.C67](/backend/11-api-design/cases/status-502-504-gateway-ambiguity/)）—— 判讀規則是「不確定就當作做了」、非冪等又沒帶 key 的操作、重送前先查狀態。
+「該不該重試」是三個輸入的合判、status 只是其中之一。status 給第一刀：4xx 終態停止重試、5xx 與 429 可重試（分類判斷標準見 [11.4](/backend/11-api-design/error-model-design/)、429 的等待語意見 [11.9](/backend/11-api-design/external-traffic-semantics/)）。method 與冪等給第二刀：可重試的 status 不等於重送安全 —— GET 與 PUT 有冪等承諾、直接重送；POST 沒有、重送可能重複執行、要嘛操作帶 [idempotency key](/backend/knowledge-cards/idempotency-key/)（[11.8](/backend/11-api-design/api-idempotency-design/)）、要嘛先查再送。第三刀是不確定性：502/504 分不出上游「沒收到」還是「執行了」、兩種情況 retry 安全性相反（見 [11.C67](/backend/11-api-design/cases/status-502-504-gateway-ambiguity/)）—— 判讀規則是「不確定就當作做了」、非冪等又沒帶 key 的操作、重送前先查狀態。
 
 這一層的 provider 義務對應存在：用不同的 code 把可重試與不可重試分開（Google SRE Book 的明文建議、見 [11.C69](/backend/11-api-design/cases/retry-sre-book-cascading-failures/)）、Retry-After 說到做到（見 11.9）。provider 標示含糊、consumer 的合判就從第一刀開始就錯。
 
@@ -18,7 +18,7 @@ tags: ["backend", "api-design", "error-contract"]
 
 單一 consumer 的合理重試、乘上所有 consumer 就變質。兩個機制疊加：第一是 retry 放大 —— 100 QPS 的失敗、每個都重試一次就變 200 QPS、再放大成 300 QPS、「fewer and fewer requests are able to succeed on their first attempt」（SRE Book 原文、見 C69）；第二是同步波 —— 所有 client 用相同的 [exponential backoff](/backend/knowledge-cards/exponential-backoff/)、退避後會在同一時刻一起回來、每一波都是對 provider 的同步衝擊。
 
-去同步是 consumer 的集體契約責任。Marc Brooker 的實測給了量化根據（模擬情境是 OCC（樂觀並發控制）寫入競爭、非 HTTP retry、結論可遷移）：N 個 client 競爭時總工作量隨 N² 成長、無 jitter 的純 exponential backoff 是「the clear loser」、100 個競爭 client 下加 jitter 讓呼叫量減半以上、Full Jitter（`sleep = random(0, min(cap, base * 2^attempt))`）總工作量最少（見 [11.C68](/backend/11-api-design/cases/retry-brooker-backoff-jitter/)）。判準很直接：backoff 解決「等多久」、[jitter](/backend/knowledge-cards/jitter/) 解決「別一起回來」—— 兩者都是 consumer 對 provider 的義務、不是可選優化。
+去同步是 consumer 的集體契約責任。Marc Brooker 的實測給了量化根據（模擬情境是 OCC（樂觀並發控制）寫入競爭、非 HTTP retry、結論可遷移）：N 個 client 競爭時總工作量隨 N² 成長、無 jitter 的純 exponential backoff 是「the clear loser」、100 個競爭 client 下加 jitter 讓呼叫量減半以上、Full Jitter（`sleep = random(0, min(cap, base * 2^attempt))`）總工作量最少（見 [11.C68](/backend/11-api-design/cases/retry-brooker-backoff-jitter/)）。判斷標準很直接：backoff 解決「等多久」、[jitter](/backend/knowledge-cards/jitter/) 解決「別一起回來」—— 兩者都是 consumer 對 provider 的義務、不是可選優化。
 
 放大失控的終點是 [retry 風暴](/backend/knowledge-cards/retry-storm/)。AWS 官方定義：「the network can quickly become saturated with new and retried requests… This can result in a retry storm」（見 [11.C72](/backend/11-api-design/cases/retry-aws-guidance-budget/)）。代表案例是 DynamoDB 2015 事故：metadata 服務過載後、逾時的 storage server 自我下線再重試、錯誤率推到 55%、且風暴成形後系統不自癒 —— 復原靠人工暫停請求讓 provider 喘息（見 [11.C70](/backend/11-api-design/cases/retry-dynamodb-2015-storm/)）。這個案例的 consumer 是 AWS 自己的內部元件：retry 變攻擊是任何 caller 的結構性行為、不是外部用戶不守規矩。
 

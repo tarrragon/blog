@@ -14,7 +14,7 @@ Gross 重建語意漂移路徑：XML-RPC / SOAP 時代、JSON 取代 XML（但 J
 
 ## 判讀
 
-關鍵教學判準：「REST 的 self-describing 特性是為 uniform client（瀏覽器）設計、machine-to-machine 的 JSON client 用不上」— 這條是復興派與 pragmatic 派唯一共識的觀察、兩派從它推出相反結論、適合當章節的對照樞紐。
+關鍵教學判斷標準：「REST 的 self-describing 特性是為 uniform client（瀏覽器）設計、machine-to-machine 的 JSON client 用不上」— 這條是復興派與 pragmatic 派唯一共識的觀察、兩派從它推出相反結論、適合當章節的對照樞紐。
 
 ## 對應大綱
 

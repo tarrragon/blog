@@ -6,7 +6,7 @@ weight: 10
 tags: ["backend", "api-design", "governance"]
 ---
 
-API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十個團隊的 API 長得像同一家公司出的、靠的是組織機制。本章比較三種有公開一手資料的治理模式、再看規範落地的工具層與失敗的成因。前面各章的判準（風格、錯誤、版本、冪等）都要靠這一層才能從「某個團隊的好品味」變成「組織的預設」。
+API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十個團隊的 API 長得像同一家公司出的、靠的是組織機制。本章比較三種有公開一手資料的治理模式、再看規範落地的工具層與失敗的成因。前面各章的判斷標準（風格、錯誤、版本、冪等）都要靠這一層才能從「某個團隊的好品味」變成「組織的預設」。
 
 ## 治理模式三型
 
@@ -34,7 +34,7 @@ API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十�
 
 ## 採現成標準、還是自建規範
 
-治理的另一個選項是直接採跨組織標準、讓別人維護規範。JSON:API 的價值主張就放在這 —「stop the bikeshedding」、用現成慣例消除團隊內的格式爭論（見 [11.C50](/backend/11-api-design/cases/standards-jsonapi-antibikeshedding/)）。反面的量尺是 OData：OASIS 標準加 ISO 認證、生態仍萎縮、Netflix 與 eBay 離場（見 [11.C51](/backend/11-api-design/cases/standards-odata-decline/)、反例、退場分析屬二手來源）— 標準機構背書不能替代生態動能、採標準前看的是 marquee adopter 與工具鏈、而非認證章。務實的中間路線是「採描述格式標準、自建設計規範」：OpenAPI 描述介面、AsyncAPI 補事件面（兩者的生態關係見 [11.C52](/backend/11-api-design/cases/standards-openapi-initiative-evolution/) 與 [11.C53](/backend/11-api-design/cases/standards-asyncapi-complement/)）、設計判準寫成自家 guidelines 配 Spectral ruleset。採現成標準 vs 自建規範的完整選型判準、以及描述格式的選型、收在 [standards 流派層](/backend/11-api-design/styles/standards/)。
+治理的另一個選項是直接採跨組織標準、讓別人維護規範。JSON:API 的價值主張就放在這 —「stop the bikeshedding」、用現成慣例消除團隊內的格式爭論（見 [11.C50](/backend/11-api-design/cases/standards-jsonapi-antibikeshedding/)）。反面的量尺是 OData：OASIS 標準加 ISO 認證、生態仍萎縮、Netflix 與 eBay 離場（見 [11.C51](/backend/11-api-design/cases/standards-odata-decline/)、反例、退場分析屬二手來源）— 標準機構背書不能替代生態動能、採標準前看的是 marquee adopter 與工具鏈、而非認證章。務實的中間路線是「採描述格式標準、自建設計規範」：OpenAPI 描述介面、AsyncAPI 補事件面（兩者的生態關係見 [11.C52](/backend/11-api-design/cases/standards-openapi-initiative-evolution/) 與 [11.C53](/backend/11-api-design/cases/standards-asyncapi-complement/)）、設計判斷標準寫成自家 guidelines 配 Spectral ruleset。採現成標準 vs 自建規範的完整選型標準、以及描述格式的選型、收在 [standards 流派層](/backend/11-api-design/styles/standards/)。
 
 ## 判讀訊號
 
@@ -50,5 +50,5 @@ API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十�
 ## 下一步路由
 
 - 相容性檢查的工具細節：[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
-- 各章判準是治理的內容物：從 [11.1](/backend/11-api-design/api-boundary-responsibility/) 依序讀
+- 各章判斷標準是治理的內容物：從 [11.1](/backend/11-api-design/api-boundary-responsibility/) 依序讀
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

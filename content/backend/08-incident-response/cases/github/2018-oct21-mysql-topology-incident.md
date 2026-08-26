@@ -34,12 +34,12 @@ GitHub 在 2018-10-21 22:52 UTC 因例行網路設備維護引發 network partit
 
 ## 可回寫控制面
 
-| 控制面                             | 這次事故暴露的缺口                 | 回寫方向                                               |
-| ---------------------------------- | ---------------------------------- | ------------------------------------------------------ |
-| Cross-DC replication guardrail     | partition 後拓撲變更過快           | 增加拓撲變更保護與人工切換門檻                         |
-| Consistency-first decision path    | 可用性與一致性取捨缺標準化準則     | 在 decision log 固定記錄 fail-forward / fail-back 判準 |
-| Backlog recovery strategy          | webhook / Pages 積壓恢復節奏缺共識 | 將 backlog drain 納入 recovery completion 定義         |
-| Incident communication granularity | 只用單一顏色狀態無法表達部分恢復   | 對外更新按子服務與恢復階段拆分                         |
+| 控制面                             | 這次事故暴露的缺口                 | 回寫方向                                                   |
+| ---------------------------------- | ---------------------------------- | ---------------------------------------------------------- |
+| Cross-DC replication guardrail     | partition 後拓撲變更過快           | 增加拓撲變更保護與人工切換門檻                             |
+| Consistency-first decision path    | 可用性與一致性取捨缺標準化準則     | 在 decision log 固定記錄 fail-forward / fail-back 判斷標準 |
+| Backlog recovery strategy          | webhook / Pages 積壓恢復節奏缺共識 | 將 backlog drain 納入 recovery completion 定義             |
+| Incident communication granularity | 只用單一顏色狀態無法表達部分恢復   | 對外更新按子服務與恢復階段拆分                             |
 
 ## 下一步路由
 

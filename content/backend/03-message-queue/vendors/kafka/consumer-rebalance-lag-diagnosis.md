@@ -48,7 +48,7 @@ GROUP    ASSIGNMENT-STRATEGY  STATE    #MEMBERS
 coop-cg  cooperative-sticky   Stable   1
 ```
 
-選 protocol 的判準是 group 規模與消費中斷的容忍度：
+選 protocol 的判斷標準是 group 規模與消費中斷的容忍度：
 
 | Protocol                | revoke 範圍      | rebalance 期間消費    | 適用                                     |
 | ----------------------- | ---------------- | --------------------- | ---------------------------------------- |
@@ -137,7 +137,7 @@ Lag 均勻分布在所有 partition，代表 consumer group 整體消費速度�
 
 Lag 集中在少數 partition、其餘 partition lag 接近零，代表負載不均，根因通常在 key 分布。Producer 用 key 決定 partition（`hash(key) % partition_count`），如果某些 key 是熱點（例如某個大客戶的 id、某個 null key 全落同一 partition），對應 partition 的訊息量遠高於其他，負責它的 consumer 再快也追不上，而其他 consumer 閒著。加 consumer 不解決這個問題，因為瓶頸 partition 仍只能被一個 consumer 消費。修法在 key 設計：拆熱點 key、加 salt 打散、或對熱點走獨立 topic。
 
-Airbnb 的 logging pipeline 遇到的正是 partition 層 skew：event size 從幾百 bytes 到幾百 KB、QPS 跨數個量級，Spark 一個 partition 對一個 task，造成 data skew，catch-up 一個 4 小時 lag 要再花 4 小時（[3.C15](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/)）。它的解法揭露一個關鍵判準：partition 數不該等同 consumer parallelism。當 lag 集中在少數重 partition，加 consumer 受限於 partition 數的天花板無效，要把 parallelism 從 partition 數解耦、按 event volume × size 重新分派 work。這把「lag 集中」的診斷從 key 分布延伸到了 work 分派模型本身。
+Airbnb 的 logging pipeline 遇到的正是 partition 層 skew：event size 從幾百 bytes 到幾百 KB、QPS 跨數個量級，Spark 一個 partition 對一個 task，造成 data skew，catch-up 一個 4 小時 lag 要再花 4 小時（[3.C15](/backend/03-message-queue/cases/kafka-airbnb-spark-streaming-rebalance/)）。它的解法揭露一個關鍵判斷標準：partition 數不該等同 consumer parallelism。當 lag 集中在少數重 partition，加 consumer 受限於 partition 數的天花板無效，要把 parallelism 從 partition 數解耦、按 event volume × size 重新分派 work。這把「lag 集中」的診斷從 key 分布延伸到了 work 分派模型本身。
 
 | Lag 分布形狀                | 根因方向                 | 修法                                           | 加 consumer 是否有效          |
 | --------------------------- | ------------------------ | ---------------------------------------------- | ----------------------------- |
@@ -203,7 +203,7 @@ Walmart 在 25K+ consumer 規模下，正是 pod scaling / deploy / heartbeat fa
 2. 接受 scale-to-zero 的冷啟動 lag 為設計取捨：minReplicaCount=0 省下 idle 成本，代價是流量回來時的 catch-up 窗口，對非即時 sink 可接受。
 3. 設 lag 閾值與擴容步長：閾值太高 catch-up 久、太低頻繁擴縮，依 SLA 對 backlog 的容忍度設定。
 
-Trivago 跨 3 region 跑 50+ Kafka sink、每個 always-on 用 1 CPU + 1 GB，CPU/mem autoscaling 對 I/O-bound sink 無效；改用 KEDA 以 consumer lag 為 scaling signal、minReplicaCount=0 達到 scale-to-zero，daily replica-hour 從 50 降到 1-2（[3.C22](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/)）。這個案例的判準是 resource usage 不等於工作量，event-driven 場景該看 backlog signal。
+Trivago 跨 3 region 跑 50+ Kafka sink、每個 always-on 用 1 CPU + 1 GB，CPU/mem autoscaling 對 I/O-bound sink 無效；改用 KEDA 以 consumer lag 為 scaling signal、minReplicaCount=0 達到 scale-to-zero，daily replica-hour 從 50 降到 1-2（[3.C22](/backend/03-message-queue/cases/kafka-trivago-keda-scale-to-zero/)）。這個案例的判斷標準是 resource usage 不等於工作量，event-driven 場景該看 backlog signal。
 
 ## Capacity 與 cost
 

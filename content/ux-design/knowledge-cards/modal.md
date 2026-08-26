@@ -11,7 +11,7 @@ Modal 的核心概念是「UI 元素阻斷背景互動，使用者必須回應�
 
 ## 概念位置
 
-Modal 是跨元件的行為屬性，不是特定元件。Dialog 永遠是 modal — 它的設計目的就是阻斷流程、強制回應。Bottom Sheet 可以是 modal（有遮罩、阻斷背景）也可以是 non-modal（與背景內容並存、使用者可切換注意力）。Banner 和 SnackBar 永遠是 non-modal — 它們出現時使用者仍可操作其他功能。這個區分決定了通知形式的干擾程度（[通知模式選擇](/ux-design/06-interaction-feedback/notification-pattern-selection/)的二軸判準之一）。
+Modal 是跨元件的行為屬性，不是特定元件。Dialog 永遠是 modal — 它的設計目的就是阻斷流程、強制回應。Bottom Sheet 可以是 modal（有遮罩、阻斷背景）也可以是 non-modal（與背景內容並存、使用者可切換注意力）。Banner 和 SnackBar 永遠是 non-modal — 它們出現時使用者仍可操作其他功能。這個區分決定了通知形式的干擾程度（[通知模式選擇](/ux-design/06-interaction-feedback/notification-pattern-selection/)的二軸判斷標準之一）。
 
 和 [Gate](/ux-design/knowledge-cards/gate/) 互補：Gate 管流程層的阻斷（使用者必須通過關卡才能進入某個功能），Modal 管 UI 層的阻斷（使用者必須回應當前元素才能操作其他 UI）。Gate 失敗時的 fallback 設計可能用 modal Dialog 呈現（「認證失敗，請重試或返回」），兩者在這裡交會。
 

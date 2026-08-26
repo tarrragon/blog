@@ -73,6 +73,6 @@ Defender pressure 的核心概念是辨識防守成本集中點。壓力模型�
 - [7.16 從公開事故到工程 Workflow](/backend/07-security-data-protection/incident-case-to-control-workflow/)
 - [7.25 資安成熟度的組織節奏](/backend/07-security-data-protection/security-maturity-organization-cadence/)
 
-## 完稿判準
+## 完稿標準
 
 完稿時要讓讀者能把一個事故壓力轉成改進路由。輸出至少包含壓力分類、控制映射、演練映射、治理映射與回寫位置。

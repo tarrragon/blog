@@ -14,7 +14,7 @@ tags: ["monitoring", "mental-model", "event-classification"]
 - [事件命名規範](/monitoring/01-mental-model/event-naming-convention/) — namespace.action 格式、命名慣例與衝突解決
 - [商業方案的事件類型對應](/monitoring/01-mental-model/commercial-event-mapping/) — Sentry / Crashlytics / GA4 / Datadog RUM 怎麼對應四類事件
 - [從需求推導「該收集哪些事件」](/monitoring/01-mental-model/derive-collection-from-requirements/) — 從業務需求出發、系統性推導收集清單的方法
-- [事件枚舉與補齊檢查](/monitoring/01-mental-model/event-enumeration-method/) — 四類補齊檢查確保事件清單沒有遺漏、粒度判準確保每個事件只記一個事實
+- [事件枚舉與補齊檢查](/monitoring/01-mental-model/event-enumeration-method/) — 四類補齊檢查確保事件清單沒有遺漏、粒度判斷標準確保每個事件只記一個事實
 - [動機驅動的事件設計](/monitoring/01-mental-model/motivation-to-event-mapping/) — Debug / 商業 / 資安 / 效能四個動機各自需要什麼事件
 
 ## 跨分類引用
