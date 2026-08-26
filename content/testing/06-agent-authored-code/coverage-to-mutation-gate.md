@@ -118,4 +118,4 @@ tags: ["testing", "mutation-testing", "coverage", "quality-gate", "ai-generated-
 - 預期值連寫都寫不出來時怎麼辦 → [判準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)
 - 術語卡 → [Mutation Testing](/testing/knowledge-cards/mutation-testing/)
 - 機械約束的代價 → [#278 機械約束買到被量測的那個數字](/report/mechanical-constraints-buy-the-measured-number/)
-- 斷言本身怎麼寫才有鑑別力 → [Assertion 品質三問](/testing/05-test-design-judgment/assertion-quality/)
+- 斷言本身怎麼寫才偵測得到錯誤 → [Assertion 品質三問](/testing/05-test-design-judgment/assertion-quality/)

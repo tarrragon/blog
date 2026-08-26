@@ -29,6 +29,6 @@ tags: ["testing", "property-based-testing", "invariant", "test-oracle"]
 
 ## 設計責任
 
-寫得出來的性質決定了這個測試的射程，所以性質太弱是主要的失效方式。「結果不會是 null」對所有實作都成立，包含錯的那些；把它收緊成「結果的長度等於輸入的長度且每個元素都來自輸入」才開始有鑑別力。判斷方式跟[突變測試](/testing/knowledge-cards/mutation-testing/)一致——問這條性質擋不擋得住某個具體的錯誤寫法。
+寫得出來的性質決定了這個測試的射程，所以性質太弱是主要的失效方式。「結果不會是 null」對所有實作都成立，包含錯的那些；把它收緊成「結果的長度等於輸入的長度且每個元素都來自輸入」才開始有偵測能力。判斷方式跟[突變測試](/testing/knowledge-cards/mutation-testing/)一致——問這條性質擋不擋得住某個具體的錯誤寫法。
 
 生成器要跟著資料的真實形狀走。預設生成器產出的字串多半是短的隨機字元，而實際輸入可能有多位元組字元、前後空白與極長的內容；生成器沒有涵蓋的形狀，性質再強也驗不到，這與 [test data 代表性](/testing/05-test-design-judgment/test-data-representativeness/)是同一個問題。連性質都難以陳述時，判準要再退一層到[變形關係](/testing/knowledge-cards/metamorphic-testing/)。
