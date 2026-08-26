@@ -90,3 +90,5 @@ slug: "term-probe-measures-register-not-invention"
 [#267 關鍵字清單只收違規義項佔多數的詞](/report/keyword-list-needs-dominant-violating-sense/) 管的是探針的產出往 grep 清單走的那一段。本卡新增的候選要先過它的入選判斷才進清單——「站得住」過了、「站穩」沒過，而兩者是同一次量測抓出來的。
 
 [#149 命中是候選不是判決](/report/keyword-bank-hit-is-candidate-not-verdict/) 的不對稱在這裡以另一個形態出現：探針的回報跟 grep 的命中一樣是候選，中間隔著一個歸因步驟。差別在這裡的歸因要離開稿件去查別的領域，而不是回原文找字串。
+
+[#290 譯者拿得到作者的意圖時，最該被偵測的那一類歧義會被安靜譯對](/report/probe-independence-is-not-transferable/) 是同一個獨立性要求在另一個受測單位上的形態。本卡的對應設計是控制詞（證明分歧可歸因到詞），那裡是脈絡隔離（證明分歧可歸因到文字）。兩者要防的是同一件事：報告上的分歧或收斂，來自受測對象還是來自量測條件。

@@ -85,6 +85,8 @@ find_report_slug() {
       echo "/report/recompute-trigger-must-bind-to-the-changing-event/" ;;
     term-probe-measures-register-not-invention)
       echo "/report/term-probe-measures-register-not-invention/" ;;
+    probe-independence-is-not-transferable)
+      echo "/report/probe-independence-is-not-transferable/" ;;
     risk-asymmetric-audit-standard)
       echo "/report/security-teaching-rigor-asymmetry/" ;;
     *)
