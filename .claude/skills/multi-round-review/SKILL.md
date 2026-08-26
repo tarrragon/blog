@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作�
 license: MIT
 metadata:
   portable: true
-  version: 1.52.0
+  version: 1.52.1
   category: writing-methodology
 ---
 
@@ -327,6 +327,8 @@ frame 清單長到一定程度之後會反覆出現同一個問題——某兩�
 - **把「多輪全過」當成「知識類型對」**：歷輪 finding 全部落在字句與結構層時、「三輪全過」的語意只是「已覆蓋層全過」——斷言支撐與知識類型層若沒有 frame 負責、錯的知識類型（披著教學結構的經驗談）會全數通過。finding 類型分佈本身是訊號：全部集中表面層 = 深層無人在看、下一輪排斷言支撐 frame（per [claim-support frame](references/principles/review-needs-claim-support-frame.md)）
 
 ---
+
+**Version**: 1.52.1 — 上一版新增的段落自己命中否定起手（「要留的不是譯文而是一個問句」把核心概念擠到「而是」之後），改成重點在前
 
 **Version**: 1.52.0 — B⁵ 翻譯探針補上不可讓渡的設計條件（譯者只能拿得到文字）與兩條判讀規則。新增 principle 卡 probe-independence-is-not-transferable：翻譯探針的訊號來自譯者只拿得到文字、這個條件不可讓渡。十份探針對照（指令逐字相同、只差讀到的範圍）結果完全分離——有脈絡的 5/5 譯成作者意圖的讀法且零人標記不確定，無脈絡的 5/5 譯成另一個讀法。推論是「寫作當下同時產出兩種語言互相對照」對最該偵測的那一類全盲，因為會傷到讀者的歧義正好是作者毫無困難就能解決的那一種。判讀另加兩條：譯文通順而原文成分不在裡面要當成命中、「沒有標記不確定」讀成沒有資訊
 
