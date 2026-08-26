@@ -239,6 +239,7 @@
 - [ ] 這次留下的未完成工作已記進模組 `_index.md` 的 `## Backlog` 段、完成的項目已從表中刪除（見 §12）
 - [ ] 步驟 4 的寫作規範掃描實際 invoke 過 `compositional-writing` skill 並留下逐類表，不是憑印象確認（見 §5 關鍵硬性規則）
 - [ ] 跑過多輪審查的稿件、以及規則類文件（本檔 / CLAUDE.md / skill / spec），文字精準度已用低階 model 讀者探針取樣過，回報的每一處讀錯都做完歸因與處置（見 §5 的「理解取樣：低階 model 讀者探針」段與 [#281](/report/comprehension-sampled-not-judged/)）
+- [ ] 稿件裡反覆出現而從未被定義的用詞、以及讀起來偏口語的譬喻，已用術語探針量過（同批含控制詞才採用結果）；判定非通用的詞先列詞形分佈再按義項替換，有英文詞而無可靠中譯的保留英文並連回知識卡（見 §5 的第七種用途與 [#289](/report/term-probe-measures-register-not-invention/)）
 
 ---
 

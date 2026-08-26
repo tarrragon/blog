@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 0.87.0
+  version: 0.87.1
   category: writing-methodology
 ---
 
@@ -276,6 +276,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.87.1 — term-probe 卡補一條前提：詞形分組指令本身要先驗（某些環境的 sort / uniq 在 UTF-8 locale 下把中文字串視為等值、把全部詞形塌成一組並回報一個剛好等於總數的數字，而那個結論正好會讓人用單一替換詞掃全站）
+
 **Version**: 0.87.0 — 新增 principle 卡 term-probe-measures-register-not-invention：一個詞是不是通用術語用多份獨立定義的收斂度量、同批混入控制詞才算數；回答分三類讀（收斂＝通用、各給不同定義而有把握＝一名多義、沒見過＝非通用），而非通用不等於自創。字句層的物理化錯配 grep 收進站得住家族（站穩評估後未收——實際用法多數合規）
 
 **Version**: 0.86.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
