@@ -12,7 +12,7 @@ tags: ["testing", "property-based-testing", "invariant", "test-oracle"]
 
 不變量是比例子更難被實作污染的一種判準。逐例的預期值可以從實作跑一次抄回來，不變量抄不了——它必須從需求推導。這讓性質式測試在測試與實作[出處不獨立](/testing/knowledge-cards/test-provenance/)的情況下保有較多驗證力，而生成器的存在也讓它涵蓋到人不會主動想到的輸入組合。
 
-四類骨幹性質（另有上下界與順序無關兩類，連同適用條件與划算判準在[判準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)）：
+四類約束單一操作內部的性質（另有上下界與順序無關兩類，連同適用條件與划算判準在[判準寫不下來的時候](/testing/06-agent-authored-code/oracle-beyond-examples/)）：
 
 | 類型 | 形式                             | 適用對象                   |
 | ---- | -------------------------------- | -------------------------- |
