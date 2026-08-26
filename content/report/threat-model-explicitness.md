@@ -75,7 +75,7 @@ per-IP rate limit 擋「單來源」連續嘗試（brute force from single host�
 
 ### 對稱不是「補負面」、是「scope 顯式化」
 
-跟 [#94 正向改寫保留對照論據](../positive-rewrite-preserves-contrast/) 同骨：「不防 Y」不是負向陳述、是 mitigation 的 scope qualifier。把 contrast 寫進句子、不是違反「正向陳述優先」、是讓主句的 X claim 站得住。
+跟 [#94 正向改寫保留對照論據](../positive-rewrite-preserves-contrast/) 同骨：「不防 Y」不是負向陳述、是 mitigation 的 scope qualifier。把 contrast 寫進句子、不是違反「正向陳述優先」、是讓主句的 X claim 成立。
 
 | 違反「正向陳述優先」              | 符合「正向陳述優先」 + 對稱 boundary    |
 | --------------------------------- | --------------------------------------- |

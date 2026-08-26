@@ -10,7 +10,7 @@ cogent 形容一個論點清晰、邏輯緊密而有說服力——靠條理和�
 
 ## 語感差異
 
-cogent 靠邏輯服人。convincing 泛指「能說服人」（手段不拘），cogent 特指「條理清楚、推論嚴密」這種訴諸理性的說服力。[compelling](../compelling/) 是情理兼具、強到不由你不信，cogent 則偏重理性上站得住、無懈可擊。學術寫作特別看重論證是否 cogent。
+cogent 靠邏輯服人。convincing 泛指「能說服人」（手段不拘），cogent 特指「條理清楚、推論嚴密」這種訴諸理性的說服力。[compelling](../compelling/) 是情理兼具、強到不由你不信，cogent 則偏重理性上成立、無懈可擊。學術寫作特別看重論證是否 cogent。
 
 ## 字源
 
@@ -19,6 +19,6 @@ cogent 靠邏輯服人。convincing 泛指「能說服人」（手段不拘）�
 ## 搭配與語境
 
 - cogent argument / case（有力的論點）
-- cogent reason（站得住的理由）
+- cogent reason（成立的理由）
 - cogent analysis（條理分明的分析）
 - cogently argued（論證嚴密地）

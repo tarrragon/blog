@@ -3,7 +3,7 @@ title: "XOR 可逆編碼的適用邊界：金鑰隨程式發佈時、擋的是�
 slug: "xor_reversible_encoding_boundary"
 date: 2026-07-27
 draft: false
-description: "決定要不要把憑證編碼後印上 QR Code 或標籤時，用來判斷金鑰隨程式發佈的方案保護到哪裡、以及需要哪些配套才站得住。"
+description: "決定要不要把憑證編碼後印上 QR Code 或標籤時，用來判斷金鑰隨程式發佈的方案保護到哪裡、以及需要哪些配套才成立。"
 tags: ["security", "encoding", "xor", "dart", "qrcode", "threat-model"]
 ---
 

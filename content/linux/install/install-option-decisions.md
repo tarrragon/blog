@@ -85,7 +85,7 @@ swap 還有形態的選擇，這裡用分區 swap 是因為在安裝程式階段
 
 GRUB 的容錯來自它（以 removable 模式安裝時）多寫了一份。除了 NVRAM 開機項，`grub-install --removable` 會在 ESP 的標準 fallback 路徑（aarch64 是 `\EFI\BOOT\BOOTAA64.EFI`）也放一份，就算 NVRAM 開機項丟了，韌體仍會從 fallback 路徑找到 GRUB；VM 環境的安裝程式通常以這個模式裝 GRUB，正是看上這層保險。它還附帶一個開機選單，當 kernel 或 initramfs 出問題時，可以進選單救援、加開機參數除錯——演練時的容錯空間大很多。
 
-判讀軸是環境的 NVRAM 可靠度。在 NVRAM 穩定的實體機上，EFISTUB 的極簡是漂亮的選擇；在 NVRAM 可能不穩的 VM 上，可靠性優先，GRUB 的「多寫一份 fallback + 救援選單」更穩妥。GRUB 不是唯一的可靠選擇——systemd-boot 同樣是有開機選單、能裝到 fallback 路徑的獨立 bootloader，又比 GRUB 輕，在 VM / 單系統同樣站得住；這裡落在 GRUB 是因為 archboot 安裝程式預設以 removable 模式裝它，不是 GRUB 獨佔可靠性。GRUB 自己的設定檔在 VM 上用預設值即可，不需要額外的 kernel 參數。
+判讀軸是環境的 NVRAM 可靠度。在 NVRAM 穩定的實體機上，EFISTUB 的極簡是漂亮的選擇；在 NVRAM 可能不穩的 VM 上，可靠性優先，GRUB 的「多寫一份 fallback + 救援選單」更穩妥。GRUB 不是唯一的可靠選擇——systemd-boot 同樣是有開機選單、能裝到 fallback 路徑的獨立 bootloader，又比 GRUB 輕，在 VM / 單系統同樣適用；這裡落在 GRUB 是因為 archboot 安裝程式預設以 removable 模式裝它，不是 GRUB 獨佔可靠性。GRUB 自己的設定檔在 VM 上用預設值即可，不需要額外的 kernel 參數。
 
 ## 下一步
 

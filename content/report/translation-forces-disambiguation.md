@@ -83,6 +83,8 @@ slug: "translation-forces-disambiguation"
 | [#279 句子成分缺失會被讀成脈絡不足](/report/missing-constituents-read-as-missing-context/) | 成分缺失在翻譯時被強制補齊（英文要求主詞），譯者補了哪些字就是原文缺了哪些成分——那卡的分流判斷標準在這裡有了可直接讀出的證據                                                             |
 | [#114 multi-pass frame 顆粒度盲點](/report/multi-pass-review-frame-granularity-blindspot/) | 新增一條軸：不是換 reviewer、不是換問題，是**換輸出的語言**——語法差異本身當偵測器，這條軸與既有各軸正交                                                                                  |
 
+[#289 一個詞是不是通用術語，用多份獨立定義的收斂度量](/report/term-probe-measures-register-not-invention/) 是同一個家族的另一個成員，機制相同而施力點不同：那裡靠換提問對象逼出作者已經失去陌生感的詞，本卡靠換輸出語言逼出中文允許不決定的語法項。兩者都用份與份之間的分歧當訊號，也都需要一個東西先證明分歧可歸因——本卡是命題層要先收斂，那裡是同批要混入控制詞。
+
 ## 判讀徵兆
 
 - 稿件已通過理解探針與多輪審查，而使用者或冷讀者仍指出個別詞句「說不清楚」——命題層已收斂、剩下的在詞與語法層，這個 frame 是對的工具。

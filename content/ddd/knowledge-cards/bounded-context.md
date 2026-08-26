@@ -2,7 +2,7 @@
 title: "Bounded Context"
 tags: ["bounded-context", "aggregate-root", "domain-event"]
 date: 2026-07-20
-description: "同一套架構判斷標準跨到另一個服務還站不站得住？bounded context 是模型與詞彙保持一致的邊界——邊界內的推導在邊界外不必然成立。"
+description: "同一套架構判斷標準跨到另一個服務還成不成立？bounded context 是模型與詞彙保持一致的邊界——邊界內的推導在邊界外不必然成立。"
 weight: 19
 ---
 

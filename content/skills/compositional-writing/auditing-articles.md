@@ -21,7 +21,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 四個情境：
 
 - 對高 stakes 章節（資安 / concurrency / distributed / financial / medical）做 quality gate
-- 把過去寫的高 stakes 文章當素材二次擴寫前、先 audit 老文是否仍站得住
+- 把過去寫的高 stakes 文章當素材二次擴寫前、先 audit 老文是否仍成立
 - Reviewer 視角審稿（自己寫的、別人寫的、AI 寫的高 stakes 內容）
 - 教學 / 文件 ship 前的 final pass、決定 accept / revise / withdraw
 

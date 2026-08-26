@@ -58,5 +58,5 @@ Report 卡的「論述基礎與限制」段承擔兩個功能：告訴讀者 evi
 ## 跟其他抽象層原則的關係
 
 - → [#199 一篇文章只承擔一種功能](/report/single-function-per-article-sop-vs-retrospective/)：本卡的 trigger case；#199 論述基礎段的修改揭露此原則
-- → [#154 教材的重點/總結段是內容發散訊號](/report/summary-section-signals-scattered-prose/)：#154 說「刪掉看正文站不站得住」，本卡的對應操作是「刪掉過程描述看論述基礎段站不站得住」
+- → [#154 教材的重點/總結段是內容發散訊號](/report/summary-section-signals-scattered-prose/)：#154 說「刪掉看正文是否仍自足」，本卡的對應操作是「刪掉過程描述看論述基礎段是否仍自足」
 - → [讀者不需要知道的資訊不該出現在最終文件](/report/reader-does-not-need-to-know/)：過程描述是 meta 資訊、服務作者不服務讀者，同根原則在 report 卡 surface 的體現

@@ -16,7 +16,7 @@ tags: ["flutter", "dart", "exception", "error-handling", "refactoring", "over-en
 
 ## 被砍的東西、跟砍它的理由
 
-舊系統的過度設計是實錘的，重構計畫列的證據都站得住：
+舊系統的過度設計是實錘的，重構計畫列的證據都可靠：
 
 - **雙重系統並存**：兩個目錄各有一個 `app_error.dart`、互相依賴、責任不明
 - **無資訊的欄位**：`StandardError` 是 `BusinessLogicError` 的薄包裝，`businessRule` 欄位永遠是固定值 `'LEGACY_STANDARD_ERROR'`——欄位存在、但永遠同值，等於沒有這個欄位

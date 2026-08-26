@@ -38,9 +38,9 @@ Kafka 的責任邊界是「成為跨系統的事件總線」。它把訊息寫�
 
 Arcjet 的判讀對遷移方向的啟示：當 workload 是低延遲、資料量留在記憶體可承受的範圍、團隊本來就在跑 Redis，Redis Streams 是務實且便宜的選擇；願意自寫 retention 工具就能補上它缺的治理能力。這條路成立時，遷去 Kafka 是用六位數年費跟一整套叢集運維，去換一個現有方案已能覆蓋的需求。
 
-[Bitso](/backend/03-message-queue/cases/redis-streams-bitso-reliable-streams/) 是另一個 Redis Streams 站得住的高壓案例。Bitso 的撮合引擎微服務要扛每秒上千則訊息、亞毫秒延遲、撐住 BTC 價格暴動的尖峰；他們先後評估 Kafka（延遲不符）跟 SQS（vendor lock-in + 延遲）後選 Redis Streams，自建一層 Reliable Streams 抽象封裝 PEL + retry + DLQ，走 idempotent processing 接受重複勝過遺失。Bitso 揭露 Redis Streams 是「資料結構」而非「broker 系統」，可靠性責任在 application 層；但在亞毫秒延遲是硬指標的撮合場景，這個取捨反而讓 Redis Streams 勝過 Kafka。
+[Bitso](/backend/03-message-queue/cases/redis-streams-bitso-reliable-streams/) 是另一個 Redis Streams 適用的高壓案例。Bitso 的撮合引擎微服務要扛每秒上千則訊息、亞毫秒延遲、撐住 BTC 價格暴動的尖峰；他們先後評估 Kafka（延遲不符）跟 SQS（vendor lock-in + 延遲）後選 Redis Streams，自建一層 Reliable Streams 抽象封裝 PEL + retry + DLQ，走 idempotent processing 接受重複勝過遺失。Bitso 揭露 Redis Streams 是「資料結構」而非「broker 系統」，可靠性責任在 application 層；但在亞毫秒延遲是硬指標的撮合場景，這個取捨反而讓 Redis Streams 勝過 Kafka。
 
-兩個案例共同點：當延遲是硬指標、資料量在 RAM 可承受範圍、團隊能自建缺的治理層，Redis Streams 就站得住。遷去 Kafka 的決策該建立在這些前提不再成立之上，而不是建立在 Kafka 更有名之上。
+兩個案例共同點：當延遲是硬指標、資料量在 RAM 可承受範圍、團隊能自建缺的治理層，Redis Streams 就適用。遷去 Kafka 的決策該建立在這些前提不再成立之上，而不是建立在 Kafka 更有名之上。
 
 ## 真正該遷的訊號
 

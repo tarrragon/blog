@@ -44,7 +44,7 @@ Round 3-B steelman reviewer 的檢查項包含「數字 / 閾值有無源頭」�
 
 ### case 3：全部通過本身就是訊號
 
-三輪審查產出的 finding 全部是字句與結構層（負向陳述、cadence 同骨、broken link、enumeration 缺項）。回頭看，「沒有任何一個 finding 質疑斷言站不站得住」這件事本身就該觸發警覺——finding 類型的分佈反映 frame 集合的覆蓋範圍，全部集中在表面層代表深層無人在看。
+三輪審查產出的 finding 全部是字句與結構層（負向陳述、cadence 同骨、broken link、enumeration 缺項）。回頭看，「沒有任何一個 finding 質疑斷言成不成立」這件事本身就該觸發警覺——finding 類型的分佈反映 frame 集合的覆蓋範圍，全部集中在表面層代表深層無人在看。
 
 ---
 

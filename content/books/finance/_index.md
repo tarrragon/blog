@@ -74,7 +74,7 @@ tags: ["books", "reading", "finance", "investing", "accounting"]
 
 書單給選讀判斷，實作與術語在教學系列：商業術語、單位經濟、護城河與估值語言看 [商業概念與策略分析](/business/)，報表判讀與企業體質分析看 [企業財報判讀](/business/financial-analysis/sme-listed-company-financial-analysis/)，併購情境下的財務判斷看 [買方財務能力評估](/business/financial-analysis/ma-buyer-financial-assessment/) 與 [併購引擎型公司的整合效果判讀](/business/financial-analysis/acquisition-driven-integration/)。
 
-反向不成立：教學系列不引用這條線的選書判定，它們的關係是書單指出去、教學系列自己站得住。
+反向不成立：教學系列不引用這條線的選書判定，它們的關係是書單指出去、教學系列本身自足。
 
 ## Backlog
 

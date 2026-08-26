@@ -10,7 +10,7 @@ rigorous 指做法嚴謹、精確、徹底到不留捷徑——每一步都照�
 
 ## 語感差異
 
-rigorous 不放水：規矩嚴（strict）與做得徹底（thorough）它都占，還多一層「方法上站得住、經得起挑剔」。研究經 rigorous scrutiny（嚴格審視）後得出的結論，才配稱 [robust](../robust/)（換個方法檢驗仍成立）。它把 [scrutinize](../scrutinize/)（逐項嚴查）的態度落實成一整套方法。
+rigorous 不放水：規矩嚴（strict）與做得徹底（thorough）它都占，還多一層「方法上嚴謹、經得起挑剔」。研究經 rigorous scrutiny（嚴格審視）後得出的結論，才配稱 [robust](../robust/)（換個方法檢驗仍成立）。它把 [scrutinize](../scrutinize/)（逐項嚴查）的態度落實成一整套方法。
 
 ## 字源
 
