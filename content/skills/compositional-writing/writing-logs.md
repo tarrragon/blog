@@ -5,6 +5,8 @@ description: "compositional-writing reference：log / 錯誤訊息 / 結構化�
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Writing Logs — Log 輸出的組合式寫作指引
+
 本文件為「撰寫 log 輸出」情境的完整寫作指引。Log 的讀者是未來的除錯者（人或 AI），寫作目標是讓讀者在最短時間內理解**發生了什麼、在哪裡、影響什麼**。
 
 > **自包含聲明**：本文件不依賴其他 reference。讀完本文件即可獨立寫出合格 log。

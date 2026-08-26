@@ -5,6 +5,8 @@ description: "compositional-writing reference：對資安 / concurrency / distri
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Auditing Articles：對既有文章跑 reviewer-style audit
+
 對「已寫完的高 stakes 內容」跑學術級 reviewer pass、找出 false sense of security / 對位失效 / context 缺 / citation 過時等 silent gap、輸出 ship-gate tier 化的 audit report。
 
 跟「寫的時候自己跑的 multi-pass review」（[writing-multi-pass-review](/report/writing-multi-pass-review/) 的 stakes-conditional 追加輪 E）共享同一組 dimension、不同 trigger 跟 audience：
@@ -231,7 +233,7 @@ Q4：weakness 在容忍範圍（背景段 / 低 stakes 段、reader 不會直接
 Audit 完成後產出結構化報告——格式比照學術 peer review、但 weakness 對應到 ship gate：
 
 ```text
-# Audit Report：<章節 / 文章 title>
+## Audit Report：<章節 / 文章 title>
 
 ## Summary
 <1-2 句：主要 audit 結論 + 整體 tier>

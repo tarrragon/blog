@@ -5,6 +5,8 @@ description: "compositional-writing reference：把英文材料轉成中文、�
 tags: ["skills", "compositional-writing", "寫作方法論", "translation"]
 ---
 
+## Translation Review
+
 > **本檔位置**：`compositional-writing` 的文章轉譯 / 翻譯 / 術語改寫 reference。
 >
 > **何時讀**：把英文材料轉成中文、把既有文章改寫成另一種語言、整理 AI / 工程 / 方法論術語，或 reviewer 指出「這個翻譯放在句子裡怪怪的」時。

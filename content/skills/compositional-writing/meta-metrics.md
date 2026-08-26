@@ -5,6 +5,8 @@ description: "compositional-writing reference：M1–M5 指標定義、量測方
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Meta — Compositional Writing Quality Metrics
+
 本 reference 定義 compositional-writing Skill 的品質量化驗收方式。寫得好不好是主觀判斷，metric 讓它變成可重複驗證的客觀評估。
 
 > **核心理念**：Metric 是自評工具，不是硬性 KPI。目的是讓「達成/未達成」可被重複驗證，並在 Skill 演化過程中守住設計底線。

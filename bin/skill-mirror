@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# skill-mirror: 把 .claude/skills/<name>/SKILL.md 同步到 content/skills/<name>/skill.md
-# 自動處理：Hugo frontmatter、H1→H2、references/principles/ → /report/ 連結轉換
+# skill-mirror: 把 .claude/skills/<name>/ 同步到 content/skills/<name>/
+#   SKILL.md                → skill.md（產生 Hugo frontmatter）
+#   references/<ref>.md     → <ref>.md（保留鏡像既有的 frontmatter，只換 body）
+# 自動處理：H1→H2、principles/ → /report/ 連結轉換、平輩 reference → /skills/<name>/ route
+#
+# reference 只同步「鏡像已經存在」的那些——建立新鏡像是刻意的動作、要先手動建檔
+# 並寫好 frontmatter（title / date / description / tags），本工具不代為決定那些欄位。
 
 usage() {
   echo "Usage: skill-mirror <skill-name>"
@@ -11,6 +16,10 @@ usage() {
   echo ""
   echo "Reads .claude/skills/<name>/SKILL.md and writes content/skills/<name>/skill.md"
   echo "with Hugo frontmatter and /report/ links (replacing references/principles/)."
+  echo ""
+  echo "Also syncs references/<ref>.md into content/skills/<name>/<ref>.md for every"
+  echo "reference that already has a mirror. Creating a new mirror is a deliberate act:"
+  echo "make the file and write its frontmatter first, then this tool keeps it in sync."
   exit 1
 }
 
@@ -168,13 +177,102 @@ if command -v ./bin/mdtools &>/dev/null; then
   ./bin/mdtools fmt --fix "$TARGET" 2>/dev/null && echo "  fmt applied"
 fi
 
+# --- Step 4: 同步 references/ ---
+# 只處理鏡像已存在的 reference。缺同步機制時這一層會靜默漂移——鏡像落後把源檔的
+# 違規擋在 lint 之外（.claude/skills/ 在 pre-commit 跳過 lint），兩個 surface 因此
+# 可以分岔到結構層而沒有人發現。
+REF_DIR=".claude/skills/${SKILL_NAME}/references"
+ref_synced=0
+ref_skipped=0
+
+if [[ -d "$REF_DIR" ]]; then
+  for ref_src in "$REF_DIR"/*.md; do
+    [[ -f "$ref_src" ]] || continue
+    ref_name=$(basename "$ref_src" .md)
+    ref_target="${TARGET_DIR}/${ref_name}.md"
+
+    if [[ ! -f "$ref_target" ]]; then
+      ref_skipped=$((ref_skipped + 1))
+      continue
+    fi
+
+    # 保留鏡像既有的 frontmatter（title / date / description / tags 是為 blog 讀者寫的）
+    fm_end=$(awk 'NR>1 && /^---$/{print NR; exit}' "$ref_target")
+    if [[ -z "$fm_end" ]]; then
+      echo "  WARN: ${ref_target} 沒有可辨識的 frontmatter — 跳過" >&2
+      ref_skipped=$((ref_skipped + 1))
+      continue
+    fi
+
+    ref_tmp=$(mktemp)
+    head -n "$fm_end" "$ref_target" > "$ref_tmp"
+    echo "" >> "$ref_tmp"
+
+    while IFS= read -r line; do
+      # H1 → H2（與 SKILL.md 路徑一致）
+      if [[ "$line" =~ ^'# '[^#] ]]; then
+        line="#${line}"
+      fi
+
+      # 標了 broken-link-exempt 的行是示範用連結、不是真的指向某個檔，原樣輸出。
+      # 少了這一段會對示範連結發假警告，而假警告會讓真警告被忽略。
+      if echo "$line" | grep -q 'broken-link-exempt'; then
+        echo "$line"
+        continue
+      fi
+
+      # principles/xxx.md（含 ./ 前綴）→ /report/slug/
+      if echo "$line" | grep -qE '(\./)?principles/'; then
+        for slug in $(echo "$line" | grep -oE '(\./)?principles/[a-z0-9_-]+\.md' | sed 's|.*principles/||;s|\.md||'); do
+          report_path=$(find_report_slug "$slug" 2>/dev/null) || true
+          if [[ -n "$report_path" ]]; then
+            line="${line//.\/principles\/${slug}.md/${report_path}}"
+            line="${line//principles\/${slug}.md/${report_path}}"
+          else
+            echo "  WARN: ${ref_name} 引用的 ${slug} 沒有對應 report 卡 — 原樣保留" >&2
+          fi
+        done
+      fi
+
+      # 平輩 reference（含 ./ 前綴與 #anchor）→ /skills/<name>/xxx/
+      if echo "$line" | grep -qE '\]\((\./)?[a-z0-9_-]+\.md(#[^)]*)?\)'; then
+        for sib in $(echo "$line" | grep -oE '\]\((\./)?[a-z0-9_-]+\.md' | sed 's|.*(||;s|\./||;s|\.md||'); do
+          if [[ -f "${TARGET_DIR}/${sib}.md" ]]; then
+            # 取代字串不跳脫斜線——${var//pattern/replacement} 只有 pattern 那半
+            # 需要跳脫，replacement 裡的 \/ 會被原樣輸出成字面反斜線。
+            line="${line//](.\/${sib}.md/](/skills/${SKILL_NAME}/${sib}/}"
+            line="${line//](${sib}.md/](/skills/${SKILL_NAME}/${sib}/}"
+          else
+            echo "  WARN: ${ref_name} 引用的平輩 ${sib} 沒有鏡像 — 原樣保留" >&2
+          fi
+        done
+      fi
+
+      echo "$line"
+    done < "$ref_src" >> "$ref_tmp"
+
+    mv "$ref_tmp" "$ref_target"
+    ref_synced=$((ref_synced + 1))
+  done
+
+  if command -v ./bin/mdtools &>/dev/null && [[ $ref_synced -gt 0 ]]; then
+    ./bin/mdtools fmt --fix "$TARGET_DIR" >/dev/null 2>&1 || true
+  fi
+  echo "  references: ${ref_synced} 份同步、${ref_skipped} 份無鏡像（略過）"
+fi
+
 lines=$(wc -l < "$TARGET" | tr -d ' ')
-remaining=$(grep -c 'references/principles/' "$TARGET" 2>/dev/null || echo 0)
+# 只數真的連結。裸寫在反引號裡的目錄名（散文提及那個路徑）不是待解析的連結，
+# 把它算進來會產生一個永遠不會消失的警告，而長期存在的假警告會讓真警告被忽略。
+# grep -c 在零命中時「既輸出 0 又回傳非零」，配上 `|| echo 0` 會得到兩個 0、
+# 讓後面的算術比較炸掉。改用 `|| true` 讓 grep 自己輸出的 0 留下就好。
+remaining=$(grep -cE '\]\([^)]*references/principles/[a-z0-9_-]+\.md' "$TARGET" 2>/dev/null || true)
+remaining=${remaining:-0}
 
 echo "Done. ${lines} lines written."
 [[ "$remaining" -gt 0 ]] && echo "  WARN: ${remaining} unresolved references/principles/ links remain"
 [[ "$remaining" -eq 0 ]] && echo "  All principle links resolved to /report/"
 echo ""
 echo "Next steps:"
-echo "  git add $TARGET"
+echo "  git add $TARGET_DIR"
 echo "  git commit --no-verify -m 'fix: ${TARGET_DIR} mirror sync v${skill_version}'"

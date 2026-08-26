@@ -5,6 +5,8 @@ description: "compositional-writing reference：新增或修改 Skill reference 
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Reference Authoring Standards
+
 本文件為 compositional-writing Skill 的 reference 撰寫品質規範。適用對象：新增或修改本 Skill 任何 reference 的作者（人類或代理人）。
 
 > **自包含聲明**：閱讀本文件不需要先讀其他 reference。品質驗收 metric（M1-M2）見 `meta-metrics.md`；本文件聚焦「如何寫出符合品質的 reference」。
@@ -95,7 +97,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 **標準骨架**：
 
 ```markdown
-# [Reference 名稱]
+## [Reference 名稱]
 
 [1-3 行情境說明，含適用/不適用聲明]
 

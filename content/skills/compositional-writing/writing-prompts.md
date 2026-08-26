@@ -5,6 +5,8 @@ description: "compositional-writing reference：prompt / Agent 派發 / Ticket C
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Writing Prompts
+
 ## 檔案定位
 
 本檔案為 **`.claude/rules/core/ai-communication-rules.md` 的詳細版庫**（portability-allow: 本 skill 架構性橋接至框架 auto-load 規則，非可攜性違規）。
@@ -63,7 +65,7 @@ Prompt 的「原子單位」是「一個可被驗收的任務」、不是「一�
 **反例**：
 
 ```javascript
-# 違反原子化：三個任務混在一起
+## 違反原子化：三個任務混在一起
 請閱讀檔案 X，找出函式 Y 的測試覆蓋缺口，
 補上缺失的測試，並順便重構重複的 setup 程式碼，
 最後把所有 console.log 改成 logger。
@@ -72,15 +74,15 @@ Prompt 的「原子單位」是「一個可被驗收的任務」、不是「一�
 **正確**（拆為 3 個獨立 prompt 或 3 個明確分段）：
 
 ```javascript
-# 任務 1：分析測試覆蓋缺口
+## 任務 1：分析測試覆蓋缺口
 輸入：檔案 X 的函式 Y
 輸出：未被測試覆蓋的分支清單
 
-# 任務 2：補缺測試
+## 任務 2：補缺測試
 輸入：任務 1 的缺口清單
 輸出：新增的測試案例
 
-# 任務 3：清理（獨立 ticket）
+## 任務 3：清理（獨立 ticket）
 輸入：console.log 位置清單
 輸出：logger 替換後的 diff
 ```
@@ -140,7 +142,7 @@ Prompt 第一句就說清楚「要 AI 做什麼」。AI 讀 prompt 時會根據�
 **反例**：
 
 ```text
-# 意圖埋在後段
+## 意圖埋在後段
 我們的系統最近遇到一些效能問題，昨天 profile 發現
 BookRepository 的 getAll() 呼叫量暴增，估計是 cache 失效。
 我之前試過加 memoization 但沒效果，可能是 key 設計問題。
@@ -150,7 +152,7 @@ BookRepository 的 getAll() 呼叫量暴增，估計是 cache 失效。
 **正確**：
 
 ```text
-# 開頭直述目標
+## 開頭直述目標
 任務：重寫 BookRepository.getAll() 的快取層。
 
 背景（供參考，非必讀）：

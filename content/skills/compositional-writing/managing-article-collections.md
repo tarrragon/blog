@@ -5,6 +5,8 @@ description: "compositional-writing reference：跨多篇相關文章的結構�
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Managing Article Collections — 跨多篇相關文章的結構設計
+
 本文件處理「一個主題累積多篇相關文章後、如何維持可導航、可組合、不發散」的情境。適用於開發檢討集（report folder）、系列 blog post、技術知識庫、產品文件群。
 
 > **自包含聲明**：本文件不依賴其他 reference。讀完即可獨立判斷一個 article collection 該怎麼結構化。

@@ -5,6 +5,8 @@ description: "compositional-writing reference：ticket 欄位、schema frontmatt
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Designing Fields — Ticket / Schema / Configuration Fields
+
 本文件為「設計欄位」情境的完整指引。適用於 ticket 模板、YAML frontmatter、API response、database schema、配置檔案等任何**多欄位結構**的設計。
 
 > **為什麼獨立成篇**：欄位設計的錯誤會被模板放大。一個設計不良的 ticket 模板會產生上百個混淆 ticket、上千則語意空洞的資料。欄位一旦上線就難以撤回，因為後續所有資料都已按此格式寫入。
@@ -53,7 +55,7 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 ### 反例：一個欄位承載兩個維度
 
 ```yaml
-# 錯誤：status 同時表達「進度」和「阻塞原因」
+## 錯誤：status 同時表達「進度」和「阻塞原因」
 status: "in_progress_waiting_for_api_team"
 ```
 
@@ -184,7 +186,7 @@ frontmatter 的值優先讓程式 grep/parse，再由顯示層（UI、報表）�
 一份文件內的欄位應處於**同一抽象層**。混層會讓讀者不知道該看哪個。
 
 ```yaml
-# 錯誤：混抽象層
+## 錯誤：混抽象層
 what: "修 bug"                           # 業務層
 implementationDetail: "修改 auth.py 第 42 行"  # 實作層
 ```
@@ -202,10 +204,10 @@ implementationDetail: "修改 auth.py 第 42 行"  # 實作層
 有限集合的欄位應列出所有合法值：
 
 ```yaml
-# 正確：status 有固定集合
+## 正確：status 有固定集合
 status: in_progress    # 僅限 pending / in_progress / blocked / completed / cancelled
 
-# 錯誤：狀態用自由文字
+## 錯誤：狀態用自由文字
 status: "進行中，但有點卡"
 ```
 
@@ -229,10 +231,10 @@ enum 的三個好處：
 若欄位必須承載複合值，用**穩定的分隔符**讓 regex 可拆。
 
 ```yaml
-# 正確：用 : 分隔方向和目標
+## 正確：用 : 分隔方向和目標
 direction: "to-sibling:ticket-045"
 
-# 錯誤：自由文字
+## 錯誤：自由文字
 direction: "指向兄弟 ticket 045"
 ```
 
@@ -252,23 +254,23 @@ direction: "指向兄弟 ticket 045"
 當同類型但需細分時，用固定前綴而非混在自由文字中。
 
 ```yaml
-# 正確：ID 前綴暗示類別
+## 正確：ID 前綴暗示類別
 id: PROP-042    # proposal (portability-allow: teaching example)
 id: UC-007      # use case
 id: SPEC-012    # spec
 
-# 錯誤：自由文字描述類別
+## 錯誤：自由文字描述類別
 id: "proposal 42"
 ```
 
 ### 日期時間統一 ISO 8601
 
 ```yaml
-# 正確
+## 正確
 createdAt: "2026-04-16"
 startedAt: "2026-04-16T09:30:00+08:00"
 
-# 錯誤
+## 錯誤
 createdAt: "2026/4/16"       # 分隔符不穩
 createdAt: "April 16, 2026"  # 不可排序
 createdAt: "昨天"             # 不可重複解析
@@ -372,7 +374,7 @@ retry:
 **範例（常見混淆）**：
 
 ```yaml
-# 錯誤：單位混亂、命名模糊、enum 變自由文字
+## 錯誤：單位混亂、命名模糊、enum 變自由文字
 db:
   timeout: 10          # 秒？毫秒？
   retry: true          # 布林還是次數？

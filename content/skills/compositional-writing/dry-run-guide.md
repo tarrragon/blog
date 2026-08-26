@@ -5,6 +5,8 @@ description: "compositional-writing reference：Phase 2 dry-run 流程 — 驗�
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Portability Phase 2 Dry-Run Guide
+
 本文件定義 compositional-writing Skill 的 Phase 2 語意層驗收流程。Phase 1 是自動化形式掃描（portability-check.sh），Phase 2 是語意層驗收——驗證一個不熟悉本框架的新使用者，只讀 SKILL.md 和對應 reference 後，能否獨立套用寫作方法論。
 
 > **Phase 2 的核心問題**：形式合規不代表內容可理解。本流程解答「Skill 內容品質是否足以讓陌生讀者自立運作」。

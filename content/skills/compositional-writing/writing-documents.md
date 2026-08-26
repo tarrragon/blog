@@ -5,6 +5,8 @@ description: "compositional-writing reference：worklog、spec、README 等文�
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
+## Writing Documents — Situational Reference
+
 > Situation: You are about to compose any markdown document — worklog, README, spec, methodology, error-pattern record, or ticket — where both human cognitive load and downstream AI token consumption matter.
 
 ## Before You Start: Identify Document Type
@@ -78,12 +80,12 @@ Given many atomic documents, how does a reader find the right one?
 
 <!-- broken-link-exempt: example — the Example column contains literal string samples wrapped in backticks (inline code). Paths like ./validation.md are placeholders, not real links. -->
 
-| Reference type                                            | Format                                 | Example                                                                                                                                                                        |
-| --------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Same-directory sibling                                    | Relative path + intent                 | `See [validation rules](/skills/compositional-writing/validation/) for acceptable field values` <!-- broken-link-exempt: illustrative placeholder path, not a real sibling --> |
-| Cross-directory                                           | Full repo-relative path                | `Detailed flow: rules/decision-tree.md`                                                                                                                                        |
-| External (stable)                                         | URL with context                       | `Anthropic skill spec: https://...`                                                                                                                                            |
-| External (volatile: ticket ID, commit hash, worklog path) | **Allowed only in volatile documents** | Never in spec / methodology / error-pattern content                                                                                                                            |
+| Reference type                                            | Format                                 | Example                                                                                                                                              |
+| --------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Same-directory sibling                                    | Relative path + intent                 | `See [validation rules](./validation.md) for acceptable field values` <!-- broken-link-exempt: illustrative placeholder path, not a real sibling --> |
+| Cross-directory                                           | Full repo-relative path                | `Detailed flow: rules/decision-tree.md`                                                                                                              |
+| External (stable)                                         | URL with context                       | `Anthropic skill spec: https://...`                                                                                                                  |
+| External (volatile: ticket ID, commit hash, worklog path) | **Allowed only in volatile documents** | Never in spec / methodology / error-pattern content                                                                                                  |
 
 > A reference without intent ("see X.md") is a broken signpost. Always say what the reader gains by clicking.
 
