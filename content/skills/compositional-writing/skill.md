@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.87.1
+  version: 0.88.0
   category: writing-methodology
 ---
 
@@ -278,6 +278,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.88.0 — portable 修復：unstated-implementation-premise-under-a-correct-axis 從跨 skill 相對連結改為本 skill 自帶副本；兩份副本裡指向原 skill 專屬卡的連結降級為粗體提及，避免無界的連鎖複製
+
 **Version**: 0.87.1 — term-probe 卡補一條前提：詞形分組指令本身要先驗（某些環境的 sort / uniq 在 UTF-8 locale 下把中文字串視為等值、把全部詞形塌成一組並回報一個剛好等於總數的數字，而那個結論正好會讓人用單一替換詞掃全站）
 
 **Version**: 0.87.0 — 新增 principle 卡 term-probe-measures-register-not-invention：一個詞是不是通用術語用多份獨立定義的收斂度量、同批混入控制詞才算數；回答分三類讀（收斂＝通用、各給不同定義而有把握＝一名多義、沒見過＝非通用），而非通用不等於自創。字句層的物理化錯配 grep 收進站得住家族（站穩評估後未收——實際用法多數合規）
