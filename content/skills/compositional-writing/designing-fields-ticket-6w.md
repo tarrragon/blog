@@ -5,10 +5,10 @@ description: "compositional-writing reference：正確 + 混淆共 12 項的六�
 tags: ["skills", "compositional-writing", "寫作方法論"]
 ---
 
-本文件為 `designing-fields.md` Ticket 六欄位角度解析段的詳細附錄。
+本文件是 `designing-fields.md`「Ticket 六欄位角度解析」一節的詳細附錄。
 每個欄位提供 1 個正確範例 + 1 個常見混淆範例，共 12 項。
 
-> **前置閱讀**：先讀 `designing-fields.md`「六欄位角度總表」，理解六個欄位的角色分工後再閱讀本文件。
+> **前置閱讀**：先讀 `designing-fields.md` 的「六欄位角度總表」，理解六個欄位的角色分工後再閱讀本文件。
 
 ---
 
@@ -293,6 +293,6 @@ acceptance:
 
 ---
 
-**來源**：從 `designing-fields.md` Ticket 六欄位角度解析段獨立拆出，保留全部詳細範例
+**來源**：從 `designing-fields.md`「Ticket 六欄位角度解析」的十二個欄位小節獨立拆出（那些小節現在只存在於本文件），保留全部詳細範例
 **Last Updated**: 2026-04-18
 **Version**: 1.0.0

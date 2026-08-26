@@ -1,7 +1,7 @@
 ---
 title: "T.C8 fire-and-forget 編排讓測試單跑綠、合跑紅"
 date: 2026-07-17
-description: "結帳成功後的收尾動作（列印、狀態清理、資料同步）沒有被 await — 測試斷言與收尾動作賽跑，單獨執行時碰巧贏、整批執行時排程不同就輸；競態本身也揭露了產品的時序特性"
+description: "結帳成功後的收尾動作（列印、狀態清理、資料同步）沒有被 await — 測試斷言與收尾動作賽跑，單獨執行時贏、整批執行時排程不同就輸；競態本身也揭露了產品的時序特性"
 weight: 8
 tags: ["testing", "case-study", "flaky", "async", "race-condition"]
 ---

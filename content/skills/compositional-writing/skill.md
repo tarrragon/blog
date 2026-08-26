@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.89.1
+  version: 0.90.0
   category: writing-methodology
 ---
 
@@ -279,6 +279,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.90.0 — references 的結構與字句整理，由 content/ 鏡像同步時暴露。writing-articles 的 46 處獨立粗體段（**做法**、**正例**、**反例**）改成真標題——粗體當標題會破壞 TOC 與錨點，而鏡像那一側早就是真標題、兩個 surface 已經分岔。designing-fields-ticket-6w 的「§6」與「§6.1–§6.12」這類位置引用改用語意標題（那些編號指向的小節已經搬走、在來源檔裡不存在）。source-to-teaching-analysis 與 writing-code-comments 修三處否定起手。這些違規在源檔存活是因為 .claude/skills/ 在 pre-commit 跳過 lint，而鏡像落後把它們擋在檢查之外
+
 **Version**: 0.89.1 — 上一版新增的段落自己命中否定起手（「要留的不是譯文而是一個問句」把核心概念擠到「而是」之後），改成重點在前
 
 **Version**: 0.89.0 — 新增 principle 卡 probe-independence-is-not-transferable：翻譯探針的訊號來自譯者只拿得到文字、這個條件不可讓渡。十份探針對照（指令逐字相同、只差讀到的範圍）結果完全分離——有脈絡的 5/5 譯成作者意圖的讀法且零人標記不確定，無脈絡的 5/5 譯成另一個讀法。推論是「寫作當下同時產出兩種語言互相對照」對最該偵測的那一類全盲，因為會傷到讀者的歧義正好是作者毫無困難就能解決的那一種。判讀另加兩條：譯文通順而原文成分不在裡面要當成命中、「沒有標記不確定」讀成沒有資訊

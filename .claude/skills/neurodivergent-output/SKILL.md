@@ -140,3 +140,7 @@ Neurodiversity is a spectrum. These rules are defaults, not prescriptions — th
 Two of these profiles — ADHD and autistic — are established diagnoses; demand avoidance (PDA) is not a formal DSM-5 / ICD-11 diagnosis and remains a contested construct within autism research. This skill uses it to shape how a task is phrased, not to assert a clinical fact. The de-imperative framing helps some readers regardless of whether they identify with the PDA label.
 
 This skill distills and integrates three prior single-profile skills: `i-have-adhd` (ayghri, MIT), the autistic-reader counterpart in the same style, and `pda-reframing` (emory, MIT). The reasoning behind each layer — why each rule traces to a cognitive fact, and how the three profiles compose over a shared base — is written up separately in the analysis this skill was distilled from. This file is the operational form of that analysis.
+
+---
+
+**Version**: 1.8.0 — 補記版本紀錄段。此前版本號只存在於 frontmatter 的 `metadata.version`，文末沒有紀錄段，所以 1.8.0 之前的變更內容查不到。
