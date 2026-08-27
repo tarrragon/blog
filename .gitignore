@@ -64,3 +64,9 @@ scripts/mcp-demo/__pycache__/
 .claude/skills/*/.ruff_cache/
 .claude/skills/*/__pycache__/
 .claude/skills/**/__pycache__/
+
+# skill-sync 的 --force 追溯紀錄，不入版控：
+# 繞過可攜性閘門時把違規清單落地在這裡，供事後追查是誰在什麼時候推了什麼。
+# 它是單機紀錄而非共用內容——skill-sync 自己的 EXCLUDE_DIRS 也把 hook-logs/
+# 排除在同步之外，這裡只是讓 repo 跟上同一個認定。
+.claude/hook-logs/
