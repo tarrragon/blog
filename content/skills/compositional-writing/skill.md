@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 0.91.0
+  version: 0.92.0
   category: writing-methodology
 ---
 
@@ -279,6 +279,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.92.0 — 刪掉 `hooks/` 目錄下的 comment-qa-hook.py 與 worklog-format-check.py。兩者在 0.17.0 就宣告移除（職責已由其他機制覆蓋），而檔案留在原地、還進了版控，任何 settings 都沒有註冊它們，所以三份紀錄與現況對不上而沒有人會發現。由一次「為什麼工作區有 hook-logs」的追查暴露：那個目錄底下的空資料夾正是這個 hook 的產物落點。刪除靠 `skill-sync push --prune` 傳播，否則本地刪掉而其他消費端繼續 pull 到它
+
 **Version**: 0.91.0 — dry-run-guide 的 12 處獨立粗體段改成真標題、3 個 code fence 補語言標示——與 0.90.0 對 writing-articles 做的是同一類，由 bin/skill-mirror 擴充成會同步 references 之後才浮現。references 從此有同步機制，不再靠人記得
 
 **Version**: 0.90.0 — references 的結構與字句整理，由 content/ 鏡像同步時暴露。writing-articles 的 46 處獨立粗體段（**做法**、**正例**、**反例**）改成真標題——粗體當標題會破壞 TOC 與錨點，而鏡像那一側早就是真標題、兩個 surface 已經分岔。designing-fields-ticket-6w 的「§6」與「§6.1–§6.12」這類位置引用改用語意標題（那些編號指向的小節已經搬走、在來源檔裡不存在）。source-to-teaching-analysis 與 writing-code-comments 修三處否定起手。這些違規在源檔存活是因為 .claude/skills/ 在 pre-commit 跳過 lint，而鏡像落後把它們擋在檢查之外
