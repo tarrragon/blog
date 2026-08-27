@@ -75,7 +75,7 @@ Tett 另有《穀倉效應2：未來思考》（原書 Anthro-Vision）的繁體
 
 再往外擴會進入決策科學與專案風險，那些分屬 [估算、承諾與決策偏誤](../estimation-decision/)。
 
-這個主題沒查到可以收的公開課，而它是三種成因裡最接近有解的一種——學院有對應的課（MIT Sloan 的 15.871 Introduction to System Dynamics），只是它在 OpenCourseWare 上沒有影片。整條線的供給狀況寫在 [主題書單的公開課段](../#沒查到課的那十個主題理由分三種)。
+這個主題沒查到可以收的公開課，而它是三種成因裡最接近有解的一種——學院有對應的課（MIT Sloan 的 15.871 Introduction to System Dynamics），只是它在 OpenCourseWare 上沒有影片。整條線的供給狀況寫在 [主題書單的公開課段](../#沒查到課的那些主題理由分三種)。
 
 ## 這個主題接到哪裡
 

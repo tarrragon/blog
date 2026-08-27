@@ -39,4 +39,4 @@ Gerald Weinberg 從 Satir 借了這套模型，寫進《Quality Software Managem
 
 ## 要往下讀
 
-Weinberg 的第 3 卷是它在軟體管理裡的完整版本，選讀判斷在 [困難對話與無權限影響力書單](/books/software-management/topics/influence-conversation/)——那一篇也收了處理對話另一端（要對別人說什麼）的書。原始模型出自 Satir 的家族治療著作，那條線本書單沒有涵蓋。
+Weinberg 的第 3 卷是它在軟體管理裡的完整版本，選讀判斷在 [困難對話與無權限影響力書單](/books/software-management/topics/influence-conversation/)——那一篇也收了對話另外兩端的書——要對別人說什麼、以及別人說了之後怎麼接。原始模型出自 Satir 的家族治療著作，那條線本書單沒有涵蓋。
