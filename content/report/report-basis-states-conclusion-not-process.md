@@ -60,3 +60,5 @@ Report 卡的「論述基礎與限制」段承擔兩個功能：告訴讀者 evi
 - → [#199 一篇文章只承擔一種功能](/report/single-function-per-article-sop-vs-retrospective/)：本卡的 trigger case；#199 論述基礎段的修改揭露此原則
 - → [#154 教材的重點/總結段是內容發散訊號](/report/summary-section-signals-scattered-prose/)：#154 說「刪掉看正文是否仍自足」，本卡的對應操作是「刪掉過程描述看論述基礎段是否仍自足」
 - → [讀者不需要知道的資訊不該出現在最終文件](/report/reader-does-not-need-to-know/)：過程描述是 meta 資訊、服務作者不服務讀者，同根原則在 report 卡 surface 的體現
+
+[#293 撰文脈絡以兩種尺度洩漏](/report/authoring-context-leaks-at-two-scales/) 指出本卡處理的是句子層、而且限定在 report 卡的單一欄位上。同一個區分在整篇的組織順序上還有一份——欄位裡的過程敘述刪乾淨之後，章節的排列順序仍然可能是作者走過材料的順序，而那一層沒有關鍵詞可掃。
