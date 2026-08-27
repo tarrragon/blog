@@ -26,7 +26,7 @@ tags: ["books", "reading", "career", "engineering-manager", "retention"]
 
 **[The Fearless Organization](../../topics/culture-safety/)**（Amy Edmondson）處理的是這裡最難自我診斷的問題（概念本身見 [心理安全感](/til/organization/psychological-safety/)）——團隊不講壞消息時，所有回報看起來都正常。它給的介入手段都落在不需要制度配合就做得到的範圍內。書中失敗案例裡「領導者宣稱歡迎壞消息、實際反應卻相反」那一段值得特別對照，那是這個位置最常見的自我誤判。框架本身與證據在主題篇。
 
-**[Radical Candor](../../topics/retention-motivation/)**（Kim Scott）處理回饋這一個動作。新任管理者最常卡在「只關心不挑戰」那個象限，卡住的代價要幾個月後才結算。這本的用途是讓那個狀態在當下被自己認出來，而不是事後回想。四個象限的定義在主題篇。
+**[Radical Candor](../../topics/retention-motivation/)**（Kim Scott）處理回饋這一個動作。新任管理者最常卡在「只關心不挑戰」那個象限，卡住的代價要幾個月後才結算。這本的用途是讓那個狀態在當下被自己認出來，而不是事後回想。四個象限的定義在主題篇。要注意那四格靠讀對方的反應來判定，而判定的刻度以美國科技業為零點——成員成長環境不同時要先校準，做法在 [跨文化協作與行為判讀](../../topics/cross-cultural-collaboration/)。
 
 ## 想往哪裡走
 

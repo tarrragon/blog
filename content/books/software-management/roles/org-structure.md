@@ -24,7 +24,7 @@ tags: ["books", "reading", "career", "engineering-leadership", "organization-des
 
 **[How Big Things Get Done](../../topics/estimation-decision/)**（Flyvbjerg & Gardner）處理的是這個位置躲不掉的承諾問題。它區分的兩個失準來源對這條路線特別重要，因為到這裡的所有估算都經過至少兩層轉述，每一層都有調整它的誘因——分不出手上這個數字失真在哪一層，加再多緩衝也押錯地方。兩個來源各是什麼、為什麼其中一個靠方法修不了，在主題篇。
 
-**[The Fearless Organization](../../topics/culture-safety/)** 在這個位置讀出來的東西，跟直接帶人的人讀到的不同。這裡的問題是**壞消息在兩層轉述中會不會被磨平**——每一層都做了合理的摘要，而合理的摘要累積起來就是失真；自己的團隊敢不敢講是 [對人負責](../people/) 那一篇的題目。
+**[The Fearless Organization](../../topics/culture-safety/)** 在這個位置讀出來的東西，跟直接帶人的人讀到的不同。這裡的問題是**壞消息在兩層轉述中會不會被磨平**（分部之間的制度落差要用可跨國比較的維度來讀，那組維度在 [跨文化協作與行為判讀](../../topics/cross-cultural-collaboration/)）——每一層都做了合理的摘要，而合理的摘要累積起來就是失真；自己的團隊敢不敢講是 [對人負責](../people/) 那一篇的題目。
 
 **[Quality Software Management, Vol. 4](../../topics/team-design/)**（Gerald Weinberg，繁中譯名《溫伯格的軟體管理學：擁抱變革》，四卷各自獨立、不必從第 1 卷讀起）處理推動組織轉變時的人的阻力，是這條路線上唯一一本把抗拒當資訊而不是當障礙的書。完整的性質判定與讀的時機在主題篇。
 
