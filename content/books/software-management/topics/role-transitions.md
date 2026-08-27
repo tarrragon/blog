@@ -12,6 +12,8 @@ tags: ["books", "reading", "career", "engineering-leadership", "staff-engineer"]
 
 預習有一個時間差要注意。位置轉換前讀這些書，能讀到的是那個位置的全貌；真正的判斷標準要等到承擔了責任才長出來。因此比較有效的用法是轉換前讀一次建立預期，等到自己獨立走完一輪那個位置的完整循環（帶完一次績效週期、獨立處理過一次人的問題、或主導完一次跨團隊的交付）之後再讀一次，兩次讀到的東西不同。
 
+先拿哪一本，看要看的是哪一個位置。想知道從工程師到管理者這條路整條長什麼樣，從 [The Manager's Path](#起點是-the-managers-path) 開始，它一層一層寫完。還在個人貢獻者的位置、想先把自己這一層做穩，走 [The Software Engineer's Guidebook](#還在個人貢獻者階段時讀-the-software-engineers-guidebook)。確定不走管理而要往 Staff 走，走 [Staff 工程師的兩本](#要走技術路線而非管理路線時讀-staff-工程師的兩本)。下個月就要開始帶人，走 [The Making of a Manager](#第一次帶人時讀-the-making-of-a-manager)。
+
 ## 起點是 The Manager's Path
 
 Camille Fournier 的《The Manager's Path》一本鋪完整條路徑，涵蓋面在本篇最廣。它從「怎麼被管理」開始，接著是 mentor、tech lead、管理個人、管理團隊、管理多個團隊、管理管理者，最後到資深領導。每章結構相似：這個角色實際在做什麼、常見的失敗模式、怎麼判斷自己準備好進下一層。
