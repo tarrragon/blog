@@ -297,7 +297,7 @@ Deep article（vendor 自身的配置、故障、容量）跟 migration playbook
 
 ## 延伸閱讀
 
-本模組的無指責檢討與事故歸因來自安全科學（航空、太空、醫療）的既有研究。兩個地基概念各自有整理：[心理安全感](/til/organization/psychological-safety/) 決定當事人願不願意說出當時真正發生什麼，[後見之明偏誤](/til/behavior/hindsight-bias/) 決定調查者有沒有能力聽懂他說的，而 [偏差正常化](/til/organization/normalization-of-deviance/) 解釋了那些訊號在當時為什麼真的不明顯。要理解那批理論的來源、以及後見之明偏誤與偏差正常化這兩個機制怎麼被建立起來，看 [事故、歸因與無指責檢討](/books/software-management/topics/incident-blame/) 的選讀；該篇也標出了受監理環境下無指責主張的法律邊界。
+本模組的無指責檢討與事故歸因來自安全科學（航空、太空、醫療）的既有研究。兩個地基概念各自有整理：[心理安全感](/til/organization/psychological-safety/) 決定當事人願不願意說出當時真正發生什麼——而「明知有異狀卻沒有升級」這種事故前的沉默有它自己的動機分型與制度解法，寫在 [發聲、沉默與階層落差](/books/software-management/topics/voice-and-silence/)——[後見之明偏誤](/til/behavior/hindsight-bias/) 決定調查者有沒有能力聽懂他說的，而 [偏差正常化](/til/organization/normalization-of-deviance/) 解釋了那些訊號在當時為什麼真的不明顯。要理解那批理論的來源、以及後見之明偏誤與偏差正常化這兩個機制怎麼被建立起來，看 [事故、歸因與無指責檢討](/books/software-management/topics/incident-blame/) 的選讀；該篇也標出了受監理環境下無指責主張的法律邊界。
 
 ## Tripwire
 
