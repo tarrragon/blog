@@ -97,3 +97,5 @@ slug: "count-update-by-addition-is-not-recount"
 [#247 多次局部正確的修法會合成缺陷](/report/sequential-fixes-compose-into-defects/) 描述的是多次各自正確的修改合成一個新問題。本卡的實例是它的一個子型：每一次計數更新單獨看都做了該做的事，而它們共用同一個省略（不重數），於是錯誤跨批次累積而不是被下一次更新沖掉。
 
 [#293 撰文脈絡以兩種尺度洩漏](/report/authoring-context-leaks-at-two-scales/) 與本卡共用同一個機制在不同對象上：完成的訊號來自最容易驗的那一項——這裡是分項加起來等於總數，那裡是掃描指令降到零命中——而那一項不是會出錯的那一項。
+
+[#294 非互動環境裡，要人停下來看的關卡表現成當機](/report/confirmation-prompt-reads-as-a-hang/) 的旗標不對稱與本卡的驗算不對稱同型：驗總數與驗分項、問「它會不會做我要的」與問「它還會做什麼」，前者都便宜而且都會通過。

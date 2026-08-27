@@ -249,7 +249,6 @@ done | wc -l
 - 遠端版本較新 → diff 審查後決定是否合併（`skill-sync pull` + 本地比對）。
 - 本地版本較高 → 不覆蓋，本地為準。
 - 遠端有新增檔案（原則卡、hooks）→ `skill-sync pull` 取用到本地，再推合併版回遠端。
-- `compositional-writing` 的 `hooks/` 目錄只存在遠端、本地不使用 — 推回時工具會保留。
 
 ### 注意事項
 
