@@ -56,3 +56,11 @@ scripts/mcp-demo/__pycache__/
 # .skill-sync-override 宣告本地內容為刻意客製，兩者皆為單機 bookkeeping。
 .claude/skills/*/.skill-sync-base
 .claude/skills/*/.skill-sync-override
+
+# skill-sync 的執行產物（uv 建的虛擬環境與快取），不入版控：
+# 只有 SKILL.md / pyproject.toml / uv.lock / skill_sync/ / tests/ 是來源
+.claude/skills/*/.venv/
+.claude/skills/*/.pytest_cache/
+.claude/skills/*/.ruff_cache/
+.claude/skills/*/__pycache__/
+.claude/skills/**/__pycache__/
