@@ -72,3 +72,5 @@ slug: "authoring-context-leaks-at-two-scales"
 [#254 寫給帶問題來的讀者、不用演講姿態](/report/write-for-readers-not-audiences/) 處理的是敘事姿態，本卡處理的是組織順序。兩者都源自把作者那一側的東西搬到讀者頁面上，差別在搬的是姿態還是路徑：姿態問題讀起來就不對勁，路徑問題讀起來完全順暢。
 
 [#292 更新一個可數宣稱時，加法不算重算](/report/count-update-by-addition-is-not-recount/) 與本卡共用一個機制：驗算完成的訊號來自最容易驗的那一項（總數自洽、grep 零命中），而它不是會出錯的那一項。
+
+[#294 非互動環境裡，要人停下來看的關卡表現成當機](/report/confirmation-prompt-reads-as-a-hang/) 是同一個機制的另一個方向：本卡講完成訊號來自最容易通過的那條路，那張講阻力被解釋成最容易排除的那個成因。兩者都讓判斷停在第一個合理的解釋上。
