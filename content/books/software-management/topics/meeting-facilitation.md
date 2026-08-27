@@ -10,7 +10,7 @@ tags: ["books", "reading", "facilitation", "decision-making", "meetings"]
 
 三本書對「把人聚在一起想事情」的信任度不同，而那條線是選書的主軸。Kaner 的整套設計建立在群體能一起想；de Bono 認為可以，但要先規定所有人在同一時間只用一種模式；Knapp 的流程把產出環節退回個人，只把評估與收斂留給群體。常見的會議格式各自預設了這條線上的某一點，而那個預設很少被說出來過。
 
-先拿哪一本，看要的是整套設計還是一個明天就能用的動作。要建立引導這件事的完整基礎，從 [Facilitator's Guide to Participatory Decision-Making](#起點是-facilitators-guide-to-participatory-decision-making) 開始，它最厚也最完整。下週的會議就想改掉一件事，走 [六頂思考帽](#要一個當天就能導入的協議時讀六頂思考帽)，一個協議、當天導得進去。已經試過集體發想而結果一再讓人失望，走 [Sprint](#對一群人一起發想存疑時讀-sprint)——它把產出環節退回個人，正面處理那個懷疑。
+先拿哪一本，看要的是整套設計還是一個明天就能用的動作。要建立引導這件事的完整基礎，從 [Facilitator's Guide to Participatory Decision-Making](#起點是-facilitators-guide-to-participatory-decision-making) 開始，它最厚也最完整。下週的會議就想改掉一件事，走 [六頂思考帽](#要一個當天就能導入的協議時讀六頂思考帽)，一個協議、當天導得進去。已經試過集體發想而結果一再讓人失望，走 [Sprint](#對一群人一起發想存疑時讀-sprint)——它把產出環節退回個人，正面處理那個懷疑。不確定自己落在哪一格，就從 [Facilitator's Guide](#起點是-facilitators-guide-to-participatory-decision-making) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 Facilitator's Guide to Participatory Decision-Making
 

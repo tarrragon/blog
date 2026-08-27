@@ -8,7 +8,7 @@ tags: ["books", "reading", "craft", "testing", "tdd"]
 
 這個主題有 [工程技藝書單](../)其他三篇——設計判斷標準、系統架構、改既有的程式——都沒有的特徵：**收錄的書彼此不同意**。測試該寫到什麼粒度、協作對象該不該用 mock 替換、測試該綁在行為上還是結構上——這些問題有兩個互相對立的傳統，而多數讀者是在讀到第二本、發現它跟第一本說法相反的時候，才知道自己一直在照著其中一派做而不知道有另一派。
 
-先拿哪一本，看現在卡在哪裡。還沒有立場、想知道這整件事在吵什麼，從 [Beck 那本](#起點是-kent-beck-的-test-driven-development-by-example) 開始——分歧的起點是他定的，後面幾本都在跟他對話。手上已經有一套測試而它正在造成負擔，跳過立場之爭直接拿 [Khorikov 那本](#要一組可以拿來評分的判斷標準時讀-unit-testing-principles-practices-and-patterns)，那本是拿來逐項打分的。兩種都不是、只想要一套把規格變成測試案例的程序，[Aniche 那本](#要一套推出測試案例的程序時讀-effective-software-testing) 的前置要求最低。
+先拿哪一本，看現在卡在哪裡。還沒有立場、想知道這整件事在吵什麼，從 [Beck 那本](#起點是-kent-beck-的-test-driven-development-by-example) 開始——分歧的起點是他定的，後面幾本都在跟他對話。手上已經有一套測試而它正在造成負擔，跳過立場之爭直接拿 [Khorikov 那本](#要一組可以拿來評分的判斷標準時讀-unit-testing-principles-practices-and-patterns)，那本是拿來逐項打分的。兩種都不是、只想要一套把規格變成測試案例的程序，[Aniche 那本](#要一套推出測試案例的程序時讀-effective-software-testing) 的前置要求最低。不確定自己落在哪一格，就從 [Beck 那本](#起點是-kent-beck-的-test-driven-development-by-example) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 兩種定義的分野本身，在 [Sociable vs Solitary Unit Test](/testing/knowledge-cards/unit-definition-two-schools/) 那張卡。要診斷手上這套測試的邊界畫錯了沒有，讀 [TDD 的兩種做法](/record/behavior-first-tdd-methodology/)——那篇回答「所以我們怎麼做」，本篇回答「該讀哪本、每本代表什麼位置」。
 

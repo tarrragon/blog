@@ -10,7 +10,7 @@ tags: ["books", "reading", "estimation", "risk", "cognitive-bias", "planning"]
 
 把這兩者分開是這個主題的核心價值。多數組織的估算改善措施只處理第一層，於是導入了更精細的估算流程、卻得到同樣失準的數字，因為真正在運作的是第二層。
 
-先拿哪一本，看要處理的是哪一層。承諾一再跳票而想知道別的產業怎麼解，從 [How Big Things Get Done](#起點是-how-big-things-get-done) 開始，它直接處理第二層。手上是一個具體專案、要把風險換算成可以談的數字，走 [Waltzing with Bears](#要處理軟體專案的風險時讀-waltzing-with-bears)。要的是偏誤本身從哪來、以及一份可以長期翻回去查的目錄，走 [Thinking, Fast and Slow](#想理解偏誤的來源時讀-thinking-fast-and-slow)。讀不動長篇文字的走文末的課程段。
+先拿哪一本，看要處理的是哪一層。承諾一再跳票而想知道別的產業怎麼解，從 [How Big Things Get Done](#起點是-how-big-things-get-done) 開始，它直接處理第二層。手上是一個具體專案、要把風險換算成可以談的數字，走 [Waltzing with Bears](#要處理軟體專案的風險時讀-waltzing-with-bears)。要的是偏誤本身從哪來、以及一份可以長期翻回去查的目錄，走 [Thinking, Fast and Slow](#想理解偏誤的來源時讀-thinking-fast-and-slow)。讀不動長篇文字的走文末的課程段。不確定自己落在哪一格，就從 [How Big Things Get Done](#起點是-how-big-things-get-done) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 How Big Things Get Done
 

@@ -10,7 +10,7 @@ tags: ["books", "reading", "devops", "sre", "measurement", "continuous-delivery"
 
 量測本身也在這個主題裡。選錯指標的組織會得到精確衡量的錯誤行為：以程式碼行數衡量產出、以工時衡量投入、以缺陷數衡量品質，每一個都會在幾個月內長出對應的規避行為。
 
-先拿哪一本，看要拿它去做什麼。要一組拿得出去、對方追問時指得回大規模調查的數字，從 [Accelerate](#起點是-accelerate) 開始。已經同意那組結論而卡在怎麼落地，走 [The DevOps Handbook](#要把結論落到操作時讀-the-devops-handbook)。要說服的是還沒有共同語言的人，[鳳凰專案](#門檻最低的一本是鳳凰專案) 的門檻最低，適合整組一起讀。生產環境已經在跑而問題落在維運那一側，走 [Google SRE](#已經在跑生產環境時讀-google-sre)。
+先拿哪一本，看要拿它去做什麼。要一組拿得出去、對方追問時指得回大規模調查的數字，從 [Accelerate](#起點是-accelerate) 開始。已經同意那組結論而卡在怎麼落地，走 [The DevOps Handbook](#要把結論落到操作時讀-the-devops-handbook)。要說服的是還沒有共同語言的人，[鳳凰專案](#門檻最低的一本是鳳凰專案) 的門檻最低，適合整組一起讀。生產環境已經在跑而問題落在維運那一側，走 [Google SRE](#已經在跑生產環境時讀-google-sre)。不確定自己落在哪一格，就從 [Accelerate](#起點是-accelerate) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 Accelerate
 

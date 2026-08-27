@@ -8,7 +8,7 @@ tags: ["books", "reading", "craft", "refactoring", "legacy-code"]
 
 改既有的程式跟寫新的程式是兩種活。寫新的時候形狀由動手的人決定；改既有的時候形狀已經定了，動它的前提是不弄壞任何人依賴的行為。這件事的難度不由程式碼的複雜度決定，由**有沒有辦法知道自己弄壞了什麼**決定——同一段程式，有測試時的改法跟沒測試時的改法完全不同。
 
-先拿哪一本，就看手上那段程式有沒有測試。有測試，從 [Refactoring](#起點是-refactoring) 開始，它給的是一份可以逐項對照的手法目錄。沒有測試而又非動不可，先走 [Working Effectively with Legacy Code](#手上沒有測試時讀-working-effectively-with-legacy-code)——那本處理的正是「怎麼在沒有安全網的情況下先弄出安全網」。改動小到不值得為它開一張工單、只是不確定要不要順手整理，走 [Tidy First?](#要決定現在整理還是之後再說時讀-tidy-first)，一個下午讀得完。
+先拿哪一本，就看手上那段程式有沒有測試。有測試，從 [Refactoring](#起點是-refactoring) 開始，它給的是一份可以逐項對照的手法目錄。沒有測試而又非動不可，先走 [Working Effectively with Legacy Code](#手上沒有測試時讀-working-effectively-with-legacy-code)——那本處理的正是「怎麼在沒有安全網的情況下先弄出安全網」。改動小到不值得為它開一張工單、只是不確定要不要順手整理，走 [Tidy First?](#要決定現在整理還是之後再說時讀-tidy-first)，一個下午讀得完。不確定自己落在哪一格，就從 [Refactoring](#起點是-refactoring) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 Refactoring
 

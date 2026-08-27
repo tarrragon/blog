@@ -10,7 +10,7 @@ tags: ["books", "reading", "craft", "architecture", "trade-off"]
 
 這個主題只有兩本，按有沒有詞彙分：《Fundamentals of Software Architecture》先建立一整套可以用來討論的概念，《Software Architecture: The Hard Parts》再處理那些用了概念仍然沒有標準答案的決定。
 
-所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接走 [The Hard Parts](#已經在拆分而每個選項都有代價時讀-software-architecture-the-hard-parts)。讀不動長篇文字的走文末的課程段，那裡有兩門完整的課接機制那一半。
+所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接走 [The Hard Parts](#已經在拆分而每個選項都有代價時讀-software-architecture-the-hard-parts)。讀不動長篇文字的走文末的課程段，那裡有兩門完整的課接機制那一半。不確定自己落在哪一格，就從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 Fundamentals of Software Architecture
 

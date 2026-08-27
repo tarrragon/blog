@@ -10,7 +10,7 @@ tags: ["books", "reading", "craft", "software-design", "practice"]
 
 三本書的差別在**密度與主張數**，不在誰對誰錯：《The Pragmatic Programmer》列幾十條短原則、《A Philosophy of Software Design》用一條主張貫穿全書、《Code Complete》鋪成百科式的對照表。三本都不預設任何組織條件——判斷標準落在程式碼本身的形狀與個人的動手習慣上，成立與否不取決於有沒有職級制度、成員是不是同一個僱主、大家在不在同一個時區，換了公司照樣讀得動。
 
-先拿哪一本，看手上的問題有多具體。還沒有通盤基礎、要的是一批可以逐條拿走的實踐，從 [The Pragmatic Programmer](#起點是-the-pragmatic-programmer) 開始。手上有一個具體的設計問題想不通——這個模組該怎麼切、這個介面為什麼用起來彆扭——走 [A Philosophy of Software Design](#想把設計問題想清楚時讀-a-philosophy-of-software-design)，它主張集中、篇幅短。要的是一份可以長期翻回去查的對照，才輪到 [Code Complete](#要一份百科式的對照時讀-code-complete)。
+先拿哪一本，看手上的問題有多具體。還沒有通盤基礎、要的是一批可以逐條拿走的實踐，從 [The Pragmatic Programmer](#起點是-the-pragmatic-programmer) 開始。手上有一個具體的設計問題想不通——這個模組該怎麼切、這個介面為什麼用起來彆扭——走 [A Philosophy of Software Design](#想把設計問題想清楚時讀-a-philosophy-of-software-design)，它主張集中、篇幅短。要的是一份可以長期翻回去查的對照，才輪到 [Code Complete](#要一份百科式的對照時讀-code-complete)。不確定自己落在哪一格，就從 [The Pragmatic Programmer](#起點是-the-pragmatic-programmer) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 The Pragmatic Programmer
 

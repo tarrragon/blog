@@ -10,7 +10,7 @@ tags: ["books", "reading", "psychological-safety", "culture", "organizational-le
 
 這個主題的書大多來自軟體業以外——組織行為學、教育學、管理心理學。軟體業自己的書幾乎不處理恐懼與防衛，而這些領域在這一題上累積了三十年以上的實證研究，所以讀的時候要自己做一次轉譯。
 
-先拿哪一本，看現在要做什麼。要建立這個構念本身、並且拿得出實證依據，從 [The Fearless Organization](#起點是-the-fearless-organization) 開始。手上的團隊在東亞、而讀起點書時覺得那些描述對不太上，走 [愈吵愈有競爭力](#想知道這個構念在東亞職場長什麼樣時讀愈吵愈有競爭力)。改善措施已經推過一輪而沒有動靜，走 [Argyris](#想知道為什麼改善措施總是失效時讀-argyris)——它處理的正是為什麼大家都同意卻沒有改變。
+先拿哪一本，看現在要做什麼。要建立這個構念本身、並且拿得出實證依據，從 [The Fearless Organization](#起點是-the-fearless-organization) 開始。手上的團隊在東亞、而讀起點書時覺得那些描述對不太上，走 [愈吵愈有競爭力](#想知道這個構念在東亞職場長什麼樣時讀愈吵愈有競爭力)。改善措施已經推過一輪而沒有動靜，走 [Argyris](#想知道為什麼改善措施總是失效時讀-argyris)——它處理的正是為什麼大家都同意卻沒有改變。不確定自己落在哪一格，就從 [The Fearless Organization](#起點是-the-fearless-organization) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 The Fearless Organization
 
