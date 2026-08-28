@@ -99,3 +99,5 @@ slug: "count-update-by-addition-is-not-recount"
 [#293 撰文脈絡以兩種尺度洩漏](/report/authoring-context-leaks-at-two-scales/) 與本卡共用同一個機制在不同對象上：完成的訊號來自最容易驗的那一項——這裡是分項加起來等於總數，那裡是掃描指令降到零命中——而那一項不是會出錯的那一項。
 
 [#294 非互動環境裡，要人停下來看的關卡表現成當機](/report/confirmation-prompt-reads-as-a-hang/) 的旗標不對稱與本卡的驗算不對稱同型：驗總數與驗分項、問「它會不會做我要的」與問「它還會做什麼」，前者都便宜而且都會通過。
+
+[#295 查不到的反證要換一個維度](../negative-claim-needs-a-second-dimension/) 是同一種自洽假象在查證上的形態：分項加起來剛好等於總數只證明它們出自同一次計算，多個來源一致也只證明它們收到同一組查詢詞。
