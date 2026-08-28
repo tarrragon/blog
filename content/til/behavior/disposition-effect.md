@@ -34,6 +34,6 @@ Terrance Odean 1998 年的〈Are Investors Reluctant to Realize Their Losses?〉
 
 ## 要往下讀
 
-這個效應在期貨部位上有一個具體形態：交易人用反向部位把帳面虧損凍結而不平倉，制度層面實際發生什麼、代價落在哪裡，見[期貨對鎖](/business/case-analyses/futures-locked-position/)。
+這個效應在零售交易上最直接的操作形態是[凹單](/business/retail-instruments/knowledge-cards/letting-losses-run/)——走到原定該認賠的價位而不認賠，繼續持有或繼續加碼，兩種形式都把心理帳戶維持在開啟狀態。期貨部位另有一個繞得更遠的形態：用反向部位把帳面虧損凍結而不平倉，制度層面實際發生什麼、代價落在哪裡，見[期貨對鎖](/business/case-analyses/futures-locked-position/)。
 
 誤判心理的完整清單在 Charlie Munger 的《窮查理的普通常識》，該書在投資書單裡承擔的正是做判斷的人的心理這個主題，選讀說明見[資本配置與投資](/books/finance/investing/)。損失趨避與心理帳戶的理論來源是 Kahneman 與 Tversky 的展望理論，普及版本在 Kahneman 的《Thinking, Fast and Slow》，選讀判斷見[估算、承諾與決策偏誤](/books/software-management/topics/estimation-decision/)。
