@@ -74,3 +74,5 @@ tags: ["business", "retail-instruments", "fraud", "crypto", "taiwan"]
 ## 往下讀
 
 穩定幣的凍結能力與抗審查宣稱之間的矛盾，見[穩定幣想解決什麼、實際解決了什麼](../stablecoin-claims/)。以高年化收益為訴求的產品要查哪些條款，見[加密借貸與收益產品](../crypto-lending-claims/)。通過前兩層之後的工具結構分析，從[成本結構決定期望值](../trading-cost-structure/)開始。
+
+第一層通過代表資金確實進入了市場、成交是真的、部位隨時能賣出。這個價格有多少是由來自同一方的委託單推出來的，是另一個問題，判讀材料在成交量的組成而非資金流向，見[炒作把方向的不確定性換成可預算的成本](../manipulation-as-cost-structure/)。

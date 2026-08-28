@@ -60,3 +60,5 @@ tags: ["business", "retail-instruments", "counterparty", "warrants", "cfd"]
 摩擦成本的量級與計算方式在[成本結構決定期望值](../trading-cost-structure/)。對手方能單方面調整的參數裡，保證金與清算價的影響最直接，見[槓桿把方向與存活拆成兩個條件](../leverage-splits-direction-from-survival/)。
 
 制度怎麼認定一個部位，與交易人自己認為它是什麼，可以完全不同——[期貨對鎖](/business/case-analyses/futures-locked-position/)是這個落差的一個完整實例。
+
+本篇指認的是摩擦流向誰。同一個問題的另一半是有一類參與者除了收取摩擦，還參與製造被拿去判斷的價格與成交量，見[炒作把方向的不確定性換成可預算的成本](../manipulation-as-cost-structure/)。
