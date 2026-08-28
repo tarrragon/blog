@@ -37,6 +37,8 @@ Gerald Weinberg 從 Satir 借了這套模型，寫進《Quality Software Managem
 
 它跟 [後見之明偏誤](../hindsight-bias/) 同屬個人層而作用在不同時點：後見之明偏誤發生在事後重建，這套姿態發生在事情正在進行的當下。
 
+它跟 Kegan 與 Lahey 的四欄地圖重建的對象不同，而兩者都是對自己用的：四種姿態指認一次對話裡丟掉了哪一樣，四欄地圖重建的是一個跨越很多次對話的結構——兩個互相衝突的承諾，加上支撐它的假設。姿態每次對話都要重新問一遍，地圖問出來之後會解釋掉很多次。選讀判斷寫在 [困難對話與無權限影響力](/books/software-management/topics/influence-conversation/)。
+
 ## 要往下讀
 
 Weinberg 的第 3 卷是它在軟體管理裡的完整版本，選讀判斷在 [困難對話與無權限影響力書單](/books/software-management/topics/influence-conversation/)——那一篇也收了對話另外兩端的書——要對別人說什麼、以及別人說了之後怎麼接。原始模型出自 Satir 的家族治療著作，那條線本書單沒有涵蓋。

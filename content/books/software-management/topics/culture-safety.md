@@ -50,10 +50,12 @@ Chris Argyris 的研究方法是逐字記錄組織裡的真實對話再逐句分
 
 那篇 HBR 文章〈Teaching Smart People How to Learn〉是最經濟的入口，十幾頁，主張聰明人特別不擅長學習——因為他們很少失敗、沒有練習過面對失敗，一旦失敗就把責任外推。這個論點描述的處境在高學歷、高能力的工程團隊上有明確對應。
 
-證據來源是跨客戶的顧問經驗，形式特別的地方在方法：長期的組織介入研究加上逐字對話分析，因此細節極具體，但樣本集中在少數顧問公司與大型企業。時效上，案例場景是 1980 年代的管理顧問與董事會，職稱與會議形式已經不同；信奉理論與使用理論的落差建立在人對自我形象的維護上，不依賴那個場景。文字的概念密度高、案例冗長，《Overcoming Organizational Defenses》是書的形式，但多數人從那篇文章得到的已經接近全書。兩者都查不到中譯本。讀得出價值的前提是：親身推動過一次無疾而終的改善——沒有這個對照時，防衛慣例會讀成對組織的譏諷。
+證據來源是跨客戶的顧問經驗，形式特別的地方在方法：長期的組織介入研究加上逐字對話分析，因此細節極具體，但樣本集中在少數顧問公司與大型企業。時效上，案例場景是 1980 年代的管理顧問與董事會，職稱與會議形式已經不同；信奉理論與使用理論的落差建立在人對自我形象的維護上，不依賴那個場景。文字的概念密度高、案例冗長，《Overcoming Organizational Defenses》是書的形式，但多數人從那篇文章得到的已經接近全書。繁體中文版兩者都查不到；《Overcoming Organizational Defenses》有簡體中文版《克服組織防衛》，中國人民大學出版社 2007 年與天津科學技術出版社 2022 年各出過一次。讀得出價值的前提是：親身推動過一次無疾而終的改善——沒有這個對照時，防衛慣例會讀成對組織的譏諷。
 
 - [HBR（Teaching Smart People How to Learn）](https://hbr.org/1991/05/teaching-smart-people-how-to-learn)
 - [Amazon（Overcoming Organizational Defenses: Facilitating Organizational Learning）](https://www.amazon.com/Overcoming-Organizational-Defenses-Facilitating-Learning/dp/0205123384)
+- [三民（克服組織防衛，天津科學技術出版社 2022 年簡體中文版）](https://www.sanmin.com.tw/product/index/010880135)
+- [三民（克服組織防衛，中國人民大學出版社 2007 年簡體中文版）](https://www.sanmin.com.tw/product/index/000798512)
 
 ## 程式碼審查滑向人身攻擊的起源在溫伯格 1971 年的《The Psychology of Computer Programming》
 
