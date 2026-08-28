@@ -203,8 +203,10 @@ done
 6. **commit 到 blog repo**
 7. **推送到 skill repo**：`skill-sync push <name> -m "描述" --force`
 8. **同步鏡像**：`bin/skill-mirror <name>`（自動處理 Hugo frontmatter、H1→H2、連結轉換、fmt）
-9. **commit 鏡像**：`git add content/skills/<name>/skill.md && git commit --no-verify`
+9. **commit 鏡像**：`git add content/skills/<name>/skill.md && git commit`
 10. **push**
+
+步驟 9 若被 pre-commit 的 `cards` 擋下，最可能的成因是步驟 4 漏了——mapping table 沒有對應的 principle slug，鏡像因此留著 `references/principles/` 相對連結而在 `content/` 下解析不到。`bin/skill-mirror` 對這種情形只印 `WARN: N unresolved` 而不中止，所以真正攔下它的是 `cards`。回頭補 mapping、重跑步驟 8。
 
 簡化版（步驟 6-10）：
 
@@ -212,8 +214,8 @@ done
 git add .claude/skills/<name>/ content/report/ && git commit
 skill-sync push <name> -m "vX.Y.Z: 描述" --force
 bin/skill-mirror <name>
-git add content/skills/<name>/skill.md && git commit --no-verify
-git push --no-verify
+git add content/skills/<name>/skill.md && git commit
+git push
 ```
 
 批量推送多個 skill 時逐一執行 `skill-sync push`，不要嘗試手動 clone 遠端 repo 操作。
