@@ -63,6 +63,7 @@ WRAP 框架（Widen Options / Reality Test / Attain Distance / Prepare to be Wro
 | [Claude for Legal 之後](/business/case-analyses/claude-for-legal/)         | 應用層 SaaS 毛利擠壓、新創淘汰、知識工作者 stake 放大 |
 | [FDE 軍備競賽](/business/case-analyses/fde-arms-race/)                     | SaaS 三支柱鬆動、FDE 從可選變結構性被迫               |
 | [CoreWeave 收購 Bufstream](/business/case-analyses/bufstream-acquisition/) | 串流市場整併、算力廠商垂直整合資料基礎設施            |
+| [期貨對鎖](/business/case-analyses/futures-locked-position/)               | 交易慣例宣稱的功能與交易所認定之間的落差              |
 
 企業財務分析與投資評估的系統性教材（16 篇）已獨立為 [企業財務分析與投資評估](/business/financial-analysis/) 領域專題模組。
 
