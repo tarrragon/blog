@@ -84,6 +84,8 @@ blog 累積了 #94 / #147 / #149 一整套 register 審查原則、看起來防�
 
 ## 跟其他抽象層原則的關係
 
+[#296 同一個 session 派出的 reviewer 共用它的盲區](/report/review-scale-does-not-buy-independent-origin/) 把本卡的「同源」畫得更大。本卡談的是作者與他的 reviewer 共享文體直覺，而那張卡指出**一個 session 派出的全部 reviewer 與探針都算同一個來源**——它們拿的是同一個人寫的 prompt、繼承同一個 context 的框架。所以「已經派了幾十個 reviewer」不構成異源已經覆蓋的證據，本卡要求的「標註未經異源抽查」在那種情況下仍然適用。
+
 - **[#149 字句層 review：keyword bank 命中是候選、不是判決](../keyword-bank-hit-is-candidate-not-verdict/)**：#149 揭露「命中後判定會放水」這個現象、本卡是它的上層 —— 揭露放水的根因（判定在品味側、同源自審有結構上限）跟結構解（異源視角、不是更好的判定準則）。#149 的「概念位置判斷標準」是好的判斷標準、但它仍要同源 reviewer 執行品味判斷、本卡指出這一步有上限。
 - **[#147 規範化跟自審是兩種認知任務](../rule-codification-vs-self-audit/)**：#147 講「立規範不等於自審執行」、修法是轉 grep + sweep。本卡補它沒覆蓋的：對 register 違規、grep + sweep 命中了、判定仍跨不過同源盲區。#147 解「自審有沒有做」、本卡解「自審做了、為什麼對 register 仍失效」。
 - **[#82 字面攔截 vs 行為精修](../literal-interception-vs-behavioral-refinement/)**：本卡把 #82 的「字面 vs 行為」推到極限 —— 對 register 違規、連「行為精修」（讀者能不能驗證）都還是品味判斷、需要異源的讀者才感受得到。形式違規停在字面層即可、register 違規連行為層都需要異源。
