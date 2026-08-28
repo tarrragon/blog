@@ -69,7 +69,7 @@ Gerald Weinberg 的《The Secrets of Consulting》處理的是在沒有指揮權
 證據來源是跨客戶的顧問經驗。時效上，影響力的機制部分處理的是被求助者與求助者的關係位置，沒有發現依賴時代條件的部分。處境上，全書預設的僱傭關係是獨立顧問對客戶——收費、合約、什麼時候退出這幾章，對組織內部的技術影響者不適用，因為他退不掉也不收費。試過一次「我明明是對的但沒人動」的人，讀這些法則會覺得精準；沒試過的，會覺得玩世不恭——讀得出價值的前提就在那一次。
 
 - [Amazon（The Secrets of Consulting）](https://www.amazon.com/Secrets-Consulting-Giving-Getting-Successfully/dp/0932633013)
-- [博客來（顧問成功的祕密：有效建議、促成改變的工作智慧，10 週年智慧紀念版）](https://www.books.com.tw/products/0010711585)
+- [博客來（顧問成功的祕密：有效建議、促成改變的工作智慧，10 週年智慧紀念版）](https://www.books.com.tw/products/0011055748)
 
 ## 想看自己在壓力下的反應時讀溫伯格第 3 卷
 
