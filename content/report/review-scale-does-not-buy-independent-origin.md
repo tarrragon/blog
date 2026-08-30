@@ -58,6 +58,7 @@ slug: "review-scale-does-not-buy-independent-origin"
 跟 [#234 用詞要貼合概念的屬性](/report/word-choice-fits-concept-attributes/) 的關係是實例與母題。本卡的兩處實例都落在那張卡描述的錯配類型裡，而本卡不處理怎麼判定錯配，只處理誰判定得出來。
 
 - [#300 查證回報的單位是宣稱，而失效的單位可能是整個框架](../verification-reports-claims-but-failures-are-framed/) 記的是本卡的一次正向應用。把事實查核整批轉派給另一個 session 之後，回報裡有三項是本側跑完多輪審查都沒有動搖過的判斷，其中一項推翻了整篇的軸。轉派買到的不只是視角，還有額度——搜尋額度按執行者計算而不累計，所以耗盡的一方轉派出去，同一批工作仍然做得完。
+- [#301 限制類宣稱的錯誤會自我保存，因為它勸阻的正是唯一能推翻它的那個動作](../capability-limits-suppress-their-own-refutation/) 是本卡的另一次應用。錯誤的限制宣稱對寫下它的人不再可疑（那次失敗是他親眼看到的），而併行的另一個執行者沒有那段記憶、照常去試，於是四則錯誤宣稱是被互相指認出來的，兩個 session 各出兩則。
 
 ## 判讀徵兆
 
