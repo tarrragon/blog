@@ -63,7 +63,13 @@ func TestNegationLeadSkipsQuotedAntiExample(t *testing.T) {
 		{"bare full-width comma fires", "核心責任不是行數，是概念數。", 1},
 		{"bare enumeration comma fires", "核心責任不是行數、是概念數。", 1},
 		{"bare comma inside quotes is exempt", "違規：「核心責任不是行數，是概念數」。", 0},
-		{"causal 是因為 is not a corrected definition", "這樣寫不是為了美觀，是因為讀者會漏看。", 0},
+		// Parallel causes are the canonical shape, not an exemption: the
+		// point (讀者會漏看) sits behind 是因為. An earlier version excluded
+		// 因 on the Y side and silently dropped ten of these.
+		{"parallel causes fire", "這樣寫不是為了美觀，是因為讀者會漏看。", 1},
+		{"parallel 因為 clauses fire", "不是因為 attention、是因為 residual 讓深層仍收斂。", 1},
+		{"trailing negation with 而不是 is the correct form", "放在結尾、而不是開頭，是為了讓它最後才送。", 0},
+		{"而不是 without a purpose clause is still correct form", "分桶而不是比大小，是這個限制下唯一穩健的用法。", 0},
 		{"是不是 interrogative does not fire", "插的是不是它，是組裝層的問題。", 0},
 		// Known imprecision: 是 whose subject is the whole preceding clause
 		// (not a corrected object) has the same surface shape. The rule warns

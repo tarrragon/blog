@@ -29,11 +29,14 @@ import (
 //	「不在 X、而在 Y」 and the bare-comma 「不是 X，是 Y」 each slipped past
 //	an earlier version of this rule, caught later by adversarial review).
 //
-//	The bare-comma form needs two guards the 而是 form does not. Its
-//	middle excludes ，and 、 so a match cannot span clauses, and the
-//	Y side excludes 因 so that 「不是 X，是因為 Z」 — a causal explanation,
-//	not a corrected definition — stays out. 「是不是」 is filtered in the
-//	loop below rather than in the pattern, because RE2 has no lookbehind.
+//	The bare-comma form needs guards the 而是 form does not. Its middle
+//	excludes ，and 、 so a match cannot span clauses, and two preceding
+//	runes disqualify it (see precededBy). An earlier version also excluded
+//	因 on the Y side, on the theory that 「不是 X，是因為 Z」 explains a
+//	cause rather than correcting a definition — that was wrong and cost
+//	ten real hits: 「不是因為 attention、是因為 residual + LayerNorm」 puts
+//	two parallel causes side by side and buries the point in the second,
+//	which is the canonical shape this rule exists to surface.
 //	One shape stays imprecise on purpose: a 是 whose subject is the whole
 //	preceding clause (「哪些不是自己說了算，是排序問題」) looks identical to
 //	a corrected object and would need parsing to separate. The rule warns
@@ -46,17 +49,31 @@ import (
 // content, not prose), and contrast inside an explicit 反例 / 對照
 // section (#94) — that judgment is left to the reader, which is why
 // the rule only warns.
-var negationLeadRe = regexp.MustCompile(`不是[^。\n「」]{0,30}而是|不是[^。\n「」—–]{0,25}[—–]\s*是|不是[^。\n「」，、]{1,25}[，、]\s*是[^因]|不在[^。\n「」]{0,30}而在|與其[^。\n「」]{0,25}不如`)
+var negationLeadRe = regexp.MustCompile(`不是[^。\n「」]{0,30}而是|不是[^。\n「」—–]{0,25}[—–]\s*是|不是[^。\n「」，、]{1,25}[，、]\s*是|不在[^。\n「」]{0,30}而在|與其[^。\n「」]{0,25}不如`)
 
-// precededByShi reports whether the rune immediately before idx is 是,
-// which makes the 不是 at idx part of the 「是不是」 interrogative rather
-// than a negated definition.
-func precededByShi(line string, idx int) bool {
+// precededBy reports whether the rune immediately before idx is any of
+// the given runes. Two of them disqualify a 不是 from leading a negation:
+//
+//   - 是 — 「是不是」 is the interrogative, not a negated definition.
+//   - 而 — 「A 而不是 B」 puts the negation *after* the point, which is the
+//     shape this rule wants writers to reach. A bare-comma match that
+//     starts inside 而不是 therefore reports the correct form as a defect
+//     (「放在 </body> 前、而不是 <head> 裡，是為了…」), and the 是 it lands
+//     on takes the whole preceding clause as its subject.
+func precededBy(line string, idx int, runes ...rune) bool {
 	if idx == 0 {
 		return false
 	}
 	r, size := utf8.DecodeLastRuneInString(line[:idx])
-	return size > 0 && r == '是'
+	if size == 0 {
+		return false
+	}
+	for _, want := range runes {
+		if r == want {
+			return true
+		}
+	}
+	return false
 }
 
 func checkNegationLead(path string, lines []string, ctx mdfmt.LineContext) []report.Violation {
@@ -69,7 +86,7 @@ func checkNegationLead(path string, lines []string, ctx mdfmt.LineContext) []rep
 			if quotedAt(line, loc[0]) || inlineCodeAt(line, loc[0]) {
 				continue
 			}
-			if precededByShi(line, loc[0]) {
+			if precededBy(line, loc[0], '是', '而') {
 				continue
 			}
 			out = append(out, report.Violation{
