@@ -3,7 +3,7 @@ name: case-first-module-workflow
 description: "Case-first + Agent team review 五階段流程、寫跨多章節教學模組（5+ 章、有 case 庫）時用。觸發詞：教學模組、case-first、case-driven、stage 1/2/3/4/5、agent team review、polish pass、fact vs derive、reviewer prompt、SSoT 對應、frame 重複、skeleton case vs rich case、case fidelity、自掃描 regex、模組擴章。Trigger when writing teaching modules across multiple chapters with an existing case library."
 license: MIT
 metadata:
-  version: 1.5.1
+  version: 1.6.0
   category: writing-methodology
 ---
 
@@ -132,6 +132,8 @@ Stage 2 commit 後、平行 spawn 3 個 reviewer（`subagent_type: general-purpo
 
 按 *檔案批次* 修、不是按 issue 編號順序。每個檔案修完跑一次 `mdtools fmt --fix` + `mdtools cards` + `mdtools lint`、確認該檔內部一致、再進下一檔。最後跑跨檔驗證、確認 cross-link 全部對齊。
 
+**每個 issue 修完之後，掃的是那一類、不是清單上的那幾行**（per [principles/fix-the-class-not-the-cited-instances](./references/principles/fix-the-class-not-the-cited-instances.md)）。reviewer 列出的是它抽樣到的位置，而清單的形式（位置、原文、嚴重度、建議修法）在暗示完整性，於是「按嚴重度修完清單」被讀成「處理完問題」。修完用該 issue 的特徵字串掃整批章節——命中歸零、或剩下的都逐處判定合規，才算這一條處理完；掃描指令先拿一個已知會命中的字串驗過管道。沒有穩定關鍵詞的類別（frame 重複、fact-derive 錯位、論元結構）掃不出來，改派一輪限定 scope 的複掃、指令只說「找出這一類的全部位置」而不給已知的那幾處。**留下的舊實例比新引入的變體難抓**：新變體下一輪近 frame 撞得到，舊實例因為這一類已經回報過、後續輪次不再掃它。
+
 預期成本 1.5-2.5 小時 / 模組。
 
 ### Stage 5：Polish pass
@@ -198,6 +200,8 @@ Stage 4 後仍會殘留 ~30-40% low / medium issue（負向骨架、編號漂移
 - case-first-module-workflow 管 *內容生產*（5 階段執行）
 
 ---
+
+**Version**: 1.6.0 — Stage 4 修正循環補一條處置端紀律並新增 principle 卡 fix-the-class-not-the-cited-instances：**每個 issue 修完之後掃的是那一類、不是清單上的那幾行**。原本整段以 issue 清單為單位組織（按嚴重度、按檔案批次），沒有任何一步要求回頭掃同類的其他位置，而 reviewer 列出的是抽樣位置、清單的形式卻在暗示完整性。實測是同一個動詞的同一處論元結構歧義散在三個位置，四份理解探針一致指向其中一行、修好並經驗證翻轉，另外兩處由後續換 frame 的探針才撞見；同批另有四次同形態復發。修法是用特徵字串掃整批、掃描指令先驗管道、無關鍵詞的類別改派限定 scope 的複掃
 
 **Version**: 1.5.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 

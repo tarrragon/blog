@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 0.92.0
+  version: 0.93.0
   category: writing-methodology
 ---
 
@@ -101,6 +101,8 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 **知識目標決定文章結構**：文章寫完後讀者帶走的是判斷能力（面對新情境能自己評估）還是操作步驟（照做能解決特定問題）——兩者需要不同的結構。判斷力導向把機制理解當主線、操作當自然推導的結果；流程導向把步驟當主線。多數教學文章應走判斷力導向——文章的價值在於提供判斷力、這是官方文件不做的事。詳見 [teach-judgment-not-procedure](references/principles/teach-judgment-not-procedure.md)。
 
 **判斷標準寫到條件層**：判斷標準有三個成熟度——口訣（無推導的結論）、維度清單（「判斷看 A / B / C」）、條件映射（「A 成立 → 做 X；A 破 → 切 Y」加失效情境）——教學要交付到第三層。維度清單是判斷標準的空殼：有判斷的動詞、每個維度都有機制支撐、通過字句與機制審查，卻在讀者要做決定的那一刻斷線；且機制重建完成後它仍會殘留（機制正確與判斷標準到位是兩個獨立檢查）。驗收用重算測試：讀者帶自己的參數進來能不能走出行動。條件不可窮舉的決策，用自查問句組（把變數轉成讀者可自答的問題）＋排序規則，同樣算第三層。詳見 [criteria-need-condition-action-mapping](references/principles/criteria-need-condition-action-mapping.md)。
+
+**判斷標準的輸入集合要跟正文的組織維度對齊**：映射的成熟度與輸入的完整性是兩個獨立的檢查——一段判斷標準可以把每個條件都對到明確的行動，而只要讀者帶進來的個案在某個維度上取了作者沒設想的值，整條路就走不到底。最高頻的形態是**只收「表徵」一個輸入，把產生表徵的那個條件從輸入端折疊掉**，即使它在正文裡佔了整整一節（處置句寫著只有某一種執行環境才有的操作名詞，而內容涵蓋的環境不只那一種）。便宜的自查指標是分支數與種類數的落差：分支數少於正文自己列出的種類數時，就有種類落在所有分支之外。作者看不見它，因為讀的人自帶那個被折疊的條件；驗收要拿具體個案走一遍、而個案要刻意挑落在那些種類上的。詳見 [criteria-fold-away-the-condition-that-produces-the-symptom](references/principles/criteria-fold-away-the-condition-that-produces-the-symptom.md)。
 
 **教學模組要有推導源頭**：分析導向的教學模組（判斷標準密集、讀者要帶走判斷力），模組級結構要是推導體系、不是主題集合——一個源頭機制（成本結構 / 約束 / 生命週期，各篇判斷標準能折算回去的基準）、每篇承擔一條展開、模組入口能一句話說出推導起點。源頭買到：判斷標準同尺、跨篇矛盾現形、擴篇有掛載點、推導式閱讀路線成立。目錄型模組與異質 case 記錄不適用；源頭是折算基準、不是開場模板。詳見 [teaching-module-needs-derivation-anchor](references/principles/teaching-module-needs-derivation-anchor.md) 與 `references/managing-article-collections.md` 的對應段。
 
@@ -277,6 +279,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.93.0 — 原則 3 的「判斷標準寫到條件層」段補一條配套：**判斷標準的輸入集合要跟正文的組織維度對齊**。映射的成熟度與輸入的完整性是兩個獨立的檢查——一段判斷標準可以把每個條件都對到明確的行動，而只要讀者帶進來的個案在某個維度上取了作者沒設想的值，整條路就走不到底；最高頻的形態是只收「表徵」一個輸入、把產生表徵的那個條件從輸入端折疊掉，即使它在正文裡佔了整整一節。便宜的自查指標是分支數與正文列出的種類數的落差。實測是三篇短文的末節判斷標準通過了字句層、冷讀逐格、情境可想像性與 steelman 四種 frame，而九個具體個案走下來只有兩個走通，三組停頓點並排之後指向同一個形態。新增 principle 卡 criteria-fold-away-the-condition-that-produces-the-symptom
+
 **Version**: 0.92.0 — 刪掉 `hooks/` 目錄下的 comment-qa-hook.py 與 worklog-format-check.py。兩者在 0.17.0 就宣告移除（職責已由其他機制覆蓋），而檔案留在原地、還進了版控，任何 settings 都沒有註冊它們，所以三份紀錄與現況對不上而沒有人會發現。由一次「為什麼工作區有 hook-logs」的追查暴露：那個目錄底下的空資料夾正是這個 hook 的產物落點。刪除靠 `skill-sync push --prune` 傳播，否則本地刪掉而其他消費端繼續 pull 到它。同批修掉 0.90.0 那條版本紀錄裡的來源專案路徑——可攜性閘門反覆攔在同一處，而它只需要留下論點、拿掉路徑
 
 **Version**: 0.91.0 — dry-run-guide 的 12 處獨立粗體段改成真標題、3 個 code fence 補語言標示——與 0.90.0 對 writing-articles 做的是同一類，由 bin/skill-mirror 擴充成會同步 references 之後才浮現。references 從此有同步機制，不再靠人記得
