@@ -22,7 +22,7 @@ tags: ["til", "料理", "手法", "澱粉"]
 
 ## 哪些菜用它
 
-[flan pâtissier（派皮布丁塔）](../../dishes/flan-patissier/)、[英式 flan（開放式塔）](../../dishes/english-flan/)、[pastel de nata（葡式蛋塔）](../../dishes/pastel-de-nata/)。
+[flan pâtissier（派皮布丁塔）](../../dishes/flan-patissier/)、[英式 flan（開放式塔）](../../dishes/english-flan/)、[pastel de nata（葡式蛋塔）](../../dishes/pastel-de-nata/)、[quiche（法式鹹派）](../../dishes/quiche/)、[港式蛋撻](../../dishes/hk-egg-tart/)。
 
 ## 代價
 
