@@ -44,6 +44,8 @@ slug: "writing-motivation-is-editorial-not-content"
 | [#97 Metadata surface 要納入寫作 review](../metadata-surface-in-writing-review/)                   | 寫作動機寫進引言是 metadata 滲透到 content surface 的反向 — #97 是 content 滲透不到 metadata、本卡是 metadata 滲透進 content                                                                             |
 | [#271 收錄取捨的結果進正文，判斷標準運算不進](../inclusion-deliberation-is-editorial-not-content/) | **sibling、新 surface** — 本卡管引言裡的寫作動機、#271 管策展條目內文裡的收錄門檻運算（「按判斷標準仍不到否決」）；#271 另給了判定工具（行動測試）與邊界（可信度標註留、決策結果句留、收錄邏輯集中專節） |
 
+[#299 文章寫題目本身，不寫作者怎麼認識它](../article-writes-the-topic-not-the-authors-path-to-it/)：本卡是那張卡在引言位置的特例。本卡處理「為什麼寫這篇」，那張卡的範圍涵蓋全篇任何位置的「我怎麼得到這個結論」，並多涵蓋一種形態——從題目推出去的通用內容該另開一篇。
+
 ---
 
 ## 判讀徵兆

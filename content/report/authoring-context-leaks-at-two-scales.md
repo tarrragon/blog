@@ -74,3 +74,5 @@ slug: "authoring-context-leaks-at-two-scales"
 [#292 更新一個可數宣稱時，加法不算重算](/report/count-update-by-addition-is-not-recount/) 與本卡共用一個機制：驗算完成的訊號來自最容易驗的那一項（總數自洽、grep 零命中），而它不是會出錯的那一項。
 
 [#294 非互動環境裡，要人停下來看的關卡表現成當機](/report/confirmation-prompt-reads-as-a-hang/) 是同一個機制的另一個方向：本卡講完成訊號來自最容易通過的那條路，那張講阻力被解釋成最容易排除的那個成因。兩者都讓判斷停在第一個合理的解釋上。
+
+[#299 文章寫題目本身，不寫作者怎麼認識它](../article-writes-the-topic-not-the-authors-path-to-it/)：洩漏的東西不同。本卡洩漏的是作者的工作紀錄（查了什麼、這一輪做到哪），有可指認的字串可掃；那張卡洩漏的是作者的認識過程（怎麼推出來的、覺得有多可靠），句子每一個字都像正常內容。
