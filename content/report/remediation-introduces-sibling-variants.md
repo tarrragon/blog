@@ -74,6 +74,7 @@ tags: ["report", "事後檢討", "工程方法論", "review-process", "原則"]
 - **[#153 Review 漏抓先分 design gap 與 execution gap](../review-miss-diagnose-design-vs-execution-gap/)**：本卡補一類 gap 的來源——修法本身引入的新 gap。修法後沒重審，是把「修法產物」排除在 scope 外的 execution gap。
 - **[#148 跨輪 review 停止訊號是 frame 涵蓋](../cross-round-review-stopping-signal/)**：本卡補「修法產生新批」這個維度——停止判斷不能停在「修完這批」、要含修法產物的重審。
 - **[#149 keyword bank 命中是候選、不是判決](../keyword-bank-hit-is-candidate-not-verdict/)**：補 pattern 抓變體是偵測層、收斂靠判斷標準是判定層——本卡的「靠判斷標準不靠窮舉」是 #149「判定優先」在 remediation 的應用。
+- [#298 finding 清單列的是抽樣位置](../fix-the-class-not-the-cited-instances/)：本卡的姊妹、方向相反。本卡是修法**引入新的**同類變體，那張卡是修法**留下舊的**同類實例。偵測難度也相反——本卡的新變體下一輪近 frame 抓得到，那張卡的舊實例可能永遠抓不到，因為這一類已經被回報過、後續輪次不再掃它。
 
 ---
 

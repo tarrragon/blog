@@ -68,6 +68,8 @@ slug: "broken-scan-reports-a-plausible-number"
 
 ---
 
+[#298 finding 清單列的是抽樣位置](/report/fix-the-class-not-the-cited-instances/) 要求每個 finding 修完之後回掃全批驗證，而本卡是那個動作的前置條件：回掃的指令若自己壞掉，回報的零命中會直接被讀成「這一類清完了」，而那個結論正好落在最想聽到它的時點上。
+
 ## 判讀徵兆
 
 | 徵兆                                       | 為什麼是訊號                             | 下一個動作                             |

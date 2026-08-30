@@ -65,3 +65,4 @@ slug: "unstated-implementation-premise-under-a-correct-axis"
 - [#257 軸名取了次好的代理變數](../axis-named-by-proxy-not-mechanism/)：那張是命名選錯，這張是容器選了而沒說。兩者可以同時發生在一段內容上，而修法的順序是先讓前提顯形、再檢查軸名——因為前提換掉之後，原本的軸名可能連帶失效。
 - [#248 推翻假說之後，替補解釋不會自動繼承嚴格度](../hypothesis-replacement-inherits-no-scrutiny/)：前提顯形並被換掉之後，新的實作形態同樣沒有被檢驗過，適用該卡的處理。
 - [#241 判讀內容要給情境與後果](../judgment-content-needs-triggering-scenarios/)：未顯形的前提會讓判讀內容的適用邊界說不清楚——讀者無法判斷自己的情境在不在射程內，因為射程由一個他看不到的假設劃定。
+- [#297 判斷標準只收表徵，把產生表徵的那個條件從輸入端折疊掉](../criteria-fold-away-the-condition-that-produces-the-symptom/)：那張卡的「處置預設了某一種執行環境」是本卡所說前提的一個實例，而它補上了本卡缺的偵測入口——數判斷標準的分支數與正文列出的種類數，落差直接指出有前提沒被寫出來，比等 steelman 想到去質疑一個沒說出口的東西便宜。

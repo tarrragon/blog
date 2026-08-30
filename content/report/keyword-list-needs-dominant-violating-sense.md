@@ -76,6 +76,8 @@ slug: "keyword-list-needs-dominant-violating-sense"
 
 [#295 查不到的反證要換一個維度](../negative-claim-needs-a-second-dimension/) 是同一個上限在查證方向上的形態：這裡漏掉的是寫不成 pattern 的違規詞，那裡漏掉的是想不到的查詢詞，兩邊都是用已知的形態去找未知的東西。
 
+[#298 finding 清單列的是抽樣位置](../fix-the-class-not-the-cited-instances/) 把本卡「清單是抽樣、不是那一類的全部」推到審查報告上。兩者是同一個結構，而審查報告更容易被讀成窮舉——它逐條寫了位置、原文摘引與嚴重度，那個格式本身在暗示完整性，於是照著清單逐處修完就被當成這一類處理完了。
+
 ## 判讀徵兆
 
 | 訊號                                                 | 該做的事                                                                   |
