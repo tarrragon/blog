@@ -10,7 +10,7 @@ Marginal Cost 的核心概念是「多服務一個客戶要多花多少錢」。
 
 ## 概念位置
 
-Marginal Cost 是 [SaaS](/business/knowledge-cards/saas/) 模式之所以能擴張的根基。零邊際成本讓 [PLG](/business/knowledge-cards/plg/) 數學算得過去—免費試用、口碑擴散、自助上手都不會傷成本。一旦邊際成本不再是零，PLG 模式就會撐不住，要回到傳統的高接觸銷售。
+Marginal Cost 是 [SaaS](/business/knowledge-cards/saas/) 模式之所以能擴張的根基。零邊際成本讓 [PLG](/business/knowledge-cards/plg/) 數學算得過去—免費試用、口碑擴散、自助上手都不會傷成本。一旦邊際成本不再是零，PLG 就算不過去了，要回到傳統的高接觸銷售。
 
 ## 可觀察訊號與例子
 

@@ -14,7 +14,7 @@ tags: ["dart", "flutter", "ddd", "aggregate", "domain-model", "pos", "lifecycle"
 
 ---
 
-## 直覺建模在三個操作前撐不住
+## 直覺建模到第三個操作就走不下去
 
 「一桌一單」的一對一建模，遇到這個專案實際支援的操作就露出縫：
 

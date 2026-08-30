@@ -14,7 +14,7 @@ Google SRE Workbook 的 incident response 章：預寫溝通 —— 「prepare t
 
 ## 判讀
 
-這幾條的價值在觀測退化時被放大。儀表板能自己說話時、即席溝通還撐得住；telemetry 不可信、人得靠零碎訊號拼圖時、認知頻寬全被「判斷現況」吃掉、沒餘裕再設計溝通。預寫模板 / 預定通道 / 預備清單把「溝通這件事本身」從故障時的判斷負載裡移除。mitigation-first 承認「你不會有完整資訊」、允許先止血而非卡在「等監控告訴我發生什麼」。living document 是 telemetry 不可信時的人肉狀態機 —— working theories 由人維護、不依賴任何故障系統、工具全黑時它就是唯一的 dashboard。
+這幾條的價值在觀測退化時被放大。儀表板能自己說話時、即席溝通還夠用；telemetry 不可信、人得靠零碎訊號拼圖時、認知頻寬全被「判斷現況」吃掉、沒餘裕再設計溝通。預寫模板 / 預定通道 / 預備清單把「溝通這件事本身」從故障時的判斷負載裡移除。mitigation-first 承認「你不會有完整資訊」、允許先止血而非卡在「等監控告訴我發生什麼」。living document 是 telemetry 不可信時的人肉狀態機 —— working theories 由人維護、不依賴任何故障系統、工具全黑時它就是唯一的 dashboard。
 
 ## 對應大綱
 

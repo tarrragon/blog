@@ -12,7 +12,7 @@ tags: ["backend", "database", "firestore", "denormalization", "consistency"]
 
 一個社群 app 的貼文列表要顯示作者頭像與名稱。關聯式思路是貼文存 `authorId`、查詢時 JOIN `users` 表。但 Firestore 沒有 JOIN——要嘛 client 每顯示一則貼文就多查一次 `users`（列表 20 則就 20 次額外讀取），要嘛在貼文 document 裡直接存一份 `authorName` 與 `authorAvatar` 副本。為了讀取效率，多數人選後者。
 
-副本一上線就埋了一致性債：使用者改了名稱，他過去發的一千則貼文裡的 `authorName` 還是舊的。改名這個動作從「更新一筆 `users` document」變成「更新一千筆貼文 document」。這篇處理 Firestore 反正規化的建模決策、如何用 fan-out write 維護副本一致、以及這套手段撐不住時的退場。
+副本一上線就埋了一致性債：使用者改了名稱，他過去發的一千則貼文裡的 `authorName` 還是舊的。改名這個動作從「更新一筆 `users` document」變成「更新一千筆貼文 document」。這篇處理 Firestore 反正規化的建模決策、如何用 fan-out write 維護副本一致、以及這套手段不再適用時的退場。
 
 ## 核心概念：反正規化是查詢邊界逼出來的
 

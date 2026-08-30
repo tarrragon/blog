@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 0.93.0
+  version: 0.93.1
   category: writing-methodology
 ---
 
@@ -279,6 +279,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 0.93.1 — writing-code-comments 的斷言判斷標準去掉借來的物理動詞：「有沒有一個會紅的斷言撐得住」改成「有沒有一個會紅的斷言」（那一句自己就寫著判斷標準是斷言存不存在，動詞是多餘的），「二元性掛在／不掛在」改成「來自／不來自」。同一句在全站散在六個位置、含兩份鏡像，一併清掉
+
 **Version**: 0.93.0 — 原則 3 的「判斷標準寫到條件層」段補一條配套：**判斷標準的輸入集合要跟正文的組織維度對齊**。映射的成熟度與輸入的完整性是兩個獨立的檢查——一段判斷標準可以把每個條件都對到明確的行動，而只要讀者帶進來的個案在某個維度上取了作者沒設想的值，整條路就走不到底；最高頻的形態是只收「表徵」一個輸入、把產生表徵的那個條件從輸入端折疊掉，即使它在正文裡佔了整整一節。便宜的自查指標是分支數與正文列出的種類數的落差。實測是三篇短文的末節判斷標準通過了字句層、冷讀逐格、情境可想像性與 steelman 四種 frame，而九個具體個案走下來只有兩個走通，三組停頓點並排之後指向同一個形態。新增 principle 卡 criteria-fold-away-the-condition-that-produces-the-symptom
 
 **Version**: 0.92.0 — 刪掉 `hooks/` 目錄下的 comment-qa-hook.py 與 worklog-format-check.py。兩者在 0.17.0 就宣告移除（職責已由其他機制覆蓋），而檔案留在原地、還進了版控，任何 settings 都沒有註冊它們，所以三份紀錄與現況對不上而沒有人會發現。由一次「為什麼工作區有 hook-logs」的追查暴露：那個目錄底下的空資料夾正是這個 hook 的產物落點。刪除靠 `skill-sync push --prune` 傳播，否則本地刪掉而其他消費端繼續 pull 到它。同批修掉 0.90.0 那條版本紀錄裡的來源專案路徑——可攜性閘門反覆攔在同一處，而它只需要留下論點、拿掉路徑

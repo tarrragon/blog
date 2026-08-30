@@ -77,7 +77,7 @@ mongobetween proxy（Coinbase 自建）：把多 application process 的連線�
 
 MongoDB cluster 擴容時間：傳統 reactive scaling 起點到完成 ~70 分鐘（9.C36 Coinbase 揭露口徑：含 instance provisioning + 資料 sync + balancer rebalance、特定 Atlas tier / 資料量條件）。
 
-Reactive 為主撐不住快變流量：CPU / queue 觸發 reactive scaling 在 surge 開始時才動、來不及；surge 已經結束擴容才到位。
+Reactive 為主跟不上快變流量：CPU / queue 觸發 reactive scaling 在 surge 開始時才動、來不及；surge 已經結束擴容才到位。
 
 Predictive scaling 機制（Coinbase 揭露）：
 

@@ -103,7 +103,7 @@ Pattern card 的責任是歸納。模式可以比單一案例更抽象，但要�
 - **[#96 適用範圍要展開成 file enumeration](../applicability-scope-must-be-enumerated/)**：#96 要求 scope 具體列出，本卡要求素材庫比例具體列出：主情境數、source card 數、scenario 數、pattern 數。
 - **[#67 寫作便利度跟意圖對齊反相關](../ease-of-writing-vs-intent-alignment/)**：素材與文章一比一最方便，但跟「可驗證、可延伸」的意圖不對齊。補足 2-3 倍來源是較高成本但更貼合目標的做法。
 - **[#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)**：情境數量是字面層，情境是否有足夠變體支撐是行為層。本卡要求用來源覆蓋度判斷推演素材是否足夠。
-- **[#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/)**：#97 補 surface 軸，本卡補 material 軸。文章品質不只看正文與入口，也看背後來源是否支撐得住推演。
+- **[#97 Metadata surface 要納入寫作 review 範圍](../metadata-surface-in-writing-review/)**：#97 補 surface 軸，本卡補 material 軸。文章品質不只看正文與入口，也看背後的來源足不足以支持推演。
 
 ---
 
