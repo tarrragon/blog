@@ -60,6 +60,15 @@ func TestNegationLeadSkipsQuotedAntiExample(t *testing.T) {
 		{"inline code is exempt", "regex 用 `不是.{0,30}而是` 掃描。", 0},
 		{"quote elsewhere on the line does not exempt prose", "「引用」之後核心責任不是 X、而是 Y。", 1},
 		{"與其 不如 fires", "與其重寫整段、不如先補一句定義。", 1},
+		{"bare full-width comma fires", "核心責任不是行數，是概念數。", 1},
+		{"bare enumeration comma fires", "核心責任不是行數、是概念數。", 1},
+		{"bare comma inside quotes is exempt", "違規：「核心責任不是行數，是概念數」。", 0},
+		{"causal 是因為 is not a corrected definition", "這樣寫不是為了美觀，是因為讀者會漏看。", 0},
+		{"是不是 interrogative does not fire", "插的是不是它，是組裝層的問題。", 0},
+		// Known imprecision: 是 whose subject is the whole preceding clause
+		// (not a corrected object) has the same surface shape. The rule warns
+		// rather than errors precisely because this needs a reader.
+		{"clause-subject 是 is a known false-positive shape", "哪些承擔得起、哪些不是自己說了算，是排序問題。", 1},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

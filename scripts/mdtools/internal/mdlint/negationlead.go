@@ -2,6 +2,7 @@ package mdlint
 
 import (
 	"regexp"
+	"unicode/utf8"
 
 	"blog/scripts/mdtools/internal/mdfmt"
 	"blog/scripts/mdtools/internal/report"
@@ -20,12 +21,23 @@ import (
 //	is cross-language (English "not X but Y", Japanese "X ではなく Y"),
 //	so the signal is the sentence shape, not a Chinese-specific token —
 //	detection is mechanizable but the judgment is not. The regex covers
-//	the 而是 / 「— 是」/ 不在…而在 / 不如 connectives, but enumerating
-//	variants is inherently incomplete (#166): the real judgment is whether
-//	the core concept leads, not which connective appears — a missed variant
-//	just keeps a candidate silent until a reader catches it (which is
-//	exactly how 「不是 X — 是 Y」 and 「不在 X、而在 Y」 each slipped past an
-//	earlier version of this rule, caught later by adversarial review).
+//	the 而是 / 「— 是」/ 「，是」/ 「、是」/ 不在…而在 / 不如 connectives,
+//	but enumerating variants is inherently incomplete (#166): the real
+//	judgment is whether the core concept leads, not which connective
+//	appears — a missed variant just keeps a candidate silent until a
+//	reader catches it (which is exactly how 「不是 X — 是 Y」,
+//	「不在 X、而在 Y」 and the bare-comma 「不是 X，是 Y」 each slipped past
+//	an earlier version of this rule, caught later by adversarial review).
+//
+//	The bare-comma form needs two guards the 而是 form does not. Its
+//	middle excludes ，and 、 so a match cannot span clauses, and the
+//	Y side excludes 因 so that 「不是 X，是因為 Z」 — a causal explanation,
+//	not a corrected definition — stays out. 「是不是」 is filtered in the
+//	loop below rather than in the pattern, because RE2 has no lookbehind.
+//	One shape stays imprecise on purpose: a 是 whose subject is the whole
+//	preceding clause (「哪些不是自己說了算，是排序問題」) looks identical to
+//	a corrected object and would need parsing to separate. The rule warns
+//	rather than errors, so a reader settles it.
 //
 // Three legitimate forms stay out of scope and are handled by exemptions:
 // anti-example citations wrapped in 「」 (skipped via quotedAt, e.g. the
@@ -34,7 +46,18 @@ import (
 // content, not prose), and contrast inside an explicit 反例 / 對照
 // section (#94) — that judgment is left to the reader, which is why
 // the rule only warns.
-var negationLeadRe = regexp.MustCompile(`不是[^。\n「」]{0,30}而是|不是[^。\n「」—–]{0,25}[—–]\s*是|不在[^。\n「」]{0,30}而在|與其[^。\n「」]{0,25}不如`)
+var negationLeadRe = regexp.MustCompile(`不是[^。\n「」]{0,30}而是|不是[^。\n「」—–]{0,25}[—–]\s*是|不是[^。\n「」，、]{1,25}[，、]\s*是[^因]|不在[^。\n「」]{0,30}而在|與其[^。\n「」]{0,25}不如`)
+
+// precededByShi reports whether the rune immediately before idx is 是,
+// which makes the 不是 at idx part of the 「是不是」 interrogative rather
+// than a negated definition.
+func precededByShi(line string, idx int) bool {
+	if idx == 0 {
+		return false
+	}
+	r, size := utf8.DecodeLastRuneInString(line[:idx])
+	return size > 0 && r == '是'
+}
 
 func checkNegationLead(path string, lines []string, ctx mdfmt.LineContext) []report.Violation {
 	var out []report.Violation
@@ -44,6 +67,9 @@ func checkNegationLead(path string, lines []string, ctx mdfmt.LineContext) []rep
 		}
 		for _, loc := range negationLeadRe.FindAllStringIndex(line, -1) {
 			if quotedAt(line, loc[0]) || inlineCodeAt(line, loc[0]) {
+				continue
+			}
+			if precededByShi(line, loc[0]) {
 				continue
 			}
 			out = append(out, report.Violation{
