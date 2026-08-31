@@ -107,9 +107,19 @@ Python 的物件導向設計模式，從類別設計到設計模式。
 - [完整案例回顧](/python/07-refactoring/case-study/)
 - [作用域迴歸案例研究](/python/07-refactoring/scope-regression/)
 
+### [模組八：整批資料的處理與分析](/python/08-data-analysis/)
+
+資料整批進入程式之後的工具選擇。軸是運算發生在資料庫端還是程式的記憶體端。
+
+- [資料以什麼單位進來，分開了 Python 底下幾種工作](/python/08-data-analysis/data-unit-splits-work/)
+- [運算發生在哪一端，決定了工具長什麼樣子](/python/08-data-analysis/where-computation-runs/)
+- [ORM 交出查詢，DataFrame 自己算](/python/08-data-analysis/orm-and-dataframe/)
+- [SQL 與 DataFrame 是同一套關聯代數的兩個介面](/python/08-data-analysis/same-relational-algebra/)
+- [記憶體是 pandas 的邊界條件](/python/08-data-analysis/memory-is-the-boundary/)
+
 ## 範例來源
 
-所有範例均來自實際的 Hook 系統程式碼：
+模組零到模組七的範例均來自實際的 Hook 系統程式碼；模組八的範例來自 pandas 與 SQLAlchemy，與該系統無關。
 
 ```text
 .claude/lib/
