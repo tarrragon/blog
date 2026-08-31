@@ -190,3 +190,119 @@ h5 {
     text-align: left;
   }
 }
+/* ===========================================
+   垂直分類色帶（麵包屑）
+
+   固定在正文左側、不隨捲動移動，跟右側的章節目錄形成對稱的兩條軌。
+   由 layouts/partials/breadcrumb.html 產生，色相與明度都由 inline 的
+   --bc-bg / --bc-fg 帶進來，這裡只負責排版與互動。
+
+   定位錨在正文欄而不是視窗左緣（right: calc(50% + var(--bc-offset))），
+   所以視窗變寬時色帶跟著正文走、不會被拋到畫面角落。色帶往左長，深度
+   增加只影響左緣、緊鄰正文的那一塊永遠在同一個位置。
+   =========================================== */
+
+.breadcrumb-rail {
+  --bc-offset: 37.5rem; /* 正文欄半寬 + 間距，視窗中線到色帶右緣的距離 */
+
+  position: fixed;
+  top: 50%;
+  right: calc(50% + var(--bc-offset));
+  transform: translateY(-50%);
+  display: flex;
+  align-items: stretch;
+  max-height: 70vh;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  z-index: 900;
+}
+
+/* 色塊本身。writing-mode 讓中文直排、text-orientation: mixed 讓夾雜的英文
+   側躺（英文直立逐字排在中文直排裡反而難讀，側躺是直排排版的既有慣例）。 */
+.breadcrumb-rail .breadcrumb-block {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  display: block;
+  box-sizing: border-box;
+  width: 4.8rem;
+  max-height: 24rem;
+  padding: 1.2rem 0.85rem;
+  /* 主題的 `nav a` 給每個連結 12px 右外距。色塊要相鄰成一條連續色帶，
+     縫隙會讓它看起來像四個分離的方塊而不是一條路徑。 */
+  margin: 0;
+  color: var(--bc-fg) !important;
+  background-color: var(--bc-bg);
+  background-image: none;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: filter 0.2s ease, color 0.2s ease;
+}
+
+.breadcrumb-rail .breadcrumb-block:hover,
+.breadcrumb-rail .breadcrumb-block:focus-visible {
+  color: rgba(255, 255, 255, 0.98) !important;
+  filter: brightness(1.35);
+}
+
+.breadcrumb-rail .breadcrumb-block:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -3px;
+}
+
+/* 最深的一塊代表讀者當前所在的分類，用內側亮邊把它跟上游層級分開。 */
+.breadcrumb-rail .breadcrumb-block.is-current {
+  box-shadow: inset 2px 0 0 rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+}
+
+.breadcrumb-rail .breadcrumb-home {
+  font-size: 1.3rem;
+  letter-spacing: 0.16em;
+}
+
+/* 左側 gutter 放不下整條色帶時收起來。門檻隨層數變動 —— 色帶往左長，六層比
+   兩層多吃 200px 的 gutter，用單一斷點會讓深層頁面在中等寬度溢出到畫面外。
+
+   每個門檻是 2 x (--bc-offset + 色塊寬 x 塊數 + 24px 留白)，色塊固定 48px：
+   798 + 96n，取整到百位。窄於門檻就整條收起，正文欄的位置不受影響。 */
+@media (max-width: 999px) {
+  .breadcrumb-rail {
+    display: none;
+  }
+}
+
+@media (max-width: 1099px) {
+  .breadcrumb-rail[data-blocks="3"] {
+    display: none;
+  }
+}
+
+@media (max-width: 1199px) {
+  .breadcrumb-rail[data-blocks="4"] {
+    display: none;
+  }
+}
+
+@media (max-width: 1299px) {
+  .breadcrumb-rail[data-blocks="5"] {
+    display: none;
+  }
+}
+
+@media (max-width: 1399px) {
+  .breadcrumb-rail[data-blocks="6"] {
+    display: none;
+  }
+}
+
+@media print {
+  .breadcrumb-rail {
+    display: none;
+  }
+}

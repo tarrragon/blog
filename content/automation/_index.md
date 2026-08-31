@@ -1,5 +1,6 @@
 ---
 title: "免伺服器自動化實務指南：用免費雲端服務給靜態站補上動態能力"
+breadcrumb: "自動化"
 date: 2026-07-06
 description: "不租主機、用免費雲端服務給靜態站或個人專案補上收資料、存資料、排程彙總能力時的實作與選型"
 tags: ["automation", "serverless", "apps-script", "google-sheets", "static-site", "beacon", "no-server"]

@@ -1,5 +1,6 @@
 ---
 title: "LLM 寫 code 工程實務指南：從心智模型到應用架構"
+breadcrumb: "LLM"
 date: 2026-05-12
 description: "以寫 code 場景為主、涵蓋本地推論（Mac / PC）、雲端混用、LLM 數學與理論基礎、應用層架構（RAG / tool use / agent / VLM / 靜態 deployment）、reasoning model 與 speculative decoding、本地 dev 安全、跨工具世代不變的原理"
 tags: ["llm", "local-llm", "mac", "apple-silicon", "nvidia", "discrete-gpu", "windows", "linux", "ollama", "llama-cpp", "foundations", "transformer", "inference", "rag", "agent", "vlm", "reasoning", "security", "deployment"]

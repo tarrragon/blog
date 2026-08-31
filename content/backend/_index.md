@@ -1,5 +1,6 @@
 ---
 title: "Backend 服務實務指南"
+breadcrumb: "Backend"
 date: 2026-04-22
 description: "用跨語言教學路線整理資料庫、快取、訊息佇列、觀測、部署、可靠性、資安、事故與容量等後端服務能力"
 weight: 34

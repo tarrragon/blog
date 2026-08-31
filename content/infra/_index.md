@@ -1,5 +1,6 @@
 ---
 title: "Infra 基礎設施建置指南"
+breadcrumb: "Infra"
 date: 2026-06-26
 description: "從零循序漸進把雲端基礎設施做起來 — IaC、身分憑證、網路地基、環境分離、核心服務、可觀測性、自動化 review 與治理習慣，含怎麼在組織內推動"
 weight: 39

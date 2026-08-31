@@ -1,0 +1,44 @@
+{{- /* 垂直分類色塊導航：固定在正文左側、不隨頁面捲動。
+
+  每一層 section 一個色塊，塊內文字用 CJK 直排（writing-mode: vertical-rl）。
+  色塊由左而右越來越深，最深的一塊緊鄰正文，所以「整條色帶有多寬」直接等於
+  讀者所在的層數。文章標題本身不進來 —— 這條導航回答的是「我在哪個分類」，
+  不是「我在讀哪一篇」，後者正文標題已經寫著。
+
+  色相由頂層 section 的名稱雜湊出來，同一個分類底下的所有頁面共用一個色相，
+  明度隨層數遞增。雜湊而非對照表，是為了新增頂層分類時不必回來登記。 */ -}}
+
+{{- $trail := .Ancestors.Reverse -}}
+{{- if .IsSection -}}
+  {{- /* section 列表頁自己就是一個分類，要出現在色帶末端 */ -}}
+  {{- $trail = $trail | append . -}}
+{{- end -}}
+
+{{- if and (not .IsHome) (gt (len $trail) 1) -}}
+  {{- /* 色相取自策展過的 12 色環，避開暗底上會發濁的黃綠帶。頂層分類多於 12 個
+       時會碰撞，但同一條路徑只會出現一個頂層分類，碰撞不會同時出現在畫面上。 */ -}}
+  {{- $hues := slice 208 262 320 348 22 42 92 152 186 232 288 334 -}}
+  {{- $root := index $trail 1 -}}
+  {{- $hue := index $hues (mod (hash.FNV32a $root.Section) (len $hues)) -}}
+
+<nav class="breadcrumb-rail" data-blocks="{{ len $trail }}" aria-label="分類路徑">
+  {{- range $i, $p := $trail -}}
+    {{- $isLast := eq $i (sub (len $trail) 1) -}}
+    {{- if eq $i 0 -}}
+      {{- /* 首頁用無彩度色塊，跟分類色塊區隔開 */ -}}
+  <a class="breadcrumb-block breadcrumb-home" href="{{ $p.RelPermalink }}"
+     style="--bc-bg: hsl(0 0% 15%); --bc-fg: rgba(250, 250, 250, 0.55);"
+     title="{{ $p.LinkTitle }}"><span>首頁</span></a>
+    {{- else -}}
+      {{- $level := sub $i 1 -}}
+      {{- $light := add 20 (mul $level 7) -}}
+      {{- $sat := add 38 (mul $level 4) -}}
+      {{- $fg := add 0.62 (mul $level 0.08) -}}
+      {{- if $isLast }}{{ $fg = 0.96 }}{{ end -}}
+  <a class="breadcrumb-block{{ if $isLast }} is-current{{ end }}" href="{{ $p.RelPermalink }}"
+     style="--bc-bg: hsl({{ $hue }} {{ $sat }}% {{ $light }}%); --bc-fg: rgba(250, 250, 250, {{ $fg }});"
+     title="{{ $p.LinkTitle }}" aria-label="{{ $p.LinkTitle }}"{{ if and $isLast $.IsSection }} aria-current="page"{{ end }}><span>{{ partial "breadcrumb_label.html" $p }}</span></a>
+    {{- end -}}
+  {{- end }}
+</nav>
+{{- end -}}

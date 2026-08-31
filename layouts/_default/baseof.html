@@ -35,6 +35,7 @@
   <header>
     {{- partial "header.html" . -}}
   </header>
+  {{- partial "breadcrumb.html" . -}}
   <main id="main-content">
     {{- partial "pagefind_meta.html" . -}}
     {{- block "main" . }}{{- end }}

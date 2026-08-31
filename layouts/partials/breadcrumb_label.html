@@ -1,0 +1,38 @@
+{{- /* 產生分類色塊裡要直排的短標籤。
+
+  直排一個字佔一格，色塊高度等於字數，所以標籤要短。多數 section 的 title
+  是給列表頁看的完整敘述（「模組二：快取與 Redis」「8.1 Google：大規模微服務
+  與索引服務」），直接拿來直排會拉出半個螢幕高。這裡剝掉三種在直排色塊裡不帶
+  資訊的成分：
+
+  1. 分隔符後方的補述段 —— 主段已經說完是哪個分類
+  2. 排序用的前綴（「模組二」「8.1」「7.BM1」）—— 色帶的位置本身就是順序
+  3. 文體尾綴（指南 / 教學 / 列表 …）—— 每個分類都一樣、不區辨
+
+  這裡不做長度截斷。截斷會切在半個詞中間而讀者看不出被切過，改由 CSS 的
+  text-overflow 在超出色塊高度時顯示省略號，滑鼠停留可看 title 的完整標題。
+
+  推導結果不理想時，在該 _index.md 的 front matter 寫 `breadcrumb: "短標籤"`
+  直接覆寫，不必遷就推導規則。 */ -}}
+{{- $page := . -}}
+{{- $label := "" -}}
+{{- with $page.Params.breadcrumb -}}
+  {{- $label = . -}}
+{{- else -}}
+  {{- $title := $page.LinkTitle -}}
+  {{- $parts := slice -}}
+  {{- range (split (replaceRE `\s*[—–:：|，,]\s*` "\n" $title) "\n") -}}
+    {{- $seg := trim . " " -}}
+    {{- $seg = replaceRE `^模組[零一二三四五六七八九十百千]+\s*` "" $seg -}}
+    {{- $seg = replaceRE `^\d+(\.[0-9A-Za-z]+)*[.、\s]+` "" $seg -}}
+    {{- $seg = trim $seg " " -}}
+    {{- if ne $seg "" -}}
+      {{- $parts = $parts | append $seg -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $label = cond (gt (len $parts) 0) (index $parts 0) $title -}}
+  {{- $label = replaceRE `\s*(實務指南|實戰指南|入門實戰指南|工程實務指南|學習筆記|建置指南|設計指南|入門指南|配置指南|全景|教學|指南|列表|推薦)$` "" $label -}}
+  {{- $label = trim $label " " -}}
+  {{- if eq $label "" -}}{{- $label = $title -}}{{- end -}}
+{{- end -}}
+{{- return $label -}}
