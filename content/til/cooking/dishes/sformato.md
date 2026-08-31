@@ -42,4 +42,4 @@ sformato 是蔬菜泥用蛋液黏合、入模隔水烤到凝固再脫模的一�
 
 蛋液凝固的完整物理、三度的容錯帶與失敗形態，在 [egg custard（蛋液凝凍）](../../forms/egg-custard/)。熱水那道保護的原理與水位的作用，在 [水浴烘烤](../../techniques/bain-marie/)。
 
-這個形態底下還有哪些成員，在 [蒸蔬菜泥](../../forms/vegetable-puree/)。flan 這個字為什麼連義大利菜也收得進去，在 [flan](../../naming/flan/)。
+這個形態的分界怎麼畫、加熱走哪一條路線，在 [蒸蔬菜泥](../../forms/vegetable-puree/)。flan 這個字為什麼連義大利菜也收得進去，在 [flan](../../naming/flan/)。

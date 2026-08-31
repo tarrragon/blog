@@ -2,7 +2,7 @@
 title: "flan"
 slug: "flan"
 date: 2026-08-30
-description: "在外文菜單或食譜上看到 flan 而不確定端上來會是什麼時，用國別、菜單位置與主體食材三層定位"
+description: "菜單上看到 flan 而不確定端上來會是甜點、正餐還是別的東西時"
 tags: ["til", "料理", "命名", "flan"]
 ---
 
