@@ -36,6 +36,6 @@ tags: ["til", "料理", "命名", "兩岸用詞"]
 
 ## 從別的方向查
 
-雞蛋羹這一類的形態頁是 [egg custard（蛋液凝凍）](../../forms/egg-custard/)。勾芡的濃湯那一類目前還沒有形態頁。
+雞蛋羹這一類的形態頁是 [egg custard（蛋液凝凍）](../../forms/egg-custard/)，勾芡的濃湯那一類是 [勾芡濃湯](../../forms/thickened-soup/)，台灣的 [肉羹](../../dishes/rou-geng/) 落在後面那一個。
 
 歐洲語言也有名字比作法更分歧的同型現象，[flan](../flan/) 是其中一例。
