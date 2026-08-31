@@ -49,6 +49,8 @@ INSERT INTO 評價 VALUES (9001,101,5);
 | [1.4 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/) | 同一個條件放兩處在 INNER 下同值而在 OUTER 下不同值的原因 |
 | [1.5 識別字送進引擎之後會被改寫](/sql/identifier-rules/)            | 大小寫摺疊與引號各家的規則，以及混用時失效的時機         |
 | [1.6 權限的預設是什麼都不給](/sql/privilege-model/)                 | 角色與 GRANT 的模型，以及最小權限在事故時省下什麼        |
+| [1.7 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)       | 列數膨脹怎麼讓聚合算錯，以及 NULL 為什麼不能用等號比     |
+| [1.8 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/)  | 自連接需要別名的原因，以及什麼問題非它不可               |
 
 ## 知識卡
 
