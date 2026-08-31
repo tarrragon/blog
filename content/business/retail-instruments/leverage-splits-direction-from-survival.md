@@ -91,4 +91,8 @@ m = 維持保證金 ÷ 名目價值
 
 ## 往下讀
 
-清算距離縮小之後，社群上有幾種手法宣稱能延後它——[加碼攤平](../knowledge-cards/averaging-down/)、[對鎖](../knowledge-cards/locked-position/)、[全倉](../knowledge-cards/cross-and-isolated-margin/)各自改變了哪一項，見[社群流行手法的共同結構](../social-trading-patterns/)。台股的融資部位另有一種存活條件被制度關閉的形態：追繳的時程照常推進，而跌停鎖死使平倉無法執行，見[漲跌幅限制的效果按槓桿分岔](../price-limit-splits-by-leverage/)。摩擦成本與槓桿的互動在[成本結構決定期望值](../trading-cost-structure/)；清算費用流向誰在[對手方的身分決定賠率](../counterparty-determines-odds/)。
+清算距離縮小之後，社群上有幾種手法宣稱能延後它——加碼攤平、對鎖、全倉。[社群流行手法的共同結構](../social-trading-patterns/) 逐個檢查這些做法動到了損益三項裡的哪一項，並指出多數只延後了確認虧損的時點而沒有改變處境。
+
+台股的融資部位另有一種存活條件被制度關閉的形態：追繳的時程照常推進，而跌停鎖死使平倉無法執行。[漲跌幅限制的效果按槓桿分岔](../price-limit-splits-by-leverage/) 算出連續三日跌停之後維持率會落到哪裡，以及鎖死期間還剩哪些動作做得到。
+
+[成本結構決定期望值](../trading-cost-structure/) 說明摩擦成本怎麼隨交易頻率線性累積、以及打平需要多高的勝率——那一項與這裡的清算距離相乘，決定了高槓桿高頻操作的實際期望值。[對手方的身分決定賠率](../counterparty-determines-odds/) 指出清算費用流向平台，所以平台的收入與參與者使用高槓桿同向成長。

@@ -96,4 +96,6 @@ tags: ["business", "retail-instruments", "taiwan-stock", "regulation", "policy"]
 
 ## 往下讀
 
-這個缺口對個人融資部位的實際後果、以及自己怎麼算距離，見[漲跌幅限制的效果按槓桿分岔](../price-limit-splits-by-leverage/)。漲跌幅在炒作條件上的另一個作用（漲停作為可製造的訊號）見[台股三項條件同時成立](../taiwan-stock-manipulability/)的「台股的三項條件各由什麼制度構成」一節。
+[漲跌幅限制的效果按槓桿分岔](../price-limit-splits-by-leverage/) 把這個缺口換算成個人融資部位的處境：連續三日跌停之後維持率落到哪裡、什麼時候會變成對證券商的債務、以及鎖死期間還剩哪些動作做得到。
+
+[台股三項條件同時成立](../taiwan-stock-manipulability/) 的「台股的三項條件各由什麼制度構成」一節寫漲跌幅在另一個方向的作用——漲停使未成交的買單累積在漲停價上，形成「想買買不到」的盤面，而那個狀態由制度產生卻被讀成需求強度。
