@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 1.0.0
+  version: 1.1.0
   category: writing-methodology
 ---
 
@@ -303,6 +303,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 1.1.0 — `managing-article-collections` 新增一節：按功能組織的模組要另給選擇一層路由。每個功能都有一節而「我這個問題該用哪一個」沒有，這是組織方式的直接結果——章節照被解釋的對象切、選擇發生在對象之間。修法是模組入口加一張問題到落點的表（很便宜、不必重寫任何一章），兩個判準：問題用讀者的語言寫不用功能的語言、承擔選擇的章節從業務事實開場不從功能比對開場（功能型章節維持原樣）。辨識訊號是章節名全部是被解釋的對象、以及使用者問「我這樣寫犯了什麼錯」而非「這個功能怎麼用」。
+
 **Version**: 1.0.0 — 新增 principle 卡 `basics-anchor-the-advanced` 與核心原則一段：深度的分配不看主題的表面複雜度。熟悉度決定作者覺得一件事要不要解釋、要不要當推導起點，而基本功能的熟悉度最高、因此同時失去這兩個待遇；讀者的處境相反。量測：一批十篇教材裡兩個最基礎的題目產出全批最危險的兩個缺陷而兩者都不報錯。同批修兩張既有卡——`audience-is-professional-not-layperson` 補一節擋掉「讀者不是外行人所以基本可以帶過」這個誤讀（那張卡管姿態不管份量），`teaching-module-needs-derivation-anchor` 補源頭的品質測試（必須是基本機制、一句話說得完）。
 
 **Version**: 0.99.0 — principle 卡 `cross-links-eat-the-article-they-live-in` 的修正，來自第二批異形態內容的預先登記驗證。**五種關係裡的「組成」補上方向這一維**——它原本寫成「本篇的哪一步用到它」，而十八條路由裡有兩條方向相反（目的地拿本篇的產物去用），在五種關係裡歸不進去，硬歸會讓承諾寫反。兩個方向各有自己的承諾形態。同批證實這個清單換題材仍然涵蓋：第二批替換零條（第一批的主導形態），其餘四種各自都用上了。
