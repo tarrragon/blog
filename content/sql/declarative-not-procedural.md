@@ -29,7 +29,20 @@ SELECT count(*) FROM 訂單 JOIN 顧客 ON 訂單.顧客編號 = 顧客.顧客�
 SELECT count(*) FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
 ```
 
-兩者都回 `200000`，而它們的 [query plan](/sql/knowledge-cards/query-plan/) 取決於引擎手上有沒有這兩張表的統計資訊。
+兩者都回 `200000`。看它們的 [query plan](/sql/knowledge-cards/query-plan/) 要用 `EXPLAIN QUERY PLAN`（SQLite 的 `EXPLAIN` 給的是逐行 bytecode，不是計畫），而計畫取決於引擎手上有沒有這兩張表的統計資訊。
+
+這一節的兩張表可以這樣造：
+
+```sql
+CREATE TABLE 顧客 (顧客編號 INT, 姓名 TEXT);
+CREATE TABLE 訂單 (訂單編號 INT, 顧客編號 INT, 金額 INT);
+
+WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i+1 FROM n WHERE i < 50)
+INSERT INTO 顧客 SELECT i, '顧客' || i FROM n;
+
+WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i+1 FROM n WHERE i < 200000)
+INSERT INTO 訂單 SELECT i, i % 50 + 1, i % 900 FROM n;
+```
 
 **剛建好、還沒統計過的資料庫**上，SQLite 給出兩個不同的計畫——第一種寫法掃訂單、第二種寫法掃顧客。沒有統計就不知道哪張表大，於是它照文字的順序走。
 
@@ -49,7 +62,7 @@ SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 
 「先讀的那張表」這個直覺因此對應不到任何固定的東西——同一段查詢在兩個資料庫狀態下先讀的表不同。文字上的先後只決定語意（見 [1.3](/sql/join-left-operand-accumulates/)），不決定執行。
 
-## 求值順序不是建議，它擋得住寫法
+## 求值順序擋得住寫法
 
 語意模型摸不著，但它會在一個地方現形。書店要找出下過一張以上訂單的顧客，把「訂單張數大於一」這個條件寫進 `WHERE`：
 
@@ -59,7 +72,7 @@ SELECT 顧客編號 FROM 訂單 WHERE COUNT(*) > 1 GROUP BY 顧客編號;
 
 SQLite 回 `misuse of aggregate: COUNT()`，DuckDB 回 `WHERE clause cannot contain aggregates`。兩個引擎都拒絕，而理由就寫在求值順序裡：`WHERE` 這一步分組還沒發生，沒有組就沒有組的計數可以拿來比。
 
-同一個問題移到 `HAVING`，兩邊都回 `(1, 2)`——顧客編號 1 的佳穎，兩張訂單。分組這時候已經完成，每一組的計數算得出來了。
+同一個問題移到 `HAVING`，兩邊都回 `(1, 2)`——書店的三位顧客裡只有一號的佳穎下過單，而她有兩張訂單。分組這時候已經完成，每一組的計數算得出來了。
 
 這組錯誤訊息是這個語言少數把內部模型直接講出來的地方。**它拒絕的理由是這一步拿不到那個值**，與這個寫法好不好看無關。
 
@@ -73,8 +86,8 @@ SQLite 回 `misuse of aggregate: COUNT()`，DuckDB 回 `WHERE clause cannot cont
 
 ## 往下走
 
-**求值順序的完整清單與它的例外**：[1.2 子句的求值順序](/sql/clause-evaluation-order/) 逐步走過從 `FROM` 到 `ORDER BY` 每一步手上有什麼，並分開兩種限制——語意模型規定的（各家引擎都擋）與各家自己的寬鬆度（同一段查詢換引擎會換行為，其中一種還不報錯）。
+求值順序每一步手上有什麼、以及哪些限制擋得掉哪些只是引擎的寬鬆度，在 [1.2 子句的求值順序](/sql/clause-evaluation-order/)。
 
-**書寫位置真正決定的那件事**：[1.3 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/) 寫多張表相連時每個 `JOIN` 的左邊到底是什麼，以及在鏈中間放 `RIGHT JOIN` 會把保護範圍縮到只剩一張表。
+書寫位置真正決定的是哪一側的列被保護，而多張表相連時「左邊」已經不是一張表——[1.3 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/) 寫這個累積過程。
 
-**在真實系統上讀計畫**：[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 三層工具的分工，以及統計資訊過時、多欄統計缺失這類讓計畫選錯的實際案例。
+要在真實系統上讀計畫，到 [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 拿 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 的分工，以及統計過時、多欄統計缺失這幾種讓計畫選錯的實際案例。

@@ -16,7 +16,7 @@ tags: ["sql", "group-by", "null", "aggregate", "join"]
 
 ```sql
 SELECT 訂單.顧客編號 AS 分組鍵, count(*) AS 這組幾列,
-       count(訂單.顧客編號) AS 有值幾列, group_concat(顧客.姓名) AS 裝了誰
+       count(訂單.顧客編號) AS 有值幾列, group_concat(顧客.姓名) AS 裝了誰   -- group_concat 把一組裡的名字串起來
 FROM 顧客 LEFT JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號
 GROUP BY 訂單.顧客編號;
 ```
@@ -57,7 +57,10 @@ DuckDB 同樣拒絕。SQLite 接受，從那一組裡任意挑一列回傳——
 一組要代表一位顧客，鍵就是顧客的識別欄位：
 
 ```sql
-GROUP BY 顧客.顧客編號, 顧客.姓名 HAVING count(訂單.顧客編號) = 0
+SELECT 顧客.姓名 FROM 顧客
+LEFT JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號
+GROUP BY 顧客.顧客編號, 顧客.姓名
+HAVING count(訂單.顧客編號) = 0;
 -- 宗翰、雅文
 ```
 

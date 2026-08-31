@@ -90,8 +90,6 @@ SELECT 姓名, 訂單.金額 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編
 
 ## 往下走
 
-**列數為什麼會變多**：[1.5 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 寫配對怎麼讓一列變成多列、後續的聚合因此算錯什麼，以及 `NOT IN` 碰到 NULL 整個失效的完整推導。
+選了 `JOIN` 之後列數會變多，而後面接聚合就會算錯。[1.5 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 寫配對怎麼讓一列變成多列、`NOT IN` 碰到 `NULL` 整段失效的完整推導也在那裡。
 
-**這三種寫法的代價差多少**：[1.11 代價由資料與索引決定](/sql/cost-lives-in-the-plan/) 用一道實際的題目量三種寫法，並示範加一個索引之後三者的快慢排名整個對調。
-
-**條件放 `ON` 還是 `WHERE`**：`JOIN` 這一側還有一個位置要選。[1.4 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/) 寫同一個條件放兩處在外連接下為什麼不同值。
+三種寫法的代價差多少要看資料與索引，不看寫法。[1.11](/sql/cost-lives-in-the-plan/) 用一道重複值的題目量三種，並示範加一個索引之後三者的快慢排名重排。

@@ -34,11 +34,23 @@ SELECT DISTINCT email FROM Person p
 WHERE EXISTS (SELECT 1 FROM Person q WHERE q.email = p.email AND q.id <> p.id);
 ```
 
-三個都給出正確答案。以下的時間都在 SQLite 上量，資料是七千列，其中一個 email 重複兩千次。
-
 ## 加一個索引，同一組寫法的快慢排名重排
 
-三個都給出正確答案。以下的時間都在 SQLite 3.49 上量，七千列資料、其中一個 email 重複兩千次，各跑三次取最小值。**同一段查詢在別的機器或別的版本上絕對值會不同，要看的是同一欄之內的相對關係。**
+三個都給出正確答案。以下的時間都在 SQLite 3.49 上量，各跑三次取最小值。資料是這樣造的：
+
+```sql
+CREATE TABLE Person (id INTEGER PRIMARY KEY, email TEXT);
+
+WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i < 4999)
+INSERT INTO Person SELECT i, 'u' || i || '@x.com' FROM n;
+
+WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i < 1999)
+INSERT INTO Person SELECT 100000 + i, 'hot@x.com' FROM n;
+
+-- 有索引的那一欄另外跑：CREATE INDEX ix ON Person(email);
+```
+
+七千列，其中一個 email 重複兩千次。**同一段查詢在別的機器或別的版本上絕對值會不同，要看的是同一欄之內的相對關係。**
 
 | 寫法     | `email` 沒有索引 | `email` 有索引 |
 | -------- | ---------------- | -------------- |
@@ -69,7 +81,7 @@ SEARCH q USING COVERING INDEX ix (email=?)
 
 子查詢仍然逐列執行，而每一次從 `SCAN`（掃全表）變成 `SEARCH`（透過[索引](/sql/knowledge-cards/indexing/)定位）。逐列執行這個結構沒變，變的是每一次的單價。
 
-## 分組的代價與重複程度無關
+## 分組的代價只隨資料量走
 
 另一組量測換一個變數：五萬列資料，其中一個 email 的重複次數從十次加到兩千次，都沒有索引。
 
@@ -91,20 +103,22 @@ SEARCH q USING COVERING INDEX ix (email=?)
 
 資料量決定常數項會不會被放大。分布決定會不會踩到某個寫法的最壞情況——上面的自連接就是被重複程度打敗的。索引決定每一次查找的單價，而上面那組量測裡它讓同一段查詢差了五百多倍。
 
-這三項都在資料庫那一側，所以問這個問題的正確方式是去問引擎，而不是比較兩段文字。做法是把兩種寫法各跑一次 `EXPLAIN`，看它們的[計畫](/sql/knowledge-cards/query-plan/)差在哪；再改變其中一項（加索引、換資料量），看計畫變不變。
+這三項都在資料庫那一側，所以問這個問題的正確方式是去問引擎，而不是比較兩段文字。做法是把兩種寫法各要一次計畫（SQLite 用 `EXPLAIN QUERY PLAN`，PostgreSQL 用 `EXPLAIN`），看它們差在哪；再改變其中一項（加索引、換資料量），看計畫變不變。
 
 ## 練習平台驗結果集，不驗代價
 
 練習題的資料量小到任何寫法都在幾毫秒內完成，所以通過與否只反映結果集對不對——也就是描述得對不對這一半。代價那一半在那個環境裡沒有東西可以量。
 
-練習題的定位就落在這裡：先把描述練對，代價要另外練。而練代價的方式就是上面那一套——同一題寫兩種、把計畫調出來看、改變資料分布再看一次。三個步驟都不需要真實的 production 系統，一個本機的資料庫加幾萬列造出來的資料就夠。
+練習題的定位就落在這裡：先把描述練對，代價要另外練。
+
+代價之所以只能這樣知道，是因為它住在資料與索引那一側。取得它的唯一途徑是讓那一側現形——一次計畫只回答那一個資料庫狀態的問題，所以換一個變數再問一次才看得到什麼在動。本篇兩張表就是這樣得來的：一次換索引、一次換重複程度，其餘不動。
 
 有一件事值得先知道：**猜通常會猜錯。** `EXISTS` 沒有把配對展開，看起來應該是三者裡最省的一種；而在沒有索引的那一欄，它比自連接慢了將近六倍。這就是「代價不在文字裡」的具體樣子——從查詢的形狀推不出它的代價，推得再仔細也一樣。
 
 ## 往下走
 
-**代價為什麼會落在文字之外**：[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 寫這個分工從哪裡來，以及書寫順序、求值順序與執行順序為什麼是三件事。
+代價落在文字之外這件事從哪裡來，[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 從語言的性質推一次，並把書寫、求值、執行三種順序分開。
 
-**計畫裡那些名詞各指什麼**：[Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 給 `SCAN` 與 `SEARCH` 的分別、覆蓋索引的意思，以及索引的代價落在寫入端。
+計畫裡的 `SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，查 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡。索引的代價落在寫入端這一點也在後者。
 
-**在真實系統上讀計畫**：[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN ANALYZE` 與 `auto_explain` 的分工，以及統計資訊過時、多欄統計缺失這類讓計畫選錯的實際案例。
+真實系統上的計畫比本篇複雜得多。到 [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 拿三層工具的分工與四個 production case。
