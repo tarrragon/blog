@@ -16,9 +16,22 @@ Query plan 是引擎為一段查詢決定的執行步驟，內容是一棵運算
 
 ## 可觀察訊號與例子
 
-SQLite 的 `EXPLAIN QUERY PLAN` 回報一組掃描步驟，例如 `SCAN small` 接著 `SCAN huge`。同一個連接寫成 `FROM huge JOIN small` 與 `FROM small JOIN huge`，兩次都得到同樣的結果——書寫順序不影響它。
 
-DuckDB 的 `EXPLAIN` 回報一棵運算子樹，節點標著 `HASH_JOIN`、`SEQ_SCAN` 這類名稱與估計的列數；`EXPLAIN ANALYZE` 另外附上實際跑出來的列數與耗時。
+書店把顧客與訂單連起來，`EXPLAIN QUERY PLAN` 在 SQLite 上回三行：
+
+```text
+SCAN 顧客
+BLOOM FILTER ON 訂單 (顧客編號=?)
+SEARCH 訂單 USING AUTOMATIC COVERING INDEX (顧客編號=?)
+```
+
+`SCAN` 與 `SEARCH` 是兩種取法：`SCAN 顧客` 表示整張顧客表逐列看過，`SEARCH 訂單` 表示對訂單表透過索引定位而不逐列看。
+
+`AUTOMATIC` 指的是這個索引不存在於資料庫裡，是引擎為了這一次查詢臨時建的——它判斷建索引比全表掃描划算。`COVERING` 指的是索引本身帶著查詢要的欄位，所以定位之後不必再回去讀原本的列。`BLOOM FILTER` 是它加的一道快速排除步驟。
+
+**這三行裡沒有一個字出現在原本的查詢裡。** 查詢只說了要把兩張表按顧客編號連起來，其餘全部是引擎的決定——而它們決定了這段查詢要花多久。
+
+DuckDB 的 `EXPLAIN` 換一種呈現，回一棵運算子樹，節點標著 `HASH_JOIN`、`SEQ_SCAN` 這類名稱與估計的列數；`EXPLAIN ANALYZE` 另外附上實際跑出來的列數與耗時。
 
 ## 設計責任
 

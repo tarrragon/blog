@@ -69,3 +69,4 @@ infra 教學模組的入門層文章原本採用宣導式框架：
 - → [#165 register 違規需要跨文體視角](/report/register-violation-needs-cross-style-eyes/)：宣導語氣是一種 register 問題 — LLM 自然傾向「對讀者友善」的語氣，自審時很難察覺它已經偏向宣導
 - → [#166 重點先行是跨語言的資訊結構](/report/lead-with-the-point-cross-language/)：宣導式框架常把重點藏在故事線之後（「跑得好好的…直到…」），經驗補足式直接把操作需求放句首
 - → [教材用中性陳述、不對讀者喊話](/report/teaching-register-states-not-addresses-reader/)：宣導語氣跟喊話是相鄰問題 — 都源自「讀者需要被管理」的隱含假設
+- [#305 基本功能衍生的問題不比進階議題簡單，而進階議題要從它推導](../basics-anchor-the-advanced/)：擋掉本卡的一個誤讀。「讀者不是外行人」管的是姿態（不用科普語氣、不用故事線導入），不是份量——讀者缺的正是這個領域的基本結構，基本定義要寫足。

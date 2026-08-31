@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 0.99.0
+  version: 1.0.0
   category: writing-methodology
 ---
 
@@ -125,6 +125,8 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 **判斷標準的輸入集合要跟正文的組織維度對齊**：映射的成熟度與輸入的完整性是兩個獨立的檢查——一段判斷標準可以把每個條件都對到明確的行動，而只要讀者帶進來的個案在某個維度上取了作者沒設想的值，整條路就走不到底。最高頻的形態是**只收「表徵」一個輸入，把產生表徵的那個條件從輸入端折疊掉**，即使它在正文裡佔了整整一節（處置句寫著只有某一種執行環境才有的操作名詞，而內容涵蓋的環境不只那一種）。便宜的自查指標是分支數與種類數的落差：分支數少於正文自己列出的種類數時，就有種類落在所有分支之外。作者看不見它，因為讀的人自帶那個被折疊的條件；驗收要拿具體個案走一遍、而個案要刻意挑落在那些種類上的。詳見 [criteria-fold-away-the-condition-that-produces-the-symptom](references/principles/criteria-fold-away-the-condition-that-produces-the-symptom.md)。
 
 **教學模組要有推導源頭**：分析導向的教學模組（判斷標準密集、讀者要帶走判斷力），模組級結構要是推導體系、不是主題集合——一個源頭機制（成本結構 / 約束 / 生命週期，各篇判斷標準能折算回去的基準）、每篇承擔一條展開、模組入口能一句話說出推導起點。源頭買到：判斷標準同尺、跨篇矛盾現形、擴篇有掛載點、推導式閱讀路線成立。目錄型模組與異質 case 記錄不適用；源頭是折算基準、不是開場模板。詳見 [teaching-module-needs-derivation-anchor](references/principles/teaching-module-needs-derivation-anchor.md) 與 `references/managing-article-collections.md` 的對應段。
+
+**深度的分配不看主題的表面複雜度**：判斷一段要寫多詳細時用「讀者讀到這裡手上有什麼」，而不是這個主題看起來簡不簡單。基本處讀者手上的既有結構最少、作者的熟悉度最高，兩邊的需求剛好反向，所以用熟悉度當訊號必然分配錯——而陷阱聚集在基本處有結構上的原因：基本語法用得最頻繁，同一個誤解在每次使用裡重複，且失效多半是靜默的（實作為相容性接受寬鬆寫法，寬鬆的那一版還能算出看起來合理的值）。**「難」與「危險」是兩個不同的軸。** 同一條也管進階議題的起點——推導從底下的基本機制開始、複雜需求留成案例，驗收用一句話測試（這個起點能不能在不預設本模組任何內容的前提下說完）。詳見 [basics-anchor-the-advanced](references/principles/basics-anchor-the-advanced.md)。
 
 **複合問題先拆機制再談交互**：問題由多個概念交互導致時、先各自教 A / B / C 的機制、再談 A×B×C 交互。讀者理解各元件後交互作用是自然推導的。各概念獨立成篇、文章之間用連結而非重複來串接。判讀訊號是文章裡出現「另外還有一個原因是...」的堆疊式展開。詳見 [compound-problem-decompose-then-interact](references/principles/compound-problem-decompose-then-interact.md)。
 
@@ -299,6 +301,8 @@ compositional-writing/
 ---
 
 **Last Updated**: 2026-08-18
+**Version**: 1.0.0 — 新增 principle 卡 `basics-anchor-the-advanced` 與核心原則一段：深度的分配不看主題的表面複雜度。熟悉度決定作者覺得一件事要不要解釋、要不要當推導起點，而基本功能的熟悉度最高、因此同時失去這兩個待遇；讀者的處境相反。量測：一批十篇教材裡兩個最基礎的題目產出全批最危險的兩個缺陷而兩者都不報錯。同批修兩張既有卡——`audience-is-professional-not-layperson` 補一節擋掉「讀者不是外行人所以基本可以帶過」這個誤讀（那張卡管姿態不管份量），`teaching-module-needs-derivation-anchor` 補源頭的品質測試（必須是基本機制、一句話說得完）。
+
 **Version**: 0.99.0 — principle 卡 `cross-links-eat-the-article-they-live-in` 的修正，來自第二批異形態內容的預先登記驗證。**五種關係裡的「組成」補上方向這一維**——它原本寫成「本篇的哪一步用到它」，而十八條路由裡有兩條方向相反（目的地拿本篇的產物去用），在五種關係裡歸不進去，硬歸會讓承諾寫反。兩個方向各有自己的承諾形態。同批證實這個清單換題材仍然涵蓋：第二批替換零條（第一批的主導形態），其餘四種各自都用上了。
 
 **Version**: 0.98.0 — 三輪十二個 frame 的審查之後的修正。**條件分支降級成五種關係型別裡的一種**（替換），另外四種各給形態——個案實跑逐條檢查二十二個連結只有一個是替換型，把它寫成通用解會逼出硬塞。**判準補上射程**：測的是以論證為交付的單篇，術語卡、目錄頁、歸納層與孤立單篇落在射程外，判準之前先過定位這一關。principle 卡另補「每一條判定都要附它的輸入」（十六條規則裡十三條的最省力遵循是腦中判一次、報告寫一句通過，而認真做過與沒做產物相同）。
