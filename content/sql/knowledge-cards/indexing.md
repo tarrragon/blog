@@ -20,7 +20,7 @@ Index 是為了加快查找而額外維護的一份資料結構，內容是某�
 
 SQLite 的計畫用 `SCAN` 與 `SEARCH` 分開兩種取法：`SCAN 訂單` 表示整張表逐列看過，`SEARCH 顧客 USING AUTOMATIC COVERING INDEX` 表示透過索引定位。
 
-`AUTOMATIC` 指的是這個索引不存在於資料庫裡，是引擎為了這一次查詢臨時建的——它判斷建索引比全表掃描划算。`COVERING` 指的是索引本身就帶著查詢要的欄位，所以定位之後不必再回去讀原本的列。
+計畫裡那幾個關鍵字（`AUTOMATIC`、`COVERING`、`BLOOM FILTER`）各指什麼，在 [query plan](/sql/knowledge-cards/query-plan/)。
 
 ## 設計責任
 
