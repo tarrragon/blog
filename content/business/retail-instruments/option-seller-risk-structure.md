@@ -65,4 +65,4 @@ tags: ["business", "retail-instruments", "options", "tail-risk"]
 
 ## 往下讀
 
-強制平倉的觸發條件與[清算距離](/business/retail-instruments/knowledge-cards/liquidation-price/)的算法在[槓桿把方向與存活拆成兩個條件](../leverage-splits-direction-from-survival/)。選擇權買方的對應風險（時間價值衰減、發行商調整隱含波動率）在[對手方的身分決定賠率](../counterparty-determines-odds/)與[成本結構決定期望值](../trading-cost-structure/)。以「高勝率」為訴求的策略在社群上的其他形態，見[社群流行手法的共同結構](../social-trading-patterns/)。強制平倉在缺乏對手單時執行不了這件事，在股票市場有一個由每日漲跌幅產生的對應形態，見[漲跌幅限制的效果按槓桿分岔](../price-limit-splits-by-leverage/)。
+強制平倉的觸發條件、以及被平倉需要多大的價格變動（[清算距離](/business/retail-instruments/knowledge-cards/liquidation-price/) 那張卡寫它怎麼算）的算法在[槓桿把方向與存活拆成兩個條件](../leverage-splits-direction-from-survival/)。選擇權買方的對應風險（時間價值衰減、發行商調整隱含波動率）在[對手方的身分決定賠率](../counterparty-determines-odds/)與[成本結構決定期望值](../trading-cost-structure/)，那一篇寫摩擦成本怎麼隨頻率累積、以及打平需要多高的勝率。以「高勝率」為訴求的策略在社群上的其他形態，見[社群流行手法的共同結構](../social-trading-patterns/)。強制平倉在缺乏對手單時執行不了這件事，在股票市場有一個由每日漲跌幅產生的對應形態，見[漲跌幅限制的效果按槓桿分岔](../price-limit-splits-by-leverage/)。
