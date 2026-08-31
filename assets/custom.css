@@ -283,12 +283,34 @@ h5 {
   letter-spacing: 0.16em;
 }
 
-/* 左側 gutter 放不下色帶時收起來。一欄堆疊之後寬度是固定的 48px、不隨層數
-   變動，所以這裡只需要一個斷點：48px + 24px 留白 <= (視窗寬 - 正文欄寬) / 2，
-   正文欄 701px，得 845px。深度改為影響高度，由色塊的 max-height 收斂。 */
+/* 窄視窗把色帶縮小而不是收起來。一欄堆疊之後它只佔 48px，跟正文的衝突
+   小到不值得換掉整條導航：845px 以下正文欄已經觸到 70ch 的上限、左緣凍結
+   在 body padding 的 40px，色帶右緣 48px 與它重疊 8px，且不論視窗再窄都
+   維持這 8px（正文左緣不再移動）。
+
+   讓出這 8px 的兩個方向代價差六倍。色帶縮到 36px、body 左內距補到 44px，
+   375px 視窗的正文寬從 295px 減到 291px；反過來讓正文退到 64px 之後，同一
+   個視窗要少掉 24px、是可讀寬度的 8%。橫向空間在手機上比色帶的尺寸一致性
+   值錢，所以讓步由色帶承擔。
+
+   字級不動，讓步全部由 padding 出。直排色塊的 width 供應的是文字的行寬，
+   而行寬有硬上限：整站標籤同一個字級，純中文佔 18px、含拉丁字母的佔 20px
+   —— 側躺的拉丁字母吃的是字體 em box 而不是 line-height，所以比中文寬。
+   左右各留 7px 得到 22px 內容寬，兩種標籤都有 2px 餘裕。 */
 @media (max-width: 849px) {
   .breadcrumb-rail {
-    display: none;
+    max-width: 3.6rem;
+  }
+
+  .breadcrumb-rail .breadcrumb-block {
+    width: 3.6rem;
+    padding: 0.9rem 0.7rem;
+  }
+
+  /* 色帶右緣 36px + 8px 留白。custom.css 在 baseof 的 head 最後載入，
+     同 specificity 覆蓋主題的 body { padding: 4rem }。 */
+  body {
+    padding-left: 4.4rem;
   }
 }
 
