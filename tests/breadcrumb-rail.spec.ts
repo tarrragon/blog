@@ -10,6 +10,8 @@ import { expect, Page, test } from '@playwright/test';
  * 2. 主題的 `nav a` 給每個連結 12px 右外距，色帶會被撐成分離的方塊而不是一條
  *    連續路徑。任何動到 nav 樣式的改動都可能把它加回來。
  * 3. 色帶離開視窗左緣，變成浮在頁面中間的卡片。
+ * 4. 色塊被拉成統一高度。改一個 align-items 值就會回去，而回去之後兩個字的
+ *    分類會拿到跟七個字一樣長的色塊，多出來的部分不對應任何內容。
  */
 
 const PATHS = {
@@ -42,6 +44,8 @@ async function railState(page: Page) {
       seams: blocks.slice(1).map((b, i) =>
         Math.round(b.getBoundingClientRect().left - blocks[i].getBoundingClientRect().right)
       ),
+      heights: blocks.map((b) => Math.round(b.getBoundingClientRect().height)),
+      tops: blocks.map((b) => Math.round(b.getBoundingClientRect().top)),
       labels: blocks.map((b) => b.textContent),
       writingMode: blocks[0] ? window.getComputedStyle(blocks[0]).writingMode : null,
     };
@@ -64,6 +68,20 @@ test.describe('vertical breadcrumb rail', () => {
     expect(state!.labels[0]).toBe('首頁');
     expect(state!.labels[1]).toBe('Backend');
     expect(state!.labels).toHaveLength(state!.blockCount);
+  });
+
+  test('色塊各自量自己的高度、上緣齊平', async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await page.goto(PATHS.depth6);
+
+    const state = await railState(page);
+    // 這條路徑的標籤從兩字（首頁）到超過二十字（PostgreSQL Hands-on 操作路線），
+    // 高度全部相同就代表色塊又被拉成統一高度了
+    expect(new Set(state!.heights).size).toBeGreaterThan(1);
+    // 「首頁」比「資料庫與持久化」短，色塊也要比較短
+    expect(state!.heights[0]).toBeLessThan(state!.heights[2]);
+    // 高度參差但上緣是同一條線，讀者才看得出這是一條路徑而不是散落的方塊
+    expect(new Set(state!.tops).size).toBe(1);
   });
 
   test('色帶貼齊視窗左緣、右緣不壓到正文', async ({ page }) => {

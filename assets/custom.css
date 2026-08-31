@@ -200,6 +200,14 @@ h5 {
    定位錨在視窗左緣（left: 0）而不是正文欄，所以色帶的位置在所有寬度下
    固定不動，視窗變寬時只有它跟正文的距離拉開。圓角只留右側 —— 三面貼齊
    邊緣的色帶讀起來是嵌在頁面上，四角都圓的話會變成浮在旁邊的卡片。
+
+   色塊各自量自己的高度（align-items: flex-start），高度差本身就是標籤長度
+   的資訊。統一高度會讓兩個字的分類拿到跟七個字一樣長的色塊，多出來的部分
+   是純粹的色面、不對應任何內容。
+
+   高度參差之後，圓角與陰影不能再掛在容器上：容器的外框有一半是沒有色塊的
+   空白，裁在那裡的圓角看不見，畫在那裡的矩形陰影則會浮在空處。圓角改掛在
+   最後一塊（唯一右緣外露的），陰影改用 drop-shadow 跟著實際畫出來的形狀走。
    =========================================== */
 
 .breadcrumb-rail {
@@ -208,11 +216,9 @@ h5 {
   left: 0;
   transform: translateY(-50%);
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   max-height: 70vh;
-  border-radius: 0 8px 8px 0;
-  overflow: hidden;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
+  filter: drop-shadow(3px 0 14px rgba(0, 0, 0, 0.45));
   z-index: 900;
 }
 
@@ -253,10 +259,15 @@ h5 {
   outline-offset: -3px;
 }
 
-/* 最深的一塊代表讀者當前所在的分類，用內側亮邊把它跟上游層級分開。 */
+/* 最深的一塊代表讀者當前所在的分類，用內側亮邊把它跟上游層級分開。
+   它同時是唯一右緣外露的色塊，圓角掛在這裡。 */
 .breadcrumb-rail .breadcrumb-block.is-current {
   box-shadow: inset 2px 0 0 rgba(255, 255, 255, 0.35);
   font-weight: 600;
+}
+
+.breadcrumb-rail .breadcrumb-block:last-child {
+  border-radius: 0 6px 6px 0;
 }
 
 .breadcrumb-rail .breadcrumb-home {
