@@ -73,6 +73,8 @@ Round 3-B steelman reviewer 的檢查項包含「數字 / 閾值有無源頭」�
 
 ---
 
+- [#302 定位決定體例，而共用的寫作規範會把一個 surface 的體例搬到另一個上](../positioning-decides-form-before-any-rule-applies/) 是本卡在跨 surface 方向的對應。本卡比對的是模組的知識類型跟它所在分類的 house style，兩邊都在同一個 surface 裡面；那張卡處理的是一份給人讀的教材套上了給 agent 執行的體例，而那兩個 surface 的 house style 本來就該不同，比對 sibling 比不出來。
+
 ## 判讀徵兆
 
 | 徵兆                                                     | 該做的行動                                                  |
