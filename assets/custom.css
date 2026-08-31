@@ -193,28 +193,26 @@ h5 {
 /* ===========================================
    垂直分類色帶（麵包屑）
 
-   固定在正文左側、不隨捲動移動，跟右側的章節目錄形成對稱的兩條軌。
+   貼齊視窗左緣、不隨捲動移動，跟右側的章節目錄形成對稱的兩條軌。
    由 layouts/partials/breadcrumb.html 產生，色相與明度都由 inline 的
    --bc-bg / --bc-fg 帶進來，這裡只負責排版與互動。
 
-   定位錨在正文欄而不是視窗左緣（right: calc(50% + var(--bc-offset))），
-   所以視窗變寬時色帶跟著正文走、不會被拋到畫面角落。色帶往左長，深度
-   增加只影響左緣、緊鄰正文的那一塊永遠在同一個位置。
+   定位錨在視窗左緣（left: 0）而不是正文欄，所以色帶的位置在所有寬度下
+   固定不動，視窗變寬時只有它跟正文的距離拉開。圓角只留右側 —— 三面貼齊
+   邊緣的色帶讀起來是嵌在頁面上，四角都圓的話會變成浮在旁邊的卡片。
    =========================================== */
 
 .breadcrumb-rail {
-  --bc-offset: 37.5rem; /* 正文欄半寬 + 間距，視窗中線到色帶右緣的距離 */
-
   position: fixed;
   top: 50%;
-  right: calc(50% + var(--bc-offset));
+  left: 0;
   transform: translateY(-50%);
   display: flex;
   align-items: stretch;
   max-height: 70vh;
-  border-radius: 8px;
+  border-radius: 0 8px 8px 0;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
   z-index: 900;
 }
 
@@ -266,36 +264,37 @@ h5 {
   letter-spacing: 0.16em;
 }
 
-/* 左側 gutter 放不下整條色帶時收起來。門檻隨層數變動 —— 色帶往左長，六層比
-   兩層多吃 200px 的 gutter，用單一斷點會讓深層頁面在中等寬度溢出到畫面外。
+/* 左側 gutter 放不下整條色帶時收起來。門檻隨層數變動 —— 色帶從左緣往右長，
+   六層比兩層多吃 200px，用單一斷點會讓深層頁面的色帶壓到正文上。
 
-   每個門檻是 2 x (--bc-offset + 色塊寬 x 塊數 + 24px 留白)，色塊固定 48px：
-   798 + 96n，取整到百位。窄於門檻就整條收起，正文欄的位置不受影響。 */
-@media (max-width: 999px) {
+   色帶貼左緣，所以限制條件是右緣要停在正文欄左緣之前：
+   48px x 塊數 + 24px 留白 <= (視窗寬 - 正文欄寬) / 2，正文欄 701px，
+   得 749 + 96n，取整到五十位。窄於門檻就整條收起，正文欄的位置不受影響。 */
+@media (max-width: 949px) {
   .breadcrumb-rail {
     display: none;
   }
 }
 
-@media (max-width: 1099px) {
+@media (max-width: 1049px) {
   .breadcrumb-rail[data-blocks="3"] {
     display: none;
   }
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 1149px) {
   .breadcrumb-rail[data-blocks="4"] {
     display: none;
   }
 }
 
-@media (max-width: 1299px) {
+@media (max-width: 1249px) {
   .breadcrumb-rail[data-blocks="5"] {
     display: none;
   }
 }
 
-@media (max-width: 1399px) {
+@media (max-width: 1349px) {
   .breadcrumb-rail[data-blocks="6"] {
     display: none;
   }

@@ -5,12 +5,11 @@ import { expect, Page, test } from '@playwright/test';
  *
  * 三件事在改版面時會靜默壞掉，都不會有 build error：
  *
- * 1. 色帶往左長，深度越深吃掉越多左側 gutter。斷點若沒有跟著層數走，深層頁面
- *    會在中等寬度整條溢出到畫面外 —— 元素還在、getBoundingClientRect 的 x 是
- *    負的、讀者什麼都看不到。
+ * 1. 色帶貼左緣往右長，深度越深越接近正文欄。斷點若沒有跟著層數走，深層頁面
+ *    的色帶會在中等寬度壓到正文上 —— 兩者都還在、只是疊著，沒有任何報錯。
  * 2. 主題的 `nav a` 給每個連結 12px 右外距，色帶會被撐成分離的方塊而不是一條
  *    連續路徑。任何動到 nav 樣式的改動都可能把它加回來。
- * 3. 色帶跟正文欄重疊，或反過來被拋到離正文很遠的畫面角落。
+ * 3. 色帶離開視窗左緣，變成浮在頁面中間的卡片。
  */
 
 const PATHS = {
@@ -67,26 +66,26 @@ test.describe('vertical breadcrumb rail', () => {
     expect(state!.labels).toHaveLength(state!.blockCount);
   });
 
-  test('色帶貼著正文欄左緣、不重疊也不貼視窗邊', async ({ page }) => {
+  test('色帶貼齊視窗左緣、右緣不壓到正文', async ({ page }) => {
     for (const width of [1440, 1600, 1920]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(PATHS.depth6);
 
       const state = await railState(page);
       expect(state!.display).toBe('flex');
-      // 定位錨在正文欄而不是視窗左緣：視窗變寬時間距不變
-      expect(Math.round(state!.mainLeft - state!.right)).toBe(25);
-      expect(state!.left).toBeGreaterThan(0);
+      // 定位錨在視窗左緣而不是正文欄：視窗變寬時色帶不動、只有間距拉開
+      expect(state!.left, `@ ${width}`).toBe(0);
+      expect(state!.right, `@ ${width} 壓到正文`).toBeLessThan(state!.mainLeft);
     }
   });
 
-  test('視窗放不下時整條收起、不溢出畫面外', async ({ page }) => {
-    // 門檻是 798 + 96n（n = 色塊數）取整到百位，見 custom.css 的 media query 段
+  test('視窗放不下時整條收起、不壓到正文', async ({ page }) => {
+    // 門檻是 749 + 96n（n = 色塊數）取整到五十位，見 custom.css 的 media query 段
     const cases: Array<[string, number, boolean]> = [
       [PATHS.depth3, 1000, false],
-      [PATHS.depth3, 1100, true],
+      [PATHS.depth3, 1050, true],
       [PATHS.depth6, 1300, false],
-      [PATHS.depth6, 1400, true],
+      [PATHS.depth6, 1350, true],
     ];
 
     for (const [path, width, shouldShow] of cases) {
@@ -99,7 +98,7 @@ test.describe('vertical breadcrumb rail', () => {
         continue;
       }
       expect(state!.display, `${path} @ ${width}`).toBe('flex');
-      expect(state!.left, `${path} @ ${width} 溢出畫面左緣`).toBeGreaterThan(0);
+      expect(state!.right, `${path} @ ${width} 壓到正文`).toBeLessThan(state!.mainLeft);
     }
   });
 
