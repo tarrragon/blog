@@ -58,7 +58,7 @@ RIGHT JOIN 評價 ON 評價.訂單編號 = 訂單.訂單編號
 
 ## 這與「先讀哪張表」無關
 
-左右是書寫位置決定的語意，與引擎實際先處理誰無關。同一個連接寫成 `FROM 訂單 JOIN 顧客` 與 `FROM 顧客 JOIN 訂單`，SQLite 兩次給出完全相同的 [query plan](/sql/knowledge-cards/query-plan/)——它掃二十萬列的訂單、對五十列的顧客做查找，與誰寫在前面無關。
+左右是書寫位置決定的語意，與引擎實際先處理誰無關。同一個連接寫成 `FROM 訂單 JOIN 顧客` 與 `FROM 顧客 JOIN 訂單`，在跑過 `ANALYZE` 的資料庫上，SQLite 兩次給出完全相同的 [query plan](/sql/knowledge-cards/query-plan/)——它掃二十萬列的訂單、對五十列的顧客做查找，與誰寫在前面無關（沒有統計時它會改照文字順序走，見 [1.1](/sql/declarative-not-procedural/)）。
 
 **左右決定哪一側的列被保護，執行順序決定誰先被掃，兩者互不相干。** 混用這兩個直覺會讓人以為調換書寫順序可以調效能，或以為從查詢文字看得出引擎的動作。
 

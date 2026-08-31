@@ -1,8 +1,8 @@
 ---
-title: "1.5 識別字送進引擎之後會被改寫"
+title: "1.9 識別字送進引擎之後會被改寫"
 date: 2026-08-31
 description: "同一段建表語句在別的資料庫上查不到表、或想決定要不要在名字上加引號時"
-weight: 5
+weight: 9
 tags: ["sql", "identifier", "naming", "postgresql", "portability"]
 ---
 
@@ -68,8 +68,8 @@ CREATE TABLE select (x INT);
 
 ## 往下走
 
-**取什麼名字（而不是名字怎麼被處理）**：[backend 模組一的 Schema Design](/backend/01-database/schema-design/) 的「Naming 與一致性」段給表、欄、外鍵、布林、時間戳、索引各自的命名慣例，以及縮寫不一致、隱性意義這幾種反模式。
+**取什麼名字（而不是名字怎麼被處理）**：[Schema Design 的「Naming 與一致性」段](/backend/01-database/schema-design/#naming-與一致性)給表、欄、外鍵、布林、時間戳、索引各自的命名慣例，以及縮寫不一致、隱性意義這幾種反模式。
 
 **這一篇為什麼屬於同一個主題**：查詢的文字不足以決定結果，識別字規則是補上差額的其中一方。[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 寫這個缺口從哪裡來，以及最佳化器怎麼補上另外一塊。
 
-**誰被允許讀寫這些名字**：[1.6 權限的預設是什麼都不給](/sql/privilege-model/) 寫角色與 `GRANT` 的模型，以及新建的角色在拿到授權之前連讀都讀不了。
+**誰被允許讀寫這些名字**：[1.10 權限的預設是什麼都不給](/sql/privilege-model/) 寫角色與 `GRANT` 的模型，以及新建的角色在拿到授權之前連讀都讀不了。

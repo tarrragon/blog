@@ -1,8 +1,8 @@
 ---
-title: "1.7 連接產出的是新的關係，列數與空缺都變了"
+title: "1.5 連接產出的是新的關係，列數與空缺都變了"
 date: 2026-08-31
 description: "連接之後 COUNT 的數字比預期大、或條件寫了卻回零列而沒有報錯時"
-weight: 7
+weight: 5
 tags: ["sql", "null", "join", "aggregate", "count", "not-in"]
 ---
 
@@ -68,7 +68,7 @@ WHERE 訂單.訂單編號 = NULL;
 
 ```sql
 SELECT (NULL = NULL), (NULL IS NULL);
--- NULL | true
+-- NULL | 1        SQLite 用 1 表示真
 ```
 
 `NULL = NULL` 的結果既不是真也不是假，它是第三種答案。而 `WHERE` 只留下判斷為真的列，所以「未知」與「假」在這一步的下場相同——列被丟掉。

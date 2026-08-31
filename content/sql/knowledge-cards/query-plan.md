@@ -17,19 +17,22 @@ Query plan 是引擎為一段查詢決定的執行步驟，內容是一棵運算
 ## 可觀察訊號與例子
 
 
-書店把顧客與訂單連起來，`EXPLAIN QUERY PLAN` 在 SQLite 上回三行：
+
+書店把顧客與訂單連起來，`EXPLAIN QUERY PLAN` 在 SQLite 上回三行（前提是跑過 `ANALYZE`，見下）：
 
 ```text
-SCAN 顧客
-BLOOM FILTER ON 訂單 (顧客編號=?)
-SEARCH 訂單 USING AUTOMATIC COVERING INDEX (顧客編號=?)
+SCAN 訂單
+BLOOM FILTER ON 顧客 (顧客編號=?)
+SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 ```
 
-`SCAN` 與 `SEARCH` 是兩種取法：`SCAN 顧客` 表示整張顧客表逐列看過，`SEARCH 訂單` 表示對訂單表透過索引定位而不逐列看。
+`SCAN` 與 `SEARCH` 是兩種取法：`SCAN 訂單` 表示二十萬列的訂單表逐列看過，`SEARCH 顧客` 表示對五十列的顧客表透過索引定位而不逐列看。
 
 `AUTOMATIC` 指的是這個索引不存在於資料庫裡，是引擎為了這一次查詢臨時建的——它判斷建索引比全表掃描划算。`COVERING` 指的是索引本身帶著查詢要的欄位，所以定位之後不必再回去讀原本的列。`BLOOM FILTER` 是它加的一道快速排除步驟。
 
 **這三行裡沒有一個字出現在原本的查詢裡。** 查詢只說了要把兩張表按顧客編號連起來，其餘全部是引擎的決定——而它們決定了這段查詢要花多久。
+
+**同一段查詢在別的資料庫狀態下會得到別的計畫。** 沒跑過 `ANALYZE` 的資料庫上，引擎不知道哪張表大，改成照文字的順序掃；建好 `訂單(顧客編號)` 索引之後，計畫縮成 `SCAN 顧客` 加 `SEARCH 訂單 USING COVERING INDEX ix`。所以讀計畫要連同「當時的資料庫是什麼狀態」一起讀。
 
 DuckDB 的 `EXPLAIN` 換一種呈現，回一棵運算子樹，節點標著 `HASH_JOIN`、`SEQ_SCAN` 這類名稱與估計的列數；`EXPLAIN ANALYZE` 另外附上實際跑出來的列數與耗時。
 

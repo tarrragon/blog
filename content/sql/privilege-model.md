@@ -1,8 +1,8 @@
 ---
-title: "1.6 權限的預設是什麼都不給"
+title: "1.10 權限的預設是什麼都不給"
 date: 2026-08-31
 description: "想知道應用程式的資料庫帳號該開哪些權限、或查詢報 permission denied 時"
-weight: 6
+weight: 10
 tags: ["sql", "privilege", "grant", "role", "least-privilege", "postgresql"]
 ---
 
@@ -50,7 +50,7 @@ WHERE table_name = '顧客';
 
 `REVOKE SELECT ON 顧客 FROM 報表` 之後，那個角色又回到 `permission denied`。
 
-## 建立物件的權限是另一層
+## 建立物件的權限擋在 schema，不擋在 table
 
 `GRANT SELECT` 給的是對既有表的存取，與「能不能建新的表」無關。報表角色去建表：
 
@@ -71,8 +71,8 @@ CREATE TABLE 偷建的 (x INT);
 
 ## 往下走
 
-**資料層的攻擊面全貌**：權限只是其中一層。[backend 模組一的攻擊者視角](/backend/01-database/red-team-data-layer/) 走注入、授權繞過、資料外洩、競態與資源耗盡五類攻擊模式，以及各自的判讀訊號與失敗代價。
+**資料層的攻擊面全貌**：權限只是其中一層。[backend 模組一的攻擊者視角](/backend/01-database/red-team-data-layer/) 走注入、授權繞過、資料外洩、競態與資源耗盡五類攻擊模式，每一類各附一則真實事件對照，失敗代價在全篇末的盤點段。
 
-**這些權限管的物件叫什麼名字**：[1.5 識別字送進引擎之後會被改寫](/sql/identifier-rules/) 寫引擎怎麼處理表名與欄名，以及為什麼同一段建表語句換引擎之後可能指向不同的名字。
+**這些權限管的物件叫什麼名字**：[1.9 識別字送進引擎之後會被改寫](/sql/identifier-rules/) 寫引擎怎麼處理表名與欄名，以及為什麼同一段建表語句換引擎之後可能指向不同的名字。
 
 **遷移用的那個高權限帳號怎麼使用**：[資料庫轉換實作](/backend/01-database/database-migration-playbook/) 走雙寫、回填、切流與回滾的完整流程，那是 DDL 權限實際被用到的場合。

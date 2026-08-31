@@ -1,8 +1,8 @@
 ---
-title: "1.9 IN、EXISTS 與 JOIN 描述的是三件不同的事"
+title: "1.7 IN、EXISTS 與 JOIN 描述的是三件不同的事"
 date: 2026-08-31
 description: "同一個「找出有對應資料的那些」有三種寫法、想知道該選哪一種時"
-weight: 9
+weight: 7
 tags: ["sql", "in", "exists", "join", "subquery", "semi-join"]
 ---
 
@@ -10,15 +10,15 @@ tags: ["sql", "in", "exists", "join", "subquery", "semi-join"]
 
 分開它們的問題只有一個：**除了判斷有沒有，還要不要用到那張表的欄位。**
 
-## 三種寫法，同一個問題
+## 同一個問題的三種寫法，回的列數不同
 
-書店有三位顧客：佳穎下過兩張訂單、雅文一張、宗翰沒有。要找出下過單的顧客。
+書店的三位顧客裡只有佳穎下過單，兩張都是她的。要找出下過單的顧客。
 
 `IN` 問的是成員資格——這個顧客編號在不在那一份清單裡：
 
 ```sql
 SELECT 姓名 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編號 FROM 訂單);
--- 佳穎、雅文
+-- 佳穎
 ```
 
 `EXISTS` 問的是存在性——有沒有至少一張訂單屬於這位顧客：
@@ -26,27 +26,27 @@ SELECT 姓名 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編號 FROM 訂單
 ```sql
 SELECT 姓名 FROM 顧客
 WHERE EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客編號);
--- 佳穎、雅文
+-- 佳穎
 ```
 
 `JOIN` 做的是另一件事——把兩張表併成一個新的關係：
 
 ```sql
 SELECT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
--- 佳穎、佳穎、雅文
+-- 佳穎、佳穎
 ```
 
-同一個問題，`IN` 與 `EXISTS` 回兩列而 `JOIN` 回三列——**佳穎在 `JOIN` 的結果裡出現了兩次**。
+同一個問題，`IN` 與 `EXISTS` 回一列而 `JOIN` 回兩列——**佳穎在 `JOIN` 的結果裡出現了兩次**。
 
 ## 差別在於誰會讓列數變多
 
 `IN` 與 `EXISTS` 出現在 `WHERE` 裡，它們是條件。條件對每一列只做一件事——留下或丟掉——所以顧客表有三列，過完條件最多剩三列，一列都不會多出來。
 
-`JOIN` 出現在 `FROM` 裡，它參與的是關係的組成。佳穎配得上兩張訂單，於是她在新的關係裡出現兩次（[1.7](/sql/join-changes-rows-and-nulls/)）。加上 `DISTINCT` 之後結果才與前兩者一致：
+`JOIN` 出現在 `FROM` 裡，它參與的是關係的組成。佳穎配得上兩張訂單，於是她在新的關係裡出現兩次（[1.5](/sql/join-changes-rows-and-nulls/)）。加上 `DISTINCT` 之後結果才與前兩者一致：
 
 ```sql
 SELECT DISTINCT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
--- 佳穎、雅文
+-- 佳穎
 ```
 
 **需要 `DISTINCT` 這件事本身是一個訊號**：它表示這個查詢只是要判斷有沒有，而 `JOIN` 順便做了不需要的配對。這種時候 `IN` 或 `EXISTS` 更貼合意圖，因為它們一開始就沒有把列複製出來。
@@ -57,7 +57,7 @@ SELECT DISTINCT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = �
 
 ```sql
 SELECT 顧客.姓名, 訂單.金額 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
--- 佳穎 300 / 佳穎 500 / 雅文 200
+-- 佳穎 300 / 佳穎 500
 ```
 
 同一件事用 `IN` 寫不出來：
@@ -74,7 +74,7 @@ SELECT 姓名, 訂單.金額 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編
 
 ## 選哪一種，問一句話
 
-**要不要用到那張表的欄位。** 要用到就得 `JOIN`，因為只有它把那張表帶進 `FROM`。這時候要順帶檢查列數是不是預期內的——後面如果接聚合，`sum` 與 `count` 算的是配對後的列（[1.7](/sql/join-changes-rows-and-nulls/)）。
+**要不要用到那張表的欄位。** 要用到就得 `JOIN`，因為只有它把那張表帶進 `FROM`。這時候要順帶檢查列數是不是預期內的——後面如果接聚合，`sum` 與 `count` 算的是配對後的列（[1.5](/sql/join-changes-rows-and-nulls/)）。
 
 只是判斷有沒有，就用 `IN` 或 `EXISTS`。兩者在這件事上等價而且不製造多餘的列，寫出來的意圖也比 `JOIN` 加 `DISTINCT` 清楚。
 
@@ -82,7 +82,7 @@ SELECT 姓名, 訂單.金額 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編
 
 兩者在「有沒有」這件事上同值，而在一個地方分岔：**子查詢的結果裡有 NULL 的時候。**
 
-`NOT IN` 碰到一個 NULL 就對每一列回答「未知」，整段查詢回零列且不報錯；`NOT EXISTS` 不受影響。完整的推導與實測在 [1.7](/sql/join-changes-rows-and-nulls/)。
+`NOT IN` 碰到一個 NULL 就對每一列回答「未知」，整段查詢回零列且不報錯；`NOT EXISTS` 不受影響。完整的推導與實測在 [1.5](/sql/join-changes-rows-and-nulls/)。
 
 所以肯定式的 `IN` 與 `EXISTS` 可以按可讀性挑，而**否定式一律用 `NOT EXISTS`**——除非能保證子查詢那一欄不會有 NULL，而那個保證通常來自約束而不是來自習慣。
 
@@ -90,8 +90,8 @@ SELECT 姓名, 訂單.金額 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編
 
 ## 往下走
 
-**列數為什麼會變多**：[1.7 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 寫配對怎麼讓一列變成多列、後續的聚合因此算錯什麼，以及 `NOT IN` 碰到 NULL 整個失效的完整推導。
+**列數為什麼會變多**：[1.5 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 寫配對怎麼讓一列變成多列、後續的聚合因此算錯什麼，以及 `NOT IN` 碰到 NULL 整個失效的完整推導。
 
-**這三種寫法的代價差多少**：[1.10 代價由資料與索引決定](/sql/cost-lives-in-the-plan/) 用一道實際的題目量三種寫法，並示範加一個索引之後三者的快慢排名整個對調。
+**這三種寫法的代價差多少**：[1.11 代價由資料與索引決定](/sql/cost-lives-in-the-plan/) 用一道實際的題目量三種寫法，並示範加一個索引之後三者的快慢排名整個對調。
 
 **條件放 `ON` 還是 `WHERE`**：`JOIN` 這一側還有一個位置要選。[1.4 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/) 寫同一個條件放兩處在外連接下為什麼不同值。
