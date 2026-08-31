@@ -6,7 +6,7 @@ weight: 6
 tags: ["sql", "alias", "self-join", "correlation-name", "join"]
 ---
 
-`FROM` 裡寫下的表名指的是那張表在這個查詢裡的一次出現，而那個名字是這次出現的稱呼。同一張表因此可以出現兩次、各自扮演不同角色——這就是自連接。
+`FROM` 裡寫下的表名指的是那張表在這個查詢裡的一次出現，而那個名字是這次出現的稱呼。標準把這件事叫 table reference，關聯代數那一側的傳統名稱是 range variable，各家文件裡也常寫成 correlation name——三個名字說的是同一件事。同一張表因此可以出現兩次、各自扮演不同角色——這就是自連接。
 
 引擎把這件事講得很明白。同一張表寫兩次而不另外命名，PostgreSQL 直接回 `table name "訂單" specified more than once`；SQLite 與 DuckDB 在引用欄位時才擋下來，訊息分別是 `ambiguous column name` 與 `Ambiguous reference to column name`。**表名本身就是預設的別名**，所以兩次出現共用同一個名字等於兩個東西叫同一個稱呼，之後每一次引用都無從分辨。
 
