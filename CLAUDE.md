@@ -196,7 +196,8 @@ done
 流程從 report 卡開始，不從 skill 修改開始。report 是原則的 SSoT（有情境、根因、理想做法），skill 是 report 的操作化引用。先有 report 才有 skill 引用的依據。
 
 1. **建 report 卡**：在 `content/report/` 建卡，更新 `_index.md` 篇目索引
-2. **評估是否進 skill**：判斷這個原則該進哪個 skill（compositional-writing / multi-round-review / 其他）、進哪個段落
+2. **評估是否進 skill、以及進多少**：先問這一條進了 skill 之後 agent 的動作會不會不同——不會就留在卡裡。會的話只搬可執行的那一半（判斷標準、觸發條件、處置），推導、實例與「為什麼既有審查抓不到」留在卡上，skill 用一句話帶過並連回去。**report 不是 skill 的草稿，兩者的責任不同**：卡歸納問題與解法，skill 給處理方式與判斷方法。驗收問一句——一個沒讀過那張卡的 agent，照 skill 這一段做得出動作嗎；做得出就夠了，多的是說明。
+   搬多了的代價是 skill 膨脹到沒有人讀得完，而膨脹不可逆，因為每一段單獨看都有道理。決定要進的時候順便決定它擠掉誰的注意力
 3. **修改 skill**：在 `.claude/skills/<name>/` 修改 SKILL.md，引用 report 卡的路徑（`.claude/` 用 `references/principles/` 相對連結、`content/` 鏡像會自動轉成 `/report/` 路徑）
 4. **如果新增 principle 卡**：在 `references/principles/` 建卡，並在 `bin/skill-mirror` 的 mapping table 加上 principle slug → report slug 的對應
 5. **更新版本號**：SKILL.md 末尾加版本號（見上方版號規則）
