@@ -35,6 +35,7 @@
 - 表格中承載推導的每個「情境/判斷」都要有出口，出口有三個：**就地展開**（表格下方加延伸子段落，回答這情境在真實服務長什麼樣、為何成立、常見陷阱是什麼）、**拆卡外部化**（概念與範例住進知識卡、文章保留「什麼情境用哪張卡」的判讀敘事）、**換成連結**（那個概念已經有卡或有專章承載時，格內不寫自撰的簡述、直接指過去）。壓縮判斷標準去遷就格寬不在出口之列。
 - 出口的選擇看概念角色：主線概念（本篇論證繞著它轉）就地展開，外部化會讓讀者跳出去讀卡而斷了論證線；支撐與背景概念可以拆卡或換連結。詳見 [#262](/report/content-pressure-resolves-by-expansion-not-compression/)。
 - 選出口之前先查這個概念在別篇有沒有不相容的版本（兩篇各給一套階段表或欄位組時，三個出口都會把矛盾保留下來），判斷標準與收斂做法見 [#263](/report/incompatible-decompositions-look-complementary/)。
+- **「換成連結」這個出口有個前提：本篇的主線不能靠它。** 驗收是把所有往外的連結當成不存在重讀一次，剩下的東西該長什麼樣依這一篇的定位而定（教材要剩得下論證、術語卡剩下定義是正常的）。同一步順便查那個貫穿全篇的承重術語有沒有被定義過——越承重的詞作者寫得越多、陌生感消失得越早。見 [#303](/report/cross-links-eat-the-article-they-live-in/)。
 - **豁免**：查表型段落（判讀徵兆表、「訊號 → 判定」對照表、關係表）與 checklist 型段落不適用延伸段要求——它們的消費單位是逐列查詢或逐項執行，每列的自足義務由[句自足規則](/report/sentence-self-sufficiency-by-consumption-unit/)承接，逐列補延伸段反而製造重複。判定看消費單位、不看表格密度。
 
 ### 原則五：避免專案綁定敘事
@@ -160,6 +161,8 @@
 
 完整推導、判定矩陣、audit 流程見 [術語解釋分層方法論](/record/term-explanation-layering-methodology/)。
 
+這套分級有一個偵測盲點：**承重的術語在自己的主場最容易漏掉**。越承重的詞作者寫得越多、陌生感消失得越早，所以停下來定義它的那一刻從來不會到——一次量測裡同一個詞在兩篇都是全篇的軸而兩篇都沒說它是什麼。掃法與它的射程限制見 [#303](/report/cross-links-eat-the-article-they-live-in/)，工具在 `scripts/loadbearing-terms.py`。
+
 ---
 
 ## 4. WARP（wrap-decision）分析方法（強制觸發）
@@ -266,6 +269,7 @@
 - [ ] 未依賴特定專案背景知識
 - [ ] 關鍵術語已連到對應卡片
 - [ ] 有明確下一步路由（章節/模組連結），且每條路由都去目的地確認過它承接該主題、到站第一屏看得到——目的地存在不等於它承接（見 [#240](/report/routing-destination-must-own-the-topic/)）
+- [ ] 每條路由都交代了目的地會給什麼——判斷標準是遮住目的地之後讀者能不能預測那一篇的內容，而句型只影響命中率、不是判定條件（見 [#303](/report/cross-links-eat-the-article-they-live-in/)）
 - [ ] 標題與段標是承載結論的直述句、判斷標準由推導交付（不設懸念、也不把結論抽到開頭灌輸）；檢討內容用客觀條件視角、不用第一人稱事件敘事（見 [#254](/report/write-for-readers-not-audiences/)）
 - [ ] `description` 是 recall trigger 而非摘要：回答「什麼情境下需要回來讀」而非「這篇在講什麼」（見 [#170](/report/description-as-recall-trigger/)）
 - [ ] 新增頂層 `content/<module>/` 資料夾時、已同步更新 `content/_index.md` 對應分類段（見 [#139](/report/top-level-content-folder-needs-homepage-entry/)）
