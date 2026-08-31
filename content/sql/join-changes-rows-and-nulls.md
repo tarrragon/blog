@@ -41,7 +41,7 @@ GROUP BY 顧客.姓名;
 
 ## 空缺是連接造出來的
 
-外連接配不上時補的 NULL，來源表裡並不存在。`count` 對它的處理與一般的值不同：
+外連接配不上時補的 [NULL](/sql/knowledge-cards/null/)，來源表裡並不存在。`count` 對它的處理與一般的值不同：
 
 ```sql
 SELECT count(*) AS 全部列, count(評價.星等) AS 有星等的列

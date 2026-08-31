@@ -10,6 +10,21 @@ tags: ["sql", "alias", "self-join", "correlation-name", "join"]
 
 引擎把這件事講得很明白。同一張表寫兩次而不另外命名，PostgreSQL 直接回 `table name "訂單" specified more than once`；SQLite 與 DuckDB 在引用欄位時才擋下來，訊息是 `ambiguous column name` 與 `duplicate alias`。**表名本身就是預設的別名**，所以兩次出現共用同一個名字等於兩個東西叫同一個稱呼，之後每一次引用都無從分辨。
 
+## 同一個機制也管兩張不同的表
+
+欄位的歸屬要靠名字決定，所以兩張不同的表共用一個欄名時同樣分不開。書店的顧客表與訂單表都有 `顧客編號`：
+
+```sql
+SELECT 顧客編號 FROM 顧客 LEFT JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
+-- MySQL:  ERROR 1052: Column '顧客編號' in field list is ambiguous
+-- SQLite: ambiguous column name: 顧客編號
+-- DuckDB: Ambiguous reference to column name "顧客編號"
+```
+
+`id` 是這件事最常撞到的名字，因為多數表都有一個。**連接之後每個欄位引用都要能追回它屬於哪一次出現**，加上表名或別名當前綴就解決。
+
+自連接只是這個規則的極端情形：兩次出現連表名都一樣，所以連前綴都救不了，非取別名不可。
+
 ## 給了名字，兩次出現就分得開
 
 書店要找出同一位顧客的訂單先後配對——哪一張在前、哪一張在後。這件事需要把訂單表的兩列擺在一起比較，而一列一列處理的查詢做不到，除非讓訂單表出現兩次：

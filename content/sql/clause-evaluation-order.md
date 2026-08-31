@@ -77,7 +77,14 @@ SELECT 訂單編號, count(*) FROM 評價
 GROUP BY 訂單編號 HAVING 星等 = 5 AND count(*) >= 2;
 ```
 
-DuckDB 拒絕，訊息是 `column 星等 must appear in the GROUP BY clause`——分組之後組裡有兩個不同的星等，「這一組的星等」沒有定義。
+DuckDB 拒絕，訊息是 `column 星等 must appear in the GROUP BY clause`——分組之後組裡有兩個不同的星等，「這一組的星等」沒有定義。MySQL 8 也拒絕，而它的訊息點名了負責這件事的設定：
+
+```text
+ERROR 1055 (42000): ... not in GROUP BY clause and contains nonaggregated column
+... incompatible with sql_mode=only_full_group_by
+```
+
+`ONLY_FULL_GROUP_BY` 從 MySQL 5.7 起是預設值。它是一個可以關掉的開關，而關掉之後 MySQL 的行為就與下一段的 SQLite 相同。
 
 **SQLite 接受，回 101 與 102。** 兩張訂單都被報成「有兩則以上五星」，而 101 只有一則。它從組裡任意挑了一列的星等來比對，挑中 101 那組的五星，於是整組通過。
 

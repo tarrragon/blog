@@ -41,18 +41,19 @@ INSERT INTO 評價 VALUES (9001,101,5);
 
 ## 章節
 
-| 篇                                                                  | 交付                                                     |
-| ------------------------------------------------------------------- | -------------------------------------------------------- |
-| [1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/)          | 三種順序各由誰決定，以及它們不一致時哪一種說了算         |
-| [1.2 子句的求值順序](/sql/clause-evaluation-order/)                 | 哪些限制來自語意模型而擋不掉，哪些是各家引擎自己的寬鬆度 |
-| [1.3 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/)    | 鏈式 JOIN 的左運算元是什麼，以及 RIGHT 在鏈裡保護了誰    |
-| [1.4 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/) | 同一個條件放兩處在 INNER 下同值而在 OUTER 下不同值的原因 |
-| [1.5 識別字送進引擎之後會被改寫](/sql/identifier-rules/)            | 大小寫摺疊與引號各家的規則，以及混用時失效的時機         |
-| [1.6 權限的預設是什麼都不給](/sql/privilege-model/)                 | 角色與 GRANT 的模型，以及最小權限在事故時省下什麼        |
-| [1.7 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)       | 列數膨脹怎麼讓聚合算錯，以及 NULL 為什麼不能用等號比     |
-| [1.8 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/)  | 自連接需要別名的原因，以及什麼問題非它不可               |
-| [1.9 IN、EXISTS 與 JOIN 描述的是三件不同的事](/sql/in-exists-join/) | 三者在列數上的差別，以及選哪一種只問一句話               |
-| [1.10 代價由資料與索引決定](/sql/cost-lives-in-the-plan/)           | 一道題三種寫法的實測，加一個索引之後排名對調             |
+| 篇                                                                   | 交付                                                     |
+| -------------------------------------------------------------------- | -------------------------------------------------------- |
+| [1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/)           | 三種順序各由誰決定，以及它們不一致時哪一種說了算         |
+| [1.2 子句的求值順序](/sql/clause-evaluation-order/)                  | 哪些限制來自語意模型而擋不掉，哪些是各家引擎自己的寬鬆度 |
+| [1.3 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/)     | 鏈式 JOIN 的左運算元是什麼，以及 RIGHT 在鏈裡保護了誰    |
+| [1.4 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/)  | 同一個條件放兩處在 INNER 下同值而在 OUTER 下不同值的原因 |
+| [1.5 識別字送進引擎之後會被改寫](/sql/identifier-rules/)             | 大小寫摺疊與引號各家的規則，以及混用時失效的時機         |
+| [1.6 權限的預設是什麼都不給](/sql/privilege-model/)                  | 角色與 GRANT 的模型，以及最小權限在事故時省下什麼        |
+| [1.7 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)        | 列數膨脹怎麼讓聚合算錯，以及 NULL 為什麼不能用等號比     |
+| [1.8 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/)   | 自連接需要別名的原因，以及什麼問題非它不可               |
+| [1.9 IN、EXISTS 與 JOIN 描述的是三件不同的事](/sql/in-exists-join/)  | 三者在列數上的差別，以及選哪一種只問一句話               |
+| [1.10 代價由資料與索引決定](/sql/cost-lives-in-the-plan/)            | 一道題三種寫法的實測，加一個索引之後排名對調             |
+| [1.11 分組鍵決定每一組代表什麼](/sql/grouping-key-decides-the-unit/) | 選鍵的判準，以及先問這一題需不需要分組                   |
 
 ## 知識卡
 
