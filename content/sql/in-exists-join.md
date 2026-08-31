@@ -14,7 +14,7 @@ tags: ["sql", "in", "exists", "join", "subquery", "semi-join"]
 
 書店的三位顧客裡只有佳穎下過單，兩張都是她的。要找出下過單的顧客。
 
-`IN` 問的是成員資格——這個顧客編號在不在那一份清單裡：
+`IN` 問的是成員資格——這個顧客編號在不在括號裡那個[子查詢](/sql/knowledge-cards/subquery/)交出的清單裡：
 
 ```sql
 SELECT 姓名 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編號 FROM 訂單);

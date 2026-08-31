@@ -36,6 +36,8 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 
 語言教材處理 repository interface / [protocol](/backend/knowledge-cards/protocol/)、取消與逾時、error wrapping、memory fake 與 [contract](/backend/knowledge-cards/contract/) test。Backend database 模組處理 SQL schema、migration tool、transaction isolation、connection pool 與資料庫錯誤語意。
 
+**查詢語言本身另有一個模組。** 子句怎麼切、連接的左右決定誰被保護、條件放 `ON` 還是 `WHERE`、代價為什麼不在查詢的文字裡——那些在 [SQL：這個語言為什麼長這樣](/sql/)。本模組從查詢寫對之後接手：交易邊界、遷移、每請求的查詢次數預算。
+
 跨模組端到端串聯（DB → cache → event → observability）見 [0.15 跨模組 Checkout Episode](/backend/00-service-selection/cross-module-checkout-episode/)。
 
 ## 章節列表

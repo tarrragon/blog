@@ -29,6 +29,7 @@ tags: ["python", "pandas", "data-analysis", "sql"]
 ## 跨分類引用
 
 - → [backend 模組一 資料庫](/backend/01-database/)：運算留在資料庫端那一側的工程議題，N+1 與交易邊界都在那裡
+- → [SQL：這個語言為什麼長這樣](/sql/)：資料庫端那一側用的語言本身——子句怎麼切、連接的左右決定誰被保護、代價為什麼不在查詢的文字裡
 - → [monitoring 模組八 行為資料的商業利用](/monitoring/08-business-analytics/)：批次算出來的指標怎麼定義，以及事件屬性決定哪些指標算得出來
 - → [python 模組三 標準庫實戰](/python/03-stdlib/)：自動化那一格用到的工具，處理的單位是檔案與程序而不是資料集
 

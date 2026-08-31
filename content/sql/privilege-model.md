@@ -59,7 +59,7 @@ CREATE TABLE 偷建的 (x INT);
 -- ERROR: permission denied for schema public
 ```
 
-被擋的層次不同——這次擋在 schema 而不是 table。PostgreSQL 15 之後 `public` schema 預設不再開放給所有人建立物件，在那之前這個操作會成功。**同一段 SQL 在不同版本上的結果不同，而差別在預設值而不在語法。**
+被擋的層次不同——這次擋在 [schema](/sql/knowledge-cards/schema-namespace/) 而不是 table。PostgreSQL 15 之後 `public` schema 預設不再開放給所有人建立物件，在那之前這個操作會成功。**同一段 SQL 在不同版本上的結果不同，而差別在預設值而不在語法。**
 
 ## 最小權限在這裡的具體意思
 
