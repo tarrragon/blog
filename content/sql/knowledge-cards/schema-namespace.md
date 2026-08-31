@@ -6,7 +6,7 @@ weight: 9
 tags: ["sql", "schema", "namespace", "postgresql", "knowledge-card"]
 ---
 
-在 PostgreSQL 這類資料庫裡，schema 是資料庫底下的一層命名空間，表、索引、序列這些物件都住在某一個 schema 裡。預設的那一個叫 `public`。它與[權限](/sql/knowledge-cards/relation/)是分層的：對表的授權管的是讀寫那張表，對 schema 的授權管的是能不能在裡面建立新物件。
+在 PostgreSQL 這類資料庫裡，schema 是資料庫底下的一層命名空間，表、索引、序列這些物件都住在某一個 schema 裡。預設的那一個叫 `public`。它與[權限](/sql/privilege-model/)是分層的：對表的授權管的是讀寫那張表，對 schema 的授權管的是能不能在裡面建立新物件——而表是一種 [relation](/sql/knowledge-cards/relation/)。
 
 **這個字有另一個常見的所指——「表結構」，也就是有哪些表、每張表有哪些欄位、型別與約束是什麼。** 兩者不同層：命名空間是容器，表結構是被裝的東西。談 schema migration 的時候用的是後者，談 `permission denied for schema public` 的時候用的是前者。
 

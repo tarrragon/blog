@@ -29,7 +29,7 @@ WHERE 訂單.訂單編號 IS NULL    -- 宗翰、雅文
 
 分組那一側的表現相反。按訂單表的顧客編號分組，宗翰與雅文因為都是 NULL 而被收進同一組——MySQL、SQLite 與 DuckDB 的結果一致。
 
-最難發現的是 `NOT IN`。子查詢的結果裡只要有一個 NULL，`NOT IN` 對每一列都回答未知，整段查詢回零列，三個引擎都不報錯。`NOT EXISTS` 問的是存在性、答案只有真假，所以不受影響。
+最難發現的是 `NOT IN`：子查詢的結果裡只要有一個 NULL，整段查詢回零列而三個引擎都不報錯。推導、實測與 `NOT EXISTS` 的安全範圍在 [1.5](/sql/join-changes-rows-and-nulls/)。
 
 ## 設計責任
 
