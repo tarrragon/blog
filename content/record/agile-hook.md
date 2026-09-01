@@ -35,7 +35,7 @@ Claude Code Hook 有五個觸發點——`SessionStart`、`UserPromptSubmit`、`
 
 Claude Code hook 系統的設計是：任何寫入 `stderr` 的輸出都會被視為 hook error 顯示給使用者。Python 的 `logging` 模組預設輸出到 stderr，所以 hook 即使正常執行，只要有 logging 輸出，UI 上就會出現 hook error 警告。
 
-這個組合會重複發生，因為 logging 是寫 Python 腳本的默認動作。系統性的修法是一條規則：hook 禁止寫入 stderr，所有輸出走 stdout。新 hook 用一個指令驗證：
+這個組合會重複發生，因為 logging 是寫 Python 腳本的預設動作。系統性的修法是一條規則：hook 禁止寫入 stderr，所有輸出走 stdout。新 hook 用一個指令驗證：
 
 ```bash
 grep -r "sys\.stderr" .claude/hooks/ --include="*.py"

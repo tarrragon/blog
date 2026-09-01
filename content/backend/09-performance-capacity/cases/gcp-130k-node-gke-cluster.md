@@ -57,7 +57,7 @@ GCP 130K-node GKE cluster 實驗（引自 [How we built a 130,000-node GKE clust
 
 1. **K8s control plane 跟 data plane 分開規劃容量**：data plane（worker nodes）擴容容易、control plane（API server、etcd / storage）擴容難。瓶頸通常在 control plane、不是 worker。
 2. **storage backend 是 K8s 規模極限的關鍵**：etcd 撐 5K-10K node 後開始吃力、要用 PostgreSQL / Spanner / 自家 KV 替換、才能擴到萬級節點。一般客戶用不到、但要知道「為什麼到某個規模 etcd 不夠」。
-3. **AI workload 用 specialized scheduler**（Kueue、Volcano）：默認 K8s scheduler 為 web workload 設計、AI 的 gang scheduling、fair-sharing、preemption 都不太適合。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 scheduler 選型。
+3. **AI workload 用 specialized scheduler**（Kueue、Volcano）：預設的 K8s scheduler 為 web workload 設計、AI 的 gang scheduling、fair-sharing、preemption 都不太適合。對應 [05 部署平台模組](/backend/05-deployment-platform/) 的 scheduler 選型。
 4. **power-aware capacity planning 是未來方向**：傳統按 CPU / RAM 規劃容量、未來要加上 *power budget*。data center 用電量是硬上限、不是錢的問題。
 5. **multi-cluster 是萬卡訓練的必然**：單一 cluster 撐不住、要 MultiKueue 等跨 cluster 排程方案。對應 [9.C12 Riot Games multi-cluster](/backend/09-performance-capacity/cases/riot-games-eks-multi-cluster/) 但目的完全不同。
 

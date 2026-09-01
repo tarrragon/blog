@@ -125,7 +125,7 @@ SELECT pg_drop_replication_slot('debezium_app');
 
 **徵兆**：對 1TB 表跑 `CREATE SUBSCRIPTION ... WITH (copy_data=true)` 後、application 對該表 query / write 阻塞 30+ 分鐘；application timeout 大量。
 
-**根因**：initial COPY 默認跑在 *single transaction*、整個 snapshot LSN 鎖住、長 transaction 跟 vacuum 衝突；同時對 subscriber 端鎖表寫入。
+**根因**：initial COPY 預設跑在 *single transaction*、整個 snapshot LSN 鎖住、長 transaction 跟 vacuum 衝突；同時對 subscriber 端鎖表寫入。
 
 **修法**：
 

@@ -16,7 +16,7 @@ GHAS 的核心定位是 *把 application security 控制面收斂回 GitHub 平�
 
 跟 [Dependabot](/backend/07-security-data-protection/vendors/dependabot/) 的關係是 *內含* — Dependabot 是 GHAS 四模組之一、跟 GHAS 同一個控制平面、跟 PR / Security tab 同一條 evidence chain。本頁聚焦 GHAS 整體 + Code Scanning / Secret Scanning / Dependency Review；Dependabot 的 update PR 政策、ecosystem 覆蓋、alert routing 細節留在該頁。
 
-關鍵張力：GHAS 計費走 *per-active-committer + per-repo*、2024 後 Secret Scanning 跟 Code Scanning 拆開計費。大型 mono-repo 或 committer 數量膨脹的組織會撞到成本天花板、需要選擇性 enable repo + 拆模組買；同時、Push Protection 這類 *預防型* 控制只有 enable 後才有效、選擇性 enable 等於默認 risk 接受。
+關鍵張力：GHAS 計費走 *per-active-committer + per-repo*、2024 後 Secret Scanning 跟 Code Scanning 拆開計費。大型 mono-repo 或 committer 數量膨脹的組織會撞到成本天花板、需要選擇性 enable repo + 拆模組買；同時、Push Protection 這類 *預防型* 控制只有 enable 後才有效、選擇性 enable 等於接受沒開的那些 repo 的風險。
 
 ## 本章目標
 

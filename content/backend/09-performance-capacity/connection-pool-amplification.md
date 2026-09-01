@@ -36,7 +36,7 @@ PgBouncer 的核心參數是 `pool_mode`：
 - **Transaction mode**：每個 transaction 結束、應用層 client 的連線釋放回 pool、下個 transaction 再分配 DB backend。multiplexing 比較強、但**不支援 transaction-scoped state**（如 `SET LOCAL`、prepared statement、temporary table）。
 - **Statement mode**：每個 statement 結束就釋放、最強 multiplexing 但**不支援 transaction**。極少用、只在純 stateless query workload 適用。
 
-Transaction mode 是多數場景的 default。但要注意：應用層的 ORM / driver 可能默認用 prepared statement、跟 transaction mode 衝突。PostgreSQL 14+ 的 protocol-level prepared statement 才相容、JDBC / asyncpg 等需要特別配置。
+Transaction mode 是多數場景的 default。但要注意：應用層的 ORM / driver 可能預設用 prepared statement、跟 transaction mode 衝突。PostgreSQL 14+ 的 protocol-level prepared statement 才相容、JDBC / asyncpg 等需要特別配置。
 
 ### AWS RDS Proxy — managed 換掉運維
 
