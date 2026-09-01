@@ -46,6 +46,7 @@ tags: ["sql", "database", "query"]
 | [1.7 IN、EXISTS 與 JOIN](/sql/in-exists-join/)                                    | 三者在列數上的差別，以及選哪一種只問一句話           |
 | [1.8 分組鍵決定每一組代表什麼](/sql/grouping-key-decides-the-unit/)               | 選鍵的判準，以及先問這一題需不需要分組               |
 | [1.13 分組把列收掉，視窗函數把列留著](/sql/window-keeps-rows-grouping-collapses/) | 兩者的輸出單位差在哪，以及取相鄰列時的邊界           |
+| [1.14 連接從說出配對關係開始](/sql/join-starts-from-the-relationship/)            | 兩種起手式各把條件放在哪裡，以及連接的種類由什麼決定 |
 
 ### 第二支：文字之外的四方（其中一方還沒有專章）
 
@@ -74,6 +75,7 @@ tags: ["sql", "database", "query"]
 | 條件寫了卻回零列，而且沒有報錯                   | [1.5](/sql/join-changes-rows-and-nulls/)：空值的比較是第三種答案                                      |
 | 外連接寫了，加上條件之後該留的人不見了           | [1.4](/sql/on-describes-where-filters/)：條件放 `ON` 還是 `WHERE`                                     |
 | 好幾個 `JOIN` 疊起來，不確定某個 `LEFT` 保護了誰 | [1.3](/sql/join-left-operand-accumulates/)：左運算元是累積結果                                        |
+| 手上是一句業務描述，不知道連接該從哪裡下筆       | [1.14](/sql/join-starts-from-the-relationship/)：三個決定各對應查詢的一個位置                         |
 | 要拿同一批資料的兩列互相比較                     | [1.6](/sql/table-occurrence-and-alias/)：表的一次出現與別名                                           |
 | 要在每一列旁邊放上它所屬那一組的總計或佔比       | [1.13](/sql/window-keeps-rows-grouping-collapses/)：分組收掉列、視窗留著列                            |
 | 拿每一列跟排在它前面那一列比，算出來的數字很怪   | [1.13](/sql/window-keeps-rows-grouping-collapses/)：相鄰的是什麼要自己說清楚                          |
