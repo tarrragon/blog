@@ -70,3 +70,7 @@ scripts/mcp-demo/__pycache__/
 # 它是單機紀錄而非共用內容——skill-sync 自己的 EXCLUDE_DIRS 也把 hook-logs/
 # 排除在同步之外，這裡只是讓 repo 跟上同一個認定。
 .claude/hook-logs/
+# 需要第二條的理由：那個預設路徑是相對的，而 skill-sync 的 shim 用
+# `uv run --directory <skill_dir>` 執行，cwd 是 skill 目錄不是 repo 根，
+# 所以 log 實際落在 .claude/skills/<name>/.claude/hook-logs/ 而非上面那個位置。
+.claude/skills/*/.claude/hook-logs/
