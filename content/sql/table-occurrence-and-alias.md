@@ -10,7 +10,7 @@ tags: ["sql", "alias", "self-join", "correlation-name", "join"]
 
 一張表只出現一次的時候，這個區別沒有作用。出現兩次就有：兩次出現共用同一個名字，引擎分不出某個欄位屬於哪一次，於是擋下來。
 
-引擎把這件事講得很明白。同一張表寫兩次而不另外命名，PostgreSQL 直接回 `table name "訂單" specified more than once`；SQLite 與 DuckDB 在引用欄位時才擋下來，訊息分別是 `ambiguous column name` 與 `Ambiguous reference to column name`。**表名本身就是預設的別名**，所以同一張表的兩次出現共用同一個名字時，等於兩次出現叫同一個稱呼，之後每一次引用都無從分辨。
+引擎把這件事講得很明白，而擋下來的時機分兩種。PostgreSQL 與 DuckDB 看到重複的名字就停，訊息分別是 `table name "訂單" specified more than once` 與 `Duplicate alias "訂單" in query!`；SQLite 讓查詢往下走，等到某個欄位引用無從分辨時才回 `ambiguous column name`。**表名本身就是預設的別名**，所以同一張表的兩次出現共用同一個名字時，等於兩次出現叫同一個稱呼，之後每一次引用都無從分辨。
 
 ## 同一個機制也管兩張不同的表
 

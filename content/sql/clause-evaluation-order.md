@@ -81,14 +81,15 @@ SELECT 訂單編號, count(*) FROM 評價
 GROUP BY 訂單編號 HAVING 星等 = 5 AND count(*) >= 2;
 ```
 
-DuckDB 拒絕，訊息是 `column 星等 must appear in the GROUP BY clause`——分組之後組裡有兩個不同的星等，「這一組的星等」沒有定義。MySQL 8 也拒絕，而它的訊息點名了負責這件事的設定：
+DuckDB 拒絕，訊息是 `column 星等 must appear in the GROUP BY clause`——分組之後組裡有兩個不同的星等，「這一組的星等」沒有定義。MySQL 8 也拒絕，而它擋在更前面的一步：
 
 ```text
-ERROR 1055 (42000): ... not in GROUP BY clause and contains nonaggregated column
-... incompatible with sql_mode=only_full_group_by
+ERROR 1054 (42S22): Unknown column '星等' in 'having clause'
 ```
 
-`ONLY_FULL_GROUP_BY` 從 MySQL 5.7 起是預設值。它是一個可以關掉的開關，而關掉之後 MySQL 的行為就與下一段的 SQLite 相同。
+MySQL 的 `HAVING` 只認得分組鍵、聚合，以及 `SELECT` 裡取好的別名，而 `星等` 三樣都不是，所以它在解析名字那一步就停了。這一種擋法與設定無關——把 `sql_mode` 清空再跑，訊息一個字都沒變。
+
+管寬鬆度的那個設定叫 `ONLY_FULL_GROUP_BY`，從 MySQL 5.7 起是預設值，而它管的是另一個形態：把非分組欄放進 `SELECT` 的寫法（`SELECT 訂單編號, 星等 FROM 評價 GROUP BY 訂單編號`）開著時回 `ERROR 1055` 並在訊息裡點名這個設定，關掉之後就與下一段的 SQLite 一樣從組裡任意挑一列。
 
 **SQLite 接受，回 101 與 102。** 兩張訂單都被報成「有兩則以上五星」，而 101 只有一則。SQLite 從組裡取了其中一列的星等拿去比對，而它取到的剛好是 101 那組裡五星的那一列，於是整組通過。
 

@@ -51,9 +51,9 @@ INSERT INTO 訂單 SELECT i, i % 50 + 1, i % 900 FROM n;
 跑一次 `ANALYZE` 讓引擎去數過兩張表之後，同樣兩段查詢得到同一個計畫：
 
 ```text
-SCAN 訂單
-BLOOM FILTER ON 顧客 (顧客編號=?)
-SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
+|--SCAN 訂單
+|--BLOOM FILTER ON 顧客 (顧客編號=?)
+`--SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 ```
 
 兩次都選擇掃二十萬列那張、對五十列那張做查找，寫誰在前面沒有影響。

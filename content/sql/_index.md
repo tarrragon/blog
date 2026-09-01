@@ -130,7 +130,7 @@ INSERT INTO 評價 VALUES (9001,101,5);
 
 - **資料表與欄位該怎麼取名**：[Schema Design 的「Naming 與一致性」段](/backend/01-database/schema-design/#naming-與一致性)給表、欄、外鍵、布林、時間戳、索引各自的慣例，以及縮寫不一致、隱性意義、跨表同義不同名這幾種反模式。本分類的 [1.11](/sql/identifier-rules/) 接在它後面，處理取好的名字送進引擎會被怎麼改寫。
 - **資料庫怎麼設計**：同一篇的其餘各段給狀態責任的界定、索引設計、反正規化、分區策略與演進友好的結構。
-- **資料層的攻擊面**：[攻擊者視角：資料層弱點判讀](/backend/01-database/red-team-data-layer/) 走注入、授權繞過、資料外洩、競態與資源耗盡五類，其中前三類各附一則真實事件對照，另有一段把失敗代價從資料外洩延伸到業務中斷。本分類的 [1.12](/sql/privilege-model/) 只處理其中「授權」這一層的語言機制。
+- **資料層的攻擊面**：[攻擊者視角：資料層弱點判讀](/backend/01-database/red-team-data-layer/) 走注入、授權繞過、資料外洩、競態與資源耗盡五類，其中前三類各附真實事件對照，另有一段把失敗代價從資料外洩延伸到業務中斷。本分類的 [1.12](/sql/privilege-model/) 只處理其中「授權」這一層的語言機制。
 - **遷移**：[資料庫轉換實作](/backend/01-database/database-migration-playbook/) 走雙寫、回填、切流與回滾；[Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/) 走每一步要留下什麼證明。
 
 ## 跨分類引用

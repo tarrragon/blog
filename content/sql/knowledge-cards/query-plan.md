@@ -18,12 +18,12 @@ Query plan 是引擎為一段查詢決定的執行步驟，內容是一棵運算
 
 
 
-書店把顧客與訂單連起來，`EXPLAIN QUERY PLAN` 在 SQLite 上回三行（前提是跑過 `ANALYZE`，見下）：
+書店把顧客與訂單連起來，`EXPLAIN QUERY PLAN` 在 SQLite 上回三行（查的是 `FROM 訂單 JOIN 顧客`，訂單二十萬列、顧客五十列）：
 
 ```text
-SCAN 訂單
-BLOOM FILTER ON 顧客 (顧客編號=?)
-SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
+|--SCAN 訂單
+|--BLOOM FILTER ON 顧客 (顧客編號=?)
+`--SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 ```
 
 `SCAN` 與 `SEARCH` 是兩種取法：`SCAN 訂單` 表示二十萬列的訂單表逐列看過，`SEARCH 顧客` 表示對五十列的顧客表透過索引定位而不逐列看。
@@ -32,7 +32,7 @@ SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 
 **這三行裡沒有一個字出現在原本的查詢裡。** 查詢只說了要把兩張表按顧客編號連起來，其餘全部是引擎的決定——而它們決定了這段查詢要花多久。
 
-**同一段查詢在別的資料庫狀態下會得到別的計畫**——有沒有統計、有沒有索引都會換掉它。所以讀計畫要連同「當時的資料庫是什麼狀態」一起讀，那組對照在 [1.1](/sql/declarative-not-procedural/) 與 [1.13](/sql/cost-lives-in-the-plan/)。
+**同一段查詢在別的資料庫狀態下會得到別的計畫**——有沒有統計、有沒有索引都會換掉它。上面那三行對書寫順序也敏感：把兩張表對調寫成 `FROM 顧客 JOIN 訂單`，沒有統計的資料庫會改成掃顧客那張，跑過 `ANALYZE` 之後才收斂回上面這一個。所以讀計畫要連同「當時的資料庫是什麼狀態」一起讀，那組對照在 [1.1](/sql/declarative-not-procedural/) 與 [1.13](/sql/cost-lives-in-the-plan/)。
 
 DuckDB 的 `EXPLAIN` 換一種呈現，回一棵運算子樹，節點標著 `HASH_JOIN`、`SEQ_SCAN` 這類名稱與估計的列數；`EXPLAIN ANALYZE` 另外附上實際跑出來的列數與耗時。
 

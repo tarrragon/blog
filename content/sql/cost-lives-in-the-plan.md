@@ -66,10 +66,10 @@ INSERT INTO Person SELECT 100000 + i, 'hot@x.com' FROM n;
 計畫說明了 `EXISTS` 那一格的變化。沒有索引時：
 
 ```text
-SCAN p
-CORRELATED SCALAR SUBQUERY 1
-SCAN q
-USE TEMP B-TREE FOR DISTINCT
+|--SCAN p
+|--CORRELATED SCALAR SUBQUERY 1
+|  `--SCAN q
+`--USE TEMP B-TREE FOR DISTINCT
 ```
 
 `CORRELATED` 表示那個子查詢引用了外層的欄位，所以它對外層的每一列各執行一次，而每一次都是 `SCAN q`——掃過整張表。外層那七千列，每一列都讓內層把整張七千列的表掃過一遍。
@@ -77,9 +77,9 @@ USE TEMP B-TREE FOR DISTINCT
 有索引之後同一段查詢：
 
 ```text
-SCAN p USING COVERING INDEX ix
-CORRELATED SCALAR SUBQUERY 1
-SEARCH q USING COVERING INDEX ix (email=?)
+|--SCAN p USING COVERING INDEX ix
+`--CORRELATED SCALAR SUBQUERY 1
+   `--SEARCH q USING COVERING INDEX ix (email=?)
 ```
 
 子查詢仍然逐列執行，而每一次從 `SCAN`（掃全表）變成 `SEARCH`（透過[索引](/sql/knowledge-cards/indexing/)定位）。逐列執行這個結構沒變，變的是每一次的單價。
