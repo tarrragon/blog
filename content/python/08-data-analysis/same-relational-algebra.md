@@ -6,7 +6,7 @@ weight: 4
 tags: ["python", "pandas", "sql", "dataframe", "relational-algebra"]
 ---
 
-SQL 的子句與 pandas 的方法對應得起來，因為兩者操作的是同一種資料結構：由欄與列構成的表格。對表格能做的基本操作就那幾種——挑出符合條件的列、挑出要的欄、把兩張表按鍵值接起來、把列分組後彙總——這組操作叫[關聯代數](/sql/knowledge-cards/relational-algebra/)。SQL 與 [DataFrame](/sql/knowledge-cards/dataframe/) 各自是它的一個介面——介面在這裡指的是表達那組操作的那一層，底下由誰執行、怎麼執行都被它蓋住。
+SQL 的子句與 pandas 的方法對應得起來，因為兩者操作的是同一種資料結構：由欄與列構成的表格。對表格能做的基本操作就那幾種——挑出符合條件的列、挑出要的欄、把兩張表按鍵值接起來、把列分組後彙總——這組操作叫[關聯代數](/sql/knowledge-cards/relational-algebra/)。SQL 與 [DataFrame](/sql/knowledge-cards/dataframe/) 各自是這套代數的一個介面——介面在這裡指的是表達那組操作的那一層，而底下由誰執行、怎麼執行，這一層都蓋住了。
 
 換介面重寫一次同樣的邏輯因此是划算的練習：邏輯已經想清楚了，剩下的是查另一套語法怎麼寫。
 
@@ -62,7 +62,7 @@ emp.assign(d=emp["salary"] - emp.groupby("dept")["salary"].transform("mean"))[["
 
 有三個地方兩邊的語意本來就不同，照著逐句翻譯會在這裡失準。
 
-**空值在分組時的去留。** SQL 的 `GROUP BY` 把 `NULL` 當成一組，pandas 的 `groupby` 預設把含缺值的那些列整組丟掉。
+**空值在分組時的去留。** SQL 的 `GROUP BY` 把 `NULL` 當成一組，pandas 的 `groupby` 預設把分組鍵是缺值的那些列排除掉，於是那一組在結果裡整組消失。
 
 ```python
 t.groupby("k").size()                 # {'x': 1}          缺值那一組消失了
