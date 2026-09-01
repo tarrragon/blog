@@ -34,3 +34,5 @@ tags: ["posts", "hugo", "markdown", "blog"]
 | 判斷「slug 必填」要不要做成 mdtools 規則                                               | 跨模組 | 無（前置的 slug 補齊已完成、四個 permalink section 存量歸零，誤報成本可評估了） | 小   |
 | skill-mirror 加 --check：走 mapping table 比對 principle 卡與它的 report / record 本體 | 跨模組 | 無                                                                              | 小   |
 | skill-mirror Step 4 改成遞迴，讓 references/principles/ 也能有 content 鏡像            | 跨模組 | 先決定 principle 卡要不要對外公開                                               | 小   |
+| description 的四種觸發句型進 mdtools 警告層，配路徑豁免清單                            | 跨模組 | 無                                                                              | 中   |
+| principle-mirror-check 接進 pre-commit 或 CI                                           | 跨模組 | skill-mirror --check 完成                                                       | 小   |
