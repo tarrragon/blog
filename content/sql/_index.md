@@ -151,12 +151,11 @@ INSERT INTO 評價 VALUES (9001,101,5);
 | 基數與選擇率                        | 知識卡 | 代價那篇       | 1    |
 | 字串值的大小寫（LIKE 與 collation） | 主章   | 1.12 完成      | 小   |
 | ORDER BY 與分頁                     | 主章   | 無             | 中   |
-| SQL 引擎（實作差異的承載者）        | 知識卡 | 無             | 1    |
 | 外鍵與參照完整性                    | 主章   | 1.6、1.15 完成 | 中   |
 
 ### 後續候選
 
-表上兩張新登記的卡各有量測支撐：「引擎」在本分類反覆出現而沒有一處說它指什麼（它是 DB 產品、執行元件、還是與最佳化器同層的東西，各篇讀起來不同），第二支整支的判斷標準都建在這個詞上；「外鍵」由[約束](/sql/knowledge-cards/constraint/)那張卡引進而本分類沒有承接篇，讀者拿到定義之後無處可去。
+表上那張新登記的卡有量測支撐：「外鍵」由[約束](/sql/knowledge-cards/constraint/)那張卡引進而本分類沒有承接篇，讀者拿到定義之後無處可去。（「引擎」原本也在這裡——它在本分類出現一百多次而沒有一處說它指什麼，[Database Engine](/sql/knowledge-cards/database-engine/) 已補上；同一次補的還有 [Semantic Model](/sql/knowledge-cards/semantic-model/)，那個詞在八個檔用到而唯一的行內定義在第十一篇。）
 
 
 **問題落點表有兩個缺口。**「查出來的筆數比預期少而沒有報錯」是高頻的真實症狀而表上無列，它需要一條分辨順序（先看 `WHERE` 有沒有抵銷外連接的保護、再看是不是 `NULL`，兩者皆非才是問錯了問題），單一落點接不住。第三支現在有承接篇（[1.11](/sql/well-formed-is-not-correct/)），缺的是把前兩支並置起來的那一列；[約束](/sql/knowledge-cards/constraint/)那張卡沒進表，而 [Sargable](/sql/knowledge-cards/sargable/) 已有先例，兩張卡的檢索面性質相同。

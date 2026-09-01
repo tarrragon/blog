@@ -26,3 +26,5 @@ tags: ["sql", "knowledge-card"]
 | [Constraint（約束）](/sql/knowledge-cards/constraint/)                     | 由資料庫在每次寫入時檢查的規則，判斷標準的豁免條件從這裡來 |
 | [Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/)           | 條件能不能翻成索引上的一次查找；欄位被包住就走不了         |
 | [Cartesian Product（笛卡兒積）](/sql/knowledge-cards/cartesian-product/)   | 每一列與每一列各配一次；條件缺席時連接回到的起點           |
+| [Database Engine（資料庫引擎）](/sql/knowledge-cards/database-engine/)     | 收下查詢並算出結果的軟體；它的四種決定換家之後後果不同     |
+| [Semantic Model（語意模型）](/sql/knowledge-cards/semantic-model/)         | 文字算出哪一批列的那套規則；各家一致，與執行方式分開       |
