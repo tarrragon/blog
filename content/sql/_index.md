@@ -27,7 +27,7 @@ tags: ["sql", "database", "query"]
 
 兩支的答案方向相反而問的是同一個性質的兩面，所以它們不是互斥的分類：第二方的實例就住在第一支的 [1.2](/sql/clause-evaluation-order/) 與 [1.8](/sql/grouping-key-decides-the-unit/) 裡（同一個寫法 SQLite 接受而 DuckDB 與 MySQL 拒絕）。[1.1](/sql/declarative-not-procedural/) 是分岔點——它把書寫順序、求值順序與執行順序分開，前兩者屬第一支，第三者屬第二支。
 
-**用第二支之前要先讀得出四項現況**，而查法不在查詢語言裡：名字實際存成什麼查系統目錄（`pg_tables` / `sqlite_master`）、自己有哪些授權查 `information_schema.role_table_grants`、有哪些索引查 `pg_indexes` 或 `PRAGMA index_list`、有沒有統計查 `pg_stats` 或 `sqlite_stat1`。
+**用第二支之前要先讀得出四項現況**，而查法不在查詢語言裡：名字實際存成什麼查系統目錄——資料庫把自己有哪些表、哪些欄位也存成表，那幾張就是系統目錄（`pg_tables` / `sqlite_master`）、自己有哪些授權查 `information_schema.role_table_grants`、有哪些索引查 `pg_indexes` 或 `PRAGMA index_list`、有沒有統計查 `pg_stats` 或 `sqlite_stat1`。
 
 ## 章節
 

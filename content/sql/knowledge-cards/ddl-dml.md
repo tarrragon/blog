@@ -6,7 +6,7 @@ weight: 11
 tags: ["sql", "ddl", "dml", "privilege", "migration", "knowledge-card"]
 ---
 
-SQL 的語句按它改動的對象分成兩類。**DDL**（Data Definition Language）改的是結構——`CREATE`、`ALTER`、`DROP`，它動的是有哪些表、每張表有哪些欄位——也就是一個 [relation](/sql/knowledge-cards/relation/) 的欄位組成由什麼決定。**DML**（Data Manipulation Language）改的是結構裡裝的資料——`INSERT`、`UPDATE`、`DELETE`，表還是那張表，變的是裡面有哪些列。`SELECT` 只讀不改，各家文件有的把它算進 DML、有的另立一類。
+SQL 的語句按它改動的對象分成兩類。**DDL**（Data Definition Language）改的是結構——`CREATE`、`ALTER`、`DROP`，它動的是有哪些表、每張表有哪些欄位。**DML**（Data Manipulation Language）改的是結構裡裝的資料——`INSERT`、`UPDATE`、`DELETE`，表還是那張表，變的是裡面有哪些列（列與欄這兩個字在本站的用法見 [relation](/sql/knowledge-cards/relation/)）。`SELECT` 只讀不改，各家文件有的把它算進 DML、有的另立一類。
 
 ## 這條線在權限上有實際後果
 

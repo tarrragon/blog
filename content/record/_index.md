@@ -33,7 +33,7 @@ tags: ["方法論", "AI協作心得", "敏捷", "工程實踐"]
 - [經驗分享文章的寫作準則](writing-guidelines/)
 - [SOLID 寫作方法論](solid-writing-methodology/)：程式結構原則映射到文章體系的組合層（卡片盒管原子層、SOLID 管文章責任邊界 / 依賴方向 / 擴充點 / 讀者分流）
 - [術語解釋分層方法論](term-explanation-layering-methodology/)：專業術語的行內 / 連卡 / 裸用三級、用「術語角色 × 前置知識基線」矩陣判定、含缺卡 audit 流程
-- [教學文章的脈絡](teaching-article-context-method/)：一篇在序列裡的位置、論證用得到的材料就地寫進去、跨篇連結綁在本篇模型的一個變數上（三種連結寫法差在讀者需要先有什麼），以及這幾項為什麼只能靠理解取樣量而不能自審
+- [教學文章的脈絡](teaching-article-context-method/)：一篇在序列裡的位置、論證用得到的材料就地寫進去、跨篇連結綁在本篇模型的一個可動項上（三種連結寫法差在讀者需要先有什麼），以及這幾項為什麼只能靠理解取樣量而不能自審
 
 **文件與 API 設計** — function 文件分層、測試命名作為 spec、commit message vs source code doc 的職責邊界、型別取代 doc 等表達設計議題。例：
 

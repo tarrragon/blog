@@ -18,7 +18,7 @@ Python 這一側有三種寫法，差別只在那段 SQL 由誰組出來。
 
 **用方法串出 SQL**：SQLAlchemy Core 這類查詢建構器提供 Python 的方法對應 SQL 的子句，組出來的仍然是一段 SQL。
 
-**用類別描述表**：SQLAlchemy ORM、Django ORM 把資料表對應成類別、把資料列對應成物件，篩選條件寫成屬性比較，框架據此組出 SQL，並把回來的每一列包成物件。
+**用類別描述表**：[ORM](/backend/knowledge-cards/orm/) 這一類工具（SQLAlchemy、Django ORM）把資料表對應成類別、把資料列對應成物件，篩選條件寫成屬性比較，框架據此組出 SQL，並把回來的每一列包成物件。
 
 三者的共同點比差異重要：**運算在資料庫那一端發生**，程式收到的是算完的結果。編譯出來的 SQL 可以直接印出來看：
 
@@ -31,7 +31,7 @@ print(stmt.compile(engine))
 
 ## 搬進記憶體端：資料整批進來，程式自己算
 
-另一側的做法是把資料整批載進程式，運算由程式自己完成。pandas 屬於這一側。
+另一側的做法是把資料整批載進程式，運算由程式自己完成。pandas 屬於這一側，它的容器是 [DataFrame](/sql/knowledge-cards/dataframe/)。
 
 ```python
 df[df["age"] > 18]
