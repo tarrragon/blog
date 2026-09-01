@@ -115,6 +115,8 @@ SEARCH q USING COVERING INDEX ix (email=?)
 
 **往回問代價為什麼一開始就落在文字之外**：那是宣告式這個選擇的直接後果。[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 從語言的性質推一次，並把書寫、求值、執行三種順序分開。
 
+**這個結論有一個有界的例外**：條件把索引欄位包進函式裡的時候，寫法決定的是引擎能不能用那個索引，而非它在幾條路裡挑哪一條。[Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/) 給判斷標準與三種改寫方向。
+
 **把計畫上那些字讀懂**：`SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，由 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡承擔。索引的代價落在寫入端這一點也在後者。
 
 **把引擎換成真實系統**：本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給三層工具的分工與四個 production case。

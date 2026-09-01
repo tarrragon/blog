@@ -24,3 +24,4 @@ tags: ["sql", "knowledge-card"]
 | [DataFrame（資料框）](/sql/knowledge-cards/dataframe/)                     | 表在記憶體裡的表示，列有順序、運算在自己的行程             |
 | [Relational Algebra（關聯代數）](/sql/knowledge-cards/relational-algebra/) | 作用在關係上並產出關係的一組運算，SQL 的底層               |
 | [Constraint（約束）](/sql/knowledge-cards/constraint/)                     | 由資料庫在每次寫入時檢查的規則，判斷標準的豁免條件從這裡來 |
+| [Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/)           | 條件能不能翻成索引上的一次查找；欄位被包住就走不了         |
