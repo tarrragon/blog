@@ -92,6 +92,8 @@ find_report_slug() {
       echo "/report/keyword-pattern-does-not-transfer-across-genres/" ;;
     recompute-trigger-must-bind-to-the-changing-event)
       echo "/report/recompute-trigger-must-bind-to-the-changing-event/" ;;
+    teaching-article-context)
+      echo "/record/teaching-article-context-method/" ;;
     term-probe-measures-register-not-invention)
       echo "/report/term-probe-measures-register-not-invention/" ;;
     probe-independence-is-not-transferable)
