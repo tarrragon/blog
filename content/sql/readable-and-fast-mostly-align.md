@@ -14,7 +14,7 @@ tags: ["sql", "readability", "performance", "index", "cte"]
 
 同一批列的兩種寫法送進[最佳化器](/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[1.14](/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[1.8](/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫——這兩種寫法在 SQLite 上各自走不同的計畫（`LIST SUBQUERY` 對 `CORRELATED SCALAR SUBQUERY`），而語意相同已經足以讓選擇落在可讀性上。
 
-這一類的判斷很省事——兩種寫法各要一次計畫，一樣就按好讀的挑。
+這一類的判斷很省事——兩種寫法各要一次計畫，一樣就按好讀的挑。**這一步預設了拿得到計畫**；拿不到的時候本篇的方法整個用不上，剩下的是條件形狀那一層的排除法（[Sargable](/sql/knowledge-cards/sargable/)）。
 
 ## 分岔發生在條件的形狀上
 
