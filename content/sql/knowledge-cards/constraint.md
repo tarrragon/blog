@@ -24,4 +24,4 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 ## 往下走
 
-`NULL` 在比較、計數與分組裡各自怎麼表現，以及否定式那條規則的完整推導，在 [NULL（空值）](/sql/knowledge-cards/null/) 與 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 的「NOT IN 碰到一個 NULL 就整個失效」一節。約束把哪一部分的正確性從提問的人手上移進資料庫、又為什麼只涵蓋得了一部分，在 [1.11 引擎驗的是合不合法，不是問對了沒有](/sql/well-formed-is-not-correct/)。約束由誰有權建立、以及它跟常態運行帳號的權限為什麼分開，在 [1.13 權限的預設是什麼都不給](/sql/privilege-model/)。
+`NULL` 在比較、計數與分組裡各自怎麼表現，以及否定式那條規則的完整推導，在 [NULL（空值）](/sql/knowledge-cards/null/) 與 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 的「NOT IN 碰到一個 NULL 就整個失效」一節。約束把哪一部分的正確性從提問的人手上移進資料庫、又為什麼只涵蓋得了一部分，在 [1.11 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/)。約束由誰有權建立、以及它跟常態運行帳號的權限為什麼分開，在 [1.13 權限的預設是什麼都不給](/sql/privilege-model/)。

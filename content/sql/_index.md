@@ -37,19 +37,19 @@ tags: ["sql", "database", "query"]
 
 ### 第一支：語意的模型
 
-| 篇                                                                                | 交付                                                 |
-| --------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/)                        | 三種順序各由誰決定，以及前兩支從哪裡分開             |
-| [1.2 子句的求值順序](/sql/clause-evaluation-order/)                               | 每一步手上有什麼，以及哪些限制擋得掉哪些擋不掉       |
-| [1.3 連接從說出配對關係開始](/sql/join-starts-from-the-relationship/)             | 兩種起手式各把條件放在哪裡，以及連接的種類由什麼決定 |
-| [1.4 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/)                  | 鏈式 JOIN 的左運算元是什麼，RIGHT 在鏈裡保護了誰     |
-| [1.5 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/)               | 同一條件放兩處在內連接下同值而在外連接下不同值的原因 |
-| [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)                     | 列數膨脹怎麼讓聚合算錯，以及 NULL 為什麼不能用等號比 |
-| [1.7 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/)                | 自連接需要別名的原因，以及什麼問題非它不可           |
-| [1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/)                                    | 三者在列數上的差別，以及選哪一種只問一句話           |
-| [1.9 分組鍵決定每一組代表什麼](/sql/grouping-key-decides-the-unit/)               | 選鍵的判準，以及先問這一題需不需要分組               |
-| [1.10 分組把列收掉，視窗函數把列留著](/sql/window-keeps-rows-grouping-collapses/) | 兩者的輸出單位差在哪，以及取相鄰列時的邊界           |
-| [1.11 引擎驗的是合不合法，不是問對了沒有](/sql/well-formed-is-not-correct/)       | 正確性的兩層各由誰負責，以及上層失效時為什麼安靜     |
+| 篇                                                                                  | 交付                                                 |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| [1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/)                          | 三種順序各由誰決定，以及前兩支從哪裡分開             |
+| [1.2 子句的求值順序](/sql/clause-evaluation-order/)                                 | 每一步手上有什麼，以及哪些限制擋得掉哪些擋不掉       |
+| [1.3 連接從說出配對關係開始](/sql/join-starts-from-the-relationship/)               | 兩種起手式各把條件放在哪裡，以及連接的種類由什麼決定 |
+| [1.4 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/)                    | 鏈式 JOIN 的左運算元是什麼，RIGHT 在鏈裡保護了誰     |
+| [1.5 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/)                 | 同一條件放兩處在內連接下同值而在外連接下不同值的原因 |
+| [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)                       | 列數膨脹怎麼讓聚合算錯，以及 NULL 為什麼不能用等號比 |
+| [1.7 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/)                  | 自連接需要別名的原因，以及什麼問題非它不可           |
+| [1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/)                                      | 三者在列數上的差別，以及選哪一種只問一句話           |
+| [1.9 分組鍵決定每一組代表什麼](/sql/grouping-key-decides-the-unit/)                 | 選鍵的判準，以及先問這一題需不需要分組               |
+| [1.10 分組把列收掉，視窗函數把列留著](/sql/window-keeps-rows-grouping-collapses/)   | 兩者的輸出單位差在哪，以及取相鄰列時的邊界           |
+| [1.11 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/) | 正確性的兩層各由誰負責，以及答案錯掉時為什麼不報錯   |
 
 ### 第二支：文字之外的四方（其中一方還沒有專章）
 
@@ -72,31 +72,33 @@ tags: ["sql", "database", "query"]
 
 上面那三支是讀完整個分類會走的順序。帶著一個具體問題進來的人不必照順序讀——多數篇的篇名是語法或語法結構，而手上的東西通常是一個業務問題，這張表把問題對到落點。
 
-| 手上的問題                                       | 去哪一篇                                                                                                                           |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 找出「沒有對應資料」的那些人或事                 | [1.9](/sql/grouping-key-decides-the-unit/)：從業務事實推到 `NOT EXISTS`，並說明為什麼計數那條路走不通                              |
-| 判斷「有沒有對應資料」，三種寫法選哪一個         | [1.8](/sql/in-exists-join/)：三者在列數上的差別，選哪一種只問一句話                                                                |
-| 分組之後結果少了幾筆                             | [1.9](/sql/grouping-key-decides-the-unit/)：分組鍵決定一組代表誰                                                                   |
-| 連接之後數量變多、總和比預期大                   | [1.6](/sql/join-changes-rows-and-nulls/)：一列配到多列就複製一次                                                                   |
-| 條件寫了卻回零列，而且沒有報錯                   | [1.6](/sql/join-changes-rows-and-nulls/)：空值的比較是第三種答案                                                                   |
-| 外連接寫了，加上條件之後該留的人不見了           | [1.5](/sql/on-describes-where-filters/)：條件放 `ON` 還是 `WHERE`                                                                  |
-| 好幾個 `JOIN` 疊起來，不確定某個 `LEFT` 保護了誰 | [1.4](/sql/join-left-operand-accumulates/)：左運算元是累積結果                                                                     |
-| 手上是一句業務描述，不知道連接該從哪裡下筆       | [1.3](/sql/join-starts-from-the-relationship/) 的「從一句業務描述走到查詢」一節                                                    |
-| 要拿同一批資料的兩列互相比較                     | [1.7](/sql/table-occurrence-and-alias/)：表的一次出現與別名                                                                        |
-| 要在每一列旁邊放上它所屬那一組的總計或佔比       | [1.10](/sql/window-keeps-rows-grouping-collapses/) 的「每一列與它所屬那一組的關係」一節                                            |
-| 拿每一列跟排在它前面那一列比，算出來的數字很怪   | [1.10](/sql/window-keeps-rows-grouping-collapses/) 的「相鄰的是什麼，要自己說清楚」一節                                            |
-| 查詢報錯說某個名字在這裡用不了                   | [1.2](/sql/clause-evaluation-order/)：每一步手上有什麼                                                                             |
-| 兩種寫法都對，想知道哪個代價低                   | [1.14](/sql/cost-lives-in-the-plan/)：代價由資料與索引決定                                                                         |
-| 查詢很慢，不知道從哪裡查起                       | [1.14](/sql/cost-lives-in-the-plan/) 先問代價由什麼決定；條件的形狀是第一個要排除的，在 [Sargable](/sql/knowledge-cards/sargable/) |
-| 索引建了，計畫還是掃全表                         | [Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/)：欄位被包住就走不了查找                                           |
-| 相關子查詢很慢，拆成 CTE 會不會比較好            | [1.16](/sql/readable-and-fast-mostly-align/) 的「方向常常相反」一節：一整段的時間隨列數超線性成長而 CTE 接近線性                   |
-| 查詢很難讀，想知道改成好讀的會不會變慢           | [1.16](/sql/readable-and-fast-mostly-align/)：多數時候不用選，分岔時動 schema                                                      |
-| 查詢跑得動、結果看起來也正常，而答案是錯的       | [1.11](/sql/well-formed-is-not-correct/)：引擎驗的是合不合法                                                                       |
-| 查詢答案是對的，而寫法讀起來像在做另一件事       | [1.15](/sql/declared-intent-vs-behaviour/)：宣告與行為分岔時怎麼查                                                                 |
-| 要稽核別人寫的查詢，不知道從哪裡下手             | [1.15](/sql/declared-intent-vs-behaviour/) 的「換掉關鍵字」一節：問這段文字說的話可不可信                                          |
-| 換一個資料庫之後找不到表                         | [1.12](/sql/identifier-rules/)：識別字送進引擎會被改寫                                                                             |
-| 查詢回 `permission denied`                       | [1.13](/sql/privilege-model/)：權限的預設是什麼都不給                                                                              |
-| 想知道引擎到底照什麼順序做事                     | [1.1](/sql/declarative-not-procedural/)：三種順序各自由誰決定                                                                      |
+| 手上的問題                                       | 去哪一篇                                                                                                                                        |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 找出「沒有對應資料」的那些人或事                 | [1.9](/sql/grouping-key-decides-the-unit/)：從業務事實推到 `NOT EXISTS`，並說明為什麼計數那條路走不通                                           |
+| 判斷「有沒有對應資料」，三種寫法選哪一個         | [1.8](/sql/in-exists-join/)：三者在列數上的差別，選哪一種只問一句話                                                                             |
+| 分組之後結果少了幾筆                             | [1.9](/sql/grouping-key-decides-the-unit/)：分組鍵決定一組代表誰                                                                                |
+| 連接之後數量變多、總和比預期大                   | [1.6](/sql/join-changes-rows-and-nulls/)：一列配到多列就複製一次                                                                                |
+| 條件寫了卻回零列，而且沒有報錯                   | [1.6](/sql/join-changes-rows-and-nulls/)：空值的比較是第三種答案；零列也可能是問錯了問題，兩者的分法在 [1.11](/sql/well-formed-is-not-correct/) |
+| 外連接寫了，加上條件之後該留的人不見了           | [1.5](/sql/on-describes-where-filters/)：條件放 `ON` 還是 `WHERE`                                                                               |
+| 好幾個 `JOIN` 疊起來，不確定某個 `LEFT` 保護了誰 | [1.4](/sql/join-left-operand-accumulates/)：左運算元是累積結果                                                                                  |
+| 手上是一句業務描述，不知道連接該從哪裡下筆       | [1.3](/sql/join-starts-from-the-relationship/) 的「從一句業務描述走到查詢」一節                                                                 |
+| 要拿同一批資料的兩列互相比較                     | [1.7](/sql/table-occurrence-and-alias/)：表的一次出現與別名                                                                                     |
+| 要在每一列旁邊放上它所屬那一組的總計或佔比       | [1.10](/sql/window-keeps-rows-grouping-collapses/) 的「每一列與它所屬那一組的關係」一節                                                         |
+| 拿每一列跟排在它前面那一列比，算出來的數字很怪   | [1.10](/sql/window-keeps-rows-grouping-collapses/) 的「相鄰的是什麼，要自己說清楚」一節                                                         |
+| 查詢報錯說某個名字在這裡用不了                   | [1.2](/sql/clause-evaluation-order/)：每一步手上有什麼                                                                                          |
+| 兩種寫法都對，想知道哪個代價低                   | [1.14](/sql/cost-lives-in-the-plan/)：代價由資料與索引決定                                                                                      |
+| 查詢很慢，不知道從哪裡查起                       | [1.14](/sql/cost-lives-in-the-plan/) 先問代價由什麼決定；條件的形狀是第一個要排除的，在 [Sargable](/sql/knowledge-cards/sargable/)              |
+| 索引建了，計畫還是掃全表                         | [Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/)：欄位被包住就走不了查找                                                        |
+| 相關子查詢很慢，拆成 CTE 會不會比較好            | [1.16](/sql/readable-and-fast-mostly-align/) 的「方向常常相反」一節：一整段的時間隨列數超線性成長而 CTE 接近線性                                |
+| 查詢很難讀，想知道改成好讀的會不會變慢           | [1.16](/sql/readable-and-fast-mostly-align/)：多數時候不用選，分岔時動 schema                                                                   |
+| 沒有報錯，而查出來的結果跟預期對不上             | [1.11](/sql/well-formed-is-not-correct/)：引擎驗的是合不合法                                                                                    |
+| 想確認一段查詢問的是不是我要問的那一題           | [1.11](/sql/well-formed-is-not-correct/) 的「判準只能來自查詢之外」一節                                                                         |
+| 換一批資料之後，同一段查詢的答案就變了           | [1.11](/sql/well-formed-is-not-correct/)：三種錯法各自要哪一筆資料才現形                                                                        |
+| 查詢答案是對的，而寫法讀起來像在做另一件事       | [1.15](/sql/declared-intent-vs-behaviour/)：宣告與行為分岔時怎麼查                                                                              |
+| 要稽核別人寫的查詢，不知道從哪裡下手             | [1.15](/sql/declared-intent-vs-behaviour/) 的「換掉關鍵字」一節：問這段文字說的話可不可信                                                       |
+| 換一個資料庫之後找不到表                         | [1.12](/sql/identifier-rules/)：識別字送進引擎會被改寫                                                                                          |
+| 查詢回 `permission denied`                       | [1.13](/sql/privilege-model/)：權限的預設是什麼都不給                                                                                           |
+| 想知道引擎到底照什麼順序做事                     | [1.1](/sql/declarative-not-procedural/)：三種順序各自由誰決定                                                                                   |
 
 **選工具之前先把業務事實說成一句話。** 一句「沒消費過的顧客在訂單表裡不會有任何一列」就足以排除掉計數那一整條路——因為計數預設有東西可以數，而那些人一列都沒有。這一步在 [1.9](/sql/grouping-key-decides-the-unit/) 走了完整一遍。
 
@@ -139,6 +141,7 @@ INSERT INTO 評價 VALUES (9001,101,5);
 
 - → [backend 模組一 資料庫與持久化](/backend/01-database/)：查詢寫對之後的工程議題，交易邊界、遷移與每請求的查詢次數預算都在那裡
 - → [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)：在真實系統上讀計畫要用的三層工具與四個 production case，本分類只到概念層
+- → [Test Oracle（判斷標準來源）](/testing/knowledge-cards/test-oracle/)：一段查詢問對了沒有，判準從哪裡取得、各種取法各自抓不到什麼，在測試那一側有完整的分類；[1.11](/sql/well-formed-is-not-correct/) 只把它放回 SQL 的兩層裡講
 - → [python 模組八 8.4 同一套關聯代數](/python/08-data-analysis/same-relational-algebra/)：同一組操作換成 DataFrame 介面的四組對應，以及對應斷掉的三個位置
 
 ## Backlog
@@ -155,5 +158,7 @@ INSERT INTO 評價 VALUES (9001,101,5);
 
 表上兩張新登記的卡各有量測支撐：「引擎」在本分類反覆出現而沒有一處說它指什麼（它是 DB 產品、執行元件、還是與最佳化器同層的東西，各篇讀起來不同），第二支整支的判斷標準都建在這個詞上；「外鍵」由[約束](/sql/knowledge-cards/constraint/)那張卡引進而本分類沒有承接篇，讀者拿到定義之後無處可去。
 
+
+**問題落點表有兩個缺口。**「查出來的筆數比預期少而沒有報錯」是高頻的真實症狀而表上無列，它需要一條分辨順序（先看 `WHERE` 有沒有抵銷外連接的保護、再看是不是 `NULL`，兩者皆非才是問錯了問題），單一落點接不住；[約束](/sql/knowledge-cards/constraint/)那張卡沒進表，而 [Sargable](/sql/knowledge-cards/sargable/) 已有先例，兩張卡的檢索面性質相同。
 
 兩個題目還沒決定要不要做，所以不進上表。「引擎寬鬆度與可攜性的取捨」有五處供料（1.2、1.7、1.9、1.12、1.13）而無人並置，要先確認那個取捨值不值得獨立成章；「從問題走到工具的判準怎麼排序」要看上面那張問題表用起來夠不夠——它本身已經是那個缺口的一種修法。
