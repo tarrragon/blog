@@ -6,7 +6,7 @@ weight: 6
 tags: ["sql", "alias", "self-join", "correlation-name", "join"]
 ---
 
-`FROM` 裡寫下的表名指的是那張表在這個查詢裡的一次出現，而那個名字是這次出現的稱呼。標準把這件事叫 table reference，關聯代數那一側的傳統名稱是 range variable，各家文件裡也常寫成 correlation name——三個名字說的是同一件事。同一張表因此可以出現兩次、各自扮演不同角色——這就是自連接。
+`FROM` 裡寫下的表名指的是那張表在這個查詢裡的一次出現，而那個名字是這次出現的稱呼。標準把這件事叫 table reference，[關聯代數](/sql/knowledge-cards/relational-algebra/)那一側的傳統名稱是 range variable，各家文件裡也常寫成 correlation name——三個名字說的是同一件事。同一張表因此可以出現兩次、各自扮演不同角色——這就是自連接。
 
 一張表只出現一次的時候，這個區別沒有作用。出現兩次就有：兩次出現共用同一個名字，引擎分不出某個欄位屬於哪一次，於是擋下來。
 
