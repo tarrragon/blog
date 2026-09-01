@@ -109,12 +109,12 @@ SEARCH q USING COVERING INDEX ix (email=?)
 這三項都在資料庫那一側，所以問這個問題的正確方式是去問引擎，而不是比較兩段文字。做法是把兩種寫法各要一次計畫（SQLite 用 `EXPLAIN QUERY PLAN`，PostgreSQL 用 `EXPLAIN`），看它們差在哪；再改變其中一項（加索引、換資料量），看計畫變不變。
 
 
-## 這個主題之外的幾個面向
+## 換掉其中一項會變成什麼
 
-本篇用量測說明代價由什麼決定。代價為什麼一開始就落在文字之外、計畫上那些字各是什麼意思、以及真實系統的計畫長什麼樣，是往外的三個方向。
+本篇的可動項是：有沒有索引、資料的重複程度，以及在哪一種引擎上量。
 
-代價落在文字之外這件事從哪裡來，[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 從語言的性質推一次，並把書寫、求值、執行三種順序分開。
+**往回問代價為什麼一開始就落在文字之外**：那是宣告式這個選擇的直接後果。[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 從語言的性質推一次，並把書寫、求值、執行三種順序分開。
 
-計畫裡的 `SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，由 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡承擔。索引的代價落在寫入端這一點也在後者。
+**把計畫上那些字讀懂**：`SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，由 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡承擔。索引的代價落在寫入端這一點也在後者。
 
-真實系統上的計畫比本篇複雜得多，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給三層工具的分工與四個 production case。
+**把引擎換成真實系統**：本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給三層工具的分工與四個 production case。

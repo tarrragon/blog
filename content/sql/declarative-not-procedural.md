@@ -78,12 +78,12 @@ SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 
 練習平台驗的是前一件。題目的資料量小到任何寫法都夠快，所以通過與否只反映描述得對不對；後一件在那個環境裡沒有東西可以量。
 
-## 這個主題之外的幾個面向
+## 換掉其中一項會變成什麼
 
-本篇停在「三種順序各是什麼、由誰決定」。求值順序的內部、連接的左右怎麼算、以及在真實系統上讀計畫要用的工具，各自是另一個主題。
+本篇的三個可動項是：看哪一種順序、引擎手上有多少資訊、以及在哪一台機器上跑。
 
-求值順序每一步手上有什麼、各家引擎把哪些限制放寬了、以及一種不報錯而給出錯答案的形態，都在 [1.2 子句的求值順序](/sql/clause-evaluation-order/)。
+**把觀察的對象從執行順序換成求值順序**：問題從「引擎照什麼次序做」變成「每一步手上有什麼」，而後者是語意模型規定死的、換引擎不變。[1.2 子句的求值順序](/sql/clause-evaluation-order/) 逐步走過那條線，並分開模型層擋得住的限制與各家引擎自己放寬的，包括一種不報錯而給出錯答案的形態。
 
-書寫位置真正決定的是哪一側的列被保護，而多張表相連時「左邊」已經不是一張表——[1.3 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/) 寫這個累積過程。
+**把「順序」這個問題換成「位置」**：文字上的先後不決定執行，而它決定另一件事——哪一側的列被保護。多張表相連時「左邊」已經不是一張表，[1.3 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/) 寫那個累積過程，以及在鏈中間放 `RIGHT` 會把保護範圍縮到只剩一張表。
 
-真實系統上的計畫在 [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)，那一篇給 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 的分工，以及統計過時、多欄統計缺失這幾種讓計畫選錯的實際案例。
+**把引擎從教學用的換成真實系統**：本篇的計畫短到可以整段印出來，真實系統的不是。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 三層工具的分工，以及統計過時、多欄統計缺失這幾種讓計畫選錯的實際案例。
