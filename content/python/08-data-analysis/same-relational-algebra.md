@@ -44,7 +44,7 @@ SELECT dept, MAX(salary) AS m FROM emp GROUP BY dept
 emp.groupby("dept", as_index=False)["salary"].max().rename(columns={"salary": "m"})
 ```
 
-### 窗口函數：算出分組的統計值，但保留原本的每一列
+### 視窗函數：算出分組的統計值，但保留原本的每一列
 
 ```sql
 SELECT name, salary - AVG(salary) OVER (PARTITION BY dept) AS d FROM emp
@@ -54,7 +54,7 @@ SELECT name, salary - AVG(salary) OVER (PARTITION BY dept) AS d FROM emp
 emp.assign(d=emp["salary"] - emp.groupby("dept")["salary"].transform("mean"))[["name", "d"]]
 ```
 
-`transform` 是這一組裡最值得記的：它與 `agg` 的差別正是窗口函數與 `GROUP BY` 的差別——`agg` 讓每一組收斂成一列，`transform` 把組的統計值攤回組內的每一列。
+`transform` 是這一組裡最值得記的：它與 `agg` 的差別正是視窗函數與 `GROUP BY` 的差別——`agg` 讓每一組收斂成一列，`transform` 把組的統計值攤回組內的每一列。
 
 這四組在同一份資料上跑出來的結果逐格相同。
 
@@ -78,6 +78,8 @@ t.groupby("k", dropna=False).size()   # {'x': 1, nan: 2}  與 SQL 一致
 ## 往下走
 
 **這兩個介面為什麼會分家**：一邊把運算交給資料庫，一邊在自己的記憶體裡算。[8.2 運算發生在哪一端](/python/08-data-analysis/where-computation-runs/) 寫這條分界怎麼決定容量上限，以及選邊要問的三個條件。
+
+**同一個對比在 SQL 那一側怎麼講**：`transform` 對 `agg` 的差別就是視窗函數對 `GROUP BY` 的差別。[SQL 1.10 分組把列收掉，視窗函數把列留著](/sql/window-keeps-rows-grouping-collapses/) 用輸出的單位當判準，並示範相鄰的定義漏掉分區之後會跨到別的組上。
 
 **從產出認出手上是哪一個介面**：[8.3 ORM 交出查詢，DataFrame 自己算](/python/08-data-analysis/orm-and-dataframe/) 寫兩者的回傳值形狀差在哪，以及分得開它們的三個訊號。
 
