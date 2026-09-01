@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.4.1 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
+
 **Version**: 1.4.0 — value-investing-assessment 補 steelman 審查修正：Three-Gate 的 veto 範圍明確化（否決的是複利機器分類、非一切學派下的可投資性、前向引用 School Routing）；School Routing 補殘餘桶的顯式標籤（轉機投機 / 治理陷阱排除）——未定義的「皆非」會把觀察名單、投機、永久排除三種不同狀態壓平
 **Version**: 1.3.1 — value-investing-assessment 的 Holding-company numerator bullet 拆為兩條（numerator discipline / holding-layer dilution）、對齊 Capital Efficiency Screen 清單的顆粒度（cadence 審查 finding）
 **Version**: 1.4.0 — 從八方雲集 / 揚秦加盟餐飲比較的實作提煉「value-chain span 解釋毛利、且限制可比性」概念：value-chain-analysis reference 新增 Value-Chain Span 段（全製程 / 轉售 / 外部代工三 span × 毛利涵蓋範圍、36% vs 27% 的 9pp 差是結構不是效率、不同 span 的毛利不可當效率直接比較的 guardrail、跟 transfer-pricing 紅旗的正反面互補）；Key Analytical Patterns 表加第 9 個模式 Value-chain span；Step 3 peer group 篩選加 value-chain span 維度（全製程producer 與 reseller 不是 margin peer）。這是既有 line 「margin depends on processing depth」一句帶過的展開

@@ -3,7 +3,7 @@ name: content-extension-evaluation
 description: "寫完核心章節 / 教學模組後評估「該補哪些延伸內容」的標準流程。產出 6 軸候選 + ROI 矩陣 + 立即補 / backlog 排序、避免完美主義 collapse 跟覆蓋率不足兩種反向誤判。觸發詞：延伸評估、補章節、章節後續、評估缺口、規模成長後續、extension 候選、內容後續、模組完成評估、長期維護、知識卡缺口、跨章整合、vendor 深入。Trigger when evaluating what extensions to add after completing a batch of teaching chapters."
 license: MIT
 metadata:
-  version: 1.1.1
+  version: 1.1.2
   category: writing-methodology
 ---
 

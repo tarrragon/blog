@@ -9,7 +9,7 @@ description: >
   "research before writing", "collect data for analysis". Provides a systematic data collection
   and verification workflow to prevent hallucination and ensure analysis is grounded in public data.
 metadata:
-  version: 1.9.0
+  version: 1.9.1
 ---
 
 # Business Research

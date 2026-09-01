@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.3.2 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
+
 **Version**: 1.3.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 1.3.0 — 多輪審查：frontmatter `metadata.version` 補同步（原漏、卡在 1.0.0）；關係段點名並連結 sibling skill（verification-driven-cli / multi-round-review，對齊 repo 慣例）；階段 3 補「階段 1 稽核缺口寫進 agent prompt」的資料流交棒；cold-read-agent-protocol 邊界補兩條方法缺口（需人工填的憑證步驟、依賴外部時序的長等待步驟怎麼在冷讀 cadence 下處理）

@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.9.1 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
+
 **Version**: 1.9.0 — 補「公開發行未上市」中間層（產生 blog 事實錯誤的根因）：MOPS 涵蓋所有公開發行公司、非僅上市/上櫃；「沒股價 / 未上市」≠「無公開財報」；在「No Public Financials」段加前置查核（先查公開發行狀態、市場別欄「公發」再判財務不透明）、修正 MOPS 定義。實測 field case：中聯油脂 1246 被 blog 誤讀成未上市無財報、實際財報完整公開（營收/毛利率/EPS/月營收皆在 MOPS）。
 **Version**: 1.8.0 — FinMind ROE 分子口徑陷阱入檔：`IncomeAfterTaxes` 含非控制權益、控股集團誤用會把 ROE 高估近一倍（實測：某控股公司 Q4 總淨利為歸母 1.7 倍、推算帶 14-19% 被高估成 22-28%）；正確做法是損益表 `EquityAttributableToOwnersOfParent`（歸母淨利）當分子、同名資產負債表欄位當分母、並用「分子 ÷ 股數 對 已公布 EPS」做 sanity check
 **Version**: 1.7.0 — FinMind 實測入檔：三個驗證過的 dataset（Dividend 與主表 11/11 校準一致、FinancialStatements 為季值需加總且要用已知 FY 值驗證加總假設、BalanceSheet 供 ROE 自算）、解析陷阱（民國年標示、同所屬年現金與股票股利分筆）、以及「先校準再填缺」紀律——API 先對已驗證公司跑一輪確認一致、再用於無基線的公司。實測成果：味全與泰山的逐年序列（先前兩輪都未取得）由此補齊

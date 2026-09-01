@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.2.7 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
+
 **Version**: 2.2.6 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 2.2.5 - `references/phase1-split-methodology.md` 檔尾的 `**Source**` 指向已併入本 skill 的 `tdd-phase1-split/SKILL.md`，該檔不再存在故被判為斷鏈。此為歷史遷移軌跡（記錄本文件的來源），加 `broken-link-exempt` marker 並在行內註明原檔已併入，保留可追溯性。

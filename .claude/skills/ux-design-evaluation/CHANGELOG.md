@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.4.2 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
+
 **Version**: 1.4.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 1.4.0 — 三輪 agent 審查（compliance / cadence 冷讀對齊 / self-application steelman outbound）修正：宣告層與內容層對齊（description / Triggers / 路由表症狀欄補 v1.2-1.3 新增檢查的入口、「不涵蓋」聲明修正為視覺風格 — WCAG 對比屬檢查範圍、元件語意段主標去半套）；steelman 修正（WCAG AA 分字級 4.5:1 / 3:1、觸控底線標派系 44pt HIG / 48dp Material、選中態補主題成對機制條件、溢出手段補捲軸指示、toggle 消歧補動詞標籤選項、完成證據補 API cursor + 全量場景邊界、debounce 慣例值去門檻化、跨平台適配補系統行為 / 視覺風格判斷標準、navigation 補參考來源）；快速自檢 3-in-1 拆分、佔位掃描補操作提示

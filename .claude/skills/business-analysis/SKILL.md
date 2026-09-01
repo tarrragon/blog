@@ -10,7 +10,7 @@ description: >
   from report reading through value chain tracing.
 metadata:
   portable: true
-  version: 1.4.0
+  version: 1.4.1
 ---
 
 # Business Analysis

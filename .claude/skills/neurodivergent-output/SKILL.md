@@ -4,7 +4,7 @@ description: "Shape output for a neurodivergent reader who has declared their pr
 license: MIT
 metadata:
   portable: true
-  version: 1.8.0
+  version: 1.8.1
   category: neurodiversity-output
 ---
 

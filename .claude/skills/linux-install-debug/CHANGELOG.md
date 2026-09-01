@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.17.2 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
+
 **Version**: 1.17.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
 
 **Version**: 1.17.0 — 補 frontmatter（並補一條症狀路由：自己寫的 shell script 壞了 → 可攜陷阱段。那幾條歸檔在安裝流程底下，因為它們是寫 bootstrap 腳本時踩出來的，而症狀出現時多半不在裝機情境——只憑主題歸屬分類，症狀查不到它）。補的是 frontmatter（`name` / `description` / `metadata.version`）。這份 skill 先前整份沒有 frontmatter，所以它從來不會被自動觸發——只有明確指名才叫得動。代價在補這一版的當天具體發生過一次：另一個工作流程踩到 `$var` 緊跟多位元組字被吞 byte 的 bug（實測環境正是 macOS bash 3.2），現場重新推導一次，並寫下了 v1.15.3 這條 fact-check 早就修正掉的錯誤歸因。**知識在庫裡而觸發器不存在，等於沒有這份 skill。**
