@@ -6,7 +6,7 @@ weight: 1
 tags: ["sql", "relational-model", "knowledge-card"]
 ---
 
-Relation 是一組欄位固定、由若干列構成的資料集合。資料表是它的一種，而查詢過程中產生的中間結果也是——[outer join](/sql/knowledge-cards/outer-join/) 產出的那一份就是，它比來源表多了幾列補 NULL 的。
+Relation 是一組欄位固定、由若干列構成的資料集合。**列**（row）指橫向的一筆資料，**欄**（column）指縱向的一個位置——這是台灣的用法，簡體中文的 SQL 資料多半用「行」指這裡的列、用「列」指這裡的欄，兩套剛好對調。資料表是它的一種，而查詢過程中產生的中間結果也是——[outer join](/sql/knowledge-cards/outer-join/) 產出的那一份就是，它比來源表多了幾列補 NULL 的。
 
 這個詞值得單獨認一次，因為中文的「關係」在日常語言裡指人或事物之間的聯繫，與這裡的意思無關。它是 relation 的譯名，指的是那個集合本身。
 
