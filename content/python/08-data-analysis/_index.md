@@ -1,7 +1,7 @@
 ---
 title: "模組八：整批資料的處理與分析"
 date: 2026-08-31
-description: "想釐清 pandas 跟 ORM 各自站在哪裡、或想判斷手上這批資料該用哪一側的工具時"
+description: "資料整批進入程式之後的工具選擇，軸是運算發生在資料庫端還是程式的記憶體端"
 weight: 8
 tags: ["python", "pandas", "data-analysis", "sql"]
 ---

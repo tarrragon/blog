@@ -1,7 +1,7 @@
 ---
 title: "8.4 SQL 與 DataFrame 是同一套關聯代數的兩個介面"
 date: 2026-08-31
-description: "想把 SQL 的寫法換算成 pandas 的操作、或想知道這組換算在哪裡會失準時"
+description: "SQL 子句與 pandas 方法的四組對應，以及對應斷掉的三個位置"
 weight: 4
 tags: ["python", "pandas", "sql", "dataframe", "relational-algebra"]
 ---

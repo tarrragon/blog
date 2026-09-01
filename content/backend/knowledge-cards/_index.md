@@ -20,87 +20,88 @@ weight: -1
 
 ## 資料與一致性
 
-| 卡片                                                                         | 核心問題                                 | 常見出現位置                         |
-| ---------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------ |
-| [Database](/backend/knowledge-cards/database/)                               | 正式狀態如何保存、查詢與保護             | source of truth、transaction、backup |
-| [Data Repair](/backend/knowledge-cards/data-repair/)                         | 已確認的資料差異如何安全修復             | reconciliation、dry-run、audit       |
-| [Source of Truth](/backend/knowledge-cards/source-of-truth/)                 | 哪個位置承擔正式資料判斷                 | database、cache、search index        |
-| [Search Index](/backend/knowledge-cards/search-index/)                       | 搜尋體驗如何有獨立讀取模型               | full-text、filter、ranking           |
-| [Full-Text Search](/backend/knowledge-cards/full-text-search/)               | 文本檢索如何支援關鍵字與相關性排序       | search、documents、catalog           |
-| [Facet Query](/backend/knowledge-cards/facet-query/)                         | 搜尋結果如何提供可篩選聚合維度           | filter、aggregation、UX              |
-| [Object Storage](/backend/knowledge-cards/object-storage/)                   | 大型檔案如何保存與控管生命週期           | upload、export、backup               |
-| [Event Log](/backend/knowledge-cards/event-log/)                             | 歷史事件如何保存與重播                   | replay、audit、projection            |
-| [Read Model](/backend/knowledge-cards/read-model/)                           | 查詢需求如何有獨立讀取資料形狀           | projection、query model              |
-| [Projection](/backend/knowledge-cards/projection/)                           | 來源資料如何轉換成查詢視圖               | events、materialized view            |
-| [資料生命週期](/backend/knowledge-cards/data-lifecycle/)                     | 資料如何建立、保留、封存與刪除           | retention、audit、export             |
-| [資料不一致](/backend/knowledge-cards/data-inconsistency/)                   | 多份資料暫時不同步時如何辨識與修復       | cache、replica、eventual consistency |
-| [Transaction](/backend/knowledge-cards/transaction/)                         | 一組資料變更如何一起成功或一起回復       | database、commit、rollback           |
-| [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)       | 哪些變更要一起成功或回復                 | database、unit of work               |
-| [Migration](/backend/knowledge-cards/migration/)                             | 系統如何從舊狀態受控移到新狀態           | release、cutover、backfill           |
-| [Schema Migration](/backend/knowledge-cards/schema-migration/)               | 資料庫結構如何隨版本安全演進             | release、rollback、migration         |
-| [Expand / Contract](/backend/knowledge-cards/expand-contract/)               | 先擴充相容面再收斂舊路徑的遷移做法       | schema migration、online migration   |
-| [Migration Gate](/backend/knowledge-cards/migration-gate/)                   | 遷移流程如何決定能否進入下一階段         | backfill、correctness check          |
-| [Mapping Table](/backend/knowledge-cards/mapping-table/)                     | 舊資料語意如何明確對應到新語意           | migration、backfill、validation      |
-| [Validation Query](/backend/knowledge-cards/validation-query/)               | 查詢如何證明資料語意是否一致             | migration、evidence package          |
-| [Read Compatibility](/backend/knowledge-cards/read-compatibility/)           | 讀取路徑如何同時支援新舊語意             | expand、cutover、fallback read       |
-| [Fallback Read](/backend/knowledge-cards/fallback-read/)                     | 切換失敗時如何暫時回到舊讀取語意         | cutover、rollback window             |
-| [Cutover Window](/backend/knowledge-cards/cutover-window/)                   | 正式切換如何被時間窗與訊號框住           | cutover、release gate                |
-| [Release Gate](/backend/knowledge-cards/release-gate/)                       | 變更如何在正式釋出前通過或阻擋           | error budget、migration、review      |
-| [Gate Decision](/backend/knowledge-cards/gate-decision/)                     | gate 如何把證據轉成下一步決策            | release gate、rollout                |
-| [Go/No-Go](/backend/knowledge-cards/go-no-go/)                               | 不可逆變更前的固定時點如何分票放行       | gate decision、cutover               |
-| [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)           | 回滾流程如何在正式事故前演練             | rollback strategy、migration         |
-| [Rollback Window](/backend/knowledge-cards/rollback-window/)                 | 變更後還能用哪種方式回退或改路線         | cutover、rollback strategy           |
-| [Rollback Condition](/backend/knowledge-cards/rollback-condition/)           | 決策後何時要撤回、回退或改路線           | incident decision、rollback          |
-| [Fail-forward](/backend/knowledge-cards/fail-forward/)                       | 舊狀態已失效時如何受控前進修復           | rollback window、incident decision   |
-| [Stop Condition](/backend/knowledge-cards/stop-condition/)                   | 何時必須暫停、回退或改路線               | release gate、incident decision      |
-| [Isolation Level](/backend/knowledge-cards/isolation-level/)                 | 並發交易彼此看見哪些資料                 | transaction、lock、retry             |
-| [Connection Pool](/backend/knowledge-cards/connection-pool/)                 | application 如何限制下游連線壓力         | database、Redis、broker              |
-| [Database Sharding](/backend/knowledge-cards/database-sharding/)             | 資料庫如何依 shard key 分散與路由        | Vitess、Citus、tenant key            |
-| [Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/)                 | 寫入如何先記 log 再合併以支援復原        | WAL、checkpoint、recovery            |
-| [Single Writer Model](/backend/knowledge-cards/single-writer-model/)         | 寫入如何被序列化成單一路徑               | SQLite、primary lease、容量上限      |
-| [Embedded Database](/backend/knowledge-cards/embedded-database/)             | 資料庫如何隨 application process 運作    | SQLite、檔案生命週期、本地儲存       |
-| [Metadata Lock](/backend/knowledge-cards/metadata-lock/)                     | DDL 與既有交易如何在 schema 層互相阻塞   | ALTER、長交易、DDL window            |
-| [Table Partitioning](/backend/knowledge-cards/table-partitioning/)           | 大表如何在單庫內拆成多個分區             | range/list/hash、pruning、retention  |
-| [Read-Write Split](/backend/knowledge-cards/read-write-split/)               | 讀寫流量如何分流到 primary 與 replica    | proxy、replica lag、read-after-write |
-| [Transaction Pooling](/backend/knowledge-cards/transaction-pooling/)         | 連線如何只綁定單一 transaction           | pooler、session state、SET LOCAL     |
-| [Document Store](/backend/knowledge-cards/document-store/)                   | 資料如何以 JSON 文件與彈性 schema 存取   | JSON、巢狀結構、index                |
-| [Local-First](/backend/knowledge-cards/local-first/)                         | 資料如何本機優先並離線可用               | 離線、多端同步、行動 app             |
-| [Read-After-Write Consistency](/backend/knowledge-cards/read-after-write/)   | 寫入後能否立即讀到該筆寫入               | primary、lag guard、session          |
-| [Type Affinity](/backend/knowledge-cards/type-affinity/)                     | SQLite 欄位型別如何是傾向而非硬約束      | SQLite、storage class、STRICT        |
-| [Consistency Level](/backend/knowledge-cards/consistency-level/)             | 讀寫一致性語意有哪些可選層級             | strong、bounded、eventual            |
-| [Linearizability](/backend/knowledge-cards/linearizability/)                 | 操作如何看起來在單一全域順序即時生效     | 強一致、共識、read-after-write       |
-| [External Consistency](/backend/knowledge-cards/external-consistency/)       | 交易可見順序如何對齊外部真實時間         | Spanner、commit timestamp            |
-| [Eventual Consistency](/backend/knowledge-cards/eventual-consistency/)       | 短暫不一致如何最終收斂到同一狀態         | replica、cache、跨區複製             |
-| [Bounded Staleness](/backend/knowledge-cards/bounded-staleness/)             | 資料落後的上限如何被量化                 | replica lag、一致性 SLA              |
-| [Session Consistency](/backend/knowledge-cards/session-consistency/)         | 同一工作階段內如何維持讀寫一致           | session、sticky read                 |
-| [Stale Read](/backend/knowledge-cards/stale-read/)                           | 讀到舊版本資料的條件是什麼               | replica lag、cache                   |
-| [Freshness Token](/backend/knowledge-cards/freshness-token/)                 | 寫入之後如何保證下一次讀看得到           | DB + cache、版本 token               |
-| [Follower Read](/backend/knowledge-cards/follower-read/)                     | 從不參與提交的副本讀取的代價是什麼       | closed timestamp、低延遲讀           |
-| [CAP Theorem](/backend/knowledge-cards/cap/)                                 | 網路分區時一致性與可用性如何取捨         | 分散式、分區容忍                     |
-| [PACELC](/backend/knowledge-cards/pacelc/)                                   | 正常時段的延遲與一致性如何取捨           | CAP 之外、latency                    |
-| [Quorum](/backend/knowledge-cards/quorum/)                                   | 多數同意如何成為提交與讀取的門檻         | Raft、replica set                    |
-| [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/)         | 跨區投票副本如何決定提交延遲的下限       | multi-region、RTT                    |
-| [Consensus Protocol](/backend/knowledge-cards/consensus-protocol/)           | 節點如何在不可靠網路下對單一決策達成一致 | Raft、Paxos                          |
-| [Leader Election](/backend/knowledge-cards/leader-election/)                 | 獨佔工作如何選出單一主節點               | Raft、lease、failover                |
-| [Leaseholder](/backend/knowledge-cards/leaseholder/)                         | 每個 range 的讀寫入口由誰承擔            | 分散式 SQL、Raft leader              |
-| [Commit Wait](/backend/knowledge-cards/commit-wait/)                         | 提交順序如何用等待換取真實時間對齊       | Spanner、TrueTime                    |
-| [TrueTime](/backend/knowledge-cards/truetime/)                               | 時間的不確定性如何被界定                 | Spanner、時鐘上界                    |
-| [Hybrid Logical Clock](/backend/knowledge-cards/hybrid-logical-clock/)       | 事件時間戳如何兼顧物理與邏輯順序         | HLC、max offset                      |
-| [Serialization Failure](/backend/knowledge-cards/serialization-failure/)     | 序列化衝突如何被回報與重試               | SERIALIZABLE、40001                  |
-| [Distributed Lock](/backend/knowledge-cards/distributed-lock/)               | 跨機器互斥如何在持有者失效時收回         | lease、Redis、etcd                   |
-| [Fencing Token](/backend/knowledge-cards/fencing-token/)                     | 過期持鎖者的寫入如何被下游拒絕           | 單調遞增 token、資料層               |
-| [Distributed SQL](/backend/knowledge-cards/distributed-sql/)                 | SQL 與交易語意如何延伸到多節點           | CockroachDB、Spanner                 |
-| [Global OLTP](/backend/knowledge-cards/global-oltp/)                         | 跨地理區域維持交易一致性的代價是什麼     | multi-region、延遲預算               |
-| [Range Sharding](/backend/knowledge-cards/range-sharding/)                   | key space 如何自動切分與合併             | range、split、merge                  |
-| [Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) | 單一熱點 key 如何拆到多個物理分片        | 熱點、fan-out 讀取                   |
-| [Interleaved Table](/backend/knowledge-cards/interleaved-table/)             | 父子資料如何物理交錯以避免跨分片 JOIN    | Spanner、locality                    |
-| [Request Unit](/backend/knowledge-cards/request-unit/)                       | 容量如何被抽象成單一計價單位             | Cosmos DB、RU                        |
-| [Data Residency](/backend/knowledge-cards/data-residency/)                   | 資料留在哪個地理邊界由誰決定             | 合規、跨境複製                       |
-| [Materialized View](/backend/knowledge-cards/materialized-view/)             | 查詢結果如何預先計算並儲存               | projection、read model               |
-| [CQRS](/backend/knowledge-cards/cqrs/)                                       | 讀寫責任在什麼條件下該分離               | read model、projection               |
-| [Event Sourcing](/backend/knowledge-cards/event-sourcing/)                   | 事件流如何取代可變狀態成為正式紀錄       | append-only、replay                  |
-| [Saga](/backend/knowledge-cards/saga/)                                       | 跨服務事務如何用補償序列取代 atomic      | 補償交易、最終一致                   |
-| [Connection Pooler](/backend/knowledge-cards/connection-pooler/)             | 連線數放大如何在應用與資料庫之間收斂     | pgbouncer、水平擴展                  |
+| 卡片                                                                         | 核心問題                                    | 常見出現位置                         |
+| ---------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------ |
+| [Database](/backend/knowledge-cards/database/)                               | 正式狀態如何保存、查詢與保護                | source of truth、transaction、backup |
+| [Data Repair](/backend/knowledge-cards/data-repair/)                         | 已確認的資料差異如何安全修復                | reconciliation、dry-run、audit       |
+| [Source of Truth](/backend/knowledge-cards/source-of-truth/)                 | 哪個位置承擔正式資料判斷                    | database、cache、search index        |
+| [Search Index](/backend/knowledge-cards/search-index/)                       | 搜尋體驗如何有獨立讀取模型                  | full-text、filter、ranking           |
+| [Full-Text Search](/backend/knowledge-cards/full-text-search/)               | 文本檢索如何支援關鍵字與相關性排序          | search、documents、catalog           |
+| [Facet Query](/backend/knowledge-cards/facet-query/)                         | 搜尋結果如何提供可篩選聚合維度              | filter、aggregation、UX              |
+| [Object Storage](/backend/knowledge-cards/object-storage/)                   | 大型檔案如何保存與控管生命週期              | upload、export、backup               |
+| [Event Log](/backend/knowledge-cards/event-log/)                             | 歷史事件如何保存與重播                      | replay、audit、projection            |
+| [Read Model](/backend/knowledge-cards/read-model/)                           | 查詢需求如何有獨立讀取資料形狀              | projection、query model              |
+| [Projection](/backend/knowledge-cards/projection/)                           | 來源資料如何轉換成查詢視圖                  | events、materialized view            |
+| [資料生命週期](/backend/knowledge-cards/data-lifecycle/)                     | 資料如何建立、保留、封存與刪除              | retention、audit、export             |
+| [資料不一致](/backend/knowledge-cards/data-inconsistency/)                   | 多份資料暫時不同步時如何辨識與修復          | cache、replica、eventual consistency |
+| [ORM（Object-Relational Mapping）](/backend/knowledge-cards/orm/)            | 把表對映成類別、把方法串接翻成 SQL 的產生器 | database、persistence、n+1           |
+| [Transaction](/backend/knowledge-cards/transaction/)                         | 一組資料變更如何一起成功或一起回復          | database、commit、rollback           |
+| [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/)       | 哪些變更要一起成功或回復                    | database、unit of work               |
+| [Migration](/backend/knowledge-cards/migration/)                             | 系統如何從舊狀態受控移到新狀態              | release、cutover、backfill           |
+| [Schema Migration](/backend/knowledge-cards/schema-migration/)               | 資料庫結構如何隨版本安全演進                | release、rollback、migration         |
+| [Expand / Contract](/backend/knowledge-cards/expand-contract/)               | 先擴充相容面再收斂舊路徑的遷移做法          | schema migration、online migration   |
+| [Migration Gate](/backend/knowledge-cards/migration-gate/)                   | 遷移流程如何決定能否進入下一階段            | backfill、correctness check          |
+| [Mapping Table](/backend/knowledge-cards/mapping-table/)                     | 舊資料語意如何明確對應到新語意              | migration、backfill、validation      |
+| [Validation Query](/backend/knowledge-cards/validation-query/)               | 查詢如何證明資料語意是否一致                | migration、evidence package          |
+| [Read Compatibility](/backend/knowledge-cards/read-compatibility/)           | 讀取路徑如何同時支援新舊語意                | expand、cutover、fallback read       |
+| [Fallback Read](/backend/knowledge-cards/fallback-read/)                     | 切換失敗時如何暫時回到舊讀取語意            | cutover、rollback window             |
+| [Cutover Window](/backend/knowledge-cards/cutover-window/)                   | 正式切換如何被時間窗與訊號框住              | cutover、release gate                |
+| [Release Gate](/backend/knowledge-cards/release-gate/)                       | 變更如何在正式釋出前通過或阻擋              | error budget、migration、review      |
+| [Gate Decision](/backend/knowledge-cards/gate-decision/)                     | gate 如何把證據轉成下一步決策               | release gate、rollout                |
+| [Go/No-Go](/backend/knowledge-cards/go-no-go/)                               | 不可逆變更前的固定時點如何分票放行          | gate decision、cutover               |
+| [Rollback Rehearsal](/backend/knowledge-cards/rollback-rehearsal/)           | 回滾流程如何在正式事故前演練                | rollback strategy、migration         |
+| [Rollback Window](/backend/knowledge-cards/rollback-window/)                 | 變更後還能用哪種方式回退或改路線            | cutover、rollback strategy           |
+| [Rollback Condition](/backend/knowledge-cards/rollback-condition/)           | 決策後何時要撤回、回退或改路線              | incident decision、rollback          |
+| [Fail-forward](/backend/knowledge-cards/fail-forward/)                       | 舊狀態已失效時如何受控前進修復              | rollback window、incident decision   |
+| [Stop Condition](/backend/knowledge-cards/stop-condition/)                   | 何時必須暫停、回退或改路線                  | release gate、incident decision      |
+| [Isolation Level](/backend/knowledge-cards/isolation-level/)                 | 並發交易彼此看見哪些資料                    | transaction、lock、retry             |
+| [Connection Pool](/backend/knowledge-cards/connection-pool/)                 | application 如何限制下游連線壓力            | database、Redis、broker              |
+| [Database Sharding](/backend/knowledge-cards/database-sharding/)             | 資料庫如何依 shard key 分散與路由           | Vitess、Citus、tenant key            |
+| [Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/)                 | 寫入如何先記 log 再合併以支援復原           | WAL、checkpoint、recovery            |
+| [Single Writer Model](/backend/knowledge-cards/single-writer-model/)         | 寫入如何被序列化成單一路徑                  | SQLite、primary lease、容量上限      |
+| [Embedded Database](/backend/knowledge-cards/embedded-database/)             | 資料庫如何隨 application process 運作       | SQLite、檔案生命週期、本地儲存       |
+| [Metadata Lock](/backend/knowledge-cards/metadata-lock/)                     | DDL 與既有交易如何在 schema 層互相阻塞      | ALTER、長交易、DDL window            |
+| [Table Partitioning](/backend/knowledge-cards/table-partitioning/)           | 大表如何在單庫內拆成多個分區                | range/list/hash、pruning、retention  |
+| [Read-Write Split](/backend/knowledge-cards/read-write-split/)               | 讀寫流量如何分流到 primary 與 replica       | proxy、replica lag、read-after-write |
+| [Transaction Pooling](/backend/knowledge-cards/transaction-pooling/)         | 連線如何只綁定單一 transaction              | pooler、session state、SET LOCAL     |
+| [Document Store](/backend/knowledge-cards/document-store/)                   | 資料如何以 JSON 文件與彈性 schema 存取      | JSON、巢狀結構、index                |
+| [Local-First](/backend/knowledge-cards/local-first/)                         | 資料如何本機優先並離線可用                  | 離線、多端同步、行動 app             |
+| [Read-After-Write Consistency](/backend/knowledge-cards/read-after-write/)   | 寫入後能否立即讀到該筆寫入                  | primary、lag guard、session          |
+| [Type Affinity](/backend/knowledge-cards/type-affinity/)                     | SQLite 欄位型別如何是傾向而非硬約束         | SQLite、storage class、STRICT        |
+| [Consistency Level](/backend/knowledge-cards/consistency-level/)             | 讀寫一致性語意有哪些可選層級                | strong、bounded、eventual            |
+| [Linearizability](/backend/knowledge-cards/linearizability/)                 | 操作如何看起來在單一全域順序即時生效        | 強一致、共識、read-after-write       |
+| [External Consistency](/backend/knowledge-cards/external-consistency/)       | 交易可見順序如何對齊外部真實時間            | Spanner、commit timestamp            |
+| [Eventual Consistency](/backend/knowledge-cards/eventual-consistency/)       | 短暫不一致如何最終收斂到同一狀態            | replica、cache、跨區複製             |
+| [Bounded Staleness](/backend/knowledge-cards/bounded-staleness/)             | 資料落後的上限如何被量化                    | replica lag、一致性 SLA              |
+| [Session Consistency](/backend/knowledge-cards/session-consistency/)         | 同一工作階段內如何維持讀寫一致              | session、sticky read                 |
+| [Stale Read](/backend/knowledge-cards/stale-read/)                           | 讀到舊版本資料的條件是什麼                  | replica lag、cache                   |
+| [Freshness Token](/backend/knowledge-cards/freshness-token/)                 | 寫入之後如何保證下一次讀看得到              | DB + cache、版本 token               |
+| [Follower Read](/backend/knowledge-cards/follower-read/)                     | 從不參與提交的副本讀取的代價是什麼          | closed timestamp、低延遲讀           |
+| [CAP Theorem](/backend/knowledge-cards/cap/)                                 | 網路分區時一致性與可用性如何取捨            | 分散式、分區容忍                     |
+| [PACELC](/backend/knowledge-cards/pacelc/)                                   | 正常時段的延遲與一致性如何取捨              | CAP 之外、latency                    |
+| [Quorum](/backend/knowledge-cards/quorum/)                                   | 多數同意如何成為提交與讀取的門檻            | Raft、replica set                    |
+| [Cross-Region Quorum](/backend/knowledge-cards/cross-region-quorum/)         | 跨區投票副本如何決定提交延遲的下限          | multi-region、RTT                    |
+| [Consensus Protocol](/backend/knowledge-cards/consensus-protocol/)           | 節點如何在不可靠網路下對單一決策達成一致    | Raft、Paxos                          |
+| [Leader Election](/backend/knowledge-cards/leader-election/)                 | 獨佔工作如何選出單一主節點                  | Raft、lease、failover                |
+| [Leaseholder](/backend/knowledge-cards/leaseholder/)                         | 每個 range 的讀寫入口由誰承擔               | 分散式 SQL、Raft leader              |
+| [Commit Wait](/backend/knowledge-cards/commit-wait/)                         | 提交順序如何用等待換取真實時間對齊          | Spanner、TrueTime                    |
+| [TrueTime](/backend/knowledge-cards/truetime/)                               | 時間的不確定性如何被界定                    | Spanner、時鐘上界                    |
+| [Hybrid Logical Clock](/backend/knowledge-cards/hybrid-logical-clock/)       | 事件時間戳如何兼顧物理與邏輯順序            | HLC、max offset                      |
+| [Serialization Failure](/backend/knowledge-cards/serialization-failure/)     | 序列化衝突如何被回報與重試                  | SERIALIZABLE、40001                  |
+| [Distributed Lock](/backend/knowledge-cards/distributed-lock/)               | 跨機器互斥如何在持有者失效時收回            | lease、Redis、etcd                   |
+| [Fencing Token](/backend/knowledge-cards/fencing-token/)                     | 過期持鎖者的寫入如何被下游拒絕              | 單調遞增 token、資料層               |
+| [Distributed SQL](/backend/knowledge-cards/distributed-sql/)                 | SQL 與交易語意如何延伸到多節點              | CockroachDB、Spanner                 |
+| [Global OLTP](/backend/knowledge-cards/global-oltp/)                         | 跨地理區域維持交易一致性的代價是什麼        | multi-region、延遲預算               |
+| [Range Sharding](/backend/knowledge-cards/range-sharding/)                   | key space 如何自動切分與合併                | range、split、merge                  |
+| [Composite Partition Key](/backend/knowledge-cards/composite-partition-key/) | 單一熱點 key 如何拆到多個物理分片           | 熱點、fan-out 讀取                   |
+| [Interleaved Table](/backend/knowledge-cards/interleaved-table/)             | 父子資料如何物理交錯以避免跨分片 JOIN       | Spanner、locality                    |
+| [Request Unit](/backend/knowledge-cards/request-unit/)                       | 容量如何被抽象成單一計價單位                | Cosmos DB、RU                        |
+| [Data Residency](/backend/knowledge-cards/data-residency/)                   | 資料留在哪個地理邊界由誰決定                | 合規、跨境複製                       |
+| [Materialized View](/backend/knowledge-cards/materialized-view/)             | 查詢結果如何預先計算並儲存                  | projection、read model               |
+| [CQRS](/backend/knowledge-cards/cqrs/)                                       | 讀寫責任在什麼條件下該分離                  | read model、projection               |
+| [Event Sourcing](/backend/knowledge-cards/event-sourcing/)                   | 事件流如何取代可變狀態成為正式紀錄          | append-only、replay                  |
+| [Saga](/backend/knowledge-cards/saga/)                                       | 跨服務事務如何用補償序列取代 atomic         | 補償交易、最終一致                   |
+| [Connection Pooler](/backend/knowledge-cards/connection-pooler/)             | 連線數放大如何在應用與資料庫之間收斂        | pgbouncer、水平擴展                  |
 
 ## 快取與流量
 

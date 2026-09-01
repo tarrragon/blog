@@ -1,7 +1,7 @@
 ---
 title: "8.5 記憶體是 pandas 的邊界條件"
 date: 2026-08-31
-description: "想估算手上這批資料 pandas 吃不吃得下、或已經吃不下要決定換哪一種工具時"
+description: "pandas 的記憶體邊界怎麼估算，以及越過之後三個方向各自付什麼代價"
 weight: 5
 tags: ["python", "pandas", "duckdb", "polars", "spark", "memory"]
 ---

@@ -1,12 +1,12 @@
 ---
 title: "8.3 ORM 交出查詢，DataFrame 自己算"
 date: 2026-08-31
-description: "看到 pandas 的方法串接覺得像 ORM、想確認兩者差在哪裡時"
+description: "ORM 產生查詢、DataFrame 執行運算，以及外觀相似的方法串接底下差了什麼"
 weight: 3
 tags: ["python", "pandas", "orm", "sqlalchemy", "dataframe"]
 ---
 
-ORM 的產出是一段 SQL 與一組物件，DataFrame 的產出是一張新的表格。兩者的寫法看起來相似，因為都用方法串接描述篩選條件，而底下發生的事完全不同：一個是查詢的產生器，一個是運算的執行者。
+[ORM](/backend/knowledge-cards/orm/) 的產出是一段 SQL 與一組物件，DataFrame 的產出是一張新的表格。兩者的寫法看起來相似，因為都用方法串接描述篩選條件，而底下發生的事完全不同：一個是查詢的產生器，一個是運算的執行者。
 
 ## ORM 產生查詢，把運算交出去
 

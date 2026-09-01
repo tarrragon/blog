@@ -1,7 +1,7 @@
 ---
 title: "8.1 資料以什麼單位進來，分開了 Python 底下幾種工作"
 date: 2026-08-31
-description: "想知道為什麼搜到的 Python 內容集中在某一側、或想確認手上這份工作屬於哪一種時"
+description: "資料以一筆還是一整批進入程式，這個單位怎麼把同一個語言標籤底下幾組不相干的工作分開"
 weight: 1
 tags: ["python", "data-analysis", "pandas", "ecosystem"]
 ---

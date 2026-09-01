@@ -1,7 +1,7 @@
 ---
 title: "8.2 運算發生在哪一端，決定了工具長什麼樣子"
 date: 2026-08-31
-description: "想判斷手上這段處理該讓資料庫算還是搬進程式算、或想釐清各種資料庫套件的分層時"
+description: "運算留在資料庫端或搬進記憶體端這條分界，怎麼決定工具的形狀、容量上限與失敗形態"
 weight: 2
 tags: ["python", "data-analysis", "sql", "orm", "pandas"]
 ---
