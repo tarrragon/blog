@@ -8,7 +8,7 @@ tags: ["sql", "optimizer", "performance", "knowledge-card"]
 
 Query optimizer 是引擎裡負責挑選執行方式的元件。它讀進查詢，產出一個 [query plan](/sql/knowledge-cards/query-plan/)，而它可以任意重排步驟，只受一個約束：輸出的 [relation](/sql/knowledge-cards/relation/) 要與語意模型算出來的一致。
 
-它比較的依據不在查詢裡也不在資料裡，而在另外存著的一份[統計資訊](/sql/knowledge-cards/query-statistics/)上——統計多新，它的估計就多準。
+它比較的依據是另外存著的一份[統計資訊](/sql/knowledge-cards/query-statistics/)——那份摘要既不在查詢的文字裡也不在資料表裡，而統計多新，它的估計就多準。
 
 ## 概念位置
 
