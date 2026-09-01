@@ -92,7 +92,7 @@ WHERE 訂單編號 NOT IN (SELECT 訂單編號 FROM 評價 WHERE 星等 = 5);
 
 這件事在測試那一側有名字，而那一側分得比這裡細：預期值從哪裡取得叫 [test oracle](/testing/knowledge-cards/test-oracle/)，那張卡列了四種來源與各自抓不到的那些；「寫斷言的人與寫實作的人共用同一份誤解」叫 [test provenance](/testing/knowledge-cards/test-provenance/)；而「造不出分岔的資料」在 [Mutation Testing](/testing/knowledge-cards/mutation-testing/) 裡叫 equivalent mutant。本篇只把這件事放回 SQL 的兩層裡講，那三張卡有本篇沒有的射程。
 
-## 換掉其中一項會變成什麼
+## 換掉其中一項就走到另一篇
 
 本篇建立的模型裡有三件事可以各自換掉——錯在哪一層、錯給誰看、以及判準由誰持有——每換掉一件就走到另一篇。
 
