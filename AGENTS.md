@@ -61,13 +61,16 @@
 - 案例、反例、tripwire、規模對照都要保留該情境的專屬語言：資料形狀、流量型態、組織能力、合規壓力、失敗代價與回退路徑。
 - 寫作檢查時要問：「這段是否只是把不同情境塞進同一欄位？」如果是，先改寫成該情境自己的判讀問題與操作條件。
 
-### 原則九：Description 是 recall trigger
+### 原則九：Description 是文章的輔助說明，體例由內容定位決定
 
-- `description` 描述文章的**功能**（解什麼問題、什麼情境下需要），不描述文章的**結構**（幾段幾項怎麼做）。
-- 理想的 description 無論內文怎麼調整都不用變動；如果內文改了 description 就過時，代表 description 寫了不該寫的東西。
+- **教材**（`content/` 下規劃在序列裡的文章與章節）的 `description` 說這一篇涵蓋什麼、交付哪一段觀念，補上標題說不完的部分。**不寫成觸發條件**——以「⋯⋯時」收尾、「想知道 / 想確認 / 想判斷」起手、把症狀寫在前面、或寫成問句，這四種都不用。
+- **查閱型內容**（排錯記錄、工具筆記、知識卡的定義層）的 `description` 回答「什麼情境下需要回來讀」，因為它的使用者本來就帶著症狀或術語來。
+- 分開兩者的理由是框架會反過來決定文章：`description` 寫成「遇到 X 時」，文章就得是 X 的答案，而教材照問題組織會產生**沒有問就不知道的斷點**。文章從標題發想、`description` 從文章發想，順序不能反。詳見 [#308](/report/description-frames-the-article/)。
+- 兩種體例共用一條驗收：遮住 `description` 只看標題能猜出全部內容 → 沒有增量 → 重寫。
+- 理想的 description 無論內文怎麼調整都不用變動；如果內文改了 description 就過時，代表它寫了不該寫的東西。
 - 四不要：不塞操作細節、不加假設前提（「想不起來」「卻發現」）、不用情緒修辭（「別被騙」「打架」）、不內嵌數字（「三項」「6 段」）。
 - 給人也給機器判斷，每 token 要有資訊量，短能到位就短。
-- 詳見 [#170](/report/description-as-recall-trigger/)。
+- 查閱型那一半的完整推導見 [#170](/report/description-as-recall-trigger/)。
 
 ### 原則十：寫給帶問題來的讀者、不用演講姿態
 
@@ -271,7 +274,8 @@
 - [ ] 有明確下一步路由（章節/模組連結），且每條路由都去目的地確認過它承接該主題、到站第一屏看得到——目的地存在不等於它承接（見 [#240](/report/routing-destination-must-own-the-topic/)）
 - [ ] 每條路由都交代了目的地會給什麼——判斷標準是遮住目的地之後讀者能不能預測那一篇的內容，而句型只影響命中率、不是判定條件（見 [#303](/report/cross-links-eat-the-article-they-live-in/)）
 - [ ] 標題與段標是承載結論的直述句、判斷標準由推導交付（不設懸念、也不把結論抽到開頭灌輸）；檢討內容用客觀條件視角、不用第一人稱事件敘事（見 [#254](/report/write-for-readers-not-audiences/)）
-- [ ] `description` 是 recall trigger 而非摘要：回答「什麼情境下需要回來讀」而非「這篇在講什麼」（見 [#170](/report/description-as-recall-trigger/)）
+- [ ] `description` 的體例對得上內容定位：教材說這一篇涵蓋什麼（不用「⋯⋯時」「想知道」這類觸發條件式），查閱型內容回答什麼情境下需要回來讀；兩者共用「遮住 description 只看標題能不能猜出全部內容」這條驗收（見 [#308](/report/description-frames-the-article/) 與 [#170](/report/description-as-recall-trigger/)）
+- [ ] 教材的開場給概念不給情境，跨篇引導寫成本篇的範圍交代（這個主題不涵蓋哪些脈絡、那些面向另有專篇）而非「遇到 X 時去讀 Y」（見 [#308](/report/description-frames-the-article/)）
 - [ ] 新增頂層 `content/<module>/` 資料夾時、已同步更新 `content/_index.md` 對應分類段（見 [#139](/report/top-level-content-folder-needs-homepage-entry/)）
 - [ ] 這次留下的未完成工作已記進模組 `_index.md` 的 `## Backlog` 段、完成的項目已從表中刪除（見 §12）
 - [ ] 步驟 4 的寫作規範掃描實際 invoke 過 `compositional-writing` skill 並留下逐類表，不是憑印象確認（見 §5 關鍵硬性規則）
@@ -302,7 +306,7 @@
   - **URL**：裸 URL 禁止；顯示文字若含 TLD 字樣（`.com` / `.org` / `.gov` / `.net` / `.io` / `.dev` / `.tw`），domain 必須與 href 一致（反釣魚）。
   - **表格**：aligned 風格，每欄補空白對齊（CJK 雙寬）；分隔線 `| --- |` 長度隨欄寬自動增減。`mdtools fmt --fix` 負責重新對齊。
   - **列表與代碼**：列表 / code block 前後空行；有序列表 `1./2./3.` 一致；code block 需語言標示。
-  - **Front matter**：通用層 `title` + `date` 必填；新文章必填 `description` + `tags`；卡片層加 `description` + `weight` 必填。`description` 的語意要求：寫成 recall trigger（回答「什麼情境下需要回來讀」）而非內容摘要（回答「這篇在講什麼」）；判斷標準是「刪掉 description 後只看 title 能猜出全部內容 → 沒有增量 → 重寫」。寫法四不要：不塞操作細節（留內文）、不加假設前提（「想不起來」「卻發現」）、不用情緒修辭（「別被騙」「打架」）、不內嵌數字（「三項」「6 段」隨內文增刪過時，同 #156）——給人也給機器判斷，每 token 要有資訊量，短能到位就短。詳見 [#170](/report/description-as-recall-trigger/)。
+  - **Front matter**：通用層 `title` + `date` 必填；新文章必填 `description` + `tags`；卡片層加 `description` + `weight` 必填。`description` 的語意要求依內容定位分兩種（見原則九）：教材說這一篇涵蓋什麼、交付哪一段觀念，不寫成觸發條件；查閱型內容回答「什麼情境下需要回來讀」。兩者共用同一條判斷標準：「刪掉 description 後只看 title 能猜出全部內容 → 沒有增量 → 重寫」。寫法四不要：不塞操作細節（留內文）、不加假設前提（「想不起來」「卻發現」）、不用情緒修辭（「別被騙」「打架」）、不內嵌數字（「三項」「6 段」隨內文增刪過時，同 #156）——給人也給機器判斷，每 token 要有資訊量，短能到位就短。詳見 [#170](/report/description-as-recall-trigger/)。
   - **卡片**：相對連結有效、卡片 orphan 偵測、卡片首段與概念位置段需含鄰卡連結（對應 `.codex/briefs/knowledge-cards.md` K4）。
   - **位置引用與數量命名（警告層）**：`mdtools lint` 掃位置式引用候選（REF1：「見第 N 章」「§N」）與標題內嵌成員數的集合命名（REF2：「六大原則」）；命中是候選不是判決 — 凍結外部編號（RFC / 法條）、緊鄰清單的行內計數、「」內的反例引用合規。判讀依 [#155](/report/reference-by-semantic-title-not-number/) / [#156](/report/name-collections-by-role-not-count/)、細節見 spec §5.10。
   - **否定起手（警告層）**：`mdtools lint` 掃「不是 X、而是 Y」「與其 X、不如 Y」重點後置候選（POS-negation-lead）；核心概念被擠到「而是 / 不如」之後是資訊結構效率問題、跨語言（非中文特有句型）。命中是候選不是判決 — 判定用「核心概念在不在句首」、明示反例對照與「」內引用合規、以此句型為主題的卡（[#166](/report/lead-with-the-point-cross-language/) 本身）引用該句型時會命中自己這條規則。判讀依 [#166](/report/lead-with-the-point-cross-language/) / [#165](/report/register-violation-needs-cross-style-eyes/)、細節見 spec §5.11。

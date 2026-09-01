@@ -1,12 +1,12 @@
 ---
 title: "1.11 代價由資料與索引決定，不由寫法決定"
 date: 2026-08-31
-description: "三種寫法都對而其中一種特別慢、想知道差別出在寫法還是資料與索引時"
+description: "同一組寫法在索引與資料分布改變後的實測排名，以及比較兩段查詢該補上哪些條件"
 weight: 11
 tags: ["sql", "cost", "query-plan", "index", "performance"]
 ---
 
-同一段 SQL 的代價由資料分布與可用的索引決定，不由寫法決定。三種寫法都對而其中一種明顯慢的時候，慢的原因通常不在那段文字裡——換一個索引，排名就可能對調。
+同一段 SQL 的代價由資料分布與可用的索引決定，不由寫法決定。同一組寫法的快慢排名會隨著索引改變而對調，而三段查詢的文字一個字都沒有動。
 
 
 ## 三種寫法都對
@@ -109,10 +109,12 @@ SEARCH q USING COVERING INDEX ix (email=?)
 這三項都在資料庫那一側，所以問這個問題的正確方式是去問引擎，而不是比較兩段文字。做法是把兩種寫法各要一次計畫（SQLite 用 `EXPLAIN QUERY PLAN`，PostgreSQL 用 `EXPLAIN`），看它們差在哪；再改變其中一項（加索引、換資料量），看計畫變不變。
 
 
-## 往下走
+## 這個主題之外的幾個面向
+
+本篇用量測說明代價由什麼決定。代價為什麼一開始就落在文字之外、計畫上那些字各是什麼意思、以及真實系統的計畫長什麼樣，是往外的三個方向。
 
 代價落在文字之外這件事從哪裡來，[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 從語言的性質推一次，並把書寫、求值、執行三種順序分開。
 
-計畫裡的 `SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，查 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡。索引的代價落在寫入端這一點也在後者。
+計畫裡的 `SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，由 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡承擔。索引的代價落在寫入端這一點也在後者。
 
-真實系統上的計畫比本篇複雜得多。到 [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 拿三層工具的分工與四個 production case。
+真實系統上的計畫比本篇複雜得多，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給三層工具的分工與四個 production case。

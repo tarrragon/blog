@@ -1,7 +1,7 @@
 ---
 title: "1.8 分組鍵決定每一組代表什麼"
 date: 2026-08-31
-description: "分組之後結果少了幾筆、或想確認該拿哪一欄當分組鍵時"
+description: "分組鍵與一組所代表的對象之間的對應、選鍵的判準，以及分組不適用的那一類問題"
 weight: 8
 tags: ["sql", "group-by", "null", "aggregate", "join"]
 ---
@@ -105,7 +105,9 @@ WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客
 
 三種寫法各自描述什麼、以及 `NOT IN` 為什麼在這裡是危險的那一個，在 [1.7](/sql/in-exists-join/)。
 
-## 往下走
+## 這個主題之外的幾個面向
+
+本篇處理鍵與一組代表什麼的對應。分組這一步在整條求值順序裡的位置、那些 `NULL` 的來源、以及 `NULL` 在別處的行為，各自另有落點。
 
 **每一步手上有什麼**：[1.2 子句的求值順序](/sql/clause-evaluation-order/) 走過從 `FROM` 到 `ORDER BY` 每一步的單位變化，並分開語意模型擋得住的限制與各家引擎自己放寬的。
 
