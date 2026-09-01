@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.63.2 — 三份翻譯探針對 `description-as-recall-trigger` 裡「沒有問就不知道的斷點」給了三種不同的意思（沒人問／缺了那個問題／讀者不知道該問什麼）。那句話把誰沒問、不知道什麼都省略了，中文允許、英文強制決定，所以這一類要靠翻譯才現形。就地展開成「讀者不曾遇到那個問題，就永遠不會知道有那件事」。
+
 **Version**: 1.63.1 — `description-as-recall-trigger` principle 卡的 H1 停在被自己推翻的版本（「Description 是 Recall Trigger、不是文章摘要」），而同一次改動已把結論改成體例由內容定位決定。slug 不動、只改 H1。
 
 **Version**: 1.63.0 — description 的體例改成依內容定位分兩種。查閱型內容維持觸發條件式（使用者帶著症狀或術語來），教材改成說這一篇涵蓋什麼——觸發條件式在教材上是缺陷，因為那句話寫成「遇到 X 時」之後文章就得是 X 的答案，而照問題組織的教材會產生沒有問就不知道的斷點。1-C 的檢查多一個前置判定（這一批是教材還是查閱型），並加一條整批訊號：一個分類的 description 幾乎每一篇都以「時」收尾，那是規範長出來的形狀、要回頭改規範。principle 卡 description-as-recall-trigger 同步
