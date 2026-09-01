@@ -96,7 +96,9 @@ Claude Code 寫 `content/` 文章時，不要為了整齊而把案例、反例�
 
 實測漏掉這兩句是 0/9 自行交件、寫了是 9/9，Haiku 也照做——這是指令有沒有寫的問題、不是模型能力問題。細節見 memory 的 `reviewer-agents-need-sendmessage-pull`。
 
-**術語探針的派發，第一步是查測試詞在不在探針自己的系統提示裡。** subagent 會繼承本檔與 AGENTS.md，而值得量的詞多半就寫在那兩份裡面——量到的會是詞頻不是語域，且兩者同向（本檔詞頻 3 的詞五份全數有把握並給出本站自己的定義，詞頻 0 的五份全數沒把握）。列一次詞頻，命中的換到沒有專案規範檔的目錄下派、或改用不帶本專案上下文的實例；做不到就承認那幾個詞這一批沒有結論，不要記成「已量測」。逆向的命中（提示裡有而探針仍回報沒把握）可以直接採信。同批另放一個**安慰劑詞**——只在規範檔出現而該領域確定非通用的詞，它收斂就代表這批在讀提示；通用性控制詞對這一種無感，因為通用詞讀不讀得到提示都收斂。見 [#309](/report/probe-reads-the-prompt-that-defines-the-term/)。
+**術語探針的派發，第一步是查測試詞在不在探針自己的系統提示裡。** subagent 會繼承本檔與 AGENTS.md，而值得量的詞多半就寫在那兩份裡面——量到的會是詞頻不是語域，且兩者同向（本檔詞頻 3 的詞五份全數有把握並給出本站自己的定義，詞頻 0 的五份全數沒把握）。列一次詞頻，命中的換到沒有專案規範檔的目錄下派、或**同向的那幾個直接記成「本批無結論」**——`Agent` 沒有換工作目錄的參數，subagent 一律繼承本檔與 AGENTS.md，所以「換一個乾淨的配置重測」目前沒有跑通過的做法，別把它當成可執行的補救，否則唯一可執行的分支會變成豁免。詞頻全部是零的時候這個檢查是恆真的（規範檔沒涵蓋那個領域），通過不代表乾淨。逆向的命中（提示裡有而探針仍回報沒把握）可以直接採信。
+
+同批另放一個**安慰劑詞**，四個條件缺一就給假訊號：**與測試詞同域**（跨域的詞回報「沒見過」是因為領域不符，假陰性）、只在規範檔出現、語意不可由組成推出（可拆解的詞探針靠拆解就答得出來，假陽性）、詞頻與測試詞同量級。實測合格的安慰劑詞三份全數有把握並複述規範檔原文，所以這一項確實有效；但本檔涵蓋的是寫作方法論，替 `content/business/` 這類分類撈不到同域的安慰劑詞，那時報告上記「本批無污染對照」。通用性控制詞對這一種無感，因為通用詞讀不讀得到提示都收斂。見 [#309](/report/probe-reads-the-prompt-that-defines-the-term/)。
 
 **第二步是控制詞。** 受測單位是一個詞而不是一段文字時（懷疑某個高頻用詞在目標語域沒有穩定所指、或某個譬喻太口語），prompt 要同時列出測試詞與**至少兩個已知通用的術語**，混在同一份清單裡、不標示哪個是控制，問法是「這幾個詞在<領域>裡各指什麼；沒把握或沒見過就直接寫沒見過，不要推測」。控制詞收斂才代表這批的分歧可歸因到詞本身，控制詞也分歧就整批作廢——少了這一步，「全部答不出來」與「這批模型不行」在報告上長得一樣。prompt 另外要求「有把握的那些，寫出它指的東西」——少了這一句，回報會退化成一張把握度清單，而同域佔用的證據全在定義的內容裡。回報分四類讀，收斂度只分得出前三類（收斂＝通用、各給不同定義而都有把握＝一名多義、全部沒見過＝非通用）；第四類是少數份有把握而它們一致指向另一個所指，代表這個詞在同一個領域已經有主人，它在收斂度上與非通用詞同區而處置嚴格得多——非通用可以就地定義後留用，同域佔用只能換掉，且要換成描述不是同義詞（見 [#307](/report/term-already-owned-inside-the-domain/)）。而**非通用不等於自創**：先查這個詞在別的領域有沒有穩定用法，有就是語域錯配。判定之後的替換要先列詞形分佈再按義項走，程序見 [#289](/report/term-probe-measures-register-not-invention/)。
 
@@ -227,26 +229,25 @@ git push
 
 上面的流程管的是新卡建立，改**既有**卡時另有一個缺口：卡的內容可能已經被抄成 skill 的 principle 卡，改了 report 側而沒改 skill 側，共用庫裡就留著一份已被推翻的規則，而下游專案 pull 到的是舊版。
 
-發現方式不能靠記憶，而且**不能只用卡自己的 slug 去掃**：principle 卡的檔名常常與 report / record 卡不同名，而兩者的對應表已經存在——`bin/skill-mirror` 的 `find_report_slug()` mapping table 就是它。先反查拿到 skill 側的 slug，再用兩個 slug 各掃一次：
+發現方式不能靠記憶，也不能用任何單一個名字去掃。副本與本體的對應在本庫有四種形態，每一種只有一個鍵抓得到：檔名相同、去專案化時改過標題（H1 相同）、兩者都改過（靠 `bin/skill-mirror` 的 mapping table）、只在正文引用（內容掃描）。四個鍵合起來才是完整的射程，所以這件事交給腳本：
 
 ```bash
-check_mirror() {
-  local slug="$1" skill_slug
-  skill_slug=$(awk -v want="/$slug/" '/^    [a-z0-9-]+\)$/{k=$1;sub(/\)$/,"",k)} $0~want{print k}' bin/skill-mirror)
-  echo "skill 側 slug: ${skill_slug:-（同名）}"
-  for s in "$slug" ${skill_slug:-}; do
-    rg -l "$s" .claude/skills/ content/skills/ 2>/dev/null
-    find .claude/skills content/skills -name "$s.md" 2>/dev/null
-  done | sort -u
-}
-check_mirror <report-或-record-卡的-slug>
+scripts/principle-mirror-check.py <report-或-record-卡的-slug>   # 查一張，落後的會標出來
+scripts/principle-mirror-check.py --all                          # 全庫掃，列出本體較新的那些
 ```
 
-不反查會漏掉的正是最該查的那一種。實測：對 `teaching-article-context-method` 跑原本那兩條，`rg` 回兩個由 `skill-mirror` 自動產生、且已被 pre-commit 覆蓋的鏡像，`find` 零命中——**真正持有分岔副本的 `references/principles/teaching-article-context.md` 一次都沒被列出來**，因為 `SKILL.md` 寫的是相對路徑 `principles/teaching-article-context.md`（不含 `-method`），而檔名也不同。命中的全是自動同步的那一半，於是回報「已檢查、已同步」。
+**這支腳本取代了先前那段手寫的 `rg` + `find` 程序，而取代的理由要記住。** 那段程序先只用卡自己的 slug，後來補了 mapping table 反查，兩個版本都會對真正分岔的副本回報零命中——實測 `multi-round-review-minimum-three-rounds` 在兩個版本下都是零行，而 `.claude/skills/multi-round-review/references/principles/minimum-three-rounds.md` 就在那裡、H1 與 report 卡的 title 逐字相同、本體新兩個月。成因是 mapping table 的涵蓋率由「這個 skill 有沒有 `content/skills/` 鏡像」決定（`skill-mirror` 只在有鏡像的 skill 上跑），而查副本的需求由「這張卡有沒有任何副本」決定，兩個作用域不同：150 張 principle 卡裡有 36 張既非同名也不在 mapping 表裡。
 
-`rg` 與 `find` 兩條缺一不可。principle 卡的 slug 只存在於檔名，內容的 H1 是給人讀的標題，所以 `rg` 掃內容掃不到卡自己——全站量測 157 張 principle 卡，內容含自己 slug 的只有 9 張，**148/157 掃不到**。漏掉是常態不是巧合。
+驗收案例固定四個，改動腳本之後逐個跑過再提交——**其中兩個的正確輸出都是零行以外的東西，所以「跑起來沒報錯」不算通過**：
 
-只跑 `rg` 比不跑更糟：它會命中引用該卡的 `SKILL.md`，給出「已檢查、已同步」的假訊號，而真正停在舊規則的那張卡再也不會被看。實測踩過一次。
+| slug                                      | 該有的結果                                          |
+| ----------------------------------------- | --------------------------------------------------- |
+| `multi-round-review-minimum-three-rounds` | 靠 H1 抓到 `minimum-three-rounds.md`，並標為落後    |
+| `teaching-article-context-method`         | 靠 mapping table 抓到 `teaching-article-context.md` |
+| `basics-anchor-the-advanced`              | 靠同名抓到                                          |
+| `description-frames-the-article`          | 副本 0 份（真陰性）                                 |
+
+`--all` 目前回報 74 張卡的 skill 側副本落後於本體。這個數字是存量不是本批造成的，處置是逐張判斷該不該同步，不是一次全改。
 
 量測指令：
 

@@ -1,8 +1,8 @@
 ---
-title: "Description 是未來自己的 recall trigger、不是文章摘要"
+title: "查閱型內容的 description 是未來自己的 recall trigger"
 date: 2026-06-29
 weight: 170
-description: "文章的 description 欄位要讓未來的自己在掃列表時判斷「我現在遇到的問題，該不該回來讀這篇」——像 skill 的 description 讓系統決定何時載入一樣。摘要式 description 只回答「這篇在講什麼」，recall trigger 回答「你在什麼情境下需要這篇」。"
+description: "排錯記錄、工具筆記這類使用者帶著症狀來的內容，它的 description 要讓未來的自己在掃列表時判斷該不該回來讀，本卡處理這一半的寫法與判斷標準；教材那一半另有專卡。"
 tags: ["report", "事後檢討", "工程方法論", "原則", "寫作"]
 slug: "description-as-recall-trigger"
 ---
@@ -11,9 +11,15 @@ slug: "description-as-recall-trigger"
 
 本卡抽自一次三篇 macOS 系統管理文章的多輪審查。審查修完 32 項 finding 後，作者發現 description 雖符合格式規範（30-150 字、非空），語意卻只是摘要——未來回顧列表時無法判斷「何時該重讀」。限制：單一案例（操作型文章），其他類型（教學模組、report 卡、知識卡）的 description 可能有不同的 recall 結構。
 
+## 射程：這張卡只管查閱型內容
+
+本卡的論述基礎是三篇 macOS 排錯文章——查閱型內容，使用者確實帶著症狀來，情境索引在那裡有用。**教材套用它會讓文章反過來被 `description` 決定**：那句話寫成「遇到 X 時」之後，文章就得是 X 的答案，而照問題組織的教材會產生沒有問就不知道的斷點。教材那一半的體例與改法見 [#308](/report/description-frames-the-article/)，兩張卡共用同一條驗收（遮住 description 只看標題能不能猜出全部內容）。
+
+判別看這一篇在不在一條規劃好的序列上：在序列上的是教材，走 [#308](/report/description-frames-the-article/)；使用者帶著症狀或術語來的是查閱型，走本卡。下面每一段都預設已經判成查閱型。
+
 ## 核心原則
 
-文章的 `description` 欄位是寫給**未來自己**的 recall trigger，不是寫給搜尋引擎的摘要。它要回答的問題是：「我在什麼情境下、遇到什麼問題，會需要回來讀這篇？」
+查閱型內容的 `description` 欄位是寫給**未來自己**的 recall trigger，不是寫給搜尋引擎的摘要。它要回答的問題是：「我在什麼情境下、遇到什麼問題，會需要回來讀這篇？」
 
 類比：Claude Code skill 的 `description` 讓系統在對話中自動判斷「要不要載入這個 skill」。文章的 description 讓未來的自己在掃列表時自動判斷「要不要進去讀」。兩者目的相同——降低 recall 的認知成本。
 
@@ -83,9 +89,3 @@ description 給人判斷也給機器（AI）判斷，每個 token 都要有資�
 - [#131 教材完整性要用讀者旅程驗證](../teaching-completeness-by-learner-journey/)：讀者旅程的第一站是列表頁的 description——旅程驗證如果從「已進入文章」開始，就跳過了「要不要進入」的判斷點。
 - [#159 入口分流要放在詞彙牆之前](../audience-fork-before-jargon-wall/)：description 是文章的入口分流欄位，分流依據應是讀者的情境而非文章的內容結構。
 - [#268 要維持當期的內容只能放在更新到得了讀者的載體上](../current-content-needs-a-carrier-that-reaches-readers/)：本卡「不內嵌數字」那一條的上位形式。理由是 description 的更新頻率低於內文——內文增刪一項的當下沒有任何動作會去改 description，所以寫進去的「三項」「6 段」在讀者看到它的時候已經錯了。#268 把同一問推到任意載體：內容的正確性會不會隨時間失效，加上這個載體改完到不到得了讀者。description 只是「特別慢的那一層」的一個實例，判斷別的 metadata 欄位該不該放某個值時走那張卡。
-
----
-
-## 射程限定
-
-本卡的論述基礎是三篇 macOS 排錯文章——查閱型內容，使用者確實帶著症狀來，情境索引在那裡有用。**教材套用它會讓文章反過來被 `description` 決定**：那句話寫成「遇到 X 時」之後，文章就得是 X 的答案，而照問題組織的教材會產生沒有問就不知道的斷點。教材那一半的體例與改法見 [#308](/report/description-frames-the-article/)，兩張卡共用同一條驗收（遮住 description 只看標題能不能猜出全部內容）。
