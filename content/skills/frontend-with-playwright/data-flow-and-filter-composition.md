@@ -5,6 +5,8 @@ description: "frontend-with-playwright reference：Filter / sort / count / trans
 tags: ["skills", "frontend-with-playwright", "Data Flow", "Architecture", "Filter"]
 ---
 
+## Data Flow and Filter Composition
+
 設計 filter / sort / count / transform 等 stream 操作時、確保操作位置跟資料源同層、避免層錯位產生 silent 缺口。原則跨 UI / 後端 / 演算法管線通用 — 不只是前端問題。
 
 適用：前端 paginated UI 加 filter、後端 API + middleware filter、演算法 pipeline 加 transform、map-reduce 加 post-filter、資料庫 materialized view 加 query。
@@ -61,7 +63,7 @@ document.querySelectorAll('.result').forEach(el => {
 ### 情境 2：後端 API + ORM middleware
 
 ```python
-# 反例：middleware 在 pagination 之後 filter
+## 反例：middleware 在 pagination 之後 filter
 @app.route("/posts")
 def posts():
     page = Post.objects.paginate(page=1, per_page=10)
@@ -72,10 +74,10 @@ def posts():
 ### 情境 3：Async iterator + take(N)
 
 ```python
-# 反例：先 take 後 filter
+## 反例：先 take 後 filter
 items = list(itertools.islice(stream(), 100))
 filtered = [x for x in items if matches(x)]
-# stream 後面可能還有符合的、但被 take 100 切斷了
+## stream 後面可能還有符合的、但被 take 100 切斷了
 ```
 
 ### 情境 4：Map-reduce + post-reduce filter
@@ -246,7 +248,7 @@ document.querySelector('.scope-title').addEventListener('click', () => {
 **對**（策略 C：多 index + 切換）：
 
 ```bash
-# Build 階段
+## Build 階段
 pagefind --site public --output-subdir _pagefind-all
 pagefind --site public --root-selector "article h1, article h2" --output-subdir _pagefind-title
 ```

@@ -5,6 +5,8 @@ description: "WRAP reference：快速模式、完整模式與決策品質自測�
 tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 ---
 
+## 決策者快速參考清單（PM Checklist）
+
 WRAP 決策框架的每階段自問清單。在決策時快速掃描使用。
 
 ---

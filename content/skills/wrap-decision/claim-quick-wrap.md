@@ -5,6 +5,8 @@ description: "WRAP reference：任務啟動前用 1 到 2 分鐘檢查選項、�
 tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 ---
 
+## 任務啟動快速 WRAP（Claim Quick WRAP）
+
 任務啟動快速 WRAP（Claim Quick WRAP）的責任是在開始一個任務前，用 1-2 分鐘檢查選項、機會成本與失敗防護。它提供任務啟動前的最低品質閘門；高風險任務接著進入完整 WRAP。
 
 ---

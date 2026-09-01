@@ -5,6 +5,8 @@ description: "requirement-protocol reference：同方向失敗 2 次的轉折協
 tags: ["skills", "requirement-protocol", "對話協議", "Debugging"]
 ---
 
+## Failure Pivot Protocol
+
 同方向失敗 ≥ 2 次時的轉折協議 — 停下來驗證底層假設、不沿同方向加碼到第 3 次。
 
 適用：debug 反覆失敗、CSS 規則不生效、JS 改完元素還原、layout 怎麼調都不對。
@@ -189,13 +191,9 @@ container.appendChild(customEl);  // 不在 framework 子樹內、不會被 reco
 
 ---
 
-## 延伸閱讀
+## 相關原則
 
-對應的事後檢討（在 `content/report/`）：
-
-- [failure-direction-pivot-point](/report/failure-direction-pivot-point/) — 同方向反覆失敗的轉折點
-- [two-occurrence-threshold](/report/two-occurrence-threshold/) — 2 次門檻的抽象原則（跨工具 / 測試 / 思路 / 溝通四面向）
-- [verification-method-timing](/report/verification-method-timing/) — 驗證方法的選擇時機
+- [`/report/two-occurrence-threshold/`](/report/two-occurrence-threshold/) — 2 次門檻的抽象原則（跨工具 / 測試 / 思路 / 溝通四面向）
 
 ---
 

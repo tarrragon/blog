@@ -5,6 +5,8 @@ description: "frontend-with-playwright reference：Playwright 三個位置（假
 tags: ["skills", "frontend-with-playwright", "Playwright", "Testing"]
 ---
 
+## Playwright in the Development Loop
+
 Playwright 在前端開發循環的三個位置：假設驗證（寫 CSS 前）、行為驗證（規則寫完後）、互動驗證（dispatch event 後）。第 2 次同個版型 bug 出現 → 寫成測試固化。
 
 適用：CSS / DOM debug、layout 驗收、互動行為驗證、寫 layout regression test。
@@ -212,7 +214,7 @@ test('sidebar hidden at < 1400px', async ({ page }) => {
 ### Server
 
 ```bash
-# 任何方式起本地 server
+## 任何方式起本地 server
 hugo server                                       # Hugo
 python3 -m http.server 8000 --directory public    # 純靜態
 npm run dev                                        # framework dev server
@@ -300,18 +302,18 @@ test('layout golden path: form → scope → results', async ({ page }) => {
 跳過 step 1 的 retrospective 補救（修完才補測試）：
 
 ```bash
-# Stash 修復、checkout 修前 commit
+## Stash 修復、checkout 修前 commit
 git stash && git checkout <pre-fix-commit>
 
-# Cherry-pick 測試 commit、build、跑
+## Cherry-pick 測試 commit、build、跑
 git cherry-pick <test-commit>
 make site && npm test
-# 預期：RED
+## 預期：RED
 
-# 切回修後版本
+## 切回修後版本
 git checkout main && git stash pop
 npm test
-# 預期：GREEN
+## 預期：GREEN
 ```
 
 兩個訊號都看到 + 順序對、測試才被驗證。
@@ -330,15 +332,6 @@ debug / 驗證 layout 時：
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [playwright-early-in-loop](/report/playwright-early-in-loop/) — 在開發循環裡早一點用 playwright 看真實結果
-- [layout-tests-with-playwright](/report/layout-tests-with-playwright/) — 用前端測試把排版問題自動化
-- [verification-method-timing](/report/verification-method-timing/) — 驗證方法的選擇時機
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

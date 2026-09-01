@@ -172,7 +172,7 @@ skill-sync push <skill-name> -m "commit message"
 
 ### 版號規則（強制）
 
-修改 skill 內容後必須更新 SKILL.md 末尾的版本號，格式為 `**Version**: X.Y.Z — 變更摘要`。版號遵循 semver：
+修改 skill 內容後必須更新版本號。版本紀錄住在該 skill 目錄下的 `CHANGELOG.md`（新到舊），格式為 `**Version**: X.Y.Z — 變更摘要`，新的一條加在最上面。`SKILL.md` 本身只留一行指過去——**skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄**，把它留在 SKILL.md 等於每次叫用都付一次無效讀取（搬出去之前 `compositional-writing` 有 54% 是版本紀錄）。版號遵循 semver：
 
 - **patch**（0.1.0 → 0.1.1）：修錯字、補連結、格式調整
 - **minor**（0.1.0 → 0.2.0）：新增 reference / principle 卡、擴充段落、加觸發詞
@@ -180,7 +180,7 @@ skill-sync push <skill-name> -m "commit message"
 
 未標版號的 skill 首次補標用 `1.0.0`。變更摘要簡述改了什麼，參考 compositional-writing 的版本紀錄格式。
 
-**版號有兩個住址，兩個都要改**：文末的 `**Version**:` 版本紀錄，以及 SKILL.md frontmatter 的 `metadata.version`。只改文末是高頻漏失——`bin/skill-mirror` 會擋下不一致，但它只跑在有 `content/skills/` 鏡像的 skill 上，沒有鏡像的 skill 漂多久都不會有人發現。一次全庫掃描的結果：三個 skill 的 frontmatter 分別落後一到四個版本，三個都沒有鏡像。
+**版號有兩個住址，兩個都要改**：`CHANGELOG.md` 最上面那一條，以及 `SKILL.md` frontmatter 的 `metadata.version`。只改一個是高頻漏失——`bin/skill-mirror` 會擋下不一致，但它只跑在有 `content/skills/` 鏡像的 skill 上，沒有鏡像的 skill 漂多久都不會有人發現。一次全庫掃描的結果：三個 skill 的 frontmatter 分別落後一到四個版本，三個都沒有鏡像。
 
 改完用這條掃全庫，兩個住址對不上的會列出來：
 
@@ -188,12 +188,12 @@ skill-sync push <skill-name> -m "commit message"
 for f in .claude/skills/*/SKILL.md; do
   n=$(basename $(dirname $f))
   fm=$(sed -n '/^  version:/{s/^  version: *//;s/"//g;p;q;}' "$f")
-  cl=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+' "$f" | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
-  if [ -n "$fm" ] && [ "$fm" != "$cl" ]; then echo "DRIFT $n frontmatter=$fm changelog=$cl"; fi
+  cl=$(grep -m1 -oE '^\*\*Version\*\*: [0-9]+\.[0-9]+\.[0-9]+' ".claude/skills/$n/CHANGELOG.md" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+  if [ -n "$fm" ] && [ -n "$cl" ] && [ "$fm" != "$cl" ]; then echo "DRIFT $n frontmatter=$fm changelog=$cl"; fi
 done
 ```
 
-推導值取的是「檔案裡最大的版本號」，所以引用了別的 skill 裸版號的 changelog 會給假陽性。命中之後先看該檔的 `**Version**:` 清單確認那個號碼真的是版本紀錄，再改 frontmatter。
+這條比先前那個版本準：舊的掃法取「SKILL.md 裡最大的三段數字」，而引用了別的 skill 裸版號的段落會讓它給假陽性（實際發生過，`tdd` 就是這樣被誤報的）。現在比的是 `CHANGELOG.md` 最上面那一條，那個位置只可能是這個 skill 自己的版號。
 
 ### 標準操作流程
 

@@ -5,6 +5,8 @@ description: "frontend-with-playwright reference：framework 邊界辨識、JS �
 tags: ["skills", "frontend-with-playwright", "Framework", "外部組件"]
 ---
 
+## Framework Coexistence
+
 跟 framework-managed DOM 共處：把 framework 子樹當禁區、客製 UI 注入到 boundary 外、JS 操作邊界由穩定性梯度決定、外部組件客製優先用公共介面。
 
 適用：跟 vendor library / framework component（pagefind、Vue widget、React component、jQuery plugin）共存的客製、注入客製 UI、覆寫 vendor 樣式。
@@ -244,16 +246,6 @@ sidebar.appendChild(filter);  // 整節點搬遷、event listener 跟著、state
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [coexisting-with-framework-managed-dom](/report/coexisting-with-framework-managed-dom/) — 客製 UI 留 framework 邊界外、用 CSS 控制視覺位置
-- [component-boundary-and-js-impact](/report/component-boundary-and-js-impact/) — JS 操作 framework 元件的邊界辨識
-- [external-component-customization](/report/external-component-customization/) — 在外部組件上加客製功能：以邊界為中心
-- [external-component-collaboration-layers](/report/external-component-collaboration-layers/) — 跟外部組件合作的四層次
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

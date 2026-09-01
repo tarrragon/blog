@@ -5,6 +5,8 @@ description: "requirement-protocol reference：空間 / 相對位置 / 隔離 / 
 tags: ["skills", "requirement-protocol", "對話協議", "需求澄清"]
 ---
 
+## Clarifying Ambiguous Instructions
+
 收到含模糊形容詞或缺數字的指令時 — 把指令翻譯成可驗證的具體輸入、給選項讓使用者點頭、再開始實作。
 
 適用：空間 / 尺寸（「padding 加大」「對齊」）、相對位置（「在 X 旁邊」「靠近 Y」）、隔離（「不要動 X」「跟 Y 分開」）、決定權（「breakpoint 設多少」）、篩選（「依 X 篩選」「只看 Y」）。
@@ -243,17 +245,6 @@ C. Form 下方、結果之上           → grid row 排序、跟 results 共生
 - [ ] 純技術細節沒攤給使用者煩（grid / flex、selector 寫法）
 
 如果 ≥ 2 項打勾失敗、訊息回到草稿重寫。
-
----
-
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/` 目錄下）：
-
-- [spatial-instruction-clarification](/report/spatial-instruction-clarification/) — 空間 / 尺寸類
-- [relative-position-instruction-clarification](/report/relative-position-instruction-clarification/) — 相對位置類
-- [isolation-instruction-clarification](/report/isolation-instruction-clarification/) — 隔離類
-- [decide-vs-confirm-boundary](/report/decide-vs-confirm-boundary/) — 可決定 vs 該確認的完整判斷標準
 
 ---
 

@@ -5,6 +5,8 @@ description: "frontend-with-playwright reference：CSS-only vs JS-assisted 判�
 tags: ["skills", "frontend-with-playwright", "CSS", "JavaScript"]
 ---
 
+## CSS / JS Boundary
+
 CSS 跟 JS 各自負責什麼、邊界由「值能不能 build-time 定下來」決定。`!important` / inline style / specificity 戰是訊號、不是工具。
 
 適用：寫 / 改 CSS 規則、決定 styling 該放 CSS 還是 JS、跟 vendor CSS 共存、檔案組織。
@@ -296,18 +298,6 @@ window.addEventListener('resize', () => {
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [css-only-vs-js-assisted](/report/css-only-vs-js-assisted/) — 排版精度的工具選擇
-- [class-toggle-over-important](/report/class-toggle-over-important/) — class toggle 取代 inline `display:none !important`
-- [css-layers-over-specificity](/report/css-layers-over-specificity/) — CSS Layers 取代 specificity 戰
-- [css-variable-single-location](/report/css-variable-single-location/) — CSS 變數定義位置統一
-- [extract-css-js-files](/report/extract-css-js-files/) — CSS / JS 拆出獨立檔案
-- [runtime-measurement-unification](/report/runtime-measurement-unification/) — runtime 量測模式統一
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

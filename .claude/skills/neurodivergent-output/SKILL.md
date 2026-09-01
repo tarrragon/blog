@@ -143,4 +143,4 @@ This skill distills and integrates three prior single-profile skills: `i-have-ad
 
 ---
 
-**Version**: 1.8.0 — 補記版本紀錄段。此前版本號只存在於 frontmatter 的 `metadata.version`，文末沒有紀錄段，所以 1.8.0 之前的變更內容查不到。
+版本紀錄在同目錄的 `CHANGELOG.md`。

@@ -5,6 +5,8 @@ description: "frontend-with-playwright reference：MutationObserver 三維度、
 tags: ["skills", "frontend-with-playwright", "Performance", "MutationObserver"]
 ---
 
+## Reactive Performance
+
 前端 reactive 效能的盤點與優化：MutationObserver 三維度（root / options / debounce）、polling → observer、iteration / regex / reflow / lazy load 四個成本面。
 
 適用：使用者反映卡頓、CPU 100%、scroll lag、resize jank、首次互動延遲。
@@ -336,18 +338,6 @@ new MutationObserver((mutations, obs) => {
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [mutation-observer-scope](/report/mutation-observer-scope/) — MutationObserver 範圍與觸發頻率
-- [mutationobserver-over-polling](/report/mutationobserver-over-polling/) — setTimeout 輪詢換 MutationObserver
-- [reactive-listener-frequency-management](/report/reactive-listener-frequency-management/) — Reactive 監聽器的效能 audit
-- [runtime-iteration-and-regex-cost](/report/runtime-iteration-and-regex-cost/) — Runtime 計算成本：每筆迭代與正則
-- [layout-reflow-measurement](/report/layout-reflow-measurement/) — Layout reflow / repaint 的可量化評估
-- [lazy-loading-and-critical-path](/report/lazy-loading-and-critical-path/) — 資源載入時序：lazy chunk 與 critical path
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

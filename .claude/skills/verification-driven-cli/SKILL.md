@@ -110,8 +110,4 @@ docker exec sqltest-pg psql -U test -d testdb \
 
 ---
 
-**Version**: 1.2.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
-
-**Version**: 1.2.0 — 關係段補回指 golden-path-validation（雙向可見：本 skill「作者驗單一工具」vs 它「陌生人端到端驗指引」、共享執行勝過審讀/模擬不可信）；frontmatter `metadata.version` 補同步（原漏、卡在 1.0.0）
-**Version**: 1.1.0 — 反覆陷阱補兩條方法論：verifier 自己也是待驗的（naive 檢查對上 stow 摺疊等會假陰性、拿已知正確環境先驗 verifier）、模擬架構的 fixture 不可信（qemu 下 sandbox/seccomp/LSM/syscall 行為跟原生不同、架構敏感驗證要原生跑）
-**Version**: 1.0.0
+版本紀錄在同目錄的 `CHANGELOG.md`。

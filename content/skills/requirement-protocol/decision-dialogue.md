@@ -5,9 +5,11 @@ description: "requirement-protocol reference：呈現決策時的五個獨立維
 tags: ["skills", "requirement-protocol", "對話協議", "決策呈現"]
 ---
 
+## Reference：決策對話的五個維度
+
 對應觸發情境：**準備呈現決策給使用者選擇時**（任何「該怎麼做、A 還是 B、要不要做 X」的場景）。
 
-本 reference 自包含、不需讀其他 reference。把 [#74-#79](/report/) 系列翻譯成可直接套用的協議步驟與模板。
+本 reference 自包含、不需讀其他 reference。把決策協議系列翻譯成可直接套用的協議步驟與模板（個別原則卡見 `principles/`）。
 
 ---
 

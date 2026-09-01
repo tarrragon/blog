@@ -5,6 +5,8 @@ description: "frontend-with-playwright reference：鍵盤可達性三要素、fo
 tags: ["skills", "frontend-with-playwright", "Accessibility", "A11y"]
 ---
 
+## Accessibility and Focus
+
 A11y 三道防線：靜態（鍵盤可達性三要素）、動態（focus 跟 aria-live）、優先 Native HTML > ARIA。鍵盤 / 視覺 / motor / 認知都納入。
 
 適用：寫互動 UI、JS reparent / hide 元素、自製 component（modal / dropdown / tabs）、客製外部組件後檢查 a11y。
@@ -331,18 +333,6 @@ mediaQuery.addEventListener('change', () => {
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [focus-management-on-dom-move](/report/focus-management-on-dom-move/) — 動態 DOM 移動時的 focus 管理
-- [aria-live-for-dynamic-content](/report/aria-live-for-dynamic-content/) — Screen reader 與動態內容變動的 live region 設計
-- [native-html-over-aria-role](/report/native-html-over-aria-role/) — Native HTML element 優先於 ARIA role 的取捨
-- [keyboard-accessibility](/report/keyboard-accessibility/) — 鍵盤可達性：focus indicator、tab 順序、escape 路徑
-- [motor-accessibility-hit-target](/report/motor-accessibility-hit-target/) — Motor 可達性：hit target、間距、誤點防護
-- [visual-aids-contrast-zoom-responsive](/report/visual-aids-contrast-zoom-responsive/) — 視覺輔助：對比度、放大、字型 zoom 的 layout 適配
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

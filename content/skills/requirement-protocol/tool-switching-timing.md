@@ -5,6 +5,8 @@ description: "requirement-protocol reference：四種 debug 工具的 ROI 對照
 tags: ["skills", "requirement-protocol", "對話協議", "Playwright"]
 ---
 
+## Tool Switching Timing
+
 何時從靜態推理切換到量測工具、何時從 DevTools 升級到 Playwright、何時把 debug 過程寫成測試。
 
 適用：CSS / DOM debug、layout 卡關、不確定該用哪個工具。
@@ -127,9 +129,9 @@ test('search scope is between form and results', async ({ page }) => {
 ## Playwright 引入的最低門檻
 
 ```bash
-# 起本地 server（任何方式）
+## 起本地 server（任何方式）
 python3 -m http.server 8000 --directory public
-# 或 hugo server
+## 或 hugo server
 hugo server
 ```
 
@@ -229,16 +231,6 @@ debug 卡關時：
 - [ ] 切到 playwright 之前、有沒有試圖用更努力的推理多撐一次？（如果有 → 停）
 - [ ] 第 2 次同個版型 bug 出現時、有沒有寫成測試固化？
 - [ ] 對外回報切換工具的提案、有沒有寫得具體（要起哪個 server、量什麼）？
-
----
-
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [playwright-early-in-loop](/report/playwright-early-in-loop/) — 在開發循環裡早一點用 playwright 看真實結果
-- [verification-method-timing](/report/verification-method-timing/) — 驗證方法的選擇時機
-- [layout-tests-with-playwright](/report/layout-tests-with-playwright/) — 用前端測試把排版問題自動化
 
 ---
 

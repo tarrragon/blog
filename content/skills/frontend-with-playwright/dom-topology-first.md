@@ -5,6 +5,8 @@ description: "frontend-with-playwright reference：寫 CSS 前用 playwright/Dev
 tags: ["skills", "frontend-with-playwright", "CSS", "DOM", "Selector"]
 ---
 
+## DOM Topology First
+
 寫 CSS 規則之前、先讀真實 DOM tree — class name 是約定、不是結構保證。Selector 設計從最精準起步、有證據再放寬。
 
 適用：寫 / 改 CSS 規則、設計 JS query selector、判斷是否該改 layout 結構。
@@ -231,16 +233,6 @@ root.querySelectorAll(':scope > .results > .result > .title').forEach(el => el.c
 
 ---
 
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [dom-topology-before-css](/report/dom-topology-before-css/) — 拓樸理解先行於 CSS 規則
-- [dom-selector-precision](/report/dom-selector-precision/) — Selector 精準度三維度
-- [pattern-document-query](/report/pattern-document-query/) / [pattern-component-root](/report/pattern-component-root/) / [pattern-root-as-parameter](/report/pattern-root-as-parameter/) / [pattern-closest-lookup](/report/pattern-closest-lookup/) — 起點四選一 pattern 卡片
-- [pattern-attribute-idempotency-marker](/report/pattern-attribute-idempotency-marker/) / [pattern-weakmap-idempotency-record](/report/pattern-weakmap-idempotency-record/) — Idempotency 兩選一
-
----
 
 **Last Updated**: 2026-04-26
 **Version**: 0.1.0

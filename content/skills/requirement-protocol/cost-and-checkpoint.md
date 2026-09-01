@@ -5,6 +5,8 @@ description: "requirement-protocol reference：對抗多層的覆寫成本告知
 tags: ["skills", "requirement-protocol", "對話協議", "Git"]
 ---
 
+## Cost Transparency & Revert Checkpoint
+
 兩個情境的協議合併：**對抗多層的覆寫成本告知** + **「先還原 / 先重來」類退出指令處理**。共同主軸 = 把成本攤開、讓使用者參與決策、保留可逆性。
 
 適用：
@@ -131,7 +133,7 @@ Checkpoint commit 的特徵：
 確認 checkpoint commit 完成後、執行使用者要的還原：
 
 ```bash
-# 視類型而定
+## 視類型而定
 git reset --hard <target>      # 完全還原
 git checkout <commit> -- <file> # 部分還原
 git revert <commit>             # 保留歷史的還原
@@ -180,7 +182,7 @@ B. 直接覆寫 class 規則（要 8 條 !important）
 
 ```bash
 git checkout .  # 直接清空、丟掉 30 分鐘探索成果
-# 之後想對比「為什麼方向 A 不行」時、什麼都沒留下
+## 之後想對比「為什麼方向 A 不行」時、什麼都沒留下
 ```
 
 **對**：
@@ -228,15 +230,6 @@ git reset --hard HEAD~4  # 或使用者指定的 target
 - [ ] checkpoint 的 commit message 有沒有寫「為什麼不採用」、不只寫「做了什麼」？
 
 成本沒攤、checkpoint 沒 commit → 退回去補。
-
----
-
-## 延伸閱讀
-
-對應的事後檢討（在 `content/report/`）：
-
-- [override-depth-cost-report](/report/override-depth-cost-report/) — 覆寫深度的成本告知
-- [revert-instruction-handling](/report/revert-instruction-handling/) — 「先還原」「先重來」類退出指令的處理
 
 ---
 

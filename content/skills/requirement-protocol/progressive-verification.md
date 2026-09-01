@@ -5,6 +5,8 @@ description: "requirement-protocol reference：placeholder 漸進除錯 + measur
 tags: ["skills", "requirement-protocol", "對話協議", "Debugging"]
 ---
 
+## Progressive Verification & Minimum Necessary Scope
+
 從最小可驗證單位起步、加變數一次只加一個、範圍從窄到寬擴張。
 
 適用：UI layout debug、對齊問題、selector / MutationObserver root / JS 操作邊界的設計。
@@ -261,13 +263,9 @@ new MutationObserver(...).observe(container, { childList: true });
 
 ---
 
-## 延伸閱讀
+## 相關原則
 
-對應的事後檢討（在 `content/report/`）：
-
-- [placeholder-driven-ui-debug](/report/placeholder-driven-ui-debug/) — 從色塊 placeholder 開始的漸進式 UI 除錯
-- [measurement-completeness](/report/measurement-completeness/) — 量測值缺一不可
-- [minimum-necessary-scope-is-sanity-defense](/report/minimum-necessary-scope-is-sanity-defense/) — 最小必要範圍是 sanity 防線
+- [`/report/minimum-necessary-scope-is-sanity-defense/`](/report/minimum-necessary-scope-is-sanity-defense/) — 最小必要範圍是 sanity 防線
 
 ---
 

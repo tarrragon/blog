@@ -202,4 +202,4 @@ Step 7: 評估候選軸（current open question）
 
 ---
 
-**Version**: 1.0.0
+版本紀錄在同目錄的 `CHANGELOG.md`。
