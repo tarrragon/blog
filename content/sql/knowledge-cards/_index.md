@@ -25,3 +25,4 @@ tags: ["sql", "knowledge-card"]
 | [Relational Algebra（關聯代數）](/sql/knowledge-cards/relational-algebra/) | 作用在關係上並產出關係的一組運算，SQL 的底層               |
 | [Constraint（約束）](/sql/knowledge-cards/constraint/)                     | 由資料庫在每次寫入時檢查的規則，判斷標準的豁免條件從這裡來 |
 | [Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/)           | 條件能不能翻成索引上的一次查找；欄位被包住就走不了         |
+| [Cartesian Product（笛卡兒積）](/sql/knowledge-cards/cartesian-product/)   | 每一列與每一列各配一次；條件缺席時連接回到的起點           |

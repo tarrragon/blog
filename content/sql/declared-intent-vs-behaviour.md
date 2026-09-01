@@ -56,6 +56,8 @@ CROSS JOIN 加 WHERE 等值          JOIN ... ON 同一個條件
 `--SEARCH 訂單 USING ...          `--SEARCH 訂單 USING ...
 ```
 
+`CROSS JOIN` 在代數上確實對應[笛卡兒積](/sql/knowledge-cards/cartesian-product/)，而那張卡寫明展開由條件決定：條件把兩邊綁起來時全部組合一次都沒有被造出來。
+
 這一項的誤導方向反過來。`LEFT` 那一節是宣告承諾了引擎沒做的事，這一節是宣告嚇到了讀的人——看到 `CROSS` 就以為代價是列數的平方，於是花力氣改寫一段本來就是內連接的查詢。代價由什麼決定在 [1.11](/sql/cost-lives-in-the-plan/)，而在這裡要先分清楚：`CROSS JOIN` 加等值條件與 `JOIN ... ON` 是同一段查詢的兩種寫法，換掉它省下的是讀的人的疑慮，不是執行時間。
 
 ## LEFT 描述的情況從一開始就不存在
