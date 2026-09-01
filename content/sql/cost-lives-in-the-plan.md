@@ -1,8 +1,8 @@
 ---
-title: "1.14 代價由資料與索引決定，不由寫法決定"
+title: "1.16 代價由資料與索引決定，不由寫法決定"
 date: 2026-08-31
 description: "同一組寫法在索引與資料分布改變後的實測排名，以及比較兩段查詢該補上哪些條件"
-weight: 14
+weight: 16
 tags: ["sql", "cost", "query-plan", "index", "performance"]
 ---
 
@@ -127,7 +127,7 @@ INSERT INTO Person SELECT 1000000 + i, 'hot@x.com' FROM n;
 
 **這個結論有一個有界的例外**：條件把索引欄位包進函式裡的時候，寫法決定的是引擎能不能用那個索引，而非它在幾條路裡挑哪一條。[Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/) 給判斷標準與三種改寫方向。
 
-**問這件事對怎麼寫查詢意味著什麼**：代價既然由資料與索引決定，那查詢的文字該為誰而寫。[1.17 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/) 量了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開反而快二十幾倍的——並給出分岔時該動查詢還是動 schema 的判準。
+**問這件事對怎麼寫查詢意味著什麼**：代價既然由資料與索引決定，那查詢的文字該為誰而寫。[1.19 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/) 量了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開反而快二十幾倍的——並給出分岔時該動查詢還是動 schema 的判準。
 
 **把計畫上那些字讀懂**：`SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，由 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡承擔。索引的代價落在寫入端這一點也在後者。
 

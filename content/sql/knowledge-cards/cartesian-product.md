@@ -34,7 +34,7 @@ SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 
 15139881 是 3891 的平方。外層每掃一列，內層就把整張表再走一遍，而這一千五百萬對配對在後面的子句拿到資料之前就要先產生出來。這張表加到 13891 列之後，列數變成 3.6 倍而配對數變成 192959881——**將近十三倍**。成長是平方而非線性，這正是這個運算與其他多出來的列的差別。
 
-**要看的是條件把不把兩邊綁起來，而不是用了哪個關鍵字。** `CROSS JOIN` 加一個等值條件，與 `JOIN ... ON` 寫同一個條件，對引擎是同一段查詢（[1.16](/sql/declared-intent-vs-behaviour/)）；反過來，`JOIN` 寫了而 `ON` 的條件只提到單邊的欄位，展開照樣發生。
+**要看的是條件把不把兩邊綁起來，而不是用了哪個關鍵字。** `CROSS JOIN` 加一個等值條件，與 `JOIN ... ON` 寫同一個條件，對引擎是同一段查詢（[1.18](/sql/declared-intent-vs-behaviour/)）；反過來，`JOIN` 寫了而 `ON` 的條件只提到單邊的欄位，展開照樣發生。
 
 ## 與列數膨脹是兩種不同的多
 
@@ -56,4 +56,4 @@ SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 
 ## 往下走
 
-條件正確而列數仍然變多的那一種，在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一批配對用自連接與 `EXISTS` 兩種寫法的差別，在 [1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/)。`CROSS JOIN` 這個關鍵字對讀的人宣告了什麼，在 [1.16 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)。production 查詢的結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
+條件正確而列數仍然變多的那一種，在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一批配對用自連接與 `EXISTS` 兩種寫法的差別，在 [1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/)。`CROSS JOIN` 這個關鍵字對讀的人宣告了什麼，在 [1.18 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)。production 查詢的結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。

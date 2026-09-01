@@ -22,7 +22,7 @@ tags: ["backend", "database", "schema"]
 
 table 切分要對齊業務聚合邊界。聚合內需要交易一致性的欄位、放在同一交易可控範圍；跨聚合流程透過事件或引用關係接續。relation 的責任是表達資料約束、不是替代流程編排。
 
-主鍵策略要先回答「如何穩定識別」與「如何支援查詢」。自然鍵可讀性高但變動風險高；代理鍵穩定且易擴展、常搭配業務唯一鍵一起使用。外鍵策略則要平衡完整性與演進自由度：正式核心域可強約束、跨域整合可由應用層保護並保留遷移彈性。另外要分清宣告與執法：schema 宣告了 FK 不等於執法開啟（連線層開關、約束的 NOT VALID 狀態、欄位層 vs 表層的寫法、storage engine 都可能讓宣告形同註解，四者在三家引擎上的實測見 [1.15 外鍵寫下保證，各家引擎決定它生不生效](/sql/foreign-key-and-referential-integrity/)）、給存量表補約束的順序見 [1.6 的 Type I 加約束](/backend/01-database/database-migration-playbook/)。
+主鍵策略要先回答「如何穩定識別」與「如何支援查詢」。自然鍵可讀性高但變動風險高；代理鍵穩定且易擴展、常搭配業務唯一鍵一起使用。外鍵策略則要平衡完整性與演進自由度：正式核心域可強約束、跨域整合可由應用層保護並保留遷移彈性。另外要分清宣告與執法：schema 宣告了 FK 不等於執法開啟（連線層開關、約束的 NOT VALID 狀態、欄位層 vs 表層的寫法、storage engine 都可能讓宣告形同註解，四者在三家引擎上的實測見 [1.17 外鍵寫下保證，各家引擎決定它生不生效](/sql/foreign-key-and-referential-integrity/)）、給存量表補約束的順序見 [1.6 的 Type I 加約束](/backend/01-database/database-migration-playbook/)。
 
 **主鍵選擇實務**：
 
