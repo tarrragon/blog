@@ -6,7 +6,7 @@ weight: 10
 tags: ["sql", "statistics", "analyze", "query-plan", "knowledge-card"]
 ---
 
-統計資訊是引擎另外去數出來、存在一旁的一份摘要：每張表大概多少列、某個欄位的值大概怎麼分布。它不在查詢的文字裡，也不在資料表裡——資料本身有多少列是一回事，引擎「知道」有多少列是另一回事，而後者才是 [query optimizer](/sql/knowledge-cards/query-optimizer/) 選 [query plan](/sql/knowledge-cards/query-plan/) 時看的東西。
+統計資訊是引擎另外去數出來、存在一旁的一份摘要：每張表大概多少列、某個欄位的值大概怎麼分布。它不在查詢的文字裡，也不在資料表裡——資料本身有多少列是一回事，引擎「知道」有多少列是另一回事，而 [query optimizer](/sql/knowledge-cards/query-optimizer/) 選 [query plan](/sql/knowledge-cards/query-plan/) 時讀的是後者。
 
 ## 誰產生它，什麼時候
 
@@ -30,7 +30,7 @@ tags: ["sql", "statistics", "analyze", "query-plan", "knowledge-card"]
 
 統計資訊是「查詢的文字不足以決定執行方式」這件事的具體內容。查詢說要什麼結果，[query optimizer](/sql/knowledge-cards/query-optimizer/) 決定怎麼拿，而它決定的依據既不在查詢裡也不在資料裡——它在這一份另外存著的摘要上。
 
-這讓同一段 SQL 成為一個沒有固定答案的東西：資料沒變、索引沒變、查詢沒變，只要統計重收過一次，[query plan](/sql/knowledge-cards/query-plan/) 就可能不同。所以「這段查詢的計畫是什麼」這個問題要連同資料庫的狀態一起問。
+這讓同一段 SQL 沒有固定的執行方式：資料沒變、索引沒變、查詢沒變，只要統計重收過一次，[query plan](/sql/knowledge-cards/query-plan/) 就可能不同。所以「這段查詢的計畫是什麼」這個問題要連同資料庫的狀態一起問。
 
 ## 往下走
 

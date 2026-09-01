@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作�
 license: MIT
 metadata:
   portable: true
-  version: 1.63.0
+  version: 1.63.1
   category: writing-methodology
 ---
 
@@ -363,6 +363,8 @@ frame 清單長到一定程度之後會反覆出現同一個問題——某兩�
 - **把「多輪全過」當成「知識類型對」**：歷輪 finding 全部落在字句與結構層時、「三輪全過」的語意只是「已覆蓋層全過」——斷言支撐與知識類型層若沒有 frame 負責、錯的知識類型（披著教學結構的經驗談）會全數通過。finding 類型分佈本身是訊號：全部集中表面層 = 深層無人在看、下一輪排斷言支撐 frame（per [claim-support frame](references/principles/review-needs-claim-support-frame.md)）
 
 ---
+
+**Version**: 1.63.1 — `description-as-recall-trigger` principle 卡的 H1 停在被自己推翻的版本（「Description 是 Recall Trigger、不是文章摘要」），而同一次改動已把結論改成體例由內容定位決定。slug 不動、只改 H1。
 
 **Version**: 1.63.0 — description 的體例改成依內容定位分兩種。查閱型內容維持觸發條件式（使用者帶著症狀或術語來），教材改成說這一篇涵蓋什麼——觸發條件式在教材上是缺陷，因為那句話寫成「遇到 X 時」之後文章就得是 X 的答案，而照問題組織的教材會產生沒有問就不知道的斷點。1-C 的檢查多一個前置判定（這一批是教材還是查閱型），並加一條整批訊號：一個分類的 description 幾乎每一篇都以「時」收尾，那是規範長出來的形狀、要回頭改規範。principle 卡 description-as-recall-trigger 同步
 

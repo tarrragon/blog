@@ -20,6 +20,6 @@ tags: ["sql", "knowledge-card"]
 | [Subquery（子查詢）](/sql/knowledge-cards/subquery/)                       | 獨立的算一次，引用外層的逐列各算一次             |
 | [Schema（命名空間義）](/sql/knowledge-cards/schema-namespace/)             | 資料庫底下的一層容器，與「表結構」那個所指不同層 |
 | [Query Statistics（統計資訊）](/sql/knowledge-cards/query-statistics/)     | 引擎另外數出來存著的摘要，最佳化器的估計依據它   |
+| [DDL 與 DML](/sql/knowledge-cards/ddl-dml/)                                | 改結構與改資料兩類語句，權限與代價形狀都不同     |
 | [DataFrame（資料框）](/sql/knowledge-cards/dataframe/)                     | 表在記憶體裡的表示，列有順序、運算在自己的行程   |
 | [Relational Algebra（關聯代數）](/sql/knowledge-cards/relational-algebra/) | 作用在關係上並產出關係的一組運算，SQL 的底層     |
-| [DDL 與 DML](/sql/knowledge-cards/ddl-dml/)                                | 改結構與改資料兩類語句，權限與代價形狀都不同     |

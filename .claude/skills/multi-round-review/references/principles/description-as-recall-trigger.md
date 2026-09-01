@@ -1,4 +1,4 @@
-# Description 是 Recall Trigger、不是文章摘要
+# Description 的體例由內容定位決定：教材說涵蓋什麼、查閱型說什麼時候回來
 
 > **角色**：本卡是 `multi-round-review` 的支撐型原則、被 Round 1-C frontmatter 一致性維度引用。
 >

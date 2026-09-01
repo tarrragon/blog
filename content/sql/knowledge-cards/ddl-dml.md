@@ -6,7 +6,7 @@ weight: 11
 tags: ["sql", "ddl", "dml", "privilege", "migration", "knowledge-card"]
 ---
 
-SQL 的語句按它動的東西分成兩類。**DDL**（Data Definition Language）改的是結構——`CREATE`、`ALTER`、`DROP`，它動的是有哪些表、每張表有哪些欄位——也就是一個 [relation](/sql/knowledge-cards/relation/) 的欄位組成由什麼決定。**DML**（Data Manipulation Language）改的是結構裡裝的東西——`INSERT`、`UPDATE`、`DELETE`，表還是那張表，變的是裡面有哪些列。`SELECT` 只讀不改，各家文件有的把它算進 DML、有的另立一類。
+SQL 的語句按它改動的對象分成兩類。**DDL**（Data Definition Language）改的是結構——`CREATE`、`ALTER`、`DROP`，它動的是有哪些表、每張表有哪些欄位——也就是一個 [relation](/sql/knowledge-cards/relation/) 的欄位組成由什麼決定。**DML**（Data Manipulation Language）改的是結構裡裝的資料——`INSERT`、`UPDATE`、`DELETE`，表還是那張表，變的是裡面有哪些列。`SELECT` 只讀不改，各家文件有的把它算進 DML、有的另立一類。
 
 ## 這條線在權限上有實際後果
 
@@ -20,7 +20,7 @@ DML 的權限掛在表上——`GRANT SELECT ON 顧客`。DDL 的權限多數掛
 
 ## 概念位置
 
-這條線切的是語句動的東西，而 SQL 的其餘概念多數只活在 DML 這一側——[relation](/sql/knowledge-cards/relation/)、[外連接](/sql/knowledge-cards/outer-join/)、分組、[子查詢](/sql/knowledge-cards/subquery/) 全部是在既有結構上取資料的方式。DDL 決定那個結構長什麼樣，它跑完之後才輪到那些概念。
+這條線切的是語句改動的對象，而 SQL 的其餘概念多數只活在 DML 這一側——[relation](/sql/knowledge-cards/relation/)、[外連接](/sql/knowledge-cards/outer-join/)、分組、[子查詢](/sql/knowledge-cards/subquery/) 全部是在既有結構上取資料的方式。DDL 決定那個結構長什麼樣，它跑完之後才輪到那些概念。
 
 兩類在時間上的分布因此完全不同：DDL 集中在部署那幾分鐘，DML 散在系統活著的每一秒。權限、備份策略與事故的補救方式都跟著這條線分。
 

@@ -1,7 +1,7 @@
 ---
 title: "DataFrame（資料框）"
 date: 2026-09-01
-description: "SQL 教材拿 pandas 或資料框當對照時，查這個東西是什麼、它與資料表差在哪"
+description: "SQL 教材拿 pandas 或資料框當對照時，查 DataFrame 是什麼、它與資料表差在哪"
 weight: 12
 tags: ["sql", "dataframe", "pandas", "declarative", "knowledge-card"]
 ---
