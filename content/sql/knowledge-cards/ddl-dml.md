@@ -26,4 +26,4 @@ DML 的權限掛在表上——`GRANT SELECT ON 顧客`。DDL 的權限多數掛
 
 ## 往下走
 
-授權的單位與最小權限的具體切法在 [1.12 權限的預設是什麼都不給](/sql/privilege-model/)。DDL 權限實際被用到的場合（雙寫、回填、切流、回滾）在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
+授權的單位與最小權限的具體切法在 [1.13 權限的預設是什麼都不給](/sql/privilege-model/)。DDL 權限實際被用到的場合（雙寫、回填、切流、回滾）在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
