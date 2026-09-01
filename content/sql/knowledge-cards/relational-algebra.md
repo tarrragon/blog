@@ -26,4 +26,4 @@ SQL 在代數之上多了幾樣代數本身沒有的：重複的列（代數的�
 
 ## 往下走
 
-連接產出的新關係怎麼改變列數與空缺，在 [1.5 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一組操作在 SQL 與 DataFrame 兩個介面上的對應、以及對應斷掉的三個位置，在 [python 模組八 8.4](/python/08-data-analysis/same-relational-algebra/)。
+連接產出的新關係怎麼改變列數與空缺，在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一組操作在 SQL 與 DataFrame 兩個介面上的對應、以及對應斷掉的三個位置，在 [python 模組八 8.4](/python/08-data-analysis/same-relational-algebra/)。

@@ -1,8 +1,8 @@
 ---
-title: "1.7 IN、EXISTS 與 JOIN 描述的是三件不同的事"
+title: "1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事"
 date: 2026-08-31
 description: "三者在列數與可取用欄位上的差別，以及 NOT IN 碰到 NULL 時與 NOT EXISTS 的分岔"
-weight: 7
+weight: 8
 tags: ["sql", "in", "exists", "join", "subquery", "semi-join"]
 ---
 
@@ -42,7 +42,7 @@ SELECT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧
 
 `IN` 與 `EXISTS` 出現在 `WHERE` 裡，它們是條件。條件對每一列只做一件事——留下或丟掉——所以顧客表有三列，過完條件最多剩三列，一列都不會多出來。
 
-`JOIN` 出現在 `FROM` 裡，它參與的是關係的組成。佳穎配得上兩張訂單，於是她在新的關係裡出現兩次（[1.5](/sql/join-changes-rows-and-nulls/)）。加上 `DISTINCT` 之後結果才與前兩者一致：
+`JOIN` 出現在 `FROM` 裡，它參與的是關係的組成。佳穎配得上兩張訂單，於是她在新的關係裡出現兩次（[1.6](/sql/join-changes-rows-and-nulls/)）。加上 `DISTINCT` 之後結果才與前兩者一致：
 
 ```sql
 SELECT DISTINCT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
@@ -78,21 +78,21 @@ SELECT 姓名, (SELECT 金額 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧
 -- 佳穎 300 / 宗翰 NULL / 雅文 NULL
 ```
 
-它一次只交得出一個值，所以要多欄或多列時仍然回到 `JOIN`；代價那一側它是逐列執行的，見 [1.11](/sql/cost-lives-in-the-plan/)。
+它一次只交得出一個值，所以要多欄或多列時仍然回到 `JOIN`；代價那一側它是逐列執行的，見 [1.13](/sql/cost-lives-in-the-plan/)。
 
 這時候佳穎出現兩次是對的，因為問的是每一張訂單的金額，而她確實有兩張。**這一題本來就要每張訂單各佔一列，所以列數變多正是這個寫法要交出來的東西。**
 
 ## 選哪一種，問一句話
 
-**要不要用到那張表的欄位。** 要用到就得 `JOIN`，因為只有它把那張表帶進 `FROM`。這時候要順帶檢查列數是不是預期內的——後面如果接聚合，`sum` 與 `count` 算的是配對後的列（[1.5](/sql/join-changes-rows-and-nulls/)）。
+**要不要用到那張表的欄位。** 要用到就得 `JOIN`，因為只有它把那張表帶進 `FROM`。這時候要順帶檢查列數是不是預期內的——後面如果接聚合，`sum` 與 `count` 算的是配對後的列（[1.6](/sql/join-changes-rows-and-nulls/)）。
 
-只是判斷有沒有，就用 `IN` 或 `EXISTS`。它們是條件，對每一列只做留或丟，寫出來的意圖比 `JOIN` 加 `DISTINCT` 清楚——而哪一種比較快是另一個問題，答案取決於資料與索引（[1.11](/sql/cost-lives-in-the-plan/)）。
+只是判斷有沒有，就用 `IN` 或 `EXISTS`。它們是條件，對每一列只做留或丟，寫出來的意圖比 `JOIN` 加 `DISTINCT` 清楚——而哪一種比較快是另一個問題，答案取決於資料與索引（[1.13](/sql/cost-lives-in-the-plan/)）。
 
 ## IN 與 EXISTS 之間再分一次
 
 兩者在「有沒有」這件事上同值，而在一個地方分岔：**子查詢的結果裡有 NULL 的時候。**
 
-`NOT IN` 碰到一個 NULL 就對每一列回答「未知」，整段查詢回零列且不報錯；`NOT EXISTS` 不受影響。完整的推導與實測在 [1.5](/sql/join-changes-rows-and-nulls/)。
+`NOT IN` 碰到一個 NULL 就對每一列回答「未知」，整段查詢回零列且不報錯；`NOT EXISTS` 不受影響。完整的推導與實測在 [1.6](/sql/join-changes-rows-and-nulls/)。
 
 所以肯定式的 `IN` 與 `EXISTS` 可以按可讀性挑，而**否定式一律用 `NOT EXISTS`**——除非能保證子查詢那一欄不會有 NULL，而那個保證要來自[約束](/sql/knowledge-cards/constraint/)而不是來自習慣：翻遍現在的資料都沒有 NULL 只證明此刻沒有，而查詢要活得比這一批資料久。
 
@@ -102,8 +102,8 @@ SELECT 姓名, (SELECT 金額 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧
 
 本篇的可動項是：要不要用到那張表的欄位、寫成肯定式還是否定式，以及資料與索引長什麼樣。
 
-**選了 `JOIN` 之後，看列數**：配對會讓一列變成多列，而後面接聚合就會算在展開後的列上。[1.5 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 寫這個膨脹怎麼發生、以及三種聚合各自要怎麼修。
+**選了 `JOIN` 之後，看列數**：配對會讓一列變成多列，而後面接聚合就會算在展開後的列上。[1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/) 寫這個膨脹怎麼發生、以及三種聚合各自要怎麼修。
 
-**把肯定式換成否定式**：`IN` 與 `EXISTS` 在「有沒有」上同值，`NOT IN` 碰到子查詢裡的一個 `NULL` 就整段回零列而不報錯。完整推導在同一篇 [1.5](/sql/join-changes-rows-and-nulls/)，包括 `NOT EXISTS` 的安全範圍為什麼限定在等號配對。
+**把肯定式換成否定式**：`IN` 與 `EXISTS` 在「有沒有」上同值，`NOT IN` 碰到子查詢裡的一個 `NULL` 就整段回零列而不報錯。完整推導在同一篇 [1.6](/sql/join-changes-rows-and-nulls/)，包括 `NOT EXISTS` 的安全範圍為什麼限定在等號配對。
 
-**把「哪一種對」換成「哪一種快」**：三者都對的時候，快慢由資料與索引決定而不由寫法決定。[1.11 代價由資料與索引決定](/sql/cost-lives-in-the-plan/) 用一道重複值的題目量三種寫法，並示範加一個索引之後三者的排名重排。
+**把「哪一種對」換成「哪一種快」**：三者都對的時候，快慢由資料與索引決定而不由寫法決定。[1.13 代價由資料與索引決定](/sql/cost-lives-in-the-plan/) 用一道重複值的題目量三種寫法，並示範加一個索引之後三者的排名重排。

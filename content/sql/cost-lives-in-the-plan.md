@@ -1,8 +1,8 @@
 ---
-title: "1.11 代價由資料與索引決定，不由寫法決定"
+title: "1.13 代價由資料與索引決定，不由寫法決定"
 date: 2026-08-31
 description: "同一組寫法在索引與資料分布改變後的實測排名，以及比較兩段查詢該補上哪些條件"
-weight: 11
+weight: 13
 tags: ["sql", "cost", "query-plan", "index", "performance"]
 ---
 
@@ -19,14 +19,14 @@ tags: ["sql", "cost", "query-plan", "index", "performance"]
 SELECT email FROM Person GROUP BY email HAVING count(*) > 1;
 ```
 
-**用自連接。** 把表配對，找出 email 相同而 id 不同的兩列（[1.6](/sql/table-occurrence-and-alias/)）：
+**用自連接。** 把表配對，找出 email 相同而 id 不同的兩列（[1.7](/sql/table-occurrence-and-alias/)）：
 
 ```sql
 SELECT DISTINCT p1.email FROM Person p1
 JOIN Person p2 ON p1.email = p2.email AND p1.id <> p2.id;
 ```
 
-**用 `EXISTS`。** 對每一列問「有沒有另一列 email 跟我一樣」（[1.7](/sql/in-exists-join/)）：
+**用 `EXISTS`。** 對每一列問「有沒有另一列 email 跟我一樣」（[1.8](/sql/in-exists-join/)）：
 
 ```sql
 SELECT DISTINCT email FROM Person p

@@ -17,6 +17,7 @@ SQL 寫成 `CROSS JOIN`，也可以在 `FROM` 裡用逗號把兩張表隔開。
 條件缺席的時候展開才會發生。一張 3891 列的表跟自己做沒有條件的 `CROSS JOIN`：
 
 ```text
+-- SQLite 3.51，Weather 表 3891 列，recordDate 上有唯一索引
 SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 -- 15139881
 
@@ -24,9 +25,9 @@ SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 `--SCAN b USING COVERING INDEX ix
 ```
 
-15139881 是 3891 的平方。外層每掃一列，內層就把整張表再走一遍，而這一千五百萬對配對在後面的子句拿到資料之前就要先產生出來。同樣的兩張表各加一萬列，配對數會漲到將近三倍。
+15139881 是 3891 的平方。外層每掃一列，內層就把整張表再走一遍，而這一千五百萬對配對在後面的子句拿到資料之前就要先產生出來。兩張表各加一萬列之後，列數變成 3.6 倍而配對數變成 192959881——**將近十三倍**。成長是平方而非線性，這正是這個運算與其他多出來的列的差別。
 
-**要看的是條件把不把兩邊綁起來，而不是用了哪個關鍵字。** `CROSS JOIN` 加一個等值條件，與 `JOIN ... ON` 寫同一個條件，對引擎是同一段查詢（[1.12](/sql/declared-intent-vs-behaviour/)）；反過來，`JOIN` 寫了而 `ON` 的條件只提到單邊的欄位，展開照樣發生。
+**要看的是條件把不把兩邊綁起來，而不是用了哪個關鍵字。** `CROSS JOIN` 加一個等值條件，與 `JOIN ... ON` 寫同一個條件，對引擎是同一段查詢（[1.14](/sql/declared-intent-vs-behaviour/)）；反過來，`JOIN` 寫了而 `ON` 的條件只提到單邊的欄位，展開照樣發生。
 
 ## 與列數膨脹是兩種不同的多
 
@@ -34,14 +35,16 @@ SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 
 [列數膨脹](/sql/join-changes-rows-and-nulls/)是條件正確而一列配到了多列，於是它被複製那麼多次——多出來的量由資料的重複程度決定，改法是把展開的那一層先收成一列，或改用不展開的寫法。笛卡兒積是條件從一開始就沒有把兩邊綁住——多出來的量由兩張表各自的大小決定，改法是補上那個條件。
 
-分辨的問句落在結果的任何一列上：**這一列是靠哪個條件配起來的。** 答得出來是膨脹，答不出來是積。
+分辨的問句落在條件上而非結果上：**這個條件有沒有同時引用兩邊。** 兩邊都引用到就是配對條件，多出來的列是膨脹；只引用單邊或根本沒有條件，那個條件篩得掉列卻綁不住配對，多出來的列是積。
+
+這裡刻意不問「這一列是靠哪個條件配起來的」——`JOIN` 寫了而 `ON` 只提單邊欄位的那個形態，讀者答得出「靠那個 `ON` 條件」而它並沒有把兩邊配起來，問句會把積判成膨脹。
 
 ## 概念位置
 
-笛卡兒積是連接的下限——條件寫得越少，結果越靠近它，而條件寫滿的時候結果落在兩張表配得上的那些列。所以「連接會不會爆掉」這個問題等於「條件綁住了多少」，與用了 `JOIN` 還是 `CROSS JOIN` 無關。判斷某個條件綁不綁得住，要看它引用了哪幾次[表的出現](/sql/knowledge-cards/relation/)——只提到單邊欄位的條件篩得掉列，卻綁不住兩邊的配對。
+笛卡兒積是連接的下限——條件寫得越少，結果越靠近它，而條件寫滿的時候結果落在兩張表配得上的那些列。所以「連接的結果集會不會整個換一個量級」這個問題等於「條件綁住了多少」，與用了 `JOIN` 還是 `CROSS JOIN` 無關。判斷某個條件綁不綁得住，要看它引用了哪幾次[表的出現](/sql/table-occurrence-and-alias/)——只提到單邊欄位的條件篩得掉列，卻綁不住兩邊的配對。
 
-它在代數裡的位置說明了漏寫連接條件的後果為什麼這麼大：查詢退回它的定義起點，全部組合重新成立。這是結果集大小的整個量級換掉，與逐步變慢是不同的一件事。
+它在[關聯代數](/sql/knowledge-cards/relational-algebra/)裡的位置說明了漏寫連接條件的後果為什麼這麼大：查詢退回它的定義起點，全部組合重新成立。這是結果集大小的整個量級換掉，與逐步變慢是不同的一件事。
 
 ## 往下走
 
-條件正確而列數仍然變多的那一種，在 [1.5 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一批配對用自連接與 `EXISTS` 兩種寫法的差別，在 [1.7 IN、EXISTS 與 JOIN](/sql/in-exists-join/)。`CROSS JOIN` 這個關鍵字對讀的人宣告了什麼，在 [1.12 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)。production 查詢的結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
+條件正確而列數仍然變多的那一種，在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一批配對用自連接與 `EXISTS` 兩種寫法的差別，在 [1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/)。`CROSS JOIN` 這個關鍵字對讀的人宣告了什麼，在 [1.14 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)。production 查詢的結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。

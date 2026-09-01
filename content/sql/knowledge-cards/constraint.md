@@ -14,7 +14,7 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 一個判斷標準能不能省掉某一步，取決於約束有沒有把那一步的前提固定住。最直接的一例是[空值](/sql/knowledge-cards/null/)：`NOT IN` 在子查詢那一欄出現 `NULL` 的時候會整個回空集合而不報錯，所以否定式的成員判斷一般用 `NOT EXISTS`。這條規則有一個豁免——那一欄掛了 `NOT NULL`。**豁免的條件是約束而不是觀察**：翻遍現在的資料都沒有 `NULL`，只證明此刻沒有；約束證明的是往後也不會有，而查詢要活得比這一批資料久。
 
-同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [1.5](/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
+同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [1.6](/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
 
 ## 概念位置
 
@@ -24,4 +24,4 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 ## 往下走
 
-`NULL` 在比較、計數與分組裡各自怎麼表現，以及否定式那條規則的完整推導，在 [NULL（空值）](/sql/knowledge-cards/null/) 與 [1.7 IN、EXISTS 與 JOIN](/sql/in-exists-join/)。約束由誰有權建立、以及它跟常態運行帳號的權限為什麼分開，在 [1.10 權限的預設是什麼都不給](/sql/privilege-model/)。
+`NULL` 在比較、計數與分組裡各自怎麼表現，以及否定式那條規則的完整推導，在 [NULL（空值）](/sql/knowledge-cards/null/) 與 [1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/)。約束由誰有權建立、以及它跟常態運行帳號的權限為什麼分開，在 [1.12 權限的預設是什麼都不給](/sql/privilege-model/)。

@@ -62,7 +62,7 @@ SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 
 還有第二件事：計畫裡有查詢文字完全沒提到的步驟。`AUTOMATIC COVERING INDEX` 是 SQLite 當場替顧客表建的[索引](/sql/knowledge-cards/indexing/)，`BLOOM FILTER` 是它加的過濾步驟。查詢裡沒有一個字要求這些。
 
-「先讀的那張表」這個直覺因此對應不到任何固定的東西——同一段查詢在兩個資料庫狀態下先讀的表不同。文字上的先後只決定語意（見 [1.3](/sql/join-left-operand-accumulates/)），不決定執行。
+「先讀的那張表」這個直覺因此對應不到任何固定的東西——同一段查詢在兩個資料庫狀態下先讀的表不同。文字上的先後只決定語意（見 [1.4](/sql/join-left-operand-accumulates/)），不決定執行。
 
 ## 求值順序擋得住寫法
 
@@ -84,6 +84,6 @@ SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
 
 **把觀察的對象從執行順序換成求值順序**：問題從「引擎照什麼次序做」變成「每一步手上有什麼」，而後者是語意模型規定死的、換引擎不變。[1.2 子句的求值順序](/sql/clause-evaluation-order/) 逐步走過那條線，並分開模型層擋得住的限制與各家引擎自己放寬的，包括一種不報錯而給出錯答案的形態。
 
-**文字上的先後決定的是位置而不是順序**：它不決定執行，卻決定哪一側的列被保護。多張表相連時「左邊」已經不是一張表，[1.3 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/) 寫那個累積過程，以及在鏈中間放 `RIGHT` 會把保護範圍縮到只剩一張表。
+**文字上的先後決定的是位置而不是順序**：它不決定執行，卻決定哪一側的列被保護。多張表相連時「左邊」已經不是一張表，[1.4 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/) 寫那個累積過程，以及在鏈中間放 `RIGHT` 會把保護範圍縮到只剩一張表。
 
 **在真實系統上，計畫不再短到可以整段印出來**：本篇的只有幾行，production 的不是。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 三層工具的分工，以及統計過時、多欄統計缺失這幾種讓計畫選錯的實際案例。
