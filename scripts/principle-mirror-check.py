@@ -22,20 +22,34 @@ def read(p):
 
 
 def title_of(path):
-    m = re.search(r'^title:\s*"(.+?)"', read(path), re.M)
+    m = re.search(r'^title:\s*"(.+?)"\s*$', read(path), re.M)
+    if m:
+        return m.group(1).strip()
+    m = re.search(r'^title:\s*([^"\n].*?)\s*$', read(path), re.M)
     return m.group(1).strip() if m else None
 
 
 def h1_of(path):
-    with open(path, encoding='utf8') as f:
-        return f.readline().lstrip('# ').strip()
+    for line in read(path).lstrip('\ufeff').splitlines():
+        if line.strip():
+            return line.lstrip('# ').strip()
+    return ''
 
 
-def mapping_table():
-    """反查 bin/skill-mirror 的 find_report_slug()：skill 側 slug -> 目標 route。"""
+# mapping 條目數的下限。低於這個值多半是解析壞了而不是表真的變小——
+# 這支腳本存在的理由就是「靜默零命中」，所以它自己的鍵失效時要出聲。
+MAPPING_FLOOR = 10
+
+
+def mapping_table(warn=True):
+    """反查 bin/skill-mirror 的 find_report_slug()：skill 側 slug -> 目標 route。
+
+    縮排刻意不綁死：原本要求正好四個空白，而 shell 檔重排縮排是常見編輯，
+    綁死的版本在那種情況下回傳空 dict 而整支腳本照常跑完。
+    """
     out, key = {}, None
     for line in read(os.path.join(ROOT, 'bin/skill-mirror')).splitlines():
-        m = re.match(r'^\s{4}([a-z0-9-]+)\)$', line)
+        m = re.match(r'^\s*([a-z0-9-]+)\)$', line)
         if m:
             key = m.group(1)
             continue
@@ -44,6 +58,10 @@ def mapping_table():
             if m:
                 out[key] = m.group(2)
             key = None
+    if warn and len(out) < MAPPING_FLOOR:
+        print(f"警告：只從 bin/skill-mirror 解析到 {len(out)} 條 mapping"
+              f"（預期至少 {MAPPING_FLOOR} 條）。這一個鍵可能已經失效，"
+              f"下面的結果會少一整類副本。", file=sys.stderr)
     return out
 
 
@@ -107,13 +125,17 @@ def main():
             src, hits = copies_of(slug, mt, files)
             st = last_commit(src)
             behind = [f for f, _ in hits
-                      if f.startswith('.claude/') and last_commit(f) < st]
+                      if f.startswith('.claude/')
+                      and 0 < last_commit(f) < st]
             if behind:
                 stale += 1
                 print(f"{slug}")
                 for f in behind:
                     print(f"    落後: {f}")
-        print(f"\n本體較新的副本出現在 {stale} 張卡上。")
+        print(f"\n本體較新的副本出現在 {stale} 張卡上"
+              f"（mapping 這個鍵解析到 {len(mt)} 條）。")
+        print("這個判定用的是 git commit 時間，不看內容——副本晚於本體 commit"
+              "而內容已經分岔的，這裡不會出現。")
         return 0
 
     slug = sys.argv[1]
@@ -127,7 +149,9 @@ def main():
         print("  副本 0 份")
         return 0
     for f, why in hits:
-        flag = '  ← 落後，要同步' if last_commit(f) < st else ''
+        lc = last_commit(f)
+        flag = '  ← 尚未 commit' if lc == 0 else (
+            '  ← 落後，要同步' if lc < st else '')
         print(f"  [{why}] {f}{flag}")
     return 0
 

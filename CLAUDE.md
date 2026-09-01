@@ -236,9 +236,9 @@ scripts/principle-mirror-check.py <report-或-record-卡的-slug>   # 查一張�
 scripts/principle-mirror-check.py --all                          # 全庫掃，列出本體較新的那些
 ```
 
-**這支腳本取代了先前那段手寫的 `rg` + `find` 程序，而取代的理由要記住。** 那段程序先只用卡自己的 slug，後來補了 mapping table 反查，兩個版本都會對真正分岔的副本回報零命中——實測 `multi-round-review-minimum-three-rounds` 在兩個版本下都是零行，而 `.claude/skills/multi-round-review/references/principles/minimum-three-rounds.md` 就在那裡、H1 與 report 卡的 title 逐字相同、本體新兩個月。成因是 mapping table 的涵蓋率由「這個 skill 有沒有 `content/skills/` 鏡像」決定（`skill-mirror` 只在有鏡像的 skill 上跑），而查副本的需求由「這張卡有沒有任何副本」決定，兩個作用域不同：150 張 principle 卡裡有 36 張既非同名也不在 mapping 表裡。
+**這支腳本取代了先前那段手寫的 `rg` + `find` 程序，而取代的理由要記住。** 那段程序先只用卡自己的 slug，後來補了 mapping table 反查，兩個版本都會對真正分岔的副本回報零命中——實測 `multi-round-review-minimum-three-rounds` 在兩個版本下都是零行，而 `.claude/skills/multi-round-review/references/principles/minimum-three-rounds.md` 就在那裡、H1 與 report 卡的 title 逐字相同、本體新兩個月。成因是 mapping table 的涵蓋率由「這個 skill 有沒有 `content/skills/` 鏡像」決定（`skill-mirror` 只在有鏡像的 skill 上跑），而查副本的需求由「這張卡有沒有任何副本」決定，兩個作用域不同：量測當下有三十幾張 principle 卡既非同名也不在 mapping 表裡（`find .claude/skills -path "*/principles/*.md"` 給的是含跨 skill 重複的份數，去重之後才是卡數，兩個口徑差三成）。
 
-驗收案例固定四個，改動腳本之後逐個跑過再提交——**其中兩個的正確輸出都是零行以外的東西，所以「跑起來沒報錯」不算通過**：
+驗收案例固定四個，改動 `scripts/principle-mirror-check.py` **或 `bin/skill-mirror`** 之後逐個跑過再提交——讓 mapping 這個鍵失效的多半是後者（每建一張異名的 principle 卡都要去編輯它），而綁在前者上的觸發永遠不會被那種改動叫起來——**其中兩個的正確輸出都是零行以外的東西，所以「跑起來沒報錯」不算通過**：
 
 | slug                                      | 該有的結果                                          |
 | ----------------------------------------- | --------------------------------------------------- |
@@ -247,7 +247,9 @@ scripts/principle-mirror-check.py --all                          # 全庫掃，�
 | `basics-anchor-the-advanced`              | 靠同名抓到                                          |
 | `description-frames-the-article`          | 副本 0 份（真陰性）                                 |
 
-`--all` 目前回報 74 張卡的 skill 側副本落後於本體。這個數字是存量不是本批造成的，處置是逐張判斷該不該同步，不是一次全改。
+`--all` 會列出本體較新的那些卡，數量是兩位數。**這個值是 git commit 時間的函數，每一次 commit 都會動它**，所以不要把當下的數字抄進任何文件——要知道現在幾張就跑一次。落後的存量遠早於任何一批改動，處置是逐張判斷該不該同步，不是一次全改。
+
+`--all` 的判定看 commit 時間、不看內容，所以**副本晚於本體 commit 而內容已經分岔的，它抓不到**。實測過一例：某張卡兩份的敘述已經不同而時間戳讓它判為不落後。要確認內容是不是真的一致，還是得打開兩份比對。
 
 量測指令：
 
