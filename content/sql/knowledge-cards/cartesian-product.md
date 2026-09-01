@@ -14,10 +14,17 @@ SQL 寫成 `CROSS JOIN`，也可以在 `FROM` 裡用逗號把兩張表隔開。
 
 代數說連接從積開始，而那是語意層的定義，執行方式由[最佳化器](/sql/knowledge-cards/query-optimizer/)按代價選。條件把兩邊綁起來的時候，它用索引或雜湊直接找出配得上的那些列，全部組合一次都沒有被造出來。
 
-條件缺席的時候展開才會發生。一張 3891 列的表跟自己做沒有條件的 `CROSS JOIN`：
+條件缺席的時候展開才會發生。一張逐日的觀測表跟自己做沒有條件的 `CROSS JOIN`：
+
+```sql
+CREATE TABLE Weather (id INTEGER PRIMARY KEY, recordDate TEXT, temperature INT);
+WITH RECURSIVE n(i) AS (SELECT 0 UNION ALL SELECT i+1 FROM n WHERE i < 3890)
+INSERT INTO Weather SELECT i, date('2015-01-01', i || ' day'), i % 40 FROM n;
+CREATE UNIQUE INDEX ix ON Weather(recordDate);
+```
 
 ```text
--- SQLite 3.51，Weather 表 3891 列，recordDate 上有唯一索引
+-- SQLite 3.51，Weather 表 3891 列
 SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 -- 15139881
 
