@@ -1,18 +1,18 @@
 ---
-title: "1.19 好讀的寫法多數時候也是引擎好走的"
+title: "1.20 好讀的寫法多數時候也是引擎好走的"
 date: 2026-09-01
 description: "寫法差異在什麼情形下免費、什麼情形下分岔，以及分岔時該動查詢還是動 schema"
-weight: 19
+weight: 20
 tags: ["sql", "readability", "performance", "index", "cte"]
 ---
 
 一段 SQL 同時要給引擎執行與給人維護，而這兩個需求在 SQL 上多數時候指向同一個寫法。理由落在這個語言的性質上：**引擎執行的是計畫，不是那段文字**（[1.1](/sql/declarative-not-procedural/)），所以文字裡為了讓人看懂而多出來的結構，只要最佳化器攤得平就在計畫上留不下痕跡。決定執行次數的結構是例外——相關子查詢與 CTE 都屬於這一類，後面那一節量的正是它。
 
-這一篇與 [1.18](/sql/declared-intent-vs-behaviour/) 都問文字寫給誰。那一篇問文字對讀的人說了什麼，這一篇問文字該為誰而寫。
+這一篇與 [1.19](/sql/declared-intent-vs-behaviour/) 都問文字寫給誰。那一篇問文字對讀的人說了什麼，這一篇問文字該為誰而寫。
 
 ## 多數的寫法差異是免費的
 
-同一批列的兩種寫法送進[最佳化器](/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[1.18](/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[1.8](/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫——這兩種寫法在 SQLite 上各自走不同的計畫（`LIST SUBQUERY` 對 `CORRELATED SCALAR SUBQUERY`），而語意相同已經足以讓選擇落在可讀性上。
+同一批列的兩種寫法送進[最佳化器](/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[1.19](/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[1.8](/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫——這兩種寫法在 SQLite 上各自走不同的計畫（`LIST SUBQUERY` 對 `CORRELATED SCALAR SUBQUERY`），而語意相同已經足以讓選擇落在可讀性上。
 
 這一類的判斷很省事——兩種寫法各要一次計畫，一樣就按好讀的挑。**這一步預設了拿得到計畫**；拿不到的時候本篇的方法整個用不上，剩下的是條件形狀那一層的排除法（[Sargable](/sql/knowledge-cards/sargable/)）。
 
@@ -107,4 +107,4 @@ SQLite 3.51，四個資料量各跑二十次取最小：
 
 **問這個代價該由哪一層吸收**：條件的形狀與索引的形狀是一組互補的選擇，把運算搬進索引就讓好讀的條件重新走得了。[Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/) 給判斷標準與三種改寫方向。
 
-**可讀性之上還有兩層**：一層是文字說的話與查詢的行為對不對得上，[1.18 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/) 寫宣告落空的幾種形態與查證它的動作；再上面一層是答案本身對不對，而引擎對那一層沒有回報的管道，[1.12 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/) 寫它為什麼不報錯。
+**可讀性之上還有兩層**：一層是文字說的話與查詢的行為對不對得上，[1.19 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/) 寫宣告落空的幾種形態與查證它的動作；再上面一層是答案本身對不對，而引擎對那一層沒有回報的管道，[1.12 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/) 寫它為什麼不報錯。

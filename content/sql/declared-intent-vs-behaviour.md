@@ -1,8 +1,8 @@
 ---
-title: "1.18 關鍵字宣告意圖，引擎只執行行為"
+title: "1.19 關鍵字宣告意圖，引擎只執行行為"
 date: 2026-09-01
 description: "同一批結果的幾種寫法各自宣告了什麼，以及宣告落空時用什麼動作查出來"
-weight: 18
+weight: 19
 tags: ["sql", "join", "distinct", "intent", "maintenance"]
 ---
 
