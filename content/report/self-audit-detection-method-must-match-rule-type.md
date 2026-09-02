@@ -55,3 +55,5 @@ slug: "self-audit-detection-method-must-match-rule-type"
 | 某條規則的違反沒有穩定句型 / 關鍵詞（敘事、結構、register） | grep 對它結構性失明、改用 eyeball 或異源 reviewer、回報時標明     |
 | 自審回報 clean 後就停止追查                                 | 問「這個 clean 是沒違規、還是我的方法看不見」再決定要不要異源複核 |
 | 編輯一個早於某條 session 規則的檔案、只改被點名的段落       | 已確立的規則適用整檔、不只正在動的段落——把規則掃過整檔一次        |
+
+- [#317 已經記錄過的失效仍然重演，因為記錄住在要人先起疑才會打開的地方](../recorded-failures-recur-when-the-record-is-off-path/) 是本卡的機械版本：本卡的偵測方法與規則類型不匹配，那裡的偵測方法根本沒跑到目標。兩者的輸出都是 clean，而分辨它們的動作不同——本卡要換偵測方法，那裡只要一個正對照。
