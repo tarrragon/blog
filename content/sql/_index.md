@@ -168,13 +168,12 @@ INSERT INTO 評價 VALUES (9001,101,5);
 | 系統目錄                                       | 知識卡 | 無                       | 1    |
 | 「小表量不出計畫差異」收一個住址               | 跨模組 | 三處各自宣告的段落已存在 | 小   |
 | 反向連結回補（backend / ddd / linux 共十餘處） | 跨模組 | 無                       | 中   |
-| 約束改不改變執行計畫，在基線引擎上重驗         | 知識卡 | 已有一次異引擎量測       | 小   |
 
 上一輪登記的四項——外鍵與參照完整性、`ORDER BY` 與分頁、字串值的大小寫、基數與選擇率——都已寫成篇或卡。
 
 上表五項由一輪多輪審查的 outbound frame 抽出。三張卡的判定理由不同：**覆蓋索引**是 [1.12](/sql/pagination-needs-a-total-order/) 的 `OFFSET` 結論整條的承重詞而全站無卡；**儲存引擎**在 [1.18](/sql/foreign-key-and-referential-integrity/) 是讓宣告消失的第四條路，而本分類的卡系統已經用「引擎」指另一層，屬同域佔用而非單純缺卡；**系統目錄**被六個檔依賴，[1.19](/sql/engine-leniency-and-portability/) 第四級的整個判定靠它。
 
-**約束改不改變執行計畫**這一條登記的是一次待驗的量測，而非一個已成立的結論。MySQL 8.0.46 上，`recordDate` 掛著唯一索引時最佳化器把 `EXISTS` 的[半連接](/sql/knowledge-cards/semi-join-and-anti-join/)降級成內連接——唯一性保證至多配到一列，去重的語意因此沒有作用。若同一個現象在 SQLite 與 DuckDB 上也成立，它就是 [1.17](/sql/cost-lives-in-the-plan/) 那條結論的第二個有界例外（第一個是 [Sargable](/sql/knowledge-cards/sargable/)），而兩個例外的性質不同：那裡是寫法擋住索引，這裡是 schema 上的宣告餵給最佳化器一條新資訊，也因此會界定 [Constraint](/sql/knowledge-cards/constraint/) 結尾「索引買的是查找速度，約束買的是內容的保證」那一句的邊界。本分類的實測基線是 SQLite 與 DuckDB，所以落點要等基線引擎上的計畫比對，不照抄異引擎的觀察。
+上一輪登記的「約束改不改變執行計畫」已在基線引擎上量過，結論是各家不一致：SQLite 3.51.0 把索引從 `UNIQUE` 換成普通索引之後，同一個 `EXISTS` 查詢產出的位元碼多一圈內層迴圈（`EXPLAIN QUERY PLAN` 層看不出來，這組資料上也量不出時間差）；DuckDB 1.5.5 的計畫與有沒有 `UNIQUE` 無關。落點寫進 [Constraint](/sql/knowledge-cards/constraint/)，界定它「約束買的是內容的保證」那一句；[Semi-join 與 Anti-join](/sql/knowledge-cards/semi-join-and-anti-join/) 收下這兩個運算在各家計畫裡的能見度差異。
 
 「小表量不出計畫差異」這一條是缺住址而非缺內容：[1.15](/sql/string-comparison-and-collation/)、[1.12](/sql/pagination-needs-a-total-order/) 與[基數與選擇率](/sql/knowledge-cards/cardinality-and-selectivity/)各自就地宣告過一次，而它回答的問題比任何一篇的主題都早發生，落點在[執行計畫](/sql/knowledge-cards/query-plan/)或[最佳化器](/sql/knowledge-cards/query-optimizer/)那張卡。
 
