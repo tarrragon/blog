@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.64.0 — Round 3 outbound 的知識卡缺口補第二個方向：從用法盤點到名字（用法盤點表 / tag 對正文 / 枚舉卡對照用法），加反向術語探針。起因是一個跑過五輪審查的集合被外部提問撞出一個零次進正文、卻在五篇裡反覆執行的運算名稱；既有檢查全部以文中的名字為入口，對它沒有入口。新增 principle 卡 `concept-used-but-never-named`。
+
 **Version**: 1.63.2 — 三份翻譯探針對 `description-as-recall-trigger` 裡「沒有問就不知道的斷點」給了三種不同的意思（沒人問／缺了那個問題／讀者不知道該問什麼）。那句話把誰沒問、不知道什麼都省略了，中文允許、英文強制決定，所以這一類要靠翻譯才現形。就地展開成「讀者不曾遇到那個問題，就永遠不會知道有那件事」。
 
 **Version**: 1.63.1 — `description-as-recall-trigger` principle 卡的 H1 停在被自己推翻的版本（「Description 是 Recall Trigger、不是文章摘要」），而同一次改動已把結論改成體例由內容定位決定。slug 不動、只改 H1。
