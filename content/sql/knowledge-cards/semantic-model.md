@@ -12,7 +12,7 @@ tags: ["sql", "relational-algebra", "semantics", "knowledge-card"]
 
 ## 它與另外兩件事分開
 
-**與執行方式分開。** [最佳化器](/sql/knowledge-cards/query-optimizer/)可以任意重排步驟，只受一個約束：輸出的關係要與語意模型算出來的一致。這個分工是「代價由資料與索引決定、不由寫法決定」的根據（[1.16](/sql/cost-lives-in-the-plan/)）。
+**與執行方式分開。** [最佳化器](/sql/knowledge-cards/query-optimizer/)可以任意重排步驟，只受一個約束：輸出的關係要與語意模型算出來的一致。這個分工是「代價由資料與索引決定、不由寫法決定」的根據（[1.17](/sql/cost-lives-in-the-plan/)）。
 
 **與書寫順序分開。** `SELECT` 寫在最前面而它在求值順序上排在後面，這正是語意模型與文字順序不同的地方（[1.2](/sql/clause-evaluation-order/)）。
 
@@ -24,7 +24,7 @@ tags: ["sql", "relational-algebra", "semantics", "knowledge-card"]
 
 ## 概念位置
 
-**「符合語意模型」與「答案對了」是兩件事。** 模型與[約束](/sql/knowledge-cards/constraint/)的分工也在這條線上——約束管資料能長成什麼樣，模型管那批資料算出什麼。 模型保證的是這段文字算出哪一批列，而那批列是不是要問的那個問題的答案，模型不管也管不到——問題不在查詢裡（[1.12](/sql/well-formed-is-not-correct/)）。第一支反覆出現的那幾類安靜的錯誤，全部發生在模型算對了的前提下。
+**「符合語意模型」與「答案對了」是兩件事。** 模型與[約束](/sql/knowledge-cards/constraint/)的分工也在這條線上——約束管資料能長成什麼樣，模型管那批資料算出什麼。 模型保證的是這段文字算出哪一批列，而那批列是不是要問的那個問題的答案，模型不管也管不到——問題不在查詢裡（[1.13](/sql/well-formed-is-not-correct/)）。第一支反覆出現的那幾類安靜的錯誤，全部發生在模型算對了的前提下。
 
 ## 往下走
 

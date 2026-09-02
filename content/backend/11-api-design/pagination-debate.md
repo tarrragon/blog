@@ -79,7 +79,7 @@ offset 在爭論裡常被寫成過渡方案，而它有一個換不掉的能力�
 ## 下一步路由
 
 - 分頁、批次與長時操作的完整判斷標準：[11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)
-- 為什麼缺了 tiebreaker 就會跳項與重複——關係是集合、排序鍵不唯一時同分的列跟著執行計畫走：[1.11 輸出的順序只有 ORDER BY 決定](/sql/order-by-and-pagination/) 附三家引擎的實測與游標條件寫錯方向的形態
+- 為什麼缺了 tiebreaker 就會跳項與重複——關係是集合、排序鍵不唯一時同分的列跟著執行計畫走：[1.12 分頁要一個全序](/sql/pagination-needs-a-total-order/) 附三家引擎的實測與游標條件寫錯方向的形態
 - 深頁掃描背後的資料庫機制：[Keyset Pagination 知識卡](/backend/knowledge-cards/keyset-pagination/) 給複雜度對照與 tiebreaker 設計；[Query 反模式](/backend/01-database/query-anti-patterns/) 把它放在查詢反模式的全景裡，與 N+1、缺索引並列
 - cursor 作為對外契約的概念位置：[Pagination Cursor 知識卡](/backend/knowledge-cards/pagination-cursor/)
 - 條款清單這個做法的 case 支撐版本：[11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)

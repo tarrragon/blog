@@ -60,4 +60,4 @@ SELECT attname, n_distinct, most_common_freqs FROM pg_stats WHERE tablename = '�
 
 ## 往下走
 
-這兩個數怎麼被收集、多久失效一次，在 [Query Statistics（統計資訊）](/sql/knowledge-cards/query-statistics/)。[query optimizer](/sql/knowledge-cards/query-optimizer/) 拿它們估代價的過程，以及估錯時計畫長什麼樣，在 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/)。同一道題三種寫法的排名怎麼隨索引重排，在 [1.16 代價由資料與索引決定](/sql/cost-lives-in-the-plan/)。production 上結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
+這兩個數怎麼被收集、多久失效一次，在 [Query Statistics（統計資訊）](/sql/knowledge-cards/query-statistics/)。[query optimizer](/sql/knowledge-cards/query-optimizer/) 拿它們估代價的過程，以及估錯時計畫長什麼樣，在 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/)。同一道題三種寫法的排名怎麼隨索引重排，在 [1.17 代價由資料與索引決定](/sql/cost-lives-in-the-plan/)。production 上結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
