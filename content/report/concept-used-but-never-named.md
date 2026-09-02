@@ -75,6 +75,7 @@ slug: "concept-used-but-never-named"
 - [#240 路由目的地要承接該主題](../routing-destination-must-own-the-topic/)：本卡的裸用實例是那條驗收在術語層的形態——目的地承接了主題而不含那個詞。承接的驗收要多問一句：路由句裡的術語在目的地出現了嗎。
 - [#296 規模買不到異源視角](../review-scale-does-not-buy-independent-origin/)：本卡的 finding 由外部提問撞出，而提問帶進來的正是模組詞彙之外的詞。異源在這裡買到的是詞表，視角只是其中一半。
 - [#318 每一格都驗過，不代表由格子導出的那句話驗過了](../per-cell-verification-misses-the-derived-claim/)：tags 欄位驗存在不驗宣稱，是同一個結構。
+- [#322 比對回報零差異時，那個零只證明這個粒度看不到差異](../null-difference-only-at-the-resolution-you-looked/)：同一批工作抽出的姊妹卡。本卡是檢查走不到對象（入口是名字），那張卡是檢查走到了但看不清（粒度不夠），兩者在報告上都是零命中。
 - [#232 自審 sweep 的偵測方法要對齊規則類型](../self-audit-detection-method-must-match-rule-type/)：名字驅動的偵測對無名概念是方法錯配，補救是加一個方向相反的方法，不是把既有方法跑得更細。
 
 ## 判讀徵兆
