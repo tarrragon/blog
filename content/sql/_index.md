@@ -159,7 +159,21 @@ INSERT INTO 評價 VALUES (9001,101,5);
 
 ## Backlog
 
-目前沒有待辦項目。上一輪登記的四項——外鍵與參照完整性、`ORDER BY` 與分頁、字串值的大小寫、基數與選擇率——都已寫成篇或卡。
+| 項目                                           | 類型   | 前置條件                 | 規模 |
+| ---------------------------------------------- | ------ | ------------------------ | ---- |
+| 覆蓋索引                                       | 知識卡 | 無                       | 1    |
+| 儲存引擎                                       | 知識卡 | 無                       | 1    |
+| 系統目錄                                       | 知識卡 | 無                       | 1    |
+| 「小表量不出計畫差異」收一個住址               | 跨模組 | 三處各自宣告的段落已存在 | 小   |
+| 反向連結回補（backend / ddd / linux 共十餘處） | 跨模組 | 無                       | 中   |
+
+上一輪登記的四項——外鍵與參照完整性、`ORDER BY` 與分頁、字串值的大小寫、基數與選擇率——都已寫成篇或卡。
+
+上表五項由一輪多輪審查的 outbound frame 抽出。三張卡的判定理由不同：**覆蓋索引**是 [1.11](/sql/order-by-and-pagination/) 的 `OFFSET` 結論整條的承重詞而全站無卡；**儲存引擎**在 [1.17](/sql/foreign-key-and-referential-integrity/) 是讓宣告消失的第四條路，而本分類的卡系統已經用「引擎」指另一層，屬同域佔用而非單純缺卡；**系統目錄**被六個檔依賴，[1.18](/sql/engine-leniency-and-portability/) 第四級的整個判定靠它。
+
+「小表量不出計畫差異」這一條是缺住址而非缺內容：[1.14](/sql/string-comparison-and-collation/)、[1.11](/sql/order-by-and-pagination/) 與[基數與選擇率](/sql/knowledge-cards/cardinality-and-selectivity/)各自就地宣告過一次，而它回答的問題比任何一篇的主題都早發生，落點在[執行計畫](/sql/knowledge-cards/query-plan/)或[最佳化器](/sql/knowledge-cards/query-optimizer/)那張卡。
+
+另有兩處是**定義衝突而非缺口**，處置要動的是既有內容：[Query 反模式](/backend/01-database/query-anti-patterns/)的缺索引段把選擇率寫成欄位的屬性，而[基數與選擇率](/sql/knowledge-cards/cardinality-and-selectivity/)的第一句就是「選擇率是條件的屬性而非欄位的屬性」；[Database Engine](/sql/knowledge-cards/database-engine/) 的「四種決定」與本頁第二支的各方是兩套不對映的分解（卡按動作切、本頁按決定者切），缺的是一句說明兩者的軸不同。
 
 ### 後續候選
 
