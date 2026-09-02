@@ -108,4 +108,4 @@ FROM 訂單 LEFT JOIN 評價
 
 **把配對的兩側換成同一張表**：配對關係變成同一批資料裡兩列之間的關係，而兩次出現需要各自的名字。[1.7 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/) 用三個引擎的錯誤訊息示範同一張表出現兩次為什麼非取名不可，並把自連接處理的關係分成三種形態。
 
-**只問配不配得到、不把兩列並排**：那時不需要把兩列並排，半連接就夠。[1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/) 寫三者在列數上的差別與選哪一種的判準。
+**只問配不配得到、不把兩列並排**：這時要的運算是半連接——配起來之後只帶走左邊那一份，右邊只當條件（[Semi-join 與 Anti-join（半連接與反連接）](/sql/knowledge-cards/semi-join-and-anti-join/)）。[1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/) 寫三者在列數上的差別與選哪一種的判準。

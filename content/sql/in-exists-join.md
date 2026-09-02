@@ -51,6 +51,8 @@ SELECT DISTINCT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = �
 
 **需要 `DISTINCT` 這件事本身是一個訊號**：它表示這個查詢只是要判斷有沒有，而 `JOIN` 順便做了不需要的配對。這種時候 `IN` 或 `EXISTS` 更貼合意圖，因為它們一開始就沒有把列複製出來。
 
+這兩種寫法在[關聯代數](/sql/knowledge-cards/relational-algebra/)裡有自己的名字：只帶走左邊那一份的叫半連接，否定式那一邊叫反連接（[Semi-join 與 Anti-join（半連接與反連接）](/sql/knowledge-cards/semi-join-and-anti-join/)）。
+
 ## 只有 JOIN 把那張表帶進 FROM
 
 要列出每位顧客的訂單金額，`JOIN` 是最直接的一條路：

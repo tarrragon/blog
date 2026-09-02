@@ -6,7 +6,7 @@ weight: 13
 tags: ["sql", "relational-algebra", "relation", "knowledge-card"]
 ---
 
-關聯代數是一組作用在 [relation](/sql/knowledge-cards/relation/) 上、產出 relation 的運算——relation 指一組欄位固定、由若干列構成的資料集合，資料表是它的一種，查詢途中的中間結果也是。運算有這幾個：挑列（選取）、挑欄（投影）、把兩份的每一列各配一次（[積](/sql/knowledge-cards/cartesian-product/)）、在積上面加條件挑出要留的（連接）、以及聯集、差集、更名。SQL 的子句是這些運算的一層語法外衣，而不是另一套獨立的規則。
+關聯代數是一組作用在 [relation](/sql/knowledge-cards/relation/) 上、產出 relation 的運算——relation 指一組欄位固定、由若干列構成的資料集合，資料表是它的一種，查詢途中的中間結果也是。運算有這幾個：挑列（選取）、挑欄（投影）、把兩份的每一列各配一次（[積](/sql/knowledge-cards/cartesian-product/)）、在積上面加條件挑出要留的（連接）、以及聯集、差集、更名。連接自己就是積加上選取的組合，同一層還有兩個這個分類反覆用到的導出運算——[半連接與反連接](/sql/knowledge-cards/semi-join-and-anti-join/)，配起來之後只帶走左邊那一份。SQL 的子句是這些運算的一層語法外衣，而不是另一套獨立的規則。
 
 ## 封閉性是它最重要的性質
 

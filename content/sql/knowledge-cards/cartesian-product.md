@@ -56,4 +56,4 @@ SELECT count(*) FROM Weather a CROSS JOIN Weather b;
 
 ## 往下走
 
-條件正確而列數仍然變多的那一種，在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一批配對用自連接與 `EXISTS` 兩種寫法的差別，在 [1.8 IN、EXISTS 與 JOIN](/sql/in-exists-join/)。`CROSS JOIN` 這個關鍵字對讀的人宣告了什麼，在 [1.20 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)。production 查詢的結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
+條件正確而列數仍然變多的那一種，在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。同一批配對用自連接與 `EXISTS` 兩種寫法的實測對照，在 [1.17 代價由資料與索引決定](/sql/cost-lives-in-the-plan/)。條件只用來判斷存在時結果的上限落在哪裡，在 [Semi-join 與 Anti-join（半連接與反連接）](/sql/knowledge-cards/semi-join-and-anti-join/)。`CROSS JOIN` 這個關鍵字對讀的人宣告了什麼，在 [1.20 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)。production 查詢的結果集大小怎麼治理，在 [Cardinality Explosion](/backend/knowledge-cards/cardinality-explosion/)。
