@@ -231,10 +231,11 @@ h5 {
    基準長度按比例分配，最長的標籤讓步最多、短標籤幾乎不動，超出的部分由
    text-overflow 收尾。
 
-   兩個 flex 的細節決定這條行不行：min-height 必須明寫 0，因為 flex item
-   在主軸方向的 min-height 預設是 auto、會解析成內容高度而擋掉全部壓縮；
-   單塊不能設 max-height，設了會讓觸頂的長色塊在演算法裡被凍結、壓縮全部
-   落到沒觸頂的短色塊上，讓步方向剛好相反。 */
+   兩個 flex 的細節決定這條行不行。flex item 在主軸方向的 min-height 預設是
+   auto、會解析成內容高度而擋掉全部壓縮，這裡由 min-height: 0 與色塊自己的
+   overflow: hidden 各自歸零（兩者任一存在壓縮就成立，兩個都沒有才會溢出）。
+   單塊不能設會夾住的 max-height，設了會讓觸頂的長色塊在演算法裡被凍結、壓縮
+   全部落到沒觸頂的短色塊上，讓步方向剛好相反。 */
 .breadcrumb-rail .breadcrumb-block {
   writing-mode: vertical-rl;
   text-orientation: mixed;
