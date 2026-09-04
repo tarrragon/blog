@@ -71,6 +71,7 @@ slug: "fabricated-observation-hides-among-cited-facts"
 - [要求揭露只擋得住省略，要分層得改成要求分類](/report/disclosure-yields-one-bucket-classification-yields-layers/) — **分類法的性質相同，而受詞不同。** 那一張的第三格「沒查」與本卡的第四欄是同一個設計：類別要窮盡，少一格時落在那一格的東西會被歸進最接近的一格，而最接近的那一格通常是「已經驗過」的那一格。
 - [掃描指令壞掉時不會報錯，它報一個數字](/report/broken-scan-reports-a-plausible-number/) — 同族的「回報一個看起來合理的數字」，成因分別是工具失效與工具從未被呼叫。那一張的修法在這裡仍然有效——正對照放進輸出，要求那次呼叫真的發生並留下痕跡。
 - [查證回報的單位是宣稱](/report/verification-reports-claims-but-failures-are-framed/) — 那一張處理查證回報之後的處置範圍，本卡處理更前面一步：這個宣稱該由誰去查、以及有沒有一整類宣稱從來沒有被分派。
+- [代理比本體便宜](/report/proxy-is-cheaper-than-the-thing-it-stands-for/) — 本卡的第五欄（別人量的、我引用）是那一張在數字來源上的具體化，而本卡的五欄分類是它第二條修法（讓本體與代理的產物長得不一樣）的實作。
 
 ## 判讀徵兆
 

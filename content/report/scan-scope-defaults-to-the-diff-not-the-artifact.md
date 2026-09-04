@@ -59,6 +59,7 @@ slug: "scan-scope-defaults-to-the-diff-not-the-artifact"
 - [finding 清單列的是抽樣位置](/report/fix-the-class-not-the-cited-instances/) — 同一個動作的另一個維度。那一張要求掃描的單位從「清單上的行」升成「類別」，本卡問類別對了之後餵給指令的路徑集合夠不夠寬。兩者可以同時發生且互不遮蔽：類別對、範圍窄，報告一樣乾淨。
 - [已經記錄過的失效仍然重演](/report/recorded-failures-recur-when-the-record-is-off-path/) — 那一張補的「執行本身有深淺」講的是動作做得多深（不掃、只掃同形、逐項對照），本卡講的是動作作用在多大範圍上。深度與廣度獨立失效，所以收尾清單要分開列。
 - [一次修法會對同一件事寫出兩種形式](/report/one-fix-writes-two-forms-of-the-same-thing/)：**正確作用域相反，而兩者不衝突。** 本卡說批次清理的收尾要掃成品的全部，因為它問的是存量；那一張的正確作用域恰好就是改動集合，因為它問的是增量的內部一致性。本卡那張兩種作用域對照表裡「改動集合答增量」那一格，它就是具體內容。
+- [代理比本體便宜](/report/proxy-is-cheaper-than-the-thing-it-stands-for/) — 本卡的改動集合是成品全集的代理，而本卡指出的成因（手邊那份清單在另一個用途上正是對的作用域）是那一張「差價很小」的一個實例：換掉它只要改一個路徑參數。
 
 ## 判讀徵兆
 

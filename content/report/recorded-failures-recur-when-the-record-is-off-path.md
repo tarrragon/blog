@@ -101,3 +101,4 @@ slug: "recorded-failures-recur-when-the-record-is-off-path"
 
 [#315 真值住在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/) 與本卡共用「知識不等於動作」這個軸。那裡是閱讀取代不了執行，這裡是記錄取代不了執行；兩張卡的修法都是把一個原本靠人的環節換成一個會自己動的環節。
 [#329 掃描的作用域會默默對齊「我這次動過什麼」](/report/scan-scope-defaults-to-the-diff-not-the-artifact/) 與本卡補的「執行本身有深淺」是兩條正交的軸：那裡問動作作用在多大範圍上，這裡問動作做得多深。同一次收尾可以深度到位而範圍窄，兩者的報告都是乾淨的，所以收尾清單要把它們分開列。
+[#334 代理比本體便宜](/report/proxy-is-cheaper-than-the-thing-it-stands-for/) 與本卡相鄰而軸不同：本卡問防線放在哪裡（要人先起疑才會打開），那一張問走到防線要花多少錢。兩者合起來解釋「知道」為什麼不等於「做到」——一個是觸發不到，一個是觸發到了而代理更便宜。
