@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.7.0 — `fix-the-class-not-the-cited-instances` 原則卡補三項（與本體同步）：字串掃描抓得到同形殘留而抓不到異形殘留、掃描的輸出要逐條列出不讀計數、以及這一條要放進收尾動作清單而不是只放在原則層——一次四輪審查裡同型失誤發生三次，三次的動作差別只有一項（修完有沒有再掃一遍），而規則在三次之前就已經讀過。
+
 **Version**: 1.6.1 — 版本紀錄搬到同目錄的 `CHANGELOG.md`。skill 是 runtime 整份載入的檔案，而沒有任何規則要求任何人讀版本紀錄，留在 SKILL.md 等於每次叫用都付一次無效讀取。SKILL.md 末尾留一行指過去，版號的兩個住址改成「CHANGELOG.md 最上面那一條 + frontmatter 的 metadata.version」。skill 的指令內容一個字都沒改。
 
 **Version**: 1.6.0 — Stage 4 修正循環補一條處置端紀律並新增 principle 卡 fix-the-class-not-the-cited-instances：**每個 issue 修完之後掃的是那一類、不是清單上的那幾行**。原本整段以 issue 清單為單位組織（按嚴重度、按檔案批次），沒有任何一步要求回頭掃同類的其他位置，而 reviewer 列出的是抽樣位置、清單的形式卻在暗示完整性。實測是同一個動詞的同一處論元結構歧義散在三個位置，四份理解探針一致指向其中一行、修好並經驗證翻轉，另外兩處由後續換 frame 的探針才撞見；同批另有四次同形態復發。修法是用特徵字串掃整批、掃描指令先驗管道、無關鍵詞的類別改派限定 scope 的複掃
