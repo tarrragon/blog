@@ -64,6 +64,7 @@ slug: "review-scale-does-not-buy-independent-origin"
 - [#300 查證回報的單位是宣稱，而失效的單位可能是整個框架](../verification-reports-claims-but-failures-are-framed/) 記的是本卡的一次正向應用。把事實查核整批轉派給另一個 session 之後，回報裡有三項是本側跑完多輪審查都沒有動搖過的判斷，其中一項推翻了整篇的軸。轉派買到的不只是視角，還有額度——搜尋額度按執行者計算而不累計，所以耗盡的一方轉派出去，同一批工作仍然做得完。
 - [#301 限制類宣稱的錯誤會自我保存，因為它勸阻的正是唯一能推翻它的那個動作](../capability-limits-suppress-their-own-refutation/) 是本卡的另一次應用。錯誤的限制宣稱對寫下它的人不再可疑（那次失敗是他親眼看到的），而併行的另一個執行者沒有那段記憶、照常去試，於是四則錯誤宣稱是被互相指認出來的，兩個 session 各出兩則。
 - [#311 reviewer 給的數字要用被審對象宣告的口徑重跑一次](../reviewer-measurement-needs-the-audited-scope/)：本卡的推論之一。派再多 reviewer 也不會讓量測自動可信，而複驗那一步無法靠增加 reviewer 完成——它要由讀報告的人回被審對象做。
+- [審查的 frame 全部在問規則的效力，沒有一個問它的代價](/report/review-frames-ask-efficacy-never-cost/)：鄰居而軸不同。本卡講**來源**（增加數量提高的是覆蓋的面而不是視角的來源數），那一張講**提問方向**——來源就算換了，只要每個 frame 都在問同一個方向，換來的仍是同一側的 finding。加人與換人都補不上一個沒有人提的問題。
 
 ## 判讀徵兆
 
