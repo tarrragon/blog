@@ -50,6 +50,7 @@ slug: "never-satisfiable-signal-shrinks-the-quorum"
 - [可核對的錨要跟它該偵測的狀態連動](/report/checkable-anchor-must-be-able-to-fall/) — 相反的方向。那裡的錨恆真（該偵測的事情發生了它也不動），本卡的訊號恆偽（該齊備的時候它也不齊備）。兩者共用同一個檢查：這一條在什麼情況下會改變狀態，答不出來的都要重寫。
 - [判斷標準少一條獨立的軸時，它會篤定地指向錯的答案](/report/missing-axis-yields-a-confident-wrong-answer/) — 症狀相反的一對。少一條軸讓判斷提早收斂並答錯，多一條不會動的訊號讓判斷遲遲不收斂；兩者都要把每一條軸單獨拿出來問它量什麼。
 - [檢查規則的作用域要顯式列舉](/report/lint-scope-must-be-explicit-fact/) — 同一個家族：清單的表面完整度與它的實際作用範圍是兩件事，而兩者在文件上長得一樣。
+- [審查的 frame 全部在問規則的效力，沒有一個問它的代價](/report/review-frames-ask-efficacy-never-cost/) — 本卡的修法（把量判斷者的訊號改寫成量對象的版本）在那一張有一個現成的實作：**finding 的方向分佈**。「想不出新 frame」要靠列舉的完整性，而看一欄是不是全空只要讀分佈，兩者問的是同一件事而後者可操作。
 
 ## 判讀徵兆
 

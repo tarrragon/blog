@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作�
 license: MIT
 metadata:
   portable: true
-  version: 1.75.0
+  version: 1.75.1
   category: writing-methodology
 ---
 

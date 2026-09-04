@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.75.1 — 兩張 principle 卡各補一段邊界。`review-frames-ask-efficacy-never-cost`：那個偏斜是一個沒被算過的假設，而不是算過之後的成本選擇——「代價側產出少」一量就翻轉。`proxy-is-cheaper-than-the-thing-it-stands-for`：它的三條修法預設「代理確實比較便宜」，而那個前提要驗過才算數；「這是理性的成本選擇」是一個可以被驗的宣稱、不是一個解釋，沒驗就套用會讓一個該修的偏斜看起來合理。
+
 **Version**: 1.75.0 — Round N 規劃判讀新增一個停止前置條件：看 finding 的方向分佈。frame 集合會朝同一個方向長（問規則的效力、不問規則的代價），成因兩端同向——找到漏抓是產出、找到誤報是否定產出，而規劃者在找「還有什麼沒被檢查」、執行者的價值由 finding 數體現。零 finding 與零 frame 在報告上同形，所以代價側交白卷讀起來像那一側沒問題。偵測是逐則標方向欄，修法是 frame 清單成對排；「找誤報會減少產出」這個估計本身是錯的，實測兩次撤回之後的替代 finding 都更強。新增 principle 卡 `review-frames-ask-efficacy-never-cost`。同批 `fabricated-observation-hides-among-cited-facts` 補兩節：兩個子形態（來源不存在／來源存在而說的是別的事），以及分類欄位本身就是偵測程序——第二個實例是被那張四欄表自己抓出來的。
 
 **Version**: 1.74.0 — 收尾清單新增一項：每一步標明用的是本體還是代理。代理比本體便宜而兩者的產物在報告上同形（都是一個零、一次通過），且收尾階段的成本壓力最高，所以在那個結構下拿代理是理性的——「下次更仔細」對它無效，問題不在注意力的總量而在那個時點的成本結構。四個實例的差價都是一條指令或一個檔，小到不像一個決定。修法方向因此是改成本結構（降低本體的取用成本、讓兩者的產物長得不一樣）而不是改注意力。新增 principle 卡 `proxy-is-cheaper-than-the-thing-it-stands-for`。
