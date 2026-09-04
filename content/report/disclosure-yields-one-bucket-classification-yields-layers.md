@@ -72,6 +72,7 @@ slug: "disclosure-yields-one-bucket-classification-yields-layers"
 - [掃描指令壞掉時不會報錯，它報一個數字](/report/broken-scan-reports-a-plausible-number/) — 同屬「零命中有幾種來源」這個家族，而每一種的處置不同：工具失效驗指令、[作用域窄一圈](/report/scan-scope-defaults-to-the-diff-not-the-artifact/)寫全路徑、[未納管的規則](/report/lint-scope-must-be-explicit-fact/)列作用域、[只驗了一個方向](/report/concept-used-but-never-named/)雙向各驗一次，而本卡的判準不適用要分類。**這些零在報告上是同一句話**，所以零命中要附它的來源，不能只附數字。
 - [要交出物件，不要交出關於物件的判斷](/report/ask-for-the-object-not-the-verdict/) — 姊妹卡，兩者都是問句的形態決定回報的內容，受詞不同：本卡問同一批東西怎麼分堆，那一張問交的是判斷還是物件。共用的推論是回報者不會做問句沒要求的工作，而那不是隱瞞。
 - [一次修法會對同一件事寫出兩種形式](/report/one-fix-writes-two-forms-of-the-same-thing/) — 同一批材料的姊妹卡，受詞不同：本卡管回報怎麼分類，那一張管修法怎麼收尾。
+- [「我以為觀測到的」躲在「引用的」那一欄裡](/report/fabricated-observation-hides-among-cited-facts/) — **分類法的性質相同，受詞不同。** 本卡的第三格「沒查」與那一張的第四欄是同一個設計：類別要窮盡，少一格時落在那一格的東西會被歸進最接近的一格，而最接近的那一格通常是「已經驗過」的那一格。
 
 ## 判讀徵兆
 
