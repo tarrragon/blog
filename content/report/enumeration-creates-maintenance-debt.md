@@ -78,3 +78,4 @@ W3-008 分析報告寫了「duplicate_detection 群組 9 個函式、428 行」�
 - [適用範圍要展開成 file enumeration](/report/applicability-scope-must-be-enumerated/) — 鏡像關係：該卡主張「適用範圍要 enumerate」、本卡主張「定義型文件的冗餘列舉要刪」。取決於文件型別——scope 文件需要 enumeration 確保執行時不遺漏、定義型文件的範圍已由定義本身表達
 - [集合命名用角色、不內嵌數量](/report/name-collections-by-role-not-count/) — 同原則在不同層面：前者處理命名層（「六大原則」的數字是成員清單的衍生值）、本卡處理正文定義層（「9 個函式」的數字是程式碼的衍生值）。兩卡共享「外部凍結數字可留」的邊界（前者的 SOLID / OWASP 對應本卡的 SLA / 設計常數）
 - [便利驅動的寫法會偏離意圖](/report/ease-of-writing-vs-intent-alignment/) — 上位原則：列舉殘留是「寫的時候方便（先算再寫）、讀的時候多餘」的具體實例
+- [散文裡指向一組成員的數字，在結構改動之後不會跟著動](/report/inline-counts-drift-with-every-restructure/)：限定本卡判斷決策表的射程。「拿掉之後讀者理解不受影響就刪」對承擔指涉功能的計數（「後三列」「共用兩節」）一律答「受影響」，於是它留下來而沒有第二個出口；那一張補的正是那個出口——留下指涉、換掉計數，判別問句是這個數字由什麼決定。
