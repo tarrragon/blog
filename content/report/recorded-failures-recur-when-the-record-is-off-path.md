@@ -100,3 +100,4 @@ slug: "recorded-failures-recur-when-the-record-is-off-path"
 [#232 自審 sweep 的偵測方法要對齊規則類型](/report/self-audit-detection-method-must-match-rule-type/) 講 grep 對無關鍵詞的規則是看不見而不是 clean，本卡是它的機械版本：那裡偵測方法與規則類型不匹配，這裡偵測方法根本沒跑到目標。兩者的輸出都是 clean，而分辨它們的動作不同——那裡要換偵測方法，這裡只要一個正對照。
 
 [#315 真值住在稿件之外的宣稱，讀多少遍都驗不出來](/report/text-review-cannot-reach-external-truth/) 與本卡共用「知識不等於動作」這個軸。那裡是閱讀取代不了執行，這裡是記錄取代不了執行；兩張卡的修法都是把一個原本靠人的環節換成一個會自己動的環節。
+[#329 掃描的作用域會默默對齊「我這次動過什麼」](/report/scan-scope-defaults-to-the-diff-not-the-artifact/) 與本卡補的「執行本身有深淺」是兩條正交的軸：那裡問動作作用在多大範圍上，這裡問動作做得多深。同一次收尾可以深度到位而範圍窄，兩者的報告都是乾淨的，所以收尾清單要把它們分開列。
