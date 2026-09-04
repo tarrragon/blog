@@ -59,7 +59,8 @@ slug: "disclosure-yields-one-bucket-classification-yields-layers"
 - [要求執行者做判定的規則，要一併規定判定留下什麼痕跡](/report/judgment-rules-must-specify-their-trace/) — 本卡是它的下一層。那一張問「有沒有痕跡」，本卡問「痕跡本身分不分得出證據力」。**那一張的依據層（判成零後續時要說出憑什麼）在這裡不夠用**：憑什麼可以被一句話答完，而那一句話同時涵蓋了造過情境與造不出情境兩種來源。
 - [檢查規則的作用域要顯式列舉](/report/lint-scope-must-be-explicit-fact/) — 第二類（判準不在本 frame 射程）就是那一張的「未納管」。差別在住址：那裡的未納管寫在設定檔的路徑常數裡，查得到；本卡的未納管藏在一份看起來合規的報告內文裡，只有追問才會現形。
 - [掃描的作用域會默默對齊「我這次動過什麼」](/report/scan-scope-defaults-to-the-diff-not-the-artifact/) — 相鄰而軸不同。那裡是餵給指令的路徑集合窄了一圈，本卡是判準與 frame 不匹配；兩者都讓零失去意義，而報告一樣是乾淨的。
-- [掃描指令壞掉時不會報錯，它報一個數字](/report/broken-scan-reports-a-plausible-number/) — 同一個家族的第三種來源。那裡的零來自工具失效，#329 的零來自作用域，本卡的零來自判準不適用；三者的輸出相同，而處置分別是驗指令、寫全路徑、分類。
+- [掃描指令壞掉時不會報錯，它報一個數字](/report/broken-scan-reports-a-plausible-number/) — 同屬「零命中有幾種來源」這個家族，而每一種的處置不同：工具失效驗指令、[作用域窄一圈](/report/scan-scope-defaults-to-the-diff-not-the-artifact/)寫全路徑、[未納管的規則](/report/lint-scope-must-be-explicit-fact/)列作用域、[只驗了一個方向](/report/concept-used-but-never-named/)雙向各驗一次，而本卡的判準不適用要分類。**這些零在報告上是同一句話**，所以零命中要附它的來源，不能只附數字。
+- [要交出物件，不要交出關於物件的判斷](/report/ask-for-the-object-not-the-verdict/) — 姊妹卡，兩者都是問句的形態決定回報的內容，受詞不同：本卡問同一批東西怎麼分堆，那一張問交的是判斷還是物件。共用的推論是回報者不會做問句沒要求的工作，而那不是隱瞞。
 
 ## 判讀徵兆
 

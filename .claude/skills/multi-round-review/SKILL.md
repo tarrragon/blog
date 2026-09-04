@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準操作�
 license: MIT
 metadata:
   portable: true
-  version: 1.68.0
+  version: 1.69.0
   category: writing-methodology
 ---
 
@@ -307,8 +307,9 @@ Round 1-3 是硬底線、直接跑不問。Round 3 結束後才進入「是否�
   1. **特徵字串掃全批**，指令先拿一個已知會命中的字串驗過管道。「全批」是成品的全部、不是這一輪改過的檔——指令可以完全正確而作用域窄一圈，而在改過的檔裡命中歸零、報告讀起來就是乾淨的；連帶要求是正對照放在**沒被這一輪改動過的檔**裡，放在改過的檔裡它會命中而作用域缺口原樣留著。
   2. **逐條列出、不讀計數**——聚合損掉的正好是判定要用的東西（實測 `grep -o <pattern> | uniq -c` 計數回報一處而逐條是兩處；中文字串在預設 locale 下被 `uniq` 視為等值而全部塌成一組也只有逐條看得出來）。
   3. **逐項對照實例數與已修數**——把 reviewer 指出的每個多實例 finding 列成一行，寫下它宣稱的實例數與已修數。字串掃描抓得到同形殘留、抓不到異形殘留（實測漏掉「另一張表也該改」，字面完全不同），這一步不依賴關鍵詞，涵蓋掃描涵蓋不到的那一半。
-7. **拆 commit**：按 frame 拆 2-3 個 commit（如 commit 1 處理規範 frame finding、commit 2 處理 cadence frame）
-8. **驗證 + commit**：專案 markdown 工具鏈（如 mdtools lint / cards / fmt）跑過、各 commit 帶清楚的修法描述
+7. **要質疑一個 finding 時，要它交出物件、不要它交出判斷**（per [要交出物件、不要交出關於物件的判斷](references/principles/ask-for-the-object-not-the-verdict.md)）。關於物件的斷言（「這兩條判準不可同時滿足」「這個檔超標」）可以在抽象層完全合理，而**推翻它要離開抽象層、構造出那個物件**——回報者的主張在他自己的推理裡自洽，沒有人要求構造時他沒有理由去做。追問的動詞用「寫出來 / 算出來 / 構造一個」而不用「確認 / 說明 / 檢查」，並加一句「我要能自己驗證」（它把產物的接收者換成追問者，交出來的東西因此必須獨立於回報者的推理而可檢驗）。回報者在更早輪次量過的數字要明確要求代入並印出計算——實測一次，那個值一直在它手上而本輪的判斷沒有用到它。判別問句：這個宣稱要成立，需要一個什麼樣的物件（一個字串、一個數字、一組走得完的步驟）。
+8. **拆 commit**：按 frame 拆 2-3 個 commit（如 commit 1 處理規範 frame finding、commit 2 處理 cadence frame）
+9. **驗證 + commit**：專案 markdown 工具鏈（如 mdtools lint / cards / fmt）跑過、各 commit 帶清楚的修法描述
 
 ### 修法生效要另外量測
 

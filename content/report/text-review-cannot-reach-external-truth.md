@@ -44,6 +44,7 @@ slug: "text-review-cannot-reach-external-truth"
 - [理解要取樣、不要靠判斷](/report/comprehension-sampled-not-judged/) — 探針也是讀，受同一條射程限制。探針補的是「讀者實際帶走什麼」，補不了「這句話是不是真的」。
 - [能力限制會壓制自己的反證](/report/capability-limits-suppress-their-own-refutation/) — 本卡的修法有一條依賴它：判定「這一類驗不了」之前先驗那個判定，否則整批外部真值宣稱會被合法地略過。
 - [承重事實回到 primary source 查證](/report/verify-load-bearing-facts-against-primary-source/) — 那一張管**來源**（拿自己的舊分析當一手事實），本卡管**動作**（拿閱讀當驗證）。兩者可以同時發生：引用了正確的來源，而抄過來的那一段沒跑過。
+- [要交出物件，不要交出關於物件的判斷](/report/ask-for-the-object-not-the-verdict/) — 相鄰而處置相反。本卡的真值住在稿件之外、只能靠執行取得，所以修法是換工具；那一張的物件可以從手上已有的材料構造出來，缺的只是有人要求構造，所以修法是換問句。分辨兩者問一句：這個物件造得出來嗎。
 
 ## 判讀徵兆
 
