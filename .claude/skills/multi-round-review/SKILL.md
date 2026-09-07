@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準流程�
 license: MIT
 metadata:
   portable: true
-  version: 2.0.1
+  version: 2.1.0
   category: writing-methodology
 ---
 
@@ -29,7 +29,7 @@ metadata:
 
 1. **每輪用不同 frame**（per [#114 multi-pass frame 顆粒度盲點](references/principles/multi-pass-frame-granularity.md)）：同 reviewer / 同 frame 跑多輪 catch 高度相同。多輪價值在 frame 切換、不在重複加深。
 2. **跨輪 finding 互不重疊**：若新一輪 finding 跟上一輪重疊、代表 frame 沒換、再跑無增益。
-3. **停止訊號是 frame 涵蓋、不是 finding 遞減**（per [#148 跨輪 review 停止訊號](references/principles/cross-round-stopping-signal.md)）：多輪 review 通常 finding 不遞減、Round 3 可能比 Round 1 / 2 多。停止判讀看七軸有沒有都動過，程序在〈Round N 規劃判讀〉；「想不出新 frame」量的是判斷者、不作必要條件。
+3. **停止訊號是 frame 涵蓋、不是 finding 遞減**（per [#148 跨輪 review 停止訊號](references/principles/cross-round-stopping-signal.md)）：多輪 review 通常 finding 不遞減、Round 3 可能比 Round 1 / 2 多。停止判讀看七軸有沒有都動過，程序在 `references/planning-and-stopping.md`〈Round N 規劃判讀〉；「想不出新 frame」量的是判斷者、不作必要條件。
 4. **至少三輪是硬底線**（per [#202 多輪審查至少三輪](references/principles/minimum-three-rounds.md)）：Round 3 的 steelman / outbound frame 覆蓋 Round 1-2 結構性盲區（漏選項、反向引用、搜尋落點、知識卡缺口），歷次實測每輪都找出 10+ 項。Round 1-2 從「已寫的內容」裡找錯，Round 3 從「沒寫的東西」出發——這類問題在前兩輪的 frame 下結構性不可見。「要不要跑 Round 3」不是判讀問題、是執行紀律。停止判讀從 Round 3 結束後才開始。
 5. **規模與來源是兩件事**（per [規模買不到異源視角](references/principles/review-scale-does-not-buy-independent-origin.md)）：一個 session 派出的所有 reviewer 與探針構成單一來源——同一份稿、同一個人寫的 prompt、同一個 context 的框架。增加數量提高的是覆蓋的面，不是視角的來源數。register 與用詞搭配這一類的偵測依賴的正是來源，所以「已經派了幾十個 reviewer」不構成異源已經覆蓋的證據。一次實測：兩個併行執行者各自跑完四輪、各自掃描回報乾淨，交換檢視時各自一眼看到對方一處違規，其中一處的判斷標準可機械執行而寫的人套在自己的小節標題上判定通過。併行的另一個執行者是最便宜的異源視角，交換的單位是掃描而不是評價。
 
@@ -83,7 +83,7 @@ Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 sessi
 | frame                                  | 什麼時候跑                                           | 判定依據                                                                                             |
 | -------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | 1-A 寫作規範 / 1-B 案例 / 1-C 跨章一致 | 一律跑                                               | 無條件                                                                                               |
-| 1-D Downstream-task                    | 讀者讀完有明確的下一個動作（提案、估時程、選型）時   | 看文章的收尾段有沒有指向一個外部動作                                                                 |
+| 1-D Downstream-task                    | 讀者讀完有明確的下一個動作（提案、估時程、選型）時   | 看文章的收尾段有沒有指向一個外部動作；定位為教材時照〈派發之前先定這一批的定位〉的例外               |
 | 1-E 斷言支撐                           | 素材來源是經驗談 / 訪談 / 口述的批次；或判斷標準密集 | 高風險批次此 frame 排第一輪，知識類型錯位的修法是重寫                                                |
 | 1-F 商業分析                           | 內容含財報判讀、產業比較、估值                       | 逐篇看有沒有財務數字或估值段                                                                         |
 | 2-A Cadence                            | 一批三篇以上                                         | 單篇不適用（同骨化是跨篇現象）                                                                       |
@@ -120,6 +120,6 @@ Round 1-3 是硬底線、直接跑不問；每一輪的 frame 定義、reviewer 
 ## 跟既有 skill 的關係
 
 - `case-first-module-workflow`（若專案已採用此 skill）的 Stage 4 含「agent team review」但偏 case-driven 單輪。Multi-round-review 補完跨輪 frame 切換維度、可以接在 case-first 的 Stage 5 之後或同時使用。
-- [`compositional-writing`](../compositional-writing/SKILL.md) 提供寫作原則（intent-revealing、grep-friendly）+ 字句層 grep keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）。**本 skill 啟動時應同步 invoke compositional-writing** — Round 1-A 寫作規範 reviewer 必須跑 compositional-writing 的字句 grep（清單在 `references/round-1-compliance.md` 的 1-A）、Round 2-A cadence reviewer 引用其 multi-pass review 第 6 原則跟 cadence-homogenization 原則卡。兩個 skill 是垂直協同：multi-round-review 給 frame 切換結構、compositional-writing 給每輪 frame 的具體檢查清單。
+- [`compositional-writing`](../compositional-writing/SKILL.md) 提供寫作原則（intent-revealing、grep-friendly）+ 字句層 grep keyword bank（正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）。**本 skill 啟動時應同步 invoke compositional-writing** — Round 1-A 寫作規範 reviewer 必須跑 compositional-writing 的字句 grep（摘要在 `references/round-1-compliance.md` 的 1-A、完整清單在 `compositional-writing` 的「字句層 keyword bank」節）、Round 2-A cadence reviewer 引用其 multi-pass review 第 6 原則跟 cadence-homogenization 原則卡。兩個 skill 是垂直協同：multi-round-review 給 frame 切換結構、compositional-writing 給每輪 frame 的具體檢查清單。
 - **協同觸發**：用戶說「多輪審查 / 寫作 audit / batch review」時、兩個 skill 都該 surface — multi-round-review 規劃 frame、compositional-writing 提供每 frame 的 keyword bank。單獨用 multi-round-review 容易漏字句層、單獨用 compositional-writing 容易漏跨輪 frame 規劃。
 - [`business-analysis`](../business-analysis/SKILL.md) 提供商業分析的 7 步驟流程和 7 個分析模式（分母意識、邊際貢獻、正常化 EPS、關係人交易、三面受壓、結構性 vs 一次性、供給衝擊 vs 週期）。**審查的內容涉及財報判讀、產業比較、估值時，Round 1-F 應同步 invoke business-analysis skill** — 用其 7 步驟作為分析完整度的 checklist、用其 references/ 的判讀條件表驗證文中的分析是否到位。跟 compositional-writing 的垂直協同關係相同：multi-round-review 給 frame 結構、business-analysis 給商業分析維度的具體檢查清單。

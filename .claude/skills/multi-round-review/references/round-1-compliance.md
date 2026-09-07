@@ -4,11 +4,13 @@
 >
 > **同目錄**：`round-2-cadence.md`（下一輪）、`reviewer-prompt.md`（把本檔的 frame 寫成指令）、`integrating-findings.md`（拿到本輪 finding 之後）。
 >
-> **溯源**：本檔由 `SKILL.md` 的〈標準流程〉外移，見 CHANGELOG 2.0.0。
+> **術語**：frame、主 session、reviewer 的定義在 `SKILL.md`〈基本原則〉與〈誰做哪一段〉；同源／異源在 `round-1-compliance.md` 1-A 的〈命中是候選、不是判決〉段；探針家族在 `round-2-cadence.md` 2-B⁗。
+>
+> **溯源**：本檔由 `SKILL.md` 的〈標準流程〉外移，見 skill 根目錄 `CHANGELOG.md` 的 2.0.0。
 
 ## Round 1：Compliance / 基線 audit
 
-最先用「規範遵循」frame、抓 surface 層問題。**Round 1-A 寫作規範 reviewer 啟動時、必須同步 invoke `compositional-writing` skill 的字句層 grep keyword bank**（正向陳述優先 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）— 寫作規範 audit 漏這層、會把字句層問題推到 Round 2 才被 catch。常見三個 reviewer 平行 background：
+最先用「規範遵循」frame、抓 surface 層問題。**Round 1-A 寫作規範 reviewer 啟動時、必須同步 invoke `compositional-writing` skill 的字句層 grep keyword bank**（正向陳述優先 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號）— 寫作規範 audit 漏這層、會把字句層問題推到 Round 2 才被 catch。A / B / C 一律跑、常見三個 reviewer 平行 background，D / E / F 條件式：
 
 - **A: 寫作規範 audit** — 專案寫作規範（如 AGENTS.md / markdown-writing-spec）/ compositional-writing 規範遵循
   - **字句層 grep（必跑）**——**下面是摘要、不是完整清單**。完整的一份在 `compositional-writing` 的「字句層 keyword bank（完整清單）」節，類數以那一節為準；這裡沒有列到的至少有澄清式框架、歸因語氣、宣導語氣、脈絡懸置（等下再討論 / 前面兩個小節 / 用一句話總結 / 列舉鳥瞰）四類。派 reviewer 時把它導去那一節逐類跑，不要只跑這裡列到的：

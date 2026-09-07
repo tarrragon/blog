@@ -4,7 +4,9 @@
 >
 > **同目錄**：三份 `round-*.md`（frame 定義來源）、`integrating-findings.md`（契約規定的欄位在那裡被消費）。
 >
-> **溯源**：由 `SKILL.md` 的〈每個 frame 的產出契約〉與〈Reviewer prompt 結構〉外移，見 CHANGELOG 2.0.0。
+> **術語**：frame、主 session、reviewer 的定義在 `SKILL.md`〈基本原則〉與〈誰做哪一段〉；同源／異源在 `round-1-compliance.md` 1-A 的〈命中是候選、不是判決〉段；探針家族在 `round-2-cadence.md` 2-B⁗。
+>
+> **溯源**：由 `SKILL.md` 的〈每個 frame 的產出契約〉與〈Reviewer prompt 結構〉外移，見 skill 根目錄 `CHANGELOG.md` 的 2.0.0。
 
 ## 每個 frame 的產出契約
 
@@ -45,12 +47,14 @@
 - 建議（可改）：可優化但非阻塞
 最後給「整體評估」分級。
 產出（finding 清單、逐格表）寫在報告最前面，材料與推導附在後面；不修檔案。
+你拿到的是這一個 frame；不再往下派 reviewer。
+報告的送達方式：[派發環境決定，這裡明寫怎麼送回主 session]
 ```
 
 關鍵設計：
 
 - **「不要做」段必填**：排除已被前面 round 覆蓋的 frame、強制 reviewer 進入新維度、避免 finding 重疊
-- **平行 background 跑**：3 個 reviewer 同時跑、主 context 節省 ~80% token
+- **平行 background 跑**：多個 reviewer 同時跑、主 context 節省 ~80% token
 - **輸出不設字數上限**：防膨脹靠下面兩條——欄位契約與產出先於材料的順序——不靠字數。字數上限與「逐格表、逐跳表必附」互斥，且截斷從尾端切，上限先砍掉的正是產出
 - **輸出格式是欄位契約**：每個 finding 帶固定欄位（位置、問題描述、嚴重度、建議修法）、下游的整合 punch list 靠欄位運作 — 漏欄位的 finding 整合時只能退回原報告重讀、平行 reviewer 省 context 的效益就被吃掉。位置欄用「檔案 + 段落語意標題」、行號在多 reviewer 平行修復中會漂移
 - **產出排在報告尾端的 frame，回報格式要先設計**：截斷從尾端切、方向固定，所以一份報告缺什麼由排版順序決定、與哪一段重要無關。翻譯探針、逐格表、逐跳表的產出（決策清單、彙整列）都排在材料之後，超長時被切掉的正是它，而留下的副產品有頭有尾、不留任何缺席的痕跡。處置優先用**反轉輸出順序**（指令明寫產出先寫、材料後附——這一個不依賴執行者遵守約定）；材料本身也要完整送達時才改用切分約定，並要求每一則自報「第幾則、共幾則」。回收時先看最後一段有沒有在句中斷開。詳見 [截斷先丟掉設計在尾端的產出](principles/truncation-drops-the-frame-output-first.md)
