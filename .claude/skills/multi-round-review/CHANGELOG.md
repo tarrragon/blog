@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.78.0 — 異源交換的驗收不按來源歸帳。`gap-remedy-depends-on-the-resource-it-needs` 與 SKILL.md 補：那一類的產出沒有歸屬（分歧在兩個量被並排的那一刻才存在，兩邊各自都只是照自己的算法報了一個數），所以驗收寫「有幾個約定因為這次並排而被寫明」而不是「取得對方的 N 則 finding」；按 finding 數歸帳會把貢獻記在先說出那句話的人名下，另一邊歸零。由一次自傷實例佐證：本卡作者在交換收尾時列了一份「從對方來的關鍵句」清單，被對方退回。
+
 **Version**: 1.77.0 — 異源交換的票要指定交換的形式，另補回一整段落後的內容。`gap-remedy-depends-on-the-resource-it-needs` 的〈異源交換買到的是沒寫明的約定〉先前只寫進了 report 側、這份副本漏了，由 `principle-mirror-check` 抓出後補齊。新增的判斷是：instance 軸要的不只是另一雙眼睛，是另一組會被說出來的預設，所以票要寫成兩邊各自量同一件事、各自報數，而不是一邊做另一邊審——一邊審的那種形式裡，審的人用的是被審那一份的約定，讀得到產物而讀不到產生它的預設，分歧沒有生成的機會。SKILL.md 的 Round N 段同步。
 
 **Version**: 1.76.0 — 七軸盤點的引導性與射程。由併行 session 的四輪實跑回饋改。**七軸卡**：表加「靠什麼補上」欄（timing 填時間、instance 填另一個執行者、其餘五軸填下一輪），套用方式由「找出未動的軸就是下一輪的價值來源」改成兩步（再問它靠什麼補得到），新增〈盤點怎麼填才算數〉（逐 reviewer 對帳、不適用與未動分開記、切換強度要對齊該軸的 catch 目標）與一份含修正過程的填好範例。**SKILL.md**：停止訊號第 1 條補程序摘要並標明七軸卡是必讀；新增〈派發之前先列這一批用的工具〉；共用產物段升級為三類射程外項目。**新增兩張 principle**：`gap-remedy-depends-on-the-resource-it-needs`、`review-scope-never-includes-the-instrument`。停止訊號卡同步補「停止判定寫成兩句話」。
