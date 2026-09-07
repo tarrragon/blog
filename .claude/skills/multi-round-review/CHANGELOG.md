@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.76.0 — 七軸盤點的引導性與射程。由併行 session 的四輪實跑回饋改。**七軸卡**：表加「靠什麼補上」欄（timing 填時間、instance 填另一個執行者、其餘五軸填下一輪），套用方式由「找出未動的軸就是下一輪的價值來源」改成兩步（再問它靠什麼補得到），新增〈盤點怎麼填才算數〉（逐 reviewer 對帳、不適用與未動分開記、切換強度要對齊該軸的 catch 目標）與一份含修正過程的填好範例。**SKILL.md**：停止訊號第 1 條補程序摘要並標明七軸卡是必讀；新增〈派發之前先列這一批用的工具〉；共用產物段升級為三類射程外項目。**新增兩張 principle**：`gap-remedy-depends-on-the-resource-it-needs`、`review-scope-never-includes-the-instrument`。停止訊號卡同步補「停止判定寫成兩句話」。
+
 **Version**: 1.75.1 — 兩張 principle 卡各補一段邊界。`review-frames-ask-efficacy-never-cost`：那個偏斜是一個沒被算過的假設，而不是算過之後的成本選擇——「代價側產出少」一量就翻轉。`proxy-is-cheaper-than-the-thing-it-stands-for`：它的三條修法預設「代理確實比較便宜」，而那個前提要驗過才算數；「這是理性的成本選擇」是一個可以被驗的宣稱、不是一個解釋，沒驗就套用會讓一個該修的偏斜看起來合理。
 
 **Version**: 1.75.0 — Round N 規劃判讀新增一個停止前置條件：看 finding 的方向分佈。frame 集合會朝同一個方向長（問規則的效力、不問規則的代價），成因兩端同向——找到漏抓是產出、找到誤報是否定產出，而規劃者在找「還有什麼沒被檢查」、執行者的價值由 finding 數體現。零 finding 與零 frame 在報告上同形，所以代價側交白卷讀起來像那一側沒問題。偵測是逐則標方向欄，修法是 frame 清單成對排；「找誤報會減少產出」這個估計本身是錯的，實測兩次撤回之後的替代 finding 都更強。新增 principle 卡 `review-frames-ask-efficacy-never-cost`。同批 `fabricated-observation-hides-among-cited-facts` 補兩節：兩個子形態（來源不存在／來源存在而說的是別的事），以及分類欄位本身就是偵測程序——第二個實例是被那張四欄表自己抓出來的。

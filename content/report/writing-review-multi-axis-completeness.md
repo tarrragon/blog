@@ -72,6 +72,22 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "抽象層", "Revi
 
 七題都回答後、再判斷該不該補軸。如果某軸沒覆蓋、不一定要補（cost vs risk）、但要 *知道沒覆蓋對應什麼盲點*。
 
+### 盤點怎麼填才算數
+
+七題有答案不等於盤點成立。一次四輪、二十餘個 reviewer 的實跑暴露三個執行細節：
+
+**憑印象填與逐 reviewer 對帳填會得到不同答案，而兩份表外觀相同。** 那次盤點的第一版有兩處錯——一個軸被判為未動而它審過兩次，另一個軸被一刀切判為「名義動、實質未動」。改成逐 reviewer 對帳（每個 reviewer 的 prompt 對到它實際切了哪幾軸）之後才對。填表的動作要有來源，而來源是 reviewer 清單。
+
+**「不適用」與「未動」分開記。** 某軸的切換方式在本次的審查對象上不存在時，它與「有這種表面而沒有審」是兩件事——審查一支 skill 時，surface 軸列的 report card 這一種表面並不存在。quorum 數的是軸，兩者混在一起會算錯，所以不適用不計入未動。
+
+**切換強度要對齊該軸的 catch 目標。** Instance 軸列的三種切換（不同 reviewer agent / 不同 LLM / 不同人）強度差很多。判準是問這次切換換掉的是不是該軸要 catch 的那個來源：instance 軸要 catch 的是異源視角，而同一個 session 派出的 reviewer 共用一份 prompt 與一個框架，換掉執行體取得的是採樣噪音——這一種記為未動、不進 quorum 的分子。下方反模式表的「把 instance 當主要變量」說的正是這件事，而它只寫了別這樣做、沒有回答做了算不算。
+
+### 未動的軸不一定是下一輪的價值來源
+
+「找出未動的軸、那就是 Round N+1 的價值來源」這句話對五個軸成立，對兩個軸不成立：timing 軸要的是時間，instance 軸要的是另一個執行者，兩者都不是再跑一輪取得的。照這條推論走會跑出一輪在七軸上補不了任何一格的審查，而它的產出只能來自把已動的軸再細分——正是本卡自己列為反模式的加輪數。
+
+所以盤點表要多一欄「這一軸靠什麼補上」：五個軸填「下一輪」，timing 填「時間」，instance 填「另一個執行者」。套用方式跟著改成兩步——找出未動的軸，再問它靠什麼補得到；答案不是「下一輪」的，處置是建票綁觸發條件而不是加輪。停止判定因此要寫成兩句話，分開記哪幾軸判定為已覆蓋、哪幾軸判定為取不到，否則「停在資源用完」與「停在證據齊備」在文字上同形。完整推導見 [#336 盤點出來的缺口，處置要看補上它需要哪一種資源](../gap-remedy-depends-on-the-resource-it-needs/)。
+
 ### Cadence + Timing 軸 dogfood (2026-05-18)
 
 4 篇 deep article batch 驗證 cadence + timing 兩軸的設計、不靠 reviewer 補、是靠 stage 2 寫作流程內抽樣：
@@ -117,18 +133,20 @@ N=5 full-threshold 補強驗證（同日第二批）：再跑 5 篇 PostgreSQL s
 
 ## 跟其他抽象層原則的關係
 
-| 原則                                                                                         | 關係                                                                                                |
-| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| [#83 Writing multi-pass review](../writing-multi-pass-review/)                               | 子軸（Frame）— #83 是 review 的 frame 軸 anchor                                                     |
-| [#121 Agent team context 隔離](../agent-team-context-isolation/)                             | 子軸（Instance）— #121 是 review 的 instance 軸 anchor                                              |
-| [#97 Metadata surface 納入寫作 review 範圍](../metadata-surface-in-writing-review/)          | 子軸（Surface）— #97 是 review 的 surface 軸 anchor                                                 |
-| [#95 Multi-pass review 的 scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)   | 子軸（Scope）— #95 是 review 的 scope 軸 anchor                                                     |
-| [#122 Cadence 同質化是模板的隱形維度](../cadence-homogenization-in-batch-writing/)           | 子軸（Cadence）— #122 是 review 的 cadence 軸 anchor                                                |
-| [#124 Emergence 違規要 stage 內抽樣](../emergence-violations-need-in-stream-sampling/)       | 子軸（Timing）— #124 是 review 的 timing 軸 anchor                                                  |
-| [#114 Multi-pass review frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/) | 子軸（Granularity）— #114 是 review 的 granularity 軸 anchor                                        |
-| [#79 決策對話的五維度](../decision-dialogue-dimensions/)                                     | Sibling meta-卡 — #79 是 decision 多軸 anchor、本卡是 review 多軸 anchor、兩者結構同骨              |
-| [#125 Collapse 是隱形預設](../collapse-is-implicit-default/)                                 | 上位 driver — 把 review collapse 到單軸是 #125 在 review surface 的具體 instance                    |
-| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)                | 互補 — #82 是錯誤類型 × 工具粒度、本卡是 review 多軸；兩者交集點 = granularity 軸 + timing 軸的設計 |
+| 原則                                                                                                        | 關係                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [#83 Writing multi-pass review](../writing-multi-pass-review/)                                              | 子軸（Frame）— #83 是 review 的 frame 軸 anchor                                                               |
+| [#121 Agent team context 隔離](../agent-team-context-isolation/)                                            | 子軸（Instance）— #121 是 review 的 instance 軸 anchor                                                        |
+| [#97 Metadata surface 納入寫作 review 範圍](../metadata-surface-in-writing-review/)                         | 子軸（Surface）— #97 是 review 的 surface 軸 anchor                                                           |
+| [#95 Multi-pass review 的 scope 要蓋同類風險區](../multi-pass-scope-must-cover-risk-zone/)                  | 子軸（Scope）— #95 是 review 的 scope 軸 anchor                                                               |
+| [#122 Cadence 同質化是模板的隱形維度](../cadence-homogenization-in-batch-writing/)                          | 子軸（Cadence）— #122 是 review 的 cadence 軸 anchor                                                          |
+| [#124 Emergence 違規要 stage 內抽樣](../emergence-violations-need-in-stream-sampling/)                      | 子軸（Timing）— #124 是 review 的 timing 軸 anchor                                                            |
+| [#114 Multi-pass review frame 顆粒度盲點](../multi-pass-review-frame-granularity-blindspot/)                | 子軸（Granularity）— #114 是 review 的 granularity 軸 anchor                                                  |
+| [#79 決策對話的五維度](../decision-dialogue-dimensions/)                                                    | Sibling meta-卡 — #79 是 decision 多軸 anchor、本卡是 review 多軸 anchor、兩者結構同骨                        |
+| [#125 Collapse 是隱形預設](../collapse-is-implicit-default/)                                                | 上位 driver — 把 review collapse 到單軸是 #125 在 review surface 的具體 instance                              |
+| [#82 字面攔截 vs 行為精煉](../literal-interception-vs-behavioral-refinement/)                               | 互補 — #82 是錯誤類型 × 工具粒度、本卡是 review 多軸；兩者交集點 = granularity 軸 + timing 軸的設計           |
+| [#336 盤點出來的缺口，處置要看補上它需要哪一種資源](../gap-remedy-depends-on-the-resource-it-needs/)        | 限定本卡的處置那一半 — 本卡把「某軸沒覆蓋」交給成本與風險的權衡，而權衡之前要先問這一格用手上的流程補不補得到 |
+| [#337 審查的射程只涵蓋被審查的對象，工具與共用產物在射程外](../review-scope-never-includes-the-instrument/) | 補本卡的盲區 — 七軸全部指著審查對象，所以審查所用的工具與每輪共用的產物落在七軸之外、加軸補不到               |
 
 ---
 
@@ -145,5 +163,6 @@ N=5 full-threshold 補強驗證（同日第二批）：再跑 5 篇 PostgreSQL s
 | 1 個 reviewer 跑 10 輪、catch 範圍仍狹窄         | Instance 軸 collapse、補不同 reviewer instance             |
 | 「我們 review 已經很完整」但常被 user 點漏抓問題 | 自我評估只看單軸、需要對照七軸 enumeration                 |
 | 想加 review 第 11 輪                             | 警訊 — 多半是缺軸不缺深度、查七軸覆蓋而不是加輪            |
+| 盤點出未動的軸、直接排下一輪                     | 先問那一軸靠什麼補上、答案不是「下一輪」的改建票（#336）   |
 
 **核心**：寫作 review 完整性是七軸交集、不是單軸深度；缺軸不缺深度。設計 review 流程時 enumerate 七軸覆蓋狀況、預設展開、選窄要證明；當 review 報告漏抓 systematic 違規、查的不是「再加一輪」、是「哪一軸沒覆蓋」。
