@@ -2,6 +2,12 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.0.0 — 結構重組：SKILL.md 由 30,101 tokens（官方 5k 門檻的 6.0 倍、392 行）拆成入口檔加六份 reference，照 `skill-design-guide` 1.9.0 的 `splitting-an-existing-skill.md` 程序走。**入口檔留下的**：適用情境、基本原則、誰做哪一段、派發前兩節、frame 表、新增的〈標準流程：按輪讀對應的檔〉路由表（帶「涵蓋章節」欄）、跟既有 skill 的關係——4,754 tokens、125 行。**外移**：`round-1-compliance.md`（1-A 到 1-F）、`round-2-cadence.md`（2-A 到 2-D）、`round-3-self-application.md`（3-A 到 3-H，加重組後遺症 frame）、`planning-and-stopping.md`（Round N 規劃判讀、反模式）、`reviewer-prompt.md`（產出契約、prompt 結構）、`integrating-findings.md`（整合工作流、異源複核、隔離實驗）。每份檔頭三段式（何時讀／同目錄／溯源），橫向入口逐檔用 `grep -rn <檔名>` 扣掉路由列與同目錄列後寫進「亦由此進入」。**判準**：留下的是路由表某一列的判斷條件、或每一列讀者都會用到的；搬走的是指得出唯一或少數幾列的。〈產出契約〉因此跟 prompt 結構同住——它是 prompt 的內容，寫 prompt 的人才用。
+
+驗證：行覆蓋逐行比對（392 行每行恰一次，忽略 fmt 對齊與已知的三處跨檔改寫）PASS；節界 H2+H3 合計 21 與原檔相同（round 檔內 `###` 升為 `##`）；各檔 H1 涵蓋其全部 H2；跨檔指涉一律連檔名；位置詞殘留四處皆同檔緊鄰；portable scan clean；description 由 581 字元縮到 246（250 字元閘門）。
+
+拆分前先跑 1-E 兩個 reviewer（互相矛盾的判準／斷言支撐），修掉會分居兩檔的 15 處矛盾，見上一個 commit。**留給拆分後三輪審查的清單**——矛盾類 F1-2 單篇適用性（入口說 3+ 篇而 frame 表替單篇寫了條件）、F1-5/F2-1 欄位契約三處不齊且 prompt 模板缺契約欄位、F1-6「三個 reviewer」硬數字過期、F1-7 時間加總不合、F2-3 窮盡列舉不外包 vs 五個 frame 派 reviewer 窮盡、F2-4 3-C 的探針由誰派、F2-5 frame 表 22 列全是漏抓方向沒有誤報方向、F2-6 2-B 混進有檢查表的動作、F3-4/F3-5 register 層真防線與工具鏈三處答案不同、F3-6 原則 4「前兩輪只從已寫的找」與 1-D/2-B/2-B‴ 不符、F4-4/F4-5/F4-6、F5-1/F5-2/F5-3/F5-5、F6-3；斷言支撐類 14 則缺支撐（承重最高：quorum 任二齊備為何是二、「一份讀錯就是判決」的統計腿、低階模型不可信三維、跨 batch 升級的「第二次」）與 22 處裸數字門檻。**已知的第 3 層規模問題**：`round-2-cadence.md` 8,172 tokens 是最大的單檔，第 3 層單檔判準（整份執行 vs 選段查閱）在 skill-design-guide 1.9.0 尚未定案，先不再拆。
+
 **Version**: 1.78.0 — 異源交換的驗收不按來源歸帳。`gap-remedy-depends-on-the-resource-it-needs` 與 SKILL.md 補：那一類的產出沒有歸屬（分歧在兩個量被並排的那一刻才存在，兩邊各自都只是照自己的算法報了一個數），所以驗收寫「有幾個約定因為這次並排而被寫明」而不是「取得對方的 N 則 finding」；按 finding 數歸帳會把貢獻記在先說出那句話的人名下，另一邊歸零。由一次自傷實例佐證：本卡作者在交換收尾時列了一份「從對方來的關鍵句」清單，被對方退回。
 
 **Version**: 1.77.0 — 異源交換的票要指定交換的形式，另補回一整段落後的內容。`gap-remedy-depends-on-the-resource-it-needs` 的〈異源交換買到的是沒寫明的約定〉先前只寫進了 report 側、這份副本漏了，由 `principle-mirror-check` 抓出後補齊。新增的判斷是：instance 軸要的不只是另一雙眼睛，是另一組會被說出來的預設，所以票要寫成兩邊各自量同一件事、各自報數，而不是一邊做另一邊審——一邊審的那種形式裡，審的人用的是被審那一份的約定，讀得到產物而讀不到產生它的預設，分歧沒有生成的機會。SKILL.md 的 Round N 段同步。
