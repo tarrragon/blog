@@ -13,26 +13,35 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from skill_sync.cli import (  # noqa: E402
     _apply_prune,
+    _check_push_revert,
+    _check_suspect_revert,
     _diff_line_counts,
     _diverge_warning,
+    _new_line_numbers_from_diff,
     _extract_python_narrative_text,
     _is_portable_declared,
     _read_sync_base,
     _record_sync_base,
+    _refresh_stale_sync_base,
     _report_portability,
     _resolve_diverge_direction,
     _resolve_hook_logs_dir,
     _scan_line_for_violations,
     _skill_exists_in_canonical,
+    _stale_version_warning,
+    _write_divergence_force_log,
     _write_portability_force_log,
     _write_sync_base,
     check_portability,
     _classify_sync_status,
     _extract_local_manifest,
+    _extract_single_version,
+    _extract_version_string,
     _has_local_override,
     _should_exclude_file,
     build_parser,
     build_push_plan,
+    cmd_list,
     cmd_pull,
     cmd_pull_all,
     cmd_push,
@@ -45,6 +54,7 @@ from skill_sync.cli import (  # noqa: E402
     PortabilityViolation,
     print_diff_preview,
     prune_dst_only,
+    scan_push_for_banned_terms,
     SKILL_SYNC_BASE_MARKER,
     SKILL_SYNC_OVERRIDE_MARKER,
     sync_status_report,
@@ -329,6 +339,25 @@ def _write_skill(base: Path, name: str, version: str, body: str) -> Path:
     return skill_dir
 
 
+def _write_skill_with_frontmatter_version(
+    base: Path, name: str, version: str, body: str
+) -> Path:
+    """建立 SKILL.md，版本寫在 frontmatter 的 metadata.version（縮排兩格）。
+
+    本專案實際 SKILL.md 的主流形式（多數採此寫法），與 `_write_skill` 用的
+    `**Version**:` 形式不同——後者一直讓 `_extract_version_string` 的回歸
+    測試綠燈，卻沒有覆蓋到真正的生產形狀，才讓 frontmatter 版本抽取的迴歸
+    長期未被發現。
+    """
+    skill_dir = base / name
+    skill_dir.mkdir(parents=True, exist_ok=True)
+    (skill_dir / "SKILL.md").write_text(
+        f"---\nname: {name}\nmetadata:\n  version: {version}\n---\n\n"
+        f"# {name}\n\n{body}\n"
+    )
+    return skill_dir
+
+
 class _FakeCompletedProcess:
     """替代 subprocess.CompletedProcess，讓 update_sync_manifest 的測試不觸發真實 git/網路操作。"""
 
@@ -407,6 +436,20 @@ def test_content_hash_excludes_ruff_cache_dir(tmp_path):
 
 def test_content_hash_returns_none_for_missing_dir(tmp_path):
     assert compute_content_hash(tmp_path / "does-not-exist") is None
+
+
+def test_content_hash_with_subdirectory_matches_hardcoded_digest(tmp_path):
+    """含子目錄的固定 digest 斷言（0.1.0-W3-039）：rel 鍵必須是 `sub/nested.txt`
+    這個 POSIX 分隔符形式，不論執行平台為何。若實作改回 `str(Path)`，在
+    Windows 上會產生 `sub\\nested.txt`，鍵值改變導致雜湊與此處硬編碼值不符；
+    本測試以固定內容 + 固定 digest 把這個格式鎖進斷言。"""
+    skill_dir = _write_skill(tmp_path, "wrap-decision", "2.5.0", "same body")
+    sub_dir = skill_dir / "sub"
+    sub_dir.mkdir()
+    (sub_dir / "nested.txt").write_text("nested content\n")
+
+    expected = "f45f1ae9f5242b3a26c6709e9cbabce09078a7914d10d203d78ac605b503f976"
+    assert compute_content_hash(skill_dir) == expected
 
 
 # --- regression: 同號不同內容不再被判為 up_to_date（0.2.1-W3-124 §11.2） ------
@@ -612,6 +655,106 @@ def test_record_sync_base_skips_missing_dir(tmp_path):
     # compute_content_hash 回傳 None 時不應嘗試寫入不存在的目錄
     _record_sync_base(tmp_path / "does-not-exist")
     assert not (tmp_path / "does-not-exist").exists()
+
+
+# --- _refresh_stale_sync_base（0.2.1-W3-1271） -------------------------------
+#
+# canonical 通道（sync-claude-pull 全樹 overlay）與本地直接編輯都會讓 skill
+# 內容前進而不觸碰 .skill-sync-base，之後遠端單向前進被 _resolve_diverge_direction
+# 判成 conflict，報告端要求人工比對本可自動判定的情況。本節固化：只在「呼叫端已
+# 確認 local == remote」且 marker 落後時才重記，並且對已正確的 marker 不做無謂寫入。
+
+
+def test_refresh_stale_sync_base_rewrites_marker_when_stale(tmp_path):
+    skill_dir = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+    _write_sync_base(skill_dir, "0" * 64)  # 過期 marker，代表上次同步後內容已前進
+
+    refreshed = _refresh_stale_sync_base(tmp_path, ["demo-skill"])
+
+    assert refreshed == 1
+    assert _read_sync_base(skill_dir) == compute_content_hash(skill_dir)
+
+
+def test_refresh_stale_sync_base_skips_when_marker_already_current(tmp_path):
+    """marker 已等於目前雜湊：不重寫，避免報告命令對已正確的 skill 逐次觸碰檔案。"""
+    skill_dir = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+    current_hash = compute_content_hash(skill_dir)
+    _write_sync_base(skill_dir, current_hash)
+    marker_path = skill_dir / SKILL_SYNC_BASE_MARKER
+    mtime_before = marker_path.stat().st_mtime_ns
+
+    refreshed = _refresh_stale_sync_base(tmp_path, ["demo-skill"])
+
+    assert refreshed == 0
+    assert marker_path.stat().st_mtime_ns == mtime_before
+
+
+def test_refresh_stale_sync_base_skips_missing_dir(tmp_path):
+    # compute_content_hash 回傳 None（目錄不存在）時略過，不視為錯誤
+    assert _refresh_stale_sync_base(tmp_path, ["does-not-exist"]) == 0
+
+
+def test_cmd_pull_all_refreshes_stale_marker_for_up_to_date_skill(tmp_path, monkeypatch):
+    """驗收 1：marker 過期 + local == remote，跑 `skill-sync pull`（無名稱）後 marker 更新。"""
+    import skill_sync.cli as cli_module
+
+    skill_dir = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+    _write_sync_base(skill_dir, "0" * 64)  # 過期 marker（例如 canonical overlay 通道寫入的內容）
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: tmp_path)
+    _stub_manifest(
+        monkeypatch, {"demo-skill": {"hash": compute_content_hash(skill_dir), "version": "1.0.0"}}
+    )
+
+    cmd_pull_all(argparse.Namespace())
+
+    assert _read_sync_base(skill_dir) == compute_content_hash(skill_dir)
+
+
+def test_cmd_pull_all_does_not_refresh_marker_for_diverged_skill(tmp_path, monkeypatch):
+    """驗收 2：marker 過期 + local != remote（真分歧），跑報告後 marker 保持不變。"""
+    import skill_sync.cli as cli_module
+
+    skill_dir = _write_skill(tmp_path, "demo-skill", "1.0.0", "local body")
+    _write_sync_base(skill_dir, "0" * 64)
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: tmp_path)
+    _stub_manifest(monkeypatch, {"demo-skill": {"hash": "1" * 64, "version": "0.9.0"}})
+
+    cmd_pull_all(argparse.Namespace())
+
+    assert _read_sync_base(skill_dir) == "0" * 64
+
+
+def test_cmd_pull_all_prints_refresh_count_when_markers_refreshed(tmp_path, monkeypatch, capsys):
+    import skill_sync.cli as cli_module
+
+    skill_dir = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+    _write_sync_base(skill_dir, "0" * 64)
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: tmp_path)
+    _stub_manifest(
+        monkeypatch, {"demo-skill": {"hash": compute_content_hash(skill_dir), "version": "1.0.0"}}
+    )
+
+    cmd_pull_all(argparse.Namespace())
+
+    out = capsys.readouterr().out
+    assert "Refreshed 1 stale" in out
+
+
+def test_cmd_pull_all_silent_when_no_marker_needs_refresh(tmp_path, monkeypatch, capsys):
+    """既有行為不變：marker 已正確時報告不印任何重記訊息（唯讀命令的既有安靜輸出）。"""
+    import skill_sync.cli as cli_module
+
+    skill_dir = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+    _write_sync_base(skill_dir, compute_content_hash(skill_dir))
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: tmp_path)
+    _stub_manifest(
+        monkeypatch, {"demo-skill": {"hash": compute_content_hash(skill_dir), "version": "1.0.0"}}
+    )
+
+    cmd_pull_all(argparse.Namespace())
+
+    out = capsys.readouterr().out
+    assert "Refreshed" not in out
 
 
 # --- _resolve_diverge_direction（純函式，四種組合） ---------------------------
@@ -1127,6 +1270,32 @@ def test_cmd_push_records_sync_base_on_no_changes_fast_path(tmp_path, monkeypatc
     assert _read_sync_base(source) == compute_content_hash(source)
 
 
+def test_cmd_push_clone_disables_autocrlf(tmp_path, monkeypatch):
+    """push 用的暫存 clone 若繼承 Git for Windows 系統層 core.autocrlf=true，
+    checkout 出來的內容會變成 CRLF，使雜湊與本地不同（0.1.0-W3-039）。"""
+    import skill_sync.cli as cli_module
+
+    skills_dir = tmp_path / "skills"
+    (skills_dir / "demo-skill").mkdir(parents=True)
+    (skills_dir / "demo-skill" / "SKILL.md").write_text("kept")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    scratch = tmp_path / "scratch"
+    remote_skill = scratch / "repo" / "demo-skill"
+    remote_skill.mkdir(parents=True)
+    (remote_skill / "SKILL.md").write_text("kept")
+    _stub_fixed_tempdir(monkeypatch, scratch)
+
+    git_calls, _ = _stub_git_recording(monkeypatch)
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cmd_push(args)
+
+    clone_calls = [call for call in git_calls if "clone" in call]
+    assert clone_calls, "expected at least one clone call"
+    assert all(call[:2] == ["-c", "core.autocrlf=false"] for call in clone_calls)
+
+
 # --- cmd_pull 記錄 sync base（0.2.1-W3-668） ----------------------------------
 
 
@@ -1180,6 +1349,57 @@ def test_cmd_pull_records_sync_base_when_already_up_to_date(tmp_path, monkeypatc
     cmd_pull(args)
 
     assert _read_sync_base(target) == compute_content_hash(target)
+
+
+def test_cmd_pull_clone_disables_autocrlf(tmp_path, monkeypatch):
+    """pull 用的暫存 clone 同樣需要 -c core.autocrlf=false（0.1.0-W3-039）。"""
+    import skill_sync.cli as cli_module
+
+    skills_dir = tmp_path / "skills"
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    scratch = tmp_path / "scratch"
+    remote_skill = scratch / "repo" / "demo-skill"
+    remote_skill.mkdir(parents=True)
+    (remote_skill / "SKILL.md").write_text("fresh remote content")
+    _stub_fixed_tempdir(monkeypatch, scratch)
+
+    git_calls: list[list[str]] = []
+
+    def _fake_run_git(args, cwd=None):
+        git_calls.append(args)
+        return _FakeCompletedProcess(returncode=0)
+
+    monkeypatch.setattr(cli_module, "run_git", _fake_run_git)
+
+    args = argparse.Namespace(name="demo-skill", force=True)
+    cmd_pull(args)
+
+    clone_calls = [call for call in git_calls if "clone" in call]
+    assert clone_calls, "expected at least one clone call"
+    assert all(call[:2] == ["-c", "core.autocrlf=false"] for call in clone_calls)
+
+
+# --- cmd_list（0.1.0-W3-039：clone 呼叫需帶 -c core.autocrlf=false） ----------
+
+
+def test_cmd_list_clone_disables_autocrlf(monkeypatch):
+    """list 用的暫存 clone 同樣需要 -c core.autocrlf=false（0.1.0-W3-039）。"""
+    import skill_sync.cli as cli_module
+
+    git_calls: list[list[str]] = []
+
+    def _fake_run_git(args, cwd=None):
+        git_calls.append(args)
+        return _FakeCompletedProcess(returncode=0)
+
+    monkeypatch.setattr(cli_module, "run_git", _fake_run_git)
+
+    cmd_list(argparse.Namespace())
+
+    clone_calls = [call for call in git_calls if "clone" in call]
+    assert clone_calls, "expected at least one clone call"
+    assert all(call[:2] == ["-c", "core.autocrlf=false"] for call in clone_calls)
 
 
 # --- cmd_pull_all 依 direction 分組列印（0.2.1-W3-668） -----------------------
@@ -1244,6 +1464,21 @@ def test_pull_parser_has_no_prune_flag():
         parser.parse_args(["pull", "demo-skill", "--prune"])
 
 
+def test_pull_help_does_not_claim_no_name_form_updates_all_installed(capsys):
+    """0.2.1-W3-1284：無名稱形式自 W3-124 起即為純報告（無 input() 提示、
+    無 overlay_copy），`--help` 不得再宣稱它會 update all installed —— 另一
+    consumer 曾依這句文字誤判該命令為寫入命令。"""
+    parser = build_parser()
+
+    with pytest.raises(SystemExit):
+        parser.parse_args(["pull", "--help"])
+
+    out = capsys.readouterr().out
+    assert "update all installed" not in out
+    assert "report" in out.lower()
+    assert "sync_status" not in out.lower()  # 面向使用者文字，不外洩內部函式名
+
+
 # --- sync_status_report（對外契約，0.2.1-W3-353） ----------------------------
 #
 # 此函式是 skill-sync 對消費端的公開介面。先前消費端（sync-claude-push）取用
@@ -1275,6 +1510,7 @@ def test_public_contract_names_exist_for_consumers(tmp_path, monkeypatch):
         "pull_command",
         "push_command",
         "direction",
+        "suspect_revert_commit",
     )
 
 
@@ -1376,33 +1612,89 @@ def test_sync_status_report_handles_missing_skills_dir(tmp_path, monkeypatch):
     assert status.skipped_remote_missing == []
 
 
-def test_fetch_remote_manifest_builds_raw_url_from_repo_url(monkeypatch):
-    """URL 拼裝只此一份；消費端複製這段正是 repo 不一致的來源。"""
-    captured = {}
+def _init_bare_repo_with_versions_json(tmp_path: Path, payload: dict | None) -> Path:
+    """建一個本地 bare git repo，選擇性在根目錄放一份 versions.json 並 commit。
 
-    class _Resp:
-        def read(self):
-            return b"{}"
+    `fetch_remote_manifest` 改走 git clone 後，測試不再需要真的連網——本地
+    bare repo 的 `git clone` 走一模一樣的程式碼路徑（clone / sparse-checkout /
+    讀檔），只是 transport 換成檔案系統，行為與對真實 GitHub repo 完全等價。
+    `payload=None` 時建一個沒有 versions.json 的 repo，用於驗證「根目錄無此
+    檔案」分支。
+    """
+    import subprocess as sp
 
-        def __enter__(self):
-            return self
+    bare = tmp_path / "bare.git"
+    sp.run(["git", "init", "--bare", "-q", str(bare)], check=True)
+    # HEAD 明確指向 main，不依賴 init.defaultBranch 設定——clone 沒指定分支時
+    # 一律解析 HEAD，HEAD 若指向一個從未被推送過的分支，clone 會失敗。
+    sp.run(["git", "-C", str(bare), "symbolic-ref", "HEAD", "refs/heads/main"], check=True)
 
-        def __exit__(self, *exc):
-            return False
-
-    def _fake_urlopen(req, timeout=None):
-        captured["url"] = req.full_url
-        return _Resp()
-
-    import skill_sync.cli as cli_module
-
-    monkeypatch.setattr(cli_module.urllib.request, "urlopen", _fake_urlopen)
-
-    fetch_remote_manifest("https://github.com/owner/repo.git")
-
-    assert captured["url"] == (
-        "https://raw.githubusercontent.com/owner/repo/main/versions.json"
+    seed = tmp_path / "seed"
+    sp.run(["git", "init", "-q", str(seed)], check=True)
+    sp.run(["git", "-C", str(seed), "config", "user.email", "test@example.com"], check=True)
+    sp.run(["git", "-C", str(seed), "config", "user.name", "test"], check=True)
+    if payload is not None:
+        (seed / "versions.json").write_text(json.dumps(payload), encoding="utf-8")
+    else:
+        (seed / "README.md").write_text("no versions.json here\n", encoding="utf-8")
+    sp.run(["git", "-C", str(seed), "add", "-A"], check=True)
+    sp.run(["git", "-C", str(seed), "commit", "-q", "-m", "seed"], check=True)
+    sp.run(
+        ["git", "-C", str(seed), "push", "-q", str(bare), "HEAD:main"],
+        check=True,
     )
+    return bare
+
+
+def test_fetch_remote_manifest_clones_repo_url_directly(tmp_path):
+    """repo_url 原樣傳給 git clone，不做任何 URL 拼裝或改寫（ARCH-BAL-016：
+    URL 推導只此一份 —— 改走 git clone 後這份推導直接歸零，clone 的目標
+    就是呼叫端傳入的同一個 repo_url，沒有第二份邏輯可能與它分岔）。"""
+    bare = _init_bare_repo_with_versions_json(tmp_path, {"demo": {"hash": "abc"}})
+
+    manifest = fetch_remote_manifest(str(bare))
+
+    assert manifest == {"demo": {"hash": "abc"}}
+
+
+def test_fetch_remote_manifest_returns_empty_dict_when_versions_json_absent(tmp_path):
+    bare = _init_bare_repo_with_versions_json(tmp_path, None)
+
+    assert fetch_remote_manifest(str(bare)) == {}
+
+
+def test_fetch_remote_manifest_raises_runtime_error_on_clone_failure(tmp_path):
+    """不存在的 repo 路徑：git clone 非零結束碼須轉為可被呼叫端 catch 的例外，
+    不可用 sys.exit（run_git 的既有行為）直接砍掉整個行程——
+    `_skill_exists_in_canonical` 與 `sync_status_report` 的呼叫端都是
+    `except Exception` 包住這個呼叫，指望的是例外而非行程終止。"""
+    with pytest.raises(RuntimeError):
+        fetch_remote_manifest(str(tmp_path / "does-not-exist"))
+
+
+def test_fetch_remote_manifest_sees_content_immediately_after_remote_changes(tmp_path):
+    """回歸測試（0.2.1-W3-1106）：改走 raw.githubusercontent.com 的舊實作在
+    CDN 快取窗內（實測最長 308 秒）會回傳推送前的內容，使剛推送完成的 skill
+    被 `sync_status_report` 誤判為 SHOULD PULL；照建議操作會用舊內容覆蓋
+    剛推送的新內容。本地 bare repo 沒有 CDN，故無法重現快取窗本身，但能驗證
+    `fetch_remote_manifest` 走的是「每次都問 live ref」的路徑：對同一個
+    repo_url，遠端內容變更後緊接著再呼叫一次，必須立刻讀到新值，不得回傳
+    任何快取層級的舊值。"""
+    import subprocess as sp
+
+    bare = _init_bare_repo_with_versions_json(tmp_path, {"demo-skill": {"hash": "old-hash"}})
+
+    assert fetch_remote_manifest(str(bare)) == {"demo-skill": {"hash": "old-hash"}}
+
+    seed = tmp_path / "seed"
+    (seed / "versions.json").write_text(
+        json.dumps({"demo-skill": {"hash": "new-hash"}}), encoding="utf-8"
+    )
+    sp.run(["git", "-C", str(seed), "add", "-A"], check=True)
+    sp.run(["git", "-C", str(seed), "commit", "-q", "-m", "push new content"], check=True)
+    sp.run(["git", "-C", str(seed), "push", "-q", str(bare), "HEAD:main"], check=True)
+
+    assert fetch_remote_manifest(str(bare)) == {"demo-skill": {"hash": "new-hash"}}
 
 
 def test_preview_labels_dst_only_as_prune_when_enabled(capsys):
@@ -1566,6 +1858,526 @@ def test_diverge_warning_conflict_mentions_both_sides():
     assert "independently" in warning
 
 
+# --- SUSPECT REVERT（0.2.1-W3-1302：git log 祖先關係偵測回退） ---------------
+#
+# 三方比對（_resolve_diverge_direction）只判斷「哪一側自 base 後移動過」，
+# 不判斷「移動後的內容是否仍是 base 的超集」。一個沒有合法 .skill-sync-base
+# marker 的推送方（如從未透過本 CLI 同步過的既有消費者）用舊副本覆蓋
+# canonical 時，另一個持有合法 marker 的消費者看到的是字面正確、語意錯誤的
+# "pull"：remote 確實移動過，只是移動方向是倒退。_check_suspect_revert
+# 用 canonical 既有的 git 樹狀物件雜湊補上這道檢查，不需新增持久化格式。
+
+
+def _git(args: list[str], cwd) -> None:
+    __import__("subprocess").run(["git", *args], cwd=cwd, check=True, capture_output=True)
+
+
+def _init_bare_with_head(bare: Path) -> None:
+    _git(["init", "--bare", "-q", str(bare)], cwd=None)
+    _git(["symbolic-ref", "HEAD", "refs/heads/main"], cwd=bare)
+
+
+def _init_consumer(consumer_dir: Path) -> None:
+    consumer_dir.mkdir(parents=True, exist_ok=True)
+    _git(["init", "-q", str(consumer_dir)], cwd=None)
+    _git(["config", "user.email", "test@example.com"], cwd=consumer_dir)
+    _git(["config", "user.name", "test"], cwd=consumer_dir)
+
+
+def test_check_suspect_revert_detects_content_matching_older_commit(tmp_path):
+    """單元測試：直接對一個真實 bare repo 驗證 _check_suspect_revert 本身
+    （不經過完整 push/pull 流程）。v1 -> v2 -> v1（回退）三次提交後，
+    v1 的樹狀雜湊在較早的提交中已經出現過，須命中。"""
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    seed = tmp_path / "seed"
+    _init_consumer(seed)
+
+    skill_dir = seed / "demo-skill"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text("v1\n")
+    _git(["add", "-A"], cwd=seed)
+    _git(["commit", "-q", "-m", "v1"], cwd=seed)
+    _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    (skill_dir / "SKILL.md").write_text("v2\n")
+    _git(["add", "-A"], cwd=seed)
+    _git(["commit", "-q", "-m", "v2"], cwd=seed)
+    _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    (skill_dir / "SKILL.md").write_text("v1\n")  # 回退：內容與第一次提交相同
+    _git(["add", "-A"], cwd=seed)
+    _git(["commit", "-q", "-m", "revert to v1"], cwd=seed)
+    _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    result = _check_suspect_revert(str(bare), "demo-skill")
+
+    assert result is not None
+    assert "(" in result and ")" in result  # 短 SHA + 時間戳格式
+
+
+def test_check_suspect_revert_none_when_content_genuinely_new(tmp_path):
+    """v1 -> v2，remote 目前是 v2，不是任何更舊提交的重複：不應誤報。"""
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    seed = tmp_path / "seed"
+    _init_consumer(seed)
+
+    skill_dir = seed / "demo-skill"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text("v1\n")
+    _git(["add", "-A"], cwd=seed)
+    _git(["commit", "-q", "-m", "v1"], cwd=seed)
+    _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    (skill_dir / "SKILL.md").write_text("v2\n")
+    _git(["add", "-A"], cwd=seed)
+    _git(["commit", "-q", "-m", "v2"], cwd=seed)
+    _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    assert _check_suspect_revert(str(bare), "demo-skill") is None
+
+
+def test_check_suspect_revert_none_when_only_one_commit(tmp_path):
+    """只有一筆歷史（首次推送）：沒有「更舊」可比對，不誤報。"""
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    seed = tmp_path / "seed"
+    _init_consumer(seed)
+
+    skill_dir = seed / "demo-skill"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text("v1\n")
+    _git(["add", "-A"], cwd=seed)
+    _git(["commit", "-q", "-m", "v1"], cwd=seed)
+    _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    assert _check_suspect_revert(str(bare), "demo-skill") is None
+
+
+def test_check_suspect_revert_none_on_clone_failure(tmp_path):
+    """repo_url 不存在：吞下例外回傳 None，不讓報告連帶失敗。"""
+    assert _check_suspect_revert(str(tmp_path / "does-not-exist"), "demo-skill") is None
+
+
+# --- _check_push_revert（0.2.1-W3-1303：push 端縱深防禦） --------------------
+#
+# 與 _check_suspect_revert 共用 _cloned_skill_history 走訪歷史，但比對對象
+# 是「本地檔案系統內容」而非「remote 現況」，不能用樹狀雜湊直接比對，改為
+# 逐一 checkout 歷史提交後用 compute_content_hash 比對。
+
+
+def test_check_push_revert_detects_local_content_matching_older_commit(tmp_path):
+    """v1 -> v2 -> v3；本地內容等於 v1（比 HEAD 更舊兩步）：須命中。"""
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    seed = tmp_path / "seed"
+    _init_consumer(seed)
+
+    skill_dir = seed / "demo-skill"
+    skill_dir.mkdir()
+    for body in ("v1", "v2", "v3"):
+        (skill_dir / "SKILL.md").write_text(f"{body}\n")
+        _git(["add", "-A"], cwd=seed)
+        _git(["commit", "-q", "-m", body], cwd=seed)
+        _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    local_dir = tmp_path / "local" / "demo-skill"
+    local_dir.mkdir(parents=True)
+    (local_dir / "SKILL.md").write_text("v1\n")
+    local_hash = compute_content_hash(local_dir)
+
+    result = _check_push_revert(str(bare), "demo-skill", local_hash)
+
+    assert result is not None
+    assert "(" in result and ")" in result
+
+
+def test_check_push_revert_none_when_local_matches_latest_commit(tmp_path):
+    """本地內容等於最新提交（HEAD）：不是回退，交由既有機制處理，本函式不命中。"""
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    seed = tmp_path / "seed"
+    _init_consumer(seed)
+
+    skill_dir = seed / "demo-skill"
+    skill_dir.mkdir()
+    for body in ("v1", "v2"):
+        (skill_dir / "SKILL.md").write_text(f"{body}\n")
+        _git(["add", "-A"], cwd=seed)
+        _git(["commit", "-q", "-m", body], cwd=seed)
+        _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    local_dir = tmp_path / "local" / "demo-skill"
+    local_dir.mkdir(parents=True)
+    (local_dir / "SKILL.md").write_text("v2\n")  # 等於 HEAD
+    local_hash = compute_content_hash(local_dir)
+
+    assert _check_push_revert(str(bare), "demo-skill", local_hash) is None
+
+
+def test_check_push_revert_none_when_content_genuinely_new(tmp_path):
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    seed = tmp_path / "seed"
+    _init_consumer(seed)
+
+    skill_dir = seed / "demo-skill"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text("v1\n")
+    _git(["add", "-A"], cwd=seed)
+    _git(["commit", "-q", "-m", "v1"], cwd=seed)
+    _git(["push", "-q", str(bare), "HEAD:main"], cwd=seed)
+
+    local_dir = tmp_path / "local" / "demo-skill"
+    local_dir.mkdir(parents=True)
+    (local_dir / "SKILL.md").write_text("brand new content\n")
+    local_hash = compute_content_hash(local_dir)
+
+    assert _check_push_revert(str(bare), "demo-skill", local_hash) is None
+
+
+def test_check_push_revert_none_on_clone_failure(tmp_path):
+    assert _check_push_revert(str(tmp_path / "does-not-exist"), "demo-skill", "abc") is None
+
+
+def test_cmd_push_warns_on_revert_when_no_sync_base_recorded(tmp_path, monkeypatch, capsys):
+    """整合測試，重現 0.2.1-W3-1132 場景一：乙無合法 marker 拿舊副本
+    push --force 覆蓋，push 過程須印出方向警告而非靜默。"""
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    jia = tmp_path / "jia"
+    yi = tmp_path / "yi"
+    for consumer in (jia, yi):
+        _init_consumer(consumer)
+        (consumer / ".claude" / "skills").mkdir(parents=True)
+
+    monkeypatch.setenv("SKILL_SYNC_REPO", str(bare))
+    import skill_sync.cli as cli_module
+
+    def push_in(consumer_skills: Path, version: str, body: str, message: str) -> None:
+        _write_skill_with_frontmatter_version(consumer_skills, "demo-skill", version, body)
+        monkeypatch.setattr(cli_module, "get_skills_dir", lambda: consumer_skills)
+        cli_module.cmd_push(
+            argparse.Namespace(name="demo-skill", message=message, force=True, prune=False)
+        )
+
+    jia_skills = jia / ".claude" / "skills"
+    yi_skills = yi / ".claude" / "skills"
+
+    push_in(jia_skills, "1.0.0", "body v1", "v1")
+    _write_skill_with_frontmatter_version(yi_skills, "demo-skill", "1.0.0", "body v1")  # 乙存底，無 marker
+    push_in(jia_skills, "1.1.0", "body v2", "v2")
+
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: yi_skills)
+    cli_module.cmd_push(
+        argparse.Namespace(name="demo-skill", message="yi accidental revert", force=True, prune=False)
+    )
+
+    err = capsys.readouterr().err
+    assert "WARNING" in err
+    assert "matches an older historical version" in err
+    assert "--force ignored" in err
+
+
+def test_cmd_push_skips_revert_check_when_sync_base_exists(tmp_path, monkeypatch):
+    """acceptance 2：有合法 marker 時 _check_push_revert 完全不被呼叫——
+    既有三態判定（_print_divergence_warning）已正確處理，不重複查詢。"""
+    import skill_sync.cli as cli_module
+
+    called = []
+    monkeypatch.setattr(
+        cli_module, "_check_push_revert", lambda *a, **k: called.append(1) or None
+    )
+
+    skills_dir = tmp_path / "skills"
+    local_skill = skills_dir / "demo-skill"
+    local_skill.mkdir(parents=True)
+    (local_skill / "SKILL.md").write_text("content\n")
+    _write_sync_base(local_skill, compute_content_hash(local_skill))  # 合法 marker
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    scratch = tmp_path / "scratch"
+    remote_skill = scratch / "repo" / "demo-skill"
+    remote_skill.mkdir(parents=True)
+    (remote_skill / "SKILL.md").write_text("content\n")  # 與本地相同，無變更
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_recording(monkeypatch)
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cli_module.cmd_push(args)
+
+    assert called == []
+
+
+def test_sync_status_report_reclassifies_pull_as_suspect_revert_on_regression(
+    tmp_path, monkeypatch
+):
+    """端到端整合測試（0.2.1-W3-1132 場景一重現，RED -> GREEN）：甲 push v1
+    再 push v2；乙從未同步過此 skill（無 marker），拿 v1 舊副本 push --force
+    覆蓋。甲方報告不應顯示可信的 [SHOULD PULL]，須改標 suspect_revert 並附
+    命中的歷史 commit。"""
+    bare = tmp_path / "bare.git"
+    _init_bare_with_head(bare)
+    jia = tmp_path / "jia"
+    yi = tmp_path / "yi"
+    for consumer in (jia, yi):
+        _init_consumer(consumer)
+        (consumer / ".claude" / "skills").mkdir(parents=True)
+
+    monkeypatch.setenv("SKILL_SYNC_REPO", str(bare))
+    import skill_sync.cli as cli_module
+
+    def push_in(consumer: Path, version: str, body: str, message: str) -> None:
+        skills_dir = consumer / ".claude" / "skills"
+        _write_skill_with_frontmatter_version(skills_dir, "demo-skill", version, body)
+        monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+        cli_module.cmd_push(
+            argparse.Namespace(name="demo-skill", message=message, force=True, prune=False)
+        )
+
+    push_in(jia, "1.0.0", "body v1", "v1")
+
+    # 乙拿 v1 副本存底，從未透過 skill-sync 同步過此 skill（不建立 marker）
+    yi_skill_dir = yi / ".claude" / "skills"
+    _write_skill_with_frontmatter_version(yi_skill_dir, "demo-skill", "1.0.0", "body v1")
+
+    push_in(jia, "1.1.0", "body v2", "v2")
+
+    # 乙用舊副本覆蓋回退（無 marker，push --force 無警告，見 0.2.1-W3-1132）
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: yi_skill_dir)
+    cli_module.cmd_push(
+        argparse.Namespace(name="demo-skill", message="yi accidental revert", force=True, prune=False)
+    )
+
+    jia_skill_dir = jia / ".claude" / "skills"
+    status = cli_module.sync_status_report(jia_skill_dir)
+
+    assert len(status.diverged) == 1
+    entry = status.diverged[0]
+    assert entry.direction == "suspect_revert"
+    assert entry.suspect_revert_commit is not None
+
+
+# --- _stale_version_warning（純函式，0.1.0-W3-031） ---------------------------
+#
+# W3-025 判定的六支分歧全數是同一形態：內容改了、版號沒動。版號相同時它不只
+# 無鑑別力，而是主動宣稱兩邊一致，使分歧不會被例行同步檢查發現。
+
+
+def test_stale_version_warning_none_when_versions_differ(tmp_path):
+    """版號已經跟著內容一起 bump：不該每次 push 都跳警告。"""
+    source = _write_skill(tmp_path, "demo-skill", "1.1.0", "body")
+
+    assert _stale_version_warning(source, "1.1.0", "1.0.0") is None
+
+
+def test_stale_version_warning_none_when_no_base_recorded(tmp_path):
+    """從未走過本機制的既有 skill（無 .skill-sync-base）：無從判定是否變更過，維持靜默。"""
+    source = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+
+    assert _stale_version_warning(source, "1.0.0", "1.0.0") is None
+
+
+def test_stale_version_warning_none_when_content_matches_base(tmp_path):
+    """內容雜湊與 .skill-sync-base 相同：自上次同步後未變更，無需警告。"""
+    source = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+    _write_sync_base(source, compute_content_hash(source))
+
+    assert _stale_version_warning(source, "1.0.0", "1.0.0") is None
+
+
+def test_stale_version_warning_fires_when_content_drifted_and_version_same(tmp_path):
+    """內容雜湊與 .skill-sync-base 不同、版號與遠端相同：命中六支分歧的共通形態。"""
+    source = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
+    _write_sync_base(source, "0" * 64)  # 任意不同雜湊，代表上次同步時內容並非現狀
+
+    warning = _stale_version_warning(source, "1.0.0", "1.0.0")
+
+    assert warning is not None
+    assert "1.0.0" in warning
+
+
+def test_stale_version_warning_fires_with_frontmatter_metadata_version_fixture(tmp_path):
+    """同上案例，改用 frontmatter 縮排 metadata.version 的真實生產形狀建 fixture。
+
+    重現本專案實際迴歸：舊 regex 只認行首 `version:`，本專案 SKILL.md 主流
+    寫法是縮排在 metadata 之下，`_extract_single_version` 對這類檔案一律
+    回傳 None，使本閘門（依賴 local_ver/remote_ver 非 None）從未真正生效。
+    """
+    source = _write_skill_with_frontmatter_version(tmp_path, "demo-skill", "1.0.0", "body")
+    _write_sync_base(source, "0" * 64)
+    local_ver = _extract_single_version(source / "SKILL.md")
+    assert local_ver == "1.0.0"
+
+    warning = _stale_version_warning(source, local_ver, "1.0.0")
+
+    assert warning is not None
+    assert "1.0.0" in warning
+
+
+# --- _extract_version_string（frontmatter 縮排 metadata.version） -----------
+
+
+def test_extract_version_string_reads_indented_frontmatter_metadata_version():
+    """本專案主流寫法：version 縮排在 frontmatter 的 metadata 之下。"""
+    text = "---\nname: demo\nmetadata:\n  version: 2.3.1\n---\n\n# demo\n"
+
+    assert _extract_version_string(text) == "2.3.1"
+
+
+def test_extract_version_string_reads_bare_frontmatter_version():
+    """既有的行首寫法（frontmatter 內、無縮排）仍須維持支援，不因收窄範圍而失效。"""
+    text = "---\nname: demo\nversion: 3.5.0\n---\n\n# demo\n"
+
+    assert _extract_version_string(text) == "3.5.0"
+
+
+def test_extract_version_string_ignores_body_text_without_frontmatter_version():
+    """正文含 `version:` 字樣、但 frontmatter 未宣告版本：不得誤抓，回傳 None。"""
+    text = (
+        "---\nname: demo\n---\n\n"
+        "# demo\n\n"
+        "設定檔範例：`version: 9.9.9`（僅示範用途，非本 skill 版號）\n"
+    )
+
+    assert _extract_version_string(text) is None
+
+
+def test_extract_version_string_none_when_no_frontmatter_block():
+    """無 frontmatter 區塊（不以 `---` 開頭）：直接回傳 None，不誤搜全文。"""
+    text = "# demo\n\nversion: 1.0.0\n"
+
+    assert _extract_version_string(text) is None
+
+
+# --- 增量禁用詞掃描（0.2.1-W3-1304） ------------------------------------------
+#
+# 詞表與豁免規則字面複製自 .claude/hooks/skill-banned-term-scan-hook.py（見
+# cli.py 該節註解說明為何不 import）；一致性由專案層級測試斷言，不在本檔內。
+# 本節測試聚焦「增量」這個 skill-sync 特有的行為：只掃新增/修改的行，既有
+# 基線債務（本次 push 未動到的既有行）不得誤報。
+
+
+def test_new_line_numbers_from_diff_marks_insert_and_replace_only():
+    before = ["a", "b", "c"]
+    after = ["a", "X", "c", "Y"]  # b -> X（replace），末尾新增 Y（insert）
+
+    assert _new_line_numbers_from_diff(before, after) == {2, 4}
+
+
+def test_scan_push_for_banned_terms_flags_new_line_in_added_file(tmp_path):
+    source = tmp_path / "source"
+    target = tmp_path / "target"
+    (source / "demo-skill").mkdir(parents=True)
+    (target / "demo-skill").mkdir(parents=True)  # target 端此檔不存在
+    (source / "demo-skill" / "NEW.md").write_text("這份文檔說明流程\n")
+
+    diff = compute_diff(source / "demo-skill", target / "demo-skill")
+    hits = scan_push_for_banned_terms(source / "demo-skill", target / "demo-skill", diff)
+
+    assert len(hits) == 1
+    assert hits[0].term == "文檔"
+    assert hits[0].suggestion == "文件"
+
+
+def test_scan_push_for_banned_terms_flags_only_new_line_in_modified_file(tmp_path):
+    """既有基線債務（本次 push 未新增/修改的既有行）不觸發報告。"""
+    source = tmp_path / "source" / "demo-skill"
+    target = tmp_path / "target" / "demo-skill"
+    source.mkdir(parents=True)
+    target.mkdir(parents=True)
+    (target / "SKILL.md").write_text("既有內容\n默認值為 1\n")  # 既有基線債務：默認
+    (source / "SKILL.md").write_text("既有內容\n默認值為 1\n新增一行含代碼字樣\n")
+
+    diff = compute_diff(source, target)
+    hits = scan_push_for_banned_terms(source, target, diff)
+
+    assert len(hits) == 1
+    assert hits[0].term == "代碼"
+    assert hits[0].line == 3
+
+
+def test_scan_push_for_banned_terms_ignores_fenced_code_block(tmp_path):
+    source = tmp_path / "source" / "demo-skill"
+    target = tmp_path / "target" / "demo-skill"
+    source.mkdir(parents=True)
+    target.mkdir(parents=True)
+    (source / "NEW.md").write_text("```\n默認\n```\n")
+
+    diff = compute_diff(source, target)
+    hits = scan_push_for_banned_terms(source, target, diff)
+
+    assert hits == []
+
+
+def test_scan_push_for_banned_terms_ignores_inline_code_span(tmp_path):
+    source = tmp_path / "source" / "demo-skill"
+    target = tmp_path / "target" / "demo-skill"
+    source.mkdir(parents=True)
+    target.mkdir(parents=True)
+    (source / "NEW.md").write_text("範例指令 `grep 默認` 僅供示範\n")
+
+    diff = compute_diff(source, target)
+    hits = scan_push_for_banned_terms(source, target, diff)
+
+    assert hits == []
+
+
+def test_scan_push_for_banned_terms_ignores_inline_marker(tmp_path):
+    source = tmp_path / "source" / "demo-skill"
+    target = tmp_path / "target" / "demo-skill"
+    source.mkdir(parents=True)
+    target.mkdir(parents=True)
+    (source / "NEW.md").write_text(
+        "地區對照：默認 <!-- banned-term-exempt: 術語對照樣本 -->\n"
+    )
+
+    diff = compute_diff(source, target)
+    hits = scan_push_for_banned_terms(source, target, diff)
+
+    assert hits == []
+
+
+def test_scan_push_for_banned_terms_skips_non_markdown_files(tmp_path):
+    source = tmp_path / "source" / "demo-skill"
+    target = tmp_path / "target" / "demo-skill"
+    source.mkdir(parents=True)
+    target.mkdir(parents=True)
+    (source / "script.py").write_text("# 這是代碼註解\n")
+
+    diff = compute_diff(source, target)
+    hits = scan_push_for_banned_terms(source, target, diff)
+
+    assert hits == []
+
+
+def test_cmd_push_reports_banned_term_without_blocking(tmp_path, monkeypatch, capsys):
+    """新增行含禁用詞：push 仍完整完成（report-only，不中止）。"""
+    import skill_sync.cli as cli_module
+
+    skills_dir = tmp_path / "skills"
+    local_skill = skills_dir / "demo-skill"
+    local_skill.mkdir(parents=True)
+    (local_skill / "NEW.md").write_text("這份文檔說明流程\n")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    scratch = tmp_path / "scratch"
+    remote_skill = scratch / "repo" / "demo-skill"
+    remote_skill.mkdir(parents=True)  # target 端此 skill 目錄存在但無此檔
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_recording(monkeypatch)
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cmd_push(args)
+
+    err = capsys.readouterr().err
+    out = capsys.readouterr().out
+    assert "[BannedTerm]" in err
+    assert "文檔" in err and "文件" in err
+    assert "Aborted" not in out and "Aborted" not in err
+
+
 # --- cmd_pull / cmd_push 方向警示整合（0.2.1-W3-671） ------------------------
 
 
@@ -1682,6 +2494,172 @@ def test_cmd_push_silent_when_direction_matches_push(tmp_path, monkeypatch, caps
     assert "WARNING" not in err
 
 
+# --- push --force 的第三層語意：警告停點降級（0.2.1-W3-1270） ------------------
+#
+# --force 不影響方向警告或 stale-version 警告本身（檢查照跑、輸出照印），但
+# 拿掉了警告後緊接的 [y/N] 停點——原本使用者必然讀到才能繼續，拿掉停點後
+# 同樣的字只是 push 成功訊息前滾過去的幾行 stderr。修法對準這個停點，而非
+# 對準檢查本身：結尾摘要重述被忽略的警告則數，並落地 force-log。
+
+
+def test_cmd_push_force_summarizes_ignored_divergence_warning(tmp_path, monkeypatch, capsys):
+    """事故一情境（base==local、remote 已前進）改用 --force：不再是安靜的
+    [WARNING] 滾過去，結尾必須重述『已忽略』且寫入 force-log。"""
+    import skill_sync.cli as cli_module
+
+    monkeypatch.setenv("HOOK_LOGS_DIR", str(tmp_path / "hook-logs"))
+    skills_dir = tmp_path / "skills"
+    local_skill = skills_dir / "demo-skill"
+    local_skill.mkdir(parents=True)
+    (local_skill / "SKILL.md").write_text("stale content\n")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    base_hash = compute_content_hash(local_skill)
+    _write_sync_base(local_skill, base_hash)
+
+    scratch = tmp_path / "scratch"
+    remote_skill = scratch / "repo" / "demo-skill"
+    remote_skill.mkdir(parents=True)
+    (remote_skill / "SKILL.md").write_text("remote moved on\n")
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_noop(monkeypatch)
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cmd_push(args)
+
+    err = capsys.readouterr().err
+    assert "WARNING" in err  # 原本的方向警告仍照常印出
+    assert "--force ignored 1 direction warning" in err
+
+    log_files = list((tmp_path / "hook-logs").glob("skill-sync-divergence-force.jsonl"))
+    assert len(log_files) == 1
+    record = json.loads(log_files[0].read_text().splitlines()[0])
+    assert record["skill"] == "demo-skill"
+    assert record["divergence_warning_ignored"] is True
+    assert record["stale_version_warning_ignored"] is False
+
+
+def test_cmd_push_force_summarizes_ignored_stale_version_warning(tmp_path, monkeypatch, capsys):
+    """stale-version 警告單獨命中（不夾帶分歧警告）且帶 --force：同樣需要
+    結尾重述與 force-log。base 設為等於 remote hash（只有本地前進，方向
+    "push" 與 expected 相符，分歧警告不會觸發），版號相同但內容已變則觸發
+    stale-version 警告，隔離出「只有這一種警告」的情境。"""
+    import skill_sync.cli as cli_module
+
+    monkeypatch.setenv("HOOK_LOGS_DIR", str(tmp_path / "hook-logs"))
+    source = _write_skill(tmp_path / "skills", "demo-skill", "1.0.0", "new body")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: tmp_path / "skills")
+
+    scratch = tmp_path / "scratch"
+    remote_skill = scratch / "repo" / "demo-skill"
+    remote_skill.mkdir(parents=True)
+    (remote_skill / "SKILL.md").write_text("**Version**: 1.0.0\n\nold body\n")
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_noop(monkeypatch)
+
+    _write_sync_base(source, compute_content_hash(remote_skill))
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cmd_push(args)
+
+    err = capsys.readouterr().err
+    assert "Content changed since last sync" in err
+    assert "--force ignored 1 direction warning" in err
+
+    log_files = list((tmp_path / "hook-logs").glob("skill-sync-divergence-force.jsonl"))
+    record = json.loads(log_files[0].read_text().splitlines()[0])
+    assert record["divergence_warning_ignored"] is False
+    assert record["stale_version_warning_ignored"] is True
+
+
+def test_cmd_push_force_silent_when_no_warnings(tmp_path, monkeypatch, capsys):
+    """--force 但沒有任何方向/版本警告命中：不印摘要、不寫 force-log
+    （既有安靜成功輸出不因本次修改而改變）。"""
+    import skill_sync.cli as cli_module
+
+    monkeypatch.setenv("HOOK_LOGS_DIR", str(tmp_path / "hook-logs"))
+    source = _write_skill(tmp_path / "skills", "demo-skill", "1.0.0", "new body")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: tmp_path / "skills")
+
+    scratch = tmp_path / "scratch"
+    remote_skill = scratch / "repo" / "demo-skill"
+    remote_skill.mkdir(parents=True)
+    (remote_skill / "SKILL.md").write_text("**Version**: 1.0.0\n\nold body\n")
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_noop(monkeypatch)
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cmd_push(args)
+
+    err = capsys.readouterr().err
+    assert "ignored" not in err
+    assert not (tmp_path / "hook-logs").exists()
+
+
+def test_write_divergence_force_log_appends_jsonl_record(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOOK_LOGS_DIR", str(tmp_path / "hook-logs"))
+
+    _write_divergence_force_log("demo", divergence_warned=True, stale_version_warned=False)
+
+    log_files = list((tmp_path / "hook-logs").glob("*.jsonl"))
+    assert len(log_files) == 1
+    record = json.loads(log_files[0].read_text().splitlines()[0])
+    assert record["skill"] == "demo"
+    assert record["divergence_warning_ignored"] is True
+    assert record["stale_version_warning_ignored"] is False
+
+
+# --- cmd_push 版號未變閘門整合（0.1.0-W3-031） --------------------------------
+
+
+def test_cmd_push_warns_when_version_unchanged_but_content_drifted(tmp_path, monkeypatch, capsys):
+    """W3-025 六支分歧的共通形態重現：內容自上次同步已變更，但版號與遠端相同時，
+    push preview 必須警告——版號相同不只無鑑別力，還主動宣稱兩邊一致。"""
+    import skill_sync.cli as cli_module
+
+    skills_dir = tmp_path / "skills"
+    source = _write_skill(skills_dir, "demo-skill", "1.0.0", "local modified body")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    scratch = tmp_path / "scratch"
+    remote_skill = _write_skill(scratch / "repo", "demo-skill", "1.0.0", "original body")
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_recording(monkeypatch)
+
+    _write_sync_base(source, compute_content_hash(remote_skill))
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cmd_push(args)
+
+    err = capsys.readouterr().err
+    assert "WARNING" in err
+    assert "1.0.0" in err
+
+
+def test_cmd_push_silent_when_version_already_bumped_despite_content_drift(
+    tmp_path, monkeypatch, capsys
+):
+    """版號已跟著內容一起 bump 時不觸發警告，避免每次 push 都跳（第二條驗收）。"""
+    import skill_sync.cli as cli_module
+
+    skills_dir = tmp_path / "skills"
+    source = _write_skill(skills_dir, "demo-skill", "1.1.0", "local modified body")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    scratch = tmp_path / "scratch"
+    remote_skill = _write_skill(scratch / "repo", "demo-skill", "1.0.0", "original body")
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_recording(monkeypatch)
+
+    _write_sync_base(source, compute_content_hash(remote_skill))
+
+    args = _RecordingArgs(name="demo-skill", prune=False, force=True)
+    cmd_push(args)
+
+    err = capsys.readouterr().err
+    assert "WARNING" not in err
+
+
 # --- update_sync_manifest（不觸發真實 git/網路操作） -------------------------
 
 
@@ -1763,6 +2741,53 @@ def test_ticket_id_reported(tmp_path):
     violations = check_portability(skill)
     assert [v.kind for v in violations] == ["ticket-id"]
     assert "1.5.0-W5-009" in violations[0].text
+
+
+def test_bare_ticket_id_reported(tmp_path):
+    """裸格式（無版本前綴）ticket ID 亦須被閘門認出，同 kind='ticket-id'。"""
+    skill = _write_portable_skill(
+        tmp_path,
+        "demo",
+        PORTABLE_FRONTMATTER + "\n# W8-047 缺陷 1：來源端排除\n",
+    )
+    violations = check_portability(skill)
+    assert [v.kind for v in violations] == ["ticket-id"]
+    assert violations[0].text == "W8-047"
+
+
+def test_full_format_ticket_id_not_double_counted_as_bare(tmp_path):
+    """全格式 ID 內嵌的裸格式片段（如 "W5-009"）不得與全格式匹配重複計為
+    兩筆違規——同一段文字只應產生一筆。"""
+    skill = _write_portable_skill(
+        tmp_path,
+        "demo",
+        PORTABLE_FRONTMATTER + "\n**Version**: 0.8.0 — refined (1.5.0-W5-009.7)\n",
+    )
+    violations = check_portability(skill)
+    assert len(violations) == 1
+    assert violations[0].kind == "ticket-id"
+    assert "1.5.0-W5-009" in violations[0].text
+
+
+def test_bare_ticket_id_and_full_format_both_counted_when_distinct(tmp_path):
+    """同一行同時出現全格式與不重疊的裸格式 ID 時，兩筆都應計入。"""
+    skill = _write_portable_skill(
+        tmp_path,
+        "demo",
+        PORTABLE_FRONTMATTER + "\n見 1.5.0-W5-009 與 W8-047 兩處修復。\n",
+    )
+    violations = check_portability(skill)
+    assert sorted(v.text for v in violations) == ["1.5.0-W5-009", "W8-047"]
+
+
+def test_bare_ticket_id_respects_allow_marker(tmp_path):
+    skill = _write_portable_skill(
+        tmp_path,
+        "demo",
+        PORTABLE_FRONTMATTER
+        + "\nW8-047 缺陷已知 (portability-allow: illustrative example)\n",
+    )
+    assert check_portability(skill) == []
 
 
 def test_clean_skill_has_no_violations(tmp_path):
@@ -1893,6 +2918,66 @@ def test_resolve_hook_logs_dir_honours_env_override(tmp_path, monkeypatch):
     assert _resolve_hook_logs_dir() == tmp_path / "custom-logs"
 
 
+def test_resolve_hook_logs_dir_anchors_to_project_root_without_env(
+    tmp_path, monkeypatch
+):
+    """無 HOOK_LOGS_DIR 時應錨定 git toplevel，而非相對於呼叫端 cwd。"""
+    import skill_sync.cli as cli_module
+
+    monkeypatch.delenv("HOOK_LOGS_DIR", raising=False)
+    monkeypatch.setattr(cli_module, "_resolve_project_root", lambda purpose="": tmp_path)
+
+    assert _resolve_hook_logs_dir() == tmp_path / ".claude" / "hook-logs"
+
+
+def test_resolve_hook_logs_dir_independent_of_caller_cwd(tmp_path, monkeypatch):
+    """從非專案根目錄呼叫（如透過 uv run --directory shim 執行）仍應寫入
+    專案根下的 canonical 位置，不落在呼叫端所在的巢狀目錄。"""
+    import skill_sync.cli as cli_module
+
+    monkeypatch.delenv("HOOK_LOGS_DIR", raising=False)
+    monkeypatch.setattr(cli_module, "_resolve_project_root", lambda purpose="": tmp_path)
+
+    nested_cwd = tmp_path / ".claude" / "skills" / "skill-sync"
+    nested_cwd.mkdir(parents=True)
+    monkeypatch.chdir(nested_cwd)
+
+    resolved = _resolve_hook_logs_dir()
+
+    assert resolved == tmp_path / ".claude" / "hook-logs"
+    assert "skills" not in resolved.relative_to(tmp_path).parts
+
+
+def test_resolve_project_root_git_success_returns_toplevel(tmp_path, monkeypatch):
+    """git 正常時應回傳 toplevel 絕對路徑（實際 git 環境，未 mock subprocess）。"""
+    import subprocess
+
+    import skill_sync.cli as cli_module
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init"], cwd=repo, capture_output=True, check=True)
+    monkeypatch.chdir(repo)
+
+    assert cli_module._resolve_project_root() == repo
+
+
+def test_resolve_project_root_falls_back_to_cwd_outside_git_repo(
+    tmp_path, monkeypatch, capsys
+):
+    """非 git 目錄時 fallback 至現行 cwd，並輸出 stderr 警告。"""
+    import skill_sync.cli as cli_module
+
+    monkeypatch.chdir(tmp_path)
+
+    result = cli_module._resolve_project_root("custom purpose")
+
+    assert result == tmp_path
+    captured = capsys.readouterr()
+    assert "Warning" in captured.err
+    assert "custom purpose" in captured.err
+
+
 def test_push_with_force_on_declared_violation_writes_force_log(tmp_path, monkeypatch, capsys):
     """cmd_push --force 繞過已宣告 portable 的違規時，違規清單必須落地到記錄檔。"""
     skills = tmp_path / "skills"
@@ -1916,6 +3001,58 @@ def test_push_with_force_on_declared_violation_writes_force_log(tmp_path, monkey
     record = json.loads(log_files[0].read_text().splitlines()[0])
     assert record["skill"] == "demo"
     assert record["violation_count"] == 1
+
+
+# --- --force 的雙重語意：旁路閘門的痕跡不能只留在 jsonl（0.1.0-W3-038）--------
+#
+# `--force` 同時控制「跳過互動確認」與「旁路 portability 閘門」兩件事，但
+# --help 只寫前者。既有的完整違規列表只印在 stderr；只收集 stdout 的呼叫端
+# （管線只轉存 stdout 供事後稽核）在旁路發生時，除了 hook-logs 的 jsonl 外
+# 看不到任何痕跡，而後者不是使用者會主動去看的地方。
+
+
+def test_force_bypass_prints_violation_summary_to_stdout(tmp_path, monkeypatch, capsys):
+    skills = tmp_path / "skills"
+    _write_portable_skill(
+        skills,
+        "demo",
+        PORTABLE_FRONTMATTER + "\nSee `.claude/pm-rules/tdd-flow.md`.\n",
+    )
+    monkeypatch.setattr("skill_sync.cli.get_skills_dir", lambda: skills)
+    monkeypatch.setenv("HOOK_LOGS_DIR", str(tmp_path / "hook-logs"))
+
+    _report_portability(skills / "demo", "demo", force=True)
+
+    out = capsys.readouterr().out
+    assert "demo" in out
+    assert "SKILL.md:9" in out
+    assert "consumer-path" in out
+
+
+def test_force_bypass_stdout_summary_truncates_like_stderr(tmp_path, monkeypatch, capsys):
+    """stdout 摘要與 stderr 共用同一份截斷邏輯（前 20 筆 + `... and N more`），
+    不是各自維護一份會漂移的格式。"""
+    skills = tmp_path / "skills"
+    many_refs = "\n".join(f"See `.claude/pm-rules/x{i}.md`." for i in range(25))
+    _write_portable_skill(skills, "demo", PORTABLE_FRONTMATTER + "\n" + many_refs + "\n")
+    monkeypatch.setattr("skill_sync.cli.get_skills_dir", lambda: skills)
+    monkeypatch.setenv("HOOK_LOGS_DIR", str(tmp_path / "hook-logs"))
+
+    _report_portability(skills / "demo", "demo", force=True)
+
+    out = capsys.readouterr().out
+    assert "... and 5 more" in out
+
+
+def test_push_force_help_text_covers_portability_bypass(capsys):
+    """--help 文字須涵蓋 --force 的全部語意，不只跳過確認。"""
+    parser = build_parser()
+
+    with pytest.raises(SystemExit):
+        parser.parse_args(["push", "--help"])
+
+    out = capsys.readouterr().out
+    assert "portability" in out.lower()
 
 
 # --- 已跨 consumer 使用但未宣告 portable（0.2.1-W3-635 缺口二） ----------------
@@ -2102,6 +3239,16 @@ def test_scan_line_for_violations_respects_allow_marker():
     assert _scan_line_for_violations(
         "x.py", 1, ".claude/pm-rules/x.md (portability-allow: bridge)"
     ) == []
+
+
+def test_scan_line_for_violations_bare_ticket_id():
+    violations = _scan_line_for_violations("x.py", 1, "見 W8-047 修復")
+    assert [(v.kind, v.text) for v in violations] == [("ticket-id", "W8-047")]
+
+
+def test_scan_line_for_violations_full_format_excludes_embedded_bare_span():
+    violations = _scan_line_for_violations("x.py", 1, "見 1.5.0-W5-009 修復")
+    assert [(v.kind, v.text) for v in violations] == [("ticket-id", "1.5.0-W5-009")]
 
 
 def test_check_portability_detects_violation_in_python_docstring(tmp_path):

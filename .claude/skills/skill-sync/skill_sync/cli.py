@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import contextlib
 import difflib
 import filecmp
 import hashlib
@@ -14,7 +15,6 @@ import re
 import subprocess
 import sys
 import tempfile
-import urllib.request
 from collections.abc import Iterable
 from datetime import datetime
 from pathlib import Path
@@ -22,9 +22,12 @@ from typing import NamedTuple
 
 DEFAULT_REPO = "https://github.com/tarrragon/claude-skills.git"
 
-# 取遠端 manifest 的等待上限。正常回應 0.5-1.2 秒，被防火牆黑洞時會用滿整個
-# 上限；這份資料只影響一段資訊性報告，不值得讓呼叫端多等十秒。
-REMOTE_FETCH_TIMEOUT_SECONDS = 5
+# 取遠端 manifest（fetch_remote_manifest，淺 clone）的等待上限。正常約 1.8 秒
+# （實測對 canonical repo），比改走 git clone 之前的 HTTP 直接 GET（0.5-1.2 秒）
+# 慢，故上限沿用同一顆常數但放寬，避免正常網路延遲被誤判為逾時；被防火牆
+# 黑洞時仍會用滿整個上限，這份資料只影響一段資訊性報告，不值得讓呼叫端無限
+# 等待。
+REMOTE_FETCH_TIMEOUT_SECONDS = 15
 EXCLUDE_DIRS = {
     "project-integration",
     ".venv",
@@ -45,6 +48,7 @@ EXCLUDE_DIRS = {
 _HOOK_LOGS_DIR_ENV = "HOOK_LOGS_DIR"
 _DEFAULT_HOOK_LOGS_DIR = ".claude/hook-logs"
 _PORTABILITY_FORCE_LOG_FILENAME = "skill-sync-portability-force.jsonl"
+_DIVERGENCE_FORCE_LOG_FILENAME = "skill-sync-divergence-force.jsonl"
 
 # 憑證判準（移植自 .claude/lib/sync_exclude_manifest.py 的憑證維度）。
 #
@@ -94,6 +98,14 @@ class DivergedSkill(NamedTuple):
     (see SKILL_SYNC_BASE_MARKER) cannot have its direction resolved, and the
     default keeps every existing construction site valid without having to
     thread a base lookup through call sites that never had one.
+
+    `direction` can also be `"suspect_revert"`: a `"pull"` classification
+    (local unchanged, remote moved) whose remote content turned out to match
+    an older historical commit of that skill rather than genuinely new
+    content — see `_check_suspect_revert`. `suspect_revert_commit` carries a
+    display string (short SHA + timestamp) for that match; it stays `None`
+    for every other direction, so existing construction sites need no
+    change.
     """
 
     name: str
@@ -102,6 +114,7 @@ class DivergedSkill(NamedTuple):
     pull_command: str
     push_command: str
     direction: str = "unknown"
+    suspect_revert_commit: str | None = None
 
 
 class SyncStatus(NamedTuple):
@@ -175,6 +188,160 @@ def _should_exclude_file(rel_path: str) -> bool:
 
 
 
+# --- Incremental banned-term scan -------------------------------------------------
+
+# 字面複製自 .claude/hooks/skill-banned-term-scan-hook.py 的 BANNED_TERMS /
+# INLINE_MARKER / 隱式規則（fenced code block、inline code span），非 import——
+# skill-sync 是零框架依賴的獨立套件（見 pyproject.toml dependencies = []），
+# 任何跨套件 import 都會讓它無法安裝到不含該 hook 的環境。兩份判準是否一致
+# 由專案層級的獨立測試斷言（`.claude/hooks/tests/`，比照既有裸格式 ticket ID
+# 正則複製同一模式，不放在本套件目錄內以免測試原始碼自身的字面路徑引用被
+# `check_portability` 的 consumer-path 判準命中形成自我指涉）。
+#
+# 只複製「判準本身」（詞表 + 行內豁免規則），不複製該 hook 的
+# FILE_LEVEL_ALLOWLIST：那份白名單是為全檔掃描設計（術語對照表整篇都是
+# mention），而本模組只掃描 push 相對遠端新增/修改的行——範圍已經比全檔
+# 掃描窄得多，尚未觀察到需要整檔豁免的實例，且新增行不太可能剛好是既有
+# 全檔白名單想保護的既有內容。若未來出現真實需求再加，不預先照搬一個
+# 用不到的機制。
+_BANNED_TERMS = {
+    "智能": "Hook 系統、規則比對",
+    "文檔": "文件",
+    "數據": "資料",
+    "默認": "預設",
+    "代碼": "程式碼",
+    "視頻": "影片",
+    "軟件": "軟體",
+    "硬件": "硬體",
+    "信息": "資訊",
+}
+_BANNED_TERM_INLINE_MARKER = "banned-term-exempt"
+_BANNED_TERM_INLINE_CODE_SPAN_RE = re.compile(r"`[^`]*`")
+_BANNED_TERM_FENCE_RE = re.compile(r"^\s*```")
+
+
+class BannedTermHit(NamedTuple):
+    """一處疑似禁用詞散文使用。file 為 skill 目錄內的相對路徑。"""
+
+    file: str
+    line: int
+    term: str
+    suggestion: str
+    text: str
+
+
+def _strip_banned_term_code_spans(line: str) -> str:
+    """把反引號內的內容清空，避免 mention 被誤判為 use（保留字元數不變，
+    比對到的 term 位置不受影響，用空白填充維持行內位置對齊）。字面複製自
+    `skill-banned-term-scan-hook.py` 的 `_strip_inline_code_spans`。
+    """
+    return _BANNED_TERM_INLINE_CODE_SPAN_RE.sub(lambda m: " " * len(m.group(0)), line)
+
+
+def _new_line_numbers_from_diff(before_lines: list[str], after_lines: list[str]) -> set[int]:
+    """回傳 after_lines 中屬於「新增或取代」的 1-index 行號集合。
+
+    重用 `_diff_line_counts` 的 `difflib.SequenceMatcher` opcode 機制：
+    insert / replace 段落的 after 側行號範圍即為本次改動新增的行，delete
+    段落不影響 after 側行號、equal 段落不是新增，皆不計入。
+    """
+    new_lines: set[int] = set()
+    for tag, _i1, _i2, j1, j2 in difflib.SequenceMatcher(None, before_lines, after_lines).get_opcodes():
+        if tag in ("insert", "replace"):
+            new_lines.update(range(j1 + 1, j2 + 1))
+    return new_lines
+
+
+def _scan_lines_for_banned_terms(
+    rel: str, after_lines: list[str], new_line_numbers: set[int]
+) -> list[BannedTermHit]:
+    """對 after_lines 逐行掃描禁用詞，只回報 new_line_numbers 內的命中。
+
+    fenced code block 狀態須從檔案第一行開始追蹤才正確——一個較早開啟、
+    尚未關閉的 fence 會涵蓋到新增行卻看不到開啟該 fence 的那一行本身（那行
+    通常不在新增範圍內）；因此本函式對整份 after_lines 逐行掃描以維持正確
+    的 fence 狀態機，但只在該行屬於 new_line_numbers 時才記錄命中。
+    """
+    hits: list[BannedTermHit] = []
+    in_fence = False
+    for line_no, raw_line in enumerate(after_lines, start=1):
+        if _BANNED_TERM_FENCE_RE.match(raw_line):
+            in_fence = not in_fence
+            continue
+        if line_no not in new_line_numbers or in_fence:
+            continue
+        if _BANNED_TERM_INLINE_MARKER in raw_line:
+            continue
+        scannable = _strip_banned_term_code_spans(raw_line)
+        for term, suggestion in _BANNED_TERMS.items():
+            if term in scannable:
+                hits.append(BannedTermHit(rel, line_no, term, suggestion, raw_line.strip()))
+    return hits
+
+
+def scan_push_for_banned_terms(source: Path, target: Path, diff: dict[str, list[str]]) -> list[BannedTermHit]:
+    """對本次 push 相對遠端新增/修改的內容，掃描 language-constraints.md
+    規則 2 禁用詞，report-only（呼叫端不得據此中止 push）。
+
+    只掃描 `diff["added"]`（全檔皆新增，全部逐行掃描）與 `diff["modified"]`
+    （只掃描相對 target 新增或取代的行，見 `_new_line_numbers_from_diff`）；
+    `diff["unchanged"]` 與 `diff["dst_only"]` 一律略過——既有基線債務（本次
+    push 未新增/修改的既有行）不在本次改動範圍內，重複舉報只會製造噪音且
+    對「這次 push 是否引入新問題」無鑑別力。只掃 `.md` 檔（禁用詞規範針對
+    散文，`.py` 等程式碼檔的字串常數/識別符不在規範範圍內，且比照
+    `check_portability` 對 `.py` 只掃 docstring/comment 的既有先例，全文
+    掃描程式碼會招致大量誤判）。
+
+    讀取失敗或無法以 UTF-8 解碼的檔案略過，不中斷整體掃描（同
+    `_diff_line_counts` 的既有處理方式）。
+    """
+    hits: list[BannedTermHit] = []
+
+    for rel in diff["added"]:
+        if not rel.endswith(".md"):
+            continue
+        try:
+            after_lines = (source / rel).read_text(encoding="utf-8").splitlines()
+        except (OSError, UnicodeDecodeError):
+            continue
+        new_line_numbers = set(range(1, len(after_lines) + 1))
+        hits.extend(_scan_lines_for_banned_terms(rel, after_lines, new_line_numbers))
+
+    for rel in diff["modified"]:
+        if not rel.endswith(".md"):
+            continue
+        try:
+            before_lines = (target / rel).read_text(encoding="utf-8").splitlines()
+            after_lines = (source / rel).read_text(encoding="utf-8").splitlines()
+        except (OSError, UnicodeDecodeError):
+            continue
+        new_line_numbers = _new_line_numbers_from_diff(before_lines, after_lines)
+        hits.extend(_scan_lines_for_banned_terms(rel, after_lines, new_line_numbers))
+
+    return hits
+
+
+def _print_banned_term_report(hits: list[BannedTermHit]) -> None:
+    """印出增量禁用詞掃描結果，report-only（不影響 push 是否繼續）。"""
+    print(
+        f"\n  [BannedTerm] {len(hits)} suspected banned-term use(s) in new/modified "
+        "line(s) (language-constraints.md rule 2), reporting only:",
+        file=sys.stderr,
+    )
+    for hit in hits:
+        print(
+            f"    {hit.file}:{hit.line}  \"{hit.term}\" -> \"{hit.suggestion}\"",
+            file=sys.stderr,
+        )
+        print(f"      {hit.text}", file=sys.stderr)
+    print(
+        "  If this is a legitimate reference (grep pattern / terminology sample), "
+        "wrap it in backticks or a fenced code block, or append "
+        "<!-- banned-term-exempt: reason --> to the line.",
+        file=sys.stderr,
+    )
+
+
 # --- Portability check ----------------------------------------------------------
 
 # 消費端框架路徑：canonical repo 根沒有 .claude/ 這一層，任何以它開頭的引用在
@@ -183,6 +350,15 @@ _CONSUMER_PATH_RE = re.compile(r"\.claude/[A-Za-z0-9_./-]+")
 # 專案 ticket ID：不只是斷鏈，blog 的 skill-mirror 從全檔取最大三段數字推導版號，
 # 一個 ticket ID 就能讓它抓錯版並中斷發佈。
 _TICKET_ID_RE = re.compile(r"\b\d+\.\d+\.\d+-W\d+-\d+")
+# rule8-exempt: illustration:下一段裸格式常數註解舉例展示裸格式與全格式的字面差異
+# 裸格式 ticket ID（無版本前綴，如 W8-047）：另一種下游危害——內容送進其他消費端
+# 後，該端若部署框架既有的引用穩定性守衛，會因裸格式命中而阻擋其 commit。此正則
+# 為框架單一權威定義（供多個獨立守衛比對裸格式用）的字面複製，非 import——
+# skill-sync 是零框架依賴的獨立套件（見上方一段的既有說明），任何跨套件 import
+# 都會讓它無法安裝到不含該套件的環境。字面是否與權威定義一致由專案層級的獨立測試
+# 斷言（不放在本套件目錄內，避免測試原始碼自身的字面路徑引用被本檔的
+# consumer-path 判準命中，形成自我指涉）。
+_BARE_TICKET_ID_RE = re.compile(r"\bW\d+-\d+\b")
 # 行內豁免：該行的引用經人判定為刻意保留（架構性橋接、教學範例）。標記語彙沿用
 # 專案既有的 portability-allow，寫在哪一行就只豁免那一行。
 # 兩個標記語彙互認：portability-allow 說「這個消費端專屬引用是刻意保留的」，
@@ -237,13 +413,25 @@ def _scan_line_for_violations(rel: str, lineno: int, line: str) -> list[Portabil
 
     .md 全文掃描與 .py 敘述性文字（docstring／# 註解）掃描共用同一判準，避免
     兩條路徑各自維護一份 regex 比對邏輯而彼此漂移。
+
+    裸格式比對（_BARE_TICKET_ID_RE）會命中全格式 ID 內嵌的裸片段（如
+    "0.2.1-W3-1"（rule8-exempt: illustration:示範全格式如何內嵌裸片段） 內的
+    "W3-1"），需排除完全落在既有全格式命中範圍內的裸格式匹配，避免同一段文字
+    被同時記兩筆違規。
     """
     if _ALLOW_RE.search(line):
         return []
     found: list[PortabilityViolation] = []
     for match in _CONSUMER_PATH_RE.finditer(line):
         found.append(PortabilityViolation(rel, lineno, "consumer-path", match.group(0)))
+    full_spans: list[tuple[int, int]] = []
     for match in _TICKET_ID_RE.finditer(line):
+        found.append(PortabilityViolation(rel, lineno, "ticket-id", match.group(0)))
+        full_spans.append(match.span())
+    for match in _BARE_TICKET_ID_RE.finditer(line):
+        start, end = match.span()
+        if any(fs <= start and end <= fe for fs, fe in full_spans):
+            continue
         found.append(PortabilityViolation(rel, lineno, "ticket-id", match.group(0)))
     return found
 
@@ -328,8 +516,18 @@ def check_portability(skill_dir: Path) -> list[PortabilityViolation]:
 
 
 def _resolve_hook_logs_dir() -> Path:
-    """解析 hook-logs 目錄；env var 優先，否則用預設相對路徑（測試隔離用）。"""
-    return Path(os.environ.get(_HOOK_LOGS_DIR_ENV, _DEFAULT_HOOK_LOGS_DIR))
+    """解析 hook-logs 目錄；env var 優先（測試隔離用），否則錨定專案根目錄。
+
+    改為呼叫 _resolve_project_root() 前，此函式用未錨定的相對路徑
+    `.claude/hook-logs`，經由已安裝的全域 shim（`uv run --directory
+    <skill_dir>`，cwd 恆等於 skill 自身目錄）執行時，稽核紀錄會寫到
+    `<repo>/.claude/skills/skill-sync/.claude/hook-logs/`，而非本函式
+    文件承諾的 `<repo>/.claude/hook-logs/`。
+    """
+    env_value = os.environ.get(_HOOK_LOGS_DIR_ENV)
+    if env_value:
+        return Path(env_value)
+    return _resolve_project_root("hook-logs resolution") / _DEFAULT_HOOK_LOGS_DIR
 
 
 def _write_portability_force_log(
@@ -365,6 +563,41 @@ def _write_portability_force_log(
         print(f"  [Warning] force-log 寫入失敗（不阻斷 push）：{exc}", file=sys.stderr)
 
 
+def _write_divergence_force_log(
+    name: str,
+    divergence_warned: bool,
+    stale_version_warned: bool,
+    push_revert_warned: bool = False,
+) -> None:
+    """`push --force` 使方向警告、stale-version 警告或疑似回退警告失去
+    `[y/N]` 停點時，把「這次 push 忽略了哪些警告」落地到 hook-logs，供事後
+    追溯。
+
+    `push_revert_warned` 預設 `False`：`_check_push_revert` 是後補的第三種
+    警告來源，既有呼叫點（測試與其他呼叫端）不需要跟著改寫就能維持原行為。
+
+    與 `_write_portability_force_log` 同一權衡：append-only JSONL、目錄不存在
+    自動建立、寫入失敗只警告不阻斷 push（這是稽核記錄，不是主閘門）。只在
+    `cmd_push` 判定至少一道警告曾印出且 `force=True` 時呼叫——沒有警告或未帶
+    `--force` 的正常路徑不產生任何記錄，避免每次成功 push 都無謂寫檔。
+    """
+    logs_dir = _resolve_hook_logs_dir()
+    record = {
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "skill": name,
+        "divergence_warning_ignored": divergence_warned,
+        "stale_version_warning_ignored": stale_version_warned,
+        "push_revert_warning_ignored": push_revert_warned,
+    }
+    try:
+        logs_dir.mkdir(parents=True, exist_ok=True)
+        log_file = logs_dir / _DIVERGENCE_FORCE_LOG_FILENAME
+        with open(log_file, mode="a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as exc:
+        print(f"  [Warning] force-log 寫入失敗（不阻斷 push）：{exc}", file=sys.stderr)
+
+
 def _skill_exists_in_canonical(name: str, repo_url: str) -> bool:
     """查詢遠端 versions.json 是否已收錄此 skill。
 
@@ -384,13 +617,25 @@ def _skill_exists_in_canonical(name: str, repo_url: str) -> bool:
     return isinstance(manifest, dict) and name in manifest
 
 
+def _format_violation_lines(violations: list[PortabilityViolation]) -> list[str]:
+    """把違規清單格式化為顯示行（不含輸出目的地），供 stderr 完整報告與
+    --force 旁路時的 stdout 摘要共用同一格式，避免兩處各自維護一份「前 20
+    筆 + ... and N more」的截斷邏輯而彼此漂移。
+    """
+    lines = [f"    {v.file}:{v.line}  [{v.kind}]  {v.text}" for v in violations[:20]]
+    if len(violations) > 20:
+        lines.append(f"    ... and {len(violations) - 20} more")
+    return lines
+
+
 def _report_portability(
     skill_dir: Path, name: str, force: bool, repo_url: str | None = None
 ) -> None:
     """push 前的可攜性閘門。
 
     宣告 portable 的 skill 命中即中止（--force 可覆蓋但仍列出違規並落地
-    force-log）。未宣告者只列出摘要，不論它是否已存在於 canonical repo——
+    force-log，另見下方 stdout 摘要說明）。未宣告者只列出摘要，不論它是否已
+    存在於 canonical repo——
     「存在於 canonical」只證明「曾被 push 過」，不證明「其他 consumer 真的
     裝了它」（實測：canonical 現有 64 個 skill，某一線消費專案僅裝 23 個；
     `doc` / `ticket` / `worktree` 等框架專屬工具全都在 canonical 裡但該專案
@@ -406,6 +651,11 @@ def _report_portability(
     這是資訊，不是判決；中止沒有可靠依據就不該做。
 
     repo_url 預設 None：省略時完全不查詢遠端，行為與未傳時完全一致。
+
+    --force 旁路時額外印一份 stdout 摘要：既有的完整違規列表只印在 stderr，
+    若呼叫端只收集 stdout（如管線只轉存 stdout 供事後稽核），--force 的效果
+    會只留下 hook-logs 的 jsonl 這一條痕跡，使用者不會主動去看。stdout 摘要
+    與 stderr 版共用 _format_violation_lines，不重複維護格式。
     """
     violations = check_portability(skill_dir)
     if not violations:
@@ -437,10 +687,8 @@ def _report_portability(
         f"{len(violations)} consumer-specific reference(s):",
         file=sys.stderr,
     )
-    for v in violations[:20]:
-        print(f"    {v.file}:{v.line}  [{v.kind}]  {v.text}", file=sys.stderr)
-    if len(violations) > 20:
-        print(f"    ... and {len(violations) - 20} more", file=sys.stderr)
+    for line in _format_violation_lines(violations):
+        print(line, file=sys.stderr)
     print(
         "  A portable skill must not name another project's files: keep the point "
         "in the sentence and drop the path, or move the passage into "
@@ -450,6 +698,15 @@ def _report_portability(
     if force:
         _write_portability_force_log(name, declared, already_shared, violations)
         print("  --force given: pushing anyway.", file=sys.stderr)
+        # 同一份摘要另印到 stdout：上面的完整報告只在 stderr，只收集 stdout
+        # 的呼叫端（如管線只轉存 stdout）原本除了 hook-logs 的 jsonl 外看不到
+        # 任何痕跡。
+        print(
+            f"  [Portability] --force bypassed {len(violations)} "
+            f"consumer-specific reference(s) in '{name}':"
+        )
+        for line in _format_violation_lines(violations):
+            print(line)
         return
     print("  Aborted. Use --force to push regardless.", file=sys.stderr)
     sys.exit(1)
@@ -463,10 +720,25 @@ def _extract_version_string(text: str) -> str | None:
     """從 SKILL.md 文字擷取版本字串。
 
     僅供人類於 changelog 對照閱讀，不進入同步決策（見 update_sync_manifest）。
+
+    `version:` 的比對範圍限定在 frontmatter 區塊（首尾 `---` 之間）：本專案
+    多數 SKILL.md 把版本寫在 frontmatter 的 metadata.version（縮排兩格），
+    原本只認行首 `^version:` 的寫法會漏抓這些縮排寫法；若不限定區塊，正文
+    （含本函式自身的說明文字）出現的 `version:` 字樣又會被誤抓，使抽取結果
+    依賴巧合而非結構。`**Version**:` 形式（工作日誌／規則文件慣用）仍在全文
+    搜尋，不受此限——本專案實測沒有 SKILL.md 使用此形式，收窄範圍無實際
+    行為變更，維持全文搜尋以免影響其他消費端可能存在的既有用法。
     """
     m = re.search(r"\*\*Version\*\*:\s*(\S+)", text)
-    if not m:
-        m = re.search(r"^version:\s*(\S+)", text, re.MULTILINE)
+    if m:
+        return m.group(1)
+    if not text.startswith("---"):
+        return None
+    end = text.find("\n---", 3)
+    if end == -1:
+        return None
+    front = text[3:end]
+    m = re.search(r"^\s*version:\s*(\S+)", front, re.MULTILINE)
     return m.group(1) if m else None
 
 
@@ -495,7 +767,7 @@ def compute_content_hash(skill_dir: Path) -> str | None:
     for f in skill_dir.rglob("*"):
         if not f.is_file():
             continue
-        rel = str(f.relative_to(skill_dir))
+        rel = f.relative_to(skill_dir).as_posix()
         if _should_exclude_file(rel):
             continue
         rel_paths.append(rel)
@@ -541,6 +813,33 @@ def _record_sync_base(skill_dir: Path) -> None:
         _write_sync_base(skill_dir, content_hash)
 
 
+def _refresh_stale_sync_base(skills_dir: Path, up_to_date_names: Iterable[str]) -> int:
+    """對內容已與遠端一致、但 `.skill-sync-base` 落後的 skill 重記同步基準。
+
+    只接收呼叫端已用內容雜湊確認 local == remote 的名單：這是安全性前提——只有
+    雙邊已確定一致時，「marker 落後」才等於「上次同步後兩邊各自獨立前進到同一份
+    內容」，可放心視為新的同步基準；若雙邊仍分歧就重記，會把尚未真正同步的狀態
+    誤標成已同步，讓下次分歧報告誤判方向。
+
+    僅在 marker 與目前雜湊不同時才寫入：canonical 通道（sync-claude-pull 全樹
+    overlay）與本地直接編輯都會讓內容前進而不觸碰 marker，`skill-sync pull`
+    （無名稱）狀態報告因此需要補上這一步；但報告命令原本是唯讀的，若對每個
+    marker 已經正確的 skill 也重寫一次，會讓每次報告都無謂觸碰檔案 mtime。
+    回傳實際重記的數量，供呼叫端印出可觀測訊息——報告命令從純讀變成偶爾有
+    寫入副作用，這個轉變不能對使用者靜默（觀測性規則 4）。
+    """
+    refreshed = 0
+    for name in up_to_date_names:
+        skill_dir = skills_dir / name
+        current_hash = compute_content_hash(skill_dir)
+        if current_hash is None:
+            continue
+        if _read_sync_base(skill_dir) != current_hash:
+            _write_sync_base(skill_dir, current_hash)
+            refreshed += 1
+    return refreshed
+
+
 def _resolve_diverge_direction(
     base_hash: str | None, local_hash: str, remote_hash: str
 ) -> str:
@@ -583,26 +882,225 @@ def _diverge_warning(direction: str, expected: str) -> str | None:
     )
 
 
+@contextlib.contextmanager
+def _cloned_skill_history(repo_url: str, skill_name: str):
+    """Clone `repo_url` 的完整歷史 metadata（不下載檔案內容）並取得該 skill
+    路徑的 commit log，供呼叫端在 `with` 區塊內對回傳的 repo 目錄執行進一步
+    的 git 操作（讀 tree 物件雜湊、checkout 特定歷史提交）。
+
+    共用給 `_check_suspect_revert`（報告端，比對遠端現況 vs 遠端自己的歷史，
+    皆為 git 物件可直接比對樹狀雜湊）與 `_check_push_revert`（推送端，比對
+    本地檔案系統內容 vs canonical 歷史，需要實際 checkout 內容才能比對，
+    見該函式說明）——兩者「clone + 取得該 skill 的 commit log」這段完全
+    相同，只有取得 log 之後的比對手段不同。
+
+    yield `(repo_dir, entries)`：`entries` 為 `(sha, ISO 時間戳)` 由新到舊
+    排列的清單；clone 失敗、log 失敗或無任何歷史時 `repo_dir` 為 `None`、
+    `entries` 為空清單，呼叫端一律先檢查 `repo_dir is not None` 才能使用。
+
+    成本說明（team lead 要求明列）：對 repo_url 執行一次
+    `--filter=blob:none --no-checkout` clone，不限 `--depth`——祖先關係
+    比對需要完整歷史，深度限制的淺 clone 無法提供「更早」的比較基準。
+    `blob:none` 確保 clone 當下完全不下載檔案內容，只取得 commit 與 tree
+    metadata；`--no-checkout` 確保 clone 當下不落地任何工作目錄檔案（後續
+    若呼叫端執行 `git checkout <sha> -- <path>`，才會針對那個路徑、那個
+    commit 惰性下載對應 blob，這是刻意的按需下載，不是一次性下載全部
+    歷史內容）。這個 clone 的成本隨 canonical **全庫**歷史長度成長，不是
+    隨單一 skill 的檔案量或提交數成長（git 的物件傳輸協定以整個 repo 的
+    歷史圖為單位，sparse-checkout 只影響工作目錄 populate 範圍，不影響
+    物件傳輸範圍）；兩個呼叫端都只在少數候選才觸發（`_check_suspect_revert`
+    限 direction == "pull"、`_check_push_revert` 限本地無合法 marker），
+    故實際發生頻率通常很低。若未來 canonical 歷史成長到使此操作成為報告或
+    推送延遲的主要來源，才需要評估更精細的方案（如伺服器端歷史查詢 API），
+    本次不預先最佳化一個尚未觀測到的問題。
+
+    任何 git 操作失敗（網路、路徑不存在、逾時等）皆吞下、yield 空結果——
+    這是報告/推送的加值判斷，不是主流程，失敗不該讓整份報告或整次推送
+    連帶失敗。
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp = Path(tmpdir) / "repo"
+        try:
+            clone = subprocess.run(
+                ["git", "-c", "core.autocrlf=false", "clone",
+                 "--filter=blob:none", "--no-checkout", repo_url, str(tmp)],
+                capture_output=True, text=True, timeout=REMOTE_FETCH_TIMEOUT_SECONDS,
+            )
+            if clone.returncode != 0:
+                yield None, []
+                return
+
+            log = subprocess.run(
+                ["git", "log", "--follow", "--format=%H,%cI", "--", f"{skill_name}/"],
+                cwd=tmp, capture_output=True, text=True,
+            )
+            if log.returncode != 0 or not log.stdout.strip():
+                yield None, []
+                return
+            entries = [
+                (sha, timestamp)
+                for sha, timestamp in (line.split(",", 1) for line in log.stdout.strip().splitlines())
+            ]
+            yield tmp, entries
+        except (OSError, subprocess.SubprocessError):
+            yield None, []
+
+
+def _check_suspect_revert(repo_url: str, skill_name: str) -> str | None:
+    """對已判定方向為 "pull" 的 skill，檢查 remote 目前內容是否命中該 skill
+    某個非最新歷史提交（即回退回一個更舊的版本），命中則回傳可顯示的摘要
+    （短 SHA + ISO 時間戳），否則回傳 None。
+
+    背景：三方比對（`_resolve_diverge_direction`）只回答「哪一側自 base 後
+    移動過」，不回答「移動後的內容是否仍是 base 的超集」。一個沒有合法
+    `.skill-sync-base` marker 的推送方（如從未透過本 CLI 同步過的既有消費
+    者）用舊副本覆蓋 canonical 時，方向判定會退化為 "unknown"，但另一個
+    持有合法 marker 的消費者看到的卻是字面正確、語意錯誤的 "pull"——
+    remote 確實移動過，只是移動方向是倒退。本函式補上這道「移動後內容是否
+    仍是超集」的檢查（`_check_push_revert` 是同一問題在推送端的縱深防禦，
+    兩者共用 `_cloned_skill_history` 走訪歷史）。
+
+    只在呼叫端已判定 direction == "pull" 時呼叫，故不影響其餘多數健康報告
+    （up_to_date、無分歧）的執行成本。
+
+    比對手段是 git 樹狀物件雜湊（`git rev-parse <commit>:<path>`），不是
+    `compute_content_hash` 的 SHA256 排序雜湊——兩者演算法不同不可混用，
+    但同一份內容在 git 裡不論何時提交，樹狀雜湊必定相同，足以判定「目前
+    內容是否與某個歷史時刻完全相同」，且不需要重新實作一套等價的排序
+    雜湊邏輯或另外持久化任何鏈結資料結構（canonical 本身的 git 歷史就是
+    現成的祖先關係來源）。
+    """
+    with _cloned_skill_history(repo_url, skill_name) as (repo_dir, entries):
+        if repo_dir is None or len(entries) < 2:
+            return None  # clone/log 失敗，或只有一筆歷史（無「更舊」可比對）
+
+        def tree_hash(commit: str) -> str | None:
+            result = subprocess.run(
+                ["git", "rev-parse", f"{commit}:{skill_name}/"],
+                cwd=repo_dir, capture_output=True, text=True,
+            )
+            return result.stdout.strip() if result.returncode == 0 else None
+
+        current_sha, _ = entries[0]
+        current_tree = tree_hash(current_sha)
+        if current_tree is None:
+            return None
+        for sha, timestamp in entries[1:]:
+            if tree_hash(sha) == current_tree:
+                return f"{sha[:8]} ({timestamp})"
+        return None
+
+
+def _check_push_revert(repo_url: str, skill_name: str, local_hash: str) -> str | None:
+    """推送方本地無合法 `.skill-sync-base` marker 時，檢查本地內容
+    （`local_hash`，`compute_content_hash` 算出）是否命中該 skill 於
+    canonical 的某個非最新歷史提交，命中則回傳可顯示摘要（短 SHA + ISO
+    時間戳），否則 `None`。
+
+    與 `_check_suspect_revert` 同一問題（三方比對只判「誰動過」不判「內容
+    是否仍是超集」）在推送端的縱深防禦：`_check_suspect_revert` 是報告端
+    的事後防線（回退已經寫進 canonical，只是不讓它被無感傳播），本函式是
+    事前防線（在回退寫入 canonical 之前警告推送方）。兩者共用
+    `_cloned_skill_history` 走訪歷史，只有走訪之後的比對手段不同——本地
+    內容不是 git 物件，不能用樹狀雜湊直接比對，改為對每個候選歷史提交
+    `git checkout <sha> -- <path>` 實際取出內容，用與呼叫端相同的
+    `compute_content_hash` 語意逐一雜湊比對。
+
+    只跳過歷史清單最新的一筆（`entries[0]`）：命中最新提交代表本地內容就是
+    canonical 目前的樣子，屬正常的「無變更重推」而非回退，此情況留給既有
+    `_print_divergence_warning`/`_print_stale_version_warning` 處理，不在
+    本函式範圍。
+    """
+    with _cloned_skill_history(repo_url, skill_name) as (repo_dir, entries):
+        if repo_dir is None or len(entries) < 2:
+            return None
+        for sha, timestamp in entries[1:]:
+            checkout = subprocess.run(
+                ["git", "checkout", sha, "--", f"{skill_name}/"],
+                cwd=repo_dir, capture_output=True, text=True,
+            )
+            if checkout.returncode != 0:
+                continue
+            historical_hash = compute_content_hash(repo_dir / skill_name)
+            if historical_hash == local_hash:
+                return f"{sha[:8]} ({timestamp})"
+        return None
+
+
+def _stale_version_warning(
+    source: Path, local_ver: str | None, remote_ver: str | None
+) -> str | None:
+    """版號與遠端相同、但內容雜湊自 .skill-sync-base 已變更時，回傳警告文字；否則 None。
+
+    內容改了、版號沒動是一種容易累積的分歧形態：版號相同時它不只無鑑別力，而是
+    主動宣稱兩邊一致，使分歧不會被例行同步檢查發現，須等到事後逐一讀 diff 才判
+    得出方向。閘門放在 push 端最便宜——寫入者當下仍握有變更脈絡，事後比對端已經
+    沒有。
+
+    版號不同（已 bump）或任一版號缺失時直接放行：本函式只鎖定「版號相同」這個
+    誤導性訊號，版號已跟著內容變更時不該每次 push 都跳警告。無 base 記錄（從未
+    走過本機制的既有 skill）維持向後相容的靜默，與 `_diverge_warning` 同一哲學。
+    """
+    if local_ver is None or remote_ver is None or local_ver != remote_ver:
+        return None
+    base_hash = _read_sync_base(source)
+    if base_hash is None:
+        return None
+    current_hash = compute_content_hash(source)
+    if current_hash is None or current_hash == base_hash:
+        return None
+    return (
+        f"Content changed since last sync (hash differs from {SKILL_SYNC_BASE_MARKER}) "
+        f"but version is still {local_ver}, same as remote. Bump the version before "
+        "pushing, or confirm this push intentionally keeps it unchanged."
+    )
+
+
+def _print_stale_version_warning(
+    source: Path, local_ver: str | None, remote_ver: str | None
+) -> bool:
+    """push preview 內印出 `_stale_version_warning` 的結果（若有）。
+
+    回傳是否印出了警告：`push --force` 需要這個布林值來判斷警告是否存在——
+    `--force` 不影響這個函式本身（檢查照跑、輸出照印），但拿掉了緊接其後的
+    `[y/N]` 停點，使這行 `[WARNING]` 從「使用者必然讀到才能繼續」降級為
+    「push 成功訊息前滾過去的幾行 stderr」。呼叫端（`cmd_push`）用回傳值在
+    `--force` 且警告存在時於結尾摘要重述，把降級的閱讀強制性至少部分找回來。
+    """
+    warning = _stale_version_warning(source, local_ver, remote_ver)
+    if warning:
+        print(f"  [WARNING] {warning}", file=sys.stderr)
+        return True
+    return False
+
+
 def _print_divergence_warning(
     local_skill_dir: Path,
     local_hash: str | None,
     remote_hash: str | None,
     expected: str,
-) -> None:
+) -> bool:
     """pull/push preview 前的方向檢查。local_skill_dir 是 sync base 記錄所在的
     本地目錄（pull 時是 target、push 時是 source，兩者皆為本地端）。
 
     任一雜湊為 None（目錄不存在，如首次 pull 或遠端尚無此 skill）或兩者相同
-    （未分歧，無方向可判）時安靜略過。
+    （未分歧，無方向可判）時安靜略過，回傳 False。
+
+    回傳是否印出了警告，理由與 `_print_stale_version_warning` 相同——
+    `cmd_push` 用它判斷 `--force` 是否把這道警告的停點拿掉了。`cmd_pull`
+    呼叫本函式時忽略回傳值：pull 沒有等價的 `--force` 降級問題，該路徑的
+    `[y/N]` 停點不受 `--force` 影響。
     """
     if local_hash is None or remote_hash is None or local_hash == remote_hash:
-        return
+        return False
     direction = _resolve_diverge_direction(
         _read_sync_base(local_skill_dir), local_hash, remote_hash
     )
     warning = _diverge_warning(direction, expected)
     if warning:
         print(f"  [WARNING] {warning}", file=sys.stderr)
+        return True
+    return False
 
 
 def _warn_skill_md_case_mismatch(base_dir: Path) -> None:
@@ -701,13 +1199,18 @@ def update_sync_manifest(repo_dir: Path) -> None:
     print("  [OK] versions.json updated")
 
 
-def get_skills_dir() -> Path:
-    """解析 .claude/skills 目錄，優先以 git toplevel 為基準，消除 cwd 依賴。
+def _resolve_project_root(purpose: str = ".claude/skills resolution") -> Path:
+    """解析專案根目錄，優先以 git toplevel 為基準，消除 cwd 依賴。
 
     在專案任意子目錄（含 skill 目錄內、`uv run --directory` 情境）執行時，
-    都應解析到專案根下的 .claude/skills，而非誤把子目錄當根目錄。
-    非 git 目錄（或 git 不可用）時 fallback 至現行 cwd 行為，並於 stderr
-    輸出警告（觀測性規則 4）。
+    都應解析到專案根，而非誤把子目錄當根目錄。非 git 目錄（或 git 不可用）
+    時 fallback 至現行 cwd，並於 stderr 輸出警告（觀測性規則 4）。
+
+    抽出為共用 helper：get_skills_dir() 與 _resolve_hook_logs_dir() 各自需要
+    同一段「消除 cwd 依賴」邏輯，若各自實作會在同一檔案內重蹈多處各自
+    解析同一件事的覆轍（`uv run --directory` shim 使 cwd 恆等於 skill 自身
+    目錄，任何未錨定專案根目錄的相對路徑寫入都會落錯位置）。`purpose`
+    只影響警告文字，兩個呼叫端共用判斷邏輯與 fallback 語意。
     """
     try:
         result = subprocess.run(
@@ -720,21 +1223,31 @@ def get_skills_dir() -> Path:
     except (OSError, subprocess.SubprocessError) as e:
         print(
             f"Warning: git rev-parse failed ({type(e).__name__}: {e}); "
-            "falling back to current working directory for .claude/skills resolution",
+            f"falling back to current working directory for {purpose}",
             file=sys.stderr,
         )
-        return Path.cwd() / ".claude" / "skills"
+        return Path.cwd()
 
     if result.returncode != 0:
         print(
-            "Warning: not a git repository; "
-            "falling back to current working directory for .claude/skills resolution",
+            f"Warning: not a git repository; "
+            f"falling back to current working directory for {purpose}",
             file=sys.stderr,
         )
-        return Path.cwd() / ".claude" / "skills"
+        return Path.cwd()
 
-    toplevel = result.stdout.strip()
-    return Path(toplevel) / ".claude" / "skills"
+    return Path(result.stdout.strip())
+
+
+def get_skills_dir() -> Path:
+    """解析 .claude/skills 目錄，優先以 git toplevel 為基準，消除 cwd 依賴。
+
+    在專案任意子目錄（含 skill 目錄內、`uv run --directory` 情境）執行時，
+    都應解析到專案根下的 .claude/skills，而非誤把子目錄當根目錄。
+    非 git 目錄（或 git 不可用）時 fallback 至現行 cwd 行為，並於 stderr
+    輸出警告（觀測性規則 4）。
+    """
+    return _resolve_project_root(".claude/skills resolution") / ".claude" / "skills"
 
 
 def run_git(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
@@ -770,7 +1283,7 @@ def compute_diff(src: Path, dst: Path) -> dict[str, list[str]]:  # i18n-exempt
     src_files: set[str] = set()
     for f in src.rglob("*"):
         if f.is_file():
-            rel = str(f.relative_to(src))
+            rel = f.relative_to(src).as_posix()
             if _should_exclude_file(rel):
                 continue
             src_files.add(rel)
@@ -785,7 +1298,7 @@ def compute_diff(src: Path, dst: Path) -> dict[str, list[str]]:  # i18n-exempt
     if dst.exists():
         for f in dst.rglob("*"):
             if f.is_file():
-                rel = str(f.relative_to(dst))
+                rel = f.relative_to(dst).as_posix()
                 if _should_exclude_file(rel):
                     continue
                 if rel not in src_files:
@@ -940,7 +1453,7 @@ def prune_dst_only(dst: Path, diff: dict[str, list[str]]) -> int:
     if removed:
         directories = [p for p in dst.rglob("*") if p.is_dir()]
         for directory in sorted(directories, key=lambda p: len(p.parts), reverse=True):
-            rel = str(directory.relative_to(dst))
+            rel = directory.relative_to(dst).as_posix()
             if _should_exclude_file(rel):
                 continue
             try:
@@ -996,7 +1509,9 @@ def cmd_pull(args: argparse.Namespace) -> None:
         tmp = Path(tmpdir) / "repo"
         print(f"Pulling skill '{name}' from {repo_url} ...")
 
-        run_git(["clone", "--depth", "1", "--filter=blob:none", "--sparse", repo_url, str(tmp)])
+        run_git(
+            ["-c", "core.autocrlf=false", "clone", "--depth", "1", "--filter=blob:none", "--sparse", repo_url, str(tmp)]
+        )
         run_git(["sparse-checkout", "set", f"{name}/"], cwd=tmp)
 
         source = tmp / name
@@ -1060,7 +1575,7 @@ def cmd_push(args: argparse.Namespace) -> None:
 
         # depth-1 full clone (not sparse) — push needs complete repo for git add/commit/push.
         # Sparse checkout would reduce download but git add -A behavior differs on sparse repos.
-        run_git(["clone", "--depth", "1", repo_url, str(tmp)])
+        run_git(["-c", "core.autocrlf=false", "clone", "--depth", "1", repo_url, str(tmp)])
 
         target = tmp / name
 
@@ -1072,9 +1587,29 @@ def cmd_push(args: argparse.Namespace) -> None:
         diff = compute_diff(source, target)
         plan = build_push_plan(diff, prune)
         print("\n[Push Preview]")
-        _print_divergence_warning(
-            source, compute_content_hash(source), compute_content_hash(target), "push"
+        local_content_hash = compute_content_hash(source)
+        divergence_warned = _print_divergence_warning(
+            source, local_content_hash, compute_content_hash(target), "push"
         )
+        stale_version_warned = _print_stale_version_warning(source, local_ver, remote_ver)
+        push_revert_warned = False
+        # 只在推送方本地無合法 marker 時才查——有合法 marker 的路徑已由
+        # _print_divergence_warning 的既有三態判定正確處理（見
+        # _check_push_revert 說明），無謂重複查詢徒增每次 push 的成本。
+        if _read_sync_base(source) is None and local_content_hash is not None:
+            push_revert_commit = _check_push_revert(repo_url, name, local_content_hash)
+            if push_revert_commit is not None:
+                print(
+                    "  [WARNING] Local content matches an older historical version "
+                    f"of this skill (commit {push_revert_commit}), not genuinely "
+                    "new — pushing may overwrite newer canonical content with a "
+                    "stale copy.",
+                    file=sys.stderr,
+                )
+                push_revert_warned = True
+        banned_term_hits = scan_push_for_banned_terms(source, target, diff)
+        if banned_term_hits:
+            _print_banned_term_report(banned_term_hits)
         print_diff_preview(plan, direction="push", src=source, dst=target)
 
         prunable = plan["prunable"]
@@ -1123,6 +1658,22 @@ def cmd_push(args: argparse.Namespace) -> None:
         _record_sync_base(source)
 
     print(f"\nPushed '{name}' to {repo_url}")
+
+    # --force 拿掉了警告後緊接的 [y/N] 停點，使上面任何一道 [WARNING] 從
+    # 「使用者必然讀到才能繼續」降級為「成功訊息前滾過去的幾行 stderr」——
+    # 檢查本身沒有被跳過，變的是讀者處境。這裡在最終摘要重述被忽略的警告
+    # 則數並落地 force-log，把降級的閱讀強制性至少部分找回來；未帶 --force
+    # 或沒有警告產生時，這段完全不執行，不影響既有的安靜成功輸出。
+    if force and (divergence_warned or stale_version_warned or push_revert_warned):
+        ignored = int(divergence_warned) + int(stale_version_warned) + int(push_revert_warned)
+        print(
+            f"  [WARNING] --force ignored {ignored} direction warning(s) above "
+            "— review them before assuming this push is safe.",
+            file=sys.stderr,
+        )
+        _write_divergence_force_log(
+            name, divergence_warned, stale_version_warned, push_revert_warned
+        )
 
 
 def _classify_sync_status(
@@ -1202,20 +1753,55 @@ def _classify_sync_status(
 
 
 def fetch_remote_manifest(repo_url: str) -> object:
-    """Fetch versions.json for the given repo. Raises on network or parse failure.
+    """Fetch versions.json for the given repo via a shallow, blob-less sparse clone.
 
-    The GitHub-to-raw URL rewrite lives here and nowhere else. A consumer that
-    re-derives it also re-derives the repo it points at, and then compares local
-    content against a different remote than `skill-sync` itself uses
-    (see ARCH-BAL-016).
+    Previously read raw.githubusercontent.com directly. That path sits behind
+    a CDN whose cache entry is created at push time and can keep serving the
+    pre-push content for well over a minute afterwards (three real-world
+    measurements against the canonical repo: 158s / 0s / 308s, upper bound
+    set by the CDN's own max-age=300 plus polling granularity) — a report run
+    inside that window misclassifies a just-pushed skill as SHOULD PULL, and
+    acting on that recommendation would overwrite the just-pushed content
+    with the stale remote copy. The GitHub REST contents API is not a fix
+    either: its response still carries `Cache-Control: max-age=60` (a
+    shorter but non-zero staleness window, measured), and anonymous callers
+    are additionally capped at 60 requests/hour — a ceiling a report command
+    invoked more than once a minute (routine across a multi-agent session)
+    can hit. `pull <name>` and `push <name>` already clone git directly for
+    this same repo and have never exhibited this staleness: git's smart HTTP
+    protocol resolves against the live ref on every request, with no CDN
+    edge cache in front of it. This switches the report path onto that same
+    mechanism instead of introducing a third one — repo/URL resolution for
+    fetching the manifest still lives only here (see ARCH-BAL-016); cloning
+    needs no URL derivation at all, `repo_url` is passed through unchanged.
+
+    `versions.json` lives at the repository root, so the default cone-mode
+    sparse pattern that `--sparse` alone applies (`/*` plus `!/*/`, meaning
+    "root-level files, no subdirectories") already limits the checkout to
+    it — unlike `pull <name>`, this needs no follow-up `sparse-checkout set`
+    to narrow to a specific path.
+
+    Raises `RuntimeError` on a non-zero git exit and
+    `subprocess.TimeoutExpired` past `REMOTE_FETCH_TIMEOUT_SECONDS`. That
+    bound is looser than the previous HTTP timeout: a clone takes longer
+    than a single GET under ordinary network conditions (~1.8s vs ~0.5s,
+    measured against the canonical repo), and a bound sized for the old path
+    would false-time-out on normal clone latency; it still keeps a
+    black-holed connection from hanging a report command indefinitely.
     """
-    raw_url = repo_url.replace(
-        "https://github.com/", "https://raw.githubusercontent.com/"
-    ).removesuffix(".git") + "/main/versions.json"
-    req = urllib.request.Request(raw_url, headers={"User-Agent": "skill-sync"})
-    # magic-exempt
-    with urllib.request.urlopen(req, timeout=REMOTE_FETCH_TIMEOUT_SECONDS) as resp:
-        return json.loads(resp.read())
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp = Path(tmpdir) / "repo"
+        clone = subprocess.run(
+            ["git", "-c", "core.autocrlf=false", "clone", "--depth", "1",
+             "--filter=blob:none", "--sparse", repo_url, str(tmp)],
+            capture_output=True, text=True, timeout=REMOTE_FETCH_TIMEOUT_SECONDS,
+        )
+        if clone.returncode != 0:
+            raise RuntimeError(f"git clone failed: {clone.stderr.strip()}")
+        versions_file = tmp / "versions.json"
+        if not versions_file.is_file():
+            return {}
+        return json.loads(versions_file.read_text(encoding="utf-8"))
 
 
 def sync_status_report(
@@ -1238,8 +1824,10 @@ def sync_status_report(
     instead of `skipped_remote_missing`.
 
     Raises `ValueError` when the remote manifest is not a JSON object, and
-    whatever `urlopen` raises when the remote is unreachable. Callers decide how
-    to degrade: `cmd_pull_all` reports and stops, an informational consumer may
+    whatever `fetch_remote_manifest` raises when the remote is unreachable
+    (`RuntimeError` on a git failure, `subprocess.TimeoutExpired` past
+    `REMOTE_FETCH_TIMEOUT_SECONDS`). Callers decide how to degrade:
+    `cmd_pull_all` reports and stops, an informational consumer may
     downgrade to a warning. Deciding that here would force one policy on both.
     """
     resolved_url = repo_url or get_repo_url()
@@ -1260,25 +1848,38 @@ def sync_status_report(
     ) = _classify_sync_status(
         local_manifest, remote_manifest, skills_dir, excluded_skills
     )
-    return SyncStatus(
-        repo_url=resolved_url,
-        remote_count=len(remote_manifest),
-        up_to_date=up_to_date,
-        diverged=[
+    diverged_skills: list[DivergedSkill] = []
+    for name, local_display, remote_display in diverged:
+        direction = _resolve_diverge_direction(
+            _read_sync_base(skills_dir / name),
+            local_manifest[name]["hash"],
+            remote_manifest[name]["hash"],
+        )
+        suspect_revert_commit = None
+        # 只對已判定為 "pull" 的候選額外查驗——多數健康報告（up_to_date、
+        # 無分歧）與其餘方向不受這道加值檢查的執行成本影響，見
+        # _check_suspect_revert 的成本說明。
+        if direction == "pull":
+            suspect_revert_commit = _check_suspect_revert(resolved_url, name)
+            if suspect_revert_commit is not None:
+                direction = "suspect_revert"
+        diverged_skills.append(
             DivergedSkill(
                 name=name,
                 local=local_display,
                 remote=remote_display,
                 pull_command=f"skill-sync pull {name}",
                 push_command=f"skill-sync push {name}",
-                direction=_resolve_diverge_direction(
-                    _read_sync_base(skills_dir / name),
-                    local_manifest[name]["hash"],
-                    remote_manifest[name]["hash"],
-                ),
+                direction=direction,
+                suspect_revert_commit=suspect_revert_commit,
             )
-            for name, local_display, remote_display in diverged
-        ],
+        )
+
+    return SyncStatus(
+        repo_url=resolved_url,
+        remote_count=len(remote_manifest),
+        up_to_date=up_to_date,
+        diverged=diverged_skills,
         overridden=overridden,
         excluded_by_policy=excluded_by_policy,
         skipped_no_hash=skipped_no_hash,
@@ -1305,6 +1906,25 @@ def _print_dual_command_group(header: str, entries: list[DivergedSkill]) -> None
         print(f"    -> {entry.push_command}   # inspect/send local content")
 
 
+def _print_suspect_revert_group(entries: list[DivergedSkill]) -> None:
+    """列印疑似回退的 skill：字面上是 "pull"（remote 移動過），但移動後的
+    內容命中一個更舊的歷史提交，不是真正的前進。不直接建議 pull——與
+    `_print_dual_command_group` 一樣兩條指令並列，多印一行命中的歷史 commit，
+    供人工判斷這是刻意回退（如撤銷某次變更）還是意外事故（見
+    `_check_suspect_revert`）。
+    """
+    print(
+        f"\n[SUSPECT REVERT] {len(entries)} skill(s) — remote has moved, but its "
+        "current content matches an older historical version rather than being "
+        "genuinely new. Review before pulling:\n"
+    )
+    for entry in entries:
+        print(f"  {entry.name}: local({entry.local}) vs remote({entry.remote})")
+        print(f"    remote matches historical commit {entry.suspect_revert_commit}")
+        print(f"    -> {entry.pull_command}   # inspect/take remote content")
+        print(f"    -> {entry.push_command}   # inspect/send local content")
+
+
 def cmd_pull_all(args: argparse.Namespace) -> None:
     """掃描本地已安裝 skill，以內容雜湊比對 versions.json，回報分歧供人工處理。
 
@@ -1319,6 +1939,13 @@ def cmd_pull_all(args: argparse.Namespace) -> None:
         print(f"Failed to read remote versions.json: {type(e).__name__}: {e}")
         print("Use 'skill-sync pull <name>' to work on a single skill instead.")
         return
+
+    refreshed = _refresh_stale_sync_base(skills_dir, status.up_to_date)
+    if refreshed:
+        print(
+            f"[OK] Refreshed {refreshed} stale '{SKILL_SYNC_BASE_MARKER}' marker(s) "
+            "for already up-to-date skill(s)."
+        )
 
     if not status.local_count:
         print("No local skills found.")
@@ -1351,12 +1978,14 @@ def cmd_pull_all(args: argparse.Namespace) -> None:
         print(f"\nAll {len(status.up_to_date)} checked skill(s) are up to date.")
         return
 
-    # 依 direction 分成四組：有 sync base 記錄的三態可給出明確建議，"unknown"
-    # （無 base 記錄的既有 skill）維持現行「方向未知，需人工判斷」輸出。
+    # 依 direction 分成五組：有 sync base 記錄的三態可給出明確建議，
+    # "suspect_revert" 是 "pull" 的子集但另設分類（見 _check_suspect_revert），
+    # "unknown"（無 base 記錄的既有 skill）維持現行「方向未知，需人工判斷」輸出。
     should_pull = [e for e in status.diverged if e.direction == "pull"]
     should_push = [e for e in status.diverged if e.direction == "push"]
     conflicts = [e for e in status.diverged if e.direction == "conflict"]
     unresolved = [e for e in status.diverged if e.direction == "unknown"]
+    suspect_reverts = [e for e in status.diverged if e.direction == "suspect_revert"]
 
     if should_pull:
         _print_single_command_group(
@@ -1382,6 +2011,8 @@ def cmd_pull_all(args: argparse.Namespace) -> None:
             "Direction unknown from hash alone — review and resolve manually:",
             unresolved,
         )
+    if suspect_reverts:
+        _print_suspect_revert_group(suspect_reverts)
 
     if status.up_to_date:
         print(f"\n{len(status.up_to_date)} other skill(s) are up to date.")
@@ -1426,7 +2057,9 @@ def cmd_list(args: argparse.Namespace) -> None:
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir) / "repo"
-        run_git(["clone", "--depth", "1", "--filter=blob:none", "--sparse", repo_url, str(tmp)])
+        run_git(
+            ["-c", "core.autocrlf=false", "clone", "--depth", "1", "--filter=blob:none", "--sparse", repo_url, str(tmp)]
+        )
         run_git(["sparse-checkout", "set", "--no-cone", "*/SKILL.md"], cwd=tmp)
 
         result = run_git(["ls-tree", "--name-only", "HEAD"], cwd=tmp)
@@ -1466,9 +2099,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    pull_parser = sub.add_parser("pull", help="Pull a skill from remote repo")
-    pull_parser.add_argument("name", nargs="?", default=None,
-                             help="Skill name to pull (omit to update all installed)")
+    pull_parser = sub.add_parser(
+        "pull",
+        help="Pull a skill from remote repo, or print a sync status report for "
+             "all installed skills (omit name)",
+    )
+    pull_parser.add_argument(
+        "name", nargs="?", default=None,
+        help="Skill name to pull (omit to print a sync status report for all "
+             "installed skills instead; report only — writes nothing except "
+             "refreshing a stale '.skill-sync-base' marker for a skill "
+             "already up to date)",
+    )
     pull_parser.add_argument("--force", "-f", action="store_true",
                              help="Apply changes without confirmation")
 
@@ -1476,7 +2118,13 @@ def build_parser() -> argparse.ArgumentParser:
     push_parser.add_argument("name", help="Skill name to push")
     push_parser.add_argument("-m", "--message", help="Commit message", default=None)
     push_parser.add_argument("--force", "-f", action="store_true",
-                             help="Apply changes without confirmation")
+                             help="Apply changes without confirmation; also bypasses the "
+                                  "portability gate for a declared-portable skill (violations "
+                                  "are still printed to stdout/stderr and logged); and removes "
+                                  "the confirmation stop that would otherwise follow a direction "
+                                  "or stale-version [WARNING] (the checks still run and still "
+                                  "print, but a summary line and force-log entry are the only "
+                                  "things left demanding you actually read them)")
     push_parser.add_argument("--prune", action="store_true",
                              help="Delete remote-only files (default: keep them)")
 
