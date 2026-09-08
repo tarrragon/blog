@@ -266,10 +266,12 @@ done | wc -l
 
 `--force` 除了跳過互動確認，還會**旁路 portability 閘門**與**三方方向警告**（skill-sync 1.14.0 / 1.18.0 的 CHANGELOG 記錄這兩個效果先前未文件化），而違規清單只印在 stderr。把它寫死在流程裡等於每次推送都預設關掉這兩道閘門，於是真違規混在正當豁免裡永遠不會被單獨看見。
 
-不帶 `--force` 推送時，決定按不按 y 之前讀這兩行：
+不帶 `--force` 推送時，決定按不按 y 之前讀這兩行，而**兩行的權重不同**：
 
-- `[Version] local X vs remote Y` — **X 不高於 Y 就不要推**，先 `skill-sync pull <name>` 合併。本庫實測過兩次同號覆蓋：兩個 session 各自從同一個基底寫出版號相同、內容不同的版本，後推的整檔蓋掉先推的，而版號相同讓落差在版號上看不出來。
-- `[WARNING] Sync base shows both sides changed independently` — 兩側都動過，這次推送會丟掉對方的改動。看到它就去比對，不要按 y。
+- `[WARNING] Sync base shows both sides changed independently` — **這是閘門**。它比對的是三方基底（雙方各自的基底與共同祖先），由內容雜湊算出。看到它就去逐段比對，不要按 y。
+- `[Version] local X vs remote Y` — 這是給人對照 changelog 用的顯示行，**不是判定依據**。`skill-sync` 自己已經把版本字串移出同步決策（`update_sync_manifest` 的 docstring 明寫理由：兩個獨立演化的分支可能巧合共用同一版本號而內容不同，semver 比較預設線性演進、對分支式分歧失準），內容同一性改用 hash。**X 高於 Y 不構成推送的許可**——本庫三次覆蓋裡有一次的版號正是遞增而基底是舊的。
+
+版號字串另有兩種讀錯的方式，兩種都讓顯示行與檔案內容分家：抽取邏輯的 `**Version**:` 分支搜尋全文、`version:` 分支只搜 frontmatter，SKILL.md 正文若出現前一種形式會勝過 frontmatter；而各專案自己解析 CHANGELOG 版號行的摘要工具會被破折號後緊接的反引號與日期括號截斷（併行專案實測兩例）。要確定某支 skill 的版本，讀它 SKILL.md frontmatter 的 `metadata.version`，不讀任何報告字串。
 
 確實要旁路時再手動加 `--force`，並把旁路掉的那幾條寫進 commit message。
 
