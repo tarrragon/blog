@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: wrap-decision
 license: MIT
 metadata:
-  version: 2.10.3
+  version: 2.12.0
   category: writing-methodology
 ---
 
@@ -63,7 +63,7 @@ metadata:
 
 > **實證（設計選型類）**：某次面對「文件索引寫入的接線方式該選哪種形態」的設計選型決策，直覺列出三個選項，選項間在「無旁路強度」與「自動寫入版控檔的副作用風險」兩軸上代價方向相反（強度高者風險也高），且能被一句話概括（三選項皆為「接線層級」的程度差異），未通過框架概括測試；首輪標為推薦的方案且基於未查證的基本率假設，被現實檢驗（Reality Test）證偽。
 
-> 本節為「二元處置取捨」判斷標準的 substance 權威來源。專案端若有對應的提問規則（本框架為 `references/project-integration/pm-rules-map.md` 所列者），其「選項空間檢查」節為落地版本，兩節判斷標準相同，修改請以本節為準並同步該節。<!-- portability-allow: 分層目錄由各專案自備，不隨 sync 傳遞 -->
+> 本節為「二元處置取捨」判準的 substance 權威來源。專案端若有對應的提問規則（本框架為 `references/project-integration/pm-rules-map.md` 所列者），其「選項空間檢查」節為落地版本，兩節判準相同，修改請以本節為準並同步該節。<!-- portability-allow: 分層目錄由各專案自備，不隨 sync 傳遞 -->
 
 **快速模式**（5 分鐘）：錨點 + Step 0 + W + 基本率（R 核心）+ 機會成本（A 核心）+ 決定
 **快速+模式**：快速模式 + 強制 R 的基本率 / 反向驗證兩階段反思（分析任務最容易跳過事證直接下結論，故在快速基礎上補回 R 核心 + 一輪反向驗證）
@@ -160,7 +160,7 @@ W 階段「擴增選項（Widen Options）」是「擴增選項空間」，但�
 | --------------------------------------------------------------- | ---------------------------------------------- |
 | 擴增選項（Widen Options）時寫出「適合的用戶選 A，其他用戶選 B」 | 已承認用戶差異會影響選擇，卻未先確認用戶是哪種 |
 | 選項描述含「通常」「一般來說」「大多數人」                      | 用群體敘述替代個體判定                         |
-| 執行現實檢驗（Reality Test）時發現「數據來源是群體統計」        | 這屬於 Step 0 應提前檢出的問題                 |
+| 執行現實檢驗（Reality Test）時發現「資料來源是群體統計」        | 這屬於 Step 0 應提前檢出的問題                 |
 | Attain Distance 的機會成本計算需假設用戶偏好                    | 偏好是 Step 0 資料，不該在 A 階段假設          |
 
 **失敗模式**：Step 0 最容易被跳過是因為反問當事人打斷對話流暢度。流暢度與準確度的取捨應交由當事人決定。
@@ -217,7 +217,7 @@ Step 0（本閘門）、premortem 的 context 閘門、`requirement-protocol` �
 
 **最低操作**：列方案前先寫出「我假設問題是 X 造成的」，再質疑 X 是否為真根因。
 
-> 分析類任務（根因調查、設計決策）建議完整執行三層質疑、現實檢驗（Reality Test）閘門與警告信號檢查。
+> 分析類任務（根因調查、設計決策）建議完整執行三層質疑、現實檢驗（Reality Test）閘門與警告信號檢查。完整防護機制、三層質疑步驟、案例、警告信號見 `references/pseudo-widen-guard.md`；ANA 類型 Ticket 強制執行該檔規格。
 
 ### 多輪迭代查詢（深度議題建議）
 
@@ -271,7 +271,7 @@ Step 0（本閘門）、premortem 的 context 閘門、`requirement-protocol` �
 - 清單每一項對照 source；找不到 → 標記為候選幻覺
 - 單項細節（schema、欄位語意）比整體清單可信
 
-> 完整防護重點是幻覺模式分類、逐項核對流程與反模式識別；各專案可另建來源清單與核對模板。
+> 完整防護重點是幻覺模式分類、逐項核對流程與反模式識別；各專案可另建來源清單與核對模板。完整幻覺模式、逐項核對流程、反模式、實戰案例見 `references/source-verification.md`。
 
 ### R.2 事實宣稱驗證（ANA → IMP 派發前強化）
 
@@ -500,9 +500,9 @@ WRAP 每階段之間是切割點 — 強迫問「是否繼續」：
 | `references/anti-paternalism.md`    | 悖論識別檢查清單 + 自我暴露偏好實踐（善意家長主義（benevolent paternalism）4 條件測試、自我參照悖論識別、推薦標記（Recommended）是暗黑模式（dark pattern））                                                                   |
 | `references/claim-quick-wrap.md`    | 任務啟動的簡化三問（W/A/P 1-2 分鐘版）、快速模式進一步壓縮版                                                                                                                                                                   |
 | `references/premortem-workflow.md`  | 完整 premortem 五步流程（context 閘門 → raw 失敗原因列舉 → 並行深挖 subagent → 三分綜合報告 → 落檔），為 P 階段簡化三問的高成本決策展開版；含本框架落地約束章節（PCB 派發骨架、markdown 落檔限制），其他專案沿用時可調整該章節 |
+| `references/pseudo-widen-guard.md`  | W 階段假設層級多元性完整規格：偽 Widen vs 真 Widen 判別、三層質疑步驟、PC-063 案例、警告信號、執行時機分級                                                                                                                     |
+| `references/source-verification.md` | R 階段清單類答案來源核對完整規格：LLM 幻覺模式分類、逐項核對流程、反模式、官方 guide agent 清單幻覺實戰案例                                                                                                                    |
 
 ---
-
-**Last Updated**: 2026-08-10
 
 版本紀錄在同目錄的 `CHANGELOG.md`。
