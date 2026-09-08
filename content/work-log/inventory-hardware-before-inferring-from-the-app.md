@@ -10,7 +10,7 @@ tags: ["adb", "android", "hardware", "pos", "debugging", "usb"]
 
 ## 從應用端反推的成本結構
 
-從程式行為反推的過程大致是：程式找不到印表機，所以推測過濾條件太嚴；改寬條件，出現一堆裝置，所以推測某幾個是內部硬體；試著連其中一個，觸控失效，所以推測那個是螢幕。
+從程式行為反推的過程**典型上**長這樣（這是這條路線的形狀，不是某一次排查的逐字紀錄）：程式找不到印表機，所以推測過濾條件太嚴；改寬條件，出現一堆裝置，所以推測某幾個是內部硬體；試著連其中一個，觸控失效，所以推測那個是螢幕。
 
 每一步都要跑一次完整的建置與安裝循環，而每一步得到的是一個間接證據。更麻煩的是這些推測會互相污染——過濾條件與裝置識別兩個假設同時可疑時，一次實驗改不動其中一個。
 
@@ -20,11 +20,11 @@ tags: ["adb", "android", "hardware", "pos", "debugging", "usb"]
 
 `adb shell dumpsys usb` 回答「Android 認得哪些 USB 裝置」。輸出含 vendor id、product id、製造商與產品名稱字串，以及每個介面的類別——[類別代碼記在兩層](../usb-class-code-lives-in-two-layers/)的那個問題可以在這裡直接看到答案，不必從程式的比對結果反推。
 
-sysfs 底下的 `/sys/bus/usb/devices/*/` 給的資訊更完整。每個裝置目錄裡有 `idVendor`、`idProduct`、`product`、`manufacturer`、`bDeviceClass`，介面的類別在 `<裝置>:1.0/bInterfaceClass`。這條路徑額外提供的是**拓樸**——目錄名稱本身編碼了裝置掛在哪個集線器的哪個埠底下，而許多一體機的內建印表機掛在內部集線器上。知道拓樸就能分辨「這台裝置在機器內部」與「這台是使用者接上去的」。
+sysfs 底下的 `/sys/bus/usb/devices/*/` 給的資訊更完整。每個裝置目錄裡有 `idVendor`、`idProduct`、`product`、`manufacturer`、`bDeviceClass`，介面的類別在 `<裝置>:1.0/bInterfaceClass`。這條路徑額外提供的是**拓樸**——目錄名稱本身編碼了裝置掛在哪個集線器的哪個埠底下，而一體機的內建印表機可能掛在內部集線器底下——拓樸看得出這件事，而裝置清單看不出來。知道拓樸就能分辨「這台裝置在機器內部」與「這台是使用者接上去的」。
 
 `adb shell dumpsys input` 回答「哪個裝置是觸控螢幕」。輸出裡的 `DeviceType: touchScreen` 是把某個 USB 裝置與螢幕觸控連起來的**關鍵證據**——沒有這一步，觸控面板在 USB 清單裡與任何一台 HID 裝置長得一樣。
 
-`adb shell pm list packages` 與 `dumpsys package` 回答「裝的是哪一版、是不是可偵錯的建置」。可偵錯的建置能用 `run-as` 讀應用程式私有目錄，這對確認「設定實際存了什麼值」很有用——那個問題的答案決定[讀取端驗證](../validate-persisted-settings-on-read/)該驗什麼。
+`adb shell pm list packages` 與 `dumpsys package` 回答「裝的是哪一版、是不是可偵錯的建置」。可偵錯的建置**一般可以**用 `run-as` 讀應用程式私有目錄，而這條路徑能回答「設定實際存了什麼值」——那個問題的答案決定[讀取端驗證](../validate-persisted-settings-on-read/)該驗什麼。
 
 `adb exec-out screencap -p` 搭配 `adb shell input tap` 讓遠端操作介面並取回畫面，不必每一次都請現場的人動手。這條路徑不經過螢幕，所以觸控已經失效的機器仍然操作得了。
 
@@ -48,4 +48,4 @@ sysfs 底下的 `/sys/bus/usb/devices/*/` 給的資訊更完整。每個裝置�
 
 面對一台不熟悉的機器，先取硬體清單再讀程式行為——盤點的產出是可核對的值，反推的產出是待驗證的假設，而假設會互相污染。
 
-盤點的完整度用一個條件檢查：機器上每一個會被程式列進候選的裝置，都能說出它是什麼、掛在哪裡、現在歸誰用。第三項是最容易漏的一項，而它正是[claim 之後誰失去了什麼](../usb-claim-takes-the-hardware-away/)那個問題要的輸入。
+盤點的完整度用一個條件檢查：機器上每一個會被程式列進候選的裝置，都能說出它是什麼、掛在哪裡、現在歸誰用。第三項是最容易漏的一項，而它正是[claim 一個介面等於接管它](../usb-claim-takes-the-hardware-away/)那一篇要的輸入——那一篇處理的是接管之後誰失去了什麼。
