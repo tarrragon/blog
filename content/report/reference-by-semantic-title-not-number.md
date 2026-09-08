@@ -69,6 +69,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "SSoT", "寫作規
 - [#84 Naming 是 iterated artifact](/report/naming-as-iterated-artifact/)：標題是名字。本卡要求標題承載可被引用的語意、等於對標題套用 #84 的 cross-call-site 檢驗 — 從引用者的角度看、這個標題單獨出現時讀者知道它指什麼嗎？只有編號的標題在這個檢驗下直接不及格。
 - [#270 敘事的解碼材料要在讀者已讀的文本裡](/report/decodable-from-text-already-read/)：本卡的篇內形態。本卡管跨段跨檔引用結構單位時的編號；#270 管同一篇敘事裡對實體的位置與數量指涉（「前兩本」「另外兩本」「後者」）——derivation vs fact 的判斷標準共用，而 #270 的實例顯示這種指涉不必等結構重排就錯位：位置與數量只在作者腦中的地圖上成立、作者自己就數錯了兩次。
 - [#97 Metadata surface 要納入寫作 review 範圍](/report/metadata-surface-in-writing-review/)：引用句屬於 #97 分類中的 navigation surface（跟 link label、索引條目同層）— 同樣是正文之外、卻直接決定讀者入口正確性的層。重排結構時、review 範圍要把散落各檔的引用句列入掃描面、而不是只改目標檔。
+- [#339 壓縮標籤省下的字數是一次，展開成本乘以引用點數](/report/compressed-label-cost-multiplies-with-citations/)：錨點寫法家族的第三員。本卡的錨點是結構排列的 derivation，#156 的錨點內嵌成員數，#339 的錨點是完整概念的壓縮——三者都把只在作者側成立的前提寫進了會被複製的標識符。#339 另補一條給本卡用的成本論證：錨點的修復成本乘以引用點數，所以錨點取名時的自足義務高於一般欄位。
 - [#282 規則要指到一個打得開的東西](/report/rule-must-point-at-something-openable/)：同一種無聲失效的另一種載體。本卡的編號在結構重排後字面完好而指向錯的內容；#282 的檔名在改名後字面完好而指向不存在的東西。兩者都成功「解析」到錯的地方、都不報錯，差別只在漂移的是位置還是名字。
 
 ---
