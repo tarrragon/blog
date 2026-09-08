@@ -3,7 +3,7 @@ name: knowledge-cards
 description: "Standardizes the full lifecycle of atomic knowledge cards (Zettelkasten term cards) in a content collection: creation criteria, gap detection via the term-role × baseline matrix, card authoring format, registration points (index + tool scope), link backfill, and module-scale audits. Use when creating cards, auditing a module for missing cards, restructuring card directories, or wiring card links into articles. Triggers: 建卡, 知識卡, 缺卡, 術語卡, 卡片 audit, 卡片格式, 概念位置, 鄰卡連結, 回填連結, 卡片目錄, 卡片重構, 詞頻掃描, 基線, 行內解釋, knowledge card, term card, card gap."
 license: MIT
 metadata:
-  version: 1.7.2
+  version: 1.8.0
   category: content-methodology
 ---
 
@@ -27,7 +27,7 @@ metadata:
 
 ## 缺卡判定矩陣（速查）
 
-術語處理分三級：行內展開（正文 1-2 句定義）、連卡、裸用。判定用兩軸——**術語在本文的角色**（主線 / 支撐 / 背景）×**是否在本文的前置知識基線內**（基線＝模組讀者定位 ∪ 閱讀路線中前置篇章教過的主線術語）：
+術語處理分三級：行內展開（正文 1-2 句定義）、連卡、裸用。判定用兩軸——**術語在本文的角色**（主線 / 支撐 / 背景）×**是否在本文的前置知識基線內**（基線＝模組讀者定位 ∪ 閱讀路線中前置篇章教過的主線術語）。**基線取的是讀者的知識存量，讀者定位在這裡供應的是他讀過哪些前置篇章，不是他有能力理解到什麼程度**——把「讀者是專業人士」這種能力宣稱直接算進基線，它會膨脹到涵蓋整個領域的名詞，缺卡判定因此永遠不觸發，而不觸發與「檢查過、沒有缺口」在報告上同形：
 
 | 術語角色 | 基線外                        | 基線內                     |
 | -------- | ----------------------------- | -------------------------- |

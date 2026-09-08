@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 1.10.2
+  version: 1.11.0
   category: writing-methodology
 ---
 
@@ -86,7 +86,7 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 
 **讀者定位聲明（生成端前置步驟）**：每個教學模組在第一篇文章生成前，顯式聲明讀者定位——一段話描述目標讀者的背景、已有能力、缺的經驗。這份聲明是後續所有生成和 review 的可檢查基準。缺少顯式聲明時，LLM 預設用「教外行人」的姿態寫教學內容，這個預設不被 review 挑戰（reviewer 共享同一個預設），導致宣導語氣通過多輪審查。per [outside-in reader frames](references/principles/review-lacks-outside-in-reader-frames.md)
 
-**讀者定位：缺經驗的專業人士、不是外行人**：技術教材的讀者是在特定領域缺乏經驗的專業人士，不是完全不懂的外行人。寫法是補足經驗缺口（直接描述情境與操作需求），不是從零科普（故事線導入、比喻堆疊、宣導語氣）。宣導式語氣（「你可能沒注意到」「把 X 想成 Y」「跑得好好的」）預設讀者無能、降低教材可信度。詳見 [audience-is-professional-not-layperson](references/principles/audience-is-professional-not-layperson.md)。
+**讀者定位：缺經驗的專業人士、不是外行人**：技術教材的讀者是在特定領域缺乏經驗的專業人士，不是完全不懂的外行人。寫法是補足經驗缺口（直接描述情境與操作需求），不是從零科普（故事線導入、比喻堆疊、宣導語氣）。宣導式語氣（「你可能沒注意到」「把 X 想成 Y」「跑得好好的」）預設讀者無能、降低教材可信度。**這條定位是能力宣稱、不是知識宣稱**——它說讀者有能力理解（研究方法、開發原則、邏輯推導），不說他已經知道這個領域的名詞、原理與縮寫；兩種讀法對同一句話都通順，而只有後一種會授權省略。方向由需求決定：專業讀者要的是每個流程的原因、成本、代價與用詞精準，全部是更多的文字，所以這條原則推向展開。判別問句是**這一處省略，省下的是讀者不需要的字，還是讀者要自己補回來的脈絡**；省略在產物上沒有痕跡（沒補的卡不存在、沒展開的原理不佔行數），所以偵測靠術語分級表與理解取樣、不靠讀稿。詳見 [audience-is-professional-not-layperson](references/principles/audience-is-professional-not-layperson.md)。
 
 **跨專業溝通用情境遞進、不用比喻堆疊**：向非本領域的專業人士（管理層、決策者）解釋技術議題時，減少術語並從簡單情境遞進到複雜情境。比喻傳遞形狀但不傳遞嚴重性、在細節處崩解、且隱含「對方聽不懂」的預設。用決策者熟悉的維度（影響範圍、恢復時間、成本量級）表達。詳見 [cross-expertise-scenario-not-analogy](references/principles/cross-expertise-scenario-not-analogy.md)。
 
