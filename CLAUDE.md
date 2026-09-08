@@ -207,7 +207,7 @@ done
 4. **如果新增 principle 卡**：在 `references/principles/` 建卡，並在 `bin/skill-mirror` 的 mapping table 加上 principle slug → report slug 的對應
 5. **更新版本號**：SKILL.md 末尾加版本號（見上方版號規則）
 6. **commit 到 blog repo**
-7. **推送到 skill repo**：`skill-sync push <name> -m "描述" --force`
+7. **推送到 skill repo**：`skill-sync push <name> -m "描述"`（**不帶 `--force`**，理由見下方「推送前必讀那兩行」）
 8. **同步鏡像**：`bin/skill-mirror <name>`（自動處理 Hugo frontmatter、H1→H2、連結轉換、fmt）
 9. **commit 鏡像**：`git add content/skills/<name>/skill.md && git commit`
 10. **push**
@@ -218,7 +218,7 @@ done
 
 ```bash
 git add .claude/skills/<name>/ content/report/ && git commit
-skill-sync push <name> -m "vX.Y.Z: 描述" --force
+skill-sync push <name> -m "vX.Y.Z: 描述"   # 讀完 [Version] 與 [WARNING] 兩行再按 y
 bin/skill-mirror <name>
 git add content/skills/<name>/skill.md && git commit
 git push
@@ -261,6 +261,19 @@ done | wc -l
 ```
 
 同步時連段標一起對齊：同一個結構單位在兩份鏡像裡要用同一組 canonical 字串，否則之後靠 anchor 比對的自動化與人工檢查都會錯位。
+
+### 推送前必讀那兩行
+
+`--force` 除了跳過互動確認，還會**旁路 portability 閘門**與**三方方向警告**（skill-sync 1.14.0 / 1.18.0 的 CHANGELOG 記錄這兩個效果先前未文件化），而違規清單只印在 stderr。把它寫死在流程裡等於每次推送都預設關掉這兩道閘門，於是真違規混在正當豁免裡永遠不會被單獨看見。
+
+不帶 `--force` 推送時，決定按不按 y 之前讀這兩行：
+
+- `[Version] local X vs remote Y` — **X 不高於 Y 就不要推**，先 `skill-sync pull <name>` 合併。本庫實測過兩次同號覆蓋：兩個 session 各自從同一個基底寫出版號相同、內容不同的版本，後推的整檔蓋掉先推的，而版號相同讓落差在版號上看不出來。
+- `[WARNING] Sync base shows both sides changed independently` — 兩側都動過，這次推送會丟掉對方的改動。看到它就去比對，不要按 y。
+
+確實要旁路時再手動加 `--force`，並把旁路掉的那幾條寫進 commit message。
+
+**查發佈庫的實際狀態用 `git clone`，不要用 `raw.githubusercontent.com`。** 那個端點有 CDN 快取、回讀到的是數分鐘前的內容，而它與真實狀態的落差沒有任何訊號——讀得到、格式正確、看起來就是答案。本庫實測踩過一次：據此判定「推上去的內容被覆蓋」而做了一輪多餘的重寫，那次重寫反而蓋掉對方已經寫好的修正。skill-sync 自己印的 `[Version]` 行比對的是 clone，可以信。
 
 ### 同步判斷原則
 

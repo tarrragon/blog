@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 1.9.0
+  version: 1.10.1
   category: writing-methodology
 ---
 
@@ -261,7 +261,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
   - **命中數不是涵蓋率**：一條回傳大量命中的 pattern 讀起來像「這一類有在管」，於是「這個體裁的這一類還有沒有別的形態」不會被問——零命中至少還會讓人懷疑 pattern 寫錯了。跑完一批修正之後回頭比對命中數：修了幾十處而數字幾乎沒動時，修的東西與量的東西不是同一批。這個對照免費（改動前後各跑一次），而它是涵蓋缺口最早的訊號。**掃描指令本身也要驗**——同一個 session 內三次因為指令而非內容漏報：zsh 的字串沒斷行、`uniq -c` 的輸出被誤讀、以及要求前後脈絡的 regex 略過了靠近行首行尾的命中。回報 clean 之前，先拿一個已知會命中的字串餵給同一條指令。
   - **這些 grep 曝光候選、不做自動判定**：命中後要不要算違規有品味核心；且 LLM reviewer 跟作者共享文體、同源自審對 register 類（否定起手 / 喊話 / 誇飾 / 概念前置）有結構上限 ——「不是 X、而是 Y」這種 LLM 高頻自產句型最容易全員放水。grep + 同源判定只負責曝光候選、register 層的真防線是文體異源視角（human cold-read 或 prompt 採「挑剔否定起手 / 概念後置」對抗姿態的 reviewer）、同源回報的「clean」不可當真
   - **判準外交接**：驚嘆號等標點強度重複、逐字重複兩處歸「同一件事兩形」（結構層一致性判準，非本清單類別）；skill / reference 檔頭缺三段式（何時讀／同目錄／溯源）歸結構約定判準（self-application sweep 的 self-grep 對象）。兩者字面上像字句層問題、但本清單無對應類別，不列為本清單 finding
-  - **1-A 掃描的另兩份判準（非本清單成員）**：跑 1-A 全批掃描時，「隱含詞」（`rg "希望|按理|自然|通常"`，判「作者以隱含詞迴避判斷」還是「誠實標示機制的機率性或作為術語成分」）歸文件撰寫明示性判準；「優化」等禁用詞的豁免範圍（TDD phase 名／關鍵字枚舉表帶 exempt marker 合規，散文設計權衡句不豁免）與 zhtw cross_strait／confusable 命中跟 CLAUDE.md、rules/core 全框架用語一致者判專案 canonical、strict error 級同理，歸語言約束判準。三者各自的正本不在本清單，本清單只記錄它們在 1-A 掃描中的合規邊界，語意與命中規則仍以各自正本為準
+  - **1-A 掃描的另兩份判準（非本清單成員）**：跑 1-A 全批掃描時，「隱含詞」歸文件撰寫明示性判準，合規邊界已載於該專案的文件撰寫明示性規則（其撰寫前檢查清單一節）；「優化」等禁用詞豁免範圍與 zhtw cross_strait／confusable 命中判專案 canonical 歸語言約束判準，合規邊界已載於該專案的語言約束規則（禁用詞那一條）。本清單不重複載述條文內容，語意與命中規則以各自正本為準
 
 詳細各維度的判讀規則跟修法、見對應 reference（writing-articles / writing-documents 等）跟 principles 目錄內的 cadence-homogenization / colloquial-rhetoric / regional-terminology / decorative-symbols / multi-pass-review-frame-granularity 等原則卡。
 
