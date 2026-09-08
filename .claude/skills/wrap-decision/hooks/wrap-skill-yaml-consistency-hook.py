@@ -11,7 +11,7 @@ WRAP SKILL↔YAML 一致性檢查 Hook — wrap-skill-yaml-consistency-hook.py
       .claude/skills/wrap-decision/SKILL.md（portability-allow: 本 skill 自我引用，consumer 共通安裝位置）
       .claude/config/wrap-triggers.yaml（portability-allow: 此 skill 對消費端環境的硬性依賴——AC4 缺映射檔會 exit 2 阻擋，沿用時需提供對應設定檔）
 
-檢查項目（依 W10-055.1 ANA Solution 規格）：
+檢查項目（依 ANA Solution 規格）：
   AC1 Signal orphan：每個 YAML signals[].id 在映射檔 signal_to_skill_triggers 有對應 SKILL 情境（警告）
   AC2 Keyword orphan：每個 YAML keywords[] / failure_detection.keywords[] 在映射檔
                        keyword_to_trigger_category 有 belongs_to 類別（警告）
@@ -66,6 +66,17 @@ ALIGNMENT_REL_PATH = (
 
 WATCHED_PATHS = (YAML_REL_PATH, SKILL_REL_PATH)
 STDERR_PREFIX = "[WRAP Consistency]"
+
+# 缺映射檔時內嵌的最小可用範例：
+# schema 只存在於映射檔自身的檔頭註解（即缺失的那個檔案內），故不可指向外部
+# 文件自救。範例保留兩個頂層必要欄位，佔位符供讀者依實際 signal/keyword 替換。
+_ALIGNMENT_MINIMAL_EXAMPLE = """\
+version: "1.0.0"
+signal_to_skill_triggers:
+  <yaml_signal_id>:
+    - "<skill_situation_label>"
+keyword_to_trigger_category:
+  "<yaml_keyword>": "<skill_description_trigger_category>\""""
 
 
 # ============================================================================
@@ -148,7 +159,11 @@ def load_alignment(project_root: Path, logger) -> Tuple[Optional[Dict[str, Any]]
     """載入映射檔。返回 (data, error_message)。error_message 非 None 時應阻擋。"""
     path = project_root / ALIGNMENT_REL_PATH
     if not path.exists():
-        msg = f"映射檔不存在：{ALIGNMENT_REL_PATH}（請依映射檔規格新建，見 SKILL.md）"
+        msg = (
+            f"映射檔不存在：{ALIGNMENT_REL_PATH}\n"
+            "請在該路徑新建檔案，最小可用範例（複製後依實際 signal/keyword 調整佔位符）：\n"
+            f"{_ALIGNMENT_MINIMAL_EXAMPLE}"
+        )
         logger.error(msg)
         return None, msg
     try:

@@ -2,8 +2,8 @@
 name: spec
 description: "需求完善度品質閘門。Use for: (1) Phase 1 開始時初始化功能規格骨架 (/spec init), (2) 驗證功能規格的需求完善度 (/spec validate), (3) 判斷需求是否足夠清晰可進入實作。Use when: Phase 1 功能設計代理人在進行功能設計時，作為內部工具使用。不是流程入口——/tdd 管流程編排，/spec 管產出物品質。"
 metadata:
-  version: 1.6.2
   portable: true
+  version: 1.6.2
 
 ---
 
@@ -168,7 +168,7 @@ python3 .claude/skills/spec/scripts/check_api_surface.py {spec-file-path}  # por
 
 輸出缺口清單（`[FR-XX] {行內容}`）或「檢核通過」；exit code 0 = 通過、1 = 有缺口。**性質為啟發式提醒**（依訊號詞比對，非語意理解），可能有少量誤判（如籠統的架構流程敘述），不構成強制阻擋，僅供撰寫者複核。
 
-**domain-map 覆蓋檢核**（動機：W2-014 domain map 曾停在 FR-24 漏 FR-25/26，靠人工四視角審查才抓出）：驗證 version-bootstrap Step 2.5 產出的 domain map 是否覆蓋 spec 全部 FR。適用於規劃波的 domain spec（`docs/spec/{domain}/`），非 ticket 級 feature-spec。命令：
+**domain-map 覆蓋檢核**（動機：domain map 曾漏覆蓋部分 FR，靠人工四視角審查才抓出）：驗證 version-bootstrap Step 2.5 產出的 domain map 是否覆蓋 spec 全部 FR。適用於規劃波的 domain spec（`docs/spec/{domain}/`），非 ticket 級 feature-spec。命令：
 
 ```bash
 python3 .claude/skills/spec/scripts/check_domain_coverage.py {spec-file-path} [--domain-map {path}]  # portability-allow: consumer 共通安裝位置

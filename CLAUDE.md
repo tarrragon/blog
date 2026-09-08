@@ -152,7 +152,7 @@ Hugo 的列表排序是 weight 遞增、**未設 weight 的頁面排在全部有
 
 ## Skill 庫同步
 
-本專案的 `.claude/skills/` 與遠端 skill 庫 `https://github.com/tarrragon/claude-skills.git` 共用同一組 skill。使用 `skill-sync` CLI 工具同步（透過 `uv tool` 安裝在 `~/.local/bin/skill-sync`）。
+本專案的 `.claude/skills/` 與遠端 skill 庫 `https://github.com/tarrragon/claude-skills.git` 共用同一組 skill。使用 `skill-sync` CLI 工具同步。`~/.local/bin/skill-sync` 是 `.claude/scripts/install-skill-clis.py` 產生的 shim，它以當前 git repo 的根目錄解析出 `.claude/skills/skill-sync` 再 `uv run --directory` 執行——**跑的是這個 repo 裡那份 source，不是一份全域安裝**（`uv tool list` 是空的），所以拉取這個 skill 等於升級工具本身、下一次呼叫即生效。
 
 ### skill-sync 指令
 
@@ -160,10 +160,11 @@ Hugo 的列表排序是 weight 遞增、**未設 weight 的頁面排在全部有
 # 列出遠端所有 skill
 skill-sync list
 
-# 批次更新已安裝的 skill（比對 versions.json，只更新有差異者）
+# 盤點已安裝的 skill 與遠端的落差（report-only，一個檔案都不會動）
+# 輸出分三類：[SHOULD PULL] 本地未改而遠端前進、[SKIP] 遠端沒有這個條目、以及已同步的
 skill-sync pull
 
-# 拉取指定 skill（新安裝或強制更新）
+# 實際套用的只有具名形式（新安裝或更新既有）
 skill-sync pull <skill-name>
 
 # 本地 → 遠端（修改 skill 後推送，自動更新 versions.json）
@@ -264,7 +265,7 @@ done | wc -l
 ### 同步判斷原則
 
 - 版本號相同但檔案有差異 → 本地是客製版，以本地為準推回遠端。
-- 遠端版本較新 → diff 審查後決定是否合併（`skill-sync pull` + 本地比對）。
+- 遠端版本較新 → diff 審查後決定是否合併（`skill-sync pull <name>` + 本地比對）。無參數 `pull` 的 `[SHOULD PULL]` 分類本身已經代表「本地自上次同步後未改動」，落在那一類的 skill 沒有會被覆蓋的客製版，diff 審查的重點是看進來什麼、不是防遺失。
 - 本地版本較高 → 不覆蓋，本地為準。
 - 遠端有新增檔案（原則卡、hooks）→ `skill-sync pull` 取用到本地，再推合併版回遠端。
 
