@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
-# 檢查 .claude/skills/*/SKILL.md 的 frontmatter metadata.version 與文末版本記錄一致。
+# 檢查 .claude/skills/*/SKILL.md 的 frontmatter metadata.version 與
+# 同目錄 CHANGELOG.md 最上面那一條版本記錄一致。
 #
 # 為什麼獨立成一支：同樣的檢查原本只掛在 bin/skill-mirror 裡，而那支只跑有 content/
 # 鏡像的 skill。實測有一次三個 skill 同時漏更 frontmatter，只有帶鏡像的那個被攔下、
 # 另外兩個以不一致的版號推上了遠端庫。防線的覆蓋範圍跟它掛在哪個流程上綁死，所以
 # 把它移到一個以「全部 skill」為對象的位置。
+#
+# 為什麼比對 CHANGELOG.md 最上面那一條，而不是 SKILL.md 裡的版號字串：SKILL.md 正文
+# 可能引用別的 skill 的裸版號，取「最大的三段數字」會給假陽性（tdd 曾被那樣誤報）。
+# CHANGELOG 的第一條只可能是這個 skill 自己的版號。
+#
+# 這支腳本曾經整支失效而沒有任何徵兆：版本記錄從 SKILL.md 搬到 CHANGELOG.md 之後，
+# 這裡仍然 grep SKILL.md，grep 找不到就回 1，配上 set -e 讓腳本在第一個 skill 就
+# 靜默中止（exit 1、stdout 與 stderr 都零行）。所以底下每一個可能找不到東西的
+# grep 都接 `|| true`，並在結尾印出實際檢查過幾個——**零輸出不可以是通過的樣子**。
 #
 # 用法：bin/skill-version-check [skill-name ...]   不給參數就掃全部。
 
@@ -21,6 +31,7 @@ else
 fi
 
 fail=0
+checked=0
 for name in "${targets[@]}"; do
   f=".claude/skills/${name}/SKILL.md"
   if [[ ! -f "$f" ]]; then
@@ -34,8 +45,10 @@ for name in "${targets[@]}"; do
     continue
   fi
 
-  declared=$(sed -n '/^  version:/{s/^  version: *//;s/"//g;p;q;}' "$f")
-  logged=$(grep -oE '^\*\*Version\*\*: [0-9]+\.[0-9]+\.[0-9]+' "$f" | head -1 | sed 's/.*: //')
+  c=".claude/skills/${name}/CHANGELOG.md"
+  declared=$(sed -n '/^  version:/{s/^  version: *//;s/"//g;p;q;}' "$f" || true)
+  logged=$(grep -m1 -oE '^\*\*Version\*\*: [0-9]+\.[0-9]+\.[0-9]+' "$c" 2>/dev/null | sed 's/.*: //' || true)
+  checked=$((checked + 1))
 
   if [[ -z "$declared" && -z "$logged" ]]; then
     echo "skip: ${name}（未標版號）"
@@ -46,14 +59,16 @@ for name in "${targets[@]}"; do
     echo "Error: $name frontmatter 缺 metadata.version（版本記錄是 ${logged}）" >&2
     fail=1
   elif [[ -z "$logged" ]]; then
-    echo "Error: $name 缺文末版本記錄（frontmatter 是 ${declared}）" >&2
+    echo "Error: $name 缺 CHANGELOG.md 最上面那一條版本記錄（frontmatter 是 ${declared}）" >&2
     fail=1
   elif [[ "$declared" != "$logged" ]]; then
-    echo "Error: $name frontmatter (${declared}) 與版本記錄 (${logged}) 不一致" >&2
+    echo "Error: $name frontmatter (${declared}) 與 CHANGELOG.md (${logged}) 不一致" >&2
     fail=1
   else
     echo "ok: $name $declared"
   fi
 done
 
+# 零輸出曾經是這支腳本失效的樣子，所以結尾一定要印出檢查過幾個。
+echo "checked ${checked} skill(s), ${fail} failing"
 exit $fail

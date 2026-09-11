@@ -181,20 +181,18 @@ skill-sync push <skill-name> -m "commit message"
 
 未標版號的 skill 首次補標用 `1.0.0`。變更摘要簡述改了什麼，參考 compositional-writing 的版本紀錄格式。
 
-**版號有兩個住址，兩個都要改**：`CHANGELOG.md` 最上面那一條，以及 `SKILL.md` frontmatter 的 `metadata.version`。只改一個是高頻漏失——`bin/skill-mirror` 會擋下不一致，但它只跑在有 `content/skills/` 鏡像的 skill 上，沒有鏡像的 skill 漂多久都不會有人發現。一次全庫掃描的結果：三個 skill 的 frontmatter 分別落後一到四個版本，三個都沒有鏡像。
+**版號有兩個住址，兩個都要改**：`CHANGELOG.md` 最上面那一條，以及 `SKILL.md` frontmatter 的 `metadata.version`。只改一個是高頻漏失，而**沒有任何一道流程會順便攔下它**——`bin/skill-mirror` 只確認 frontmatter 有版號（它拿那個值當權威、不比對 CHANGELOG），而且只跑在有 `content/skills/` 鏡像的 skill 上。一次全庫掃描的結果：三個 skill 的 frontmatter 分別落後一到四個版本，三個都沒有鏡像。比對兩個住址的是下面那支、以全部 skill 為對象。
 
-改完用這條掃全庫，兩個住址對不上的會列出來：
+改完用這支掃全庫，兩個住址對不上的會列出來：
 
 ```bash
-for f in .claude/skills/*/SKILL.md; do
-  n=$(basename $(dirname $f))
-  fm=$(sed -n '/^  version:/{s/^  version: *//;s/"//g;p;q;}' "$f")
-  cl=$(grep -m1 -oE '^\*\*Version\*\*: [0-9]+\.[0-9]+\.[0-9]+' ".claude/skills/$n/CHANGELOG.md" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-  if [ -n "$fm" ] && [ -n "$cl" ] && [ "$fm" != "$cl" ]; then echo "DRIFT $n frontmatter=$fm changelog=$cl"; fi
-done
+bin/skill-version-check            # 不給參數掃全部
+bin/skill-version-check <name> …   # 只掃指定的幾支
 ```
 
-這條比先前那個版本準：舊的掃法取「SKILL.md 裡最大的三段數字」，而引用了別的 skill 裸版號的段落會讓它給假陽性（實際發生過，`tdd` 就是這樣被誤報的）。現在比的是 `CHANGELOG.md` 最上面那一條，那個位置只可能是這個 skill 自己的版號。
+它比對的是 frontmatter 的 `metadata.version` 與同目錄 `CHANGELOG.md` 最上面那一條。**不取「SKILL.md 裡最大的三段數字」**——正文引用別的 skill 的裸版號會讓那種掃法給假陽性（`tdd` 曾被那樣誤報），而 CHANGELOG 的第一條只可能是這個 skill 自己的版號。
+
+這裡曾經放一段等效的 inline 迴圈，而同一個檢查同時有兩份實作正是它出事的方式：版本記錄從 SKILL.md 搬到 CHANGELOG.md 之後，腳本那一份沒跟著改、`grep` 找不到就回 1、`set -e` 讓它在第一個 skill 就靜默中止（exit 1 而 stdout 與 stderr 都零行），而文件這一份是對的，所以沒有人發現。現在只有一份實作，它腐爛時會有人叫用時撞到。**零輸出不是通過的樣子**——它結尾一定會印 `checked N skill(s), M failing`。
 
 ### 標準操作流程
 
