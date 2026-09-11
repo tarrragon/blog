@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準流程�
 license: MIT
 metadata:
   portable: true
-  version: 2.4.0
+  version: 2.6.0
   category: writing-methodology
 ---
 
@@ -27,11 +27,11 @@ metadata:
 
 ## 基本原則
 
-1. **每輪用不同 frame**（per [multi-pass frame 顆粒度盲點](references/principles/multi-pass-frame-granularity.md)）：同 reviewer / 同 frame 跑多輪 catch 高度相同。多輪價值在 frame 切換、不在重複加深。
+1. **每輪用不同 frame**（per [multi-pass frame 顆粒度盲點](references/principles/multi-pass-frame-granularity.md)，那裡分 design gap 與 execution gap）：同 reviewer / 同 frame 跑多輪 catch 高度相同。多輪價值在 frame 切換、不在重複加深。
 2. **跨輪 finding 互不重疊**：若新一輪 finding 跟上一輪重疊、代表 frame 沒換、再跑無增益。
-3. **停止訊號是 frame 涵蓋、不是 finding 遞減**（per [跨輪 review 停止訊號](references/principles/cross-round-stopping-signal.md)）：多輪 review 通常 finding 不遞減、Round 3 可能比 Round 1 / 2 多。停止判讀看七軸有沒有都動過，程序在 `references/planning-and-stopping.md`〈Round N 規劃判讀〉；「想不出新 frame」量的是判斷者、不作必要條件。
-4. **至少三輪是硬底線**（per [多輪審查至少三輪](references/principles/minimum-three-rounds.md)）：Round 3 的 steelman / outbound frame 覆蓋 Round 1-2 結構性盲區（漏選項、反向引用、搜尋落點、知識卡缺口），歷次實測每輪都找出 10+ 項。Round 1-2 從「已寫的內容」裡找錯，Round 3 從「沒寫的東西」出發——這類問題在前兩輪的 frame 下結構性不可見。「要不要跑 Round 3」不是判讀問題、是執行紀律。停止判讀從 Round 3 結束後才開始。
-5. **規模與來源是兩件事**（per [規模買不到異源視角](references/principles/review-scale-does-not-buy-independent-origin.md)）：一個 session 派出的所有 reviewer 與探針構成單一來源——同一份稿、同一個人寫的 prompt、同一個 context 的框架。增加數量提高的是覆蓋的面，不是視角的來源數。register 與用詞搭配這一類的偵測依賴的正是來源，所以「已經派了幾十個 reviewer」不構成異源已經覆蓋的證據。一次實測：兩個併行執行者各自跑完四輪、各自掃描回報乾淨，交換檢視時各自一眼看到對方一處違規，其中一處的判斷標準可機械執行而寫的人套在自己的小節標題上判定通過。併行的另一個執行者是最便宜的異源視角，交換的單位是掃描而不是評價。
+3. **停止訊號是 frame 涵蓋、不是 finding 遞減**（per [跨輪 review 停止訊號](references/principles/cross-round-stopping-signal.md)，那裡給七軸的清單）：多輪 review 通常 finding 不遞減、Round 3 可能比 Round 1 / 2 多。停止判讀看七軸有沒有都動過，程序在 `references/planning-and-stopping.md`〈Round N 規劃判讀〉；「想不出新 frame」量的是判斷者、不作必要條件。
+4. **至少三輪是硬底線**（per [多輪審查至少三輪](references/principles/minimum-three-rounds.md)，那裡有逐輪的實測數字）：Round 3 的 steelman / outbound frame 覆蓋 Round 1-2 結構性盲區（漏選項、反向引用、搜尋落點、知識卡缺口），歷次實測每輪都找出 10+ 項。Round 1-2 從「已寫的內容」裡找錯，Round 3 從「沒寫的東西」出發——這類問題在前兩輪的 frame 下結構性不可見。「要不要跑 Round 3」不是判讀問題、是執行紀律。停止判讀從 Round 3 結束後才開始。
+5. **規模與來源是兩件事**（per [規模買不到異源視角](references/principles/review-scale-does-not-buy-independent-origin.md)，那裡有兩則實測與「犯規的是編輯動作」這個機制）：一個 session 派出的所有 reviewer 與探針構成單一來源——同一份稿、同一個人寫的 prompt、同一個 context 的框架。增加數量提高的是覆蓋的面，不是視角的來源數，而 register 與用詞搭配這一類的偵測依賴的正是來源。**最便宜的異源視角是併行的另一個執行者，交換的單位是掃描而不是評價。**
 
 ## 誰做哪一段
 
@@ -46,13 +46,15 @@ metadata:
 | 判斷可不可以停                       | 是                                                  | 否                             |
 | 整合跨 reviewer 的 finding、決定修法 | 是                                                  | 否                             |
 
+**探針不是 reviewer，兩者的派發契約相反。** reviewer 要的是判斷力，所以給它審查框架；探針要的是理解的樣本，所以**禁止**給審查框架（問「你讀到什麼」而不是「這寫得好不好」），且同一批的指令與餵入範圍要逐字相同。派探針之前讀 `references/round-2-probes.md`〈探針的派發契約〉，`references/reviewer-prompt.md` 的模板對探針不適用。
+
 **如果你拿到的指示沒有指名 frame**：不要自己挑一個，也不要整份跑一遍。回去問派你來的人要哪一個——這種情況代表派發時漏了東西，而你猜一個跑完的成本比問一句高得多，猜錯的那份報告還會被當成該維度已經覆蓋。
 
 **主 session 不外包的四項**：整體通讀（reviewer 各看一角、合成缺陷只有通讀看得到）、停止判讀、跨 reviewer finding 的去重與修法決策、以及需要窮盡列舉的維度——列舉在主 context 很便宜，派出去的 reviewer 只回報它抽樣到的位置，而窮盡要的是全部。
 
 ## 派發之前先列這一批用的工具
 
-**一行的成本，擋掉整批審查建立在過期規則上的可能。** 列出這次要用的方法論、規範檔與檢查腳本，逐個寫下版本與取得時間；有發佈端的順手比一次。理由是每個 frame 都對著審查對象設計，工具從來不在任何一個 frame 的射程裡——實測一次四輪、二十餘個 reviewer 的審查全程沒有一步會發現所用的方法論落後十一個 minor 版，而那些版本差裡有一版正好改掉了該次停止判定所依據的規則。見 [審查的射程只涵蓋被審查的對象](references/principles/review-scope-never-includes-the-instrument.md)
+**一行的成本，擋掉整批審查建立在過期規則上的可能。** 列出這次要用的方法論、規範檔與檢查腳本，逐個寫下版本與取得時間；有發佈端的順手比一次。理由是每個 frame 都對著審查對象設計，工具從來不在任何一個 frame 的射程裡——實測一次四輪、二十餘個 reviewer 的審查全程沒有一步會發現所用的方法論落後十一個 minor 版，而那些版本差裡有一版正好改掉了該次停止判定所依據的規則。見 [審查的射程只涵蓋被審查的對象](references/principles/review-scope-never-includes-the-instrument.md)，那裡列四類射程外的項目
 
 ## 派發之前先定這一批的定位
 
@@ -72,11 +74,13 @@ metadata:
 
 定位判定為人類教材時，下列 frame 的觸發條件要重新過一次，因為它們的預設來自 agent 指令或工程決策內容：2-B‴ 的微案例要求（後果直觀時補了是冗餘）、2-B″ 的可執行走查（教材的讀者不照著執行）、1-D 的下游任務（下游任務是理解而不是產出）。判定為不跑的照樣要寫理由。
 
-詳見 [定位決定體例](references/principles/positioning-decides-form-before-any-rule-applies.md)。
+詳見 [定位決定體例](references/principles/positioning-decides-form-before-any-rule-applies.md)，那裡有七種會讓稿件被讀成手冊的裝置。
 
 ## 這一批要跑哪些 frame
 
-Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 session 在派發前先過這張表，把結果寫下來——**判定為不跑的也要寫，並寫出理由——理由要指出該篇哪一段構成或不構成觸發條件；只寫類型標籤（「非操作型」「本批無可疑詞」）是關機鍵、不算理由（per [判定型規則要規定判定的痕跡](references/principles/judgment-rules-must-specify-their-trace.md)）**，否則「沒跑」與「判定不需要」在產物裡分不開。
+Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 session 在派發前先過這張表，把結果寫下來——**判定為不跑的也要寫，並寫出理由——理由要指出該篇哪一段構成或不構成觸發條件；只寫類型標籤（「非操作型」「本批無可疑詞」）是關機鍵、不算理由（per [判定型規則要規定判定的痕跡](references/principles/judgment-rules-must-specify-their-trace.md)，那裡給痕跡的驗收形式）**，否則「沒跑」與「判定不需要」在產物裡分不開。
+
+**先看這三組，再進表。** 無條件跑的：1-A / 1-B / 1-C、2-B′ / 2-B⁗ / 2-C / 2-D、3-A / 3-B / 3-C。看批次規模的（單篇一律不跑）：2-A / 2-B / 3-D / 3-E / 3-G。其餘各列看內容性質，逐列判定。**表是拿來逐列查的，不是拿來線性讀完的**——判定的時候一列一列對，判完把三組的結果寫下來。
 
 | frame                                  | 什麼時候跑                                           | 判定依據                                                                                                                                    |
 | -------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -89,7 +93,7 @@ Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 sessi
 | 2-B′ 冷讀                              | 一律跑                                               | 任何可被搜尋或直連抵達的內容都適用                                                                                                          |
 | 2-B″ Executable walkthrough            | 操作型（有步驟、有指令）                             | 非操作型不跑                                                                                                                                |
 | 2-B‴ 情境可想像性                      | 判讀 / 選型型（給判斷標準、要讀者做決定）            | 非判讀型不跑                                                                                                                                |
-| 2-B⁗ 低階 model 讀者探針               | 一律跑；審查對象是規則類文件時加「第一個具體動作」欄 | 無條件；報告的自評欄與比對欄分開讀（見 `references/reviewer-prompt.md` 的〈每個 frame 的產出契約〉）；定義在 `references/round-2-probes.md` |
+| 2-B⁗ 低階 model 讀者探針               | 一律跑；審查對象是規則類文件時加「第一個具體動作」欄 | 無條件；處置門檻在派發前寫死（`references/round-2-probes.md`〈探針的處置門檻〉）；自評欄與比對欄分開讀 |
 | 2-B⁵ 翻譯探針                          | 中文稿件、且已通過 2-B⁗                              | 非中文稿件不跑；命題層未收斂時先跑 2-B⁗；定義在 `references/round-2-probes.md`                                                              |
 | 2-B⁶ 術語探針                          | 有可疑的高頻用詞或口語譬喻                           | 沒有可疑詞不跑；同批沒有控制詞的結果不採用；定義在 `references/round-2-probes.md`                                                           |
 | 2-B⁷ 類型探針                          | 定位是人類教材、而內容帶操作性材料時                 | 同批沒有兩份控制文件的結果不採用；定義在 `references/round-2-probes.md`                                                                     |

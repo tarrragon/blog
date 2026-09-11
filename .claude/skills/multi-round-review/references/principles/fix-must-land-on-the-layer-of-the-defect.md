@@ -52,3 +52,5 @@
 - [one-fix-writes-two-forms-of-the-same-thing](one-fix-writes-two-forms-of-the-same-thing.md)：那裡的檢查是回頭比對本批之內的其他修法，本卡的檢查是回頭比對同一節的既有陳述。兩者同屬「修法產生的新文字要另外驗」這一族，而找比對對象的方向相反（那裡橫向找同批、這裡縱向找同節）。
 - [comprehension-sampled-not-judged](comprehension-sampled-not-judged.md)：本卡的判別問句取自它的分歧點修法段，而本卡把那條問句從診斷推到驗收。
 - [split-defects-land-between-the-files](split-defects-land-between-the-files.md)：同一批量測的另一項產出。那裡的單變項對照（只改一個手段才拿得到因果）與本卡是同一件事在兩個階段的形態——那裡管改法怎麼設計才歸得了因，這裡管改法有沒有落在該落的層。
+- [fix-never-landed-and-the-round-signed-off-for-it](fix-never-landed-and-the-round-signed-off-for-it.md)：本卡的前一步。判層對不對之前要先確認那次修法動到了東西，順序顛倒會在一個空的 diff 上討論它修在哪一層。
+- [thresholds-registered-before-dispatch](thresholds-registered-before-dispatch.md)：本卡的出口。層對了而命中仍不動時，代表手段本身對這個位置無效，該換的是手段不是層；換手段的條件要在派發前就寫下來。
