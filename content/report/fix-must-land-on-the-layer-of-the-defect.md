@@ -60,3 +60,5 @@ slug: "fix-must-land-on-the-layer-of-the-defect"
 - [#262 內容超出容器時擴充結構、不壓縮內容](/report/content-pressure-resolves-by-expansion-not-compression/)：本卡第二種失敗的成因來源。那裡的容器形狀先驗作用在寫作當下、產物是被裁掉的內容，這裡作用在改寫當下、產物是被放大的陳述；同一個機制的兩個方向。
 - [#281 理解檢查用低階 model 取樣讀者的實際理解](/report/comprehension-sampled-not-judged/)：本卡的判別問句取自它的分歧點修法段，而本卡把那條問句從「診斷這是哪一種缺陷」推到「檢驗這個修法動對了沒有」——同一條問句在修法之後再問一次，答案應該從仍然讀不懂翻轉成補回去就懂。
 - [#343 拆分產生的缺陷落在檔與檔的交界](/report/split-defects-land-between-the-files/)：同一批量測的另一項產出。那裡的單變項對照（只改一個手段才拿得到因果）與本卡是同一件事在兩個階段的形態——那裡管的是改法怎麼設計才歸得了因，這裡管的是改法有沒有落在該落的層。
+- [#345 修法沒有寫進檔案，而同一輪的無關改善替它簽了名](/report/fix-never-landed-and-the-round-signed-off-for-it/)：本卡的前一步。判層對不對之前要先確認那次修法動到了東西——順序顛倒會在一個空的 diff 上討論它修在哪一層。
+- [#346 門檻要在派發之前寫死](/report/thresholds-registered-before-dispatch/)：本卡的出口。層對了而命中仍然不動時，代表手段本身對這個位置無效，該換的是手段不是層；換手段的條件（同一手段改過兩次而命中沒動）要在派發前就寫下來。

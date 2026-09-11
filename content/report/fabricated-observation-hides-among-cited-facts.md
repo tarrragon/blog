@@ -105,6 +105,7 @@ slug: "fabricated-observation-hides-among-cited-facts"
 - [掃描指令壞掉時不會報錯，它報一個數字](/report/broken-scan-reports-a-plausible-number/) — 同族的「回報一個看起來合理的數字」，成因分別是工具失效與工具從未被呼叫。那一張的修法在這裡仍然有效——正對照放進輸出，要求那次呼叫真的發生並留下痕跡。
 - [查證回報的單位是宣稱](/report/verification-reports-claims-but-failures-are-framed/) — 那一張處理查證回報之後的處置範圍，本卡處理更前面一步：這個宣稱該由誰去查、以及有沒有一整類宣稱從來沒有被分派。
 - [代理比本體便宜](/report/proxy-is-cheaper-than-the-thing-it-stands-for/) — 本卡的第五欄（別人量的、我引用）是那一張在數字來源上的具體化，而本卡的五欄分類是它第二條修法（讓本體與代理的產物長得不一樣）的實作。
+- [#345 修法沒有寫進檔案，而同一輪的無關改善替它簽了名](/report/fix-never-landed-and-the-round-signed-off-for-it/)：本卡的機制在修法紀錄上的形態。「我修了」為真而「那個檔案改了」為假，而變更紀錄照修改計畫寫、不照 diff 寫時，這兩者中間沒有任何一處會被查。
 
 ## 判讀徵兆
 

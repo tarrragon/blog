@@ -59,6 +59,7 @@ slug: "never-satisfiable-signal-shrinks-the-quorum"
 - [判斷標準少一條獨立的軸時，它會篤定地指向錯的答案](/report/missing-axis-yields-a-confident-wrong-answer/) — 症狀相反的一對。少一條軸讓判斷提早收斂並答錯，多一條不會動的訊號讓判斷遲遲不收斂；兩者都要把每一條軸單獨拿出來問它量什麼。
 - [檢查規則的作用域要顯式列舉](/report/lint-scope-must-be-explicit-fact/) — 同一個家族：清單的表面完整度與它的實際作用範圍是兩件事，而兩者在文件上長得一樣。
 - [審查的 frame 全部在問規則的效力，沒有一個問它的代價](/report/review-frames-ask-efficacy-never-cost/) — 本卡的修法（把量判斷者的訊號改寫成量對象的版本）在那一張有一個現成的實作：**finding 的方向分佈**。「想不出新 frame」要靠列舉的完整性，而看一欄是不是全空只要讀分佈，兩者問的是同一件事而後者可操作。
+- [#346 門檻要在派發之前寫死](/report/thresholds-registered-before-dispatch/)：本卡判別問句的又一個實例，且帶時序——「讀者最終有沒有理解」量的是判斷者事後的評估、「連續兩輪達到命中比例」量的是對象的現況，而量判斷者的那一版要在派發之前就被換掉，事後訂的門檻會被當輪的觀感蓋過去。
 
 ## 判讀徵兆
 
