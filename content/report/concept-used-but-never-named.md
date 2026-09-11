@@ -94,6 +94,7 @@ slug: "concept-used-but-never-named"
 - [#322 比對回報零差異時，那個零只證明這個粒度看不到差異](../null-difference-only-at-the-resolution-you-looked/)：同一批工作抽出的姊妹卡。本卡是檢查走不到對象（入口是名字），那張卡是檢查走到了但看不清（粒度不夠），兩者在報告上都是零命中。
 - [#232 自審 sweep 的偵測方法要對齊規則類型](../self-audit-detection-method-must-match-rule-type/)：名字驅動的偵測對無名概念是方法錯配，補救是加一個方向相反的方法，不是把既有方法跑得更細。
 - [要求揭露只擋得住省略](/report/disclosure-yields-one-bucket-classification-yields-layers/) 與 [掃描的作用域會默默對齊「我這次動過什麼」](/report/scan-scope-defaults-to-the-diff-not-the-artifact/)：同屬「零命中有幾種來源」這個家族。本卡貢獻的那一種是**只驗了一個方向**——死名檢查全綠而孤兒那一側從未被驗，兩者都是路由缺陷、回報也都是零，而處置是雙向各驗一次並在報告上分開寫。
+- [#343 拆分產生的缺陷落在檔與檔的交界](/report/split-defects-land-between-the-files/)：本卡回填的「方向數不等於入口數」在那裡被推進一步——入口數也不等於落點數。同一條指路寫在檔頭與寫在首次用點的效果相差三份對零份（單變項對照），所以檔頭的同目錄索引這套指標即使完整無缺，正文那一套仍可能對讀者無效。
 
 ## 判讀徵兆
 

@@ -64,6 +64,7 @@ slug: "inline-counts-drift-with-every-restructure"
 - [列舉與數字殘留在定義型文件會製造維護債務](/report/enumeration-creates-maintenance-debt/) — 本卡限定它的判斷標準射程。那一張問「拿掉之後讀者理解受不受影響」，受影響就留下；而承擔指涉功能的計數對這一問一律答「受影響」，於是留下之後沒有第二個出口。本卡補的正是那個出口：留下指涉、換掉計數。
 - [更新一個可數宣稱時，加法不算重算](/report/count-update-by-addition-is-not-recount/) — 修這一類時最常見的失誤。把「三」改成「四」是加法，而正確的動作是重新數一遍那個集合，再決定這個數字該不該留在句子裡。
 - [逐輪修法掛回原句，累積出來的腫脹只有跨輪比對看得見](/report/fixes-accrete-onto-the-sentence-they-correct/) — 同族：兩者都是每一輪修法都在生產新的問題，而單輪的 frame 看不到。
+- [#343 拆分產生的缺陷落在檔與檔的交界](/report/split-defects-land-between-the-files/)：本卡的判別問句（這個數字由什麼決定）在那裡是六種拆分形態之一，而那張卡補的是位置——本卡管的這一類，連同另外五類，全部落在檔與檔之間的交界上，所以逐檔審查對它們一律恆真。那張卡也記下拆分的位置座標該怎麼寫（上一步與下一步，不寫總數）。
 
 ## 判讀徵兆
 
