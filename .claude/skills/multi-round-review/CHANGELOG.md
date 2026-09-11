@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.6.1 — 字句層基線修正：`unstated-implementation-premise-under-a-correct-axis` 卡與 `round-3-self-application.md` 的「天生打不到」改為「結構上打不到」（必然性框架類，且後者本來就更精確——那是 steelman 這個 frame 的結構性質，不是自然法則）。同一個詞在 `compositional-writing` 的同名卡上一併修，兩份共用卡不就地分岔。CHANGELOG 的歷史條目刻意不改。
+
 **Version**: 2.6.0 — 本 skill 自己跑了一次探針審查（六批十八份、初測與複驗各一輪），依結果改。
 
 翻轉的四項：〈誰做哪一段〉補「探針不是 reviewer，兩者的派發契約相反」（差集 0/3 帶走 → 2/3）；〈基本原則〉第五條的兩則實證外移到 `review-scale-does-not-buy-independent-origin` principle 卡、正文留主張加一句理由（閱讀負擔 3/3 → 1/3）；`round-2-probes.md` 補〈走完之後〉（交棒 3/3 說沒說 → 0/3）；「低階 model」首次用點就地定義（缺料 2/3 → 未再列入）。同檔另修「恆真」（兩個讀法都不是原意，改成「一律回報通過」）、「它同時抓得到填平行為」的指涉具名、「首次用點」就地展開。

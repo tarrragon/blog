@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 1.15.1
+  version: 1.16.0
   category: writing-methodology
 ---
 
@@ -175,6 +175,8 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 **Production 教學文章追加輪 8-10（字句層 catch、跑 N 輪仍漏時觸發）**：跑了 5 輪基本 frame 仍系統性漏 catch 字句層問題（口語修辭 / 廢話前綴 / 地區漂移 / 依賴 code / **裝飾符號 emoji** / 對讀者喊話 / 自評誇飾 / 必然性框架 / 恐嚇式語氣 / 歸因語氣）時、追加三個換軸機制——輪 8 keyword bank（換工具、含 emoji / 裝飾 unicode 掃描）、輪 9 reader simulation（換視角、四 lens：自包含性 + register/stance + meta 殘留 + AI 歸因過度）、輪 10 self-criticism（換層次、審視 framework 本身覆蓋度）。短文 / 即時 note 不需要、production 教學文章在跑 5 輪後仍漏同類問題時 opt-in。**keyword bank 命中是候選、不是判決**——grep 命中後仍要一個語意判定步驟（這個命中是建立概念的違規、還是合規的反例對照 / hook），reviewer 容易把違規合理化放行；偵測（bank）跟判定（語意）是兩個認知步驟。**register/stance 類（喊話 / 誇飾 / 必然）無穩定關鍵詞、keyword bank 抓不到、輪 9 reader-sim 是主 keyword bank 是輔、且最依賴 external cold-read**。漏抓後補機制前先分 **design gap**（框架缺 frame、改框架）vs **execution gap**（框架有 frame 但只跑了臨時子集、改執行不是改框架）——「加 keyword」對 execution gap 跟無關鍵詞的類都無效。詳見 [multi-pass-review-frame-granularity](references/principles/multi-pass-review-frame-granularity.md)、[decorative-symbols-keyword-bank](references/principles/decorative-symbols-keyword-bank.md)、[teaching-prose-neutral-register](references/principles/teaching-prose-neutral-register.md) 跟 `references/writing-articles.md` 輪 8-10 段。
 
 **批量 sibling 寫作的生成端輪替**：一次寫多份同類文件時、cadence 同質化會在六個層發生（title 形式 / 開場句式 / 章節標題 / 敘事骨架 / 條目形態 / 跨檔引用句）、單份 review 全部抓不到、且 review 端抓過的同骨會在下一批復發 — 同類 finding 第二次出現、就把規則升到生成端：寫之前排好開場 frame 輪替（規則先行 / 後果先行 / 動作先行 / 反差先行）、條目形態輪替、敘事視角輪替、引用句去重。詳見 [cadence-homogenization](references/principles/cadence-homogenization.md)。
+
+**驗證手段要對齊錯誤的層次**：字面攔截（掃得到的固定字串）與行為精煉（要看行為才判得出的）是兩種錯誤層次，用錯層的手段驗不出東西而報告看起來正常。詳見 [literal-interception-vs-behavioral-refinement](references/principles/literal-interception-vs-behavioral-refinement.md)，那裡給兩層的分界與各自該用的驗證手段。
 
 **Instance 軸：跨 reviewer instance 隔離**：Instance 軸是 multi-pass review 的另一條擴展軸 — N 個獨立 reviewer instance 各自獨立 context、各自跑 background、解「單一 reviewer 同時看多維度容易維度盲點 + context 污染」的問題。Instance 指獨立 reviewer 程式實體（如 agent tool spawn 出的 subagent）、跟同一 reviewer 換輪次 frame（frame 軸）正交可疊加。適用 production 教學文章 / 高 stakes 內容 / 跨章節教學模組這類維度複雜度高的審查場景。詳見 [agent-team-context-isolation](references/principles/agent-team-context-isolation.md)。
 

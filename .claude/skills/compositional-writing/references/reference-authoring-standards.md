@@ -5,6 +5,10 @@
 > **自包含聲明**：閱讀本文件不需要先讀其他 reference。品質驗收 metric（M1-M2）見 `meta-metrics.md`；本文件聚焦「如何寫出符合品質的 reference」。
 
 ---
+## 支撐本檔的原則卡
+
+- [parallel-parentheses-imply-a-uniform-relation](principles/parallel-parentheses-imply-a-uniform-relation.md)：一組並列的括號各裝不同東西時，讀者會先找一條統一規則——給可掃描的形態（連續三個以上以括號收尾的條列項）與嚴重度依條文可執行性分級。
+
 
 ## 何時參閱本文件
 

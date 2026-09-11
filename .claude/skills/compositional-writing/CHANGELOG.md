@@ -2,6 +2,18 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.16.0 — 補齊 principle 卡從 references 的路由，為後續把 SKILL.md 的原則外移做前置。
+
+**起因是一次預算量測**：`SKILL.md` 24,180 tokens 對 5k 預算（行數 316 < 500 通過官方那一項，取較嚴者）。依 `skill-design-guide` 的四問診斷，41 條原則裡 35 條指得出唯一或少數幾列路由（問 3 → 外移），只有 `positioning-decides-form-before-any-rule-applies` 落在問 1（讀者不用它就判不出自己屬哪一列，留在入口檔）。外移之前要先確保卡不會變孤兒，這一版做的是那一步。
+
+**量到的結構債**：75 張卡裡 **7 張完全沒有任何入口**、**20 張只從 SKILL.md 路由得到**。其中 7 張的〈角色〉行**自己指名了引用者而對方沒連回來**（`source-to-teaching-analysis.md` 缺 4 條、`writing-articles.md` / `writing-documents.md` / `SKILL.md` 各 1 條）——單方宣告的引用關係，可用一條機械檢查抓出來。
+
+**處置**：7 條指名不對稱逐一補在卡所宣告的那一節（Pass 1 Source Layering / Pass 2 Reader Level / Pass 5 Deliverable / 機制重建 Pass 等）；其餘在 `writing-articles.md`（10 張）、`managing-article-collections.md`（2 張）、`judgment-content-needs-scenarios.md`、`auditing-articles.md`（5 張）、`reference-authoring-standards.md` 各新增〈支撐本檔的原則卡〉節，每條帶目的地承諾並指出它支撐本檔哪一段。`SKILL.md` 第 6 原則補 `literal-interception-vs-behavioral-refinement`。
+
+**結果**：無入口 7 → 0，只靠 SKILL.md 路由 20 → 1（剩下那一張依問 1 本來就該留在入口檔）。
+
+**兩項限制要記**：指名不對稱的機械檢查只涵蓋〈角色〉行有寫檔名的卡（75 張裡 49 張），其餘用散文宣告引用者、抓不到；而〈支撐本檔的原則卡〉是檔尾索引，**本 skill 自己量到檔尾式指路對術語查找無效**（3/3 判「沒說去哪查」，改首次用點後 0/3），所以把卡連結嵌進正文對應段落是後續，本版只做到可達性。
+
 **Version**: 1.15.1 — `structuring-with-solid.md` 的 O 原則邊界段補轄域（該 reference 升 1.1.1）。原文寫「O 管結構骨架、內容不在管轄範圍」只涵蓋 O，而同檔〈類比的邊界〉寫的是整個清單，**兩處轄域不同而讀第一處的人拿不到第二處**；一份冷讀在初測與複驗都列這一處，歸因是文章自己寫的落差、不是讀者誤讀。末句「結構原則被拿來否定⋯⋯是誤用訊號」的主詞改為具名的動作。
 
 這一項先前被歸成閱讀負擔類而套了 2/3 的門檻，因此以「1/3 未達門檻」略過；實際上它是轄域陳述不一致，歸因後屬「找得到逐字對應的句子」那一類，依登記的門檻是一份即處置。**分類錯了會讓 finding 落進錯的門檻**，這是派發前寫死兩類門檻時要一併寫下判別依據的理由。
