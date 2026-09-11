@@ -93,6 +93,8 @@ find_report_slug() {
       echo "/report/cadence-homogenization-in-batch-writing/" ;;
     decorative-symbols-keyword-bank)
       echo "/report/visual-tool-error-layer-alignment/" ;;
+    analysis-rewrite-delivers-transferable-framework)
+      echo "/report/analysis-rewrite-must-deliver-transferable-framework/" ;;
     keyword-list-needs-dominant-violating-sense)
       echo "/report/keyword-list-needs-dominant-violating-sense/" ;;
     keyword-pattern-does-not-transfer-across-genres)

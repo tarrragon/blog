@@ -561,6 +561,12 @@ review 時、讀完先問三題：
 
 ---
 
+## 支撐本檔的原則卡
+
+- [atomic-note-needs-situational-entry](/report/atomic-note-needs-situational-entry/)：承載知識的原子筆記要從情境進入、不劈頭給定義——給議題 hub 的設計與卡頂回指的做法。支撐三層 structure 的卡層。
+- [common-knowledge-is-relative-to-reader-background](/report/common-knowledge-is-relative-to-reader-background/)：建卡標準用目標讀者群裡最不熟悉的那端——給跨背景讀者群的建卡邊際成本與缺卡代價的對比。支撐拆分標準那一節。
+
+
 ## 與核心原則的映射
 
 | 本 reference 規則     | 對應核心原則        | 說明                                   |

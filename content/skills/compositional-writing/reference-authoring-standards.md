@@ -13,6 +13,11 @@ tags: ["skills", "compositional-writing", "寫作方法論"]
 
 ---
 
+## 支撐本檔的原則卡
+
+- [parallel-parentheses-imply-a-uniform-relation](/report/parallel-parentheses-imply-a-uniform-relation/)：一組並列的括號各裝不同東西時，讀者會先找一條統一規則——給可掃描的形態（連續三個以上以括號收尾的條列項）與嚴重度依條文可執行性分級。
+
+
 ## 何時參閱本文件
 
 | 觸發情境                    | 動作                           |
