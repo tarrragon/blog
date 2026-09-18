@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.7.0 — 收一份併行專案交來的審查設計檢討（該專案跑數日的條文驗證，形態是多輪審查的極端版本，抓出大量真實缺陷而沒有收斂）。對方提十一條建議，逐條比對本 skill 既有原則後收三條、退三條、其餘併入既有段落。新增三張 principle 卡：`verdict-and-attribution-are-different-products`（判定與歸因是兩種產物，歸因要單變數實驗而累積式產物上沒有收斂點，器材會凍結在第一批的形狀）、`rule-binds-only-where-it-sits-in-the-readers-procedure`（讀者取值的單位是程序中的一步與有編號的款次，逐字引用只證明送達不證明綁定）、`measurement-preprocessing-decides-the-denominator`（過濾條件、丟棄規則、抽取單位、步驟順序全在「處理」之前完成，抽樣比對對這一類結構上無效、要換守恆式對帳）。SKILL.md 新增〈派發之前先宣告這一批的產出層級〉一段（排在工具清單之前，因為產出層級決定後面每一步的規模），工具清單段補「自寫檢查腳本要多列分母」一條，prompt 契約清單補「finding 要指出修法落在哪個位置、不寫成附註」一條。`round-3-self-application.md` 的 3-F 加第四題（問位置，前三題問的是讀到之後怎麼繞過）。`round-2-probes.md` 補通過那一側的歸因（全數答對有三種成因而依據句外觀相同，判讀多一道「依據句與題幹有沒有共用字串」）。`sequential-fixes-compose-into-defects` 補第三種形態（修正動作為量測工具開出新通路，既有兩種形態的判斷標準對量測層恆真）。退掉的三條已被既有卡涵蓋：只審不改與允許改的分野在 `sequential-fixes-compose-into-defects`、省力路徑在 `proxy-is-cheaper-than-the-thing-it-stands-for`、「未發現 X 須說明看不看得到」在 SKILL.md 的零 finding 三格。
+
 **Version**: 2.6.1 — 字句層基線修正：`unstated-implementation-premise-under-a-correct-axis` 卡與 `round-3-self-application.md` 的「天生打不到」改為「結構上打不到」（必然性框架類，且後者本來就更精確——那是 steelman 這個 frame 的結構性質，不是自然法則）。同一個詞在 `compositional-writing` 的同名卡上一併修，兩份共用卡不就地分岔。CHANGELOG 的歷史條目刻意不改。
 
 **Version**: 2.6.0 — 本 skill 自己跑了一次探針審查（六批十八份、初測與複驗各一輪），依結果改。

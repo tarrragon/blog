@@ -57,3 +57,4 @@ slug: "fix-never-landed-and-the-round-signed-off-for-it"
 - [#298 finding 清單列的是抽樣位置](/report/fix-the-class-not-the-cited-instances/)：那裡的清單形式在暗示完整性，本卡的紀錄形式在暗示已執行。兩者同屬「產物的形式提供了它沒有量到的保證」，而驗收動作相同——回到原始材料逐條對照，不讀清單本身。
 - [#333 「我以為觀測到的」躲在「引用的」那一欄裡](/report/fabricated-observation-hides-among-cited-facts/)：本卡是它在修法紀錄上的形態。「我修了」為真而「那個檔案改了」為假，中間那一步沒有任何人查。
 - [#291 掃描指令壞掉時不會報錯，它報一個數字](/report/broken-scan-reports-a-plausible-number/)：批次套用的腳本回報零筆命中是一個正確的輸出，而它在那個流程裡沒有消費者。工具說了實話而沒有人在聽，與工具說謊的後果相同。
+- [#347 審查的產出是判定還是歸因要先宣告](/report/verdict-and-attribution-are-different-products/)：本卡確立了歸因的門檻——要歸給某一條，那一條得是該輪唯一的變項——而那張卡接著問這個門檻要花多少錢。累積式產物上它的成本由既有存量決定而每次改動的價值是常數，所以買不買要在派發之前決定。兩張合起來是完整的判斷：本卡擋的是沒有單變項而宣稱歸因，那裡擋的是在不需要歸因的地方付單變項的成本。
