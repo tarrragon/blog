@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.17.0 — 收一份併行專案交來的寫作層檢討（七輪探針讀規範文字作答、兩名獨立判定者判讀，十一項各有逐輪讀數）。新增三張 principle 卡：`subjective-precondition-never-fires-for-the-misreader`（要件寫成讀者的主觀狀態時在最需要它的人身上不觸發——誤讀的定義就是他不認為自己誤讀；同族形態是極性詞由讀者自行附加、改直述句驗不過要廢除並禁用，以及雙重否定會連帶擴散要全庫一次清完）、`rule-text-can-have-negative-effect`（條文的效力有正負號而零引用讀起來像中性；禁止某條捷徑的句子若交代了那條捷徑需要的前提就自己成了地圖——實測「結論只有三種、互斥且窮盡、不得排除法」零效力、刪除後三輪皆走正面觸發條件）、`field-shape-induces-false-reporting`（欄位集合是關於「會有哪些結果」的宣稱，沒有格子的結果會被虛構或被跳過而兩種失真方向相反；同卡記報告結論要分正面命中與窮舉宣稱兩類）。SKILL.md 在意圖顯性與欄位設計兩節加路由；`reference-authoring-standards.md` 的驗收清單新增〈條文的可觸發性與效力方向〉五項；`designing-fields.md` 在新增欄位必問清單前補〈值域涵蓋檢查：有哪種真實情形填不進去〉一節。
+
 **Version**: 1.16.0 — 補齊 principle 卡從 references 的路由，為後續把 SKILL.md 的原則外移做前置。
 
 **起因是一次預算量測**：`SKILL.md` 24,180 tokens 對 5k 預算（行數 316 < 500 通過官方那一項，取較嚴者）。依 `skill-design-guide` 的四問診斷，41 條原則裡 35 條指得出唯一或少數幾列路由（問 3 → 外移），只有 `positioning-decides-form-before-any-rule-applies` 落在問 1（讀者不用它就判不出自己屬哪一列，留在入口檔）。外移之前要先確保卡不會變孤兒，這一版做的是那一步。
