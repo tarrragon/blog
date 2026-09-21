@@ -28,7 +28,7 @@ sysfs 底下的 `/sys/bus/usb/devices/*/` 給的資訊更完整。每個裝置�
 
 `adb shell pm list packages` 與 `dumpsys package` 回答「裝的是哪一版、是不是可偵錯的建置」。版本這一項換掉的假設是「現場跑的就是我手上這份程式碼」，而那個假設在排查裡經常是錯的。可偵錯的建置**一般可以**用 `run-as` 讀應用程式私有目錄，而這條路徑能回答「設定實際存了什麼值」——那個問題的答案決定[讀取端驗證](../validate-persisted-settings-on-read/)該驗什麼。
 
-`adb exec-out screencap -p` 搭配 `adb shell input tap` 讓遠端操作介面並取回畫面，不必每一次都請現場的人動手。這條路徑不經過螢幕，所以觸控已經失效的機器仍然操作得了。
+`adb exec-out screencap -p` 搭配 `adb shell input tap` 讓遠端操作介面並取回畫面，不必每一次都請現場的人動手。這條路徑不經過螢幕，所以觸控已經失效的機器仍然操作得了。這裡走 `exec-out` 而不走 `shell`，因為 `shell` 在配置了 pty 的時候會改寫換行、把 PNG 寫壞；[adb 遠端診斷時該信哪一種輸入](../adb-remote-android-diagnosis/)展開這個差別，並給畫面歸屬與 logcat 參數的取法。
 
 `adb logcat -v time <TAG>:D "*:S"` 過濾特定標籤。這裡有一個會誤導歸因的細節：**zsh 底下 `*:S` 要加引號**，否則 shell 會先把它當成萬用字元展開、在找不到相符檔案時報錯。那個錯誤訊息來自 shell 而不是 adb，所以它看起來像是 adb 或裝置出了問題——**排查工具本身的失敗被讀成排查對象的失敗**，而這正是盤點要避免的那種假設。
 

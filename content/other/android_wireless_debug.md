@@ -95,7 +95,9 @@ adb devices
 flutter devices
 ```
 
-應該能看到無線連接的裝置列表。
+應該能看到無線連接的裝置列表。列數可能多於實體機器數——同一台無線機器會同時以 IP 位址與 mDNS 名稱兩個 transport 在線，兩列背後是同一台。
+
+接上之後怎麼指定指令要送到哪一台、以及畫面與 log 各該怎麼取回，見 [adb 遠端診斷 Android 實機](/work-log/adb-remote-android-diagnosis/)。
 
 ---
 
