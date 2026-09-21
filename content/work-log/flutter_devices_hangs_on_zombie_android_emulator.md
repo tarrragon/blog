@@ -153,4 +153,4 @@ pkill -f qemu-system-aarch64
 
 同一個 emulator 長期不關還有另一組完全不同的症狀，跟 ADB 無關：qemu 在生命週期裡反覆 fork 子程序而漏收，殭屍累積到把整個 uid 的程序額度吃光，表現是所有需要開新程序的指令都開始失敗、而記憶體與 CPU 完全正常。兩者的來源同屬長跑程序，判讀與回收見 [殭屍程序與使用者程序上限](/macos/macos_process_limit_zombie_reaping/)。
 
-辨認規則一致：**list 指令連跑兩次結果不一致 → 維護清單的 server 對某個 entry 的看法不穩定 → 找出那個 entry 局部處理**。這條規則的邊界是：如果清單穩定但操作失敗，問題更可能在該 target 的權限、版本或 runtime 狀態，需要改走對應工具的細部診斷。
+辨認規則一致：**list 指令連跑兩次結果不一致 → 維護清單的 server 對某個 entry 的看法不穩定 → 找出那個 entry 局部處理**。這條規則的邊界是：如果清單穩定但操作失敗，問題更可能在該 target 的權限、版本或 runtime 狀態，需要改走對應工具的細部診斷。Android 實機那一側的細部診斷見 [adb 遠端診斷 Android 實機](/work-log/adb-remote-android-diagnosis/)，它給的是該信哪一種輸入、畫面上那一層由誰畫的怎麼定、以及 logcat 的時間窗怎麼界定。

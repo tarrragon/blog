@@ -30,6 +30,8 @@ GNU-only 的工具在 macOS 預設沒有，呼叫直接 `command not found`。�
 
 跨平台腳本在 macOS 上結果怪、卻一個錯誤訊息都沒有時，先回頭盤點它用了哪些 BSD/GNU 行為分歧的指令（`sed`、`date`、`stat`、`grep`）。這一類的特徵正是不報錯、只默默做出不一樣的結果——比形態一的 `command not found` 難抓，因為沒有紅字提醒你哪裡不對。
 
+形態一的紅字也不是一定看得到：輸出被重導到檔案時，`command not found` 走的是標準錯誤、不會進那個檔，事後只看檔案的人拿到的是一個空檔案而不是一則錯誤。[adb 遠端診斷 Android 實機](/work-log/adb-remote-android-diagnosis/) 的 `timeout` 那一段是這個形態的實例，那裡同時給了不需要 `timeout` 的替代做法。
+
 ## 形態三：bash 太舊，而且預設 shell 已換
 
 `/bin/bash` 凍在 3.2，所以 bash 4 以後才有的語法在 macOS 的系統 bash 上全部不存在：關聯陣列（`declare -A`）、`${var,,}` / `${var^^}` 大小寫轉換、`readarray` / `mapfile`、`|&`。一支 `#!/bin/bash` 又用了這些的腳本，在 macOS 會直接語法錯。

@@ -24,6 +24,8 @@ Linux 系列（dotfile / 安裝 / 除錯 / 工具）共用的關鍵術語。各�
 | 卡片                                                                                                                | 主題                                                               |
 | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | [TTY](/linux/dotfile/knowledge-cards/tty/)                                                                          | Linux 核心的純文字終端機介面，桌面故障時的救生通道                 |
+| [PTY（Pseudo-Terminal，虛擬終端機）](/linux/dotfile/knowledge-cards/pty/)                                           | 核心提供的一對虛擬終端機裝置，行規則為何會改寫穿過它的位元組       |
+| [Ring Buffer（環狀緩衝區）](/linux/dotfile/knowledge-cards/ring-buffer-log/)                                        | 固定大小、寫滿覆蓋最舊的紀錄區，log 能回溯多久由寫入速率決定       |
 | [initramfs](/linux/dotfile/knowledge-cards/initramfs/)                                                              | 開機初期掛真 root 之前的臨時根檔系統，ESP 大小要算進它             |
 | [UEFI Boot Chain（開機鏈）](/linux/dotfile/knowledge-cards/uefi-boot-chain/)                                        | 韌體到 kernel 的交棒過程，bootloader 選型與開機故障的依據          |
 | [Partition Identification（分區識別，PARTUUID / FSUUID）](/linux/dotfile/knowledge-cards/partition-identification/) | 分區的穩定識別方式，fstab / bootloader 怎麼指涉分區                |
