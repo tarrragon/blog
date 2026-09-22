@@ -7,7 +7,7 @@ tags: ["skills", "wrap-decision", "決策框架", "工程方法論"]
 
 ## WRAP 詳細技巧說明
 
-本文件提供 WRAP 每個階段的詳細操作技巧、範例和判斷規則。
+本文件提供 WRAP 每個階段的詳細操作技巧、範例和判斷規則。 四個階段各自對付一個決策 villain（狹隘框架、確認偏誤、短期情緒、過度自信），階段為什麼這樣切、對應關係與《Decisive》的來源見 [four-villains](principles/four-villains.md)。
 
 ---
 

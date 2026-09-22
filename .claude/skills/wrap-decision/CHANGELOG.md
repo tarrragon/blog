@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.13.2 — 2.13.1 接回的三張卡改用反引號路徑（`references/principles/x.md`）而非超連結，與 premortem-workflow 指 premortem-klein 的既有慣例一致：這三張是外部理論摘要、沒有也不該有 report 對應，超連結進鏡像會成斷鏈
+
 **Version**: 2.13.1 — principles/ 三張卡（benevolent-paternalism、four-villains、voss-influence-transparency）自 8/18 建立以來零入連，各接回檔頭指名的宿主段：前兩張接 anti-paternalism.md 的檢查 2 與自我暴露段（含學術依據列），four-villains 接 detailed-techniques.md 開頭
 
 **Version**: 2.13.0 — 體量收斂：SKILL.md 全檔 10,507 tokens（門檻 5,000 的 2.10 倍）收斂至 4,954 tokens。做法：(1) 移除全站 markdown 表格的對齊留白（純格式，不影響渲染），單此項省約 1,145 tokens；(2)「二元處置取捨」節的完整 Why/Consequence 論證與兩則實證、Step 0「為什麼必須在 W 之前」與「反模式偵測」完整版移至 `references/detailed-techniques.md` 新增章節，SKILL.md 保留核心定義 + Action + 路由；(3) 觸發條件表、W/R/A/P 各階段表格與段落逐句壓縮為核心問句 + 速查表，移除與 references 重複的展開說明。全部 references 交叉引用逐條驗證可達（無斷鏈），H2 章節數與結構不變（10 節）。Portable skill，收斂後需 skill-sync push。

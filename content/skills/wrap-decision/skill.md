@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: wrap-decision
 license: MIT
 metadata:
-  version: 2.13.0
+  version: 2.13.1
   category: writing-methodology
 ---
 
