@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 1.23.0
+  version: 1.24.0
   category: writing-methodology
 ---
 
@@ -151,6 +151,8 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 ### 4. 可查詢性（Searchability）
 
 關鍵字前置、使用可 grep 的分隔符（`:` `|` `→` `==`）、欄位名稱使用 regex 友善格式。命名讓 AI 能以單次 grep 命中，不需要語意推理。
+
+**句子層文法標準（全部書面產出適用）**：技術文章的每一句讓讀者知道四件事裡的至少兩件——**誰**在做（操作者、工具、系統元件）、**對什麼**做（哪一份資料、哪一段輸出）、**做了什麼**、**結果是什麼**。這條標準獨立於文章的定位、獨立於消費位（鍵位或段落位都適用），與行自足是兩個獨立的檢查——行自足管的是句子在脈絡外能不能還原命題，本條管的是句子在脈絡內有沒有交代操作的骨架。兩條規則：(1) 主詞是人或系統元件、不是指令片段——「`tr -d '\r'` 處理的是行尾」改成「腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元」；(2) 強調句式用直述事實替代——「遠端一個字都沒有執行」改成「指令沒有被送到遠端執行」。段落按讀者的問題序排列：讀者會看到什麼 → 這個工具做什麼 → 為什麼需要它 → 不做的具體後果 → 副作用。grep 抓不到（缺席的主詞沒有關鍵詞），偵測靠冷讀或理解探針的「這個動作是誰做的」欄。詳見 [command-fragment-as-subject-hides-the-actor](/report/command-fragment-as-subject-hides-the-actor/) 與 [spoken-emphasis-is-silent-in-text](/report/spoken-emphasis-is-silent-in-text/)。
 
 **行自足是可查詢性的配套義務**：grep-friendly 設計預期句子被單獨命中、被命中的句子就要單獨讀得懂。單句消費位（checklist 項、表格格、判斷標準句、grep 目標行、章節首句）必須在句內資訊自足——四條件：命題完整（主詞 / 謂語 / 對象 / 條件在場）、指涉閉合（殘片名詞有完整形先行）、實詞可反推（承載內容的詞能反推到機制 / 條件 / 契約）、一句一命題（對仗的每個半句能獨立判真）；驗收用抽離重讀測試（句子單獨給沒讀過上下文的消費者、命題能不能無歧義復原）。第三類位置是檢索鍵位（title / description / 表格鍵欄 / 卡名）——義務是識別充足、命題完整不適用、跟精簡規範衝突時精簡優先。段落敘事位可依賴鄰句、壓縮合法——三角取捨（精準、總長、句自足）的解法是按消費單位分配：自足要補成分、精準要加限定語與名詞頭、兩者都與精簡的減字反向、全域加長跟全域壓縮都是錯的答案。中文單字多義與 LLM 的三種消費模式（單行檢索 / attention 稀釋 / 風格繼承）是放大條件；四字節奏與對仗是「該跑抽離重讀」的候選訊號、不是判決（判定看消費單位）。詳見 [sentence-self-sufficiency-by-consumption-unit](/report/sentence-self-sufficiency-by-consumption-unit/) 與 `references/reference-authoring-standards.md` 的單句消費位段。
 
