@@ -54,7 +54,7 @@ adb -s <serial> shell -tt "printf 'a\nb\n'" < /dev/null | xxd
 # 610d 0a62 0d0a   — 轉換了
 ```
 
-`exec-out` 有一個代價：它把遠端的 stderr 併進 stdout。遠端吐一行警告，它就排在 PNG 前面進了檔案，而徵兆與行尾被改寫完全一樣（`file` 回 `data`、本機 stderr 零行）。
+`exec-out` 有一個代價：它把遠端的 stderr 併進 stdout。遠端吐一行警告，它就排在 PNG 前面進了檔案。`file` 與本機 stderr 分不出這種壞檔跟行尾被改寫的壞檔——兩種都是 `file` 回 `data`、stderr 零行；分得出的是檔案開頭的位元組（`xxd -l 16`）。
 
 ```bash
 adb -s <serial> exec-out "printf 'OUT\n'; printf 'ERR\n' >&2" | xxd
