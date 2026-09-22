@@ -150,13 +150,21 @@ while IFS= read -r line; do
     line="#${line}"
   fi
 
-  # 替換 references/principles/xxx.md → /report/slug/
-  if echo "$line" | grep -q 'references/principles/'; then
-    # 提取所有 principle slug
-    for slug in $(echo "$line" | grep -oE 'references/principles/[a-z0-9_-]+\.md' | sed 's|references/principles/||;s|\.md||'); do
+  # 替換 principle 連結 → /report/slug/。兩種寫法都要收：SKILL.md 寫 references/principles/xxx.md，
+  # references/ 裡的檔寫相對的 principles/xxx.md。找不到 report 對應時，markdown 超連結
+  # [label](principles/xxx.md) 降成「label（`references/principles/xxx.md`）」惰性文字——
+  # 超連結照抄進鏡像是斷鏈（cards 擋 commit），反引號路徑是惰性的、原樣保留。
+  # 漏掉裸 principles/ 這一形的症狀：無 WARN 穿過去，直到 cards 在 commit 時才擋。
+  if echo "$line" | grep -qE '(references/)?principles/[a-z0-9_-]+\.md'; then
+    BT='`'
+    for slug in $(echo "$line" | grep -oE '(references/)?principles/[a-z0-9_-]+\.md' | sed -E 's|^(references/)?principles/||;s|\.md||' | sort -u); do
       report_path=$(find_report_slug "$slug" 2>/dev/null) || true
       if [[ -n "$report_path" ]]; then
+        line=$(printf '%s\n' "$line" | sed -E "s#\]\((references/)?principles/${slug}\.md\)#](${report_path})#g")
         line="${line//references\/principles\/${slug}.md/${report_path}}"
+      elif printf '%s\n' "$line" | grep -qE "\]\((references/)?principles/${slug}\.md\)"; then
+        line=$(printf '%s\n' "$line" | sed -E "s#\[([^]]+)\]\((references/)?principles/${slug}\.md\)#\1（${BT}references/principles/${slug}.md${BT}）#g")
+        echo "  WARN: no report card for ${slug} — hyperlink degraded to inert path" >&2
       else
         echo "  WARN: no report card for ${slug} — leaving as-is" >&2
       fi

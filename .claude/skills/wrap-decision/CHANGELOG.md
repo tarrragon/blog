@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.15.0 — 錨點確認補第三錨點「評估單位」（實例還是模式；嚴重性在單位固定並量過普及度之後才給），推導在 detailed-techniques.md 新子節，principle 卡 evaluation-unit-before-severity（case：同一個發現當句子評是校對、當形態評是 33 篇的規範問題）；pm-checklist 1.3.0 同步；iterative-research 首次標號 1.0.0；hooks 硬路徑加 portability-allow 註記
+
 **Version**: 2.14.1 — 反轉 2.14.0 對 reference 檔尾的處理：本 skill 九份 reference 有七份帶自己的 Last Updated / Version 註記，逐條對照後 13 條裡 11 條不在本 CHANGELOG（本檔只回溯到 2.1.0），那是各 reference 的歷史不是重複。「版本住 CHANGELOG」管的是 SKILL.md，套到 reference 層會掉歷史。還原 claim-quick-wrap 的 2.0.0 註記，pm-checklist 補 1.2.0 對齊註記
 
 **Version**: 2.14.0 — pm-checklist.md 對齊 SKILL.md：五個月未動（內嵌版號停在 1.1.0 / 2026-04-16），缺 Step 0 整道閘門、W 的假設層級／三類涵蓋／方案關聯性、R 的搜尋範圍校準／清單逐項核對／事實宣稱驗證、A 前置的工具選擇四問、A 的 10/10/10 與悖論識別五條、P 的早期警訊與自我暴露；快速模式補 Step 0；自測表 6 項擴為 10 項（門檻 7/10）。claim-quick-wrap.md 與 pm-checklist.md 移除內嵌 Last Updated / Version 檔尾，版本住 CHANGELOG

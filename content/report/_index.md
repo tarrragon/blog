@@ -1116,3 +1116,4 @@ Filter × Source 合成三選（從 #59 抽出）：
 | #356 | [先備知識與環境陷阱跟在所屬的指令旁邊，用結構承接](/report/supplementary-knowledge-follows-its-parent-concept/) | 寫作 |
 | #357 | [口語的語氣強調寫進文章後變成讀者的解碼成本](/report/spoken-emphasis-is-silent-in-text/)                        | 寫作 |
 | #358 | [指令片段當主詞時，做事的人與做事的系統都從句子裡消失](/report/command-fragment-as-subject-hides-the-actor/)    | 寫作 |
+| #359 | [嚴重性評估先固定評估單位，單一實例與跨集合的模式是兩個對象](/report/evaluation-unit-before-severity/)          | 審查 |
