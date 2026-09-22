@@ -20,7 +20,7 @@ adb -t <transport_id> shell <command>   # transport_id 較短、同一次連線�
 
 寫成 `adb shell -s <serial> <command>` 時，`-s` 被劃進 `shell` 子命令的選項，而 `shell` 的選項解析器不認得它，回 `adb shell: illegal option -- s`，指令沒有被送到遠端執行。沒有指定 transport 而多台在線時，adb 在解析目標裝置那一步就失敗、回 `adb: more than one device/emulator`，`shell` 的選項解析沒有被執行。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
 
-同一台無線機器可能同時以 IP 位址與 mDNS 名稱兩個 transport 在線，`adb devices` 因此列出兩列而背後是同一台。`adb devices -l` 印的 product / model 欄位在同一批機器上完全相同，靠它們分辨不了；硬體序號可以分辨，逐個 transport 問一次 `getprop ro.serialno`，回同一個值的是同一台。
+同一台無線機器可能同時以 IP 位址與 mDNS 名稱兩個 transport 在線，`adb devices` 因此列出兩列而背後是同一台。`adb devices -l` 印的 product / model 欄位在同一批機器上完全相同，靠它們分辨不了；硬體序號可以分辨。`getprop` 讀裝置的系統屬性，引數是屬性名稱，`ro.serialno` 存的是硬體序號。逐個 transport 問一次，回同一個值的是同一台。
 
 ```bash
 for serial in $(adb devices | awk 'NR>1 && $2=="device" {print $1}'); do
@@ -32,7 +32,9 @@ for serial in $(adb devices | awk 'NR>1 && $2=="device" {print $1}'); do
 done
 ```
 
-腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元（`\r`）。adb 送輸出回來時若配置了 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal，虛擬終端機），而作業系統核心的 pty 行規則會把每個 `0x0A`（換行）補成 `0x0D 0x0A`（歸位加換行）。補進來的 `0x0D` 肉眼看不見，但它會讓 shell 的字串比對失敗——`"$model" = "<型號字串>"` 這種比較永遠回假，因為 `$model` 的值尾端多了一個 `\r`。`tr -d '\r'` 在沒有 pty 的情況下是空操作，加上去沒有副作用。
+迴圈的成員取自 `adb devices` 的輸出：`awk` 的 `NR>1` 跳過 `List of devices attached` 這行標頭，`$2=="device"` 只留下狀態欄是 `device` 的列（`offline` 與 `unauthorized` 的機器接不上、要排掉），`{print $1}` 印出第一欄的 transport 名稱。
+
+腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元（`\r`）。adb 送輸出回來時若配置了 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal，虛擬終端機），而作業系統核心的 pty 行規則會把每個 `0x0A`（換行）補成 `0x0D 0x0A`（歸位加換行）。補進來的 `0x0D` 肉眼看不見，但它會讓 shell 的字串比對失敗——`"$model" = "<型號字串>"` 這種比較永遠回假，因為 `$model` 的值尾端多了一個 `\r`。沒有配置 pty 時 `tr -d '\r'` 是空操作，加上去沒有副作用。
 
 ## 遠端擷圖
 
@@ -40,7 +42,9 @@ done
 adb -s <serial> exec-out screencap -p > screen.png
 ```
 
-`screencap -p` 在裝置上把當前畫面編碼成 PNG 寫到標準輸出。走 `exec-out` 時 adb 不配置 pty，位元組原樣送回；走 `shell` 且配置了 pty 時，pty 行規則會把 `0x0A` 換成 `0x0D 0x0A`。PNG 裡的 `0x0A` 是資料，被換過的每一處都讓檔案多一個位元組，解碼失敗。
+`screencap` 在裝置上抓當前畫面，`-p` 指定編碼成 PNG。它另外接受一個選用的引數——輸出的檔案路徑——而**有沒有寫這個引數決定畫面往哪裡去**：寫了路徑，`screencap` 把 PNG 存成裝置上的那個檔，標準輸出是空的；沒寫路徑，`screencap` 把 PNG 的位元組送到標準輸出。上面這條沒寫路徑，位元組因此經由 adb 回到本機，由本機 shell 的 `>` 存成 `screen.png`，裝置上不留檔案。寫路徑的那一種在下面的〈舊環境的兩段式做法〉。
+
+位元組從裝置送回本機的過程中會經過一次可能的行尾轉換。走 `exec-out` 時 adb 不配置 pty，位元組原樣送回；走 `shell` 且配置了 pty 時，pty 行規則會把 `0x0A` 換成 `0x0D 0x0A`。PNG 裡的 `0x0A` 是資料，被換過的每一處都讓檔案多一個位元組，解碼失敗。
 
 `adb shell` 配不配置 pty 取決於 adb 版本、裝置端有沒有 shell protocol v2（`adb features` 裡有沒有 `shell_v2`）、以及有沒有帶命令參數——帶命令的不配置，不帶命令的互動模式才配。這條規則在裝置有 shell_v2 且沒帶 `-t` / `-tt` 時成立，沒有 v2 的舊組合不適用。用 `exec-out` 取二進位輸出，行尾轉換與否不再取決於這組版本組合。
 
@@ -77,7 +81,13 @@ file screen.png
 
 ### 舊環境的兩段式做法
 
-`exec-out` 不可用時，讓裝置端先寫檔再 `pull` 回來。`pull` 是檔案傳輸、不做行尾處理、也不併 stderr。`pull` 與 `shell` 的可讀範圍不一樣，`/sdcard` 底下兩者都讀得到，系統分割區 `shell` 讀得到而 `pull` 可能回 `Permission denied`。
+`exec-out` 不可用時，讓裝置端先寫檔再 `pull` 回來。三條指令的引數各是什麼：
+
+- `screencap -p <裝置上的路徑>`：寫了路徑，`screencap` 把 PNG 存成裝置上的檔案
+- `pull <裝置上的路徑> <本機的路徑>`：第一個引數是來源、在裝置上，第二個是目的地、在本機，順序固定。`pull` 走檔案傳輸通道，不做行尾處理、也不併 stderr
+- `rm <裝置上的路徑>`：刪掉中繼檔，裝置上不留排查產生的檔案
+
+**路徑寫在 `/sdcard` 底下，是因為 `pull` 與 `shell` 讀得到的範圍不一樣**：`/sdcard` 兩者都讀得到，系統分割區 `shell` 讀得到而 `pull` 可能回 `Permission denied`。`/sdcard` 是 `/storage/emulated/0` 的符號連結，`adb -s <serial> shell ls -l /sdcard` 印得出這個對應；後面〈狀態查詢〉查的 App 資料目錄在同一個掛載點底下。
 
 ```bash
 adb -s <serial> shell screencap -p /sdcard/screen.png
@@ -92,7 +102,7 @@ adb -s <serial> shell screenrecord --time-limit <秒數> /sdcard/demo.mp4
 adb -s <serial> pull /sdcard/demo.mp4 ./
 ```
 
-時間上限由 `screenrecord` 自己定，`adb -s <serial> shell screenrecord --help` 會印出來。
+`screenrecord` 的引數是錄影檔在裝置上的輸出路徑，所以錄完要 `pull` 回本機；`--time-limit` 接的是秒數。`pull` 的第二個引數寫 `./` 時，本機端沿用來源的檔名。時間上限由 `screenrecord` 自己定，`adb -s <serial> shell screenrecord --help` 會印出來。
 
 ### 多螢幕機器的顯示器選擇
 
@@ -125,7 +135,7 @@ adb -s <serial> shell dumpsys window windows \
   | grep -E "Window #|package=|ty=|mViewVisibility="                # 當下的視窗堆疊
 ```
 
-第一條列的是能力不是行為，有權限的套件不一定當下有視窗在畫面上。第二條按 z-order 由上而下列出視窗，要同時看三個條件：排在目標之上、`ty=APPLICATION_OVERLAY`、且 `mViewVisibility=0x0`。第三個條件用來排除隱形視窗：`0x4` 是存在但不可見，系統自己就常駐幾個這樣的視窗（拖放目標、螢幕裝飾）。三個條件同時成立才代表有第三方視窗正在疊圖。從截圖分不出 overlay 與被改寫的元件——兩種在畫面上呈現相同的文字；分得開兩者的是 z-order 那份輸出。
+`appops query-op` 的兩個引數是 op 名稱與 mode，它列出在那個 op 上被設成該 mode 的套件。所以第一條列的是能力不是行為，有權限的套件不一定當下有視窗在畫面上。第二條的 `windows` 是傳給 window 服務的參數，要它印視窗清單那一段；輸出按 z-order 由上而下列出視窗，要同時看三個條件：排在目標之上、`ty=APPLICATION_OVERLAY`、且 `mViewVisibility=0x0`。第三個條件用來排除隱形視窗：`0x4` 是存在但不可見，系統自己就常駐幾個這樣的視窗（拖放目標、螢幕裝飾）。三個條件同時成立才代表有第三方視窗正在疊圖。從截圖分不出 overlay 與被改寫的元件——兩種在畫面上呈現相同的文字；分得開兩者的是 z-order 那份輸出。
 
 ## logcat
 
@@ -199,7 +209,7 @@ adb -s <serial> shell ls -l /storage/emulated/0/Android/data/<package>/
 
 ### appops
 
-`appops` 的 mode 是一組固定值（`allow` / `ignore` / `deny` / `default`，位置類另有 `foreground`）。`ignore` 與 `deny` 都讓呼叫拿不到值，差別在 `deny` 回報失敗、`ignore` 靜默回空。從沒設定過的印 `No operations.` 加一行 `Default mode: default`。
+`appops get` 的兩個引數是套件名與 op 名稱，回報那個套件在那個 op 上目前的 mode。mode 是一組固定值（`allow` / `ignore` / `deny` / `default`，位置類另有 `foreground`）。`ignore` 與 `deny` 都讓呼叫拿不到值，差別在 `deny` 回報失敗、`ignore` 靜默回空。從沒設定過的印 `No operations.` 加一行 `Default mode: default`。
 
 ### dumpsys user
 
@@ -211,7 +221,7 @@ device owner 管整台機器，profile owner 只管工作資料夾，兩者都�
 
 ### settings
 
-分成 global / secure / system 三個 namespace，一個鍵通常只在其中一個裡面有值。跨版本搬過家的鍵會在舊 namespace 留下值為 `null` 的殘餘，`null` 因此蓋住三種情形：查錯 namespace、這台機器沒有這個設定、以及殘餘。`settings list <ns> | grep <key>` 命中不等於值在這裡——三個 namespace 都 `get` 過一輪，確認只有一個回非 `null`，才能確定值在哪。
+`settings` 的引數依序是動作（`list` / `get` / `put`）、namespace、鍵名。namespace 分成 global / secure / system 三個，一個鍵通常只在其中一個裡面有值。跨版本搬過家的鍵會在舊 namespace 留下值為 `null` 的殘餘，`null` 因此蓋住三種情形：查錯 namespace、這台機器沒有這個設定、以及殘餘。`settings list <ns> | grep <key>` 命中不等於值在這裡——三個 namespace 都 `get` 過一輪，確認只有一個回非 `null`，才能確定值在哪。
 
 ### dumpsys package
 
@@ -219,7 +229,11 @@ device owner 管整台機器，profile owner 只管工作資料夾，兩者都�
 
 ### pm resolve-activity
 
-輸出的 `ActivityInfo` 區塊帶 `name=` 與 `packageName=`，指出 action 落在誰身上。下方巢狀的 `ApplicationInfo` 另有一組同名欄位，那是套件的 Application 類別，直接 `grep name=` 會拿到兩個不同的值。
+`-a` 後面接的是 intent action 的名稱，`pm resolve-activity` 回答系統會把這個 action 交給哪個元件處理。輸出的 `ActivityInfo` 區塊帶 `name=` 與 `packageName=`，指出 action 落在誰身上。下方巢狀的 `ApplicationInfo` 另有一組同名欄位，那是套件的 Application 類別，直接 `grep name=` 會拿到兩個不同的值。
+
+### App 的外部儲存資料目錄
+
+`ls -l` 後面那條路徑是套件在外部儲存上的私有資料目錄。App 把自己下載的檔案放在這裡時，這一條確認那個檔案在不在。`/storage/emulated/0` 是當前使用者的外部儲存掛載點，與前面擷圖用的 `/sdcard` 指向同一處。
 
 ## 放寬安裝管控（修改型指令）
 
