@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.27.1 — 〈示範指令的引數〉一節與 principle 卡補上示範層的要求：引數的有無改變行為時，兩種形態各給一條指令並列在同一個程式碼區塊裡、各帶一行註解；並列是修法本身，文字說明是補充而不是替代——只給一條、另一條用散文描述時，讀者要從那段文字重建出另一條指令長什麼樣，而他來那一節就是為了拿指令。邊界：錯誤用法不進區塊（區塊是可以複製的位置）。`writing-articles.md` 與 `writing-documents.md` 同步一句。
+
 **Version**: 1.27.0 — 新增〈示範指令的引數另有一條檢查（程式碼區塊適用）〉一節與 `references/principles/literal-operand-hides-the-change-point.md`。前一節的四槽位判定單位是句子，而指令沒有主詞也沒有謂語，逐句填槽位走到程式碼區塊就停下來，區塊裡的字面值因此通過每一道句子層檢查。新判準逐條指令可執行：讀者把這條指令用在自己的環境上要改哪幾個位置，每個位置文章有沒有說過它填什麼；掃描入口是字面值而不是佔位符——佔位符自帶「這裡要換」的訊號，字面值長得像一個完整可用的答案。字句層 bank 新增「指令引數未說明的檢查」一類（三條有詞形的 rg 加一句漏網說明）；`writing-articles.md` 接在操作句那一節之後並補一列診斷；`writing-documents.md` 新增 〈Command operands〉一節。
 
 **Version**: 1.26.0 — 四槽位規格、教室形式、補充資訊歸位接進七個情境 reference（articles 新節加四列徵兆、documents P1/P3 子節、prompts 與 code-comments 路由段）；四張 principle 卡首次被 reference 引用

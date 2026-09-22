@@ -39,10 +39,16 @@ done
 ## 遠端擷圖
 
 ```bash
+# 不寫路徑：PNG 的位元組送到標準輸出，由本機的 > 存檔，裝置端不留中繼檔
 adb -s <serial> exec-out screencap -p > screen.png
+
+# 寫路徑：PNG 存成裝置上的那個檔，標準輸出是空的，檔案要另外 pull 回來
+adb -s <serial> shell screencap -p /sdcard/screen.png
 ```
 
-`screencap` 在裝置上抓當前畫面，`-p` 指定編碼成 PNG。它另外接受一個選用的引數——輸出的檔案路徑——而**有沒有寫這個引數決定畫面往哪裡去**：寫了路徑，`screencap` 把 PNG 存成裝置上的那個檔，標準輸出是空的；沒寫路徑，`screencap` 把 PNG 的位元組送到標準輸出。上面這條沒寫路徑，位元組因此經由 adb 回到本機，由本機 shell 的 `>` 存成 `screen.png`，裝置上不留檔案。寫路徑的那一種在下面的〈舊環境的兩段式做法〉。
+`screencap` 在裝置上抓當前畫面，`-p` 指定編碼成 PNG。它另外接受一個選用的引數——輸出的檔案路徑——**上面兩條的差別只在寫不寫這個引數，而它決定畫面往哪裡去**。
+
+兩條各自的完整流程分開講：第一種的位元組要經過 adb 這條通道回到本機，本節接下來處理那條通道上的兩個問題（行尾轉換與 stderr 混入）；第二種在〈舊環境的兩段式做法〉，它多兩條指令（取回與清除），而因為沒有位元組經過通道，用 `shell` 送就夠了。
 
 位元組從裝置送回本機的過程中會經過一次可能的行尾轉換。走 `exec-out` 時 adb 不配置 pty，位元組原樣送回；走 `shell` 且配置了 pty 時，pty 行規則會把 `0x0A` 換成 `0x0D 0x0A`。PNG 裡的 `0x0A` 是資料，被換過的每一處都讓檔案多一個位元組，解碼失敗。
 
@@ -111,7 +117,12 @@ adb -s <serial> pull /sdcard/demo.mp4 ./
 **編號要取自 SurfaceFlinger，不是 `dumpsys window` 的 `mDisplayId`。** 兩套編號不相容，把 `mDisplayId` 餵給 `screencap -d` 的結果是成功退出、stderr 零行、檔案零位元組。`screencap --help` 自己就寫著要去 SurfaceFlinger 查。
 
 ```bash
-adb -s <serial> shell dumpsys display | grep mViewports     # 同一行印出兩套編號的對應
+adb -s <serial> shell dumpsys display | grep mViewports    # 同一行印出兩套編號的對應
+
+# 不加 -d：抓主顯示器
+adb -s <serial> exec-out screencap -p > screen.png
+
+# 加 -d：抓指定的顯示器
 adb -s <serial> exec-out screencap -p -d <SurfaceFlinger 的編號> > screen.png
 ```
 

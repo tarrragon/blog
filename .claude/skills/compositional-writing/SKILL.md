@@ -4,7 +4,7 @@ description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelka
 license: MIT
 metadata:
   portable: true
-  version: 1.27.0
+  version: 1.27.1
   category: writing-methodology
 ---
 
@@ -69,7 +69,11 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 
 判準一句話，逐條指令可執行：**讀者要把這條指令用在自己的環境上，他得改哪幾個位置；每一個要改的位置，文章有沒有說過它填的是什麼。** 答「不用改任何位置」的指令不適用。
 
-掃描入口是區塊裡的**字面值**、不是佔位符——`<serial>` 自帶「這裡要換」的訊號，`/sdcard/screen.png` 長得像一個完整可用的答案，於是同時逃過作者的說明義務與讀者的警覺；稿件上因此看不出缺口，那個位置填著一個看起來很正常的值。五種形態、修法與掃描指令在 [literal-operand-hides-the-change-point](references/principles/literal-operand-hides-the-change-point.md)。
+掃描入口是區塊裡的**字面值**、不是佔位符——`<serial>` 自帶「這裡要換」的訊號，`/sdcard/screen.png` 長得像一個完整可用的答案，於是同時逃過作者的說明義務與讀者的警覺；稿件上因此看不出缺口，那個位置填著一個看起來很正常的值
+
+**引數的有無改變行為時，兩種形態各給一條指令、並列在同一個程式碼區塊裡**，各自帶一行註解說它做什麼。並列是修法本身，文字說明是補充而不是替代——只給一條、另一條用散文描述時，讀者要從那段文字重建出另一條指令長什麼樣，而他來那一節就是為了拿指令。邊界：錯誤用法不進區塊（區塊是可以複製的位置），寫在散文裡用行內程式碼標出來就夠了。
+
+五種形態、修法與掃描指令在 [literal-operand-hides-the-change-point](references/principles/literal-operand-hides-the-change-point.md)。
 
 ## Core Pillars（核心支柱）
 
