@@ -18,7 +18,7 @@ adb -s <serial> shell <command>
 adb -t <transport_id> shell <command>   # transport_id 較短、同一次連線內有效
 ```
 
-寫成 `adb shell -s <serial> <command>` 時，`-s` 落在遠端那一側，`adb shell` 自己的解析器回 `adb shell: illegal option -- s`，遠端一個字都沒有執行。沒有指定 transport 而多台在線時，adb 在更前面一步失敗、回 `adb: more than one device/emulator`，根本沒走到 shell 的解析。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
+寫成 `adb shell -s <serial> <command>` 時，`-s` 落在遠端那一側，`adb shell` 自己的解析器回 `adb shell: illegal option -- s`，指令沒有被送到遠端執行。沒有指定 transport 而多台在線時，adb 在更前面一步失敗、回 `adb: more than one device/emulator`，根本沒走到 shell 的解析。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
 
 同一台無線機器可能同時以 IP 位址與 mDNS 名稱兩個 transport 在線，`adb devices` 因此列出兩列而背後是同一台。`adb devices -l` 印的 product / model 欄位在同一批機器上完全相同，靠它們分辨不了；硬體序號可以分辨，逐個 transport 問一次 `getprop ro.serialno`，回同一個值的是同一台。
 
@@ -32,7 +32,7 @@ for serial in $(adb devices | awk 'NR>1 && $2=="device" {print $1}'); do
 done
 ```
 
-`tr -d '\r'` 處理的是行尾。adb 送輸出回來的時候如果配置了 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal），核心會對經過的位元組做終端機處理，把每個 `0x0A` 補成 `0x0D 0x0A`。字串比對在這裡會靜默失敗——`"$model" = "<型號字串>"` 永遠不成立而印出來看不出差別。`tr -d '\r'` 在沒有 pty 時不改變結果，固定寫上的成本是零。
+腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元（`\r`）。adb 在某些條件下會配置 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal，虛擬終端機），而作業系統核心的 pty 行規則會把每個 `0x0A`（換行）補成 `0x0D 0x0A`（歸位加換行）。補進來的 `0x0D` 肉眼看不見，但它會讓 shell 的字串比對失敗——`"$model" = "<型號字串>"` 這種比較永遠回假，因為 `$model` 的值尾端多了一個 `\r`。`tr -d '\r'` 在沒有 pty 的情況下是空操作，加上去沒有副作用。
 
 ## 遠端擷圖
 
