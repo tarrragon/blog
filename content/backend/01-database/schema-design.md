@@ -137,6 +137,8 @@ index 設計要從查詢路徑反推、不是從欄位列表前推。每個高�
 - 用 OR 條件依賴單一 index：query planner 不一定能用
 - 大表 ALTER INDEX 不分批：lock 整個表
 
+本節從查詢路徑反推的是索引，而同一個反推對其餘的 schema 決定同樣成立——欄位允不允許為空、鍵唯不唯一、長欄位放在哪一張表、字串的比較規則寫在哪一層，每一個都在替往後每一次查詢定價，而它們在設計當下全部看不出差別。六個決定各自的查詢代價、浮現條件與遷移成本，逐條實測在 [1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。
+
 ## Denormalization 模式
 
 normalize 是 SQL 的預設、但 denormalize 有時是更好的工程選擇。

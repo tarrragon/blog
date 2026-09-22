@@ -121,6 +121,12 @@ NoSQL / KV DB 也有 sibling 反模式（hot partition、read amplification、sc
 
 這張表以 OLTP API 為主。Dashboard / report / search endpoint 常需要 10-30 query 解 join / aggregation、用「Complex」涵蓋不夠精確；batch / bulk write（一次寫入 1000 筆訂單）不該用 query count 評估、應該看 batch size 跟 transaction 範圍。預算是判讀工具、不是硬閾值。
 
+## 這幾條反模式有一半的成因在 schema
+
+本章的修法落在查詢與 ORM 那一側，而其中幾條的成因在更上游：`SELECT *` 的代價由那張表裝了多寬決定（長文字欄位與短欄位同表時，不碰它的查詢也要掃過它的頁面）、N+1 的可修性由常一起取的資料切在幾張表決定、缺索引那一條裡有一種是索引建了而條件的形狀讓它用不上，而條件寫成那個形狀往往是因為比較規則沒有寫在欄位上。
+
+這幾個上游決定各自替查詢定了什麼價，逐條實測在 [1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。兩章的分工是：那一篇問設計時要怎麼想，本章問已經長成這樣之後怎麼修。
+
 ## 判讀訊號
 
 | 訊號                              | 判讀重點                                 | 對應動作                                                                                    |
