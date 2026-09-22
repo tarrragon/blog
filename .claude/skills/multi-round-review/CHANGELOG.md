@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.15.0 — 2-B′ 加操作句逐句槽位表（必附產出、不代填）、2-B⁗ 探針加「對什麼做」欄、1-A 加槽位路由、reviewer-prompt 契約同步
+
 **Version**: 2.14.2 — principle 卡同步 #357 量詞判準
 
 **Version**: 2.14.1 — principle 卡同步 #357 判準修訂
