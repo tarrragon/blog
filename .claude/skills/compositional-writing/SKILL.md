@@ -1,10 +1,10 @@
 ---
 name: compositional-writing
-description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 歸因語氣 / 宣導語氣 / 泛用詞 / 位置與集合指涉 / 脈絡懸置 / 敘事姿態 / 用詞搭配 / 物理化錯配 — 完整清單見本檔「字句層 keyword bank」節) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 檢討報告, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 問句標題, 敘事視角, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流, 示範指令, 程式碼區塊, code block, 指令註解, 參數表, 引數說明, 佔位符."
+description: "Composes atomic, intent-revealing, grep-friendly writing (Zettelkasten) for code comments, docs, logs, prompts, schema/ticket fields, external-analysis transformation, and long-form technical articles. Use when cognitive load and token cost matter. **Also triggers during multi-round review / batch review / 寫作 audit** — provides the keyword bank (正向陳述 / 口語修辭 / 地區用語 / 廢話前綴 / 裝飾符號 / 對讀者喊話 / 自評誇飾 / 必然性框架 / 澄清式框架 / 歸因語氣 / 宣導語氣 / 泛用詞 / 位置與集合指涉 / 脈絡懸置 / 敘事姿態 / 用詞搭配 / 物理化錯配 — 完整清單見本檔「字句層 keyword bank」節) and frame-specific check lists that multi-round-review reviewer agents need. Triggers: 寫註解, 寫文件, 寫日誌, 寫 prompt, 寫文章, 技術文章, 商業分析, 外部分析文章, 經驗談轉教學, 訪談整理, 機制重建, post-mortem, 架構決策, 除錯復盤, 檢討報告, 欄位設計, atomic, reusable, 多輪審查, multi-round review, batch review, 寫作 audit, 正向陳述, 口語修辭, 問句標題, 敘事視角, 字句層 grep, SOLID, 文章拆分, 結構決策, 擴充點, 依賴方向, 讀者分流, 示範指令, 程式碼區塊, code block, 指令註解, 參數表, 引數說明, 佔位符, 多種做法, 解法比較, 並排比較, 取捨, trade-off, 比較表."
 license: MIT
 metadata:
   portable: true
-  version: 1.28.0
+  version: 1.29.0
   category: writing-methodology
 ---
 
@@ -173,6 +173,8 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 
 **判斷標準的輸入集合要跟正文的組織維度對齊**：映射的成熟度與輸入的完整性是兩個獨立的檢查——一段判斷標準可以把每個條件都對到明確的行動，而只要讀者帶進來的個案在某個維度上取了作者沒設想的值，整條路就走不到底。最高頻的形態是**只收「表徵」一個輸入，把產生表徵的那個條件從輸入端折疊掉**，即使它在正文裡佔了整整一節（處置句寫著只有某一種執行環境才有的操作名詞，而內容涵蓋的環境不只那一種）。便宜的自查指標是分支數與種類數的落差：分支數少於正文自己列出的種類數時，就有種類落在所有分支之外。作者看不見它，因為讀的人自帶那個被折疊的條件；驗收要拿具體個案走一遍、而個案要刻意挑落在那些種類上的。詳見 [criteria-fold-away-the-condition-that-produces-the-symptom](references/principles/criteria-fold-away-the-condition-that-produces-the-symptom.md)。
 
+**並排多種做法時，比較的軸要落在讀者接下來要交出的那份產出上**：軸的來源有兩個——那幾種做法彼此的差異（回的筆數、花的時間、取得到的欄位），或讀者讀完要交出的那份產出（他正在設計的資料結構、介面、型別）。取自做法差異的每一欄都正確、都可實測、主詞都寫清楚了，而讀者讀完不知道自己該怎麼辦，因為他要動手改的那份產出不在任何一欄裡。**把軸寫成「這個做法假設了什麼」仍然不算換到讀者那一側**——主詞還是做法；換過來的問法是「我要設計這個東西，某一項要不要唯一、允不允許缺」，而那一個決定同時決定幾種做法各自成不成立。既有檢查全數放行：軸的數量與種類數對得上（缺軸那一條的先兆不觸發），名字與機制也都對，錯在整組軸選在另一個平面上。判讀逐欄唸標題問主詞是誰，或問**讀者讀完這一欄會去改什麼**——改這段文字的降為格內內容，改他正在設計的那份產出的留作欄並排在前面。修法是先寫下讀者要交出的那份產出再往回列軸；原本的軸不刪、降成格。**跨篇的零件要在某一處並排，而那一處是新的內容**——互相連結不產生並排，讀者一次仍然只看得到一種。詳見 [comparison-axis-comes-from-the-readers-decision](references/principles/comparison-axis-comes-from-the-readers-decision.md)。
+
 **教學模組要有推導源頭**：分析導向的教學模組（判斷標準密集、讀者要帶走判斷力），模組級結構要是推導體系、不是主題集合——一個源頭機制（成本結構 / 約束 / 生命週期，各篇判斷標準能折算回去的基準）、每篇承擔一條展開、模組入口能一句話說出推導起點。源頭買到：判斷標準同尺、跨篇矛盾現形、擴篇有掛載點、推導式閱讀路線成立。目錄型模組與異質 case 記錄不適用；源頭是折算基準、不是開場模板。詳見 [teaching-module-needs-derivation-anchor](references/principles/teaching-module-needs-derivation-anchor.md) 與 `references/managing-article-collections.md` 的對應段。
 
 **深度的分配不看主題的表面複雜度**：判斷一段要寫多詳細時用「讀者讀到這裡手上有什麼」，而不是這個主題看起來簡不簡單。基本處讀者手上的既有結構最少、作者的熟悉度最高，兩邊的需求剛好反向，所以用熟悉度當訊號必然分配錯——而陷阱聚集在基本處有結構上的原因：基本語法用得最頻繁，同一個誤解在每次使用裡重複，且失效多半是靜默的（實作為相容性接受寬鬆寫法，寬鬆的那一版還能算出看起來合理的值）。**「難」與「危險」是兩個不同的軸。** 同一條也管進階議題的起點——推導從底下的基本機制開始、複雜需求留成案例，驗收用一句話測試（這個起點能不能在不預設本模組任何內容的前提下說完）。詳見 [basics-anchor-the-advanced](references/principles/basics-anchor-the-advanced.md)。
@@ -244,6 +246,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 | 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、剛把一份文件拆成多檔要查交界、或用結構原則 review 既有文集                                           | `references/structuring-with-solid.md`                                                                             |
 | 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時 / 強度失準（誇飾或降格） | `references/auditing-articles.md`                                                                                  |
 | 要寫或檢查判讀 / 選型 / 決策類內容（回答「該怎麼判斷」那一層），或讀者提問「什麼情況會需要這個」「什麼樣的系統會這樣做」「沒有範例看不懂」                                                           | `references/judgment-content-needs-scenarios.md`                                                                   |
+| 要把一個題目的幾種做法並排比較（比較表有幾欄、每一欄比什麼、跨篇的零件在哪裡並排） | `references/principles/comparison-axis-comes-from-the-readers-decision.md` |
 | 要在文章或文件裡示範指令（區塊裡放什麼、註解裝什麼、何時並列兩條、何時另開參數表） | `references/demonstrating-commands.md` |
 | 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                                                                                                   | `references/designing-fields.md`                                                                                   |
 | 想驗證寫作品質（認知負擔、獨立理解率）                                                                                                                                                               | `references/meta-metrics.md`                                                                                       |
