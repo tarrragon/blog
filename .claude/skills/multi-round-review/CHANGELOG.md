@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.16.0 — 2-B″ 新增〈引數檢查〉與 `references/principles/literal-operand-hides-the-change-point.md`。原本的 2-B″ 問的是讀者執行得了嗎，新增這一段問的是讀者換得了值嗎——同一份走查可以在「照著跑得起來」全過，而讀者換成自己的路徑或套件時無處下手，兩題的通過條件不同所以分開問。產出是逐條指令表（指令 / 讀者要改的位置 / 說明在第幾段或缺）。掃描入口是程式碼區塊裡的字面值而不是佔位符；記明這一類逐句判定抓不到——四槽位的判定單位是句子，而指令沒有主詞也沒有謂語。SKILL.md 的 frame 表 2-B″ 那一列同步。
+
 **Version**: 2.15.0 — 2-B′ 加操作句逐句槽位表（必附產出、不代填）、2-B⁗ 探針加「對什麼做」欄、1-A 加槽位路由、reviewer-prompt 契約同步
 
 **Version**: 2.14.2 — principle 卡同步 #357 量詞判準

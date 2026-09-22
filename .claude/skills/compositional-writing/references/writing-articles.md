@@ -73,6 +73,8 @@ compositional-writing 的核心主張是「寫原子卡片」，但完整文章�
 
 動作者格填對之後，段落順序通常自動修正——操作者視角的順序就是讀者的問題序：讀者會看到什麼 → 這個工具做什麼 → 為什麼需要它 → 不做的具體後果 → 副作用。判準與 before/after 見 [command-fragment-as-subject-hides-the-actor](principles/command-fragment-as-subject-hides-the-actor.md)（動作者格）與 [spoken-emphasis-is-silent-in-text](principles/spoken-emphasis-is-silent-in-text.md)（受詞與量詞格）。教學定位的文章另有兩條形狀層的檢查：開場是不是超過一句話的情境敘事、正文有沒有「該問誰」「容易搞錯」「前面提到的」這類教室互動語句（[teaching-is-not-lecturing](principles/teaching-is-not-lecturing.md)）；先備知識與環境陷阱有沒有跟在所屬的指令旁邊，判斷問句是「讀者在讀到哪個位置時會需要這段資訊」（[supplementary-knowledge-follows-its-parent-concept](principles/supplementary-knowledge-follows-its-parent-concept.md)）。
 
+**這一節的判定單位是句子，所以它走到程式碼區塊就停下來。** 指令沒有主詞也沒有謂語，逐句填槽位的動作對它不產生任何判定，區塊裡的每一個字面值因此通過。示範指令另有一條檢查：四個位置（工具 / 子命令 / 選項 / 引數）裡引數最需要寫，因為它的語意常常只有文章講得出來，而且它是讀者唯一要動手改的位置。判準是「讀者把這條指令用在自己的環境上要改哪幾個位置，每個位置文章有沒有說過它填什麼」，掃描入口是區塊裡的字面值而不是佔位符——`<serial>` 自帶「這裡要換」的訊號，`/sdcard/screen.png` 長得像一個完整可用的答案。五種形態與修法見 [literal-operand-hides-the-change-point](principles/literal-operand-hides-the-change-point.md)。
+
 ## 八條核心規則
 
 規則一-七 處理「單篇文章內部怎麼寫」的不同層面（段落結構、句子層級、方案對照）。規則八是 meta-level、跨所有規則。規則九指向 `managing-article-collections.md` 處理跨多篇的議題。
@@ -662,6 +664,7 @@ build-炸-修循環。明顯划算。
 **用法**：把徵兆欄當 grep key，文章寫到該徵兆時展開對應的判讀問題，不得跳過。
 
 ---
+| 程式碼區塊裡出現讀者要換掉的值（路徑、套件名、op 名稱、namespace） | 讀者把這條指令用在自己的環境上要改哪幾個位置？每個位置文章說過它填什麼嗎？字面值與 `<佔位符>` 都算要改的位置。（[literal-operand-hides-the-change-point](principles/literal-operand-hides-the-change-point.md)） |
 | 一句操作描述的主詞是參數、管線一段、或子命令               | 動作者是誰——人、腳本、工具、還是系統元件？受詞是動詞在領域裡作用得到的對象嗎？（[command-fragment-as-subject-hides-the-actor](principles/command-fragment-as-subject-hides-the-actor.md)） |
 | 「完全」「任何」「所有」「一個 X 都沒」                    | 量詞的範圍寫在句內了嗎？句子自己說了「全部」的話，全部的什麼？（[spoken-emphasis-is-silent-in-text](principles/spoken-emphasis-is-silent-in-text.md)）                                     |
 | 開場超過一句話的情境敘事、或正文出現「該問誰」「容易搞錯」 | 刪掉這一段之後讀者還知不知道這篇在講什麼？這一句是在給正確做法還是在模擬課堂？（[teaching-is-not-lecturing](principles/teaching-is-not-lecturing.md)）                                     |

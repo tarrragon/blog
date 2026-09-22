@@ -4,7 +4,7 @@ description: "寫多篇章節後做多輪 agent reviewer audit 的標準流程�
 license: MIT
 metadata:
   portable: true
-  version: 2.15.0
+  version: 2.16.0
   category: writing-methodology
 ---
 
@@ -101,7 +101,7 @@ Round 1-3 是硬底線，但每一輪裡的 frame 不是全部都跑。主 sessi
 | 2-A Cadence                            | 一批三篇以上                                         | 單篇不適用（同骨化是跨篇現象）                                                                                                              |
 | 2-B 讀者旅程                           | 有跨篇路線                                           | 單篇不適用                                                                                                                                  |
 | 2-B′ 冷讀                              | 一律跑                                               | 任何可被搜尋或直連抵達的內容都適用                                                                                                          |
-| 2-B″ Executable walkthrough            | 操作型（有步驟、有指令）                             | 非操作型不跑                                                                                                                                |
+| 2-B″ Executable walkthrough            | 操作型（有步驟、有指令）                             | 非操作型不跑；有示範指令時另跑引數檢查（讀者換得了值嗎，與執行得了嗎是兩題）                                                                |
 | 2-B‴ 情境可想像性                      | 判讀 / 選型型（給判斷標準、要讀者做決定）            | 非判讀型不跑                                                                                                                                |
 | 2-B⁗ 低階 model 讀者探針               | 一律跑；審查對象是規則類文件時加「第一個具體動作」欄 | 無條件；處置門檻在派發前寫死（`references/round-2-probes.md`〈探針的處置門檻〉）；自評欄與比對欄分開讀 |
 | 2-B⁵ 翻譯探針                          | 中文稿件、且已通過 2-B⁗                              | 非中文稿件不跑；命題層未收斂時先跑 2-B⁗；定義在 `references/round-2-probes.md`                                                              |
