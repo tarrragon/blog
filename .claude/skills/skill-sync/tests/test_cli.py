@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -27,7 +28,7 @@ from skill_sync.cli import (  # noqa: E402
     _resolve_diverge_direction,
     _resolve_hook_logs_dir,
     _scan_line_for_violations,
-    _skill_exists_in_canonical,
+    _skill_exists_in_publish_repo,
     _stale_version_warning,
     _write_divergence_force_log,
     _write_portability_force_log,
@@ -274,7 +275,7 @@ def test_compute_diff_excludes_override_marker_from_dst_only(tmp_path):
 
 # ---------- sync base marker 排除（0.2.1-W3-668：三態方向判定） ----------
 #
-# base 記錄檔與 override marker 同理：呼叫端本地寫入，絕不能進 canonical 或
+# base 記錄檔與 override marker 同理：呼叫端本地寫入，絕不能進發佈庫或
 # 影響 content hash，否則寫入 base 本身會改變 hash，造成自我循環。
 
 
@@ -455,8 +456,8 @@ def test_content_hash_with_subdirectory_matches_hardcoded_digest(tmp_path):
 # --- regression: 同號不同內容不再被判為 up_to_date（0.2.1-W3-124 §11.2） ------
 
 
-def test_blog_and_canonical_2_5_0_same_version_different_content_are_diverged(tmp_path):
-    """blog 的 2.5.0（基礎設施累積型絆腳索）與 canonical 的 2.5.0（行前預想配早期警訊）
+def test_blog_and_publish_repo_2_5_0_same_version_different_content_are_diverged(tmp_path):
+    """blog 的 2.5.0（基礎設施累積型絆腳索）與發佈庫的 2.5.0（行前預想配早期警訊）
     版本字串相同、內容不同；修改前的字串比對會誤判為 up_to_date，本測試證明
     改用內容雜湊後兩者被正確識別為分歧。"""
     local_dir = _write_skill(
@@ -465,7 +466,7 @@ def test_blog_and_canonical_2_5_0_same_version_different_content_are_diverged(tm
     )
     remote_dir = _write_skill(
         tmp_path / "remote", "wrap-decision", "2.5.0",
-        "行前預想配早期警訊：canonical 演化內容",
+        "行前預想配早期警訊：發佈庫演化內容",
     )
 
     local_manifest = {
@@ -629,7 +630,7 @@ def test_has_local_override_false_when_marker_absent(tmp_path):
 #
 # versions.json 只存 hash 與 version，本地無「上次同步到哪個 hash」的記錄；三方
 # 資訊（本地／遠端／上次同步基準）塌成兩方，方向因此永遠推不出來而必須人判，
-# 一次漏判即以舊版覆蓋 canonical。本節固化：讀寫基準檔的原始行為、
+# 一次漏判即以舊版覆蓋發佈庫。本節固化：讀寫基準檔的原始行為、
 # 純函式方向判定的四種組合、_classify_sync_status 向後相容（無 base 記錄時維持
 # 現行 diverged 輸出）、pull/push 成功後的落盤時機。
 
@@ -659,7 +660,7 @@ def test_record_sync_base_skips_missing_dir(tmp_path):
 
 # --- _refresh_stale_sync_base（0.2.1-W3-1271） -------------------------------
 #
-# canonical 通道（sync-claude-pull 全樹 overlay）與本地直接編輯都會讓 skill
+# 框架正本通道（sync-claude-pull 全樹 overlay）與本地直接編輯都會讓 skill
 # 內容前進而不觸碰 .skill-sync-base，之後遠端單向前進被 _resolve_diverge_direction
 # 判成 conflict，報告端要求人工比對本可自動判定的情況。本節固化：只在「呼叫端已
 # 確認 local == remote」且 marker 落後時才重記，並且對已正確的 marker 不做無謂寫入。
@@ -699,7 +700,7 @@ def test_cmd_pull_all_refreshes_stale_marker_for_up_to_date_skill(tmp_path, monk
     import skill_sync.cli as cli_module
 
     skill_dir = _write_skill(tmp_path, "demo-skill", "1.0.0", "body")
-    _write_sync_base(skill_dir, "0" * 64)  # 過期 marker（例如 canonical overlay 通道寫入的內容）
+    _write_sync_base(skill_dir, "0" * 64)  # 過期 marker（例如框架正本 overlay 通道寫入的內容）
     monkeypatch.setattr(cli_module, "get_skills_dir", lambda: tmp_path)
     _stub_manifest(
         monkeypatch, {"demo-skill": {"hash": compute_content_hash(skill_dir), "version": "1.0.0"}}
@@ -1220,7 +1221,7 @@ def test_cmd_push_without_force_rejects_and_skips_deletion(tmp_path, monkeypatch
 
 
 def test_cmd_push_records_sync_base_after_successful_push(tmp_path, monkeypatch):
-    """完整 push（有變更、有 commit/push）成功後，local 端須留下這次的 canonical
+    """完整 push（有變更、有 commit/push）成功後，local 端須留下這次的發佈庫
     hash，供下次同步的三態判定使用（0.2.1-W3-668）。"""
     import skill_sync.cli as cli_module
 
@@ -1294,6 +1295,61 @@ def test_cmd_push_clone_disables_autocrlf(tmp_path, monkeypatch):
     clone_calls = [call for call in git_calls if "clone" in call]
     assert clone_calls, "expected at least one clone call"
     assert all(call[:2] == ["-c", "core.autocrlf=false"] for call in clone_calls)
+
+
+def test_cmd_push_clones_publish_repo_exactly_once(tmp_path, monkeypatch):
+    """一次 push 對發佈庫只 clone 一次（0.2.1-W3-1300）。
+
+    可攜性閘門要判斷「這個 skill 是否已收錄於發佈庫的 versions.json」，該事實
+    先前經 fetch_remote_manifest 自己 clone 一次取得，而 push 本體隨後又 clone
+    一次做 diff 與推送——同一份遠端內容取兩次。本測試把兩個取得管道都算進來：
+    run_git（push 本體）與 subprocess.run（fetch_remote_manifest 自己發的
+    clone），只要 argv 含 "clone" 就計數，避免修正後把 clone 從一個管道搬到另一
+    個管道仍算通過。
+
+    以「有違規但未宣告 portable」的 skill 佈題：這是閘門唯一會去查遠端的分支，
+    也是實務上最常走到的分支（框架專屬 skill 談 .claude/ 路徑是正當內容）。
+
+    另佈置合法 `.skill-sync-base` marker，讓 _check_push_revert 的完整歷史
+    clone 不觸發：那是另一個問題的另一次查詢（比對本地內容 vs 發佈庫歷史，
+    需要不設 --depth 的完整歷史），與本票要消除的「同一份 versions.json 取
+    兩次」在資料需求上不同源，無法併入 push 本體的 depth-1 clone，屬
+    0.2.1-W3-1302 / 1303 的範圍。
+    """
+    import skill_sync.cli as cli_module
+
+    skills_dir = tmp_path / "skills"
+    skill = _write_portable_skill(
+        skills_dir,
+        "demo",
+        PLAIN_FRONTMATTER + "\nSee `.claude/pm-rules/tdd-flow.md`.\n",
+    )
+    (skill / cli_module.SKILL_SYNC_BASE_MARKER).write_text("base-hash\n")
+    monkeypatch.setattr(cli_module, "get_skills_dir", lambda: skills_dir)
+
+    scratch = tmp_path / "scratch"
+    repo = scratch / "repo"
+    (repo / "demo").mkdir(parents=True)
+    (repo / "demo" / "SKILL.md").write_text("remote")
+    (repo / "versions.json").write_text(json.dumps({"demo": {"hash": "abc"}}))
+    _stub_fixed_tempdir(monkeypatch, scratch)
+
+    git_calls, _ = _stub_git_recording(monkeypatch)
+
+    subprocess_argv: list[list[str]] = []
+
+    def _recording_subprocess_run(*args, **kwargs):
+        argv = list(args[0]) if args else []
+        subprocess_argv.append(argv)
+        return _FakeCompletedProcess(returncode=1)  # 有 staged 變更
+
+    monkeypatch.setattr(cli_module.subprocess, "run", _recording_subprocess_run)
+
+    cmd_push(_RecordingArgs(name="demo", prune=False, force=True))
+
+    clone_calls = [call for call in git_calls if "clone" in call]
+    clone_calls += [argv for argv in subprocess_argv if "clone" in argv]
+    assert len(clone_calls) == 1, f"expected exactly one clone, got {clone_calls}"
 
 
 # --- cmd_pull 記錄 sync base（0.2.1-W3-668） ----------------------------------
@@ -1666,8 +1722,9 @@ def test_fetch_remote_manifest_returns_empty_dict_when_versions_json_absent(tmp_
 def test_fetch_remote_manifest_raises_runtime_error_on_clone_failure(tmp_path):
     """不存在的 repo 路徑：git clone 非零結束碼須轉為可被呼叫端 catch 的例外，
     不可用 sys.exit（run_git 的既有行為）直接砍掉整個行程——
-    `_skill_exists_in_canonical` 與 `sync_status_report` 的呼叫端都是
-    `except Exception` 包住這個呼叫，指望的是例外而非行程終止。"""
+    `sync_status_report` 的呼叫端是 `except Exception` 包住這個呼叫，指望的是
+    例外而非行程終止。（可攜性閘門先前也是呼叫端之一，現已改讀 push 本體
+    clone 下來的 versions.json，不再經過本函式。）"""
     with pytest.raises(RuntimeError):
         fetch_remote_manifest(str(tmp_path / "does-not-exist"))
 
@@ -1730,7 +1787,7 @@ def test_print_diff_preview_rejects_prune_kwarg():
 # --- _diff_line_counts（0.2.1-W3-671：preview 變更可見性） -------------------
 #
 # 兩次真實事故都是 preview 只顯示檔名所致：push 顯示「~ SKILL.md」兩行卻以
-# 舊版覆蓋 canonical、pull 顯示「31 file(s) updated」卻刪掉 1782 行。增刪行數
+# 舊版覆蓋發佈庫、pull 顯示「31 file(s) updated」卻刪掉 1782 行。增刪行數
 # 才是區分「例行同步」與「大幅回退」的數字，本節固化 _diff_line_counts 本身
 # 的正確性——特別是「總行數相同但內容互換」不得誤報為無變化。
 
@@ -1863,9 +1920,9 @@ def test_diverge_warning_conflict_mentions_both_sides():
 # 三方比對（_resolve_diverge_direction）只判斷「哪一側自 base 後移動過」，
 # 不判斷「移動後的內容是否仍是 base 的超集」。一個沒有合法 .skill-sync-base
 # marker 的推送方（如從未透過本 CLI 同步過的既有消費者）用舊副本覆蓋
-# canonical 時，另一個持有合法 marker 的消費者看到的是字面正確、語意錯誤的
+# 發佈庫時，另一個持有合法 marker 的消費者看到的是字面正確、語意錯誤的
 # "pull"：remote 確實移動過，只是移動方向是倒退。_check_suspect_revert
-# 用 canonical 既有的 git 樹狀物件雜湊補上這道檢查，不需新增持久化格式。
+# 用發佈庫既有的 git 樹狀物件雜湊補上這道檢查，不需新增持久化格式。
 
 
 def _git(args: list[str], cwd) -> None:
@@ -2383,7 +2440,7 @@ def test_cmd_push_reports_banned_term_without_blocking(tmp_path, monkeypatch, ca
 
 def test_cmd_push_warns_when_local_lags_remote(tmp_path, monkeypatch, capsys):
     """事故一重現：push 時 base==local（本地自上次同步後未變）而 remote 已前進，
-    繼續 push 會以舊內容覆蓋 canonical，preview 必須顯著標示。"""
+    繼續 push 會以舊內容覆蓋發佈庫，preview 必須顯著標示。"""
     import skill_sync.cli as cli_module
 
     skills_dir = tmp_path / "skills"
@@ -2664,7 +2721,7 @@ def test_cmd_push_silent_when_version_already_bumped_despite_content_drift(
 
 
 def test_update_sync_manifest_writes_hash_matching_extract_local_manifest(tmp_path, monkeypatch):
-    skill_dir = _write_skill(tmp_path, "wrap-decision", "2.5.0", "canonical content")
+    skill_dir = _write_skill(tmp_path, "wrap-decision", "2.5.0", "publish repo content")
 
     monkeypatch.setattr(
         "skill_sync.cli.subprocess.run",
@@ -2827,6 +2884,12 @@ def test_push_aborts_on_declared_portable_skill_with_violations(tmp_path, monkey
         PORTABLE_FRONTMATTER + "\nSee `.claude/pm-rules/tdd-flow.md`.\n",
     )
     monkeypatch.setattr("skill_sync.cli.get_skills_dir", lambda: skills)
+    # 閘門移到 clone 之後，本測試因此會走到 clone 那一行；stub 掉 git 與暫存
+    # 目錄，讓中止行為的驗證不依賴網路（其餘斷言不變）。
+    scratch = tmp_path / "scratch"
+    (scratch / "repo").mkdir(parents=True)
+    _stub_fixed_tempdir(monkeypatch, scratch)
+    _stub_git_recording(monkeypatch)
     args = argparse.Namespace(name="demo", message=None, force=False, prune=False)
 
     with pytest.raises(SystemExit) as exc:
@@ -2932,7 +2995,7 @@ def test_resolve_hook_logs_dir_anchors_to_project_root_without_env(
 
 def test_resolve_hook_logs_dir_independent_of_caller_cwd(tmp_path, monkeypatch):
     """從非專案根目錄呼叫（如透過 uv run --directory shim 執行）仍應寫入
-    專案根下的 canonical 位置，不落在呼叫端所在的巢狀目錄。"""
+    專案根下的正規位置，不落在呼叫端所在的巢狀目錄。"""
     import skill_sync.cli as cli_module
 
     monkeypatch.delenv("HOOK_LOGS_DIR", raising=False)
@@ -3057,42 +3120,52 @@ def test_push_force_help_text_covers_portability_bypass(capsys):
 
 # --- 已跨 consumer 使用但未宣告 portable（0.2.1-W3-635 缺口二） ----------------
 #
-# 未宣告 portable 但已存在於 canonical repo 的 skill，代表它已經在被跨
-# consumer 散布，閘門先前對它只印一行計數。已存在於 canonical 是可從既有
-# fetch_remote_manifest 取得的結構性事實，不是新猜測——凡是 versions.json
+# 未宣告 portable 但已存在於發佈庫的 skill，代表它已經在被跨
+# consumer 散布，閘門先前對它只印一行計數。已存在於發佈庫是可從
+# versions.json 取得的結構性事實，不是新猜測——凡是 versions.json
 # 收錄的 skill 名稱，定義上就是已經在被多個 consumer 拉取的 skill。
+#
+# 判準來源改吃呼叫端已 clone 好的工作目錄（不再自行向遠端取），故以下測試
+# 佈置的是一個含 versions.json 的目錄，不再 monkeypatch fetch_remote_manifest。
 
 
-def test_skill_exists_in_canonical_true_when_manifest_has_name(monkeypatch):
-    import skill_sync.cli as cli_module
-
-    monkeypatch.setattr(
-        cli_module, "fetch_remote_manifest", lambda url: {"demo": {"hash": "abc"}}
-    )
-    assert _skill_exists_in_canonical("demo", "https://example.com/repo.git") is True
-
-
-def test_skill_exists_in_canonical_false_when_name_absent(monkeypatch):
-    import skill_sync.cli as cli_module
-
-    monkeypatch.setattr(cli_module, "fetch_remote_manifest", lambda url: {"other": {}})
-    assert _skill_exists_in_canonical("demo", "https://example.com/repo.git") is False
+def _write_cloned_repo(root: Path, manifest: dict | None) -> Path:
+    """佈置一個「已 clone 好的發佈庫工作目錄」：manifest 為 None 時不寫
+    versions.json，用來涵蓋遠端根本沒有這份檔案的情況。"""
+    repo = root / "cloned-repo"
+    repo.mkdir(parents=True, exist_ok=True)
+    if manifest is not None:
+        (repo / "versions.json").write_text(json.dumps(manifest), encoding="utf-8")
+    return repo
 
 
-def test_skill_exists_in_canonical_fails_open_on_network_error(monkeypatch):
-    """查詢失敗時回傳 False（fail open）：本函式只升級嚴重度，查詢失敗不該
-    連帶讓 push 卡住或誤判未跨 consumer 使用的 skill。"""
-    import skill_sync.cli as cli_module
-
-    def _raise(url):
-        raise OSError("network unreachable")
-
-    monkeypatch.setattr(cli_module, "fetch_remote_manifest", _raise)
-    assert _skill_exists_in_canonical("demo", "https://example.com/repo.git") is False
+def test_skill_exists_in_publish_repo_true_when_manifest_has_name(tmp_path):
+    repo = _write_cloned_repo(tmp_path, {"demo": {"hash": "abc"}})
+    assert _skill_exists_in_publish_repo("demo", repo) is True
 
 
-def test_report_portability_without_repo_url_keeps_report_only_behavior(tmp_path, monkeypatch, capsys):
-    """向後相容：未傳 repo_url（如既有呼叫端）維持原「未宣告只報告」行為，不查詢遠端。"""
+def test_skill_exists_in_publish_repo_false_when_name_absent(tmp_path):
+    repo = _write_cloned_repo(tmp_path, {"other": {}})
+    assert _skill_exists_in_publish_repo("demo", repo) is False
+
+
+def test_skill_exists_in_publish_repo_fails_open_when_versions_json_absent(tmp_path):
+    """讀不到 versions.json 時回傳 False（fail open）：本函式只附加一行提示，
+    讀取失敗不該連帶讓 push 卡住或誤判未跨 consumer 使用的 skill。"""
+    repo = _write_cloned_repo(tmp_path, None)
+    assert _skill_exists_in_publish_repo("demo", repo) is False
+
+
+def test_skill_exists_in_publish_repo_fails_open_on_malformed_versions_json(tmp_path):
+    """壞掉的 versions.json 與缺檔同樣 fail open，不讓提示查詢拖垮整次 push。"""
+    repo = _write_cloned_repo(tmp_path, None)
+    (repo / "versions.json").write_text("{not json", encoding="utf-8")
+    assert _skill_exists_in_publish_repo("demo", repo) is False
+
+
+def test_report_portability_without_repo_dir_keeps_report_only_behavior(tmp_path, monkeypatch, capsys):
+    """向後相容：未傳 repo_dir（如只做本地檢查的呼叫端）維持原「未宣告只報告」
+    行為，不讀任何遠端內容。"""
     skill = _write_portable_skill(
         tmp_path,
         "demo",
@@ -3105,69 +3178,57 @@ def test_report_portability_without_repo_url_keeps_report_only_behavior(tmp_path
     assert "Not declared portable" in err
 
 
-def test_report_portability_notes_but_does_not_abort_when_already_in_canonical(
+def test_report_portability_notes_but_does_not_abort_when_already_in_publish_repo(
     tmp_path, monkeypatch, capsys
 ):
-    """未宣告 portable，repo_url 查得到它已在 canonical repo：只多印一行建議，
+    """未宣告 portable，repo_dir 查得到它已在發佈庫：只多印一行建議，
     不中止、不升級嚴重度。
 
-    修正記錄：初版曾以「存在於 canonical」升級為中止，PM 驗收時指出這是過度
-    推論——canonical 只是散佈通道，一個 skill 在裡面只代表曾被 push 過，不
-    代表任何其他 consumer 真的安裝了它（實測：canonical 64 個 skill 中，一線
-    消費專案僅裝 23 個；doc/ticket/worktree 等框架專屬工具全在 canonical 但
+    修正記錄：初版曾以「存在於發佈庫」升級為中止，PM 驗收時指出這是過度
+    推論——發佈庫只是散佈通道，一個 skill 在裡面只代表曾被 push 過，不
+    代表任何其他 consumer 真的安裝了它（實測：發佈庫 64 個 skill 中，一線
+    消費專案僅裝 23 個；doc/ticket/worktree 等框架專屬工具全在發佈庫但
     該專案一個都沒裝）。據此中止會誤擋大量未共用的框架工具 push，且反轉
     「未宣告者高命中率、故只報告不阻擋」的既有設計取捨。改為僅提示。
     """
-    import skill_sync.cli as cli_module
-
     skill = _write_portable_skill(
         tmp_path,
         "demo",
         PLAIN_FRONTMATTER + "\nSee `.claude/pm-rules/tdd-flow.md`.\n",
     )
-    monkeypatch.setattr(
-        cli_module, "fetch_remote_manifest", lambda url: {"demo": {"hash": "abc"}}
-    )
+    repo = _write_cloned_repo(tmp_path, {"demo": {"hash": "abc"}})
 
-    _report_portability(skill, "demo", force=False, repo_url="https://example.com/repo.git")
+    _report_portability(skill, "demo", force=False, repo_dir=repo)
 
     err = capsys.readouterr().err
     assert "Not declared portable" in err
-    assert "canonical" in err.lower()
+    assert "publish repo" in err.lower()
     assert "declare metadata.portable" in err
 
 
-def test_report_portability_no_escalation_when_not_in_canonical(tmp_path, monkeypatch, capsys):
-    """repo_url 有傳，但這個 skill 名稱不在 canonical manifest：維持報告only，不中止。"""
-    import skill_sync.cli as cli_module
-
+def test_report_portability_no_escalation_when_not_in_publish_repo(tmp_path, monkeypatch, capsys):
+    """repo_dir 有傳，但這個 skill 名稱不在發佈庫 manifest：維持報告only，不中止。"""
     skill = _write_portable_skill(
         tmp_path,
         "demo",
         PLAIN_FRONTMATTER + "\nSee `.claude/pm-rules/tdd-flow.md`.\n",
     )
-    monkeypatch.setattr(cli_module, "fetch_remote_manifest", lambda url: {})
+    repo = _write_cloned_repo(tmp_path, {})
 
-    _report_portability(skill, "demo", force=False, repo_url="https://example.com/repo.git")
+    _report_portability(skill, "demo", force=False, repo_dir=repo)
 
     err = capsys.readouterr().err
     assert "Not declared portable" in err
 
 
-def test_framework_only_skills_in_canonical_never_abort_push(tmp_path, monkeypatch, capsys):
-    """框架專屬工具（全都在 canonical 但目標 consumer 未安裝）不得被本閘門
+def test_framework_only_skills_in_publish_repo_never_abort_push(tmp_path, monkeypatch, capsys):
+    """框架專屬工具（全都在發佈庫但目標 consumer 未安裝）不得被本閘門
     誤擋——即使它們的違規數量很高（doc/continuous-learning/broken-link-check
     等實測命中數十處）。"""
-    import skill_sync.cli as cli_module
-
     framework_only_names = [
         "doc", "ticket", "worktree", "continuous-learning", "broken-link-check",
     ]
-    monkeypatch.setattr(
-        cli_module,
-        "fetch_remote_manifest",
-        lambda url: {n: {"hash": "x"} for n in framework_only_names},
-    )
+    repo = _write_cloned_repo(tmp_path, {n: {"hash": "x"} for n in framework_only_names})
 
     for name in framework_only_names:
         skill = _write_portable_skill(
@@ -3178,7 +3239,7 @@ def test_framework_only_skills_in_canonical_never_abort_push(tmp_path, monkeypat
                 f"See `.claude/pm-rules/rule-{i}.md`." for i in range(5)
             ),
         )
-        _report_portability(skill, name, force=False, repo_url="https://example.com/repo.git")
+        _report_portability(skill, name, force=False, repo_dir=repo)
         capsys.readouterr()  # 每輪清空，只確認不拋 SystemExit
 
 
@@ -3285,3 +3346,94 @@ def test_check_portability_python_file_with_no_narrative_violation_is_clean(tmp_
     )
 
     assert check_portability(skill) == []
+
+
+# --- 三個版號住址一致性（0.2.1-W3-1316） --------------------------------------
+#
+# 這個 skill 的版號寫在三個地方：CHANGELOG.md 的首個 `**Version**:` 條目、
+# SKILL.md frontmatter 的 metadata.version、pyproject.toml 的 project.version。
+# 三處各由不同動機的變更去動（寫版本紀錄 / 改 skill 說明 / 動打包設定），沒有任何
+# 機制檢查它們是否一致：既有的 stale-version 閘門只比對 SKILL.md 版號與內容雜湊，
+# 對另外兩處完全無感。實際後果同一天發生兩次——pyproject.toml 停在 1.0.0 而
+# CHANGELOG 已到 1.18.0；三次 bump 之後 SKILL.md 停在 1.18.0 而 CHANGELOG 已到
+# 1.21.0。規則層寫「記得三處都要改」對這類漏動無效，改由測試承擔。
+#
+# uv.lock 是第四處出現版號的地方，刻意不納入：它由 uv 依 pyproject.toml 自動重算，
+# 不是人工維護的住址，跑任何 uv 指令就會自我校正，納入只會製造與工具搶著寫同一個
+# 值的假紅燈。
+
+_SKILL_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _changelog_leading_version(changelog: Path) -> str | None:
+    """取 CHANGELOG 最上方（最新）的 `**Version**:` 版號。
+
+    逐行掃到第一個命中就停：本檔慣例是新到舊排列，首個條目即當前版本。
+    """
+    for line in changelog.read_text(encoding="utf-8").splitlines():
+        matched = re.match(r"\*\*Version\*\*:\s*(\S+)", line.strip())
+        if matched:
+            return matched.group(1)
+    return None
+
+
+def _pyproject_version(pyproject: Path) -> str | None:
+    """取 pyproject.toml 的 `project.version`。
+
+    優先用 tomllib（3.11+）；本套件 requires-python 為 >=3.9，在更舊的直譯器上
+    改用限定於 `[project]` 區段的正則。不用 pytest.skip 處理舊版：跳過會讓這道
+    檢查在那些直譯器上無聲消失，而它要防的正是無聲漂移。
+    """
+    text = pyproject.read_text(encoding="utf-8")
+    try:
+        import tomllib
+    except ModuleNotFoundError:
+        section = text.split("[project]", 1)[-1].split("\n[", 1)[0]
+        matched = re.search(r'^version\s*=\s*"([^"]+)"', section, re.MULTILINE)
+        return matched.group(1) if matched else None
+    return tomllib.loads(text).get("project", {}).get("version")
+
+
+def test_three_version_addresses_agree():
+    """CHANGELOG 首個條目、SKILL.md metadata.version、pyproject.toml 三處版號必須相等。"""
+    changelog = _changelog_leading_version(_SKILL_ROOT / "CHANGELOG.md")
+    skill_md = _extract_single_version(_SKILL_ROOT / "SKILL.md")
+    pyproject = _pyproject_version(_SKILL_ROOT / "pyproject.toml")
+
+    assert changelog is not None, "CHANGELOG.md 讀不到任何 **Version**: 條目"
+    assert skill_md is not None, "SKILL.md frontmatter 讀不到 metadata.version"
+    assert pyproject is not None, "pyproject.toml 讀不到 project.version"
+    assert changelog == skill_md == pyproject, (
+        "三個版號住址不一致，bump 時三處必須一起動：\n"
+        f"  CHANGELOG.md 首個條目      : {changelog}\n"
+        f"  SKILL.md metadata.version : {skill_md}\n"
+        f"  pyproject.toml version    : {pyproject}"
+    )
+
+
+def test_version_address_readers_extract_each_address(tmp_path):
+    """三個讀取器各自從自己的檔案格式取出版號。
+
+    與上面那個對真實檔案的斷言分開：真實三處相等時，上面的測試恆綠，無法分辨
+    「三處真的相等」與「三個讀取器都回傳 None 而 None == None == None」。這裡用
+    刻意互異的合成值釘住每個讀取器讀的是哪一處。
+    """
+    (tmp_path / "CHANGELOG.md").write_text(
+        "# skill-sync 版本紀錄\n\n說明段落，不含版號條目。\n\n"
+        "**Version**: 9.9.9 — 最新條目\n\n"
+        "**Version**: 9.8.0 — 較舊條目\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "SKILL.md").write_text(
+        "---\nname: demo\nmetadata:\n  version: 8.8.8\n---\n\n# demo\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "pyproject.toml").write_text(
+        '[build-system]\nrequires = ["hatchling"]\n\n'
+        '[project]\nname = "demo"\nversion = "7.7.7"\n',
+        encoding="utf-8",
+    )
+
+    assert _changelog_leading_version(tmp_path / "CHANGELOG.md") == "9.9.9"
+    assert _extract_single_version(tmp_path / "SKILL.md") == "8.8.8"
+    assert _pyproject_version(tmp_path / "pyproject.toml") == "7.7.7"

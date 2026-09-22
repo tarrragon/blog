@@ -23,7 +23,7 @@ from typing import NamedTuple
 DEFAULT_REPO = "https://github.com/tarrragon/claude-skills.git"
 
 # 取遠端 manifest（fetch_remote_manifest，淺 clone）的等待上限。正常約 1.8 秒
-# （實測對 canonical repo），比改走 git clone 之前的 HTTP 直接 GET（0.5-1.2 秒）
+# （實測對發佈庫），比改走 git clone 之前的 HTTP 直接 GET（0.5-1.2 秒）
 # 慢，故上限沿用同一顆常數但放寬，避免正常網路延遲被誤判為逾時；被防火牆
 # 黑洞時仍會用滿整個上限，這份資料只影響一段資訊性報告，不值得讓呼叫端無限
 # 等待。
@@ -80,7 +80,7 @@ SKILL_SYNC_OVERRIDE_MARKER = ".skill-sync-override"
 # 記錄「上次成功 pull/push 時」該 skill 的內容雜湊（見 _record_sync_base，pull/push
 # 成功後寫入）。versions.json 只存 hash 與 version，本地原本無任何「上次同步到哪」
 # 的記錄，三方資訊塌成兩方，覆蓋方向因此永遠推不出來、必須人判——一次漏判即以舊版
-# 覆蓋 canonical。本標記檔補上第三方資訊：local==base 而 remote!=base 代表遠端已
+# 覆蓋發佈庫。本標記檔補上第三方資訊：local==base 而 remote!=base 代表遠端已
 # 前進 -> 該 pull；反向 -> 該 push；兩者皆偏離 base -> 真衝突（見
 # _resolve_diverge_direction）。從未走過本機制的既有 skill 無此檔，維持現行
 # diverged 輸出（方向 "unknown"，向後相容）。
@@ -167,7 +167,7 @@ def _should_exclude_file(rel_path: str) -> bool:
 
     SKILL_SYNC_BASE_MARKER shares the same rationale via the same failure
     mode: it too is a single consumer's local bookkeeping (this sync's
-    canonical hash, see _record_sync_base), and letting it into the content
+    publish-repo hash, see _record_sync_base), and letting it into the content
     hash would make writing it change the hash it is meant to describe — a
     self-referential loop where every write invalidates itself.
     """
@@ -344,7 +344,7 @@ def _print_banned_term_report(hits: list[BannedTermHit]) -> None:
 
 # --- Portability check ----------------------------------------------------------
 
-# 消費端框架路徑：canonical repo 根沒有 .claude/ 這一層，任何以它開頭的引用在
+# 消費端框架路徑：發佈庫根沒有 .claude/ 這一層，任何以它開頭的引用在
 # 另一個 consumer 端都指向不存在的檔案。
 _CONSUMER_PATH_RE = re.compile(r"\.claude/[A-Za-z0-9_./-]+")
 # 專案 ticket ID：不只是斷鏈，blog 的 skill-mirror 從全檔取最大三段數字推導版號，
@@ -547,7 +547,7 @@ def _write_portability_force_log(
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "skill": name,
         "declared_portable": declared,
-        "already_in_canonical": already_shared,
+        "already_in_publish_repo": already_shared,
         "violation_count": len(violations),
         "violations": [
             {"file": v.file, "line": v.line, "kind": v.kind, "text": v.text}
@@ -598,21 +598,29 @@ def _write_divergence_force_log(
         print(f"  [Warning] force-log 寫入失敗（不阻斷 push）：{exc}", file=sys.stderr)
 
 
-def _skill_exists_in_canonical(name: str, repo_url: str) -> bool:
-    """查詢遠端 versions.json 是否已收錄此 skill。
+def _skill_exists_in_publish_repo(name: str, repo_dir: Path) -> bool:
+    """查詢已 clone 的發佈庫工作目錄內 versions.json 是否已收錄此 skill。
 
     只證明「這個 skill 曾經被 push 過」，不證明「有其他 consumer 真的裝了
-    它」——canonical 是散佈通道，versions.json 只記錄 hash 與 version，不記錄
+    它」——發佈庫是散佈通道，versions.json 只記錄 hash 與 version，不記錄
     任何安裝／訂閱資訊。回傳 True 時只適合用來給未宣告 portable 的 skill附加
     一則提示（見 _report_portability），不適合作為升級嚴重度或中止 push 的
     依據，兩者判準不同不可混用。
 
-    查詢失敗回傳 False（fail open）：本函式只是提示訊息的輔助查詢，不是主
-    閘門本身，網路查詢失敗不該連帶讓 push 卡住。
+    讀已 clone 的目錄而非自己向遠端取：唯一呼叫端 `cmd_push` 本來就要為 diff
+    與推送 clone 一次同一個 repo，本函式先前經 `fetch_remote_manifest` 再
+    clone 一次只為讀同一份檔案，等於同一份遠端內容取兩次、每次 push 兩趟網路
+    往返。改吃呼叫端已有的 clone 後兩次收斂為一次，判準來源不變——仍是 repo
+    根目錄 versions.json 於 HEAD 的內容。
+
+    讀取或解析失敗回傳 False（fail open）：本函式只是提示訊息的輔助查詢，不
+    是主閘門本身，versions.json 缺檔或壞格式不該連帶讓 push 卡住——與先前
+    網路查詢失敗時的處置一致。
     """
+    versions_file = repo_dir / "versions.json"
     try:
-        manifest = fetch_remote_manifest(repo_url)
-    except Exception:
+        manifest = json.loads(versions_file.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
         return False
     return isinstance(manifest, dict) and name in manifest
 
@@ -629,28 +637,31 @@ def _format_violation_lines(violations: list[PortabilityViolation]) -> list[str]
 
 
 def _report_portability(
-    skill_dir: Path, name: str, force: bool, repo_url: str | None = None
+    skill_dir: Path, name: str, force: bool, repo_dir: Path | None = None
 ) -> None:
     """push 前的可攜性閘門。
 
     宣告 portable 的 skill 命中即中止（--force 可覆蓋但仍列出違規並落地
     force-log，另見下方 stdout 摘要說明）。未宣告者只列出摘要，不論它是否已
-    存在於 canonical repo——
-    「存在於 canonical」只證明「曾被 push 過」，不證明「其他 consumer 真的
-    裝了它」（實測：canonical 現有 64 個 skill，某一線消費專案僅裝 23 個；
-    `doc` / `ticket` / `worktree` 等框架專屬工具全都在 canonical 裡但該專案
+    存在於發佈庫——
+    「存在於發佈庫」只證明「曾被 push 過」，不證明「其他 consumer 真的
+    裝了它」（實測：發佈庫現有 64 個 skill，某一線消費專案僅裝 23 個；
+    `doc` / `ticket` / `worktree` 等框架專屬工具全都在發佈庫裡但該專案
     一個都沒裝，`.claude/` 路徑是它們的主題而非缺陷）。用「存在於
-    canonical」推論「已跨 consumer 使用」是過度推論，據此中止會讓大量實際
+    發佈庫」推論「已跨 consumer 使用」是過度推論，據此中止會讓大量實際
     未共用的框架工具 push 被誤擋，且反轉「未宣告者的高命中率理當只報告不
     阻擋」的既有設計取捨——高假陽性的閘門只會催生 --force 肌肉記憶，讓
     force-log 淪為擋不住任何事的事後考古。
 
-    確有 repo_url 且查得到已存在於 canonical（見 _skill_exists_in_canonical）
+    確有 repo_dir 且查得到已存在於發佈庫（見 _skill_exists_in_publish_repo）
     時，只在既有的「reporting only」訊息後多印一行建議：若這個 skill 確實
     跨 consumer 使用，應顯式宣告 metadata.portable: true 讓閘門真正生效——
     這是資訊，不是判決；中止沒有可靠依據就不該做。
 
-    repo_url 預設 None：省略時完全不查詢遠端，行為與未傳時完全一致。
+    repo_dir 是呼叫端已 clone 好的發佈庫工作目錄，不是 repo URL：本函式
+    不自己向遠端取任何東西，remote 查詢的責任留在已經必須 clone 的呼叫端，
+    避免同一份 versions.json 被取兩次。預設 None：省略時不做這項查詢，行為
+    與未傳時完全一致（只印 reporting only 那一行）。
 
     --force 旁路時額外印一份 stdout 摘要：既有的完整違規列表只印在 stderr，
     若呼叫端只收集 stdout（如管線只轉存 stdout 供事後稽核），--force 的效果
@@ -661,7 +672,7 @@ def _report_portability(
     if not violations:
         return
     declared = _is_portable_declared(skill_dir)
-    already_shared = repo_url is not None and _skill_exists_in_canonical(name, repo_url)
+    already_shared = repo_dir is not None and _skill_exists_in_publish_repo(name, repo_dir)
     kinds = {v.kind for v in violations}
     label = " + ".join(sorted(kinds))
 
@@ -673,7 +684,7 @@ def _report_portability(
         )
         if already_shared:
             print(
-                f"  Note: '{name}' already exists in the canonical repo. Existence "
+                f"  Note: '{name}' already exists in the skills publish repo. Existence "
                 "there only means it has been pushed before, not that another "
                 "consumer actually installed it — if it genuinely is shared across "
                 "consumers, declare metadata.portable: true so this gate can "
@@ -757,7 +768,7 @@ def compute_content_hash(skill_dir: Path) -> str | None:
     對 (相對路徑, 檔案位元組) 依路徑排序後逐一雜湊，雜湊值只反映內容與檔案樹結構，
     與 mtime、掃描順序、檔案系統無關：相同內容不論何處產生都得到相同雜湊，內容不同
     則版本字串相同也得到不同雜湊。這修正的是版本字串同時被當內容同一性與演化祖先關係
-    使用、卻兩者都擔不起的機制缺陷（0.2.1-W3-124 §11.2：blog 與 canonical 的 2.5.0
+    使用、卻兩者都擔不起的機制缺陷（0.2.1-W3-124 §11.2：blog 與發佈庫的 2.5.0
     號碼相同、內容不同，曾被判為 up_to_date）。回傳 None 表示目錄不存在。
     """
     if not skill_dir.is_dir():
@@ -821,7 +832,7 @@ def _refresh_stale_sync_base(skills_dir: Path, up_to_date_names: Iterable[str]) 
     內容」，可放心視為新的同步基準；若雙邊仍分歧就重記，會把尚未真正同步的狀態
     誤標成已同步，讓下次分歧報告誤判方向。
 
-    僅在 marker 與目前雜湊不同時才寫入：canonical 通道（sync-claude-pull 全樹
+    僅在 marker 與目前雜湊不同時才寫入：框架正本通道（sync-claude-pull 全樹
     overlay）與本地直接編輯都會讓內容前進而不觸碰 marker，`skill-sync pull`
     （無名稱）狀態報告因此需要補上這一步；但報告命令原本是唯讀的，若對每個
     marker 已經正確的 skill 也重寫一次，會讓每次報告都無謂觸碰檔案 mtime。
@@ -890,7 +901,7 @@ def _cloned_skill_history(repo_url: str, skill_name: str):
 
     共用給 `_check_suspect_revert`（報告端，比對遠端現況 vs 遠端自己的歷史，
     皆為 git 物件可直接比對樹狀雜湊）與 `_check_push_revert`（推送端，比對
-    本地檔案系統內容 vs canonical 歷史，需要實際 checkout 內容才能比對，
+    本地檔案系統內容 vs 發佈庫歷史，需要實際 checkout 內容才能比對，
     見該函式說明）——兩者「clone + 取得該 skill 的 commit log」這段完全
     相同，只有取得 log 之後的比對手段不同。
 
@@ -905,12 +916,12 @@ def _cloned_skill_history(repo_url: str, skill_name: str):
     metadata；`--no-checkout` 確保 clone 當下不落地任何工作目錄檔案（後續
     若呼叫端執行 `git checkout <sha> -- <path>`，才會針對那個路徑、那個
     commit 惰性下載對應 blob，這是刻意的按需下載，不是一次性下載全部
-    歷史內容）。這個 clone 的成本隨 canonical **全庫**歷史長度成長，不是
+    歷史內容）。這個 clone 的成本隨發佈庫**全庫**歷史長度成長，不是
     隨單一 skill 的檔案量或提交數成長（git 的物件傳輸協定以整個 repo 的
     歷史圖為單位，sparse-checkout 只影響工作目錄 populate 範圍，不影響
     物件傳輸範圍）；兩個呼叫端都只在少數候選才觸發（`_check_suspect_revert`
     限 direction == "pull"、`_check_push_revert` 限本地無合法 marker），
-    故實際發生頻率通常很低。若未來 canonical 歷史成長到使此操作成為報告或
+    故實際發生頻率通常很低。若未來發佈庫歷史成長到使此操作成為報告或
     推送延遲的主要來源，才需要評估更精細的方案（如伺服器端歷史查詢 API），
     本次不預先最佳化一個尚未觀測到的問題。
 
@@ -954,7 +965,7 @@ def _check_suspect_revert(repo_url: str, skill_name: str) -> str | None:
     背景：三方比對（`_resolve_diverge_direction`）只回答「哪一側自 base 後
     移動過」，不回答「移動後的內容是否仍是 base 的超集」。一個沒有合法
     `.skill-sync-base` marker 的推送方（如從未透過本 CLI 同步過的既有消費
-    者）用舊副本覆蓋 canonical 時，方向判定會退化為 "unknown"，但另一個
+    者）用舊副本覆蓋發佈庫時，方向判定會退化為 "unknown"，但另一個
     持有合法 marker 的消費者看到的卻是字面正確、語意錯誤的 "pull"——
     remote 確實移動過，只是移動方向是倒退。本函式補上這道「移動後內容是否
     仍是超集」的檢查（`_check_push_revert` 是同一問題在推送端的縱深防禦，
@@ -967,7 +978,7 @@ def _check_suspect_revert(repo_url: str, skill_name: str) -> str | None:
     `compute_content_hash` 的 SHA256 排序雜湊——兩者演算法不同不可混用，
     但同一份內容在 git 裡不論何時提交，樹狀雜湊必定相同，足以判定「目前
     內容是否與某個歷史時刻完全相同」，且不需要重新實作一套等價的排序
-    雜湊邏輯或另外持久化任何鏈結資料結構（canonical 本身的 git 歷史就是
+    雜湊邏輯或另外持久化任何鏈結資料結構（發佈庫本身的 git 歷史就是
     現成的祖先關係來源）。
     """
     with _cloned_skill_history(repo_url, skill_name) as (repo_dir, entries):
@@ -994,20 +1005,20 @@ def _check_suspect_revert(repo_url: str, skill_name: str) -> str | None:
 def _check_push_revert(repo_url: str, skill_name: str, local_hash: str) -> str | None:
     """推送方本地無合法 `.skill-sync-base` marker 時，檢查本地內容
     （`local_hash`，`compute_content_hash` 算出）是否命中該 skill 於
-    canonical 的某個非最新歷史提交，命中則回傳可顯示摘要（短 SHA + ISO
+    發佈庫的某個非最新歷史提交，命中則回傳可顯示摘要（短 SHA + ISO
     時間戳），否則 `None`。
 
     與 `_check_suspect_revert` 同一問題（三方比對只判「誰動過」不判「內容
     是否仍是超集」）在推送端的縱深防禦：`_check_suspect_revert` 是報告端
-    的事後防線（回退已經寫進 canonical，只是不讓它被無感傳播），本函式是
-    事前防線（在回退寫入 canonical 之前警告推送方）。兩者共用
+    的事後防線（回退已經寫進發佈庫，只是不讓它被無感傳播），本函式是
+    事前防線（在回退寫入發佈庫之前警告推送方）。兩者共用
     `_cloned_skill_history` 走訪歷史，只有走訪之後的比對手段不同——本地
     內容不是 git 物件，不能用樹狀雜湊直接比對，改為對每個候選歷史提交
     `git checkout <sha> -- <path>` 實際取出內容，用與呼叫端相同的
     `compute_content_hash` 語意逐一雜湊比對。
 
     只跳過歷史清單最新的一筆（`entries[0]`）：命中最新提交代表本地內容就是
-    canonical 目前的樣子，屬正常的「無變更重推」而非回退，此情況留給既有
+    發佈庫目前的樣子，屬正常的「無變更重推」而非回退，此情況留給既有
     `_print_divergence_warning`/`_print_stale_version_warning` 處理，不在
     本函式範圍。
     """
@@ -1564,11 +1575,6 @@ def cmd_push(args: argparse.Namespace) -> None:
         print(f"Error: local skill '{name}' not found at {source}", file=sys.stderr)
         sys.exit(1)
 
-    # 閘門放在 clone 之前：違規與遠端狀態無關，先擋下省一次完整 clone。
-    # repo_url 傳入讓閘門能查詢這個 skill 是否已存在於 canonical（見
-    # _skill_exists_in_canonical）——這只是一次輕量 HTTP 取檔，不是 git clone。
-    _report_portability(source, name, force, repo_url=repo_url)
-
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp = Path(tmpdir) / "repo"
         print(f"Pushing skill '{name}' to {repo_url} ...")
@@ -1578,6 +1584,18 @@ def cmd_push(args: argparse.Namespace) -> None:
         run_git(["-c", "core.autocrlf=false", "clone", "--depth", "1", repo_url, str(tmp)])
 
         target = tmp / name
+
+        # 閘門放在 clone 之後、overlay 之前：它要查的「這個 skill 是否已收錄於
+        # 發佈庫的 versions.json」就在剛 clone 下來的 repo 根目錄裡，直接讀
+        # 檔即可，不必自己再向遠端取一次。先前刻意把閘門放在 clone 之前是為了
+        # 讓中止案例省下 push 的完整 clone，但那個順序讓「未宣告 portable 但有
+        # 違規」這個最常走到的分支每次 push 都付兩趟網路往返（實測對發佈庫：
+        # 閘門的 blobless sparse clone 約 1.98 秒 / 388 KB，push 本體的 depth-1
+        # clone 約 4.78 秒 / 21.5 MB）。換取的代價是閘門真的中止時，省下的那次
+        # clone 從較輕的一次變成較重的一次；中止屬使用者已宣告 portable 卻仍留
+        # 著 consumer 路徑的錯誤路徑，不是每次 push 都會走的熱路徑，用熱路徑的
+        # 一次往返去換錯誤路徑的一次往返划算。
+        _report_portability(source, name, force, repo_dir=tmp)
 
         local_ver = _extract_single_version(source / "SKILL.md")
         remote_ver = _extract_single_version(target / "SKILL.md") if target.is_dir() else None
@@ -1602,7 +1620,7 @@ def cmd_push(args: argparse.Namespace) -> None:
                 print(
                     "  [WARNING] Local content matches an older historical version "
                     f"of this skill (commit {push_revert_commit}), not genuinely "
-                    "new — pushing may overwrite newer canonical content with a "
+                    "new — pushing may overwrite newer publish-repo content with a "
                     "stale copy.",
                     file=sys.stderr,
                 )
@@ -1758,7 +1776,7 @@ def fetch_remote_manifest(repo_url: str) -> object:
     Previously read raw.githubusercontent.com directly. That path sits behind
     a CDN whose cache entry is created at push time and can keep serving the
     pre-push content for well over a minute afterwards (three real-world
-    measurements against the canonical repo: 158s / 0s / 308s, upper bound
+    measurements against the publish repo: 158s / 0s / 308s, upper bound
     set by the CDN's own max-age=300 plus polling granularity) — a report run
     inside that window misclassifies a just-pushed skill as SHOULD PULL, and
     acting on that recommendation would overwrite the just-pushed content
@@ -1785,7 +1803,7 @@ def fetch_remote_manifest(repo_url: str) -> object:
     `subprocess.TimeoutExpired` past `REMOTE_FETCH_TIMEOUT_SECONDS`. That
     bound is looser than the previous HTTP timeout: a clone takes longer
     than a single GET under ordinary network conditions (~1.8s vs ~0.5s,
-    measured against the canonical repo), and a bound sized for the old path
+    measured against the publish repo), and a bound sized for the old path
     would false-time-out on normal clone latency; it still keeps a
     black-holed connection from hanging a report command indefinitely.
     """

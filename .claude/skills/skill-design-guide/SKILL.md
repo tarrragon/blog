@@ -2,7 +2,7 @@
 name: skill-design-guide
 description: "Anthropic skill spec plus this project's conventions: frontmatter, descriptions, loading budgets, and splitting an oversized skill. Use when creating a skill, editing SKILL.md, reviewing skill quality, or moving content into references/."
 metadata:
-  version: 1.12.4
+  version: 1.23.0
 ---
 
 # Skill Design Guide
@@ -111,6 +111,18 @@ wc -l .claude/skills/<name>/SKILL.md   # 官方 500 行，超標即須外移
 | 整份執行 | 全檔分段估算 | 5k tokens——它與 SKILL.md 一樣是整份進 context |
 | 選段查閱 | 最大單節的分段估算 | 5k tokens |
 
+**機械複製動作不算整份執行的判斷依據。** 模板／範本類檔案常見消費方式是複製（如 `cp`）一份到工作目錄後，逐欄位或逐章節查閱填寫——複製本身是一次性機械動作，不等於讀入做整體推理；此類檔案的讀取方式判定為選段查閱，量測其最大單節而非全檔。
+
+**判定條件（三項皆須成立，缺一即仍判整份執行）**：
+
+| 條件 | 說明 |
+|---|---|
+| 1. 消費流程已明寫 | 該 skill 的路由表或前置步驟文件已明寫此檔為「依欄位／章節查閱」，不是撰寫者事後片面宣稱 |
+| 2. 有可定位的分段結構 | 章節或欄位可依編號或名稱直接對應查閱起點，不需通讀全文才能定位 |
+| 3. 消費動作不要求跨節推理 | 讀者查閱單一章節或欄位即可完成當下任務，不需要比對其他章節內容才能下判斷 |
+
+**Consequence**：不設判定條件，任何長文都能以「反正是查閱用」自稱豁免整份執行門檻，選段查閱的例外會變成迴避門檻的漏洞——那正是本判準要防的另一端。
+
 ---
 
 ## 按需讀取
@@ -122,8 +134,9 @@ wc -l .claude/skills/<name>/SKILL.md   # 官方 500 行，超標即須外移
 | 寫或修 frontmatter：name、description、擴展欄位、觸發控制、命名 | `references/frontmatter-and-description.md` | 〈YAML Frontmatter〉〈Description 寫作（最重要的一節）〉〈命名規則〉〈觸發控制矩陣〉 |
 | 寫或修 SKILL.md 正文：骨架、內容品質、引用形式、什麼不該放 | `references/writing-the-body.md` | 〈嚴禁清單 — 什麼不該放進 Skill〉〈Body 寫作〉（含〈外部引用：指名身分，不用檔案路徑〉）〈Claude Code 特有功能〉〈一則完整走查：兩個判準只有一個附了可執行動作〉 |
 | 從零建一個新 skill、判斷它屬哪一類型、決定內容該放 `scripts/`／`references/`／`assets/`、要廢止或遷移既有 skill、或引入他人的 skill | `references/creating-and-adopting-skills.md` | 〈檔案結構〉〈三類 bundled resource 的分工〉〈Skill 建立流程〉〈Skill 類型速查〉〈廢止與遷移〉〈安全考量〉 |
-| 既有 skill 超出第 2 層預算、要外移內容 | `references/splitting-an-existing-skill.md` | 〈為什麼需要專屬程序〉〈外移什麼、留什麼〉〈拆分特有的必查項〉〈兩種驗證，方法不同〉〈拆分特有的高頻缺陷〉〈結構約定〉〈收尾〉〈一則最小走查〉〈走完之後〉〈相關〉 |
+| 既有 skill 超出第 2 層預算、要外移內容 | `references/splitting-an-existing-skill.md` | 〈為什麼需要專屬程序〉〈補範例後超標：觸發條件與處置順序〉〈外移什麼、留什麼〉〈拆分特有的必查項〉〈兩種驗證，方法不同〉〈拆分特有的高頻缺陷〉〈結構約定〉〈收尾〉〈一則最小走查〉〈走完之後〉〈相關〉 |
 | 決定工作流該給多少自由度或要不要設預設值、設計多步驟工作流、要進階範本、規劃測試方法、或 skill 行為不如預期 | `references/patterns-and-troubleshooting.md` | 〈Degrees of Freedom — 自由度匹配脆弱性〉〈Opinionated Defaults — 預設路徑引導正確做法〉〈Skill 設計模式〉（**控制流形狀**，要模板來這裡）〈選擇方法：Problem-first vs Tool-first〉〈測試方法〉〈迭代回饋指引〉〈常見問題排除〉 |
+| 設計某個 skill 的範例、或判斷某處文字約束是否需要配範例 | `references/chained-examples.md` | 〈三段鏈式格式〉〈各段允許與禁止內容〉〈「何處需要範例」判準〉〈「缺範例」與「缺引導」的分界〉〈完整示範〉〈語言專屬 skill 的例外：違規／修正程式碼對照〉〈與既有範例規格的相容判定〉 |
 | 某個設計取捨說不出理由、想理解工具設計哲學與 agent 視角的演進，或需要可貼用的進階設計模式（評估驅動開發、Feedback Loop 等）與程式碼片段 | `references/seeing-like-an-agent.md` | 〈核心哲學〉〈Claude Code 團隊的演進教訓〉〈進階 Skill 設計模式〉（**設計方法論**，不是控制流模板）〈觀察 Claude 如何使用 Skill〉〈反模式〉 |
 
 > **維護本表時**（讀者選路不需要這一段）：「涵蓋章節」欄的字串要與目標檔的 `##` 標題逐字相同且**雙向齊全**——每個名字都在目標檔存在（無死名），且目標檔的每個 `##` 都在這一欄出現（無孤兒節）。**兩個方向各驗一次**：只驗死名會漏掉無人指向的新節。
@@ -153,6 +166,7 @@ wc -l .claude/skills/<name>/SKILL.md   # 官方 500 行，超標即須外移
 - [ ] 無「When to Use This Skill」段（觸發資訊只放 description）
 - [ ] 指令具體可操作、含錯誤處理
 - [ ] 含至少 1 個範例
+- [ ] 新增或修改範例的【驗證】段時，`chained-examples.md`〈驗證段機械檢查：依據句可溯性〉的逐問句表由非撰寫者複核「引文位置在範例之外？」與「判定詞逐詞對照」兩欄；撰寫者自檢無鑑別力，不可省略此步驟
 - [ ] 每份 reference 一跳可達（判準與例外見 `references/writing-the-body.md` 的〈Body 寫作〉）。機械檢查如下，每個命中逐一判定——說明用的示意路徑與被討論的對象不算違規，其餘即是
 
 ```bash
