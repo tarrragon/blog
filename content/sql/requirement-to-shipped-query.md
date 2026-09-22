@@ -125,7 +125,7 @@ ORDER BY 測站, 觀測日;
 
 三者押的前提不同。自連接押「同一個日期在同一個測站上只有一筆」——有兩筆的時候一列會配到多列，結果多出來（[1.6](/sql/join-changes-rows-and-nulls/)）。視窗函數押「排序鍵在每個分區裡分得出唯一的次序」——並列的時候「前一列」是哪一列沒有定義（[1.12](/sql/pagination-needs-a-total-order/)）。相關子查詢押「括號裡那一段最多回一列」——而**回多列的時候兩家引擎的反應相反**：PostgreSQL 18.6 報 `more than one row returned by a subquery used as an expression`，SQLite 3.51.0 靜默取其中一列往下算。這一條落在 [1.19](/sql/engine-leniency-and-portability/) 的引擎差異上。
 
-**三個前提說的是同一件事**：`(測站, 觀測日)` 這一組唯不唯一。那是 schema 上的一條約束，而三段查詢沒有一段查得到它有沒有成立——[外鍵與約束要去系統目錄查](/sql/foreign-key-and-referential-integrity/)，設計側的完整推導在 [1.16 設計時下的每一個決定](/backend/01-database/design-decisions-price-every-query/)。
+**三個前提說的是同一件事**：`(測站, 觀測日)` 這一組唯不唯一。那是 schema 上的一條約束，而三段查詢沒有一段查得到它有沒有成立——[外鍵與約束要去系統目錄查](/sql/foreign-key-and-referential-integrity/)，設計側的完整推導在 [backend 1.16 設計時下的每一個決定](/backend/01-database/design-decisions-price-every-query/)。
 
 ## 四、漏掉前提的兩種寫法，錯在相反的方向
 
@@ -280,12 +280,14 @@ ON 昨.測站 = 今.測站 AND 昨.觀測日 = date(今.觀測日, '-1 day')
 
 **兩篇的分工**：1.0 定義步驟，本篇在一個需求上把七步走一遍。步驟的定義改 1.0，這一題的實跑改本篇。
 
-## 換掉其中一項就走到別處
+## 這條路線的下一段在哪裡
 
-**把需求換成另一個**：第一節那四個追問與第六節那四類邊界，換一個題目仍然要問一遍，而答案會不同。
+走完七步之後，這一題就交出去了。而同一條路線上還有三個往外的接點，各自接在不同的步驟上。
 
-**把「查詢怎麼寫」換成「表該怎麼設計」**：第三節三種寫法押的同一個前提是 `(測站, 觀測日)` 唯不唯一，而那是設計時的一個決定。[1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/) 走六個這樣的決定，唯一性是其中之一。
+第三步與第四步的接點在**設計那一側**。三種寫法押的同一個前提是 `(測站, 觀測日)` 唯不唯一，而那不是查詢能決定的事——它是建表時的一個決定。同樣的決定還有五個（可空性、表有多寬、常一起取的資料切在幾張表、字串的比較規則寫在哪一層、外鍵生不生效），每一個都在替往後每一次查詢定價，逐條實測在 [backend 1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)。
 
-**把 SQLite 換成正式環境的引擎**：本篇的計畫只有三四行。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 三層工具，以及統計過時讓計畫選錯的實際案例。
+第五步的接點在**工具那一側**。本篇讀的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，而且要分得出「估計錯了」與「真的很慢」。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 三層工具的分工，以及統計過時讓計畫選錯的實際案例。
 
-**把「這一段查詢跑幾次」換成「每個請求跑幾段」**：第一節問的是這份結果餵給哪個決定，而一個請求裡的查詢次數有它自己的預算。[1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/) 處理那一層。
+第一步的接點在**預算那一側**。第一步問這份結果餵給哪一個下游用途，而那個答案決定它跑幾次；一個請求裡跑幾段查詢則有另一套預算，兩者相乘才是真正的代價。[backend 1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/) 處理後面那一半。
+
+換一個題目的話，七步照走，而第一節那四個追問與第六節那四類邊界的答案會全部不同——那正是為什麼它們是追問而不是清單。

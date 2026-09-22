@@ -150,6 +150,8 @@ N=5 full-threshold 補強驗證（同日第二批）：再跑 5 篇 PostgreSQL s
 
 ---
 
+[#362 規範指定了某個位置要交付什麼，全批長成同一個模板](/report/mandated-section-hides-its-own-sameness/)限定本卡的處置方向：同骨化屬於 cadence 那一軸，而那一軸跑過了仍然漏掉，所以修法不在加輪數也不在加軸，在改那一軸的豁免規則。
+
 ## 判讀徵兆
 
 | 訊號                                             | 該做的事                                                   |

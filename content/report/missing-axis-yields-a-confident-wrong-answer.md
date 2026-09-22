@@ -88,3 +88,5 @@ slug: "missing-axis-yields-a-confident-wrong-answer"
 [判斷標準要寫到條件層](/report/criteria-need-condition-action-mapping/) 管的是成熟度：維度清單不夠，要有條件到行動的映射。本卡處理的是映射齊全之後的下一層——**映射的完整性與輸入的完整性是兩個獨立的檢查**，一段判斷標準可以把每個條件都對到明確的行動，而輸入端就是少一個維度。
 
 [#302 定位決定體例，它先於任何一條規則生效](/report/positioning-decides-form-before-any-rule-applies/) 講規則的觸發條件先於它自己的判斷標準生效。本卡是它在判斷標準內部的形態：**第一條軸的觸發條件涵蓋了第二條軸該管的個案**，於是第二條軸永遠不會被叫起來。兩者的處置也同形——在規則之前加一道問句，而不是在規則裡加一個例外。
+
+[#361 比較的軸要落在讀者接下來要交出的那份產出上](/report/comparison-axis-comes-from-the-readers-decision/)補上第三種軸失效：本卡的先兆（分支數少於種類數）對它沉默，因為軸的數量完全對得上，錯的是整組軸選在另一個平面上。分辨順序是先數分支與種類，對得上再查平面。
