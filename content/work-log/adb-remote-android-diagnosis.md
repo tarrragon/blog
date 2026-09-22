@@ -131,6 +131,8 @@ adb -s <serial> shell dumpsys window windows \
 
 logcat 讀的是裝置上的[環狀緩衝區](/linux/dotfile/knowledge-cards/ring-buffer-log/)，寫滿之後從頭覆蓋。時間窗由清空與倒出界定，中間那一段是重現問題時裝置寫進去的。
 
+macOS 上常見的替代做法是用 `timeout` 控制收集時間，但 `timeout` 屬於 GNU coreutils，macOS 預設沒有（裝了 coreutils 之後叫 `gtimeout`）。`timeout 300 adb logcat > install.log` 在 macOS 上留下的是 0 bytes 的 `install.log`——`command not found: timeout` 走 stderr、沒進重導檔。清空與倒出已經界定了時間窗，收集時間由操作本身決定，本機的計時程序沒有需要做的事。
+
 ```bash
 adb -s <serial> logcat -G 16M                          # 放大緩衝區
 adb -s <serial> logcat -c                              # 清空，時間窗起點
@@ -139,15 +141,13 @@ adb -s <serial> logcat -d -v threadtime > install.log    # 倒出，時間窗終
 adb -s <serial> logcat -g                              # 確認各緩衝區大小
 ```
 
-| 參數            | 用途                                                 |
-| --------------- | ---------------------------------------------------- |
-| `-G 16M`        | 放大緩衝區，`16M` 是起點不是定值，對著 `-g` 的現況調 |
-| `-c`            | 清空                                                 |
-| `-v threadtime` | 每行帶 PID / TID 與精確時間戳                        |
-| `-d`            | 一次倒出後結束，不停在前景等                         |
-| `-g`            | 每個緩衝區各印一行，設完跑一次看 `-G` 涵蓋了哪幾個   |
-
-POS 機、車機這類常駐服務多的機器，緩衝區在重現過程中就可能把最早的行覆蓋掉，放大值得做。
+| 參數            | 用途                                                                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-G 16M`        | 放大緩衝區。POS 機、車機這類常駐服務多的機器，緩衝區在重現過程中就可能把最早的行覆蓋掉——關鍵行往往正是操作之前的那幾行。`16M` 是起點，對著 `-g` 的現況調 |
+| `-c`            | 清空                                                                                                                                                     |
+| `-v threadtime` | 每行帶 PID / TID 與精確時間戳                                                                                                                            |
+| `-d`            | 一次倒出後結束，不停在前景等                                                                                                                             |
+| `-g`            | 每個緩衝區各印一行，設完跑一次看 `-G` 涵蓋了哪幾個                                                                                                       |
 
 ### PID 與 tag
 
@@ -180,10 +180,6 @@ grep -E 'ActivityTaskManager.*(START|Displayed)' install.log | grep -i <安裝�
 ```
 
 撈得到 `cmp=<套件>/.InstallStart`，代表安裝意圖已經送出去；撈不到，代表 App 根本沒把它發出去。
-
-### macOS 上 timeout 不存在
-
-`timeout 300 adb logcat > install.log` 在 macOS 留下 0 bytes 的 `install.log`——`command not found: timeout` 走 stderr、沒進重導檔。`timeout` 屬於 GNU coreutils，macOS 沒有（裝了 coreutils 之後叫 `gtimeout`）。緩衝區的清空與倒出已經界定了時間窗，不需要在本機另跑一個計時程序。
 
 ## 狀態查詢
 
