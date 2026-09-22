@@ -257,7 +257,7 @@ bin/skill-version-check <name> …   # 只掃指定的幾支
 5. **更新版本號**：SKILL.md 末尾加版本號（見上方版號規則）
 6. **commit 到 blog repo**
 7. **推送到 skill repo**：`skill-sync push <name> -m "描述"`（**不帶 `--force`**，理由見下方「推送前必讀那兩行」）
-8. **同步鏡像**：`bin/skill-mirror <name>`（自動處理 Hugo frontmatter、H1→H2、連結轉換、fmt）
+8. **同步鏡像**：`bin/skill-mirror <name>`（自動處理 Hugo frontmatter、H1→H2、連結轉換、fmt）。**新增的 reference 第一次不會被鏡像**——鏡像保留自己的 frontmatter（`title` / `date` / `description` / `tags` 是為 blog 讀者寫的），所以工具不憑空建檔，只對已存在的鏡像填正文。先手動放一份只有 frontmatter 的 `content/skills/<name>/<ref>.md` 再重跑。漏掉這一步的症狀離成因很遠：別的 reference 指向它的相對連結在鏡像裡解析不到，由步驟 9 的 `cards` 擋下。工具會把無鏡像的檔名逐個印在 stderr
 9. **commit 鏡像**：`git add content/skills/<name>/skill.md && git commit`
 10. **push**
 

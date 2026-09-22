@@ -6,7 +6,7 @@ tags: ["skill", "writing", "methodology"]
 name: compositional-writing
 license: MIT
 metadata:
-  version: 1.27.1
+  version: 1.28.0
   category: writing-methodology
 ---
 
@@ -75,7 +75,7 @@ SKILL.md 給的是原則、判別線與邊界；**可執行的操作在兩個地
 
 **引數的有無改變行為時，兩種形態各給一條指令、並列在同一個程式碼區塊裡**，各自帶一行註解說它做什麼。並列是修法本身，文字說明是補充而不是替代——只給一條、另一條用散文描述時，讀者要從那段文字重建出另一條指令長什麼樣，而他來那一節就是為了拿指令。邊界：錯誤用法不進區塊（區塊是可以複製的位置），寫在散文裡用行內程式碼標出來就夠了。
 
-五種形態、修法與掃描指令在 [literal-operand-hides-the-change-point](/report/literal-operand-hides-the-change-point/)。
+五種形態、修法與掃描指令在 [literal-operand-hides-the-change-point](/report/literal-operand-hides-the-change-point/)。 區塊怎麼排、註解裝什麼、何時改用參數表，連同 before / after 走查與檢查清單在 [demonstrating-commands](/skills/compositional-writing/demonstrating-commands/)。
 
 ## Core Pillars（核心支柱）
 
@@ -246,6 +246,7 @@ Naming 是這條原則最容易跳的子場景 — 第一版命名幾乎不對�
 | 要做文章 / 模組 / 系列的結構決策（該不該拆篇、擴充點設計、方法論與案例的依賴方向、多讀者分流）、剛把一份文件拆成多檔要查交界、或用結構原則 review 既有文集                                           | `references/structuring-with-solid.md`                                                                             |
 | 要對既有高 stakes 內容（資安 / concurrency / distributed / financial / medical）做 reviewer-style audit、找 false sense of security / 對位失效 / context 缺 / citation 過時 / 強度失準（誇飾或降格） | `references/auditing-articles.md`                                                                                  |
 | 要寫或檢查判讀 / 選型 / 決策類內容（回答「該怎麼判斷」那一層），或讀者提問「什麼情況會需要這個」「什麼樣的系統會這樣做」「沒有範例看不懂」                                                           | `references/judgment-content-needs-scenarios.md`                                                                   |
+| 要在文章或文件裡示範指令（區塊裡放什麼、註解裝什麼、何時並列兩條、何時另開參數表）                                                                                                                   | `references/demonstrating-commands.md`                                                                             |
 | 要設計 ticket 欄位 / schema frontmatter / 表單欄位                                                                                                                                                   | `references/designing-fields.md`                                                                                   |
 | 想驗證寫作品質（認知負擔、獨立理解率）                                                                                                                                                               | `references/meta-metrics.md`                                                                                       |
 | 要新增或修改一份 Skill reference（撰寫品質規範、結構標準）                                                                                                                                           | `references/reference-authoring-standards.md`                                                                      |
@@ -351,6 +352,7 @@ compositional-writing/
     ├── managing-article-collections.md   # 情境 5c：跨多篇文章的結構（三層、素材庫比例、MOC、Pattern 卡片）
     ├── structuring-with-solid.md         # 情境 5d：結構決策標準（SOLID 寫作映射：拆分 / 擴充點 / 依賴方向 / 讀者分流）
     ├── judgment-content-needs-scenarios.md # 情境 5e：判讀 / 選型類內容補情境與後果（形態 / 觸發事件 / 微案例、含正反例四組）
+    ├── demonstrating-commands.md         # 情境 5f：示範指令（區塊內容、註解分工、並列對照、參數表判準）
     ├── designing-fields.md               # 情境 6：欄位設計（含六欄位角度總表）
     ├── designing-fields-ticket-6w.md     # 六欄位詳細範例：正確 + 混淆共 12 項（按需讀取）
     ├── meta-metrics.md                   # 品質量化驗收（M1-M5）

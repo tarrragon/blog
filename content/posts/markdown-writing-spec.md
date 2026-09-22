@@ -164,6 +164,9 @@ R-URL-1 的觸發條件是一份 TLD 清單，而這份清單有 [#251](/report/
 
 ### 5.1 程式碼區塊必須註明語言（MD040）
 
+> 本節與其後各節管的是**排版的機械規則**。區塊裡放什麼——註解裝什麼、什麼時候要把兩種用法並列、什麼時候改用參數表——在 [示範指令：程式碼區塊裡放什麼](/skills/compositional-writing/demonstrating-commands/)。
+
+
 由 `mdtools lint` 檢查。未註明語言的 fenced code block 會被報警：
 
 ````markdown

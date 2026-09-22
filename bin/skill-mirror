@@ -203,6 +203,7 @@ fi
 REF_DIR=".claude/skills/${SKILL_NAME}/references"
 ref_synced=0
 ref_skipped=0
+ref_skipped_names=()
 
 if [[ -d "$REF_DIR" ]]; then
   for ref_src in "$REF_DIR"/*.md; do
@@ -212,6 +213,7 @@ if [[ -d "$REF_DIR" ]]; then
 
     if [[ ! -f "$ref_target" ]]; then
       ref_skipped=$((ref_skipped + 1))
+      ref_skipped_names+=("$ref_name")
       continue
     fi
 
@@ -220,6 +222,7 @@ if [[ -d "$REF_DIR" ]]; then
     if [[ -z "$fm_end" ]]; then
       echo "  WARN: ${ref_target} 沒有可辨識的 frontmatter — 跳過" >&2
       ref_skipped=$((ref_skipped + 1))
+      ref_skipped_names+=("$ref_name")
       continue
     fi
 
@@ -278,6 +281,16 @@ if [[ -d "$REF_DIR" ]]; then
     ./bin/mdtools fmt --fix "$TARGET_DIR" >/dev/null 2>&1 || true
   fi
   echo "  references: ${ref_synced} 份同步、${ref_skipped} 份無鏡像（略過）"
+  if [[ ${ref_skipped} -gt 0 ]]; then
+    # 只印數量的話，讀的人知道有東西沒同步而不知道是哪一份，也不知道下一步做什麼。
+    # 鏡像保留自己的 frontmatter（title / date / description 是為 blog 讀者寫的），
+    # 所以本工具不憑空建檔；新增 reference 之後要先手動放一份帶 frontmatter 的鏡像，
+    # 再重跑本工具填正文。漏掉這一步的下游症狀是別的 reference 指向它的相對連結
+    # 在鏡像裡解析不到，由 mdtools cards 擋下——距離成因很遠。
+    for skipped_name in "${ref_skipped_names[@]}"; do
+      echo "    無鏡像: ${skipped_name} — 先建 ${TARGET_DIR}/${skipped_name}.md（含 frontmatter）再重跑" >&2
+    done
+  fi
 fi
 
 lines=$(wc -l < "$TARGET" | tr -d ' ')
