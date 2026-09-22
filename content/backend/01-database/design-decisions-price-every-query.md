@@ -14,7 +14,7 @@ tags: ["backend", "database", "schema", "query", "design"]
 
 範圍：這裡談決定與它的查詢代價。那些查詢本身怎麼寫在 [SQL：這個語言為什麼長這樣](/sql/)；已經寫成那樣的查詢怎麼修在 [1.13 應用層查詢反模式](/backend/01-database/query-anti-patterns/)；改 schema 的動作怎麼分段執行在 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
 
-本篇的輸出都是實際跑出來的。單引擎的量測在 SQLite 3.51.0，跨引擎的那兩節另外用 PostgreSQL 18.6，每一段標明是哪一個。
+本篇的輸出都是實際跑出來的，每一段標明引擎。多數量測在 SQLite 3.51.0；collation 那一節整節在 PostgreSQL 18.6（索引能不能用要看計畫，而 SQLite 沒有對應的形態），外鍵那一節兩家並排。
 
 ## 這一欄允不允許為空
 
@@ -28,6 +28,9 @@ tags: ["backend", "database", "schema", "query", "design"]
 
 ```sql
 -- SQLite 3.51.0
+-- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+DROP TABLE IF EXISTS 優惠券;
+DROP TABLE IF EXISTS 訂單;
 CREATE TABLE 優惠券 (優惠券編號 INTEGER PRIMARY KEY, 名稱 TEXT);
 INSERT INTO 優惠券 VALUES (9001,'新客'),(9002,'週年'),(9003,'生日');
 
@@ -75,6 +78,8 @@ WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.優惠券編號 = 優惠券.
 
 ```sql
 -- SQLite 3.51.0
+-- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+DROP TABLE IF EXISTS 訂單;
 CREATE TABLE 訂單 (訂單編號 INTEGER PRIMARY KEY, 下單日 TEXT, 金額 INT);
 INSERT INTO 訂單 VALUES
  (101,'2026-03-02',300),(102,'2026-03-02',500),(103,'2026-03-02',200),
@@ -87,7 +92,10 @@ INSERT INTO 訂單 VALUES
 -- 第 1 頁（此時還沒有索引）
 SELECT 訂單編號 FROM 訂單 ORDER BY 下單日 LIMIT 2 OFFSET 0;
 
-CREATE INDEX ix_日金 ON 訂單(下單日, 金額);   -- 有人在這個時間點建了索引
+-- 有人在這個時間點建了索引。第二欄 金額 不是裝飾——
+-- 它決定同一天那四張訂單在索引上的先後，而掃全表時的先後由存放順序決定，
+-- 兩者不同才看得到下面的錯位。只建 (下單日) 的話兩種順序剛好一致，什麼事都不會發生。
+CREATE INDEX ix_日金 ON 訂單(下單日, 金額);
 
 -- 第 2、3 頁（此時有索引了）
 SELECT 訂單編號 FROM 訂單 ORDER BY 下單日 LIMIT 2 OFFSET 2;
@@ -103,6 +111,8 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日 LIMIT 2 OFFSET 4;
 ```
 
 **102 出現兩次，而 103 一次都沒有出現。** 兩次查詢都沒有報錯，兩次的結果也都正確——四張同一天的訂單之間，`ORDER BY 下單日` 沒有規定誰在前面，所以掃全表時照存放順序、走索引時照索引順序，兩種都合法（機制在 [1.11 關係沒有順序](/sql/relations-have-no-order/)）。
+
+**這個示範要成立，索引的第二欄是必要的。** 換成只建 `(下單日)`，第 2 頁回的是 `103, 104`，重複與遺漏都不發生——因為 SQLite 的單欄索引用 rowid 決勝，而那剛好與掃全表的順序一致。**這件事本身就是這一節的結論**：並列的列由什麼決勝沒有規定，所以它可以剛好一致、也可以剛好不一致，而查詢的文字對這件事完全沉默。
 
 補一個決勝鍵之後，同一組操作在有索引與沒索引底下給同一份清單：
 
@@ -136,6 +146,9 @@ SELECT 訂單編號 FROM 訂單 ORDER BY 下單日, 訂單編號 LIMIT 2 OFFSET 
 
 ```sql
 -- SQLite 3.51.0
+-- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+DROP TABLE IF EXISTS 商品寬;
+DROP TABLE IF EXISTS 商品窄;
 CREATE TABLE 商品寬 (商品編號 INTEGER PRIMARY KEY, 名稱 TEXT, 價格 INT, 描述 TEXT);
 CREATE TABLE 商品窄 (商品編號 INTEGER PRIMARY KEY, 名稱 TEXT, 價格 INT);
 
@@ -181,6 +194,10 @@ SELECT count(*) FROM 商品窄 WHERE 價格 > 500;
 
 ```sql
 -- SQLite 3.51.0
+-- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+DROP TABLE IF EXISTS 訂單;
+DROP TABLE IF EXISTS 明細;
+DROP TABLE IF EXISTS 標籤;
 CREATE TABLE 訂單 (訂單編號 INTEGER PRIMARY KEY, 金額 INT);
 CREATE TABLE 明細 (明細編號 INTEGER PRIMARY KEY, 訂單編號 INT, 小計 INT);
 CREATE TABLE 標籤 (標籤編號 INTEGER PRIMARY KEY, 訂單編號 INT, 名稱 TEXT);
@@ -236,6 +253,8 @@ JOIN 標籤 ON 標籤.訂單編號 = 訂單.訂單編號;
 
 ```sql
 -- PostgreSQL 18.6
+-- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+DROP TABLE IF EXISTS 會員;
 CREATE TABLE 會員 (會員編號 int PRIMARY KEY, email text);
 INSERT INTO 會員 SELECT i, 'User'||i||'@Example.com' FROM generate_series(1,200000) i;
 CREATE INDEX ix_email ON 會員(email);
@@ -263,10 +282,21 @@ Gather (actual time=1.809..20.367 rows=1.00 loops=1)
 ```sql
 -- 修法 A：規則寫進索引，查詢不動
 CREATE INDEX ix_lower ON 會員(lower(email));
+ANALYZE 會員;   -- 這一句不可省：上面那次 ANALYZE 跑在 ix_lower 存在之前，
+                -- 沒有替這個運算式索引收統計，少了它計畫是 Bitmap Heap Scan
 
 -- 修法 B：規則寫進欄位宣告，查詢連 lower() 都不必寫
+-- provider=icu 指定用 ICU 這套比較規則的實作；
+-- locale 的 und-u-ks-level2 是強度等級——level2 讓大小寫不算差異而重音仍算，
+--   換成 level1 連重音也不算；
+-- deterministic=false 是 PostgreSQL 的硬性要求，不寫會被擋下來
 CREATE COLLATION ci (provider = icu, locale = 'und-u-ks-level2', deterministic = false);
+-- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+DROP TABLE IF EXISTS 會員2;
 CREATE TABLE 會員2 (會員編號 int PRIMARY KEY, email text COLLATE ci);
+INSERT INTO 會員2 SELECT * FROM 會員;
+CREATE INDEX ix2 ON 會員2(email);
+ANALYZE 會員2;
 ```
 
 ```text
@@ -277,7 +307,7 @@ CREATE TABLE 會員2 (會員編號 int PRIMARY KEY, email text COLLATE ci);
 
 兩條都快，而**修法 B 的查詢裡沒有任何東西在處理大小寫**——規則住在欄位上，每一段查詢自動套用它。修法 A 要求每一段查詢都記得寫 `lower()`，漏掉一處就是一次全表掃描加一個不分大小寫失效的比對。
 
-**代價在什麼條件下浮現**。表長到掃描明顯變慢的時候。而這一條還有第二個代價**在單一引擎上完全量不到**：各家的預設比較規則不同，同一句 `WHERE 姓名 = 'anna'` 在 MySQL 8.4 上回兩列而在 SQLite、DuckDB、PostgreSQL 上回一列（四家的實測在 [1.15](/sql/string-comparison-and-collation/)）。規則沒有寫出來的時候，換一家引擎、換一個資料庫的建立參數，命中的列就變。
+**代價在什麼條件下浮現**。表長到掃描明顯變慢的時候。而這一條還有第二個代價**在單一引擎上完全量不到**：各家的預設比較規則不同，同一句 `WHERE 姓名 = 'anna'` 在 MySQL 8.4 上回四列（`Anna`、`anna`、`ANNA`、`Ánna`——它的預設 collation `utf8mb4_0900_ai_ci` 把大小寫與重音都算成同一個值），而在 SQLite 3.51 與 PostgreSQL 18 上只回逐字相同的那一列（三家的實測在 [1.15](/sql/string-comparison-and-collation/)）。規則沒有寫出來的時候，換一家引擎、換一個資料庫的建立參數，命中的列就變。
 
 **改回來要付什麼**。改欄位的 collation 要重建那一欄上的全部索引，因為索引裡的排序是按舊規則建的。這件事在大表上是一次有停機風險的操作。
 
@@ -297,6 +327,9 @@ CREATE TABLE 會員2 (會員編號 int PRIMARY KEY, email text COLLATE ci);
 -- SQLite 3.51.0
 PRAGMA foreign_keys;        -- 回 0，也就是預設不執法
 
+-- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+DROP TABLE IF EXISTS 顧客;
+DROP TABLE IF EXISTS 訂單;
 CREATE TABLE 顧客 (顧客編號 INTEGER PRIMARY KEY, 姓名 TEXT);
 CREATE TABLE 訂單 (訂單編號 INTEGER PRIMARY KEY,
                    顧客編號 INT REFERENCES 顧客(顧客編號), 金額 INT);
@@ -304,10 +337,10 @@ INSERT INTO 顧客 VALUES (1,'佳穎');
 INSERT INTO 訂單 VALUES (101,1,300),(102,999,500);   -- 999 這位顧客不存在
 ```
 
-兩列都寫進去了，沒有任何錯誤。同一段 DDL 在 PostgreSQL 18.6 上，第二筆直接被擋：
+兩列都寫進去了，沒有任何錯誤。同一段 DDL 在 PostgreSQL 18.6 上被擋下來——而擋的單位是**整句 `INSERT`**，所以 101 那一列也沒有進去，訂單表跑完之後是空的：
 
 ```text
-ERROR:  insert or update on table "訂單f" violates foreign key constraint "訂單f_顧客編號_fkey"
+ERROR:  insert or update on table "訂單" violates foreign key constraint "訂單_顧客編號_fkey"
 DETAIL:  Key (顧客編號)=(999) is not present in table "顧客".
 ```
 
@@ -347,7 +380,7 @@ DETAIL:  Key (顧客編號)=(999) is not present in table "顧客".
 
 **浮現的時機由資料決定，不由程式碼決定。** 所以「上線前測過了」對這六條沒有保證力——測試資料裡沒有那個空值、沒有並列、沒有孤兒列，六條就全部沉默。
 
-**其中四條的症狀是一個錯的數字，不是一個錯誤訊息。** 靜默回零列、分頁少一筆、聚合翻倍、報表兩種算法差 500——這幾種沒有任何一個會讓程式停下來。
+**六條裡只有表寬那一條的症狀是「慢」，其餘五條的症狀都是一個錯的數字。** 靜默回零列、分頁少一筆、聚合翻倍、換引擎之後命中的列變了、報表兩種算法差 500——這五種沒有任何一個會讓程式停下來。
 
 ## 設計當下能問出來的六個問題
 
@@ -364,7 +397,7 @@ DETAIL:  Key (顧客編號)=(999) is not present in table "顧客".
 
 ## 跨模組路由
 
-- → [1.2 schema design 與資料建模](/backend/01-database/schema-design/)：這組表該長什麼樣。它的 Index 設計段已經寫著「index 設計要從查詢路徑反推」，而本篇把同一個反推套到另外五個決定上
+- → [1.2 schema design 與資料建模](/backend/01-database/schema-design/)：這組表該長什麼樣。它的 Index 設計段已經寫著「index 設計要從查詢路徑反推」，而本篇把同一個反推套到上面那六個決定上
 - → [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)：查詢已經寫成那樣之後怎麼修。本篇的第三節與第四節是那一篇 `SELECT *` 與 N+1 兩條反模式在 schema 這一側的成因
 - → [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)：上面每一節的「改回來要付什麼」都落在它的分段流程上，`Type I：加約束` 那一節對應本篇的第一節與第六節
 - → [1.8 State Ownership 與 Query Boundary](/backend/01-database/state-ownership-query-boundary/)：本篇問單一決定的查詢代價，那一篇問哪些資料是正式狀態、哪幾種查詢責任該分開
