@@ -10,7 +10,7 @@ tags: ["adb", "android", "debugging", "logcat", "pos"]
 
 ## 指定裝置
 
-adb 的參數分成兩段：`adb` 自己要讀的部分，以及要送去遠端執行的字串。分界是子命令本身，選擇裝置的參數要寫在 `shell` 之前。
+adb 的一行指令分成三段：`adb` 自己的全域選項、子命令（如 `shell`）自己的選項、以及子命令之後要送去遠端執行的字串。選擇裝置的 `-s` / `-t` 是全域選項，要寫在子命令之前。
 
 ```bash
 adb devices -l                          # -l 多印 product / model / transport_id
@@ -18,7 +18,7 @@ adb -s <serial> shell <command>
 adb -t <transport_id> shell <command>   # transport_id 較短、同一次連線內有效
 ```
 
-寫成 `adb shell -s <serial> <command>` 時，`-s` 落在遠端那一側，`adb shell` 自己的解析器回 `adb shell: illegal option -- s`，指令沒有被送到遠端執行。沒有指定 transport 而多台在線時，adb 在更前面一步失敗、回 `adb: more than one device/emulator`，shell 的選項解析沒有被執行。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
+寫成 `adb shell -s <serial> <command>` 時，`-s` 被劃進 `shell` 子命令的選項，而 `shell` 的選項解析器不認得它，回 `adb shell: illegal option -- s`，指令沒有被送到遠端執行。沒有指定 transport 而多台在線時，adb 在解析目標裝置那一步就失敗、回 `adb: more than one device/emulator`，`shell` 的選項解析沒有被執行。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
 
 同一台無線機器可能同時以 IP 位址與 mDNS 名稱兩個 transport 在線，`adb devices` 因此列出兩列而背後是同一台。`adb devices -l` 印的 product / model 欄位在同一批機器上完全相同，靠它們分辨不了；硬體序號可以分辨，逐個 transport 問一次 `getprop ro.serialno`，回同一個值的是同一台。
 
@@ -32,7 +32,7 @@ for serial in $(adb devices | awk 'NR>1 && $2=="device" {print $1}'); do
 done
 ```
 
-腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元（`\r`）。adb 在某些條件下會配置 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal，虛擬終端機），而作業系統核心的 pty 行規則會把每個 `0x0A`（換行）補成 `0x0D 0x0A`（歸位加換行）。補進來的 `0x0D` 肉眼看不見，但它會讓 shell 的字串比對失敗——`"$model" = "<型號字串>"` 這種比較永遠回假，因為 `$model` 的值尾端多了一個 `\r`。`tr -d '\r'` 在沒有 pty 的情況下是空操作，加上去沒有副作用。
+腳本裡每一行 `getprop` 的結尾都接了 `tr -d '\r'`，作用是去掉輸出裡的歸位字元（`\r`）。adb 送輸出回來時若配置了 [pty](/linux/dotfile/knowledge-cards/pty/)（pseudo-terminal，虛擬終端機），而作業系統核心的 pty 行規則會把每個 `0x0A`（換行）補成 `0x0D 0x0A`（歸位加換行）。補進來的 `0x0D` 肉眼看不見，但它會讓 shell 的字串比對失敗——`"$model" = "<型號字串>"` 這種比較永遠回假，因為 `$model` 的值尾端多了一個 `\r`。`tr -d '\r'` 在沒有 pty 的情況下是空操作，加上去沒有副作用。
 
 ## 遠端擷圖
 
@@ -40,9 +40,9 @@ done
 adb -s <serial> exec-out screencap -p > screen.png
 ```
 
-`screencap -p` 在裝置上把當前畫面編碼成 PNG 寫到標準輸出。`exec-out` 不對位元組做行尾轉換；`shell` 在配置了 pty 的時候會把 `0x0A` 換成 `0x0D 0x0A`，PNG 裡的 `0x0A` 是資料不是行尾，被換過之後整個檔案壞掉。
+`screencap -p` 在裝置上把當前畫面編碼成 PNG 寫到標準輸出。走 `exec-out` 時 adb 不配置 pty，位元組原樣送回；走 `shell` 且配置了 pty 時，pty 行規則會把 `0x0A` 換成 `0x0D 0x0A`。PNG 裡的 `0x0A` 是資料，被換過的每一處都讓檔案多一個位元組，解碼失敗。
 
-`adb shell` 配不配置 pty 取決於 adb 版本、裝置端有沒有 shell protocol v2（`adb features` 裡有沒有 `shell_v2`）、以及有沒有帶命令參數——帶命令的不配置，不帶命令的互動模式才配。這條規則在裝置有 shell_v2 且沒帶 `-t` / `-tt` 時成立，沒有 v2 的舊組合不適用。`exec-out` 把結果從這組版本組合裡拿出來。
+`adb shell` 配不配置 pty 取決於 adb 版本、裝置端有沒有 shell protocol v2（`adb features` 裡有沒有 `shell_v2`）、以及有沒有帶命令參數——帶命令的不配置，不帶命令的互動模式才配。這條規則在裝置有 shell_v2 且沒帶 `-t` / `-tt` 時成立，沒有 v2 的舊組合不適用。用 `exec-out` 取二進位輸出，行尾轉換與否不再取決於這組版本組合。
 
 可以用一段已知的位元組確認手上這條通道有沒有配 pty：
 
@@ -109,7 +109,7 @@ adb -s <serial> exec-out screencap -p -d <SurfaceFlinger 的編號> > screen.png
 
 ## 前景元件查詢
 
-`screencap` 的擷圖看到畫面上寫了什麼，查畫面由哪個元件繪製要用 `dumpsys window`：
+`screencap` 的擷圖顯示畫面上寫了什麼；畫面由哪個元件繪製要用 `dumpsys window` 查：
 
 ```bash
 adb -s <serial> shell dumpsys window | grep -iE "mCurrentFocus|mFocusedApp"
@@ -117,7 +117,7 @@ adb -s <serial> shell dumpsys window | grep -iE "mCurrentFocus|mFocusedApp"
 
 輸出帶套件名與 Activity 名。多螢幕機器每個顯示器各印一組，沒有焦點的顯示器兩個欄位都是 `null`。讀輸出時跳過兩欄都是 `null` 的組，找到欄位有值的那一組——它對應的就是有焦點的顯示器。
 
-一個視窗可以畫在有焦點的視窗之上而不取得焦點——`APPLICATION_OVERLAY` 且 `NOT_FOCUSABLE` 的視窗就是這樣，`mCurrentFocus` 不會動。任何持有 `SYSTEM_ALERT_WINDOW` 的第三方套件都畫得出來。排除 overlay 的方法：
+一個視窗可以畫在有焦點的視窗之上而不取得焦點——`APPLICATION_OVERLAY` 且 `NOT_FOCUSABLE` 的視窗就是這樣，`mCurrentFocus` 的值不變。任何持有 `SYSTEM_ALERT_WINDOW` 的第三方套件都畫得出來。排除 overlay 的方法：
 
 ```bash
 adb -s <serial> shell appops query-op SYSTEM_ALERT_WINDOW allow     # 誰有這個權限
@@ -125,7 +125,7 @@ adb -s <serial> shell dumpsys window windows \
   | grep -E "Window #|package=|ty=|mViewVisibility="                # 當下的視窗堆疊
 ```
 
-第一條列的是能力不是行為，有權限不代表當下有畫東西。第二條按 z-order 由上而下列出視窗，要同時看三個條件：排在目標之上、`ty=APPLICATION_OVERLAY`、且 `mViewVisibility=0x0`。第三個條件用來排除隱形視窗：`0x4` 是存在但不可見，系統自己就常駐幾個這樣的視窗（拖放目標、螢幕裝飾）。三個條件同時成立才代表有第三方視窗正在疊圖。截圖分不出 overlay 與被改寫的元件，兩種在畫面上長得一樣，只有 z-order 的輸出分得開。
+第一條列的是能力不是行為，有權限的套件不一定當下有視窗在畫面上。第二條按 z-order 由上而下列出視窗，要同時看三個條件：排在目標之上、`ty=APPLICATION_OVERLAY`、且 `mViewVisibility=0x0`。第三個條件用來排除隱形視窗：`0x4` 是存在但不可見，系統自己就常駐幾個這樣的視窗（拖放目標、螢幕裝飾）。三個條件同時成立才代表有第三方視窗正在疊圖。從截圖分不出 overlay 與被改寫的元件——兩種在畫面上呈現相同的文字；分得開兩者的是 z-order 那份輸出。
 
 ## logcat
 
@@ -151,7 +151,7 @@ adb -s <serial> logcat -g                              # 確認各緩衝區大�
 
 ### PID 與 tag
 
-`-v threadtime` 的欄位順序是日期、時間、PID、TID、層級、tag。PID 直接指出發出這一行的 process；tag 由各元件自行填寫、跨元件會重複，只憑 tag 做對應是推測。
+`-v threadtime` 的欄位順序是日期、時間、PID、TID、層級、tag。PID 直接指出發出這一行的 process；tag 由各元件自行填寫、跨元件會重複，只憑 tag 把 log 行對應到 process 是推測。
 
 ### 篩選
 
@@ -169,7 +169,7 @@ awk '$2 >= "16:26:00.000" && $2 <= "16:27:00.000"' install.log \
 awk '{print $6}' install.log | sort | uniq -c | sort -rn | head
 ```
 
-logcat 把 tag 欄補寬到八個字元。短於八個字元的 tag 後面冒號被推成獨立一欄，所以長 tag 在第六欄帶冒號（`WifiVendorHal:`）、短 tag 不帶（`adbd`）。統計結果貼回 `awk` 做精確比對前，先確認有沒有尾冒號。
+logcat 把 tag 欄補寬到八個字元。短於八個字元的 tag 後面補了空白，`awk` 用空白切欄時那個冒號因此被切成獨立的一欄，所以長 tag 在第六欄帶冒號（`WifiVendorHal:`）、短 tag 不帶（`adbd`）。統計結果貼回 `awk` 做精確比對前，先確認有沒有尾冒號。
 
 ### 找特定元件的啟動紀錄
 
@@ -179,7 +179,7 @@ logcat 把 tag 欄補寬到八個字元。短於八個字元的 tag 後面冒號
 grep -E 'ActivityTaskManager.*(START|Displayed)' install.log | grep -i <安裝器套件名>
 ```
 
-撈得到 `cmp=<套件>/.InstallStart`，代表安裝意圖已經送出去；撈不到，代表 App 根本沒把它發出去。
+撈得到 `cmp=<套件>/.InstallStart`，代表安裝意圖已經送出去；撈不到，代表 App 沒有發出安裝意圖。
 
 ## 狀態查詢
 
@@ -203,7 +203,7 @@ adb -s <serial> shell ls -l /storage/emulated/0/Android/data/<package>/
 
 ### dumpsys user
 
-要讀的是目標使用者底下的 `Effective restrictions`。`grep -i restriction` 還會撈到 `Guest restrictions`（guest 使用者型別的預設清單）、`mDefaultRestrictions`、`Device policy global restrictions`，它們都不是當前使用者的有效值。判別看它落在哪個標題底下：`UserInfo` 區塊裡的屬於那個使用者，`Device properties` 或使用者型別定義裡的是型別預設。`Guest restrictions` 裡面本來就列著 `no_install_unknown_sources`——乾淨機器上 grep 照樣撈到這一行，跟現象無關。
+要讀的是目標使用者底下的 `Effective restrictions`。`grep -i restriction` 還會撈到 `Guest restrictions`（guest 使用者型別的預設清單）、`mDefaultRestrictions`、`Device policy global restrictions`，它們都不是當前使用者的有效值。判別看它落在哪個標題底下：`UserInfo` 區塊裡的屬於那個使用者，`Device properties` 或使用者型別定義裡的是型別預設。`Guest restrictions` 裡面本來就列著 `no_install_unknown_sources`——乾淨機器上 grep 照樣撈到這一行，它與當前使用者的限制無關。
 
 ### dumpsys device_policy
 
@@ -215,7 +215,7 @@ device owner 管整台機器，profile owner 只管工作資料夾，兩者都�
 
 ### dumpsys package
 
-更新過的系統 App 有兩組值：出廠版在 `/system/app`、更新版在 `/data/app`。分辨靠 dumpsys 印的段標——`Packages:` 底下是活的、`Hidden system packages:` 底下是被蓋掉的出廠版。grep 要把段標一起收進來。
+更新過的系統 App 有兩組值：出廠版在 `/system/app`、更新版在 `/data/app`。分辨靠 dumpsys 印的段標——`Packages:` 底下是目前生效的那一組、`Hidden system packages:` 底下是被蓋掉的出廠版。grep 要把段標一起收進來。
 
 ### pm resolve-activity
 
