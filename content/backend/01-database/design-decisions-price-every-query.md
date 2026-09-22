@@ -64,7 +64,7 @@ WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.優惠券編號 = 優惠券.
 
 **代價在什麼條件下浮現**。第一張沒有用優惠券的訂單被寫進來的那一刻——不是 schema 變更的時刻。在那之前這一欄裡沒有空值，上面兩種寫法回同一個答案，測試會過，而 schema 早就已經是現在這個樣子了。
 
-**改回來要付什麼**。把欄位改成 `NOT NULL` 要先處理存量的空值，也就是替每一列決定它該填什麼——而那個決定當初沒有做，所以現在多半找不到依據。這條路屬於 [1.6](/backend/01-database/database-migration-playbook/) 的加約束流程：先補值、再加 `NOT VALID` 約束、再驗證、最後 `VALIDATE`。
+**改回來要付什麼**。把欄位改成 `NOT NULL` 要先處理存量的空值，也就是替每一列決定它該填什麼——而那個決定當初沒有做，所以現在多半找不到依據。這條路在 [backend 1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/) 裡是 `Type G：加 NOT NULL constraint`，三步：**先讓應用端所有實例停止寫入空值**（少了這一步，補完值之後新的空值又進來）、再回填既有的空值、最後才加約束。`CHECK` 與外鍵走的是另一型（`Type I`）的兩段式，那一型才用 `NOT VALID` 加 `VALIDATE`。
 
 **所以設計當下要問的是**：這一欄的空值，代表「還不知道」、「不適用」、還是「確定沒有」。三種是不同的事實，而 `NULL` 只有一個，把它們併成同一個值之後，往後每一段查詢都要從別的欄位去猜是哪一種。分得開的那幾種，各自給一個實際的值或各自一張表。
 
@@ -255,7 +255,7 @@ JOIN 標籤 ON 標籤.訂單編號 = 訂單.訂單編號;
 
 ```sql
 -- PostgreSQL 18.6
--- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+-- 各節的表名重複，照順序跑要先清掉上一節的
 DROP TABLE IF EXISTS 會員;
 CREATE TABLE 會員 (會員編號 int PRIMARY KEY, email text);
 INSERT INTO 會員 SELECT i, 'User'||i||'@Example.com' FROM generate_series(1,200000) i;
@@ -291,14 +291,29 @@ ANALYZE 會員;   -- 這一句不可省：上面那次 ANALYZE 跑在 ix_lower �
 -- provider=icu 指定用 ICU 這套比較規則的實作；
 -- locale 的 und-u-ks-level2 是強度等級——level2 讓大小寫不算差異而重音仍算，
 --   換成 level1 連重音也不算；
--- deterministic=false 是 PostgreSQL 的硬性要求，不寫會被擋下來
+-- deterministic=false 不寫也建得起來，而不寫的話 ks-level2 不生效：
+--   比對變回逐位元組比較，WHERE email = 'user...' 靜默回零列。
+--   實測 PostgreSQL 18.6：省略它的 collation 回 0 列、寫了的回 1 列，
+--   兩次 CREATE COLLATION 都成功。這一行漏掉的症狀正是本篇在講的那一種
 CREATE COLLATION ci (provider = icu, locale = 'und-u-ks-level2', deterministic = false);
--- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
+-- 各節的表名重複，照順序跑要先清掉上一節的
 DROP TABLE IF EXISTS 會員2;
 CREATE TABLE 會員2 (會員編號 int PRIMARY KEY, email text COLLATE ci);
 INSERT INTO 會員2 SELECT * FROM 會員;
 CREATE INDEX ix2 ON 會員2(email);
 ANALYZE 會員2;
+```
+
+三段查詢並排，差別看得出來——**修法 A 與原本那一段逐字相同，修法 B 少了 `lower()`**：
+
+```sql
+-- 原本（慢）與修法 A（快）用的是同一段查詢，差別只在索引建了沒有
+EXPLAIN (ANALYZE, COSTS OFF)
+SELECT 會員編號 FROM 會員 WHERE lower(email) = 'user12345@example.com';
+
+-- 修法 B：規則住在欄位上，查詢裡沒有任何東西在處理大小寫
+EXPLAIN (ANALYZE, COSTS OFF)
+SELECT 會員編號 FROM 會員2 WHERE email = 'user12345@example.com';
 ```
 
 ```text
@@ -401,7 +416,7 @@ DETAIL:  Key (顧客編號)=(999) is not present in table "顧客".
 
 - → [1.2 schema design 與資料建模](/backend/01-database/schema-design/)：這組表該長什麼樣。它的 Index 設計段已經寫著「index 設計要從查詢路徑反推」，而本篇把同一個反推套到上面那六個決定上
 - → [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)：查詢已經寫成那樣之後怎麼修。本篇的第三節與第四節是那一篇 `SELECT *` 與 N+1 兩條反模式在 schema 這一側的成因
-- → [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)：上面每一節的「改回來要付什麼」都落在它的分段流程上，`Type I：加約束` 那一節對應本篇的第一節與第六節
+- → [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)：上面每一節的「改回來要付什麼」都落在它的分段流程上，第一節（可空性）對應它的 `Type G：加 NOT NULL constraint`，第六節（外鍵）對應 `Type I：加約束`
 - → [1.8 State Ownership 與 Query Boundary](/backend/01-database/state-ownership-query-boundary/)：本篇問單一決定的查詢代價，那一篇問哪些資料是正式狀態、哪幾種查詢責任該分開
 
 ## 下一步路由
