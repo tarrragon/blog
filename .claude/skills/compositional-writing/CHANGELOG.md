@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.23.0 — 教室形式加形態四（判定標準包裝成提問）與形態五（問得出/問不出替代指標）
+
 **Version**: 1.22.0 — 教室形式擴充為三形態 + 補充資訊歸位檢查（#355/#356）
 
 **Version**: 1.21.0 — 新增「教室互動語句 grep」類別，principle 卡 teaching-is-not-lecturing
