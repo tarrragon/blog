@@ -18,7 +18,7 @@ adb -s <serial> shell <command>
 adb -t <transport_id> shell <command>   # transport_id 較短、同一次連線內有效
 ```
 
-寫成 `adb shell -s <serial> <command>` 時，`-s` 落在遠端那一側，`adb shell` 自己的解析器回 `adb shell: illegal option -- s`，指令沒有被送到遠端執行。沒有指定 transport 而多台在線時，adb 在更前面一步失敗、回 `adb: more than one device/emulator`，根本沒走到 shell 的解析。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
+寫成 `adb shell -s <serial> <command>` 時，`-s` 落在遠端那一側，`adb shell` 自己的解析器回 `adb shell: illegal option -- s`，指令沒有被送到遠端執行。沒有指定 transport 而多台在線時，adb 在更前面一步失敗、回 `adb: more than one device/emulator`，shell 的選項解析沒有被執行。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
 
 同一台無線機器可能同時以 IP 位址與 mDNS 名稱兩個 transport 在線，`adb devices` 因此列出兩列而背後是同一台。`adb devices -l` 印的 product / model 欄位在同一批機器上完全相同，靠它們分辨不了；硬體序號可以分辨，逐個 transport 問一次 `getprop ro.serialno`，回同一個值的是同一台。
 
