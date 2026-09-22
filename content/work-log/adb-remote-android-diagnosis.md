@@ -20,7 +20,7 @@ adb -t <transport_id> shell <command>   # transport_id 較短、同一次連線�
 
 寫成 `adb shell -s <serial> <command>` 時，`-s` 落在遠端那一側，`adb shell` 自己的解析器回 `adb shell: illegal option -- s`，遠端一個字都沒有執行。沒有指定 transport 而多台在線時，adb 在更前面一步失敗、回 `adb: more than one device/emulator`，根本沒走到 shell 的解析。同一個寫錯的指令因此有兩種回報，指向選項位置的那一則只在單機在線時看得到。
 
-同一台無線機器可能同時以 IP 位址與 mDNS 名稱兩個 transport 在線，`adb devices` 因此列出兩列而背後是同一台。`-l` 印的 product / model 分不出來，同一批機器這些字串本來就一樣；分得出來的是硬體序號，逐個 transport 問一次 `getprop ro.serialno`，回同一個值的是同一台。
+同一台無線機器可能同時以 IP 位址與 mDNS 名稱兩個 transport 在線，`adb devices` 因此列出兩列而背後是同一台。`adb devices -l` 印的 product / model 欄位在同一批機器上完全相同，靠它們分辨不了；硬體序號可以分辨，逐個 transport 問一次 `getprop ro.serialno`，回同一個值的是同一台。
 
 ```bash
 for serial in $(adb devices | awk 'NR>1 && $2=="device" {print $1}'); do
@@ -109,13 +109,13 @@ adb -s <serial> exec-out screencap -p -d <SurfaceFlinger 的編號> > screen.png
 
 ## 前景元件查詢
 
-擷圖看到畫面上寫了什麼，由誰畫的要另外問：
+`screencap` 的擷圖看到畫面上寫了什麼，查畫面由哪個元件繪製要用 `dumpsys window`：
 
 ```bash
 adb -s <serial> shell dumpsys window | grep -iE "mCurrentFocus|mFocusedApp"
 ```
 
-輸出帶套件名與 Activity 名。多螢幕機器每個顯示器各印一組，沒有焦點的那幾組兩個欄位都是 `null`，不能預設第一行就是有焦點的那一組。
+輸出帶套件名與 Activity 名。多螢幕機器每個顯示器各印一組，沒有焦點的顯示器兩個欄位都是 `null`。讀輸出時跳過兩欄都是 `null` 的組，找到欄位有值的那一組——它對應的就是有焦點的顯示器。
 
 一個視窗可以畫在有焦點的視窗之上而不取得焦點——`APPLICATION_OVERLAY` 且 `NOT_FOCUSABLE` 的視窗就是這樣，`mCurrentFocus` 不會動。任何持有 `SYSTEM_ALERT_WINDOW` 的第三方套件都畫得出來。排除 overlay 的方法：
 
@@ -125,7 +125,7 @@ adb -s <serial> shell dumpsys window windows \
   | grep -E "Window #|package=|ty=|mViewVisibility="                # 當下的視窗堆疊
 ```
 
-第一條列的是能力不是行為，有權限不代表當下有畫東西。第二條按 z-order 由上而下列出視窗，要同時看三個條件：排在目標之上、`ty=APPLICATION_OVERLAY`、且 `mViewVisibility=0x0`。第三個條件不能省——`0x4` 是存在但不可見，系統自己就常駐幾個這樣的視窗（拖放目標、螢幕裝飾），只看前兩個會把它們誤判成疊圖來源。截圖分不出 overlay 與被改寫的元件，兩種在畫面上長得一樣，只有 z-order 的輸出分得開。
+第一條列的是能力不是行為，有權限不代表當下有畫東西。第二條按 z-order 由上而下列出視窗，要同時看三個條件：排在目標之上、`ty=APPLICATION_OVERLAY`、且 `mViewVisibility=0x0`。第三個條件用來排除隱形視窗：`0x4` 是存在但不可見，系統自己就常駐幾個這樣的視窗（拖放目標、螢幕裝飾）。三個條件同時成立才代表有第三方視窗正在疊圖。截圖分不出 overlay 與被改寫的元件，兩種在畫面上長得一樣，只有 z-order 的輸出分得開。
 
 ## logcat
 
