@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.14.0 — pm-checklist.md 對齊 SKILL.md：五個月未動（內嵌版號停在 1.1.0 / 2026-04-16），缺 Step 0 整道閘門、W 的假設層級／三類涵蓋／方案關聯性、R 的搜尋範圍校準／清單逐項核對／事實宣稱驗證、A 前置的工具選擇四問、A 的 10/10/10 與悖論識別五條、P 的早期警訊與自我暴露；快速模式補 Step 0；自測表 6 項擴為 10 項（門檻 7/10）。claim-quick-wrap.md 與 pm-checklist.md 移除內嵌 Last Updated / Version 檔尾，版本住 CHANGELOG
+
 **Version**: 2.13.2 — 2.13.1 接回的三張卡改用反引號路徑（`references/principles/x.md`）而非超連結，與 premortem-workflow 指 premortem-klein 的既有慣例一致：這三張是外部理論摘要、沒有也不該有 report 對應，超連結進鏡像會成斷鏈
 
 **Version**: 2.13.1 — principles/ 三張卡（benevolent-paternalism、four-villains、voss-influence-transparency）自 8/18 建立以來零入連，各接回檔頭指名的宿主段：前兩張接 anti-paternalism.md 的檢查 2 與自我暴露段（含學術依據列），four-villains 接 detailed-techniques.md 開頭
