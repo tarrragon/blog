@@ -62,6 +62,24 @@ compositional-writing 的核心主張是「寫原子卡片」，但完整文章�
 
 段裡出現讀起來像規則、禁令或教訓的句子時另有一條：[compressed-conclusion-strips-derivation](/report/compressed-conclusion-strips-derivation/)——那裡給「讀者能照做而不能調整」這個判讀徵兆，與推導被剝掉之後要補回哪一段。
 
+## 操作句先填槽位再成句
+
+上一節的三項管整篇的脈絡，這一節管每一句。描述操作的句子由四個槽位組成——**動作者**（人、腳本、工具、系統元件）、**動詞**（執行、轉換、比對、寫入）、**受詞**（動詞在這個領域裡能作用的對象）、**結果**（輸出或狀態變成什麼）——外加**量詞範圍**一格。寫的順序是先填槽位再成句；每格填的都是這個領域裡實際存在的東西。
+
+| 槽位   | 遠端沒有執行任何指令 | 遠端一個字都沒有執行 |
+| ------ | -------------------- | -------------------- |
+| 動作者 | 遠端                 | 遠端                 |
+| 動詞   | 執行                 | 執行                 |
+| 受詞   | 指令                 | 字                   |
+
+右邊語法完整、讀起來通順，而「執行」在這個領域裡作用的對象是指令——沒有任何系統逐字執行東西。「一個 X 都沒有 Y」在口語裡成立的前提是 X 是 Y 的計數單位，搬到「執行」上前提不成立，句子照樣通順，讀者要做四步還原（認出慣用語 → 字對回指令 → 一個都沒有對回零個 → 重組）。左邊直接就是終點。
+
+三條判定，寫的當下逐句可判、不需要上下文：動作者格填了指令片段（參數、管線一段、子命令——「`-G 16M` 放大緩衝區」）→ 改成人或系統元件當動作者；受詞格的名詞是動詞在領域裡作用不到的對象 → 換成領域內的名詞；量詞（任何、所有、完全、全部、一個 X 都沒）的範圍沒在句內或緊接的前一子句具名 → 補範圍，「兩個 md5 完全相同」過、「徵兆完全一樣」不過。
+
+**判定者不代填槽位。** 單位要寫在句子裡，從上下文推得出來不算——判準是是非題「有沒有寫在句子裡」，寫成「推不推得出來」它永遠通過，因為判定者永遠推得出來。這一節放在生成端的理由也在這裡：寫的人跟審的人是同一個模型時，審查端對這一類偵測率是零（一次實測三輪十七個 reviewer 零命中、逐句填槽位得十四處），bank 的反模式清單是給審查者掃已寫好的稿，生成器需要的是正向規格。
+
+動作者格填對之後，段落順序通常自動修正——操作者視角的順序就是讀者的問題序：讀者會看到什麼 → 這個工具做什麼 → 為什麼需要它 → 不做的具體後果 → 副作用。判準與 before/after 見 [command-fragment-as-subject-hides-the-actor](/report/command-fragment-as-subject-hides-the-actor/)（動作者格）與 [spoken-emphasis-is-silent-in-text](/report/spoken-emphasis-is-silent-in-text/)（受詞與量詞格）。教學定位的文章另有兩條形狀層的檢查：開場是不是超過一句話的情境敘事、正文有沒有「該問誰」「容易搞錯」「前面提到的」這類教室互動語句（[teaching-is-not-lecturing](/report/teaching-is-not-lecturing/)）；先備知識與環境陷阱有沒有跟在所屬的指令旁邊，判斷問句是「讀者在讀到哪個位置時會需要這段資訊」（[supplementary-knowledge-follows-its-parent-concept](/report/supplementary-knowledge-follows-its-parent-concept/)）。
+
 ## 八條核心規則
 
 規則一-七 處理「單篇文章內部怎麼寫」的不同層面（段落結構、句子層級、方案對照）。規則八是 meta-level、跨所有規則。規則九指向 `managing-article-collections.md` 處理跨多篇的議題。
@@ -651,6 +669,10 @@ build-炸-修循環。明顯划算。
 **用法**：把徵兆欄當 grep key，文章寫到該徵兆時展開對應的判讀問題，不得跳過。
 
 ---
+| 一句操作描述的主詞是參數、管線一段、或子命令               | 動作者是誰——人、腳本、工具、還是系統元件？受詞是動詞在領域裡作用得到的對象嗎？（[command-fragment-as-subject-hides-the-actor](/report/command-fragment-as-subject-hides-the-actor/)） |
+| 「完全」「任何」「所有」「一個 X 都沒」                    | 量詞的範圍寫在句內了嗎？句子自己說了「全部」的話，全部的什麼？（[spoken-emphasis-is-silent-in-text](/report/spoken-emphasis-is-silent-in-text/)）                                     |
+| 開場超過一句話的情境敘事、或正文出現「該問誰」「容易搞錯」 | 刪掉這一段之後讀者還知不知道這篇在講什麼？這一句是在給正確做法還是在模擬課堂？（[teaching-is-not-lecturing](/report/teaching-is-not-lecturing/)）                                     |
+| 一段「為什麼要這樣做」離它解釋的指令超過一段               | 讀者在讀到哪個位置時會需要這段資訊？（[supplementary-knowledge-follows-its-parent-concept](/report/supplementary-knowledge-follows-its-parent-concept/)）                             |
 
 ## 術語
 

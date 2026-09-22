@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.26.0 — 四槽位規格、教室形式、補充資訊歸位接進七個情境 reference（articles 新節加四列徵兆、documents P1/P3 子節、prompts 與 code-comments 路由段）；四張 principle 卡首次被 reference 引用
+
 **Version**: 1.25.1 — 量詞槽位加「範圍在句內具名」與「判定者不代填槽位」；#357 第三例翻案
 
 **Version**: 1.25.0 — 新增〈操作句先填槽位再成句〉生成端規格；句子層文法標準的判準改為「受詞是不是動詞在領域裡能作用的對象」（#357 修訂）
