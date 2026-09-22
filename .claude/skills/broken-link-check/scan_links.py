@@ -72,6 +72,17 @@ REF_REGEX = re.compile(
 # `@.claude/` 前綴（不會命中 REF_REGEX），不需要加 marker。
 EXEMPT_MARKER = re.compile(r"<!--\s*broken-link-exempt\b.*?-->|portability-allow")
 
+# 同步工具把這些目錄整個排除在傳遞之外（skill-sync 的 EXCLUDE_DIRS），所以裡面
+# 的消費端專屬路徑是刻意的、不是缺陷：project-integration/ 正是 Layer 2 內容
+# 該住的地方，消費端專案自備自己的一份。本掃描若不跟著排除，唯一合法的 Layer 2
+# 住址會變成每行都要標記的地方，而那等於取消了這個目錄的用途。
+# 兩支工具的排除清單要一起改——只改一邊的症狀是「照規範放對位置反而被報違規」。
+SYNC_EXCLUDED_DIRS = ("hook-logs/", "project-integration/")
+
+
+def _in_sync_excluded_dir(path_str: str) -> bool:
+    return any(d in path_str for d in SYNC_EXCLUDED_DIRS)
+
 # fence 內 cp/mv 指令目的地參數的相對路徑：resolve_path() 對 `./X`（非
 # `./.claude/X`）一律以來源檔目錄為基準，但這類指令的相對路徑基準是執行時
 # cwd（通常為 repo root），靜態文字無法確定 cwd（不同於 `.claude/X`／
@@ -345,7 +356,7 @@ def classify_ref(raw, resolved, knobs, exists, exempt=False, shell_ambiguous_cwd
     if not knobs["include_placeholder"]:
         if raw in PLACEHOLDER_SAMPLES or is_placeholder_pattern(raw):
             return "placeholder"
-    if "migration-backups/" in resolved or "hook-logs/" in resolved:
+    if "migration-backups/" in resolved or _in_sync_excluded_dir(resolved):
         if not knobs["include_migration_backups"]:
             return "excluded_backup"
         # 旋鈕開啟 → 落到下方 exists/broken 判定
@@ -380,7 +391,7 @@ def scan(root, knobs=None, scan_roots=None):
     md_files = set()
     for subtree in scan_roots:
         md_files.update(root.glob(f"{subtree}/**/*.md"))
-    md_files = sorted(f for f in md_files if "hook-logs/" not in str(f))
+    md_files = sorted(f for f in md_files if not _in_sync_excluded_dir(str(f)))
     categories = {
         "broken": 0,
         "placeholder": 0,
@@ -557,7 +568,7 @@ def fence_audit(root, scan_roots=None):
     md_files = set()
     for subtree in scan_roots:
         md_files.update(root.glob(f"{subtree}/**/*.md"))
-    md_files = sorted(f for f in md_files if "hook-logs/" not in str(f))
+    md_files = sorted(f for f in md_files if not _in_sync_excluded_dir(str(f)))
     entries = []
     scanned = 0
     for f in md_files:

@@ -1475,3 +1475,27 @@ class TestShellDestAmbiguousCwd:
         d1 = json.loads(widened.stdout)
         assert d0["broken_count"] == 0
         assert d1["broken_count"] == 1
+
+    def test_sync_excluded_dirs_are_not_scanned(self, tmp_path):
+        """project-integration/ 是同步工具排除傳遞的目錄，裡面的消費端路徑是刻意的。
+
+        突變驗證：把 project-integration/ 從 SYNC_EXCLUDED_DIRS 拿掉之後，同一份
+        輸入要從 0 broken 變成 1 broken——沒有這一半，這個測試在實作被改壞時仍然通過。
+        """
+        claude = tmp_path / ".claude"
+        pi = claude / "skills" / "demo" / "references" / "project-integration"
+        pi.mkdir(parents=True)
+        (pi / "integration.md").write_text(
+            "本框架的 schema 在 `.claude/rules/core/nonexistent-rule.md`。\n"
+        )
+
+        assert scan_links.scan(tmp_path)["broken_count"] == 0
+
+        original = scan_links.SYNC_EXCLUDED_DIRS
+        try:
+            scan_links.SYNC_EXCLUDED_DIRS = ("hook-logs/",)
+            assert scan_links.scan(tmp_path)["broken_count"] == 1
+        finally:
+            scan_links.SYNC_EXCLUDED_DIRS = original
+
+        assert scan_links.scan(tmp_path)["broken_count"] == 0
