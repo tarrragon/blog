@@ -38,7 +38,7 @@ tags: ["work-log", "debug", "工具"]
 
 **遠端 Android 實機診斷** — 機器不在手邊、只有一條指令通道時怎麼取值與判讀。上一組把判定的依據從程式的推論換成硬體的值，而機器不在手邊時，連取值這件事本身都要先決定信哪一種輸入：
 
-- [adb 遠端診斷 Android 實機：狀態查詢讀到的是元件對自己的描述，畫面與 log 是它實際產生的輸出](adb-remote-android-diagnosis/)
+- [用 adb 遠端診斷 Android 實機](adb-remote-android-diagnosis/)
 
 連線本身（無線偵錯的配對與連接）在 [Android 無線調試連接指南](/other/android_wireless_debug/)，這一組從連上之後開始。
 
