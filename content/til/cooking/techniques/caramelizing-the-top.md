@@ -28,4 +28,4 @@ tags: ["til", "料理", "手法", "焦糖"]
 
 [crème brûlée（烤布蕾）](../../dishes/creme-brulee/)。
 
-底下那層凝凍怎麼做出來的、以及三度的窄窗口從哪裡來，在 [egg custard（蛋液凝凍）](../../forms/egg-custard/)。烤它用的熱水那道保護，在 [水浴烘烤](../bain-marie/)。
+底下那層凝凍怎麼做出來的、以及三度的窄容錯帶從哪裡來，在 [egg custard（蛋液凝凍）](../../forms/egg-custard/)。烤它用的熱水那道保護，在 [水浴烘烤](../bain-marie/)。
