@@ -2,7 +2,7 @@
 title: "模組四：視窗管理與平鋪式工作流"
 date: 2026-06-29
 description: "同時開多個視窗時的排列策略 — 手動貼齊跟自動平鋪的差距在哪、macOS 和 Linux 各有哪些工具、多螢幕怎麼處理、什麼情境值得從浮動切換到平鋪"
-weight: 4
+weight: 5
 tags: ["dotfile", "window-manager", "tiling", "hyprland", "workflow"]
 ---
 

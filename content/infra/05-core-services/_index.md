@@ -2,7 +2,7 @@
 title: "模組五：核心服務上 IaC"
 date: 2026-06-26
 description: "資料庫、運算、儲存、load balancer 怎麼寫進基礎設施程式碼，以及上線順序"
-weight: 5
+weight: 6
 tags: ["infra", "iac", "rds", "compute", "storage"]
 ---
 

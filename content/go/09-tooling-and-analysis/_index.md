@@ -2,7 +2,7 @@
 title: "模組九：Go 做工具鏈與靜態分析"
 date: 2026-04-24
 description: "把 Go 的型別、interface 與標準庫用在寫 CLI、靜態分析與內部工具鏈上，補上後端服務之外的另一條常見落地路徑"
-weight: 9
+weight: 10
 tags: ["go", "tooling"]
 ---
 

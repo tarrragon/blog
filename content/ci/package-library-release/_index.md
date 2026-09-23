@@ -3,7 +3,7 @@ title: "Package / Library Release CI/CD"
 date: 2026-05-06
 description: "整理 SDK / NPM / PyPI / 套件庫的版本發佈、相容性驗證與供應鏈安全流程"
 tags: ["CI", "CD", "package", "library"]
-weight: 18
+weight: 19
 ---
 
 Package / Library Release CI/CD 的核心責任是把可重用套件安全發佈到分發平台，並維持版本語意與相容承諾。它和應用部署不同，重點在版本管理、相容邊界、發佈簽章與撤版策略。

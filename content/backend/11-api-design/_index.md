@@ -2,7 +2,7 @@
 title: "模組十一：API 設計與對外契約"
 date: 2026-07-03
 description: "整理 API 風格選型、資源建模、錯誤模型、版本與相容策略、冪等與對外流量語意的設計判斷標準；主流做法與各流派的深度論證分層收錄"
-weight: 11
+weight: 12
 tags: ["backend", "api-design", "contract"]
 ---
 

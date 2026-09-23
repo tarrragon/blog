@@ -2,7 +2,7 @@
 title: "模組零：infra 是什麼，為什麼 day 1 就要鋪地基"
 date: 2026-06-26
 description: "基礎設施的責任邊界、成熟度階梯，以及地基為什麼總在環境爆炸時才被看見"
-weight: 0
+weight: 1
 tags: ["infra", "iac", "mindset"]
 ---
 

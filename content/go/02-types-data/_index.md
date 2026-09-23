@@ -2,7 +2,7 @@
 title: "模組二：型別、資料與介面"
 date: 2026-04-22
 description: "用 struct、interface、slice、map、常數、embedding、generics 與 JSON tag 表達 Go 資料"
-weight: 2
+weight: 3
 tags: ["go", "type-system"]
 ---
 

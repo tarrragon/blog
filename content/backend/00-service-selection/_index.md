@@ -2,7 +2,7 @@
 title: "模組零：後端服務選型"
 date: 2026-04-23
 description: "從需求類型判斷資料庫、快取、訊息佇列、觀測與部署平台的選型方向"
-weight: 0
+weight: 1
 tags: ["backend", "service-selection"]
 ---
 

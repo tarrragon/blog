@@ -2,7 +2,7 @@
 title: "模組七：桌面環境維護與故障排除"
 date: 2026-06-30
 description: "桌面凍結、compositor 掛了、或某個工具不回應時回來讀 — Linux 桌面的故障隔離模型、常見故障場景的恢復操作、日誌判讀與診斷工具"
-weight: 7
+weight: 8
 tags: ["dotfile", "linux", "hyprland", "troubleshooting"]
 ---
 

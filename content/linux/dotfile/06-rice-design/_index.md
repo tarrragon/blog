@@ -2,7 +2,7 @@
 title: "模組六：桌面 Rice 設計"
 date: 2026-06-29
 description: "Hyprland 桌面從能用到好看好用 — 狀態列、啟動器、通知、鎖屏、配色系統的設計與配置"
-weight: 6
+weight: 7
 tags: ["dotfile", "rice", "waybar", "hyprland", "linux"]
 ---
 

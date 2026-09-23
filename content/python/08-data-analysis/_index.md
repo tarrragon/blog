@@ -2,7 +2,7 @@
 title: "模組八：整批資料的處理與分析"
 date: 2026-08-31
 description: "資料整批進入程式之後的工具選擇，軸是運算發生在資料庫端還是程式的記憶體端"
-weight: 8
+weight: 9
 tags: ["python", "pandas", "data-analysis", "sql"]
 ---
 

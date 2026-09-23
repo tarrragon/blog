@@ -2,7 +2,7 @@
 title: "模組十：Prod Parity — 跨發行版與線上環境對齊"
 date: 2026-07-06
 description: "工作站是 Arch 這種滾動最新版、但要開發的 client 線上跑的是凍結舊環境（PHP 7.2 / MySQL 5.7 / Debian）時回來讀 — dotfile 哲學怎麼跨 distro 落地、怎麼建對齊 prod 的 runtime"
-weight: 10
+weight: 11
 tags: ["dotfile", "container", "prod-parity", "docker"]
 ---
 

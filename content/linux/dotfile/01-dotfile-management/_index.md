@@ -2,7 +2,7 @@
 title: "模組一：管理工具與目錄結構"
 date: 2026-06-29
 description: "要把散落在家目錄的配置檔集中版控時，選 bare repo、stow 還是 chezmoi、目錄該怎麼組織"
-weight: 1
+weight: 2
 tags: ["dotfile", "git", "stow", "chezmoi"]
 ---
 

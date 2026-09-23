@@ -2,7 +2,7 @@
 title: "8.7 Cockroach Labs：分散式 SQL 資料庫"
 date: 2026-04-23
 description: "看 Go 如何支撐分散式資料庫與高一致性系統"
-weight: 7
+weight: 8
 tags: ["go", "case-study", "distributed-systems"]
 ---
 

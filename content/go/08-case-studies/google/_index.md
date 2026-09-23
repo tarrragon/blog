@@ -2,7 +2,7 @@
 title: "8.1 Google：大規模微服務與索引服務"
 date: 2026-04-23
 description: "看 Go 如何支撐 Google 的大規模微服務與資料索引"
-weight: 1
+weight: 2
 tags: ["go", "case-study", "distributed-systems"]
 ---
 

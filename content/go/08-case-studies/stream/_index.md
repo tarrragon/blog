@@ -2,7 +2,7 @@
 title: "8.8 Stream：Feeds 與 Chat"
 date: 2026-04-23
 description: "看 Go 如何支撐 feeds、chat 與即時訊息 SDK"
-weight: 8
+weight: 9
 tags: ["go", "case-study", "networking"]
 ---
 

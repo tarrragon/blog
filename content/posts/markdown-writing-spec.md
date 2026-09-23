@@ -401,14 +401,16 @@ slug 是 URL 的核心識別、跨多個工具共用（Hugo build、mdtools lint
 
 作用範圍：`content/**/*.md`，重點關注 `content/backend/knowledge-cards/`。
 
-| 層級                    | 規則                                                                                              | 實作                                           |
-| ----------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| **L1 連結有效性**       | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案    |
-| **L2 卡片 orphan 偵測** | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片         |
-| **L4 卡片 K4 結構合規** | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數            |
-| **L6 卡片目錄登記**     | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge   |
-| **L7 Fragment 有效性**  | 連結的 `#fragment` 必須命名目標頁上存在的標題                                                     | 建每頁 heading ID 索引 → 比對 edge 的 fragment |
-| **L8 slug 與檔名對齊**  | 頁面若有 `slug`，值必須等於檔名 stem（`_index.md` 豁免）                                          | 取 front matter 的 `slug` → 比對 filename stem |
+| 層級                                | 規則                                                                                              | 實作                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **L1 連結有效性**                   | 所有相對連結 `[...](/posts/markdown-writing-spec/path)` / `[...](/posts/path)` 的目標檔案必須存在 | AST 抽 Link node → 解析相對路徑 → stat 檔案    |
+| **L2 卡片 orphan 偵測**             | 每張卡片至少被 `content/**` 中一篇非卡片正文引用                                                  | 建反向索引 → 找無 incoming edge 的卡片         |
+| **L4 卡片 K4 結構合規**             | 卡片首段與「概念位置」段各至少 1 個相鄰卡片連結                                                   | AST 定位段落節點 → 統計子樹 Link 數            |
+| **L5 section 的 weight 全有或全無** | 同一 section 的頁面要嘛全部有 weight、要嘛全部沒有；`weight: 0` 算沒有（警告層，可登記豁免）      | 逐 section 統計有效 weight 的頁數              |
+| **L6 卡片目錄登記**                 | 每張卡片被自己所屬 cards root 內的某個 `_index.md` 列出                                           | 取 source 為該 root 內 section index 的 edge   |
+| **L7 Fragment 有效性**              | 連結的 `#fragment` 必須命名目標頁上存在的標題                                                     | 建每頁 heading ID 索引 → 比對 edge 的 fragment |
+| **L8 slug 與檔名對齊**              | 頁面若有 `slug`，值必須等於檔名 stem（`_index.md` 豁免）                                          | 取 front matter 的 `slug` → 比對 filename stem |
+| **L9 weight 0 等於未設**            | 頁面與 `_index.md` 都不得設 `weight: 0`                                                           | 取 front matter 的 `weight` → 值為零即報 error |
 
 L3（正文首次出現術語必須連結到卡片）暫不納入，待術語字典（`.codex/briefs/knowledge-web-expansion.md`）啟動後再開。
 
@@ -464,6 +466,14 @@ heading ID 用 Hugo 的 github 型 auto-ID 演算法計算，規則（hugo 建�
 程式碼圍籬裡的示範連結自動豁免，因為它們不是 Link node——走 AST 而非 regex 換到的性質。已知邊界是**不屬於任何標題的 anchor**（腳註反向連結、theme 注入的 ID）：repo 目前沒有這類用法，出現時的修法是讓這條規則認識那個產生器，不是放寬規則。
 
 減少暴露的寫作面做法仍然有效：**標題不內嵌數量**（[#156](/report/name-collections-by-role-not-count/)）。實際斷掉的案例裡有一條的肇因就是標題從「33 個 vendor」改成「51 個 vendor」；現在 L7 會攔下它，而標題本來就不該把數量寫死。注意 `mdtools lint` 的 REF2 只認「數字 + 支柱 / 原則 / 步驟 / 階段 / 面向 / 心法」這組量詞，「三份來源」「三同步」「51 個 vendor」都在它的視野之外。
+
+### L9 擋的是 Hugo 讀成「沒有」的那個值
+
+Hugo 的列表排序是 weight 遞增，而 `weight: 0` 在 Hugo 裡等於沒有設，所以設了 0 的頁面排在每一個有 weight 的同層頁面之後。`_index.md` 也一樣：它的 weight 決定這個 section 在同層 section 之間的位置，設成 0 的 section 在父層列表裡排到最後。0 是章節從 0 起算時最自然寫下的值（`00-philosophy`、`1.0`），所以寫的人讀到的是「第一篇」，讀者看到的是最後一篇。
+
+促成這條規則的量測（2026-09-23）：全站 38 個頁面分布在 14 個 section、另有 8 個 `_index.md` 設了 `weight: 0`，寫入時間從 4 月到 9 月，是逐批累積的。L5 在那之前全數放行，原因是它用「有沒有 `weight:` 這一行」判斷有沒有設，而它自己的註解明寫著 weight 0 是未設——規則的說明與實作對同一個值給了相反的答案。L5 現在把 0 算成未設，一個 section 裡混了 0 就會被判成混合。
+
+L9 另外單獨成條，**採 error 層**，理由有兩個。第一，設 0 想達成的每一種排法都有別的寫法：要把一篇排在最前面用低的正數或負數，要讓 section 按日期排就整個不設。第二，L5 只比對同一個 section 裡的頁面，同層 section 之間的排序只有 L9 看得到。修法是把同一個列表裡 weight 大於等於 0 的都加 1（相對順序不變），或把這一篇改成負數。
 
 ### 為什麼要做跨文件檢查
 

@@ -2,7 +2,7 @@
 title: "模組一：Go 基礎概念"
 date: 2026-04-22
 description: "Go 專案結構、變數、控制流程、package、檔案拆分、函式、應用啟動與日常 tooling"
-weight: 1
+weight: 2
 tags: ["go", "basics"]
 ---
 

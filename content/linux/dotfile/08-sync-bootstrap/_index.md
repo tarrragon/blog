@@ -2,7 +2,7 @@
 title: "模組八：同步、Bootstrap 與環境重建"
 date: 2026-06-29
 description: "換機器或重灌時怎麼還原工作環境 — bootstrap script 設計、套件清單管理、跨機器同步策略、secret 排除，以及 VM 快照和 dotfile 重建兩種思路的場景判讀"
-weight: 8
+weight: 9
 tags: ["dotfile", "bootstrap", "sync"]
 ---
 

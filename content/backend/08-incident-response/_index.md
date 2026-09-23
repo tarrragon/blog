@@ -2,7 +2,7 @@
 title: "模組八：事故處理與復盤"
 date: 2026-05-01
 description: "用 IR 領域詞彙建問題節點、以服務級案例庫累積事故脈絡，先建概念與案例庫再進實作交接"
-weight: 8
+weight: 9
 tags: ["backend", "incident-response", "operations"]
 ---
 

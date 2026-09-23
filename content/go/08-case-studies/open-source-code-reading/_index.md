@@ -2,7 +2,7 @@
 title: "8.11 Go 公開原始碼讀碼路線"
 date: 2026-04-23
 description: "用固定順序閱讀成熟 Go 專案的入口、package、並發與測試"
-weight: 11
+weight: 12
 tags: ["go", "case-study"]
 ---
 

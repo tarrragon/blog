@@ -2,7 +2,7 @@
 title: "模組二：快取與 Redis"
 date: 2026-04-22
 description: "整理快取策略、Redis 資料型別與分散式狀態輔助能力"
-weight: 2
+weight: 3
 tags: ["backend", "cache", "redis"]
 ---
 

@@ -3,7 +3,7 @@ title: "Desktop Client 部署 CI/CD"
 date: 2026-05-06
 description: "整理桌面客戶端（Flutter / Electron / Tauri）的打包、簽章、公證、更新與回退流程"
 tags: ["CI", "CD", "desktop", "client"]
-weight: 17
+weight: 18
 ---
 
 Desktop Client 部署 CI/CD 的核心責任是把可安裝客戶端安全交付到使用者裝置，並維持可更新與可回退能力。它和 web 發布不同，重點在安裝包簽章、公證、更新通道與多平台相容。

@@ -3,7 +3,7 @@ title: "模組四：LLM 應用層原理"
 date: 2026-05-14
 description: "Prompt 技術光譜、RAG、tool use、agent、應用層協議、人機協作、multi-agent、workflow 編排、eval 設計：跨工具不變的概念地圖"
 tags: ["llm", "applications", "rag", "tool-use", "agent", "mcp", "eval"]
-weight: 4
+weight: 5
 ---
 
 > **狀態**：大綱階段、部分章節待完成內容。

@@ -2,7 +2,7 @@
 title: "模組三：訊息佇列與事件傳遞"
 date: 2026-04-22
 description: "整理 durable queue、broker、retry、outbox 與 idempotency 的後端實務"
-weight: 3
+weight: 4
 tags: ["backend", "message-queue", "event-delivery"]
 ---
 

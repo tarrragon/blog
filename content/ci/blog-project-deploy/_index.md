@@ -3,7 +3,7 @@ title: "本 blog 專案部署"
 date: 2026-05-06
 description: "記錄本 blog 專案的 Hugo、Pagefind、GitHub Pages 與 GitHub Actions 部署流程，作為專案維護參考"
 tags: ["CI", "CD", "GitHub Actions", "blog維護"]
-weight: 20
+weight: 21
 ---
 
 本 blog 專案部署是前端靜態站部署的一個具體案例。這個資料夾只記錄本專案實際使用的 Hugo、Pagefind、Playwright、GitHub Pages 與 Claude workflow，不把這些細節當成所有 CI/CD 場域的通用規則。

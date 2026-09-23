@@ -2,7 +2,7 @@
 title: "模組零：Dotfile 心智模型"
 date: 2026-06-29
 description: "換機器、開 VM、重灌系統時需要快速還原開發環境，或想釐清哪些配置該版控、哪些該排除時回來讀"
-weight: 0
+weight: 1
 tags: ["dotfile", "workflow"]
 ---
 

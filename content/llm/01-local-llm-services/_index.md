@@ -3,7 +3,7 @@ title: "模組一：本地 LLM 服務的安裝與應用"
 date: 2026-05-11
 description: "Ollama、LM Studio、llama.cpp 的安裝與差異、VS Code + Continue.dev 整合、模型選型與期望管理"
 tags: ["llm", "local-llm-services", "ollama", "lm-studio", "continue-dev"]
-weight: 1
+weight: 2
 ---
 
 本模組的核心目標是把 [模組零](/llm/00-foundations/) 的心智模型落地到實際安裝步驟與工作流。網路上多數本地 LLM 教學是「列三個工具裝法」，缺乏選型脈絡與期望管理；本模組會先回答「為什麼選這個」，再給「怎麼裝」與「裝完之後該調哪些設定」。

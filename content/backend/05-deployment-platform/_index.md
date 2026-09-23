@@ -2,7 +2,7 @@
 title: "模組五：部署平台與網路入口"
 date: 2026-04-22
 description: "整理 Kubernetes、systemd、load balancer、container 與服務生命週期合約"
-weight: 5
+weight: 6
 tags: ["backend", "deployment", "platform"]
 ---
 

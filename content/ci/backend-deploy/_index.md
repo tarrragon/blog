@@ -3,7 +3,7 @@ title: "後端部署 CI/CD"
 date: 2026-05-06
 description: "整理 API、worker、資料庫 migration、rollout、rollback 與 runtime 設定在後端部署 CI/CD 中的責任"
 tags: ["CI", "CD", "backend", "deployment"]
-weight: 11
+weight: 12
 ---
 
 後端部署 CI/CD 的核心責任是把可執行服務安全推進到 runtime 環境。後端部署不只發布程式碼，還要處理資料庫 [Migration](/ci/knowledge-cards/migration/)（backend 深入見 [Migration](/backend/knowledge-cards/migration/)）、外部依賴、runtime config、[Readiness / Health Check](/ci/knowledge-cards/readiness-health-check/)（backend 深入見 [Readiness](/backend/knowledge-cards/readiness/) / [Health Check](/backend/knowledge-cards/health-check/)）、流量切換與 rollback。

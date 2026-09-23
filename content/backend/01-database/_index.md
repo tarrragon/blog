@@ -2,7 +2,7 @@
 title: "模組一：資料庫與持久化"
 date: 2026-04-22
 description: "整理 SQL、transaction、migration 與 repository adapter 的後端實務"
-weight: 1
+weight: 2
 tags: ["backend", "database", "storage"]
 ---
 

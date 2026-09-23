@@ -3,7 +3,7 @@ title: "模組六：本地 LLM 的安全與權限"
 date: 2026-05-12
 description: "個人 dev 在自己機器上跑本地 LLM 的安全議題：模型供應鏈、推論伺服器綁定、tool use 副作用、prompt injection 在 IDE、跨雲端 / 本地資料邊界"
 tags: ["llm", "security", "local-llm", "tool-use", "prompt-injection", "supply-chain"]
-weight: 6
+weight: 7
 ---
 
 本模組的核心目標是把「個人 dev 在自己機器上跑本地 LLM 寫 code」這條工作流上會碰到的安全議題拆成可操作的判讀。跟 [模組一](/llm/01-local-llm-services/) / [模組五](/llm/05-discrete-gpu/) 是同一條讀者旅程的延伸：模組一/五處理「怎麼跑得起來」、本模組處理「跑起來後該注意什麼」。

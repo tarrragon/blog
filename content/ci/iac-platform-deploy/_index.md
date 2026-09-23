@@ -3,7 +3,7 @@ title: "IaC / Platform 部署 CI/CD"
 date: 2026-05-06
 description: "整理 Terraform / Helm / Pulumi 等基礎設施變更的 plan-apply、drift 與回復流程"
 tags: ["CI", "CD", "IaC", "platform"]
-weight: 16
+weight: 17
 ---
 
 IaC / Platform 部署 CI/CD 的核心責任是把基礎設施變更轉成可審查、可追溯、可回復的流程。它和應用部署不同，主要風險在 state、權限、[Infrastructure Drift](/ci/knowledge-cards/infrastructure-drift/) 與不可逆資源變更。

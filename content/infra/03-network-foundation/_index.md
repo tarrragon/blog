@@ -2,7 +2,7 @@
 title: "模組三：網路地基 — VPC 與分層"
 date: 2026-06-26
 description: "VPC、public / private subnet 切分、route table、NAT、security group 設計"
-weight: 3
+weight: 4
 tags: ["infra", "network", "vpc", "security-group"]
 ---
 

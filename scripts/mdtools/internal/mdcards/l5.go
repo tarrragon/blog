@@ -68,7 +68,8 @@ func checkL5SectionWeightConsistency(g *Graph, exempt []string) []report.Violati
 		if s.anyPath == "" || fn.Path < s.anyPath {
 			s.anyPath = fn.Path
 		}
-		if weightFieldRe.Match(frontMatterOf(fn.Src)) {
+		// `weight: 0` counts as unset, matching Hugo; L9 reports it on its own.
+		if hasEffectiveWeight(frontMatterOf(fn.Src)) {
 			s.weighed++
 			s.present = append(s.present, filepath.Base(fn.Path))
 		} else {

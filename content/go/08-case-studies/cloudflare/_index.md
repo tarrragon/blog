@@ -2,7 +2,7 @@
 title: "8.6 Cloudflare：DNS、SSL 與長連線服務"
 date: 2026-04-23
 description: "看 Go 如何處理大量連線、網路邊界與高延遲環境"
-weight: 6
+weight: 7
 tags: ["go", "case-study", "networking"]
 ---
 

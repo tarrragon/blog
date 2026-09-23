@@ -3,7 +3,7 @@ title: "Data Pipeline 部署 CI/CD"
 date: 2026-05-06
 description: "整理 ETL / stream / batch 任務的部署、回填、重跑與資料正確性 gate"
 tags: ["CI", "CD", "data-pipeline", "deployment"]
-weight: 15
+weight: 16
 ---
 
 Data Pipeline 部署 CI/CD 的核心責任是把資料處理邏輯推進到生產環境，同時維持資料正確性與可回復性。它和 API 部署不同，重點在 schema 相容、[Backfill](/ci/knowledge-cards/backfill/)、[Checkpoint](/ci/knowledge-cards/checkpoint/) 與 [Rerun](/ci/knowledge-cards/rerun/) 風險。

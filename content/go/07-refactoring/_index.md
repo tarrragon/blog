@@ -2,7 +2,7 @@
 title: "模組七：重構實戰"
 date: 2026-04-22
 description: "用 Go 的 package、interface、state 與測試邊界重構逐漸變大的服務"
-weight: 7
+weight: 8
 tags: ["go", "refactoring"]
 ---
 

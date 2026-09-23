@@ -3,7 +3,7 @@ title: "App 部署 CI/CD"
 date: 2026-05-06
 description: "整理 mobile / desktop app 的簽章、版本、審核、分批發布與回退限制"
 tags: ["CI", "CD", "app", "deployment"]
-weight: 12
+weight: 13
 ---
 
 App 部署 CI/CD 的核心責任是把可安裝的 client [artifact](/ci/knowledge-cards/artifact/) 安全送到發行通道。App 發布和 web 部署最大的差異是使用者裝置會保留舊版，app store 審核、[App Signing](/ci/knowledge-cards/app-signing/)、版本號與分批發布會直接影響交付節奏。

@@ -3,7 +3,7 @@ title: "模組零：基礎知識與心智模型"
 date: 2026-05-11
 description: "建立本地 LLM 的心智模型、釐清 MLX / MTP / oMLX 等常被混淆的術語、Apple Silicon 記憶體現實"
 tags: ["llm", "foundations", "mac"]
-weight: 0
+weight: 1
 ---
 
 本模組的核心目標是把「本地跑 LLM」這件事拆成可討論的工程概念。先建立心智模型再進入工具選擇，可以避開大量網路文章把 framework、加速技巧、伺服器混為一談的陷阱；讀完模組零再進模組一，就能用同一套詞彙判讀任何新的本地 LLM 工具是在解哪一層的問題。

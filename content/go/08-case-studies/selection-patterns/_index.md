@@ -2,7 +2,7 @@
 title: "8.0 Go 的選型案例總覽"
 date: 2026-04-23
 description: "用真實案例辨識 Go 常出現的服務選型條件"
-weight: 0
+weight: 1
 tags: ["go", "case-study", "architecture"]
 ---
 

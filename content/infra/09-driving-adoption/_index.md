@@ -2,7 +2,7 @@
 title: "模組九：怎麼把 infra 推動起來"
 date: 2026-06-26
 description: "技術正確不等於推得動 — 信任赤字、期望值對齊、知識共享，infra 落地的組織課題"
-weight: 9
+weight: 10
 tags: ["infra", "adoption", "stakeholder", "team"]
 ---
 

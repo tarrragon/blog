@@ -2,7 +2,7 @@
 title: "模組三：標準庫實戰"
 date: 2026-04-22
 description: "使用 fmt、time、encoding/json、net/http、log/slog、context、defer、flag 與 os/env 解決實務問題"
-weight: 3
+weight: 4
 tags: ["go", "stdlib"]
 ---
 

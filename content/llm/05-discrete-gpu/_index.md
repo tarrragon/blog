@@ -3,7 +3,7 @@ title: "模組五：Windows / Linux + 獨立 GPU"
 date: 2026-05-12
 description: "消費級 PC（Windows / Linux + NVIDIA / AMD 獨立 GPU）跑本地 LLM 的硬體判讀、MoE CPU 卸載、KV cache 量化與 llama.cpp 調參"
 tags: ["llm", "discrete-gpu", "nvidia", "amd", "windows", "linux", "llama-cpp", "moe", "vram"]
-weight: 5
+weight: 6
 ---
 
 本模組的核心目標是把 [模組零](/llm/00-foundations/) 的心智模型落地到「Windows / Linux + 獨立 GPU」這條硬體路線。跟 [模組一](/llm/01-local-llm-services/)（Apple Silicon Mac）平行、共用模組零的詞彙跟 [knowledge-cards](/llm/knowledge-cards/)、但硬體判讀模型本質不同：Mac 是統一記憶體一塊預算、PC 是 VRAM + 系統 RAM 兩塊分層預算、要分開判讀。

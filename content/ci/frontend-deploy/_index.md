@@ -3,7 +3,7 @@ title: "前端部署 CI/CD"
 date: 2026-05-06
 description: "整理靜態站、SPA、CDN、preview environment 與前端 artifact 的 CI/CD 注意事項"
 tags: ["CI", "CD", "frontend", "deployment"]
-weight: 10
+weight: 11
 ---
 
 前端部署 CI/CD 的核心責任是把瀏覽器可執行的靜態產物安全交付到 hosting、CDN 或 [preview environment](/ci/knowledge-cards/preview-environment/)。前端部署常見輸出是 HTML、CSS、JavaScript、圖片與搜尋索引；它的風險集中在 build [artifact](/ci/knowledge-cards/artifact/)、路由、cache、環境變數與使用者可見回歸。

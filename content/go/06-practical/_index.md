@@ -2,7 +2,7 @@
 title: "模組六：實戰指南"
 date: 2026-04-22
 description: "用 Go 的核心概念完成常見服務功能：輸入、事件、狀態、背景工作、記錄與儲存邊界"
-weight: 6
+weight: 7
 tags: ["go", "best-practices"]
 ---
 

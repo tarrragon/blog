@@ -2,7 +2,7 @@
 title: "模組五：Hyprland 配置"
 date: 2026-06-29
 description: "要在 Linux 上設定 Hyprland 平鋪式桌面時回來讀"
-weight: 5
+weight: 6
 tags: ["dotfile", "hyprland", "wayland", "linux"]
 ---
 

@@ -3,7 +3,7 @@ title: "Knowledge Cards"
 date: 2026-05-06
 description: "用原子化卡片整理 CI/CD 章節的核心術語，讓流程文章專注在判讀與決策"
 tags: ["CI", "CD", "Knowledge Cards"]
-weight: 0
+weight: 1
 ---
 
 CI/CD 知識卡片的核心責任是建立共同語言。流程文章會使用 pipeline、gate、artifact、rollout、rollback、environment protection 等術語；卡片負責定義它們在系統中的位置、可觀察訊號與設計責任。

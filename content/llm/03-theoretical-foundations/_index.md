@@ -3,7 +3,7 @@ title: "模組三：LLM 的理論基礎"
 date: 2026-05-11
 description: "從神經網路、embedding、attention、Transformer 架構、訓練到 sampling：LLM 內部運作的完整理論圖像"
 tags: ["llm", "theoretical-foundations"]
-weight: 3
+weight: 4
 ---
 
 本模組整理 LLM 內部運作的理論機制。模組零（[基礎知識與心智模型](/llm/00-foundations/)）回答「裝跟用」的問題、模組二（[數學基礎](/llm/02-math-foundations/)）提供數學工具；本模組把數學工具組合起來、解釋「LLM 內部到底發生什麼事」。

@@ -2,7 +2,7 @@
 title: "模組八：Go 案例與讀碼路線"
 date: 2026-04-23
 description: "用一家公司一章的方式理解 Go 在真實服務中的使用方式"
-weight: 8
+weight: 9
 tags: ["go", "case-study"]
 ---
 

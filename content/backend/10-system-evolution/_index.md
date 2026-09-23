@@ -2,7 +2,7 @@
 title: "模組十：系統演進與遷移"
 date: 2026-05-27
 description: "處理服務拆分、跨服務重構、大型遷移與雲端切換的執行紀律 — 設計階段的選型判斷見模組零、執行階段的高風險變更收斂在本模組"
-weight: 10
+weight: 11
 tags: ["backend", "evolution", "migration"]
 ---
 

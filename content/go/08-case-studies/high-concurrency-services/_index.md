@@ -2,7 +2,7 @@
 title: "8.10 Go 的高併發服務案例"
 date: 2026-04-23
 description: "從即時服務、邊緣網路與資料平台辨識 Go 的高併發使用情境"
-weight: 10
+weight: 11
 tags: ["go", "case-study", "concurrency", "performance"]
 ---
 

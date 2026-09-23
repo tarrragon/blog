@@ -2,7 +2,7 @@
 title: "模組二：身分與憑證地基 — IAM 與 OIDC"
 date: 2026-06-26
 description: "IAM role / policy 設計、最小權限，以及用 OIDC 短期憑證取代長期 access key"
-weight: 2
+weight: 3
 tags: ["infra", "iam", "oidc", "security"]
 ---
 

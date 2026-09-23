@@ -2,7 +2,7 @@
 title: "模組三：終端機與編輯器"
 date: 2026-06-29
 description: "終端機相關工具的配置檔散落在不同位置、不確定哪些該進 dotfile repo 時回來讀"
-weight: 3
+weight: 4
 tags: ["dotfile", "terminal", "tmux", "neovim"]
 ---
 

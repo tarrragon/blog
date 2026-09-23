@@ -2,7 +2,7 @@
 title: "模組四：可觀測性平台"
 date: 2026-04-22
 description: "整理 log、metric、trace、dashboard 與 alert 的後端操作實務"
-weight: 4
+weight: 5
 tags: ["backend", "observability", "operations"]
 ---
 

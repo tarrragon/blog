@@ -2,7 +2,7 @@
 title: "模組七：infra 走 PR 流程與自動化護欄"
 date: 2026-06-26
 description: "infra 變更走 PR → plan → review diff → 合併 → apply，配 fmt / validate / tflint / checkov / tfsec 與 Atlantis 自動化，讓基礎設施可審查、可回溯、可交接"
-weight: 7
+weight: 8
 tags: ["infra", "ci-cd", "review", "tflint", "checkov"]
 ---
 

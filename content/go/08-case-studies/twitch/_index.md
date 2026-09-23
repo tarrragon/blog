@@ -2,7 +2,7 @@
 title: "8.5 Twitch：直播與聊天室系統"
 date: 2026-04-23
 description: "看 Go 如何服務低延遲、高併發的即時系統"
-weight: 5
+weight: 6
 tags: ["go", "case-study", "concurrency", "websocket"]
 ---
 

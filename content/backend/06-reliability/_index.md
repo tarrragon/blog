@@ -2,7 +2,7 @@
 title: "模組六：可靠性驗證流程"
 date: 2026-05-01
 description: "用 SRE 領域詞彙建問題節點、以服務級案例庫累積驗證脈絡，先建概念與案例庫再進實作交接"
-weight: 6
+weight: 7
 tags: ["backend", "reliability", "sre"]
 ---
 

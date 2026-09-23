@@ -2,7 +2,7 @@
 title: "8.9 ByteDance / CloudWeGo：微服務基礎設施"
 date: 2026-04-23
 description: "看 Go 如何從單一服務語言沉澱成微服務治理與框架"
-weight: 9
+weight: 10
 tags: ["go", "case-study", "networking"]
 ---
 

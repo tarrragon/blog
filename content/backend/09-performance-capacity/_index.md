@@ -2,7 +2,7 @@
 title: "模組九：效能工程與容量規劃"
 date: 2026-05-12
 description: "把『目前配置能撐多少、要加多少機器』變成可量化、可驗證、可改進的工程流程"
-weight: 9
+weight: 10
 tags: ["backend", "performance", "capacity"]
 ---
 

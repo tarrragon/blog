@@ -2,7 +2,7 @@
 title: "模組一：最小可行 IaC — state 地基與 Console 唯讀鐵律"
 date: 2026-06-26
 description: "Terraform / OpenTofu 選型、remote state 與 lock，以及「Console 只能看不能改」鐵律"
-weight: 1
+weight: 2
 tags: ["infra", "iac", "terraform", "state"]
 ---
 

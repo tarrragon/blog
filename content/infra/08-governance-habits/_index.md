@@ -2,7 +2,7 @@
 title: "模組八：治理好習慣 — 規模長大後不失控的最小節奏"
 date: 2026-06-26
 description: "tagging 規範、secrets 不進 code、成本可見性、最小可行節奏，規模長大後不失控"
-weight: 8
+weight: 9
 tags: ["infra", "governance", "tagging", "secrets", "cost"]
 ---
 

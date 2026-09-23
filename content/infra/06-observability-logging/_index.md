@@ -2,7 +2,7 @@
 title: "模組六：可觀測性與 log 一併寫進 code"
 date: 2026-06-26
 description: "log group、metric、alarm 跟基礎設施同生命週期管理，出事時追得到查得到"
-weight: 6
+weight: 7
 tags: ["infra", "observability", "logging", "alarm"]
 ---
 

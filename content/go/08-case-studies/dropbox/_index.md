@@ -2,7 +2,7 @@
 title: "8.3 Dropbox：從 Python 遷移到 Go"
 date: 2026-04-23
 description: "看性能關鍵後端如何從 Python 逐步轉向 Go"
-weight: 3
+weight: 4
 tags: ["go", "case-study", "performance"]
 ---
 

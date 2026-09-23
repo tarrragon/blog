@@ -189,7 +189,7 @@ rg -n "\\]\\((/|content/|\\.\\./\\.\\./)|(/report/|/posts/|/skills/|content/repo
 
 Hugo 的列表排序是 weight 遞增、**未設 weight 的頁面排在全部有 weight 的頁面之後**、同 weight 才用日期遞減。這條語意衍生出幾個操作規則（背景見 [#221](/report/lint-scope-must-be-explicit-fact/)）：
 
-- **weight 全有或全無**：同一 section 混用會讓缺 weight 的頁面靜默沉到列表底部。`mdtools cards` 的 `L5-section-weight-consistency` 會對混合 section 警告。刻意用低 weight 置頂單篇的 section（如 `content/linux/tools/cli`）在 `scripts/mdtools/internal/rules/config.go` 的 `WeightExemptSections` 登記 — 豁免要有記錄、不能是沒人決定過的遺漏。
+- **weight 全有或全無**：同一 section 混用會讓缺 weight 的頁面靜默沉到列表底部。`mdtools cards` 的 `L5-section-weight-consistency` 會對混合 section 警告。刻意用低 weight 置頂單篇的 section（如 `content/linux/tools/cli`）在 `scripts/mdtools/internal/rules/config.go` 的 `WeightExemptSections` 登記 — 豁免要有記錄、不能是沒人決定過的遺漏。`weight: 0` 在 Hugo 就是未設，頁面與 `_index.md` 都一樣會沉到同層最後；`cards` 的 `L9-weight-zero-is-unset` 以 error 擋下它，章節從 0 起算時最容易寫出這個值。
 - **後補文章的 weight 要放「屬於它的位置」**：值要落在該 section 既有編號帶之內、順序對得上這篇在模組裡的位置。只確認沒跟別人重號就填上去是不夠的，重號與否跟排序對不對是兩件事。實例：`07-security` 的 7.27 曾被給 27（其餘章節 72-95）而排到整個模組第一篇、`postgresql` 的 pgbouncer-config 曾被給 100 而沉到最後。L5 只查全有全無、對「有 weight 但值錯」沉默 — 補號前先看該 section 的既有編號帶（postgresql 有預留空號、mysql 是連續序）。
 - **新增卡片型目錄**（必填 `title` / `date` / `description` / `weight` 的）時在 `scripts/mdtools/internal/rules/config.go` 的 `FrontMatter.CardPaths` 登記（跟上面那條的 `WeightExemptSections` 同一個檔），否則卡片層 frontmatter 檢查永遠不涵蓋它、缺欄位不會被攔。規則存在不等於規則涵蓋、未納管目錄的零 error 跟合規目錄的零 error 訊號相同。
 - **frontmatter 的 date 是台北時間**：`hugo.toml` 已設 `timeZone = 'Asia/Taipei'`。拿掉這行的話、UTC 的 CI 在台北 00:00-08:00 之間 build 會把當日日期的文章判成未來文章而排除。

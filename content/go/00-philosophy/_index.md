@@ -2,7 +2,7 @@
 title: "模組零：Go 選型與設計哲學"
 date: 2026-04-22
 description: "先判斷何時選擇 Go，再理解它的設計取捨"
-weight: 0
+weight: 1
 tags: ["go", "philosophy"]
 ---
 

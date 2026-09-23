@@ -2,7 +2,7 @@
 title: "模組九：從個人到團隊"
 date: 2026-06-29
 description: "個人 dotfile 管理的思想要延伸到團隊開發環境標準化時回來讀 — devcontainer、nix、商業環境配置管理"
-weight: 9
+weight: 10
 tags: ["dotfile", "devcontainer", "nix", "team"]
 ---
 

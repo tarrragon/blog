@@ -3,7 +3,7 @@ title: "Serverless 部署 CI/CD"
 date: 2026-05-06
 description: "整理 Lambda / Cloud Functions / Edge Functions 的打包、版本推進、權限與回退流程"
 tags: ["CI", "CD", "serverless", "deployment"]
-weight: 14
+weight: 15
 ---
 
 Serverless 部署 CI/CD 的核心責任是把函式型服務安全推進到受管執行環境。它和長駐服務不同，風險集中在 artifact 打包、runtime 相容、權限設定、版本別名與冷啟動行為。

@@ -2,7 +2,7 @@
 title: "模組五：錯誤處理與測試"
 date: 2026-04-22
 description: "用明確錯誤路徑、testing、table-driven test 與時間注入驗證 Go 程式"
-weight: 5
+weight: 6
 tags: ["go", "error-handling", "testing"]
 ---
 

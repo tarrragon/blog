@@ -103,6 +103,9 @@ type CardRules struct {
 	// L1 only ever checks that the file exists — so a disagreement 404s
 	// while every existing check stays green.
 	CheckSlugFilenameAlignment bool
+	// L9: `weight: 0` is unset to Hugo, so the page (or section index) sorts
+	// after every weighted sibling. Error level: there is no legitimate use.
+	CheckWeightZero bool
 	K4ConceptPositionTitle string // heading text that marks the "concept position" section
 	ContentScope           string // "content/**"
 }
@@ -192,6 +195,7 @@ func Default() Config {
 			CheckIndexRegistration:        true,
 			CheckSectionWeightConsistency: true,
 			CheckSlugFilenameAlignment:    true,
+			CheckWeightZero:               true,
 			WeightExemptSections: []string{
 				// modern-cli-replacements is the section's overview article
 				// and is pinned above the otherwise date-sorted tool posts.

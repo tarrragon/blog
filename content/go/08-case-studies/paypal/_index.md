@@ -2,7 +2,7 @@
 title: "8.2 PayPal：支付平台與 NoSQL / build pipelines"
 date: 2026-04-23
 description: "看 Go 如何處理支付平台、NoSQL proxy 與內部工程流水線"
-weight: 2
+weight: 3
 tags: ["go", "case-study"]
 ---
 

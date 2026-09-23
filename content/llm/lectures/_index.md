@@ -3,7 +3,7 @@ title: "LLM 課程筆記"
 date: 2026-05-14
 description: "AI / LLM 相關公開課程的講稿整理。保留英文原文、用文章結構重新組織、便於檢索與回看。"
 tags: ["llm", "lectures", "notes"]
-weight: 99
+weight: 100
 ---
 
 本資料夾收錄 LLM / AI 相關公開課程的講稿整理。

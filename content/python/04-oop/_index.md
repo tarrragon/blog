@@ -2,7 +2,7 @@
 title: "模組四：物件導向設計"
 date: 2026-01-20
 description: "Python 的物件導向設計與設計模式"
-weight: 4
+weight: 5
 tags: ["python", "oop", "class"]
 ---
 

@@ -3,7 +3,7 @@ title: "Docker / Image 部署 CI/CD"
 date: 2026-05-06
 description: "整理 container image 的 build、tag、scan、registry、promotion 與 runtime 部署注意事項"
 tags: ["CI", "CD", "Docker", "container"]
-weight: 13
+weight: 14
 ---
 
 Docker / image 部署 CI/CD 的核心責任是把可執行環境封裝成可追溯的 image。Image 同時承載 application、runtime、OS package、dependency 與安全掃描結果，因此它是可以被推進、掃描與回溯的部署產物；而 [Container Registry](/ci/knowledge-cards/container-registry/) 提供保存與推進的供應鏈節點。

@@ -2,7 +2,7 @@
 title: "模組四：環境分離與模組化"
 date: 2026-06-26
 description: "dev / staging / prod 切分、目錄結構 vs workspace、用可重用 module 避免環境漂移"
-weight: 4
+weight: 5
 tags: ["infra", "iac", "environment", "module"]
 ---
 
