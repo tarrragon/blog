@@ -35,7 +35,7 @@ tags: ["sql", "database", "query"]
 
 前兩支的答案方向相反而問的是同一個性質的兩面，所以它們不是互斥的分類：第二方的實例就住在第一支的 [1.2](/sql/clause-evaluation-order/) 與 [1.9](/sql/grouping-key-decides-the-unit/) 裡（同一個寫法 SQLite 接受而 DuckDB 與 MySQL 拒絕）。[1.1](/sql/declarative-not-procedural/) 是分岔點——它把書寫順序、求值順序與執行順序分開，前兩者屬第一支，第三者屬第二支。
 
-**用第二支之前要先讀得出手上這個資料庫的現況**，而查法不在查詢語言裡：名字實際存成什麼查系統目錄——資料庫把自己有哪些表、哪些欄位也存成表，那幾張就是系統目錄（`pg_tables` / `sqlite_master`）、自己有哪些授權查 `information_schema.role_table_grants`、有哪些索引查 `pg_indexes` 或 `PRAGMA index_list`、有沒有統計查 `pg_stats` 或 `sqlite_stat1`、哪些約束真的生效了查 `information_schema.table_constraints` 或 `PRAGMA foreign_key_list`、字串套哪一條比較規則查 `pg_database.datcollate`、`@@collation_database` 或 `PRAGMA collation_list`。
+**用第二支之前要先讀得出手上這個資料庫的現況**，而查法不在查詢語言裡：名字實際存成什麼查系統目錄——資料庫把自己有哪些表、哪些欄位也存成表，那幾張就是系統目錄（`pg_tables` / `sqlite_master`）、自己有哪些授權查 `information_schema.role_table_grants`、有哪些索引查 `pg_indexes` 或 `PRAGMA index_list`、有沒有統計查 `pg_stats` 或 `sqlite_stat1`、哪些約束宣告了查 `information_schema.table_constraints` 或 `PRAGMA foreign_key_list`、生不生效另外查（SQLite 查連線上的 `PRAGMA foreign_keys`，PostgreSQL 查 `pg_constraint.convalidated`）、字串套哪一條比較規則查 `pg_database.datcollate`、`@@collation_database` 或 `PRAGMA collation_list`。
 
 ## 章節
 
@@ -109,7 +109,7 @@ tags: ["sql", "database", "query"]
 | 同一段查詢換一個資料庫之後，比對名字或帳號的條件命中的列變了 | [1.15](/sql/string-comparison-and-collation/)：字串的相等由 collation 決定，各家預設不同                                                                                                                                                       |
 | 建了索引，而 `LIKE 前綴%` 的查詢還是掃全表                   | [1.15](/sql/string-comparison-and-collation/) 的「索引的比較規則要跟條件的對得上」一節；條件形狀那一半在 [Sargable](/sql/knowledge-cards/sargable/)                                                                                            |
 | 想知道最佳化器憑什麼決定要不要走索引                         | [Cardinality 與 Selectivity（基數與選擇率）](/sql/knowledge-cards/cardinality-and-selectivity/)：同一個索引對不同的值會有相反的決定                                                                                                            |
-| 同一段查詢搬到另一家引擎，跑得動而答案不一樣                 | [1.19](/sql/engine-leniency-and-portability/)：四家的分組每一條都不同，而差異被發現的成本分四級                                                                                                                                                |
+| 同一段查詢搬到另一家引擎，跑得動而答案不一樣                 | [1.19](/sql/engine-leniency-and-portability/)：四家的分組每一條都不同，而差異按發聲的位置分四級                                                                                                                                                |
 | 外連接寫了，加上條件之後該留的人不見了                       | [1.5](/sql/on-describes-where-filters/)：條件放 `ON` 還是 `WHERE`                                                                                                                                                                              |
 | 好幾個 `JOIN` 疊起來，不確定某個 `LEFT` 保護了誰             | [1.4](/sql/join-left-operand-accumulates/)：左運算元是累積結果                                                                                                                                                                                 |
 | 手上是一句業務描述，不知道連接該從哪裡下筆                   | [1.3](/sql/join-starts-from-the-relationship/) 的「從一句業務描述走到查詢」一節                                                                                                                                                                |
@@ -181,16 +181,21 @@ INSERT INTO 評價 VALUES (9001,101,5);
 
 ## Backlog
 
-| 項目                                           | 類型   | 前置條件                 | 規模 |
-| ---------------------------------------------- | ------ | ------------------------ | ---- |
-| 覆蓋索引                                       | 知識卡 | 無                       | 1    |
-| 儲存引擎                                       | 知識卡 | 無                       | 1    |
-| 系統目錄                                       | 知識卡 | 無                       | 1    |
-| 「小表量不出計畫差異」收一個住址               | 跨模組 | 三處各自宣告的段落已存在 | 小   |
-| 反向連結回補（backend / ddd / linux 共十餘處） | 跨模組 | 無                       | 中   |
-| CTE（含「遞迴 CTE 當數列產生器」這個用法）     | 知識卡 | 無                       | 1    |
-| 1.22 代價表的軸從寫法換成設計決定              | 主章   | 無                       | 小   |
-| 執行計畫卡在 1.22 與 backend 1.16 的回填       | 跨模組 | 無                       | 小   |
+| 項目                                           | 類型   | 前置條件                                                                                                                                    | 規模 |
+| ---------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| 覆蓋索引                                       | 知識卡 | 無                                                                                                                                          | 1    |
+| 儲存引擎                                       | 知識卡 | 無                                                                                                                                          | 1    |
+| 系統目錄                                       | 知識卡 | 寫的時候分開「宣告存不存在」與「生不生效」：目錄記的是宣告                                                                                  | 1    |
+| 「小表量不出計畫差異」收一個住址               | 跨模組 | 三處各自宣告的段落已存在                                                                                                                    | 小   |
+| 反向連結回補（backend / ddd / linux 共十餘處） | 跨模組 | 無                                                                                                                                          | 中   |
+| CTE（含「遞迴 CTE 當數列產生器」這個用法）     | 知識卡 | 無                                                                                                                                          | 1    |
+| 1.22 代價表的軸從寫法換成設計決定              | 主章   | 無                                                                                                                                          | 小   |
+| 執行計畫卡在 1.22 與 backend 1.16 的回填       | 跨模組 | 無                                                                                                                                          | 小   |
+| 首節段名「同一 X…」                            | 主章   | 7/21 篇的第一個段名以「同一個 / 段 / 組」起首；#362 處置之前就存在，挑三到四篇改成那一節的結果句                                            | 小   |
+| 站點「上一篇 / 下一篇」在 SQL 頁上方向相反     | 跨模組 | layouts 的 PrevInSection / NextInSection 在 SQL 頁把「下一篇」指向前一篇，1.0（weight 0）排到 1.22 之後；末節拆掉之後它是文末唯一的往後指標 | 小   |
+| 1.19「四家的答案就統一了」只量過三家           | 案例   | 可攜性那一節說把比較規則寫進欄位宣告之後四家答案統一，而 1.15 只量了 SQLite、PostgreSQL、MySQL；DuckDB 要實跑                               | 1 句 |
+| 前綴縮寫的節名引用                             | 跨模組 | 本頁問題落點表三處、1.13 兩處、1.18 一處只寫了目的地節名的前半，grep 驗不到；補成完整節名                                                   | 小   |
+| 1.20 的落空形態補上別名                        | 主章   | 1.7 說別名「也是一種宣告」，而 1.20〈每一個關鍵字都在宣告一件事〉列的落空形態沒有別名                                                       | 1 句 |
 
 上一輪登記的四項——外鍵與參照完整性、`ORDER BY` 與分頁、字串值的大小寫、基數與選擇率——都已寫成篇或卡。
 
@@ -212,4 +217,4 @@ CTE、1.22 代價表的軸、執行計畫卡的回填這幾列由一輪三回合
 
 **從問題走到工具的判準怎麼排序**還沒決定要不要做，所以不建表登記——要看上面那張問題表用起來夠不夠，它本身已經是那個缺口的一種修法。
 
-上一輪登記的「引擎的寬鬆度與可攜性之間的取捨」已寫成 [1.19](/sql/engine-leniency-and-portability/)。當時判斷要先確認的那件事（那些位置的形態分兩級、判讀成本差一個量級）在寫的過程中細分成四級，而分級的依據也換了——從「看不看得見」換成「要花多少工夫才知道有這件事」。
+上一輪登記的「引擎的寬鬆度與可攜性之間的取捨」已寫成 [1.19](/sql/engine-leniency-and-portability/)。當時判斷要先確認的那件事（那些位置的形態分兩級、判讀成本差一個量級）在寫的過程中細分成四級，而分級的依據也換了——從「看不看得見」換成「在什麼位置發聲」，它決定的是什麼時候會知道有這件事。

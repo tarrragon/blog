@@ -76,9 +76,9 @@ ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint f
 
 同一段文字在 PostgreSQL 與 SQLite 底下建得出約束，在 MySQL 底下建不出來，而 MySQL 在建表時沒有給任何警告。
 
-**表的儲存引擎**。同一家 MySQL 裡還有第二條讓宣告消失的路，而它多半不是有人刻意選的——舊系統的建表模板、從舊備份還原回來的表、或複製過來的一段舊 DDL，都會把儲存引擎一起帶進來。改用表層的 `FOREIGN KEY` 寫法之後，把表建在 MyISAM 上，語法照收、警告照樣是空的，而 `information_schema.REFERENTIAL_CONSTRAINTS` 仍然回零列，指不到顧客的訂單插得進去。這兩條路的差別在於要改哪裡才修得好——一條要改寫法，另一條要換儲存引擎。外鍵只是引擎替文字補上決定的其中一處；把這一類差異按「什麼時候會被發現」分四級、並依組態數決定可攜性維持到哪一級，在 [1.19 哪一家最寬鬆只答得了一條軸，可攜性要逐條決定](/sql/engine-leniency-and-portability/)。
+**表的儲存引擎**。同一家 MySQL 裡還有第二條讓宣告消失的路，而它多半不是有人刻意選的——舊系統的建表模板、從舊備份還原回來的表、或複製過來的一段舊 DDL，都會把儲存引擎一起帶進來。改用表層的 `FOREIGN KEY` 寫法之後，把表建在 MyISAM 上，語法照收、警告照樣是空的，而 `information_schema.REFERENTIAL_CONSTRAINTS` 仍然回零列，指不到顧客的訂單插得進去。這兩條路的差別在於要改哪裡才修得好——一條要改寫法，另一條要換儲存引擎。
 
-這幾個位置的共同點是**外鍵只在寫入的那一刻現身**：查詢的文字裡沒有一個字提到約束，讀的時候也沒有差別。所以「這條保證在不在」要另外查，而查法在系統目錄那一側——PostgreSQL 用 `information_schema.table_constraints`、MySQL 用 `information_schema.REFERENTIAL_CONSTRAINTS`、SQLite 用 `PRAGMA foreign_key_list(表名)`。**建表語句裡看得到宣告，系統目錄裡看得到的才是生效的那些。** 外鍵至少還有一個生效的狀態可查；`LEFT JOIN` 的 `LEFT` 也宣告了一件事——預期有配不到的列——而引擎從不查證它，照著算完就結束，宣告落空時查詢照樣回正確答案。引擎從不查證的那一種宣告在 [1.20 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)；兩篇合起來是同一個問題的兩邊：一段文字說的話，什麼時候會被執行。
+這幾個位置的共同點是**外鍵只在寫入的那一刻現身**：查詢的文字裡沒有一個字提到約束，讀的時候也沒有差別。所以「這條保證在不在」要另外查，而查法在系統目錄那一側——PostgreSQL 用 `information_schema.table_constraints`、MySQL 用 `information_schema.REFERENTIAL_CONSTRAINTS`、SQLite 用 `PRAGMA foreign_key_list(表名)`。**系統目錄記的是宣告存不存在，生不生效要另外查**：SQLite 在 `PRAGMA foreign_keys` 關著的時候，`PRAGMA foreign_key_list` 照樣列出那條外鍵，而孤兒列插得進去——生效與否要查的是連線上的 `PRAGMA foreign_keys`；PostgreSQL 的 `NOT VALID` 同樣會出現在 `table_constraints` 裡，要看 `pg_constraint.convalidated`。
 
 生效之後還有一個「什麼時候檢查」的維度。預設是每一句寫入當場檢查，而 PostgreSQL 的 `DEFERRABLE INITIALLY DEFERRED` 把檢查推到交易提交的那一刻——中間的每一句都通過，`COMMIT` 才回 `violates foreign key constraint`。互相指向的兩張表要一起寫入時需要這個推遲——部門有一欄指向它的主管、員工有一欄指向所屬部門，兩張表都得先有對方的一列才寫得進去。這種形態下沒有推遲就沒有第一筆資料。代價是錯誤浮現的位置離寫錯的那一句遠了一整個交易。
 
@@ -149,4 +149,8 @@ DETAIL:  Key (訂單編號)=(777) is not present in table "訂單".
 
 **業務規則不在射程裡。** 外鍵回答的問題只有一個：這個值在那張表裡找不找得到。「評價要在出貨之後」「同一張訂單只能退款一次」這一類的規則裡沒有這個形狀，`CHECK` 與應用層各自接住其中一部分。
 
-第三項連著上一支的分工：[1.13](/sql/well-formed-is-not-correct/) 說「答案對不對」這一層有一部分判準交得出去，而交得出去的界線落在**判斷需要什麼**——在寫入的那一刻用該筆資料本身、或它指向的那一列就判得完的，寫得成約束。外鍵是這條界線上最靠外的那一種：它要讀另一張表的內容才判得出來，而讀的範圍到那一列為止。
+業務規則那一項連著上一組文章的分工：[1.13](/sql/well-formed-is-not-correct/) 說「答案對不對」這一層有一部分判準交得出去，而交得出去的界線落在**判斷需要什麼**——在寫入的那一刻用該筆資料本身、或它指向的那一列就判得完的，寫得成約束。外鍵是這條界線上最靠外的那一種：它要讀另一張表的內容才判得出來，而讀的範圍到那一列為止。
+
+## 一段文字說的話會不會被執行，外鍵在答案最明確的那一端
+
+一段文字說的話什麼時候會被執行，外鍵是答案最明確的那一端：它有生效的狀態可查，查得到之後保證就在。`LEFT JOIN` 的 `LEFT` 也宣告了一件事——預期有配不到的列——而引擎從不查證它，照著算完就結束，宣告落空時查詢照樣回正確答案；那一端在 [1.20 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)。夾在中間的是引擎替文字補上的決定：外鍵在某一家被靜默丟掉就是其中一例，這一類差異按發聲的位置分四級、並依組態數決定可攜性維持到哪一級，在 [1.19 哪一家最寬鬆只答得了一條軸，可攜性要逐條決定](/sql/engine-leniency-and-portability/)。
