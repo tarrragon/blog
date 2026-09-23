@@ -82,7 +82,7 @@ INSERT INTO Person SELECT 100000 + i, 'hot@x.com' FROM n;
    `--SEARCH q USING COVERING INDEX ix (email=?)
 ```
 
-子查詢仍然逐列執行，而每一次從 `SCAN`（掃全表）變成 `SEARCH`（透過[索引](/sql/knowledge-cards/indexing/)定位）。逐列執行這個結構沒變，變的是每一次的單價。
+子查詢仍然逐列執行，而每一次從 `SCAN`（掃全表）變成 `SEARCH`（透過[索引](/sql/knowledge-cards/indexing/)定位）。逐列執行這個結構沒變，變的是每一次的單價。計畫上其餘的字（`COVERING` 是什麼意思、`TEMP B-TREE` 為什麼出現）由 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 承擔；索引本身的代價落在寫入端，這一點寫在 [Index（索引）](/sql/knowledge-cards/indexing/) 那張卡。
 
 ## 分組的代價只隨資料量走
 
@@ -110,25 +110,17 @@ INSERT INTO Person SELECT 1000000 + i, 'hot@x.com' FROM n;
 
 分組那一欄不管重複多少次都是同一個值，因為它從頭到尾沒有展開任何配對。**這是結構上的差別，不是調校問題。**
 
+
+## 寫法決定代價的有界例外：條件把索引欄包進函式
+
+本篇的結論有一個邊界。條件寫成 `WHERE lower(email) = 'hot@x.com'` 的時候，`email` 上的索引排好的是原值，而條件問的是摺過的值，兩者對不起來，引擎只能掃全表；同一個條件寫成 `WHERE email = 'hot@x.com'` 就能查找。這時寫法決定的是引擎**能不能用**那個索引，而不是它在幾條可行的路裡挑哪一條——所以它是本篇結論的前提：可行的路由條件的形狀決定，挑哪一條才由資料與索引決定。[Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/) 給判斷一個條件能不能走索引的標準，以及三種改寫方向。
+
 ## 所以「哪個比較快」要怎麼問
 
-補上四項再問：**資料有多大、分布長什麼樣、有哪些索引、引擎有沒有[統計資訊](/sql/knowledge-cards/query-statistics/)。** 最後一項是 [1.1](/sql/declarative-not-procedural/) 實測過的——同一段查詢在跑過 `ANALYZE` 之前與之後拿到不同的計畫。
+補上四項再問：**資料有多大、分布長什麼樣、有哪些索引、引擎有沒有[統計資訊](/sql/knowledge-cards/query-statistics/)。** 最後一項是 [1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 實測過的——同一段查詢在跑過 `ANALYZE` 之前與之後拿到不同的計畫；那一篇也從語言的性質推了一次，代價為什麼一開始就落在查詢文字之外。
 
 資料量決定常數項會不會被放大。分布決定會不會踩到某個寫法的最壞情況——上面的自連接就是被重複程度打敗的。索引決定每一次查找的單價，而上面那組量測裡，索引的有無讓同一段查詢差了三個量級。
 
-這三項都在資料庫那一側，所以「哪個比較快」是一個要向引擎問的問題，不是比較兩段文字就答得出來的問題。而且要問兩次：一次拿到現在這個狀態下的計畫，一次改動其中一項（加索引、換資料量）之後再拿一次，看它變不變。問一次只拿得到一個狀態下的答案，而上面那兩張表證明狀態換了排名就換。各家的問法不同，SQLite 是 `EXPLAIN QUERY PLAN`，PostgreSQL 是 `EXPLAIN`。
+這三項都在資料庫那一側，所以「哪個比較快」是一個要向引擎問的問題，不是比較兩段文字就答得出來的問題。而且要問兩次：一次拿到現在這個狀態下的計畫，一次改動其中一項（加索引、換資料量）之後再拿一次，看它變不變。問一次只拿得到一個狀態下的答案，而上面那兩張表證明狀態換了排名就換。各家的問法不同，SQLite 是 `EXPLAIN QUERY PLAN`，PostgreSQL 是 `EXPLAIN`。本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給三層工具的分工與四個 production case。
 
-
-## 換掉其中一項就走到另一篇
-
-本篇把索引的有無、資料的重複程度與量測用的引擎都當成可以抽換的條件，抽換任何一項，代價的判讀就要重算。
-
-**往回問代價為什麼一開始就落在文字之外**：那是宣告式這個選擇的直接後果。[1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/) 從語言的性質推一次，並把書寫、求值、執行三種順序分開。
-
-**這個結論有一個有界的例外**：條件把索引欄位包進函式裡的時候，寫法決定的是引擎能不能用那個索引，而非它在幾條路裡挑哪一條。[Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/) 給判斷標準與三種改寫方向。
-
-**問這件事對怎麼寫查詢意味著什麼**：代價既然由資料與索引決定，那查詢的文字該為誰而寫。[1.21 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/) 量了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開反而快二十幾倍的——並給出分岔時該動查詢還是動 schema 的判準。
-
-**把計畫上那些字讀懂**：`SCAN` 與 `SEARCH` 差在哪、`COVERING` 是什麼意思，由 [Query Plan（執行計畫）](/sql/knowledge-cards/query-plan/) 與 [Index（索引）](/sql/knowledge-cards/indexing/) 兩張卡承擔。索引的代價落在寫入端這一點也在後者。
-
-**把引擎換成真實系統**：本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給三層工具的分工與四個 production case。
+代價既然由資料與索引決定，查詢的文字就可以先為讀它的人而寫。[1.21 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/) 量了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開反而快二十幾倍的——並給出分岔時該動查詢還是動 schema 的判準。
