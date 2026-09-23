@@ -19,11 +19,13 @@ tags: ["sql", "database", "query"]
 
 **想把一段陌生的查詢讀準**，四篇走完就夠：[1.2](/sql/clause-evaluation-order/) 每一步手上有什麼、[1.4](/sql/join-left-operand-accumulates/) 連接鏈的左邊是什麼、[1.5](/sql/on-describes-where-filters/) 條件在哪一步生效、[1.20](/sql/declared-intent-vs-behaviour/) 文字說的話跟查詢的行為對不對得上。
 
+**手上是一個已經發生的症狀**（數字對不上、查詢很慢、換引擎之後結果變了），跳過上面兩條直接查[問題落點表](/sql/#帶著問題來的話這張表給落點)，它按症狀指到篇。修完手上那一題之後，[1.0](/sql/the-seven-steps/) 給的是那一題落在整條路線的哪一步。
+
 **從 [DataFrame](/sql/knowledge-cards/dataframe/) 那一側過來、沒寫過 SQL 的讀者**：[1.1](/sql/declarative-not-procedural/) 不預設 SQL 經驗，它講的是這個語言與逐步執行的程式差在哪。讀完它再回這張表挑落點。
 
 ## 推導源頭
 
-**SQL 是宣告式的：寫下的是要什麼結果，而怎麼算、名字指向誰、送出的人被允許做什麼都不在那段文字裡。** 各篇的判斷標準都折算回這一條，而它分出三支，本分類的章節照三支排列。
+**SQL 是宣告式的：寫下的是要什麼結果，而怎麼算、名字指向誰、送出的人被允許做什麼都不在那段文字裡。** 各篇的判斷標準都折算回這一條，而它分出三支。**機制各篇照三支排列**；另有兩篇不屬於任何一支——一篇在最前面畫整條路線、一篇在最後面走完它，兩篇都按做事的先後排而不按誰決定結果排（兩個軸的關係在 [1.0](/sql/the-seven-steps/) 裡展開）。
 
 **第一支問「結果集由什麼決定」。** 答案是一個明確的模型，而那個模型與直覺不同——子句的先後、配對關係寫在哪、連接的左右、條件擺哪一邊、分組的鍵、輸出的單位收不收起來、那批列排成什麼樣，每一項都由[關聯代數](/sql/knowledge-cards/relational-algebra/)的組合規則定死，而每一項的規則都有一處與讀者的直覺相反。這一支要學的就是那個模型，而它的收尾一篇處理直覺錯掉之後會發生什麼——[1.13](/sql/well-formed-is-not-correct/) 說明引擎驗的是這段文字合不合法，「問對了沒有」的判準在提問的人手上，所以那一類錯誤回的是一批形狀正確的列。
 
@@ -128,6 +130,9 @@ tags: ["sql", "database", "query"]
 | 換一個資料庫之後找不到表                                     | [1.14](/sql/identifier-rules/)：識別字送進引擎會被改寫                                                                                                                                                                                         |
 | 查詢回 `permission denied`                                   | [1.16](/sql/privilege-model/)：權限的預設是什麼都不給                                                                                                                                                                                          |
 | 想知道引擎到底照什麼順序做事                                 | [1.1](/sql/declarative-not-procedural/)：三種順序各自由誰決定                                                                                                                                                                                  |
+| 加了索引，而同一段查詢變得更慢                               | [1.22](/sql/requirement-to-shipped-query/) 的第五節：引擎放棄它自己會建的覆蓋索引、改用你給的那個非覆蓋索引，於是每一列內層多回表一次；判讀要向計畫問兩次                                                                                      |
+| 設計時不確定某一欄該不該允許為空、某個鍵該不該唯一           | [backend 1.16 設計時下的每一個決定](/backend/01-database/design-decisions-price-every-query/)：六個 schema 決定各自替查詢定了什麼價、代價在什麼條件下浮現、改回來要付什麼                                                                      |
+| 手上是一個要交出去的需求，想知道從哪裡下手到哪裡算完         | [1.0](/sql/the-seven-steps/)：七個決定與各自決錯的症狀；[1.22](/sql/requirement-to-shipped-query/) 在一個真實需求上把七步走一遍                                                                                                                |
 
 **選工具之前先把業務事實說成一句話。** 一句「沒消費過的顧客在訂單表裡不會有任何一列」就足以排除掉計數那一整條路——因為計數預設有東西可以數，而那些人一列都沒有。這一步在 [1.9](/sql/grouping-key-decides-the-unit/) 走了完整一遍。
 
@@ -169,6 +174,7 @@ INSERT INTO 評價 VALUES (9001,101,5);
 ## 跨分類引用
 
 - → [backend 模組一 資料庫與持久化](/backend/01-database/)：查詢寫對之後的工程議題，交易邊界、遷移與每請求的查詢次數預算都在那裡
+- → [backend 1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/)：**查詢還不存在的時候**那一側。本分類每一篇都把表的形狀當成給定的，而那個形狀是建表時的六個決定造出來的——欄位允不允許為空、鍵唯不唯一、長欄位放哪一張表、常一起取的資料切在幾張表、字串的比較規則寫在哪一層、外鍵生不生效。六條各自替查詢定了什麼價在那一篇有實測
 - → [PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/)：在真實系統上讀計畫要用的三層工具與四個 production case，本分類只到概念層
 - → [Test Oracle（判斷標準來源）](/testing/knowledge-cards/test-oracle/)：一段查詢問對了沒有，判準從哪裡取得、各種取法各自抓不到什麼，在測試那一側有完整的分類；[1.13](/sql/well-formed-is-not-correct/) 只把它放回 SQL 的兩層裡講
 - → [python 模組八 8.4 同一套關聯代數](/python/08-data-analysis/same-relational-algebra/)：同一組操作換成 DataFrame 介面的四組對應，以及對應斷掉的三個位置

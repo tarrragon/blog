@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.31.0 — `comparison-axis-comes-from-the-readers-decision` 依 Round 3 修兩處判準缺口：判別的入口從「逐欄唸標題」改成「找出本篇在比較什麼」（實測該卡指名的三處證據裡有兩處零個表格，綁在表格上會在入口判不適用而放行）；「先寫下讀者要交出的產出」補取值來源（本篇所屬集合已宣告的定位，不是當下猜）與「讀不出來要記下來、不要代填」。SKILL.md 的適用邊界改掉一個會在該卡自己的案例上觸發的豁免條款——判別軸從產物型別換成產物的去留（丟掉的作業不適用、會被接手維護的適用），並要求把答案寫進審查紀錄；`writing-articles.md` 補上同一段適用邊界（Round 2 漏掉的第二個引用處）。
+
 **Version**: 1.30.0 — `comparison-axis-comes-from-the-readers-decision` 依 Round 1 審查更新：段標與 report 版對齊（`三種形態`→`失效的形態`）、新增〈論述基礎與限制〉（單一分類單次判定、觸發條件靠一個未量測的預設落地、判讀表接不住三種形態裡的第三種）；SKILL.md 引用處補適用邊界——依該卡自己的主張，射程限制放在卡上沒有效力，要由引用它的規範寫。
 
 **Version**: 1.29.0 — 新增 `comparison-axis-comes-from-the-readers-decision` principle：並排多種做法時，比較的軸要落在讀者接下來要交出的那份產出上，不落在做法彼此的差異上，也不落在「這個做法假設了什麼」（主詞仍是做法）。SKILL.md 意圖顯性節加一段、觸發路由表加一列、Triggers 補六個詞；`writing-articles.md` 規則七在 A/B/C/D 樣板之前加〈套樣板之前先定軸〉——樣板的每個區塊是一個做法、每個欄位的主詞也是做法，而多數教材的讀者要交的是一份設計而不是一段程式。
