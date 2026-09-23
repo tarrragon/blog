@@ -2,7 +2,7 @@
 title: "Delivery Mode"
 date: 2026-04-23
 description: "說明訊息投遞模式如何影響可靠性、延遲與成本"
-weight: 69
+weight: 70
 ---
 
 

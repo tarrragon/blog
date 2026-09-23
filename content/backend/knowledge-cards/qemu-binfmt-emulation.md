@@ -2,7 +2,7 @@
 title: "QEMU binfmt Emulation（跨架構模擬）"
 date: 2026-07-06
 description: "docker 跑非原生架構的 image 報 exec format error、mysql:5.7 在 Apple Silicon 要 platform: linux/amd64、或跨平台 build 特別慢時回來讀 — 非原生 image 怎麼被模擬跑起來"
-weight: 130
+weight: 131
 tags: ["backend", "deployment", "docker", "container", "knowledge-cards"]
 ---
 

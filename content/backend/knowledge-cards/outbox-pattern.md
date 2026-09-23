@@ -2,7 +2,7 @@
 title: "Outbox Pattern"
 date: 2026-04-23
 description: "說明資料庫狀態變更與事件發布如何透過 outbox 維持一致"
-weight: 26
+weight: 27
 ---
 
 

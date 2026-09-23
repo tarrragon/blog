@@ -2,7 +2,7 @@
 title: "Hot Partition"
 date: 2026-05-12
 description: "說明分散式 KV / OLTP 中、單一 partition 流量遠超其他的容量問題"
-weight: 227
+weight: 228
 ---
 
 Hot partition 的核心概念是「partition 之間流量不均、最熱 partition 先 saturate、整體名義容量達不到」。partition key 設計不均勻是主因。可先對照 [Saturation Point](/backend/knowledge-cards/saturation-point/)。

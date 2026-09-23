@@ -3,7 +3,7 @@ title: "Threat Model"
 tags: ["backend", "knowledge-card", "security", "threat-model"]
 date: 2026-08-17
 description: "說明系統如何被攤成資產、邊界與攻擊者能力，讓風險的位置可以逐項列舉"
-weight: 439
+weight: 440
 ---
 
 Threat model 的核心概念是「把系統攤成資產、邊界與攻擊者能力，讓風險的位置可以逐項列舉，而不是靠印象判斷哪裡危險」。它是列舉框架，產出的是一張「哪個資產在哪條邊界上、面對什麼能力的攻擊者」的對照，具體的濫用情境由 [abuse case](/backend/knowledge-cards/abuse-case/) 承接。 可先對照 [Trust Boundary](/backend/knowledge-cards/trust-boundary/)。

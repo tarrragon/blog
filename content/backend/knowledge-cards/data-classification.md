@@ -3,7 +3,7 @@ title: "Data Classification"
 tags: ["資料分級", "Data Classification"]
 date: 2026-04-23
 description: "說明資料分級如何決定保護、存取、保留與匯出規則"
-weight: 124
+weight: 125
 ---
 
 

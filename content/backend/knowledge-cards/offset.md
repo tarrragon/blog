@@ -2,7 +2,7 @@
 title: "Offset"
 date: 2026-06-22
 description: "說明 consumer 在事件流中的讀取位置與重放基準"
-weight: 74
+weight: 75
 tags: ["backend", "message-queue"]
 ---
 

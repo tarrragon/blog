@@ -2,7 +2,7 @@
 title: "給非工程背景決策者的 infra 說明"
 date: 2026-06-26
 description: "從管理視角解釋基礎設施在解決什麼營運問題、不做的代價、出事怎麼處理，讓參與資源決策的人能判斷投入的優先級"
-weight: 0
+weight: 1
 tags: ["infra", "adoption", "non-technical"]
 ---
 

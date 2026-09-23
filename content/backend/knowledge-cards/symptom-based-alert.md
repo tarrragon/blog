@@ -2,7 +2,7 @@
 title: "Symptom-Based Alert"
 date: 2026-06-22
 description: "說明告警應優先偵測使用者可感知症狀"
-weight: 108
+weight: 109
 tags: ["backend", "observability"]
 ---
 

@@ -2,7 +2,7 @@
 title: "9.5 工具決策：regex 到 AST、Python 到 Go 的 tripwire"
 date: 2026-04-24
 description: "什麼訊號代表工具該升級到下一個層次；用 WRAP 框架做語言與實作層的技術決策；延遲決策的成本"
-weight: 5
+weight: 6
 tags: ["go", "tooling", "best-practices"]
 ---
 

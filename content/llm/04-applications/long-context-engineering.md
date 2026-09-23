@@ -3,7 +3,7 @@ title: "4.11 Long context engineering"
 date: 2026-05-12
 description: "128K / 1M context 模型怎麼用：claimed vs effective context、lost-in-the-middle、context 設計策略、Long context vs RAG 取捨"
 tags: ["llm", "applications", "long-context", "rag"]
-weight: 11
+weight: 12
 ---
 
 長 [context window](/llm/knowledge-cards/context-window/) 模型（128K、1M、甚至更長）在 2024-2026 變成主流標配。但「聲稱 context」跟「實用 effective context」之間有顯著落差、不理解這條鴻溝會讓 long context 變成資源浪費而非能力延伸。本章把 long context 的實際運作、典型失敗模式、prompt 設計策略、跟 [RAG](/llm/knowledge-cards/rag/) 的取捨拆成可操作的判讀。

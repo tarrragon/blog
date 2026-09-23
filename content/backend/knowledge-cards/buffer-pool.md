@@ -2,7 +2,7 @@
 title: "Buffer Pool"
 date: 2026-05-22
 description: "說明資料庫如何用記憶體快取磁碟頁，以降低 I/O 並影響查詢效能"
-weight: 347
+weight: 348
 ---
 
 Buffer Pool 的核心概念是資料庫在記憶體中快取磁碟上的資料頁，讓重複存取的資料不必每次讀磁碟。它是資料庫最主要的記憶體消耗者，命中率直接決定查詢要走記憶體還是 I/O。它是全域共用的快取，和每條連線各自配置的 [Per-Connection Memory](/backend/knowledge-cards/per-connection-memory/) 是兩種不同的記憶體。

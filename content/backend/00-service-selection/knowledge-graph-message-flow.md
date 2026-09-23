@@ -2,7 +2,7 @@
 title: "0.9 知識網：訊息與事件決策路徑"
 date: 2026-04-23
 description: "把 broker、queue、ack、retry、DLQ、replay 與 idempotency 串成可操作的非同步決策語言"
-weight: 9
+weight: 10
 tags: ["backend", "service-selection"]
 ---
 

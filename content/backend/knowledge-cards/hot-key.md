@@ -2,7 +2,7 @@
 title: "Hot Key"
 date: 2026-04-23
 description: "說明單一 key 承受大量讀寫時如何形成容量瓶頸"
-weight: 21
+weight: 22
 ---
 
 

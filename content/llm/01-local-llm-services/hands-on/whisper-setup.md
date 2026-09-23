@@ -3,7 +3,7 @@ title: "Hands-on：安裝 whisper.cpp 做語音轉文字"
 date: 2026-05-12
 description: "brew install whisper-cpp、下載 GGML model、Metal 加速、ffmpeg 餵 WAV、484ms 完成 7 秒音訊轉錄"
 tags: ["llm", "hands-on", "whisper", "speech-to-text"]
-weight: 2
+weight: 3
 ---
 
 本篇紀錄在 Apple Silicon Mac 上裝 `whisper.cpp` 並驗證英文語音轉文字。選 whisper.cpp 而非 `openai-whisper`（Python 版）的理由：

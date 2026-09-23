@@ -2,7 +2,7 @@
 title: "SLI / SLO"
 date: 2026-06-22
 description: "說明服務品質指標與服務品質目標如何連接產品承諾"
-weight: 34
+weight: 35
 tags: ["backend", "observability"]
 ---
 

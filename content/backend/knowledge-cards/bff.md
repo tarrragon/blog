@@ -2,7 +2,7 @@
 title: "BFF"
 date: 2026-04-23
 description: "說明 Backend for Frontend 如何聚合下游服務並服務特定客戶端"
-weight: 156
+weight: 157
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Dark Launch"
 date: 2026-05-12
 description: "新功能上線但暫不開放 UI 入口、走 production traffic 但對用戶不可見的發布模式"
-weight: 234
+weight: 235
 ---
 
 Dark launch 的核心概念是「程式碼上線、走 production traffic、但用戶看不到 UI 入口」。跟 [shadow traffic](/backend/knowledge-cards/shadow-traffic/) 不同 — dark launch 是 *真正寫入 production*、shadow 只是複製比對。可先對照 [Feature Flag](/backend/knowledge-cards/feature-flag/)。

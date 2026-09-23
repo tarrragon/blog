@@ -2,7 +2,7 @@
 title: "Migration Gate"
 date: 2026-04-24
 description: "說明遷移流程何時可以進入下一階段或正式切換"
-weight: 140
+weight: 141
 ---
 
 

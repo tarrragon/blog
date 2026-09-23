@@ -2,7 +2,7 @@
 title: "Rolling Update"
 date: 2026-04-23
 description: "說明逐批替換服務版本的發版策略與風險控制"
-weight: 152
+weight: 153
 ---
 
 

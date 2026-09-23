@@ -2,7 +2,7 @@
 title: "Integration Adapter"
 date: 2026-04-23
 description: "說明外部系統接入層如何轉換介面與隔離差異"
-weight: 0
+weight: 1
 ---
 
 

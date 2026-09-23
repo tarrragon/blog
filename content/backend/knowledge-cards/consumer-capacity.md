@@ -2,7 +2,7 @@
 title: "Consumer Capacity"
 date: 2026-04-23
 description: "說明 consumer 群組每秒能穩定處理多少工作"
-weight: 70
+weight: 71
 ---
 
 

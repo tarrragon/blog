@@ -2,7 +2,7 @@
 title: "Trace ID"
 date: 2026-06-22
 description: "說明分散式追蹤中同一條呼叫路徑的識別碼"
-weight: 106
+weight: 107
 tags: ["backend", "observability"]
 ---
 

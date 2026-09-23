@@ -3,7 +3,7 @@ title: "1.2 llama.cpp：底層推論引擎"
 date: 2026-05-11
 description: "GGUF 格式、量化、MTP 仍 beta；多數讀者不需要直接接觸，Ollama 已經包好"
 tags: ["llm", "llama-cpp", "server"]
-weight: 2
+weight: 3
 ---
 
 llama.cpp 是本地 LLM 生態的**底層推論引擎**、2023 年由 ggerganov 釋出、後來成為 Ollama、LM Studio 等高層工具的內部 backend。它的核心承諾是「用純 C++ 寫一個高效能的 [GGUF](/llm/knowledge-cards/gguf/) 模型推論器、跨平台、CPU/GPU/Apple Metal 都能跑」。

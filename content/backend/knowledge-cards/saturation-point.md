@@ -2,7 +2,7 @@
 title: "Saturation Point"
 date: 2026-05-12
 description: "說明系統從線性穩態進入 latency 指數成長區的關鍵流量點"
-weight: 222
+weight: 223
 ---
 
 Saturation point 的核心概念是「系統 latency 從線性穩態進入指數成長的流量臨界點」。容量曲線分三段：linear → knee → cliff。knee point 是設計容量上限（safe operating zone 的邊界）、cliff 是系統極限（已不可用）。可先對照 [Load Test](/backend/knowledge-cards/load-test/)。

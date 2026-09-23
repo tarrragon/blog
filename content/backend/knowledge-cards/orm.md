@@ -2,7 +2,7 @@
 title: "ORM（Object-Relational Mapping）"
 date: 2026-09-01
 description: "看到程式用類別與方法描述查詢時，查它交出去的是什麼、以及哪些行為在程式碼上讀不出來"
-weight: 442
+weight: 443
 tags: ["backend", "orm", "persistence", "database", "knowledge-card"]
 ---
 

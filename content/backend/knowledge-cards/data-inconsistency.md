@@ -3,7 +3,7 @@ title: "Data Inconsistency"
 tags: ["資料不一致", "Data Inconsistency"]
 date: 2026-04-23
 description: "說明多份資料暫時不同步時如何判斷產品後果與修復責任"
-weight: 7
+weight: 8
 ---
 
 

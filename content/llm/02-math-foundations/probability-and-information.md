@@ -3,7 +3,7 @@ title: "2.1 機率與資訊論"
 date: 2026-05-11
 description: "LLM 輸出的本質是機率分佈：softmax、cross-entropy、KL divergence、perplexity 在訓練與推論中的角色"
 tags: ["llm", "math", "probability"]
-weight: 1
+weight: 2
 ---
 
 LLM 輸出的本質是「下一個 [token](/llm/knowledge-cards/token/) 的機率分佈」。模型 forward pass 結束後、會對詞彙表中每個 token 給出一個分數（[logit](/llm/knowledge-cards/logit/)）；[softmax](/llm/knowledge-cards/softmax/) 把分數轉成合法的機率分佈、之後用各種 sampling 策略挑下一個 token。訓練時用 cross-entropy loss 衡量「模型預測的機率分佈跟真實答案差多少」、最佳化方向就是讓兩者盡量靠近。

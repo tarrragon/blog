@@ -2,7 +2,7 @@
 title: "Redelivery Loop"
 date: 2026-04-23
 description: "說明同一訊息反覆投遞失敗如何消耗 consumer 容量"
-weight: 64
+weight: 65
 ---
 
 

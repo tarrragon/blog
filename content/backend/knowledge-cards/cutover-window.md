@@ -2,7 +2,7 @@
 title: "Cutover Window"
 date: 2026-05-11
 description: "說明正式切換發生的觀察窗口、停止條件與回退判讀範圍"
-weight: 144
+weight: 145
 tags: ["backend", "knowledge-card", "migration", "reliability"]
 ---
 

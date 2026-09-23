@@ -2,7 +2,7 @@
 title: "Consistency Level"
 date: 2026-05-13
 description: "資料系統對讀寫一致性語意的可選擇層級"
-weight: 252
+weight: 253
 ---
 
 Consistency level 的核心概念是「系統對同一筆資料在不同節點可見性的承諾強度」。它的責任是把一致性從抽象口號轉成可配置語意，常用於 [eventual-consistency](/backend/knowledge-cards/eventual-consistency/)、[session-consistency](/backend/knowledge-cards/session-consistency/) 與 [linearizability](/backend/knowledge-cards/linearizability/) 之間的取捨。

@@ -2,7 +2,7 @@
 title: "Rollback Condition"
 date: 2026-05-11
 description: "說明決策執行後出現哪些訊號時要撤回、回退或改路線"
-weight: 160
+weight: 161
 tags: ["backend", "knowledge-card", "incident-response", "reliability"]
 ---
 

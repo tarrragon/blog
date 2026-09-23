@@ -2,7 +2,7 @@
 title: "Error Budget"
 date: 2026-06-22
 description: "說明 SLO 允許的失敗額度如何影響發版與可靠性投入"
-weight: 101
+weight: 102
 tags: ["backend", "observability"]
 ---
 

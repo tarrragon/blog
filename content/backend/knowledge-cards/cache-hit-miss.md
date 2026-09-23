@@ -2,7 +2,7 @@
 title: "Cache Hit / Miss"
 date: 2026-04-23
 description: "說明快取命中與未命中如何影響讀取成本與下游壓力"
-weight: 88
+weight: 89
 ---
 
 

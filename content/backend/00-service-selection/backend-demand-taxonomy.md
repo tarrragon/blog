@@ -2,7 +2,7 @@
 title: "0.0 後端需求分類地圖"
 date: 2026-04-23
 description: "先從需求形狀辨識狀態、讀取、非同步、即時、診斷、交付與可靠性問題"
-weight: 0
+weight: 1
 tags: ["backend", "service-selection"]
 ---
 

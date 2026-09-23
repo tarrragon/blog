@@ -2,7 +2,7 @@
 title: "Peak Forecast"
 date: 2026-05-12
 description: "說明預期峰值流量的預測方法 — 容量規劃的第一個輸入"
-weight: 228
+weight: 229
 ---
 
 Peak forecast 的核心概念是「估計未來 N 個月的峰值流量」。容量公式 = 預期峰值 × (1 + headroom)、forecast 錯了下游全部錯。可先對照 [Headroom Budget](/backend/knowledge-cards/headroom-budget/)。

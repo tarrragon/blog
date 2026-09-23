@@ -2,7 +2,7 @@
 title: "Cache Tag Purge"
 date: 2026-05-27
 description: "CDN / cache 用 tag / surrogate key 批量失效多個關聯資源"
-weight: 358
+weight: 359
 ---
 
 Cache tag purge（也稱 surrogate key purge）的核心責任是讓 CDN / cache 批量失效操作可控 — 寫入快取時除了 cache key 還附加多個 tag；purge 時用 tag 觸發、一次失效所有帶該 tag 的資源、用單一 tag 取代逐個 cache key 列舉。是大型內容系統的事實標準 — 比版本化路徑通用、比逐個 purge 可控。跟 [cache invalidation](/backend/knowledge-cards/cache-invalidation/) 是執行手段關係（cache invalidation 規定「何時清」、本卡提供「怎麼批量清」）。

@@ -3,7 +3,7 @@ title: "Steady State"
 tags: ["Steady State", "Chaos Engineering", "穩態"]
 date: 2026-05-07
 description: "說明可靠性實驗與事故恢復如何定義系統應維持的可接受狀態"
-weight: 319
+weight: 320
 ---
 
 Steady state 的核心概念是「系統在正常或受控退化期間仍應維持的服務能力」。它連接 [SLI / SLO](/backend/knowledge-cards/sli-slo/)、[chaos test](/backend/knowledge-cards/chaos-test/) 與 [degradation](/backend/knowledge-cards/degradation/)，讓實驗與事故共用同一組成功條件。

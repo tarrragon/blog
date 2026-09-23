@@ -2,7 +2,7 @@
 title: "Bulkhead"
 date: 2026-04-23
 description: "說明 bulkhead 如何用資源分艙限制故障擴散"
-weight: 55
+weight: 56
 ---
 
 

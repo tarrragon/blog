@@ -2,7 +2,7 @@
 title: "Correlation ID"
 date: 2026-06-22
 description: "說明跨事件或跨服務的關聯識別碼如何支援排障"
-weight: 104
+weight: 105
 tags: ["backend", "observability"]
 ---
 

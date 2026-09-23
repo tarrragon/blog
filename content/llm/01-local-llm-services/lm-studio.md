@@ -3,7 +3,7 @@ title: "1.1 LM Studio：GUI 探索模型"
 date: 2026-05-11
 description: "GUI 取向的本地推論伺服器：內建模型瀏覽器、speculative decoding 設定面板、適合探索新模型"
 tags: ["llm", "lm-studio", "server"]
-weight: 1
+weight: 2
 ---
 
 LM Studio 跟 Ollama 一樣屬於[本地推論伺服器層](/llm/00-foundations/three-layer-architecture/)、但定位完全不同：Ollama 是 CLI-first、LM Studio 是 GUI-first。它的核心承諾是「不打開終端機也能玩本地 LLM」、特別適合對 Hugging Face model hub（社群最大的開源模型 registry、提供權重檔下載與比較）、[量化](/llm/knowledge-cards/quantization/)等級、[speculative decoding](/llm/knowledge-cards/speculative-decoding/) 還在摸索階段的使用者。

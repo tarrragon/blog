@@ -3,7 +3,7 @@ title: "4.19 Agent memory 分層架構"
 date: 2026-05-12
 description: "Agent 在 context window 之外管理長期狀態的設計：working / short-term / long-term episodic / semantic / procedural 五個層次、寫入時機、retrieval 設計、失敗模式"
 tags: ["llm", "applications", "agent", "memory", "rag"]
-weight: 19
+weight: 20
 ---
 
 LLM 本身無狀態 — 每次 [forward pass](/llm/knowledge-cards/forward-pass/) 從零開始、唯一輸入是 [context window](/llm/knowledge-cards/context-window/)。但「agent」概念上有跨 session 狀態：使用者偏好、過去任務、累積知識、操作流程。Agent memory 是 harness 層的設計、把這些狀態持久化、按需 inject 到 working context。本章把 memory 分成五個層次、各層的寫入時機、retrieval 設計、失敗模式拆成可操作的工程實務。

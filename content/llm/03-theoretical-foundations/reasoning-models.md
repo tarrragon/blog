@@ -3,7 +3,7 @@ title: "3.8 Reasoning models：test-time compute paradigm"
 date: 2026-05-12
 description: "Chain-of-thought 從 prompting 技巧演化成訓練 paradigm、reasoning model 的內部運作、本地可跑的選項與適用任務"
 tags: ["llm", "theory", "reasoning", "chain-of-thought", "test-time-compute"]
-weight: 8
+weight: 9
 ---
 
 [Reasoning model](/llm/knowledge-cards/reasoning-model/) 把「LLM 該想多久」從固定的 forward pass 數變成**可訓練、可在推論時動態擴展**的維度。OpenAI o1（2024 年底）跟 DeepSeek-R1（2025 年初）是這條路線的兩個里程碑、後續 Qwen-QwQ、Claude thinking、Gemini thinking 等都跟上。本章把 reasoning model 的訓練原理、推論行為、本地可跑選項、適用 / 不適用任務拆成可操作的判讀。

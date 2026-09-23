@@ -2,7 +2,7 @@
 title: "Boundary Contract"
 date: 2026-04-23
 description: "說明跨邊界約定如何維持相容與可驗證"
-weight: 0
+weight: 1
 ---
 
 

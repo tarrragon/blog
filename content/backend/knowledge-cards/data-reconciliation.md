@@ -2,7 +2,7 @@
 title: "Data Reconciliation"
 date: 2026-04-23
 description: "說明多個資料來源不一致時如何比對、修復與留下證據"
-weight: 87
+weight: 88
 ---
 
 

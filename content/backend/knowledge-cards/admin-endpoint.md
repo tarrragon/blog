@@ -3,7 +3,7 @@ title: "Admin Endpoint"
 tags: ["管理端點", "Admin Endpoint"]
 date: 2026-04-23
 description: "說明管理入口如何承擔高權限操作與稽核責任"
-weight: 0
+weight: 1
 ---
 
 

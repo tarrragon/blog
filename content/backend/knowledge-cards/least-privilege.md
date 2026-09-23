@@ -2,7 +2,7 @@
 title: "Least Privilege"
 date: 2026-04-23
 description: "說明身份、服務與人員只應取得完成工作所需的最小權限"
-weight: 119
+weight: 120
 ---
 
 

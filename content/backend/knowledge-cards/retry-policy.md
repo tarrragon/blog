@@ -2,7 +2,7 @@
 title: "Retry Policy"
 date: 2026-06-22
 description: "說明重試策略如何區分暫時性錯誤、永久錯誤與副作用風險"
-weight: 24
+weight: 25
 tags: ["backend", "message-queue"]
 ---
 

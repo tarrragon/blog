@@ -2,7 +2,7 @@
 title: "Mapping Table"
 date: 2026-05-11
 description: "說明遷移或轉換期間如何把舊語意明確對應到新語意"
-weight: 145
+weight: 146
 tags: ["backend", "knowledge-card", "database", "migration"]
 ---
 

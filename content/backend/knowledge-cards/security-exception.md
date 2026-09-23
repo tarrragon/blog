@@ -3,7 +3,7 @@ title: "Security Exception"
 tags: ["治理例外", "Risk Acceptance"]
 date: 2026-04-30
 description: "說明資安風險例外如何以期限、補償控制與關閉條件管理"
-weight: 255
+weight: 256
 ---
 
 Security exception 的核心概念是「在明確邊界內接受短期風險，並用協議管理收斂路徑」。它讓風險接受決策可追蹤、可關閉、可回寫。 可先對照 [Release Gate](/backend/knowledge-cards/release-gate/)。

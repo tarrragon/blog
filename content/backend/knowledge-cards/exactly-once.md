@@ -2,7 +2,7 @@
 title: "Exactly-Once"
 date: 2026-06-16
 description: "說明訊息剛好被處理一次的語意承諾、它的代價，以及多數時候該用的替代路"
-weight: 387
+weight: 388
 ---
 
 Exactly-once 的核心概念是「一則訊息對最終結果剛好生效一次，不漏也不重複」。它是三種投遞語意中最難實作、代價最高的一種，多數系統實際採用的是 at-least-once 投遞加上消費端 idempotency，用較低成本達到等效結果。 可先對照 [Delivery Semantics](/backend/knowledge-cards/delivery-semantics/)。

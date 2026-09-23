@@ -3,7 +3,7 @@ title: "4.2 RAG 檢索增強：query rewriting / HyDE / multi-step / context pac
 date: 2026-05-14
 description: "Query 端增強（rewriting / expansion / HyDE）、multi-step iterative retrieval、retrieve 後的 context packing（dedup / ordering / summarization）、adaptive retrieval：vanilla RAG 不夠時的下一層工具箱"
 tags: ["llm", "applications", "rag", "retrieval"]
-weight: 2
+weight: 3
 ---
 
 [4.1 RAG 原理](/llm/04-applications/rag-principles/) 建立了 vanilla RAG 的骨架——chunk、embed、retrieve、prompt——並列出 hybrid + reranker 的 production 兩段式。本章往上走一層、寫**當 vanilla 兩段式仍不夠時、有哪些增強技術可選**。

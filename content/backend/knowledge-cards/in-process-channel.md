@@ -2,7 +2,7 @@
 title: "In-Process Channel"
 date: 2026-04-23
 description: "說明單一 process 內用來傳遞工作的 channel 或 queue abstraction"
-weight: 125
+weight: 126
 ---
 
 

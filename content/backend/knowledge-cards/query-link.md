@@ -2,7 +2,7 @@
 title: "Query Link"
 date: 2026-05-11
 description: "說明證據包如何保存可重跑查詢入口，而不是只保留截圖或口頭結論"
-weight: 319
+weight: 320
 tags: ["backend", "knowledge-card", "observability", "incident-response"]
 ---
 

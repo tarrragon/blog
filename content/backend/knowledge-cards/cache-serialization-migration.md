@@ -2,7 +2,7 @@
 title: "Cache Serialization Migration"
 date: 2026-07-20
 description: "說明快取 value 編碼格式演進時如何用雙軌解碼避免舊資料變成無法讀取的錯誤"
-weight: 392
+weight: 393
 tags: ["backend", "knowledge-card", "cache", "migration"]
 ---
 

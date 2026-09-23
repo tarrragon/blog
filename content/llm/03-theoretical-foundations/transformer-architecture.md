@@ -3,7 +3,7 @@ title: "3.3 Transformer 架構細節"
 date: 2026-05-11
 description: "Decoder-only 結構、Transformer block、positional encoding、layer norm、residual stream"
 tags: ["llm", "theory", "transformer"]
-weight: 3
+weight: 4
 ---
 
 [Transformer](/llm/knowledge-cards/transformer/) 把 [embedding](/llm/03-theoretical-foundations/embedding-spaces/) 與 [attention](/llm/knowledge-cards/attention/) 組合成完整 forward pass 結構。LLM 用的是「decoder-only Transformer」、跟原始 paper（Vaswani et al., 2017）的 encoder-decoder 結構不同。本章把現代 LLM（Llama / Gemma / Qwen 系列）的 Transformer 架構走過一遍、解釋每個組件的角色。

@@ -3,7 +3,7 @@ title: "3.4 訓練流程：pre-train → SFT → RLHF"
 date: 2026-05-11
 description: "LLM 的三階段訓練：預訓練、指令微調、人類反饋強化學習；各階段目標與最新替代方案"
 tags: ["llm", "theory", "training"]
-weight: 4
+weight: 5
 ---
 
 現代 LLM 的訓練分三個階段：**pre-training**（預訓練）、**supervised fine-tuning（SFT、指令微調）**、**alignment**（傳統用 RLHF、近年也用 DPO 等替代方案）。每個階段目標不同、資料不同、[loss function](/llm/knowledge-cards/loss-function/) 不同。理解這條鏈、能解釋為什麼「Gemma 4 31B base」跟「Gemma 4 31B instruct」是兩個版本、為什麼 fine-tuning 需要慎重、為什麼 RLHF 對對話品質這麼關鍵。

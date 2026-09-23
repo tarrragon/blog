@@ -3,7 +3,7 @@ title: "Load Shedding"
 tags: ["負載削峰", "Load Shedding"]
 date: 2026-04-23
 description: "說明服務過載時如何主動拒絕低優先工作以保護核心能力"
-weight: 52
+weight: 53
 ---
 
 

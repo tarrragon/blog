@@ -2,7 +2,7 @@
 title: "Storage Tiering"
 date: 2026-06-22
 description: "說明按資料熱度分層儲存以平衡查詢速度、儲存成本與保留完整性的機制"
-weight: 326
+weight: 327
 tags: ["backend", "observability"]
 ---
 

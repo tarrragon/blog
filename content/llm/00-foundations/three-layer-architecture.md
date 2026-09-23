@@ -3,7 +3,7 @@ title: "0.2 介面 / 伺服器 / 模型三層架構"
 date: 2026-05-11
 description: "把任何本地 LLM 工具放回正確的層級，用三層心智模型看懂工具關係"
 tags: ["llm", "foundations", "architecture"]
-weight: 2
+weight: 3
 ---
 
 本地 LLM 生態的核心心智模型是**[三層架構](/llm/knowledge-cards/three-layer-architecture/)**：介面層（CLI / UI / Plugin）→ 伺服器層（推論引擎與 API）→ 模型本身（權重檔）。三層之間有明確邊界，每層可以獨立替換；理解這個分層後，看到任何新工具都能立刻判斷它在解哪一層的問題。

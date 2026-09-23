@@ -3,7 +3,7 @@ title: "0.8 Deterministic vs Fuzzy Engineering：軟體設計典範的位移"
 date: 2026-05-14
 description: "傳統 deterministic 軟體跟 fuzzy LLM 軟體在資料、邏輯、分解、實驗成本四個維度的根本差異、以及哪段該 deterministic、哪段該 fuzzy 的決策框架"
 tags: ["llm", "foundations", "paradigm", "architecture"]
-weight: 8
+weight: 9
 ---
 
 LLM 進到軟體工程的最大影響、不是「多了一個 API 可以呼叫」、而是軟體設計典範本身的位移（見 [deterministic-vs-fuzzy](/llm/knowledge-cards/deterministic-vs-fuzzy/) 卡）。傳統軟體建立在 deterministic 假設上——同樣的 input 永遠對應同樣的 output、邏輯靠人類寫定、行為可以靠 test 鎖住。LLM 軟體則建立在 fuzzy 假設上——同樣的 input 在不同溫度、不同 sampling 下會給不同 output、邏輯是模型自己推、行為只能用統計方式驗證。

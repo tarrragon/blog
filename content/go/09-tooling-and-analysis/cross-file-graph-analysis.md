@@ -2,7 +2,7 @@
 title: "9.4 跨檔案圖分析：從 lint 走到 static analysis"
 date: 2026-04-24
 description: "Single-file 規則用 AST 搞定；跨檔 orphan 偵測、broken link、backlink 完整性需要把整個 repo 建成圖再走訪。用 mdtools cards 為例"
-weight: 4
+weight: 5
 tags: ["go", "tooling"]
 ---
 

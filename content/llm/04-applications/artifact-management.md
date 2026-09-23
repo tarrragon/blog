@@ -3,7 +3,7 @@ title: "4.10 衍生產物管理原理：什麼進 git、什麼不該"
 date: 2026-05-12
 description: "LLM 應用的 source / derived / external 三類產物對應 git / build cache / registry、與 production 部署的 reproducibility / cost / share 取捨"
 tags: ["llm", "applications", "git", "artifacts", "deployment"]
-weight: 10
+weight: 11
 ---
 
 LLM 應用的 codebase 不只 source code、還含 [embedding](/llm/knowledge-cards/embedding-model/) index、cache、model weights、prompt config、lockfile、log 等各種「衍生」或「外部」產物。每個產物該不該進 git、有沒有共通邏輯？

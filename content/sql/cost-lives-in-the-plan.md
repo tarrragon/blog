@@ -2,7 +2,7 @@
 title: "1.17 代價由資料與索引決定，不由寫法決定"
 date: 2026-08-31
 description: "同一組寫法在索引與資料分布改變後的實測排名，以及比較兩段查詢該補上哪些條件"
-weight: 17
+weight: 18
 tags: ["sql", "cost", "query-plan", "index", "performance"]
 ---
 

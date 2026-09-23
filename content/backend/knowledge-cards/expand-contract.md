@@ -2,7 +2,7 @@
 title: "Expand / Contract"
 date: 2026-04-24
 description: "說明先擴充相容面、再收斂舊路徑的遷移做法"
-weight: 139
+weight: 140
 ---
 
 

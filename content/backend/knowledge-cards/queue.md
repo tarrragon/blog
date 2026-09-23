@@ -2,7 +2,7 @@
 title: "Queue"
 date: 2026-06-22
 description: "說明 queue 如何保存等待處理的工作並形成容量邊界"
-weight: 130
+weight: 131
 tags: ["backend", "message-queue"]
 ---
 

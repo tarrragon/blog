@@ -2,7 +2,7 @@
 title: "1.4 JOIN 的左邊是累積結果，不是一張表"
 date: 2026-08-31
 description: "鏈式連接的左運算元怎麼累積，以及 RIGHT 放在鏈中間時保護方向的反轉"
-weight: 4
+weight: 5
 tags: ["sql", "join", "left-join", "right-join", "outer-join"]
 ---
 

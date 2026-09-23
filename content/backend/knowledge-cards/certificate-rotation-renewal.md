@@ -2,7 +2,7 @@
 title: "Certificate Rotation and Renewal"
 date: 2026-04-23
 description: "說明網站憑證如何安全續期與輪替以避免停機"
-weight: 148
+weight: 149
 ---
 
 

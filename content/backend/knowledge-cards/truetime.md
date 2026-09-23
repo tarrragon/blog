@@ -2,7 +2,7 @@
 title: "TrueTime"
 date: 2026-05-13
 description: "分散式資料庫用來界定時間不確定性的時間語意機制"
-weight: 245
+weight: 246
 ---
 
 TrueTime 的核心概念是「系統回傳一個帶不確定區間的時間視窗，而不是假設時間戳絕對精準」。它的責任是讓跨節點交易排序可以被驗證，而不是只靠每台機器的本地時鐘，通常和 [external-consistency](/backend/knowledge-cards/external-consistency/) 一起討論。

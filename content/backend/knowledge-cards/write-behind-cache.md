@@ -2,7 +2,7 @@
 title: "Write-Behind Cache"
 date: 2026-04-23
 description: "說明先寫快取再非同步寫入正式來源的風險與用途"
-weight: 94
+weight: 95
 ---
 
 

@@ -3,7 +3,7 @@ title: "Container"
 tags: ["容器", "Container"]
 date: 2026-04-23
 description: "說明容器如何包裝服務、隔離依賴與影響部署方式"
-weight: 128
+weight: 129
 ---
 
 Container 的核心概念是「把應用程式與執行環境封裝成可交付單位」。它通常承載 application binary、runtime 依賴、config 與啟動命令。 可先對照 [Resource Limit](/backend/knowledge-cards/resource-limit/)。

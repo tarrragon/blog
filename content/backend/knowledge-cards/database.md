@@ -2,7 +2,7 @@
 title: "Database"
 date: 2026-04-23
 description: "說明 database 在後端系統中如何承擔正式狀態、查詢與一致性責任"
-weight: 136
+weight: 137
 ---
 
 

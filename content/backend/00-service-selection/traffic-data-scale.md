@@ -2,7 +2,7 @@
 title: "0.5 流量與資料量評估"
 date: 2026-04-23
 description: "用流量形狀、資料成長、hot key、保留期限與尖峰模式評估後端需求規模"
-weight: 5
+weight: 6
 tags: ["backend", "service-selection"]
 ---
 

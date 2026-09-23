@@ -2,7 +2,7 @@
 title: "Stop Condition"
 date: 2026-05-11
 description: "說明變更、實驗或事故處理何時必須暫停、回退或改路線"
-weight: 158
+weight: 159
 tags: ["backend", "knowledge-card", "reliability", "incident-response"]
 ---
 

@@ -3,7 +3,7 @@ title: "Rollback Rehearsal"
 tags: ["回滾演練", "Rollback Rehearsal"]
 date: 2026-04-24
 description: "說明如何在正式事故前演練回滾流程"
-weight: 156
+weight: 157
 ---
 
 Rollback Rehearsal 的核心概念是「在低風險環境實際走一次回滾流程，確認步驟、權限與耗時都符合預期」。 可先對照 [Rollback Strategy](/backend/knowledge-cards/rollback-strategy/)。

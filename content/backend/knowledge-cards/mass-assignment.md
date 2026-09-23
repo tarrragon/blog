@@ -2,7 +2,7 @@
 title: "Mass Assignment"
 date: 2026-04-23
 description: "說明自動綁定 request 欄位如何造成未授權欄位被修改"
-weight: 114
+weight: 115
 ---
 
 

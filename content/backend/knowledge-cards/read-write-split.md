@@ -2,7 +2,7 @@
 title: "Read-Write Split"
 date: 2026-05-22
 description: "說明讀寫流量如何分流到 primary 與 replica，以及它引入的一致性責任"
-weight: 325
+weight: 326
 ---
 
 Read-Write Split 的核心概念是把寫入導向 primary、把讀取導向一個或多個 replica，用 replica 擴展讀取容量。它讓讀多寫少的服務把壓力分散開，而不必全部集中在 primary，代價是 replica 有 [Replication Lag](/backend/knowledge-cards/replication-lag/)，剛寫入的資料可能還沒同步。它和 [Connection Pool](/backend/knowledge-cards/connection-pool/)、[Transaction Pooling](/backend/knowledge-cards/transaction-pooling/) 一起決定連線怎麼分配；判斷讀到舊資料的後果時要接回 [Stale Read](/backend/knowledge-cards/stale-read/)。

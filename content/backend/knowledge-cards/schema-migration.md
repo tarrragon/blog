@@ -2,7 +2,7 @@
 title: "Schema Migration"
 date: 2026-04-23
 description: "說明資料庫結構如何隨應用程式版本安全演進"
-weight: 15
+weight: 16
 ---
 
 

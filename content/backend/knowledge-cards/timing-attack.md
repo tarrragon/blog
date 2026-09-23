@@ -2,7 +2,7 @@
 title: "Timing Attack"
 date: 2026-07-27
 description: "比對密鑰、token 或簽章的程式碼要判斷是否會由執行時間洩漏資訊時的依據"
-weight: 423
+weight: 424
 ---
 
 Timing Attack 的核心概念是攻擊者從操作耗時的差異反推出他不該知道的資訊。它成立的條件是處理時間與秘密值相關：比對兩個字串時，多數語言的相等運算在第一個不同的位元組就返回，回應時間因此隨「前面猜對了幾個位元組」而變長，攻擊者逐位元組調整就能把猜測收斂。它針對的是 [Message Authentication](/backend/knowledge-cards/message-authentication/) 的驗證值、[Credential](/backend/knowledge-cards/credential/) 與 token 這類需要逐字比對的秘密。

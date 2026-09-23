@@ -2,7 +2,7 @@
 title: "infra 投資的商業論證"
 date: 2026-06-26
 description: "用成本、風險、速度三條論述線把 infra 投資翻譯成商業語言，附一頁簡報邏輯與常見反對意見的回應"
-weight: 1
+weight: 2
 tags: ["infra", "adoption", "business-case", "roi"]
 ---
 

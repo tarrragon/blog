@@ -3,7 +3,7 @@ title: "Release Freeze"
 tags: ["發布凍結", "Release Governance"]
 date: 2026-04-30
 description: "說明高風險期間如何以凍結策略保護正式環境"
-weight: 256
+weight: 257
 ---
 
 

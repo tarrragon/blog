@@ -2,7 +2,7 @@
 title: "Corruption Recovery"
 date: 2026-05-22
 description: "說明資料損毀事故如何先辨識來源、保全證據，再決定修復或還原"
-weight: 346
+weight: 347
 ---
 
 Corruption Recovery 的核心概念是處理資料損毀事故時，先辨識損毀來自儲存層（檔案、磁碟、檔案系統）還是應用層（寫入了錯誤資料），保全證據，再決定修復或還原。它讓損毀事故有確定的處置順序，而不是直覺地直接修。它和 [Embedded Database](/backend/knowledge-cards/embedded-database/) 特別相關，因為這類系統的檔案責任落在 application。

@@ -2,7 +2,7 @@
 title: "Keyset Pagination"
 date: 2026-05-27
 description: "用上一頁最後一筆的 key 當下一頁起點、避開 OFFSET 大表時的線性退化"
-weight: 357
+weight: 358
 ---
 
 Keyset pagination（也稱 cursor pagination）的核心責任是讓大表分頁性能穩定在 O(LIMIT)、跟 offset 大小解耦。傳統 `LIMIT 20 OFFSET 10000` 在大表退化成「掃描 10020 行 + skip 10000 行」、是 O(OFFSET + LIMIT)；keyset 寫成 `WHERE id > last_seen_id LIMIT 20`、永遠是 O(LIMIT)、跟 offset 大小無關。跟 [query cardinality explosion](/backend/knowledge-cards/cardinality-explosion/) 同屬大表查詢反模式修法、機制各自獨立。

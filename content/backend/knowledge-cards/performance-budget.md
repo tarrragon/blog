@@ -2,7 +2,7 @@
 title: "Performance Budget"
 date: 2026-05-12
 description: "跟 error budget 同類概念、但用於 latency / throughput 退化的可控額度"
-weight: 239
+weight: 240
 ---
 
 Performance budget 的核心概念是「每月有允許退化的額度、用完就 freeze new feature、focus on perf」。跟 [error budget](/backend/knowledge-cards/error-budget/) 並列、用同一套方法論處理可靠性 vs 效能。可先對照 [Error Budget](/backend/knowledge-cards/error-budget/)。

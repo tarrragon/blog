@@ -2,7 +2,7 @@
 title: "Write-Through Cache"
 date: 2026-04-23
 description: "說明寫入時同步更新快取與正式來源的策略"
-weight: 93
+weight: 94
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Migration"
 date: 2026-04-23
 description: "說明系統如何把資料、流量或結構從舊狀態移到新狀態"
-weight: 138
+weight: 139
 ---
 
 

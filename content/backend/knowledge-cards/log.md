@@ -2,7 +2,7 @@
 title: "Log"
 date: 2026-04-23
 description: "說明 log 如何記錄單一事件的上下文並支援事故排查"
-weight: 139
+weight: 140
 ---
 
 

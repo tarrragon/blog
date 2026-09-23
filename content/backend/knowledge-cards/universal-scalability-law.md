@@ -2,7 +2,7 @@
 title: "Universal Scalability Law (USL)"
 date: 2026-05-12
 description: "說明系統擴容到一定規模後吞吐反而下降的數學模型"
-weight: 221
+weight: 222
 ---
 
 Universal Scalability Law 的核心概念是「擴容到某個臨界點之後、加機器反而讓吞吐下降」。Neil Gunther 的公式 throughput(N) = N / (1 + α(N-1) + βN(N-1))，其中 α = serialization（Amdahl 部分）、β = crosstalk（跨節點協調成本）。可先對照 [Little's Law](/backend/knowledge-cards/little-law/)。

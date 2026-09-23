@@ -3,7 +3,7 @@ title: "Playbook"
 tags: ["處置手冊", "Playbook"]
 date: 2026-04-23
 description: "說明場景化處置腳本如何降低事故處理不確定性"
-weight: 162
+weight: 163
 ---
 
 

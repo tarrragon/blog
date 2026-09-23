@@ -2,7 +2,7 @@
 title: "Step-Up Authentication（升階驗證）"
 date: 2026-07-20
 description: "登入成功不等於高權限操作可被信任時、在關鍵操作點插入額外驗證的設計位置"
-weight: 411
+weight: 412
 ---
 
 Step-up authentication 是在特定高風險操作點插入的額外驗證，跟登入時的 [Authentication](/backend/knowledge-cards/authentication/) 是兩個不同時機的判斷。登入驗證回答「這是不是本人」，一次成立後通常維持一段會話；step-up 驗證回答「這次操作是不是本人此刻真的要做」，只在觸及高風險操作（改密碼、大額轉帳、匯出敏感資料）時才觸發，會話期間的一般操作不需要重新驗證。

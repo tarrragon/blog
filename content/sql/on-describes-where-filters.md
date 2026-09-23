@@ -2,7 +2,7 @@
 title: "1.5 ON 描述關係、WHERE 篩選結果"
 date: 2026-08-31
 description: "配對與成品兩個時刻的分工，以及外連接的保護為什麼會在 WHERE 那一步被抵銷"
-weight: 5
+weight: 6
 tags: ["sql", "join", "on-clause", "where-clause", "outer-join"]
 ---
 

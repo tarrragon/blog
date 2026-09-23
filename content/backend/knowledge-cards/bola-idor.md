@@ -2,7 +2,7 @@
 title: "BOLA / IDOR"
 date: 2026-04-23
 description: "說明物件層授權缺失如何讓使用者存取不屬於自己的資料"
-weight: 112
+weight: 113
 ---
 
 

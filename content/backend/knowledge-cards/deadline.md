@@ -2,7 +2,7 @@
 title: "Deadline"
 date: 2026-04-23
 description: "說明整體操作的截止時間如何沿著服務邊界傳遞"
-weight: 44
+weight: 45
 ---
 
 

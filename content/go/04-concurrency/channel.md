@@ -2,7 +2,7 @@
 title: "4.2 channel：資料傳遞與 backpressure "
 date: 2026-04-22
 description: "理解 channel 如何在 goroutine 之間傳遞資料並形成 backpressure "
-weight: 2
+weight: 3
 tags: ["go", "concurrency", "channel"]
 ---
 

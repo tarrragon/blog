@@ -2,7 +2,7 @@
 title: "Abuse Case"
 date: 2026-04-24
 description: "說明合法功能如何被惡意轉用成突破或濫用路徑"
-weight: 125
+weight: 126
 ---
 
 

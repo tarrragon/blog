@@ -2,7 +2,7 @@
 title: "9.0 Go 在工具鏈生態的位置"
 date: 2026-04-24
 description: "後端服務以外，Go 常被用來寫 CLI、靜態分析、基礎設施客戶端。本章建立工具類 Go 程式跟服務類 Go 程式在結構、生命週期與錯誤處理上的分野"
-weight: 0
+weight: 1
 tags: ["go", "tooling"]
 ---
 

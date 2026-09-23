@@ -2,7 +2,7 @@
 title: "Broker"
 date: 2026-04-23
 description: "說明 broker 在訊息傳遞系統中負責保存、路由與交付訊息"
-weight: 1
+weight: 2
 ---
 
 

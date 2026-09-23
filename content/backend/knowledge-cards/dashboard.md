@@ -2,7 +2,7 @@
 title: "Dashboard"
 date: 2026-06-22
 description: "說明 dashboard 如何把關鍵訊號組成可判讀的服務狀態畫面"
-weight: 141
+weight: 142
 tags: ["backend", "observability"]
 ---
 

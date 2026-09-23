@@ -2,7 +2,7 @@
 title: "從單一環境到環境分離：infra 需求的浮現過程"
 date: 2026-06-26
 description: "單一 EC2 + RDS 的結構在需要測試環境、多人協作時會撞到哪些操作極限，以及環境分離怎麼牽出身分、網路、變更流程等後續 infra 關注點"
-weight: 1
+weight: 2
 tags: ["infra", "environment", "iac"]
 ---
 

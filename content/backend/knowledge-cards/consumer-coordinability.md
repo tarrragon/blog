@@ -2,7 +2,7 @@
 title: "Consumer Coordinability（消費者可協調度）"
 date: 2026-08-11
 description: "「消費者少而可協調」這句話裡的可協調是什麼——列得出名單、發得出通知、握有 SDK、有強制力四項各自成立與否"
-weight: 438
+weight: 439
 ---
 
 Consumer Coordinability 的核心責任是把「可協調」從一個感覺變成四項查得到的事實。版本與退場決策常用「消費者少而可協調」這類判斷標準，而多數人不會問「可協調」的成立條件是什麼，於是它變成一個沒有人反對也沒有人驗證的形容詞。這張卡處理的是「有沒有能力通知與協調」；通知本身怎麼發、退場時程怎麼排，是另一件事（見 [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/)）。適用對象是 [API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/) 裡第一種形態（有人格的整合團隊）——其餘三種形態不需要這份判定：非人格中介恆為零、內部呼叫端恆為滿、聯絡不到的外部整合方恆為零。

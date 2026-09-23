@@ -2,7 +2,7 @@
 title: "Negative Cache"
 date: 2026-06-16
 description: "說明把「查無此 key」的結果也快取一小段時間，擋掉重複穿透的防護與代價"
-weight: 385
+weight: 386
 ---
 
 Negative cache 的核心概念是「把『查無此 key』這個結果也快取一小段時間，讓重複的不存在查詢不再每次都穿透到資料庫」。它是 [cache penetration](/backend/knowledge-cards/cache-penetration/) 的主要防護工具。 可先對照 [Cache Penetration](/backend/knowledge-cards/cache-penetration/)。

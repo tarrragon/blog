@@ -2,7 +2,7 @@
 title: "Cache Aside"
 date: 2026-04-23
 description: "說明 application 如何在讀取時自行管理快取與正式資料來源"
-weight: 20
+weight: 21
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Offline Catch-up"
 date: 2026-04-23
 description: "說明訂閱者離線後如何補回缺失事件或狀態"
-weight: 142
+weight: 143
 ---
 
 

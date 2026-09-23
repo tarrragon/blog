@@ -2,7 +2,7 @@
 title: "Dual Write"
 date: 2026-04-23
 description: "說明同一變更同時寫入兩個系統時的一致性風險"
-weight: 83
+weight: 84
 ---
 
 

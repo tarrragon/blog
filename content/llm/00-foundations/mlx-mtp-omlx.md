@@ -3,7 +3,7 @@ title: "0.4 MLX / MTP / oMLX 的區別"
 date: 2026-05-11
 description: "三個常被混為一談的術語：framework、加速技巧、特化 server，疊加而非互斥"
 tags: ["llm", "foundations", "mlx", "mtp"]
-weight: 4
+weight: 5
 ---
 
 MLX、MTP、oMLX 是本地 LLM 生態中最容易被網路文章混為一談的三個術語。它們分別屬於不同的技術層級：MLX 是 Apple 自家的數值運算 framework，MTP 是一種加速技巧，oMLX 是一個建在 MLX 上的特化推論伺服器。三者**疊加而非互斥**，可以同時存在於一套堆疊裡。

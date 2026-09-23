@@ -3,7 +3,7 @@ title: "Resource Limit"
 tags: ["資源限制", "Resource Limit"]
 date: 2026-04-24
 description: "說明服務可使用的 CPU、memory 與相關資源上限如何影響行為"
-weight: 134
+weight: 135
 ---
 
 Resource Limit 的核心概念是「限制一個服務實例可使用多少 CPU、memory 或其他運行資源」。它會直接影響啟動、排程、延遲、穩定性與故障型態，當成單純的部署參數會低估其影響面。 可先對照 [Retention](/backend/knowledge-cards/retention/)。

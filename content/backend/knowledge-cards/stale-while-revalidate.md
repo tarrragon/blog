@@ -2,7 +2,7 @@
 title: "Stale-While-Revalidate"
 date: 2026-05-27
 description: "HTTP cache-control directive，cache 過期後仍立即回舊版、背景發出 origin request 拉取新版本更新快取"
-weight: 29
+weight: 30
 ---
 
 Stale-while-revalidate（SWR）的核心概念是「[TTL](/backend/knowledge-cards/ttl/) 過期後仍可立即回舊版本給使用者、同時背景發出 origin request 拉取新版本更新快取」。使用者體驗永遠快、新鮮度有「最多 stale `max-age + swr`」秒的上限。是天然的 [cache stampede](/backend/knowledge-cards/cache-stampede/) 緩解機制 — 把「TTL 過期那一刻 N 個請求同時打 origin」變成「TTL 過期那一刻 1 個請求打 origin、其他 N-1 個拿舊版」。

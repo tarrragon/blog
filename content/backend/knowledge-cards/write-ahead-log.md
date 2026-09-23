@@ -2,7 +2,7 @@
 title: "Write-Ahead Log"
 date: 2026-05-22
 description: "說明資料庫如何先寫入 log 再合併回主資料，以提供持久性與崩潰復原"
-weight: 323
+weight: 324
 ---
 
 Write-Ahead Log（WAL）的核心概念是把每筆寫入先 append 到一個循序 log，再由背景程序合併回主要資料檔。這個順序讓資料庫在 crash 後能用 log 重放回到一致狀態，也讓 reader 與 writer 的衝突降低。WAL 是 [Single Writer Model](/backend/knowledge-cards/single-writer-model/) 的持久化基礎、是 [Replication Slot](/backend/knowledge-cards/replication-slot/) 與 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 的事件來源，累積的 log 由 [Checkpoint](/backend/knowledge-cards/checkpoint/) 收斂。

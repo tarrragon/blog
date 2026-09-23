@@ -2,7 +2,7 @@
 title: "Handover Protocol"
 date: 2026-04-23
 description: "說明事故與值班交接時要傳遞哪些資訊、責任與完成條件"
-weight: 152
+weight: 153
 ---
 
 Handover protocol 的核心概念是「把事故或值班責任從一個人或一組人，完整、安全地轉到下一個接手者」。它的責任是確認目前狀態、未完成事項、風險與下一步，單純通知誰接手只完成了形式。 可先對照 [On-Call](/backend/knowledge-cards/on-call/)。

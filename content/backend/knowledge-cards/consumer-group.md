@@ -2,7 +2,7 @@
 title: "Consumer Group"
 date: 2026-06-22
 description: "說明一組 consumer 如何共同分攤 stream 或 topic 的處理責任"
-weight: 72
+weight: 73
 tags: ["backend", "message-queue"]
 ---
 

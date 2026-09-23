@@ -2,7 +2,7 @@
 title: "Autoscaling"
 date: 2026-04-23
 description: "說明系統如何依負載自動調整服務實例數量"
-weight: 153
+weight: 154
 ---
 
 

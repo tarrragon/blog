@@ -2,7 +2,7 @@
 title: "Bounded Staleness"
 date: 2026-05-13
 description: "允許資料延遲，但把落後上限限制在可量化範圍內的一致性語意"
-weight: 247
+weight: 248
 ---
 
 Bounded staleness 的核心概念是「接受資料不是最新，但限定最多落後多少時間或多少版本」。它的責任是把一致性風險轉成可監控的上限，而不是放任不一致無邊界擴大，可搭配 [latency-budget](/backend/knowledge-cards/latency-budget/) 一起設計。

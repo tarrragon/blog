@@ -2,7 +2,7 @@
 title: "Local Worker"
 date: 2026-04-23
 description: "說明同一個 process 內的背景工作模型與其生命週期邊界"
-weight: 148
+weight: 149
 ---
 
 

@@ -3,7 +3,7 @@ title: "1.5 期望管理：本地 LLM 的擅長領域與分工"
 date: 2026-05-11
 description: "本地 LLM 是免費的初階 pair programmer：辨識它的擅長領域、跟雲端旗艦做結構性分工"
 tags: ["llm", "expectation", "local-vs-cloud"]
-weight: 5
+weight: 6
 ---
 
 本地 LLM 用得順不順、九成取決於「期待對齊現實」。把本地當成「免費、永遠在線的初階 pair programmer」、它的表現會超出預期、變成日常雜事的得力幫手；把它當成 Claude Sonnet / GPT-5 替代品、跨檔案重構失敗、規劃 multi-step 任務（把模糊目標拆成多個可執行步驟依序執行）崩潰、深度 debug 給平庸答案的場景就會接連出現、第一週體感很差。本地 vs 雲端的能力分工背景見 [0.0 本地 vs 雲端 LLM](/llm/00-foundations/local-vs-cloud/)。

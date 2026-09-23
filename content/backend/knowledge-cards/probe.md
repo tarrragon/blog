@@ -3,7 +3,7 @@ title: "Probe"
 tags: ["探針", "Probe"]
 date: 2026-04-23
 description: "說明平台如何透過 probe 判斷服務狀態與接流量條件"
-weight: 130
+weight: 131
 ---
 
 

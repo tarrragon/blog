@@ -2,7 +2,7 @@
 title: "Producer"
 date: 2026-04-23
 description: "說明 producer 如何把工作、事件或資料送入後續處理路徑"
-weight: 132
+weight: 133
 ---
 
 

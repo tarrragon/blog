@@ -2,7 +2,7 @@
 title: "Message Persistence"
 date: 2026-04-23
 description: "說明訊息是否落盤保存，以及 broker 重啟後能否恢復"
-weight: 68
+weight: 69
 ---
 
 

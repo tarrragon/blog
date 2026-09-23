@@ -3,7 +3,7 @@ title: "Authorization"
 tags: ["授權", "Authorization"]
 date: 2026-04-23
 description: "說明授權如何判斷誰能對哪些資源執行哪些操作"
-weight: 38
+weight: 39
 ---
 
 

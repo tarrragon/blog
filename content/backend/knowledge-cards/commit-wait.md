@@ -2,7 +2,7 @@
 title: "Commit Wait"
 date: 2026-05-27
 description: "Spanner external consistency 的核心機制 — read-write transaction 拿 commit timestamp s 後等到 TT.after(s) 才 ACK、wait ≈ 2ε、付 latency tax 換 commit 順序 = real-time 順序"
-weight: 364
+weight: 365
 ---
 
 Commit wait 的核心概念是「read-write transaction 拿到 commit timestamp `s` 後、Spanner 不立刻回 ACK、而是等到 `TT.after(s)` 確定為真（即 wall clock 必然已過 s）才回 ACK、wait 時間約 2ε」。它的責任是用一段固定 latency 支出換取「transaction commit timestamp 全序 = real-time 順序」這個 external consistency 保證。可先對照 [TrueTime](/backend/knowledge-cards/truetime/)。

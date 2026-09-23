@@ -2,7 +2,7 @@
 title: "0.10 知識網：容量、觀測與資安決策路徑"
 date: 2026-04-23
 description: "把容量、可觀測、備援、權限、憑證與稽核術語串成統一的服務治理語言"
-weight: 10
+weight: 11
 tags: ["backend", "service-selection"]
 ---
 

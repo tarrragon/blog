@@ -2,7 +2,7 @@
 title: "1.18 外鍵寫下保證，各家引擎決定它生不生效"
 date: 2026-09-02
 description: "外鍵保證什麼、宣告與生效在哪幾個位置分開，以及有了它之後查詢可以省掉哪一步"
-weight: 18
+weight: 19
 tags: ["sql", "foreign-key", "constraint", "referential-integrity", "ddl"]
 ---
 

@@ -3,7 +3,7 @@ title: "MTTR"
 tags: ["平均修復時間", "MTTR"]
 date: 2026-04-23
 description: "說明平均修復時間如何作為事故處理能力指標"
-weight: 160
+weight: 161
 ---
 
 

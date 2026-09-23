@@ -2,7 +2,7 @@
 title: "Problem Details（RFC 9457）"
 date: 2026-08-11
 description: "錯誤格式的現成標準給了什麼——URI 命名空間與未知欄位忽略條款，這兩件事自建格式要自己補"
-weight: 436
+weight: 437
 ---
 
 Problem Details 的核心責任是給 HTTP API 的錯誤回應一個現成的、可演化的形狀。RFC 9457 定義 media type `application/problem+json`，核心成員是 `type`（錯誤種類的 URI）、`title`、`status`、`detail`、`instance` 五個。它跟 [API Contract](/backend/knowledge-cards/api-contract/) 的關係是後者的一個具體切面：錯誤格式一旦被消費者依賴，變更成本跟正常回應完全相同，因此它需要跟成功路徑同等的演化設計。

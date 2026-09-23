@@ -2,7 +2,7 @@
 title: "0.15 跨模組 Checkout Episode：從資料寫入到觀測證據"
 date: 2026-06-22
 description: "以 checkout 為切片，走完 DB write → cache invalidation → event publish → observability evidence 四層串聯，標示各模組的交接欄位與失敗判讀"
-weight: 15
+weight: 16
 tags: ["backend", "service-selection", "cross-module", "checkout"]
 ---
 

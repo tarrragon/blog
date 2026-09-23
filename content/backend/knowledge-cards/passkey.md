@@ -2,7 +2,7 @@
 title: "Passkey"
 date: 2026-07-31
 description: "要用金鑰對取代密碼、或判斷已導入的 passkey 實際擋掉了什麼時，用來定位它的保護落在哪一段、上限由哪條路徑決定"
-weight: 428
+weight: 429
 tags: ["backend", "knowledge-card", "security", "authentication"]
 ---
 

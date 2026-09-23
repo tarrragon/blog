@@ -3,7 +3,7 @@ title: "0.0 本地 vs 雲端 LLM"
 date: 2026-05-11
 description: "從隱私、成本、速度、能力四個維度建立本地與雲端 LLM 的基本對照"
 tags: ["llm", "foundations", "comparison"]
-weight: 0
+weight: 1
 ---
 
 [本地 LLM 與雲端 LLM](/llm/knowledge-cards/local-vs-cloud/) 的核心差異是「模型權重在哪台機器上跑、誰能看到對話內容」。把模型權重載到自己 Mac 的記憶體裡、用本機算力跑[推論](/llm/knowledge-cards/inference-server/)，就是本地；把 prompt 透過 HTTPS 送到 Anthropic、OpenAI、Google 的伺服器，再把結果回傳，就是雲端。

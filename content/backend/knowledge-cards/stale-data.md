@@ -2,7 +2,7 @@
 title: "Stale Data"
 date: 2026-04-23
 description: "說明過期資料在快取、replica 與衍生資料中的產品影響"
-weight: 95
+weight: 96
 ---
 
 

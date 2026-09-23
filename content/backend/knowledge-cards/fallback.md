@@ -2,7 +2,7 @@
 title: "Fallback"
 date: 2026-04-23
 description: "說明主要路徑失敗時使用替代結果或替代流程的設計責任"
-weight: 56
+weight: 57
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Key Management"
 date: 2026-05-22
 description: "說明加密金鑰如何產生、保存、輪替，以及還原時如何依賴金鑰"
-weight: 337
+weight: 338
 ---
 
 Key Management 的核心概念是管理加密金鑰的完整生命週期 — 產生、保存、存取控制與輪替 — 並承擔「加密後的資料能否還原取決於金鑰是否健在」這個責任。它是 [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/) 能否真正保護資料的前提，金鑰本身的保存要接回 [Secret Management](/backend/knowledge-cards/secret-management/)。

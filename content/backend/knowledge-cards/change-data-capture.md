@@ -2,7 +2,7 @@
 title: "Change Data Capture"
 date: 2026-04-23
 description: "說明資料變更如何被捕捉並傳送到其他系統"
-weight: 79
+weight: 80
 ---
 
 

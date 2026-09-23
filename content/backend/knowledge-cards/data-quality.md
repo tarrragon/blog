@@ -2,7 +2,7 @@
 title: "Data Quality"
 date: 2026-05-11
 description: "說明證據欄位如何標示 completeness、freshness、sampling 與資料限制"
-weight: 320
+weight: 321
 tags: ["backend", "knowledge-card", "observability", "incident-response"]
 ---
 

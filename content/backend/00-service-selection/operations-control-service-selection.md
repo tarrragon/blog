@@ -2,7 +2,7 @@
 title: "0.12 觀測、可靠性與事故服務選型"
 date: 2026-05-02
 description: "從訊號、驗證與響應三層能力判斷操作控制服務的選型順序"
-weight: 12
+weight: 13
 tags: ["backend", "service-selection", "observability", "reliability", "incident-response"]
 ---
 

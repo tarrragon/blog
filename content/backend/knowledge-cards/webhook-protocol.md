@@ -2,7 +2,7 @@
 title: "Webhook Protocol"
 date: 2026-04-23
 description: "說明外部回呼如何對齊簽章、重試與 payload 語意"
-weight: 0
+weight: 1
 ---
 
 Webhook Protocol 的核心概念是「外部系統把事件送進來時，雙方如何對齊驗證、payload 與失敗語意」。 可先對照 [Webhook](/backend/knowledge-cards/webhook/)。

@@ -2,7 +2,7 @@
 title: "Exponential Backoff"
 date: 2026-04-23
 description: "說明重試間隔如何逐步拉長以降低下游壓力"
-weight: 45
+weight: 46
 ---
 
 

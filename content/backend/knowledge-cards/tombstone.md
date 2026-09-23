@@ -2,7 +2,7 @@
 title: "Tombstone"
 date: 2026-05-22
 description: "說明刪除如何用一筆標記記錄下來，讓刪除事件能跨副本與裝置傳播"
-weight: 342
+weight: 343
 ---
 
 Tombstone 的核心概念是用一筆「已刪除」標記來記錄刪除，而不是直接讓資料消失，讓刪除這個事件能跨副本、裝置或下游系統傳播。它讓最終一致系統裡的刪除不會被遺漏。它是 [Conflict Resolution](/backend/knowledge-cards/conflict-resolution/) 與資料同步處理刪除的基礎機制。

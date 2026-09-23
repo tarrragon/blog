@@ -3,7 +3,7 @@ title: "Containment"
 tags: ["事故圍堵", "Containment"]
 date: 2026-04-24
 description: "說明事故處理中如何限制擴散面，為回復與驗證爭取時間"
-weight: 267
+weight: 268
 ---
 
 

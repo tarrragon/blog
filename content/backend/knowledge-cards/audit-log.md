@@ -3,7 +3,7 @@ title: "Audit Log"
 tags: ["稽核日誌", "Audit Log"]
 date: 2026-04-23
 description: "說明高風險操作如何留下可追溯、可稽核的紀錄"
-weight: 42
+weight: 43
 ---
 
 

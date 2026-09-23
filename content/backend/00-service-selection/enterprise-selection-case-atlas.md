@@ -2,7 +2,7 @@
 title: "0.14 企業選型案例圖譜"
 date: 2026-05-07
 description: "蒐集不同類型與不同規模企業的技術選型案例，作為後端選型判讀的跨情境補充。"
-weight: 14
+weight: 15
 tags: ["backend", "service-selection"]
 ---
 

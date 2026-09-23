@@ -2,7 +2,7 @@
 title: "Flame Graph（火焰圖）"
 date: 2026-07-20
 description: "把 CPU 或記憶體 profile 的呼叫堆疊視覺化、用寬度找出哪段程式碼佔用資源最多"
-weight: 412
+weight: 413
 ---
 
 Flame graph 是 profiling 結果的標準視覺化形式——每一層代表呼叫堆疊的一層函式，寬度代表該函式（含其子呼叫）佔用的取樣比例。它是 [Continuous Profiling](/backend/knowledge-cards/continuous-profiling/) 持續取樣機制最終被人眼讀懂的呈現形式，寬度而非高度是判讀重點：一段程式碼佔的寬度越大，代表它在取樣期間消耗的 CPU 或記憶體比例越高，跟它在堆疊中的深淺無關。

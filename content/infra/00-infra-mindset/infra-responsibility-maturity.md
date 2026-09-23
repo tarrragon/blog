@@ -2,7 +2,7 @@
 title: "infra 的責任邊界、成熟度階梯與 day 1 鐵律"
 date: 2026-06-26
 description: "基礎設施承擔五個面向的責任，每一面都有獨立的失效模式；成熟度階梯用來對齊現況而非追求滿分，day 1 鐵律則劃出早期團隊該優先鋪的地基"
-weight: 2
+weight: 3
 tags: ["infra", "iac", "mindset"]
 ---
 

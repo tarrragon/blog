@@ -3,7 +3,7 @@ title: "Tripwire"
 tags: ["重評估觸發器", "Tripwire"]
 date: 2026-04-30
 description: "說明風險決策在條件變化時如何自動回到評估流程"
-weight: 254
+weight: 255
 ---
 
 

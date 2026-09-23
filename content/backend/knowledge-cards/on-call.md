@@ -2,7 +2,7 @@
 title: "On-Call"
 date: 2026-06-22
 description: "說明值班制度如何承接告警、事故分級與升級流程"
-weight: 161
+weight: 162
 tags: ["backend", "observability", "incident-response"]
 ---
 

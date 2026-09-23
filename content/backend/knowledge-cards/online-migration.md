@@ -2,7 +2,7 @@
 title: "Online Migration"
 date: 2026-04-23
 description: "說明服務持續接流量時如何完成資料或 schema 遷移"
-weight: 76
+weight: 77
 ---
 
 

@@ -2,7 +2,7 @@
 title: "9.6 Pre-commit hook 與 CI 整合"
 date: 2026-04-24
 description: "工具寫完只是起點；接到 pre-commit hook 跟 CI 才真正守住品質。Re-staging、dry-run vs apply、不能繞過的邊界"
-weight: 6
+weight: 7
 tags: ["go", "tooling"]
 ---
 

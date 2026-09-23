@@ -2,7 +2,7 @@
 title: "Quorum"
 date: 2026-05-13
 description: "分散式系統以多數節點同意作為提交或讀取有效性的門檻"
-weight: 250
+weight: 251
 ---
 
 Quorum 的核心概念是「操作要被接受，必須取得最小同意門檻」。它的責任是把一致性從單節點保證轉成多節點共識機制，常用於 [linearizability](/backend/knowledge-cards/linearizability/) 與 [global-oltp](/backend/knowledge-cards/global-oltp/)。

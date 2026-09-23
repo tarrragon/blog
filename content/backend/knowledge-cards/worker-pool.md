@@ -2,7 +2,7 @@
 title: "Worker Pool"
 date: 2026-04-23
 description: "說明一組 worker 如何限制同時處理量並保護下游資源"
-weight: 126
+weight: 127
 ---
 
 

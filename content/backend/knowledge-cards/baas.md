@@ -2,7 +2,7 @@
 title: "BaaS（Backend as a Service）"
 date: 2026-06-11
 description: "說明把認證、資料庫、檔案儲存、推播打包成現成模組、由前端 SDK 直連的後端交付形態"
-weight: 372
+weight: 373
 ---
 
 BaaS（Backend as a Service）的核心概念是把後端的常見能力 — 認證、資料庫、檔案儲存、推播、serverless function — 打包成現成模組、應用程式的前端（app / SPA）用平台 SDK 直接連上這些模組、不經過自己寫的後端服務。它讓「沒有後端工程師」的團隊能先把產品做出來、代價是資料模型、查詢能力與授權機制都沿平台的形狀生長。代表服務是 Firebase 與 Supabase。它的長期成本面接回 [Vendor Lock-In](/backend/knowledge-cards/vendor-lock-in/)。

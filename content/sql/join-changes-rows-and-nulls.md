@@ -2,7 +2,7 @@
 title: "1.6 連接產出的是新的關係，列數與空缺都變了"
 date: 2026-08-31
 description: "連接造成的列數膨脹與新生的空缺，以及 NULL 的三值邏輯在聚合、比較與 NOT IN 上的後果"
-weight: 6
+weight: 7
 tags: ["sql", "null", "join", "aggregate", "count", "not-in"]
 ---
 

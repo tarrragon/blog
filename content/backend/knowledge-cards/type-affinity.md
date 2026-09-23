@@ -2,7 +2,7 @@
 title: "Type Affinity"
 date: 2026-05-22
 description: "說明 SQLite 如何用 type affinity 決定欄位的型別傾向與值的儲存方式"
-weight: 350
+weight: 351
 ---
 
 Type Affinity 的核心概念是 SQLite 的型別模型 — 欄位宣告的型別是一個「傾向」，SQLite 依這個傾向決定存入的值如何被轉換與儲存，硬約束的心智模型在此不適用。它讓 SQLite 的 schema 比嚴格型別資料庫更寬鬆，代價是要理解值實際被存成什麼。理解它對寫對 [Schema Migration](/backend/knowledge-cards/schema-migration/) 與查詢很關鍵。

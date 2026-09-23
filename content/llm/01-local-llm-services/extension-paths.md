@@ -3,7 +3,7 @@ title: "1.6 延伸方向：Web UI、coding agent、產圖"
 date: 2026-05-11
 description: "日常路徑跑穩後可以玩的延伸：Open WebUI、aider、ComfyUI；先把基底跑穩再進階"
 tags: ["llm", "extension", "open-webui", "aider", "diffusion"]
-weight: 6
+weight: 7
 ---
 
 模組一前五章覆蓋了「Ollama + Continue.dev」這條最短路徑。日常路徑跑穩後，你可能會想往以下方向延伸：加裝 ChatGPT 風格的 Web UI、跑 coding agent、嘗試產圖。本章把這些延伸方向逐一列出、給優先順序、講清楚哪些是「換工具」、哪些是「換領域」。

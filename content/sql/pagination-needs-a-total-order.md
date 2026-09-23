@@ -2,7 +2,7 @@
 title: "1.12 分頁要一個全序，而 ORDER BY 只給到分得出高下為止"
 date: 2026-09-02
 description: "同分的列在分頁時重複與遺漏的機制、排序鍵要滿足什麼條件，以及把游標從位置換成值的兩種寫法與它們的方向陷阱"
-weight: 12
+weight: 13
 tags: ["sql", "pagination", "limit", "offset", "keyset", "order-by"]
 ---
 

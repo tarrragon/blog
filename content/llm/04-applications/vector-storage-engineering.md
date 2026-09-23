@@ -3,7 +3,7 @@ title: "4.22 RAG storage 工程：從 pickle 到 vector database 的選型判讀
 date: 2026-07-01
 description: "RAG storage backend 選型：規模到哪個階段該從 in-memory 升級到 vector DB、dependency chain 如何收窄選項"
 tags: ["llm", "applications", "rag", "vector-database", "embedding", "storage"]
-weight: 22
+weight: 23
 ---
 
 做完 RAG proof-of-concept 後最常見的問題是「現在的 in-memory 方案什麼時候該換成 vector database」。RAG pipeline 的儲存方案是**工程選擇、不是概念要件**。[4.1 RAG 原理](/llm/04-applications/rag-principles/)定義的 retrieval + augmentation 二段式結構，跟 embedding 存在 pickle、flat file、SQLite、還是 Pinecone 無關 — 只要能「給一個 query vector，找到最相似的 chunk vectors」，retrieval 這一段就成立。

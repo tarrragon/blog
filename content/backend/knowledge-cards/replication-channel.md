@@ -2,7 +2,7 @@
 title: "Replication Channel"
 date: 2026-05-22
 description: "說明多來源複製中，每個來源對應的獨立複製通道如何成為隔離單位"
-weight: 344
+weight: 345
 ---
 
 Replication Channel 的核心概念是當一個資料庫同時從多個來源複製時，每個來源對應一條獨立的複製通道，各自有自己的進度、延遲、錯誤與設定。它讓多來源複製的健康狀況可以被分開判讀與分開處理，每條通道的延遲要分開接回 [Replication Lag](/backend/knowledge-cards/replication-lag/)。

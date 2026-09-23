@@ -2,7 +2,7 @@
 title: "Trace Context"
 date: 2026-06-22
 description: "說明跨服務 request 如何用 trace context 串起路徑與耗時"
-weight: 35
+weight: 36
 tags: ["backend", "observability"]
 ---
 

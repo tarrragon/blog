@@ -2,7 +2,7 @@
 title: "Buffer"
 date: 2026-04-23
 description: "說明系統如何用暫存空間吸收短暫速度差與尖峰流量"
-weight: 129
+weight: 130
 ---
 
 

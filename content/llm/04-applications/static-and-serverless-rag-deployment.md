@@ -3,7 +3,7 @@ title: "4.16 靜態 / serverless RAG deployment：架構選擇與資安取捨"
 date: 2026-05-12
 description: "沒 backend 的場景怎麼做 RAG：四種 deployment 方案、API key 暴露問題、CORS / abuse / 第三方信任、跟模組六的 routing"
 tags: ["llm", "applications", "rag", "deployment", "static-site", "serverless", "security"]
-weight: 16
+weight: 17
 ---
 
 [4.1 RAG](/llm/04-applications/rag-principles/) 跟 [4.12 embedding model](/llm/04-applications/embedding-model-internals/) 寫的是「RAG 在做什麼、embedding 怎麼選」、預設「有 backend server」可跑 embedding 跟 LLM。但實際大量場景是**沒 backend** — 個人 blog（Hugo / Jekyll / Astro）想加智能搜尋、docs site 想做 LLM 對話、demo 想離線跑。本章把這條「靜態 / serverless RAG」路線拆成四個方案、配合靜態場景**特有的資安議題**（這些議題模組六沒覆蓋、屬本章新增）。

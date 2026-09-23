@@ -2,7 +2,7 @@
 title: "Same-Origin Policy"
 date: 2026-07-31
 description: "前端送得出請求卻拿不到回應、或要判斷跨站防護的前提還在不在時，用來定位瀏覽器隔離的是讀取而非送出"
-weight: 425
+weight: 426
 tags: ["backend", "knowledge-card", "security", "web"]
 ---
 

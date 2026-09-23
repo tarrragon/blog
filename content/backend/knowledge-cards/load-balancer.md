@@ -3,7 +3,7 @@ title: "Load Balancer"
 tags: ["負載平衡器", "Load Balancer"]
 date: 2026-04-23
 description: "說明流量如何分散、排空與導向健康節點"
-weight: 129
+weight: 130
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Alert"
 date: 2026-06-22
 description: "說明 alert 如何把需要處理的服務症狀轉成可行動通知"
-weight: 142
+weight: 143
 tags: ["backend", "observability"]
 ---
 

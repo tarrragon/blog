@@ -2,7 +2,7 @@
 title: "Chaos Test"
 date: 2026-04-23
 description: "說明透過受控故障注入驗證系統在異常條件下的恢復能力"
-weight: 159
+weight: 160
 ---
 
 

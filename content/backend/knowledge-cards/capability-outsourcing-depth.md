@@ -3,7 +3,7 @@ title: "Capability Outsourcing Depth（外包深度）"
 slug: "capability-outsourcing-depth"
 date: 2026-06-14
 description: "說明外包一塊後端能力有三種深度（managed 基礎設施、feature SaaS、BaaS bundle）、深度決定保留多少控制權與遷出代價"
-weight: 375
+weight: 376
 ---
 
 外包深度的核心概念是：把一塊後端能力交出去有深淺之分、不是「全有或全無」的二元 — 同樣是「不自己寫」、把維運交出去跟把整塊能力連業務邏輯一起交出去、保留的控制權與 [Vendor Lock-In](/backend/knowledge-cards/vendor-lock-in/) 的退出成本差一個量級。三種深度由淺到深是 managed 基礎設施、feature SaaS 與 BaaS bundle — 這條軸只涵蓋雲端託管側、自架 OSS 或 on-prem 授權、只租控制平面的自管形態鎖定在運維 know-how 與授權、屬軸外的另一類。判斷一塊能力該外包到哪個深度、是選型時與「買還是建」並列的問題。它跟 [BaaS](/backend/knowledge-cards/baas/) 的差別在抽象層級：BaaS 是最深那一層的具體交付形態、外包深度是涵蓋三層的判讀軸。

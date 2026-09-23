@@ -2,7 +2,7 @@
 title: "Clock Skew"
 date: 2026-07-27
 description: "跨機器比較時間才成立的機制（時效窗口、憑證有效期、事件排序）在決定容忍值時的判斷依據"
-weight: 419
+weight: 420
 ---
 
 Clock Skew 的核心概念是兩台機器對「現在幾點」的認知有落差，任何跨機器比較時間的機制都要為這個落差保留容忍範圍。它影響的是時效性判斷的邊界：[Replay Attack](/backend/knowledge-cards/replay-attack/) 的新鮮度窗口、憑證的有效期起訖、以及依時間戳排序的事件流，都建立在雙方時鐘足夠接近這個前提上。

@@ -3,7 +3,7 @@ title: "Diagnostic Endpoint"
 tags: ["診斷端點", "Diagnostic Endpoint"]
 date: 2026-04-23
 description: "說明健康檢查、診斷與調試入口如何控制暴露面"
-weight: 0
+weight: 1
 ---
 
 

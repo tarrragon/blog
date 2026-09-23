@@ -2,7 +2,7 @@
 title: "Escalation Policy"
 date: 2026-04-23
 description: "說明事故升級鏈與值班轉接規則"
-weight: 152
+weight: 153
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Burn Rate"
 date: 2026-06-22
 description: "說明 error budget 消耗速度如何支援告警與事故分級"
-weight: 102
+weight: 103
 tags: ["backend", "observability"]
 ---
 

@@ -2,7 +2,7 @@
 title: "4.5 高併發控制與 backpressure "
 date: 2026-04-23
 description: "用 bounded concurrency、backpressure 與 cancellation 控制 goroutine 的成長"
-weight: 5
+weight: 6
 tags: ["go", "concurrency", "performance"]
 ---
 

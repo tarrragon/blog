@@ -2,7 +2,7 @@
 title: "Registrable Domain"
 date: 2026-07-31
 description: "判斷兩個主機名算不算同一方、或某個跨站防護的信任邊界實際涵蓋誰時，用來定位「站」的切點在哪一層"
-weight: 429
+weight: 430
 tags: ["backend", "knowledge-card", "security", "web"]
 ---
 

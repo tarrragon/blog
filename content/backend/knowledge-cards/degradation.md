@@ -3,7 +3,7 @@ title: "Degradation"
 tags: ["降級", "Degradation"]
 date: 2026-04-23
 description: "說明服務部分能力失效時如何保留核心功能與控制風險"
-weight: 8
+weight: 9
 ---
 
 

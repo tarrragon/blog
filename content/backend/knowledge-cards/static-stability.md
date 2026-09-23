@@ -3,7 +3,7 @@ title: "Static Stability"
 tags: ["Static Stability", "Control Plane", "Data Plane", "可靠性"]
 date: 2026-06-23
 description: "控制面失效時資料面用快取的已知好配置繼續服務的設計模式"
-weight: 320
+weight: 321
 ---
 
 Static stability 的核心概念是「資料面在 [control plane](/backend/knowledge-cards/control-plane/) 失效時仍能維持服務」。設計約束是資料面必須快取控制面最後已知的好配置，並在控制面不可用時用快取繼續運作，不依賴控制面即時回應。

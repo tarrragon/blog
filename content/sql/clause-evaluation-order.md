@@ -2,7 +2,7 @@
 title: "1.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉"
 date: 2026-08-31
 description: "求值順序規定每一步手上有什麼，以及模型層的限制與各家引擎的放寬怎麼分辨"
-weight: 2
+weight: 3
 tags: ["sql", "clause-order", "having", "group-by", "alias"]
 ---
 

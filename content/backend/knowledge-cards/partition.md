@@ -2,7 +2,7 @@
 title: "Partition"
 date: 2026-06-22
 description: "說明事件流如何切分成多個可並行處理的有序片段"
-weight: 73
+weight: 74
 tags: ["backend", "message-queue"]
 ---
 

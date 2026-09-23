@@ -2,7 +2,7 @@
 title: "Message Authentication"
 date: 2026-07-27
 description: "兩個系統用共享密鑰互相呼叫時，用來判斷驗證值保護到什麼範圍、撤銷粒度落在哪一層"
-weight: 417
+weight: 418
 ---
 
 Message Authentication 的核心概念是用雙方共享的密鑰為訊息產生一段驗證值，接收方重算後比對，同時確認「訊息出自持有密鑰的一方」與「內容在傳輸中沒有被改過」。這段驗證值在多數 API 文件裡稱為 signature 或 MAC。它承擔的是來源與完整性，訊息本身照常明文傳輸；需要內容不可讀時要疊加 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/) 或 [At-Rest Encryption](/backend/knowledge-cards/at-rest-encryption/)，密鑰的保存與輪替接回 [Key Management](/backend/knowledge-cards/key-management/)。

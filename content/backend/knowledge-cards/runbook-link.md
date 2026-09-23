@@ -2,7 +2,7 @@
 title: "Runbook Link"
 date: 2026-04-23
 description: "說明告警與 dashboard 如何直接連到處理流程"
-weight: 109
+weight: 110
 ---
 
 

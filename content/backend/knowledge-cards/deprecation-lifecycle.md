@@ -2,7 +2,7 @@
 title: "Deprecation Lifecycle（棄用生命週期）"
 date: 2026-07-20
 description: "從宣告棄用到全面停用之間、用哪些工具組合把通訊觸及率覆蓋到不同類型的消費者"
-weight: 415
+weight: 416
 ---
 
 Deprecation lifecycle 是 API 版本從宣告棄用到完全退場之間的一組執行工具，各自解決通訊鏈上不同的斷點，跟內部資料遷移使用的 [Migration Gate](/backend/knowledge-cards/migration-gate/) 是同一類分階段收斂問題在不同邊界的應用——一個管內部資料能不能推進到下一階段，一個管外部消費者的退場節奏。宣告棄用本身容易，讓長尾消費者實際完成遷移才是工程問題，單一公告觸及不到所有消費者，這個生命週期因此需要多種工具組合，各自覆蓋不同的接觸面。

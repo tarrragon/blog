@@ -2,7 +2,7 @@
 title: "Time Range"
 date: 2026-05-11
 description: "說明證據、查詢與事故判讀如何用時間窗保留可回放上下文"
-weight: 318
+weight: 319
 tags: ["backend", "knowledge-card", "observability", "incident-response"]
 ---
 

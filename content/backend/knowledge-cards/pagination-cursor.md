@@ -2,7 +2,7 @@
 title: "Pagination Cursor（分頁游標）"
 date: 2026-07-20
 description: "分頁狀態的表示權該留在誰手上——cursor 的不透明性是介面演化自由度的承諾還是逃生門"
-weight: 414
+weight: 415
 ---
 
 Pagination cursor 跟 [Keyset Pagination](/backend/knowledge-cards/keyset-pagination/) 談的是同一個分頁機制的不同切面：keyset pagination 卡描述的是伺服器內部怎麼用 `WHERE id > last_seen_id` 這類條件把查詢複雜度壓到跟 offset 大小無關；pagination cursor 卡描述的是這個內部狀態要不要對消費者不透明——cursor 內容用 Base64 編碼、消費者不能解析，是服務端保留自由改動底層分頁策略的契約承諾，不只是實作細節。

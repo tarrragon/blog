@@ -2,7 +2,7 @@
 title: "Reliability Boundary"
 date: 2026-04-23
 description: "說明系統在哪個邊界內承諾可靠傳遞，邊界外需要哪些補償機制"
-weight: 139
+weight: 140
 ---
 
 

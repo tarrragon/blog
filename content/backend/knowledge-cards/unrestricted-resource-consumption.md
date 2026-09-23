@@ -2,7 +2,7 @@
 title: "Unrestricted Resource Consumption"
 date: 2026-04-23
 description: "說明缺少資源限制如何讓 API 被濫用或拖垮"
-weight: 116
+weight: 117
 ---
 
 

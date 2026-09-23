@@ -2,7 +2,7 @@
 title: "Search Index"
 date: 2026-06-22
 description: "說明搜尋索引如何承擔全文檢索、排序與查詢體驗"
-weight: 146
+weight: 147
 tags: ["backend", "observability", "database"]
 ---
 

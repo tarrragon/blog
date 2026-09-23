@@ -2,7 +2,7 @@
 title: "At-Rest Encryption"
 date: 2026-05-22
 description: "說明資料落到儲存媒介前的加密層，以及它對應的威脅模型"
-weight: 332
+weight: 333
 ---
 
 At-Rest Encryption 的核心概念是資料寫入磁碟前先加密，保護 tablespace、log、backup 等落地資料。它對應的威脅是儲存媒介遺失或被竊 — 磁碟、快照或 backup 檔落到他人手上時，加密讓資料仍受保護。它和保護傳輸中資料的 [TLS / mTLS](/backend/knowledge-cards/tls-mtls/) 解的是不同威脅，兩者互補；金鑰的保存與輪替要接回 [Secret Management](/backend/knowledge-cards/secret-management/)。

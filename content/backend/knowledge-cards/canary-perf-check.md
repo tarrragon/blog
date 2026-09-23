@@ -2,7 +2,7 @@
 title: "Canary Perf Check"
 date: 2026-05-12
 description: "canary release 中針對 latency / throughput 而非 error rate 的退化檢查"
-weight: 235
+weight: 236
 ---
 
 Canary perf check 的核心概念是「canary 階段不只看 error rate、也看 latency / throughput / resource utilization 退化」。傳統 canary 看 error rate、但 perf 退化通常先於 error 出現、是更早的警訊。可先對照 [Profile Diff](/backend/knowledge-cards/profile-diff/)。

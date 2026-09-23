@@ -2,7 +2,7 @@
 title: "Headroom Budget"
 date: 2026-05-12
 description: "說明容量規劃中為應付異常 burst + AZ 故障 + forecast 誤差的安全餘量"
-weight: 229
+weight: 230
 ---
 
 Headroom budget 的核心概念是「預期峰值之上、額外預留多少 capacity 應付異常」。常見 30-50%、不同工作負載比例不同。可先對照 [Peak Forecast](/backend/knowledge-cards/peak-forecast/)。

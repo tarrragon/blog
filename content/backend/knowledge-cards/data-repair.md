@@ -2,7 +2,7 @@
 title: "Data Repair"
 date: 2026-07-20
 description: "對帳抓到差異之後、要把錯誤資料改回正式狀態時——dry-run、稽核與可逆設計決定這次修復是收斂還是擴大污染"
-weight: 388
+weight: 389
 tags: ["backend", "knowledge-card", "database", "reliability"]
 ---
 

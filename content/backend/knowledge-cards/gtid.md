@@ -2,7 +2,7 @@
 title: "GTID"
 date: 2026-05-22
 description: "說明全域交易識別碼如何讓複製進度與故障切換不依賴實體 log 位置"
-weight: 348
+weight: 349
 ---
 
 GTID（Global Transaction Identifier）的核心概念是給每一筆交易一個全域唯一的識別碼，讓複製進度用「套用到哪個交易」來表示，而不是用某台機器上的實體 log 檔名與位移。它讓 replica 重接、故障切換與拓撲調整不必手算 log 位置。它是 [Replication Channel](/backend/knowledge-cards/replication-channel/) 與 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 追蹤位置的基礎。

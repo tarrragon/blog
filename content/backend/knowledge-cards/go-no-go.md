@@ -2,7 +2,7 @@
 title: "Go/No-Go"
 date: 2026-08-11
 description: "說明在不可逆變更前的固定時點，由各職能分持一票宣告放行或停止的決策制度"
-weight: 434
+weight: 435
 tags: ["backend", "knowledge-card", "reliability", "release-gate"]
 ---
 

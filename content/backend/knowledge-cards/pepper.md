@@ -2,7 +2,7 @@
 title: "Pepper"
 date: 2026-07-31
 description: "威脅模型含「資料庫被拿走而伺服器沒有」時，用來判斷這一層值不值得加、以及它的輪替成本由什麼決定"
-weight: 431
+weight: 432
 tags: ["backend", "knowledge-card", "security", "cryptography"]
 ---
 

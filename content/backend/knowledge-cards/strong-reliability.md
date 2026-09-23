@@ -2,7 +2,7 @@
 title: "Strong Reliability"
 date: 2026-04-23
 description: "說明高可靠事件路徑需要的保存、重試、去重與回復責任"
-weight: 143
+weight: 144
 ---
 
 

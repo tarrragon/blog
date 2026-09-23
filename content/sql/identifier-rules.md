@@ -2,7 +2,7 @@
 title: "1.14 識別字送進引擎之後會被改寫"
 date: 2026-08-31
 description: "各家對大小寫的摺疊規則、引號的作用與保留字，以及兩種一致做法之間的中間地帶"
-weight: 14
+weight: 15
 tags: ["sql", "identifier", "naming", "postgresql", "portability"]
 ---
 

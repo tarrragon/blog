@@ -2,7 +2,7 @@
 title: "Eviction"
 date: 2026-04-23
 description: "說明快取容量不足時哪些資料會被淘汰，以及淘汰如何影響服務"
-weight: 19
+weight: 20
 ---
 
 

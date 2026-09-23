@@ -2,7 +2,7 @@
 title: "Workload Model"
 date: 2026-05-12
 description: "描述 production traffic 形狀的可重播模型 — 容量規劃跟壓測的共同輸入"
-weight: 225
+weight: 226
 ---
 
 Workload model 的核心概念是「把 production traffic shape 量化成可重播的模型」。沒有模型、壓測結果無意義、容量規劃靠猜；有模型之後、所有效能決策都有共同的輸入。可先對照 [Load Test](/backend/knowledge-cards/load-test/)。

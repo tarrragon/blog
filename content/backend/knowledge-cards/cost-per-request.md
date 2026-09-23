@@ -2,7 +2,7 @@
 title: "Cost Per Request"
 date: 2026-05-12
 description: "把雲端成本拆到單一 API 請求的 unit economics 模型"
-weight: 238
+weight: 239
 ---
 
 Cost per request 的核心概念是「把月帳單 / 總 RPS = 每個請求的成本」、進一步拆到每個 endpoint、每個 stage（app / DB / cache / network）。讓容量決策有 unit economics 邊界。可先對照 [Headroom Budget](/backend/knowledge-cards/headroom-budget/)。

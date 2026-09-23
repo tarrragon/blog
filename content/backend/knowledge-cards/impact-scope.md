@@ -3,7 +3,7 @@ title: "Impact Scope"
 tags: ["影響範圍", "Impact Scope"]
 date: 2026-04-24
 description: "說明事故中如何盤點受影響範圍，支持通報、回復與責任判讀"
-weight: 268
+weight: 269
 ---
 
 

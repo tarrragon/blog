@@ -2,7 +2,7 @@
 title: "Load Test"
 date: 2026-04-23
 description: "說明在預期流量下驗證容量、延遲與降級策略的測試"
-weight: 158
+weight: 159
 ---
 
 

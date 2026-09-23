@@ -2,7 +2,7 @@
 title: "Logical Replication"
 date: 2026-05-22
 description: "說明以表為粒度解碼 row-level 變更的複製方式，對照 byte-level 的實體複製"
-weight: 339
+weight: 340
 ---
 
 Logical Replication 的核心概念是以 table 或 publication 為粒度，把 row-level 變更解碼成邏輯事件再複製到下游，相對於整個 cluster byte-level 複製的實體複製。它讓跨版本、選擇性、跨系統的複製成為可能，代價是要處理 schema 漂移與 [Replication Slot](/backend/knowledge-cards/replication-slot/) 的保留壓力。它是 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 的常見基礎。

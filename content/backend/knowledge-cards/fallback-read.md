@@ -2,7 +2,7 @@
 title: "Fallback Read"
 date: 2026-05-11
 description: "說明讀取路徑切換失敗時如何暫時回到舊資料語意或舊讀取來源"
-weight: 143
+weight: 144
 tags: ["backend", "knowledge-card", "database", "migration"]
 ---
 

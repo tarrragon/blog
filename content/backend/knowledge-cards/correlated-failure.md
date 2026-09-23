@@ -2,7 +2,7 @@
 title: "Correlated Failure"
 date: 2026-07-04
 description: "以為獨立的多個元件共享一個隱藏的失效觸發器、在同一時刻一起壞；冗餘副本、觀測系統、跨區部署都可能共命運"
-weight: 50
+weight: 51
 tags: ["backend", "knowledge-card", "reliability"]
 ---
 

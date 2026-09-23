@@ -3,7 +3,7 @@ title: "Rollback Strategy"
 tags: ["回滾策略", "Rollback Strategy"]
 date: 2026-04-23
 description: "說明事故期間如何判斷回滾、回切與暫停變更"
-weight: 155
+weight: 156
 ---
 
 Rollback strategy 的核心概念是「在事故期間用可驗證條件決定是否回滾」。回滾是根據影響面、資料風險與回復速度做出的風險控制決策，當成預設答案會忽略回滾本身的代價。 可先對照 [Incident Severity](/backend/knowledge-cards/incident-severity/)。

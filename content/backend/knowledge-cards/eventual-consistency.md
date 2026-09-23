@@ -2,7 +2,7 @@
 title: "Eventual Consistency"
 date: 2026-05-13
 description: "允許短暫不一致、最終收斂到同一資料狀態的一致性語意"
-weight: 251
+weight: 252
 ---
 
 Eventual consistency 的核心概念是「節點可以暫時看到不同資料，但在沒有新寫入時最終會收斂一致」。它的責任是用一致性延遲換取可用性與吞吐，常和 [session-consistency](/backend/knowledge-cards/session-consistency/) 對照使用。

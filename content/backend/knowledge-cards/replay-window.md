@@ -2,7 +2,7 @@
 title: "Replay Window"
 date: 2026-06-16
 description: "說明事件可重播的時間或 offset 範圍邊界，由 retention 與 checkpoint 決定"
-weight: 378
+weight: 379
 ---
 
 Replay window 的核心概念是「事件能往回重播的範圍」。它由 broker 的 retention 與 consumer 的 checkpoint 共同界定，決定出事後能補送多久以前的事件。 可先對照 [Recovery Semantics](/backend/knowledge-cards/recovery-semantics/)。

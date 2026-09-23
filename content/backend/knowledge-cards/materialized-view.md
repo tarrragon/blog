@@ -2,7 +2,7 @@
 title: "Materialized View"
 date: 2026-06-22
 description: "說明預先計算並儲存查詢結果以加速讀取的資料結構"
-weight: 327
+weight: 328
 tags: ["backend", "observability", "database"]
 ---
 

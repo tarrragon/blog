@@ -3,7 +3,7 @@ title: "Hands-on：用 QLoRA 在本機 fine-tune coding 模型"
 date: 2026-05-12
 description: "Apple Silicon Mac / PC 獨立 GPU 上跑 QLoRA fine-tune 的完整流程：環境、資料、訓練、evaluation、合併、部署到 Ollama"
 tags: ["llm", "hands-on", "fine-tuning", "qlora", "lora"]
-weight: 7
+weight: 8
 ---
 
 [QLoRA](/llm/knowledge-cards/qlora/)（4-bit 量化 base model + [LoRA](/llm/knowledge-cards/lora/) adapter）讓消費級硬體也能 fine-tune 7B-32B 模型、是 2026/5 本地 fine-tuning 的主流方法。「在本機 fine-tune 一個小 coding 模型懂我 codebase 的慣例」是個人 dev 的合理目標、特別是在「本地 RAG 不夠精準、prompt engineering 已到天花板」的場景。本篇用 QLoRA 把 fine-tuning 的最短路徑走完：環境準備、資料蒐集、訓練、evaluation、合併權重、部署到 Ollama / llama.cpp 配 VS Code Continue.dev。

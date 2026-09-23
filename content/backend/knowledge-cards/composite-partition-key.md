@@ -2,7 +2,7 @@
 title: "Composite Partition Key"
 date: 2026-05-27
 description: "多欄位合成 partition key 把單一 logical hot key 拆成多個物理 shard、寫入分散讀取 fan-out"
-weight: 368
+weight: 369
 ---
 
 Composite partition key 的核心概念是「用多個欄位拼接成 partition key — 例如 `event_id#shard_id`、`tenant_id + user_id_hash`、`userId_random` — 把單一 logical key 寫入分散到 N 個物理 partition」。它是 [Hot Partition](/backend/knowledge-cards/hot-partition/) 的標準治療手段、跟 [Database Sharding](/backend/knowledge-cards/database-sharding/) 不同層（後者是跨 cluster 的 application-level、composite key 是單表內 partition layout）。

@@ -3,7 +3,7 @@ title: "Token Revocation"
 tags: ["權杖撤銷", "Token Revocation"]
 date: 2026-04-24
 description: "說明事件中如何撤銷 token，縮短可利用窗口"
-weight: 266
+weight: 267
 ---
 
 

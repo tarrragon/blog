@@ -2,7 +2,7 @@
 title: "Freshness Window"
 date: 2026-07-20
 description: "每類資料能容忍多久的不新鮮？依欄位風險分級定義過時窗口、取代單一全域 TTL"
-weight: 389
+weight: 390
 tags: ["backend", "knowledge-card", "cache", "freshness"]
 ---
 

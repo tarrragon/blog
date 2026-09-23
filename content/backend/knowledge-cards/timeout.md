@@ -3,7 +3,7 @@ title: "Timeout"
 tags: ["逾時", "Timeout"]
 date: 2026-04-23
 description: "說明等待外部操作的時間上限如何保護資源與使用者體驗"
-weight: 43
+weight: 44
 ---
 
 

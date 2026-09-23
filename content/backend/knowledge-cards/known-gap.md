@@ -2,7 +2,7 @@
 title: "Known Gap"
 date: 2026-05-11
 description: "說明證據包如何明確保存已知缺口，避免下游高估證據完整性"
-weight: 322
+weight: 323
 tags: ["backend", "knowledge-card", "observability", "incident-response"]
 ---
 

@@ -2,7 +2,7 @@
 title: "PII"
 date: 2026-04-23
 description: "說明可識別個人的資料如何影響權限、遮罩、保留與稽核"
-weight: 123
+weight: 124
 ---
 
 

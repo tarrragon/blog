@@ -3,7 +3,7 @@ title: "1.7 排錯方法論：用三層架構做故障定位"
 date: 2026-05-11
 description: "故障定位的分層思考、症狀到層級的對應反射、log 在三層的角色差異、最小可重現的縮減策略"
 tags: ["llm", "local-llm-services", "troubleshooting"]
-weight: 7
+weight: 8
 ---
 
 本地 LLM 工作流出問題時、第一個本能反應常是「重啟試試看」。本章建立另一種反射：用[三層架構](/llm/00-foundations/three-layer-architecture/)（介面 / [推論伺服器](/llm/knowledge-cards/inference-server/) / 模型）的視角先確認「哪一層壞」、再針對該層做具體診斷。這個方法不依賴記住每個工具的具體錯誤訊息、跨工具世代都成立。

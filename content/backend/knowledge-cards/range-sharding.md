@@ -2,7 +2,7 @@
 title: "Range Sharding"
 date: 2026-05-27
 description: "分散式 SQL 把 key space 切成可自動 split / merge 的 range、每個 range 自己的 consensus group、application 透明"
-weight: 362
+weight: 363
 ---
 
 Range sharding 的核心概念是「distributed SQL 把整個 key space 依 key 順序切成多個 range、每個 range 有自己的 consensus group 跟 replica 分布、容量逼近 split 上限就自動分裂、application 看到的只是 SQL table」。它的責任是讓資料分散變成系統內建透明機制、不需要 application 端設計 shard key。可先對照 [Database Sharding](/backend/knowledge-cards/database-sharding/)。

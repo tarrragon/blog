@@ -2,7 +2,7 @@
 title: "0.4 操作平台選型"
 date: 2026-04-23
 description: "區分 log、metric、trace、dashboard、alert、deployment 與 reliability 的選型邊界"
-weight: 4
+weight: 5
 tags: ["backend", "service-selection"]
 ---
 

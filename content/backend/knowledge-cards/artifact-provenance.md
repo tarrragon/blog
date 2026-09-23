@@ -3,7 +3,7 @@ title: "Artifact Provenance"
 tags: ["供應鏈", "Provenance"]
 date: 2026-04-30
 description: "說明交付物的來源、完整性與簽章關聯如何建立信任"
-weight: 258
+weight: 259
 ---
 
 

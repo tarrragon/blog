@@ -2,7 +2,7 @@
 title: "HTTP Client"
 date: 2026-04-23
 description: "說明服務呼叫外部 HTTP 依賴時需要管理 timeout、連線與重試"
-weight: 127
+weight: 128
 ---
 
 

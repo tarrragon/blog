@@ -2,7 +2,7 @@
 title: "Transient Failure"
 date: 2026-04-23
 description: "說明暫時性故障如何影響重試、告警與使用者回應"
-weight: 49
+weight: 50
 ---
 
 

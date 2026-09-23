@@ -2,7 +2,7 @@
 title: "Poison Message"
 date: 2026-04-23
 description: "說明特定訊息內容如何穩定造成 consumer 失敗"
-weight: 65
+weight: 66
 ---
 
 

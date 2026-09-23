@@ -2,7 +2,7 @@
 title: "Fencing Token"
 date: 2026-06-16
 description: "說明用單調遞增的 token 讓下游拒絕過期持鎖者的寫入，把互斥正確性下沉到資料層"
-weight: 383
+weight: 384
 ---
 
 Fencing token 的核心概念是「每次取鎖發一個單調遞增的編號，持鎖者對下游的每個寫入都帶上它，下游記住見過的最大編號並拒絕比它小的寫入」。它把互斥的正確性從鎖本身下沉到擁有正式狀態的那一層。 可先對照 [Distributed Lock](/backend/knowledge-cards/distributed-lock/)。

@@ -2,7 +2,7 @@
 title: "0.2 狀態與資料儲存選型"
 date: 2026-04-23
 description: "區分 source of truth、快取、搜尋索引、event log 與 object storage 的選型邊界"
-weight: 2
+weight: 3
 tags: ["backend", "service-selection"]
 ---
 

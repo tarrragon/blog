@@ -2,7 +2,7 @@
 title: "Website Certificate Lifecycle"
 date: 2026-04-23
 description: "說明網站 TLS 憑證從簽發到續期與撤銷的全流程責任"
-weight: 145
+weight: 146
 ---
 
 

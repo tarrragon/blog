@@ -3,7 +3,7 @@ title: "Hands-on：用 blog content 當 corpus 跑 RAG"
 date: 2026-05-12
 description: "200 行 Python：embedding + cosine retrieval + Ollama chat、validating 4.0 RAG 原理"
 tags: ["llm", "hands-on", "rag", "ollama", "embedding"]
-weight: 4
+weight: 5
 ---
 
 本篇把 [4.1 RAG 原理](/llm/04-applications/rag-principles/) 的概念落到一個能跑的最小實作：用本 blog 的 `content/llm/` 當 corpus、Ollama 的 `nomic-embed-text` 做 embedding、`gemma3:1b` 做生成、兩個 Python 檔案完成 ingest + query 整條鏈。實作刻意保持 minimal、為的是把每一段都看清楚、跟原理對應。

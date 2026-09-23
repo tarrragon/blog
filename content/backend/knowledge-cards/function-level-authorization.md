@@ -2,7 +2,7 @@
 title: "Function-Level Authorization"
 date: 2026-04-23
 description: "說明功能操作本身也需要授權，不只資源 ID 需要授權"
-weight: 117
+weight: 118
 ---
 
 

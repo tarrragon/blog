@@ -2,7 +2,7 @@
 title: "Full-Text Search"
 date: 2026-04-23
 description: "說明全文檢索如何處理關鍵字匹配、語言分析與排序"
-weight: 161
+weight: 162
 ---
 
 

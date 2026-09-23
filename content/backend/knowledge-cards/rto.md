@@ -3,7 +3,7 @@ title: "RTO"
 tags: ["復原時間目標", "RTO"]
 date: 2026-04-23
 description: "說明恢復時間目標如何約束事故回復策略"
-weight: 158
+weight: 159
 ---
 
 

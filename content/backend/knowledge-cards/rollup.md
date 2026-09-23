@@ -2,7 +2,7 @@
 title: "Rollup / Downsampling"
 date: 2026-06-22
 description: "說明時間序列資料隨時間降低精度以控制儲存成本與查詢效能的機制"
-weight: 325
+weight: 326
 tags: ["backend", "observability"]
 ---
 

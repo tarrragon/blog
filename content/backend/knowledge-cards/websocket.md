@@ -2,7 +2,7 @@
 title: "WebSocket"
 date: 2026-04-23
 description: "說明 WebSocket 如何提供長連線雙向即時通訊"
-weight: 132
+weight: 133
 ---
 
 

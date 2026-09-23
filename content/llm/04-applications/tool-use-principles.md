@@ -3,7 +3,7 @@ title: "4.3 Tool use 原理：LLM 跟外部世界互動"
 date: 2026-05-11
 description: "Structured output 是 LLM 跨入工程系統的橋、function calling 取捨、為什麼本地小模型 tool use 表現崩潰"
 tags: ["llm", "applications", "tool-use", "function-calling"]
-weight: 3
+weight: 4
 ---
 
 [Tool use](/llm/knowledge-cards/tool-use/) 把 LLM 從「會生成文字的模型」延伸到「能參與工程系統的元件」。它的核心機制是 structured output——把 LLM 的機率分佈約束到工程系統可解析的格式、讓下游程式能對 LLM 的輸出做確定性處理。[Function calling](/llm/knowledge-cards/function-calling/) 是 structured output 的工程化形態、由模型訓練端跟推論端共同支撐。協議層級的對應（structured output / function calling / MCP 三者怎麼疊）見 [4.6 應用層協議](/llm/04-applications/application-protocols/)。

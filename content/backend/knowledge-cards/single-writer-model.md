@@ -2,7 +2,7 @@
 title: "Single Writer Model"
 date: 2026-05-22
 description: "說明單寫者模型如何序列化寫入，並成為系統的容量邊界"
-weight: 328
+weight: 329
 ---
 
 Single Writer Model 的核心概念是同一個邏輯資料庫在任一時間只允許一條 writer path，所有寫入被序列化。它讓寫入路徑簡單、省去分散式寫入協調，代價是寫入吞吐有明確上限。它是 SQLite WAL mode 與許多 leader-based 系統的並發模型，和 [Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/)、[Embedded Database](/backend/knowledge-cards/embedded-database/) 一起決定寫入行為。

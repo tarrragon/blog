@@ -2,7 +2,7 @@
 title: "Retention"
 date: 2026-06-22
 description: "說明資料或事件保留多久，以及保留期限如何影響重放與成本"
-weight: 75
+weight: 76
 tags: ["backend", "observability"]
 ---
 

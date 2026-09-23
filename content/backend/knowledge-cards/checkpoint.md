@@ -2,7 +2,7 @@
 title: "Checkpoint"
 date: 2026-04-23
 description: "說明長時間處理流程如何記錄可恢復進度"
-weight: 81
+weight: 82
 ---
 
 

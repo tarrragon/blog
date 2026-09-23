@@ -2,7 +2,7 @@
 title: "Replay Runbook"
 date: 2026-04-23
 description: "說明事件重放前需要控制的範圍、順序、驗證與副作用"
-weight: 4
+weight: 5
 ---
 
 

@@ -3,7 +3,7 @@ title: "Backpressure"
 tags: ["背壓控制", "Backpressure"]
 date: 2026-04-23
 description: "說明下游處理速度不足時系統如何讓上游依下游能力送出工作"
-weight: 27
+weight: 28
 ---
 
 Backpressure 的核心概念是「下游處理能力不足時，讓上游感知並放慢」。它把上游從「盲目送出」轉為「依下游能力送出」，讓系統在壓力下排隊、拒絕、降級或削峰，以保護下游資源並維持整體可預測性。Backpressure 的本質是「壓力從下游往上游傳遞」的訊號通道，覆蓋範圍比單純的拒絕策略更廣。 可先對照 [In-Process Channel](/backend/knowledge-cards/in-process-channel/)。

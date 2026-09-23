@@ -2,7 +2,7 @@
 title: "Cold Start"
 date: 2026-04-23
 description: "說明服務或快取剛啟動時尚未累積狀態造成的延遲與壓力"
-weight: 92
+weight: 93
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Row-Level Security"
 date: 2026-05-22
 description: "說明資料庫如何用 policy 限制同一張表中哪些 row 對某個角色可見或可寫"
-weight: 331
+weight: 332
 ---
 
 Row-Level Security（RLS）的核心概念是在資料庫層、用 policy 規則限制同一張表裡哪些 row 對某個角色可讀或可寫。它讓資料隔離多一道資料庫強制的防線，而不只依賴 application 的查詢條件。它是 [Tenant Boundary](/backend/knowledge-cards/tenant-boundary/) 的一種落地機制，和 [Authorization](/backend/knowledge-cards/authorization/)、[Least Privilege](/backend/knowledge-cards/least-privilege/) 一起構成防禦縱深。

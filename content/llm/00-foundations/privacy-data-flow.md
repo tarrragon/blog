@@ -3,7 +3,7 @@ title: "0.7 隱私 / 資安的資料流原理"
 date: 2026-05-11
 description: "從「位置」到「資料流」的思考升級：信任邊界、合約模型、零信任原則套用到 LLM 工作流"
 tags: ["llm", "foundations", "privacy", "security"]
-weight: 7
+weight: 8
 ---
 
 [0.6 判讀框架五](/llm/00-foundations/info-judgment-frames/) 建立的反射是「隱私是資料流、不是位置」。本章把這個 framing 展開成可操作的設計原則：信任邊界該怎麼劃、本地推論 vs 雲端的合約模型差異、零信任原則套用到 LLM 工作流的具體做法、NDA / 企業合規場景的判讀框架。

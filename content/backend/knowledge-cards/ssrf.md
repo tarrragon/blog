@@ -2,7 +2,7 @@
 title: "SSRF"
 date: 2026-04-23
 description: "說明伺服器端請求被濫用時如何存取內部網路或 metadata 服務"
-weight: 122
+weight: 123
 ---
 
 

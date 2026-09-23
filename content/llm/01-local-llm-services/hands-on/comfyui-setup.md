@@ -3,7 +3,7 @@ title: "Hands-on：安裝 ComfyUI + SDXL base"
 date: 2026-05-12
 description: "git clone、venv、pip install requirements、SDXL safetensors 放哪、--listen 啟動 server、瀏覽器 workflow 驗證"
 tags: ["llm", "hands-on", "comfyui", "stable-diffusion", "diffusion"]
-weight: 1
+weight: 2
 ---
 
 本篇紀錄裝 ComfyUI 跟 Stable Diffusion XL base 模型、在 Apple Silicon Mac 上跑通最小 text-to-image 流程。ComfyUI 是 2026 年 Apple Silicon 跑 [Diffusion](/llm/knowledge-cards/diffusion/) 最主流的選擇——節點式工作流（拖拉節點連線、像 visual programming、每個節點負責一段運算）、跨平台、Python 環境、容易客製化。Draw Things（Mac 原生 GUI）更簡單、但 ComfyUI 接 workflow 跟 custom node 的能力強很多。

@@ -2,7 +2,7 @@
 title: "Cache Warmup"
 date: 2026-04-23
 description: "說明服務啟動或活動前如何預先建立快取資料"
-weight: 90
+weight: 91
 ---
 
 

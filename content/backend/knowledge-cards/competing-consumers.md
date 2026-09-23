@@ -2,7 +2,7 @@
 title: "Competing Consumers"
 date: 2026-04-23
 description: "說明多個 consumer 共同處理同一個 queue 如何提高吞吐與影響順序"
-weight: 71
+weight: 72
 ---
 
 

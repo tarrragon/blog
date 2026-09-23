@@ -2,7 +2,7 @@
 title: "PACELC"
 date: 2026-05-13
 description: "在 CAP 之外補上正常時段的延遲與一致性取捨框架"
-weight: 243
+weight: 244
 ---
 
 PACELC 的核心概念是「系統就算沒有分區，也要在延遲與一致性之間做選擇」。它讓分散式資料庫的取捨從事故時段延伸到日常時段，常用於評估 [global-oltp](/backend/knowledge-cards/global-oltp/) 的可行性。

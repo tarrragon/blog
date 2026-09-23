@@ -2,7 +2,7 @@
 title: "In-Flight Work"
 date: 2026-05-13
 description: "目前已接收但尚未完成處理的工作量"
-weight: 255
+weight: 256
 ---
 
 In-flight work 的核心概念是「系統已接收、正在處理、但尚未完成的工作集合」。它的責任是量化即時壓力，支援容量控制與回退判讀。可對照 [in-flight-message](/backend/knowledge-cards/in-flight-message/) 與 [worker-pool](/backend/knowledge-cards/worker-pool/)。

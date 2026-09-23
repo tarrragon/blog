@@ -2,7 +2,7 @@
 title: "Read Model"
 date: 2026-06-22
 description: "說明為查詢場景建立的讀取模型，與正式狀態的責任分離"
-weight: 150
+weight: 151
 tags: ["backend", "architecture", "database"]
 ---
 

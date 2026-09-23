@@ -3,7 +3,7 @@ title: "4.0 Prompt 技術光譜：手法分類、取捨、組合模式"
 date: 2026-05-14
 description: "Zero-shot / few-shot、chain-of-thought、role / template、reflection 等 prompt 技術的分類與取捨、何時 stack 何時不要 stack、跟 fine-tune / RAG / chaining 的邊界"
 tags: ["llm", "applications", "prompt-engineering", "tradeoffs"]
-weight: 0
+weight: 1
 ---
 
 Prompt 技術不缺教學文章——但多數教學是「教你怎麼寫」、半年後模型換代、寫法跟著過時。本章不教「怎麼寫」、寫的是**這個技術 landscape 的結構**：有哪些手法、每個解什麼問題、它們的 trade-off 在哪、什麼時候該組合、什麼時候不該。這些結構性問題跨模型世代不變。

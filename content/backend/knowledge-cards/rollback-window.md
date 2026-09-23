@@ -2,7 +2,7 @@
 title: "Rollback Window"
 date: 2026-05-11
 description: "說明變更進入 production 後還能用哪種方式回退或改路線的時間與條件"
-weight: 156
+weight: 157
 tags: ["backend", "knowledge-card", "reliability", "migration"]
 ---
 

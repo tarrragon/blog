@@ -3,7 +3,7 @@ title: "Resiliency Matrix"
 tags: ["Resiliency Matrix", "Failure Mode", "Game Day", "可靠性"]
 date: 2026-06-23
 description: "服務與失敗模式的交叉矩陣，標記每個交叉點的防護狀態與驗證覆蓋"
-weight: 321
+weight: 322
 ---
 
 Resiliency matrix 的核心概念是「用 service × failure mode 的交叉矩陣，把系統的防護狀態從隱性假設變成可檢查資產」。每個交叉點標記 covered（有防護且已驗證）、gap（已知缺口待補）或 in-progress（防護建置中），讓團隊能系統性地追蹤 [blast radius](/backend/knowledge-cards/blast-radius/) 覆蓋。

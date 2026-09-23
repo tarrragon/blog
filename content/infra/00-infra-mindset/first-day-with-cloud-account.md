@@ -2,7 +2,7 @@
 title: "拿到雲端帳號的第一天"
 date: 2026-06-30
 description: "被指派 infra 工作、拿到 AWS 或 GCP 帳號、不確定該先做什麼時讀 — 第一小時安全底線、帳號現況判讀、後續學習路線分流"
-weight: 4
+weight: 5
 tags: ["infra", "aws", "onboarding", "iam"]
 ---
 

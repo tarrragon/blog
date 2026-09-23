@@ -2,7 +2,7 @@
 title: "Metric Cardinality"
 date: 2026-04-23
 description: "說明 metric label 組合數量如何影響觀測成本與查詢穩定性"
-weight: 36
+weight: 37
 ---
 
 

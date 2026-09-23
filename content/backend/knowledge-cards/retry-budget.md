@@ -2,7 +2,7 @@
 title: "Retry Budget"
 date: 2026-04-23
 description: "說明重試次數如何受整體容量與錯誤預算限制"
-weight: 58
+weight: 59
 ---
 
 

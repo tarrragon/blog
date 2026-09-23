@@ -2,7 +2,7 @@
 title: "Consumer Lag"
 date: 2026-04-23
 description: "說明 consumer lag 如何反映訊息堆積、處理能力與容量風險"
-weight: 2
+weight: 3
 ---
 
 

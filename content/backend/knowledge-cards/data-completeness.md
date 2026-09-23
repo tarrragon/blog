@@ -2,7 +2,7 @@
 title: "Data Completeness"
 date: 2026-04-23
 description: "說明資料是否完整到足以支持查詢、遷移與決策"
-weight: 86
+weight: 87
 ---
 
 

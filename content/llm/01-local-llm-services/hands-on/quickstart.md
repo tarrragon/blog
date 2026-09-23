@@ -3,7 +3,7 @@ title: "Hands-on Quickstart：clone repo 後跑通所有 demo"
 date: 2026-05-12
 description: "4 步驟跑通 RAG / MCP / permission demo 的 setup 跟驗證指令、整合 hands-on 系列所有章節的 prerequisite"
 tags: ["llm", "hands-on", "quickstart", "setup"]
-weight: 0
+weight: 1
 ---
 
 本篇是 hands-on 系列的**導讀**——把分散在 `ollama-setup` / `rag-demo` / `mcp-demo` / `permission-boundary` 各章節的 setup 步驟整合成一條最短路徑、讓 clone repo 的人能在 15 分鐘內跑通所有 demo（[RAG](/llm/knowledge-cards/rag/)、[MCP](/llm/knowledge-cards/mcp/)、權限邊界三個 demo、RAG 是「retrieval 找相關內容 + LLM 回答」、MCP 是「LLM application ↔ tool server 的標準協議」）。

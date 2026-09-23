@@ -2,7 +2,7 @@
 title: "Tail Latency"
 date: 2026-05-12
 description: "說明 p99 / p999 等長尾延遲為何比平均延遲更能反映 saturation"
-weight: 226
+weight: 227
 ---
 
 Tail latency 的核心概念是「p99 / p999 等高 percentile 的 latency 通常比 average 高一個量級、且 *是* 用戶體感的決定因素」。average 看不到的 saturation、p99 早就看到了。可先對照 [Saturation Point](/backend/knowledge-cards/saturation-point/)。

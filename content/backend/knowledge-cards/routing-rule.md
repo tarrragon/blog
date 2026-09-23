@@ -2,7 +2,7 @@
 title: "Routing Rule"
 date: 2026-04-23
 description: "說明訊息系統如何依規則把訊息送到不同處理路徑"
-weight: 135
+weight: 136
 ---
 
 

@@ -2,7 +2,7 @@
 title: "SLO Baseline Drift"
 date: 2026-05-12
 description: "SLO baseline 因業務變化 / surge / 架構改動而需要重新校準的現象"
-weight: 241
+weight: 242
 ---
 
 SLO baseline drift 的核心概念是「SLO 訂了不是永遠不動 — 業務變化、用戶習慣演變、架構升級都會讓 baseline 必須重新校準」。沒有 drift 意識、SLO 可能「太鬆失去意義」或「太緊每天 alert」。可先對照 [SLI / SLO](/backend/knowledge-cards/sli-slo/)。

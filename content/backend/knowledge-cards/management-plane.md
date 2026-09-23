@@ -3,7 +3,7 @@ title: "Management Plane"
 tags: ["管理平面", "Management Plane"]
 date: 2026-04-24
 description: "說明管理平面如何與業務流量平面分離，避免高權限入口擴散"
-weight: 264
+weight: 265
 ---
 
 

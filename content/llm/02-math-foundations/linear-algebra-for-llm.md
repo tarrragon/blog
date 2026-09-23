@@ -3,7 +3,7 @@ title: "2.0 線性代數：向量、矩陣、空間"
 date: 2026-05-11
 description: "LLM 內部運算的基底：向量、矩陣、向量空間、內積、norm、矩陣乘法的角色"
 tags: ["llm", "math", "linear-algebra"]
-weight: 0
+weight: 1
 ---
 
 線性代數是 LLM 內部運算的基底。每一次模型 [forward pass](/llm/knowledge-cards/forward-pass/)、本質上都是一連串矩陣乘法；每個 [token](/llm/knowledge-cards/token/) 在模型內部都是一個向量；[attention](/llm/knowledge-cards/attention/) 機制計算「相關性」的方式就是向量內積。理解這幾個概念、能讓「為什麼模型有 31B 個參數」「為什麼推論需要這麼多記憶體」「為什麼 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 是瓶頸」從口號變成可推導的事實。

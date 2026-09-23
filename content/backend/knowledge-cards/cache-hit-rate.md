@@ -2,7 +2,7 @@
 title: "Cache Hit Rate"
 date: 2026-04-23
 description: "說明快取命中比例如何衡量加速效果與下游保護"
-weight: 89
+weight: 90
 ---
 
 

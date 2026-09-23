@@ -2,7 +2,7 @@
 title: "Shadow Read"
 date: 2026-04-23
 description: "說明正式讀取仍走舊路徑時如何暗中讀新路徑比對結果"
-weight: 84
+weight: 85
 ---
 
 

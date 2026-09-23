@@ -2,7 +2,7 @@
 title: "Jitter"
 date: 2026-04-23
 description: "說明重試或排程加入隨機偏移如何降低同步尖峰"
-weight: 46
+weight: 47
 ---
 
 

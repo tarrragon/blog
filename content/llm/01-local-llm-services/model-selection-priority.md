@@ -3,7 +3,7 @@ title: "1.4 寫 code 場景的模型選型優先順序"
 date: 2026-05-11
 description: "Gemma 4 31B MTP → Qwen3-Coder 30B → Qwen3 14B → gpt-oss 20B 的取捨與適用情境"
 tags: ["llm", "model-selection", "coding"]
-weight: 4
+weight: 5
 ---
 
 裝完伺服器後，下一個決策是「該裝哪個 model」。本地 LLM 模型百百種，但寫 code 場景的真正候選名單其實很短：2026 年 5 月有四個值得認真考慮的選擇，加幾個 niche 選項。

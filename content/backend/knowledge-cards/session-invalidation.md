@@ -3,7 +3,7 @@ title: "Session Invalidation"
 tags: ["會話失效", "Session Invalidation"]
 date: 2026-04-24
 description: "說明事件後如何讓既有會話失效，避免被重放或延續利用"
-weight: 265
+weight: 266
 ---
 
 

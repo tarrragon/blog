@@ -3,7 +3,7 @@ title: "1.0 Ollama：主流推論伺服器"
 date: 2026-05-11
 description: "一行 brew 裝完、ollama run 一鍵跑 Gemma 4 MTP、OpenAI 相容 API on localhost:11434"
 tags: ["llm", "ollama", "server"]
-weight: 0
+weight: 1
 ---
 
 Ollama 是本地 LLM 生態的**主流推論伺服器**、承擔三個責任：模型管理（拉、存、列、刪）、推論執行（呼叫 [llama.cpp](/llm/01-local-llm-services/llama-cpp/) backend）、API 暴露（預設 [`localhost:11434`](/llm/knowledge-cards/port-and-localhost/) 上的 [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/) 與原生 API）。它的設計取捨偏向「拿來就跑」、把 [GGUF 格式](/llm/knowledge-cards/gguf/)、[量化](/llm/knowledge-cards/quantization/)、[KV cache](/llm/knowledge-cards/kv-cache/) 等底層細節都包進 CLI、使用者面對的只有 [model tag](/llm/knowledge-cards/model-tag/) 跟幾個指令。

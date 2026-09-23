@@ -2,7 +2,7 @@
 title: "WAF"
 date: 2026-04-23
 description: "說明 Web Application Firewall 如何在入口層過濾常見攻擊與濫用"
-weight: 121
+weight: 122
 ---
 
 

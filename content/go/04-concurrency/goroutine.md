@@ -2,7 +2,7 @@
 title: "4.1 goroutine：輕量並發工作"
 date: 2026-04-22
 description: "用 goroutine 啟動並發工作，並設計清楚的退出條件"
-weight: 1
+weight: 2
 tags: ["go", "concurrency", "goroutine"]
 ---
 

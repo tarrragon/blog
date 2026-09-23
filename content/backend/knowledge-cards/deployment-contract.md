@@ -2,7 +2,7 @@
 title: "Deployment Contract"
 date: 2026-04-23
 description: "說明服務與部署平台之間的生命週期約定"
-weight: 0
+weight: 1
 ---
 
 

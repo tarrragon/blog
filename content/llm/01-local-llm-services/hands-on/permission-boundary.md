@@ -3,7 +3,7 @@ title: "Hands-on：Ollama 改檔案 / 寫程式碼的權限邊界在哪"
 date: 2026-05-12
 description: "四組對照實驗：Ollama 自己沒 FS / shell 權限、wrapper 才有；--dry-run / --confirm / --auto 三檔審查粒度的取捨"
 tags: ["llm", "hands-on", "security", "permission", "ollama"]
-weight: 6
+weight: 7
 ---
 
 「Ollama 自己改檔案要不要 sudo？」「叫它寫 `rm -rf` 會直接刪嗎？」這類問題的答案來自一個根本事實：**LLM 是 pure function、文字進、文字出、本身沒任何 file system / shell / network 副作用**。改檔案、刪檔案、發網路請求、執行 shell command——全部由 **wrapper 或人類**做。LLM 「以為」自己做了什麼、跟實際發生什麼是兩件事。

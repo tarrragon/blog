@@ -2,7 +2,7 @@
 title: "Out-of-Band Signal（頻外訊號）"
 date: 2026-07-20
 description: "觀測系統本身也可能在事故中失能時、判斷該從哪個獨立通道取得系統存活狀態"
-weight: 407
+weight: 408
 ---
 
 Out-of-band signal 住在觀測系統的失效邊界之外——它是一個獨立失效域、不依賴被觀測系統自己上報，用來在內部 telemetry 全黑時仍能回答「系統死沒死」。這個獨立性是它唯一的核心要求：把它跟主系統放進同一個資料庫、同一個部署管線、同一個雲區域，等於讓它跟要它救援的對象共享同一個失效點，價值就消失。可先對照 [Status Page](/backend/knowledge-cards/status-page/)。

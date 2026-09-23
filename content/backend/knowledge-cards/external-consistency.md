@@ -2,7 +2,7 @@
 title: "External Consistency"
 date: 2026-05-13
 description: "交易可見順序與外部真實時間順序一致的強一致性語意"
-weight: 244
+weight: 245
 ---
 
 External consistency 的核心概念是「系統觀察到的交易順序，必須符合外部世界的先後順序」。它比一般 strong consistency 更強，因為要求與真實時間語意對齊，常出現在 [global-oltp](/backend/knowledge-cards/global-oltp/) 場景。

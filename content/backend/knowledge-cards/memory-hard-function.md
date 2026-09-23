@@ -2,7 +2,7 @@
 title: "Memory-Hard Function"
 date: 2026-07-31
 description: "要解釋為什麼某個密碼雜湊比另一個抗硬體、或判斷沒見過的構造落在哪裡時，用來定位它向攻擊者收的是哪一種費"
-weight: 432
+weight: 433
 tags: ["backend", "knowledge-card", "security", "cryptography"]
 ---
 

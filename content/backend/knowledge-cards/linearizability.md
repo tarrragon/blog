@@ -2,7 +2,7 @@
 title: "Linearizability"
 date: 2026-05-13
 description: "每次操作看起來都在單一全域順序中即時生效的一致性語意"
-weight: 249
+weight: 250
 ---
 
 Linearizability 的核心概念是「每次讀寫都像在單一時間線上立刻生效，且順序對所有節點一致」。它的責任是提供可直覺驗證的操作語意，常作為 [external-consistency](/backend/knowledge-cards/external-consistency/) 的基礎概念。

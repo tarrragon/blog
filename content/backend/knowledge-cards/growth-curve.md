@@ -2,7 +2,7 @@
 title: "Growth Curve"
 date: 2026-05-12
 description: "說明用戶 / 流量隨時間成長的五種典型形狀、影響容量規劃方法"
-weight: 232
+weight: 233
 ---
 
 Growth curve 的核心概念是「用戶 / 流量隨時間成長的形狀分五類：linear、step、exponential、S-curve、cyclical」。不同形狀對應不同容量規劃方法、forecast 方式跟 headroom 比例。可先對照 [Peak Forecast](/backend/knowledge-cards/peak-forecast/)。

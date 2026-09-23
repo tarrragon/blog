@@ -2,7 +2,7 @@
 title: "Poison-Message Quarantine"
 date: 2026-06-16
 description: "說明把毒訊息從主處理路徑隔離出來的機制，讓正常訊息繼續前進"
-weight: 382
+weight: 383
 ---
 
 Poison-message quarantine 的核心概念是「把穩定造成失敗的訊息從主處理路徑移開」。它是對 [poison message](/backend/knowledge-cards/poison-message/) 這個現象的處置：用投遞次數上限把壞訊息送進隔離區，讓正常訊息繼續前進。 可先對照 [Poison Message](/backend/knowledge-cards/poison-message/)。

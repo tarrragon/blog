@@ -2,7 +2,7 @@
 title: "Retry Storm"
 date: 2026-04-23
 description: "說明大量重試如何把局部故障放大成系統壓力"
-weight: 47
+weight: 48
 ---
 
 

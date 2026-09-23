@@ -2,7 +2,7 @@
 title: "1.22 一句需求走到一段上線的查詢"
 date: 2026-09-22
 description: "把一句業務的話追問成可驗收的資料問題、三種寫法各自押的前提、四種形態的代價實測，以及需求沒說而資料會有的那些邊界"
-weight: 22
+weight: 23
 tags: ["sql", "requirement", "query-design", "cost", "boundary"]
 ---
 

@@ -2,7 +2,7 @@
 title: "怎麼把 infra 推動起來 — 信任赤字、期望值對齊與知識共享"
 date: 2026-06-26
 description: "技術正確不等於推得動 — infra 在商業優先級裡吃虧的結構性原因，以及用可回退切片、期望值對齊與知識分散來跨過組織關卡"
-weight: 2
+weight: 3
 tags: ["infra", "adoption", "stakeholder", "team"]
 ---
 

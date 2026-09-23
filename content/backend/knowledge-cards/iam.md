@@ -2,7 +2,7 @@
 title: "IAM"
 date: 2026-04-23
 description: "說明 identity and access management 如何集中管理身分、角色與權限"
-weight: 120
+weight: 121
 ---
 
 

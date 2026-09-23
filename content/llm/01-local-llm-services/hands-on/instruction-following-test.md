@@ -3,7 +3,7 @@ title: "Hands-on：跨資料夾風格 follow 任務的模型對比"
 date: 2026-05-12
 description: "1B / 4B / 8B / 跨代 4B 在「讀風格參考、follow 既有格式、寫新章節」任務上的 structural metrics 對比、揭示 model size 不是唯一因素"
 tags: ["llm", "hands-on", "ollama", "gemma", "qwen", "instruction-following"]
-weight: 7
+weight: 8
 ---
 
 本篇是個讓本地 LLM 在「**讀兩個資料夾、學風格、寫新章節**」任務上自我評估的實驗。任務本身內容無關緊要（隨便挑了一份私人創作資料夾）、要看的是**不同模型在 [instruction following](/llm/knowledge-cards/instruction-following/) / format consistency / 篇幅控制三個維度的差距**。

@@ -3,7 +3,7 @@ title: "3.1 Embedding 空間"
 date: 2026-05-11
 description: "token 怎麼變成向量、為什麼相似 token 在向量空間中靠近、embedding 是怎麼學出來的"
 tags: ["llm", "theory", "embedding"]
-weight: 1
+weight: 2
 ---
 
 Embedding 是 LLM 把離散 [token](/llm/knowledge-cards/token/) 轉成連續向量的關鍵步驟。模型內部的每一層運算都對向量做、token 本身的整數 ID 只在 input / output 端用到。理解 embedding 怎麼運作、能解釋「為什麼模型能理解 token 之間的語意關係」「為什麼 [embedding 模型](/llm/knowledge-cards/embedding-model/) 能做 semantic search」「為什麼不同 model 的 embedding 互不相容」。

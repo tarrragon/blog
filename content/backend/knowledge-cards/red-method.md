@@ -2,7 +2,7 @@
 title: "RED Method"
 date: 2026-05-12
 description: "Tom Wilkie 提出的請求層 Rate / Errors / Duration 三維度量測法"
-weight: 224
+weight: 225
 ---
 
 RED method 的核心概念是「對每個 service / endpoint 量測 Rate、Errors、Duration 三個維度」。Rate 是 RPS、Errors 是錯誤率、Duration 是 latency 分布（p50 / p95 / p99 / p999）。可先對照 [USE Method](/backend/knowledge-cards/use-method/)。

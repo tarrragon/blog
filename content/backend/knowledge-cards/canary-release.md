@@ -2,7 +2,7 @@
 title: "Canary Release"
 date: 2026-06-23
 description: "分批把流量導向新版本、用 stop condition 控制 blast radius 的部署策略"
-weight: 236
+weight: 237
 tags: ["canary", "deployment"]
 ---
 

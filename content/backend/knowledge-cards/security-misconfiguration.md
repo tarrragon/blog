@@ -2,7 +2,7 @@
 title: "Security Misconfiguration"
 date: 2026-04-23
 description: "說明錯誤設定如何讓安全控制失效或暴露內部能力"
-weight: 120
+weight: 121
 ---
 
 

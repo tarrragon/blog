@@ -2,7 +2,7 @@
 title: "Latency Budget"
 date: 2026-05-12
 description: "把 user-perceived latency 拆到每個 stage 的配額、反推架構選擇"
-weight: 240
+weight: 241
 ---
 
 Latency budget 的核心概念是「給定 SLO end-to-end latency 上限、拆到每個 stage（網路 / CDN / app / cache / DB / 第三方）的配額、總和不得超過 SLO」。讓 latency 從口號變成可分解的工程目標。可先對照 [Performance Budget](/backend/knowledge-cards/performance-budget/)。

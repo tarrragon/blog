@@ -3,7 +3,7 @@ title: "4.6 應用層協議：function calling / structured output / MCP"
 date: 2026-05-11
 description: "三個常被混為一談的概念：模型能力、sampling 約束、server 協議，三者的層級差異與組合方式"
 tags: ["llm", "applications", "mcp", "function-calling", "structured-output"]
-weight: 6
+weight: 7
 ---
 
 [Function calling](/llm/knowledge-cards/function-calling/)、[structured output](/llm/knowledge-cards/structured-output/)、[MCP](/llm/knowledge-cards/mcp/) 是 LLM 應用落地時最常被混為一談的三個術語。三者解的問題層級完全不同：function calling 是**模型能力**（訓練階段建立）、structured output 是**[sampling 約束](/llm/knowledge-cards/sampling-constraint/)**（推論階段控制）、MCP 是**server 協議**（架構層標準化）。把三者放回正確層級、應用設計就會變清楚；混為一談會看到「我啟用了 function calling 為什麼還需要 structured output」「MCP 跟 function calling 衝突嗎」這類根本誤解。

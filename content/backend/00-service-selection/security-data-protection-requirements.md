@@ -2,7 +2,7 @@
 title: "0.8 資安與資料保護需求"
 date: 2026-04-23
 description: "從身分來源、權限分級、伺服器防護、資料遮罩、傳輸保護與稽核設計安全邊界"
-weight: 8
+weight: 9
 tags: ["backend", "service-selection"]
 ---
 

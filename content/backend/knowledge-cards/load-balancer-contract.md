@@ -3,7 +3,7 @@ title: "Load Balancer Contract"
 tags: ["負載平衡協議", "Load Balancer Contract"]
 date: 2026-04-23
 description: "說明服務與負載平衡器之間的流量與健康檢查約定"
-weight: 0
+weight: 1
 ---
 
 

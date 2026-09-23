@@ -2,7 +2,7 @@
 title: "Consensus Protocol"
 date: 2026-05-27
 description: "讓多個獨立節點在訊息可能延遲、丟失、亂序的網路下對單一決策達成一致的演算法"
-weight: 28
+weight: 29
 ---
 
 Consensus protocol 的核心責任是「讓多個獨立節點在訊息可能延遲、丟失、亂序的網路環境下、仍能對同一個值或同一個決策達成一致」。常見演算法：Paxos（理論基礎、難實作）、Raft（教學友善、Etcd / Consul / CockroachDB 採用）、ZAB（ZooKeeper 採用）、Multi-Paxos / EPaxos（Paxos 工程變體）。是 [leader election](/backend/knowledge-cards/leader-election/) 跟 [distributed lock](/backend/knowledge-cards/distributed-lock/) 的底層機制、跟 [replication channel](/backend/knowledge-cards/replication-channel/) 互補（consensus 保證一致順序、replication 負責複製狀態）。

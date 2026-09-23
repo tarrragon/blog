@@ -2,7 +2,7 @@
 title: "Backfill"
 date: 2026-04-23
 description: "說明如何為既有資料補上新欄位、新索引或新衍生狀態"
-weight: 82
+weight: 83
 ---
 
 

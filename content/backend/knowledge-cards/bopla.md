@@ -2,7 +2,7 @@
 title: "BOPLA"
 date: 2026-04-23
 description: "說明屬性層授權缺失如何讓使用者讀寫不該暴露的欄位"
-weight: 113
+weight: 114
 ---
 
 

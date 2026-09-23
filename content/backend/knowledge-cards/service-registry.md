@@ -3,7 +3,7 @@ title: "Service Registry"
 tags: ["服務註冊", "Service Registry"]
 date: 2026-04-24
 description: "說明服務實例如何被註冊、維護與摘除"
-weight: 152
+weight: 153
 ---
 
 

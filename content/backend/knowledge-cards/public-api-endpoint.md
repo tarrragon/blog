@@ -2,7 +2,7 @@
 title: "Public API Endpoint"
 date: 2026-04-23
 description: "說明面向外部 client 的穩定 API 入口如何被管理"
-weight: 0
+weight: 1
 ---
 
 

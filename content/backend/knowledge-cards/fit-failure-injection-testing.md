@@ -2,7 +2,7 @@
 title: "FIT（Failure Injection Testing）"
 date: 2026-07-20
 description: "驗證應用層容錯邏輯是否生效時、在請求路徑注入 timeout / error / 延遲的故障注入粒度"
-weight: 409
+weight: 410
 ---
 
 FIT 是 Netflix 開發的請求路徑層故障注入工具，對特定 API call、dependency request 或 service-to-service 通訊植入 timeout、error 或延遲。它跟 instance-level injection（如 Chaos Monkey，關閉整個節點）是同一個 [Chaos Test](/backend/knowledge-cards/chaos-test/) 光譜上不同粒度的兩端——instance-level 驗證基礎設施韌性（load balancer 能否切流、auto-scaling 能否補位），FIT 驗證的是應用韌性（fallback 是否生效、circuit breaker 是否觸發、retry 是否安全）。

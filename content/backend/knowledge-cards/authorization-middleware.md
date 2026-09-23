@@ -2,7 +2,7 @@
 title: "Authorization Middleware"
 date: 2026-04-23
 description: "說明請求進入 handler 前如何完成權限判斷"
-weight: 0
+weight: 1
 ---
 
 

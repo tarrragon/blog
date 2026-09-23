@@ -2,7 +2,7 @@
 title: "Transaction Pooling"
 date: 2026-05-22
 description: "說明 connection pooler 的 transaction 綁定模式如何壓縮連線並改變 session 語意"
-weight: 327
+weight: 328
 ---
 
 Transaction Pooling 的核心概念是 connection pooler 把後端連線的綁定縮到單一 transaction 期間 — transaction 一結束，後端連線就還回池子給其他 client 用。它把連線壓縮做到最大，代價是 session 狀態無法跨 transaction 保留。它和 [Connection Pool](/backend/knowledge-cards/connection-pool/) 是同一條線上的不同精細度，並和 [Transaction Boundary](/backend/knowledge-cards/transaction-boundary/) 直接耦合。

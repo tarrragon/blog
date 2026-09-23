@@ -2,7 +2,7 @@
 title: "Defense in Depth"
 date: 2026-07-27
 description: "有人主張某個弱環節「還有其他防線擋著」時，用來判斷這個說法成不成立"
-weight: 422
+weight: 423
 ---
 
 Defense in Depth 的核心概念是讓單一控制失效不等於整體失守，做法是在同一條攻擊路徑上放置多個彼此獨立的控制。它的成立條件是各層真的獨立：任一層被繞過時，其餘各層仍然各自生效。多層控制若共用同一個前提，該前提失效時各層會同時失效，層數就只是表面上的。它處理的是失效發生前的機率，失效發生後的擴散範圍由 [Blast Radius](/backend/knowledge-cards/blast-radius/) 承接。

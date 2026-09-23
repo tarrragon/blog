@@ -2,7 +2,7 @@
 title: "Stale-If-Error"
 date: 2026-05-27
 description: "HTTP cache-control directive、origin 出錯時用舊版頂著、確保使用者拿到有效回應"
-weight: 30
+weight: 31
 ---
 
 Stale-if-error（SIE）的核心概念是「cache 過期後若 origin 回 5xx 或不可達、用舊版本頂著、確保使用者仍能拿到回應」。是 cache 充當 fallback 的明示授權 — 把 [origin protection](/backend/knowledge-cards/origin-protection/) 從「降低 origin 流量」延伸到「origin 故障時保持服務」。跟 [Stale-While-Revalidate](/backend/knowledge-cards/stale-while-revalidate/) 屬不同維度但常一起配置 — SWR 處理過期、SIE 處理錯誤。

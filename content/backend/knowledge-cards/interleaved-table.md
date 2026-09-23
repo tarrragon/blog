@@ -2,7 +2,7 @@
 title: "Interleaved Table"
 date: 2026-05-27
 description: "Spanner 把 parent / child table row 物理交錯儲存、parent + child JOIN 不跨 split"
-weight: 369
+weight: 370
 ---
 
 Interleaved table 的核心概念是「parent table 跟 child table 的 row 在 storage layer 物理交錯儲存 — child row 跟對應 parent row 落在同一個 split」。它把「foreign key 是 logical constraint」翻成「parent-child access 是 physical co-location」、跟 [Range Sharding](/backend/knowledge-cards/range-sharding/) 是相鄰機制（前者是 row-level co-location、後者是 key-space transparent split）、跟 PostgreSQL declarative 的 [Table Partitioning](/backend/knowledge-cards/table-partitioning/) 不同層（後者是單機表結構、interleaved 是分散式 SQL 跨 Paxos group 的 row co-location）。

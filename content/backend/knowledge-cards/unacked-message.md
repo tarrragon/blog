@@ -2,7 +2,7 @@
 title: "Unacked Message"
 date: 2026-04-23
 description: "說明 broker 已投遞但尚未收到 consumer 確認的訊息"
-weight: 61
+weight: 62
 ---
 
 

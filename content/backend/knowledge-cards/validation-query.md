@@ -2,7 +2,7 @@
 title: "Validation Query"
 date: 2026-05-11
 description: "說明遷移、回填與修復期間如何用查詢證明資料語意是否一致"
-weight: 141
+weight: 142
 tags: ["backend", "knowledge-card", "database", "migration"]
 ---
 

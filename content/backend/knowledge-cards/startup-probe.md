@@ -2,7 +2,7 @@
 title: "Startup Probe"
 date: 2026-06-23
 description: "保護慢啟動服務不被 liveness probe 過早重啟的探針"
-weight: 131
+weight: 132
 tags: ["probe", "deployment", "lifecycle"]
 ---
 

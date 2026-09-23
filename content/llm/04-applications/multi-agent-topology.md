@@ -3,7 +3,7 @@ title: "4.8 Multi-Agent 拓樸：flat / hierarchical / agent-as-tool"
 date: 2026-05-14
 description: "從 multi-call workflow 走到 multi-agent system 的判讀、flat vs hierarchical 拓樸、agent-as-tool 的 MCP 視角、specialization 跟 orchestration overhead 的取捨"
 tags: ["llm", "applications", "agent", "multi-agent", "architecture"]
-weight: 8
+weight: 9
 ---
 
 [4.7 workflow patterns](/llm/04-applications/workflow-patterns/) 寫的是「多次 LLM call 怎麼組合」、四個基本模式（pipeline / router / parallel / [reflection](/llm/knowledge-cards/reflection/)）解的是 single-thread 多 call 問題。當問題進一步複雜——需要平行的多個專業化角色、需要跨產品的 [agent](/llm/knowledge-cards/agent/) 重用、需要 agent 之間互相呼叫——就進入 [multi-agent system](/llm/knowledge-cards/multi-agent-system/) 的領域。

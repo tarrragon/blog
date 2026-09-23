@@ -2,7 +2,7 @@
 title: "Origin Protection"
 date: 2026-07-20
 description: "快取失效或冷啟動時、miss 流量集中打回正式來源會不會壓垮它——回源保護的手段組合與監控面"
-weight: 390
+weight: 391
 tags: ["backend", "knowledge-card", "cache", "reliability"]
 ---
 

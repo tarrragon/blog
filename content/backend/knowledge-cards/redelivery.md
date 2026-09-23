@@ -2,7 +2,7 @@
 title: "Redelivery"
 date: 2026-04-23
 description: "說明 broker 重新投遞訊息時 consumer 需要承擔的重入責任"
-weight: 62
+weight: 63
 ---
 
 

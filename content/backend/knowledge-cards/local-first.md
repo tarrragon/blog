@@ -2,7 +2,7 @@
 title: "Local-First"
 date: 2026-05-22
 description: "說明本機優先的資料架構如何讓離線可用，並把同步當成獨立問題"
-weight: 334
+weight: 335
 ---
 
 Local-First 的核心概念是讓裝置本機持有資料、離線時功能照常運作，把和其他裝置或伺服器的同步當成次要且獨立的問題。它讓產品在弱網或離線下仍可用、互動沒有網路延遲，代價是要處理多端同步的合併語意。它依賴 [Embedded Database](/backend/knowledge-cards/embedded-database/) 作為本機儲存，依賴 [Conflict Resolution](/backend/knowledge-cards/conflict-resolution/) 處理同步衝突。

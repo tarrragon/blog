@@ -2,7 +2,7 @@
 title: "Event Sourcing"
 date: 2026-06-22
 description: "說明用 append-only 事件流取代 mutable state 作為正式紀錄的設計模式、需求判斷標準與代價"
-weight: 329
+weight: 330
 tags: ["backend", "architecture", "database"]
 ---
 

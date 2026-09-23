@@ -2,7 +2,7 @@
 title: "Liveness"
 date: 2026-04-23
 description: "說明平台如何判斷 process 是否仍然存活，以及何時應重啟"
-weight: 31
+weight: 32
 ---
 
 

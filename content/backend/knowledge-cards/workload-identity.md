@@ -2,7 +2,7 @@
 title: "Workload Identity"
 date: 2026-05-13
 description: "用於機器工作負載的身份語意與授權邊界"
-weight: 257
+weight: 258
 ---
 
 Workload identity 的核心概念是「把機器身份與人類身份分開治理」。它的責任是讓服務到服務授權可追蹤、可撤銷，避免長期共享憑證造成高權限擴散。可對照 [credential](/backend/knowledge-cards/credential/) 與 [federation](/backend/knowledge-cards/federation/)。

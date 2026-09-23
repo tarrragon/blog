@@ -2,7 +2,7 @@
 title: "TLS / mTLS"
 date: 2026-04-23
 description: "說明傳輸加密與雙向憑證驗證如何保護跨邊界資料流"
-weight: 41
+weight: 42
 ---
 
 

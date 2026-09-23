@@ -2,7 +2,7 @@
 title: "Read-After-Write Consistency"
 date: 2026-05-22
 description: "說明寫入後能否立即讀到該筆寫入的一致性保證"
-weight: 341
+weight: 342
 ---
 
 Read-After-Write Consistency 的核心概念是一個明確的保證：寫入成功後，後續讀取能立即看到這筆寫入。它讓「送出後馬上檢視」這類操作有正確的結果。它和泛指讀到舊資料的 [Stale Read](/backend/knowledge-cards/stale-read/) 相對，並常和 [Session Consistency](/backend/knowledge-cards/session-consistency/) 一起出現。

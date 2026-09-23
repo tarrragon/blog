@@ -2,7 +2,7 @@
 title: "Connection Pooler"
 date: 2026-05-27
 description: "應用層跟資料庫之間的連線複用中介層、解水平擴展時的連線數放大問題"
-weight: 353
+weight: 354
 ---
 
 Connection pooler 的核心責任是讓部署在應用層跟資料庫之間的中介層、把多個應用層連線複用到少數 DB backend 連線上。解水平擴展應用層時「100 臺機器 × 每臺 10 連線 = 1000 個 DB 連線、超過 `max_connections` 十倍」這個常見問題。跟 [connection pool](/backend/knowledge-cards/connection-pool/) 是不同層 — 後者在 application instance 內、本卡是跨 instance 共享層。

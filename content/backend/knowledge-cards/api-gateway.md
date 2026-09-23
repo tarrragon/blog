@@ -2,7 +2,7 @@
 title: "API Gateway"
 date: 2026-04-24
 description: "說明外部流量如何先收斂到一層可集中控制的入口"
-weight: 131
+weight: 132
 ---
 
 

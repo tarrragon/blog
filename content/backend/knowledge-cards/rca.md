@@ -2,7 +2,7 @@
 title: "RCA"
 date: 2026-04-23
 description: "說明根因分析如何區分觸發事件、系統弱點與防線缺口"
-weight: 157
+weight: 158
 ---
 
 

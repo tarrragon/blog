@@ -2,7 +2,7 @@
 title: "Source of Truth"
 date: 2026-04-23
 description: "說明正式資料來源如何決定資料判斷、修復與一致性責任"
-weight: 12
+weight: 13
 ---
 
 

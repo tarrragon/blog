@@ -2,7 +2,7 @@
 title: "Cohort（分組子集）"
 date: 2026-07-20
 description: "把整體流量或使用者依共享屬性拆成子群、用來限縮實驗範圍或分開量測負載型態"
-weight: 408
+weight: 409
 ---
 
 Cohort 的核心概念是依共享屬性把整體切成子集——屬性可以是 tenant、plan、traffic percentage，也可以是操作型態（讀 / 寫 / 混合 / 背景任務）。它的作用有兩層：在可靠性實驗裡限縮 [Blast Radius](/backend/knowledge-cards/blast-radius/)（先打 internal-only cohort 再擴大到全量），在壓測設計裡分開量測不同負載型態（讀寫比例不同、資源消耗模式就不同）。

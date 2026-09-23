@@ -2,7 +2,7 @@
 title: "Communication Protocol"
 date: 2026-04-23
 description: "說明不同系統如何對齊資料交換與錯誤語意"
-weight: 127
+weight: 128
 ---
 
 Communication Protocol 的核心概念是「雙方對資料格式、順序、錯誤與互動方式達成一致的規則」。它描述的是通訊雙方如何交換資料，以及在失敗時如何解讀結果。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。

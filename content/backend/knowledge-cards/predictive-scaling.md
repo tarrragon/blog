@@ -2,7 +2,7 @@
 title: "Predictive Scaling"
 date: 2026-05-12
 description: "說明用歷史模式或 ML 模型預測流量、提前擴容的 autoscaler 模式"
-weight: 230
+weight: 231
 ---
 
 Predictive scaling 的核心概念是「不等流量上來、提前根據預測擴容」。跟 reactive scaling（觀察到指標飆才擴）相反、解決 reactive 在快速 burst 場景下「來不及」的問題。可先對照 [Scheduled Scaling](/backend/knowledge-cards/scheduled-scaling/)。

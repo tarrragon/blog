@@ -2,7 +2,7 @@
 title: "Publisher Confirm"
 date: 2026-04-23
 description: "說明 producer 如何確認 broker 已接收並承擔訊息"
-weight: 67
+weight: 68
 ---
 
 

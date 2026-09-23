@@ -2,7 +2,7 @@
 title: "Consumer"
 date: 2026-06-22
 description: "說明 consumer 如何取得等待處理的工作並產生業務結果"
-weight: 133
+weight: 134
 tags: ["backend", "message-queue"]
 ---
 

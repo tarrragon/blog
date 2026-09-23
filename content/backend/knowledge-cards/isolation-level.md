@@ -2,7 +2,7 @@
 title: "Isolation Level"
 date: 2026-04-23
 description: "說明資料庫交易隔離級別如何影響並發讀寫結果"
-weight: 16
+weight: 17
 ---
 
 

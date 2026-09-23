@@ -2,7 +2,7 @@
 title: "Delivery Semantics"
 date: 2026-04-23
 description: "說明事件投遞語意如何定義遺失、重複、順序與補償策略"
-weight: 149
+weight: 150
 ---
 
 

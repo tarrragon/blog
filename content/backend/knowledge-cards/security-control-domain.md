@@ -3,7 +3,7 @@ title: "Security Control Domain（資安控制面）"
 tags: ["backend", "knowledge-card", "security", "governance"]
 date: 2026-08-18
 description: "說明一條資安風險的防守責任歸給哪一類控制，以及這個「控制面」與基礎設施的 control plane 同名不同義"
-weight: 441
+weight: 442
 ---
 
 Security control domain 的核心概念是「一條風險的防守責任歸給哪一類控制」。它把風險分派到身分、入口、資料、供應鏈、偵測或治理其中一面，讓「誰該處理這件事」有一個先於人選的答案——先判歸屬、再指派角色。資安章節裡的「控制面」指的是這個東西。 可先對照 [Defense in Depth](/backend/knowledge-cards/defense-in-depth/)。

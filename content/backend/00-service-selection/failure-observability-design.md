@@ -2,7 +2,7 @@
 title: "0.7 錯誤定位、觀測訊號與備援切換設計"
 date: 2026-04-23
 description: "從錯誤分類、定位線索、降級策略與 failover 設計服務可維護性"
-weight: 7
+weight: 8
 tags: ["backend", "service-selection"]
 ---
 

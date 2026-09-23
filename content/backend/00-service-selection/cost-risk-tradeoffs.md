@@ -2,7 +2,7 @@
 title: "0.6 成本、風險與選型取捨"
 date: 2026-04-23
 description: "用人力成本、雲端成本、操作成本與失敗代價判斷後端能力投入順序"
-weight: 6
+weight: 7
 tags: ["backend", "service-selection"]
 ---
 

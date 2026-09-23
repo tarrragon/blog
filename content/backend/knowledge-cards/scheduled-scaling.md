@@ -2,7 +2,7 @@
 title: "Scheduled Scaling"
 date: 2026-05-12
 description: "說明按已知時間表預先擴容的 autoscaler 模式"
-weight: 231
+weight: 232
 ---
 
 Scheduled scaling 的核心概念是「按已知時間表預先擴容、不等流量上來才反應」。處理「已知時間點的可預期峰值」場景。可先對照 [Predictive Scaling](/backend/knowledge-cards/predictive-scaling/)。

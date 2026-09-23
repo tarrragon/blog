@@ -2,7 +2,7 @@
 title: "Replication Lag"
 date: 2026-04-23
 description: "說明資料副本落後正式來源多久，以及它如何影響讀取正確性"
-weight: 80
+weight: 81
 ---
 
 

@@ -2,7 +2,7 @@
 title: "USE Method"
 date: 2026-05-12
 description: "Brendan Gregg 提出的資源層 Utilization / Saturation / Errors 三維度量測法"
-weight: 223
+weight: 224
 ---
 
 USE method 的核心概念是「對每個資源（CPU / RAM / disk / network / DB connection）量測 Utilization、Saturation、Errors 三個維度」。第一個出現 saturation 上升的資源、就是 bottleneck。可先對照 [RED Method](/backend/knowledge-cards/red-method/)。

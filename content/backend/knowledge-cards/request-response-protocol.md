@@ -2,7 +2,7 @@
 title: "Request/Response Protocol"
 date: 2026-04-23
 description: "說明同步請求如何在 client 與 service 之間對齊互動規則"
-weight: 0
+weight: 1
 ---
 
 Request/Response Protocol 的核心概念是「client 發出請求，service 回應結果時，雙方如何對齊格式、錯誤與語意」。 可先對照 [API Gateway](/backend/knowledge-cards/api-gateway/)。

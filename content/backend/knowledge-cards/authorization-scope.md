@@ -3,7 +3,7 @@ title: "Authorization Scope（授權範圍）"
 tags: ["身分安全", "Authorization", "OAuth", "Security"]
 date: 2026-07-29
 description: "把一次授權寫成可協商的單位時，用來判斷顆粒由誰決定、授予的範圍與實際用到的範圍差多少、以及事後收斂為什麼比事前貴"
-weight: 424
+weight: 425
 ---
 
 Authorization Scope 的核心概念是把一次授權表達成一組具名的範圍，讓「這個呼叫方獲准做什麼」在授予當下就寫成可列舉的清單。它與 [authorization](/backend/knowledge-cards/authorization/) 的分工是：authorization 回答單一請求該不該放行，scope 是那個判斷所依據的授予內容本身。OAuth 系列協定用 `scope` 這個參數承載它，而同樣的結構在 API key 的權限勾選、雲平台的角色政策、資料庫的授權語句裡都成立。

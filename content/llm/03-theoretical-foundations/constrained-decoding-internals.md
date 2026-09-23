@@ -3,7 +3,7 @@ title: "3.10 Constrained decoding 內部：grammar mask 跟性能取捨"
 date: 2026-05-12
 description: "Constrained decoding 的內部運作：token mask 計算、JSON schema / regex / CFG 三種 grammar、XGrammar pre-compile 機制、性能反而加速"
 tags: ["llm", "theory", "sampling", "constrained-decoding", "structured-output"]
-weight: 10
+weight: 11
 ---
 
 [3.5 sampling-and-decoding](/llm/03-theoretical-foundations/sampling-and-decoding/) 寫了 greedy / beam / top-p / top-k sampling、是「在合法輸出中選下一個 token」的基本機制。[4.6 application-protocols](/llm/04-applications/application-protocols/) 寫了 function calling / structured output 的應用層 — 但「為什麼 LLM 能保證輸出合法 JSON」這層原理在前兩章都沒展開。本章補 [constrained decoding](/llm/knowledge-cards/constrained-decoding/) 的內部機制：token mask 怎麼算、JSON schema / regex / [CFG](/llm/knowledge-cards/grammar/) 三種 grammar、為什麼 XGrammar 等實作反而加速生成。

@@ -2,7 +2,7 @@
 title: "Idempotency Key（冪等鍵）"
 date: 2026-07-20
 description: "同一操作重送時該由誰生成識別碼、存多久、衝突怎麼回——冪等性質的對外契約落地機制"
-weight: 413
+weight: 414
 ---
 
 Idempotency key 是消費者為每次操作生成的唯一識別碼，服務端用這個 key 記住該次操作的執行結果，同 key 重送時直接回傳同樣的結局，不再重複執行副作用。它是 [Idempotency](/backend/knowledge-cards/idempotency/) 這個系統性質在 API 邊界落地的具體機制——idempotency 卡回答「同操作執行多次為何要結果一致」，idempotency key 卡回答「這個一致性用什麼機制對外承諾」，兩者互補而非重疊。

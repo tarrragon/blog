@@ -2,7 +2,7 @@
 title: "Dead-Letter Queue"
 date: 2026-04-23
 description: "說明 dead-letter queue 如何隔離多次處理失敗的訊息"
-weight: 3
+weight: 4
 ---
 
 

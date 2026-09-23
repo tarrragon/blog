@@ -2,7 +2,7 @@
 title: "Cascading Failure"
 date: 2026-04-23
 description: "說明局部故障如何透過等待、重試與資源耗盡擴散到整個系統"
-weight: 51
+weight: 52
 ---
 
 Cascading failure 的核心概念是「局部故障沿著依賴關係擴散成更大範圍故障」。常見擴散路徑包括 timeout 太長、重試太多、connection pool 耗盡、queue 堆積、thread pool 被占滿與 fallback 過載。 可先對照 [Certificate Chain and Trust Root](/backend/knowledge-cards/certificate-chain-trust/)。

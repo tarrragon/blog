@@ -2,7 +2,7 @@
 title: "Cache Penetration"
 date: 2026-06-16
 description: "說明查詢必定不存在的 key 繞過快取直接打向 origin 的弱點與防護"
-weight: 384
+weight: 385
 ---
 
 Cache penetration 的核心概念是「查詢必定不存在的 key，讓請求全部 miss 並穿透到資料庫，把快取的保護作用繞過」。它跟 [cache stampede](/backend/knowledge-cards/cache-stampede/) 不同：stampede 是同一個熱門 key 同時失效，penetration 是大量不同的不存在 key 從不命中。 可先對照 [Cache Stampede](/backend/knowledge-cards/cache-stampede/)。

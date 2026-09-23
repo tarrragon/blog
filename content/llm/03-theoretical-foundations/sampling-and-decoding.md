@@ -3,7 +3,7 @@ title: "3.5 Sampling 與 Decoding 策略"
 date: 2026-05-11
 description: "Greedy、beam search、top-k、top-p、temperature、min-p：模型輸出後怎麼挑下一個 token"
 tags: ["llm", "theory", "sampling"]
-weight: 5
+weight: 6
 ---
 
 LLM 的輸出本質是「下一個 [token](/llm/knowledge-cards/token/) 的機率分佈」、不是直接的 token。從機率分佈挑下一個 token 的具體方法、就是 sampling / decoding 策略。同一個模型、同一個 prompt、不同 sampling 策略會給出顯著不同的輸出。

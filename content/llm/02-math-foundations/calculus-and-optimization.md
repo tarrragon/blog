@@ -3,7 +3,7 @@ title: "2.2 微積分與最佳化"
 date: 2026-05-11
 description: "從 gradient、chain rule 到 SGD / Adam：LLM 訓練如何更新數十億參數"
 tags: ["llm", "math", "optimization"]
-weight: 2
+weight: 3
 ---
 
 LLM 訓練的本質是「最佳化問題」：給定 [loss function](/llm/knowledge-cards/loss-function/)（預訓練用 [cross-entropy](/llm/knowledge-cards/cross-entropy/)、推導見 [2.1 機率與資訊論](/llm/02-math-foundations/probability-and-information/)）、找一組權重讓 loss 最小。微積分提供工具回答「往哪個方向調權重能讓 loss 變小」、最佳化演算法回答「具體怎麼一步一步調」。

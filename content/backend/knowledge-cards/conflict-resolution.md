@@ -2,7 +2,7 @@
 title: "Conflict Resolution"
 date: 2026-05-22
 description: "說明並發或離線寫入產生衝突時，如何偵測、呈現與合併成可接受狀態"
-weight: 330
+weight: 331
 ---
 
 Conflict Resolution 的核心概念是當兩筆都合法的寫入落在同一份資料上時，用一個明確策略把它們合併成可接受的最終狀態。它讓多裝置同步、離線編輯與多區寫入有確定的結果，代價是要先選定策略並承擔它的取捨。它和事後比對修復的 [Data Reconciliation](/backend/knowledge-cards/data-reconciliation/) 是不同時機 — conflict resolution 是寫入或合併當下的策略，是 [Local-First](/backend/knowledge-cards/local-first/) 系統的核心決策。

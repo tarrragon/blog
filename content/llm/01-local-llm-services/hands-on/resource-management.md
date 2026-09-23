@@ -3,7 +3,7 @@ title: "Hands-on：LLM 運行中 + 結束的資源管理"
 date: 2026-05-12
 description: "RAM / 磁碟 / port 三個 dimension 的觀察跟釋放、Ollama keep_alive 跟 ComfyUI 兩種 lifecycle 對比、實測釋放數字"
 tags: ["llm", "hands-on", "resource", "lifecycle", "ollama", "comfyui"]
-weight: 8
+weight: 9
 ---
 
 跑本地 LLM 的核心 invariant 跟雲端不一樣：**Mac 是 shared resource、不是 dedicated GPU**。雲端 inference server 跑進 dedicated container、結束 instance 自然回收所有資源；本地[推論伺服器](/llm/knowledge-cards/inference-server/)跑在你日常用的 Mac、跟 [統一記憶體](/llm/knowledge-cards/unified-memory/) 共享同一塊容量，忘記管理會 silently 吃光 RAM、磁碟、port、最後讓系統變慢甚至 swap。

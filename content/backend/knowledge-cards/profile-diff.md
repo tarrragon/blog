@@ -2,7 +2,7 @@
 title: "Profile Diff"
 date: 2026-05-12
 description: "對比兩次 profile（如 release candidate vs baseline）找出 hottest 變化"
-weight: 236
+weight: 237
 ---
 
 Profile diff 的核心概念是「兩次 profile 取得後、用差分視覺化找出 *相對變化最大* 的 code path」。比看絕對值更能定位退化原因。可先對照 [Continuous Profiling](/backend/knowledge-cards/continuous-profiling/)。

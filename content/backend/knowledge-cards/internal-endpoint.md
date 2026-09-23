@@ -3,7 +3,7 @@ title: "Internal Endpoint"
 tags: ["內部端點", "Internal Endpoint"]
 date: 2026-04-23
 description: "說明服務內部通訊入口如何配合網路邊界與服務發現"
-weight: 0
+weight: 1
 ---
 
 

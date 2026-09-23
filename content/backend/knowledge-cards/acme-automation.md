@@ -2,7 +2,7 @@
 title: "ACME Automation"
 date: 2026-04-23
 description: "說明網站憑證如何透過 ACME 自動簽發與續期"
-weight: 146
+weight: 147
 ---
 
 

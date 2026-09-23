@@ -2,7 +2,7 @@
 title: "Request Routing"
 date: 2026-04-24
 description: "說明入口流量如何依規則被導向不同服務或處理路徑"
-weight: 132
+weight: 133
 ---
 
 

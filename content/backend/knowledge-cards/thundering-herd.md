@@ -2,7 +2,7 @@
 title: "Thundering Herd"
 date: 2026-04-23
 description: "說明大量工作同時被喚醒或同時競爭資源時的尖峰風險"
-weight: 48
+weight: 49
 ---
 
 

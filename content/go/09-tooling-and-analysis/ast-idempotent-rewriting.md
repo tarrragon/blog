@@ -2,7 +2,7 @@
 title: "9.3 AST 驅動的 idempotent 文字改寫"
 date: 2026-04-24
 description: "用 AST 定位位置、用 line-based 或 byte-level 改寫；設計多條 rule 的執行順序；--check 跟 --fix 如何共用邏輯"
-weight: 3
+weight: 4
 tags: ["go", "tooling"]
 ---
 

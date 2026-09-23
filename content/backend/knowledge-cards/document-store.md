@@ -2,7 +2,7 @@
 title: "Document Store"
 date: 2026-05-22
 description: "說明以 JSON 文件與彈性 schema 提供資料存取的模式，以及它仍需的治理邊界"
-weight: 335
+weight: 336
 ---
 
 Document Store 的核心概念是以 JSON 或 BSON 文件為單位儲存與查詢資料，schema 較彈性、巢狀結構可以直接存。它讓形狀多變或快速演進的資料容易落地，代價是 index、schema 演進與一致性仍要治理，彈性的範圍止於資料形狀、不延伸到免治理。它和關聯式的 [Database](/backend/knowledge-cards/database/) 是不同的資料模型，查詢需求複雜時要對照 [Read Model](/backend/knowledge-cards/read-model/)。

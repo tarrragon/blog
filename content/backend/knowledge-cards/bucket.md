@@ -2,7 +2,7 @@
 title: "Bucket"
 date: 2026-04-23
 description: "說明 histogram 分桶如何決定觀測解析度與成本"
-weight: 99
+weight: 100
 ---
 
 

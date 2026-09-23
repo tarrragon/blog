@@ -2,7 +2,7 @@
 title: "Action Item Closure"
 date: 2026-06-22
 description: "說明事故行動項如何被驗證完成，而不是只停留在待辦清單"
-weight: 316
+weight: 317
 tags: ["backend", "observability", "incident-response"]
 ---
 

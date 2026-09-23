@@ -2,7 +2,7 @@
 title: "0.3 非同步與事件傳遞選型"
 date: 2026-04-23
 description: "區分背景工作、durable queue、stream、pub/sub 與 outbox 的選型邊界"
-weight: 3
+weight: 4
 tags: ["backend", "service-selection"]
 ---
 

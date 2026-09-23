@@ -2,7 +2,7 @@
 title: "Durable Queue"
 date: 2026-04-23
 description: "說明可持久化的 queue 如何在重啟與失敗後保留待處理工作"
-weight: 144
+weight: 145
 ---
 
 

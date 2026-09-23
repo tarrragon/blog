@@ -2,7 +2,7 @@
 title: "Query Cardinality Explosion"
 date: 2026-05-27
 description: "Query 結果行數因 join / cross product / 條件缺失爆炸性放大的反模式"
-weight: 356
+weight: 357
 ---
 
 Query cardinality explosion 的核心責任是命名「query 結果行數遠超業務直覺」這類反模式 — 通常源於多對多 join 缺 filter、或誤用 cross join。一個應該回 100 行的 query 變成回 10000 行（10000 × M）、應用層拉回 deserialize 後記憶體爆掉、DB 也付出大量的 scan + serialization 成本。跟 [keyset pagination](/backend/knowledge-cards/keyset-pagination/) 是 query 結果集大小判讀的雙刃 — cardinality 處理「join 行數失控的爆量」、keyset 處理「offset 跳行的線性退化」、修法方向不同但同屬 result-set sizing 維度。

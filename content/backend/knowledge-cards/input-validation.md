@@ -2,7 +2,7 @@
 title: "Input Validation"
 date: 2026-04-23
 description: "說明進入系統的資料如何先被檢查格式、範圍與語意"
-weight: 121
+weight: 122
 ---
 
 

@@ -2,7 +2,7 @@
 title: "0.19 雲端服務對照地圖（AWS / GCP / Azure）"
 date: 2026-05-27
 description: "把後端能力分類對照到 AWS / GCP / Azure 的具體服務名稱、保留跨雲遷移與選型差異的判讀重點"
-weight: 19
+weight: 20
 tags: ["backend", "service-selection", "cloud", "vendor-mapping"]
 ---
 

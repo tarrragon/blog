@@ -2,7 +2,7 @@
 title: "Confidence"
 date: 2026-05-11
 description: "說明證據包如何標示 confirmed、suspected 或 needs follow-up 的判讀信心"
-weight: 321
+weight: 322
 tags: ["backend", "knowledge-card", "observability", "incident-response"]
 ---
 

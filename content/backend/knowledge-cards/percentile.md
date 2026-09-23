@@ -2,7 +2,7 @@
 title: "Percentile"
 date: 2026-06-22
 description: "說明 p95 與 p99 如何描述長尾延遲與使用者體驗"
-weight: 100
+weight: 101
 tags: ["backend", "observability"]
 ---
 

@@ -3,7 +3,7 @@ title: "4.1 RAG 原理：retrieval + augmentation 模式"
 date: 2026-05-11
 description: "為什麼模型需要外掛知識、語意相似 vs 字面相似、chunking 的本質取捨、retrieval 失敗的根本原因"
 tags: ["llm", "applications", "rag", "embedding"]
-weight: 1
+weight: 2
 ---
 
 [RAG](/llm/knowledge-cards/rag/)（Retrieval-Augmented Generation）的核心是「給 LLM 動態外掛一份知識、讓它在生成時拿這份知識當 context」。它的存在解的是 LLM 「靜態參數記憶」的根本限制：模型訓練完之後權重就凍結、無法存取訓練資料外的事實、無法看到 cutoff 之後發生的事、也無法存取私有資料。

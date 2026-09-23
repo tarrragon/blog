@@ -2,7 +2,7 @@
 title: "Data Masking"
 date: 2026-04-23
 description: "說明敏感資料如何在顯示、匯出、log 與測試資料中降低暴露"
-weight: 39
+weight: 40
 ---
 
 

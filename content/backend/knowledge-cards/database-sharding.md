@@ -2,7 +2,7 @@
 title: "Database Sharding"
 date: 2026-05-20
 description: "說明資料庫如何依 shard key 分散資料、路由請求與承擔跨 shard 查詢成本"
-weight: 243
+weight: 244
 ---
 
 Database sharding 的核心概念是把同一個 logical database 或 table 依 shard key 分散到多個獨立 storage 節點，讓寫入、儲存與故障範圍水平分散。它和 [Partition](/backend/knowledge-cards/partition/) 相鄰，但資料庫 sharding 的主要責任是 data placement、request routing、cross-shard query 與 resharding；容量失衡時要接回 [Hot Partition](/backend/knowledge-cards/hot-partition/)，一致性需求升高時要對照 [Distributed SQL](/backend/knowledge-cards/distributed-sql/)。

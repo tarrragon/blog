@@ -2,7 +2,7 @@
 title: "Embedded Database"
 date: 2026-05-22
 description: "說明嵌入式資料庫如何隨 application process 運作，並把檔案生命週期責任交回應用"
-weight: 329
+weight: 330
 ---
 
 Embedded Database 的核心概念是資料庫以 library 形式嵌入 application process，與應用共用同一個 process。它讓部署簡單、讀寫沒有網路往返，代價是 backup、locking、durability 與 corruption recovery 的責任從 DBA 回到 application process 與檔案系統。SQLite 是典型例子，它和 [Single Writer Model](/backend/knowledge-cards/single-writer-model/)、[Local-First](/backend/knowledge-cards/local-first/) 一起定義這類系統的邊界。

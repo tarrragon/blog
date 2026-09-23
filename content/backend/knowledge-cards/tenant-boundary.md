@@ -2,7 +2,7 @@
 title: "Tenant Boundary"
 date: 2026-04-23
 description: "說明多租戶系統如何隔離不同客戶或組織的資料與資源"
-weight: 118
+weight: 119
 ---
 
 

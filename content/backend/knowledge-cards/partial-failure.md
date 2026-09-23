@@ -2,7 +2,7 @@
 title: "Partial Failure"
 date: 2026-04-23
 description: "說明分散式系統中部分依賴失效時如何保留整體可用性"
-weight: 50
+weight: 51
 ---
 
 

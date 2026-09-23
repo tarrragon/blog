@@ -2,7 +2,7 @@
 title: "Global OLTP"
 date: 2026-05-13
 description: "跨地理區域仍維持交易一致性的 OLTP 設計責任與代價"
-weight: 241
+weight: 242
 ---
 
 Global OLTP 的核心概念是「跨 region 寫入與讀取仍維持可驗證的交易一致性」。它承擔的是跨地理距離下的正確性責任，不是單純把資料複製到多地，常依賴 [distributed-sql](/backend/knowledge-cards/distributed-sql/) 或同級一致性機制。

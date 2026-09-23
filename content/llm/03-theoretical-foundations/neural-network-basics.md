@@ -3,7 +3,7 @@ title: "3.0 神經網路基礎"
 date: 2026-05-11
 description: "從單一 neuron 到 multi-layer：weights、activation function、forward / backward pass 的角色"
 tags: ["llm", "theory", "neural-network"]
-weight: 0
+weight: 1
 ---
 
 神經網路（Neural Network、NN）是 LLM 的底層架構。完整描述需要從「單一 neuron 怎麼算」開始、堆疊成 layer、串成 multi-layer network、再加上訓練機制（forward pass 跑預測、backward pass 算 gradient）。本章把這條鏈走過一遍、為後續章節的 embedding、attention、Transformer 架構建立詞彙基底。

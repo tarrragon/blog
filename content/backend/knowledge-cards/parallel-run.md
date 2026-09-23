@@ -2,7 +2,7 @@
 title: "Parallel Run（並行期）"
 date: 2026-06-11
 description: "說明舊系統維持 source of truth、新系統以單向同步加唯讀驗證運轉的遷移共存階段、與雙寫的寫入路徑控制權差異"
-weight: 374
+weight: 375
 ---
 
 並行期（parallel run）的核心概念是讓新舊系統共存一段時間、用真實資料驗證新系統的正確性、再執行切換：舊系統維持 [source of truth](/backend/knowledge-cards/source-of-truth/)、變更透過同步管道單向流入新系統、新系統以唯讀角色運轉並接受比對。它跟 [dual write](/backend/knowledge-cards/dual-write/) 的分界在寫入路徑的控制權：寫入發生在自己的程式碼裡、可以雙寫；寫入發生在外部系統（託管平台、第三方服務）內部、插不進那條路徑、就只能單向同步 — 並行期是後者的標準驗證形態。

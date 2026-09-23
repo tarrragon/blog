@@ -2,7 +2,7 @@
 title: "Saga"
 date: 2026-05-27
 description: "處理跨服務分散事務的補償型 transaction 序列、用最終一致換 ACID atomic"
-weight: 27
+weight: 28
 ---
 
 Saga 是處理跨服務分散事務的設計模式：把一筆業務動作拆成一系列局部 [transaction](/backend/knowledge-cards/transaction/)、每個 step 在對應服務內以本地 transaction 完成、若中途某 step 失敗、就反向執行已完成 step 的補償 transaction 回到一致狀態。Saga 不提供 ACID 的 atomic 保證、是用最終一致 + 補償可回退換取跨服務獨立性。跟 [outbox pattern](/backend/knowledge-cards/outbox-pattern/) 跟 [idempotency](/backend/knowledge-cards/idempotency/) 共同構成 microservice 一致性的三件套。

@@ -2,7 +2,7 @@
 title: "Break-Glass Access"
 date: 2026-05-22
 description: "說明緊急情況下臨時授予的高權限存取，如何用工單、時限與事後審查治理"
-weight: 340
+weight: 341
 ---
 
 Break-Glass Access 的核心概念是在正常權限模型之外，為緊急事故臨時授予的高權限存取，並要求它伴隨工單、時限與事後審查。它讓事故處理在需要時拿得到必要權限，同時讓這個例外可被追溯。它是 [Least Privilege](/backend/knowledge-cards/least-privilege/) 的受控例外，和 [Security Exception](/backend/knowledge-cards/security-exception/) 相鄰。

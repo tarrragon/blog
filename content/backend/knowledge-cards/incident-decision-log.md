@@ -3,7 +3,7 @@ title: "Incident Decision Log"
 tags: ["Incident Decision Log", "Decision Log", "事故決策紀錄"]
 date: 2026-05-07
 description: "說明事故期間如何保留決策、證據、owner 與回退條件"
-weight: 318
+weight: 319
 ---
 
 Incident decision log 的核心概念是「把事故期間的已決事項與證據鏈保存成可回放紀錄」。它連接 [incident command system](/backend/knowledge-cards/incident-command-system/)、[incident timeline](/backend/knowledge-cards/incident-timeline/) 與 [evidence package](/backend/knowledge-cards/evidence-package/)，讓事中交班與事後復盤使用同一組決策背景。

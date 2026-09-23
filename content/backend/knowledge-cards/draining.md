@@ -3,7 +3,7 @@ title: "Draining"
 tags: ["排空", "Draining"]
 date: 2026-04-24
 description: "說明服務如何先停止接收新流量，再讓既有工作完成"
-weight: 131
+weight: 132
 ---
 
 Draining 的核心概念是「先把新的 request 停掉，再讓已經進來的工作在期限內完成或交回」。它是負載切換與停止流程中的保護動作，常出現在 rolling update、縮容、故障切換與 graceful shutdown。 可先對照 [Dual Write](/backend/knowledge-cards/dual-write/)。

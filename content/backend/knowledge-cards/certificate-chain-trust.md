@@ -2,7 +2,7 @@
 title: "Certificate Chain and Trust Root"
 date: 2026-04-23
 description: "說明網站憑證鏈與信任根如何影響連線可用性與驗證結果"
-weight: 147
+weight: 148
 ---
 
 

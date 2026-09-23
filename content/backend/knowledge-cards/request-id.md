@@ -2,7 +2,7 @@
 title: "Request ID"
 date: 2026-04-23
 description: "說明單次 request 的識別碼如何支援 log 搜尋與問題定位"
-weight: 105
+weight: 106
 ---
 
 

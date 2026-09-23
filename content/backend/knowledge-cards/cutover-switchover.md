@@ -2,7 +2,7 @@
 title: "Cutover / Switchover"
 date: 2026-04-23
 description: "說明遷移期間如何把正式流量切到新路徑"
-weight: 77
+weight: 78
 ---
 
 

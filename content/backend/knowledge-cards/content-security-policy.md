@@ -2,7 +2,7 @@
 title: "Content Security Policy"
 date: 2026-07-31
 description: "要限制注入成立之後那段程式碼能做什麼、或判斷既有政策實際擋住了誰時，用來定位它承擔哪一層而不承擔哪一層"
-weight: 433
+weight: 434
 tags: ["backend", "knowledge-card", "security", "web"]
 ---
 

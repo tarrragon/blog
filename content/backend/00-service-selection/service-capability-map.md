@@ -2,7 +2,7 @@
 title: "0.1 後端服務能力地圖"
 date: 2026-04-23
 description: "用需求類型判斷應先評估資料庫、快取、訊息佇列、觀測平台或部署平台"
-weight: 1
+weight: 2
 tags: ["backend", "service-selection"]
 ---
 

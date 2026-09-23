@@ -2,7 +2,7 @@
 title: "Repository Adapter"
 date: 2026-04-23
 description: "說明持久化層如何把資料模型轉成外部儲存介面"
-weight: 0
+weight: 1
 ---
 
 

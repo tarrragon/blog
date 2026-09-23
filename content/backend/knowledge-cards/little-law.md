@@ -2,7 +2,7 @@
 title: "Little's Law"
 date: 2026-05-12
 description: "說明系統內並發數、到達率與逗留時間三者的數學關係"
-weight: 220
+weight: 221
 ---
 
 Little's Law 的核心概念是「穩態系統內、平均並發 = 到達率 × 平均逗留時間（L = λW）」。三個變數固定兩個就能推第三個、是容量規劃最小的數學工具。可先對照 [SLI / SLO](/backend/knowledge-cards/sli-slo/)。

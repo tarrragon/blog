@@ -2,7 +2,7 @@
 title: "Data Residency"
 date: 2026-05-27
 description: "合規要求資料留在特定地理邊界內、跨境複製違反合規、推動 fleet 拓樸決策"
-weight: 370
+weight: 371
 ---
 
 Data residency 的核心概念是「合規法規（GDPR、PIPL、LGPD、美國 Wire Act 等）要求資料留在某個地理邊界內、跨境複製本身違反合規、不是延遲或成本議題」。它是 *合規驅動的地理邊界*、跟 [Tenant Boundary](/backend/knowledge-cards/tenant-boundary/)（業務 / 帳戶邊界）跟 [Trust Boundary](/backend/knowledge-cards/trust-boundary/)（安全 / 信任邊界）相鄰但語意分離 — 三者可能在同一系統共存、但決策驅動力不同。

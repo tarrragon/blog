@@ -2,7 +2,7 @@
 title: "Shadow Traffic"
 date: 2026-05-12
 description: "把 production traffic 複製到新版本驗證、但不返回結果給用戶的測試模式"
-weight: 233
+weight: 234
 ---
 
 Shadow traffic 的核心概念是「production traffic 同時送到舊版本跟新版本、但只把舊版本的結果返回用戶、新版本的結果只用來驗證」。用戶感受不變、新版本實測 production load。可先對照 [Dark Launch](/backend/knowledge-cards/dark-launch/)。

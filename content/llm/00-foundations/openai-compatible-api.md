@@ -3,7 +3,7 @@ title: "0.3 OpenAI 相容 API"
 date: 2026-05-11
 description: "為什麼幾乎所有本地 LLM 工具不用改就能切到本地：背後是同一套 API 形狀"
 tags: ["llm", "foundations", "api"]
-weight: 3
+weight: 4
 ---
 
 [OpenAI 相容 API](/llm/knowledge-cards/openai-compatible-api/) 是本地 LLM 生態能夠快速繁榮的關鍵基礎建設。OpenAI 在 2023 年定義的 `POST /v1/chat/completions` 介面成為事實標準後，後來幾乎所有本地推論伺服器（Ollama、LM Studio、llama.cpp、vLLM、oMLX）都實作同一份 API 規格；介面層工具只要支援這個規格，就能「不改一行程式」切換本地與雲端。

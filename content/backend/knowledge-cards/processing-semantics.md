@@ -2,7 +2,7 @@
 title: "Processing Semantics"
 date: 2026-06-16
 description: "說明 consumer 處理事件後業務結果是否正確，與投遞成功分屬不同責任"
-weight: 376
+weight: 377
 ---
 
 Processing semantics 的核心概念是「consumer 處理事件後，業務結果是否正確」。broker 把訊息送到只代表投遞成功，consumer 的副作用是否正確是另一層責任。它回答副作用能否承受重複、亂序與部分失敗。 可先對照 [Delivery Semantics](/backend/knowledge-cards/delivery-semantics/)。

@@ -2,7 +2,7 @@
 title: "Excessive Data Exposure"
 date: 2026-04-23
 description: "說明 API 回傳過多資料如何增加敏感資訊外洩風險"
-weight: 115
+weight: 116
 ---
 
 

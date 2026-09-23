@@ -2,7 +2,7 @@
 title: "1.11 關係沒有順序，只有 ORDER BY 加得回來"
 date: 2026-09-02
 description: "同一段查詢在建索引前後回不同順序的機制、ORDER BY 在求值順序的位置，以及空值落在哪一端各家的差別"
-weight: 11
+weight: 12
 tags: ["sql", "order-by", "null", "query-plan", "semantic-model"]
 ---
 

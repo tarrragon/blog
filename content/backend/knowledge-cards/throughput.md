@@ -3,7 +3,7 @@ title: "Throughput"
 tags: ["吞吐量", "Throughput"]
 date: 2026-04-23
 description: "整理系統單位時間內可處理的工作量"
-weight: 0
+weight: 1
 ---
 
 

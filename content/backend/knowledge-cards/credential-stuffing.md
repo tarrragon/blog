@@ -3,7 +3,7 @@ title: "Credential Stuffing（憑證填充）"
 tags: ["身分安全", "Credential Stuffing", "Security"]
 date: 2026-07-29
 description: "說明攻擊者如何拿別處外洩的帳密清單來登入自己的服務，以及它與暴力破解在防護上的差異"
-weight: 334
+weight: 335
 ---
 
 Credential stuffing 的核心概念是「拿在別處外洩的帳號密碼組合，到這個服務逐一試登入」。它利用的是同一個人在多個服務用同一組密碼，因此攻擊者不需要猜——手上的每一組都曾經是某人的真密碼，[authentication](/backend/knowledge-cards/authentication/) 這一層因此看到的是一次完全合法的登入。

@@ -2,7 +2,7 @@
 title: "Trace"
 date: 2026-06-22
 description: "說明 trace 如何重建跨服務請求的路徑、耗時與依賴關係"
-weight: 140
+weight: 141
 tags: ["backend", "observability"]
 ---
 

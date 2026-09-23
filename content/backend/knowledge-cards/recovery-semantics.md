@@ -2,7 +2,7 @@
 title: "Recovery Semantics"
 date: 2026-06-16
 description: "說明事件處理失敗後能否透過 replay、checkpoint 與補償重建正確狀態並驗證"
-weight: 377
+weight: 378
 ---
 
 Recovery semantics 的核心概念是「處理失敗或資料錯亂後，系統能否重建正確狀態並驗證」。它回答 replay、checkpoint、offset 與補償流程是否可重播、可稽核，是 queue 三層語意中最後一層。 可先對照 [Processing Semantics](/backend/knowledge-cards/processing-semantics/)。

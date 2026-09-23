@@ -2,7 +2,7 @@
 title: "CAP Theorem"
 date: 2026-05-13
 description: "分散式系統在網路分區時一致性與可用性的取捨框架"
-weight: 248
+weight: 249
 ---
 
 CAP theorem 的核心概念是「當發生網路分區時，系統無法同時保證強一致與完全可用」。它的責任是限制設計者在故障情境下的承諾邊界，而不是提供日常延遲優化答案。可搭配 [pacelc](/backend/knowledge-cards/pacelc/) 一起判讀。

@@ -2,7 +2,7 @@
 title: "Leaseholder"
 date: 2026-05-27
 description: "分散式 SQL 每個 range 在任一時間點的 read / write entry point、通常等於 Raft leader、承擔該 range 的 coordination"
-weight: 361
+weight: 362
 ---
 
 Leaseholder 的核心概念是「distributed SQL 把 key space 切成多個 range、每個 range 在任一時間點有唯一一個 leaseholder 節點、承擔該 range 所有 read / write 的 coordination」。它的責任是把「誰來決定這個 range 的順序」這件事從 cluster-level 推到 per-range level、讓寫入吞吐可以線性分散。可先對照 [Consensus Protocol](/backend/knowledge-cards/consensus-protocol/)。

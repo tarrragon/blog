@@ -2,7 +2,7 @@
 title: "Table Partitioning"
 date: 2026-05-22
 description: "說明單一資料庫內如何把大表拆成多個分區，並由查詢規劃器只掃相關片段"
-weight: 333
+weight: 334
 ---
 
 Table Partitioning 的核心概念是在單一資料庫內，把一張大表按 range、list 或 hash 拆成 parent 表加多個 child 分區，讓查詢規劃器只掃描相關分區。它讓大表的查詢、維護與資料清理可以按分區進行，代價是分區鍵要選得讓多數查詢都帶得到。它和跨節點的 [Database Sharding](/backend/knowledge-cards/database-sharding/) 不同層 — table partitioning 仍在同一個資料庫內，[Hot Partition](/backend/knowledge-cards/hot-partition/) 是它失衡時的訊號。

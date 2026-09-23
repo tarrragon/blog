@@ -2,7 +2,7 @@
 title: "Cross-Site Request Forgery"
 date: 2026-07-31
 description: "憑證靠瀏覽器自動附上時，用來判斷攻擊者不必讀到憑證就能做到什麼、以及各層防護的缺口分別落在哪"
-weight: 426
+weight: 427
 tags: ["backend", "knowledge-card", "security", "web"]
 ---
 

@@ -2,7 +2,7 @@
 title: "Modular Monolith"
 date: 2026-05-27
 description: "單一部署單位 + 模組化內部邊界的架構、是 monolith 跟 microservice 之間的折衷形態"
-weight: 355
+weight: 356
 ---
 
 Modular monolith 的核心責任是讓單一部署單位內維持明確的模組邊界、約束 dependency 走 interface。換取的是「monolith 的部署簡單」+「microservice 的邊界紀律」、收回兩個極端各自的代價。Shopify、Basecamp、Stack Overflow 是大規模長期維持的代表。跟 [cell-based architecture](/backend/knowledge-cards/cell-based-architecture/) 沿不同維度拆分（cell-based 沿使用者群 / region 拆、modular monolith 沿業務功能拆內部）、跟 [strangler fig](/backend/knowledge-cards/strangler-fig/) 是策略階段關係（modular monolith 是拆分前該先嘗試的中間態）。

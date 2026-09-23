@@ -2,7 +2,7 @@
 title: "Strangler Fig Pattern"
 date: 2026-05-27
 description: "服務拆分 / 系統替換的漸進演進模式、用『新舊共存 + 逐步遷移 + 最終下架』取代 big bang 重寫"
-weight: 354
+weight: 355
 ---
 
 Strangler Fig pattern 的核心責任是讓 legacy 系統替換成新系統的過程可控、用「新服務從舊 monolith 旁長出、流量逐步遷移、舊系統最終下架」取代 big bang 重寫。跟 big bang 的本質差異是失敗代價可控 — 大爆炸失敗就整個服務掛、Strangler 拆分失敗只影響該功能、可即時切回。跟 [dual write](/backend/knowledge-cards/dual-write/) 是組合關係（dual write 是 strangler 階段 2 的核心執行）。

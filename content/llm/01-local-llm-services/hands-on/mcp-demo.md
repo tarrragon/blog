@@ -3,7 +3,7 @@ title: "Hands-on：用 blog content 寫一個最小 MCP server"
 date: 2026-05-12
 description: "stdio JSON-RPC、stdlib-only Python、暴露 blog content 給 LLM 用、validating 4.3 應用層協議"
 tags: ["llm", "hands-on", "mcp", "rag"]
-weight: 5
+weight: 6
 ---
 
 本篇把 [4.6 應用層協議](/llm/04-applications/application-protocols/) 的 MCP 概念落到一個可跑的最小實作：用 stdio JSON-RPC 暴露兩個 tool（`search_blog`、`read_chunk`）、客戶端 spawn server 跟它對話、驗證 protocol initialize / tools/list / tools/call / error 四個基本流程。實作刻意只用 Python stdlib、不依賴 MCP SDK、為的是把 wire protocol 看清楚、跟 4.3 的「server 協議層」framing 對應。

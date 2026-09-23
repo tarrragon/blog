@@ -2,7 +2,7 @@
 title: "Queue Depth"
 date: 2026-04-23
 description: "說明 queue 中等待處理的訊息數如何反映 backlog 與容量壓力"
-weight: 66
+weight: 67
 ---
 
 

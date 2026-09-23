@@ -2,7 +2,7 @@
 title: "Metrics"
 date: 2026-06-22
 description: "說明指標如何描述服務趨勢、容量與健康狀態"
-weight: 33
+weight: 34
 tags: ["backend", "observability"]
 ---
 

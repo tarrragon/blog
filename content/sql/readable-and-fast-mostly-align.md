@@ -2,7 +2,7 @@
 title: "1.21 好讀的寫法多數時候也是引擎好走的"
 date: 2026-09-01
 description: "寫法差異在什麼情形下免費、什麼情形下分岔，以及分岔時該動查詢還是動 schema"
-weight: 21
+weight: 22
 tags: ["sql", "readability", "performance", "index", "cte"]
 ---
 

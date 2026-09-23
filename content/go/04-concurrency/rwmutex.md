@@ -2,7 +2,7 @@
 title: "4.4 sync.RWMutex：保護共享狀態"
 date: 2026-04-22
 description: "用讀寫鎖保護共享狀態"
-weight: 4
+weight: 5
 tags: ["go", "concurrency", "performance"]
 ---
 

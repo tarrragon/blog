@@ -2,7 +2,7 @@
 title: "0.11 攻擊者視角（紅隊）：跨服務弱點判讀總表"
 date: 2026-04-24
 description: "用攻擊面、可觀察訊號與失敗代價，建立 backend 選型前的弱點盤點框架"
-weight: 11
+weight: 12
 tags: ["backend", "service-selection"]
 ---
 

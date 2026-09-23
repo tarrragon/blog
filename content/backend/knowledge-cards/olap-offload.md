@@ -2,7 +2,7 @@
 title: "OLAP Offload"
 date: 2026-05-22
 description: "說明如何把分析型查詢從 OLTP 主庫卸載，以保護線上交易效能"
-weight: 336
+weight: 337
 ---
 
 OLAP Offload 的核心概念是把分析型查詢從線上交易（OLTP）主庫移開，讓重量級的彙總、掃描與報表查詢不影響線上讀寫。它讓交易效能和分析需求各自有容量，代價是要決定分析資料放哪、以及它和主庫之間的新鮮度差。它常透過 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 把資料送到分析側，分析側本身則是一種 [Read Model](/backend/knowledge-cards/read-model/)。

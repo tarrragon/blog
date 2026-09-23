@@ -3,7 +3,7 @@ title: "Sticky Session"
 tags: ["黏性會話", "Sticky Session"]
 date: 2026-04-24
 description: "說明同一 client 如何在一段時間內持續命中同一個後端實例"
-weight: 130
+weight: 131
 ---
 
 

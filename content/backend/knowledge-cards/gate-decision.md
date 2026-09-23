@@ -2,7 +2,7 @@
 title: "Gate Decision"
 date: 2026-05-11
 description: "說明 release gate 如何把證據轉成放行、暫停、回退或補證據的決策"
-weight: 159
+weight: 160
 tags: ["backend", "knowledge-card", "reliability", "release-gate"]
 ---
 

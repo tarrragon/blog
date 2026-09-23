@@ -2,7 +2,7 @@
 title: "Transaction"
 date: 2026-04-23
 description: "說明 transaction 如何讓一組資料變更一起成功或一起回復"
-weight: 137
+weight: 138
 ---
 
 

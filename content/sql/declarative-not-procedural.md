@@ -2,7 +2,7 @@
 title: "1.1 宣告式的紅利與代價：三種順序各自由誰決定"
 date: 2026-08-31
 description: "書寫、求值、執行三種順序各自由誰決定，以及宣告式把代價搬到查詢文字之外的後果"
-weight: 1
+weight: 2
 tags: ["sql", "declarative", "query-plan", "optimizer"]
 ---
 

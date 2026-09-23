@@ -2,7 +2,7 @@
 title: "1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事"
 date: 2026-08-31
 description: "三者在列數與可取用欄位上的差別，以及 NOT IN 碰到 NULL 時與 NOT EXISTS 的分岔"
-weight: 8
+weight: 9
 tags: ["sql", "in", "exists", "join", "subquery", "semi-join"]
 ---
 

@@ -2,7 +2,7 @@
 title: "Replica Identity"
 date: 2026-05-22
 description: "說明 row-level 變更事件如何帶穩定 key，讓下游能正確套用 update 與 delete"
-weight: 338
+weight: 339
 ---
 
 Replica Identity 的核心概念是一張表對外輸出 row-level 變更時，必須附帶一個穩定的 key，讓下游系統知道每個 update 或 delete 事件要套用到哪一列。它是 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 與 [Logical Replication](/backend/knowledge-cards/logical-replication/) 能否正確重建資料的前置契約，缺少它時 update / delete 事件無法定位目標列。

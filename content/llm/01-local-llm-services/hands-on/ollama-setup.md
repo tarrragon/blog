@@ -3,7 +3,7 @@ title: "Hands-on：安裝 Ollama + 拉第一個 Gemma 模型"
 date: 2026-05-11
 description: "brew install ollama、launchd service、ollama pull、curl 驗證 OpenAI 相容 API"
 tags: ["llm", "hands-on", "ollama", "gemma"]
-weight: 0
+weight: 1
 ---
 
 本篇紀錄在 Apple Silicon Mac 上裝 Ollama 並拉一個小模型驗證的完整流程。指令在 macOS 14 (Sonoma) / Homebrew 提供的環境下驗證。

@@ -3,7 +3,7 @@ title: "0.21 交付形態選型：從全託管到自建的光譜與邊界"
 slug: "delivery-mode-selection"
 date: 2026-06-11
 description: "在進入資料庫、快取與部署選型之前、先判斷服務該用託管平台（Wix / Shopify / Google Sites）、辦公生態自動化（Apps Script）、BaaS（Firebase）、半託管 CMS（WordPress）還是自建、並為日後遷往自建保留可遷出路徑"
-weight: 21
+weight: 22
 tags: ["backend", "service-selection", "delivery-mode-selection"]
 ---
 

@@ -2,7 +2,7 @@
 title: "Fan-out"
 date: 2026-06-22
 description: "說明單一事件同時分發給多個下游的訊息拓撲"
-weight: 141
+weight: 142
 tags: ["backend", "message-queue"]
 ---
 

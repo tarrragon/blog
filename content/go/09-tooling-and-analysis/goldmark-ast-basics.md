@@ -2,7 +2,7 @@
 title: "9.2 第三方 parser 整合：goldmark AST 入門"
 date: 2026-04-24
 description: "用 goldmark 把 markdown 解析成 AST，掌握 ast.Walk visitor 模式、block 與 inline 節點的判讀、byte offset 如何定位到行號"
-weight: 2
+weight: 3
 tags: ["go", "tooling"]
 ---
 

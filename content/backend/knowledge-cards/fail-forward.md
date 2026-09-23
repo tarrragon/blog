@@ -2,7 +2,7 @@
 title: "Fail-forward"
 date: 2026-05-11
 description: "說明無法回到舊狀態時如何用受控前進完成修復"
-weight: 157
+weight: 158
 tags: ["backend", "knowledge-card", "reliability", "incident-response"]
 ---
 

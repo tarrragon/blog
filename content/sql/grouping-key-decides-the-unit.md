@@ -2,7 +2,7 @@
 title: "1.9 分組鍵決定每一組代表什麼"
 date: 2026-08-31
 description: "分組鍵與一組所代表的對象之間的對應、選鍵的判準，以及分組不適用的那一類問題"
-weight: 9
+weight: 10
 tags: ["sql", "group-by", "null", "aggregate", "join"]
 ---
 

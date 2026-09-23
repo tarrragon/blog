@@ -2,7 +2,7 @@
 title: "Queue Contract"
 date: 2026-04-23
 description: "說明佇列工作在重試、確認與重複投遞上的約定"
-weight: 0
+weight: 1
 ---
 
 

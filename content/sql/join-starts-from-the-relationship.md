@@ -2,7 +2,7 @@
 title: "1.3 連接從說出配對關係開始"
 date: 2026-09-01
 description: "兩種起手式各自把條件放在哪裡、它們在外連接處分開的原因，以及連接的種類由什麼決定"
-weight: 3
+weight: 4
 tags: ["sql", "join", "cross-join", "outer-join", "on-clause"]
 ---
 

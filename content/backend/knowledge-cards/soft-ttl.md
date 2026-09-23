@@ -2,7 +2,7 @@
 title: "Soft TTL"
 date: 2026-04-23
 description: "說明資料進入刷新期後仍可短暫使用以降低 stampede"
-weight: 96
+weight: 97
 ---
 
 

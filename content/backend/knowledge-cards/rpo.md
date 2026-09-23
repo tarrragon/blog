@@ -3,7 +3,7 @@ title: "RPO"
 tags: ["復原點目標", "RPO"]
 date: 2026-04-23
 description: "說明恢復點目標如何定義可接受資料損失範圍"
-weight: 159
+weight: 160
 ---
 
 

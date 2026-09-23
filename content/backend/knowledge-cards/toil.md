@@ -3,7 +3,7 @@ title: "Toil"
 tags: ["Toil", "重複手動工作"]
 date: 2026-05-02
 description: "說明重複、手動、無永久價值的工作如何成為工程治理對象"
-weight: 315
+weight: 316
 ---
 
 Toil 的核心概念是「重複、手動、無永久價值、可自動化的工作」。它通常和 [on-call](/backend/knowledge-cards/on-call/) 壓力、[alert fatigue](/backend/knowledge-cards/alert-fatigue/) 與 [runbook](/backend/knowledge-cards/runbook/) 綁在一起。

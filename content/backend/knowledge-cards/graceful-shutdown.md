@@ -2,7 +2,7 @@
 title: "Graceful Shutdown"
 date: 2026-04-23
 description: "說明服務停止前如何排空流量、完成工作與保存狀態"
-weight: 11
+weight: 12
 ---
 
 

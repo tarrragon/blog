@@ -3,7 +3,7 @@ title: "3.7 跨語言場景的 tokenizer 與訓練分佈原理"
 date: 2026-05-11
 description: "為什麼模型對不同語言表現不一致：tokenizer + 訓練資料分佈雙因素、語言選擇取捨"
 tags: ["llm", "theory", "tokenization", "multilingual"]
-weight: 7
+weight: 8
 ---
 
 模組三 [3.6 tokenization 章節](/llm/03-theoretical-foundations/tokenization-algorithms/) 提到 Llama 2 對中文支援差、Gemma 4 改善很多——但「為什麼」展開後不只 tokenizer 一層、還涉及訓練資料分佈、模型容量分配、跨語言 reasoning 行為差異。本章把跨語言場景的根本原理走過、讓「該用什麼語言寫 prompt」「commit message 用中文還是英文」這類取捨從直覺變成可推導判斷。

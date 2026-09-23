@@ -3,7 +3,7 @@ title: "Failover"
 tags: ["容錯切換", "Failover"]
 date: 2026-04-23
 description: "說明主要服務或節點失效時如何切換到備援能力"
-weight: 30
+weight: 31
 ---
 
 

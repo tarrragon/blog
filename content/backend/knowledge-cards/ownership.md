@@ -2,7 +2,7 @@
 title: "Ownership"
 date: 2026-06-22
 description: "說明 ownership 如何把問題、決策與交接責任固定到可執行角色"
-weight: 208
+weight: 209
 tags: ["backend", "observability", "incident-response"]
 ---
 

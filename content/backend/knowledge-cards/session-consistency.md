@@ -2,7 +2,7 @@
 title: "Session Consistency"
 date: 2026-05-13
 description: "同一使用者工作階段內維持讀寫一致、跨工作階段允許短暫不一致"
-weight: 246
+weight: 247
 ---
 
 Session consistency 的核心概念是「同一 session 內讀到自己剛寫入的資料」，但不保證全域即時一致。它的責任是在體感一致與系統延遲之間提供可操作折衷，位在 [external-consistency](/backend/knowledge-cards/external-consistency/) 與 eventual consistency 之間。

@@ -3,7 +3,7 @@ title: "2.3 數值精度與量化的數學依據"
 date: 2026-05-11
 description: "fp32 / bf16 / fp16 / int8 / int4 的差別、量化能省哪些 bits、品質衰減從哪裡來"
 tags: ["llm", "math", "numerical-precision"]
-weight: 3
+weight: 4
 ---
 
 [量化](/llm/knowledge-cards/quantization/) 是讓 30B+ LLM 跑在 consumer 等級硬體上的關鍵技術。直覺說法是「用較少 bits 表示權重」、但這背後有完整的數值精度數學依據：浮點數怎麼編碼、不同 format 的取捨在哪、量化在哪一步損失資訊、Q4 vs Q5 的品質差距是怎麼算出來的。

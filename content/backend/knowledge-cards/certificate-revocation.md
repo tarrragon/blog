@@ -2,7 +2,7 @@
 title: "Certificate Revocation"
 date: 2026-04-23
 description: "說明憑證洩漏或誤發時如何撤銷並控制影響範圍"
-weight: 149
+weight: 150
 ---
 
 

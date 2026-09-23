@@ -3,7 +3,7 @@ title: "Readiness"
 tags: ["就緒檢查", "Readiness"]
 date: 2026-04-23
 description: "說明 instance 何時可以安全接收流量，以及 readiness 如何和部署平台協作"
-weight: 10
+weight: 11
 ---
 
 

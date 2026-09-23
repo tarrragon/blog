@@ -3,7 +3,7 @@ title: "3.2 Attention 機制"
 date: 2026-05-11
 description: "Query / Key / Value、scaled dot-product attention、multi-head attention：Transformer 的核心運算"
 tags: ["llm", "theory", "attention"]
-weight: 2
+weight: 3
 ---
 
 [Attention](/llm/knowledge-cards/attention/)（注意力）是 Transformer 的核心創新、也是 LLM 能處理長 context 的關鍵。它的核心想法是「每個 token 決定該關注前面哪幾個 token」、用 [embedding](/llm/03-theoretical-foundations/embedding-spaces/) 之間的[內積](/llm/02-math-foundations/linear-algebra-for-llm/) 量化「相關性」。理解 attention 後、[Multi-head](/llm/knowledge-cards/multi-head-attention/)、KV cache、Flash Attention、attention sink 等術語都能放到正確位置。

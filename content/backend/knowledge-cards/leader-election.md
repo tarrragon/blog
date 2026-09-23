@@ -2,7 +2,7 @@
 title: "Leader Election"
 date: 2026-05-27
 description: "從一群對等節點中選出單一主節點負責獨佔工作、leader 失效時自動選新 leader"
-weight: 31
+weight: 32
 ---
 
 Leader election 的核心責任是「從一群對等節點選出單一主來執行某類獨佔工作（執行排程、接受寫入、coordinate cluster state）」。Leader 失效時、剩餘節點要在有限時間內選出新 leader。底層通常依賴 [consensus protocol](/backend/knowledge-cards/consensus-protocol/)（Raft / ZAB）保證選舉一致、確保任何時刻只有單一 leader（防範 split-brain）。是 [distributed lock](/backend/knowledge-cards/distributed-lock/) 在「服務角色互斥」這個情境的應用。

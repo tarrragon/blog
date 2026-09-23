@@ -2,7 +2,7 @@
 title: "Continuous Profiling"
 date: 2026-06-22
 description: "在 production 持續取得低 overhead profile 的觀察方法"
-weight: 237
+weight: 238
 tags: ["backend", "observability"]
 ---
 

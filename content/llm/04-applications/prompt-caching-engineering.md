@@ -3,7 +3,7 @@ title: "4.18 Prompt caching 工程實務：cost / latency 最大槓桿"
 date: 2026-05-12
 description: "Prompt cache 怎麼運作、cache_control 設計、coding agent 跟 long-context 的 cache pattern、anti-pattern 跟 cache miss 訊號"
 tags: ["llm", "applications", "prompt-cache", "cost", "latency", "coding-agent"]
-weight: 18
+weight: 19
 ---
 
 [Prompt cache](/llm/knowledge-cards/prompt-cache/) 把重複 prefix 的計算結果在 LLM 服務端跨 request 持久化、後續 query 跳過 [prefill](/llm/knowledge-cards/prefill/) 階段。Anthropic / OpenAI / Bedrock / Gemini 都列為 cost 跟 [TTFT](/llm/knowledge-cards/ttft/) 的最大單一槓桿 — 90% cost 折扣 + 顯著 latency 改善。本章把 prompt caching 的運作機制、設計原則、coding agent / long-context 場景的 pattern、常見 anti-pattern 拆成可操作的工程實務。

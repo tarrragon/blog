@@ -2,7 +2,7 @@
 title: "Facet Query"
 date: 2026-04-23
 description: "說明分面查詢如何提供分類統計與篩選體驗"
-weight: 162
+weight: 163
 ---
 
 

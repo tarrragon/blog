@@ -2,7 +2,7 @@
 title: "Cell-Based Architecture"
 date: 2026-05-27
 description: "把系統拆成多個 isolated cell、控制 blast radius、跨 cell 共用標準介面"
-weight: 359
+weight: 360
 ---
 
 Cell-based architecture 的核心責任是 blast radius 控制 — 把整個系統拆成多個 isolated cell、每個 cell 內含完整 stack（front + back + data）、跨 cell 共用標準介面。任何一個 cell 的故障、最壞影響範圍是該 cell 的使用者群、不會跨 cell 擴散。AWS、Slack、DoorDash 採用這條模式。跟 [modular monolith](/backend/knowledge-cards/modular-monolith/) 跟 microservice 是不同維度的拆分（後兩者沿功能拆、cell-based 沿使用者群 / 區域 / tenant 拆）、跟 [database sharding](/backend/knowledge-cards/database-sharding/) 同概念但不同層級（sharding 切資料、cell 切完整 stack）。

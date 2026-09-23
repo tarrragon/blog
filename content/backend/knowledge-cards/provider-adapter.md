@@ -2,7 +2,7 @@
 title: "Provider Adapter"
 date: 2026-04-23
 description: "說明第三方服務如何被包裝成內部穩定介面"
-weight: 0
+weight: 1
 ---
 
 

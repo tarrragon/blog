@@ -2,7 +2,7 @@
 title: "Cross-Site Scripting"
 date: 2026-07-31
 description: "要判斷憑證放在 JavaScript 讀得到的位置有多大代價、或哪些防護以「攻擊者讀不到」為前提時，用來定位這個攻擊面取得的是整個來源的能力"
-weight: 427
+weight: 428
 tags: ["backend", "knowledge-card", "security", "web"]
 ---
 

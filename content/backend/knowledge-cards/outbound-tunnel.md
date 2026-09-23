@@ -2,7 +2,7 @@
 title: "Outbound Tunnel"
 date: 2026-06-18
 description: "反向隧道把出站連線轉成可達入口、與傳統 port-forward 的責任倒轉"
-weight: 350
+weight: 351
 tags: ["backend", "deployment", "tunnel", "knowledge-card"]
 ---
 

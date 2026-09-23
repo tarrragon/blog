@@ -2,7 +2,7 @@
 title: "No-Versioning（不做版本）"
 date: 2026-08-11
 description: "拿掉版本識別碼要換來什麼前提——執行期習得控制項或欄位級宣告，缺了它就只是不承諾相容"
-weight: 435
+weight: 436
 ---
 
 No-versioning 的核心責任是把介面演進的協調成本從「版本切換」轉成「服務端的持續自我約束」。它換的是付款地點而非付款金額：沒有版本識別碼時，服務端每次變更都要保證既有消費者不會斷，而這份保證由紀律提供、不由機制提供。跟 [Deprecation Lifecycle](/backend/knowledge-cards/deprecation-lifecycle/) 的關係是互補的——no-versioning 讓「版本退場」這個動作消失，卻讓「單一欄位或控制項退場」變成日常，而後者仍然需要完整的退場生命週期。

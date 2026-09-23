@@ -2,7 +2,7 @@
 title: "Event Log"
 date: 2026-06-22
 description: "說明事件歷史如何保存、重播與支援跨服務資料重建"
-weight: 145
+weight: 146
 tags: ["backend", "architecture", "database"]
 ---
 

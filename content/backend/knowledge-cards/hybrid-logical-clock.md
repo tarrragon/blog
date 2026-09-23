@@ -2,7 +2,7 @@
 title: "Hybrid Logical Clock"
 date: 2026-05-27
 description: "用 physical wall clock + monotonic logical counter 給每個事件 timestamp、靠軟體 max-offset 保證跨節點時鐘差不超過上限、超過 panic 保護一致性"
-weight: 363
+weight: 364
 ---
 
 Hybrid Logical Clock（HLC）的核心概念是「給每個事件一個 `(physical, logical)` timestamp、physical 來自 NTP 同步的 wall clock、logical 是單調遞增的 counter 處理同一 physical tick 內的事件順序」。它的責任是讓跨節點 event ordering 可以用軟體保證、不需要 GPS + 原子鐘等專用硬體、代價是要承擔 max-offset 邊界內的不確定性。可先對照 [TrueTime](/backend/knowledge-cards/truetime/)。

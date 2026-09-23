@@ -3,7 +3,7 @@ title: "4.13 Eval 設計座標系：三軸、八象限、何時測什麼"
 date: 2026-05-14
 description: "Eval 設計三軸（objective↔subjective / component↔end-to-end / quantitative↔qualitative）、八象限的對應 eval 工具、軸選錯的訊號、跟 benchmarking / LLM-as-judge / tracing 的關係"
 tags: ["llm", "applications", "evaluation", "evals", "methodology"]
-weight: 13
+weight: 14
 ---
 
 LLM 應用的「怎麼測」問題大家都在問、但答案常常是「跑某個 benchmark」「找個 [LLM judge](/llm/knowledge-cards/llm-as-judge/)」這類**工具層**回答。實務上工具是末端、設計重點是**先選測什麼軸、再選工具**。軸選錯了、再好的工具也測不出有用訊號——用 subjective 工具測 objective 行為（例如用 LLM judge 看金額計算對不對）、或用 end-to-end 工具測 component bug（例如看 user satisfaction 但其實是 retrieval pipeline 在漏 chunk）、都是常見的軸誤選。

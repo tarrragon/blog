@@ -2,7 +2,7 @@
 title: "Requeue"
 date: 2026-04-23
 description: "說明處理失敗的訊息重新排回 queue 時的風險與控制條件"
-weight: 63
+weight: 64
 ---
 
 

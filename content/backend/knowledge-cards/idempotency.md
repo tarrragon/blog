@@ -2,7 +2,7 @@
 title: "Idempotency"
 date: 2026-04-23
 description: "說明同一操作執行多次時如何保持結果一致"
-weight: 25
+weight: 26
 ---
 
 

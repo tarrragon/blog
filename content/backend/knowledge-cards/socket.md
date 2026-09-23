@@ -2,7 +2,7 @@
 title: "Socket"
 date: 2026-04-23
 description: "說明 network socket 如何成為 application 與網路之間的資料傳輸邊界"
-weight: 131
+weight: 132
 ---
 
 

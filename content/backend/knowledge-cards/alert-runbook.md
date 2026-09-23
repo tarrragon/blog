@@ -3,7 +3,7 @@ title: "Alert Runbook"
 tags: ["告警處置手冊", "Alert Runbook"]
 date: 2026-04-23
 description: "說明告警如何連到可執行的排障與恢復流程"
-weight: 37
+weight: 38
 ---
 
 

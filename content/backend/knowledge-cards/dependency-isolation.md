@@ -2,7 +2,7 @@
 title: "Dependency Isolation"
 date: 2026-04-23
 description: "說明如何隔離下游依賴，避免單一依賴耗盡共享資源"
-weight: 54
+weight: 55
 ---
 
 

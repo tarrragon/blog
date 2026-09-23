@@ -2,7 +2,7 @@
 title: "In-Flight Message"
 date: 2026-04-23
 description: "說明已交給 consumer 但尚未完成確認的訊息狀態"
-weight: 60
+weight: 61
 ---
 
 

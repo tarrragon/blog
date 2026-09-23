@@ -2,7 +2,7 @@
 title: "Fallback Plan"
 date: 2026-04-23
 description: "說明變更失敗時如何回到可接受狀態"
-weight: 78
+weight: 79
 ---
 
 

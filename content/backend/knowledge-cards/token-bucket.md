@@ -2,7 +2,7 @@
 title: "Token Bucket"
 date: 2026-04-23
 description: "說明 token bucket 如何用配額與補充速率控制流量"
-weight: 53
+weight: 54
 ---
 
 

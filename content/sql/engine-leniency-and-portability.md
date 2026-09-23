@@ -2,7 +2,7 @@
 title: "1.19 哪一家最寬鬆只答得了一條軸，可攜性要逐條決定"
 date: 2026-09-02
 description: "各家引擎在同一組寫法上的分割互不預測、差異在什麼位置發聲分幾級，以及可攜性要維持到哪一級"
-weight: 19
+weight: 20
 tags: ["sql", "portability", "engine", "standard", "compatibility"]
 ---
 

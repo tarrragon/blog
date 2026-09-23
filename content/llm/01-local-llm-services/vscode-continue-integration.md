@@ -3,7 +3,7 @@ title: "1.3 VS Code + Continue.dev 整合"
 date: 2026-05-11
 description: "安裝 Continue 擴充套件、config.json 設定、Cmd+L 對話 / Cmd+I 行內編輯快捷鍵"
 tags: ["llm", "vscode", "continue-dev", "integration"]
-weight: 3
+weight: 4
 ---
 
 把本地 LLM 接到 VS Code 是「本地 LLM 寫 code」工作流的真正起點。前面章節安裝的 Ollama 是[伺服器層](/llm/00-foundations/three-layer-architecture/)，本章要接的 Continue.dev 是**介面層**：使用者實際在編輯器裡按快捷鍵、打字、看 inline diff 的工具。

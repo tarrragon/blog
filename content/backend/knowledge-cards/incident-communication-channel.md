@@ -2,7 +2,7 @@
 title: "Incident Communication Channel"
 date: 2026-04-23
 description: "說明事故期間內外部溝通要使用哪些固定通道與節奏"
-weight: 154
+weight: 155
 ---
 
 

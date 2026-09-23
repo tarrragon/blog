@@ -2,7 +2,7 @@
 title: "Log Schema"
 date: 2026-06-22
 description: "說明結構化 log 欄位如何支援搜尋、關聯與事故排查"
-weight: 32
+weight: 33
 tags: ["backend", "observability"]
 ---
 

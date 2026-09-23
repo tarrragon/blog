@@ -3,7 +3,7 @@ title: "Runtime Config"
 tags: ["執行期設定", "Runtime Config"]
 date: 2026-04-24
 description: "說明服務在啟動與執行時如何讀取與組合設定"
-weight: 153
+weight: 154
 ---
 
 

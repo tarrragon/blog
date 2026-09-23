@@ -2,7 +2,7 @@
 title: "Follower Read"
 date: 2026-05-27
 description: "分散式 SQL 從 non-voting replica 讀 closed timestamp 之前的資料、不參與 Raft commit、低 latency 但 read-after-write 場景仍可能 stale"
-weight: 366
+weight: 367
 ---
 
 Follower read 的核心概念是「distributed SQL 把 read 從 leaseholder 路徑分流到 non-voting replica、讀的是 closed timestamp 之前已確定不會被改寫的快照」。它的責任是讓跨 region 部署仍能在本地讀到資料、不用付每次 read 都跨 region 找 leaseholder 的 RTT、代價是只能讀稍 stale 的資料。可先對照 [Stale Read](/backend/knowledge-cards/stale-read/)。

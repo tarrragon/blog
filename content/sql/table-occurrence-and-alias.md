@@ -2,7 +2,7 @@
 title: "1.7 查詢裡的表是一個具名的出現"
 date: 2026-08-31
 description: "表名是一次出現的稱呼、別名的作用範圍，以及自連接處理的是同一張表兩列之間的關係"
-weight: 7
+weight: 8
 tags: ["sql", "alias", "self-join", "correlation-name", "join"]
 ---
 

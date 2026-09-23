@@ -2,7 +2,7 @@
 title: "Circuit Breaker"
 date: 2026-04-23
 description: "說明下游持續失敗時如何暫停呼叫並保護系統"
-weight: 29
+weight: 30
 ---
 
 

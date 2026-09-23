@@ -2,7 +2,7 @@
 title: "Runbook"
 date: 2026-06-22
 description: "說明 runbook 如何把事故判斷與操作步驟標準化"
-weight: 143
+weight: 144
 tags: ["backend", "observability", "incident-response"]
 ---
 

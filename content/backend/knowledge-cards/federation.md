@@ -2,7 +2,7 @@
 title: "Federation"
 date: 2026-05-13
 description: "跨系統信任與授權交換的聯邦機制"
-weight: 254
+weight: 255
 ---
 
 Federation 的核心概念是「不同身份或資源系統之間建立可驗證信任關係，讓授權資訊可被交換使用」。它的責任是縮短跨域整合成本，同時維持邊界可追蹤。可對照 [workload-identity](/backend/knowledge-cards/workload-identity/) 與 [trust-boundary](/backend/knowledge-cards/trust-boundary/)。

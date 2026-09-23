@@ -2,7 +2,7 @@
 title: "Vendor Lock-In"
 date: 2026-05-22
 description: "說明採用供應商產品後，其 API 與格式滲入程式碼造成的退出成本"
-weight: 345
+weight: 346
 ---
 
 Vendor Lock-In 的核心概念是採用某個供應商的產品後，它的 API、資料格式或平台行為逐漸滲入核心程式碼，使得日後要換掉它的成本變得很高。它讓「現在好接」與「日後難退」成為要一起評估的取捨。降低它的手段要接回 [Provider Adapter](/backend/knowledge-cards/provider-adapter/) 與 [Repository Adapter](/backend/knowledge-cards/repository-adapter/)。

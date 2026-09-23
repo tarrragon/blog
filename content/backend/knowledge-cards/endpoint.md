@@ -2,7 +2,7 @@
 title: "Service Endpoint"
 date: 2026-04-23
 description: "說明服務如何對外暴露可被路由與存取的入口"
-weight: 126
+weight: 127
 ---
 
 

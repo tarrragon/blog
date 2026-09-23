@@ -2,7 +2,7 @@
 title: "Projection"
 date: 2026-06-22
 description: "說明從事件流或資料變更推算出查詢用讀取視圖的轉換機制"
-weight: 160
+weight: 161
 tags: ["backend", "architecture", "database"]
 ---
 

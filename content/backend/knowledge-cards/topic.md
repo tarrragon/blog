@@ -2,7 +2,7 @@
 title: "Topic"
 date: 2026-06-22
 description: "說明 topic 如何把事件依主題分流給不同訂閱者"
-weight: 134
+weight: 135
 tags: ["backend", "message-queue"]
 ---
 

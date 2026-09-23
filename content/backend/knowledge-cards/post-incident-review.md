@@ -3,7 +3,7 @@ title: "Post-Incident Review"
 tags: ["事故後檢討", "Post-Incident Review"]
 date: 2026-04-23
 description: "說明事故後如何完成復盤、學習與改進閉環"
-weight: 156
+weight: 157
 ---
 
 

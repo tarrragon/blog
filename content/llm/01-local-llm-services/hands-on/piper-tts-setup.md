@@ -3,7 +3,7 @@ title: "Hands-on：安裝 Piper TTS 做文字轉語音"
 date: 2026-05-12
 description: "pip install piper-tts、ONNX voice model、stdin 餵文字、WAV 輸出、跟 Whisper 互為 round-trip 驗證"
 tags: ["llm", "hands-on", "tts", "piper"]
-weight: 3
+weight: 4
 ---
 
 本篇紀錄裝 Piper TTS 並用它合成英文語音、再用 Whisper 轉回文字做 round-trip 驗證。選 Piper 而非雲端 TTS（OpenAI / ElevenLabs）的理由：

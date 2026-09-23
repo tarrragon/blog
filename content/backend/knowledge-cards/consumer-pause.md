@@ -2,7 +2,7 @@
 title: "Consumer Pause"
 date: 2026-06-16
 description: "說明暫停消費作為事故控制手段，止住錯誤副作用擴大"
-weight: 379
+weight: 380
 ---
 
 Consumer pause 的核心概念是「主動停止消費，止住錯誤副作用繼續擴大」。當下游故障、毒訊息卡關或處理邏輯有 bug 時，暫停消費讓事件留在 broker、爭取修復時間，是事故當下的控制手段。 可先對照 [Consumer Lag](/backend/knowledge-cards/consumer-lag/)。

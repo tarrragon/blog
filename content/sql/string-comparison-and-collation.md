@@ -2,7 +2,7 @@
 title: "1.15 字串的相等、大小與索引可用性都由 collation 決定"
 date: 2026-09-02
 description: "同一段等值條件在各家回不同的列的原因、LIKE 與等號何時分岔、索引與條件的比較規則怎麼對上，以及規則該寫在哪一層"
-weight: 15
+weight: 16
 tags: ["sql", "collation", "like", "string", "index", "portability"]
 ---
 

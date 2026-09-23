@@ -3,7 +3,7 @@ title: "3.6 Tokenization：BPE、SentencePiece、Tiktoken"
 date: 2026-05-11
 description: "把文字切成 token 的算法：為什麼不同模型切出不同 token 數、tokenizer 選擇對能力的影響"
 tags: ["llm", "theory", "tokenization"]
-weight: 6
+weight: 7
 ---
 
 [Tokenization](/llm/knowledge-cards/token/) 是把文字切成模型可處理的 token 序列的過程。看似簡單的「切字」實際上有完整算法、且 tokenizer 的選擇深刻影響模型能力、context window 利用率、跨語言表現、跟一些奇怪 bug 的成因（GPT 在某些字串上表現異常的「glitch tokens」就源於 tokenizer 設計）。

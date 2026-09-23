@@ -2,7 +2,7 @@
 title: "Span"
 date: 2026-06-22
 description: "說明 trace 中一段工作如何記錄耗時、狀態與關聯"
-weight: 107
+weight: 108
 tags: ["backend", "observability"]
 ---
 

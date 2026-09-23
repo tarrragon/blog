@@ -2,7 +2,7 @@
 title: "Ack / Nack"
 date: 2026-04-23
 description: "說明 consumer 如何向 broker 回報訊息處理結果"
-weight: 23
+weight: 24
 ---
 
 

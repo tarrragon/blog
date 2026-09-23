@@ -3,7 +3,7 @@ title: "Health Check"
 tags: ["健康檢查", "Health Check"]
 date: 2026-04-24
 description: "說明服務如何對外提供可供平台判斷狀態的健康回應"
-weight: 133
+weight: 134
 ---
 
 

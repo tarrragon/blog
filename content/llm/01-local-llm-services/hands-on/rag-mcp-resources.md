@@ -3,7 +3,7 @@ title: "Hands-on：RAG / MCP 的資源 footprint"
 date: 2026-05-12
 description: "RAG ingest / query / MCP server 三階段的 RAM / 磁碟 / process 實測、多模型並存的 RAM 衝突、本地 LLM 跑 RAG 跟單純 chat 的差異"
 tags: ["llm", "hands-on", "rag", "mcp", "resource"]
-weight: 9
+weight: 10
 ---
 
 [Resource management 章](/llm/01-local-llm-services/hands-on/resource-management/) 講的是 Ollama / ComfyUI 等[推論伺服器](/llm/knowledge-cards/inference-server/)的 lifecycle。但**跑 [RAG](/llm/knowledge-cards/rag/) / [MCP](/llm/knowledge-cards/mcp/) 應用**比單純 chat 多吃幾倍資源——[embedding model](/llm/knowledge-cards/embedding-model/)、chat model、index 檔、subprocess、tool 邏輯——而且不同階段（ingest vs query）的瓶頸不一樣。

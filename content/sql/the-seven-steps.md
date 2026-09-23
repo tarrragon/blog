@@ -2,7 +2,7 @@
 title: "1.0 從需求到上線的查詢，這條路有七步"
 date: 2026-09-22
 description: "一段查詢從業務的一句話到上線之間的七個決定、每一步決錯之後的症狀，以及本分類哪一章擁有哪一步"
-weight: 0
+weight: 1
 tags: ["sql", "overview", "query-design", "reading-path"]
 ---
 

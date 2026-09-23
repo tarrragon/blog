@@ -2,7 +2,7 @@
 title: "Cross-Region Quorum"
 date: 2026-05-27
 description: "multi-region distributed SQL 強制 voting replica 跨 region、commit 等多 region quorum ack、跨洲 RTT 物理硬限"
-weight: 371
+weight: 372
 ---
 
 Cross-region quorum 的核心概念是「multi-region distributed SQL（Spanner multi-region instance、CockroachDB region survival）強制 voting replica 跨 region 分布、write commit 必須等多 region quorum ack」。它跟 [Quorum](/backend/knowledge-cards/quorum/) 同源（後者是抽象機制）、但承擔 *跨 region 情境下被物理光速限定的 latency tax* 這個獨立語意 — 是 distributed SQL line-rate scaling 上無法 scale away 的固定支出、跟 [Latency Budget](/backend/knowledge-cards/latency-budget/) 共軸、跟 [Commit Wait](/backend/knowledge-cards/commit-wait/) 是相鄰但獨立的物理 cost。

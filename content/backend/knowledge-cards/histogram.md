@@ -2,7 +2,7 @@
 title: "Histogram"
 date: 2026-06-22
 description: "說明 histogram 如何用分桶統計延遲、大小與分布"
-weight: 98
+weight: 99
 tags: ["backend", "observability"]
 ---
 

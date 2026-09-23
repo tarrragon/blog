@@ -3,7 +3,7 @@ title: "Allowlist"
 tags: ["允許清單", "Policy Control"]
 date: 2026-04-30
 description: "說明如何用明確允許條件控制例外放行範圍"
-weight: 257
+weight: 258
 ---
 
 

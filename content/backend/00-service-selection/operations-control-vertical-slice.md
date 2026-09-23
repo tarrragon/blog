@@ -2,7 +2,7 @@
 title: "0.13 操作控制 vertical slice 實作入口"
 date: 2026-05-07
 description: "用一個服務串起觀測證據、可靠性驗證、事故決策與回寫閉環"
-weight: 13
+weight: 14
 tags: ["backend", "vertical-slice", "observability", "reliability", "incident-response"]
 ---
 

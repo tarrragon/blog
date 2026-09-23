@@ -2,7 +2,7 @@
 title: "Point-in-Time Recovery"
 date: 2026-05-22
 description: "說明如何用完整備份加上後續變更日誌，把資料庫還原到任意時間點"
-weight: 349
+weight: 350
 ---
 
 Point-in-Time Recovery（PITR）的核心概念是用一份完整備份，加上備份之後累積的變更日誌，把資料庫還原到過去任意一個時間點。它讓「還原到誤操作發生的前一刻」成為可能，而不只是還原到最近一次備份。它依賴 [Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/) 之類的變更日誌，是達成 [RPO](/backend/knowledge-cards/rpo/) 的具體機制。

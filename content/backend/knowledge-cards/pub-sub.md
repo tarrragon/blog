@@ -2,7 +2,7 @@
 title: "Pub/Sub"
 date: 2026-04-23
 description: "說明 publish-subscribe 如何把事件即時分發給多個訂閱者"
-weight: 140
+weight: 141
 ---
 
 

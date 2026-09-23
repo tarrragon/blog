@@ -3,7 +3,7 @@ title: "4.15 Vision in coding workflow：本地 VLM 怎麼接寫 code"
 date: 2026-05-12
 description: "VLM 在 coding 工作流的 use cases、本地 VLM 選型、跟雲端 VLM 的分工、Continue.dev / Ollama 整合現狀"
 tags: ["llm", "applications", "vlm", "vision", "multimodal", "ide-integration"]
-weight: 15
+weight: 16
 ---
 
 寫 code 工作流不只是文字進文字出 — 大量任務需要看圖：browser 截圖 debug UI、Figma mockup 寫前端、架構白板照片寫文件、log 截圖找 error。[VLM](/llm/knowledge-cards/vlm/)（Vision-Language Model）把這些任務從「人類用文字描述給 LLM」升級到「LLM 直接看圖理解」。本章把 vision 在 coding 場景的 use cases、本地 VLM 選型、跟雲端 VLM 的分工、IDE 整合現狀拆成可操作的判讀。

@@ -3,7 +3,7 @@ title: "4.7 Workflow 編排模式"
 date: 2026-05-11
 description: "Pipeline / router / parallel / reflection：多 LLM call 組合的四種基本模式與退化條件"
 tags: ["llm", "applications", "workflow", "orchestration"]
-weight: 7
+weight: 8
 ---
 
 LLM 應用很少是單一 call、多半是多次 LLM call 的組合。Multi-call 組合的模式雖然各 framework（LangGraph、LlamaIndex Workflow、各家 DAG runner）包裝不同、本質上可歸納成幾種基本模式：pipeline、router、parallel、[reflection](/llm/knowledge-cards/reflection/)。理解這幾個模式、看到任何 LLM application 都能拆解成基本元件、判斷複雜度合不合理、識別常見反模式。

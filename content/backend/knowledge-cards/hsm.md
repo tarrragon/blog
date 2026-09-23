@@ -2,7 +2,7 @@
 title: "HSM（Hardware Security Module）"
 date: 2026-07-20
 description: "判斷金鑰材料需不需要脫離軟體邊界、放進不可讀取明文的專用硬體時的核心術語"
-weight: 410
+weight: 411
 ---
 
 HSM 是專門保存加密金鑰材料並執行加密運算的硬體裝置，金鑰只在裝置內部使用、不以明文形式離開硬體邊界。它是 [Key Management](/backend/knowledge-cards/key-management/) 光譜上最嚴格的一端——軟體層的 key store 仍存在金鑰以某種形式被讀出的可能，HSM 的設計目標是連持有裝置的服務供應商都讀不到金鑰本體。

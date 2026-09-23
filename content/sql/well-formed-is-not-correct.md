@@ -2,7 +2,7 @@
 title: "1.13 合不合法由引擎驗，答案對不對由提問的人負責"
 date: 2026-09-02
 description: "正確性的兩層分別由誰負責，以及答案錯掉時引擎為什麼不報錯"
-weight: 13
+weight: 14
 tags: ["sql", "null", "three-valued-logic", "correctness", "constraint"]
 ---
 

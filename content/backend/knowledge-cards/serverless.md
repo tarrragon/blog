@@ -2,7 +2,7 @@
 title: "Serverless"
 date: 2026-06-11
 description: "說明按請求 / 按用量計費、由平台管理執行環境與擴縮的運算交付模型、與其冷啟動與計價邊界"
-weight: 373
+weight: 374
 ---
 
 Serverless 的核心概念是把「伺服器的存在」從開發者的責任清單移除：程式碼以函式或請求處理單元交給平台、平台負責執行環境、擴縮與閒置歸零、費用按實際用量計（請求數、執行時間、記憶體）。名稱說的是「開發者看不到 server」、伺服器本身仍然存在 — 只是由平台調度。代表形態是 FaaS（AWS Lambda、Cloud Functions）與 serverless 化的資料庫（Aurora Serverless、Cosmos DB serverless）；相對的長駐交付形態見 [container](/backend/knowledge-cards/container/)。

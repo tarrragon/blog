@@ -2,7 +2,7 @@
 title: "Cache Stampede"
 date: 2026-04-23
 description: "說明快取同時失效時大量 request 如何壓垮正式來源"
-weight: 22
+weight: 23
 ---
 
 

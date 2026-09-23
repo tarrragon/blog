@@ -2,7 +2,7 @@
 title: "Server-Sent Events (SSE)"
 date: 2026-04-23
 description: "說明 SSE 如何透過 HTTP 長連線向 client 單向推送事件"
-weight: 133
+weight: 134
 ---
 
 

@@ -2,7 +2,7 @@
 title: "Singleflight"
 date: 2026-04-23
 description: "說明相同工作同時發生時如何合併成一次下游請求"
-weight: 97
+weight: 98
 ---
 
 

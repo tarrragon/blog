@@ -3,7 +3,7 @@ title: "Hands-on：用本地 LLM 跑 judge harness（最小可行版）"
 date: 2026-05-12
 description: "在 Ollama / LM Studio 上跑 local reasoning model 當 judge、對自己工作流案例做 eval、JSONL in / JSONL out 最小 harness"
 tags: ["llm", "hands-on", "evaluation", "llm-as-judge", "ollama"]
-weight: 8
+weight: 9
 ---
 
 [4.21 LLM-as-judge](/llm/04-applications/llm-as-judge/) 寫的是原理。本篇用 Ollama / LM Studio 在本地跑一個最小可行的 judge harness、對自己工作流的真實案例做 systematic eval。隱私敏感場景特別合用 — eval 資料（user query、agent output、可能含 PII）不需要送雲端。

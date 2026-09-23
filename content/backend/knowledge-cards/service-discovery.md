@@ -3,7 +3,7 @@ title: "Service Discovery"
 tags: ["服務發現", "Service Discovery"]
 date: 2026-04-23
 description: "說明服務實例如何被查找與路由"
-weight: 151
+weight: 152
 ---
 
 

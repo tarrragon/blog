@@ -2,7 +2,7 @@
 title: "Rate Limit Contract（限流對外契約）"
 date: 2026-07-20
 description: "限流回什麼 status、Retry-After 承諾了什麼、配額 header 該不該被信任——被擋下之後消費者能依賴的邊界"
-weight: 416
+weight: 417
 ---
 
 Rate limit contract 是限流機制對外承諾的語意邊界，回答消費者被擋下之後能依賴什麼。[Rate Limit](/backend/knowledge-cards/rate-limit/) 卡描述限流保護誰、限制什麼資源；rate limit contract 卡描述限流被觸發之後，消費者拿到的訊息是不是可以直接寫進重試邏輯的承諾，還是只是參考用的提示。

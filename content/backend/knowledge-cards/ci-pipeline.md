@@ -2,7 +2,7 @@
 title: "CI Pipeline"
 date: 2026-04-23
 description: "說明持續整合流程如何在合併前驗證品質與相容性"
-weight: 157
+weight: 158
 ---
 
 

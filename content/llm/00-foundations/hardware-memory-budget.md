@@ -3,7 +3,7 @@ title: "0.5 Apple Silicon 記憶體預算"
 date: 2026-05-11
 description: "記憶體決定能跑什麼，Q4 量化下的可運作模型對照與系統保留"
 tags: ["llm", "foundations", "hardware", "apple-silicon"]
-weight: 5
+weight: 6
 ---
 
 本章只處理 Apple Silicon Mac 的場景。Mac 是「[統一記憶體](/llm/knowledge-cards/unified-memory/)」架構、CPU 跟 GPU 共用同一塊 RAM、所以判讀模型是「一塊預算切系統 / 模型 / KV cache」。Windows / Linux + 獨立 GPU 是「VRAM + 系統 RAM」兩塊分層預算、判讀模型本質不同、見 [模組五 5.0 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)。

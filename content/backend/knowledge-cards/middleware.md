@@ -2,7 +2,7 @@
 title: "Request Middleware"
 date: 2026-04-23
 description: "說明請求處理鏈中的共通攔截與前後置處理"
-weight: 0
+weight: 1
 ---
 
 

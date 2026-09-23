@@ -3,7 +3,7 @@ title: "Evidence Package"
 tags: ["Evidence Package", "Incident Evidence", "證據包"]
 date: 2026-05-07
 description: "說明觀測、驗證與事故流程如何把證據包成可交接、可回放的 artifact"
-weight: 317
+weight: 318
 ---
 
 Evidence package 的核心概念是「把查詢、時間窗、資料品質限制與 owner 打包成可交接證據」。它連接 [log](/backend/knowledge-cards/log/)、[metrics](/backend/knowledge-cards/metrics/)、[trace](/backend/knowledge-cards/trace/) 與 [incident timeline](/backend/knowledge-cards/incident-timeline/)，讓事故與驗證能回放同一組事實。

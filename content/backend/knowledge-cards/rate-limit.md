@@ -3,7 +3,7 @@ title: "Rate Limit"
 tags: ["速率限制", "Rate Limit"]
 date: 2026-04-23
 description: "說明限流如何保護服務入口、下游依賴與租戶公平性"
-weight: 28
+weight: 29
 ---
 
 Rate limit 的核心概念是「限制某個主體在一段時間內可以使用的資源量」。主體可以是 user、API key、IP、tenant、endpoint、worker、[producer](/backend/knowledge-cards/producer/) 或內部服務。

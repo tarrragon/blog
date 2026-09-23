@@ -3,7 +3,7 @@ title: "4.17 Coding agent harness：scaffold / context engineering / subagent"
 date: 2026-05-12
 description: "Coding agent 的內部設計：scaffold vs harness 分層、context budget 25% 規則、subagent 拓樸、跟 Claude Code / Cursor / Aider 的 mapping"
 tags: ["llm", "applications", "coding-agent", "harness", "scaffold", "context-engineering"]
-weight: 17
+weight: 18
 ---
 
 教材整體 framing 是「LLM 寫 code 工程實務」、模組四前面 11 章寫的是**通用 LLM 應用層原理**（RAG / tool use / agent / VLM 等）。本章補上「coding agent 怎麼設計」這層 — 為什麼 Claude Code / Cursor / Aider / Codex 這類工具長那樣、scaffold 跟 harness 怎麼分、context budget 怎麼配。本章把這些設計取捨從特定產品抽出來、寫成跨工具世代不變的工程原理。

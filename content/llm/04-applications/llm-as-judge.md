@@ -3,7 +3,7 @@ title: "4.21 LLM-as-Judge 評估方法"
 date: 2026-05-12
 description: "LLM 評估 LLM 的 production eval 方法：rubric design、pairwise / direct scoring、三大 bias 緩解、跟 trace 串接的閉環、calibration"
 tags: ["llm", "applications", "evaluation", "production", "llm-as-judge"]
-weight: 21
+weight: 22
 ---
 
 [4.14 benchmarking-and-evaluation](/llm/04-applications/benchmarking-and-evaluation/) 寫了 capability benchmark（MMLU、SWE-bench 等）跟 in-house benchmark 概念。但「自己工作流的真實案例該怎麼系統性 eval」這個操作層、4.14 點到沒展開。本章補上 [LLM-as-Judge](/llm/knowledge-cards/llm-as-judge/) — production AI app 的事實標準 eval 方法、比 human eval 便宜 500-5000×、跟人類有 80%+ agreement、但要處理 bias。

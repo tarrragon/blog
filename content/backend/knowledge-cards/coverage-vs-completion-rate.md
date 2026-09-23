@@ -3,7 +3,7 @@ title: "Coverage vs Completion Rate（覆蓋率與完成率）"
 tags: ["backend", "knowledge-card", "observability", "governance"]
 date: 2026-08-17
 description: "說明同一個百分比的分母由誰列舉，決定它衡量的是全體的覆蓋率還是管理範圍內的完成率"
-weight: 440
+weight: 441
 ---
 
 Coverage 與 completion rate 的核心區別是分母由誰列舉：**完成率的分母是被某個系統管理的那批，覆蓋率的分母是實際存在的全體**。同一個百分比因此可以長期接近滿分而與風險無關——分母由執行這項工作的工具自己列舉時，它衡量的是「工具管的那些做完了沒有」，不是「該做的都做了沒有」。 可先對照 [Data Completeness](/backend/knowledge-cards/data-completeness/)。

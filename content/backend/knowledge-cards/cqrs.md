@@ -2,7 +2,7 @@
 title: "CQRS"
 date: 2026-06-22
 description: "說明讀寫不對稱時為何需要分離查詢與寫入責任、分離的判斷標準與代價"
-weight: 328
+weight: 329
 tags: ["backend", "architecture"]
 ---
 

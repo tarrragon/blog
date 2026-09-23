@@ -3,7 +3,7 @@ title: "4.14 Benchmarking 與評估方法論"
 date: 2026-05-12
 description: "判讀 model card benchmark 數字、做自己工作流的 in-house benchmark、量測本地推論速度的完整方法論"
 tags: ["llm", "applications", "benchmark", "evaluation"]
-weight: 14
+weight: 15
 ---
 
 讀 model card 看到「MMLU 78.5」「HumanEval 82.3」「SWE-bench 12.6」等數字、要能判讀對自己場景的意義；自己跑本地 LLM、要能量化「tok/s、TTFT、實際品質」；想對比不同 model / 量化等級、要有可重現的 evaluation 方法。本章把「LLM 能力評估」跟「本地推論性能評估」兩條軸拆成可操作的方法論。

@@ -2,7 +2,7 @@
 title: "Visibility Timeout"
 date: 2026-06-16
 description: "說明訊息被取走後對其他 consumer 暫時不可見的時間窗，timeout 後重新投遞"
-weight: 386
+weight: 387
 ---
 
 Visibility timeout 的核心概念是「訊息被一個 consumer 取走後，在一段時間內對其他 consumer 不可見；consumer 在這段時間內處理完並刪除訊息，否則 timeout 後訊息重新變可見、被重新投遞」。它是任務佇列模型（如 SQS）實作 at-least-once 的核心機制。 可先對照 [ack / nack](/backend/knowledge-cards/ack-nack/)。

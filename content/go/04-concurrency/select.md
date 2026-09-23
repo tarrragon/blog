@@ -2,7 +2,7 @@
 title: "4.3 select：同時等待多種事件"
 date: 2026-04-22
 description: "用 select 建立事件迴圈"
-weight: 3
+weight: 4
 tags: ["go", "concurrency", "channel"]
 ---
 

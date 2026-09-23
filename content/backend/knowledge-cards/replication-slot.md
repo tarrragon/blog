@@ -2,7 +2,7 @@
 title: "Replication Slot"
 date: 2026-05-22
 description: "說明邏輯複製如何用 slot 追蹤消費進度，並對來源端造成保留壓力"
-weight: 326
+weight: 327
 ---
 
 Replication Slot 的核心概念是來源資料庫為每個下游 consumer 保留的進度標記 — 它記錄 consumer 確認到哪個位置，並據此保留尚未被消費的 [Write-Ahead Log](/backend/knowledge-cards/write-ahead-log/)。slot 讓 consumer 斷線後仍能從正確位置續傳，代價是 consumer 停擺時 log 會在來源端持續累積。它是 [Change Data Capture](/backend/knowledge-cards/change-data-capture/) 與邏輯複製的進度基礎，和 messaging 的 [Offset](/backend/knowledge-cards/offset/) 相鄰但責任不同。

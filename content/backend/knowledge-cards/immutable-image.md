@@ -2,7 +2,7 @@
 title: "Immutable Image（不可變映像）"
 date: 2026-07-06
 description: "想「修改 / 升級一個已經 build 好的 image」、或搞不懂為什麼同一個 tag 隔天內容變了時回來讀 — image 是不可變的 build 產物、改了就是新 image"
-weight: 131
+weight: 132
 tags: ["backend", "deployment", "docker", "container", "knowledge-cards"]
 ---
 

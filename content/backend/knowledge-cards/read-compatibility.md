@@ -2,7 +2,7 @@
 title: "Read Compatibility"
 date: 2026-05-11
 description: "說明資料或服務演進期間讀取路徑如何同時支援新舊語意"
-weight: 142
+weight: 143
 tags: ["backend", "knowledge-card", "database", "migration"]
 ---
 

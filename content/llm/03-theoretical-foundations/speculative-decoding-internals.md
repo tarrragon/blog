@@ -3,7 +3,7 @@ title: "3.9 Speculative decoding 內部：drafter / 驗證 / 加速上限"
 date: 2026-05-12
 description: "speculative decoding 的演算法細節、drafter 跟 target 怎麼配對、acceptance rate 怎麼決定實際加速、MTP 跟 EAGLE 等變體"
 tags: ["llm", "theory", "speculative-decoding", "inference-optimization"]
-weight: 9
+weight: 10
 ---
 
 [Speculative decoding](/llm/knowledge-cards/speculative-decoding/) 在多個前面章節被引用作為「LLM 推論加速的主要技術之一」。本章把這個機制完整展開：為什麼能加速、acceptance 怎麼運作、實際加速倍率怎麼算、[drafter model](/llm/knowledge-cards/drafter-model/) 怎麼選、跟 [MTP](/llm/knowledge-cards/mtp/) / EAGLE 等變體的關係。

@@ -2,7 +2,7 @@
 title: "Prefetch"
 date: 2026-04-23
 description: "說明 consumer 一次取得多少未完成訊息，以及它如何影響吞吐與公平性"
-weight: 59
+weight: 60
 ---
 
 

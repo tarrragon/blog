@@ -2,7 +2,7 @@
 title: "雲端部署裡已經存在的 infra 元件"
 date: 2026-06-26
 description: "VPC、security group、IAM、儲存 — 這些元件在任何雲端部署裡都已經在運作，差別在於有沒有被有意識地管理"
-weight: 0
+weight: 1
 tags: ["infra", "mindset"]
 ---
 

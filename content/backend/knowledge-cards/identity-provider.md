@@ -2,7 +2,7 @@
 title: "Identity Provider"
 date: 2026-07-31
 description: "登入要交給外部系統時，用來定位對方承擔了什麼、沒承擔什麼，以及這邊還剩下哪些責任"
-weight: 430
+weight: 431
 tags: ["backend", "knowledge-card", "security", "authentication"]
 ---
 

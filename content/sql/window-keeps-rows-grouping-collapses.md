@@ -2,7 +2,7 @@
 title: "1.10 分組把列收掉，視窗函數把列留著"
 date: 2026-09-01
 description: "兩者各自產出什麼、選哪一個由要不要保留原本的列決定，以及取相鄰列時的邊界"
-weight: 10
+weight: 11
 tags: ["sql", "window-function", "group-by", "lag", "partition-by"]
 ---
 

@@ -2,7 +2,7 @@
 title: "Hyrum's Law"
 date: 2026-07-04
 description: "使用者夠多時、介面的一切可觀察行為都會被依賴 — 不管你承諾了什麼；契約設計要主動給機器可讀欄位、否則人類可讀欄位會被迫變成契約"
-weight: 50
+weight: 51
 tags: ["backend", "knowledge-card", "api-design"]
 ---
 

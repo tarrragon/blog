@@ -2,7 +2,7 @@
 title: "Replay Attack"
 date: 2026-07-27
 description: "攔截到的合法請求被原封不動再送一次時，用來判斷哪一層該負責擋、以及擋不住會發生什麼"
-weight: 418
+weight: 419
 ---
 
 Replay Attack 的核心概念是攻擊者不需要偽造內容，只要把一個原本合法的請求整包重送就能再次生效。它成立的條件是驗證機制只檢查「這個請求是否合法」而不檢查「這個請求是否已經被處理過」——[Message Authentication](/backend/knowledge-cards/message-authentication/) 的驗證值對重送的內容照樣吻合，因為內容確實沒有被改動。收斂它依賴新鮮度判斷，時間基準的偏差範圍見 [Clock Skew](/backend/knowledge-cards/clock-skew/)。

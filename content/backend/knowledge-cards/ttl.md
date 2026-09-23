@@ -2,7 +2,7 @@
 title: "TTL"
 date: 2026-04-23
 description: "說明資料過期時間如何影響快取新鮮度、成本與一致性"
-weight: 18
+weight: 19
 ---
 
 

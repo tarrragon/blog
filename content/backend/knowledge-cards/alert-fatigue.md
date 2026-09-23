@@ -2,7 +2,7 @@
 title: "Alert Fatigue"
 date: 2026-06-22
 description: "說明過多低品質告警如何降低 on-call 反應品質"
-weight: 110
+weight: 111
 tags: ["backend", "observability"]
 ---
 

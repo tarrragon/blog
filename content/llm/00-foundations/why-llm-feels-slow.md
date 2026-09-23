@@ -3,7 +3,7 @@ title: "0.1 為什麼 LLM 生字慢"
 date: 2026-05-11
 description: "自回歸架構與記憶體頻寬瓶頸：為何即使 Mac 算力很強，本地 LLM 仍一個字一個字吐"
 tags: ["llm", "foundations", "performance"]
-weight: 1
+weight: 2
 ---
 
 LLM 生字慢的核心原因有兩個：**[自回歸架構](/llm/knowledge-cards/autoregressive/)**（autoregressive）讓模型一次生一個 [token](/llm/knowledge-cards/token/)、**[記憶體頻寬](/llm/knowledge-cards/memory-bandwidth/)瓶頸**讓 Apple Silicon 在算力之外有一個獨立的速度上限。這兩個瓶頸結合起來、才能解釋為什麼 32GB Mac 跑 31B 模型約 30 [tok/s](/llm/knowledge-cards/tokens-per-second/)、而資料中心的 H100 跑同樣模型能到 200 tok/s。

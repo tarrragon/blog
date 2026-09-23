@@ -2,7 +2,7 @@
 title: "Connection Pool"
 date: 2026-04-23
 description: "說明連線池如何限制下游資源並影響服務容量"
-weight: 17
+weight: 18
 ---
 
 Connection pool 的核心概念是「重用並限制到下游服務的連線」。資料庫、Redis、broker 與 HTTP client 都可能使用連線池；連線池決定同時有多少工作能進入下游。 可先對照 [Consumer Capacity](/backend/knowledge-cards/consumer-capacity/)。

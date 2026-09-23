@@ -2,7 +2,7 @@
 title: "9.1 用 stdlib flag 寫 subcommand CLI"
 date: 2026-04-24
 description: "Go 的 flag 套件足以支撐多層 subcommand 的 CLI，不用過早引入 cobra；本章示範 main → cmd/ → internal/ 的標準 layout"
-weight: 1
+weight: 2
 tags: ["go", "tooling", "stdlib"]
 ---
 

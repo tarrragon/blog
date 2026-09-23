@@ -2,7 +2,7 @@
 title: "Request Unit"
 date: 2026-05-27
 description: "Cosmos DB 的容量抽象單位、1 RU = 1KB document strong-consistent read 的 CPU + memory + IOPS 綜合 cost、寫 ~5 RU、複雜 query 數百 RU"
-weight: 365
+weight: 366
 ---
 
 Request Unit（RU）的核心概念是「Cosmos DB 把 CPU + memory + IOPS 等資源綜合成單一抽象計量、1 RU 對應 1KB document 的 strong-consistent read 成本」。它的責任是把容量規劃從「估 CPU / IOPS / working set」改成「估每個操作多少 RU × 操作頻率」、讓 throttle / scaling / 計費都用同一個量綱。可先對照 [Cost Per Request](/backend/knowledge-cards/cost-per-request/)。

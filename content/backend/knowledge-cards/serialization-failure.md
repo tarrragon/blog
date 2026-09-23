@@ -2,7 +2,7 @@
 title: "Serialization Failure"
 date: 2026-05-27
 description: "SERIALIZABLE isolation 衝突偵測後 abort 的協議、SQL state 40001、application 必須包 retry loop"
-weight: 367
+weight: 368
 ---
 
 Serialization failure 的核心概念是「SERIALIZABLE isolation 偵測到並行 transaction 衝突、把後到的 transaction abort、回傳 SQL state `40001`、要求 application 包 retry loop 重跑」。它是 serializable 跟弱 isolation 行為差異的關鍵介面、跟 [Isolation Level](/backend/knowledge-cards/isolation-level/) 共軸、retry 設計沒做好會升級成 [Retry Storm](/backend/knowledge-cards/retry-storm/)。

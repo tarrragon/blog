@@ -2,7 +2,7 @@
 title: "Correctness Check"
 date: 2026-04-23
 description: "說明遷移或重構期間如何驗證新舊結果是否符合規則"
-weight: 85
+weight: 86
 ---
 
 

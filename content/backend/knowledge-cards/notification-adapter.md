@@ -2,7 +2,7 @@
 title: "Notification Adapter"
 date: 2026-04-23
 description: "說明通知通道如何把 domain event 轉成外部傳遞格式"
-weight: 0
+weight: 1
 ---
 
 

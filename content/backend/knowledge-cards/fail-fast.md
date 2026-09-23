@@ -2,7 +2,7 @@
 title: "Fail Fast"
 date: 2026-04-23
 description: "說明已知無法完成時快速回應如何保護資源與上游判斷"
-weight: 57
+weight: 58
 ---
 
 

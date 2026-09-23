@@ -2,7 +2,7 @@
 title: "Cache Prefetching"
 date: 2026-04-23
 description: "說明系統如何在資料被需要前預先載入快取"
-weight: 91
+weight: 92
 ---
 
 

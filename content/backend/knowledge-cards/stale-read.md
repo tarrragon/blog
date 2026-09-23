@@ -2,7 +2,7 @@
 title: "Stale Read"
 date: 2026-05-13
 description: "讀取到落後於最新寫入版本的舊資料"
-weight: 256
+weight: 257
 ---
 
 Stale read 的核心概念是「讀到的資料不是最新提交狀態」。它的責任是揭露一致性延遲在讀路徑的實際影響，常用於 [eventual-consistency](/backend/knowledge-cards/eventual-consistency/) 與 [bounded-staleness](/backend/knowledge-cards/bounded-staleness/) 的風險判讀。

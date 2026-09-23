@@ -2,7 +2,7 @@
 title: "Metadata Lock"
 date: 2026-05-22
 description: "說明 DDL 與既有交易如何在 table metadata 層互相排隊與阻塞"
-weight: 324
+weight: 325
 ---
 
 Metadata Lock 的核心概念是資料庫為了保護 table 結構，在 DDL 與既有交易之間建立的相容鎖。任何讀寫某張表的交易都會持有該表的 metadata 讀鎖，DDL 需要 metadata 寫鎖；當一個長交易尚未結束，DDL 會排隊等待，而排在 DDL 後面的新查詢也會一起被擋住。它和處理 row 層並發的 [Isolation Level](/backend/knowledge-cards/isolation-level/) 是不同層的鎖；要安全執行 schema 變更時要接回 [Schema Migration](/backend/knowledge-cards/schema-migration/) 與 [Online Migration](/backend/knowledge-cards/online-migration/)。

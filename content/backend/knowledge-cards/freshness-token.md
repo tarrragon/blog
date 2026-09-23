@@ -2,7 +2,7 @@
 title: "Freshness Token"
 date: 2026-05-27
 description: "DB write 後返回的版本 token、後續 read 帶 token、保證 read 看到的資料 ≥ token 版本、解 DB + cache 跨層 read-after-write"
-weight: 360
+weight: 361
 ---
 
 Freshness token 的核心概念是「write 完成後 DB 返回一個版本 token、後續 read 帶這個 token、中間任何一層（cache / replica / proxy）必須回傳 ≥ token 版本的資料、否則 bypass 回 source of truth」。它的責任是把 read-after-write 一致性從單一 DB 內部、延伸到 application 跟 cache 之間的跨層協議。可先對照 [Session Consistency](/backend/knowledge-cards/session-consistency/)。

@@ -3,7 +3,7 @@ title: "4.9 Production 部署的資源評估原理"
 date: 2026-05-12
 description: "從本地單 user 到 production multi-tenant：concurrent users、cost model、observability、SLA、capacity planning 的設計取捨"
 tags: ["llm", "applications", "production", "deployment", "resource-planning"]
-weight: 9
+weight: 10
 ---
 
 LLM 應用從本地實驗跨到 production 是個 phase transition、不是線性放大。本地 single-user 場景的「跑得起來」變 production 場景就要回答全新一組問題：100 個 user 同時打進來怎麼辦、每個 [token](/llm/knowledge-cards/token/) 要多少錢、p99 latency 怎麼控、model service down 了怎麼處理。

@@ -3,7 +3,7 @@ title: "4.12 Embedding model 內部：訓練、選型、in-domain fine-tune"
 date: 2026-05-12
 description: "Embedding model 怎麼訓練（contrastive learning + hard negative mining）、怎麼挑（MTEB / 大小 / domain）、何時該自己 fine-tune"
 tags: ["llm", "applications", "embedding", "rag", "evaluation"]
-weight: 12
+weight: 13
 ---
 
 [RAG](/llm/04-applications/rag-principles/) 章節定義了 retrieval + augmentation 的二段式結構、但 retrieval 階段背後的 [embedding model](/llm/knowledge-cards/embedding-model/) 怎麼運作、怎麼選、什麼時候該換、什麼時候該自己 fine-tune、這些決策直接影響 RAG 品質。本章把 embedding model 的訓練機制、評估方法、實務選型展開。

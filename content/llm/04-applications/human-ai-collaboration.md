@@ -3,7 +3,7 @@ title: "4.5 人機協作拓樸：何時人介入、怎麼介入"
 date: 2026-05-14
 description: "Centaur vs Cyborg 工作模式、jagged frontier、HITL 三種觸發時機（pre-act / mid-stream / post-hoc）、確認流程的設計避免橡皮圖章化"
 tags: ["llm", "applications", "human-in-the-loop", "collaboration", "ux"]
-weight: 5
+weight: 6
 ---
 
 [HITL（human-in-the-loop）](/llm/knowledge-cards/human-in-the-loop/) 設計的本質是**在「人類介入頻率」spectrum 上選位置**——位置由 risk（副作用範圍 + 失敗代價）跟自動 validator 能力決定。risk 高 + validator 弱、人類介入頻率高；risk 低 + validator 強、人類介入頻率低。落點選錯就會出兩種事故：自動化過度跑 production migration 是 over-trust、每個 tool call 都要 approval 是 under-trust。

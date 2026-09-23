@@ -2,7 +2,7 @@
 title: "Recording Rule"
 date: 2026-06-22
 description: "說明把 query-time 聚合計算推到寫入時的 pre-aggregation 機制"
-weight: 324
+weight: 325
 tags: ["backend", "observability"]
 ---
 

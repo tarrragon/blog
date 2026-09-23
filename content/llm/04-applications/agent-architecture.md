@@ -3,7 +3,7 @@ title: "4.4 Agent 架構原理"
 date: 2026-05-11
 description: "Agent loop 結構、失敗模式、什麼任務適合 vs 不適合、跟人類審查的協作模型"
 tags: ["llm", "applications", "agent"]
-weight: 4
+weight: 5
 ---
 
 [Agent](/llm/knowledge-cards/agent/) 跟「對話 LLM」的根本差異在於控制流的所有權。對話 LLM 是「人類問、模型答」、每輪都由人類決定下一步；agent 是「LLM 自己決定下一步、自己呼叫工具、自己評估結果」、控制流交給模型。

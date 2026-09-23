@@ -2,7 +2,7 @@
 title: "Control Plane"
 date: 2026-05-13
 description: "負責下發策略、配置與路由決策的控制層"
-weight: 253
+weight: 254
 ---
 
 Control plane 的核心概念是「管理系統行為的決策層」，負責下發策略、配置與流量規則。它的責任是控制系統怎麼運作，而不是直接承載業務資料讀寫。可對照 [management-plane](/backend/knowledge-cards/management-plane/) 與 [request-routing](/backend/knowledge-cards/request-routing/)。

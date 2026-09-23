@@ -2,7 +2,7 @@
 title: "Message Protocol"
 date: 2026-04-23
 description: "說明 queue 或 stream message 如何對齊格式與處理語意"
-weight: 0
+weight: 1
 ---
 
 

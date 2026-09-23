@@ -2,7 +2,7 @@
 title: "Per-Connection Memory"
 date: 2026-05-22
 description: "說明每條連線或每個操作的記憶體用量如何隨並發數放大"
-weight: 343
+weight: 344
 ---
 
 Per-Connection Memory 的核心概念是某些記憶體是「每條連線」或「每個操作」各自配置的 — sort buffer、join buffer、連線本身的開銷 — 它的總量等於單份用量乘上並發連線數。它讓並發尖峰時的記憶體用量可能遠超直覺。它和全域共用的 [Buffer Pool](/backend/knowledge-cards/buffer-pool/) 是兩種不同的記憶體，並和 [Connection Pool](/backend/knowledge-cards/connection-pool/) 直接相關。

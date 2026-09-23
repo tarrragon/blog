@@ -2,7 +2,7 @@
 title: "Event Schema Compatibility"
 date: 2026-06-16
 description: "說明 event schema 演進時，新舊 producer 與 consumer 能否互通的相容性等級"
-weight: 380
+weight: 381
 ---
 
 Event schema compatibility 的核心概念是「event schema 改版後，新舊 producer 與 consumer 能否互通」。它用 forward、backward、full 三種相容性等級界定演進規則，是跨服務事件契約能安全升級的前提。 可先對照 [Delivery Semantics](/backend/knowledge-cards/delivery-semantics/)。

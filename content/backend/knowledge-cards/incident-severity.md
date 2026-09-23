@@ -3,7 +3,7 @@ title: "Incident Severity"
 tags: ["事故等級", "Incident Severity"]
 date: 2026-04-23
 description: "說明事故分級如何把產品影響轉成對應處置節奏"
-weight: 150
+weight: 151
 ---
 
 Incident severity 的核心概念是「用一致標準把事故影響分級」。分級描述的是產品影響範圍、持續時間、資料風險與回復緊急程度，技術細節放在其他層處理。 可先對照 [Alert](/backend/knowledge-cards/alert/)。

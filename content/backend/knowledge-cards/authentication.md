@@ -3,7 +3,7 @@ title: "Authentication"
 tags: ["身分驗證", "Authentication"]
 date: 2026-04-23
 description: "說明系統如何確認呼叫者身份"
-weight: 111
+weight: 112
 ---
 
 

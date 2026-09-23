@@ -2,7 +2,7 @@
 title: "Incident Timeline"
 date: 2026-06-22
 description: "說明事故時間線如何支援判斷、溝通與復盤"
-weight: 153
+weight: 154
 tags: ["backend", "observability", "incident-response"]
 ---
 

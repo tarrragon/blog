@@ -2,7 +2,7 @@
 title: "DLQ Drain"
 date: 2026-06-16
 description: "說明把 dead-letter queue 累積的訊息重新處理或排空的受控流程"
-weight: 381
+weight: 382
 ---
 
 DLQ drain 的核心概念是「把 dead-letter queue 累積的訊息重新處理或清空的受控流程」。訊息進 DLQ 只是被隔離，drain 決定它們最終被修復重送、丟棄還是歸檔，是 DLQ 不無限長大的收尾步驟。 可先對照 [Dead-letter Queue](/backend/knowledge-cards/dead-letter-queue/)。

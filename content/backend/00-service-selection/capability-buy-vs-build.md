@@ -3,7 +3,7 @@ title: "0.22 能力級買 vs 建：feature-as-a-service 與 BaaS bundle 選型"
 slug: "capability-buy-vs-build"
 date: 2026-06-14
 description: "在交付形態決定整個系統要不要自建之後、逐能力判斷該外包還是自建：辨識 managed 基礎設施、feature SaaS 與 BaaS bundle 三種外包深度、no-code 到 dev-tool 的服務光譜、買 vs 建判斷標準與權重浮動、整合接縫與遷出代價"
-weight: 22
+weight: 23
 tags: ["backend", "service-selection", "buy-vs-build", "baas"]
 ---
 

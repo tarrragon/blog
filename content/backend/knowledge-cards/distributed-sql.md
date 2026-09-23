@@ -2,7 +2,7 @@
 title: "Distributed SQL"
 date: 2026-05-13
 description: "把 SQL 與交易語意延伸到多節點與多區域的資料庫形態"
-weight: 242
+weight: 243
 ---
 
 Distributed SQL 的核心概念是「保留 SQL 與交易語意，同時把資料與計算分散到多節點」。它承擔的是一致性、擴展性與故障收斂的協調成本，並常作為 [global-oltp](/backend/knowledge-cards/global-oltp/) 的資料層基礎。

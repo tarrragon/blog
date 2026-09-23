@@ -2,7 +2,7 @@
 title: "4.0 Go 並發模型總覽"
 date: 2026-04-22
 description: "先理解 goroutine、OS thread 與 runtime 排程，再看高併發應用怎麼設計"
-weight: 0
+weight: 1
 tags: ["go", "concurrency", "goroutine", "channel"]
 ---
 

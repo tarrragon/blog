@@ -2,7 +2,7 @@
 title: "1.16 權限的預設是什麼都不給"
 date: 2026-08-31
 description: "角色與 GRANT 的授權單位、建立物件擋在 schema 這一層，以及最小權限成立的前提"
-weight: 16
+weight: 17
 tags: ["sql", "privilege", "grant", "role", "least-privilege", "postgresql"]
 ---
 

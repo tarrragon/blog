@@ -2,7 +2,7 @@
 title: "Cache Key Versioning"
 date: 2026-07-20
 description: "說明快取 key 結構本身版本化如何讓新舊值格式共存，用漸進收斂取代一次性替換"
-weight: 391
+weight: 392
 tags: ["backend", "knowledge-card", "cache", "migration"]
 ---
 

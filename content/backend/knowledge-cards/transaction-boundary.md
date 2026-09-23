@@ -2,7 +2,7 @@
 title: "Transaction Boundary"
 date: 2026-04-23
 description: "說明哪些資料變更應在同一個交易中一起成功或一起回復"
-weight: 14
+weight: 15
 ---
 
 

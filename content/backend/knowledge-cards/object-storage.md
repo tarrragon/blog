@@ -2,7 +2,7 @@
 title: "Object Storage"
 date: 2026-04-23
 description: "說明大型非結構化檔案的保存、存取與生命週期管理"
-weight: 147
+weight: 148
 ---
 
 
