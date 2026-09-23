@@ -39,7 +39,7 @@ INSERT INTO 顧客 VALUES (4,'柏宇');   -- permission denied for table 顧客
 DELETE FROM 顧客 WHERE 顧客編號=1;    -- permission denied for table 顧客
 ```
 
-兩個都被擋下來，錯誤訊息與完全沒授權時一模一樣。權限的單位是「哪個角色、對哪張表、做哪一種動作」，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 各自獨立，給一項不會順帶給另一項。「哪張表」由識別字指認，而那個名字送進引擎之前會先被改寫一次——`GRANT SELECT ON Orders` 在 PostgreSQL 上授權的對象是 `orders`，[1.14 識別字送進引擎之後會被改寫](/sql/identifier-rules/) 寫各家的摺疊規則與引號的作用。
+兩個都被擋下來，錯誤訊息與完全沒授權時一模一樣。權限的單位是「哪個角色、對哪張表、做哪一種動作」，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 各自獨立，給一項不會順帶給另一項。「哪張表」由識別字指認，而那個名字送進引擎之前會先被改寫一次——`GRANT SELECT ON Orders` 在 PostgreSQL 上授權的對象是 `orders`，這個改寫的規則在 [1.14 識別字送進引擎之後會被改寫](/sql/identifier-rules/)。
 
 查得到目前有哪些授權：
 

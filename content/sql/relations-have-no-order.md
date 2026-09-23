@@ -56,4 +56,4 @@ SELECT 金額 * 2 AS 兩倍 FROM 訂單 WHERE 兩倍 > 1000;    -- PostgreSQL �
 
 兩種規定各自自洽：SQLite 與 MySQL 把 `NULL` 當成比任何值都小，PostgreSQL 與 DuckDB 當成比任何值都大。要跨引擎一致就得寫出來，而寫法本身也分兩家——`ORDER BY 金額 NULLS LAST` 在 PostgreSQL 18 與 SQLite 3.51 上直接支援，MySQL 8.4 回 `ERROR 1064` 語法錯誤。三家都收的寫法是先排一個布林值：`ORDER BY (金額 IS NULL), 金額`，實測三家回的都是 104,102,101,103。
 
-`NULL` 是比不出大小的那一種值；字串是比得出、而比法由另一條規則決定的那一種。排序鍵換成姓名時，大小寫算不算相同、重音字母排在哪裡，各家預設不同，同一批名字排出來的順序也不同——[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 寫那條規則住在哪裡。
+`NULL` 是比不出大小的那一種值；字串是比得出、而比法由另一條規則決定的那一種。排序鍵換成姓名時，大小寫算不算相同、重音字母排在哪裡，各家預設不同，同一批名字排出來的順序也不同——[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 用同一批名字在三家上排出三種順序。

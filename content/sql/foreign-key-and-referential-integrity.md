@@ -76,7 +76,7 @@ ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint f
 
 同一段文字在 PostgreSQL 與 SQLite 底下建得出約束，在 MySQL 底下建不出來，而 MySQL 在建表時沒有給任何警告。
 
-**表的儲存引擎**。同一家 MySQL 裡還有第二條讓宣告消失的路，而它多半不是有人刻意選的——舊系統的建表模板、從舊備份還原回來的表、或複製過來的一段舊 DDL，都會把儲存引擎一起帶進來。改用表層的 `FOREIGN KEY` 寫法之後，把表建在 MyISAM 上，語法照收、警告照樣是空的，而 `information_schema.REFERENTIAL_CONSTRAINTS` 仍然回零列，指不到顧客的訂單插得進去。這兩條路的差別在於要改哪裡才修得好——一條要改寫法，另一條要換儲存引擎。
+**表的儲存引擎**。同一家 MySQL 裡還有第二條讓宣告消失的路，而它多半不是有人刻意選的——舊系統的建表模板、從舊備份還原回來的表、或複製過來的一段舊 DDL，都會把儲存引擎一起帶進來。改用表層的 `FOREIGN KEY` 寫法之後，把表建在 MyISAM 上，語法照收、警告照樣是空的，而 `information_schema.REFERENTIAL_CONSTRAINTS` 仍然回零列，指不到顧客的訂單插得進去。這兩條路的差別在於要改哪裡才修得好——一條要改寫法，另一條要換儲存引擎。外鍵只是引擎替文字補上決定的其中一處；把這一類差異按「什麼時候會被發現」分四級、並依組態數決定可攜性維持到哪一級，在 [1.19 哪一家最寬鬆只答得了一條軸，可攜性要逐條決定](/sql/engine-leniency-and-portability/)。
 
 這幾個位置的共同點是**外鍵只在寫入的那一刻現身**：查詢的文字裡沒有一個字提到約束，讀的時候也沒有差別。所以「這條保證在不在」要另外查，而查法在系統目錄那一側——PostgreSQL 用 `information_schema.table_constraints`、MySQL 用 `information_schema.REFERENTIAL_CONSTRAINTS`、SQLite 用 `PRAGMA foreign_key_list(表名)`。**建表語句裡看得到宣告，系統目錄裡看得到的才是生效的那些。** 外鍵至少還有一個生效的狀態可查；`LEFT JOIN` 的 `LEFT` 也宣告了一件事——預期有配不到的列——而引擎從不查證它，照著算完就結束，宣告落空時查詢照樣回正確答案。引擎從不查證的那一種宣告在 [1.20 關鍵字宣告意圖，引擎只執行行為](/sql/declared-intent-vs-behaviour/)；兩篇合起來是同一個問題的兩邊：一段文字說的話，什麼時候會被執行。
 
