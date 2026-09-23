@@ -141,7 +141,7 @@ ERROR:  insert or update on table "出貨" violates foreign key constraint "出�
 DETAIL:  Key (訂單編號)=(777) is not present in table "訂單".
 ```
 
-這則錯誤說的是資料裡已經有違反它的列，而約束加得上去的條件，是既有的每一列都已經滿足它。給有流量的大表補約束的完整順序在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/) 的 `Type I：加約束` 一節。
+這則錯誤說的是資料裡已經有違反它的列，而約束加得上去的條件，是既有的每一列都已經滿足它。給有流量的大表補約束的完整順序在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/) 的 「Type I：加約束（CHECK / FK / NOT NULL 收緊）」一節。
 
 **同一個資料庫之外的指向不在射程裡。** 外鍵認的是另一張表，所以一個指向別的服務的識別碼、或指向物件儲存的一個鍵，資料庫無從檢查。這一類的完整性要在別的層落地，而本分類不涵蓋那些層。應用程式碼內部的落點分幾層、各層違反規則時發生什麼，在 [不變式的強制層次](/ddd/invariant-enforcement-layers/)——那一篇的作用域是單一物件的規則。跨服務的一致性靠什麼維持（Saga、outbox 這一類），在 [Transaction 與一致性邊界](/backend/01-database/transaction-boundary/)，那一篇談的是一致性，參照完整性要落在哪一層它沒有單獨處理。
 
