@@ -66,11 +66,14 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 
 格式見 [Backlog 段格式規範](/posts/backlog-format-spec/)。
 
-| 項目                                                                                                               | 類型   | 前置條件                     | 規模       |
-| ------------------------------------------------------------------------------------------------------------------ | ------ | ---------------------------- | ---------- |
-| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）     | vendor | 各 vendor `_index.md` 已列項 | 大         |
-| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection） | 主章   | 無                           | 中         |
-| migration validation 知識卡                                                                                        | 知識卡 | 無                           | 1 張（小） |
+| 項目                                                                                                               | 類型   | 前置條件                            | 規模       |
+| ------------------------------------------------------------------------------------------------------------------ | ------ | ----------------------------------- | ---------- |
+| 六個 vendor 的後續擴充（Aurora 13 / CockroachDB 12 / DynamoDB 15 / MongoDB 13 / Cosmos DB 14 / Spanner 12 項）     | vendor | 各 vendor `_index.md` 已列項        | 大         |
+| 觀念網路五方向的章節回寫（state ownership / query boundary / migration safety / reconciliation / data protection） | 主章   | 無                                  | 中         |
+| migration validation 知識卡                                                                                        | 知識卡 | 無                                  | 1 張（小） |
+| 1.16 的六個例子全取自交易型系統，換成事件流／IoT 時有兩條答不出來                                                  | 主章   | 無                                  | 小         |
+| 1.16 補 `NOT VALID`、雙寫、回填、孤兒列的就地定義或連卡                                                            | 主章   | `dual-write` 與 `backfill` 卡已存在 | 小         |
+| 1.16 的 collation 那一節要交代 PostgreSQL 前置條件（需帶 ICU 編譯、`CREATE COLLATION` 權限）                       | 主章   | 無                                  | 1 句       |
 
 ### 觀念網路補完方向
 

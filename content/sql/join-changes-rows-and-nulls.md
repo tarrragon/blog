@@ -131,6 +131,8 @@ WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客
 
 本篇的可動項是：列數、空缺，以及拿空缺去比的那個運算子。
 
+**前兩樣在這一篇是給定的，而它們各自有一個上游。** 列數會不會膨脹由「常一起取的資料切在幾張表」決定，空缺存不存在由「這一欄允不允許為空」決定——兩個都是建表時下的，而下的當下看不出代價。[backend 1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/) 各給一節，並量出雙重展開讓聚合翻倍、以及 `DISTINCT` 這個修法對不對由資料決定。
+
 **問這個新關係是怎麼一層層長出來的**：本篇從它已經成形的那一刻開始，而它是逐個 `JOIN` 累積出來的。[1.4 JOIN 的左邊是累積結果](/sql/join-left-operand-accumulates/) 寫每個 `JOIN` 的左運算元是什麼，以及在鏈中間放 `RIGHT` 會把保護範圍縮到只剩一張表。
 
 **問空缺是哪個機制補上的**：本篇只說它們是連接造出來的。[Outer Join（外連接）](/sql/knowledge-cards/outer-join/) 定義 `LEFT` / `RIGHT` / `FULL` 各自保護哪一側，以及連接補的 `NULL` 與資料裡本來就有的空值來源不同。
