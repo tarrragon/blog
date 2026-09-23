@@ -80,4 +80,4 @@ INSERT INTO 訂單 SELECT i, i % 50 + 1, i % 900 FROM n;
 
 練習平台驗的是前一件。題目的資料量小到任何寫法都夠快，所以通過與否只反映描述得對不對；後一件在那個環境裡沒有東西可以量。
 
-本篇的計畫只有三行，可以整段印出來；production 的計畫有巢狀節點與估計列數。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN`、`EXPLAIN ANALYZE`、`auto_explain` 三層工具的分工，以及統計過時、多欄統計缺失這幾種讓計畫選錯的實際案例。
+上面那一組對照在真實系統上有它的故障形態：統計資訊過時、或者欄位之間的相關性沒有被統計到，最佳化器就拿著錯的資訊選計畫。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 收了這幾種讓計畫選錯的實際案例，以及讀懂 production 計畫要用的 `EXPLAIN`、`EXPLAIN ANALYZE`、`auto_explain` 三層工具。
