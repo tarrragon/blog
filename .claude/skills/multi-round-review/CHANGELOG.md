@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.23.0 — 2-B⁗ 新增「逐字引出所屬」變體，專抓論斷句與段標裡缺所屬的名詞；記下「列出缺項」問法在同一組校準句上沒有鑑別力；新 principle 卡 `noun-without-its-owner-passes-the-slot-check`
+
 **Version**: 2.22.0 — 嚴重度改按讀者學不學得會分級（必修：照做會學錯、段內理解不了、要離頁或回頭翻、作者編排脈絡進正文；可改：多花力氣），prompt 不再放「寧可少報」「措辭偏好不回報」；2-B⁗ 新增逐段落地變體專抓隔段指稱（審查者持有全文地圖、結構上看不到），附對照全文的篩選規則與抽查；新 principle 卡 `reviewer-holds-the-map-readers-land-without-it`
 
 **Version**: 2.21.1 — Round 1-A 序數命名 pattern 補上「種、類、條、項」
