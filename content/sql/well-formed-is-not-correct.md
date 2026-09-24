@@ -90,7 +90,7 @@ WHERE 訂單編號 NOT IN (SELECT 訂單編號 FROM 評價 WHERE 星等 = 5);
 
 這個出口與約束不在同一層上做事。約束改變的是資料能長成什麼樣，不是查詢的合法性——加上 `NOT NULL` 之後「NOT IN」的錯法不再回零列，是因為觸發它的那一列進不來，而那段查詢照樣合法、照樣是同一個誤解，同一個人在下一個可為空的欄位上會再寫一次 `NOT IN`。分岔的資料連資料能長成什麼樣都沒動，判斷標準仍然在原地，只是被寫成一個往後還讀得到的形式——那個形式就是一則測試案例，而讀者手上多半已經有跑它的工具。**分岔的資料也只證偽、不證成**——「漏掉星等」的錯法在原本那批資料上通過了一切檢驗，而通過從來不是對的證明。射程另有一道邊界：那筆資料由同一個人依他當時對問題的理解寫下，所以這個做法分得出「想的對而寫錯了」，分不出「想的就不對」。
 
-這件事在測試那一側有名字，而那一側分得比這裡細：預期值從哪裡取得叫 [test oracle](/testing/knowledge-cards/test-oracle/)，那張卡列了四種來源與各自抓不到的那些；「寫斷言的人與寫實作的人共用同一份誤解」叫 [test provenance](/testing/knowledge-cards/test-provenance/)；而「造不出分岔的資料」在 [Mutation Testing](/testing/knowledge-cards/mutation-testing/) 裡叫 equivalent mutant。本篇只把這件事放回 SQL 的兩層裡講，那三張卡有本篇沒有的射程。
+這件事在測試那一側有名字，而那一側分得比這裡細：預期值從哪裡取得叫 [test oracle](/testing/knowledge-cards/test-oracle/)，那張卡列了規格、參照實作、人的判斷與現狀四種來源，以及各自抓不到的那些；「寫斷言的人與寫實作的人共用同一份誤解」叫 [test provenance](/testing/knowledge-cards/test-provenance/)；而「造不出分岔的資料」在 [Mutation Testing](/testing/knowledge-cards/mutation-testing/) 裡叫 equivalent mutant。本篇只把這件事放回 SQL 的兩層裡講，那三張卡有本篇沒有的射程。
 
 ## 正確性與代價是兩條互不覆蓋的軸
 
