@@ -40,7 +40,7 @@ CREATE INDEX ix_日 ON 訂單(下單日);
 
 ## 出口在 schema 那一層
 
-同一個好讀的寫法，把索引建在運算式上：
+同一個好讀的寫法（`strftime('%Y-%m',下單日) = '2021-03'`），把索引建在運算式上：
 
 ```sql
 CREATE INDEX ix_月 ON 訂單(strftime('%Y-%m',下單日));

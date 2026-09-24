@@ -43,7 +43,7 @@ SELECT 金額 * 2 AS 兩倍 FROM 訂單 WHERE 兩倍 > 1000;    -- PostgreSQL �
 
 `WHERE` 那一步發生在算出 `兩倍` 之前，所以那個名字在那裡還不存在——PostgreSQL 回 `column "兩倍" does not exist`，MySQL 回 `ERROR 1054 Unknown column '兩倍' in 'where clause'`。SQLite 收下同一段並回答 1400，這是它的寬鬆度而不是標準行為（求值順序的完整推導與這條寬鬆度的其他實例在 [1.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/sql/clause-evaluation-order/)）。
 
-## NULL 排在哪一端，三家給兩種答案
+## NULL 排在哪一端，引擎之間有兩種答案
 
 排序鍵含[空值](/sql/knowledge-cards/null/)的時候，`NULL` 與任何值都比不出大小，所以它落在哪一端由引擎自己規定。會同時是排序鍵又可能為空的欄位不少——選填的折扣金額、還沒完成的那些列的完成時間，都是拿來排序的常見對象。同一批四列（700、500、NULL、300）：
 
@@ -54,6 +54,6 @@ SELECT 金額 * 2 AS 兩倍 FROM 訂單 WHERE 兩倍 > 1000;    -- PostgreSQL �
 | PostgreSQL 18  | NULL 排最後     | NULL 排最前          |
 | DuckDB v0.10.3 | NULL 排最後     | NULL 排最前          |
 
-兩種規定各自自洽：SQLite 與 MySQL 把 `NULL` 當成比任何值都小，PostgreSQL 與 DuckDB 當成比任何值都大。要跨引擎一致就得寫出來，而寫法本身也分兩家——`ORDER BY 金額 NULLS LAST` 在 PostgreSQL 18 與 SQLite 3.51 上直接支援，MySQL 8.4 回 `ERROR 1064` 語法錯誤。三家都收的寫法是先排一個布林值：`ORDER BY (金額 IS NULL), 金額`，實測三家回的都是 104,102,101,103。
+兩種規定各自自洽：SQLite 與 MySQL 把 `NULL` 當成比任何值都小，PostgreSQL 與 DuckDB 當成比任何值都大。要跨引擎一致就得寫出來，而寫法本身也分兩家——`ORDER BY 金額 NULLS LAST` 在 PostgreSQL 18 與 SQLite 3.51 上直接支援，MySQL 8.4 回 `ERROR 1064` 語法錯誤。PostgreSQL、SQLite、MySQL 三家都收的寫法是先排一個布林值：`ORDER BY (金額 IS NULL), 金額`，實測這三家回的都是 104,102,101,103（DuckDB 這一項沒有測）。
 
 `NULL` 是比不出大小的那一種值；字串是比得出、而比法由另一條規則決定的那一種。排序鍵換成姓名時，大小寫算不算相同、重音字母排在哪裡，各家預設不同，同一批名字排出來的順序也不同——[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 用同一批名字在三家上排出三種順序。
