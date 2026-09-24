@@ -8,6 +8,7 @@ _index.md 的正文不會渲染（layouts/_default/list.html 不輸出 .Content�
   scripts/index-leak-check.py content/sql             掃一個目錄
   scripts/index-leak-check.py content/sql a.md b.md   只掃指定的文章（驗證用）
   scripts/index-leak-check.py --all                   掃 content/ 下所有教學目錄
+  scripts/index-leak-check.py --anchors               列出連到目錄頁錨點的連結（任何層數的路徑）
 
 候選片語取自 _index.md 的 ##–#### 段標、切開標點之後至少五個漢字的片段。
 文章的段標與連結文字不算（前者是文章自己的段名，後者是被連那一篇的標題），
@@ -62,7 +63,24 @@ def scan(directory, only=None):
     return hits
 
 
+def anchors():
+    """文章連到 `/<分類>/<子分類>/#段名` 這種目錄頁錨點：目錄頁正文不渲染，錨點在網站上不存在。"""
+    sections = {"/" + os.path.dirname(p)[len("content/"):] + "/" for p in glob.glob("content/**/_index.md", recursive=True)}
+    hits = 0
+    for f in sorted(glob.glob("content/**/*.md", recursive=True)):
+        if f.endswith("_index.md"):
+            continue
+        for m in re.finditer(r"\]\((/[^)#\s]*/)#([^)]+)\)", open(f, encoding="utf-8").read()):
+            if m.group(1) in sections:
+                print(f"{f}\t{m.group(1)}#{m.group(2)}")
+                hits += 1
+    return hits
+
+
 def main(argv):
+    if argv[:1] == ["--anchors"]:
+        print(f"hits {anchors()}", file=sys.stderr)
+        return
     if argv[:1] == ["--all"]:
         total = 0
         for idx in sorted(glob.glob("content/**/_index.md", recursive=True)):
