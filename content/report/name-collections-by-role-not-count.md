@@ -66,6 +66,8 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "SSoT", "Naming", 
 - [#84 Naming 是 iterated artifact](/report/naming-as-iterated-artifact/)：本卡給 #84 的命名 review 加一個檢查維度 — 數量入名是「第一版命名基於當下狹窄 context」的典型產物：寫名字的當下成員剛好七個、七看起來是這個集合的屬性；cross-time 檢驗（成員會不會變）才暴露它是快照。
 - [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/)：「七問」「六階段」順口、有節奏感、好記 — 正是便利驅動的選擇；意圖對齊的名稱（核心問題）平淡但誠實。便利的代價延遲到第一次成員變動才結算。
 
+- [#363 正文裡的對象要用它是什麼來命名](/report/ordinal-labels-are-the-authors-index/)：本卡管標題裡的成員數，#363 管正文裡以計數或序數當名字的實體（「三支」「第三步」），並指出成員數不變時它已經讀不懂。
+
 ---
 
 - [散文裡指向一組成員的數字，在結構改動之後不會跟著動](/report/inline-counts-drift-with-every-restructure/)：同一個機制的另一個載體。本卡在名稱上，名稱是被複製最多次的字串、缺陷隨引用繁殖，而工具掃得到；那一張在散文裡，不被複製而每一輪結構改動再生產一批，且工具層目前掃不到。

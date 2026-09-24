@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.20.0 — Round 1-A 摘要新增「序數、計數與字母代號當名字」類別（判定改用變數名稱測試與落點測試，reviewer 持有規劃清單所以「我讀得懂」不可當判準）；2-B⁗ 理解正確性加一題「從這一節讀起，○○ 指的是什麼」，對應 compositional-writing 1.32.0 的 `ordinal-labels-are-the-authors-index`
+
 **Version**: 2.19.4 — `mandated-section-hides-its-own-sameness` 修法段重排並補齊：前置動作移到最前、改成連規範裡的正面範例一起查，並記下搬回正文時不插進推導中間；「不能整批套同一種新形態」寫出判定單位；完成條件規定四項輸出當痕跡；子句層量測寫明分母、範圍改成全文、加上同目的地命題比對與相鄰篇末句比對，並寫明射程（一批、同一生成端、連續兩輪）。
 
 **Version**: 2.19.3 — `mandated-section-hides-its-own-sameness` 與 `round-2-cadence` 依審查改掉物理化錯配（「一股力」「拉到」「掉到下一層」），並補上下一輪審查量到的另兩種子句層重現：相鄰兩篇收在逐字相同的一句、多篇連到同一目的地時交代同形。
