@@ -71,4 +71,4 @@ CircleCI 2023 案例的範圍量級壓力 governance frame 在 [7.6 § CI secret
 
 ## 下一步路由
 
-要回到全模組實作串接，接著讀 [Backend 學習路線](/backend/#學習路線) 進入下一條服務路徑。
+要回到全模組實作串接，接著讀 [Backend 分類](/backend/) 挑下一個服務模組。
