@@ -77,22 +77,22 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 可觀測性的案例補充重點是「訊號平台為什麼這樣設計」，不是工具比較表。閱讀時先抓資料規模、查詢延遲、保留策略與多租戶治理，再對照本模組章節。
 
-| 企業案例                                                                                                      | 主要觀測選型問題                             | 優先回讀章節                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [M3: Uber’s Open Source, Large-scale Metrics Platform for Prometheus](https://www.uber.com/en-GB/blog/m3/)    | 單機 Prometheus 不足時如何擴成平台層         | [4.2](/backend/04-observability/metrics-basics/)、[4.11](/backend/04-observability/telemetry-pipeline/)                     |
-| [Building Cloudflare on Cloudflare](https://blog.cloudflare.com/building-cloudflare-on-cloudflare/)           | 大規模系統內部如何同時做 logs/metrics/traces | [4.1](/backend/04-observability/log-schema/)、[4.3](/backend/04-observability/tracing-context/)                             |
-| [Cloudflare Observability](https://blog.cloudflare.com/vision-for-observability/)                             | 監控、分析、鑑識三層能力如何組合             | [4.4](/backend/04-observability/dashboard-alert/)、[4.20](/backend/04-observability/observability-evidence-package/)        |
-| [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) | 成長後如何從儲存問題回推觀測缺口             | [4.17](/backend/04-observability/telemetry-data-quality/)、[4.18](/backend/04-observability/observability-operating-model/) |
+| 企業案例                                                                                                      | 主要觀測選型問題                             | 優先回讀章節                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [M3: Uber’s Open Source, Large-scale Metrics Platform for Prometheus](https://www.uber.com/en-GB/blog/m3/)    | 單機 Prometheus 不足時如何擴成平台層         | [4.2 metrics 與 SLI/SLO](/backend/04-observability/metrics-basics/)、[4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)                               |
+| [Building Cloudflare on Cloudflare](https://blog.cloudflare.com/building-cloudflare-on-cloudflare/)           | 大規模系統內部如何同時做 logs/metrics/traces | [4.1 log schema 與搜尋規劃](/backend/04-observability/log-schema/)、[4.3 tracing 與 context link](/backend/04-observability/tracing-context/)                                    |
+| [Cloudflare Observability](https://blog.cloudflare.com/vision-for-observability/)                             | 監控、分析、鑑識三層能力如何組合             | [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)、[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)      |
+| [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) | 成長後如何從儲存問題回推觀測缺口             | [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)、[4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/) |
 
 若要擴充企業案例，先到 [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) 依「企業型態 × 規模階段」挑樣本，再把觀測面教訓回寫到 4.16-4.21。這樣案例擴充會先補齊覆蓋度，再補單點技巧。
 
 第一批缺口回填建議先做三條觀測題目：FinTech 補 audit log completeness 與 evidence traceability（回寫 4.12、4.20）；Gaming 補高峰時段 signal freshness 與 cardinality guardrail（回寫 4.7、4.17）；Healthcare 補資料主權相關的 access evidence 與留存邊界（回寫 4.12、4.18）。
 
-| 產業案例類型 | 觀測回寫重點                                       | 章節路由                                                                                                                   |
-| ------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| FinTech      | 金流與帳務事件的 evidence chain、審計 log 完整性   | [4.12](/backend/04-observability/audit-log-governance/)、[4.20](/backend/04-observability/observability-evidence-package/) |
-| Gaming       | 高峰流量下的訊號新鮮度、cardinality 膨脹與警示品質 | [4.7](/backend/04-observability/cardinality-cost-governance/)、[4.17](/backend/04-observability/telemetry-data-quality/)   |
-| Healthcare   | 存取軌跡可追溯性、資料留存邊界與跨團隊 ownership   | [4.12](/backend/04-observability/audit-log-governance/)、[4.18](/backend/04-observability/observability-operating-model/)  |
+| 產業案例類型 | 觀測回寫重點                                       | 章節路由                                                                                                                                                                            |
+| ------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FinTech      | 金流與帳務事件的 evidence chain、審計 log 完整性   | [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/)、[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) |
+| Gaming       | 高峰流量下的訊號新鮮度、cardinality 膨脹與警示品質 | [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)、[4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)          |
+| Healthcare   | 存取軌跡可追溯性、資料留存邊界與跨團隊 ownership   | [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/)、[4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)   |
 
 第一批案例正文入口見 [可觀測性案例正文](/backend/04-observability/cases/)，可直接對應 `4.12 / 4.17 / 4.18 / 4.20` 的回寫欄位。
 
@@ -108,33 +108,33 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 ## 章節列表
 
-| 章節                                                                | 主題                                   | 關鍵收穫                                                                                       |
-| ------------------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [4.1](/backend/04-observability/log-schema/)                        | log schema 與搜尋規劃                  | 設計欄位、索引與查詢方式                                                                       |
-| [4.2](/backend/04-observability/metrics-basics/)                    | metrics 與 SLI/SLO                     | 用 counter、gauge、histogram 描述服務健康                                                      |
-| [4.3](/backend/04-observability/tracing-context/)                   | tracing 與 context link                | 追蹤跨服務 request path                                                                        |
-| [4.4](/backend/04-observability/dashboard-alert/)                   | dashboard 與 alert 設計                | 讓告警能對應 runbook 與容量趨勢                                                                |
-| [4.5](/backend/04-observability/attacker-view-observability-risks/) | 可觀測性威脅建模（Threat Modeling）    | 用盲區、告警失真與資料暴露風險盤點觀測系統                                                     |
-| [4.6](/backend/04-observability/sli-slo-signal/)                    | SLI 量測與 SLO 訊號設計                | 把可靠性目標轉成可量測訊號、餵給 6.6 SLO 政策                                                  |
-| [4.7](/backend/04-observability/cardinality-cost-governance/)       | Cardinality 治理與成本邊界             | 把 cardinality 與保留階梯作為平台一級治理                                                      |
-| [4.8](/backend/04-observability/signal-governance-loop/)            | 訊號治理閉環                           | 把 [post-incident review](/backend/knowledge-cards/post-incident-review/) 偵測缺口回寫成新訊號 |
-| [4.9](/backend/04-observability/continuous-profiling/)              | Continuous Profiling                   | 把 CPU / heap / lock profile 升級為持續訊號                                                    |
-| [4.10](/backend/04-observability/client-side-monitoring/)           | Client-side / Synthetic / RUM          | 補 server-side 看不到的 user perceived 訊號                                                    |
-| [4.11](/backend/04-observability/telemetry-pipeline/)               | Telemetry Pipeline 架構                | 把採集到查詢分層治理、定位 pipeline 失敗                                                       |
-| [4.12](/backend/04-observability/audit-log-governance/)             | Audit Log 邊界與 PII 治理              | 把稽核訊號從 operational log 拆出、按法規治理                                                  |
-| [4.13](/backend/04-observability/service-topology/)                 | Service Topology 與 Dependency Map     | 把跨服務依賴變成自動發現的觀測訊號                                                             |
-| [4.14](/backend/04-observability/anomaly-detection/)                | Anomaly Detection                      | ML / statistical baseline alert 跟 rule-based 整合                                             |
-| [4.15](/backend/04-observability/cost-attribution/)                 | Cost Attribution / Chargeback          | 把 observability 成本拆到團隊 / 服務維度                                                       |
-| [4.16](/backend/04-observability/observability-readiness-review/)   | Observability Readiness Review         | 在服務上線、重大變更與演練前檢查 log / metric / trace / alert 是否可支援事故判讀               |
-| [4.17](/backend/04-observability/telemetry-data-quality/)           | Telemetry Data Quality                 | 把 missing signal、schema drift、sampling bias 與 timestamp skew 變成資料品質問題              |
-| [4.18](/backend/04-observability/observability-operating-model/)    | Observability Operating Model          | 定義 platform / service team / on-call 對訊號、dashboard、alert 與成本的 ownership             |
-| [4.19](/backend/04-observability/debuggability-by-design/)          | Debuggability by Design                | 把可診斷性前移到 API、async workflow、dependency call 與錯誤模型設計                           |
-| [4.20](/backend/04-observability/observability-evidence-package/)   | Observability Evidence Package         | 把 log、metric、trace、audit 與資料品質限制包成可交接證據                                      |
-| [4.21](/backend/04-observability/rule-level-cpu-signal-governance/) | Rule-level CPU Signal Governance       | 把規則執行成本變成可觀測訊號，避免小變更在全域 rollout 後形成 CPU 熱點                         |
-| [4.22](/backend/04-observability/checkout-api-evidence-package/)    | Checkout API Evidence Package 實作示範 | 以 checkout 路徑示範 evidence package 如何交接到 gate 與 incident                              |
-| [4.23](/backend/04-observability/observability-query-design/)       | 觀測查詢設計                           | 把讀取路徑當系統設計問題：三種查詢模式、storage tiering、pre-aggregation 與資源治理            |
-| [4.24](/backend/04-observability/client-server-trace-integration/)  | Client-to-Server 端到端觀測串接        | 用一個結帳場景走完 browser click → trace context → server span → 統一 waterfall 的完整實作鏈路 |
-| [4.25](/backend/04-observability/observability-shared-fate/)        | 觀測共命運失效                         | 觀測跟系統一起退化時的 out-of-band 訊號、優雅降級、與 telemetry 不可信下的人層應對設計         |
+| 章節                                                                                                    | 主題                                   | 關鍵收穫                                                                                       |
+| ------------------------------------------------------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [4.1 log schema 與搜尋規劃](/backend/04-observability/log-schema/)                                      | log schema 與搜尋規劃                  | 設計欄位、索引與查詢方式                                                                       |
+| [4.2 metrics 與 SLI/SLO](/backend/04-observability/metrics-basics/)                                     | metrics 與 SLI/SLO                     | 用 counter、gauge、histogram 描述服務健康                                                      |
+| [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)                               | tracing 與 context link                | 追蹤跨服務 request path                                                                        |
+| [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)                               | dashboard 與 alert 設計                | 讓告警能對應 runbook 與容量趨勢                                                                |
+| [4.5 可觀測性威脅建模（Threat Modeling）](/backend/04-observability/attacker-view-observability-risks/) | 可觀測性威脅建模（Threat Modeling）    | 用盲區、告警失真與資料暴露風險盤點觀測系統                                                     |
+| [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)                                | SLI 量測與 SLO 訊號設計                | 把可靠性目標轉成可量測訊號、餵給 6.6 SLO 政策                                                  |
+| [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)                | Cardinality 治理與成本邊界             | 把 cardinality 與保留階梯作為平台一級治理                                                      |
+| [4.8 訊號治理閉環](/backend/04-observability/signal-governance-loop/)                                   | 訊號治理閉環                           | 把 [post-incident review](/backend/knowledge-cards/post-incident-review/) 偵測缺口回寫成新訊號 |
+| [4.9 Continuous Profiling](/backend/04-observability/continuous-profiling/)                             | Continuous Profiling                   | 把 CPU / heap / lock profile 升級為持續訊號                                                    |
+| [4.10 Client-side / Synthetic / RUM](/backend/04-observability/client-side-monitoring/)                 | Client-side / Synthetic / RUM          | 補 server-side 看不到的 user perceived 訊號                                                    |
+| [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)                           | Telemetry Pipeline 架構                | 把採集到查詢分層治理、定位 pipeline 失敗                                                       |
+| [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/)                       | Audit Log 邊界與 PII 治理              | 把稽核訊號從 operational log 拆出、按法規治理                                                  |
+| [4.13 Service Topology 與 Dependency Map](/backend/04-observability/service-topology/)                  | Service Topology 與 Dependency Map     | 把跨服務依賴變成自動發現的觀測訊號                                                             |
+| [4.14 Anomaly Detection](/backend/04-observability/anomaly-detection/)                                  | Anomaly Detection                      | ML / statistical baseline alert 跟 rule-based 整合                                             |
+| [4.15 Cost Attribution / Chargeback](/backend/04-observability/cost-attribution/)                       | Cost Attribution / Chargeback          | 把 observability 成本拆到團隊 / 服務維度                                                       |
+| [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/)        | Observability Readiness Review         | 在服務上線、重大變更與演練前檢查 log / metric / trace / alert 是否可支援事故判讀               |
+| [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)                        | Telemetry Data Quality                 | 把 missing signal、schema drift、sampling bias 與 timestamp skew 變成資料品質問題              |
+| [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)          | Observability Operating Model          | 定義 platform / service team / on-call 對訊號、dashboard、alert 與成本的 ownership             |
+| [4.19 Debuggability by Design](/backend/04-observability/debuggability-by-design/)                      | Debuggability by Design                | 把可診斷性前移到 API、async workflow、dependency call 與錯誤模型設計                           |
+| [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)        | Observability Evidence Package         | 把 log、metric、trace、audit 與資料品質限制包成可交接證據                                      |
+| [4.21 Rule-level CPU Signal Governance](/backend/04-observability/rule-level-cpu-signal-governance/)    | Rule-level CPU Signal Governance       | 把規則執行成本變成可觀測訊號，避免小變更在全域 rollout 後形成 CPU 熱點                         |
+| [4.22 Checkout API Evidence Package 實作示範](/backend/04-observability/checkout-api-evidence-package/) | Checkout API Evidence Package 實作示範 | 以 checkout 路徑示範 evidence package 如何交接到 gate 與 incident                              |
+| [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)                              | 觀測查詢設計                           | 把讀取路徑當系統設計問題：三種查詢模式、storage tiering、pre-aggregation 與資源治理            |
+| [4.24 Client-to-Server 端到端觀測串接](/backend/04-observability/client-server-trace-integration/)      | Client-to-Server 端到端觀測串接        | 用一個結帳場景走完 browser click → trace context → server span → 統一 waterfall 的完整實作鏈路 |
+| [4.25 觀測共命運失效：工具退化時的訊號與人層設計](/backend/04-observability/observability-shared-fate/) | 觀測共命運失效                         | 觀測跟系統一起退化時的 out-of-band 訊號、優雅降級、與 telemetry 不可信下的人層應對設計         |
 
 > 註：4.1-4.25 已完成概念層、實作示範與端到端串接正文，案例庫可支援 06 與 08 的路由引用。後續工作重點為案例深挖與跨模組回寫密度提升，而非章節補齊。4.25（觀測共命運失效）是深化補的一章，處理「觀測系統自己在事故中失能」這個 4.1-4.24 假設可用、未正面展開的邊界。
 
@@ -167,11 +167,11 @@ Log aggregation 適合查單一事件與錯誤脈絡；metrics 適合觀察 erro
 
 04 後續深化以「案例反例補強、跨模組回寫、證據欄位對齊」為主。可觀測性是 06 與 08 的輸入層，重點在提高 evidence package、data quality 與 incident write-back 的銜接精度。
 
-| 深化方向     | 主要責任                                        | 回寫路由                                                                                                                     |
-| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| 案例反例補強 | 補齊遷移失敗與訊號失真案例                      | [4.17](/backend/04-observability/telemetry-data-quality/)、[4.20](/backend/04-observability/observability-evidence-package/) |
-| 跨模組對位   | 把觀測欄位對齊 release/incident 決策欄位        | [6.23](/backend/06-reliability/verification-evidence-handoff/)、[8.19](/backend/08-incident-response/incident-decision-log/) |
-| 成本與治理   | 把採樣、cardinality、chargeback 連到 owner 決策 | [4.7](/backend/04-observability/cardinality-cost-governance/)、[4.15](/backend/04-observability/cost-attribution/)           |
+| 深化方向     | 主要責任                                        | 回寫路由                                                                                                                                                                           |
+| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 案例反例補強 | 補齊遷移失敗與訊號失真案例                      | [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)、[4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) |
+| 跨模組對位   | 把觀測欄位對齊 release/incident 決策欄位        | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)、[8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)   |
+| 成本與治理   | 把採樣、cardinality、chargeback 連到 owner 決策 | [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)、[4.15 Cost Attribution / Chargeback](/backend/04-observability/cost-attribution/)        |
 
 ## 實作探討入口
 

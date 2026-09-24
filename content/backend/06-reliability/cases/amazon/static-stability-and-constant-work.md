@@ -28,12 +28,12 @@ Constant work pattern 的核心是讓系統無論在正常或故障狀態下都�
 
 ## 可觀測訊號
 
-| 訊號                           | 判讀重點                         | 對應章節                                                       |
-| ------------------------------ | -------------------------------- | -------------------------------------------------------------- |
-| control-plane health           | 控制面是否可用、是否在退化中     | [4.13](/backend/04-observability/service-topology/)            |
-| cache staleness                | 快取配置距離最後更新多久         | [6.22](/backend/06-reliability/steady-state-definition/)       |
-| recovery work amplification    | 恢復過程中負載是否比正常時更高   | [6.14](/backend/06-reliability/dependency-reliability-budget/) |
-| data-plane autonomous duration | 資料面在無控制面時能獨立運作多久 | [6.7](/backend/06-reliability/dr-rollback-rehearsal/)          |
+| 訊號                           | 判讀重點                         | 對應章節                                                                                     |
+| ------------------------------ | -------------------------------- | -------------------------------------------------------------------------------------------- |
+| control-plane health           | 控制面是否可用、是否在退化中     | [4.13 Service Topology 與 Dependency Map](/backend/04-observability/service-topology/)       |
+| cache staleness                | 快取配置距離最後更新多久         | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)             |
+| recovery work amplification    | 恢復過程中負載是否比正常時更高   | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) |
+| data-plane autonomous duration | 資料面在無控制面時能獨立運作多久 | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)           |
 
 cache staleness 是 static stability 最關鍵的健康指標。當快取新鮮度超過預設門檻（取決於配置變更頻率），資料面仍能服務，但服務行為可能與最新意圖不一致。這個門檻決定了 degraded mode 的可接受時間窗。
 

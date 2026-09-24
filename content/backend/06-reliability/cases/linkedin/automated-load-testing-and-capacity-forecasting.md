@@ -27,12 +27,12 @@ Automated load test 用 production traffic replay 而非固定 scenario，讓壓
 
 ## 可觀測訊號
 
-| 訊號                   | 判讀重點                           | 對應章節                                                     |
-| ---------------------- | ---------------------------------- | ------------------------------------------------------------ |
-| saturation point drift | 壓測結果是否隨時間漂移             | [6.2](/backend/06-reliability/load-testing/)                 |
-| headroom ratio         | peak load 與 capacity ceiling 比值 | [6.9](/backend/06-reliability/capacity-cost/)                |
-| forecast accuracy      | 預測與實際 peak 的偏差             | [6.13](/backend/06-reliability/performance-regression-gate/) |
-| capacity spend trend   | 容量成本是否超出預算               | [6.9](/backend/06-reliability/capacity-cost/)                |
+| 訊號                   | 判讀重點                           | 對應章節                                                                                 |
+| ---------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| saturation point drift | 壓測結果是否隨時間漂移             | [6.2 load test](/backend/06-reliability/load-testing/)                                   |
+| headroom ratio         | peak load 與 capacity ceiling 比值 | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                             |
+| forecast accuracy      | 預測與實際 peak 的偏差             | [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/) |
+| capacity spend trend   | 容量成本是否超出預算               | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                             |
 
 ## 常見陷阱
 

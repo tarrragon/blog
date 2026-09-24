@@ -231,7 +231,7 @@ Production trace + eval result
 引用原理：
 
 - Prompt 跟 model 層的失敗診斷 → [4.0 prompt 技術光譜](/llm/04-applications/prompt-techniques-landscape/) systematic vs random error
-- 整體 fuzzy / deterministic 邊界判讀 → [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)
+- 整體 fuzzy / deterministic 邊界判讀 → [0.8 Deterministic vs Fuzzy Engineering：軟體設計典範的位移](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)
 
 ## 五個容易遺漏的設計反射
 
@@ -243,7 +243,7 @@ Production trace + eval result
 
 ### 反射二：Policy 寫成 code、LLM 只解析意圖
 
-判斷類規則（user tier、訂單狀態、可否操作）走 deterministic code、LLM 只負責「user 想做什麼」這層意圖抽取。這條邊界讓 debug 容易、規則更新不用 prompt iteration。對應反例：「LLM、請判斷這個訂單能不能改地址、規則如下：...」——把判斷塞進 prompt、debug 困難、規則漂移無從追蹤。對應 [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/) 的「邊界用錯」反模式。
+判斷類規則（user tier、訂單狀態、可否操作）走 deterministic code、LLM 只負責「user 想做什麼」這層意圖抽取。這條邊界讓 debug 容易、規則更新不用 prompt iteration。對應反例：「LLM、請判斷這個訂單能不能改地址、規則如下：...」——把判斷塞進 prompt、debug 困難、規則漂移無從追蹤。對應 [0.8 Deterministic vs Fuzzy Engineering：軟體設計典範的位移](/llm/00-foundations/deterministic-vs-fuzzy-engineering/) 的「邊界用錯」反模式。
 
 ### 反射三：Trace 是 day-1 設計
 
@@ -251,7 +251,7 @@ Production trace + eval result
 
 ### 反射四：Deterministic 行為用 deterministic check
 
-有 ground truth 的行為（抽取對不對、API 參數對不對、JSON schema 合不合）用 Python 函數驗證、判斷成本低、精度高。LLM judge 留給沒 ground truth 的 subjective 行為。對應反例：用 LLM judge 測「step 1 抽取對不對」——cost 翻倍、精度反而不如 deterministic check。對應 [4.13](/llm/04-applications/eval-design-framework/) 軸誤選一。
+有 ground truth 的行為（抽取對不對、API 參數對不對、JSON schema 合不合）用 Python 函數驗證、判斷成本低、精度高。LLM judge 留給沒 ground truth 的 subjective 行為。對應反例：用 LLM judge 測「step 1 抽取對不對」——cost 翻倍、精度反而不如 deterministic check。對應 [4.13 Eval 設計座標系：三軸、八象限、何時測什麼](/llm/04-applications/eval-design-framework/) 軸誤選一。
 
 ### 反射五：保留 frozen baseline
 
@@ -261,15 +261,15 @@ Production trace + eval result
 
 本案例每階段引用的原理章節彙整：
 
-| 階段                                              | 引用章節                                                                                                                                                                                                     |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1. 觀察人類工作流                                 | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                                                                                                                             |
-| 2. 典範定位                                       | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                                                                                                                             |
-| 3. 工作流設計（prompt / tool / RAG / HITL）       | [4.0](/llm/04-applications/prompt-techniques-landscape/)、[4.1](/llm/04-applications/rag-principles/)、[4.3](/llm/04-applications/tool-use-principles/)、[4.5](/llm/04-applications/human-ai-collaboration/) |
-| 4. 結構決定（multi-call vs agent vs multi-agent） | [4.4](/llm/04-applications/agent-architecture/)、[4.7](/llm/04-applications/workflow-patterns/)、[4.8](/llm/04-applications/multi-agent-topology/)                                                           |
-| 5. Trace instrumentation                          | [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)                                                                                                                                      |
-| 6. Eval 設計                                      | [4.13 eval framework](/llm/04-applications/eval-design-framework/)、[4.14](/llm/04-applications/benchmarking-and-evaluation/)、[4.21](/llm/04-applications/llm-as-judge/)                                    |
-| 7. Iteration loop                                 | [4.0 prompt 光譜](/llm/04-applications/prompt-techniques-landscape/) systematic vs random error 段                                                                                                           |
+| 階段                                              | 引用章節                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. 觀察人類工作流                                 | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                                                                                                                                                                                                                                                                                    |
+| 2. 典範定位                                       | [0.8 fuzzy engineering](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)                                                                                                                                                                                                                                                                                    |
+| 3. 工作流設計（prompt / tool / RAG / HITL）       | [4.0 Prompt 技術光譜：手法分類、取捨、組合模式](/llm/04-applications/prompt-techniques-landscape/)、[4.1 RAG 原理：retrieval + augmentation 模式](/llm/04-applications/rag-principles/)、[4.3 Tool use 原理：LLM 跟外部世界互動](/llm/04-applications/tool-use-principles/)、[4.5 人機協作拓樸：何時人介入、怎麼介入](/llm/04-applications/human-ai-collaboration/) |
+| 4. 結構決定（multi-call vs agent vs multi-agent） | [4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)、[4.7 Workflow 編排模式](/llm/04-applications/workflow-patterns/)、[4.8 Multi-Agent 拓樸：flat / hierarchical / agent-as-tool](/llm/04-applications/multi-agent-topology/)                                                                                                                           |
+| 5. Trace instrumentation                          | [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)                                                                                                                                                                                                                                                                                             |
+| 6. Eval 設計                                      | [4.13 eval framework](/llm/04-applications/eval-design-framework/)、[4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)、[4.21 LLM-as-Judge 評估方法](/llm/04-applications/llm-as-judge/)                                                                                                                                           |
+| 7. Iteration loop                                 | [4.0 prompt 光譜](/llm/04-applications/prompt-techniques-landscape/) systematic vs random error 段                                                                                                                                                                                                                                                                  |
 
 ## 下一步
 

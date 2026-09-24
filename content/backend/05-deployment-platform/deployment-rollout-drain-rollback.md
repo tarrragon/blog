@@ -114,7 +114,7 @@ Release gate 的責任是決定下一批切換與是否凍結 rollout，不是�
 
 ## Incident Decision Log
 
-freeze rollout、rollback version、隔離 region、延長 drain 都屬事故決策，需寫入 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。涉及流量規則 / [control plane](/backend/knowledge-cards/control-plane/) 設定推送的決策、見 [5.7](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 跟 [8.23 Control Plane Decision Log](/backend/08-incident-response/control-plane-decision-log-write-back/)。
+freeze rollout、rollback version、隔離 region、延長 drain 都屬事故決策，需寫入 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。涉及流量規則 / [control plane](/backend/knowledge-cards/control-plane/) 設定推送的決策、見 [5.7 Traffic、Config 與 Control Plane Boundary](/backend/05-deployment-platform/traffic-config-control-plane-boundary/) 跟 [8.23 Control Plane Decision Log](/backend/08-incident-response/control-plane-decision-log-write-back/)。
 
 ```yaml
 incident_decision:

@@ -27,12 +27,12 @@ idempotency key 與 zero-downtime migration 的組合，目標是讓這些變更
 
 ## 可觀測訊號
 
-| 訊號                             | 判讀重點                       | 對應章節                                                          |
-| -------------------------------- | ------------------------------ | ----------------------------------------------------------------- |
-| duplicate request collapse ratio | 重試是否被正確合併             | [6.12](/backend/06-reliability/idempotency-replay/)               |
-| migration phase error drift      | 遷移各階段錯誤是否收斂         | [6.11](/backend/06-reliability/migration-safety/)                 |
-| canary transaction anomaly       | 小流量交易是否出現偏差         | [6.8](/backend/06-reliability/release-gate/)                      |
-| payment trace consistency        | trace 是否完整覆蓋交易關鍵欄位 | [4.20](/backend/04-observability/observability-evidence-package/) |
+| 訊號                             | 判讀重點                       | 對應章節                                                                                         |
+| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------ |
+| duplicate request collapse ratio | 重試是否被正確合併             | [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/)                   |
+| migration phase error drift      | 遷移各階段錯誤是否收斂         | [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                 |
+| canary transaction anomaly       | 小流量交易是否出現偏差         | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                             |
+| payment trace consistency        | trace 是否完整覆蓋交易關鍵欄位 | [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) |
 
 ## 常見陷阱
 
@@ -40,4 +40,4 @@ idempotency key 與 zero-downtime migration 的組合，目標是讓這些變更
 
 ## 下一步路由
 
-實作層先從 [6.12](/backend/06-reliability/idempotency-replay/) 定義重放語義，再到 [6.11](/backend/06-reliability/migration-safety/) 建立遷移節奏。發布控制對齊 [6.8](/backend/06-reliability/release-gate/)；事故時的交易影響評估對齊 [8.20](/backend/08-incident-response/customer-impact-assessment/)。
+實作層先從 [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/) 定義重放語義，再到 [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/) 建立遷移節奏。發布控制對齊 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)；事故時的交易影響評估對齊 [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)。

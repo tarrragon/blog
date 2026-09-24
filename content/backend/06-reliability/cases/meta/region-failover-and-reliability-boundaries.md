@@ -22,12 +22,12 @@ Meta 案例的核心責任是處理跨區故障時的邊界與回復順序。大
 
 ## 可觀測訊號
 
-| 訊號                         | 判讀重點           | 對應章節                                                            |
-| ---------------------------- | ------------------ | ------------------------------------------------------------------- |
-| cross-region error spread    | 擴散是否越界       | [8.14](/backend/08-incident-response/multi-incident-coordination/)  |
-| failover completion lag      | 回復批次是否收斂   | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
-| shared dependency saturation | 共享依賴是否成瓶頸 | [6.14](/backend/06-reliability/dependency-reliability-budget/)      |
+| 訊號                         | 判讀重點           | 對應章節                                                                                       |
+| ---------------------------- | ------------------ | ---------------------------------------------------------------------------------------------- |
+| cross-region error spread    | 擴散是否越界       | [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/) |
+| failover completion lag      | 回復批次是否收斂   | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)       |
+| shared dependency saturation | 共享依賴是否成瓶頸 | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)   |
 
 ## 下一步路由
 
-先定義 [6.20](/backend/06-reliability/experiment-safety-boundary/) 的演練範圍，再回寫 [8.19](/backend/08-incident-response/incident-decision-log/) 的決策欄位。
+先定義 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 的演練範圍，再回寫 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 的決策欄位。

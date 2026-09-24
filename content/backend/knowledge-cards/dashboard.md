@@ -22,4 +22,4 @@ Dashboard 分層服務不同使用者：service overview 給 [on-call](/backend/
 
 Dashboard 設計要服務具體決策。每個面板應對應一個可回答的問題（「服務現在健康嗎」「延遲瓶頸在哪」「容量還夠嗎」）。高 cardinality、缺少單位或只呈現低層資源的圖表會增加判讀成本而非降低。
 
-Dashboard panel 的查詢效能影響使用體驗 — 長時間趨勢 panel 應讀 [recording rule](/backend/knowledge-cards/recording-rule/) 或 [rollup](/backend/knowledge-cards/rollup/) 資料，避免每次刷新都掃描 raw series。Dashboard / alert 的完整設計見 [4.4](/backend/04-observability/dashboard-alert/)。
+Dashboard panel 的查詢效能影響使用體驗 — 長時間趨勢 panel 應讀 [recording rule](/backend/knowledge-cards/recording-rule/) 或 [rollup](/backend/knowledge-cards/rollup/) 資料，避免每次刷新都掃描 raw series。Dashboard / alert 的完整設計見 [4.4 dashboard 與 alert 設計](/backend/04-observability/dashboard-alert/)。

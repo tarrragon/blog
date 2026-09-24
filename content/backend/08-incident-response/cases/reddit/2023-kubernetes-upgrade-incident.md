@@ -10,11 +10,11 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                     | 判讀重點               | 回寫章節                                                            |
-| ------------------------ | ---------------------- | ------------------------------------------------------------------- |
-| post-upgrade error burst | 變更後退化是否快速擴散 | [8.1](/backend/08-incident-response/incident-severity-trigger/)     |
-| rollback decision delay  | 回退決策是否過慢       | [8.19](/backend/08-incident-response/incident-decision-log/)        |
-| service recovery slope   | 恢復是否分批收斂       | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
+| 訊號                     | 判讀重點               | 回寫章節                                                                                 |
+| ------------------------ | ---------------------- | ---------------------------------------------------------------------------------------- |
+| post-upgrade error burst | 變更後退化是否快速擴散 | [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)       |
+| rollback decision delay  | 回退決策是否過慢       | [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)       |
+| service recovery slope   | 恢復是否分批收斂       | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/) |
 
 ## 邊界判讀
 
@@ -22,4 +22,4 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 下一步路由
 
-把升級變更與事故決策共用欄位，並在 [6.8](/backend/06-reliability/release-gate/) 加入升級專屬 gate。事故收斂後回寫 [8.19](/backend/08-incident-response/incident-decision-log/)。
+把升級變更與事故決策共用欄位，並在 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/) 加入升級專屬 gate。事故收斂後回寫 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。

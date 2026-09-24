@@ -24,4 +24,4 @@ Trace 聚合後可以自動生成 [service topology](/backend/04-observability/s
 
 Trace 設計要處理 [trace context](/backend/knowledge-cards/trace-context/) 傳遞（HTTP header、queue message header、thread context）、[sampling](/backend/knowledge-cards/sampling/) 策略（head / tail / adaptive）、span 命名慣例、敏感資料 redaction、跨語言 SDK 相容性與 log correlation（trace id 寫進 log 欄位）。
 
-高流量服務需要控制採樣成本，同時保留錯誤與高延遲樣本。Sampling 策略的完整討論見 [4.7](/backend/04-observability/cardinality-cost-governance/#sampling-策略)。Context propagation 在不同邊界（HTTP / queue / thread pool / background job）的斷鏈風險與修復見 [4.3](/backend/04-observability/tracing-context/)。
+高流量服務需要控制採樣成本，同時保留錯誤與高延遲樣本。Sampling 策略的完整討論見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/#sampling-策略)。Context propagation 在不同邊界（HTTP / queue / thread pool / background job）的斷鏈風險與修復見 [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)。

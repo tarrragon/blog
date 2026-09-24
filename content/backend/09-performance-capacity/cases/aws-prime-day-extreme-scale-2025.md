@@ -33,9 +33,9 @@ tags: ["backend", "performance", "capacity", "case-study"]
 
 Prime Day 是「可預期極端峰值」的標竿。它的容量問題不是「會不會撐住」、而是「準備到什麼程度才划算」。對應主章問題節點：
 
-1. **Capacity Planning**（[9.6](/backend/09-performance-capacity/)）：年度活動的容量計算可以用歷史 baseline × 預期成長 × headroom 三項相乘、但 Prime Day 規模下、每一項的不確定性放大都會變成數百萬美金成本差異。Amazon 公開的年增率（API Gateway +30%、CloudFront +43%、ECS on Fargate +77%）顯示連 Amazon 自己每年的成長預測都不能直線外推。
-2. **Performance Observability**（[9.8](/backend/09-performance-capacity/)）：DynamoDB 「1.51 億 RPS、毫秒級回應」這種敘述同時包含吞吐與延遲、是 production-grade 容量地圖的最小單位。只說吞吐不說延伸分布、容量資訊不完整。
-3. **Improvement Loop**（[9.9](/backend/09-performance-capacity/)）：FIS 混沌實驗 8 倍於 2024 顯示 Amazon 把「在 Prime Day 之前主動製造失敗」當成必修課、不是事後檢討。這層投資跟容量規劃同等重要。
+1. **Capacity Planning**（[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)）：年度活動的容量計算可以用歷史 baseline × 預期成長 × headroom 三項相乘、但 Prime Day 規模下、每一項的不確定性放大都會變成數百萬美金成本差異。Amazon 公開的年增率（API Gateway +30%、CloudFront +43%、ECS on Fargate +77%）顯示連 Amazon 自己每年的成長預測都不能直線外推。
+2. **Performance Observability**（[9.8 效能可觀測性](/backend/09-performance-capacity/performance-observability/)）：DynamoDB 「1.51 億 RPS、毫秒級回應」這種敘述同時包含吞吐與延遲、是 production-grade 容量地圖的最小單位。只說吞吐不說延伸分布、容量資訊不完整。
+3. **Improvement Loop**（[9.9 Performance Improvement Loop](/backend/09-performance-capacity/improvement-loop/)）：FIS 混沌實驗 8 倍於 2024 顯示 Amazon 把「在 Prime Day 之前主動製造失敗」當成必修課、不是事後檢討。這層投資跟容量規劃同等重要。
 
 ## 策略
 

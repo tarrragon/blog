@@ -317,8 +317,8 @@ python judge_harness.py
 
 ## 跟其他章節的關係
 
-- 原理層的 LLM-as-judge 設計見 [4.21](/llm/04-applications/llm-as-judge/)
+- 原理層的 LLM-as-judge 設計見 [4.21 LLM-as-Judge 評估方法](/llm/04-applications/llm-as-judge/)
 - Production trace 串接見 [4.20 tracing](/llm/04-applications/llm-tracing-and-observability/)
-- Reasoning model 選型見 [3.8](/llm/03-theoretical-foundations/reasoning-models/)
-- 隱私 / 跨雲端邊界判讀見 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)
-- Benchmark 跟 in-house eval 的層次見 [4.14](/llm/04-applications/benchmarking-and-evaluation/)
+- Reasoning model 選型見 [3.8 Reasoning models：test-time compute paradigm](/llm/03-theoretical-foundations/reasoning-models/)
+- 隱私 / 跨雲端邊界判讀見 [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)
+- Benchmark 跟 in-house eval 的層次見 [4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)

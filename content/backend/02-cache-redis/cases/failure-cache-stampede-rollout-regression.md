@@ -28,4 +28,4 @@ tags: ["backend", "cache", "case-study"]
 
 ## 下一步路由
 
-回 [2.2](/backend/02-cache-redis/cache-aside/) 與 [6.24](/backend/06-reliability/rule-rollout-safety-gate/)。
+回 [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/) 與 [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)。

@@ -27,15 +27,15 @@ Mac 統一記憶體的判讀模型把「能載入多大模型」這個問題收�
 
 ## 章節列表
 
-| 章節                                                        | 主題                      | 關鍵收穫                                                             |
-| ----------------------------------------------------------- | ------------------------- | -------------------------------------------------------------------- |
-| [5.0](/llm/05-discrete-gpu/vram-ram-budget/)                | VRAM + RAM 分層預算       | 16GB VRAM × 64GB RAM 等情境的模型對照、跟 Mac 統一記憶體的對比       |
-| [5.1](/llm/05-discrete-gpu/moe-cpu-offload-strategy/)       | MoE 模型與 CPU 卸載策略   | 何時把專家層卸到 RAM、卸幾層、prefill / generation 影響各自不同      |
-| [5.2](/llm/05-discrete-gpu/kv-cache-quantization-strategy/) | KV cache 量化策略         | K=Q8 / V=Q4 跟 context window / 併發數的權衡、flash attention 的關係 |
-| [5.3](/llm/05-discrete-gpu/llama-cpp-on-pc/)                | llama.cpp 在 PC 上        | CUDA / ROCm build、核心旗標地圖、`llama-bench` 校準工作流            |
-| [5.4](/llm/05-discrete-gpu/lm-studio-on-windows/)           | LM Studio 在 Windows      | Windows 安裝、CUDA backend 選擇、GUI 欄位對應到 llama.cpp 旗標       |
-| [5.5](/llm/05-discrete-gpu/model-selection-priority-pc/)    | PC 場景的模型選型優先順序 | 全載 14B Dense vs 卸載 30B MoE 等的選型決策                          |
-| [5.6](/llm/05-discrete-gpu/gpu-vendor-differences/)         | GPU 廠商差異              | NVIDIA / AMD / Intel 的工具鏈支援度、選卡判讀框架                    |
+| 章節                                                                               | 主題                      | 關鍵收穫                                                             |
+| ---------------------------------------------------------------------------------- | ------------------------- | -------------------------------------------------------------------- |
+| [5.0 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)                   | VRAM + RAM 分層預算       | 16GB VRAM × 64GB RAM 等情境的模型對照、跟 Mac 統一記憶體的對比       |
+| [5.1 MoE 模型與 CPU 卸載策略](/llm/05-discrete-gpu/moe-cpu-offload-strategy/)      | MoE 模型與 CPU 卸載策略   | 何時把專家層卸到 RAM、卸幾層、prefill / generation 影響各自不同      |
+| [5.2 KV cache 量化策略](/llm/05-discrete-gpu/kv-cache-quantization-strategy/)      | KV cache 量化策略         | K=Q8 / V=Q4 跟 context window / 併發數的權衡、flash attention 的關係 |
+| [5.3 llama.cpp 在 PC 上](/llm/05-discrete-gpu/llama-cpp-on-pc/)                    | llama.cpp 在 PC 上        | CUDA / ROCm build、核心旗標地圖、`llama-bench` 校準工作流            |
+| [5.4 LM Studio 在 Windows](/llm/05-discrete-gpu/lm-studio-on-windows/)             | LM Studio 在 Windows      | Windows 安裝、CUDA backend 選擇、GUI 欄位對應到 llama.cpp 旗標       |
+| [5.5 PC 場景的模型選型優先順序](/llm/05-discrete-gpu/model-selection-priority-pc/) | PC 場景的模型選型優先順序 | 全載 14B Dense vs 卸載 30B MoE 等的選型決策                          |
+| [5.6 GPU 廠商差異](/llm/05-discrete-gpu/gpu-vendor-differences/)                   | GPU 廠商差異              | NVIDIA / AMD / Intel 的工具鏈支援度、選卡判讀框架                    |
 
 ## 跟模組一的對應關係
 

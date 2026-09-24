@@ -72,7 +72,7 @@ SLO 與 performance budget 的責任是讓容量決策有「可衡量的目標 +
 
 [Performance budget](/backend/knowledge-cards/performance-budget/) 跟 error budget 是 *姊妹概念* — 用同一套方法論處理可靠性 vs 效能。
 
-**Error budget**（[06.6](/backend/06-reliability/slo-error-budget/)）：
+**Error budget**（[6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)）：
 
 - 每月有允許的 unavailability 額度
 - 例如 SLO 99.95% → error budget = 0.05% × 30 days = 21.6 分鐘 / 月

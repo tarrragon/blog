@@ -10,11 +10,11 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                        | 判讀重點               | 回寫章節                                                               |
-| --------------------------- | ---------------------- | ---------------------------------------------------------------------- |
-| telemetry gap               | 缺失是否影響決策       | [8.18](/backend/08-incident-response/incident-intake-evidence-triage/) |
-| customer-side false normal  | 客戶是否誤以為服務正常 | [8.10](/backend/08-incident-response/stakeholder-communication/)       |
-| fallback evidence readiness | 備援證據能否即時接手   | [4.20](/backend/04-observability/observability-evidence-package/)      |
+| 訊號                        | 判讀重點               | 回寫章節                                                                                                 |
+| --------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------- |
+| telemetry gap               | 缺失是否影響決策       | [8.18 Incident Intake & Evidence Triage](/backend/08-incident-response/incident-intake-evidence-triage/) |
+| customer-side false normal  | 客戶是否誤以為服務正常 | [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/)            |
+| fallback evidence readiness | 備援證據能否即時接手   | [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)         |
 
 ## 邊界判讀
 
@@ -22,4 +22,4 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 下一步路由
 
-事故流程要預留「觀測失明」分支，並在復盤回寫 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。同時補 [4.20](/backend/04-observability/observability-evidence-package/) 的備援證據來源。
+事故流程要預留「觀測失明」分支，並在復盤回寫 [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)。同時補 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 的備援證據來源。

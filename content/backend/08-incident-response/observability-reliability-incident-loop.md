@@ -95,5 +95,5 @@ tags: ["backend", "incident-response"]
 
 判讀完閉環現況後沿兩條 chain 進入 implementation：
 
-1. **方向強化 chain**：找出最弱的方向、補對應模組的章節 — 04 → 08 弱補 4.4 alert design + 8.2 command；08 → 06 弱補 8.5 [post-incident review](/backend/knowledge-cards/post-incident-review/) 模板 + [6.6](/backend/06-reliability/slo-error-budget/) / [6.7](/backend/06-reliability/dr-rollback-rehearsal/)；06 → 04 弱補 [6.6 SLO](/backend/06-reliability/slo-error-budget/) + 4.2 metrics；08 → 04 弱補 8.5 + 4.4。
+1. **方向強化 chain**：找出最弱的方向、補對應模組的章節 — 04 → 08 弱補 4.4 alert design + 8.2 command；08 → 06 弱補 8.5 [post-incident review](/backend/knowledge-cards/post-incident-review/) 模板 + [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/) / [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)；06 → 04 弱補 [6.6 SLO](/backend/06-reliability/slo-error-budget/) + 4.2 metrics；08 → 04 弱補 8.5 + 4.4。
 2. **跨模組演練 chain**：用 6.6 [game day](/backend/knowledge-cards/game-day/) 同時驗證三個方向是否串通 — 注入故障、看 04 是否觸發、08 是否響應、[post-incident review](/backend/knowledge-cards/post-incident-review/) 是否回寫 06 / 04。

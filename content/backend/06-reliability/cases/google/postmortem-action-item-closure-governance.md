@@ -30,12 +30,12 @@ Postmortem 的核心責任是把事故轉成會被完成的工程改進，解釋
 
 ## 可觀測訊號
 
-| 訊號                           | 判讀重點                       | 對應章節                                                       |
-| ------------------------------ | ------------------------------ | -------------------------------------------------------------- |
-| overdue action-item ratio      | 是否長期積壓高風險改進         | [8.5](/backend/08-incident-response/post-incident-review/)     |
-| repeated-incident similarity   | 同型事故是否仍反覆發生         | [8.13](/backend/08-incident-response/repeated-incident-toil/)  |
-| gate bypass count              | 是否在高風險情況下跳過治理閘門 | [6.8](/backend/06-reliability/release-gate/)                   |
-| verification evidence coverage | 完成項是否附驗證證據           | [6.23](/backend/06-reliability/verification-evidence-handoff/) |
+| 訊號                           | 判讀重點                       | 對應章節                                                                                     |
+| ------------------------------ | ------------------------------ | -------------------------------------------------------------------------------------------- |
+| overdue action-item ratio      | 是否長期積壓高風險改進         | [8.5 復盤與改進追蹤](/backend/08-incident-response/post-incident-review/)                    |
+| repeated-incident similarity   | 同型事故是否仍反覆發生         | [8.13 Repeated Incident 與 Toil 治理](/backend/08-incident-response/repeated-incident-toil/) |
+| gate bypass count              | 是否在高風險情況下跳過治理閘門 | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                         |
+| verification evidence coverage | 完成項是否附驗證證據           | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) |
 
 ## 常見陷阱
 

@@ -12,16 +12,16 @@ Go 重構的核心目標是讓邊界更清楚、測試更直接、資料競爭�
 
 ## 章節列表
 
-| 章節                                                | 主題                           | 關鍵收穫                                            |
-| --------------------------------------------------- | ------------------------------ | --------------------------------------------------- |
-| [7.1](/go/07-refactoring/handler-boundary/)         | 把 handler 邏輯拆成可測單元    | 分離協定處理與業務邏輯                              |
-| [7.2](/go/07-refactoring/interface-boundary/)       | 用 interface 隔離外部依賴      | 建立小而穩定的測試替身                              |
-| [7.3](/go/07-refactoring/dedup-refactor/)           | 事件去重邏輯的重構策略         | 保留語義鍵，降低重複流程                            |
-| [7.4](/go/07-refactoring/state-boundary/)           | 狀態管理的安全邊界             | 用複製與鎖保護共享資料                              |
-| [7.5](/go/07-refactoring/domain-packages/)          | 以 domain 重新整理 package     | 讓 account、job、event、workflow 這類語意邊界可見   |
-| [7.6](/go/07-refactoring/hexagonal-migration/)      | 逐步遷移到 ports/adapters 架構 | 用 ports/adapters 控制依賴方向                      |
-| [7.7](/go/07-refactoring/composition-root/)         | composition root 與依賴組裝    | 把具體 adapter、config 與 usecase wiring 留在入口層 |
-| [7.8](/go/07-refactoring/pressure-driven-refactor/) | 壓力出現後的重構路線           | 按壓力逐步拆邊界，讓服務變大仍可維護                |
+| 章節                                                                          | 主題                           | 關鍵收穫                                            |
+| ----------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------------- |
+| [7.1 把 handler 邏輯拆成可測單元](/go/07-refactoring/handler-boundary/)       | 把 handler 邏輯拆成可測單元    | 分離協定處理與業務邏輯                              |
+| [7.2 用 interface 隔離外部依賴](/go/07-refactoring/interface-boundary/)       | 用 interface 隔離外部依賴      | 建立小而穩定的測試替身                              |
+| [7.3 事件去重邏輯的重構策略](/go/07-refactoring/dedup-refactor/)              | 事件去重邏輯的重構策略         | 保留語義鍵，降低重複流程                            |
+| [7.4 狀態管理的安全邊界](/go/07-refactoring/state-boundary/)                  | 狀態管理的安全邊界             | 用複製與鎖保護共享資料                              |
+| [7.5 以 domain 重新整理 package](/go/07-refactoring/domain-packages/)         | 以 domain 重新整理 package     | 讓 account、job、event、workflow 這類語意邊界可見   |
+| [7.6 逐步遷移到 ports/adapters 架構](/go/07-refactoring/hexagonal-migration/) | 逐步遷移到 ports/adapters 架構 | 用 ports/adapters 控制依賴方向                      |
+| [7.7 composition root 與依賴組裝](/go/07-refactoring/composition-root/)       | composition root 與依賴組裝    | 把具體 adapter、config 與 usecase wiring 留在入口層 |
+| [7.8 壓力出現後的重構路線](/go/07-refactoring/pressure-driven-refactor/)      | 壓力出現後的重構路線           | 按壓力逐步拆邊界，讓服務變大仍可維護                |
 
 ## 本模組的重構判斷
 

@@ -41,11 +41,11 @@ RabbitMQ 適合明確 routing、[ack/nack](/backend/knowledge-cards/ack-nack/) �
 
 佇列案例的核心讀法是先辨識遷移的是「資料路徑」還是「治理路徑」，再決定先做 broker 切換還是治理收斂。
 
-| 案例                                                                                         | 先看章節                                                                                           | 回寫目標                                    |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| [3.C1 Meta：FOQS 全域遷移](/backend/03-message-queue/cases/meta-foqs-global-migration/)      | [3.1](/backend/03-message-queue/broker-basics/)、[3.2](/backend/03-message-queue/durable-queue/)   | 把跨區 queue 路由與可用性邊界前置           |
-| [3.C2 VMware：Kafka -> MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/)            | [3.1](/backend/03-message-queue/broker-basics/)、[3.4](/backend/03-message-queue/consumer-design/) | 把 managed broker 遷移轉成 ACL/lag/回退治理 |
-| [3.C3 LinkedIn：TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/) | [3.4](/backend/03-message-queue/consumer-design/)                                                  | 把 topic 生命週期治理納入可靠性成本模型     |
+| 案例                                                                                         | 先看章節                                                                                                                                        | 回寫目標                                    |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| [3.C1 Meta：FOQS 全域遷移](/backend/03-message-queue/cases/meta-foqs-global-migration/)      | [3.1 broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/)、[3.2 durable queue 與重試策略](/backend/03-message-queue/durable-queue/) | 把跨區 queue 路由與可用性邊界前置           |
+| [3.C2 VMware：Kafka -> MSK](/backend/03-message-queue/cases/vmware-kafka-to-msk/)            | [3.1 broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/)、[3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)    | 把 managed broker 遷移轉成 ACL/lag/回退治理 |
+| [3.C3 LinkedIn：TopicGC](/backend/03-message-queue/cases/linkedin-topicgc-kafka-governance/) | [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)                                                                           | 把 topic 生命週期治理納入可靠性成本模型     |
 
 ## 跨語言適配評估
 
@@ -53,17 +53,17 @@ RabbitMQ 適合明確 routing、[ack/nack](/backend/knowledge-cards/ack-nack/) �
 
 ## 章節列表
 
-| 章節                                                                  | 主題                                                                   | 關鍵收穫                                                                              |
-| --------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [3.1](/backend/03-message-queue/broker-basics/)                       | broker 基礎與投遞模型                                                  | 看懂 exchange、topic、consumer 與 delivery semantics                                  |
-| [3.2](/backend/03-message-queue/durable-queue/)                       | [durable queue](/backend/knowledge-cards/durable-queue) 與重試策略     | 規劃持久化、ack/nack、DLQ 與 retry                                                    |
-| [3.3](/backend/03-message-queue/outbox-pattern/)                      | [outbox pattern](/backend/knowledge-cards/outbox-pattern) 與發佈一致性 | 把交易寫入與事件發佈分離                                                              |
-| [3.4](/backend/03-message-queue/consumer-design/)                     | consumer 設計與去重                                                    | 設計 idempotency、[checkpoint](/backend/knowledge-cards/checkpoint/) 與 replay safety |
-| [3.5](/backend/03-message-queue/red-team-delivery-layer/)             | 攻擊者視角（紅隊）：傳遞層弱點判讀                                     | 用重放、重複、毒訊息與延遲累積檢查非同步傳遞邊界                                      |
-| [3.6](/backend/03-message-queue/processing-recovery-semantics/)       | Processing Semantics 與 Recovery Semantics                             | 分辨投遞成功、處理成功與恢復成功                                                      |
-| [3.7](/backend/03-message-queue/event-contract-replay-boundary/)      | Event Contract 與 Replay Boundary                                      | 定義 event schema、idempotency key、replay window 與補償邊界                          |
-| [3.8](/backend/03-message-queue/queue-consumer-retry-replay-handoff/) | Queue Consumer Retry 與 Replay Handoff 實作示範                        | 以訂單事件 consumer 示範 evidence、DLQ、replay runbook 與 decision log                |
-| [3.C](/backend/03-message-queue/cases/)                               | 轉換案例正文                                                           | 把 queue 架構、broker 遷移與 topic 治理轉成可操作案例                                 |
+| 章節                                                                                                                     | 主題                                                                   | 關鍵收穫                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [3.1 broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/)                                                    | broker 基礎與投遞模型                                                  | 看懂 exchange、topic、consumer 與 delivery semantics                                  |
+| [3.2 durable queue 與重試策略](/backend/03-message-queue/durable-queue/)                                                 | [durable queue](/backend/knowledge-cards/durable-queue) 與重試策略     | 規劃持久化、ack/nack、DLQ 與 retry                                                    |
+| [3.3 outbox pattern 與發佈一致性](/backend/03-message-queue/outbox-pattern/)                                             | [outbox pattern](/backend/knowledge-cards/outbox-pattern) 與發佈一致性 | 把交易寫入與事件發佈分離                                                              |
+| [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)                                                    | consumer 設計與去重                                                    | 設計 idempotency、[checkpoint](/backend/knowledge-cards/checkpoint/) 與 replay safety |
+| [3.5 攻擊者視角（紅隊）：傳遞層弱點判讀](/backend/03-message-queue/red-team-delivery-layer/)                             | 攻擊者視角（紅隊）：傳遞層弱點判讀                                     | 用重放、重複、毒訊息與延遲累積檢查非同步傳遞邊界                                      |
+| [3.6 Processing Semantics 與 Recovery Semantics](/backend/03-message-queue/processing-recovery-semantics/)               | Processing Semantics 與 Recovery Semantics                             | 分辨投遞成功、處理成功與恢復成功                                                      |
+| [3.7 Event Contract 與 Replay Boundary](/backend/03-message-queue/event-contract-replay-boundary/)                       | Event Contract 與 Replay Boundary                                      | 定義 event schema、idempotency key、replay window 與補償邊界                          |
+| [3.8 Queue Consumer Retry 與 Replay Handoff（實作示範）](/backend/03-message-queue/queue-consumer-retry-replay-handoff/) | Queue Consumer Retry 與 Replay Handoff 實作示範                        | 以訂單事件 consumer 示範 evidence、DLQ、replay runbook 與 decision log                |
+| [3.C](/backend/03-message-queue/cases/)                                                                                  | 轉換案例正文                                                           | 把 queue 架構、broker 遷移與 topic 治理轉成可操作案例                                 |
 
 反例與規模對照入口： [3.C9 反例](/backend/03-message-queue/cases/failure-queue-semantics-mismatch-cutover/) / [3.C10 對照](/backend/03-message-queue/cases/contrast-queue-model-by-scale/)。
 
@@ -87,13 +87,13 @@ RabbitMQ 適合明確 routing、[ack/nack](/backend/knowledge-cards/ack-nack/) �
 
 訊息佇列章節下一輪的核心責任是把「投遞成功」和「業務結果正確」分開。現有章節已經有 broker、durable queue、outbox 與 consumer design，但還需要補上 delivery semantics、processing semantics 與 recovery semantics 的三層關係，讓讀者知道 queue 失敗同時包括訊息遺失、重複副作用、順序錯亂、重播風險與下游壓力放大。
 
-| 補完方向             | 需要回答的問題                                     | 主要路由                                                                                                                     |
-| -------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Delivery semantics   | broker 如何 ack、nack、redelivery、retry、送入 DLQ | [delivery semantics](/backend/knowledge-cards/delivery-semantics/)、[3.2](/backend/03-message-queue/durable-queue/)          |
-| Processing semantics | consumer 的副作用是否能承受重複、亂序與部分失敗    | [idempotency](/backend/knowledge-cards/idempotency/)、[6.12](/backend/06-reliability/idempotency-replay/)                    |
-| Recovery semantics   | replay、checkpoint、offset 與補償是否可重播與驗證  | [offset](/backend/knowledge-cards/offset/)、[8.19](/backend/08-incident-response/incident-decision-log/)                     |
-| Outbox boundary      | 資料庫交易與事件發布是否有一致性邊界               | [outbox pattern](/backend/knowledge-cards/outbox-pattern/)、[1.3](/backend/01-database/transaction-boundary/)                |
-| Poison handling      | 壞訊息是否會卡住 consumer 或被無限重試             | [poison message](/backend/knowledge-cards/poison-message/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/) |
+| 補完方向             | 需要回答的問題                                     | 主要路由                                                                                                                                     |
+| -------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Delivery semantics   | broker 如何 ack、nack、redelivery、retry、送入 DLQ | [delivery semantics](/backend/knowledge-cards/delivery-semantics/)、[3.2 durable queue 與重試策略](/backend/03-message-queue/durable-queue/) |
+| Processing semantics | consumer 的副作用是否能承受重複、亂序與部分失敗    | [idempotency](/backend/knowledge-cards/idempotency/)、[6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/)         |
+| Recovery semantics   | replay、checkpoint、offset 與補償是否可重播與驗證  | [offset](/backend/knowledge-cards/offset/)、[8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)               |
+| Outbox boundary      | 資料庫交易與事件發布是否有一致性邊界               | [outbox pattern](/backend/knowledge-cards/outbox-pattern/)、[1.3 Transaction 與一致性邊界](/backend/01-database/transaction-boundary/)       |
+| Poison handling      | 壞訊息是否會卡住 consumer 或被無限重試             | [poison message](/backend/knowledge-cards/poison-message/)、[dead-letter queue](/backend/knowledge-cards/dead-letter-queue/)                 |
 
 這些方向要用非同步服務自己的語意展開。寄信、開 invoice、更新 CRM、同步 search index、發 webhook 的副作用不同，retry、DLQ 與 replay 的判斷標準也不同。
 
@@ -109,4 +109,4 @@ RabbitMQ 適合明確 routing、[ack/nack](/backend/knowledge-cards/ack-nack/) �
 
 這條路徑的前置引用應該是 3.2 durable queue、3.3 outbox pattern、3.4 consumer design、[6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/) 與 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)。完成後可依 [Backend 學習路線](/backend/#學習路線) 進入下一條服務路徑。
 
-佇列路徑的 artifact 對齊重點是「把投遞成功與處理成功拆開記錄」。對 [4.20](/backend/04-observability/observability-evidence-package/) 要交 `Source/Time range/Query link/Owner/Data quality`，並覆蓋 consumer lag、retry、DLQ 與 duplicate side-effect；對 [6.12](/backend/06-reliability/idempotency-replay/) / [6.23](/backend/06-reliability/verification-evidence-handoff/) / [6.8](/backend/06-reliability/release-gate/) 要交 `Gate decision/Checks/Stop condition/Rollback window/Owner`，呈現 replay 範圍、去重驗證與補償路徑；對 [8.19](/backend/08-incident-response/incident-decision-log/) 要交 `Timestamp/Decision/Context/Evidence/Owner/Expected effect/Rollback condition`，記錄 pause consumer、drain DLQ、重播啟停的決策序列。
+佇列路徑的 artifact 對齊重點是「把投遞成功與處理成功拆開記錄」。對 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 要交 `Source/Time range/Query link/Owner/Data quality`，並覆蓋 consumer lag、retry、DLQ 與 duplicate side-effect；對 [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/) / [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) / [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/) 要交 `Gate decision/Checks/Stop condition/Rollback window/Owner`，呈現 replay 範圍、去重驗證與補償路徑；對 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 要交 `Timestamp/Decision/Context/Evidence/Owner/Expected effect/Rollback condition`，記錄 pause consumer、drain DLQ、重播啟停的決策序列。

@@ -10,11 +10,11 @@ tags: ["backend", "service-selection", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                       | 判讀重點               | 對應章節                                                                    |
-| -------------------------- | ---------------------- | --------------------------------------------------------------------------- |
-| cross-region data movement | 是否違反主權邊界       | [0.8](/backend/00-service-selection/security-data-protection-requirements/) |
-| access audit completeness  | 存取證據是否可追溯     | [0.2](/backend/00-service-selection/state-storage-selection/)               |
-| recovery ordering conflict | 回復步驟是否與合規衝突 | [0.7](/backend/00-service-selection/failure-observability-design/)          |
+| 訊號                       | 判讀重點               | 對應章節                                                                                            |
+| -------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
+| cross-region data movement | 是否違反主權邊界       | [0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/)      |
+| access audit completeness  | 存取證據是否可追溯     | [0.2 狀態與資料儲存選型](/backend/00-service-selection/state-storage-selection/)                    |
+| recovery ordering conflict | 回復步驟是否與合規衝突 | [0.7 錯誤定位、觀測訊號與備援切換設計](/backend/00-service-selection/failure-observability-design/) |
 
 ## 風險與邊界
 
@@ -22,4 +22,4 @@ tags: ["backend", "service-selection", "case-study"]
 
 ## 下一步路由
 
-先補 [4.18](/backend/04-observability/observability-operating-model/) 的責任邊界，再在 [6.7](/backend/06-reliability/dr-rollback-rehearsal/) 驗證回復流程。
+先補 [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/) 的責任邊界，再在 [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/) 驗證回復流程。

@@ -31,12 +31,12 @@ Resiliency matrix 是 service × failure mode 的二維矩陣。每格填入三�
 
 ## 可觀測訊號
 
-| 訊號                      | 判讀重點                    | 對應章節                                                       |
-| ------------------------- | --------------------------- | -------------------------------------------------------------- |
-| pod-level error isolation | 故障是否被限制在單一 pod 內 | [6.14](/backend/06-reliability/dependency-reliability-budget/) |
-| matrix gap count trend    | 缺口是否在收斂              | [6.21](/backend/06-reliability/reliability-debt-backlog/)      |
-| cross-pod contamination   | 是否有故障穿越 pod 邊界     | [6.20](/backend/06-reliability/experiment-safety-boundary/)    |
-| game-day action closure   | 演練暴露的缺口是否被關閉    | [6.5](/backend/06-reliability/failure-mode-pre-mortem/)        |
+| 訊號                      | 判讀重點                    | 對應章節                                                                                     |
+| ------------------------- | --------------------------- | -------------------------------------------------------------------------------------------- |
+| pod-level error isolation | 故障是否被限制在單一 pod 內 | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) |
+| matrix gap count trend    | 缺口是否在收斂              | [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)           |
+| cross-pod contamination   | 是否有故障穿越 pod 邊界     | [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)       |
+| game-day action closure   | 演練暴露的缺口是否被關閉    | [6.5 失敗模式預判（Pre-mortem 與 FMEA）](/backend/06-reliability/failure-mode-pre-mortem/)   |
 
 ## 常見陷阱
 

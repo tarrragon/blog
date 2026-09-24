@@ -29,13 +29,13 @@ Config 變更（如 provider timeout 或 retry 次數）與 code 變更走不同
 
 ## 可觀測訊號
 
-| 訊號                       | 判讀重點                      | 對應章節                                                       |
-| -------------------------- | ----------------------------- | -------------------------------------------------------------- |
-| checkout success rate      | canary 批次是否維持交易承諾   | [6.8](/backend/06-reliability/release-gate/)                   |
-| canary vs baseline latency | 延遲偏移是否超過可接受範圍    | [6.13](/backend/06-reliability/performance-regression-gate/)   |
-| payment duplicate rate     | 重試是否產生重複扣款          | [6.12](/backend/06-reliability/idempotency-replay/)            |
-| rollback trigger count     | 自動回退是否頻繁觸發          | [6.23](/backend/06-reliability/verification-evidence-handoff/) |
-| refund anomaly rate        | 退款比率是否偏離歷史 baseline | [8.19](/backend/08-incident-response/incident-decision-log/)   |
+| 訊號                       | 判讀重點                      | 對應章節                                                                                     |
+| -------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------- |
+| checkout success rate      | canary 批次是否維持交易承諾   | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                         |
+| canary vs baseline latency | 延遲偏移是否超過可接受範圍    | [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)     |
+| payment duplicate rate     | 重試是否產生重複扣款          | [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/)               |
+| rollback trigger count     | 自動回退是否頻繁觸發          | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) |
+| refund anomaly rate        | 退款比率是否偏離歷史 baseline | [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)           |
 
 ## 常見陷阱
 

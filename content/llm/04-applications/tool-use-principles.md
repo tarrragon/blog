@@ -177,4 +177,4 @@ Tool use 的適用面有邊界、下列情境純生成已足夠、加 tool use �
 
 ## 下一章
 
-下一章：[4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)、看 LLM 自主決策的設計取捨。副作用等級跟 HITL 時機怎麼配（pre-act / mid-stream / post-hoc）見 [4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)。本地 dev 場景把 tool use 落地到「實際給 wrapper 寫權限」的 hands-on、見 [Ollama 改檔案 / 寫程式碼的權限邊界](/llm/01-local-llm-services/hands-on/permission-boundary/)；個人 dev 視角的 tool use / MCP 權限判讀見 [6.2](/llm/06-security/tool-use-permission-model/)。
+下一章：[4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)、看 LLM 自主決策的設計取捨。副作用等級跟 HITL 時機怎麼配（pre-act / mid-stream / post-hoc）見 [4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)。本地 dev 場景把 tool use 落地到「實際給 wrapper 寫權限」的 hands-on、見 [Ollama 改檔案 / 寫程式碼的權限邊界](/llm/01-local-llm-services/hands-on/permission-boundary/)；個人 dev 視角的 tool use / MCP 權限判讀見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。

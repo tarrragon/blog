@@ -6,7 +6,7 @@ weight: 6
 tags: ["backend", "api-design", "compatibility"]
 ---
 
-向後相容的變更紀律回答一個高頻的日常問題：這個 diff 能不能直接上。版本策略（[11.5](/backend/11-api-design/versioning-and-deprecation/)）處理「決定要 breaking 之後怎麼辦」、本章處理更前面的一層 — 怎麼在每次變更時判定它 break 不 break、以及這個判定由人還是由工具把關。
+向後相容的變更紀律回答一個高頻的日常問題：這個 diff 能不能直接上。版本策略（[11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)）處理「決定要 breaking 之後怎麼辦」、本章處理更前面的一層 — 怎麼在每次變更時判定它 break 不 break、以及這個判定由人還是由工具把關。
 
 ## Breaking 的定義要明文、且比直覺寬
 

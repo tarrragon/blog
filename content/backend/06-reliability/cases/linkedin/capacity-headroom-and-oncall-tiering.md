@@ -22,12 +22,12 @@ LinkedIn 案例的核心責任是讓容量治理與 on-call 分工一起運作�
 
 ## 可觀測訊號
 
-| 訊號                    | 判讀重點               | 對應章節                                                        |
-| ----------------------- | ---------------------- | --------------------------------------------------------------- |
-| replication latency     | 是否接近容量邊界       | [6.9](/backend/06-reliability/capacity-cost/)                   |
-| on-call handoff latency | 分層交接是否順暢       | [8.12](/backend/08-incident-response/ic-handoff-long-incident/) |
-| load-test drift         | 模型與真實壓力是否偏移 | [6.2](/backend/06-reliability/load-testing/)                    |
+| 訊號                    | 判讀重點               | 對應章節                                                                                      |
+| ----------------------- | ---------------------- | --------------------------------------------------------------------------------------------- |
+| replication latency     | 是否接近容量邊界       | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                  |
+| on-call handoff latency | 分層交接是否順暢       | [8.12 IC Handoff 與長事故跨班次協調](/backend/08-incident-response/ic-handoff-long-incident/) |
+| load-test drift         | 模型與真實壓力是否偏移 | [6.2 load test](/backend/06-reliability/load-testing/)                                        |
 
 ## 下一步路由
 
-把容量假設寫進 [6.22](/backend/06-reliability/steady-state-definition/)，再把交接規則對齊 [8.2](/backend/08-incident-response/incident-command-roles/)。
+把容量假設寫進 [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)，再把交接規則對齊 [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)。

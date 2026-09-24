@@ -16,7 +16,7 @@ tags: ["backend", "observability"]
 
 ## 概念定位
 
-觀測共命運失效指觀測系統跟它監控的系統共享失效域、在事故壓力下一起退化 —— 而它退化的時刻，正好是你最需要它的時刻。本章的責任是把「觀測會在事故中失能」當成設計輸入：不是假設儀表板永遠可用、再談怎麼判讀訊號（那是 [4.3](/backend/04-observability/tracing-context/)、[4.6](/backend/04-observability/sli-slo-signal/) 的前提），而是假設它會失能、為那個時刻預先設計 [out-of-band](/backend/knowledge-cards/out-of-band-signal/)（獨立於生產棧的旁路）訊號、優雅降級、以及人在盲飛下的應對。
+觀測共命運失效指觀測系統跟它監控的系統共享失效域、在事故壓力下一起退化 —— 而它退化的時刻，正好是你最需要它的時刻。本章的責任是把「觀測會在事故中失能」當成設計輸入：不是假設儀表板永遠可用、再談怎麼判讀訊號（那是 [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)、[4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/) 的前提），而是假設它會失能、為那個時刻預先設計 [out-of-band](/backend/knowledge-cards/out-of-band-signal/)（獨立於生產棧的旁路）訊號、優雅降級、以及人在盲飛下的應對。
 
 這章跟 [08 事故處理](/backend/08-incident-response/) 的分工是一條窄線：08 講事故的完整角色、指揮鏈、通訊節奏、客訴 intake；本章只截「觀測工具本身退化 / telemetry 不可信」這個特定約束下、哪些設計仍能運作。判斷標準是「工具可靠時就不需要它、工具退化時它才變關鍵」。
 
@@ -26,7 +26,7 @@ tags: ["backend", "observability"]
 
 **依賴耦合**是最根本的一種。Google SRE Book 的立論是：觀測系統若跟被觀測系統一樣複雜、依賴一樣多，它會在同樣的壓力下一起變 fragile —— 所以「the elements of your monitoring system that direct to a pager need to be very simple and robust」、規則要「as simple, predictable, and reliable as possible」（見 [4.C15](/backend/04-observability/cases/monitoring-simple-robust-sre-book/)）。這裡要標明推導邊界：SRE Book 沒有「觀測必須不共享失效域」的字面原句、「共命運」是從 simple / robust / fragile / loosely-coupled 這幾個原句推導的框架。啟示是把「叫醒人類」那條路徑的依賴壓到最少、讓它能獨立於生產棧存活。這條 simple 的約束只加在 alerting 的關鍵路徑上、不是要求整個 tracing 與分析棧都簡單 —— 大規模分散式追蹤本質複雜、該複雜的地方複雜、但決定「要不要 page 人」的那條路徑要能在生產棧全滅時獨立運作。
 
-**反噬**是被觀測系統的異常行為把觀測後端打爆。正好在你要下 query 排障的時刻、被觀測系統反過來拖垮了觀測：事故時 error、user、request-id 這類維度會從低基數突然 spike 成高基數（[cardinality](/backend/knowledge-cards/metric-cardinality/) spike）、而 Prometheus 這類 TSDB「every unique combination of key-value label pairs represents a new time series」、高基數會「lead to memory errors and system crashes」（見 [4.C16](/backend/04-observability/cases/cardinality-explosion-incident/)）。這不是外部依賴掛掉、是被觀測系統透過 label 反噬觀測後端。反噬還有兩條打在被觀測服務自己身上的路徑：log 暴量塞爆磁碟、把服務本身也拖垮；觀測 agent 或 sidecar 在高負載時跟服務爭 CPU 與記憶體。修法在 label 白名單與高基數維度的隔離（見 [4.7](/backend/04-observability/cardinality-cost-governance/)）、log 的容量上限與 agent 的資源上限。
+**反噬**是被觀測系統的異常行為把觀測後端打爆。正好在你要下 query 排障的時刻、被觀測系統反過來拖垮了觀測：事故時 error、user、request-id 這類維度會從低基數突然 spike 成高基數（[cardinality](/backend/knowledge-cards/metric-cardinality/) spike）、而 Prometheus 這類 TSDB「every unique combination of key-value label pairs represents a new time series」、高基數會「lead to memory errors and system crashes」（見 [4.C16](/backend/04-observability/cases/cardinality-explosion-incident/)）。這不是外部依賴掛掉、是被觀測系統透過 label 反噬觀測後端。反噬還有兩條打在被觀測服務自己身上的路徑：log 暴量塞爆磁碟、把服務本身也拖垮；觀測 agent 或 sidecar 在高負載時跟服務爭 CPU 與記憶體。修法在 label 白名單與高基數維度的隔離（見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)）、log 的容量上限與 agent 的資源上限。
 
 **供應商單點**是把「我有沒有事」外包給單一觀測供應商、供應商自己掛。Datadog 2023-03-08 事故裡、客戶的「monitors were unavailable and not alerting」、根因是一個跨區同時觸發的自動更新打到多個本應獨立的部署（見 [4.C18](/backend/04-observability/cases/datadog-2023-monitoring-as-dependency/)）—— 觀測層變成客戶事故的放大器：系統可能沒事但看不到、或有事但沒被叫醒。這是 [correlated failure](/backend/knowledge-cards/correlated-failure/) 的典型：以為獨立的部署共享同一個觸發器。
 

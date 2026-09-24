@@ -24,7 +24,7 @@ LinkedIn 在 Kafka 維運中導入自動化治理，降低人工介入與恢復�
 
 ## 下一步路由
 
-回 [3.2](/backend/03-message-queue/durable-queue/) 與 [8.16](/backend/08-incident-response/runbook-lifecycle/)。
+回 [3.2 durable queue 與重試策略](/backend/03-message-queue/durable-queue/) 與 [8.16 Runbook Lifecycle 管理](/backend/08-incident-response/runbook-lifecycle/)。
 
 ## 引用源
 

@@ -22,12 +22,12 @@ Honeycomb 案例的核心責任是把可觀測訊號直接轉成可靠性決策�
 
 ## 可觀測訊號
 
-| 訊號               | 判讀重點               | 對應章節                                          |
-| ------------------ | ---------------------- | ------------------------------------------------- |
-| fast burn          | 短期消耗是否超過容忍帶 | [6.6](/backend/06-reliability/slo-error-budget/)  |
-| slow burn          | 長期趨勢是否持續惡化   | [4.6](/backend/04-observability/sli-slo-signal/)  |
-| trace outlier path | 關鍵路徑是否集中退化   | [4.3](/backend/04-observability/tracing-context/) |
+| 訊號               | 判讀重點               | 對應章節                                                                  |
+| ------------------ | ---------------------- | ------------------------------------------------------------------------- |
+| fast burn          | 短期消耗是否超過容忍帶 | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/) |
+| slow burn          | 長期趨勢是否持續惡化   | [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)  |
+| trace outlier path | 關鍵路徑是否集中退化   | [4.3 tracing 與 context link](/backend/04-observability/tracing-context/) |
 
 ## 下一步路由
 
-先用 [4.20](/backend/04-observability/observability-evidence-package/) 組證據，再在 [6.23](/backend/06-reliability/verification-evidence-handoff/) 回寫驗證條件。
+先用 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 組證據，再在 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 回寫驗證條件。

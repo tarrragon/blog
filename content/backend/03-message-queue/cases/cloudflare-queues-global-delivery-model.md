@@ -24,7 +24,7 @@ Cloudflare Queues 以邊緣網路為背景，提供事件傳遞與 consumer 處�
 
 ## 下一步路由
 
-回 [3.4](/backend/03-message-queue/consumer-design/) 與 [4.11](/backend/04-observability/telemetry-pipeline/)。
+回 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/) 與 [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)。
 
 ## 引用源
 

@@ -24,7 +24,7 @@ Netflix 用 EVCache 支撐大規模低延遲讀取，把快取從單服務實作
 
 ## 下一步路由
 
-回 [2.1](/backend/02-cache-redis/high-concurrency-access/) 與 [0.7](/backend/00-service-selection/failure-observability-design/)。
+回 [2.1 高併發下的 Redis 讀寫邊界](/backend/02-cache-redis/high-concurrency-access/) 與 [0.7 錯誤定位、觀測訊號與備援切換設計](/backend/00-service-selection/failure-observability-design/)。
 
 ## 引用源
 

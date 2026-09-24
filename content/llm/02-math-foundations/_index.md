@@ -12,13 +12,13 @@ weight: 3
 
 ## 章節列表
 
-| 章節                                                         | 主題                       | 關鍵收穫                                                   |
-| ------------------------------------------------------------ | -------------------------- | ---------------------------------------------------------- |
-| [2.0](/llm/02-math-foundations/linear-algebra-for-llm/)      | 線性代數：向量、矩陣、空間 | LLM 內部所有運算都是矩陣乘法、為什麼維度匹配是常見錯誤源頭 |
-| [2.1](/llm/02-math-foundations/probability-and-information/) | 機率與資訊論               | softmax、cross-entropy、KL divergence、perplexity 的角色   |
-| [2.2](/llm/02-math-foundations/calculus-and-optimization/)   | 微積分與最佳化             | gradient、chain rule、SGD / Adam 在訓練流程中的位置        |
-| [2.3](/llm/02-math-foundations/numerical-precision/)         | 數值精度與量化的數學依據   | floating point、bf16 vs fp32、量化能在哪裡省 bits          |
-| [2.4](/llm/02-math-foundations/going-deeper-math/)           | 想學更深：推薦公開課程     | MIT、Stanford、Harvard、3Blue1Brown 等系統教材路線         |
+| 章節                                                                               | 主題                       | 關鍵收穫                                                   |
+| ---------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------- |
+| [2.0 線性代數：向量、矩陣、空間](/llm/02-math-foundations/linear-algebra-for-llm/) | 線性代數：向量、矩陣、空間 | LLM 內部所有運算都是矩陣乘法、為什麼維度匹配是常見錯誤源頭 |
+| [2.1 機率與資訊論](/llm/02-math-foundations/probability-and-information/)          | 機率與資訊論               | softmax、cross-entropy、KL divergence、perplexity 的角色   |
+| [2.2 微積分與最佳化](/llm/02-math-foundations/calculus-and-optimization/)          | 微積分與最佳化             | gradient、chain rule、SGD / Adam 在訓練流程中的位置        |
+| [2.3 數值精度與量化的數學依據](/llm/02-math-foundations/numerical-precision/)      | 數值精度與量化的數學依據   | floating point、bf16 vs fp32、量化能在哪裡省 bits          |
+| [2.4 想學更深：推薦公開課程](/llm/02-math-foundations/going-deeper-math/)          | 想學更深：推薦公開課程     | MIT、Stanford、Harvard、3Blue1Brown 等系統教材路線         |
 
 ## 跟模組零的分工
 
@@ -78,7 +78,7 @@ weight: 3
 
 ## 不在本模組內的主題
 
-1. **完整數學證明**：本模組只給定義跟用途、不展開推導。完整證明交給 [2.4](/llm/02-math-foundations/going-deeper-math/) 推薦的公開課。
+1. **完整數學證明**：本模組只給定義跟用途、不展開推導。完整證明交給 [2.4 想學更深：推薦公開課程](/llm/02-math-foundations/going-deeper-math/) 推薦的公開課。
 2. **數值分析的進階主題**：條件數、誤差累積、迭代法收斂等屬於數值分析專門課程的範圍。
 3. **機率論進階**：測度論、隨機過程等屬於數學系的範圍、跟 LLM 推論的關聯較淡。
 4. **最佳化理論**：凸最佳化、二階方法等深度主題交給 Stanford CS229 / Boyd 的最佳化課程。

@@ -116,26 +116,26 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 可靠性案例補充的重點是「驗證機制如何被制度化」。閱讀時先抓它在保護哪一種風險，再對照本模組的驗證節點與放行門檻。
 
-| 企業案例                                                                                                                        | 主要可靠性選型問題                     | 優先回讀章節                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [Four Steps to Creating Effective Game Day Tests](https://shopify.engineering/four-steps-creating-effective-game-day-tests)     | Game Day 如何從想法變成可執行驗證流程  | [6.4](/backend/06-reliability/chaos-testing/)、[6.20](/backend/06-reliability/experiment-safety-boundary/)                  |
-| [Resiliency Planning for High-Traffic Events](https://shopify.engineering/resiliency-planning-for-high-traffic-events)          | 高流量活動前如何做風險建模與演練       | [6.9](/backend/06-reliability/capacity-cost/)、[6.22](/backend/06-reliability/steady-state-definition/)                     |
-| [Workload isolation using shuffle-sharding](https://aws.amazon.com/builders-library/workload-isolation-using-shuffle-sharding/) | 多租戶系統如何把故障影響限制在局部     | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[6.20](/backend/06-reliability/experiment-safety-boundary/) |
-| [Google SRE Workbook: Example Error Budget Policy](https://sre.google/workbook/error-budget-policy/)                            | Error budget 如何直接影響 release 節奏 | [6.6](/backend/06-reliability/slo-error-budget/)、[6.8](/backend/06-reliability/release-gate/)                              |
+| 企業案例                                                                                                                        | 主要可靠性選型問題                     | 優先回讀章節                                                                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Four Steps to Creating Effective Game Day Tests](https://shopify.engineering/four-steps-creating-effective-game-day-tests)     | Game Day 如何從想法變成可執行驗證流程  | [6.4 chaos testing](/backend/06-reliability/chaos-testing/)、[6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)                                  |
+| [Resiliency Planning for High-Traffic Events](https://shopify.engineering/resiliency-planning-for-high-traffic-events)          | 高流量活動前如何做風險建模與演練       | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)、[6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)                                       |
+| [Workload isolation using shuffle-sharding](https://aws.amazon.com/builders-library/workload-isolation-using-shuffle-sharding/) | 多租戶系統如何把故障影響限制在局部     | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)、[6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) |
+| [Google SRE Workbook: Example Error Budget Policy](https://sre.google/workbook/error-budget-policy/)                            | Error budget 如何直接影響 release 節奏 | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)、[6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                                      |
 
 若要延續案例擴充，先從 [0.14 企業選型案例圖譜](/backend/00-service-selection/enterprise-selection-case-atlas/) 找到對應規模與產業，再回到本模組決定要補哪一類驗證節點（6.6、6.19、6.20、6.22、6.24）。案例頁與主章的關係是「案例提供壓力樣本，主章提供放行規則」。
 
 產業情境回寫覆蓋 7 個產業，每個產業回寫到 2 個最相關的章節。不同產業的約束類型不同（監管 / 即時互動 / 合規 / 季節峰值 / 多租戶 / 即時交付 / 邊緣可靠性），通用章節覆蓋不到的差異由產業情境段補齊。
 
-| 產業案例類型 | 約束類型              | 驗證回寫重點                                        | 章節路由                                                                                                                 |
-| ------------ | --------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| FinTech      | 監管 + 交易正確性     | error budget 觸發凍結、交易關鍵路徑的 release gate  | [6.6](/backend/06-reliability/slo-error-budget/)、[6.8](/backend/06-reliability/release-gate/)                           |
-| Gaming       | 即時互動 + 使用者體驗 | 高峰事件前穩態定義、規則推送回退與停止條件          | [6.22](/backend/06-reliability/steady-state-definition/)、[6.24](/backend/06-reliability/rule-rollout-safety-gate/)      |
-| Healthcare   | 合規 + 臨床安全       | DR rehearsal 節奏、合規約束下的恢復驗證與 readiness | [6.7](/backend/06-reliability/dr-rollback-rehearsal/)、[6.19](/backend/06-reliability/reliability-readiness-review/)     |
-| 電商 / 零售  | 季節峰值 + 轉換率     | 峰值 workload model、容量成本與降級邊界             | [6.2](/backend/06-reliability/load-testing/)、[6.9](/backend/06-reliability/capacity-cost/)                              |
-| SaaS / B2B   | 多租戶 SLA + 隔離     | 依賴 budget 按 SLA 分配、租戶級穩態定義             | [6.14](/backend/06-reliability/dependency-reliability-budget/)、[6.22](/backend/06-reliability/steady-state-definition/) |
-| 串流 / 媒體  | 即時交付 + 直播事件   | CDN chaos 與媒體品質 regression                     | [6.4](/backend/06-reliability/chaos-testing/)、[6.13](/backend/06-reliability/performance-regression-gate/)              |
-| IoT / 製造   | 邊緣可靠性 + OTA 安全 | firmware rollback 與裝置碎片化 release gate         | [6.7](/backend/06-reliability/dr-rollback-rehearsal/)、[6.8](/backend/06-reliability/release-gate/)                      |
+| 產業案例類型 | 約束類型              | 驗證回寫重點                                        | 章節路由                                                                                                                                                                       |
+| ------------ | --------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FinTech      | 監管 + 交易正確性     | error budget 觸發凍結、交易關鍵路徑的 release gate  | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)、[6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                                |
+| Gaming       | 即時互動 + 使用者體驗 | 高峰事件前穩態定義、規則推送回退與停止條件          | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)、[6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)                   |
+| Healthcare   | 合規 + 臨床安全       | DR rehearsal 節奏、合規約束下的恢復驗證與 readiness | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)、[6.19 Reliability Readiness Review](/backend/06-reliability/reliability-readiness-review/) |
+| 電商 / 零售  | 季節峰值 + 轉換率     | 峰值 workload model、容量成本與降級邊界             | [6.2 load test](/backend/06-reliability/load-testing/)、[6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                                           |
+| SaaS / B2B   | 多租戶 SLA + 隔離     | 依賴 budget 按 SLA 分配、租戶級穩態定義             | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)、[6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/) |
+| 串流 / 媒體  | 即時交付 + 直播事件   | CDN chaos 與媒體品質 regression                     | [6.4 chaos testing](/backend/06-reliability/chaos-testing/)、[6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)                          |
+| IoT / 製造   | 邊緣可靠性 + OTA 安全 | firmware rollback 與裝置碎片化 release gate         | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)、[6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                       |
 
 ## 跨語言適配評估
 
@@ -190,15 +190,15 @@ Deep article（工具自身的配置、故障、容量）跟 migration playbook�
 
 06 後續深化以「多事件案例鏈、驗證證據欄位統一、事故路由回寫」為主。可靠性驗證承接 04 的訊號可信度，並把結果穩定交給 08 的 incident 決策流程。
 
-| 深化方向     | 主要責任                                       | 回寫路由                                                                                                                       |
-| ------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| 多事件案例鏈 | 同服務補第二、第三事件，提升 longitudinal 判讀 | [cases/](/backend/06-reliability/cases/)                                                                                       |
-| 證據欄位統一 | 把 SLO / chaos / rollout 證據變成同一決策格式  | [6.23](/backend/06-reliability/verification-evidence-handoff/)、[8.19](/backend/08-incident-response/incident-decision-log/)   |
-| 風險回寫治理 | 把 repeated incident 與手動補救回寫 backlog    | [6.21](/backend/06-reliability/reliability-debt-backlog/)、[8.22](/backend/08-incident-response/incident-evidence-write-back/) |
+| 深化方向     | 主要責任                                       | 回寫路由                                                                                                                                                                             |
+| ------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 多事件案例鏈 | 同服務補第二、第三事件，提升 longitudinal 判讀 | [cases/](/backend/06-reliability/cases/)                                                                                                                                             |
+| 證據欄位統一 | 把 SLO / chaos / rollout 證據變成同一決策格式  | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)、[8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)     |
+| 風險回寫治理 | 把 repeated incident 與手動補救回寫 backlog    | [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)、[8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/) |
 
 ## 實作探討入口
 
-進入實作層時，06 建議先做一條最小 release gate：同一個變更同時具備 `SLO 狀態、readiness 結論、experiment 證據、rollback 條件` 四欄，並寫入 [6.23](/backend/06-reliability/verification-evidence-handoff/) 供 [8.19](/backend/08-incident-response/incident-decision-log/) 直接調用。
+進入實作層時，06 建議先做一條最小 release gate：同一個變更同時具備 `SLO 狀態、readiness 結論、experiment 證據、rollback 條件` 四欄，並寫入 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 供 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 直接調用。
 
 首篇示範已完成： [6.25 Provider Dependency Release Gate 實作示範](/backend/06-reliability/provider-dependency-release-gate/)。
 

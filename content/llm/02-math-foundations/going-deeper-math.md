@@ -26,12 +26,12 @@ weight: 5
 
 Grant Sanderson 的 3Blue1Brown 頻道是入門 / 複習數學概念最有效率的選擇。動畫品質高、講解直觀、每集 15 ~ 30 分鐘。
 
-| 系列                               | 涵蓋內容                                          | 直接相關章節                                                                                                                   |
-| ---------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Essence of Linear Algebra（15 集） | 向量、矩陣、線性變換、特徵值、向量空間            | [2.0](/llm/02-math-foundations/linear-algebra-for-llm/)                                                                        |
-| Essence of Calculus（12 集）       | 導數、積分、chain rule、Taylor series             | [2.2](/llm/02-math-foundations/calculus-and-optimization/)                                                                     |
-| Neural Networks（4 集）            | 神經網路怎麼學、backpropagation、gradient descent | [2.2](/llm/02-math-foundations/calculus-and-optimization/) + [3.0](/llm/03-theoretical-foundations/neural-network-basics/)     |
-| But what is a GPT?（多集系列）     | Transformer 內部、attention、embedding 視覺化     | [3.2](/llm/03-theoretical-foundations/attention-mechanism/) + [3.3](/llm/03-theoretical-foundations/transformer-architecture/) |
+| 系列                               | 涵蓋內容                                          | 直接相關章節                                                                                                                                                       |
+| ---------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Essence of Linear Algebra（15 集） | 向量、矩陣、線性變換、特徵值、向量空間            | [2.0 線性代數：向量、矩陣、空間](/llm/02-math-foundations/linear-algebra-for-llm/)                                                                                 |
+| Essence of Calculus（12 集）       | 導數、積分、chain rule、Taylor series             | [2.2 微積分與最佳化](/llm/02-math-foundations/calculus-and-optimization/)                                                                                          |
+| Neural Networks（4 集）            | 神經網路怎麼學、backpropagation、gradient descent | [2.2 微積分與最佳化](/llm/02-math-foundations/calculus-and-optimization/) + [3.0 神經網路基礎](/llm/03-theoretical-foundations/neural-network-basics/)             |
+| But what is a GPT?（多集系列）     | Transformer 內部、attention、embedding 視覺化     | [3.2 Attention 機制](/llm/03-theoretical-foundations/attention-mechanism/) + [3.3 Transformer 架構細節](/llm/03-theoretical-foundations/transformer-architecture/) |
 
 **為什麼從這裡開始**：3Blue1Brown 的影片不依賴背景知識、用視覺直觀傳達核心概念、適合在進入正式課之前對齊直覺。看完 Essence of Linear Algebra 跟 Neural Networks 兩個系列、本模組大部分概念都能 grasp 到直覺層。
 
@@ -45,7 +45,7 @@ Grant Sanderson 的 3Blue1Brown 頻道是入門 / 複習數學概念最有效率
 - **課程連結**：ocw.mit.edu 站內搜尋 18.06 或 18.06SC
 - **時長**：18 ~ 35 講、每講 50 分鐘、約 30 小時
 - **適合**：認真打底、想做完整作業
-- **跟本模組關係**：完整補完 [2.0](/llm/02-math-foundations/linear-algebra-for-llm/) 的數學深度
+- **跟本模組關係**：完整補完 [2.0 線性代數：向量、矩陣、空間](/llm/02-math-foundations/linear-algebra-for-llm/) 的數學深度
 
 ### MIT 18.06SC Linear Algebra（Self-Paced 版本）
 
@@ -61,7 +61,7 @@ Harvard 教授 Joe Blitzstein 的機率論課、是 LLM 機率基礎最完整的
 - **教科書**：Introduction to Probability by Blitzstein & Hwang
 - **時長**：35 講、每講 50 分鐘、約 30 小時
 - **適合**：想懂機率論完整體系
-- **跟本模組關係**：補完 [2.1](/llm/02-math-foundations/probability-and-information/) 的數學深度
+- **跟本模組關係**：補完 [2.1 機率與資訊論](/llm/02-math-foundations/probability-and-information/) 的數學深度
 
 ### MIT 6.041 Probabilistic Systems Analysis（OCW 免費）
 
@@ -78,7 +78,7 @@ Stanford 的 CS 系開設、機率論 + 程式應用、適合想直接看「機�
 涵蓋 entropy、cross-entropy、KL divergence、Shannon coding theorem、channel capacity 等資訊論完整基礎。
 
 - **教科書**：Information Theory, Inference, and Learning Algorithms by David MacKay（也免費 PDF）
-- **適合**：想懂 [2.1](/llm/02-math-foundations/probability-and-information/) 中 entropy / KL 的數學起源
+- **適合**：想懂 [2.1 機率與資訊論](/llm/02-math-foundations/probability-and-information/) 中 entropy / KL 的數學起源
 - **跟 LLM 的連結**：cross-entropy 為什麼是訓練 LLM 的標準 loss、perplexity 的資訊論意義
 
 ### Stanford EE376A Information Theory
@@ -93,7 +93,7 @@ Stanford 的 EE 系開設、跟通訊工程結合、適合 EE 背景讀者。
 
 - **教科書**：Convex Optimization by Boyd & Vandenberghe（線上 PDF 免費）
 - **適合**：想懂 SGD、Adam、Lagrangian 等最佳化技術的數學起源
-- **跟本模組關係**：補完 [2.2](/llm/02-math-foundations/calculus-and-optimization/) 的最佳化理論深度
+- **跟本模組關係**：補完 [2.2 微積分與最佳化](/llm/02-math-foundations/calculus-and-optimization/) 的最佳化理論深度
 
 ## 階段 6：深度學習與 LLM
 

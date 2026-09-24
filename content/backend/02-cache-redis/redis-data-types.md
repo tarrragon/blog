@@ -10,7 +10,7 @@ Redis data types 的核心責任是把服務語意映射到適合的內建結構
 
 ## 與 2.8 的分工
 
-[2.8](/backend/02-cache-redis/cache-data-shape-access-pattern/) 回答「這份資料是單 key、集合、排序還是計數」這層形狀選型，本章回答「選定形狀後，這個型別的操作語意、原子性與記憶體曲線是什麼」。形狀選型決定方向，型別實作決定它在真實流量下的成本與正確性邊界。兩章分工互補：2.8 判斷形狀，本章確認該型別能不能撐住預期的存取節奏。本章涵蓋 sorted set、bitmap、HyperLogLog、counter 與 hash 這五個快取場景最常用的型別；list 與 stream 的責任偏向佇列與事件流，由 [模組三 message queue](/backend/03-message-queue/) 涵蓋，geo 這類空間型別不在本章範圍。
+[2.8 Cache Data Shape 與 Access Pattern](/backend/02-cache-redis/cache-data-shape-access-pattern/) 回答「這份資料是單 key、集合、排序還是計數」這層形狀選型，本章回答「選定形狀後，這個型別的操作語意、原子性與記憶體曲線是什麼」。形狀選型決定方向，型別實作決定它在真實流量下的成本與正確性邊界。兩章分工互補：2.8 判斷形狀，本章確認該型別能不能撐住預期的存取節奏。本章涵蓋 sorted set、bitmap、HyperLogLog、counter 與 hash 這五個快取場景最常用的型別；list 與 stream 的責任偏向佇列與事件流，由 [模組三 message queue](/backend/03-message-queue/) 涵蓋，geo 這類空間型別不在本章範圍。
 
 ## sorted set：排行榜與時間線
 

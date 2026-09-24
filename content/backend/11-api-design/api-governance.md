@@ -24,7 +24,7 @@ API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十�
 
 ## 工具層：規範進 CI
 
-治理成本的關鍵優化是把可機檢的規則從人工 review 前移到 CI。OpenAPI 生態的代表是 Spectral（內建 OpenAPI 與 AsyncAPI rulesets、組織自帶自訂規則）跟 Zalando 的 Zally（預設 ruleset 直接執行 Zalando guidelines）；兩者的生態軌跡本身是選型訊號 — Spectral 有 8.1k dependent projects 且持續發版、Zally 的 release 停在 2022：兩個資料點指向「通用 linter 加組織自帶 ruleset、比單一組織專用 linter 更能存活」的判讀（C49 判讀、樣本有限、見 [11.C49](/backend/11-api-design/cases/governance-linting-spectral-zally/)）。protobuf 生態的對應物是 buf 的 lint 與 breaking check（[11.6](/backend/11-api-design/backward-compatibility-discipline/) 的工具層）。工具的邊界要誠實：linter 蓋得住命名、結構、必填欄位；蓋不住語意（這個資源建模合不合理）— 語意層仍回到 design review、工具的價值是讓人的注意力只花在語意上。
+治理成本的關鍵優化是把可機檢的規則從人工 review 前移到 CI。OpenAPI 生態的代表是 Spectral（內建 OpenAPI 與 AsyncAPI rulesets、組織自帶自訂規則）跟 Zalando 的 Zally（預設 ruleset 直接執行 Zalando guidelines）；兩者的生態軌跡本身是選型訊號 — Spectral 有 8.1k dependent projects 且持續發版、Zally 的 release 停在 2022：兩個資料點指向「通用 linter 加組織自帶 ruleset、比單一組織專用 linter 更能存活」的判讀（C49 判讀、樣本有限、見 [11.C49](/backend/11-api-design/cases/governance-linting-spectral-zally/)）。protobuf 生態的對應物是 buf 的 lint 與 breaking check（[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/) 的工具層）。工具的邊界要誠實：linter 蓋得住命名、結構、必填欄位；蓋不住語意（這個資源建模合不合理）— 語意層仍回到 design review、工具的價值是讓人的注意力只花在語意上。
 
 ## 失敗的模式：文件不會自己活著
 
@@ -50,5 +50,5 @@ API 規範治理處理的問題在文件之外：規範寫得出來、讓幾十�
 ## 下一步路由
 
 - 相容性檢查的工具細節：[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)
-- 各章判斷標準是治理的內容物：從 [11.1](/backend/11-api-design/api-boundary-responsibility/) 依序讀
+- 各章判斷標準是治理的內容物：從 [11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/) 依序讀
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

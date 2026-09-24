@@ -71,7 +71,7 @@ Firestore 為「已知路徑的 document 讀寫」付成本，不為「任意欄
 **1. 行動 app / SPA 的 MVP 後端**：
 
 - 認證接 Firebase Auth、資料存 Firestore、推播接 Cloud Messaging，整個 MVP 沒有自己的後端服務
-- 對應 [0.21](/backend/00-service-selection/delivery-mode-selection/) BaaS 段的「把後端工程師這個角色延後」
+- 對應 [0.21 交付形態選型：從全託管到自建的光譜與邊界](/backend/00-service-selection/delivery-mode-selection/) BaaS 段的「把後端工程師這個角色延後」
 
 **2. 多裝置即時同步**：
 
@@ -131,7 +131,7 @@ Firestore 為「已知路徑的 document 讀寫」付成本，不為「任意欄
 
 - Firestore：document model、Google 的 BaaS bundle 資料層
 - Supabase：底層是 PostgreSQL（relational）、開源 BaaS bundle，遷出時資料是標準 SQL
-- 兩者都是 client 直連 + 規則授權的 BaaS 形狀，差別在資料模型（document vs relational）與遷出時的資料可攜性；Supabase 的資料層判讀見 [Managed PostgreSQL 比較](/backend/01-database/vendors/postgresql/managed-pg-comparison/)，選型層錨點見 [0.22](/backend/00-service-selection/capability-buy-vs-build/)
+- 兩者都是 client 直連 + 規則授權的 BaaS 形狀，差別在資料模型（document vs relational）與遷出時的資料可攜性；Supabase 的資料層判讀見 [Managed PostgreSQL 比較](/backend/01-database/vendors/postgresql/managed-pg-comparison/)，選型層錨點見 [0.22 能力級買 vs 建：feature-as-a-service 與 BaaS bundle 選型](/backend/00-service-selection/capability-buy-vs-build/)
 
 ## 容量規劃要點
 

@@ -12,7 +12,7 @@ tags: ["backend", "database", "firestore", "migration", "paradigm-shift", "migra
 
 ## 遷移的 driver：三面牆，不是「relational 比較好」
 
-Firestore 遷往自建很少因為「relational 比較好」這種空泛動機，而是撞到 [0.21](/backend/00-service-selection/delivery-mode-selection/) BaaS 段描述的三面具體的牆。先確認 driver 真的成立、再啟動遷移：
+Firestore 遷往自建很少因為「relational 比較好」這種空泛動機，而是撞到 [0.21 交付形態選型：從全託管到自建的光譜與邊界](/backend/00-service-selection/delivery-mode-selection/) BaaS 段描述的三面具體的牆。先確認 driver 真的成立、再啟動遷移：
 
 | Driver          | 撞牆訊號                                                   | 遷移要解的問題                                  |
 | --------------- | ---------------------------------------------------------- | ----------------------------------------------- |
@@ -20,7 +20,7 @@ Firestore 遷往自建很少因為「relational 比較好」這種空泛動機�
 | 成本曲線轉折    | read / write 計費隨流量線性成長、超過自建 + cache 的成本   | 用自管資料庫 + 應用層快取壓低單位成本           |
 | 授權控制面失控  | Security Rules 長到難以測試 / review、授權邏輯沒有版本治理 | 把授權拉回後端 API 中介層、可測試可審查         |
 
-> **No-go condition**：產品仍以多裝置 realtime 同步與 offline-first 為核心賣點、且查詢需求簡單、成本仍在舒適區 → 先不要遷。這些正是 Firestore 的主場，硬遷會把 realtime / offline 這層平台白送的能力變成自己要重建的工程。遷移前先問「撞的是哪面牆」，三面牆都沒撞到就是 [0.22](/backend/00-service-selection/capability-buy-vs-build/) 講的偽自建。
+> **No-go condition**：產品仍以多裝置 realtime 同步與 offline-first 為核心賣點、且查詢需求簡單、成本仍在舒適區 → 先不要遷。這些正是 Firestore 的主場，硬遷會把 realtime / offline 這層平台白送的能力變成自己要重建的工程。遷移前先問「撞的是哪面牆」，三面牆都沒撞到就是 [0.22 能力級買 vs 建：feature-as-a-service 與 BaaS bundle 選型](/backend/00-service-selection/capability-buy-vs-build/) 講的偽自建。
 
 逐能力遷出是常態而非整包搬離：[0.22 的「成長期 SaaS」例子](/backend/00-service-selection/capability-buy-vs-build/) 就是只把撞牆的資料層搬到自管 PostgreSQL、認證留在原平台。本文預設的也是這種逐能力遷出 — 遷的是資料層，不一定連認證、儲存一起搬。
 
@@ -140,7 +140,7 @@ Type E 的 cleanup 通常不是「關掉整個 Firebase」— 多數情況認證
 - shadow read 比對 code 移除
 - 前端殘留的 Firestore SDK 依賴清掉（資料層已不走它）
 - 但 Firebase Auth / Storage 若仍在用，保留；明確標示哪條資料路徑的 source of truth 是自建庫、哪條仍在平台
-- Firestore 的資料匯出備份保留到確認新庫穩定，對應 [10.3](/backend/10-system-evolution/managed-platform-exit/) 的並行期退役判斷標準
+- Firestore 的資料匯出備份保留到確認新庫穩定，對應 [10.3 託管形態遷出：資產線盤點與並行期執行](/backend/10-system-evolution/managed-platform-exit/) 的並行期退役判斷標準
 
 混合架構不是遷移失敗、是逐能力選型的穩態 — 撞牆的資料層自建、沒撞牆的認證 / 儲存留在平台。
 
@@ -154,7 +154,7 @@ production 常見的 5 個踩雷：
 
 #### Case 2：Security Rules 翻譯漏洞
 
-把規則翻成後端授權時漏一條、開了越權查詢的洞、上線後資料外洩。修法：授權翻譯要逐條對照 + 紅隊驗證（[1.5](/backend/01-database/red-team-data-layer/)）、當成 cutover gate 條件、不是功能 bug。
+把規則翻成後端授權時漏一條、開了越權查詢的洞、上線後資料外洩。修法：授權翻譯要逐條對照 + 紅隊驗證（[1.5 攻擊者視角（紅隊）：資料層弱點判讀](/backend/01-database/red-team-data-layer/)）、當成 cutover gate 條件、不是功能 bug。
 
 #### Case 3：反正規化還原錯誤
 

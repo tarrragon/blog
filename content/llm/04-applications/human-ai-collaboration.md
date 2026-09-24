@@ -71,7 +71,7 @@ Centaur 跟 cyborg 是兩種人類跟 LLM 共事的姿態。概念起源於 Kasp
 
 - **精確算術**：靠符號操作、訓練資料中算術佔比小、tokenizer 把數字切成多 token 也加難度。Tool use（呼叫 calculator）能補救。
 - **計數**：要對 input 做精確 traversal、跟 LLM 的並行 [attention](/llm/knowledge-cards/attention/) 機制不對盤、容易少算多算。對 needle in long context 的失敗模式類比見 [needle in haystack](/llm/knowledge-cards/needle-in-haystack/) 卡。
-- **嚴格遵守冷僻格式**：format 沒在訓練分佈中見過、模型回退到「我熟悉的格式」。Constrained decoding（見 [3.10](/llm/03-theoretical-foundations/constrained-decoding-internals/)）能補救。
+- **嚴格遵守冷僻格式**：format 沒在訓練分佈中見過、模型回退到「我熟悉的格式」。Constrained decoding（見 [3.10 Constrained decoding 內部：grammar mask 跟性能取捨](/llm/03-theoretical-foundations/constrained-decoding-internals/)）能補救。
 - **引用真實 URL**：模型沒辦法區分「真實存在」跟「看起來合理」、[hallucinate](/llm/knowledge-cards/hallucination/) 出格式對但內容假的 URL。靠 tool（web search、URL validator）才能驗證。
 
 整體看：能力分佈跟訓練資料分佈、tokenizer 行為、推論機制相關、跟人類直覺的「難易」沒對齊。這給三個實務啟示：
@@ -226,4 +226,4 @@ User 的 approve / reject pattern 進 trace、定期 analyze、把「總是 appr
 
 ## 下一章
 
-下一章：[4.6 應用層協議](/llm/04-applications/application-protocols/)、把 function calling / structured output / MCP 三個概念放回正確層級、銜接 agent 跟外部系統的協議設計。Agent 自主度分層完整討論見 [4.4](/llm/04-applications/agent-architecture/)、工具副作用範圍見 [4.3](/llm/04-applications/tool-use-principles/)、HITL 在 fuzzy engineering 中的定位見 [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)。
+下一章：[4.6 應用層協議](/llm/04-applications/application-protocols/)、把 function calling / structured output / MCP 三個概念放回正確層級、銜接 agent 跟外部系統的協議設計。Agent 自主度分層完整討論見 [4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)、工具副作用範圍見 [4.3 Tool use 原理：LLM 跟外部世界互動](/llm/04-applications/tool-use-principles/)、HITL 在 fuzzy engineering 中的定位見 [0.8 Deterministic vs Fuzzy Engineering：軟體設計典範的位移](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)。

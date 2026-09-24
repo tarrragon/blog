@@ -69,22 +69,22 @@ PC 場景常用的旗標可以分成五組：
 
 ### 1. GPU 層分配
 
-| 旗標                  | 作用                                                                                                 |
-| --------------------- | ---------------------------------------------------------------------------------------------------- |
-| `-ngl <N>`            | 把 N 層 transformer block 放 GPU。常設 99 或 max 表示能放盡量放                                      |
-| `--n-cpu-moe <N>`     | MoE 模型：把 N 層的專家權重保留 CPU 記憶體、見 [5.1](/llm/05-discrete-gpu/moe-cpu-offload-strategy/) |
-| `--split-mode <mode>` | 多卡模式（`none` / `layer` / `row`）                                                                 |
-| `-ts <floats>`        | tensor split、多卡時各卡的權重比例                                                                   |
-| `-mg <N>`             | 主卡 index、特定計算（如 KV cache）放在主卡                                                          |
+| 旗標                  | 作用                                                                                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `-ngl <N>`            | 把 N 層 transformer block 放 GPU。常設 99 或 max 表示能放盡量放                                                              |
+| `--n-cpu-moe <N>`     | MoE 模型：把 N 層的專家權重保留 CPU 記憶體、見 [5.1 MoE 模型與 CPU 卸載策略](/llm/05-discrete-gpu/moe-cpu-offload-strategy/) |
+| `--split-mode <mode>` | 多卡模式（`none` / `layer` / `row`）                                                                                         |
+| `-ts <floats>`        | tensor split、多卡時各卡的權重比例                                                                                           |
+| `-mg <N>`             | 主卡 index、特定計算（如 KV cache）放在主卡                                                                                  |
 
 ### 2. KV cache 與 context
 
-| 旗標                    | 作用                                                                                                 |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| `-c <N>`                | context window 大小                                                                                  |
-| `--cache-type-k <type>` | K cache 量化（f16 / q8_0 / q4_0 等）、見 [5.2](/llm/05-discrete-gpu/kv-cache-quantization-strategy/) |
-| `--cache-type-v <type>` | V cache 量化                                                                                         |
-| `-fa` / `--flash-attn`  | 啟用 flash attention、部分量化組合需要                                                               |
+| 旗標                    | 作用                                                                                                                   |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `-c <N>`                | context window 大小                                                                                                    |
+| `--cache-type-k <type>` | K cache 量化（f16 / q8_0 / q4_0 等）、見 [5.2 KV cache 量化策略](/llm/05-discrete-gpu/kv-cache-quantization-strategy/) |
+| `--cache-type-v <type>` | V cache 量化                                                                                                           |
+| `-fa` / `--flash-attn`  | 啟用 flash attention、部分量化組合需要                                                                                 |
 
 ### 3. 平行與 batch
 
@@ -242,13 +242,13 @@ llama-bench 的結果是「fixed prompt / 固定生成長度」、跟「實際�
 
 llama.cpp 對非 CUDA backend 的支援度依社群回報有以下相對位置：
 
-| Backend | 平台支援              | 社群成熟度                              | 常見適用情境                                         |
-| ------- | --------------------- | --------------------------------------- | ---------------------------------------------------- |
-| CUDA    | NVIDIA、Windows/Linux | 最成熟、PR 與文件最多                   | 預設選項                                             |
-| ROCm    | AMD、Linux 為主       | 演進中、Windows 支援較新                | AMD GPU on Linux                                     |
-| Vulkan  | 跨廠商                | 通用但 throughput 通常較 CUDA / ROCm 低 | AMD on Windows、Intel ARC、跨平台 fallback           |
-| SYCL    | Intel                 | 新興、社群實測案例較少                  | Intel ARC                                            |
-| Metal   | Apple Silicon         | 成熟（屬模組一範圍）                    | Mac、見 [1.2](/llm/01-local-llm-services/llama-cpp/) |
+| Backend | 平台支援              | 社群成熟度                              | 常見適用情境                                                                 |
+| ------- | --------------------- | --------------------------------------- | ---------------------------------------------------------------------------- |
+| CUDA    | NVIDIA、Windows/Linux | 最成熟、PR 與文件最多                   | 預設選項                                                                     |
+| ROCm    | AMD、Linux 為主       | 演進中、Windows 支援較新                | AMD GPU on Linux                                                             |
+| Vulkan  | 跨廠商                | 通用但 throughput 通常較 CUDA / ROCm 低 | AMD on Windows、Intel ARC、跨平台 fallback                                   |
+| SYCL    | Intel                 | 新興、社群實測案例較少                  | Intel ARC                                                                    |
+| Metal   | Apple Silicon         | 成熟（屬模組一範圍）                    | Mac、見 [1.2 llama.cpp：底層推論引擎](/llm/01-local-llm-services/llama-cpp/) |
 
 > **事實查核註**：各 backend 的成熟度跟性能對比是社群常見回報、不是經本文系統實測。建議引用前查閱 [llama.cpp 的 PR 列表](https://github.com/ggml-org/llama.cpp/pulls)、對應 backend 的官方文件、跟自己硬體的實際 benchmark。
 

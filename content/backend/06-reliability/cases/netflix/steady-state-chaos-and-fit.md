@@ -29,12 +29,12 @@ Netflix 的價值在於把 chaos 轉成科學化驗證循環：先定義穩態�
 
 ## 可觀測訊號
 
-| 訊號                      | 判讀重點               | 對應章節                                                            |
-| ------------------------- | ---------------------- | ------------------------------------------------------------------- |
-| steady-state SLI          | 注入後是否維持服務承諾 | [6.22](/backend/06-reliability/steady-state-definition/)            |
-| abort trigger count       | 停止條件是否可執行     | [6.20](/backend/06-reliability/experiment-safety-boundary/)         |
-| fallback success ratio    | 降級與替代路徑是否有效 | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
-| trace degradation pattern | 退化是否集中於預期依賴 | [4.3](/backend/04-observability/tracing-context/)                   |
+| 訊號                      | 判讀重點               | 對應章節                                                                                 |
+| ------------------------- | ---------------------- | ---------------------------------------------------------------------------------------- |
+| steady-state SLI          | 注入後是否維持服務承諾 | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)         |
+| abort trigger count       | 停止條件是否可執行     | [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)   |
+| fallback success ratio    | 降級與替代路徑是否有效 | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/) |
+| trace degradation pattern | 退化是否集中於預期依賴 | [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)                |
 
 ## 常見陷阱
 
@@ -42,4 +42,4 @@ Netflix 的價值在於把 chaos 轉成科學化驗證循環：先定義穩態�
 
 ## 下一步路由
 
-若要把本案例落地，先寫 [6.22](/backend/06-reliability/steady-state-definition/) 的穩態欄位，再在 [6.20](/backend/06-reliability/experiment-safety-boundary/) 定義停止條件。案例輸出的證據交給 [6.23](/backend/06-reliability/verification-evidence-handoff/) 與 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。
+若要把本案例落地，先寫 [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/) 的穩態欄位，再在 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 定義停止條件。案例輸出的證據交給 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 與 [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)。

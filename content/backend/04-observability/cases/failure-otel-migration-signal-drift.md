@@ -28,4 +28,4 @@ OTel 切換後，儀表板看起來都有資料，但 on-call 開始收到不同
 
 ## 下一步路由
 
-回 [4.17](/backend/04-observability/telemetry-data-quality/) 與 [4.11](/backend/04-observability/telemetry-pipeline/)。
+回 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 與 [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)。

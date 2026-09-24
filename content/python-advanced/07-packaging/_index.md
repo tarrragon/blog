@@ -16,13 +16,13 @@ tags: ["python", "python-advanced", "packaging", "pyproject"]
 
 ## 章節列表
 
-| 章節                                                   | 主題                    | 關鍵收穫                      |
-| ------------------------------------------------------ | ----------------------- | ----------------------------- |
-| [7.1](/python-advanced/07-packaging/pyproject-toml/)   | pyproject.toml 完整指南 | 現代設定標準                  |
-| [7.2](/python-advanced/07-packaging/build-systems/)    | 建構系統比較            | setuptools vs Poetry vs Hatch |
-| [7.3](/python-advanced/07-packaging/distribution/)     | 發布到 PyPI             | 建構與上傳流程                |
-| [7.4](/python-advanced/07-packaging/best-practices/)   | 最佳實踐                | 套件維護指南                  |
-| [7.5](/python-advanced/07-packaging/bundled-binaries/) | 封裝預編譯二進位        | Python 封裝 Go/Rust/C 二進位  |
+| 章節                                                                         | 主題                    | 關鍵收穫                      |
+| ---------------------------------------------------------------------------- | ----------------------- | ----------------------------- |
+| [6.1 pyproject.toml 完整指南](/python-advanced/07-packaging/pyproject-toml/) | pyproject.toml 完整指南 | 現代設定標準                  |
+| [6.2 建構系統比較](/python-advanced/07-packaging/build-systems/)             | 建構系統比較            | setuptools vs Poetry vs Hatch |
+| [6.3 發布到 PyPI](/python-advanced/07-packaging/distribution/)               | 發布到 PyPI             | 建構與上傳流程                |
+| [6.4 套件維護最佳實踐](/python-advanced/07-packaging/best-practices/)        | 最佳實踐                | 套件維護指南                  |
+| [6.5 封裝預編譯二進位](/python-advanced/07-packaging/bundled-binaries/)      | 封裝預編譯二進位        | Python 封裝 Go/Rust/C 二進位  |
 
 ## 相關 PEP 標準
 

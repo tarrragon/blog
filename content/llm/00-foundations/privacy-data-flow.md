@@ -199,7 +199,7 @@ VS Code、JetBrains 系列預設可能開 settings sync、把對話歷史、rece
 
 判讀訊號：plugin 不是 verified publisher、下載量少、permission 列表廣。
 
-緩解：敏感場景只用 verified plugin、定期 audit 已裝 plugin、移除不必要的。完整 tool use / MCP server 信任邊界見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)、IDE 場景的 prompt injection 攻擊面（codebase / 外部文件 / 剪貼簿）見 [6.3](/llm/06-security/prompt-injection-in-ide/)。
+緩解：敏感場景只用 verified plugin、定期 audit 已裝 plugin、移除不必要的。完整 tool use / MCP server 信任邊界見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)、IDE 場景的 prompt injection 攻擊面（codebase / 外部文件 / 剪貼簿）見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。
 
 ### Open WebUI 對話歷史備份
 

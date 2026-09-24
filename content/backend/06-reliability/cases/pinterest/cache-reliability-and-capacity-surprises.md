@@ -22,12 +22,12 @@ Pinterest 案例的核心責任是處理快取層造成的容量驚奇。快取�
 
 ## 可觀測訊號
 
-| 訊號                 | 判讀重點           | 對應章節                                                            |
-| -------------------- | ------------------ | ------------------------------------------------------------------- |
-| cache hit ratio drop | 是否進入危險區     | [6.9](/backend/06-reliability/capacity-cost/)                       |
-| fallback latency     | 降級路徑是否可接受 | [6.22](/backend/06-reliability/steady-state-definition/)            |
-| rewarm backlog       | 回填是否可收斂     | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
+| 訊號                 | 判讀重點           | 對應章節                                                                                 |
+| -------------------- | ------------------ | ---------------------------------------------------------------------------------------- |
+| cache hit ratio drop | 是否進入危險區     | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                             |
+| fallback latency     | 降級路徑是否可接受 | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)         |
+| rewarm backlog       | 回填是否可收斂     | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/) |
 
 ## 下一步路由
 
-先在 [6.2](/backend/06-reliability/load-testing/) 模擬命中率崩落，再把恢復證據寫入 [6.23](/backend/06-reliability/verification-evidence-handoff/)。
+先在 [6.2 load test](/backend/06-reliability/load-testing/) 模擬命中率崩落，再把恢復證據寫入 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)。

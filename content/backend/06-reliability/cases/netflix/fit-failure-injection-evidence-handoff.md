@@ -25,12 +25,12 @@ tags: ["backend", "reliability", "case-study"]
 
 ## 可觀測訊號
 
-| 訊號                  | 判讀重點                   | 對應章節                                                            |
-| --------------------- | -------------------------- | ------------------------------------------------------------------- |
-| verification evidence | 證據是否足以支持 release   | [6.23](/backend/06-reliability/verification-evidence-handoff/)      |
-| rule rollout anomaly  | 規則推送後是否偏離預期     | [6.24](/backend/06-reliability/rule-rollout-safety-gate/)           |
-| incident decision lag | 事故時是否可快速調用證據   | [8.19](/backend/08-incident-response/incident-decision-log/)        |
-| evidence write-back   | 教訓是否回寫成下次驗證輸入 | [8.22](/backend/08-incident-response/incident-evidence-write-back/) |
+| 訊號                  | 判讀重點                   | 對應章節                                                                                         |
+| --------------------- | -------------------------- | ------------------------------------------------------------------------------------------------ |
+| verification evidence | 證據是否足以支持 release   | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)     |
+| rule rollout anomaly  | 規則推送後是否偏離預期     | [6.24 規則推送安全閘門](/backend/06-reliability/rule-rollout-safety-gate/)                       |
+| incident decision lag | 事故時是否可快速調用證據   | [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)               |
+| evidence write-back   | 教訓是否回寫成下次驗證輸入 | [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/) |
 
 ## 常見陷阱
 
@@ -38,7 +38,7 @@ tags: ["backend", "reliability", "case-study"]
 
 ## 下一步路由
 
-先把 FIT 輸出整理到 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)，再接到 [6.24 Rule Rollout Safety Gate](/backend/06-reliability/rule-rollout-safety-gate/) 做放行判斷。事故發生時由 [8.19](/backend/08-incident-response/incident-decision-log/) 快速提取決策證據，最後回寫 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。
+先把 FIT 輸出整理到 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)，再接到 [6.24 Rule Rollout Safety Gate](/backend/06-reliability/rule-rollout-safety-gate/) 做放行判斷。事故發生時由 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 快速提取決策證據，最後回寫 [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)。
 
 ## 引用源
 

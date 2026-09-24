@@ -17,7 +17,7 @@ Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷
 | Level 2 | HTTP method 與 status 正確使用  | 中介層基礎設施（快取、重試、監控）開始能讀懂介面 |
 | Level 3 | Hypermedia controls（HATEOAS）  | client 從回應習得可用操作、業務知識收回 server   |
 
-表格是索引、每級的躍遷各有實質收益。Level 0 到 1 的收益是結構：橫切能力（權限、審計、快取鍵）有了掛載單位。Level 1 到 2 的收益是讓基礎設施當盟友：GET 的安全承諾讓 proxy 敢快取、status 的語意讓監控與重試鏈正確運作 — method 與 status 作為承諾的完整判斷標準在 [11.3](/backend/11-api-design/resource-modeling-operation-semantics/)。Level 2 到 3 的收益是解耦 client 的業務知識 — 但這一級的收益前提（存在會跟連結走的 uniform client）在 machine-to-machine 場景多半不成立、完整交鋒見 [Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)。
+表格是索引、每級的躍遷各有實質收益。Level 0 到 1 的收益是結構：橫切能力（權限、審計、快取鍵）有了掛載單位。Level 1 到 2 的收益是讓基礎設施當盟友：GET 的安全承諾讓 proxy 敢快取、status 的語意讓監控與重試鏈正確運作 — method 與 status 作為承諾的完整判斷標準在 [11.3 資源建模與操作語意](/backend/11-api-design/resource-modeling-operation-semantics/)。Level 2 到 3 的收益是解耦 client 的業務知識 — 但這一級的收益前提（存在會跟連結走的 uniform client）在 machine-to-machine 場景多半不成立、完整交鋒見 [Hypermedia 與 HATEOAS 復興](/backend/11-api-design/styles/rest/hypermedia-hateoas-revival/)。
 
 ## 兩個立場事實
 
@@ -25,7 +25,7 @@ Richardson 成熟度模型（RMM）是一把定位尺、而非一張認證考卷
 
 ## 誤用一：當合規檢查表
 
-「我們的 API 要通過 Level 2 審查」這類用法把定位尺變成認證考卷、產生兩種浪費。輕的浪費是形式主義：為了「正確使用 PATCH」而在沒有部分更新需求的資源上硬加 PATCH、級別達標、介面多了沒人用的表面積。重的浪費是誤導優先序：Level 2 的實質收益是中介層能讀懂介面 — 檢查的對象該是「快取有沒有實際命中、重試鏈行為是否正確」、而非 method 使用的字面合規。合規檢查表要從自家的 breaking 清單與錯誤模型長出來（[11.6](/backend/11-api-design/backward-compatibility-discipline/)、[11.4](/backend/11-api-design/error-model-design/)）、RMM 的粒度不夠細，做不了這個角色。
+「我們的 API 要通過 Level 2 審查」這類用法把定位尺變成認證考卷、產生兩種浪費。輕的浪費是形式主義：為了「正確使用 PATCH」而在沒有部分更新需求的資源上硬加 PATCH、級別達標、介面多了沒人用的表面積。重的浪費是誤導優先序：Level 2 的實質收益是中介層能讀懂介面 — 檢查的對象該是「快取有沒有實際命中、重試鏈行為是否正確」、而非 method 使用的字面合規。合規檢查表要從自家的 breaking 清單與錯誤模型長出來（[11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)、[11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)）、RMM 的粒度不夠細，做不了這個角色。
 
 ## 誤用二：當升級路線圖
 

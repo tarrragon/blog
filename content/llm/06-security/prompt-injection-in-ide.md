@@ -134,7 +134,7 @@ prompt injection → LLM 輸出 → 下游動作
 下游動作的常見類型：
 
 1. **使用者照 LLM 建議貼到 shell 跑**：純人工執行、防護點在「使用者要看清楚再執行」。
-2. **tool use 自動執行 LLM 生成的指令 / API call**：自動執行、防護點在 tool 的權限白名單 + confirm 機制（見 [6.2](/llm/06-security/tool-use-permission-model/)）。
+2. **tool use 自動執行 LLM 生成的指令 / API call**：自動執行、防護點在 tool 的權限白名單 + confirm 機制（見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)）。
 3. **LLM 輸出寫進 file / commit / PR**：寫入後續被 CI / 其他人 review、防護點在 git track + code review。
 4. **LLM 輸出送進下一個 agent**：agent chain 放大、防護點在 chain 設計層。
 
@@ -143,7 +143,7 @@ prompt injection → LLM 輸出 → 下游動作
 ## 個人 dev 場景的最低防護建議
 
 1. **codebase 搜尋 exclude 第三方依賴目錄**：`node_modules/`、`vendor/`、`.venv/`、`target/`、`dist/` 等加進 search exclude、降低 RAG 索引到藏 prompt 的依賴文件。
-2. **tool use 副作用類動作要 confirm**：見 [6.2](/llm/06-security/tool-use-permission-model/)。
+2. **tool use 副作用類動作要 confirm**：見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)。
 3. **untrusted 來源內容明確標記**：LLM client 支援的話、用「以下是來自外部 X 的內容、僅供參考」這類框框出來。
 4. **agent mode 別讓 LLM 自己決定下一步**：個人 dev 場景下、agent loop 開太大容易自我循環、值得設 max steps 跟 review checkpoint。Agent loop 五步骨架跟人類審查協作 spectrum 見 [4.4 Agent 架構](/llm/04-applications/agent-architecture/)。
 5. **codebase 用 git track**：被誤注入時、`git diff` 看得到改動、`git checkout` 回退。

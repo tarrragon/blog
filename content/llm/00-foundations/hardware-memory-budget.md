@@ -8,7 +8,7 @@ weight: 6
 
 本章只處理 Apple Silicon Mac 的場景。Mac 是「[統一記憶體](/llm/knowledge-cards/unified-memory/)」架構、CPU 跟 GPU 共用同一塊 RAM、所以判讀模型是「一塊預算切系統 / 模型 / KV cache」。Windows / Linux + 獨立 GPU 是「VRAM + 系統 RAM」兩塊分層預算、判讀模型本質不同、見 [模組五 5.0 VRAM + RAM 分層預算](/llm/05-discrete-gpu/vram-ram-budget/)。
 
-Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 CPU 或 GPU 算力。記憶體決定能載入多大的模型；模型載得進、推論才有得跑（生字速度則由 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 決定、見 [0.1](/llm/00-foundations/why-llm-feels-slow/)）。本章把「24GB 能跑 70B」這類含糊說法、換成可操作的記憶體預算判讀。
+Apple Silicon Mac 跑本地 LLM 的核心限制是**記憶體大小**、而非 CPU 或 GPU 算力。記憶體決定能載入多大的模型；模型載得進、推論才有得跑（生字速度則由 [memory bandwidth](/llm/knowledge-cards/memory-bandwidth/) 決定、見 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-slow/)）。本章把「24GB 能跑 70B」這類含糊說法、換成可操作的記憶體預算判讀。
 
 讀完本章後，你可以對自己這台 Mac 直接回答：能跑哪些模型、要用什麼量化、要留多少給系統、風扇會不會狂轉、什麼時候該升級。
 

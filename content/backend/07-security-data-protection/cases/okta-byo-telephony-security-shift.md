@@ -24,7 +24,7 @@ Okta 推動 BYO telephony，將 SMS/voice MFA 的供應商控制責任轉給客�
 
 ## 下一步路由
 
-回 [7.10](/backend/07-security-data-protection/workload-identity-and-federated-trust/) 與 [7.14](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。
+回 [7.10 Workload Identity 與聯邦信任邊界](/backend/07-security-data-protection/workload-identity-and-federated-trust/) 與 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。
 
 ## 引用源
 

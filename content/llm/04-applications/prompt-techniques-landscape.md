@@ -176,13 +176,13 @@ Stack 有效的必要條件是**兩技術解不同軸的問題、且底層假設
 
 Prompt 技術不是萬能、有些問題該換層解：
 
-| 問題                           | Prompt 層能解到哪                 | 該換的層                                                               |
-| ------------------------------ | --------------------------------- | ---------------------------------------------------------------------- |
-| 模型不知道某個事實             | few-shot 塞少量、不夠             | RAG（[4.1](/llm/04-applications/rag-principles/)）                     |
-| 模型完全不會某個任務           | few-shot 不夠用、頻繁失敗         | Fine-tune（[3.4](/llm/03-theoretical-foundations/training-pipeline/)） |
-| 任務要多步、每步要不同 context | single prompt 塞不下、邏輯混      | Chaining / workflow（[4.7](/llm/04-applications/workflow-patterns/)）  |
-| 任務要外部資料 / API           | prompt 描述不出、需要實際呼叫     | Tool use（[4.3](/llm/04-applications/tool-use-principles/)）           |
-| 任務要 LLM 自主推進            | prompt 無法表達「持續決定下一步」 | Agent（[4.4](/llm/04-applications/agent-architecture/)）               |
+| 問題                           | Prompt 層能解到哪                 | 該換的層                                                                                                |
+| ------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 模型不知道某個事實             | few-shot 塞少量、不夠             | RAG（[4.1 RAG 原理：retrieval + augmentation 模式](/llm/04-applications/rag-principles/)）              |
+| 模型完全不會某個任務           | few-shot 不夠用、頻繁失敗         | Fine-tune（[3.4 訓練流程：pre-train → SFT → RLHF](/llm/03-theoretical-foundations/training-pipeline/)） |
+| 任務要多步、每步要不同 context | single prompt 塞不下、邏輯混      | Chaining / workflow（[4.7 Workflow 編排模式](/llm/04-applications/workflow-patterns/)）                 |
+| 任務要外部資料 / API           | prompt 描述不出、需要實際呼叫     | Tool use（[4.3 Tool use 原理：LLM 跟外部世界互動](/llm/04-applications/tool-use-principles/)）          |
+| 任務要 LLM 自主推進            | prompt 無法表達「持續決定下一步」 | Agent（[4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)）                                 |
 
 判讀訊號：prompt 改了五版、accuracy 還是不到 baseline、就該往這個表的右欄移、不是再改 prompt 第六版。
 
@@ -220,4 +220,4 @@ Prompt 修改沒效、定位是 systematic 還是 random error：
 
 ## 下一章
 
-下一章：[4.1 RAG 原理](/llm/04-applications/rag-principles/)、把「prompt 層塞不下知識」這個邊界往外推、進入 LLM 跟外部資料互動的領域。Prompt 跟 fine-tune 的對齊取捨見 [3.4](/llm/03-theoretical-foundations/training-pipeline/)、跟 chaining 的邊界完整討論見 [4.7](/llm/04-applications/workflow-patterns/)、跟 fuzzy engineering 典範的關係見 [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)。
+下一章：[4.1 RAG 原理](/llm/04-applications/rag-principles/)、把「prompt 層塞不下知識」這個邊界往外推、進入 LLM 跟外部資料互動的領域。Prompt 跟 fine-tune 的對齊取捨見 [3.4 訓練流程：pre-train → SFT → RLHF](/llm/03-theoretical-foundations/training-pipeline/)、跟 chaining 的邊界完整討論見 [4.7 Workflow 編排模式](/llm/04-applications/workflow-patterns/)、跟 fuzzy engineering 典範的關係見 [0.8 Deterministic vs Fuzzy Engineering：軟體設計典範的位移](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)。

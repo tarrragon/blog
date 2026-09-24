@@ -184,7 +184,7 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 本地 LLM 跑 agent 現階段（2026/5）失敗率明顯高於雲端、根因不只一條：
 
-- **Tool use 訓練不足**（見 [4.3](/llm/04-applications/tool-use-principles/)）：小模型 tool use 本來就崩、agent 需要多次穩定 tool use、失敗率複合放大。
+- **Tool use 訓練不足**（見 [4.3 Tool use 原理：LLM 跟外部世界互動](/llm/04-applications/tool-use-principles/)）：小模型 tool use 本來就崩、agent 需要多次穩定 tool use、失敗率複合放大。
 - **Long context prefill 痛點**（見 [0.1 為什麼 LLM 生字慢](/llm/00-foundations/why-llm-feels-slow/)）：Agent 每步都重新 prefill 累積 context、TTFT 越跑越長。
 - **規劃能力弱**：雲端旗艦在 multi-step planning 上的優勢是公認的；本地 model SFT 規模有限、規劃能力跟雲端有明顯差距。
 - **失敗 recovery 弱**：模型發現走錯路時、本地模型較容易繼續錯下去、雲端模型較會自我修正。
@@ -219,4 +219,4 @@ Agent 的自主程度跟人類審查粒度是 spectrum、不是 binary：
 
 ## 下一章
 
-下一章：[4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)、把上文的人類審查 spectrum 落到「人類什麼時候介入、怎麼介入」的三時機設計。應用層協議（function calling / structured output / MCP）的層級差異見 [4.6](/llm/04-applications/application-protocols/)。Agent 對本機資源副作用的個人 dev 權限判讀見 [6.2](/llm/06-security/tool-use-permission-model/)、個人工作流跨進 production 服務時的 routing 中樞見 [6.5](/llm/06-security/routing-to-production-security/)。
+下一章：[4.5 人機協作拓樸](/llm/04-applications/human-ai-collaboration/)、把上文的人類審查 spectrum 落到「人類什麼時候介入、怎麼介入」的三時機設計。應用層協議（function calling / structured output / MCP）的層級差異見 [4.6 應用層協議：function calling / structured output / MCP](/llm/04-applications/application-protocols/)。Agent 對本機資源副作用的個人 dev 權限判讀見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)、個人工作流跨進 production 服務時的 routing 中樞見 [6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/)。

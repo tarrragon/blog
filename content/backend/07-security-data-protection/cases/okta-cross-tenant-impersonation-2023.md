@@ -24,7 +24,7 @@ Okta 公開 cross-tenant impersonation 預防與偵測建議，揭示管理員�
 
 ## 下一步路由
 
-回 [7.2](/backend/07-security-data-protection/identity-access-boundary/) 與 [7.13](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)。
+回 [7.2 身分與授權邊界](/backend/07-security-data-protection/identity-access-boundary/) 與 [7.13 偵測覆蓋率與訊號治理](/backend/07-security-data-protection/detection-coverage-and-signal-governance/)。
 
 ## 引用源
 

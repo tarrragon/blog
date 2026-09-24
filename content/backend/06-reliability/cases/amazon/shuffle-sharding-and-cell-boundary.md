@@ -27,12 +27,12 @@ cell-based architecture 與 shuffle sharding 提供的是前置結構：先限�
 
 ## 可觀測訊號
 
-| 訊號                         | 判讀重點                 | 對應章節                                                            |
-| ---------------------------- | ------------------------ | ------------------------------------------------------------------- |
-| shard contention             | 熱點是否跨 shard 擴散    | [6.14](/backend/06-reliability/dependency-reliability-budget/)      |
-| cell error isolation ratio   | 錯誤是否被限制在局部     | [6.20](/backend/06-reliability/experiment-safety-boundary/)         |
-| recovery batch completion    | 分批恢復是否可預測       | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
-| control-plane dependency lag | 控制面異常是否拖累資料面 | [4.13](/backend/04-observability/service-topology/)                 |
+| 訊號                         | 判讀重點                 | 對應章節                                                                                     |
+| ---------------------------- | ------------------------ | -------------------------------------------------------------------------------------------- |
+| shard contention             | 熱點是否跨 shard 擴散    | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) |
+| cell error isolation ratio   | 錯誤是否被限制在局部     | [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/)       |
+| recovery batch completion    | 分批恢復是否可預測       | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)     |
+| control-plane dependency lag | 控制面異常是否拖累資料面 | [4.13 Service Topology 與 Dependency Map](/backend/04-observability/service-topology/)       |
 
 ## 常見陷阱
 
@@ -40,4 +40,4 @@ cell-based architecture 與 shuffle sharding 提供的是前置結構：先限�
 
 ## 下一步路由
 
-要把案例轉成可執行設計，先定義 [6.14](/backend/06-reliability/dependency-reliability-budget/) 的依賴預算與共享邊界，再在 [6.20](/backend/06-reliability/experiment-safety-boundary/) 驗證局部化假設。事故時的分批回復流程回到 [8.14](/backend/08-incident-response/multi-incident-coordination/)。
+要把案例轉成可執行設計，先定義 [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) 的依賴預算與共享邊界，再在 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 驗證局部化假設。事故時的分批回復流程回到 [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/)。

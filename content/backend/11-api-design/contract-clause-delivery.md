@@ -29,7 +29,7 @@ tags: ["backend", "api-design", "contract"]
 
 **型別與 schema 層**的觸及率高、承載力窄。OpenAPI 的 required 與列舉、protobuf 的欄位定義、SDK 方法簽章上的型別，這些會在 codegen 或編譯時擋下違規，而消費者不必知道背後的規則是什麼。它的界線畫在單一請求上：schema 看得到這一次請求的形狀（JSON Schema 的 `dependentRequired` 之類還表達得了請求內欄位的相依），看不到請求跟請求之間的關係。「同一個 key 配不同參數會失敗」與「這個 cursor 過期後失效」都是跨請求狀態，因此都落在下一層。
 
-**執行期回饋層**是跨請求條款的主場，而它的品質差距全在錯誤的表達力上。同一個違規回 `400 Bad Request` 與回一個帶明確錯誤碼加說明的回應，對消費者是「不知道自己做錯什麼」與「知道並且改得掉」的差別。這一層還有一個常被忽略的形式：`Deprecation` 與 `Sunset` header 這類 in-band warning，它把「未來會怎樣」推進了執行期，訊號出現在開發者一定會看的地方，觸及率高於任何公告渠道（工具箱見 [11.5](/backend/11-api-design/versioning-and-deprecation/)）。
+**執行期回饋層**是跨請求條款的主場，而它的品質差距全在錯誤的表達力上。同一個違規回 `400 Bad Request` 與回一個帶明確錯誤碼加說明的回應，對消費者是「不知道自己做錯什麼」與「知道並且改得掉」的差別。這一層還有一個常被忽略的形式：`Deprecation` 與 `Sunset` header 這類 in-band warning，它把「未來會怎樣」推進了執行期，訊號出現在開發者一定會看的地方，觸及率高於任何公告渠道（工具箱見 [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)）。
 
 送達還有一個維度不在這張表上：**時機**。一個手段送到了，不代表對方來得及反應——Deprecation 標頭在每個回應裡出現，而消費者要能發一版新的 client 才改得掉，那個週期由他們的發布節奏決定而非你的。因此推播與執行期回饋這兩層的提前量要以對方的變更節奏為輸入（那個數怎麼量、怎麼進排程，見 [11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/) 的第零層）；一季才發一次版的消費者，提前三週通知等於沒有通知。
 

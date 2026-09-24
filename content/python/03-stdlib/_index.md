@@ -10,16 +10,16 @@ Python 的「電池內建」哲學意味著標準庫提供了豐富的工具。�
 
 ## 章節列表
 
-| 章節                                  | 主題                      | 關鍵收穫                                       |
-| ------------------------------------- | ------------------------- | ---------------------------------------------- |
-| [3.1](/python/03-stdlib/pathlib/)     | pathlib - 路徑操作        | 物件導向的路徑處理                             |
-| [3.2](/python/03-stdlib/json/)        | json - 序列化             | 資料的讀寫與轉換                               |
-| [3.3](/python/03-stdlib/subprocess/)  | subprocess - 執行外部命令 | 呼叫系統命令                                   |
-| [3.4](/python/03-stdlib/regex/)       | re - 正規表達式           | 文字模式匹配                                   |
-| [3.5](/python/03-stdlib/logging/)     | logging - 日誌系統        | 結構化日誌輸出                                 |
-| [3.6](/python/03-stdlib/argparse/)    | argparse - CLI 介面       | 命令列參數解析                                 |
-| [3.7](/python/03-stdlib/concurrency/) | 並行處理                  | threading、multiprocessing、concurrent.futures |
-| [3.8](/python/03-stdlib/performance/) | 效能迷思與優化            | 效能測量、優化策略                             |
+| 章節                                                                                            | 主題                      | 關鍵收穫                                       |
+| ----------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------- |
+| [3.1 pathlib - 路徑操作](/python/03-stdlib/pathlib/)                                            | pathlib - 路徑操作        | 物件導向的路徑處理                             |
+| [3.2 json - 序列化](/python/03-stdlib/json/)                                                    | json - 序列化             | 資料的讀寫與轉換                               |
+| [3.3 subprocess - 執行外部命令](/python/03-stdlib/subprocess/)                                  | subprocess - 執行外部命令 | 呼叫系統命令                                   |
+| [3.4 re - 正規表達式](/python/03-stdlib/regex/)                                                 | re - 正規表達式           | 文字模式匹配                                   |
+| [3.5 logging - 日誌系統](/python/03-stdlib/logging/)                                            | logging - 日誌系統        | 結構化日誌輸出                                 |
+| [3.6 argparse - CLI 介面](/python/03-stdlib/argparse/)                                          | argparse - CLI 介面       | 命令列參數解析                                 |
+| [3.7 並行處理 - threading、multiprocessing、concurrent.futures](/python/03-stdlib/concurrency/) | 並行處理                  | threading、multiprocessing、concurrent.futures |
+| [3.8 效能迷思與優化策略](/python/03-stdlib/performance/)                                        | 效能迷思與優化            | 效能測量、優化策略                             |
 
 ## 實際範例來源
 

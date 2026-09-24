@@ -27,7 +27,7 @@ tags: ["security", "authentication", "api", "backend", "provisioning"]
 
 ---
 
-> 呼叫方是瀏覽器裡的頁面時，憑證怎麼帶進每個請求（cookie 自動附上與請求標頭明確附上各自的攻擊面）見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)；登入交給外部身分提供者（SAML / OIDC）的那一側見 [7.38](/backend/07-security-data-protection/external-identity-local-record-lifecycle/) 與 [7.40](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。
+> 呼叫方是瀏覽器裡的頁面時，憑證怎麼帶進每個請求（cookie 自動附上與請求標頭明確附上各自的攻擊面）見 [7.36 憑證在請求中怎麼帶](/backend/07-security-data-protection/credential-transport-in-request/)；登入交給外部身分提供者（SAML / OIDC）的那一側見 [7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/) 與 [7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)。
 
 ## Layer 1：使用者層（Bearer Token）
 

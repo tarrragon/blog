@@ -43,7 +43,7 @@ LLM 服務的供應鏈跟一般 software 服務的差異在「同時管三條 ch
 
 ## 分析模型
 
-production LLM 供應鏈的分析依五個層次拆解、跟 [7.4](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) 的層次模型保持一致：
+production LLM 供應鏈的分析依五個層次拆解、跟 [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) 的層次模型保持一致：
 
 1. **來源層**：模型 build provenance 是否可回溯（哪個 base model、用哪個 dataset、由誰量化）。
 2. **產物層**：GGUF / safetensors 在傳遞過程的完整性（hash / 簽署）。
@@ -92,7 +92,7 @@ LLM 供應鏈相對一般 software 供應鏈有幾個特殊點：
 
 ## 案例觸發參考
 
-LLM 場景的供應鏈事件案例尚在累積中、本章先沿用 [7.4](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) 的通用案例。LLM-specific 案例累積後會補入 `red-team/cases/llm-supply-chain/`：
+LLM 場景的供應鏈事件案例尚在累積中、本章先沿用 [7.12 供應鏈完整性與 Artifact 信任](/backend/07-security-data-protection/supply-chain-integrity-and-artifact-trust/) 的通用案例。LLM-specific 案例累積後會補入 `red-team/cases/llm-supply-chain/`：
 
 - 開源組件滲透與下游衝擊：[XZ Backdoor 2024](/backend/07-security-data-protection/red-team/cases/supply-chain/xz-backdoor-2024-open-source-supply-chain/)（同類威脅在 MCP server / inference framework 也適用）
 - 平台級供應鏈事件：[SolarWinds 2020](/backend/07-security-data-protection/red-team/cases/supply-chain/solarwinds-2020-sunburst/)（模型釋出方平台級事件適用）

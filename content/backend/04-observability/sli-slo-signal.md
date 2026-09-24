@@ -23,7 +23,7 @@ SLI 訊號設計是把可靠性目標轉成可量測資料的步驟，責任是�
 
 CPU、memory、queue depth 可以提供系統背景，但 [SLI](/backend/knowledge-cards/sli-slo/) 需要回答的是使用者層面的問題：request 是否成功、回應是否夠快、結果是否正確。SLI 量測的位置跟算式決定了 SLO 反映的是「使用者體驗」還是「基礎設施健康」— 兩者的判讀意義不同。
 
-本章處理的是 metric 到 SLI 的轉換。[4.2](/backend/04-observability/metrics-basics/) 定義 counter / gauge / histogram 的基礎型別；本章定義怎麼用這些型別組出代表使用者體驗的 SLI，並設計 burn rate alert 的訊號結構。SLO 政策本身（error budget freeze、release gate 決策）由 [6.6 SLO 政策](/backend/06-reliability/) 處理。
+本章處理的是 metric 到 SLI 的轉換。[4.2 metrics 與 SLI/SLO](/backend/04-observability/metrics-basics/) 定義 counter / gauge / histogram 的基礎型別；本章定義怎麼用這些型別組出代表使用者體驗的 SLI，並設計 burn rate alert 的訊號結構。SLO 政策本身（error budget freeze、release gate 決策）由 [6.6 SLO 政策](/backend/06-reliability/) 處理。
 
 ## SLI 設計起點：User Journey
 

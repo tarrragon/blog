@@ -10,11 +10,11 @@ tags: ["backend", "api-design", "graphql"]
 
 ## 採用：動機要能量化
 
-[11.C18](/backend/11-api-design/cases/graphql-github-adoption/) 記錄了 GitHub 2016 年的採用動機、關鍵在它的可量化性：既有 REST API 佔資料庫層超過 60% 的請求、且 over-fetching 與 under-fetching 並存 — 送太多資料、又缺消費者要的資料。這是基礎設施成本層的痛、不只是開發體驗敘事。判讀：GraphQL 的採用決策值得用同樣的標準檢驗 — 指得出「哪個資源層指標會因 client 聲明取數而改善」、動機成立；只給得出「前端想要彈性」、先確認這個彈性有多少會被實際用到（消費者形狀判斷標準、見 [11.2](/backend/11-api-design/api-style-selection/)）。
+[11.C18](/backend/11-api-design/cases/graphql-github-adoption/) 記錄了 GitHub 2016 年的採用動機、關鍵在它的可量化性：既有 REST API 佔資料庫層超過 60% 的請求、且 over-fetching 與 under-fetching 並存 — 送太多資料、又缺消費者要的資料。這是基礎設施成本層的痛、不只是開發體驗敘事。判讀：GraphQL 的採用決策值得用同樣的標準檢驗 — 指得出「哪個資源層指標會因 client 聲明取數而改善」、動機成立；只給得出「前端想要彈性」、先確認這個彈性有多少會被實際用到（消費者形狀判斷標準、見 [11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)）。
 
 ## 穩態一：雙軌共存
 
-GitHub 的十年後狀態記錄在 [11.C20](/backend/11-api-design/cases/graphql-github-rest-parallel/)：官方立場是 REST 與 GraphQL 並行、依情境選用、且明文說明功能覆蓋不對等 — 某功能可能只在其中一個 API 支援。這是「新風格取代舊風格」預期的反面實證：兩套 API 各自累積消費者之後、任何一套的退場都是大規模 breaking change（成本結構見 [11.1](/backend/11-api-design/api-boundary-responsibility/)）、共存從過渡狀態變成永久狀態。雙軌的隱藏成本是每個新功能的「要不要兩邊都做」決策與文件、SDK、支援的雙倍表面積 — 採用前把這筆帳算進去、雙軌不是免費的中間路線。
+GitHub 的十年後狀態記錄在 [11.C20](/backend/11-api-design/cases/graphql-github-rest-parallel/)：官方立場是 REST 與 GraphQL 並行、依情境選用、且明文說明功能覆蓋不對等 — 某功能可能只在其中一個 API 支援。這是「新風格取代舊風格」預期的反面實證：兩套 API 各自累積消費者之後、任何一套的退場都是大規模 breaking change（成本結構見 [11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)）、共存從過渡狀態變成永久狀態。雙軌的隱藏成本是每個新功能的「要不要兩邊都做」決策與文件、SDK、支援的雙倍表面積 — 採用前把這筆帳算進去、雙軌不是免費的中間路線。
 
 ## 穩態二：平台強制的 all-in
 

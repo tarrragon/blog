@@ -10,11 +10,11 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                         | 判讀重點             | 回寫章節                                                            |
-| ---------------------------- | -------------------- | ------------------------------------------------------------------- |
-| router error spike           | 入口故障是否擴散     | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
-| tenant-level impact variance | 影響是否呈現分區差異 | [8.20](/backend/08-incident-response/customer-impact-assessment/)   |
-| status lag                   | 對外更新是否落後     | [8.10](/backend/08-incident-response/stakeholder-communication/)    |
+| 訊號                         | 判讀重點             | 回寫章節                                                                                      |
+| ---------------------------- | -------------------- | --------------------------------------------------------------------------------------------- |
+| router error spike           | 入口故障是否擴散     | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)      |
+| tenant-level impact variance | 影響是否呈現分區差異 | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)  |
+| status lag                   | 對外更新是否落後     | [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/) |
 
 ## 邊界判讀
 
@@ -22,4 +22,4 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 下一步路由
 
-事故流程需先切分租戶影響，再做回復批次，並回寫 [8.4](/backend/08-incident-response/incident-communication/) 與 [8.20](/backend/08-incident-response/customer-impact-assessment/)。
+事故流程需先切分租戶影響，再做回復批次，並回寫 [8.4 事故通訊與狀態更新](/backend/08-incident-response/incident-communication/) 與 [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)。

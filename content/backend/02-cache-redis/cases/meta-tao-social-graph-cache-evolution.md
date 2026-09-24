@@ -24,7 +24,7 @@ Meta TAO 用於社交圖讀取，演進重點在一致性、可擴展性與資�
 
 ## 下一步路由
 
-回 [2.2](/backend/02-cache-redis/cache-aside/) 與 [1.2](/backend/01-database/schema-design/)。
+回 [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/) 與 [1.2 Schema Design 與資料建模](/backend/01-database/schema-design/)。
 
 ## 引用源
 

@@ -173,7 +173,7 @@ Multi-agent 的核心 trade-off 是**專業化收益跟協調成本的拉鋸**�
 
 ## Multi-Agent 特有的失敗模式
 
-除了單 agent 共通的失敗（context drift / goal drift / tool misread、見 [4.4](/llm/04-applications/agent-architecture/)）、multi-agent 系統有自己特有的失敗模式：
+除了單 agent 共通的失敗（context drift / goal drift / tool misread、見 [4.4 Agent 架構原理](/llm/04-applications/agent-architecture/)）、multi-agent 系統有自己特有的失敗模式：
 
 ### 循環依賴
 

@@ -176,7 +176,7 @@ T+7 retro 是讓 readiness 持續改進的關鍵。
 
 **Retro 產出**：
 
-- forecast 改進建議（給 [9.6](/backend/09-performance-capacity/capacity-planning/)）
+- forecast 改進建議（給 [9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)）
 - 新 runbook 或 runbook 更新
 - 新 monitoring / alert
 - 新工程任務（補容量、補工具）

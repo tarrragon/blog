@@ -73,7 +73,7 @@ Replay 機制是事故恢復工具、也是攻擊面。攻擊者可能濫用 rep
 
 ## 跨模組路由
 
-1. 與 03 內部：規模化分層治理回 [3.1 broker-basics](/backend/03-message-queue/broker-basics/)；下游推送 quota 攻擊面跟 [3.2 durable-queue 下游推送是隱性瓶頸](/backend/03-message-queue/durable-queue/) 互補；replay 跟 idempotency 共設計回 [3.6](/backend/03-message-queue/processing-recovery-semantics/)
+1. 與 03 內部：規模化分層治理回 [3.1 broker-basics](/backend/03-message-queue/broker-basics/)；下游推送 quota 攻擊面跟 [3.2 durable-queue 下游推送是隱性瓶頸](/backend/03-message-queue/durable-queue/) 互補；replay 跟 idempotency 共設計回 [3.6 Processing Semantics 與 Recovery Semantics](/backend/03-message-queue/processing-recovery-semantics/)
 2. 與 01 的交接：replay / 補償權限管理回 [1.9 reconciliation 修復權限管理](/backend/01-database/reconciliation-data-repair/)
 3. 與 04 的交接：紅隊偵測訊號（DLQ 速率、retry storm、duplicate）進 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)
 4. 與 06 的交接：rule rollout 安全閘門進 [6.24 rule-rollout-safety-gate](/backend/06-reliability/rule-rollout-safety-gate/)

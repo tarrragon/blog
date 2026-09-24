@@ -44,9 +44,9 @@ Ingestion / storage / query 三層的成本增長模式不同、控制手段也�
 
 **Ingestion 成本**：跟 events/sec 跟 series count 成正比。控制手段是 sampling、cardinality 限制、低價值訊號過濾。歸因到產生訊號的服務。
 
-**Storage / retention 成本**：跟資料量 × 保留期成正比。控制手段是 retention 階梯（[4.7](/backend/04-observability/cardinality-cost-governance/)）、[rollup](/backend/knowledge-cards/rollup/) 跟 [storage tiering](/backend/knowledge-cards/storage-tiering/)。歸因到資料保留政策的 owner。
+**Storage / retention 成本**：跟資料量 × 保留期成正比。控制手段是 retention 階梯（[4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)）、[rollup](/backend/knowledge-cards/rollup/) 跟 [storage tiering](/backend/knowledge-cards/storage-tiering/)。歸因到資料保留政策的 owner。
 
-**Query 成本**：跟查詢次數 × 掃描量成正比。控制手段是 [recording rule](/backend/knowledge-cards/recording-rule/)、query cache、query cost estimation（[4.23](/backend/04-observability/observability-query-design/)）。歸因到 dashboard 跟 alert rule 的 owner。
+**Query 成本**：跟查詢次數 × 掃描量成正比。控制手段是 [recording rule](/backend/knowledge-cards/recording-rule/)、query cache、query cost estimation（[4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)）。歸因到 dashboard 跟 alert rule 的 owner。
 
 三層分開歸因的價值是精確定位成本增長來源。「這個月成本增長 30%」→ 是 ingestion 增長（某服務開了新 metric）還是 query 增長（某人加了 heavy dashboard panel）？分層歸因讓回答這個問題只需要查一個 dashboard。
 
@@ -54,7 +54,7 @@ Ingestion / storage / query 三層的成本增長模式不同、控制手段也�
 
 Multi-tenant 平台的 observability 成本跟 tenant 的活躍度有關。大 tenant 產生的事件量可能是小 tenant 的 100 倍，但如果 observability 成本平攤，小 tenant 補貼大 tenant。
 
-Tenant-level attribution 需要 metric / log / trace 帶 tenant label。Label 的 cardinality 問題在 [4.7](/backend/04-observability/cardinality-cost-governance/) 處理 — tenant label 在 metric 層通常過高 cardinality（每個 tenant 一條 series），可以改在 log 或 trace 層按 tenant 統計 ingestion 量。
+Tenant-level attribution 需要 metric / log / trace 帶 tenant label。Label 的 cardinality 問題在 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/) 處理 — tenant label 在 metric 層通常過高 cardinality（每個 tenant 一條 series），可以改在 log 或 trace 層按 tenant 統計 ingestion 量。
 
 ## Showback vs Chargeback
 

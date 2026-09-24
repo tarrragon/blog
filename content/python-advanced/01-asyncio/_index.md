@@ -31,13 +31,13 @@ asyncio 提供在單執行緒中高效處理大量 I/O 並發任務的模型，�
 
 ## 章節列表
 
-| 章節                                                     | 主題                    | 關鍵收穫                 |
-| -------------------------------------------------------- | ----------------------- | ------------------------ |
-| [1.0](/python-advanced/01-asyncio/threading-to-asyncio/) | 從 threading 到 asyncio | 理解為什麼需要 asyncio   |
-| [1.1](/python-advanced/01-asyncio/fundamentals/)         | 基礎概念與事件迴圈      | 理解 asyncio 的核心概念  |
-| [1.2](/python-advanced/01-asyncio/coroutines-tasks/)     | 協程與 Task 管理        | 掌握 async/await 語法    |
-| [1.3](/python-advanced/01-asyncio/patterns/)             | 設計模式與最佳實踐      | 學會常見的異步模式       |
-| [1.4](/python-advanced/01-asyncio/real-world/)           | 實戰：與同步程式碼整合  | 在現有專案中應用 asyncio |
+| 章節                                                                                   | 主題                    | 關鍵收穫                 |
+| -------------------------------------------------------------------------------------- | ----------------------- | ------------------------ |
+| [從 threading 到 asyncio：轉換指南](/python-advanced/01-asyncio/threading-to-asyncio/) | 從 threading 到 asyncio | 理解為什麼需要 asyncio   |
+| [1.1 基礎概念與事件迴圈](/python-advanced/01-asyncio/fundamentals/)                    | 基礎概念與事件迴圈      | 理解 asyncio 的核心概念  |
+| [1.2 協程與 Task 管理](/python-advanced/01-asyncio/coroutines-tasks/)                  | 協程與 Task 管理        | 掌握 async/await 語法    |
+| [1.3 設計模式與最佳實踐](/python-advanced/01-asyncio/patterns/)                        | 設計模式與最佳實踐      | 學會常見的異步模式       |
+| [1.4 實戰：與同步程式碼整合](/python-advanced/01-asyncio/real-world/)                  | 實戰：與同步程式碼整合  | 在現有專案中應用 asyncio |
 
 ## 案例研究
 

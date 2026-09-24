@@ -34,12 +34,12 @@ Error budget policy 的核心責任是把「可靠性目標」轉成「發布節
 
 政策有效與否要靠訊號判讀，不靠會議共識。
 
-| 訊號                  | 判讀重點               | 對應章節                                                            |
-| --------------------- | ---------------------- | ------------------------------------------------------------------- |
-| burn rate             | 是否進入短期高消耗區   | [6.6](/backend/06-reliability/slo-error-budget/)                    |
-| release failure ratio | 發版後回歸是否集中     | [6.8](/backend/06-reliability/release-gate/)                        |
-| alert noise           | 告警是否支持 gate 判讀 | [4.6](/backend/04-observability/sli-slo-signal/)                    |
-| recovery latency      | 凍結後修復是否收斂     | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
+| 訊號                  | 判讀重點               | 對應章節                                                                                 |
+| --------------------- | ---------------------- | ---------------------------------------------------------------------------------------- |
+| burn rate             | 是否進入短期高消耗區   | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)                |
+| release failure ratio | 發版後回歸是否集中     | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                     |
+| alert noise           | 告警是否支持 gate 判讀 | [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)                 |
+| recovery latency      | 凍結後修復是否收斂     | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/) |
 
 ## 常見陷阱
 
@@ -47,4 +47,4 @@ Error budget policy 的核心責任是把「可靠性目標」轉成「發布節
 
 ## 下一步路由
 
-要把這個案例落到制度層，先回到 [6.6](/backend/06-reliability/slo-error-budget/) 定義政策欄位，再到 [6.8](/backend/06-reliability/release-gate/) 實作 gate。若你發現訊號不足，先補 [4.16](/backend/04-observability/observability-readiness-review/) 與 [4.20](/backend/04-observability/observability-evidence-package/)。
+要把這個案例落到制度層，先回到 [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/) 定義政策欄位，再到 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/) 實作 gate。若你發現訊號不足，先補 [4.16 Observability Readiness Review](/backend/04-observability/observability-readiness-review/) 與 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。

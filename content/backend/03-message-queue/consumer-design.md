@@ -94,7 +94,7 @@ consumer 恢復語意可用 [3.C9 反例](/backend/03-message-queue/cases/failur
 
 consumer 設計是 01/03/04/06/08 的交界點。
 
-1. 與 03 內部的交接：processing/recovery 語意完整定義在 [3.6 processing-recovery-semantics](/backend/03-message-queue/processing-recovery-semantics/)；event contract 跟 replay boundary 在 [3.7](/backend/03-message-queue/event-contract-replay-boundary/)；規模差異判讀跟 job queue 拓樸分工在 [3.8](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)。
+1. 與 03 內部的交接：processing/recovery 語意完整定義在 [3.6 processing-recovery-semantics](/backend/03-message-queue/processing-recovery-semantics/)；event contract 跟 replay boundary 在 [3.7 Event Contract 與 Replay Boundary](/backend/03-message-queue/event-contract-replay-boundary/)；規模差異判讀跟 job queue 拓樸分工在 [3.8 Queue Consumer Retry 與 Replay Handoff（實作示範）](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)。
 2. 與 01 的交接：交易與發布一致性回到 [3.3 outbox pattern](/backend/03-message-queue/outbox-pattern/) 與 [1.3 transaction boundary](/backend/01-database/transaction-boundary/)。
 3. 與 04 的交接：lag、retry、DLQ、duplicate 指標進入 [Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。
 4. 與 06 的交接：重試與重播驗證進入 [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/)。

@@ -94,7 +94,7 @@ SQL 標準定義四個 isolation level、實務上 PostgreSQL / MySQL / Spanner 
 - 衝突 > 30% → pessimistic（避免 retry waste）
 - 中間區 → 量測再決定
 
-對應 [hot row contention 處理](/backend/01-database/high-concurrency-access/)（[1.1](/backend/01-database/high-concurrency-access/)）— 高衝突 hot row 通常該換 KV / cache、不該硬擴 SQL。
+對應 [hot row contention 處理](/backend/01-database/high-concurrency-access/)（[1.1 高併發下的 SQL 讀寫邊界](/backend/01-database/high-concurrency-access/)）— 高衝突 hot row 通常該換 KV / cache、不該硬擴 SQL。
 
 ## 服務情境：Checkout 多層邊界
 

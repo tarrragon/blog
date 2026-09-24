@@ -106,7 +106,7 @@ Schema 變化讓 cache 失效的三種模式（屬工程實踐推導、非案例
 3. **新欄位用 versioned key**（同步進行）：`product:v2:{id}` 跟 `product:v1:{id}` 並存、避免雙寫干擾。對應 [2.C3 Shopify 雙軌策略](/backend/02-cache-redis/cases/shopify-cache-serialization-migration/)。
 4. **降級 fallback**（最後保險）：cache miss 後 origin 也準備好被打、避免假設「cache hit rate 永遠維持高水位」。對應本章「回源保護策略」段。
 
-判讀重點：四步應同步落地、缺一個就會在 migration 期間踩 stampede。一致性 invalidation 模型回到 [2.7](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
+判讀重點：四步應同步落地、缺一個就會在 migration 期間踩 stampede。一致性 invalidation 模型回到 [2.7 Cache Copy Boundary 與 Freshness](/backend/02-cache-redis/cache-copy-freshness-boundary/)。
 
 ## Rollout / Cutover / Rollback
 

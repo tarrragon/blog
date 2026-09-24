@@ -29,12 +29,12 @@ Resilience patterns 讓依賴失效時的行為可預測。retry with [jitter](/
 
 ## 可觀測訊號
 
-| 訊號                         | 判讀重點                   | 對應章節                                                        |
-| ---------------------------- | -------------------------- | --------------------------------------------------------------- |
-| ring health delta            | 每層的品質是否維持         | [6.8](/backend/06-reliability/release-gate/)                    |
-| automatic rollback frequency | 自動回退是否過於頻繁或過少 | [6.18](/backend/06-reliability/reliability-metrics-governance/) |
-| circuit breaker trip rate    | 依賴失效是否被及時隔離     | [6.14](/backend/06-reliability/dependency-reliability-budget/)  |
-| deployment velocity          | 漸進部署是否拖慢交付速度   | [6.1](/backend/06-reliability/ci-pipeline/)                     |
+| 訊號                         | 判讀重點                   | 對應章節                                                                                       |
+| ---------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------- |
+| ring health delta            | 每層的品質是否維持         | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                           |
+| automatic rollback frequency | 自動回退是否過於頻繁或過少 | [6.18 Reliability Metrics Governance](/backend/06-reliability/reliability-metrics-governance/) |
+| circuit breaker trip rate    | 依賴失效是否被及時隔離     | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)   |
+| deployment velocity          | 漸進部署是否拖慢交付速度   | [6.1 CI pipeline](/backend/06-reliability/ci-pipeline/)                                        |
 
 ## 常見陷阱
 

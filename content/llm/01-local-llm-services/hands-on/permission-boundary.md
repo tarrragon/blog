@@ -365,4 +365,4 @@ cp /tmp/token-orig.md content/llm/knowledge-cards/token.md
 
 讀這篇若指令跑不過、可能是 wrapper script API 微調、但「測試 LLM 是不是 pure function」這個方法本身永遠成立——拿任何 LLM API、送任何 prompt、check 檔案 mtime / md5、就能驗證。
 
-跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、副作用範圍 spectrum 原理見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)、Agent loop 跟人類審查的協作見 [4.4 Agent 架構](/llm/04-applications/agent-architecture/)、Tool use / MCP server 權限模型的個人 dev 視角見 [6.2](/llm/06-security/tool-use-permission-model/)、術語見 [Sandbox](/llm/knowledge-cards/sandbox/)。
+跟其他 hands-on 章節的關係：完整 hands-on 系列見 [Hands-on 章節索引](/llm/01-local-llm-services/hands-on/)、副作用範圍 spectrum 原理見 [4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)、Agent loop 跟人類審查的協作見 [4.4 Agent 架構](/llm/04-applications/agent-architecture/)、Tool use / MCP server 權限模型的個人 dev 視角見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)、術語見 [Sandbox](/llm/knowledge-cards/sandbox/)。

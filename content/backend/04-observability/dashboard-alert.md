@@ -45,7 +45,7 @@ SLI 導向的 dashboard 從使用者體驗出發：第一排 panel 回答「使�
 
 ### Dashboard 的查詢效能
 
-Dashboard 是觀測查詢設計中「聚合趨勢」模式的主要消費者（見 [4.23](/backend/04-observability/observability-query-design/)）。每個 panel 每 30 秒刷新一次，十個團隊各自有 dashboard 就是每分鐘數百個背景查詢。
+Dashboard 是觀測查詢設計中「聚合趨勢」模式的主要消費者（見 [4.23 觀測查詢設計](/backend/04-observability/observability-query-design/)）。每個 panel 每 30 秒刷新一次，十個團隊各自有 dashboard 就是每分鐘數百個背景查詢。
 
 Panel 設計時要注意查詢成本：時間範圍越長、raw series 越多、聚合越複雜，query-time cost 越高。長時間趨勢 panel 應該讀 recording rule 或 rollup series，而非每次刷新都掃描 raw data。
 
@@ -67,7 +67,7 @@ Burn rate alerting 的好處是自動適應基線。低流量時段的 1% error 
 
 SLO-based alert 的實作通常用 multi-window burn rate — 短視窗（5 分鐘）抓急性問題、長視窗（1 小時）抓慢性問題。兩個視窗都超過 burn rate 閾值時才觸發，減少單一 spike 造成的 false alarm。
 
-SLI/SLO 訊號的詳細設計見 [4.6](/backend/04-observability/sli-slo-signal/)。
+SLI/SLO 訊號的詳細設計見 [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)。
 
 ### Alert 的必要欄位
 

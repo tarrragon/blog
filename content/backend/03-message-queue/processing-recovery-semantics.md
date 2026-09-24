@@ -97,7 +97,7 @@ Queue 選型前要先回答：
 
 ## 跨模組路由
 
-1. 與 03 內部：consumer 端去重跟 ack timing 詳見 [3.4 consumer-design](/backend/03-message-queue/consumer-design/)；event payload 跟 replay 邊界寫入事件契約見 [3.7](/backend/03-message-queue/event-contract-replay-boundary/)；規模差異判讀跟 job queue 拓樸分工見 [3.8](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)
+1. 與 03 內部：consumer 端去重跟 ack timing 詳見 [3.4 consumer-design](/backend/03-message-queue/consumer-design/)；event payload 跟 replay 邊界寫入事件契約見 [3.7 Event Contract 與 Replay Boundary](/backend/03-message-queue/event-contract-replay-boundary/)；規模差異判讀跟 job queue 拓樸分工見 [3.8 Queue Consumer Retry 與 Replay Handoff（實作示範）](/backend/03-message-queue/queue-consumer-retry-replay-handoff/)
 2. 與 04 的交接：lag、retry、DLQ、duplicate 訊號進 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)
 3. 與 06 的交接：idempotency 跟 replay 驗證進 [6.12 Idempotency 與 Replay 驗證](/backend/06-reliability/idempotency-replay/)
 

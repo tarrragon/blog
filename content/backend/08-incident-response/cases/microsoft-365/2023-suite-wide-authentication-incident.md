@@ -10,11 +10,11 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                      | 判讀重點               | 回寫章節                                                          |
-| ------------------------- | ---------------------- | ----------------------------------------------------------------- |
-| cross-product auth errors | 影響是否跨產品同步出現 | [8.20](/backend/08-incident-response/customer-impact-assessment/) |
-| admin-plane availability  | 管理平面是否可用       | [8.15](/backend/08-incident-response/vendor-dependency-incident/) |
-| communication consistency | 對外狀態是否一致       | [8.10](/backend/08-incident-response/stakeholder-communication/)  |
+| 訊號                      | 判讀重點               | 回寫章節                                                                                      |
+| ------------------------- | ---------------------- | --------------------------------------------------------------------------------------------- |
+| cross-product auth errors | 影響是否跨產品同步出現 | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)  |
+| admin-plane availability  | 管理平面是否可用       | [8.15 Vendor / 第三方依賴事故處理](/backend/08-incident-response/vendor-dependency-incident/) |
+| communication consistency | 對外狀態是否一致       | [8.10 Stakeholder 通訊與外部狀態頁](/backend/08-incident-response/stakeholder-communication/) |
 
 ## 邊界判讀
 
@@ -22,4 +22,4 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 下一步路由
 
-先做產品分層影響盤點，再把指揮決策與外部更新同步回寫 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。若影響評估不一致，先補 [8.20](/backend/08-incident-response/customer-impact-assessment/) 再更新對外節奏。
+先做產品分層影響盤點，再把指揮決策與外部更新同步回寫 [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)。若影響評估不一致，先補 [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/) 再更新對外節奏。

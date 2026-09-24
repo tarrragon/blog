@@ -192,7 +192,7 @@ deep article 的差異化價值在故障演練。以下五個徵兆對應前述�
 
 1. 量測 p99 處理時間，把 ackDeadline 設到 p99 之上留 buffer，但不要不加判斷地設到 600 秒上限 — deadline 越長，consumer crash 後訊息重投的延遲越長。
 2. 長任務靠 lease extension 而非長 ackDeadline：確認 client library 的自動續約有在跑，application code 不要在處理迴圈裡阻塞到讓 background 續約 thread 餓死。
-3. consumer 端做 idempotency：用 message 的 dedup key（[3.7](/backend/03-message-queue/event-contract-replay-boundary/)）讓重複投遞變成無害 — at-least-once 交付下重複是常態，不靠調 ackDeadline 消除、靠 consumer 設計吸收。
+3. consumer 端做 idempotency：用 message 的 dedup key（[3.7 Event Contract 與 Replay Boundary](/backend/03-message-queue/event-contract-replay-boundary/)）讓重複投遞變成無害 — at-least-once 交付下重複是常態，不靠調 ackDeadline 消除、靠 consumer 設計吸收。
 
 ### 演練三：DLT max delivery attempts 設定誤判
 

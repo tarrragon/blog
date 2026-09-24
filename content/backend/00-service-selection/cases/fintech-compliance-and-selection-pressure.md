@@ -10,11 +10,11 @@ tags: ["backend", "service-selection", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                       | 判讀重點                 | 對應章節                                                                    |
-| -------------------------- | ------------------------ | --------------------------------------------------------------------------- |
-| audit evidence gap         | 稽核證據是否連續         | [0.8](/backend/00-service-selection/security-data-protection-requirements/) |
-| duplicate transaction risk | 重試是否可能造成雙重結果 | [0.2](/backend/00-service-selection/state-storage-selection/)               |
-| release freeze frequency   | 發布是否常因風險臨時凍結 | [0.6](/backend/00-service-selection/cost-risk-tradeoffs/)                   |
+| 訊號                       | 判讀重點                 | 對應章節                                                                                       |
+| -------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------- |
+| audit evidence gap         | 稽核證據是否連續         | [0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) |
+| duplicate transaction risk | 重試是否可能造成雙重結果 | [0.2 狀態與資料儲存選型](/backend/00-service-selection/state-storage-selection/)               |
+| release freeze frequency   | 發布是否常因風險臨時凍結 | [0.6 成本、風險與選型取捨](/backend/00-service-selection/cost-risk-tradeoffs/)                 |
 
 ## 風險與邊界
 
@@ -22,4 +22,4 @@ tags: ["backend", "service-selection", "case-study"]
 
 ## 下一步路由
 
-先補 [4.12](/backend/04-observability/audit-log-governance/) 的審計訊號，再用 [6.8](/backend/06-reliability/release-gate/) 定義合規變更門檻。
+先補 [4.12 Audit Log 邊界與 PII 治理](/backend/04-observability/audit-log-governance/) 的審計訊號，再用 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/) 定義合規變更門檻。

@@ -22,7 +22,7 @@ tags: ["backend", "service-selection", "buy-vs-build", "baas"]
 
 ## 【判讀】先確認該不該讀這章
 
-本章預設讀者已經過了 [0.21](/backend/00-service-selection/delivery-mode-selection/) 的 whole-system gate、決定自建核心。在那之前有一種讀者該先被擋下來：**非工程師、目的是解自己的生活痛點或做第一個 MVP 的人**。對這種讀者、0.21 已經把答案給完了 — 用 [BaaS](/backend/knowledge-cards/baas/)（Supabase、Firebase）就是對的起點、本章的逐能力拆解反而是過度工程。免費額度對個人專案通常夠用、BaaS 連後端與資料庫的串接、效能調教、資源調配一起省掉、把這些當成「之後真的撞牆再說」的問題、是這個尺度最誠實的選擇。
+本章預設讀者已經過了 [0.21 交付形態選型：從全託管到自建的光譜與邊界](/backend/00-service-selection/delivery-mode-selection/) 的 whole-system gate、決定自建核心。在那之前有一種讀者該先被擋下來：**非工程師、目的是解自己的生活痛點或做第一個 MVP 的人**。對這種讀者、0.21 已經把答案給完了 — 用 [BaaS](/backend/knowledge-cards/baas/)（Supabase、Firebase）就是對的起點、本章的逐能力拆解反而是過度工程。免費額度對個人專案通常夠用、BaaS 連後端與資料庫的串接、效能調教、資源調配一起省掉、把這些當成「之後真的撞牆再說」的問題、是這個尺度最誠實的選擇。
 
 常見的誤判是把選型問題問錯層。「我該選什麼資料庫」這個提問、對非工程師多半真正的答案在 0.21（這個尺度根本不必自己管資料庫）、不在本章。下表把提問者的身分對應到該回的章節：
 
@@ -46,7 +46,7 @@ tags: ["backend", "service-selection", "buy-vs-build", "baas"]
 
 managed 基礎設施是最淺的外包：vendor 接手備份、修補、failover、擴容、跨區複製、但 schema、query、index、資料模型還是你的。遷出時資料是標準格式、架構是自己畫的、換一家 managed PostgreSQL 主要是搬資料與改連線字串。撞牆時你改得動的邊界很寬 — 慢查詢自己優化、index 自己加、只有底層硬體與維運動作在 vendor 手上。不過「邊界很寬」有前提：受限的 serverless 或內嵌型 managed（沒給 superuser、裝不了 extension 的那種）邊界其實更窄、選之前要確認需要的控制權它給不給。
 
-feature SaaS 把整塊能力連同它的內部業務邏輯一起交出去、你消費的是一組 API 而不是一台機器。買認證這一類要另外算兩筆：交出去之後本地仍然留著一筆使用者紀錄、而它與外部身分是兩條生命週期（[7.38](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)），以及 B2B 客戶要用自己的 SSO 時該廠商給不給每租戶一組設定（[7.40](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)）。買 Auth0 不只是省下跑一台認證伺服器、是把「密碼雜湊策略、MFA、SSO、social login、session 管理」整套交給 vendor、你只接它的 SDK。代價是你改得動的邊界縮到 vendor 開放的擴展點為止 — 它沒給的客製、你做不到、繞過去就是在 vendor 之外再搭一層。遷出代價中到高、因為資料模型與業務規則都沿 vendor 的特性長出來。
+feature SaaS 把整塊能力連同它的內部業務邏輯一起交出去、你消費的是一組 API 而不是一台機器。買認證這一類要另外算兩筆：交出去之後本地仍然留著一筆使用者紀錄、而它與外部身分是兩條生命週期（[7.38 外部身分與本地紀錄：兩條生命週期在哪裡分岔](/backend/07-security-data-protection/external-identity-local-record-lifecycle/)），以及 B2B 客戶要用自己的 SSO 時該廠商給不給每租戶一組設定（[7.40 B2B 多租戶的身分接入：這個人屬於哪個租戶由誰說了算](/backend/07-security-data-protection/multi-tenant-identity-onboarding/)）。買 Auth0 不只是省下跑一台認證伺服器、是把「密碼雜湊策略、MFA、SSO、social login、session 管理」整套交給 vendor、你只接它的 SDK。代價是你改得動的邊界縮到 vendor 開放的擴展點為止 — 它沒給的客製、你做不到、繞過去就是在 vendor 之外再搭一層。遷出代價中到高、因為資料模型與業務規則都沿 vendor 的特性長出來。
 
 選 feature SaaS 真正在賭的、是它的擴展點夠不夠你長出差異化。commodity 能力的多數需求跟同業一樣、買現成就解決；會區分產品的是少數、而那少數得疊在 vendor 之上自己長 — 但要先確認那塊差異化存不存在：有些 commodity（收個款、寄封信）差異化趨近零、整塊就是純買、這條擴展點判斷標準根本不啟動。判斷標準只在「確實有一塊差異化要疊上去」時才是選型核心。能不能疊、看 vendor 把控制權開到哪 — 開 API 讓你改它的排序、規則、把自己的資料接進它的邏輯、差異化長得出來；只開一面設定面板、核心邏輯動不了、一撞到差異化需求就得繞到 vendor 外另建一塊補。所以選的時候除了問「它做不做這塊能力」、更關鍵的是「它讓不讓我在上面長出獨有的那部分」 — 這一題決定它能陪產品走多遠。
 

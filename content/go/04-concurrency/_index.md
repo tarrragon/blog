@@ -10,14 +10,14 @@ Go 的並發不是只會寫 `go func()`。Go 的並發模型包含工作如何�
 
 ## 章節列表
 
-| 章節                                         | 主題                                                                       | 關鍵收穫                                        |
-| -------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------- |
-| [4.0](/go/04-concurrency/concurrency-model/) | Go 並發模型總覽                                                            | 看懂 goroutine、thread 與 runtime 的關係        |
-| [4.1](/go/04-concurrency/goroutine/)         | goroutine：輕量並發工作                                                    | 啟動並發工作並設計退出條件                      |
-| [4.2](/go/04-concurrency/channel/)           | channel：資料傳遞與 [backpressure](/backend/knowledge-cards/backpressure/) | 用 channel 在 goroutine 之間傳遞資料            |
-| [4.3](/go/04-concurrency/select/)            | select：同時等待多種事件                                                   | 實作 event loop                                 |
-| [4.4](/go/04-concurrency/rwmutex/)           | sync.RWMutex：保護共享狀態                                                 | 安全讀寫共享資料                                |
-| [4.5](/go/04-concurrency/backpressure/)      | 高併發控制與 [backpressure](/backend/knowledge-cards/backpressure)         | 用 bounded concurrency 與 cancellation 控制壓力 |
+| 章節                                                                 | 主題                                                                       | 關鍵收穫                                        |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------- |
+| [4.0 Go 並發模型總覽](/go/04-concurrency/concurrency-model/)         | Go 並發模型總覽                                                            | 看懂 goroutine、thread 與 runtime 的關係        |
+| [4.1 goroutine：輕量並發工作](/go/04-concurrency/goroutine/)         | goroutine：輕量並發工作                                                    | 啟動並發工作並設計退出條件                      |
+| [4.2 channel：資料傳遞與 backpressure ](/go/04-concurrency/channel/) | channel：資料傳遞與 [backpressure](/backend/knowledge-cards/backpressure/) | 用 channel 在 goroutine 之間傳遞資料            |
+| [4.3 select：同時等待多種事件](/go/04-concurrency/select/)           | select：同時等待多種事件                                                   | 實作 event loop                                 |
+| [4.4 sync.RWMutex：保護共享狀態](/go/04-concurrency/rwmutex/)        | sync.RWMutex：保護共享狀態                                                 | 安全讀寫共享資料                                |
+| [4.5 高併發控制與 backpressure ](/go/04-concurrency/backpressure/)   | 高併發控制與 [backpressure](/backend/knowledge-cards/backpressure)         | 用 bounded concurrency 與 cancellation 控制壓力 |
 
 ## 本模組使用的範例主題
 

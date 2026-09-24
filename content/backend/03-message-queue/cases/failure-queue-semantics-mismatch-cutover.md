@@ -28,4 +28,4 @@ tags: ["backend", "message-queue", "case-study"]
 
 ## 下一步路由
 
-回 [3.4](/backend/03-message-queue/consumer-design/) 與 [6.10](/backend/06-reliability/contract-testing/)。
+回 [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/) 與 [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)。

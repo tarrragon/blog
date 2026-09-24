@@ -64,7 +64,7 @@ Audit event 的核心責任是回答五個問題：誰（who）、做了什麼�
 2. **Tamper-evident hash chain**：每個 audit event 含前一個 event 的 hash，篡改任一筆會破壞整條 chain。需要週期性 anchor 到外部時間戳服務或第三方公證。
 3. **Independent retention**：audit log 的保留期跟 application DB 解耦，application 刪資料不影響 audit。retention 由合規團隊定義、不由應用團隊調整。
 
-對應 [4.C1 FinTech 審計證據鏈](/backend/04-observability/cases/fintech-audit-evidence-observability/)：揭露「audit log completeness、event correlation integrity、retention policy drift」是合規場景的核心治理項目，本章關注的是治理邊界跟欄位設計，事件相關的 evidence 包裝由 [4.20](/backend/04-observability/observability-evidence-package/) 處理。
+對應 [4.C1 FinTech 審計證據鏈](/backend/04-observability/cases/fintech-audit-evidence-observability/)：揭露「audit log completeness、event correlation integrity、retention policy drift」是合規場景的核心治理項目，本章關注的是治理邊界跟欄位設計，事件相關的 evidence 包裝由 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 處理。
 
 ## 跨團隊存取證據連續性
 

@@ -22,12 +22,12 @@ Spotify 案例的核心責任是把可靠性標準平台化。當團隊自治程
 
 ## 可觀測訊號
 
-| 訊號                                | 判讀重點               | 對應章節                                                       |
-| ----------------------------------- | ---------------------- | -------------------------------------------------------------- |
-| contract compliance rate            | 契約覆蓋是否足夠       | [6.10](/backend/06-reliability/contract-testing/)              |
-| release dependency failures         | 依賴變更是否常破壞發布 | [6.14](/backend/06-reliability/dependency-reliability-budget/) |
-| cross-team incident handoff latency | 交接是否有共同語言     | [8.2](/backend/08-incident-response/incident-command-roles/)   |
+| 訊號                                | 判讀重點               | 對應章節                                                                                     |
+| ----------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
+| contract compliance rate            | 契約覆蓋是否足夠       | [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)            |
+| release dependency failures         | 依賴變更是否常破壞發布 | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) |
+| cross-team incident handoff latency | 交接是否有共同語言     | [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)              |
 
 ## 下一步路由
 
-先補 [6.10](/backend/06-reliability/contract-testing/) 的契約欄位，再以 [4.18](/backend/04-observability/observability-operating-model/) 對齊 owner 與責任邊界。
+先補 [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/) 的契約欄位，再以 [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/) 對齊 owner 與責任邊界。

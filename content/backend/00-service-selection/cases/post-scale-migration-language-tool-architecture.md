@@ -62,55 +62,55 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 
 ### A. 外部官方遷移案例（20）
 
-| 案例                                   | 轉換主題                 | 實作討論入口                                                        |
-| -------------------------------------- | ------------------------ | ------------------------------------------------------------------- |
-| Slack PHP -> Hack                      | 漸進型別化與大型重構安全 | [1.6](/backend/01-database/database-migration-playbook/)            |
-| Discord Go -> Rust                     | 延遲長尾與 GC 抖動治理   | [6.11](/backend/06-reliability/migration-safety/)                   |
-| Dropbox Python 2 -> 3                  | runtime EOL 與生態升級   | [6.8](/backend/06-reliability/release-gate/)                        |
-| Dropbox RPC -> gRPC                    | 協定標準化與跨語言維運   | [0.4](/backend/00-service-selection/operations-platform-selection/) |
-| GitLab Main/CI DB split                | 單庫拆分與負載隔離       | [1.6](/backend/01-database/database-migration-playbook/)            |
-| Notion Postgres sharding               | 熱點與容量壓力分片       | [0.5](/backend/00-service-selection/traffic-data-scale/)            |
-| Shopify MySQL -> Vitess                | 水平擴充與線上遷移       | [1.6](/backend/01-database/database-migration-playbook/)            |
-| Shopify Ruby + Sorbet                  | 動態語言型別治理         | [6.10](/backend/06-reliability/contract-testing/)                   |
-| Figma -> Kubernetes                    | 部署控制面平台化         | [0.4](/backend/00-service-selection/operations-platform-selection/) |
-| Cloudflare C/NGINX -> Rust             | 記憶體安全與效能路徑重寫 | [0.6](/backend/00-service-selection/cost-risk-tradeoffs/)           |
-| Slack monolith topology -> cellular    | blast radius 局部化      | [0.7](/backend/00-service-selection/failure-observability-design/)  |
-| Uber domain-oriented microservices     | 服務邊界與組織對齊       | [0.1](/backend/00-service-selection/service-capability-map/)        |
-| Meta MySQL -> MyRocks                  | 儲存成本與寫入效率       | [0.2](/backend/00-service-selection/state-storage-selection/)       |
-| Pinterest HBase -> TiDB                | 零停機儲存遷移           | [6.11](/backend/06-reliability/migration-safety/)                   |
-| Pinterest 新 wide-column DB（RocksDB） | 資料層能力換血           | [0.2](/backend/00-service-selection/state-storage-selection/)       |
-| Meta MySQL Raft deploy                 | failover 工具化          | [6.7](/backend/06-reliability/dr-rollback-rehearsal/)               |
-| Shopify MySQL upgrade program          | 大規模升級治理           | [6.8](/backend/06-reliability/release-gate/)                        |
-| GitLab major PostgreSQL upgrade        | 主版本升級與回退窗       | [6.11](/backend/06-reliability/migration-safety/)                   |
-| AWS shuffle sharding adoption          | 多租戶隔離重整           | [6.14](/backend/06-reliability/dependency-reliability-budget/)      |
-| Cloudflare observability stack內建化   | 觀測平台內生化           | [4.18](/backend/04-observability/observability-operating-model/)    |
+| 案例                                   | 轉換主題                 | 實作討論入口                                                                                        |
+| -------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------- |
+| Slack PHP -> Hack                      | 漸進型別化與大型重構安全 | [1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)     |
+| Discord Go -> Rust                     | 延遲長尾與 GC 抖動治理   | [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                    |
+| Dropbox Python 2 -> 3                  | runtime EOL 與生態升級   | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                                |
+| Dropbox RPC -> gRPC                    | 協定標準化與跨語言維運   | [0.4 操作平台選型](/backend/00-service-selection/operations-platform-selection/)                    |
+| GitLab Main/CI DB split                | 單庫拆分與負載隔離       | [1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)     |
+| Notion Postgres sharding               | 熱點與容量壓力分片       | [0.5 流量與資料量評估](/backend/00-service-selection/traffic-data-scale/)                           |
+| Shopify MySQL -> Vitess                | 水平擴充與線上遷移       | [1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)     |
+| Shopify Ruby + Sorbet                  | 動態語言型別治理         | [6.10 Contract Testing 與 Schema 演進](/backend/06-reliability/contract-testing/)                   |
+| Figma -> Kubernetes                    | 部署控制面平台化         | [0.4 操作平台選型](/backend/00-service-selection/operations-platform-selection/)                    |
+| Cloudflare C/NGINX -> Rust             | 記憶體安全與效能路徑重寫 | [0.6 成本、風險與選型取捨](/backend/00-service-selection/cost-risk-tradeoffs/)                      |
+| Slack monolith topology -> cellular    | blast radius 局部化      | [0.7 錯誤定位、觀測訊號與備援切換設計](/backend/00-service-selection/failure-observability-design/) |
+| Uber domain-oriented microservices     | 服務邊界與組織對齊       | [0.1 後端服務能力地圖](/backend/00-service-selection/service-capability-map/)                       |
+| Meta MySQL -> MyRocks                  | 儲存成本與寫入效率       | [0.2 狀態與資料儲存選型](/backend/00-service-selection/state-storage-selection/)                    |
+| Pinterest HBase -> TiDB                | 零停機儲存遷移           | [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                    |
+| Pinterest 新 wide-column DB（RocksDB） | 資料層能力換血           | [0.2 狀態與資料儲存選型](/backend/00-service-selection/state-storage-selection/)                    |
+| Meta MySQL Raft deploy                 | failover 工具化          | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)                  |
+| Shopify MySQL upgrade program          | 大規模升級治理           | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                                |
+| GitLab major PostgreSQL upgrade        | 主版本升級與回退窗       | [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                    |
+| AWS shuffle sharding adoption          | 多租戶隔離重整           | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)        |
+| Cloudflare observability stack內建化   | 觀測平台內生化           | [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)      |
 
 ### B. 站內可回寫實作案例池（22）
 
-| 案例                                                                                                                              | 轉換主題                  | 實作討論入口                                                                                    |
-| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------- |
-| [Stripe：Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)                 | 交易安全 + migration 並行 | [6.11](/backend/06-reliability/migration-safety/)                                               |
-| [Pinterest：快取可靠性與容量驚奇治理](/backend/06-reliability/cases/pinterest/cache-reliability-and-capacity-surprises/)          | 快取策略與容量重整        | [6.9](/backend/06-reliability/capacity-cost/)                                                   |
-| [Amazon：Shuffle Sharding 與 Cell 邊界](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/)                 | cell/shard 重整           | [0.7](/backend/00-service-selection/failure-observability-design/)                              |
-| [Meta：Region Failover 與可靠性邊界](/backend/06-reliability/cases/meta/region-failover-and-reliability-boundaries/)              | 區域切換能力演進          | [6.7](/backend/06-reliability/dr-rollback-rehearsal/)                                           |
-| [Shopify：BFCM 容量治理與 Game Day](/backend/06-reliability/cases/shopify/bfcm-capacity-and-game-day/)                            | 高峰前治理轉換            | [6.6](/backend/06-reliability/load-testing/)                                                    |
-| [Google：Error Budget 發布門檻](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)                     | 從速度導向轉為預算導向    | [6.2](/backend/06-reliability/slo-error-budget/)                                                |
-| [Microsoft：變更治理與可靠性門檻](/backend/06-reliability/cases/microsoft/change-management-and-reliability-governance/)          | 變更流程平台化            | [6.8](/backend/06-reliability/release-gate/)                                                    |
-| [Spotify：平台工程與可靠性契約](/backend/06-reliability/cases/spotify/platform-engineering-and-reliability-contracts/)            | 團隊自助平台化            | [0.4](/backend/00-service-selection/operations-platform-selection/)                             |
-| [LinkedIn：Capacity Headroom 與 On-call 分層](/backend/06-reliability/cases/linkedin/capacity-headroom-and-oncall-tiering/)       | 容量與值班模型重整        | [6.9](/backend/06-reliability/capacity-cost/)                                                   |
-| [Netflix：Steady State、Chaos 與 FIT](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/)                          | 驗證方法轉換              | [6.5](/backend/06-reliability/chaos-testing/)                                                   |
-| [Honeycomb：Burn Rate 驅動操作](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)                 | 告警治理轉換              | [4.13](/backend/04-observability/sli-slo-signal/)                                               |
-| [GitHub 2018 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)             | 跨區 DB 拓撲決策轉換      | [1.6](/backend/01-database/database-migration-playbook/)                                        |
-| [Reddit 2023 Kubernetes 升級事故](/backend/08-incident-response/cases/reddit/2023-kubernetes-upgrade-incident/)                   | 平台升級失敗模式          | [5.2](/backend/05-deployment-platform/kubernetes-deployment/)                                   |
-| [Discord 2022 Gateway 容量事件](/backend/08-incident-response/cases/discord/2022-gateway-capacity-event/)                         | 容量與連線模型調整        | [0.5](/backend/00-service-selection/traffic-data-scale/)                                        |
-| [Cloudflare 2019 Regex CPU Outage](/backend/08-incident-response/cases/cloudflare/2019-regex-cpu-outage/)                         | 規則系統推送模型調整      | [8.13](/backend/08-incident-response/incident-workflow-automation-boundary/)                    |
-| [Cloudflare 2023 Control Plane Token Incident](/backend/08-incident-response/cases/cloudflare/2023-control-plane-token-incident/) | 控制面信任邊界重整        | [7.12](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/) |
-| [Fastly 2021 全域 Edge 配置事故](/backend/08-incident-response/cases/fastly/2021-june-global-edge-config-triggered-outage/)       | 配置發布流程轉換          | [6.8](/backend/06-reliability/release-gate/)                                                    |
-| [AWS S3 2017 US-EAST-1 事件](/backend/08-incident-response/cases/aws-s3/2017-us-east-1-service-disruption/)                       | 控制面操作模型重整        | [8.3](/backend/08-incident-response/containment-recovery-strategy/)                             |
-| [Atlassian 2022 多租戶刪除事故](/backend/08-incident-response/cases/atlassian/2022-april-multi-tenant-deletion-outage/)           | tenant 安全邊界重整       | [0.6](/backend/00-service-selection/cost-risk-tradeoffs/)                                       |
-| [Azure AD 2021 身分控制面事件](/backend/08-incident-response/cases/azure-ad/2021-identity-control-plane-disruption/)              | 身分服務依賴治理          | [8.20](/backend/08-incident-response/customer-impact-assessment/)                               |
-| [GCP 2019 多服務網路擁塞事件](/backend/08-incident-response/cases/gcp/2019-us-network-congestion-multi-service-incident/)         | 區域網路依賴重整          | [6.14](/backend/06-reliability/dependency-reliability-budget/)                                  |
-| [Heroku 2021 Routing 控制事件](/backend/08-incident-response/cases/heroku/2021-routing-control-event/)                            | 路由控制面恢復策略        | [8.3](/backend/08-incident-response/containment-recovery-strategy/)                             |
+| 案例                                                                                                                              | 轉換主題                  | 實作討論入口                                                                                                                       |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [Stripe：Idempotency 與零停機遷移](/backend/06-reliability/cases/stripe/idempotency-and-zero-downtime-migration/)                 | 交易安全 + migration 並行 | [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)                                                   |
+| [Pinterest：快取可靠性與容量驚奇治理](/backend/06-reliability/cases/pinterest/cache-reliability-and-capacity-surprises/)          | 快取策略與容量重整        | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                                                       |
+| [Amazon：Shuffle Sharding 與 Cell 邊界](/backend/06-reliability/cases/amazon/shuffle-sharding-and-cell-boundary/)                 | cell/shard 重整           | [0.7 錯誤定位、觀測訊號與備援切換設計](/backend/00-service-selection/failure-observability-design/)                                |
+| [Meta：Region Failover 與可靠性邊界](/backend/06-reliability/cases/meta/region-failover-and-reliability-boundaries/)              | 區域切換能力演進          | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)                                                 |
+| [Shopify：BFCM 容量治理與 Game Day](/backend/06-reliability/cases/shopify/bfcm-capacity-and-game-day/)                            | 高峰前治理轉換            | [6.2 load test](/backend/06-reliability/load-testing/)                                                                             |
+| [Google：Error Budget 發布門檻](/backend/06-reliability/cases/google/error-budget-policy-and-release-gating/)                     | 從速度導向轉為預算導向    | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)                                                          |
+| [Microsoft：變更治理與可靠性門檻](/backend/06-reliability/cases/microsoft/change-management-and-reliability-governance/)          | 變更流程平台化            | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                                                               |
+| [Spotify：平台工程與可靠性契約](/backend/06-reliability/cases/spotify/platform-engineering-and-reliability-contracts/)            | 團隊自助平台化            | [0.4 操作平台選型](/backend/00-service-selection/operations-platform-selection/)                                                   |
+| [LinkedIn：Capacity Headroom 與 On-call 分層](/backend/06-reliability/cases/linkedin/capacity-headroom-and-oncall-tiering/)       | 容量與值班模型重整        | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                                                       |
+| [Netflix：Steady State、Chaos 與 FIT](/backend/06-reliability/cases/netflix/steady-state-chaos-and-fit/)                          | 驗證方法轉換              | [6.4 chaos testing](/backend/06-reliability/chaos-testing/)                                                                        |
+| [Honeycomb：Burn Rate 驅動操作](/backend/06-reliability/cases/honeycomb/burn-rate-driven-reliability-operations/)                 | 告警治理轉換              | [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)                                                           |
+| [GitHub 2018 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)             | 跨區 DB 拓撲決策轉換      | [1.6 資料庫轉換實作：雙寫、回填、切流與回滾](/backend/01-database/database-migration-playbook/)                                    |
+| [Reddit 2023 Kubernetes 升級事故](/backend/08-incident-response/cases/reddit/2023-kubernetes-upgrade-incident/)                   | 平台升級失敗模式          | [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/)                                                  |
+| [Discord 2022 Gateway 容量事件](/backend/08-incident-response/cases/discord/2022-gateway-capacity-event/)                         | 容量與連線模型調整        | [0.5 流量與資料量評估](/backend/00-service-selection/traffic-data-scale/)                                                          |
+| [Cloudflare 2019 Regex CPU Outage](/backend/08-incident-response/cases/cloudflare/2019-regex-cpu-outage/)                         | 規則系統推送模型調整      | [8.21 Incident Workflow Automation Boundary](/backend/08-incident-response/incident-workflow-automation-boundary/)                 |
+| [Cloudflare 2023 Control Plane Token Incident](/backend/08-incident-response/cases/cloudflare/2023-control-plane-token-incident/) | 控制面信任邊界重整        | [7.18 資安控制面如何交接到部署與事故流程](/backend/07-security-data-protection/security-control-handoff-to-delivery-and-incident/) |
+| [Fastly 2021 全域 Edge 配置事故](/backend/08-incident-response/cases/fastly/2021-june-global-edge-config-triggered-outage/)       | 配置發布流程轉換          | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                                                               |
+| [AWS S3 2017 US-EAST-1 事件](/backend/08-incident-response/cases/aws-s3/2017-us-east-1-service-disruption/)                       | 控制面操作模型重整        | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)                                           |
+| [Atlassian 2022 多租戶刪除事故](/backend/08-incident-response/cases/atlassian/2022-april-multi-tenant-deletion-outage/)           | tenant 安全邊界重整       | [0.6 成本、風險與選型取捨](/backend/00-service-selection/cost-risk-tradeoffs/)                                                     |
+| [Azure AD 2021 身分控制面事件](/backend/08-incident-response/cases/azure-ad/2021-identity-control-plane-disruption/)              | 身分服務依賴治理          | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)                                       |
+| [GCP 2019 多服務網路擁塞事件](/backend/08-incident-response/cases/gcp/2019-us-network-congestion-multi-service-incident/)         | 區域網路依賴重整          | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)                                       |
+| [Heroku 2021 Routing 控制事件](/backend/08-incident-response/cases/heroku/2021-routing-control-event/)                            | 路由控制面恢復策略        | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)                                           |
 
 這兩層合計 42 個案例。使用方式是先在 A 層找轉換動機，再到 B 層找可操作證據與失敗模式，最後回寫到 `01/04/06/08` 的正文。
 
@@ -184,33 +184,33 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 
 這一批的核心責任是把中低密度分類補到可用水位，讓 `02/03/04/05/07` 都有可引用的真實轉換案例，而不是只有資料庫案例可用。
 
-| 分類                   | 案例                                                   | 轉換焦點                               | 回寫入口                                                                                 |
-| ---------------------- | ------------------------------------------------------ | -------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Cache                  | Meta：Cache made consistent                            | cache invalidation 一致性治理升級      | [2.1](/backend/02-cache-redis/cache-aside/)                                              |
-| Cache                  | Meta：mcrouter at scale                                | 單機快取轉成跨區路由層                 | [2.4](/backend/02-cache-redis/high-concurrency-access/)                                  |
-| Cache                  | Meta：CacheLib + Kangaroo                              | DRAM-only 快取轉向 flash-friendly 架構 | [2.5](/backend/02-cache-redis/ttl-eviction/)                                             |
-| Cache                  | Shopify：Marshal -> MessagePack cache migration        | 快取序列化格式遷移與雙軌相容           | [2.1](/backend/02-cache-redis/cache-aside/)                                              |
-| Cache                  | Shopify：Shop App write-through cache                  | read-heavy 路徑轉 write-through        | [2.1](/backend/02-cache-redis/cache-aside/)                                              |
-| Queue                  | Meta：FOQS disaster-ready migration                    | 區域佇列轉全域架構且零停機             | [3.3](/backend/03-message-queue/durable-queue/)                                          |
-| Queue                  | LinkedIn：Running Kafka at Scale                       | 單叢集使用模式轉 tiered cluster        | [3.1](/backend/03-message-queue/broker-basics/)                                          |
-| Queue                  | LinkedIn：TopicGC                                      | Kafka topic 治理從手動轉自動回收       | [3.2](/backend/03-message-queue/consumer-design/)                                        |
-| Queue                  | VMware Tanzu CloudHealth：Kafka -> Amazon MSK          | 自管 broker 轉 managed streaming       | [3.1](/backend/03-message-queue/broker-basics/)                                          |
-| Queue                  | Slack：Scaling job queue                               | 背景工作通道轉 Kafka + Redis 組合      | [3.4](/backend/03-message-queue/outbox-pattern/)                                         |
-| Observability          | AWS：X-Ray SDK/Daemon -> OpenTelemetry migration       | vendor SDK 轉 OTel 標準化              | [4.21](/backend/04-observability/telemetry-pipeline/)                                    |
-| Observability          | Google Cloud：OTLP support in Cloud Trace (2025)       | 專有 ingest 轉 OTLP 標準入口           | [4.21](/backend/04-observability/telemetry-pipeline/)                                    |
-| Observability          | AWS：ADOT 建立集中觀測平台                             | 多代理轉單一 OTel pipeline             | [4.18](/backend/04-observability/observability-operating-model/)                         |
-| Observability          | AWS：EKS + ADOT + X-Ray/CloudWatch                     | 既有監控拆散轉標準化管線               | [4.7](/backend/04-observability/tracing-context/)                                        |
-| Observability          | Honeycomb：Burn rate operations                        | 告警規則轉 error budget 驅動治理       | [4.13](/backend/04-observability/sli-slo-signal/)                                        |
-| Deployment             | Tradeshift：self-hosted K8s -> EKS (zero downtime)     | 自管控制面轉 managed control plane     | [5.2](/backend/05-deployment-platform/kubernetes-deployment/)                            |
-| Deployment             | Condé Nast：K8s platform modernization on EKS          | 多團隊異質集群轉統一平台               | [5.2](/backend/05-deployment-platform/kubernetes-deployment/)                            |
-| Deployment             | Orbitera：AWS -> GKE migration                         | 基礎平台重置與容器編排轉換             | [5.2](/backend/05-deployment-platform/kubernetes-deployment/)                            |
-| Deployment             | Mobileye：workloads -> EKS                             | 資源調度模式轉 managed K8s             | [5.2](/backend/05-deployment-platform/kubernetes-deployment/)                            |
-| Deployment             | Miro：microservices/K8s -> EKS managed                 | 自維運平台轉 managed service 組合      | [5.2](/backend/05-deployment-platform/kubernetes-deployment/)                            |
-| Security/Control Plane | Cloudflare：2026 route leak incident                   | 路由政策自動化治理重整                 | [7.16](/backend/07-security-data-protection/security-governance-exception-and-tripwire/) |
-| Security/Control Plane | Cloudflare：2026 BYOIP BGP withdrawal                  | 控制面變更保護與回退策略               | [8.3](/backend/08-incident-response/containment-recovery-strategy/)                      |
-| Security/Control Plane | Cloudflare：2023 control-plane token incident          | token 管理邊界與供應鏈信任調整         | [7.11](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)  |
-| Security/Control Plane | Azure AD：2021 identity control-plane disruption       | 身分控制面故障隔離與恢復路由           | [8.8](/backend/08-incident-response/security-vs-operational-incident/)                   |
-| Security/Control Plane | Microsoft 365：2023 suite-wide authentication incident | 身分服務相依邊界重整                   | [8.20](/backend/08-incident-response/customer-impact-assessment/)                        |
+| 分類                   | 案例                                                   | 轉換焦點                               | 回寫入口                                                                                                               |
+| ---------------------- | ------------------------------------------------------ | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Cache                  | Meta：Cache made consistent                            | cache invalidation 一致性治理升級      | [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)                                                     |
+| Cache                  | Meta：mcrouter at scale                                | 單機快取轉成跨區路由層                 | [2.1 高併發下的 Redis 讀寫邊界](/backend/02-cache-redis/high-concurrency-access/)                                      |
+| Cache                  | Meta：CacheLib + Kangaroo                              | DRAM-only 快取轉向 flash-friendly 架構 | [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/)                                                           |
+| Cache                  | Shopify：Marshal -> MessagePack cache migration        | 快取序列化格式遷移與雙軌相容           | [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)                                                     |
+| Cache                  | Shopify：Shop App write-through cache                  | read-heavy 路徑轉 write-through        | [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)                                                     |
+| Queue                  | Meta：FOQS disaster-ready migration                    | 區域佇列轉全域架構且零停機             | [3.2 durable queue 與重試策略](/backend/03-message-queue/durable-queue/)                                               |
+| Queue                  | LinkedIn：Running Kafka at Scale                       | 單叢集使用模式轉 tiered cluster        | [3.1 broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/)                                                  |
+| Queue                  | LinkedIn：TopicGC                                      | Kafka topic 治理從手動轉自動回收       | [3.4 consumer 設計與去重](/backend/03-message-queue/consumer-design/)                                                  |
+| Queue                  | VMware Tanzu CloudHealth：Kafka -> Amazon MSK          | 自管 broker 轉 managed streaming       | [3.1 broker 基礎與投遞模型](/backend/03-message-queue/broker-basics/)                                                  |
+| Queue                  | Slack：Scaling job queue                               | 背景工作通道轉 Kafka + Redis 組合      | [3.3 outbox pattern 與發佈一致性](/backend/03-message-queue/outbox-pattern/)                                           |
+| Observability          | AWS：X-Ray SDK/Daemon -> OpenTelemetry migration       | vendor SDK 轉 OTel 標準化              | [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)                                          |
+| Observability          | Google Cloud：OTLP support in Cloud Trace (2025)       | 專有 ingest 轉 OTLP 標準入口           | [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)                                          |
+| Observability          | AWS：ADOT 建立集中觀測平台                             | 多代理轉單一 OTel pipeline             | [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)                         |
+| Observability          | AWS：EKS + ADOT + X-Ray/CloudWatch                     | 既有監控拆散轉標準化管線               | [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)                                              |
+| Observability          | Honeycomb：Burn rate operations                        | 告警規則轉 error budget 驅動治理       | [4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)                                               |
+| Deployment             | Tradeshift：self-hosted K8s -> EKS (zero downtime)     | 自管控制面轉 managed control plane     | [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/)                                      |
+| Deployment             | Condé Nast：K8s platform modernization on EKS          | 多團隊異質集群轉統一平台               | [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/)                                      |
+| Deployment             | Orbitera：AWS -> GKE migration                         | 基礎平台重置與容器編排轉換             | [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/)                                      |
+| Deployment             | Mobileye：workloads -> EKS                             | 資源調度模式轉 managed K8s             | [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/)                                      |
+| Deployment             | Miro：microservices/K8s -> EKS managed                 | 自維運平台轉 managed service 組合      | [5.2 Kubernetes 部署策略](/backend/05-deployment-platform/kubernetes-deployment/)                                      |
+| Security/Control Plane | Cloudflare：2026 route leak incident                   | 路由政策自動化治理重整                 | [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)       |
+| Security/Control Plane | Cloudflare：2026 BYOIP BGP withdrawal                  | 控制面變更保護與回退策略               | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)                               |
+| Security/Control Plane | Cloudflare：2023 control-plane token incident          | token 管理邊界與供應鏈信任調整         | [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/)          |
+| Security/Control Plane | Azure AD：2021 identity control-plane disruption       | 身分控制面故障隔離與恢復路由           | [8.17 Security Incident vs Operational Incident 分流](/backend/08-incident-response/security-vs-operational-incident/) |
+| Security/Control Plane | Microsoft 365：2023 suite-wide authentication incident | 身分服務相依邊界重整                   | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/)                           |
 
 ## 第二批補查來源
 
@@ -223,12 +223,12 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 
 ## 判讀訊號
 
-| 訊號                   | 判讀重點                    | 對應章節                                                            |
-| ---------------------- | --------------------------- | ------------------------------------------------------------------- |
-| 延遲分布長尾惡化       | 是平均值問題還是尖峰問題    | [0.5](/backend/00-service-selection/traffic-data-scale/)            |
-| 重構風險持續升高       | 型別/契約是否不足以支撐變更 | [0.6](/backend/00-service-selection/cost-risk-tradeoffs/)           |
-| 故障常跨服務放大       | 架構邊界是否缺乏隔離能力    | [0.7](/backend/00-service-selection/failure-observability-design/)  |
-| 發布節奏被品質問題拖慢 | 問題在語言、工具鏈或架構層  | [0.4](/backend/00-service-selection/operations-platform-selection/) |
+| 訊號                   | 判讀重點                    | 對應章節                                                                                            |
+| ---------------------- | --------------------------- | --------------------------------------------------------------------------------------------------- |
+| 延遲分布長尾惡化       | 是平均值問題還是尖峰問題    | [0.5 流量與資料量評估](/backend/00-service-selection/traffic-data-scale/)                           |
+| 重構風險持續升高       | 型別/契約是否不足以支撐變更 | [0.6 成本、風險與選型取捨](/backend/00-service-selection/cost-risk-tradeoffs/)                      |
+| 故障常跨服務放大       | 架構邊界是否缺乏隔離能力    | [0.7 錯誤定位、觀測訊號與備援切換設計](/backend/00-service-selection/failure-observability-design/) |
+| 發布節奏被品質問題拖慢 | 問題在語言、工具鏈或架構層  | [0.4 操作平台選型](/backend/00-service-selection/operations-platform-selection/)                    |
 
 ## 轉換決策資料要求
 
@@ -255,7 +255,7 @@ tags: ["backend", "service-selection", "case-study", "migration"]
 
 ## 下一步路由
 
-若問題在執行時特性（延遲抖動、記憶體模型），先回 [0.2](/backend/00-service-selection/state-storage-selection/) 與 [0.5](/backend/00-service-selection/traffic-data-scale/)。若是資料庫轉換已進入執行階段，直接進 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)；需要把 production migration 寫成 evidence、gate 與 decision log，接 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)；需要放行與回滾治理時，接 [6.11 Migration Safety](/backend/06-reliability/migration-safety/)；若要看事故層教訓，接 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)。
+若問題在執行時特性（延遲抖動、記憶體模型），先回 [0.2 狀態與資料儲存選型](/backend/00-service-selection/state-storage-selection/) 與 [0.5 流量與資料量評估](/backend/00-service-selection/traffic-data-scale/)。若是資料庫轉換已進入執行階段，直接進 [1.6 資料庫轉換實作](/backend/01-database/database-migration-playbook/)；需要把 production migration 寫成 evidence、gate 與 decision log，接 [1.7 Schema Migration Rollout 證據](/backend/01-database/schema-migration-rollout-evidence/)；需要放行與回滾治理時，接 [6.11 Migration Safety](/backend/06-reliability/migration-safety/)；若要看事故層教訓，接 [GitHub 2018 Oct21 MySQL Topology Incident](/backend/08-incident-response/cases/github/2018-oct21-mysql-topology-incident/)。
 
 ## 引用源
 

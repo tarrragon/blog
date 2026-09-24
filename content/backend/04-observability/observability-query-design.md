@@ -26,7 +26,7 @@ tags: ["backend", "observability"]
 
 觀測資料有一個 application data 不常見的特性：同一份資料被多種完全不同的查詢形狀讀取，每種查詢的時間壓力、精度需求、結果形狀差距可以到三個數量級。
 
-寫入面相對單純。不管是 log、metric 還是 trace，寫入都是 append-only、schema 由產生端定義、吞吐由流量決定。寫入路徑的設計問題集中在 cardinality 控制（[4.7](/backend/04-observability/cardinality-cost-governance/)）、pipeline 可靠性（[4.11](/backend/04-observability/telemetry-pipeline/)）與 sampling 策略。
+寫入面相對單純。不管是 log、metric 還是 trace，寫入都是 append-only、schema 由產生端定義、吞吐由流量決定。寫入路徑的設計問題集中在 cardinality 控制（[4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)）、pipeline 可靠性（[4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/)）與 sampling 策略。
 
 讀取面則至少有三種模式，各自有獨立的 SLA、索引需求與資源消耗模型。把三種模式混在同一個未分化的 query engine 裡，會在任何一種模式的負載增長時拖累其他模式。
 

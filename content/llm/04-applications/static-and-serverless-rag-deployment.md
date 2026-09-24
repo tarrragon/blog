@@ -321,7 +321,7 @@ RAG SaaS 供應鏈（本章新增）：
 
 1. **CDN 被 compromise**：WebLLM runtime 或 model weights 在 CDN 上被換、注入 backdoor
 2. **HTTPS 之外無額外驗證**：不像本地 [GGUF + hash 比對](/llm/06-security/model-supply-chain-trust/)、browser 載模型純信 CDN + HTTPS
-3. **使用者本機沒 inventory 記錄**：跟 [6.0](/llm/06-security/model-supply-chain-trust/) 推薦的「下載後記 hash」對比、browser 沒這機制
+3. **使用者本機沒 inventory 記錄**：跟 [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/) 推薦的「下載後記 hash」對比、browser 沒這機制
 
 緩解：
 
@@ -329,23 +329,23 @@ RAG SaaS 供應鏈（本章新增）：
 2. **CSP（Content Security Policy）**：限制可載入的 script / image source、減少 supply chain attack 面
 3. **挑大廠 CDN**：Cloudflare / jsdelivr / unpkg 等被 compromise 的歷史紀錄較少
 
-跟 [6.0](/llm/06-security/model-supply-chain-trust/) 的關係：6.0 講「本機跑的 GGUF 模型供應鏈」、本章補「browser 跑的 client-side 模型供應鏈」— 兩種場景的 framing 一致、但具體威脅面跟工具不同。
+跟 [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/) 的關係：6.0 講「本機跑的 GGUF 模型供應鏈」、本章補「browser 跑的 client-side 模型供應鏈」— 兩種場景的 framing 一致、但具體威脅面跟工具不同。
 
 ## 跟模組六的 routing
 
 本章資安段跟既有 [模組六](/llm/06-security/) 的對應：
 
-| 議題                            | 06 對應章節                                              | 本章補的角度                           |
-| ------------------------------- | -------------------------------------------------------- | -------------------------------------- |
-| 模型 / 供應鏈信任               | [6.0](/llm/06-security/model-supply-chain-trust/)        | client-side 模型分發新形態             |
-| Server 綁定                     | [6.1](/llm/06-security/inference-server-binding/)        | 靜態場景無 server、議題消失            |
-| Tool use 權限                   | [6.2](/llm/06-security/tool-use-permission-model/)       | browser-side tool use（少數場景）      |
-| Prompt injection                | [6.3](/llm/06-security/prompt-injection-in-ide/)         | 靜態 RAG 仍適用、source 變 web fetched |
-| 跨雲端 / 本地資料邊界           | [6.4](/llm/06-security/cross-cloud-local-data-boundary/) | 靜態場景 query 走向跟 backend 場景不同 |
-| Production routing              | [6.5](/llm/06-security/routing-to-production-security/)  | 從個人靜態 RAG 升級到 production       |
-| **API key 暴露 / browser**      | （無）                                                   | **本章獨有**                           |
-| **CORS / 同源策略**             | （無）                                                   | **本章獨有**                           |
-| **靜態場景 abuse / rate limit** | （無、跟 6.1 server 議題不同）                           | **本章獨有**                           |
+| 議題                            | 06 對應章節                                                                             | 本章補的角度                           |
+| ------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------- |
+| 模型 / 供應鏈信任               | [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/)                  | client-side 模型分發新形態             |
+| Server 綁定                     | [6.1 推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/)            | 靜態場景無 server、議題消失            |
+| Tool use 權限                   | [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)    | browser-side tool use（少數場景）      |
+| Prompt injection                | [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)            | 靜態 RAG 仍適用、source 變 web fetched |
+| 跨雲端 / 本地資料邊界           | [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)        | 靜態場景 query 走向跟 backend 場景不同 |
+| Production routing              | [6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/) | 從個人靜態 RAG 升級到 production       |
+| **API key 暴露 / browser**      | （無）                                                                                  | **本章獨有**                           |
+| **CORS / 同源策略**             | （無）                                                                                  | **本章獨有**                           |
+| **靜態場景 abuse / rate limit** | （無、跟 6.1 server 議題不同）                                                          | **本章獨有**                           |
 
 ## 判讀流程
 

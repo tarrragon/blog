@@ -288,7 +288,7 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 4. **Flash-sale spiky workload**：用 SQL 接搶購、connection 跟 lock 都會爆。對應 [9.C15 Tixcraft](/backend/09-performance-capacity/cases/tixcraft-ticketing-flash-sale-spike/) 用 DynamoDB 當 durable queue、legacy SQL 慢慢消費。
 
-5. **跨 region 強一致 OLTP**：傳統 PostgreSQL / MySQL 跨 region 是 async、滿足不了強一致。換 Spanner / Aurora DSQL / CockroachDB（[1.11](/backend/01-database/global-distributed-oltp/)）。
+5. **跨 region 強一致 OLTP**：傳統 PostgreSQL / MySQL 跨 region 是 async、滿足不了強一致。換 Spanner / Aurora DSQL / CockroachDB（[1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/)）。
 
 不要因為「現在 SQL 慢」就跳結論換 NoSQL — 先確認問題是 *結構性的*（connection、contention、跨 region）、不只是 *調校問題*（index、query、cache）。
 
@@ -322,7 +322,7 @@ SQL 的 transactional 模型有結構性限制、超過某個規模硬擴 SQL �
 
 1. **database client 共用**、不要每 request 新建
 2. **連線池可控** — 三層架構（app pool + middleware + DB max_connections）
-3. **transaction 要短** — 詳見 [1.3](/backend/01-database/transaction-boundary/)
+3. **transaction 要短** — 詳見 [1.3 Transaction 與一致性邊界](/backend/01-database/transaction-boundary/)
 4. **rows 要關**、避免連線被占住
 5. **timeout 要傳遞** — 從 request 一路到 DB
 6. **Hot row 要識別** — counter shard、optimistic concurrency、async batching、或換 KV

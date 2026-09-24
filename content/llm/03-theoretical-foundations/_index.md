@@ -14,20 +14,20 @@ weight: 4
 
 ## 章節列表
 
-| 章節                                                                    | 主題                                  | 關鍵收穫                                                         |
-| ----------------------------------------------------------------------- | ------------------------------------- | ---------------------------------------------------------------- |
-| [3.0](/llm/03-theoretical-foundations/neural-network-basics/)           | 神經網路基礎                          | layer、weights、activation function、forward / backward pass     |
-| [3.1](/llm/03-theoretical-foundations/embedding-spaces/)                | Embedding 空間                        | 為什麼相似 token 在向量空間靠近、embedding 是怎麼學出來的        |
-| [3.2](/llm/03-theoretical-foundations/attention-mechanism/)             | Attention 機制                        | Query / Key / Value、scaled dot-product、multi-head attention    |
-| [3.3](/llm/03-theoretical-foundations/transformer-architecture/)        | Transformer 架構細節                  | Decoder-only、positional encoding、layer norm、residual stream   |
-| [3.4](/llm/03-theoretical-foundations/training-pipeline/)               | 訓練流程：pre-train → SFT → RLHF      | 三階段訓練、各階段目標、為什麼這順序                             |
-| [3.5](/llm/03-theoretical-foundations/sampling-and-decoding/)           | Sampling 與 decoding 策略             | Greedy、beam、top-k、top-p、temperature、min-p                   |
-| [3.6](/llm/03-theoretical-foundations/tokenization-algorithms/)         | Tokenization：BPE、SentencePiece      | 為什麼不同 model 切出來的 token 數不同、tokenizer 的選擇影響     |
-| [3.7](/llm/03-theoretical-foundations/cross-language-tokenization/)     | 跨語言 tokenizer 與訓練分佈原理       | 雙因素：tokenizer + 訓練資料分佈、語言選擇取捨                   |
-| [3.8](/llm/03-theoretical-foundations/reasoning-models/)                | Reasoning models 與 test-time compute | CoT 從 prompting 變訓練 paradigm、本地 reasoning model 選型      |
-| [3.9](/llm/03-theoretical-foundations/speculative-decoding-internals/)  | Speculative decoding 內部             | Drafter / target 配對、acceptance rate、MTP / EAGLE 變體         |
-| [3.10](/llm/03-theoretical-foundations/constrained-decoding-internals/) | Constrained decoding 內部             | Grammar mask、JSON / regex / CFG、XGrammar pre-compile、反而加速 |
-| [3.11](/llm/03-theoretical-foundations/going-deeper-theory/)            | 想學更深：推薦公開課程                | Karpathy、Stanford CS224N / CS25 / CS336、DeepLearning.AI        |
+| 章節                                                                                                                        | 主題                                  | 關鍵收穫                                                         |
+| --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ---------------------------------------------------------------- |
+| [3.0 神經網路基礎](/llm/03-theoretical-foundations/neural-network-basics/)                                                  | 神經網路基礎                          | layer、weights、activation function、forward / backward pass     |
+| [3.1 Embedding 空間](/llm/03-theoretical-foundations/embedding-spaces/)                                                     | Embedding 空間                        | 為什麼相似 token 在向量空間靠近、embedding 是怎麼學出來的        |
+| [3.2 Attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)                                                  | Attention 機制                        | Query / Key / Value、scaled dot-product、multi-head attention    |
+| [3.3 Transformer 架構細節](/llm/03-theoretical-foundations/transformer-architecture/)                                       | Transformer 架構細節                  | Decoder-only、positional encoding、layer norm、residual stream   |
+| [3.4 訓練流程：pre-train → SFT → RLHF](/llm/03-theoretical-foundations/training-pipeline/)                                  | 訓練流程：pre-train → SFT → RLHF      | 三階段訓練、各階段目標、為什麼這順序                             |
+| [3.5 Sampling 與 Decoding 策略](/llm/03-theoretical-foundations/sampling-and-decoding/)                                     | Sampling 與 decoding 策略             | Greedy、beam、top-k、top-p、temperature、min-p                   |
+| [3.6 Tokenization：BPE、SentencePiece、Tiktoken](/llm/03-theoretical-foundations/tokenization-algorithms/)                  | Tokenization：BPE、SentencePiece      | 為什麼不同 model 切出來的 token 數不同、tokenizer 的選擇影響     |
+| [3.7 跨語言場景的 tokenizer 與訓練分佈原理](/llm/03-theoretical-foundations/cross-language-tokenization/)                   | 跨語言 tokenizer 與訓練分佈原理       | 雙因素：tokenizer + 訓練資料分佈、語言選擇取捨                   |
+| [3.8 Reasoning models：test-time compute paradigm](/llm/03-theoretical-foundations/reasoning-models/)                       | Reasoning models 與 test-time compute | CoT 從 prompting 變訓練 paradigm、本地 reasoning model 選型      |
+| [3.9 Speculative decoding 內部：drafter / 驗證 / 加速上限](/llm/03-theoretical-foundations/speculative-decoding-internals/) | Speculative decoding 內部             | Drafter / target 配對、acceptance rate、MTP / EAGLE 變體         |
+| [3.10 Constrained decoding 內部：grammar mask 跟性能取捨](/llm/03-theoretical-foundations/constrained-decoding-internals/)  | Constrained decoding 內部             | Grammar mask、JSON / regex / CFG、XGrammar pre-compile、反而加速 |
+| [3.11 想學更深：推薦公開課程](/llm/03-theoretical-foundations/going-deeper-theory/)                                         | 想學更深：推薦公開課程                | Karpathy、Stanford CS224N / CS25 / CS336、DeepLearning.AI        |
 
 ## 跟其他模組的分工
 

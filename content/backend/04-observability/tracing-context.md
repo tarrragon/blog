@@ -11,7 +11,7 @@ tags: ["backend", "observability"]
 - [trace](/backend/knowledge-cards/trace/) / [span](/backend/knowledge-cards/span/) 模型
 - [trace context](/backend/knowledge-cards/trace-context/) propagation
 - context 斷鏈的常見邊界與修復
-- [sampling](/backend/knowledge-cards/sampling/) 策略的 tracing 面（SSoT 在 [4.7](/backend/04-observability/cardinality-cost-governance/#sampling-策略)）
+- [sampling](/backend/knowledge-cards/sampling/) 策略的 tracing 面（SSoT 在 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/#sampling-策略)）
 - service graph 與依賴發現
 - 反模式
 
@@ -107,7 +107,7 @@ Service graph 的完整性取決於 trace 的覆蓋率。如果某些服務沒�
 
 - [trace id](/backend/knowledge-cards/trace-id/) 是否能和 log、metric 共享 [correlation id](/backend/knowledge-cards/correlation-id/)
 - async / queue / background job 是否能保留 parent-child 關係
-- sampling 是否能在高流量下保留錯誤與高延遲樣本（策略矩陣見 [4.7](/backend/04-observability/cardinality-cost-governance/#sampling-策略)）
+- sampling 是否能在高流量下保留錯誤與高延遲樣本（策略矩陣見 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/#sampling-策略)）
 - service graph 是否能由 trace 聚合而來，並降低 wiki 手動維護成本
 - trace context 在跨語言 / 跨 vendor 邊界是否用 W3C 標準統一
 

@@ -19,7 +19,7 @@ weight: 11
 
 ## Sampling 階段的位置
 
-回顧 LLM 輸出流程（見 [3.5](/llm/03-theoretical-foundations/sampling-and-decoding/)）：
+回顧 LLM 輸出流程（見 [3.5 Sampling 與 Decoding 策略](/llm/03-theoretical-foundations/sampling-and-decoding/)）：
 
 ```text
 [forward pass] → logits（vocab_size 維、每個 token 一個實數）

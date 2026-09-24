@@ -28,4 +28,4 @@ secret、token、key 若沒有按作用域分開，輪替會變成一次性控�
 
 ## 下一步路由
 
-回 [7.6](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 與 [7.14](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。
+回 [7.6 秘密管理與機器憑證治理](/backend/07-security-data-protection/secrets-and-machine-credential-governance/) 與 [7.14 資安治理例外與 Tripwire](/backend/07-security-data-protection/security-governance-exception-and-tripwire/)。

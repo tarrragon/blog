@@ -249,4 +249,4 @@ LLM 先嘗試直接答、若 confidence 低（self-report 或 logits 機率）�
 
 ## 下一章
 
-下一章：[4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)、從「LLM 讀外部資料」延伸到「LLM 對外部世界做事」。Vanilla RAG 的骨架見 [4.1](/llm/04-applications/rag-principles/)、long context 跟 RAG 的取捨見 [4.11](/llm/04-applications/long-context-engineering/)、multi-step 跟 reflection 的失敗模式比對見 [4.7](/llm/04-applications/workflow-patterns/)。
+下一章：[4.3 Tool use 原理](/llm/04-applications/tool-use-principles/)、從「LLM 讀外部資料」延伸到「LLM 對外部世界做事」。Vanilla RAG 的骨架見 [4.1 RAG 原理：retrieval + augmentation 模式](/llm/04-applications/rag-principles/)、long context 跟 RAG 的取捨見 [4.11 Long context engineering](/llm/04-applications/long-context-engineering/)、multi-step 跟 reflection 的失敗模式比對見 [4.7 Workflow 編排模式](/llm/04-applications/workflow-patterns/)。

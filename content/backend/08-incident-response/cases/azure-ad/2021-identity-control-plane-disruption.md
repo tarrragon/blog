@@ -10,11 +10,11 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                    | 判讀重點           | 回寫章節                                                               |
-| ----------------------- | ------------------ | ---------------------------------------------------------------------- |
-| auth failure surge      | 影響是否跨產品擴散 | [8.1](/backend/08-incident-response/incident-severity-trigger/)        |
-| token issuance lag      | 控制面是否壅塞     | [8.18](/backend/08-incident-response/incident-intake-evidence-triage/) |
-| dependency blast radius | 下游受影響範圍     | [8.15](/backend/08-incident-response/vendor-dependency-incident/)      |
+| 訊號                    | 判讀重點           | 回寫章節                                                                                                 |
+| ----------------------- | ------------------ | -------------------------------------------------------------------------------------------------------- |
+| auth failure surge      | 影響是否跨產品擴散 | [8.1 事故分級與啟動條件](/backend/08-incident-response/incident-severity-trigger/)                       |
+| token issuance lag      | 控制面是否壅塞     | [8.18 Incident Intake & Evidence Triage](/backend/08-incident-response/incident-intake-evidence-triage/) |
+| dependency blast radius | 下游受影響範圍     | [8.15 Vendor / 第三方依賴事故處理](/backend/08-incident-response/vendor-dependency-incident/)            |
 
 ## 邊界判讀
 
@@ -22,4 +22,4 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 下一步路由
 
-先做影響分層，再同步外部通訊與回復節奏，並將判讀欄位回寫 [8.20](/backend/08-incident-response/customer-impact-assessment/) 與 [8.19](/backend/08-incident-response/incident-decision-log/)。
+先做影響分層，再同步外部通訊與回復節奏，並將判讀欄位回寫 [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/) 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。

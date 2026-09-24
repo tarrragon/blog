@@ -167,7 +167,7 @@ Eval 不是孤立的——它跟 [4.20 LLM tracing](/llm/04-applications/llm-tra
    [回到 production traffic、看 metric 收斂]
 ```
 
-Production trace 不只是 debug 工具、是 eval set 的活泉。Trace + eval 閉環的設計細節見 [4.20](/llm/04-applications/llm-tracing-and-observability/)。
+Production trace 不只是 debug 工具、是 eval set 的活泉。Trace + eval 閉環的設計細節見 [4.20 LLM tracing 與 observability](/llm/04-applications/llm-tracing-and-observability/)。
 
 ## 跟其他 Eval 章節的分工
 
@@ -227,4 +227,4 @@ Production trace 持續抽樣補進 eval set、每季 review eval set 跟 traffi
 
 ## 下一章
 
-下一章：[4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)、把座標系落到具體 benchmark 設計。Subjective eval 的工具見 [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)、production trace 怎麼接 eval 見 [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)、跟 fuzzy engineering 典範的關係見 [0.8](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)（fuzzy 行為的測試本質就是 distribution metric）。
+下一章：[4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/)、把座標系落到具體 benchmark 設計。Subjective eval 的工具見 [4.21 LLM-as-Judge](/llm/04-applications/llm-as-judge/)、production trace 怎麼接 eval 見 [4.20 LLM tracing](/llm/04-applications/llm-tracing-and-observability/)、跟 fuzzy engineering 典範的關係見 [0.8 Deterministic vs Fuzzy Engineering：軟體設計典範的位移](/llm/00-foundations/deterministic-vs-fuzzy-engineering/)（fuzzy 行為的測試本質就是 distribution metric）。

@@ -223,4 +223,4 @@ Tripwire（什麼時候值得評估 multimodal RAG）：
 
 ## 跟其他章節的關係
 
-本章是 [4.1 RAG](/llm/04-applications/rag-principles/) / [4.3 Tool use](/llm/04-applications/tool-use-principles/) / [4.12 embedding model](/llm/04-applications/embedding-model-internals/) 在 vision 延伸的補完；隱私 / 跨雲端分流邏輯沿用 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)；本地 VLM 配 IDE 的 hands-on 屬於 [模組一 hands-on](/llm/01-local-llm-services/hands-on/) 範圍、視推論伺服器支援度成熟度補。
+本章是 [4.1 RAG](/llm/04-applications/rag-principles/) / [4.3 Tool use](/llm/04-applications/tool-use-principles/) / [4.12 embedding model](/llm/04-applications/embedding-model-internals/) 在 vision 延伸的補完；隱私 / 跨雲端分流邏輯沿用 [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)；本地 VLM 配 IDE 的 hands-on 屬於 [模組一 hands-on](/llm/01-local-llm-services/hands-on/) 範圍、視推論伺服器支援度成熟度補。

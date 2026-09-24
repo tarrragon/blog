@@ -24,7 +24,7 @@ Cloudflare Cache Reserve 透過分層儲存延長快取可用性，降低 origin
 
 ## 下一步路由
 
-回 [2.3](/backend/02-cache-redis/ttl-eviction/) 與 [6.9](/backend/06-reliability/capacity-cost/)。
+回 [2.3 TTL 與 eviction](/backend/02-cache-redis/ttl-eviction/) 與 [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)。
 
 ## 引用源
 

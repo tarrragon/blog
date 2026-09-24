@@ -33,12 +33,12 @@ Staged recovery order 把恢復拆成明確的階段：先恢復物理網路連�
 
 ## 可觀測訊號
 
-| 訊號                            | 判讀重點                     | 對應章節                                                            |
-| ------------------------------- | ---------------------------- | ------------------------------------------------------------------- |
-| out-of-band reachability        | 獨立管理通道是否可連線       | [6.7](/backend/06-reliability/dr-rollback-rehearsal/)               |
-| recovery dependency cycle count | 恢復步驟之間是否存在循環依賴 | [6.14](/backend/06-reliability/dependency-reliability-budget/)      |
-| DNS propagation lag             | 名稱解析恢復後多久全域生效   | [6.22](/backend/06-reliability/steady-state-definition/)            |
-| physical access activation time | 從決策到實體接觸設備的時間   | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
+| 訊號                            | 判讀重點                     | 對應章節                                                                                     |
+| ------------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------- |
+| out-of-band reachability        | 獨立管理通道是否可連線       | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)           |
+| recovery dependency cycle count | 恢復步驟之間是否存在循環依賴 | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/) |
+| DNS propagation lag             | 名稱解析恢復後多久全域生效   | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)             |
+| physical access activation time | 從決策到實體接觸設備的時間   | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)     |
 
 ## 常見陷阱
 

@@ -29,12 +29,12 @@ Feature flag safety 控制變更的 blast radius。dark launch 讓新邏輯在 p
 
 ## 可觀測訊號
 
-| 訊號                       | 判讀重點                   | 對應章節                                                       |
-| -------------------------- | -------------------------- | -------------------------------------------------------------- |
-| trace cardinality coverage | 觀測維度是否足以切分異常   | [4.3](/backend/04-observability/tracing-context/)              |
-| flag rollout anomaly       | 新 flag 開啟後行為是否偏離 | [6.17](/backend/06-reliability/feature-flag-governance/)       |
-| production validation pass | 驗證結果是否支持繼續放量   | [6.8](/backend/06-reliability/release-gate/)                   |
-| rollback trigger count     | 自動回退是否被觸發         | [6.23](/backend/06-reliability/verification-evidence-handoff/) |
+| 訊號                       | 判讀重點                   | 對應章節                                                                                     |
+| -------------------------- | -------------------------- | -------------------------------------------------------------------------------------------- |
+| trace cardinality coverage | 觀測維度是否足以切分異常   | [4.3 tracing 與 context link](/backend/04-observability/tracing-context/)                    |
+| flag rollout anomaly       | 新 flag 開啟後行為是否偏離 | [6.17 Feature Flag Governance](/backend/06-reliability/feature-flag-governance/)             |
+| production validation pass | 驗證結果是否支持繼續放量   | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                         |
+| rollback trigger count     | 自動回退是否被觸發         | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) |
 
 ## 常見陷阱
 
@@ -42,7 +42,7 @@ Feature flag safety 控制變更的 blast radius。dark launch 讓新邏輯在 p
 
 ## 下一步路由
 
-先回到 [6.15 Environment Parity](/backend/06-reliability/environment-parity/) 評估 staging 差異的實際風險，再到 [6.17 Feature Flag Governance](/backend/06-reliability/feature-flag-governance/) 建立 flag safety 機制。production validation 的證據回寫 [6.23](/backend/06-reliability/verification-evidence-handoff/) 與 [6.8 Release Gate](/backend/06-reliability/release-gate/)。
+先回到 [6.15 Environment Parity](/backend/06-reliability/environment-parity/) 評估 staging 差異的實際風險，再到 [6.17 Feature Flag Governance](/backend/06-reliability/feature-flag-governance/) 建立 flag safety 機制。production validation 的證據回寫 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 與 [6.8 Release Gate](/backend/06-reliability/release-gate/)。
 
 ## 引用源
 

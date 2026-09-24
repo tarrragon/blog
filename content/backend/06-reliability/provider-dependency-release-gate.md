@@ -47,7 +47,7 @@ Payment 類變更的觀察窗比一般 config 變更長，原因有兩個。第�
 
 ### 證據留存格式
 
-每批 canary 結束時留存一筆結構化證據，供 [6.23](/backend/06-reliability/verification-evidence-handoff/) 與 [8.19](/backend/08-incident-response/incident-decision-log/) 調用。
+每批 canary 結束時留存一筆結構化證據，供 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 調用。
 
 | 欄位             | 內容                                                       |
 | ---------------- | ---------------------------------------------------------- |

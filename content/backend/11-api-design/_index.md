@@ -41,22 +41,22 @@ API 設計的核心目標是管理對外承諾的成本結構。服務內部的�
 
 ### 主章（判斷標準層）
 
-| 章節                                                                  | 主題                    | 核心問題                                                                                                         | 案例支撐                     |
-| --------------------------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| [11.1](/backend/11-api-design/api-boundary-responsibility/)           | API 作為服務邊界的責任  | 承諾的成本結構：改內部便宜、改對外語意昂貴；違約模式與成本分配                                                   | 合成（全庫）                 |
-| [11.2](/backend/11-api-design/api-style-selection/)                   | 風格選型總覽            | 消費者形狀、演進成本、操作可及性的判斷標準軸；各風格深度收在 `styles/`                                           | 合成（C18-C34 為主）         |
-| [11.3](/backend/11-api-design/resource-modeling-operation-semantics/) | 資源建模與操作語意      | 資源導向與動作導向的取捨、HTTP method / status 的承諾意義、跨資源操作                                            | C1、C3、C5（偏論證型）       |
-| [11.4](/backend/11-api-design/error-model-design/)                    | 錯誤模型設計            | 可重試與終態的分類、錯誤碼 taxonomy、錯誤格式的演進空間                                                          | C35、C36、C45                |
-| [11.5](/backend/11-api-design/versioning-and-deprecation/)            | 版本策略與 deprecation  | 版本是承諾的分期方式；[deprecation 生命週期](/backend/knowledge-cards/deprecation-lifecycle/)與 sunset 量測      | C10-C16、C26                 |
-| [11.6](/backend/11-api-design/backward-compatibility-discipline/)     | 向後相容的變更紀律      | 什麼算 breaking（欄位、預設值、錯誤碼、時序）、變更審查 gate                                                     | C11、C13、C26、C28、C29      |
-| [11.7](/backend/11-api-design/collection-interface-design/)           | 集合介面設計            | 分頁與批次的部分失敗語意、長時操作的非同步模式                                                                   | C37、C44                     |
-| [11.8](/backend/11-api-design/api-idempotency-design/)                | API 層冪等設計          | idempotency key 的對外語意：誰生成、存多久、衝突怎麼回                                                           | C38-C41、C45                 |
-| [11.9](/backend/11-api-design/external-traffic-semantics/)            | 對外流量語意            | rate limit / quota 作為[契約](/backend/knowledge-cards/rate-limit-contract/)：429 / Retry-After 的承諾、承諾邊界 | C19、C42、C43                |
-| [11.10](/backend/11-api-design/api-governance/)                       | API 規範治理            | style guide 與 design review 作為組織能力：提案制 / Guild 制 / 分軌制三型比較、linting 進 CI、治理缺席的失敗模式 | C46-C54                      |
-| [11.11](/backend/11-api-design/error-bidirectional-contract/)         | Status 與錯誤的雙向契約 | provider 與 consumer 對彼此的期望、成本外部化的判讀；四篇深度文章攤開表達力邊界、重試決策、傳播信任、回饋迴路    | C64-C77                      |
-| [11.12](/backend/11-api-design/consumer-usage-observability/)         | API 消費者用量觀測      | 契約決策要能執行、前提是查得出誰在用什麼；身分維度、欄位級可答性與 cardinality 分層                              | 合成（四篇爭論文推導）       |
-| [11.13](/backend/11-api-design/existing-api-retrofit/)                | 既有 API 的改造路徑     | 契約已上線、消費者改不動、觀測未建時怎麼落地；已暴露性質的四類收法、程序閘門與三層排序                           | 合成（四篇爭論文的個案實跑） |
-| [11.14](/backend/11-api-design/contract-clause-delivery/)             | 契約條款的送達          | 寫進文件只是宣告；送達手段的強制力與射程兩個維度、以及哪些條款只能靠人讀                                         | 合成（四篇爭論文的條款層）   |
+| 章節                                                                                     | 主題                    | 核心問題                                                                                                         | 案例支撐                     |
+| ---------------------------------------------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| [11.1 API 作為服務邊界的責任](/backend/11-api-design/api-boundary-responsibility/)       | API 作為服務邊界的責任  | 承諾的成本結構：改內部便宜、改對外語意昂貴；違約模式與成本分配                                                   | 合成（全庫）                 |
+| [11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)                         | 風格選型總覽            | 消費者形狀、演進成本、操作可及性的判斷標準軸；各風格深度收在 `styles/`                                           | 合成（C18-C34 為主）         |
+| [11.3 資源建模與操作語意](/backend/11-api-design/resource-modeling-operation-semantics/) | 資源建模與操作語意      | 資源導向與動作導向的取捨、HTTP method / status 的承諾意義、跨資源操作                                            | C1、C3、C5（偏論證型）       |
+| [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)                          | 錯誤模型設計            | 可重試與終態的分類、錯誤碼 taxonomy、錯誤格式的演進空間                                                          | C35、C36、C45                |
+| [11.5 版本策略與 deprecation](/backend/11-api-design/versioning-and-deprecation/)        | 版本策略與 deprecation  | 版本是承諾的分期方式；[deprecation 生命週期](/backend/knowledge-cards/deprecation-lifecycle/)與 sunset 量測      | C10-C16、C26                 |
+| [11.6 向後相容的變更紀律](/backend/11-api-design/backward-compatibility-discipline/)     | 向後相容的變更紀律      | 什麼算 breaking（欄位、預設值、錯誤碼、時序）、變更審查 gate                                                     | C11、C13、C26、C28、C29      |
+| [11.7 集合介面設計](/backend/11-api-design/collection-interface-design/)                 | 集合介面設計            | 分頁與批次的部分失敗語意、長時操作的非同步模式                                                                   | C37、C44                     |
+| [11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/)                    | API 層冪等設計          | idempotency key 的對外語意：誰生成、存多久、衝突怎麼回                                                           | C38-C41、C45                 |
+| [11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)                  | 對外流量語意            | rate limit / quota 作為[契約](/backend/knowledge-cards/rate-limit-contract/)：429 / Retry-After 的承諾、承諾邊界 | C19、C42、C43                |
+| [11.10 API 規範治理](/backend/11-api-design/api-governance/)                             | API 規範治理            | style guide 與 design review 作為組織能力：提案制 / Guild 制 / 分軌制三型比較、linting 進 CI、治理缺席的失敗模式 | C46-C54                      |
+| [11.11 Status 與錯誤的雙向契約](/backend/11-api-design/error-bidirectional-contract/)    | Status 與錯誤的雙向契約 | provider 與 consumer 對彼此的期望、成本外部化的判讀；四篇深度文章攤開表達力邊界、重試決策、傳播信任、回饋迴路    | C64-C77                      |
+| [11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)         | API 消費者用量觀測      | 契約決策要能執行、前提是查得出誰在用什麼；身分維度、欄位級可答性與 cardinality 分層                              | 合成（四篇爭論文推導）       |
+| [11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)               | 既有 API 的改造路徑     | 契約已上線、消費者改不動、觀測未建時怎麼落地；已暴露性質的四類收法、程序閘門與三層排序                           | 合成（四篇爭論文的個案實跑） |
+| [11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)                 | 契約條款的送達          | 寫進文件只是宣告；送達手段的強制力與射程兩個維度、以及哪些條款只能靠人讀                                         | 合成（四篇爭論文的條款層）   |
 
 ### 流派層（`styles/`）
 
@@ -109,17 +109,17 @@ API 設計的核心目標是管理對外承諾的成本結構。服務內部的�
 
 四項共同前提缺口已全數補完，性質跟前兩列不同：它們在單篇視角下都不落空——四篇各自給了自己那一角、讀者當下走得下去——所以逐篇審查看不到它們，是把四篇並排才浮現的。登記時要標明各篇的哪一角屬於它，否則下一輪會被逐篇修回各篇裡、缺口再度消失。
 
-四項裡的**用量觀測**優先序最高、同時是另外三項的前置，已寫成 [11.12](/backend/11-api-design/consumer-usage-observability/)：四篇的檢查問法全部掛在它上面，缺了它，四篇提供的可操作的判斷標準同時退化成問了也得不到答案的問題。
+四項裡的**用量觀測**優先序最高、同時是另外三項的前置，已寫成 [11.12 API 消費者用量觀測](/backend/11-api-design/consumer-usage-observability/)：四篇的檢查問法全部掛在它上面，缺了它，四篇提供的可操作的判斷標準同時退化成問了也得不到答案的問題。
 
-**條款的送達**已寫成 [11.14](/backend/11-api-design/contract-clause-delivery/)：四篇都把「寫進文件」當終點動作，而「條款寫了但沒人讀」與「條款根本沒寫」的觀察結果相同——消費者踩到、雙方都判定不了誰違約。該章處理送達分層與哪些條款只能靠人讀。
+**條款的送達**已寫成 [11.14 契約條款的送達](/backend/11-api-design/contract-clause-delivery/)：四篇都把「寫進文件」當終點動作，而「條款寫了但沒人讀」與「條款根本沒寫」的觀察結果相同——消費者踩到、雙方都判定不了誰違約。該章處理送達分層與哪些條款只能靠人讀。
 
-**既有 API 的改造路徑**已寫成 [11.13](/backend/11-api-design/existing-api-retrofit/)：四篇的判定序都是綠地版，而個案實跑顯示三個真實 API 裡有兩個半的讀者站在棕地位置。該章同時承接四篇合起來缺的動工順序（觀測 → 止血 → 錯誤格式 → 分頁 → 版本），以及三章共用的「消費者側變更節奏」這個外部變數——對方多久發一次版、更新覆蓋率爬到多少、簽核走幾天，它決定所有時程的絕對長度而三章原本都沒問過它。
+**既有 API 的改造路徑**已寫成 [11.13 既有 API 的改造路徑](/backend/11-api-design/existing-api-retrofit/)：四篇的判定序都是綠地版，而個案實跑顯示三個真實 API 裡有兩個半的讀者站在棕地位置。該章同時承接四篇合起來缺的動工順序（觀測 → 止血 → 錯誤格式 → 分頁 → 版本），以及三章共用的「消費者側變更節奏」這個外部變數——對方多久發一次版、更新覆蓋率爬到多少、簽核走幾天，它決定所有時程的絕對長度而三章原本都沒問過它。
 
 **消費者形態與可協調度**已建成兩張卡（[API Consumer Shape](/backend/knowledge-cards/api-consumer-shape/) 與 [Consumer Coordinability](/backend/knowledge-cards/consumer-coordinability/)）：「消費者」在四篇裡指四種行為完全不同的對象，而「可協調」原本全站無一處定義。
 
 前兩列的性質要跟以上四列分開讀。錯誤格式之爭的 envelope 派與分頁之爭的 offset 失效模式目前由推導承接、且正文已標明推導邊界，因此它們現在是可讀的內容而非空白；找到一手來源時要做的是把推導換成引用、順帶檢查推導的結論有沒有被來源推翻。案例庫索引的「案例覆蓋缺口」段記著 offset 那一項的搜尋結果、避免重複投入同一次搜尋。
 
-模組外的關聯缺口、記錄備查：05 部署平台模組缺 gateway 限流實作章、[11.9](/backend/11-api-design/external-traffic-semantics/) 的執行面交接目前落在該模組首頁（已在責任分工表標 backlog）。
+模組外的關聯缺口、記錄備查：05 部署平台模組缺 gateway 限流實作章、[11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/) 的執行面交接目前落在該模組首頁（已在責任分工表標 backlog）。
 
 ## 案例庫
 

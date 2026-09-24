@@ -10,15 +10,15 @@ Go 的型別系統不追求複雜，而是讓資料形狀、行為需求與程�
 
 ## 章節列表
 
-| 章節                                            | 主題                          | 關鍵收穫                               |
-| ----------------------------------------------- | ----------------------------- | -------------------------------------- |
-| [2.1](/go/02-types-data/struct-json/)           | struct 與 JSON tag            | 用 struct 定義 API schema              |
-| [2.2](/go/02-types-data/slices-maps/)           | slice 與 map                  | 掌握 Go 最常用的集合型別               |
-| [2.3](/go/02-types-data/interfaces/)            | interface：用行為定義依賴     | 用小介面降低耦合                       |
-| [2.4](/go/02-types-data/constants/)             | 常數與 typed string           | 管理狀態值與訊息類型                   |
-| [2.5](/go/02-types-data/pointers-copy/)         | 指標與資料複製邊界            | 避免外部修改共享狀態                   |
-| [2.6](/go/02-types-data/embedding-composition/) | struct embedding 與組合式設計 | 分辨欄位提升、方法提升與依賴組合       |
-| [2.7](/go/02-types-data/generics-basics/)       | generics 入門：型別參數與約束 | 在重複資料結構與 helper 中使用最小泛型 |
+| 章節                                                                          | 主題                          | 關鍵收穫                               |
+| ----------------------------------------------------------------------------- | ----------------------------- | -------------------------------------- |
+| [2.1 struct 與 JSON tag](/go/02-types-data/struct-json/)                      | struct 與 JSON tag            | 用 struct 定義 API schema              |
+| [2.2 slice 與 map](/go/02-types-data/slices-maps/)                            | slice 與 map                  | 掌握 Go 最常用的集合型別               |
+| [2.3 interface：用行為定義依賴](/go/02-types-data/interfaces/)                | interface：用行為定義依賴     | 用小介面降低耦合                       |
+| [2.4 常數與 typed string](/go/02-types-data/constants/)                       | 常數與 typed string           | 管理狀態值與訊息類型                   |
+| [2.5 指標與資料複製邊界](/go/02-types-data/pointers-copy/)                    | 指標與資料複製邊界            | 避免外部修改共享狀態                   |
+| [2.6 struct embedding 與組合式設計](/go/02-types-data/embedding-composition/) | struct embedding 與組合式設計 | 分辨欄位提升、方法提升與依賴組合       |
+| [2.7 generics 入門：型別參數與約束](/go/02-types-data/generics-basics/)       | generics 入門：型別參數與約束 | 在重複資料結構與 helper 中使用最小泛型 |
 
 ## 本模組使用的範例主題
 

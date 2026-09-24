@@ -165,7 +165,7 @@ Agent 跟 multi-call workflow 是「fuzzy 軟體」最複雜的型態。[4.4 age
 **會變的部分**：
 
 - 具體 schema 工具（Pydantic、Zod、各家 framework 的 typed output API）。
-- 具體 LLM-as-judge 平台跟方法（見 [4.21](/llm/04-applications/llm-as-judge/)）。
+- 具體 LLM-as-judge 平台跟方法（見 [4.21 LLM-as-Judge 評估方法](/llm/04-applications/llm-as-judge/)）。
 - 各家 framework 的 guardrail SDK（隨工具世代換）。
 - Fuzzy / deterministic 的邊界位置會隨模型能力移動——模型越強、能 fuzzy 處理的範圍越大、但「該包 guardrail」的原則不變。
 

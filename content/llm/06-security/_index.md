@@ -21,15 +21,15 @@ weight: 7
 
 ## 章節列表
 
-| 章節                                                     | 主題                              | 關鍵收穫                                                             |
-| -------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------- |
-| [6.0](/llm/06-security/model-supply-chain-trust/)        | 模型供應鏈與信任邊界              | GGUF / Hugging Face / Ollama registry 信任、量化版本污染、權重完整性 |
-| [6.1](/llm/06-security/inference-server-binding/)        | 推論伺服器的綁定與暴露範圍        | 127.0.0.1 vs 0.0.0.0 vs 反代、預設安全、誤開放給內網的後果           |
-| [6.2](/llm/06-security/tool-use-permission-model/)       | tool use 與 MCP server 的權限模型 | 檔案系統 / shell / 網路存取邊界、第三方 MCP 信任、副作用的可逆性     |
-| [6.3](/llm/06-security/prompt-injection-in-ide/)         | IDE 場景的 prompt injection       | codebase 內容、外部文件、剪貼簿作為攻擊面、跟雲端 LLM 場景的差異     |
-| [6.4](/llm/06-security/cross-cloud-local-data-boundary/) | 跨雲端 / 本地的資料邊界           | Continue.dev 多 provider 設定、prompt 洩漏點、本地優先的判讀         |
-| [6.5](/llm/06-security/routing-to-production-security/)  | 跨進 production 的 routing 中樞   | 個人 → 團隊 → production 三層演化、列舉 backend/07 對應卡片          |
-| [6.6](/llm/06-security/owasp-llm-top10-mapping/)         | OWASP LLM Top 10 對照圖           | 把 6.0-6.5 對應到 OWASP LLM01-LLM10、跟企業安全溝通的共同詞彙        |
+| 章節                                                                                    | 主題                              | 關鍵收穫                                                             |
+| --------------------------------------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------- |
+| [6.0 模型供應鏈與信任邊界](/llm/06-security/model-supply-chain-trust/)                  | 模型供應鏈與信任邊界              | GGUF / Hugging Face / Ollama registry 信任、量化版本污染、權重完整性 |
+| [6.1 推論伺服器的綁定與暴露範圍](/llm/06-security/inference-server-binding/)            | 推論伺服器的綁定與暴露範圍        | 127.0.0.1 vs 0.0.0.0 vs 反代、預設安全、誤開放給內網的後果           |
+| [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)    | tool use 與 MCP server 的權限模型 | 檔案系統 / shell / 網路存取邊界、第三方 MCP 信任、副作用的可逆性     |
+| [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)            | IDE 場景的 prompt injection       | codebase 內容、外部文件、剪貼簿作為攻擊面、跟雲端 LLM 場景的差異     |
+| [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)        | 跨雲端 / 本地的資料邊界           | Continue.dev 多 provider 設定、prompt 洩漏點、本地優先的判讀         |
+| [6.5 跨進 production 的 routing 中樞](/llm/06-security/routing-to-production-security/) | 跨進 production 的 routing 中樞   | 個人 → 團隊 → production 三層演化、列舉 backend/07 對應卡片          |
+| [6.6 OWASP LLM Top 10 對照圖](/llm/06-security/owasp-llm-top10-mapping/)                | OWASP LLM Top 10 對照圖           | 把 6.0-6.5 對應到 OWASP LLM01-LLM10、跟企業安全溝通的共同詞彙        |
 
 ## 跟其他模組的關係
 

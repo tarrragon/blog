@@ -39,10 +39,10 @@ tags: ["python", "python-advanced", "optimization"]
 
 ## 章節列表
 
-| 章節                                                                   | 主題         | 關鍵收穫                   |
-| ---------------------------------------------------------------------- | ------------ | -------------------------- |
-| [8.1](/python-advanced/08-practical-optimization/parallel-processing/) | 並行處理實戰 | 將 I/O 密集任務並行化      |
-| [8.2](/python-advanced/08-practical-optimization/performance-tuning/)  | 效能調優實戰 | 測量、分析、優化的完整流程 |
+| 章節                                                                                | 主題         | 關鍵收穫                   |
+| ----------------------------------------------------------------------------------- | ------------ | -------------------------- |
+| [8.1 並行處理實戰](/python-advanced/08-practical-optimization/parallel-processing/) | 並行處理實戰 | 將 I/O 密集任務並行化      |
+| [8.2 效能調優實戰](/python-advanced/08-practical-optimization/performance-tuning/)  | 效能調優實戰 | 測量、分析、優化的完整流程 |
 
 ## 案例研究
 

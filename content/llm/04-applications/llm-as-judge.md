@@ -22,7 +22,7 @@ Judge 在 eval 系統中的定位：[4.13 Eval 設計座標系](/llm/04-applicat
 
 ## 為什麼需要 LLM-as-Judge
 
-[4.14](/llm/04-applications/benchmarking-and-evaluation/) 推「in-house benchmark 是 final test」、但操作層是個 gap：
+[4.14 Benchmarking 與評估方法論](/llm/04-applications/benchmarking-and-evaluation/) 推「in-house benchmark 是 final test」、但操作層是個 gap：
 
 | Eval 痛點                               | LLM-as-Judge 解法                               |
 | --------------------------------------- | ----------------------------------------------- |

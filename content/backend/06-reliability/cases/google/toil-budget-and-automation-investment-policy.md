@@ -25,12 +25,12 @@ Toil budget 是把工時結果接到 release 與 backlog 決策的機制，單�
 
 ## 可觀測訊號
 
-| 訊號                       | 判讀重點                 | 對應章節                                                            |
-| -------------------------- | ------------------------ | ------------------------------------------------------------------- |
-| toil ratio                 | 是否長期超出預算         | [6.21](/backend/06-reliability/reliability-debt-backlog/)           |
-| incident manual-step count | 事故處理是否過度依賴人工 | [8.16](/backend/08-incident-response/runbook-lifecycle/)            |
-| automation closure rate    | 改善項是否真的落地       | [8.22](/backend/08-incident-response/incident-evidence-write-back/) |
-| on-call overload signal    | 值班負荷是否持續上升     | [8.6](/backend/08-incident-response/drills-and-oncall-readiness/)   |
+| 訊號                       | 判讀重點                 | 對應章節                                                                                         |
+| -------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------ |
+| toil ratio                 | 是否長期超出預算         | [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)               |
+| incident manual-step count | 事故處理是否過度依賴人工 | [8.16 Runbook Lifecycle 管理](/backend/08-incident-response/runbook-lifecycle/)                  |
+| automation closure rate    | 改善項是否真的落地       | [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/) |
+| on-call overload signal    | 值班負荷是否持續上升     | [8.6 演練與值班能力建設](/backend/08-incident-response/drills-and-oncall-readiness/)             |
 
 ## 常見陷阱
 

@@ -16,13 +16,13 @@ tags: ["python", "python-advanced", "cpython"]
 
 ## 章節列表
 
-| 章節                                                         | 主題                 | 關鍵收穫                     |
-| ------------------------------------------------------------ | -------------------- | ---------------------------- |
-| [4.1](/python-advanced/04-cpython-internals/object-model/)   | PyObject 與物件模型  | 理解「一切皆物件」           |
-| [4.2](/python-advanced/04-cpython-internals/memory-gc/)      | 記憶體管理與垃圾回收 | 理解記憶體如何管理           |
-| [4.3](/python-advanced/04-cpython-internals/bytecode/)       | Bytecode 與虛擬機    | 理解程式碼如何執行           |
-| [4.4](/python-advanced/04-cpython-internals/gil-threading/)  | GIL 與執行緒模型     | 深入理解 GIL                 |
-| [4.5](/python-advanced/04-cpython-internals/free-threading/) | Free-Threading       | Python 3.13+ 無 GIL 多執行緒 |
+| 章節                                                                                                    | 主題                 | 關鍵收穫                     |
+| ------------------------------------------------------------------------------------------------------- | -------------------- | ---------------------------- |
+| [3.1 PyObject 與物件模型](/python-advanced/04-cpython-internals/object-model/)                          | PyObject 與物件模型  | 理解「一切皆物件」           |
+| [3.2 記憶體管理與垃圾回收](/python-advanced/04-cpython-internals/memory-gc/)                            | 記憶體管理與垃圾回收 | 理解記憶體如何管理           |
+| [3.3 Bytecode 與虛擬機](/python-advanced/04-cpython-internals/bytecode/)                                | Bytecode 與虛擬機    | 理解程式碼如何執行           |
+| [3.4 GIL 與執行緒模型](/python-advanced/04-cpython-internals/gil-threading/)                            | GIL 與執行緒模型     | 深入理解 GIL                 |
+| [4.5 Free-Threading - Python 的真正多執行緒時代](/python-advanced/04-cpython-internals/free-threading/) | Free-Threading       | Python 3.13+ 無 GIL 多執行緒 |
 
 ## 先備知識
 

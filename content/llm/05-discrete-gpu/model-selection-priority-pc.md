@@ -46,7 +46,7 @@ Mac 統一記憶體場景下、選型主要看「能不能塞進記憶體」。P
 
 **模型定位**：MoE 架構、總參數約 30B、active parameter 約 3B、coding / 通用混合訓練。
 
-**啟動旗標起點**（GGUF Q4_K_M、需配合 [5.1](/llm/05-discrete-gpu/moe-cpu-offload-strategy/)）：
+**啟動旗標起點**（GGUF Q4_K_M、需配合 [5.1 MoE 模型與 CPU 卸載策略](/llm/05-discrete-gpu/moe-cpu-offload-strategy/)）：
 
 ```bash
 llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf \

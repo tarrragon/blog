@@ -24,7 +24,7 @@ Airbnb 在 Kubernetes 規模化過程強調動態擴縮，代表觀測系統需�
 
 ## 下一步路由
 
-回 [4.13](/backend/04-observability/service-topology/) 與 [4.18](/backend/04-observability/observability-operating-model/)。
+回 [4.13 Service Topology 與 Dependency Map](/backend/04-observability/service-topology/) 與 [4.18 Observability Operating Model](/backend/04-observability/observability-operating-model/)。
 
 ## 引用源
 

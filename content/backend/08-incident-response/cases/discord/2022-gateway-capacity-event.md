@@ -10,11 +10,11 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                   | 判讀重點         | 回寫章節                                                            |
-| ---------------------- | ---------------- | ------------------------------------------------------------------- |
-| gateway saturation     | 是否超出穩態邊界 | [6.22](/backend/06-reliability/steady-state-definition/)            |
-| reconnect queue growth | 回復是否放大壓力 | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
-| region imbalance       | 影響是否偏斜     | [8.20](/backend/08-incident-response/customer-impact-assessment/)   |
+| 訊號                   | 判讀重點         | 回寫章節                                                                                     |
+| ---------------------- | ---------------- | -------------------------------------------------------------------------------------------- |
+| gateway saturation     | 是否超出穩態邊界 | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)             |
+| reconnect queue growth | 回復是否放大壓力 | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)     |
+| region imbalance       | 影響是否偏斜     | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/) |
 
 ## 邊界判讀
 
@@ -22,4 +22,4 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 下一步路由
 
-先定義分批回復門檻，再在 [8.14](/backend/08-incident-response/multi-incident-coordination/) 固化協調規則，並回寫 [6.22](/backend/06-reliability/steady-state-definition/) 的穩態門檻。
+先定義分批回復門檻，再在 [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/) 固化協調規則，並回寫 [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/) 的穩態門檻。

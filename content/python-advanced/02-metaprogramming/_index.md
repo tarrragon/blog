@@ -45,12 +45,12 @@ class Parser(ABC):
 
 ## 章節列表
 
-| 章節                                                       | 主題                         | 關鍵收穫              |
-| ---------------------------------------------------------- | ---------------------------- | --------------------- |
-| [2.1](/python-advanced/02-metaprogramming/descriptors/)    | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
-| [2.2](/python-advanced/02-metaprogramming/metaclasses/)    | Metaclass 設計與應用         | 控制類別的建立過程    |
-| [2.3](/python-advanced/02-metaprogramming/class-creation/) | 類別裝飾器與動態類別         | @dataclass 的實現原理 |
-| [2.4](/python-advanced/02-metaprogramming/introspection/)  | 反射與 inspect 模組          | 程式檢視自身的能力    |
+| 章節                                                                                 | 主題                         | 關鍵收穫              |
+| ------------------------------------------------------------------------------------ | ---------------------------- | --------------------- |
+| [2.1 Descriptor Protocol 完整指南](/python-advanced/02-metaprogramming/descriptors/) | Descriptor Protocol 完整指南 | 理解 @property 的本質 |
+| [2.2 Metaclass 設計與應用](/python-advanced/02-metaprogramming/metaclasses/)         | Metaclass 設計與應用         | 控制類別的建立過程    |
+| [2.3 類別裝飾器與動態類別](/python-advanced/02-metaprogramming/class-creation/)      | 類別裝飾器與動態類別         | @dataclass 的實現原理 |
+| [2.4 反射與 inspect 模組](/python-advanced/02-metaprogramming/introspection/)        | 反射與 inspect 模組          | 程式檢視自身的能力    |
 
 ## 案例研究
 

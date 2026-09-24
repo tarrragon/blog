@@ -19,7 +19,7 @@ API 層冪等處理一個無法迴避的物理事實：網路請求會在結果�
 - **key 由誰生成**：消費者生成、建議 UUIDv4、上限 255 字元 — key 代表「消費者眼中的同一次操作」、只有消費者知道邊界。
 - **存多久**：至少 24 小時、逾期同 key 視為新請求 — 保存期是承諾、要明文、消費者據此設計重試窗口。
 - **replay 回什麼**：首次請求的 status code 加 body、**包含 500 也照樣快取重放**。這條最容易自建做錯 — 快取的是「該次請求的結局」、而非「成功結果」；只快取成功的實作、會在 server 錯誤後讓同 key 重試觸發第二次執行、冪等保證在最需要它的時刻失效。
-- **衝突怎麼回**：同 key 不同參數直接報錯 — key 綁定請求語意、防止被當 session id 濫用。Stripe 的錯誤模型甚至為此保留一級錯誤型別 `idempotency_error`（見 [11.4](/backend/11-api-design/error-model-design/)）。
+- **衝突怎麼回**：同 key 不同參數直接報錯 — key 綁定請求語意、防止被當 session id 濫用。Stripe 的錯誤模型甚至為此保留一級錯誤型別 `idempotency_error`（見 [11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)）。
 - **作用範圍**：只限 POST — GET 與 DELETE 的冪等由 method 語意承諾、不需要 key。
 
 ## 無標準的現況：條款逐家不同

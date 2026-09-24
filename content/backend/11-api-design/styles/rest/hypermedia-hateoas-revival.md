@@ -30,7 +30,7 @@ Pragmatic 派的拆解針對的是收益假設而非名詞；本文把 C8 記錄
 
 ## 適用邊界
 
-把兩派論證疊起來、hypermedia 的適用邊界可以畫得相當清楚。收益前提成立的場景：consumer 是瀏覽器（或任何會 render hypermedia 的 uniform client）、UI 由 server 驅動、業務狀態機常變 — server-rendered web 應用、後台管理介面、htmx 式的漸進增強前端。收益前提不成立的場景：machine-to-machine 整合、第三方開發者寫程式消費、mobile app 內建業務邏輯 — 這些場景的務實選擇是「狀態欄位 + 明文狀態機」路線（判斷標準見 [11.3](/backend/11-api-design/resource-modeling-operation-semantics/)）。誤區是把邊界問題當立場問題：同一個組織可以對外 API 走 pragmatic、後台 UI 走 hypermedia、兩者引用的是同一組論證的不同半邊。
+把兩派論證疊起來、hypermedia 的適用邊界可以畫得相當清楚。收益前提成立的場景：consumer 是瀏覽器（或任何會 render hypermedia 的 uniform client）、UI 由 server 驅動、業務狀態機常變 — server-rendered web 應用、後台管理介面、htmx 式的漸進增強前端。收益前提不成立的場景：machine-to-machine 整合、第三方開發者寫程式消費、mobile app 內建業務邏輯 — 這些場景的務實選擇是「狀態欄位 + 明文狀態機」路線（判斷標準見 [11.3 資源建模與操作語意](/backend/11-api-design/resource-modeling-operation-semantics/)）。誤區是把邊界問題當立場問題：同一個組織可以對外 API 走 pragmatic、後台 UI 走 hypermedia、兩者引用的是同一組論證的不同半邊。
 
 ## 下一步路由
 

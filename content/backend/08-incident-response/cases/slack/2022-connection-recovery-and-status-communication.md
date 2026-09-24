@@ -10,11 +10,11 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                    | 判讀重點               | 回寫章節                                                            |
-| ----------------------- | ---------------------- | ------------------------------------------------------------------- |
-| reconnect spike         | 回復是否造成新一輪壓力 | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
-| status update cadence   | 對外節奏是否穩定       | [8.4](/backend/08-incident-response/incident-communication/)        |
-| workspace impact spread | 影響是否跨租戶擴散     | [8.20](/backend/08-incident-response/customer-impact-assessment/)   |
+| 訊號                    | 判讀重點               | 回寫章節                                                                                     |
+| ----------------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
+| reconnect spike         | 回復是否造成新一輪壓力 | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)     |
+| status update cadence   | 對外節奏是否穩定       | [8.4 事故通訊與狀態更新](/backend/08-incident-response/incident-communication/)              |
+| workspace impact spread | 影響是否跨租戶擴散     | [8.20 Customer Impact Assessment](/backend/08-incident-response/customer-impact-assessment/) |
 
 ## 邊界判讀
 
@@ -22,4 +22,4 @@ tags: ["backend", "incident-response", "case-study"]
 
 ## 下一步路由
 
-先保住連線層穩態，再做狀態同步。事故後把通訊節奏與指揮欄位回寫 [8.19](/backend/08-incident-response/incident-decision-log/) 與 [8.4](/backend/08-incident-response/incident-communication/)。
+先保住連線層穩態，再做狀態同步。事故後把通訊節奏與指揮欄位回寫 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 與 [8.4 事故通訊與狀態更新](/backend/08-incident-response/incident-communication/)。

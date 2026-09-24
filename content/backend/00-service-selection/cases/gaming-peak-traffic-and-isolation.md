@@ -10,11 +10,11 @@ tags: ["backend", "service-selection", "case-study"]
 
 ## 判讀訊號
 
-| 訊號                                                                   | 判讀重點             | 對應章節                                                           |
-| ---------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------ |
-| peak burst ratio                                                       | 尖峰是否超過模型緩衝 | [0.5](/backend/00-service-selection/traffic-data-scale/)           |
-| matchmaking queue lag                                                  | 非同步鏈路是否壅塞   | [0.3](/backend/00-service-selection/async-delivery-selection/)     |
-| [reconnect storm](/backend/knowledge-cards/thundering-herd/) indicator | 回復是否放大負載     | [0.7](/backend/00-service-selection/failure-observability-design/) |
+| 訊號                                                                   | 判讀重點             | 對應章節                                                                                            |
+| ---------------------------------------------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------- |
+| peak burst ratio                                                       | 尖峰是否超過模型緩衝 | [0.5 流量與資料量評估](/backend/00-service-selection/traffic-data-scale/)                           |
+| matchmaking queue lag                                                  | 非同步鏈路是否壅塞   | [0.3 非同步與事件傳遞選型](/backend/00-service-selection/async-delivery-selection/)                 |
+| [reconnect storm](/backend/knowledge-cards/thundering-herd/) indicator | 回復是否放大負載     | [0.7 錯誤定位、觀測訊號與備援切換設計](/backend/00-service-selection/failure-observability-design/) |
 
 ## 風險與邊界
 
@@ -22,4 +22,4 @@ tags: ["backend", "service-selection", "case-study"]
 
 ## 下一步路由
 
-把容量假設回寫 [6.9](/backend/06-reliability/capacity-cost/)，並在 [8.14](/backend/08-incident-response/multi-incident-coordination/) 補多事故協調規則。
+把容量假設回寫 [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)，並在 [8.14 Multi-incident Coordination](/backend/08-incident-response/multi-incident-coordination/) 補多事故協調規則。

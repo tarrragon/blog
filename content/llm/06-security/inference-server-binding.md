@@ -6,7 +6,7 @@ tags: ["llm", "security", "inference-server", "bind-address", "network-exposure"
 weight: 2
 ---
 
-推論伺服器的 [bind address](/llm/knowledge-cards/bind-address/) 決定誰能從網路連到模型。本章把「我這個 server 開到哪裡了」「家裡其他電腦該不該連得到」「反向代理會放大什麼風險」整理成可操作的判讀。實際 bind / `--host` / `OLLAMA_HOST` 等設定指令見 [1.0 Ollama](/llm/01-local-llm-services/ollama/)、[1.1 LM Studio](/llm/01-local-llm-services/lm-studio/)、[1.2 llama.cpp](/llm/01-local-llm-services/llama-cpp/)；PC 場景的 CUDA backend 跟 Windows firewall 差異見 [5.3](/llm/05-discrete-gpu/llama-cpp-on-pc/)、[5.4](/llm/05-discrete-gpu/lm-studio-on-windows/)。傳輸層加密見 backend [tls-mtls](/backend/knowledge-cards/tls-mtls/) 卡、流量限制見 backend [rate-limit](/backend/knowledge-cards/rate-limit/) 卡。本章 framing 是個人 dev 視角；production / 對外公開 API 服務的入口治理見 [Backend 7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
+推論伺服器的 [bind address](/llm/knowledge-cards/bind-address/) 決定誰能從網路連到模型。本章把「我這個 server 開到哪裡了」「家裡其他電腦該不該連得到」「反向代理會放大什麼風險」整理成可操作的判讀。實際 bind / `--host` / `OLLAMA_HOST` 等設定指令見 [1.0 Ollama](/llm/01-local-llm-services/ollama/)、[1.1 LM Studio](/llm/01-local-llm-services/lm-studio/)、[1.2 llama.cpp](/llm/01-local-llm-services/llama-cpp/)；PC 場景的 CUDA backend 跟 Windows firewall 差異見 [5.3 llama.cpp 在 PC 上](/llm/05-discrete-gpu/llama-cpp-on-pc/)、[5.4 LM Studio 在 Windows](/llm/05-discrete-gpu/lm-studio-on-windows/)。傳輸層加密見 backend [tls-mtls](/backend/knowledge-cards/tls-mtls/) 卡、流量限制見 backend [rate-limit](/backend/knowledge-cards/rate-limit/) 卡。本章 framing 是個人 dev 視角；production / 對外公開 API 服務的入口治理見 [Backend 7.3 入口治理與伺服器防護](/backend/07-security-data-protection/entrypoint-and-server-protection/)。
 
 讀完本章後、你應該能對自己跑的推論伺服器回答：bind 在哪、誰能連到、預設配置安不安全、要分享給家裡其他電腦時該怎麼設、要透過反代或 tunnel 上 internet 時要做什麼。
 
@@ -89,7 +89,7 @@ netstat -an | grep LISTEN | grep -E "(1234|8080|11434)"
 
 1. **prompt 內容洩漏**：每個 prompt 包含的 code、檔案路徑、API key、商業邏輯都會在請求 body 裡。同網段任何人 dump 流量都能看到（HTTP）或要破 TLS（HTTPS）。
 2. **API 被別人用**：對方拿你的 server 跑他自己的 prompt、消耗你的算力跟電費；若你的 server 連到雲端 LLM 當 fallback、會消耗你的 API quota。
-3. **被當跳板**：tool use 啟用的話、攻擊者可以透過 prompt 觸發 tool 的副作用、讀寫檔案、執行 shell command（見 [6.2](/llm/06-security/tool-use-permission-model/)）。
+3. **被當跳板**：tool use 啟用的話、攻擊者可以透過 prompt 觸發 tool 的副作用、讀寫檔案、執行 shell command（見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)）。
 4. **被當 DoS 目標**：發送大量 prompt 讓 GPU 滿載、影響本機其他工作。
 
 WAN 暴露的進一步後果：

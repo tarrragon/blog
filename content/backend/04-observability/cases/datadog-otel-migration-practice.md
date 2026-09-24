@@ -24,7 +24,7 @@ Datadog 與 OTel 生態整合的做法，顯示團隊可在不一次重寫下逐
 
 ## 下一步路由
 
-回 [4.11](/backend/04-observability/telemetry-pipeline/) 與 [4.17](/backend/04-observability/telemetry-data-quality/)。
+回 [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/) 與 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)。
 
 ## 引用源
 

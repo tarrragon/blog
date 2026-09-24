@@ -189,7 +189,7 @@ Cloud fallback（手動切）：雲端旗艦
   本地 reasoning 卡住、或極困難任務
 ```
 
-Continue.dev 的 multi-model config 可同時設多個、UI 下拉切換、不用重啟 server。安全 / 隱私面：reasoning trace 可能含敏感推理過程、跨雲端 / 本地邊界判讀同 [6.4](/llm/06-security/cross-cloud-local-data-boundary/)。
+Continue.dev 的 multi-model config 可同時設多個、UI 下拉切換、不用重啟 server。安全 / 隱私面：reasoning trace 可能含敏感推理過程、跨雲端 / 本地邊界判讀同 [6.4 跨雲端 / 本地的資料邊界](/llm/06-security/cross-cloud-local-data-boundary/)。
 
 ## 何時過時 / 何時不過時
 

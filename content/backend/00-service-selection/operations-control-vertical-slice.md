@@ -44,12 +44,12 @@ Login 適合用來驗證外部依賴事故。它能暴露 identity provider、fa
 
 Artifact 契約的責任是讓每個環節都有可交接輸出。這些 artifact 可以先用 Markdown、ticket 欄位或 incident template 表達，等流程跑通後再導入工具自動化。
 
-| Artifact                       | 最小欄位                                                                           | 來源章節                                                            | 下游使用                         |
-| ------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------- |
-| Observability evidence package | source、time range、query link、owner、data quality、confidence、known gap         | [4.20](/backend/04-observability/observability-evidence-package/)   | triage、release gate、PIR        |
-| Verification evidence handoff  | hypothesis、scope、steady state、workload / fault、result、decision、owner         | [6.23](/backend/06-reliability/verification-evidence-handoff/)      | release gate、runbook、drill     |
-| Incident decision log          | timestamp、decision、context、evidence、owner、expected effect、rollback condition | [8.19](/backend/08-incident-response/incident-decision-log/)        | handoff、stakeholder update、PIR |
-| Incident evidence write-back   | finding、evidence、target artifact、owner、closure signal、review date             | [8.22](/backend/08-incident-response/incident-evidence-write-back/) | dashboard、experiment、runbook   |
+| Artifact                       | 最小欄位                                                                           | 來源章節                                                                                         | 下游使用                         |
+| ------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------- |
+| Observability evidence package | source、time range、query link、owner、data quality、confidence、known gap         | [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) | triage、release gate、PIR        |
+| Verification evidence handoff  | hypothesis、scope、steady state、workload / fault、result、decision、owner         | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/)     | release gate、runbook、drill     |
+| Incident decision log          | timestamp、decision、context、evidence、owner、expected effect、rollback condition | [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)               | handoff、stakeholder update、PIR |
+| Incident evidence write-back   | finding、evidence、target artifact、owner、closure signal、review date             | [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/) | dashboard、experiment、runbook   |
 
 Observability evidence package 是第一個 artifact。它保存查詢、時間窗、資料品質與 owner，讓後面的驗證與事故流程使用同一組事實。
 

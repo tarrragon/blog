@@ -10,13 +10,13 @@ Python 3.5+ 引入的型別系統讓程式碼更易讀、更易維護。本模�
 
 ## 章節列表
 
-| 章節                                          | 主題                  | 關鍵收穫                          |
-| --------------------------------------------- | --------------------- | --------------------------------- |
-| [2.1](/python/02-type-system/type-hints/)     | Type Hints 基礎       | 為函式添加型別註解                |
-| [2.2](/python/02-type-system/optional-union/) | Optional、Union、泛型 | 處理可能為 None 的值              |
-| [2.3](/python/02-type-system/dataclass/)      | Dataclass 資料結構    | 快速定義資料類別                  |
-| [2.4](/python/02-type-system/enum/)           | Enum 列舉型別         | 定義有限選項集合                  |
-| [2.5](/python/02-type-system/callable/)       | Callable 與高階函式   | 描述可呼叫物件契約，支援回調與 DI |
+| 章節                                                                | 主題                  | 關鍵收穫                          |
+| ------------------------------------------------------------------- | --------------------- | --------------------------------- |
+| [2.1 Type Hints 基礎](/python/02-type-system/type-hints/)           | Type Hints 基礎       | 為函式添加型別註解                |
+| [2.2 Optional、Union、泛型](/python/02-type-system/optional-union/) | Optional、Union、泛型 | 處理可能為 None 的值              |
+| [2.3 Dataclass 資料結構](/python/02-type-system/dataclass/)         | Dataclass 資料結構    | 快速定義資料類別                  |
+| [2.4 Enum 列舉型別](/python/02-type-system/enum/)                   | Enum 列舉型別         | 定義有限選項集合                  |
+| [2.5 Callable 型別與高階函式](/python/02-type-system/callable/)     | Callable 與高階函式   | 描述可呼叫物件契約，支援回調與 DI |
 
 ## 實際範例來源
 

@@ -6,7 +6,7 @@ weight: 2
 tags: ["backend", "api-design", "graphql", "security"]
 ---
 
-一個只有 128 bytes 的惡意查詢、可以耗掉 10 秒 CPU。這組數字出自一位六年 GraphQL 使用者的撤退紀錄（[11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、含畸形 directives 造成 2,000 倍記憶體放大的並列觀察）、它濃縮了 GraphQL 執行層的結構性質：**請求的成本由 query 的結構決定、而 query 的結構由消費者決定** — 傳統「一個請求約等於一份成本」的容量假設、在 resolver 執行模型下不成立。下面沿這個性質追出四個工程後果；限流的判斷標準層語意已由 [11.9](/backend/11-api-design/external-traffic-semantics/) 承擔、這裡往機制層走。
+一個只有 128 bytes 的惡意查詢、可以耗掉 10 秒 CPU。這組數字出自一位六年 GraphQL 使用者的撤退紀錄（[11.C22](/backend/11-api-design/cases/graphql-bessey-retreat/)、反例、含畸形 directives 造成 2,000 倍記憶體放大的並列觀察）、它濃縮了 GraphQL 執行層的結構性質：**請求的成本由 query 的結構決定、而 query 的結構由消費者決定** — 傳統「一個請求約等於一份成本」的容量假設、在 resolver 執行模型下不成立。下面沿這個性質追出四個工程後果；限流的判斷標準層語意已由 [11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/) 承擔、這裡往機制層走。
 
 ## N+1：從偶發問題變成預設行為
 
@@ -14,7 +14,7 @@ resolver-per-field 的執行模型讓 N+1 從查詢寫壞才發生的偶發問�
 
 ## 成本計點：限流模型的被迫重建
 
-請求成本不是常數的直接後果是 per-request 限流失效。[11.C19](/backend/11-api-design/cases/graphql-github-cost-rate-limiting/) 記錄了 GitHub 的完整應對：對每個 query 依 connection 展開計算 point、每小時 5,000 點；另設 500,000 node 上限與分頁參數 1-100 的限制；消費者可事前預估、也可事後查 `rateLimit.cost`。動靜兩層各擋一類風險（C19 判讀）— 成本計點管累積用量、node 上限管單發炸彈；成本模型對消費者透明可預估、是它能當契約的前提（對外流量語意的承諾邊界、見 [11.9](/backend/11-api-design/external-traffic-semantics/)）。自建 GraphQL 公開 API 時這一整層都要自己蓋 — 這是 REST 世界拿現成 gateway 限流就能用的能力。
+請求成本不是常數的直接後果是 per-request 限流失效。[11.C19](/backend/11-api-design/cases/graphql-github-cost-rate-limiting/) 記錄了 GitHub 的完整應對：對每個 query 依 connection 展開計算 point、每小時 5,000 點；另設 500,000 node 上限與分頁參數 1-100 的限制；消費者可事前預估、也可事後查 `rateLimit.cost`。動靜兩層各擋一類風險（C19 判讀）— 成本計點管累積用量、node 上限管單發炸彈；成本模型對消費者透明可預估、是它能當契約的前提（對外流量語意的承諾邊界、見 [11.9 對外流量語意](/backend/11-api-design/external-traffic-semantics/)）。自建 GraphQL 公開 API 時這一整層都要自己蓋 — 這是 REST 世界拿現成 gateway 限流就能用的能力。
 
 ## Introspection：型別系統是雙面刃
 

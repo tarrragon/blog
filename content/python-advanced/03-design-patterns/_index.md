@@ -37,14 +37,14 @@ tags: ["python", "python-advanced", "design-patterns"]
 
 ## 章節列表
 
-| 章節                                                         | 主題               | 關鍵收穫               |
-| ------------------------------------------------------------ | ------------------ | ---------------------- |
-| [3.1](/python-advanced/03-design-patterns/generics/)         | 泛型進階           | 建立型別安全的抽象層   |
-| [3.2](/python-advanced/03-design-patterns/exception-design/) | 異常設計架構       | 設計大型專案的錯誤處理 |
-| [3.3](/python-advanced/03-design-patterns/context-managers/) | 進階上下文管理     | 複雜資源的優雅管理     |
-| [3.4](/python-advanced/03-design-patterns/plugin-system/)    | 插件系統設計       | 建立可擴展的架構       |
-| [3.5](/python-advanced/03-design-patterns/integration/)      | 設計模式整合案例   | 綜合應用所有模式       |
-| [3.6](/python-advanced/03-design-patterns/trade-offs/)       | 軟體設計的取捨藝術 | 取捨決策框架與業界經驗 |
+| 章節                                                                          | 主題               | 關鍵收穫               |
+| ----------------------------------------------------------------------------- | ------------------ | ---------------------- |
+| [3.5.1 泛型進階](/python-advanced/03-design-patterns/generics/)               | 泛型進階           | 建立型別安全的抽象層   |
+| [3.5.2 異常設計架構](/python-advanced/03-design-patterns/exception-design/)   | 異常設計架構       | 設計大型專案的錯誤處理 |
+| [3.5.3 進階上下文管理](/python-advanced/03-design-patterns/context-managers/) | 進階上下文管理     | 複雜資源的優雅管理     |
+| [3.5.4 插件系統設計](/python-advanced/03-design-patterns/plugin-system/)      | 插件系統設計       | 建立可擴展的架構       |
+| [3.5.5 設計模式整合案例](/python-advanced/03-design-patterns/integration/)    | 設計模式整合案例   | 綜合應用所有模式       |
+| [3.5.6 軟體設計的取捨藝術](/python-advanced/03-design-patterns/trade-offs/)   | 軟體設計的取捨藝術 | 取捨決策框架與業界經驗 |
 
 ## 案例研究
 

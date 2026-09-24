@@ -89,7 +89,7 @@ output
 
 兩個關鍵組件：
 
-1. **Multi-head attention**：見 [3.2](/llm/03-theoretical-foundations/attention-mechanism/)、Q/K/V 來源同 sequence 的部分見 [self-attention](/llm/knowledge-cards/self-attention/) 卡。
+1. **Multi-head attention**：見 [3.2 Attention 機制](/llm/03-theoretical-foundations/attention-mechanism/)、Q/K/V 來源同 sequence 的部分見 [self-attention](/llm/knowledge-cards/self-attention/) 卡。
 2. **[FFN](/llm/knowledge-cards/ffn/)**（feed-forward network）：兩層 [linear layer](/llm/03-theoretical-foundations/neural-network-basics/) + 非線性 [activation](/llm/knowledge-cards/activation-function/)。
 
 每個 sub-layer 前後加 **[residual connection](/llm/knowledge-cards/residual-connection/)**：把 sub-layer 的輸出加回 input、形成「主流」。這個結構讓 [gradient](/llm/knowledge-cards/gradient/) 容易在深層網路中傳遞、解決 [gradient vanishing](/llm/02-math-foundations/calculus-and-optimization/) 問題。

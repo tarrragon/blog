@@ -63,7 +63,7 @@ tags: ["backend", "service-selection", "delivery-mode-selection"]
 
 [BaaS](/backend/knowledge-cards/baas/) 把後端拆成現成模組：認證、資料庫、檔案儲存、推播、[serverless](/backend/knowledge-cards/serverless/) function。前端（app / SPA）自己寫、後端用平台的 SDK 直連 — 本系列 [0.2 狀態與資料儲存選型](/backend/00-service-selection/state-storage-selection/) 討論的多數問題、在這一段被平台的預設答案取代。行動 app MVP 與快速驗證期的產品、BaaS 把「後端工程師」這個角色延後了。
 
-BaaS 的邊界牆通常分三面依序出現。第一面是報表 — 老闆要一張跨集合的月報、Firestore 查不出來、工程師開始把資料複製第二份、複製管線本身變成要維護的系統。第二面是帳單：讀寫計費隨流量線性成長、某個月的發票讓人重新打開計算機比對自建。第三面最安靜：client 直連資料庫的模型把授權邏輯全部塞進 security rules、規則檔長到沒人敢改時、[0.8](/backend/00-service-selection/security-data-protection-requirements/) 的整個控制面已經壓在一個難以測試的規則語言（DSL）裡。
+BaaS 的邊界牆通常分三面依序出現。第一面是報表 — 老闆要一張跨集合的月報、Firestore 查不出來、工程師開始把資料複製第二份、複製管線本身變成要維護的系統。第二面是帳單：讀寫計費隨流量線性成長、某個月的發票讓人重新打開計算機比對自建。第三面最安靜：client 直連資料庫的模型把授權邏輯全部塞進 security rules、規則檔長到沒人敢改時、[0.8 資安與資料保護需求](/backend/00-service-selection/security-data-protection-requirements/) 的整個控制面已經壓在一個難以測試的規則語言（DSL）裡。
 
 遷出的代價集中在資料層：資料本身可匯出、但資料模型沿平台特性設計（為遷就查詢限制、同一份資料複製存放多處的反正規化結構、加上平台專屬的即時同步語意）、遷到關聯式資料庫等於重做資料層。認證體系可攜性視平台而定（Firebase Auth 可匯出密碼雜湊、是少數友善案例）。
 

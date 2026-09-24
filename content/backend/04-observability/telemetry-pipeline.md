@@ -85,7 +85,7 @@ Collector 在 pipeline 中扮演三個角色：
 
 執行順序的設計理由：collector 是 vendor-neutral 抽象、可以雙軌並存承受對照成本；應用層 instrumentation 改動會跨眾多 service team、變更面廣、要在 collector 對照穩定後才大規模推進。把次序反過來容易在 instrumentation 全面改完才發現 collector 抽象有缺失、被迫重做。
 
-對應 [4.C4 X-Ray 到 OpenTelemetry 轉換](/backend/04-observability/cases/xray-to-opentelemetry-migration/)：揭露「先 collector 後 instrumentation」的階段切換方向。對應 [4.C7 Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「雙軌期成本跟語意漂移是遷移期主要風險」（單一 agent 安裝是次要議題）。本章關注的是執行順序，schema drift 跟資料品質的對照驗證細節由 [4.17](/backend/04-observability/telemetry-data-quality/) 處理。
+對應 [4.C4 X-Ray 到 OpenTelemetry 轉換](/backend/04-observability/cases/xray-to-opentelemetry-migration/)：揭露「先 collector 後 instrumentation」的階段切換方向。對應 [4.C7 Datadog OTel 相容遷移實務](/backend/04-observability/cases/datadog-otel-migration-practice/)：揭露「雙軌期成本跟語意漂移是遷移期主要風險」（單一 agent 安裝是次要議題）。本章關注的是執行順序，schema drift 跟資料品質的對照驗證細節由 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/) 處理。
 
 ## 規模差異下的遷移節奏
 

@@ -16,14 +16,14 @@ Go 的語言設計刻意保守：語法少、抽象少、控制流程直接。�
 
 ## 章節列表
 
-| 章節                                                    | 主題                        | 關鍵收穫                                                               |
-| ------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------- |
-| [0.1](/go/00-philosophy/simplicity/)                    | Go 的簡單哲學與認知負擔     | 理解 Go 為什麼適合可讀、可交接的服務                                   |
-| [0.2](/go/00-philosophy/composition/)                   | 組合優先：小介面與明確依賴  | 用 interface 表達行為能力與依賴邊界                                    |
-| [0.3](/go/00-philosophy/error-thinking/)                | 錯誤處理：把失敗路徑寫出來  | 理解 `if err != nil` 的維護價值                                        |
-| [0.4](/go/00-philosophy/selecting-go/)                  | 什麼時候選 Go               | 用選型條件判斷 Go 是否適合這類服務                                     |
-| [0.5](/go/00-philosophy/concurrency-language-position/) | Go 和其他並發語言的差異     | 用工作負載比較 Go、Java/C#、Rust、Node.js、Python async、Erlang/Elixir |
-| [0.6](/go/00-philosophy/happy-path/)                    | Happy path 理論與錯誤可見性 | 回應來自例外語言的質疑、判讀集中處理與顯式錯誤值各自適合的服務型態     |
+| 章節                                                                            | 主題                        | 關鍵收穫                                                               |
+| ------------------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------- |
+| [0.1 Go 的簡單哲學與認知負擔](/go/00-philosophy/simplicity/)                    | Go 的簡單哲學與認知負擔     | 理解 Go 為什麼適合可讀、可交接的服務                                   |
+| [0.2 組合優先：小介面與明確依賴](/go/00-philosophy/composition/)                | 組合優先：小介面與明確依賴  | 用 interface 表達行為能力與依賴邊界                                    |
+| [0.3 錯誤處理：把失敗路徑寫出來](/go/00-philosophy/error-thinking/)             | 錯誤處理：把失敗路徑寫出來  | 理解 `if err != nil` 的維護價值                                        |
+| [0.4 什麼時候選 Go](/go/00-philosophy/selecting-go/)                            | 什麼時候選 Go               | 用選型條件判斷 Go 是否適合這類服務                                     |
+| [0.5 Go 和其他並發語言的差異](/go/00-philosophy/concurrency-language-position/) | Go 和其他並發語言的差異     | 用工作負載比較 Go、Java/C#、Rust、Node.js、Python async、Erlang/Elixir |
+| [0.6 Happy path 理論：錯誤路徑放哪裡](/go/00-philosophy/happy-path/)            | Happy path 理論與錯誤可見性 | 回應來自例外語言的質疑、判讀集中處理與顯式錯誤值各自適合的服務型態     |
 
 ## 本模組使用的範例主題
 

@@ -22,7 +22,7 @@ protobuf 官方語言規範把 schema 變更分三類：wire-unsafe、wire-safe�
 
 ## 契約放哪裡：與 tRPC 的對照
 
-proto 演進紀律的本質是把契約外置成一份 IDL（介面定義語言）檔、相容性檢查對這份檔做。這跟 [rpc-revival 的 tRPC 路線](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/) 形成選型上的對照：tRPC 把契約放進 TypeScript 型別系統、靠推導同步、不產 IDL 檔。兩者都在解「契約怎麼跨 client/server 同步」、差別在契約放在哪 —— proto 外置換到跨語言與 CI 可檢、代價是要維護 IDL 與 codegen；型別內嵌換到零 codegen 的開發體驗、代價是鎖定單一語言。演進成本這條選型軸就是在問團隊承擔得起哪種紀律、判斷標準見 [11.2](/backend/11-api-design/api-style-selection/)。
+proto 演進紀律的本質是把契約外置成一份 IDL（介面定義語言）檔、相容性檢查對這份檔做。這跟 [rpc-revival 的 tRPC 路線](/backend/11-api-design/styles/rpc-revival/rpc-revival-trpc-type-sharing/) 形成選型上的對照：tRPC 把契約放進 TypeScript 型別系統、靠推導同步、不產 IDL 檔。兩者都在解「契約怎麼跨 client/server 同步」、差別在契約放在哪 —— proto 外置換到跨語言與 CI 可檢、代價是要維護 IDL 與 codegen；型別內嵌換到零 codegen 的開發體驗、代價是鎖定單一語言。演進成本這條選型軸就是在問團隊承擔得起哪種紀律、判斷標準見 [11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)。
 
 ## 下一步路由
 

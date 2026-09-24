@@ -22,7 +22,7 @@ tRPC 的優勢反過來看、是「契約中介層」在單一團隊場景下的
 
 ## schema-first vs inference-first：契約放在相反的地方
 
-tRPC 與 [gRPC 的 proto](/backend/11-api-design/styles/grpc/grpc-proto-evolution-discipline/) 都在解同一個問題 —— 契約怎麼跨 client 與 server 同步 —— 但把契約放在相反的地方。protobuf 走 schema-first：契約是一份外置的 IDL 檔、跨語言、可用 CI 做 breaking 檢查、代價是要維護檔案與 codegen。tRPC 走 inference-first：契約是型別推導的結果、零 codegen、代價是鎖定單一語言與同倉。這組對照是演進成本這條選型軸的具體兩極：團隊承擔得起「外置 schema 的維護」還是需要「零 codegen 的即時同步」、判斷標準見 [11.2](/backend/11-api-design/api-style-selection/)。
+tRPC 與 [gRPC 的 proto](/backend/11-api-design/styles/grpc/grpc-proto-evolution-discipline/) 都在解同一個問題 —— 契約怎麼跨 client 與 server 同步 —— 但把契約放在相反的地方。protobuf 走 schema-first：契約是一份外置的 IDL 檔、跨語言、可用 CI 做 breaking 檢查、代價是要維護檔案與 codegen。tRPC 走 inference-first：契約是型別推導的結果、零 codegen、代價是鎖定單一語言與同倉。這組對照是演進成本這條選型軸的具體兩極：團隊承擔得起「外置 schema 的維護」還是需要「零 codegen 的即時同步」、判斷標準見 [11.2 風格選型總覽](/backend/11-api-design/api-style-selection/)。
 
 ## 下一步路由
 

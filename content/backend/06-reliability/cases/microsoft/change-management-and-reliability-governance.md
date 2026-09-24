@@ -22,12 +22,12 @@ Microsoft 案例的核心責任是把變更管理制度化。對大型 SaaS 而�
 
 ## 可觀測訊號
 
-| 訊號                       | 判讀重點         | 對應章節                                                      |
-| -------------------------- | ---------------- | ------------------------------------------------------------- |
-| release rollback frequency | 變更品質是否退化 | [6.8](/backend/06-reliability/release-gate/)                  |
-| freeze trigger count       | 凍結是否過晚     | [6.6](/backend/06-reliability/slo-error-budget/)              |
-| incident recurrence        | 同型事件是否重複 | [8.13](/backend/08-incident-response/repeated-incident-toil/) |
+| 訊號                       | 判讀重點         | 對應章節                                                                                     |
+| -------------------------- | ---------------- | -------------------------------------------------------------------------------------------- |
+| release rollback frequency | 變更品質是否退化 | [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/)                         |
+| freeze trigger count       | 凍結是否過晚     | [6.6 SLO 與 Error Budget 政策](/backend/06-reliability/slo-error-budget/)                    |
+| incident recurrence        | 同型事件是否重複 | [8.13 Repeated Incident 與 Toil 治理](/backend/08-incident-response/repeated-incident-toil/) |
 
 ## 下一步路由
 
-把風險分層寫進 [6.19](/backend/06-reliability/reliability-readiness-review/)，並將復盤項目回寫 [6.21](/backend/06-reliability/reliability-debt-backlog/)。
+把風險分層寫進 [6.19 Reliability Readiness Review](/backend/06-reliability/reliability-readiness-review/)，並將復盤項目回寫 [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)。

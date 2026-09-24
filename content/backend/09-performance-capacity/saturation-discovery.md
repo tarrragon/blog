@@ -12,7 +12,7 @@ Saturation discovery 的責任是把「系統能撐多少」這個問題變成�
 
 跟 [9.1 壓測理論](/backend/09-performance-capacity/performance-theory/) 的關係：9.1 預測 saturation curve 的形狀（linear → knee → cliff）、9.4 用實測找出 *本服務* 的曲線具體位置。理論告訴我們 knee 存在、實測告訴我們它在哪裡。
 
-本章不深入工具操作（[9.3](/backend/09-performance-capacity/load-test-tooling/) 處理工具）、聚焦在 *方法論* — 怎麼設計 ramp-up、怎麼判斷 knee、怎麼把結果文件化讓後續決策可用。
+本章不深入工具操作（[9.3 壓測工具選型](/backend/09-performance-capacity/load-test-tooling/) 處理工具）、聚焦在 *方法論* — 怎麼設計 ramp-up、怎麼判斷 knee、怎麼把結果文件化讓後續決策可用。
 
 ## Saturation 的精確定義
 

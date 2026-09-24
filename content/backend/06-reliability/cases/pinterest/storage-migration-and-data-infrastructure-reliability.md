@@ -31,12 +31,12 @@ Staged cutover 按 traffic percentage、data partition 或 use case 漸進切換
 
 ## 可觀測訊號
 
-| 訊號                        | 判讀重點                 | 對應章節                                                       |
-| --------------------------- | ------------------------ | -------------------------------------------------------------- |
-| shadow read mismatch rate   | 新舊系統行為差異是否收斂 | [6.11](/backend/06-reliability/migration-safety/)              |
-| dual-write latency overhead | 同步寫入是否拖累主路徑   | [6.13](/backend/06-reliability/performance-regression-gate/)   |
-| reconciliation gap          | 兩套系統資料是否持續一致 | [6.23](/backend/06-reliability/verification-evidence-handoff/) |
-| cutover rollback count      | 切換過程是否穩定         | [6.7](/backend/06-reliability/dr-rollback-rehearsal/)          |
+| 訊號                        | 判讀重點                 | 對應章節                                                                                     |
+| --------------------------- | ------------------------ | -------------------------------------------------------------------------------------------- |
+| shadow read mismatch rate   | 新舊系統行為差異是否收斂 | [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/)             |
+| dual-write latency overhead | 同步寫入是否拖累主路徑   | [6.13 Performance Regression Gate](/backend/06-reliability/performance-regression-gate/)     |
+| reconciliation gap          | 兩套系統資料是否持續一致 | [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) |
+| cutover rollback count      | 切換過程是否穩定         | [6.7 DR 演練與 Rollback Rehearsal](/backend/06-reliability/dr-rollback-rehearsal/)           |
 
 ## 常見陷阱
 

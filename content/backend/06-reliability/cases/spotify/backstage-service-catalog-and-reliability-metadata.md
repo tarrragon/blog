@@ -30,12 +30,12 @@ Dependency graph 的價值在事故時最明顯。當一個服務異常時，cat
 
 ## 可觀測訊號
 
-| 訊號                     | 判讀重點                         | 對應章節                                                            |
-| ------------------------ | -------------------------------- | ------------------------------------------------------------------- |
-| Orphan service count     | 無 owner 服務是否持續增加        | [6.21](/backend/06-reliability/reliability-debt-backlog/)           |
-| Metadata freshness       | catalog 資料是否仍然準確         | [6.18](/backend/06-reliability/reliability-metrics-governance/)     |
-| Dependency coverage      | 依賴圖是否涵蓋關鍵路徑           | [6.14](/backend/06-reliability/dependency-reliability-budget/)      |
-| MTTR vs catalog coverage | catalog 覆蓋率是否與恢復速度相關 | [8.3](/backend/08-incident-response/containment-recovery-strategy/) |
+| 訊號                     | 判讀重點                         | 對應章節                                                                                       |
+| ------------------------ | -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Orphan service count     | 無 owner 服務是否持續增加        | [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)             |
+| Metadata freshness       | catalog 資料是否仍然準確         | [6.18 Reliability Metrics Governance](/backend/06-reliability/reliability-metrics-governance/) |
+| Dependency coverage      | 依賴圖是否涵蓋關鍵路徑           | [6.14 Dependency Reliability Budget](/backend/06-reliability/dependency-reliability-budget/)   |
+| MTTR vs catalog coverage | catalog 覆蓋率是否與恢復速度相關 | [8.3 止血、降級與回復策略](/backend/08-incident-response/containment-recovery-strategy/)       |
 
 ## 常見陷阱
 

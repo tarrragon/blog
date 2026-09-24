@@ -57,7 +57,7 @@ schema 是唯一與程式碼同步執行的規格層：CHECK 違反時資料庫�
 - **狀態責任分層**：canonical（正式狀態、唯一寫入來源）／derived（衍生、只能 rebuild）／追蹤欄位（審計用）——與 [1.8 State Ownership](/backend/01-database/state-ownership-query-boundary/) 的分層對齊
 - **不變式清單**：跨欄位、跨表的業務規則陳述（例如「同一分類至多一筆活躍記錄」）、只陳述規則本身、把保證層歸屬留給 B 區
 - **交易邊界**：哪些寫入必須一起成立、只描述原子性要求、[isolation level](/backend/knowledge-cards/isolation-level/) 屬 B 區
-- **錯誤語意契約**：唯一鍵衝突、外鍵違反對應哪個 domain error——這是 [1.4](/backend/01-database/repository-adapter/) error translation 的規格來源
+- **錯誤語意契約**：唯一鍵衝突、外鍵違反對應哪個 domain error——這是 [1.4 Repository Adapter 實作](/backend/01-database/repository-adapter/) error translation 的規格來源
 - **恢復模型**：備份還原後如何驗證資料完整
 
 **B 區承載的內容**：

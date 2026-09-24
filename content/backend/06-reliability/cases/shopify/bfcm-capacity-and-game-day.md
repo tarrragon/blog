@@ -27,12 +27,12 @@ Shopify 的做法是把容量規劃、隔離邊界與演練節奏綁成同一條
 
 ## 可觀測訊號
 
-| 訊號                    | 判讀重點               | 對應章節                                                        |
-| ----------------------- | ---------------------- | --------------------------------------------------------------- |
-| peak-load headroom      | 高峰前安全緩衝是否充足 | [6.9](/backend/06-reliability/capacity-cost/)                   |
-| game-day action closure | 演練缺口是否完成回寫   | [6.21](/backend/06-reliability/reliability-debt-backlog/)       |
-| pod-level degradation   | 退化是否被限制在局部   | [6.22](/backend/06-reliability/steady-state-definition/)        |
-| command handoff latency | 高峰日交接節奏是否穩定 | [8.12](/backend/08-incident-response/ic-handoff-long-incident/) |
+| 訊號                    | 判讀重點               | 對應章節                                                                                      |
+| ----------------------- | ---------------------- | --------------------------------------------------------------------------------------------- |
+| peak-load headroom      | 高峰前安全緩衝是否充足 | [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/)                                  |
+| game-day action closure | 演練缺口是否完成回寫   | [6.21 Reliability Debt Backlog](/backend/06-reliability/reliability-debt-backlog/)            |
+| pod-level degradation   | 退化是否被限制在局部   | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)              |
+| command handoff latency | 高峰日交接節奏是否穩定 | [8.12 IC Handoff 與長事故跨班次協調](/backend/08-incident-response/ic-handoff-long-incident/) |
 
 ## 常見陷阱
 
@@ -40,4 +40,4 @@ Shopify 的做法是把容量規劃、隔離邊界與演練節奏綁成同一條
 
 ## 下一步路由
 
-若要落地本案例，先從 [6.9](/backend/06-reliability/capacity-cost/) 建容量模型，再在 [6.22](/backend/06-reliability/steady-state-definition/) 定義高峰穩態。演練證據回寫 [6.23](/backend/06-reliability/verification-evidence-handoff/) 與 [8.6](/backend/08-incident-response/drills-and-oncall-readiness/)。
+若要落地本案例，先從 [6.9 容量與成本邊界](/backend/06-reliability/capacity-cost/) 建容量模型，再在 [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/) 定義高峰穩態。演練證據回寫 [6.23 Verification Evidence Handoff](/backend/06-reliability/verification-evidence-handoff/) 與 [8.6 演練與值班能力建設](/backend/08-incident-response/drills-and-oncall-readiness/)。

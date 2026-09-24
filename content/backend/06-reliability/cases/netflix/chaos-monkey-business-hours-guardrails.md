@@ -27,12 +27,12 @@ Business-hours chaos 是把風險放進 guardrails 內驗證，風險範圍是�
 
 ## 可觀測訊號
 
-| 訊號                    | 判讀重點               | 對應章節                                                     |
-| ----------------------- | ---------------------- | ------------------------------------------------------------ |
-| abort trigger latency   | 停止條件是否能即時生效 | [6.20](/backend/06-reliability/experiment-safety-boundary/)  |
-| on-call handoff quality | 值班與指揮鏈條是否順暢 | [8.2](/backend/08-incident-response/incident-command-roles/) |
-| steady-state drift      | 實驗期間是否偏離穩態   | [6.22](/backend/06-reliability/steady-state-definition/)     |
-| communication lag       | 內外部更新是否跟上變化 | [8.4](/backend/08-incident-response/incident-communication/) |
+| 訊號                    | 判讀重點               | 對應章節                                                                               |
+| ----------------------- | ---------------------- | -------------------------------------------------------------------------------------- |
+| abort trigger latency   | 停止條件是否能即時生效 | [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) |
+| on-call handoff quality | 值班與指揮鏈條是否順暢 | [8.2 事故指揮與角色分工](/backend/08-incident-response/incident-command-roles/)        |
+| steady-state drift      | 實驗期間是否偏離穩態   | [6.22 Steady State Definition](/backend/06-reliability/steady-state-definition/)       |
+| communication lag       | 內外部更新是否跟上變化 | [8.4 事故通訊與狀態更新](/backend/08-incident-response/incident-communication/)        |
 
 ## 常見陷阱
 
@@ -40,7 +40,7 @@ Business-hours chaos 是把風險放進 guardrails 內驗證，風險範圍是�
 
 ## 下一步路由
 
-先在 [6.19 Reliability Readiness Review](/backend/06-reliability/reliability-readiness-review/) 檢查實驗前置條件，再到 [6.20](/backend/06-reliability/experiment-safety-boundary/) 寫 guardrails 與 abort 條件。實驗結果回寫 [8.6 Drills and On-call Readiness](/backend/08-incident-response/drills-and-oncall-readiness/) 與 [8.22](/backend/08-incident-response/incident-evidence-write-back/)。
+先在 [6.19 Reliability Readiness Review](/backend/06-reliability/reliability-readiness-review/) 檢查實驗前置條件，再到 [6.20 Experiment Safety Boundary](/backend/06-reliability/experiment-safety-boundary/) 寫 guardrails 與 abort 條件。實驗結果回寫 [8.6 Drills and On-call Readiness](/backend/08-incident-response/drills-and-oncall-readiness/) 與 [8.22 Incident Evidence Write-back](/backend/08-incident-response/incident-evidence-write-back/)。
 
 ## 引用源
 
