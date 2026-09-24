@@ -10,7 +10,7 @@
 | `interaction-feedback-checklist.md` | 反模式速查／檢查清單／參考來源（三份內容檔共用） |
 
 適用：判斷 loading indicator 的時機與形式（spinner / skeleton / 進度條）；決定非同步操作等待期間的回饋策略（動畫過渡 / spinner / 進度指示 / 取消選項）；連線 / 配對 / 同步類多步驟流程的畫面級回饋；操作結果的通知形式選擇（SnackBar / Dialog / Banner / Bottom Sheet）。
-不適用：單一按鈕的狀態機（idle / loading / disabled，屬按鈕級回饋範疇，見 `interaction-feedback.md`〈按鈕級回饋〉）；元件語意與版面判準（屬 `interaction-feedback-component-semantics.md`）；畫面狀態的完整枚舉與退出路徑（狀態矩陣範疇，見 `screen-state-matrix.md`）。
+不適用：單一按鈕的狀態機（idle / loading / disabled，屬按鈕級回饋範疇，見 `interaction-feedback.md`〈按鈕級回饋〉）；元件語意與版面判斷標準（屬 `interaction-feedback-component-semantics.md`）；畫面狀態的完整枚舉與退出路徑（狀態矩陣範疇，見 `screen-state-matrix.md`）。
 
 > **自包含聲明**：本檔判斷等待時間該用哪種回饋策略、通知該用哪種形式時不需要先讀其他 reference。本檔〈時間門檻與回饋策略〉回答的是 `interaction-feedback.md`〈三層回饋模型〉第 2 層「等待指示」的具體策略，兩檔已互相具名指路。
 

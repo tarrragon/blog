@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.32.1 — 術語校正：「判準」全數改為「判斷標準」（「停止判準」改「停止條件」）。上一輪全站替換之後這個縮寫又回流，詞面在工程讀者端讀不出來；keyword bank 新增「縮寫術語」類別（content/ 由 mdtools `TERM-abbreviation` 擋，skill 目錄要手動掃）
+
 **Version**: 1.32.0 — 新增 principle 卡 `ordinal-labels-are-the-authors-index`：正文裡的實體不用序數、計數或字母代號當名字（三支、七步、第三步、第一級、前提一、A1）。〈索引建立〉原則加生成端規則，keyword bank 新增「序數、計數與字母代號當名字」類別（含詞綴非窮舉與「集合不會再變」不構成放行理由），並把一起出現的編排思路句列為移出正文的對象
 
 **Version**: 1.31.5 — `teaching-article-context` 替可動項清單補上痕跡的住址：清單與計數寫進該篇的提交訊息，單軸與列不出來分兩行寫（第三輪誤用梯度的遺留項：單軸是後續動作最少的出口，沒有清單的判定無法證偽）。

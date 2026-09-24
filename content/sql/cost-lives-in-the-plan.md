@@ -123,4 +123,4 @@ INSERT INTO Person SELECT 1000000 + i, 'hot@x.com' FROM n;
 
 這三項都在資料庫那一側，所以「哪個比較快」是一個要向引擎問的問題，不是比較兩段文字就答得出來的問題。而且要問兩次：一次拿到現在這個狀態下的計畫，一次改動其中一項（加索引、換資料量）之後再拿一次，看它變不變。問一次只拿得到一個狀態下的答案，而上面第一張表證明狀態換了排名就換，第二張表證明分組與自連接的差距會隨資料的分布放大。各家的問法不同，SQLite 是 `EXPLAIN QUERY PLAN`，PostgreSQL 是 `EXPLAIN`。本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給`EXPLAIN`、`EXPLAIN ANALYZE`、`auto_explain` 三層工具的分工與四個 production case。
 
-代價既然由資料與索引決定，查詢的文字就可以先為讀它的人而寫。[1.21 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/) 並排了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開之後在四萬列上快三十多倍的——並給出分岔時該動查詢還是動 schema 的判準。
+代價既然由資料與索引決定，查詢的文字就可以先為讀它的人而寫。[1.21 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/) 並排了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開之後在四萬列上快三十多倍的——並給出分岔時該動查詢還是動 schema 的判斷標準。

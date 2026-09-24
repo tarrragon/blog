@@ -48,6 +48,10 @@ func Check(path string, cfg rules.Config) ([]report.Violation, error) {
 	// core concept after 而是. Warn-level — detection is mechanizable but
 	// the lead-with-the-point judgment needs reading the sentence (#166).
 	out = append(out, checkNegationLead(path, lines, ctx)...)
+	// TERM-abbreviation: compressed terms engineering readers cannot
+	// decode (判準 → 判斷標準). Error-level — no sentence needs them, and
+	// quoting the word keeps discussing it possible (#289).
+	out = append(out, checkAbbreviatedTerms(path, lines, ctx)...)
 	// Front matter schema check always runs; rules.Config.FrontMatter
 	// describes which fields are required / recommended / disallowed.
 	out = append(out, checkFrontMatter(path, lines, cfg.FrontMatter)...)

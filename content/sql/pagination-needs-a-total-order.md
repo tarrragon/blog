@@ -12,7 +12,7 @@ tags: ["sql", "pagination", "limit", "offset", "keyset", "order-by"]
 
 而 `ORDER BY` 給的順序有一段是空的：它只規定排序鍵分得出高下的部分。那個規定怎麼運作、空值為什麼比不出大小，在 [1.11 關係沒有順序，只有 ORDER BY 加得回來](/sql/relations-have-no-order/)。整批取回的時候那一段空白無害，逐頁取回的時候它變成同一筆資料出現兩次、另一筆一次都不出現。
 
-本篇處理三件事：那個機制、把順序補到全序（任兩列都比得出先後）的判準，以及位置式與值式兩種游標各自成立什麼。**對外要選哪一種分頁還牽涉到跳頁與總筆數要不要放棄、游標怎麼編碼、以及一致性承諾怎麼寫進契約，那些不在本篇裡**：[分頁之爭：offset 與 keyset 選機制、cursor 決定表示權](/backend/11-api-design/pagination-debate/) 的 `選型的順序固定、每一步都有出口` 一節給選型的三步（先問跳頁與總數、再選定位機制、最後定表示法）與各步的出口，`不透明性同時是一份多半沒寫下來的承諾` 一節寫游標要對外承諾哪些條款，`定位機制的成本曲線與能力差` 一節另列出快照分頁與時間視窗這兩條本篇沒有的路；游標式的複雜度對照與 tiebreaker 設計在 [Keyset Pagination](/backend/knowledge-cards/keyset-pagination/)。
+本篇處理三件事：那個機制、把順序補到全序（任兩列都比得出先後）的判斷標準，以及位置式與值式兩種游標各自成立什麼。**對外要選哪一種分頁還牽涉到跳頁與總筆數要不要放棄、游標怎麼編碼、以及一致性承諾怎麼寫進契約，那些不在本篇裡**：[分頁之爭：offset 與 keyset 選機制、cursor 決定表示權](/backend/11-api-design/pagination-debate/) 的 `選型的順序固定、每一步都有出口` 一節給選型的三步（先問跳頁與總數、再選定位機制、最後定表示法）與各步的出口，`不透明性同時是一份多半沒寫下來的承諾` 一節寫游標要對外承諾哪些條款，`定位機制的成本曲線與能力差` 一節另列出快照分頁與時間視窗這兩條本篇沒有的路；游標式的複雜度對照與 tiebreaker 設計在 [Keyset Pagination](/backend/knowledge-cards/keyset-pagination/)。
 
 本篇沿用 [1.11 關係沒有順序，只有 ORDER BY 加得回來](/sql/relations-have-no-order/) 那一批訂單：把[共用資料庫](/sql/sample-bookstore-database/)裡 101 的金額改成 700，再加三張，同分的三張都是 500 元，這三張正是分頁要處理的對象：101 是 700 元、102 與 103 是 500 元、104 是 300 元、105 是 500 元。
 
@@ -52,7 +52,7 @@ tags: ["sql", "pagination", "limit", "offset", "keyset", "order-by"]
 OFFSET 0 → 101,102     OFFSET 2 → 103,105     OFFSET 4 → 104
 ```
 
-同一段查詢跑幾次都是這個結果，換計畫也是。**判準是排序鍵的組合在「排序用的那條比較規則下」兩兩可分**，這個性質叫全序：任兩列都比得出先後——「值不重複」還不夠，有兩種形態會讓不重複的鍵仍然排不出先後。一種是空值：一欄掛著 `UNIQUE` 而三列都是 `NULL`，約束成立而 `NULL` 之間比不出高下，SQLite 3.51 上建了索引之後同一段查詢回的順序就翻轉。另一種是比較規則把不同的值判成相等：MySQL 預設的 collation 底下 `Anna`／`anna`／`ANNA`／`Ánna` 四個值 `COUNT(DISTINCT BINARY 姓名)` 是 4 而 `COUNT(DISTINCT 姓名)` 是 1。看起來唯一的字串鍵因此可能不唯一，那條比較規則住在哪一層、各家預設是什麼，在 [1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/)。
+同一段查詢跑幾次都是這個結果，換計畫也是。**判斷標準是排序鍵的組合在「排序用的那條比較規則下」兩兩可分**，這個性質叫全序：任兩列都比得出先後——「值不重複」還不夠，有兩種形態會讓不重複的鍵仍然排不出先後。一種是空值：一欄掛著 `UNIQUE` 而三列都是 `NULL`，約束成立而 `NULL` 之間比不出高下，SQLite 3.51 上建了索引之後同一段查詢回的順序就翻轉。另一種是比較規則把不同的值判成相等：MySQL 預設的 collation 底下 `Anna`／`anna`／`ANNA`／`Ánna` 四個值 `COUNT(DISTINCT BINARY 姓名)` 是 4 而 `COUNT(DISTINCT 姓名)` 是 1。看起來唯一的字串鍵因此可能不唯一，那條比較規則住在哪一層、各家預設是什麼，在 [1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/)。
 
 把主鍵接在排序鍵最後面之所以省事，是因為它同時滿足兩邊——[約束](/sql/knowledge-cards/constraint/)保證它不重複，而數值型別的比較規則不會把兩個不同的數判成相等。所以排序鍵分不分得出高下，多半在寫 `CREATE TABLE` 的那一刻就定了：那一欄有沒有唯一約束、決勝鍵有沒有現成的欄位可用。[backend 1.16 設計時下的每一個決定，替往後每一次查詢定價](/backend/01-database/design-decisions-price-every-query/) 的「這個鍵唯不唯一」一節走那個決定，並示範補決勝鍵只買到並列那一半。
 
