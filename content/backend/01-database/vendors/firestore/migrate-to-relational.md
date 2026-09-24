@@ -188,7 +188,7 @@ dual-write 時新庫寫成功 Firestore 失敗（或反之）、兩邊分歧、c
 
 - **保留 document model**：若只是要逃離 Firestore 的查詢限制、但 document 形狀仍適合，遷 [MongoDB](/backend/01-database/vendors/mongodb/) 比遷 relational 的 paradigm 跨度小、不必反正規化還原
 - **整包託管遷出**：若連認證、儲存一起搬離 Firebase，整場資產線盤點與並行期走 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)、本文是其中資料層那一條
-- **反向視角**：哪些資料當初就不該進 Firestore（報表來源、強一致交易），見 [Firestore overview 的不適用場景](/backend/01-database/vendors/firestore/#不適用場景)
+- **反向視角**：哪些資料當初就不該進 Firestore：跨實體的報表與分析查詢（跨 collection JOIN 與彙總要靠資料複製工程）、讀取量大而計費隨 document 讀寫線性成長的場景、授權規則複雜到 Security Rules 難以測試的場景，以及跨大量 document 的強一致交易
 
 ### Sibling 與 cross-link
 

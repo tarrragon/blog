@@ -32,7 +32,7 @@ tags: ["testing", "acceptance-test", "ai-generated-code", "requirements"]
 
 它同時解釋了一種常見的挫折感——測試一直加、線上還是出事，而出的事「測試裡明明有類似的案例」。類似不等於交叉：同一個維度上的第十個案例，對另一個維度的貢獻仍然是零。
 
-本章引用的量測數字全部來自同一份實驗，它足以支持與不足以支持什麼寫在[模組入口](/testing/06-agent-authored-code/)。
+本章引用的量測數字全部來自同一份實驗，它足以支持與不足以支持什麼寫在[本模組引用的對照實驗](/testing/06-agent-authored-code/shared-experiment-scope/)。
 
 ## 量射程的操作方式
 

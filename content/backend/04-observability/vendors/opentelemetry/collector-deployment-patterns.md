@@ -89,7 +89,7 @@ gateway 層的 processor 是攔截高 cardinality attribute 的有效位置：�
 
 ## 整合 / 下一步
 
-Collector 部署模式是 OTel 落地的第一個決策，它的下游是 sampling 策略與 backend 選型。決定了 agent + gateway 兩層後，tail sampling 的設計接到 gateway 層的 pipeline；exporter 指向哪個 backend 則回到 [何時改走其他服務](/backend/04-observability/vendors/opentelemetry/#何時改走其他服務) 的 vendor portability 判讀。
+Collector 部署模式是 OTel 落地的第一個決策，它的下游是 sampling 策略與 backend 選型。決定了 agent + gateway 兩層後，tail sampling 的設計接到 gateway 層的 pipeline；exporter 指向哪個 backend 則看需要的後端類型：metrics 走 [Prometheus](/backend/04-observability/vendors/prometheus/) 或 Mimir、logs 走 [Elastic Stack](/backend/04-observability/vendors/elastic-stack/) 或 Loki、high-cardinality 除錯走 [Honeycomb](/backend/04-observability/vendors/honeycomb/)、要 SaaS APM 整合走 [Datadog](/backend/04-observability/vendors/datadog/)。exporter 是 Collector 設定裡的一段，換後端不必改應用程式的埋點。
 
 pipeline 的訊號治理與資料品質回到 [4.11 Telemetry Pipeline 架構](/backend/04-observability/telemetry-pipeline/) 與 [4.17 Telemetry Data Quality](/backend/04-observability/telemetry-data-quality/)；cardinality 攔截回到 [4.7 Cardinality 治理與成本邊界](/backend/04-observability/cardinality-cost-governance/)。
 

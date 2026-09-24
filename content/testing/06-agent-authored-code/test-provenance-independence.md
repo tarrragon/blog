@@ -38,7 +38,7 @@ tags: ["testing", "test-provenance", "ai-generated-code", "test-oracle", "tdd"]
 
 這個盲區不會因為測試變多而縮小。[T.C10](/testing/cases/acceptance-passes-eight-different-programs/) 裡八份程式的單元測試規模從零到 206 個範例，而 25 條驗收條件對危險判定順序一律沉默——規模成長沒有把任何一份帶進那個維度，因為斷言全部從同一份對需求的理解長出來。
 
-本節的三種形態與四個變數出自機制推導；用來對照的實驗數字只有一份來源，[模組入口](/testing/06-agent-authored-code/)交代了它支持與不支持哪些宣稱。
+本節的三種形態與四個變數出自機制推導；用來對照的實驗數字只有一份來源，[本模組引用的對照實驗](/testing/06-agent-authored-code/shared-experiment-scope/)交代了它支持與不支持哪些宣稱。
 
 ## 把判斷標準移出實作的四個變數
 
