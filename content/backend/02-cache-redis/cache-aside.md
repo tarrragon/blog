@@ -112,7 +112,7 @@ cache aside 的設計會直接影響觀測、驗證與事故處理。
 
 ## 下一步路由
 
-**規模成長路線下一站 → [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)**：應用層快取上面還有 CDN 邊緣層、兩層失效時序要對齊（先 purge 應用層、再 purge 邊緣層、避免邊緣回填到應用層舊資料）。
+**[規模成長路線](/backend/scale-growth-walls/)下一站 → [5.9 邊緣分發與靜態資源](/backend/05-deployment-platform/edge-cdn-static-distribution/)**：應用層快取上面還有 CDN 邊緣層、兩層失效時序要對齊（先 purge 應用層、再 purge 邊緣層、避免邊緣回填到應用層舊資料）。
 
 其他延伸方向：
 

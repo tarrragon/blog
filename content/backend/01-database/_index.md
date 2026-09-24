@@ -103,7 +103,7 @@ SQLite 適合單機服務、embedded app、測試資料庫與低操作成本場�
 
 資料庫的第一條實作路徑已完成： [1.7 Schema Migration Rollout 證據實作示範](/backend/01-database/schema-migration-rollout-evidence/)。這篇以訂單資料表付款狀態欄位演進為例，說明 migration plan、[validation query](/backend/knowledge-cards/validation-query/)、rollback condition 與 incident decision route 如何一起成立。
 
-這條路徑的前置引用是 1.2 schema design、1.3 transaction boundary、1.6 migration playbook、[6.11 Migration Safety](/backend/06-reliability/migration-safety/) 與 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。完成後可依 [Backend 學習路線](/backend/#學習路線) 進入 02 cache migration。
+這條路徑的前置引用是 1.2 schema design、1.3 transaction boundary、1.6 migration playbook、[6.11 Migration Safety](/backend/06-reliability/migration-safety/) 與 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/)。完成後可依 [Backend 學習路線](/backend/reading-paths/) 進入 02 cache migration。
 
 資料庫路徑的 artifact 對齊重點是「先證明資料演進正確，再討論是否放行」。對 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 要交 `Source/Time range/Query link/Owner/Data quality`，並在 query 內容覆蓋 validation query、row count 差異與 replication lag；對 [6.11 Migration Safety 與 DB Rollout](/backend/06-reliability/migration-safety/) / [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/) 要交 `Gate decision/Checks/Stop condition/Rollback window/Owner`，呈現 expand/contract 分段結果；對 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 要交 `Timestamp/Decision/Context/Evidence/Owner/Expected effect/Rollback condition`，記錄 pause / rollback / fail-forward 的判斷與依據。
 

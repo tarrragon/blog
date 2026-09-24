@@ -154,7 +154,7 @@ Zomato 跟 Netflix 不在這份案例清單裡的原因要先講清楚：擴展�
 
 ## 下一步路由
 
-**規模成長路線下一站 → [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)**：選定擴展軸後、在加機器前先用反模式清單收回單機可撐住的容量。
+**[規模成長路線](/backend/scale-growth-walls/)下一站 → [1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/)**：選定擴展軸後、在加機器前先用反模式清單收回單機可撐住的容量。
 
 其他延伸方向：
 

@@ -123,7 +123,7 @@ Container 解決服務包裝與 runtime 依賴；Kubernetes 解決多 instance �
 
 部署平台的第一條實作路徑是 [5.8 Deployment Rollout with Drain and Rollback（實作示範）](/backend/05-deployment-platform/deployment-rollout-drain-rollback/)。這篇以 checkout service rollout 為例，說明 rollout plan、canary evidence、drain signal、rollback condition 與 incident decision route 如何一起成立。
 
-這條路徑的前置引用應該是 5.2 Kubernetes deployment、5.3 load balancer contract、[5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)、[6.8 Release Gate](/backend/06-reliability/release-gate/) 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。完成後可依 [Backend 學習路線](/backend/#學習路線) 進入下一條服務路徑。
+這條路徑的前置引用應該是 5.2 Kubernetes deployment、5.3 load balancer contract、[5.C9 反例](/backend/05-deployment-platform/cases/failure-platform-cutover-without-drain/)、[6.8 Release Gate](/backend/06-reliability/release-gate/) 與 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/)。完成後可依 [Backend 學習路線](/backend/reading-paths/) 進入下一條服務路徑。
 
 部署路徑的 artifact 對齊重點是「每一批切換都能被觀測、被放行、被回退」。對 [4.20 Observability Evidence Package](/backend/04-observability/observability-evidence-package/) 要交 `Source/Time range/Query link/Owner/Data quality`，並覆蓋 per-version error rate、latency、drain completion 與 reconnect 訊號；對 [6.8 Release Gate 與變更節奏](/backend/06-reliability/release-gate/) 要交 `Gate decision/Checks/Stop condition/Rollback window/Owner`，呈現 canary 批次與停損規則；對 [8.19 Incident Decision Log](/backend/08-incident-response/incident-decision-log/) 要交 `Timestamp/Decision/Context/Evidence/Owner/Expected effect/Rollback condition`，記錄 freeze、回退與重啟切流的決策條件與時間序列。
 

@@ -430,7 +430,7 @@ Headroom budget 是 *提前預留的容量空間*、給可預期或不可預期�
 - 下游：[1.10 KV / Document DB 容量規劃](/backend/01-database/kv-document-capacity-planning/)（SQL 不夠用時的替代）/ [1.11 全球分散式 OLTP](/backend/01-database/global-distributed-oltp/) / [1.12 大規模 DB 遷移實戰](/backend/01-database/large-scale-db-migration/)（換 DB engine 的決策跟流程）
 - 跨模組：[9.4 Saturation Discovery](/backend/09-performance-capacity/saturation-discovery/)、[9.5 瓶頸定位流程](/backend/09-performance-capacity/bottleneck-localization/)、[9.6 容量規劃模型](/backend/09-performance-capacity/capacity-planning/)、[9.13 擴展軸](/backend/09-performance-capacity/scaling-axes/)（hot row 是不可分散瓶頸的 application 層表現）
 - Vendor：[PostgreSQL](/backend/01-database/vendors/postgresql/)、[MySQL](/backend/01-database/vendors/mysql/)、[Aurora](/backend/01-database/vendors/aurora/)
-- 規模成長路線下一站 → [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)（連線池 / replica 擴完後、進入應用層快取設計）
+- [規模成長路線](/backend/scale-growth-walls/)下一站 → [2.2 cache aside 與失效策略](/backend/02-cache-redis/cache-aside/)（連線池 / replica 擴完後、進入應用層快取設計）
 - MongoDB connection storm 深入：[MongoDB connection 管理與 cache 層](/backend/01-database/vendors/mongodb/connection-management-and-cache-layer/) / [replica set read preference](/backend/01-database/vendors/mongodb/replica-set-read-preference/)
 - Aurora read replica 擴展：[Aurora read replica scaling](/backend/01-database/vendors/aurora/read-replica-scaling/)（reader endpoint / lag 治理）
 - Freshness token 卡片：[Freshness Token](/backend/knowledge-cards/freshness-token/)（read-after-write 保證選項）

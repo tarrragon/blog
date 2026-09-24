@@ -115,7 +115,7 @@ tags: ["backend", "service-selection"]
 
 這三個 artifact 先接起來，再補該路徑的 DB、cache、queue、deployment 細節，實作討論會更穩定，也更容易做跨模組回寫。
 
-完整撰寫順序與服務路徑選擇依 [Backend 學習路線](/backend/#學習路線) 安排。
+完整撰寫順序與服務路徑選擇依 [Backend 學習路線](/backend/reading-paths/) 安排。
 
 ## Backlog
 

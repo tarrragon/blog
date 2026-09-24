@@ -119,7 +119,7 @@ tags: ["backend", "service-selection"]
 
 下一步可讀：[操作平台選型](/backend/00-service-selection/operations-platform-selection/)。
 
-**規模成長路線下一站 → [10.1 服務拆分與邊界判讀](/backend/10-system-evolution/service-decomposition-boundaries/)**：需求分類完之後、第一個判讀通常是「該不該把服務拆開」。
+**[規模成長路線](/backend/scale-growth-walls/)下一站 → [10.1 服務拆分與邊界判讀](/backend/10-system-evolution/service-decomposition-boundaries/)**：需求分類完之後、第一個判讀通常是「該不該把服務拆開」。服務從能跑演進到能撐的完整順序與各階段的撞牆訊號，在 [服務從能跑到能撐，每一次架構調整都由一個撞牆訊號觸發](/backend/scale-growth-walls/)。
 
 ## 小結
 

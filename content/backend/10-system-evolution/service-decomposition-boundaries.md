@@ -178,7 +178,7 @@ Netflix Aurora consolidation 是反例最有教學價值的一筆 — 它證明�
 
 ## 下一步路由
 
-**規模成長路線下一站 → [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)**：拆分後接著要為每個服務選擇擴展軸。
+**[規模成長路線](/backend/scale-growth-walls/)下一站 → [9.13 擴展軸與 Stateless 前提](/backend/09-performance-capacity/scaling-axes/)**：拆分後接著要為每個服務選擇擴展軸。
 
 其他延伸方向：
 
