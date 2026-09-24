@@ -14,7 +14,7 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 一個判斷標準能不能省掉某一步，取決於約束有沒有把那一步的前提固定住。最直接的一例是[空值](/sql/knowledge-cards/null/)：`NOT IN` 在子查詢那一欄出現 `NULL` 的時候會整個回空集合而不報錯，所以否定式的成員判斷一般用 `NOT EXISTS`。這條規則有一個豁免——那一欄掛了 `NOT NULL`。**豁免的條件是約束而不是觀察**：翻遍現在的資料都沒有 `NULL`，只證明此刻沒有；約束證明的是往後也不會有，而查詢要活得比這一批資料久。
 
-同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [1.6](/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
+同一個結構在別處反覆出現：`UNIQUE` 讓「這個連接會不會讓一列配到多列」變成可以事先回答的問題（見 [1.6 連接產出的是新的關係，列數與空缺都變了](/sql/join-changes-rows-and-nulls/)），`FOREIGN KEY` 讓「這個 `JOIN` 會不會掉列」有一個不必查資料就成立的答案。
 
 ## 概念位置
 
@@ -22,7 +22,7 @@ tags: ["sql", "constraint", "null", "ddl", "knowledge-card"]
 
 它與[索引](/sql/knowledge-cards/indexing/)在外觀上容易混——`UNIQUE` 在多數引擎底下確實靠一個索引實作，而兩者的責任不同：索引買的是查找速度，約束買的是內容的保證。刪掉一個索引查詢會變慢，刪掉一個約束則是往後的寫入不再被擋。
 
-這條分工有一個邊界：約束宣告的內容同時是[最佳化器](/sql/knowledge-cards/query-optimizer/)可用的資訊，所以它買到的有時候多於內容的保證。同一張五千列的表、同一個 `EXISTS` 查詢、`recordDate` 上同樣掛著索引，只把索引從 `UNIQUE` 換成普通索引，SQLite 3.51.0 產出的位元碼就多一圈內層迴圈——唯一的時候引擎知道那次查找至多回一列，不唯一的時候它得準備好再看下一筆。這個差別在 `EXPLAIN QUERY PLAN` 上看不見，兩邊都印同一行 `SEARCH y USING INDEX ix (recordDate=?)`，要 `EXPLAIN` 到位元碼那一層才分得開；而在這組資料上它沒有量出時間差。同一組查詢在 DuckDB 1.5.5 上的計畫與有沒有 `UNIQUE` 無關。所以約束會不會影響代價是各家自己的決定，不是約束本身的性質（[1.19](/sql/engine-leniency-and-portability/)）。
+這條分工有一個邊界：約束宣告的內容同時是[最佳化器](/sql/knowledge-cards/query-optimizer/)可用的資訊，所以它買到的有時候多於內容的保證。同一張五千列的表、同一個 `EXISTS` 查詢、`recordDate` 上同樣掛著索引，只把索引從 `UNIQUE` 換成普通索引，SQLite 3.51.0 產出的位元碼就多一圈內層迴圈——唯一的時候引擎知道那次查找至多回一列，不唯一的時候它得準備好再看下一筆。這個差別在 `EXPLAIN QUERY PLAN` 上看不見，兩邊都印同一行 `SEARCH y USING INDEX ix (recordDate=?)`，要 `EXPLAIN` 到位元碼那一層才分得開；而在這組資料上它沒有量出時間差。同一組查詢在 DuckDB 1.5.5 上的計畫與有沒有 `UNIQUE` 無關。所以約束會不會影響代價是各家自己的決定，不是約束本身的性質（[1.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/sql/engine-leniency-and-portability/)）。
 
 ## 往下走
 

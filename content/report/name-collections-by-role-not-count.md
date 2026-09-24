@@ -65,7 +65,6 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "SSoT", "Naming", 
 - [#44 Single Source of Truth](/report/single-source-of-truth/)：成員數量的 truth 在清單本身（數一下就有）；把數量寫進名稱是把這個 derivation 複製成第二個源、且這個源被嵌進最高頻複製的字串裡：是 SSoT 違反裡擴散速度最快的形態。
 - [#84 Naming 是 iterated artifact](/report/naming-as-iterated-artifact/)：本卡給 #84 的命名 review 加一個檢查維度 — 數量入名是「第一版命名基於當下狹窄 context」的典型產物：寫名字的當下成員剛好七個、七看起來是這個集合的屬性；cross-time 檢驗（成員會不會變）才暴露它是快照。
 - [#67 寫作便利度跟意圖對齊反相關](/report/ease-of-writing-vs-intent-alignment/)：「七問」「六階段」順口、有節奏感、好記 — 正是便利驅動的選擇；意圖對齊的名稱（核心問題）平淡但誠實。便利的代價延遲到第一次成員變動才結算。
-
 - [#363 正文裡的對象要用它是什麼來命名](/report/ordinal-labels-are-the-authors-index/)：本卡管標題裡的成員數，#363 管正文裡以計數或序數當名字的實體（「三支」「第三步」），並指出成員數不變時它已經讀不懂。
 
 ---

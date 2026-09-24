@@ -14,7 +14,7 @@ tags: ["sql", "order-by", "null", "query-plan", "semantic-model"]
 
 範圍之外的兩件事各有專篇。哪些列會進到這份結果由條件與連接決定，順序管不到那一層：條件擺哪一邊決定留下哪些列在 [1.5 ON 描述關係、WHERE 篩選結果](/sql/on-describes-where-filters/)，連接怎麼改變列數在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)。視窗函數的 `OVER (ORDER BY ...)` 是另一個順序，它決定計算時誰算相鄰、不決定輸出怎麼排，兩者可以不同，[1.10 分組把列收掉，視窗函數把列留著](/sql/window-keeps-rows-grouping-collapses/) 的〈相鄰的是什麼，要自己說清楚〉一節寫那一種。
 
-本篇的查詢跑在[共用資料庫](/sql/#各篇共用的範例資料庫)的訂單表上，並把 101 的金額改成 700、再加三張，讓五張訂單裡有三張同樣是 500 元：101 是 700 元、102 與 103 是 500 元、104 是 300 元、105 是 500 元。
+本篇的查詢跑在[共用資料庫](/sql/sample-bookstore-database/)的訂單表上，並把 101 的金額改成 700、再加三張，讓五張訂單裡有三張同樣是 500 元：101 是 700 元、102 與 103 是 500 元、104 是 300 元、105 是 500 元。
 
 ## 沒有 ORDER BY 的時候，順序跟著計畫走
 
@@ -41,7 +41,7 @@ SELECT 金額 * 2 AS 兩倍 FROM 訂單 ORDER BY 兩倍 DESC;   -- 三家都接�
 SELECT 金額 * 2 AS 兩倍 FROM 訂單 WHERE 兩倍 > 1000;    -- PostgreSQL 與 MySQL 拒絕
 ```
 
-`WHERE` 那一步發生在算出 `兩倍` 之前，所以那個名字在那裡還不存在——PostgreSQL 回 `column "兩倍" does not exist`，MySQL 回 `ERROR 1054 Unknown column '兩倍' in 'where clause'`。SQLite 收下同一段並回答 1400，這是它的寬鬆度而不是標準行為（求值順序的完整推導與這條寬鬆度的其他實例在 [1.2](/sql/clause-evaluation-order/)）。
+`WHERE` 那一步發生在算出 `兩倍` 之前，所以那個名字在那裡還不存在——PostgreSQL 回 `column "兩倍" does not exist`，MySQL 回 `ERROR 1054 Unknown column '兩倍' in 'where clause'`。SQLite 收下同一段並回答 1400，這是它的寬鬆度而不是標準行為（求值順序的完整推導與這條寬鬆度的其他實例在 [1.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/sql/clause-evaluation-order/)）。
 
 ## NULL 排在哪一端，三家給兩種答案
 

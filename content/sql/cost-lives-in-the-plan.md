@@ -19,14 +19,14 @@ tags: ["sql", "cost", "query-plan", "index", "performance"]
 SELECT email FROM Person GROUP BY email HAVING count(*) > 1;
 ```
 
-**用自連接。** 把表配對，找出 email 相同而 id 不同的兩列（[1.7](/sql/table-occurrence-and-alias/)）：
+**用自連接。** 把表配對，找出 email 相同而 id 不同的兩列（[1.7 查詢裡的表是一個具名的出現](/sql/table-occurrence-and-alias/)）：
 
 ```sql
 SELECT DISTINCT p1.email FROM Person p1
 JOIN Person p2 ON p1.email = p2.email AND p1.id <> p2.id;
 ```
 
-**用 `EXISTS`。** 對每一列問「有沒有另一列 email 跟我一樣」（[1.8](/sql/in-exists-join/)）：
+**用 `EXISTS`。** 對每一列問「有沒有另一列 email 跟我一樣」（[1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/sql/in-exists-join/)）：
 
 ```sql
 SELECT DISTINCT email FROM Person p
