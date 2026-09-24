@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.22.0 — 嚴重度改按讀者學不學得會分級（必修：照做會學錯、段內理解不了、要離頁或回頭翻、作者編排脈絡進正文；可改：多花力氣），prompt 不再放「寧可少報」「措辭偏好不回報」；2-B⁗ 新增逐段落地變體專抓隔段指稱（審查者持有全文地圖、結構上看不到），附對照全文的篩選規則與抽查；新 principle 卡 `reviewer-holds-the-map-readers-land-without-it`
+
 **Version**: 2.21.1 — Round 1-A 序數命名 pattern 補上「種、類、條、項」
 
 **Version**: 2.21.0 — Round 1-A 摘要新增「計數式摘要」類別（介紹另一份內容的位置按句讀，grep 分不出合規與違規），對應 compositional-writing 1.33.0 的 `counted-summary-delivers-only-the-length`
