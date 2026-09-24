@@ -12,7 +12,7 @@ Aggregate function 把一組列收成一個值：`count` 數幾列、`sum` 加�
 
 **「一組」是由 `GROUP BY` 的鍵決定的，所以聚合要等到分組發生之後才有意義。** 這解釋了一個看起來像限制的行為：聚合寫進 `WHERE` 會被拒絕，因為那一步分組還沒發生，沒有組就沒有組的計數。同一件事寫進 `HAVING` 通過，因為那一步分組已經完成。
 
-沒有 `GROUP BY` 的時候整張表算一組，所以 `SELECT count(*) FROM 訂單` 回一列。分組之後手上的單位從列換成組，而每一組仍然是一個 [relation](/sql/knowledge-cards/relation/) 的子集。
+沒有 `GROUP BY` 的時候整張表算一組，所以 `SELECT count(*) FROM 訂單` 回一列。分組之後結果的單位從列換成組，而每一組仍然是一個 [relation](/sql/knowledge-cards/relation/) 的子集。
 
 ## 可觀察訊號與例子
 

@@ -8,7 +8,7 @@ tags: ["sql", "identifier", "naming", "postgresql", "portability"]
 
 表名與欄名（統稱識別字）寫進查詢之後，引擎會先按自己的規則處理一次，才拿去對照真正存在的名字。這道改寫各家不同，所以同一段 SQL 在不同引擎上指向的可能是不同的名字——或者什麼都指不到。
 
-查詢的文字之外，還有幾方決定一段 SQL 最後做什麼：識別字規則、權限、最佳化器、約束、collation，以及決定其餘各方的線畫在哪裡的引擎寬鬆度（寬鬆度那一方在 [1.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/sql/engine-leniency-and-portability/)）。識別字規則是離查詢文字最近的那一方：名字還沒指到任何一張表之前，引擎就已經按這套規則把它改寫過一次。同一張表被誰允許讀寫是另一方的事，在 [1.16 權限的預設是什麼都不給](/sql/privilege-model/)；最佳化器那一方，執行順序怎麼從書寫順序分出來在 [1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/)。
+查詢的文字之外，還有幾方決定一段 SQL 最後做什麼：識別字規則、權限、最佳化器、約束、collation，以及引擎寬鬆度——標準禁止的寫法這一家引擎收不收（寬鬆度那一方在 [1.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/sql/engine-leniency-and-portability/)）。識別字規則是離查詢文字最近的那一方：名字還沒指到任何一張表之前，引擎就已經按這套規則把它改寫過一次。同一張表被誰允許讀寫是另一方的事，在 [1.16 權限的預設是什麼都不給](/sql/privilege-model/)；最佳化器那一方，執行順序怎麼從書寫順序分出來在 [1.1 宣告式的紅利與代價](/sql/declarative-not-procedural/)。
 
 這與命名慣例是兩件事。取什麼名字是設計問題，[Schema Design 的「Naming 與一致性」段](/backend/01-database/schema-design/#naming-與一致性) 給表、欄、外鍵、布林、時間戳、索引各自的慣例，以及縮寫不一致、隱性意義這幾種反模式；這裡談的是取好的名字送進引擎會發生什麼。改寫的後果在單一引擎上看不見，換一個引擎才浮現：一段建表語句在原本那個引擎上建好了表，同樣的名字搬到另一個引擎去查卻找不到——名字在送進引擎的路上會先被改寫一次，而兩個引擎改寫的規則不一樣。
 
@@ -31,9 +31,9 @@ CREATE TABLE MixedCase (x INT);
 -- 實際存進系統目錄的表名是 mixedcase
 ```
 
-所以 `CREATE TABLE MixedCase` 與 `SELECT * FROM mixedcase` 互相對得上，而 `CREATE TABLE "MixedCase"` 與 `SELECT * FROM MixedCase` 對不上。**加引號的效果是關掉這道摺疊，要求逐字比對。**
+所以 `CREATE TABLE MixedCase` 與 `SELECT * FROM mixedcase` 互相對得上，而 `CREATE TABLE "MixedCase"` 與 `SELECT * FROM MixedCase` 對不上。**加引號的效果是關掉「沒加引號就摺成小寫」這道摺疊，要求逐字比對。**
 
-這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，而那套規則在 PostgreSQL 的預設底下兩者不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 寫那套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
+這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，而那套規則在 PostgreSQL 的預設底下兩者不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 寫 collation 這套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
 
 ## SQLite 與 DuckDB 完全不區分大小寫
 

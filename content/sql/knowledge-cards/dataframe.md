@@ -6,7 +6,7 @@ weight: 12
 tags: ["sql", "dataframe", "pandas", "declarative", "knowledge-card"]
 ---
 
-DataFrame 是一張表在程式記憶體裡的表示：有具名的欄、有列，整份資料握在執行這段程式的行程手上。Python 的 pandas 是最常見的實作，R 與 Julia 各有自己的一套。它與 [relation](/sql/knowledge-cards/relation/)——一組欄位固定、由若干列構成的資料集合，資料表是它的一種——裝的內容幾乎一樣，而兩者在三個地方分開。
+DataFrame 是一張表在程式記憶體裡的表示：有具名的欄、有列，整份資料放在執行這段程式的行程的記憶體裡。Python 的 pandas 是最常見的實作，R 與 Julia 各有自己的一套。它與 [relation](/sql/knowledge-cards/relation/)——一組欄位固定、由若干列構成的資料集合，資料表是它的一種——裝的內容幾乎一樣，而兩者在三個地方分開。
 
 ## 三個分開的地方
 

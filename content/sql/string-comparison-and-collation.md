@@ -10,7 +10,7 @@ tags: ["sql", "collation", "like", "string", "index", "portability"]
 
 大小寫這件事在 SQL 裡落在兩個彼此獨立的層。[1.14 識別字送進引擎之後會被改寫](/sql/identifier-rules/) 處理的是**名字**送進引擎會被怎麼摺疊，這一篇處理的是**值**被拿去比較時套的是哪一把尺。兩層的規則互不影響：PostgreSQL 把沒加引號的表名摺成小寫，卻不會把 `'Anna'` 這個值摺成小寫。
 
-本篇把同一條規則作用的四個表面走完：什麼算相等、`LIKE` 為什麼會與等號分岔、誰排在前面、以及索引走不走得了。四者收在同一個處置上——規則要寫出來，而寫在哪一層決定它涵蓋到哪裡。
+本篇把同一條規則作用的四個表面走完：什麼算相等、`LIKE` 為什麼會與等號分岔、誰排在前面、以及索引走不走得了。四者收在同一個處置上——規則要寫出來，而寫在資料庫、表或欄位哪一層決定它涵蓋到哪裡。
 
 本篇的顧客表有五列：`Anna`、`anna`、`ANNA`、`Ánna`、`佳穎`。
 
@@ -58,7 +58,7 @@ PostgreSQL 18      anna, Anna, ANNA, Ánna, 佳穎
 MySQL 8.4          Anna, anna, ANNA, Ánna, 佳穎
 ```
 
-SQLite 那一列是位元組的先後——大寫字母的碼位小於小寫，所以 `ANNA` 整批排在前面。PostgreSQL 這一列取決於資料庫建立時選的 collation，量測用的這個是 `en_US.utf8`（查法是 `SELECT datcollate FROM pg_database`），它照人類語言的習慣把大小寫視為同一個字母的變體、再用大小寫決定同分時的先後。同一段加上 `COLLATE "C"` 之後回的是 `ANNA, Anna, anna, Ánna, 佳穎`，與 SQLite 一致——**同一家引擎、同一批資料，換一條規則就換一種順序**，而 SQLite 的預設順序就是位元組序這件事也因此驗得出來。
+SQLite 那一列是位元組的先後——大寫字母的碼位小於小寫，所以 `ANNA` 整批排在前面。PostgreSQL 這一列取決於資料庫建立時選的 collation，量測用的這個是 `en_US.utf8`（查法是 `SELECT datcollate FROM pg_database`），它照人類語言的習慣把大小寫視為同一個字母的變體、再用大小寫決定同分時的先後。同一段 `ORDER BY 姓名` 加上 `COLLATE "C"` 之後回的是 `ANNA, Anna, anna, Ánna, 佳穎`，與 SQLite 一致——**同一家引擎、同一批資料，換一條規則就換一種順序**，而 SQLite 的預設順序就是位元組序這件事也因此驗得出來。
 
 MySQL 那一列要換個方式讀。在 `ai_ci` 底下四個 A 開頭的名字**彼此相等**，所以它們之間沒有先後可言——那一列印的是它們進表的順序。**同一個排序鍵改用 `GROUP_CONCAT(姓名 ORDER BY 姓名)` 取回，順序整個倒過來**：同一張表、同一批資料，回來的是 `Ánna, ANNA, anna, Anna, 佳穎`，四個名字整個倒過來。兩次都沒有違反 collation，因為 collation 對這四個之間什麼都沒有規定。這是 collation 與分頁交會的地方：一條把大小寫與重音都忽略的規則，會讓原本以為唯一的排序鍵變成不唯一，而沒有規定的那一段在分頁時會變成同一列出現兩次、另一列一次都不出現——[1.12 分頁要一個全序](/sql/pagination-needs-a-total-order/) 寫那個機制與把排序鍵補到兩兩可分的判斷標準。
 
@@ -84,7 +84,7 @@ WHERE lower(姓名) = 'anna'   Filter: (lower(姓名) = 'anna')       逐列過�
 WHERE 姓名 LIKE 'ann%'       Filter: (姓名 ~~ 'ann%')             逐列過濾
 ```
 
-`en_US.utf8` 的排序規則與位元組序不同，所以 `ann` 這個前綴在索引上不對應一段連續的區間。PostgreSQL 給的出口是另建一個按位元組排的索引：`CREATE INDEX ON 顧客(姓名 text_pattern_ops)` 之後同一段變成 `Index Cond: (姓名 ~>=~ 'ann' AND 姓名 ~<~ 'ano')`，而 `lower(姓名)` 那一行則由運算式索引 `CREATE INDEX ON 顧客(lower(姓名))` 接住，變成 `Index Cond: (lower(姓名) = 'anna')`。
+`en_US.utf8` 的排序規則與位元組序不同，所以 `ann` 這個前綴在索引上不對應一段連續的區間。PostgreSQL 的解法是另建一個按位元組排的索引：`CREATE INDEX ON 顧客(姓名 text_pattern_ops)` 之後同一段前綴搜尋的計畫變成 `Index Cond: (姓名 ~>=~ 'ann' AND 姓名 ~<~ 'ano')`，而 `lower(姓名)` 那一行則由運算式索引 `CREATE INDEX ON 顧客(lower(姓名))` 接住，變成 `Index Cond: (lower(姓名) = 'anna')`。
 
 三種修法的共同形狀是**讓索引與條件套同一條規則**，而它們把改動放在不同的一邊：改條件、改索引的 collation、或另建一個按別的規則排的索引。比較規則對得上只是索引派得上用場的條件之一：條件的形狀是另一個（`lower(姓名)` 那一行就是形狀出的問題），而形狀與規則都對了之後，引擎還要看這個條件留下多少列才決定值不值得走索引，那一半在 [Cardinality 與 Selectivity](/sql/knowledge-cards/cardinality-and-selectivity/)。
 
