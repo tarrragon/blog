@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.21.0 — Round 1-A 摘要新增「計數式摘要」類別（介紹另一份內容的位置按句讀，grep 分不出合規與違規），對應 compositional-writing 1.33.0 的 `counted-summary-delivers-only-the-length`
+
 **Version**: 2.20.1 — 術語校正：「判準」全數改為「判斷標準」（「停止判準」改「停止條件」）。上一輪全站替換之後這個縮寫又回流，詞面在工程讀者端讀不出來
 
 **Version**: 2.20.0 — Round 1-A 摘要新增「序數、計數與字母代號當名字」類別（判定改用變數名稱測試與落點測試，reviewer 持有規劃清單所以「我讀得懂」不可當判準）；2-B⁗ 理解正確性加一題「從這一節讀起，○○ 指的是什麼」，對應 compositional-writing 1.32.0 的 `ordinal-labels-are-the-authors-index`
