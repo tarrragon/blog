@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.33.1 — 序數命名的掃描 pattern 補上「種、類、條、項」（逐段審查發現「第一種／第二種／第三種錯法」因詞綴缺「種」被漏掉）
+
 **Version**: 1.33.0 — 新增 principle 卡 `counted-summary-delivers-only-the-length`：介紹另一份內容時（description、交付欄、連結介紹）寫出成員，「四個追問、三種寫法」只交付清單長度。〈索引建立〉原則加生成端規則，keyword bank 新增「計數式摘要」類別（無穩定 pattern，按位置逐句讀）
 
 **Version**: 1.32.1 — 術語校正：「判準」全數改為「判斷標準」（「停止判準」改「停止條件」）。上一輪全站替換之後這個縮寫又回流，詞面在工程讀者端讀不出來；keyword bank 新增「縮寫術語」類別（content/ 由 mdtools `TERM-abbreviation` 擋，skill 目錄要手動掃）

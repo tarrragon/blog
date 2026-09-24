@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 2.21.1 — Round 1-A 序數命名 pattern 補上「種、類、條、項」
+
 **Version**: 2.21.0 — Round 1-A 摘要新增「計數式摘要」類別（介紹另一份內容的位置按句讀，grep 分不出合規與違規），對應 compositional-writing 1.33.0 的 `counted-summary-delivers-only-the-length`
 
 **Version**: 2.20.1 — 術語校正：「判準」全數改為「判斷標準」（「停止判準」改「停止條件」）。上一輪全站替換之後這個縮寫又回流，詞面在工程讀者端讀不出來
