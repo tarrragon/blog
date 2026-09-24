@@ -63,16 +63,33 @@ def scan(directory, only=None):
     return hits
 
 
+def page_url(path):
+    """content/a/b/c.md → /a/b/c/；content/a/b/_index.md → /a/b/"""
+    rel = os.path.relpath(path, "content")
+    d, name = os.path.split(rel)
+    return "/" + (d + "/" if d else "") + ("" if name == "_index.md" else name[:-3] + "/")
+
+
 def anchors():
-    """文章連到 `/<分類>/<子分類>/#段名` 這種目錄頁錨點：目錄頁正文不渲染，錨點在網站上不存在。"""
+    """文章連到目錄頁錨點：目錄頁正文不渲染，錨點在網站上不存在。
+    絕對路徑（/a/b/#x）與相對路徑（../#x、topics/#x）都解析；mdtools cards 比對的是
+    markdown 裡有沒有那個段標，目錄頁的 markdown 有，所以 cards 對這一類放行。"""
+    import posixpath
     sections = {"/" + os.path.dirname(p)[len("content/"):] + "/" for p in glob.glob("content/**/_index.md", recursive=True)}
+    sections.add("/")
     hits = 0
     for f in sorted(glob.glob("content/**/*.md", recursive=True)):
         if f.endswith("_index.md"):
             continue
-        for m in re.finditer(r"\]\((/[^)#\s]*/)#([^)]+)\)", open(f, encoding="utf-8").read()):
-            if m.group(1) in sections:
-                print(f"{f}\t{m.group(1)}#{m.group(2)}")
+        base = page_url(f)
+        for m in re.finditer(r"\]\(([^)#\s]*)#([^)]+)\)", open(f, encoding="utf-8").read()):
+            target = m.group(1)
+            if target == "" or target.startswith(("http:", "https:")):
+                continue
+            url = target if target.startswith("/") else posixpath.normpath(posixpath.join(base, target)) + "/"
+            url = url.replace("//", "/")
+            if url in sections:
+                print(f"{f}\t{m.group(1)}#{m.group(2)}\t→ {url}")
                 hits += 1
     return hits
 

@@ -73,7 +73,7 @@ two-challenge rule 規定同一個疑慮要被提出兩次，提了第二次而�
 
 ## 這些材料的限制
 
-這一篇沒有套用書單對書的四個維度，那組維度是為整本書設計的——它交付的是判定的依據而非書，因此也不計入書單的書目小節，這個例外登記在 [起點書怎麼選出來的](../#起點書怎麼選出來的)。要找書的話，發話端在 [留任、動機與工作環境](../retention-motivation/) 的 Radical Candor 那一節，接收端在 [困難對話與無權限影響力](../influence-conversation/) 的 Thanks for the Feedback 那一節。
+這一篇沒有套用書單對書的四個維度，那組維度是為整本書設計的——它交付的是判定的依據而非書，因此也不計入書單的書目小節，這個例外登記在 [起點書怎麼選出來的](../starting-book-selection/#起點書怎麼選出來的)。要找書的話，發話端在 [留任、動機與工作環境](../retention-motivation/) 的 Radical Candor 那一節，接收端在 [困難對話與無權限影響力](../influence-conversation/) 的 Thanks for the Feedback 那一節。
 
 材料本身的限制有兩項。
 

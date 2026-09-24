@@ -112,7 +112,7 @@ Maurício Aniche 這本（Manning，2022）處理的是四本立場書都沒有�
 
 學術機構開的免費課最貼近本篇主題：Delft 理工大學在 edX 上的 Automated Software Testing 系列由 Aniche 與 Arie van Deursen 開設，內容是單元測試、覆蓋準則與可測試性設計，與上面收錄的《Effective Software Testing》同源而形式互補。
 
-整條線的供給狀況寫在 [工程技藝書單的公開課段](../#四個主題裡只有系統架構接得住公開課)。
+整條線的供給狀況寫在 [工程技藝書單的公開課段](../craft-line-guide/#四個主題裡只有系統架構接得住公開課)。
 
 
 ## 這個主題接到哪裡
