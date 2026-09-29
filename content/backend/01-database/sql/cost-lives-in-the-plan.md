@@ -1,5 +1,5 @@
 ---
-title: "1.17 代價由資料與索引決定，不由寫法決定"
+title: "SQL.17 代價由資料與索引決定，不由寫法決定"
 date: 2026-08-31
 description: "同一組寫法在索引與資料分布改變後的實測排名，以及比較兩段查詢該補上哪些條件"
 aliases: ["/sql/cost-lives-in-the-plan/"]
@@ -20,14 +20,14 @@ tags: ["sql", "cost", "query-plan", "index", "performance"]
 SELECT email FROM Person GROUP BY email HAVING count(*) > 1;
 ```
 
-**用自連接。** 把表配對，找出 email 相同而 id 不同的兩列（[1.7 查詢裡的表是一個具名的出現](/backend/01-database/sql/table-occurrence-and-alias/)）：
+**用自連接。** 把表配對，找出 email 相同而 id 不同的兩列（[SQL.7 查詢裡的表是一個具名的出現](/backend/01-database/sql/table-occurrence-and-alias/)）：
 
 ```sql
 SELECT DISTINCT p1.email FROM Person p1
 JOIN Person p2 ON p1.email = p2.email AND p1.id <> p2.id;
 ```
 
-**用 `EXISTS`。** 對每一列問「有沒有另一列 email 跟我一樣」（[1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)）：
+**用 `EXISTS`。** 對每一列問「有沒有另一列 email 跟我一樣」（[SQL.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)）：
 
 ```sql
 SELECT DISTINCT email FROM Person p
@@ -131,10 +131,10 @@ EXPLAIN QUERY PLAN SELECT * FROM Person WHERE email = 'hot@x.com';
 
 ## 「哪種寫法比較快」要向引擎問，而且要問兩次
 
-補上四項再問：**資料有多大、分布長什麼樣、有哪些索引、引擎有沒有[統計資訊](/backend/01-database/sql/knowledge-cards/query-statistics/)。** 最後一項是 [1.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/) 實測過的——同一段查詢在跑過 `ANALYZE` 之前與之後拿到不同的計畫；那一篇也從 SQL 這個語言的性質推了一次，代價為什麼一開始就落在查詢文字之外。
+補上四項再問：**資料有多大、分布長什麼樣、有哪些索引、引擎有沒有[統計資訊](/backend/01-database/sql/knowledge-cards/query-statistics/)。** 最後一項是 [SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/) 實測過的——同一段查詢在跑過 `ANALYZE` 之前與之後拿到不同的計畫；那一篇也從 SQL 這個語言的性質推了一次，代價為什麼一開始就落在查詢文字之外。
 
 資料量決定像自連接那筆固定掃描成本這種常數項會不會被放大。分布決定會不會踩到某個寫法的最壞情況——上面的自連接就是被重複程度打敗的。索引決定每一次查找的單價，而加索引前後的那組量測裡，索引的有無讓同一段查詢差了三個量級。
 
 資料量、分布與索引都是資料庫當下的狀態，查詢的文字裡讀不到，所以「哪種寫法比較快」是一個要向引擎問的問題，不是比較兩段文字就答得出來的問題。而且要問兩次：一次拿到現在這個狀態下的計畫，一次改動其中一項（加索引、換資料量）之後再拿一次，看它變不變。問一次只拿得到一個狀態下的答案，而加索引前後的那張表證明狀態換了排名就換，重複次數那張表證明分組與自連接的差距會隨資料的分布放大。各家的問法不同，SQLite 是 `EXPLAIN QUERY PLAN`，PostgreSQL 是 `EXPLAIN`。本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給`EXPLAIN`、`EXPLAIN ANALYZE`、`auto_explain` 三層工具的分工，以及四個計畫選錯的 production case：該走索引而走了全表掃描、該用 hash join 而用了 nested loop、缺少多欄位統計而估錯列數、該平行執行而沒有。
 
-代價既然由資料與索引決定，查詢的文字就可以先為讀它的人而寫。[1.21 好讀的寫法多數時候也是引擎好走的](/backend/01-database/sql/readable-and-fast-mostly-align/) 並排了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開之後在四萬列上快三十多倍的——並給出分岔時該動查詢還是動 schema 的判斷標準。
+代價既然由資料與索引決定，查詢的文字就可以先為讀它的人而寫。[SQL.21 好讀的寫法多數時候也是引擎好走的](/backend/01-database/sql/readable-and-fast-mostly-align/) 並排了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開之後在四萬列上快三十多倍的——並給出分岔時該動查詢還是動 schema 的判斷標準。

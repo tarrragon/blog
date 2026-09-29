@@ -1,5 +1,5 @@
 ---
-title: "1.22 一句需求走到一段上線的查詢"
+title: "SQL.22 一句需求走到一段上線的查詢"
 date: 2026-09-22
 description: "以「哪幾天氣溫比前一天高」為例，把一句業務的話追問成可驗收的資料問題，比較自連接、視窗函數與相關子查詢各自押的前提與實測代價，以及需求沒說而資料會有的重複紀錄、時區與補登"
 aliases: ["/sql/requirement-to-shipped-query/"]
@@ -70,7 +70,7 @@ INSERT INTO 氣溫 (測站, 觀測日, 攝氏) VALUES
 
 ## 三種寫法都做得到，而它們押的前提不同
 
-**自連接**把同一張表當成兩次出現，一次扮演「今天」、一次扮演「昨天」（[1.7 查詢裡的表是一個具名的出現](/backend/01-database/sql/table-occurrence-and-alias/)）：
+**自連接**把同一張表當成兩次出現，一次扮演「今天」、一次扮演「昨天」（[SQL.7 查詢裡的表是一個具名的出現](/backend/01-database/sql/table-occurrence-and-alias/)）：
 
 ```sql
 SELECT 今.測站, 今.觀測日
@@ -84,7 +84,7 @@ ORDER BY 今.測站, 今.觀測日;
 
 `date(今.觀測日, '-1 day')` 是 SQLite 的日期運算，把字串日期往前推一天。別名 `今` 與 `昨` 各自標示這一次出現扮演什麼角色——欄位一定要帶前綴，兩次出現共用同一個表名的時候不帶前綴會直接被擋下（`ambiguous column name: 測站`）。
 
-**視窗函數**沿著排好的順序往前取一列（[1.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/)）：
+**視窗函數**沿著排好的順序往前取一列（[SQL.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/)）：
 
 ```sql
 SELECT 測站, 觀測日 FROM (
@@ -100,7 +100,7 @@ ORDER BY 測站, 觀測日;
 
 `WINDOW w AS (...)` 把窗的定義取個名字，讓兩個 `LAG` 共用同一個窗；`julianday()` 把日期換成可以相減的數值，兩筆相差幾天由它算出來。`相隔 = 1` 這個條件是必要的——`LAG` 交出的是**排序後的相鄰一列**，而需求要的是**日曆上的前一天**，兩者只在資料連續時相同。
 
-**相關子查詢**對每一列去問一次「我的前一天是幾度」（[1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)）：
+**相關子查詢**對每一列去問一次「我的前一天是幾度」（[SQL.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)）：
 
 ```sql
 SELECT 測站, 觀測日
@@ -111,7 +111,7 @@ WHERE 攝氏 > (SELECT 攝氏 FROM 氣溫 昨
 ORDER BY 測站, 觀測日;
 ```
 
-前一天不存在的時候括號裡那一段回零列，純量子查詢因此給出 `NULL`，而拿任何數字跟 `NULL` 比大小的答案是未知，那一列被 `WHERE` 丟掉（[1.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。**台北 3/06 正是靠這個機制被排除的**——排除它的是空值的比較落在真、假之外的「未知」上，而查詢裡沒有任何一個條件在擋它。
+前一天不存在的時候括號裡那一段回零列，純量子查詢因此給出 `NULL`，而拿任何數字跟 `NULL` 比大小的答案是未知，那一列被 `WHERE` 丟掉（[SQL.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。**台北 3/06 正是靠這個機制被排除的**——排除它的是空值的比較落在真、假之外的「未知」上，而查詢裡沒有任何一個條件在擋它。
 
 三段都回同一批四列：
 
@@ -122,7 +122,7 @@ ORDER BY 測站, 觀測日;
 高雄  2026-03-06
 ```
 
-三者押的前提不同。自連接押「同一個日期在同一個測站上只有一筆」——有兩筆的時候一列會配到多列，結果多出來（[1.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。視窗函數押「排序鍵在每個分區裡分得出唯一的次序」——並列的時候「前一列」是哪一列沒有定義（[1.12 分頁要一個全序，而 ORDER BY 只給到分得出高下為止](/backend/01-database/sql/pagination-needs-a-total-order/)）。相關子查詢押「括號裡那一段最多回一列」——而**回多列的時候兩家引擎的反應相反**：PostgreSQL 18.6 報 `more than one row returned by a subquery used as an expression`，SQLite 3.51.0 靜默取其中一列往下算。這一條落在 [1.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/backend/01-database/sql/engine-leniency-and-portability/) 的引擎差異上。
+三者押的前提不同。自連接押「同一個日期在同一個測站上只有一筆」——有兩筆的時候一列會配到多列，結果多出來（[SQL.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。視窗函數押「排序鍵在每個分區裡分得出唯一的次序」——並列的時候「前一列」是哪一列沒有定義（[SQL.12 分頁要一個全序，而 ORDER BY 只給到分得出高下為止](/backend/01-database/sql/pagination-needs-a-total-order/)）。相關子查詢押「括號裡那一段最多回一列」——而**回多列的時候兩家引擎的反應相反**：PostgreSQL 18.6 報 `more than one row returned by a subquery used as an expression`，SQLite 3.51.0 靜默取其中一列往下算。這一條落在 [SQL.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/backend/01-database/sql/engine-leniency-and-portability/) 的引擎差異上。
 
 **三個前提說的是同一件事**：`(測站, 觀測日)` 這一組唯不唯一。那是 schema 上的一條約束，而三段查詢沒有一段查得到它有沒有成立——[外鍵與約束要去系統目錄查](/backend/01-database/sql/foreign-key-and-referential-integrity/)，設計側的完整推導在 [backend 1.16 設計時下的每一個決定](/backend/01-database/design-decisions-price-every-query/)。
 
@@ -197,7 +197,7 @@ ORDER BY 測站, 觀測日;
 
 ## 代價：同一組資料，四種形態差三個量級
 
-三種寫法都答對了，而「哪個比較快」要向引擎問（[1.17 代價由資料與索引決定，不由寫法決定](/backend/01-database/sql/cost-lives-in-the-plan/)）。把資料放大到二十個測站、兩年、每隔九十七天缺一天，共 14460 列：
+三種寫法都答對了，而「哪個比較快」要向引擎問（[SQL.17 代價由資料與索引決定，不由寫法決定](/backend/01-database/sql/cost-lives-in-the-plan/)）。把資料放大到二十個測站、兩年、每隔九十七天缺一天，共 14460 列：
 
 ```sql
 -- 各節的表名重複，照順序跑要先清掉上一節的（SQLite 的 DROP 一次只收一張表）
@@ -325,7 +325,7 @@ ORDER BY 今.測站, 今.觀測日;
 
 **測站搬家。** 同一個 `測站` 值在某一天之後指的是另一個地點。`PARTITION BY 測站` 會把搬家前後接成同一條序列，而那一天的「比前一天高」比的是兩個地方。這一類問題不在查詢裡，在**識別碼的語意有沒有隨時間改變**。
 
-四件事有一個共同點：**它們都讓查詢繼續回出形狀正確的列**。沒有一件會讓程式停下來（[1.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/)）。
+四件事有一個共同點：**它們都讓查詢繼續回出形狀正確的列**。沒有一件會讓程式停下來（[SQL.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/)）。
 
 ## 上線之前還剩三個決定，而它們都不在查詢的文字裡
 
@@ -335,11 +335,11 @@ ORDER BY 今.測站, 今.觀測日;
 
 **資料量長大之後排名會重排。** 代價量測那張表是 14460 列上的結果。列數再大一個量級，日期差自連接與相關子查詢的數字會變，而等值自連接與視窗函數未必。判斷要重問一次計畫，而且**要在改動索引之後再問一次**——日期差自連接已經示範過加索引可以讓事情更糟。
 
-**換一家引擎，這四段都要改寫。** 四段全部用了 SQLite 的日期函式——兩種自連接與相關子查詢用 `date(x, '-1 day')` 或 `julianday()`，視窗函數用 `julianday()`。同一個日期運算，PostgreSQL 要先把欄位轉成日期，寫成 `CAST(觀測日 AS DATE) - 1`（本篇的觀測日宣告成 `TEXT`，直接寫 `觀測日 - INTERVAL '1 day'` 會回 `operator does not exist: text - interval`）；MySQL 寫成 `DATE_SUB(觀測日, INTERVAL 1 DAY)`，文字欄會被隱含轉成日期；`WINDOW w AS (...)` 這個具名窗各家支援程度不同。這一層的差異第一次執行就會報錯，屬於當場報錯的那一級、最省事——而同一段查詢還有不報錯的差異，分級在 [1.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/backend/01-database/sql/engine-leniency-and-portability/)。
+**換一家引擎，這四段都要改寫。** 四段全部用了 SQLite 的日期函式——兩種自連接與相關子查詢用 `date(x, '-1 day')` 或 `julianday()`，視窗函數用 `julianday()`。同一個日期運算，PostgreSQL 要先把欄位轉成日期，寫成 `CAST(觀測日 AS DATE) - 1`（本篇的觀測日宣告成 `TEXT`，直接寫 `觀測日 - INTERVAL '1 day'` 會回 `operator does not exist: text - interval`）；MySQL 寫成 `DATE_SUB(觀測日, INTERVAL 1 DAY)`，文字欄會被隱含轉成日期；`WINDOW w AS (...)` 這個具名窗各家支援程度不同。這一層的差異第一次執行就會報錯，屬於當場報錯的那一級、最省事——而同一段查詢還有不報錯的差異，分級在 [SQL.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/backend/01-database/sql/engine-leniency-and-portability/)。
 
 ## 從需求到上線的每一個決定，在這一題上各做了什麼
 
-每個決定要決定什麼、決錯之後的症狀、背後的機制在哪一篇，都在 [1.0 從需求到上線，一段查詢要做的決定](/backend/01-database/sql/decisions-from-requirement-to-shipping/)；下表只對照這一題在每個決定上做了什麼：
+每個決定要決定什麼、決錯之後的症狀、背後的機制在哪一篇，都在 [SQL.0 從需求到上線，一段查詢要做的決定](/backend/01-database/sql/decisions-from-requirement-to-shipping/)；下表只對照這一題在每個決定上做了什麼：
 
 | 決定         | 這一題在這個決定上做了什麼                                               |
 | ------------ | ------------------------------------------------------------------------ |

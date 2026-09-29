@@ -1,5 +1,5 @@
 ---
-title: "1.4 JOIN 的左邊是累積結果，不是一張表"
+title: "SQL.4 JOIN 的左邊是累積結果，不是一張表"
 date: 2026-08-31
 description: "鏈式連接的左運算元怎麼累積，以及 RIGHT 放在鏈中間時保護方向的反轉"
 aliases: ["/sql/join-left-operand-accumulates/"]
@@ -45,7 +45,7 @@ JOIN 評價 ON 評價.訂單編號 = 訂單.訂單編號;       -- 內連接：�
 -- 佳穎  101  5
 ```
 
-他們那兩列訂單欄裡的 `NULL` 是連接的產物，不是資料裡本來的空值，而後續對這欄做的計數與比較分不出這件事。`LEFT` 保護左側、`RIGHT` 保護右側、`FULL` 兩側都保護，這三種方向與這些 `NULL` 的來源定義在 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)；這些 `NULL` 怎麼讓聚合算錯、為什麼不能用等號比，由 [1.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/) 接手。
+他們那兩列訂單欄裡的 `NULL` 是連接的產物，不是資料裡本來的空值，而後續對這欄做的計數與比較分不出這件事。`LEFT` 保護左側、`RIGHT` 保護右側、`FULL` 兩側都保護，這三種方向與這些 `NULL` 的來源定義在 [Outer Join（外連接）](/backend/01-database/sql/knowledge-cards/outer-join/)；這些 `NULL` 怎麼讓聚合算錯、為什麼不能用等號比，由 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/) 接手。
 
 ## 鏈中間的 RIGHT 保護的是那一張單表
 
@@ -83,7 +83,7 @@ LEFT JOIN 顧客 ON 顧客.顧客編號 = 訂單.顧客編號;
 
 ## 左右決定保護誰，執行順序決定誰先被掃
 
-左右是書寫位置決定的語意，與引擎實際先處理誰無關。同一個連接寫成 `FROM 訂單 JOIN 顧客` 與 `FROM 顧客 JOIN 訂單`，在跑過 `ANALYZE` 的資料庫上，SQLite 兩次給出完全相同的 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/)——它掃二十萬列的訂單、對五十列的顧客做查找，與誰寫在前面無關。沒有統計時它會改照文字順序走，而那只是它沒有別的資訊時的退路——[1.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/) 對照有無統計資訊時引擎怎麼選計畫。
+左右是書寫位置決定的語意，與引擎實際先處理誰無關。同一個連接寫成 `FROM 訂單 JOIN 顧客` 與 `FROM 顧客 JOIN 訂單`，在跑過 `ANALYZE` 的資料庫上，SQLite 兩次給出完全相同的 [query plan](/backend/01-database/sql/knowledge-cards/query-plan/)——它掃二十萬列的訂單、對五十列的顧客做查找，與誰寫在前面無關。沒有統計時它會改照文字順序走，而那只是它沒有別的資訊時的退路——[SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/) 對照有無統計資訊時引擎怎麼選計畫。
 
 **左右決定哪一側的列被保護，執行順序決定誰先被掃，兩者互不相干。** 混用這兩個直覺會讓人以為調換書寫順序可以調效能，或以為從查詢文字看得出引擎的動作。
 
@@ -100,4 +100,4 @@ WHERE 評價.星等 = 5;   -- 補出來的 NULL 判成未知，那三列被篩�
 -- 佳穎  101  5
 ```
 
-在這份資料上，消失的正好是把第二個 `JOIN` 換成 `INNER` 時消失的同一批列。所以判讀一個 `WHERE` 條件撤掉了誰，同樣回到累積：它引用的表掛在鏈的哪一行，那一行以上累積進來、在那張表上配不到的列都在它的射程裡。條件對 `NULL` 判成什麼決定撤不撤得掉，哪幾種條件形態保得住保護，在 [1.5 ON 描述關係、WHERE 篩選結果](/backend/01-database/sql/on-describes-where-filters/)。
+在這份資料上，消失的正好是把第二個 `JOIN` 換成 `INNER` 時消失的同一批列。所以判讀一個 `WHERE` 條件撤掉了誰，同樣回到累積：它引用的表掛在鏈的哪一行，那一行以上累積進來、在那張表上配不到的列都在它的射程裡。條件對 `NULL` 判成什麼決定撤不撤得掉，哪幾種條件形態保得住保護，在 [SQL.5 ON 描述關係、WHERE 篩選結果](/backend/01-database/sql/on-describes-where-filters/)。

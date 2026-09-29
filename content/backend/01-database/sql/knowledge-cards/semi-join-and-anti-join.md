@@ -31,11 +31,11 @@ WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客
 | 半連接 | 只有左邊的   | 至多左邊的列數     | `EXISTS`、`IN` |
 | 反連接 | 只有左邊的   | 至多左邊的列數     | `NOT EXISTS`   |
 
-右邊那份資料在這兩個運算裡的角色是條件，它的欄位到不了結果。要把右邊的欄位列出來就得用連接，那條判斷標準在 [1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)。
+右邊那份資料在這兩個運算裡的角色是條件，它的欄位到不了結果。要把右邊的欄位列出來就得用連接，那條判斷標準在 [SQL.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)。
 
 ## 列數上限省掉去重這一步
 
-半連接問的是配不配得到，所以配到幾筆不影響結果——一位顧客手上有兩張訂單或二十張訂單，`EXISTS` 都只讓她出現一次。同一個問題用連接寫，她會照訂單張數各出現一次，要補 `DISTINCT` 把複製出來的列收掉（[1.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
+半連接問的是配不配得到，所以配到幾筆不影響結果——一位顧客手上有兩張訂單或二十張訂單，`EXISTS` 都只讓她出現一次。同一個問題用連接寫，她會照訂單張數各出現一次，要補 `DISTINCT` 把複製出來的列收掉（[SQL.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 
 需要 `DISTINCT` 因此是一個訊號：這個查詢問的是有沒有，而連接順便做了它不需要的配對。
 
@@ -51,7 +51,7 @@ WHERE 訂單.訂單編號 IS NULL;
 
 兩段回同一批列，路徑不同——一條由條件直接表達，另一條靠外連接補出來的 `NULL` 當標記。
 
-`NOT IN` 的行為與這兩條分岔：子查詢的結果裡出現一個 [NULL](/backend/01-database/sql/knowledge-cards/null/)，整段就回零列且不報錯。反連接的安全寫法因此落在 `NOT EXISTS` 與外連接這兩條上（[1.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
+`NOT IN` 的行為與這兩條分岔：子查詢的結果裡出現一個 [NULL](/backend/01-database/sql/knowledge-cards/null/)，整段就回零列且不報錯。反連接的安全寫法因此落在 `NOT EXISTS` 與外連接這兩條上（[SQL.6 連接產出的是新的關係，列數與空缺都變了](/backend/01-database/sql/join-changes-rows-and-nulls/)）。
 
 ## 概念位置
 
@@ -63,4 +63,4 @@ WHERE 訂單.訂單編號 IS NULL;
 
 ## 往下走
 
-`IN`、`EXISTS` 與 `JOIN` 在列數與可取用欄位上的差別、以及選哪一種只問一句話，在 [1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)。從一句業務描述推到反連接、以及為什麼計數那條路走不通，在 [1.9 分組鍵決定每一組代表什麼](/backend/01-database/sql/grouping-key-decides-the-unit/)。同一張表的兩列互相比較時這兩個運算長什麼樣，在 [1.7 查詢裡的表是一個具名的出現](/backend/01-database/sql/table-occurrence-and-alias/)。同一組寫法的快慢隨索引與資料分布重排的實測，在 [1.17 代價由資料與索引決定](/backend/01-database/sql/cost-lives-in-the-plan/)。
+`IN`、`EXISTS` 與 `JOIN` 在列數與可取用欄位上的差別、以及選哪一種只問一句話，在 [SQL.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/)。從一句業務描述推到反連接、以及為什麼計數那條路走不通，在 [SQL.9 分組鍵決定每一組代表什麼](/backend/01-database/sql/grouping-key-decides-the-unit/)。同一張表的兩列互相比較時這兩個運算長什麼樣，在 [SQL.7 查詢裡的表是一個具名的出現](/backend/01-database/sql/table-occurrence-and-alias/)。同一組寫法的快慢隨索引與資料分布重排的實測，在 [SQL.17 代價由資料與索引決定](/backend/01-database/sql/cost-lives-in-the-plan/)。

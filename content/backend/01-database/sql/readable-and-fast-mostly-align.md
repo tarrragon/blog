@@ -1,5 +1,5 @@
 ---
-title: "1.21 好讀的寫法多數時候也是引擎好走的"
+title: "SQL.21 好讀的寫法多數時候也是引擎好走的"
 date: 2026-09-01
 description: "寫法差異在什麼情形下免費、什麼情形下分岔，以及分岔時該動查詢還是動 schema"
 aliases: ["/sql/readable-and-fast-mostly-align/"]
@@ -7,13 +7,13 @@ weight: 22
 tags: ["sql", "readability", "performance", "index", "cte"]
 ---
 
-一段 SQL 同時要給引擎執行與給人維護，而這兩個需求在 SQL 上多數時候指向同一個寫法。理由落在這個語言的性質上：**引擎執行的是計畫，不是那段文字**（[1.1 宣告式的紅利與代價：三種順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/)），所以文字裡為了讓人看懂而多出來的結構，只要最佳化器攤得平就在計畫上留不下痕跡。決定執行次數的結構是例外——相關子查詢與 CTE 都屬於這一類，後面那一節量的正是它。
+一段 SQL 同時要給引擎執行與給人維護，而這兩個需求在 SQL 上多數時候指向同一個寫法。理由落在這個語言的性質上：**引擎執行的是計畫，不是那段文字**（[SQL.1 宣告式的紅利與代價：三種順序各自由誰決定](/backend/01-database/sql/declarative-not-procedural/)），所以文字裡為了讓人看懂而多出來的結構，只要最佳化器攤得平就在計畫上留不下痕跡。決定執行次數的結構是例外——相關子查詢與 CTE 都屬於這一類，後面那一節量的正是它。
 
-這一篇與 [1.20 關鍵字宣告意圖，引擎只執行行為](/backend/01-database/sql/declared-intent-vs-behaviour/) 都問文字寫給誰。那一篇問文字對讀的人說了什麼——宣告落空的幾種形態與查證它的動作——這一篇問文字該為誰而寫。兩篇底下還有一層是答案本身對不對，引擎對那一層沒有回報的管道，好讀與否也碰不到它，[1.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/) 寫它為什麼不報錯。
+這一篇與 [SQL.20 關鍵字宣告意圖，引擎只執行行為](/backend/01-database/sql/declared-intent-vs-behaviour/) 都問文字寫給誰。那一篇問文字對讀的人說了什麼——宣告落空的幾種形態與查證它的動作——這一篇問文字該為誰而寫。兩篇底下還有一層是答案本身對不對，引擎對那一層沒有回報的管道，好讀與否也碰不到它，[SQL.13 合不合法由引擎驗，答案對不對由提問的人負責](/backend/01-database/sql/well-formed-is-not-correct/) 寫它為什麼不報錯。
 
 ## 多數的寫法差異是免費的
 
-同一批列的兩種寫法送進[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[1.20 關鍵字宣告意圖，引擎只執行行為](/backend/01-database/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[1.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫：這兩種寫法在 SQLite 上各自走不同的計畫，而語意相同已經足以讓選擇落在可讀性上。
+同一批列的兩種寫法送進[最佳化器](/backend/01-database/sql/knowledge-cards/query-optimizer/)之後常常收斂成同一個計畫。`CROSS JOIN` 加等值條件與 `JOIN ... ON` 寫同一個條件，計畫逐字相同（[SQL.20 關鍵字宣告意圖，引擎只執行行為](/backend/01-database/sql/declared-intent-vs-behaviour/) 有並排的輸出）。[SQL.8 IN、EXISTS 與 JOIN 描述的是三件不同的事](/backend/01-database/sql/in-exists-join/) 從另一條路走到同一個處置：肯定式的 `IN` 與 `EXISTS` 語意相同，所以選哪一個按可讀性挑。它的依據是語意而非計畫：這兩種寫法在 SQLite 上各自走不同的計畫，而語意相同已經足以讓選擇落在可讀性上。
 
 ```sql
 -- 共用資料：下過單的顧客，兩段都回 佳穎
@@ -122,9 +122,9 @@ SEARCH o USING INDEX ix_顧 (顧客編號=?)         拿每人平均去連接訂
 
 ## 為速度而寫醜，押的是索引與資料量這些會變的狀態
 
-真要在好讀的寫法與為速度扭曲的寫法之間排序的話，理由落在 [1.17 代價由資料與索引決定](/backend/01-database/sql/cost-lives-in-the-plan/) 已經證過的一件事上：同一組寫法的快慢排名會隨索引對調——那一篇拿一道重複值的題目，示範加一個索引之後最慢的寫法變成最快之一，而查詢的文字一個字沒改。**為當下的代價而扭曲的文字，在別人加了一個索引之後就失去理由，而那段文字會留著。** 可讀性沒有這個問題——它不隨資料庫的狀態改變。
+真要在好讀的寫法與為速度扭曲的寫法之間排序的話，理由落在 [SQL.17 代價由資料與索引決定](/backend/01-database/sql/cost-lives-in-the-plan/) 已經證過的一件事上：同一組寫法的快慢排名會隨索引對調——那一篇拿一道重複值的題目，示範加一個索引之後最慢的寫法變成最快之一，而查詢的文字一個字沒改。**為當下的代價而扭曲的文字，在別人加了一個索引之後就失去理由，而那段文字會留著。** 可讀性沒有這個問題——它不隨資料庫的狀態改變。
 
-這也對得上優化該動哪裡：[1.17 代價由資料與索引決定，不由寫法決定](/backend/01-database/sql/cost-lives-in-the-plan/) 列的那四項（資料量、分布、索引、統計資訊）全部是資料庫本身的狀態，不在查詢的文字裡，所以調整的位置在 schema 與計畫，而查詢的文字負責把意圖說清楚。
+這也對得上優化該動哪裡：[SQL.17 代價由資料與索引決定，不由寫法決定](/backend/01-database/sql/cost-lives-in-the-plan/) 列的那四項（資料量、分布、索引、統計資訊）全部是資料庫本身的狀態，不在查詢的文字裡，所以調整的位置在 schema 與計畫，而查詢的文字負責把意圖說清楚。
 
 ## 文字層無解而 schema 動不了的時候
 

@@ -1,5 +1,5 @@
 ---
-title: "1.16 權限的預設是什麼都不給"
+title: "SQL.16 權限的預設是什麼都不給"
 date: 2026-08-31
 description: "角色與 GRANT 的授權單位、建立物件擋在 schema 這一層，以及最小權限成立的前提"
 aliases: ["/sql/privilege-model/"]
@@ -43,7 +43,7 @@ INSERT INTO 顧客 VALUES (4,'柏宇');   -- permission denied for table 顧客
 DELETE FROM 顧客 WHERE 顧客編號=1;    -- permission denied for table 顧客
 ```
 
-兩個都被擋下來，錯誤訊息與完全沒授權時一模一樣。權限的單位是「哪個角色、對哪張表、做哪一種動作」，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 各自獨立，給一項不會順帶給另一項。「哪張表」由識別字指認，而那個名字送進引擎之前會先被改寫一次——`GRANT SELECT ON Orders` 在 PostgreSQL 上授權的對象是 `orders`，這個改寫的規則在 [1.14 識別字送進引擎之後會被改寫](/backend/01-database/sql/identifier-rules/)。
+兩個都被擋下來，錯誤訊息與完全沒授權時一模一樣。權限的單位是「哪個角色、對哪張表、做哪一種動作」，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 各自獨立，給一項不會順帶給另一項。「哪張表」由識別字指認，而那個名字送進引擎之前會先被改寫一次——`GRANT SELECT ON Orders` 在 PostgreSQL 上授權的對象是 `orders`，這個改寫的規則在 [SQL.14 識別字送進引擎之後會被改寫](/backend/01-database/sql/identifier-rules/)。
 
 目前有哪些授權查得到，收回之後那個角色又回到 `permission denied`：
 

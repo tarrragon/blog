@@ -1,5 +1,5 @@
 ---
-title: "1.11 關係沒有順序，只有 ORDER BY 加得回來"
+title: "SQL.11 關係沒有順序，只有 ORDER BY 加得回來"
 date: 2026-09-02
 description: "同一段查詢在建索引前後回不同順序的機制、ORDER BY 在求值順序的位置，以及空值落在哪一端各家的差別"
 aliases: ["/sql/relations-have-no-order/"]
@@ -22,9 +22,9 @@ SELECT id FROM (SELECT id, k FROM t) d ORDER BY k;
 
 這個語言用一套規則決定哪些列會出現在結果裡（那套規則叫[語意模型](/backend/01-database/sql/knowledge-cards/semantic-model/)），而輸出的順序是它管得最少的一項：**規則只到「排序鍵分得出高下」為止，分不出高下的那些它沒有規定**。
 
-本篇交代順序從哪裡來、`ORDER BY` 看得到什麼、以及比不出大小的值落在哪一端。**`ORDER BY` 沒有規定同分的列誰先誰後，這件事在什麼時候變成錯誤，在 [1.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/)**——整批看的時候同分的列換位置沒有後果，每一頁各查一次的時候它變成重複與遺漏；那一篇寫排序鍵要補到兩兩可分的判斷標準，以及把游標從位置換成值的寫法。
+本篇交代順序從哪裡來、`ORDER BY` 看得到什麼、以及比不出大小的值落在哪一端。**`ORDER BY` 沒有規定同分的列誰先誰後，這件事在什麼時候變成錯誤，在 [SQL.12 分頁要一個全序](/backend/01-database/sql/pagination-needs-a-total-order/)**——整批看的時候同分的列換位置沒有後果，每一頁各查一次的時候它變成重複與遺漏；那一篇寫排序鍵要補到兩兩可分的判斷標準，以及把游標從位置換成值的寫法。
 
-本篇範圍之外的兩件事各有專篇。哪些列會進到這份結果由條件與連接決定，順序管不到那一層：條件擺哪一邊決定留下哪些列在 [1.5 ON 描述關係、WHERE 篩選結果](/backend/01-database/sql/on-describes-where-filters/)，連接怎麼改變列數在 [1.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)。視窗函數的 `OVER (ORDER BY ...)` 是另一個順序，它決定計算時誰算相鄰、不決定輸出怎麼排，兩者可以不同，[1.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 的〈相鄰的是什麼，要自己說清楚〉一節寫那一種。
+本篇範圍之外的兩件事各有專篇。哪些列會進到這份結果由條件與連接決定，順序管不到那一層：條件擺哪一邊決定留下哪些列在 [SQL.5 ON 描述關係、WHERE 篩選結果](/backend/01-database/sql/on-describes-where-filters/)，連接怎麼改變列數在 [SQL.6 連接產出的是新的關係](/backend/01-database/sql/join-changes-rows-and-nulls/)。視窗函數的 `OVER (ORDER BY ...)` 是另一個順序，它決定計算時誰算相鄰、不決定輸出怎麼排，兩者可以不同，[SQL.10 分組把列收掉，視窗函數把列留著](/backend/01-database/sql/window-keeps-rows-grouping-collapses/) 的〈相鄰的是什麼，要自己說清楚〉一節寫那一種。
 
 本篇的查詢跑在[共用資料庫](/backend/01-database/sql/sample-bookstore-database/)的訂單表上，並把 101 的金額改成 700、再加三張，讓五張訂單裡有三張同樣是 500 元：
 
@@ -69,7 +69,7 @@ SELECT 金額 * 2 AS 兩倍 FROM 訂單 WHERE 兩倍 > 1000;
 -- SQLite：收下，回 1400
 ```
 
-`WHERE` 那一步發生在算出 `兩倍` 之前，所以那個名字在那裡還不存在。SQLite 收下同一段，這是它的寬鬆度而不是標準行為（求值順序的完整推導與這條寬鬆度的其他實例在 [1.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/backend/01-database/sql/clause-evaluation-order/)）。
+`WHERE` 那一步發生在算出 `兩倍` 之前，所以那個名字在那裡還不存在。SQLite 收下同一段，這是它的寬鬆度而不是標準行為（求值順序的完整推導與這條寬鬆度的其他實例在 [SQL.2 子句的求值順序，以及哪些限制擋得掉哪些擋不掉](/backend/01-database/sql/clause-evaluation-order/)）。
 
 ## NULL 排在哪一端，引擎之間有兩種答案
 
@@ -100,4 +100,4 @@ SELECT 訂單編號 FROM 訂單 ORDER BY (金額 IS NULL), 金額;
 -- PostgreSQL 18、SQLite 3.51、MySQL 8.4、DuckDB v0.10.3：104,102,101,103
 ```
 
-`NULL` 是比不出大小的那一種值；字串是比得出、而比法由另一條規則決定的那一種。排序鍵換成姓名時，大小寫算不算相同、重音字母排在哪裡，各家預設不同，同一批名字排出來的順序也不同——[1.15 字串的相等、大小與索引可用性都由 collation 決定](/backend/01-database/sql/string-comparison-and-collation/) 用同一批名字在三家上排出三種順序。
+`NULL` 是比不出大小的那一種值；字串是比得出、而比法由另一條規則決定的那一種。排序鍵換成姓名時，大小寫算不算相同、重音字母排在哪裡，各家預設不同，同一批名字排出來的順序也不同——[SQL.15 字串的相等、大小與索引可用性都由 collation 決定](/backend/01-database/sql/string-comparison-and-collation/) 用同一批名字在三家上排出三種順序。

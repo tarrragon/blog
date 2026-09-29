@@ -25,4 +25,4 @@ DataFrame 在 SQL 那個分類裡的角色是對照組。宣告式這個性質�
 
 ## 往下走
 
-宣告式與逐步執行的完整對照、以及三種順序的分工，在 [1.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/)。同一組操作在兩種介面上的四組對應與對應斷掉的三個位置，在 [python 模組八 8.4](/python/08-data-analysis/same-relational-algebra/)。
+宣告式與逐步執行的完整對照、以及三種順序的分工，在 [SQL.1 宣告式的紅利與代價](/backend/01-database/sql/declarative-not-procedural/)。同一組操作在兩種介面上的四組對應與對應斷掉的三個位置，在 [python 模組八 8.4](/python/08-data-analysis/same-relational-algebra/)。
