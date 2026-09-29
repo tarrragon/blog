@@ -302,6 +302,6 @@ WHERE 今.攝氏 > 昨.攝氏;
 
 量代價的接點在**工具那一側**。本篇讀的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，而且要分得出「估計錯了」與「真的很慢」。[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給 `EXPLAIN` / `EXPLAIN ANALYZE` / `auto_explain` 三層工具的分工，以及統計過時讓計畫選錯的實際案例。
 
-追問需求的接點在**預算那一側**。追問需求時問的是這份結果餵給哪一個下游用途，而那個答案決定它跑幾次；一個請求裡跑幾段查詢則有另一套預算，兩者相乘才是真正的代價。[backend 1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/) 處理後面那一半。
+追問需求的接點在**預算那一側**。追問需求時問的是這份結果餵給哪一個下游用途，而那個答案決定它跑幾次；一個請求裡跑幾段查詢則有另一套預算，兩者相乘才是真正的代價。[backend 1.13 應用層查詢反模式與 Query 預算](/backend/01-database/query-anti-patterns/) 處理一個請求裡跑幾段查詢的那一套預算。
 
 換一個題目的話，這些決定照樣要做，而追問需求得到的答案與需求沒說的那些邊界會全部不同——那正是為什麼它們是追問而不是清單。

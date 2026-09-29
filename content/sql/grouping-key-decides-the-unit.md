@@ -29,7 +29,7 @@ NULL    2         0         宗翰,雅文
 1       2         2         佳穎,佳穎
 ```
 
-**宗翰與雅文被併進同一組。** 他們沒有配到訂單，外連接給他們的 `訂單.顧客編號` 都是 `NULL`，而 `GROUP BY` 把值相同的列收成一組——`GROUP BY` 對 [NULL](/sql/knowledge-cards/null/) 的處理與比較運算不同：鍵同樣是 `NULL` 的那些列會被收進同一組，所有沒配到的列因此共用同一個鍵。分組是少數 `NULL` 表現得像一般值的地方，它在比較與 `NOT IN` 上的表現剛好相反，那一半在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)；這些 `NULL` 是連接補上的、不是資料裡本來的空值，兩種來源的分別在 [Outer Join（外連接）](/sql/knowledge-cards/outer-join/)。
+**宗翰與雅文被併進同一組。** 他們沒有配到訂單，外連接給他們的 `訂單.顧客編號` 都是 `NULL`，而 `GROUP BY` 把值相同的列收成一組——`GROUP BY` 對 [NULL](/sql/knowledge-cards/null/) 的處理與比較運算不同：鍵同樣是 `NULL` 的那些列會被收進同一組，所有沒配到的列因此共用同一個鍵。分組是少數 `NULL` 表現得像一般值的地方，它在比較與 `NOT IN` 上的表現剛好相反，那兩處的表現寫在 [1.6 連接產出的是新的關係](/sql/join-changes-rows-and-nulls/)；這些 `NULL` 是連接補上的、不是資料裡本來的空值，兩種來源的分別在 [Outer Join（外連接）](/sql/knowledge-cards/outer-join/)。
 
 接著用 `HAVING count(訂單.顧客編號) = 0` 挑出沒下過單的那一組，這個條件本身是對的：它確實選中了那一組，因為 `count(欄位)` 只數有值的列而那一組一列都沒有。**選中的是一組，而這一組底下是宗翰與雅文兩列。**
 

@@ -81,6 +81,7 @@ tags: ["report", "事後檢討", "工程方法論", "原則", "寫作", "審查"
 - [#365 逐段審查量讀者學不學得會](/report/reviewer-holds-the-map-readers-land-without-it/)——審查者持有全文地圖所以解得開每個指稱；本卡是同一張地圖在寫的人手上的後果，以及它漏到目錄頁框架詞的那一種。
 - [#363 正文裡的對象要用它是什麼來命名](/report/ordinal-labels-are-the-authors-index/)——序數名字是作者的索引漏進正文；目錄頁的框架詞是作者的編排漏進正文，兩者都要讀者手上有一份他沒有的清單。
 - [#302 定位決定體例](/report/positioning-decides-form-before-any-rule-applies/)——那一張記下規則的觸發條件比判斷標準先生效；本卡是反方向：觸發條件比缺陷窄，規則在沒寫到的句型上從不生效。
+- [#367 切開一個集合之前先寫切分的依據，再替每一塊命名](/report/unnamed-halves-are-unextracted-variables/)——本卡是一個名詞缺所屬；「一部分」「另一半」缺的所屬是整個切法，那一張處理它。
 
 ## 判讀徵兆
 

@@ -72,6 +72,7 @@ rg -n "\b[A-E][0-9]?\b 那|\b[A-E][0-9]? 與 [A-E][0-9]?\b" content/<分類>
 - [#270 敘事的解碼材料要在讀者已讀的文本裡](/report/decodable-from-text-already-read/)——序數與代號是「作者的地圖」最純粹的形態：解碼它需要的正是那張地圖本身。
 - [#364 摘要另一份內容時寫出成員，計數只告訴讀者清單有多長](/report/counted-summary-delivers-only-the-length/)——同一個成因的另一個位置：本卡是計數或序數當成一個對象的名字，#364 是計數當成一段摘要的全部內容；計數式摘要沒有被當成名字，所以本卡的掃描放過它。
 - [#84 Naming 是 iterated artifact](/report/naming-as-iterated-artifact/)——規劃階段的編號是第一版命名，本卡是那一條在教材上的具體出口：交稿前第一版的工作語言要換成內容名。
+- [#367 切開一個集合之前先寫切分的依據，再替每一塊命名](/report/unnamed-halves-are-unextracted-variables/)——本卡管已有名字而名字是索引的對象；那一張管還沒被命名、只以「一部分」「另一半」出現的對象，並補上先寫切分依據這一步。
 
 ## Case
 

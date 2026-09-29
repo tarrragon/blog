@@ -48,7 +48,7 @@ SQLite 這個不分大小寫的範圍限定在 ASCII 字母：`LIKE 'ánna'` 在
 
 ## 同一條規則也決定排序
 
-collation 規定的另一半是誰排在前面。同一批五個名字，三家排出三種順序：
+collation 除了規定兩個字串相不相等，也規定誰排在前面。同一批五個名字，三家排出三種順序：
 
 ```text
 ORDER BY 姓名
@@ -86,7 +86,7 @@ WHERE 姓名 LIKE 'ann%'       Filter: (姓名 ~~ 'ann%')             逐列過�
 
 `en_US.utf8` 的排序規則與位元組序不同，所以 `ann` 這個前綴在索引上不對應一段連續的區間。PostgreSQL 的解法是另建一個按位元組排的索引：`CREATE INDEX ON 顧客(姓名 text_pattern_ops)` 之後同一段前綴搜尋的計畫變成 `Index Cond: (姓名 ~>=~ 'ann' AND 姓名 ~<~ 'ano')`，而 `lower(姓名)` 那一行則由運算式索引 `CREATE INDEX ON 顧客(lower(姓名))` 接住，變成 `Index Cond: (lower(姓名) = 'anna')`。
 
-三種修法的共同形狀是**讓索引與條件套同一條規則**，而它們把改動放在不同的一邊：改條件、改索引的 collation、或另建一個按別的規則排的索引。比較規則對得上只是索引派得上用場的條件之一：條件的形狀是另一個（`lower(姓名)` 那一行就是形狀出的問題），而形狀與規則都對了之後，引擎還要看這個條件留下多少列才決定值不值得走索引，那一半在 [Cardinality 與 Selectivity](/sql/knowledge-cards/cardinality-and-selectivity/)。
+三種修法的共同形狀是**讓索引與條件套同一條規則**，而它們把改動放在不同的一邊：改條件、改索引的 collation、或另建一個按別的規則排的索引。比較規則對得上只是索引派得上用場的條件之一：條件的形狀是另一個（`lower(姓名)` 那一行就是形狀出的問題），而形狀與規則都對了之後，引擎還要看這個條件留下多少列才決定值不值得走索引，留下多少列怎麼估計在 [Cardinality 與 Selectivity](/sql/knowledge-cards/cardinality-and-selectivity/)。
 
 ## 規則的住址決定它涵蓋到哪裡
 
