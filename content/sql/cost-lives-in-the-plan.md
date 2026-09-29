@@ -113,7 +113,20 @@ INSERT INTO Person SELECT 1000000 + i, 'hot@x.com' FROM n;
 
 ## 條件把索引欄包進函式時，寫法決定的是能不能走索引
 
-本篇的結論有一個邊界。條件寫成 `WHERE lower(email) = 'hot@x.com'` 的時候，索引裡存的是 `email` 本身，條件問的卻是 `lower()` 算完的結果，引擎沒辦法在索引上找到那個值，只能掃全表；同一個條件寫成 `WHERE email = 'hot@x.com'` 就能查找。這時寫法決定的是引擎**能不能用**那個索引，而不是它在幾條可行的路裡挑哪一條——所以它是本篇結論的前提：可行的路由條件的形狀決定，挑哪一條才由資料與索引決定。[Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/) 給判斷一個條件能不能走索引的標準，以及讓條件走得了索引的改寫方向：把函數條件改寫成範圍（`date(下單日) = X` 寫成 `下單日 >= X AND 下單日 < 次日`）、把運算搬到不含索引欄的那一側，或者對運算式本身建索引。
+本篇的結論有一個邊界，出現在條件把索引欄包進函式的時候。資料沿用〈加一個索引，同一組寫法的快慢排名重排〉那一節有索引的七千列：
+
+```sql
+EXPLAIN QUERY PLAN SELECT * FROM Person WHERE lower(email) = 'hot@x.com';
+-- `--SCAN Person
+-- 索引 ix 存的是 email 本身，條件問的是 lower() 算完的結果，
+-- 引擎在索引上找不到那個值，只能掃全表、逐列算完再比
+
+EXPLAIN QUERY PLAN SELECT * FROM Person WHERE email = 'hot@x.com';
+-- `--SEARCH Person USING COVERING INDEX ix (email=?)
+-- 條件直接比 email，引擎在索引上查找
+```
+
+兩個條件只在 email 一律以小寫存放時回同一批列——這份資料是，兩段都回兩千列；`lower()` 那一段另外會配到大小寫寫法不同的 email。這時寫法決定的是引擎**能不能用**那個索引，而不是它在幾條可行的存取路徑裡挑哪一條——所以它是本篇結論的前提：哪幾條存取路徑可行由條件的形狀決定，挑哪一條才由資料與索引決定。[Sargable（可走索引的條件形狀）](/sql/knowledge-cards/sargable/) 給判斷一個條件能不能走索引的標準，以及讓條件走得了索引的改寫方向：把函數條件改寫成範圍（`date(下單日) = X` 寫成 `下單日 >= X AND 下單日 < 次日`）、把運算從索引欄移到比較式的另一個運算元上，或者對運算式本身建索引。
 
 ## 「哪種寫法比較快」要向引擎問，而且要問兩次
 
@@ -121,6 +134,6 @@ INSERT INTO Person SELECT 1000000 + i, 'hot@x.com' FROM n;
 
 資料量決定像自連接那筆固定掃描成本這種常數項會不會被放大。分布決定會不會踩到某個寫法的最壞情況——上面的自連接就是被重複程度打敗的。索引決定每一次查找的單價，而加索引前後的那組量測裡，索引的有無讓同一段查詢差了三個量級。
 
-這三項都在資料庫那一側，所以「哪種寫法比較快」是一個要向引擎問的問題，不是比較兩段文字就答得出來的問題。而且要問兩次：一次拿到現在這個狀態下的計畫，一次改動其中一項（加索引、換資料量）之後再拿一次，看它變不變。問一次只拿得到一個狀態下的答案，而加索引前後的那張表證明狀態換了排名就換，重複次數那張表證明分組與自連接的差距會隨資料的分布放大。各家的問法不同，SQLite 是 `EXPLAIN QUERY PLAN`，PostgreSQL 是 `EXPLAIN`。本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給`EXPLAIN`、`EXPLAIN ANALYZE`、`auto_explain` 三層工具的分工，以及四個計畫選錯的 production case：該走索引而走了全表掃描、該用 hash join 而用了 nested loop、缺少多欄位統計而估錯列數、該平行執行而沒有。
+資料量、分布與索引都是資料庫當下的狀態，查詢的文字裡讀不到，所以「哪種寫法比較快」是一個要向引擎問的問題，不是比較兩段文字就答得出來的問題。而且要問兩次：一次拿到現在這個狀態下的計畫，一次改動其中一項（加索引、換資料量）之後再拿一次，看它變不變。問一次只拿得到一個狀態下的答案，而加索引前後的那張表證明狀態換了排名就換，重複次數那張表證明分組與自連接的差距會隨資料的分布放大。各家的問法不同，SQLite 是 `EXPLAIN QUERY PLAN`，PostgreSQL 是 `EXPLAIN`。本篇的計畫只有三四行，真實系統的計畫有巢狀節點與估計列數，[PostgreSQL Query Optimization](/backend/01-database/vendors/postgresql/query-optimization/) 給`EXPLAIN`、`EXPLAIN ANALYZE`、`auto_explain` 三層工具的分工，以及四個計畫選錯的 production case：該走索引而走了全表掃描、該用 hash join 而用了 nested loop、缺少多欄位統計而估錯列數、該平行執行而沒有。
 
 代價既然由資料與索引決定，查詢的文字就可以先為讀它的人而寫。[1.21 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/) 並排了三組——寫法差異免費的、條件形狀讓兩者分岔的、以及拆開之後在四萬列上快三十多倍的——並給出分岔時該動查詢還是動 schema 的判斷標準。

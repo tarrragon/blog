@@ -46,7 +46,21 @@ WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i+1 FROM n WHERE i < 200000)
 INSERT INTO 訂單 SELECT i, i % 50 + 1, i % 900 FROM n;
 ```
 
-**剛建好、還沒統計過的資料庫**上，SQLite 給出兩個不同的計畫——`訂單 JOIN 顧客` 那種寫法掃訂單、`顧客 JOIN 訂單` 那種寫法掃顧客。沒有統計就不知道哪張表大，於是它退回去按查詢文字裡兩張表出現的先後來決定計畫。
+**剛建好、還沒統計過的資料庫**上，SQLite 給出兩個不同的計畫：
+
+```text
+-- EXPLAIN QUERY PLAN SELECT count(*) FROM 訂單 JOIN 顧客 ON 訂單.顧客編號 = 顧客.顧客編號;
+|--SCAN 訂單
+|--BLOOM FILTER ON 顧客 (顧客編號=?)
+`--SEARCH 顧客 USING AUTOMATIC COVERING INDEX (顧客編號=?)
+
+-- EXPLAIN QUERY PLAN SELECT count(*) FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = 顧客.顧客編號;
+|--SCAN 顧客
+|--BLOOM FILTER ON 訂單 (顧客編號=?)
+`--SEARCH 訂單 USING AUTOMATIC COVERING INDEX (顧客編號=?)
+```
+
+沒有統計就不知道哪張表大，於是它退回去按查詢文字裡兩張表出現的先後來決定計畫：`顧客 JOIN 訂單` 那種寫法掃五十列的顧客，為了查找而當場替二十萬列的訂單建一個索引。
 
 跑一次 `ANALYZE` 讓引擎去數過兩張表之後，同樣兩段查詢得到同一個計畫：
 
@@ -66,15 +80,24 @@ INSERT INTO 訂單 SELECT i, i % 50 + 1, i % 900 FROM n;
 
 ## 求值順序擋得住寫法
 
-語意模型摸不著，而它會在錯誤訊息上現形：把聚合函數寫進 `WHERE`，SQLite 與 DuckDB 都拒絕，而它們的訊息各自寫出了理由——那一步分組還沒發生，沒有組就沒有組的計數。同一件事移到 `HAVING` 就通過。
+語意模型摸不著，而它會在引擎拒絕的地方現形：把聚合函數寫進 `WHERE`，SQLite 與 DuckDB 都拒絕，同一件事移到 `HAVING` 就通過。拿[共用資料庫](/sql/sample-bookstore-database/)的訂單表找下過一張以上訂單的顧客：
 
-**這組錯誤訊息是 SQL 少數把內部模型直接講出來的地方。** 它拒絕的理由是這一步分組還沒發生、拿不到聚合函數要用的那個計數值，與寫法好不好看無關。
+```sql
+SELECT 顧客編號 FROM 訂單 WHERE COUNT(*) > 1 GROUP BY 顧客編號;
+-- SQLite：misuse of aggregate: COUNT()
+-- DuckDB：Binder Error: WHERE clause cannot contain aggregates!
+
+SELECT 顧客編號, COUNT(*) AS 張數 FROM 訂單 GROUP BY 顧客編號 HAVING COUNT(*) > 1;
+-- 兩個引擎都回 (1, 2)：顧客編號 1 的佳穎，兩張訂單
+```
+
+**兩則訊息都只說了不准，理由要從求值順序讀出來。** `WHERE` 那一步分組還沒發生，沒有組就沒有組的計數，聚合函數拿不到它要用的那個值；`HAVING` 排在 `GROUP BY` 之後，那時每一組的計數已經算得出來。這條限制由語意模型規定，與寫法好不好看無關。
 
 求值順序與執行順序不同的地方在於它是語意模型規定死的，換引擎不變，所以「每一步能用到哪些欄位與值」是一個有固定答案的問題。[1.2 子句的求值順序](/sql/clause-evaluation-order/) 逐步走過求值順序這一串步驟，並分開模型層擋得住的限制與各家引擎自己放寬的——後者包括一種不報錯而給出錯答案的形態。
 
 ## 代價的位置
 
-宣告式把「怎麼算」交給引擎，代價也跟著搬到引擎那一側。查詢的文字裡沒有任何東西表示它會掃全表還是走索引、會不會臨時建一個索引、會不會把中間結果寫到磁碟——上面那段計畫證明了這一點，`SCAN`、`BLOOM FILTER` 與那個臨時索引，三者一個都不在查詢裡。
+宣告式把「怎麼算」交給引擎決定，代價也跟著由引擎決定。查詢的文字裡沒有任何一處表示它會掃全表還是走索引、會不會臨時建一個索引、會不會把中間結果寫到磁碟——上面那段計畫證明了這一點，`SCAN`、`BLOOM FILTER` 與那個臨時索引，三者一個都不在查詢裡。
 
 所以驗證分成兩件互相獨立的事。**結果對不對**看輸出，從查詢本身推得出來。**代價可不可以接受**看計畫，非得問引擎不可，而且同一段查詢在不同資料量、不同索引、不同統計資訊底下的答案不一樣。
 

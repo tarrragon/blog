@@ -26,8 +26,11 @@ SELECT * FROM 顧客;
 給了讀取權之後才讀得到：
 
 ```sql
+RESET ROLE;                     -- 切回表的擁有者；以報表的身分執行這條 GRANT 會回 permission denied
 GRANT SELECT ON 顧客 TO 報表;
--- 之後 SELECT 姓名 FROM 顧客 回 佳穎、宗翰、雅文
+SET ROLE 報表;
+SELECT 姓名 FROM 顧客;
+-- 佳穎、宗翰、雅文
 ```
 
 ## 授權是逐項的，讀寫各自分開
@@ -41,14 +44,20 @@ DELETE FROM 顧客 WHERE 顧客編號=1;    -- permission denied for table 顧�
 
 兩個都被擋下來，錯誤訊息與完全沒授權時一模一樣。權限的單位是「哪個角色、對哪張表、做哪一種動作」，`SELECT`、`INSERT`、`UPDATE`、`DELETE` 各自獨立，給一項不會順帶給另一項。「哪張表」由識別字指認，而那個名字送進引擎之前會先被改寫一次——`GRANT SELECT ON Orders` 在 PostgreSQL 上授權的對象是 `orders`，這個改寫的規則在 [1.14 識別字送進引擎之後會被改寫](/sql/identifier-rules/)。
 
-查得到目前有哪些授權：
+目前有哪些授權查得到，收回之後那個角色又回到 `permission denied`：
 
 ```sql
+RESET ROLE;                     -- 查詢與收回都由表的擁有者執行
 SELECT grantee, privilege_type FROM information_schema.role_table_grants
 WHERE table_name = '顧客';
-```
+-- 表的擁有者：INSERT、SELECT、UPDATE、DELETE、TRUNCATE、REFERENCES、TRIGGER 各一列
+-- 報表 | SELECT
 
-`REVOKE SELECT ON 顧客 FROM 報表` 之後，那個角色又回到 `permission denied`。
+REVOKE SELECT ON 顧客 FROM 報表;
+SET ROLE 報表;
+SELECT * FROM 顧客;
+-- ERROR: permission denied for table 顧客
+```
 
 ## 建立物件的權限擋在 schema，不擋在 table
 
@@ -63,7 +72,7 @@ CREATE TABLE 偷建的 (x INT);
 
 ## 最小權限在這裡的具體意思
 
-應用程式連資料庫用的帳號，開的權限涵蓋它實際會執行的動作就夠。一個只跑報表的程式從來不寫入，所以它的帳號有沒有 `INSERT` 對它的功能沒有差別；處理訂單的程式不會刪顧客，所以那一項也一樣。遷移是唯一需要 [DDL](/sql/knowledge-cards/ddl-dml/) 的場合，而它不是常態運行的一部分——那些權限跟著它自己的帳號走，平常沒有任何一條應用程式的連線用它登入。遷移本身的流程（雙寫、回填、切流與回滾）在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
+應用程式連資料庫用的帳號，開的權限涵蓋它實際會執行的動作就夠。一個只跑報表的程式從來不寫入，所以它的帳號有沒有 `INSERT` 對它的功能沒有差別；處理訂單的程式不會刪顧客，所以它的帳號有沒有顧客表的 `DELETE` 對它的功能也沒有差別。遷移是唯一需要 [DDL](/sql/knowledge-cards/ddl-dml/) 的場合，而它不是常態運行的一部分——那些權限跟著它自己的帳號走，平常沒有任何一條應用程式的連線用它登入。遷移本身的流程（雙寫、回填、切流與回滾）在 [資料庫轉換實作](/backend/01-database/database-migration-playbook/)。
 
 每一種用途各用一個帳號、只開它用得到的權限，這樣分的效益在事故發生時才顯示出來。應用程式如果用超級使用者連線，一個注入漏洞——攻擊者讓自己寫的片段被當成 SQL 的一部分送出去——的可觸及範圍就是整個資料庫，包含刪表與讀取其他應用的資料；同一個漏洞在只有 `SELECT` 權限的帳號上，可觸及範圍縮到被授予 `SELECT` 的那幾張表的讀取。**漏洞一樣，可觸及的範圍差很多，而差別在事發前就決定好了。** 授權只是資料層攻擊面的其中一層，[backend 模組一的攻擊者視角](/backend/01-database/red-team-data-layer/) 走注入、授權繞過、資料外洩、競態與資源耗盡五類，前三類各附真實事件對照。這個推論的前提是應用程式的每一種用途各用一個資料庫帳號；所有用途共用一個帳號、由應用層自己做授權的架構下，資料庫這一層的最小權限就使不上力，防線要落在別處。
 

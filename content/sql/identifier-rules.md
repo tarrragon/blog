@@ -31,13 +31,34 @@ CREATE TABLE MixedCase (x INT);
 -- 實際存進系統目錄的表名是 mixedcase
 ```
 
-所以 `CREATE TABLE MixedCase` 與 `SELECT * FROM mixedcase` 互相對得上，而 `CREATE TABLE "MixedCase"` 與 `SELECT * FROM MixedCase` 對不上。**加引號的效果是關掉「沒加引號就摺成小寫」這道摺疊，要求逐字比對。**
+所以建表與查詢兩邊只要都經過同一道摺疊，名字就對得上：
 
-這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，而那套規則在 PostgreSQL 的預設底下兩者不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 寫 collation 這套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
+```sql
+-- PostgreSQL，兩組各在一個空的資料庫上跑
+CREATE TABLE MixedCase (x INT);     -- 存成 mixedcase
+SELECT * FROM mixedcase;            -- 找得到
+
+CREATE TABLE "MixedCase" (x INT);   -- 加了引號，存成 MixedCase
+SELECT * FROM MixedCase;            -- 摺成 mixedcase 去找
+-- ERROR: relation "mixedcase" does not exist
+```**加引號的效果是關掉「沒加引號就摺成小寫」這道摺疊，要求逐字比對。**
+
+這道摺疊只作用在名字上。同一家引擎把 `Orders` 摺成 `orders` 之後，拿 `'Anna'` 去比 `'anna'` 時用的是另一套規則，叫 collation，而 PostgreSQL 預設的 collation 判這兩個值不相等——值的大小寫與名字的大小寫由兩套彼此獨立的規則管。[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 寫 collation 這套規則住在哪一層，以及索引與條件的規則為什麼要對得上。
 
 ## SQLite 與 DuckDB 完全不區分大小寫
 
-同一組測試搬到 SQLite 與 DuckDB，四種寫法全部成功：不加引號查小寫、不加引號照原樣、加引號一致、加引號不一致——`SELECT * FROM orders`、`FROM Orders`、`FROM "Orders"`、`FROM "orders"` 都找得到那張表。
+同一張 `"Orders"` 表搬到 SQLite 與 DuckDB，四種查法全部找得到那張表：
+
+```sql
+CREATE TABLE "Orders" ("OrderId" INT);
+
+SELECT * FROM orders;     -- 不加引號、查小寫
+SELECT * FROM Orders;     -- 不加引號、照原樣
+SELECT * FROM "Orders";   -- 加引號、大小寫一致
+SELECT * FROM "orders";   -- 加引號、大小寫不一致
+-- SQLite、DuckDB：四句都找得到
+-- PostgreSQL：只有加引號、大小寫一致的那一句找得到，其餘三句都回 relation "orders" does not exist
+```
 
 這兩個引擎對識別字的大小寫不敏感，連引號都不會讓它變敏感。
 
@@ -54,7 +75,18 @@ CREATE TABLE select (x INT);
 -- PostgreSQL: syntax error at or near "select"
 ```
 
-加上引號之後三者都接受，因為引號告訴剖析器這是一個名字而不是關鍵字。「要加引號」這件事各家一致，引號的寫法則不一致：MySQL 預設把雙引號當成字串，識別字要用反引號（`` `order` ``），只有在 `sql_mode` 開了 `ANSI_QUOTES` 時雙引號才代表識別字。同一份 DDL 要跑在 MySQL 與另外幾家上，引號要逐家寫，或者乾脆不用保留字當名字。
+加上引號之後三家都接受，因為引號告訴剖析器這是一個名字而不是關鍵字。「要加引號」這件事各家一致，引號的寫法則不一致：
+
+```sql
+CREATE TABLE "select" (x INT);
+-- SQLite、DuckDB、PostgreSQL：接受
+-- MySQL：ERROR 1064 語法錯誤，它預設把雙引號當成字串
+
+CREATE TABLE `select` (x INT);   -- MySQL 的識別字要用反引號
+
+SET SESSION sql_mode = CONCAT(@@sql_mode, ',ANSI_QUOTES');
+CREATE TABLE "order" (x INT);    -- 開了 ANSI_QUOTES 之後，MySQL 的雙引號才代表識別字
+```同一份 DDL 要跑在 MySQL 與另外幾家上，引號要逐家寫，或者乾脆不用保留字當名字。
 
 保留字清單各家不完全相同，而且新版本會往清單裡加新的字——今天合法的名字在下個大版本可能變成保留字。這是「所有識別字一律加引號」這個慣例的主要理由。採用這個慣例的代價是每個名字都變長，而且從此大小寫必須逐字一致。
 

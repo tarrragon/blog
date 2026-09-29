@@ -51,7 +51,7 @@ SELECT DISTINCT 顧客.姓名 FROM 顧客 JOIN 訂單 ON 訂單.顧客編號 = �
 
 **需要 `DISTINCT` 這件事本身是一個訊號**：它表示這個查詢只是要判斷有沒有，而 `JOIN` 順便做了不需要的配對。這種時候 `IN` 或 `EXISTS` 更貼合意圖，因為它們一開始就沒有把列複製出來。
 
-這兩種寫法在[關聯代數](/sql/knowledge-cards/relational-algebra/)裡有自己的名字：只帶走左邊那一份的叫半連接，否定式那一邊叫反連接（[Semi-join 與 Anti-join（半連接與反連接）](/sql/knowledge-cards/semi-join-and-anti-join/)）。
+`IN` 與 `EXISTS` 做的運算在[關聯代數](/sql/knowledge-cards/relational-algebra/)裡叫半連接：顧客表與訂單表配對之後只留下顧客表的列，每一列至多出現一次。否定式的 `NOT EXISTS` 留下顧客表裡配不到任何訂單的列，叫反連接（[Semi-join 與 Anti-join（半連接與反連接）](/sql/knowledge-cards/semi-join-and-anti-join/)）。
 
 ## 只有 JOIN 把被比對的那張表帶進 FROM
 
@@ -72,7 +72,7 @@ SELECT 姓名, 訂單.金額 FROM 顧客 WHERE 顧客編號 IN (SELECT 顧客編
 
 錯誤訊息說得很直接：`訂單` 這張表不在 `FROM` 裡面。子查詢是一個獨立的查詢，它算完之後只交出一份值的清單，而訂單表沒有成為外層 `FROM` 的一部分——外層因此引用不到它的任何欄位。
 
-帶欄位出來還有另一條路——把子查詢寫在 `SELECT` 裡並讓它引用外層：
+帶欄位出來還有另一條路——把子查詢寫在 `SELECT` 裡並讓它引用外層的欄位。引用外層欄位的子查詢叫[相關子查詢](/sql/knowledge-cards/subquery/)（correlated subquery）：
 
 ```sql
 SELECT 姓名, (SELECT 金額 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客編號
@@ -94,10 +94,24 @@ SELECT 姓名, (SELECT 金額 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧
 
 `IN` 與 `EXISTS` 在「有沒有」這件事上同值，而在一個地方分岔：**子查詢的結果裡有 NULL 的時候。**
 
-清單裡只要混了一個 NULL，`NOT IN` 就再也不會為真：值在清單裡的列判成明確的假，值不在清單裡的列因為那個 NULL 判成未知，兩種都被 `WHERE` 丟掉，整段查詢回零列且不報錯；`NOT EXISTS` 不受影響。完整的推導與實測在 [1.6 連接產出的是新的關係，列數與空缺都變了](/sql/join-changes-rows-and-nulls/)，包括 `NOT EXISTS` 的安全範圍為什麼限定在等號配對。零列與「確實沒有」在結果上分不開，所以這一類錯只能靠寫的人預先知道「子查詢有 NULL 時 NOT IN 會失效」那條規則——[1.13 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/) 把它歸成「對模型的一條規則預期錯了」，而這一類的性質是改對之後永遠對。
+清單裡只要混了一個 NULL，`NOT IN` 就再也不會為真：值在清單裡的列判成明確的假，值不在清單裡的列因為那個 NULL 判成未知，兩種都被 `WHERE` 丟掉，整段查詢回零列且不報錯；`NOT EXISTS` 不受影響。在共用資料上多一張沒填顧客編號的訂單就看得到：
+
+```sql
+INSERT INTO 訂單 VALUES (103, NULL, '2026-03-20', 100);   -- 訂單 103 沒有填顧客編號
+
+SELECT 姓名 FROM 顧客 WHERE 顧客編號 NOT IN (SELECT 顧客編號 FROM 訂單);
+-- 共用資料：宗翰、雅文
+-- 多了訂單 103 之後：零列，不報錯（子查詢交出的清單是 1、1、NULL）
+
+SELECT 姓名 FROM 顧客
+WHERE NOT EXISTS (SELECT 1 FROM 訂單 WHERE 訂單.顧客編號 = 顧客.顧客編號);
+-- 共用資料與多了訂單 103 之後都是：宗翰、雅文
+```
+
+完整的推導在 [1.6 連接產出的是新的關係，列數與空缺都變了](/sql/join-changes-rows-and-nulls/)，包括 `NOT EXISTS` 的安全範圍為什麼限定在等號配對。零列與「確實沒有」在結果上分不開，所以 `NOT IN` 碰到 NULL 的錯只能靠寫的人預先知道「子查詢有 NULL 時 NOT IN 會失效」那條規則——[1.13 合不合法由引擎驗，答案對不對由提問的人負責](/sql/well-formed-is-not-correct/) 把它歸成**誤解語意模型**：寫的人對某條規則的預期與語意模型的規定不同，而誤解語意模型修得掉，改對之後永遠對。
 
 所以肯定式的 `IN` 與 `EXISTS` 可以按可讀性挑，而**否定式一律用 `NOT EXISTS`**——除非能保證子查詢那一欄不會有 NULL，而那個保證要來自[約束](/sql/knowledge-cards/constraint/)而不是來自習慣：翻遍現在的資料都沒有 NULL 只證明此刻沒有，而查詢要活得比這一批資料久。
 
-還有一個形態上的差別：`IN` 的子查詢與外層無關，可以單獨拿出來執行；`EXISTS` 的子查詢引用了外層的欄位，離開外層就跑不動。這個差別在讀陌生的查詢時有用——看到子查詢裡出現外層的表名，就知道它是逐列被問一次的。
+還有一個形態上的差別：本篇 `IN` 的子查詢與外層無關，可以單獨拿出來執行，叫獨立子查詢；`EXISTS` 的子查詢引用了外層的欄位，離開外層就跑不動，是相關子查詢。讀陌生的查詢時，看子查詢裡有沒有出現外層的表名，就分得出它是算一次的獨立子查詢，還是對外層每一列各問一次的相關子查詢。
 
 「語意相同就按可讀性挑」這個處置的適用範圍不只 `IN`、`EXISTS` 與 `JOIN` 這三種寫法：哪幾類寫法差異是免費的、哪一類會與效能分岔，在 [1.21 好讀的寫法多數時候也是引擎好走的](/sql/readable-and-fast-mostly-align/)。

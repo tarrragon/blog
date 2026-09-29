@@ -58,13 +58,31 @@ PostgreSQL 18      anna, Anna, ANNA, Ánna, 佳穎
 MySQL 8.4          Anna, anna, ANNA, Ánna, 佳穎
 ```
 
-SQLite 那一列是位元組的先後——大寫字母的碼位小於小寫，所以 `ANNA` 整批排在前面。PostgreSQL 這一列取決於資料庫建立時選的 collation，量測用的這個是 `en_US.utf8`（查法是 `SELECT datcollate FROM pg_database`），它照人類語言的習慣把大小寫視為同一個字母的變體、再用大小寫決定同分時的先後。同一段 `ORDER BY 姓名` 加上 `COLLATE "C"` 之後回的是 `ANNA, Anna, anna, Ánna, 佳穎`，與 SQLite 一致——**同一家引擎、同一批資料，換一條規則就換一種順序**，而 SQLite 的預設順序就是位元組序這件事也因此驗得出來。
+SQLite 那一列是位元組的先後——大寫字母的碼位小於小寫，所以 `ANNA` 整批排在前面。PostgreSQL 這一列取決於資料庫建立時選的 collation，量測用的這個是 `en_US.utf8`（查法是 `SELECT datcollate FROM pg_database`），它照人類語言的習慣把大小寫視為同一個字母的變體、再用大小寫決定同分時的先後。同一段排序在 PostgreSQL 上改用 `C` 這條逐位元組比較的規則，順序就與 SQLite 一致：
 
-MySQL 那一列要換個方式讀。在 `ai_ci` 底下四個 A 開頭的名字**彼此相等**，所以它們之間沒有先後可言——那一列印的是它們進表的順序。**同一個排序鍵改用 `GROUP_CONCAT(姓名 ORDER BY 姓名)` 取回，順序整個倒過來**：同一張表、同一批資料，回來的是 `Ánna, ANNA, anna, Anna, 佳穎`，四個名字整個倒過來。兩次都沒有違反 collation，因為 collation 對這四個之間什麼都沒有規定。這是 collation 與分頁交會的地方：一條把大小寫與重音都忽略的規則，會讓原本以為唯一的排序鍵變成不唯一，而沒有規定的那一段在分頁時會變成同一列出現兩次、另一列一次都不出現——[1.12 分頁要一個全序](/sql/pagination-needs-a-total-order/) 寫那個機制與把排序鍵補到兩兩可分的判斷標準。
+```sql
+-- PostgreSQL 18，資料庫的 collation 是 en_US.utf8
+SELECT 姓名 FROM 顧客 ORDER BY 姓名;
+-- anna, Anna, ANNA, Ánna, 佳穎
+SELECT 姓名 FROM 顧客 ORDER BY 姓名 COLLATE "C";
+-- ANNA, Anna, anna, Ánna, 佳穎（與 SQLite 的預設順序相同）
+```
+
+**同一家引擎、同一批資料，換一條規則就換一種順序**，而 SQLite 的預設順序就是位元組序這件事也因此驗得出來。
+
+MySQL 那一列要換個方式讀。在 `ai_ci` 底下四個 A 開頭的名字**彼此相等**，所以它們之間沒有先後可言——那一列印的是它們進表的順序。**同一個排序鍵改由 `GROUP_CONCAT` 取回，四個名字的順序整個倒過來**：
+
+```sql
+-- MySQL 8.4，同一張表、同一批資料
+SELECT 姓名 FROM 顧客 ORDER BY 姓名;
+-- Anna, anna, ANNA, Ánna, 佳穎（進表的順序）
+SELECT GROUP_CONCAT(姓名 ORDER BY 姓名) FROM 顧客;
+-- Ánna,ANNA,anna,Anna,佳穎（四個 A 開頭的名字倒過來，佳穎仍在最後）
+```兩次都沒有違反 collation，因為 collation 對這四個之間什麼都沒有規定。這是 collation 與分頁交會的地方：一條把大小寫與重音都忽略的規則，會讓原本以為唯一的排序鍵變成不唯一，而沒有規定的那一段在分頁時會變成同一列出現兩次、另一列一次都不出現——[1.12 分頁要一個全序](/sql/pagination-needs-a-total-order/) 寫那個機制與把排序鍵補到兩兩可分的判斷標準。
 
 ## 索引的比較規則要跟條件的對得上
 
-索引把值按某一條規則排好，所以它只服務照同一條規則發問的條件。這一類問題在小表上感覺不出來——資料長到某個量之後前綴搜尋開始變慢，而查詢與索引都沒有動過。這一節的計畫也要在夠大的表上才看得出來——五列的表無論條件寫成什麼，引擎都直接掃完，所以下面兩組輸出量在二十萬列的同結構表上。SQLite 上的三種問法，索引是同一個：
+索引把值按某一條規則排好，所以它只服務照同一條規則發問的條件。索引與條件的規則對不上，在小表上感覺不出來——資料長到某個量之後前綴搜尋開始變慢，而查詢與索引都沒有動過。這一節的計畫也要在夠大的表上才看得出來——五列的表無論條件寫成什麼，引擎都直接掃完，所以下面兩組輸出量在二十萬列的同結構表上。SQLite 上的三種問法，索引是同一個：
 
 ```text
 CREATE INDEX ixn ON 顧客(姓名);            -- 預設規則，逐位元組
@@ -74,7 +92,22 @@ WHERE lower(姓名) = 'anna'   SCAN                     整段掃過
 WHERE 姓名 LIKE 'ann%'       SCAN                     整段掃過
 ```
 
-第二行是欄位被函式包住，索引上排好的是原值而條件問的是摺過的值，兩者對不起來（[Sargable](/sql/knowledge-cards/sargable/)）。**第三行的成因不同**：前綴比對本來可以翻成索引上的一段範圍，而 `LIKE` 預設不分大小寫，索引卻是逐位元組排的——規則對不上，範圍就算不出來。把兩邊之中的任何一邊換掉都能修好：`PRAGMA case_sensitive_like = ON` 讓條件回到位元組規則，或者 `CREATE INDEX ON 顧客(姓名 COLLATE NOCASE)` 讓索引改用摺疊規則，兩種做法之後同一段查詢都變成 `SEARCH ... (姓名>? AND 姓名<?)`。
+第二行是欄位被函式包住，索引上排好的是原值而條件問的是摺過的值，兩者對不起來（[Sargable](/sql/knowledge-cards/sargable/)）。**第三行的成因不同**：前綴比對本來可以翻成索引上的一段範圍，而 `LIKE` 預設不分大小寫，索引卻是逐位元組排的——規則對不上，範圍就算不出來。條件的規則與索引的規則，換掉任何一個都讓計畫回到範圍查找，而兩種換法回的列不同——改條件的規則也改掉了 `LIKE` 的答案：
+
+```sql
+-- 改條件的規則：LIKE 改成分大小寫，回到位元組規則
+PRAGMA case_sensitive_like = ON;
+EXPLAIN QUERY PLAN SELECT * FROM 顧客 WHERE 姓名 LIKE 'ann%';
+-- SEARCH ... (姓名>? AND 姓名<?)
+-- 本篇五列的顧客表上回 anna
+
+-- 改索引的規則：LIKE 維持預設的不分大小寫，另建一個按摺疊規則排的索引；SQLite 的索引一定要取名字
+PRAGMA case_sensitive_like = OFF;
+CREATE INDEX ixn_nocase ON 顧客(姓名 COLLATE NOCASE);
+EXPLAIN QUERY PLAN SELECT * FROM 顧客 WHERE 姓名 LIKE 'ann%';
+-- SEARCH ... (姓名>? AND 姓名<?)
+-- 本篇五列的顧客表上回 Anna, anna, ANNA
+```
 
 PostgreSQL 上，索引與條件套的規則對不上，同樣會讓前綴搜尋用不到索引，只是外觀不同：
 
@@ -84,7 +117,19 @@ WHERE lower(姓名) = 'anna'   Filter: (lower(姓名) = 'anna')       逐列過�
 WHERE 姓名 LIKE 'ann%'       Filter: (姓名 ~~ 'ann%')             逐列過濾
 ```
 
-`en_US.utf8` 的排序規則與位元組序不同，所以 `ann` 這個前綴在索引上不對應一段連續的區間。PostgreSQL 的解法是另建一個按位元組排的索引：`CREATE INDEX ON 顧客(姓名 text_pattern_ops)` 之後同一段前綴搜尋的計畫變成 `Index Cond: (姓名 ~>=~ 'ann' AND 姓名 ~<~ 'ano')`，而 `lower(姓名)` 那一行則由運算式索引 `CREATE INDEX ON 顧客(lower(姓名))` 接住，變成 `Index Cond: (lower(姓名) = 'anna')`。
+`en_US.utf8` 的排序規則與位元組序不同，所以 `ann` 這個前綴在索引上不對應一段連續的區間。PostgreSQL 的解法是另建一個按位元組排的索引；`lower(姓名)` 那一行則由建在運算式上的索引接住：
+
+```sql
+-- 前綴搜尋：text_pattern_ops 讓這個索引逐字元比較，不照資料庫的 en_US.utf8
+CREATE INDEX ON 顧客(姓名 text_pattern_ops);
+EXPLAIN SELECT * FROM 顧客 WHERE 姓名 LIKE 'ann%';
+-- Index Cond: (姓名 ~>=~ 'ann' AND 姓名 ~<~ 'ano')：前綴翻成一段範圍
+
+-- 欄位被函式包住：索引直接建在 lower(姓名) 上
+CREATE INDEX ON 顧客(lower(姓名));
+EXPLAIN SELECT * FROM 顧客 WHERE lower(姓名) = 'anna';
+-- Index Cond: (lower(姓名) = 'anna')
+```
 
 三種修法的共同形狀是**讓索引與條件套同一條規則**，而它們把改動放在不同的一邊：改條件、改索引的 collation、或另建一個按別的規則排的索引。比較規則對得上只是索引派得上用場的條件之一：條件的形狀是另一個（`lower(姓名)` 那一行就是形狀出的問題），而形狀與規則都對了之後，引擎還要看這個條件留下多少列才決定值不值得走索引，留下多少列怎麼估計在 [Cardinality 與 Selectivity](/sql/knowledge-cards/cardinality-and-selectivity/)。
 
@@ -94,6 +139,6 @@ WHERE 姓名 LIKE 'ann%'       Filter: (姓名 ~~ 'ann%')             逐列過�
 
 所以規則的住址要選定，而可選的住址比多數人用到的多。開頭那一句說 collation 掛在資料庫、表或欄位上——那是三層，**越外層涵蓋越廣而越容易被裡層蓋掉**：建庫時選的那一條是所有沒有另外指定的欄位的預設，建表時選的蓋過它，欄位上寫的又蓋過表。來歷不明的建表模板最常把規則留在表層或庫層，所以查一欄的實際規則要從欄位往外找，找到第一個明寫的為止。
 
-**寫在欄位上**是最貼近資料的一種：`姓名 VARCHAR(50) COLLATE utf8mb4_0900_as_cs`（`as_cs` 是 accent-sensitive、case-sensitive）把這一欄固定住，往後每一段查詢、每一個索引都套它。**寫在條件上**（`WHERE 姓名 = 'anna' COLLATE NOCASE`）只涵蓋那一句。**還有一個住址不在 collation 這條路上**：寫入的時候就把值正規化，另存一欄折過的版本，讀的時候比那一欄。開頭提過的登入查詢——帳號比對在 MySQL 上不分大小寫、搬到 PostgreSQL 突然變成分大小寫——實際的解法多半是這一種：比較規則變成一次寫入時的決定，而讀的那一句與它的索引都回到最單純的等值比較。同一個登入功能裡兩種住址各有位置：帳號欄整欄要不分大小寫，那是欄位的事；而某支後台工具要逐字比對，那是那一句的事。代價是寫在條件上的那一句走不了按預設規則建的索引。
+**寫在欄位上**是最貼近資料的一種：`姓名 VARCHAR(50) COLLATE utf8mb4_0900_as_cs`（`as_cs` 是 accent-sensitive、case-sensitive）把這一欄固定住，往後每一段查詢、每一個索引都套它。**寫在條件上**（`WHERE 姓名 = 'anna' COLLATE NOCASE`）只涵蓋那一句。**還有一個住址不在 collation 這條路上**：寫入的時候就把值正規化，另存一欄摺過的版本，讀的時候比那一欄。開頭提過的登入查詢——帳號比對在 MySQL 上不分大小寫、搬到 PostgreSQL 突然變成分大小寫——實際的解法多半是這一種：比較規則變成一次寫入時的決定，而讀的那一句與它的索引都回到最單純的等值比較。同一個登入功能裡兩種住址各有位置：帳號欄整欄要不分大小寫，那是欄位的事；而某支後台工具要逐字比對，那是那一句的事。代價是寫在條件上的那一句走不了按預設規則建的索引。
 
 判斷標準與[約束](/sql/knowledge-cards/constraint/)那一條同源：一個保證要涵蓋往後的每一次使用，它就得寫在結構上，而不是靠每一句查詢各自記得。差別在於約束擋的是寫入，collation 決定的是讀出來的時候什麼算相等。
