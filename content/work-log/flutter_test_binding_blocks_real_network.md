@@ -65,4 +65,4 @@ dio.options.headers['Authorization'] = 'Bearer $token';
 ## 下一步
 
 - 這層測試的完整設計（預設可執行、離線降級、憑證失效紅燈）→ [真實後端驗證測試](/testing/03-protocol-integration-test/real-backend-verification/)
-- harness 那一側的組裝 → [讓 UI 控制器在 headless 測試立起來](/work-log/flutter_headless_controller_test_bootstrap/)
+- 測試 harness 的組裝 → [讓 UI 控制器在 headless 測試立起來](/work-log/flutter_headless_controller_test_bootstrap/)

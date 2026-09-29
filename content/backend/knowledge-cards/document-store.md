@@ -13,7 +13,7 @@ Document Store 位在資料模型光譜上、和嚴格關聯式 schema 相對的
 
 ## 可觀察訊號與例子
 
-適合 document store 的訊號是資料以「一份完整文件」被讀寫、形狀因來源而異，例如使用者 profile、第三方整合 payload、feature flag 設定。需要重新評估的訊號是巢狀文件變成主要關聯模型，或 JSON 路徑變成核心查詢條件 — 這時要把熱欄位抽出來建 index，或把這部分 relationalize。
+適合 document store 的訊號是資料以「一份完整文件」被讀寫、形狀因來源而異，例如使用者 profile、第三方整合 payload、feature flag 設定。需要重新評估的訊號是巢狀文件變成主要關聯模型，或 JSON 路徑變成核心查詢條件 — 這時要把熱欄位抽出來建 index，或把承載主要關聯的巢狀結構 relationalize。
 
 ## 設計責任
 

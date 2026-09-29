@@ -102,7 +102,7 @@ producer.commitTransaction()      // 全部原子提交；失敗則 abortTransac
 
 > **實機限制**：`kafka-console-producer.sh` 帶 `--producer-property transactional.id=...` 不會自動呼叫 `initTransactions()`、會直接報 `IllegalStateException: Cannot add partition ... before completing a call to initTransactions`。完整 transaction 生命週期只能在 client code 中驗證、無法用 console 工具演示。本文的 transaction 行為描述依官方 producer API 語義、生命週期程式碼未經本地 client 實機跑通。
 
-Transaction 的另一半在 consumer 端：`isolation.level=read_committed`。預設的 `read_uncommitted` 會讀到尚未 commit、甚至最終被 abort 的 transactional 訊息。設成 `read_committed` 後、consumer 只會看到已 commit 的 transactional 訊息、abort 的訊息對它不可見、未 commit 的訊息會被擋在 last stable offset（LSO）之前等待。
+Transaction 除了 producer 端的 `transactional.id`，還要 consumer 端配合設定：`isolation.level=read_committed`。預設的 `read_uncommitted` 會讀到尚未 commit、甚至最終被 abort 的 transactional 訊息。設成 `read_committed` 後、consumer 只會看到已 commit 的 transactional 訊息、abort 的訊息對它不可見、未 commit 的訊息會被擋在 last stable offset（LSO）之前等待。
 
 ```bash
 # consumer 以 read_committed 隔離級別讀取、只看已 commit 的 transactional 訊息

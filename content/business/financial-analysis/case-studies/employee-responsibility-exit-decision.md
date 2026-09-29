@@ -6,7 +6,7 @@ weight: 17
 tags: ["business", "case-analysis", "labor", "financial-analysis"]
 ---
 
-小型自營商面對虧損要收店時，員工不只是損益表上一個可以裁撤的成本項——他們是雇主負有責任的對象，而這份責任會回頭改變「要不要收、什麼時候收」的決策本身。續行 vs 退場的討論通常只算資本這一邊（[經營者的下一步](/business/financial-analysis/case-studies/operator-human-capital-paths/)談的是資本的另一半：經營者自己退場後怎麼走），但同一個決策還有員工這個主體。這篇談的就是對員工的責任——它不是決定退場之後才處理的執行問題，在決策階段就是一個約束。
+小型自營商面對虧損要收店時，員工不只是損益表上一個可以裁撤的成本項——他們是雇主負有責任的對象，而這份責任會回頭改變「要不要收、什麼時候收」的決策本身。續行 vs 退場的討論通常只算投入這間店的資金該不該留（[經營者的下一步](/business/financial-analysis/case-studies/operator-human-capital-paths/)談的是經營者自己的人力資本：他退場後怎麼走），但同一個決策還有員工這個主體。這篇談的就是對員工的責任——它不是決定退場之後才處理的執行問題，在決策階段就是一個約束。
 
 執行層的完整方法（清算、倒閉、被收購三種情境怎麼處理員工）在[公司退場時如何處理老員工](/business/workforce-transition/company-exit-employee-handling/)。這篇聚焦決策層：員工責任如何改變經營者「要不要收、什麼時候收」的判斷。
 

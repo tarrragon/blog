@@ -89,7 +89,7 @@ CDK 與 Pulumi 同屬程式語言路線，但「狀態由誰持有」這個軸�
 
 CDK 把程式碼 synth 成 CloudFormation 模板，再交給 CloudFormation 服務端執行與追蹤。state 由 AWS 代管 — 沒有一份 tfstate 檔要自己存放、加密、回捲，也不需要額外的鎖表來防並行。這份「狀態維運外包給雲端」正是 CDK 在 AWS 生態內的賣點之一。代價是綁定 CloudFormation 與單一雲 — CloudFormation 的更新速度、resource coverage、錯誤訊息品質都由 AWS 控制，團隊的 debug 能力受限於 CloudFormation 的回報粒度。
 
-Pulumi 走另一邊：它維護一份自己的 state，預設交給 Pulumi Cloud 託管，也能改用 S3 之類的後端自管。形態上更接近 Terraform 的 state 模型，state 的存放、保護與並行控制重回團隊手上。同一條程式語言路線，選 CDK 等於把 state 責任讓給雲端，選 Pulumi 則保留對 state 落點的掌控。
+Pulumi 的 state 由 Pulumi 自己持有：它維護一份自己的 state，預設交給 Pulumi Cloud 託管，也能改用 S3 之類的後端自管。形態上更接近 Terraform 的 state 模型，state 的存放、保護與並行控制重回團隊手上。同一條程式語言路線，選 CDK 等於把 state 責任讓給雲端，選 Pulumi 則保留對 state 落點的掌控。
 
 ### 選型標準
 

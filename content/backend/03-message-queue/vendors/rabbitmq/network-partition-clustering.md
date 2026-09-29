@@ -166,7 +166,7 @@ $ rabbitmqadmin publish routing_key=cq.test payload="classic-during-partition"
 Message published   # 立即成功
 ```
 
-Classic queue 立即接受寫入。它沒有 Raft、leader 節點獨自決定、可用性優先——但這也正是它在腦裂下會分歧的根源：rmq1 接受的這筆、partition 結束後可能跟另一側的狀態衝突。
+Classic queue 立即接受寫入。它沒有 Raft、leader 節點獨自決定、可用性優先——但這也正是它在腦裂下會分歧的根源：rmq1 接受的這筆、partition 結束後可能跟 rmq2、rmq3 上的狀態衝突。
 
 把兩邊 disconnect 的節點重新 connect、quorum 恢復、`quorum_status` 三個節點回到 leader + 2 follower、原本被阻塞的 publish 路徑恢復、新 publish 立即成功。Quorum queue 的恢復是協議自動完成的、不需要人工 reset 任何節點。
 

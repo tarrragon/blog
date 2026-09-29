@@ -23,7 +23,7 @@ tags: ["flutter", "dart", "test", "noise", "fallback", "platform-channel", "runZ
 
 ## 2. 為什麼要治理：已知雜訊遮蔽新警報
 
-單看無害——catch 有接、fallback 有兜、測試全綠。傷害在人這一側：讀輸出的人很快學會「那兩行不用看」，心理過濾建立後，過濾的是**模式**不是內容——某天一行真正的新錯誤以相似的形狀出現（另一個 MissingPluginException、另一個 assert fallback），會被同一個過濾器吃掉。
+單看無害——catch 有接、fallback 有兜、測試全綠。傷害落在讀測試輸出的人身上：這些人很快學會「那兩行不用看」，心理過濾建立後，過濾的是**模式**不是內容——某天一行真正的新錯誤以相似的形狀出現（另一個 MissingPluginException、另一個 assert fallback），會被同一個過濾器吃掉。
 
 治理原則一句話：**測試輸出裡的每一行錯誤長相的文字，都應該值得停下來看**。做不到就治理到做得到。
 

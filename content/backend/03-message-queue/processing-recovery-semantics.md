@@ -6,7 +6,7 @@ weight: 6
 tags: ["backend", "message-queue", "semantics", "recovery"]
 ---
 
-Processing semantics 與 recovery semantics 的核心責任是把訊息送達、業務副作用完成、故障後可恢復三件事分開判斷。進入 Kafka、RabbitMQ、SQS、NATS 或 Redis Streams 前，讀者需要先知道 broker 保證主要落在傳遞語意的一部分。
+Processing semantics 與 recovery semantics 的核心責任是把訊息送達、業務副作用完成、故障後可恢復三件事分開判斷。進入 Kafka、RabbitMQ、SQS、NATS 或 Redis Streams 前，讀者需要先知道 broker 的保證主要只涵蓋其中的訊息送達（傳遞語意）。
 
 ## Delivery / Processing / Recovery
 

@@ -14,7 +14,7 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 對虛擬機或同網段的機器，一個很有用的權威來源是**鄰居表**（IP 對 MAC 的對應）。要填起來需要對方在鏈路層有回應，所以它直接反映「對方在不在」。用 `ip neigh` 看目標 IP 的條目——優先用 `ip neigh` 而不是 `arp -a`，因為 `ip`（iproute2）在現代最小系統一定有，`arp`（net-tools）常常沒裝、跑了會 command not found 反而誤導。如果狀態是 `INCOMPLETE`（`arp -a` 顯示的是 `incomplete`），代表這個 IP 在鏈路層上根本沒有機器回應——不是 SSH 的問題，是那台機器的網路沒起來、或根本沒在跑。一個實際案例：一台虛擬機 SSH timeout，鄰居表顯示整個網段的 guest 位址全是 incomplete、只有閘道（宿主那側的橋接介面）是好的——這就定位到「宿主的橋沒問題，但橋的另一頭沒有 VM 在講話」，方向立刻從「調 SSH」轉到「去看 VM 的網路或開機狀態」。
 
-定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的那條路）確認——實體機是接鍵盤螢幕，VM 則是打開 hypervisor 的 guest console（UTM / virt-manager 的視窗，或序列 console），必要時用 `chvt` 切到別的 VT，這部分見[遠端連線與終端機問題](../ssh-and-terminal-troubleshooting/)：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、鄰居表的條目從 incomplete 變成有 MAC，就通了。
+定位到「機器在跑但網路沒起來」後，去那台機器的主控台（不是 SSH，SSH 正是連不上的那條路）確認——實體機是接鍵盤螢幕，VM 則是打開 hypervisor 的 guest console（UTM / virt-manager 的視窗，或序列 console），必要時用 `chvt` 切到別的 VT，切 VT 的做法見[遠端連線與終端機問題](../ssh-and-terminal-troubleshooting/)：`ip -brief a` 看有沒有拿到 IP、`systemctl status <網路服務>`（`dhcpcd` / `systemd-networkd`）看網路服務起了沒，需要時 `sudo systemctl restart <網路服務>` 重拉。IP 回來、鄰居表的條目從 incomplete 變成有 MAC，就通了。
 
 連不上的還有一類根因在**你這端的發起程式**，判讀關鍵是交叉驗證「同一個目標、不同的發起 process」：某個終端機 app 裡 SSH 回 `No route to host`，但同一時刻換一個 app（或系統內建終端機）對同一個 IP 的 ping / ssh 都通——網路層跟目標機器都沒事，是作業系統對那個 app 的網路權限。實測案例在 macOS：終端機 app 缺「本機網路」（Local Network）隱私權限時，對區網位址（包括本機上的 VM）的連線一律被擋、錯誤訊息卻長得跟路由故障一模一樣；系統設定裡把權限打開即解。錯誤訊息把你指向網路層、而交叉驗證能在一分鐘內把方向修正回發起端。
 
@@ -42,7 +42,7 @@ tags: ["linux", "vm", "networking", "debugging"]
 
 很多看起來各自獨立的故障，共同根因是磁碟滿。磁碟一滿，寫入就會失敗，而系統裡太多東西依賴寫入：SSH session 可能因為寫不了而被斷、正在跑的編譯 / 安裝會中途失敗、log 寫不進去、虛擬機狀態檔存不下導致連不上或開不起來。所以當你在短時間內撞到「連線斷了 + 某個任務失敗 + 服務怪怪的」這種一串症狀時，`df -h` 應該是很早就要做的檢查——一個廉價的檢查就可能一次解釋掉全部。
 
-這裡有一個容易搞錯的點：**清錯了地方**。宿主跟 guest 是兩個獨立的檔案系統；虛擬機的宿主磁碟滿，跟 guest 內部磁碟滿，是兩件事。如果你 SSH 進 guest 裡 `df` 看到還有空間就以為沒事，但真正滿的是宿主的磁碟，那問題不會解決。判讀時要分清這串故障是「哪一台機器的哪個檔案系統」滿了——在宿主上 `df -h` 看宿主、在 guest 裡 `df -h` 看 guest，兩邊都要確認。清空間也要清在對的那一側。
+這裡有一個容易搞錯的點：**清錯了地方**。宿主跟 guest 是兩個獨立的檔案系統；虛擬機的宿主磁碟滿，跟 guest 內部磁碟滿，是兩件事。如果你 SSH 進 guest 裡 `df` 看到還有空間就以為沒事，但真正滿的是宿主的磁碟，那問題不會解決。判讀時要分清這串故障是「哪一台機器的哪個檔案系統」滿了——在宿主上 `df -h` 看宿主、在 guest 裡 `df -h` 看 guest，兩邊都要確認。清空間也要清在滿了的那一邊：宿主滿就清宿主，guest 滿就清 guest。
 
 ## 判讀路由
 

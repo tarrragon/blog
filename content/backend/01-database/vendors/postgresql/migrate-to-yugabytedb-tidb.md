@@ -8,7 +8,7 @@ tags: ["backend", "database", "postgresql", "migration", "distributed-sql"]
 
 PostgreSQL to YugabyteDB / TiDB migration 的核心責任是處理從 single-primary PostgreSQL 走向 distributed SQL 的資料拓撲變更。這條路線通常由 multi-region write、horizontal scale、tenant sharding、availability 或 single-node capacity ceiling 觸發；其中 YugabyteDB 走 PostgreSQL-compatible YSQL 路線，TiDB 走 MySQL-compatible distributed SQL 路線，兩者的 application diff audit 不同。
 
-本文的判讀錨點是：API compatibility 只解決入口語法的一部分。YugabyteDB 要審查 PostgreSQL 相容與 distributed operation 差異；TiDB 要額外處理 PostgreSQL → MySQL dialect / driver / tooling 轉換。Distributed SQL 會改變 transaction latency、placement、index cost、DDL、sequence、lock、backup、observability 與 incident route。
+本文的判讀錨點是：API compatibility 解決的只有入口語法，distributed operation 帶來的差異要另外審查。YugabyteDB 要審查 PostgreSQL 相容與 distributed operation 差異；TiDB 要額外處理 PostgreSQL → MySQL dialect / driver / tooling 轉換。Distributed SQL 會改變 transaction latency、placement、index cost、DDL、sequence、lock、backup、observability 與 incident route。
 
 ## Official Documentation Route
 

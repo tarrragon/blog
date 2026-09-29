@@ -16,7 +16,7 @@ consumer 對錯誤回應的期望收斂成四件：**可判讀的行為指示**�
 
 provider 對 consumer 的期望同樣具體：守 retry 紀律（退避間隔加隨機抖動、有上限、對過載退讓）；快速 ack（多快看 vendor 明文、如 GitHub 的 10 秒、Slack 的 3 秒）、把慢邏輯移出回應路徑；用 event id 去重、不依賴投遞順序（webhook 場景、見 [realtime 流派層](/backend/11-api-design/styles/realtime/realtime-webhook-contract/)）；把機器分支寫在 type/code 上、不 parse message 文字 —— consumer 把人類可讀欄位當契約、之後 provider 改個錯字都變 breaking change（[Hyrum's Law](/backend/knowledge-cards/hyrums-law/)（一切可觀察行為終將被依賴）的錯誤版、案例見 [11.C75](/backend/11-api-design/cases/errorchain-aip193-error-content/) 的 message 穩定性條款）。
 
-這兩張清單合起來是本章的骨架：契約寫得好、兩張清單都成立；寫得偏、一邊的成本變成另一邊的日常。
+這兩張清單合起來是本章的骨架：契約寫得好、兩張清單都成立；寫得偏、provider 或 consumer 其中一端該付的成本，會變成另一端的日常。
 
 ## 成本外部化的判讀訊號
 

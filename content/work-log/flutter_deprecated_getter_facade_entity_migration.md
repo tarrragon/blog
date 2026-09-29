@@ -58,7 +58,7 @@ entity 持有 repository 注入的 `List<BookTag>`，每個廢除欄位各有一
 
 ## facade 與永久相容層的一線之隔：退場計畫
 
-這個策略跟同專案早年[VO 擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)裡「加回 `.value` getter 當相容性介面」在機制上是同一件事——差別全在配套。那次的 getter 加回來就沒有然後了、成為永久的一部分；這次的 facade 在 ticket 系統裡直接 spawn 了九張後續票、逐 Wave 遷移各消費端，deprecated getter 的死期寫在 backlog 上。
+這個策略跟同專案早年[VO 擺盪](/work-log/flutter_value_object_encapsulation_oscillation/)裡「加回 `.value` getter 當相容性介面」在機制上是同一件事——差別全在配套。那次的 getter 加回來就沒有然後了、成為 VO 永久公開介面的一部分；這次的 facade 在 ticket 系統裡直接 spawn 了九張後續票、逐 Wave 遷移各消費端，deprecated getter 的死期寫在 backlog 上。
 
 **facade 的性質由退場計畫決定**：有計畫、它是分期償還的過渡層；沒計畫、它是把重構宣告完成的化妝——新舊兩套 API 永久並存、每個新人都要學「哪個是真的」。判斷一個 codebase 裡的 deprecated 標記是哪一種，看它有沒有對應的遷移工作項、以及 warning 數量的趨勢是降是平。
 

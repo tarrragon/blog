@@ -5,7 +5,7 @@ description: "Cloudflare D1、Turso、libSQL 與 local SQLite 在 edge、replica
 tags: ["backend", "database", "sqlite", "edge", "d1", "turso"]
 ---
 
-D1 / Turso / libSQL comparison 的核心責任是把 SQLite-compatible edge products 和 local SQLite 分開判讀。它們共享 SQLite 開發體驗的一部分，但它們承擔的服務責任不同：Cloudflare D1 把 SQLite-like database 放進 Workers 生態與 managed edge platform；Turso / libSQL 把 SQLite family 延伸到 remote primary、embedded replica 與同步模型；local SQLite 則是 application process 直接管理單一 database file。
+D1 / Turso / libSQL comparison 的核心責任是把 SQLite-compatible edge products 和 local SQLite 分開判讀。它們共享 SQLite 的 SQL 語法與開發入口，但它們承擔的服務責任不同：Cloudflare D1 把 SQLite-like database 放進 Workers 生態與 managed edge platform；Turso / libSQL 把 SQLite family 延伸到 remote primary、embedded replica 與同步模型；local SQLite 則是 application process 直接管理單一 database file。
 
 本文的判讀錨點是：SQLite compatibility 代表開發入口接近，服務責任仍要重新審查。採用 edge SQLite 前，要先確認 write authority、read freshness、migration limit、backup evidence、observability、cost 與 vendor exit，而非只看 SQL 語法能否執行。
 

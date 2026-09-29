@@ -110,7 +110,7 @@ Dev 環境的 retention 可以大幅縮短（7 天甚至 3 天），因為它不
 
 ### 存取控制與加密
 
-「誰能讀」是 retention 之外的另一半。Log 經常夾帶 PII（使用者信箱、IP）、token 或內部結構，讀取權限要跟[模組二（身分與憑證地基）](/infra/02-identity-credentials/)建立的 IAM 角色一起管。
+Log 的治理除了 retention 管的「留多久」，還要管「誰能讀」。Log 經常夾帶 PII（使用者信箱、IP）、token 或內部結構，讀取權限要跟[模組二（身分與憑證地基）](/infra/02-identity-credentials/)建立的 IAM 角色一起管。
 
 常見陷阱是 log 在傳輸與儲存都加密了（`kms_key_id` 有設），卻對整個團隊開放讀取。加密保護的是靜態資料不被未授權存取，但如果整個開發團隊都有 `logs:GetLogEvents` 權限，加密形同虛設 — read 權限應該縮到值班與稽核需要的最小集合。
 

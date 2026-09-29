@@ -14,13 +14,13 @@ tags: ["books", "reading", "retention", "motivation", "feedback", "peopleware"]
 
 ## 起點是 Peopleware
 
-Tom DeMarco 與 Timothy Lister 的《Peopleware》一本收齊環境支的全部主題，而《First, Break All the Rules》與《Radical Candor》都只處理其中一支的一部分，因此起點是它。它 1987 年出版時的主張是軟體專案的主要問題是社會性的而非技術性的；這個立場現在聽起來像常識，但書中對中斷成本、辦公環境、團隊凝聚、離職代價的具體論證，後續的書多半引用它而少有更完整的處理。
+Tom DeMarco 與 Timothy Lister 的《Peopleware》一本收齊環境支的全部主題，而《First, Break All the Rules》與《Radical Candor》都落在關係支、各自只處理其中一環（《First, Break All the Rules》給的是主管關係的大規模實證，《Radical Candor》只處理回饋這一個動作），因此起點是它。它 1987 年出版時的主張是軟體專案的主要問題是社會性的而非技術性的；這個立場現在聽起來像常識，但書中對中斷成本、辦公環境、團隊凝聚、離職代價的具體論證，後續的書多半引用它而少有更完整的處理。
 
 最可直接使用的是中斷成本的量化與 jelled team 的形成條件。前者把「開放式辦公室很吵」從抱怨變成可以算成本的事；後者（書中稱 jelled team，指一群人已經磨合到把團隊目標當成自己的目標、彼此的工作方式互相熟悉）說明凝聚的團隊有哪些可觀察特徵，以及哪些管理動作會把凝聚拆掉——包括加班、頻繁重組、以及用個人績效評比取代團隊成果。
 
 一本 1987 年的書會讓人先問哪些部分還算數。談實體辦公室隔間、電話中斷、通勤的段落，預設的工作型態已經改變，第三版新增的領導病理、會議文化與跨世代混合團隊章節補上了一部分；中斷成本、凝聚條件、離職代價這三條論證建立在注意力恢復與人際信任的累積上，不依賴辦公形式，因此仍然成立。
 
-[證據來源](/books/knowledge-cards/evidence-provenance/)是跨客戶的顧問經驗加上他們自辦的編碼競賽資料，強度介於單一路徑的個人經驗與大規模實證之間——競賽樣本數以百計，不是大規模調查。[處境相容性](/books/knowledge-cards/context-compatibility/)上，環境那一半的論證以共處一個實體空間為單位：隔間、噪音、走過來打斷手上工作的那個人。分散在多個時區的團隊要自己把「中斷」重新定義成非同步訊息的回應期待（哪些論證會在這個換算裡失效，見 [協作形態](/books/knowledge-cards/collaboration-mode/)），而書裡沒有做這個轉換；凝聚那一半同樣預設每天有大量重疊時間。讀得出價值的前提標不出具體條件——待過任何一個辦公環境就讀得動，不需要先帶過人。
+[證據來源](/books/knowledge-cards/evidence-provenance/)是跨客戶的顧問經驗加上他們自辦的編碼競賽資料，強度介於單一路徑的個人經驗與大規模實證之間——競賽樣本數以百計，不是大規模調查。[處境相容性](/books/knowledge-cards/context-compatibility/)上，書中談工作環境的論證以共處一個實體空間為單位：隔間、噪音、走過來打斷手上工作的那個人。分散在多個時區的團隊要自己把「中斷」重新定義成非同步訊息的回應期待（哪些論證會在這個換算裡失效，見 [協作形態](/books/knowledge-cards/collaboration-mode/)），而書裡沒有做這個轉換；書中談團隊凝聚（jelled team）的論證同樣預設每天有大量重疊時間。讀得出價值的前提標不出具體條件——待過任何一個辦公環境就讀得動，不需要先帶過人。
 
 - [Amazon（Peopleware: Productive Projects and Teams, 3rd Edition）](https://www.amazon.com/Peopleware-Productive-Projects-Teams-3rd/dp/0321934113)
 - [博客來（Peopleware：腦力密集產業的人才管理之道，經典紀念版）](https://www.books.com.tw/products/0010872982)

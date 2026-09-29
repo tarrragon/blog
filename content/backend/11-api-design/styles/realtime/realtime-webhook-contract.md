@@ -16,7 +16,7 @@ webhook 不一定會重試 —— 這是採用前最該先確認的承諾。GitH
 
 ## consumer 要扛的五件事
 
-webhook 把可靠性的一部分交給 consumer 自己扛、有五件事跑不掉。
+webhook 把去重、不依賴順序、快速 ack、簽章驗證與對帳兜底這幾項可靠性責任交給 consumer 自己扛，每一項都跑不掉。
 
 去重（[冪等](/backend/knowledge-cards/idempotency/)）是第一件。[at-least-once](/backend/knowledge-cards/delivery-semantics/) 的投遞會重複、vendor 明文要你用某個 header 當冪等 key 去重 —— Stripe 用 event ID、Shopify 指定 `X-Shopify-Webhook-Id`、GitHub 給 `X-GitHub-Delivery` GUID。就算 GitHub 不自動重試、手動重投也會重複、去重照樣跑不掉。這條對到 [11.8 API 層冪等設計](/backend/11-api-design/api-idempotency-design/) 的 consumer 側。
 

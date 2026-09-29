@@ -65,7 +65,7 @@ Daniel Kahneman 的《Thinking, Fast and Slow》提供的是規劃謬誤的心�
 
 這兩門課有一個取得上的注意事項，而它剛好示範了平台與載體的差別。兩門同時上架 Coursera，而 Coursera 自 2025 年 8 月起把免費的旁聽改成預覽，只能看第一個單元；同樣的內容在台大開放式課程與 YouTube 上仍然完整免費。走 OCW 或 YouTube 那一邊，不走 Coursera。
 
-樂觀偏誤那一層由 **Open Yale PHIL 181 Philosophy and the Science of Human Nature** 接得住一部分。Tamar Gendler（哲學與認知科學）主講、2011 年春季、26 講。它不是偏誤目錄課——全課的骨架是幸福、道德與政治正當性三個哲學問題——但它的指定閱讀直接是《Thinking, Fast and Slow》的一手來源：Kahneman 的〈Mapping Bounded Rationality〉與諾貝爾講座、Ariely 的《Predictably Irrational》全本、Evans 的雙系統推理、Sunstein 的道德捷思。讀 Thinking, Fast and Slow 是拿 Kahneman 整理過的版本，走這門課是拿原始論文加一個哲學家的追問。門檻也在那裡：英語授課，而指定閱讀是一手論文而非科普，投入的份量比另外三門重。它跟 ECON 159 一樣是 Open Yale Courses 的課，該站的標準供給含英文逐字稿，讀得慢而聽不動的讀者靠那份稿子搭橋。
+樂觀偏誤那一層的一手研究由 **Open Yale PHIL 181 Philosophy and the Science of Human Nature** 接得住，逐條走完偏誤目錄的用途它接不住。Tamar Gendler（哲學與認知科學）主講、2011 年春季、26 講。它不是偏誤目錄課——全課的骨架是幸福、道德與政治正當性三個哲學問題——但它的指定閱讀直接是《Thinking, Fast and Slow》的一手來源：Kahneman 的〈Mapping Bounded Rationality〉與諾貝爾講座、Ariely 的《Predictably Irrational》全本、Evans 的雙系統推理、Sunstein 的道德捷思。讀 Thinking, Fast and Slow 是拿 Kahneman 整理過的版本，走這門課是拿原始論文加一個哲學家的追問。門檻也在那裡：英語授課，而指定閱讀是一手論文而非科普，投入的份量比另外三門重。它跟 ECON 159 一樣是 Open Yale Courses 的課，該站的標準供給含英文逐字稿，讀得慢而聽不動的讀者靠那份稿子搭橋。
 
 它接不住的是把整批偏誤逐一走完那一面——[《Thinking, Fast and Slow》](#想理解偏誤的來源時讀-thinking-fast-and-slow) 的用途之一是當長期參考的偏誤目錄，而課程這個載體給不了那個功能：目錄要能隨時翻回某一條，講次只能線性播。
 

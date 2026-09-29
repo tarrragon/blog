@@ -41,7 +41,7 @@ Vision encoder 的關鍵設計取捨：
 
 ## 設計責任
 
-讀 VLM model card 看到「vision tower」「ViT backbone」「image encoder」就是這部分。寫 code 場景的判讀：
+讀 VLM model card 看到「vision tower」「ViT backbone」「image encoder」就是 vision encoder。寫 code 場景的判讀：
 
 1. **解析度影響細節辨識**：低解析度（224）對「截圖中的小字 / 細邊框」可能模糊、看不清；高解析度（1024+）能看清楚但 token 用量大
 2. **Token 用量估算**：一張 1024×1024 圖經過 vision encoder 後、產出 ~500-2500 image tokens（依設計）、相當於一段中等長度的文字 prompt

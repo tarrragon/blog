@@ -8,7 +8,7 @@ tags: ["backend", "database", "firestore", "migration", "paradigm-shift", "migra
 
 > 本文是 [Firestore](/backend/01-database/vendors/firestore/) overview 的 migration playbook。寫作參照 [Migration Playbook 寫作方法論](/posts/migration-playbook-methodology/)。BaaS 託管平台整場遷出的資產線盤點與並行期總覽見 [10.3 託管形態遷出](/backend/10-system-evolution/managed-platform-exit/)；本文聚焦資料層的跨 paradigm 重建模。
 
-「我們把 Firestore 整包匯出，匯進 PostgreSQL 就好。」這句話低估了遷移的真正內容 — Firestore 遷往自建 relational 的難點是**反轉整個存取模型**，搬資料只是其中最容易的一條線。Firestore 是 client 用 SDK 直連資料庫、授權寫在 Security Rules；自建 relational 是 client 打自己的後端 API、授權在後端中介層。資料可以匯出，但反正規化的 document 形狀、沿查詢限制長出來的資料模型、realtime listener 與 offline 同步能力，都沒有 1:1 的對應物。字面意義的「匯出再匯入」只搬走了最容易的那部分。本文走 paradigm shift 結構：先講為何字面遷移不成立、再講哪些該遷哪些先留、最後才是階段化執行。
+「我們把 Firestore 整包匯出，匯進 PostgreSQL 就好。」這句話低估了遷移的真正內容 — Firestore 遷往自建 relational 的難點是**反轉整個存取模型**，搬資料只是其中最容易的一條線。Firestore 是 client 用 SDK 直連資料庫、授權寫在 Security Rules；自建 relational 是 client 打自己的後端 API、授權在後端中介層。資料可以匯出，但反正規化的 document 形狀、沿查詢限制長出來的資料模型、realtime listener 與 offline 同步能力，都沒有 1:1 的對應物。字面意義的「匯出再匯入」只搬走了資料，存取模型的反轉與授權位置的搬遷都還沒有處理本文走 paradigm shift 結構：先講為何字面遷移不成立、再講哪些該遷哪些先留、最後才是階段化執行。
 
 ## 遷移的 driver：三面牆，不是「relational 比較好」
 

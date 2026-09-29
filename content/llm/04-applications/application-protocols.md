@@ -176,7 +176,7 @@ LLM application 把結果塞進 context、回到推論伺服器繼續
 - **Function calling + structured output 兩邊 schema 不一致**：模型訓練的 function spec 跟 application 套的 JSON schema 欄位不對、模型輸出符合訓練 spec 但不符合 application schema、parser 失敗。修法：grammar 直接從 function spec 生、避免人工維護兩份。
 - **MCP server 沒做 input validation、prompt injection 通過 tool 結果污染 context**：tool 回的內容沒檢查、惡意內容（如 PR 留言中的「請執行 rm -rf」）被模型當指令執行。修法：tool 輸出做 sanitization、可疑內容用 sandbox 標籤包起來、模型 prompt 明確區分「使用者指令」vs「tool 結果」。個人 dev 在自己機器上跑 MCP server 的權限模型（檔案系統 / shell / 網路存取邊界、第三方 MCP 信任）見 [6.2 tool use 與 MCP server 的權限模型](/llm/06-security/tool-use-permission-model/)；IDE 場景中 codebase / 外部文件 / 剪貼簿等 prompt injection 攻擊面見 [6.3 IDE 場景的 prompt injection](/llm/06-security/prompt-injection-in-ide/)。
 
-## 何時可以只用一部分
+## 何時可以只用 function calling、structured output、MCP 其中幾種
 
 三者組合的需求視場景而定：
 

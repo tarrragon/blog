@@ -10,7 +10,7 @@ tags: ["books", "reading", "craft", "architecture", "trade-off"]
 
 這個主題只有兩本，按有沒有詞彙分：《Fundamentals of Software Architecture》先建立一整套可以用來討論的概念，《Software Architecture: The Hard Parts》再處理那些用了概念仍然沒有標準答案的決定。
 
-所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接走 [The Hard Parts](#已經在拆分而每個選項都有代價時讀-software-architecture-the-hard-parts)。讀不動長篇文字的走文末的課程段，那裡有兩門完整的課接機制那一半。不確定自己落在哪一格，就從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
+所以先拿哪一本很好判斷：架構討論還停在「我覺得微服務比較好」這種層次，缺的是詞彙，從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始；詞彙已經夠用而卡在某個拆分的每個選項都有代價，直接走 [The Hard Parts](#已經在拆分而每個選項都有代價時讀-software-architecture-the-hard-parts)。讀不動長篇文字的走文末的課程段，那裡有兩門完整的課教架構決定要用到的分散式系統機制。不確定自己落在哪一格，就從 [Fundamentals of Software Architecture](#起點是-fundamentals-of-software-architecture) 開始——它是這一篇裡不需要先盤點自己就讀得動的那一本。
 
 ## 起點是 Fundamentals of Software Architecture
 
@@ -35,7 +35,7 @@ Mark Richards 與 Neal Ford 這本的主要貢獻是一整套詞彙，而詞彙�
 
 它的書名說明了立場——這些是**沒有最佳實踐的問題**。書的結構因此給的是取捨分析的做法而非答案：把每個決定的可能選項列出來、標出各自在哪些架構特性上得分、明確寫出放棄了什麼。它反覆示範同一個動作，那個動作本身才是要學的東西。
 
-其中資料那部分特別值得注意，因為它是拆分服務時最常被低估的一段。服務可以切開，資料的一致性需求切不開；書中對於哪些資料該複製、哪些該共用、交易邊界該畫在哪，給的是可以逐項走的判斷，而不是「盡量避免分散式交易」這種沒有出口的建議。
+書中處理資料該怎麼跟著服務拆的論述特別值得注意，因為它是拆分服務時最常被低估的一段。服務可以切開，資料的一致性需求切不開；書中對於哪些資料該複製、哪些該共用、交易邊界該畫在哪，給的是可以逐項走的判斷，而不是「盡量避免分散式交易」這種沒有出口的建議。
 
 它跟 Fundamentals 的關係是前置與承接：Fundamentals 讓人說得出這個系統要什麼，這本接手說得出之後仍然沒有標準答案的那些決定。順序不要顛倒——沒有架構特性的詞彙時，這本的取捨分析會讀成一堆並列的技術選項。
 
@@ -56,7 +56,7 @@ Robert Martin 的《Clean Architecture》常被列在這個位置，不收的理
 
 資料密集系統的設計（複製、分片、一致性模型）不在這個主題，那屬於 [Backend 服務實務指南](/backend/) 的責任範圍。
 
-## 機制那一半有兩門完整的課，取捨判斷那一半沒有
+## 架構決定要用的機制知識有兩門完整的課，取捨判斷沒有
 
 這是技藝線唯一接得住公開課的主題，而它接住的只有一半。架構決定要用到機制知識與取捨判斷兩者：機制知識是複製怎麼做、一致性有幾種、共識協定在解什麼、分割之後交易怎麼辦；取捨判斷是在資訊不足時把每個選項的代價講清楚。機制教得了，判斷教不了——這跟本篇兩本書的分工同向，起點書先給詞彙、The Hard Parts 才處理用了詞彙仍然沒有標準答案的決定。
 

@@ -32,6 +32,6 @@ provider 側的鏡像責任：把 consumer 的回報當訊號源。同一個 req
 - 錯誤內容的受眾分層：[錯誤傳播與信任邊界](/backend/11-api-design/error-propagation-trust-boundary/)
 - trace 傳播的機制面：[4.3 tracing 與 context link](/backend/04-observability/tracing-context/)
 - error rate 與 SLO 的訊號設計：[4.6 SLI 量測與 SLO 訊號設計](/backend/04-observability/sli-slo-signal/)
-- 診斷欄位的觀測動機（本篇契約欄位的另一半）：[4.19 Debuggability by Design](/backend/04-observability/debuggability-by-design/)
+- 診斷欄位的觀測動機（本篇從契約面要求的 request-id 與 trace-id，在觀測面的設計理由）：[4.19 Debuggability by Design](/backend/04-observability/debuggability-by-design/)
 - 錯誤格式的欄位設計：[11.4 錯誤模型設計](/backend/11-api-design/error-model-design/)
 - 案例原文：[模組十一案例庫](/backend/11-api-design/cases/)

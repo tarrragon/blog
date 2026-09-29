@@ -48,7 +48,7 @@ tags: ["backend", "security"]
 
 多數導入的做法是「使用者登入之後在設定頁新增一支」。登入若照舊可以用密碼，這支新憑證的強度上限就是那組密碼——攻擊者拿到密碼一樣註冊得出來。於是新機制沒有取代舊的，只是疊在上面。
 
-這個結構有一個後果值得單獨寫：攻擊者用密碼登入之後可以替自己註冊一支憑證，從此他有一條看起來更強、而且不會因為使用者改密碼而失效的持久存取路徑。使用者這一側沒有任何徵兆，因為他自己的憑證照常可用。
+這個結構有一個後果值得單獨寫：攻擊者用密碼登入之後可以替自己註冊一支憑證，從此他有一條看起來更強、而且不會因為使用者改密碼而失效的持久存取路徑。使用者看不到任何徵兆，因為他自己的憑證照常可用。
 
 處置有三項，彼此獨立。**註冊事件要通知使用者**，而且通知要寫清楚「這不是你做的話該去哪裡」。**註冊要當成高風險操作**，要求重新驗證或升級驗證強度，判讀見 [step-up authentication](/backend/knowledge-cards/step-up-authentication/)。**舊路徑要有退場計畫**——憑證覆蓋率到某個比例之後把密碼路徑關掉或降級，而這個觸發條件要在導入當下就寫下來。
 
@@ -99,7 +99,7 @@ tags: ["backend", "security"]
 - 要不要走這條路、與密碼和委派身分的取捨：[7.31 認證方式選型](../authentication-approach-selection/)
 - 註冊這類高風險操作要怎麼升級驗證強度：[step-up authentication](/backend/knowledge-cards/step-up-authentication/)
 - 憑證的簽發、續期與撤銷（智慧卡形態合讀）：[7.5 傳輸信任與憑證生命週期](../transport-trust-and-certificate-lifecycle/)
-- 密碼那一側的回復路徑（同一個問題的另一種形態）：[7.42 密碼重設流程](../password-reset-flow/)
+- 密碼遺失時的回復路徑（同一個問題的另一種形態）：[7.42 密碼重設流程](../password-reset-flow/)
 - 帳號側的停用同步與離開後的處置：[7.38 外部身分與本地紀錄](../external-identity-local-record-lifecycle/)
 - 機器持有的憑證機制：[7.34 機器憑證的機制選型](../machine-credential-mechanism-selection/)
 - 單人自用工具的兩段式認證：[7.2 單人裝置認證模型](../identity-access-boundary/#單人裝置認證模型)
