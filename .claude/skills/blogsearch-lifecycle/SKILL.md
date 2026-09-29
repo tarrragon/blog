@@ -3,7 +3,7 @@ name: blogsearch-lifecycle
 description: "blogsearch 向量 index 的生命週期管理：偵測 index 過時或不存在、觸發 rebuild、驗證結果。適用於有 blogsearch 語意搜尋工具的專案。觸發詞：blogsearch、rebuild index、ingest、向量搜尋、語意搜尋、index 過時、content 變動、pull 後 rebuild、新增文章後搜尋。Trigger when content changes may have made the search index stale, or when semantic search is needed."
 license: MIT
 metadata:
-  version: 1.4.1
+  version: 1.4.2
   category: tooling-lifecycle
 ---
 
@@ -55,7 +55,7 @@ cd scripts/blogsearch && make ingest     # 全量重建，耗時隨 content 規�
 
 預期輸出：逐檔列出 chunk 數、最後顯示總 chunk 數與耗時。
 
-**耗時要按當前規模估、不要記固定值。** 2026-08 實測 3510 個 md 檔產出 29863 chunks、耗時 3296 秒（約 55 分鐘）；早期版本的 skill 寫「約 4 分鐘」，那是 content 遠小於現在時的數字。開跑前先 `find content -name '*.md' | wc -l` 對照上次的檔數與秒數推估，免得用過時的預期把正常進度誤判成卡住。
+**耗時要按當前規模估、不要記固定值。** 兩次實測：2026-08 是 3510 個 md 檔、29863 chunks、3296 秒（約 55 分鐘）；2026-09-29 是 3830 個 md 檔、33092 chunks、2182 秒（約 36 分鐘）。檔數多了一成而耗時少了三分之一，所以耗時不只由檔數決定，換算下來的速度落在每秒 1.1 到 1.8 檔之間；早期版本的 skill 寫「約 4 分鐘」，那是 content 遠小於現在時的數字。開跑前先 `find content -name '*.md' | wc -l` 取得檔數，開跑半分鐘後用下方的 `grep -c` 讀已處理檔數換算這一次的速度，再推估剩餘時間，免得用過時的預期把正常進度誤判成卡住。
 
 **沒有增量模式。** `ingest` 只有全量一種，改一個檔跟改三千個檔付一樣的代價。這決定了 rebuild 的時機策略：累積一批 content 變動再跑一次，而不是每次寫完就跑。中途中斷是安全的——它在全部 embedding 完成後才寫檔，舊 index 在整個過程中保持完整可用。
 
