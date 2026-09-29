@@ -334,7 +334,7 @@ ORDER BY 今.測站, 今.觀測日;
 
 **資料量長大之後排名會重排。** 代價量測那張表是 14460 列上的結果。列數再大一個量級，日期差自連接與相關子查詢的數字會變，而等值自連接與視窗函數未必。判斷要重問一次計畫，而且**要在改動索引之後再問一次**——日期差自連接已經示範過加索引可以讓事情更糟。
 
-**換一家引擎，這四段都要改寫。** 四段全部用了 SQLite 的日期函式——兩種自連接與相關子查詢用 `date(x, '-1 day')` 或 `julianday()`，視窗函數用 `julianday()`。同一個日期運算，PostgreSQL 寫成 `觀測日 - INTERVAL '1 day'`、MySQL 寫成 `DATE_SUB(觀測日, INTERVAL 1 DAY)`；`WINDOW w AS (...)` 這個具名窗各家支援程度不同。這一層的差異第一次執行就會報錯，屬於當場報錯的那一級、最省事——而同一段查詢還有不報錯的差異，分級在 [1.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/sql/engine-leniency-and-portability/)。
+**換一家引擎，這四段都要改寫。** 四段全部用了 SQLite 的日期函式——兩種自連接與相關子查詢用 `date(x, '-1 day')` 或 `julianday()`，視窗函數用 `julianday()`。同一個日期運算，PostgreSQL 要先把欄位轉成日期，寫成 `CAST(觀測日 AS DATE) - 1`（本篇的觀測日宣告成 `TEXT`，直接寫 `觀測日 - INTERVAL '1 day'` 會回 `operator does not exist: text - interval`）；MySQL 寫成 `DATE_SUB(觀測日, INTERVAL 1 DAY)`，文字欄會被隱含轉成日期；`WINDOW w AS (...)` 這個具名窗各家支援程度不同。這一層的差異第一次執行就會報錯，屬於當場報錯的那一級、最省事——而同一段查詢還有不報錯的差異，分級在 [1.19 引擎的寬鬆度沒有總排名，可攜性要逐個寫法決定](/sql/engine-leniency-and-portability/)。
 
 ## 從需求到上線的每一個決定，在這一題上各做了什麼
 

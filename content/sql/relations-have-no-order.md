@@ -85,18 +85,18 @@ DELETE FROM 訂單 WHERE 訂單編號 = 105;
 | SQLite 3.51    | NULL 排最前     | NULL 排最後          |
 | MySQL 8.4      | NULL 排最前     | NULL 排最後          |
 | PostgreSQL 18  | NULL 排最後     | NULL 排最前          |
-| DuckDB v0.10.3 | NULL 排最後     | NULL 排最前          |
+| DuckDB v0.10.3 | NULL 排最後     | NULL 排最後          |
 
-兩種規定各自自洽：SQLite 與 MySQL 把 `NULL` 當成比任何值都小，PostgreSQL 與 DuckDB 當成比任何值都大。要跨引擎一致就得寫出來，而寫法本身也分兩家：
+三家的規定各自自洽：SQLite 與 MySQL 把 `NULL` 當成比任何值都小，PostgreSQL 當成比任何值都大，DuckDB v0.10.3 則不論升冪降冪都把 `NULL` 排在最後——它的預設是 `NULLS LAST`，不隨 `DESC` 翻轉。要跨引擎一致就得寫出來，而寫法本身也分兩家：
 
 ```sql
 SELECT 訂單編號 FROM 訂單 ORDER BY 金額 NULLS LAST;
--- PostgreSQL 18、SQLite 3.51：104,102,101,103
+-- PostgreSQL 18、SQLite 3.51、DuckDB v0.10.3：104,102,101,103
 -- MySQL 8.4：ERROR 1064 語法錯誤
 
 -- 先排一個布林值：金額是 NULL 的列 (金額 IS NULL) 為真，排在為假的列之後
 SELECT 訂單編號 FROM 訂單 ORDER BY (金額 IS NULL), 金額;
--- PostgreSQL 18、SQLite 3.51、MySQL 8.4：104,102,101,103（DuckDB 沒有測）
+-- PostgreSQL 18、SQLite 3.51、MySQL 8.4、DuckDB v0.10.3：104,102,101,103
 ```
 
 `NULL` 是比不出大小的那一種值；字串是比得出、而比法由另一條規則決定的那一種。排序鍵換成姓名時，大小寫算不算相同、重音字母排在哪裡，各家預設不同，同一批名字排出來的順序也不同——[1.15 字串的相等、大小與索引可用性都由 collation 決定](/sql/string-comparison-and-collation/) 用同一批名字在三家上排出三種順序。
