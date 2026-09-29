@@ -3,7 +3,7 @@ name: blogsearch-lifecycle
 description: "blogsearch 向量 index 的生命週期管理：偵測 index 過時或不存在、觸發 rebuild、驗證結果。適用於有 blogsearch 語意搜尋工具的專案。觸發詞：blogsearch、rebuild index、ingest、向量搜尋、語意搜尋、index 過時、content 變動、pull 後 rebuild、新增文章後搜尋。Trigger when content changes may have made the search index stale, or when semantic search is needed."
 license: MIT
 metadata:
-  version: 1.4.2
+  version: 1.4.3
   category: tooling-lifecycle
 ---
 
@@ -86,14 +86,15 @@ cd scripts/blogsearch && make verify     # status + test query
 
 ### 4. 失敗處理
 
-| 錯誤                       | 原因                                     | 修法                                              |
-| -------------------------- | ---------------------------------------- | ------------------------------------------------- |
-| `connection refused`       | Ollama 沒跑                              | `ollama serve &`                                  |
-| `model not found`          | 沒 pull 模型                             | `ollama pull nomic-embed-text`                    |
-| `no records to save`       | content 目錄空或路徑錯                   | 檢查 `-content` 參數                              |
-| 結果品質差                 | CJK chunking 問題或 embedding 模型不適合 | 先跑幾個已知 query 確認，必要時換 embedding model |
-| 跑到一半整個消失、log 空白 | 行程掛在 agent 的背景工作下、被一起回收  | 用上面的雙重 fork 重跑；舊 index 未被破壞、可照用 |
-| 長時間零輸出               | `make ingest \| tail` 把輸出緩衝住了     | 輸出直接導檔、不經管線，再 `grep -c` 讀進度       |
+| 錯誤                                    | 原因                                                                                                        | 修法                                                                                                                                                                |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `connection refused`                    | Ollama 沒跑                                                                                                 | `ollama serve &`                                                                                                                                                    |
+| `model not found`                       | 沒 pull 模型                                                                                                | `ollama pull nomic-embed-text`                                                                                                                                      |
+| `no records to save`                    | content 目錄空或路徑錯                                                                                      | 檢查 `-content` 參數                                                                                                                                                |
+| 結果品質差                              | CJK chunking 問題或 embedding 模型不適合                                                                    | 先跑幾個已知 query 確認，必要時換 embedding model                                                                                                                   |
+| 跑到一半整個消失、log 空白              | 行程掛在 agent 的背景工作下、被一起回收                                                                     | 用上面的雙重 fork 重跑；舊 index 未被破壞、可照用                                                                                                                   |
+| 長時間零輸出                            | `make ingest \| tail` 把輸出緩衝住了                                                                        | 輸出直接導檔、不經管線，再 `grep -c` 讀進度                                                                                                                         |
+| 等 ingest 結束的迴圈在 Linux 上停不下來 | procps 的 `pgrep -f` 會匹配到迴圈自己那個 shell 的指令列；BSD / macOS 的 `pgrep` 預設排除祖先行程，不會發生 | 迴圈改盯 ingest 的 PID：`while kill -0 <PID>; do sleep 20; done`；要用 pattern 就寫成 `pgrep -f '[b]in/blogsearch ingest'`，方括號讓 pattern 的字面文字不再匹配自己 |
 
 ## 何時提醒 vs 何時自動執行
 

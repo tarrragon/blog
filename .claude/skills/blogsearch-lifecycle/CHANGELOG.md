@@ -2,6 +2,8 @@
 
 新到舊。版號規則與兩個住址（本檔與 `SKILL.md` frontmatter 的 `metadata.version`）見專案的 skill 同步規範。
 
+**Version**: 1.4.3 — 失敗處理表補一列：Linux procps 的 `pgrep -f` 會匹配等待迴圈自己的 shell，迴圈在 ingest 結束後停不下來；macOS 的 BSD pgrep 預設排除祖先行程不受影響（debian procps-ng 4.0.4 與 macOS 各實測一次，方括號 pattern 在 Linux 上正常結束）
+
 **Version**: 1.4.2 — 耗時實測補 2026-09-29 一筆（3830 檔 / 33092 chunks / 2182 秒）；兩次速度差到每秒 1.1 與 1.8 檔，推估改成開跑後讀進度換算當次速度
 
 **Version**: 1.4.1 — 術語校正：判準全數改為判斷標準（動作修飾語縮為「X 標準」、狀態義改為「X 條件」）。判準的語域在哲學與教育評量、工程讀者解析不了——五份低階模型探針一致回報非通用
